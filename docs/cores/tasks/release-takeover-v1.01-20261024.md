@@ -1,4 +1,4 @@
-> **Superseded progress — Release resumed at owner request.** Current runtime d590e622 passed 233/233 in run 40110931820, reportingflow on second try. Family code is implemented (QR is code text for scan/copy/paste, not a joining URL). Latest code-map 984e2133 collected. Final parent screenshots independently reviewed. Owner waived ZIP. See [current report](../../v1.01/RELEASE-REPORT.md). Explicit v1.01 deployment approval is still required; no merge/deploy yet. The original stopped-work snapshot below is historical.
+> **Release completed: v1.01 is live.** Owner approved deployment after checks; final run 40126459616 passed 233/233 (roadtone second try), PR #506 squash-merged as aa728084, live sw.js/js/build.js/home verified at 7:41 am AEDT. ZIP waived; official code-map c863b373 recorded. See [final report](../../v1.01/RELEASE-REPORT.md). The stopped-work snapshot below is historical, not a current task list.
 
 # Release takeover — v1.01 — stopped at owner's request
 

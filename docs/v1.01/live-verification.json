@@ -1,0 +1,31 @@
+{
+  "merge": "aa728084fa1557307b57eef1c5e93f1eb5509234",
+  "checkedUTC": "2026-10-24T20:41:45.796420+00:00",
+  "checkedSydney": "2026-10-25T07:41:45.796420+11:00",
+  "checks": [
+    {
+      "url": "https://sparklevalley.au/sw.js",
+      "status": 200,
+      "expected": "sv-2026-10-24-v1.01",
+      "passed": true
+    },
+    {
+      "url": "https://sparklevalley.au/js/build.js",
+      "status": 200,
+      "expected": "BUILD = 'v1.01'",
+      "passed": true
+    },
+    {
+      "url": "https://sparklevalley.au/home",
+      "status": 200,
+      "expected": "Game guide · v1.01",
+      "passed": true
+    },
+    {
+      "url": "https://sparklevalley.netlify.app/sw.js",
+      "status": 200,
+      "expected": "sv-2026-10-24-v1.01",
+      "passed": true
+    }
+  ]
+}

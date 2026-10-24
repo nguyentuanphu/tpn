@@ -263,3 +263,7 @@ Release completed the `v1.01` takeover and owner additions on `release/r91` (dra
 ## v1.01 final preparation resumed
 
 Owner instructed Release to take over and finish, explicitly waiving the final ZIP. Runtime d590e622 passed 233/233 in GitHub run 40110931820 (reportingflow second try); code-map collected from 984e2133. Final bilingual parent screenshots independently reviewed. Corrected old report claims: code is XXXX-XXXX and QR encodes code text for scan/copy/paste, not a joining URL. No deployment approval. [Current report](../v1.01/RELEASE-REPORT.md) covers speed baseline failures and physical-device limitations.
+
+## v1.01 deployed — owner approval completed
+
+Owner explicitly approved “Yes, deploy v1.01 after checks pass (Recommended)”; ZIP waived. Final release head ba118721 passed **233/233** in run 40126459616, with `roadtone` second try. All branch checks green before PR #506 was made ready and squash-merged as **aa728084**. Live `/sw.js`, `/js/build.js` and `/home` plus Netlify-domain service worker verified v1.01 at **7:41 am AEDT**; exact evidence in `docs/v1.01/live-verification.json`. Official code-map **c863b373** from that run committed on main with `[skip netlify]`. #499, #448 and #449 closed “Fixed in v1.01”; unrelated reports remain open. Studio online only. [Final report](../v1.01/RELEASE-REPORT.md) retains timing failures/baseline comparisons, physical-device limits, QR workflow and unfinished AI review.

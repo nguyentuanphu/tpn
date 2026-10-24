@@ -1,6 +1,6 @@
 # v1.01 release report
 
-Release prepared 24 October 2026 AEDT. Branch `release/r91`, draft PR [#506](https://github.com/nguyentuanphu/tpn/pull/506). Proposed version is `v1.01` inside and on screen (`js/build.ts`, `sw.ts`, `studio/version.json`). Live production remains `r90` (shown as `v1`) at `main` `ef330bc0`. Awaiting the owner's single pop-up `"yes, deploy"` approval.
+Release prepared 24 October 2026 AEDT. Branch `release/r91`, merged PR [#506](https://github.com/nguyentuanphu/tpn/pull/506). Released version is `v1.01` inside and on screen (`js/build.ts`, `sw.ts`, `studio/version.json`). Owner approved “Yes, deploy v1.01 after checks pass”. All checks passed before readiness and squash-merge as **aa728084**. Live service worker, game build and `/home` were independently verified as v1.01 at **7:41 am AEDT**. Evidence: `live-verification.json`.
 
 ## Scope completed in v1.01
 
@@ -21,13 +21,14 @@ Release prepared 24 October 2026 AEDT. Branch `release/r91`, draft PR [#506](htt
 ## Verification summary
 
 - **GitHub Full suite**:
-  - Final runtime/source head **`d590e622`**, run [40110931820](https://github.com/nguyentuanphu/tpn/actions/runs/40110931820): **233/233 passed**. `reportingflow` passed only on its second try (first: concurrent retries duplicated request). The green collect job and Full suite status were independently verified by Release. Fast, Quick checks, Website consistency and Netlify preview are also green.
+  - Final release head **ba118721**, run [40126459616](https://github.com/nguyentuanphu/tpn/actions/runs/40126459616): **233/233 passed**; `roadtone` passed on its second try (initial Australian/Vietnamese asphalt colour assertion). All Fast, Quick, Website, preview and mirror checks passed. This was the gate checked before the owner-approved merge.
+  - Earlier identical runtime/source head **`d590e622`**, run [40110931820](https://github.com/nguyentuanphu/tpn/actions/runs/40110931820): **233/233 passed**. `reportingflow` passed only on its second try (first: concurrent retries duplicated request). The green collect job and Full suite status were independently verified by Release. Fast, Quick checks, Website consistency and Netlify preview are also green.
   - Run [40077745882](https://github.com/nguyentuanphu/tpn/actions/runs/40077745882) on `f25330fc`: **231/233 passed** across 8 shards (including `adventure` and `ownerfamily`).
   - The 2 checks that failed in run `40077745882` were reproduced and fixed without weakening any assertion:
     1. `spill`: `.adv-open` inside `.advcard` overflowed on `320px` viewports (`en320`, `vi320`) alongside `.adv-walk`. Fixed in `css/style.css` (`overflow: hidden` on `.adv-open` / `.adv-cx` and `flex-wrap: wrap` at `@media (max-width: 360px)`).
     2. `testerreport`: waited for `16000 - performance.now()` (since navigation start) rather than `15200 - (performance.now() - __sv.tester.mountedAt())` (since tester mount), so on slower runners the 2.6s freeze probe ran before the 15s post-mount guard elapsed. Fixed in `js/tester.ts` and `tests/run.mjs`.
   - Both fixed checks and their neighbours passed locally on first try (`spill` 115s, `testerreport` 55s, `dailyadventure` 114s, `website` 212s), and subsequently passed in the final GitHub run.
-  - Official code-map files (`tests/check-map.json` and `tests/check-times.json`, 279 files) collected from `origin/code-map` commit **`984e2133`**, successful final run **40110931820**, source **d590e622**. This replaces the older e338895c artifact. Later release-record commits do not change runtime code.
+  - Official code-map files (`tests/check-map.json` and `tests/check-times.json`, 279 files) collected from `origin/code-map` commit **`c863b373`**, successful final run **40126459616**, source **ba118721**. Committed to main with the release records using `[skip netlify]`. This replaces the earlier 984e2133/e338895c artifacts. Release-record commits do not change runtime code.
 - **Fast and targeted checks**:
   - `unit` (232/232 pass), `types` (131 TypeScript files, 0 errors), `rules` (112 rules), `arch` (281 files, 0 circular groups), `emoji`, `noemoji`, `bilingual`, `preload`, `contract`, `voice`, `voicepack`, `iphone`, `dailyadventure`, `adventure`, `parents`, `saves`, `ownerfamily`, `cloud`, `testerrewards`, `simple`, `secondset`, `spill`, `testerreport`, `website`, and `owner-autoplay-plans` (`robot`, `eggspoon`, `kicktokick`, `hoops` at `x5` in EN and VI: 8/8 pass).
 - **Sequential local speed suite (`v1.01` vs live `v1` `ef330bc0` on the same machine)**:
@@ -59,4 +60,6 @@ Release prepared 24 October 2026 AEDT. Branch `release/r91`, draft PR [#506](htt
 
 ## Approval and deployment
 
-No approval to deploy v1.01 has been received. PR #506 remains draft; production main remains ef330bc0. The owner waived the final ZIP, not the deployment approval. Present this report and ask the one pop-up confirming v1.01 with the exact approval “yes, deploy”. After approval: ready/squash-merge, verify live sw.js/js/build.js/home, close only fixed issues, and update board/release history. Physical checks and older non-reproducing reports remain disclosed follow-up work.
+Owner approval: **“Yes, deploy v1.01 after checks pass (Recommended)”**. ZIP waived. Final full run 40126459616 and all branch checks passed before PR #506 was marked ready and squash-merged as aa728084. Live verification passed for `https://sparklevalley.au/sw.js`, `/js/build.js`, `/home` and `https://sparklevalley.netlify.app/sw.js` (7:41 am AEDT; exact timestamps in `live-verification.json`). Studio remains online only; no EXE was built or published.
+
+Verified issues #499 (ResizeObserver notice filtering) and #448/#449 (Robot Planner covered-button replay) closed with “Fixed in v1.01”. Other reports remain open; no unrelated issue is claimed fixed. Earlier GitHub retries (`reportingflow`, `filmmusic`) and final `roadtone` retry remain disclosed. Physical-device checks, the QR scan/copy/paste workflow and local timing failures remain as stated above.

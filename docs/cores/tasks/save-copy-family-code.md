@@ -51,4 +51,4 @@ get QR code and family code." So a family never needs the creator, Studio or the
 
 Part 1 first (small, no server change), then Part 2. Each with its plan shown to the owner before building.
 
-Short privacy wording approved and implementation included in v1.01 candidate (not deployed); QR scans to code text for copying/pasting into Join with a code, not a one-tap URL. See the v1.01 release report. Wording: [approved EN/VI copy](family-code-privacy-wording-v1.01.md) (24 October 2026 AEDT).
+Short privacy wording approved and implementation released in v1.01 (PR #506, aa728084); QR scans to code text for copying/pasting into Join with a code, not a one-tap URL. See the v1.01 release report. Wording: [approved EN/VI copy](family-code-privacy-wording-v1.01.md) (24 October 2026 AEDT).
