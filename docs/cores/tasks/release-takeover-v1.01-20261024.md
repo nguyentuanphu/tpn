@@ -1,3 +1,5 @@
+> **Superseded progress — Release resumed at owner request.** Current runtime d590e622 passed 233/233 in run 40110931820, reportingflow on second try. Family code is implemented (QR is code text for scan/copy/paste, not a joining URL). Latest code-map 984e2133 collected. Final parent screenshots independently reviewed. Owner waived ZIP. See [current report](../../v1.01/RELEASE-REPORT.md). Explicit v1.01 deployment approval is still required; no merge/deploy yet. The original stopped-work snapshot below is historical.
+
 # Release takeover — v1.01 — stopped at owner's request
 
 24 October 2026 AEDT. Owner said: “Stop and upload what you do, another AI will take over your work.” No deployment approval. Do not merge or deploy. Resume only when assigned by the owner.
