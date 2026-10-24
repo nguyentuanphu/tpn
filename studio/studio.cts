@@ -13,7 +13,7 @@
 'use strict';
 const http = require('http'), fs = require('fs'), path = require('path'), os = require('os'), zlib = require('zlib'), vm = require('vm'), { spawn, execFile } = require('child_process');
 
-const { createStudio, folderStore, MIME }: StudioEngine = require('./core.cts');
+const { createStudio, buildRank, folderStore, MIME }: StudioEngine = require('./core.cts');
 let sea = null; try { sea = require('node:sea'); if (!sea.isSea()) sea = null; } catch (e) { sea = null; }
 const UI_DIR = path.join(__dirname, 'ui');
 const asset = name => { if (sea) { try { return Buffer.from(sea.getAsset(name)); } catch (e) { return null; } } const p = path.join(UI_DIR, name); return fs.existsSync(p) ? fs.readFileSync(p) : null; };
@@ -131,7 +131,7 @@ const family = {
 // is removed on the next start. Settings and keys stay in %APPDATA%. If anything fails, the exe stays as it was.
 const HERE = require('./version.json').studio, EXE_BRANCH = 'studio-exe';
 const GH_UPD = () => process.env.STUDIO_GITHUB_API || 'https://api.github.com';
-const num = v => +((/r(\d+)/.exec(String(v || '')) || [0, 0])[1]);
+const num = v => buildRank(v); // (owner, 24 Oct 2026 AEDT) v1.01 sorts after r90, as on the website
 const selfExe = () => process.env.STUDIO_UPDATE_EXE || (sea ? process.execPath : null);
 async function exeFile(rel) {
   if (!conf.githubToken || !/^[\w.-]+\/[\w.-]+$/.test(conf.githubRepo || '')) throw new Error('Add the GitHub token and repository (owner/name) in Settings first.');
@@ -185,7 +185,7 @@ async function ghJ<T extends object>(p: string): Promise<Partial<T>> {
   const t = await r.text(); let j: Partial<T> = {}; try { j = JSON.parse(t); } catch (e) { }
   if (!r.ok) throw new Error(`GitHub ${r.status} while getting the newest game`); return j;
 }
-const folderBuild = () => { try { return (/VERSION = '[^']*?(r\d+)'/.exec(fs.readFileSync(G('sw.js'), 'utf8')) || [])[1] || '?'; } catch (e) { return '?'; } };
+const folderBuild = () => { try { return (/VERSION = 'sv-\d{4}-\d{2}-\d{2}-([^']+)'/.exec(fs.readFileSync(G('sw.js'), 'utf8')) || [])[1] || '?'; } catch (e) { return '?'; } };
 // (owner, 12 Oct: "if the game folder is not latest or not available then it will download the latest from github")
 // with no game folder at all, the newest game goes into a "SparkleValley" folder next to the exe
 const newGameDir = () => path.join(path.dirname(selfExe() || process.execPath), 'SparkleValley');

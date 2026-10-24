@@ -28,6 +28,7 @@ import { GAMES, gameOpen } from './games/frame.js';
 import { holdButton, openGrownups, openFestivals } from './ui.js';
 import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, withSitePlaces } from './content/activities.js';
 import { featureOn } from './custom.js';
+import { isOpen } from './content/unlocks.js';
 
 // a star drawn on the picture card (round I, owner: "stars without a strip, placed on the icon"): gold when earned
 const STAR = 'M12 1.8l3.1 6.4 7 1-5.1 4.9 1.2 7-6.2-3.3-6.2 3.3 1.2-7L1.9 9.2l7-1z';
@@ -73,6 +74,7 @@ export function createSimple(G) {
     if (t === 'tales') {
       const tales = G.TALES || [], known = TALE_AREAS.filter(a => a.key !== '💛').map(a => a.key);
       return TALE_AREAS.map(a => ({ area: a, items: tales.filter(x => a.key === '💛' ? !known.includes(x.flag) : x.flag === a.key)
+        .filter(x => isOpen(p, x.id, 'tale', a.key === '🌍' ? 'world' : a.key))
         .map(x => ({ kind: 'tale', key: x.id, icon: firstPic(x.pages[0][0]), badge: x.flag, name: x.title(), voice: both(x.title), stars: (p.tales || {})[x.id] ? 1 : 0, max: 1 })) }));
     }
     // (round R) the festival calendar opens the places tab: festivals happen in places, each in its own ones
@@ -84,7 +86,7 @@ export function createSimple(G) {
       .sort((x, y) => Number(x.area.key === 'asia') - Number(y.area.key === 'asia'));
     // (round N) the Music group starts with 🎵 Songs: lullabies, village tunes and festival songs to listen to
     const songs = { kind: 'songs', key: 'songs', icon: '🎵', name: T('Songs', 'Bài hát'), voice: ['Songs', 'Bài hát'], stars: 0, max: 0 };
-    return AREAS.map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, lt).map(g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level }))) }));
+    return AREAS.map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, lt).filter(g => isOpen(p, g.id, 'game', a.key)).map(g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level }))) }));
   }
   const tabOf = t => TABS.find(y => y.key === t);
   const groupsOf = t => areasOf(t).filter(a => a.items.length);
@@ -264,13 +266,13 @@ export function createSimple(G) {
       const p = hero().profile;
       m.innerHTML = `<div class="sp-scene">${SCENE}</div><div class="sp-top"><span class="sp-me">${p.photo ? `<img src="${p.photo}" alt="">` : pic('🙂')}<b>${esc(p.name)}</b></span>
         <button class="sp-back" hidden aria-label="${T('Back', 'Quay lại')}">${pic('⬅️')}<small>${T('Back', 'Quay lại')}</small></button>
-        <button class="sp-again" aria-label="${T('Say it again', 'Nói lại')}">${pic('🔊')}</button>
+        <div class="sp-tools"><button class="sp-again" aria-label="${T('Say it again', 'Nói lại')}">${pic('🔊')}</button>
         <button class="sp-sound" aria-label="${T('Sound on or off', 'Bật tắt âm thanh')}">${pic('🎵')}<small>${T('Sound', 'Âm thanh')}</small></button>
-        <button class="grown sp-grown"><span class="ring"></span>${pic('⚙️')}<small>${T('Grown-ups: press and hold', 'Người lớn: nhấn giữ')}</small></button></div>
+        <button class="sp-home" aria-label="${T('Home', 'Trang chủ')}">${pic('🏠')}<small>${T('Home', 'Trang chủ')}</small></button>
+        <button class="grown sp-grown"><span class="ring"></span>${pic('⚙️')}<small>${T('Grown-ups: press and hold', 'Người lớn: nhấn giữ')}</small></button></div></div>
         <div class="sp-scroll"><div class="sp-path"></div></div>
         <nav class="sp-tabs">${TABS.map(x => `<button data-tab="${x.key}"><span>${pic(x.icon)}</span><small>${esc(x.label())}</small></button>`).join('')}
           <button class="sp-discover"><span>${pic('🔎')}</span><small>${T('Discover', 'Khám phá')}</small></button>
-          <button class="sp-home"><span>${pic('🏠')}</span><small>${T('Home', 'Trang chủ')}</small></button>
           <button class="sp-valley"><span>${pic('🌳')}</span><small>${T('Valley', 'Thung lũng')}</small></button></nav>
         <div class="sp-find" hidden></div>`;
       document.body.appendChild(m);

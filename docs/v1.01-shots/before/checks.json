@@ -1,0 +1,52 @@
+[
+  {
+    "name": "phone-vi",
+    "quick": {
+      "scroll": 1424,
+      "xTop": -1366,
+      "xBottom": -1302,
+      "headBottom": -1302,
+      "closeVisible": false
+    },
+    "backup": {
+      "save": true,
+      "load": true,
+      "old": false,
+      "done": true
+    },
+    "targets": [
+      {
+        "text": "Tất cả đã hết lỗi",
+        "width": 150,
+        "height": 45
+      },
+      {
+        "text": "Đã hết lỗi",
+        "width": 105,
+        "height": 45
+      },
+      {
+        "text": "Vẫn còn lỗi",
+        "width": 115,
+        "height": 45
+      },
+      {
+        "text": "Đã hết lỗi",
+        "width": 105,
+        "height": 45
+      },
+      {
+        "text": "Vẫn còn lỗi",
+        "width": 115,
+        "height": 45
+      }
+    ],
+    "simple": {
+      "homeTop": true,
+      "width": 64,
+      "height": 64,
+      "overflow": false
+    },
+    "errors": []
+  }
+]

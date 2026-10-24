@@ -27,13 +27,13 @@ import { RELEASES } from './content/releases.js';
 import { takeCopy, putCopyBack, hasCopy, dropCopy } from './keepcopy.js';
 import { revertOf } from './content/autoplay.js';
 import { easyName } from './content/devname.js';
-import { unreachableControl, activeReportPanel, observeGameOpen } from './tester-detection.js';
+import { unreachableControl, activeReportPanel, observeGameOpen, resizeDeliveryNotice, publicFixedVersion } from './tester-detection.js';
 import { readReportQueue, persistReportQueue } from './report-outbox.js';
 
 import type { SvMain } from './main.js';
 import type { ReportEntry } from './report-outbox.js';
 type Where = { area: string; place: string; game: string; window: string; x: number; z: number };
-type Problem = { k: string; title: string; status?: string; fixedIn?: string; n?: number; auto?: string; where?: Where };
+type Problem = { spoken?: boolean; k: string; title: string; status?: string; fixedIn?: string; n?: number; auto?: string; where?: Where };
 type TesterStatus = { open?: Problem[]; mine?: Problem[]; retest?: Problem[]; reports?: number; helped?: number; peeks?: string[] };
 type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regionOf'> & {
   playGame?: SvMain['playGame'] & { __tester?: boolean };
@@ -41,7 +41,7 @@ type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regi
   autoplay?: { running(): boolean; attach?(body: HTMLElement, close: () => void): void; detach?(): void; stop?(): void; start?(items: unknown, speed: string): void; open?(): void };
   testerRewards?: { apply(status: TesterStatus): void; unmount(): void; corner(): void };
 };
-export type TesterApi = { level: string; openPanel: typeof openPanel; autoReport: typeof autoReport; refresh: typeof refresh; retest: typeof retest; nightly: typeof nightly; settings: typeof settingsRows; status(): TesterStatus | null; unmount(): void };
+export type TesterApi = { level: string; openPanel: typeof openPanel; autoReport: typeof autoReport; refresh: typeof refresh; retest: typeof retest; nightly: typeof nightly; settings: typeof settingsRows; status(): TesterStatus | null; mountedAt(): number; unmount(): void };
 type ReportPanel = HTMLElement & { close(): void; selectTab?(tab: string): void };
 declare global {
   interface Window { __svTesterURL?: string }
@@ -203,7 +203,7 @@ export async function autoReport(kind: string, detail: string, where?: Where, mo
 function watch() {
   const on = (t: EventTarget, k: string, f: EventListener, o: boolean | AddEventListenerOptions = false) => { t.addEventListener(k, f, o); offs.push(() => t.removeEventListener(k, f, o)); };
   // errors in the game's own code
-  const err = (msg: string, file = '', line: number | string = 0) => { const f = String(file || '').split('/').pop().split('?')[0]; if (f && !/\.m?js$/.test(f)) return; const s = `${String(msg || 'error').slice(0, 120)} @ ${f || '?'}:${line || 0}`; errors.push(s); if (errors.length > C.LIMITS.errors) errors.shift(); note('error', s); autoReport('error', s); };
+  const err = (msg: string, file = '', line: number | string = 0) => { if (resizeDeliveryNotice(String(msg || ''))) return; const f = String(file || '').split('/').pop().split('?')[0]; if (f && !/\.m?js$/.test(f)) return; const s = `${String(msg || 'error').slice(0, 120)} @ ${f || '?'}:${line || 0}`; errors.push(s); if (errors.length > C.LIMITS.errors) errors.shift(); note('error', s); autoReport('error', s); };
   on(window, 'error', (e: ErrorEvent) => err(e.message, e.filename, e.lineno));
   on(window, 'unhandledrejection', (e: PromiseRejectionEvent) => { const r = e.reason, m = /\/([\w.-]+\.m?js):(\d+)/.exec(String(r && r.stack || '')); err(r && r.message || String(r), m ? m[1] : 'promise.js', m ? m[2] : 0); });
   // taps, and windows that do not close
@@ -316,7 +316,7 @@ function newsHTML() {
 }
 
 // ---------- the ladybird and the tester mark ----------
-const paintCount = () => { dispatchEvent(new Event('sv-report-queue')); const n = queue().length, fixed = fixedToSee().length, fresh = newsUnseen(); document.querySelectorAll('.z-lb').forEach(b => { b.querySelector<HTMLElement>('.lb-n').textContent = n ? String(n) : ''; b.querySelector<HTMLElement>('.lb-n').hidden = !n; b.querySelector<HTMLElement>('.lb-ok').hidden = !fixed; const nw = b.querySelector<HTMLElement>('.lb-new'); if (nw) nw.hidden = !fresh; }); };
+const paintCount = () => { dispatchEvent(new Event('sv-report-queue')); const n = queue().length, fixed = fixedToSee().length, fresh = newsUnseen(); document.querySelectorAll('.z-lb').forEach(b => { b.querySelector<HTMLElement>('.lb-n').textContent = n ? String(n) : ''; b.querySelector<HTMLElement>('.lb-n').hidden = !n; const ok = b.querySelector<HTMLElement>('.lb-ok'); ok.hidden = !fixed; if (fixed) ok.textContent = String(fixed); const nw = b.querySelector<HTMLElement>('.lb-new'); if (nw) nw.hidden = !fresh; }); };
 const fixedToSee = () => { const seen = get(KEY.seen, {}); return ((status && status.mine) || []).filter(p => ['fixed', 'confirmed'].includes(p.status) && !seen[p.k]); };
 function addUI() {
   // (each player's HUD gets the mark under its clock and, at the ladybird level, the ladybird with the zoom buttons; also
@@ -328,7 +328,7 @@ function addUI() {
     const b = el('button', 'z-lb', `${pic('🐞')}<i class="lb-n" hidden></i><i class="lb-ok" hidden>✓</i><i class="lb-new" hidden></i><kbd class="kb">L</kbd>`); b.setAttribute('aria-label', T('Report a problem (hold: quick report)', 'Báo lỗi (giữ: báo nhanh)'));
     let t0 = 0, quick = null;
     b.addEventListener('pointerdown', e => { e.stopPropagation(); t0 = performance.now(); quick = setTimeout(() => { quick = null; quickReport('quick'); }, 700); });
-    b.addEventListener('pointerup', e => { e.stopPropagation(); if (quick) { clearTimeout(quick); quick = null; if (fixedToSee().length) showFixed(); else openPanel(i); } });
+    b.addEventListener('pointerup', e => { e.stopPropagation(); if (quick) { clearTimeout(quick); quick = null; openPanel(i, fixedToSee().length ? 'fixed' : 'tester'); } });
     b.addEventListener('pointerleave', () => { if (quick) { clearTimeout(quick); quick = null; } });
     b.addEventListener('keydown', e => { if (e.key === 'Enter') openPanel(i); });
     z.appendChild(b); offs.push(() => b.remove()); paintCount();
@@ -392,27 +392,42 @@ export async function openPanel(i = 0, initialTab = 'tester') {
   markNewsSeen(); card.querySelectorAll<HTMLButtonElement>('[data-try]').forEach(b => b.onclick = () => { m.close(); G.paused = was; G.playGame?.(i, b.dataset.try, 'tester'); });
   const full = card.querySelector<HTMLInputElement>('.tp-full');
   full.onchange = () => { selectedShot = full.checked ? pic0 : scenePic; card.querySelector<HTMLImageElement>('.tp-shot').src = selectedShot; };
-  const reportBody = el('div','testing-report'), autoBody = el('div','testing-auto');
+  const reportBody = el('div','testing-report'), autoBody = el('div','testing-auto'), fixedBody: HTMLDivElement = el('div','testing-fixed'); fixedBody.id='testing-fixed'; fixedBody.setAttribute('role','tabpanel'); fixedBody.hidden=true;
   const head = card.querySelector('.tp-head');
   [...card.children].filter(child => child !== head).forEach(child => reportBody.appendChild(child));
-  const tabs = el('div','testing-tabs', `<button class="btn" data-test-tab="tester" role="tab">${T('Tester','Người thử')}</button><button class="btn" data-test-tab="autoplay" role="tab">${T('Auto play','Tự chơi')}</button>`);
+  const tabs: HTMLDivElement = el('div','testing-tabs', `<button class="btn" data-test-tab="tester" role="tab">${T('Tester','Người thử')}</button><button class="btn" data-test-tab="autoplay" role="tab">${T('Auto play','Tự chơi')}</button>${fixedToSee().length ? `<button class="btn" data-test-tab="fixed" role="tab">${T('Fixed', 'Đã sửa')} (${fixedToSee().length})</button>` : ''}`);
   tabs.setAttribute('role','tablist'); reportBody.id='testing-report'; autoBody.id='testing-autoplay';
   reportBody.setAttribute('role','tabpanel'); autoBody.setAttribute('role','tabpanel'); autoBody.hidden=true;
   const reportActions=reportBody.querySelector('.tp-send').closest('.actions');reportActions.classList.add('testing-actions');
-  card.append(tabs,reportBody,autoBody,reportActions);
+  card.append(tabs,reportBody,autoBody,fixedBody,reportActions);
   const close = () => { G.autoplay?.detach?.(); m.close(); G.paused = was; };
   card.querySelector<HTMLButtonElement>('.x').onclick = close;
   const selectTab = tab => {
-    reportBody.hidden=tab!=='tester'; autoBody.hidden=tab!=='autoplay';reportActions.hidden=tab!=='tester';
-    head.querySelector('h2').textContent=tab==='tester'?T('Report a problem','Báo lỗi'):T('Auto play','Tự chơi');
-    tabs.querySelectorAll('button').forEach(b=>{const on=b.dataset.testTab===tab;b.classList.toggle('primary',on);b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;b.id='testing-tab-'+b.dataset.testTab;const target=b.dataset.testTab==='tester'?reportBody:autoBody;b.setAttribute('aria-controls',target.id);target.setAttribute('aria-labelledby',b.id);});
+    const fixedTab = tabs.querySelector('[data-test-tab="fixed"]');
+    if (fixedTab) fixedTab.textContent = T('Fixed', 'Đã sửa') + ' (' + fixedToSee().length + ')';
+    reportBody.hidden=tab!=='tester'; autoBody.hidden=tab!=='autoplay'; fixedBody.hidden=tab!=='fixed'; reportActions.hidden=tab!=='tester';
+    head.querySelector('h2').textContent=tab==='tester'?T('Report a problem','Báo lỗi'):tab==='fixed'?T('Fixed, please check','Đã sửa, con thử lại nhé'):T('Auto play','Tự chơi');
+    tabs.querySelectorAll('button').forEach(b=>{const on=b.dataset.testTab===tab;b.classList.toggle('primary',on);b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;b.id='testing-tab-'+b.dataset.testTab;const target=b.dataset.testTab==='tester'?reportBody:b.dataset.testTab==='fixed'?fixedBody:autoBody;b.setAttribute('aria-controls',target.id);target.setAttribute('aria-labelledby',b.id);});
     if (tab==='autoplay') {
       if (G.autoplay?.attach) G.autoplay.attach(autoBody,close);
       else autoBody.textContent=T('Auto play is not enabled on this device.','Tự chơi chưa được bật trên máy này.');
     }
+    if (tab==='fixed') {
+      const list = fixedToSee(), seen = get(KEY.seen, {});
+      fixedBody.innerHTML = `<div class="tm-head actions"><button class="btn primary tp-all-fixed">${T('All fixed', 'Tất cả đã hết lỗi')}</button></div><div class="tm-list">${list.length ? list.map(p => `<div class="tm-row s-fixed"><b>${esc(p.title)}</b><small class="tm-coins">+${C.COINS.helped + (p.spoken ? C.COINS.spoken : 0)} ${pic('🪙')}</small><div class="actions"><button class="btn primary" data-fok='1' data-fk='${esc(p.k)}'>${T('Yes, fixed', 'Đã hết lỗi')}</button><button class="btn" data-fok='0' data-fk='${esc(p.k)}'>${T('Still wrong', 'Vẫn còn lỗi')}</button></div></div>`).join('') : `<p class="note">${T('Nothing waiting to be checked.', 'Không còn lỗi nào cần kiểm tra.')}</p>`}</div>`;
+      fixedBody.querySelector<HTMLButtonElement>('.tp-all-fixed')?.addEventListener('click', () => {
+        list.forEach(p => { seen[p.k] = 1; tell({ k: p.k, fixed: true }); });
+        put(KEY.seen, seen); paintCount(); selectTab('tester');
+      });
+      fixedBody.querySelectorAll<HTMLButtonElement>('[data-fok]').forEach(b => b.onclick = () => {
+        const k = b.dataset.fk, ok = b.dataset.fok === '1';
+        seen[k] = 1; put(KEY.seen, seen); paintCount(); tell({ k, fixed: ok });
+        selectTab(fixedToSee().length ? 'fixed' : 'tester');
+      });
+    }
   };
   tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>selectTab(b.dataset.testTab));
-  tabs.onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const next=e.key==='Home'?'tester':e.key==='End'?'autoplay':reportBody.hidden?'tester':'autoplay';selectTab(next);tabs.querySelector(`[data-test-tab="${next}"]`).focus();}};
+  tabs.onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const buttons=[...tabs.querySelectorAll<HTMLButtonElement>('[data-test-tab]')],current=buttons.findIndex(b=>b.getAttribute('aria-selected')==='true');const n=e.key==='Home'?0:e.key==='End'?buttons.length-1:(current+(e.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;selectTab(buttons[n].dataset.testTab);buttons[n].focus();}};
   m.selectTab=selectTab;
   selectTab(initialTab);
   const retry = card.querySelector<HTMLButtonElement>('.tp-retry'), deliveryStatus = card.querySelector<HTMLElement>('.tp-delivery');
@@ -450,15 +465,6 @@ export async function openPanel(i = 0, initialTab = 'tester') {
   return m;
 }
 // "Fixed in rNN: please check" with Yes, fixed / Still wrong
-function showFixed() {
-  const list = fixedToSee(); if (!list.length) return; const p = list[0], seen = get(KEY.seen, {});
-  const m = modal('tpanel tfixed', `<div class="tp-head"><span class="tp-lb">${pic('🐞')}</span><h2>${T('Fixed', 'Đã sửa')}${p.fixedIn ? ' · ' + esc(p.fixedIn) : ''}</h2><button class="x" aria-label="${T('Close', 'Đóng')}">✕</button></div>
-    <p>${esc(p.title)}</p><p>${T('Please check: is it fixed?', 'Bạn thử lại nhé: đã hết lỗi chưa?')}</p>
-    <div class="actions"><button class="btn primary" data-ok="1">${T('Yes, fixed', 'Đã hết lỗi')}</button><button class="btn" data-ok="0">${T('Still wrong', 'Vẫn còn lỗi')}</button></div>`);
-  const card = m.querySelector('.card'), done = ok => { seen[p.k] = 1; put(KEY.seen, seen); m.close(); paintCount(); tell({ k: p.k, fixed: ok }); }; // (the thank-you comes with the status: js/testerrewards.js)
-  card.querySelector('.x').onclick = () => m.close();
-  card.querySelectorAll('[data-ok]').forEach(b => b.onclick = () => done(b.dataset.ok === '1'));
-}
 const tell = b => fetch(URL_(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: me(), ...b }) }).catch(() => { });
 
 // ---------- how my reports are doing ----------
@@ -544,7 +550,7 @@ function showMine() {
   const list = ((status && status.mine) || []).slice().reverse(), waiting = queue();
   const m = modal('tpanel tmine', `<div class="tp-head"><span class="tp-lb">${pic('🐞')}</span><h2>${T('My reports', 'Báo cáo của tôi')}</h2><button class="x" aria-label="${T('Close', 'Đóng')}">✕</button></div>
     ${waiting.length ? `<p class="note">${T(`${waiting.length} waiting to send`, `${waiting.length} đang chờ gửi`)}</p>` : ''}
-    <div class="tm-list">${list.length ? list.map(p => `<div class="tm-row s-${esc(p.status)}"><b>${esc(p.title)}</b><small>${L(STATUS_WORDS[p.status] || ['', ''])}${p.fixedIn ? ' · ' + esc(p.fixedIn) : ''}</small></div>`).join('') : `<p class="note">${T('Nothing yet. Tap the ladybird when something looks wrong.', 'Chưa có gì. Chạm vào con bọ rùa khi thấy gì không ổn.')}</p>`}</div>`);
+    <div class="tm-list">${list.length ? list.map(p => `<div class="tm-row s-${esc(p.status)}"><b>${esc(p.title)}</b><small>${L(STATUS_WORDS[p.status] || ['', ''])}${publicFixedVersion(p.fixedIn) ? ' · ' + esc(publicFixedVersion(p.fixedIn)) : ''}</small></div>`).join('') : `<p class="note">${T('Nothing yet. Tap the ladybird when something looks wrong.', 'Chưa có gì. Chạm vào con bọ rùa khi thấy gì không ổn.')}</p>`}</div>`);
   m.querySelector('.x').onclick = () => m.close();
 }
 
@@ -572,7 +578,7 @@ function stop() { live = false; offs.splice(0).forEach(f => { try { f(); } catch
 // js/testergate.js: this device is a tester at this level ('' = no longer)
 export function mountTester(game: TesterGame, lv: string) {
   G = game; level = lv;
-  G.tester = { level, openPanel, autoReport, refresh, retest, nightly, settings: settingsRows, status: () => status, unmount: () => { stop(); delete G.tester; } };
+  G.tester = { level, openPanel, autoReport, refresh, retest, nightly, settings: settingsRows, status: () => status, mountedAt: () => mounted, unmount: () => { stop(); delete G.tester; } };
   // (the agreement waits until a child is in the valley, not over the title screen)
   if (accepted()) start(); else if (!(get(KEY.acc, null) || {}).stopped) { const wait = setInterval(() => { if (!G.tester) return clearInterval(wait); if (G.heroes && G.heroes.length && !G.paused) { clearInterval(wait); setTimeout(agreement, 1200); } }, 500); }
 }

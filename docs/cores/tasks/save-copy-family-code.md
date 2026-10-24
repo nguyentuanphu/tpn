@@ -23,17 +23,32 @@ privacy rules (PRIV-*) do not allow. The family code below is the consented way 
 - Checks: a unit test of the file format and the checker (bad, old, too large files refused); a browser check that saves,
   wipes the device, loads the file and finds the same progress; phone, tablet and computer screenshots.
 
-## Part 2: The family code (Studio counts by family and child)
+## Part 2: The family code (made and shared inside the game; owner, 24 Oct 2026 AEDT)
 
-- Studio shows a family code (short, plus a QR). A grown-up enters or scans it once on each device (Grown-ups).
-- The device keeps the link with its saves (and in the copy above). Its hello to the website carries the family's link,
-  not anything about the child beyond what Analytics already sends.
-- Studio groups devices by family: a wiped device, or a second app on the same iPhone (Safari tab, Safari Home Screen
-  app, Chrome Home Screen app keep separate storage), counts as part of the family again once the code is entered.
-- Studio also gets "same device as…" to join two device entries by hand.
-- Builds on the Family devices trial (js/familydevices.ts, netlify/lib/family-devices.mts); privacy notice wording in
-  English and Vietnamese for the owner to approve first.
+Owner: "Family code don't involve Studio in here, users wouldn't know who I am as creator let alone contacting me to
+get QR code and family code." So a family never needs the creator, Studio or the website to get a code:
+
+- **Make it on the first device.** Grown-ups (behind the grown-up gate) gets "Family code · Mã gia đình". On the first
+  device a grown-up taps "Make a family code · Tạo mã gia đình": the game makes a short random code by itself (no
+  account, no name, no email) and shows it with a QR.
+- **Add the other devices.** On each other device (a second tablet, the Safari tab and the Home Screen app on the same
+  iPhone, a wiped phone) a grown-up taps "Join with a code · Nhập mã gia đình" and types the code or scans the QR shown
+  on the first device.
+- **Kept with the saves.** The code is stored with the device's saves and inside "Save a copy", so a device restored
+  from its copy is in the family again without typing anything.
+- **What it gives the family:** every device of the family shows the same family name and code in Grown-ups. (Sharing
+  progress between devices is not part of this part.)
+- **What it gives the owner:** the device's hello to the website carries a one-way hash of the code, never the code,
+  the children's names or anything else new. Studio only reads it: it counts devices with the same hash as one family
+  in Analytics (families, devices per family, a wiped device coming back). Studio never makes, shows or hands out codes.
+- **Leaving:** "Leave the family · Rời gia đình" removes the code from the device.
+- Privacy notice wording in English and Vietnamese, shown before the code is made, for the owner to approve first.
+- Builds on the Family devices trial (js/familydevices.ts, netlify/lib/family-devices.mts).
+- Checks: unit tests for the code, its hash and joining; a browser check that makes a code on one device, joins on a
+  second, wipes one and rejoins from "Save a copy"; phone, tablet and computer screenshots in both languages.
 
 ## Order
 
 Part 1 first (small, no server change), then Part 2. Each with its plan shown to the owner before building.
+
+Short privacy wording approved and implementation included in v1.01 candidate (not deployed); QR scans to code text for copying/pasting into Join with a code, not a one-tap URL. See the v1.01 release report. Wording: [approved EN/VI copy](family-code-privacy-wording-v1.01.md) (24 October 2026 AEDT).

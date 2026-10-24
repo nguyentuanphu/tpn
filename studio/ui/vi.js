@@ -20,7 +20,7 @@ export const VI_MESSAGES = [
   // (owner, 12 Oct) the exe updating itself
   [/^Looking at GitHub…$/, () => 'Đang xem GitHub…'],
   [/^That browser is not trusted \(any more\)\.$/, () => 'Trình duyệt đó không (còn) được tin cậy.'],
-  [/^Your game folder is r(\d*) and the website is r(\d*): get the newest game first \(Settings, Get the newest game\)\.$/, (m) => `Thư mục game của bạn là r${m[1]}, trang web là r${m[2]}: hãy lấy game mới nhất trước (Cài đặt, Lấy game mới nhất).`],
+  [/^Your game folder is (\S*) and the website is (\S*): get the newest game first \(Settings, Get the newest game\)\.$/, (m) => `Thư mục game của bạn là ${m[1]}, trang web là ${m[2]}: hãy lấy game mới nhất trước (Cài đặt, Lấy game mới nhất).`],
   [/^GitHub (\d+) while getting the newest game$/, (m) => `GitHub báo lỗi ${m[1]} khi lấy game mới nhất`],
   [/^GitHub sent only part of the game: get it as a ZIP from GitHub instead\.$/, () => 'GitHub chỉ gửi một phần game: hãy tải tệp ZIP từ GitHub.'],
   [/^Only SparkleStudio\.exe updates itself\.$/, () => 'Chỉ SparkleStudio.exe mới tự cập nhật.'],

@@ -617,13 +617,16 @@ export const Net = {
   async _withPub(hello) { try { this.pub = await myPub(); } catch (e) { this.pub = null; } return Object.assign({}, hello || {}, this.pub ? { pub: this.pub } : {}); },
   // send my photo to one player, locked with our pair key (once per player; after they are in the room only)
   async _sendPhoto(id) {
-    const r = this.remotes[id], mine = this.hello && this.hello.photo; this._photoTo = this._photoTo || new Set();
+    const r = this.remotes[id], mine = this.hello && this.hello.photo, room = this.code, me = this.me; this._photoTo = this._photoTo || new Set();
     if (!r || !okPub(r.pub) || !mine || this.knocking || this._photoTo.has(id + r.pub)) return;
     this._photoTo.add(id + r.pub);
     try {
-      const small = await smallPhoto(mine); if (!small) return;
+      const small = await smallPhoto(mine); if (!small) { this._photoTo.delete(id + r.pub); return; }
       const iv = rnd(12), ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await pairKey(r.pub), new TextEncoder().encode(small));
-      if (this.remotes[id] === r) this.send({ t: 'photo', to: id, iv: b64(iv), ct: b64(ct), mid: 'p' + hex(rnd(5)) });
+      // A repeated hello replaces the remote record while the image/crypto awaits.
+      // Admission and the recipient's key, not that temporary object's identity, bind the photo.
+      if (this.code === room && this.me === me && !this.knocking && this.remotes[id]?.pub === r.pub && this.hello?.photo === mine) this.send({ t: 'photo', to: id, iv: b64(iv), ct: b64(ct), mid: 'p' + hex(rnd(5)) });
+      else this._photoTo?.delete(id + r.pub);
     } catch (e) { this._photoTo.delete(id + r.pub); }
   },
   // (a newcomer's first photos can be sent while it is still opening "come in": a few seconds after joining it asks
@@ -633,10 +636,11 @@ export const Net = {
       for (const r of Object.values(this.remotes)) if (!r.photo && okPub(r.pub) && (this._asked[r.id] || 0) < 2) { this._asked[r.id] = (this._asked[r.id] || 0) + 1; this.send({ t: 'photoreq', to: r.id }); } }, 4000);
   },
   async _openPhoto(d, from) {
-    const r = this.remotes[from]; if (!r || !r.pub || typeof d.ct !== 'string' || d.ct.length > 160000) return;
+    const r = this.remotes[from], room = this.code, me = this.me; if (!r || !r.pub || typeof d.ct !== 'string' || d.ct.length > 160000) return;
     try {
       const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(d.iv) }, await pairKey(r.pub), unb64(d.ct)), photo = okPhoto(new TextDecoder().decode(pt));
-      if (photo && this.remotes[from] === r && r.photo !== photo) { r.photo = photo; this.emit('hello', r); }
+      const current = this.remotes[from];
+      if (photo && this.code === room && this.me === me && !this.knocking && current?.pub === r.pub && current.photo !== photo) { current.photo = photo; this.emit('hello', current); }
     } catch (e) { }
   },
   _cloudSend(d) { if (this.cloud) this.cloud.send(Object.assign({ from: this.me }, d)); },

@@ -1,5 +1,10 @@
 // @ts-check
 // Reporting observations only: never changes game state or disables real failures.
+// Browsers emit these two delivery notices when observers settle on the next frame.
+// Do not suppress other ResizeObserver errors or actual exceptions.
+export const resizeDeliveryNotice = (message: string): boolean => /^(?:ResizeObserver loop limit exceeded|ResizeObserver loop completed with undelivered notifications\.?)$/.test(message.trim());
+// Old internal round numbers remain in storage; testers see only public versions.
+export const publicFixedVersion = (version: string): string => /^v\d+(?:\.\d{2})?$/.test(version || '') ? version : version === 'r90' ? 'v1' : '';
 /** @param {Element} control @param {Element | null} top */
 export function unreachableControl(control: Element, top: Element | null = null) {
   if (top && !top.contains(control)) return false; // a covered/background panel

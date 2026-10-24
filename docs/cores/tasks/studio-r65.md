@@ -19,7 +19,7 @@ round takes it). Read `CLAUDE.md`, `HANDOFF.md`, `docs/cores/README.md`, `docs/c
    saved thumbnail opens as an image, online and in the exe.
 3. **Ads: more guidance and pictures of how they look.** On the Ads page: a live preview of the roadside signboard and of
    the small card after a mini-game, drawn with the ad's own picture and words, at phone and computer sizes; a short
-   picture guide made from real game screenshots (put them in `docs/ads-guide/` and in Studio); a checklist that says what
+   picture guide made from real game screenshots (put them in `docs/guides/ads-guide/` and in Studio); a checklist that says what
    is missing before an ad can go live (picture, both languages, an allowed link). Link the five ready-made ad videos
    (`marketing/ads-r60/` on `claude/exciting-feynman-5nxzz8`) as examples.
 Checks: `studio`, `nostudio`, `phone` (Studio's pages), the full suite; record the result in `docs/cores/studio.md`.

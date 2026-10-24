@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createSaveCopy, readSaveCopy, COPY_VERSION, MAX_COPY_BYTES } from "../../js/content/savecopy.ts";
+import { createSaveCopy, readSaveCopy, readSaveCopyOrLegacy, COPY_VERSION, MAX_COPY_BYTES } from "../../js/content/savecopy.ts";
 
 const good = {
   app: "sparkle-valley", v: COPY_VERSION, saved: Date.now(), device: "abc123def456",
@@ -99,4 +99,26 @@ test("copy creation upgrades the internal snapshot and removes secrets", () => {
 test("duplicate profile ids are rejected", () => {
   const bad = { ...good, profiles: [good.profiles[0], { ...good.profiles[0] }] };
   assert.throws(() => readSaveCopy(JSON.stringify(bad)), /invalid profile/);
+});
+
+test("legacy v2 backup file is accepted by readSaveCopyOrLegacy", () => {
+  const legacy = {
+    app: "sparkle-valley", v: 2, saved: Date.now() - 1000,
+    settings: { lang: "vi", sound: false },
+    profiles: good.profiles,
+    farm: good.farm
+  };
+  const parsed = readSaveCopyOrLegacy(JSON.stringify(legacy));
+  assert.equal(parsed.app, "sparkle-valley");
+  assert.equal(parsed.v, COPY_VERSION);
+  assert.equal(parsed.device, "");
+  assert.equal(parsed.profiles.length, 1);
+  assert.equal(parsed.settings.lang, "vi");
+});
+
+test("familyCode in settings is normalized and preserved in save copies", () => {
+  const copy = createSaveCopy({ ...good, v: 2, settings: { lang: "en", familyCode: "k7m4 p9q2" } });
+  assert.equal(copy.settings.familyCode, "K7M4-P9Q2");
+  const bad = { ...good, settings: { lang: "en", familyCode: "not-a-code!" } };
+  assert.throws(() => readSaveCopy(JSON.stringify(bad)), /invalid family code/);
 });

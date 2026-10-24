@@ -22,3 +22,9 @@ Restored by owner decision on 23 Oct 2026 AEDT.
 - Convert touched/new files to TypeScript.
 - Run `tests/suite.mjs --changed` after commits. Do not run local full suite if it defers to GitHub.
 - Keep Australia/Sydney time (AEDT/AEST).
+
+## 5. Content Integrity Safeguards
+- Edit source files as UTF-8 without BOM and preserve LF line endings; avoid PowerShell text pipelines that can re-encode Vietnamese.
+- Before pushing, strictly decode changed text as UTF-8 and review suspicious sequences, replacement characters, and accidental question-mark placeholders against the surrounding content and a known-good version. Do not flag valid Vietnamese letters (such as the capital A with circumflex) merely because they resemble mojibake.
+- Every new child-facing picture must resolve to its own drawing in `js/art.ts` through `pic()`; reject fallback initials and question-mark icons rather than substituting text or a phone emoji.
+- Run the relevant bilingual, drawing/emoji, preload, and visual checks; inspect English and Vietnamese on phone, tablet, and desktop before handoff. Record the exact checks and any unverified cases.

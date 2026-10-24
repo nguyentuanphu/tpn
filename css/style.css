@@ -1758,7 +1758,8 @@ body.calm .rv-img.on { animation: none; }
 .rv-360 { border: 0; border-radius: 999px; padding: 12px 24px; font: inherit; font-size: 19px; font-weight: 700; color: #3b2a4f; background: linear-gradient(180deg, #ffe066, #ffb020); box-shadow: 0 5px 0 #d08400; min-height: 52px; }
 
 /* Save / Cancel / Done always within reach: the button row floats at the bottom of long pages */
-.modal .card .actions.floatbar { position: sticky; bottom: calc(-1 * env(safe-area-inset-bottom)); z-index: 3; margin-top: 12px; padding: 12px 4px calc(env(safe-area-inset-bottom) + 12px); background: linear-gradient(rgba(255, 253, 248, 0), #fffdf8 30%); }
+.modal .card .actions.floatbar { position: sticky; bottom: calc(-1 * env(safe-area-inset-bottom)); z-index: 3; margin-top: 12px; padding: 12px 4px calc(env(safe-area-inset-bottom) + 12px); background: transparent; pointer-events: none; }
+.modal .card .actions.floatbar > * { pointer-events: auto; }
 .modal .card .actions.floatbar .btn { min-height: 52px; box-shadow: 0 6px 16px rgba(60, 30, 90, .18); }
 /* photo faces for villagers (Grown-ups → Character names) */
 .rn-row { grid-template-columns: 56px 1fr 1fr; }
@@ -1819,7 +1820,8 @@ body.calm .rv-img.on { animation: none; }
 .modal .card > .floatbtn { position: sticky; bottom: calc(env(safe-area-inset-bottom) + 6px); z-index: 3; box-shadow: 0 8px 22px rgba(60, 30, 90, .25); }
 .modal .card > .x { position: sticky; top: 8px; float: right; margin: -2px -2px -48px 8px; z-index: 4; }
 /* the top rows with ✕ (quick settings, Sparkle Pad) stay at the top while the window scrolls */
-.qsettings .card .qs-head { position: sticky; top: 0; z-index: 4; background: #fffdf8; padding-top: 6px; margin-top: -6px; }
+.qsettings .card .qs-head { position: relative; z-index: 1; background: transparent; padding-top: 6px; margin-top: -6px; }
+.qsettings .card .qs-head .x { position: sticky; top: 8px; float: right; z-index: 4; background: rgba(255, 255, 255, .85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: var(--shadow); }
 .pad .card .pad-head { position: sticky; top: 0; z-index: 4; }
 .qs-head .x { top: 4px; right: 0; }
 .gl-tapout { margin: 14px 0 0; text-align: center; color: rgba(255, 255, 255, .85); font-weight: 600; font-size: 15px; text-shadow: 0 1px 3px rgba(0, 0, 0, .4); }
@@ -2615,7 +2617,7 @@ details.ocard.friends:not([open]) > summary::after { transform: rotate(-90deg); 
    with their own steady height (Pad, Grown-ups, Shop, tester panel, Play) keep it */
 .pad .card { height: min(760px, calc(100dvh - 24px)); display:flex; flex-direction:column; }
 .pad-head { flex:none; } .pad-body { flex:1; min-height:0; max-height:none; }
-.grownups .card { padding-bottom:100px; } .grownups #gDone { position:sticky; bottom:0; margin:20px auto 0; width:min(360px,100%); display:block; z-index:2; box-shadow:0 0 0 12px #fffaf0; }
+.grownups .card { padding-bottom:100px; } .grownups #gDone { position:sticky; bottom:0; margin:20px auto 0; width:min(360px,100%); display:block; z-index:2; box-shadow:0 8px 24px rgba(60, 30, 90, .35); }
 .zoomer .ztray { flex-direction:column; top:auto; bottom:0; gap:8px; }
 .zoomer .ztray button { flex:none; }
 .pad .slot > .kpic, .pad .slot > .art, .pad .slot > svg { display:block; width:64px; height:64px; max-width:100%; margin:8px auto; }
@@ -3215,3 +3217,43 @@ body.calm .sv2 .press::after { animation: none; display: none; }
 .tp-news-list { display: grid; gap: 6px; padding-bottom: 4px; }
 .tp-news-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; }
 .tp-news-row span { display: grid; } .tp-news-row small { opacity: .75; }
+
+/* v1.01: Home joins the Simple screen sound/parent controls; all remain 64px. */
+.sp-top { flex-wrap:wrap; }
+.sp-tools { display:flex; align-items:center; gap:8px; margin-left:auto; flex-shrink:0; }
+.sp-tools > button { flex:none; width:64px; height:64px; min-width:64px; min-height:64px; }
+.sp-tools .sp-home { position:relative; display:grid; place-items:center; padding:0; border:0; border-radius:50%; background:#fff; box-shadow:0 4px 0 rgba(60,100,40,.3); }
+.sp-tools .sp-home .art { width:34px; height:34px; }
+.sp-tools .sp-home small { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+
+/* v1.01: the parent action floats below the panel; scrolling content keeps its own space. */
+.grownups .card { padding:0; gap:16px; background:transparent; border:0; box-shadow:none; overflow:visible; }
+.grownups-panel { position:relative; display:flex; flex-direction:column; flex:1; min-height:0; gap:16px; padding:14px 18px 16px; overflow:clip; background:var(--panel2); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); }
+.grownups-panel > h2 { flex:none; padding:0 58px 0 4px; background:transparent; box-shadow:none; border:0; text-shadow:none; }
+.grownups .grownups-panel > .x { position:absolute; top:12px; right:12px; z-index:3; background:rgba(255,255,255,.85); backdrop-filter:blur(6px); box-shadow:var(--shadow); }
+.grownups #gDone { margin:0 auto; width:min(360px,calc(100% - 24px)); }
+.testing-fixed { flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; }
+.reporting-form.little .testing-fixed .btn { min-width:64px; min-height:64px; }
+/* Only the parent body's content scrolls; focusing an inner control must not shift the whole panel. */
+.grownups { overflow:clip; }
+
+/* v1.01: Voice style buttons stay on one row on phones (390px iPhone); Today's Adventure Go button; Family code card; Play report heading clearance. */
+.qsettings .seg.vstyle { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+.qsettings .seg.vstyle button { min-height: 48px; min-width: 0; padding: 8px 4px; font-size: clamp(12.5px, 3.4vw, 15px); white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.advcard .adv-open { overflow: hidden; }
+.advcard .adv-cx { flex: 1; min-width: 0; overflow: hidden; }
+.advcard .adv-text { overflow-wrap: anywhere; }
+.advcard .adv-walk { flex: none; min-width: 48px; min-height: 48px; height: 48px; padding: 0 12px; border-radius: 16px; border: 3px solid var(--ink); background: #43c463; box-shadow: 0 3px 0 #2a8a40; color: #fff; font: 700 16px/1 var(--font); display: inline-flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; white-space: nowrap; }
+.hud.small .advcard .adv-walk { min-width: 44px; min-height: 44px; height: 44px; padding: 0 8px; font-size: 14px; }
+@media (max-width: 360px) { .hud.small .advcard { flex-wrap: wrap; justify-content: flex-end; } .hud.small .advcard .adv-open { flex: 1 1 100%; } }
+.advwin .adv-st { flex: 1; }
+.advwin .adv-step-go { margin-left: auto; flex: none; min-width: 48px; min-height: 44px; padding: 6px 12px; border-radius: 16px; border: 3px solid var(--ink); background: #43c463; box-shadow: 0 3px 0 #2a8a40; color: #fff; font: 700 16px/1 var(--font); display: inline-flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; white-space: nowrap; }
+.fam-code-box { background: rgba(255, 255, 255, .75); border: 1px solid var(--line); border-radius: 16px; padding: 12px; margin: 6px 0 10px; }
+.fam-code-linked { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.fam-code-meta { flex: 1 1 200px; min-width: 0; display: grid; gap: 4px; }
+.fam-code-val { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 18px; letter-spacing: 1px; color: #4a2a78; background: #f3ecff; padding: 2px 8px; border-radius: 8px; }
+.fam-code-qr { flex: none; display: flex; align-items: center; justify-content: center; background: #fff; padding: 6px; border-radius: 12px; border: 1px solid var(--line); }
+.fam-code-qr svg.fam-qr { display: block; width: 128px; height: 128px; }
+.fam-join-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.fam-join-row input { flex: 1 1 140px; min-height: 44px; text-transform: uppercase; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: 1px; }
+.modal.report .card > h2 { padding-right: 64px; }

@@ -11,9 +11,10 @@
 //     longer has); its reports stay in Studio, and an issue already made is kept up to date as before.
 // Once a day (the run after 9 am AEDT) it also updates one issue "Tester daily summary" (label `tester-summary`).
 //   STUDIO_KEY=… GITHUB_TOKEN=… GITHUB_REPOSITORY=owner/repo node tools/tester-issues.mts [--site https://…] [--dry]
+import { buildRank, rankBefore } from '../netlify/lib/build-number.mts';
 const arg = k => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : ''; };
 const SITE = (arg('--site') || process.env.SV_SITE || 'https://sparklevalley.au').replace(/\/$/, ''), KEY = process.env.STUDIO_KEY || '';
-const GH = process.env.GITHUB_TOKEN || '', REPO = process.env.GITHUB_REPOSITORY || 'nguyentuanphu/Sparkle-Valley', DRY = process.argv.includes('--dry');
+const GH = process.env.GITHUB_TOKEN || '', REPO = process.env.GITHUB_REPOSITORY || 'nguyentuanphu/tpn', DRY = process.argv.includes('--dry');
 
 // (#472) report text such as "tap: Send @45,375" mentioned real GitHub accounts; a zero-width space after every @ keeps
 // the text readable but never mentions anyone
@@ -35,10 +36,10 @@ export function coreOf(p, d) {
   if (/players\.js|startup|slow|freeze/i.test(text) || ['slow', 'freeze'].includes(p.auto)) return 'analytics-infra';
   return 'kid-ui';
 }
-// the number of a build ('r83' → 83; anything else → 0)
-const num = (b: unknown) => { const m = /^r(\d+(\.\d+)?)$/.exec(String(b || '')); return m ? +m[1] : 0; };
+// the number of a build (netlify/lib/build-number.mts: 'r83' → 83, 'v1.01' → 1001; anything else → 0)
+const num = (b: unknown) => Math.max(0, buildRank(b));
 // a problem is recent when one of its builds is the live one or the one before it (no live build known: every problem is)
-export const recentEnough = (builds: string[] | undefined, live: number) => !live || (builds || []).some(b => num(b) >= live - 1);
+export const recentEnough = (builds: string[] | undefined, live: number) => !live || (builds || []).some(b => num(b) >= rankBefore(live));
 // the build the website serves now (js/build.js), else the newest build any tester sent
 async function liveBuild(problems: { builds?: string[] }[]) {
   try { const r = await fetch(`${SITE}/js/build.js`); const n = num((/BUILD = '([^']+)'/.exec(await r.text()) || [])[1]); if (r.ok && n) return n; } catch (e) { }
@@ -66,7 +67,7 @@ export function statusFromIssue(iss: { state?: string, state_reason?: string | n
   if (iss.state_reason === 'not_planned') return { status: 'notbug' };
   for (const c of [...comments].reverse()) {
     const b = String(c.body || ''); if (/came back on/i.test(b)) return null;
-    const m = /\bfixed in (r\d{1,4}(?:\.\d{1,2})?)\b/i.exec(b); if (m) return { fixedIn: m[1].toLowerCase() };
+    const m = /\bfixed in (r\d{1,4}(?:\.\d{1,2})?|v\d{1,2}\.\d{2})(?!\d|\.\d)/i.exec(b); if (m) return { fixedIn: m[1].toLowerCase() };
   }
   return null;
 }

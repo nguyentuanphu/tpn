@@ -1,6 +1,6 @@
 # Parent settings and child play reports
 
-Source: 834476ab45b25887f1b4ff808e1cf269310e4150. Reviewed 23 October 2026 AEDT. Existing game controls, not a new statistics backend.
+Source: d539f5b5bea905eb647cad813060f904d1c84591. Reviewed 23 October 2026 AEDT. Existing game controls, not a new statistics backend.
 
 ## Reach the report
 
@@ -22,7 +22,7 @@ Grown-ups → Language; Sound and voices / Phụ huynh → Ngôn ngữ; Âm than
 
 Choose English or Vietnamese, learning-language options, captions and bilingual voice. Control talking, music, effects and tap sounds separately; choose supported voice styles and recordings. / Chọn tiếng Anh hoặc tiếng Việt, ngôn ngữ học, phụ đề và giọng song ngữ. Điều chỉnh riêng lời nói, nhạc, hiệu ứng, tiếng bấm; chọn kiểu giọng và bản ghi được hỗ trợ.
 
-Listen together first. Bilingual voice can repeat guidance in the other language; turn captions on to follow the words. / Cùng nghe thử trước. Giọng song ngữ có thể nói lại hướng dẫn bằng ngôn ngữ kia; bật phụ đề để theo dõi chữ.
+Listen together first. Female recordings are the default; preview Woman or Man and optionally enable male recordings. Offline-pack downloads continue after Save & close while the game stays open. You choose whether full automatic downloads may use mobile data. Bilingual voice can repeat guidance in the other language; turn captions on to follow the words. / Cùng nghe thử trước. Giọng nữ là mặc định; nghe thử Giọng nữ hoặc Giọng nam và bật bản ghi giọng nam nếu muốn. Gói ngoại tuyến tiếp tục tải sau khi Lưu và đóng khi trò chơi còn mở. Bạn chọn có cho phép tự tải đầy đủ bằng dữ liệu di động hay không. Giọng song ngữ có thể nói lại hướng dẫn bằng ngôn ngữ kia; bật phụ đề để theo dõi chữ.
 
 ## Set a daily rest reminder / Đặt giờ nhắc nghỉ hằng ngày
 
@@ -36,7 +36,7 @@ Agree on a comfortable stopping point together. This is a game reminder on this 
 
 Grown-ups → Play time → Daily adventure / Phụ huynh → Giờ chơi → Phiêu lưu mỗi ngày
 
-Turn daily adventures on or off, choose when the next day starts and select Gentle or Tricky. For ages five and over, Tricky adds an optional bonus timer; under-fives do not have that timer. / Bật hoặc tắt phiêu lưu ngày, chọn lúc bắt đầu ngày mới và mức Nhẹ nhàng hoặc Thử thách. Từ năm tuổi, Thử thách có đồng hồ thưởng thêm; bé dưới năm tuổi không có đồng hồ đó.
+Turn daily adventures on or off, choose when the next day starts and select Gentle or Tricky. Children can also tap Go on Today’s Adventure for a sparkle trail and auto-walk guide to the current stop. For ages five and over, Tricky adds an optional bonus timer; under-fives do not have that timer. / Bật hoặc tắt phiêu lưu ngày, chọn lúc bắt đầu ngày mới và mức Nhẹ nhàng hoặc Thử thách. Bé cũng có thể bấm Đi trên Phiêu lưu hôm nay để có đường lấp lánh dẫn lối tới điểm hiện tại. Từ năm tuổi, Thử thách có đồng hồ thưởng thêm; bé dưới năm tuổi không có đồng hồ đó.
 
 The timer adds a possible bonus; it does not remove an earned reward. Choose the version your child enjoys. / Đồng hồ có thể tặng thêm thưởng; không lấy quà bé đã nhận. Chọn cách chơi bé thích.
 
@@ -76,9 +76,9 @@ Read the reset explanation and keep a backup before a reset. The informational w
 
 Grown-ups → Analytics and backup / Phụ huynh → Phân tích và sao lưu
 
-Save a backup file to a location you choose, or open an existing backup to restore or move progress. The Analytics On/Off control is separate from the local Play report and controls the game’s usage reporting. / Lưu tệp sao lưu ở nơi bạn chọn, hoặc mở bản sao để khôi phục hay chuyển tiến trình. Nút Bật/Tắt Phân tích riêng với Báo cáo chơi trên máy và điều khiển việc gửi thống kê sử dụng của trò chơi.
+Use Save a copy to keep progress in Files, iCloud Drive or Google Drive. Load a copy also accepts older backup files and asks before replacing progress. Family code links your family’s devices for statistics only—no progress or photo sharing. The Analytics On/Off control is separate from the local Play report and controls the game’s usage reporting. / Dùng Lưu một bản để giữ tiến trình trong Tệp, iCloud Drive hoặc Google Drive. Mở bản đã lưu cũng nhận tệp sao lưu cũ và hỏi trước khi thay thế tiến trình. Mã gia đình liên kết thiết bị để thống kê gia đình—không chia sẻ tiến trình hay ảnh. Nút Bật/Tắt Phân tích riêng với Báo cáo chơi trên máy và điều khiển việc gửi thống kê sử dụng của trò chơi.
 
-Choosing a Drive or iCloud location is a manual file-save action, not a promise of automatic cloud sync. Review any restore before replacing existing progress. / Chọn nơi lưu Drive hoặc iCloud là thao tác lưu tệp thủ công, không có nghĩa tự động đồng bộ đám mây. Kiểm tra trước khi khôi phục thay tiến trình đang có.
+Choosing a Drive or iCloud location is a manual file-save action, not a promise of automatic cloud sync. Review any restore before replacing existing progress, and keep your family code private. / Chọn nơi lưu Drive hoặc iCloud là thao tác lưu tệp thủ công, không có nghĩa tự động đồng bộ đám mây. Kiểm tra trước khi khôi phục thay tiến trình đang có và giữ riêng mã gia đình.
 
 ## What the report means
 

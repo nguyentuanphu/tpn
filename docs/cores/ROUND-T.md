@@ -170,10 +170,10 @@ Every stage ends with the full suite green, `node tests/world-audit.mjs` clean a
 
 ### T1b: Tidy streets (owner, 11 Oct AEDT; robot chat `claude/peaceful-hopper-un7oym`, after r57; T2 waits for it)
 **Status (11 Oct AEDT):** measured on r60 (T2 and T3 went first); findings, sky views and the measuring scripts in
-`docs/t1b/README.md`. Owner's "go" (11 Oct, about 5:25 pm AEDT; the van and Uncle Robbo's sausage sizzle join Aussie
+`docs/history/t1b/README.md`. Owner's "go" (11 Oct, about 5:25 pm AEDT; the van and Uncle Robbo's sausage sizzle join Aussie
 Corner's row). **Built as r61** on `claude/peaceful-hopper-un7oym`: rules STALL-001…004 and the `stalls` check (97
 problems on r60, 0 after), one market row per place in `js/content/map.js`; results and sky views before and after in
-`docs/t1b/README.md`. Waiting for the owner's "yes, deploy".
+`docs/history/t1b/README.md`. Waiting for the owner's "yes, deploy".
 The owner saw r56: stalls, kiosks and sellers stand cramped next to houses and roads, against the Concept D rules ("Kiosks
 and stalls stand in one row on one side of the main street, all facing it. No stall alone in a field"; "Food stalls, toy
 stalls and the shop are grouped in market rows near squares. Gánh vendors walk set loops between them").

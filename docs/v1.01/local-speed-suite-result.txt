@@ -1,0 +1,10 @@
+Sequential speed suite on release/r91 (v1.01) vs live v1 (ef330bc0) on the same machine (1 check at a time):
+
+v1.01 (release/r91):
+- battery: PASS (89 s) — caps (ms a frame) {"computerAuto":16.7,"computerFast":33.3,"computerPretty":16.7,"computerPrettyPlus":0,"phoneAuto":33.3,"phonePretty":16.7}; frame gate at 60/120/144 Hz: 59/60/60 (cap 60), 31/31/31 (cap 30), title 20/21, idle 9/9; title 0 fps, valley 8 fps, idle after 18.3 s 7.7 fps; pixel ratio 1.5 on a 3x screen; 174/174 far people still.
+- perf: worldMs 4830 ms (PASS, limit 6600), drawCalls 353 (PASS), triangles 733953 (PASS), drawCallsHome 453 (PASS), heapGrowMB 0 (PASS), domGrow 0 (PASS); startMB 2.690884 > 2.55 (matches live v1 on this fast CPU where background valley chunks start fetching during open()).
+- startup: firstKB 1009 KB (PASS, limit 1050), secondKB 0 KB (PASS, cached start downloads 0 KB); machineMs 135 (speed 0.75), firstTitleMs 1790, firstReadyMs 24337, secondReadyMs 23852, secondFreezeMs 5354; slowest: things 7.6 s, world 3.2 s, roads 2.3 s, pretraffic 1.8 s.
+
+live v1 (ef330bc0, same machine):
+- perf: worldMs 4760 ms, drawCalls 404, triangles 798512, drawCallsHome 435, heapGrowMB 0, domGrow 0; startMB 2.687364 > 2.55.
+- startup: firstKB 1004 KB, secondKB 0 KB; machineMs 143 (speed 0.80), firstTitleMs 1815, firstReadyMs 23587, secondReadyMs 23367, secondFreezeMs 5444; slowest: things 7.8 s, world 3.1 s, roads 2.2 s, pretraffic 1.8 s.

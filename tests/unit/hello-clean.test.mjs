@@ -32,4 +32,8 @@ test('synthetic bot metadata is recognized and preserved in cleaned hello', () =
     days: [{ d: '2026-10-14', build: 'r75', m: 5 }] }, NOW);
   assert.equal(h?.isRobot, true);
   assert.equal(h?.traffic, 'synthetic_bot');
+  const ok = clean({ id: 'device000001', fh: '0123456789abcdef', days: [{ d: '2026-10-14', build: 'v1.01', m: 3 }] }, NOW);
+  assert.equal(ok?.fh, '0123456789abcdef');
+  const bad = clean({ id: 'device000001', fh: 'K7M4-P9Q2', days: [{ d: '2026-10-14', build: 'v1.01', m: 3 }] }, NOW);
+  assert.equal(bad?.fh, '');
 });

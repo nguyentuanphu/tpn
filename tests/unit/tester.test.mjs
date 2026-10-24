@@ -182,3 +182,26 @@ test('a point release (r89.1, owner 23 Oct AEDT) is a build like any other and s
   const { statusFromIssue } = await import('../../tools/tester-issues.mts');
   assert.deepEqual(statusFromIssue({ state: 'closed', state_reason: 'completed' }, [{ body: 'Fixed in r89.1.' }]), { fixedIn: 'r89.1' });
 });
+
+test('v numbers from r91 on (owner, 24 Oct 2026 AEDT): v1.01, v1.02 ... v2.00, newer than every r build', async () => {
+  const B = await import('../../netlify/lib/build-number.mts');
+  for (const ok of ['r67', 'r89.1', 'r90', 'v1.01', 'v1.99', 'v2.00']) assert.ok(B.isBuild(ok), ok);
+  for (const bad of ['v1', 'v1.1', 'v1.001', '1.01', 'r', 'v1.01x', '']) assert.ok(!B.isBuild(bad), bad);
+  const order = ['r83', 'r89', 'r89.1', 'r90', 'v1.01', 'v1.09', 'v1.10', 'v1.99', 'v2.00'];
+  assert.deepEqual([...order].sort(() => Math.random() - .5).sort((a, b) => B.buildRank(a) - B.buildRank(b)), order);
+  assert.equal(B.rankBefore(B.buildRank('v1.02')), B.buildRank('v1.01'));
+  assert.equal(B.rankBefore(B.buildRank('v1.01')), B.buildRank('r90'), 'the build before v1.01 is r90 (shown as v1)');
+  const { recentEnough } = await import('../../tools/tester-issues.mts');
+  assert.equal(recentEnough(['r90'], B.buildRank('v1.01')), true); assert.equal(recentEnough(['r89.1'], B.buildRank('v1.01')), false);
+  // a problem fixed in v1.01 that a device reports again on v1.02 comes back; one from r90 does not
+  const S = mem(), a = await T.addReport(S, LIVE, { ...rep(A), b: 'r90' });
+  await T.setProblem(S, a.k, { fixedIn: 'v1.01' });
+  await T.addReport(S, LIVE, { ...rep(A), b: 'r90' }); assert.equal((await T.problem(S, a.k)).status, 'fixed');
+  await T.addReport(S, LIVE, { ...rep(A), b: 'v1.02' }); assert.equal((await T.problem(S, a.k)).status, 'back');
+});
+
+test('an issue closed with "Fixed in v1.01." is fixed in v1.01', async () => {
+  const { statusFromIssue } = await import('../../tools/tester-issues.mts');
+  assert.deepEqual(statusFromIssue({ state: 'closed', state_reason: 'completed' }, [{ body: 'Fixed in v1.01.' }]), { fixedIn: 'v1.01' });
+  assert.deepEqual(statusFromIssue({ state: 'closed', state_reason: 'completed' }, [{ body: 'Fixed in v2.00, thanks' }]), { fixedIn: 'v2.00' });
+});

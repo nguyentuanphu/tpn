@@ -10,6 +10,9 @@
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const { splitManifest } = require('../tools/voice-manifests.cts');
 const STUDIO_VERSION = require('./version.json').studio;
+// the order of game builds, the same rule as netlify/lib/build-number.mts (owner, 24 Oct 2026 AEDT): r83 → 83,
+// r89.1 → 89.1, r90 (shown as v1) → 1000, v1.01 → 1001, v2.00 → 2000; anything else → 0
+const buildRank = (b: unknown): number => { const s = String(b || ''); if (s === 'r90') return 1000; let m = /^r(\d{1,4}(?:\.\d{1,2})?)$/.exec(s); if (m) return +m[1]; m = /^v(\d{1,2})\.(\d{2})$/.exec(s); return m ? 1000 * +m[1] + +m[2] : 0; };
 
 // ---------- where the files live ----------
 // A store reads and writes the game's files by their path in the game (content/custom.json, voices/vi/f/….mp3).
@@ -386,8 +389,10 @@ function createStudio({ store, conf, online = false, local = {}, family = null }
   async function draftFromFolder(J, message) {
     const G = ghStore(), R = `/repos/${conf.githubRepo}`;
     // (owner, 12 Oct) never from a game folder older than the website: its old voices or content would undo newer ones
-    { const bn = b => +((/VERSION = '[^']*?r(\d+(?:\.\d+)?)'/.exec(b ? b.toString('utf8') : '') || [0, 0])[1]), here = bn(await S.read('sw.js').catch(() => null)), there = bn(await gh(`${R}/contents/sw.js?ref=${encodeURIComponent(conf.githubBranch || 'main')}`).then(j => Buffer.from(j.content || '', 'base64')).catch(() => null)); // (fresh: not the branch kept for a few seconds)
-      if (here && there && here < there) throw new Error(`Your game folder is r${here} and the website is r${there}: get the newest game first (Settings, Get the newest game).`); }
+    { const ver = b => (/VERSION = 'sv-\d{4}-\d{2}-\d{2}-([^']+)'/.exec(b ? b.toString('utf8') : '') || [0, '?'])[1]; // (fresh: not the branch kept for a few seconds)
+      const hereF = await S.read('sw.js').catch(() => null), thereF = await gh(`${R}/contents/sw.js?ref=${encodeURIComponent(conf.githubBranch || 'main')}`).then(j => Buffer.from(j.content || '', 'base64')).catch(() => null);
+      const here = buildRank(ver(hereF)), there = buildRank(ver(thereF));
+      if (here && there && here < there) throw new Error(`Your game folder is ${ver(hereF)} and the website is ${ver(thereF)}: get the newest game first (Settings, Get the newest game).`); }
     J.msg = 'Reading the website’s files…';
     const remote = await G.familyShas();
     const mine = [...await S.walk('content'), ...await S.walk('voices'), ...await S.walk('photos'), ...((await S.read('tools/voice-extra.json')) ? ['tools/voice-extra.json'] : [])].filter(rel => FAMILY(rel) && !rel.startsWith('content/old/'));
@@ -607,7 +612,7 @@ const makeToken = (pw, days = 30) => { const exp = Date.now() + days * 864e5, si
 const checkToken = (pw, t) => { if (!pw || !t) return false; const [exp, sig] = String(t).split('.'); if (!(+exp > Date.now())) return false; const want = crypto.createHmac('sha256', tokenKey(pw)).update(String(exp)).digest('base64url'); return sig && sig.length === want.length && crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(want)); };
 const samePassword = (pw, given) => { if (!pw || typeof given !== 'string') return false; const a = crypto.createHash('sha256').update(pw).digest(), b = crypto.createHash('sha256').update(given).digest(); return crypto.timingSafeEqual(a, b); };
 
-const engine = { createStudio, folderStore, githubStore, ghApi, STUDIO_VERSION, MIME, mimeOf, slug, CAST, makeToken, checkToken, samePassword, FAMILY, FAMREF, FAMNAME, familyRefs };
+const engine = { createStudio, buildRank, folderStore, githubStore, ghApi, STUDIO_VERSION, MIME, mimeOf, slug, CAST, makeToken, checkToken, samePassword, FAMILY, FAMREF, FAMNAME, familyRefs };
 module.exports = engine;
 // TypeScript cannot see module.exports across files (the only syntax that could, import = require, is not a type note),
 // and an "export" would make esbuild treat this file as a module (the exe and the website bundle it): the engine's shape

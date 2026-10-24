@@ -37,10 +37,14 @@ declare global {
     svLaunchProgress?: (value: number, total: number, label?: string) => void;
     /** the checks: speed up story films */
     __svFilmRate?: number;
+    __svBot?: boolean;
+    __svHelloTest?: boolean | string;
     /** older Safari */
     webkitAudioContext?: typeof AudioContext;
   }
+  interface Performance { memory?: { usedJSHeapSize: number }; }
   interface Navigator {
+    getBattery?: () => Promise<{ charging: boolean, level: number }>;
     /** Safari 17+: how the page's sound mixes with the phone (js/audio.ts setSession) */
     audioSession?: { type: string };
     /** iPhone: the game opened from the Home Screen */

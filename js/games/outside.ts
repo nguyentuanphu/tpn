@@ -243,6 +243,8 @@ register({
     for (let s = 0; s < steps && !api.closed; s++) {
       const targetX = 30 + (s + 1) * 50;
       api.plan(() => spoon.isConnected ? spoon : null, { maxActions: steps * 3 });
+      const clicked = await untilRight(api, [spoon], () => true);
+      if (!clicked || api.closed) return;
 
       spoon.style.transition = 'left 0.6s ease';
       spoon.style.left = targetX + 'px';
@@ -323,6 +325,8 @@ register({
     for (let p = 0; p < passes && !api.closed; p++) {
       const targetX = side === 0 ? 260 : 60;
       api.plan(() => ball.isConnected ? ball : null, { maxActions: passes * 2 });
+      const clicked = await untilRight(api, [ball], () => true);
+      if (!clicked || api.closed) return;
 
       ball.style.transition = 'left 0.7s ease, top 0.7s ease';
       ball.style.left = targetX + 'px';
@@ -413,6 +417,8 @@ register({
     for (let s = 0; s < steps && !api.closed; s++) {
       const pt = path[s];
       api.plan(() => hoop.isConnected ? hoop : null, { maxActions: steps * 2 });
+      const clicked = await untilRight(api, [hoop], () => true);
+      if (!clicked || api.closed) return;
 
       hoop.style.transition = 'left 0.8s ease, top 0.8s ease';
       hoop.style.left = (pt.x - 28) + 'px';

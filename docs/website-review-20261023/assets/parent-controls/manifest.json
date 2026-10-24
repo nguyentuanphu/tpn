@@ -1,8 +1,8 @@
 {
-  "source": "781089d6f1c3533a226d4a49271baa61142b940d",
-  "build": "r88",
-  "captured": "23 October 2026 AEDT",
-  "method": "Actual game ui-settings and report modules rendered in an isolated HTML harness with the game styles/fonts; fresh example profile, zero play history, API requests blocked. No real child data.",
+  "source": "a675fb41b40fcfb18bcad1541be6a2d9fe2b0bc7",
+  "build": "v1.01",
+  "captured": "24 October 2026 AEDT",
+  "method": "Actual v1.01 ui-settings/report modules in an isolated compiled export, with current game CSS/fonts and under-five touch mode. Fresh example profile, zero play history, API requests blocked. Save & close floats outside the panel; header/focus geometry verified at phone, tablet and computer in both languages. No real child data.",
   "sources": [
     "js/ui-settings.ts",
     "js/report.js",
@@ -15,5 +15,31 @@
     "settings-vi.png",
     "report-en.png",
     "report-vi.png"
+  ],
+  "files": [
+    {
+      "file": "settings-en.png",
+      "width": 560,
+      "height": 900,
+      "sha256": "74fbf337f35c83200d887d7698fbf557eae2a8b4288aaf81de71b1b51d9b3091"
+    },
+    {
+      "file": "settings-vi.png",
+      "width": 560,
+      "height": 900,
+      "sha256": "f9961ed353e3cb5bfa05fa3f60826c0db3415dbd36e5b40c68fc4094302490d0"
+    },
+    {
+      "file": "report-en.png",
+      "width": 560,
+      "height": 674,
+      "sha256": "b334e3d6e99e22604764ab2668a6092f45c0be272838f186c38abc4760f1e566"
+    },
+    {
+      "file": "report-vi.png",
+      "width": 560,
+      "height": 703,
+      "sha256": "c5cf8c7091a27ca868657bd9d3f0769d7e727de854845e25e66c9395c152d6b3"
+    }
   ]
 }

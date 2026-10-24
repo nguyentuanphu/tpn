@@ -19,7 +19,7 @@ export const runScheduledBots = async ({ liveStore, dispatch, now = new Date() }
   return { dispatched: true, slot };
 };
 export default async () => {
-  const token = env('GITHUB_TOKEN'), repo = env('GITHUB_REPO') || 'nguyentuanphu/Sparkle-Valley';
+  const token = env('GITHUB_TOKEN'), repo = env('GITHUB_REPO') || 'nguyentuanphu/tpn';
   if (!token || !/^[\w.-]+\/[\w.-]+$/.test(repo)) throw new Error('Bot schedule requires a valid GitHub token and repository');
   const { getStore } = await import('@netlify/blobs');
   const liveStore = getStore({ name: 'live', consistency: 'strong' });

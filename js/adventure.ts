@@ -283,13 +283,51 @@ export function createAdventure(G) {
   // ---------- the way (ADV-6): sparkles along the roads to where the step is ----------
   const trails = new Map(); let graph = null;
   const pool = [...Array(24)].map(() => { const s = sprite('✨', 1.1); s.visible = false; scene.add(s); return s; });
-  function stopTrail(h = undefined) { if (h) trails.delete(h); else trails.clear(); if (!trails.size) pool.forEach(s => { s.visible = false; }); }
-  function showWay(h) {
+  function stopTrail(h = undefined) {
+    if (h) { const tr = trails.get(h); if (tr && tr.walk && !h.goalAct) h.goal = null; trails.delete(h); }
+    else { for (const [hh, tr] of trails) if (tr && tr.walk && !hh.goalAct) hh.goal = null; trails.clear(); }
+    if (!trails.size) pool.forEach(s => { s.visible = false; });
+  }
+  function stepTarget(h) {
+    const s = step(h), t = stepPos(h); if (!s || !t) return null;
+    if (s.kind === 'find') {
+      const L = live.get(h), left = L && L.things.filter(x => !x.got);
+      const th = left && left.sort((a, b) => dist2(a.x, a.z, h.pos.x, h.pos.z) - dist2(b.x, b.z, h.pos.x, h.pos.z))[0];
+      return th && th.it ? th.it : null;
+    }
+    if (s.kind === 'give') {
+      const L = live.get(h);
+      return L && L.giveIt ? L.giveIt : null;
+    }
+    if (s.at) {
+      return G.interactables.filter(it => matches(s.at, it.id) && Number.isFinite(it.x) && (!it.visible || it.visible(h))).sort((a, b) => dist2(a.x, a.z, t.x, t.z) - dist2(b.x, b.z, t.x, t.z))[0] || null;
+    }
+    return null;
+  }
+  function showWay(h, walk = false) {
     const t = stepPos(h); if (!t) return false;
     graph = graph || roadGraph(G.PLACES || []);
     let r = null; try { r = route(graph, h.pos.x, h.pos.z, t.x, t.z); } catch (e) { }
     const pts = r ? r.pts : [...Array(Math.max(2, Math.ceil(Math.hypot(t.x - h.pos.x, t.z - h.pos.z) / 4)))].map((_, k, A) => [h.pos.x + (t.x - h.pos.x) * k / (A.length - 1), h.pos.z + (t.z - h.pos.z) * k / (A.length - 1)]);
-    trails.set(h, { t, pts, i: 0, key: today(h).step }); SFX.chime && SFX.chime(); return true;
+    trails.set(h, { t, pts, i: 0, key: today(h).step, walk });
+    if (walk) { const wp = pts[Math.min(pts.length - 1, 2)] || [t.x, t.z]; h.goal = { x: wp[0], z: wp[1] }; }
+    SFX.chime && SFX.chime(); return true;
+  }
+  function goToStep(i = 0) {
+    const h = G.heroes[i] || G.heroes[0]; if (!h || !on()) return false;
+    const r = today(h), s = step(h); if (!s || r.done) return false;
+    sync(h); showWay(h, true); sayL(stepText(s, h.profile.age));
+    const t = stepPos(h); if (!t) return false;
+    if (G.closePopups) G.closePopups();
+    if (h.indoors && G.exitHouse) G.exitHouse(h);
+    if (h.riding && h.dismount) h.dismount();
+    const d = Math.hypot(t.x - h.pos.x, t.z - h.pos.z);
+    if (d > 45 && G.travel) G.travel(h, t.x, t.z);
+    else if (G.blocked && G.landBy && G.blocked(h.pos.x, h.pos.z, t.x, t.z)) { const [lx, lz] = G.landBy(t.x, t.z, 3); h.place(lx, lz); }
+    const target = stepTarget(h);
+    if (target && G.goAndDo) G.goAndDo(h, target);
+    else h.goal = { x: t.x, z: t.z };
+    return true;
   }
 
   // ---------- the window (D5) ----------
@@ -306,7 +344,7 @@ export function createAdventure(G) {
         const n = findCount(s, h.profile.age), also = alsoOf(s, h.profile.age), got = cls === 'done' ? n : cls === 'now' ? r.got | 0 : 0, got2 = cls === 'done' && also ? also.n : cls === 'now' ? r.got2 | 0 : 0;
         extra = `<span class="adv-found">${[...Array(n)].map((_, j) => `<i class="${j < got ? 'have' : 'miss'}">${pic(s.thing.icon)}</i>`).join('')}${also ? [...Array(also.n)].map((_, j) => `<i class="${j < got2 ? 'have' : 'miss'}">${pic(also.icon)}</i>`).join('') : ''}</span>`;
       }
-      return `${k ? '<div class="adv-line"></div>' : ''}<div class="adv-step ${cls}"><span class="adv-dot">${cls === 'done' ? '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 12l5 5 9-10" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>' : k + 1}</span><span class="adv-st"><span class="adv-pic">${pic(s.icon)}</span><span class="adv-tx"><b>${esc(T(en, vi))}</b>${extra}</span></span></div>`;
+      return `${k ? '<div class="adv-line"></div>' : ''}<div class="adv-step ${cls}"><span class="adv-dot">${cls === 'done' ? '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 12l5 5 9-10" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>' : k + 1}</span><span class="adv-st"><span class="adv-pic">${pic(s.icon)}</span><span class="adv-tx"><b>${esc(T(en, vi))}</b>${extra}</span>${cls === 'now' ? `<button class="adv-step-go" type="button" aria-label="${esc(T('Go', 'Đi'))}">▶ ${esc(T('Go', 'Đi'))}</button>` : ''}</span></div>`;
     }).join('');
   }
   function weekHTML(h) {
@@ -333,7 +371,8 @@ export function createAdventure(G) {
     const close = () => { G.paused = was; m.close(); };
     m.querySelector('.x').onclick = close;
     m.querySelector('.adv-bubble').onclick = () => sayL(a.say);
-    m.querySelector('.adv-go').onclick = () => { close(); if (r.done) return; sync(h); if (showWay(h)) sayL(stepText(step(h), h.profile.age)); };
+    const stepGo = m.querySelector('.adv-step-go'); if (stepGo instanceof HTMLElement) stepGo.onclick = () => { close(); if (!r.done) goToStep(i); };
+    m.querySelector('.adv-go').onclick = () => { close(); if (r.done) return; sync(h); if (showWay(h, true)) sayL(stepText(step(h), h.profile.age)); };
     return m;
   }
 
@@ -342,9 +381,10 @@ export function createAdventure(G) {
     const now = performance.now(); if (H._advT && now - H._advT < 250) return; H._advT = now;   // four times a second is plenty
     const h = H.hero, q = H.q('.quest'); if (!q) return;
     let card = H._adv; if (!card) {
-      card = H._adv = el('div', 'advcard', `<button class="adv-open"><span class="adv-badge"></span><span class="adv-cx"><b class="adv-text"></b><span class="adv-dots"></span></span></button><button class="adv-hear" aria-label="${T('Hear it again', 'Nghe lại')}"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#fff"/><path d="M17 8a5 5 0 0 1 0 8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></button>`);
+      card = H._adv = el('div', 'advcard', `<button class="adv-open"><span class="adv-badge"></span><span class="adv-cx"><b class="adv-text"></b><span class="adv-dots"></span></span></button><button class="adv-walk" aria-label="${T('Go', 'Đi')}">▶ <span class="adv-wl">${T('Go', 'Đi')}</span></button><button class="adv-hear" aria-label="${T('Hear it again', 'Nghe lại')}"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#fff"/><path d="M17 8a5 5 0 0 1 0 8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></button>`);
       q.appendChild(card);   // (owner, 17 Oct AEDT: "show both") under the goal row, which stays as it was
       card.querySelector('.adv-open').onclick = () => openWindow(H.i);
+      card.querySelector('.adv-walk').onclick = e => { e.stopPropagation(); goToStep(H.i); };
       card.querySelector('.adv-hear').onclick = e => { e.stopPropagation(); const s = step(h), a = adv(h); if (s) sayL(stepText(s, h.profile.age)); else if (a) sayL(ADV_LINES.doneToday); };
     }
     const r = on() ? today(h) : null, a = r && r.id ? BY_ID[r.id] : null, show = !!(a && !r.done);
@@ -360,6 +400,7 @@ export function createAdventure(G) {
     card.querySelector('.adv-text').textContent = txt + left + timer;
     card.querySelector('.adv-dots').innerHTML = dots(h).map(d => `<i class="${d}"></i>`).join('');
     card.querySelector('.adv-open').setAttribute('aria-label', tt(ADV_LINES.title));
+    const wl = card.querySelector('.adv-wl'), wb = card.querySelector('.adv-walk'); if (wl) wl.textContent = T('Go', 'Đi'); if (wb) wb.setAttribute('aria-label', T('Go', 'Đi'));
     H.fitQuest?.();
   }
 
@@ -372,10 +413,12 @@ export function createAdventure(G) {
     // the sparkles: a stretch at a time ahead of the child, gone on arrival or when the step changes
     let k0 = 0;
     for (const [h, tr] of trails) {
-      if (tr.key !== today(h).step || Math.hypot(h.pos.x - tr.t.x, h.pos.z - tr.t.z) < 9) { trails.delete(h); continue; }
+      if (tr.key !== today(h).step) { trails.delete(h); continue; }
+      if (Math.hypot(h.pos.x - tr.t.x, h.pos.z - tr.t.z) < 9) { if (tr.walk && !G.paused) { const target = stepTarget(h); if (target && G.goAndDo) G.goAndDo(h, target); else h.goal = { x: tr.t.x, z: tr.t.z }; } trails.delete(h); continue; }
       let bi = tr.i, bd = 1e9; for (let k = Math.max(0, tr.i - 4); k < Math.min(tr.pts.length, tr.i + 40); k++) { const d = Math.hypot(tr.pts[k][0] - h.pos.x, tr.pts[k][1] - h.pos.z); if (d < bd) { bd = d; bi = k; } }
-      if (bd > 25) { trails.delete(h); showWay(h); continue; }
+      if (bd > 25) { const w = tr.walk; trails.delete(h); showWay(h, w); continue; }
       tr.i = bi;
+      if (tr.walk && !G.paused) { const hi = G.heroes.indexOf(h), pad = G.pads && G.pads[hi]; if (pad && Math.hypot(pad.mx || 0, pad.mz || 0) > .3) tr.walk = false; else if (!h.goalAct) { const wp = tr.pts[Math.min(tr.pts.length - 1, tr.i + 3)] || [tr.t.x, tr.t.z]; h.goal = { x: wp[0], z: wp[1] }; } }
       const share = Math.floor(pool.length / Math.max(1, trails.size));
       for (let k = 0; k < share; k++) { const p = tr.pts[tr.i + 1 + k], s = pool[k0 + k]; s.visible = !!p; if (p) s.position.set(p[0], heightAt(p[0], p[1]) + .7 + (reduceMotion() ? 0 : Math.sin(t * 4 + k * .7) * .15), p[1]); }
       k0 += share;
@@ -411,7 +454,7 @@ export function createAdventure(G) {
 
   /** (tests and Grown-ups) give this child a chosen adventure for today, from its first step */
   function force(i, id) { const h = G.heroes[i] || G.heroes[0]; if (!h || !BY_ID[id]) return false; const r = today(h); clearLive(h); stopTrail(h); Object.assign(r, { id, step: 0, got: 0, got2: 0, done: false, timer: 0 }); saveProfiles(); sync(h); checkHere(h); return true; }
-  G.adventure = { on, today, adv, step, openWindow, force, giveReward, where: itPos, hud, logHTML, showWay, stepPos, sync, next, finish, clearLive,
+  G.adventure = { on, today, adv, step, openWindow, goToStep, force, giveReward, where: itPos, hud, logHTML, showWay, stepPos, sync, next, finish, clearLive,
     get trails() { return trails; }, live: h => live.get(h), lines: () => import('./content/adventures.js').then(m => m.spokenLines()) };
   return G.adventure;
 }

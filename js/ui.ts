@@ -6,7 +6,7 @@ import type { Profile } from '../types/save.js';
 import type { SvMain } from './main.js';
 import { T, applyLang, nm } from './i18n.js';
 import { settings, saveSettings, profiles, saveProfiles, addProfile, removeProfile, STYLES, OUTFIT_COLORS, HATS, BACKS, HAIR, SKIN, HAIRSTYLES, GLIDERS, farm, saveFarm, MAX_KIDS, reduceMotion } from './state.js';
-import { say, spoken } from './voice.js';
+import { say, spoken, warmVoiceLine } from './voice.js';
 
 import { SFX, Music, ac } from './audio.js';
 import { fmt, cur, spoken as money } from './money.js';
@@ -270,6 +270,9 @@ export function openQuick(game, i) {
       <button class="qs-site" id="qSite"><span>${WEBSITE_ICON}</span><b>${T('Website', 'Trang web')}</b><small>${T('Explore the game with your family: play stays just as it is', 'Cùng gia đình khám phá trò chơi: trò chơi vẫn giữ nguyên')}</small></button>
       <button class="grown qgrown"><span class="ring"></span>👨‍👩‍👧 ${T('Grown-ups settings', 'Cài đặt phụ huynh')}<small>${T('press and hold', 'nhấn giữ')}</small></button>
       <div class="actions floatbar"><button class="btn primary" id="qDone">${T('Done', 'Xong')}</button></div>`;
+    // Keep only Close outside the scrolling title row, so its sticky anchor spans the card.
+    const closeButton = card.querySelector('.qs-head .x');
+    if (closeButton) card.prepend(closeButton);
     bindLang(card, draw);
     if (game.tester) game.tester.settings(card.querySelector('#qTester'), draw); // (owner, 12 Oct) a tester device's Tester rows (js/tester.js)
     card.querySelector('.x').onclick = card.querySelector('#qDone').onclick = close;
@@ -284,7 +287,7 @@ export function openQuick(game, i) {
     });
     card.querySelectorAll('[data-view]').forEach(b => b.onclick = () => { game.setView(i, b.dataset.view); keep(draw); });
     card.querySelectorAll('.seg.tsize button').forEach(b => b.onclick = () => { s.textSize = +b.dataset.ts; saveSettings(); applyComfort(); keep(draw); });
-    card.querySelectorAll('.seg.vstyle button').forEach(b => b.onclick = () => { s.voiceStyle = b.dataset.v; saveSettings(); keep(draw); say('Hello! Do you like my voice?', 'Xin chào! Con có thích giọng này không?'); });
+    card.querySelectorAll('.seg.vstyle button').forEach(b => b.onclick = () => { ac(); s.voice = true; s.voiceStyle = b.dataset.v; saveSettings(); keep(draw); say('Hello! Do you like my voice?', 'Xin chào! Con có thích giọng này không?'); });
     const fb = card.querySelector('#qFest'); if (fb) fb.onclick = () => { SFX.tap(); m.close(); openFestivals(game, i); };
     // (r89, owner 23 Oct AEDT: Home moves from the corner into Settings) the website floats over Settings, which stays
     // open and paused under it; closing it comes back here, with the focus on this button
@@ -293,6 +296,7 @@ export function openQuick(game, i) {
     holdButton(card.querySelector('.qgrown'), () => openGrownups(() => { draw(); game.huds.forEach(h => { h.refreshAudio(); h.refreshWho(); }); }));
   };
   const keep = f => { const y = m.scrollTop; f(); m.scrollTop = y; };
+  warmVoiceLine('Hello! Do you like my voice?', 'Xin chào! Con có thích giọng này không?');
   draw();
 }
 

@@ -51,6 +51,7 @@ marketing/source/runvalley.log
 /js/content/chapter2hanoi.js
 /js/content/chapter2text.js
 /js/content/chapters.js
+/js/content/familycode.js
 /js/content/releases.js
 /js/content/savecopy.js
 /js/content/secondset.js
@@ -60,6 +61,7 @@ marketing/source/runvalley.log
 /js/core/geo.js
 /js/core/ids.js
 /js/core/rng.js
+/js/extras.js
 /js/family-backup.js
 /js/familydevices.js
 /js/film.js
@@ -127,6 +129,7 @@ marketing/source/runvalley.log
 /js/packhash.js
 /js/parents.js
 /js/player.js
+/js/players.js
 /js/plots.js
 /js/popups.js
 /js/printpage.js

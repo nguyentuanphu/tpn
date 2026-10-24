@@ -1,5 +1,5 @@
 {
-  "source": "834476ab45b25887f1b4ff808e1cf269310e4150",
+  "source": "d539f5b5bea905eb647cad813060f904d1c84591",
   "files": [
     {
       "file": "content/custom.json",
@@ -15,7 +15,7 @@
     },
     {
       "file": "css/style.css",
-      "hash": "3ffd84c8a4db4020cc3e664b15f8a6352bd693ad"
+      "hash": "aa642d5857954ddaacf7c7c142af096404b6b25b"
     },
     {
       "file": "fonts/Baloo2-latin-600.woff2",
@@ -211,7 +211,7 @@
     },
     {
       "file": "index.html",
-      "hash": "e0dbca31b8c39d3f1f5edc2c1202206939ce5d38"
+      "hash": "c0e7a4ad6b1b2c587ab4ecd132f3db3deffafb74"
     },
     {
       "file": "js/ads.js",
@@ -219,7 +219,7 @@
     },
     {
       "file": "js/adventure.ts",
-      "hash": "409c08e064865f9ff25ef68861f00a4c10c72643"
+      "hash": "defb289ba8579bdf2069f0c18c04489337dc7ec7"
     },
     {
       "file": "js/animalhomes.js",
@@ -255,7 +255,7 @@
     },
     {
       "file": "js/build.ts",
-      "hash": "eaf0cabcc3b43da2d8ff213863c0b15900b011c6"
+      "hash": "0eed12aa08bbe41e1d378b6c6c1903a6b7c8ab38"
     },
     {
       "file": "js/cartoon.js",
@@ -352,6 +352,10 @@
     {
       "file": "js/content/devname.js",
       "hash": "aa818fed9d08da3457a595f7b2b4841f3010bc21"
+    },
+    {
+      "file": "js/content/familycode.ts",
+      "hash": "9e4f35269c4d88c95e2fed4b105e23b14ae14af2"
     },
     {
       "file": "js/content/familymissions.js",
@@ -543,7 +547,7 @@
     },
     {
       "file": "js/content/savecopy.ts",
-      "hash": "38a530c4e8ea9e0cf5f8e8cf1ce9e4e6be54c0e0"
+      "hash": "a09b19890fdb5f03827f7be005aea5ec12711e92"
     },
     {
       "file": "js/content/secondset.ts",
@@ -638,8 +642,8 @@
       "hash": "14a1f82036725bd86858cbe5c613bd619cea5113"
     },
     {
-      "file": "js/extras.js",
-      "hash": "1ef2af03fcceca7bc22cc88809191586f4828ecd"
+      "file": "js/extras.ts",
+      "hash": "7eac17cc86b8882e065d314323bbd3c0a0bcfc6e"
     },
     {
       "file": "js/family-backup.ts",
@@ -651,7 +655,7 @@
     },
     {
       "file": "js/familydevices.ts",
-      "hash": "e6c0b3d48e658e769beafdbb16e9d16a61539862"
+      "hash": "26bdf5c56877226dfb0dff87dae6bd7c51f50a73"
     },
     {
       "file": "js/farm.js",
@@ -799,7 +803,7 @@
     },
     {
       "file": "js/games/outside.ts",
-      "hash": "9b2652c4f543fe2ff7f0660ad19478127e713c3f"
+      "hash": "6a955b39553305404036dc630f22902acdfa8a5d"
     },
     {
       "file": "js/games/places2.ts",
@@ -999,7 +1003,7 @@
     },
     {
       "file": "js/net.ts",
-      "hash": "5d8fb669ccd4eb73ddd729eafe625f86363c2caf"
+      "hash": "8f1189b2ee92cdd9d81933469fd2f0f51a9927ee"
     },
     {
       "file": "js/netgames.ts",
@@ -1058,8 +1062,8 @@
       "hash": "c5b5d52e0e002c553ab7397a09361b35e883c430"
     },
     {
-      "file": "js/players.js",
-      "hash": "07aaa94ce5df3243838b6cb4d97b76b2fd318976"
+      "file": "js/players.ts",
+      "hash": "e56b9e8062650890415fae1cc59f516361f65763"
     },
     {
       "file": "js/plots.ts",
@@ -1155,7 +1159,7 @@
     },
     {
       "file": "js/simple.ts",
-      "hash": "5ffbb29457e0ff8f58369bb66235e1fad09a391e"
+      "hash": "b42ccf8943ca8eaf4d67d7a8c4b28ae3ee25cc54"
     },
     {
       "file": "js/snacks.js",
@@ -1223,11 +1227,11 @@
     },
     {
       "file": "js/tester-detection.ts",
-      "hash": "af44bd63397e1fd7fccd2f88ceaa2d04ddb3c170"
+      "hash": "c4cdbe4be93100a1ac95ee5000b9ab8bae8092ac"
     },
     {
       "file": "js/tester.ts",
-      "hash": "82d84bd80a503499dc72e34ca97908a9a2042b06"
+      "hash": "93fce392ba4a6f8bb788d476dd398d77dc9b506e"
     },
     {
       "file": "js/testergate.js",
@@ -1235,7 +1239,7 @@
     },
     {
       "file": "js/testerrewards.ts",
-      "hash": "284bbdaa3c23be2b9d6a54b4e8ef65fa2ce6bc4b"
+      "hash": "da2821b493e0c23805e36a0a1ab9fb30d0917a5f"
     },
     {
       "file": "js/town.js",
@@ -1255,11 +1259,11 @@
     },
     {
       "file": "js/ui-settings.ts",
-      "hash": "b620d1d09d98e09008524cb7bf66999bd245e0dd"
+      "hash": "b5ffa0271324fe2b45f025c9515f48ba9c2560d2"
     },
     {
       "file": "js/ui.ts",
-      "hash": "c984e537acbde710d3be15225b6071e862f99f42"
+      "hash": "c839cc23e47d38a5feb296b5528a00fe6d158336"
     },
     {
       "file": "js/util.js",
@@ -1295,11 +1299,11 @@
     },
     {
       "file": "js/voice.ts",
-      "hash": "9b61788093457731ae2f306e78ef61b34a97669f"
+      "hash": "1b7a376e33f0111ac7964e56fbcd0710f5a3fdaa"
     },
     {
       "file": "js/voicepack.ts",
-      "hash": "1042b198c070d86edf0a2182ccc52eb20b70466f"
+      "hash": "7c2ebb146f44ee0ef028d505cf2a9a2277d55899"
     },
     {
       "file": "js/wayfind.js",
@@ -1399,11 +1403,11 @@
     },
     {
       "file": "studio/version.json",
-      "hash": "a5dea50b1b13f5abfa073b31d875683ff70403b4"
+      "hash": "28bb8fe706fefda3a2babcfc513521f6d79f6ec8"
     },
     {
       "file": "sw.ts",
-      "hash": "ee54b05c22f857862719b5b9ebf5c5aadf4a3abd"
+      "hash": "862415ae74d8ca10175728ae0eab62b9814a9008"
     },
     {
       "file": "vendor/RoomEnvironment.js",

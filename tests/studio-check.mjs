@@ -404,13 +404,13 @@ export async function studioCheck(browser, open) {
     // (owner, 12 Oct: the exe's game folder was r38 while the website was r63) a folder older than the website cannot
     // save a draft (its old files would undo newer ones); the exe gets the newest game from GitHub by itself, and keeps a
     // content, voice or photo file changed here and not published yet
-    { const sw = fs.readFileSync(path.join(game, 'sw.js'), 'utf8'), newer = sw.replace(/-r\d+(?:\.\d+)?(?:-[^']*)?'/, "-r9998'");
-      ok(newer!==sw && /-r9998'/.test(newer),'fixture must actually advance the remote build, including cache revisions');
+    { const sw = fs.readFileSync(path.join(game, 'sw.js'), 'utf8'), newer = sw.replace(/-(?:r\d+(?:\.\d+)?|v\d{1,2}\.\d{2})(?:-[^']*)?'/, "-v99.98'");
+      ok(newer!==sw && /-v99\.98'/.test(newer),'fixture must actually advance the remote build, including cache revisions');
       gh.commitOnMain('sw.js', newer, 'newer game'); gh.commitOnMain('voices/en/f/newline1.mp3', 'NEWV', 'a new line'); gh.commitOnMain('voices/en/f/0000aaaa.mp3', 'REMOTE', 'a changed line');
       fs.writeFileSync(path.join(game, 'voices/en/f/0000aaaa.mp3'), 'LOCAL');
       const old = await job('github/draft', {}); ok(old.error && /get the newest game first/.test(old.error), 'a draft from an older game folder was not refused: ' + JSON.stringify(old));
       let st = (await ex('sync/start', { force: true })).j; for (let i = 0; i < 100 && st.state === 'running'; i++) { await new Promise(r => setTimeout(r, 200)); st = (await ex('sync/status')).j; }
-      ok(st.state === 'done' && st.build === 'r9998' && fs.readFileSync(path.join(game, 'voices/en/f/newline1.mp3'), 'utf8') === 'NEWV', 'the exe did not get the newest game: ' + JSON.stringify(st));
+      ok(st.state === 'done' && st.build === 'v99.98' && fs.readFileSync(path.join(game, 'voices/en/f/newline1.mp3'), 'utf8') === 'NEWV', 'the exe did not get the newest game: ' + JSON.stringify(st));
       ok(fs.readFileSync(path.join(game, 'voices/en/f/0000aaaa.mp3'), 'utf8') === 'LOCAL' && st.kept.includes('voices/en/f/0000aaaa.mp3'), 'a change not published yet was overwritten: ' + JSON.stringify(st.kept));
       notes.push('exe: gets the newest game by itself, keeps changes not published, refuses a draft from an older folder'); }
     // (owner, 12 Oct) on a computer with no game folder, the exe downloads the newest game next to itself
@@ -564,7 +564,7 @@ export async function studioCheck(browser, open) {
         const lv = await pg.evaluate(() => fetch('/api/live', { cache: 'no-store' }).then(r => r.json()));
         if (!(lv.releases && lv.releases.traffic && lv.releases.traffic.on === false && lv.releases.fest_halloween && lv.releases.fest_halloween.newDays === 5 && /^\d{4}-/.test(lv.releases.fest_halloween.start))) bad.push('releases did not reach /api/live: ' + JSON.stringify(lv));
         // (owner, 12 Oct) testers: tick a device at "auto reports only" with a sneak peek; it reports; the Tester reports page
-        // shows the problem, marks it fixed in r67, and the device hears it
+        // shows the problem, marks it fixed in v1.01 (a report from r66 sorts before it), and the device hears it
         await pg.evaluate(() => { location.hash = 'game/lab'; }); await pg.waitForSelector('#devs [data-tdev]', { timeout: 15000 }).catch(() => { });
         // (r85, owner 18 Oct AEDT) one card per device: name (bold) and children, a grey line, then Tester and Auto play chips
         // that open that feature's settings for this device only
@@ -591,9 +591,9 @@ export async function studioCheck(browser, open) {
           await pg.evaluate(() => { location.hash = 'players/testers'; }); await pg.waitForSelector('#tpb tr[data-open]', { timeout: 15000 }).catch(() => { });
           await pg.evaluate(() => document.querySelector('#tpb tr[data-open]') && document.querySelector('#tpb tr[data-open]').click()); await pg.waitForSelector('#tfix', { timeout: 10000 }).catch(() => { });
           const det = await pg.evaluate(() => ({ note: /The bridge floats/.test((document.querySelector('.tdet') || {}).innerText || ''), shot: !!document.querySelector('.tdet [data-shot]'), steps: !!document.querySelector('.tdet .tlog') }));
-          await pg.evaluate(() => { const i = document.querySelector('#tfin'); if (i) { i.value = 'r67'; document.querySelector('#tfix').click(); } }); await pg.waitForTimeout(1200);
-          const st = await pg.evaluate(id => fetch('/api/tester?id=' + id + '&b=r67').then(r => r.json()), tid);
-          if (!det.note || !det.shot || !det.steps || !(st.mine && st.mine[0] && st.mine[0].status === 'fixed' && st.mine[0].fixedIn === 'r67' && st.helped === 1)) bad.push('the Tester reports page: ' + JSON.stringify({ det, st }));
+          await pg.evaluate(() => { const i = document.querySelector('#tfin'); if (i) { i.value = 'v1.01'; document.querySelector('#tfix').click(); } }); await pg.waitForTimeout(1200);
+          const st = await pg.evaluate(id => fetch('/api/tester?id=' + id + '&b=v1.01').then(r => r.json()), tid);
+          if (!det.note || !det.shot || !det.steps || !(st.mine && st.mine[0] && st.mine[0].status === 'fixed' && st.mine[0].fixedIn === 'v1.01' && st.helped === 1)) bad.push('the Tester reports page: ' + JSON.stringify({ det, st }));
         }
         await pg.evaluate(() => { location.hash = 'game/festivals'; }); await pg.waitForSelector('tr[data-id="tet"]', { timeout: 15000 });
         await pg.evaluate(() => { document.querySelector('tr[data-id="anzac"] [data-f="on"]').value = 'false'; document.querySelector('tr[data-id="halloween"] [data-f="buildup"]').value = '14'; document.querySelector('#save').click(); });

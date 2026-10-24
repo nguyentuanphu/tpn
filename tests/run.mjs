@@ -541,6 +541,8 @@ await check('phone', async () => {
           if (/^(x|th-x|ht-x|gl-x|dch|ht-play|th-next|gl-next)$/.test(btn.className.split(' ')[0]) && (b.left < -1 || b.right > W + 1 || b.top < -1 || b.bottom > H + 1)) out.push(`button "${(btn.textContent || btn.getAttribute('aria-label') || btn.className).trim().slice(0, 20)}" off screen (${[b.left, b.top, b.right, b.bottom].map(Math.round)} in ${W}×${H}; on top: ${[...document.querySelectorAll('.dialog, .modal, .reward, .hub, .pad, .gl, .theatre, .songs')].map(e => e.className.split(' ').slice(0, 2).join('.')).join(',')})`); }
         for (const t of document.querySelectorAll('.pad-tabs small')) { const lh = parseFloat(getComputedStyle(t).lineHeight) || 13; if (t.getClientRects().length && t.getBoundingClientRect().height > lh * 1.6 + 2) out.push(`tab name "${t.firstChild && t.firstChild.textContent}" broken over lines`); }
         const md = document.querySelector('.modal'); if (md && /blur/.test(getComputedStyle(md).backdropFilter || '')) out.push('the window blurs the game behind it');
+        const vs = [...document.querySelectorAll('.qsettings .seg.vstyle button')].map(b => b.getBoundingClientRect()).filter(b => b.width > 0);
+        if (vs.length === 3 && (Math.max(...vs.map(b => b.top)) - Math.min(...vs.map(b => b.top)) > 4 || vs.some(b => b.height < 44))) out.push('voice style buttons wrapped or under 44px (' + JSON.stringify(vs.map(b => [Math.round(b.top), Math.round(b.height)])) + ')');
         return out;
       });
       r.forEach(x => bad.push(`${name} (${tag}): ${x}`));
@@ -685,6 +687,46 @@ await check('voicepack', async () => {
   ok(counts.length >= 2 && counts[0] > 0 && counts[0] < counts[1], 'resumed progress must include voices already cached: ' + JSON.stringify({ resumed, counts }));
   ok(!errs.length, errs.join(' | '));
   return `first open downloads with a small bar (${first.map(x => '"' + x + '"').slice(0, 2).join(' → ')} … "${first[first.length - 1]}"), the next open shows and downloads nothing, and files the phone lost are fetched again`;
+});
+
+await check('voicebackground', async () => {
+  // Owner, v1.01: male previews select the actual male file while female remains default.
+  // The explicit offline job keeps downloading after Save & close and Settings redraws.
+  const {lineHash}=await import('../js/packhash.js'), requests=[];
+  const preview={en:lineHash('en','Hello! Welcome to Sparkle Valley.'),vi:lineHash('vi','Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.')};
+  const P=await open(b,{w:390,h:844,touch:true,lang:'vi',settings:{autoPack:false,voice:false,voiceMale:false,packCell:true},route:async ctx=>{
+    await ctx.route('**/voices/manifest-*.json',async rt=>{const r=await rt.fetch(),j=await r.json(),keys=[...new Set([preview[j.language],...Object.keys(j.lines).slice(0,30)])].filter(k=>j.lines[k]);await rt.fulfill({json:{...j,lines:Object.fromEntries(keys.map(k=>[k,j.lines[k]])),langOf:Object.fromEntries(keys.map(k=>[k,j.language])),made:'background-test',signature:'background-'+j.language}})});
+    await ctx.route('**/voices/**/*.mp3',async rt=>{requests.push(rt.request().url());await new Promise(r=>setTimeout(r,350));await rt.fulfill({response:await rt.fetch()})});
+  }});
+  try{
+    await clear(P.page);
+    await P.page.evaluate(async()=>{const S=await import('/js/state.js');S.settings.voice=true;__sv.paused=true;const V=await import('/js/voice.js');V.hush();await V.previewPackVoice('f')});
+    const female=requests.some(u=>u.includes('/vi/f/'+preview.vi+'.mp3'));
+    const cut=requests.length;
+    await P.page.evaluate(async()=>{await (await import('/js/voice.js')).previewPackVoice('m')});
+    ok(female&&requests.slice(cut).some(u=>u.includes('/vi/m/'+preview.vi+'.mp3')),'female/male preview did not request distinct recordings: '+JSON.stringify(requests.slice(-6)));
+    ok(await P.page.evaluate(async()=>(await import('/js/state.js')).settings.voiceMale===false),'preview silently enabled male downloads');
+    await P.page.evaluate(async()=>(await import('/js/ui.js')).openGrownups());await P.page.waitForSelector('.grownups #gDone');
+    await P.page.evaluate(()=>document.querySelectorAll('.grownups details').forEach(d=>d.open=true));
+    await P.page.locator('#gVoiceMale').check();
+    await P.page.waitForSelector('.grownups #xPackSave');
+    await P.page.evaluate(()=>document.querySelectorAll('.grownups details').forEach(d=>d.open=true));
+    await P.page.locator('#xPackSave').click();
+    const before=await P.page.evaluate(async()=>(await (await caches.open('sv-voices')).keys()).filter(r=>/\.mp3$/.test(r.url)).length);
+    await P.page.locator('#gDone').click();
+    await P.page.waitForSelector('.grownups',{state:'detached'});
+    // Playwright 1.56 treats a returned Promise as truthy; poll asynchronous CacheStorage explicitly.
+    for(let attempt=0;attempt<240;attempt++){
+      const count=await P.page.evaluate(async()=>(await (await caches.open('sv-voices')).keys()).filter(r=>/\.mp3$/.test(r.url)).length);
+      if(count>before+6)break;
+      await P.page.waitForTimeout(250);
+    }
+    const result=await P.page.evaluate(async()=>({open:!!document.querySelector('.grownups'),male:(await import('/js/state.js')).settings.voiceMale,auto:(await import('/js/state.js')).settings.autoPack,progress:document.querySelector('.packbar')?.textContent,files:(await (await caches.open('sv-voices')).keys()).filter(r=>/\.mp3$/.test(r.url)).length}));
+    ok(!result.open&&result.male&&result.auto&&result.progress&&result.files>before+6,'settings close stopped background download/progress: '+JSON.stringify({before,result}));
+    await P.page.waitForFunction(()=>/✓/.test(document.querySelector('.packbar')?.textContent||''),null,{timeout:60000});
+    ok(!P.errors.length,P.errors.join(' | '));
+    return 'real female and male MP3 previews with male opt-in still off; opt-in and explicit offline download continue with shared progress after Save & close';
+  }finally{await P.ctx.unrouteAll({behavior:'ignoreErrors'});await P.ctx.close()}
 });
 
 await check('ownerwificard', async () => {
@@ -951,7 +993,7 @@ await check('ground', async () => {
   ok(!r.bad.length && !r.roadBad.length, 'problems: ' + JSON.stringify([...r.bad, ...r.roadBad].slice(0, 6)));
   ok(ver.endsWith('-' + build), `build ${build} does not match sw.js VERSION ${ver}`);
   // (owner, 24 Oct AEDT) families see the public number (v1, v1.1 ...), never the round count
-  ok(/^v\d+(\.\d+)*$/.test(shown) && /^r\d+(\.\d+)?$/.test(build), `SHOWN ${shown} must be v and a number, BUILD ${build} r and a number`);
+  ok(/^v\d{1,2}\.\d{2}$/.test(build) && shown === build, `BUILD ${build} must be v, a number, a point and two digits (v1.01), and SHOWN ${shown} the same`);
   ok(title.trim() === shown, `the title screen shows "${title}", not the public number ${shown}`);
   return `${r.buildings} buildings and ${r.roads} roads checked, build ${build}, shown as ${shown}`;
 });
@@ -1408,9 +1450,9 @@ await check('testerreport', async () => {
   if (!e || !/^data:image\/jpeg;base64,/.test(e.shot || '') || !(e.log && e.log.length) || !e.players.length || !e.players[0].name || !e.dev || !e.b) out.push('the error report has no picture, steps, players or device: ' + JSON.stringify(e && { shot: (e.shot || '').slice(0, 30), log: e.log && e.log.length, players: e.players, dev: e.dev, b: e.b }));
   await P.page.evaluate(() => __sv.playGame(0, 'no-such-game-for-the-tester-check'));
   if (!await wait(x => x && x.auto === 'noopen' && /no-such-game/.test(x.detail), 9000)) out.push('a game that did not open was not reported');
-  await P.page.waitForFunction(() => performance.now() > 0, null); await P.page.waitForTimeout(Math.max(0, 16000 - await P.page.evaluate(() => performance.now())));
+  await P.page.waitForFunction(() => window.__sv?.tester?.mountedAt && window.__sv.tester.mountedAt() > 0 && performance.now() - window.__sv.tester.mountedAt() > 15200, null, { timeout: 30000 });
   const earlierFreezes = got.filter(x => x && x.auto === 'freeze');
-  await P.page.evaluate(() => new Promise(r => requestAnimationFrame(() => { const t = performance.now(); while (performance.now() - t < 2600) { } r(); })));
+  await P.page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => { const t = performance.now(); while (performance.now() - t < 2600) { } r(); }))));
   { const fz = await wait(x => x && x.auto === 'freeze' && !earlierFreezes.includes(x), 6000); if (!fz) out.push('a frozen screen was not reported');
     // (#261) the report says the game's own code ran long (this freeze is a 2.6 s script), not only that frames stopped
     else { const scripts = [...JSON.stringify(fz.log || []).matchAll(/longest script (\d+) ms/g)];
@@ -1495,7 +1537,7 @@ await check('testernews', async () => {
 });
 
 await check('testerrewards', async () => {
-  // a problem the tester found is fixed: the tick on the ladybird, Ông Cú's thank-you with coins; reports that helped
+  // A fixed report gives quiet coins and a counted ladybird list, with no fix speech or pop-up; reports that helped
   // give the Bug Hunter badge on the shirt (seen by friends: it is in the look), tester gear, stickers and the week's star
   const out = [];
   for (const [w, h, touch, name] of [[390, 844, true, 'phone'], [820, 1180, true, 'tablet'], [1180, 760, false, 'computer']]) {
@@ -1507,8 +1549,18 @@ await check('testerrewards', async () => {
     const thank = await P.page.evaluate(() => (document.querySelector('.dialog') || {}).innerText || '');
     await P.page.evaluate(() => document.querySelectorAll('.dialog').forEach(d => d.click())); await P.page.waitForTimeout(800);
     const r = await P.page.evaluate(async () => { const S = await import('/js/state.js'), SH = await import('/js/content/shop.js'), p = S.profiles[0]; return { badge: p.look.badge, star: p.look.star, gear: ['sleuthhat', 'ladypack', 'sleuthcape'].map(id => SH.versionFor(id, SH.setOf(p.look))).filter(id => (p.owned.clothes || []).includes(id)), /* (r79) each child gets their own set's version */ stickers: p.testerStickers, coins: S.farm.coins, tick: !(document.querySelector('.z-lb .lb-ok') || { hidden: true }).hidden, starName: !!document.querySelector('.hud .pname.starname') }; });
-    if (!/fixed|đã được sửa/i.test(thank) || r.coins - coins0 < 25) out.push(name + ': no thank-you with coins: ' + JSON.stringify({ thank: thank.slice(0, 80), coins: r.coins - coins0 }));
+    if (/fixed|đã được sửa/i.test(thank) || r.coins - coins0 < 25) out.push(name + ': fix must grant quiet coins without thank-you speech: ' + JSON.stringify({ thank: thank.slice(0, 80), coins: r.coins - coins0 }));
     if (r.badge !== 'lb2' || !r.star || r.gear.length !== 3 || (r.stickers || []).length !== 5 || !r.tick || !r.starName) out.push(name + ': rewards ' + JSON.stringify(r));
+    // Owner-requested replacement for the removed fix dialog: verify the real ladybird list.
+    await clear(P.page); await P.page.evaluate(async()=>{await (await import('/js/tester.js')).openPanel(0,'fixed');});
+    await P.page.waitForSelector('.testing-fixed:not([hidden]) [data-fok="1"]');
+    const fixedList=await P.page.evaluate(()=>({targets64:[...document.querySelectorAll('.testing-fixed button')].every(b=>{const r=b.getBoundingClientRect();return r.height>=64&&r.width>=64}),rows:document.querySelectorAll('.testing-fixed [data-fok="1"]').length,coins:document.querySelector('.tm-coins')?.textContent,badge:document.querySelector('.z-lb .lb-ok')?.textContent,legacy:/\br67\b/.test(document.querySelector('.tpanel').textContent),popup:!!document.querySelector('.tfixed'),linked:document.querySelector('[data-test-tab="fixed"]')?.getAttribute('aria-controls')==='testing-fixed'}));
+    if(!fixedList.targets64||fixedList.rows!==1||!fixedList.coins?.includes('+25')||fixedList.badge!=='1'||fixedList.legacy||fixedList.popup||!fixedList.linked)out.push(name+': fixed list '+JSON.stringify(fixedList));
+    await P.page.locator('.testing-fixed [data-fok="1"]').click();
+    const coinsOnce=await P.page.evaluate(async()=>{await (await import('/js/tester.js')).refresh();return (await import('/js/state.js')).farm.coins});
+    await P.page.waitForTimeout(600);
+    const afterCheck=await P.page.evaluate(async()=>({coins:(await import('/js/state.js')).farm.coins,badgeHidden:document.querySelector('.z-lb .lb-ok')?.hidden,fixedCount:document.querySelector('[data-test-tab=fixed]')?.textContent}));
+    if(afterCheck.coins!==coinsOnce||!afterCheck.badgeHidden||!/\(0\)/.test(afterCheck.fixedCount))out.push(name+': answered fix repeated '+JSON.stringify(afterCheck));
     // the Tester's Corner and the badge drawn on the shirt
     await clear(P.page); await P.page.evaluate(() => __sv.testerRewards.corner()); await P.page.waitForSelector('.tcorner .tc-badge.on', { timeout: 5000 }).catch(() => { });
     const c = await P.page.evaluate(() => { const card = document.querySelector('.tcorner .card'), r = card && card.getBoundingClientRect(); return { on: document.querySelectorAll('.tcorner .tc-badge.on').length, st: document.querySelectorAll('.tcorner .tc-st.on').length, fixed: document.querySelectorAll('.tcorner .tm-row').length, wide: card ? card.scrollWidth <= card.clientWidth + 2 && r.right <= innerWidth + 1 : false }; });
@@ -1518,7 +1570,7 @@ await check('testerrewards', async () => {
     const errs = P.errors; await P.ctx.close(); if (errs.length) out.push(name + ': ' + errs.slice(0, 2).join(' | '));
   }
   ok(!out.length, out.join(' | '));
-  return 'on phone, tablet and computer: the fixed tick, Ông Cú\'s thank-you with coins (more for a spoken note), the Silver Ladybird on the shirt (and in the look friends see), the tester hat, backpack and cape, five stickers, the week\'s star by the name, and the Tester\'s Corner';
+  return 'on phone, tablet and computer: counted fixed list and quiet coins (more for a spoken note), the Silver Ladybird on the shirt (and in the look friends see), the tester hat, backpack and cape, five stickers, the week\'s star by the name, and the Tester\'s Corner';
 });
 
 await check('festcal', async () => {
@@ -3386,14 +3438,21 @@ await check('adventure', async () => {
     return { missing: ids.filter(i => !A.GAME_INFO[i]), extra: keys.filter(k => !GAMES[k] && k !== 'familyquiz') /* Family Quiz is there only once the family has written questions in Studio */, badArea: keys.filter(k => !A.AREAS.some(a => a.key === A.GAME_INFO[k][0])), games: ids.length }; });
   // every under-5 section on the one page: its title (drawn picture and name) and its road of drawn pictures
   r.walk = await P.page.evaluate(async () => {
-    const { GAMES } = await import('/js/games/registry.js'), A = await import('/js/content/activities.js'), out = { notDrawn: [], tooBig: [] };
-    __sv.simple.openGroup('games', null); const v = __sv.simple.view, cats = v.cats, stops = v.stops.slice(), heads = document.querySelectorAll('.sp-sec .sp-sectitle').length;
+    const { GAMES } = await import('/js/games/registry.js'), A = await import('/js/content/activities.js'), U = await import('/js/content/unlocks.js'), out = { notDrawn: [], tooBig: [] };
+    const p = __sv.heroes[0].profile;
+    __sv.simple.openGroup('games', null);
+    const openWant = Object.keys(GAMES).filter(id => A.gameInfo(id).ageMin < 5 && U.isOpen(p, id, 'game', A.gameInfo(id).area));
+    const initialStops = __sv.simple.view.stops.filter(id => id !== 'songs');
+    if (openWant.some(id => !initialStops.includes(id)) || initialStops.some(id => !openWant.includes(id))) out.notDrawn.push('unlocks ' + initialStops.length + '/' + openWant.length);
+    p.unlockAll = true; __sv.simple.openGroup('games', null);
+    const v = __sv.simple.view, cats = v.cats, stops = v.stops.slice(), heads = document.querySelectorAll('.sp-sec .sp-sectitle').length;
     const secCats = [...document.querySelectorAll('.sp-sec')].map(x => x.dataset.cat);
     document.querySelectorAll('.sp-sectitle .sp-hpic, .sp-stop .sp-pic').forEach(p => { if (!p.querySelector('.art')) out.notDrawn.push((p.closest('[aria-label]') || p.parentElement).getAttribute('aria-label') || p.parentElement.textContent); });
     if (JSON.stringify(secCats) !== JSON.stringify(cats)) out.notDrawn.push('sections ' + secCats.join(','));
     out.tooBig.push(...stops.filter(id => id !== 'songs' && A.gameInfo(id).ageMin >= 5));
     const want = Object.keys(GAMES).filter(id => A.gameInfo(id).ageMin < 5);
     const order = A.AREAS.map(a => a.key).filter(k => cats.includes(k));
+    delete p.unlockAll; __sv.simple.openGroup('games', null);
     return { cats: cats.length, inOrder: JSON.stringify(order) === JSON.stringify(cats), heads, missed: want.filter(id => !stops.includes(id)), notDrawn: out.notDrawn, tooBig: out.tooBig, stops: stops.length };
   });
   // places: China and India (asia) always come last
@@ -3424,7 +3483,7 @@ await check('adventure', async () => {
   const errs = P.errors; await P.ctx.close();
   // a big kid: the first tap shows, the second plays; ✨ on a game that came after the last look; search finds "Đập Niêu" without accents
   const B = await open(b, { w: 390, h: 844, touch: true, screen: 'simple' });
-  await B.page.evaluate(() => { const p = __sv.heroes[0].profile; p.age = 'big'; p.seenActs = undefined; __sv.simple.hide(); __sv.simple.show(); p.seenActs = p.seenActs.filter(x => x !== 'game:bunny'); __sv.simple.hide(); __sv.simple.show('games'); __sv.simple.openGroup('games', 'animals'); document.querySelectorAll('.dialog').forEach(d => d.remove()); });
+  await B.page.evaluate(() => { const p = __sv.heroes[0].profile; p.age = 'big'; p.unlockAll = true; p.seenActs = undefined; __sv.simple.hide(); __sv.simple.show(); p.seenActs = p.seenActs.filter(x => x !== 'game:bunny'); __sv.simple.hide(); __sv.simple.show('games'); __sv.simple.openGroup('games', 'animals'); document.querySelectorAll('.dialog').forEach(d => d.remove()); });
   r.big = await B.page.evaluate(() => ({ stops: __sv.simple.view.stops.length, newOn: [...document.querySelectorAll('.sp-stop')].filter(s => s.querySelector('.sp-new')).map(s => s.getAttribute('aria-label')), dots: document.querySelectorAll('.sp-level').length === 0 })); // stars only: no difficulty dots (owner)
   await B.page.locator('.sp-stop:not(.grp)').first().click(); await B.page.waitForTimeout(700);
   r.big.firstTap = await B.page.evaluate(() => ({ game: !!document.querySelector('.gl'), sel: !!document.querySelector('.sp-stop.sel .sp-play') }));
@@ -3651,11 +3710,22 @@ await check('grownupsui', async () => {
     // (round R privacy, 9 Oct) no voice engine or voice key any more; the privacy notice is its own small block at the top
     const eng = document.querySelector('.grownups details.xeng, .grownups #xKey, .grownups #xTts, .grownups #xClone'), credits = !!document.querySelector('.grownups #crName');
     const priv = document.querySelector('.grownups details.g-priv'), firstSec = document.querySelector('.grownups details.gsec');
-    return { act: [a.left, a.top, a.right, a.bottom].map(Math.round), moves: Math.round(mv.top), w: innerWidth, cap: c ? [Math.round(c.top), Math.round(c.bottom)] : null, secs, open, engine: !!eng, privacy: priv ? priv.querySelectorAll('li').length : 0, privFirst: !!(priv && firstSec && priv.compareDocumentPosition(firstSec) & Node.DOCUMENT_POSITION_FOLLOWING), privTap: priv ? Math.round(priv.querySelector('summary').getBoundingClientRect().height) : 0, credits };
+    const privLines = priv ? priv.querySelectorAll('li').length : 0;
+    const privFirst = !!(priv && firstSec && priv.compareDocumentPosition(firstSec) & Node.DOCUMENT_POSITION_FOLLOWING);
+    const privTap = priv ? Math.round(priv.querySelector('summary').getBoundingClientRect().height) : 0;
+    const dataSec = document.querySelector('.grownups details.gsec[data-sec="data"]'); if (dataSec) dataSec.open = true; await wait(100);
+    const famPriv = document.querySelector('.grownups .fam-privacy')?.textContent || '';
+    document.querySelector('#gFamCodeMake')?.click(); await wait(150);
+    const madeCode = document.querySelector('.grownups .fam-code-val')?.textContent || '', hasQr = !!document.querySelector('.grownups svg.fam-qr');
+    document.querySelector('#gFamCodeLeave')?.click(); await wait(150);
+    const famIn = document.querySelector('#gFamCodeIn'); if (famIn) { famIn.value = 'k7m4 p9q2'; document.querySelector('#gFamCodeJoin')?.click(); await wait(150); }
+    const joinedCode = document.querySelector('.grownups .fam-code-val')?.textContent || '';
+    document.querySelector('#gFamCodeLeave')?.click(); await wait(100);
+    return { act: [a.left, a.top, a.right, a.bottom].map(Math.round), moves: Math.round(mv.top), w: innerWidth, cap: c ? [Math.round(c.top), Math.round(c.bottom)] : null, secs, open, engine: !!eng, privacy: privLines, privFirst, privTap, credits, famPriv, madeCode, hasQr, joinedCode };
   });
   const errs = P.errors; await P.ctx.close();
   ok(r.act[0] > r.w / 2 - 40 && r.act[3] <= r.moves + 2 && r.cap && r.cap[0] < 260, 'phone layout: ' + JSON.stringify(r));
-  ok(r.secs.length >= 8 && r.secs.includes('sound') && r.secs.includes('online') && r.open.join() === 'players' && !r.engine && r.privacy === 6 && r.privFirst && r.privTap >= 44 && !r.credits && !errs.length, 'grown-ups: ' + JSON.stringify(Object.assign(r, { errs })));
+  ok(r.secs.length >= 8 && r.secs.includes('sound') && r.secs.includes('online') && r.open.join() === 'players' && !r.engine && r.privacy === 6 && r.privFirst && r.privTap >= 44 && !r.credits && /không chia sẻ tiến trình hay ảnh/.test(r.famPriv) && /^[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(r.madeCode) && r.hasQr && r.joinedCode === 'K7M4-P9Q2' && !errs.length, 'grown-ups: ' + JSON.stringify(Object.assign(r, { errs })));
   return `action button on the right above Jump/Run (${r.act.join(',')}), words at the top (${r.cap.join('–')} px); Grown-ups: ${r.secs.length} groups (${r.secs.join(', ')}), the privacy notice first (${r.privacy} lines), no voice engine or voice key, no credits editor`;
 });
 
@@ -5568,7 +5638,7 @@ await check('cloud', async () => {
   const B = await open(b, { pre, w: 390, h: 760, lang: 'vi', touch: true, settings: { friendCode: 'BBBBB3', friendsOn: true, autoMeet: false, friends: [{ code: 'AAAAA2', name: 'Na' }] } });
   await pairKeys(A, B);
   // each player has a photo: it must reach the friend through the cloud too (locked with their pair key)
-  const photo = c => { const k = document.createElement('canvas'); k.width = k.height = 64; const g = k.getContext('2d'); g.fillStyle = c; g.fillRect(0, 0, 64, 64); __sv.heroes[0].profile.photo = k.toDataURL('image/jpeg', .8); };
+  const photo = c => { const k = document.createElement('canvas'); k.width = k.height = 64; const g = k.getContext('2d'); g.fillStyle = c; g.fillRect(0, 0, 64, 64); __sv.heroes[0].profile.photo = k.toDataURL('image/jpeg', .8); __sv.rebuildHero(0); };
   for (const [P, c] of [[A, '#ff0000'], [B, '#0000ff']]) { await clear(P.page); await P.page.evaluate(async c => { window.__Net = (await import('/js/net.js')).Net; }, c); await P.page.evaluate(photo, c); }
   const code = await A.page.evaluate(async () => __Net.host(__sv.sendHello()));
   await A.page.evaluate(async () => { const S = (await import('/js/world.js')).CITIES.find(c => c.id === 'saigon'); __sv.heroes[0].place(S.x, S.z); __sv.shareStatus(); });
@@ -5591,6 +5661,9 @@ await check('cloud', async () => {
   // photos arrived both ways (red at B, blue at A)
   const pix = P => P.page.evaluate(() => new Promise(r => { const p = Object.values(__Net.remotes)[0]?.photo; if (!p) return r(null); const im = new Image(); im.onload = () => { const k = document.createElement('canvas'); k.width = k.height = 8; const g = k.getContext('2d'); g.drawImage(im, 0, 0, 8, 8); r([...g.getImageData(4, 4, 1, 1).data].slice(0, 3)); }; im.src = p; }));
   const photoAtB = await pix(B), photoAtA = await pix(A);
+  // Each device must also retain its own photo after joining, including the rendered face texture.
+  const ownPhotos = await Promise.all([A,B].map(P=>P.page.evaluate(()=>{const h=__sv.heroes[0],c=h.av.faceMat.map.image,g=c.getContext('2d');return {saved:!!h.profile.photo,pixel:[...g.getImageData(c.width/2,c.height/2,1,1).data].slice(0,3)}})));
+  ok(ownPhotos[0].saved&&ownPhotos[0].pixel[0]>180&&ownPhotos[0].pixel[2]<80&&ownPhotos[1].saved&&ownPhotos[1].pixel[2]>180&&ownPhotos[1].pixel[0]<80,'own face missing after joining: '+JSON.stringify(ownPhotos));
   // a third friend comes in through the cloud: everyone must see everyone
   const C = await open(b, { pre, w: 600, h: 500, lang: 'en' }); await clear(C.page);
   await C.page.evaluate(async c => { window.__Net = (await import('/js/net.js')).Net; __Net.join(c, __sv.sendHello()); const S = (await import('/js/world.js')).CITIES.find(c => c.id === 'saigon'); __sv.heroes[0].place(S.x + 4, S.z - 6); }, code);
@@ -6438,6 +6511,7 @@ await check('feel', async () => {
   const notes = [];
   for (const [tag, w, h, touch] of [['computer', 1180, 760, false], ['phone', 390, 844, true]]) {
     const P = await open(b, { w, h, touch, settings: { sound: true, calm: false } });
+    await noWelcome(P.page); // (r83: Grandpa Owl's 7 s welcome sticker flies in midway on slower machines)
     const r = await P.page.evaluate(async () => {
       const A = await import('/js/audio.js'), S = await import('/js/state.js'), U = await import('/js/popups.js');
       let osc = 0; const make = AudioContext.prototype.createOscillator; AudioContext.prototype.createOscillator = function () { osc++; return make.call(this); };
@@ -6503,21 +6577,21 @@ await check('dailyadventure', async () => {
     ok(!miss.length, `${tag}: spots not in the valley: ${miss.join(', ')}`);
     await P.page.evaluate(age => { __sv.heroes[0].profile.age = age; __sv.adventure.force(0, 'house'); }, age);
     await P.page.waitForTimeout(600);
-    // HUD-4: the goal card shows the step, 3 dots and hear-again; a tap opens the window
-    const card = await P.page.evaluate(() => { const c = document.querySelector('.hud .advcard'); if (!c || c.hidden) return null; const r = c.getBoundingClientRect(), hear = c.querySelector('.adv-hear').getBoundingClientRect();
-      return { text: c.querySelector('.adv-text').textContent, dots: c.querySelectorAll('.adv-dots i').length, now: c.querySelectorAll('.adv-dots i.now').length, hear: Math.min(hear.width, hear.height), right: r.right, quest: getComputedStyle(document.querySelector('.hud .q-say')).display }; });
-    ok(card && card.dots === 3 && card.now === 1 && card.hear >= 44 && card.right <= w + 1 && card.quest !== 'none', `${tag}: goal card under the goal row, which stays (owner, 17 Oct AEDT: "show both") ${JSON.stringify(card)}`);
+    // HUD-4: the goal card shows the step, 3 dots, Go walk button and hear-again; a tap opens the window
+    const card = await P.page.evaluate(() => { const c = document.querySelector('.hud .advcard'); if (!c || c.hidden) return null; const r = c.getBoundingClientRect(), hear = c.querySelector('.adv-hear').getBoundingClientRect(), walk = c.querySelector('.adv-walk').getBoundingClientRect();
+      return { text: c.querySelector('.adv-text').textContent, dots: c.querySelectorAll('.adv-dots i').length, now: c.querySelectorAll('.adv-dots i.now').length, hear: Math.min(hear.width, hear.height), walk: Math.min(walk.width, walk.height), right: r.right, quest: getComputedStyle(document.querySelector('.hud .q-say')).display }; });
+    ok(card && card.dots === 3 && card.now === 1 && card.hear >= 44 && card.walk >= 44 && card.right <= w + 1 && card.quest !== 'none', `${tag}: goal card under the goal row, which stays (owner, 17 Oct AEDT: "show both") ${JSON.stringify(card)}`);
     ok(lang === 'vi' ? /Phố Hai Quê/.test(card.text) : /Two Homes Street/.test(card.text), `${tag}: the step in the language (${card.text})`);
     await P.page.click('.hud .advcard .adv-open'); await P.page.waitForTimeout(500);
     const win = await P.page.evaluate(() => { const m = document.querySelector('.modal.advwin'); if (!m) return null; const R = e => e.getBoundingClientRect();
-      const go = m.querySelector('.adv-go'), x = m.querySelector('.x');
-      return { steps: m.querySelectorAll('.adv-step').length, stamps: m.querySelectorAll('.adv-stamp').length, chest: !!m.querySelector('.adv-chestrow .adv-rew'), mains: m.querySelectorAll('.adv-go').length, go: R(go).height, x: R(x).width, goBottom: R(go).bottom, wide: [...m.querySelectorAll('*')].some(e => R(e).right > innerWidth + 1), txt: m.innerText }; });
-    ok(win && win.steps === 3 && win.stamps === 7 && win.chest && win.mains === 1, `${tag}: window ${JSON.stringify(win && { ...win, txt: '' })}`);
+      const go = m.querySelector('.adv-go'), x = m.querySelector('.x'), stepGo = m.querySelector('.adv-step.now .adv-step-go');
+      return { steps: m.querySelectorAll('.adv-step').length, stamps: m.querySelectorAll('.adv-stamp').length, chest: !!m.querySelector('.adv-chestrow .adv-rew'), mains: m.querySelectorAll('.adv-go').length, stepGo: stepGo ? Math.min(R(stepGo).width, R(stepGo).height) : 0, go: R(go).height, x: R(x).width, goBottom: R(go).bottom, wide: [...m.querySelectorAll('*')].some(e => R(e).right > innerWidth + 1), txt: m.innerText }; });
+    ok(win && win.steps === 3 && win.stamps === 7 && win.chest && win.mains === 1 && win.stepGo >= 44, `${tag}: window ${JSON.stringify(win && { ...win, txt: '' })}`);
     ok(win.go >= 64 && win.x >= 56 && win.goBottom <= h + 1 && !win.wide, `${tag}: big buttons, all on screen (${win.go}, ${win.x}, ${win.goBottom})`);
     ok(lang === 'vi' ? win.txt.includes('Phiêu lưu hôm nay') && !win.txt.includes("Today's adventure") : win.txt.includes("Today's adventure"), `${tag}: the window in the language`);
     await P.page.screenshot({ path: `out/dailyadventure-window-${w}.png` });
     await P.page.click('.modal.advwin .adv-go'); await P.page.waitForTimeout(500);
-    ok(await P.page.evaluate(() => !document.querySelector('.modal.advwin') && __sv.adventure.trails.size === 1), `${tag}: Let's go closes the window and shows the way`);
+    ok(await P.page.evaluate(() => !document.querySelector('.modal.advwin') && __sv.adventure.trails.size === 1 && !!(__sv.heroes[0].goal || __sv.adventure.trails.get(__sv.heroes[0])?.walk)), `${tag}: Let's go closes the window, shows the way and starts walking`);
     // play it: walk in, find, give (big kids count first), the chest
     const coins0 = await P.page.evaluate(async () => { const S = await import('/js/state.js'); return S.farm.coins; });
     await P.page.evaluate(async () => { const G = __sv, h = G.heroes[0], V = (await import('/js/content/map.js')).anchorOf('town'); h.pos.x = V[0]; h.pos.z = V[1] + 4; h.pos.y = (await import('/js/world.js')).heightAt(h.pos.x, h.pos.z); });

@@ -3,8 +3,9 @@
 // kept only as the text or number the rule allows (a list or object that merely looks like text is not kept as itself).
 // (owner repair round, 15 Oct AEDT: identity, build and version data are type-checked, `types` check.)
 // (synthetic bot isolation, 20 Oct AEDT): bots tag events with isRobot: true and traffic: 'synthetic_bot' and are routed to a separate store.
+import { isBuild } from './build-number.mts';
 
-export const ID = /^[a-z0-9]{10,24}$/, WORD = /^[\w-]{1,32}$/, KEY = /^[\w .:/()'#,@-]{1,140}$/, NAME = /^[\p{L}' -]{0,20}$/u, DAY = /^\d{4}-\d{2}-\d{2}$/;
+export const ID = /^[a-z0-9]{10,24}$/, WORD = /^[\w-]{1,32}$/, KEY = /^[\w .:/()'#,@-]{1,140}$/, NAME = /^[\p{L}' -]{0,20}$/u, DAY = /^\d{4}-\d{2}-\d{2}$/, FH = /^[0-9a-f]{16}$/;
 export const LINES = { hello: 10, device: 30, ip: 60, newPerDay: 200 }; // (round R privacy) missing lines taken at most
 
 // what arrived: any field may be missing or of any kind
@@ -18,7 +19,7 @@ export type HelloDay = { d: string, build: string, mins: number, games: Record<s
   hours: Record<number, number>, kids: Record<string, KidDay>, errs: Record<string, number>, stuck: Record<string, number>,
   quits: Record<string, number>, fps: [number, number, number], starts: Start[], bat: number[] };
 export type Hello = { id: string, hid: string, build: string, sid: string, started: number, lang: 'en' | 'vi' | '?', kids: number, days: HelloDay[],
-  kind: 'phone' | 'tablet' | 'computer' | '?', app: boolean, os: string, br: string, sc: string, lines: [string, string][], isRobot?: boolean, traffic?: string };
+  kind: 'phone' | 'tablet' | 'computer' | '?', app: boolean, os: string, br: string, sc: string, fh?: string, lines: [string, string][], isRobot?: boolean, traffic?: string };
 
 // as a regular expression tests it (`x || ''`), but as text
 export const txt = (v: unknown): string => v ? String(v) : '';
@@ -50,7 +51,7 @@ export function clean(input: unknown, now: number = Date.now()): Hello|null {
   // an older device sends one bucket for today
   const lo = day(now - 30 * 864e5), hi = day(now + 864e5), seen = new Set();
   // where a day was played: its own build (a release or '?'), or the device's build for an older device
-  const origin = (x: Loose) => typeof x.build === 'string' && (/^r\d{1,4}(\.\d{1,2})?$/.test(x.build) || x.build === '?') ? x.build : (b.sid ? '?' : WORD.test(txt(b.b)) ? txt(b.b) : '?');
+  const origin = (x: Loose) => typeof x.build === 'string' && (isBuild(x.build) || x.build === '?') ? x.build : (b.sid ? '?' : WORD.test(txt(b.b)) ? txt(b.b) : '?');
   const sent: unknown[] = Array.isArray(b.days) ? b.days : [{ d: day(now), m: b.m, g: b.g, t: b.t, o: b.o }];
   const days = sent.slice(0, 42).map(obj)
     .filter(x => { const d = txt(x.d); if (!DAY.test(d) || d < lo || d > hi) return false; const key = d + '|' + origin(x); if (seen.has(key)) return false; seen.add(key); return true; })
@@ -65,6 +66,7 @@ export function clean(input: unknown, now: number = Date.now()): Hello|null {
     lang: l === 'en' || l === 'vi' ? l : '?', kids: int(b.k, 8), days,
     kind: d === 'phone' || d === 'tablet' || d === 'computer' ? d : '?', app: !!b.a,
     os: /^(iOS|iPadOS|Android|ChromeOS|Windows|macOS|Linux|other)$/.test(os) ? os : '?', br: /^(Safari|Chrome|Edge|Firefox|Samsung|other)$/.test(br) ? br : '?', sc: /^\d{2,5}x\d{2,5}$/.test(txt(b.sc)) ? txt(b.sc) : '',
+    fh: FH.test(txt(b.fh)) ? txt(b.fh) : '',
     lines: (Array.isArray(b.v) ? b.v : []).slice(0, LINES.hello).filter(v => Array.isArray(v) && /^(en|vi|zh|hi)$/.test(txt(v[0])) && typeof v[1] === 'string' && v[1].trim() && v[1].length <= 300 && !/[\u0000-\u001f<>]/.test(v[1])).map(v => ([txt(v[0]), v[1].trim()] as [string, string])),
     isRobot: b.isRobot === true && b.traffic === 'synthetic_bot', traffic: b.isRobot === true && b.traffic === 'synthetic_bot' ? 'synthetic_bot' : undefined };
 }

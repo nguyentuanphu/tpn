@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "compilerOptions": {"strict":true,"noImplicitAny":true,"checkJs":true},
-  "files": ["../js/tester-detection.ts","../js/report-outbox.ts", "../js/family-backup.ts", "../js/content/autoplay.ts", "../js/games/playwatch.js", "../js/content/tester.js", "../netlify/lib/hello-clean.mts", "../netlify/lib/family-devices.mts"]
+  "compilerOptions": {"strict":true,"noImplicitAny":true,"checkJs":true,"allowImportingTsExtensions":true},
+  "files": ["../js/tester-detection.ts","../js/report-outbox.ts", "../js/family-backup.ts", "../js/content/autoplay.ts", "../js/content/familycode.ts", "../js/content/savecopy.ts", "../js/games/playwatch.js", "../js/content/tester.js", "../netlify/lib/hello-clean.mts", "../netlify/lib/family-devices.mts"]
 }

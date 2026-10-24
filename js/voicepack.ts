@@ -7,6 +7,9 @@ import { T } from './i18n.js';
 import { featureOn } from './custom.js';
 
 let PACK = null, packEmit = e => { }, hereArea = () => null, packStarted = false;
+let manualSave: Promise<number> | null = null;
+const manualListeners = new Set<(done: number, total: number) => void>();
+export const refreshPack = () => { checkPack().catch(() => { }); };
 // Keep the pack on the device by itself: a few seconds after the game opens (every time it opens), the voice cache is
 // checked against the list, and any file not there yet (first visit, a new pack, or a phone that cleared space) is
 // downloaded quietly. A small bar shows it (js/packbar.js); every line then plays with the recorded voice, offline too.
@@ -93,6 +96,7 @@ const valleyBuilt = async () => { for (let i = 0; i < 240 && !(window.__sv && wi
 const rest = ms => new Promise(r => setTimeout(r, ms));
 async function checkPack() {
   if (!PACK) return;
+  if (manualSave) { recheck = true; return; }
   if (checking) { recheck = true; return; }
   checking = true; recheck = false;
   if (mayFetchRest()) close();
@@ -132,6 +136,7 @@ async function checkPack() {
       if (g !== 'core' && !mayFetchRest()) break; // (left the Wi-Fi: the rest waits)
       const miss = missingOf([g]).filter(u => pending.has(u));
       for (let i = 0; i < miss.length; i += 6) {
+        if (manualSave) return; // the explicit job takes over after this batch
         if (languageChanged()) return; // finish only the current batch, then start the new selected language
         if (g !== 'core' && !mayFetchRest()) break;
         await Promise.all(miss.slice(i, i + 6).map(async u => { try { const r = await fetch(u); if (r.ok) { await cache.put(u, r); have.add(abs(u)); pending.delete(u); done = Math.min(total, done + 1); } } catch (e) { } }));
@@ -148,7 +153,7 @@ async function checkPack() {
   } finally {
     checking = false;
     // A language/connection/settings event during an in-flight request must not be lost.
-    if (recheck || languageChanged()) { recheck = false; setTimeout(() => checkPack().catch(() => { }), 0); }
+    if (!manualSave && (recheck || languageChanged())) { recheck = false; setTimeout(() => checkPack().catch(() => { }), 0); }
   }
 }
 function donePack(want, langs) {
@@ -196,14 +201,32 @@ function packFiles(groups?: string[], mine = packLangs()) {
   return urls;
 }
 // Download every file of the pack so it plays with no internet (Grown-ups → "Save voices for offline")
-export async function savePackOffline(progress) {
-  if (!PACK) return 0; const urls = packFiles();
-  let n = 0; const cache = await caches.open('sv-voices');
-  for (let i = 0; i < urls.length; i += 6) {
-    await Promise.all(urls.slice(i, i + 6).map(async u => { if (await cache.match(u)) { n++; return; } try { const r = await fetch(u); if (r.ok) { await cache.put(u, r); n++; } } catch (e) { } }));
-    progress && progress(Math.min(urls.length, i + 6), urls.length);
-  }
-  return n;
+export async function savePackOffline(progress?: (done: number, total: number) => void) {
+  if (progress) manualListeners.add(progress);
+  if (!manualSave) manualSave = (async () => {
+    // This task belongs to the voice service, never to a settings window. Reopening
+    // the window joins the same job; closing/redrawing it cannot stop the work.
+    while (checking) await rest(25);
+    if (!PACK) return 0;
+    const cache = await caches.open('sv-voices'), urls = packFiles();
+    let n = 0;
+    const notify = () => {
+      packEmit({state:'loading',done:n,total:urls.length,saved:n,fullTotal:urls.length});
+      for (const f of manualListeners) try { f(n,urls.length); } catch (e) { }
+    };
+    notify();
+    for (let i = 0; i < urls.length; i += 6) {
+      await Promise.all(urls.slice(i, i + 6).map(async u => { if (await cache.match(u)) { n++; return; } try { const r = await fetch(u); if (r.ok) { await cache.put(u, r); n++; } } catch (e) { } }));
+      notify();
+      if (offline()) break;
+      await rest(PACK_REST.core);
+    }
+    if (n === urls.length) packEmit({state:'ready',total:n});
+    else packEmit({state:'waiting',left:urls.length-n});
+    return n;
+  })().finally(() => { manualSave = null; if (settings.autoPack !== false) refreshPack(); });
+  try { return await manualSave; }
+  finally { if (progress) manualListeners.delete(progress); }
 }
 
 // (round R item 12, owner 10 Oct: "wifi should automatically, ask user to allow download over mobile") the core voices

@@ -4,7 +4,7 @@
 // Set these in Netlify → Site configuration → Environment variables (never in the code):
 //   STUDIO_PASSWORD   the grown-ups' password (12 characters or more, not used anywhere else)  required
 //   GITHUB_TOKEN      fine-grained token: this repository only, Contents read/write and Actions write for bot dispatch
-//   GITHUB_REPO       e.g. nguyentuanphu/Sparkle-Valley (the default)                    optional
+//   GITHUB_REPO       e.g. nguyentuanphu/tpn (the default)                    optional
 //   AZURE_KEY, AZURE_REGION                            to make voices online             optional
 //   NETLIFY_TOKEN                                      the Website page                  optional
 //   FAMILY_CODE                                        the family code (else Studio makes one)  optional
@@ -264,7 +264,7 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
       out.days.reverse();
       return json(out);
     }
-    const conf = { azureKey: env('AZURE_KEY'), azureRegion: env('AZURE_REGION'), githubToken: env('GITHUB_TOKEN'), githubRepo: env('GITHUB_REPO') || 'nguyentuanphu/Sparkle-Valley', githubBranch: env('GITHUB_BRANCH') || 'main',
+    const conf = { azureKey: env('AZURE_KEY'), azureRegion: env('AZURE_REGION'), githubToken: env('GITHUB_TOKEN'), githubRepo: env('GITHUB_REPO') || 'nguyentuanphu/tpn', githubBranch: env('GITHUB_BRANCH') || 'main',
       netlifyToken: env('NETLIFY_TOKEN'), netlifySite: env('NETLIFY_SITE') || env('SITE_ID'), siteUrl: env('URL') };
   if (!conf.githubToken) return json({ error: 'Add GITHUB_TOKEN in Netlify (Site configuration → Environment variables) so the online Studio can read and save the family’s files.', setup: true }, 503);
   const gstore = githubStore({ token: conf.githubToken, repo: conf.githubRepo, branch: conf.githubBranch, held: heldOn(await heldStore()) });

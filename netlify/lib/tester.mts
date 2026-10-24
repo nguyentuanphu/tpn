@@ -6,12 +6,13 @@
 // and the rewards). (PRIV-016) only devices the switch covers are heard; reports keep the players' names because the
 // tester accepted that; nothing here is ever public.
 import { createHash } from 'node:crypto';
+import { BUILD_RE, buildRank } from './build-number.mts';
 
 export const TLIMITS = { size: 320000, device: 60, ip: 150, problems: 3000, keepDays: 60, reportsPerProblem: 20, note: 600, log: 300, errors: 20 };
 const ID = /^[a-z0-9]{12}$/, KINDS = ['broken', 'looks', 'words', 'sound', 'idea', 'auto'], AUTOS = ['error', 'noopen', 'noclose', 'freeze', 'slow', 'offscreen', 'novoice', 'stuck', 'autoplay'];
 export const STATUSES = ['new', 'fixing', 'fixed', 'confirmed', 'back', 'notbug', 'dup'];
 // (r89.1, owner 23 Oct AEDT) a build is r and a whole number, or one with a point release (r89.1); builds compare as numbers
-const BUILD = /^r\d{1,4}(\.\d{1,2})?$/, PK = /^[a-f0-9]{16}$/;
+const BUILD = BUILD_RE, PK = /^[a-f0-9]{16}$/;
 const day = t => new Intl.DateTimeFormat('en-CA', { timeZone:'Australia/Sydney', year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date(t));
 const txt = (v, n) => typeof v === 'string' ? v.replace(/[\u0000-\u001f<>]/g, ' ').trim().slice(0, n) : '';
 const num = (v, lo, hi) => Number.isFinite(+v) ? Math.max(lo, Math.min(hi, +v)) : undefined;
@@ -78,7 +79,7 @@ export async function addReport(S, live, body, now = Date.now(), ipk = '') {
     if (r.join) return { error: 'no such problem', status: 400 };
     p = { k, kind: r.kind, auto: r.auto, title: titleOf(r), where: r.where, firstAt: now, n: 0, devices: [], builds: [], reports: [], status: 'new', kinds: {}, spoken: false };
   }
-  if (p.status === 'fixed' || p.status === 'confirmed') { if (r.b && p.fixedIn && +r.b.slice(1) >= +p.fixedIn.slice(1)) p.status = 'back'; }
+  if (p.status === 'fixed' || p.status === 'confirmed') { if (r.b && p.fixedIn && buildRank(r.b) >= buildRank(p.fixedIn)) p.status = 'back'; }
   p.n += r.count; p.lastAt = now; p.kinds[r.kind] = (p.kinds[r.kind] || 0) + 1; if (r.spoken) p.spoken = true;
   if (!p.devices.includes(r.id)) p.devices.push(r.id); if (r.b && !p.builds.includes(r.b)) p.builds.push(r.b);
   p.reports = [...p.reports, rid].slice(-TLIMITS.reportsPerProblem); p.devices = p.devices.slice(-200); p.builds = p.builds.slice(-20);
@@ -124,7 +125,7 @@ export async function problem(S, k) {
   return { ...short(p), devices: p.devices, reports };
 }
 export const shotOf = async (S, rid) => /^[a-f0-9]{16}$/.test(rid || '') ? await S.get(`shot/${rid}`) : null;
-// Studio sets a problem's status: { status, fixedIn: 'rNN', dupOf: k, issue: n }; fixed and confirmed count as help for
+// Studio sets a problem's status: { status, fixedIn: 'v1.01' (older: 'rNN'), dupOf: k, issue: n }; fixed and confirmed count as help for
 // every device that reported it (the badges, the coins and the weekly star)
 export async function setProblem(S, k, b, now = Date.now()) {
   if (!PK.test(k || '')) return null; const p = await S.get(`p/${k}`, { type: 'json' }); if (!p || !b || typeof b !== 'object') return null;
@@ -149,9 +150,9 @@ export async function deviceStatus(S, live, id, build, now = Date.now()) {
   const t = (await S.get(`t/${id}`, { type: 'json' })) || { id, mine: [], helped: [] }, mine = [];
   const minek = (t.mine || []).slice(-100), mp = await readJSON(S, minek.map(k => `p/${k}`));
   for (const [i, k] of minek.entries()) { const p = mp[i]; if (p) mine.push({ k, title: p.title, status: p.status, fixedIn: p.fixedIn || '', kind: (t.kinds || {})[k] || p.kind, auto: p.auto || '', where: p.where, spoken: !!p.spoken }); }
-  const list = await problems(S), b = BUILD.test(build || '') ? +build.slice(1) : 0;
+  const list = await problems(S), b = Math.max(0, buildRank(build));
   const open = list.filter(p => ['new', 'fixing', 'back'].includes(p.status)).slice(0, 200).map(p => ({ k: p.k, title: p.title, where: p.where, n: p.n }));
-  const retest = mine.filter(p => p.status === 'fixed' && p.fixedIn && b >= +p.fixedIn.slice(1) && p.kind === 'auto');
+  const retest = mine.filter(p => p.status === 'fixed' && p.fixedIn && b >= buildRank(p.fixedIn) && p.kind === 'auto');
   const star = starOf((await readJSON(S, await all(S, 't/'))).filter(Boolean), now) === id;
   return { mine, open, retest, helped: (t.helped || []).length, helpedKinds: [...new Set((t.helped || []).map(h => h.kind))], reports: t.reports || 0, star, peeks: Array.isArray((testerRule(live) || {}).peeks) ? testerRule(live).peeks : [] };
 }

@@ -1,4 +1,4 @@
-# Sparkle Valley · Thung Lũng Lấp Lánh
+# TPN
 
 An open-world 3D adventure for children aged 2 to 8, in **English and Vietnamese**. Each child plays as their own character with their own face photo. They explore a valley, solve thinking puzzles in shrines, grow a farm, play traditional Vietnamese games with the village kids, and follow a story.
 
@@ -15,7 +15,7 @@ Choose **one** of these:
 1. Merge this work into the `main` branch.
 2. On GitHub, open the repository → **Settings** → **Pages**.
 3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-4. Wait about a minute. The address appears at the top of the Pages screen, for example `https://nguyentuanphu.github.io/Sparkle-Valley/`.
+4. Wait about a minute. The address appears at the top of the Pages screen, for example `https://nguyentuanphu.github.io/tpn/`.
 
 **B. Netlify Drop (free, drag and drop)**
 1. Run `./build-netlify.sh` to get the `netlify-site/` folder with only the files the game needs.

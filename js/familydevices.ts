@@ -18,12 +18,12 @@ const notify = () => dispatchEvent(new Event('sv-family-photos'));
 async function request(action, body = {}) {
   const device = familyDevice(); const r = await fetch('api/family-devices/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(device?.token ? { Authorization: 'Bearer ' + device.token } : {}) }, body: JSON.stringify(body), cache: 'no-store' });
   let value; try { value = await r.json(); } catch { throw new Error(T('This connection is unavailable. Try again when online.', 'Kết nối chưa hoạt động. Thử lại khi có mạng.')); }
-  if(device?.token && familyDevice()?.token!==device.token && !['create','join','recover'].includes(action))throw new Error(T('This connection is unavailable. Try again when online.', 'Kết nối chưa hoạt động. Thử lại khi có mạng.'));
-  if (!r.ok) { if (r.status === 403 && device?.token && familyDevice()?.token===device.token && !['join', 'recover'].includes(action)) { if(action==='status')localStorage.removeItem(KEY);
+  // Check HTTP status before comparing connection state so a concurrent 403 revocation still clears cached photos.
+  if (!r.ok) { if (r.status === 403 && device?.token && !['join', 'recover'].includes(action)) { const current = familyDevice()?.token; if (current === device.token) { if(action==='status')localStorage.removeItem(KEY);
       // A device may be revoked between status and manifest/photo. Confirm the
       // connection before retaining its token; pending approval is still valid.
       else await request('status');
-      await clearPrivatePhotos(); } throw new Error(T(`Could not complete this step (${r.status}). Check the code or connection and try again.`, `Chưa hoàn thành bước này (${r.status}). Kiểm tra mã hoặc kết nối rồi thử lại.`)); } return value;
+      await clearPrivatePhotos(); } else if (!current) await clearPrivatePhotos(); } throw new Error(T(`Could not complete this step (${r.status}). Check the code or connection and try again.`, `Chưa hoàn thành bước này (${r.status}). Kiểm tra mã hoặc kết nối rồi thử lại.`)); } if(device?.token && familyDevice()?.token!==device.token && !['create','join','recover'].includes(action))throw new Error(T('This connection is unavailable. Try again when online.', 'Kết nối chưa hoạt động. Thử lại khi có mạng.')); return value;
 }
 let refreshing = null;
 export function refreshDevicePhotos({ force = false } = {}) { if (refreshing) return force ? refreshing.then(() => refreshDevicePhotos()) : refreshing; refreshing = refreshPhotos().finally(() => { refreshing = null; }); return refreshing; }

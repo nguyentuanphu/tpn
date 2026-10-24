@@ -133,7 +133,7 @@ async function speakNow(en, vi) {
   const my = ++seq;
   try { speechSynthesis.cancel(); } catch (e) { }
   stopPlayback();
-  await waitPack(); if (my !== seq) return;
+  if (!PACK || !voiceLanguages(settings).every(l => voiceIndex.has(l))) { await waitPack(); if (my !== seq) return; }
   // a family recording of exactly this line wins over any other voice
   if (settings.familyVoice) {
     const ph = FAMILY_PHRASES.find(p => p.en === en || p.vi === vi);
@@ -310,8 +310,18 @@ function stopPlayback() {
   if (cancelUrlPlayback) cancelUrlPlayback();
   try { player?.pause(); } catch (e) { }
 }
-unlockers.push(() => { if (primed) return; try { player = player || new Audio(); player.src = SILENT; const p = player.play(); if (p) p.then(() => { primed = true; player.pause(); }).catch(() => { }); } catch (e) { } });
+unlockers.push(() => {
+  if (primed) return;
+  try {
+    player = player || new Audio();
+    if (player.src && player.src !== SILENT && !player.paused) { primed = true; return; }
+    player.src = SILENT;
+    const p = player.play();
+    if (p) p.then(() => { primed = true; if (player.src === SILENT) player.pause(); }).catch(() => { });
+  } catch (e) { }
+});
 function playUrl(url, rate = 1) {
+  player = player || (typeof Audio !== 'undefined' ? new Audio() : null);
   if (!player) return Promise.resolve(false);
   if (cancelUrlPlayback) cancelUrlPlayback();
   // (owner, 13 Oct: some films did not start by themselves) a recording the phone never starts, or that stalls, used to
@@ -319,14 +329,22 @@ function playUrl(url, rate = 1) {
   // started one ends at its own length plus 1.5 s at the latest
   return new Promise(res => {
     let done = false, t0 = null, t1 = null;
-    const end = ok => { if (done) return; done = true; clearTimeout(t0); clearTimeout(t1); if (cancelUrlPlayback === cancel) { cancelUrlPlayback = null; player.onended = player.onerror = player.onplaying = null; } res(ok); };
+    const end = ok => { if (done) return; done = true; clearTimeout(t0); clearTimeout(t1); if (cancelUrlPlayback === cancel) { cancelUrlPlayback = null; player.onended = player.onerror = player.onplaying = player.onloadedmetadata = null; } res(ok); };
     const cancel = () => { try { player.pause(); } catch (e) { } end(true); };
     cancelUrlPlayback = cancel;
     t0 = setTimeout(() => { try { player.pause(); } catch (e) { } end(false); }, 6000);
+    const applyRate = () => {
+      try {
+        player.defaultPlaybackRate = rate;
+        player.playbackRate = rate;
+        player.preservesPitch = player.mozPreservesPitch = player.webkitPreservesPitch = rate === 1;
+      } catch (e) { }
+    };
     try {
-      player.pause(); player.src = url; player.preservesPitch = player.webkitPreservesPitch = rate === 1; player.playbackRate = rate;
+      player.pause(); player.src = url; applyRate();
+      player.onloadedmetadata = applyRate;
       player.onended = () => end(true); player.onerror = () => end(false);
-      player.onplaying = () => { clearTimeout(t0); const d = player.duration; t1 = setTimeout(() => end(true), ((isFinite(d) && d > 0 ? d / rate : 30) + 1.5) * 1000); };
+      player.onplaying = () => { applyRate(); clearTimeout(t0); const d = player.duration; t1 = setTimeout(() => end(true), ((isFinite(d) && d > 0 ? d / rate : 30) + 1.5) * 1000); };
       player.play().catch(() => end(false));
     } catch (e) { end(false); }
   });
@@ -369,6 +387,7 @@ addEventListener('click', () => loadPack(), { once: true, passive: true });
 for (const ev of ['LanguageChanged', 'SettingsChanged']) events.on(ev, () => { if (packReady) loadPack(); });
 { const t0 = Date.now(), wait = setInterval(() => { const g = window.__sv; if (packReady) return clearInterval(wait); if ((g && g.bootTimes) || Date.now() - t0 > 30000) { clearInterval(wait); setTimeout(() => { if (settings.voice || settings.autoPack !== false) loadPack(); }, 3000); } }, 500); }
 const waitPack = async (langs = voiceLanguages(settings)) => {
+  if (PACK && langs.every(l => voiceIndex.has(l))) return;
   let timer;
   try { await Promise.race([loadPack(langs), new Promise(r => { timer = setTimeout(r, 12000); })]); } finally { clearTimeout(timer); }
 };
@@ -388,7 +407,7 @@ export const allowMobilePack = yes => voicePackMod().then(m => m.allowMobilePack
 // an English line with Vietnamese words has its own recording with both voices (js/packhash.js lineHash); an older pack
 // without it still plays its all-English recording
 const packKey = (lang, text) => { if (!PACK) return null; const h = lineHash(lang, text); if (PACK.lines[h]) return h; const o = packHash(lang, text); return PACK.lines[o] ? o : null; };
-let previewSlot = null;
+let previewSlot = null, previewRequest = 0;
 const packSlot = (lang, text) => {
   const has = PACK && PACK.lines[packKey(lang, text)];
   if (!has) return null;
@@ -399,22 +418,56 @@ const packSlot = (lang, text) => {
   return has.includes('f') ? 'f' : has[0];
 };
 export async function previewPackVoice(slot) {
+  const request = ++previewRequest;
   previewSlot = slot === 'm' ? 'm' : 'f';
-  try { await say('Hello! Welcome to Sparkle Valley.', 'Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.'); }
-  finally { previewSlot = null; }
+  // say() is fire-and-forget; clearing the slot after it selected the female default
+  // before the asynchronous manifest lookup could choose the requested recording.
+  try { await sayAsync('Hello! Welcome to Sparkle Valley.', 'Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.'); }
+  finally { if (request === previewRequest) previewSlot = null; }
 }
 // (round P, owner: "the 3 voice styles sound the same") the recordings play for almost every line, so the style changes
 // them too: Cute a little higher and quicker, Grandparent lower and slower (playing faster or slower moves the pitch)
-const STYLE_RATE = { natural: 1, cute: 1.13, grandpa: .88 };
+const STYLE_RATE = { natural: 1, cute: 1.22, grandpa: .82 };
 const packRate = slot => { const k = speakerKind(), st = STYLE_RATE[settings.voiceStyle] || 1; if (!k) return st; let r = k.old ? .9 : k.kid ? 1.1 : 1; if (k.gender === 'm' && slot === 'f') r *= .86; return r * st; };
+export async function warmVoiceLine(en: string, vi?: string) {
+  try {
+    await waitPack();
+    const pairs: [string, string][] = [['en', en]];
+    if (vi) pairs.push(['vi', vi]);
+    for (const [lang, text] of pairs) {
+      const slot = packSlot(lang, text);
+      if (!slot) continue;
+      const k = 'pack|' + slot + '|' + lang + '|' + text;
+      if (mem.has(k)) continue;
+      const r = await fetch(packUrl(lang, text, slot));
+      if (!r.ok) continue;
+      const buf = await decode(await r.arrayBuffer());
+      mem.set(k, buf);
+      if (mem.size > 120) mem.delete(mem.keys().next().value);
+    }
+  } catch (e) { }
+}
 // Download every file of the pack so it plays with no internet (Grown-ups → "Save voices for offline")
-export const savePackOffline = progress => voicePackMod().then(m => m.savePackOffline(progress));
+export async function resumePackDownload() {
+  await waitPack();
+  const m = await voicePackMod();
+  if (PACK) m.startPack(PACK, packEmit, () => hereArea);
+  m.refreshPack();
+}
+export async function savePackOffline(progress?: (done: number, total: number) => void) {
+  settings.autoPack = true; saveSettings();
+  await resumePackDownload();
+  return (await voicePackMod()).savePackOffline(progress);
+}
 export const packUrl = (lang, text, slot) => `voices/${lang}/${slot}/${packKey(lang, text) || lineHash(lang, text)}.mp3`;
 async function playPack(lang, text, my) {
   if (my !== seq) return true;
   const slot = packSlot(lang, text); if (!slot) return false;
   const k = 'pack|' + slot + '|' + lang + '|' + text;
   const url = packUrl(lang, text, slot), a = ac();
+  if (a && a.state !== 'running' && typeof document !== 'undefined' && !document.hidden) {
+    try { await Promise.race([a.resume(), new Promise(r => setTimeout(r, 250))]); } catch (e) { }
+  }
   // Web Audio asleep (iPhone before a tap took, or after a call): the plain player plays the same recording
   if (!a || a.state !== 'running') { voiceDiag.audio = a ? a.state : 'none'; if (await playUrl(url, packRate(slot))) return true; voiceDiag.lastMiss = 'audio ' + voiceDiag.audio; return false; }
   let buf = mem.get(k);
@@ -426,6 +479,10 @@ async function playPack(lang, text, my) {
     mem.set(k, buf); if (mem.size > 120) mem.delete(mem.keys().next().value);
   }
   if (my !== seq) return true;
+  if (a.state !== 'running') {
+    try { await Promise.race([a.resume(), new Promise(r => setTimeout(r, 200))]); } catch (e) { }
+    if (a.state !== 'running') return playUrl(url, packRate(slot));
+  }
   voiceDiag.audio = 'running'; await playBuffer(buf, packRate(slot)); return true;
 }
 

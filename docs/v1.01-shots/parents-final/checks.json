@@ -1,0 +1,68 @@
+[
+  {
+    "device": "phone",
+    "lang": "en",
+    "panelScroll": 0,
+    "headingTop": 29,
+    "footerTop": 766,
+    "bodyBottom": 733,
+    "footerVisible": true,
+    "familyCode": true,
+    "reportTitleClear": true
+  },
+  {
+    "device": "phone",
+    "lang": "vi",
+    "panelScroll": 0,
+    "headingTop": 29,
+    "footerTop": 766,
+    "bodyBottom": 733,
+    "footerVisible": true,
+    "familyCode": true,
+    "reportTitleClear": true
+  },
+  {
+    "device": "tablet",
+    "lang": "en",
+    "panelScroll": 0,
+    "headingTop": 155,
+    "footerTop": 976,
+    "bodyBottom": 943,
+    "footerVisible": true,
+    "familyCode": true,
+    "reportTitleClear": true
+  },
+  {
+    "device": "tablet",
+    "lang": "vi",
+    "panelScroll": 0,
+    "headingTop": 155,
+    "footerTop": 976,
+    "bodyBottom": 943,
+    "footerVisible": true,
+    "familyCode": true,
+    "reportTitleClear": true
+  },
+  {
+    "device": "computer",
+    "lang": "en",
+    "panelScroll": 0,
+    "headingTop": 29,
+    "footerTop": 722,
+    "bodyBottom": 689,
+    "footerVisible": true,
+    "familyCode": true,
+    "reportTitleClear": true
+  },
+  {
+    "device": "computer",
+    "lang": "vi",
+    "panelScroll": 0,
+    "headingTop": 29,
+    "footerTop": 722,
+    "bodyBottom": 689,
+    "footerVisible": true,
+    "familyCode": true,
+    "reportTitleClear": true
+  }
+]

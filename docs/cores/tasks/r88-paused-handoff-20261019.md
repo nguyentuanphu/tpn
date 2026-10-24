@@ -6,12 +6,12 @@ Branch: `work/bugs-typescript-20261019`. [Draft PR #400](https://github.com/nguy
 
 ## Saved implementation
 
-- Reporting: durable receipt-backed queue, bounded/coalesced sends, live retry status, keyboard-aware form, larger picture viewer, and capture of the actual world plus interface. Four reporting sources converted to TypeScript. [Reporting evidence](../../repair-reporting-20261019/STATUS.md).
-- Game completion: valley/NPC/shrine games return outside after the celebration; Play/Pad/Simple retain choices. Next/replay/difficulty preserve their launch origin and once-only shrine rewards. Shared frame converted to TypeScript. Short/split-pane celebration layout improved, but a GitHub clipping failure remains. [Game-flow evidence](../../repair-game-flow-20261019/STATUS.md).
-- Story/audio: actual rope dragging, correct turtle targets, retry progress accounting and waiting for the deferred film. Six fixed companion-name recordings integrated from `21d37dfc`; missing-voice reports include the actual text. Five story/autoplay sources converted to TypeScript with shared contracts. [Story evidence](../../repair-story-quests-20261019/STATUS.md).
-- Navigation: solid-map source converted in unchanged-rename commit `4818ad97` and typed in `5e163652`; the final checkpoint adds an exact circle/cell footprint query to planner acceptance without changing physical collision resolution or map geometry. [Before/after evidence](../../repair-autoplay-shrine-20261019/evidence/).
+- Reporting: durable receipt-backed queue, bounded/coalesced sends, live retry status, keyboard-aware form, larger picture viewer, and capture of the actual world plus interface. Four reporting sources converted to TypeScript. [Reporting evidence](../../history/repair-reporting-20261019/STATUS.md).
+- Game completion: valley/NPC/shrine games return outside after the celebration; Play/Pad/Simple retain choices. Next/replay/difficulty preserve their launch origin and once-only shrine rewards. Shared frame converted to TypeScript. Short/split-pane celebration layout improved, but a GitHub clipping failure remains. [Game-flow evidence](../../history/repair-game-flow-20261019/STATUS.md).
+- Story/audio: actual rope dragging, correct turtle targets, retry progress accounting and waiting for the deferred film. Six fixed companion-name recordings integrated from `21d37dfc`; missing-voice reports include the actual text. Five story/autoplay sources converted to TypeScript with shared contracts. [Story evidence](../../history/repair-story-quests-20261019/STATUS.md).
+- Navigation: solid-map source converted in unchanged-rename commit `4818ad97` and typed in `5e163652`; the final checkpoint adds an exact circle/cell footprint query to planner acceptance without changing physical collision resolution or map geometry. [Before/after evidence](../../history/repair-autoplay-shrine-20261019/evidence/).
 - Latest story follow-up gives dialogue its own choice plan instead of replacing another child's global game plan. The stronger regression and corrected screenshot setup are saved, but have not been browser-tested after this follow-up.
-- Gate #369 has a three-device reproduction and screenshots, with no production fix applied. [Gate evidence](../../repair-gate-view-20261019/evidence/before/).
+- Gate #369 has a three-device reproduction and screenshots, with no production fix applied. [Gate evidence](../../history/repair-gate-view-20261019/evidence/before/).
 
 The game now has **61 maintained TypeScript sources and 196 maintained JavaScript sources**. Generated JavaScript build output is excluded from this count. Eleven game sources were converted during this plan. This is not a completed migration or full strict checking.
 
@@ -20,12 +20,12 @@ The game now has **61 maintained TypeScript sources and 196 maintained JavaScrip
 | Checkpoint | Result | Limits |
 | --- | --- | --- |
 | Reporting `7c28d21a`, GitHub run [39237648036](https://github.com/nguyentuanphu/Sparkle-Valley/actions/runs/39237648036) | 223/223, no failed/repeated checks | Earlier checkpoint only. AI review did not finish. |
-| Completion `aff79ee3`, GitHub run [39244377795](https://github.com/nguyentuanphu/Sparkle-Valley/actions/runs/39244377795) | 222/225 | gameflow, gamewinlayout and testerreport still fail after standalone retries. ownerfamily and filmmusic pass only on retry. [Parsed summary](../../repair-game-flow-20261019/evidence/github-summary.json). |
+| Completion `aff79ee3`, GitHub run [39244377795](https://github.com/nguyentuanphu/Sparkle-Valley/actions/runs/39244377795) | 222/225 | gameflow, gamewinlayout and testerreport still fail after standalone retries. ownerfamily and filmmusic pass only on retry. [Parsed summary](../../history/repair-game-flow-20261019/evidence/github-summary.json). |
 | Local gameflow/types before later diagnostics | Both pass, 362/35 s | Does not clear the later GitHub timeout. |
 | Local storyquestflow on `b1523a2c` behaviour | Pass, 464 s | Earlier repaired run failed on deferred-film lifecycle; corrected run passed. Latest scoped-choice follow-up is not browser-retested. |
 | Related story/audio checks | 7/8 | voicecover, story, chapter2, arch, rules, types and ownerautoplaynavigation pass. Existing autoplay fails at the counting-shrine approach. No assertion relaxed. |
 | Focused autoplayshrine after footprint change | Pass, 79 s | Sampled accepted positions now agree with real collision. Actual trail uses the existing flight fallback, then walking and a legal win; this does not prove an entirely walkable route or clear the original whole-autoplay failure. |
-| Latest local CI reproduction | 1/2 | gamewinlayout passes 10/10 in 31 s; testerreport fails an 8 s report-panel visibility wait. This is different from its GitHub failure. [Evidence](../../r88-pause/evidence/). |
+| Latest local CI reproduction | 1/2 | gamewinlayout passes 10/10 in 31 s; testerreport fails an 8 s report-panel visibility wait. This is different from its GitHub failure. [Evidence](../../history/r88-pause/evidence/). |
 
 Last type check passed after the footprint and scoped-choice source edits. The newest gameflow diagnostic additions were written afterwards and are not rechecked. The stop request takes priority over further testing. No suites are running; the two-hour local server has expired. Restore/restart it when work is explicitly resumed.
 
