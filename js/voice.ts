@@ -27,7 +27,18 @@ if (window.speechSynthesis) { load(); try { speechSynthesis.addEventListener('vo
 
 export function voicesFor(lang) {
   const re = new RegExp('^' + (lang || 'en'), 'i');   // en, vi, zh (Chinese), hi (Hindi)
-  return all.filter(v => re.test(v.lang)).sort((a, b) => score(b) - score(a) || (Number(/en[-_](au|us)/i.test(b.lang)) - Number(/en[-_](au|us)/i.test(a.lang))));
+  const unique = [];
+  const seen = new Map();
+  for (const v of all.filter(v => re.test(v.lang))) {
+    const key = `${v.name.replace(/\s*\((?:enhanced|premium|compact|standard)\)$/i, '').trim().toLowerCase()}:${v.lang.toLowerCase()}`;
+    const old = seen.get(key);
+    if (!old || score(v) > score(old) || (score(v) === score(old) && v.localService && !old.localService)) {
+      if (old) unique[unique.indexOf(old)] = v;
+      else unique.push(v);
+      seen.set(key, v);
+    }
+  }
+  return unique.sort((a, b) => score(b) - score(a) || (Number(/en[-_](au|us)/i.test(b.lang)) - Number(/en[-_](au|us)/i.test(a.lang))));
 }
 export function voiceFor(lang) {
   const list = voicesFor(lang), want = lang === 'vi' ? settings.voiceVi : lang === 'en' ? settings.voiceEn : null;
@@ -96,6 +107,7 @@ function utter(text, lang) {
 // Long lines are split at sentence ends: some phones cut long utterances off or rush them.
 function deviceSpeak(text, lang, my) {
   if (!window.speechSynthesis) return Promise.resolve();
+  try { speechSynthesis.resume(); } catch (e) { }
   const parts = String(text).match(/[^.!?。…]+[.!?。…]*\s*/g) || [text];
   let chunks = []; for (const p of parts) { const last = chunks.length - 1; if (last >= 0 && (chunks[last] + p).length < 160) chunks[last] += p; else chunks.push(p); }
   // (round R, owner: "bánh khọt" and "nước mía" said by the English voice can't be understood) the Vietnamese words of an
@@ -215,6 +227,14 @@ function noteMiss(lang, text) {
   clearTimeout(missTimer); missTimer = setTimeout(() => { try { localStorage.setItem(MISS_KEY, JSON.stringify(L)); } catch (e) { } }, 2000);
 }
 export const voiceMisses = () => loadMisses().slice().sort((a, b) => b[2] - a[2]);
+export function forgetVoiceMisses(lines) {
+  if (!lines.length) return;
+  const sent = new Set(lines.map(m => `${m[0]}|${m[1]}`));
+  const remaining = loadMisses().filter(m => !sent.has(`${m[0]}|${m[1]}`));
+  misses = remaining;
+  clearTimeout(missTimer);
+  try { localStorage.setItem(MISS_KEY, JSON.stringify(remaining)); } catch (e) { }
+}
 export const clearVoiceMisses = () => { misses = []; try { localStorage.removeItem(MISS_KEY); } catch (e) { } };
 // Speak one string in a fixed language (letter names, etc.).
 export function sayIn(lang, text) {
