@@ -24,7 +24,7 @@
 import { settings, profiles } from './state.js';
 import { BUILD } from './build.js';
 import { Net } from './net.js';
-import { voiceMisses } from './voice.js';
+import { voiceMisses, forgetVoiceMisses } from './voice.js';
 import { events } from './core/events.js';
 import { id as makeId } from './core/ids.js';
 import { familyHash } from './content/familycode.js';
@@ -114,7 +114,7 @@ export async function flush(closing) {
     const r = await fetch('/api/hello', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true });
     if (r.status !== 204) return false;
     const now = readOut(); if (now.pending && now.pending.h === P.h) delete now.pending; writeOut(now);
-    markSent(P.v); lastSent = Date.now(); return true;
+    markSent(P.v); forgetVoiceMisses(P.v); lastSent = Date.now(); return true;
   } catch (e) { return false; } finally { sending = false; }
 }
 const markSent = v => { let sent = []; try { sent = JSON.parse(localStorage.getItem(SENT) || '[]'); } catch (e) { } try { localStorage.setItem(SENT, JSON.stringify(sent.concat(v.map(m => m[0] + '|' + m[1])).slice(-800))); } catch (e) { } };
