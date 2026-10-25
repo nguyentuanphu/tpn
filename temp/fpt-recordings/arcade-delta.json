@@ -1,5 +1,5 @@
 {
-  "inventory": "0d930eb1f0a6e744ab77e4d2ae809c32b0f16a11caacb58feab30a5ca0099a2c",
+  "inventory": "88b2ffa7438cc38bc3c682a58c753c80312cf4fb36eed916c4a96af7921a695b",
   "voice": {
     "provider": "FPT Neo",
     "model": "FPT.AI-VITs",
@@ -77,5 +77,5 @@
     }
   },
   "status": "complete",
-  "updated": "2026-10-25T12:26:41.354Z"
+  "updated": "2026-10-25T13:03:43.379Z"
 }
