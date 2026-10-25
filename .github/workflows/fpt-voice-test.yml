@@ -1,0 +1,54 @@
+name: FPT Le Minh voice test
+on:
+  push:
+    branches: [work/fpt-voice-samples-20261025]
+    paths:
+      - tools/fpt-voice-test.mts
+      - tests/unit/fpt-voice.test.mjs
+      - .github/workflows/fpt-voice-test.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: fpt-leminh-voice-test
+  cancel-in-progress: false
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.0
+      - name: Verify request and error handling without credentials
+        run: node --test tests/unit/fpt-voice.test.mjs
+      - name: Record one short Le Minh sample
+        env:
+          FPT_API_KEY: ${{ secrets.FPT_API_KEY }}
+        run: node tools/fpt-voice-test.mts
+      - name: Check the MP3 can be decoded
+        run: |
+          ffprobe -v error -show_entries format=duration -of json docs/voice-review-20261025/leminh-test.mp3 > docs/voice-review-20261025/audio-check.json
+          node -e "const r=require('./docs/voice-review-20261025/audio-check.json'); if (!(Number(r.format?.duration)>0)) process.exit(1)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fpt-leminh-test
+          path: docs/voice-review-20261025/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Save the sample only on the working branch
+        if: github.ref == 'refs/heads/work/fpt-voice-samples-20261025'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh auth setup-git
+          git config user.name 'Sparkle Valley voices'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/voice-review-20261025/*.mp3 docs/voice-review-20261025/*.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Save the owner-requested FPT Le Minh test recording [skip netlify]'
+          git pull --no-rebase origin work/fpt-voice-samples-20261025
+          git push origin HEAD:work/fpt-voice-samples-20261025
