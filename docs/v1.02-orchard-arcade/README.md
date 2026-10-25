@@ -45,3 +45,6 @@ Final Orchard review repaired guest-to-NPC continuation to retain the guest’s 
 The dedicated parent-entry regression also passes: rapid duplicate opening creates one gated window, an actual round completes, and closing restores the prior pause state. New invitations are declined while the parent arcade is already active. The 6,319 baseline clips cover stable v1.01; six uncorrected folk prototypes still require a later reviewed speech delta, rather than paying to record incorrect instructions.
 
 [Orchard pictures](review/orchard.jpg) · [Parent arcade pictures](review/parent-bar.jpg) · [Studio analytics pictures](review/analytics.jpg) · [Studio switches](review/switches.jpg). These are synthetic test profiles and actual game artwork, not real family data.
+
+
+Final parent layout review covers allocation fields and actual two-adult result screens in both languages on all three sizes (twelve additional native captures). Close has a separate fixed header row and cannot cover inputs; the outer window retains its height, the primary Start/Next action has its own footer, and changing turn/round resets the scroll body deliberately. All six layout/round cases pass. Default animated lights finish and re-enable Next; closing during a hold cannot create a hidden online session. Images: [allocations](review/parent-allocations.jpg), [actions](review/parent-actions.jpg).

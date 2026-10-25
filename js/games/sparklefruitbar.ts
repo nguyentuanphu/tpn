@@ -14,9 +14,9 @@ export function openFruitBar(online?:GameOnline){
  const wasPaused=window.__sv?.paused;if(window.__sv)window.__sv.paused=true;
  const m=modal('parent-arcade',''),card=m.querySelector('.card') as HTMLElement;card.replaceChildren();
  const style=dom('style');style.textContent=ARCADE_STYLE;const close=control('✕',()=>finish());close.setAttribute('aria-label',T('Close','Đóng'));close.classList.add('x');
- const root=dom('div','arcade arcade-adult');root.dataset.parentArcade='';card.append(style,close,root);
+ const root=dom('div','arcade arcade-adult');root.dataset.parentArcade='';const header=dom('div','parent-arcade-header');header.append(dom('b','',T('Grown-up tester arcade','Khu thử nghiệm người lớn')),close);const footer=dom('div','parent-arcade-footer');card.append(style,header,root,footer);
  let session:ArcadeSession<ReturnType<typeof barStart>>|undefined,dead=false,helper=false,waitingAt=0;
- let timer:ReturnType<typeof setInterval>|undefined,frame=0,shown=-1,spinning=false,light=0;
+ let timer:ReturnType<typeof setInterval>|undefined,frame=0,shown=-1,spinning=false,light=0,lastView='';
  const icon=(i:number)=>i>=6?dom('b','',i===6?'7':'BAR'):art(BAR_SYMBOLS[i].art);
  function finish(){if(dead)return;dead=true;if(timer)clearInterval(timer);cancelAnimationFrame(frame);session?.close();if(online)online.leave?.();observer.disconnect();m.remove();if(window.__sv)window.__sv.paused=wasPaused||false;}
  function start(seats:number,npc:boolean,fair:boolean){helper=npc;session=new ArcadeSession(barStart(online?.seed||`parent-bar-${Date.now()}`,seats,fair),online,barApply,paint);paint();timer=setInterval(()=>{
@@ -31,7 +31,7 @@ export function openFruitBar(online?:GameOnline){
  const batch=(values:number[])=>{queued=values;while(queued.length&&!session?.busy){const n=queued.shift()!;if(!session?.submit(n))break;}};
  const command=(value:number)=>{if(!spinning)session?.submit(value);};
  function paint(){
-  if(!session||dead)return;const s=session.state;root.replaceChildren();root.dataset.phase=s.phase;root.dataset.round=String(s.round);queueMicrotask(pump);
+  if(!session||dead)return;const s=session.state;const view=[s.phase,s.round,s.turn].join(':');const resetView=view!==lastView;lastView=view;root.replaceChildren();footer.replaceChildren();root.dataset.phase=s.phase;root.dataset.round=String(s.round);queueMicrotask(pump);
   root.append(dom('h2','',T('Sparkle Fruit Bar · Grown-ups','Bảng Trái Cây Lấp Lánh · Người lớn')),
    dom('p','',T('Free virtual counters only. No purchase, cash-out or exchange. Separate from children’s coins.','Chỉ dùng điểm ảo miễn phí. Không mua, đổi tiền hay trao đổi. Tách biệt với xu của trẻ.')));
   const board=dom('div','arcade-ring');for(let i=0;i<16;i++){const c=dom('div','arcade-cell');c.dataset.barCell=String(i);c.style.gridColumn=String(RING_CELLS[i][0]);c.style.gridRow=String(RING_CELLS[i][1]);c.append(icon(i%8));board.append(c);}
@@ -48,22 +48,23 @@ export function openFruitBar(online?:GameOnline){
    const clear=control(T('Clear','Xóa'),()=>batch(s.bets[s.turn].flatMap((n,i)=>n?[i*101]:[])));
    const repeat=control(T('Repeat','Lặp lại'),()=>batch(s.previous[s.turn].flatMap((n,i)=>n!==s.bets[s.turn][i]?[i*101+n]:[])));
    const refill=control(T('Free refill to 100,000','Nạp miễn phí lên 100.000'),()=>command(902));refill.disabled=s.balances[s.turn]>=100000;
-   const ready=control(T('Lock allocations / Start','Chốt điểm / Bắt đầu'),()=>command(900));ready.dataset.barReady='';ready.disabled=!s.bets[s.turn].some(Boolean);actions.append(clear,repeat,refill,ready);if(queued.length||!mine()||session.waiting||helper&&!session.online&&s.turn!==0)actions.querySelectorAll('button').forEach(b=>b.disabled=true);root.append(actions);
+   const ready=control(T('Lock allocations / Start','Chốt điểm / Bắt đầu'),()=>command(900));ready.dataset.barReady='';ready.disabled=!s.bets[s.turn].some(Boolean)||!mine()||session.waiting||queued.length>0||helper&&!session.online&&s.turn!==0;actions.append(clear,repeat,refill);footer.append(ready);if(queued.length||!mine()||session.waiting||helper&&!session.online&&s.turn!==0)actions.querySelectorAll('button').forEach(b=>b.disabled=true);root.append(actions);
   }else{
    root.append(dom('p','',T(`Biggest returns: ${s.biggest.join(' · ')}`,`Điểm nhận lớn nhất: ${s.biggest.join(' · ')}`)));
-   if(s.phase==='result'){const next=control(s.round>=s.limit?T('Finish session','Kết thúc phiên'):T('Next round','Lượt tiếp theo'),()=>command(901));next.dataset.barNext='';next.disabled=!mine()||session.waiting||(!reduceMotion()&&s.round!==shown);root.append(next);}
+   if(s.phase==='result'){const next=control(s.round>=s.limit?T('Finish session','Kết thúc phiên'):T('Next round','Lượt tiếp theo'),()=>command(901));next.dataset.barNext='';next.disabled=!mine()||session.waiting||spinning||(!reduceMotion()&&s.round!==shown);footer.append(next);}
    else root.append(dom('h2','',T('Session complete. These counters stay in this arcade only.','Phiên chơi kết thúc. Điểm ảo chỉ nằm trong trò này.')));
   }
   const rules=dom('details'),summary=dom('summary','',T('Rules and exact frequencies','Luật chơi và tần suất chính xác'));rules.append(summary,dom('p','',T('Each selected counter is deducted once. Return = allocation × multiplier on the final symbol. Choose 0–100 per symbol. The default challenge lasts 20 rounds; refills are always free.','Mỗi điểm đã chọn được trừ một lần. Điểm nhận = điểm đặt × hệ số của hình cuối. Chọn 0–100 mỗi hình. Phiên mặc định có 20 lượt; nạp điểm luôn miễn phí.')),
    dom('p','',BAR_SYMBOLS.map(x=>`${T(x.en,x.vi)}: ${s.fair?'12.5':x.weight}% ×${x.mult}`).join(' · ')),dom('p','',T('Family-hosted seeded results are shared across players. This is not a ranked or cheat-proof competition. No public leaderboard or real-world value.','Kết quả theo hạt giống được chia sẻ giữa người chơi trong phòng gia đình. Đây không phải cuộc thi xếp hạng hay chống gian lận. Không có bảng xếp hạng công khai hoặc giá trị ngoài đời.')));root.append(rules);
   if(session.waiting&&performance.now()-waitingAt>=30000){const b=control(T('Continue locally','Chơi tiếp trên máy này'),()=>{session!.continueLocally();helper=false;waitingAt=0;paint();});b.dataset.barContinue='';root.append(b);}
+  if(resetView)root.scrollTop=0;
   if(s.phase==='result'&&s.round!==shown){shown=s.round;animateResult(s.result!);}else highlight(s.result??0);
  }
  function highlight(index:number){root.querySelectorAll<HTMLElement>('[data-bar-cell]').forEach((cell,i)=>cell.classList.toggle('on',i===index));}
  function animateResult(result:number){cancelAnimationFrame(frame);if(reduceMotion()){highlight(result);return;}spinning=true;const begin=performance.now();const tick=(now:number)=>{if(dead)return;const p=Math.min(1,(now-begin)/1800);light=Math.floor(48*(1-(1-p)**3));highlight(p===1?result:light%16);if(p<1)frame=requestAnimationFrame(tick);else{spinning=false;paint();}};frame=requestAnimationFrame(tick);}
  const gate=dom('div','arcade-gate');gate.append(dom('h2','',T('Grown-up tester arcade','Khu thử nghiệm dành cho người lớn')),dom('p','',T('Hold to enter. Virtual play only; this does not change the child’s progress.','Nhấn giữ để vào. Chỉ chơi bằng điểm ảo; không thay đổi tiến trình của trẻ.')));
  const enter=control(T('Grown-ups: press and hold','Người lớn: nhấn giữ'),()=>{});enter.classList.add('grown');enter.innerHTML='<span class="ring"></span>'+T('Grown-ups: press and hold','Người lớn: nhấn giữ');enter.dataset.barGate='';gate.append(enter);root.append(gate);
- holdButton(enter,()=>{root.replaceChildren();if(online){start(Math.min(4,online.names.length),false,false);return;}root.append(dom('h2','',T('Choose a parent arcade session','Chọn phiên chơi dành cho người lớn')));for(const [label,vi,seats,npc,fair]of [['Classic solo','Một người cổ điển',1,false,false],['Equal frequencies solo','Một người tần suất bằng nhau',1,false,true],['Two adults here','Hai người lớn cùng máy',2,false,false],['With a practice helper','Cùng bạn hỗ trợ tập chơi',2,true,false]]as const){if(!testerArcadeAvailable('sparklefruitbar','single'))continue;const b=control(T(label,vi),()=>start(seats,npc,fair));b.dataset.barMode=String(seats)+(npc?'npc':fair?'fair':'');root.append(b);}if(testerArcadeAvailable('sparklefruitbar','multi'))root.append(control(T('Invite another grown-up online','Mời người lớn khác trực tuyến'),()=>{finish();window.__sv.inviteGame('sparklefruitbar',undefined,1);}));});
+ holdButton(enter,()=>{if(dead)return;root.replaceChildren();if(online){start(Math.min(4,online.names.length),false,false);return;}root.append(dom('h2','',T('Choose a parent arcade session','Chọn phiên chơi dành cho người lớn')));for(const [label,vi,seats,npc,fair]of [['Classic solo','Một người cổ điển',1,false,false],['Equal frequencies solo','Một người tần suất bằng nhau',1,false,true],['Two adults here','Hai người lớn cùng máy',2,false,false],['With a practice helper','Cùng bạn hỗ trợ tập chơi',2,true,false]]as const){if(!testerArcadeAvailable('sparklefruitbar','single'))continue;const b=control(T(label,vi),()=>start(seats,npc,fair));b.dataset.barMode=String(seats)+(npc?'npc':fair?'fair':'');root.append(b);}if(testerArcadeAvailable('sparklefruitbar','multi'))root.append(control(T('Invite another grown-up online','Mời người lớn khác trực tuyến'),()=>{finish();window.__sv.inviteGame('sparklefruitbar',undefined,1);}));});
  return {close:finish};
 }
 

@@ -5,6 +5,10 @@
   {
     "parentEntryDeduplicates": true,
     "parentGateAndRoundComplete": true,
+    "normalLightAnimationFinishes": true,
     "pauseStateRestored": true
+  },
+  {
+    "closingDuringHoldCannotStartHiddenOnlineSession": true
   }
 ]

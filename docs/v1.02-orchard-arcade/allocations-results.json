@@ -1,0 +1,59 @@
+[
+  {
+    "nonTesterCannotOpenEither": true
+  },
+  {
+    "device": "phone",
+    "lang": "en",
+    "parentAllocationFields": 8,
+    "parentFooterAccessible": true,
+    "closeStaysVisible": true,
+    "closeOutsideScrollBody": true,
+    "actualRoundCompletes": true
+  },
+  {
+    "device": "phone",
+    "lang": "vi",
+    "parentAllocationFields": 8,
+    "parentFooterAccessible": true,
+    "closeStaysVisible": true,
+    "closeOutsideScrollBody": true,
+    "actualRoundCompletes": true
+  },
+  {
+    "device": "tablet",
+    "lang": "en",
+    "parentAllocationFields": 8,
+    "parentFooterAccessible": true,
+    "closeStaysVisible": true,
+    "closeOutsideScrollBody": true,
+    "actualRoundCompletes": true
+  },
+  {
+    "device": "tablet",
+    "lang": "vi",
+    "parentAllocationFields": 8,
+    "parentFooterAccessible": true,
+    "closeStaysVisible": true,
+    "closeOutsideScrollBody": true,
+    "actualRoundCompletes": true
+  },
+  {
+    "device": "computer",
+    "lang": "en",
+    "parentAllocationFields": 8,
+    "parentFooterAccessible": true,
+    "closeStaysVisible": true,
+    "closeOutsideScrollBody": true,
+    "actualRoundCompletes": true
+  },
+  {
+    "device": "computer",
+    "lang": "vi",
+    "parentAllocationFields": 8,
+    "parentFooterAccessible": true,
+    "closeStaysVisible": true,
+    "closeOutsideScrollBody": true,
+    "actualRoundCompletes": true
+  }
+]
