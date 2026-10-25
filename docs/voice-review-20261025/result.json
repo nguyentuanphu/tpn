@@ -1,0 +1,14 @@
+{
+  "provider": "FPT Neo",
+  "endpoint": "https://token-api.fpt.ai/v1/audio/speech",
+  "model": "FPT.AI-VITs",
+  "input": "Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.",
+  "voice": "leminh",
+  "speed": 1,
+  "response_format": "mp3",
+  "made": "2026-10-25T06:12:00.388Z",
+  "bytes": 87294,
+  "sha256": "0d24f193a6f36779d7e7c915601a41761c7d18ec7e1e63a0a6afa16ea85f7307",
+  "audio": "leminh-test.mp3",
+  "apiCalls": 1
+}
