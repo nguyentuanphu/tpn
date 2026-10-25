@@ -40,3 +40,32 @@ test('a successful JSON response cannot be mistaken for MP3 audio', async () => 
 test('transport errors cannot reveal credentials', async () => {
   await assert.rejects(recordTest('fixture-key', async () => { throw new Error('Bearer fixture-key'); }), error => !error.message.includes('fixture-key') && /No automatic retry/.test(error.message));
 });
+
+test('Neo signed FPT storage responses download without forwarding the API key', async () => {
+  const calls = [];
+  const url = 'https://s3-han02.fptcloud.com/sample.mp3?signature=fixture';
+  const result = await recordTest('fixture-key', async (target, init) => {
+    calls.push({ target, init });
+    return calls.length === 1 ? Response.json({ audio_url: url }) : new Response(mp3);
+  });
+  assert.deepEqual(result, mp3);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].target, url);
+  assert.equal(calls[1].init.headers, undefined);
+  assert.equal(calls[1].init.redirect, 'error');
+});
+
+test('unrelated download hosts and embedded credentials are not followed', async () => {
+  for (const url of ['https://unrelated.invalid/audio.mp3', 'https://name:password@s3-han02.fptcloud.com/audio.mp3']) {
+    let calls = 0;
+    await assert.rejects(recordTest('fixture-key', async () => { calls++; return Response.json({ url }); }), /expected MP3/);
+    assert.equal(calls, 1);
+  }
+});
+
+test('failed FPT storage responses stop without retrying or printing signed URLs', async () => {
+  const url = 'https://s3-han02.fptcloud.com/sample.mp3?signature=private';
+  let calls = 0;
+  await assert.rejects(recordTest('fixture-key', async () => ++calls === 1 ? Response.json({ url }) : new Response('', { status: 403 })), error => /storage returned HTTP 403/.test(error.message) && !error.message.includes('private'));
+  assert.equal(calls, 2);
+});
