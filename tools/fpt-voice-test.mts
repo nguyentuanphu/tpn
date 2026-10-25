@@ -14,14 +14,15 @@ export const FPT_TEST_REQUEST = {
 export const FPT_ENDPOINT = 'https://token-api.fpt.ai/v1/audio/speech';
 export class FptVoiceTestError extends Error {}
 
-export async function recordTest(key: string, fetcher: typeof fetch = fetch): Promise<Uint8Array> {
+export async function recordFpt(text: string, key: string, fetcher: typeof fetch = fetch): Promise<Uint8Array> {
+  if (!text.trim() || text.length > 5000) throw new FptVoiceTestError('FPT input must contain 1 to 5000 characters.');
   if (!key?.trim()) throw new FptVoiceTestError('Add the repository Actions secret FPT_API_KEY before running the test.');
   let response: Response;
   try {
     response = await fetcher(FPT_ENDPOINT, {
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(FPT_TEST_REQUEST),
+      body: JSON.stringify({ ...FPT_TEST_REQUEST, input: text }),
       redirect: 'error',
       signal: AbortSignal.timeout(60000)
     });
@@ -70,6 +71,8 @@ export async function recordTest(key: string, fetcher: typeof fetch = fetch): Pr
   }
   return bytes;
 }
+
+export const recordTest = (key: string, fetcher: typeof fetch = fetch) => recordFpt(FPT_TEST_REQUEST.input, key, fetcher);
 
 export async function main() {
   const bytes = await recordTest(process.env.FPT_API_KEY || '');

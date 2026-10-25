@@ -132,6 +132,12 @@ const CORE_MB = 7;
 }
 const list = [...uniq.entries()];
 
+// Read-only catalogue for another recording provider: includes dynamic lines, reading and reusable parts.
+if (flag('inventory')) {
+  console.log(JSON.stringify({ version: 1, lines: list.map(([id, j]) => ({ id, lang: j.lang, text: j.text, area: j.area, part: !!j.part })) }));
+  process.exit(0);
+}
+
 // ---------- the cost ----------
 const PACK_DIR = path.join(ROOT, 'voices'), MAN = path.join(PACK_DIR, 'manifest.json');
 function saveManifest(man) {
