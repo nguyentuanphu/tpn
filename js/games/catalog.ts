@@ -13,6 +13,7 @@ export const GAME_CATALOG = [
   { id: 'sorting', icon: '📏', name: () => T('Small to Big', 'Từ Bé Đến Lớn') },
   { id: 'memory', online: true, icon: '🃏', name: () => T('Memory Match', 'Lật Hình Ghi Nhớ') },
   { id: 'fruitparade', online: true, icon: '🍎', name: () => T('Sparkle Fruit Parade', 'Diễu hành trái cây lấp lánh') },
+  { id: 'sparkleorchard', online: true, icon: '🌈', name: () => T('Sparkle Orchard Quest', 'Nhiệm vụ Vườn Quả Lấp Lánh') },
   { id: 'hanoi', icon: '🗼', name: () => T('Tower Stack', 'Tháp Hà Nội') },
   { id: 'robot', icon: '🤖', name: () => T('Robot Planner', 'Lập Trình Rô-bốt') },
   { id: 'maze', icon: '🌀', name: () => T('Mountain Maze', 'Mê Cung Trên Núi') },
@@ -189,6 +190,7 @@ export const GAME_CATALOG = [
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
   'fruitparade.ts': { ids: ['fruitparade'], load: () => import('./fruitparade.js') },
+  'sparkleorchard.ts': { ids: ['sparkleorchard'], load: () => import('./sparkleorchard.js') },
   'strategy.js': { ids: ["hanoi","robot","maze","goat"], load: () => import('./strategy.js') },
   'cacuangua.ts': { ids: ['cacuangua'], load: () => import('./cacuangua.js') },
   'vietnam.js': { ids: ["oanquan","caro","hopscotch","tug"], load: () => import('./vietnam.js') },
@@ -221,3 +223,4 @@ export const GAME_LOADERS = {
     'money2.js': { ids: ['savegoal', 'pocketweek', 'pricetags', 'busfare', 'lemonade', 'party', 'recycle', 'tetmarket', 'bank', 'sharefair'], load: () => import('./money2.js') },
   'drawing.js': { ids: ["dotdot","trace","mirror","colournum","lanternart","card","sand","drawpath","shapedraw","copygrid"], load: () => import('./drawing.js') }
 };
+

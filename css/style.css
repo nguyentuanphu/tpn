@@ -941,7 +941,7 @@ button { color: var(--text); }
 .gl-nx b { font-size: 19px; line-height: 1.15; } .gl-nx small { font-size: 14px; opacity: .75; line-height: 1.15; text-align: center; overflow-wrap: anywhere; }
 .gl-nx.go { background: #e9ffe4; box-shadow: 0 6px 0 #3f9a4c; } .gl-nx:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
 .gl-chest.open .lid { transform: translateY(.15em) scale(.9); } .gl-chest.open .prize { opacity: 1; transform: translateY(-.75em) scale(1); }
-.gl-combo { position: fixed; left: 50%; top: 22%; transform: translateX(-50%); z-index: 4; background: linear-gradient(180deg, #ff9f43, #ff5f7e); color: #fff; font-size: clamp(22px, 5vw, 34px); font-weight: 700; padding: 10px 22px; border-radius: 999px; box-shadow: 0 6px 20px rgba(255, 95, 126, .5); animation: comboUp 1.1s forwards; pointer-events: none; }
+.gl-combo { position: fixed; left: 50%; top: 22%; transform: translateX(-50%); z-index: 4; background: linear-gradient(180deg, #ff9f43, #ff5f7e); color: #fff; font-size: clamp(18px, 4.4vw, 30px); font-weight: 700; line-height: 1.1; padding: 8px clamp(12px, 4vw, 20px); max-width: calc(100vw - 24px); box-sizing: border-box; white-space: nowrap; border-radius: 999px; box-shadow: 0 6px 20px rgba(255, 95, 126, .5); animation: comboUp 1.1s forwards; pointer-events: none; }
 .gl-combo.lucky { background: linear-gradient(180deg, #ffe066, #ffb020); color: #5a3a00; }
 @keyframes comboUp { 0% { transform: translate(-50%, 20px) scale(.5); opacity: 0; } 20% { transform: translate(-50%, 0) scale(1.1); opacity: 1; } 80% { opacity: 1; } 100% { transform: translate(-50%, -40px) scale(1); opacity: 0; } }
 .wordlist { display: flex; flex-direction: column; gap: 6px; } .wordlist span { background: #fff; border-radius: 14px; padding: 8px 12px; font-size: 15px; box-shadow: 0 1px 4px rgba(80,40,140,.1); }
@@ -1965,8 +1965,9 @@ body.calm .rv-img.on { animation: none; }
 .simple-screen { position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column; color: #2d2350;
   background: radial-gradient(circle at 15% 8%, #fff6c9 0 60px, transparent 61px), linear-gradient(180deg, #bfe8a8 0%, #9fd88b 55%, #8ccd7a 100%); }
 .simple-screen[hidden] { display: none; }
-.sp-top { display: flex; align-items: center; gap: 10px; padding: calc(env(safe-area-inset-top) + 10px) 14px 8px; }
-.sp-me { display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 999px; padding: 4px 16px 4px 4px; box-shadow: 0 3px 0 rgba(60, 100, 40, .25); font-size: 20px; min-height: 56px; }
+.sp-top { display: flex; flex-wrap: nowrap; min-width: 0; align-items: center; gap: 6px; padding: calc(env(safe-area-inset-top) + 8px) 10px 6px; }
+.sp-me { display: flex; flex: 1 1 0; min-width: 0; align-items: center; gap: 6px; background: #fff; border-radius: 999px; padding: 4px 10px 4px 4px; box-shadow: 0 3px 0 rgba(60, 100, 40, .25); font-size: 20px; min-height: 52px; }
+.sp-me b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sp-me img, .sp-me .art, .sp-me .emo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; font-size: 40px; }
 .sp-again { margin-left: auto; width: 64px; height: 64px; border-radius: 50%; border: 0; background: #fff; box-shadow: 0 4px 0 rgba(60, 100, 40, .3); display: grid; place-items: center; }
 .sp-again .art, .sp-again .emo { width: 40px; height: 40px; font-size: 34px; }
@@ -1988,9 +1989,9 @@ body.calm .rv-img.on { animation: none; }
 body.calm .sp-stop.next .sp-pic { animation: none; }
 @media (prefers-reduced-motion: reduce) { .sp-stop.next .sp-pic { animation: none; } }
 .sp-stop:active .sp-pic { transform: translateY(4px); box-shadow: 0 2px 0 rgba(60, 100, 40, .35); }
-.sp-tabs { display: flex; justify-content: space-around; gap: 6px; background: #fff; border-radius: 28px 28px 0 0; padding: 8px 8px calc(env(safe-area-inset-bottom) + 8px); box-shadow: 0 -4px 16px rgba(40, 80, 30, .15); }
-.sp-tabs button { flex: 1; max-width: 140px; min-height: 76px; border: 0; background: none; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #4a3d70; font-size: 16px; }
-.sp-tabs button .art, .sp-tabs button .emo { width: 40px; height: 40px; font-size: 34px; }
+.sp-tabs { display: flex; flex: none; justify-content: space-around; gap: 4px; background: #fff; border-radius: 24px 24px 0 0; padding: 6px 4px calc(env(safe-area-inset-bottom) + 4px); box-shadow: 0 -4px 16px rgba(40, 80, 30, .15); }
+.sp-tabs button { flex: 1 1 0; min-width: 0; max-width: 140px; min-height: 64px; border: 0; background: none; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #4a3d70; font-size: 13px; line-height: 1.05; text-align: center; }
+.sp-tabs button .art, .sp-tabs button .emo { width: 34px; height: 34px; font-size: 29px; }
 .sp-tabs button.on { background: #efe6ff; color: #5b2fd0; font-weight: 700; }
 .simplesw { pointer-events: auto; display: flex; align-items: center; gap: 6px; margin-top: 6px; min-height: 44px; padding: 5px 14px 5px 8px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .92); color: #3b2a4f; font-family: inherit; font-weight: 800; font-size: 14px; box-shadow: 0 3px 0 rgba(59, 42, 79, .18), 0 6px 14px rgba(0, 0, 0, .12); cursor: pointer; }
 .simplesw .ico { width: 28px; height: 28px; } .simplesw:active { transform: translateY(2px); }
@@ -3219,11 +3220,11 @@ body.calm .sv2 .press::after { animation: none; display: none; }
 .tp-news-row span { display: grid; } .tp-news-row small { opacity: .75; }
 
 /* v1.01: Home joins the Simple screen sound/parent controls; all remain 64px. */
-.sp-top { flex-wrap:wrap; }
-.sp-tools { display:flex; align-items:center; gap:8px; margin-left:auto; flex-shrink:0; }
-.sp-tools > button { flex:none; width:64px; height:64px; min-width:64px; min-height:64px; }
+.sp-top { flex-wrap:nowrap; min-width:0; gap:6px; }
+.sp-tools { display:flex; align-items:center; gap:clamp(3px, 1vw, 8px); margin-left:auto; flex:0 0 auto; }
+.sp-tools > button { flex:none; width:clamp(44px, 10vw, 64px); height:clamp(44px, 10vw, 64px); min-width:44px; min-height:44px; }
 .sp-tools .sp-home { position:relative; display:grid; place-items:center; padding:0; border:0; border-radius:50%; background:#fff; box-shadow:0 4px 0 rgba(60,100,40,.3); }
-.sp-tools .sp-home .art { width:34px; height:34px; }
+.sp-tools .sp-home .art { width:clamp(26px, 5.4vw, 34px); height:clamp(26px, 5.4vw, 34px); }
 .sp-tools .sp-home small { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
 
 /* v1.01: the parent action floats below the panel; scrolling content keeps its own space. */

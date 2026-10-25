@@ -1663,9 +1663,9 @@ PAGES.players = async P => {
     return [w.fps != null && `🎞️ ${w.fps} ${T('frames/s', 'khung/giây')}`, w.frameMs != null && `${w.frameMs} ms ${T('a frame', 'mỗi khung')}`, w.draws != null && `${w.draws} ${T('draws', 'lần vẽ')}`, w.ratio != null && `${T('sharpness', 'độ nét')} ${w.ratio}×`, `🔋 ${w.batteryPerHour != null ? pctH(w.batteryPerHour) : T('battery not given by this browser', 'trình duyệt này không cho biết pin')}`, w.charging && T('mostly charging', 'thường đang sạc')].filter(Boolean).join(' · '); };
   const more = (id, title, body) => `<details class="card more" data-more="${id}"><summary><b>${title}</b></summary>${body}</details>`;
   P.innerHTML = `<h2>📊 ${T('Analytics', 'Phân tích')} <button class="btn small" id="totesters">🐞 ${T('Tester reports', 'Báo cáo người thử')}</button></h2><p class="sub">${T('What the children play, for the last 30 days, from the game’s own website. A grown-up can switch it off on the device: Grown-ups → Advanced → Analytics.', 'Các con chơi gì trong 30 ngày qua, từ trang web của game. Người lớn có thể tắt trên máy: Người lớn → Nâng cao → Phân tích.')}</p>
-  <div class="tiles">${tiles.join('')}</div>
+  <details class="card" open><summary><b>Tiles</b></summary><div class="tiles">${tiles.join('')}</div></details>
   ${(r.tips || []).length ? `<div class="card tips"><h3>💡 ${T('Worth doing', 'Nên làm')}</h3><ul>${r.tips.slice(0, 4).map(t => `<li>${esc(tipText(t))}</li>`).join('')}</ul>${r.tips.length > 4 ? `<p class="note">${T(`${r.tips.length - 4} more under More detail → Suggestions.`, `Còn ${r.tips.length - 4} gợi ý trong Thêm chi tiết → Gợi ý.`)}</p>` : ''}</div>` : ''}
-  <div class="grid two"><div class="card"><h3>👨‍👩‍👧 ${T('Each child', 'Từng bé')}</h3>${kidRows ? `<table class="rows"><thead><tr><th>${T('Child', 'Bé')}</th><th>⏱️ ${T('30 days', '30 ngày')}</th><th>⭐ ${T('Favourite game', 'Trò thích nhất')}</th></tr></thead><tbody>${kidRows}</tbody></table>` : `<p class="note">${T('No children yet.', 'Chưa có bé nào.')}</p>`}</div>
+  <div class="grid two"><div class="card"><h3>👨‍👩‍👧 ${T('Each child', 'Từng bé')}</h3>${kidRows ? `<details class="card" open><summary><b>${T('Child details', 'Chi tiết từng bé')}</b></summary><table class="rows"><thead><tr><th>${T('Child', 'Bé')}</th><th>⏱️ ${T('30 days', '30 ngày')}</th><th>⭐ ${T('Favourite game', 'Trò thích nhất')}</th></tr></thead><tbody>${kidRows}</tbody></table></details>` : `<p class="note">${T('No children yet.', 'Chưa có bé nào.')}</p>`}</div>
     <div class="card"><h3>📱 ${T('Each kind of device', 'Từng loại máy')}</h3>${kindRows ? `<table class="rows kinds"><thead><tr><th>${T('Device', 'Máy')}</th><th>🎞️ ${T('frames/s', 'khung/giây')}</th><th>🏁 ${T('start', 'khởi động')}</th><th>🔋 ${T('battery', 'pin')}</th></tr></thead><tbody>${kindRows}</tbody></table>` : `<p class="note">${T('No devices yet.', 'Chưa có máy nào.')}</p>`}
       <p class="note">${T('Battery: only Chrome-based browsers tell it (not Safari on iPhone or Mac).', 'Pin: chỉ trình duyệt dựa trên Chrome cho biết (Safari trên iPhone và Mac thì không).')}</p></div></div>
   <h3 class="sec">🔎 ${T('More detail', 'Thêm chi tiết')}</h3>
@@ -1699,12 +1699,13 @@ PAGES.players = async P => {
       const routeRows = Object.entries(pv).sort((a: any, b: any) => b[1] - a[1]).map(([rt, c]) => `<tr><td><code>${esc(rt)}</code></td><td><b>${c}</b></td></tr>`).join('') || `<tr><td colspan="2" class="note">${T('No parent website visits recorded yet.', 'Chưa có lượt truy cập website cha mẹ.')}</td></tr>`;
       return more('parent-analytics', T('🌐 Parent website analytics (first-party)', '🌐 Phân tích website cha mẹ (trực tiếp)'), `
         <p class="sub">${T('Privacy-conscious first-party measurement of sparklevalley.au/home. Separate from game telemetry and synthetic traffic. Consent-gated; visitors who opt out are never recorded, so numbers represent consenting visitors only.', 'Đo lường trực tiếp, bảo vệ quyền riêng tư cho sparklevalley.au/home. Tách biệt với số liệu trò chơi và lưu lượng tự động. Phải có đồng ý; khách từ chối không bao giờ bị ghi nhận, nên số liệu chỉ đại diện người đồng ý.')}</p>
-        <div class="tiles">
+        <details class="card" open><summary><b>Tiles</b></summary><div class="tiles">
           ${tile('👁️', tot.totalEvents || 0, T('consented events (30d)', 'sự kiện đồng ý (30 ngày)'))}
           ${tile('▶️', tot.playConversions || 0, T('Play Sparkle Valley clicks', 'bấm Chơi Sparkle Valley'))}
           ${tile('⏱️', Math.round((tot.activeTimeTotalSec || 0) / 60) + ' min', T('active reading time', 'thời gian đọc thực tế'))}
           ${tile('🔗', tot.linkClicks || 0, T('link clicks', 'lượt bấm liên kết'))}
         </div>
+        </details>
         <div class="grid two">
           <div class="card">
             <h3>📄 ${T('Pages viewed', 'Trang đã xem')}</h3>
@@ -1927,3 +1928,4 @@ $('#quit').onclick = async () => {
   document.body.innerHTML = `<main><div class="card"><h2>👋 ${T('Sparkle Studio is closed.', 'Đã đóng Sparkle Studio.')}</h2><p class="sub">${T('You can close this window. Double-click SparkleStudio.exe to open it again.', 'Bạn có thể đóng cửa sổ này. Bấm đúp SparkleStudio.exe để mở lại.')}</p></div></main>`;
   window.close();
 };
+

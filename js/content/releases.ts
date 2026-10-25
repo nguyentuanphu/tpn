@@ -111,3 +111,7 @@ RELEASES.push(
   { id: 'sparkleFruitParade_multi', en: 'Sparkle Fruit Parade: multiplayer mode (off hides it from Friends)', vi: 'Sparkle Fruit Parade: chế độ nhiều người (tắt sẽ ẩn khỏi Bạn bè)', group: 'kids', def: false },
   { id: 'sparkleFruitParade_tester', en: 'Sparkle Fruit Parade: tester preview (allows a tester to open it while child modes are off)', vi: 'Sparkle Fruit Parade: bản thử nghiệm (cho phép người thử mở trò khi các chế độ cho trẻ đang tắt)', group: 'tools', def: false }
 );
+
+  { id: 'sparkleOrchard_single', en: 'Sparkle Orchard Quest: single-player mode', vi: 'Nhiệm vụ Vườn Quả: chơi đơn', group: 'kids', def: false },
+  { id: 'sparkleOrchard_multi', en: 'Sparkle Orchard Quest: multiplayer mode', vi: 'Nhiệm vụ Vườn Quả: chơi cùng bạn', group: 'kids', def: false },
+  { id: 'sparkleOrchard_tester', en: 'Sparkle Orchard Quest: tester preview', vi: 'Nhiệm vụ Vườn Quả: bản thử nghiệm', group: 'tools', def: false },
