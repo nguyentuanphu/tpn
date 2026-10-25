@@ -13,6 +13,8 @@ test('adapter metadata declares bounded cooperative/turn-based roster semantics'
 test('move validators and turn helpers are deterministic', () => {
   assert.equal(validMove('snakes', 6), true);
   assert.equal(validMove('snakes', 7), false);
+  assert.equal(validMove('cacuangua', 25), true);
+  assert.equal(validMove('cacuangua', 26), false);
   assert.equal(nextTurn(2, 3), 0);
   assert.equal(nextTurn(0, 0), 0);
   assert.equal(applySnakesRoll(4, 3, 25, { 7: 12 }), 12);
