@@ -87,4 +87,3 @@ export function resolveTugRound(pulls: number[], target = 5): number {
 export function scoreFamilyQuiz(answers: Array<number | null>, correct: number): number[] {
   return answers.map(answer => answer === correct ? 1 : 0);
 }
-
