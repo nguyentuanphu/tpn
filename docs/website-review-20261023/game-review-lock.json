@@ -1,5 +1,5 @@
 {
-  "source": "d539f5b5bea905eb647cad813060f904d1c84591",
+  "source": "107302c9cf6743c31ca4936f31bfa0ae7f2e9d68",
   "files": [
     {
       "file": "content/custom.json",
@@ -211,7 +211,7 @@
     },
     {
       "file": "index.html",
-      "hash": "c0e7a4ad6b1b2c587ab4ecd132f3db3deffafb74"
+      "hash": "2c1909a723ffe70b0237bedee4c9afefb786b671"
     },
     {
       "file": "js/ads.js",
@@ -255,7 +255,7 @@
     },
     {
       "file": "js/build.ts",
-      "hash": "0eed12aa08bbe41e1d378b6c6c1903a6b7c8ab38"
+      "hash": "3493153c2abb9c2a16717928e062fc908dd77296"
     },
     {
       "file": "js/cartoon.js",
@@ -295,7 +295,7 @@
     },
     {
       "file": "js/content/activities.ts",
-      "hash": "cd6e6b869bf15ae9cdf80e87eeeb2e70d3fbc7de"
+      "hash": "ceaf0d880a02331019232bbfff04ac87daf47fb4"
     },
     {
       "file": "js/content/adventures.js",
@@ -539,7 +539,7 @@
     },
     {
       "file": "js/content/releases.ts",
-      "hash": "932ee48137f72b6c78ed809d79a30841504f795b"
+      "hash": "7e9f63d9fde9004e86696d1dff905125f106817a"
     },
     {
       "file": "js/content/rules.js",
@@ -703,7 +703,7 @@
     },
     {
       "file": "js/games/asia.ts",
-      "hash": "7a2e1082ae0ab877b06e4877b70f45445b2985b7"
+      "hash": "b30893baec183023eb5c15395bfaad6780fd1330"
     },
     {
       "file": "js/games/bigthinkers.ts",
@@ -714,8 +714,16 @@
       "hash": "188c403fe1ba1dc6a6c4d8c61013a1b4acafc0f8"
     },
     {
+      "file": "js/games/cacuangua-core.ts",
+      "hash": "26dd98355b497370f611f1a35dee94e8d029eddf"
+    },
+    {
+      "file": "js/games/cacuangua.ts",
+      "hash": "791b33e12ac63aa5c07798066ece87515ce23ca2"
+    },
+    {
       "file": "js/games/catalog.ts",
-      "hash": "5de0301bcc69cbbd634b617bafe9146ea9d362c3"
+      "hash": "f950caa1335dce079916150ad43d1926d1a149ba"
     },
     {
       "file": "js/games/cities.ts",
@@ -754,6 +762,14 @@
       "hash": "5bf31e74ab91151b481aca7635066bf5d29dc808"
     },
     {
+      "file": "js/games/fruitparade-core.ts",
+      "hash": "bda3c52acc390251b313ebeb4c7e738f56f0a43f"
+    },
+    {
+      "file": "js/games/fruitparade.ts",
+      "hash": "794f787695cc32e2877160f96cfeaff8fe052f24"
+    },
+    {
       "file": "js/games/learning-meta.ts",
       "hash": "546d31eb459f60f6890d984ce16f5180f52d7c24"
     },
@@ -783,7 +799,11 @@
     },
     {
       "file": "js/games/more.ts",
-      "hash": "b496be74a10f3586c16ba3fa8e832ba1d11c152a"
+      "hash": "13eb3ccde259faf62ec40eb9cb41d6a21c1a1836"
+    },
+    {
+      "file": "js/games/multiplayer-foundations.ts",
+      "hash": "0e9d2ffa68e7b0faaf56a56ac261206127aed738"
     },
     {
       "file": "js/games/music.ts",
@@ -804,6 +824,10 @@
     {
       "file": "js/games/outside.ts",
       "hash": "6a955b39553305404036dc630f22902acdfa8a5d"
+    },
+    {
+      "file": "js/games/pending-vietnam.ts",
+      "hash": "e2da13fee5440d0abfafb0f2a4af10eca162f91f"
     },
     {
       "file": "js/games/places2.ts",
@@ -983,7 +1007,7 @@
     },
     {
       "file": "js/main.ts",
-      "hash": "d411a64405925526762c79cc613d9b3addad675f"
+      "hash": "efacdd0bf1a19d89ea5efa8fc91bb3bf1f9680d4"
     },
     {
       "file": "js/mictest.ts",
@@ -1007,7 +1031,7 @@
     },
     {
       "file": "js/netgames.ts",
-      "hash": "1a043bef828558a6505458f5ee889b6fbcbabc67"
+      "hash": "ee311d62649009845f57097301586bf8983e2dae"
     },
     {
       "file": "js/netmsg.ts",
@@ -1063,7 +1087,7 @@
     },
     {
       "file": "js/players.ts",
-      "hash": "e56b9e8062650890415fae1cc59f516361f65763"
+      "hash": "ef318dae369fe1d3f608f1447986706bc0787b2e"
     },
     {
       "file": "js/plots.ts",
@@ -1179,7 +1203,7 @@
     },
     {
       "file": "js/state.ts",
-      "hash": "6f0b96f209dc28b03ed79247e76ccee37a3ca462"
+      "hash": "caf4d8bb9f35ee15abdc7044c9284b10796655b7"
     },
     {
       "file": "js/stickerfx.js",
@@ -1259,7 +1283,7 @@
     },
     {
       "file": "js/ui-settings.ts",
-      "hash": "b5ffa0271324fe2b45f025c9515f48ba9c2560d2"
+      "hash": "a4ad9e3f4fdaf19ede2c4c3bd7dc602a24dd7ffa"
     },
     {
       "file": "js/ui.ts",
@@ -1299,7 +1323,7 @@
     },
     {
       "file": "js/voice.ts",
-      "hash": "1b7a376e33f0111ac7964e56fbcd0710f5a3fdaa"
+      "hash": "ea65a0d47e4fbf01a922ac4108b4ee94c8b4bd60"
     },
     {
       "file": "js/voicepack.ts",
@@ -1403,11 +1427,11 @@
     },
     {
       "file": "studio/version.json",
-      "hash": "28bb8fe706fefda3a2babcfc513521f6d79f6ec8"
+      "hash": "d28084e4bcb6899ca1de7005c94bbe0679792f24"
     },
     {
       "file": "sw.ts",
-      "hash": "862415ae74d8ca10175728ae0eab62b9814a9008"
+      "hash": "54306bfbd8967be7fea92810b9e5c3b033f5441c"
     },
     {
       "file": "vendor/RoomEnvironment.js",

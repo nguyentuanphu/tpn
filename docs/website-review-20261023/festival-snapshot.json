@@ -1,5 +1,5 @@
 {
-  "source": "d539f5b5bea905eb647cad813060f904d1c84591",
+  "source": "107302c9cf6743c31ca4936f31bfa0ae7f2e9d68",
   "festivals": [
     {
       "id": "tet",
@@ -934,6 +934,15 @@
       "origin": null
     },
     {
+      "id": "fruitparade",
+      "name": [
+        "Sparkle Fruit Parade",
+        "Diễu hành trái cây lấp lánh"
+      ],
+      "icon": "🍎",
+      "origin": null
+    },
+    {
       "id": "hanoi",
       "name": [
         "Tower Stack",
@@ -968,6 +977,15 @@
       ],
       "icon": "🐐",
       "origin": null
+    },
+    {
+      "id": "cacuangua",
+      "name": [
+        "Horse Racing Chess",
+        "Cờ Cá Ngựa"
+      ],
+      "icon": "🐴",
+      "origin": "vn"
     },
     {
       "id": "oanquan",
@@ -1139,6 +1157,69 @@
       ],
       "icon": "🫧",
       "origin": null
+    },
+    {
+      "id": "meochuot",
+      "name": [
+        "Cat and Mouse",
+        "Mèo Đuổi Chuột"
+      ],
+      "icon": "🐱",
+      "origin": "vn"
+    },
+    {
+      "id": "cuopco",
+      "name": [
+        "Flag Relay",
+        "Cướp Cờ"
+      ],
+      "icon": "🚩",
+      "origin": "vn"
+    },
+    {
+      "id": "keocua",
+      "name": [
+        "Pull Saw Song",
+        "Kéo Cưa Lừa Xẻ"
+      ],
+      "icon": "🪚",
+      "origin": "vn"
+    },
+    {
+      "id": "danhdao",
+      "name": [
+        "Đánh Đáo",
+        "Đánh Đáo"
+      ],
+      "icon": "🪵",
+      "origin": "vn"
+    },
+    {
+      "id": "nemcon",
+      "name": [
+        "Throw the Còn",
+        "Ném Còn"
+      ],
+      "icon": "🎯",
+      "origin": "vn"
+    },
+    {
+      "id": "trongnu",
+      "name": [
+        "Plant the Seed",
+        "Trồng Nụ"
+      ],
+      "icon": "🌱",
+      "origin": "vn"
+    },
+    {
+      "id": "duathuyen",
+      "name": [
+        "Boat Race",
+        "Đua Thuyền"
+      ],
+      "icon": "🚣",
+      "origin": "vn"
     },
     {
       "id": "mrwolf",
