@@ -2,7 +2,7 @@
 
 **Status: NOT READY FOR DEPLOYMENT.** Owner chose v1.02, but has not approved deployment. Live remains v1.01. This is an audit of the pushed `work/v1.01-hanoi-voice` branch at **59fe48fd**, not uncommitted files on the helper's Windows machine.
 
-Release collected the helper's 14 new commits after ba118721 onto current main ac76cf60, preserving the verified v1.01 history and production evidence. Audit branch: `release/hanoi-audit-20261025`. Runtime checkpoint: **107302c9**. The family privacy regression and catalogue registration/order mismatch were repaired; known gameplay blockers below remain.
+Release collected the helper's 14 new commits after ba118721 onto current main ac76cf60, preserving the verified v1.01 history and production evidence. Audit branch: `release/hanoi-audit-20261025`. Initial reproduction checkpoint: **107302c9**; original-art repair checkpoint: **536734ec**. The family privacy regression and catalogue registration/order mismatch were repaired; known gameplay blockers below remain.
 
 ## Requested scope
 
@@ -27,7 +27,7 @@ Release collected the helper's 14 new commits after ba118721 onto current main a
 5. **Cờ Cá Ngựa full-mode roll stalls.** Empty-stable turns repeatedly roll [4,3] then [3,4]. Dice depend only on the turn and old dice, which are cleared; no six is rolled to leave the stable. The UI also does not reliably pass a no-move NPC turn back. No complete full-mode match was verified.
 6. **Horse rules accept an illegal launch.** With a full-mode die of 1, legalMoves returns zero, but applyMove accepts the launch and puts the horse on the track. The move reducer must validate legalMoves, indexes, dice and turn state itself.
 7. **Horse rendering/networking incomplete.** Display is two player cards and horse icons, no track or movement positions. Colours remain RED/BLUE in Vietnamese. State is initialized for two players despite advertised online capacity four; dice are not synchronized, and receipt handling calls the same move function that sends again. [Phone screenshot](shots/phone-vi-cacuangua.png).
-8. **Shared multiplayer validation is not a game-authoritative reducer.** A future move number 9999 is accepted in a fresh state. Turn counting does not validate a board. Snakes advertises four players but renders/moves only two; its under-five clamp can send zero while the new validator rejects zero. Ô Ăn Quan and Kéo Co renderers were not upgraded to the newly advertised shared rules (they retain generic race/local play). Family Quiz shares correct-answer indexes rather than a host-authoritative shared question/result flow.
+8. **Shared multiplayer validation is not a game-authoritative reducer.** A future move number 9999 is accepted in a fresh state. Turn counting does not validate a board. Snakes advertises four players but renders/moves only two; its under-five clamp can send zero while the new validator rejects zero. Ô Ăn Quan and Kéo Co renderers were not upgraded to the newly advertised shared rules (they retain generic race/local play). Family Quiz exchanges locally selected answer indexes without synchronizing the host's question set/result state.
 9. **Incomplete online replay handling.** Fruit retries reuse the same round/lane message numbers, whose existing transport deduplicates earlier moves. Received lane values do not stop/redraw the remote lane. The fourth online player gets no lane. Random-sort shuffling also needs a defined deterministic shuffle across browser engines.
 10. **Test coverage overclaims.** New renderer tests largely search source strings for online calls; they do not prove a real NPC game or a synchronized multi-device match can finish. The existing full suite remains necessary but will not by itself approve the above failures.
 
@@ -43,16 +43,18 @@ Owner authorized full Lê Minh recording on 25 October 2026 AEDT. Running separa
 
 The complete stable v1.01 catalogue contains **6,319 Vietnamese recordings**, including **870 reusable parts**, after holding 19 test-child-name lines for privacy. Approximate text cost US$3.84 at the owner's displayed rate, before retries. The helper's static-only 3,521 count is incomplete. [Frozen inventory and recording rules](https://github.com/nguyentuanphu/tpn/blob/work/fpt-leminh-full-20261025/docs/fpt-leminh-full-20261025/README.md).
 
-Four serial shards, 1.5-second spacing, bounded retries, stop on access/quota problems; every output is decoded, checksummed and bound to exact provider/text identity. Progress is saved every 50 clips into **temp/fpt-recordings/** on that branch. First verified 50/100-clip checkpoints were independently confirmed. This is not a claim of full completion. New/repaired helper content will be a later delta; no current female/default policy, game voice manifest or live site has been changed. Full FPT manifest/cache/selection integration remains to be reviewed.
+Four serial shards, 1.5-second spacing, bounded retries, stop on access/quota problems; every output is decoded, checksummed and bound to exact provider/text identity. Progress is saved every 50 clips into **temp/fpt-recordings/** on that branch. A 600-clip checkpoint was independently downloaded: all file checksums match, and representative files probe as MP3. This is not a claim of full completion. New/repaired helper content will be a later delta; no current female/default policy, game voice manifest or live site has been changed. Full FPT manifest/cache/selection integration remains to be reviewed.
 
 ## Verification
 
-- Initial local unit check failed on catalogue registration; targeted catalogue check passes after the repair.
+- Initial local unit check failed on catalogue registration; targeted catalogue check and the complete unit run now pass: 255 passed, one legacy skip.
 - Local types pass (137 generated TypeScript game files; explicit/core/server checks reported by suite).
-- Read-only reproduction and 56 captures completed with zero page errors, while reproducing semantic failures above. Nine contact sheets in review/ are for visual inspection.
-- Website source sync/preload checks pass at runtime 107302c9; publication remains blocked.
+- Read-only reproduction and 56 captures completed with zero page errors, while reproducing semantic failures above. All nine contact sheets in review/ were visually inspected across both languages and all three sizes; gameplay/visual gaps remain.
+- Initial GitHub Checks failed only the unchanged artwork check: saw and vintage key were undrawn. Added original SVGs in 536734ec; focused emoji check now passes (zero undrawn), and the tools-art screenshot was inspected. This is a code repair, not a retry-only pass.
+- Website source sync/preload checks pass at source 536734ec; publication remains blocked.
 - Bulk tooling: 245 unit tests and standalone strict TypeScript passed; existing pack coverage stayed green before recording started.
-- **GitHub full suite: pending start on the audit PR.** Results and retry disclosures will be added when complete. No local full suite, release speed run or ZIP is warranted until gameplay blockers are resolved.
+- **GitHub full suite: running on [draft PR #580](https://github.com/nguyentuanphu/tpn/pull/580).** Initial run 40170780868 started at de554606; the original-art repair requires a new run on the updated head. Results and retry disclosures will be added when complete.
+- Initial website consistency passed. AI review did not finish (workflow job success is not a completed AI review). No local full suite, release speed run or ZIP is warranted until gameplay blockers are resolved.
 
 ## Work required before release approval
 

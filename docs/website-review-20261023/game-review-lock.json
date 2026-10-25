@@ -1,5 +1,5 @@
 {
-  "source": "107302c9cf6743c31ca4936f31bfa0ae7f2e9d68",
+  "source": "536734ec5b423d42da6be7d512503ccc6adfdb69",
   "files": [
     {
       "file": "content/custom.json",
@@ -231,7 +231,7 @@
     },
     {
       "file": "js/art.ts",
-      "hash": "a0218c94c617ec063c303ff846c5ddce89a0321f"
+      "hash": "1746a0b98c824e55c13d1b78ae1c2154dabab22f"
     },
     {
       "file": "js/asia.js",
