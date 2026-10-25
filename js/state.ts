@@ -111,6 +111,7 @@ export const settings: Settings = Object.assign({
   familyVoice: true,     // play the grown-up's recordings when there are some
   familyPitch: 0,        // speaking pitch matched to the recordings (0 = not set)
   voiceRate: 1, voicePitch: 1,
+  voiceViVariant: 'standard',
   voiceControl: true,    // show the 🎤 "talk to the game" button where speech recognition exists
   aiKey: '',             // optional Anthropic API key so villagers can chat freely (grown-ups only)
   aiOn: false,

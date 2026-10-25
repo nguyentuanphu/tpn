@@ -120,8 +120,12 @@ function packStatusHTML() {
       <button class="btn" id="gMissClear">🧹 ${T('Clear the list', 'Xóa danh sách')}</button></details>` : `<p class="note">✅ ${T('Every line said on this device so far had a recording.', 'Mọi câu đã nói trên máy này đều có bản ghi.')}</p>`}`;
 }
 function bindPackStatus(card, redraw) {
-  card.querySelectorAll('[data-pv]').forEach(b => b.onclick = () => {
-    previewPackVoice(b.dataset.pv);
+  card.querySelectorAll('[data-pv]').forEach(b => b.onclick = async () => {
+    const audio = ac();
+    if (audio && audio.state !== 'running') {
+      try { await audio.resume(); } catch (e) { }
+    }
+    await previewPackVoice(b.dataset.pv);
   });
   const c = card.querySelector('#gMissClear'); if (c) c.onclick = () => { clearVoiceMisses(); redraw(); };
   const vm = card.querySelector('#gVoiceMale'); 
