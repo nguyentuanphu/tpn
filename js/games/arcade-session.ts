@@ -30,7 +30,7 @@ export class ArcadeSession<S extends { turn: number }> {
   private receive(seat: number, n: number, value: number) {
     if(this.dead || !Number.isInteger(n) || !Number.isInteger(value) || value < 0 || value > 9999 || !this.online) return;
     if(this.mine===0){
-      if(n>=8000 && n<9000){this.tape.forEach((v,i)=>this.online?.move(i+2000,v));return;}
+      if(n>=8000 && n<9000){if(value<=this.tape.length)for(let i=value;i<this.tape.length;i++)this.online?.move(i+2000,this.tape[i]);return;}
       if(n>=0 && n<1900){if(n<this.index){const old=this.tape[n];if(old!==undefined)this.online.move(n+2000,old);}else this.accept(seat,n,value);}
       return;
     }
@@ -42,7 +42,7 @@ export class ArcadeSession<S extends { turn: number }> {
     }
     this.changed();
   }
-  poll(){if(this.dead||!this.online)return;if(this.request)this.online.move(this.request.index,this.request.value);if(this.mine!==0)this.online.move(8000+(this.sync++%900),0);}
+  poll(){if(this.dead||!this.online)return;if(this.request)this.online.move(this.request.index,this.request.value);if(this.mine!==0)this.online.move(8000+(this.sync++%900),this.index);}
   continueLocally(){this.online?.leave?.();this.online=undefined;this.request=undefined;this.pending.clear();this.changed();}
   close(){this.dead=true;this.unsubscribe?.();this.pending.clear();}
 }

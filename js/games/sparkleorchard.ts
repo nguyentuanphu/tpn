@@ -43,7 +43,7 @@ async function run(api:OrchardApi){
    if(helper&&!session.online&&s.turn!==0&&now-lastNpc>1500){lastNpc=now;const target=s.mission.find((_,i)=>!s.found[i]);if(target)session.submit(s.board.indexOf(target));}
    const down=!!navigator.getGamepads?.()?.[0]?.buttons[0]?.pressed;if(down&&!pressed)stop();pressed=down;
   }
-  if(session.waiting){if(!waitingAt)waitingAt=now;if(now-lastPoll>1000)paint();}else if(waitingAt){waitingAt=0;paint();}
+  if(session.waiting){if(!waitingAt){waitingAt=now;paint();}else if(now-waitingAt>=30000&&!root.querySelector('[data-orchard-continue]'))paint();}else if(waitingAt){waitingAt=0;paint();}
   if(now-lastPoll>2000){session.poll();lastPoll=now;}}
   frame=requestAnimationFrame(animate);
  }

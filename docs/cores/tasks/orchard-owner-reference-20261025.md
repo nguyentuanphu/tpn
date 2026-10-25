@@ -27,11 +27,11 @@ Ví dụ:
 │       [picture] SPARKLE FRUIT PARADE [picture]        │
 │                                          │
 │       NHIỆM VỤ / MISSION                 │
-│       Tìm: [picture] [picture] [picture] ⭐                  │
+│       Tìm: [picture] [picture] [picture] [star]                  │
 │                                          │
-│    [picture]     [picture]     ⭐     [picture]               │
+│    [picture]     [picture]     [star]     [picture]               │
 │ [picture]                              [picture]      │
-│ [picture]             ⭐               [picture]      │
+│ [picture]             [star]               [picture]      │
 │ [picture]                              [picture]      │
 │    [picture]     [picture]     [picture]     [picture]              │
 │                                          │
@@ -41,7 +41,7 @@ Ví dụ:
 │                                          │
 │ Progress: [picture] [picture] [picture] _                    │
 │                                          │
-│ Clara ⭐⭐⭐      Team ⭐⭐⭐⭐             │
+│ Clara [star][star][star]      Team [star][star][star][star]             │
 ╰──────────────────────────────────────────╯
 ```
 
@@ -141,7 +141,7 @@ Ví dụ:
 | [picture] Strawberry | thêm progress |
 | [picture] Flower | thêm garden item |
 | [picture] Ladybug | gọi Ladybug helper |
-| ⭐ Star | wildcard |
+| [star] Star | wildcard |
 | [picture] Rainbow | đổi một symbol bất kỳ |
 | [picture] Dragon | mở mini challenge |
 | [picture] Key | mở Treasure Hunt |
@@ -175,7 +175,7 @@ Sau khi thoát mini-game, một Ladybug bay trong world Sparkle Valley và dẫn
 ### Combo 2
 
 ```text
-[picture] ⭐ ⭐
+[picture] [star] [star]
 ```
 
 → Dragon Challenge
@@ -203,7 +203,7 @@ hoặc:
 ### Combo 4
 
 ```text
-[picture] [picture] ⭐
+[picture] [picture] [star]
 ```
 
 → nhận một mảnh bản đồ kho báu.
@@ -231,11 +231,11 @@ Mình sẽ làm engine hỗ trợ nhiều board.
 Giống máy Bar gốc:
 
 ```text
-[picture] [picture] [picture] [picture] ⭐
+[picture] [picture] [picture] [picture] [star]
 [picture]           [picture]
 [picture]           [picture]
 [picture]           [picture]
-[picture] [picture] ⭐ [picture] [picture]
+[picture] [picture] [star] [picture] [picture]
 ```
 
 Đèn chạy quanh viền.
@@ -247,10 +247,10 @@ Rất dễ hiểu cho trẻ.
 ### Mode B — Three Lanes
 
 ```text
-[picture]   [picture]   ⭐
+[picture]   [picture]   [star]
 [picture]   [picture]   [picture]
-⭐   [picture]   [picture]
-[picture]   ⭐   [picture]
+[star]   [picture]   [picture]
+[picture]   [star]   [picture]
 ```
 
 3 lane chạy.
@@ -268,11 +268,11 @@ Mode này thích hợp hơn cho trẻ lớn.
 ```text
 START
  ↓
-[picture] → [picture] → ⭐ → [picture]
+[picture] → [picture] → [star] → [picture]
                ↓
 [picture] ← [picture] ← [picture] ← [picture]
  ↓
-[picture] → [picture] → ⭐ → FINISH
+[picture] → [picture] → [star] → FINISH
 ```
 
 Có thể rất hay cho Treasure game.
@@ -310,7 +310,7 @@ Ví dụ:
 
 ```text
 MISSION
-[picture] [picture] ⭐
+[picture] [picture] [star]
 ```
 
 Lần 1:
@@ -351,7 +351,7 @@ Progress:
 Lần 4:
 
 ```text
-STOP → ⭐
+STOP → [star]
 ```
 
 Mission complete.
@@ -381,7 +381,7 @@ Ví dụ nhiệm vụ:
 ```text
 COLLECT TOGETHER
 
-[picture] [picture] [picture] [picture] ⭐
+[picture] [picture] [picture] [picture] [star]
 ```
 
 Player 1:
@@ -411,7 +411,7 @@ STOP → [picture]
 Player 2:
 
 ```text
-STOP → ⭐
+STOP → [star]
 ```
 
 Cuối cùng cả hai hoàn thành.
@@ -430,15 +430,15 @@ Một màn hình chia đôi.
 │                                         │
 │ CLARA                    TRIXIE          │
 │                                         │
-│ [picture] [picture] ⭐                [picture] [picture] [picture]       │
-│ [picture] [picture] [picture]                ⭐ [picture] [picture]       │
+│ [picture] [picture] [star]                [picture] [picture] [picture]       │
+│ [picture] [picture] [picture]                [star] [picture] [picture]       │
 │                                         │
 │ [STOP]                   [STOP]         │
 │                                         │
 │        SHARED MISSION                   │
-│        [picture] [picture] [picture] ⭐                     │
+│        [picture] [picture] [picture] [star]                     │
 │                                         │
-│ Progress: [picture] _ [picture] ⭐                   │
+│ Progress: [picture] _ [picture] [star]                   │
 ╰─────────────────────────────────────────╯
 ```
 
@@ -476,13 +476,13 @@ Player 2 phải hoàn thành phần còn lại.
 Ví dụ mission:
 
 ```text
-[picture] [picture] ⭐ [picture]
+[picture] [picture] [star] [picture]
 ```
 
 Player 2 tìm:
 
 ```text
-⭐ [picture]
+[star] [picture]
 ```
 
 Cả hai cùng hoàn thành.
@@ -498,7 +498,7 @@ Mình sẽ thay bằng child-safe bonus games.
 Ví dụ khi đủ 3 Star:
 
 ```text
-⭐ ⭐ ⭐
+[star] [star] [star]
 ```
 
 mở:
@@ -508,10 +508,10 @@ mở:
 Trong 10 giây:
 
 ```text
-⭐        ⭐
-      ⭐
+[star]        [star]
+      [star]
    [picture]
-⭐        ⭐
+[star]        [star]
 ```
 
 Player move left/right để bắt sao.
@@ -529,7 +529,7 @@ Một bonus khác:
 → Ladybug Memory
 
 ```text
-[picture] [picture] ⭐ [picture]
+[picture] [picture] [star] [picture]
 ```
 
 Hiện 3 giây.
@@ -858,7 +858,7 @@ Màn hình:
 Đèn bắt đầu.
 
 ```text
-[picture] → [picture] → [picture] → [picture] → ⭐ → [picture]
+[picture] → [picture] → [picture] → [picture] → [star] → [picture]
 ```
 
 Clara bấm.
@@ -989,25 +989,25 @@ Nội dung thay đổi tùy theo nơi trẻ đang ở.
 Ví dụ ở Hà Nội:
 
 ```text
-[picture] [picture] [picture] ⭐ [picture]
+[picture] [picture] [picture] [star] [picture]
 ```
 
 Ở Sydney:
 
 ```text
-[picture] [picture] ⭐ [picture] [picture]
+[picture] [picture] [star] [picture] [picture]
 ```
 
 Đà Nẵng:
 
 ```text
-[picture] [picture] [picture] ⭐ [picture]
+[picture] [picture] [picture] [star] [picture]
 ```
 
 Bắc Ninh:
 
 ```text
-[picture] [picture] [picture] ⭐ [picture]
+[picture] [picture] [picture] [star] [picture]
 ```
 
 Vẫn một engine.

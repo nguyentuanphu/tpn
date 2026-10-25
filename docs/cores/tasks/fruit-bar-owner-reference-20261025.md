@@ -18,19 +18,19 @@ The main screen could look roughly like this:
 │                                              │
 │   [picture] x5     [picture] x8      [picture] x10      [picture] x12   │
 │                                              │
-│   [picture] x15    ⭐ x20     7 x40      BAR x60  │
+│   [picture] x15    [star] x20     7 x40      BAR x60  │
 │                                              │
 │  ┌────────────────────────────────────────┐  │
-│  │ [picture]  [picture]  [picture]  [picture]  [picture]  ⭐  7  BAR      │  │
+│  │ [picture]  [picture]  [picture]  [picture]  [picture]  [star]  7  BAR      │  │
 │  │                                        │  │
 │  │ BAR                               [picture]   │  │
 │  │                                        │  │
-│  │ 7   ⭐   [picture]   [picture]   [picture]   [picture]   [picture]       │  │
+│  │ 7   [star]   [picture]   [picture]   [picture]   [picture]   [picture]       │  │
 │  └────────────────────────────────────────┘  │
 │                                              │
 │  PLAY COINS   999,999        LAST WIN  320  │
 │                                              │
-│ [picture] 10  [picture] 20  [picture] 0  [picture] 5   ⭐ 10   BAR 2  │
+│ [picture] 10  [picture] 20  [picture] 0  [picture] 5   [star] 10   BAR 2  │
 │                                              │
 │ [CLEAR]       [REPEAT]        [ START ]      │
 └──────────────────────────────────────────────┘
@@ -54,9 +54,9 @@ Then press **START**.
 The light begins running around the outside:
 
 ```text
-[picture] → [picture] → [picture] → [picture] → [picture] → ⭐ → 7 → BAR
+[picture] → [picture] → [picture] → [picture] → [picture] → [star] → 7 → BAR
 ↑                                      ↓
-[picture] ← [picture] ← [picture] ← ⭐ ← [picture] ← [picture] ← [picture] ← [picture]
+[picture] ← [picture] ← [picture] ← [star] ← [picture] ← [picture] ← [picture] ← [picture]
 ```
 
 Fast initially, then gradually slower:
@@ -184,7 +184,7 @@ More conventional:
 ┌─────┬─────┬─────┐
 │ [picture]  │ 7  │ BAR │
 │ BAR │ [picture]  │ 7  │
-│ ⭐  │ ⭐  │ ⭐  │
+│ [star]  │ [star]  │ [star]  │
 └─────┴─────┴─────┘
 ```
 
@@ -198,7 +198,7 @@ Hanoi       [picture]
 Dragon      [picture]
 Ladybug     [picture]
 Rainbow     [picture]
-Star        ⭐
+Star        [star]
 Diamond     [picture]
 Crown       [picture]
 ```
@@ -224,7 +224,7 @@ Then choose:
 [picture] Orange       15 × 8
 [picture] Watermelon   10 × 12
 [picture] Bell         10 × 15
-⭐ Star          10 × 20
+[star] Star          10 × 20
 7 Seven         5 × 40
 BAR              2 × 60
 ```
@@ -275,7 +275,7 @@ show something like:
 | [picture] | ×8 | Common |
 | [picture] | ×12 | Medium |
 | [picture] | ×15 | Medium |
-| ⭐ | ×20 | Uncommon |
+| [star] | ×20 | Uncommon |
 | 7 | ×40 | Rare |
 | BAR | ×60 | Very rare |
 | [picture] | ×100 | Special |
@@ -323,7 +323,7 @@ Will next number be:
 
 ### Treasure Wheel
 
-Hit 3 × ⭐:
+Hit 3 × [star]:
 
 ```text
           100
@@ -381,7 +381,7 @@ For example:
 Or:
 
 ```text
-⭐ → 7 → BAR
+[star] → 7 → BAR
 ```
 
 activates:
@@ -402,7 +402,7 @@ Only fruit symbols remain.
 
 Or:
 
-> ⭐ STAR NIGHT
+> [star] STAR NIGHT
 
 Star frequency increases temporarily.
 
@@ -437,7 +437,7 @@ PLAYER 1                        PLAYER 2
 
 [picture] 20                           [picture] 0
 [picture] 10                           [picture] 10
-⭐ 5                            ⭐ 25
+[star] 5                            [star] 25
 BAR 2                           BAR 10
 
                   START
@@ -446,7 +446,7 @@ BAR 2                           BAR 10
 Server determines:
 
 ```text
-RESULT → ⭐
+RESULT → [star]
 ```
 
 Player 1:
@@ -698,7 +698,7 @@ PARENT ARCADE STATS
 Rounds played          427
 Biggest single win   8,400
 Best 20-round score  21,750
-Favourite symbol        ⭐
+Favourite symbol        [star]
 BAR hits                  7
 Longest streak            5
 Most-used strategy     Safe

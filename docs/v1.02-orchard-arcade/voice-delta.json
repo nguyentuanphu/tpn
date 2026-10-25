@@ -4,8 +4,8 @@
   "sourceHashes": {
     "js/games/fruitparade.ts": "2ca93b3ad5e575f4ce3241b65bb2cca37ce78f39cff6207a171f9e9740a81011",
     "js/games/trongnu.ts": "9130b86018778c848286ac0e712822146f15eeed552ff100cc038d3fbe2c7316",
-    "js/games/sparkleorchard.ts": "9f3f33d743ae2183feb3374f80f1953e46cc29f03573d84792051450ff41c1b1",
-    "js/games/sparklefruitbar.ts": "0c0588e72e110c4de93bee2d418b17eddd843eaf03433094e69241dfe4f3a8a7"
+    "js/games/sparkleorchard.ts": "7a39cb27e100294bce91adfb2a4b2be4dffbe82ed2b450ae7af7177542b3967b",
+    "js/games/sparklefruitbar.ts": "b070c173bcf4a43e72e70413d58f31c940e7a2ac06b195c8b82454bb8cbfa14f"
   },
   "lines": [
     {

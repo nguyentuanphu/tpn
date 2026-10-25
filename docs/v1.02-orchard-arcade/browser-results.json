@@ -9,5 +9,13 @@
     "bilingualDeviceCaptures": 12,
     "parentGateBeforeControls": true,
     "parentLocalSharedRound": true
+  },
+  {
+    "orchardTwoBrowserSharedCompletion": true
+  },
+  {
+    "parentTwoBrowserSharedResult": true,
+    "parentNoChildSaveWrites": true,
+    "parentTemporaryDisconnectRetained": true
   }
 ]

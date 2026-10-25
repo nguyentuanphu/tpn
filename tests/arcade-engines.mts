@@ -48,6 +48,7 @@ test('ordered host commands reject forged turns, recover lost/reordered commits 
  const target=sessions[0].state.mission[0];assert.ok(sessions[0].submit(sessions[0].state.board.indexOf(target)));
  queue.length=0;sessions[1].poll();drain();assert.deepEqual(sessions[1].state,sessions[0].state);
  const guest=sessions[1];assert.equal(guest.submit(9999),false);const needed=guest.state.mission.find((_,i)=>!guest.state.found[i])!;assert.ok(guest.submit(guest.state.board.indexOf(needed)));drain(true);assert.deepEqual(guest.state,sessions[0].state);
+ guest.poll();assert.equal(queue.length,1);const request=queue.shift()!;listeners.get(0)!(request.from,request.n,request.value);assert.equal(queue.length,0,'synchronized peers do not resend the whole history');
  const old=guest.state;listeners.get(1)!(1,2002,0);listeners.get(0)!(1,1800,0);assert.equal(guest.state,old);
  sessions.forEach(s=>s.close());assert.equal(listeners.size,0);
 });

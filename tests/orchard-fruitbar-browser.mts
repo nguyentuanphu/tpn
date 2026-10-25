@@ -23,6 +23,7 @@ async function completeOrchard(page:Page){
  throw Error('Orchard mission did not complete through real controls');
 }
 export async function orchardFruitBarBrowser(){
+ const capturesOnly=process.argv.includes('--captures-only');
  await fs.mkdir(out,{recursive:true});const browser=await launch(),notes:unknown[]=[];
  try{
   const P=await open(browser,{w:390,h:844,touch:true,settings:{countPlayers:false,online:false,calm:true},route:async ctx=>{
@@ -36,6 +37,7 @@ export async function orchardFruitBarBrowser(){
   for(const [device,w,h]of[['phone',390,844],['tablet',820,1180],['computer',1280,800]]as const)for(const lang of['en','vi']){
    await P.page.setViewportSize({width:w,height:h});await P.page.evaluate(async lang=>{const S=await import(String('/js/state.js'));S.settings.lang=lang;(await import(String('/js/i18n.js'))).applyLang();},lang);
    await play(P.page);await P.page.locator('[data-orchard-mode=solo]').click();await P.page.waitForTimeout(400);
+   const bounds=await P.page.locator('.orchard button').evaluateAll(bs=>bs.map(b=>{const r=b.getBoundingClientRect();return{top:r.top,bottom:r.bottom};}));assert.ok(bounds.every(r=>r.top>=0&&r.bottom<=h),`visible controls ${device}-${lang}: ${JSON.stringify(bounds)}`);
    const sizes=await P.page.locator('.orchard button').evaluateAll(bs=>bs.map(b=>b.getBoundingClientRect().height));assert.ok(sizes.every(n=>n>=64));
    await P.page.screenshot({path:new URL(`${device}-${lang}-orchard.png`,out).pathname});await closeGame(P.page);
    await P.page.evaluate(async()=>{(await import(String('/js/games/sparklefruitbar.js'))).openFruitBar();});assert.equal(await P.page.locator('[data-bar-bet]').count(),0);await hold(P.page);await P.page.locator('[data-bar-mode="2"]').click();
@@ -45,6 +47,7 @@ export async function orchardFruitBarBrowser(){
    await P.page.locator('[data-bar-next]').click();await P.page.locator('.arcade-adult[data-phase=allocate]').waitFor();await P.page.locator('.parent-arcade .x').click();await P.page.locator('.parent-arcade').waitFor({state:'detached'});
   }
   notes.push({bilingualDeviceCaptures:12,parentGateBeforeControls:true,parentLocalSharedRound:true});
+  if(capturesOnly){assert.deepEqual(P.errors,[]);await P.ctx.close();return;}
   const Q=await open(browser,{w:820,h:1180,settings:{countPlayers:false,online:false,calm:true},route:async ctx=>{await ctx.route('**/api/**',r=>r.fulfill({json:{}}));await ctx.route('**/content/custom.json*',r=>r.fulfill({json:{releases:flags}}));}});await clear(Q.page);await noWelcome(Q.page);await eligibility(Q.page,true);
   // Real createNetGames identity/session/invitation messages, relayed between two isolated browser pages.
   for(const [here,there]of[[P,Q],[Q,P]])await here.page.exposeFunction('__arcadeSend',async data=>there.page.evaluate(async packet=>(window as any).__arcadeNet.receive(packet),data));
@@ -74,7 +77,7 @@ export async function orchardFruitBarBrowser(){
   await Q.page.evaluate(()=>{(window as any).__arcadeConnected=true;});await Q.page.waitForTimeout(1700);assert.equal(await Q.page.locator('.arcade-adult').count(),1);
   notes.push({parentTwoBrowserSharedResult:true,parentNoChildSaveWrites:true,parentTemporaryDisconnectRetained:true});
   for(const d of[P,Q]){await d.page.locator('.parent-arcade .x').click();assert.deepEqual(d.errors,[]);await d.ctx.close();}
- }finally{await browser.close();await fs.writeFile(new URL('../docs/v1.02-orchard-arcade/browser-results.json',import.meta.url),JSON.stringify(notes,null,2)+'\n');}
+ }finally{await browser.close();await fs.writeFile(new URL(capturesOnly?'../docs/v1.02-orchard-arcade/capture-results.json':'../docs/v1.02-orchard-arcade/browser-results.json',import.meta.url),JSON.stringify(notes,null,2)+'\n');}
  console.log(JSON.stringify(notes));
 }
 await orchardFruitBarBrowser();

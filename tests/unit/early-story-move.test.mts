@@ -18,14 +18,14 @@ test('accepted story retains an inviter page arriving before its delayed start, 
 test('pending story pages are replayed in move order despite relay reordering', () => {
   const pages=[];let game;
   game=createNetGames({net:{ids:()=>['A'],send:()=>{}},me:()=> 'B',onStart:()=>game.onMove((seat,n,page)=>pages.push(page))});
-  game.answer({gid:'story2',from:'A'},true);
+  game.answer({gid:'story2',from:'A',game:'tale-banhchung'},true);
   for(const n of [2,0,1])game.receive({t:'gmove',gid:'story2',from:'A',n,mv:n});
   game.receive({t:'gstart',gid:'story2',game:'tale-banhchung',level:1,seats:['A','B'],from:'A'});
   assert.deepEqual(pages,[0,1,2]);
 });
 
 test('declining an accepted but not started story discards its pending pages and permission', () => {
-  const game=createNetGames({net:{ids:()=>['A'],send:()=>{}},me:()=> 'B'}),invite={gid:'story3',from:'A'};
+  const game=createNetGames({net:{ids:()=>['A'],send:()=>{}},me:()=> 'B'}),invite={gid:'story3',from:'A',game:'tale-banhchung'};
   game.answer(invite,true);game.receive({t:'gmove',gid:'story3',from:'A',n:0,mv:2});game.answer(invite,false);
   game.receive({t:'gstart',gid:'story3',game:'tale-banhchung',level:1,seats:['A','B'],from:'A'});
   assert.equal(game.session,null);
