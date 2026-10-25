@@ -82,6 +82,8 @@ register({
   async run(api) {
     const N = 25, LAD = { 3: 11, 8: 17, 14: 22 }, SNK = api.little ? {} : { 19: 7, 24: 15, 16: 5 };
     const me = api.players[0], friendName = api.two ? (api.players[1].name || T('Friend', 'Bạn')) : 'Priya';
+    const online = api.online;
+    let roundNo = 0;
     api.say('Snakes and ladders comes from India! Climb the ladders, and watch out for the snakes. Roll the dice!', 'Rắn và thang có từ Ấn Độ đó! Leo thang lên, cẩn thận con rắn nhé. Gieo xúc xắc nào!');
     const pos = [1, 1];
     const board = el('div', 'sl-board'); api.stage.appendChild(board);
@@ -106,14 +108,23 @@ register({
     for (;;) {
       if (api.closed) return;
       await new Promise<void>(res => { rollB.disabled = false; rollB.onclick = () => { rollB.disabled = true; res(); }; });
-      const n = rand(1, max); die.textContent = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][n - 1]; die.classList.remove('spin'); void die.offsetWidth; die.classList.add('spin');
+      let n;
+      if (!online || online.mine === 0) {
+        n = rand(1, max); if (online) online.move(roundNo, n);
+      } else n = Number(await online.next(roundNo, 0));
+      die.textContent = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][n - 1]; die.classList.remove('spin'); void die.offsetWidth; die.classList.add('spin');
       api.say(`You rolled ${n}! Count with me.`, `Con được ${n}! Đếm cùng nhé.`); await wait(900);
       await move(0, n);
       if (pos[0] >= N) { api.right(); break; }
       // the friend's turn (little ones always get there first)
-      let f = rand(1, max); if (api.little) f = Math.min(f, Math.max(0, N - 1 - pos[1]), Math.max(0, pos[0] - pos[1] + 1));
+      let f;
+      if (!online || online.mine === 1) {
+        f = rand(1, max); if (api.little) f = Math.min(f, Math.max(0, N - 1 - pos[1]), Math.max(0, pos[0] - pos[1] + 1));
+        if (online) online.move(roundNo, f);
+      } else f = Number(await online.next(roundNo, 1));
       msg.textContent = T(`${friendName} rolls ${f}`, `${friendName} gieo được ${f}`); await wait(700);
       if (f > 0) await move(1, f);
+      roundNo++;
       if (pos[1] >= N) { msg.textContent = T(`${friendName} got there first! Let's play again.`, `${friendName} về đích trước! Chơi lại nhé.`); api.say('So close! Let us play again.', 'Suýt nữa thôi! Chơi lại nhé.'); await wait(1500); pos[0] = pos[1] = 1; place(); }
       msg.textContent = T('Your turn! Tap Roll.', 'Đến lượt con! Bấm Gieo.');
     }

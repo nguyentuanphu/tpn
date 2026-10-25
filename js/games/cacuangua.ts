@@ -27,6 +27,7 @@ async function run(api) {
   let state = initialState(mode, 2, 'cacuangua-local');
   const root = el('div', 'ccn-root');
   const controls = el('div', 'ccn-controls');
+  const online = api.online;
   const board = el('div', 'ccn-board');
   const status = el('p', 'ccn-status');
   const dice = el('div', 'ccn-dice');
@@ -42,10 +43,13 @@ async function run(api) {
   const difficulty = controls.querySelector('[data-difficulty]') as HTMLSelectElement;
   const reset = () => { state = initialState(mode, 2, 'cacuangua-local'); renderBoard(board, state); dice.textContent = ''; moves.replaceChildren(); roll.disabled = false; status.textContent = T('Red starts. Roll the dice!', 'Đỏ đi trước. Tung xúc xắc nhé!'); };
   (controls.querySelectorAll('[data-mode]') as NodeListOf<HTMLButtonElement>).forEach(button => button.onclick = () => { mode = button.dataset.mode as Mode; reset(); });
+  if (online) { npcBox.checked = false; npcBox.disabled = true; difficulty.disabled = true; }
   npcBox.onchange = () => { difficulty.disabled = !npcBox.checked; };
   difficulty.onchange = () => { npc = difficulty.value as NPCDifficulty; };
 
-  const chooseMove = (move: { horse: number; dieIndex: number }) => { state = applyMove(state, move.horse, move.dieIndex); renderBoard(board, state); };
+  const chooseMove = (move: { horse: number; dieIndex: number }) => { state = applyMove(state, move.horse, move.dieIndex); renderBoard(board, state); if (online) online.move(moveNo++, move.horse * 8 + move.dieIndex); };
+  let moveNo = 0;
+  if (online) online.onMove((seat, n, value) => { if (seat !== online.mine && n >= moveNo) { moveNo = n + 1; const horse = Math.floor(Number(value) / 8); const dieIndex = Number(value) % 8; chooseMove({ horse, dieIndex }); } });
   const npcTurn = async () => {
     if (!npcBox.checked || state.turn !== 1 || isGameOver(state)) return;
     await wait(450);
@@ -64,7 +68,7 @@ async function run(api) {
     });
   };
   roll.onclick = async () => {
-    if (state.turn === 1 && npcBox.checked) return;
+    if ((online && state.turn !== online.mine) || (state.turn === 1 && npcBox.checked)) return;
     const values = rollDice(state);
     state = { ...state, dice: values, pendingMove: true };
     dice.textContent = values.map(value => `🎲 ${value}`).join('  ');

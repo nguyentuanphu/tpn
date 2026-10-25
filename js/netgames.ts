@@ -9,7 +9,7 @@ import { GAMES } from './games/registry.js';
 import { MULTIPLAYER_FOUNDATIONS, applyAuthoritativeMove, createAuthoritativeState, foundationFor, validMove } from './games/multiplayer-foundations.js';
 // games made for playing together; every other game is played side by side (a race: js/games/frame.js), and a tale
 // ('tale-<id>') is read together, page by page
-export const ONLINE_GAMES = { caro: { max: 2, all: false }, oantuti: { max: 6, all: true }, memory: { max: 4, all: true }, tienlen: { max: 4, all: true }, tienlenbac: { max: 4, all: true }, fruitparade: { max: 4, all: true }, ...Object.fromEntries(Object.entries(MULTIPLAYER_FOUNDATIONS).map(([id, foundation]) => [id, { max: foundation.maxPlayers, all: foundation.all, foundation }])) };   // (Round V) Tiến Lên miền Bắc too
+export const ONLINE_GAMES = { caro: { max: 2, all: false }, oantuti: { max: 6, all: true }, memory: { max: 4, all: true }, tienlen: { max: 4, all: true }, tienlenbac: { max: 4, all: true }, fruitparade: { max: 4, all: true }, ...Object.fromEntries(Object.entries(MULTIPLAYER_FOUNDATIONS).map(([id, foundation]) => [id, { max: foundation.max, all: foundation.all, foundation }])) };   // (Round V) Tiến Lên miền Bắc too
 const newGid = () => Math.random().toString(36).slice(2, 10);
 
 const defOf = game => ONLINE_GAMES[game] || foundationFor(game) || (GAMES[game] ? { max: 6, all: true, race: true } : /^tale-[\w-]{1,40}$/.test(game || '') ? { max: 6, all: true, tale: true } : null);
