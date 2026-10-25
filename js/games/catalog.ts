@@ -12,6 +12,7 @@ export const GAME_CATALOG = [
   { id: 'colors', icon: '🎨', name: () => T('Rainbow Paints', 'Pha Màu Cầu Vồng') },
   { id: 'sorting', icon: '📏', name: () => T('Small to Big', 'Từ Bé Đến Lớn') },
   { id: 'memory', online: true, icon: '🃏', name: () => T('Memory Match', 'Lật Hình Ghi Nhớ') },
+  { id: 'fruitparade', online: true, icon: '🍎', name: () => T('Sparkle Fruit Parade', 'Diễu hành trái cây lấp lánh') },
   { id: 'hanoi', icon: '🗼', name: () => T('Tower Stack', 'Tháp Hà Nội') },
   { id: 'robot', icon: '🤖', name: () => T('Robot Planner', 'Lập Trình Rô-bốt') },
   { id: 'maze', icon: '🌀', name: () => T('Mountain Maze', 'Mê Cung Trên Núi') },
@@ -179,6 +180,7 @@ export const GAME_CATALOG = [
 ].filter(def => def.id !== 'familyquiz' || customQuiz().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
+  'fruitparade.ts': { ids: ['fruitparade'], load: () => import('./fruitparade.js') },
   'strategy.js': { ids: ["hanoi","robot","maze","goat"], load: () => import('./strategy.js') },
   'vietnam.js': { ids: ["oanquan","caro","hopscotch","tug"], load: () => import('./vietnam.js') },
   'vietnam2.js': { ids: ['banhchung','denongsao','mualan','cayneu'], load: () => import('./vietnam2.js') },
