@@ -1,3 +1,4 @@
+import { floatReportButton } from './tester-float.js';
 // Tester reports on a tester device (owner, 12 Oct 2026 AEDT; brief docs/cores/tasks/tester-reports.md). Loaded only
 // on the devices Studio's Releases page makes testers (switch `tester`, js/testergate.js); everywhere else nothing of it
 // is downloaded. Once the tester accepts the agreement (shown once, both languages):
@@ -319,19 +320,16 @@ function newsHTML() {
 const paintCount = () => { dispatchEvent(new Event('sv-report-queue')); const n = queue().length, fixed = fixedToSee().length, fresh = newsUnseen(); document.querySelectorAll('.z-lb').forEach(b => { b.querySelector<HTMLElement>('.lb-n').textContent = n ? String(n) : ''; b.querySelector<HTMLElement>('.lb-n').hidden = !n; const ok = b.querySelector<HTMLElement>('.lb-ok'); ok.hidden = !fixed; if (fixed) ok.textContent = String(fixed); const nw = b.querySelector<HTMLElement>('.lb-new'); if (nw) nw.hidden = !fresh; }); };
 const fixedToSee = () => { const seen = get(KEY.seen, {}); return ((status && status.mine) || []).filter(p => ['fixed', 'confirmed'].includes(p.status) && !seen[p.k]); };
 function addUI() {
+  const floatingSeats = new Set<number>();
   // (each player's HUD gets the mark under its clock and, at the ladybird level, the ladybird with the zoom buttons; also
   // the HUDs made after this: the game starts after the title screen)
   const ensure = () => (G.huds || []).forEach((hud, i) => {
     const ck = hud.q && hud.q('.zoom'); if (ck && !ck.querySelector('.testermark')) { const mk = el('span', 'testermark', `${pic('🐞')}<span>${T('Tester', 'Người thử')} · ${SHOWN}</span>`); mk.setAttribute('aria-hidden', 'true'); ck.appendChild(mk); offs.push(() => mk.remove()); }
     if (level !== 'ladybird') return;
-    const z = hud.q && hud.q('.zoomer'); if (!z || z.querySelector('.z-lb')) return;
+    const z = hud.q && hud.q('.zoomer'); if (!z || floatingSeats.has(i)) return;
     const b = el('button', 'z-lb', `${pic('🐞')}<i class="lb-n" hidden></i><i class="lb-ok" hidden>✓</i><i class="lb-new" hidden></i><kbd class="kb">L</kbd>`); b.setAttribute('aria-label', T('Report a problem (hold: quick report)', 'Báo lỗi (giữ: báo nhanh)'));
-    let t0 = 0, quick = null;
-    b.addEventListener('pointerdown', e => { e.stopPropagation(); t0 = performance.now(); quick = setTimeout(() => { quick = null; quickReport('quick'); }, 700); });
-    b.addEventListener('pointerup', e => { e.stopPropagation(); if (quick) { clearTimeout(quick); quick = null; openPanel(i, fixedToSee().length ? 'fixed' : 'tester'); } });
-    b.addEventListener('pointerleave', () => { if (quick) { clearTimeout(quick); quick = null; } });
-    b.addEventListener('keydown', e => { if (e.key === 'Enter') openPanel(i); });
-    z.appendChild(b); offs.push(() => b.remove()); paintCount();
+    floatingSeats.add(i);
+    offs.push(floatReportButton(b as HTMLButtonElement, z, i, () => openPanel(i, fixedToSee().length ? 'fixed' : 'tester'), () => { void quickReport('quick'); })); paintCount();
   });
   ensure(); const ev = setInterval(ensure, 1000); offs.push(() => clearInterval(ev));
   const key = e => { if ((e.key === 'l' || e.key === 'L') && !e.target.closest('input, textarea') && !document.querySelector<ReportPanel>('.modal.tpanel')) openPanel(0); };

@@ -55,7 +55,7 @@ jobs:
           retention-days: 14
 
       - name: Save recordings to the release branch when requested
-        if: inputs.save_to_branch && startsWith(github.ref_name, 'release/')
+        if: inputs.save_to_branch && (startsWith(github.ref_name, 'release/') || github.ref_name == 'work/v1.02-fruit-parade')
         env:
           RELEASE_BRANCH: ${{ github.ref_name }}
         run: |

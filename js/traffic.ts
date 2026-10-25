@@ -1,3 +1,4 @@
+import { destinationStops } from './travel-stops.js';
 // Traffic of the two homes (round R, owner: vehicles on Vietnamese streets, Australian streets and farms, bicycles
 // everywhere, children can ride them, all switchable in Sparkle Studio). Uses the models in js/vehicles.js.
 //   · on the roads between places: motorbikes, taxis, buses and xe ba gác in Vietnam (riding on the right); cars, utes,
@@ -277,7 +278,7 @@ export function createTraffic(G) {
   }
   // (Round V) the stop picker: every bus stop by its place's picture and name; "Next stop" rides to the end of this route
   function pickStop(h, sl) {
-    const stops = (W.busStops || []).filter(b => Math.hypot(b.x - h.pos.x, b.z - h.pos.z) > 12);
+    const stops = destinationStops(W.busStops || [], h.pos);
     if (!stops.length) return Promise.resolve(null);
     return new Promise(res => {
       const m = modal('stoppick', `<h2>${pic('🚏')} ${T('Where shall we go?', 'Mình đi đâu nào?')}</h2><div class="wp-grid">${stops.map((b, k) => `<button class="wp-pick" data-k="${k}" aria-label="${esc(b.name())}">${pic(b.icon)}<b>${esc(b.name())}</b></button>`).join('')}</div>

@@ -3257,3 +3257,9 @@ body.calm .sv2 .press::after { animation: none; display: none; }
 .fam-join-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
 .fam-join-row input { flex: 1 1 140px; min-height: 44px; text-transform: uppercase; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: 1px; }
 .modal.report .card > h2 { padding-right: 64px; }
+
+/* Report control lives above games, menus and their stacking contexts. */
+.tester-floating.z-lb { position:fixed; z-index:2147483000; width:64px; height:64px; min-width:64px; min-height:64px; border:3px solid #fff; border-radius:50%; background:#fff4cf; color:var(--text); box-shadow:0 3px 10px #33204455; display:grid; place-items:center; padding:8px; touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab; pointer-events:auto; --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px); --safe-left:env(safe-area-inset-left,0px); --safe-right:env(safe-area-inset-right,0px); }
+.tester-floating.z-lb:active { cursor:grabbing; }
+.tester-floating.z-lb .art { width:42px; height:42px; }
+.tester-floating.z-lb .kb { position:absolute; bottom:1px; right:4px; }

@@ -15,6 +15,11 @@ on:
       - 'studio/ui/**'
       - 'tests/orchard-*.mts'
       - 'tests/arcade-engines.mts'
+      - 'tests/report-float-browser.mts'
+      - 'js/tester-float.ts'
+      - 'js/travel-stops.ts'
+      - 'js/tester.ts'
+      - 'js/traffic.ts'
       - '.github/workflows/tester-arcades.yml'
   workflow_dispatch:
 permissions:
@@ -47,11 +52,15 @@ jobs:
           node tests/orchard-fruitbar-browser.mts --input-only
           node tests/orchard-fruitbar-browser.mts --parent-entry-only
           node tests/orchard-fruitbar-browser.mts --allocations-only
+      - name: Floating report control and unique ride destinations
+        run: node tests/report-float-browser.mts
       - name: Actual Studio bilingual folds, analytics layout and six controls
         run: node tests/orchard-studio-browser.mts
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: tester-arcades-evidence
-          path: docs/v1.02-orchard-arcade/
+          path: |
+            docs/v1.02-orchard-arcade/
+            docs/v1.02-report-control/
           retention-days: 30
