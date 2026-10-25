@@ -1,0 +1,41 @@
+name: FPT Le Minh authorization diagnostic
+on:
+  push:
+    branches: [work/fpt-leminh-full-20261025]
+    paths:
+      - tools/fpt-auth-diagnostic.mts
+      - .github/workflows/fpt-auth-diagnostic.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fpt-leminh-auth-diagnostic
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    if: github.ref == 'refs/heads/work/fpt-leminh-full-20261025'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.0
+      - name: Check diagnostics cannot disclose credentials
+        run: node --test tests/fpt-diagnostic.mts
+      - name: Install decoder before one tiny synthesis request
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+      - name: Diagnose one Le Minh request safely
+        env:
+          FPT_API_KEY: ${{ secrets.FPT_API_KEY }}
+        run: node tools/fpt-auth-diagnostic.mts
+      - name: Decode successful output
+        run: ffmpeg -v error -xerror -i temp/fpt-diagnostic/clip.mp3 -f null -
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fpt-auth-diagnostic
+          path: temp/fpt-diagnostic/
+          retention-days: 30
