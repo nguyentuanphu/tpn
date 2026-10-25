@@ -1,6 +1,7 @@
 [
   {
     "slowNativeDoubleTapCancelsUntouchedReport": true,
-    "resetPreservesEditedDraft": true
+    "resetPreservesEditedDraft": true,
+    "resetPreservesKeyboardCategory": true
   }
 ]

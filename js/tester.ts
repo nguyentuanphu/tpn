@@ -404,9 +404,9 @@ export async function openPanel(i = 0, initialTab = 'tester', signal?: AbortSign
   let interacted = false;
   const touched = () => { interacted = true; };
   const cancelUntouched = () => { if (signal?.reason === 'reset' && !interacted) close(); };
-  card.addEventListener('pointerdown', touched, true); card.addEventListener('input', touched, true);
+  card.addEventListener('pointerdown', touched, true); card.addEventListener('input', touched, true); card.addEventListener('click', touched, true);
   signal?.addEventListener('abort', cancelUntouched, { once: true });
-  m.addEventListener('sv-report-cleanup', () => { signal?.removeEventListener('abort', cancelUntouched); card.removeEventListener('pointerdown', touched, true); card.removeEventListener('input', touched, true); }, { once: true });
+  m.addEventListener('sv-report-cleanup', () => { signal?.removeEventListener('abort', cancelUntouched); card.removeEventListener('pointerdown', touched, true); card.removeEventListener('input', touched, true); card.removeEventListener('click', touched, true); }, { once: true });
   card.querySelector<HTMLButtonElement>('.x').onclick = close;
   const selectTab = tab => {
     const fixedTab = tabs.querySelector('[data-test-tab="fixed"]');

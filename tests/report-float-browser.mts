@@ -16,7 +16,8 @@ try{
   const b=await button.boundingBox();assert.ok(b);await P.page.mouse.click(b.x+32,b.y+32,{clickCount:2});await P.page.locator('.tpanel').waitFor({state:'detached'});
   await button.click();await P.page.locator('.tpanel').waitFor();await P.page.locator('.tpanel textarea').fill('Synthetic report draft');await button.dblclick();await P.page.waitForTimeout(450);
   assert.equal(await P.page.locator('.tpanel textarea').inputValue(),'Synthetic report draft');await P.page.locator('.tpanel .tp-head > .x').click();await P.page.locator('.tpanel').waitFor({state:'detached'});
-  results.push({slowNativeDoubleTapCancelsUntouchedReport:true,resetPreservesEditedDraft:true});assert.deepEqual(P.errors,[]);await P.ctx.close();return;
+  await button.click();await P.page.locator('.tpanel').waitFor();await P.page.locator('.tp-k[data-k=looks]').focus();await P.page.keyboard.press('Enter');await button.dblclick();await P.page.waitForTimeout(450);assert.equal(await P.page.locator('.tp-k[data-k=looks]').evaluate(b=>b.classList.contains('on')),true);await P.page.locator('.tpanel .tp-head > .x').click();await P.page.locator('.tpanel').waitFor({state:'detached'});
+  results.push({slowNativeDoubleTapCancelsUntouchedReport:true,resetPreservesEditedDraft:true,resetPreservesKeyboardCategory:true});assert.deepEqual(P.errors,[]);await P.ctx.close();return;
  }
 
  const drag=async(x:number,y:number)=>{const r=await button.boundingBox();assert.ok(r);await P.page.mouse.move(r.x+32,r.y+32);await P.page.mouse.down();await P.page.mouse.move(x,y);await P.page.mouse.up();};
