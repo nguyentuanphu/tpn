@@ -1,0 +1,17 @@
+{
+  "inventory": "cd42b404530c7b68750fb8238d098552201fdf51ec33c8b58cae402354427874",
+  "voice": {
+    "provider": "FPT Neo",
+    "model": "FPT.AI-VITs",
+    "voice": "leminh",
+    "speed": 1,
+    "response_format": "mp3"
+  },
+  "total": 1580,
+  "done": {},
+  "failed": {
+    "00102b83-2808443b": "FPT Neo returned HTTP 401. Check key access and account quota. No retry was made."
+  },
+  "status": "stopped-access-or-quota",
+  "updated": "2026-10-25T07:37:07.807Z"
+}
