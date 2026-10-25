@@ -13,6 +13,10 @@ Source: stable v1.01 plus recording tools. Unreviewed helper-game lines will be 
 - Checkpoints every 50 clips; each file decoded with ffprobe, checksummed and linked to the exact text/provider configuration. Resume skips only validated matching files. Outputs and metadata are saved on work/fpt-leminh-full-20261025, never main.
 - No replacement of female recordings, defaults, game manifests or live files occurs in this job. Voice policy and publication remain part of v1.02 review.
 
+## Current status — 25 October 2026 AEDT
+
+**Stopped on authorization, not complete.** Shard 0 completed with 1,580 saved clips. Shard 1 received HTTP 401 at 6:37 pm AEDT; the remaining jobs stopped. The owner was asked to check that the Neo key is active and update repository secret FPT_API_KEY if required. No further paid retry has been made. All 1,580 downloaded files passed checksum/provenance checks and full FFmpeg decoding; 4,739 recordings remain. See [checkpoint audit](checkpoint-audit.json). After credential repair, rerun the recording workflow; matching verified clips are reused. Do not change the frozen inventory or overwrite the existing pack.
+
 ## Completion audit
 
 Owner chose parent-selectable Lê Minh for **all Vietnamese speech**, preserving the current default. This policy does not install unfinished recordings or approve deployment.

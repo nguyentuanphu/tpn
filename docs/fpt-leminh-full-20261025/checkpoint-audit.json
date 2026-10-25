@@ -9,18 +9,20 @@
     "response_format": "mp3"
   },
   "expected": 6319,
-  "verified": 950,
-  "missing": 5369,
-  "bytes": 65200612,
-  "decoded": 950,
+  "verified": 1580,
+  "missing": 4739,
+  "bytes": 108249769,
+  "decoded": 1580,
   "absentShards": [
-    1,
     2,
     3
   ],
   "pendingShards": [
-    0
+    1
   ],
-  "errors": [],
+  "errors": [
+    "Shard 1: recording failed for 00102b83-2808443b",
+    "Shard 1: stopped-access-or-quota"
+  ],
   "complete": false
 }
