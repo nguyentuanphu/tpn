@@ -12,3 +12,18 @@ Source: stable v1.01 plus recording tools. Unreviewed helper-game lines will be 
 - Four sequential shards; one recording request at a time, 1.5 s spacing, bounded retries and stop on access/quota failures.
 - Checkpoints every 50 clips; each file decoded with ffprobe, checksummed and linked to the exact text/provider configuration. Resume skips only validated matching files. Outputs and metadata are saved on work/fpt-leminh-full-20261025, never main.
 - No replacement of female recordings, defaults, game manifests or live files occurs in this job. Voice policy and publication remain part of v1.02 review.
+
+## Completion audit
+
+Owner chose parent-selectable Lê Minh for **all Vietnamese speech**, preserving the current default. This policy does not install unfinished recordings or approve deployment.
+
+Read-only validation (no key, no synthesis calls):
+
+```
+node tools/verify-fpt-pack.mts --allow-partial
+node tools/verify-fpt-pack.mts --decode
+```
+
+The first command reports partial progress without marking it complete. The final command must pass after all four shard manifests finish: exact frozen inventory/provider identity, every required clip, byte count, MP3 header, checksum, positive probed duration, and full FFmpeg decoding. Wrong-provider files, corrupted audio, stopped shards and missing shards block readiness. `decoded: 0` means full decoding was not requested; it is not an audio-quality/listening approval. The review also needs listening and game/offline integration checks.
+
+Independent checkpoint review: 600 downloaded clips had matching checksums and all 600 fully decoded with FFmpeg without failure. A later 900-clip snapshot passed the new read-only hash/provenance audit; it correctly reports 5,419 recordings still missing and complete=false. Six focused recorder/integrity tests pass; the audit tool also passes strict TypeScript.
