@@ -4,6 +4,8 @@ Release branch: `work/v1.02-fruit-parade`. NOT READY for deployment. The owner r
 
 The helper's latest audited head is ed9a5b0a. It does not contain the claimed parade-engine.ts: Orchard is a welcome-only stub with an unresolved import. Its recording manifest says dryRun true and recorded 0. The Studio diff contains broad line-ending churn around three folding wrappers, including untranslated “Tiles”; its Simple screen CSS reduces under-five tools to 44px. These changes have not been blindly merged. [Audit and implementation plan](../cores/tasks/orchard-fruit-bar-v1.02.md).
 
+[Full comparison with both shared designs](REFERENCE-MATRIX.md), including the later ideas that remain extensions.
+
 ## Implemented for review
 
 - Separate Orchard ID `sparkleorchard`: perimeter light board, visual collection mission, seeded board with every requested picture present, gentle assist, solo/helper/local two-player and online 2–4 players. Original game drawings, bilingual spoken introduction, 64px child controls, calm mode, keyboard/controller stop, cleanup. Existing child reward/save flow stays with Orchard only. Special combinations emit the adopted extension event; world adventures and inventory prizes are not falsely awarded.
