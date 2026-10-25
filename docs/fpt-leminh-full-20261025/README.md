@@ -33,3 +33,8 @@ node tools/verify-fpt-pack.mts --decode
 The first command reports partial progress without marking it complete. The final command must pass after all four shard manifests finish: exact frozen inventory/provider identity, every required clip, byte count, MP3 header, checksum, positive probed duration, and full FFmpeg decoding. Wrong-provider files, corrupted audio, stopped shards and missing shards block readiness. `decoded: 0` means full decoding was not requested; it is not an audio-quality/listening approval. The review also needs listening and game/offline integration checks.
 
 Independent checkpoint review: 600 downloaded clips had matching checksums and all 600 fully decoded with FFmpeg without failure. A later 900-clip snapshot passed the new read-only hash/provenance audit; it correctly reports 5,419 recordings still missing and complete=false. Six focused recorder/integrity tests pass; the audit tool also passes strict TypeScript.
+
+
+## Completed baseline recording · 25 October 2026 AEDT
+
+Resumed run 40175822783 completed successfully with all 6,319 canonical Vietnamese clips saved across four complete manifests. The original run stopped after 1,580 clips on HTTP 401; the unchanged-key diagnostic succeeded, and resume recorded the previously failed line. The provider failure cause remains unproven. First 1,580 clips were independently fully decoded earlier; a separate unpaid GitHub job now checks hashes and fully decodes all 6,319. Recording success does not establish subjective listening approval or production integration. The owner-selected all-Vietnamese Lê Minh option must preserve the default female voice.

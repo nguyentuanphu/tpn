@@ -1,0 +1,37 @@
+name: FPT Le Minh full pack integrity and decode
+on:
+  push:
+    branches: [work/fpt-leminh-full-20261025]
+    paths: [.github/workflows/fpt-pack-audit.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fpt-leminh-pack-audit
+  cancel-in-progress: true
+jobs:
+  audit:
+    if: github.ref == 'refs/heads/work/fpt-leminh-full-20261025'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: work/fpt-leminh-full-20261025
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.0
+      - name: Install independent audio decoder
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+      - name: Check every frozen ID, provider, checksum, byte count and decoded audio stream
+        run: node tools/verify-fpt-pack.mts --decode > docs/fpt-leminh-full-20261025/final-audit.json
+      - name: Show only safe audit metadata
+        if: always()
+        run: test ! -f docs/fpt-leminh-full-20261025/final-audit.json || cat docs/fpt-leminh-full-20261025/final-audit.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: le-minh-full-pack-audit
+          path: docs/fpt-leminh-full-20261025/final-audit.json
+          retention-days: 30
