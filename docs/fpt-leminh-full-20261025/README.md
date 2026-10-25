@@ -15,7 +15,9 @@ Source: stable v1.01 plus recording tools. Unreviewed helper-game lines will be 
 
 ## Current status — 25 October 2026 AEDT
 
-**Stopped on authorization, not complete.** Shard 0 completed with 1,580 saved clips. Shard 1 received HTTP 401 at 6:37 pm AEDT; the remaining jobs stopped. The owner was asked to check that the Neo key is active and update repository secret FPT_API_KEY if required. No further paid retry has been made. All 1,580 downloaded files passed checksum/provenance checks and full FFmpeg decoding; 4,739 recordings remain. See [checkpoint audit](checkpoint-audit.json). After credential repair, rerun the recording workflow; matching verified clips are reused. Do not change the frozen inventory or overwrite the existing pack.
+**Resumed, not complete.** [Fresh run 40175822783](https://github.com/nguyentuanphu/tpn/actions/runs/40175822783) is recording missing clips, reusing the first 1,580. Current independently downloaded checkpoint: 1680 clips; full coverage remains pending. Owner confirmed the key is active. One tiny diagnostic request in [run 40175648144](https://github.com/nguyentuanphu/tpn/actions/runs/40175648144) succeeded and fully decoded; the resumed batch also passed the exact input that originally returned 401.
+
+First attempt disclosure: shard 0 completed with 1,580 saved clips. Shard 1 received HTTP 401 at 6:37 pm AEDT and stopped the remaining jobs. All 1,580 files passed independent checksums and full FFmpeg decoding. [Pre-resume audit](before-resume-audit.json) preserves that failure; [current audit](checkpoint-audit.json) explicitly distinguishes verified files from full decoding. The authorization failure is currently not reproducible; its original provider-side cause is not proven. No key was changed by Release.
 
 ## Completion audit
 
