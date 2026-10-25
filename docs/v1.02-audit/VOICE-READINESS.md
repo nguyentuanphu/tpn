@@ -1,14 +1,15 @@
 # Lê Minh readiness · 26 October 2026 AEDT
 
-Snapshot of runtime `4fd792cfa`, after the default-voice coverage check reported zero missing files. Exact counts and source paths: [VOICE-READINESS.json](VOICE-READINESS.json).
+Snapshot of runtime `ad302279a`, voice assets through `1a05aed33`, after the default-voice coverage check reported zero missing files. Exact counts and source paths: [VOICE-READINESS.json](VOICE-READINESS.json).
 
 | Inventory | Vietnamese voice units |
 |---|---:|
-| Current default manifest | 6,362 |
+| Current default manifest | 6,363 |
 | Frozen v1.01 Lê Minh baseline, independently verified/decoded | 6,319 |
-| New reviewed arcade delta, recorded/decoded | 11 |
+| Reviewed arcade delta including two family titles, recorded/decoded | 13 |
 | New reviewed public title labels, recorded/decoded | 10 |
-| Total Lê Minh staging | 6,340 |
+| Total Lê Minh staging, including one historical title | 6,342 |
+| Current manifest units with a staged Lê Minh recording | 6,341 |
 | Privacy-held items excluded from FPT | 19 |
 | Public instructions awaiting game/copy review and an FPT delta | 3 |
 
@@ -27,3 +28,5 @@ Production parent selection of Lê Minh for Vietnamese speech is still pending. 
 An FPT batch freezes reviewed public Vietnamese text and canonical IDs. Manifests retain provider/model/voice, text identity, checksum and recording progress; source hashes in the arcade delta detect changed instructions. New actors also need the speaker/cast metadata. A new provider requires its own identity/cache path. Private family text and child names require the existing private/on-device fallback policy, not automatic provider upload.
 
 The cache-area totals in the JSON are download groups, not numbers of games or stories: the games group also includes film/story material. Canonical IDs deduplicate shared phrases across source files. This readiness table is a dated audit snapshot; the source collectors, coverage check and reviewed batch inventories are the maintained records.
+
+The 26 October family-access change replaces the adult-only title. Its old canonical clip remains historical staging, so 6,342 staged files cover 6,341 current units. Run 40243379237 reused the original eleven arcade clips and recorded only two new names; both were independently checksummed and fully decoded. Default run 40243424013 recorded eight English/Vietnamese female/male title files and passed coverage. No other privacy-held or prototype instruction was sent.

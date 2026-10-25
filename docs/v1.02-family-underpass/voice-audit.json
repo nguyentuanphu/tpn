@@ -1,0 +1,61 @@
+{
+  "runtime": "ad302279a",
+  "recordingsHead": "1a05aed33",
+  "azureRun": 40243424013,
+  "expected": 8,
+  "verified": 8,
+  "fullyDecoded": 8,
+  "clips": [
+    {
+      "file": "voices/en/f/6533568b-27a7ebe2.mp3",
+      "sha256": "c105be06461fa41d80ecdfea08e02239f18b490c8b1624925b56f33d55a2b122",
+      "bytes": 9216
+    },
+    {
+      "file": "voices/en/f/d71616cd-6273db80.mp3",
+      "sha256": "661973b1975291e71f82cb5199b01f37e451b238cf0f43056da9b11890b5aaee",
+      "bytes": 7200
+    },
+    {
+      "file": "voices/en/m/6533568b-27a7ebe2.mp3",
+      "sha256": "92570e930d395c435ba4a0a928b51959ccc57d8e984b31f7bc07c572347249bf",
+      "bytes": 7200
+    },
+    {
+      "file": "voices/en/m/d71616cd-6273db80.mp3",
+      "sha256": "55d60ee522ed2e93e89ef45e3d8c79bf157e15971e54c99653920ff4e4312239",
+      "bytes": 5040
+    },
+    {
+      "file": "voices/vi/f/2f061dda-331b13db.mp3",
+      "sha256": "33644e894145bfe5aa444354ce6d41c94a04ce37c7e14ed3a26a4aa4ef6b1305",
+      "bytes": 9504
+    },
+    {
+      "file": "voices/vi/f/4ff39bc0-380f8516.mp3",
+      "sha256": "21eaf5a59641646d06107cc6b2c3cdf1366fbbca80a3c3b2606756fb67d38899",
+      "bytes": 7488
+    },
+    {
+      "file": "voices/vi/m/2f061dda-331b13db.mp3",
+      "sha256": "0e7d348b8695d5d97632c4a12695a5cb4a4f18dc2a8c6d57fd64c199639ad35d",
+      "bytes": 9792
+    },
+    {
+      "file": "voices/vi/m/4ff39bc0-380f8516.mp3",
+      "sha256": "681d8a77a2d70faac12a0cb4b66b8c8cbb5e9ecd01393e4ff717e8349edf187f",
+      "bytes": 7632
+    }
+  ],
+  "coverage": {
+    "lines": 11056,
+    "parts": 1865,
+    "templates": 259,
+    "areas": 27,
+    "reasons": {
+      "built while playing (say with a variable): collected by tools/voice-harvest.mts into tools/voice-extra.json": 432,
+      "a child's, friend's or pet's name: shown, never recorded or spoken (HANDOFF rule 11)": "every gap that is a name"
+    },
+    "bad": []
+  }
+}

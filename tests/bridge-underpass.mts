@@ -33,6 +33,17 @@ export async function bridgeUnderpassCheck(browser: Browser) {
   });
   await fs.mkdir('out/underpass',{recursive:true});await fs.writeFile('out/underpass/results.json',JSON.stringify(results,null,2));
   assert.deepEqual(results.filter(r=>!r.swims||!r.arrived||r.passage===null||!r.deckRailBlocks),[],JSON.stringify(results.filter(r=>!r.swims||!r.arrived||r.passage===null||!r.deckRailBlocks)));
+  await fs.mkdir('../docs/v1.02-family-underpass/shots',{recursive:true});
+  for(const [device,w,h]of[['phone',390,844],['tablet',820,1180],['computer',1280,800]]as const)for(const lang of['en','vi']){
+   await P.page.setViewportSize({width:w,height:h});await P.page.evaluate(async({lang,passage})=>{
+    const G=window.__sv as unknown as import('../js/main.js').SvMain,W=await import(String('/js/world.js')),S=await import(String('/js/state.js'));
+    S.settings.lang=lang;(await import(String('/js/i18n.js'))).applyLang();
+    const B=W.BRIDGES.find(b=>b.id==='princes'),x=B.axis==='z'?B.c:passage,z=B.axis==='z'?passage:B.c,hero=G.heroes[0];
+    hero.place(x,z,W.WATER-.55);hero.update(1/30,{mx:0,mz:0,cdx:0,cdy:0,jump:()=>false,act:()=>false,run:false},performance.now()/1000,G);
+    G.renderer.setPixelRatio(1);hero.cam.position.set(x+9,2.4,z+3);hero.cam.lookAt(x,.25,z);hero.cam.updateProjectionMatrix();
+   },{lang,passage:results.find(r=>r.id==='princes')!.passage});
+   await P.page.waitForTimeout(300);await P.page.screenshot({path:`../docs/v1.02-family-underpass/shots/${device}-${lang}-underpass.png`});
+  }
   assert.deepEqual(P.errors,[]); return `${results.length} bridge water crossings remain open below their walkable decks`;
  }finally{await P.ctx.close();}
 }

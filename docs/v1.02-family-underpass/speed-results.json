@@ -1,0 +1,32 @@
+{
+  "runtime": "ad302279a",
+  "recordingsHead": "1a05aed33",
+  "date": "26 October 2026 AEDT",
+  "serial": true,
+  "results": {
+    "bridgeunderpass": {
+      "ok": true,
+      "secs": 70,
+      "note": "13 bridge water crossings remain open below their walkable decks"
+    },
+    "perf": {
+      "ok": false,
+      "note": "{\"over\":[\"PERF-001 worldMs 11305 > 6600\"],\"got\":{\"startMB\":2.594481,\"worldMs\":11305,\"drawCalls\":409,\"triangles\":803757,\"drawCallsHome\":448,\"frames\":7,\"texturePx\":1024,\"heapGrowMB\":0,\"domGrow\":2,\"games\":10},\"errs\":[]}"
+    },
+    "battery": {
+      "ok": true,
+      "secs": 132,
+      "note": "caps (ms a frame) {\"computerAuto\":16.7,\"computerFast\":33.3,\"computerPretty\":16.7,\"computerPrettyPlus\":0,\"phoneAuto\":33.3,\"phonePretty\":16.7}; frame gate a second at 60/120/144 Hz: 60/61/61 (cap 60), 31/31/31 (cap 30), title 21/21, idle 9/9; measured in the test browser: title 0 a second, valley 3, idle after 19.4 s 2.3; pixel ratio 1.5 on a 3x screen; 170/170 far people still, 0 near moving; statistics [1,76,2944,33390,35,0,0,0,1,32] sent once, nothing with Analytics off"
+    },
+    "startup": {
+      "ok": false,
+      "note": "{\"over\":[\"PERF-001 firstTitleMs 1668 > 1130 x 0.82 (machine speed) = 929\",\"PERF-001 firstReadyMs 40361 > 19500 x 0.82 (machine speed) = 16033\",\"PERF-001 secondReadyMs 28222 > 19100 x 0.82 (machine speed) = 15704\",\"PERF-001 secondFreezeMs 6105 > 4950 x 0.82 (machine speed) = 4070\"],\"got\":{\"firstKB\":1004,\"firstTitleMs\":1668,\"firstReadyMs\":40361,\"secondReadyMs\":28222,\"secondFreezeMs\":6105,\"secondKB\":0},\"mutedIndexLoads\":[],\"machineMs\":148,\"speed\":0.82,\"slowest\":[\"things 8.4 s\",\"world 6.1 s\",\"roads 2.1 s\",\"ready 1.9 s\"],\"firstSteps\":{\"start\":1643,\"world\":6455,\"people\":6929,\"town\":9155,\"roads\":12841,\"pretraffic\":21063,\"traffic\":21521,\"things\":34040,\"wideland\":35124,\"levelled\":35762,\"roadside\":36990,\"solids\":37027,\"ready\":38718,\"shaders\":43742},\"secondSteps\":{\"start\":3466,\"world\":6057,\"people\":6342,\"town\":7766,\"roads\":9848,\"pretraffic\":11667,\"traffic\":11732,\"things\":20132,\"wideland\":21108,\"levelled\":21710,\"roadside\":22799,\"solids\":22849,\"ready\":24756,\"shaders\":25359},\"errs\":[]}"
+    }
+  },
+  "notes": [
+    "Live comparison recorded separately at ac76cf609.",
+    "Updated first ready is 40.36s, slower than the prior candidate and live sample; do not dismiss this as only the inherited budget failure.",
+    "Battery passes and secondKB is zero. No limits changed.",
+    "First-start marks: roads-to-pretraffic 8.22s versus earlier candidate1.97s/live2.82s; traffic-to-things12.52s versus8.34s/10.35s. Those precede buildSolids. Solids setup37ms and post-solids ready1.69s, similar to live; this sample does not identify the water-grid build as the cause. Investigate first-load variability before deployment."
+  ]
+}
