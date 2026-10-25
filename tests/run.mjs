@@ -1,4 +1,6 @@
-import { adventureWalkSnapshot } from './adventure-snapshot.mts';
+import { installReportInputProbe, readReportInputProbe } from './report-input-probe.mts';
+import { waitObserved } from './wait-observed.mts';
+import { adventureWalkSnapshot, adventureDaySnapshot, seedAdventureWalk } from './adventure-snapshot.mts';
 // Sparkle Valley regression checks. Start the game first (python3 -m http.server 8765 in the repo), then:
 //   cd tests && npm install && node run.mjs            all checks
 //   node run.mjs games features                        only some
@@ -1414,8 +1416,8 @@ await check('tester', async () => {
     const before = await P.page.evaluate(() => (JSON.parse(localStorage.getItem('sv2_tester_out') || '[]')).length + document.querySelectorAll('.testermark, .z-lb').length);
     if (before || got.length) out.push(lang + ': something was kept or sent before "I accept": ' + JSON.stringify({ before, got: got.length }));
     await P.page.click('.tagree .tg-yes'); await P.page.waitForSelector('.testermark', { timeout: 8000 }).catch(() => { }); await P.page.waitForTimeout(1500);
-    const on = await P.page.evaluate(async () => ({ mark: (document.querySelector('.testermark') || {}).textContent || '', lb: document.querySelectorAll('.hud .z-lb').length, build: (await import('/js/build.js')).SHOWN, lbSize: (r => r && Math.min(r.width, r.height))(document.querySelector('.hud .z-lb') && document.querySelector('.hud .z-lb').getBoundingClientRect()) }));
-    if (!on.mark.includes(on.build) || on.lb !== 1 || !(on.lbSize >= 44)) out.push(lang + ': after accepting, no tester mark with the version or no ladybird (44 px): ' + JSON.stringify(on));
+    const on = await P.page.evaluate(async () => ({ mark: (document.querySelector('.testermark') || {}).textContent || '', lb: document.querySelectorAll('.tester-floating.z-lb').length, build: (await import('/js/build.js')).SHOWN, lbSize: (r => r && Math.min(r.width, r.height))(document.querySelector('.tester-floating.z-lb') && document.querySelector('.tester-floating.z-lb').getBoundingClientRect()) }));
+    if (!on.mark.includes(on.build) || on.lb !== 1 || !(on.lbSize >= 64)) out.push(lang + ': after accepting, no tester mark with the version or no ladybird (64 px): ' + JSON.stringify(on));
     if (!got.some(x => x && x.accepted === true)) out.push(lang + ': the acceptance was not told');
     // Settings → Stop being a tester
     // (owner, 13 Oct AEDT) "Stop being a tester" is held down: a quick tap does nothing
@@ -1443,8 +1445,8 @@ await check('testerreport', async () => {
   // number on the ladybird, and send when back online; "Already reported → add to it" joins the open problem
   const P = await open(b, { w: 1024, h: 768, pre: testerPre({ on: true, devices: ['tester000001'] }, ACCEPTED) });
   let near = []; const got = await testerSite(P.ctx, () => ({ mine: [], open: near, retest: [], helped: 0, reports: 1 }));
-  await P.page.waitForFunction(() => window.__sv.tester && document.querySelector('.hud .z-lb'), null, { timeout: 15000 }); await clear(P.page);
-  const wait = async (f, ms = 12000) => { for (let t = 0; t < ms; t += 250) { const x = got.find(f); if (x) return x; await P.page.waitForTimeout(250); } return null; };
+  await P.page.waitForFunction(() => window.__sv.tester && document.querySelector('.tester-floating.z-lb'), null, { timeout: 15000 }); await clear(P.page);
+  const wait = (f, ms = 12000) => waitObserved(got, f, delay => P.page.waitForTimeout(delay), ms);
   const out = [];
   await P.page.evaluate(() => { setTimeout(() => { throw new Error('tester check boom'); }, 0); });
   const e = await wait(x => x && x.kind === 'auto' && x.auto === 'error' && /tester check boom/.test(x.detail));
@@ -1462,8 +1464,9 @@ await check('testerreport', async () => {
     fs.writeFileSync('out/tester-freeze-observation.json', JSON.stringify({ earlier: earlierFreezes, all: got.filter(x => x && x.auto === 'freeze') }, null, 2)); }
   // the ladybird: tap
   await clear(P.page); const n0 = got.length;
-  await P.page.locator('.hud .z-lb').first().dispatchEvent('pointerdown'); await P.page.locator('.hud .z-lb').first().dispatchEvent('pointerup');
-  await P.page.waitForSelector('.modal.tpanel .tp-shot', { timeout: 8000 });
+  await P.page.evaluate(installReportInputProbe);
+  await P.page.locator('.tester-floating.z-lb').first().click();
+  try { await P.page.waitForSelector('.modal.tpanel .tp-shot', { timeout: 8000 }); } catch (error) { fs.writeFileSync('out/tester-open-observation.json',JSON.stringify({...(await P.page.evaluate(readReportInputProbe)),errors:P.errors},null,2));throw error; }
   const shotFirst = await P.page.evaluate(() => /^data:image\/jpeg/.test(document.querySelector('.tp-shot').src));
   await P.page.click('.tp-k[data-k="looks"]'); await P.page.fill('.tpanel textarea', 'The bridge floats above the river'); await P.page.click('.tp-send');
   const t = await wait(x => x && x.kind === 'looks' && /bridge floats/.test(x.note || ''));
@@ -1471,7 +1474,7 @@ await check('testerreport', async () => {
   // long press: a quick report
   // (held until the quick report is made, like a child holding until something happens: on a slow machine one frame
   // can take half a second, and a fixed 1 s hold could let go before the 700 ms hold counted)
-  await P.page.locator('.hud .z-lb').first().dispatchEvent('pointerdown'); const quick = await wait(x => x && x.detail === 'quick'); await P.page.locator('.hud .z-lb').first().dispatchEvent('pointerup');
+  await P.page.locator('.tester-floating.z-lb').first().hover(); await P.page.mouse.down(); const quick = await wait(x => x && x.detail === 'quick'); await P.page.mouse.up();
   if (!quick) out.push('a long press made no quick report');
   // offline: waits with a number, then sends
   await P.ctx.setOffline(true); await P.page.evaluate(() => __sv.tester.openPanel(0)); await P.page.waitForSelector('.tpanel .tp-send'); await P.page.fill('.tpanel textarea', 'offline report'); await P.page.click('.tp-send'); await P.page.waitForTimeout(600);
@@ -1518,14 +1521,14 @@ await check('testernews', async () => {
   for (const lang of ['en', 'vi']) {
     const P = await open(b, { w: 390, h: 844, touch: true, lang, pre: `try { localStorage.setItem('sv2_playerid', 'tester000001'); localStorage.setItem('sv2_live', ${JSON.stringify(JSON.stringify(live))}); ${ACCEPTED} } catch (e) { }`,
       route: async ctx => { await ctx.route('**/api/live**', r => r.fulfill({ json: live })); await testerSite(ctx, () => ({ mine: [], open: [], retest: [], helped: 0, reports: 0, peeks: ['money_bahu'] })); } });
-    await clear(P.page); await P.page.waitForSelector('.hud .z-lb', { timeout: 20000 }); await P.page.waitForTimeout(9000);
+    await clear(P.page); await P.page.waitForSelector('.tester-floating.z-lb', { timeout: 20000 }); await P.page.waitForTimeout(9000);
     const r = await P.page.evaluate(async () => {
       const popup = [...document.querySelectorAll('.reward, .modal')].map(x => x.textContent).find(t => /Tester preview|Xem trước cho người thử/.test(t)) || '';
-      const dot = !document.querySelector('.hud .z-lb .lb-new')?.hidden;
+      const dot = !document.querySelector('.tester-floating.z-lb .lb-new')?.hidden;
       const T = await import('/js/tester.js'); await T.openPanel(0); await new Promise(res => setTimeout(res, 600));
       const rows = [...document.querySelectorAll('.tp-news .tp-news-row')].map(x => x.textContent.trim()), play = !!document.querySelector('.tp-news [data-try="bahu"]');
       document.querySelector('.modal.tpanel .x')?.click(); await new Promise(res => setTimeout(res, 400));
-      return { popup: popup.slice(0, 80), dot, rows, play, dotAfter: !document.querySelector('.hud .z-lb .lb-new')?.hidden };
+      return { popup: popup.slice(0, 80), dot, rows, play, dotAfter: !document.querySelector('.tester-floating.z-lb .lb-new')?.hidden };
     });
     if (r.popup) out.push(lang + ': a pop-up at the start: ' + r.popup);
     if (!r.dot || r.dotAfter) out.push(lang + ': the ladybird dot ' + JSON.stringify({ before: r.dot, after: r.dotAfter }));
@@ -6576,7 +6579,7 @@ await check('dailyadventure', async () => {
     const miss = await P.page.evaluate(async () => { const { ADVENTURES } = await import('/js/content/adventures.js'), out = [];
       for (const a of ADVENTURES) for (const s of a.steps) if (s.at && !__sv.adventure.where(s.at)) out.push(a.id + ':' + s.at); return out; });
     ok(!miss.length, `${tag}: spots not in the valley: ${miss.join(', ')}`);
-    await P.page.evaluate(age => { __sv.heroes[0].profile.age = age; __sv.adventure.force(0, 'house'); }, age);
+    await P.page.evaluate(seedAdventureWalk, age);
     await P.page.waitForTimeout(600);
     // HUD-4: the goal card shows the step, 3 dots, Go walk button and hear-again; a tap opens the window
     const card = await P.page.evaluate(() => { const c = document.querySelector('.hud .advcard'); if (!c || c.hidden) return null; const r = c.getBoundingClientRect(), hear = c.querySelector('.adv-hear').getBoundingClientRect(), walk = c.querySelector('.adv-walk').getBoundingClientRect();
@@ -6635,16 +6638,9 @@ await check('dailyadventure', async () => {
       A.force(0, 'house'); A.next(h); const t = A.today(h).timer; S.settings.advLevel = 'gentle'; return !!t; });
     ok(timer === (age === 'big'), `${tag}: a Tricky timer only for 5 and over (${timer})`);
     // a missed day keeps its stamps; Grandpa Owl remembers yesterday's (D11); 7 stamps open the week chest (D10)
-    const days = await P.page.evaluate(async () => { const G = __sv, h = G.heroes[0], A = G.adventure, r = A.today(h), d = r.day;
-      Object.assign(r, { day: d - 1, stamps: [d - 5, d - 3], last: 'house', lastDay: d - 1, done: true, told: false });
-      const r2 = A.today(h); const kept = r2.stamps.length, fresh = r2.id && !r2.done && r2.day === d;
-      await new Promise(res => setTimeout(res, 1600)); const told = r2.told === d;
-      r2.stamps = [d - 6, d - 5, d - 4, d - 3, d - 2, d - 1]; const pet = h.profile.lanterns = h.profile.lanterns || {}; pet.pet = pet.pet || {}; pet.pet.hats = [];
-      r2.prizes = []; A.finish(h); await new Promise(res => setTimeout(res, 2500)); document.querySelectorAll('.advchest .adv-coin').forEach(c => c.click());
-      for (let k = 0; k < 20 && document.querySelector('.modal.advchest'); k++) { document.querySelectorAll('.advchest .adv-go:not([hidden])').forEach(b => b.click()); await new Promise(res => setTimeout(res, 500)); }
-      return { kept, fresh, told, chests: r2.chests, stamps: r2.stamps.length, hat: (h.profile.lanterns.pet.hats || []).includes('party') }; });
+    const days = await P.page.evaluate(adventureDaySnapshot);
     ok(days.kept === 2 && days.fresh, `${tag}: a missed day takes no stamp away; a new adventure today ${JSON.stringify(days)}`);
-    ok(days.told, `${tag}: Grandpa Owl remembers yesterday's adventure`);
+    ok(days.told, `${tag}: Grandpa Owl remembers yesterday's adventure ${JSON.stringify(days.diagnostic)}`);
     ok(days.chests === 1 && days.stamps === 0 && days.hat, `${tag}: seven stamps open the week chest: a hat ${JSON.stringify(days)}`);
     // the Adventures tab: today's on top, the rest behind "More adventures"; the switch off: as before
     await P.page.evaluate(() => __sv.openPad(0, 'log')); await P.page.waitForTimeout(500);

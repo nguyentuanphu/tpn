@@ -358,7 +358,7 @@ function bindReportViewport(panel: HTMLElement) {
   };
   sync(); addEventListener('resize', sync); viewport?.addEventListener('resize', sync); viewport?.addEventListener('scroll', sync);
   const observer = new MutationObserver(() => { if (!panel.isConnected) clean(); });
-  const clean = () => { removeEventListener('resize', sync); viewport?.removeEventListener('resize', sync); viewport?.removeEventListener('scroll', sync); observer.disconnect(); };
+  const clean = () => { removeEventListener('resize', sync); viewport?.removeEventListener('resize', sync); viewport?.removeEventListener('scroll', sync); observer.disconnect(); panel.dispatchEvent(new Event('sv-report-cleanup')); };
   observer.observe(document.body, { childList: true }); panel.addEventListener('sv-modal-close', clean, { once: true });
 }
 
@@ -399,6 +399,14 @@ export async function openPanel(i = 0, initialTab = 'tester', signal?: AbortSign
   const reportActions=reportBody.querySelector('.tp-send').closest('.actions');reportActions.classList.add('testing-actions');
   card.append(tabs,reportBody,autoBody,fixedBody,reportActions);
   const close = () => { G.autoplay?.detach?.(); m.close(); G.paused = was; };
+  // On a busy screen the first tap's capture can finish before native double-click
+  // arrives. Cancel only that untouched form; never discard an edited report.
+  let interacted = false;
+  const touched = () => { interacted = true; };
+  const cancelUntouched = () => { if (signal?.reason === 'reset' && !interacted) close(); };
+  card.addEventListener('pointerdown', touched, true); card.addEventListener('input', touched, true);
+  signal?.addEventListener('abort', cancelUntouched, { once: true });
+  m.addEventListener('sv-report-cleanup', () => { signal?.removeEventListener('abort', cancelUntouched); card.removeEventListener('pointerdown', touched, true); card.removeEventListener('input', touched, true); }, { once: true });
   card.querySelector<HTMLButtonElement>('.x').onclick = close;
   const selectTab = tab => {
     const fixedTab = tabs.querySelector('[data-test-tab="fixed"]');

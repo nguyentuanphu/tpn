@@ -53,7 +53,9 @@ jobs:
           node tests/orchard-fruitbar-browser.mts --parent-entry-only
           node tests/orchard-fruitbar-browser.mts --allocations-only
       - name: Floating report control and unique ride destinations
-        run: node tests/report-float-browser.mts
+        run: |
+          node tests/report-float-browser.mts
+          node tests/report-float-browser.mts --slow-reset-only
       - name: Actual Studio bilingual folds, analytics layout and six controls
         run: node tests/orchard-studio-browser.mts
       - uses: actions/upload-artifact@v4

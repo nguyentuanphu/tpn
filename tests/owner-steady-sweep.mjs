@@ -306,18 +306,18 @@ async function sweepDevice(b, dev) {
     await pg.goto(GAME_URL); await pg.waitForSelector('.screen.title', { timeout: 90000 });
     await pg.evaluate(() => { const r = window.__sv.renderer; if (r) { r.setPixelRatio(.35); dispatchEvent(new Event('resize')); } });
     await start(pg);
-    const lb = await pg.waitForFunction(() => window.__sv.tester && document.querySelector('.hud .z-lb'), null, { timeout: 20000 }).then(() => true).catch(() => false);
+    const lb = await pg.waitForFunction(() => window.__sv.tester && document.querySelector('.tester-floating.z-lb'), null, { timeout: 20000 }).then(() => true).catch(() => false);
     await pg.evaluate(() => { document.querySelectorAll('.storybook, .dialog, .modal, .vc-pop, .reward').forEach(e => e.remove()); window.__sv.paused = false; });
     await testerPanel(pg, lb);
     await ctx2.close();
   }
   async function testerPanel(pg, lb) {
     const P = R.panels['ladybird-tester'] = { shell: '.modal.tpanel .card', opened: false, actions: [] };
-    if (!lb) { P.notOpened = 'no ladybird button (.hud .z-lb) appeared within 20 s on a tester device'; save(); return; }
+    if (!lb) { P.notOpened = 'no ladybird button (.tester-floating.z-lb) appeared within 20 s on a tester device'; save(); return; }
     const parts = [['card', '.modal.tpanel .card']];
     try {
       await pg.evaluate(sels => window.__stStart(sels), parts);
-      const l = pg.locator('.hud .z-lb').first(); await l.dispatchEvent('pointerdown'); await l.dispatchEvent('pointerup');
+      const l = pg.locator('.tester-floating.z-lb').first(); await l.click();
       const ok = await pg.waitForSelector('.modal.tpanel .card', { timeout: 20000 }).then(() => true).catch(() => false);
       if (!ok) { await pg.evaluate(() => window.__stStop()); P.notOpened = 'the panel did not open within 20 s of a tap on the ladybird'; save(); return; }
       P.opened = true;

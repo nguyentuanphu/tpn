@@ -1,0 +1,6 @@
+[
+  {
+    "slowNativeDoubleTapCancelsUntouchedReport": true,
+    "resetPreservesEditedDraft": true
+  }
+]

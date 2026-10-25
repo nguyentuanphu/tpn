@@ -52,6 +52,8 @@ All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed`
 
 ## Owner's decisions
 
+- 26 October 2026 AEDT: the tester ladybird must float above games and windows, drag anywhere on screen, and return home on double-tap. Remove duplicate Brisbane destination cards while keeping physical stops. Preserve existing tester consent and automatic-only levels.
+
 - 25 October 2026 AEDT (owner pop-up): **v1.02** is the next reviewed round; this is not deployment approval. Owner also authorized the full FPT Neo **Lê Minh** recording batch. GitHub Secret `FPT_API_KEY` is used only in Actions. The stable inventory contains 6,319 clips, not the helper's static-only 3,521. Independent helper audit and blockers: [report](../v1.02-audit/REPORT.md), draft PR #580; full recording job 40169102867. Owner also chose: parents can select Lê Minh for all Vietnamese speech after recording review; preserve the existing default. Selector and offline-pack integration remain pending. No live site changed.
 - 24 October 2026 AEDT: owner approved the concise family-code privacy copy: EN “Link your family’s devices for statistics only—no progress or photo sharing. Keep your code private.” / VI “Liên kết thiết bị để thống kê gia đình—không chia sẻ tiến trình hay ảnh. Giữ riêng mã gia đình.” Owner also requested in this round (`v1.01`): (1) implement Family Code (`docs/cores/tasks/save-copy-family-code.md` Part 2); (2) fix Voice Style (`Kiểu giọng`) on iPhone so the 3 buttons stay on one line and play the selected voice style on iOS; (3) add `Go / Đi` auto-guide / walk to Today's Adventure (`Phiêu lưu hôm nay`) like the quest bar. See [approved copy](tasks/family-code-privacy-wording-v1.01.md) and [v1.01 report](../v1.01/RELEASE-REPORT.md).
 

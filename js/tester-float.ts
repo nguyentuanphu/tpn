@@ -20,10 +20,10 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
   const place = (x: number, y: number) => { const b = bounds(); button.style.left = `${Math.max(b.left, Math.min(b.right, x))}px`; button.style.top = `${Math.max(b.top, Math.min(b.bottom, y))}px`; };
   const layout = () => { const b = bounds(), a = anchor.getBoundingClientRect(); place(saved ? b.left + saved.x * (b.right - b.left) : a.width > 0 ? a.right - button.offsetWidth : b.right, saved ? b.top + saved.y * (b.bottom - b.top) : a.height > 0 ? a.bottom + 8 : b.top + .55 * (b.bottom - b.top)); };
   const remember = () => { const b = bounds(), r = button.getBoundingClientRect(); saved = { x: (r.left - b.left) / Math.max(1, b.right - b.left), y: (r.top - b.top) / Math.max(1, b.bottom - b.top) }; try { localStorage.setItem(key, JSON.stringify(saved)); } catch {} };
-  const reset = () => { opening?.abort(); clearTimeout(tap); stopHold(); lastTap = 0; saved = undefined; try { localStorage.removeItem(key); } catch {} layout(); };
+  const reset = () => { opening?.abort('reset'); clearTimeout(tap); stopHold(); lastTap = 0; saved = undefined; try { localStorage.removeItem(key); } catch {} layout(); };
   const start = (e: PointerEvent) => {
     if (down || e.button !== 0) return;
-    e.preventDefault(); e.stopPropagation(); clearTimeout(tap); opening?.abort();
+    e.preventDefault(); e.stopPropagation(); clearTimeout(tap);
     const r = button.getBoundingClientRect(); down = { id: e.pointerId, x: e.clientX, y: e.clientY, left: r.left, top: r.top }; moved = held = false;
     button.setPointerCapture(e.pointerId);
     hold = setTimeout(() => { held = true; lastTap = 0; quick(); }, 700);
@@ -31,7 +31,7 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
   const move = (e: PointerEvent) => {
     if (!down || e.pointerId !== down.id) return;
     e.preventDefault(); e.stopPropagation();
-    if (Math.hypot(e.clientX - down.x, e.clientY - down.y) > 8) { moved = true; stopHold(); lastTap = 0; }
+    if (Math.hypot(e.clientX - down.x, e.clientY - down.y) > 8) { moved = true; stopHold(); opening?.abort('gesture'); lastTap = 0; }
     if (moved) place(down.left + e.clientX - down.x, down.top + e.clientY - down.y);
   };
   const end = (e: PointerEvent) => {
