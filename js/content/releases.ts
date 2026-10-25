@@ -111,3 +111,10 @@ RELEASES.push(
   { id: 'sparkleFruitParade_multi', en: 'Sparkle Fruit Parade: multiplayer mode (off hides it from Friends)', vi: 'Sparkle Fruit Parade: chế độ nhiều người (tắt sẽ ẩn khỏi Bạn bè)', group: 'kids', def: false },
   { id: 'sparkleFruitParade_tester', en: 'Sparkle Fruit Parade: tester preview (allows a tester to open it while child modes are off)', vi: 'Sparkle Fruit Parade: bản thử nghiệm (cho phép người thử mở trò khi các chế độ cho trẻ đang tắt)', group: 'tools', def: false }
 );
+
+// Preview access always requires an actual tester device; mode switches never publish these games to children.
+for (const [id,en,vi] of [['sparkleorchard','Orchard Quest','Nhiệm vụ vườn quả'],['sparklefruitbar','Fruit Bar (grown-ups)','Bảng trái cây (người lớn)']]) {
+ RELEASES.push({id:id+'_tester',en:en+': enable invited tester preview only',vi:vi+': chỉ bật bản thử cho người thử được mời',group:'tools',def:false},
+ {id:id+'_single',en:en+': tester single-device play',vi:vi+': người thử chơi cùng máy',group:'tools',def:false},
+ {id:id+'_multi',en:en+': tester online multiplayer',vi:vi+': người thử chơi nhiều máy',group:'tools',def:false});
+}

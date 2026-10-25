@@ -33,7 +33,7 @@ export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'so
   if (!schedule) await ctx.route('**/content/custom.json', async r => {
     const res = await r.fetch(); let j; try { j = await res.json(); } catch (e) { return r.fulfill({ response: res }); }
     const today = new Date().toISOString().slice(0, 10);
-    for (const [id, rule] of Object.entries(j.releases || {})) if (rule && typeof rule.start === 'string' && rule.start > today) delete j.releases[id];
+    for (const [id, rule] of Object.entries(j.releases || {})) if (rule && typeof rule === 'object' && 'start' in rule && typeof rule.start === 'string' && rule.start > today) delete j.releases[id];
     // (r90, owner 24 Oct AEDT) the second set of games and stories is held in Studio until the owner releases it; the
     // checks play as after that release (the hold itself is checked by "secondset").
     // Fruit Parade is likewise explicitly enabled for functional checks; dedicated gating cases override this route.
@@ -58,18 +58,18 @@ export async function start(page, mode = 'solo', screen = 'valley') {
   await page.waitForSelector('.screen.who', { timeout: 90000 });
   if (mode !== 'solo') await page.click(`.modes button[data-m=${mode}]`, { timeout: 90000 });
   await page.locator('.pick[data-id]').nth(0).click({ timeout: 90000 }); if (mode === 'split') await page.locator('.pick[data-id]').nth(1).click({ timeout: 90000 });
-  if (screen) await page.evaluate(async scr => { const S = await import('/js/state.js'); S.profiles.forEach(p => { p.screen = scr; }); }, screen);
+  if (screen) await page.evaluate(async scr => { const S = await import(String('/js/state.js')); S.profiles.forEach(p => { p.screen = scr; }); }, screen);
   // (round R) Ông Cú's prologue film starts by itself for a new child; the checks start without it unless they ask
   await page.evaluate(() => { if (window.__sv) window.__sv._owlAuto = true; });
   await page.click('.who .go', { timeout: 90000 });
   await page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
   // skip the prologue
-  for (let i = 0; i < 40; i++) { const sb = await page.$('.storybook'); if (!sb) break; await page.evaluate(() => { const b = document.querySelector('.storybook .sb-next, .storybook .next, .storybook button:last-of-type'); b && b.click(); }); await page.waitForTimeout(80); }
+  for (let i = 0; i < 40; i++) { const sb = await page.$('.storybook'); if (!sb) break; await page.evaluate(() => { const b = document.querySelector<HTMLElement>('.storybook .sb-next, .storybook .next, .storybook button:last-of-type'); b && b.click(); }); await page.waitForTimeout(80); }
   await page.evaluate(() => { document.querySelectorAll('.storybook').forEach(e => e.remove()); window.__sv.paused = false; });
   // (round S) the village festival (real clock), surprises (after 2.5 min of play) and the dance break (after 20 min) come
   // by themselves: the checks start with them off, so they never land in another check; hoilang, surprises and parents
   // switch them back on
-  await page.evaluate(async () => { const C = (await import('/js/custom.js')).CUSTOM; C.features = { ...(C.features || {}), hoilang: false, surprises: false, danceBreak: false }; });
+  await page.evaluate(async () => { const C = (await import(String('/js/custom.js'))).CUSTOM; C.features = { ...(C.features || {}), hoilang: false, surprises: false, danceBreak: false }; });
   await page.waitForTimeout(500);
 }
 // close story pages, dialogs and pop-ups that the world opens by itself
@@ -82,7 +82,7 @@ export async function clear(page) {
 // fresh child starts playing; a check that looks for its own caption at a set time counts the welcome as given first.
 // The sticker checks leave the welcome alone.
 export async function noWelcome(page) {
-  await page.evaluate(() => import('/js/stickers.js').then(S => { for (const h of window.__sv.heroes) S.book(h.profile).welcomed = Date.now(); }));
+  await page.evaluate(() => import(String('/js/stickers.js')).then(S => { for (const h of window.__sv.heroes) S.book(h.profile).welcomed = Date.now(); }));
 }
 
 // ---- which game code a check ran (SV_COVER=1; tests/suite.mjs builds tests/check-map.json from it) ----
@@ -107,6 +107,16 @@ async function readCoverage(cdp) {
 }
 // { ran: { file: [[start, end], …] }, seen: { … every function the browser knew, run or not } }
 export function takeCoverage() {
-  const pack = o => Object.fromEntries(Object.entries(o).map(([f, set]) => [f, [...set].map(x => x.split(':').map(Number))]));
+  const pack = (o:Record<string,Set<string>>) => Object.fromEntries(Object.entries(o).map(([f, set]) => [f, [...set].map(x => x.split(':').map(Number))]));
   const out = { ran: pack(covered), seen: pack(seen) }; covered = {}; seen = {}; return out;
+}
+
+// Functional all-game checks explicitly opt into tester-only titles after startup. They do not
+// start the automatic reporter or bypass production entry gates. Negative gating has its own browser check.
+export async function openAllGamesFixture(browser,options={}) {
+ const result=await open(browser,options);
+ await result.page.evaluate(async()=>{const C=(await import(String('/js/custom.js'))).CUSTOM;
+  C.releases={...(C.releases||{}),tester:{on:true},sparkleorchard_tester:{on:true},sparkleorchard_single:{on:true},sparkleorchard_multi:{on:true}};
+  localStorage.setItem('sv2_tester',JSON.stringify({at:Date.now(),b:'synthetic-fixture'}));
+ });return result;
 }

@@ -5,7 +5,7 @@
 // Multiplayer runs when a local PeerJS server is up on 127.0.0.1:9000 (see the README in this folder).
 import fs from 'fs';
 import os from 'os';
-import { launch, open, clear, noWelcome, start, URL, seedPlayers, takeCoverage } from './harness.mjs';
+import { launch, open, clear, noWelcome, start, URL, seedPlayers, takeCoverage, openAllGamesFixture } from './harness.mjs';
 import { groundAudit } from './world-audit.mjs';
 import { studioCheck } from './studio-check.mjs';
 import { studioRepairCheck } from './studio-repair-check.mjs';
@@ -244,7 +244,7 @@ await check('facetoface', async () => {
 });
 
 await check('games', async () => {
-  const P = await open(b, { w: 1024, h: 768 }); await clear(P.page);
+  const P = await openAllGamesFixture(b, { w: 1024, h: 768 }); await clear(P.page);
   const ids = await P.page.evaluate(async () => Object.keys((await import('/js/games/frame.js')).GAMES));
   const failed = [];
   for (const id of ids) {
@@ -2961,7 +2961,7 @@ await check('noemoji', async () => {
   }, where).then(r => bad.push(...r));
   { const P = await open(b, { w: 820, h: 1180, touch: true, play: false, lang: 'vi' });
     await P.page.click('.screen.title .press', { force: true }); await P.page.waitForSelector('.screen.who'); await P.page.click('.modes button[data-m=split]'); await scan(P, 'who'); await P.ctx.close(); }
-  const P = await open(b, { w: 1180, h: 820, lang: 'vi' }); await clear(P.page);
+  const P = await openAllGamesFixture(b, { w: 1180, h: 820, lang: 'vi' }); await clear(P.page);
   await scan(P, 'valley');
   await P.page.evaluate(() => __sv.openGamesHub(0)); await P.page.waitForTimeout(500); await scan(P, 'Vui chơi'); await clear(P.page);
   for (const t of ['map', 'bag', 'log', 'album', 'passport', 'games', 'cam', 'friend']) { await P.page.evaluate(t => __sv.openPad(0, t), t); await P.page.waitForTimeout(400); await scan(P, 'Pad ' + t); await clear(P.page); }
@@ -3429,7 +3429,7 @@ await check('adventure', async () => {
   // second tap can't start a game twice; a big kid taps once to look and again to play, sees ✨ on new games and can
   // search; Discover jumps to any area; Ông Cú cheers a new star; the landscape stands still in Calm mode; opening and
   // closing the screen 25 times leaves no extra listeners or elements behind
-  const P = await open(b, { w: 390, h: 844, touch: true, screen: 'simple' });
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, screen: 'simple' });
   await P.page.waitForSelector('.simple-screen:not([hidden]) .sp-catcard, .simple-screen:not([hidden]) .sp-stop', { timeout: 20000 });
   await P.page.evaluate(() => document.querySelectorAll('.dialog').forEach(d => d.remove()));
   const r = {};   // (Round V, owner 13 Oct: one page that scrolls down, each section's title then its own road, like Khám phá)
@@ -3757,7 +3757,7 @@ await check('playhub', async () => {
 await check('a11y', async () => {
   // accessibility rules (round I, ARCHITECTURE §9.6): UI-004 touch targets, A11Y-001 reduced motion, A11Y-002 readable
   // captions, A11Y-004 under-5s hear every game's instruction (A11Y-003 simple paths: the "simple" check)
-  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true }); await clear(P.page);
   const small = (min, sel = 'button, a[href], [role=button], input[type=checkbox], select') => P.page.evaluate(([min, sel]) => {
     const out = [];
     for (const e of document.querySelectorAll(sel)) {

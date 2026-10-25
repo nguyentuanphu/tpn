@@ -1,0 +1,122 @@
+{
+  "source": "v1.02 static arcade source; frozen 6319 baseline excluded",
+  "baselineSha256": "a2761a6c7032fda1f0fe97c04d7de64da36cf97a8ae543a416c49095a5f3201f",
+  "sourceHashes": {
+    "js/games/fruitparade.ts": "2ca93b3ad5e575f4ce3241b65bb2cca37ce78f39cff6207a171f9e9740a81011",
+    "js/games/trongnu.ts": "9130b86018778c848286ac0e712822146f15eeed552ff100cc038d3fbe2c7316",
+    "js/games/sparkleorchard.ts": "9f3f33d743ae2183feb3374f80f1953e46cc29f03573d84792051450ff41c1b1",
+    "js/games/sparklefruitbar.ts": "0c0588e72e110c4de93bee2d418b17eddd843eaf03433094e69241dfe4f3a8a7"
+  },
+  "lines": [
+    {
+      "id": "1b9b622526a2c94c",
+      "lang": "vi",
+      "text": "Cùng nhau giỏi quá!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/fruitparade.js"
+      ]
+    },
+    {
+      "id": "1e3c2ab627b36b45",
+      "lang": "vi",
+      "text": "Nhiệm Vụ Vườn Quả Lấp Lánh",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/sparkleorchard.js"
+      ]
+    },
+    {
+      "id": "24a09649-2533e125",
+      "lang": "vi",
+      "text": "Giỏi lắm! Xem mình tìm được gì nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/fruitparade.js"
+      ]
+    },
+    {
+      "id": "2b586e58-399d9bea",
+      "lang": "vi",
+      "text": "Tìm tranh. Dừng ở giữa nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/fruitparade.js"
+      ]
+    },
+    {
+      "id": "3fbf022c-1bfa6fb7",
+      "lang": "vi",
+      "text": "Hoàn thành nhiệm vụ vườn quả!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/sparkleorchard.js"
+      ]
+    },
+    {
+      "id": "5b0e3da35ae5eec6",
+      "lang": "vi",
+      "text": "Diễu hành trái cây lấp lánh",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/fruitparade.js"
+      ]
+    },
+    {
+      "id": "64908fa818dffbc8",
+      "lang": "vi",
+      "text": "Hai bạn chồng chân và tay lên nhau. Giúp bạn cùng nhảy qua nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/trongnu.js"
+      ]
+    },
+    {
+      "id": "8482a48a1525e6f6",
+      "lang": "vi",
+      "text": "Ai cùng chơi nào?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/fruitparade.js"
+      ]
+    },
+    {
+      "id": "8c881541-292ebe16",
+      "lang": "vi",
+      "text": "Trò này dành cho người thử được mời.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/sparkleorchard.js"
+      ]
+    },
+    {
+      "id": "9489dcb10790ed06",
+      "lang": "vi",
+      "text": "Tìm tranh trong nhiệm vụ. Dừng đèn nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/sparkleorchard.js"
+      ]
+    },
+    {
+      "id": "9c91c3de-a4aff7e",
+      "lang": "vi",
+      "text": "Ai cùng khám phá vườn quả?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/sparkleorchard.js"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+name: FPT Le Minh reviewed arcade delta
+on:
+  push:
+    branches: [work/v1.02-fruit-parade]
+    paths:
+      - docs/v1.02-orchard-arcade/voice-delta.json
+      - tools/fpt-arcade-delta.mts
+      - .github/workflows/fpt-arcade-delta.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+# Same provider lock as the baseline job: never run two FPT batches together.
+concurrency:
+  group: fpt-leminh-full-20261025
+  cancel-in-progress: false
+jobs:
+  record:
+    if: github.ref == 'refs/heads/work/v1.02-fruit-parade'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: work/v1.02-fruit-parade
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.0
+      - name: Install decoder before any paid request
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+      - name: Record only fixed public game lines; fully decode every MP3
+        env:
+          FPT_API_KEY: ${{ secrets.FPT_API_KEY }}
+        run: node tools/fpt-arcade-delta.mts
+      - name: Preserve complete or partial recordings on the working branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f temp/fpt-recordings/arcade-delta.json ]; then
+            gh auth setup-git
+            git config user.name 'Sparkle Valley voices'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -f temp/fpt-recordings/
+            if ! git diff --cached --quiet; then
+              git commit -m 'Record reviewed Le Minh arcade delta [skip netlify]' -m 'Co-Authored-By: Claude <noreply@anthropic.com>'
+              git pull --no-rebase origin work/v1.02-fruit-parade
+              git push origin HEAD:work/v1.02-fruit-parade
+            fi
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: le-minh-arcade-delta
+          path: temp/fpt-recordings/
+          retention-days: 30

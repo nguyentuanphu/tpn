@@ -12,6 +12,7 @@ export const GAME_CATALOG = [
   { id: 'colors', icon: '🎨', name: () => T('Rainbow Paints', 'Pha Màu Cầu Vồng') },
   { id: 'sorting', icon: '📏', name: () => T('Small to Big', 'Từ Bé Đến Lớn') },
   { id: 'memory', online: true, icon: '🃏', name: () => T('Memory Match', 'Lật Hình Ghi Nhớ') },
+  { id: 'sparkleorchard', online: true, icon: '🌳', name: () => T('Sparkle Orchard Quest', 'Nhiệm Vụ Vườn Quả Lấp Lánh') },
   { id: 'fruitparade', online: true, icon: '🍎', name: () => T('Sparkle Fruit Parade', 'Diễu hành trái cây lấp lánh') },
   { id: 'hanoi', icon: '🗼', name: () => T('Tower Stack', 'Tháp Hà Nội') },
   { id: 'robot', icon: '🤖', name: () => T('Robot Planner', 'Lập Trình Rô-bốt') },
@@ -188,6 +189,7 @@ export const GAME_CATALOG = [
 ].filter(def => def.id !== 'familyquiz' || customQuiz().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
+  'sparkleorchard.ts': { ids: ['sparkleorchard'], load: () => import('./sparkleorchard.js') },
   'fruitparade.ts': { ids: ['fruitparade'], load: () => import('./fruitparade.js') },
   'strategy.js': { ids: ["hanoi","robot","maze","goat"], load: () => import('./strategy.js') },
   'cacuangua.ts': { ids: ['cacuangua'], load: () => import('./cacuangua.js') },

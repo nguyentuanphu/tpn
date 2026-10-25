@@ -131,7 +131,7 @@ export async function checkParadeBrowser() {
     }
     for(const dev of[P,Q])await dev.page.locator('.gl-win').waitFor();
     observations.push({onlineCompleted:true,reconnectRetained:true,hostResultBothLanguages:true,errors:[...P.errors,...Q.errors]});assert.deepEqual([...P.errors,...Q.errors],[]);
-    for(const dev of[P,Q]){await dev.page.locator('.gl-win').click({position:{x:20,y:20}});await dev.page.locator('.gl').waitFor({state:'detached'});await dev.page.evaluate(()=>window.__paradeTestNet.leave());}
+    for(const dev of[P,Q]){await dev.page.locator('.gl-win.ask').waitFor();await dev.page.locator('.gl-win').click({position:{x:20,y:20}});await dev.page.locator('.gl').waitFor({state:'detached'});await dev.page.evaluate(()=>window.__paradeTestNet.leave());}
     await P.page.evaluate(()=>window.__paradeTestNet.invite('fruitparade',1,'guest'));
     await Q.page.locator('.parade-player').nth(1).waitFor();await Q.page.evaluate(()=>{window.__paradeConnected=false;});
     await Q.page.locator('[data-parade-action=helper]').waitFor({timeout:40000});

@@ -330,7 +330,7 @@ Outside the game, sharing L0–L2 where possible:
 | `InteractionStarted` | interaction | `{playerId, entityId, action}` | voice, ui, progress |
 | `ActivityStarted` | activities | `{activityId, kind, defId, players[], source}` | world (pause), audio, net (co-op), players-count |
 | `ActivityCompleted` | activities | `{activityId, defId, players[], result{won, score, level}}` | progress (levels, stickers), economy (rewards), players-count, voice |
-| `ArcadeAdventureTriggered` | Fruit Parade session result | `{sourceGame, activityType, playerIds[], combination[], round, reward:null}` | extension hook for future world activities; does not itself award inventory or complete another activity |
+| `ArcadeAdventureTriggered` | Fruit Parade / Orchard session result | `{sourceGame, activityType, playerIds[], combination[], round, reward:null}` | extension hook for future world activities; does not itself award inventory or complete another activity |
 | `ActivityAbandoned` | activities | `{activityId, reason}` | world (resume), audio |
 | `ItemsChanged` / `CoinsChanged` | economy | `{profileId, delta, reason}` | ui, save (dirty), progress |
 | `ProgressChanged` | progress | `{profileId, what}` | ui, save |
