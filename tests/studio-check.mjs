@@ -1,3 +1,4 @@
+import { readAnalyticsLayout } from './studio-analytics-layout.mts';
 // Sparkle Studio, both ways it runs, checked together (the exe and the online Studio must always be the same):
 //   · a pretend GitHub (in memory) stands in for the real one, so nothing real is touched
 //   · a pretend Netlify serves the site like Netlify does (netlify.toml's redirects, the two functions)
@@ -534,7 +535,7 @@ export async function studioCheck(browser, open) {
         await pg.screenshot({ path: path.join(ROOT, 'tests/out', `studio-admins-${w}.png`) }); }
       { await pg.evaluate(() => document.querySelector('#tabs [data-k="players"]').click()); await pg.waitForSelector('.tiles .tile', { timeout: 15000 });
         // (r65, owner: "cleaner but still the details") five tiles, a row per child and per kind of device, the rest folded and closed at first
-        const look = await pg.evaluate(() => ({ tiles: document.querySelectorAll('#page > .tiles .tile, #page > .analytics-overview .tiles .tile').length, visibleTiles: [...document.querySelectorAll('#page > .tiles .tile, #page > .analytics-overview .tiles .tile')].filter(t => t.getBoundingClientRect().height > 0).length, top: document.querySelector('#page').innerText, more: document.querySelectorAll('details.more').length, open: document.querySelectorAll('details.more[open]').length, kinds: document.querySelectorAll('table.kinds tbody tr').length }));
+        const look = await pg.evaluate(readAnalyticsLayout);
         const t = await pg.evaluate(() => (document.querySelectorAll('details.more').forEach(d => { d.open = true; }), document.querySelector('#page').innerText));
         ok(/3/.test(t), 'online players page');
         if (!(look.tiles === 5 && look.visibleTiles === 5 && look.more >= 5 && !look.open && look.kinds >= 2 && /(not reported yet|chưa có số liệu)/.test(look.top) && !/(usually ready in|thường sẵn sàng sau)/.test(look.top))) bad.push(`online ${w}px: the Analytics page is not five tiles, rows and folded detail: ` + JSON.stringify({ ...look, top: look.top.slice(0, 200) }));

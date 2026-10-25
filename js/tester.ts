@@ -329,7 +329,7 @@ function addUI() {
     const z = hud.q && hud.q('.zoomer'); if (!z || floatingSeats.has(i)) return;
     const b = el('button', 'z-lb', `${pic('🐞')}<i class="lb-n" hidden></i><i class="lb-ok" hidden>✓</i><i class="lb-new" hidden></i><kbd class="kb">L</kbd>`); b.setAttribute('aria-label', T('Report a problem (hold: quick report)', 'Báo lỗi (giữ: báo nhanh)'));
     floatingSeats.add(i);
-    offs.push(floatReportButton(b as HTMLButtonElement, z, i, () => openPanel(i, fixedToSee().length ? 'fixed' : 'tester'), () => { void quickReport('quick'); })); paintCount();
+    offs.push(floatReportButton(b as HTMLButtonElement, z, i, signal => { void openPanel(i, fixedToSee().length ? 'fixed' : 'tester', signal); }, () => { void quickReport('quick'); })); paintCount();
   });
   ensure(); const ev = setInterval(ensure, 1000); offs.push(() => clearInterval(ev));
   const key = e => { if ((e.key === 'l' || e.key === 'L') && !e.target.closest('input, textarea') && !document.querySelector<ReportPanel>('.modal.tpanel')) openPanel(0); };
@@ -363,13 +363,13 @@ function bindReportViewport(panel: HTMLElement) {
 }
 
 // the panel: the picture is taken first, then a kind, a spoken or typed note, Send; or "Already reported → add to it"
-export async function openPanel(i = 0, initialTab = 'tester') {
+export async function openPanel(i = 0, initialTab = 'tester', signal?: AbortSignal) {
   const existing=document.querySelector<ReportPanel>('.modal.tpanel');
   if(existing){existing.selectTab?.(initialTab);return existing;}
   if (!live || panelOpening) return;
   panelOpening=true; let pic0,scenePic;
   try { const pictures = await shotPair(); pic0 = pictures.full; scenePic = pictures.scene; } finally {panelOpening=false;}
-  if(!live)return;
+  if(!live||signal?.aborted)return;
   // Capture what the reporter saw, then clear competing control trays for the form.
   document.querySelector<HTMLElement & { close?(): void }>('.audio-tray')?.close?.();
   document.querySelectorAll('.zoomer.open').forEach(x=>x.classList.remove('open'));

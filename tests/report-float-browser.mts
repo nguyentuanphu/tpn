@@ -12,7 +12,7 @@ try{
  const button=P.page.locator('.tester-floating[data-tester-player="0"]');await button.waitFor();
  const drag=async(x:number,y:number)=>{const r=await button.boundingBox();assert.ok(r);await P.page.mouse.move(r.x+32,r.y+32);await P.page.mouse.down();await P.page.mouse.move(x,y);await P.page.mouse.up();};
  for(const [device,w,h]of [['phone',390,844],['tablet',820,1180],['computer',1280,800]]as const)for(const lang of ['en','vi']){
-  if(process.argv.includes('--phone-only')&&device!=='phone')continue;
+  if(process.argv.includes('--destinations-only')||(process.argv.includes('--phone-only')&&device!=='phone'))continue;
   console.log('checking',device,lang);
   await P.page.setViewportSize({width:w,height:h});await P.page.evaluate(async lang=>{(await import(String('/js/state.js'))).settings.lang=lang;(await import(String('/js/i18n.js'))).applyLang();},lang);
   await P.page.evaluate(async()=>{(await import(String('/js/popups.js'))).modal('report-layer-proof','<h2>Overlay</h2><button class="proof-close">Close</button>');});
@@ -33,11 +33,11 @@ try{
  }
  await P.page.setViewportSize({width:390,height:844});
  // Test the actual ride picker with duplicate physical stops retained in the world.
- await P.page.evaluate(()=>{const g=window.__sv as any;const a=g.world.busStops.find((s:any)=>s.name()==='Brisbane');if(!a)throw Error('Brisbane stop missing');g.world.busStops.push({...a,x:a.x+15});g.heroes[0].pos.x=0;g.heroes[0].pos.z=0;const ride=g.interactables.find((r:any)=>/^ride_/.test(r.id));if(!ride)throw Error('ride missing');void ride.act(g.heroes[0]);});
+ await P.page.evaluate(()=>{const g=window.__sv as any;const a=g.world.busStops[0];if(!a)throw Error('Physical bus stops missing');const brisbane={...a,x:80,z:20,place:{id:'fixture-brisbane'},name:()=> 'Brisbane'};g.world.busStops.push(brisbane,{...brisbane,x:95});g.heroes[0].pos.x=0;g.heroes[0].pos.z=0;const ride=g.interactables.find((r:any)=>/^ride_/.test(r.id));if(!ride)throw Error('ride missing');void ride.act(g.heroes[0]);});
  await P.page.locator('.dchoices button').first().waitFor();await P.page.locator('.dchoices button').first().click();await P.page.locator('.stoppick').waitFor();
  const names=await P.page.locator('.stoppick [data-k] b').allTextContents();assert.equal(names.filter(n=>n==='Brisbane').length,1);assert.equal(new Set(names).size,names.length);
  await P.page.screenshot({path:new URL('phone-vi-destinations.png',dir).pathname});await P.page.locator('.stoppick [data-next]').click();
  results.push({duplicateBrisbaneRemoved:true,physicalStopsPreserved:true});
  assert.deepEqual(P.errors,[]);await P.ctx.close();
-}finally{await browser.close();await fs.writeFile(new URL('results.json',dir),JSON.stringify(results,null,2)+'\n');}
+}finally{await browser.close();await fs.writeFile(new URL(process.argv.includes('--destinations-only')?'destinations-results.json':'results.json',dir),JSON.stringify(results,null,2)+'\n');}
 console.log(JSON.stringify(results));

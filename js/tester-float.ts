@@ -1,10 +1,11 @@
 /** A report control stays outside HUD/game stacking contexts. Position is device-local. */
-export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement, seat: number, open: () => void, quick: () => void): () => void {
+export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement, seat: number, open: (signal?: AbortSignal) => void, quick: () => void): () => void {
   const key = `sv2_report_position_${seat}`;
   let saved: { x: number; y: number } | undefined;
   try { const p = JSON.parse(localStorage.getItem(key) || 'null'); if (Number.isFinite(p?.x) && Number.isFinite(p?.y)) saved = p; } catch {}
   let down: { id: number; x: number; y: number; left: number; top: number } | undefined;
   let moved = false, held = false, lastTap = 0;
+  let opening: AbortController | undefined;
   let hold: ReturnType<typeof setTimeout> | undefined, tap: ReturnType<typeof setTimeout> | undefined;
   const stopHold = () => { clearTimeout(hold); hold = undefined; };
   button.classList.add('tester-floating');
@@ -19,10 +20,10 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
   const place = (x: number, y: number) => { const b = bounds(); button.style.left = `${Math.max(b.left, Math.min(b.right, x))}px`; button.style.top = `${Math.max(b.top, Math.min(b.bottom, y))}px`; };
   const layout = () => { const b = bounds(), a = anchor.getBoundingClientRect(); place(saved ? b.left + saved.x * (b.right - b.left) : a.right - button.offsetWidth, saved ? b.top + saved.y * (b.bottom - b.top) : a.bottom + 8); };
   const remember = () => { const b = bounds(), r = button.getBoundingClientRect(); saved = { x: (r.left - b.left) / Math.max(1, b.right - b.left), y: (r.top - b.top) / Math.max(1, b.bottom - b.top) }; try { localStorage.setItem(key, JSON.stringify(saved)); } catch {} };
-  const reset = () => { clearTimeout(tap); stopHold(); lastTap = 0; saved = undefined; try { localStorage.removeItem(key); } catch {} layout(); };
+  const reset = () => { opening?.abort(); clearTimeout(tap); stopHold(); lastTap = 0; saved = undefined; try { localStorage.removeItem(key); } catch {} layout(); };
   const start = (e: PointerEvent) => {
     if (down || e.button !== 0) return;
-    e.preventDefault(); e.stopPropagation(); clearTimeout(tap);
+    e.preventDefault(); e.stopPropagation(); clearTimeout(tap); opening?.abort();
     const r = button.getBoundingClientRect(); down = { id: e.pointerId, x: e.clientX, y: e.clientY, left: r.left, top: r.top }; moved = held = false;
     button.setPointerCapture(e.pointerId);
     hold = setTimeout(() => { held = true; lastTap = 0; quick(); }, 700);
@@ -39,15 +40,15 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
     if (button.hasPointerCapture(e.pointerId)) button.releasePointerCapture(e.pointerId);
     if (moved) { remember(); return; }
     if (held || e.type !== 'pointerup') return;
-    const now = performance.now();
+    const now = e.timeStamp;
     if (lastTap && now - lastTap < 350) { reset(); return; }
-    lastTap = now; tap = setTimeout(() => { lastTap = 0; open(); }, 350);
+    lastTap = now; tap = setTimeout(() => { opening = new AbortController(); open(opening.signal); }, 350);
   };
   const keydown = (e: KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); clearTimeout(tap); open(); } else if (e.key === 'Home') { e.preventDefault(); reset(); } };
-  const click = (e: MouseEvent) => { e.stopPropagation(); if (e.detail === 0 && !held && !moved) open(); };
+  const click = (e: MouseEvent) => { e.stopPropagation(); if (e.detail > 1) { reset(); return; } if (e.detail === 0 && !held && !moved) open(); };
   const dblclick = (e: MouseEvent) => { e.preventDefault(); e.stopPropagation(); reset(); };
   button.addEventListener('pointerdown', start); button.addEventListener('pointermove', move); button.addEventListener('pointerup', end); button.addEventListener('pointercancel', end); button.addEventListener('lostpointercapture', end);
   button.addEventListener('keydown', keydown); button.addEventListener('click', click); button.addEventListener('dblclick', dblclick);
   addEventListener('resize', layout); visualViewport?.addEventListener('resize', layout); visualViewport?.addEventListener('scroll', layout); layout();
-  return () => { stopHold(); clearTimeout(tap); removeEventListener('resize', layout); visualViewport?.removeEventListener('resize', layout); visualViewport?.removeEventListener('scroll', layout); button.remove(); };
+  return () => { opening?.abort(); stopHold(); clearTimeout(tap); removeEventListener('resize', layout); visualViewport?.removeEventListener('resize', layout); visualViewport?.removeEventListener('scroll', layout); button.remove(); };
 }
