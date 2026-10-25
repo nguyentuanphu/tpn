@@ -1075,8 +1075,11 @@ G.openPlayTogether = () => {
   const little = G.heroes[0].profile.age !== 'big', made = Object.keys(ONLINE_GAMES).filter(id => GAMES[id] && (id !== 'fruitparade' || fruitParadeModeOn('multi')));
   const race = Object.keys(GAMES).filter(id => !ONLINE_GAMES[id] && (!little || !gameInfoAge(id) || gameInfoAge(id) < 5)), tales = (G.TALES || []).slice(0, 12);
   const btn = (id: string, sub?: string) => `<button class="pt-g" data-g="${esc(id)}" aria-label="${esc(GAMES[id].name())}">${pic(GAMES[id].icon)}<b>${esc(GAMES[id].name())}</b>${sub ? `<small>${sub}</small>` : ''}</button>`;
+  const turnGames = made.filter(id => !ONLINE_GAMES[id].all);
+  const groupGames = made.filter(id => ONLINE_GAMES[id].all);
   const m = modal('playtogether', `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>${pic('🎲')} ${T('Play together', 'Chơi cùng nhau')}</h2>
-    <h3>${pic('👫')} ${T('Games made for friends', 'Trò chơi dành cho bạn bè')}</h3><div class="pt-grid">${made.map(id => btn(id, T(`up to ${ONLINE_GAMES[id].max}`, `tối đa ${ONLINE_GAMES[id].max}`))).join('')}</div>
+    ${turnGames.length ? `<h3>${pic('🎲')} ${T('Board and turn-taking', 'Bàn cờ và lần lượt')} </h3><div class="pt-grid">${turnGames.map(id => btn(id, T(`up to ${ONLINE_GAMES[id].max}`, `tối đa ${ONLINE_GAMES[id].max}`))).join('')}</div>` : ''}
+    ${groupGames.length ? `<h3>${pic('👫')} ${T('Team and cooperative', 'Đồng đội và hợp tác')} </h3><div class="pt-grid">${groupGames.map(id => btn(id, T(`up to ${ONLINE_GAMES[id].max}`, `tối đa ${ONLINE_GAMES[id].max}`))).join('')}</div>` : ''}
     <h3>${pic('🏁')} ${T('Race side by side', 'Thi đua cùng nhau')} <small>${T('everyone plays the same game, stars for all', 'mọi người chơi cùng một trò, ai cũng có sao')}</small></h3><div class="pt-grid">${race.map(id => btn(id)).join('')}</div>
     ${tales.length ? `<h3>${pic('📖')} ${T('Read a story together', 'Đọc truyện cùng nhau')}</h3><div class="pt-grid">${tales.map(t => `<button class="pt-g" data-g="tale-${esc(t.id)}" aria-label="${esc(t.title())}">${pic('📖')}<b>${esc(t.title())}</b></button>`).join('')}</div>` : ''}`);
   m.querySelector('.x').onclick = () => m.close();
