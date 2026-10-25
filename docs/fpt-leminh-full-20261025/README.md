@@ -38,3 +38,5 @@ Independent checkpoint review: 600 downloaded clips had matching checksums and a
 ## Completed baseline recording · 25 October 2026 AEDT
 
 Resumed run 40175822783 completed successfully with all 6,319 canonical Vietnamese clips saved across four complete manifests. The original run stopped after 1,580 clips on HTTP 401; the unchanged-key diagnostic succeeded, and resume recorded the previously failed line. The provider failure cause remains unproven. First 1,580 clips were independently fully decoded earlier; a separate unpaid GitHub job now checks hashes and fully decodes all 6,319. Recording success does not establish subjective listening approval or production integration. The owner-selected all-Vietnamese Lê Minh option must preserve the default female voice.
+
+Independent run **40190674496 passed**: 6,319 expected, 6,319 verified, 6,319 fully decoded, zero missing/errors. Exact safe report recovered from its log is `final-audit.json`; the workflow also retained the same JSON artifact. No subjective listening approval or production integration is implied.
