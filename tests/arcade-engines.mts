@@ -1,6 +1,7 @@
 import test from 'node:test';
+import {createNetGames} from '../js/netgames.js';
 import assert from 'node:assert/strict';
-import { orchardStart, orchardStop } from '../js/games/parade-engine.ts';
+import { orchardStart, orchardStop, orchardSessionTier } from '../js/games/parade-engine.ts';
 import { barStart, barApply, barResult, BAR_SYMBOLS } from '../js/games/fruitbar-engine.ts';
 import { ArcadeSession, controlsArcadeTurn } from '../js/games/arcade-session.ts';
 import type { ArcadeOnline } from '../js/games/arcade-session.ts';
@@ -64,4 +65,30 @@ test('a disconnected guest finishes a four-seat mission with helpers taking the 
   assert.ok(session.submit(state.board.indexOf(target)));assert.ok(session.index<=5);
  }
  assert.deepEqual(human,[2]);assert.deepEqual([...helpers].sort(),[0,1,3]);assert.equal(session.state.found.filter(Boolean).length,5);session.close();
+});
+
+test('mixed-age devices derive and complete the same invitation mission at every shared level',()=>{
+ for(let level=1;level<=5;level++){
+  let younger=orchardStart('mixed-age',2,orchardSessionTier(0,level));let older=orchardStart('mixed-age',2,orchardSessionTier(3,level));
+  assert.deepEqual(younger,older);
+  while(!younger.complete){const target=younger.mission.find((_,i)=>!younger.found[i])!;const position=younger.board.indexOf(target);younger=orchardStop(younger,position)!;older=orchardStop(older,position)!;assert.deepEqual(younger,older);}
+ }
+ assert.equal(orchardStart('solo',1,orchardSessionTier(0)).mission.length,3);assert.equal(orchardStart('solo',1,orchardSessionTier(3)).mission.length,5);
+});
+
+test('actual game transport recovers a late renderer and repeated replay requests after packet loss',()=>{
+ const packets:{from:string;t:string;gid:string;n?:number;mv?:number;[key:string]:unknown}[]=[];
+ let hostNet:ReturnType<typeof createNetGames>,guestNet:ReturnType<typeof createNetGames>,host:ArcadeSession<ReturnType<typeof orchardStart>>;
+ const channel=(game:ReturnType<typeof createNetGames>):ArcadeOnline=>({mine:game.session.mine,names:['A','B'],move:(n,v)=>game.move(n,v),onMove:f=>game.onMove(f),peek:(n,seat)=>game.session?.moves.get(n)?.get(seat)});
+ hostNet=createNetGames({net:{ids:()=>['B'],send:d=>packets.push({...d,from:'A'})},me:()=> 'A',onStart:()=>{host=new ArcadeSession(orchardStart(hostNet.session.gid,2,0),channel(hostNet),orchardStop,()=>{});}});
+ guestNet=createNetGames({net:{ids:()=>['A'],send:d=>packets.push({...d,from:'B'})},me:()=> 'B',onAsk:d=>guestNet.answer(d,true),onStart:()=>{}});
+ const drain=(drop?:number)=>{let guard=0;while(packets.length){if(++guard>200)throw Error('replay loop');const p=packets.shift()!;if(p.from==='A'&&p.t==='gmove'&&p.n===drop)continue;(p.from==='A'?guestNet:hostNet).receive(p);}};
+ hostNet.invite('sparkleorchard',1,'B');drain();
+ const choose=(s:typeof host)=>{const target=s.state.mission.find((_,i)=>!s.state.found[i])!;assert.ok(s.submit(s.state.board.indexOf(target)));};
+ choose(host!);drain();assert.ok(guestNet.session.moves.has(2000),'transport cached a commit before UI subscribed');
+ const guest=new ArcadeSession(orchardStart(guestNet.session.gid,2,0),channel(guestNet),orchardStop,()=>{});assert.deepEqual(guest.state,host!.state,'late UI reads cached commits without waiting forever');
+ choose(guest);drain(2001);assert.equal(guest.index,1);assert.equal(host!.index,2);guest.poll();drain();assert.deepEqual(guest.state,host!.state);
+ choose(host!);drain(2002);assert.equal(guest.state.complete,false);hostNet.receive({t:'gmove',from:'B',gid:hostNet.session.gid,n:8000,mv:guest.index});drain();
+ assert.equal(guest.state.complete,true,'a replay request ID already used earlier still recovers the final commit');assert.deepEqual(guest.state,host!.state);
+ host!.close();guest.close();hostNet.leave();guestNet.leave();
 });

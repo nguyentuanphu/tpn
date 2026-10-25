@@ -51,3 +51,7 @@ Final parent layout review covers allocation fields and actual two-adult result 
 
 
 Final Vietnamese completion check caught an untranslated Orchard win heading. The title now uses the selected language; one static bilingual pair also preserves voice inventory coverage without speaking the completion twice. Actual keyboard/controller play through the Vietnamese win screen passes; screenshot `shots/phone-vi-orchard-complete.png`. The eleven recorded line identities are unchanged.
+
+26 October 2026 AEDT: online Orchard uses the room invitation’s shared difficulty rather than each device’s age, while solo play keeps the child’s own setting. Mixed-age two-browser completion passes. Cached commits are read when a renderer opens late; transient recovery queries remain deliverable after their identifier wraps. The actual createNetGames transport test covers late subscription, dropped commits and reused recovery identifiers. All 272 combined units and project TypeScript checks pass (nine focused arcade cases); final browser/regression status is recorded separately.
+
+The transport browser rerun caught a fixture timing error: its child-save snapshot was taken before the parent invitation opened, allowing normal child-play minutes to advance in that gap. The snapshot now follows both parent gates, with an explicit assertion that child play is paused; the complete unchanged-save comparison remains. The initial failed run is not counted as a pass.

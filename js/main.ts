@@ -1055,7 +1055,7 @@ G.netGames = createNetGames({
     const names = s.seats.map(id => id === Net.me ? G.heroes[0].profile.name : remoteName(id));
     // every move is tied to this game: a story or game that is still winding down can't send into (or end) a newer one
     const live = () => !!G.netGames.session && G.netGames.session.gid === s.gid, end = () => { if (live()) G.netGames.leave(); };
-    const online = { mine: s.mine, names, seed: s.gid, size: s.size, connected: () => !!Net.connected, present: seat => seat === s.mine || !s.gone.has(seat) && !!Net.remotes[s.seats[seat]], leave: end, onMove: f => live() ? G.netGames.onMove(f) : undefined, move: (n, mv) => live() && G.netGames.move(n, mv), next: (n, seat) => live() ? G.netGames.next(n, seat) : Promise.resolve(null), all: n => live() ? G.netGames.all(n) : Promise.resolve([]) };
+    const online = { mine: s.mine, names, seed: s.gid, size: s.size, connected: () => !!Net.connected, present: seat => seat === s.mine || !s.gone.has(seat) && !!Net.remotes[s.seats[seat]], leave: end, peek: (n, seat) => live() ? G.netGames.session?.moves.get(n)?.get(seat) : undefined, onMove: f => live() ? G.netGames.onMove(f) : undefined, move: (n, mv) => live() && G.netGames.move(n, mv), next: (n, seat) => live() ? G.netGames.next(n, seat) : Promise.resolve(null), all: n => live() ? G.netGames.all(n) : Promise.resolve([]) };
     if(s.game === 'sparklefruitbar'){void import('./games/sparklefruitbar.js').then(module=>module.openFruitBar(online));return;}
     if (/^tale-/.test(s.game)) { // a tale read together: page turns travel as moves
       const t = (G.TALES || []).find(x => 'tale-' + x.id === s.game); if (!t || !G.readTaleNow) { end(); return; }

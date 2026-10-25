@@ -1,4 +1,4 @@
-export interface ArcadeOnline {mine:number;names:string[];seed?:string;move(n:number,value:number):void;onMove?(fn:(seat:number,n:number,value:number)=>void):void|(()=>void);connected?():boolean;present?(seat:number):boolean;leave?():void;}
+export interface ArcadeOnline {mine:number;names:string[];seed?:string;move(n:number,value:number):void;peek?(n:number,seat:number):number|undefined;onMove?(fn:(seat:number,n:number,value:number)=>void):void|(()=>void);connected?():boolean;present?(seat:number):boolean;leave?():void;}
 
 export const controlsArcadeTurn=(turn:number,mine:number,online:boolean,helper:boolean)=>online?turn===mine:!helper||turn===mine;
 
@@ -12,7 +12,11 @@ export class ArcadeSession<S extends { turn: number }> {
   constructor(initial: S, online: ArcadeOnline | undefined, reduce: (state: S, value: number) => S | null, changed: () => void) {
     this.reduce=reduce;this.changed=changed;this.state = initial;this.online = online;this.mine = online?.mine || 0;
     const off = online?.onMove?.((seat, n, value) => this.receive(seat, n, value));
-    if (typeof off === 'function') this.unsubscribe = off;
+    if (typeof off === 'function') this.unsubscribe = off;this.catchup();
+  }
+  private catchup(){
+    if(this.dead||!this.online||this.mine===0||!this.online.peek)return;
+    while(true){const index=this.index,value=this.online.peek(index+2000,0);if(typeof value!=='number')break;this.receive(0,index+2000,value);if(this.index===index)break;}
   }
   get busy(){return !!this.request;}
   get waiting() { return !!this.online && (this.online.connected?.() === false || this.online.names.some((_, seat) => this.online?.present?.(seat) === false)); }
@@ -44,7 +48,7 @@ export class ArcadeSession<S extends { turn: number }> {
     }
     this.changed();
   }
-  poll(){if(this.dead||!this.online)return;if(this.request)this.online.move(this.request.index,this.request.value);if(this.mine!==0)this.online.move(8000+(this.sync++%900),this.index);}
+  poll(){if(this.dead||!this.online)return;this.catchup();if(this.request)this.online.move(this.request.index,this.request.value);if(this.mine!==0)this.online.move(8000+(this.sync++%900),this.index);}
   continueLocally(){this.online?.leave?.();this.online=undefined;this.request=undefined;this.pending.clear();this.changed();}
   close(){this.dead=true;this.unsubscribe?.();this.pending.clear();}
 }

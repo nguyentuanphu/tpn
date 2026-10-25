@@ -72,15 +72,15 @@ export async function orchardFruitBarBrowser(){
   notes.push({bilingualDeviceCaptures:12,parentGateBeforeControls:true,parentLocalSharedRound:true});
   if(capturesOnly){assert.deepEqual(P.errors,[]);await P.ctx.close();return;}
   await play(P.page);await P.page.locator('[data-orchard-mode=npc]').click();await completeOrchard(P.page);await closeGame(P.page);notes.push({orchardNpcCompletes:true});
-  const Q=await open(browser,{w:820,h:1180,settings:{countPlayers:false,online:false,calm:true},route:async ctx=>{await ctx.route('**/api/**',r=>r.fulfill({json:{}}));await ctx.route('**/content/custom.json*',r=>r.fulfill({json:{releases:flags}}));}});await clear(Q.page);await noWelcome(Q.page);await eligibility(Q.page,true);
+  const Q=await open(browser,{w:820,h:1180,settings:{countPlayers:false,online:false,calm:true},route:async ctx=>{await ctx.route('**/api/**',r=>r.fulfill({json:{}}));await ctx.route('**/content/custom.json*',r=>r.fulfill({json:{releases:flags}}));}});await clear(Q.page);await noWelcome(Q.page);await eligibility(Q.page,true);await Q.page.evaluate(()=>{window.__sv.heroes[0].profile.age='big';});
   // Real createNetGames identity/session/invitation messages, relayed between two isolated browser pages.
   for(const [here,there]of[[P,Q],[Q,P]])await here.page.exposeFunction('__arcadeSend',async data=>there.page.evaluate(async packet=>(window as any).__arcadeNet.receive(packet),data));
   for(const [mine,dev]of[P,Q].entries())await dev.page.evaluate(async mine=>{
    const {createNetGames}=await import(String('/js/netgames.js'));const w=window as any;const id=mine?'guest':'host',other=mine?'host':'guest';w.__arcadeConnected=true;
-   const g=createNetGames({net:{ids:()=>[other],send:data=>{void w.__arcadeSend({...data,from:id});}},me:()=>id,waitMs:1000,onAsk:d=>g.answer(d,true),onStart:s=>{if(!s)return;const online={mine:s.mine,names:['Parent A','Parent B'],seed:s.gid,move:(n,v)=>g.move(n,v),onMove:f=>g.onMove(f),connected:()=>w.__arcadeConnected,present:()=>w.__arcadeConnected,leave:()=>g.leave()};if(s.game==='sparklefruitbar')void import(String('/js/games/sparklefruitbar.js')).then(m=>m.openFruitBar(online));else void w.__sv.playGameOnline(s.game,1,online);}});w.__arcadeNet=g;
+   const g=createNetGames({net:{ids:()=>[other],send:data=>{void w.__arcadeSend({...data,from:id});}},me:()=>id,waitMs:1000,onAsk:d=>g.answer(d,true),onStart:s=>{if(!s)return;const online={mine:s.mine,names:['Parent A','Parent B'],seed:s.gid,move:(n,v)=>g.move(n,v),onMove:f=>g.onMove(f),peek:(n,seat)=>g.session?.moves.get(n)?.get(seat),connected:()=>w.__arcadeConnected,present:()=>w.__arcadeConnected,leave:()=>g.leave()};if(s.game==='sparklefruitbar')void import(String('/js/games/sparklefruitbar.js')).then(m=>m.openFruitBar(online));else void w.__sv.playGameOnline(s.game,1,online);}});w.__arcadeNet=g;
   },mine);
   await P.page.evaluate(()=>(window as any).__arcadeNet.invite('sparkleorchard',1,'guest'));
-  for(const d of[P,Q])await d.page.locator('.orchard[data-mode=online]').waitFor();
+  for(const d of[P,Q]){await d.page.locator('.orchard[data-mode=online]').waitFor();assert.equal(await d.page.locator('.arcade-mission>span').count(),3,'mixed ages share the invitation mission');}
   for(let move=0;move<6;move++){
    if(await P.page.locator('.gl-win').count())break;const dev=move%2===0?P:Q;
    const target=await dev.page.locator('.arcade-mission > span:not(.found)').first().innerHTML();const index=await dev.page.locator('[data-cell]').evaluateAll((cells,target)=>cells.findIndex(c=>c.querySelector('.arcade-art')?.innerHTML===target),target);
@@ -89,13 +89,14 @@ export async function orchardFruitBarBrowser(){
    await Promise.all([P,Q].map(d=>d.page.waitForFunction(n=>Number(document.querySelector('.orchard')?.getAttribute('data-moves'))>n,before)));
   }
   for(const dev of[P,Q]){await dev.page.locator('.gl-win').waitFor();await closeGame(dev.page);await dev.page.evaluate(()=>(window as any).__arcadeNet.leave());}
-  notes.push({orchardTwoBrowserSharedCompletion:true});
+  notes.push({orchardTwoBrowserSharedCompletion:true,mixedAgeSharedMission:true});
   await P.page.evaluate(()=>(window as any).__arcadeNet.invite('sparkleorchard',1,'guest'));await Q.page.locator('.orchard[data-mode=online]').waitFor();await Q.page.evaluate(()=>{(window as any).__arcadeConnected=false;});
   await Q.page.locator('[data-orchard-continue]').waitFor({timeout:40000});await Q.page.locator('[data-orchard-continue]').click();await Q.page.locator('.orchard[data-mode=npc]').waitFor();await completeOrchard(Q.page);await closeGame(Q.page);await closeGame(P.page);
   for(const d of[P,Q])await d.page.evaluate(()=>(window as any).__arcadeNet.leave());await Q.page.evaluate(()=>{(window as any).__arcadeConnected=true;});notes.push({orchardGuestNpcContinuationCompletes:true});
-  const before=await P.page.evaluate(()=>localStorage.getItem('sv2_profiles'));
   await P.page.evaluate(()=>(window as any).__arcadeNet.invite('sparklefruitbar',1,'guest'));
   for(const d of[P,Q])await hold(d.page);
+  assert.equal(await P.page.evaluate(()=>window.__sv.paused),true,'parent arcade pauses child play');
+  const before=await P.page.evaluate(()=>localStorage.getItem('sv2_profiles'));
   for(const d of[P,Q]){await d.page.locator('[data-bar-bet="0"]').fill('10');await d.page.locator('[data-bar-bet="0"]').press('Tab');await d.page.locator('[data-bar-ready]').click();}
   for(const d of[P,Q])await d.page.locator('.arcade-adult[data-phase=result]').waitFor();
   assert.equal(await P.page.locator('.arcade-players').innerText(),await Q.page.locator('.arcade-players').innerText());

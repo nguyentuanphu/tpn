@@ -4,12 +4,12 @@ import { T } from '../i18n.js';
 import { reduceMotion } from '../state.js';
 import { testerArcadeAvailable } from '../content/tester-arcades.js';
 import { ArcadeSession, controlsArcadeTurn } from './arcade-session.js';
-import { orchardStart, orchardStop, orchardSymbol } from './parade-engine.js';
+import { orchardStart, orchardStop, orchardSymbol, orchardSessionTier } from './parade-engine.js';
 import { ARCADE_STYLE, RING_CELLS, art, control, dom } from './arcade-board.js';
 import type { GameOnline } from './frame.js';
 // A static bilingual pair keeps the completion line visible to voice inventory tooling.
 const ORCHARD_COMPLETION=['Orchard mission complete!','Hoàn thành nhiệm vụ vườn quả!'] as const;
-interface OrchardApi {stage:HTMLElement;online?:GameOnline;players:{id?:string;name?:string}[];tier():number;closed:boolean;onCleanup(f:()=>void):void;say(en:string,vi:string):void;dots(n:number,k:number):void;sfx:{tap():void};win(extra:{title:string;titleVi:string}):Promise<unknown>;plan?(f:()=>Element|null,opts:{maxActions:number}):void;}
+interface OrchardApi {level?:number;stage:HTMLElement;online?:GameOnline;players:{id?:string;name?:string}[];tier():number;closed:boolean;onCleanup(f:()=>void):void;say(en:string,vi:string):void;dots(n:number,k:number):void;sfx:{tap():void};win(extra:{title:string;titleVi:string}):Promise<unknown>;plan?(f:()=>Element|null,opts:{maxActions:number}):void;}
 async function run(api:OrchardApi){
  if(!testerArcadeAvailable('sparkleorchard',api.online?'multi':'single')){api.say('This game is for invited testers.', 'Trò này dành cho người thử được mời.');return;}
  const style=dom('style');style.textContent=ARCADE_STYLE;const root=dom('div','arcade orchard');api.stage.append(style,root);root.tabIndex=-1;api.stage.closest('.gl')?.classList.add('gl-arcade');
@@ -18,7 +18,7 @@ async function run(api:OrchardApi){
  const mine=()=>!!session&&controlsArcadeTurn(session.state.turn,session.mine,!!session.online,helper);
  const active=()=>!!session&&!session.state.complete&&!session.waiting&&mine();
  function stop(){if(!active())return;if(session!.submit(position))api.sfx.tap();}
- function start(seats:number,npc:boolean){helper=npc;session=new ArcadeSession(orchardStart(api.online?.seed||`orchard-${Date.now()}`,seats,api.tier()),api.online,orchardStop,paint);api.say('Find the mission pictures. Stop the light!', 'Tìm tranh trong nhiệm vụ. Dừng đèn nhé!');paint();}
+ function start(seats:number,npc:boolean){helper=npc;session=new ArcadeSession(orchardStart(api.online?.seed||`orchard-${Date.now()}`,seats,orchardSessionTier(api.tier(),api.online?(api.level??1):undefined)),api.online,orchardStop,paint);api.say('Find the mission pictures. Stop the light!', 'Tìm tranh trong nhiệm vụ. Dừng đèn nhé!');paint();}
  function paint(){
   if(dead||!session)return;const s=session.state;const keepFocus=root.contains(document.activeElement)||document.activeElement===document.body;root.replaceChildren();root.dataset.mode=session.online?'online':helper?'npc':s.seats>1?'local':'solo';root.dataset.moves=String(s.moves);
   root.append(dom('h2','',T('Our orchard mission','Nhiệm vụ vườn quả')));

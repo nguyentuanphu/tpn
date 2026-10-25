@@ -14,14 +14,10 @@
     "orchardNpcCompletes": true
   },
   {
-    "orchardTwoBrowserSharedCompletion": true
+    "orchardTwoBrowserSharedCompletion": true,
+    "mixedAgeSharedMission": true
   },
   {
     "orchardGuestNpcContinuationCompletes": true
-  },
-  {
-    "parentTwoBrowserSharedResult": true,
-    "parentNoChildSaveWrites": true,
-    "parentTemporaryDisconnectRetained": true
   }
 ]

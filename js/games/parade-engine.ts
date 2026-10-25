@@ -9,6 +9,11 @@ export const ORCHARD_SYMBOLS: ReadonlyArray<{id:OrchardSymbol;art:string;en:stri
 ];
 export interface OrchardState {seed:string;seats:number;turn:number;tier:number;board:OrchardSymbol[];mission:OrchardSymbol[];found:boolean[];moves:number;misses:number;last:OrchardSymbol|null;complete:boolean;collection:OrchardSymbol[];combo:'ladybird'|'dragon'|'treasure'|null;}
 export const orchardSymbol=(id:OrchardSymbol)=>ORCHARD_SYMBOLS.find(s=>s.id===id)!;
+// Online difficulty comes from the shared invitation, never a device-local age or saved level.
+export function orchardSessionTier(localTier:number,sharedLevel?:number){
+ const requested=sharedLevel===undefined?localTier:(Number.isFinite(sharedLevel)?sharedLevel:1)-1;
+ return Math.max(0,Math.min(3,Math.floor(Number.isFinite(requested)?requested:0)));
+}
 export function orchardStart(seed:string,seats:number,tier:number):OrchardState {
   if(!Number.isInteger(seats)||seats<1||seats>4)throw new Error('Orchard seats must be 1–4');
   const rand=randomStream(seed), board:OrchardSymbol[]=[];
