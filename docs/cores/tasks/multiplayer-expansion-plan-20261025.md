@@ -6,7 +6,7 @@
 ## 1. Decisions
 
 - The selected Vietnamese recording voice is FPT Neo Le Minh (`leminh`). Record a small listening-review sample first; do not regenerate the full pack until the sample scope is approved.
-- These remain pending because no registered playable implementation was found: Meo Duoi Chuot, Cuop Co, Keo Cua Lua Xe, Danh Dao, Nem Con, Trong Nu, and Dua Thuyen.
+- These seven games are now registered and playable as child-safe single-player mini-games: Mèo Đuổi Chuột, Cướp Cờ, Kéo Cưa Lừa Xẻ, Đánh Đáo, Ném Còn, Trồng Nụ, and Đua Thuyền. They remain controlled by the existing Studio `newGames` switch and star-based second-set unlock rules. Their online multiplayer upgrades remain future work.
 - Rong Ran Len May already exists under another ID. Do not add a duplicate.
 - Co Vua Nho and Co Tuong Nho are puzzle experiences, not full two-player matches. New full matches need distinct IDs and labels.
 - Co Ca Ngua is a new addition with a beginner mode using fewer pieces and a fuller rules mode.
@@ -55,7 +55,7 @@
 ### Batch C: additional verified games
 
 - Add only after confirming rules, content, assets, and registration: Co Ganh and picture/number Dominoes.
-- Keep the seven unregistered names on the pending list until actual game modules and registry entries exist.
+- Keep the seven games in the verified single-player set; add them to multiplayer only after a shared reducer and invitation protocol are tested.
 - Re-check every proposed upgrade before changing unlock lists or release content.
 
 ### Separate workstream: Le Minh recordings
