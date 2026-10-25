@@ -1,4 +1,3 @@
-import { testerArcadeAvailable } from './content/tester-arcades.js';
 import { hasClip, saveClip, deleteClip, playClip, estimatePitch, pitchFromHz } from './voice.js';
 import { startRecording, releaseMic, micProblem } from './recorder.js';
 import { ac } from './audio.js';
@@ -281,7 +280,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       
       </div></details>
       ${window.__sv && window.__sv.parents ? window.__sv.parents.grownupsHTML(gOpen.has('family')) : '' /* (round S) family missions, week note, cards, dance, bedtime, birthdays: js/parents.js */}
-      ${(testerArcadeAvailable('sparklefruitbar','single') || testerArcadeAvailable('sparklefruitbar','multi')) ? `<p><button class="btn" data-parent-arcade>${T('Grown-up tester arcade · Fruit Bar','Khu thử người lớn · Bảng trái cây')}</button></p>` : ''}
+
       <details class="gsec" data-sec="note" ${gOpen.has('note') ? 'open' : ''}><summary><span class="gi">📜</span><b>${T('Note for grown-ups', 'Lưu ý cho người lớn')}</b></summary><div class="gbody">
       <ul class="gnote"><li>${T('Sparkle Valley is a free family game made for fun and learning. It is provided as it is, without any promise or warranty.', 'Thung Lũng Lấp Lánh là trò chơi gia đình miễn phí, làm ra để vui chơi và học hỏi. Trò chơi được cung cấp như hiện có, không kèm bất kỳ cam kết hay bảo đảm nào.')}</li><li>${T('A grown-up is responsible for the child’s play: when and how long they play, online play and chat, and the device itself.', 'Người lớn chịu trách nhiệm về việc chơi của trẻ: chơi lúc nào, chơi bao lâu, chơi trực tuyến, trò chuyện, và cả thiết bị.')}</li><li>${T('Games the valley suggests playing for real (tug of war, jump rope, hopscotch, đá cầu, kites, cooking…) need a grown-up watching, a safe place and the right equipment.', 'Các trò chơi được gợi ý chơi ngoài đời (kéo co, nhảy dây, nhảy lò cò, đá cầu, thả diều, nấu ăn…) cần có người lớn trông, chỗ chơi an toàn và dụng cụ phù hợp.')}</li><li>${T('Take a break every 20 to 30 minutes, and stop if a child feels unwell (tired eyes, dizziness, motion sickness).', 'Nghỉ giải lao sau mỗi 20 đến 30 phút, và dừng chơi nếu trẻ thấy khó chịu (mỏi mắt, chóng mặt, say xe).')}</li><li>${T('Places, festivals, food and history are told simply for children and may not be complete or exact.', 'Địa danh, lễ hội, món ăn và lịch sử được kể đơn giản cho trẻ, có thể chưa đầy đủ hoặc chưa chính xác hoàn toàn.')}</li><li>${T('Online friends, chat and real photos come from other people and services; the makers are not responsible for their content.', 'Bạn bè trực tuyến, trò chuyện và ảnh thật đến từ người khác và các dịch vụ khác; người làm game không chịu trách nhiệm về nội dung đó.')}</li><li>${T('As far as the law allows, the makers are not responsible for any loss, injury or damage from using the game.', 'Trong phạm vi pháp luật cho phép, người làm game không chịu trách nhiệm về bất kỳ mất mát, thương tích hay thiệt hại nào do việc sử dụng trò chơi.')}</li></ul>
       </div></details>
@@ -292,7 +291,6 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
     bindPackStatus(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; });
     card.querySelector('.x').onclick = card.querySelector('#gDone').onclick = () => { m.close(); after && after(); };
     jumpNav(card, card.querySelector('h2'));
-    const parentArcade=(card.querySelector('[data-parent-arcade]') as HTMLButtonElement | null);if(parentArcade)parentArcade.onclick=()=>{void import('./games/sparklefruitbar.js').then(module=>module.openFruitBar());};
     card.querySelectorAll('.gbody').forEach(b => foldHeadings(b, 'grownups')); // (owner, 13 Oct) each category inside a part opens and closes
     card.querySelectorAll('.seg.cur button').forEach(b => b.onclick = () => { if (b.dataset.c === 'auto') settings.curPinned = false; else { settings.currency = b.dataset.c; settings.curPinned = true; } saveSettings(); draw(); });
     card.querySelectorAll('[data-add]').forEach(b => b.onclick = () => { const n = +b.dataset.add; if (window.__sv && window.__sv.addCoins) window.__sv.addCoins(n); else { farm.coins += n; saveFarm(); } SFX.coin ? SFX.coin() : SFX.chime(); card.querySelector('#gCoins').textContent = fmt(farm.coins); toast(T('Coins added: ', 'Đã thêm: ') + fmt(n)); });

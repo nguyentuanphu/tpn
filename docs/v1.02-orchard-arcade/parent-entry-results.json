@@ -1,14 +1,15 @@
 [
   {
-    "nonTesterCannotOpenEither": true
+    "orchardStillTesterOnly": true,
+    "fruitBarPublicForNonTester": true
   },
   {
     "parentEntryDeduplicates": true,
-    "parentGateAndRoundComplete": true,
+    "familyEntryAndRoundComplete": true,
     "normalLightAnimationFinishes": true,
     "pauseStateRestored": true
   },
   {
-    "closingDuringHoldCannotStartHiddenOnlineSession": true
+    "closingOnlineStopsSession": true
   }
 ]

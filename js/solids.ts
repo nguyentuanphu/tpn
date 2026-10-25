@@ -14,10 +14,13 @@ import { MAP_VERSION, WORLD } from './content/map.js';
 
 // the saved map belongs to one build, one layout of the valley (round T: js/content/map.js) and one family content
 // pack (moved or added buildings change it)
-const SIG = (() => { let h = 0; const t = JSON.stringify(CUSTOM || {}); for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return BUILD + '_' + MAP_VERSION + '_' + (h >>> 0).toString(36); })();
+const SIG = (() => { let h = 0; const t = JSON.stringify(CUSTOM || {}); for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return BUILD + '_underpass1_' + MAP_VERSION + '_' + (h >>> 0).toString(36); })();
 const CELL = .5, HALF = WORLD.size / 2, N = Math.round(HALF * 2 / CELL), LO = .35, HI = 1.6;
 export function buildSolids(G: SvMain): Promise<SolidStats> {
-  const { scene, world: W } = G, grid = new Uint8Array(N * N);
+  const { scene, world: W } = G, grid = new Uint8Array(N * N), waterGrid = new Uint8Array(N * N);
+  const bridges=W.platforms.filter(p=>p.bridge);
+  const belowBridge=(x:number,z:number)=>bridges.some(p=>x>p.x0-.8&&x<p.x1+.8&&z>p.z0-.8&&z<p.z1+.8);
+  const waterFeet=WORLD.water-.55;
   const idx = (x: number, z: number) => { const i = Math.floor((x + HALF) / CELL), j = Math.floor((z + HALF) / CELL); return i < 0 || j < 0 || i >= N || j >= N ? -1 : j * N + i; };
   // (audit, 9 Oct) things that come and go are marked noSolid where they are made (a building removed in Studio, the yard's
   // coach and house): the map is the same for every child and every screen, so it can't follow what is shown now
@@ -46,11 +49,15 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
       // only triangles that reach into the body-height slice somewhere near them
       const ymin = Math.min(A.y, B.y, C.y), ymax = Math.max(A.y, B.y, C.y);
       const gx = (A.x + B.x + C.x) / 3, gz = (A.z + B.z + C.z) / 3, g0 = ground(gx, gz);
-      if (ymax < g0 + LO - 1.5 || ymin > g0 + HI + 1.5) return;
+      const deckSlice=!(ymax < g0 + LO - 1.5 || ymin > g0 + HI + 1.5);
+      const waterSlice=ymax>=waterFeet+LO&&ymin<=waterFeet+HI&&bridges.some(p=>Math.max(A.x,B.x,C.x)>p.x0-.8&&Math.min(A.x,B.x,C.x)<p.x1+.8&&Math.max(A.z,B.z,C.z)>p.z0-.8&&Math.min(A.z,B.z,C.z)<p.z1+.8);
+      if(!deckSlice&&!waterSlice)return;
       const e1 = Math.hypot(B.x - A.x, B.y - A.y, B.z - A.z), e2 = Math.hypot(C.x - A.x, C.y - A.y, C.z - A.z), n = Math.min(60, Math.ceil(Math.max(e1, e2) / .3));
       for (let i = 0; i <= n; i++) for (let j = 0; j <= n - i; j++) {
         const u = i / n, v = j / n, x = A.x + (B.x - A.x) * u + (C.x - A.x) * v, y = A.y + (B.y - A.y) * u + (C.y - A.y) * v, z = A.z + (B.z - A.z) * u + (C.z - A.z) * v;
-        const k = idx(x, z); if (k < 0 || grid[k]) continue;
+        const k = idx(x, z); if (k < 0) continue;
+        if(waterSlice&&y>=waterFeet+LO&&y<=waterFeet+HI&&belowBridge(x,z))waterGrid[k]=1;
+        if(grid[k])continue;
         const g = ground(x, z); if (y < g + LO || y > g + HI) continue;
         if (onPlatSide(x, z, y)) continue;
         grid[k] = 1; marked++;
@@ -60,6 +67,7 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
     const sig = 'sv2_solid_' + SIG + '_' + still.length;
     let oi = 0, work = 0, lastEnd = 0; // (declared before the saved map is used: done() reads work)
     let cached = null; try { cached = localStorage.getItem(sig); } catch (e) { }
+    if (cached) { let saved;try{saved=JSON.parse(cached);}catch{}if(saved?.version!==1)cached=null;else{for(const k of saved.water)waterGrid[k]=1;cached=saved.deck;} }
     if (cached) { const bin = atob(cached); for (let k = 0; k < N * N; k++) if (bin.charCodeAt(k >> 3) & (1 << (k & 7))) { grid[k] = 1; marked++; } return done(true); }
     // otherwise a little at a time (about 12 ms per frame), so the game keeps moving while it is made; on a device
     // whose frames are slow anyway, a bigger bite each time (a quarter of the time between bites, at most 120 ms)
@@ -81,12 +89,12 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
       if (oi < still.length) return setTimeout(step, 0);
       try { const bytes = new Uint8Array(N * N / 8); for (let k = 0; k < N * N; k++) if (grid[k]) bytes[k >> 3] |= 1 << (k & 7); let str = ''; for (let k = 0; k < bytes.length; k += 4096) str += String.fromCharCode.apply(null, bytes.subarray(k, k + 4096));
         for (let k = localStorage.length - 1; k >= 0; k--) { const key = localStorage.key(k); if (key && key.startsWith('sv2_solid_') && key !== sig) localStorage.removeItem(key); }
-        localStorage.setItem(sig, btoa(str)); } catch (e) { }
+        localStorage.setItem(sig, JSON.stringify({version:1,deck:btoa(str),water:Array.from(waterGrid.keys()).filter(k=>waterGrid[k])})); } catch (e) { }
       done(false);
     };
     step();
     function done(fromCache: boolean) {
-    W.solid = grid; W.solidGround = ground; W.solidAt = (x, z) => { const k = idx(x, z); return k >= 0 && grid[k] === 1; };
+    W.solid = grid; W.underpassSolid=waterGrid; W.solidGround = ground; W.solidAt = (x, z) => { const k = idx(x, z); return k >= 0 && grid[k] === 1; };
     // anything you tap that now stands inside something solid reaches out to the nearest open ground
     for (const it of G.interactables) {
       if (!Number.isFinite(it.x) || !W.solidAt(it.x, it.z)) continue;
@@ -113,14 +121,18 @@ export function solidCircleHit(W: { solid?: Uint8Array }, x: number, z: number, 
 }
 
 // push a body of radius r out of solid cells (used by world.collide)
-export function pushOutOfSolids(W: Pick<ReturnType<typeof import('./world.js').createWorld>, 'solid' | 'solidGround'>, pos: { x: number; y?: number; z: number }, r: number) {
+export function pushOutOfSolids(W: Pick<ReturnType<typeof import('./world.js').createWorld>, 'solid' | 'solidGround' | 'underpassSolid' | 'platforms'>, pos: { x: number; y?: number; z: number }, r: number) {
   if (!W.solid) return;
   if (pos.y != null && pos.y > W.solidGround(pos.x, pos.z) + 1.2) return; // up in the air (gliding, a tower top, a room upstairs)
+  // The ordinary grid represents bodies standing on the deck. At water height use
+  // the separately sampled layer, preserving real piers while leaving overhead rails open.
+  const below=pos.y!=null&&W.platforms.some(p=>p.bridge&&pos.x>p.x0-.8&&pos.x<p.x1+.8&&pos.z>p.z0-.8&&pos.z<p.z1+.8&&pos.y+HI<p.y-.5);
+  const grid=below&&W.underpassSolid?W.underpassSolid:W.solid;
   for (let pass = 0; pass < 2; pass++) {
     const i0 = Math.floor((pos.x - r + HALF) / CELL), i1 = Math.floor((pos.x + r + HALF) / CELL), j0 = Math.floor((pos.z - r + HALF) / CELL), j1 = Math.floor((pos.z + r + HALF) / CELL);
     let moved = false;
     for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
-      if (i < 0 || j < 0 || i >= N || j >= N || !W.solid[j * N + i]) continue;
+      if (i < 0 || j < 0 || i >= N || j >= N || !grid[j * N + i]) continue;
       const x0 = i * CELL - HALF, z0 = j * CELL - HALF, cx = Math.max(x0, Math.min(pos.x, x0 + CELL)), cz = Math.max(z0, Math.min(pos.z, z0 + CELL));
       let dx = pos.x - cx, dz = pos.z - cz; const d = Math.hypot(dx, dz);
       if (d >= r) continue;

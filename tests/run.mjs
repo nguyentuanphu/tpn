@@ -3049,6 +3049,14 @@ await check('bridges', async () => {
   return `${r.n} bridges each over its water, ends on land, decks walkable; landmarks on their bridges: ${r.lm.join(', ')}; no road in water`;
 });
 
+await check('fruitbarfamily', async () => {
+  await ownerSmoke('orchard-fruitbar-browser.mts', ['--parent-entry-only']);
+  await ownerSmoke('orchard-fruitbar-browser.mts', ['--allocations-only']);
+  return 'Public non-tester entry, no adult gate, 64px counter taps, online cleanup and six EN/VI allocation/result layouts';
+});
+
+await check('bridgeunderpass', async () => (await import('./bridge-underpass.mts')).bridgeUnderpassCheck(b));
+
 await check('boats', async () => {
   // (round T2, RIVER-002/005/006) ride every boat end to end, 1 m at a time: the water under it and 1.5 m either side
   // is deep enough (at the piers a little shallower), every deck it passes is high enough over it, and every pier's land
@@ -3056,17 +3064,20 @@ await check('boats', async () => {
   const P = await open(b, { w: 900, h: 640 }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
     const W = await import('/js/world.js'), M = await import('/js/content/map.js'), G = __sv, bad = [], THREE = await import('/vendor/three.module.js');
+    await G.solidsReady;
     const F = G.ferries.ferries, info = [];
     for (const f of F) {
       const box = new THREE.Box3().setFromObject(f.model), tall = box.max.y - W.WATER, name = f.boat === 'vtboat' ? 'Vũng Tàu boat' : f.harbour ? 'harbour ferry' : f.line ? 'raft line' : f.loop ? 'lake ferry' : 'crossing raft';
-      let shallow = 0, low = 0, first = '';
+      let shallow = 0, low = 0, pierHits = 0, first = '';
       const stopPts = f.stops.map(s => f.path[s.i]);
       for (let i = 0; i < f.path.length - (f.loop ? 0 : 1); i++) { const a = f.path[i], c = f.path[(i + 1) % f.path.length], L = Math.hypot(c.x - a.x, c.z - a.z), n = Math.max(1, Math.ceil(L));
         for (let k = 0; k < n; k++) { const x = a.x + (c.x - a.x) * k / n, z = a.z + (c.z - a.z) * k / n, ux = -(c.z - a.z) / (L || 1), uz = (c.x - a.x) / (L || 1);
           const nearStop = stopPts.some(p => Math.hypot(p.x - x, p.z - z) < 6), lim = nearStop ? W.WATER - .25 : W.WATER - .8;
           const hs = [0, -1.5, 1.5].map(o => W.heightAt(x + ux * o, z + uz * o)); if ((nearStop ? hs[0] : Math.max(...hs)) > lim) { shallow++; if (!first) first = `${x.toFixed(0)},${z.toFixed(0)}`; }
-          const B = W.bridgeAt(x, z, 4); if (B && B.h - tall < .5) low++; } }
+          const B = W.bridgeAt(x, z, 4); if (B && B.h - tall < .5) low++;
+          if(B&&!nearStop&&G.world.underpassSolid){const N=Math.round(W.SIZE/.5);for(const o of[0,-1.5,1.5]){const gx=Math.floor((x+ux*o+W.HALF)/.5),gz=Math.floor((z+uz*o+W.HALF)/.5);if(G.world.underpassSolid[gz*N+gx])pierHits++;}} } }
       if (shallow) bad.push(`${name}: ${shallow} m too shallow (first at ${first})`);
+      if(pierHits)bad.push(`${name}: ${pierHits} hull samples intersect a real bridge support`);
       if (low) bad.push(`${name}: ${low} m under a deck too low for it`);
       for (const s of f.stops) { const p = s.dock && s.dock.pier && s.dock.pier.land; if (!p) continue; const rd = W.roadDist(p.x, p.z); if (!rd.road || rd.d > rd.road.w / 2 + 3) bad.push(`${name}: the pier at ${p.x.toFixed(0)},${p.z.toFixed(0)} (${s.name()}) joins no road (${rd.d.toFixed(1)} m)`); }
       // (owner, 18 Oct AEDT: "the boat docks are too far drop off the ground") walk each pier from the bank to its end: it
@@ -7229,7 +7240,10 @@ await check('realrides', async () => {
     yes.click(); await wait(800);
     const stops = [...document.querySelectorAll('.stoppick [data-k]')]; if (!stops.length) return { none: 'no stop picker' };
     // the farthest stop on the list
-    const list = G.world.busStops.filter(b => Math.hypot(b.x - h.pos.x, b.z - h.pos.z) > 12); let far = 0; list.forEach((b, k) => { if (Math.hypot(b.x - h.pos.x, b.z - h.pos.z) > Math.hypot(list[far].x - h.pos.x, list[far].z - h.pos.z)) far = k; });
+    const { destinationStops } = await import('/js/travel-stops.js');
+    const list = destinationStops(G.world.busStops, h.pos);
+    if (stops.length !== list.length) return { none: 'picker and destination model disagree', cards: stops.length, destinations: list.length };
+    let far = 0; list.forEach((b, k) => { if (Math.hypot(b.x - h.pos.x, b.z - h.pos.z) > Math.hypot(list[far].x - h.pos.x, list[far].z - h.pos.z)) far = k; });
     stops[far].click(); await go; await wait(500);
     const tr = sl.trip; if (!tr) return { none: 'no trip' };
     const p0 = [sl.v.o.position.x, sl.v.o.position.z], s0 = tr.s; await wait(3000); const along = tr.s - s0; // (game time: a slow test browser runs the game's clock slower)

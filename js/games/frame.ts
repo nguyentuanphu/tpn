@@ -92,6 +92,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
       show: (en, vi) => { setHelp(en, vi); },
       sfx: SFX, wait,
       onCleanup: f => cleanups.push(f),
+      close: () => finish(false),
       // Test autoplay still uses real UI taps; a strategy supplies the next legal target, not a synthetic win.
       plan: (f, { maxActions = 0 } = {}) => { cleanups.push(setPlan(f, maxActions)); },
       // (r79 learning, I1) the game's tier now: 0 under-5, 1 Easy, 2 Medium, 3 Hard. The level the game started at

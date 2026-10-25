@@ -5,7 +5,7 @@ import { orchardStart, orchardStop, orchardSessionTier } from '../js/games/parad
 import { barStart, barApply, barResult, BAR_SYMBOLS } from '../js/games/fruitbar-engine.ts';
 import { ArcadeSession, controlsArcadeTurn } from '../js/games/arcade-session.ts';
 import type { ArcadeOnline } from '../js/games/arcade-session.ts';
-import { testerArcadeAllowed } from '../js/content/tester-arcades.ts';
+import { testerArcadeAllowed, familyArcadeAllowed } from '../js/content/tester-arcades.ts';
 
 test('Orchard is deterministic, every required picture exists and 1–4 seats can complete',()=>{
  for(let seats=1;seats<=4;seats++)for(let tier=0;tier<4;tier++){
@@ -22,6 +22,9 @@ test('Orchard validates inputs and assists after repeated misses without fake ra
 });
 test('tester mode can never publish to a non-tester and master/mode off win',()=>{
  for(const tester of[false,true])for(const master of[false,true])for(const mode of[false,true])assert.equal(testerArcadeAllowed(tester,master,mode),tester&&master&&mode);
+});
+test('Family Fruit Bar public modes allow non-testers; preview alone requires accepted testers',()=>{
+ for(const published of[false,true])for(const preview of[false,true])for(const tester of[false,true])assert.equal(familyArcadeAllowed(published,preview,tester),published||preview&&tester);
 });
 test('Fruit Bar locks separate allocations, shares result and debits each stake once',()=>{
  for(let seats=1;seats<=4;seats++){

@@ -495,7 +495,7 @@ const fruitParadeModeOn = fruitParadeAvailable;
 
 async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number]) {
   const h = G.heroes[i]; if (!h) return;
-  if (id === 'sparklefruitbar') return; // Parent arcade has a separate gated entry and no child reward path.
+  if (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar',source === 'online'?'multi':'single')) return;
   if (id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard',source === 'online'?'multi':'single')) return;
   if (id === 'fruitparade' && !fruitParadeModeOn('single')) { hudFor(h).toast(T('Sparkle Fruit Parade is not available yet.', 'Diễu hành trái cây lấp lánh chưa mở.')); return; }
   if (gameOpen()) { if (twoHalves()) hudFor(h).toast(T('Your friend is playing a game. Play it together, or wait a moment!', 'Bạn con đang chơi một trò. Chơi cùng bạn, hoặc chờ một chút nhé!')); return; }
@@ -524,7 +524,7 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   // (r79, owner point 7) a game opened from Play goes back to Play, one opened from the Pad's Games page back to that page;
   // one opened by talking to a villager (or at a shrine) closes straight back to the valley
   const back = () => { if (source === 'hub') G.openGamesHub(i); else if (source === 'pad') G.openPad(i, 'games'); };
-  if (!res.won) { back(); return; }
+  if (!res.won || id === 'sparklefruitbar') { back(); return; }
   // after the rewards: straight on to the next game, or this one again, if the child chose that
   const then = () => { if (res.next === 'next' && nextId) return playGame(i, nextId, source); if (res.next === 'again') return playGame(i, id, source, shrine); back(); };
   // winning Kite Flying earns the whistling kite (diều sáo), which then flies above you everywhere
@@ -1041,7 +1041,6 @@ G.netGames = createNetGames({
     if(document.querySelector('.parent-arcade,.parent-arcade-invite')){G.netGames.answer(d,false);return;}
     if (d.game === 'fruitparade' && !fruitParadeModeOn('multi')) { G.netGames.answer(d, false); return; }
     if(d.game === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi') || d.game === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi')) {G.netGames.answer(d,false);return;}
-    if(d.game === 'sparklefruitbar'){if(gameOpen()){G.netGames.answer(d,false);return;}void import('./games/sparklefruitbar.js').then(async module=>{const yes=await module.confirmFruitBarInvite(remoteName(d.from));G.netGames.answer(d,yes&&!gameOpen());});return;}
     const h = G.heroes[0], tale = /^tale-/.test(d.game) && (G.TALES || []).find(x => 'tale-' + x.id === d.game), gname = tale ? T('the story “' + tale.title() + '”', 'truyện “' + tale.title() + '”') : (GAMES[d.game] && GAMES[d.game].name()) || d.game; SFX.chime();
     say('A friend wants to play a game with you!', 'Một bạn muốn chơi trò chơi với con!');
     const stars = '⭐'.repeat(d.level || 1);
@@ -1056,7 +1055,6 @@ G.netGames = createNetGames({
     // every move is tied to this game: a story or game that is still winding down can't send into (or end) a newer one
     const live = () => !!G.netGames.session && G.netGames.session.gid === s.gid, end = () => { if (live()) G.netGames.leave(); };
     const online = { mine: s.mine, names, seed: s.gid, size: s.size, connected: () => !!Net.connected, present: seat => seat === s.mine || !s.gone.has(seat) && !!Net.remotes[s.seats[seat]], leave: end, peek: (n, seat) => live() ? G.netGames.session?.moves.get(n)?.get(seat) : undefined, onMove: f => live() ? G.netGames.onMove(f) : undefined, move: (n, mv) => live() && G.netGames.move(n, mv), next: (n, seat) => live() ? G.netGames.next(n, seat) : Promise.resolve(null), all: n => live() ? G.netGames.all(n) : Promise.resolve([]) };
-    if(s.game === 'sparklefruitbar'){void import('./games/sparklefruitbar.js').then(module=>module.openFruitBar(online));return;}
     if (/^tale-/.test(s.game)) { // a tale read together: page turns travel as moves
       const t = (G.TALES || []).find(x => 'tale-' + x.id === s.game); if (!t || !G.readTaleNow) { end(); return; }
       let seq = 0; const sync = { send: p => online.move(seq++, p), listen: fn => online.onMove((seat, n, mv) => { if (seat !== s.mine) fn(mv); }) };
@@ -1082,7 +1080,7 @@ const CARO_SIZES = [3, 6, 9, 13, 15, 19];
 // room on one page: the games made for friends (turns on each device), any game raced side by side, and stories read together
 G.openPlayTogether = () => {
   const ids = Object.keys(Net.remotes); if (!ids.length) { toast(T('Nobody is in your room yet.', 'Chưa có bạn nào trong phòng.')); return; }
-  const little = G.heroes[0].profile.age !== 'big', made = Object.keys(ONLINE_GAMES).filter(id => id !== 'sparklefruitbar' && (id !== 'sparkleorchard' || testerArcadeAvailable('sparkleorchard','multi')) && GAMES[id] && (id !== 'fruitparade' || fruitParadeModeOn('multi')));
+  const little = G.heroes[0].profile.age !== 'big', made = Object.keys(ONLINE_GAMES).filter(id => (id !== 'sparklefruitbar' || testerArcadeAvailable('sparklefruitbar','multi')) && (id !== 'sparkleorchard' || testerArcadeAvailable('sparkleorchard','multi')) && GAMES[id] && (id !== 'fruitparade' || fruitParadeModeOn('multi')));
   const race = Object.keys(GAMES).filter(id => !ONLINE_GAMES[id] && (!little || !gameInfoAge(id) || gameInfoAge(id) < 5)), tales = (G.TALES || []).slice(0, 12);
   const btn = (id: string, sub?: string) => `<button class="pt-g" data-g="${esc(id)}" aria-label="${esc(GAMES[id].name())}">${pic(GAMES[id].icon)}<b>${esc(GAMES[id].name())}</b>${sub ? `<small>${sub}</small>` : ''}</button>`;
   const turnGames = made.filter(id => !ONLINE_GAMES[id].all);
@@ -1115,7 +1113,7 @@ G.inviteGame = (game, to, level, size) => {
   if (gid) toast(T('Invitation sent! Waiting for an answer…', 'Đã gửi lời mời! Đang chờ trả lời…')); return gid;
 };
 G.playGameOnline = async (id, level, online) => {
-  if(id === 'sparklefruitbar')return;
+  if(id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi'))return;
   if(id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi'))return;
   if (id === 'fruitparade' && !fruitParadeModeOn('multi')) return;
   if (gameOpen()) return; G.paused = true; hush();
@@ -1124,7 +1122,7 @@ G.playGameOnline = async (id, level, online) => {
   events.emit('ActivityStarted', { activityId: actId, kind: 'game', defId: makeId('game', id), players: playerIds, source: 'online' });
   const res = await openGame(id, { players: [p], level, little, strong: false, online, style: 'village' });
   G.paused = false;
-  if (res.won) { events.emit('ActivityCompleted', { activityId: actId, defId: makeId('game', id), players: playerIds, result: { won: true, stars: res.stars || 0, level } }); farm.coins += 5; save(); }
+  if (res.won && id !== 'sparklefruitbar') { events.emit('ActivityCompleted', { activityId: actId, defId: makeId('game', id), players: playerIds, result: { won: true, stars: res.stars || 0, level } }); farm.coins += 5; save(); }
   else events.emit('ActivityAbandoned', { activityId: actId, reason: 'left' });
   return res;
 };

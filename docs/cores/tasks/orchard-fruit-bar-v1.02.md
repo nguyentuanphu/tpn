@@ -1,3 +1,7 @@
+# Owner amendment · 26 October 2026 AEDT
+
+Fruit Bar is for everyone, children and adults, and belongs in Play/Friends with normal invitation consent. Studio controls public single/multiplayer access; accepted-tester preview remains separate. Remove the parent-only entry/hold, preserve isolated free session counters and 64px controls. This overrides the parent-only scope below; the remainder is the original plan for audit history.
+
 # Orchard and parent arcade implementation plan · 25 Oct 2026 AEDT
 
 Owner explicitly requested Release to review and build both shared designs. Branch work/v1.02-fruit-parade; version v1.02 already selected, deployment not approved.

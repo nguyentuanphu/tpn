@@ -1,11 +1,13 @@
 {
-  "source": "v1.02 static arcade source; frozen 6319 baseline excluded",
+  "source": "Original eleven arcade lines plus two reviewed public Fruit Bar names after owner opened access to all ages, 26 Oct 2026 AEDT",
   "baselineSha256": "a2761a6c7032fda1f0fe97c04d7de64da36cf97a8ae543a416c49095a5f3201f",
   "sourceHashes": {
     "js/games/fruitparade.ts": "2ca93b3ad5e575f4ce3241b65bb2cca37ce78f39cff6207a171f9e9740a81011",
     "js/games/trongnu.ts": "9130b86018778c848286ac0e712822146f15eeed552ff100cc038d3fbe2c7316",
     "js/games/sparkleorchard.ts": "573bcf964fd2ca903eae72d47a7f7d8b717285a9d0184c5cb395a192db2e85d0",
-    "js/games/sparklefruitbar.ts": "fc941cd0605466dc7197dee9efd69df2087096c5e3342dd7d92a6a7bc540c6a1"
+    "js/games/sparklefruitbar.ts": "d7c6d1e458b2201d9b945879c656174f62efb247a2af5d01201ff53f300b24c9",
+    "js/games/catalog.ts": "f7fbff9224cbc58bbeaa305fc72b2496bcd02afd4b32da2423777758ed00a2b4",
+    "js/content/releases.ts": "e0e36b53309f7c86bd72a77844dc71d0d08a721ed23d0e696724267e1af71b6b"
   },
   "lines": [
     {
@@ -116,6 +118,27 @@
       "part": false,
       "source": [
         "js/games/sparkleorchard.js"
+      ]
+    },
+    {
+      "id": "4ff39bc0-380f8516",
+      "lang": "vi",
+      "text": "Bảng trái cây",
+      "area": "festivals",
+      "part": false,
+      "source": [
+        "js/content/releases.js"
+      ]
+    },
+    {
+      "id": "2f061dda-331b13db",
+      "lang": "vi",
+      "text": "Bảng Trái Cây Lấp Lánh",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/sparklefruitbar.js"
       ]
     }
   ]

@@ -14,7 +14,7 @@ The shared references include both a playable first game and later platform idea
 | Special combinations and world link | Real in-session combinations; adopted extension event with reward:null | World ladybird tours, dragon flights, garden prizes and treasure-map inventory are not implemented by this change |
 | Number/colour/animal/music/festival symbol games | Extension direction, not new finished games | Future content/configuration work |
 | All alternate path/relay/split layouts | Ring shared turn-taking in Orchard; split three-lane co-op in Fruit Parade | Additional path layouts and independent relay variants remain extensions |
-| Separate parent area and tester controls | Grown-ups entry and hold gate per device; accepted testers plus separate master/single/multiplayer switches | Non-tester rejection, six real Studio controls, duplicate-window and pause restoration checks |
+| Family access (owner correction, 26 Oct) | Fruit Bar public single/multiplayer modes in Play/Friends; accepted-tester preview remains separate. Orchard stays tester-only. No adult gate. | Public non-tester entry, 64px taps, six real Studio controls, duplicate-window/cleanup checks |
 | Virtual parent counters | 100,000 start; free refill; 0–100 allocations; clear/repeat; weighted/equal frequencies; 20 rounds | Pure debit/result/limit tests and actual parent round |
 | Parent multiplayer shared result | Same seeded result, individual allocations/balances; local, practice helper and online up to four | Two-browser identical balances/result, no child save writes |
 | Isolated economy | Memory-only parent session, no purchase/cash-out/exchange/child coins, rewards or public leaderboard | No profile dependency in engine; actual unchanged child-save assertion |

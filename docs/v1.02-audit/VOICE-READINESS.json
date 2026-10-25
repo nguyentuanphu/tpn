@@ -1,0 +1,67 @@
+{
+  "runtime": "4fd792cfa",
+  "currentVietnameseUnits": 6362,
+  "fptBaseline": 6319,
+  "fptArcadeDelta": 11,
+  "fptStagedTotal": 6340,
+  "missingFromFpt": 22,
+  "privacyHeld": 19,
+  "publicNeedsReview": [
+    {
+      "id": "206a7a83-4833bc85",
+      "source": [
+        "js/games/cacuangua.js"
+      ]
+    },
+    {
+      "id": "7480de9c0394620f",
+      "source": [
+        "js/games/pending-vietnam.js"
+      ]
+    },
+    {
+      "id": "d40c6188-6d6269fe",
+      "source": [
+        "js/games/pending-vietnam.js"
+      ]
+    }
+  ],
+  "byCacheArea": {
+    "china": 38,
+    "india": 37,
+    "world": 821,
+    "games": 3709,
+    "village": 208,
+    "hanoi": 60,
+    "bacninh": 27,
+    "danang": 14,
+    "meadow": 285,
+    "saigon": 20,
+    "vungtau": 15,
+    "sydney": 61,
+    "melbourne": 26,
+    "brisbane": 23,
+    "town": 192,
+    "aussie": 89,
+    "market": 96,
+    "core": 250,
+    "lake": 13,
+    "festivals": 101,
+    "paddies": 3,
+    "mountain": 8,
+    "hoian": 9,
+    "plateau": 4,
+    "stories": 189,
+    "bamboo": 6,
+    "home": 26
+  },
+  "baselineBranch": "work/fpt-leminh-full-20261025",
+  "deltaBranch": "work/v1.02-fruit-parade",
+  "baselineVerificationRun": 40190674496,
+  "deltaRecordingRun": 40190084618,
+  "productionIntegration": "pending",
+  "fptTitleDelta": 10,
+  "labelsBranch": "work/fpt-v102-labels-20261026",
+  "labelsRecordingRun": 40227974447,
+  "labelsCommit": "715f260d1"
+}

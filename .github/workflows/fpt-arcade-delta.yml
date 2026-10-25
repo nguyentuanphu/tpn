@@ -45,8 +45,12 @@ jobs:
             git add -f temp/fpt-recordings/
             if ! git diff --cached --quiet; then
               git commit -m 'Record reviewed Le Minh arcade delta [skip netlify]' -m 'Co-Authored-By: Claude <noreply@anthropic.com>'
-              git pull --no-rebase origin work/v1.02-fruit-parade
-              git push origin HEAD:work/v1.02-fruit-parade
+              saved=false
+              for attempt in 1 2 3; do
+                git pull --no-rebase origin work/v1.02-fruit-parade
+                if git push origin HEAD:work/v1.02-fruit-parade; then saved=true; break; fi
+              done
+              test "$saved" = true
             fi
           fi
       - uses: actions/upload-artifact@v4
