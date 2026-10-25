@@ -1,0 +1,110 @@
+{
+  "source": "4fd792cfad19e02256af2ac00b922c26bb572ce3",
+  "scope": "Ten reviewed public game/title labels only; no prototype instructions or private text",
+  "sourceHashes": {
+    "js/games/catalog.ts": "6f5d9888367ab8caf25c5eb6604351ec8b6e4fd4e6bd3ded59bfc4cbb8146518",
+    "js/content/releases.ts": "b0e6537fe83af7b17e177e2b5f7b316178d3c81a56a027e6a8b3e7bb81f35f4a"
+  },
+  "lines": [
+    {
+      "id": "d59b85c4-130ca6ab",
+      "lang": "vi",
+      "text": "Nhiệm vụ vườn quả",
+      "area": "festivals",
+      "part": false,
+      "source": [
+        "js/content/releases.js"
+      ]
+    },
+    {
+      "id": "4c87fc45-4909939b",
+      "lang": "vi",
+      "text": "Bảng trái cây (người lớn)",
+      "area": "festivals",
+      "part": false,
+      "source": [
+        "js/content/releases.js"
+      ]
+    },
+    {
+      "id": "1915d97954f7f751",
+      "lang": "vi",
+      "text": "Cờ Cá Ngựa",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js"
+      ]
+    },
+    {
+      "id": "4cad64b8-5d49591d",
+      "lang": "vi",
+      "text": "Mèo Đuổi Chuột",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js"
+      ]
+    },
+    {
+      "id": "9c3c7b5005eb246d",
+      "lang": "vi",
+      "text": "Cướp Cờ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js"
+      ]
+    },
+    {
+      "id": "f867717c-6cfbeccc",
+      "lang": "vi",
+      "text": "Kéo Cưa Lừa Xẻ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js"
+      ]
+    },
+    {
+      "id": "57564e3d2b45bb35",
+      "lang": "vi",
+      "text": "Đánh Đáo",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js"
+      ]
+    },
+    {
+      "id": "7ee2d195-db36734",
+      "lang": "vi",
+      "text": "Ném Còn",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js"
+      ]
+    },
+    {
+      "id": "076215b9625f26f1",
+      "lang": "vi",
+      "text": "Trồng Nụ Trồng Hoa",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js"
+      ]
+    },
+    {
+      "id": "679b3267-e10e5e3",
+      "lang": "vi",
+      "text": "Đua Thuyền",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js"
+      ]
+    }
+  ]
+}
