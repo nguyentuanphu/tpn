@@ -36,20 +36,20 @@ For example:
 
 ```text
 ╭─────────────────────────────────────╮
-│      🌈 SPARKLE FRUIT PARADE        │
+│      [Rainbow] SPARKLE FRUIT PARADE        │
 │                                     │
-│        FIND: 🍎  🍎  🐞            │
+│        FIND: [Apple]  [Apple]  [Ladybird]            │
 │                                     │
 │     ┌──────┬──────┬──────┐         │
-│     │  🍓  │  ⭐  │  🍎  │         │
-│     │  🍎  │  🐞  │  🌻  │         │
-│     │  ⭐  │  🍎  │  🍓  │         │
+│     │  [Strawberry]  │  [Star]  │  [Apple]  │         │
+│     │  [Apple]  │  [Ladybird]  │  [Flower]  │         │
+│     │  [Star]  │  [Apple]  │  [Strawberry]  │         │
 │     └──────┴──────┴──────┘         │
 │                                     │
-│        🔴      🟡      🟢          │
+│        [Red button]      [Yellow button]      [Green button]          │
 │       STOP    STOP    STOP          │
 │                                     │
-│  Clara ⭐⭐⭐      TEAM ⭐⭐⭐⭐        │
+│  Clara [Star][Star][Star]      TEAM [Star][Star][Star][Star]        │
 │                                     │
 │       2 / 3 mission items           │
 ╰─────────────────────────────────────╯
@@ -61,27 +61,27 @@ For multiplayer, the same UI could dynamically become:
 ╭──────────────────────────────────────────────╮
 │              TEAM FRUIT PARADE               │
 │                                              │
-│ Mission: Find 🍎 🍎 🍓 🐞 ⭐                │
+│ Mission: Find [Apple] [Apple] [Strawberry] [Ladybird] [Star]                │
 │                                              │
 │   CLARA                     TRIXIE            │
 │ ┌────┬────┬────┐         ┌────┬────┬────┐   │
-│ │ 🍎 │ 🐞 │ ⭐ │         │ 🍓 │ 🍎 │ 🌻 │   │
-│ │ 🌻 │ 🍓 │ 🍎 │         │ 🐞 │ ⭐ │ 🍓 │   │
+│ │ [Apple] │ [Ladybird] │ [Star] │         │ [Strawberry] │ [Apple] │ [Flower] │   │
+│ │ [Flower] │ [Strawberry] │ [Apple] │         │ [Ladybird] │ [Star] │ [Strawberry] │   │
 │ └────┴────┴────┘         └────┴────┴────┘   │
 │                                              │
-│      Shared progress: 🍎🍎 🍓 🐞 _          │
+│      Shared progress: [Apple][Apple] [Strawberry] [Ladybird] _          │
 │                                              │
-│             ✨ ONE MORE STAR! ✨             │
+│             [Sparkles] ONE MORE STAR! [Sparkles]             │
 ╰──────────────────────────────────────────────╯
 ```
 
 One feature I'd particularly add is **“Adventure Result”**. Instead of every successful round merely saying “You win”, certain combinations can create something in the main world:
 
-**🐞🐞🐞 → Ladybug Adventure**  
-**🐉⭐⭐ → Dragon Mission**  
-**🌱🌧️☀️ → Grow a plant**  
-**🗝️🗺️⭐ → Treasure Hunt**  
-**🎵🎵🌈 → Music challenge**
+**[Ladybird][Ladybird][Ladybird] → Ladybug Adventure**  
+**[Dragon][Star][Star] → Dragon Mission**  
+**[Seedling][Rain][Sun] → Grow a plant**  
+**[Magic key][Map][Star] → Treasure Hunt**  
+**[Music][Music][Rainbow] → Music challenge**
 
 That gives the mini-game a reason to exist inside Sparkle Valley rather than feeling like a separate arcade game.
 
@@ -202,22 +202,22 @@ Sparkle Fruit Parade
 Mission:
 Visual objective such as:
 
-🍎 🍎 🐞
+[Apple] [Apple] [Ladybird]
 
 Main area:
 Three animated vertical symbol lanes.
 
 Example symbols:
 
-🍎 Apple
-🍓 Strawberry
-🍌 Banana
-🌻 Flower
-🐞 Ladybug
-⭐ Sparkle Star
-🌈 Rainbow
-🐉 Dragon
-🗝️ Magic Key
+[Apple] Apple
+[Strawberry] Strawberry
+[Banana] Banana
+[Flower] Flower
+[Ladybird] Ladybug
+[Star] Sparkle Star
+[Rainbow] Rainbow
+[Dragon] Dragon
+[Magic key] Magic Key
 
 Controls:
 
@@ -238,10 +238,10 @@ Each round generates an objective.
 Examples:
 
 Find:
-🍎 🍎 🍓
+[Apple] [Apple] [Strawberry]
 
 Find:
-🐞 ⭐ 🐞
+[Ladybird] [Star] [Ladybird]
 
 Find:
 three matching colours
@@ -315,19 +315,19 @@ Implement extensible special-symbol behaviour.
 
 Examples:
 
-🌈 Rainbow
+[Rainbow] Rainbow
 Can substitute for a required common symbol.
 
-⭐ Sparkle Star
+[Star] Sparkle Star
 Adds to shared mission progress or activates a bonus animation.
 
-🐞 Ladybug
+[Ladybird] Ladybug
 Can trigger a Ladybug-related Sparkle Valley activity.
 
-🐉 Dragon
+[Dragon] Dragon
 Can unlock a Dragon challenge.
 
-🗝️ Magic Key
+[Magic key] Magic Key
 Can trigger a treasure-hunt hook.
 
 Special actions should use an extensible data/config system rather than being deeply hard-coded.
@@ -368,14 +368,14 @@ The default multiplayer philosophy should be COOPERATIVE rather than competitive
 Example:
 
 Player 1 finds:
-🍎 🐞
+[Apple] [Ladybird]
 
 Player 2 finds:
-🍎 ⭐
+[Apple] [Star]
 
 Shared mission:
 
-🍎 🍎 🐞 ⭐
+[Apple] [Apple] [Ladybird] [Star]
 
 Both contribute toward the same objective.
 
@@ -388,7 +388,7 @@ SHARED PROGRESS
 Example:
 
 Shared progress:
-🍎 🍎 🐞 _
+[Apple] [Apple] [Ladybird] _
 
 "ONE MORE STAR!"
 
@@ -539,19 +539,19 @@ Add hooks for successful combinations to trigger Sparkle Valley world activities
 
 Examples:
 
-🐞 🐞 🐞
+[Ladybird] [Ladybird] [Ladybird]
 → Ladybug Adventure
 
-🐉 ⭐ ⭐
+[Dragon] [Star] [Star]
 → Dragon Mission
 
-🌱 🌧️ ☀️
+[Seedling] [Rain] [Sun]
 → Grow Plant activity
 
-🗝️ 🗺️ ⭐
+[Magic key] [Map] [Star]
 → Treasure Hunt
 
-🎵 🎵 🌈
+[Music] [Music] [Rainbow]
 → Music activity
 
 These should initially be implemented as event/hooks if the related world activity does not already exist.
@@ -904,7 +904,7 @@ Do not expand the scope into unrelated Sparkle Valley redesign work.
 The final result should feel like a native Sparkle Valley feature rather than a separate web game pasted into the project.
 :::
 
-I would use that as the **development prompt**, because it gives the next AI enough freedom to inspect and reuse your existing Sparkle Valley code instead of blindly creating a completely separate mini-game architecture. memcite
+I would use that as the **development prompt**, because it gives the next AI enough freedom to inspect and reuse your existing Sparkle Valley code instead of blindly creating a completely separate mini-game architecture. 
 
 ---
 
@@ -913,3 +913,5 @@ If you want, I can:
 - Outline development steps for implementing the Sparkle Fruit Parade screen-only mini-game
 - Develop UI mockups and interaction flow for single-player and multiplayer Sparkle Fruit Parade modes
 - Explain how to implement adaptive difficulty and special symbol mechanics in the Sparkle Fruit Parade mini-game
+
+Reference symbols are transcribed as names to respect the repository’s no-phone-emoji rule. Implemented screens use the game’s original SVG illustrations.

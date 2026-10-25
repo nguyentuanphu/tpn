@@ -1,3 +1,5 @@
+// Behavioural cases are authored in TypeScript; this existing entry keeps suite discovery compatible.
+import '../fruit-parade-engine.mts';
 // Pure Fruit Parade rules remain browser-independent for deterministic tests.
 import test from 'node:test';
 import assert from 'node:assert/strict';

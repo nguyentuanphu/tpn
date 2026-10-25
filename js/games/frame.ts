@@ -28,7 +28,7 @@ const PRIZES = ['🦄', '🦖', '🚀', '🧸', '🎈', '🍭', '🪁', '🐬', 
 import type { Profile, Difficulty } from '../../types/save.js';
 export type GameResult = { won: boolean; stars?: number; next?: 'next' | 'again' | 'stop'; restart?: Difficulty; [key: string]: unknown };
 type WinExtra = Partial<GameResult> & { title?: string; titleVi?: string };
-export type GameOnline = { mine: number; names: string[]; seed?: string; size?: number; move(n: number, value: number): void; onMove?(listener: (seat: number, n: number, value: number) => void): void; next?(n: number, seat: number): Promise<unknown>; all?(n: number): Promise<unknown[]> };
+export type GameOnline = { mine: number; names: string[]; seed?: string; size?: number; move(n: number, value: number): void; onMove?(listener: (seat: number, n: number, value: number) => void): void | (() => void); next?(n: number, seat: number): Promise<unknown>; all?(n: number): Promise<unknown[]>; connected?(): boolean; present?(seat: number): boolean; leave?(): void };
 export type GameOptions = { players: Profile[]; level?: number; style?: string; partnerName?: string | null; little?: boolean; strong?: boolean; nextId?: string | null; completion?: 'choose' | 'return'; online?: GameOnline | null; levelPick?: { value: Difficulty } | null };
 type Cleanup = { onCleanup?(callback: () => void): void };
 

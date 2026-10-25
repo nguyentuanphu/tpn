@@ -52,6 +52,7 @@ marketing/source/runvalley.log
 /js/content/chapter2text.js
 /js/content/chapters.js
 /js/content/familycode.js
+/js/content/fruit-parade.js
 /js/content/releases.js
 /js/content/savecopy.js
 /js/content/secondset.js
@@ -83,6 +84,10 @@ marketing/source/runvalley.log
 /js/games/folk2.js
 /js/games/frame.js
 /js/games/fruitparade-core.js
+/js/games/fruitparade-engine.js
+/js/games/fruitparade-input.js
+/js/games/fruitparade-session.js
+/js/games/fruitparade-style.js
 /js/games/fruitparade.js
 /js/games/learning-meta.js
 /js/games/learning.js
@@ -113,6 +118,8 @@ marketing/source/runvalley.log
 /js/games/thinking2.js
 /js/games/tienlen.js
 /js/games/tienlenrules.js
+/js/games/trongnu-rules.js
+/js/games/trongnu.js
 /js/games/vietnam.js
 /js/games/vietnam2.js
 /js/games/words2.js

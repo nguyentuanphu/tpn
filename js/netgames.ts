@@ -49,7 +49,7 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
     // everyone's moves for step n (Oẳn tù tì): resolves once every seat still here has moved
     async all(n) { const out = []; for (let s = 0; s < session.seats.length; s++) out[s] = await api.next(n, s); return out; },
     // every move as it arrives (races and tales): f(seat, n, mv)
-    onMove(f) { if (session) session.listeners.push(f); },
+    onMove(f) { const owner = session; if (!owner) return () => {}; owner.listeners.push(f); return () => { owner.listeners = owner.listeners.filter(listener => listener !== f); }; },
     leave() { if (!session) return; net.send({ t: 'gbye', gid: session.gid }); session = null; },
     // (from the network)
     receive(d) {
@@ -70,7 +70,9 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
       if (d.t === 'gbye') { session.gone.add(s); session.waiters = session.waiters.filter(w => { if (w.s === s) { w.res(null); return false; } return true; }); onEnd && onEnd(d.from); }
     },
     // a friend left the room
-    left(id) { if (session) api.receive({ t: 'gbye', gid: session.gid, from: id }); }
+    left(id) { if (session) api.receive({ t: 'gbye', gid: session.gid, from: id }); },
+    // A hello from an already accepted seat restores its waits; it cannot add a new seat.
+    rejoined(id) { if (session) { const seat = session.seats.indexOf(id); if (seat >= 0) session.gone.delete(seat); } }
   };
   function record(s, n, mv) {
     if (!session.moves.has(n)) session.moves.set(n, new Map());

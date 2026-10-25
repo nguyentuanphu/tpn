@@ -1,3 +1,4 @@
+import { fruitParadeAvailable } from './content/fruit-parade.js';
 // Sparkle Valley: boot, the game loop, split-screen, NPCs, quests and rewards.
 import './emojiswap.js'; // (first: no phone emoji on the page or on any canvas)
 import { THREE, sprite, P, merge, toonVC } from './gfx.js';
@@ -489,7 +490,7 @@ G.quality = quality; // (feel and sound) js/fun.js leaves out the running dust o
 G.fx = (x, y, z, ch) => { const s = sprite(ch, 1.4); s.material = s.material.clone(); s.position.set(x, y, z); scene.add(s); const t0 = performance.now(); const f = () => { const k = (performance.now() - t0) / 900; s.position.y = y + k * 2; s.material.opacity = 1 - k; if (k < 1) requestAnimationFrame(f); else { scene.remove(s); s.material.dispose(); } }; f(); };
 G.mount = (h, b) => { h.mount(b); h.profile.quests.buffalo = true; save(); say('Moo! Hold on tight!', 'Ụm bò! Bám chắc nhé!'); hudFor(h).toast(T('Press Jump to get off', 'Bấm Nhảy để xuống')); };
 
-const fruitParadeModeOn = (mode: 'single' | 'multi') => releaseOn('sparkleFruitParade_' + mode, false) || releaseOn('sparkleFruitParade_tester', false);
+const fruitParadeModeOn = fruitParadeAvailable;
 
 async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number]) {
   const h = G.heroes[i]; if (!h) return;
@@ -1016,6 +1017,7 @@ G.sendHello = sendHello;
 G.partners = {};
 Object.defineProperty(G, 'partner', { get: () => Object.values(G.partners)[0] || null }); // older code: the first friend
 Net.on('hello', r => {
+  G.netGames?.rejoined(r.id);
   const old = G.partners[r.id]; if (old) { scene.remove(old.av.root); scene.remove(old.tag); }
   const av = buildAvatar(Object.assign({ style: 'shirt', color: '#3d7fd6', hat: 'none', back: 'none', hair: '#1d1412', hairStyle: 'short', skin: '#f6c7a5', glider: 0 }, r.look || {}), r.photo);
   scene.add(av.root); const tag = nameTag((r.name || T('Friend', 'Bạn')) + (r.look && r.look.star ? ' ★' : ''), '#9ff0ff'); // (a week's star tester: ★) scene.add(tag);
@@ -1046,7 +1048,7 @@ G.netGames = createNetGames({
     const names = s.seats.map(id => id === Net.me ? G.heroes[0].profile.name : remoteName(id));
     // every move is tied to this game: a story or game that is still winding down can't send into (or end) a newer one
     const live = () => !!G.netGames.session && G.netGames.session.gid === s.gid, end = () => { if (live()) G.netGames.leave(); };
-    const online = { mine: s.mine, names, seed: s.gid, size: s.size, onMove: f => live() && G.netGames.onMove(f), move: (n, mv) => live() && G.netGames.move(n, mv), next: (n, seat) => live() ? G.netGames.next(n, seat) : Promise.resolve(null), all: n => live() ? G.netGames.all(n) : Promise.resolve([]) };
+    const online = { mine: s.mine, names, seed: s.gid, size: s.size, connected: () => !!Net.connected, present: seat => seat === s.mine || !s.gone.has(seat) && !!Net.remotes[s.seats[seat]], leave: end, onMove: f => live() ? G.netGames.onMove(f) : undefined, move: (n, mv) => live() && G.netGames.move(n, mv), next: (n, seat) => live() ? G.netGames.next(n, seat) : Promise.resolve(null), all: n => live() ? G.netGames.all(n) : Promise.resolve([]) };
     if (/^tale-/.test(s.game)) { // a tale read together: page turns travel as moves
       const t = (G.TALES || []).find(x => 'tale-' + x.id === s.game); if (!t || !G.readTaleNow) { end(); return; }
       let seq = 0; const sync = { send: p => online.move(seq++, p), listen: fn => online.onMove((seat, n, mv) => { if (seat !== s.mine) fn(mv); }) };

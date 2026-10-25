@@ -1,3 +1,4 @@
+import { fruitParadeAvailable } from './fruit-parade.js';
 // One list of everything a child can choose on the Simple screen (round J, owner: "one source of truth"): every
 // mini-game sits in exactly one child-friendly area, with the youngest age it suits and how hard it is. The Simple
 // screen's path, its Discover page and search, the "new" markers and the checks all read it from here; the names and
@@ -64,7 +65,7 @@ export function gameInfo(id) {
   // child playing has already played it
   // (r90) the second set of games is held back while Studio's New games switch is off (js/content/secondset.ts)
   const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id);
-  const fruitHeld = id === 'fruitparade' && !releaseOn('sparkleFruitParade_single', false) && !releaseOn('sparkleFruitParade_tester', false);
+  const fruitHeld = id === 'fruitparade' && !fruitParadeAvailable('single');
   return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: c.hide === true || held || fruitHeld };
 }
 // the games of one area for a child: under-5s only see the ones made for them

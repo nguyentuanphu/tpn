@@ -9,6 +9,9 @@ const worker = self;
 // saved progress (localStorage, IndexedDB, and the 'sv-save' copy) and the voice pack are never deleted.
 const VERSION = 'sv-2026-10-25-v1.02';
 const FILES = [
+  'js/games/trongnu.js', 'js/games/trongnu-rules.js',
+  'js/content/fruit-parade.js', 'js/games/fruitparade.js', 'js/games/fruitparade-core.js', 'js/games/fruitparade-engine.js', 'js/games/fruitparade-session.js', 'js/games/fruitparade-input.js', 'js/games/fruitparade-style.js',
+  'js/games/cacuangua.js', 'js/games/cacuangua-core.js', 'js/games/multiplayer-foundations.js', 'js/games/pending-vietnam.js',
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
   'vendor/three.module.js', 'vendor/peerjs.min.js', 'vendor/RoomEnvironment.js', 'css/fonts.css',
   'fonts/Fredoka-latin-500.woff2', 'fonts/Fredoka-latin-ext-500.woff2', 'fonts/Baloo2-latin-600.woff2', 'fonts/Baloo2-latin-ext-600.woff2', 'fonts/Baloo2-vietnamese-600.woff2',

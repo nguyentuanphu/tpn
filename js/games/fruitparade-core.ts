@@ -20,8 +20,13 @@ const rng = (seed: string) => {
 
 export function createRound(seed: string, level = 1): FruitRound {
   const random = rng(String(seed) + ':' + level);
-  const items = [...SYMBOLS].sort(() => random() - .5).slice(0, 3);
-  const target = [...items].sort(() => random() - .5);
+  const shuffle = (source: string[]) => {
+    const copy = source.slice();
+    for (let i = copy.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [copy[i], copy[j]] = [copy[j], copy[i]]; }
+    return copy;
+  };
+  const items = shuffle(SYMBOLS).slice(0, 3);
+  const target = shuffle(items);
   return { items, target };
 }
 

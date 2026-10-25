@@ -1,3 +1,4 @@
+import { playTrongNu } from './trongnu.js';
 import { register, tapOne } from './frame.js';
 import { T } from '../i18n.js';
 import { el, wait } from '../util.js';
@@ -47,14 +48,6 @@ async function runAim(api, id: string, title: [string, string], target: string) 
   api.wrong(chosen); await wait(450); return runAim(api, id, title, target);
 }
 
-async function runPlant(api) {
-  prompt(api, 'Remember the planting order!', 'Nhớ thứ tự trồng cây nhé!');
-  const sequence = ['🌱', '💧', '☀️']; const display = el('div', 'folk-big', sequence.join(' ')); api.stage.appendChild(display); await wait(1000);
-  display.textContent = ''; const controls = buttons(api, ['🌱', '💧', '☀️']);
-  for (const expected of sequence) { const chosen = await tapOne(controls); if (!chosen || api.closed) return; if (chosen.textContent !== expected) { api.wrong(chosen); await wait(450); return runPlant(api); } }
-  api.right(controls[0]); return api.win({ title: T('The plant is growing!', 'Cây đang lớn lên rồi!') });
-}
-
 async function runBoat(api) {
   prompt(api, 'Row with the rhythm to reach the finish!', 'Chèo theo nhịp để về đích nhé!');
   const controls = buttons(api, ['🚣', '⏸️']); let strokes = 0;
@@ -68,5 +61,5 @@ register({ id: 'cuopco', icon: '🚩', origin: 'vn', name: () => T('Flag Relay',
 register({ id: 'keocua', icon: '🪚', origin: 'vn', name: () => T('Pull Saw Song', 'Kéo Cưa Lừa Xẻ'), run: runPullSaw });
 register({ id: 'danhdao', icon: '🪵', origin: 'vn', name: () => T('Đánh Đáo', 'Đánh Đáo'), run: api => runAim(api, 'danhdao', ['Tap the centre to strike the wooden peg!', 'Chạm vào giữa để đánh trúng cọc nhé!'], '🎯') });
 register({ id: 'nemcon', icon: '🎯', origin: 'vn', name: () => T('Throw the Còn', 'Ném Còn'), run: api => runAim(api, 'nemcon', ['Aim the còn at the target!', 'Ngắm ném còn vào vòng nhé!'], '🎯') });
-register({ id: 'trongnu', icon: '🌱', origin: 'vn', name: () => T('Plant the Seed', 'Trồng Nụ'), run: runPlant });
+register({ id: 'trongnu', icon: '🌸', origin: 'vn', name: () => T('Flower Stack Jump', 'Trồng Nụ Trồng Hoa'), run: playTrongNu });
 register({ id: 'duathuyen', icon: '🚣', origin: 'vn', name: () => T('Boat Race', 'Đua Thuyền'), run: runBoat });
