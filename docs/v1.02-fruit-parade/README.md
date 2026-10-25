@@ -10,11 +10,11 @@ Trồng Nụ now depicts feet and hand-buds rising through four stages for a jum
 
 ## Verified so far
 
-- Nine Fruit Parade engine/legacy/protocol unit cases pass, including four participants, duplicate/stale/future rejection, wildcard use, shared outcomes, lost request/commit replay and offline continuation.
+- Twelve Fruit Parade engine/legacy/protocol unit cases pass, including four participants, duplicate/stale/future rejection, wildcard use, shared outcomes, lost request/commit replay and offline continuation.
 - Complete unit suite: 260 passed, one legacy skip. Project types pass, architecture/preload pass. The copied reference initially tripped the no-phone-emoji docs check; symbols were transcribed as names, and the unchanged check now passes.
 - Real phone browser: two-player co-op completes both missions, all 13 controls measure at least 64px, progress is saved once, no page errors.
 - Trồng Nụ completes four real UI jumps. Twelve EN/VI device captures exist for both games; refined larger Trồng Nụ captures will replace the first version.
 
-Still required: real browser NPC and online completion/reconnect/input checks, fresh screenshot inspection after refinements, strict engine/session/type checks after final changes, offline verification, website source sync, voice delta, and final GitHub regression of this rewrite. The running audit PR #580 suite checks the earlier baseline, not this working tree. Other helper-game blockers are listed in [the independent audit](../v1.02-audit/REPORT.md).
+NPC, keyboard/controller, two-browser completion and reconnect checks passed before the final offline/reconnect-choice extension. Existing netgames/friendstab and swupdate/offline checks pass. Still required: final extended browser check, fresh screenshot inspection after refinements, strict engine/session/type checks after final changes, website source sync, voice delta, and final GitHub regression of this rewrite. The running audit PR #580 suite checks the earlier baseline, not this working tree. Other helper-game blockers are listed in [the independent audit](../v1.02-audit/REPORT.md).
 
-Lê Minh recording is separate: 1,580 baseline clips saved; job 40169102867 stopped on HTTP 401 at the next shard. Owner has been asked to check the active key/secret. No API key is stored here, and the default voice has not changed.
+Lê Minh recording is separate: the first job stopped after 1,580 clips on HTTP 401. A one-clip diagnostic succeeded with the unchanged secret; resumed job 40175822783 has completed shards 0–2 and is recording shard 3. No API key is stored here, and the default voice has not changed.

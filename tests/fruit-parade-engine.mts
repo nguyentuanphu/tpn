@@ -4,8 +4,35 @@ import { applyParadeStop, evaluateMission, initialParadeState, laneSymbol, makeP
 import type { ParadeRound, Stop } from '../js/games/fruitparade-engine.js';
 import { ParadeSession } from '../js/games/fruitparade-session.js';
 import type { ParadeChannel } from '../js/games/fruitparade-session.js';
+import { FLOWER_STACKS, trongNuReady } from '../js/games/trongnu-rules.js';
+import { createNetGames } from '../js/netgames.js';
+import { fruitPreviewAllowed } from '../js/content/fruit-parade.js';
 
 const tickFor = (r: ParadeRound, seat: number, lane: number) => r.cycles[seat][lane].indexOf(r.goals[seat][lane] || r.config.pool[0]);
+
+test('preview requires tester entitlement and Trồng Nụ protects young/calm play', () => {
+  assert.equal(fruitPreviewAllowed(false, true, false), false);
+  assert.equal(fruitPreviewAllowed(false, true, true), true);
+  assert.equal(fruitPreviewAllowed(true, false, false), true);
+  assert.equal(FLOWER_STACKS.length, 4);
+  assert.equal(trongNuReady(.1, 0, false), true);
+  assert.equal(trongNuReady(.1, 3, true), true);
+  assert.equal(trongNuReady(.1, 3, false), false);
+  assert.equal(trongNuReady(.6, 3, false), true);
+  assert.equal(trongNuReady(NaN, 3, false), false);
+});
+
+test('accepted invitations cannot switch games; closed listeners cannot retain a renderer', () => {
+  const g = createNetGames({ net: { ids: () => ['A'], send() {} }, me: () => 'B', onStart() {} });
+  g.answer({ gid: 'consent', from: 'A', game: 'fruitparade' }, true);
+  g.receive({ t: 'gstart', gid: 'consent', from: 'A', game: 'snakes', seats: ['A', 'B'] });assert.equal(g.session, null);
+  g.receive({ t: 'gstart', gid: 'consent', from: 'A', game: 'fruitparade', seats: ['A', 'B'] });assert.equal(g.session.game, 'fruitparade');
+  let calls = 0;const off = g.onMove(() => { calls++; });
+  g.receive({ t: 'gmove', gid: 'consent', from: 'A', n: 0, mv: 1 });off();
+  g.receive({ t: 'gmove', gid: 'consent', from: 'A', n: 1, mv: 1 });assert.equal(calls, 1);
+  g.left('A');assert.equal(g.session.gone.has(0), true);g.rejoined('A');assert.equal(g.session.gone.has(0), false);
+  g.leave();
+});
 
 test('parade age configs and deterministic lanes are playable for every advertised seat', () => {
   for (let tier = 0; tier <= 3; tier++) for (let seats = 1; seats <= 4; seats++) {
@@ -31,12 +58,30 @@ test('parade rejects duplicate, stale, out-of-range and future lane actions with
   for (const bad of [{ round: 1 }, { attempt: 1 }, { seat: 2 }, { lane: 3 }, { tick: -1 }, { tick: 1801 }, { tick: NaN }]) assert.equal(applyParadeStop(state, { ...action, ...bad }), null);
 });
 
+test('ability adaptation stays within one step and never speeds up an under-five game', () => {
+  const finish = (round: ParadeRound) => {
+    let state = initialParadeState(round);
+    for (let seat = 0; seat < round.seats; seat++) for (let lane = 0; lane < 3; lane++) {
+      const next = applyParadeStop(state, { round: round.round, attempt: round.attempt, seat, lane, tick: tickFor(round, seat, lane) });
+      assert.ok(next);state = next;
+    }
+    return state;
+  };
+  const first = makeParadeRound('practice', 2, 1), second = nextParadeRound(finish(first));assert.ok(second);
+  const third = nextParadeRound(finish(second));assert.ok(third);assert.equal(third.config.tier, 3);assert.equal(third.config.rounds, 3);
+  const young = nextParadeRound(finish(makeParadeRound('young', 0, 1)));assert.ok(young);assert.equal(young.config.tier, 0);assert.equal(young.config.rounds, 2);
+  const hard = makeParadeRound('gentle-retry', 3, 1), easier = nextParadeRound({ round: hard, stops: [], outcome: { matched: 0, needed: 3, success: false, effects: [], star: false } });
+  assert.ok(easier);assert.equal(easier.config.tier, 2);assert.equal(easier.attempt, 1);
+});
+
 test('rainbow substitutes once, specials need their real combinations and partial results have bounded retries', () => {
   const r = makeParadeRound('specials', 2, 1);r.goals = [['apple', 'apple', 'banana']];
   const stops = (ids: Stop['symbol'][]) => ids.map((symbol, lane) => ({ seat: 0, lane, symbol, assisted: false }));
   assert.equal(evaluateMission(r, stops(['apple', 'rainbow', 'banana'])).success, true);
   assert.equal(evaluateMission(r, stops(['rainbow', 'flower', 'banana'])).matched, 2);
   assert.deepEqual(evaluateMission(r, stops(['dragon', 'star', 'star'])).effects, ['dragon']);
+  const specialMission: ParadeRound = { ...r, goals: [['dragon', 'star', 'star']] };
+  assert.equal(evaluateMission(specialMission, stops(['rainbow', 'star', 'star'])).success, false, 'rainbow replaces common pictures, not rare specials');
   assert.deepEqual(evaluateMission(r, stops(['ladybug', 'ladybug', 'ladybug'])).effects, ['ladybug']);
   assert.deepEqual(evaluateMission(r, stops(['key', 'star', 'banana'])).effects, ['treasure']);
   const partial = { round: r, stops: stops(['flower', 'flower', 'flower']), outcome: evaluateMission(r, stops(['flower', 'flower', 'flower'])) };

@@ -1,6 +1,7 @@
 export type FruitRound = { items: string[], target: string[] };
 
-export const SYMBOLS = ['🍎', '🍓', '🍌', '🌻', '🐞', '⭐', '🌈', '🐉', '🗝️'];
+import { SYMBOL_DEFS } from './fruitparade-engine.js';
+export const SYMBOLS = SYMBOL_DEFS.map(symbol => symbol.art);
 
 const hash = (seed: string) => {
   let h = 2166136261;

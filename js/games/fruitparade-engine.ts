@@ -1,12 +1,12 @@
 // Pure rules for the screen-only arcade: no DOM, clocks, transport, saves or rewards.
 export type SymbolId = 'apple' | 'strawberry' | 'banana' | 'flower' | 'ladybug' | 'star' | 'rainbow' | 'dragon' | 'key';
 export type AdventureId = 'ladybug' | 'dragon' | 'treasure';
-export type SymbolDef = { id: SymbolId; art: string; en: string; vi: string; wildcard?: boolean };
+export type SymbolDef = { id: SymbolId; art: string; en: string; vi: string; wildcard?: boolean; substitutable?: boolean };
 export const SYMBOL_DEFS: readonly SymbolDef[] = [
-  { id: 'apple', art: '🍎', en: 'Apple', vi: 'Táo' },
-  { id: 'strawberry', art: '🍓', en: 'Strawberry', vi: 'Dâu tây' },
-  { id: 'banana', art: '🍌', en: 'Banana', vi: 'Chuối' },
-  { id: 'flower', art: '🌻', en: 'Flower', vi: 'Hoa' },
+  { id: 'apple', art: '🍎', substitutable: true, en: 'Apple', vi: 'Táo' },
+  { id: 'strawberry', art: '🍓', substitutable: true, en: 'Strawberry', vi: 'Dâu tây' },
+  { id: 'banana', art: '🍌', substitutable: true, en: 'Banana', vi: 'Chuối' },
+  { id: 'flower', art: '🌻', substitutable: true, en: 'Flower', vi: 'Hoa' },
   { id: 'ladybug', art: '🐞', en: 'Ladybird', vi: 'Bọ rùa' },
   { id: 'star', art: '⭐', en: 'Sparkle star', vi: 'Ngôi sao' },
   { id: 'rainbow', art: '🌈', en: 'Rainbow', vi: 'Cầu vồng', wildcard: true },
@@ -32,14 +32,16 @@ export function shuffled<T>(source: readonly T[], random: () => number): T[] {
   for (let i = copy.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [copy[i], copy[j]] = [copy[j], copy[i]]; }
   return copy;
 }
-export type ParadeRound = { seed: string; round: number; attempt: number; seats: number; config: ParadeConfig; goals: SymbolId[][]; cycles: SymbolId[][][] };
-export function makeParadeRound(seed: string, tier: number, seats: number, round = 0, attempt = 0): ParadeRound {
+export type ParadeRound = { seed: string; round: number; attempt: number; seats: number; baseTier: number; streak: number; config: ParadeConfig; goals: SymbolId[][]; cycles: SymbolId[][][] };
+export function makeParadeRound(seed: string, tier: number, seats: number, round = 0, attempt = 0, adaptation: { baseTier?: number; streak?: number } = {}): ParadeRound {
   if (!Number.isInteger(seats) || seats < 1 || seats > 4 || !Number.isInteger(round) || round < 0 || round > 2 || !Number.isInteger(attempt) || attempt < 0 || attempt > 7) throw new Error('Invalid parade round');
   const config = paradeConfig(tier), random = randomStream(`${seed}:${round}:${attempt}:${config.tier}`);
+  const baseTier = adaptation.baseTier ?? config.tier;
+  config.rounds = paradeConfig(baseTier).rounds;
   const wanted = config.pool.filter(id => !symbolDef(id).wildcard);
   const goals = Array.from({ length: seats }, () => Array.from({ length: config.quota }, () => wanted[Math.floor(random() * wanted.length)]));
   const cycles = Array.from({ length: seats }, () => Array.from({ length: 3 }, () => shuffled(config.pool, random)));
-  return { seed, round, attempt, seats, config, goals, cycles };
+  return { seed, round, attempt, seats, baseTier, streak: adaptation.streak || 0, config, goals, cycles };
 }
 export function laneSymbol(round: ParadeRound, seat: number, lane: number, tick: number): SymbolId {
   const cycle = round.cycles[seat][lane];
@@ -63,7 +65,7 @@ export function evaluateMission(round: ParadeRound, stops: readonly Stop[]): Out
     if (available.get(target)) { available.set(target, available.get(target)! - 1); matched++; } else unmet.push(target);
   }
   let wild = SYMBOL_DEFS.filter(item => item.wildcard).reduce((n, item) => n + (available.get(item.id) || 0), 0);
-  for (const target of unmet) if (wild > 0 && !symbolDef(target).wildcard) { wild--; matched++; }
+  for (const target of unmet) if (wild > 0 && symbolDef(target).substitutable) { wild--; matched++; }
   const effects = ADVENTURES.filter(rule => {
     const counts = new Map(raw);
     return rule.needs.every(id => { const n = counts.get(id) || 0; counts.set(id, n - 1); return n > 0; });
@@ -87,5 +89,8 @@ export function nextParadeRound(state: ParadeState): ParadeRound | null {
   if (!state.outcome) return state.round;
   const retry = !state.outcome.success && state.round.attempt < 1;
   const round = state.round.round + (retry ? 0 : 1);
-  return round >= state.round.config.rounds ? null : makeParadeRound(state.round.seed, state.round.config.tier, state.round.seats, round, retry ? state.round.attempt + 1 : 0);
+  const streak = state.outcome.success ? state.round.streak + 1 : 0, base = state.round.baseTier;
+  const shift = !state.outcome.success ? -1 : streak >= 2 ? 1 : 0;
+  const tier = base === 0 ? 0 : Math.max(1, base - 1, Math.min(3, base + 1, state.round.config.tier + shift));
+  return round >= state.round.config.rounds ? null : makeParadeRound(state.round.seed, tier, state.round.seats, round, retry ? state.round.attempt + 1 : 0, { baseTier: base, streak });
 }

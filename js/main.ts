@@ -1080,8 +1080,10 @@ G.openPlayTogether = () => {
   const turnGames = made.filter(id => !ONLINE_GAMES[id].all);
   const groupGames = made.filter(id => ONLINE_GAMES[id].all);
   const m = modal('playtogether', `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>${pic('🎲')} ${T('Play together', 'Chơi cùng nhau')}</h2>
-    ${turnGames.length ? `<h3>${pic('🎲')} ${T('Board and turn-taking', 'Bàn cờ và lần lượt')} </h3><div class="pt-grid">${turnGames.map(id => btn(id, T(`up to ${ONLINE_GAMES[id].max}`, `tối đa ${ONLINE_GAMES[id].max}`))).join('')}</div>` : ''}
-    ${groupGames.length ? `<h3>${pic('👫')} ${T('Team and cooperative', 'Đồng đội và hợp tác')} </h3><div class="pt-grid">${groupGames.map(id => btn(id, T(`up to ${ONLINE_GAMES[id].max}`, `tối đa ${ONLINE_GAMES[id].max}`))).join('')}</div>` : ''}
+    <div class="pt-grid pt-made">
+      ${turnGames.length ? `<h3 style="grid-column:1/-1">${pic('🎲')} ${T('Board and turn-taking', 'Bàn cờ và lần lượt')}</h3>${turnGames.map(id => btn(id, T(`up to ${ONLINE_GAMES[id].max}`, `tối đa ${ONLINE_GAMES[id].max}`))).join('')}` : ''}
+      ${groupGames.length ? `<h3 style="grid-column:1/-1">${pic('👫')} ${T('Team and cooperative', 'Đồng đội và hợp tác')}</h3>${groupGames.map(id => btn(id, T(`up to ${ONLINE_GAMES[id].max}`, `tối đa ${ONLINE_GAMES[id].max}`))).join('')}` : ''}
+    </div>
     <h3>${pic('🏁')} ${T('Race side by side', 'Thi đua cùng nhau')} <small>${T('everyone plays the same game, stars for all', 'mọi người chơi cùng một trò, ai cũng có sao')}</small></h3><div class="pt-grid">${race.map(id => btn(id)).join('')}</div>
     ${tales.length ? `<h3>${pic('📖')} ${T('Read a story together', 'Đọc truyện cùng nhau')}</h3><div class="pt-grid">${tales.map(t => `<button class="pt-g" data-g="tale-${esc(t.id)}" aria-label="${esc(t.title())}">${pic('📖')}<b>${esc(t.title())}</b></button>`).join('')}</div>` : ''}`);
   m.querySelector('.x').onclick = () => m.close();

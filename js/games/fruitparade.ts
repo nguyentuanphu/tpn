@@ -203,6 +203,7 @@ async function run(api: ParadeApi) {
   api.onCleanup(() => { dead = true;cancelAnimationFrame(frame);input.dispose();session?.dispose();root.onclick = null;api.stage.classList.remove('parade-stage');api.stage.closest('.gl')?.classList.remove('gl-parade');finishRun(); });
   if (api.online) start(api.online.names.length, false);
   else {
+    api.say('Who will play?', 'Ai cùng chơi nào?');
     const intro = node('section', 'parade-intro');intro.append(artwork('🍎'), node('h2', '', T('Let’s make a fruit parade!', 'Cùng làm đoàn trái cây vui nhé!')));
     const choices = node('div', 'parade-choices');
     for (const [action, art, en, vi] of [['solo', '🍎', 'Play alone', 'Chơi một mình'], ['npc', '🦉', 'Play with a helper', 'Chơi cùng bạn máy'], ['local', '🧒', 'Two players here', 'Hai bạn cùng máy']]) {

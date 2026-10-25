@@ -37,7 +37,7 @@ async function run(api) {
   roll.type = 'button';
   root.append(controls, board, status, dice, moves, roll);
   api.stage.appendChild(root);
-  api.show('Move the horses home!', 'Đưa các chú ngựa về chuồng nhé!');
+  api.say('Move the horses home!', 'Đưa các chú ngựa về chuồng nhé!');
 
   const npcBox = controls.querySelector('[data-npc]') as HTMLInputElement;
   const difficulty = controls.querySelector('[data-difficulty]') as HTMLSelectElement;

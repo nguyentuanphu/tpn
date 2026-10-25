@@ -12,5 +12,18 @@
   },
   {
     "bilingualDeviceCaptures": 12
+  },
+  {
+    "npcCompleted": true
+  },
+  {
+    "keyboardStop": true,
+    "controllerStop": true
+  },
+  {
+    "onlineCompleted": true,
+    "reconnectRetained": true,
+    "hostResultBothLanguages": true,
+    "errors": []
   }
 ]

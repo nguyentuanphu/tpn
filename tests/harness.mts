@@ -35,8 +35,9 @@ export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'so
     const today = new Date().toISOString().slice(0, 10);
     for (const [id, rule] of Object.entries(j.releases || {})) if (rule && typeof rule.start === 'string' && rule.start > today) delete j.releases[id];
     // (r90, owner 24 Oct AEDT) the second set of games and stories is held in Studio until the owner releases it; the
-    // checks play as after that release (the hold itself is checked by "secondset")
-    j.releases = { ...(j.releases || {}), newGames: { on: true }, newStories: { on: true } };
+    // checks play as after that release (the hold itself is checked by "secondset").
+    // Fruit Parade is likewise explicitly enabled for functional checks; dedicated gating cases override this route.
+    j.releases = { ...(j.releases || {}), newGames: { on: true }, newStories: { on: true }, sparkleFruitParade_single: { on: true }, sparkleFruitParade_multi: { on: true } };
     await r.fulfill({ response: res, json: j });
   });
   if (route) await route(ctx); // (marketing films) change what the page loads
