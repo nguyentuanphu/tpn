@@ -25,7 +25,13 @@ jobs:
           node-version: 22.22.0
       - name: Verify request and error handling without credentials
         run: node --test tests/unit/fpt-voice.test.mjs
+      - name: Install the audio decoder before using the paid API
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          ffprobe -version | head -1
       - name: Record one short Le Minh sample
+        id: record
         env:
           FPT_API_KEY: ${{ secrets.FPT_API_KEY }}
         run: node tools/fpt-voice-test.mts
@@ -34,6 +40,7 @@ jobs:
           ffprobe -v error -show_entries format=duration -of json docs/voice-review-20261025/leminh-test.mp3 > docs/voice-review-20261025/audio-check.json
           node -e "const r=require('./docs/voice-review-20261025/audio-check.json'); if (!(Number(r.format?.duration)>0)) process.exit(1)"
       - uses: actions/upload-artifact@v4
+        if: always() && steps.record.outcome == 'success'
         with:
           name: fpt-leminh-test
           path: docs/voice-review-20261025/
