@@ -117,6 +117,8 @@ export async function openAllGamesFixture(browser,options={}) {
  const result=await open(browser,options);
  await result.page.evaluate(async()=>{const C=(await import(String('/js/custom.js'))).CUSTOM;
   C.releases={...(C.releases||{}),tester:{on:true},sparkleorchard_tester:{on:true},sparkleorchard_single:{on:true},sparkleorchard_multi:{on:true}};
+  if(!localStorage.getItem('sv2_playerid'))localStorage.setItem('sv2_playerid','arcadefixture01');
   localStorage.setItem('sv2_tester',JSON.stringify({at:Date.now(),b:'synthetic-fixture'}));
+  const gate=await import(String('/js/content/tester-arcades.js'));if(!gate.testerArcadeAvailable('sparkleorchard','single'))throw Error('All-games fixture failed to establish accepted tester eligibility');
  });return result;
 }

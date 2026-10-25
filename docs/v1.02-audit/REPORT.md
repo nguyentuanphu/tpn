@@ -67,3 +67,10 @@ Owner supplied the full screen-only Fruit Parade design and required TypeScript.
 ## Work required before release approval
 
 Rework the seven folk games against their actual rules and original art; implement and test real shared/NPC state transitions; repair Fruit preview entitlement, timers, retry numbering and controls; finish horse rules/track/turn/dice flow; replace source-string-only assurances with behavioural tests; finish voice delta/provider/cache integration after recording, using the owner-approved parent-selectable policy. Then rerun required regression, inspect revised EN/VI devices, perform speed checks and provide the round report. No merge or deployment without a new explicit v1.02 “yes, deploy”.
+
+
+## Follow-up status · 25 October 2026 AEDT
+
+Draft PR #602 now holds typed Fruit Parade, enlarged authentic Trồng Nụ, separate Orchard and parent tester arcade, and reviewed Studio repairs. Helper ed9a5b0a Orchard was independently found to be a welcome-only stub importing an absent engine; its claimed recording manifest was a zero-recording dry run. New game/Studio evidence is `../v1.02-orchard-arcade/README.md`. Fruit/TN full browser and new Orchard/parent local/online/gate/save checks pass; Studio six bilingual/device cases pass, including persistent folds. Combined units 269 pass; source checks and strict engines pass after documented fixture/transcription corrections. Adventure passes after synthetic tester ID was explicitly established; no assertion was removed. Latest GitHub regression is pending; this does not clear the remaining horse, folk-prototype, voice integration, website or physical-device findings above.
+
+Lê Minh baseline completed 6,319 recordings in run 40175822783; independent run 40190674496 fully decoded and verified all of them with zero errors. Eleven static arcade delta recordings additionally passed full decoding in run 40190084618. These are staged assets; default voice and live site are unchanged. No v1.02 deployment approval.

@@ -22,7 +22,7 @@ All-game regression fixtures explicitly opt into accepted tester access through 
 
 ## Voices
 
-The frozen 6,319-line baseline completed successfully in workflow 40175822783 on `work/fpt-leminh-full-20261025`; every shard manifest is complete. Independent full-pack decode job 40190674496 is running. It resumed after the earlier HTTP 401 and a successful one-clip diagnostic. The exact original failed line was subsequently recorded; the initial provider failure's cause remains unproven.
+The frozen 6,319-line baseline completed successfully in workflow 40175822783 on `work/fpt-leminh-full-20261025`; every shard manifest is complete. Independent full-pack audit **40190674496 passed: all 6,319 checksummed and fully decoded, zero missing/errors**. Exact result is retained in `../fpt-leminh-full-20261025/final-audit.json`. It resumed after the earlier HTTP 401 and a successful one-clip diagnostic. The exact original failed line was subsequently recorded; the initial provider failure's cause remains unproven.
 
 The new stable static arcade source contributes **11 additional Vietnamese lines / 344 characters** after deduplicating against that frozen baseline, not an assumed 35. `voice-delta.json` retains canonical IDs, source hashes and provenance. The separate delta workflow used the same provider lock and waited for the baseline job. Run 40190084618 succeeded: all 11 new clips recorded and fully decoded. A source-hash refresh reuses verified identical recordings rather than paying for them again. Each clip is checksummed, probed and fully FFmpeg-decoded; progress survives failure. FPT_API_KEY stays in GitHub Actions. No child names, family questions or private text are uploaded. Generated clips are review staging only; production voice selection/download integration remains pending, and the default female voice has not changed.
 
@@ -32,3 +32,6 @@ The new stable static arcade source contributes **11 additional Vietnamese lines
 
 
 Initial GitHub fast checks identified two fixture/integration problems: the story-reordering fixture omitted the game in its accepted invitation (now supplied, with all ordering assertions preserved); dynamic switch wrappers were invisible to the unchanged control-coverage check (now explicit literal reads). The new consent check still rejects an invitation that changes games. Website editorial review remains deliberately blocked until current explanations are reviewed; it has not been marked reviewed merely to turn a check green. AI review did not finish.
+
+
+The targeted Simple-screen adventure check initially missed Orchard because this synthetic fixture had no tester device ID (analytics can be disabled). The typed fixture now creates a synthetic ID if absent and asserts that accepted tester eligibility was established; all original adventure assertions remain. Rerun passes: 205 games, 13 under-five sections, 179 drawn stops. One interrupted incorrectly started fixture rerun was discarded; it is not counted as a pass.
