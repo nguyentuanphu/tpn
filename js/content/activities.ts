@@ -50,7 +50,7 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   letters: ['words', 4, 2], phonics: ['words', 4, 2], opposites: ['words', 4, 2], words: ['words', 5, 2], firstwords: ['words', 5, 3],
   feelings: ['me', 2, 1], bodyparts: ['me', 2, 1], familyquiz: ['me', 3, 2], fruitparade: ['play', 2, 1],
   kite: ['play', 2, 1], hopscotch: ['play', 3, 1], tug: ['play', 2, 1], skipping: ['play', 3, 2], sackrace: ['play', 3, 1], nemlon: ['play', 3, 1], marbles: ['play', 4, 2], cricket: ['play', 5, 2], mrwolf: ['play', 3, 2], dacau: ['play', 4, 2],
-  dragon: ['vietnam', 3, 1], meochuot: ['vietnam', 3, 1], cuopco: ['vietnam', 3, 1], keocua: ['vietnam', 3, 1], danhdao: ['vietnam', 4, 2], nemcon: ['vietnam', 3, 1], trongnu: ['vietnam', 3, 1], duathuyen: ['vietnam', 3, 1], datnieu: ['vietnam', 2, 1],
+  dragon: ['vietnam', 3, 1], cacuangua: ['vietnam', 5, 2], meochuot: ['vietnam', 3, 1], cuopco: ['vietnam', 3, 1], keocua: ['vietnam', 3, 1], danhdao: ['vietnam', 4, 2], nemcon: ['vietnam', 3, 1], trongnu: ['vietnam', 3, 1], duathuyen: ['vietnam', 3, 1], datnieu: ['vietnam', 2, 1],
   banhchung: ['vietnam', 2, 1], denongsao: ['vietnam', 2, 1], mualan: ['vietnam', 2, 2], cayneu: ['vietnam', 2, 1], oantuti: ['vietnam', 3, 1], chuyen: ['vietnam', 5, 2], oanquan: ['vietnam', 5, 3], caro: ['vietnam', 5, 3], tienlen: ['vietnam', 5, 3], tienlenbac: ['vietnam', 5, 3],
   traffic: ['travel', 2, 1], ferries: ['travel', 3, 1], tram: ['travel', 3, 1], balloon: ['travel', 2, 1], bubbles: ['travel', 2, 1], market: ['travel', 3, 2], sortout: ['travel', 3, 2], order: ['travel', 5, 2],
   robot: ['thinking', 5, 3], maze: ['thinking', 5, 2], snakes: ['thinking', 5, 2], snap: ['thinking', 3, 2],
