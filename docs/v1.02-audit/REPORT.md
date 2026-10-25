@@ -39,11 +39,11 @@ Release collected the helper's 14 new commits after ba118721 onto current main a
 
 ## Voice recording status
 
-Owner authorized full Lê Minh recording on 25 October 2026 AEDT. Running separately on `work/fpt-leminh-full-20261025`: [workflow 40169102867](https://github.com/nguyentuanphu/tpn/actions/runs/40169102867).
+Owner authorized full Lê Minh recording on 25 October 2026 AEDT. Started separately on `work/fpt-leminh-full-20261025`; now stopped on authorization: [workflow 40169102867](https://github.com/nguyentuanphu/tpn/actions/runs/40169102867).
 
 The complete stable v1.01 catalogue contains **6,319 Vietnamese recordings**, including **870 reusable parts**, after holding 19 test-child-name lines for privacy. Approximate text cost US$3.84 at the owner's displayed rate, before retries. The helper's static-only 3,521 count is incomplete. [Frozen inventory and recording rules](https://github.com/nguyentuanphu/tpn/blob/work/fpt-leminh-full-20261025/docs/fpt-leminh-full-20261025/README.md).
 
-Four serial shards, 1.5-second spacing, bounded retries, stop on access/quota problems; every output is decoded, checksummed and bound to exact provider/text identity. Progress is saved every 50 clips into **temp/fpt-recordings/** on that branch. A 600-clip checkpoint was independently downloaded: all file checksums match, and representative files probe as MP3. This is not a claim of full completion. New/repaired helper content will be a later delta; no current female/default policy, game voice manifest or live site has been changed. Full FPT manifest/cache/selection integration remains to be reviewed.
+Four serial shards, 1.5-second spacing, bounded retries, stop on access/quota problems; every output is decoded, checksummed and bound to exact provider/text identity. Progress is saved every 50 clips into **temp/fpt-recordings/** on that branch. The first shard completed: **1,580 clips saved**. All 1,580 were independently downloaded, checksummed and fully decoded with FFmpeg without errors. The second shard stopped at **HTTP 401**; 4,739 clips remain. The owner was asked to check the key and GitHub secret. No further paid retry has been made. This is not a claim of full completion. New/repaired helper content will be a later delta; no current female/default policy, game voice manifest or live site has been changed. Owner chose parent-selectable Lê Minh for **all Vietnamese speech**, preserving the existing default. Full FPT manifest/cache/selection integration remains to be implemented and reviewed.
 
 ## Verification
 
@@ -53,9 +53,17 @@ Four serial shards, 1.5-second spacing, bounded retries, stop on access/quota pr
 - Initial GitHub Checks failed only the unchanged artwork check: saw and vintage key were undrawn. Added original SVGs in 536734ec; focused emoji check now passes (zero undrawn), and the tools-art screenshot was inspected. This is a code repair, not a retry-only pass.
 - Website source sync/preload checks pass at source 536734ec; publication remains blocked.
 - Bulk tooling: 245 unit tests and standalone strict TypeScript passed; existing pack coverage stayed green before recording started.
-- **GitHub full suite: running on [draft PR #580](https://github.com/nguyentuanphu/tpn/pull/580).** Initial run 40170780868 started at de554606; the original-art repair requires a new run on the updated head. Results and retry disclosures will be added when complete.
-- Initial website consistency passed. AI review did not finish (workflow job success is not a completed AI review). No local full suite, release speed run or ZIP is warranted until gameplay blockers are resolved.
+- **GitHub full suite: 225/233 passed**, at dfd46bb7 on [run 40171076084](https://github.com/nguyentuanphu/tpn/actions/runs/40171076084). Failed: netgames, games, a11y, adventure, friendstab, swupdate, voicecover (22 missing lines), offline. [Exact summary](github-suite-result.md). No failures are waived.
+- **Passed only on a second try: phone** (execution context destroyed during navigation). Catalogue and original-art failures were repaired in code; those are not flaky retry passes.
+- Official code map/timings copied from code-map commit **f869b6f7**, whose provenance names run 40171076084 and runtime dfd46bb7 (285 covered files). Direct artifact download returned Forbidden; the workflow's official code-map branch supplied the identical designated files.
+- Updated Checks and website consistency pass. AI review did not finish (workflow job success is not a completed AI review).
+- No local full suite, release speed run or ZIP is warranted until gameplay blockers are resolved.
+
+## Owner-directed follow-up already underway
+
+Owner supplied the full screen-only Fruit Parade design and required TypeScript. Work is isolated on **work/v1.02-fruit-parade**, initial implementation checkpoint **34ecafb4**; it is not what the above full suite tested. The owner also flagged tiny Trồng Nụ pictures: the rewrite replaces the wrong planting activity with a large illustrated Trồng Nụ Trồng Hoa jumping adaptation. Local behavioural/protocol tests and bilingual device captures are being checked, including NPC, two-player play and reconnect. Other six folk games, horse/shared-game blockers and the baseline failures still require resolution. Do not merge either branch as a complete release.
+
 
 ## Work required before release approval
 
-Rework the seven folk games against their actual rules and original art; implement and test real shared/NPC state transitions; repair Fruit preview entitlement, timers, retry numbering and controls; finish horse rules/track/turn/dice flow; replace source-string-only assurances with behavioural tests; finish voice delta/provider/cache integration after recording and policy choice. Then rerun required regression, inspect revised EN/VI devices, perform speed checks and provide the round report. No merge or deployment without a new explicit v1.02 “yes, deploy”.
+Rework the seven folk games against their actual rules and original art; implement and test real shared/NPC state transitions; repair Fruit preview entitlement, timers, retry numbering and controls; finish horse rules/track/turn/dice flow; replace source-string-only assurances with behavioural tests; finish voice delta/provider/cache integration after recording, using the owner-approved parent-selectable policy. Then rerun required regression, inspect revised EN/VI devices, perform speed checks and provide the round report. No merge or deployment without a new explicit v1.02 “yes, deploy”.
