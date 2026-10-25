@@ -1,14 +1,29 @@
 import type { } from './registry.js';
 
 export type FoundationMode = 'turn' | 'round';
-export type MoveKind = 'pit' | 'roll' | 'pull' | 'answer';
-export type MultiplayerFoundation = { id: string; max: number; all: boolean; mode: FoundationMode; move: MoveKind };
+export type MoveKind = 'pit' | 'roll' | 'pull' | 'answer' | 'horse';
+export type MultiplayerCapabilities = {
+  online: true;
+  npc: false;
+  local: true;
+  maxPlayers: number;
+  turnBased: boolean;
+  teamBased: boolean;
+  difficultyLevels: number[];
+  adultConsent: false;
+};
+export type MultiplayerFoundation = MultiplayerCapabilities & { id: string; all: boolean; mode: FoundationMode; move: MoveKind; max: number };
+
+const caps = (maxPlayers: number, mode: FoundationMode, teamBased = false): MultiplayerCapabilities => ({
+  online: true, npc: false, local: true, maxPlayers, turnBased: mode === 'turn', teamBased, difficultyLevels: [1, 2, 3, 4, 5], adultConsent: false
+});
 
 export const MULTIPLAYER_FOUNDATIONS: Record<string, MultiplayerFoundation> = {
-  oanquan: { id: 'oanquan', max: 2, all: false, mode: 'turn', move: 'pit' },
-  snakes: { id: 'snakes', max: 4, all: false, mode: 'turn', move: 'roll' },
-  tug: { id: 'tug', max: 6, all: true, mode: 'round', move: 'pull' },
-  familyquiz: { id: 'familyquiz', max: 6, all: true, mode: 'round', move: 'answer' }
+  oanquan: { id: 'oanquan', all: false, mode: 'turn', move: 'pit', max: 2, ...caps(2, 'turn') },
+  snakes: { id: 'snakes', all: false, mode: 'turn', move: 'roll', max: 4, ...caps(4, 'turn') },
+  tug: { id: 'tug', all: true, mode: 'round', move: 'pull', max: 6, ...caps(6, 'round', true) },
+  familyquiz: { id: 'familyquiz', all: true, mode: 'round', move: 'answer', max: 6, ...caps(6, 'round', true) },
+  cacuangua: { id: 'cacuangua', all: false, mode: 'turn', move: 'horse', max: 4, ...caps(4, 'turn') }
 };
 
 export function foundationFor(id: string): MultiplayerFoundation | null { return MULTIPLAYER_FOUNDATIONS[id] || null; }
@@ -19,7 +34,36 @@ export function validMove(id: string, value: number): boolean {
   if (id === 'snakes') return value >= 1 && value <= 6;
   if (id === 'tug') return value === 0 || value === 1;
   if (id === 'familyquiz') return value >= 0 && value <= 3;
+  // Encoded horse move: horse index (0-3) * 8 + die index (0-1), with room for a no-op.
+  if (id === 'cacuangua') return value >= 0 && value <= 3;
   return false;
+}
+
+export type AuthoritativeMoveState = {
+  game: string;
+  seats: number;
+  turn: number;
+  rounds: Map<number, Set<number>>;
+  moves: Map<number, Map<number, number>>;
+};
+
+export function createAuthoritativeState(id: string, seats: number): AuthoritativeMoveState | null {
+  const def = foundationFor(id);
+  if (!def || !Number.isInteger(seats) || seats < 2 || seats > def.maxPlayers) return null;
+  return { game: id, seats, turn: 0, rounds: new Map(), moves: new Map() };
+}
+
+export function applyAuthoritativeMove(state: AuthoritativeMoveState, seat: number, n: number, value: number): boolean {
+  const def = foundationFor(state.game);
+  if (!def || !Number.isInteger(seat) || seat < 0 || seat >= state.seats || !Number.isInteger(n) || n < 0 || n > 9999 || !validMove(state.game, value)) return false;
+  if (def.mode === 'turn' && seat !== state.turn) return false;
+  const round = state.rounds.get(n) || new Set<number>();
+  if (round.has(seat)) return false;
+  round.add(seat); state.rounds.set(n, round);
+  if (!state.moves.has(n)) state.moves.set(n, new Map());
+  state.moves.get(n)!.set(seat, value);
+  if (def.mode === 'turn') state.turn = nextTurn(state.turn, state.seats);
+  return true;
 }
 
 export function nextTurn(current: number, players: number): number {
