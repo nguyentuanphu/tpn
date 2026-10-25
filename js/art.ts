@@ -16,6 +16,10 @@ const sparkle = (x, y, s = 1, f = '#fff6b0') => `<path d="M${x} ${y - 4 * s}l${s
 const ART = {};
 const def = (keys: string, body: string, cls = '') => { for (const k of keys.split(' ')) ART[k] = svg(body, cls); };
 
+// Hand-drawn tools for the folk-game rhythm and Fruit Parade picture choices.
+def('🪚', `<path d="M16 12l27 6-3 5-4-1-2 5-4-1-2 5-4-1-3 5-9-8z" fill="#bfe3f2" ${W}/><path d="M7 9l12 4-6 17-9-5z" fill="#ffb347" ${W}/><path d="M9 16l4 1-2 6-4-2z" fill="#fff6d8" ${W}/><path d="M23 17l12 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`);
+def('🗝️', `${circ(15, 14, 10, '#ffd23f')}${circ(15, 14, 4, '#fff6d8')}<path d="M21 22l19 18-5 4-5-5 3-3-5-4-3 3-6-6z" fill="#ffd23f" ${W}/>`);
+
 // ---------- the Pad ----------
 def('🗺️', `<path d="M5 12l12-5 14 5 12-5v29l-12 5-14-5-12 5z" fill="#a8e6a1" ${W}/><path d="M17 7v29M31 12v29" ${W} ${N}/><path d="M10 22c4-3 8 2 12-1s7 4 12 1" stroke="#5fb6ff" stroke-width="2.4" ${N} stroke-dasharray="3 3" class="a-dash"/>` + g('a-bob', `<path d="M36 10c-3 0-5 2-5 5 0 4 5 9 5 9s5-5 5-9c0-3-2-5-5-5z" fill="#ff5f7a" ${W}/>${dot(36, 15, 1.8, '#fff')}`, '36px 24px'));
 def('🎒', `<path d="M15 15c0-6 4-9 9-9s9 3 9 9" ${N} ${W}/>` + g('a-wiggle', `<rect x="8" y="14" width="32" height="28" rx="10" fill="#ffb347" ${W}/><rect x="15" y="27" width="18" height="10" rx="4" fill="#ffd27a" ${W}/><path d="M24 27v4" ${W}/>`, '24px 42px'));
