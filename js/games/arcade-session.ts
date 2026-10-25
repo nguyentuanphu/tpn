@@ -1,5 +1,7 @@
 export interface ArcadeOnline {mine:number;names:string[];seed?:string;move(n:number,value:number):void;onMove?(fn:(seat:number,n:number,value:number)=>void):void|(()=>void);connected?():boolean;present?(seat:number):boolean;leave?():void;}
 
+export const controlsArcadeTurn=(turn:number,mine:number,online:boolean,helper:boolean)=>online?turn===mine:!helper||turn===mine;
+
 /** Ordered, host-committed family commands. Not a trusted anti-cheat backend. */
 export class ArcadeSession<S extends { turn: number }> {
   state: S; index = 0; online: ArcadeOnline | undefined; readonly mine: number;

@@ -42,7 +42,9 @@ jobs:
       - name: Start game server
         run: python3 -m http.server 8765 > /tmp/tester-arcades-server.log 2>&1 &
       - name: Actual tester rejection, child missions, parent gate and two-browser state
-        run: node tests/orchard-fruitbar-browser.mts
+        run: |
+          node tests/orchard-fruitbar-browser.mts
+          node tests/orchard-fruitbar-browser.mts --input-only
       - name: Actual Studio bilingual folds, analytics layout and six controls
         run: node tests/orchard-studio-browser.mts
       - uses: actions/upload-artifact@v4

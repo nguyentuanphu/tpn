@@ -35,3 +35,6 @@ Initial GitHub fast checks identified two fixture/integration problems: the stor
 
 
 The targeted Simple-screen adventure check initially missed Orchard because this synthetic fixture had no tester device ID (analytics can be disabled). The typed fixture now creates a synthetic ID if absent and asserts that accepted tester eligibility was established; all original adventure assertions remain. Rerun passes: 205 games, 13 under-five sections, 179 drawn stops. One interrupted incorrectly started fixture rerun was discarded; it is not counted as a pass.
+
+
+Final Orchard review repaired guest-to-NPC continuation to retain the guest’s actual seat, and restored keyboard focus after choosing a mode. The extended full browser pass now completes solo/local, NPC, shared online and guest-to-NPC games; parent shared balances, temporary reconnect and unchanged child saves still pass. A separate actual-keyboard/controller run passes. Seven pure arcade cases include completing a four-seat mission from guest seat two with helpers controlling the other three; strict engines and project types pass again. Exact evidence is `browser-results.json` and `input-results.json`.

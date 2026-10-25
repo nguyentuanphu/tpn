@@ -11,7 +11,13 @@
     "parentLocalSharedRound": true
   },
   {
+    "orchardNpcCompletes": true
+  },
+  {
     "orchardTwoBrowserSharedCompletion": true
+  },
+  {
+    "orchardGuestNpcContinuationCompletes": true
   },
   {
     "parentTwoBrowserSharedResult": true,

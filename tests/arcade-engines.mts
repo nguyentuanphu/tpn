@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { orchardStart, orchardStop } from '../js/games/parade-engine.ts';
 import { barStart, barApply, barResult, BAR_SYMBOLS } from '../js/games/fruitbar-engine.ts';
-import { ArcadeSession } from '../js/games/arcade-session.ts';
+import { ArcadeSession, controlsArcadeTurn } from '../js/games/arcade-session.ts';
 import type { ArcadeOnline } from '../js/games/arcade-session.ts';
 import { testerArcadeAllowed } from '../js/content/tester-arcades.ts';
 
@@ -51,4 +51,17 @@ test('ordered host commands reject forged turns, recover lost/reordered commits 
  guest.poll();assert.equal(queue.length,1);const request=queue.shift()!;listeners.get(0)!(request.from,request.n,request.value);assert.equal(queue.length,0,'synchronized peers do not resend the whole history');
  const old=guest.state;listeners.get(1)!(1,2002,0);listeners.get(0)!(1,1800,0);assert.equal(guest.state,old);
  sessions.forEach(s=>s.close());assert.equal(listeners.size,0);
+});
+
+test('a disconnected guest finishes a four-seat mission with helpers taking the other seats',()=>{
+ let left=0;const channel:ArcadeOnline={mine:2,names:['A','B','C','D'],move:()=>{},connected:()=>false,leave:()=>{left++;}};
+ const session=new ArcadeSession(orchardStart('guest-fallback',4,3),channel,orchardStop,()=>{});
+ assert.equal(session.waiting,true);session.continueLocally();assert.equal(left,1);assert.equal(session.waiting,false);
+ const human:number[]=[],helpers=new Set<number>();
+ while(!session.state.complete){
+  const state=session.state,target=state.mission.find((_,i)=>!state.found[i])!;
+  if(controlsArcadeTurn(state.turn,session.mine,!!session.online,true))human.push(state.turn);else helpers.add(state.turn);
+  assert.ok(session.submit(state.board.indexOf(target)));assert.ok(session.index<=5);
+ }
+ assert.deepEqual(human,[2]);assert.deepEqual([...helpers].sort(),[0,1,3]);assert.equal(session.state.found.filter(Boolean).length,5);session.close();
 });
