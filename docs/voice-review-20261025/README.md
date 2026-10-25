@@ -1,6 +1,6 @@
 # FPT Neo: Lê Minh listening test / Nghe thử Lê Minh
 
-Owner selected Lê Minh (`leminh`), not Ban Mai. One short paid API request is authorized to verify the connection, secret and MP3 output before any full-pack work. / Chủ game chọn Lê Minh (`leminh`), không phải Ban Mai. Chỉ gọi API một lần với câu ngắn để kiểm tra kết nối, secret và MP3 trước khi làm cả gói.
+Owner selected Lê Minh (`leminh`), not Ban Mai. Each test run makes one short paid API request to verify the connection, secret and MP3 output before any full-pack work. / Chủ game chọn Lê Minh (`leminh`), không phải Ban Mai. Mỗi lần thử chỉ gọi API một lần với câu ngắn để kiểm tra kết nối, secret và MP3 trước khi làm cả gói.
 
 - API: `https://token-api.fpt.ai/v1/audio/speech`
 - Model: `FPT.AI-VITs`; voice: `leminh`; speed: `1`.
@@ -15,3 +15,13 @@ Local verification before the real request: 237 unit tests pass (including five 
 First real run: [40167805173](https://github.com/nguyentuanphu/tpn/actions/runs/40167805173) reached FPT and returned HTTP success, but not raw MP3 bytes; no sample was saved. The test now explicitly requests MP3 and can download a single signed link from the FPT storage host in the owner-provided example, without forwarding authorization. Other hosts are rejected. A follow-up test is required; the actual response format is not yet confirmed. / Lần gọi đầu trả HTTP thành công nhưng chưa nhận MP3 trực tiếp. Công cụ đã thêm yêu cầu MP3 và hỗ trợ liên kết lưu trữ FPT; chưa khẳng định lần thử sau đã thành công.
 
 Follow-up run [40168074128](https://github.com/nguyentuanphu/tpn/actions/runs/40168074128): the authenticated Lê Minh recording step succeeded, but the runner had no ffprobe and stopped before saving the audio artifact. Decoder installation now happens before the paid call, and the artifact is retained whenever recording succeeds. A final short test will verify decoding and deliver the clip. The updated tool passed 240 unit tests and standalone strict TypeScript checking. / Lần thử tiếp đã nhận MP3; runner thiếu ffprobe nên chưa lưu được mẫu. Đã sửa bước cài bộ giải mã và giữ tệp nếu các bước sau lỗi.
+
+## Result / Kết quả
+
+**PASS:** [run 40168193633](https://github.com/nguyentuanphu/tpn/actions/runs/40168193633). GitHub Secret was available; the authenticated request for `leminh` returned a playable MP3. The final run made one synthesis POST. Three short test requests were made across debugging: missing explicit MP3 handling, missing runner decoder, then the successful run. No full pack was recorded. / **ĐẠT:** secret dùng được, yêu cầu `leminh` trả MP3 phát được. Tổng cộng ba yêu cầu ngắn trong quá trình kiểm tra và sửa công cụ; chưa thu cả gói.
+
+- [Original Lê Minh audio / Bản thu gốc](leminh-test.mp3): 87,294 bytes, 4.336327 seconds, independently decoded by ffprobe on GitHub and locally.
+- Model `FPT.AI-VITs`, voice `leminh`, speed `1`, explicit `response_format: mp3`.
+- Output commit: `5c2f4e63`; SHA-256 and request details in [result.json](result.json).
+- Current tooling checks: 240 unit tests pass, standalone strict TypeScript passes; all original nine changed-file checks were covered before the first push. Final workflow passed end to end, including decoder, artifact and branch save.
+- No additional owner environment setup was needed. For full recording, still add provider/cast/provenance/cache integration to the pack generator, confirm the voice policy and scope, and obtain approval for the full paid batch. This smoke test is not full FPT pack integration and does not change live v1.01. / Không cần thiết lập môi trường thêm. Trước khi thu cả gói vẫn cần tích hợp bộ tạo pack, xác định phạm vi/chính sách giọng và được duyệt toàn bộ lượt thu có phí. Trò chơi v1.01 đang chạy không đổi.
