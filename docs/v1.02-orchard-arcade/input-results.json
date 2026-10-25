@@ -4,6 +4,7 @@
   },
   {
     "orchardKeyboardFromModeChoice": true,
-    "orchardControllerStop": true
+    "orchardControllerStop": true,
+    "vietnameseCompletionVisible": true
   }
 ]

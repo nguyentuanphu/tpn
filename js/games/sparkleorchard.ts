@@ -7,6 +7,8 @@ import { ArcadeSession, controlsArcadeTurn } from './arcade-session.js';
 import { orchardStart, orchardStop, orchardSymbol } from './parade-engine.js';
 import { ARCADE_STYLE, RING_CELLS, art, control, dom } from './arcade-board.js';
 import type { GameOnline } from './frame.js';
+// A static bilingual pair keeps the completion line visible to voice inventory tooling.
+const ORCHARD_COMPLETION=['Orchard mission complete!','Hoàn thành nhiệm vụ vườn quả!'] as const;
 interface OrchardApi {stage:HTMLElement;online?:GameOnline;players:{id?:string;name?:string}[];tier():number;closed:boolean;onCleanup(f:()=>void):void;say(en:string,vi:string):void;dots(n:number,k:number):void;sfx:{tap():void};win(extra:{title:string;titleVi:string}):Promise<unknown>;plan?(f:()=>Element|null,opts:{maxActions:number}):void;}
 async function run(api:OrchardApi){
  if(!testerArcadeAvailable('sparkleorchard',api.online?'multi':'single')){api.say('This game is for invited testers.', 'Trò này dành cho người thử được mời.');return;}
@@ -31,7 +33,7 @@ async function run(api:OrchardApi){
   if(session.waiting&&waitingAt&&performance.now()-waitingAt>=30000){const b=control(T('Continue with a helper','Chơi tiếp với bạn hỗ trợ'),()=>{helper=true;session!.continueLocally();waitingAt=0;paint();});b.dataset.orchardContinue='';root.append(b);}
   if(s.combo){root.append(dom('p','',T('Special picture combination found!','Đã tìm thấy bộ tranh đặc biệt!')));if(announced!==s.combo){announced=s.combo;events.emit('ArcadeAdventureTriggered',{sourceGame:'sparkleorchard',activityType:s.combo,playerIds:api.players.map(p=>p.id).filter(Boolean),combination:s.collection,round:0,reward:null});}}
   highlight();if(keepFocus)root.focus({preventScroll:true});
-  if(s.complete&&!ending){ending=true;api.say('Orchard mission complete!','Hoàn thành nhiệm vụ vườn quả!');void api.win({title:'Orchard mission complete!',titleVi:'Hoàn thành nhiệm vụ vườn quả!'}).then(resolve);}
+  if(s.complete&&!ending){ending=true;void api.win({title:T(...ORCHARD_COMPLETION),titleVi:ORCHARD_COMPLETION[1]}).then(resolve);}
  }
  function highlight(){root.querySelectorAll<HTMLElement>('[data-cell]').forEach((cell,i)=>cell.classList.toggle('on',i===position));root.dataset.position=String(position);}
  const choices=dom('div','arcade-actions');if(api.online)start(Math.min(4,api.online.names.length),false);else{root.append(dom('h2','',T('Who will explore the orchard?','Ai cùng khám phá vườn quả?')));for(const [mode,en,vi,seats,npc]of [['solo','Just me','Mình con',1,false],['npc','With a helper','Cùng bạn hỗ trợ',2,true],['local','Two players here','Hai bạn cùng máy',2,false]]as const){const b=control(T(en,vi),()=>start(seats,npc));b.dataset.orchardMode=mode;choices.append(b);}root.append(choices);api.say('Who will explore the orchard?','Ai cùng khám phá vườn quả?');}

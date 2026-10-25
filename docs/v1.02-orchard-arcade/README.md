@@ -48,3 +48,6 @@ The dedicated parent-entry regression also passes: rapid duplicate opening creat
 
 
 Final parent layout review covers allocation fields and actual two-adult result screens in both languages on all three sizes (twelve additional native captures). Close has a separate fixed header row and cannot cover inputs; the outer window retains its height, the primary Start/Next action has its own footer, and changing turn/round resets the scroll body deliberately. All six layout/round cases pass. Default animated lights finish and re-enable Next; closing during a hold cannot create a hidden online session. Images: [allocations](review/parent-allocations.jpg), [actions](review/parent-actions.jpg).
+
+
+Final Vietnamese completion check caught an untranslated Orchard win heading. The title now uses the selected language; one static bilingual pair also preserves voice inventory coverage without speaking the completion twice. Actual keyboard/controller play through the Vietnamese win screen passes; screenshot `shots/phone-vi-orchard-complete.png`. The eleven recorded line identities are unchanged.
