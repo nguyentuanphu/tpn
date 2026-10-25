@@ -1,3 +1,4 @@
+import { adventureWalkSnapshot } from './adventure-snapshot.mts';
 // Sparkle Valley regression checks. Start the game first (python3 -m http.server 8765 in the repo), then:
 //   cd tests && npm install && node run.mjs            all checks
 //   node run.mjs games features                        only some
@@ -6591,7 +6592,8 @@ await check('dailyadventure', async () => {
     ok(lang === 'vi' ? win.txt.includes('Phiêu lưu hôm nay') && !win.txt.includes("Today's adventure") : win.txt.includes("Today's adventure"), `${tag}: the window in the language`);
     await P.page.screenshot({ path: `out/dailyadventure-window-${w}.png` });
     await P.page.click('.modal.advwin .adv-go'); await P.page.waitForTimeout(500);
-    ok(await P.page.evaluate(() => !document.querySelector('.modal.advwin') && __sv.adventure.trails.size === 1 && !!(__sv.heroes[0].goal || __sv.adventure.trails.get(__sv.heroes[0])?.walk)), `${tag}: Let's go closes the window, shows the way and starts walking`);
+    const walkSnapshot = await P.page.evaluate(adventureWalkSnapshot);
+    ok(walkSnapshot.valid, `${tag}: Let's go closes the window, shows the way and starts walking ${JSON.stringify(walkSnapshot)}`);
     // play it: walk in, find, give (big kids count first), the chest
     const coins0 = await P.page.evaluate(async () => { const S = await import('/js/state.js'); return S.farm.coins; });
     await P.page.evaluate(async () => { const G = __sv, h = G.heroes[0], V = (await import('/js/content/map.js')).anchorOf('town'); h.pos.x = V[0]; h.pos.z = V[1] + 4; h.pos.y = (await import('/js/world.js')).heightAt(h.pos.x, h.pos.z); });

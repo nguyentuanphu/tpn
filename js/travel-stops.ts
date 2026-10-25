@@ -4,7 +4,7 @@ export function destinationStops<S extends { x: number; z: number; icon: string;
   const distance = (s: S) => Math.hypot(s.x - from.x, s.z - from.z);
   for (const stop of stops) {
     if (distance(stop) <= 12) continue;
-    const key = stop.place?.id || stop.name().trim().toLocaleLowerCase();
+    const key = stop.name().normalize('NFC').trim().replace(/\s+/g, ' ').toLocaleLowerCase() || stop.place?.id || `${stop.x}:${stop.z}`;
     const old = unique.get(key);
     if (!old || distance(stop) < distance(old)) unique.set(key, stop);
   }

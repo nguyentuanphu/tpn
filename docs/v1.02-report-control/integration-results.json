@@ -1,0 +1,11 @@
+[
+  {
+    "reportDuringActualGame": true,
+    "dragClampedToScreen": true,
+    "positionRestoredOnRemount": true
+  },
+  {
+    "duplicateBrisbaneRemoved": true,
+    "physicalStopsPreserved": true
+  }
+]

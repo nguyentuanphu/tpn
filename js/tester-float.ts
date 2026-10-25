@@ -18,7 +18,7 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
     return { left, top, right: Math.max(left, (v?.offsetLeft || 0) + (v?.width || innerWidth) - button.offsetWidth - 8 - (parseFloat(s.getPropertyValue('--safe-right')) || 0)), bottom: Math.max(top, (v?.offsetTop || 0) + (v?.height || innerHeight) - button.offsetHeight - 8 - (parseFloat(s.getPropertyValue('--safe-bottom')) || 0)) };
   };
   const place = (x: number, y: number) => { const b = bounds(); button.style.left = `${Math.max(b.left, Math.min(b.right, x))}px`; button.style.top = `${Math.max(b.top, Math.min(b.bottom, y))}px`; };
-  const layout = () => { const b = bounds(), a = anchor.getBoundingClientRect(); place(saved ? b.left + saved.x * (b.right - b.left) : a.right - button.offsetWidth, saved ? b.top + saved.y * (b.bottom - b.top) : a.bottom + 8); };
+  const layout = () => { const b = bounds(), a = anchor.getBoundingClientRect(); place(saved ? b.left + saved.x * (b.right - b.left) : a.width > 0 ? a.right - button.offsetWidth : b.right, saved ? b.top + saved.y * (b.bottom - b.top) : a.height > 0 ? a.bottom + 8 : b.top + .55 * (b.bottom - b.top)); };
   const remember = () => { const b = bounds(), r = button.getBoundingClientRect(); saved = { x: (r.left - b.left) / Math.max(1, b.right - b.left), y: (r.top - b.top) / Math.max(1, b.bottom - b.top) }; try { localStorage.setItem(key, JSON.stringify(saved)); } catch {} };
   const reset = () => { opening?.abort(); clearTimeout(tap); stopHold(); lastTap = 0; saved = undefined; try { localStorage.removeItem(key); } catch {} layout(); };
   const start = (e: PointerEvent) => {
