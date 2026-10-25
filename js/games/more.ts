@@ -236,13 +236,22 @@ register({
 if (customQuiz().length) register({
   id: 'familyquiz', icon: '💛', name: () => T('Family Quiz', 'Đố Vui Gia Đình'),
   async run(api) {
-    const qs = shuffle(customQuiz()).slice(0, 6);
+    const qs = customQuiz().slice(0, 6);
+    const online = api.online;
     for (let r = 0; r < qs.length; r++) {
       api.dots(qs.length, r); api.stage.innerHTML = '';
       const Q = qs[r]; if (Q.pic) api.stage.appendChild(el('div', 'fq-pic', Q.pic));
       api.say(Q.q[0], Q.q[1]);
       const btns = choiceButtons(api, shuffle(Q.answers.map((a, i) => [a, i])), ([a]) => `<b>${T(a[0], a[1]).replace(/</g, '&lt;')}</b>`);
-      const ok = await untilRight(api, btns, e => e._v[1] === Q.right); if (!ok) return;
+      if (online) {
+        const answer = await tapOne(btns, api); if (!answer) return;
+        const value = answer._v[1]; online.move(r, value);
+        const answers = await online.all(r); if (answers.some(value => value == null)) return;
+        const correct = value === Q.right;
+        correct ? api.right(answer) : api.wrong(answer);
+      } else {
+        const answer = await untilRight(api, btns, e => e._v[1] === Q.right); if (!answer) return;
+      }
       api.say(Q.answers[Q.right][0] + '!', Q.answers[Q.right][1] + '!'); await wait(1300);
     }
     api.dots(qs.length, qs.length); return api.win({ title: T('You know your family so well!', 'Con hiểu gia đình mình quá!') });
