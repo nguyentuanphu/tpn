@@ -1,0 +1,10 @@
+[
+  {
+    "nonTesterCannotOpenEither": true
+  },
+  {
+    "parentEntryDeduplicates": true,
+    "parentGateAndRoundComplete": true,
+    "pauseStateRestored": true
+  }
+]

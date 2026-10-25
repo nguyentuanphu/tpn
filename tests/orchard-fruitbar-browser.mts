@@ -33,6 +33,9 @@ export async function orchardFruitBarBrowser(){
   await eligibility(P.page,false);await play(P.page);await P.page.waitForTimeout(250);assert.equal(await P.page.locator('.gl').count(),0);
   await P.page.evaluate(async()=>{(await import(String('/js/games/sparklefruitbar.js'))).openFruitBar();});assert.equal(await P.page.locator('.parent-arcade').count(),0);
   notes.push({nonTesterCannotOpenEither:true});await eligibility(P.page,true);
+  if(process.argv.includes('--parent-entry-only')){
+   const before=await P.page.evaluate(()=>window.__sv.paused);await P.page.evaluate(async()=>{const M=await import(String('/js/games/sparklefruitbar.js'));M.openFruitBar();M.openFruitBar();});assert.equal(await P.page.locator('.parent-arcade').count(),1);assert.equal(await P.page.locator('[data-bar-bet]').count(),0);await hold(P.page);await P.page.locator('[data-bar-mode="1"]').click();await P.page.locator('[data-bar-bet="0"]').fill('10');await P.page.locator('[data-bar-bet="0"]').press('Tab');await P.page.locator('[data-bar-ready]').click();await P.page.locator('.arcade-adult[data-phase=result]').waitFor();await P.page.locator('.parent-arcade .x').click();assert.equal(await P.page.evaluate(()=>window.__sv.paused),before);assert.deepEqual(P.errors,[]);notes.push({parentEntryDeduplicates:true,parentGateAndRoundComplete:true,pauseStateRestored:true});await P.ctx.close();return;
+  }
   if(process.argv.includes('--input-only')){
    await play(P.page);await P.page.locator('[data-orchard-mode=solo]').click();await P.page.keyboard.press('Space');await P.page.waitForFunction(()=>Number(document.querySelector('.orchard')?.getAttribute('data-moves'))===1);
    await P.page.evaluate(()=>{const w=window as any;w.__orchardPad=true;Object.defineProperty(navigator,'getGamepads',{configurable:true,value:()=>[{id:'Synthetic Orchard controller',index:0,connected:true,mapping:'standard',timestamp:0,axes:[0,0,0,0],buttons:Array.from({length:16},(_,i)=>({pressed:i===0&&w.__orchardPad,touched:false,value:i===0&&w.__orchardPad?1:0}))}]});});await P.page.waitForFunction(()=>Number(document.querySelector('.orchard')?.getAttribute('data-moves'))===2);await P.page.evaluate(()=>{(window as any).__orchardPad=false;});
@@ -46,7 +49,7 @@ export async function orchardFruitBarBrowser(){
    const bounds=await P.page.locator('.orchard button').evaluateAll(bs=>bs.map(b=>{const r=b.getBoundingClientRect();return{top:r.top,bottom:r.bottom};}));assert.ok(bounds.every(r=>r.top>=0&&r.bottom<=h),`visible controls ${device}-${lang}: ${JSON.stringify(bounds)}`);
    const sizes=await P.page.locator('.orchard button').evaluateAll(bs=>bs.map(b=>b.getBoundingClientRect().height));assert.ok(sizes.every(n=>n>=64));
    await P.page.screenshot({path:new URL(`${device}-${lang}-orchard.png`,out).pathname});await closeGame(P.page);
-   await P.page.evaluate(async()=>{(await import(String('/js/games/sparklefruitbar.js'))).openFruitBar();});assert.equal(await P.page.locator('[data-bar-bet]').count(),0);await hold(P.page);await P.page.locator('[data-bar-mode="2"]').click();
+   await P.page.evaluate(async()=>{const M=await import(String('/js/games/sparklefruitbar.js'));M.openFruitBar();M.openFruitBar();});assert.equal(await P.page.locator('.parent-arcade').count(),1,'double opening cannot stack parent windows');assert.equal(await P.page.locator('[data-bar-bet]').count(),0);await hold(P.page);await P.page.locator('[data-bar-mode="2"]').click();
    await P.page.locator('[data-bar-bet="0"]').fill('10');await P.page.locator('[data-bar-bet="0"]').press('Tab');await P.page.locator('[data-bar-ready]').click();
    await P.page.locator('[data-bar-bet="1"]').fill('20');await P.page.locator('[data-bar-bet="1"]').press('Tab');await P.page.locator('[data-bar-ready]').click();await P.page.locator('.arcade-adult[data-phase=result]').waitFor();await P.page.waitForTimeout(1900);
    await P.page.screenshot({path:new URL(`${device}-${lang}-parent-bar.png`,out).pathname});
@@ -87,7 +90,7 @@ export async function orchardFruitBarBrowser(){
   await Q.page.evaluate(()=>{(window as any).__arcadeConnected=true;});await Q.page.waitForTimeout(1700);assert.equal(await Q.page.locator('.arcade-adult').count(),1);
   notes.push({parentTwoBrowserSharedResult:true,parentNoChildSaveWrites:true,parentTemporaryDisconnectRetained:true});
   for(const d of[P,Q]){await d.page.locator('.parent-arcade .x').click();assert.deepEqual(d.errors,[]);await d.ctx.close();}
- }finally{await browser.close();await fs.writeFile(new URL(process.argv.includes('--input-only')?'../docs/v1.02-orchard-arcade/input-results.json':capturesOnly?'../docs/v1.02-orchard-arcade/capture-results.json':'../docs/v1.02-orchard-arcade/browser-results.json',import.meta.url),JSON.stringify(notes,null,2)+'\n');}
+ }finally{await browser.close();await fs.writeFile(new URL(process.argv.includes('--parent-entry-only')?'../docs/v1.02-orchard-arcade/parent-entry-results.json':process.argv.includes('--input-only')?'../docs/v1.02-orchard-arcade/input-results.json':capturesOnly?'../docs/v1.02-orchard-arcade/capture-results.json':'../docs/v1.02-orchard-arcade/browser-results.json',import.meta.url),JSON.stringify(notes,null,2)+'\n');}
  console.log(JSON.stringify(notes));
 }
 await orchardFruitBarBrowser();

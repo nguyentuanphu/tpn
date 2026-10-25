@@ -1038,6 +1038,7 @@ G.openSongs = start => openSongs(G, start); for (const f of familySongs()) Music
 G.netGames = createNetGames({
   net: { ids: () => Object.keys(Net.remotes), send: d => Net.send(d) }, me: () => Net.me,
   onAsk: d => { // "Mít wants to play Caro with you!"
+    if(document.querySelector('.parent-arcade,.parent-arcade-invite')){G.netGames.answer(d,false);return;}
     if (d.game === 'fruitparade' && !fruitParadeModeOn('multi')) { G.netGames.answer(d, false); return; }
     if(d.game === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi') || d.game === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi')) {G.netGames.answer(d,false);return;}
     if(d.game === 'sparklefruitbar'){if(gameOpen()){G.netGames.answer(d,false);return;}void import('./games/sparklefruitbar.js').then(async module=>{const yes=await module.confirmFruitBarInvite(remoteName(d.from));G.netGames.answer(d,yes&&!gameOpen());});return;}

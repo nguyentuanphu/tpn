@@ -45,6 +45,7 @@ jobs:
         run: |
           node tests/orchard-fruitbar-browser.mts
           node tests/orchard-fruitbar-browser.mts --input-only
+          node tests/orchard-fruitbar-browser.mts --parent-entry-only
       - name: Actual Studio bilingual folds, analytics layout and six controls
         run: node tests/orchard-studio-browser.mts
       - uses: actions/upload-artifact@v4

@@ -38,3 +38,8 @@ The targeted Simple-screen adventure check initially missed Orchard because this
 
 
 Final Orchard review repaired guest-to-NPC continuation to retain the guest’s actual seat, and restored keyboard focus after choosing a mode. The extended full browser pass now completes solo/local, NPC, shared online and guest-to-NPC games; parent shared balances, temporary reconnect and unchanged child saves still pass. A separate actual-keyboard/controller run passes. Seven pure arcade cases include completing a four-seat mission from guest seat two with helpers controlling the other three; strict engines and project types pass again. Exact evidence is `browser-results.json` and `input-results.json`.
+
+
+The dedicated parent-entry regression also passes: rapid duplicate opening creates one gated window, an actual round completes, and closing restores the prior pause state. New invitations are declined while the parent arcade is already active. The 6,319 baseline clips cover stable v1.01; six uncorrected folk prototypes still require a later reviewed speech delta, rather than paying to record incorrect instructions.
+
+[Orchard pictures](review/orchard.jpg) · [Parent arcade pictures](review/parent-bar.jpg) · [Studio analytics pictures](review/analytics.jpg) · [Studio switches](review/switches.jpg). These are synthetic test profiles and actual game artwork, not real family data.

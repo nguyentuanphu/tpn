@@ -9,6 +9,7 @@ import { ARCADE_STYLE, RING_CELLS, art, control, dom } from './arcade-board.js';
 
 /** Parent arcade owns no child profile, coins, rewards, analytics or persistent balance. */
 export function openFruitBar(online?:GameOnline){
+ if(document.querySelector('.parent-arcade')){online?.leave?.();return;}
  if(!testerArcadeAvailable('sparklefruitbar',online?'multi':'single')&&(online||!testerArcadeAvailable('sparklefruitbar','multi')))return;
  const wasPaused=window.__sv?.paused;if(window.__sv)window.__sv.paused=true;
  const m=modal('parent-arcade',''),card=m.querySelector('.card') as HTMLElement;card.replaceChildren();
