@@ -2,18 +2,6 @@ import { register, tapOne } from './frame.js';
 import { T } from '../i18n.js';
 import { el, wait } from '../util.js';
 
-type PendingDef = { id: string, icon: string, en: string, vi: string };
-
-const defs: PendingDef[] = [
-  { id: 'meochuot', icon: '🐱', en: 'Cat and Mouse', vi: 'Mèo Đuổi Chuột' },
-  { id: 'cuopco', icon: '🚩', en: 'Flag Relay', vi: 'Cướp Cờ' },
-  { id: 'keocua', icon: '🪚', en: 'Pull Saw Song', vi: 'Kéo Cưa Lừa Xẻ' },
-  { id: 'danhdao', icon: '🪵', en: 'Đánh Đáo', vi: 'Đánh Đáo' },
-  { id: 'nemcon', icon: '🎯', en: 'Throw the Còn', vi: 'Ném Còn' },
-  { id: 'trongnu', icon: '🌱', en: 'Plant the Seed', vi: 'Trồng Nụ' },
-  { id: 'duathuyen', icon: '🚣', en: 'Boat Race', vi: 'Đua Thuyền' }
-];
-
 const prompt = (api, en: string, vi: string) => { api.show(en, vi); api.say(en, vi); };
 const buttons = (api, values: string[]) => {
   const row = el('div', 'choices');
@@ -74,15 +62,11 @@ async function runBoat(api) {
   api.right(controls[0]); return api.win({ title: T('Boat race complete!', 'Đua thuyền về đích rồi!') });
 }
 
-for (const def of defs) register({
-  id: def.id, icon: def.icon, origin: 'vn', name: () => T(def.en, def.vi),
-  async run(api) {
-    if (def.id === 'meochuot') return runCatMouse(api);
-    if (def.id === 'cuopco') return runFlag(api);
-    if (def.id === 'keocua') return runPullSaw(api);
-    if (def.id === 'danhdao') return runAim(api, def.id, ['Tap the centre to strike the wooden peg!', 'Chạm vào giữa để đánh trúng cọc nhé!'], '🎯');
-    if (def.id === 'nemcon') return runAim(api, def.id, ['Aim the còn at the target!', 'Ngắm ném còn vào vòng nhé!'], '🎯');
-    if (def.id === 'trongnu') return runPlant(api);
-    return runBoat(api);
-  }
-});
+// Explicit registrations keep lazy-loader metadata checkable in both languages.
+register({ id: 'meochuot', icon: '🐱', origin: 'vn', name: () => T('Cat and Mouse', 'Mèo Đuổi Chuột'), run: runCatMouse });
+register({ id: 'cuopco', icon: '🚩', origin: 'vn', name: () => T('Flag Relay', 'Cướp Cờ'), run: runFlag });
+register({ id: 'keocua', icon: '🪚', origin: 'vn', name: () => T('Pull Saw Song', 'Kéo Cưa Lừa Xẻ'), run: runPullSaw });
+register({ id: 'danhdao', icon: '🪵', origin: 'vn', name: () => T('Đánh Đáo', 'Đánh Đáo'), run: api => runAim(api, 'danhdao', ['Tap the centre to strike the wooden peg!', 'Chạm vào giữa để đánh trúng cọc nhé!'], '🎯') });
+register({ id: 'nemcon', icon: '🎯', origin: 'vn', name: () => T('Throw the Còn', 'Ném Còn'), run: api => runAim(api, 'nemcon', ['Aim the còn at the target!', 'Ngắm ném còn vào vòng nhé!'], '🎯') });
+register({ id: 'trongnu', icon: '🌱', origin: 'vn', name: () => T('Plant the Seed', 'Trồng Nụ'), run: runPlant });
+register({ id: 'duathuyen', icon: '🚣', origin: 'vn', name: () => T('Boat Race', 'Đua Thuyền'), run: runBoat });

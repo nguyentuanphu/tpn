@@ -87,4 +87,4 @@ async function run(api) {
   return api.win({ title: winner });
 }
 
-register({ id: 'cacuangua', icon: '🐴', name: () => T('Cờ Cá Ngựa', 'Cờ Cá Ngựa'), run });
+register({ id: 'cacuangua', icon: '🐴', origin: 'vn', name: () => T('Horse Racing Chess', 'Cờ Cá Ngựa'), run });

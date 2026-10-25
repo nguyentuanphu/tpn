@@ -7,8 +7,8 @@ const FAM_COLOUR: [string, string][] = [['Red', 'Đỏ'], ['Blue', 'Xanh'], ['Gr
 const FAM_ANIMAL: [string, string][] = [['Koala', 'Gấu túi'], ['Panda', 'Gấu trúc'], ['Turtle', 'Rùa'], ['Fox', 'Cáo'], ['Owl', 'Cú'], ['Dolphin', 'Cá heo'], ['Rabbit', 'Thỏ'], ['Tiger', 'Hổ'], ['Duck', 'Vịt'], ['Kangaroo', 'Chuột túi'], ['Buffalo', 'Trâu'], ['Lotus', 'Sen']];
 
 export const FAMILY_CODE_PRIVACY = {
-  en: 'The family code and your children’s photos stay on this device or the devices you share with.',
-  vi: 'Mã gia đình và ảnh của các con chỉ được lưu trên máy này hoặc máy do bạn chia sẻ.'
+  en: 'Link your family’s devices for statistics only—no progress or photo sharing. Keep your code private.',
+  vi: 'Liên kết thiết bị để thống kê gia đình—không chia sẻ tiến trình hay ảnh. Giữ riêng mã gia đình.'
 };
 
 const ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
