@@ -35,7 +35,7 @@ export function validMove(id: string, value: number): boolean {
   if (id === 'tug') return value === 0 || value === 1;
   if (id === 'familyquiz') return value >= 0 && value <= 3;
   // Encoded horse move: horse index (0-3) * 8 + die index (0-1), with room for a no-op.
-  if (id === 'cacuangua') return value >= 0 && value <= 3;
+  if (id === 'cacuangua') return value >= 0 && (value <= 3 || (value <= 25 && Math.floor(value / 8) < 4 && value % 8 < 2));
   return false;
 }
 
@@ -87,3 +87,4 @@ export function resolveTugRound(pulls: number[], target = 5): number {
 export function scoreFamilyQuiz(answers: Array<number | null>, correct: number): number[] {
   return answers.map(answer => answer === correct ? 1 : 0);
 }
+
