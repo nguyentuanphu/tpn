@@ -5,7 +5,7 @@
 // The family's Studio can move a game to another area, hide it, or open it to under-5s (content/custom.json
 // "activities": { id: { area, little, hide } }).
 import { T } from '../i18n.js';
-import { CUSTOM, keptOn, MONEY_GAMES } from '../custom.js';
+import { CUSTOM, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
 import { heldGame } from './secondset.js';
 
@@ -48,7 +48,7 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   counting: ['numbers', 2, 1], numbers: ['numbers', 3, 1], moreless: ['numbers', 3, 2], dragonfire: ['numbers', 3, 1], sums: ['numbers', 5, 3], clock: ['numbers', 5, 3], days: ['numbers', 5, 2],
   shapes: ['shapes', 2, 1], pattern: ['shapes', 3, 2], sorting: ['shapes', 2, 1], tower: ['shapes', 2, 1], memory: ['shapes', 3, 2], sudoku: ['shapes', 5, 3], hanoi: ['shapes', 5, 3],
   letters: ['words', 4, 2], phonics: ['words', 4, 2], opposites: ['words', 4, 2], words: ['words', 5, 2], firstwords: ['words', 5, 3],
-  feelings: ['me', 2, 1], bodyparts: ['me', 2, 1], familyquiz: ['me', 3, 2],
+  feelings: ['me', 2, 1], bodyparts: ['me', 2, 1], familyquiz: ['me', 3, 2], fruitparade: ['play', 2, 1],
   kite: ['play', 2, 1], hopscotch: ['play', 3, 1], tug: ['play', 2, 1], skipping: ['play', 3, 2], sackrace: ['play', 3, 1], nemlon: ['play', 3, 1], marbles: ['play', 4, 2], cricket: ['play', 5, 2], mrwolf: ['play', 3, 2], dacau: ['play', 4, 2],
   dragon: ['vietnam', 3, 1], datnieu: ['vietnam', 2, 1],
   banhchung: ['vietnam', 2, 1], denongsao: ['vietnam', 2, 1], mualan: ['vietnam', 2, 2], cayneu: ['vietnam', 2, 1], oantuti: ['vietnam', 3, 1], chuyen: ['vietnam', 5, 2], oanquan: ['vietnam', 5, 3], caro: ['vietnam', 5, 3], tienlen: ['vietnam', 5, 3], tienlenbac: ['vietnam', 5, 3],
@@ -64,7 +64,8 @@ export function gameInfo(id) {
   // child playing has already played it
   // (r90) the second set of games is held back while Studio's New games switch is off (js/content/secondset.ts)
   const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id);
-  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: c.hide === true || held };
+  const fruitHeld = id === 'fruitparade' && !releaseOn('sparkleFruitParade_single', false) && !releaseOn('sparkleFruitParade_tester', false);
+  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: c.hide === true || held || fruitHeld };
 }
 // the games of one area for a child: under-5s only see the ones made for them
 export const gamesIn = (games, area, little) => Object.keys(games).map(gameInfo).filter(g => g.area === area && !g.hidden && (!little || g.ageMin < 5));

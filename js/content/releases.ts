@@ -104,3 +104,10 @@ RELEASES.push({ id: 'familyDevices', en: 'Family devices and photo sharing (tria
 // (owner plan, 16 Oct AEDT) one three-step adventure a day for each child, the goal card, the window, the week chest
 // (js/adventure.js, js/content/adventures.js). Off: no goal card or adventure window; the Adventures tab is as before
 RELEASES.push({ id: 'adventure', en: 'Daily adventure: one three-step adventure a day with a treasure chest, week stamps and a week chest. Off: no adventure card on the game screen and the Adventures tab shows its lists as before', vi: 'Phiêu lưu mỗi ngày: mỗi ngày một chuyến phiêu lưu ba bước có rương báu, con dấu trong tuần và rương cuối tuần. Tắt: không có thẻ phiêu lưu trên màn hình và mục Nhiệm vụ hiện danh sách như trước', group: 'kids', def: true });
+
+// Sparkle Fruit Parade availability is independently controllable for children, friends, and testers.
+RELEASES.push(
+  { id: 'sparkleFruitParade_single', en: 'Sparkle Fruit Parade: single-player mode (off hides it from Play)', vi: 'Sparkle Fruit Parade: chế độ chơi đơn (tắt sẽ ẩn khỏi Vui chơi)', group: 'kids', def: false },
+  { id: 'sparkleFruitParade_multi', en: 'Sparkle Fruit Parade: multiplayer mode (off hides it from Friends)', vi: 'Sparkle Fruit Parade: chế độ nhiều người (tắt sẽ ẩn khỏi Bạn bè)', group: 'kids', def: false },
+  { id: 'sparkleFruitParade_tester', en: 'Sparkle Fruit Parade: tester preview (allows a tester to open it while child modes are off)', vi: 'Sparkle Fruit Parade: bản thử nghiệm (cho phép người thử mở trò khi các chế độ cho trẻ đang tắt)', group: 'tools', def: false }
+);

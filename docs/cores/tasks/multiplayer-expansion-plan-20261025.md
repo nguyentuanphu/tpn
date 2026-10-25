@@ -11,7 +11,7 @@
 - Co Vua Nho and Co Tuong Nho are puzzle experiences, not full two-player matches. New full matches need distinct IDs and labels.
 - Co Ca Ngua is a new addition with a beginner mode using fewer pieces and a fuller rules mode.
 - Multiplayer games should also support a local NPC opponent when the game permits it. NPC difficulty is configurable per game.
-- The screenshot is a reference for an arcade-style game, not enough evidence to identify exact rules, title, legal status, or asset rights. Do not implement its rules until confirmed.
+- The replacement game is the screen-only, child-safe Sparkle Fruit Parade. It is not a physical cabinet, slot machine, casino game, or gambling system.
 
 ## 2. Friend-tab experience
 
@@ -65,19 +65,21 @@
 - Keep current voice files and manifests untouched while the sample is reviewed.
 - Only after approval define which Vietnamese voice categories, if any, move to Le Minh and update manifests/coverage tests.
 
-## 5. Adult-confirmation design for the screenshot game
+## 5. Sparkle Fruit Parade design
 
-The screenshot appears to show an arcade-style board machine, but it does not identify the exact game or rules. Treat it as a pluggable game slot until the owner confirms its name, rules, intended audience, and permission to use the reference.
-
-When confirmed:
-
-- Add `adultConsent: true` to its capability metadata.
-- Before invite acceptance, NPC start, or local start, show a bilingual confirmation: **I confirm I am 18 or older. / Toi xac nhan toi tu 18 tuoi tro len.**
-- Require every participating adult to confirm on their own device.
-- Do not collect identity documents, birth dates, or names. Store only a short-lived session consent marker.
-- Default the gate to on. Studio may disable it only through an explicit adult/admin setting with a visible warning.
-- Do not include real-money wagering, cash-out, gambling rewards, or child-targeted monetisation. Stop for owner/legal review if those are part of the source game.
-- Studio exposes: enabled/disabled, adult confirmation required, NPC allowed, and allowed difficulty levels. These private settings must not leak into public analytics.
+- Use the existing mini-game framework and visual language; do not redesign global Sparkle Valley UI.
+- The initial reusable mode is Fruit Parade: three animated vertical symbol lanes, a visual mission, and large STOP 1/2/3 controls.
+- Use large symbols and minimal text for ages 2-8. Support English and Vietnamese through the existing translation system and `T()` conventions.
+- Easy (roughly ages 2-4): slower lanes, fewer symbols, 1-2 item missions, visual hints, forgiving timing, and gentle assistance.
+- Normal (roughly ages 4-6): moderate speed, 2-3 item objectives, and simple combinations.
+- Advanced (roughly ages 6-8): faster movement, memory sequences, multi-step missions, and combos.
+- Use cooperative play as the default: players contribute to one shared mission and see shared progress. Competitive Fruit Race remains optional and secondary.
+- Support single-player offline play, same-device two-player play, online family play, and NPC partner fallback through the same state engine.
+- Special symbols are configuration-driven: Rainbow substitutes, Sparkle Star advances shared progress, Ladybug/Dragon/Key emit Adventure Result hooks, and future symbols can be added without hard-coded rules.
+- Positive results use non-monetary Sparkle Valley rewards only: stickers, clothes, accessories, seeds, decorations, cards, emotes, sparkle effects, activities, or achievement progress.
+- Reduced motion, larger controls, audio-independent visual cues, colour-independent audio cues, and responsive mobile/tablet/desktop layouts are required.
+- Use existing audio, voice, character reaction, save, event, analytics, and multiplayer systems; do not create competing systems.
+- Add hooks for start, completion, mode, difficulty, duration, multiplayer, disconnect/reconnect, errors, and Adventure Result events without collecting unnecessary personal data.
 
 ## 6. Technical shape
 
@@ -101,8 +103,8 @@ When confirmed:
 
 ## 8. Decisions needed before implementation
 
-1. Confirm the exact title and rules of the screenshot game, and whether its reference assets may be used.
+1. Confirm whether the first implementation slice should be the reusable engine plus Fruit Parade single-player, or include cooperative multiplayer in the first code pass.
 2. Confirm standard versus child-friendly simplified rules for Co Vua and Co Tuong.
 3. Confirm the Batch A order if it differs from the recommendation.
-4. Confirm whether the Studio adult-gate switch is owner-only or available to all administrators.
+4. Confirm whether Studio NPC/difficulty settings are owner-only or available to all administrators.
 5. Review and approve the Le Minh sample scope before paid bulk synthesis.
