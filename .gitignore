@@ -95,6 +95,7 @@ marketing/source/runvalley.log
 /js/games/nature2.js
 /js/games/numbers2.js
 /js/games/outside.js
+/js/games/pending-vietnam.js
 /js/games/places2.js
 /js/games/playwatch.js
 /js/games/reading.js
@@ -277,3 +278,5 @@ marketing/source/runvalley.log
 /js/world.js
 /studio/ui/app.js
 # --- end of tools/build.mts ---
+
+/js/games/pending-vietnam.js
