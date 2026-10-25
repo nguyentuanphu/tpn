@@ -3263,3 +3263,6 @@ body.calm .sv2 .press::after { animation: none; display: none; }
 .tester-floating.z-lb:active { cursor:grabbing; }
 .tester-floating.z-lb .art { width:42px; height:42px; }
 .tester-floating.z-lb .kb { position:absolute; bottom:1px; right:4px; }
+
+/* Reports opened from a game remain above that game or parent window. */
+.modal.tpanel, .modal.tp-picture { z-index:2147482999; }
