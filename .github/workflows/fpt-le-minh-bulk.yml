@@ -1,0 +1,33 @@
+name: FPT Le Minh bulk recording
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_lines:
+        description: Optional line limit for a resumable test batch (0 records all lines)
+        required: false
+        default: '0'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Record Lê Minh lines
+        run: node tools/fpt-recorder.mts --record
+        env:
+          FPT_API_KEY: ${{ secrets.FPT_API_KEY }}
+          FPT_MAX_LINES: ${{ inputs.max_lines }}
+      - name: Upload recording manifest and audio
+        uses: actions/upload-artifact@v4
+        with:
+          name: fpt-le-minh-recordings-${{ github.run_id }}
+          path: temp/fpt-recordings/
+          if-no-files-found: error
