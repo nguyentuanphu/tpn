@@ -1,5 +1,5 @@
 {
-  "inventory": "37441b5faba0c89e9da9cfb27d842b4c21180da55ee68f83fda4222a987e49f4",
+  "inventory": "00688b1bc171fe7c4cd9ea5392fb1e8b2565945c74baa73366614160b7152a97",
   "voice": {
     "provider": "FPT Neo",
     "model": "FPT.AI-VITs",
@@ -7,7 +7,7 @@
     "speed": 1,
     "response_format": "mp3"
   },
-  "total": 57,
+  "total": 58,
   "done": {
     "1b9b622526a2c94c": {
       "identity": "eec3ba725bfce1ffa7254e1990320f5ef4b5fcdea2e5fb13f7728b63a57cefe2",
@@ -350,8 +350,14 @@
       "sha256": "9536031c8b79ed0e9c9d0f9be68b99edb625039294bf4ccc21c27a248d9a7ba8",
       "bytes": 44453,
       "duration": 2.194286
+    },
+    "2964e89112c4e669": {
+      "identity": "b0a6306e2efbdfa9eac95a722483709ef5ecc238175232d8d0ec3e470f02f603",
+      "sha256": "03def6ceeccde848b2daabdc58e3e59aacd9314bc25ffa9fb5dacb1dbc8f4725",
+      "bytes": 41841,
+      "duration": 2.063673
     }
   },
   "status": "complete",
-  "updated": "2026-10-26T06:06:33.674Z"
+  "updated": "2026-10-26T07:21:17.486Z"
 }
