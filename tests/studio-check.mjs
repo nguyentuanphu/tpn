@@ -12,6 +12,7 @@ import crypto from 'crypto';
 import { spawn } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { start, seedPlayers } from './harness.mjs';
+import { PERMS } from '../netlify/lib/admins.mts';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // ---------- a pretend GitHub: blobs, trees, commits and branches in memory ----------
@@ -99,7 +100,7 @@ export function memoryBlobs() {
 // (round R privacy) a clock the tests move on, so every sign-in has a fresh two-step code
 export const testClock = { t: Date.now() };
 const toURL = p => pathToFileURL(p).href;
-export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs(), heldStore = memoryBlobs(), liveStore = memoryBlobs(), familyStore = memoryBlobs(), guardStore = memoryBlobs(), logStore = memoryBlobs(), testerStore = memoryBlobs(), parentAnalyticsStore = memoryBlobs() }) {
+export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs(), heldStore = memoryBlobs(), liveStore = memoryBlobs(), familyStore = memoryBlobs(), guardStore = memoryBlobs(), logStore = memoryBlobs(), testerStore = memoryBlobs(), parentAnalyticsStore = memoryBlobs(), managementDatabase = undefined }) {
   Object.assign(process.env, env);
   const { makeStudio } = await import(toURL(path.join(ROOT, 'netlify/functions/studio.mts')));
   const { makeHello } = await import(toURL(path.join(ROOT, 'netlify/functions/hello.mts')));
@@ -107,7 +108,7 @@ export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs
   const { makeFamily } = await import(toURL(path.join(ROOT, 'netlify/functions/family.mts')));
   const { makeTester } = await import(toURL(path.join(ROOT, 'netlify/functions/tester.mts'))); // (owner, 12 Oct) tester reports
   const now = () => testClock.t, tester = makeTester({ testerStore: async () => testerStore, liveStore: async () => liveStore, guardStore: async () => guardStore, now }), family = makeFamily({ familyStore: async () => familyStore, guardStore: async () => guardStore, now });
-  const studio = makeStudio({ playersStore: async () => players, adminStore: async () => adminStore, heldStore: async () => heldStore, liveStore: async () => liveStore, familyStore: async () => familyStore, guardStore: async () => guardStore, logStore: async () => logStore, testerStore: async () => testerStore, parentAnalyticsStore: async () => parentAnalyticsStore, now }), hello = makeHello({ playersStore: async () => players, botStore: async () => players, guardStore: async () => guardStore }), live = makeLive({ liveStore: async () => liveStore });
+  const studio = makeStudio({ managementDatabase, playersStore: async () => players, adminStore: async () => adminStore, heldStore: async () => heldStore, liveStore: async () => liveStore, familyStore: async () => familyStore, guardStore: async () => guardStore, logStore: async () => logStore, testerStore: async () => testerStore, parentAnalyticsStore: async () => parentAnalyticsStore, now }), hello = makeHello({ playersStore: async () => players, botStore: async () => players, guardStore: async () => guardStore }), live = makeLive({ liveStore: async () => liveStore });
   const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp3': 'audio/mpeg', '.woff2': 'font/woff2' };
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${port}`); let p = decodeURIComponent(url.pathname);
@@ -527,8 +528,8 @@ export async function studioCheck(browser, open) {
       // (owner, 14 Oct AEDT) Setup → Admins: each person's permissions, ticked one by one (da.mi has chosen ones)
       { await pg.evaluate(() => { location.hash = 'admins'; }); await pg.waitForSelector('tr.permrow details', { timeout: 15000 }).catch(() => { });
         await pg.evaluate(() => { const r = [...document.querySelectorAll('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); if (r) { r.querySelector('details').open = true; r.scrollIntoView(); } }); await pg.waitForTimeout(500);
-        const pm = await pg.evaluate(() => { const r = [...document.querySelectorAll('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); return r ? { n: r.querySelectorAll('[data-perm]').length, on: [...r.querySelectorAll('[data-perm]:checked')].map(x => x.dataset.perm), small: [...r.querySelectorAll('.perm')].filter(x => x.getBoundingClientRect().height < 44).length } : null; });
-        if (!pm || pm.n !== 13 || pm.on.join() !== 'pages,releases' || pm.small) bad.push(`online ${w}px admins: the permission ticks are not right: ${JSON.stringify(pm)}`);
+        const pm = await pg.evaluate(() => { const r = [...document.querySelectorAll('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); return r ? { n: r.querySelectorAll('[data-perm]').length, keys: [...r.querySelectorAll('[data-perm]')].map(x => x.dataset.perm).sort(), on: [...r.querySelectorAll('[data-perm]:checked')].map(x => x.dataset.perm), small: [...r.querySelectorAll('.perm')].filter(x => x.getBoundingClientRect().height < 44).length } : null; });
+        if (!pm || pm.n !== Object.keys(PERMS).length || JSON.stringify(pm.keys) !== JSON.stringify(Object.keys(PERMS).sort()) || pm.on.join() !== 'pages,releases' || pm.small) bad.push(`online ${w}px admins: the permission ticks are not right: ${JSON.stringify(pm)}`);
         if (await pg.evaluate(() => document.scrollingElement.scrollWidth > innerWidth + 1)) bad.push(`online ${w}px admins: page scrolls sideways`);
         const emo = await pg.evaluate(SHOWN_EMOJI); if (emo.length) bad.push(`online ${w}px admins: phone emoji shown: ${emo.join(' ')}`);
         await pg.screenshot({ path: path.join(ROOT, 'tests/out', `studio-admins-${w}.png`) }); }

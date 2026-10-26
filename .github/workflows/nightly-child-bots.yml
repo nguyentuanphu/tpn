@@ -40,6 +40,7 @@ jobs:
         run: node -e 'const {COUNT:c,PROFILE:p,DURATION:d}=process.env; if(!/^(10|[1-9])$/.test(c)||!/^(30|[12][0-9]|[1-9])$/.test(d)||!(["chaos-toddler","gentle-explorer","max-competence"].includes(p))) process.exit(1)'
       - name: Install browser dependencies and build TypeScript game
         run: |
+          npm ci --no-audit --no-fund
           cd tests && npm install --no-package-lock --no-save --no-audit --no-fund && npx playwright install --with-deps chromium
           cd .. && node tools/build.mts
       - name: Start local game server

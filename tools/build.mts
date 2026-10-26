@@ -36,6 +36,11 @@ export function strip(src, file = 'file.ts') {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  // Regenerate public source facts in a complete checkout before packaging.
+  // Tiny build fixtures intentionally omit these inputs.
+  if (ROOT === path.resolve(HERE, '..') && fs.existsSync(path.join(ROOT, 'js/games/catalog.ts'))) {
+    execFileSync(process.execPath, [path.join(HERE, 'export-management-catalogue.mts'), ...(CHECK ? ['--check'] : [])], { cwd: ROOT, stdio: 'inherit' });
+  }
   const ts = sources(), outs = ts.map(f => f.replace(/\.ts$/, '.js')), problems = [];
   // a .js committed to git beside its .ts would be two copies of the same file
   let tracked = new Set(); try { tracked = new Set(execFileSync('git', ['-c', 'core.quotePath=false', 'ls-files', '--', ...outs], { cwd: ROOT, encoding: 'utf8' }).split('\n').filter(Boolean)); } catch (e) { }

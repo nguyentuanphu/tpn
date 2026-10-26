@@ -1,5 +1,7 @@
 # Decisions, assumptions and unresolved prerequisites
 
+> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices, deferred finance input, and asked for one active agent. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
+
 This package is authorised design/documentation work. Proposed implementation defaults are recommendations, not claims of owner approval. A future builder must record the selected decision, date, actor and affected tickets before activating dependent behavior. Continue independent work while a prerequisite is unresolved; do not invent access or approval.
 
 | ID | Topic | Recommended design | Status / dependency |

@@ -1,5 +1,7 @@
 # The handbook: understand before building
 
+> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices, deferred finance input, and asked for one active agent. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
+
 ## 1. What we are building
 
 Sparkle Valley has three experiences. The child uses the game to play. A parent uses the website to understand the game. The owner and authorised administrators use Studio to manage it. The proposed work gives Studio a clearer picture of what is happening and a shorter route from a problem to a safe action.

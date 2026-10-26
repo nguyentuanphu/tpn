@@ -1,0 +1,12 @@
+{
+  "capturedAt": "2026-10-26T19:54:10.354Z",
+  "fixture": "Synthetic records; real owner sign-in, Studio routes and UI; no production data",
+  "captures": [
+    "en-390-device.png",
+    "vi-390-device.png",
+    "en-820-device.png",
+    "vi-820-device.png",
+    "en-1440-device.png",
+    "vi-1440-device.png"
+  ]
+}

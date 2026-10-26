@@ -59,6 +59,7 @@ jobs:
           node-version: 22
       - name: Get the checks ready (browser and test server)
         run: |
+          npm ci --no-audit --no-fund
           cd tests && npm ci --no-audit --no-fund && npx playwright install --with-deps chromium
           cd .. && (python3 -m http.server 8765 >/dev/null 2>&1 &)
       - name: Start local synthetic test services

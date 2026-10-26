@@ -297,6 +297,12 @@ const server = http.createServer(async (req, res) => {
     }
     if (!p.startsWith('/studio/api/')) return send(res, 404, 'not found', 'text/plain');
     const api = decodeURIComponent(p.slice(12)); lastSeen = Date.now();
+    if (api.startsWith('management/')) {
+      if (req.method !== 'GET') return send(res, 403, { error: 'Management edits require the signed-in online Studio.' });
+      if (!linked()) return send(res, 503, { error: 'Connect the website and a scoped Studio key in Settings.' });
+      const upstream = await siteApi(api + url.search);
+      return send(res, upstream.status, await upstream.json());
+    }
     if (api === 'sync/status') return send(res, 200, { ...sync, build: folderBuild() });
     if (api === 'sync/start' && req.method === 'POST') { const b = JSON.parse((await readBody(req)).toString() || '{}'); syncFolder(!!b.force); return send(res, 200, { ...sync, build: folderBuild() }); }
     if (api === 'update/check') { try { return send(res, 200, await updateCheck()); } catch (e) { return send(res, 200, { here: HERE, error: e.message }); } }

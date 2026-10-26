@@ -35,6 +35,10 @@ export const CUSTOM = data && typeof data === 'object' ? data : {};
 const LIVE_KEY = 'sv2_live', liveFns = [];
 let LIVE = {}; try { LIVE = JSON.parse(localStorage.getItem(LIVE_KEY) || '{}') || {}; } catch (e) { LIVE = {}; }
 export const onLive = f => liveFns.push(f);
+// The optional management client reads only the receipt metadata, never this public content body.
+// This keeps a fetch that finishes before the game starts counting from losing its application evidence.
+let lastManagementApplication = null;
+export const managementApplication = () => lastManagementApplication;
 // (r81, owner 17 Oct AEDT) the content pages are live too: LIVE.content's sections (Message, Missions, Quiz, Our stories,
 // Villagers, Story characters, Memory Villages, Simple screen, Defaults, Ads settings, photo links) take the place of the
 // same ones in content/custom.json, which stays the fallback for a section Studio never saved live. The copy kept on this
@@ -123,7 +127,15 @@ if (typeof fetch === 'function' && typeof location !== 'undefined' && /^https?:/
   fetch('api/live', { cache: 'no-store' }).then(r => r.ok && /json/.test(r.headers.get('content-type') || '') ? r.json() : null).then(j => {
     if (!j || typeof j !== 'object') return; const was = JSON.stringify(LIVE), wasC = JSON.stringify(LIVE.content || null); LIVE = j; useContent(j.content);
     if (wasC !== JSON.stringify(j.content || null) && inGame && familyRefs().length && (familyCode() || fromExe())) refreshFamilyPhotos().catch(() => { }); // (r81) a photo link that came live
-    try { localStorage.setItem(LIVE_KEY, JSON.stringify(j)); } catch (e) { }
+    let kept = false;
+    try { localStorage.setItem(LIVE_KEY, JSON.stringify(j)); kept = true; } catch (e) { }
+    const m = j.management;
+    if (m && typeof m.scopeKey === 'string' && /^(global|device:[a-z0-9]{12}|feature:[a-z0-9_-]{1,60})$/.test(m.scopeKey) && Number.isSafeInteger(m.revision) && m.revision > 0 && /^[0-9a-f]{64}$/.test(m.effectiveHash || '')) {
+      const stamp = new Date().toISOString();
+      lastManagementApplication = { scopeKey: m.scopeKey, revision: m.revision, effectiveHash: m.effectiveHash,
+        fetchedAt: stamp, appliedAt: kept ? stamp : null, result: kept ? 'applied' : 'rejected', reasonCode: kept ? 'none' : 'storage_failure' };
+      if (typeof dispatchEvent === 'function' && typeof CustomEvent === 'function') dispatchEvent(new CustomEvent('sv-management-config-applied', { detail: lastManagementApplication }));
+    }
     if (JSON.stringify(j) !== was) liveFns.forEach(f => { try { f(); } catch (e) { } });
   }).catch(() => { });
 }

@@ -121,6 +121,7 @@ marketing/source/runvalley.log
 /js/learn.js
 /js/lotus.js
 /js/main.js
+/js/management-telemetry.js
 /js/mictest.js
 /js/net.js
 /js/netgames.js
@@ -164,6 +165,7 @@ marketing/source/runvalley.log
 /js/world.js
 /js/worldedit.js
 /studio/ui/app.js
+/studio/ui/management.js
 /sw.js
 # --- end of tools/build.mts ---
 # --- made by tools/build.mts from .ts files (never committed; do not edit by hand) ---

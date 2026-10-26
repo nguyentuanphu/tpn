@@ -1,37 +1,523 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:sparkle-valley:management:event:v1",
-  "title": "PROPOSED management event; synthetic fixtures only until implemented",
+  "title": "Management event v1: activity hooks implemented; other event kinds reserved until instrumented",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "eventId", "deviceId", "sessionId", "attemptId", "eventName", "occurredAt", "deviceDay", "offsetMinutes", "build", "sourceCommit", "environment", "traffic", "data"],
+  "required": [
+    "schemaVersion",
+    "eventId",
+    "deviceId",
+    "sessionId",
+    "attemptId",
+    "eventName",
+    "occurredAt",
+    "deviceDay",
+    "offsetMinutes",
+    "build",
+    "sourceCommit",
+    "environment",
+    "traffic",
+    "data"
+  ],
   "properties": {
-    "schemaVersion": {"const": 1},
-    "eventId": {"type": "string", "format": "uuid"},
-    "deviceId": {"type": "string", "pattern": "^[a-z0-9]{12}$"},
-    "sessionId": {"type": "string", "pattern": "^[a-z0-9]{16}$"},
-    "attemptId": {"type": "string", "format": "uuid"},
-    "eventName": {"enum": ["activity.started", "activity.completed", "activity.abandoned", "boot.started", "boot.ready", "boot.failed", "story.opened", "story.completed", "connection.attempt", "connection.result", "voice.result", "update.result", "backup.result"]},
-    "occurredAt": {"type": "string", "format": "date-time", "pattern": "Z$"},
-    "deviceDay": {"type": "string", "format": "date"},
-    "offsetMinutes": {"type": "integer", "minimum": -840, "maximum": 840},
-    "build": {"type": "string", "pattern": "^(v[0-9]{1,2}\\.[0-9]{2}|r[0-9]{1,4}(\\.[0-9]{1,2})?)$"},
-    "sourceCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-    "environment": {"enum": ["production", "staging", "local"]},
-    "traffic": {"enum": ["ordinary", "authorised_test", "synthetic_bot"]},
-    "data": {"type": "object", "maxProperties": 5}
+    "schemaVersion": {
+      "const": 1
+    },
+    "eventId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "deviceId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{12}$"
+    },
+    "sessionId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{16}$"
+    },
+    "attemptId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "eventName": {
+      "enum": [
+        "activity.started",
+        "activity.completed",
+        "activity.abandoned",
+        "boot.started",
+        "boot.ready",
+        "boot.failed",
+        "story.opened",
+        "story.completed",
+        "connection.attempt",
+        "connection.result",
+        "voice.result",
+        "update.result",
+        "backup.result"
+      ]
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "deviceDay": {
+      "type": "string",
+      "format": "date"
+    },
+    "offsetMinutes": {
+      "type": "integer",
+      "minimum": -840,
+      "maximum": 840
+    },
+    "build": {
+      "type": "string",
+      "pattern": "^(v[0-9]{1,2}\\.[0-9]{2}|r[0-9]{1,4}(\\.[0-9]{1,2})?)$"
+    },
+    "sourceCommit": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "Null means no verified source provenance. Never substitute an unrelated commit."
+    },
+    "environment": {
+      "enum": [
+        "production",
+        "staging",
+        "local"
+      ]
+    },
+    "traffic": {
+      "enum": [
+        "ordinary",
+        "authorised_test",
+        "synthetic_bot"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "maxProperties": 5
+    },
+    "profiles": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "age"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,64}$"
+          },
+          "age": {
+            "enum": [
+              "little",
+              "big"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 20
+          }
+        }
+      },
+      "description": "Private first-name profile context, only while Analytics and name reporting permit. Server additionally validates Unicode letters."
+    }
   },
   "allOf": [
-    {"if": {"properties": {"eventName": {"const": "activity.started"}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["activityId", "difficulty", "mode"], "properties": {"activityId": {"type": "string", "pattern": "^[a-z0-9_-]{1,32}$"}, "difficulty": {"enum": ["easy", "medium", "hard"]}, "mode": {"enum": ["solo", "local_two", "online"]}}}}}},
-    {"if": {"properties": {"eventName": {"const": "activity.completed"}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["activityId"], "properties": {"activityId": {"type": "string", "pattern": "^[a-z0-9_-]{1,32}$"}}}}}},
-    {"if": {"properties": {"eventName": {"const": "activity.abandoned"}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["activityId", "reason"], "properties": {"activityId": {"type": "string", "pattern": "^[a-z0-9_-]{1,32}$"}, "reason": {"enum": ["closed", "navigation", "cancelled"]}}}}}},
-    {"if": {"properties": {"eventName": {"const": "boot.started"}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["stage"], "properties": {"stage": {"const": "boot"}}}}}},
-    {"if": {"properties": {"eventName": {"const": "boot.ready"}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["stage", "elapsedMs"], "properties": {"stage": {"const": "first_playable"}, "elapsedMs": {"type": "integer", "minimum": 0, "maximum": 600000}}}}}},
-    {"if": {"properties": {"eventName": {"const": "boot.failed"}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["stage", "reasonCode"], "properties": {"stage": {"enum": ["boot", "resources", "world", "first_playable"]}, "reasonCode": {"enum": ["timeout", "resource_missing", "exception", "unsupported"]}}}}}},
-    {"if": {"properties": {"eventName": {"enum": ["story.opened", "story.completed"]}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["storyId"], "properties": {"storyId": {"type": "string", "pattern": "^[a-z0-9_-]{1,40}$"}}}}}},
-    {"if": {"properties": {"eventName": {"const": "connection.attempt"}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["transport"], "properties": {"transport": {"enum": ["direct", "relay"]}}}}}},
-    {"if": {"properties": {"eventName": {"const": "connection.result"}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["transport", "outcome", "elapsedMs"], "properties": {"transport": {"enum": ["direct", "relay"]}, "outcome": {"enum": ["success", "timeout", "rejected", "failed"]}, "elapsedMs": {"type": "integer", "minimum": 0, "maximum": 600000}}}}}},
-    {"if": {"properties": {"eventName": {"const": "voice.result"}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["source", "outcome", "language"], "properties": {"source": {"enum": ["recorded", "family", "device"]}, "outcome": {"enum": ["success", "failed", "cancelled"]}, "language": {"enum": ["en", "vi", "zh", "hi"]}}}}}},
-    {"if": {"properties": {"eventName": {"enum": ["update.result", "backup.result"]}}}, "then": {"properties": {"data": {"type": "object", "additionalProperties": false, "required": ["outcome", "reasonCode"], "properties": {"outcome": {"enum": ["success", "failed", "cancelled"]}, "reasonCode": {"enum": ["none", "timeout", "storage", "network", "invalid", "unsupported", "user_cancelled"]}}}}}}
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "activity.started"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "activityId",
+              "difficulty",
+              "mode"
+            ],
+            "properties": {
+              "activityId": {
+                "type": "string",
+                "pattern": "^[a-z0-9_-]{1,32}$"
+              },
+              "difficulty": {
+                "enum": [
+                  "easy",
+                  "medium",
+                  "hard"
+                ]
+              },
+              "mode": {
+                "enum": [
+                  "solo",
+                  "local_two",
+                  "online"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "activity.completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "activityId"
+            ],
+            "properties": {
+              "activityId": {
+                "type": "string",
+                "pattern": "^[a-z0-9_-]{1,32}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "activity.abandoned"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "activityId",
+              "reason"
+            ],
+            "properties": {
+              "activityId": {
+                "type": "string",
+                "pattern": "^[a-z0-9_-]{1,32}$"
+              },
+              "reason": {
+                "enum": [
+                  "closed",
+                  "navigation",
+                  "cancelled"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "boot.started"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "stage"
+            ],
+            "properties": {
+              "stage": {
+                "const": "boot"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "boot.ready"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "stage",
+              "elapsedMs"
+            ],
+            "properties": {
+              "stage": {
+                "const": "first_playable"
+              },
+              "elapsedMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 600000
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "boot.failed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "stage",
+              "reasonCode"
+            ],
+            "properties": {
+              "stage": {
+                "enum": [
+                  "boot",
+                  "resources",
+                  "world",
+                  "first_playable"
+                ]
+              },
+              "reasonCode": {
+                "enum": [
+                  "timeout",
+                  "resource_missing",
+                  "exception",
+                  "unsupported"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "enum": [
+              "story.opened",
+              "story.completed"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "storyId"
+            ],
+            "properties": {
+              "storyId": {
+                "type": "string",
+                "pattern": "^[a-z0-9_-]{1,40}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "connection.attempt"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "transport"
+            ],
+            "properties": {
+              "transport": {
+                "enum": [
+                  "direct",
+                  "relay"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "connection.result"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "transport",
+              "outcome",
+              "elapsedMs"
+            ],
+            "properties": {
+              "transport": {
+                "enum": [
+                  "direct",
+                  "relay"
+                ]
+              },
+              "outcome": {
+                "enum": [
+                  "success",
+                  "timeout",
+                  "rejected",
+                  "failed"
+                ]
+              },
+              "elapsedMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 600000
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "voice.result"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "outcome",
+              "language"
+            ],
+            "properties": {
+              "source": {
+                "enum": [
+                  "recorded",
+                  "family",
+                  "device"
+                ]
+              },
+              "outcome": {
+                "enum": [
+                  "success",
+                  "failed",
+                  "cancelled"
+                ]
+              },
+              "language": {
+                "enum": [
+                  "en",
+                  "vi",
+                  "zh",
+                  "hi"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "enum": [
+              "update.result",
+              "backup.result"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "outcome",
+              "reasonCode"
+            ],
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "success",
+                  "failed",
+                  "cancelled"
+                ]
+              },
+              "reasonCode": {
+                "enum": [
+                  "none",
+                  "timeout",
+                  "storage",
+                  "network",
+                  "invalid",
+                  "unsupported",
+                  "user_cancelled"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
   ]
 }

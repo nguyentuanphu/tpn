@@ -115,7 +115,7 @@ const SECTIONS = [
   { k: 'home', i: '🏠', en: 'Home', vi: 'Trang chính', pages: ['home'] },
   { k: 'family', i: '💛', en: 'Family', vi: 'Gia đình', pages: ['message', 'missions', 'children', 'album', 'quiz', 'stories', 'villagers', 'plots', 'familycode'] },
   { k: 'game', i: '🎮', en: 'Game', vi: 'Trò chơi', pages: ['releases', 'lab', 'festivals', 'looks', 'path', 'music', 'map', 'photos', 'play', 'voices', 'ads'] },
-  { k: 'players', i: '📊', en: 'Analytics', vi: 'Phân tích', pages: ['players', 'testers'] },
+  { k: 'players', i: '📊', en: 'Analytics', vi: 'Phân tích', pages: ['management', 'managementdevices', 'managementchildren', 'managementattention', 'managementactivities', 'managementactivity', 'managementdevice', 'managementrelease', 'managementoperations', 'managementchanges', 'players', 'testers'] },
   { k: 'setup', i: '⚙️', en: 'Setup', vi: 'Thiết lập', pages: ['publish', 'site', 'check', 'settings', 'admins', 'security', 'accesslog'] }
 ];
 // who is signed in online (round O: each admin has an own account): a viewer sees the Analytics only; the 👥 Admins
@@ -126,11 +126,21 @@ const ONLINE_ONLY = ['admins', 'security', 'accesslog'], OWNER_ONLY = ['security
 // (owner, 14 Oct AEDT) each account has its own permissions (netlify/lib/admins.mts PERMS): a page shows only to those
 // who may open it, the rest of the dashboard follows. The exe on the family computer is the owner's: everything.
 const CAN = k => ROLE() === 'owner' || ((INFO && INFO.me && INFO.me.perms) || []).includes(k);
-const PAGE_NEEDS = { players: 'analytics', testers: 'testers', familycode: 'family', album: 'family', publish: 'publish' };
+const PAGE_NEEDS = { management: 'management.read', managementdevices: 'management.read', managementchildren: 'management.deviceDetail', managementdevice: 'management.deviceDetail', managementattention: 'management.read', managementactivities: 'management.read', managementactivity: 'management.read', managementrelease: 'management.read', managementoperations: 'operations.read', managementchanges: 'management.read', players: 'analytics', testers: 'testers', familycode: 'family', album: 'family', publish: 'publish' };
 const canSee = k => k === 'home' || k === 'admins' ? true : OWNER_ONLY.includes(k) ? ROLE() === 'owner' : CAN(PAGE_NEEDS[k] || 'pages');
-const SEC = () => SECTIONS.map(x => ({ ...x, pages: x.pages.filter(k => (INFO && INFO.online || !ONLINE_ONLY.includes(k)) && canSee(k)) })).filter(x => x.pages.length && (x.k !== 'home' || CAN('pages')));
+const SEC = () => SECTIONS.map(x => ({ ...x, pages: x.pages.filter(k => (INFO && INFO.online || !ONLINE_ONLY.includes(k)) && (!INFO?.managementOnly || k.startsWith('management') || ['admins','security','accesslog'].includes(k)) && canSee(k)) })).filter(x => x.pages.length && (x.k !== 'home' || CAN('pages')));
 // each page: its picture, its name and one line saying what it is for
 const ABOUT = {
+  management: ['📊', 'Management overview', 'Tổng quan quản lý', 'Audience, play, experience and reporting quality', 'Người chơi, hoạt động, trải nghiệm và chất lượng báo cáo'],
+  managementdevices: ['📱', 'Device reporting', 'Báo cáo thiết bị', 'Reporting installations and play history', 'Bản cài đặt gửi báo cáo và lịch sử chơi'],
+  managementchildren: ['👧', 'Children and devices', 'Các con và thiết bị', 'Reported child names linked to each installation', 'Tên bé được báo cáo gắn với từng bản cài đặt'],
+  managementdevice: ['📱', 'Device detail', 'Chi tiết thiết bị', '', ''],
+  managementattention: ['🐞', 'Needs attention', 'Cần xem xét', 'Evidence from tester reports', 'Bằng chứng từ báo cáo người thử'],
+  managementactivities: ['🎮', 'Activity catalogue', 'Danh mục hoạt động', 'Game and website source facts', 'Thông tin nguồn game và trang web'],
+  managementactivity: ['🎮', 'Activity detail', 'Chi tiết hoạt động', '', ''],
+  managementrelease: ['🆕', 'Release evidence', 'Bằng chứng phát hành', 'Reporting by originating build', 'Báo cáo theo phiên bản phát sinh'],
+  managementoperations: ['🌐', 'Operations', 'Vận hành', 'Provider configuration and verified observations', 'Cấu hình nhà cung cấp và quan sát đã xác minh'],
+  managementchanges: ['📜', 'Configuration changes', 'Thay đổi cấu hình', 'Revisioned controls and device acknowledgements', 'Điều khiển theo phiên bản và xác nhận từ thiết bị'],
   home: ['🏠', 'Home', 'Trang chính', '', ''],
   message: ['💌', 'Message', 'Lời nhắn', 'A note the children see when they start playing', 'Lời nhắn các con thấy khi bắt đầu chơi'],
   missions: ['📝', 'Family missions', 'Nhiệm vụ gia đình', 'Real-life jobs the children see in the game (“Help set the table”); a grown-up ticks them on the device', 'Việc ngoài đời các con thấy trong game (“Giúp dọn bàn ăn”); người lớn đánh dấu trên máy'],
@@ -164,7 +174,7 @@ const ABOUT = {
 };
 const sectionOf = k => SEC().find(x => x.k === k || x.pages.includes(k)) || SEC()[0];
 // #family → the Family cards; #family/quiz (or the old #quiz) → that page
-const route = () => { const h = location.hash.slice(1), [a, b] = h.split('/'); if (b && ABOUT[b]) return b; if (ABOUT[a] || SECTIONS.some(x => x.k === a)) return a; return 'home'; };
+const route = () => { const h = location.hash.slice(1).split('?')[0], [a, b] = h.split('/'); if (b && ABOUT[b]) return b; if (ABOUT[a] || SECTIONS.some(x => x.k === a)) return a; return 'home'; };
 let cur = route();
 const go = k => { if (k === cur || !leaveOk()) return; cur = k; const sec = sectionOf(k); location.hash = sec.k === k || sec.pages.length === 1 ? sec.k : sec.k + '/' + k; render(); };
 // the bar at the top: Publish when something is waiting, reload, language
@@ -190,9 +200,9 @@ async function load(force) {
   if (LOADED && !force) return;
   if (!DEVNAME) DEVNAME = await import(GAME + 'js/content/devname.js').catch(() => null);
   INFO = await api('info'); document.body.classList.toggle('online', !!INFO.online);
-  CONTENT = INFO.ok ? await api('content') : {};
+  CONTENT = INFO.ok && !INFO.managementOnly ? await api('content') : {};
   // (r81) what the devices really get: the content pages' live sections win over custom.json
-  if (INFO.ok && liveOn()) { try { const L = await api('live/content'); for (const [k, v] of Object.entries((L && L.content) || {})) if (v && typeof v === 'object') CONTENT[k] = v; } catch (e) { } }
+  if (INFO.ok && !INFO.managementOnly && liveOn()) { try { const L = await api('live/content'); for (const [k, v] of Object.entries((L && L.content) || {})) if (v && typeof v === 'object') CONTENT[k] = v; } catch (e) { } }
   LOADED = true;
 }
 const drawSection = (P, sec) => {
@@ -216,7 +226,7 @@ async function render(force?: boolean) {
     if (sec.k === cur && sec.pages.length > 1 && !ABOUT[sec.k]) { crumb.innerHTML = ''; drawSection(P, sec); KEPT = contentNow(); HASH = location.hash; window.scrollTo(0, 0); return; }
     crumb.innerHTML = sec.pages.length > 1 && cur !== sec.k ? `<button class="back">← ${sec.i} ${T(sec.en, sec.vi)}</button>` : '';
     if (crumb.firstElementChild instanceof HTMLElement) crumb.firstElementChild.onclick = () => go(sec.k);
-    const page = cur; await PAGES[page](P); if (sequence !== renderSequence || cur !== page) return; explainPage(P, cur); foldPage(P, cur); refold(P, page); KEPT = contentNow(); HASH = location.hash; paintState(); window.scrollTo(0, 0);
+    const page = cur; await PAGES[page](P); if (sequence !== renderSequence || cur !== page) return; explainPage(P, cur); if (!cur.startsWith('management')) { foldPage(P, cur); refold(P, page); } KEPT = contentNow(); HASH = location.hash; paintState(); window.scrollTo(0, 0);
   } catch (e) { if (sequence === renderSequence && !e.signin) P.innerHTML = `<div class="card badtxt">${esc(e.message)}</div>`; }
 }
 
@@ -298,6 +308,21 @@ function explainPage(P, page) {
   const box = document.createElement('details'); box.className = 'studio-help'; box.innerHTML = `<summary>${T('How this section works', 'Cách dùng mục này')}</summary><p>${T2(text)}</p>`; P.prepend(box);
 }
 const PAGES: Record<string, (P: HTMLElement) => unknown> = {};
+const MANAGEMENT_PAGES = { management: 'overview', managementdevices: 'devices', managementchildren: 'children', managementdevice: 'device', managementattention: 'attention', managementactivities: 'activities', managementactivity: 'activity', managementrelease: 'release', managementoperations: 'operations', managementchanges: 'changes' } as const;
+for (const [page, kind] of Object.entries(MANAGEMENT_PAGES)) PAGES[page] = async P => {
+  const { renderManagement } = await import('./management.js');
+  const query = Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''));
+  const { id, ...filters } = query;
+  return renderManagement(P, { api, T, kind, id, query: filters, can: permission => !INFO.online && ['management.configure','management.triage','operations.run'].includes(permission) ? false : CAN(permission),
+    go: (next, nextId, nextQuery) => {
+      if (!leaveOk()) return;
+      const target = Object.keys(MANAGEMENT_PAGES).find(k => MANAGEMENT_PAGES[k] === next);
+      const q = new URLSearchParams({ ...nextQuery, ...(nextId ? { id: nextId } : {}) });
+      const hash = 'players/' + target + (q.size ? '?' + q : '');
+      if (location.hash.slice(1) === hash) void render(); else location.hash = hash;
+    } });
+}
+
 // ---------- home ----------
 PAGES.home = async P => {
   const c = CONTENT;
@@ -1847,7 +1872,10 @@ PAGES.security = async P => {
       try { await api('trusted/forget', { id: tr.dataset.tid }); toast(T('Forgotten.', 'Đã quên.'), 'ok'); drawTrusted(); } catch (e) { fail(e); } }); };
   drawTrusted();
   $('#allout').onclick = async () => { if (!confirm(T('Sign everyone out, on every device? You sign in again yourself.', 'Đăng xuất mọi người trên mọi máy? Bạn sẽ đăng nhập lại.'))) return; try { await api('security/signout-all', {}); signIn(); } catch (e) { fail(e); } };
-  $('#kmake').onclick = async () => { try { const r = await api('keys/make', { label: $('#klabel').value }); $('#kout').innerHTML = `${T('Copy it now (it is not shown again):', 'Sao chép ngay (sẽ không hiện lại):')}<br><code style="user-select:all;word-break:break-all">${esc(r.key)}</code>`; } catch (e) { fail(e); } };
+  const grants = document.createElement('fieldset');
+  grants.innerHTML = `<legend>${T('Optional management access for this key', 'Quyền quản lý tùy chọn cho khóa này')}</legend>${['management.read', 'management.deviceDetail', 'operations.read'].map(k => `<label class="chk"><input type="checkbox" data-management-key value="${k}"> ${esc(T2((INFO.perms?.[k] || ['', k, k]).slice(1)))}</label>`).join('')}`;
+  $('#kmake').before(grants);
+  $('#kmake').onclick = async () => { try { const r = await api('keys/make', { label: $('#klabel').value, perms: [...document.querySelectorAll<HTMLInputElement>('[data-management-key]:checked')].map(x => x.value) }); $('#kout').innerHTML = `${T('Copy it now (it is not shown again):', 'Sao chép ngay (sẽ không hiện lại):')}<br><code style="user-select:all;word-break:break-all">${esc(r.key)}</code>`; } catch (e) { fail(e); } };
   P.querySelectorAll<HTMLInputElement>('[data-krm]').forEach(b => b.onclick = async () => { if (!confirm(T('Remove this key? That computer can no longer reach the website.', 'Xóa khóa này? Máy đó sẽ không đến được trang web nữa.'))) return; try { await api('keys/remove', { id: b.closest<HTMLInputElement>('tr').dataset.id }); PAGES.security(P); } catch (e) { fail(e); } });
 };
 // ---------- 📜 Access log (online, the owner; round R privacy): the last 200 ----------
@@ -1879,7 +1907,7 @@ function signIn() {
 }
 // (the browser's Back button, or a typed address: a page with changes not saved asks first, and stays if you say no)
 let HASH = location.hash;
-window.addEventListener('hashchange', () => { const k = route(); if (k === cur) { HASH = location.hash; return; } if (!leaveOk()) { history.replaceState(null, '', HASH || '#'); return; } HASH = location.hash; cur = k; render(); });
+window.addEventListener('hashchange', () => { const k = route(); if (k === cur) { const changed = HASH !== location.hash; HASH = location.hash; if (changed && k.startsWith('management')) render(); return; } if (!leaveOk()) { history.replaceState(null, '', HASH || '#'); return; } HASH = location.hash; cur = k; render(); });
 // (owner, 12 Oct) the exe updates itself: a banner when GitHub has a newer Sparkle Studio; "Update now" swaps it in
 async function checkUpdate(manual) {
   if (!INFO || INFO.online) return null;

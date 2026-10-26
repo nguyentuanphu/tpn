@@ -1,5 +1,7 @@
 # Sparkle Valley: Studio management foundation
 
+> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices, deferred finance input, and asked for one active agent. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
+
 Written 26 October 2026, Australia/Sydney (AEDT). Source baseline: `ac76cf6097a8071bf2da4be90fe81fd0af8201d6`, game and Studio `v1.01`.
 
 **Purpose:** give the owner, a new developer and a future AI the same understandable, traceable instructions for connecting game, website, Studio and business operations. This package specifies a proposed management expansion. It does not implement that expansion or authorise a live release.

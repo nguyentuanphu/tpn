@@ -1,0 +1,43 @@
+name: Management PostgreSQL integration
+on:
+  pull_request:
+    paths:
+      - 'netlify/lib/management/**'
+      - 'tests/management/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/management-postgres.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: management_ci_test
+          POSTGRES_USER: postgres
+          # Ephemeral synthetic CI service only; never a production credential.
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d management_ci_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund
+      - name: Exercise real SQL transactions with synthetic records
+        env:
+          MANAGEMENT_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/management_ci_test
+        run: node tests/management/postgres-integration.mjs

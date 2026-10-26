@@ -1,5 +1,7 @@
 # Ordered implementation tickets
 
+> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices, deferred finance input, and asked for one active agent. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
+
 This is a specification, not completed product work. Build in dependency order. Ticket IDs are referenced by the data and metric registers. No ticket may infer a missing datum, change save identity, weaken a check, publish an unreviewed guide, or bypass the owner's deployment gate.
 
 ## Common definition of done

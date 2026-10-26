@@ -55,6 +55,7 @@ jobs:
       - name: Get the checks ready (browser and test server)
         run: |
           # tests/package-lock.json points playwright at a folder on the Claude machines: install from package.json
+          npm ci --no-audit --no-fund
           cd tests && npm install --no-package-lock --no-save --no-audit --no-fund && npx playwright install --with-deps chromium
           cd .. && (python3 -m http.server 8765 >/dev/null 2>&1 &)
 

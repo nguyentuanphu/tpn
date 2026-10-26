@@ -1,1 +1,1 @@
-{"name":"sparkle-valley-tests","private":true,"type":"module","dependencies":{"playwright":"1.56.1"},"devDependencies":{"@netlify/blobs":"10.7.13","@types/node":"22.20.5","@types/three":"0.160.0","typescript":"5.9.3"}}
+{"name":"sparkle-valley-tests","private":true,"type":"module","dependencies":{"playwright":"1.56.1"},"devDependencies":{"@netlify/blobs":"10.7.13","@types/node":"22.20.5","@types/pg":"8.15.5","@types/three":"0.160.0","typescript":"5.9.3"}}

@@ -1,0 +1,52 @@
+/* Private management pages reuse Studio's existing type, colour and shell tokens. */
+.mg-root { min-width: 0; }
+.mg-root h3, .mg-root h4, .mg-root p, .mg-root dd { overflow-wrap: anywhere; }
+.mg-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+.mg-nav button, .mg-root button, .mg-root input, .mg-root select { min-height: 44px; }
+.mg-nav .btn { white-space: normal; }
+.mg-filters { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+.mg-filters label { display: flex; flex: 1 1 140px; flex-direction: column; gap: 5px; min-width: 0; }
+.mg-filters input, .mg-filters select { width: 100%; min-width: 0; box-sizing: border-box; }
+.mg-filters .mg-filter-search { flex-basis: 240px; }
+.mg-content { min-height: 280px; }
+.mg-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,240px),1fr)); gap: 12px; }
+.mg-grid > .card { margin: 0 0 12px; min-width: 0; }
+.mg-card { display: flex; flex-direction: column; align-items: flex-start; }
+.mg-card h3, .mg-metric h3 { font-size: 18px; margin-top: 0; }
+.mg-card > button { margin-top: auto; }
+.mg-value { display: block; max-width: 100%; font-size: clamp(22px,4vw,32px); line-height: 1.25; overflow-wrap: anywhere; margin-bottom: 8px; }
+.mg-badge { display: inline-block; font-size: 13px; font-weight: 700; border: 1px solid var(--ok,#1f7a45); color: var(--ok,#1f7a45); border-radius: 8px; padding: 3px 8px; background: var(--card,#fff); }
+.mg-badge.mg-watch { color: #795200; border-color: #ad7900; }
+.mg-badge.mg-bad { color: var(--bad,#a5242c); border-color: var(--bad,#a5242c); }
+.mg-facts { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,200px),1fr)); gap: 10px 20px; margin: 12px 0; }
+.mg-facts > div { min-width: 0; }
+.mg-facts dt { font-size: 13px; font-weight: 600; color: var(--soft,#62576d); }
+.mg-facts dd { margin: 3px 0 0; }
+.mg-provenance h3 { font-size: 17px; margin-top: 0; }
+.mg-provenance summary, .mg-root details summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; }
+.mg-device h3 { margin: 0 0 8px; }
+.mg-device .mg-children { margin: 8px 0; }
+.mg-id { display: block; overflow-wrap: anywhere; white-space: normal; font-size: 13px; margin: 10px 0; color: var(--soft,#62576d); }
+.mg-device button { margin-top: 6px; }
+.mg-child { padding: 14px; border: 1px solid var(--line,#ddd); border-radius: 12px; }
+.mg-child h4 { margin: 0 0 10px; font-size: 17px; }
+.mg-loading { min-height: 150px; display: flex; align-items: center; }
+.mg-error { border-color: var(--bad,#a5242c); }
+.mg-error details p { white-space: normal; }
+.mg-lookup { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.mg-lookup label { flex: 1 1 200px; min-width: 0; }
+.mg-lookup input { width: 100%; box-sizing: border-box; }
+.mg-list { display: grid; gap: 0; }
+@media (max-width: 600px) {
+  .mg-nav .btn { flex: 1 1 44%; padding: 10px 8px; }
+  .mg-filters label { flex-basis: 44%; }
+  .mg-filters .mg-filter-search { flex-basis: 100%; }
+  .mg-filters > button { width: 100%; }
+  .mg-grid { grid-template-columns: 1fr; }
+  .mg-facts { grid-template-columns: 1fr; }
+  .mg-device button { width: 100%; }
+}
+
+.mg-editor label { display: block; margin: 12px 0; }
+.mg-editor textarea, .mg-editor select { width: 100%; box-sizing: border-box; }
+.mg-editor textarea[name=configBody] { font-family: monospace; font-size: 14px; }

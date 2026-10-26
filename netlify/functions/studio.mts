@@ -14,6 +14,11 @@
 // log (netlify/lib/accesslog.mts). "Sign everyone out" counts a generation up, and every cookie and exe key is
 // signed with it. Family photos live in the private store (netlify/lib/family.mts), never in GitHub.
 import crypto from 'crypto';
+import studioVersion from '../../studio/version.json' with { type: 'json' };
+import { managementService } from '../lib/management/runtime.mts';
+import { managementHttp, managementFailure } from '../lib/management/http.mts';
+import { createManagementReadService } from '../lib/management/read.mts';
+import { loadManagementCatalogue } from '../lib/management/catalogue.mts';
 import core from '../../studio/core.cts';
 import type { Store } from '../lib/family-devices.mts';
 import { report, inbox, setLabel } from '../lib/players.mts';
@@ -74,7 +79,7 @@ export const heldOn = S => ({
 export const familyOn = F => ({ where: 'site', put: (n, b) => family.put(F, n, b), get: n => family.get(F, n), remove: n => family.remove(F, n), code: () => family.code(F), newCode: () => family.newCode(F) });
 const isJpeg = b => b && b.length > 3 && b[0] === 0xff && b[1] === 0xd8;
 
-export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, heldStore = heldBlobs, liveStore = liveBlobs, familyStore = familyBlobs, guardStore = guardBlobs, logStore = logBlobs, testerStore = testerBlobs, parentAnalyticsStore = parentAnalyticsBlobs, now = () => Date.now() } = {}) => { const handle = async (req, ctx, out) => {
+export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, heldStore = heldBlobs, liveStore = liveBlobs, familyStore = familyBlobs, guardStore = guardBlobs, logStore = logBlobs, testerStore = testerBlobs, parentAnalyticsStore = parentAnalyticsBlobs, managementDatabase: managementDb = undefined, now = () => Date.now() } = {}) => { const handle = async (req, ctx, out) => {
   const url = new URL(req.url), p = url.pathname, pw = env('STUDIO_PASSWORD'), post = req.method === 'POST';
   if (!pw) return json({ error: 'The online Studio is not set up yet: add STUDIO_PASSWORD in Netlify (Site configuration → Environment variables), then deploy again.', setup: true }, 503);
   const A: Store & { set(key: string, value: string): Promise<unknown> } = await adminStore(), gen = +(await A.get('gen').catch(() => 0)) || 0, t = now();
@@ -144,7 +149,7 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
   if (!me && xk) {
     const G = await guardStore(), ipk = 'ip/' + await ipKey(G, ipOf(req, ctx));
     if (await locked(G, [ipk], t)) return json({ error: 'Too many wrong tries: wait 15 minutes.' }, 429);
-    const k = await admins.fromKey(A, xk, gen); if (k) me = { name: 'exe:' + k.label, role: 'exe' };
+    const k = await admins.fromKey(A, xk, gen); if (k) me = { name: 'exe:' + k.label, role: 'exe', perms: k.perms || [] };
     else { await failed(G, [ipk], t); return json({ error: 'That Studio key is not right, or was removed: make a new one online (Setup → Security) and put it in Settings.', signin: true }, 401); }
   }
   if (!me) return json({ error: 'Please sign in.', signin: true }, 401);
@@ -163,6 +168,16 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
   const route = p.startsWith('/studio/content/') ? 'file' : decodeURIComponent(p.slice('/studio/api/'.length)), asked = route.startsWith('file/') && !post ? 'info' : route;
   if (!admins.allowed(me, asked, post)) { const need = admins.needs(asked, post), P = admins.PERMS[need];
     return json({ error: P ? `Your account may not do that. Ask the owner for “${P[1]}” (Setup → Admins).` : 'Only an owner can do that.', need }, 403); }
+  if (route === 'info' && !post && !env('GITHUB_TOKEN')) return json({ ok: true, online: true, managementOnly: true,
+    studio: studioVersion.studio, version: studioVersion.studio, me, perms: admins.PERMS, conf: { github: false, players: true }, waiting: 0, unpublished: false });
+  if (route.startsWith('management/')) {
+    const canReadReports = admins.allowed(me, 'testers', false);
+    try { return await managementHttp(req, me, { log, catalogue: () => loadManagementCatalogue().entries,
+      reads: createManagementReadService({ playersStore, parentAnalyticsStore,
+        ...(canReadReports ? { testerStore } : {}),
+        botStore: store('bot-players'), catalogue: () => loadManagementCatalogue().entries, now }),
+      service: managementService(liveStore, managementDb) }); } catch (error) { return managementFailure(error); }
+  }
   const body = async () => post ? await req.json().catch(() => ({})) : {};
   if (p === '/studio/api/whoami') return json(me);
   if (p.startsWith('/studio/api/admins/')) {
@@ -189,7 +204,7 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
   // (round R privacy) Sign everyone out: every cookie and every exe key made so far stops working
   if (p === '/studio/api/security/signout-all' && post) { await A.set('gen', String(gen + 1)); await log(me.name, me.role, 'signout-all'); return json({ ok: true }, 200, setCookie('')); }
   if (p === '/studio/api/keys/list') return json({ keys: await admins.listKeys(A) });
-  if (p === '/studio/api/keys/make' && post) { const b = await body(), k = await admins.makeKey(A, b.label, me.name, gen); await log(me.name, me.role, 'key-made', String(b.label || '')); return json({ key: k }); }
+  if (p === '/studio/api/keys/make' && post) { const b = await body(), k = await admins.makeKey(A, b.label, me.name, gen, b.perms); await log(me.name, me.role, 'key-made', String(b.label || '')); return json({ key: k }); }
   if (p === '/studio/api/keys/remove' && post) { const b = await body(); await log(me.name, me.role, 'key-removed'); return json(await admins.removeKey(A, b.id)); }
   if (p === '/studio/api/log') { tidy(await guardStore(), t).catch(() => { }); return json({ entries: await accessLog.list(await logStore()) }); }
   // (round R privacy) the family photos and the family code: the private store, never GitHub
@@ -206,15 +221,18 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
   // (r81, owner 17 Oct AEDT) the content pages (Message, Missions, Quiz, Stories, Villagers, Defaults…): live at once too,
   // only the sections sent change; needs "Change pages" (admins.needs), and SparkleStudio.exe's key may send them
   if (p === '/studio/api/live/content') {
-    if (!post) return json(await readLiveContent(await liveStore()));
+    if (post && await (await liveStore()).get('management-live', { type: 'json' })) return json({ error: 'Revisioned configuration is active. Use Analytics → Configuration changes to save safely.' }, 409);
+    if (!post) { const S = await liveStore(), projected = await S.get('management-live', { type: 'json' }); return json(projected ? { content: projected.content || {}, at: projected.contentAt } : await readLiveContent(S)); }
     try { const v = await saveLiveContent(await liveStore(), await body(), me.name); return json({ ok: true, at: v.at, content: v.content }); }
     catch (e) { if (!(e instanceof LiveError)) throw e;
       return json({ error: e.why === 'big' ? `Too much to go live at once (${e.n} KB; 200 KB at most): make the stories or the quiz shorter, then Save again.` : `Some words are too long to go live (${LIVE_PART[e.where] || e.where}: ${e.n} letters at most): make them shorter, then Save again.` }, 400); }
   }
   if (p === '/studio/api/live') {
+    if (post && await (await liveStore()).get('management-live', { type: 'json' })) return json({ error: 'Revisioned configuration is active. Use Analytics → Configuration changes to save safely.' }, 409);
     const S = await liveStore();
     if (!post) {
-      const v = await readLive(S);
+      const projected = await S.get('management-live', { type: 'json' });
+      const v = projected ? { releases: projected.releases, festivals: projected.festivals, at: projected.at } : await readLive(S);
       return json(admins.allowed(me, 'bot/run', true)
         ? { ...v, releases: { ...v.releases, nightlyBots: await S.get('bot-schedule', { type: 'json' }).catch(() => null) || undefined } }
         : v);
@@ -241,7 +259,7 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
   if (p === '/studio/api/players/label' && post) { const b = await body(); return json({ ok: await setLabel(await playersStore(), b.id, b.label) }); }
     // Parent website analytics (privacy-first, consent-gated, no PII)
     if (p === '/studio/api/parent-analytics') {
-      if (!admins.allowed(me, 'analytics', false)) return json({ error: 'Analytics permission required.' }, 403);
+      if (!admins.allowed(me, 'parent-analytics', false)) return json({ error: 'Analytics permission required.' }, 403);
       const S = await parentAnalyticsStore();
       const days = 30;
       const out: any = { days: [], totals: { totalEvents: 0, pageViews: {}, actionClicks: {}, linkClicks: 0, scrollMilestones: {}, activeTimeTotalSec: 0, playConversions: 0, languages: {}, devices: {} } };
