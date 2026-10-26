@@ -48,7 +48,7 @@ const check = async (name, fn) => {
   const limit = new Promise((_, no) => { timer = setTimeout(() => no(new Error(`did not finish within ${CHECK_LIMIT / 60000} min (stopped so the later checks still run)`)), CHECK_LIMIT); });
   try { const running = fn(); running.catch(() => { }); const note = await Promise.race([running, limit]); results.push([name, true, note || '']); console.log(`✅ ${name} (${((Date.now() - t0) / 1000).toFixed(0)}s) ${note || ''}`); }
   catch (e) {
-    results.push([name, false, e.message]); console.log(`❌ ${name}: ${e.message}`);
+    const detail=String(e.message||e).replace(/\s+/g,' ').trim();results.push([name,false,detail]);console.log(`❌ ${name}: ${detail}`);
     // a picture of what was on screen when it failed (out/fail-<check>.png)
     try { const pg = b.contexts().flatMap(c => c.pages()).pop(); if (pg) await pg.screenshot({ path: `out/fail-${name}.png`, timeout: 10000 }); } catch (e2) { }
   }
@@ -691,6 +691,8 @@ await check('voicepack', async () => {
   ok(!errs.length, errs.join(' | '));
   return `first open downloads with a small bar (${first.map(x => '"' + x + '"').slice(0, 2).join(' → ')} … "${first[first.length - 1]}"), the next open shows and downloads nothing, and files the phone lost are fetched again`;
 });
+
+await check('folkplay', async () => (await import('./folk-court-browser.mts')).folkCourtBrowserCheck(b));
 
 await check('horseplay', async () => (await import('./horse-browser.mts')).horseBrowserCheck(b));
 

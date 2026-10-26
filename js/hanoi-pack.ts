@@ -2,7 +2,7 @@
 export const HANOI_ROOT='/voices/fpt-leminh-v1/';
 export const HANOI_CACHE='sv-voices-fpt-leminh-v1';
 export type HanoiManifest={schema:1;provider:'FPT Neo';model:'FPT.AI-VITs';voice:'leminh';language:'vi';signature:string;bytes:number;lines:Record<string,{bytes:number;sha256:string}>};
-export type HanoiProgress={state:'loading'|'ready'|'waiting'|'nostore';done:number;total:number;bytes:number;provider:'Lê Minh'};
+export type HanoiProgress={state:'loading'|'ready'|'waiting'|'nostore';done:number;total:number;bytes:number;provider:'Lê Minh';known?:boolean};
 const valid=(m:HanoiManifest)=>m?.schema===1&&m.provider==='FPT Neo'&&m.model==='FPT.AI-VITs'&&m.voice==='leminh'&&m.language==='vi'&&!!m.lines&&Object.entries(m.lines).every(([id,l])=>/^[a-f0-9-]{8,40}$/.test(id)&&l.bytes>0&&/^[a-f0-9]{64}$/.test(l.sha256));
 export function createHanoiPack({fetcher=fetch,storage=globalThis.caches,allowed=():boolean=>false,online=()=>navigator.onLine!==false,emit=(_p:HanoiProgress)=>{},pause=(ms:number)=>new Promise<void>(r=>setTimeout(r,ms)),baseURL=()=>location.href}={}){
  let manifest:HanoiManifest|null=null,loading:Promise<HanoiManifest|null>|null=null,job:Promise<number>|null=null,storageFailed=false;
@@ -28,10 +28,10 @@ export function createHanoiPack({fetcher=fetch,storage=globalThis.caches,allowed
   if(job)return job;
   job=(async()=>{
    const m=await load();if(!m)return 0;storageFailed=false;const ids=Object.keys(m.lines),total=ids.length;let done=0;
-   const notify=(state:HanoiProgress['state'])=>emit({state,done,total,bytes:m.bytes,provider:'Lê Minh'});
+   const notify=(state:HanoiProgress['state'],known=false)=>emit({state,done,total,bytes:m.bytes,provider:'Lê Minh',known});
    let cache:Cache;try{cache=await storage.open(HANOI_CACHE);}catch{notify('nostore');return 0;}
    const have=new Set((await cache.keys()).map(r=>r.url));
-   const missing=ids.filter(id=>!have.has(new URL(url(m,id),baseURL()).href));done=total-missing.length;notify(done===total?'ready':'loading');
+   const missing=ids.filter(id=>!have.has(new URL(url(m,id),baseURL()).href));done=total-missing.length;notify(done===total?'ready':'loading',done===total);
    for(let i=0;i<missing.length;i+=3){
     if(!allowed()||!online())break;
     await Promise.all(missing.slice(i,i+3).map(async id=>{const u=url(m,id);if(await audio(u)&&await cache.match(u))done++;}));

@@ -18,6 +18,11 @@
     "../js/games/horse-session.ts",
     "./horse-rules.mts",
     "./horse-session.mts",
-    "./horse-browser.mts"
+    "./horse-browser.mts",
+    "../js/games/folk-court.ts",
+    "../js/games/folk-court-rules.ts",
+    "../js/games/pending-vietnam.ts",
+    "./folk-court-browser.mts",
+    "./folk-court-rules.mts"
   ]
 }

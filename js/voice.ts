@@ -437,7 +437,11 @@ try{navigator.connection?.addEventListener('change',resumeHanoi);}catch{}
 export async function chooseVietnamesePack(choice:string){settings.voiceViVariant=choice==='leminh'?'leminh':'standard';saveSettings();resumeHanoi();}
 export async function hanoiPackInfo(){const m=await(await hanoiPack()).load();return m?{bytes:m.bytes,lines:Object.keys(m.lines).length}:null;}
 export async function downloadHanoiPack(){settings.voiceViVariant='leminh';settings.packCell=true;saveSettings();return(await hanoiPack()).download();}
-export async function previewHanoiVoice(){hush();const my=seq;await waitPack(['vi']);return playPack('vi','Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.',my,true);}
+export async function previewHanoiVoice(){
+  ++previewRequest;previewSlot=null;hush();const my=seq,ticket={};activeSpeech.add(ticket);told();
+  try{await waitPack(['vi']);return await playPack('vi','Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.',my,true);}
+  finally{activeSpeech.delete(ticket);told();}
+}
 
 // a grown-up's answer to "download the rest on mobile data?" (js/packbar.js, Grown-ups)
 export const allowMobilePack = yes => voicePackMod().then(m => {m.allowMobilePack(yes);if(yes)resumeHanoi();}).catch(() => { });

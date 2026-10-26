@@ -18,9 +18,9 @@ New feature logic is TypeScript; the entire legacy repository has not been conve
 
 ## Verification and failures
 
-Latest completed exhaustive GitHub run: [40256019376](https://github.com/nguyentuanphu/tpn/actions/runs/40256019376), exact runtime **deb6eba06**, **236/237**. Its only failure was voicecover for turtle clips, before the recording jobs finished. The clips have since arrived and local coverage is zero missing. This does **not** replace a full run on the latest candidate.
+Latest completed exhaustive GitHub run: [40267531199](https://github.com/nguyentuanphu/tpn/actions/runs/40267531199), exact head **bed1f1672**, **237/238**. Only hanoivoice failed, both initially and alone. Reproduced locally: the concurrent default download overwrote the completed Lê Minh progress label. The fix tracks both providers independently; the stronger regression requires a default loading event after optional completion and retains both labels. Its first local follow-up passed hanoivoice/voicebackground/types3/3; latest rapid-preview follow-up also passes: hanoivoice108s, voicebackground104s, types23s (163 explicit/49 server and Studio),3/3.
 
-**Passed only on a second try in that run:** `ownerreportedphonevi` (screen assertion), `testerreport` (freeze report not detected on the first attempt). Keep both in the final report. Official code map from **ab5cb1293** collected for that exact run. Bot-pushed follow-up runs marked action_required did not execute tests and are not passes.
+**Passed only on a second try:** filmmusic in run40267531199; ownerreportedphonevi and testerreport in prior run40256019376. Keep all in the final report. Official code map from40267531199 collected fromed1103d94. Its generated metadata names23084a2d (the bot commit pushed during the run); the run itself testedbed1f1672. This mismatch is disclosed, not treated as final exact-head evidence. Bot-pushed runs marked action_required did not execute tests and are not passes.
 
 Local targeted checks pass: games (206), under-five adventure coverage, a11y and solid collision; room-startup cancellation; Studio → public website → game festival sync, both Studio controls, all-off and cached-off outage handling. First festival integration caught an annual override being removed by an unrelated save; source fixed, subsequent run passed. Seven focused festival/turtle units pass. The prior 231/235 full run's four failures are fixed and pass in the newer GitHub run.
 
@@ -30,7 +30,7 @@ AI review is **unfinished** (usage/time exhausted; a green wrapper is not an AI 
 
 ## Remaining before deployment
 
-1. Repair six inaccurate folk prototypes: Cướp Cờ, Đánh Đáo, Ném Còn, Kéo Cưa Lừa Xẻ, Mèo Đuổi Chuột and Đua Thuyền.
+1. Six folk repairs now pass actual gameplay in both age modes,300 units/types and36 reviewed bilingual/device layouts; record/package their new lines, verify final source on GitHub. Corrected ribbon captures have been retaken and reviewed. See traditional-game evidence.
 2. Cờ Cá Ngựa repair now passes local rules/real four-seat transport/playable-board/layout checks; collect its new recordings and verify it on GitHub. Shared multiplayer validation/renderers for Snakes, Ô Ăn Quan, Kéo Co and Family Quiz remain pending.
 3. Complete chosen-voice handling for Vietnamese words inside English recordings and rapid preview switching; then complete website editorial/source consistency review against the final game content. Its gate is still red; do not blindly record a reviewed lock.
 4. Finish an exhaustive GitHub run on the resulting source, fix every red check, collect its official code map, and keep retries visible.
