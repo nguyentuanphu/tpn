@@ -1577,6 +1577,8 @@ await check('testerrewards', async () => {
   return 'on phone, tablet and computer: counted fixed list and quiet coins (more for a spoken note), the Silver Ladybird on the shirt (and in the look friends see), the tester hat, backpack and cape, five stickers, the week\'s star by the name, and the Tester\'s Corner';
 });
 
+await check('festivalsync', async () => (await import('./festival-sync.mts')).festivalSyncCheck(b));
+
 await check('festcal', async () => {
   // (round R, owner) the festival calendar: real dates, 3 weeks of build-up that grows each week, two festivals at once
   // in their own places, quiet days only a few days before, the day's timetable, Halloween trick-or-treat and keepsake
@@ -6378,6 +6380,8 @@ await check('ownerhearts', async () => {
   ok(!P.errors.length,P.errors.join(' | '));await P.ctx.close();
   return 'fall-damage handler protects under-5/easy/medium; older Hard loses hearts; zero-heart rescue returns to lastSafe and restores hearts/stamina (emulated runtime, not a physical fall/device test)';
 });
+
+await check('roomstartup', async () => (await import('./room-startup.mts')).roomStartupCheck(b));
 
 await check('ownerfamily', async () => {
   return await ownerSmoke('owner-family-smoke.mjs');

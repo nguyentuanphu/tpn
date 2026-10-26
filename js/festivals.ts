@@ -21,16 +21,19 @@ import { heightAt, WATER, VILLAGE, CHINA, INDIA, AUSSIE, TOWN, MARKET, HOME, HOI
 import { FEAST } from './data.js';
 import { FESTCAL, DAY_PLAN, BUILDUP, GROUPS } from './content/festcal.js';
 import { lunarDay, easter, nthWeekday } from './lunar.js';
-import { festivalRule, releaseOn, releaseNew, onLive } from './custom.js';
+import {festivalVisible} from './content/festival-visibility.js';
+import {publicFestivals,onPublicFestivals,startPublicFestivals} from './festival-live.js';
+const ruleOf=(id:string)=>publicFestivals()?publicFestivals().festivals[id]:festivalRule(id);
+import { festivalRule, liveRule, releaseNew, onLive } from './custom.js';
 
 const DAY = 864e5;
 const at0 = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-const parse = s => { const d = new Date(s + 'T00:00:00'); return isNaN(d) ? null : d; };
+const parse = s => { const d = new Date(s + 'T00:00:00'); return Number.isNaN(+d) ? null : d; };
 const pad = n => String(n).padStart(2, '0');
 // ---------- dates ----------
 // the first day of a festival in a given year (a grown-up's moved date wins)
 export function festDate(F, year) {
-  const r = festivalRule(F.id);
+  const r = ruleOf(F.id);
   if (r && typeof r.date === 'string') { if (/^\d{4}-\d\d-\d\d$/.test(r.date)) { if (+r.date.slice(0, 4) === year) return parse(r.date); } else if (/^\d\d-\d\d$/.test(r.date)) return parse(`${year}-${r.date}`); }
   const w = F.when;
   if (w.lunar) { const s = lunarDay(w.lunar[0], w.lunar[1], year); return s ? parse(s) : null; }
@@ -40,23 +43,23 @@ export function festDate(F, year) {
   if (w.table) return w.table[year] ? parse(w.table[year]) : null;
   return null;
 }
-const enabled = F => { const r = festivalRule(F.id); return !(r && r.on === false) && releaseOn('fest_' + F.id, true); };
-const buildupOf = F => { const r = festivalRule(F.id); return r && r.buildup >= 0 ? Math.min(60, r.buildup) : BUILDUP[F.kind] || 3; };
+const enabled = F => {const publicState=publicFestivals();return publicState?publicState.enabled.includes(F.id):festivalVisible(festivalRule(F.id),liveRule('fest_'+F.id));};
+const buildupOf = F => { const r = ruleOf(F.id); return r && r.buildup >= 0 ? Math.min(60, r.buildup) : BUILDUP[F.kind] || 3; };
 // the next time it happens on or after today: { F, start, end, daysTo (0 = today), on (it is on today) }
 export function nextOf(F, now = new Date()) {
   const today = at0(now);
   for (const y of [today.getFullYear() - 1, today.getFullYear(), today.getFullYear() + 1]) {
     const st = festDate(F, y); if (!st) continue;
     const end = new Date(+st + (F.days || 1) * DAY);
-    if (end > today) return { F, start: st, end, daysTo: Math.max(0, Math.round((st - today) / DAY)), on: st <= today };
+    if (end > today) return { F, start: st, end, daysTo: Math.max(0, Math.round((+st - +today) / DAY)), on: st <= today };
   }
   return null;
 }
 // every festival in date order, the soonest first (the calendar page)
-export const upcoming = (now = new Date()) => FESTCAL.filter(enabled).map(F => nextOf(F, now)).filter(Boolean).sort((a, b) => a.start - b.start);
+export const upcoming = (now = new Date()) => FESTCAL.filter(enabled).map(F => nextOf(F, now)).filter(Boolean).sort((a, b) => +a.start - +b.start);
 const byId = id => FESTCAL.find(F => F.id === id);
 let previewing = null;   // a grown-up's preview from Sparkle Studio (?festival=<id>), this session only
-let scheduled = () => false; // (an admin's schedule in Studio, fest_<id>: js/festdecor.js, once a child plays)
+let scheduled: (festival:unknown,now:Date)=>boolean = () => false; // (an admin's schedule in Studio, fest_<id>: js/festdecor.js, once a child plays)
 // what decorates the valley now: each festival in its build-up or on its day, with how far along (stage 1–4)
 export function activeFestivals(now = new Date()) {
   const pickOne = settings.festival || 'auto', out = [];
@@ -71,7 +74,7 @@ export function activeFestivals(now = new Date()) {
     }
   }
   if (previewing && byId(previewing)) { const k = out.findIndex(a => a.F.id === previewing); const v = { F: byId(previewing), stage: 4, daysTo: 0, on: true }; if (k >= 0) out[k] = v; else out.push(v); }
-  return out;
+  return out.filter(a=>enabled(a.F));
 }
 // (older code and saves call this: the one festival that is on today, or null)
 export function festivalToday(d = new Date()) { const a = activeFestivals(d).filter(x => x.on); return a.length ? a[0].F.id : null; }
@@ -82,7 +85,8 @@ export const showTime = little => { const p = DAY_PLAN.find(x => x.what === 'sho
 
 // ---------- where ----------
 // (round T) Hội An is a site for now (a circle, no streets): it gets the ring of pieces round its middle; Vũng Tàu is a city
-const PLACES = () => ({ village: VILLAGE, china: CHINA, india: INDIA, aussie: AUSSIE, town: TOWN, market: MARKET, home: HOME, hoian: HOIAN, ...Object.fromEntries(CITIES.map(c => [c.id, c])) });
+type FestivalPlace={x?:number;z?:number;x0?:number;x1?:number;z0?:number;z1?:number;r?:number;roadZ?:number;h?:number};
+const PLACES = ():Record<string,FestivalPlace> => ({ village: VILLAGE, china: CHINA, india: INDIA, aussie: AUSSIE, town: TOWN, market: MARKET, home: HOME, hoian: HOIAN, ...Object.fromEntries(CITIES.map(c => [c.id, c])) });
 const centre = o => o.x != null ? { x: o.x, z: o.z } : { x: (o.x0 + o.x1) / 2, z: (o.z0 + o.z1) / 2 };
 
 // ---------- decorations: the valley's own 3D things ----------
@@ -232,9 +236,9 @@ export function createFestivals(G) {
   // triangles and CALLS draw calls in all (PERF-003: Lotus Village stays within its budget on a festival day, whatever the amount in Studio)
   const CELL = 12, NEAR = 85, CLOSE = 30, BUDGET = 60000, CALLS = 16, places3 = [], placed = [];
   const tris = m => m && m.geometry ? (m.geometry.index ? m.geometry.index.count : m.geometry.attributes.position.count) / 3 : 0;
-  const addMeshes = (parts, glows, at) => {
+  const addMeshes = (parts, glows, at?:{x:number;z:number;r?:number}) => {
     const box = at ? new THREE.Group() : group; if (at) { box.userData.at = at; group.add(box); places3.push(box); }
-    if (parts.length) { const m = new THREE.Mesh(merge(parts), mat); m.castShadow = true; outline(m, .012, '#3a2a20'); box.add(m); if (at) { box.userData.lines = m.children.filter(c => c.isMesh); box.userData.tri = tris(m); box.userData.lineTri = box.userData.lines.reduce((a, l) => a + tris(l), 0); } }
+    if (parts.length) { const m = new THREE.Mesh(merge(parts), mat); m.castShadow = true; outline(m, .012, '#3a2a20'); box.add(m); if (at) { box.userData.lines = m.children.filter(c => c instanceof THREE.Mesh); box.userData.tri = tris(m); box.userData.lineTri = box.userData.lines.reduce((a, l) => a + tris(l), 0); } }
     if (glows.length) { const g = new THREE.Mesh(merge(glows), mat); box.add(g); glowMeshes.push(g); if (at) box.userData.tri = (box.userData.tri || 0) + tris(g); }
   };
   // a place's pieces, grouped into patches
@@ -255,7 +259,7 @@ export function createFestivals(G) {
   const build = () => {
     // (festdecor loads once a child is in the valley, not behind the title screen)
     if (!D) { active = activeFestivals(); if (G.heroes.length) loadD(); else if (!waitD) { waitD = true; W.updaters.push(() => { if (G.heroes.length && !loadingD) loadD(); }); } return; }
-    group.traverse(o => { if (o.isMesh && o.geometry && !o.userData.outline) o.geometry.dispose(); });
+    group.traverse(o => { if (o instanceof THREE.Mesh && o.geometry && !o.userData.outline) o.geometry.dispose(); });
     group.clear(); places3.length = 0; placed.length = 0; bursts.length = 0; glowMeshes = []; unhook(tables); unhook(doors);
     active = activeFestivals();
     D.begin();const supports=new Map(),drawBunting=(a,b,cols,kind,wall=false)=>bunting(a,b,cols,kind,wall,supports);
@@ -355,11 +359,13 @@ export function createFestivals(G) {
   };
 
   // ---------- the festival table ----------
+  const festivalDialog=(F,lines:string[][],choices?:string[][])=>{const answer=G.dialog(T(F.en,F.vi),lines,choices);const panel=document.querySelector<HTMLElement>('.dialog:not(.out)');if(panel)panel.dataset.festivalOwner=F.id;return answer;};
   const little = () => G.heroes.some(h => h.profile && h.profile.age !== 'big');
   const visit = async (h, F) => {
+    if(!enabled(F))return;
     const p = h.profile, today = new Date().toDateString(), preview = previewing === F.id;
     p.festivals = p.festivals || {};
-    await G.dialog(T(F.en, F.vi), F.lines);
+    await festivalDialog(F,F.lines);if(!enabled(F))return;
     if (p.festivals[F.id] !== today) {
       p.festivals[F.id] = today;
       const t = F.treat && FEAST.find(x => x.id === F.treat);
@@ -370,8 +376,8 @@ export function createFestivals(G) {
       await G.reward(F.icon, T(F.en, F.vi), st ? T('A festival present and a sticker!', 'Quà lễ hội và một hình dán!') : T('A festival present!', 'Quà lễ hội!'));
     }
     // the festival game opens at 15:00 (any time when visiting from the calendar)
-    if (!preview && new Date() < todayAt('15:00')) { const sn = showName(F); await G.dialog(T(F.en, F.vi), [[`The festival game starts at 3 o'clock${F.show !== 'none' ? `, and the ${sn[0]} at ${showTime(little())}` : ''}. Come back then!`, `Trò chơi lễ hội bắt đầu lúc 3 giờ chiều${F.show !== 'none' ? `, ${sn[1]} lúc ${showTime(little())}` : ''}. Nhớ quay lại nhé!`, 'The festival game starts at three o’clock. Come back then!', 'Trò chơi lễ hội bắt đầu lúc ba giờ chiều. Nhớ quay lại nhé!']]); return; }   // (shows the times, speaks a recorded line)
-    const k = await G.dialog(T(F.en, F.vi), [[`Shall we play a festival game?`, `Mình chơi một trò ngày lễ nhé?`]], [['🎉 Yes!', '🎉 Có!'], ['👋 Later', '👋 Để sau']]);
+    if (!preview && new Date() < todayAt('15:00')) { const sn = showName(F); await festivalDialog(F, [[`The festival game starts at 3 o'clock${F.show !== 'none' ? `, and the ${sn[0]} at ${showTime(little())}` : ''}. Come back then!`, `Trò chơi lễ hội bắt đầu lúc 3 giờ chiều${F.show !== 'none' ? `, ${sn[1]} lúc ${showTime(little())}` : ''}. Nhớ quay lại nhé!`, 'The festival game starts at three o’clock. Come back then!', 'Trò chơi lễ hội bắt đầu lúc ba giờ chiều. Nhớ quay lại nhé!']]); return; }   // (shows the times, speaks a recorded line)
+    const k = await festivalDialog(F, [[`Shall we play a festival game?`, `Mình chơi một trò ngày lễ nhé?`]], [['🎉 Yes!', '🎉 Có!'], ['👋 Later', '👋 Để sau']]);
     // (audit, 9 Oct) the Family Quiz only exists once the family has written one in Studio: otherwise a feelings game
     if (k === 0 && F.game) { const { GAMES } = await import('./games/frame.js'); G.playGame(h.i, GAMES[F.game] ? F.game : 'feelings', 'replay'); }
   };
@@ -403,7 +409,9 @@ export function createFestivals(G) {
   });
   W.updaters.push(dt => { for (let i = bursts.length - 1; i >= 0; i--) { const b = bursts[i]; b.life -= dt; b.v.y -= dt * b.grav; b.s.position.addScaledVector(b.v, dt); b.s.material.opacity = Math.max(0, Math.min(1, b.life / 1.4)); if (b.life <= 0) { group.remove(b.s); b.s.material.dispose(); bursts.splice(i, 1); } } });
   build();
-  onLive(build);   // a grown-up changed a festival in Studio: show it straight away
+  const refresh=()=>{build();document.querySelectorAll<HTMLElement&{_autoClose?:()=>void}>('[data-festival-owner]').forEach(panel=>{const F=byId(panel.dataset.festivalOwner);if(!F||!enabled(F))panel._autoClose?.();});};
+  onPublicFestivals(refresh);startPublicFestivals();
+  onLive(refresh);   // a grown-up changed a festival in Studio: show it straight away
   // the decorations change at midnight (a new week's stage, a new festival)
   let dayKey = new Date().toDateString(), dayT = 0; W.updaters.push(dt => { if ((dayT -= dt) > 0) return; dayT = 30; const k = new Date().toDateString(); if (k !== dayKey) { dayKey = k; build(); } });
   return {
@@ -425,10 +433,10 @@ export function createFestivals(G) {
     // about (on today, decorations going up, or days to go), nothing starts and nobody travels. Only a grown-up's Preview
     // link from Studio (an admin) takes the child to a festival, once.
     visit: async (i, id) => {
-      const h = G.heroes[i], F = byId(id); if (!h || !F) return;
+      const h = G.heroes[i], F = byId(id); if (!h || !F || !enabled(F)) return;
       const pv = new URLSearchParams(location.search).get('festival');
       if (pv === id && !G._festPreviewed) { G._festPreviewed = true; previewing = id; build(); }
-      else { await loadD(); return D.tell(G, h, F, active.find(a => a.F.id === id), nextOf(F, new Date())); }
+      else { await loadD();if(!enabled(F))return;const answer=D.tell(G, h, F, active.find(a => a.F.id === id), nextOf(F, new Date()));const panel=document.querySelector<HTMLElement>('.dialog:not(.out)');if(panel)panel.dataset.festivalOwner=F.id;return answer; }
       const it = tables.find(t => t.id === 'festival_' + id);
       if (it) await G.landBy(h, it.x, it.z);
       showT = 14; SFX.chime && SFX.chime();
@@ -441,6 +449,6 @@ export function createFestivals(G) {
     groups: GROUPS,
     showTime: () => showTime(little()),
     // a greeting when a session starts during a festival (08:00 onwards)
-    greet: h => { const a = active.find(x => x.on); if (!a || new Date() < todayAt('08:00')) return; const F = a.F; setTimeout(() => { G.toast(h, `${F.icon} ${T("It's ", 'Hôm nay là ')}${T(F.en, F.vi)}!`); say(F.lines[0][0], F.lines[0][1]); }, 2500); }   // (a fixed line, so the recorded voice says it)
+    greet: h => { const a = active.find(x => x.on); if (!a || new Date() < todayAt('08:00')) return; const F = a.F; setTimeout(() => { if(!enabled(F))return; G.toast(h, `${F.icon} ${T("It's ", 'Hôm nay là ')}${T(F.en, F.vi)}!`); say(F.lines[0][0], F.lines[0][1]); }, 2500); }   // (a fixed line, so the recorded voice says it)
   };
 }

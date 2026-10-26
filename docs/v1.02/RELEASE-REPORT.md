@@ -1,5 +1,16 @@
 # v1.02 Release review · 26 October 2026 AEDT
 
+## Current work · 26 October 2026, 12:50 pm AEDT
+
+Previous exhaustive GitHub run [40244549770](https://github.com/nguyentuanphu/tpn/actions/runs/40244549770), exact head `edc37929`, finished **231/235**, not a release pass. Four failures were games, adventure, a11y (Fruit Bar not enabled in the all-games fixture / missing opening instruction) and solid (deck-only query used for an under-deck player). All four now pass locally with the original checks retained. The official map from that exact run is collected from `1dca02c0e`.
+
+Newly implemented: shared festival switches across both Studio screens, public-only website endpoint and game visibility, with offline snapshot handling and automatic refresh. Local Studio → website → game integration passed after fixing an annual-date preservation bug. Seven focused units pass. Friends room-startup cancellation/null-relay regression passes. Turtle counting utterances now match the voice inventory; small default/FPT recording deltas are queued on the next push, not yet claimed recorded. See [festival evidence](../v1.02-festival-sync/README.md).
+
+The full workflow is set to exhaustive `--all` for this PR branch. No local full suite is authorized. One accidental `--help` invocation launched workers and was stopped immediately; its incomplete output is not a test result. Historical timing comparisons below predate discovery and removal of 87 orphaned headless browser groups; fresh paired speed runs remain required, without changing budgets.
+
+Remaining release blockers: six inaccurate traditional-game prototypes, Cờ Cá Ngựa and shared multiplayer rules, production Lê Minh selection/cache/background downloads, website editorial consistency, latest exhaustive regression, performance investigation and physical-device/listening checks. AI review remains unfinished. Live is v1.01, candidate v1.02; no deployment approval.
+
+
 Live remains v1.01. The last exhaustive runtime was `4fd792cfa`; the candidate now adds the family/underpass changes below on `work/v1.02-fruit-parade`, draft [PR #602](https://github.com/nguyentuanphu/tpn/pull/602). Deployment approval has not been requested while the blockers below remain.
 
 ## Changes reviewed and prepared
@@ -76,3 +87,5 @@ These software-rendered browser timings establish the same failing budget catego
 5. Finish the exact full regression/code-map collection and resolve any red; retain the measured speed limitations in the owner report.
 
 Manual rules findings remain release blockers alongside automated results. Main/Netlify remains unchanged, and the owner's v1.02 version choice is not deployment approval.
+
+Extended festival integration and types pass 2/2 (85s and 22s): both Studio controls synchronize, all-off removes the website festival section, and service failure retains cached off state. No check was weakened.

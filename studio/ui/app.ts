@@ -730,10 +730,10 @@ PAGES.releases = P => drawReleases(P, false);
 PAGES.lab = P => drawReleases(P, true);
 async function drawReleases(P, lab) {
   const myDraw = P.dataset.draw = String((+P.dataset.draw || 0) + 1), stale = () => P.dataset.draw !== myDraw || cur !== (lab ? 'lab' : 'releases');
-  const [{ RELEASES, RELEASE_GROUPS }, live] = await Promise.all([import(GAME + 'js/content/releases.js'), loadLive()]);
+  const [{ RELEASES, RELEASE_GROUPS }, live, {festivalSwitchedOn}] = await Promise.all([import(GAME + 'js/content/releases.js'), loadLive(),import(GAME+'js/content/festival-visibility.js')]);
   if (stale()) return;
   const R = live.releases || {}, inScope = x => lab === ['tester', 'autoplay'].includes(x.id);
-  const isOn = x => { const r = R[x.id] || {}; if (x.id === 'wayfind' && r.controlVersion !== 1) return false; return typeof r.on === 'boolean' ? r.on : x.def; };
+  const isOn = x => { const r = R[x.id] || {};if(x.id.startsWith('fest_'))return festivalSwitchedOn(live.festivals?.[x.id.slice(5)],r); if (x.id === 'wayfind' && r.controlVersion !== 1) return false; return typeof r.on === 'boolean' ? r.on : x.def; };
   const fmtDay = d => d ? new Date(d + 'T12:00:00').toLocaleDateString(LANG === 'vi' ? 'vi-VN' : 'en-AU', { day: 'numeric', month: 'short' }) : '';
   const status = (on, r) => { const today = isoDay(new Date()), out = [];
     if (!on) out.push(['off', '⏸️ ' + T('Off', 'Tắt')]);
@@ -909,31 +909,45 @@ async function drawReleases(P, lab) {
             delete out.nightlyBots;
           }
         }
-        await saveLive({ releases: out, festivals: latest.festivals || {} });
+        const festivals={...(latest.festivals||{})};
+        P.querySelectorAll('.relc[data-id^="fest_"]').forEach((card:HTMLElement)=>{const id=card.dataset.id,x=RELEASES.find(f=>f.id===id),on=card.querySelector<HTMLInputElement>('[data-r="on"]').checked;
+          if(on!==isOn(x))festivals[id.slice(5)]={...(festivals[id.slice(5)]||{}),on};
+        });
+        await saveLive({ releases: out, festivals });Object.keys(R).forEach(k=>delete R[k]);Object.assign(R,out);live.festivals=festivals;
       } catch (e) { fail(e); }
     };
 }
 PAGES.festivals = async P => {
-  const [{ FESTCAL, GROUPS }, L] = await Promise.all([import(GAME + 'js/content/festcal.js'), import(GAME + 'js/lunar.js')]), live = await loadLive(), F = live.festivals || {};
+  const [{ FESTCAL, GROUPS }, L, {festivalSwitchedOn}] = await Promise.all([import(GAME + 'js/content/festcal.js'), import(GAME + 'js/lunar.js'),import(GAME+'js/content/festival-visibility.js')]), live = await loadLive(), F = live.festivals || {};
   const pad = n => String(n).padStart(2, '0'), y = new Date().getFullYear();
   // this year's (or next year's, once it has passed) date, worked out like the game does
-  const dateOf = (f, yr) => { const w = f.when; return w.lunar ? L.lunarDay(w.lunar[0], w.lunar[1], yr) : w.date ? `${yr}-${pad(w.date[0])}-${pad(w.date[1])}` : w.easter != null ? L.easter(yr) : w.nth ? L.nthWeekday(yr, ...w.nth) : w.table ? w.table[yr] : null; };
+  const dateOf = (f, yr) => { const rule=F[f.id]||{};if(/^\d{4}-/.test(rule.date||'')&&+rule.date.slice(0,4)===yr)return rule.date;if(/^\d\d-\d\d$/.test(rule.date||''))return `${yr}-${rule.date}`;const w = f.when; return w.lunar ? L.lunarDay(w.lunar[0], w.lunar[1], yr) : w.date ? `${yr}-${pad(w.date[0])}-${pad(w.date[1])}` : w.easter != null ? L.easter(yr) : w.nth ? L.nthWeekday(yr, ...w.nth) : w.table ? w.table[yr] : null; };
   const next = f => { const a = dateOf(f, y), today = isoDay(new Date()); return a && a >= today ? a : dateOf(f, y + 1); };
-  const row = f => { const r = F[f.id] || {}, on = r.on !== false;
+  const row = f => { const r = F[f.id] || {}, on = festivalSwitchedOn(r,live.releases?.['fest_'+f.id]);
     return `<tr data-id="${f.id}"><td>${f.icon} ${esc(T(f.en, f.vi))}<div class="mini">${f.kind === 'quiet' ? T('quiet day', 'ngày yên lặng') : ''}</div></td>
       <td data-label="${T('Now', 'Hiện')}"><select data-f="on"><option value="true" ${on ? 'selected' : ''}>${T('On', 'Bật')}</option><option value="false" ${on ? '' : 'selected'}>${T('Off', 'Tắt')}</option></select></td>
-      <td data-label="${T('Next date', 'Ngày tới')}">${next(f) || '?'}</td><td data-label="${T('Move to', 'Đổi sang ngày')}"><input type="date" data-f="date" value="${/^\d{4}/.test(r.date || '') ? r.date : ''}"></td>
+      <td data-label="${T('Next date', 'Ngày tới')}">${next(f) || '?'}</td><td data-label="${T('Move to', 'Đổi sang ngày')}"><input type="date" data-f="date" value="${/^\d{4}/.test(r.date || '') ? r.date : /^\d\d-\d\d$/.test(r.date||'') ? y+'-'+r.date : ''}"></td>
       <td data-label="${T('Decorate days before', 'Trang trí trước (ngày)')}"><input type="number" min="0" max="60" data-f="buildup" value="${r.buildup ?? ''}" placeholder="${f.kind === 'quiet' ? 3 : 21}"></td>
       <td data-label="${T('Decorations', 'Trang trí')}"><select data-f="deco">${[[1, 'As before', 'Như trước'], [2, '2x', '2x'], [3, '3x', '3x'], [5, '5x', '5x'], [7, '7x', '7x']].map(([n, en, vi]) => `<option value="${n}" ${(+r.deco || 5) === n ? 'selected' : ''}>${T(en, vi)}</option>`).join('')}</select></td>
       <td><a class="btn small ghost" target="_blank" href="${GAME}?festival=${f.id}">${T('Preview', 'Xem thử')}</a></td></tr>`; };
   P.innerHTML = `<h2>📅 ${T('Festivals', 'Lễ hội')}</h2><p class="sub">${T('Every festival on its real date (lunar dates are worked out each year). Party festivals decorate their places for 3 weeks before, quiet days a few days. On the day: 08:00 present, 15:00 festival game, 18:30 show (17:30 for under-5s). Decorations: half in week 1, three quarters in week 2, all of it in the last week; 5x by default (Decorations column). In the last week and on the day, 5 festival items are hidden among them to find.', 'Mỗi lễ hội đúng ngày thật (ngày âm lịch tự tính mỗi năm). Lễ hội vui trang trí 3 tuần trước, ngày yên lặng vài ngày. Đúng ngày: 08:00 nhận quà, 15:00 trò chơi lễ hội, 18:30 trình diễn (17:30 cho bé dưới 5 tuổi). Trang trí: tuần đầu một nửa, tuần hai ba phần tư, tuần cuối đầy đủ; mặc định gấp 5 lần (cột Trang trí). Tuần cuối và đúng ngày có 5 món đồ lễ hội giấu giữa đồ trang trí để các con tìm.')}</p>
-    ${liveNote()}${Object.entries<[string, string]>(GROUPS).map(([g, [en, vi]]) => `<h3>${T(en, vi)}</h3><div class="card"><table class="rel"><thead><tr><th></th><th>${T('Now', 'Hiện')}</th><th>${T('Next date', 'Ngày tới')}</th><th>${T('Move to', 'Đổi sang ngày')}</th><th>${T('Decorate days before', 'Trang trí trước (ngày)')}</th><th>${T('Decorations', 'Trang trí')}</th><th></th></tr></thead><tbody>${FESTCAL.filter(f => f.group === g).map(row).join('')}</tbody></table></div>`).join('')}
+    <p class="note">${T('Off hides the festival on the website and in the game, including calendar notices, decorations, activities and previews. Open pages refresh the published settings automatically.','Tắt sẽ ẩn lễ hội trên trang web và trong trò chơi, gồm thông báo lịch, trang trí, hoạt động và phần xem thử. Trang đang mở tự cập nhật cài đặt đã lưu.')}</p>${liveNote()}${Object.entries<[string, string]>(GROUPS).map(([g, [en, vi]]) => `<h3>${T(en, vi)}</h3><div class="card"><table class="rel"><thead><tr><th></th><th>${T('Now', 'Hiện')}</th><th>${T('Next date', 'Ngày tới')}</th><th>${T('Move to', 'Đổi sang ngày')}</th><th>${T('Decorate days before', 'Trang trí trước (ngày)')}</th><th>${T('Decorations', 'Trang trí')}</th><th></th></tr></thead><tbody>${FESTCAL.filter(f => f.group === g).map(row).join('')}</tbody></table></div>`).join('')}
     <div class="bar"><button class="btn" id="save">💾 ${T('Save', 'Lưu')}</button></div>`;
   $('#save').onclick = async () => {
-    const out = {};
-    P.querySelectorAll<HTMLInputElement>('tr[data-id]').forEach(tr => { const id = tr.dataset.id, v = k => tr.querySelector<HTMLInputElement>(`[data-f="${k}"]`).value, r: Rule = {};
-      if (v('on') === 'false') r.on = false; if (v('date')) r.date = v('date'); if (v('buildup') !== '') r.buildup = +v('buildup'); if (+v('deco') !== 5) r.deco = +v('deco'); if (Object.keys(r).length) out[id] = r; });
-    await saveLive({ releases: live.releases || {}, festivals: out }).catch(fail);
+    try{
+      const latest=await loadLive(),out={...(latest.festivals||{})},releases={...(latest.releases||{})};
+      P.querySelectorAll<HTMLInputElement>('tr[data-id]').forEach(tr=>{
+        const id=tr.dataset.id,v=(k:string)=>tr.querySelector<HTMLInputElement>(`[data-f="${k}"]`).value,before=F[id]||{},r={...(out[id]||{})};
+        const on=v('on')==='true',was=festivalSwitchedOn(before,live.releases?.['fest_'+id]);
+        if(on!==was){r.on=on;releases['fest_'+id]={...(releases['fest_'+id]||{}),on};}
+        const initialDate=/^\d{4}/.test(before.date||'')?before.date:/^\d\d-\d\d$/.test(before.date||'')?y+'-'+before.date:'';
+        if(v('date')!==initialDate){if(v('date'))r.date=v('date');else delete r.date;}
+        if(v('buildup')!==String(before.buildup??'')){if(v('buildup')!=='')r.buildup=+v('buildup');else delete r.buildup;}
+        if(+v('deco')!==(Number(before.deco)||5)){if(+v('deco')!==5)r.deco=+v('deco');else delete r.deco;}
+        if(Object.keys(r).length)out[id]=r;else delete out[id];
+      });
+      await saveLive({releases,festivals:out});Object.keys(F).forEach(k=>delete F[k]);Object.assign(F,out);live.releases=releases;live.festivals=F;
+    }catch(e){fail(e);}
   };
 };
 // ---------- children: open a backup, see progress, change it, save a new backup ----------

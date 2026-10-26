@@ -185,7 +185,7 @@ export function createHanoi(G, ctx: StoryContext) {
   async function countTurtle(h, tu) {
     const p = h.profile, a = A(p); a.counted = a.counted || []; if (a.counted.includes(tu.k)) return;
     a.counted.push(tu.k); save();
-    const n = a.counted.length; say(COUNT[n - 1][0] + '!', COUNT[n - 1][1] + '!'); G.fx && G.fx(tu.x, heightAt(tu.x, tu.z) + 1.4, tu.z, '⭐');
+    const n = a.counted.length; say(...COUNT[n - 1]); G.fx && G.fx(tu.x, heightAt(tu.x, tu.z) + 1.4, tu.z, '⭐');
     if (n < nTurtles(p) || asking) return;
     asking = true;
     try {
