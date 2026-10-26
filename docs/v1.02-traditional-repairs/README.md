@@ -28,3 +28,7 @@ Local suite **3/3**: folkplay331s (six actual completed games in both age modes)
 The reviewed static FPT inventory now contains57 entries (previous23 retained plus34 public folk lines); only the earlier16 are already recorded in that delta. Source fingerprints are generated from the actual TypeScript. Recording, packaging, default voice coverage and latest-source GitHub regression remain pending; these local passes do not approve deployment.
 
 Voice regression follow-up: hanoivoice108s, voicebackground104s, types23s, **3/3**. It uses18 real optional recordings, holds one until after Settings closes, observes a later default download update and requires both labels, checks rapid male→Lê Minh preview/speech ducking cleanup, female default and offline playback. The known GitHub failure is repaired locally; it still needs final GitHub confirmation.
+
+## Recording follow-up
+
+FPT run40277620143 succeeded57/57 and saved6a670a255. All57 MP3s were independently checked against receipt bytes/SHA and fully decoded again (folk-audio-audit.json). New default Azure recordings and current-manifest production packaging remain pending. Fast GitHub Checks on8a4a46ebe caught tick emojis in the two saved test-log files; those logs now use plain PASS. Local emoji check1/1 passes. No game/check behavior changed for that correction. Full run40277800123 remains running.

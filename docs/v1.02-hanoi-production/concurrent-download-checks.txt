@@ -1,8 +1,8 @@
 build: 163 TypeScript files, 0 made
 only: hanoivoice, voicebackground, types
 3 checks: group 1 3 (~4 min)
-[1] ✅ hanoivoice (108s) 18 real Lê Minh files: female default avoids optional fetch, preview preserves choice, download survives Settings close, female character us
-[1] ✅ voicebackground (104s) real female and male MP3 previews with male opt-in still off; opt-in and explicit offline download continue with shared progress after 
-[1] ✅ types (23s) 163 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 49 TypeScript files of the server, Studio and 
+[1] PASS hanoivoice (108s) 18 real Lê Minh files: female default avoids optional fetch, preview preserves choice, download survives Settings close, female character us
+[1] PASS voicebackground (104s) real female and male MP3 previews with male opt-in still off; opt-in and explicit offline download continue with shared progress after
+[1] PASS types (23s) 163 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 49 TypeScript files of the server, Studio and
 
 3/3 checks passed in 4 min (1 at a time)

@@ -72,5 +72,13 @@
   "defaultRecordingRun": 40256013546,
   "defaultCoverage": "zero missing after turtle count recordings",
   "productionSignature": "280b151ec80c4a1cc838f157c75e1b0f9135cb0597b093767ca862f8af860766",
-  "productionBytes": 424275298
+  "productionBytes": 424275298,
+  "latestReviewedDelta": {
+    "run": 40277620143,
+    "commit": "6a670a255",
+    "inventoryEntries": 57,
+    "verifiedEntries": 57,
+    "independentDecodeAudit": "docs/v1.02-traditional-repairs/folk-audio-audit.json",
+    "productionPackaging": "pending arrival of current default manifest; existing production count is the previous snapshot"
+  }
 }
