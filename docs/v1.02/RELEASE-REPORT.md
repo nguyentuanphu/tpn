@@ -47,3 +47,7 @@ See [traditional-game evidence](../v1.02-traditional-repairs/README.md). Combine
 ## Owner-requested handover · 26 October 2026, 5:10 pm AEDT
 
 Owner requested a ten-minute wrap-up and upload. Codeadb9a0b7d/8a4a46ebe pushed; FPT6a670a255 collected. Delta57/57 succeeded in40277620143 and every MP3 independently byte/SHA/full-decode checked. Default Azure40277620142 and exhaustive40277800123 were still running at this checkpoint. Fast Checks failed only on tick emoji characters in saved evidence logs; replaced with plain PASS and local emoji1/1 passes. Website consistency remains red. Production6344 count is the preceding package until new default inventory arrives and packaging runs again. No remaining shared-adapter/mixed-language work is claimed completed. See [takeover instructions](../cores/tasks/v1.02-release-takeover-20261026.md).
+
+## Production voice package resumed
+
+Owner asked this chat to continue; no other chat works on the branch. Isolated the57-entry delta from older overlapping receipts, retaining all verification checks. Rebuilt production6384 units/427403942 bytes (~408MiB). Current VI inventory6403; only19 privacy-held units absent, no unknown public gaps. Default Azure completed, zero missing. Latest package browser/types follow-up2/2 (110s/21s). Earlier packaging-blocker/6344 statements describe the handover snapshot and are resolved. Snakes shared four-seat repair is now in progress, not yet release-ready.

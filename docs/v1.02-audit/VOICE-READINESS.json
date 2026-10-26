@@ -1,31 +1,12 @@
 {
   "runtime": "f3a135a86",
-  "currentVietnameseUnits": 6366,
+  "currentVietnameseUnits": 6403,
   "fptBaseline": 6319,
   "fptArcadeDelta": 16,
   "fptStagedTotal": 6345,
-  "missingFromFpt": 22,
+  "missingFromFpt": 19,
   "privacyHeld": 19,
-  "publicNeedsReview": [
-    {
-      "id": "206a7a83-4833bc85",
-      "source": [
-        "js/games/cacuangua.js"
-      ]
-    },
-    {
-      "id": "7480de9c0394620f",
-      "source": [
-        "js/games/pending-vietnam.js"
-      ]
-    },
-    {
-      "id": "d40c6188-6d6269fe",
-      "source": [
-        "js/games/pending-vietnam.js"
-      ]
-    }
-  ],
+  "publicNeedsReview": [],
   "byCacheArea": {
     "core": 250,
     "aussie": 89,
@@ -64,21 +45,21 @@
   "labelsBranch": "work/fpt-v102-labels-20261026",
   "labelsRecordingRun": 40227974447,
   "labelsCommit": "715f260d1",
-  "recordingsHead": "f3a135a86",
-  "fptCurrentCoverage": 6344,
+  "recordingsHead": "1977f56ef",
+  "fptCurrentCoverage": 6384,
   "fptHistoricalOnly": [
     "4c87fc45-4909939b"
   ],
-  "defaultRecordingRun": 40256013546,
-  "defaultCoverage": "zero missing after turtle count recordings",
-  "productionSignature": "280b151ec80c4a1cc838f157c75e1b0f9135cb0597b093767ca862f8af860766",
-  "productionBytes": 424275298,
+  "defaultRecordingRun": 40277620142,
+  "defaultCoverage": "zero missing after horse and folk recordings",
+  "productionSignature": "8a31e517ec550ba65712e30ad8132671397419c57d520350c3fbe1ca1415cab1",
+  "productionBytes": 427403942,
   "latestReviewedDelta": {
     "run": 40277620143,
     "commit": "6a670a255",
     "inventoryEntries": 57,
     "verifiedEntries": 57,
     "independentDecodeAudit": "docs/v1.02-traditional-repairs/folk-audio-audit.json",
-    "productionPackaging": "pending arrival of current default manifest; existing production count is the previous snapshot"
+    "productionPackaging": "6384 verified current units packaged using isolated matching receipts"
   }
 }

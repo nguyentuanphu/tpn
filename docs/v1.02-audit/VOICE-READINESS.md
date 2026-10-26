@@ -1,3 +1,7 @@
+# Production update · 26 October 2026 AEDT
+
+The packaging blocker is resolved using a separate57-entry delta staging folder with only matching receipts. Production now contains **6384 verified current public units**,427403942 bytes (~408MiB), against6403 current VI units. All19 remaining gaps are the privacy-held name units; **zero unknown public gaps**. Default Azure40277620142 succeeded and assets collected at1977f56ef; coverage zero missing. Pack integration follow-up hanoivoice110s/types21s **2/2**. Source IDs/provider/identity/bytes/SHA checks were retained. Every newly reviewed delta MP3 was independently fully decoded before packaging. Mixed-language accent selection and final full regression still pending. Older counts below are historical.
+
 # Latest voice delta · 26 October 2026, 5:10 pm AEDT
 
 FPT run40277620143 succeeded57/57 reviewed static delta entries and saved6a670a255. Independently verified all57 receipts against file bytes/SHA and fully decoded every MP3; evidence docs/v1.02-traditional-repairs/folk-audio-audit.json. New horse/folk speech is staged; default Azure run40277620142 still runs. Production count6344 below describes the prior package, not installed coverage of the newly repaired games. Collect the current default manifest and rebuild the production package before release. No private speech was uploaded. Mixed English/Vietnamese recordings still need selected Lê Minh fragments.
