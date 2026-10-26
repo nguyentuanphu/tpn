@@ -1,3 +1,7 @@
+# Latest voice delta · 26 October 2026, 5:10 pm AEDT
+
+FPT run40277620143 succeeded57/57 reviewed static delta entries and saved6a670a255. Independently verified all57 receipts against file bytes/SHA and fully decoded every MP3; evidence docs/v1.02-traditional-repairs/folk-audio-audit.json. New horse/folk speech is staged; default Azure run40277620142 still runs. Production count6344 below describes the prior package, not installed coverage of the newly repaired games. Collect the current default manifest and rebuild the production package before release. No private speech was uploaded. Mixed English/Vietnamese recordings still need selected Lê Minh fragments.
+
 # Current voice checkpoint · 26 October 2026 AEDT
 
 Production packaging now contains **6,344 verified current public Lê Minh units**, with canonical IDs and provider/model/voice identity, checksum and byte totals. The optional pack is about 405 MiB. Staging has 6,345 clips including one historical title. Current default Vietnamese inventory has 6,366 units; 19 privacy-held units and three unreviewed prototype instructions remain excluded from FPT.

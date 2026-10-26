@@ -43,3 +43,7 @@ The proposed full Studio redesign remains a separate proposal. Earlier detailed 
 ## Latest local horse repair
 
 See [traditional-game evidence](../v1.02-traditional-repairs/README.md). Combined local horseplay/unit/types3/3,295units; reviewed-layout/types2/2 after stronger visibility/capture checks. Four-seat actual transport match and replay/mixed-age tests pass. New horse voice delta and latest-source GitHub checks remain pending. No other multiplayer adapter is implied fixed by this result.
+
+## Owner-requested handover · 26 October 2026, 5:10 pm AEDT
+
+Owner requested a ten-minute wrap-up and upload. Codeadb9a0b7d/8a4a46ebe pushed; FPT6a670a255 collected. Delta57/57 succeeded in40277620143 and every MP3 independently byte/SHA/full-decode checked. Default Azure40277620142 and exhaustive40277800123 were still running at this checkpoint. Fast Checks failed only on tick emoji characters in saved evidence logs; replaced with plain PASS and local emoji1/1 passes. Website consistency remains red. Production6344 count is the preceding package until new default inventory arrives and packaging runs again. No remaining shared-adapter/mixed-language work is claimed completed. See [takeover instructions](../cores/tasks/v1.02-release-takeover-20261026.md).
