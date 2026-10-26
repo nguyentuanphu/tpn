@@ -21,7 +21,7 @@
 //   (r81) every section Studio's content pages save live (LIVE_SECTIONS below) may come from /api/live instead, and wins
 //   features { id: true|false }           things in the valley switched on or off from Studio (owner, round R: kept in the game,
 //                                         shown only when switched on). powerPoles: Phố Hai Quê's power poles and wires (off)
-let data = {};
+let data:Record<string,any> = {};
 // (Analytics & Infra, 10 Oct) never more than a few seconds: a connection that never answers must not keep the game from
 // starting (the service worker already answers with the saved copy after 1.5 s)
 try {
@@ -31,9 +31,9 @@ try {
   clearTimeout(t);
 } catch (e) { /* offline and never saved, or no answer: no content pack */ }
 /** @type {Record<string, any>} the family's content pack (content/custom.json), checked field by field where it is used */
-export const CUSTOM = data && typeof data === 'object' ? data : {};
-const LIVE_KEY = 'sv2_live', liveFns = [];
-let LIVE = {}; try { LIVE = JSON.parse(localStorage.getItem(LIVE_KEY) || '{}') || {}; } catch (e) { LIVE = {}; }
+export const CUSTOM:Record<string,any> = data && typeof data === 'object' ? data : {};
+const LIVE_KEY = 'sv2_live', liveFns:Array<()=>void> = [];
+let LIVE:Record<string,any> = {}; try { LIVE = JSON.parse(localStorage.getItem(LIVE_KEY) || '{}') || {}; } catch (e) { LIVE = {}; }
 export const onLive = f => liveFns.push(f);
 // (r81, owner 17 Oct AEDT) the content pages are live too: LIVE.content's sections (Message, Missions, Quiz, Our stories,
 // Villagers, Story characters, Memory Villages, Simple screen, Defaults, Ads settings, photo links) take the place of the
@@ -58,16 +58,16 @@ export const customQuiz = () => (Array.isArray(CUSTOM.quiz) ? CUSTOM.quiz : []).
 // shown: villagers keep their drawn faces and the postcards wait. A code the website no longer takes clears the copies.
 // (Old packs that still name content/faces/… or content/album/… files keep working until Studio moves them.)
 const FAMREF = /^family:([\w-]{24,64})$/, OLDFACE = /^content\/faces\/[\w.-]+\.(jpg|jpeg|png)$/, OLDALBUM = /^content\/album\/[\w.-]+\.jpg$/;
-const FAM_KEY = 'sv2_familycode', FAM_CACHE = 'sv-family', famURL = new Map(), famFns = [];
+const FAM_KEY = 'sv2_familycode', FAM_CACHE = 'sv-family', famURL = new Map<string,string>(), famFns:Array<()=>void> = [];
 export const familyCode = () => { try { return localStorage.getItem(FAM_KEY) || ''; } catch (e) { return ''; } };
 export const onFamilyPhotos = f => famFns.push(f);
 const photoOf = p => { const m = FAMREF.exec(p || ''); return m ? famURL.get(m[1]) || '' : p; };
-export const familyRefs = () => { const out = new Set(), add = p => { const m = FAMREF.exec(p || ''); if (m) out.add(m[1]); };
-  for (const f of Object.values(CUSTOM.faces || {})) add(f && f.photo); for (const x of Array.isArray(CUSTOM.album) ? CUSTOM.album : []) add(x && x.photo); return [...out]; };
+export const familyRefs = () => { const out = new Set<string>(), add = p => { const m = FAMREF.exec(p || ''); if (m) out.add(m[1]); };
+  for (const f of Object.values(CUSTOM.faces || {})) if(f&&typeof f==='object'&&'photo'in f)add(f.photo); for (const x of Array.isArray(CUSTOM.album) ? CUSTOM.album : []) add(x && x.photo); return [...out]; };
 export const customAlbum = () => ([...(Array.isArray(CUSTOM.album) ? CUSTOM.album : []), ...Object.entries(ownFamilyPhotos()).filter(([id]) => id.startsWith('album_')).map(([id, p]) => ({ id, photo: p.image, en: 'Family photo', vi: 'Ảnh gia đình', place: 'home' }))]).filter(x => x && typeof x.photo === 'string' && (x.photo.startsWith('data:image/jpeg;base64,') || OLDALBUM.test(x.photo) || (FAMREF.test(x.photo) && photoOf(x.photo))))
   .slice(0, 60).map(x => ({ id: String(x.id || x.photo).replace(/[^\w-]/g, '').slice(0, 30) || 'photo', photo: photoOf(x.photo), en: str(x.en).slice(0, 120), vi: str(x.vi).slice(0, 120) || str(x.en).slice(0, 120), place: /^[a-z]{2,16}$/.test(x.place || '') ? x.place : 'home' }));
 export const customName = id => { const n = CUSTOM.names && CUSTOM.names[id]; return n && typeof n === 'object' ? n : null; };
-const ownFamilyPhotos = () => { try { return { ...JSON.parse(localStorage.getItem('sv2_familyphotos') || '{}'), ...(globalThis.__svFamilyPhotos || {}) }; } catch { return {}; } };
+const ownFamilyPhotos = ():Record<string,{image?:string}> => { try { return { ...JSON.parse(localStorage.getItem('sv2_familyphotos') || '{}'), ...(globalThis.__svFamilyPhotos || {}) }; } catch { return {}; } };
 if (typeof addEventListener === 'function') addEventListener('sv-family-photos', () => famFns.forEach(f => { try { f(); } catch {} }));
 export const familyOwnFace = id => { const photo = ownFamilyPhotos()[id]?.image; return photo ? { photo } : null; };
 export const customFace = id => { const own = ownFamilyPhotos()[id]; if (own?.image) return { photo: own.image }; const f = CUSTOM.faces && CUSTOM.faces[id]; if (!f || typeof f.photo !== 'string') return null; if (OLDFACE.test(f.photo)) return f; const u = FAMREF.test(f.photo) && photoOf(f.photo); return u ? { ...f, photo: u } : null; };
@@ -119,18 +119,20 @@ if (inGame && familyRefs().length && (familyCode() || fromExe())) {
 // A release rule: { on: true|false, start: 'YYYY-MM-DD' (from this day), days: N (on for N days only), newDays: N (a
 // "New" badge and a "New!" moment for N days) }. A rule from the website wins over one in content/custom.json.
 // (Switching something off never takes away what a child already has: games played and places found stay theirs.)
-if (typeof fetch === 'function' && typeof location !== 'undefined' && /^https?:/.test(location.protocol) && !/\/studio\//.test(location.pathname) && document.title !== 'Sparkle Studio') {   // (the game only, not Studio's pages that borrow its modules)
-  fetch('api/live', { cache: 'no-store' }).then(r => r.ok && /json/.test(r.headers.get('content-type') || '') ? r.json() : null).then(j => {
-    if (!j || typeof j !== 'object') return; const was = JSON.stringify(LIVE), wasC = JSON.stringify(LIVE.content || null); LIVE = j; useContent(j.content);
-    if (wasC !== JSON.stringify(j.content || null) && inGame && familyRefs().length && (familyCode() || fromExe())) refreshFamilyPhotos().catch(() => { }); // (r81) a photo link that came live
+// Reuse this already-needed request for the game's initial public festival snapshot.
+// It remains asynchronous: missing live settings never hold up the title or world.
+export const liveBoot:Promise<Record<string,any>|null>|null = typeof fetch === 'function' && typeof location !== 'undefined' && /^https?:/.test(location.protocol) && !/\/studio\//.test(location.pathname) && document.title !== 'Sparkle Studio'
+ ? fetch('api/live', { cache: 'no-store' }).then(r => r.ok && /json/.test(r.headers.get('content-type') || '') ? r.json() : null).then(j => {
+    if (!j || typeof j !== 'object' || Array.isArray(j)) return null; const was = JSON.stringify(LIVE), wasC = JSON.stringify(LIVE.content || null); LIVE = j; useContent(j.content);
+    if (wasC !== JSON.stringify(j.content || null) && inGame && familyRefs().length && (familyCode() || fromExe())) refreshFamilyPhotos().catch(() => { });
     try { localStorage.setItem(LIVE_KEY, JSON.stringify(j)); } catch (e) { }
     if (JSON.stringify(j) !== was) liveFns.forEach(f => { try { f(); } catch (e) { } });
-  }).catch(() => { });
-}
+    return j;
+  }).catch(() => null) : null;
 const pick = (kind, id) => { const a = LIVE[kind] && LIVE[kind][id], b = CUSTOM[kind] && CUSTOM[kind][id]; return a && typeof a === 'object' ? a : b && typeof b === 'object' ? b : null; };
 export const liveRule = id => pick('releases', id);
 export const festivalRule = id => pick('festivals', id);
-const DAY = 864e5, dayOf = s => { const d = new Date(String(s) + 'T00:00:00'); return isNaN(d) ? null : d; };
+const DAY = 864e5, dayOf = s => { const d = new Date(String(s) + 'T00:00:00'); return isNaN(+d) ? null : d; };
 // is a release on today? (def: what it is when Studio never set it)
 // (owner, 12 Oct: tester reports) the releases a tester device sees early ("Tester preview"), set by js/tester.js
 // (rollout, owner 13 Oct AEDT: "testers see each batch a week early") a tester device also sees a release whose start

@@ -216,6 +216,8 @@
     "family-report-privacy.mts",
     "hanoi-pack-policy.mts",
     "../tools/hanoi-pack-policy.mts",
-    "../tools/mixed-voice-inventory.mts"
+    "../tools/mixed-voice-inventory.mts",
+    "festival-bootstrap.mts",
+    "../js/custom.ts"
   ]
 }

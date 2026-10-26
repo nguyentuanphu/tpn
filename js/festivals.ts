@@ -21,7 +21,7 @@ import { heightAt, WATER, VILLAGE, CHINA, INDIA, AUSSIE, TOWN, MARKET, HOME, HOI
 import { FEAST } from './data.js';
 import { FESTCAL, DAY_PLAN, BUILDUP, GROUPS } from './content/festcal.js';
 import { lunarDay, easter, nthWeekday } from './lunar.js';
-import {festivalVisible} from './content/festival-visibility.js';
+import {festivalVisible,festivalScheduled} from './content/festival-visibility.js';
 import {publicFestivals,onPublicFestivals,startPublicFestivals} from './festival-live.js';
 const ruleOf=(id:string)=>publicFestivals()?publicFestivals().festivals[id]:festivalRule(id);
 import { festivalRule, liveRule, releaseNew, onLive } from './custom.js';
@@ -59,7 +59,7 @@ export function nextOf(F, now = new Date()) {
 export const upcoming = (now = new Date()) => FESTCAL.filter(enabled).map(F => nextOf(F, now)).filter(Boolean).sort((a, b) => +a.start - +b.start);
 const byId = id => FESTCAL.find(F => F.id === id);
 let previewing = null;   // a grown-up's preview from Sparkle Studio (?festival=<id>), this session only
-let scheduled: (festival:unknown,now:Date)=>boolean = () => false; // (an admin's schedule in Studio, fest_<id>: js/festdecor.js, once a child plays)
+const scheduled = (F,now:Date)=>festivalScheduled(liveRule('fest_'+F.id),F.days||1,now); // (an admin's schedule in Studio, fest_<id>: js/festdecor.js, once a child plays)
 // what decorates the valley now: each festival in its build-up or on its day, with how far along (stage 1–4)
 export function activeFestivals(now = new Date()) {
   const pickOne = settings.festival || 'auto', out = [];
@@ -228,7 +228,7 @@ export function createFestivals(G) {
   const free = (x, z, r = 1) => heightAt(x, z) > WATER + .3 && !W.colliders.some(c => c.r > 0 && c.top == null && Math.hypot(c.x - x, c.z - z) < c.r + r) && !W.boxes.some(b => x > b.x0 - r && x < b.x1 + r && z > b.z0 - r && z < b.z1 + r);
   // (owner, 10 Oct) the street spots: js/festdecor.js, loaded once a child plays (PERF-001), then the decorations are built
   let D = null, loadingD = null, waitD = false;
-  const loadD = () => loadingD || (loadingD = import('./festdecor.js').then(m => { D = { ...m.createDecor(free), tell: m.tell, decoOf: m.decoOf, FRAC: m.FRAC }; scheduled = m.scheduled; build(); }).catch(e => { loadingD = null; console.warn('festdecor', e); window.svModuleGone?.(e); }));
+  const loadD = () => loadingD || (loadingD = import('./festdecor.js').then(m => { D = { ...m.createDecor(free), tell: m.tell, decoOf: m.decoOf, FRAC: m.FRAC }; build(); }).catch(e => { loadingD = null; console.warn('festdecor', e); window.svModuleGone?.(e); }));
   const streetSpots = (key, o) => D ? D.streetSpots(key, o) : [];
   const unhook = list => { list.forEach(it => { const k = G.interactables.indexOf(it); if (k >= 0) G.interactables.splice(k, 1); }); list.length = 0; };
   // (owner, 13 Oct: 5x the decorations) the decorations are drawn in 12 m patches: the ones nearest the children first,

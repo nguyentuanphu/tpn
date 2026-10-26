@@ -46,6 +46,9 @@ import { createPets } from './pets.js';
 import { createFerries } from './ferry.js';
 import { createPassport } from './passport.js';
 import { createFestivals } from './festivals.js';
+import {configureFestivalStartup} from './festival-live.js';
+import {projectPublicFestivals} from './content/festival-visibility.js';
+import {FESTCAL} from './content/festcal.js';
 import { createWeather } from './weather.js';
 import { createFun, confetti } from './fun.js';
 import { createLearning } from './learn.js';
@@ -55,7 +58,7 @@ import { createSignposts } from './signposts.js';
 import { createNameTags } from './nametags.js';
 import { createTraffic } from './traffic.js';
 import { RELEASES } from './content/releases.js';
-import { releaseNew, featureOn, releaseOn, liveRule, onLive, keptOn, markTried, triedFromSave, setPlayers, MONEY_GAMES } from './custom.js';
+import { liveBoot, releaseNew, featureOn, releaseOn, liveRule, onLive, keptOn, markTried, triedFromSave, setPlayers, MONEY_GAMES } from './custom.js';
 import { cachedCanvas } from './worldcache.js';
 import { events } from './core/events.js';
 import { createPlaceBook } from './placebook.js';
@@ -1880,6 +1883,7 @@ G.pets = createPets(G);
 G.ferries = createFerries(G);
 G.kites = createKites(G);
 createPassport(G);
+if(liveBoot)configureFestivalStartup(liveBoot.then(live=>live?projectPublicFestivals(FESTCAL.map(f=>f.id),live,CUSTOM):null));
 G.festivals = createFestivals(G);
 // (owner, 12 Oct) the auto play check for grown-ups testing the game: only on the devices Studio's Releases page allows
 // (switch `autoplay`: every device, or the ticked ones); everywhere else nothing of it is even downloaded

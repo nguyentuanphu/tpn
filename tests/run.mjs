@@ -694,6 +694,8 @@ await check('voicepack', async () => {
 
 await check('folkplay', async () => (await import('./folk-court-browser.mts')).folkCourtBrowserCheck(b));
 
+await check('festivalbootstrap', async () => (await import('./festival-bootstrap.mts')).festivalBootstrapCheck(b));
+
 await check('mixedhanoivoice', async () => (await import('./mixed-hanoi-voice.mts')).mixedHanoiVoiceCheck(b));
 
 await check('familyreportprivacy', async () => (await import('./family-report-privacy.mts')).familyReportPrivacyCheck(b));
@@ -1611,7 +1613,7 @@ await check('festcal', async () => {
     out.rows = document.querySelectorAll('.pad .fcal-row').length; document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false;
     // Halloween: knock at five doors for a pumpkin lantern (owner, 10 Oct: children cannot start a festival, so the check
     // has an admin schedule it for today in Studio, as a grown-up would)
-    const h = __sv.heroes[0], C = (await import('/js/custom.js')).CUSTOM, d = new Date(), ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const h = __sv.heroes[0], C = (await import('/js/custom.js')).CUSTOM, ymd = (await import('/js/content/festival-visibility.js')).sydneyFestivalDate();
     C.releases = { ...(C.releases || {}), fest_halloween: { on: true, start: ymd, days: 1 } }; __sv.festivals.rebuild(); await new Promise(r => setTimeout(r, 2500));
     document.querySelectorAll('.dialog, .reward, .modal').forEach(e => e.remove());
     const doors = __sv.interactables.filter(i => i.id.startsWith('trick_')); out.doors = doors.length;
@@ -1646,7 +1648,7 @@ await check('festivals', async () => {
     out.startedByChild = G.festivals.active().some(a => a.F.id === far.F.id) || G.interactables.some(i => i.id === 'festival_' + far.F.id);
     __sv.openPad(0, 'cal'); await wait(500); out.calNote = (document.querySelector('.pad .note') || {}).textContent || ''; document.querySelectorAll('.modal').forEach(e => e.remove()); G.paused = false;
     // an admin schedules it for today in Studio: it is on, with its table
-    const d = new Date(), ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const ymd = (await import('/js/content/festival-visibility.js')).sydneyFestivalDate();
     C.releases = { ...(C.releases || {}), ['fest_' + far.F.id]: { on: true, start: ymd, days: 1 } }; G.festivals.rebuild(); await wait(300);
     out.adminOn = G.festivals.active().some(a => a.F.id === far.F.id && a.on) && G.interactables.some(i => i.id === 'festival_' + far.F.id);
     // (owner, 11 Oct, #32) even on its day, a calendar tap only tells: nobody is sent to the festival
@@ -1707,7 +1709,7 @@ await check('festhunt', async () => {
   const r = await P.page.evaluate(async () => {
     const G = __sv, W = await import('/js/world.js'), C = (await import('/js/custom.js')).CUSTOM, { FESTCAL } = await import('/js/content/festcal.js'), { HUNT } = await import('/js/content/festhunt.js');
     const wait = ms => new Promise(r => setTimeout(r, ms)), out = { bad: [] }, bad = out.bad;
-    const d = new Date(), ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const ymd = (await import('/js/content/festival-visibility.js')).sydneyFestivalDate();
     for (let k = 0; k < 40 && !G.festivals.count('village', 'tet', 4); k++) { G.festivals.rebuild(); await wait(300); }
     // the amount: 5x by default, as before at 1, and 7x at least as much as 5x; never on a road or street
     const total = c => c.pieces + c.strings + 2 * c.fronts, base = c => c.base.pieces + c.base.strings; let places = 0;
