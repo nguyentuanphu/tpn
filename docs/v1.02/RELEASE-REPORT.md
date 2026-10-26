@@ -1,6 +1,6 @@
-# v1.02 release review · in progress
+# v1.02 release review
 
-Updated 27 October 2026, 5:10 am AEDT. Live remains **v1.01**. Candidate: `work/v1.02-fruit-parade`, draft [PR #602](https://github.com/nguyentuanphu/tpn/pull/602). **Not ready for deployment approval.** The owner selected v1.02 and waived the ZIP. No v1.02 merge or deployment is approved. Release is working alone at the owner's latest instruction.
+Updated 27 October 2026, 5:23 am AEDT. Live remains **v1.01**. Candidate: `work/v1.02-fruit-parade`, draft [PR #602](https://github.com/nguyentuanphu/tpn/pull/602). **Local release review complete; final GitHub regression required before deployment approval.** The owner selected v1.02 and waived the ZIP. No v1.02 merge or deployment is approved. Release is working alone at the owner's latest instruction.
 
 ## Changes prepared
 
@@ -15,7 +15,7 @@ Updated 27 October 2026, 5:10 am AEDT. Live remains **v1.01**. Candidate: `work/
 - Friends startup rejects stale attempts and safely handles a missing relay. Turtle Counting uses the exact recorded lines.
 - Parents can select **FPT Neo Lê Minh** for Vietnamese speech, including Vietnamese fragments within English recordings. Female remains default. Fragment playback is preflighted and joined into one buffer; missing/corrupt parts fall back to the entire original recording. Provider-specific verified caching/downloads survive Settings close while the game remains open; mobile permission is visible and revocable. Private user text is excluded from recording jobs and missing-line harvesting.
 - Current local optional Lê Minh package: **6,663 verified public units**, **435,948,496 bytes (~416 MiB)**. All 340 reviewed delta clips independently pass receipt bytes/SHA, duration and full MP3 decode. Nineteen privacy-held units remain excluded; no unknown public Vietnamese gap. Azure run40362276888 completed; all1,442 English fragment files are collected. Current coverage reports zero missing; independent full MP3 decoding passed for all1,442 clips.
-- Website copy now explains the actual folk/shared games, private family questions, parent controls, voices, festivals and rewards in both languages, with 17 game photos and four main destinations. Final source lock and current parent/Studio captures remain in progress; source-drift review is not bypassed.
+- Website copy now explains the actual folk/shared games, private family questions, parent controls, voices, festivals and rewards in both languages, with 17 game photos and four main destinations. The immutable reviewed-source lock is a9c809cc1. All18 current parent/Studio device/language captures were inspected; the five-layout preview passes, production home matches, and the negative drift test still rejects unreviewed source changes.
 
 All new feature logic is TypeScript. The legacy repository is not entirely converted. Existing drawing-game work and later startup/TypeScript plans retain their own scope; this report does not claim a new drawing-game batch.
 
@@ -25,7 +25,7 @@ Latest completed exhaustive [GitHub run 40362309176](https://github.com/nguyentu
 
 Prior source `c1a2c5b27` passed 240/240 in 40278772969 with no retries; its exact map is collected. It predates the final changes. Bot runs marked action_required executed no checks and are not passes.
 
-Local completed evidence includes legal full shared matches, replay/transport/consent/rate checks; 330 unit tests; actual Family Quiz private flows and report/screenshot redaction; selected-voice composition and fallback; parent download/background/offline checks; all 13 bridge crossings and deck/boat checks; and EN/VI phone/tablet/computer captures of the changed games. Family Quiz editor and game contact sheets have been inspected. Current types pass with 195 explicit files plus 51 server/Studio/tool files. Real Studio → rebuilt website → game off/on/off and bootstrap pass 2/2. Sydney calendar repair: festcal passed; after an environment restart, the resumed festivals/whole-world decorations/unit/types run passed 4/4. All placement, no-overlap, off-precedence and game-rule assertions remain.
+Local completed evidence includes legal full shared matches, replay/transport/consent/rate checks; 330 unit tests; actual Family Quiz private flows and report/screenshot redaction; selected-voice composition and fallback; parent download/background/offline checks; all 13 bridge crossings and deck/boat checks; and EN/VI phone/tablet/computer captures of the changed games. Family Quiz editor and game contact sheets have been inspected. Current types pass with 196 explicit files plus 51 server/Studio/tool files. Real Studio → rebuilt website → game off/on/off and bootstrap pass 2/2. Sydney calendar repair: festcal passed; after an environment restart, the resumed festivals/whole-world decorations/unit/types run passed 4/4. All placement, no-overlap, off-precedence and game-rule assertions remain.
 
 Historical second-try cases remain disclosed: animalvoices in 40286660229 (fixture settled before a delayed welcome sticker sound; isolated actual-animal assertions retained and strengthened), filmmusic in 40267531199, ownerreportedphonevi and testerreport in 40256019376, and phone in the initial audit. Current final-run retries will be added explicitly.
 
@@ -43,18 +43,16 @@ Serial checks, unchanged budgets, same machine. Final network repair restores **
 | Cached freeze | 8.252 s | 10.290 s | 10.423 s |
 | Second-start network | 0 KB | 1 KB | 0 KB |
 
-**Perf and startup remain red against their unchanged timing limits on both versions.** The repair substantially reduces the candidate slowdown, but timings remain a disclosed limitation. The startup calibration probe was169ms for live and218ms for the candidate, so the machine also varied between serial runs. No JavaScript errors or muted voice-index loads were observed. Candidate battery previously passed187s; final follow-up pending. Raw comparisons: [live](../v1.02-audit/live-same-machine-speed-20261027.json), [before](../v1.02-audit/speed-before-festival-bootstrap-20261027.json), [after](../v1.02-audit/speed-after-festival-bootstrap-20261027.json).
+**Perf and startup remain red against their unchanged timing limits on both versions.** The repair substantially reduces the candidate slowdown, but timings remain a disclosed limitation. The startup calibration probe was169ms for live and218ms for the candidate, so the machine also varied between serial runs. No JavaScript errors or muted voice-index loads were observed. Final battery passes169s; all8 final local checks pass (voicecover, festivalbootstrap, preload, rules, emoji, arch, types, battery). Raw comparisons: [live](../v1.02-audit/live-same-machine-speed-20261027.json), [before](../v1.02-audit/speed-before-festival-bootstrap-20261027.json), [after](../v1.02-audit/speed-after-festival-bootstrap-20261027.json).
 
 ## Open tester reports outside the verified fixes
 
 A fresh GitHub check on27 October2026 AEDT found live-v1.01 reports that this release must **not** close without reproduction and a verified repair: [#603](https://github.com/nguyentuanphu/tpn/issues/603) Hanoi electric-cart dark windscreen/road view; [#605](https://github.com/nguyentuanphu/tpn/issues/605) Terracotta Army placement near Hanoi; [#606](https://github.com/nguyentuanphu/tpn/issues/606) Sword Lake appearance; [#607](https://github.com/nguyentuanphu/tpn/issues/607) obstruction near(179,-134). Recent freeze/slow reports include#604,#608–611 and recurring#404/#561/#570. These remain open; browser rule/geometry checks do not establish a physical iPhone fix for them. Earlier startup#36 and road-art#34 also retain their scope. No claim that all repository bugs are resolved.
 
-## Still required
+## Final deployment gate
 
-1. Finish the final serial battery follow-up; preserve the red timing results and baseline comparison above.
-2. Collected English fragments independently pass full decode; coverage is zero missing and the verified optional package has been rebuilt. Final GitHub voicecover remains required.
-3. Finish current parent/Studio captures, inspect the website, record its immutable reviewed-source lock and rebuild/check production `/home/`.
-4. Push the complete candidate, fix every red GitHub check, collect the final exact code map and update this report/board/PR description.
-5. Present the final review and request one explicit **yes, deploy v1.02** pop-up. Main, Netlify, issue closure and Studio publication wait for that approval.
+All local preparation is complete. The final exhaustive GitHub regression must pass against the settled branch; Release will report its exact run/count and any retries before requesting approval. The current status and automated full-suite summary are on [PR #602](https://github.com/nguyentuanphu/tpn/pull/602). The preceding242/247 result is retained above as historical evidence, not a pass. The official final code-map artifact will be collected from that run and committed in the release record; no map from another source is substituted.
+
+ZIP waived. Timing failures/baseline, open tester reports, physical-device limitations and unfinished AI review remain disclosed. Main, Netlify, issue closure and Studio publication wait for the owner's explicit **yes, deploy v1.02**. Website branch-protection configuration could not be verified with the connector (GitHub403 administration access); this round's consistency gate and its negative regression were verified directly.
 
 [Detailed game evidence](../v1.02-traditional-repairs/README.md) · [Previous checkpoint preserved](RELEASE-REPORT-checkpoint-20261026.md).
