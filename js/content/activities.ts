@@ -1,3 +1,5 @@
+import { testerArcadeAvailable } from './tester-arcades.js';
+import { fruitParadeAvailable } from './fruit-parade.js';
 // One list of everything a child can choose on the Simple screen (round J, owner: "one source of truth"): every
 // mini-game sits in exactly one child-friendly area, with the youngest age it suits and how hard it is. The Simple
 // screen's path, its Discover page and search, the "new" markers and the checks all read it from here; the names and
@@ -5,7 +7,7 @@
 // The family's Studio can move a game to another area, hide it, or open it to under-5s (content/custom.json
 // "activities": { id: { area, little, hide } }).
 import { T } from '../i18n.js';
-import { CUSTOM, keptOn, MONEY_GAMES } from '../custom.js';
+import { CUSTOM, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
 import { heldGame } from './secondset.js';
 
@@ -48,9 +50,9 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   counting: ['numbers', 2, 1], numbers: ['numbers', 3, 1], moreless: ['numbers', 3, 2], dragonfire: ['numbers', 3, 1], sums: ['numbers', 5, 3], clock: ['numbers', 5, 3], days: ['numbers', 5, 2],
   shapes: ['shapes', 2, 1], pattern: ['shapes', 3, 2], sorting: ['shapes', 2, 1], tower: ['shapes', 2, 1], memory: ['shapes', 3, 2], sudoku: ['shapes', 5, 3], hanoi: ['shapes', 5, 3],
   letters: ['words', 4, 2], phonics: ['words', 4, 2], opposites: ['words', 4, 2], words: ['words', 5, 2], firstwords: ['words', 5, 3],
-  feelings: ['me', 2, 1], bodyparts: ['me', 2, 1], familyquiz: ['me', 3, 2],
+  feelings: ['me', 2, 1], bodyparts: ['me', 2, 1], familyquiz: ['me', 3, 2], fruitparade: ['play', 2, 1], sparkleorchard: ['play', 2, 1], sparklefruitbar: ['play', 2, 1],
   kite: ['play', 2, 1], hopscotch: ['play', 3, 1], tug: ['play', 2, 1], skipping: ['play', 3, 2], sackrace: ['play', 3, 1], nemlon: ['play', 3, 1], marbles: ['play', 4, 2], cricket: ['play', 5, 2], mrwolf: ['play', 3, 2], dacau: ['play', 4, 2],
-  dragon: ['vietnam', 3, 1], datnieu: ['vietnam', 2, 1],
+  dragon: ['vietnam', 3, 1], cacuangua: ['vietnam', 5, 2], meochuot: ['vietnam', 3, 1], cuopco: ['vietnam', 3, 1], keocua: ['vietnam', 3, 1], danhdao: ['vietnam', 4, 2], nemcon: ['vietnam', 3, 1], trongnu: ['vietnam', 3, 1], duathuyen: ['vietnam', 3, 1], datnieu: ['vietnam', 2, 1],
   banhchung: ['vietnam', 2, 1], denongsao: ['vietnam', 2, 1], mualan: ['vietnam', 2, 2], cayneu: ['vietnam', 2, 1], oantuti: ['vietnam', 3, 1], chuyen: ['vietnam', 5, 2], oanquan: ['vietnam', 5, 3], caro: ['vietnam', 5, 3], tienlen: ['vietnam', 5, 3], tienlenbac: ['vietnam', 5, 3],
   traffic: ['travel', 2, 1], ferries: ['travel', 3, 1], tram: ['travel', 3, 1], balloon: ['travel', 2, 1], bubbles: ['travel', 2, 1], market: ['travel', 3, 2], sortout: ['travel', 3, 2], order: ['travel', 5, 2],
   robot: ['thinking', 5, 3], maze: ['thinking', 5, 2], snakes: ['thinking', 5, 2], snap: ['thinking', 3, 2],
@@ -64,7 +66,9 @@ export function gameInfo(id) {
   // child playing has already played it
   // (r90) the second set of games is held back while Studio's New games switch is off (js/content/secondset.ts)
   const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id);
-  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: c.hide === true || held };
+  const orchardHeld = id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','single');
+  const fruitHeld = id === 'fruitparade' && !fruitParadeAvailable('single');
+  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld };
 }
 // the games of one area for a child: under-5s only see the ones made for them
 export const gamesIn = (games, area, little) => Object.keys(games).map(gameInfo).filter(g => g.area === area && !g.hidden && (!little || g.ageMin < 5));

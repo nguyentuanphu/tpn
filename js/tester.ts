@@ -1,3 +1,4 @@
+import { floatReportButton } from './tester-float.js';
 // Tester reports on a tester device (owner, 12 Oct 2026 AEDT; brief docs/cores/tasks/tester-reports.md). Loaded only
 // on the devices Studio's Releases page makes testers (switch `tester`, js/testergate.js); everywhere else nothing of it
 // is downloaded. Once the tester accepts the agreement (shown once, both languages):
@@ -68,7 +69,7 @@ const autoShot = () => automaticPicture || (automaticPicture = shot().finally(()
 
 // ---------- what happened in the last 30 seconds ----------
 const note = (k, s) => { const t = Date.now(); log.push([t, k, String(s || '').replace(/\s+/g, ' ').slice(0, 120)]); while (log.length && (t - log[0][0] > C.LIMITS.replay * 1000 || log.length > 400)) log.shift(); };
-const labelOf = n => { const b = n && n.closest && n.closest('button, [role=button], a, .hcard, .sp-stop, .sp-catcard, .chip'); if (!b) return n && n.tagName ? n.tagName.toLowerCase() : ''; return (b.getAttribute('aria-label') || b.textContent || b.className || '').trim().slice(0, 40); };
+const labelOf = n => { const element = n instanceof Element ? n : n?.parentElement; if (element?.closest('[data-capture-private], [data-private]')) return 'Private family content'; const b = n && n.closest && n.closest('button, [role=button], a, .hcard, .sp-stop, .sp-catcard, .chip'); if (!b) return n && n.tagName ? n.tagName.toLowerCase() : ''; return (b.getAttribute('aria-label') || b.textContent || b.className || '').trim().slice(0, 40); };
 const topWindow = () => { const w = [...document.querySelectorAll<HTMLElement>('.modal, .gl, .theatre, .storybook, .dialog')].filter(x => x.offsetParent || getComputedStyle(x).position === 'fixed').pop(); if (!w) return ''; const h = w.querySelector('h2, h3, .gl-title, .dname, b'); return (w.className.split(' ').slice(0, 2).join(' ') + (h ? ': ' + h.textContent.trim() : '')).slice(0, 80); };
 const whereNow = () => { const h = G && G.heroes && G.heroes[0], open = document.querySelector('.gl'); return { area: String((G && G.regionOf && G.regionOf[0]) || 'valley'), place: '', game: open ? lastGame : '', window: topWindow(), x: h ? Math.round(h.pos.x) : 0, z: h ? Math.round(h.pos.z) : 0 }; };
 const playersNow = () => (profiles || []).slice(0, 8).map(p => ({ name: nm(p.name || ''), age: p.age || '', coins: farm ? farm.coins : 0, stars: p.stars ? Object.keys(p.stars).length : 0, level: p.difficulty || '' }));
@@ -319,19 +320,16 @@ function newsHTML() {
 const paintCount = () => { dispatchEvent(new Event('sv-report-queue')); const n = queue().length, fixed = fixedToSee().length, fresh = newsUnseen(); document.querySelectorAll('.z-lb').forEach(b => { b.querySelector<HTMLElement>('.lb-n').textContent = n ? String(n) : ''; b.querySelector<HTMLElement>('.lb-n').hidden = !n; const ok = b.querySelector<HTMLElement>('.lb-ok'); ok.hidden = !fixed; if (fixed) ok.textContent = String(fixed); const nw = b.querySelector<HTMLElement>('.lb-new'); if (nw) nw.hidden = !fresh; }); };
 const fixedToSee = () => { const seen = get(KEY.seen, {}); return ((status && status.mine) || []).filter(p => ['fixed', 'confirmed'].includes(p.status) && !seen[p.k]); };
 function addUI() {
+  const floatingSeats = new Set<number>();
   // (each player's HUD gets the mark under its clock and, at the ladybird level, the ladybird with the zoom buttons; also
   // the HUDs made after this: the game starts after the title screen)
   const ensure = () => (G.huds || []).forEach((hud, i) => {
     const ck = hud.q && hud.q('.zoom'); if (ck && !ck.querySelector('.testermark')) { const mk = el('span', 'testermark', `${pic('🐞')}<span>${T('Tester', 'Người thử')} · ${SHOWN}</span>`); mk.setAttribute('aria-hidden', 'true'); ck.appendChild(mk); offs.push(() => mk.remove()); }
     if (level !== 'ladybird') return;
-    const z = hud.q && hud.q('.zoomer'); if (!z || z.querySelector('.z-lb')) return;
+    const z = hud.q && hud.q('.zoomer'); if (!z || floatingSeats.has(i)) return;
     const b = el('button', 'z-lb', `${pic('🐞')}<i class="lb-n" hidden></i><i class="lb-ok" hidden>✓</i><i class="lb-new" hidden></i><kbd class="kb">L</kbd>`); b.setAttribute('aria-label', T('Report a problem (hold: quick report)', 'Báo lỗi (giữ: báo nhanh)'));
-    let t0 = 0, quick = null;
-    b.addEventListener('pointerdown', e => { e.stopPropagation(); t0 = performance.now(); quick = setTimeout(() => { quick = null; quickReport('quick'); }, 700); });
-    b.addEventListener('pointerup', e => { e.stopPropagation(); if (quick) { clearTimeout(quick); quick = null; openPanel(i, fixedToSee().length ? 'fixed' : 'tester'); } });
-    b.addEventListener('pointerleave', () => { if (quick) { clearTimeout(quick); quick = null; } });
-    b.addEventListener('keydown', e => { if (e.key === 'Enter') openPanel(i); });
-    z.appendChild(b); offs.push(() => b.remove()); paintCount();
+    floatingSeats.add(i);
+    offs.push(floatReportButton(b as HTMLButtonElement, z, i, signal => { void openPanel(i, fixedToSee().length ? 'fixed' : 'tester', signal); }, () => { void quickReport('quick'); })); paintCount();
   });
   ensure(); const ev = setInterval(ensure, 1000); offs.push(() => clearInterval(ev));
   const key = e => { if ((e.key === 'l' || e.key === 'L') && !e.target.closest('input, textarea') && !document.querySelector<ReportPanel>('.modal.tpanel')) openPanel(0); };
@@ -360,18 +358,18 @@ function bindReportViewport(panel: HTMLElement) {
   };
   sync(); addEventListener('resize', sync); viewport?.addEventListener('resize', sync); viewport?.addEventListener('scroll', sync);
   const observer = new MutationObserver(() => { if (!panel.isConnected) clean(); });
-  const clean = () => { removeEventListener('resize', sync); viewport?.removeEventListener('resize', sync); viewport?.removeEventListener('scroll', sync); observer.disconnect(); };
+  const clean = () => { removeEventListener('resize', sync); viewport?.removeEventListener('resize', sync); viewport?.removeEventListener('scroll', sync); observer.disconnect(); panel.dispatchEvent(new Event('sv-report-cleanup')); };
   observer.observe(document.body, { childList: true }); panel.addEventListener('sv-modal-close', clean, { once: true });
 }
 
 // the panel: the picture is taken first, then a kind, a spoken or typed note, Send; or "Already reported → add to it"
-export async function openPanel(i = 0, initialTab = 'tester') {
+export async function openPanel(i = 0, initialTab = 'tester', signal?: AbortSignal) {
   const existing=document.querySelector<ReportPanel>('.modal.tpanel');
   if(existing){existing.selectTab?.(initialTab);return existing;}
   if (!live || panelOpening) return;
   panelOpening=true; let pic0,scenePic;
   try { const pictures = await shotPair(); pic0 = pictures.full; scenePic = pictures.scene; } finally {panelOpening=false;}
-  if(!live)return;
+  if(!live||signal?.aborted)return;
   // Capture what the reporter saw, then clear competing control trays for the form.
   document.querySelector<HTMLElement & { close?(): void }>('.audio-tray')?.close?.();
   document.querySelectorAll('.zoomer.open').forEach(x=>x.classList.remove('open'));
@@ -401,6 +399,14 @@ export async function openPanel(i = 0, initialTab = 'tester') {
   const reportActions=reportBody.querySelector('.tp-send').closest('.actions');reportActions.classList.add('testing-actions');
   card.append(tabs,reportBody,autoBody,fixedBody,reportActions);
   const close = () => { G.autoplay?.detach?.(); m.close(); G.paused = was; };
+  // On a busy screen the first tap's capture can finish before native double-click
+  // arrives. Cancel only that untouched form; never discard an edited report.
+  let interacted = false;
+  const touched = () => { interacted = true; };
+  const cancelUntouched = () => { if (signal?.reason === 'reset' && !interacted) close(); };
+  card.addEventListener('pointerdown', touched, true); card.addEventListener('input', touched, true); card.addEventListener('click', touched, true);
+  signal?.addEventListener('abort', cancelUntouched, { once: true });
+  m.addEventListener('sv-report-cleanup', () => { signal?.removeEventListener('abort', cancelUntouched); card.removeEventListener('pointerdown', touched, true); card.removeEventListener('input', touched, true); card.removeEventListener('click', touched, true); }, { once: true });
   card.querySelector<HTMLButtonElement>('.x').onclick = close;
   const selectTab = tab => {
     const fixedTab = tabs.querySelector('[data-test-tab="fixed"]');

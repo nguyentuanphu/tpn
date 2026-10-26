@@ -20,11 +20,14 @@ export function enrichment({data,dual,icon,esc}){
  ['cine-hanoi',['Discover Hà Nội','Tìm hiểu Hà Nội'],['Familiar landmarks become places to talk about together.','Danh thắng quen thuộc mở ra câu chuyện cùng gia đình.']],
  ['cine-sydney',['Visit Sydney','Ghé thăm Sydney'],['An Australian setting in the same playful valley.','Khung cảnh nước Úc trong cùng thung lũng vui chơi.']]]),
  learning:gallery([
+ ['game-familyquiz',['Your own family questions','Câu hỏi của gia đình mình'],['A synthetic example of a private family round. Parents choose the questions; these are demonstration names and answers.','Ví dụ giả định về ván câu hỏi riêng. Cha mẹ chọn câu hỏi; tên và đáp án trong hình chỉ dùng minh họa.']],
  ['game-reading',['Trace and discover letters','Tô nét và khám phá chữ'],['Follow the glowing dots with a finger or pointer.','Theo các chấm sáng bằng ngón tay hoặc con trỏ.']],
  ['game-count',['Count with pictures','Đếm cùng hình ảnh'],['Name and count what appears on screen.','Gọi tên và đếm những gì hiện trên màn hình.']],
  ['game-colors',['Explore colours','Khám phá màu sắc'],['Listen, recognise and choose colours.','Lắng nghe, nhận biết và chọn màu.']],
  ['game-money',['Explore money choices','Tìm hiểu lựa chọn tiền bạc'],['A starting point for family conversations about coins and choices.','Điểm bắt đầu để cả nhà nói về tiền xu và lựa chọn.']]],'four'),
  folk:gallery([
+ ['game-horse',['Cờ Cá Ngựa · gentle mode','Cờ Cá Ngựa · chế độ nhẹ nhàng'],['See the drawn horses and short track before playing together. Classic mode has the full board and different rules.','Xem quân ngựa và đường đi ngắn trước khi chơi cùng nhau. Chế độ thông thường có bàn đầy đủ và luật khác.']],
+ ['game-cuopco',['Cướp Cờ · a guided screen adaptation','Cướp Cờ · bản hướng dẫn trên màn hình'],['Listen for the number, choose the matching child and bring the flag back.','Nghe số, chọn bạn mang số tương ứng và đưa cờ về.']],
  ['game-oanquan',['Ô Ăn Quan','Ô Ăn Quan'],['See the pits and counters before trying a turn.','Nhìn ô và quân trước khi thử một lượt.']],
  ['game-kite',['Thả Diều · Kite flying','Thả Diều'],['A colourful screen version of a familiar outdoor tradition.','Phiên bản trên màn hình của trò chơi ngoài trời quen thuộc.']]],'two'),
  stories:gallery([['tale',['A story to share','Câu chuyện để cùng chia sẻ'],['Pictures and narration make room for listening and conversation.','Hình ảnh và lời kể giúp cả nhà lắng nghe, trò chuyện.']]],'single'),

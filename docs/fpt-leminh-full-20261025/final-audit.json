@@ -1,0 +1,20 @@
+{
+  "source": "d5a64aa84785176ffded10defe36aee252860e68",
+  "inventory": "cd42b404530c7b68750fb8238d098552201fdf51ec33c8b58cae402354427874",
+  "voice": {
+    "provider": "FPT Neo",
+    "model": "FPT.AI-VITs",
+    "voice": "leminh",
+    "speed": 1,
+    "response_format": "mp3"
+  },
+  "expected": 6319,
+  "verified": 6319,
+  "missing": 0,
+  "bytes": 423211523,
+  "decoded": 6319,
+  "absentShards": [],
+  "pendingShards": [],
+  "errors": [],
+  "complete": true
+}

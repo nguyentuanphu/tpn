@@ -5,17 +5,19 @@ const dataURL = blob => new Promise(resolve => { const f = new FileReader(); f.o
 const visible = n => { const s = getComputedStyle(n), r = n.getBoundingClientRect(); return s.display !== 'none' && s.visibility !== 'hidden' && +s.opacity > 0 && r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight; };
 const privateField = n => n.matches?.('input[type="password"], input[type="file"], .fd-code, .fd-paircode, [data-private], [data-capture-private]') || n.closest?.('[data-capture-private]');
 export const captureFieldValue = n => privateField(n) ? '••••' : (n.value || n.placeholder || '');
+// Parse the resolved style once per node instead of reparsing it for every property.
+const inlineStyle = (style: CSSStyleDeclaration) => Array.from(style, key => `${key}:${style.getPropertyValue(key)}`).join(';');
 async function clone(n, world) {
   if (n.nodeType === Node.TEXT_NODE) return document.createTextNode(n.textContent);
   if (n.nodeType !== Node.ELEMENT_NODE || /SCRIPT|STYLE|LINK|NOSCRIPT/.test(n.tagName) || (!n.closest('svg') && !visible(n))) return document.createTextNode('');
   let c;
-  if (n instanceof HTMLCanvasElement && n.closest('#stage') && world) { const hidden = document.createElement('div'); const style = getComputedStyle(n); for (const key of style) hidden.style.setProperty(key, style.getPropertyValue(key)); hidden.style.visibility = 'hidden'; return hidden; }
+  if (n instanceof HTMLCanvasElement && n.closest('#stage') && world) { const hidden = document.createElement('div'); const style = getComputedStyle(n); hidden.style.cssText = inlineStyle(style); hidden.style.visibility = 'hidden'; return hidden; }
   if (n instanceof HTMLCanvasElement) { c = document.createElement('img'); try { c.src = (n.closest('#stage') && world ? world : n).toDataURL(); } catch { c.src = ''; } }
   else c = n.cloneNode(false);
-  const s = getComputedStyle(n); for (const key of s) c.style.setProperty(key, s.getPropertyValue(key));
+  const s = getComputedStyle(n); c.style.cssText = inlineStyle(s);
   c.style.animation = 'none'; c.style.transition = 'none';
   if(privateField(n) && !(n instanceof HTMLInputElement) && !(n instanceof HTMLTextAreaElement)){c.textContent='••••';return c;}
-  if (n instanceof HTMLImageElement) { try { c.src = await dataURL(await (await fetch(n.currentSrc || n.src)).blob()); } catch { c.removeAttribute('src'); } c.removeAttribute('srcset'); }
+  if (n instanceof HTMLImageElement) { const src = n.currentSrc || n.src; try { c.src = src.startsWith('data:image/') ? src : await dataURL(await (await fetch(src)).blob()); } catch { c.removeAttribute('src'); } c.removeAttribute('srcset'); }
   if (n instanceof HTMLInputElement || n instanceof HTMLTextAreaElement) { const style=c.style.cssText;c = document.createElement('div'); c.style.cssText = style; c.textContent = captureFieldValue(n); }
   else if (!(n instanceof HTMLCanvasElement)) for (const child of n.childNodes) c.appendChild(await clone(child, world));
   if (n.scrollTop) { c.style.overflow = 'hidden'; const inner = document.createElement('div'); while (c.firstChild) inner.appendChild(c.firstChild); inner.style.transform = `translateY(-${n.scrollTop}px)`; c.appendChild(inner); }

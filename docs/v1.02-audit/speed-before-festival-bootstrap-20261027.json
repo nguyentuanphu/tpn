@@ -1,0 +1,63 @@
+{
+  "runtime": "4f1c7e023",
+  "optionalPackUnits": 6663,
+  "candidate": {
+    "over": [
+      "PERF-001 firstTitleMs 1971 > 1130 x 1.21 (machine speed) = 1371",
+      "PERF-001 firstReadyMs 48943 > 19500 x 1.21 (machine speed) = 23660",
+      "PERF-001 secondReadyMs 44611 > 19100 x 1.21 (machine speed) = 23175",
+      "PERF-001 secondFreezeMs 10290 > 4950 x 1.21 (machine speed) = 6006",
+      "PERF-001 secondKB 1 > 0"
+    ],
+    "got": {
+      "firstKB": 1009,
+      "firstTitleMs": 1971,
+      "firstReadyMs": 48943,
+      "secondReadyMs": 44611,
+      "secondFreezeMs": 10290,
+      "secondKB": 1
+    },
+    "mutedIndexLoads": [],
+    "machineMs": 218,
+    "speed": 1.21,
+    "slowest": [
+      "things 14.4 s",
+      "world 7.4 s",
+      "roads 4.3 s",
+      "shaders 4.1 s"
+    ],
+    "firstSteps": {
+      "start": 1934,
+      "world": 8365,
+      "people": 9193,
+      "town": 14585,
+      "roads": 17553,
+      "pretraffic": 23451,
+      "traffic": 23552,
+      "things": 39591,
+      "wideland": 41190,
+      "levelled": 42120,
+      "roadside": 43982,
+      "solids": 44056,
+      "ready": 47009,
+      "shaders": 54623
+    },
+    "secondSteps": {
+      "start": 3887,
+      "world": 7407,
+      "people": 8411,
+      "town": 10933,
+      "roads": 15277,
+      "pretraffic": 18130,
+      "traffic": 18213,
+      "things": 32659,
+      "wideland": 34310,
+      "levelled": 36335,
+      "roadside": 38206,
+      "solids": 38306,
+      "ready": 40724,
+      "shaders": 44777
+    },
+    "errs": []
+  }
+}

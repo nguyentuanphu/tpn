@@ -1,0 +1,62 @@
+[
+  {
+    "device": "phone",
+    "lang": "en",
+    "tiles": 5,
+    "collapsesAndRestores": true,
+    "collapsedAfterReload": true,
+    "noDocumentOverflow": true,
+    "sixIndependentStudioSwitches": true,
+    "errors": []
+  },
+  {
+    "device": "phone",
+    "lang": "vi",
+    "tiles": 5,
+    "collapsesAndRestores": true,
+    "collapsedAfterReload": true,
+    "noDocumentOverflow": true,
+    "sixIndependentStudioSwitches": true,
+    "errors": []
+  },
+  {
+    "device": "tablet",
+    "lang": "en",
+    "tiles": 5,
+    "collapsesAndRestores": true,
+    "collapsedAfterReload": true,
+    "noDocumentOverflow": true,
+    "sixIndependentStudioSwitches": true,
+    "errors": []
+  },
+  {
+    "device": "tablet",
+    "lang": "vi",
+    "tiles": 5,
+    "collapsesAndRestores": true,
+    "collapsedAfterReload": true,
+    "noDocumentOverflow": true,
+    "sixIndependentStudioSwitches": true,
+    "errors": []
+  },
+  {
+    "device": "computer",
+    "lang": "en",
+    "tiles": 5,
+    "collapsesAndRestores": true,
+    "collapsedAfterReload": true,
+    "noDocumentOverflow": true,
+    "sixIndependentStudioSwitches": true,
+    "errors": []
+  },
+  {
+    "device": "computer",
+    "lang": "vi",
+    "tiles": 5,
+    "collapsesAndRestores": true,
+    "collapsedAfterReload": true,
+    "noDocumentOverflow": true,
+    "sixIndependentStudioSwitches": true,
+    "errors": []
+  }
+]

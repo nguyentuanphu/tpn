@@ -7,6 +7,7 @@ import { swapNames } from './i18n.js';
 import { packHash, lineHash, partText } from './packhash.js';
 import { events } from './core/events.js';
 import { viRuns, mixed } from './viwords.js';
+import { mixedVoiceFragments } from './voice-fragments.js';
 import { CUSTOM } from './custom.js';
 
 let all = [];
@@ -27,7 +28,18 @@ if (window.speechSynthesis) { load(); try { speechSynthesis.addEventListener('vo
 
 export function voicesFor(lang) {
   const re = new RegExp('^' + (lang || 'en'), 'i');   // en, vi, zh (Chinese), hi (Hindi)
-  return all.filter(v => re.test(v.lang)).sort((a, b) => score(b) - score(a) || (Number(/en[-_](au|us)/i.test(b.lang)) - Number(/en[-_](au|us)/i.test(a.lang))));
+  const unique = [];
+  const seen = new Map();
+  for (const v of all.filter(v => re.test(v.lang))) {
+    const key = `${v.name.replace(/\s*\((?:enhanced|premium|compact|standard)\)$/i, '').trim().toLowerCase()}:${v.lang.toLowerCase()}`;
+    const old = seen.get(key);
+    if (!old || score(v) > score(old) || (score(v) === score(old) && v.localService && !old.localService)) {
+      if (old) unique[unique.indexOf(old)] = v;
+      else unique.push(v);
+      seen.set(key, v);
+    }
+  }
+  return unique.sort((a, b) => score(b) - score(a) || (Number(/en[-_](au|us)/i.test(b.lang)) - Number(/en[-_](au|us)/i.test(a.lang))));
 }
 export function voiceFor(lang) {
   const list = voicesFor(lang), want = lang === 'vi' ? settings.voiceVi : lang === 'en' ? settings.voiceEn : null;
@@ -94,18 +106,19 @@ function utter(text, lang) {
 }
 // Device speech, as a promise that resolves when the line has been spoken.
 // Long lines are split at sentence ends: some phones cut long utterances off or rush them.
-function deviceSpeak(text, lang, my) {
+function deviceSpeak(text, lang, my, localVoice:SpeechSynthesisVoice|null=null) {
   if (!window.speechSynthesis) return Promise.resolve();
+  try { speechSynthesis.resume(); } catch (e) { }
   const parts = String(text).match(/[^.!?。…]+[.!?。…]*\s*/g) || [text];
   let chunks = []; for (const p of parts) { const last = chunks.length - 1; if (last >= 0 && (chunks[last] + p).length < 160) chunks[last] += p; else chunks.push(p); }
   // (round R, owner: "bánh khọt" and "nước mía" said by the English voice can't be understood) the Vietnamese words of an
   // English line are said by the phone's Vietnamese voice when it has one
   chunks = chunks.map(c => [lang, c]);
-  if (lang === 'en' && mixed(text) && voicesFor('vi').length) chunks = chunks.flatMap(([, c]) => viRuns(c)).filter(([, c]) => /[\p{L}\d]/u.test(c));
+  if (!localVoice && lang === 'en' && mixed(text) && voicesFor('vi').length) chunks = chunks.flatMap(([, c]) => viRuns(c)).filter(([, c]) => /[\p{L}\d]/u.test(c));
   return new Promise<void>(res => {
     let left = chunks.length, ended = false;
     const end = () => { if (!ended) { ended = true; res(); } };
-    chunks.forEach(([l, c]) => { const u = utter(c.trim(), l); u.onend = u.onerror = () => { if (--left <= 0) end(); }; try { speechSynthesis.speak(u); } catch (e) { end(); } });
+    chunks.forEach(([l, c]) => { const u = utter(c.trim(), l); if(localVoice){u.voice=localVoice;u.lang=localVoice.lang;} u.onend = u.onerror = () => { if (--left <= 0) end(); }; try { speechSynthesis.speak(u); } catch (e) { end(); } });
     // in case the device never reports the end
     setTimeout(end, 1500 + String(text).length * 95);
     const poll = setInterval(() => { if (my !== seq) { clearInterval(poll); end(); } if (ended) clearInterval(poll); }, 200);
@@ -215,6 +228,14 @@ function noteMiss(lang, text) {
   clearTimeout(missTimer); missTimer = setTimeout(() => { try { localStorage.setItem(MISS_KEY, JSON.stringify(L)); } catch (e) { } }, 2000);
 }
 export const voiceMisses = () => loadMisses().slice().sort((a, b) => b[2] - a[2]);
+export function forgetVoiceMisses(lines) {
+  if (!lines.length) return;
+  const sent = new Set(lines.map(m => `${m[0]}|${m[1]}`));
+  const remaining = loadMisses().filter(m => !sent.has(`${m[0]}|${m[1]}`));
+  misses = remaining;
+  clearTimeout(missTimer);
+  try { localStorage.setItem(MISS_KEY, JSON.stringify(remaining)); } catch (e) { }
+}
 export const clearVoiceMisses = () => { misses = []; try { localStorage.removeItem(MISS_KEY); } catch (e) { } };
 // Speak one string in a fixed language (letter names, etc.).
 export function sayIn(lang, text) {
@@ -232,6 +253,16 @@ function sayInLoaded(lang, text, my) {
 }
 // the phone's own voice only (Grown-ups → Advanced → Phone voice ▶), so the chosen voice is really heard
 export function sayDevice(lang, text) { const my = ++seq; try { speechSynthesis.cancel(); } catch (e) { } stopPlayback(); activeSpeech.clear(); told(); return deviceSpeak(text, lang, my); }
+/** Parent-written words use an explicitly local OS voice; cloud-backed browser voices are excluded too. */
+export async function sayPrivateFamilyLine(lang:string,text:string){
+ if(!settings.voice)return false;
+ hush();
+ const voices=voicesFor(lang).filter(voice=>voice.localService===true);
+ const chosen=voices.find(voice=>voice.name===(lang==='vi'?settings.voiceVi:settings.voiceEn))||voices[0];
+ if(!chosen)return false;
+ const my=seq,ticket={};activeSpeech.add(ticket);told();
+ try{await deviceSpeak(text,lang,my,chosen);return true;}finally{activeSpeech.delete(ticket);told();}
+}
 export function hush() { seq++; try { speechSynthesis.cancel(); } catch (e) { } stopPlayback(); activeSpeech.clear(); told(); }
 
 // ---------- Family voice: real recordings of a grown-up ----------
@@ -350,7 +381,7 @@ function playUrl(url, rate = 1) {
   });
 }
 // why the recorded voice did or did not play last time (Grown-ups shows it, to help find phone problems)
-export const voiceDiag = { pack: 'loading', lastMiss: '', audio: '' };
+export const voiceDiag = { pack: 'loading', lastMiss: '', audio: '', recording: '' };
 function playBuffer(buf, rate = 1) {
   const a = ac(); if (!a) return Promise.resolve();
   stopPlayback();
@@ -401,9 +432,30 @@ const voicePackMod = () => packMod || (packMod = import('./voicepack.js'));
 // the area the child is in (a place id from the event bus, never a position): its voices download first
 let hereArea = null;
 events.on('PlayerEnteredVillage', e => { const a = String(e && e.villageId || '').split(':')[1]; if (a) hereArea = a; });
-function autoSavePack() { voicePackMod().then(m => m.startPack(PACK, packEmit, () => hereArea)).catch(() => { }); }
+let hanoiService: ReturnType<typeof import('./hanoi-pack.js').createHanoiPack> | null = null;
+let hanoiLoading: Promise<NonNullable<typeof hanoiService>> | null = null;
+const hanoiSelected=()=>settings.voiceViVariant==='leminh';
+const hanoiPack=()=>hanoiLoading||(hanoiLoading=Promise.all([import('./hanoi-pack.js'),voicePackMod()]).then(([m,p])=>hanoiService=m.createHanoiPack({allowed:()=>hanoiSelected()&&(settings.packCell===true||p.packNet()==='wifi'),emit:packEmit})));
+const resumeHanoi=()=>{if(hanoiSelected())void hanoiPack().then(p=>p.download()).catch(()=>{});};
+let hanoiAutoScheduled=false;
+function autoSavePack() {
+  voicePackMod().then(m => m.startPack(PACK, packEmit, () => hereArea)).catch(() => { });
+  if(hanoiSelected()&&!hanoiAutoScheduled){hanoiAutoScheduled=true;const ready=()=>{if(!hanoiSelected()){hanoiAutoScheduled=false;return;}if(!window.__sv?.bootTimes){setTimeout(ready,1000);return;}resumeHanoi();};setTimeout(ready,6000);}
+}
+addEventListener('online',resumeHanoi);
+events.on('SettingsChanged',resumeHanoi);
+try{navigator.connection?.addEventListener('change',resumeHanoi);}catch{}
+export async function chooseVietnamesePack(choice:string){settings.voiceViVariant=choice==='leminh'?'leminh':'standard';saveSettings();resumeHanoi();}
+export async function hanoiPackInfo(){const m=await(await hanoiPack()).load();return m?{bytes:m.bytes,lines:Object.keys(m.lines).length}:null;}
+export async function downloadHanoiPack(){settings.voiceViVariant='leminh';settings.packCell=true;saveSettings();return(await hanoiPack()).download();}
+export async function previewHanoiVoice(){
+  ++previewRequest;previewSlot=null;hush();const my=seq,ticket={};activeSpeech.add(ticket);told();
+  try{await waitPack(['vi']);return await playPack('vi','Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.',my,true);}
+  finally{activeSpeech.delete(ticket);told();}
+}
+
 // a grown-up's answer to "download the rest on mobile data?" (js/packbar.js, Grown-ups)
-export const allowMobilePack = yes => voicePackMod().then(m => m.allowMobilePack(yes)).catch(() => { });
+export const allowMobilePack = yes => voicePackMod().then(m => {m.allowMobilePack(yes);if(yes)resumeHanoi();}).catch(() => { });
 // an English line with Vietnamese words has its own recording with both voices (js/packhash.js lineHash); an older pack
 // without it still plays its all-English recording
 const packKey = (lang, text) => { if (!PACK) return null; const h = lineHash(lang, text); if (PACK.lines[h]) return h; const o = packHash(lang, text); return PACK.lines[o] ? o : null; };
@@ -429,18 +481,91 @@ export async function previewPackVoice(slot) {
 // them too: Cute a little higher and quicker, Grandparent lower and slower (playing faster or slower moves the pitch)
 const STYLE_RATE = { natural: 1, cute: 1.22, grandpa: .82 };
 const packRate = slot => { const k = speakerKind(), st = STYLE_RATE[settings.voiceStyle] || 1; if (!k) return st; let r = k.old ? .9 : k.kid ? 1.1 : 1; if (k.gender === 'm' && slot === 'f') r *= .86; return r * st; };
+type MixedRecordingPart = { key: string; url: string; rate: number; pauseAfter: number; hanoi: boolean };
+
+// Decode the whole plan before playing any part. A missing/corrupt fragment can therefore fall back to the
+// existing complete recording without repeating the first half of a sentence or using device speech.
+async function mixedRecording(text: string, my?: number): Promise<AudioBuffer | null> {
+  if (!hanoiSelected() || previewSlot || !packSlot('en', text)) return null;
+  const fragments = mixedVoiceFragments(text);
+  if (!fragments?.length) return null;
+  const context = ac();
+  if (!context) return null;
+  const active = () => hanoiSelected() && !previewSlot && (my === undefined || my === seq);
+  const service = await hanoiPack(), plan: MixedRecordingPart[] = [];
+  for (const fragment of fragments) {
+    if (!active()) return null;
+    if (fragment.lang === 'vi') {
+      // Optional fragment IDs are reviewed public speech; they need no redundant default-Vietnamese recording.
+      const url = await service.recording(lineHash('vi', fragment.text));
+      if (!url) return null;
+      plan.push({ key: 'fpt-leminh-v1|' + url, url, rate: STYLE_RATE[settings.voiceStyle] || 1, pauseAfter: fragment.pauseAfter, hanoi: true });
+    } else {
+      const slot = packSlot('en', fragment.text);
+      if (!slot) return null;
+      plan.push({ key: 'pack|' + slot + '|en|' + fragment.text, url: packUrl('en', fragment.text, slot), rate: packRate(slot), pauseAfter: fragment.pauseAfter, hanoi: false });
+    }
+  }
+  const key = 'mixed-leminh|' + JSON.stringify(plan.map(part => [part.key, part.rate, part.pauseAfter]));
+  const cached = mem.get(key);
+  if (cached) return cached;
+  const buffers: AudioBuffer[] = [];
+  for (const part of plan) {
+    if (!active()) return null;
+    let buffer = mem.get(part.key) as AudioBuffer | undefined;
+    if (!buffer) {
+      const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 8000);
+      try {
+        const response = part.hanoi ? await service.audio(part.url, controller.signal) : await fetch(part.url, { signal: controller.signal });
+        if (!response?.ok) return null;
+        buffer = await decode(await response.arrayBuffer()) as AudioBuffer;
+      } catch { return null; }
+      finally { clearTimeout(timer); }
+      mem.set(part.key, buffer);
+      if (mem.size > 120) mem.delete(mem.keys().next().value);
+    }
+    buffers.push(buffer);
+  }
+  if (!active()) return null;
+  // A single decoded source keeps cancellation and music ducking atomic across language switches. DecodeAudioData
+  // resamples into this context; the explicit ratio also handles a cached recording with another sample rate.
+  const frames = buffers.map((buffer, i) => Math.ceil(buffer.duration * context.sampleRate / plan[i].rate));
+  const pauses = plan.map(part => Math.round(part.pauseAfter * context.sampleRate / 1000));
+  const total = frames.reduce((sum, frames, i) => sum + frames + pauses[i], 0);
+  const channels = Math.max(...buffers.map(buffer => buffer.numberOfChannels));
+  const joined = context.createBuffer(channels, total, context.sampleRate);
+  for (let channel = 0; channel < channels; channel++) {
+    const output = joined.getChannelData(channel);
+    let offset = 0;
+    for (let i = 0; i < buffers.length; i++) {
+      const buffer = buffers[i], input = buffer.getChannelData(Math.min(channel, buffer.numberOfChannels - 1));
+      const ratio = buffer.sampleRate * plan[i].rate / context.sampleRate;
+      for (let frame = 0; frame < frames[i]; frame++) {
+        const position = Math.min(input.length - 1, frame * ratio), before = Math.floor(position), fraction = position - before;
+        output[offset + frame] = input[before] + (input[Math.min(before + 1, input.length - 1)] - input[before]) * fraction;
+      }
+      offset += frames[i] + pauses[i];
+    }
+  }
+  mem.set(key, joined);
+  if (mem.size > 120) mem.delete(mem.keys().next().value);
+  return joined;
+}
 export async function warmVoiceLine(en: string, vi?: string) {
   try {
     await waitPack();
+    // Keep the complete recording warm as a fallback as well as the selected mixed-language recording.
+    if (hanoiSelected() && !previewSlot) await mixedRecording(en);
     const pairs: [string, string][] = [['en', en]];
     if (vi) pairs.push(['vi', vi]);
     for (const [lang, text] of pairs) {
       const slot = packSlot(lang, text);
       if (!slot) continue;
-      const k = 'pack|' + slot + '|' + lang + '|' + text;
+      const hanoi=lang==='vi'&&hanoiSelected()?await(await hanoiPack()).recording(packKey(lang,text)||lineHash(lang,text)):null;
+      const k = hanoi?'fpt-leminh-v1|'+hanoi:'pack|' + slot + '|' + lang + '|' + text;
       if (mem.has(k)) continue;
-      const r = await fetch(packUrl(lang, text, slot));
-      if (!r.ok) continue;
+      const r = hanoi?await(await hanoiPack()).audio(hanoi):await fetch(packUrl(lang, text, slot));
+      if (!r?.ok) continue;
       const buf = await decode(await r.arrayBuffer());
       mem.set(k, buf);
       if (mem.size > 120) mem.delete(mem.keys().next().value);
@@ -457,33 +582,64 @@ export async function resumePackDownload() {
 export async function savePackOffline(progress?: (done: number, total: number) => void) {
   settings.autoPack = true; saveSettings();
   await resumePackDownload();
-  return (await voicePackMod()).savePackOffline(progress);
+  const standard=(await voicePackMod()).savePackOffline(progress);
+  if(hanoiSelected()){const[n,h]=await Promise.all([standard,downloadHanoiPack()]);return n+h;}
+  return standard;
 }
 export const packUrl = (lang, text, slot) => `voices/${lang}/${slot}/${packKey(lang, text) || lineHash(lang, text)}.mp3`;
-async function playPack(lang, text, my) {
+async function playPack(lang, text, my, forceHanoi=false, skipHanoi=false) {
   if (my !== seq) return true;
   const slot = packSlot(lang, text); if (!slot) return false;
-  const k = 'pack|' + slot + '|' + lang + '|' + text;
-  const url = packUrl(lang, text, slot), a = ac();
+  if (lang === 'en' && !forceHanoi && !skipHanoi && hanoiSelected() && !previewSlot) {
+    const recording = await mixedRecording(text, my);
+    if (my !== seq) return true;
+    if (recording) {
+      const context = ac();
+      if (context && context.state !== 'running' && !document.hidden) {
+        try { await Promise.race([context.resume(), new Promise(resolve => setTimeout(resolve, 250))]); } catch { }
+      }
+      if (my !== seq) return true;
+      if (context?.state === 'running') {
+        voiceDiag.recording = 'Default English + FPT Neo · FPT.AI-VITs · leminh';
+        voiceDiag.audio = 'running';
+        await playBuffer(recording);
+        return true;
+      }
+      // Until Web Audio is unlocked, retain the complete recording's existing HTML audio fallback.
+    }
+  }
+  const hanoi=!skipHanoi&&lang==='vi'&&!previewSlot&&(forceHanoi||hanoiSelected())?await(await hanoiPack()).recording(packKey(lang,text)||lineHash(lang,text)):null;
+  if(my!==seq)return true;
+  if(forceHanoi&&!hanoi)return false;
+  const fallback=()=>hanoi&&!forceHanoi?playPack(lang,text,my,false,true):false;
+  voiceDiag.recording=hanoi?'FPT Neo · FPT.AI-VITs · leminh':'Default recorded voices';
+  const k = hanoi?'fpt-leminh-v1|'+hanoi:'pack|' + slot + '|' + lang + '|' + text;
+  const url = hanoi||packUrl(lang, text, slot), rate=hanoi?(STYLE_RATE[settings.voiceStyle]||1):packRate(slot), a = ac();
+  const response=async(signal?:AbortSignal)=>hanoi?(await hanoiPack()).audio(hanoi,signal):fetch(url,signal?{signal}:undefined);
+  const urlPlayback=async()=>{
+    if(!hanoi)return playUrl(url,rate);
+    const r=await response();if(!r)return false;const blob=URL.createObjectURL(await r.blob());
+    try{return await playUrl(blob,rate);}finally{URL.revokeObjectURL(blob);}
+  };
   if (a && a.state !== 'running' && typeof document !== 'undefined' && !document.hidden) {
     try { await Promise.race([a.resume(), new Promise(r => setTimeout(r, 250))]); } catch (e) { }
   }
   // Web Audio asleep (iPhone before a tap took, or after a call): the plain player plays the same recording
-  if (!a || a.state !== 'running') { voiceDiag.audio = a ? a.state : 'none'; if (await playUrl(url, packRate(slot))) return true; voiceDiag.lastMiss = 'audio ' + voiceDiag.audio; return false; }
+  if (!a || a.state !== 'running') { voiceDiag.audio = a ? a.state : 'none'; if (await urlPlayback()) return true; voiceDiag.lastMiss = 'audio ' + voiceDiag.audio; return fallback(); }
   let buf = mem.get(k);
   if (!buf) {
     // (a slow phone network: the line is given up after 8 s, never waited for for ever)
     const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null, tm = ctl && setTimeout(() => ctl.abort(), 8000);
-    let data; try { const r = await fetch(url, ctl ? { signal: ctl.signal } : undefined); if (!r.ok) { voiceDiag.lastMiss = 'file ' + r.status; return false; } data = await r.arrayBuffer(); } catch (e) { voiceDiag.lastMiss = 'file slow'; return false; } finally { clearTimeout(tm); }
-    try { buf = await decode(data); } catch (e) { if (my !== seq) return true; voiceDiag.lastMiss = 'decode'; return playUrl(url, packRate(slot)); }
+    let data; try { const r = await response(ctl?.signal); if (!r?.ok) { voiceDiag.lastMiss = 'file ' + (r?.status||'unavailable'); return fallback(); } data = await r.arrayBuffer(); } catch (e) { voiceDiag.lastMiss = 'file slow'; return fallback(); } finally { clearTimeout(tm); }
+    try { buf = await decode(data); } catch (e) { if (my !== seq) return true; voiceDiag.lastMiss = 'decode'; return urlPlayback(); }
     mem.set(k, buf); if (mem.size > 120) mem.delete(mem.keys().next().value);
   }
   if (my !== seq) return true;
   if (a.state !== 'running') {
     try { await Promise.race([a.resume(), new Promise(r => setTimeout(r, 200))]); } catch (e) { }
-    if (a.state !== 'running') return playUrl(url, packRate(slot));
+    if (a.state !== 'running') return urlPlayback();
   }
-  voiceDiag.audio = 'running'; await playBuffer(buf, packRate(slot)); return true;
+  voiceDiag.audio = 'running'; await playBuffer(buf, rate); return true;
 }
 
 // ---------- Recorded lines kept in memory ----------

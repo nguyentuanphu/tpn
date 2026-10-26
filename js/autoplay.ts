@@ -12,6 +12,7 @@ import { T } from './i18n.js';
 import { el, esc } from './util.js';
 import { GAMES, playWatch } from './games/frame.js';
 import { CUSTOM, liveRule } from './custom.js';
+import { sydneyFestivalDate } from './content/festival-visibility.js';
 import { FESTCAL } from './content/festcal.js';
 import { voiceMisses } from './voice.js';
 import { settings } from './state.js';
@@ -471,7 +472,7 @@ async function doGame(id, note) {
   return `${r.won ? T('won', 'thắng') : T('played', 'đã chơi')}: ${r.rights} ✓, ${r.wrongs} ✗, ${r.taps} ${T('taps', 'lần chạm')}`;
 }
 async function doFestival(F, note) {
-  const d = new Date(), ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const ymd = sydneyFestivalDate();
   CUSTOM.releases = { ...(CUSTOM.releases || {}), ['fest_' + F.id]: { on: true, start: ymd, days: 1 } }; // (this device, until the step ends)
   try {
     G.festivals.rebuild(); await wait(300);

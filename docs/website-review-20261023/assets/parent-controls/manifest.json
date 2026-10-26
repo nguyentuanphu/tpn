@@ -1,45 +1,25 @@
 {
-  "source": "a675fb41b40fcfb18bcad1541be6a2d9fe2b0bc7",
-  "build": "v1.01",
-  "captured": "24 October 2026 AEDT",
-  "method": "Actual v1.01 ui-settings/report modules in an isolated compiled export, with current game CSS/fonts and under-five touch mode. Fresh example profile, zero play history, API requests blocked. Save & close floats outside the panel; header/focus geometry verified at phone, tablet and computer in both languages. No real child data.",
-  "sources": [
-    "js/ui-settings.ts",
-    "js/report.js",
-    "js/state.ts",
-    "css/style.css",
-    "css/fonts.css"
-  ],
-  "images": [
-    "settings-en.png",
-    "settings-vi.png",
-    "report-en.png",
-    "report-vi.png"
-  ],
+  "build": "v1.02",
+  "captured": "27 October 2026 AEDT",
+  "source": "a9c809cc1",
+  "method": "Actual running game, fresh synthetic profiles and empty report; current Studio with a synthetic server. Phone, tablet and computer, EN/VI. No real family data.",
   "files": [
     {
-      "file": "settings-en.png",
-      "width": 560,
-      "height": 900,
-      "sha256": "74fbf337f35c83200d887d7698fbf557eae2a8b4288aaf81de71b1b51d9b3091"
-    },
-    {
-      "file": "settings-vi.png",
-      "width": 560,
-      "height": 900,
-      "sha256": "f9961ed353e3cb5bfa05fa3f60826c0db3415dbd36e5b40c68fc4094302490d0"
-    },
-    {
       "file": "report-en.png",
-      "width": 560,
-      "height": 674,
-      "sha256": "b334e3d6e99e22604764ab2668a6092f45c0be272838f186c38abc4760f1e566"
+      "sha256": "e1baa10a5be667e8ae69391cb47bbdefc7a47f1969e305c2398f68c2b17960e1"
     },
     {
       "file": "report-vi.png",
-      "width": 560,
-      "height": 703,
-      "sha256": "c5cf8c7091a27ca868657bd9d3f0769d7e727de854845e25e66c9395c152d6b3"
+      "sha256": "4bb033ab0eb1b9a83dccf67036d37d67d06ee64e84e4bbbb15918aabf741bc35"
+    },
+    {
+      "file": "settings-en.png",
+      "sha256": "2830e76e9bf4cbcf5fee51330334fd888dea38f978d23dd650b7c23ecac540d9"
+    },
+    {
+      "file": "settings-vi.png",
+      "sha256": "d98186d72de2d6bddc1610e46c743158559fba80211d7d4ca6b1ae178dfe2e2a"
     }
-  ]
+  ],
+  "reviewed": "All18 EN/VI phone/tablet/computer Settings/report/Studio images inspected 27 October 2026 AEDT. Scrollable Settings retains visible floating Save; report graph is actual empty synthetic play history."
 }

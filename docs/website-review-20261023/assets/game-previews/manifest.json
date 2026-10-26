@@ -1,5 +1,5 @@
 {
-  "note": "Existing project marketing game captures, reused unchanged. These are saved scenes, not newly captured latest-release evidence. Each scene has English and Vietnamese versions.",
+  "note": "Older project captures retain their original source notes. Added release captures record their exact game-code commit and contain synthetic test profiles/questions, never real family data.",
   "images": [
     {
       "asset": "assets/game-previews/adventure-en.jpg",
@@ -168,6 +168,66 @@
       "sha256": "c9c493a82a1fc438a4f143de0c4f1bd82c3ee039a5a96f87b32c110c88d0e9e4",
       "width": 1080,
       "height": 1920
+    },
+    {
+      "asset": "assets/game-previews/game-familyquiz-en.jpg",
+      "source": "docs/v1.02-traditional-repairs/family-quiz-shots/game-phone-en.png",
+      "sha256": "49e0d763c8964e05866b63e1c451fd318f4d07b5cb07edce9bdfe61cf80d4db3",
+      "width": 390,
+      "height": 844,
+      "captureSourceCommit": "4f1c7e023",
+      "reviewedAgainst": "4f1c7e023",
+      "syntheticProfiles": true
+    },
+    {
+      "asset": "assets/game-previews/game-familyquiz-vi.jpg",
+      "source": "docs/v1.02-traditional-repairs/family-quiz-shots/game-phone-vi.png",
+      "sha256": "725e61a085738d3e4fcc80fe567757d54aae8e61d380bd0c9c672b21e63051eb",
+      "width": 390,
+      "height": 844,
+      "captureSourceCommit": "4f1c7e023",
+      "reviewedAgainst": "4f1c7e023",
+      "syntheticProfiles": true
+    },
+    {
+      "asset": "assets/game-previews/game-horse-en.jpg",
+      "source": "docs/v1.02-traditional-repairs/horse-shots/phone-en-gentle.png",
+      "sha256": "c674531cda0e74563e27cb6b945daf34ac43bd57f9836012e49c4a1757e5f0a5",
+      "width": 390,
+      "height": 844,
+      "captureSourceCommit": "adb9a0b7d",
+      "reviewedAgainst": "4f1c7e023",
+      "syntheticProfiles": true
+    },
+    {
+      "asset": "assets/game-previews/game-horse-vi.jpg",
+      "source": "docs/v1.02-traditional-repairs/horse-shots/phone-vi-gentle.png",
+      "sha256": "247dc54bc8d0942f50c9a213cc0d8769366b70a266865259447f7c43e3008e55",
+      "width": 390,
+      "height": 844,
+      "captureSourceCommit": "adb9a0b7d",
+      "reviewedAgainst": "4f1c7e023",
+      "syntheticProfiles": true
+    },
+    {
+      "asset": "assets/game-previews/game-cuopco-en.jpg",
+      "source": "docs/v1.02-traditional-repairs/folk-shots/cuopco-phone-en.png",
+      "sha256": "809975166a3769309f3503ab02a415a4ed0eae870797447da4a9514e82245a9a",
+      "width": 390,
+      "height": 844,
+      "captureSourceCommit": "8a4a46ebe",
+      "reviewedAgainst": "4f1c7e023",
+      "syntheticProfiles": true
+    },
+    {
+      "asset": "assets/game-previews/game-cuopco-vi.jpg",
+      "source": "docs/v1.02-traditional-repairs/folk-shots/cuopco-phone-vi.png",
+      "sha256": "a044763c44526e85c2adedf66b95cbfb9d43f6bea0af62ef927425c5effe2ad1",
+      "width": 390,
+      "height": 844,
+      "captureSourceCommit": "8a4a46ebe",
+      "reviewedAgainst": "4f1c7e023",
+      "syntheticProfiles": true
     }
   ]
 }

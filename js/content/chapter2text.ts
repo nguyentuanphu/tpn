@@ -38,7 +38,7 @@ export const LINES: Record<string, StoryPair> = {
   secret: ['A golden turtle! It only comes up for very kind helpers. Here is a sticker for your book.', 'Rùa Vàng kìa! Rùa chỉ nổi lên chào những bạn tốt bụng thôi. Tặng con một hình dán nhé.']
 };
 // numbers for counting, said in both languages
-export const COUNT: StoryPair[] = [['One', 'Một'], ['Two', 'Hai'], ['Three', 'Ba'], ['Four', 'Bốn'], ['Five', 'Năm']];
+export const COUNT: StoryPair[] = [['One!', 'Một!'], ['Two!', 'Hai!'], ['Three!', 'Ba!'], ['Four!', 'Bốn!'], ['Five!', 'Năm!']];
 export const TALE: StoryTale = { id: 'lantern_ch2', flag: '🏮', title: ['The Lantern of Hà Nội', 'Đèn Lồng Hà Nội'], pages: [
     ['🌉🏮', 'Up went the lantern on Cầu Thê Húc. The mist lifted, and the red bridge glowed over Hồ Gươm like a ribbon of light.', 'Chiếc đèn lồng được treo lên Cầu Thê Húc. Sương tan, cây cầu đỏ rực sáng trên Hồ Gươm như một dải lụa ánh sáng.'],
     ['🌕⭐🦁', 'It was Trung Thu! Children carried star lanterns round the lake, the lion danced to the drums, and everyone shared mooncakes under the full moon.', 'Trung Thu đến rồi! Các bạn nhỏ rước đèn ông sao quanh hồ, múa lân theo tiếng trống, và mọi người cùng ăn bánh trung thu dưới trăng rằm.']] };

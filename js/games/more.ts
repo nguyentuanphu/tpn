@@ -8,7 +8,6 @@ import { rpsWinners } from '../netgames.js';
 import { register, untilRight, choiceButtons, tapOne } from './frame.js';
 import { T, numWord } from '../i18n.js';
 import { shuffle, pick, el, wait, esc } from '../util.js';
-import { customQuiz } from '../custom.js';
 
 const THINGS = ['🍎', '⭐', '🐟', '🌸', '🎈', '🐞', '🍓', '🚗'];
 
@@ -232,19 +231,4 @@ register({
   }
 });
 
-// ---------- Family Quiz: questions the grown-ups wrote in Sparkle Studio ("What is Grandma's name?") ----------
-if (customQuiz().length) register({
-  id: 'familyquiz', icon: '💛', name: () => T('Family Quiz', 'Đố Vui Gia Đình'),
-  async run(api) {
-    const qs = shuffle(customQuiz()).slice(0, 6);
-    for (let r = 0; r < qs.length; r++) {
-      api.dots(qs.length, r); api.stage.innerHTML = '';
-      const Q = qs[r]; if (Q.pic) api.stage.appendChild(el('div', 'fq-pic', Q.pic));
-      api.say(Q.q[0], Q.q[1]);
-      const btns = choiceButtons(api, shuffle(Q.answers.map((a, i) => [a, i])), ([a]) => `<b>${T(a[0], a[1]).replace(/</g, '&lt;')}</b>`);
-      const ok = await untilRight(api, btns, e => e._v[1] === Q.right); if (!ok) return;
-      api.say(Q.answers[Q.right][0] + '!', Q.answers[Q.right][1] + '!'); await wait(1300);
-    }
-    api.dots(qs.length, qs.length); return api.win({ title: T('You know your family so well!', 'Con hiểu gia đình mình quá!') });
-  }
-});
+// Family Quiz has a separate lazy implementation so an invited guest needs no local questions.

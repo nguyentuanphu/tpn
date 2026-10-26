@@ -1,0 +1,59 @@
+{
+  "description": "One synthetic game-page measurement before/after avoiding data-image fetch/blob/FileReader round trips; both use batched style assignment. Timings vary by machine.",
+  "before": {
+    "nodes": 580,
+    "images": [
+      {
+        "kind": "data",
+        "width": 42,
+        "height": 42
+      }
+    ],
+    "timings": [
+      {
+        "stage": "start",
+        "ms": 0
+      },
+      {
+        "stage": "cloned",
+        "ms": 5135
+      },
+      {
+        "stage": "image",
+        "ms": 6511
+      },
+      {
+        "stage": "done",
+        "ms": 6582
+      }
+    ]
+  },
+  "after": {
+    "nodes": 588,
+    "images": [
+      {
+        "kind": "data",
+        "width": 42,
+        "height": 42
+      }
+    ],
+    "timings": [
+      {
+        "stage": "start",
+        "ms": 0
+      },
+      {
+        "stage": "cloned",
+        "ms": 204
+      },
+      {
+        "stage": "image",
+        "ms": 2669
+      },
+      {
+        "stage": "done",
+        "ms": 2726
+      }
+    ]
+  }
+}

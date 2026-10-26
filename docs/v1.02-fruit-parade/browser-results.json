@@ -1,0 +1,36 @@
+[
+  {
+    "localCoopCompleted": true,
+    "rounds": 2,
+    "controls": 13,
+    "progressSaved": true,
+    "errors": []
+  },
+  {
+    "trongNuCompleted": true,
+    "firstUseBothGamesOffline": true,
+    "errors": []
+  },
+  {
+    "animatedJumperVisible": true
+  },
+  {
+    "bilingualDeviceCaptures": 12
+  },
+  {
+    "npcCompleted": true
+  },
+  {
+    "keyboardStop": true,
+    "controllerStop": true
+  },
+  {
+    "onlineCompleted": true,
+    "reconnectRetained": true,
+    "hostResultBothLanguages": true,
+    "errors": []
+  },
+  {
+    "gracePeriodThenNpcContinuation": true
+  }
+]

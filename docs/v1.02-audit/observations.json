@@ -1,0 +1,1018 @@
+{
+  "source": "helper 59fe48fd plus Release metadata/catalog/privacy fixes",
+  "observations": {
+    "horseIllegalLaunch": {
+      "legalMoves": 0,
+      "accepted": true
+    },
+    "horseEmptyStableRolls": [
+      [
+        4,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "futureMoveAccepted": true,
+    "fruitPreview": {
+      "tester": false,
+      "hidden": false
+    },
+    "fruitNpc": {
+      "buttons": [
+        {
+          "disabled": true,
+          "height": 56
+        },
+        {
+          "disabled": true,
+          "height": 56
+        },
+        {
+          "disabled": true,
+          "height": 56
+        }
+      ],
+      "progress": "0%",
+      "lanes": 3
+    },
+    "throwCentre": {
+      "groupsBefore": 1,
+      "groupsAfter": 2,
+      "gameStillOpen": true
+    }
+  },
+  "layouts": [
+    {
+      "device": "phone",
+      "lang": "en",
+      "id": "meochuot",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "phone",
+      "lang": "en",
+      "id": "cuopco",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "en",
+      "id": "keocua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "\ud83e\ude9a",
+          "w": 100,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "en",
+      "id": "danhdao",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "en",
+      "id": "nemcon",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "en",
+      "id": "trongnu",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "phone",
+      "lang": "en",
+      "id": "duathuyen",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "en",
+      "id": "fruitparade",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "Play solo",
+          "w": 70,
+          "h": 22
+        },
+        {
+          "text": "Play with a helper",
+          "w": 125,
+          "h": 22
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "en",
+      "id": "cacuangua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "Beginner",
+          "w": 70,
+          "h": 22
+        },
+        {
+          "text": "Full rules",
+          "w": 73,
+          "h": 22
+        },
+        {
+          "text": "Roll dice",
+          "w": 66,
+          "h": 22
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "vi",
+      "id": "meochuot",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "phone",
+      "lang": "vi",
+      "id": "cuopco",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "vi",
+      "id": "keocua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "\ud83e\ude9a",
+          "w": 100,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "vi",
+      "id": "danhdao",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "vi",
+      "id": "nemcon",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "vi",
+      "id": "trongnu",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "phone",
+      "lang": "vi",
+      "id": "duathuyen",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "vi",
+      "id": "fruitparade",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "Ch\u01a1i m\u1ed9t m\u00ecnh",
+          "w": 106,
+          "h": 27
+        },
+        {
+          "text": "Ch\u01a1i c\u00f9ng b\u1ea1n m\u00e1y",
+          "w": 133,
+          "h": 27
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "lang": "vi",
+      "id": "cacuangua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "C\u01a1 b\u1ea3n",
+          "w": 59,
+          "h": 27
+        },
+        {
+          "text": "\u0110\u1ea7y \u0111\u1ee7",
+          "w": 58,
+          "h": 27
+        },
+        {
+          "text": "Tung x\u00fac x\u1eafc",
+          "w": 96,
+          "h": 27
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "en",
+      "id": "meochuot",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "tablet",
+      "lang": "en",
+      "id": "cuopco",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "en",
+      "id": "keocua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "\ud83e\ude9a",
+          "w": 100,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "en",
+      "id": "danhdao",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "en",
+      "id": "nemcon",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "en",
+      "id": "trongnu",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "tablet",
+      "lang": "en",
+      "id": "duathuyen",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "en",
+      "id": "fruitparade",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "Play solo",
+          "w": 70,
+          "h": 22
+        },
+        {
+          "text": "Play with a helper",
+          "w": 125,
+          "h": 22
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "en",
+      "id": "cacuangua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "Beginner",
+          "w": 70,
+          "h": 22
+        },
+        {
+          "text": "Full rules",
+          "w": 73,
+          "h": 22
+        },
+        {
+          "text": "Roll dice",
+          "w": 66,
+          "h": 22
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "vi",
+      "id": "meochuot",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "tablet",
+      "lang": "vi",
+      "id": "cuopco",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "vi",
+      "id": "keocua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "\ud83e\ude9a",
+          "w": 100,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "vi",
+      "id": "danhdao",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "vi",
+      "id": "nemcon",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "vi",
+      "id": "trongnu",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "tablet",
+      "lang": "vi",
+      "id": "duathuyen",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "vi",
+      "id": "fruitparade",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "Ch\u01a1i m\u1ed9t m\u00ecnh",
+          "w": 106,
+          "h": 27
+        },
+        {
+          "text": "Ch\u01a1i c\u00f9ng b\u1ea1n m\u00e1y",
+          "w": 133,
+          "h": 27
+        }
+      ]
+    },
+    {
+      "device": "tablet",
+      "lang": "vi",
+      "id": "cacuangua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "C\u01a1 b\u1ea3n",
+          "w": 59,
+          "h": 27
+        },
+        {
+          "text": "\u0110\u1ea7y \u0111\u1ee7",
+          "w": 58,
+          "h": 27
+        },
+        {
+          "text": "Tung x\u00fac x\u1eafc",
+          "w": 96,
+          "h": 27
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "en",
+      "id": "meochuot",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "computer",
+      "lang": "en",
+      "id": "cuopco",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "en",
+      "id": "keocua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "\ud83e\ude9a",
+          "w": 100,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "en",
+      "id": "danhdao",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "en",
+      "id": "nemcon",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "en",
+      "id": "trongnu",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "computer",
+      "lang": "en",
+      "id": "duathuyen",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 73.46875
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "en",
+      "id": "fruitparade",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "Play solo",
+          "w": 70,
+          "h": 22
+        },
+        {
+          "text": "Play with a helper",
+          "w": 125,
+          "h": 22
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "en",
+      "id": "cacuangua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "Beginner",
+          "w": 70,
+          "h": 22
+        },
+        {
+          "text": "Full rules",
+          "w": 73,
+          "h": 22
+        },
+        {
+          "text": "Roll dice",
+          "w": 66,
+          "h": 22
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "vi",
+      "id": "meochuot",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "computer",
+      "lang": "vi",
+      "id": "cuopco",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "vi",
+      "id": "keocua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "\ud83e\ude9a",
+          "w": 100,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "vi",
+      "id": "danhdao",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "vi",
+      "id": "nemcon",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "vi",
+      "id": "trongnu",
+      "horizontalOverflow": false,
+      "buttons": []
+    },
+    {
+      "device": "computer",
+      "lang": "vi",
+      "id": "duathuyen",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        },
+        {
+          "text": "",
+          "w": 96.59375,
+          "h": 78
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "vi",
+      "id": "fruitparade",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "Ch\u01a1i m\u1ed9t m\u00ecnh",
+          "w": 106,
+          "h": 27
+        },
+        {
+          "text": "Ch\u01a1i c\u00f9ng b\u1ea1n m\u00e1y",
+          "w": 133,
+          "h": 27
+        }
+      ]
+    },
+    {
+      "device": "computer",
+      "lang": "vi",
+      "id": "cacuangua",
+      "horizontalOverflow": false,
+      "buttons": [
+        {
+          "text": "C\u01a1 b\u1ea3n",
+          "w": 59,
+          "h": 27
+        },
+        {
+          "text": "\u0110\u1ea7y \u0111\u1ee7",
+          "w": 58,
+          "h": 27
+        },
+        {
+          "text": "Tung x\u00fac x\u1eafc",
+          "w": 96,
+          "h": 27
+        }
+      ]
+    }
+  ],
+  "pageErrors": []
+}

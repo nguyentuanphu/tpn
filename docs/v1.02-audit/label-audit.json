@@ -1,0 +1,67 @@
+{
+  "run": 40227974447,
+  "expected": 10,
+  "verified": 10,
+  "fullyDecoded": 10,
+  "complete": true,
+  "voice": {
+    "provider": "FPT Neo",
+    "model": "FPT.AI-VITs",
+    "voice": "leminh",
+    "speed": 1,
+    "response_format": "mp3"
+  },
+  "errors": [],
+  "files": [
+    {
+      "id": "d59b85c4-130ca6ab",
+      "sha256": "3beb6bd4426edcf2054c63fca21bd7cee6ea8d0effd6b748ebecd7daaefbe9fa",
+      "bytes": 32436
+    },
+    {
+      "id": "4c87fc45-4909939b",
+      "sha256": "4c3fd74237c84de83ae7a6273a5d4c8cbca1976b8027b1c5a60c81775d8f2f51",
+      "bytes": 32436
+    },
+    {
+      "id": "1915d97954f7f751",
+      "sha256": "050225a5320873ed5ad9e4bba3a2edcb5957dcadb061365c78e28b1c614142ec",
+      "bytes": 38183
+    },
+    {
+      "id": "4cad64b8-5d49591d",
+      "sha256": "ce83ed53cf5e3cc18b4673a14c251a09f74f011cb4c9e808b1b7905079fece8a",
+      "bytes": 29824
+    },
+    {
+      "id": "9c3c7b5005eb246d",
+      "sha256": "984abb95bc57db818e88bcdff1ea30fffe831914d60ac6851f50d2c523fed014",
+      "bytes": 33481
+    },
+    {
+      "id": "f867717c-6cfbeccc",
+      "sha256": "12aea3001c79cc9b9205db82c9cbae95b8a5d8dc4ddb0bc2402b0334d8573bca",
+      "bytes": 36616
+    },
+    {
+      "id": "57564e3d2b45bb35",
+      "sha256": "e5f9d37acf5778ecf0b195cbb6801d006201ebd13e4341c12453e7c8ebf6c027",
+      "bytes": 31914
+    },
+    {
+      "id": "7ee2d195-db36734",
+      "sha256": "a10ca7dbb02f87907efd29c0c925de6350ca32e69482175057fd999e420c0254",
+      "bytes": 26689
+    },
+    {
+      "id": "076215b9625f26f1",
+      "sha256": "7a72d8ff06d4698919e9f12901595ff9abb31c22f70acf6866f054e9aa35905f",
+      "bytes": 34526
+    },
+    {
+      "id": "679b3267-e10e5e3",
+      "sha256": "e48115f455256fd5f5d3d551cdfddec57d3611a89e48fa34d13f9c3dbd0959ed",
+      "bytes": 29302
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import {HANOI_PACK_INFO} from './content/hanoi-pack-info.js';
 import { hasClip, saveClip, deleteClip, playClip, estimatePitch, pitchFromHz } from './voice.js';
 import { startRecording, releaseMic, micProblem } from './recorder.js';
 import { ac } from './audio.js';
@@ -11,7 +12,7 @@ import { T, applyLang, nm, NPC_NAMES, defaultName } from './i18n.js';
 import { settings, saveSettings, profiles, saveProfiles, normalizeProfile, exportBackup, importBackup, backupAge, farm, resetFarm, saveFarm, MAX_KIDS, getSnapshot } from './state.js';
 import { createSaveCopy, readSaveCopyOrLegacy } from './content/savecopy.js';
 import { FAMILY_CODE_PRIVACY, makeFamilyCode, normalizeFamilyCode, familyName, familyQrSvg } from './content/familycode.js';
-import { say, voicePack, voiceDiag, allowMobilePack, voiceMisses, clearVoiceMisses, voicesFor, onVoices, hasVietnamese, FAMILY_PHRASES, previewPackVoice, resumePackDownload } from './voice.js';
+import { say, voicePack, voiceDiag, allowMobilePack, voiceMisses, clearVoiceMisses, voicesFor, onVoices, hasVietnamese, FAMILY_PHRASES, previewPackVoice, resumePackDownload, chooseVietnamesePack, downloadHanoiPack, previewHanoiVoice } from './voice.js';
 
 import { SFX, Music } from './audio.js';
 import { fmt, cur } from './money.js';
@@ -112,7 +113,10 @@ function packStatusHTML() {
     ${voiceDiag.lastMiss ? `<p class="note warn">⚠️ ${T('Last time a recording could not play here', 'Lần trước máy này không phát được bản ghi')} (${esc(voiceDiag.lastMiss)}). ${T('Tap anywhere on the screen once, check the side switch is not on silent, then press ▶ below.', 'Chạm vào màn hình một lần, kiểm tra nút gạt bên hông không ở chế độ im lặng, rồi bấm ▶ bên dưới.')}</p>` : ''}
     <div class="actions"><button class="btn" data-pv="f">▶ 👩 ${T('Woman', 'Giọng nữ')}</button><button class="btn" data-pv="m">▶ 👨 ${T('Man', 'Giọng nam')}</button></div>
     <p class="note">${T('Female voices are the default. Enable male recordings below for men, boys and grandpas. Downloads continue in the background while you play, even after Save & close.', 'Giọng nữ được dùng mặc định. Bật bản ghi giọng nam bên dưới cho đàn ông, bé trai và ông. Giọng đọc tiếp tục tải khi bạn chơi, kể cả sau khi Lưu và đóng.')}</p>
-    <label class="tog"><input type="checkbox" id="gVoiceMale" ${settings.voiceMale === true ? 'checked' : ''}> ${T('Download and use optional male voice recordings (off by default: female voices are used for all characters)', 'Tải và sử dụng bản ghi giọng nam tùy chọn (tắt mặc định: dùng giọng nữ cho tất cả nhân vật)')}</label>
+    <label>${T('Vietnamese recorded voice', 'Giọng đọc tiếng Việt đã thu')}<select id="gVietnamesePack"><option value="standard" ${settings.voiceViVariant!=='leminh'?'selected':''}>${T('Default voices (female unless male voices are enabled)', 'Giọng mặc định (giọng nữ nếu chưa bật giọng nam)')}</option><option value="leminh" ${settings.voiceViVariant==='leminh'?'selected':''}>${T('Lê Minh · Northern Vietnamese · all Vietnamese speech', 'Lê Minh · giọng Bắc · toàn bộ lời đọc tiếng Việt')}</option></select></label>
+    <p class="note">${T(`${HANOI_PACK_INFO.lines.toLocaleString()} recordings · about ${Math.ceil(HANOI_PACK_INFO.bytes/1048576)} MB.`,`${HANOI_PACK_INFO.lines.toLocaleString('vi-VN')} bản thu · khoảng ${Math.ceil(HANOI_PACK_INFO.bytes/1048576)} MB.`)} ${T('Lê Minh is a large optional pack of public recordings. On Wi-Fi it downloads while you play. The download button also allows mobile data. Closing Settings keeps the download running while the game stays open; it resumes after reopening. Family names and answers are never sent to FPT.', 'Lê Minh là gói bản thu công khai dung lượng lớn, không bắt buộc. Có Wi-Fi sẽ tải khi bạn chơi. Nút tải cũng cho phép dùng dữ liệu di động. Đóng Cài đặt vẫn tiếp tục tải khi trò chơi còn mở; mở lại sẽ tải tiếp. Không gửi tên hay câu trả lời của gia đình đến FPT.')}</p>
+    <div class="actions"><button class="btn" id="gHanoiPreview">▶ ${T('Listen to Lê Minh', 'Nghe thử Lê Minh')}</button><button class="btn" id="gHanoiDownload">⬇️ ${T('Download Lê Minh for offline use', 'Tải Lê Minh để dùng ngoại tuyến')}</button></div><p class="note" id="gHanoiStatus" role="status"></p>
+    <label class="tog"><input type="checkbox" id="gVoiceMale" ${settings.voiceMale === true ? 'checked' : ''}> ${T('Download and use optional male default voices (off by default; Lê Minh is selected separately above)', 'Tải và dùng giọng nam mặc định tùy chọn (tắt sẵn; Lê Minh chọn riêng bên trên)')}</label>
     ${P ? `<label class="tog"><input type="checkbox" id="gPackCell" ${settings.packCell === true ? 'checked' : ''}> ${T('Download the rest of the voices on mobile data too (on Wi-Fi they download by themselves)', 'Tải phần giọng đọc còn lại cả bằng dữ liệu di động (khi có Wi-Fi giọng đọc tự tải)')}</label>` : ''}
     ${miss.length ? `<details class="g-miss"><summary>📝 ${T(`${miss.length} lines on this device had no recording yet`, `${miss.length} câu trên máy này chưa có bản ghi`)}</summary>
       <p class="note">${settings.countPlayers !== false ? T('They are sent by themselves, without children’s names, and recorded for the next update.', 'Các câu này tự được gửi đi, không kèm tên các con, và sẽ được thu cho bản cập nhật sau.') : T('Analytics is off on this device, so they are not sent. They are kept in the backup file (below).', 'Phân tích đang tắt trên máy này nên các câu không được gửi. Các câu được giữ trong tệp sao lưu (bên dưới).')}</p>
@@ -120,9 +124,18 @@ function packStatusHTML() {
       <button class="btn" id="gMissClear">🧹 ${T('Clear the list', 'Xóa danh sách')}</button></details>` : `<p class="note">✅ ${T('Every line said on this device so far had a recording.', 'Mọi câu đã nói trên máy này đều có bản ghi.')}</p>`}`;
 }
 function bindPackStatus(card, redraw) {
-  card.querySelectorAll('[data-pv]').forEach(b => b.onclick = () => {
-    previewPackVoice(b.dataset.pv);
+  card.querySelectorAll('[data-pv]').forEach(b => b.onclick = async () => {
+    const audio = ac();
+    if (audio && audio.state !== 'running') {
+      try { await audio.resume(); } catch (e) { }
+    }
+    await previewPackVoice(b.dataset.pv);
   });
+  const updateHanoiInfo=()=>{card.querySelector('#gHanoiStatus').textContent=T('Lê Minh downloads continue while you play. Mobile data can be switched off below.','Lê Minh tiếp tục tải khi bạn chơi. Bạn có thể tắt dữ liệu di động bên dưới.');};
+  const hp=card.querySelector('#gVietnamesePack');if(hp)hp.onchange=()=>{void chooseVietnamesePack(hp.value);if(hp.value==='leminh')updateHanoiInfo();};
+  if(settings.voiceViVariant==='leminh')updateHanoiInfo();
+  const preview=card.querySelector('#gHanoiPreview');if(preview)preview.onclick=async()=>{const ok=await previewHanoiVoice();if(card.isConnected&&!ok)card.querySelector('#gHanoiStatus').textContent=T('Lê Minh is not available here yet. Connect and try again.','Chưa phát được giọng Lê Minh. Kết nối mạng rồi thử lại.');};
+  const download=card.querySelector('#gHanoiDownload');if(download)download.onclick=()=>{hp.value='leminh';const mobile=card.querySelector('#gPackCell');if(mobile)mobile.checked=true;updateHanoiInfo();void downloadHanoiPack().catch(()=>{if(card.isConnected)card.querySelector('#gHanoiStatus').textContent=T('The download will resume when a connection is available.','Giọng đọc sẽ tải tiếp khi có mạng.');});};
   const c = card.querySelector('#gMissClear'); if (c) c.onclick = () => { clearVoiceMisses(); redraw(); };
   const vm = card.querySelector('#gVoiceMale'); 
   if (vm) vm.onchange = async () => { 
@@ -268,6 +281,9 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
           <p class="note fam-code-msg" id="gFamCodeMsg" hidden></p>
         </div>`}
       </div>
+      <h3>${pic('💛')} ${T('Family questions','Câu hỏi gia đình')}</h3>
+      <p class="note">${T('Write private questions your children can play on this device or with friends you invite. They are included in your save copy.','Viết câu hỏi riêng để con chơi trên máy này hoặc với bạn được mời. Câu hỏi được giữ trong bản sao lưu của bạn.')}</p>
+      <div class="actions"><button class="btn" id="gFamilyQuiz">${pic('💛')} ${T('Add or edit family questions','Thêm hoặc sửa câu hỏi gia đình')}</button></div>
       <h3>${pic('💾')} ${T('Save a copy (Files / iCloud Drive)', 'Lưu một bản (Tệp / iCloud Drive)')}</h3>
       <p class="note">${T('Save a copy of your children’s progress to iCloud Drive, Google Drive or Files. Loading a copy checks the file and confirms with you before replacing anything.', 'Lưu một bản tiến trình vào iCloud Drive, Google Drive hoặc Tệp. Mở bản sao sẽ kiểm tra tệp và hỏi bạn trước khi thay thế.')}</p>
       <p class="note backup-when${backupAge() > 7 ? ' old' : ''}">${settings.lastBackup ? T('Last backup: ', 'Lần sao lưu gần nhất: ') + new Date(settings.lastBackup).toLocaleDateString(settings.lang === 'vi' ? 'vi-VN' : 'en-AU') + (backupAge() > 7 ? T(' (over a week ago)', ' (hơn một tuần trước)') : '') : T('No backup saved yet.', 'Chưa có bản sao lưu nào.')}</p>
@@ -276,6 +292,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       
       </div></details>
       ${window.__sv && window.__sv.parents ? window.__sv.parents.grownupsHTML(gOpen.has('family')) : '' /* (round S) family missions, week note, cards, dance, bedtime, birthdays: js/parents.js */}
+
       <details class="gsec" data-sec="note" ${gOpen.has('note') ? 'open' : ''}><summary><span class="gi">📜</span><b>${T('Note for grown-ups', 'Lưu ý cho người lớn')}</b></summary><div class="gbody">
       <ul class="gnote"><li>${T('Sparkle Valley is a free family game made for fun and learning. It is provided as it is, without any promise or warranty.', 'Thung Lũng Lấp Lánh là trò chơi gia đình miễn phí, làm ra để vui chơi và học hỏi. Trò chơi được cung cấp như hiện có, không kèm bất kỳ cam kết hay bảo đảm nào.')}</li><li>${T('A grown-up is responsible for the child’s play: when and how long they play, online play and chat, and the device itself.', 'Người lớn chịu trách nhiệm về việc chơi của trẻ: chơi lúc nào, chơi bao lâu, chơi trực tuyến, trò chuyện, và cả thiết bị.')}</li><li>${T('Games the valley suggests playing for real (tug of war, jump rope, hopscotch, đá cầu, kites, cooking…) need a grown-up watching, a safe place and the right equipment.', 'Các trò chơi được gợi ý chơi ngoài đời (kéo co, nhảy dây, nhảy lò cò, đá cầu, thả diều, nấu ăn…) cần có người lớn trông, chỗ chơi an toàn và dụng cụ phù hợp.')}</li><li>${T('Take a break every 20 to 30 minutes, and stop if a child feels unwell (tired eyes, dizziness, motion sickness).', 'Nghỉ giải lao sau mỗi 20 đến 30 phút, và dừng chơi nếu trẻ thấy khó chịu (mỏi mắt, chóng mặt, say xe).')}</li><li>${T('Places, festivals, food and history are told simply for children and may not be complete or exact.', 'Địa danh, lễ hội, món ăn và lịch sử được kể đơn giản cho trẻ, có thể chưa đầy đủ hoặc chưa chính xác hoàn toàn.')}</li><li>${T('Online friends, chat and real photos come from other people and services; the makers are not responsible for their content.', 'Bạn bè trực tuyến, trò chuyện và ảnh thật đến từ người khác và các dịch vụ khác; người làm game không chịu trách nhiệm về nội dung đó.')}</li><li>${T('As far as the law allows, the makers are not responsible for any loss, injury or damage from using the game.', 'Trong phạm vi pháp luật cho phép, người làm game không chịu trách nhiệm về bất kỳ mất mát, thương tích hay thiệt hại nào do việc sử dụng trò chơi.')}</li></ul>
       </div></details>
@@ -404,6 +421,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       toast(T('Left the family.', 'Đã rời gia đình.'));
       redrawKeepScroll();
     };
+    card.querySelector('#gFamilyQuiz').onclick=()=>import('./family-quiz-editor.js').then(M=>M.openFamilyQuestions(()=>{const y=m.scrollTop;draw();m.scrollTop=y;const b=card.querySelector('#gFamilyQuiz');if(b instanceof HTMLElement)b.focus({preventScroll:true});}));
     card.querySelector('#gSaveCopy').onclick = async () => {
       const text = JSON.stringify(createSaveCopy(getSnapshot()), null, 2);
       const name = 'sparkle-valley-' + new Date().toISOString().slice(0, 10) + '.svsave';
@@ -443,7 +461,10 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
           Object.keys(farm).forEach(key => delete farm[key]);
           Object.assign(farm, copy.farm);
           settings.familyCode = normalizeFamilyCode(copy.settings.familyCode);
+          // Loading an older/different family copy must not keep this device's private question set.
+          delete settings.familyQuiz;
           Object.assign(settings, copy.settings);
+          void import('./games/familyquiz.js').then(M=>M.syncFamilyQuizRegistration());
           if (settings.familyCode) settings.familyCode = normalizeFamilyCode(settings.familyCode);
           if (copy.device) localStorage.setItem('sv2_playerid', copy.device);
           // An older copy has no device id; keep this device’s existing identity.

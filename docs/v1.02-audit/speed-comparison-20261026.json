@@ -1,0 +1,188 @@
+{
+  "candidate": {
+    "commitAtStart": "f58e5b3a701c2d08f39d99fd89f445f152270470",
+    "results": {
+      "perf": {
+        "ok": false,
+        "detail": {
+          "over": [
+            "PERF-001 worldMs 10761 > 6600"
+          ],
+          "got": {
+            "startMB": 2.593138,
+            "worldMs": 10761,
+            "drawCalls": 376,
+            "triangles": 750927,
+            "drawCallsHome": 448,
+            "frames": 4,
+            "texturePx": 1024,
+            "heapGrowMB": 0,
+            "domGrow": 2,
+            "games": 10
+          },
+          "errs": []
+        }
+      },
+      "battery": {
+        "ok": true,
+        "secs": 148,
+        "note": "caps (ms a frame) {\"computerAuto\":16.7,\"computerFast\":33.3,\"computerPretty\":16.7,\"computerPrettyPlus\":0,\"phoneAuto\":33.3,\"phonePretty\":16.7}; frame gate a second at 60/120/144 Hz: 60/61/61 (cap 60), 31/31/31 (cap 30), title 21/21, idle 9/9; measured in the test browser: title 0 a second, valley 3, idle after 22.4 s 3.0; pixel ratio 1.5 on a 3x screen; 166/166 far people still, 0 near moving; statistics [1,88,2899,38160,35,0,0,0,1,37] sent once, nothing with Analytics off"
+      },
+      "startup": {
+        "ok": false,
+        "detail": {
+          "over": [
+            "PERF-001 firstTitleMs 2078 > 1130 x 1.07 (machine speed) = 1212",
+            "PERF-001 firstReadyMs 28912 > 19500 x 1.07 (machine speed) = 20908",
+            "PERF-001 secondReadyMs 31758 > 19100 x 1.07 (machine speed) = 20479",
+            "PERF-001 secondFreezeMs 7294 > 4950 x 1.07 (machine speed) = 5308"
+          ],
+          "got": {
+            "firstKB": 1003,
+            "firstTitleMs": 2078,
+            "firstReadyMs": 28912,
+            "secondReadyMs": 31758,
+            "secondFreezeMs": 7294,
+            "secondKB": 0
+          },
+          "mutedIndexLoads": [],
+          "machineMs": 193,
+          "speed": 1.07,
+          "slowest": [
+            "things 8.6 s",
+            "world 7.2 s",
+            "roads 2.2 s",
+            "pretraffic 2.2 s"
+          ],
+          "firstSteps": {
+            "start": 2057,
+            "world": 7103,
+            "people": 7584,
+            "town": 9569,
+            "roads": 11852,
+            "pretraffic": 13817,
+            "traffic": 13919,
+            "things": 22256,
+            "wideland": 23227,
+            "levelled": 23867,
+            "roadside": 25236,
+            "solids": 25297,
+            "ready": 26855,
+            "shaders": 32250
+          },
+          "secondSteps": {
+            "start": 3616,
+            "world": 7237,
+            "people": 7984,
+            "town": 9954,
+            "roads": 12194,
+            "pretraffic": 14396,
+            "traffic": 14454,
+            "things": 23066,
+            "wideland": 24087,
+            "levelled": 25272,
+            "roadside": 26833,
+            "solids": 26873,
+            "ready": 28142,
+            "shaders": 29073
+          },
+          "errs": []
+        }
+      }
+    }
+  },
+  "liveV101": {
+    "commitAtStart": "ac76cf609",
+    "results": {
+      "perf": {
+        "ok": false,
+        "detail": {
+          "over": [
+            "PERF-001 worldMs 11143 > 6600"
+          ],
+          "got": {
+            "startMB": 2.578655,
+            "worldMs": 11143,
+            "drawCalls": 375,
+            "triangles": 753065,
+            "drawCallsHome": 450,
+            "frames": 6,
+            "texturePx": 1024,
+            "heapGrowMB": 0,
+            "domGrow": 2,
+            "games": 10
+          },
+          "errs": []
+        }
+      },
+      "startup": {
+        "ok": false,
+        "detail": {
+          "over": [
+            "PERF-001 firstTitleMs 1677 > 1130 x 1.04 (machine speed) = 1171",
+            "PERF-001 firstReadyMs 31836 > 19500 x 1.04 (machine speed) = 20215",
+            "PERF-001 secondReadyMs 33036 > 19100 x 1.04 (machine speed) = 19800",
+            "PERF-001 secondFreezeMs 8550 > 4950 x 1.04 (machine speed) = 5131"
+          ],
+          "got": {
+            "firstKB": 999,
+            "firstTitleMs": 1677,
+            "firstReadyMs": 31836,
+            "secondReadyMs": 33036,
+            "secondFreezeMs": 8550,
+            "secondKB": 0
+          },
+          "mutedIndexLoads": [],
+          "machineMs": 187,
+          "speed": 1.04,
+          "slowest": [
+            "things 11.9 s",
+            "world 7.0 s",
+            "shaders 3.9 s",
+            "roads 2.9 s"
+          ],
+          "firstSteps": {
+            "start": 1658,
+            "world": 6913,
+            "people": 7364,
+            "town": 9464,
+            "roads": 12023,
+            "pretraffic": 14838,
+            "traffic": 14945,
+            "things": 25297,
+            "wideland": 26274,
+            "levelled": 27241,
+            "roadside": 28410,
+            "solids": 28468,
+            "ready": 30178,
+            "shaders": 35783
+          },
+          "secondSteps": {
+            "start": 1553,
+            "world": 7041,
+            "people": 7734,
+            "town": 9357,
+            "roads": 12235,
+            "pretraffic": 14977,
+            "traffic": 15070,
+            "things": 26994,
+            "wideland": 27965,
+            "levelled": 28538,
+            "roadside": 29975,
+            "solids": 30031,
+            "ready": 31483,
+            "shaders": 35341
+          },
+          "errs": []
+        }
+      }
+    }
+  },
+  "notes": [
+    "Checks ran sequentially, with each speed check alone.",
+    "Both checkouts fail the existing world-build and startup timing limits; no budgets were changed.",
+    "Candidate battery passed. Repeat-download secondKB is zero in both startup results.",
+    "A lazy report-form click-listener follow-up was present during the candidate sequence and committed as 4fd792cfa; it makes no startup/world changes.",
+    "These are synthetic software-rendered browser timings; physical-device performance is outstanding."
+  ]
+}

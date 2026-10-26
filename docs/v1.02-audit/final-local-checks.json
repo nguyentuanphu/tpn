@@ -1,0 +1,45 @@
+{
+  "source": "76bf8719b",
+  "checks": {
+    "festivalbootstrap": {
+      "ok": true,
+      "secs": 1,
+      "note": "Shared initial live settings avoid duplicate public requests; failed bootstrap keeps cached settings, focus refreshes, late initial responses cannot replace newer public state; standalone website behavior preserved"
+    },
+    "voicecover": {
+      "ok": true,
+      "secs": 83,
+      "note": "11149 lines and 2583 parts recorded, 257 templates, 27 areas; 435 \u00d7 built while playing (say with a variable): collected by tools/voice-harvest.mts into tools/voice-extra.json; every gap that is a name \u00d7 a child's, friend's or pet's name: shown, never recorded or spoken (HANDOFF rule 11); \"That costs 47.\" plays from 3 recorded parts and a name in a gap is left out, never the phone's voice"
+    },
+    "emoji": {
+      "ok": true,
+      "secs": 0,
+      "note": "820 different emoji in the game, 819 drawn, 0 not drawn (0 uses); left as they are: \ud83c\uddec\ud83c\udde7 (flags drawn by icons.js, and text symbols); no emoji in the docs"
+    },
+    "preload": {
+      "ok": true,
+      "secs": 0,
+      "note": "up to date: 141 scripts"
+    },
+    "arch": {
+      "ok": true,
+      "secs": 0,
+      "note": "325 files, 1360 imports; 0 circle groups (0 files in them); allowed: 0 groups, 0 files"
+    },
+    "rules": {
+      "ok": true,
+      "secs": 0,
+      "note": "112 rules, the same in the document and the code; 34 rule ids named by the checks, all known"
+    },
+    "types": {
+      "ok": true,
+      "secs": 28,
+      "note": "196 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 51 TypeScript files of the server, Studio and tools; no errors"
+    },
+    "battery": {
+      "ok": true,
+      "secs": 169,
+      "note": "caps (ms a frame) {\"computerAuto\":16.7,\"computerFast\":33.3,\"computerPretty\":16.7,\"computerPrettyPlus\":0,\"phoneAuto\":33.3,\"phonePretty\":16.7}; frame gate a second at 60/120/144 Hz: 60/61/61 (cap 60), 31/31/31 (cap 30), title 21/21, idle 9/9; measured in the test browser: title 0 a second, valley 3, idle after 18.3 s 2.7; pixel ratio 1.5 on a 3x screen; 168/168 far people still, 0 near moving; statistics [1,66,3829,27959,35,0,0,0,1,36] sent once, nothing with Analytics off"
+    }
+  }
+}

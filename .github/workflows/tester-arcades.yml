@@ -1,0 +1,68 @@
+name: Tester Orchard, parent arcade and Studio
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'js/games/arcade-*.ts'
+      - 'js/games/parade-engine.ts'
+      - 'js/games/sparkleorchard.ts'
+      - 'js/games/sparklefruitbar.ts'
+      - 'js/games/fruitbar-engine.ts'
+      - 'js/content/tester-arcades.ts'
+      - 'js/main.ts'
+      - 'js/ui-settings.ts'
+      - 'js/netgames.ts'
+      - 'studio/ui/**'
+      - 'tests/orchard-*.mts'
+      - 'tests/arcade-engines.mts'
+      - 'tests/report-float-browser.mts'
+      - 'js/tester-float.ts'
+      - 'js/travel-stops.ts'
+      - 'js/tester.ts'
+      - 'js/traffic.ts'
+      - '.github/workflows/tester-arcades.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: tester-arcades-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  behaviour:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.0
+      - name: Install existing dependencies and browser
+        working-directory: tests
+        run: npm ci --no-audit --no-fund && npx playwright install --with-deps chromium
+      - name: Build typed sources and verify pure engines/protocol
+        run: |
+          node tools/build.mts
+          node --test tests/unit/arcade-engines.test.mjs
+          tests/node_modules/.bin/tsc --noEmit --strict --module es2022 --moduleResolution bundler --target es2022 --skipLibCheck js/games/parade-engine.ts js/games/arcade-session.ts js/games/fruitbar-engine.ts
+      - name: Start game server
+        run: python3 -m http.server 8765 > /tmp/tester-arcades-server.log 2>&1 &
+      - name: Actual tester rejection, child missions, parent gate and two-browser state
+        run: |
+          node tests/orchard-fruitbar-browser.mts
+          node tests/orchard-fruitbar-browser.mts --input-only
+          node tests/orchard-fruitbar-browser.mts --parent-entry-only
+          node tests/orchard-fruitbar-browser.mts --allocations-only
+      - name: Floating report control and unique ride destinations
+        run: |
+          node tests/report-float-browser.mts
+          node tests/report-float-browser.mts --slow-reset-only
+      - name: Actual Studio bilingual folds, analytics layout and six controls
+        run: node tests/orchard-studio-browser.mts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tester-arcades-evidence
+          path: |
+            docs/v1.02-orchard-arcade/
+            docs/v1.02-report-control/
+          retention-days: 30

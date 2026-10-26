@@ -1,0 +1,9 @@
+build: 172 TypeScript files, 0 made
+only: unit, types, tugplay, snakesplay
+4 checks: group 1 4 (~3 min)
+[1] PASS tugplay (100s) Six accepted players share one rope; actual human/peer cooperative completion, everybody contributes,12 EN/VI device layouts with six drawn chi
+[1] PASS snakesplay (125s) Actual four-seat invited board completes in3 host taps; every peer agrees after every move, all4 gentle pieces finish,25 cells/four tokens a
+[1] PASS unit (71s) 315 unit tests passed
+[1] PASS types (24s) 179 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 49 TypeScript files of the server, Studio and
+
+4/4 checks passed in 5 min (1 at a time)

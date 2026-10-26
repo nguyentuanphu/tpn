@@ -1,0 +1,12 @@
+{
+  "checks": {
+    "perf": {
+      "ok": false,
+      "note": "{\"over\":[\"PERF-001 worldMs 14475 > 6600\"],\"got\":{\"startMB\":2.608856,\"worldMs\":14475,\"drawCalls\":369,\"triangles\":734438,\"drawCallsHome\":452,\"frames\":6,\"texturePx\":1024,\"heapGrowMB\":0,\"domGrow\":3,\"games\":10},\"errs\":[]}"
+    },
+    "startup": {
+      "ok": false,
+      "note": "{\"over\":[\"PERF-001 firstTitleMs 1950 > 1130 x 1.21 (machine speed) = 1370\",\"PERF-001 firstReadyMs 35262 > 19500 x 1.21 (machine speed) = 23649\",\"PERF-001 secondReadyMs 42128 > 19100 x 1.21 (machine speed) = 23164\",\"PERF-001 secondFreezeMs 10423 > 4950 x 1.21 (machine speed) = 6003\"],\"got\":{\"firstKB\":1010,\"firstTitleMs\":1950,\"firstReadyMs\":35262,\"secondReadyMs\":42128,\"secondFreezeMs\":10423,\"secondKB\":0},\"mutedIndexLoads\":[],\"machineMs\":218,\"speed\":1.21,\"slowest\":[\"things 14.8 s\",\"world 8.5 s\",\"ready 3.1 s\",\"roads 2.9 s\"],\"firstSteps\":{\"start\":1929,\"world\":7702,\"people\":8279,\"town\":10335,\"roads\":13032,\"pretraffic\":15350,\"traffic\":15417,\"things\":25604,\"wideland\":26742,\"levelled\":27631,\"roadside\":29477,\"solids\":30597,\"ready\":33333,\"shaders\":51083},\"secondSteps\":{\"start\":2062,\"world\":8507,\"people\":9063,\"town\":11507,\"roads\":14456,\"pretraffic\":17208,\"traffic\":17274,\"things\":32052,\"wideland\":33534,\"levelled\":34630,\"roadside\":36912,\"solids\":36996,\"ready\":40066,\"shaders\":41446},\"errs\":[]}"
+    }
+  }
+}

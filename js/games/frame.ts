@@ -15,6 +15,7 @@ import { playWatch, tell, setPlan } from './playwatch.js';
 export { GAMES, register }; // (the list itself is in registry.js)
 // Each kind of game has its own song.
 const GAME_MUSIC = {
+  cacuangua:'strategy',cuopco:'folk',meochuot:'folk',danhdao:'strategy',nemcon:'folk',keocua:'none',duathuyen:'none',
   music: 'none', firstwords: 'twinkle', tangram: 'think', snakes: 'party2', rangoli: 'twinkle',
   pattern: 'think', counting: 'twinkle', letters: 'twinkle', numbers: 'think', shapes: 'think', colors: 'twinkle', sorting: 'think', memory: 'twinkle',
   hanoi: 'strategy', robot: 'strategy', maze: 'strategy', goat: 'folk', oanquan: 'strategy', caro: 'strategy', hopscotch: 'folk', tug: 'village2', mrwolf: 'folk', datnieu: 'folk', kite: 'fly', chichi: 'folk', sackrace: 'party2', cricket: 'village2', parcel: 'none', words: 'twinkle', snap: 'village2', tienlen: 'village2', tienlenbac: 'village2', oantuti: 'folk', nemlon: 'party2', familyquiz: 'twinkle', moreless: 'think', days: 'twinkle', bodyparts: 'twinkle', eggs: 'farm', sudoku: 'think', dacau: 'party2', chuyen: 'village2', dragon: 'folk', marbles: 'strategy', skipping: 'party2',
@@ -28,7 +29,7 @@ const PRIZES = ['🦄', '🦖', '🚀', '🧸', '🎈', '🍭', '🪁', '🐬', 
 import type { Profile, Difficulty } from '../../types/save.js';
 export type GameResult = { won: boolean; stars?: number; next?: 'next' | 'again' | 'stop'; restart?: Difficulty; [key: string]: unknown };
 type WinExtra = Partial<GameResult> & { title?: string; titleVi?: string };
-export type GameOnline = { mine: number; names: string[]; seed?: string; size?: number; move(n: number, value: number): void; onMove?(listener: (seat: number, n: number, value: number) => void): void; next?(n: number, seat: number): Promise<unknown>; all?(n: number): Promise<unknown[]> };
+export type GameOnline = {familyQuiz?():import('../content/family-quiz.js').FamilyQuestion[]|null;shareFamilyQuiz?(questions:import('../content/family-quiz.js').FamilyQuestion[]):boolean;requestFamilyQuiz?():void; mine: number; names: string[]; seed?: string; size?: number; move(n: number, value: number): void; peek?(n: number, seat: number): number | undefined; onMove?(listener: (seat: number, n: number, value: number) => void): void | (() => void); next?(n: number, seat: number): Promise<unknown>; all?(n: number): Promise<unknown[]>; connected?(): boolean; present?(seat: number): boolean; leave?(): void };
 export type GameOptions = { players: Profile[]; level?: number; style?: string; partnerName?: string | null; little?: boolean; strong?: boolean; nextId?: string | null; completion?: 'choose' | 'return'; online?: GameOnline | null; levelPick?: { value: Difficulty } | null };
 type Cleanup = { onCleanup?(callback: () => void): void };
 
@@ -92,6 +93,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
       show: (en, vi) => { setHelp(en, vi); },
       sfx: SFX, wait,
       onCleanup: f => cleanups.push(f),
+      close: () => finish(false),
       // Test autoplay still uses real UI taps; a strategy supplies the next legal target, not a synthetic win.
       plan: (f, { maxActions = 0 } = {}) => { cleanups.push(setPlan(f, maxActions)); },
       // (r79 learning, I1) the game's tier now: 0 under-5, 1 Easy, 2 Medium, 3 Hard. The level the game started at
