@@ -1,8 +1,8 @@
 {
   "runtime": "b609dc847",
-  "currentVietnameseUnits": 6406,
+  "currentVietnameseUnits": 6407,
   "fptBaseline": 6319,
-  "fptArcadeDelta": 64,
+  "fptArcadeDelta": 65,
   "fptStagedTotal": 6345,
   "missingFromFpt": 19,
   "privacyHeld": 19,
@@ -40,20 +40,20 @@
   "deltaBranch": "work/v1.02-fruit-parade",
   "baselineVerificationRun": 40190674496,
   "deltaRecordingRun": 40286640514,
-  "productionIntegration": "Parent selection/background/offline integration verified previously; latest Family Quiz and packaging checks in progress",
+  "productionIntegration": "Public VI production6388 complete for ordinary6407-unit manifest except19private; mixed runtime routing verified locally, optional fragments recording/packaging pending; private questions explicit local OS voices only",
   "fptTitleDelta": 10,
   "labelsBranch": "work/fpt-v102-labels-20261026",
   "labelsRecordingRun": 40227974447,
   "labelsCommit": "715f260d1",
   "recordingsHead": "5aaec921b",
-  "fptCurrentCoverage": 6387,
+  "fptCurrentCoverage": 6388,
   "fptHistoricalOnly": [
     "4c87fc45-4909939b"
   ],
   "defaultRecordingRun": 40286640507,
   "defaultCoverage": "Current manifest collected; new Family Quiz finish instructions need the next default recording run",
-  "productionSignature": "9ff5fc807ec714ba574f5c9e1b98363836a13d008125e3a94ed5a6f3d0b8a37c",
-  "productionBytes": 427682018,
+  "productionSignature": "680fc1cd3810c853812f49fb3c36d5ad21224e41c66d832e762dda32d50ccd49",
+  "productionBytes": 427723336,
   "latestReviewedDelta": {
     "run": 40277620143,
     "commit": "6a670a255",
@@ -62,5 +62,7 @@
     "independentDecodeAudit": "docs/v1.02-traditional-repairs/folk-audio-audit.json",
     "productionPackaging": "6384 verified current units packaged using isolated matching receipts"
   },
-  "nextReviewedDeltaUnits": 65
+  "nextReviewedDeltaUnits": 340,
+  "mixedFragmentsRequired": 336,
+  "missingPublicMixedFragments": 275
 }

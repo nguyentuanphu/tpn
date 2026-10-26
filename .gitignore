@@ -203,6 +203,7 @@ marketing/source/runvalley.log
 /js/ui-settings.js
 /js/ui.js
 /js/viwords.js
+/js/voice-fragments.js
 /js/voice-index.js
 /js/voice.js
 /js/voicepack.js
@@ -352,3 +353,5 @@ marketing/source/runvalley.log
 
 /js/games/familyquiz.js
 /js/games/familyquiz-core.js
+
+js/voice-fragments.js

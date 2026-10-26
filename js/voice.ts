@@ -7,6 +7,7 @@ import { swapNames } from './i18n.js';
 import { packHash, lineHash, partText } from './packhash.js';
 import { events } from './core/events.js';
 import { viRuns, mixed } from './viwords.js';
+import { mixedVoiceFragments } from './voice-fragments.js';
 import { CUSTOM } from './custom.js';
 
 let all = [];
@@ -105,7 +106,7 @@ function utter(text, lang) {
 }
 // Device speech, as a promise that resolves when the line has been spoken.
 // Long lines are split at sentence ends: some phones cut long utterances off or rush them.
-function deviceSpeak(text, lang, my) {
+function deviceSpeak(text, lang, my, localVoice:SpeechSynthesisVoice|null=null) {
   if (!window.speechSynthesis) return Promise.resolve();
   try { speechSynthesis.resume(); } catch (e) { }
   const parts = String(text).match(/[^.!?。…]+[.!?。…]*\s*/g) || [text];
@@ -113,11 +114,11 @@ function deviceSpeak(text, lang, my) {
   // (round R, owner: "bánh khọt" and "nước mía" said by the English voice can't be understood) the Vietnamese words of an
   // English line are said by the phone's Vietnamese voice when it has one
   chunks = chunks.map(c => [lang, c]);
-  if (lang === 'en' && mixed(text) && voicesFor('vi').length) chunks = chunks.flatMap(([, c]) => viRuns(c)).filter(([, c]) => /[\p{L}\d]/u.test(c));
+  if (!localVoice && lang === 'en' && mixed(text) && voicesFor('vi').length) chunks = chunks.flatMap(([, c]) => viRuns(c)).filter(([, c]) => /[\p{L}\d]/u.test(c));
   return new Promise<void>(res => {
     let left = chunks.length, ended = false;
     const end = () => { if (!ended) { ended = true; res(); } };
-    chunks.forEach(([l, c]) => { const u = utter(c.trim(), l); u.onend = u.onerror = () => { if (--left <= 0) end(); }; try { speechSynthesis.speak(u); } catch (e) { end(); } });
+    chunks.forEach(([l, c]) => { const u = utter(c.trim(), l); if(localVoice){u.voice=localVoice;u.lang=localVoice.lang;} u.onend = u.onerror = () => { if (--left <= 0) end(); }; try { speechSynthesis.speak(u); } catch (e) { end(); } });
     // in case the device never reports the end
     setTimeout(end, 1500 + String(text).length * 95);
     const poll = setInterval(() => { if (my !== seq) { clearInterval(poll); end(); } if (ended) clearInterval(poll); }, 200);
@@ -252,10 +253,15 @@ function sayInLoaded(lang, text, my) {
 }
 // the phone's own voice only (Grown-ups → Advanced → Phone voice ▶), so the chosen voice is really heard
 export function sayDevice(lang, text) { const my = ++seq; try { speechSynthesis.cancel(); } catch (e) { } stopPlayback(); activeSpeech.clear(); told(); return deviceSpeak(text, lang, my); }
-/** Parent-written text is never looked up, logged as missing or sent to a recording provider. */
+/** Parent-written words use an explicitly local OS voice; cloud-backed browser voices are excluded too. */
 export async function sayPrivateFamilyLine(lang:string,text:string){
- if(!settings.voice)return;hush();const my=seq,ticket={};activeSpeech.add(ticket);told();
- try{await deviceSpeak(text,lang,my);}finally{activeSpeech.delete(ticket);told();}
+ if(!settings.voice)return false;
+ hush();
+ const voices=voicesFor(lang).filter(voice=>voice.localService===true);
+ const chosen=voices.find(voice=>voice.name===(lang==='vi'?settings.voiceVi:settings.voiceEn))||voices[0];
+ if(!chosen)return false;
+ const my=seq,ticket={};activeSpeech.add(ticket);told();
+ try{await deviceSpeak(text,lang,my,chosen);return true;}finally{activeSpeech.delete(ticket);told();}
 }
 export function hush() { seq++; try { speechSynthesis.cancel(); } catch (e) { } stopPlayback(); activeSpeech.clear(); told(); }
 
@@ -475,9 +481,81 @@ export async function previewPackVoice(slot) {
 // them too: Cute a little higher and quicker, Grandparent lower and slower (playing faster or slower moves the pitch)
 const STYLE_RATE = { natural: 1, cute: 1.22, grandpa: .82 };
 const packRate = slot => { const k = speakerKind(), st = STYLE_RATE[settings.voiceStyle] || 1; if (!k) return st; let r = k.old ? .9 : k.kid ? 1.1 : 1; if (k.gender === 'm' && slot === 'f') r *= .86; return r * st; };
+type MixedRecordingPart = { key: string; url: string; rate: number; pauseAfter: number; hanoi: boolean };
+
+// Decode the whole plan before playing any part. A missing/corrupt fragment can therefore fall back to the
+// existing complete recording without repeating the first half of a sentence or using device speech.
+async function mixedRecording(text: string, my?: number): Promise<AudioBuffer | null> {
+  if (!hanoiSelected() || previewSlot || !packSlot('en', text)) return null;
+  const fragments = mixedVoiceFragments(text);
+  if (!fragments?.length) return null;
+  const context = ac();
+  if (!context) return null;
+  const active = () => hanoiSelected() && !previewSlot && (my === undefined || my === seq);
+  const service = await hanoiPack(), plan: MixedRecordingPart[] = [];
+  for (const fragment of fragments) {
+    if (!active()) return null;
+    if (fragment.lang === 'vi') {
+      // Optional fragment IDs are reviewed public speech; they need no redundant default-Vietnamese recording.
+      const url = await service.recording(lineHash('vi', fragment.text));
+      if (!url) return null;
+      plan.push({ key: 'fpt-leminh-v1|' + url, url, rate: STYLE_RATE[settings.voiceStyle] || 1, pauseAfter: fragment.pauseAfter, hanoi: true });
+    } else {
+      const slot = packSlot('en', fragment.text);
+      if (!slot) return null;
+      plan.push({ key: 'pack|' + slot + '|en|' + fragment.text, url: packUrl('en', fragment.text, slot), rate: packRate(slot), pauseAfter: fragment.pauseAfter, hanoi: false });
+    }
+  }
+  const key = 'mixed-leminh|' + JSON.stringify(plan.map(part => [part.key, part.rate, part.pauseAfter]));
+  const cached = mem.get(key);
+  if (cached) return cached;
+  const buffers: AudioBuffer[] = [];
+  for (const part of plan) {
+    if (!active()) return null;
+    let buffer = mem.get(part.key) as AudioBuffer | undefined;
+    if (!buffer) {
+      const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 8000);
+      try {
+        const response = part.hanoi ? await service.audio(part.url, controller.signal) : await fetch(part.url, { signal: controller.signal });
+        if (!response?.ok) return null;
+        buffer = await decode(await response.arrayBuffer()) as AudioBuffer;
+      } catch { return null; }
+      finally { clearTimeout(timer); }
+      mem.set(part.key, buffer);
+      if (mem.size > 120) mem.delete(mem.keys().next().value);
+    }
+    buffers.push(buffer);
+  }
+  if (!active()) return null;
+  // A single decoded source keeps cancellation and music ducking atomic across language switches. DecodeAudioData
+  // resamples into this context; the explicit ratio also handles a cached recording with another sample rate.
+  const frames = buffers.map((buffer, i) => Math.ceil(buffer.duration * context.sampleRate / plan[i].rate));
+  const pauses = plan.map(part => Math.round(part.pauseAfter * context.sampleRate / 1000));
+  const total = frames.reduce((sum, frames, i) => sum + frames + pauses[i], 0);
+  const channels = Math.max(...buffers.map(buffer => buffer.numberOfChannels));
+  const joined = context.createBuffer(channels, total, context.sampleRate);
+  for (let channel = 0; channel < channels; channel++) {
+    const output = joined.getChannelData(channel);
+    let offset = 0;
+    for (let i = 0; i < buffers.length; i++) {
+      const buffer = buffers[i], input = buffer.getChannelData(Math.min(channel, buffer.numberOfChannels - 1));
+      const ratio = buffer.sampleRate * plan[i].rate / context.sampleRate;
+      for (let frame = 0; frame < frames[i]; frame++) {
+        const position = Math.min(input.length - 1, frame * ratio), before = Math.floor(position), fraction = position - before;
+        output[offset + frame] = input[before] + (input[Math.min(before + 1, input.length - 1)] - input[before]) * fraction;
+      }
+      offset += frames[i] + pauses[i];
+    }
+  }
+  mem.set(key, joined);
+  if (mem.size > 120) mem.delete(mem.keys().next().value);
+  return joined;
+}
 export async function warmVoiceLine(en: string, vi?: string) {
   try {
     await waitPack();
+    // Keep the complete recording warm as a fallback as well as the selected mixed-language recording.
+    if (hanoiSelected() && !previewSlot) await mixedRecording(en);
     const pairs: [string, string][] = [['en', en]];
     if (vi) pairs.push(['vi', vi]);
     for (const [lang, text] of pairs) {
@@ -512,6 +590,24 @@ export const packUrl = (lang, text, slot) => `voices/${lang}/${slot}/${packKey(l
 async function playPack(lang, text, my, forceHanoi=false, skipHanoi=false) {
   if (my !== seq) return true;
   const slot = packSlot(lang, text); if (!slot) return false;
+  if (lang === 'en' && !forceHanoi && !skipHanoi && hanoiSelected() && !previewSlot) {
+    const recording = await mixedRecording(text, my);
+    if (my !== seq) return true;
+    if (recording) {
+      const context = ac();
+      if (context && context.state !== 'running' && !document.hidden) {
+        try { await Promise.race([context.resume(), new Promise(resolve => setTimeout(resolve, 250))]); } catch { }
+      }
+      if (my !== seq) return true;
+      if (context?.state === 'running') {
+        voiceDiag.recording = 'Default English + FPT Neo · FPT.AI-VITs · leminh';
+        voiceDiag.audio = 'running';
+        await playBuffer(recording);
+        return true;
+      }
+      // Until Web Audio is unlocked, retain the complete recording's existing HTML audio fallback.
+    }
+  }
   const hanoi=!skipHanoi&&lang==='vi'&&!previewSlot&&(forceHanoi||hanoiSelected())?await(await hanoiPack()).recording(packKey(lang,text)||lineHash(lang,text)):null;
   if(my!==seq)return true;
   if(forceHanoi&&!hanoi)return false;

@@ -983,7 +983,13 @@ addEventListener('keydown', e => {
   if (!playing || e.repeat || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test((e.target instanceof Element && e.target.tagName) || '')) return;
   const k = e.code === 'KeyG' || e.key === 'g' || e.key === 'G' ? 'KeyG' : e.code;
   // Escape closes the top pop-up, chat or game card
-  if (k === 'Escape') { const x = [...document.querySelectorAll<HTMLElement>('.modal .x, .vc-pop .vc-x, .chatwin .x, .dlg-close')].pop(); if (x) { x.click(); e.preventDefault(); } return; }
+  if (k === 'Escape') {
+    // A nested dialog with its own Escape handler must never close the parent behind it.
+    const modal = e.target instanceof Element ? e.target.closest('.modal') : null;
+    const x = modal ? modal.querySelector<HTMLElement>('.x') : [...document.querySelectorAll<HTMLElement>('.modal:not(.out) .x, .vc-pop .vc-x, .chatwin .x, .dlg-close')].pop();
+    if (x) { x.click(); e.preventDefault(); }
+    return;
+  }
   if (G.paused || gameOpen() || document.querySelector<HTMLElement>('.modal, .storybook, .vc-pop')) return;
   const two = G.heroes.length > 1, i = 0;
   const map = { KeyG: () => G.openGamesHub(i), KeyM: () => G.openPad(i, 'map'), KeyB: () => G.openPad(i, 'bag'), KeyK: () => G.voiceCommand(i),

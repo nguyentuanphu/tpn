@@ -461,7 +461,10 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
           Object.keys(farm).forEach(key => delete farm[key]);
           Object.assign(farm, copy.farm);
           settings.familyCode = normalizeFamilyCode(copy.settings.familyCode);
+          // Loading an older/different family copy must not keep this device's private question set.
+          delete settings.familyQuiz;
           Object.assign(settings, copy.settings);
+          void import('./games/familyquiz.js').then(M=>M.syncFamilyQuizRegistration());
           if (settings.familyCode) settings.familyCode = normalizeFamilyCode(settings.familyCode);
           if (copy.device) localStorage.setItem('sv2_playerid', copy.device);
           // An older copy has no device id; keep this device’s existing identity.

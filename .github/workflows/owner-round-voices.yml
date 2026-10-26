@@ -3,7 +3,7 @@ name: Owner round voices
 on:
   push:
     branches: [work/v1.02-fruit-parade, work/owner-round-20261014, work/owner-repair-20261014, work/owner-repair-checkpoint-20261015]
-    paths: ['js/**', 'tools/voice-extra.json', '.github/workflows/owner-round-voices.yml']
+    paths: ['js/**', 'tools/voice-extra.json', 'tools/make-voice-pack.mts', 'tools/mixed-voice-inventory.mts', '.github/workflows/owner-round-voices.yml']
   workflow_dispatch:
     inputs:
       save_to_branch:

@@ -694,6 +694,10 @@ await check('voicepack', async () => {
 
 await check('folkplay', async () => (await import('./folk-court-browser.mts')).folkCourtBrowserCheck(b));
 
+await check('mixedhanoivoice', async () => (await import('./mixed-hanoi-voice.mts')).mixedHanoiVoiceCheck(b));
+
+await check('familyreportprivacy', async () => (await import('./family-report-privacy.mts')).familyReportPrivacyCheck(b));
+
 await check('familyquizprivate', async () => (await import('./family-quiz-browser.mts')).familyQuizBrowserCheck(b));
 
 await check('familyquizcrypto', async () => (await import('./family-quiz-crypto.mts')).familyQuizCryptoCheck(b));
@@ -880,7 +884,7 @@ await check('voicecover', async () => {
     // times; the interruptions are reported
     if (window.__sv) window.__sv.paused = true;
     const others = []; V.spoken.push(t => others.push(t));
-    for (const [key, line] of [['number', 'You rolled 47! Count with me.'], ['name', 'Zorbly is here! Hold on and kick your legs: tap, tap, tap!']]) {
+    for (const [key, line] of [['number', 'That costs 47. Sell some things first!'], ['name', 'Zorbly is here! Hold on and kick your legs: tap, tap, tap!']]) {
       res[key] = { parts: V.lineParts('en', line), cut: 0 };
       for (let k = 0; k < 3; k++) { others.length = 0; window.__speaks = 0; window.__srcs = 0; await V.sayAsync(line, line); if (!others.length) break; res[key].cut++; }
       res[key].speaks = window.__speaks; res[key].srcs = window.__srcs; res[key].diag = { ...V.voiceDiag }; // (why a part did not play, when it does not)
@@ -891,7 +895,7 @@ await check('voicecover', async () => {
   ok(g.number.parts && g.number.parts.some(p => p[1] === '47') && !g.number.speaks && g.number.srcs >= 3, 'a line with a number: ' + JSON.stringify(g.number));
   ok(g.name.parts && g.name.parts.some(p => p[1] === 'Zorbly') && !g.name.speaks && g.name.srcs >= 1, 'a line with a name: ' + JSON.stringify(g.name));
   ok(!errs.length, errs.join(' | '));
-  return `${r.lines} lines and ${r.parts} parts recorded, ${r.templates} templates, ${r.areas} areas; ${Object.entries(r.reasons).map(([k, v]) => `${v} × ${k}`).join('; ')}; "You rolled 47!" plays from ${g.number.srcs} recorded parts and a name in a gap is left out, never the phone's voice`;
+  return `${r.lines} lines and ${r.parts} parts recorded, ${r.templates} templates, ${r.areas} areas; ${Object.entries(r.reasons).map(([k, v]) => `${v} × ${k}`).join('; ')}; "That costs 47." plays from ${g.number.srcs} recorded parts and a name in a gap is left out, never the phone's voice`;
 });
 
 await check('voicearea', async () => {
@@ -7221,26 +7225,33 @@ await check('animalvoices', async () => {
   // drawn-out tone), in the game and from the animals' sounds elsewhere; each file is in the offline list
   const sw = fs.readFileSync('../sw.js', 'utf8'), names = ['cow', 'sheep', 'pig', 'dog', 'cat', 'duck', 'hen', 'horse', 'frog', 'owl'];
   const offline = names.filter(n => !sw.includes(`'sounds/animals/${n}.mp3'`));
-  const pre = `window.__rec = []; window.__osc = 0;
-    const st = AudioBufferSourceNode.prototype.start; AudioBufferSourceNode.prototype.start = function (...a) { if (this.buffer && this.buffer.duration > .5) window.__rec.push(+this.buffer.duration.toFixed(2)); return st.apply(this, a); };
+  // The automatic welcome sticker lands after 650 ms and plays SFX.shhk(): two 0.8 s noise buffers and one oscillator.
+  // Seed it as already welcomed before the first sticker poll; it is unrelated to an animal's call.
+  const pre = `(${seedPlayers.toString()})();
+    { const profiles = JSON.parse(localStorage.getItem('sv2_profiles') || '[]');
+      profiles.forEach(p => { p.stickerBook = { ...(p.stickerBook || {}), welcomed: Date.now() }; });
+      localStorage.setItem('sv2_profiles', JSON.stringify(profiles)); }
+    window.__rec = []; window.__animalBuffers = []; window.__osc = 0;
+    const st = AudioBufferSourceNode.prototype.start; AudioBufferSourceNode.prototype.start = function (...a) { if (this.buffer && this.buffer.duration > .5) { window.__rec.push(+this.buffer.duration.toFixed(2)); window.__animalBuffers.push(this.buffer); } return st.apply(this, a); };
     const os = OscillatorNode.prototype.start; OscillatorNode.prototype.start = function (...a) { window.__osc++; return os.apply(this, a); };`;
-  const P = await open(b, { w: 390, h: 844, touch: true, pre, settings: { sound: true, music: false } }); await clear(P.page);
+  const P = await open(b, { w: 390, h: 844, touch: true, pre, settings: { sound: true, music: false } }); await noWelcome(P.page); await clear(P.page);
   await P.page.mouse.click(195, 420); await P.page.waitForTimeout(300); // (sound starts after a first tap, as on a phone)
   const r = await P.page.evaluate(async () => {
     const A = await import('/js/audio.js'), wait = ms => new Promise(r => setTimeout(r, ms)), out = {};
-    await A.loadAnimalCalls(8000); __sv.paused = true; await wait(600); // (the valley's own ducks and frogs stay quiet while it listens)
+    const loaded = await A.loadAnimalCalls(8000); if (!loaded) throw new Error('Real animal recordings did not finish loading.'); __sv.paused = true; await wait(600); // (the valley's own ducks and frogs stay quiet while it listens)
     for (const call of ['moo', 'baa', 'oink', 'woof', 'meow', 'quack', 'cluck', 'neigh', 'ribbit', 'hoot']) {
-      window.__rec.length = 0; window.__osc = 0; A.animalCall(call); await wait(150);
-      out[call] = { rec: window.__rec.slice(), tones: window.__osc, len: A.animalRecording(call) ? +A.animalRecording(call).duration.toFixed(2) : 0 };
+      window.__rec.length = 0; window.__animalBuffers.length = 0; window.__osc = 0; const stop = A.animalCall(call); await wait(150);
+      out[call] = { rec: window.__rec.slice(), tones: window.__osc, len: A.animalRecording(call) ? +A.animalRecording(call).duration.toFixed(2) : 0,
+        correctRecording: window.__animalBuffers.length === 1 && window.__animalBuffers[0] === A.animalRecording(call) }; stop();
     }
     return out;
   });
   // in the game itself: the first round's sound is a recording
-  const g = await P.page.evaluate(async () => { const wait = ms => new Promise(r => setTimeout(r, ms)); window.__rec.length = 0; window.__osc = 0; __sv.playGame(0, 'animalsounds', 'replay'); for (let i = 0; i < 40 && !window.__rec.length; i++) await wait(250); return { rec: window.__rec.slice(), tones: window.__osc }; });
+  const g = await P.page.evaluate(async () => { const A = await import('/js/audio.js'), wait = ms => new Promise(r => setTimeout(r, ms)); window.__rec.length = 0; window.__animalBuffers.length = 0; window.__osc = 0; __sv.playGame(0, 'animalsounds', 'replay'); for (let i = 0; i < 40 && !window.__rec.length; i++) await wait(250); return { rec: window.__rec.slice(), tones: window.__osc, realAnimal: window.__animalBuffers.length >= 1 && ['moo', 'baa', 'oink', 'woof', 'meow', 'quack', 'cluck', 'neigh', 'ribbit', 'hoot'].some(call => window.__animalBuffers[0] === A.animalRecording(call)) }; });
   const errs = P.errors; await P.ctx.close();
-  const bad = Object.entries(r).filter(([, v]) => !(v.rec.length === 1 && v.len >= .6 && v.len <= 3 && !v.tones)).map(([k, v]) => k + ' ' + JSON.stringify(v));
-  ok(!offline.length && !bad.length && g.rec.length >= 1 && !errs.length, JSON.stringify({ offline, bad, game: g, errs }));
-  return `10 animals play their real recordings (${Object.entries(r).map(([k, v]) => `${k} ${v.len} s`).join(', ')}), none drawn as tones; "Who Says That?" starts with a recording; all 10 files in the offline list`;
+  const bad = Object.entries(r).filter(([, v]) => !(v.rec.length === 1 && v.len >= .6 && v.len <= 3 && !v.tones && v.correctRecording)).map(([k, v]) => k + ' ' + JSON.stringify(v));
+  ok(!offline.length && !bad.length && g.rec.length >= 1 && g.realAnimal && !errs.length, JSON.stringify({ offline, bad, game: g, errs }));
+  return `10 animals play their real recordings (${Object.entries(r).map(([k, v]) => `${k} ${v.len} s`).join(', ')}), exact buffer identities, none drawn as tones; "Who Says That?" starts with a recording; all 10 files in the offline list`;
 });
 
 await check('realrides', async () => {

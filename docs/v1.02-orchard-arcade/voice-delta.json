@@ -1,5 +1,5 @@
 {
-  "source": "Reviewed static arcade, horse and folk-game lines; previously reviewed titles and turtle numbers retained. Frozen baseline excluded; private user speech excluded.",
+  "source": "Reviewed static arcade, horse and folk-game lines and fixed Vietnamese fragments inside English speech; previously reviewed titles and turtle numbers retained. Frozen baseline excluded; private user speech excluded.",
   "baselineSha256": "a2761a6c7032fda1f0fe97c04d7de64da36cf97a8ae543a416c49095a5f3201f",
   "sourceHashes": {
     "js/games/fruitparade.ts": "2ca93b3ad5e575f4ce3241b65bb2cca37ce78f39cff6207a171f9e9740a81011",
@@ -24,9 +24,4050 @@
     "js/games/board-agreement.ts": "ffcc42085b5f6223fd7040cf56a11c4c23d2584dba1220de1bc557d830089020",
     "js/games/tug-core.ts": "f0c7c03b78d0d61f068ec47d8720feba713fe588ef13edc0b7849063bcc3e7ef",
     "js/games/tug-session.ts": "5e5eb9110a09416c56db2cc5bc1f68e9fb632314b53f832a4cd7aa12dd50adb4",
-    "js/games/familyquiz.ts": "10f3dcf4f0d023d05c483df6bb2709f481294afa7b8c032a47bb32e185e16ad9"
+    "js/games/familyquiz.ts": "a74756fe2a6f813e6964645f323a814a5ef63cb77315cf5b727fe5aad27d7b0a",
+    "js/chatter.js": "0ca3d9c821ed68ea7c35ae1e3c426929e7502c5d1e5adaf9821f4abe8f2bfb7b",
+    "js/games/folk2.ts": "f97ab276bd85e94eecf4eb88dd5cb6577eb2551f26816312ab817e6bb14ef9f3",
+    "js/howto-data.ts": "091b834ef1808d5e9f62c5beff422ebc51bac2690f665ab3e961bf641bc3d252",
+    "js/suburbs.js": "fb8c42a66d64d76b1e5599d5ae5ea67f60f883c7e9c814c9e434e2bc18f0db29",
+    "js/games/tienlen.ts": "e61c684a71479840d2769709c85d5101527b068dd1e29494f8c9a431383f6fe9",
+    "js/content/films/tamcam.js": "129414154422ba8b68f4933121745f6dfe157b0942963b745ddfd5de0b998165",
+    "js/tales-content.ts": "f88ae16dbdb2f57d38deb2b79374771efd06fd8c134b7b85c57364c5fd7dce6e",
+    "js/games/drawing2.ts": "bb6ba0eaf2bd22452d997e27655ac502dab1dc0a431b716d82bf4866af258828",
+    "js/heritage.js": "ce049b4b81460c0b08ccf0d40d353abea6892e9c5571b4eec25ae6e867bb317f",
+    "js/chat.ts": "2339ad7800ed4c10a4f441d335cd7aa5629141ea97e1ea108bdac9d3ab1fdefa",
+    "js/story.js": "f8e30704968ff04568ac5b18d0128a634de6186658c8ae604c26eec1a7bb419a",
+    "js/regions.js": "87e8ce7df73f291ce578f5561d59177cbf7ccf091f69999688015eeef8111e5b",
+    "js/cities.js": "d854ad2a50c85359735ab513e0243c8299ee46001af9106fd7a20dc1c23ec4df",
+    "js/vendors.js": "e7cd59135132a7907670c0129caa5b33a5620a6765ecc262cd82c094a070996b",
+    "js/content/festcal.js": "2ab41190fd6e431e040722a70a958adb3c99aaf0c0eeb3c5b41f95ace4109faa",
+    "js/homes.js": "c39aee5861d1ad484a11de7038492b86a2600ae36494b5ec6b3c138d7e36c32e",
+    "js/content/songs.js": "4e2022f4ff5dfff311aa953dece2e345efd224f714613f4b0f375e1a7c6be4d7",
+    "js/symbols.js": "1523080e4f1b759fc13dac501f5d3081479a7c80c375366e3e022fccf0a9d4d0",
+    "js/games/more.ts": "7ef879ccb1600a3d13682b84358bb839583933d85bc1598c93ef8d7686f59131",
+    "js/main.ts": "319761f88a2561a384b2b6d58062857823429742d795a0475c257c11f84a0bb2",
+    "js/games/music2.ts": "59f313b6a35d7a798cc564ef7bcd7a120b38b98dd937acc4545f22e34102ad16",
+    "js/chat-player.ts": "8c10674ecf590bfbada0c5e127967961211e97dc05fe7fd58e107ec8797a9d85",
+    "js/content/adventures.js": "3ab415db49621dc88edbd332bdae143ba04f65c5cf72a5d617c4adfc54d5bd46",
+    "js/content/jobs.js": "caee2257957836881008e1ac42a077e0a6029dceda0537b239014c37fb27983b",
+    "js/content/map.js": "43c60a2aff4160d4ce1cfcda4e6156b256027cbba53c675535a5c1f1b616c7e1",
+    "js/games/cities.ts": "426b34e8f21e45cef4833adf8740b13d2b88a3910f842bd5c7d7f448d23e4558",
+    "js/hawkers.js": "6c5b31678113965ce0aac8c465337f3288c13d726f5cfdbd1d57b732c791c975",
+    "js/vehicles.js": "e83a29268979c7c9116735356ea81272e3c2cf8ec64bbdc15eb7de67d9a4d267",
+    "js/content/stickers.js": "9c381964afe08b71cfb039d2f57429d4436d8d9716a316e466714373e4614b55",
+    "js/regionsites.js": "412f4bc3957ea41c76581312538a38a099731983a50cd9c213e14e21b5c519bd",
+    "js/games/thinking.ts": "2604c8f8a3e6172aad1b6eb4851f8f583973b4b91b2dad86b98c470579f4c576",
+    "js/games/drawing.ts": "0786853f024f390e4fd1e4a35fb3f7d2b9ba7c44f90493f4df26c3232b82959a",
+    "js/content/chapter3text.js": "4bbc022d4385b7c482b8a34e125baa090d85e5d2fcadb6e18a3710bbe49ceeec",
+    "js/content/chapters.ts": "888d9fabb9356668be7d5ff05daaf9b39e708b416db702a0025fd687269f5946",
+    "js/folkshow.js": "ae4259dcb5b465ad60426a691ddc403abbd8d063edf1d8be5a465c7d6ee0d755",
+    "js/games/vietnam2.ts": "770df0f9339880054cd7414889f53e87fd81ac415b571c23be34ccc92179cd69",
+    "js/content/films.js": "b667864d2d8a8a91ac47f065c3793aecb2a7eb602a1a0892e1595202bea45d9a",
+    "js/content/build-types.ts": "116e56b550b75cb1768abe56cb28712cd4153fe7d71a5ff7898d1e0c36232446",
+    "js/vnfun.js": "0cd77883b9e0f5e88817a1818c284efafb5b660533c1f81e5b5c3efc0d4f3eb3",
+    "js/town.js": "93e24b0e59af00cd07febb07c36514d95077b5c88d02e73f4d731a3e242179aa",
+    "js/content/films/caytre.js": "6c5606436e599f362437951110e881ee03892de04946b277e578d6c6f94c971a",
+    "js/content/villagerlines.js": "c0dd7baa443369c851e9dbf9511387108cfc281376efda1f1255b5a361d4e21d",
+    "js/games/reading2.ts": "27cd784168ab5d3ece7cca8f6aa4ad5b6ab0b41fca6dbe0ae93e74e0ea1dc6c8",
+    "js/games/pending-vietnam.ts": "d2b8b8caa7adcc4710d464eb1bdce13fc6cf94794bce2c62602d9b00f83e9474",
+    "js/content/festhunt.js": "1c153b957a12c24534e726330489bf42735e8c1bed2a3a53f13e1cff8828573e",
+    "js/games/folk.ts": "587a8d07234c8e41ae783556616c91f72af29e90926225a827b156093039260b",
+    "js/learn.ts": "4deee6fdddcd9dfb3886bbdbd4f44a92664e27dec1671f6f46ab70552227564b",
+    "js/games/music.ts": "b63c380d724870e2423bf7b27dda0114640361e99b026d80829ac589a4bcfbcb",
+    "js/content/films/ongtao.js": "ceb6c17bfad5ee3cb7320eaaf139dac4c402e94267aeaedee871f2b662c3fb10",
+    "js/content/films/thachsanh.js": "8e281ac9920b17ecf455d28aad27565a05e642cdc12d6cbe12f96b1e9d183300",
+    "js/content/yard.js": "06c670a951ea35e98993c2d5c55b4b6ed335ea0602663dbb14f5ca892102dc9b",
+    "js/content/reading.js": "f63d98168e9a688e5bc2b72a0861ea6e0b61ece0f7fa44d8b6607d0c802461d2",
+    "js/ui.ts": "8114aa3231b8d1fea9a53c1a19cf4f8aa8b22aeefe3f206db372cd2c8ad1cbd4",
+    "js/games/learning-meta.ts": "e2ff12cc6123f4b656884b74e5208dee6006fc2367297872b1ce2502fd682f90",
+    "js/games/talkgames.ts": "57e5436e9d6946f5b45aa8c52ce153a6b30c7e328781ad90d5205f391b8d6775",
+    "js/content/films/weaver.js": "7cd58f39b2d67da5b5f80a692d3c9fcfe27d29d2dfe6d49fbd047499fe6b1a5d",
+    "js/games/animals2.ts": "5fe15de1c7d808f4bdc21ec2054ca53b4bb696332d77b8f0e89bb270034c419b",
+    "js/lotus.ts": "6e054e266932e852e04b814ec94438253b2a9e123236edc50d258adef993b55d",
+    "js/content/activities.ts": "ccbc5a4d5b00c031c27000fc8239182f3556621e41bfa121ecc75f2f181e17ac",
+    "js/content/films/chucuoi.js": "f6cb6193e9407295d2abb30040bc6dc2ef63b3e6701ca98364f3d10384a2941c",
+    "js/games/market.ts": "84851224406dd426d5f261349d75db7d756f442d38fd8ded926770035c45858f",
+    "js/games/places2.ts": "ade2bf4731cf2eb585028067b5221791a9ee58198ce4506073f1959e599a9d52",
+    "js/content/storyhelp.ts": "c53678c9bec856e9647165bf5869a04e0b3b1b42b4267290c058398ca96c2351",
+    "js/games/money.ts": "fa480cdf8cdca76fef08b0ae930caf18192f9809e4107ec4ff2eecef32ded590",
+    "js/games/money2.ts": "6f912f0a57527e55a6767bc03982331b88998fc337cdd85c74a4af1d32fce225",
+    "tools/mixed-voice-inventory.mts": "36eaea8ab7bf29e977d33624c88a5b2232c6072190aba25226bb0a274e8561a0",
+    "tools/hanoi-pack-policy.mts": "5719b18772f8776ec6a873f5314fda5cf093d665fe9fdca7ab0bef9b75af8cdb",
+    "tools/fpt-arcade-inventory.mts": "cf6a9f8ce82c330395c8f2dda90268a5da07011bf0721654d317fde142d72755",
+    "docs/fpt-v102-labels-20261026/inventory.json": "5b4bf919011d792967f559451caf56650d271bd1fa9852cc73268879cb848e84",
+    "js/voice-fragments.ts": "16c86ec8acb09f81f1714637e956b96d37a4f27c16a15f60a13ab12e552515ba",
+    "js/viwords.ts": "e625052e66ec45a1cee49c0cbb8df16c9d4fab6326db98a248e383f1093c3895",
+    "js/packhash.ts": "881eb77862278ec8eadfae8aec231a643309dc6438c1df41404cb6679258351a",
+    "js/i18n.js": "65ba29a70e189aa374136fdb35e2dc81e6d5d5abd70c85287720fa3ea389ea08"
   },
+  "mixedFragments": [
+    {
+      "id": "00259908-44c4a21c",
+      "lang": "vi",
+      "text": "Chi chi chành chành",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/games/folk2.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "007f74d4-4e4a25a9",
+      "lang": "vi",
+      "text": "Hạnh’s phở",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "01b94ba751e6d9bd",
+      "lang": "vi",
+      "text": "Tiến Lên miền Bắc",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/tienlen.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "022b12560e68d598",
+      "lang": "vi",
+      "text": "Tấm",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/tamcam.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "032d7aa62a4f84a8",
+      "lang": "vi",
+      "text": "Bát Tràng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/drawing2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "03b8d78b47e96f0a",
+      "lang": "vi",
+      "text": "Phong Nha–Kẻ Bàng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "042943ad-64db058b",
+      "lang": "vi",
+      "text": "đọi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0488cc3566d6e737",
+      "lang": "vi",
+      "text": "Tèo",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/chapter2text.js",
+        "js/story.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0657cc73-3cf14a49",
+      "lang": "vi",
+      "text": "Long Biên",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "067390c97d378c16",
+      "lang": "vi",
+      "text": "Bút Tháp",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0696d916-57a59608",
+      "lang": "vi",
+      "text": "PHỞ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "06b4d2d9-79ac8dd",
+      "lang": "vi",
+      "text": "Rằm tháng Giêng",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "06c751b657328c63",
+      "lang": "vi",
+      "text": "Thái",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "070e79e1-39f178f1",
+      "lang": "vi",
+      "text": "Ninh Bình",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "071a686402253796",
+      "lang": "vi",
+      "text": "Lạc Long Quân",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0778a30343110628",
+      "lang": "vi",
+      "text": "Bạch Dinh",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "07dd19c5302dd626",
+      "lang": "vi",
+      "text": "Kéo co",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "084ad4fe3e02b3e0",
+      "lang": "vi",
+      "text": "xe ôm",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "09d7f20f-1ac1ab80",
+      "lang": "vi",
+      "text": "mẹ đi trường đời",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0a94fd45-248df20c",
+      "lang": "vi",
+      "text": "Con trâu là đầu cơ nghiệp",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0b15fb5d18f76780",
+      "lang": "vi",
+      "text": "Oẳn tù tì",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js",
+        "js/games/more.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0c2ed413-7c216219",
+      "lang": "vi",
+      "text": "Nhảy dây",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/heritage.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0c5e8e03-28cd4173",
+      "lang": "vi",
+      "text": "bướm vàng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0d3c6f3872fff46d",
+      "lang": "vi",
+      "text": "Thương",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0d9b5d131295f107",
+      "lang": "vi",
+      "text": "Dương Lễ",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0da65a7d3b9554e3",
+      "lang": "vi",
+      "text": "Buôn Đôn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0dd9668b-892cfa4",
+      "lang": "vi",
+      "text": "Mẹ mày đi cấy đồng sâu chưa về",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0e0f1d84-671cac49",
+      "lang": "vi",
+      "text": "BẾN THÀNH",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0f527014-2cd63dc",
+      "lang": "vi",
+      "text": "Hà Nội",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/chat-player.js",
+        "js/cities.js",
+        "js/content/adventures.js",
+        "js/content/chapter2text.js",
+        "js/content/jobs.js",
+        "js/content/map.js",
+        "js/games/cities.js",
+        "js/hawkers.js",
+        "js/howto-data.js",
+        "js/regions.js",
+        "js/suburbs.js",
+        "js/symbols.js",
+        "js/tales-content.js",
+        "js/vehicles.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0f851326605f7911",
+      "lang": "vi",
+      "text": "Đà Nẵng",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/content/jobs.js",
+        "js/content/map.js",
+        "js/content/stickers.js",
+        "js/games/cities.js",
+        "js/howto-data.js",
+        "js/regionsites.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "10e00709-68a5a0d8",
+      "lang": "vi",
+      "text": "hình chữ nhật",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "115f1f51-44886b77",
+      "lang": "vi",
+      "text": "Người ơi người ở đừng về",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/cities.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "118fcdcf-42bda0e1",
+      "lang": "vi",
+      "text": "Con cò mà đi ăn đêm",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1225293d18c5e8cc",
+      "lang": "vi",
+      "text": "Vũng Tàu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/content/map.js",
+        "js/games/drawing.js",
+        "js/howto-data.js",
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "12754920126571e2",
+      "lang": "vi",
+      "text": "Chùa Cầu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1278cece-2254ead5",
+      "lang": "vi",
+      "text": "Năm",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/content/adventures.js",
+        "js/content/chapter2text.js",
+        "js/content/chapter3text.js",
+        "js/content/chapters.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "139f985c4b4964d5",
+      "lang": "vi",
+      "text": "Lý ngựa ô",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/folkshow.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "187d984437509e82",
+      "lang": "vi",
+      "text": "ngủ",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1a80b80c-6fa93484",
+      "lang": "vi",
+      "text": "Quan họ",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/content/adventures.js",
+        "js/folkshow.js",
+        "js/regions.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1b4c99327a260a3b",
+      "lang": "vi",
+      "text": "nhà ba gian",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/heritage.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1ce537d7-327ab8d2",
+      "lang": "vi",
+      "text": "HUẾ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1d589436-6e4afb59",
+      "lang": "vi",
+      "text": "bánh xèo",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1eed30143890d5ce",
+      "lang": "vi",
+      "text": "răng rứa",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "20ee41c15c1d523b",
+      "lang": "vi",
+      "text": "Bánh Chưng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/vietnam2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "210094bb19f6b641",
+      "lang": "vi",
+      "text": "Ông Táo",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "21044b9b0d3c4969",
+      "lang": "vi",
+      "text": "Bắc Ninh",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/content/jobs.js",
+        "js/content/map.js",
+        "js/folkshow.js",
+        "js/games/cities.js",
+        "js/howto-data.js",
+        "js/regions.js",
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "213aa1e5-5d133192",
+      "lang": "vi",
+      "text": "Thủy’s Chè",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2224d384-5263de8f",
+      "lang": "vi",
+      "text": "Thăng Long",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "22fb92f7-627688f2",
+      "lang": "vi",
+      "text": "đình",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/content/chapters.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "230267951d495733",
+      "lang": "vi",
+      "text": "Đàn Tranh",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2391efc90014627c",
+      "lang": "vi",
+      "text": "ra cái gì",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/more.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "23d9d334-8ef9c7e",
+      "lang": "vi",
+      "text": "trê",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "24b9e247-1f6e3aec",
+      "lang": "vi",
+      "text": "Khó đi mẹ dắt",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2545b426-79580827",
+      "lang": "vi",
+      "text": "Gióng",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2670133f20634689",
+      "lang": "vi",
+      "text": "Hoi An",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/build-types.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "267235fe04061da3",
+      "lang": "vi",
+      "text": "An áo dài",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "277984001c73b75e",
+      "lang": "vi",
+      "text": "Xích lô",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vehicles.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "282749d1-4f11856c",
+      "lang": "vi",
+      "text": "Nhảy lò cò",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/games/vietnam.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "29a9050c49f3cbbc",
+      "lang": "vi",
+      "text": "xe đạp thồ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vehicles.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2aa157a0-3908c6d0",
+      "lang": "vi",
+      "text": "chè bắp",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2b84f016-20c8521b",
+      "lang": "vi",
+      "text": "Kìa",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2ba7223a-7f2c141",
+      "lang": "vi",
+      "text": "Bắn bi không",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2cbbe022-26cacf8f",
+      "lang": "vi",
+      "text": "cafés",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2ce8c9c071b5eb02",
+      "lang": "vi",
+      "text": "Bờm",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/adventures.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2d450702-4f7d6bce",
+      "lang": "vi",
+      "text": "đi",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2e9569d821d17da0",
+      "lang": "vi",
+      "text": "Sườn nướng thơm phức nè",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "314f95ca-5b5ee0e",
+      "lang": "vi",
+      "text": "trái tim",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "319f4626-24fb7392",
+      "lang": "vi",
+      "text": "Kinh Bắc",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3267275d46109eb3",
+      "lang": "vi",
+      "text": "Chè",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/homes.js",
+        "js/town.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "337fb998-755593ea",
+      "lang": "vi",
+      "text": "hình tam giác",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "33a82f52-20aa133",
+      "lang": "vi",
+      "text": "Cờ tướng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "33fc06d0-4c617de8",
+      "lang": "vi",
+      "text": "hình tròn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3494d4ab-51f9e753",
+      "lang": "vi",
+      "text": "Con Vật",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "355e8ee30-ee9139",
+      "lang": "vi",
+      "text": "Bụt",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/caytre.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "356db663182c4838",
+      "lang": "vi",
+      "text": "Xin chào",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/content/chapter3text.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "39a237f2-4fc74b39",
+      "lang": "vi",
+      "text": "Bún ốc",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/hawkers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "39c659b6-21691220",
+      "lang": "vi",
+      "text": "bịt mắt bắt dê",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3b64d200-66ce8a39",
+      "lang": "vi",
+      "text": "hình bầu dục",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3bbb2638-655b8f45",
+      "lang": "vi",
+      "text": "Tàu hủ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/hawkers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3bcbbd26-6d22cc8a",
+      "lang": "vi",
+      "text": "nhà ống",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/heritage.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3bd9c62a-4128fe10",
+      "lang": "vi",
+      "text": "thúng chai",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3e213e26-507b5c8",
+      "lang": "vi",
+      "text": "Bống",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/films/tamcam.js",
+        "js/story.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3e6f94f06e0c4878",
+      "lang": "vi",
+      "text": "Bắn bi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3ee2e6bd39ed6432",
+      "lang": "vi",
+      "text": "oẳn tù tì",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/more.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3fe02f9709b390e9",
+      "lang": "vi",
+      "text": "áo dài",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/villagerlines.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "400f3362174a6b89",
+      "lang": "vi",
+      "text": "hình vuông",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "427c81da-d20524f",
+      "lang": "vi",
+      "text": "đua bò Bảy Núi",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "42e51c7f746602a2",
+      "lang": "vi",
+      "text": "Văn Miếu",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "441bb4b37237a46f",
+      "lang": "vi",
+      "text": "Bảy’s cơm tấm",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "448c53fc0b3f2fea",
+      "lang": "vi",
+      "text": "trường cấp 2",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "44d0756c-54f5742",
+      "lang": "vi",
+      "text": "Xèo xèo",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4514b5523652a1d6",
+      "lang": "vi",
+      "text": "Đừng xáo nước đục đau lòng cò",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4517b69c-3741d366",
+      "lang": "vi",
+      "text": "đồng bào",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "46828b2b-ffe76b2",
+      "lang": "vi",
+      "text": "Năm canh chầy thức đủ vừa năm",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "46ddf5fa-59a76e3",
+      "lang": "vi",
+      "text": "Ê",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "46ee98757ddbbf2c",
+      "lang": "vi",
+      "text": "Khắc xuất",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/caytre.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "46f9c9a8798a1700",
+      "lang": "vi",
+      "text": "Năm's",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/adventures.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "470b77472dddd5e3",
+      "lang": "vi",
+      "text": "Đập niêu",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/howto-data.js",
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4811724901764d34",
+      "lang": "vi",
+      "text": "Phở",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/villagerlines.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "48686e513c996bdf",
+      "lang": "vi",
+      "text": "còn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "48ddf920373b619d",
+      "lang": "vi",
+      "text": "ô",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/reading2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4aa91bb4-769e2c4b",
+      "lang": "vi",
+      "text": "Đông Hồ",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/games/catalog.js",
+        "js/games/cities.js",
+        "js/howto-data.js",
+        "js/suburbs.js",
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4b0b8b3c-76b3a2d7",
+      "lang": "vi",
+      "text": "Bắc",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/folkshow.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4b329347-3cc96bc0",
+      "lang": "vi",
+      "text": "chú Thuận",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4bebae3d23ef4a50",
+      "lang": "vi",
+      "text": "Thê Húc",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regionsites.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4cad64b8-5d49591d",
+      "lang": "vi",
+      "text": "Mèo Đuổi Chuột",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4d39583b28473367",
+      "lang": "vi",
+      "text": "Mường",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4dc446e03c31e886",
+      "lang": "vi",
+      "text": "Chùa Dâu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "500edad7-1496d245",
+      "lang": "vi",
+      "text": "Thánh Gióng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5031cb9f-4fd9ccd",
+      "lang": "vi",
+      "text": "Bánh khọt",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5050c196-17fd597",
+      "lang": "vi",
+      "text": "Bịt mắt bắt dê",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/howto-data.js",
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "50632e88-1702d67f",
+      "lang": "vi",
+      "text": "Khắc nhập",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/caytre.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "52b52688-3b65989d",
+      "lang": "vi",
+      "text": "lì xì",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "53b08bf5-4266612",
+      "lang": "vi",
+      "text": "Đền Đô",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "543290b771324c36",
+      "lang": "vi",
+      "text": "Bát",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5487e28556a8a608",
+      "lang": "vi",
+      "text": "Chú Tễu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/games/cities.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "548be0ea77bae053",
+      "lang": "vi",
+      "text": "một đôi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "54c07eed-296498c3",
+      "lang": "vi",
+      "text": "nước mía",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "57564e3d2b45bb35",
+      "lang": "vi",
+      "text": "Đánh Đáo",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/folk-court.js",
+        "js/games/pending-vietnam.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "578950cd-3b9b8e07",
+      "lang": "vi",
+      "text": "Rồng rắn lên mây",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/chatter.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "58090fd0-2f5dbd46",
+      "lang": "vi",
+      "text": "Đoan Ngọ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/festhunt.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5b2e1e8e722a794d",
+      "lang": "vi",
+      "text": "Bãi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/content/map.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5b9a1c2e2dea4141",
+      "lang": "vi",
+      "text": "Chuyền",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/folk.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5c1db80d57c0f2ae",
+      "lang": "vi",
+      "text": "Hàng Mã",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5c9f65bf-20b8009f",
+      "lang": "vi",
+      "text": "Tôi có lòng nào ông hãy xáo măng",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5d807d81700c1d09",
+      "lang": "vi",
+      "text": "bánh chưng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5dbb60486120cecb",
+      "lang": "vi",
+      "text": "Con đi trường học",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5df8bb4e4b314e90",
+      "lang": "vi",
+      "text": "Ầu ơ",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5e100cde42398693",
+      "lang": "vi",
+      "text": "Ăn quả nhớ kẻ trồng cây",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5ede1bc253305b7c",
+      "lang": "vi",
+      "text": "â",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/reading2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "60480973-4849162",
+      "lang": "vi",
+      "text": "đàn bầu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "60add1e0-212978f3",
+      "lang": "vi",
+      "text": "Mỵ Nương",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6106ddbf-28628905",
+      "lang": "vi",
+      "text": "bé Trà",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "61f0f5c10b86d19b",
+      "lang": "vi",
+      "text": "Cơm tấm",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "63b7023566b56ead",
+      "lang": "vi",
+      "text": "chị Thúy",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "668103be-66203184",
+      "lang": "vi",
+      "text": "Chúc mừng năm mới",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/content/films/ongtao.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "66de285a74a15936",
+      "lang": "vi",
+      "text": "ê",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/reading2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6769794e-5fa99c66",
+      "lang": "vi",
+      "text": "Bún riêu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/hawkers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "68491dee09f9d541",
+      "lang": "vi",
+      "text": "dượng Dũng",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6938e62e7ba2b48f",
+      "lang": "vi",
+      "text": "Có xáo thì xáo nước",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "694efe6a5a66baf6",
+      "lang": "vi",
+      "text": "Tấm’s",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "69b9272e06939b98",
+      "lang": "vi",
+      "text": "Ô ăn quan",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/chatter.js",
+        "js/content/chapter2text.js",
+        "js/content/chapters.js",
+        "js/games/oanquan-online.js",
+        "js/games/vietnam.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6a4ef99e1688a8a3",
+      "lang": "vi",
+      "text": "Chào",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6a6d34fe6cecd210",
+      "lang": "vi",
+      "text": "Thạch Sanh",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/thachsanh.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6ab765ca-7a339c1d",
+      "lang": "vi",
+      "text": "Ở hiền gặp lành",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6bc7ac38-65d3dd01",
+      "lang": "vi",
+      "text": "Sơn Đoòng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6e76d7e150b318e3",
+      "lang": "vi",
+      "text": "Cái Răng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regionsites.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6e9ed42073299969",
+      "lang": "vi",
+      "text": "Dũng’s",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6ed18f99-1cbc931b",
+      "lang": "vi",
+      "text": "Cầu tre lắt lẻo gập ghềnh khó đi",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6fe35eb1-175ec1b6",
+      "lang": "vi",
+      "text": "Hai Bà Trưng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7262ff781dfa75d5",
+      "lang": "vi",
+      "text": "Đàn bầu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "736bb5f5-f199e8d",
+      "lang": "vi",
+      "text": "Trống cơm",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/folkshow.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7428025665d524c4",
+      "lang": "vi",
+      "text": "hình thoi",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "74e972cf-355a96c1",
+      "lang": "vi",
+      "text": "Chấp chế đi tìm",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "75491e36-63a62bcb",
+      "lang": "vi",
+      "text": "Ngũ Hành Sơn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regionsites.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "761cc3df-3fffa0bb",
+      "lang": "vi",
+      "text": "Bánh da lợn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/hawkers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "76418d32-166ff2d9",
+      "lang": "vi",
+      "text": "cờ tướng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "78238c505646aec4",
+      "lang": "vi",
+      "text": "bắn bi",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7823b8f8-1d215d24",
+      "lang": "vi",
+      "text": "Chè đậu",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7a6faa7472798961",
+      "lang": "vi",
+      "text": "Răng rứa",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7a923926-b2193fd",
+      "lang": "vi",
+      "text": "Bà",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7b19e475-14c4b38b",
+      "lang": "vi",
+      "text": "Lê Thận",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7bc969b2-48587b3b",
+      "lang": "vi",
+      "text": "Nón Lá",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/drawing2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7bca1efa4251ae8c",
+      "lang": "vi",
+      "text": "Mai An Tiêm",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/content/chapters.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7ee2d195-db36734",
+      "lang": "vi",
+      "text": "Ném Còn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7fd298d5-16c533db",
+      "lang": "vi",
+      "text": "Hà Tĩnh",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/content/yard.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "80646162-1b54c3e",
+      "lang": "vi",
+      "text": "Trà",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "80af1a0e27e3c184",
+      "lang": "vi",
+      "text": "Chuyền chuyền một",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "80cc6819-622a7f94",
+      "lang": "vi",
+      "text": "Khơ Mú",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "81521954-2d4d3b9",
+      "lang": "vi",
+      "text": "Hùng",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/content/festhunt.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "81927a61-2338b24b",
+      "lang": "vi",
+      "text": "Cơm Tấm",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "823a773018d53e64",
+      "lang": "vi",
+      "text": "Liên’s Mì Quảng",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "835dc05735a9232d",
+      "lang": "vi",
+      "text": "Tí",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/homes.js",
+        "js/story.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "83f9e81f61df436b",
+      "lang": "vi",
+      "text": "chơi ném lon hông",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "844ba7ca-1c36a334",
+      "lang": "vi",
+      "text": "Cuội’s",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "845a31320e076595",
+      "lang": "vi",
+      "text": "sư tử",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/reading.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "84600cdc7b84e5c0",
+      "lang": "vi",
+      "text": "Huệ",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "863c6fad1e9cf687",
+      "lang": "vi",
+      "text": "BÀ RỊA",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "864e1225-70ab945f",
+      "lang": "vi",
+      "text": "ông Nghi",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "865266f207c5291a",
+      "lang": "vi",
+      "text": "Bún chả",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "867a1f78-50eaae0b",
+      "lang": "vi",
+      "text": "Thung Lũng",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/ui.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "86ef42e8-2224e037",
+      "lang": "vi",
+      "text": "chi chi chành chành",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "8799f0cb-68bc49ae",
+      "lang": "vi",
+      "text": "Lá",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/learning-meta.js",
+        "js/games/talkgames.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "87e02ad0-1f165feb",
+      "lang": "vi",
+      "text": "Huệ Nghi",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "87ef73c8-92d9ad8",
+      "lang": "vi",
+      "text": "Mỹ Sơn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "881b755e5ad8426a",
+      "lang": "vi",
+      "text": "hai đôi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "8a84dacc386c106b",
+      "lang": "vi",
+      "text": "Dô",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/chatter.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "8a870ed53da38e37",
+      "lang": "vi",
+      "text": "Gió mùa thu mẹ ru mà",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "8d4a0c40-5d5e4696",
+      "lang": "vi",
+      "text": "Bà Rịa–Vũng Tàu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/jobs.js",
+        "js/content/map.js",
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "8eb36882-4611f4c6",
+      "lang": "vi",
+      "text": "Mít",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/main.js",
+        "js/story.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "8ebab872-221f7bbd",
+      "lang": "vi",
+      "text": "nón lá",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "8fc9dc955eb8f9ee",
+      "lang": "vi",
+      "text": "Thủy Tinh",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "91e7b99d-3bad6d60",
+      "lang": "vi",
+      "text": "Oẳn Tù Tì",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/more.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "91ee4653-318ea904",
+      "lang": "vi",
+      "text": "Cốm",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "91fbafc8-53734e86",
+      "lang": "vi",
+      "text": "học",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "92d39fd2-584167ef",
+      "lang": "vi",
+      "text": "bún chả",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "92f8a2ea-52ebfa6a",
+      "lang": "vi",
+      "text": "Tiến Lên",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/tienlen.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9376a82f-64109b25",
+      "lang": "vi",
+      "text": "Sơn Tinh",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "939a03af6adc8c8b",
+      "lang": "vi",
+      "text": "Lý",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9645af787a35dec4",
+      "lang": "vi",
+      "text": "Bắt được",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "96c079f3-4c181304",
+      "lang": "vi",
+      "text": "Con ngựa chết trương",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9760a970651b68c5",
+      "lang": "vi",
+      "text": "Vũ Môn",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9924913f-4ead6fad",
+      "lang": "vi",
+      "text": "bánh khọt",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9993bd25-1c1146d9",
+      "lang": "vi",
+      "text": "chè thạch",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9a37c51d15a06822",
+      "lang": "vi",
+      "text": "Thúy’s",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9ab0fb1b-5aa2b41c",
+      "lang": "vi",
+      "text": "Đồng Tháp",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9bcb57df-7ef23119",
+      "lang": "vi",
+      "text": "Âu Cơ",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9c01bce5-46ff9c35",
+      "lang": "vi",
+      "text": "café",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9c3c7b5005eb246d",
+      "lang": "vi",
+      "text": "Cướp Cờ",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9c41e428003bb4a6",
+      "lang": "vi",
+      "text": "Đô",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9c6032a4-2baec54f",
+      "lang": "vi",
+      "text": "Huế",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/heritage.js",
+        "js/homes.js",
+        "js/symbols.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9d3492fa-4de69bb2",
+      "lang": "vi",
+      "text": "Ngâu",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/weaver.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9e02524c-210c3b52",
+      "lang": "vi",
+      "text": "Hà Nội’s",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9e35a750-6c3d032a",
+      "lang": "vi",
+      "text": "nghé",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/animals2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9e4294f0-1509f0ab",
+      "lang": "vi",
+      "text": "Bà Rịa",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/cities.js",
+        "js/content/villagerlines.js",
+        "js/content/yard.js",
+        "js/hawkers.js",
+        "js/homes.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9e4af3b60a4863ce",
+      "lang": "vi",
+      "text": "Lê Lợi",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films.js",
+        "js/symbols.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9f27d898363dd422",
+      "lang": "vi",
+      "text": "thuyền thúng",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/lotus.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9f745e5c0-dbfea6",
+      "lang": "vi",
+      "text": "Tích",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9fa0447f4186da58",
+      "lang": "vi",
+      "text": "Cái đanh thổi lửa",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9fa540ef3653c860",
+      "lang": "vi",
+      "text": "Chùa Một Cột",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9fafe36b-4f2c247c",
+      "lang": "vi",
+      "text": "Huyền's",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/content/yard.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a0adcca451aad59a",
+      "lang": "vi",
+      "text": "Chị Hằng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a2b368130de50967",
+      "lang": "vi",
+      "text": "Hòa Phong",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a31258e97061f252",
+      "lang": "vi",
+      "text": "phở",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/content/festcal.js",
+        "js/suburbs.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a3ae4d045ee38857",
+      "lang": "vi",
+      "text": "Phương’s",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a5a7949e1603b360",
+      "lang": "vi",
+      "text": "Lang Liêu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films.js",
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a685575665021ff9",
+      "lang": "vi",
+      "text": "Đậu phải cành mềm lộn cổ xuống",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a8595abb-6c911399",
+      "lang": "vi",
+      "text": "Đồ Sơn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js",
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ab758261-41395c2b",
+      "lang": "vi",
+      "text": "Hạnh",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "acbf5948-59c841e9",
+      "lang": "vi",
+      "text": "Ba Bể",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ad054de142892d89",
+      "lang": "vi",
+      "text": "Tết Đoan Ngọ",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ad6f01f1-438b2155",
+      "lang": "vi",
+      "text": "Còn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/pending-vietnam.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "addbbcf5-7c2bceff",
+      "lang": "vi",
+      "text": "Bánh bò",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b0796e39-3a426951",
+      "lang": "vi",
+      "text": "Ngọc Sơn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regionsites.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b08a5eef4f5eb5cc",
+      "lang": "vi",
+      "text": "ra cái này",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/more.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b109f9d53475a4a3",
+      "lang": "vi",
+      "text": "ném lon",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/howto-data.js",
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b1cfad67-23c68db7",
+      "lang": "vi",
+      "text": "Trạng Quỳnh",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b386a6782cd844c8",
+      "lang": "vi",
+      "text": "Cờ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b627f74e-16d58133",
+      "lang": "vi",
+      "text": "hội chọi trâu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b7cf665c-74bc9ab9",
+      "lang": "vi",
+      "text": "Hồ Hoàn Kiếm",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b822a6fd6fa10a74",
+      "lang": "vi",
+      "text": "Tháp Rùa",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b8377392-5149a082",
+      "lang": "vi",
+      "text": "Hồ Gươm",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b8b1f83679c0db8f",
+      "lang": "vi",
+      "text": "HỘI AN",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b8e104ec5f26c556",
+      "lang": "vi",
+      "text": "Ông ơi ông vớt tôi nao",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "baeea0650171ef65",
+      "lang": "vi",
+      "text": "Đánh chuyền",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bc28090a-45646361",
+      "lang": "vi",
+      "text": "Cái ngủ mày ngủ cho lâu",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bc46d0991627ec34",
+      "lang": "vi",
+      "text": "Dâu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bc4b51d4-574fc3a",
+      "lang": "vi",
+      "text": "Sọ Dừa",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bc979f49-75477d8d",
+      "lang": "vi",
+      "text": "Phố Hai Quê",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/map.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bd952e5a-32ad18b8",
+      "lang": "vi",
+      "text": "múa rối nước",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bd99246b-528d1a36",
+      "lang": "vi",
+      "text": "Cầm cổ lôi về cho cái ngủ ăn",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "beffbe841d0d4e1f",
+      "lang": "vi",
+      "text": "Hà’s",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bfaa39686e56d8dd",
+      "lang": "vi",
+      "text": "bánh bèo",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "c1e013420372b44a",
+      "lang": "vi",
+      "text": "Lang Liêu’s",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "c35429235e02fa5c",
+      "lang": "vi",
+      "text": "bé Hà",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "c65fbcd0-3dc26172",
+      "lang": "vi",
+      "text": "Tư",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "c74cc9e2-ef40512",
+      "lang": "vi",
+      "text": "trắm",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "c98c57fa-6991318a",
+      "lang": "vi",
+      "text": "Đà Nẵng’s",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ca8df043-3a3b40ba",
+      "lang": "vi",
+      "text": "Cám",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cbc235df-7dfb8d8c",
+      "lang": "vi",
+      "text": "cái đanh thổi lửa",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cbd0cf69718d8008",
+      "lang": "vi",
+      "text": "Hội An",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/content/activities.js",
+        "js/regions.js",
+        "js/regionsites.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cbf2aff20f05d367",
+      "lang": "vi",
+      "text": "đàn tranh",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cc74c347-30d53daf",
+      "lang": "vi",
+      "text": "Sài Gòn",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/games/cities.js",
+        "js/hawkers.js",
+        "js/homes.js",
+        "js/regions.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ccdaef74-6e532260",
+      "lang": "vi",
+      "text": "trái",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cd440e2a3473d115",
+      "lang": "vi",
+      "text": "Chuyền chuyền hai",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cdd3c296-5a8f928d",
+      "lang": "vi",
+      "text": "Bắn bi nè",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ce312399-90b1bf2",
+      "lang": "vi",
+      "text": "Hải Phòng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cf086b52-2ea7f503",
+      "lang": "vi",
+      "text": "Bánh phu thê",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cfdc8fbd-636e695e",
+      "lang": "vi",
+      "text": "chè",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d004fab6-48cb81fd",
+      "lang": "vi",
+      "text": "Tràm Chim",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d0421228-3f60f717",
+      "lang": "vi",
+      "text": "Chi Chi Chành Chành",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/folk2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d1337f2c-626c4f27",
+      "lang": "vi",
+      "text": "quan họ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/jobs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d2f6ceb00742d3fe",
+      "lang": "vi",
+      "text": "Tuấn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d3cfcfbb42e8c4a7",
+      "lang": "vi",
+      "text": "Hạ Long",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js",
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d5769d09-213c226c",
+      "lang": "vi",
+      "text": "ngôi sao",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d6d09bf5-56cdc52b",
+      "lang": "vi",
+      "text": "vú sữa",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d764da183e8e0702",
+      "lang": "vi",
+      "text": "Nhà Tròn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "da075bab5685bee7",
+      "lang": "vi",
+      "text": "Sài Gòn’s",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "da471e97778bf126",
+      "lang": "vi",
+      "text": "An Tiêm",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/chat-player.js",
+        "js/content/films.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "da5b38c7-5d14d356",
+      "lang": "vi",
+      "text": "SÀI GÒN",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "dab2cb2d-6b821be5",
+      "lang": "vi",
+      "text": "Ô Ăn Quan",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/vietnam.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "dac6bf0073ecc251",
+      "lang": "vi",
+      "text": "mợ Phương",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "db0fcd885e28e1ad",
+      "lang": "vi",
+      "text": "Ví dầu cầu ván đóng đinh",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "db103111-69955356",
+      "lang": "vi",
+      "text": "HÀ NỘI",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "dbe588a6-20ff6698",
+      "lang": "vi",
+      "text": "Sơn",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "dc48578765f328ec",
+      "lang": "vi",
+      "text": "Chú Cuội",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films/chucuoi.js",
+        "js/learn.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "de2ecc3f50f0d5cb",
+      "lang": "vi",
+      "text": "đá cầu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "de72196c5d2a48cb",
+      "lang": "vi",
+      "text": "Hải’s",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "dfe36e17-1ce12be",
+      "lang": "vi",
+      "text": "Chào cháu",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/heritage.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e0b45c1c76a73dde",
+      "lang": "vi",
+      "text": "bánh mì",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/adventures.js",
+        "js/games/market.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e154a094-1ec886ed",
+      "lang": "vi",
+      "text": "Một cây làm chẳng nên",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e31c001040af498d",
+      "lang": "vi",
+      "text": "ngon bá cháy",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e57c80c3-64131d40",
+      "lang": "vi",
+      "text": "xin chào",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e6445122-25f6fd3d",
+      "lang": "vi",
+      "text": "Hue",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/build-types.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e67b2571-797a4760",
+      "lang": "vi",
+      "text": "Tâm",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e7cae640122cf25d",
+      "lang": "vi",
+      "text": "Thuận",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/content/yard.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e7f82f80-79ece5b8",
+      "lang": "vi",
+      "text": "Tràng An",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e8b5b9eb1393312d",
+      "lang": "vi",
+      "text": "Nước mía đây",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e933f50c1d15566b",
+      "lang": "vi",
+      "text": "chén",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/content/villagerlines.js",
+        "js/howto-data.js",
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e9ff7be2-68b70b7e",
+      "lang": "vi",
+      "text": "Kem Tràng Tiền",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ea1a1d06-1778ee40",
+      "lang": "vi",
+      "text": "Đình Bảng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "eaf8aa57-1461faa5",
+      "lang": "vi",
+      "text": "Áo Dài",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/games/drawing2.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "eafe58e3446715bb",
+      "lang": "vi",
+      "text": "Da Nang",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/places2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "eb56ffad-4e3d57c7",
+      "lang": "vi",
+      "text": "xe ba gác",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vehicles.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ecb0ebb6-2e93a819",
+      "lang": "vi",
+      "text": "Hàn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ed034061-5d087f09",
+      "lang": "vi",
+      "text": "Ù à ù ập",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "edae160164f047a3",
+      "lang": "vi",
+      "text": "Mì Quảng",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ee3f587648a22454",
+      "lang": "vi",
+      "text": "Bánh cuốn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ee7521db008a636b",
+      "lang": "vi",
+      "text": "Tày",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f0644a31-1ea3587a",
+      "lang": "vi",
+      "text": "Chợ Bến Thành",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f0867f6d6fcd2582",
+      "lang": "vi",
+      "text": "bánh tráng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f19446fc5e0b8328",
+      "lang": "vi",
+      "text": "Bà Nà",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f4226217-1721ab74",
+      "lang": "vi",
+      "text": "bát",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js",
+        "js/howto-data.js",
+        "js/regions.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f4342e0f72414280",
+      "lang": "vi",
+      "text": "mợ An",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f488a90d34a62385",
+      "lang": "vi",
+      "text": "Con mèo mà trèo cây cau",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f4c65df6046b97f4",
+      "lang": "vi",
+      "text": "Cuội",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/chucuoi.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f5ae3b4e-6c3340f2",
+      "lang": "vi",
+      "text": "Hà Nội's",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/stickers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f76ba85b2dd73b0d",
+      "lang": "vi",
+      "text": "Tết",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/content/festcal.js",
+        "js/content/festhunt.js",
+        "js/content/films.js",
+        "js/content/storyhelp.js",
+        "js/content/villagerlines.js",
+        "js/games/catalog.js",
+        "js/games/money.js",
+        "js/games/money2.js",
+        "js/games/vietnam2.js",
+        "js/howto-data.js",
+        "js/learn.js",
+        "js/suburbs.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f7c6247e6ce27ca6",
+      "lang": "vi",
+      "text": "Đá cầu",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f82bcc8e2b2600e9",
+      "lang": "vi",
+      "text": "đất",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f85ce291-7a4a18f7",
+      "lang": "vi",
+      "text": "ập",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f867717c-6cfbeccc",
+      "lang": "vi",
+      "text": "Kéo Cưa Lừa Xẻ",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f8d8570973b9ac2c",
+      "lang": "vi",
+      "text": "Hồ Chí Minh",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/jobs.js",
+        "js/content/map.js",
+        "js/content/stickers.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f93d831e77b997ae",
+      "lang": "vi",
+      "text": "Tễu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/adventures.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f9640a3e0bf70dc2",
+      "lang": "vi",
+      "text": "Cò lả",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/folkshow.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fb7e7f0d4ad65420",
+      "lang": "vi",
+      "text": "Hoàn Kiếm",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/chat-player.js",
+        "js/regions.js",
+        "js/regionsites.js",
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fbc202750e7801cf",
+      "lang": "vi",
+      "text": "Lưu Bình",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fc6ce1a2-198b351f",
+      "lang": "vi",
+      "text": "Hỏi thăm chú chuột đi đâu vắng nhà",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fcc8fabf-78028033",
+      "lang": "vi",
+      "text": "SÀI GÒN BÁNH MÌ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fcef37e975312381",
+      "lang": "vi",
+      "text": "thị",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fd84234f-164180e0",
+      "lang": "vi",
+      "text": "Cô Hoa",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/lotus.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fd89fe472b066c7a",
+      "lang": "vi",
+      "text": "Ba vương ngũ đế",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fdb776bc-75532175",
+      "lang": "vi",
+      "text": "Chú chuột đi chợ đường xa",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fe6614943cb4e6e7",
+      "lang": "vi",
+      "text": "Cầu Thê Húc",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fef545ef-88a3eea",
+      "lang": "vi",
+      "text": "Mua mắm mua muối giỗ cha chú mèo",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ffcb1b5c3614f0f2",
+      "lang": "vi",
+      "text": "Thủy",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    }
+  ],
   "lines": [
+    {
+      "id": "007f74d4-4e4a25a9",
+      "lang": "vi",
+      "text": "Hạnh’s phở",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "022b12560e68d598",
+      "lang": "vi",
+      "text": "Tấm",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/tamcam.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "032d7aa62a4f84a8",
+      "lang": "vi",
+      "text": "Bát Tràng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/drawing2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "03b8d78b47e96f0a",
+      "lang": "vi",
+      "text": "Phong Nha–Kẻ Bàng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "042943ad-64db058b",
+      "lang": "vi",
+      "text": "đọi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0488cc3566d6e737",
+      "lang": "vi",
+      "text": "Tèo",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/chapter2text.js",
+        "js/story.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
     {
       "id": "048f1f30-37535101",
       "lang": "vi",
@@ -38,6 +4079,163 @@
       ]
     },
     {
+      "id": "0657cc73-3cf14a49",
+      "lang": "vi",
+      "text": "Long Biên",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "067390c97d378c16",
+      "lang": "vi",
+      "text": "Bút Tháp",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0696d916-57a59608",
+      "lang": "vi",
+      "text": "PHỞ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "06b4d2d9-79ac8dd",
+      "lang": "vi",
+      "text": "Rằm tháng Giêng",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "06c751b657328c63",
+      "lang": "vi",
+      "text": "Thái",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "070e79e1-39f178f1",
+      "lang": "vi",
+      "text": "Ninh Bình",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "071a686402253796",
+      "lang": "vi",
+      "text": "Lạc Long Quân",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0778a30343110628",
+      "lang": "vi",
+      "text": "Bạch Dinh",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "07dd19c5302dd626",
+      "lang": "vi",
+      "text": "Kéo co",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "084ad4fe3e02b3e0",
+      "lang": "vi",
+      "text": "xe ôm",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "09d7f20f-1ac1ab80",
+      "lang": "vi",
+      "text": "mẹ đi trường đời",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0a94fd45-248df20c",
+      "lang": "vi",
+      "text": "Con trâu là đầu cơ nghiệp",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0b15fb5d18f76780",
+      "lang": "vi",
+      "text": "Oẳn tù tì",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js",
+        "js/games/more.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0c5e8e03-28cd4173",
+      "lang": "vi",
+      "text": "bướm vàng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "0d1b07a5-53370dbe",
       "lang": "vi",
       "text": "Cổ điển · một xúc xắc",
@@ -46,6 +4244,121 @@
       "source": [
         "js/games/cacuangua.js"
       ]
+    },
+    {
+      "id": "0d3c6f3872fff46d",
+      "lang": "vi",
+      "text": "Thương",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0d9b5d131295f107",
+      "lang": "vi",
+      "text": "Dương Lễ",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0da65a7d3b9554e3",
+      "lang": "vi",
+      "text": "Buôn Đôn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0dd9668b-892cfa4",
+      "lang": "vi",
+      "text": "Mẹ mày đi cấy đồng sâu chưa về",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "0e0f1d84-671cac49",
+      "lang": "vi",
+      "text": "BẾN THÀNH",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "10e00709-68a5a0d8",
+      "lang": "vi",
+      "text": "hình chữ nhật",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "115f1f51-44886b77",
+      "lang": "vi",
+      "text": "Người ơi người ở đừng về",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/cities.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "118fcdcf-42bda0e1",
+      "lang": "vi",
+      "text": "Con cò mà đi ăn đêm",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "12754920126571e2",
+      "lang": "vi",
+      "text": "Chùa Cầu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1278cece-2254ead5",
+      "lang": "vi",
+      "text": "Năm",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/content/adventures.js",
+        "js/content/chapter2text.js",
+        "js/content/chapter3text.js",
+        "js/content/chapters.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "187f8dbf1f6b937c",
@@ -78,6 +4391,33 @@
       ]
     },
     {
+      "id": "1a80b80c-6fa93484",
+      "lang": "vi",
+      "text": "Quan họ",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/content/adventures.js",
+        "js/folkshow.js",
+        "js/regions.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1b4c99327a260a3b",
+      "lang": "vi",
+      "text": "nhà ba gian",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/heritage.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "1b9b622526a2c94c",
       "lang": "vi",
       "text": "Cùng nhau giỏi quá!",
@@ -88,6 +4428,29 @@
       ]
     },
     {
+      "id": "1ce537d7-327ab8d2",
+      "lang": "vi",
+      "text": "HUẾ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "1d589436-6e4afb59",
+      "lang": "vi",
+      "text": "bánh xèo",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "1e3c2ab627b36b45",
       "lang": "vi",
       "text": "Nhiệm Vụ Vườn Quả Lấp Lánh",
@@ -96,6 +4459,17 @@
       "source": [
         "js/games/sparkleorchard.js"
       ]
+    },
+    {
+      "id": "1eed30143890d5ce",
+      "lang": "vi",
+      "text": "răng rứa",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "206a7a83-4833bc85",
@@ -118,6 +4492,85 @@
       ]
     },
     {
+      "id": "20ee41c15c1d523b",
+      "lang": "vi",
+      "text": "Bánh Chưng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/vietnam2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "210094bb19f6b641",
+      "lang": "vi",
+      "text": "Ông Táo",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "213aa1e5-5d133192",
+      "lang": "vi",
+      "text": "Thủy’s Chè",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2224d384-5263de8f",
+      "lang": "vi",
+      "text": "Thăng Long",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "22fb92f7-627688f2",
+      "lang": "vi",
+      "text": "đình",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/content/chapters.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2391efc90014627c",
+      "lang": "vi",
+      "text": "ra cái gì",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/more.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "23d9d334-8ef9c7e",
+      "lang": "vi",
+      "text": "trê",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "24a09649-2533e125",
       "lang": "vi",
       "text": "Giỏi lắm! Xem mình tìm được gì nào!",
@@ -128,6 +4581,29 @@
       ]
     },
     {
+      "id": "24b9e247-1f6e3aec",
+      "lang": "vi",
+      "text": "Khó đi mẹ dắt",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2545b426-79580827",
+      "lang": "vi",
+      "text": "Gióng",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "258378c8063a5e71",
       "lang": "vi",
       "text": "Giảm lực",
@@ -136,6 +4612,41 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "2670133f20634689",
+      "lang": "vi",
+      "text": "Hoi An",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/build-types.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "267235fe04061da3",
+      "lang": "vi",
+      "text": "An áo dài",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "282749d1-4f11856c",
+      "lang": "vi",
+      "text": "Nhảy lò cò",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/games/vietnam.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "28fbc4954daa3fe3",
@@ -158,6 +4669,28 @@
       ]
     },
     {
+      "id": "29a9050c49f3cbbc",
+      "lang": "vi",
+      "text": "xe đạp thồ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vehicles.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2aa157a0-3908c6d0",
+      "lang": "vi",
+      "text": "chè bắp",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "2b586e58-399d9bea",
       "lang": "vi",
       "text": "Tìm tranh. Dừng ở giữa nhé.",
@@ -166,6 +4699,28 @@
       "source": [
         "js/games/fruitparade.js"
       ]
+    },
+    {
+      "id": "2b84f016-20c8521b",
+      "lang": "vi",
+      "text": "Kìa",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2ba7223a-7f2c141",
+      "lang": "vi",
+      "text": "Bắn bi không",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "2c3f0bff-4e52a134",
@@ -178,6 +4733,29 @@
       ]
     },
     {
+      "id": "2cbbe022-26cacf8f",
+      "lang": "vi",
+      "text": "cafés",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "2ce8c9c071b5eb02",
+      "lang": "vi",
+      "text": "Bờm",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/adventures.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "2d8eeb15-73a87d3a",
       "lang": "vi",
       "text": "Về ăn cơm vua",
@@ -186,6 +4764,17 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "2e9569d821d17da0",
+      "lang": "vi",
+      "text": "Sườn nướng thơm phức nè",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "2f061dda-331b13db",
@@ -198,6 +4787,17 @@
       ]
     },
     {
+      "id": "319f4626-24fb7392",
+      "lang": "vi",
+      "text": "Kinh Bắc",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "334569db3dda1721",
       "lang": "vi",
       "text": "Đội hai thắng rồi!",
@@ -206,6 +4806,133 @@
       "source": [
         "js/games/tug-online.js"
       ]
+    },
+    {
+      "id": "3494d4ab-51f9e753",
+      "lang": "vi",
+      "text": "Con Vật",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "355e8ee30-ee9139",
+      "lang": "vi",
+      "text": "Bụt",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/caytre.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "39a237f2-4fc74b39",
+      "lang": "vi",
+      "text": "Bún ốc",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/hawkers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "39c659b6-21691220",
+      "lang": "vi",
+      "text": "bịt mắt bắt dê",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3b64d200-66ce8a39",
+      "lang": "vi",
+      "text": "hình bầu dục",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3bbb2638-655b8f45",
+      "lang": "vi",
+      "text": "Tàu hủ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/hawkers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3bcbbd26-6d22cc8a",
+      "lang": "vi",
+      "text": "nhà ống",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/heritage.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3bd9c62a-4128fe10",
+      "lang": "vi",
+      "text": "thúng chai",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3e213e26-507b5c8",
+      "lang": "vi",
+      "text": "Bống",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/films/tamcam.js",
+        "js/story.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3e6f94f06e0c4878",
+      "lang": "vi",
+      "text": "Bắn bi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "3ee2e6bd39ed6432",
+      "lang": "vi",
+      "text": "oẳn tù tì",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/more.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "3f99d80c27966995",
@@ -228,6 +4955,19 @@
       ]
     },
     {
+      "id": "3fe02f9709b390e9",
+      "lang": "vi",
+      "text": "áo dài",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/villagerlines.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "41c6fd9e26a22ebf",
       "lang": "vi",
       "text": "Con hiểu gia đình mình quá!",
@@ -236,6 +4976,61 @@
       "source": [
         "js/games/familyquiz.js"
       ]
+    },
+    {
+      "id": "427c81da-d20524f",
+      "lang": "vi",
+      "text": "đua bò Bảy Núi",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "42e51c7f746602a2",
+      "lang": "vi",
+      "text": "Văn Miếu",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "441bb4b37237a46f",
+      "lang": "vi",
+      "text": "Bảy’s cơm tấm",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "448c53fc0b3f2fea",
+      "lang": "vi",
+      "text": "trường cấp 2",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "44d0756c-54f5742",
+      "lang": "vi",
+      "text": "Xèo xèo",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "44d90206-2cbde64a",
@@ -248,6 +5043,39 @@
       ]
     },
     {
+      "id": "4514b5523652a1d6",
+      "lang": "vi",
+      "text": "Đừng xáo nước đục đau lòng cò",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4517b69c-3741d366",
+      "lang": "vi",
+      "text": "đồng bào",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "46828b2b-ffe76b2",
+      "lang": "vi",
+      "text": "Năm canh chầy thức đủ vừa năm",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "46c557ad-329f4df2",
       "lang": "vi",
       "text": "Ông thợ nào thua",
@@ -256,6 +5084,55 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "46ee98757ddbbf2c",
+      "lang": "vi",
+      "text": "Khắc xuất",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/caytre.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "46f9c9a8798a1700",
+      "lang": "vi",
+      "text": "Năm's",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/adventures.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "470b77472dddd5e3",
+      "lang": "vi",
+      "text": "Đập niêu",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/howto-data.js",
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4811724901764d34",
+      "lang": "vi",
+      "text": "Phở",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/content/villagerlines.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "4852321f-1918e6fe",
@@ -268,6 +5145,79 @@
       ]
     },
     {
+      "id": "48686e513c996bdf",
+      "lang": "vi",
+      "text": "còn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4aa91bb4-769e2c4b",
+      "lang": "vi",
+      "text": "Đông Hồ",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/games/catalog.js",
+        "js/games/cities.js",
+        "js/howto-data.js",
+        "js/suburbs.js",
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4b0b8b3c-76b3a2d7",
+      "lang": "vi",
+      "text": "Bắc",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/folkshow.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4b329347-3cc96bc0",
+      "lang": "vi",
+      "text": "chú Thuận",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4bebae3d23ef4a50",
+      "lang": "vi",
+      "text": "Thê Húc",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regionsites.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "4d39583b28473367",
+      "lang": "vi",
+      "text": "Mường",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "4ff39bc0-380f8516",
       "lang": "vi",
       "text": "Bảng trái cây",
@@ -278,6 +5228,123 @@
       ]
     },
     {
+      "id": "500edad7-1496d245",
+      "lang": "vi",
+      "text": "Thánh Gióng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5031cb9f-4fd9ccd",
+      "lang": "vi",
+      "text": "Bánh khọt",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "50632e88-1702d67f",
+      "lang": "vi",
+      "text": "Khắc nhập",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/caytre.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "52b52688-3b65989d",
+      "lang": "vi",
+      "text": "lì xì",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "543290b771324c36",
+      "lang": "vi",
+      "text": "Bát",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5487e28556a8a608",
+      "lang": "vi",
+      "text": "Chú Tễu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/games/cities.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "548be0ea77bae053",
+      "lang": "vi",
+      "text": "một đôi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "54c07eed-296498c3",
+      "lang": "vi",
+      "text": "nước mía",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "578950cd-3b9b8e07",
+      "lang": "vi",
+      "text": "Rồng rắn lên mây",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/chatter.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "58090fd0-2f5dbd46",
+      "lang": "vi",
+      "text": "Đoan Ngọ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/festhunt.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "5b0e3da35ae5eec6",
       "lang": "vi",
       "text": "Diễu hành trái cây lấp lánh",
@@ -286,6 +5353,143 @@
       "source": [
         "js/games/fruitparade.js"
       ]
+    },
+    {
+      "id": "5b2e1e8e722a794d",
+      "lang": "vi",
+      "text": "Bãi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/content/map.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5b9a1c2e2dea4141",
+      "lang": "vi",
+      "text": "Chuyền",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/folk.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5c9f65bf-20b8009f",
+      "lang": "vi",
+      "text": "Tôi có lòng nào ông hãy xáo măng",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5d807d81700c1d09",
+      "lang": "vi",
+      "text": "bánh chưng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5dbb60486120cecb",
+      "lang": "vi",
+      "text": "Con đi trường học",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5df8bb4e4b314e90",
+      "lang": "vi",
+      "text": "Ầu ơ",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5e100cde42398693",
+      "lang": "vi",
+      "text": "Ăn quả nhớ kẻ trồng cây",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "5ede1bc253305b7c",
+      "lang": "vi",
+      "text": "â",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/reading2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "60480973-4849162",
+      "lang": "vi",
+      "text": "đàn bầu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "60add1e0-212978f3",
+      "lang": "vi",
+      "text": "Mỵ Nương",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6106ddbf-28628905",
+      "lang": "vi",
+      "text": "bé Trà",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "61f0f5c10b86d19b",
+      "lang": "vi",
+      "text": "Cơm tấm",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "625449d74c93cbae",
@@ -308,6 +5512,17 @@
       ]
     },
     {
+      "id": "63b7023566b56ead",
+      "lang": "vi",
+      "text": "chị Thúy",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "64908fa818dffbc8",
       "lang": "vi",
       "text": "Hai bạn chồng chân và tay lên nhau. Giúp bạn cùng nhảy qua nhé!",
@@ -328,6 +5543,114 @@
       ]
     },
     {
+      "id": "668103be-66203184",
+      "lang": "vi",
+      "text": "Chúc mừng năm mới",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/content/films/ongtao.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6769794e-5fa99c66",
+      "lang": "vi",
+      "text": "Bún riêu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/hawkers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "68491dee09f9d541",
+      "lang": "vi",
+      "text": "dượng Dũng",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6938e62e7ba2b48f",
+      "lang": "vi",
+      "text": "Có xáo thì xáo nước",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "694efe6a5a66baf6",
+      "lang": "vi",
+      "text": "Tấm’s",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "69b9272e06939b98",
+      "lang": "vi",
+      "text": "Ô ăn quan",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/chatter.js",
+        "js/content/chapter2text.js",
+        "js/content/chapters.js",
+        "js/games/oanquan-online.js",
+        "js/games/vietnam.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6a6d34fe6cecd210",
+      "lang": "vi",
+      "text": "Thạch Sanh",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/thachsanh.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6ab765ca-7a339c1d",
+      "lang": "vi",
+      "text": "Ở hiền gặp lành",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6bc7ac38-65d3dd01",
+      "lang": "vi",
+      "text": "Sơn Đoòng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "6e4deb12-4f3cc1fd",
       "lang": "vi",
       "text": "Trượt viên đáo vào các đồng xu đồ chơi. Chỉnh hướng và lực nhé!",
@@ -338,6 +5661,50 @@
       ]
     },
     {
+      "id": "6e76d7e150b318e3",
+      "lang": "vi",
+      "text": "Cái Răng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regionsites.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6e9ed42073299969",
+      "lang": "vi",
+      "text": "Dũng’s",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6ed18f99-1cbc931b",
+      "lang": "vi",
+      "text": "Cầu tre lắt lẻo gập ghềnh khó đi",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "6fe35eb1-175ec1b6",
+      "lang": "vi",
+      "text": "Hai Bà Trưng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "70c589e6-60de9a67",
       "lang": "vi",
       "text": "Thuyền hội có cả đội chèo. Chèo trái rồi phải, cùng theo nhịp trống nhé!",
@@ -346,6 +5713,39 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "7428025665d524c4",
+      "lang": "vi",
+      "text": "hình thoi",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/thinking.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "761cc3df-3fffa0bb",
+      "lang": "vi",
+      "text": "Bánh da lợn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/hawkers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "76418d32-166ff2d9",
+      "lang": "vi",
+      "text": "cờ tướng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "766d7ef2-4816612d",
@@ -368,6 +5768,96 @@
       ]
     },
     {
+      "id": "78238c505646aec4",
+      "lang": "vi",
+      "text": "bắn bi",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7823b8f8-1d215d24",
+      "lang": "vi",
+      "text": "Chè đậu",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7a6faa7472798961",
+      "lang": "vi",
+      "text": "Răng rứa",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7a923926-b2193fd",
+      "lang": "vi",
+      "text": "Bà",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7b19e475-14c4b38b",
+      "lang": "vi",
+      "text": "Lê Thận",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7bc969b2-48587b3b",
+      "lang": "vi",
+      "text": "Nón Lá",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/drawing2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7bca1efa4251ae8c",
+      "lang": "vi",
+      "text": "Mai An Tiêm",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/content/chapters.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "7fd298d5-16c533db",
+      "lang": "vi",
+      "text": "Hà Tĩnh",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/content/yard.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "8021a60c-206da1d6",
       "lang": "vi",
       "text": "Bốn!",
@@ -376,6 +5866,51 @@
       "source": [
         "js/content/chapter2text.js"
       ]
+    },
+    {
+      "id": "80646162-1b54c3e",
+      "lang": "vi",
+      "text": "Trà",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "80af1a0e27e3c184",
+      "lang": "vi",
+      "text": "Chuyền chuyền một",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "80cc6819-622a7f94",
+      "lang": "vi",
+      "text": "Khơ Mú",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "81521954-2d4d3b9",
+      "lang": "vi",
+      "text": "Hùng",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/content/festhunt.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "81b5ec7f-5ec4b071",
@@ -388,6 +5923,30 @@
       ]
     },
     {
+      "id": "823a773018d53e64",
+      "lang": "vi",
+      "text": "Liên’s Mì Quảng",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "835dc05735a9232d",
+      "lang": "vi",
+      "text": "Tí",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/homes.js",
+        "js/story.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "837dda3931014857",
       "lang": "vi",
       "text": "Ngắm trái",
@@ -396,6 +5955,40 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "83f9e81f61df436b",
+      "lang": "vi",
+      "text": "chơi ném lon hông",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "844ba7ca-1c36a334",
+      "lang": "vi",
+      "text": "Cuội’s",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "84600cdc7b84e5c0",
+      "lang": "vi",
+      "text": "Huệ",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "8482a48a1525e6f6",
@@ -408,6 +6001,95 @@
       ]
     },
     {
+      "id": "863c6fad1e9cf687",
+      "lang": "vi",
+      "text": "BÀ RỊA",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "864e1225-70ab945f",
+      "lang": "vi",
+      "text": "ông Nghi",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "865266f207c5291a",
+      "lang": "vi",
+      "text": "Bún chả",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "867a1f78-50eaae0b",
+      "lang": "vi",
+      "text": "Thung Lũng",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/ui.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "86ef42e8-2224e037",
+      "lang": "vi",
+      "text": "chi chi chành chành",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "8799f0cb-68bc49ae",
+      "lang": "vi",
+      "text": "Lá",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/learning-meta.js",
+        "js/games/talkgames.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "87ef73c8-92d9ad8",
+      "lang": "vi",
+      "text": "Mỹ Sơn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "881b755e5ad8426a",
+      "lang": "vi",
+      "text": "hai đôi",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "8a3d5d192bc31468",
       "lang": "vi",
       "text": "Chia hai đội, cùng kéo dây. Bấm Kéo để giúp đội mình đưa cờ về vạch nhé!",
@@ -416,6 +6098,31 @@
       "source": [
         "js/games/tug-online.js"
       ]
+    },
+    {
+      "id": "8a84dacc386c106b",
+      "lang": "vi",
+      "text": "Dô",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/chatter.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "8a870ed53da38e37",
+      "lang": "vi",
+      "text": "Gió mùa thu mẹ ru mà",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "8c881541-292ebe16",
@@ -428,6 +6135,17 @@
       ]
     },
     {
+      "id": "8ebab872-221f7bbd",
+      "lang": "vi",
+      "text": "nón lá",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "8f54cd8c-51fd3984",
       "lang": "vi",
       "text": "Ném còn có trong lễ hội của người Tày, Thái, Mường và các cộng đồng khác. Quả còn bằng vải nhiều màu, có tua, bay qua vòng trên cột cao. Đây là bản chơi nhẹ nhàng trên màn hình.",
@@ -436,6 +6154,28 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "8fc9dc955eb8f9ee",
+      "lang": "vi",
+      "text": "Thủy Tinh",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "91ee4653-318ea904",
+      "lang": "vi",
+      "text": "Cốm",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "920ca587280f751b",
@@ -448,6 +6188,53 @@
       ]
     },
     {
+      "id": "92d39fd2-584167ef",
+      "lang": "vi",
+      "text": "bún chả",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "92f8a2ea-52ebfa6a",
+      "lang": "vi",
+      "text": "Tiến Lên",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/tienlen.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9376a82f-64109b25",
+      "lang": "vi",
+      "text": "Sơn Tinh",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "939a03af6adc8c8b",
+      "lang": "vi",
+      "text": "Lý",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "9489dcb10790ed06",
       "lang": "vi",
       "text": "Tìm tranh trong nhiệm vụ. Dừng đèn nhé!",
@@ -456,6 +6243,50 @@
       "source": [
         "js/games/sparkleorchard.js"
       ]
+    },
+    {
+      "id": "9645af787a35dec4",
+      "lang": "vi",
+      "text": "Bắt được",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9760a970651b68c5",
+      "lang": "vi",
+      "text": "Vũ Môn",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9924913f-4ead6fad",
+      "lang": "vi",
+      "text": "bánh khọt",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9993bd25-1c1146d9",
+      "lang": "vi",
+      "text": "chè thạch",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "99b3b2d6010a01be",
@@ -468,6 +6299,28 @@
       ]
     },
     {
+      "id": "9a37c51d15a06822",
+      "lang": "vi",
+      "text": "Thúy’s",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9ab0fb1b-5aa2b41c",
+      "lang": "vi",
+      "text": "Đồng Tháp",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "9bc729794c4784ce",
       "lang": "vi",
       "text": "Bạn máy suy nghĩ",
@@ -476,6 +6329,53 @@
       "source": [
         "js/games/cacuangua.js"
       ]
+    },
+    {
+      "id": "9bcb57df-7ef23119",
+      "lang": "vi",
+      "text": "Âu Cơ",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9c01bce5-46ff9c35",
+      "lang": "vi",
+      "text": "café",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9c41e428003bb4a6",
+      "lang": "vi",
+      "text": "Đô",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9c6032a4-2baec54f",
+      "lang": "vi",
+      "text": "Huế",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/heritage.js",
+        "js/homes.js",
+        "js/symbols.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "9c91c3de-a4aff7e",
@@ -488,6 +6388,103 @@
       ]
     },
     {
+      "id": "9d3492fa-4de69bb2",
+      "lang": "vi",
+      "text": "Ngâu",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/weaver.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9e02524c-210c3b52",
+      "lang": "vi",
+      "text": "Hà Nội’s",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9e35a750-6c3d032a",
+      "lang": "vi",
+      "text": "nghé",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/animals2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9e4294f0-1509f0ab",
+      "lang": "vi",
+      "text": "Bà Rịa",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/cities.js",
+        "js/content/villagerlines.js",
+        "js/content/yard.js",
+        "js/hawkers.js",
+        "js/homes.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9e4af3b60a4863ce",
+      "lang": "vi",
+      "text": "Lê Lợi",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films.js",
+        "js/symbols.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9f27d898363dd422",
+      "lang": "vi",
+      "text": "thuyền thúng",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/lotus.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9f745e5c0-dbfea6",
+      "lang": "vi",
+      "text": "Tích",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "9fafe36b-4f2c247c",
+      "lang": "vi",
+      "text": "Huyền's",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/content/yard.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "a0079f84369e8c4f",
       "lang": "vi",
       "text": "Nắm tay bạn. Cùng kéo và đẩy theo nhịp đồng dao nhé!",
@@ -496,6 +6493,18 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "a0adcca451aad59a",
+      "lang": "vi",
+      "text": "Chị Hằng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/festcal.js",
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "a26e675c-3e4bbfb9",
@@ -518,6 +6527,51 @@
       ]
     },
     {
+      "id": "a2b368130de50967",
+      "lang": "vi",
+      "text": "Hòa Phong",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a3ae4d045ee38857",
+      "lang": "vi",
+      "text": "Phương’s",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a5a7949e1603b360",
+      "lang": "vi",
+      "text": "Lang Liêu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films.js",
+        "js/learn.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "a685575665021ff9",
+      "lang": "vi",
+      "text": "Đậu phải cành mềm lộn cổ xuống",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "a7ad3ed7-203dc555",
       "lang": "vi",
       "text": "Chuột qua được vòng tròn rồi!",
@@ -526,6 +6580,18 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "a8595abb-6c911399",
+      "lang": "vi",
+      "text": "Đồ Sơn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js",
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "aa847a200d5012f7",
@@ -538,6 +6604,17 @@
       ]
     },
     {
+      "id": "ab758261-41395c2b",
+      "lang": "vi",
+      "text": "Hạnh",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "ac8faf4b-71272d62",
       "lang": "vi",
       "text": "Hai đội có số giống nhau. Đầu tiên, số hai! Lấy cờ giữa sân rồi mang về đội nhé!",
@@ -546,6 +6623,51 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "acbf5948-59c841e9",
+      "lang": "vi",
+      "text": "Ba Bể",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ad054de142892d89",
+      "lang": "vi",
+      "text": "Tết Đoan Ngọ",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/festcal.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ad6f01f1-438b2155",
+      "lang": "vi",
+      "text": "Còn",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/pending-vietnam.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "addbbcf5-7c2bceff",
+      "lang": "vi",
+      "text": "Bánh bò",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "b01b8c2b-4f3dec70",
@@ -558,6 +6680,52 @@
       ]
     },
     {
+      "id": "b0796e39-3a426951",
+      "lang": "vi",
+      "text": "Ngọc Sơn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regionsites.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b08a5eef4f5eb5cc",
+      "lang": "vi",
+      "text": "ra cái này",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/more.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b109f9d53475a4a3",
+      "lang": "vi",
+      "text": "ném lon",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/howto-data.js",
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b1cfad67-23c68db7",
+      "lang": "vi",
+      "text": "Trạng Quỳnh",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "b2774ede-604ef542",
       "lang": "vi",
       "text": "Các bạn nắm tay thành vòng tròn. Dẫn chuột qua cổng đang mở. Mèo đuổi theo đúng lối ấy nhé!",
@@ -566,6 +6734,28 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "b386a6782cd844c8",
+      "lang": "vi",
+      "text": "Cờ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b627f74e-16d58133",
+      "lang": "vi",
+      "text": "hội chọi trâu",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "b78f6a71-19285248",
@@ -578,6 +6768,152 @@
       ]
     },
     {
+      "id": "b7cf665c-74bc9ab9",
+      "lang": "vi",
+      "text": "Hồ Hoàn Kiếm",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b8377392-5149a082",
+      "lang": "vi",
+      "text": "Hồ Gươm",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b8b1f83679c0db8f",
+      "lang": "vi",
+      "text": "HỘI AN",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b8e104ec5f26c556",
+      "lang": "vi",
+      "text": "Ông ơi ông vớt tôi nao",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "baeea0650171ef65",
+      "lang": "vi",
+      "text": "Đánh chuyền",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bc28090a-45646361",
+      "lang": "vi",
+      "text": "Cái ngủ mày ngủ cho lâu",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bc46d0991627ec34",
+      "lang": "vi",
+      "text": "Dâu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bc4b51d4-574fc3a",
+      "lang": "vi",
+      "text": "Sọ Dừa",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bd952e5a-32ad18b8",
+      "lang": "vi",
+      "text": "múa rối nước",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bd99246b-528d1a36",
+      "lang": "vi",
+      "text": "Cầm cổ lôi về cho cái ngủ ăn",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "beffbe841d0d4e1f",
+      "lang": "vi",
+      "text": "Hà’s",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "bfaa39686e56d8dd",
+      "lang": "vi",
+      "text": "bánh bèo",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "c1e013420372b44a",
+      "lang": "vi",
+      "text": "Lang Liêu’s",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "c237f213-78a3a99b",
       "lang": "vi",
       "text": "Kéo cưa lừa xẻ là trò nắm tay đu đưa. Hai bạn ngồi đối diện, kéo đẩy qua lại theo từng tiếng trong đồng dao. Không có cưa thật.",
@@ -586,6 +6922,17 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "c35429235e02fa5c",
+      "lang": "vi",
+      "text": "bé Hà",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "c5ca86d90-3997c8",
@@ -598,6 +6945,88 @@
       ]
     },
     {
+      "id": "c65fbcd0-3dc26172",
+      "lang": "vi",
+      "text": "Tư",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "c74cc9e2-ef40512",
+      "lang": "vi",
+      "text": "trắm",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "c98c57fa-6991318a",
+      "lang": "vi",
+      "text": "Đà Nẵng’s",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ca8df043-3a3b40ba",
+      "lang": "vi",
+      "text": "Cám",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cbc235df-7dfb8d8c",
+      "lang": "vi",
+      "text": "cái đanh thổi lửa",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cbf2aff20f05d367",
+      "lang": "vi",
+      "text": "đàn tranh",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/music.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cc74c347-30d53daf",
+      "lang": "vi",
+      "text": "Sài Gòn",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/cities.js",
+        "js/games/cities.js",
+        "js/hawkers.js",
+        "js/homes.js",
+        "js/regions.js",
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "cca8abd8-3fdb5f45",
       "lang": "vi",
       "text": "Đội mình khỏe quá!",
@@ -606,6 +7035,231 @@
       "source": [
         "js/games/tug-online.js"
       ]
+    },
+    {
+      "id": "ccdaef74-6e532260",
+      "lang": "vi",
+      "text": "trái",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cd440e2a3473d115",
+      "lang": "vi",
+      "text": "Chuyền chuyền hai",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cdd3c296-5a8f928d",
+      "lang": "vi",
+      "text": "Bắn bi nè",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ce312399-90b1bf2",
+      "lang": "vi",
+      "text": "Hải Phòng",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/vnfun.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cf086b52-2ea7f503",
+      "lang": "vi",
+      "text": "Bánh phu thê",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "cfdc8fbd-636e695e",
+      "lang": "vi",
+      "text": "chè",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d004fab6-48cb81fd",
+      "lang": "vi",
+      "text": "Tràm Chim",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d1337f2c-626c4f27",
+      "lang": "vi",
+      "text": "quan họ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/jobs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d2f6ceb00742d3fe",
+      "lang": "vi",
+      "text": "Tuấn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/chat.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d3cfcfbb42e8c4a7",
+      "lang": "vi",
+      "text": "Hạ Long",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js",
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d6d09bf5-56cdc52b",
+      "lang": "vi",
+      "text": "vú sữa",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "d764da183e8e0702",
+      "lang": "vi",
+      "text": "Nhà Tròn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "da075bab5685bee7",
+      "lang": "vi",
+      "text": "Sài Gòn’s",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "da471e97778bf126",
+      "lang": "vi",
+      "text": "An Tiêm",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/chat-player.js",
+        "js/content/films.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "da5b38c7-5d14d356",
+      "lang": "vi",
+      "text": "SÀI GÒN",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "dac6bf0073ecc251",
+      "lang": "vi",
+      "text": "mợ Phương",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "db0fcd885e28e1ad",
+      "lang": "vi",
+      "text": "Ví dầu cầu ván đóng đinh",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "db103111-69955356",
+      "lang": "vi",
+      "text": "HÀ NỘI",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "dbe588a6-20ff6698",
+      "lang": "vi",
+      "text": "Sơn",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "dc48578765f328ec",
+      "lang": "vi",
+      "text": "Chú Cuội",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/content/films/chucuoi.js",
+        "js/learn.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "dd02167e-556172cf",
@@ -628,6 +7282,210 @@
       ]
     },
     {
+      "id": "de2ecc3f50f0d5cb",
+      "lang": "vi",
+      "text": "đá cầu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/heritage.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "de72196c5d2a48cb",
+      "lang": "vi",
+      "text": "Hải’s",
+      "area": "aussie",
+      "part": true,
+      "source": [
+        "js/suburbs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "dfe36e17-1ce12be",
+      "lang": "vi",
+      "text": "Chào cháu",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/heritage.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e154a094-1ec886ed",
+      "lang": "vi",
+      "text": "Một cây làm chẳng nên",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e31c001040af498d",
+      "lang": "vi",
+      "text": "ngon bá cháy",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e6445122-25f6fd3d",
+      "lang": "vi",
+      "text": "Hue",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/build-types.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e67b2571-797a4760",
+      "lang": "vi",
+      "text": "Tâm",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e7cae640122cf25d",
+      "lang": "vi",
+      "text": "Thuận",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/content/yard.js",
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e8b5b9eb1393312d",
+      "lang": "vi",
+      "text": "Nước mía đây",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e933f50c1d15566b",
+      "lang": "vi",
+      "text": "chén",
+      "area": "village",
+      "part": true,
+      "source": [
+        "js/chatter.js",
+        "js/content/villagerlines.js",
+        "js/howto-data.js",
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "e9ff7be2-68b70b7e",
+      "lang": "vi",
+      "text": "Kem Tràng Tiền",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ea1a1d06-1778ee40",
+      "lang": "vi",
+      "text": "Đình Bảng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "eafe58e3446715bb",
+      "lang": "vi",
+      "text": "Da Nang",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/places2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "eb56ffad-4e3d57c7",
+      "lang": "vi",
+      "text": "xe ba gác",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vehicles.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ecb0ebb6-2e93a819",
+      "lang": "vi",
+      "text": "Hàn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ed034061-5d087f09",
+      "lang": "vi",
+      "text": "Ù à ù ập",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ee3f587648a22454",
+      "lang": "vi",
+      "text": "Bánh cuốn",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ee7521db008a636b",
+      "lang": "vi",
+      "text": "Tày",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk-court.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "eef1863a39c9314b",
       "lang": "vi",
       "text": "Đánh đáo có nhiều cách chơi theo vùng. Trong bản màn hình này, viên đáo dẹt trượt từ vạch để chạm đồng xu đồ chơi. Không lấy vật gì trong ba lô.",
@@ -636,6 +7494,87 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "f0644a31-1ea3587a",
+      "lang": "vi",
+      "text": "Chợ Bến Thành",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/regions.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f0867f6d6fcd2582",
+      "lang": "vi",
+      "text": "bánh tráng",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f19446fc5e0b8328",
+      "lang": "vi",
+      "text": "Bà Nà",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/cities.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f4226217-1721ab74",
+      "lang": "vi",
+      "text": "bát",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/villagerlines.js",
+        "js/howto-data.js",
+        "js/regions.js",
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f4342e0f72414280",
+      "lang": "vi",
+      "text": "mợ An",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f488a90d34a62385",
+      "lang": "vi",
+      "text": "Con mèo mà trèo cây cau",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f4c65df6046b97f4",
+      "lang": "vi",
+      "text": "Cuội",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/content/films/chucuoi.js",
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "f4d9220500afbd5f",
@@ -648,6 +7587,77 @@
       ]
     },
     {
+      "id": "f5ae3b4e-6c3340f2",
+      "lang": "vi",
+      "text": "Hà Nội's",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/stickers.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f7c6247e6ce27ca6",
+      "lang": "vi",
+      "text": "Đá cầu",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/chat.js",
+        "js/howto-data.js",
+        "js/main.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f82bcc8e2b2600e9",
+      "lang": "vi",
+      "text": "đất",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f85ce291-7a4a18f7",
+      "lang": "vi",
+      "text": "ập",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/folk2.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f8d8570973b9ac2c",
+      "lang": "vi",
+      "text": "Hồ Chí Minh",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/jobs.js",
+        "js/content/map.js",
+        "js/content/stickers.js",
+        "js/howto-data.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "f93d831e77b997ae",
+      "lang": "vi",
+      "text": "Tễu",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/content/adventures.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
       "id": "f9b98b6c-46164383",
       "lang": "vi",
       "text": "Bạn máy nhẹ nhàng",
@@ -656,6 +7666,64 @@
       "source": [
         "js/games/cacuangua.js"
       ]
+    },
+    {
+      "id": "fb7e7f0d4ad65420",
+      "lang": "vi",
+      "text": "Hoàn Kiếm",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/chat-player.js",
+        "js/regions.js",
+        "js/regionsites.js",
+        "js/symbols.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fbc202750e7801cf",
+      "lang": "vi",
+      "text": "Lưu Bình",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fc6ce1a2-198b351f",
+      "lang": "vi",
+      "text": "Hỏi thăm chú chuột đi đâu vắng nhà",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fcc8fabf-78028033",
+      "lang": "vi",
+      "text": "SÀI GÒN BÁNH MÌ",
+      "area": "world",
+      "part": true,
+      "source": [
+        "js/vendors.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fcef37e975312381",
+      "lang": "vi",
+      "text": "thị",
+      "area": "stories",
+      "part": true,
+      "source": [
+        "js/tales-content.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     },
     {
       "id": "fcfc70f0-2244c9b8",
@@ -676,6 +7744,61 @@
       "source": [
         "js/games/folk-court.js"
       ]
+    },
+    {
+      "id": "fd84234f-164180e0",
+      "lang": "vi",
+      "text": "Cô Hoa",
+      "area": "core",
+      "part": true,
+      "source": [
+        "js/lotus.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fdb776bc-75532175",
+      "lang": "vi",
+      "text": "Chú chuột đi chợ đường xa",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fe6614943cb4e6e7",
+      "lang": "vi",
+      "text": "Cầu Thê Húc",
+      "area": "hanoi",
+      "part": true,
+      "source": [
+        "js/content/chapter2text.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "fef545ef-88a3eea",
+      "lang": "vi",
+      "text": "Mua mắm mua muối giỗ cha chú mèo",
+      "area": "festivals",
+      "part": true,
+      "source": [
+        "js/content/songs.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "ffcb1b5c3614f0f2",
+      "lang": "vi",
+      "text": "Thủy",
+      "area": "town",
+      "part": true,
+      "source": [
+        "js/homes.js"
+      ],
+      "mixedFragment": "mixed-static-v1"
     }
   ]
 }
