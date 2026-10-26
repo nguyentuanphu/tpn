@@ -6,7 +6,7 @@
     "js/games/trongnu.ts": "9130b86018778c848286ac0e712822146f15eeed552ff100cc038d3fbe2c7316",
     "js/games/sparkleorchard.ts": "573bcf964fd2ca903eae72d47a7f7d8b717285a9d0184c5cb395a192db2e85d0",
     "js/games/sparklefruitbar.ts": "1a708e7675bb7c58913676db48303bbd7c35f66d84c91c83d35d9ce094522251",
-    "js/games/catalog.ts": "4b05ce3bb0ad8e234127074ae7f07dcef23cd8628987f21973c5177f7add954a",
+    "js/games/catalog.ts": "7df24cc837d9691f880ee83d3e3e88fb4fa1821ad693c213b29bf58bf61fb004",
     "js/content/releases.ts": "e0e36b53309f7c86bd72a77844dc71d0d08a721ed23d0e696724267e1af71b6b",
     "js/content/chapter2text.ts": "fe71f6b067aaff40160c0b66d3ca93477a2b6e420ba36c7e5d11c722394a9703",
     "js/content/chapter2hanoi.ts": "38f6c0a6faf83407191efbc3a1dd8856f94e12db8d1f87f8ec57e16fa44c42f0",
@@ -23,7 +23,8 @@
     "js/games/tug-online.ts": "fea77c92696956435cf8c670ee71f922178a483521f832b14cb7f99cd4596bcd",
     "js/games/board-agreement.ts": "ffcc42085b5f6223fd7040cf56a11c4c23d2584dba1220de1bc557d830089020",
     "js/games/tug-core.ts": "f0c7c03b78d0d61f068ec47d8720feba713fe588ef13edc0b7849063bcc3e7ef",
-    "js/games/tug-session.ts": "5e5eb9110a09416c56db2cc5bc1f68e9fb632314b53f832a4cd7aa12dd50adb4"
+    "js/games/tug-session.ts": "5e5eb9110a09416c56db2cc5bc1f68e9fb632314b53f832a4cd7aa12dd50adb4",
+    "js/games/familyquiz.ts": "10f3dcf4f0d023d05c483df6bb2709f481294afa7b8c032a47bb32e185e16ad9"
   },
   "lines": [
     {
@@ -224,6 +225,16 @@
       "part": false,
       "source": [
         "js/games/sparkleorchard.js"
+      ]
+    },
+    {
+      "id": "41c6fd9e26a22ebf",
+      "lang": "vi",
+      "text": "Con hiểu gia đình mình quá!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/familyquiz.js"
       ]
     },
     {

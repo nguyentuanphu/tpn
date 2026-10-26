@@ -1,8 +1,8 @@
 {
-  "runtime": "f3a135a86",
-  "currentVietnameseUnits": 6403,
+  "runtime": "b609dc847",
+  "currentVietnameseUnits": 6406,
   "fptBaseline": 6319,
-  "fptArcadeDelta": 16,
+  "fptArcadeDelta": 64,
   "fptStagedTotal": 6345,
   "missingFromFpt": 19,
   "privacyHeld": 19,
@@ -39,21 +39,21 @@
   "baselineBranch": "work/fpt-leminh-full-20261025",
   "deltaBranch": "work/v1.02-fruit-parade",
   "baselineVerificationRun": 40190674496,
-  "deltaRecordingRun": 40256013533,
-  "productionIntegration": "implemented; focused browser/mobile-permission/offline/layout/types pass; full latest-source regression pending",
+  "deltaRecordingRun": 40286640514,
+  "productionIntegration": "Parent selection/background/offline integration verified previously; latest Family Quiz and packaging checks in progress",
   "fptTitleDelta": 10,
   "labelsBranch": "work/fpt-v102-labels-20261026",
   "labelsRecordingRun": 40227974447,
   "labelsCommit": "715f260d1",
-  "recordingsHead": "1977f56ef",
-  "fptCurrentCoverage": 6384,
+  "recordingsHead": "5aaec921b",
+  "fptCurrentCoverage": 6387,
   "fptHistoricalOnly": [
     "4c87fc45-4909939b"
   ],
-  "defaultRecordingRun": 40277620142,
-  "defaultCoverage": "zero missing after horse and folk recordings",
-  "productionSignature": "8a31e517ec550ba65712e30ad8132671397419c57d520350c3fbe1ca1415cab1",
-  "productionBytes": 427403942,
+  "defaultRecordingRun": 40286640507,
+  "defaultCoverage": "Current manifest collected; new Family Quiz finish instructions need the next default recording run",
+  "productionSignature": "9ff5fc807ec714ba574f5c9e1b98363836a13d008125e3a94ed5a6f3d0b8a37c",
+  "productionBytes": 427682018,
   "latestReviewedDelta": {
     "run": 40277620143,
     "commit": "6a670a255",
@@ -61,5 +61,6 @@
     "verifiedEntries": 57,
     "independentDecodeAudit": "docs/v1.02-traditional-repairs/folk-audio-audit.json",
     "productionPackaging": "6384 verified current units packaged using isolated matching receipts"
-  }
+  },
+  "nextReviewedDeltaUnits": 65
 }
