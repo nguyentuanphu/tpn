@@ -12,7 +12,7 @@ const FILES = [
   'js/content/tester-arcades.js', 'js/games/parade-engine.js', 'js/games/arcade-session.js', 'js/games/arcade-board.js', 'js/games/sparkleorchard.js', 'js/games/fruitbar-engine.js', 'js/games/sparklefruitbar.js',
   'js/games/trongnu.js', 'js/games/trongnu-rules.js',
   'js/content/fruit-parade.js', 'js/games/fruitparade.js', 'js/games/fruitparade-core.js', 'js/games/fruitparade-engine.js', 'js/games/fruitparade-session.js', 'js/games/fruitparade-input.js', 'js/games/fruitparade-style.js',
-  'js/games/cacuangua.js', 'js/games/cacuangua-core.js', 'js/games/multiplayer-foundations.js', 'js/games/pending-vietnam.js',
+  'js/games/cacuangua.js', 'js/games/cacuangua-core.js', 'js/games/horse-session.js', 'js/games/multiplayer-foundations.js', 'js/games/pending-vietnam.js',
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
   'vendor/three.module.js', 'vendor/peerjs.min.js', 'vendor/RoomEnvironment.js', 'css/fonts.css',
   'fonts/Fredoka-latin-500.woff2', 'fonts/Fredoka-latin-ext-500.woff2', 'fonts/Baloo2-latin-600.woff2', 'fonts/Baloo2-latin-ext-600.woff2', 'fonts/Baloo2-vietnamese-600.woff2',

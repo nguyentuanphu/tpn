@@ -1,16 +1,14 @@
+// Horse source-string assertions were replaced by actual four-seat transport/match tests in horse-session.test.mjs.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const source = name => fs.readFileSync(new URL(`../../js/games/${name}`, import.meta.url), 'utf8');
 
-test('turn-based multiplayer renderers use authoritative online turns', () => {
+test('legacy Snakes plumbing retains its online calls while board repair proceeds', () => {
   const snakes = source('asia.ts');
-  const horses = source('cacuangua.ts');
   assert.match(snakes, /online\.move\(roundNo/);
   assert.match(snakes, /online\.next\(roundNo/);
-  assert.match(horses, /online\.onMove/);
-  assert.match(horses, /state\.turn !== online\.mine/);
 });
 
 test('team and board renderers retain offline and online paths', () => {

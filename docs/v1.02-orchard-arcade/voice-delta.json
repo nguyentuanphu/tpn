@@ -1,17 +1,30 @@
 {
-  "source": "Reviewed public arcade lines, family titles and exact turtle-counting utterances. Existing canonical recordings reused; private text excluded.",
+  "source": "Reviewed public arcade, family titles, turtle-counting and repaired one-die horse-game lines. Static text only; private user speech excluded.",
   "baselineSha256": "a2761a6c7032fda1f0fe97c04d7de64da36cf97a8ae543a416c49095a5f3201f",
   "sourceHashes": {
     "js/games/fruitparade.ts": "2ca93b3ad5e575f4ce3241b65bb2cca37ce78f39cff6207a171f9e9740a81011",
     "js/games/trongnu.ts": "9130b86018778c848286ac0e712822146f15eeed552ff100cc038d3fbe2c7316",
     "js/games/sparkleorchard.ts": "573bcf964fd2ca903eae72d47a7f7d8b717285a9d0184c5cb395a192db2e85d0",
     "js/games/sparklefruitbar.ts": "1a708e7675bb7c58913676db48303bbd7c35f66d84c91c83d35d9ce094522251",
-    "js/games/catalog.ts": "f7fbff9224cbc58bbeaa305fc72b2496bcd02afd4b32da2423777758ed00a2b4",
+    "js/games/catalog.ts": "f1c1e9d709aed48ed58f5292a3317bad95d8560c61bd58863d8b72ece9fc3166",
     "js/content/releases.ts": "e0e36b53309f7c86bd72a77844dc71d0d08a721ed23d0e696724267e1af71b6b",
     "js/content/chapter2text.ts": "fe71f6b067aaff40160c0b66d3ca93477a2b6e420ba36c7e5d11c722394a9703",
-    "js/content/chapter2hanoi.ts": "38f6c0a6faf83407191efbc3a1dd8856f94e12db8d1f87f8ec57e16fa44c42f0"
+    "js/content/chapter2hanoi.ts": "38f6c0a6faf83407191efbc3a1dd8856f94e12db8d1f87f8ec57e16fa44c42f0",
+    "js/games/cacuangua.ts": "e3bfe2b37aab33b989cb5e0d203f2f716e84cf71f0e64053244fbac611a9a14e",
+    "js/games/cacuangua-core.ts": "61e839709062a01a80404f0b5689f91df8a18ec8fe751ef8d208338b9da9b6cb",
+    "js/games/horse-session.ts": "b1751665b6bc52d596d66ea5c4aea95173e0494a5c1c9e7786de1043373b13ea"
   },
   "lines": [
+    {
+      "id": "0d1b07a5-53370dbe",
+      "lang": "vi",
+      "text": "Cổ điển · một xúc xắc",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/cacuangua.js"
+      ]
+    },
     {
       "id": "1b9b622526a2c94c",
       "lang": "vi",
@@ -30,6 +43,26 @@
       "part": false,
       "source": [
         "js/games/sparkleorchard.js"
+      ]
+    },
+    {
+      "id": "206a7a83-4833bc85",
+      "lang": "vi",
+      "text": "Đưa các chú ngựa về chuồng nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/cacuangua.js"
+      ]
+    },
+    {
+      "id": "206f71c85c63ff7b",
+      "lang": "vi",
+      "text": "Ba!",
+      "area": "hanoi",
+      "part": false,
+      "source": [
+        "js/content/chapter2text.js"
       ]
     },
     {
@@ -53,6 +86,27 @@
       ]
     },
     {
+      "id": "2c3f0bff-4e52a134",
+      "lang": "vi",
+      "text": "Ngựa về chuồng rồi!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/cacuangua.js"
+      ]
+    },
+    {
+      "id": "2f061dda-331b13db",
+      "lang": "vi",
+      "text": "Bảng Trái Cây Lấp Lánh",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.js",
+        "js/games/sparklefruitbar.js"
+      ]
+    },
+    {
       "id": "3fbf022c-1bfa6fb7",
       "lang": "vi",
       "text": "Hoàn thành nhiệm vụ vườn quả!",
@@ -60,6 +114,16 @@
       "part": false,
       "source": [
         "js/games/sparkleorchard.js"
+      ]
+    },
+    {
+      "id": "4ff39bc0-380f8516",
+      "lang": "vi",
+      "text": "Bảng trái cây",
+      "area": "festivals",
+      "part": false,
+      "source": [
+        "js/content/releases.js"
       ]
     },
     {
@@ -80,6 +144,26 @@
       "part": false,
       "source": [
         "js/games/trongnu.js"
+      ]
+    },
+    {
+      "id": "766d7ef2-4816612d",
+      "lang": "vi",
+      "text": "Đường ngắn nhẹ nhàng",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/cacuangua.js"
+      ]
+    },
+    {
+      "id": "8021a60c-206da1d6",
+      "lang": "vi",
+      "text": "Bốn!",
+      "area": "hanoi",
+      "part": false,
+      "source": [
+        "js/content/chapter2text.js"
       ]
     },
     {
@@ -113,6 +197,16 @@
       ]
     },
     {
+      "id": "9bc729794c4784ce",
+      "lang": "vi",
+      "text": "Bạn máy suy nghĩ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/cacuangua.js"
+      ]
+    },
+    {
       "id": "9c91c3de-a4aff7e",
       "lang": "vi",
       "text": "Ai cùng khám phá vườn quả?",
@@ -120,27 +214,6 @@
       "part": false,
       "source": [
         "js/games/sparkleorchard.js"
-      ]
-    },
-    {
-      "id": "4ff39bc0-380f8516",
-      "lang": "vi",
-      "text": "Bảng trái cây",
-      "area": "festivals",
-      "part": false,
-      "source": [
-        "js/content/releases.js"
-      ]
-    },
-    {
-      "id": "2f061dda-331b13db",
-      "lang": "vi",
-      "text": "Bảng Trái Cây Lấp Lánh",
-      "area": "games",
-      "part": false,
-      "source": [
-        "js/games/catalog.js",
-        "js/games/sparklefruitbar.js"
       ]
     },
     {
@@ -154,23 +227,23 @@
       ]
     },
     {
-      "id": "206f71c85c63ff7b",
+      "id": "f4d9220500afbd5f",
       "lang": "vi",
-      "text": "Ba!",
-      "area": "hanoi",
+      "text": "Bạn máy thận trọng",
+      "area": "games",
       "part": false,
       "source": [
-        "js/content/chapter2text.js"
+        "js/games/cacuangua.js"
       ]
     },
     {
-      "id": "8021a60c-206da1d6",
+      "id": "f9b98b6c-46164383",
       "lang": "vi",
-      "text": "Bốn!",
-      "area": "hanoi",
+      "text": "Bạn máy nhẹ nhàng",
+      "area": "games",
       "part": false,
       "source": [
-        "js/content/chapter2text.js"
+        "js/games/cacuangua.js"
       ]
     }
   ]

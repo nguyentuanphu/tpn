@@ -4,7 +4,7 @@ export type FoundationMode = 'turn' | 'round';
 export type MoveKind = 'pit' | 'roll' | 'pull' | 'answer' | 'horse';
 export type MultiplayerCapabilities = {
   online: true;
-  npc: false;
+  npc: boolean;
   local: true;
   maxPlayers: number;
   turnBased: boolean;
@@ -23,7 +23,7 @@ export const MULTIPLAYER_FOUNDATIONS: Record<string, MultiplayerFoundation> = {
   snakes: { id: 'snakes', all: false, mode: 'turn', move: 'roll', max: 4, ...caps(4, 'turn') },
   tug: { id: 'tug', all: true, mode: 'round', move: 'pull', max: 6, ...caps(6, 'round', true) },
   familyquiz: { id: 'familyquiz', all: true, mode: 'round', move: 'answer', max: 6, ...caps(6, 'round', true) },
-  cacuangua: { id: 'cacuangua', all: false, mode: 'turn', move: 'horse', max: 4, ...caps(4, 'turn') }
+  cacuangua: { id: 'cacuangua', all: true, mode: 'turn', move: 'horse', max: 4, ...caps(4, 'turn'), npc: true }
 };
 
 export function foundationFor(id: string): MultiplayerFoundation | null { return MULTIPLAYER_FOUNDATIONS[id] || null; }
@@ -34,8 +34,8 @@ export function validMove(id: string, value: number): boolean {
   if (id === 'snakes') return value >= 1 && value <= 6;
   if (id === 'tug') return value === 0 || value === 1;
   if (id === 'familyquiz') return value >= 0 && value <= 3;
-  // Encoded horse move: horse index (0-3) * 8 + die index (0-1), with room for a no-op.
-  if (id === 'cacuangua') return value >= 0 && (value <= 3 || (value <= 25 && Math.floor(value / 8) < 4 && value % 8 < 2));
+  // Horse board reducer: 0 rolls, 1..4 choose a horse. No client-supplied die result.
+  if (id === 'cacuangua') return value >= 0 && value <= 4;
   return false;
 }
 
@@ -49,6 +49,8 @@ export type AuthoritativeMoveState = {
 
 export function createAuthoritativeState(id: string, seats: number): AuthoritativeMoveState | null {
   const def = foundationFor(id);
+  // The horse session validates actual board state, bonus turns and ordered host commits.
+  if(id==='cacuangua')return null;
   if (!def || !Number.isInteger(seats) || seats < 2 || seats > def.maxPlayers) return null;
   return { game: id, seats, turn: 0, rounds: new Map(), moves: new Map() };
 }

@@ -31,11 +31,15 @@ AI review is **unfinished** (usage/time exhausted; a green wrapper is not an AI 
 ## Remaining before deployment
 
 1. Repair six inaccurate folk prototypes: Cướp Cờ, Đánh Đáo, Ném Còn, Kéo Cưa Lừa Xẻ, Mèo Đuổi Chuột and Đua Thuyền.
-2. Repair Cờ Cá Ngựa track/rules/NPC/networking and shared multiplayer validation/renderers (including Snakes, Ô Ăn Quan, Kéo Co and Family Quiz).
-3. Complete website editorial/source consistency review against the final game content. Its gate is still red; do not blindly record a reviewed lock.
+2. Cờ Cá Ngựa repair now passes local rules/real four-seat transport/playable-board/layout checks; collect its new recordings and verify it on GitHub. Shared multiplayer validation/renderers for Snakes, Ô Ăn Quan, Kéo Co and Family Quiz remain pending.
+3. Complete chosen-voice handling for Vietnamese words inside English recordings and rapid preview switching; then complete website editorial/source consistency review against the final game content. Its gate is still red; do not blindly record a reviewed lock.
 4. Finish an exhaustive GitHub run on the resulting source, fix every red check, collect its official code map, and keep retries visible.
 5. Fresh serial perf/battery/startup comparison and performance investigation. Earlier runs predate removal of 87 orphaned headless browser groups. Battery passed; prior candidate world11.305s, first ready40.361s, second ready28.222s, freeze6.105s, secondKB0. The first-ready result was slower than live/prior samples, so it remains unresolved. Budgets were not raised. [Raw prior speeds](../v1.02-family-underpass/speed-results.json).
 6. Physical-device listening and native riding-camera confirmation remain outstanding. Browser captures are not physical-device proof.
 7. Give the final report and ask the owner's deployment pop-up. Never merge/main/Netlify without approval.
 
 The proposed full Studio redesign remains a separate proposal. Earlier detailed progress and speed comparisons are preserved in [the previous checkpoint report](RELEASE-REPORT-before-hanoi-production.md).
+
+## Latest local horse repair
+
+See [traditional-game evidence](../v1.02-traditional-repairs/README.md). Combined local horseplay/unit/types3/3,295units; reviewed-layout/types2/2 after stronger visibility/capture checks. Four-seat actual transport match and replay/mixed-age tests pass. New horse voice delta and latest-source GitHub checks remain pending. No other multiplayer adapter is implied fixed by this result.

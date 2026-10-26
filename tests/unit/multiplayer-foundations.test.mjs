@@ -13,7 +13,7 @@ test('adapter metadata declares bounded cooperative/turn-based roster semantics'
 test('move validators and turn helpers are deterministic', () => {
   assert.equal(validMove('snakes', 6), true);
   assert.equal(validMove('snakes', 7), false);
-  assert.equal(validMove('cacuangua', 25), true);
+  assert.equal(validMove('cacuangua', 25), false);
   assert.equal(validMove('cacuangua', 26), false);
   assert.equal(nextTurn(2, 3), 0);
   assert.equal(nextTurn(0, 0), 0);
@@ -62,14 +62,15 @@ test('Batch A: new games have valid move ranges and metadata', () => {
   assert.equal(MULTIPLAYER_FOUNDATIONS.familyquiz.all, true);
   assert.equal(MULTIPLAYER_FOUNDATIONS.familyquiz.mode, 'round');
 
-  // CĆ¡ CĆ¢ NgÆ°a: move 0 (exit stable) or 1-3 (die index, max 2 dice + exit)
+  // Cờ Cá Ngựa: 0 requests a shared roll; 1–4 choose a horse.
   assert.equal(validMove('cacuangua', 0), true);
   assert.equal(validMove('cacuangua', 1), true);
   assert.equal(validMove('cacuangua', 3), true);
-  assert.equal(validMove('cacuangua', 4), false);
+  assert.equal(validMove('cacuangua', 4), true);
   assert.equal(validMove('cacuangua', -1), false);
+  assert.equal(validMove('cacuangua', 5), false);
   assert.equal(MULTIPLAYER_FOUNDATIONS.cacuangua.max, 4);
-  assert.equal(MULTIPLAYER_FOUNDATIONS.cacuangua.all, false);
+  assert.equal(MULTIPLAYER_FOUNDATIONS.cacuangua.all, true);
   assert.equal(MULTIPLAYER_FOUNDATIONS.cacuangua.mode, 'turn');
 });
 

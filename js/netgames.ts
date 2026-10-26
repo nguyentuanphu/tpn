@@ -77,7 +77,7 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
   function record(s, n, mv) {
     // New arcades reserve this range for transient replay requests. Repeated requests must
     // reach the renderer even after a long session; they are not immutable game moves.
-    if((session.game==='sparkleorchard'||session.game==='sparklefruitbar')&&n>=8000&&n<9000){session.listeners.forEach(f=>{try{f(s,n,mv);}catch{}});return;}
+    if(((session.game==='sparkleorchard'||session.game==='sparklefruitbar')&&n>=8000&&n<9000)||(session.game==='cacuangua'&&n===9999)){session.listeners.forEach(f=>{try{f(s,n,mv);}catch{}});return;}
     if (!session.moves.has(n)) session.moves.set(n, new Map());
     const m = session.moves.get(n); if (m.has(s)) return; m.set(s, mv);
     session.listeners.forEach(f => { try { f(s, n, mv); } catch (e) { } });

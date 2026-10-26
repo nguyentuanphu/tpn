@@ -1,90 +1,77 @@
-import { register } from './frame.js';
-import { T } from '../i18n.js';
-import { el, wait } from '../util.js';
-import { applyMove, initialState, isGameOver, legalMoves, npcChooseMove, rollDice, type GameState, type Mode, type NPCDifficulty } from './cacuangua-core.js';
-
-const COLORS = { red: '#df5b63', blue: '#4e9bd6', green: '#4caf78', yellow: '#e3a83b' };
-
-function renderBoard(board: HTMLElement, state: GameState) {
-  board.replaceChildren();
-  state.players.forEach((player) => {
-    const card = el('section', 'ccn-player');
-    card.style.borderColor = COLORS[player.color];
-    card.innerHTML = `<h3>${player.color.toUpperCase()} <small>${player.finishedCount}/${player.horses.length}</small></h3><div class="ccn-horses"></div>`;
-    const horses = card.querySelector('.ccn-horses')!;
-    player.horses.forEach((horse) => {
-      const piece = el('span', 'ccn-horse', horse.finished ? '🏁' : horse.pos < 0 ? '🏠' : '🐴');
-      piece.title = `${player.color} ${horse.id + 1}`;
-      horses.appendChild(piece);
-    });
-    board.appendChild(card);
-  });
+import {register} from './frame.js';
+import {T} from '../i18n.js';
+import {pic} from '../art.js';
+import {dom,control} from './arcade-board.js';
+import {controlsArcadeTurn,type ArcadeOnline} from './arcade-session.js';
+import {HorseSession} from './horse-session.js';
+import {COLORS,globalPos,legalMoves,npcChooseMove,ringLength,type Mode,type NPCDifficulty,type GameState} from './cacuangua-core.js';
+import type {Profile} from '../../types/save.js';
+type Api={stage:HTMLElement;players:Profile[];little:boolean;two:boolean;strong:boolean;level:number;online?:ArcadeOnline;closed:boolean;say(en:string,vi:string):void;right(e?:HTMLElement):void;sfx:{tap():void};plan(fn:()=>HTMLElement|null,opts:{maxActions:number}):void;onCleanup(fn:()=>void):void;win(extra:{title:string;titleVi:string}):Promise<unknown>};
+const INK=['#cf475c','#347fbd','#22825d','#a97a12'];
+const FINISH:[string,string]=['The horses are home!','Ngựa về chuồng rồi!'];
+const NAMES:[string,string][]=[['Red','Đỏ'],['Blue','Xanh dương'],['Green','Xanh lá'],['Yellow','Vàng']];
+const STYLE=`.horse-race{width:min(100%,800px);margin:auto;display:grid;gap:12px;padding:8px;color:#443262}.horse-race button,.horse-race select,.horse-race summary{min-width:64px;min-height:64px;font:inherit;white-space:normal}.horse-race select{max-width:100%}.horse-race p{margin:0}.horse-race details{padding:10px;background:#fff6e4;border-radius:18px}.horse-settings{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.horse-settings input[type=checkbox]{width:64px;height:64px;min-width:64px;min-height:64px}.horse-settings label{min-height:64px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.horse-roster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.horse-player{padding:8px;border:3px solid var(--seat);border-radius:18px;background:#fff;text-align:center;overflow-wrap:anywhere}.horse-player.on{box-shadow:0 0 0 4px #ffcd5c}.horse-stable{display:flex;justify-content:center;gap:2px;min-height:25px}.horse-stable .art{width:24px;height:24px}.horse-board{position:relative;width:min(100%,480px);aspect-ratio:1;margin:auto;box-sizing:border-box;border:4px solid #795a93;border-radius:24px;background:#def1d1;overflow:hidden}.horse-cell{position:absolute;box-sizing:border-box;background:#fff9eb;border:1px solid #a1929f;border-radius:35%;display:flex;align-items:center;justify-content:center;gap:1px;color:#59466c}.horse-cell small{position:absolute;left:1px;top:0;font-size:9px}.horse-cell.start{background:#ffeab2;border:2px solid #ad7b30}.horse-token{position:relative;display:grid;place-items:center;width:76%;height:76%;border-radius:50%;box-sizing:border-box;background:#fff;border:2px solid var(--seat)}.horse-token .horse-id{position:absolute;bottom:-2px;right:-2px;font-size:10px;line-height:12px;min-width:12px;border-radius:50%;background:#fff;color:#443262;font-weight:800}.horse-token .art{width:100%;height:100%;max-width:28px;max-height:28px}.horse-home{position:absolute;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;width:30%;padding:3px;background:#fff8;border-radius:12px;border:2px solid var(--seat);box-sizing:border-box}.horse-home span{position:relative;text-align:center;min-height:20px;border-radius:6px;background:#fff;line-height:1.4;font-size:13px;border:1px solid var(--seat)}.horse-home b{grid-column:1/-1;text-align:center;font-size:12px;line-height:1.2;overflow-wrap:anywhere}.horse-home .art{width:20px;height:20px;vertical-align:middle}.horse-center{position:absolute;left:39%;top:39%;width:22%;height:22%;display:grid;place-items:center}.horse-center .art{width:100%;height:100%}.horse-race .horse-actions .art{width:44px;height:44px}.horse-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.horse-status{text-align:center;min-height:2.8em;font-weight:700}.horse-rules{font-size:14px;line-height:1.4}.horse-moves{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.horse-moves button{border:3px solid var(--seat);background:#fff8e8}.horse-race .horse-moves .art{width:32px;height:32px;vertical-align:middle}.horse-race .horse-wait{background:#fff3d6;padding:10px;border-radius:16px;text-align:center}.horse-race .horse-wait[hidden]{display:none}@media(min-width:1000px){.horse-race{width:min(100%,1000px);grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:start;gap:12px 20px}.horse-board{grid-column:1;grid-row:1/8;width:min(100%,520px,max(280px,calc(100dvh - 210px)))}.horse-roster{grid-column:2;grid-row:1}.horse-status{grid-column:2;grid-row:2}.horse-moves{grid-column:2;grid-row:3}.horse-actions{grid-column:2;grid-row:4}.horse-wait{grid-column:2;grid-row:5}.horse-rules-box{grid-column:2;grid-row:6}.horse-settings-box{grid-column:2;grid-row:7}}@media(max-width:480px){.horse-race{padding:4px;gap:8px}.horse-roster{font-size:14px}.horse-player{padding:6px}.horse-board{width:min(100%,max(240px,calc(100dvh - 520px)));border-radius:16px}.horse-home{width:29%}.horse-home b{font-size:10px}.horse-home span{font-size:11px;min-height:17px}.horse-home .art{width:16px;height:16px}}`;
+function dieFace(value:number){const patterns:Record<number,number[][]>={1:[[24,24]],2:[[12,12],[36,36]],3:[[12,12],[24,24],[36,36]],4:[[12,12],[36,12],[12,36],[36,36]],5:[[12,12],[36,12],[24,24],[12,36],[36,36]],6:[[12,12],[36,12],[12,24],[36,24],[12,36],[36,36]]};return '<svg class="art" viewBox="0 0 48 48" width="44" height="44" aria-hidden="true"><rect x="2" y="2" width="44" height="44" rx="10" fill="#fff6e4" stroke="#59466c" stroke-width="3"/>'+patterns[value].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="4" fill="#59466c"/>').join('')+'</svg>';}
+const colorName=(seat:number)=>T(...NAMES[seat]);
+const colorOf=(state:GameState,seat:number)=>COLORS.indexOf(state.players[seat].color);
+function drawBoard(board:HTMLElement,state:GameState,names:string[]){
+ board.replaceChildren();const length=ringLength(state.mode),side=length/4+1,scale=100/side,cells:HTMLElement[]=[];
+ for(let i=0;i<length;i++){
+  let x:number,y:number;if(i<side){x=i;y=side-1;}else if(i<side*2-1){x=side-1;y=side*2-2-i;}else if(i<side*3-2){x=side*3-3-i;y=0;}else{x=0;y=i-(side*3-3);}
+  const c=dom('div','horse-cell'+(i%(length/4)===0?' start':''));c.dataset.track=String(i);Object.assign(c.style,{left:x*scale+'%',top:y*scale+'%',width:scale+'%',height:scale+'%'});const n=dom('small','',String(i+1));c.append(n);board.append(c);cells.push(c);
+ }
+ const homes:HTMLElement[][]=[];
+ state.players.forEach((p,seat)=>{
+  const i=colorOf(state,seat),home=dom('section','horse-home');home.style.setProperty('--seat',INK[i]);Object.assign(home.style,{left:(i===0||i===3?19:51)+'%',top:(i<2?58:18)+'%'});
+  const title=dom('b','',T(`${colorName(i)} home`, `Chuồng ${colorName(i)}`));home.append(title);const slots:HTMLElement[]=[];
+  for(let n=1;n<=6;n++){const cell=dom('span','',String(n));cell.dataset.home=String(n);home.append(cell);slots.push(cell);}homes.push(slots);board.append(home);
+ });
+ const center=dom('div','horse-center');center.innerHTML=pic('🌸');board.append(center);
+ for(const[p,seat]of state.players.map((p,i)=>[p,i]as const))for(const h of p.horses){
+  if(h.pos<0)continue;const token=dom('span','horse-token');token.style.setProperty('--seat',INK[colorOf(state,seat)]);token.innerHTML=pic('🐴');token.dataset.seat=String(seat);token.dataset.horse=String(h.id);token.dataset.pos=String(h.pos);token.title=T(`${names[seat]} · horse ${h.id+1}`,`${names[seat]} · ngựa ${h.id+1}`);
+  const number=dom('b','horse-id',String(h.id+1));token.append(number);
+  if(h.pos<length)cells[globalPos(p,h,state.mode)].append(token);else homes[seat][h.pos-length]?.append(token);
+ }
+ board.setAttribute('role','img');board.setAttribute('aria-label',T(`Horse track: ${length} spaces, with numbered home lanes.`, `Đường đua ngựa: ${length} ô, có chuồng đánh số.`));
 }
-
-async function run(api) {
-  let mode: Mode = api.level <= 1 ? 'beginner' : 'full';
-  let npc: NPCDifficulty = api.strong ? 'hard' : api.level >= 3 ? 'standard' : 'easy';
-  let state = initialState(mode, 2, 'cacuangua-local');
-  const root = el('div', 'ccn-root');
-  const controls = el('div', 'ccn-controls');
-  const online = api.online;
-  const board = el('div', 'ccn-board');
-  const status = el('p', 'ccn-status');
-  const dice = el('div', 'ccn-dice');
-  const moves = el('div', 'ccn-moves');
-  controls.innerHTML = `<button type="button" data-mode="beginner">${T('Beginner', 'Cơ bản')}</button><button type="button" data-mode="full">${T('Full rules', 'Đầy đủ')}</button><label><input type="checkbox" data-npc checked> ${T('Play with a local helper', 'Chơi cùng bạn máy')}</label><select data-difficulty aria-label="${T('NPC difficulty', 'Độ khó bạn máy')}"><option value="easy">${T('Easy', 'Dễ')}</option><option value="standard">${T('Standard', 'Vừa')}</option><option value="hard">${T('Hard', 'Khó')}</option></select>`;
-  const roll = el('button', 'ccn-roll', T('Roll dice', 'Tung xúc xắc')) as HTMLButtonElement;
-  roll.type = 'button';
-  root.append(controls, board, status, dice, moves, roll);
-  api.stage.appendChild(root);
-  api.say('Move the horses home!', 'Đưa các chú ngựa về chuồng nhé!');
-
-  const npcBox = controls.querySelector('[data-npc]') as HTMLInputElement;
-  const difficulty = controls.querySelector('[data-difficulty]') as HTMLSelectElement;
-  const reset = () => { state = initialState(mode, 2, 'cacuangua-local'); renderBoard(board, state); dice.textContent = ''; moves.replaceChildren(); roll.disabled = false; status.textContent = T('Red starts. Roll the dice!', 'Đỏ đi trước. Tung xúc xắc nhé!'); };
-  (controls.querySelectorAll('[data-mode]') as NodeListOf<HTMLButtonElement>).forEach(button => button.onclick = () => { mode = button.dataset.mode as Mode; reset(); });
-  if (online) { npcBox.checked = false; npcBox.disabled = true; difficulty.disabled = true; }
-  npcBox.onchange = () => { difficulty.disabled = !npcBox.checked; };
-  difficulty.onchange = () => { npc = difficulty.value as NPCDifficulty; };
-
-  const chooseMove = (move: { horse: number; dieIndex: number }) => { state = applyMove(state, move.horse, move.dieIndex); renderBoard(board, state); if (online) online.move(moveNo++, move.horse * 8 + move.dieIndex); };
-  let moveNo = 0;
-  if (online) online.onMove((seat, n, value) => { if (seat !== online.mine && n >= moveNo) { moveNo = n + 1; const horse = Math.floor(Number(value) / 8); const dieIndex = Number(value) % 8; chooseMove({ horse, dieIndex }); } });
-  const npcTurn = async () => {
-    if (!npcBox.checked || state.turn !== 1 || isGameOver(state)) return;
-    await wait(450);
-    state = { ...state, dice: rollDice(state), pendingMove: true };
-    const legal = legalMoves(state);
-    if (legal.length) { chooseMove(npcChooseMove(state, npc)); if (state.turn === 1 && state.pendingMove) { state = { ...state, dice: [], pendingMove: false, turn: 0 }; } }
-    if (!isGameOver(state)) { status.textContent = T('Your turn!', 'Đến lượt bạn!'); roll.disabled = false; }
-  };
-  const showMoves = () => {
-    moves.replaceChildren();
-    legalMoves(state).forEach(move => {
-      const button = el('button', 'ccn-move', `${T('Horse', 'Ngựa')} ${move.horse + 1} · ${move.steps}`) as HTMLButtonElement;
-      button.type = 'button';
-      button.onclick = () => { api.sfx.tap(); chooseMove(move); if (isGameOver(state)) return; if (state.turn === 1) void npcTurn(); else if (state.pendingMove) showMoves(); else { status.textContent = T('Roll again!', 'Tung lại nhé!'); roll.disabled = false; } };
-      moves.appendChild(button);
-    });
-  };
-  roll.onclick = async () => {
-    if ((online && state.turn !== online.mine) || (state.turn === 1 && npcBox.checked)) return;
-    const values = rollDice(state);
-    state = { ...state, dice: values, pendingMove: true };
-    dice.textContent = values.map(value => `🎲 ${value}`).join('  ');
-    moves.replaceChildren();
-    const legal = legalMoves(state);
-    if (!legal.length) { status.textContent = T('No move this turn.', 'Lượt này chưa đi được.'); state = { ...state, dice: [], pendingMove: false, turn: (state.turn + 1) % state.players.length }; roll.disabled = true; void npcTurn(); return; }
-    roll.disabled = true;
-    status.textContent = T('Choose a horse to move.', 'Chọn một chú ngựa để đi.');
-    showMoves();
-  };
-  renderBoard(board, state); reset();
-  api.onCleanup(() => { roll.onclick = null; controls.querySelectorAll('button').forEach(button => { button.onclick = null; }); });
-  while (!api.closed && !isGameOver(state)) await wait(250);
-  if (api.closed) return;
-  const winner = state.winner === state.players[0].color ? T('You win!', 'Bạn thắng rồi!') : T('The helper wins!', 'Bạn máy thắng rồi!');
-  return api.win({ title: winner });
+async function run(api:Api){
+ const root=dom('section','horse-race'),style=dom('style');style.textContent=STYLE;root.append(style);api.stage.append(root);
+ const roster=dom('div','horse-roster'),board=dom('div','horse-board'),status=dom('p','horse-status'),moves=dom('div','horse-moves'),actions=dom('div','horse-actions'),wait=dom('div','horse-wait');status.setAttribute('role','status');
+ const rules=dom('details','horse-rules-box'),summary=dom('summary','',T('How this horse game works','Cách chơi cờ cá ngựa'));rules.append(summary);
+ const description=dom('p','horse-rules');rules.append(description);
+ const settings=dom('details','horse-settings-box'),settingsTitle=dom('summary','',T('Local players and rules','Người chơi và luật cùng máy'));settings.append(settingsTitle);const settingsRow=dom('div','horse-settings');settings.append(settingsRow);
+ const mode=dom('select');mode.setAttribute('aria-label',T('Horse game rules','Luật cờ cá ngựa'));for(const[value,en,vi]of[['beginner','Gentle short track','Đường ngắn nhẹ nhàng'],['full','Classic · one die','Cổ điển · một xúc xắc']]){const o=dom('option','',T(en,vi));o.value=value;o.disabled=api.little&&value==='full';mode.append(o);}mode.value=api.little?'beginner':'full';
+ const count=dom('select');count.setAttribute('aria-label',T('Number of players','Số người chơi'));for(let i=2;i<=4;i++){const o=dom('option','',T(`${i} players`,`${i} người chơi`));o.value=String(i);count.append(o);}
+ const helper=dom('input');helper.type='checkbox';helper.checked=!api.two;const helperLabel=dom('label','',T('Helpers play the other colours','Bạn máy chơi các màu còn lại'));helperLabel.prepend(helper);
+ const difficulty=dom('select');difficulty.setAttribute('aria-label',T('Helper difficulty','Độ khó bạn máy'));for(const[value,en,vi]of[['easy','Gentle helper','Bạn máy nhẹ nhàng'],['standard','Thinking helper','Bạn máy suy nghĩ'],['hard','Careful helper','Bạn máy thận trọng']]){const o=dom('option','',T(en,vi));o.value=value;difficulty.append(o);}difficulty.value=api.strong?'hard':api.little?'easy':'standard';
+ const roll=control(T('Roll the die','Tung xúc xắc'),()=>submit(0));roll.dataset.horseRoll='';actions.append(roll);
+ const leave=control(T('Continue here with helpers','Chơi tiếp ở đây với bạn máy'),()=>{session.continueLocally();helper.checked=true;render();});wait.append(dom('p','',T('Waiting for friends. Your board stays here.','Đang chờ bạn. Bàn cờ vẫn được giữ ở đây.')),leave);
+ let session:HorseSession,dead=false,won=false,npcTimer:ReturnType<typeof setTimeout>|undefined,previousFinished=0,lastWaiting=false,finish:(v:unknown)=>void;
+ const completed=new Promise<unknown>(r=>{finish=r;});
+ const names=()=>session.state?.players.map((_,seat)=>api.online?.names[seat]||api.players[seat]?.name||colorName(seat))||[];
+ const render=()=>{
+  if(dead)return;clearTimeout(npcTimer);const state=session?.state;wait.hidden=!session?.waiting;settings.hidden=session?.online;leave.hidden=!state;
+  if(!state){status.textContent=T('Choosing gentle shared rules for the youngest friend…','Chọn luật chung nhẹ nhàng theo bạn nhỏ tuổi nhất…');roll.disabled=true;return;}
+  const ns=names();root.dataset.mode=state.mode;root.dataset.turn=String(state.turn);root.dataset.phase=state.pendingMove?'choose':'roll';root.dataset.roll=String(state.lastRoll);root.dataset.players=String(state.players.length);root.dataset.winner=state.winner||'';
+  roster.replaceChildren();state.players.forEach((p,seat)=>{const entry=dom('div','horse-player'+(seat===state.turn?' on':''));entry.style.setProperty('--seat',INK[colorOf(state,seat)]);entry.append(dom('b','',T(ns[seat],ns[seat])),dom('p','',T(`${colorName(colorOf(state,seat))} · home ${p.finishedCount}/${p.horses.length}`,`${colorName(colorOf(state,seat))} · về chuồng ${p.finishedCount}/${p.horses.length}`)));const stable=dom('div','horse-stable');for(const h of p.horses)if(h.pos<0){const token=dom('span');token.innerHTML=pic('🐴');token.append(dom('small','',String(h.id+1)));stable.append(token);}entry.append(stable);roster.append(entry);});drawBoard(board,state,ns);
+  description.textContent=state.mode==='full'?T('One die: 1 or 6 lets a horse out and gives another roll. Go around once. Pieces cannot jump over one another; an exact landing captures an opponent. At your door, roll a home number, then the next number to climb. Finish four horses in 6, 5, 4 and 3. No betting.','Một xúc xắc: được 1 hoặc 6 thì xuất quân và tung thêm lượt. Đi đủ một vòng. Không nhảy qua quân khác; tới đúng ô thì đá quân đối thủ. Tới cửa chuồng, tung số ô để vào rồi tung số kế tiếp để lên. Đưa bốn ngựa vào 6, 5, 4 và 3. Không cá cược.'):T('A gentle short-track version: two horses, any roll starts them, no captures or blocks. Count your steps and bring both horses home.','Bản đường ngắn nhẹ nhàng: hai ngựa, tung số nào cũng được xuất quân, không đá hay cản nhau. Đếm các bước rồi đưa cả hai ngựa về chuồng.');
+  const can=controlsArcadeTurn(state.turn,session.mine,session.online,helper.checked)&&!session.waiting&&!session.busy&&!state.winner;
+  roll.disabled=!can||state.pendingMove;roll.replaceChildren();const face=dom('span');face.innerHTML=state.lastRoll?dieFace(state.lastRoll):pic('🎲');roll.append(face,document.createTextNode((state.lastRoll?state.lastRoll+' · ':'')+T('Roll the die','Tung xúc xắc')));
+  status.textContent=state.winner?T('The horses are home. Lovely counting!','Ngựa đã về chuồng. Đếm giỏi quá!'):state.pendingMove?T(`${ns[state.turn]}: choose a horse.`,`${ns[state.turn]}: chọn một chú ngựa.`):T(`${ns[state.turn]}: roll the die.`,`${ns[state.turn]}: tung xúc xắc.`);
+  moves.replaceChildren();for(const move of legalMoves(state)){const b=control(T(`Horse ${move.horse+1} · ${move.steps}`,`Ngựa ${move.horse+1} · ${move.steps}`),()=>submit(move.horse+1));b.dataset.horseChoice=String(move.horse);b.style.setProperty('--seat',INK[colorOf(state,state.turn)]);b.disabled=!can;const icon=dom('span');icon.innerHTML=pic('🐴');b.prepend(icon);moves.append(b);}
+  const finished=state.players[session.mine]?.finishedCount||0;if(finished>previousFinished){api.right();previousFinished=finished;}
+  if(state.winner&&!won){won=true;void api.win({title:T(...FINISH),titleVi:FINISH[1]}).then(finish);return;}
+  if(!session.online&&helper.checked&&state.turn!==session.mine&&!state.winner){const index=session.core!.index;npcTimer=setTimeout(()=>{if(dead||index!==session.core?.index)return;const s=session.state!;session.submit(s.pendingMove?npcChooseMove(s,difficulty.value as NPCDifficulty).horse+1:0);},api.little?550:350);}
+ };
+ const changed=()=>queueMicrotask(render);
+ const submit=(value:number)=>{if(session.submit(value))api.sfx.tap();};
+ const start=()=>{session?.close();previousFinished=0;won=false;session=new HorseSession({online:api.online,mode:mode.value as Mode,seats:api.online?.names.length||Number(count.value),seed:api.online?.seed||'horse-local-'+Date.now(),changed});render();};
+ const restart=control(T('Start a new local game','Bắt đầu ván cùng máy mới'),start);settingsRow.append(mode,count,helperLabel,difficulty,restart);helper.onchange=render;difficulty.onchange=render;
+ root.append(roster,board,status,moves,actions,wait,rules,settings);
+ api.say('Move the horses home!','Đưa các chú ngựa về chuồng nhé!');start();
+ api.plan(()=>{const s=session.state;if(!s||session.waiting||session.busy||!controlsArcadeTurn(s.turn,session.mine,session.online,helper.checked))return null;return s.pendingMove?moves.querySelector(`[data-horse-choice="${npcChooseMove(s,'standard').horse}"]`):roll;},{maxActions:4990});
+ const poll=setInterval(()=>{session.poll();if(lastWaiting!==session.waiting){lastWaiting=session.waiting;render();}},1000);
+ api.onCleanup(()=>{dead=true;clearInterval(poll);clearTimeout(npcTimer);session.close();finish(null);});
+ return completed;
 }
-
-register({ id: 'cacuangua', icon: '🐴', origin: 'vn', name: () => T('Horse Racing Chess', 'Cờ Cá Ngựa'), run });
+register({id:'cacuangua',online:true,icon:'🐴',origin:'vn',name:()=>T('Horse Racing Chess','Cờ Cá Ngựa'),run});

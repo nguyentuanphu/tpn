@@ -12,6 +12,12 @@
     "../js/festival-live.ts",
     "../home/festivals.ts",
     "../js/hanoi-pack.ts",
-    "./hanoi-voice.mts"
+    "./hanoi-voice.mts",
+    "../js/games/cacuangua-core.ts",
+    "../js/games/cacuangua.ts",
+    "../js/games/horse-session.ts",
+    "./horse-rules.mts",
+    "./horse-session.mts",
+    "./horse-browser.mts"
   ]
 }
