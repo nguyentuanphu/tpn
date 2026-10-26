@@ -34,5 +34,20 @@ try{
   },{x:record.model[0],z:record.model[1]});
   await fs.writeFile(path.join(out,id+'-'+phase+'.png'),Buffer.from(png,'base64'));
  }
+ // Inspect every stall from a street-facing camera, before and after the real see-through logic.
+ for(const faded of[false,true]){
+  const png=await P.page.evaluate(async faded=>{
+   const G=window.__sv as unknown as import('../js/main.js').SvMain,{THREE}=await import(String('/js/gfx.js')),{heightAt}=await import(String('/js/world.js'));
+   const R=G.renderer,oldRatio=R.getPixelRatio(),oldSize=R.getSize(new THREE.Vector2()),sheet=document.createElement('canvas');sheet.width=1440;sheet.height=1430;const ctx=sheet.getContext('2d')!;ctx.fillStyle='#fff6e7';ctx.fillRect(0,0,sheet.width,sheet.height);
+   try{R.setPixelRatio(1);R.setSize(480,360,false);R.setViewport(0,0,480,360);R.setScissorTest(false);G.scene.updateMatrixWorld(true);
+    for(const[index,s]of G.world.stalls.entries()){
+     G.seeThrough.step(1);const y=heightAt(s.x,s.z),fx=Math.sin(s.face||0),fz=Math.cos(s.face||0),c=new THREE.PerspectiveCamera(50,4/3,.1,400);c.layers.enable(1);c.position.set(s.x+fx*11+fz*3,y+7,s.z+fz*11-fx*3);c.lookAt(s.x,y+1.4,s.z);
+     if(faded){const a=new THREE.Vector3(s.x+fx*3,y+1.2,s.z+fz*3);G.seeThrough.mark(a,c.position);G.seeThrough.markNearStall(a,c.position);G.seeThrough.step(1);}
+     R.render(G.scene,c);const image=new Image();image.src=R.domElement.toDataURL('image/png');await image.decode();const x=index%6*240,z=Math.floor(index/6)*204;ctx.drawImage(image,x,z,240,180);ctx.fillStyle='#443262';ctx.font='bold 13px sans-serif';ctx.fillText(s.id+' · '+s.place,x+6,z+197,230);
+    }return sheet.toDataURL('image/png').split(',')[1];
+   }finally{G.seeThrough.step(1);R.setPixelRatio(oldRatio);R.setSize(oldSize.x,oldSize.y,false);R.setViewport(0,0,oldSize.x,oldSize.y);}
+  },faded);
+  await fs.writeFile(path.join(out,'all-stalls-'+(faded?'see-through':'normal')+'.png'),Buffer.from(png,'base64'));
+ }
  await P.ctx.close();console.log(JSON.stringify({counts:{places:data.places.length,landmarks:data.landmarks.length,houses:data.houses.length,stalls:data.stalls.length,interactables:data.interactables.length},suspicions:suspicions.map(l=>({id:l.id,home:l.home,nearest:l.nearest.id,region:l.region,drift:l.drift})),errors:P.errors}));
 }finally{await browser.close();}

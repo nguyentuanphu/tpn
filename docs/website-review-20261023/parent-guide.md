@@ -1,6 +1,6 @@
 # A parent-first Sparkle Valley website
 
-Editorial update 26 October 2026 AEDT. Game source: f59deb8d59e99a6149cf4df875f78c9ad8467a56. Full information about learning, folk games, shared play, parent choices and rewards is reviewed against that immutable source before release. This generated guide does not itself deploy the game.
+Editorial update 26 October 2026 AEDT. Game source: a8185680ce5ff360a1d31dedbc87bb89d9c6ecbb. Full information about learning, folk games, shared play, parent choices and rewards is reviewed against that immutable source before release. This generated guide does not itself deploy the game.
 
 [Interactive concept](prototype.html) · [Website review](README.md) · [Editable bilingual content](parent-content.mjs)
 
@@ -366,9 +366,9 @@ The examples describe opportunities for practice and parent-child discussion. Th
 
 ## Family questions written by parents / Câu hỏi gia đình do cha mẹ thêm
 
-### Open Grown-ups → Family questions / Mở Phụ huynh → Câu hỏi gia đình
+### Open Grown-ups → Family → Family questions / Mở Phụ huynh → Gia đình → Câu hỏi gia đình
 
-Pass the grown-up gate, then open Family questions in the data and save-copy section. You can write questions on this device without a Studio account or publishing a website. / Qua bước xác nhận người lớn rồi mở Câu hỏi gia đình trong mục dữ liệu và bản sao lưu. Bạn viết câu hỏi ngay trên máy, không cần tài khoản Studio hay phát hành trang web.
+Pass the grown-up gate, then open Family questions alongside family missions in the Family section. You can write questions on this device without a Studio account or publishing a website. / Qua bước xác nhận người lớn rồi mở Câu hỏi gia đình bên cạnh nhiệm vụ gia đình trong mục Gia đình. Bạn viết câu hỏi ngay trên máy, không cần tài khoản Studio hay phát hành trang web.
 
 ### Write a short question / Viết câu hỏi ngắn
 
