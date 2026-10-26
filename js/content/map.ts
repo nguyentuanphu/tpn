@@ -8,6 +8,18 @@
 // coast in the south). A saved spot (profile.pos) is stamped with it (profile.posMap), so a later layout knows the spot
 // belongs to an older map (js/main.js).
 export const MAP_VERSION = 'D3';
+// Heritage grounds belong to their district, beyond the small residential centre.
+// Keep house anchors, IDs, saved positions and the D3 layout stamp unchanged.
+export const HERITAGE_GROUNDS = {
+  china: { radius: 52, south: -174 },
+  india: { radius: 54, south: -174 }
+} as const;
+export function inHeritageGrounds(place: string, x: number, z: number): boolean {
+  const ground = HERITAGE_GROUNDS[place];
+  if (!ground) return false;
+  const [cx, cz] = anchorOf(place);
+  return z <= ground.south && z >= -WORLD.size/2+12 && Math.abs(x) <= WORLD.size/2-12 && Math.hypot(x - cx, z - cz) <= ground.radius;
+}
 // Is a saved spot, or the family's Studio content, made on this layout? Anything saved before round T has no stamp: it
 // belongs to map 'C'. (A spot or Studio edit from an older layout is never used at the wrong place: js/main.js, js/world.js.)
 export const onThisMap = stamp => (stamp || 'C') === MAP_VERSION;
@@ -20,7 +32,7 @@ export const ROAD_WIDTH = { asphalt: 6.4, dirt: 3.4, footpath: 1.6 };
 
 // (Concept D map: drawing units × 8/7 = metres, the drawing's middle (210, 210) is (0, 0); north up)
 export const WORLD = {
-  size: 480, north: '-z', water: 0,
+  size: 480, north: '-z', water: 0, riverDepth: 1.25,
   edge: [222, 252],                                // the wall of hills on the east, west and north rises between these distances from the middle
   coast: { z: 194, sea: -5 },                      // the southern coast: the sea from about z, with a sandy beach before it
   mountains: { z0: -150, z1: -238, pines: -150, region: -172 }, // the snowy belt in the north: starts rising at z0, full at z1; pines north of `pines`; "Snowcap Peaks" north of `region`
@@ -134,7 +146,8 @@ export const BRIDGES = [
 // a golden welcome gate stands exactly there, across the road (js/roads.js). Roads that end on another road
 // (a junction) have no gate at that end. A road with `loop` closes on itself (the ring road round the home island).
 // js/world.js rounds the corners (fillets) and joins side roads onto the road they end on.
-export const ROADS = [
+type MapRoad = { id: string; kind: string; pts: number[][]; tone?: string; loop?: boolean; gates?: (string | null)[] };
+export const ROADS: MapRoad[] = [
   // the ring road round the home island (Concept D), over the river north and south of it
   { id: 'ring', kind: 'asphalt', tone: 'home', loop: true, pts: [[-30, -130], [48, -130], [96, -82], [96, 62], [48, 104], [-30, 104], [-78, 62], [-78, -82]] },
   // Phố Hai Quê runs across the island; a bridge at each end to the ring road
@@ -198,7 +211,7 @@ export const RELIEF = [{ id: 'gdr', pts: [[-166, -96], [-166, 120]], h: 14, w: 1
   { id: 'truongson', pts: [[123, -30], [122, 30]], h: 14, w: 10, pass: { at: [122, 7], h: 4, w: 14 } }];
 
 // Spots kept free of trees ([x, z, r]): round Uluru.
-export const CLEARINGS = [{ id: 'uluru', place: 'uluru', off: [0, -2], r: 34 }];
+export const CLEARINGS: { id: string; place?: string; off?: number[]; at?: number[]; r: number }[] = [{ id: 'uluru', place: 'uluru', off: [0, -2], r: 34 }];
 
 // ---------- places of interest ----------
 export const SHRINES = [
@@ -248,7 +261,7 @@ export const LANDMARK_AT = {
   bondi: { place: 'melbourne', off: [26, 50] },  // the lifesavers' tower on the southern beach
   lighthouse: { place: 'vungtau', off: [12, 30] }, // on the beach below Vũng Tàu (round T3: moved here with Bạch Dinh)
   turtle: { place: 'hanoi', off: [-29, 3] },     // in Hồ Gươm by Hà Nội (round T2; was a small copy in the market)
-  onepillar: { place: 'market', off: [-10, -13.5] },   // (T1b: 3 m behind the market row)
+  onepillar: { place: 'hanoi', off: [19, 15] },   // Hà Nội heritage garden, clear of the lake and homes
   chuacau: { place: 'hoian', off: [0, -18] },    // the middle of Chùa Cầu over the Hội An canal (round T2; was a small copy in the market)
   longbien: { place: 'hanoi', off: [0, 35] },     // the middle of Long Biên bridge
   storybridge: { place: 'brisbane', off: [0, 31] }, // the middle of the Story Bridge
@@ -330,7 +343,8 @@ export const STALL = { road: 1.5, building: 3, gap: 1.2, path: .9, alone: 12 };
 // from → to (seen from above, north up), −1 on the right; plain: the way in from the gate, not a paved street (China
 // and India; Round U: plants may grow there); at: metres from `from` to the first slot's middle; pitch: metres
 // between slots' middles. The cities' rows are made from their main gate below.
-const ROWS = [
+type MarketRow = { place: string; street: number[][]; w: number; walking?: boolean; side: number; at: number; pitch: number; plain?: boolean; city?: boolean };
+const ROWS: MarketRow[] = [
   { place: 'market', street: [[-24, 0], [24, 0]], w: 8, walking: true, side: 1, at: 2, pitch: 4 },   // north side, north to south Vietnam from the gate; the hosts and the hawker on the south
   { place: 'aussie', street: [[-18, 0], [18, 0]], w: 7, side: -1, at: 0, pitch: 1 },   // south side, facing the shops across the road; slots in metres (the crossing in the middle stays clear)
   { place: 'town', street: [[-26, -6], [26, -6]], w: ROAD_WIDTH.asphalt, side: -1, at: 26.5, pitch: 4 },   // south footpath, east of the crossing, by the park

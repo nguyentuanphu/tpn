@@ -1135,6 +1135,10 @@ await check('validate', async () => {
   return 'ROAD-001/002/003/004/011, VEH-001 and STALL-001…004 hold';
 });
 
+await check('familyuiart', async () => (await import('./family-ui-art.mts')).familyUIArtCheck(b));
+
+await check('worldplacement', async () => (await import('./world-placement.mts')).worldPlacementCheck(b));
+
 await check('stalls', async () => {
   // (T1b tidy streets, owner 11 Oct) STALL-001…004 (js/validate.js): every stall, kiosk, van and tent 1.5 m off a road's
   // or street's edge and 3 m from buildings, 1.2 m between neighbours, facing its street with the tap spot in front, in
@@ -3080,6 +3084,8 @@ await check('fruitbarfamily', async () => {
   await ownerSmoke('orchard-fruitbar-browser.mts', ['--allocations-only']);
   return 'Public non-tester entry, no adult gate, 64px counter taps, online cleanup and six EN/VI allocation/result layouts';
 });
+
+await check('shallowrivers', async () => (await import('./shallow-rivers.mts')).shallowRiversCheck(b));
 
 await check('bridgeunderpass', async () => (await import('./bridge-underpass.mts')).bridgeUnderpassCheck(b));
 

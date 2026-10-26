@@ -90,7 +90,10 @@ function bearNPC() {
 export function createFarm(G) {
   const { scene, world } = G, H = HOME;
   const y0 = H.h;
-  const F = { plots: [], animals: [], pets: [], spots: {} };
+  type FarmScene = { plots: any[]; animals: any[]; pets: any[]; spots: Record<string, {x:number;z:number}>;
+    crateIcon?: THREE.Sprite; bear?: THREE.Group; fish?: {s:THREE.Sprite;a:number;r:number;feed?:number}[]; duck?: THREE.Sprite;
+    pondPos?: THREE.Vector3; balloon?: THREE.Group; syncAnimals?:()=>void; syncPets?:()=>void; animalObjs?:()=>THREE.Object3D[]; update?:(dt:number,t:number)=>void };
+  const F: FarmScene = { plots: [], animals: [], pets: [], spots: {} };
   const at = (dx, dz) => ({ x: H.x + dx, z: H.z + dz });
   const add = (obj, x, z, rot = 0) => { obj.position.set(x, heightAt(x, z), z); obj.rotation.y = rot; scene.add(obj); return obj; };
   const solid = (x, z, r) => world.colliders.push({ x, z, r });
@@ -104,6 +107,19 @@ export function createFarm(G) {
     P(new THREE.BoxGeometry(1.4, 1.2, .2), '#9ad0f0', [-2.8, 2.2, -3.55]), P(new THREE.BoxGeometry(1.4, 1.2, .2), '#9ad0f0', [2.8, 2.2, -3.55]),
     P(new THREE.BoxGeometry(1.6, .2, .4), '#ffffff', [-2.8, 1.5, -3.7]), P(new THREE.BoxGeometry(1.6, .2, .4), '#ffffff', [2.8, 1.5, -3.7]),
     P(new THREE.BoxGeometry(1, 2.4, 1), '#b0a090', [3, 6.5, 1.5]),
+    // A crafted cottage: layered door surround, timber shutters, paved doorstep and flower boxes.
+    P(new THREE.BoxGeometry(2, .18, .45), '#fff3d6', [0, 2.72, -3.68]),
+    ...[-.94, .94].map(x => P(new THREE.BoxGeometry(.15, 2.7, .3), '#fff3d6', [x, 1.36, -3.66])),
+    P(new THREE.BoxGeometry(2.8, .18, 1), '#c9baa0', [0, .09, -4.15]),
+    P(new THREE.BoxGeometry(2.3, .14, .5), '#e6d9bd', [0, .23, -3.9]),
+    ...[-2.8, 2.8].flatMap(x => [
+      ...[-1, 1].map(side => P(new THREE.BoxGeometry(.38, 1.45, .16), '#6aa9a3', [x + side*.92, 2.2, -3.68])),
+      P(new THREE.BoxGeometry(1.5, .12, .24), '#fff3d6', [x, 2.85, -3.7]),
+      P(new THREE.BoxGeometry(.08, 1.2, .1), '#fff3d6', [x, 2.2, -3.72]),
+      P(new THREE.BoxGeometry(1.45, .08, .1), '#fff3d6', [x, 2.2, -3.72]),
+      P(new THREE.BoxGeometry(1.9, .36, .5), '#9d7353', [x, 1.28, -3.82]),
+      ...[-.6, -.2, .2, .6].map((off,i) => P(new THREE.SphereGeometry(.15,8,6), i%2?'#ffd26b':'#f693bf',[x+off,1.57,-3.85]))
+    ]),
     ...[-1.9, -1.2, 1.2, 1.9].map(x => P(new THREE.SphereGeometry(.35, 8, 6), x < 0 ? '#ff7eb8' : '#ffd23f', [x * 1.8, .45, -4.2]))
   ]), toonVC()); hm.castShadow = hm.receiveShadow = true; add(hm, house.x, house.z); solid(house.x, house.z, 5);
   const wardrobe = at(-3.2, 9.6), easel = at(5.6, 9.2), jobs = at(-6.4, 9.4);
@@ -182,7 +198,7 @@ export function createFarm(G) {
   for (let k = 0; k < 6; k++) { const st = new THREE.Mesh(new THREE.SphereGeometry(2.22, 20, 16, k * 1.047, .35), new THREE.MeshStandardMaterial({ color: k % 2 ? '#ffd23f' : '#3cc7e8', roughness: .5 })); st.scale.set(1, 1.2, 1); st.position.y = 6; balloonG.add(st); }
   const basket = new THREE.Mesh(new THREE.BoxGeometry(1.4, .9, 1.4), toon('#a9764a')); basket.position.y = .45; balloonG.add(basket);
   [[.6, .6], [-.6, .6], [.6, -.6], [-.6, -.6]].forEach(([x, z]) => { const r = new THREE.Mesh(new THREE.CylinderGeometry(.02, .02, 3.6, 4), toon('#5a4030')); r.position.set(x * 1.3, 2.7, z * 1.3); r.rotation.set(z * .25, 0, -x * .25); balloonG.add(r); });
-  balloonG.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  balloonG.traverse((o: THREE.Mesh) => { if (o.isMesh) o.castShadow = true; });
   add(balloonG, balloon.x, balloon.z); solid(balloon.x, balloon.z, 1.1);
   F.balloon = balloonG;
   const bub = at(4, -12);
@@ -239,7 +255,7 @@ export function createFarm(G) {
         if (now - a.t >= d.every * 60000 && farm.hay > 0) { a.t = now; farm.products[d.product] = (farm.products[d.product] || 0) + 1; farm.hay--; saveFarm(); }
       });
     }
-    const prodN = Object.values(farm.products).reduce((a, b) => a + b, 0);
+    const prodN = (Object.values(farm.products) as number[]).reduce((a, b) => a + b, 0);
     F.crateIcon.visible = prodN > 0; F.crateIcon.position.y = heightAt(crate.x, crate.z) + 1.5 + Math.sin(t * 3) * .1;
     F.animals.forEach(A => {
       const o = A.obj, dx = A.tx - o.position.x, dz = A.tz - o.position.z, d = Math.hypot(dx, dz);
@@ -323,7 +339,7 @@ function seedPicker(G, h, i) {
   });
 }
 function collect(G, h) {
-  const got = Object.entries(farm.products).filter(([, n]) => n > 0);
+  const got = Object.entries<number>(farm.products).filter(([, n]) => n > 0);
   if (!got.length) { say(farm.hay > 0 ? 'Nothing yet. The animals are busy!' : 'The animals are hungry. Fill the hay box!', farm.hay > 0 ? 'Chưa có gì. Các con vật đang bận!' : 'Các con vật đói rồi. Đổ cỏ khô vào hộp nhé!'); return; }
   let n = 0; got.forEach(([k, c]) => { farm.basket[k] = (farm.basket[k] || 0) + c; n += c; }); farm.products = {}; saveFarm();
   SFX.harvest(); G.fx(h.pos.x, h.pos.y + 2, h.pos.z, got[0] ? PRODUCE[got[0][0]].icon : '🥚');
@@ -351,8 +367,8 @@ function openSell(G, h) {
   const m = modal('sell', ''), card = m.querySelector('.card');
   const close = () => { m.close(); G.paused = false; };
   const draw = () => {
-    const items = Object.entries(farm.basket).filter(([, n]) => n > 0);
-    const wild = Object.entries(h.profile.inv || {}).filter(([k, n]) => WILD[k] && n > 0);
+    const items = Object.entries<number>(farm.basket).filter(([, n]) => n > 0);
+    const wild = Object.entries<number>(h.profile.inv || {}).filter(([k, n]) => WILD[k] && n > 0);
     card.innerHTML = `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>🧺 ${T('Sell to Mr. Bear', 'Bán cho Bác Gấu')}</h2><p class="sub">💰 ${fmt(farm.coins)}</p>
       <div class="bigpick">${items.map(([k, n]) => `<button data-k="${k}"><span>${itemIcon(k)}</span><b>${n}</b><small>${fmt(sellPrice(k))}</small></button>`).join('') || `<p class="note">${T('Your basket is empty. Harvest crops and collect from the barn!', 'Giỏ trống rồi. Thu hoạch và nhặt đồ ở chuồng nhé!')}</p>`}</div>
       ${items.length ? `<button class="btn primary wide big" id="sellAll">💰 ${T('Sell everything', 'Bán hết')}</button>` : ''}
@@ -368,7 +384,7 @@ function openSell(G, h) {
       say(`${WILD[k].name()}: ${spoken(v)}! Now you have ${spoken(farm.coins)}.`, `${WILD[k].name()}: ${spoken(v)}! Giờ con có ${spoken(farm.coins)}.`); G.job('sell'); draw();
     });
     const all = card.querySelector('#sellAll');
-    if (all) all.onclick = () => { let v = 0, n = 0; for (const [k, c] of Object.entries(farm.basket)) { v += sellPrice(k) * c; n += c; } farm.basket = {}; farm.coins += v; saveFarm(); SFX.coin(); setTimeout(SFX.coin, 150); say(`Thank you! That is ${spoken(v)}.`, `Cảm ơn con! Tất cả là ${spoken(v)}.`); G.job('sell', n); draw(); };
+    if (all) all.onclick = () => { let v = 0, n = 0; for (const [k, c] of Object.entries<number>(farm.basket)) { v += sellPrice(k) * c; n += c; } farm.basket = {}; farm.coins += v; saveFarm(); SFX.coin(); setTimeout(SFX.coin, 150); say(`Thank you! That is ${spoken(v)}.`, `Cảm ơn con! Tất cả là ${spoken(v)}.`); G.job('sell', n); draw(); };
   };
   draw();
 }

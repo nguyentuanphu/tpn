@@ -1,0 +1,19 @@
+{
+  "status": "in progress; not approved for deployment",
+  "branch": "work/voice-bitrate-32k",
+  "versionSelected": false,
+  "zipWaived": true,
+  "checks": {
+    "mapUnit": "6 pass, 1 intentional legacy-layout skip",
+    "worldplacementInitial": "pass; later checks include riverbed/boundary revisions",
+    "familyuiartInitial": "pass on phone/tablet/computer, EN/VI; final settled captures and photo/shop controls to recheck",
+    "camera": "pass (215/220 clear, 5 grazing views)",
+    "stalls": "pass: all 42 in 14 places, 5 walking sellers",
+    "hanoivoice": "pass: 18 actual compact clips, choice/default/offline/background",
+    "voicecover": "pass: 11149 lines, 2583 parts, 257 templates",
+    "familyquizprivate": "first attempt failed: one select 51px high due shared form selector; fixed explicit 64px rule, recheck pending",
+    "remaining": "suite continuing; shallow rivers/bridges/underpass/boats, visual contact sheets, final source/full GitHub suite pending"
+  },
+  "factExpansion": "draft only; not enabled/recorded",
+  "houseBuilder": "crafted cottage and 3D furnishings, existing 8-slot/save system; full free-placement construction not implemented"
+}

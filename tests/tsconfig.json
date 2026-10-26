@@ -225,6 +225,14 @@
     "../tools/voice-routing-audit.mts",
     "./voice-provider-routes.mts",
     "../tools/build-hanoi-pack.mts",
-    "./voice-delivery.mts"
+    "./voice-delivery.mts",
+    "./world-placement.mts",
+    "./family-ui-art.mts",
+    "../js/home-decor-models.ts",
+    "../js/content/map.ts",
+    "../js/heritage.ts",
+    "../js/myhouse.ts",
+    "../js/farm.ts",
+    "./shallow-rivers.mts"
   ]
 }

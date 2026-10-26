@@ -213,12 +213,13 @@ export function createParents(G, { say, save, reward }) {
   const noteOf = p => weekNote(weekSummary((p.stats && p.stats.days) || {}, aestDate()), nm(p.name || ''), favOf(p));
 
   // ---------- Grown-ups: one group (Grown-ups is already behind the press-and-hold) ----------
-  function grownupsHTML(open) {
+  function grownupsHTML(open, questionsHTML = '') {
     const all = missions(), kids = profiles, any = ['familyMissions', 'weeklyNote', 'certCard', 'danceBreak', 'bedtime', 'birthday'].some(feat);
-    if (!any) return '';
+    if (!any && !questionsHTML) return '';
     const who = m => m.who ? (kids.find(k => k.id === m.who) || {}).name || '?' : T('everyone', 'mọi bé');
     const months = [...Array(12)].map((_, i) => String(i + 1).padStart(2, '0')), dd = [...Array(31)].map((_, i) => String(i + 1).padStart(2, '0'));
     return `<details class="gsec family" data-sec="family" ${open ? 'open' : ''}><summary><span class="gi">${pic('💛')}</span><b>${T('Family: missions, week, bedtime', 'Gia đình: nhiệm vụ, tuần, giờ ngủ')}</b></summary><div class="gbody">
+      ${questionsHTML}
       ${feat('familyMissions') ? `<h3>${pic('📝')} ${T('Family missions', 'Nhiệm vụ gia đình')}</h3>
       <p class="note">${T('Write a real-life job ("Help set the table"). The child sees it in the game; when it is done, tick ✓ here or hold ✓ in their Adventures page: coins and a sticker. Missions your family sent from the computer show here too.', 'Viết một việc ngoài đời ("Giúp dọn bàn ăn"). Bé thấy nhiệm vụ trong trò chơi; làm xong, đánh dấu ✓ ở đây hoặc giữ ✓ trong trang Nhiệm vụ của bé: được tiền và hình dán. Nhiệm vụ gia đình gửi từ máy tính cũng hiện ở đây.')}</p>
       ${guideHTML()}

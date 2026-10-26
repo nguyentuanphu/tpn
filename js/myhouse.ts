@@ -3,6 +3,7 @@
 // stay, owner round D), free ones, and the family postcards the child has (js/familycards.js) in a frame. Each child
 // keeps their own house (profile.homeDeco: { spot: key }); in split screen the room shows the first visitor's.
 // A change says "HomeDecorated" on the event bus.
+import { homeDecoration } from './home-decor-models.js';
 import { THREE, sprite } from './gfx.js';
 import { T } from './i18n.js';
 import { say } from './voice.js';
@@ -20,7 +21,9 @@ import { modal } from './ui.js';
 import { FESTCAL } from './content/festcal.js';
 
 // what can go in a spot: key → { icon, price (in coins, shown in the game's money: 5 coins = 50c), en, vi, wall (hangs on a wall) }
-export const DECOR = {
+type Decoration = { icon: string; price: number; en: string; vi: string; wall?: boolean; keepsake?: boolean };
+type DecorationOption = { key: string; icon?: string; photo?: string; name: string; price: number };
+export const DECOR: Record<string, Decoration> = {
   teddy: { icon: '🧸', price: 0, en: 'Teddy bear', vi: 'Gấu bông' },
   balloons: { icon: '🎈', price: 3, en: 'Balloons', vi: 'Bóng bay' },
   sunflower: { icon: '🌻', price: 4, en: 'Sunflowers', vi: 'Hoa hướng dương' },
@@ -63,7 +66,7 @@ export function createMyHouse(G) {
   const guide = async h => { G.paused = true; await G.dialog(T('My house', 'Nhà của con'), HOUSE_GUIDE.map(([, en, vi]) => [en.replace(/✨ /g, ''), vi.replace(/✨ /g, '')])); G.paused = false; if (h && h.profile) { h.profile.houseGuideSeen = true; if (G.tried) G.tried(h, 'houseGuide'); saveProfiles(); } };
   const guideOn = () => !G.keep || G.keep('houseGuide');   // (batch rollout) Studio switch 'houseGuide'
   const door = { x: HOME.x, z: HOME.z + 14 - 3.55 - 1.3 };
-  const home = { id: 'myhouse', mine: true, kind: 'mine', room: 'mine', H: null, people: [], door, hs: { x: HOME.x, z: HOME.z + 14, rot: Math.PI, d: 7 },
+  const home = { extra: undefined as ((group: THREE.Group, context: any) => void) | undefined, id: 'myhouse', mine: true, kind: 'mine', room: 'mine', H: null, people: [], door, hs: { x: HOME.x, z: HOME.z + 14, rot: Math.PI, d: 7 },
     name: () => T('My house', 'Nhà của con'), where: () => T('Sunny Farm', 'Nông Trại Nắng Mai'), owner: null };
   // what the room shows: the visitor's own decorations
   home.extra = (g, { RX, RY, RZ, add }) => {
@@ -75,7 +78,7 @@ export function createMyHouse(G) {
         frame.userData.roomShape = true; ph.userData.roomShape = true;
         new THREE.TextureLoader().load(c.photo, tx => { tx.colorSpace = THREE.SRGBColorSpace; ph.material.map = tx; ph.material.needsUpdate = true; });
         const grp = new THREE.Group(); grp.add(frame); ph.position.z = .035; grp.add(ph); grp.position.set(s.x, s.y + .1, s.z); grp.rotation.y = Math.abs(s.x) > 6.5 ? -Math.sign(s.x) * Math.PI / 2 : 0; g.add(grp);
-      } else if (it) { const sp = sprite(it.icon, s.wall ? 1 : 1.2); sp.position.set(s.x, s.y + (s.wall ? .1 : .2), s.z); g.add(sp); }
+      } else if (it) { const model = homeDecoration(key, it.icon, !!s.wall); model.position.set(s.x, s.wall ? s.y : .12, s.z); model.rotation.y = Math.abs(s.x) > 6.5 ? -Math.sign(s.x) * Math.PI / 2 : 0; g.add(model); }
       else { const sp = sprite('✨', .55); sp.position.set(s.x, s.y, s.z); g.add(sp); }
       if (k === 0 && guideOn()) { const q = sprite('❓', .7); q.position.set(-5, 1.3, 5); g.add(q); }
       if (k === 0 && guideOn()) add({ id: 'house_help', x: RX - 5, z: RZ + 5, y: RY, r: 1.3, icon: '❓', bubble: '❓', label: () => T('How do I decorate?', 'Trang trí thế nào?'), act: h => guide(h) });   // (Round U) the guide again
@@ -94,7 +97,7 @@ export function createMyHouse(G) {
   function choose(h, k) {
     const p = h.profile, d = deco(p), s = SPOTS[k], cards = customAlbum().filter(c => familyCards(p)[c.id]);
     G.paused = true; SFX.tap();
-    const opts = Object.entries(DECOR).filter(([key, v]) => !!v.wall === !!s.wall && (!v.keepsake || (Array.isArray(p.keepsakes) && p.keepsakes.includes(key)))).map(([key, v]) => ({ key, icon: v.icon, name: T(v.en, v.vi), price: v.price }))
+    const opts = Object.entries(DECOR).filter(([key, v]) => !!v.wall === !!s.wall && (!v.keepsake || (Array.isArray(p.keepsakes) && p.keepsakes.includes(key)))).map<DecorationOption>(([key, v]) => ({ key, icon: v.icon, name: T(v.en, v.vi), price: v.price }))
       .concat(s.wall ? cards.map(c => ({ key: 'card:' + c.id, photo: c.photo, name: T(c.en, c.vi) || T('Family photo', 'Ảnh gia đình'), price: 0 })) : []);
     const m = modal('decor', `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>${pic('🎨')} ${s.wall ? T('Something for the wall', 'Treo gì lên tường') : T('Something for the floor', 'Đặt gì trên sàn')}</h2>
       <p class="note center">${pic('💰')} ${fmt(farm.coins)}</p>

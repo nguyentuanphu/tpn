@@ -272,7 +272,7 @@ export class Hero {
       if (this.world.groundAt(x, z) + .7 > y) k = Math.max(.3, tt - .12); }
     // (bug #33) houses, stalls, trees and other solid things between the child and the camera no longer pull the camera in:
     // they fade to see-through instead (js/seethrough.js), and the camera stays where it is
-    if (!close && game.seeThrough) game.seeThrough.mark(target, want);
+    if (!close && game.seeThrough) { game.seeThrough.mark(target, want); game.seeThrough.markNearStall(target, want); }
     if (close) { this._camK = 1; this._camLift = 0; this._camFreeT = 0; }
     else {
       const ck = this._camK == null ? k : this._camK;

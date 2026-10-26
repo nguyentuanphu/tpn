@@ -57,6 +57,7 @@ marketing/source/runvalley.log
 /js/content/festival-visibility.js
 /js/content/fruit-parade.js
 /js/content/hanoi-pack-info.js
+/js/content/map.js
 /js/content/releases.js
 /js/content/savecopy.js
 /js/content/secondset.js
@@ -73,6 +74,7 @@ marketing/source/runvalley.log
 /js/family-quiz-editor.js
 /js/family-quiz-store.js
 /js/familydevices.js
+/js/farm.js
 /js/festival-live.js
 /js/festivals.js
 /js/film.js
@@ -154,6 +156,8 @@ marketing/source/runvalley.log
 /js/games/vietnam2.js
 /js/games/words2.js
 /js/hanoi-pack.js
+/js/heritage.js
+/js/home-decor-models.js
 /js/howto-data.js
 /js/howto-player.js
 /js/howto-registry.js
@@ -166,6 +170,7 @@ marketing/source/runvalley.log
 /js/lotus.js
 /js/main.js
 /js/mictest.js
+/js/myhouse.js
 /js/net.js
 /js/netgames.js
 /js/netmsg.js

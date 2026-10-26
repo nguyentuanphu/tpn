@@ -4,7 +4,7 @@
 // to knock on.
 import { THREE, toon, toonVC, P, merge, outline, sprite } from './gfx.js';
 import { T, nm, registerName } from './i18n.js';
-import { landmarkAt } from './content/map.js';
+import { landmarkAt, inHeritageGrounds } from './content/map.js';
 import { heightAt, oldHeightAt, roadDist, VILLAGE, MARKET, AUSSIE, CHINA, INDIA, LAKE, WATER, APOSTLES, FESTGROUNDS, LEAFIES, HALF } from './world.js';
 import { buildAvatar } from './avatar.js';
 import { LANDMARKS, postcard } from './regions.js';
@@ -20,7 +20,8 @@ const look = (style, color, hair, hairStyle, skin = '#f6c7a5', hat = 'none') => 
 // ---------- the landmarks ----------
 // [id, country, icon, name en/vi, fact en/vi, model]; where to start looking for a clear spot comes from the map
 // (round T: js/content/map.js LANDMARK_AT)
-const SITES = [
+type HeritageSite = [id: string, country: string, icon: string, name: [string, string], fact: [string, string], model: string];
+const SITES: HeritageSite[] = [
   // Vietnam
   ['halong', 'vn', '⛰️', ['Hạ Long Bay', 'Vịnh Hạ Long'], ['Hạ Long Bay has almost two thousand limestone islands rising out of green water. It is a UNESCO World Heritage site. Legend says a dragon made it!', 'Vịnh Hạ Long có gần hai nghìn hòn đảo đá vôi nhô lên khỏi mặt nước xanh. Đây là Di sản Thế giới UNESCO. Truyền thuyết kể rằng rồng mẹ đã tạo nên vịnh!'], 'halong'],
   ['hue', 'vn', '🏯', ['Huế Imperial City', 'Kinh thành Huế'], ['Huế was the home of the last Vietnamese emperors. The palace has golden roofs, red columns and a big moat. UNESCO World Heritage.', 'Huế là nơi ở của các vị vua cuối cùng của Việt Nam. Cung điện có mái vàng, cột đỏ và hào nước lớn. Di sản Thế giới UNESCO.'], 'hue'],
@@ -50,7 +51,7 @@ const MODELS = {
   halong: () => { const p = []; [[-6, 0, 7], [0, -5, 10], [6, 2, 8], [-2, 7, 6], [9, -6, 5]].forEach(([x, z, h], i) => { p.push(P(new THREE.DodecahedronGeometry(2.2, 0), '#a8a092', [x, h * .45, z], [i, i * 2, 0], [1, h / 3.2, 1]), P(new THREE.IcosahedronGeometry(1.7, 0), '#4f8f42', [x, h * .9, z], [0, i, 0], [1.1, .5, 1.1])); }); return p; },
   hue: () => { const p = [P(B(18, 1, 11), '#d9cdb8', [0, .5, 0]), P(B(14, 3, 7), '#c62828', [0, 2.5, 0])]; for (let i = 0; i < 8; i++) p.push(P(C(.3, .3, 3), '#8e1e1e', [-6.3 + i * 1.8, 2.5, 3.8])); p.push(P(new THREE.ConeGeometry(1, 1, 4), '#f2c230', [0, 5.2, 0], [0, Math.PI / 4, 0], [12, 1.6, 7]), P(new THREE.ConeGeometry(1, 1, 4), '#f2c230', [0, 6.7, 0], [0, Math.PI / 4, 0], [8.5, 1.5, 5])); [-1, 1].forEach(s => p.push(P(new THREE.ConeGeometry(.2, 1, 6), '#f2c230', [s * 8.2, 5.4, 0], [0, 0, s * -.8]))); p.push(P(B(20, .25, 2), '#4f9ad8', [0, .05, 7.2])); return p; },
   myson: () => { const p = []; [[0, 0, 7], [-5, 2, 5], [5, 1.5, 5.5]].forEach(([x, z, h]) => { for (let k = 0; k < 4; k++) { const w = 3.2 - k * .7; p.push(P(B(w, h / 4 * (k ? .8 : 1.4), w), k % 2 ? '#b65a3a' : '#a14a30', [x, h / 4 * k * .95 + h / 8, z])); } p.push(P(new THREE.ConeGeometry(.6, 1.2, 4), '#8e3a24', [x, h + .2, z])); }); p.push(P(B(16, .4, 8), '#7aa36a', [0, .2, 1])); return p; },
-  cave: () => { const p = [P(S(7, 16, 10), '#8f8a80', [0, 0, 0], [0, 0, 0], [1.3, .85, 1])]; p.push(P(C(3, 3, 6, 16, 1, true), '#2b2238', [0, 2.2, 5.8], [Math.PI / 2, 0, 0], [1, 1, 1.1])); for (let i = 0; i < 6; i++) p.push(P(new THREE.ConeGeometry(.3, 1.4, 6), '#d9d4c8', [-2.2 + i * .9, 4.3, 8.4], [Math.PI, 0, 0])); p.push(P(B(5, .1, 8), '#4f9ad8', [0, .1, 11])); return p; },
+  cave: () => { const p = [P(S(7, 16, 10), '#8f8a80', [0, 0, 0], [0, 0, 0], [1.3, .85, 1])]; p.push(P(C(3, 3, 6, 16), '#2b2238', [0, 2.2, 5.8], [Math.PI / 2, 0, 0], [1, 1, 1.1])); for (let i = 0; i < 6; i++) p.push(P(new THREE.ConeGeometry(.3, 1.4, 6), '#d9d4c8', [-2.2 + i * .9, 4.3, 8.4], [Math.PI, 0, 0])); p.push(P(B(5, .1, 8), '#4f9ad8', [0, .1, 11])); return p; },
   trangan: () => { const p = []; [[-5, -2, 7], [4, -3, 9], [0, -6, 6]].forEach(([x, z, h], i) => p.push(P(new THREE.DodecahedronGeometry(2.5, 0), '#9a9488', [x, h / 2 - 1, z], [i, i, 0], [1, h / 4, 1]), P(new THREE.IcosahedronGeometry(2, 0), '#4f8f42', [x, h - .8, z], [0, i, 0], [1, .5, 1]))); p.push(P(B(14, .1, 7), '#5fa8d8', [0, .1, 3]), P(B(2.6, .4, .9), '#8a5a3b', [0, .4, 3]), P(new THREE.ConeGeometry(.45, .35, 16), '#e8d27a', [.5, .9, 3])); return p; },
   // the reef (owner's screenshot, round N: a bright blue slab over the beach): a sandy shoal under the water, well out
   // in the lake, with corals rising a little above the surface; nothing flat sits on top of the water any more
@@ -69,18 +70,20 @@ const MODELS = {
   mahabodhi: () => { const p = [P(B(9, 1, 9), '#c9b89a', [0, .5, 0]), P(B(5.5, 4, 5.5), '#c9b089', [0, 3, 0]), P(new THREE.CylinderGeometry(.6, 2.6, 10, 4), '#d4ba90', [0, 10, 0], [0, Math.PI / 4, 0]), P(C(.5, .6, 1.4, 10), '#f2c230', [0, 15.6, 0])]; [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([a, b]) => p.push(P(new THREE.CylinderGeometry(.3, 1, 4, 4), '#d4ba90', [a * 3.3, 6.5, b * 3.3], [0, Math.PI / 4, 0]))); p.push(P(C(.4, .5, 3), '#7a5236', [6, 1.5, 3]), P(new THREE.IcosahedronGeometry(2.4, 1), '#4f9a4a', [6, 4.6, 3])); return p; }
 };
 
-export let CULTURE_CROPS = {};
+type CultureCrop = [key: string, icon: string, type: string, sell: number, name: [string, string], color: string];
+export let CULTURE_CROPS: Record<string, CultureCrop[]> = {};
 export function createHeritage(G, { give, sfx, say, toast }) {
   const { scene, world } = G;
   // find a clear, fairly flat spot near (x, z) (never over a hidden Leafy or another landmark's sign: round R, a landmark
   // covered two Leafies and Qutub Minar stood on Hampi's sign)
   const signs = [];
   const free = (x, z, r) => [APOSTLES, ...Object.values(FESTGROUNDS)].every(f => dist2(f.x, f.z, x, z) > 17 + r) && LEAFIES.every(l => dist2(l.x, l.z, x, z) > r + 4) && signs.every(q => dist2(q.x, q.z, x, z) > r + 3) && world.colliders.every(c => dist2(c.x, c.z, x, z) > c.r + r) && world.boxes.every(b => x < b.x0 - r || x > b.x1 + r || z < b.z0 - r || z > b.z1 + r);
-  function spot(x, z, r, water = false, ok = null, wide = false) {
+  function spot(x, z, r, water = false, ok = null, wide = false, territory: string | null = null) {
     for (let k = 0; k < (wide ? 1200 : 400); k++) {
       // (17 Oct AEDT, PERF-001) the same tests as before, cheapest first, each only when the ones before it passed (none of
       // them changes anything, so the first spot that passes them all is the same one)
       const a = k * 2.399, d = Math.sqrt(k) * 2.2, px = x + Math.cos(a) * d, pz = z + Math.sin(a) * d, h = oldHeightAt(px, pz);
+      if (territory && !inHeritageGrounds(territory, px, pz)) continue;
       if (!((water || h > WATER + 1.2) && h < 26)) continue;
       if (!(Math.abs(oldHeightAt(px + r * .6, pz) - oldHeightAt(px - r * .6, pz)) + Math.abs(oldHeightAt(px, pz + r * .6) - oldHeightAt(px, pz - r * .6)) < (water ? 99 : 3.5))) continue;
       if (!water) { const rd = roadDist(px, pz); if (!(rd.d > rd.road.w / 2 + Math.min(r, 7) + .5)) continue; } // never on a road
@@ -88,7 +91,8 @@ export function createHeritage(G, { give, sfx, say, toast }) {
     }
     // nothing clear close by (a crowded corner such as India Village): look further out with a little less room before
     // falling back to the spot on the plan (round R: Hampi fell back and its sign stood on another landmark)
-    if (ok && !wide) return spot(x, z, r * .8, water, ok, true);
+    if (ok && !wide) return spot(x, z, r * .8, water, ok, true, territory);
+    if (territory) return null; // Never relocate a country landmark into another district, even if its grounds are full.
     return [x, z];
   }
   const place = (parts, x, z, rot, ol = true) => { const m = new THREE.Mesh(merge(parts), toonVC()); const y = Math.min(heightAt(x, z), heightAt(x + 2, z), heightAt(x - 2, z), heightAt(x, z + 2), heightAt(x, z - 2)); m.position.set(x, y - .05, z); m.rotation.y = rot; m.castShadow = m.receiveShadow = true; scene.add(m); if (ol) outline(m, .03, '#4a3a3f'); return m; };
@@ -112,7 +116,9 @@ export function createHeritage(G, { give, sfx, say, toast }) {
       // (and its sign, which stands in front facing the place it belongs to, is on open ground too)
       const out = model === 'cave' ? 13 : model === 'hue' || model === 'forbidden' || model === 'exhibition' ? 10 : 8.5;
       const signClear = (px, pz) => { const a = face(px, pz, cen[cc][0], cen[cc][1]), sx = px + Math.sin(a) * out, sz = pz + Math.cos(a) * out; return world.colliders.every(c => dist2(c.x, c.z, sx, sz) > c.r + 2); };
-      [x, z] = spot(nx, nz, 9, false, signClear); mx = x; mz = z;
+      const position = spot(nx, nz, 9, false, signClear, false, cc === 'cn' ? 'china' : cc === 'in' ? 'india' : null);
+      if (!position) { console.warn(`No clear heritage ground for ${id}`); continue; }
+      [x, z] = position; mx = x; mz = z;
       const rot = face(x, z, cen[cc][0], cen[cc][1]);
       place(MODELS[model](), x, z, rot); world.colliders.push({ x, z, r: id === 'kakadu' ? 5 : model === 'cave' ? 9.5 : 7 });
       if (id === 'kakadu') { // painted animals on the rock face
@@ -171,7 +177,7 @@ export function createHeritage(G, { give, sfx, say, toast }) {
   });
 
   // ---------- crops and fruit trees from each culture ----------
-  const CROPS = CULTURE_CROPS = {
+  const CROPS: Record<string, CultureCrop[]> = CULTURE_CROPS = {
     vn: [['coconut', '🥥', 'tree', 9, ['Coconut', 'Dừa'], '#7a5236'], ['jackfruit', '🍈', 'tree', 10, ['Jackfruit', 'Mít'], '#9ccf5a'], ['chilli', '🌶️', 'veg', 4, ['Chilli', 'Ớt'], '#e8433a'], ['waterspinach', '🥬', 'veg', 4, ['Water spinach', 'Rau muống'], '#4f9a4a'], ['sweetpotato', '🍠', 'veg', 5, ['Sweet potato', 'Khoai lang'], '#a8433a']],
     au: [['macadamia', '🥜', 'tree', 9, ['Macadamia nuts', 'Hạt mắc ca'], '#c98a4a'], ['quandong', '🍑', 'tree', 8, ['Quandong (desert peach)', 'Quả quandong (đào sa mạc)'], '#e8433a'], ['fingerlime', '🍋', 'tree', 9, ['Finger lime', 'Chanh ngón tay'], '#9ccf5a'], ['bushtomato', '🍅', 'veg', 6, ['Bush tomato', 'Cà chua dại'], '#e8a33a']],
     cn: [['cnpeach', '🍑', 'tree', 8, ['Longevity peach', 'Đào tiên'], '#ffb3cf'], ['mandarin', '🍊', 'tree', 7, ['Mandarin', 'Quýt'], '#ff9f1a'], ['bokchoy', '🥬', 'veg', 4, ['Bok choy', 'Cải thìa'], '#7ac06a'], ['snowpea', '🫛', 'veg', 5, ['Snow peas', 'Đậu Hà Lan'], '#5fb04f']],

@@ -215,7 +215,7 @@ const flat = (h, x, z, c, r, fall, target) => { const R = r + fall, dx = x - c.x
 // The level ground round every village, town and city reaches WIDE metres further than the places themselves, so
 // there is always room to add new houses and buildings. It is switched on by widenFlatLand() once the whole world is
 // built, so everything already there keeps exactly its place (only lifted or lowered onto the new ground).
-let WIDE = 0, PADS = null, RB_ON = false, RB_COV = false;
+let WIDE = 0, PADS = null, RB_ON = false, RB_COV = false, HERITAGE_GROUNDS_ON = false;
 const RB_GRID = new Map(), RB_T = [], RB_D = new Float64Array(256), RB_Y = new Float64Array(256), RB_W = new Float64Array(256), RB_E = new Uint8Array(256), RB_P = new Uint8Array(256); // (past a road's very end there is no road)
 // the road beds: [{ ax, az, bx, bz, ya, yb, hw }], registered by js/roads.js before it switches them on
 export function setRoadBeds(segs) { RB_GRID.clear(); for (const S of segs) { const r = S.hw + 10; for (let i = Math.floor((Math.min(S.ax, S.bx) - r) / 8); i <= Math.floor((Math.max(S.ax, S.bx) + r) / 8); i++) for (let j = Math.floor((Math.min(S.az, S.bz) - r) / 8); j <= Math.floor((Math.max(S.az, S.bz) + r) / 8); j++) { const k = fpKey(i, j); if (!RB_GRID.has(k)) RB_GRID.set(k, []); RB_GRID.get(k).push(S); } } }
@@ -240,8 +240,8 @@ export function heightAt(x, z) {
   h = flat(h, x, z, VILLAGE, VILLAGE.r + WIDE, 16, VILLAGE.h);
   h = flat(h, x, z, HOME, HOME.r + WIDE * .8, 16, HOME.h);
   h = flat(h, x, z, PLAYGROUND, PLAYGROUND.r, 12, PLAYGROUND.h);
-  h = flat(h, x, z, CHINA, CHINA.r + WIDE, 18, CHINA.h);
-  h = flat(h, x, z, INDIA, INDIA.r + WIDE, 18, INDIA.h);
+  h = flat(h, x, z, CHINA, Math.max(CHINA.r + WIDE, HERITAGE_GROUNDS_ON ? MAP.HERITAGE_GROUNDS.china.radius : 0), 18, CHINA.h);
+  h = flat(h, x, z, INDIA, Math.max(INDIA.r + WIDE, HERITAGE_GROUNDS_ON ? MAP.HERITAGE_GROUNDS.india.radius : 0), 18, INDIA.h);
   h = flat(h, x, z, PADDIES, PADDIES.r, 12, PADDIES.h + (Math.floor((z - PADDIES.z) / 9) * .35));
   if (Math.abs(x - BAMBOO.x) < BAMBOO.r + 10 && Math.abs(z - BAMBOO.z) < BAMBOO.r + 10) h = flat(h, x, z, BAMBOO, BAMBOO.r - 10, 20, 5 + fbm(x * .03, z * .03, 2) * 2); // (farther: weight 0, no noise needed)
   const dl = dist2(x, z, LAKE.x, LAKE.z);
@@ -275,7 +275,9 @@ export function heightAt(x, z) {
   // the southern coast: a sandy beach, then the sea (its edge waves gently)
   { const cz = COAST.z + Math.sin(x * .025) * 4 + Math.sin(x * .07 + 1) * 2; h = lerp(h, Math.min(h, 1), smooth(cz - 26, cz - 8, z)); h = lerp(h, COAST.sea, smooth(cz - 6, cz + 8, z)); }
   const dr = riverDist(x, z);
-  h = lerp(h, -2.6 - mtn * 2, 1 - smooth(3.5, 11, dr));
+  // A shallow, even riverbed: keep the swimming channel below the 0.9 m threshold and the boat hulls clear.
+  // Water level, bridge decks and banks stay at their authored elevations.
+  h = lerp(h, WATER - MAP.WORLD.riverDepth, 1 - smooth(3.5, 11, dr));
   // (round T2) ponds: a round hollow with a gentle shore (after the places' flat ground, so a pond by a city stays wet)
   let dpd = 1e9; for (const P of PONDS) { if (Math.abs(x - P.x) > P.r + 8 || Math.abs(z - P.z) > P.r + 8) continue; const d = dist2(x, z, P.x, P.z); if (d > P.r + 8) continue; dpd = Math.min(dpd, d - P.r); h = lerp(h, Math.min(h, 1), 1 - smooth(P.r, P.r + 6, d)); h = lerp(h, -P.depth, 1 - smooth(P.r * .55, P.r, d)); /* (r89) a pond's own depth: Hồ Gươm is shallow enough to wade */ if (P.islet) h = lerp(h, WATER + .5, 1 - smooth(P.islet, P.islet + 1.6, d)); }
   // Raised banks either side of each bridge.
@@ -337,8 +339,8 @@ export function regionAt(x, z) {
   if (dist2(x, z, PLATEAU.x, PLATEAU.z) < PLATEAU.r + 8 && heightAt(x, z) > PLATEAU.h - 2) return 'plateau'; // its top, from the map (round T lowered it to 8 m)
   for (const c of CITIES) if (x > c.x0 - 4 && x < c.x1 + 4 && z > c.z0 - 4 && z < c.z1 + 4) return c.id;
   if (dist2(x, z, VILLAGE.x, VILLAGE.z) < VILLAGE.r + 10) return 'village';
-  if (dist2(x, z, CHINA.x, CHINA.z) < CHINA.r + 8) return 'china';
-  if (dist2(x, z, INDIA.x, INDIA.z) < INDIA.r + 8) return 'india';
+  if (MAP.inHeritageGrounds('china', x, z) || dist2(x, z, CHINA.x, CHINA.z) < CHINA.r + 8) return 'china';
+  if (MAP.inHeritageGrounds('india', x, z) || dist2(x, z, INDIA.x, INDIA.z) < INDIA.r + 8) return 'india';
   if (dist2(x, z, HOME.x, HOME.z) < HOME.r + 6) return 'home';
   if (dist2(x, z, PADDIES.x, PADDIES.z) < PADDIES.r + 8) return 'paddies';
   if (x > TOWN.x0 - 3 && x < TOWN.x1 + 3 && z > TOWN.z0 - 3 && z < TOWN.z1 + 3) return 'town';
@@ -485,6 +487,9 @@ export const plotBox = P => { const c = Math.abs(Math.cos(P.rot)), s = Math.abs(
 // the ground as it was before the level land was widened (the same while the world is being built)
 export function oldHeightAt(x, z) { const w = WIDE; WIDE = 0; try { return heightAt(x, z); } finally { WIDE = w; } }
 export function createWorld(scene, quality) {
+  // Generate the legacy housing/garden lots above on the original terrain first: saved home/plot IDs must not shift.
+  // Then build the rendered terrain and all placed objects on the district's level heritage grounds.
+  HERITAGE_GROUNDS_ON = true;
   const wParts = {
     colliders: [], boxes: [], platforms: [], stalls: [], walks: [], houses: [], plants: [], overcast: 0, interactables: [], updaters: [], lanterns: [], shrineMeshes: {}, towerMeshes: {}, leafyMeshes: {},
     time: .36

@@ -1,0 +1,38 @@
+// Inventory actual rendered positions. Reports suspicions; never relocates or alters family/Studio edits.
+import fs from'node:fs/promises';
+import path from'node:path';
+import {launch,open,clear,noWelcome}from'./harness.mjs';
+const phase=process.argv.includes('--baseline')?'baseline':'after';
+const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'docs/world-placement-audit-20261027');await fs.mkdir(out,{recursive:true});
+const browser=await launch();
+try{
+ const P=await open(browser,{w:1100,h:800,settings:{online:false,countPlayers:false,voice:false}});await clear(P.page);await noWelcome(P.page);
+ const data=await P.page.evaluate(async()=>{
+  const G=window.__sv,W=await import(String('/js/world.js')),M=await import(String('/js/content/map.js')),R=await import(String('/js/regions.js'));G.paused=true;
+  const named=M.PLACES.filter(p=>p.name||['china','india','town','market','village','aussie','home','hoian','uluru'].includes(p.id));
+  const nearest=(x:number,z:number)=>named.map(p=>({id:p.id,cc:p.id==='china'?'cn':p.id==='india'?'in':p.cc,at:M.anchorOf(p.id),distance:Math.hypot(M.anchorOf(p.id)[0]-x,M.anchorOf(p.id)[1]-z)})).sort((a,b)=>a.distance-b.distance)[0];
+  const landmarks=R.LANDMARKS.map(l=>{
+   const x=l.mx??l.x,z=l.mz??l.z,planned=M.landmarkAt(l.id),home=M.LANDMARK_HOME[l.id],actual=nearest(x,z),expected=M.PLACES.find(p=>p.id===home);
+   const expectedCountry=home==='china'?'cn':home==='india'?'in':expected?.cc;
+   return{id:l.id,name:typeof l.name==='function'?l.name():l.name,declaredCountry:l.cc,home,plannedPlace:M.LANDMARK_AT[l.id]?.place,planned,model:[x,z],sign:[l.x,l.z],modelPointUsesSignFallback:l.mx==null,region:W.regionAt(x,z),nearest:actual,expectedCountry,drift:planned?Math.hypot(x-planned[0],z-planned[1]):null,countryMismatch:!!expectedCountry&&!!actual.cc&&expectedCountry!==actual.cc,homeMismatch:!!home&&actual.id!==home};
+  });
+  const houses=G.world.houses.map((h,i)=>{const actual=nearest(h.x,h.z),city=h.info?.city,expected=M.PLACES.find(p=>p.name&&(JSON.stringify(p.name)===JSON.stringify(city)||p.name.includes(city)));return{index:i,x:h.x,z:h.z,kind:h.kind,city,expectedCity:expected?.id,region:W.regionAt(h.x,h.z),nearest:actual,declaredCountry:h.kind==='china'?'cn':h.kind==='india'?'in':expected?.cc,studioCustom:!!h.custom};});
+  const stalls=G.world.stalls.map((s,i)=>({index:i,keys:Object.keys(s),x:s.x,z:s.z,id:s.id,tap:s.tap,w:s.w,d:s.d,face:s.face,kind:s.kind,place:s.place,cc:s.cc,
+    nearestHouse:G.world.houses.map(h=>({x:h.x,z:h.z,kind:h.kind,distance:Math.hypot(h.x-s.x,h.z-s.z)})).sort((a,b)=>a.distance-b.distance)[0],
+    seller:G.interactables.filter(i=>i.id===s.tap).map(i=>({x:i.x,z:i.z,r:i.r})),region:W.regionAt(s.x,s.z),nearest:nearest(s.x,s.z)}));
+  const interactables=G.interactables.filter(i=>Number.isFinite(i.x)&&Number.isFinite(i.z)).map(i=>({id:i.id,x:i.x,z:i.z,region:W.regionAt(i.x,i.z)}));
+  return{mapVersion:M.MAP_VERSION,places:M.PLACES.map(p=>({...p,anchor:M.anchorOf(p.id)})),landmarks,houses,stalls,interactables};
+ });
+ const suspicions=data.landmarks.filter(l=>l.countryMismatch||l.drift>25||l.plannedPlace&&l.home&&l.plannedPlace!==l.home);
+ await fs.writeFile(path.join(out,phase+'.json'),JSON.stringify({capturedAEDT:new Date().toLocaleString('en-AU',{timeZone:'Australia/Sydney'}),...data,suspicions,errors:P.errors},null,2)+'\n');
+ for(const id of['terracotta','onepillar','turtle','bondi']){
+  const record=data.landmarks.find(l=>l.id===id);if(!record)continue;
+  const png=await P.page.evaluate(async({x,z})=>{
+   const G=window.__sv,{THREE}=await import(String('/js/gfx.js')),{heightAt}=await import(String('/js/world.js'));const R=G.renderer,oldRatio=R.getPixelRatio(),oldSize=R.getSize(new THREE.Vector2()),oldViewport=R.getViewport(new THREE.Vector4());
+   try{R.setPixelRatio(1);R.setSize(900,700,false);R.setViewport(0,0,900,700);const c=new THREE.PerspectiveCamera(50,900/700,.1,600),y=heightAt(x,z);c.layers.enable(1);c.position.set(x+28,y+30,z+35);c.lookAt(x,y+2,z);R.render(G.scene,c);return R.domElement.toDataURL('image/png').split(',')[1];}
+   finally{R.setPixelRatio(oldRatio);R.setSize(oldSize.x,oldSize.y,false);R.setViewport(oldViewport);}
+  },{x:record.model[0],z:record.model[1]});
+  await fs.writeFile(path.join(out,id+'-'+phase+'.png'),Buffer.from(png,'base64'));
+ }
+ await P.ctx.close();console.log(JSON.stringify({counts:{places:data.places.length,landmarks:data.landmarks.length,houses:data.houses.length,stalls:data.stalls.length,interactables:data.interactables.length},suspicions:suspicions.map(l=>({id:l.id,home:l.home,nearest:l.nearest.id,region:l.region,drift:l.drift})),errors:P.errors}));
+}finally{await browser.close();}

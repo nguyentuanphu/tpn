@@ -4,6 +4,8 @@
 // frame to fade things out and back in. Nothing is moved or changed for good: a faded thing gets its own copy of the
 // material (so the other houses of the same kind stay solid), and goes back to the shared one when it is clear again.
 import { THREE } from './gfx.js';
+import { VENDORS } from './vendors.js';
+const SELLERS = new Map(VENDORS.map(v => [v.id, v]));
 
 // How see-through things in the way become: the share of their normal opacity that is left (owner, 10 Oct AEST: "try
 // 80-90%" see-through, so 0.15). One number to tune.
@@ -20,20 +22,22 @@ export function createSeeThrough(G) {
   const ghosts = new Map();            // 'tileId:i' -> { im, i, mesh, mat, m, a }
   const rootCache = new WeakMap();     // mesh -> its thing (the whole house, not one wall)
   const partsCache = new WeakMap();    // root -> its meshes
+  const instance = new THREE.Matrix4();
   const dims = new WeakMap();          // tree geometry -> { h, r }
   const originals = new WeakMap();    // temporary fade copies must not exclude an occluder on refresh
   let cands = [], at = -1e9;
 
   const isHero = o => G.heroes.some(h => h.av.root.getObjectById(o.id));
+  const isPerson = o => { for (let p = o; p && p !== scene; p = p.parent) if (p.userData.avatar) return true; return isHero(o); };
   const collect = () => {
     cands = [];
     scene.traverse(o => {
       if (!o.isMesh || o.isInstancedMesh || o.userData.outline || o.userData.noCam || o.userData.road || o.userData.roomShape || o === G.world.terrain || !o.visible) return; // (a room's walls and floor are one shape: never fade the whole room)
       const mt = originals.get(o) || o.material;
-      if (!mt || Array.isArray(mt) || mt.transparent || mt.side === THREE.BackSide || (mt.isMeshBasicMaterial && !o.userData.camOccluder)) return;
+      if (!mt || Array.isArray(mt) || (mt.transparent && mt.opacity < .98 && !o.userData.camOccluder) || mt.side === THREE.BackSide) return;
       if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere();
       sph.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
-      if (sph.radius < MIN_R || sph.radius > MAX_R || isHero(o)) return;
+      if (sph.radius < MIN_R || sph.radius > MAX_R || isPerson(o)) return;
       cands.push({ o, x: sph.center.x, y: sph.center.y, z: sph.center.z, r: sph.radius });
     });
   };
@@ -47,7 +51,7 @@ export function createSeeThrough(G) {
   };
   const partsOf = r => {
     let parts = partsCache.get(r); if (parts) return parts;
-    parts = []; r.traverse(c => { if (c.isMesh && !c.isInstancedMesh && !isHero(c)) parts.push(c); });
+    parts = []; r.traverse(c => { if (c.isMesh && !c.isInstancedMesh && !isPerson(c)) parts.push(c); });
     partsCache.set(r, parts); return parts;
   };
   const near = (c, a, b, len2) => { // is the sphere within its radius (and a little) of the segment a-b?
@@ -69,21 +73,39 @@ export function createSeeThrough(G) {
     }
     // trees are instanced (one shape drawn many times): the tree in the way is swapped for a see-through copy
     for (const im of G.world.plants) {
-      const kind = im.userData.kind; if (kind === 'rock' || !im.userData.list) continue;
+      if (!im.userData.list) continue;
       if (!im.boundingSphere) im.computeBoundingSphere();
       if (!near({ ...im.boundingSphere.center, r: im.boundingSphere.radius }, a, b, len2)) continue;
       let d = dims.get(im.geometry);
-      if (!d) { im.geometry.computeBoundingBox(); const bb = im.geometry.boundingBox; d = { h: bb.max.y, r: Math.max(bb.max.x - bb.min.x, bb.max.z - bb.min.z) / 2 }; dims.set(im.geometry, d); }
-      if (d.h < 1.8) continue;
+      if (!d) { im.geometry.computeBoundingBox(); const bb = im.geometry.boundingBox; d = { h: bb.max.y, bottom: bb.min.y, r: Math.max(bb.max.x - bb.min.x, bb.max.z - bb.min.z) / 2 }; dims.set(im.geometry, d); }
+      if (d.h - d.bottom < .7) continue;
       im.userData.list.forEach((s, i) => {
         const sc = s[4], rad = d.r * sc * .8 + .2;
         if (Math.abs(s[0] - a.x) > len + rad || Math.abs(s[2] - a.z) > len + rad) return;
         const vx = b.x - a.x, vz = b.z - a.z, l2 = vx * vx + vz * vz; let t = l2 ? ((s[0] - a.x) * vx + (s[2] - a.z) * vz) / l2 : 0; t = Math.max(0, Math.min(1, t));
         if (Math.hypot(a.x + vx * t - s[0], a.z + vz * t - s[2]) > rad) return;
-        const y = a.y + (b.y - a.y) * t; if (y < s[1] - .5 || y > s[1] + d.h * sc) return;
-        marked.add(im.id + ':' + i);
+        // Terrain reshaping moves the instance matrix, not its original planting list.
+        // Use the live height (or the saved matrix while it is a ghost), so raised/lowered trees still fade.
+        const key = im.id + ':' + i, ghost = ghosts.get(key);
+        if (ghost) instance.copy(ghost.m); else im.getMatrixAt(i, instance);
+        const baseY = instance.elements[13], scaleY = Math.hypot(instance.elements[4], instance.elements[5], instance.elements[6]);
+        const y = a.y + (b.y - a.y) * t; if (y < baseY + d.bottom * scaleY - .5 || y > baseY + d.h * scaleY) return;
+        marked.add(key);
       });
     }
+  }
+
+  // When approaching a seller, keep the seller visible as well as the child. A canopy can hide the seller while
+  // leaving the child unobstructed. Only the nearest stall within 7 m adds a ray; people themselves never fade.
+  const stallHead = new THREE.Vector3();
+  function markNearStall(a, camera) {
+    let closest = null, best = 49;
+    for (const s of G.world.stalls || []) { const d = (s.x-a.x)**2+(s.z-a.z)**2; if (d < best) { best=d; closest=s; } }
+    if (!closest) return;
+    const seller = SELLERS.get(closest.id), back = closest.d/2+.4;
+    const x = seller?.x ?? closest.x-Math.sin(closest.face||0)*back;
+    const z = seller?.z ?? closest.z-Math.cos(closest.face||0)*back;
+    stallHead.set(x, G.world.groundAt(x,z)+1.5, z); mark(stallHead,camera);
   }
 
   const startFade = root => {
@@ -132,5 +154,5 @@ export function createSeeThrough(G) {
     marked.clear();
   }
 
-  return { mark, step, marked, rootOf, SEE_THROUGH_OPACITY, active: () => fading.size + ghosts.size };
+  return { mark, markNearStall, step, marked, rootOf, SEE_THROUGH_OPACITY, active: () => fading.size + ghosts.size };
 }
