@@ -1,6 +1,6 @@
 # Sparkle Valley: full quest guide / Hướng dẫn nhiệm vụ đầy đủ
 
-Reviewed 23 October 2026 AEDT against [source 536734ec5b423d42da6be7d512503ccc6adfdb69](https://github.com/nguyentuanphu/Sparkle-Valley/tree/536734ec5b423d42da6be7d512503ccc6adfdb69).
+Reviewed 23 October 2026 AEDT against [source a9c809cc1740ca74941c20f353997ac4e2441dbf](https://github.com/nguyentuanphu/Sparkle-Valley/tree/a9c809cc1740ca74941c20f353997ac4e2441dbf).
 
 [Open the interactive Quest Guide](prototype.html#quest-guide) · [Website review](README.md) · [Prizes and badges](rewards-guide.md)
 
@@ -1353,25 +1353,25 @@ Five little lamps are hidden for Diwali. Can you find them? / Có năm ngọn đ
 
 Parents with editing access can add their own questions using the protected family content editor. Children hear a question and choose an answer, trying again until correct. Each round uses up to six supplied questions. The game appears only when valid questions exist, subject to age and family settings. / Cha mẹ có quyền chỉnh sửa có thể thêm câu hỏi bằng trình sửa nội dung gia đình được bảo vệ. Bé nghe và chọn đáp án, thử lại đến khi đúng. Mỗi lượt dùng tối đa sáu câu đã thêm. Trò chỉ hiện khi có câu hỏi hợp lệ, tùy tuổi và cài đặt gia đình.
 
-1. **Open your protected family content editor / Mở trình sửa nội dung gia đình được bảo vệ**
+1. **Open Grown-ups → Family questions / Mở Phụ huynh → Câu hỏi gia đình**
 
-   Use an account with permission to edit Family quiz. This is separate from the public website and requires the appropriate family access. / Dùng tài khoản có quyền sửa Đố vui gia đình. Đây là khu riêng với trang web công khai, cần quyền truy cập gia đình phù hợp.
+   Pass the grown-up gate, then open Family questions in the data and save-copy section. You can write questions on this device without a Studio account or publishing a website. / Qua bước xác nhận người lớn rồi mở Câu hỏi gia đình trong mục dữ liệu và bản sao lưu. Bạn viết câu hỏi ngay trên máy, không cần tài khoản Studio hay phát hành trang web.
 
-2. **Choose Family quiz → New question / Chọn Đố vui gia đình → Câu hỏi mới**
+2. **Write a short question / Viết câu hỏi ngắn**
 
-   Write a short question in English and Vietnamese. You can add a picture from the game’s drawings. / Viết câu hỏi ngắn bằng tiếng Anh và tiếng Việt. Có thể thêm hình từ các hình vẽ của trò chơi.
+   Add up to six questions about a favourite tradition, food, story or everyday routine. Fill English and Vietnamese; if you leave one language blank, the other is used for both. / Thêm tối đa sáu câu hỏi về truyền thống, món ăn, câu chuyện yêu thích hoặc nề nếp hằng ngày. Điền tiếng Anh và tiếng Việt; nếu bỏ trống một ngôn ngữ, ngôn ngữ còn lại được dùng cho cả hai.
 
 3. **Add answers and choose the correct one / Thêm đáp án và chọn đáp án đúng**
 
-   Enter two to four answer choices in both languages, then mark the correct answer. Choose a question with a clear answer your child can understand. / Nhập hai đến bốn lựa chọn bằng cả hai ngôn ngữ, rồi đánh dấu đáp án đúng. Chọn câu có đáp án rõ ràng, dễ hiểu với bé.
+   Each question has two to six answers and one correct choice. Keep the choices short and easy to understand. You can remove an answer or a whole question before saving. / Mỗi câu có hai đến sáu đáp án và một đáp án đúng. Viết ngắn, dễ hiểu. Bạn có thể bỏ đáp án hoặc cả câu hỏi trước khi lưu.
 
-4. **Save the quiz, then publish the family change / Lưu câu đố rồi phát hành thay đổi gia đình**
+4. **Save and close, then keep a save copy / Lưu và đóng, rồi giữ bản sao lưu**
 
-   Save keeps the edit waiting to publish. The change reaches children only after the authorised grown-up publishes it. / Lưu giữ thay đổi ở trạng thái chờ phát hành. Bé chỉ nhận thay đổi sau khi người lớn có quyền phát hành.
+   Save and close makes the questions available on this device immediately. Cancel keeps your previous questions. Save a copy includes your questions with the existing family save; keep that file private. Old save copies still load. / Lưu và đóng giúp dùng câu hỏi trên máy ngay. Hủy giữ nguyên câu hỏi đã lưu trước đó. Bản sao lưu chứa câu hỏi cùng dữ liệu gia đình; hãy giữ tệp riêng tư. Bản sao lưu cũ vẫn nạp được.
 
-5. **Open the game online again and try it together / Mở lại trò chơi khi có mạng rồi cùng thử**
+5. **Play together or invite accepted friends / Chơi cùng máy hoặc mời bạn đã nhận lời**
 
-   The next online opening receives published content. Find Family Quiz on the Learning shelf. It appears only when valid family questions have been supplied; availability also follows age and family settings. / Lần mở có mạng tiếp theo nhận nội dung đã phát hành. Tìm Đố Vui Gia Đình trên kệ Học. Trò chỉ hiện khi có câu hỏi gia đình hợp lệ; nội dung còn tùy tuổi và cài đặt gia đình.
+   Find Family Quiz on the Learning shelf after adding valid questions. For a shared round, first enable online play in Grown-ups, join a room and invite friends. Up to six accepted players receive this round encrypted; guests do not need a saved question set, and the game does not save the host’s questions to their settings. Choose questions you are comfortable sharing with invited friends. / Sau khi thêm câu hợp lệ, tìm Đố Vui Gia Đình trên kệ Học. Để chơi nhiều máy, bật chơi trực tuyến trong Phụ huynh, vào phòng rồi mời bạn. Tối đa sáu người đã nhận lời nhận câu hỏi của ván được mã hóa; khách không cần có sẵn câu hỏi và trò chơi không lưu câu hỏi của chủ ván vào cài đặt máy khách. Chọn câu hỏi bạn thấy phù hợp để chia sẻ với bạn được mời.
 
 ## When you need help / Khi cần giúp đỡ
 
@@ -1384,22 +1384,22 @@ Parents with editing access can add their own questions using the protected fami
 
 The snapshot is generated by `refresh-quest-snapshot.mjs` from pinned game data, with reviewed explanations in `quest-help.mjs`. This is a design-preview guide, not a runtime change or a record of any child’s completion. No future chapters or unshipped quests are included.
 
-- [js/data.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/data.js)
-- [js/story.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/story.js)
-- [js/content/chapters.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/content/chapters.ts)
-- [js/content/chapter2text.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/content/chapter2text.ts)
-- [js/content/chapter2hanoi.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/content/chapter2hanoi.ts)
-- [js/content/chapter3text.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/content/chapter3text.js)
-- [js/content/chapter3sydney.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/content/chapter3sydney.js)
-- [js/lanterns.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/lanterns.ts)
-- [js/content/adventures.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/content/adventures.js)
-- [js/adventure.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/adventure.ts)
-- [js/content/familymissions.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/content/familymissions.js)
-- [js/parents.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/parents.ts)
-- [js/content/festhunt.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/content/festhunt.js)
-- [js/festhunt.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/festhunt.js)
-- [js/content/festcal.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/content/festcal.js)
-- [js/games/more.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/games/more.ts)
-- [js/games/catalog.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/games/catalog.ts)
-- [js/custom.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/js/custom.js)
-- [studio/ui/app.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/536734ec5b423d42da6be7d512503ccc6adfdb69/studio/ui/app.ts)
+- [js/data.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/data.js)
+- [js/story.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/story.js)
+- [js/content/chapters.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/content/chapters.ts)
+- [js/content/chapter2text.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/content/chapter2text.ts)
+- [js/content/chapter2hanoi.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/content/chapter2hanoi.ts)
+- [js/content/chapter3text.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/content/chapter3text.js)
+- [js/content/chapter3sydney.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/content/chapter3sydney.js)
+- [js/lanterns.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/lanterns.ts)
+- [js/content/adventures.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/content/adventures.js)
+- [js/adventure.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/adventure.ts)
+- [js/content/familymissions.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/content/familymissions.js)
+- [js/parents.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/parents.ts)
+- [js/content/festhunt.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/content/festhunt.js)
+- [js/festhunt.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/festhunt.js)
+- [js/content/festcal.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/content/festcal.js)
+- [js/games/more.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/games/more.ts)
+- [js/games/catalog.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/games/catalog.ts)
+- [js/custom.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/js/custom.js)
+- [studio/ui/app.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/a9c809cc1740ca74941c20f353997ac4e2441dbf/studio/ui/app.ts)

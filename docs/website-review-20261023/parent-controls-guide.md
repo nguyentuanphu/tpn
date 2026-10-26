@@ -1,6 +1,6 @@
 # Parent settings and child play reports
 
-Source: 536734ec5b423d42da6be7d512503ccc6adfdb69. Reviewed 23 October 2026 AEDT. Existing game controls, not a new statistics backend.
+Source: a9c809cc1740ca74941c20f353997ac4e2441dbf. Editorial update 26 October 2026 AEDT; source/capture review recorded separately. Existing game controls, not a new statistics backend.
 
 ## Reach the report
 
@@ -22,7 +22,7 @@ Grown-ups → Language; Sound and voices / Phụ huynh → Ngôn ngữ; Âm than
 
 Choose English or Vietnamese, learning-language options, captions and bilingual voice. Control talking, music, effects and tap sounds separately; choose supported voice styles and recordings. / Chọn tiếng Anh hoặc tiếng Việt, ngôn ngữ học, phụ đề và giọng song ngữ. Điều chỉnh riêng lời nói, nhạc, hiệu ứng, tiếng bấm; chọn kiểu giọng và bản ghi được hỗ trợ.
 
-Listen together first. Female recordings are the default; preview Woman or Man and optionally enable male recordings. Offline-pack downloads continue after Save & close while the game stays open. You choose whether full automatic downloads may use mobile data. Bilingual voice can repeat guidance in the other language; turn captions on to follow the words. / Cùng nghe thử trước. Giọng nữ là mặc định; nghe thử Giọng nữ hoặc Giọng nam và bật bản ghi giọng nam nếu muốn. Gói ngoại tuyến tiếp tục tải sau khi Lưu và đóng khi trò chơi còn mở. Bạn chọn có cho phép tự tải đầy đủ bằng dữ liệu di động hay không. Giọng song ngữ có thể nói lại hướng dẫn bằng ngôn ngữ kia; bật phụ đề để theo dõi chữ.
+Listen together first. Female recordings remain the default; preview Woman or Man and optionally enable male recordings. The Vietnamese voice selector also offers the separate optional Lê Minh pack, with its download size shown before saving it. Pack downloads continue after Save & close while the game stays open and resume saved progress later; your browser or device can pause downloads after the game closes. You decide whether full automatic downloads may use mobile data. Bilingual voice can repeat guidance in the other language; personal Family Quiz text uses the device voice rather than being sent for recordings. / Cùng nghe thử trước. Giọng nữ vẫn là mặc định; nghe thử Giọng nữ hoặc Giọng nam và bật bản ghi giọng nam nếu muốn. Mục giọng Việt còn có gói Lê Minh riêng, tùy chọn, hiện dung lượng trước khi lưu. Gói tiếp tục tải sau khi Lưu và đóng khi trò chơi còn mở, và dùng tiến trình đã lưu để tải tiếp lần sau; trình duyệt hoặc thiết bị có thể ngừng tải khi đóng trò chơi. Bạn chọn có cho tự tải đầy đủ bằng dữ liệu di động không. Giọng song ngữ có thể lặp hướng dẫn bằng ngôn ngữ kia; câu hỏi gia đình riêng dùng giọng máy, không gửi đi thu giọng.
 
 ## Set a daily rest reminder / Đặt giờ nhắc nghỉ hằng ngày
 
@@ -62,7 +62,7 @@ Grown-ups → Internet and playing online; Family photos and devices when availa
 
 A grown-up chooses whether to enable internet features such as friends and real-place maps. Family photo/device pairing and shared-content permissions depend on the available family features and granted access. / Người lớn chọn có bật nội dung internet như bạn bè và bản đồ nơi thật hay không. Ghép máy, ảnh gia đình và quyền dùng nội dung chung tùy tính năng gia đình sẵn có và quyền được cấp.
 
-Review who can connect and which sharing permissions are enabled. Family Quiz question editing still needs protected content-editor access; it is not a public website form. / Kiểm tra ai được kết nối và quyền chia sẻ nào đã bật. Sửa câu hỏi Đố Vui Gia Đình vẫn cần quyền trình sửa nội dung được bảo vệ; không phải biểu mẫu công khai trên trang web.
+Review who can connect and which sharing permissions are enabled. Add personal questions in Grown-ups → Family questions on your device; the public website does not collect them. Accepted invited players receive an encrypted round, while guests keep no saved question set. Studio’s shared quiz editor publishes general questions to this site and must not contain private family details. / Kiểm tra ai được kết nối và quyền chia sẻ đã bật. Thêm câu hỏi riêng trong Phụ huynh → Câu hỏi gia đình trên máy; trang web công khai không thu chúng. Bạn đã nhận lời mời nhận ván được mã hóa, còn máy khách không lưu bộ câu hỏi. Trình sửa câu đố chung trong Studio phát hành câu hỏi cho trang này, không dùng cho thông tin riêng của gia đình.
 
 ## Manage the shared farm and pretend money / Quản lý nông trại chung và tiền trong trò chơi
 

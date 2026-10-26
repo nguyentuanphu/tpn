@@ -1,5 +1,5 @@
 {
-  "source": "536734ec5b423d42da6be7d512503ccc6adfdb69",
+  "source": "a9c809cc1740ca74941c20f353997ac4e2441dbf",
   "festivals": [
     {
       "id": "tet",
@@ -934,6 +934,24 @@
       "origin": null
     },
     {
+      "id": "sparklefruitbar",
+      "name": [
+        "Sparkle Fruit Bar",
+        "Bảng Trái Cây Lấp Lánh"
+      ],
+      "icon": "🍎",
+      "origin": null
+    },
+    {
+      "id": "sparkleorchard",
+      "name": [
+        "Sparkle Orchard Quest",
+        "Nhiệm Vụ Vườn Quả Lấp Lánh"
+      ],
+      "icon": "🌳",
+      "origin": null
+    },
+    {
       "id": "fruitparade",
       "name": [
         "Sparkle Fruit Parade",
@@ -1191,7 +1209,7 @@
         "Đánh Đáo",
         "Đánh Đáo"
       ],
-      "icon": "🪵",
+      "icon": "🪙",
       "origin": "vn"
     },
     {
@@ -1206,10 +1224,10 @@
     {
       "id": "trongnu",
       "name": [
-        "Plant the Seed",
-        "Trồng Nụ"
+        "Flower Stack Jump",
+        "Trồng Nụ Trồng Hoa"
       ],
-      "icon": "🌱",
+      "icon": "🌸",
       "origin": "vn"
     },
     {

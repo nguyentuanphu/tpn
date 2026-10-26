@@ -1,9 +1,9 @@
 {
-  "runtime": "b609dc847",
+  "runtime": "a9c809cc1",
   "currentVietnameseUnits": 6407,
   "fptBaseline": 6319,
-  "fptArcadeDelta": 65,
-  "fptStagedTotal": 6345,
+  "fptArcadeDelta": 340,
+  "fptStagedTotal": 6668,
   "missingFromFpt": 19,
   "privacyHeld": 19,
   "publicNeedsReview": [],
@@ -39,30 +39,31 @@
   "baselineBranch": "work/fpt-leminh-full-20261025",
   "deltaBranch": "work/v1.02-fruit-parade",
   "baselineVerificationRun": 40190674496,
-  "deltaRecordingRun": 40286640514,
-  "productionIntegration": "Public VI production6388 complete for ordinary6407-unit manifest except19private; mixed runtime routing verified locally, optional fragments recording/packaging pending; private questions explicit local OS voices only",
+  "deltaRecordingRun": 40362276992,
+  "productionIntegration": "6663 public units including reviewed mixed-VI fragments; parent choice and background/resume/offline verified. Female default retained; private family text uses explicitly local offline OS voices only.",
   "fptTitleDelta": 10,
   "labelsBranch": "work/fpt-v102-labels-20261026",
   "labelsRecordingRun": 40227974447,
   "labelsCommit": "715f260d1",
-  "recordingsHead": "5aaec921b",
-  "fptCurrentCoverage": 6388,
+  "recordingsHead": "a9c809cc1",
+  "fptCurrentCoverage": 6663,
   "fptHistoricalOnly": [
-    "4c87fc45-4909939b"
+    "311e425d-5d1da220",
+    "4c87fc45-4909939b",
+    "567c632748ba9d78",
+    "78bb598407681def",
+    "e24bb0574470c671"
   ],
-  "defaultRecordingRun": 40286640507,
-  "defaultCoverage": "Current manifest collected; new Family Quiz finish instructions need the next default recording run",
-  "productionSignature": "680fc1cd3810c853812f49fb3c36d5ad21224e41c66d832e762dda32d50ccd49",
-  "productionBytes": 427723336,
+  "defaultRecordingRun": 40362276888,
+  "defaultCoverage": "Zero missing after collecting all1442 English fragment files; make-voice-pack --cover bad[]",
+  "productionSignature": "d94fe5a6bf30e602d6f87a52682af9d6740f3aa0794f090cb8be6650322bd32d",
+  "productionBytes": 435948496,
   "latestReviewedDelta": {
-    "run": 40277620143,
-    "commit": "6a670a255",
-    "inventoryEntries": 57,
-    "verifiedEntries": 57,
-    "independentDecodeAudit": "docs/v1.02-traditional-repairs/folk-audio-audit.json",
-    "productionPackaging": "6384 verified current units packaged using isolated matching receipts"
+    "units": 340,
+    "run": 40362276992,
+    "fullDecodeEvidence": "docs/v1.02-traditional-repairs/mixed-audio-audit.json"
   },
-  "nextReviewedDeltaUnits": 340,
+  "nextReviewedDeltaUnits": 0,
   "mixedFragmentsRequired": 336,
-  "missingPublicMixedFragments": 275
+  "missingPublicMixedFragments": 0
 }

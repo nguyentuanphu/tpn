@@ -5,7 +5,9 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import {execFileSync,spawnSync} from 'node:child_process';
 const git=(args,env={})=>execFileSync('git',args,{encoding:'utf8',env:{...process.env,...env}}).trim();
-const source=git(['rev-parse','origin/main']),dir=fs.mkdtempSync(path.join(os.tmpdir(),'website-drift-'));
+const reviewed=JSON.parse(fs.readFileSync(new URL('./game-review-lock.json',import.meta.url),'utf8'));
+const source=git(['rev-parse',process.env.SV_WEBSITE_SOURCE||reviewed.source]),dir=fs.mkdtempSync(path.join(os.tmpdir(),'website-drift-'));
+assert.equal(source,git(['rev-parse',reviewed.source]),'negative drift fixture must start from the reviewed source, not another release');
 const env={GIT_INDEX_FILE:path.join(dir,'index')};
 try{
  git(['read-tree',source],env);

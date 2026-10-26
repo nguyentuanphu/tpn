@@ -1,3 +1,13 @@
+# Current voice checkpoint · 27 October 2026, 5:11 am AEDT
+
+Production contains **6,663 verified public Lê Minh units**,435,948,496 bytes (~416MiB), including336 reviewed Vietnamese fragments used inside English speech. Ordinary current VI manifest6407; optional required union6682; only19 privacy-held units are excluded, with zero unknown public gaps. Reviewed FPT delta340/340 from40362276992 independently passes receipt bytes/SHA/duration/full MP3 decode. Azure40362276888 completed1,442 English fragment files; current default coverage reports zero missing. All1,442 English MP3s independently pass full decoding; file bytes/SHA evidence is in english-fragment-audio-audit.json.
+
+Parents choose Lê Minh for public Vietnamese speech; female remains default. Mixed speech preflights and joins all fragments before playing, with whole-original fallback and cancellation. Downloads are provider-specific, checksum-verified, resumable and continue after Settings closes while the game stays open. Mobile permission remains explicit and revocable. Private Family Quiz text is never sent to a provider or voice harvesting; only explicitly local offline OS voices can read it, otherwise read together.
+
+This supersedes the pending integration/count statements in the historical ledger below. Final exhaustive release checks and owner deployment approval still required.
+
+---
+
 # Current voice checkpoint · 26 October 2026, 7:44 pm AEDT
 
 Production now contains **6387 verified current public Lê Minh units**,427682018 bytes, against6406 current Vietnamese manifest units. All19 gaps are privacy-held name units; no unknown public gap in this collected manifest. All64 reviewed delta clips from40286640514 independently passed byte/SHA/duration/full-decode verification (shared-audio-audit.json). Default Azure40286640507 assets collected from5aaec921b. Four obsolete current-manifest units were pruned rather than retaining stale instructions. The new private Family Quiz uses device speech only for parent text, and its one static finish instruction makes the next reviewed FPT delta65 entries. Record/collect that final instruction and refresh the production manifest after the next Azure update. Mixed English/VI chosen-Lê Minh fragments remain unimplemented. Older counts below are dated history.

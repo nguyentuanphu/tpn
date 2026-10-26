@@ -218,6 +218,7 @@
     "../tools/hanoi-pack-policy.mts",
     "../tools/mixed-voice-inventory.mts",
     "festival-bootstrap.mts",
-    "../js/custom.ts"
+    "../js/custom.ts",
+    "./release-parent-captures.mts"
   ]
 }
