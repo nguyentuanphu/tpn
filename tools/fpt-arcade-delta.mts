@@ -14,7 +14,7 @@ const save=async()=>{report.updated=new Date().toISOString();await fs.writeFile(
 if(process.argv.includes('--dry-run'))console.log(JSON.stringify({lines:inventory.lines.length,characters:inventory.lines.reduce((n,l)=>n+l.text.length,0),voice:VOICE}));
 else{
  try{
-  if(execFileSync('git',['branch','--show-current'],{encoding:'utf8'}).trim()!=='work/v1.02-fruit-parade')throw new Error('Wrong delta branch.');
+  if(!/^(work|release|voices)\//.test(execFileSync('git',['branch','--show-current'],{encoding:'utf8'}).trim()))throw new Error('Record reviewed FPT inventory only on a working branch, never main.');
   const key=process.env.FPT_API_KEY||'';if(!key.trim())throw new Error('FPT_API_KEY is required in Actions.');
   for(const [file,expected]of Object.entries(inventory.sourceHashes))if(hash(await fs.readFile(file))!==expected)throw new Error('Source changed after inventory; rebuild the delta before recording.');
   for(const line of inventory.lines){

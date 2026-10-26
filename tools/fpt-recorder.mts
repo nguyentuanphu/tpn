@@ -7,7 +7,8 @@ import { pathToFileURL } from 'node:url';
 import { recordFpt, FptVoiceTestError } from './fpt-voice-test.mts';
 
 export type Line = { id: string; lang: string; text: string; area: string; part: boolean };
-export const VOICE = { provider: 'FPT Neo', model: 'FPT.AI-VITs', voice: 'leminh', speed: 1, response_format: 'mp3' };
+export {FPT_VOICE as VOICE} from './voice-providers.mts';
+import {FPT_VOICE as VOICE} from './voice-providers.mts';
 const digest = (data: string | Uint8Array) => createHash('sha256').update(data).digest('hex');
 export const identity = (line: Line) => digest(JSON.stringify({ ...VOICE, id: line.id, text: line.text }));
 export const selectLines = (lines: Line[], shard: number, total: number) => {

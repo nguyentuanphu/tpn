@@ -1,3 +1,4 @@
+import {AZURE_VOICES,AZURE_OUTPUT_FORMAT} from './voice-providers.mts';
 // Makes the offline voice pack with ElevenLabs: every line the game speaks, saved as small MP3 files in
 // voices/. The game plays these instead of the device voice, with no internet needed, and keeps the whole
 // pack on the device after the first visit (so nothing has to be downloaded again).
@@ -47,14 +48,14 @@ const flag = k => process.argv.includes('--' + k);
 const ENGINE = arg('engine', 'eleven');
 const KEY = arg('key', ENGINE === 'azure' ? process.env.AZURE_SPEECH_KEY : (process.env.ELEVEN_KEY || process.env.ELEVENLABS_API_KEY));
 const REGION = arg('region', process.env.AZURE_SPEECH_REGION || '');
-const AZ_VOICES = { en: { f: 'en-AU-NatashaNeural', m: 'en-AU-WilliamNeural' }, vi: { f: 'vi-VN-HoaiMyNeural', m: 'vi-VN-NamMinhNeural' }, zh: { m: 'zh-CN-YunxiNeural' }, hi: { m: 'hi-IN-MadhurNeural' } };
+const AZ_VOICES = AZURE_VOICES;
 const MODEL = arg('model', 'eleven_flash_v2_5');
 const API = arg('api', 'https://api.elevenlabs.io/v1'); // --api is only for testing with a pretend server
 // credits per character: Flash and Turbo models cost half a credit, Multilingual v2 and v3 a whole one
 const RATE = /flash|turbo/i.test(MODEL) ? .5 : 1;
 
 // which voices each language gets
-const CAST = { en: ['f', 'm'], vi: ['f', 'm'], zh: ['m'], hi: ['m'] };
+const CAST = Object.fromEntries(Object.entries(AZURE_VOICES).map(([language,voices])=>[language,Object.keys(voices)]));
 const LANG_NAME = { en: 'English', vi: 'Vietnamese', zh: 'Chinese', hi: 'Hindi' };
 
 // ---------- what to say ----------
@@ -272,7 +273,7 @@ async function make([slot, h, j]) {
   throw new Error('Too many retries: ' + j.text.slice(0, 40));
 }
 const queue = missing.slice(0, limit);
-await Promise.all(Array.from({ length: 3 }, async () => { while (queue.length) await make(queue.shift()); }));
+await Promise.all(Array.from({ length: 3 }, async () => { while (queue.length) {const next=queue.shift();if(next)await make([next[0],next[1],next[2]]);} }));
 save(); writeAreas(man);
 console.log(`Finished: ${done} new files (${used} characters). The pack is in voices/ — include that folder when you publish the game (./build-netlify.sh does).`);
 
@@ -303,7 +304,7 @@ async function azure() {
     for (let attempt = 0; ; attempt++) {
       let r;
       // a dropped connection (socket closed, timeout) is tried again, like a busy server, instead of stopping the run
-      try { r = await fetch(`${AZ}/cognitiveservices/v1`, { method: 'POST', headers: { 'Ocp-Apim-Subscription-Key': KEY, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-32kbitrate-mono-mp3', 'User-Agent': 'sparkle-valley-voice-pack' }, body: ssml }); var buf = r.ok ? Buffer.from(await r.arrayBuffer()) : null; }
+      try { r = await fetch(`${AZ}/cognitiveservices/v1`, { method: 'POST', headers: { 'Ocp-Apim-Subscription-Key': KEY, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': AZURE_OUTPUT_FORMAT, 'User-Agent': 'sparkle-valley-voice-pack' }, body: ssml }); var buf = r.ok ? Buffer.from(await r.arrayBuffer()) : null; }
       catch (e) { if (attempt < 6) { await new Promise(res => setTimeout(res, 5000 * (attempt + 1))); continue; } save(); throw e; }
       if (r.status === 401 || r.status === 403) { console.error('Azure did not accept the key or region (' + r.status + '). Copy KEY 1 and the Location/Region from the Speech resource\'s "Keys and Endpoint" page.'); save(); process.exit(3); }
       if ((r.status === 429 || r.status >= 500) && attempt < 6) { await new Promise(res => setTimeout(res, 5000 * (attempt + 1))); continue; }
@@ -316,7 +317,7 @@ async function azure() {
     }
   };
   const work = queue.slice();
-  await Promise.all(Array.from({ length: Math.max(1, +arg('parallel', 3)) }, async () => { while (work.length) await one(work.shift()); }));
+  await Promise.all(Array.from({ length: Math.max(1, +arg('parallel', 3)) }, async () => { while (work.length) {const next=work.shift();if(next)await one([next[0],next[1],next[2]]);} }));
   // the old all-English recordings of those lines are not needed once both of their new ones are made
   let gone = 0;
   for (const [h, j] of list) if (j.lang === 'en' && h !== packHash('en', j.text) && CAST.en.every(sl => fs.existsSync(path.join(PACK_DIR, 'en', sl, h + '.mp3'))))

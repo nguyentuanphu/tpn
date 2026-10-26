@@ -656,6 +656,8 @@ await check('voice', async () => {
   return `"${awake.line}" plays from the recording on a phone, and still does with Web Audio asleep (plain player); the phone's voice is never used for it`;
 });
 
+await check('voiceroutes', async () => {const {execFileSync}=await import('node:child_process');return execFileSync(process.execPath,['../tools/voice-routing-audit.mts','--check'],{encoding:'utf8'}).trim();});
+
 await check('voicepack', async () => {
   // HARD RULE (VOICE-001): the recorded voices are downloaded to the device by themselves, with a small quiet progress
   // bar; every open checks quietly that they are still there and fetches only what is missing. (A cut-down pack keeps it quick.)

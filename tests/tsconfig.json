@@ -219,6 +219,12 @@
     "../tools/mixed-voice-inventory.mts",
     "festival-bootstrap.mts",
     "../js/custom.ts",
-    "./release-parent-captures.mts"
+    "./release-parent-captures.mts",
+    "../tools/voice-providers.mts",
+    "../tools/voice-delivery.mts",
+    "../tools/voice-routing-audit.mts",
+    "./voice-provider-routes.mts",
+    "../tools/build-hanoi-pack.mts",
+    "./voice-delivery.mts"
   ]
 }
