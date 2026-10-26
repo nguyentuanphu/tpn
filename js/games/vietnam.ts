@@ -8,51 +8,12 @@ import { el, wait, pick } from '../util.js';
 
 // ---------- Ô ăn quan (Mandarin Square Capturing) ----------
 // Squares 1–5 belong to the bottom player, 7–11 to the top player, 0 and 6 are the mandarins.
-const isQuan = i => i === 0 || i === 6;
-const owner = i => (i >= 1 && i <= 5 ? 0 : i >= 7 ? 1 : -1);
-function simulate(st, from, dir) {
-  const s = { seeds: st.seeds.slice(), big: st.big.slice(), score: st.score.slice(), owe: (st.owe || [0, 0]).slice() }, me = owner(from), steps = [];
-  const seen = new Set();
-  let hand = s.seeds[from], pos = from; s.seeds[from] = 0; steps.push({ k: 'pick', i: from });
-  for (;;) {
-    // Cyclic relays must end promptly; keep every seed when ending a repeated/overlong turn.
-    const key = `${pos}:${hand}:${s.seeds.join(',')}`;
-    if (seen.has(key) || steps.length >= 240) {
-      s.seeds[pos] += hand;
-      steps.push({ k: 'restore', i: pos, n: hand });
-      break;
-    }
-    seen.add(key);
-    while (hand > 0) { pos = (pos + dir + 12) % 12; s.seeds[pos]++; hand--; steps.push({ k: 'drop', i: pos }); }
-    const next = (pos + dir + 12) % 12;
-    if (isQuan(next) && (s.seeds[next] > 0 || s.big[next])) break;
-    if (s.seeds[next] > 0) { hand = s.seeds[next]; s.seeds[next] = 0; pos = next; steps.push({ k: 'pick', i: next }); continue; }
-    let cur = next;
-    for (;;) {
-      const after = (cur + dir + 12) % 12, val = s.seeds[after] + (s.big[after] ? 10 : 0);
-      if (s.seeds[cur] !== 0 || s.big[cur] || val === 0) break;
-      s.score[me] += val; s.seeds[after] = 0; s.big[after] = false; steps.push({ k: 'take', i: after, n: val });
-      cur = (after + dir + 12) % 12;
-    }
-    break;
-  }
-  return { s, steps };
-}
-// (#350, r85) a player whose five squares are all empty puts one seed back in each from their own pile; when the pile
-// is short, the rest is borrowed from the other player (vay) and given back when the game ends, as in the real game.
-// Nothing left anywhere: no seeds go out (n 0) and the game ends.
-function refill(st, turn) {
-  const range = turn === 0 ? [1, 2, 3, 4, 5] : [7, 8, 9, 10, 11], other = 1 - turn;
-  const own = Math.min(5, st.score[turn]), borrow = Math.min(5 - own, st.score[other]), n = own + borrow;
-  st.score[turn] -= own; st.score[other] -= borrow; st.owe = st.owe || [0, 0]; st.owe[turn] += borrow;
-  range.slice(0, n).forEach(i => { st.seeds[i] = 1; });
-  return { n, borrow };
-}
-// at the end, a borrowed seed goes back to the player it came from
-function repay(st) { const o = st.owe || [0, 0]; for (const t of [0, 1]) { const back = Math.min(o[t], st.score[t]); st.score[t] -= back; st.score[1 - t] += back; } st.owe = [0, 0]; }
+import {simulate,refill,repay,owner} from './oanquan-core.js';
+import {playOnlineOaq} from './oanquan-online.js';
 register({
-  id: 'oanquan', icon: '🪨', name: () => T('Ô Ăn Quan (Mandarin Squares)', 'Ô Ăn Quan'),
+  id: 'oanquan', online: true, icon: '🪨', name: () => T('Ô Ăn Quan (Mandarin Squares)', 'Ô Ăn Quan'),
   async run(api) {
+    if(api.online)return playOnlineOaq(api);
     const names = api.two ? [api.players[0].name, api.players[1].name] : [api.players[0].name, 'Tèo'];
     let st = { seeds: [0, 5, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5], big: [true, false, false, false, false, false, true, false, false, false, false, false], score: [0, 0] };
     const wrap = el('div', 'oaq-wrap' + (api.little ? ' oaq-little' : '')); api.stage.appendChild(wrap);

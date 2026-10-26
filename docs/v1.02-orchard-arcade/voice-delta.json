@@ -6,14 +6,20 @@
     "js/games/trongnu.ts": "9130b86018778c848286ac0e712822146f15eeed552ff100cc038d3fbe2c7316",
     "js/games/sparkleorchard.ts": "573bcf964fd2ca903eae72d47a7f7d8b717285a9d0184c5cb395a192db2e85d0",
     "js/games/sparklefruitbar.ts": "1a708e7675bb7c58913676db48303bbd7c35f66d84c91c83d35d9ce094522251",
-    "js/games/catalog.ts": "a4eb55ef3cbf96ba1cd4cd3cacf6a386f0f25a26fb6c6e5d3ec688dec26c9707",
+    "js/games/catalog.ts": "f1299210abacf76099c19620181d3cd4bb61257b0664142874ab851ff2dffa56",
     "js/content/releases.ts": "e0e36b53309f7c86bd72a77844dc71d0d08a721ed23d0e696724267e1af71b6b",
     "js/content/chapter2text.ts": "fe71f6b067aaff40160c0b66d3ca93477a2b6e420ba36c7e5d11c722394a9703",
     "js/content/chapter2hanoi.ts": "38f6c0a6faf83407191efbc3a1dd8856f94e12db8d1f87f8ec57e16fa44c42f0",
     "js/games/cacuangua.ts": "e3bfe2b37aab33b989cb5e0d203f2f716e84cf71f0e64053244fbac611a9a14e",
     "js/games/cacuangua-core.ts": "61e839709062a01a80404f0b5689f91df8a18ec8fe751ef8d208338b9da9b6cb",
     "js/games/horse-session.ts": "b1751665b6bc52d596d66ea5c4aea95173e0494a5c1c9e7786de1043373b13ea",
-    "js/games/folk-court.ts": "991ac83eac160f768a68fddf6a0c5224fbc537cb81d1cc8ee45d09acf6accdf0"
+    "js/games/folk-court.ts": "991ac83eac160f768a68fddf6a0c5224fbc537cb81d1cc8ee45d09acf6accdf0",
+    "js/games/snakes.ts": "f959b75e27c2a42322cc2f54a798d6cdcbce6e3dfb11b8a9b12cefacbe0fa166",
+    "js/games/oanquan-online.ts": "29df7eb0e4d5f2ce2a378a7acae5cbb651783ccd4e39dad323843f60eb243ef5",
+    "js/games/snakes-core.ts": "c470a7174cc32569a6b054fc11713ff614ffcb68e93cb56dda5d4873fa790e93",
+    "js/games/shared-board-session.ts": "2b48a53827b7a2ebf681d1bfece93e4fe1a871bda6b54d675af372e311ac3153",
+    "js/games/oanquan-core.ts": "b2a88a345a5af81c2b5c275e6cad7de258c9fcd2078b5ccb8de81edf2a9f9b38",
+    "js/games/vietnam.ts": "928f3c77533ec4cbc0df73a05716e78727fea216cd09a1fbe12c2fffbc6462f9"
   },
   "lines": [
     {
@@ -134,6 +140,16 @@
       "part": false,
       "source": [
         "js/games/folk-court.js"
+      ]
+    },
+    {
+      "id": "2964e89112c4e669",
+      "lang": "vi",
+      "text": "Ván hay quá!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/oanquan-online.js"
       ]
     },
     {

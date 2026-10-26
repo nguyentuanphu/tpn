@@ -5,11 +5,7 @@ import fs from 'node:fs';
 
 const source = name => fs.readFileSync(new URL(`../../js/games/${name}`, import.meta.url), 'utf8');
 
-test('legacy Snakes plumbing retains its online calls while board repair proceeds', () => {
-  const snakes = source('asia.ts');
-  assert.match(snakes, /online\.move\(roundNo/);
-  assert.match(snakes, /online\.next\(roundNo/);
-});
+// Snakes source-string calls replaced by actual four-seat board/recovery tests in snakes-shared.test.mjs.
 
 test('team and board renderers retain offline and online paths', () => {
   const vietnam = source('vietnam.ts');

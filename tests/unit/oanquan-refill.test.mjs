@@ -3,14 +3,8 @@
 // capture rules have their own test (tests/unit/oanquan.test.mjs, PR #358). Runs the game's own code without a browser.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import vm from 'node:vm';
-
-const raw = fs.readFileSync(new URL('../../js/games/vietnam.js', import.meta.url), 'utf8');
-const source = raw.replace(/\r\n/g, '\n');
-const game = vm.runInNewContext(source.slice(source.indexOf('function refill'), source.indexOf("register({\n  id: 'oanquan'")) + '\n({ refill, repay })');
-// (objects made inside the sandbox compared as plain values)
-const plain = x => JSON.parse(JSON.stringify(x)), refill = (s, t) => plain(game.refill(s, t)), repay = s => game.repay(s);
+import {refill,repay} from '../../js/games/oanquan-core.js';
+const plain=x=>JSON.parse(JSON.stringify(x));
 const state = (s0, s1) => ({ seeds: Array(12).fill(0), big: [false, false, false, false, false, false, true, false, false, false, false, false], score: [s0, s1] });
 const total = s => s.seeds.reduce((a, b) => a + b, 0) + s.big.filter(Boolean).length * 10 + s.score[0] + s.score[1];
 

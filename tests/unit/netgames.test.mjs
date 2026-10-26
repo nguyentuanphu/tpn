@@ -96,19 +96,14 @@ test('Tiến Lên miền Bắc: same suit for singles and runs, same colours for
 });
 
 
-test('Batch A definitions expose capability metadata and authoritative move bounds', async () => {
+test('Snakes metadata invites four seats and transport rejects client-selected dice/reserved-slot payloads', async () => {
   const def = onlineDef('snakes');
-  assert.equal(def.max, 4);
-  assert.equal(def.foundation.turnBased, true);
-  const d = room(['A', 'B']);
-  d.A.g.invite('snakes', 1, 'B'); await tick();
-  assert.equal(d.A.g.move(0, 7), false);
-  assert.equal(d.A.g.session.moves.size, 0);
-  assert.equal(d.A.g.move(0, 3), true); await tick();
-  assert.equal(d.B.g.move(0, 7), false);
-  assert.equal(d.B.g.move(0, 4), true); await tick();
-  assert.equal(await d.A.g.next(0, 1), 4);
-  assert.equal(d.B.g.move(0, 5), false);
+  assert.equal(def.max, 4);assert.equal(def.all,true);assert.equal(def.foundation.turnBased, true);
+  const d = room(['A', 'B']);d.A.g.invite('snakes', 1, 'B');await tick();
+  assert.equal(d.A.g.move(0,7),false);assert.equal(d.A.g.move(0,3),false);
+  assert.equal(d.A.g.move(4998,0),false);assert.equal(d.A.g.move(9997,2),false);assert.equal(d.A.g.move(9999,9999),false);
+  assert.equal(d.A.g.session.moves.size,0);
+  assert.equal(d.A.g.move(0,0),true);await tick();assert.equal(await d.B.g.next(0,0),0);
 });
 
 test('Batch A round games accept one bounded move per seat and step', async () => {

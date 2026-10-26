@@ -42,7 +42,7 @@ test('Batch A: new games have valid move ranges and metadata', () => {
   assert.equal(validMove('snakes', 0), false);
   assert.equal(validMove('snakes', 7), false);
   assert.equal(MULTIPLAYER_FOUNDATIONS.snakes.max, 4);
-  assert.equal(MULTIPLAYER_FOUNDATIONS.snakes.all, false);
+  assert.equal(MULTIPLAYER_FOUNDATIONS.snakes.all, true);
   assert.equal(MULTIPLAYER_FOUNDATIONS.snakes.mode, 'turn');
 
   // Tug: pull 0 (left) or 1 (right)
@@ -75,13 +75,8 @@ test('Batch A: new games have valid move ranges and metadata', () => {
 });
 
 
-test('authoritative Batch A state rejects invalid, duplicate, and out-of-turn moves', () => {
-  const state = createAuthoritativeState('snakes', 2);
-  assert.ok(state);
-  assert.equal(applyAuthoritativeMove(state, 1, 0, 3), false);
-  assert.equal(applyAuthoritativeMove(state, 0, 0, 3), true);
-  assert.equal(applyAuthoritativeMove(state, 0, 0, 4), false);
-  assert.equal(applyAuthoritativeMove(state, 1, 0, 7), false);
-  assert.equal(applyAuthoritativeMove(state, 1, 0, 4), true);
-  assert.equal(state.turn, 0);
+test('board games use real reducers; remaining legacy rounds reject invalid and duplicate seat answers',()=>{
+ for(const id of['snakes','oanquan','cacuangua'])assert.equal(createAuthoritativeState(id,2),null);
+ const state=createAuthoritativeState('tug',2);assert.ok(state);
+ assert.equal(applyAuthoritativeMove(state,0,0,2),false);assert.equal(applyAuthoritativeMove(state,0,0,1),true);assert.equal(applyAuthoritativeMove(state,0,0,0),false);assert.equal(applyAuthoritativeMove(state,1,0,0),true);
 });

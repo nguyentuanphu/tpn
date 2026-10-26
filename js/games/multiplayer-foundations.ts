@@ -20,11 +20,20 @@ const caps = (maxPlayers: number, mode: FoundationMode, teamBased = false): Mult
 
 export const MULTIPLAYER_FOUNDATIONS: Record<string, MultiplayerFoundation> = {
   oanquan: { id: 'oanquan', all: false, mode: 'turn', move: 'pit', max: 2, ...caps(2, 'turn') },
-  snakes: { id: 'snakes', all: false, mode: 'turn', move: 'roll', max: 4, ...caps(4, 'turn') },
+  snakes: { id: 'snakes', all: true, mode: 'turn', move: 'roll', max: 4, ...caps(4, 'turn') },
   tug: { id: 'tug', all: true, mode: 'round', move: 'pull', max: 6, ...caps(6, 'round', true) },
   familyquiz: { id: 'familyquiz', all: true, mode: 'round', move: 'answer', max: 6, ...caps(6, 'round', true) },
   cacuangua: { id: 'cacuangua', all: true, mode: 'turn', move: 'horse', max: 4, ...caps(4, 'turn'), npc: true }
 };
+
+export const orderedBoard=(id:string)=>id==='cacuangua'||id==='snakes'||id==='oanquan';
+export function validBoardWire(id:string,n:number,value:number){
+ if(!orderedBoard(id)||!Number.isInteger(n)||!Number.isInteger(value)||value<0)return false;
+ if(n===9997||n===9998)return value<=1;
+ if(n===9999)return value<=4997;
+ if(n<0||n>=4997&&n<5000||n>=9997)return false;
+ return value<=(id==='cacuangua'?4:id==='oanquan'?23:0);
+}
 
 export function foundationFor(id: string): MultiplayerFoundation | null { return MULTIPLAYER_FOUNDATIONS[id] || null; }
 
@@ -50,7 +59,7 @@ export type AuthoritativeMoveState = {
 export function createAuthoritativeState(id: string, seats: number): AuthoritativeMoveState | null {
   const def = foundationFor(id);
   // The horse session validates actual board state, bonus turns and ordered host commits.
-  if(id==='cacuangua')return null;
+  if(orderedBoard(id))return null;
   if (!def || !Number.isInteger(seats) || seats < 2 || seats > def.maxPlayers) return null;
   return { game: id, seats, turn: 0, rounds: new Map(), moves: new Map() };
 }

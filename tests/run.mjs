@@ -694,6 +694,10 @@ await check('voicepack', async () => {
 
 await check('folkplay', async () => (await import('./folk-court-browser.mts')).folkCourtBrowserCheck(b));
 
+await check('oaqplay', async () => (await import('./oanquan-browser.mts')).oaqBrowserCheck(b));
+
+await check('snakesplay', async () => (await import('./snakes-browser.mts')).snakesBrowserCheck(b));
+
 await check('horseplay', async () => (await import('./horse-browser.mts')).horseBrowserCheck(b));
 
 await check('hanoivoice', async () => (await import('./hanoi-voice.mts')).hanoiVoiceCheck(b));
