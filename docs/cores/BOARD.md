@@ -1,3 +1,7 @@
+## Studio management foundation (documentation, 26 October 2026 AEDT)
+
+- **Now:** owner-requested architecture and implementation handbook complete and locally validated on branch `work`, based on `ac76cf60` (v1.01). Scope: 137 data entries, 38 metric definitions, 23 connections, seven SVG visual artifacts, offline searchable guide, 12 build tickets and 25 acceptance scenarios. [Start here](../studio-management-foundation/README.md); [validation evidence](../studio-management-foundation/VALIDATION-REPORT.md). Document/schema/source checks pass; guide browser checks 18/18 across phone/tablet/computer; repository changed checks 9/9 (232 unit passes, one intentional legacy skip). Runtime management features remain proposed; no game/Studio runtime changes, new release version, main merge or deployment authorised by this documentation task. No implementation file ownership claimed.
+
 ## Front Desk / Helper (r90 / v1 + Save Copy)
 - **Now (24 Oct 2026 AEDT): ready for Release, round r90 (published as v1) & Save/Load Copy Part 1** · branch work/r90-more-content (latest fix pending commit) · waiting for: Release to collect, run GitHub full suite, and merge · 24 Oct 2026 AEDT
 - **Progress note (checks, 24 Oct 2026 AEDT):**

@@ -1,0 +1,126 @@
+{
+  "baseline_commit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+  "meaning": "File hashes from inspected source. Recheck behavior when any source changes.",
+  "files": [
+    {
+      "path": "home/analytics.ts",
+      "sha256": "35d2e64ec4b9504d0fb89228f723e4f2e54d67e56e2604bfe330f01c7514485c"
+    },
+    {
+      "path": "home/site.ts",
+      "sha256": "8c332a2f8dc0e9ed48dd2060782576e1cba6a39f02ca9fb165001c4eb6ecf764"
+    },
+    {
+      "path": "js/content/activities.ts",
+      "sha256": "3ffdd8f802e47ea8cab0491b93f415627a747cd2059f7e76f7f9bd5146e44323"
+    },
+    {
+      "path": "js/content/releases.ts",
+      "sha256": "c289f0f570e8778e70d632f53cdcb7289230a42dcffdddfef009cce0b206c62f"
+    },
+    {
+      "path": "js/content/savecopy.ts",
+      "sha256": "0c193b20701cae0e82034697091ad02dfe9c1701b5e73d90b726ba5724fee975"
+    },
+    {
+      "path": "js/content/unlocks.ts",
+      "sha256": "f62ddbd44f79eacbe1e8640ed30cbee073da51b16c4b46fcd99012c80eac6748"
+    },
+    {
+      "path": "js/core/events.ts",
+      "sha256": "f13696e62e57ec7279a8ee2777658eb96f35ba944e00221fd57cca73fa4a20eb"
+    },
+    {
+      "path": "js/custom.js",
+      "sha256": "ccd5dfca8d60c4823c6a2caed43b595f2406ee224cada8cc56a4d9f273ec1e2f"
+    },
+    {
+      "path": "js/familydevices.ts",
+      "sha256": "a1a392137cb80c63162bbc81f07b4ddb4d6df44b3eed74042cd72aada93cb83a"
+    },
+    {
+      "path": "js/games/registry.ts",
+      "sha256": "38ae95e3f2ceda249db7aec7774565a291cd4b50c269579af5e9fbd1ad287bd2"
+    },
+    {
+      "path": "js/launch.js",
+      "sha256": "f0a9288f03914bc333dc9430590989702c003fc04eb2a34941a560932b4e2abd"
+    },
+    {
+      "path": "js/net.ts",
+      "sha256": "41629179d491d89ddf7c3478af983c0f440946d8dc87fd9b75b9e55243d2c7b1"
+    },
+    {
+      "path": "js/players.ts",
+      "sha256": "6f4c8bd362500ff1bb1b5cb260c52638f8783b5db23b2984e9b4be71616d84c3"
+    },
+    {
+      "path": "js/report-outbox.ts",
+      "sha256": "14065f9de663366efead6dadebbaaeabc6a0903d7b799f70c060f83c316b7c49"
+    },
+    {
+      "path": "js/state.ts",
+      "sha256": "a795e8d1bc0a02758e0cdb0e42403897620fabffbe2f504abbed313697c6cd6e"
+    },
+    {
+      "path": "js/tester.ts",
+      "sha256": "1422b612e0148ca4b57255b800cb76897a8d5234e9f89c10a70af219b5be9a03"
+    },
+    {
+      "path": "js/voice.ts",
+      "sha256": "71ac75e37af9af6516ea865bbc523cc3b3463730ab850902945fc0f526711d25"
+    },
+    {
+      "path": "netlify/functions/parent-analytics.mts",
+      "sha256": "da92d9f19c4b7e364811fa631e426655a087b82a999e969bea76732ffff5219b"
+    },
+    {
+      "path": "netlify/functions/studio.mts",
+      "sha256": "fbd57213ce30dd358bae1ebd8fb801151e076745655fcd2edd2ca713046dc64f"
+    },
+    {
+      "path": "netlify/lib/accesslog.mts",
+      "sha256": "ab9bf60605d9756f80eb820b4b98950974ff1fcb02843402900f56b64f292db1"
+    },
+    {
+      "path": "netlify/lib/admins.mts",
+      "sha256": "15ed40705099e038af445b955f54ede7eb6cbf119bb49b1c4adbf652f936e72d"
+    },
+    {
+      "path": "netlify/lib/child-bots.mts",
+      "sha256": "1dbf8c106180dd559f0ecf3524d2f5fd5eb1a68ea5acf6c6019a050a99189907"
+    },
+    {
+      "path": "netlify/lib/family-devices.mts",
+      "sha256": "20d1620525350c39fdae5fdeef968adf3dcb7bc0771a474bcba5ca90144ea9d6"
+    },
+    {
+      "path": "netlify/lib/family.mts",
+      "sha256": "dced493cf48d307f386fa68c1ce80c0d05de9cd2531de72001ae4b9f673b1764"
+    },
+    {
+      "path": "netlify/lib/hello-clean.mts",
+      "sha256": "1fd590108d2da5aaf0e46d70084ed0417282f336c4ab57145fc96ce40e0b52b5"
+    },
+    {
+      "path": "netlify/lib/live.mts",
+      "sha256": "14d7a6084234eb116e5d8c377410ee0100a4b4e0403f707fdb7bbcafded80155"
+    },
+    {
+      "path": "netlify/lib/players.mts",
+      "sha256": "a6cb0780c2c06bcb2b6ce80424d7e35593aac377bf551d06834f588b227a7903"
+    },
+    {
+      "path": "netlify/lib/tester.mts",
+      "sha256": "5be750c0e58701e9c56621c2bac25d5b6dfadf29496e2696f9c68c7bd4ddb059"
+    },
+    {
+      "path": "studio/core.cts",
+      "sha256": "0c32a091cb1c40adf065c7f8778cfffa1f3244802af4c0020c63d13943e8b246"
+    },
+    {
+      "path": "studio/ui/app.ts",
+      "sha256": "2066d6af891366d898980f3cbf8f66375e1c0d623d5a9460b9a216c81c4c566f"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "provider": "example-host",
+  "accountAlias": "synthetic-account",
+  "sourceDocumentId": "EXAMPLE-2026-10",
+  "sourceLineId": "1",
+  "kind": "actual",
+  "amountMinor": 12000,
+  "currency": "AUD",
+  "taxMinor": 1200,
+  "periodStart": "2026-10-01",
+  "periodEnd": "2026-10-31",
+  "recognisedAt": "2026-10-26T00:00:00Z",
+  "category": "hosting",
+  "expectedRevision": 0
+}

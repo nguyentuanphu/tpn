@@ -21,6 +21,7 @@ Nothing was deleted when the docs were tidied (owner, 24 Oct 2026 AEDT): old rou
 | The eight cores, each core's file, owner's decisions and progress notes | [cores/](cores/README.md) |
 | Task briefs for the next pieces of work | [cores/tasks/](cores/tasks/) |
 | Plans | [plans/](plans/) |
+| Studio management foundation: game/website connections, data dictionary, visual guide, metrics and implementation tickets | [studio-management-foundation/](studio-management-foundation/README.md) |
 | The family website: its rules, review and build | [website-review-20261023/](website-review-20261023/README.md) |
 | Marketing: the ads guide (Studio shows its pictures) | [guides/ads-guide/](guides/ads-guide/README.md) |
 
