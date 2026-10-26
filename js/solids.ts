@@ -94,7 +94,7 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
     };
     step();
     function done(fromCache: boolean) {
-    W.solid = grid; W.underpassSolid=waterGrid; W.solidGround = ground; W.solidAt = (x, z) => { const k = idx(x, z); return k >= 0 && grid[k] === 1; };
+    W.solid = grid; W.underpassSolid=waterGrid; W.solidGround = ground; W.solidAt = (x, z, y?:number) => solidPointAtHeight(W,x,z,y);
     // anything you tap that now stands inside something solid reaches out to the nearest open ground
     for (const it of G.interactables) {
       if (!Number.isFinite(it.x) || !W.solidAt(it.x, it.z)) continue;
@@ -120,14 +120,23 @@ export function solidCircleHit(W: { solid?: Uint8Array }, x: number, z: number, 
   return false;
 }
 
+// Both collision resolution and observations must use the body's own floor.
+export type HeightSolidWorld={solid?:Uint8Array;underpassSolid?:Uint8Array;platforms?:{bridge?:string;x0:number;x1:number;z0:number;z1:number;y:number}[]};
+export function solidGridAtHeight(W:HeightSolidWorld,x:number,z:number,y?:number){
+ const below=y!=null&&W.platforms?.some(p=>p.bridge&&x>p.x0-.8&&x<p.x1+.8&&z>p.z0-.8&&z<p.z1+.8&&y+HI<p.y-.5);
+ return below&&W.underpassSolid?W.underpassSolid:W.solid;
+}
+export function solidPointAtHeight(W:HeightSolidWorld,x:number,z:number,y?:number){
+ const i=Math.floor((x+HALF)/CELL),j=Math.floor((z+HALF)/CELL);return i>=0&&j>=0&&i<N&&j<N&&solidGridAtHeight(W,x,z,y)?.[j*N+i]===1;
+}
+
 // push a body of radius r out of solid cells (used by world.collide)
 export function pushOutOfSolids(W: Pick<ReturnType<typeof import('./world.js').createWorld>, 'solid' | 'solidGround' | 'underpassSolid' | 'platforms'>, pos: { x: number; y?: number; z: number }, r: number) {
   if (!W.solid) return;
   if (pos.y != null && pos.y > W.solidGround(pos.x, pos.z) + 1.2) return; // up in the air (gliding, a tower top, a room upstairs)
   // The ordinary grid represents bodies standing on the deck. At water height use
   // the separately sampled layer, preserving real piers while leaving overhead rails open.
-  const below=pos.y!=null&&W.platforms.some(p=>p.bridge&&pos.x>p.x0-.8&&pos.x<p.x1+.8&&pos.z>p.z0-.8&&pos.z<p.z1+.8&&pos.y+HI<p.y-.5);
-  const grid=below&&W.underpassSolid?W.underpassSolid:W.solid;
+  const grid=solidGridAtHeight(W,pos.x,pos.z,pos.y);
   for (let pass = 0; pass < 2; pass++) {
     const i0 = Math.floor((pos.x - r + HALF) / CELL), i1 = Math.floor((pos.x + r + HALF) / CELL), j0 = Math.floor((pos.z - r + HALF) / CELL), j1 = Math.floor((pos.z + r + HALF) / CELL);
     let moved = false;

@@ -8,7 +8,7 @@ import { barStart, barApply, BAR_SYMBOLS } from './fruitbar-engine.js';
 import { ARCADE_STYLE, RING_CELLS, art, control, dom } from './arcade-board.js';
 
 /** Family arcade owns no profile coins, rewards or persistent balance. */
-interface FruitBarApi {online?:GameOnline;little:boolean;closed:boolean;close():void;onCleanup(f:()=>void):void;}
+interface FruitBarApi {online?:GameOnline;little:boolean;say(en:string,vi:string):void;closed:boolean;close():void;onCleanup(f:()=>void):void;}
 function runFruitBar(api:FruitBarApi){
  const online=api.online;
  if(document.querySelector('.parent-arcade')){online?.leave?.();return;}
@@ -64,6 +64,7 @@ function runFruitBar(api:FruitBarApi){
  }
  function highlight(index:number){root.querySelectorAll<HTMLElement>('[data-bar-cell]').forEach((cell,i)=>cell.classList.toggle('on',i===index));}
  function animateResult(result:number){cancelAnimationFrame(frame);if(reduceMotion()){highlight(result);return;}spinning=true;const begin=performance.now();const tick=(now:number)=>{if(dead)return;const p=Math.min(1,(now-begin)/1800);light=Math.floor(48*(1-(1-p)**3));highlight(p===1?result:light%16);if(p<1)frame=requestAnimationFrame(tick);else{spinning=false;paint();}};frame=requestAnimationFrame(tick);}
+ api.say(online?'Place your counters':'Choose how to play',online?'Chọn điểm ảo':'Chọn cách chơi');
  if(online){start(Math.min(4,online.names.length),false,false);}else{
   root.append(dom('h2','',T('Choose how to play','Chọn cách chơi')));
   for(const [label,vi,seats,npc,fair]of [['Play on my own','Chơi một mình',1,false,false],['Equal frequencies','Các hình có cơ hội bằng nhau',1,false,true],['Two players here','Hai người cùng máy',2,false,false],['With a practice helper','Cùng bạn hỗ trợ tập chơi',2,true,false]]as const){

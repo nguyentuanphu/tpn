@@ -495,7 +495,7 @@ export function createWorld(scene, quality) {
     groundAt?: (x: number, z: number, y?: number) => number, platformAt?: (x: number, z: number, y?: number) => unknown, collide?: (pos: { x: number, y?: number, z: number }, r?: number) => unknown,
     update?: (dt: number, t: number) => void, updateSky?: (dt: number, camPos: THREE.Vector3, focus?: THREE.Vector3) => void, isNight?: () => boolean,
     waterMap?: (cv: HTMLCanvasElement) => void, setShrineDone?: (id: string, done: boolean) => void, setTowerDone?: (id: string, done: boolean) => void, hideLeafy?: (id: string) => void,
-    solid?: Uint8Array, solidAt?: (x: number, z: number) => boolean, solidGround?: (x: number, z: number) => number, solidStats?: import('./solids.js').SolidStats, busStops?: unknown[],
+    solid?: Uint8Array, solidAt?: (x: number, z: number, y?: number) => boolean, solidGround?: (x: number, z: number) => number, solidStats?: import('./solids.js').SolidStats, busStops?: unknown[],
     familyBuilt?: unknown, familyEdits?: unknown, gates?: unknown[], heroesNear?: (x: number, z: number, r: number) => boolean, levelled?: unknown,
     priceTags?: unknown[], roadLines?: { kind: string, pts: number[][], [k: string]: unknown }[], roadTop?: Map<number, number> | null, roadside?: unknown, waterSites?: { id: string, x: number, z: number, r: number }[] };
   const W: typeof wParts & SvWorldMore = wParts;

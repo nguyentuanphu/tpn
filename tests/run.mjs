@@ -592,7 +592,7 @@ await check('solid', async () => {
       const p = { x: sx, z: sz, y: W.groundAt(sx, sz) }, q = { ...p }; W.collide(q, .45); if (Math.hypot(q.x - p.x, q.z - p.z) > .01) continue; // start on open ground
       tried++;
       for (let s = 0; s < 40; s++) { const dx = cx - p.x, dz = cz - p.z, d = Math.hypot(dx, dz) || 1; p.x += dx / d * .15; p.z += dz / d * .15; W.collide(p, .45); p.y = W.groundAt(p.x, p.z, p.y + 1); }
-      if (W.solidAt(p.x, p.z)) bad.push(`walked into ${cx.toFixed(1)},${cz.toFixed(1)}`);
+      if (W.solidAt(p.x, p.z, p.y)) bad.push(`walked into ${cx.toFixed(1)},${cz.toFixed(1)}`);
     }
     let lost = 0; const lostAt = [];
     for (const it of G.interactables) {
