@@ -10,6 +10,8 @@
     "../js/festivals.ts",
     "../js/content/festival-visibility.ts",
     "../js/festival-live.ts",
-    "../home/festivals.ts"
+    "../home/festivals.ts",
+    "../js/hanoi-pack.ts",
+    "./hanoi-voice.mts"
   ]
 }

@@ -1,3 +1,15 @@
+# Current voice checkpoint · 26 October 2026 AEDT
+
+Production packaging now contains **6,344 verified current public Lê Minh units**, with canonical IDs and provider/model/voice identity, checksum and byte totals. The optional pack is about 405 MiB. Staging has 6,345 clips including one historical title. Current default Vietnamese inventory has 6,366 units; 19 privacy-held units and three unreviewed prototype instructions remain excluded from FPT.
+
+Parents can select Lê Minh for public Vietnamese narration while retaining the female default. Family recordings retain their existing priority; unrecorded/private speech retains the existing fallback policy. Independent provider caches prevent confusing Azure male recordings with Lê Minh. The shared download service continues after Settings closes, resumes cached work, verifies downloaded bytes, and never sends runtime speech to FPT. Mobile-data permission is visible and revocable. The download size is shown before the optional download starts.
+
+The real browser integration passed with 18 actual recordings: default avoids optional fetching, preview does not opt in, download continues after closing Settings, and a female character uses Lê Minh offline. Existing male/female preview and offline-background regression also passes (110s). The first combined run passed 3/3 including types. A later newly included test-file type error was corrected; final mobile-permission/bilingual layout/types follow-up passes 2/2 (130s,23s). Four focused service units pass, including full-storage reporting. Full GitHub regression on this source remains required. Physical-device/listening review remains outstanding.
+
+Turtle count recording runs 40256013533 (FPT) and 40256013546 (default Azure) succeeded. Three new FPT clips were independently checksummed and fully decoded. Current default coverage is zero missing. The packaging tool rejects unknown current voice gaps and excludes privacy-held units; adding a game/story/film requires reviewed recordings before packaging can complete.
+
+The earlier dated audit follows; its pending-production statements describe the earlier checkpoint.
+
 # Lê Minh readiness · 26 October 2026 AEDT
 
 Snapshot of runtime `ad302279a`, voice assets through `1a05aed33`, after the default-voice coverage check reported zero missing files. Exact counts and source paths: [VOICE-READINESS.json](VOICE-READINESS.json).

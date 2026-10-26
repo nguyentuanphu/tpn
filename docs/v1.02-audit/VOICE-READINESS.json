@@ -1,9 +1,9 @@
 {
-  "runtime": "ad302279a",
-  "currentVietnameseUnits": 6363,
+  "runtime": "f3a135a86",
+  "currentVietnameseUnits": 6366,
   "fptBaseline": 6319,
-  "fptArcadeDelta": 13,
-  "fptStagedTotal": 6342,
+  "fptArcadeDelta": 16,
+  "fptStagedTotal": 6345,
   "missingFromFpt": 22,
   "privacyHeld": 19,
   "publicNeedsReview": [
@@ -36,7 +36,7 @@
     "danang": 14,
     "festivals": 103,
     "games": 3722,
-    "hanoi": 60,
+    "hanoi": 65,
     "hoian": 9,
     "home": 26,
     "india": 37,
@@ -53,22 +53,24 @@
     "town": 196,
     "village": 215,
     "vungtau": 15,
-    "world": 828
+    "world": 826
   },
   "baselineBranch": "work/fpt-leminh-full-20261025",
   "deltaBranch": "work/v1.02-fruit-parade",
   "baselineVerificationRun": 40190674496,
-  "deltaRecordingRun": 40243379237,
-  "productionIntegration": "pending",
+  "deltaRecordingRun": 40256013533,
+  "productionIntegration": "implemented; focused browser/mobile-permission/offline/layout/types pass; full latest-source regression pending",
   "fptTitleDelta": 10,
   "labelsBranch": "work/fpt-v102-labels-20261026",
   "labelsRecordingRun": 40227974447,
   "labelsCommit": "715f260d1",
-  "recordingsHead": "1a05aed33",
-  "fptCurrentCoverage": 6341,
+  "recordingsHead": "f3a135a86",
+  "fptCurrentCoverage": 6344,
   "fptHistoricalOnly": [
     "4c87fc45-4909939b"
   ],
-  "defaultRecordingRun": 40243424013,
-  "defaultCoverage": "zero missing; 8/8 new files independently fully decoded"
+  "defaultRecordingRun": 40256013546,
+  "defaultCoverage": "zero missing after turtle count recordings",
+  "productionSignature": "280b151ec80c4a1cc838f157c75e1b0f9135cb0597b093767ca862f8af860766",
+  "productionBytes": 424275298
 }

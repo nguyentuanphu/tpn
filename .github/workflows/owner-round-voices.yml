@@ -37,7 +37,7 @@ jobs:
       - name: Collect only new recordings and updated indexes
         run: |
           python3 - <<'PY'
-          import pathlib, shutil, subprocess
+          import json, pathlib, shutil, subprocess
           changed = subprocess.check_output(['git','diff','--name-only','--','voices'], text=True).splitlines()
           new = subprocess.check_output(['git','ls-files','--others','--exclude-standard','voices'], text=True).splitlines()
           for name in sorted(set(changed + new)):
@@ -46,6 +46,8 @@ jobs:
                   target = pathlib.Path('voices-delta') / source
                   target.parent.mkdir(parents=True, exist_ok=True)
                   shutil.copy2(source, target)
+          pathlib.Path('voices-delta').mkdir(exist_ok=True)
+          pathlib.Path('voices-delta/result.json').write_text(json.dumps({'source': subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(), 'coverage': 'passed', 'changedFiles': sorted(set(changed + new))}, indent=2) + '\n')
           PY
       - uses: actions/upload-artifact@v4
         with:

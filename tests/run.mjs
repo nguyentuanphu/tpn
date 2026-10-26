@@ -692,6 +692,8 @@ await check('voicepack', async () => {
   return `first open downloads with a small bar (${first.map(x => '"' + x + '"').slice(0, 2).join(' → ')} … "${first[first.length - 1]}"), the next open shows and downloads nothing, and files the phone lost are fetched again`;
 });
 
+await check('hanoivoice', async () => (await import('./hanoi-voice.mts')).hanoiVoiceCheck(b));
+
 await check('voicebackground', async () => {
   // Owner, v1.01: male previews select the actual male file while female remains default.
   // The explicit offline job keeps downloading after Save & close and Settings redraws.

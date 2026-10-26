@@ -19,13 +19,14 @@ const hide = (after = 0) => { clearTimeout(hideT); hideT = setTimeout(() => { if
 
 export function startPackBar() {
   onPackProgress(e => {
+    const label=e.provider==='Lê Minh'?'Lê Minh · ':'';
     // (round R item 12) on mobile data with the core voices in: a grown-up is asked about the rest (js/voicepack.js)
     if (e.state === 'ask') { import('./voicepack.js').then(m => m.askCard(e.mb)).catch(() => { }); return; }
-    if (e.state === 'loading') { const saved = e.saved ?? e.done, total = e.fullTotal ?? e.total, pc = Math.max(0, Math.min(100, Math.floor(saved / (total || 1) * 100))); show(T(`Voices: ${saved.toLocaleString()} of ${total.toLocaleString()} saved`, `Giọng đọc: đã lưu ${saved.toLocaleString()} / ${total.toLocaleString()}`) + ' · ' + pc + '%', pc); } // (r63: never past 100 %)
+    if (e.state === 'loading') { const saved = e.saved ?? e.done, total = e.fullTotal ?? e.total, pc = Math.max(0, Math.min(100, Math.floor(saved / (total || 1) * 100))); show(label+T(`Voices: ${saved.toLocaleString()} of ${total.toLocaleString()} saved`, `Giọng đọc: đã lưu ${saved.toLocaleString()} / ${total.toLocaleString()}`) + ' · ' + pc + '%', pc); } // (r63: never past 100 %)
     else if (e.state === 'ready' && e.known) { /* already on the device from an earlier start: nothing to say (round O) */ }
-    else if (e.state === 'ready') { show(T('Voices ready', 'Giọng đọc đã sẵn sàng') + ' ✓' + (e.total ? ` (${e.total.toLocaleString()})` : ''), 100); hide(e.quiet ? 2500 : 3000); }
-    else if (e.state === 'nostore') { show(T('Voices play from the internet here: this address can’t keep them on the device (use the https website to keep them)', 'Ở địa chỉ này giọng đọc phát qua mạng, không lưu được trên máy (dùng trang https để lưu)'), null); hide(8000); }
+    else if (e.state === 'ready') { show(label+T('Voices ready', 'Giọng đọc đã sẵn sàng') + ' ✓' + (e.total ? ` (${e.total.toLocaleString()})` : ''), 100); hide(e.quiet ? 2500 : 3000); }
+    else if (e.state === 'nostore') { show(e.provider==='Lê Minh'?T('Could not save Lê Minh. Check free device storage; recordings can still play online.','Chưa lưu được Lê Minh. Kiểm tra dung lượng trống; vẫn có thể nghe bản thu qua mạng.'):T('Voices play from the internet here: this address can’t keep them on the device (use the https website to keep them)', 'Ở địa chỉ này giọng đọc phát qua mạng, không lưu được trên máy (dùng trang https để lưu)'), null); hide(8000); }
     else if (e.state === 'nopack') { show(T('No recorded voices found: the device’s own voice is used', 'Không tìm thấy giọng đọc ghi sẵn: dùng giọng của máy'), null); hide(8000); }
-    else if (e.state === 'waiting') { show(T('Voices will finish when the internet is back', 'Giọng đọc sẽ tải tiếp khi có mạng'), null); hide(6000); }
+    else if (e.state === 'waiting') { show(label+(e.provider==='Lê Minh'&&navigator.onLine!==false?T('Continues on Wi-Fi or when mobile downloads are allowed','Tải tiếp khi có Wi-Fi hoặc được phép dùng dữ liệu di động'):T('Voices will finish when the internet is back', 'Giọng đọc sẽ tải tiếp khi có mạng')), null); hide(6000); }
   });
 }

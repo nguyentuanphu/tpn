@@ -294,3 +294,5 @@ Lê Minh baseline run 40175822783 completed 6,319 clips after the first run's HT
 ## Owner decisions · 26 October 2026 AEDT
 
 Owner authorizes routine fixes and branch work without repeated questions, continuing toward the deployment review. Festival website pages, in-game notices and Studio switches must share visibility: off in Studio hides the festival in both places. Implemented on work/v1.02-fruit-parade with a public-only endpoint, shared typed policy and end-to-end coverage. Deployment still requires a fresh explicit yes, deploy for v1.02.
+
+26 October 2026 AEDT: optional production Lê Minh6344 current units (~405MiB), separate verified cache and parent selection, shared background/resume/revocable-mobile download service implemented. Focused browser/layout/types2/2 and four service units pass, default female/male/background regression passes. Full236/237 before turtle recording arrivals; now coverage zero but latest-source full pending. AI review/semantic games/website/speed/device blockers remain. Owner ZIP waiver retained for this session; no deployment approval.
