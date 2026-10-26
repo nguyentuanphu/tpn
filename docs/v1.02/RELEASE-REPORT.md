@@ -1,8 +1,10 @@
 # v1.02 release review
 
-Updated 27 October 2026, 5:23 am AEDT. Live remains **v1.01**. Candidate: `work/v1.02-fruit-parade`, draft [PR #602](https://github.com/nguyentuanphu/tpn/pull/602). **Local release review complete; final GitHub regression required before deployment approval.** The owner selected v1.02 and waived the ZIP. No v1.02 merge or deployment is approved. Release is working alone at the owner's latest instruction.
+**v1.02 is live**, verified27 October2026 at **9:08 am AEDT** on sparklevalley.au and sparklevalley.netlify.app. The owner explicitly answered **“Yes, deploy v1.02 (Recommended)”** after the final review. [PR #602](https://github.com/nguyentuanphu/tpn/pull/602) was marked ready and squash-merged as `ff5800048` at9:03 am AEDT. The reviewed source was `84c5c1d2a`; its entire tree equals the squash merge. ZIP waived. Studio remains online only under the standing owner decision.
 
-## Changes prepared
+The squash body inherited old skip-build tags from branch history, so the first merge did not start hosting. A clean empty deployment trigger `9bde35178` published the identical approved code. GitHub also returned HTTP502 during the merge request; an immediate read confirmed the merge succeeded, so it was not repeated. [Live verification](live-verification.json) checks actual version assignments, not version numbers appearing in comments.
+
+## Released changes
 
 - Fruit Parade has three lanes per player. Orchard Quest is a separate picture-mission game, available to accepted testers through its own Studio switches. Fruit Bar is for children and adults, with public single/multiplayer switches and separate tester preview; switches default off. Its free session counters never use child coins, purchases or cash-out.
 - Trồng Nụ Trồng Hoa uses a large hand-and-foot stack and jumping, replacing the unrelated planting-memory prototype. Cờ Cá Ngựa uses legal one-die classic rules and a gentle adaptation with real 2–4-seat shared boards. Six Vietnamese folk activities now show their actual actions and cultural context: Cướp Cờ, Mèo Đuổi Chuột, Ném Còn, Đánh Đáo, Kéo Cưa Lừa Xẻ and Đua Thuyền. They are labelled screen adaptations.
@@ -21,8 +23,11 @@ All new feature logic is TypeScript. The legacy repository is not entirely conve
 
 ## Verification
 
-Latest completed exhaustive [GitHub run 40362309176](https://github.com/nguyentuanphu/tpn/actions/runs/40362309176), source `4f1c7e023`: **242/247**, no second-try passes in all eight worker logs. Five initial/retry failures: voicecover lacked1,442 English fragment files (now collected with zero missing coverage), and festcal/festivals/ownerdecorworld/autoplay exposed the Sydney-vs-device schedule mismatch (targeted repairs pass). [Exact findings](../v1.02-audit/github-40362309176.md). Final code/assets need a fresh exhaustive pass and official map.
+Final exhaustive [GitHub run40377688415](https://github.com/nguyentuanphu/tpn/actions/runs/40377688415), exact source `84c5c1d2a766bfec6de0e61d51158f620c405fc2`: **248/248 passed**, completed27 October2026 at6:35 am AEDT. All eight worker logs inspected. **Passed only on isolated second try: `welcomevoice` and `ownerreportedphonevi`.** The first welcome observation included an overlapping Find3stars objective; the first phone-VI run reported181 blocked controls. Their unchanged isolated reruns passed; these are not first-pass successes. [Exact verification record](github-final-verification.json).
 
+Website consistency40377688426, Checks40377688393, Fruit Parade40377688546 and Orchard/Studio40377688481 all pass on the same source. Official code-map commit `4529e90b6` identifies that exact tested source; its two artifact files are recorded on main with this release. The map lists251 checks including the three local-only speed checks; GitHub ran248.
+
+Intermediate run40362309176 was242/247 before final recording collection and the Sydney schedule repair. Its five failures and the targeted fixes remain in [the historical findings](../v1.02-audit/github-40362309176.md).
 Prior source `c1a2c5b27` passed 240/240 in 40278772969 with no retries; its exact map is collected. It predates the final changes. Bot runs marked action_required executed no checks and are not passes.
 
 Local completed evidence includes legal full shared matches, replay/transport/consent/rate checks; 330 unit tests; actual Family Quiz private flows and report/screenshot redaction; selected-voice composition and fallback; parent download/background/offline checks; all 13 bridge crossings and deck/boat checks; and EN/VI phone/tablet/computer captures of the changed games. Family Quiz editor and game contact sheets have been inspected. Current types pass with 196 explicit files plus 51 server/Studio/tool files. Real Studio → rebuilt website → game off/on/off and bootstrap pass 2/2. Sydney calendar repair: festcal passed; after an environment restart, the resumed festivals/whole-world decorations/unit/types run passed 4/4. All placement, no-overlap, off-precedence and game-rule assertions remain.
@@ -49,11 +54,11 @@ Serial checks, unchanged budgets, same machine. Final network repair restores **
 
 A fresh GitHub check on27 October2026 AEDT found live-v1.01 reports that this release must **not** close without reproduction and a verified repair: [#603](https://github.com/nguyentuanphu/tpn/issues/603) Hanoi electric-cart dark windscreen/road view; [#605](https://github.com/nguyentuanphu/tpn/issues/605) Terracotta Army placement near Hanoi; [#606](https://github.com/nguyentuanphu/tpn/issues/606) Sword Lake appearance; [#607](https://github.com/nguyentuanphu/tpn/issues/607) obstruction near(179,-134). Recent freeze/slow reports include#604,#608–611 and recurring#404/#561/#570. These remain open; browser rule/geometry checks do not establish a physical iPhone fix for them. Earlier startup#36 and road-art#34 also retain their scope. No claim that all repository bugs are resolved.
 
-## Final deployment gate
+## Deployment and remaining work
 
-All local preparation is complete. The final exhaustive GitHub regression must pass against the settled branch; Release will report its exact run/count and any retries before requesting approval. The current status and automated full-suite summary are on [PR #602](https://github.com/nguyentuanphu/tpn/pull/602). The preceding242/247 result is retained above as historical evidence, not a pass. The official final code-map artifact will be collected from that run and committed in the release record; no map from another source is substituted.
+Live checks pass for the service worker, actual game BUILD, website release metadata and “Game guide · v1.02”, online Studio/version, public-only festival endpoint, all6663 optional voice-manifest entries and sample new English/FPT MP3 bytes/SHA. The Netlify domain also serves v1.02. Issues#589,#584,#509,#573–576 are closed “Fixed in v1.02”. Cart-view/landmark/obstruction and freeze reports listed above remain open; no physical-device fix is claimed for them.
 
-ZIP waived. Timing failures/baseline, open tester reports, physical-device limitations and unfinished AI review remain disclosed. Main, Netlify, issue closure and Studio publication wait for the owner's explicit **yes, deploy v1.02**. Website branch-protection configuration could not be verified with the connector (GitHub403 administration access); this round's consistency gate and its negative regression were verified directly.
+Local timing failures/baseline, physical-device listening/native camera/two-device limits and unfinished AI review remain disclosed and were included in the approval question. Branch-protection administration reads returned403; this round's website gate and negative drift regression themselves pass. No Studio executable was built or published, and no ZIP was produced, as authorized.
 
 [Detailed game evidence](../v1.02-traditional-repairs/README.md) · [Previous checkpoint preserved](RELEASE-REPORT-checkpoint-20261026.md).
 

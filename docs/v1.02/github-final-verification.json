@@ -1,0 +1,27 @@
+{
+  "run": 40377688415,
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40377688415",
+  "testedHead": "84c5c1d2a766bfec6de0e61d51158f620c405fc2",
+  "passed": 248,
+  "total": 248,
+  "allEightWorkerLogsInspected": true,
+  "passedOnSecondTry": [
+    "welcomevoice",
+    "ownerreportedphonevi"
+  ],
+  "retryJobs": [
+    121765456349,
+    121765456524
+  ],
+  "codeMapCommit": "4529e90b6d63dc739c37a5560669b58f16d6db5d",
+  "codeMapSource": "84c5c1d2a766bfec6de0e61d51158f620c405fc2",
+  "mapIncludesThreeLocalOnlySpeedChecks": true,
+  "relatedGreenRuns": {
+    "website": 40377688426,
+    "checks": 40377688393,
+    "fruitParade": 40377688546,
+    "orchardStudio": 40377688481
+  },
+  "ownerApproval": "Yes, deploy v1.02 (Recommended)",
+  "mergeCommit": "ff58000482f8113acd2ae54924bc7ef6d7ed6459"
+}
