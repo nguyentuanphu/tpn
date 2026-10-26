@@ -1,5 +1,5 @@
 {
-  "inventory": "00688b1bc171fe7c4cd9ea5392fb1e8b2565945c74baa73366614160b7152a97",
+  "inventory": "529c08a623515f598d7d371ba8dc872f32a421155572375306e91ead1808de60",
   "voice": {
     "provider": "FPT Neo",
     "model": "FPT.AI-VITs",
@@ -7,7 +7,7 @@
     "speed": 1,
     "response_format": "mp3"
   },
-  "total": 58,
+  "total": 64,
   "done": {
     "1b9b622526a2c94c": {
       "identity": "eec3ba725bfce1ffa7254e1990320f5ef4b5fcdea2e5fb13f7728b63a57cefe2",
@@ -356,8 +356,44 @@
       "sha256": "03def6ceeccde848b2daabdc58e3e59aacd9314bc25ffa9fb5dacb1dbc8f4725",
       "bytes": 41841,
       "duration": 2.063673
+    },
+    "334569db3dda1721": {
+      "identity": "510e08ac7497520da87f6566e80d4eb50024d4ad6e1ea6abe599fed78cb22fbb",
+      "sha256": "84d4e49861b4bf4ec61e5be095de74cbac1ef2262014572fa749f07d7d19f8cd",
+      "bytes": 33481,
+      "duration": 1.645714
+    },
+    "625449d74c93cbae": {
+      "identity": "b7ec99066bdcc1103d503657421724afde55af52e971f1d1fa05fa400a29adf2",
+      "sha256": "aa4c5a88adfee7b163b333d8ce680708291129cf1acc024b84ec2d8e15a8537b",
+      "bytes": 96175,
+      "duration": 4.780408
+    },
+    "81b5ec7f-5ec4b071": {
+      "identity": "0a0fb576306223bed975762204dc0bfa770dd233466bcdf5f943305fe10b995a",
+      "sha256": "732b20d6665b2fedd7fc0a1a7b20d7862622894f6dcf08c8a1c8d79155c83f2f",
+      "bytes": 30869,
+      "duration": 1.515102
+    },
+    "8a3d5d192bc31468": {
+      "identity": "2862a38fa5e08f2d402616e82d738267f4056fe374630bc6da6d4f75b021dd90",
+      "sha256": "52a11c6d4e702aa6122e1cae6b6cdfa0a8fc33627068eb8bb8321f98af05984c",
+      "bytes": 109759,
+      "duration": 5.459592
+    },
+    "cca8abd8-3fdb5f45": {
+      "identity": "ed8ddb4959f9f4bf06dc581a2c0bf98461c5eeb6f09e882bfdd46e1a1c43f992",
+      "sha256": "faf1e18a72d20409f678789747b4deeb31104db6c4f025689ab5aa9f144e37ba",
+      "bytes": 37661,
+      "duration": 1.854694
+    },
+    "dd02167e-556172cf": {
+      "identity": "b54142cc35523aa9ce3ad8ba246b6b6102f90cc15b4e16ef12f21cba4f264922",
+      "sha256": "e7e1c01b706365bb48db60b7f8ef110ed8535dae575b7ad95d0459937c1bcd4c",
+      "bytes": 145285,
+      "duration": 7.235918
     }
   },
   "status": "complete",
-  "updated": "2026-10-26T07:21:17.486Z"
+  "updated": "2026-10-26T07:36:09.056Z"
 }
