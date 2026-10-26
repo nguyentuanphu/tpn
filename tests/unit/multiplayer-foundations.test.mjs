@@ -76,7 +76,7 @@ test('Batch A: new games have valid move ranges and metadata', () => {
 
 
 test('board games use real reducers; remaining legacy rounds reject invalid and duplicate seat answers',()=>{
- for(const id of['snakes','oanquan','cacuangua'])assert.equal(createAuthoritativeState(id,2),null);
- const state=createAuthoritativeState('tug',2);assert.ok(state);
- assert.equal(applyAuthoritativeMove(state,0,0,2),false);assert.equal(applyAuthoritativeMove(state,0,0,1),true);assert.equal(applyAuthoritativeMove(state,0,0,0),false);assert.equal(applyAuthoritativeMove(state,1,0,0),true);
+ for(const id of['snakes','oanquan','cacuangua','tug'])assert.equal(createAuthoritativeState(id,2),null);
+ const state=createAuthoritativeState('familyquiz',2);assert.ok(state);
+ assert.equal(applyAuthoritativeMove(state,0,0,4),false);assert.equal(applyAuthoritativeMove(state,0,0,1),true);assert.equal(applyAuthoritativeMove(state,0,0,0),false);assert.equal(applyAuthoritativeMove(state,1,0,0),true);
 });

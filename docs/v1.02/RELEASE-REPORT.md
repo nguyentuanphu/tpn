@@ -51,3 +51,7 @@ Owner requested a ten-minute wrap-up and upload. Codeadb9a0b7d/8a4a46ebe pushed;
 ## Production voice package resumed
 
 Owner asked this chat to continue; no other chat works on the branch. Isolated the57-entry delta from older overlapping receipts, retaining all verification checks. Rebuilt production6384 units/427403942 bytes (~408MiB). Current VI inventory6403; only19 privacy-held units absent, no unknown public gaps. Default Azure completed, zero missing. Latest package browser/types follow-up2/2 (110s/21s). Earlier packaging-blocker/6344 statements describe the handover snapshot and are resolved. Snakes shared four-seat repair is now in progress, not yet release-ready.
+
+## Shared-game progress
+
+Prior-source exhaustive40278772969 onc1a2c5b27 passed240/240; all eight worker logs contain no failure/retry entries. Exact official map0a2beb726 collected. This does not replace a final run for new source. Snakes/Ô Ăn Quan are pushed6c2e2ff23, their new run40285147018 is running. Kéo Co now passes actual six-seat browser/protocol/rate-limit tests, with the combined local4/4 including315units,179explicit types/49 server and Studio, and24 reviewed Tug/Snakes device-language-mode captures. Family Quiz, mixed-language chosen voice, website/source review and final speed/device checks still block deployment.

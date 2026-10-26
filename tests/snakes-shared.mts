@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {snakesStart,snakesCommand,LADDERS,SNAKES} from '../js/games/snakes-core.js';
+import {SharedBoardSession} from '../js/games/shared-board-session.js';
 import {sharedRoom,flushRoom} from './shared-board-room.mjs';
 test('Snakes uses advancing seeded rolls and immutable legal destinations for all four seats',()=>{
  for(const gentle of[true,false])for(let seed=0;seed<25;seed++){
@@ -28,4 +29,9 @@ test('lost Snakes commit recovers without replaying a roll; reconnects cannot in
   r.setDrop(()=>false);r.sessions[1].poll();await flushRoom();assert.equal(r.sessions[1].core!.index,1);assert.deepEqual(r.sessions[0].state,r.sessions[1].state);
   const before=JSON.stringify(r.sessions[0].state);r.channels[1].move(4000,0);r.channels[1].move(5001,0);r.sessions[1].poll();await flushRoom();assert.equal(JSON.stringify(r.sessions[0].state),before);assert.equal(r.sessions[1].core!.index,1);
  }finally{r.close();}
+});
+
+test('a board waiting for a mode acknowledgement can explicitly continue locally',()=>{
+ let left=false;const online={mine:0,names:['one','two'],move:()=>{},onMove:()=>()=>{},peek:(n:number,seat:number)=>n===9998&&seat===1?0:undefined,connected:()=>true,present:()=>true,leave:()=>{left=true;}};
+ const s=new SharedBoardSession({online,gentle:false,seats:2,seed:'missing-ack',initial:snakesStart,reduce:snakesCommand,changed:()=>{}});try{assert.equal(s.waiting,true);s.continueLocally();assert.equal(left,true);assert.equal(s.waiting,false);assert.equal(s.submit(0),true);}finally{s.close();}
 });

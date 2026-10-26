@@ -10,6 +10,7 @@ import { el, wait, pick } from '../util.js';
 // Squares 1–5 belong to the bottom player, 7–11 to the top player, 0 and 6 are the mandarins.
 import {simulate,refill,repay,owner} from './oanquan-core.js';
 import {playOnlineOaq} from './oanquan-online.js';
+import {playOnlineTug} from './tug-online.js';
 register({
   id: 'oanquan', online: true, icon: '🪨', name: () => T('Ô Ăn Quan (Mandarin Squares)', 'Ô Ăn Quan'),
   async run(api) {
@@ -229,8 +230,9 @@ register({
 
 // ---------- Kéo co (tug of war): tap as fast as you can ----------
 register({
-  id: 'tug', icon: '🪢', name: () => T('Tug of War', 'Kéo Co'),
+  id: 'tug', online: true, icon: '🪢', name: () => T('Tug of War', 'Kéo Co'),
   async run(api) {
+    if(api.online)return playOnlineTug(api);
     const names = api.two ? [api.players[0].name, api.players[1].name] : [api.players[0].name, T('Village kids', 'Các bạn trong làng')];
     for (let attempt = 0; attempt < 5; attempt++) {
       api.stage.innerHTML = '';

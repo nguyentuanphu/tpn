@@ -26,12 +26,14 @@ export const MULTIPLAYER_FOUNDATIONS: Record<string, MultiplayerFoundation> = {
   cacuangua: { id: 'cacuangua', all: true, mode: 'turn', move: 'horse', max: 4, ...caps(4, 'turn'), npc: true }
 };
 
-export const orderedBoard=(id:string)=>id==='cacuangua'||id==='snakes'||id==='oanquan';
+export const orderedBoard=(id:string)=>id==='cacuangua'||id==='snakes'||id==='oanquan'||id==='tug';
 export function validBoardWire(id:string,n:number,value:number){
  if(!orderedBoard(id)||!Number.isInteger(n)||!Number.isInteger(value)||value<0)return false;
+ if(n===4997)return value===0;
  if(n===9997||n===9998)return value<=1;
  if(n===9999)return value<=4997;
  if(n<0||n>=4997&&n<5000||n>=9997)return false;
+ if(id==='tug')return n<4997?value===1:value>=1&&value<=63;
  return value<=(id==='cacuangua'?4:id==='oanquan'?23:0);
 }
 

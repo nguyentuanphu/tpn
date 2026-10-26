@@ -79,6 +79,7 @@ marketing/source/runvalley.log
 /js/games/asia.js
 /js/games/bigthinkers.js
 /js/games/bigthinkers2.js
+/js/games/board-agreement.js
 /js/games/cacuangua-core.js
 /js/games/cacuangua.js
 /js/games/catalog.js
@@ -140,6 +141,9 @@ marketing/source/runvalley.log
 /js/games/tienlenrules.js
 /js/games/trongnu-rules.js
 /js/games/trongnu.js
+/js/games/tug-core.js
+/js/games/tug-online.js
+/js/games/tug-session.js
 /js/games/vietnam.js
 /js/games/vietnam2.js
 /js/games/words2.js
@@ -331,3 +335,8 @@ marketing/source/runvalley.log
 
 /js/games/oanquan-core.js
 /js/games/oanquan-online.js
+
+/js/games/board-agreement.js
+/js/games/tug-core.js
+/js/games/tug-session.js
+/js/games/tug-online.js

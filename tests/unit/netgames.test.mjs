@@ -106,12 +106,8 @@ test('Snakes metadata invites four seats and transport rejects client-selected d
   assert.equal(d.A.g.move(0,0),true);await tick();assert.equal(await d.B.g.next(0,0),0);
 });
 
-test('Batch A round games accept one bounded move per seat and step', async () => {
-  const d = room(['A', 'B']);
-  d.A.g.invite('tug', 1); await tick();
-  assert.equal(d.A.g.move(2, 1), true);
-  assert.equal(d.A.g.move(2, 0), false);
-  assert.equal(d.B.g.move(2, 2), false);
-  assert.equal(d.B.g.move(2, 0), true); await tick();
-  assert.deepEqual(await d.A.g.all(2), [1, 0]);
+test('Tug transport accepts pull requests and rejects forged strengths or malformed reserved slots',async()=>{
+ const d=room(['A','B']);d.A.g.invite('tug',1);await tick();
+ assert.equal(d.A.g.move(0,2),false);assert.equal(d.A.g.move(0,0),false);assert.equal(d.A.g.move(4997,1),false);
+ assert.equal(d.A.g.move(0,1),true);await tick();assert.equal(await d.B.g.next(0,0),1);
 });

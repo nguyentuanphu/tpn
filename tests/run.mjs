@@ -694,6 +694,8 @@ await check('voicepack', async () => {
 
 await check('folkplay', async () => (await import('./folk-court-browser.mts')).folkCourtBrowserCheck(b));
 
+await check('tugplay', async () => (await import('./tug-browser.mts')).tugBrowserCheck(b));
+
 await check('oaqplay', async () => (await import('./oanquan-browser.mts')).oaqBrowserCheck(b));
 
 await check('snakesplay', async () => (await import('./snakes-browser.mts')).snakesBrowserCheck(b));
@@ -3842,7 +3844,7 @@ await check('a11y', async () => {
 await check('unit', async () => {
   // Node unit tests (architecture §10): the L0 core (ids, events, seeded random, geometry), node --test tests/unit
   const { execFileSync } = await import('child_process');
-  let out = ''; try { out = execFileSync(process.execPath, ['--test', '--test-reporter=tap', ...fs.readdirSync('unit').filter(f => f.endsWith('.test.mjs')).map(f => 'unit/' + f)], { encoding: 'utf8' }); } catch (e) { ok(false, ((e.stdout || '') + '').split('\n').filter(l => /^not ok|Error/.test(l)).slice(0, 6).join(' | ')); }
+  let out = ''; try { out = execFileSync(process.execPath, ['--test', '--test-reporter=tap', ...fs.readdirSync('unit').filter(f => f.endsWith('.test.mjs')).map(f => 'unit/' + f)], { encoding: 'utf8' }); } catch (e) { const tap=String(e.stdout||''); fs.writeFileSync('out/unit-failure.tap',tap); ok(false, tap.split('\n').filter(l => /^not ok|Error|^\s*(?:error:|expected:|actual:|operator:)/.test(l)).slice(0, 20).join(' | ')); }
   const pass = (out.match(/^# pass (\d+)/m) || [])[1], fail = (out.match(/^# fail (\d+)/m) || [])[1];
   ok(+fail === 0 && +pass > 0, out.slice(-400));
   return `${pass} unit tests passed`;
