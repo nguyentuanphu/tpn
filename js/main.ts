@@ -1036,12 +1036,12 @@ const remoteName = id => (Net.remotes[id] && Net.remotes[id].name) || T('Your fr
 G.simple = createSimple(G);
 G.openSongs = start => openSongs(G, start); for (const f of familySongs()) Music.files[f.key] = f.file; // 🎵 Songs (round N)
 G.netGames = createNetGames({
-  net: { ids: () => Object.keys(Net.remotes), send: d => Net.send(d) }, me: () => Net.me,
+  net: { ids: () => Object.keys(Net.remotes), send: d => Net.send(d),sendQuiz:(to:string,gid:string,questions:import('./content/family-quiz.js').FamilyQuestion[])=>Net.sendFamilyQuiz(to,gid,questions,()=>G.netGames.session?.gid===gid&&G.netGames.session.seats.includes(to)&&!G.netGames.session.gone.has(G.netGames.session.seats.indexOf(to))) }, me: () => Net.me,
   onAsk: d => { // "Mít wants to play Caro with you!"
     if(document.querySelector('.parent-arcade,.parent-arcade-invite')){G.netGames.answer(d,false);return;}
     if (d.game === 'fruitparade' && !fruitParadeModeOn('multi')) { G.netGames.answer(d, false); return; }
     if(d.game === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi') || d.game === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi')) {G.netGames.answer(d,false);return;}
-    const h = G.heroes[0], tale = /^tale-/.test(d.game) && (G.TALES || []).find(x => 'tale-' + x.id === d.game), gname = tale ? T('the story “' + tale.title() + '”', 'truyện “' + tale.title() + '”') : (GAMES[d.game] && GAMES[d.game].name()) || d.game; SFX.chime();
+    const h = G.heroes[0], tale = /^tale-/.test(d.game) && (G.TALES || []).find(x => 'tale-' + x.id === d.game), gname = tale ? T('the story “' + tale.title() + '”', 'truyện “' + tale.title() + '”') : (GAMES[d.game] && GAMES[d.game].name()) || (d.game==='familyquiz'?T('Family Quiz','Đố Vui Gia Đình'):d.game); SFX.chime();
     say('A friend wants to play a game with you!', 'Một bạn muốn chơi trò chơi với con!');
     const stars = '⭐'.repeat(d.level || 1);
     dialog(remoteName(d.from), [[`🎲 ${remoteName(d.from)} wants to play ${gname} with you! (${stars})`, `🎲 ${remoteName(d.from)} muốn chơi ${gname} với con! (${stars})`, 'Your friend wants to play a game with you!', 'Bạn của con muốn chơi một trò với con!']], [['▶ Play', '▶ Chơi'], ['Not now', 'Để sau']])
@@ -1054,7 +1054,7 @@ G.netGames = createNetGames({
     const names = s.seats.map(id => id === Net.me ? G.heroes[0].profile.name : remoteName(id));
     // every move is tied to this game: a story or game that is still winding down can't send into (or end) a newer one
     const live = () => !!G.netGames.session && G.netGames.session.gid === s.gid, end = () => { if (live()) G.netGames.leave(); };
-    const online = { mine: s.mine, names, seed: s.gid, size: s.size, connected: () => !!Net.connected, present: seat => seat === s.mine || !s.gone.has(seat) && !!Net.remotes[s.seats[seat]], leave: end, peek: (n, seat) => live() ? G.netGames.session?.moves.get(n)?.get(seat) : undefined, onMove: f => live() ? G.netGames.onMove(f) : undefined, move: (n, mv) => live() && G.netGames.move(n, mv), next: (n, seat) => live() ? G.netGames.next(n, seat) : Promise.resolve(null), all: n => live() ? G.netGames.all(n) : Promise.resolve([]) };
+    const online = { mine: s.mine, names, seed: s.gid, size: s.size, connected: () => !!Net.connected, present: seat => seat === s.mine || !s.gone.has(seat) && !!Net.remotes[s.seats[seat]], leave: end,familyQuiz:()=>live()?G.netGames.familyQuiz():null,shareFamilyQuiz:(questions:import('./content/family-quiz.js').FamilyQuestion[])=>live()&&G.netGames.shareFamilyQuiz(questions),requestFamilyQuiz:()=>{if(live())G.netGames.requestFamilyQuiz();}, peek: (n, seat) => live() ? G.netGames.session?.moves.get(n)?.get(seat) : undefined, onMove: f => live() ? G.netGames.onMove(f) : undefined, move: (n, mv) => live() && G.netGames.move(n, mv), next: (n, seat) => live() ? G.netGames.next(n, seat) : Promise.resolve(null), all: n => live() ? G.netGames.all(n) : Promise.resolve([]) };
     if (/^tale-/.test(s.game)) { // a tale read together: page turns travel as moves
       const t = (G.TALES || []).find(x => 'tale-' + x.id === s.game); if (!t || !G.readTaleNow) { end(); return; }
       let seq = 0; const sync = { send: p => online.move(seq++, p), listen: fn => online.onMove((seat, n, mv) => { if (seat !== s.mine) fn(mv); }) };
@@ -1067,7 +1067,7 @@ G.netGames = createNetGames({
   },
   onEnd: id => toast(T(`${remoteName(id)} left the game.`, `${remoteName(id)} đã rời trò chơi.`))
 });
-for (const k of ['gask', 'gyes', 'gno', 'gstart', 'gmove', 'gbye']) Net.on(k, d => G.netGames.receive(d));
+for (const k of ['gask', 'gyes', 'gno', 'gstart', 'gmove', 'gbye','gquiz','gquizreq']) Net.on(k, d => G.netGames.receive(d));
 // first come, first served pickups when playing together (js/claims.js)
 G.claims = createClaims(G, { net: { connected: () => Net.connected, send: d => Net.send(d), name: id => remoteName(id) }, toast: (h, m) => hudFor(h).toast(m), say, T });
 Net.on('claim', d => G.claims.receive(d));
@@ -1113,6 +1113,7 @@ G.inviteGame = (game, to, level, size) => {
   if (gid) toast(T('Invitation sent! Waiting for an answer…', 'Đã gửi lời mời! Đang chờ trả lời…')); return gid;
 };
 G.playGameOnline = async (id, level, online) => {
+  if(id==='familyquiz')(await import('./games/familyquiz.js')).registerFamilyQuiz();
   if(id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi'))return;
   if(id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi'))return;
   if (id === 'fruitparade' && !fruitParadeModeOn('multi')) return;

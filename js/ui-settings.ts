@@ -281,6 +281,9 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
           <p class="note fam-code-msg" id="gFamCodeMsg" hidden></p>
         </div>`}
       </div>
+      <h3>${pic('💛')} ${T('Family questions','Câu hỏi gia đình')}</h3>
+      <p class="note">${T('Write private questions your children can play on this device or with friends you invite. They are included in your save copy.','Viết câu hỏi riêng để con chơi trên máy này hoặc với bạn được mời. Câu hỏi được giữ trong bản sao lưu của bạn.')}</p>
+      <div class="actions"><button class="btn" id="gFamilyQuiz">${pic('💛')} ${T('Add or edit family questions','Thêm hoặc sửa câu hỏi gia đình')}</button></div>
       <h3>${pic('💾')} ${T('Save a copy (Files / iCloud Drive)', 'Lưu một bản (Tệp / iCloud Drive)')}</h3>
       <p class="note">${T('Save a copy of your children’s progress to iCloud Drive, Google Drive or Files. Loading a copy checks the file and confirms with you before replacing anything.', 'Lưu một bản tiến trình vào iCloud Drive, Google Drive hoặc Tệp. Mở bản sao sẽ kiểm tra tệp và hỏi bạn trước khi thay thế.')}</p>
       <p class="note backup-when${backupAge() > 7 ? ' old' : ''}">${settings.lastBackup ? T('Last backup: ', 'Lần sao lưu gần nhất: ') + new Date(settings.lastBackup).toLocaleDateString(settings.lang === 'vi' ? 'vi-VN' : 'en-AU') + (backupAge() > 7 ? T(' (over a week ago)', ' (hơn một tuần trước)') : '') : T('No backup saved yet.', 'Chưa có bản sao lưu nào.')}</p>
@@ -418,6 +421,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       toast(T('Left the family.', 'Đã rời gia đình.'));
       redrawKeepScroll();
     };
+    card.querySelector('#gFamilyQuiz').onclick=()=>import('./family-quiz-editor.js').then(M=>M.openFamilyQuestions(()=>{const y=m.scrollTop;draw();m.scrollTop=y;const b=card.querySelector('#gFamilyQuiz');if(b instanceof HTMLElement)b.focus({preventScroll:true});}));
     card.querySelector('#gSaveCopy').onclick = async () => {
       const text = JSON.stringify(createSaveCopy(getSnapshot()), null, 2);
       const name = 'sparkle-valley-' + new Date().toISOString().slice(0, 10) + '.svsave';

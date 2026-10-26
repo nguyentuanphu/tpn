@@ -4,7 +4,7 @@ import { collectLines } from './voice-lines.mts';
 import { packHash } from '../js/packhash.js';
 const digest=(b:string|Uint8Array)=>createHash('sha256').update(b).digest('hex');
 const baseline=fs.readFileSync('docs/fpt-leminh-full-20261025/inventory.json','utf8'),existing=new Set<string>(JSON.parse(baseline).lines.map(l=>l.id));
-const wanted=new Set(['js/games/fruitparade.js','js/games/trongnu.js','js/games/sparkleorchard.js','js/games/sparklefruitbar.js','js/games/cacuangua.js','js/games/folk-court.js','js/games/snakes.js','js/games/oanquan-online.js','js/games/tug-online.js']);
+const wanted=new Set(['js/games/fruitparade.js','js/games/trongnu.js','js/games/sparkleorchard.js','js/games/sparklefruitbar.js','js/games/cacuangua.js','js/games/folk-court.js','js/games/snakes.js','js/games/oanquan-online.js','js/games/tug-online.js','js/games/familyquiz.js']);
 const lines=new Map<string,{id:string;lang:string;text:string;area:string;part:boolean;source:string[]}>();
 // Preserve previously reviewed fixed entries (including family titles and turtle numbers).
 const previous=JSON.parse(fs.readFileSync('docs/v1.02-orchard-arcade/voice-delta.json','utf8'));

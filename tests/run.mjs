@@ -694,6 +694,10 @@ await check('voicepack', async () => {
 
 await check('folkplay', async () => (await import('./folk-court-browser.mts')).folkCourtBrowserCheck(b));
 
+await check('familyquizprivate', async () => (await import('./family-quiz-browser.mts')).familyQuizBrowserCheck(b));
+
+await check('familyquizcrypto', async () => (await import('./family-quiz-crypto.mts')).familyQuizCryptoCheck(b));
+
 await check('tugplay', async () => (await import('./tug-browser.mts')).tugBrowserCheck(b));
 
 await check('oaqplay', async () => (await import('./oanquan-browser.mts')).oaqBrowserCheck(b));

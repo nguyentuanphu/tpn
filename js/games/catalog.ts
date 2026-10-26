@@ -1,7 +1,7 @@
 // Menu metadata stays available before an implementation is opened. Keep it in registration order.
 import { T } from '../i18n.js';
 import { curCode } from '../money.js';
-import { customQuiz } from '../custom.js';
+import {familyQuizQuestions} from '../family-quiz-store.js';
 const home = () => ['AUD', 'VND'].includes(curCode()) ? curCode() : 'AUD';
 export const GAME_CATALOG = [
   { id: 'pattern', icon: '🔁', name: () => T('What Comes Next?', 'Tiếp Theo Là Gì?') },
@@ -69,7 +69,7 @@ export const GAME_CATALOG = [
   { id: 'eggs', icon: '🥚', name: () => T('Egg Hunt', 'Nhặt Trứng') },
   { id: 'sudoku', icon: '🧩', name: () => T('Picture Sudoku', 'Sudoku Hình') },
   { id: 'nemlon', icon: '🩴', origin: 'vn', name: () => T('Can Knock-Down', 'Ném Lon') },
-  { id: 'familyquiz', icon: '💛', name: () => T('Family Quiz', 'Đố Vui Gia Đình') },
+  { id: 'familyquiz', online: true, icon: '💛', name: () => T('Family Quiz', 'Đố Vui Gia Đình') },
   { id: 'firstwords', icon: '🌏', origin: 'both', name: () => T('First Words: Chinese and Hindi', 'Từ đầu tiên: tiếng Trung và tiếng Hindi') },
   { id: 'tangram', icon: '🧩', origin: 'cn', name: () => T('Tangram Shapes', 'Xếp hình Tangram') },
   { id: 'snakes', online: true, icon: '🐍', origin: 'in', name: () => T('Snakes and Ladders', 'Rắn và Thang') },
@@ -187,7 +187,7 @@ export const GAME_CATALOG = [
   { id: 'drawpath', icon: '🦆', name: () => T('Draw the Way', 'Vẽ Đường Đi') },
   { id: 'shapedraw', icon: '🔺', name: () => T('Draw a Shape', 'Vẽ Hình') },
   { id: 'copygrid', icon: '🖼️', name: () => T('Copy the Picture', 'Vẽ Lại Tranh') },
-].filter(def => def.id !== 'familyquiz' || customQuiz().length > 0);
+].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
   'sparklefruitbar.ts': { ids: ['sparklefruitbar'], load: () => import('./sparklefruitbar.js') },
@@ -203,7 +203,8 @@ export const GAME_LOADERS = {
   'folk.js': { ids: ["mrwolf","chuyen","dragon","marbles","skipping","snap","dacau"], load: () => import('./folk.js') },
   'folk2.js': { ids: ["datnieu","kite","sackrace","cricket","parcel","chichi","words"], load: () => import('./folk2.js') },
   'tienlen.js': { ids: ["tienlen","tienlenbac"], load: () => import('./tienlen.js') },
-  'more.js': { ids: ["moreless","days","bodyparts","oantuti","eggs","sudoku","nemlon","familyquiz"], load: () => import('./more.js') },
+  'more.js': { ids: ["moreless","days","bodyparts","oantuti","eggs","sudoku","nemlon"], load: () => import('./more.js') },
+  'familyquiz.ts': {ids:['familyquiz'],load:()=>import('./familyquiz.js').then(M=>M.registerFamilyQuiz())},
   'asia.js': { ids: ["firstwords","tangram","snakes","rangoli"], load: () => import('./asia.js') },
   'music.js': { ids: ["music"], load: () => import('./music.js') },
   'cities.js': { ids: ["puppets","dongho","dragonfire","traffic","ferries","tram","koala"], load: () => import('./cities.js') },

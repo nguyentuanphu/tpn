@@ -1,3 +1,4 @@
+import {cleanFamilyQuiz} from './content/family-quiz.js';
 // Games with friends online (owner, round G: "more games for 2 or more people"). In a room, a child invites a friend
 // (Caro, turn by turn) or everyone (Oẳn tù tì, all at once); each one asked sees "… wants to play …: Play / Not now".
 // Whoever says yes gets a seat; the inviter starts the game for all of them, and the game opens on every device with
@@ -6,7 +7,7 @@
 // The transport is passed in, so the same logic runs with the real network (js/net.js) and in tests.
 //   createNetGames({ net, me: () => myId, name: id => name, onAsk, onStart, toast })
 import { GAMES } from './games/registry.js';
-import { MULTIPLAYER_FOUNDATIONS, applyAuthoritativeMove, createAuthoritativeState, foundationFor, validMove, orderedBoard, validBoardWire } from './games/multiplayer-foundations.js';
+import { MULTIPLAYER_FOUNDATIONS, foundationFor, validMove, orderedBoard, validBoardWire } from './games/multiplayer-foundations.js';
 // games made for playing together; every other game is played side by side (a race: js/games/frame.js), and a tale
 // ('tale-<id>') is read together, page by page
 export const ONLINE_GAMES = { caro: { max: 2, all: false }, oantuti: { max: 6, all: true }, memory: { max: 4, all: true }, tienlen: { max: 4, all: true }, tienlenbac: { max: 4, all: true }, fruitparade: { max: 4, all: true }, sparkleorchard: { max: 4, all: true }, sparklefruitbar: { max: 4, all: true }, ...Object.fromEntries(Object.entries(MULTIPLAYER_FOUNDATIONS).map(([id, foundation]) => [id, { max: foundation.max, all: foundation.all, foundation }])) };   // (Round V) Tiến Lên miền Bắc too
@@ -18,6 +19,7 @@ export { defOf as onlineDef };
 export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 }) {
   const asks = new Map();      // gid → { game, level, yes: Set, no: Set, asked: Set, timer } (I invited)
   const said = new Map();     // gid → who asked (round R privacy, 9 Oct: a game opens only after this child said yes to that one)
+  const earlyQuiz=new Map();
   const early = new Map(); // bounded early moves, only from an inviter this child accepted
   let session = null;          // the game being played: { gid, game, seats, mine, level, moves: Map(n → Map(seat → mv)), waiters }
   const api = {
@@ -36,9 +38,18 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
       return gid;
     },
     // my answer to an invitation
-    answer(d, yes) { if (yes) { said.set(d.gid, { from: d.from, game: d.game }); if (said.size > 20) { const oldest = said.keys().next().value; said.delete(oldest); early.delete(oldest); } } else { said.delete(d.gid); early.delete(d.gid); } net.send({ t: yes ? 'gyes' : 'gno', to: d.from, gid: d.gid }); },
+    answer(d, yes) { if (yes) { said.set(d.gid, { from: d.from, game: d.game }); if (said.size > 20) { const oldest = said.keys().next().value; said.delete(oldest); early.delete(oldest);earlyQuiz.delete(oldest); } } else { said.delete(d.gid); early.delete(d.gid);earlyQuiz.delete(d.gid); } net.send({ t: yes ? 'gyes' : 'gno', to: d.from, gid: d.gid }); },
+    familyQuiz(){return session?.game==='familyquiz'?session.quiz:null;},
+    shareFamilyQuiz(value:unknown){
+      if(!session||session.game!=='familyquiz'||session.mine!==0||typeof net.sendQuiz!=='function')return false;
+      const quiz=cleanFamilyQuiz(value);if(!quiz?.length)return false;
+      if(!session.quiz)session.quiz=quiz;const owner=session;
+      for(const[seat,to]of owner.seats.entries())if(seat>0&&!owner.gone.has(seat))void net.sendQuiz(to,owner.gid,owner.quiz);
+      return true;
+    },
+    requestFamilyQuiz(){if(session?.game==='familyquiz'&&session.mine!==0&&!session.quiz)net.send({t:'gquizreq',gid:session.gid,to:session.seats[0]});},
     // a move of mine for step n (a Caro square, an Oẳn tù tì hand…)
-    move(n, mv) { if (!session || orderedBoard(session.game)&&!validBoardWire(session.game,n,mv)) return false; if (session.authoritative && !applyAuthoritativeMove(session.authoritative, session.mine, n, mv)) return false; record(session.mine, n, mv); net.send({ t: 'gmove', gid: session.gid, n, mv }); return true; },
+    move(n, mv) { if (!session || orderedBoard(session.game)&&!validBoardWire(session.game,n,mv)) return false; record(session.mine, n, mv); net.send({ t: 'gmove', gid: session.gid, n, mv }); return true; },
     // the move of seat s for step n, when it arrives (null if that player left)
     next(n, s) {
       if (!session) return Promise.resolve(null);
@@ -50,9 +61,10 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
     async all(n) { const out = []; for (let s = 0; s < session.seats.length; s++) out[s] = await api.next(n, s); return out; },
     // every move as it arrives (races and tales): f(seat, n, mv)
     onMove(f) { const owner = session; if (!owner) return () => {}; owner.listeners.push(f); return () => { owner.listeners = owner.listeners.filter(listener => listener !== f); }; },
-    leave() { if (!session) return; net.send({ t: 'gbye', gid: session.gid }); session = null; },
+    leave() { if (!session) return; net.send({ t: 'gbye', gid: session.gid });session.quiz=null; session = null; },
     // (from the network)
     receive(d) {
+      if(d.t==='gbye'&&said.get(d.gid)?.from===d.from){said.delete(d.gid);earlyQuiz.delete(d.gid);early.delete(d.gid);return;}
       if (d.t === 'gask') { if (!defOf(d.game) || session) return api.answer(d, false); onAsk && onAsk(d); return; }
       if (d.t === 'gyes' || d.t === 'gno') { const a = asks.get(d.gid); if (!a || !a.asked.has(d.from)) return; (d.t === 'gyes' ? a.yes : a.no).add(d.from); if (a.yes.size + a.no.size >= a.asked.size || a.yes.size + 1 >= defOf(a.game).max) go(d.gid); return; }
       // (round R privacy, 9 Oct) before, any player could open a game here by naming this child in the seats; now only the
@@ -64,9 +76,14 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
         let queue = early.get(d.gid); if (!queue) early.set(d.gid, queue = new Map());
         if (queue.size < 32 && !queue.has(d.n)) queue.set(d.n, { ...d }); return;
       }
+      if(d.t==='gquiz'&&(!session||d.gid!==session.gid)&&said.get(d.gid)?.from===d.from&&said.get(d.gid)?.game==='familyquiz'){
+        const quiz=cleanFamilyQuiz(d.questions);if(quiz?.length&&earlyQuiz.size<20&&!earlyQuiz.has(d.gid))earlyQuiz.set(d.gid,quiz);return;
+      }
       if (!session || d.gid !== session.gid) return;
       const s = session.seats.indexOf(d.from); if (s < 0) return;
-      if (d.t === 'gmove') { if(orderedBoard(session.game)&&!validBoardWire(session.game,d.n,d.mv))return; if (session.authoritative && !applyAuthoritativeMove(session.authoritative, s, d.n, d.mv)) return; record(s, d.n, d.mv); }
+      if(d.t==='gquiz'&&session.game==='familyquiz'&&s===0&&!session.gone.has(0)&&session.mine!==0&&!session.quiz){const quiz=cleanFamilyQuiz(d.questions);if(quiz?.length)session.quiz=quiz;return;}
+      if(d.t==='gquizreq'&&session.game==='familyquiz'&&session.mine===0&&!session.gone.has(s)&&session.quiz&&typeof net.sendQuiz==='function'){void net.sendQuiz(d.from,session.gid,session.quiz);return;}
+      if (d.t === 'gmove') { if(orderedBoard(session.game)&&!validBoardWire(session.game,d.n,d.mv))return; record(s, d.n, d.mv); }
       if (d.t === 'gbye') { session.gone.add(s); session.waiters = session.waiters.filter(w => { if (w.s === s) { w.res(null); return false; } return true; }); onEnd && onEnd(d.from); }
     },
     // a friend left the room
@@ -91,7 +108,7 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
     begin(gid, a.game, a.level, seats, a.size);
   }
   function begin(gid, game, level, seats, size) {
-    session = { gid, game, level, size, seats, mine: seats.indexOf(me()), moves: new Map(), waiters: [], gone: new Set(), listeners: [], authoritative: createAuthoritativeState(game, seats.length) };
+    session = { gid, game, level, size, seats, mine: seats.indexOf(me()), moves: new Map(), waiters: [], gone: new Set(), listeners: [], quiz:game==='familyquiz'?earlyQuiz.get(gid)||null:null };earlyQuiz.delete(gid);
     onStart && onStart(session);
   }
   return api;

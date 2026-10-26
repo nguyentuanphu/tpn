@@ -1,3 +1,4 @@
+import {cleanFamilyQuiz,type FamilyQuestion} from './content/family-quiz.js';
 // Playing together from several devices: one device starts a room (a 6-digit code) and up to 5
 // friends join it, peer-to-peer through the free PeerJS service. The room's starter passes messages
 // between everyone, and everyone hears everyone through a live voice call.
@@ -21,7 +22,7 @@ import { settings } from './state.js';
 import { micMode } from './audio.js';
 import { Channel } from './relay.js';
 import { checkMsg } from './netmsg.js';
-import type { Remote } from '../types/net.js';
+import type { Remote,Msg } from '../types/net.js';
 import { MAP_VERSION } from './content/map.js';
 const PREFIX = 'sparkle-valley-v2-';
 export const MAX_ROOM = 6;
@@ -393,6 +394,7 @@ export const Net = {
       return;
     }
     if (d.t === 'bye') { this._gone(from); return; }
+    if(d.t==='gquiz'){void this._openFamilyQuiz(d,from);return;}
     if (d.t === 'photo') { this._openPhoto(d, from); return; }
     if (d.t === 'photoreq') { if (this.remotes[from] && this._photoTo) { const r = this.remotes[from]; this._photoTo.delete(from + r.pub); } this._sendPhoto(from); return; }
     if (d.t === 's') { if (this.remotes[from]) this.remotes[from].s = d; return; }
@@ -626,6 +628,22 @@ export const Net = {
   },
   async _withPub(hello) { try { this.pub = await myPub(); } catch (e) { this.pub = null; } return Object.assign({}, hello || {}, this.pub ? { pub: this.pub } : {}); },
   // send my photo to one player, locked with our pair key (once per player; after they are in the room only)
+  // A private quiz round is sealed separately for each accepted player's key, as family photos are.
+  async sendFamilyQuiz(to:string,gid:string,questions:FamilyQuestion[],active:()=>boolean){
+    const quiz=cleanFamilyQuiz(questions),r=this.remotes[to],room=this.code,me=this.me,generation=this._roomGeneration,pub=r?.pub;
+    if(!quiz?.length||!room||!r||!okPub(pub)||this.knocking||!this.role||!/^[\w-]{1,12}$/.test(gid)||typeof active!=='function'||!active())return false;
+    try{const sealed=await sealFor(pub,{gid,questions:quiz});
+      if(sealed.ct.length>100000||this.code!==room||this.me!==me||this.knocking||this.remotes[to]?.pub!==pub||this._roomGeneration!==generation||!active())return false;
+      this.send({t:'gquiz',to,gid,...sealed});return true;
+    }catch{return false;}
+  },
+  async _openFamilyQuiz(d:Msg,from:string){
+    const r=this.remotes[from],room=this.code,me=this.me,generation=this._roomGeneration,pub=r?.pub;if(!room||!this.role||this.knocking||d.to!==me||!r||!okPub(pub)||typeof d.ct!=='string'||d.ct.length>100000||typeof d.iv!=='string')return;
+    try{const bytes=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(d.iv)},await pairKey(pub),unb64(d.ct)),value:unknown=JSON.parse(new TextDecoder().decode(bytes));
+      if(!value||typeof value!=='object'||Array.isArray(value))return;const payload=value as Record<string,unknown>;const quiz=cleanFamilyQuiz(payload.questions);
+      if(quiz?.length&&payload.gid===d.gid&&this.code===room&&this.me===me&&!this.knocking&&this.remotes[from]?.pub===pub&&this._roomGeneration===generation)this.emit('gquiz',{t:'gquiz',gid:d.gid,questions:quiz,from});
+    }catch{}
+  },
   async _sendPhoto(id) {
     const r = this.remotes[id], mine = this.hello && this.hello.photo, room = this.code, me = this.me; this._photoTo = this._photoTo || new Set();
     if (!r || !okPub(r.pub) || !mine || this.knocking || this._photoTo.has(id + r.pub)) return;
@@ -646,7 +664,7 @@ export const Net = {
       for (const r of Object.values(this.remotes)) if (!r.photo && okPub(r.pub) && (this._asked[r.id] || 0) < 2) { this._asked[r.id] = (this._asked[r.id] || 0) + 1; this.send({ t: 'photoreq', to: r.id }); } }, 4000);
   },
   async _openPhoto(d, from) {
-    const r = this.remotes[from], room = this.code, me = this.me; if (!r || !r.pub || typeof d.ct !== 'string' || d.ct.length > 160000) return;
+    const r = this.remotes[from], room = this.code, me = this.me; if (!r || !r.pub || typeof d.ct !== 'string' || d.ct.length > 1100000) return;
     try {
       const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(d.iv) }, await pairKey(r.pub), unb64(d.ct)), photo = okPhoto(new TextDecoder().decode(pt));
       const current = this.remotes[from];

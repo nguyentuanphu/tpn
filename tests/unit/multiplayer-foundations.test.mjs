@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MULTIPLAYER_FOUNDATIONS, foundationFor, validMove, nextTurn, applySnakesRoll, resolveTugRound, scoreFamilyQuiz, createAuthoritativeState, applyAuthoritativeMove } from '../../js/games/multiplayer-foundations.js';
+import { MULTIPLAYER_FOUNDATIONS, foundationFor, validMove, nextTurn, applySnakesRoll, resolveTugRound, scoreFamilyQuiz, orderedBoard, validBoardWire } from '../../js/games/multiplayer-foundations.js';
 
 test('adapter metadata declares bounded cooperative/turn-based roster semantics', () => {
   assert.equal(MULTIPLAYER_FOUNDATIONS.oanquan.max, 2);
@@ -60,7 +60,7 @@ test('Batch A: new games have valid move ranges and metadata', () => {
   assert.equal(validMove('familyquiz', -1), false);
   assert.equal(MULTIPLAYER_FOUNDATIONS.familyquiz.max, 6);
   assert.equal(MULTIPLAYER_FOUNDATIONS.familyquiz.all, true);
-  assert.equal(MULTIPLAYER_FOUNDATIONS.familyquiz.mode, 'round');
+  assert.equal(MULTIPLAYER_FOUNDATIONS.familyquiz.mode, 'turn');
 
   // Cờ Cá Ngựa: 0 requests a shared roll; 1–4 choose a horse.
   assert.equal(validMove('cacuangua', 0), true);
@@ -75,8 +75,7 @@ test('Batch A: new games have valid move ranges and metadata', () => {
 });
 
 
-test('board games use real reducers; remaining legacy rounds reject invalid and duplicate seat answers',()=>{
- for(const id of['snakes','oanquan','cacuangua','tug'])assert.equal(createAuthoritativeState(id,2),null);
- const state=createAuthoritativeState('familyquiz',2);assert.ok(state);
- assert.equal(applyAuthoritativeMove(state,0,0,4),false);assert.equal(applyAuthoritativeMove(state,0,0,1),true);assert.equal(applyAuthoritativeMove(state,0,0,0),false);assert.equal(applyAuthoritativeMove(state,1,0,0),true);
+test('all five shared games use board reducers and distinguish command, config, ACK and replay slots',()=>{
+ for(const id of['snakes','oanquan','cacuangua','tug','familyquiz']){assert.equal(orderedBoard(id),true);assert.equal(validBoardWire(id,4997,0),true);assert.equal(validBoardWire(id,4997,1),false);assert.equal(validBoardWire(id,4998,0),false);assert.equal(validBoardWire(id,9997,2),false);assert.equal(validBoardWire(id,9999,4998),false);}
+ assert.equal(validBoardWire('familyquiz',0,6),true);assert.equal(validBoardWire('familyquiz',0,7),false);assert.equal(validBoardWire('familyquiz',5000,6),true);assert.equal(orderedBoard('caro'),false);
 });

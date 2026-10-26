@@ -52,6 +52,7 @@ marketing/source/runvalley.log
 /js/content/chapter2hanoi.js
 /js/content/chapter2text.js
 /js/content/chapters.js
+/js/content/family-quiz.js
 /js/content/familycode.js
 /js/content/festival-visibility.js
 /js/content/fruit-parade.js
@@ -68,6 +69,8 @@ marketing/source/runvalley.log
 /js/core/rng.js
 /js/extras.js
 /js/family-backup.js
+/js/family-quiz-editor.js
+/js/family-quiz-store.js
 /js/familydevices.js
 /js/festival-live.js
 /js/festivals.js
@@ -88,6 +91,8 @@ marketing/source/runvalley.log
 /js/games/drawing.js
 /js/games/drawing2.js
 /js/games/drawshape.js
+/js/games/familyquiz-core.js
+/js/games/familyquiz.js
 /js/games/farmgames.js
 /js/games/folk-court-rules.js
 /js/games/folk-court.js
@@ -340,3 +345,10 @@ marketing/source/runvalley.log
 /js/games/tug-core.js
 /js/games/tug-session.js
 /js/games/tug-online.js
+
+/js/content/family-quiz.js
+/js/family-quiz-store.js
+/js/family-quiz-editor.js
+
+/js/games/familyquiz.js
+/js/games/familyquiz-core.js

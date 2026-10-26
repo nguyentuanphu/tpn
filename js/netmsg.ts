@@ -64,7 +64,7 @@ export const SCHEMA: Record<string, Kind> = {
   pres: { fields: { code: word(8), online: bool, ts: num(0, 1e14), tok: word(24) }, need: ['code'], size: 600, per: 6, sec: 10 },
   note: { fields: sealed(1200), need: SEALED, size: 1800, per: 6, sec: 10 },
   invite: { fields: sealed(1200), need: SEALED, size: 1800, per: 4, sec: 10 },
-  photo: { fields: { iv: text(40), ct: text(160000) }, need: ['iv', 'ct'], size: 161000, per: 4, sec: 10 },
+  photo: { fields: { iv: text(40), ct: text(1100000) }, need: ['iv', 'ct'], size: 161000, per: 4, sec: 10 },
   photoreq: { fields: {}, size: 600, per: 3, sec: 10 }, // ("I don't have your photo yet": the first one can go out while a newcomer is still at the door)
   emote: { fields: { id: word(24) }, need: ['id'], size: 600, per: 6, sec: 3 },
   meet: { fields: {}, size: 600, per: 2, sec: 4 },
@@ -77,10 +77,12 @@ export const SCHEMA: Record<string, Kind> = {
   gyes: { fields: { gid: word(12) }, need: ['gid'], size: 600, per: 4, sec: 5 },
   gno: { fields: { gid: word(12) }, need: ['gid'], size: 600, per: 4, sec: 5 },
   gstart: { fields: { gid: word(12), game: word(48), level: int(1, 5), size: int(3, 19), seats }, need: ['gid', 'game', 'seats'], size: 1200, per: 3, sec: 10 },
+  gquiz: { fields: {gid:word(12),iv:text(24),ct:text(100000)},need:['gid','to','iv','ct'],size:102000,per:18,sec:10 },
+  gquizreq: {fields:{gid:word(12)},need:['gid'],size:600,per:4,sec:10},
   gmove: { fields: { gid: word(12), n: int(0, 9999), mv: int(0, 9999) }, need: ['gid', 'n', 'mv'], size: 600, per: 12, sec: 2 },
   gbye: { fields: { gid: word(12) }, need: ['gid'], size: 600, per: 4, sec: 5 },
   // a pickup taken (fruit, flowers, gems, things on the ground): first come, first served (js/claims.js)
-  claim: { fields: { id: word(16), ms: int(0, 600000) }, need: ['id', 'ms'], size: 600, per: 10, sec: 5 }
+  claim: { fields: { id: word(16), ms: int(0, 1000000) }, need: ['id', 'ms'], size: 600, per: 10, sec: 5 }
 };
 // fields every message may carry (the transport's own)
 /** @type {Record<string, Field>} */
@@ -101,7 +103,7 @@ export function checkMsg(d: any, from: string): Msg | null {
   const now = Date.now(), key = from + '|' + d.t, list = (seen.get(key) || []).filter(x => now - x < S.sec * 1000);
   if (list.length >= S.per) { seen.set(key, list); return null; }
   list.push(now); seen.set(key, list);
-  if (now - lastSweep > 30000) { lastSweep = now; for (const [k, l] of seen) if (!l.length || now - l[l.length - 1] > 60000) seen.delete(k); }
+  if (now - lastSweep > 30000) { lastSweep = now; for (const [k, l] of seen) if (!l.length || now - l[l.length - 1] > 100000) seen.delete(k); }
   const out: Msg = { t: d.t }; // (d.t is one of SCHEMA's kinds, checked above)
   for (const [k, v] of Object.entries(d)) {
     const f = S.fields[k] || ENVELOPE[k]; if (!f) continue; // not on the list: left out

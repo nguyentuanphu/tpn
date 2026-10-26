@@ -22,11 +22,11 @@ export const MULTIPLAYER_FOUNDATIONS: Record<string, MultiplayerFoundation> = {
   oanquan: { id: 'oanquan', all: false, mode: 'turn', move: 'pit', max: 2, ...caps(2, 'turn') },
   snakes: { id: 'snakes', all: true, mode: 'turn', move: 'roll', max: 4, ...caps(4, 'turn') },
   tug: { id: 'tug', all: true, mode: 'round', move: 'pull', max: 6, ...caps(6, 'round', true) },
-  familyquiz: { id: 'familyquiz', all: true, mode: 'round', move: 'answer', max: 6, ...caps(6, 'round', true) },
+  familyquiz: { id: 'familyquiz', all: true, mode: 'turn', move: 'answer', max: 6, ...caps(6, 'turn') },
   cacuangua: { id: 'cacuangua', all: true, mode: 'turn', move: 'horse', max: 4, ...caps(4, 'turn'), npc: true }
 };
 
-export const orderedBoard=(id:string)=>id==='cacuangua'||id==='snakes'||id==='oanquan'||id==='tug';
+export const orderedBoard=(id:string)=>id==='cacuangua'||id==='snakes'||id==='oanquan'||id==='tug'||id==='familyquiz';
 export function validBoardWire(id:string,n:number,value:number){
  if(!orderedBoard(id)||!Number.isInteger(n)||!Number.isInteger(value)||value<0)return false;
  if(n===4997)return value===0;
@@ -34,7 +34,7 @@ export function validBoardWire(id:string,n:number,value:number){
  if(n===9999)return value<=4997;
  if(n<0||n>=4997&&n<5000||n>=9997)return false;
  if(id==='tug')return n<4997?value===1:value>=1&&value<=63;
- return value<=(id==='cacuangua'?4:id==='oanquan'?23:0);
+ return value<=(id==='cacuangua'?4:id==='oanquan'?23:id==='familyquiz'?6:0);
 }
 
 export function foundationFor(id: string): MultiplayerFoundation | null { return MULTIPLAYER_FOUNDATIONS[id] || null; }
@@ -48,35 +48,6 @@ export function validMove(id: string, value: number): boolean {
   // Horse board reducer: 0 rolls, 1..4 choose a horse. No client-supplied die result.
   if (id === 'cacuangua') return value >= 0 && value <= 4;
   return false;
-}
-
-export type AuthoritativeMoveState = {
-  game: string;
-  seats: number;
-  turn: number;
-  rounds: Map<number, Set<number>>;
-  moves: Map<number, Map<number, number>>;
-};
-
-export function createAuthoritativeState(id: string, seats: number): AuthoritativeMoveState | null {
-  const def = foundationFor(id);
-  // The horse session validates actual board state, bonus turns and ordered host commits.
-  if(orderedBoard(id))return null;
-  if (!def || !Number.isInteger(seats) || seats < 2 || seats > def.maxPlayers) return null;
-  return { game: id, seats, turn: 0, rounds: new Map(), moves: new Map() };
-}
-
-export function applyAuthoritativeMove(state: AuthoritativeMoveState, seat: number, n: number, value: number): boolean {
-  const def = foundationFor(state.game);
-  if (!def || !Number.isInteger(seat) || seat < 0 || seat >= state.seats || !Number.isInteger(n) || n < 0 || n > 9999 || !validMove(state.game, value)) return false;
-  if (def.mode === 'turn' && seat !== state.turn) return false;
-  const round = state.rounds.get(n) || new Set<number>();
-  if (round.has(seat)) return false;
-  round.add(seat); state.rounds.set(n, round);
-  if (!state.moves.has(n)) state.moves.set(n, new Map());
-  state.moves.get(n)!.set(seat, value);
-  if (def.mode === 'turn') state.turn = nextTurn(state.turn, state.seats);
-  return true;
 }
 
 export function nextTurn(current: number, players: number): number {

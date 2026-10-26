@@ -28,6 +28,8 @@ export interface Settings {
   voiceMale?: boolean;
   /** Optional public prerecorded Vietnamese provider; female remains the default. */
   voiceViVariant?: 'standard' | 'leminh';
+  /** Private grown-up-authored questions: device storage/save copy only. */
+  familyQuiz?: import('../js/content/family-quiz.js').FamilyQuestion[];
   /** optional family code (XXXX-XXXX) linking a family's devices for anonymous Studio device-count statistics only */
   familyCode?: string;
   /** family missions done: mission id → child id → when (ms) */

@@ -252,6 +252,11 @@ function sayInLoaded(lang, text, my) {
 }
 // the phone's own voice only (Grown-ups → Advanced → Phone voice ▶), so the chosen voice is really heard
 export function sayDevice(lang, text) { const my = ++seq; try { speechSynthesis.cancel(); } catch (e) { } stopPlayback(); activeSpeech.clear(); told(); return deviceSpeak(text, lang, my); }
+/** Parent-written text is never looked up, logged as missing or sent to a recording provider. */
+export async function sayPrivateFamilyLine(lang:string,text:string){
+ if(!settings.voice)return;hush();const my=seq,ticket={};activeSpeech.add(ticket);told();
+ try{await deviceSpeak(text,lang,my);}finally{activeSpeech.delete(ticket);told();}
+}
 export function hush() { seq++; try { speechSynthesis.cancel(); } catch (e) { } stopPlayback(); activeSpeech.clear(); told(); }
 
 // ---------- Family voice: real recordings of a grown-up ----------

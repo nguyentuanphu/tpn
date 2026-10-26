@@ -9,9 +9,7 @@ const source = name => fs.readFileSync(new URL(`../../js/games/${name}`, import.
 
 test('team and board renderers retain offline and online paths', () => {
   const vietnam = source('vietnam.ts');
-  const quiz = source('more.ts');
   assert.match(vietnam, /id: 'oanquan'/);
   assert.match(vietnam, /id: 'tug'/);
-  assert.match(quiz, /if \(online\)/);
-  assert.match(quiz, /untilRight/);
+  const family=source('familyquiz.ts');assert.match(family,/SharedBoardSession/);assert.match(family,/sayPrivateFamilyLine/);
 });
