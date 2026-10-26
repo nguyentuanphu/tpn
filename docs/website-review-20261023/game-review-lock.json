@@ -1,5 +1,5 @@
 {
-  "source": "a9c809cc1740ca74941c20f353997ac4e2441dbf",
+  "source": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
   "files": [
     {
       "file": "content/custom.json",
@@ -88007,7 +88007,7 @@
     },
     {
       "file": "voices/manifest-en.json",
-      "hash": "87b1575aedf751c3dd8a3254019a89acb4cec450"
+      "hash": "4e8a5db50d7ebdadac28b1497285e26aaa0ecff1"
     },
     {
       "file": "voices/manifest-hi.json",
@@ -88023,7 +88023,7 @@
     },
     {
       "file": "voices/manifest.json",
-      "hash": "55807a9a4a2593b5967d12afcdb3f97b5df39fec"
+      "hash": "a36ebf48b571e4345e244bf6a8a26242b327ebdf"
     },
     {
       "file": "voices/vi/f/000df9031a712f99.mp3",
