@@ -4,7 +4,7 @@ This handoff records the owner’s one-hour checkpoint. Read the source snapshot
 
 Runtime source is **35bcb63c0c9682bb9d32885063c8b7dc7b3c86df**. The current comprehensive **all=true** run is **40500953581**: https://github.com/nguyentuanphu/tpn/actions/runs/40500953581. Read `DELIVERY.json` for the latest observation at the hour boundary and package hashes. Everything after this runtime commit should be documentation/artifact changes unless a later handoff explicitly records another code fix.
 
-**Takeover state:** source and both ZIPs are pushed. Public downloads were fetched back, hash-matched and CRC-checked. Local corrected5/5 and final3/3 checks pass;404 unit passes plus the existing legacy exclusion;17 actual PostgreSQL checks pass. At23:20 AEDT the eight GitHub browser shares were still running and the collector had not produced a full result. There are no local suites still running and no uncommitted runtime edits. Do not restart the suite just because this chat ended; inspect the existing run first. The broader26-graph/contextual-editor suite is still unfinished.
+**Takeover state:** source and both ZIPs are pushed. Public downloads were fetched back, hash-matched and CRC-checked. Local corrected5/5 and final3/3 checks pass;404 unit passes plus the existing legacy exclusion;17 actual PostgreSQL checks pass. At23:23 AEDT the eight GitHub browser shares were still running and the collector had not produced a full result. There are no local suites still running and no uncommitted runtime edits. Do not restart the suite just because this chat ended; inspect the existing run first. The broader26-graph/contextual-editor suite is still unfinished.
 
 ## Copy-paste prompt
 
@@ -25,6 +25,8 @@ Keep the handbook, route/field map, board and source evidence current. Capture a
 ```
 
 ## Immediate remaining work
+
+Final visual review also found two straightforward polish items for the next slice: Finance still inherits the generic management subtitle about child/device reporting; replace it with a Money-specific explanation. The budget graph currently labels exact minor units for audit clarity; give the owner readable currency-formatted labels while preserving exact integer values and currency exponents in its data table. These are documented, not silently described as finished UI work.
 
 1. Inspect/collect the final comprehensive run and fix real failures. Local focused checks and synthetic SQL evidence are not a full release pass.
 2. Finish contextual content editors, shared game/website impact previews, real draft/review persistence and revision-safe specialised saves. The current config POST publishes a revision; it must not masquerade as a private Save draft action.
