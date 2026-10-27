@@ -1,5 +1,16 @@
 # Implementation validation
 
+> **Current status — 27 October 2026 AEDT:** application `35bffe6a` is under
+> comprehensive (`all=true`) [GitHub validation](https://github.com/nguyentuanphu/tpn/actions/runs/40459786851).
+> Comprehensive result: **249/250 checks passed**; `ownerreportedphonevi` failed on matched historical Home control181. All 17 real SQL cases passed. Investigation is active; this is a failed full-suite result.
+> Focused local Finance/Studio checks, 399 unit passes, the existing legacy map
+> exclusion, screenshots and prior failures are recorded below. No deployment
+> or live Netlify SQL readiness is claimed.
+
+Historical checkpoints below retain the status they had at the time. This current
+status and the final comprehensive result take precedence over earlier pending
+or superseded-run notes.
+
 27 October 2026 AEDT. Synthetic records only. See [implementation and remaining work](IMPLEMENTATION.md).
 
 ## Recorded results
@@ -181,3 +192,59 @@ round-tripped five unreconciled example rows without database writes.
 [Static package verification](evidence/finance-static-package-2026-10-27.json)
 checked ZIP integrity and recorded its hash; that archive contains no Studio or
 Functions. The offline guide passed 21 browser cases at 390/820/1280 pixels.
+
+
+[Existing live public-site baseline](evidence/finance-live-baseline-2026-10-27.json),
+observed 27 October 2026 at 17:32 AEDT: the game root, parent website and Studio
+login each returned HTTP200; the public build script reports v1.02. These are
+read-only HTTP observations, without private sign-in or a database probe. They
+validate neither deployment of this branch nor production SQL readiness.
+
+
+The 399 passed unit cases are not a claim of zero exclusions. The existing
+[legacy C-layout unit case](evidence/finance-unit-exclusion-2026-10-27.json) is
+intentionally conditional and does not run for the current D3 map. The contemporary
+bank-layout assertion remains enabled. This round adds no skip and does not
+change that test. Full-suite-level skipped checks are reported separately from
+this known legacy unit exclusion.
+
+
+### Comprehensive run completed — failed, retained
+
+[Full structured evidence](evidence/finance-comprehensive-github-2026-10-27.json)
+records **249/250** on `35bffe6a`, with no rotating SAMPLE checks.
+`ownerreportedphonevi` failed, including retry, because the matched Vietnamese
+Home control for historical issue181 was blocked at430×873. `hoilang` passed
+only on retry. The earlier folding, documentation and freeze-report failures
+passed in this run. No assertion is waived and no new skip is introduced.
+
+The owner requested review of the whole Studio rather than concentrating on
+Analytics. The [all-pages review](https://github.com/nguyentuanphu/tpn/tree/review/studio-finance-20261027/docs/studio-page-review-20261027)
+contains all41pages plus3sectionmenus and sign-in, at desktop/tablet/phone:
+135states,267sourcePNGs and a45-page bookmarkeddesktopPDF. Synthetic preview
+records only; gallery/browser checks pass, with no uncaught errors or horizontal
+page overflow. Full-suite failure and production-readiness limits remain separate.
+
+
+### Remaining phone-control failure — fixed and locally verified
+
+The actual hit-test diagnostic identified the floating report icon over historical
+Home control181. A deterministic modal collision failed before the fix. Further
+regressions exposed decorative-layer selection and missing scroll response. All
+failed stages are retained as evidence, including [initial collision](evidence/finance-report-collision-before-fix-2026-10-27.json),
+[decorative layer](evidence/finance-report-decorative-layer-before-fix-2026-10-27.json),
+and [scroll collision](evidence/finance-report-scroll-before-fix-2026-10-27.json).
+
+Default placement now avoids foreground controls across visible panels and
+updates after scrolling, input, transitions, animation, toggles and font loading.
+Deliberate dragged positions remain preserved. Listeners and observers are
+removed on unmount; the module remains tester-only. No new spoken lines or
+ordinary-game startup path are introduced.
+
+[Final focused checks](evidence/finance-report-final-local-2026-10-27.json):
+**6/6 passed** — `reportcollision`, `reportfloating`, `ownerreportedphonevi`,
+`testerreport`, `types`, `emoji`. The historical control is actually hit-testable
+in [the replay observations](evidence/finance-reported-phone-final-2026-10-27.json).
+The existing floating-report flows also pass across phone/tablet/computer in
+English and Vietnamese. A fresh comprehensive GitHub run is required for this
+new application code. Previous failed/cancelled runs do not become pass evidence.

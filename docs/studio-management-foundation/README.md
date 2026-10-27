@@ -94,3 +94,9 @@ and voice area** enabled (`all=true`). This uses the repository's comprehensive
 mode rather than rotating samples. The exact tested commit, result and any
 retries belong in [implementation validation](IMPLEMENTATION-VALIDATION.md).
 A full run belongs on GitHub; do not run two local suites together.
+
+
+The guide and its pictures are included for offline reading. Source-code links
+open the exact tested GitHub commit and need a connection when clicked; they do
+not load automatically. For offline code review, use the separate source overlay
+with the existing repository, following its review README.

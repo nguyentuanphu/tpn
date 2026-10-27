@@ -374,3 +374,17 @@ eight browser shards are still active. Default corrected run 40457933192 was
 superseded/cancelled because legacy `.js` slow-source matching can miss `.ts`
 changes; it is not full-suite pass evidence. Handbook now includes field/API
 mapping and the manual finance procedure. No application changes after `35bffe6a`.
+
+
+Owner requested every Studio page for review after concern about Analytics focus.
+Captured41pages,3sectionmenus and sign-in at3sizes:135states,267sourcePNGs,
+45-page desktopPDF and offlinegallery in `docs/studio-page-review-20261027`.
+Delivered the review ZIP separately; synthetic records only.
+
+Full comprehensive run40459786851 on35bffe6a failed249/250: historical Vietnamese
+Home control181 was covered by the default floating report button. hoilang
+passed on retry. Exact failed evidence is retained. Fixed in649d0a60 after
+deterministic collision/decorative-layer/scroll regressions; all6focusedchecks
+passed, including the historical replay, existing EN/VI report flows at3sizes,
+freeze reporting and types. No assertions weakened or skipped. Starting a new
+comprehensive run on committed code; no production release/version authorised.

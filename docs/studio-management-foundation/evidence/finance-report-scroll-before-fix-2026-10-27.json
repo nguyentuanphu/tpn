@@ -1,0 +1,9 @@
+{
+  "scope": "Expected failing deterministic scroll reproduction before the scroll listener fix",
+  "checks": {
+    "reportcollision": {
+      "ok": false,
+      "note": "report-float-browser.mts (status 1, signal none): node:internal/modules/run_main:107 triggerUncaughtException( ^ AssertionError [ERR_ASSERTION]: Scrolling a panel must not move its control underneath the default report button false !== true at reportFloatingBrowser (file:///workspace/tpn/tests/report-float-browser.mts:35:10) at async file:///workspace/tpn/tests/report-float-browser.mts:89:1 { generatedMessage: false, code: 'ERR_ASSERTION', actual: false, expected: true, operator: 'strictEqual', diff: 'simple' } Node.js v24.19.0 Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node report-float-browser.mts --collision-only node:internal/modules/run_main:107 triggerUncaughtException( ^ AssertionError [ERR_ASSERTION]: Scrolling a panel must not move its control underneath the default report button false !== true at reportFloatingBrowser (file:///workspace/tpn/tests/report-float-browser.mts:35:10) at async file:///workspace/tpn/tests/report-float-browser.mts:89:1 { generatedMessage: false, code: 'ERR_ASSERTION', actual: false, expected: true, operator: 'strictEqual', diff: 'simple' } Node.js v24.19.0"
+    }
+  }
+}

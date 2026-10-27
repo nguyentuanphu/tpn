@@ -47,7 +47,7 @@ The [original visual system map](images/01-system.svg) explains all three experi
 
 Advanced-editor limitation: the specialised Family/Releases screens can read the projected configuration but saves must use the revisioned editor once activated. Keep open legacy editors idle during the initial cutover.
 
-Runtime contracts are in [event validation](../../netlify/lib/management/transactional/validation.mts), [transactional service](../../netlify/lib/management/transactional/service.mts), [HTTP routes](../../netlify/lib/management/http.mts), and [SQL migration](../../netlify/lib/management/storage/001-management.sql). The [event schema](schemas/event.schema.json) documents optional private profile context and explicit unknown provenance. Boot, built-in stories, guest direct/relay joins, voice playback, service-worker updates and backup export/restore now emit bounded observations. See the event-to-source map below; no historical results are backfilled.
+Runtime contracts are in [event validation](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/netlify/lib/management/transactional/validation.mts), [transactional service](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/netlify/lib/management/transactional/service.mts), [HTTP routes](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/netlify/lib/management/http.mts), and [SQL migration](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/netlify/lib/management/storage/001-management.sql). The [event schema](schemas/event.schema.json) documents optional private profile context and explicit unknown provenance. Boot, built-in stories, guest direct/relay joins, voice playback, service-worker updates and backup export/restore now emit bounded observations. See the event-to-source map below; no historical results are backfilled.
 
 ## Database selection and setup
 
@@ -64,7 +64,7 @@ The current cloud workspace has no native or custom database binding and no Netl
 
 The implementation uses dedicated immutable event/conflict tables plus a transaction-capable JSON record table for typed namespaces, rather than every reference table in the original design. SQL primary keys and namespace constraints, server validation, immutable service paths, expected revisions and transaction-scoped advisory locks provide the enforced contracts. This is an explicit implementation decision, not a claim that the reference DDL was executed unchanged.
 
-For synthetic local database checks use [tests/management/README.md](../../tests/management/README.md). The prepared PostgreSQL 17.11 instance binds only to loopback and the integration runner creates and removes its own random test schema. It does not use a production database.
+For synthetic local database checks use [tests/management/README.md](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/tests/management/README.md). The prepared PostgreSQL 17.11 instance binds only to loopback and the integration runner creates and removes its own random test schema. It does not use a production database.
 
 ## Implemented versus still required
 

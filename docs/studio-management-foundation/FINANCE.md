@@ -50,11 +50,11 @@ The finance API consumes aggregate gameplay denominators only. It does not join 
 
 ## Field-by-field connection for a builder
 
-Read these sources in order: [form and display](../../studio/ui/finance.ts),
-[CSV parser/export](../../netlify/lib/management/finance-import.mts),
-[validation and exact arithmetic](../../netlify/lib/management/finance-values.mts),
-[transactions and summaries](../../netlify/lib/management/finance.mts),
-[authenticated routes](../../netlify/lib/management/http.mts).
+Read these sources in order: [form and display](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/studio/ui/finance.ts),
+[CSV parser/export](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/netlify/lib/management/finance-import.mts),
+[validation and exact arithmetic](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/netlify/lib/management/finance-values.mts),
+[transactions and summaries](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/netlify/lib/management/finance.mts),
+[authenticated routes](https://github.com/nguyentuanphu/tpn/blob/35bffe6ad5d8ca757ed60a49be670bca08b38f86/netlify/lib/management/http.mts).
 Every imported row passes through `normalLine`; an unknown field is rejected.
 The row's canonical values are saved under `finance_lines[id].body`, with every
 changed revision retained in `finance_versions`.

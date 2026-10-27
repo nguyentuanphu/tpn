@@ -1,0 +1,24 @@
+{
+  "scope": "Intermediate local run: source attribution correctly rejected an uncommitted/changed-source replay; not a product-pass claim",
+  "checks": {
+    "unit": {
+      "ok": true,
+      "secs": 25,
+      "note": "399 unit tests passed"
+    },
+    "types": {
+      "ok": true,
+      "secs": 14,
+      "note": "196 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 76 TypeScript files of the server, Studio and tools; no errors"
+    },
+    "ownerreportedphonevi": {
+      "ok": false,
+      "note": "owner-reported-screens.mjs (status 1, signal none): node:internal/modules/run_main:107 triggerUncaughtException( ^ AssertionError [ERR_ASSERTION]: Served source differs: js/tester-float.ts at file:///workspace/tpn/tests/owner-reported-screens.mjs:19:9 at process.processTicksAndRejections (node:internal/process/task_queues:104:5) { generatedMessage: false, code: 'ERR_ASSERTION', actual: false, expected: true, operator: '==', diff: 'simple' } Node.js v24.19.0 Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node owner-reported-screens.mjs phone-vi node:internal/modules/run_main:107 triggerUncaughtException( ^ AssertionError [ERR_ASSERTION]: Served source differs: js/tester-float.ts at file:///workspace/tpn/tests/owner-reported-screens.mjs:19:9 at process.processTicksAndRejections (node:internal/process/task_queues:104:5) { generatedMessage: false, code: 'ERR_ASSERTION', actual: false, expected: true, operator: '==', diff: 'simple' } Node.js v24.19.0"
+    },
+    "reportcollision": {
+      "ok": true,
+      "secs": 27,
+      "note": ""
+    }
+  }
+}

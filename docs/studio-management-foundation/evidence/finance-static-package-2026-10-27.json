@@ -6,5 +6,8 @@
   "integrity": "passed",
   "containsStudio": false,
   "containsFunctions": false,
-  "scope": "Static game and parent website only; repository deployment required for Studio/SQL Functions; not deployed"
+  "scope": "Static game and parent website only; repository deployment required for Studio/SQL Functions; not deployed",
+  "testedApplicationCommit": "35bffe6ad5d8ca757ed60a49be670bca08b38f86",
+  "gameSourceUnchangedSince": "3967cf91",
+  "voiceBuildAndHomeMatchCurrentWorkspace": true
 }
