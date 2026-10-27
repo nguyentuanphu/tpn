@@ -18,7 +18,28 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
     return { left, top, right: Math.max(left, (v?.offsetLeft || 0) + (v?.width || innerWidth) - button.offsetWidth - 8 - (parseFloat(s.getPropertyValue('--safe-right')) || 0)), bottom: Math.max(top, (v?.offsetTop || 0) + (v?.height || innerHeight) - button.offsetHeight - 8 - (parseFloat(s.getPropertyValue('--safe-bottom')) || 0)) };
   };
   const place = (x: number, y: number) => { const b = bounds(); button.style.left = `${Math.max(b.left, Math.min(b.right, x))}px`; button.style.top = `${Math.max(b.top, Math.min(b.bottom, y))}px`; };
-  const layout = () => { const b = bounds(), a = anchor.getBoundingClientRect(); place(saved ? b.left + saved.x * (b.right - b.left) : a.width > 0 ? a.right - button.offsetWidth : b.right, saved ? b.top + saved.y * (b.bottom - b.top) : a.height > 0 ? a.bottom + 8 : b.top + .55 * (b.bottom - b.top)); };
+  const panels = '.modal:not(.out), .gl:not(.out), .storybook, .dialog, .theatre';
+  const layout = () => {
+    const b = bounds(), a = anchor.getBoundingClientRect();
+    if (saved) { place(b.left + saved.x * (b.right - b.left), b.top + saved.y * (b.bottom - b.top)); return; }
+    const preferred = { x: Math.max(b.left, Math.min(b.right, a.width > 0 ? a.right - button.offsetWidth : b.right)), y: Math.max(b.top, Math.min(b.bottom, a.height > 0 ? a.bottom + 8 : b.top + .55 * (b.bottom - b.top))) };
+    const panel = [...document.querySelectorAll(panels)].filter(p => p.getClientRects().length && getComputedStyle(p).visibility !== 'hidden').pop();
+    if (!panel) { place(preferred.x, preferred.y); return; }
+    // The default must not sit over a newly opened panel's controls. Explicit user drags stay put.
+    const controls = [...panel.querySelectorAll('button, [role="button"], a, input, select, textarea')].filter(n => n.getClientRects().length && getComputedStyle(n).visibility !== 'hidden').map(n => n.getBoundingClientRect());
+    const candidates = [preferred, ...[b.left, b.right].flatMap(x => [0, .25, .5, .75, 1].map(t => ({ x, y: b.top + t * (b.bottom - b.top) })))];
+    const width = button.offsetWidth, height = button.offsetHeight;
+    const score = p => controls.reduce((sum, r) => sum + Math.max(0, Math.min(r.right, p.x + width + 4) - Math.max(r.left, p.x - 4)) * Math.max(0, Math.min(r.bottom, p.y + height + 4) - Math.max(r.top, p.y - 4)), 0);
+    const ranked = candidates.map(p => ({ ...p, overlap: score(p), distance: Math.hypot(p.x - preferred.x, p.y - preferred.y) }));
+    ranked.sort((p, q) => p.overlap - q.overlap || p.distance - q.distance);
+    place(ranked[0].x, ranked[0].y);
+  };
+  let relayout: number | undefined;
+  const queueLayout = () => { if (down || relayout !== undefined) return; relayout = requestAnimationFrame(() => { relayout = undefined; if (!down) layout(); }); };
+  const changed = (e: Event) => { if (e.target instanceof Element && e.target.closest(panels)) queueLayout(); };
+  const observer = new MutationObserver(records => { if (records.some(r => r.target === document.body || r.target instanceof Element && r.target.closest(panels))) queueLayout(); });
+  observer.observe(document.body, { childList: true, subtree: true });
+  document.addEventListener('click', changed, true); document.addEventListener('toggle', changed, true); document.fonts?.addEventListener('loadingdone', queueLayout);
   const remember = () => { const b = bounds(), r = button.getBoundingClientRect(); saved = { x: (r.left - b.left) / Math.max(1, b.right - b.left), y: (r.top - b.top) / Math.max(1, b.bottom - b.top) }; try { localStorage.setItem(key, JSON.stringify(saved)); } catch {} };
   const reset = () => { opening?.abort('reset'); clearTimeout(tap); stopHold(); lastTap = 0; saved = undefined; try { localStorage.removeItem(key); } catch {} layout(); };
   const start = (e: PointerEvent) => {
@@ -50,5 +71,5 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
   button.addEventListener('pointerdown', start); button.addEventListener('pointermove', move); button.addEventListener('pointerup', end); button.addEventListener('pointercancel', end); button.addEventListener('lostpointercapture', end);
   button.addEventListener('keydown', keydown); button.addEventListener('click', click); button.addEventListener('dblclick', dblclick);
   addEventListener('resize', layout); visualViewport?.addEventListener('resize', layout); visualViewport?.addEventListener('scroll', layout); layout();
-  return () => { opening?.abort(); stopHold(); clearTimeout(tap); removeEventListener('resize', layout); visualViewport?.removeEventListener('resize', layout); visualViewport?.removeEventListener('scroll', layout); button.remove(); };
+  return () => { opening?.abort(); stopHold(); clearTimeout(tap); observer.disconnect(); if (relayout !== undefined) cancelAnimationFrame(relayout); document.removeEventListener('click', changed, true); document.removeEventListener('toggle', changed, true); document.fonts?.removeEventListener('loadingdone', queueLayout); removeEventListener('resize', layout); visualViewport?.removeEventListener('resize', layout); visualViewport?.removeEventListener('scroll', layout); button.remove(); };
 }

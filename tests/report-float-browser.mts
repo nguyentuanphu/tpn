@@ -11,6 +11,19 @@ try{
  await clear(P.page);await noWelcome(P.page);
  await P.page.evaluate(async()=>{const g=window.__sv as any;localStorage.setItem('sv2_tester',JSON.stringify({at:Date.now()}));g.tester?.unmount();(await import(String('/js/tester.js'))).mountTester(g,'ladybird');});
  const button=P.page.locator('.tester-floating[data-tester-player="0"]');await button.waitFor();
+ if(process.argv.includes('--collision-only')){
+  const original=await button.boundingBox();assert.ok(original);
+  await P.page.evaluate(async r=>{(await import(String('/js/popups.js'))).modal('report-collision-proof',`<h2>Control collision fixture</h2><button class="collision-control btn" style="position:fixed;left:${r.x}px;top:${r.y}px;width:${r.width}px;height:${r.height}px;min-height:64px">Control</button>`);},original);
+  await P.page.screenshot({path:new URL('default-collision.png',dir).pathname});
+  const reachable=()=>P.page.locator('.collision-control').evaluate(n=>{const r=n.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return top===n||n.contains(top);});
+  for(let i=0;i<30&&!await reachable();i++)await P.page.waitForTimeout(50);
+  assert.equal(await reachable(),true,'Default report position must yield to a real modal control');
+  assert.equal(await button.evaluate(b=>{const r=b.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('.tester-floating')===b;}),true,'Report button must remain reachable too');
+  const before=await button.boundingBox();assert.ok(before);await P.page.mouse.move(before.x+32,before.y+32);await P.page.mouse.down();await P.page.mouse.move(100,200);await P.page.mouse.up();
+  const dragged=await button.boundingBox();assert.ok(dragged);await P.page.evaluate(()=>document.querySelector('.report-collision-proof')?.append(document.createElement('p')));await P.page.waitForTimeout(150);const kept=await button.boundingBox();assert.ok(kept);assert.ok(Math.abs(kept.x-dragged.x)<2&&Math.abs(kept.y-dragged.y)<2,'User-dragged position must be preserved');
+  await button.focus();await P.page.keyboard.press('Home');assert.equal(await reachable(),true,'Reset default must still avoid the underlying control');
+  results.push({defaultAvoidsUnderlyingControl:true,reportRemainsReachable:true,userPositionPreserved:true,resetAvoidsControl:true});await P.ctx.close();return;
+ }
  if(process.argv.includes('--slow-reset-only')){
   await button.click();await P.page.locator('.tpanel').waitFor();
   const b=await button.boundingBox();assert.ok(b);await P.page.mouse.click(b.x+32,b.y+32,{clickCount:2});await P.page.locator('.tpanel').waitFor({state:'detached'});
@@ -58,7 +71,7 @@ try{
  const destinationLang=await P.page.evaluate(async()=> (await import(String('/js/state.js'))).settings.lang);await P.page.screenshot({path:new URL(`phone-${destinationLang}-destinations.png`,dir).pathname});await P.page.locator('.stoppick [data-next]').click();
  results.push({duplicateBrisbaneRemoved:true,physicalStopsPreserved:true});
  assert.deepEqual(P.errors,[]);await P.ctx.close();
-}finally{await browser.close();await fs.writeFile(new URL(process.argv.includes('--slow-reset-only')?'slow-reset-results.json':process.argv.includes('--destinations-only')?(process.argv.includes('--lang-vi')?'destinations-vi-results.json':'destinations-results.json'):process.argv.includes('--integration-only')?'integration-results.json':'results.json',dir),JSON.stringify(results,null,2)+'\n');}
+}finally{await browser.close();await fs.writeFile(new URL(process.argv.includes('--collision-only')?'collision-results.json':process.argv.includes('--slow-reset-only')?'slow-reset-results.json':process.argv.includes('--destinations-only')?(process.argv.includes('--lang-vi')?'destinations-vi-results.json':'destinations-results.json'):process.argv.includes('--integration-only')?'integration-results.json':'results.json',dir),JSON.stringify(results,null,2)+'\n');}
 console.log(JSON.stringify(results));
 
 }

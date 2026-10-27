@@ -6376,6 +6376,9 @@ await check('ownerreportedphoneen', async () => {
 await check('ownerreportedphonevi', async () => {
   return await ownerSmoke('owner-reported-screens.mjs', ['phone-vi']);
 });
+await check('reportcollision', async () => {
+  return await ownerSmoke('report-float-browser.mts', ['--collision-only']);
+});
 await check('ownerautoplaynavigation', async () => {
   return await ownerSmoke('owner-autoplay-navigation.mjs');
 });
