@@ -1,0 +1,8 @@
+{
+  "scope": "Documentation example only; no database writes",
+  "rows": 5,
+  "allUnreconciled": true,
+  "exactRuntimeCsvRoundtrip": "passed",
+  "sourceSha256": "1f74b24417b8e808b0b35bc465634c2720543dce807eb543c381420f6494e461",
+  "source": "examples/finance-ledger-synthetic.csv"
+}

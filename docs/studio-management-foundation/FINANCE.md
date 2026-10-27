@@ -48,6 +48,68 @@ flowchart LR
 
 The finance API consumes aggregate gameplay denominators only. It does not join invoices to child names or introduce a website tracking token. The public game and website cannot read the ledger.
 
+## Field-by-field connection for a builder
+
+Read these sources in order: [form and display](../../studio/ui/finance.ts),
+[CSV parser/export](../../netlify/lib/management/finance-import.mts),
+[validation and exact arithmetic](../../netlify/lib/management/finance-values.mts),
+[transactions and summaries](../../netlify/lib/management/finance.mts),
+[authenticated routes](../../netlify/lib/management/http.mts).
+Every imported row passes through `normalLine`; an unknown field is rejected.
+The row's canonical values are saved under `finance_lines[id].body`, with every
+changed revision retained in `finance_versions`.
+
+| Field in JSON / CSV | What the operator supplies | Where it is used |
+|---|---|---|
+| `schemaVersion` | Integer `1` | Reject unsupported row shapes before preview |
+| `provider` | Source/provider label, not a credential | Part of stable source identity; shown in ledger |
+| `accountAlias` | Non-secret account label | Separates invoices from different accounts; part of identity |
+| `sourceDocumentId` | Original document/invoice ID | Part of identity; shown in ledger and history |
+| `sourceLineId` | Stable row ID within that document | Completes identity; unchanged reimports are duplicates |
+| `kind` | `actual`, `estimate`, `commitment`, `credit`, `revenue` | Chooses actual/estimate/reserve/income calculation and sign rules |
+| `amountMinor` | Tax-exclusive integer minor units; form converts exact decimal input | Original currency allocation, FX, cost/income totals |
+| `currency` | Supported ISO code | Defines decimal places; preserved in ledger/export |
+| `taxMinor` | Signed integer tax units in the same original currency | Separate expense/revenue tax totals; not an inferred tax return |
+| `periodStart`, `periodEnd` | Inclusive calendar service dates | Original-unit invoice allocation across days/months |
+| `recognisedAt` | Valid timestamp, canonicalised to UTC | Preserved source evidence; does not replace service-day allocation |
+| `paidAt` | Timestamp or null; form uses chosen calendar day at midnight UTC | Cash month selection; absent date remains unpaid/unknown |
+| `category` | Allowlisted cost/income category | Preserved classification and kind/refund validation |
+| `costType` | `fixed`, `variable`, `unallocated` | Commitment compatibility and forecast eligibility |
+| `expectedRevision` | `0` for a new source; current revision for a correction | Optimistic conflict check; stored revision increments only on a change |
+| `reconciled` | Boolean after comparison with source evidence | Completeness and forecast conditions; forbidden for estimates/commitments |
+| `voided` | Boolean for excluded mistaken rows | Excludes row from totals while retaining every version |
+| `settles` | Null or an existing commitment's 64-character internal ID | Reduces only the linked compatible commitment's outstanding reserve |
+| `fx.targetCurrency` / `fxTargetCurrency` | Ledger reporting currency | Reject mismatched FX target |
+| `fx.rate` / `fxRate` | Positive decimal string: original major unit → reporting major units | Exact rational conversion; rounded half away from zero |
+| `fx.source` / `fxSource` | Non-secret quote/evidence label | Preserved FX provenance |
+| `fx.asOf` / `fxAsOf` | Quote calendar date | Preserved FX provenance; no automatic live quote is inferred |
+
+`id`, body `hash`, stored `revision`, actor and update time are server-managed.
+A line audit stores before/after hashes; immutable versions retain the full row.
+`finance_batches` records the operation UUID/fingerprint and its result so a lost
+response can be retried without another write. Setting and budget audits retain
+their before/after values. These are typed namespaces in the shared SQL record
+table, not extra public tables or browser storage.
+
+All routes below begin `/studio/api/management/finance`. GET requires
+`finance.read`; POST requires `finance.write` and the normal Studio request
+protection. The session supplies the actor; the browser cannot nominate one.
+
+| Method / suffix | Request | Result / persistence |
+|---|---|---|
+| GET root | `month=YYYY-MM`, `basis=invoice` or `cash` | Qualified snapshot, original lines, settings, budget and quality flags; no mutation |
+| POST `/settings` | `expectedRevision`, `reportingCurrency`, `reason` | Explicit setup, versioned settings and audit |
+| POST `/preview` | Exactly one of `lines` or `csv`, plus `expectedSettingsRevision` | Read-only new/duplicate/correction rows and exact `previewHash` |
+| POST `/commit` | Same input and settings revision, `previewHash`, stable UUID `operationId`, `reason` | One locked transaction for lines, immutable versions, audit and batch receipt |
+| POST `/budget` | `month`, reporting-currency `amountMinor`, nullable `coverageThrough`, `expectedRevision`, `reason` | Versioned monthly budget and manual completeness assertion; immutable audit |
+| GET `/history/:id` | Stable internal source-line ID | All retained line versions |
+| GET `/history/budget/:month` | `YYYY-MM` | Budget/coverage audit versions |
+| GET `/export` | No body | Authenticated CSV including voided rows; private/no-store |
+
+No route changes the public game's coins, player saves, parent website purchases
+or provider billing. Game-derived unit costs use only the existing aggregate
+installation/minute denominators described above.
+
 ## Invoice, cash, tax and FX rules
 
 - **Invoice service-period view:** spread each original minor unit over inclusive service days. Earlier days receive indivisible remainder units. Select the requested calendar-month portion, then convert using the explicit FX rate and currency exponents. This is a documented operational allocation, not a statutory accounting policy. The entered recognition date remains preserved for source evidence; it does not replace the service-period allocation.

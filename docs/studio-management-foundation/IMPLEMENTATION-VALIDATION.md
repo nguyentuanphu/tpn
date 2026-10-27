@@ -160,3 +160,24 @@ the preceding status badge; a real authenticated regression exercises its hidden
 and visible facts on all three device sizes in both languages.
 
 [Final status-card regression](evidence/finance-status-card-regression-2026-10-27.json): **3/3 passed** (authenticated EN/VI management/finance, types and documentation rule) after that last adjustment. Eighteen refreshed runtime captures were inspected on phone, tablet and computer.
+
+
+### Comprehensive mode selected
+
+Run `40457933192` checked the corrected source `35bffe6a`; its real PostgreSQL
+job passed all 17 cases. It was superseded before the browser shards completed
+so the replacement run could use `all=true`. A cancelled run is not full-suite
+pass evidence. The legacy slow-check selector still matches `.js` for some film
+and voice sources, while maintained sources are now TypeScript. The comprehensive
+mode explicitly checks every reading item, film and voice area, bypassing rotating
+samples without weakening an assertion or changing application code. Final
+evidence must name that comprehensive run.
+
+
+The comprehensive run's [actual SQL job evidence](evidence/finance-final-github-postgres-2026-10-27.json)
+records 17 passed cases on PostgreSQL 17.11 for exact app `35bffe6a`. The full browser
+result is still pending. [Synthetic CSV verification](evidence/finance-csv-artifact-2026-10-27.json)
+round-tripped five unreconciled example rows without database writes.
+[Static package verification](evidence/finance-static-package-2026-10-27.json)
+checked ZIP integrity and recorded its hash; that archive contains no Studio or
+Functions. The offline guide passed 21 browser cases at 390/820/1280 pixels.

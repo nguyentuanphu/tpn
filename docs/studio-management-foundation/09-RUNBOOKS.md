@@ -1,6 +1,8 @@
 # Operating handbook and recovery procedures
 
-These are proposed procedures for the future management features. Existing Studio/Netlify/GitHub operations retain their current permissions and release rules. Every procedure records exact build, environment, timestamps and evidence; dates shown to the owner use Australia/Sydney with AEDT/AEST. Do not put secrets or private family data in reports.
+**Current implementation:** manual finance and the implemented reporting/configuration/operations routes are documented in [the operator guide](IMPLEMENTATION.md) and [Finance handbook](FINANCE.md). Production Netlify access and recovery drills are still unverified.
+
+The broader recovery, retention and automation procedures below remain proposed where their required jobs are not implemented. Existing Studio/Netlify/GitHub operations retain their current permissions and release rules. Every procedure records exact build, environment, timestamps and evidence; dates shown to the owner use Australia/Sydney with AEDT/AEST. Do not put secrets or private family data in reports.
 
 ## Morning review: five minutes
 
@@ -70,3 +72,41 @@ Check each store's approved policy and last cleanup result. New retention jobs r
 Record candidate source, website review lock, game/Studio/service-worker versions, schema migrations and old-client support. Complete meaningful tests and review EN/VI phone/tablet/computer evidence. Keep failed/skipped/retried and real-device/provider gaps explicit. Prepare the Netlify package and exact deployment/rollback steps; obtain the owner's round-specific approval before main/Netlify changes.
 
 After an approved deployment, verify response versions/assets, representative functional behavior and reporting receipt. Watch comparable cohorts and configuration application status. If rolling back, check save/schema compatibility and live rules first; do not restore an old binary that cannot read retained data. Follow the same explicit approval boundary for application publication changes.
+
+
+## H. Manual finance review using the implemented screen
+
+1. Before real use, verify the intended Netlify deployment context, migrations and
+   finance grants through the operator setup. Complete the ledger setup explicitly;
+   confirm reporting currency and tax-exclusive treatment before the first entry.
+2. Choose the calendar month and invoice-service-period view. Use the source
+   invoice's provider, account alias, document ID and stable line ID. Enter tax
+   separately. A new document line starts at revision 0; a correction uses the
+   existing line and its current revision. Never substitute game coins for money.
+3. For imports, use the authenticated CSV export as the header template. Keep all
+   amounts in original integer minor units, preserve source identity, and supply
+   explicit FX evidence where needed. Preview without saving, compare every
+   new/duplicate/corrected row, then confirm with a reason. Retain the same operation
+   ID if retrying a response whose result is unknown.
+4. Reconcile each actual/credit/revenue line against its source. An estimate or
+   commitment is not a reconciled actual invoice. Link a settlement only to the
+   intended compatible commitment; review outstanding reserves separately.
+5. Set the month's budget in the ledger's reporting currency. Set coverage through
+   a date only after reviewing source completeness through that date. Coverage is
+   your assertion, not a provider receipt; future coverage is rejected. Do not mark
+   it complete merely to unlock a forecast or unit-cost card.
+6. Read missing FX, unreconciled, unpaid and coverage flags before drawing a
+   conclusion. Compare actuals, estimates and commitments as distinct figures.
+   A subtotal may be useful while incomplete, but it is not the final monthly cost.
+7. Switch to cash view to inspect paid-date totals. Follow the UTC calendar-date
+   convention in [Finance](FINANCE.md) when importing offset timestamps. Invoice
+   allocations and cash payments can legitimately fall in different months.
+8. Review budget history and each corrected line's history. A late correction can
+   restate an earlier month; there is no closed-period/frozen statement feature.
+   Export privately for the applicable accounting review. Do not put actual bills,
+   exports or family records in this public repository.
+
+Cost per reporting installation/hour is available only when its completeness and
+nonzero denominator conditions hold. Forecasts require their listed coverage and
+classification conditions. No screen buys services, transfers money, changes a
+provider bill or infers an approved revenue/contribution-margin model.

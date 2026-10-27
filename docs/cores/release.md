@@ -366,3 +366,11 @@ financial input is authorised by these validation steps.
 - Owner reply, 27 October 2026 AEDT: **Existing Netlify Database (Recommended)**.
   This confirms the existing native Netlify SQL selection. No live connection is
   bound in this workspace; retain the private deployment-context `NETLIFY_DB_URL`.
+
+Comprehensive verification update, 27 October 2026 AEDT: application frozen at
+`35bffe6a`; [run 40459786851](https://github.com/nguyentuanphu/tpn/actions/runs/40459786851)
+uses `all=true` for every reading item, film and voice area. All 17 SQL cases passed,
+eight browser shards are still active. Default corrected run 40457933192 was
+superseded/cancelled because legacy `.js` slow-source matching can miss `.ts`
+changes; it is not full-suite pass evidence. Handbook now includes field/API
+mapping and the manual finance procedure. No application changes after `35bffe6a`.

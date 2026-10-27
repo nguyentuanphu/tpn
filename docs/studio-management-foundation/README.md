@@ -86,3 +86,11 @@ Unicode code-point label. It does not change numbers, outcomes or assertions.
 Keep structured result payloads intact; a reserialized JSON evidence copy may use
 Unicode escapes. Run the normal `emoji` check before publishing, along with the
 other required checks. Never edit a result from failed to passed.
+
+
+For this implementation review, dispatch the existing GitHub **Full suite**
+workflow on `review/studio-finance-20261027` with **Check every reading item, film
+and voice area** enabled (`all=true`). This uses the repository's comprehensive
+mode rather than rotating samples. The exact tested commit, result and any
+retries belong in [implementation validation](IMPLEMENTATION-VALIDATION.md).
+A full run belongs on GitHub; do not run two local suites together.

@@ -59,6 +59,16 @@ These boundaries protect delivery scope and clarify what a later proposal would 
 
 ## Current implementation decisions — 27 October 2026 AEDT
 
+The earlier D01–D12 table is the original design decision record. The following
+owner instructions and implemented decisions supersede conflicting assumptions:
+
+- The owner explicitly requested child first names alongside their devices.
+  Permission-aware private reads and optional consented event context support
+  that request; Analytics/name-reporting opt-outs remain effective. The earlier
+  installation-only D05 proposal does not override that instruction. Retention,
+  deletion and a parent-facing collection explanation remain prerequisites before
+  activating new detailed collection for real families.
+
 - The owner selected **Netlify Database** for production SQL. Its context-specific
   `NETLIFY_DB_URL` takes precedence over the development fallback. No paid database
   was provisioned and the production binding remains unavailable in this workspace.

@@ -1,6 +1,6 @@
 # Studio implementation and operator handbook
 
-27 October 2026, Australia/Sydney (AEDT). Branch `work`; current game baseline is the already released v1.02. This is the current implementation record. The original handbook and registries describe the larger design at commit `ac76cf60`; they are not a completion checklist.
+27 October 2026, Australia/Sydney (AEDT). Branch `review/studio-finance-20261027`; current game baseline is the already released v1.02. This is the current implementation record. The original handbook and registries describe the larger design at commit `ac76cf60`; they are not a completion checklist.
 
 The owner authorised implementation, requested child names alongside devices and one active agent, initially deferred finance, then explicitly authorised finance and the full suite. Saved contributions were integrated by the primary agent after the parallel workers stopped. No production deployment, paid database provisioning or version change has been performed.
 
