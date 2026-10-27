@@ -98,7 +98,24 @@
     "limitation": "Only downloaded available result artifacts are counted. Missing/running shares are unknown. Full suite requires collector success and review of actual results."
   },
   "realPostgresCasesPassed": 17,
-  "packages": [],
+  "packages": [
+    {
+      "file": "Studio-source-checkpoint.zip",
+      "bytes": 81664859,
+      "files": 723,
+      "sha256": "affe163ddfc2ed8e90d38e3385023ced1d5769743ad97454e32ff7692a730e00",
+      "sourceSnapshot": "23eb94427dc35ea43347ecfb97adcd2df9383b86",
+      "testedCommit": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df",
+      "purpose": "Cumulative source overlay since released v1.02; not a standalone Netlify/game ZIP"
+    },
+    {
+      "file": "Studio-owner-review.zip",
+      "bytes": 13639560,
+      "sha256": "59252de399d16ec2e24b7670b196829d8e9d573fd49b2ec8a99b44e3a5aa68cd",
+      "purpose": "Current handbook, 72 screenshots, preserved evidence and next-chat prompt; fictional records only",
+      "snapshotNote": "Manifest is the packaged snapshot. The live DELIVERY record may contain later CI observations and package metadata."
+    }
+  ],
   "nextChat": "NEXT-CHAT.md",
   "remaining": [
     "Collect full-suite artifacts and collector outcome; fix failures before release",

@@ -64,7 +64,9 @@ Existing HTTP private-detail gates remain enforced before device reads. Missing 
 
 ## Validation and next work
 
-See [VALIDATION.md](VALIDATION.md) for exact results and limitations, [GALLERY.md](GALLERY.md) for desktop/tablet/phone screenshots, and [NEXT-CHAT.md](NEXT-CHAT.md) for the copy-paste takeover prompt. These files are completed when the hour closes. All screenshot records are fictional; browser emulation does not replace physical-device/Windows checks.
+See [VALIDATION.md](VALIDATION.md) for exact results and limitations, [GALLERY.md](GALLERY.md) for desktop/tablet/phone screenshots, and [NEXT-CHAT.md](NEXT-CHAT.md) for the copy-paste takeover prompt. All screenshot records are fictional; browser emulation does not replace physical-device/Windows checks.
+
+Repository downloads: [review handbook and screenshots](Studio-owner-review.zip) (about14MB), [cumulative source checkpoint](Studio-source-checkpoint.zip) (about82MB). The source ZIP is an overlay for the released v1.02 base, not a deployable site ZIP; the review branch is the preferred way to resume. [Package hashes and current run observation](DELIVERY.json) distinguish the packaged snapshots from later status updates. Archives intentionally omit nested ZIP copies and unchanged base media.
 
 [ROUTE-MAP.md](ROUTE-MAP.md) inventories all45 retained/new page keys. Source runtime checkpoint: **35bcb63c0c9682bb9d32885063c8b7dc7b3c86df**. Comprehensive run: [40500953581](https://github.com/nguyentuanphu/tpn/actions/runs/40500953581). Read its observed status in the final delivery notes; a run link is not a green result.
 
