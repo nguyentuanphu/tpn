@@ -5,10 +5,10 @@
     "sampleRate": 16000,
     "channels": 1
   },
-  "units": 6663,
-  "masterBytes": 435948496,
-  "deliveryBytes": 88597680,
-  "signature": "1fdefd2e1814e75911efa8def987b969171ef78435fd433f5c3652db9633b343",
+  "units": 6680,
+  "masterBytes": 437350984,
+  "deliveryBytes": 88882017,
+  "signature": "1c107cc00496dcb3d51f1dcb9aeff273e1ab553194b64e1e4cfa2cde4b4b2830",
   "fullDecode": "passed for every newly encoded clip; resumed clips verified against their completed encoding receipts",
   "originalPackageBackup": "temp/hanoi-originals-VFBnNA",
   "files": {
@@ -53315,6 +53315,159 @@
       "deliverySha256": "02e565197cfb2dfdd5a5c34de321b999635a2bb7466c59610905c4221216af37",
       "deliveryBytes": 7568,
       "deliveryDuration": 1.836
+    },
+    "cad06358-127d5562": {
+      "masterSha256": "318022d37c720bd916aa2a3ae852bab9d00cca6ffc931ea21ffe5100977d771f",
+      "masterBytes": 100355,
+      "masterDuration": 4.989388,
+      "deliverySha256": "7ffff9725ea69aaae30007f7ca015904294d9cd82484dd638a48ffd32c130c19",
+      "deliveryBytes": 20385,
+      "deliveryDuration": 5.04,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "ab862a1d4448fa92": {
+      "masterSha256": "88eac44fef51e9331e3dae3ee24d42bb28b23143b5b8f42b15f31b1635895de9",
+      "masterBytes": 61171,
+      "masterDuration": 3.030204,
+      "deliverySha256": "29ad8022c9721dc22624f1e4481c250c593f65349f49f0da24592243a7c60fda",
+      "deliveryBytes": 12465,
+      "deliveryDuration": 3.06,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "0b282a21-22dc2f22": {
+      "masterSha256": "bddb2b6a1ac50e71ca1a4c45914eb8ce68069da182a8adffaa8257d31da46c37",
+      "masterBytes": 100877,
+      "masterDuration": 5.01551,
+      "deliverySha256": "2d073be078530c8a0cb0cc6a839df88aa7b26fec93e89287b704362f29ed1f0f",
+      "deliveryBytes": 20385,
+      "deliveryDuration": 5.04,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "ecee4965-2f6ad76b": {
+      "masterSha256": "13216ad1e137ecc13dd83baa638a3871c370fd49bf25bf3b77a782c9a80f9786",
+      "masterBytes": 156257,
+      "masterDuration": 7.78449,
+      "deliverySha256": "e3b9c79d67a62dbd2a823df81dfc2dbd1817fdb9cb31f661a22cdea316b109c6",
+      "deliveryBytes": 31473,
+      "deliveryDuration": 7.812,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "2e6ec91741176d63": {
+      "masterSha256": "a8250c86342663789c3f6925c75760b2b2900957d175f8252bb94d61b048934d",
+      "masterBytes": 164094,
+      "masterDuration": 8.176327,
+      "deliverySha256": "e1a3910810605e5c947cbd8655f75199fce28fffdf8bc92c1d7282ff374fb3f2",
+      "deliveryBytes": 33057,
+      "deliveryDuration": 8.208,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "fea49d75-7ee86574": {
+      "masterSha256": "51f97f39a0bb5c72f75d2589925029888bf6027ee23c76168c5fc898edc11834",
+      "masterBytes": 81024,
+      "masterDuration": 4.022857,
+      "deliverySha256": "3e696f271164558ad777a7c13a24e90a6868e98460a2906b38b0d0b2c18525b0",
+      "deliveryBytes": 16497,
+      "deliveryDuration": 4.068,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "aa1b68df-1faf794b": {
+      "masterSha256": "f01358320897d09cf892b0c76b52f5e45eaac02ceac0bdeed2586551feee018d",
+      "masterBytes": 75277,
+      "masterDuration": 3.73551,
+      "deliverySha256": "bfa98a4a53c7c3527e166ce5f8521b6ccde76d168fe0983aaa424675ef070add",
+      "deliveryBytes": 15345,
+      "deliveryDuration": 3.78,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "cbb7f9a368b158dd": {
+      "masterSha256": "7591c19ea330a12c2162e314f2608660370e83ef3bb364383eb112fc6acfb225",
+      "masterBytes": 75277,
+      "masterDuration": 3.73551,
+      "deliverySha256": "7e640b16f64ecf9545ad2871cec086307ce0cbd4862e958a074dc2b921c37820",
+      "deliveryBytes": 15345,
+      "deliveryDuration": 3.78,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "87b90ee5-5a44a06a": {
+      "masterSha256": "a2d8df2c363f997c90a7da0cfd4e1155963ccfc22df91480dcbec24730d6d688",
+      "masterBytes": 52289,
+      "masterDuration": 2.586122,
+      "deliverySha256": "fd47344eb0e35f9765893f0559a56d16ce896fc36637f0ef0d2fb69136ceb7ed",
+      "deliveryBytes": 10593,
+      "deliveryDuration": 2.592,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "829fcf7e-5bf451c6": {
+      "masterSha256": "b6a8cb51335ad7266a29e2b46c12a0a1315c132bf52ec10bf4d275866fbd2f14",
+      "masterBytes": 42885,
+      "masterDuration": 2.115918,
+      "deliverySha256": "6e1731cd6ee69e38e0a7fe7f559280c6bccfc9ce99794a1c84fdb8d58d171678",
+      "deliveryBytes": 8721,
+      "deliveryDuration": 2.124,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "aa38fb91126908c4": {
+      "masterSha256": "c7d1f93777a30644a4e9f5415a1a2fab174fc26e0fdf5f2162d94ce690bdd571",
+      "masterBytes": 56992,
+      "masterDuration": 2.821224,
+      "deliverySha256": "86ed39191ac5278c6ba686f176286ae6a26c1f0c901da4bc96d40c3b15f4252e",
+      "deliveryBytes": 11601,
+      "deliveryDuration": 2.844,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "bfdca21f-23313b39": {
+      "masterSha256": "31c5a3b575ac0888653aad9b0f6b8160b39922c51ec1fb2cd4813d4ab6ee8fd5",
+      "masterBytes": 40273,
+      "masterDuration": 1.985306,
+      "deliverySha256": "f97a302bb2e1da27127c488cd64082ca13dbce4213970ed482b75a8d45d987ed",
+      "deliveryBytes": 8289,
+      "deliveryDuration": 2.016,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "c4fdc3db7b13581a": {
+      "masterSha256": "ba0f87a1c21aa40a509f2c7a64f45c4dc35cb44869c68329bc20d4997df1ca48",
+      "masterBytes": 36616,
+      "masterDuration": 1.802449,
+      "deliverySha256": "82f84c7e295fd858f1efb2b820493774d69f26d9ea01cf0456355b1f46272c7b",
+      "deliveryBytes": 7425,
+      "deliveryDuration": 1.8,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "3cd59558-428843bd": {
+      "masterSha256": "ffee54ac78cbdf6117d9e1bce77da6b20a316e66d926cea0d0817e4d5c55ae59",
+      "masterBytes": 55947,
+      "masterDuration": 2.76898,
+      "deliverySha256": "c567bdad5d58a59666e1a3c8676fef0eb187543e1625f8dfdbe464d614dc2014",
+      "deliveryBytes": 11457,
+      "deliveryDuration": 2.808,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "491c63e97d3858f4": {
+      "masterSha256": "1907de61c24686fc6a9b02777daad8f3cfbbb73643fb2384c0a03152b9465917",
+      "masterBytes": 42363,
+      "masterDuration": 2.089796,
+      "deliverySha256": "a3bb048b5e69a8fbd529a45a8c6b2a178dd540c88be9e332d0deb97340b95eb7",
+      "deliveryBytes": 8721,
+      "deliveryDuration": 2.124,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "05626ca0-4118f5d9": {
+      "masterSha256": "dfa8e9f13783c9ada11a83a7290f27435605cd4be4e1c37d7135bb55262ac75e",
+      "masterBytes": 62738,
+      "masterDuration": 3.108571,
+      "deliverySha256": "db6c24d608928b914faf679b2fd9c8c595ff1cdc5b02a9bbbe2158b75fab4d50",
+      "deliveryBytes": 12753,
+      "deliveryDuration": 3.132,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
+    },
+    "702715524f754eff": {
+      "masterSha256": "80501a7f1901e4643f4c693dd7117d92781ba80e3a8ab33ae4e58be4f65aa747",
+      "masterBytes": 198053,
+      "masterDuration": 9.874286,
+      "deliverySha256": "daa03a7f2f42586138456b737bc8587aed222aac801667dc09a583bed562ef46",
+      "deliveryBytes": 39825,
+      "deliveryDuration": 9.9,
+      "inventory": "docs/voice-recording-delta/goat-northern-20261027.json"
     }
   }
 }
