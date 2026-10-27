@@ -18,6 +18,7 @@
 // Photos go only after being let in, locked for each player. Saved friends come straight in only if they bring the
 // key saved with the friend AND open a number locked with it; anyone else knocks.
 import { settings } from './state.js';
+import { managementEvidence } from './core/events.js';
 import { micMode } from './audio.js';
 import { Channel } from './relay.js';
 import { checkMsg } from './netmsg.js';
@@ -151,6 +152,10 @@ export const Net = {
   _mt: undefined as ReturnType<typeof setInterval> | null | undefined, _pt: undefined as ReturnType<typeof setInterval> | undefined,
   _askT: undefined as ReturnType<typeof setTimeout> | undefined,
   _pinWeak: undefined as boolean | undefined, _noDirect: undefined as boolean | undefined, _slowTold: undefined as boolean | undefined,
+  _managementDirect: undefined as ((outcome:'success'|'timeout'|'rejected'|'failed')=>unknown)|undefined,
+  _managementRelay: undefined as ((outcome:'success'|'timeout'|'rejected'|'failed')=>unknown)|undefined,
+  _managementStarted: 0,
+  _managementFailure(outcome:'timeout'|'rejected'|'failed') { this._managementDirect?.(outcome);this._managementRelay?.(outcome); },
   remotes: {} as Record<string, Remote>, // everyone else in the room: id -> {id, name, look, photo, friend, s:{x,y,z,yaw,st}}
   beacon: null,              // the friend-code listener
   handlers: {},
@@ -271,6 +276,7 @@ export const Net = {
     await prepare().catch(() => { }); if (!this.mic) this.emit('status', { key: 'mictap' });
     this.close(true); this.setMuted(true);   // (Round V, owner 13 Oct) the microphone is always off when a room is made or joined: a tap turns it on
     hello = await this._withPub(hello);
+    this._managementStarted=Date.now(); this._managementDirect=managementEvidence.connection('direct');
     this.role = 'guest'; this.code = code; this.hello = hello; this.hostId = PREFIX + code;
     this.hostPub = okPub(opts.hostPub) ? opts.hostPub : null; this._pinWeak = false;
     this._knock(true); this._heard = 0;
@@ -304,13 +310,13 @@ export const Net = {
       const c = this.conns.get(host), s = (Date.now() - t0) / 1000, tick = Math.floor(s);
       if (this.remotes[host]) { clearInterval(watch); return; }
       // let in, waiting for the starter's welcome on the members' channel: say hello there until it answers
-      if (!this.knocking) { if (!(c && c.open) && tick % 2 === 0) this._helloCloud(); if (s > 150) { clearInterval(watch); this.emit('status', { key: 'stuck' }); this.close(true); } return; }
-      if (this._heard) { if (!(c && c.open) && tick % 4 === 0) this._knockCloud(); if (Date.now() - this._heard > 120000) { clearInterval(watch); this.emit('status', { key: 'noanswer' }); this.close(true); } return; }
+      if (!this.knocking) { if (!(c && c.open) && tick % 2 === 0) this._helloCloud(); if (s > 150) { clearInterval(watch); this._managementFailure('timeout'); this.emit('status', { key: 'stuck' }); this.close(true); } return; }
+      if (this._heard) { if (!(c && c.open) && tick % 4 === 0) this._knockCloud(); if (Date.now() - this._heard > 120000) { clearInterval(watch); this._managementFailure('timeout'); this.emit('status', { key: 'noanswer' }); this.close(true); } return; }
       if (c && c.open) return;
       if ((s > 7 || !p || !p.open || (c && c.peerConnection && c.peerConnection.iceConnectionState === 'failed')) && !viaCloud) { viaCloud = true; this._knockCloud(); }
       else if (viaCloud && s > 3 && tick % 4 === 0) this._knockCloud();
       if (s > 12 && !this._slowTold) { this._slowTold = true; this.emit('status', { key: 'slow' }); }
-      if (s > 30) { clearInterval(watch); this.emit('status', { key: this._noDirect && this.door && this.door.connected ? 'nocode' : 'stuck' }); this.close(true); }
+      if (s > 30) { clearInterval(watch); this._managementFailure('timeout'); this.emit('status', { key: this._noDirect && this.door && this.door.connected ? 'nocode' : 'stuck' }); this.close(true); }
     }, 1000);
     this._startPings(); this._wake(true);
   },
@@ -377,6 +383,7 @@ export const Net = {
       if (!known && this.role === 'host') { const m = this.members.get(from); if (m) m.name = r.name; this.send({ t: 'hello', from, name: r.name, look: r.look, friend: r.friend, pub: r.pub }); this._shareMembers(); }
       // my photo, locked for this player
       this._sendPhoto(from);
+      if(this.role==='guest'&&from===this.hostId&&!this.knocking){if(via==='cloud')this._managementRelay?.('success');else this._managementDirect?.('success');}
       if (known) return;
       // guests call each other too, so everyone hears everyone (the newer one rings)
       if (this.role === 'guest' && from !== via && this.me > from && !this.calls.has(from) && this.peer && this.peer.open) { const call = this.peer.call(from, this.mic || this._silence()); if (call) this._call(call); }
@@ -397,7 +404,7 @@ export const Net = {
   _knock(on) { this.knocking = on; if (!on) this._heard = 0; if (this.mic) this.mic.getAudioTracks().forEach(t => t.enabled = !on && !this.muted); },
   // what a knock says: name, look, friend code and key (round R privacy: never the photo)
   _knockHello() { const h = this.hello || {}; return { name: h.name, look: h.look, friend: h.friend, pub: this.pub, map: this.mapVersion }; },
-  _knockCloud() { this._doorSend(Object.assign({ t: 'hello', to: this.hostId }, this._knockHello())); },
+  _knockCloud() { if(this.role==='guest'&&!this._managementRelay){this._managementRelay=managementEvidence.connection('relay');} this._doorSend(Object.assign({ t: 'hello', to: this.hostId }, this._knockHello())); },
   // (a guest) the starter's words to me: each one locked for me with the starter's key. The first key that answers my knock
   // is kept (the direct link to the room's own id outranks the cloud, a saved friend's key outranks both), and every
   // later word must come with the same key.
@@ -411,12 +418,12 @@ export const Net = {
     const direct = via === this.hostId, o = await openFrom(d.pub, d);
     if (!o || o.k !== d.t || o.id !== this.me || this.role !== 'guest' || !this._pin(d.pub, direct)) return;
     // (r57) the room is on another map layout: don't come in; the child is told to ask a grown-up to update
-    if (this.knocking && !this.sameMap(o.map)) { this.emit('status', { key: 'oldmap' }); this.close(true); return; }
+    if (this.knocking && !this.sameMap(o.map)) { this._managementFailure('rejected'); this.emit('status', { key: 'oldmap' }); this.close(true); return; }
     if (d.t === 'door') { if (this.knocking) { if (!this._heard) this.emit('status', { key: 'knocking' }); this._heard = Date.now(); } return; }
     if (d.t === 'chal') { if (this.knocking && typeof o.n === 'string' && /^[0-9a-f]{32}$/.test(o.n)) this._toHost({ t: 'chalr', n: o.n }, direct); return; }
     if (d.t === 'admit') { if (o.code === this.code && okSecret(o.s) && (this.knocking || o.s !== this.secret)) this._letIn(o.s, direct); return; }
-    if (d.t === 'full') { if (this.knocking) { this.emit('status', { key: 'full' }); this.close(true); } return; }
-    if (d.t === 'nope') { if (this.knocking) { this.emit('status', { key: 'denied' }); this.close(true); } return; }
+    if (d.t === 'full') { if (this.knocking) { this._managementFailure('rejected'); this.emit('status', { key: 'full' }); this.close(true); } return; }
+    if (d.t === 'nope') { if (this.knocking) { this._managementFailure('rejected'); this.emit('status', { key: 'denied' }); this.close(true); } return; }
     if (d.t === 'kick') { this.emit('status', { key: 'removed' }); this.close(true); return; }
     if (this.knocking) return;
     if (d.t === 'rekey') { if (okSecret(o.s)) { this.secret = o.s; this._startMembers(); } return; }
@@ -803,6 +810,7 @@ export const Net = {
   },
 
   close(keepMic?: boolean) {
+    this._managementDirect=undefined;this._managementRelay=undefined;
     if (this.role && this.cloud && !this.knocking) try { this._cloudSend({ t: 'bye' }); } catch (e) { }
     if (this.role === 'guest' && this.knocking && this.door) try { this._doorSend({ t: 'bye', to: this.hostId }); } catch (e) { }
     const cl = this.cloud, dr = this.door; this.cloud = null; this.door = null; this.cloudOn = false; if (cl) setTimeout(() => cl.close(), 400); if (dr) setTimeout(() => dr.close(), 400);

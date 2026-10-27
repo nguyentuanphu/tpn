@@ -3,23 +3,17 @@ import { PostgresManagementDatabase } from './storage/postgres.mts';
 import { createManagementService } from './transactional/service.mts';
 import { loadManagementCatalogue } from './catalogue.mts';
 import { readLive, readContent } from '../live.mts';
+import { managementConnection, managementBinding } from './connection.mts';
 
 export const managementEnv = (name: string): string =>
   ((globalThis.Netlify?.env.get(name)) || process.env[name] || '').trim();
 let database: PostgresManagementDatabase | undefined;
 /** No HTTP request creates tables or provisions a provider. Run the migration tool first. */
 export function managementDatabase() {
-  const connectionString = managementEnv('MANAGEMENT_DATABASE_URL');
+  const connectionString = managementBinding(managementEnv);
   if (!connectionString) return undefined;
   if (!database) {
-    const url = new URL(connectionString);
-    if (!['postgres:', 'postgresql:'].includes(url.protocol)) throw new Error('management_database_protocol');
-    const local = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
-    // Prevent URL parameters from overriding certificate verification.
-    for (const key of ['sslmode', 'sslcert', 'sslkey', 'sslrootcert']) url.searchParams.delete(key);
-    const pool = new Pool({ connectionString: url.toString(),
-      ssl: local ? false : { rejectUnauthorized: true }, max: 3,
-      connectionTimeoutMillis: 5000, idleTimeoutMillis: 10000 });
+    const pool = new Pool(managementConnection(connectionString).options);
     pool.on('error', () => { console.warn('Management database connection unavailable.'); });
     database = new PostgresManagementDatabase(pool);
   }

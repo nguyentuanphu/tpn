@@ -313,7 +313,7 @@ for (const [page, kind] of Object.entries(MANAGEMENT_PAGES)) PAGES[page] = async
   const { renderManagement } = await import('./management.js');
   const query = Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''));
   const { id, ...filters } = query;
-  return renderManagement(P, { api, T, kind, id, query: filters, can: permission => !INFO.online && ['management.configure','management.triage','operations.run'].includes(permission) ? false : CAN(permission),
+  return renderManagement(P, { api, T, kind, id, query: filters, online: INFO.online === true, can: permission => !INFO.online && ['management.configure','management.triage','operations.run'].includes(permission) ? false : CAN(permission),
     go: (next, nextId, nextQuery) => {
       if (!leaveOk()) return;
       const target = Object.keys(MANAGEMENT_PAGES).find(k => MANAGEMENT_PAGES[k] === next);

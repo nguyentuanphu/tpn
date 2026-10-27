@@ -6,6 +6,8 @@ Written 26 October 2026, Australia/Sydney (AEDT). Source baseline: `ac76cf6097a8
 
 **Purpose:** give the owner, a new developer and a future AI the same understandable, traceable instructions for connecting game, website, Studio and business operations. This package specifies a proposed management expansion. It does not implement that expansion or authorise a live release.
 
+The owner selected **Netlify Database** for SQL. See [Netlify setup and operational connections](NETLIFY-AND-OPERATIONS.md) for the native binding, game event map, controls and evidence limits.
+
 ## Open the visual guide first
 
 Open **[index.html](index.html)** in a browser. It works offline, including search and filters, without a server, external libraries or analytics. It explains the system, lets you search every registered data point, and links to the detailed instructions. A PDF can be produced with the browser's Print command; the Markdown remains the canonical narrative.

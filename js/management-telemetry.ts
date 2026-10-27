@@ -1,3 +1,4 @@
+import { cleanManagementEvidence as cleanManagementData } from './core/events.js';
 // Optional management measurements. Independent of saves and legacy analytics: a failed queue or
 // request never interrupts play. This module is imported only after its release switch is enabled.
 export type ManagementProfile = { id: string; name?: string; age: 'little' | 'big' };
@@ -32,39 +33,10 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 const ID = /^[a-z0-9]{12}$/, SESSION = /^[a-z0-9]{16}$/, ACTIVITY = /^[a-z0-9_-]{1,32}$/;
 const BUILD = /^(v\d{1,2}\.\d{2}|r\d{1,4}(\.\d{1,2})?)$/;
 const DAY = 86400000, KEEP = 30 * DAY, MAX_BATCH_BYTES = 64000;
-const kinds: Record<string, Record<string, RegExp | readonly string[] | number>> = {
-  'activity.started': { activityId: ACTIVITY, difficulty: ['easy', 'medium', 'hard'], mode: ['solo', 'local_two', 'online'] },
-  'activity.completed': { activityId: ACTIVITY },
-  'activity.abandoned': { activityId: ACTIVITY, reason: ['closed', 'navigation', 'cancelled'] },
-  'boot.started': { stage: ['boot'] },
-  'boot.ready': { stage: ['first_playable'], elapsedMs: 600000 },
-  'boot.failed': { stage: ['boot', 'resources', 'world', 'first_playable'], reasonCode: ['timeout', 'resource_missing', 'exception', 'unsupported'] },
-  'story.opened': { storyId: /^[a-z0-9_-]{1,40}$/ },
-  'story.completed': { storyId: /^[a-z0-9_-]{1,40}$/ },
-  'connection.attempt': { transport: ['direct', 'relay'] },
-  'connection.result': { transport: ['direct', 'relay'], outcome: ['success', 'timeout', 'rejected', 'failed'], elapsedMs: 600000 },
-  'voice.result': { source: ['recorded', 'family', 'device'], outcome: ['success', 'failed', 'cancelled'], language: ['en', 'vi', 'zh', 'hi'] },
-  'update.result': { outcome: ['success', 'failed', 'cancelled'], reasonCode: ['none', 'timeout', 'storage', 'network', 'invalid', 'unsupported', 'user_cancelled'] },
-  'backup.result': { outcome: ['success', 'failed', 'cancelled'], reasonCode: ['none', 'timeout', 'storage', 'network', 'invalid', 'unsupported', 'user_cancelled'] }
-};
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
 const bytes = (value: unknown) => new TextEncoder().encode(JSON.stringify(value)).length;
 const iso = (value: unknown): value is string => typeof value === 'string' && /^\d{4}-\d\d-\d\dT.*Z$/.test(value) && Number.isFinite(Date.parse(value));
-
-/** Runtime allowlist: never serialise arbitrary event-bus data (which can contain private fields). */
-export function cleanManagementData(name: string, value: unknown): Record<string, string | number> | null {
-  const shape = kinds[name];
-  if (!shape || !object(value) || Object.keys(value).length !== Object.keys(shape).length || Object.keys(value).some(k => !(k in shape))) return null;
-  const out: Record<string, string | number> = {};
-  for (const [key, rule] of Object.entries(shape)) {
-    const v = value[key];
-    if (typeof rule === 'number') { if (!Number.isInteger(v) || typeof v !== 'number' || v < 0 || v > rule) return null; }
-    else if (rule instanceof RegExp) { if (typeof v !== 'string' || !rule.test(v)) return null; }
-    else if (typeof v !== 'string' || !rule.includes(v)) return null;
-    out[key] = v as string | number;
-  }
-  return out;
-}
+export { cleanManagementEvidence as cleanManagementData } from './core/events.js';
 
 const profilesFor = (profiles: ManagementProfile[], names: boolean): ManagementProfile[] => profiles.slice(0, 6).filter(p => p && typeof p.id === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(p.id) && ['little', 'big'].includes(p.age)).map(p => ({
   id: p.id, age: p.age, ...(names && typeof p.name === 'string' && p.name.trim() ? { name: p.name.trim().split(/\s+/)[0].replace(/[^\p{L}'-]/gu, '').slice(0, 20) } : {})
@@ -162,11 +134,12 @@ export function createManagementTelemetry(options: ManagementOptions) {
     return true;
   }
 
-  function enqueue(eventName: string, value: unknown, attemptId = uuid()): ManagementEvent | null {
+  function enqueue(eventName: string, value: unknown, attemptId = uuid(), occurredAt = now()): ManagementEvent | null {
     try {
       if (!synchroniseConsent() || !eligible() || !UUID.test(attemptId)) return null;
       const data = cleanManagementData(eventName, value); if (!data) return null;
-      const date = new Date(now()), eventId = uuid(); if (!UUID.test(eventId)) return null;
+      if (!Number.isFinite(occurredAt) || occurredAt>now()+1000 || occurredAt<now()-30*DAY) return null;
+      const date = new Date(occurredAt), eventId = uuid(); if (!UUID.test(eventId)) return null;
       const profiles = profilesFor(options.profiles?.() || [], options.reportNames?.() !== false);
       const event: ManagementEvent = { schemaVersion: 1, eventId, deviceId: options.deviceId(), sessionId: options.sessionId, attemptId, eventName,
         occurredAt: date.toISOString(), deviceDay: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`,

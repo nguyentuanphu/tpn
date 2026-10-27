@@ -272,3 +272,15 @@ Owner explicitly approved “Yes, deploy v1.01 after checks pass (Recommended)�
 ## Studio management implementation checkpoint · 27 October 2026 AEDT
 
 Branch `work`; v1.01 unchanged. Owner-directed private child/device reporting, source catalogue, PostgreSQL transactions, activity outbox, global revisioned configuration/projector/receipts, follow-up controls, scoped permissions and EN/VI UI are integrated. 267 unit tests and types passed; 11 real PostgreSQL integration cases passed; management browser flows passed at phone/tablet/computer sizes in EN/VI, including configuration save/public readback and follow-up editing. Broader Studio regression, phone, battery, performance and startup passed; rendering budgets remain over target and are recorded rather than waived. Full GitHub suite, physical devices, Windows execution, production provider binding, retention/restore work and additional outcome instrumentation remain open. No release version, main merge or deployment approved. [Implementation](../studio-management-foundation/IMPLEMENTATION.md) · [evidence](../studio-management-foundation/IMPLEMENTATION-VALIDATION.md).
+
+
+## Owner decisions — 27 October 2026 AEDT, Studio operations
+
+- Use Netlify Database for SQL, including its context-specific `NETLIFY_DB_URL`.
+- Continue with the primary agent alone after integrating the saved helper contribution.
+- Child first names remain linked to their reporting devices; finance input is deferred.
+- No version change, push, production migration or deployment is authorised by this implementation round.
+
+Current work: game outcome hooks and provider operations integrated; SQL preflight
+and 14 real local PostgreSQL cases passed. Final browser/runtime, types and 285-unit checks passed; five layout/speed checks
+passed with rendering debt. Handoff packaging complete. Production Netlify database access is unbound here.

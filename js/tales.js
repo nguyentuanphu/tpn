@@ -10,6 +10,7 @@ import { el, esc, wait, flip } from './util.js';
 import { CAST, SCENES } from './cartoon.js';
 import { pic, hasArt } from './art.js';
 import { featureOn } from './custom.js';
+import { managementEvidence } from './core/events.js';
 
 const seg = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
 const graphemes = s => seg ? [...seg.segment(s)].map(x => x.segment).filter(x => x.trim()) : Array.from(s).filter(x => x.trim() && !/[‍️]/.test(x));
@@ -38,6 +39,8 @@ export const stageOf = en => (STAGES.find(([re]) => re.test(en)) || [0, 'meadow'
 export async function openTheatre(tale, { name = '', onDone, startPage = 0, sync = null } = {}) {
   try { ({ tale, sync, startPage } = await loadTale(tale, sync, startPage)); }
   catch (e) { window.svModuleGone?.(e); return null; }
+  const storyId = typeof tale.id === 'string' && !tale.id.startsWith('my_') ? tale.id : '';
+  const storyAttempt = storyId ? managementEvidence.emit('story.opened',{storyId}) : null;
   return new Promise(resolve => {
     let k = startPage, auto = true, alive = true, token = 0;
     let displayed = false;
@@ -123,7 +126,7 @@ export async function openTheatre(tale, { name = '', onDone, startPage = 0, sync
       await wait(900 / rate()); if (!alive || my !== token || !auto) return;
       next();
     };
-    const finish = done => { if (!alive) return; alive = false; hush(); offTalk(); Music.under(false); if (film) film.close(); m.classList.add('out'); setTimeout(() => m.remove(), 300); Music.play(prev || 'field'); resolve(done); onDone && onDone(done); };
+    const finish = done => { if (!alive) return; alive = false; if(done && storyAttempt) managementEvidence.emit('story.completed',{storyId},storyAttempt); hush(); offTalk(); Music.under(false); if (film) film.close(); m.classList.add('out'); setTimeout(() => m.remove(), 300); Music.play(prev || 'field'); resolve(done); onDone && onDone(done); };
     const next = () => { if (k < tale.pages.length - 1) { k++; draw(); } else { SFX.chime && SFX.chime(); finish(true); } };
     // a friend turned the page
     if (sync) sync.listen(p => { if (!alive || p === k || p < 0 || p >= tale.pages.length) return; k = p; draw(true); });

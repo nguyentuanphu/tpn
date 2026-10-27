@@ -1,7 +1,9 @@
 // Real authenticated Studio UI and read routes; all family records below are synthetic.
+import { managementRuntimeBrowserCheck } from './management-runtime-browser.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createOperationsControl } from '../netlify/lib/management/operations-control.mts';
 import { MemoryManagementTestDatabase } from '../netlify/lib/management/storage/memory-test.mts';
 import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mjs';
 
@@ -21,7 +23,12 @@ export async function managementBrowserCheck(browser) {
   };
   const testerStore=memoryBlobs();
   await testerStore.setJSON('p/1234567890abcdef',{k:'1234567890abcdef',title:'Synthetic activity report',kind:'error',status:'new',firstAt:Date.now(),lastAt:Date.now(),where:{game:'oanquan'},builds:{'v1.01':1},devices:[id]});
-  const server=await fakeNetlify({port:8796,players,liveStore,testerStore,managementDatabase:new MemoryManagementTestDatabase(),env:{STUDIO_PASSWORD:password,GITHUB_TOKEN:'fixture-token',GITHUB_REPO:repo,URL:site}});
+  const managementDatabase=new MemoryManagementTestDatabase();let dispatched=null,sends=0;
+  const managementOperations=createOperationsControl({database:managementDatabase,config:()=>({githubToken:'synthetic-token',githubRepo:repo,githubBranch:'work'}),fetcher:async(_url,opt)=>{
+    if(opt.method==='POST'){sends++;dispatched=JSON.parse(opt.body).inputs.management_operation_id;return new Response(null,{status:204});}
+    return Response.json({workflow_runs:dispatched?[{id:42,path:'.github/workflows/nightly-child-bots.yml',display_title:'Child bots management:'+dispatched,status:'completed',conclusion:'failure',head_sha:'a'.repeat(40),run_attempt:1,created_at:new Date().toISOString(),updated_at:new Date().toISOString()}]:[]},{headers:{'x-ratelimit-limit':'5000','x-ratelimit-remaining':'4990'}});
+  }});
+  const server=await fakeNetlify({port:8796,players,liveStore,testerStore,managementDatabase,managementOperations,env:{STUDIO_PASSWORD:password,GITHUB_TOKEN:'fixture-token',GITHUB_REPO:repo,URL:site}});
   const output=path.resolve('../docs/studio-management-foundation/screenshots/implementation');fs.mkdirSync(output,{recursive:true});
   const captures=[];
   try {
@@ -61,6 +68,23 @@ export async function managementBrowserCheck(browser) {
           const publicLive=await (await context.request.get(site+'/api/live')).json();
           assert.ok(publicLive.management.revision>0);assert.equal(publicLive.releases.managementTelemetry.on,true);
           const blocked=await context.request.post(site+'/studio/api/live',{headers:{'X-Studio':'1'},data:{releases:{}}});assert.equal(blocked.status(),409);
+          await page.click('[data-mg-nav=operations]');await page.waitForSelector('[name=operationKind]');
+          assert.match(await page.locator('.mg-content').innerText(),/4[,.]990/);
+          if(width===390&&lang==='en'){
+            await page.locator('[name=operationReason]').fill('Synthetic browser operation');await page.locator('.mg-editor button[type=submit]').click();
+            await page.waitForFunction(()=>/Recorded operation/.test(document.querySelector('[data-operation-result]')?.textContent||''));
+            assert.match(await page.locator('[data-operation-result]').innerText(),/Succeeded/);
+            await page.click('[data-mg-nav=overview]');await page.waitForSelector('.mg-content .mg-grid');
+            await page.click('[data-mg-nav=operations]');await page.waitForSelector('[name=operationKind]');
+            await page.selectOption('[name=operationKind]','bot');await page.locator('[name=operationReason]').fill('Synthetic bounded bot request');
+            await page.locator('.mg-editor button[type=submit]').click();await page.waitForFunction(()=>/Recorded operation/.test(document.querySelector('[data-operation-result]')?.textContent||''));
+            assert.match(await page.locator('[data-operation-result]').innerText(),/Queued/);assert.equal(sends,1);
+            await page.click('[data-mg-nav=overview]');await page.waitForSelector('.mg-content .mg-grid');
+            await page.click('[data-mg-nav=operations]');await page.waitForSelector('[name=operationKind]');
+            assert.match(await page.locator('.mg-content').innerText(),/42/);assert.match(await page.locator('.mg-content').innerText(),/Failed/);
+          }
+          assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'operations overflow');
+          const opsFilename=`${lang}-${width}-operations.png`;await page.screenshot({path:path.join(output,opsFilename),fullPage:true});captures.push(opsFilename);
           assert.deepEqual(errors,[]);
         } finally {await context.close();}
       }
@@ -73,7 +97,8 @@ export async function managementBrowserCheck(browser) {
       await page.fill('#pw',password);await page.click('#si button');
       await page.waitForSelector('.mg-content .mg-grid');assert.equal(await page.locator('.mg-error').count(),0);
     } finally {await isolated.close();}
+    await managementRuntimeBrowserCheck(browser);
     fs.writeFileSync(path.join(output,'capture-source.json'),JSON.stringify({capturedAt:new Date().toISOString(),fixture:'Synthetic records; real owner sign-in, Studio routes and UI; no production data',captures},null,2)+'\n');
-    return 'EN/VI: authenticated summary, child/device linkage, activity lookup and same-page filters at phone/tablet/desktop sizes; six captures';
+    return 'EN/VI: authenticated summary, child/device linkage, activity lookup and same-page filters at phone/tablet/desktop sizes; twelve captures; bounded operation submission, durable results and provider-run reconciliation';
   } finally {server.close();unroute();}
 }

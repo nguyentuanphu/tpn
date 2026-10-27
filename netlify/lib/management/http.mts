@@ -19,7 +19,7 @@ export const managementFailure = (error) => error instanceof ManagementError || 
   : managementJson({ error: 'Management source unavailable. No change has been confirmed.', code: 'management_source_unavailable' }, 503);
 
 /** Called only after Studio authentication. Permissions are also checked here for direct callers. */
-export async function managementHttp(req: Request, me, { reads, service, catalogue = () => [], log = async (..._args) => {} }) {
+export async function managementHttp(req: Request, me, { reads, service, operations = undefined, catalogue = () => [], log = async (..._args) => {} }) {
   try {
     const url = new URL(req.url), route = decodeURIComponent(url.pathname.split('/studio/api/')[1] || '');
     const post = req.method === 'POST';
@@ -40,6 +40,17 @@ export async function managementHttp(req: Request, me, { reads, service, catalog
             result.metrics.push(metric('M19', 'Reported attempt completion', attempts.completionRate, 'ratio', attempts.eligible,
               'Production UTC event window. Reporting attempts only; pending and unknown outcomes remain in the denominator. Not legacy profile participations.'));
             result['attempts'] = attempts; result.capabilities.exactAttempts = true;
+            const telemetry = await service.eventSummary({from:attempts.from,to:attempts.to,environment:'production',traffic:result.scope.traffic,...(result.scope.build==='all'?{}:{build:result.scope.build})});
+            result['telemetry'] = telemetry;
+            const replacements = [metric('M20','Reportable boot-phase readiness',telemetry.boot.successRate,'ratio',telemetry.boot.eligible,'Reporting phase starts at players-module evaluation; earlier import/crash failures are invisible. Pending and unknown outcomes remain in the denominator.'),
+              metric('M22','Reported connection-attempt success',telemetry.connections.successRate,'ratio',telemetry.connections.eligible,'Matched attempts/results only; pending and unknown outcomes remain in the denominator.'),
+              metric('M23','Confirmed recorded-voice playback success',telemetry.voice.recorded.confirmedSuccessRate,'ratio',telemetry.voice.recorded.confirmed,'Browser completion/error observations only. Cancelled and watchdog/unknown results are excluded and shown separately.')];
+            result.metrics = result.metrics.filter(m=>!replacements.some(r=>r.id===m.id)); result.metrics.push(...replacements);
+            if(result.scope.build==='all'&&result.scope.traffic==='ordinary') {
+              const latest=(await service.listChanges()).find(c=>String(c.createdAt)>=attempts.from&&String(c.createdAt)<attempts.to);
+              if(latest){result.metrics=result.metrics.filter(m=>m.id!=='M24');result.metrics.push(metric('M24','Latest selected configuration receipt coverage',latest.eligibleCount?latest.applied/latest.eligibleCount:null,'ratio',latest.eligibleCount,'Current self-reported receipts for the latest revision saved within this period. The denominator is its fixed reporting-installation cohort.'));}
+            }
+
           } catch { result.quality.push('event-attempt-summary-unavailable'); }
         }
         return managementJson(result);
@@ -48,7 +59,15 @@ export async function managementHttp(req: Request, me, { reads, service, catalog
       if (path === 'children') return managementJson(await reads.children(q, context));
       if (path.startsWith('devices/')) return managementJson(await reads.device(path.slice(8), q, context));
       if (path === 'activities') return managementJson({ schemaVersion: 1, generatedAt: new Date().toISOString(), activities: catalogue(), quality: ['static-source-catalogue'] });
-      if (path.startsWith('activities/')) return managementJson(await reads.activity(path.slice(11), q, context));
+      if (path.startsWith('activities/')) {
+        const result = await reads.activity(path.slice(11), q, context);
+        if(service.configured()&&!q.get('child')&&!q.get('search')&&(!q.get('deviceClass')||q.get('deviceClass')==='all')) {
+          const query={from:result.period.from+'T00:00:00Z',to:new Date(Date.parse(result.period.to+'T00:00:00Z')+86400000).toISOString(),environment:'production',traffic:result.scope.traffic,...(result.scope.build==='all'?{}:{build:result.scope.build})};
+          try {result['detailedOutcomes']=result.activity.kind==='story'?(await service.eventSummary(query,result.activity.id)).stories:await service.attemptSummary(query,result.activity.id);}
+          catch{result.quality.push('detailed-outcomes-unavailable');}
+        }
+        return managementJson(result);
+      }
       if (path === 'attention') return managementJson({ ...await reads.attention(q), assignments: service.configured() ? await service.listAttention() : [], transactional: service.configured() });
       if (path.startsWith('releases/')) return managementJson(await reads.release(path.slice(9), q));
       if (path === 'config') return managementJson({ configured: service.configured(), config: service.configured() ? await service.getConfig('global') : null, changes: service.configured() ? await service.listChanges() : [] });
@@ -56,12 +75,23 @@ export async function managementHttp(req: Request, me, { reads, service, catalog
         if (!context.includeProfileContext) return managementJson({ error: 'device_context_permission_required' }, 403);
         return managementJson(await service.changeCoverage(path.slice(8)));
       }
+      if (path === 'operations' && operations) return managementJson(await operations.snapshot());
       if (path === 'operations') return managementJson(managementOperations({ configured: {
         database: service.configured(), githubRead: !!managementEnv('GITHUB_TOKEN'), githubDispatch: !!managementEnv('GITHUB_TOKEN'),
         netlifyRead: !!managementEnv('NETLIFY_TOKEN'), voiceGeneration: !!managementEnv('AZURE_KEY'),
         managementEvents: service.configured(), configurationReceipts: service.configured() } }));
     } else {
       const body = await managementBody(req);
+      if (path === 'operations/run') {
+        if (!operations) throw new ManagementError(503, 'operations_not_connected');
+        if (body.kind === 'bot' && !admins.allowed(me, 'bot/run', true)) return managementJson({ error: 'website_permission_required' }, 403);
+        if (body.kind === 'retry_configuration' && !admins.allowed(me, 'management/config', true)) return managementJson({ error: 'configuration_permission_required' }, 403);
+        return managementJson(await operations.run(body, me.name));
+      }
+      if (path === 'operations/refresh') {
+        if (!operations) throw new ManagementError(503, 'operations_not_connected');
+        return managementJson(await operations.snapshot(true));
+      }
       if (path === 'config/project') return managementJson(await service.projectLatest('global'));
       if (path === 'config') {
         if (body.scopeKey !== 'global') throw new ManagementError(400, 'only_global_scope_supported');

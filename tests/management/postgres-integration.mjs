@@ -1,12 +1,14 @@
 // Real SQL integration checks. Run only against the isolated loopback *_test database.
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { PostgresManagementDatabase, migrateManagement } from '../../netlify/lib/management/storage/postgres.mts';
 import { createManagementService } from '../../netlify/lib/management/transactional/service.mts';
+import { managementPreflight } from '../../netlify/lib/management/preflight.mts';
+import { createOperationsControl } from '../../netlify/lib/management/operations-control.mts';
 import { makeManagement } from '../../netlify/functions/management.mts';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
@@ -31,13 +33,24 @@ let version='';
 try{
   version=(await admin.query('SELECT version() AS version')).rows[0].version;
   await admin.query(`CREATE SCHEMA ${schema}`);
-  pool=new Pool({connectionString,max:12,connectionTimeoutMillis:5000,options:`-c search_path=${schema},public`});
+  pool=new Pool({connectionString,max:12,connectionTimeoutMillis:5000,options:`-c search_path=${schema}`});
   const database=new PostgresManagementDatabase(pool);
+  await check('read-only preflight detects a missing schema without creating tables',async()=>{
+    const result=await managementPreflight(pool,{local:true});assert.equal(result.ready,false);assert.equal(result.migration,'not_applied');
+    assert.equal((await pool.query("SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema=$1",[schema])).rows[0].n,0);
+  });
   await check('real PostgreSQL migration applies once and repeats safely',async()=>{
     assert.deepEqual(await migrateManagement(pool),{version:1,applied:true});
     assert.deepEqual(await migrateManagement(pool),{version:1,applied:false});
     const repeated=await Promise.all([migrateManagement(pool),migrateManagement(pool)]);
     assert.ok(repeated.every(r=>r.applied===false));
+  });
+  await check('read-only preflight confirms migration and detects checksum drift',async()=>{
+    const result=await managementPreflight(pool,{local:true});assert.equal(result.ready,true);assert.equal(result.writeAccess,'not_tested_read_only_preflight');
+    await pool.query("UPDATE management_schema_migrations SET sha256=$1 WHERE version=1",['0'.repeat(64)]);
+    assert.equal((await managementPreflight(pool,{local:true})).migration,'mismatch');
+    await pool.query('UPDATE management_schema_migrations SET sha256=$1 WHERE version=1',[createHash('sha256').update(fs.readFileSync(path.join(root,'netlify/lib/management/storage/001-management.sql'))).digest('hex')]);
+    assert.equal((await managementPreflight(pool,{local:true})).ready,true);
   });
   await check('SQL transaction rolls back all writes after failure',async()=>{
     await assert.rejects(database.transaction(['rollback-fixture'],async tx=>{
@@ -128,6 +141,13 @@ try{
     const again=await send();assert.equal(again.status,200);assert.deepEqual((await again.json()).duplicates,[event.eventId]);
     const stored=(await pool.query('SELECT payload FROM management_events WHERE event_id=$1',[event.eventId])).rows[0].payload;
     assert.equal(stored.deviceId,event.deviceId);assert.equal(stored.profiles[0].name,'Demo');
+  });
+  await check('SQL operation locks persist one dispatch and immutable audit across concurrent requests',async()=>{
+    let sends=0;const control=createOperationsControl({database,config:()=>({githubToken:'synthetic',githubRepo:'family/test',githubBranch:'work'}),now:()=>now,fetcher:async()=>{sends++;return new Response(null,{status:204});}});
+    const input={operationId:randomUUID(),kind:'bot',count:1,duration:1,profile:'gentle-explorer',reason:'Synthetic SQL dispatch'};
+    await Promise.all([control.run(input,'test-owner'),control.run(input,'test-owner')]);assert.equal(sends,1);
+    const rows=await database.transaction([],tx=>tx.list('audit','operation|'+input.operationId+'|'));assert.equal(rows.length,2);
+    const reloaded=createOperationsControl({database,config:()=>({}),now:()=>now});assert.equal((await reloaded.run(input,'test-owner')).duplicate,true);assert.equal(sends,1);
   });
   const record={scope:'Real local PostgreSQL transaction and management service integration with synthetic records only',
     date:new Date().toLocaleDateString('en-CA',{timeZone:'Australia/Sydney'})+' Australia/Sydney',server:version,passed:true,cases:passed};

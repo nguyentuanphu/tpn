@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:sparkle-valley:management:event:v1",
-  "title": "Management event v1: activity hooks implemented; other event kinds reserved until instrumented",
+  "title": "Management event v1: reportable game phases and observed outcomes",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -459,7 +459,8 @@
                 "enum": [
                   "success",
                   "failed",
-                  "cancelled"
+                  "cancelled",
+                  "unknown"
                 ]
               },
               "language": {
@@ -479,10 +480,7 @@
       "if": {
         "properties": {
           "eventName": {
-            "enum": [
-              "update.result",
-              "backup.result"
-            ]
+            "const": "update.result"
           }
         }
       },
@@ -512,6 +510,54 @@
                   "invalid",
                   "unsupported",
                   "user_cancelled"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "backup.result"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "outcome",
+              "reasonCode"
+            ],
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "success",
+                  "failed",
+                  "cancelled",
+                  "initiated"
+                ]
+              },
+              "reasonCode": {
+                "enum": [
+                  "none",
+                  "timeout",
+                  "storage",
+                  "network",
+                  "invalid",
+                  "unsupported",
+                  "user_cancelled"
+                ]
+              },
+              "operation": {
+                "enum": [
+                  "export",
+                  "restore"
                 ]
               }
             }

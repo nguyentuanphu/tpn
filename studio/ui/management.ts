@@ -9,6 +9,7 @@ export type ManagementOptions = {
   id?: string;
   query?: ManagementQuery;
   build?: string;
+  online?: boolean;
   can?(permission: string): boolean;
   go?(kind: ManagementKind, id?: string, query?: ManagementQuery): void;
   navigate?(kind: ManagementKind, id?: string, query?: ManagementQuery): void;
@@ -62,6 +63,7 @@ function statusLabel(status: unknown, T: ManagementOptions['T']): string {
     insufficient: ['Not enough samples', 'Chưa đủ mẫu'], stale: ['Reporting is stale', 'Báo cáo đã cũ'], unknown: ['Unconfirmed', 'Chưa xác nhận'],
     investigating: ['Investigating', 'Đang điều tra'], reproduced: ['Reproduced', 'Đã tái hiện'], fixed_in_code: ['Fixed in code', 'Đã sửa trong mã'], deployed: ['Deployed', 'Đã triển khai'], verified: ['Verified', 'Đã xác minh'], reopened: ['Reopened', 'Mở lại'], dismissed: ['Dismissed', 'Đã bỏ qua'], duplicate: ['Duplicate', 'Trùng lặp'], new: ['New report', 'Báo cáo mới'], fixing: ['Being fixed', 'Đang sửa'], fixed: ['Fixed in code', 'Đã sửa trong mã'], confirmed: ['Verified', 'Đã xác minh'],
     back: ['Reopened', 'Lỗi xuất hiện lại'], notbug: ['Not a bug', 'Không phải lỗi'], dup: ['Duplicate', 'Trùng lặp'],
+    queued: ['Queued', 'Đang chờ'], running: ['Running', 'Đang chạy'], succeeded: ['Succeeded', 'Thành công'], cancelled: ['Cancelled', 'Đã hủy'], partial: ['Partial evidence', 'Bằng chứng một phần'],
     pending: ['Pending', 'Đang chờ'], passed: ['Passed', 'Đạt'], failed: ['Failed', 'Không đạt'], skipped: ['Skipped', 'Bỏ qua'],
     available: ['Available online', 'Đã có trên mạng'], applied: ['Applied by device', 'Máy đã áp dụng'], rejected: ['Rejected', 'Bị từ chối'],
     unsupported: ['Unsupported', 'Chưa hỗ trợ'], configured: ['Configured', 'Đã cấu hình']
@@ -69,7 +71,7 @@ function statusLabel(status: unknown, T: ManagementOptions['T']): string {
   const label = labels[key]; return label ? T(...label) : key || T('Unconfirmed', 'Chưa xác nhận');
 }
 function badge(value: unknown, T: ManagementOptions['T']): string {
-  const s = text(value, 'unknown'); return `<span class="mg-badge ${['failed','rejected','back'].includes(s) ? 'mg-bad' : ['unavailable','insufficient','unknown','stale','pending','unsupported','not_configured'].includes(s) ? 'mg-watch' : ''}">${esc(statusLabel(s, T))}</span>`;
+  const s = text(value, 'unknown'); return `<span class="mg-badge ${['failed','rejected','back'].includes(s) ? 'mg-bad' : ['unavailable','insufficient','unknown','stale','pending','unsupported','not_configured','configured_unverified'].includes(s) ? 'mg-watch' : ''}">${esc(statusLabel(s, T))}</span>`;
 }
 function metric(row: Row, T: ManagementOptions['T']): string {
   const unavailable = row.status === 'unavailable' || row.status === 'insufficient';
@@ -78,8 +80,8 @@ function metric(row: Row, T: ManagementOptions['T']): string {
     M04:['Reported play time','Thời gian chơi báo cáo'],M05:['Completion participation ratio','Tỷ lệ hoàn thành theo lượt tham gia'],M06:['Early-exit participation ratio','Tỷ lệ rời sớm theo lượt tham gia'],M07:['Stories opened','Truyện đã mở'],
     M08:['Sampled frame rate','Tốc độ khung hình lấy mẫu'],M09:['Low frame-rate samples','Mẫu tốc độ khung hình thấp'],M10:['Startup median','Trung vị thời gian khởi động'],M11:['Active drawing frame rate','Khung hình lúc hoạt động'],M12:['Battery loss per measured hour','Pin tiêu hao mỗi giờ được đo'],
     M13:['Website page views','Lượt xem trang web'],M14:['Website Play clicks','Lượt bấm Chơi trên trang web'],M15:['Website reading time','Thời gian đọc trang web'],M16:['Affected reporting devices','Máy có báo cáo bị ảnh hưởng'],
-    M17:['Confirmed open regressions','Lỗi tái phát đã xác nhận còn mở'],M18:['Observed day-7 return','Máy quay lại ngày thứ 7'],M19:['Attempt completion','Hoàn thành từng lượt'],M20:['Reported boot readiness','Khởi động sẵn sàng có báo cáo'],
-    M21:['First playable time p95','Thời gian sẵn sàng chơi p95'],M22:['Connection success','Kết nối thành công'],M23:['Recorded voice success','Phát giọng thu thành công'],M24:['Applied configuration coverage','Tỷ lệ máy đã áp dụng cấu hình'],
+    M17:['Confirmed open regressions','Lỗi tái phát đã xác nhận còn mở'],M18:['Observed day-7 return','Máy quay lại ngày thứ 7'],M19:['Attempt completion','Hoàn thành từng lượt'],M20:['Reportable boot-phase readiness','Sẵn sàng trong giai đoạn khởi động có báo cáo'],
+    M21:['First playable time p95','Thời gian sẵn sàng chơi p95'],M22:['Reported guest-join success','Tham gia phòng thành công có báo cáo'],M23:['Recorded voice success','Phát giọng thu thành công'],M24:['Applied configuration coverage','Tỷ lệ máy đã áp dụng cấu hình'],
     M25:['Verified recovery time','Thời gian khắc phục đã xác minh'],M26:['Recording coverage','Độ đầy đủ bản thu'],M27:['Website review coverage','Độ bao phủ duyệt trang web'],M34:['Quota headroom','Hạn mức còn lại'],M35:['Job success','Tác vụ thành công'],M36:['Delivery delay','Độ trễ nhận cấu hình'],M37:['Estimated days to quota','Số ngày ước tính tới hạn mức'],M38:['Reporting devices with errors','Máy có báo cáo lỗi']
   };
   const id=text(row.id), title=labels[id]?T(...labels[id]):pair(row.label??row.name,T)||id;
@@ -194,12 +196,78 @@ export async function renderManagement(P: HTMLElement, options: ManagementOption
     if (kind === 'changes' && !id && data.configured === true && options.can?.('management.configure')) {
       await mountConfigEditor(body, data, options, () => navigate('changes', '', q));
     }
+    if (kind === 'operations') mountOperationsControls(body, data, options, () => navigate('operations', '', q));
+    if (kind === 'overview' && data.telemetry) body.insertAdjacentHTML('beforeend', renderTelemetry(object(data.telemetry), T));
+    if (kind === 'activity' && data.detailedOutcomes) {
+      const d=object(data.detailedOutcomes),c=Object.keys(object(d.counts)).length?object(d.counts):d;
+      body.insertAdjacentHTML('beforeend',`<article class="card"><h3>${esc(T('Detailed reported attempts','Lượt được báo cáo chi tiết'))}</h3>${outcomeFacts(c,T)}<p class="note">${esc(T('Matched event attempts are separate from legacy profile participations. Missing outcomes remain pending or unknown.','Lượt sự kiện khớp mã được tách khỏi lượt tham gia hồ sơ cũ. Kết quả còn thiếu vẫn đang chờ hoặc chưa rõ.'))}</p></article>`);
+    }
   } catch (error) {
     if (!current()) return;
     const message = error instanceof Error ? error.message : '';
     body.innerHTML = `<div class="card mg-error" role="alert"><h3>${esc(T('This view could not be loaded','Chưa tải được trang này'))}</h3><p>${esc(T('Check your account permission, connection and configured management service. No missing measurement is treated as zero.','Kiểm tra quyền tài khoản, kết nối và dịch vụ quản lý đã cấu hình. Số đo còn thiếu không được coi là bằng không.'))}</p>${message ? `<details><summary>${esc(T('Service response','Phản hồi dịch vụ'))}</summary><p>${esc(message)}</p></details>` : ''}<button class="btn small" type="button" data-mg-retry>${esc(T('Try again','Thử lại'))}</button></div>`;
     const retry = body.querySelector<HTMLButtonElement>('[data-mg-retry]'); if (retry) retry.onclick = () => navigate(kind,id,q);
   }
+}
+
+function operationMessage(error:unknown,T:ManagementOptions['T']):string {
+  const code=text(object(error).raw,error instanceof Error?error.message:'');
+  const messages:Record<string,[string,string]>={
+    operation_cooldown:['Another request was recently recorded. Wait one minute and refresh its status.','Vừa ghi một yêu cầu khác. Chờ một phút và làm mới trạng thái.'],
+    operation_payload_conflict:['This operation ID already has different inputs. Refresh and review its recorded request.','Mã tác vụ này đã có tham số khác. Làm mới và xem lại yêu cầu đã ghi.'],
+    operation_reason_required:['Enter a reason of 3–600 characters.','Nhập lý do dài 3–600 ký tự.'],
+    invalid_bot_inputs:['Use 1–10 sessions, 1–30 minutes and one of the listed behaviours.','Chọn 1–10 phiên, 1–30 phút và một cách chơi trong danh sách.'],
+    management_database_not_configured:['Connect Netlify Database before running an operation.','Kết nối Netlify Database trước khi chạy tác vụ.'],
+    website_permission_required:['This action requires website permission.','Thao tác này cần quyền quản lý trang web.'],
+    configuration_permission_required:['This action requires configuration permission.','Thao tác này cần quyền cấu hình.']
+  };
+  return messages[code]?T(...messages[code]):T('The operation could not be confirmed. Refresh the recorded status before starting another request.','Chưa xác nhận được tác vụ. Làm mới trạng thái đã ghi trước khi tạo yêu cầu khác.');
+}
+
+function mountOperationsControls(body:HTMLElement,data:Row,options:ManagementOptions,reload:()=>void) {
+  const {T,api}=options,bar=document.createElement('div');bar.className='card';
+  const refresh=document.createElement('button');refresh.type='button';refresh.className='btn small';refresh.textContent=T('Refresh provider evidence','Làm mới bằng chứng nhà cung cấp');
+  const message=document.createElement('p');message.setAttribute('role','status');
+  refresh.onclick=async()=>{refresh.disabled=true;try{if(options.online!==false)await api('management/operations/refresh',{});reload();}catch(error){message.textContent=operationMessage(error,T);refresh.disabled=false;}};
+  bar.append(refresh,message);body.prepend(bar);
+  if(!options.can?.('operations.run'))return;
+  if(data.databaseConfigured!==true){message.textContent=T('Connect the management database before running jobs; every request needs a durable operation record.','Kết nối cơ sở dữ liệu quản lý trước khi chạy tác vụ; mỗi yêu cầu cần bản ghi bền vững.');return;}
+  const form=document.createElement('form');form.className='mg-editor';
+  form.innerHTML=`<h3>${esc(T('Run a bounded operation','Chạy tác vụ có giới hạn'))}</h3><label>${esc(T('Operation','Tác vụ'))}<select name="operationKind"><option value="database_check">${esc(T('Check database access','Kiểm tra truy cập cơ sở dữ liệu'))}</option>${options.can?.('management.configure')?`<option value="retry_configuration">${esc(T('Retry pending configuration publication','Thử cung cấp lại cấu hình đang chờ'))}</option>`:''}${options.can?.('site')?`<option value="bot">${esc(T('Run child-bot test','Chạy thử nghiệm bot'))}</option>`:''}</select></label><div data-bot-inputs hidden><label>${esc(T('Independent sessions (1–10)','Phiên độc lập (1–10)'))}<input name="count" type="number" min="1" max="10" value="1"></label><label>${esc(T('Minutes per session (1–30)','Phút mỗi phiên (1–30)'))}<input name="duration" type="number" min="1" max="30" value="1"></label><label>${esc(T('Behaviour','Cách chơi'))}<select name="profile"><option value="gentle-explorer">${esc(T('Gentle explorer','Khám phá nhẹ nhàng'))}</option><option value="chaos-toddler">${esc(T('Chaotic toddler','Bé nghịch ngợm'))}</option><option value="max-competence">${esc(T('Experienced player','Người chơi thành thạo'))}</option></select></label></div><label>${esc(T('Reason','Lý do'))}<input type="text" name="operationReason" required minlength="3" maxlength="600"></label><p class="note">${esc(T('A bot request can start a GitHub workflow using the configured branch. Accepted means queued, not completed. Bot requests have a shared 60-second cooldown. An uncertain request must be checked against the run feed before starting another.','Yêu cầu bot có thể chạy tác vụ GitHub trên nhánh đã cấu hình. Được nhận nghĩa là đang chờ, chưa phải hoàn tất. Yêu cầu bot dùng thời gian chờ chung 60 giây. Cần kiểm tra nguồn tác vụ khi yêu cầu chưa rõ kết quả trước khi tạo yêu cầu khác.'))}</p><button class="btn" type="submit">${esc(T('Run selected operation','Chạy tác vụ đã chọn'))}</button><p role="status" data-operation-result></p>`;
+  const kind=form.querySelector<HTMLSelectElement>('[name=operationKind]')!,bot=form.querySelector<HTMLElement>('[data-bot-inputs]')!,button=form.querySelector<HTMLButtonElement>('button')!,result=form.querySelector<HTMLElement>('[data-operation-result]')!;
+  let pending:Row|null=null;
+  kind.onchange=()=>{bot.hidden=kind.value!=='bot';};
+  form.onsubmit=async event=>{
+    event.preventDefault();button.disabled=true;
+    if(!pending){pending={operationId:crypto.randomUUID(),kind:kind.value,reason:form.querySelector<HTMLInputElement>('[name=operationReason]')!.value,
+      ...(kind.value==='bot'?{count:Number(form.querySelector<HTMLInputElement>('[name=count]')!.value),duration:Number(form.querySelector<HTMLInputElement>('[name=duration]')!.value),profile:form.querySelector<HTMLSelectElement>('[name=profile]')!.value}:{})};}
+    try {
+      const response=object(await api('management/operations/run',pending)),op=object(response.operation);
+      result.textContent=T('Recorded operation','Đã ghi tác vụ')+': '+text(op.operationId)+' · '+statusLabel(op.status,T);
+      if(op.status==='unknown')result.textContent+=' '+T('Delivery is uncertain. Refresh provider evidence before requesting another run.','Chưa rõ yêu cầu đã được nhận hay chưa. Làm mới bằng chứng nhà cung cấp trước khi yêu cầu chạy lại.');
+      const show=document.createElement('button');show.type='button';show.className='btn small';show.textContent=T('Show recorded status','Xem trạng thái đã ghi');show.onclick=reload;form.append(show);
+    }catch(error){result.textContent=operationMessage(error,T)+' '+T('Retry keeps the same operation ID and inputs.','Thử lại sẽ giữ nguyên mã tác vụ và tham số.');button.textContent=T('Retry same request','Thử lại cùng yêu cầu');button.disabled=false;}
+  };
+  bar.append(form);
+}
+
+function outcomeFacts(c:Row,T:ManagementOptions['T']):string {
+  const fields:[string,string,unknown][]=[['Started','Bắt đầu',c.started],['Confirmed success','Thành công xác nhận',c.succeeded??c.completed??c.success],['Confirmed failure','Thất bại xác nhận',c.failed],['Pending','Đang chờ',c.pending],['Unknown outcome','Kết quả chưa rõ',c.outcomeUnknown??c.unknown],['Cancelled','Đã hủy',c.cancelled],['Initiated only','Chỉ mới bắt đầu',c.initiated]];
+  return `<dl class="mg-facts">${fields.filter(([, ,value])=>value!==undefined).map(([en,vi,value])=>`<div><dt>${esc(T(en,vi))}</dt><dd>${esc(numberLabel(value,T))}</dd></div>`).join('')}</dl>`;
+}
+function renderTelemetry(data:Row,T:ManagementOptions['T']):string {
+  const voice=object(data.voice),backup=object(data.backups),boot=object(data.boot);
+  return `<section class="card"><h3>${esc(T('Observed game outcomes','Kết quả game được quan sát'))}</h3><p>${esc(T('Production UTC event evidence from consenting reporting devices. No result means unknown, not success.','Bằng chứng sự kiện theo UTC từ máy đồng ý gửi báo cáo. Chưa có kết quả là chưa rõ, không phải thành công.'))}</p><div class="mg-grid">${[
+    [T('Reportable boot phase','Giai đoạn khởi động có báo cáo'),boot],
+    [T('Individual story attempts','Lượt đọc truyện riêng'),object(data.stories)],
+    [T('Connection attempts','Lượt kết nối'),object(data.connections)],
+    [T('Recorded voice playback','Phát giọng bản ghi'),object(voice.recorded)],
+    [T('Family voice playback','Phát giọng gia đình'),object(voice.family)],
+    [T('Device voice playback','Phát giọng thiết bị'),object(voice.device)],
+    [T('Observed updates','Cập nhật được quan sát'),object(data.updates)],
+    [T('Backup exports','Xuất bản sao lưu'),object(backup.export)],
+    [T('Backup restoration','Khôi phục bản sao lưu'),object(backup.restore)]
+  ].map(([title,c])=>`<article class="card"><h4>${esc(title)}</h4>${outcomeFacts(c as Row,T)}</article>`).join('')}</div><p class="note">${esc(T('Boot timing starts when the players module can report and ends at first playable. Earlier import/crash failures are invisible. Voice watchdog completion remains unknown. A download click confirms initiation only. Share success confirms handoff to another app. Neither confirms a durable off-device copy.','Đo khởi động bắt đầu khi mô-đun người chơi có thể báo cáo và kết thúc khi bắt đầu chơi được. Không quan sát được lỗi nhập mã hoặc sập trước đó. Kết thúc do bộ canh giọng vẫn là chưa rõ. Bấm tải chỉ xác nhận bắt đầu. Chia sẻ thành công xác nhận chuyển cho ứng dụng khác. Cả hai không xác nhận bản sao bền vững ngoài thiết bị.'))}</p><p>${esc(T('Reported boot-phase p95','P95 giai đoạn khởi động có báo cáo'))}: ${esc(numberLabel(boot.phaseP95Ms,T))} ${esc(T('ms','mili giây'))} · ${esc(T('Samples','Số mẫu'))}: ${esc(numberLabel(boot.durationSamples,T))}</p></section>`;
 }
 
 function mountAttentionEditor(body: HTMLElement, data: Row, options: ManagementOptions, reload: () => void) {
@@ -308,8 +376,9 @@ function renderRelease(data:Row,T:ManagementOptions['T']):string {
   return `<div class="card"><h3>${esc(text(r.build??object(data.scope).build,T('Selected release','Phiên bản đã chọn')))}</h3><dl class="mg-facts"><div><dt>${esc(T('Source commit','Mã nguồn'))}</dt><dd>${esc(text(r.sourceCommit,T('Not recorded','Chưa ghi nhận')))}</dd></div><div><dt>${esc(T('Deployment evidence','Bằng chứng triển khai'))}</dt><dd>${esc(text(r.deployId??r.deploymentId,T('Not recorded','Chưa ghi nhận')))}</dd></div></dl><p>${esc(T('This view assembles evidence. It does not deploy, change the version or replace the owner’s approval.','Trang này tập hợp bằng chứng. Không triển khai, đổi phiên bản hay thay thế phê duyệt của chủ sở hữu.'))}</p></div>${checks.length?`<div class="card"><h3>${esc(T('Checks','Kiểm tra'))}</h3>${checks.map(c=>`<p>${badge(c.status,T)} ${esc(text(c.name??c.id))}${c.note?` — ${esc(pair(c.note,T))}`:''}</p>`).join('')}</div>`:empty(T,'No CI or deployment evidence has been attached to this build. Missing evidence is not a pass.','Chưa gắn bằng chứng CI hay triển khai cho phiên bản này. Thiếu bằng chứng không phải là đạt.')} ${metrics.length?`<div class="mg-grid">${metrics.map(m=>metric(m,T)).join('')}</div>`:''}${renderRelated(data,T)}`;
 }
 function renderOperations(data:Row,T:ManagementOptions['T']):string {
-  const services=rows(data.services??data.items),jobs=rows(data.jobs);
-  return `<div class="card"><p>${esc(T('Operational status is based on the last successful observation. Accepted job dispatch is not a completed run. Provider access must be configured separately.','Trạng thái vận hành dựa trên lần quan sát thành công gần nhất. Nhận lệnh chạy không có nghĩa tác vụ đã xong. Quyền nhà cung cấp phải cấu hình riêng.'))}</p></div>${services.length?`<div class="mg-grid">${services.map(s=>`<article class="card"><h3>${esc(pair(s.name??s.id,T))}</h3>${badge(s.status??'unknown',T)}<p>${esc(pair(s.description??s.note,T))}</p><p class="note">${esc(T('Last successful observation','Lần quan sát thành công gần nhất'))}: ${esc(dateLabel(s.lastSuccessAt??s.observedAt,T))}</p></article>`).join('')}</div>`:empty(T,'No provider observations are configured. Existing game services are not assumed down.','Chưa cấu hình quan sát nhà cung cấp. Không mặc định dịch vụ game đang hỏng.')}${jobs.length?`<div class="card"><h3>${esc(T('Recent jobs','Tác vụ gần đây'))}</h3>${jobs.map(j=>`<p>${badge(j.status,T)} ${esc(text(j.name??j.id))} <code>${esc(text(j.runId))}</code></p>`).join('')}</div>`:''}`;
+  const services=rows(data.services??data.items),jobs=rows(data.jobs),operations=rows(data.operations),feeds=object(data.feeds);
+  const names:Record<string,[string,string]>={database:['Management database','Cơ sở dữ liệu quản lý'],githubRead:['GitHub workflow feed','Nguồn tác vụ GitHub'],githubDispatch:['GitHub dispatch access','Quyền yêu cầu chạy GitHub'],netlifyRead:['Netlify deployments','Triển khai Netlify'],voiceGeneration:['Azure voice catalogue','Danh mục giọng Azure'],managementEvents:['Game evidence ingestion','Tiếp nhận bằng chứng game'],configurationReceipts:['Configuration acknowledgements','Xác nhận cấu hình']};
+  return `<div class="card"><p>${esc(T('Provider checks are read-only. A successful voice-catalogue lookup does not prove paid generation access. Workflow acceptance and completed outcomes are recorded separately.','Kiểm tra nhà cung cấp chỉ đọc. Đọc được danh mục giọng không chứng minh quyền tạo giọng trả phí. Việc nhận yêu cầu chạy và kết quả hoàn tất được ghi riêng.'))}</p></div><div class="mg-grid">${services.map(s=>`<article class="card"><h3>${esc(names[text(s.id)]?T(...names[text(s.id)]):pair(s.id,T))}</h3>${badge(s.status,T)}<p class="note">${esc(T('Last checked','Kiểm tra gần nhất'))}: ${esc(dateLabel(s.observedAt,T))}</p>${s.errorCode?`<p>${esc(text(s.errorCode))}</p>`:''}</article>`).join('')}</div>${Object.keys(feeds).length?`<div class="card"><h3>${esc(T('Feed freshness and quotas','Độ mới và hạn mức nguồn'))}</h3>${Object.entries(feeds).map(([name,v])=>{const f=object(v),q=object(f.quota);return `<p><strong>${esc(name)}</strong>: ${badge(f.status,T)} · ${esc(dateLabel(f.sourceAsOf,T))} · ${esc(T('API quota remaining','Hạn mức API còn lại'))}: ${esc(q.status==='observed'?numberLabel(q.remaining,T)+' / '+numberLabel(q.limit,T):T('Unavailable','Chưa có số liệu'))}</p>`;}).join('')}</div>`:''}${jobs.length?`<div class="card"><h3>${esc(T('Recent provider runs','Tác vụ nhà cung cấp gần đây'))}</h3>${jobs.map(j=>`<p>${badge(j.state??j.status,T)} <strong>${esc(text(j.provider))}</strong> ${esc(text(j.kind))} · <code>${esc(text(j.id))}</code> · ${esc(T('Attempt','Lần chạy'))} ${esc(numberLabel(j.attempt,T))}<br><span class="note">${esc(dateLabel(j.startedAt,T))} · ${esc(text(j.sourceCommit))}</span></p>`).join('')}</div>`:empty(T,'No observed provider runs are available. This does not prove that no jobs ran.','Chưa có tác vụ nhà cung cấp được quan sát. Điều này không chứng minh không có tác vụ đã chạy.')}<div class="card"><h3>${esc(T('Recorded operator requests','Yêu cầu người vận hành đã ghi'))}</h3><p class="note">${esc(T('An uncertain dispatch is never automatically submitted again. A matching provider run ID is needed to confirm its progress.','Yêu cầu chưa rõ kết quả không bao giờ được gửi lại tự động. Cần mã tác vụ khớp từ nhà cung cấp để xác nhận tiến trình.'))}</p>${operations.length?operations.map(o=>`<p>${badge(o.status,T)} <code>${esc(text(o.operationId))}</code> · ${esc(text(o.kind))}<br>${esc(T('Provider run','Tác vụ nhà cung cấp'))}: <code>${esc(text(o.runId,T('Unconfirmed','Chưa xác nhận')))}</code> · ${esc(dateLabel(o.observedAt,T))}</p>`).join(''):`<p>${esc(T('No recorded requests in the connected history.','Chưa có yêu cầu được ghi trong lịch sử đã kết nối.'))}</p>`}</div>`;
 }
 
 function renderChildren(data:Row,T:ManagementOptions['T']):string {

@@ -15,7 +15,8 @@
 // signed with it. Family photos live in the private store (netlify/lib/family.mts), never in GitHub.
 import crypto from 'crypto';
 import studioVersion from '../../studio/version.json' with { type: 'json' };
-import { managementService } from '../lib/management/runtime.mts';
+import { createOperationsControl } from '../lib/management/operations-control.mts';
+import { managementService, managementDatabase } from '../lib/management/runtime.mts';
 import { managementHttp, managementFailure } from '../lib/management/http.mts';
 import { createManagementReadService } from '../lib/management/read.mts';
 import { loadManagementCatalogue } from '../lib/management/catalogue.mts';
@@ -79,7 +80,13 @@ export const heldOn = S => ({
 export const familyOn = F => ({ where: 'site', put: (n, b) => family.put(F, n, b), get: n => family.get(F, n), remove: n => family.remove(F, n), code: () => family.code(F), newCode: () => family.newCode(F) });
 const isJpeg = b => b && b.length > 3 && b[0] === 0xff && b[1] === 0xd8;
 
-export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, heldStore = heldBlobs, liveStore = liveBlobs, familyStore = familyBlobs, guardStore = guardBlobs, logStore = logBlobs, testerStore = testerBlobs, parentAnalyticsStore = parentAnalyticsBlobs, managementDatabase: managementDb = undefined, now = () => Date.now() } = {}) => { const handle = async (req, ctx, out) => {
+export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, heldStore = heldBlobs, liveStore = liveBlobs, familyStore = familyBlobs, guardStore = guardBlobs, logStore = logBlobs, testerStore = testerBlobs, parentAnalyticsStore = parentAnalyticsBlobs, managementDatabase: managementDb = undefined, managementOperations: injectedOperations = undefined, now = () => Date.now() } = {}) => {
+  let operationsControl;
+  const operations = () => injectedOperations || (operationsControl ||= createOperationsControl({ database: managementDb || managementDatabase(), now,
+    config: () => ({ githubToken: env('GITHUB_TOKEN'), githubRepo: env('GITHUB_REPO') || 'nguyentuanphu/tpn', githubBranch: env('GITHUB_BRANCH') || 'main',
+      netlifyToken: env('NETLIFY_TOKEN'), netlifySite: env('NETLIFY_SITE') || env('SITE_ID'), azureKey: env('AZURE_KEY'), azureRegion: env('AZURE_REGION') }),
+    retryConfiguration: () => managementService(liveStore, managementDb).projectLatest('global') }));
+  const handle = async (req, ctx, out) => {
   const url = new URL(req.url), p = url.pathname, pw = env('STUDIO_PASSWORD'), post = req.method === 'POST';
   if (!pw) return json({ error: 'The online Studio is not set up yet: add STUDIO_PASSWORD in Netlify (Site configuration → Environment variables), then deploy again.', setup: true }, 503);
   const A: Store & { set(key: string, value: string): Promise<unknown> } = await adminStore(), gen = +(await A.get('gen').catch(() => 0)) || 0, t = now();
@@ -172,7 +179,7 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
     studio: studioVersion.studio, version: studioVersion.studio, me, perms: admins.PERMS, conf: { github: false, players: true }, waiting: 0, unpublished: false });
   if (route.startsWith('management/')) {
     const canReadReports = admins.allowed(me, 'testers', false);
-    try { return await managementHttp(req, me, { log, catalogue: () => loadManagementCatalogue().entries,
+    try { return await managementHttp(req, me, { log, ...(route.startsWith('management/operations') ? { operations: operations() } : {}), catalogue: () => loadManagementCatalogue().entries,
       reads: createManagementReadService({ playersStore, parentAnalyticsStore,
         ...(canReadReports ? { testerStore } : {}),
         botStore: store('bot-players'), catalogue: () => loadManagementCatalogue().entries, now }),

@@ -100,7 +100,7 @@ export function memoryBlobs() {
 // (round R privacy) a clock the tests move on, so every sign-in has a fresh two-step code
 export const testClock = { t: Date.now() };
 const toURL = p => pathToFileURL(p).href;
-export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs(), heldStore = memoryBlobs(), liveStore = memoryBlobs(), familyStore = memoryBlobs(), guardStore = memoryBlobs(), logStore = memoryBlobs(), testerStore = memoryBlobs(), parentAnalyticsStore = memoryBlobs(), managementDatabase = undefined }) {
+export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs(), heldStore = memoryBlobs(), liveStore = memoryBlobs(), familyStore = memoryBlobs(), guardStore = memoryBlobs(), logStore = memoryBlobs(), testerStore = memoryBlobs(), parentAnalyticsStore = memoryBlobs(), managementDatabase = undefined, managementOperations = undefined }) {
   Object.assign(process.env, env);
   const { makeStudio } = await import(toURL(path.join(ROOT, 'netlify/functions/studio.mts')));
   const { makeHello } = await import(toURL(path.join(ROOT, 'netlify/functions/hello.mts')));
@@ -108,7 +108,7 @@ export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs
   const { makeFamily } = await import(toURL(path.join(ROOT, 'netlify/functions/family.mts')));
   const { makeTester } = await import(toURL(path.join(ROOT, 'netlify/functions/tester.mts'))); // (owner, 12 Oct) tester reports
   const now = () => testClock.t, tester = makeTester({ testerStore: async () => testerStore, liveStore: async () => liveStore, guardStore: async () => guardStore, now }), family = makeFamily({ familyStore: async () => familyStore, guardStore: async () => guardStore, now });
-  const studio = makeStudio({ managementDatabase, playersStore: async () => players, adminStore: async () => adminStore, heldStore: async () => heldStore, liveStore: async () => liveStore, familyStore: async () => familyStore, guardStore: async () => guardStore, logStore: async () => logStore, testerStore: async () => testerStore, parentAnalyticsStore: async () => parentAnalyticsStore, now }), hello = makeHello({ playersStore: async () => players, botStore: async () => players, guardStore: async () => guardStore }), live = makeLive({ liveStore: async () => liveStore });
+  const studio = makeStudio({ managementDatabase, managementOperations, playersStore: async () => players, adminStore: async () => adminStore, heldStore: async () => heldStore, liveStore: async () => liveStore, familyStore: async () => familyStore, guardStore: async () => guardStore, logStore: async () => logStore, testerStore: async () => testerStore, parentAnalyticsStore: async () => parentAnalyticsStore, now }), hello = makeHello({ playersStore: async () => players, botStore: async () => players, guardStore: async () => guardStore }), live = makeLive({ liveStore: async () => liveStore });
   const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp3': 'audio/mpeg', '.woff2': 'font/woff2' };
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${port}`); let p = decodeURIComponent(url.pathname);

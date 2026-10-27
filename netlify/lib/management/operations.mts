@@ -6,7 +6,7 @@ type Job = { id: string; kind: 'ci' | 'bot' | 'voice' | 'retention' | 'restore';
 export type OperationsOptions = { configured?: Partial<Record<Capability, boolean>>; observations?: Partial<Record<Capability, Observation>>; jobs?: Job[]; now?: Date; maxObservationAgeMs?: number };
 const CAPABILITIES: Capability[] = ['database', 'githubRead', 'githubDispatch', 'netlifyRead', 'voiceGeneration', 'managementEvents', 'configurationReceipts'];
 const JOB_KINDS = ['ci', 'bot', 'voice', 'retention', 'restore'], JOB_STATES = ['queued', 'running', 'succeeded', 'failed', 'cancelled'];
-const ERROR_CODES = ['forbidden', 'unauthorised', 'timeout', 'network', 'rate_limited', 'provider_unavailable', 'not_configured', 'unsupported'];
+const ERROR_CODES = ['forbidden', 'unauthorised', 'timeout', 'network', 'rate_limited', 'provider_unavailable', 'not_configured', 'unsupported', 'invalid_response'];
 const iso = (v: unknown) => typeof v === 'string' && Number.isFinite(Date.parse(v)) ? new Date(v).toISOString() : null;
 
 export function managementOperations(options: OperationsOptions = {}) {

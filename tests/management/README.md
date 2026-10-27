@@ -59,3 +59,25 @@ for later development. To stop only this synthetic cluster:
 /workspace/.cache/management-postgres/root/usr/lib/postgresql/17/bin/pg_ctl \
   -D /workspace/.cache/management-postgres/data stop
 ```
+
+## Netlify Database binding and operator preflight
+
+Production SQL is Netlify Database, selected by the owner on 27 October 2026 AEDT.
+The runtime and operator tools prefer Netlify's context-specific `NETLIFY_DB_URL`.
+A development-only `MANAGEMENT_DATABASE_URL` remains a fallback. Never override a
+preview's native binding with the production URL. The existing pg driver is
+supported by Netlify; no new package silently provisions a database.
+
+Run `node tools/check-management-database.mts` with the binding already injected
+securely. It checks connectivity, TLS for non-loopback hosts, schema reads and
+the exact migration checksum in a read-only transaction. Exit 2 means no binding,
+exit 1 means not ready, and exit 0 means the read-only preflight passed. This does
+not prove write permissions or a working production deployment.
+
+`node tools/migrate-management.mts` remains an explicit operator action. Run it
+on the intended Netlify preview database branch first; production migration is
+a separate release action. See the [Netlify operations handoff](../../docs/studio-management-foundation/NETLIFY-AND-OPERATIONS.md).
+
+The SQL integration runner also checks absent-schema preflight without writes,
+checksum mismatch detection and durable concurrent operation dispatch using
+a stub provider. It does not start real GitHub workflows.

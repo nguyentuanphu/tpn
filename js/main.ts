@@ -85,7 +85,7 @@ import { CUSTOM } from './custom.js';
 import { createFolkShow } from './folkshow.js';
 import { createAds } from './ads.js';
 import { buildSolids, solidCircleHit } from './solids.js';
-import { startCounting, countPlay, watchHero, noteReload } from './players.js';
+import { startCounting, countPlay, watchHero, noteReload, managementBootReady } from './players.js';
 import { startPackBar } from './packbar.js';
 import { codeHTML, bindCode, padHTML, boxHTML, animalSay } from './roomcode.js';
 // the family's defaults from Sparkle Studio: applied once each time they change there (a grown-up can still change
@@ -2020,6 +2020,6 @@ document.addEventListener('click', e => { const c = e.target instanceof Element 
 import('./state.js').then(S => { if (S.restoredFromCopy) setTimeout(() => toast(T('Your progress was brought back from the safe copy on this device.', 'Tiến trình chơi đã được khôi phục từ bản lưu dự phòng trên máy.')), 1200); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (playing) keepSpot(); save(); hush(); } });
 addEventListener('pagehide', () => { if (playing) keepSpot(); saveProfiles(true); });
-bootMark('ready'); G.bootTimes = bootTimes; bootDone();
+bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
 // (owner, 16 Oct AEDT) no device contacts the family service unless Studio switches the trial on, or on a tester device
 { const refresh = () => (featureOn('familyDevices', false) || G.tester) ? import('./familydevices.js').then(m => m.refreshDevicePhotos()).catch(() => {}) : null; refresh(); addEventListener('online', refresh); setInterval(refresh, 60000); }

@@ -3,6 +3,7 @@ import { ManagementError, unavailable } from './types.mts';
 import type { EventQuery, Json, JsonObject, ManagementDatabase, ManagementTransaction, StoredEvent } from './types.mts';
 import { canonicalJson, configBody, DEVICE, fail, hashJson, instant, integer, jsonObject, keys, one, record, SCOPE, text, UUID, validateEventBatch } from './validation.mts';
 import type { Catalogue } from './validation.mts';
+import { managementOutcomes } from '../outcomes.mts';
 export { ManagementError } from './types.mts';
 export { hashJson, canonicalJson } from './validation.mts';
 
@@ -206,7 +207,7 @@ export function createManagementService(options:Options={}) {
   }
   async function operations(){return db().transaction([],async tx=>(await tx.list('operations')).map(x=>x.value));}
 
-  async function attemptSummary(query:EventQuery) {
+  async function attemptSummary(query:EventQuery,activityId?:string) {
     const from=instant(query.from),to=instant(query.to);if(from>=to||Date.parse(from)<now()-90*86400000)fail('invalid_event_period');
     const environment=query.environment??'production',traffic=query.traffic??'ordinary';
     one(environment,['production','staging','local']);one(traffic,['ordinary','authorised_test','synthetic_bot']);
@@ -216,6 +217,8 @@ export function createManagementService(options:Options={}) {
     const counts={started:0,completed:0,abandoned:0,pending:0,outcomeUnknown:0,inconsistent:0,orphanTerminals:0,lateCorrections:0};
     for(const rows of attempts.values()) {
       const starts=rows.filter(e=>e.eventName==='activity.started'&&e.occurredAt>=from&&e.occurredAt<to),terminals=rows.filter(e=>e.eventName!=='activity.started');
+      if(activityId&&!rows.some(e=>{const d=e.payload.data;return d&&typeof d==='object'&&!Array.isArray(d)&&d.activityId===activityId;}))continue;
+      if(activityId&&starts.length&&!starts.some(e=>{const d=e.payload.data;return d&&typeof d==='object'&&!Array.isArray(d)&&d.activityId===activityId;}))continue;
       if(!starts.length){if(terminals.length)counts.orphanTerminals++;continue;}
       counts.started++;const start=starts.sort((a,b)=>a.occurredAt.localeCompare(b.occurredAt))[0],id=start.payload.data&&typeof start.payload.data==='object'&&!Array.isArray(start.payload.data)?start.payload.data.activityId:null;
       const ids=new Set(rows.map(e=>{const d=e.payload.data;return d&&typeof d==='object'&&!Array.isArray(d)?d.activityId:null;}));
@@ -228,5 +231,13 @@ export function createManagementService(options:Options={}) {
     const eligible=counts.started-counts.inconsistent-counts.lateCorrections;
     return {schemaVersion:1,from,to,environment,traffic,counts,eligible,completionRate:eligible?counts.completed/eligible:null,quality:['reporting-devices-only',...(events.some(e=>e.sourceCommit===null)?['unknown-source-provenance']:[])],generatedAt:iso(now())};
   }
-  return {configured,ingestEvents,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary};
+  async function eventSummary(query:EventQuery,storyId?:string) {
+    const from=instant(query.from),to=instant(query.to);if(from>=to||Date.parse(from)<now()-90*86400000)fail('invalid_event_period');
+    const environment=one(query.environment??'production',['production','staging','local']),traffic=one(query.traffic??'ordinary',['ordinary','authorised_test','synthetic_bot']);
+    const events=await db().transaction([],tx=>tx.events({...query,from,to:iso(now()+1),environment,traffic,limit:10000}));
+    const keys=storyId?new Set(events.filter(e=>{const d=e.payload.data;return e.eventName==='story.opened'&&d&&typeof d==='object'&&!Array.isArray(d)&&d.storyId===storyId;}).map(e=>e.deviceId+'|'+e.attemptId)):null;
+    const selected=keys?events.filter(e=>keys.has(e.deviceId+'|'+e.attemptId)):events;
+    return {...managementOutcomes(selected,{from,to,now:now()}),environment,traffic,generatedAt:iso(now())};
+  }
+  return {configured,ingestEvents,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary,eventSummary};
 }

@@ -25,7 +25,7 @@ import { settings, profiles, heldByOtherTab } from './state.js';
 import { BUILD } from './build.js';
 import { Net } from './net.js';
 import { voiceMisses } from './voice.js';
-import { events } from './core/events.js';
+import { events, managementEvidence } from './core/events.js';
 import { id as makeId } from './core/ids.js';
 import { familyHash } from './content/familycode.js';
 import { featureOn, onLive, managementApplication } from './custom.js';
@@ -44,25 +44,37 @@ const rnd = n => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => 'abc
 const SESSION = rnd(16), SESSION_STARTED = Date.now();
 
 // Management detail collection is separate from legacy counters, opt-in by release switch and
-// lazy-loaded after the game is already running. Analytics off clears only its own waiting reports.
+// lazy-loaded only for the reportable boot phase when explicitly enabled. Analytics off clears only its own waiting reports.
 let management: ReturnType<typeof import('./management-telemetry.js').createManagementTelemetry> | null = null;
 let detachManagement: (() => void) | null = null, managementLoading = false, managementWatching = false;
-let managementQueueCleared = false;
+let managementQueueCleared = false, managementGame: any = null;
+let detachManagementEvidence: (() => void) | null = null;
+let reportableBootStart = 0, reportableBootId: string | null = null;
+let observedUpdate: ReturnType<typeof managementEvidence.begin> | null = null;
+export function managementBootReady() {
+  if (!reportableBootId) return;
+  const elapsedMs = Date.now()-reportableBootStart;
+  if (elapsedMs>=0 && elapsedMs<=600000) managementEvidence.emit('boot.ready', {stage:'first_playable',elapsedMs}, reportableBootId);
+  reportableBootId=null;
+}
 const managementEnabled = () => settings.countPlayers !== false && onSite() && featureOn('managementTelemetry', false);
 function startManagementCounting(G) {
+  if (G) managementGame=G;
   const sync = () => {
     if (heldByOtherTab()) {
+      managementEvidence.setEnabled(false); reportableBootId=null; detachManagementEvidence?.(); detachManagementEvidence=null;
       management?.stop(); management = null;
       if (detachManagement) { detachManagement(); detachManagement = null; }
       return; // A superseded tab must never erase or rewrite the new tab's queue.
     }
     if (!managementEnabled()) {
+      managementEvidence.setEnabled(false); reportableBootId=null; detachManagementEvidence?.(); detachManagementEvidence=null;
       if (management) { management.synchroniseConsent(); management.stop(); management = null; }
       if (detachManagement) { detachManagement(); detachManagement = null; }
       if (!managementQueueCleared) { for (const key of ['sv2_management_out', 'sv2_management_bot_out']) try { localStorage.removeItem(key); } catch { } managementQueueCleared = true; }
       return;
     }
-    managementQueueCleared = false;
+    managementQueueCleared = false; managementEvidence.setEnabled(true);
     if (management) { management.synchroniseConsent(); management.start(); return; }
     if (managementLoading) return;
     managementLoading = true;
@@ -73,13 +85,14 @@ function startManagementCounting(G) {
       management = createManagementTelemetry({ storage, fetcher: (url, options) => fetch(url, options), enabled: managementEnabled,
         deviceId: id, sessionId: SESSION, build: BUILD, sourceCommit: source || null,
         traffic: isBotEnv() ? 'synthetic_bot' : 'ordinary', environment: /^(localhost|127\.)/.test(location.hostname) ? 'local' : 'production',
-        profiles: () => ((G && G.heroes) || []).map(h => h.profile).filter(Boolean).map(p => ({ id: p.id, name: p.name, age: p.age === 'big' ? 'big' : 'little' })),
+        profiles: () => ((managementGame && managementGame.heroes) || []).map(h => h.profile).filter(Boolean).map(p => ({ id: p.id, name: p.name, age: p.age === 'big' ? 'big' : 'little' })),
         reportNames: () => settings.reportNames !== false, online: () => navigator.onLine !== false, visible: () => document.visibilityState === 'visible' });
       detachManagement = attachActivityTelemetry(management, events, e => {
-        const heroes = (G && G.heroes) || [], game = String(e.defId || '').replace(/^game:/, ''), p = heroes[0]?.profile;
+        const heroes = (managementGame && managementGame.heroes) || [], game = String(e.defId || '').replace(/^game:/, ''), p = heroes[0]?.profile;
         const diff = p?.gameDiff?.[game] || p?.difficulty;
         return { difficulty: diff === 'hard' ? 'hard' : diff === 'medium' ? 'medium' : 'easy', mode: e.source === 'online' ? 'online' : Array.isArray(e.players) && e.players.length > 1 ? 'local_two' : 'solo' };
       });
+      detachManagementEvidence = managementEvidence.subscribe(event => { management?.enqueue(event.eventName,event.data,event.attemptId,event.occurredAt); });
       const applied = managementApplication(); if (applied) management.receipt(applied);
       management.start();
     }).catch(() => { /* optional analytics never blocks play */ }).finally(() => { managementLoading = false; });
@@ -88,6 +101,13 @@ function startManagementCounting(G) {
   if (managementWatching) return; managementWatching = true;
   onLive(sync); events.on('SettingsChanged', sync);
   addEventListener('sv-held', sync);
+  addEventListener('sv-management-notice', event => {
+    if (!(event instanceof CustomEvent)) return;
+    const detail=event.detail;if(!detail||typeof detail!=='object')return;
+    if(detail.eventName==='update.started') observedUpdate=managementEvidence.begin('update.result');
+    else if(detail.eventName==='update.result'){observedUpdate?.(detail.data);observedUpdate=null;}
+    else if(detail.eventName==='boot.failed') managementEvidence.emit('boot.failed',detail.data);
+  });
   // Existing setting writers do not all emit SettingsChanged; this bounded guard also observes opt-out.
   setInterval(sync, 1000);
   addEventListener('online', () => { sync(); management?.flush(); });
@@ -278,4 +298,12 @@ export function startCounting(G) {
   // the first hello soon after starting (a child who plays two minutes still counts), and whatever waited from before
   setTimeout(() => { bump(d => { d.m = Math.max(d.m, 1); }); flush(false); }, 90e3);
   setTimeout(() => flush(false), 5000);
+}
+
+// Begin only the reportable phase: imports/parse failures before this module are invisible.
+// The existing event module has no network or storage side effects while the switch is off.
+startManagementCounting(null);
+if (managementEnabled() && !heldByOtherTab()) {
+  reportableBootStart=Date.now();
+  reportableBootId=managementEvidence.emit('boot.started',{stage:'boot'},undefined,reportableBootStart);
 }

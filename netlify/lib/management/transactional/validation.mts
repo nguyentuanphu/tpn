@@ -69,8 +69,10 @@ export function validateEvent(input:unknown,now:number,catalogue?:Catalogue):Sto
     case 'story.opened':case 'story.completed':data=shape(o.data,{storyId:story});break;
     case 'connection.attempt':data=shape(o.data,{transport:v=>one(v,['direct','relay'])});break;
     case 'connection.result':data=shape(o.data,{transport:v=>one(v,['direct','relay']),outcome:v=>one(v,['success','timeout','rejected','failed']),elapsedMs:ms});break;
-    case 'voice.result':data=shape(o.data,{source:v=>one(v,['recorded','family','device']),outcome:v=>one(v,['success','failed','cancelled']),language:v=>one(v,['en','vi','zh','hi'])});break;
-    case 'update.result':case 'backup.result':data=shape(o.data,{outcome:v=>one(v,['success','failed','cancelled']),reasonCode:v=>one(v,['none','timeout','storage','network','invalid','unsupported','user_cancelled'])});break;
+    case 'voice.result':data=shape(o.data,{source:v=>one(v,['recorded','family','device']),outcome:v=>one(v,['success','failed','cancelled','unknown']),language:v=>one(v,['en','vi','zh','hi'])});break;
+    case 'update.result':data=shape(o.data,{outcome:v=>one(v,['success','failed','cancelled']),reasonCode:v=>one(v,['none','timeout','storage','network','invalid','unsupported','user_cancelled'])});break;
+    case 'backup.result':data=shape(o.data,{outcome:v=>one(v,['initiated','success','failed','cancelled']),reasonCode:v=>one(v,['none','timeout','storage','network','invalid','unsupported','user_cancelled']),
+      ...(record(o.data).operation===undefined?{}:{operation:v=>one(v,['export','restore'])})});break;
     default:return fail('unknown_event');
   }
   const payload:JsonObject={schemaVersion:1,eventId:String(o.eventId).toLowerCase(),deviceId:String(o.deviceId),sessionId:String(o.sessionId),attemptId:String(o.attemptId).toLowerCase(),eventName,occurredAt:at,deviceDay:d,offsetMinutes:offset,build,sourceCommit:source,environment,traffic,data};

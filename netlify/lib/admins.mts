@@ -99,6 +99,7 @@ export function needs(api, post) {
     const operation = api.split('?')[0];
     if (!post && (operation === 'management/children' || /^management\/devices\/[a-z0-9]{10,24}$/.test(operation))) return 'management.deviceDetail';
     if (!post && operation === 'management/operations') return 'operations.read';
+    if (post && operation === 'management/operations/refresh') return 'operations.read';
     if (post && /^management\/attention\/[a-zA-Z0-9_-]{1,80}$/.test(operation)) return 'management.triage';
     if (post && ['management/config', 'management/config/project'].includes(operation)) return 'management.configure';
     if (post && operation === 'management/operations/run') return 'operations.run';

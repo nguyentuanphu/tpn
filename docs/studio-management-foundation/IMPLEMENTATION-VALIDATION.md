@@ -32,3 +32,40 @@ No secure production database binding is configured in this environment. No prod
 `node suite.mjs --changed --list` selects the full suite because this change includes shared and test files. Repository policy places that suite on GitHub. The full suite has not been run or claimed as passing here; the working implementation must be committed/pushed under the owner's release process before that workflow can validate the exact branch. No main merge or version change is authorised by local passes.
 
 The documentation validator checks the historical design package and schema examples. It now verifies pinned historical source hashes and explicitly reports runtime drift; it does not certify the newly implemented server or game behaviour. Runtime tests above provide that evidence.
+
+
+## Netlify SQL and operations follow-up — 27 October 2026 AEDT
+
+The owner selected Netlify Database and asked the primary agent to continue alone.
+The runtime and trusted operator tools now prefer Netlify's native context-specific
+`NETLIFY_DB_URL`; existing pg transactions and explicit checksum migrations remain.
+No Netlify database was provisioned, production migration run or workflow dispatched
+to a real provider. Provider responses and all family records in these tests are synthetic.
+
+- [Real PostgreSQL integration](evidence/postgres-operations-2026-10-27.json): **14/14 passed**, now including read-only absent-schema detection, exact checksum readiness/drift detection, and concurrent operation dispatch with durable audits/reload idempotence. Each run removes only its own random schema.
+- Preflight CLI: missing binding returned safe code `management_database_not_configured`, exit 2. With the native binding pointed at the isolated loopback PostgreSQL 17 test database it returned ready/current, local true and TLS false; this is intentionally local and does not verify remote Netlify TLS or write access.
+- [First focused suite](evidence/operations-first-suite-2026-10-27.json): **9/10 checks passed**, including **285 unit tests**, types, preload, boot, contract, voice, save recovery, network-message validation and service-worker update recovery. The Studio assertion incorrectly expected `4990`; the actual UI correctly rendered `4,990`. The assertion now accepts EN/VI separators.
+- [Browser follow-up](evidence/operations-browser-2026-10-27.json): passed real owner sign-in, child/device details, catalogue lookup, filters, attention editing and configuration publication in EN/VI at 390/820/1440 pixels. Twelve captures include six Operations views. Bounded database/bot submission and exact provider-run reconciliation passed with stub providers.
+- The same browser check runs actual save/voice modules in a synthetic isolated document. It verifies download initiation, accepted share handoff, cancelled sharing, restore persistence success, failed storage readback and invalid restore. Actual recorded-player paths verify ended/error/cancellation/watchdog observations without treating a watchdog as confirmed success. Its initial fixture failed because it did not trigger voice-index loading; the fixture now triggers the normal click loader. [Initial fixture failure](evidence/operations-browser-initial-2026-10-27.txt) is retained.
+
+The Operations screenshots were visually inspected at phone, tablet and computer
+sizes. A follow-up styling change gives the reason field the existing standard text
+input appearance and marks configured-but-unverified badges as attention states.
+The full GitHub suite and physical-device/Windows verification remain unrun.
+Production Netlify connection, real provider scopes, retention/deletion, database
+restore drills, specialised revisioned editors and rendering budget debt remain open.
+See [Netlify and operations](NETLIFY-AND-OPERATIONS.md) for scope and boundaries.
+
+
+Final follow-up checks:
+
+- [Final types/unit/browser suite](evidence/operations-final-suite-2026-10-27.json): **3/3 passed**, with 285 unit tests and the actual game boot producing matched started/ready events through its consented lazy client. Turning Analytics off cleared the detailed queue. The unit check constructs pg clients to verify URL SSL parameters cannot override certificate verification. Final Operations input styling, bilingual error feedback and attention badges are included.
+- [Layout and speed suite](evidence/operations-layout-speed-2026-10-27.json): **5/5 passed**, including ten screens on phone/tablet/computer and sequential performance, battery and startup checks. [Exact speed output](evidence/operations-speed-2026-10-27.txt) retains rendering debt: home 439 draws, village 360 draws against 250 budgets; village 734,128 triangles against 300,000. Startup measured title 0.9 seconds, valley ready 16.4 seconds initially / 17.0 seconds second start and a 3.7-second longest freeze. These results do not establish that rendering budgets are met.
+
+No full suite was run locally. Repository rules select GitHub for the full suite;
+this round has not been pushed or deployed. All previous and first-failure evidence
+remains separate from the final passing results.
+
+[Documentation/build checks](evidence/operations-documentation-checks-2026-10-27.txt):
+902 consistency checks passed; all 133 generated game/UI JavaScript files are
+current. A final preflight still reports no database binding (expected exit 2).
