@@ -1,0 +1,176 @@
+[
+  {
+    "original": "docs/v1.02-report-control/computer-en.png",
+    "preserved": "evidence/prior-report-control/computer-en.png",
+    "sha256": "b5fdfcba92255cf95eb62bd4e46bbfba2f144169d29430ca78562909fad3fbe4",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/v1.02-report-control/computer-vi.png",
+    "preserved": "evidence/prior-report-control/computer-vi.png",
+    "sha256": "ca3fa2edddb36a985c01c23809803e0a16572f82032bc006329be737ce7c927b",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/v1.02-report-control/phone-en.png",
+    "preserved": "evidence/prior-report-control/phone-en.png",
+    "sha256": "a63345f4781f11b43c5d5aaefded1a41b62beb18dbc005737644b8022c4778df",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/v1.02-report-control/phone-running-game-report.png",
+    "preserved": "evidence/prior-report-control/phone-running-game-report.png",
+    "sha256": "946b2b261f284c967805eadd69de80bcbd44516b256e09f69e432334d375d15a",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/v1.02-report-control/phone-vi-destinations.png",
+    "preserved": "evidence/prior-report-control/phone-vi-destinations.png",
+    "sha256": "2b7260e8b486f537c5b12b44a638629f73d5786548bf86af444378646d8cc4c7",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/v1.02-report-control/phone-vi.png",
+    "preserved": "evidence/prior-report-control/phone-vi.png",
+    "sha256": "e3f10c7db2eb207c08333cbf190c8f9bfc5619796fa576d2aac7aeb987b746ab",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/v1.02-report-control/results.json",
+    "preserved": "evidence/prior-report-control/results.json",
+    "sha256": "3b6ca4b45bc066f19e1f19e2df523717e406401140b2bc5eb7d5aba9e158eefa",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/v1.02-report-control/tablet-en.png",
+    "preserved": "evidence/prior-report-control/tablet-en.png",
+    "sha256": "97d08dd2f74811d6ecfc3e41439c69f1ed0932a497692cdafb52cab28605d09c",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/v1.02-report-control/tablet-vi.png",
+    "preserved": "evidence/prior-report-control/tablet-vi.png",
+    "sha256": "fa1fdbb8cf5f9c6f6ab40a6902c17b083965744c03838ea4e6a4ff115001f463",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/capture-source.json",
+    "preserved": "evidence/management-regression/capture-source.json",
+    "sha256": "dd9cc5cd6a95d217db9b07c7dbea862bae14843a540d4bdac371cd184eb36611",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/en-1440-device.png",
+    "preserved": "evidence/management-regression/en-1440-device.png",
+    "sha256": "90fd9893587a428e2d768c6f1cb31e94df4b09c8793a33365fbb7abb39eea14c",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/en-1440-finance.png",
+    "preserved": "evidence/management-regression/en-1440-finance.png",
+    "sha256": "1853866802dfdf27fe4a1ab8256db4da27b594ac1aab4117946cc37a2900950d",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/en-1440-operations.png",
+    "preserved": "evidence/management-regression/en-1440-operations.png",
+    "sha256": "32a9533a806bf817e9505b1161ab5e7eacc6e9a96630c4dd9f1c01cc404a62fe",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/en-390-device.png",
+    "preserved": "evidence/management-regression/en-390-device.png",
+    "sha256": "792d67e94b22d2954caedc1412d65992c5e005c0dc45ed4dbf63d0b04006bcc3",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/en-390-finance.png",
+    "preserved": "evidence/management-regression/en-390-finance.png",
+    "sha256": "f28eaf5c3395882dbba33e80f67c93eea87d45ce460584771de42be17e09236c",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/en-390-operations.png",
+    "preserved": "evidence/management-regression/en-390-operations.png",
+    "sha256": "7de4571520a144656aa23c30456b4b728b2e46a5441172c621af2ec8f2a51c47",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/en-820-device.png",
+    "preserved": "evidence/management-regression/en-820-device.png",
+    "sha256": "c292218cbb1c7d8552ea21af7dabd1a1797b68e048aa3b3b73356be63de3b10b",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/en-820-finance.png",
+    "preserved": "evidence/management-regression/en-820-finance.png",
+    "sha256": "b1f9c6a061f2d1afbadd91378a88460e2c6e0de94e97d06015f0f26bef8d5995",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/en-820-operations.png",
+    "preserved": "evidence/management-regression/en-820-operations.png",
+    "sha256": "cb072c07bb62418d95bb0b9a81cea59f1f04d42db408ff0b59fa3e0540c7e61b",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/vi-1440-device.png",
+    "preserved": "evidence/management-regression/vi-1440-device.png",
+    "sha256": "071401d0120a2b6ee291dcb927d5b6cafc9cfda91c553c9383e796bff2d8a82d",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/vi-1440-finance.png",
+    "preserved": "evidence/management-regression/vi-1440-finance.png",
+    "sha256": "50e84b1391c8f528bbca2b2a42feedc6252a35615470035b188e84ce23e90c5f",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/vi-1440-operations.png",
+    "preserved": "evidence/management-regression/vi-1440-operations.png",
+    "sha256": "6e8f3d2c33cfac75013f26fb3e2205ee32974643f852a2cb57ca9eedad9e23a8",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/vi-390-device.png",
+    "preserved": "evidence/management-regression/vi-390-device.png",
+    "sha256": "1d0e916f3d6e1bce8045af609923a42cc536cc850441e201d4cb04cc597b1277",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/vi-390-finance.png",
+    "preserved": "evidence/management-regression/vi-390-finance.png",
+    "sha256": "7bf5534e11c91f110f6605b17c6787d3a5f2c9f626ccdafa9c64c7f230c7cc82",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/vi-390-operations.png",
+    "preserved": "evidence/management-regression/vi-390-operations.png",
+    "sha256": "5bf6135f18f417362eaf68d38274df43db8a61ffd2bce7d5982fbe5af90eb3f0",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/vi-820-device.png",
+    "preserved": "evidence/management-regression/vi-820-device.png",
+    "sha256": "4b79e18a28de4f0d9a86b54e669a717031f6a430c57f3be4818fc9853d347a9c",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/vi-820-finance.png",
+    "preserved": "evidence/management-regression/vi-820-finance.png",
+    "sha256": "330445c7d4aeae15921be9596d8c056d4a212094fc3383ad2e4281d162fd9ce7",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-management-foundation/screenshots/implementation/vi-820-operations.png",
+    "preserved": "evidence/management-regression/vi-820-operations.png",
+    "sha256": "bd414788ee33d8f2449a658763c374655ee4c7ca04f37a8cada10acccb5f481c",
+    "reason": "Generated screenshot/evidence preserved before restoring historical tracked original"
+  },
+  {
+    "original": "docs/studio-page-review-20261027/public-link-verification.json",
+    "preserved": "evidence/prior-public-link-verification.json",
+    "sha256": "9cdf4b32e79bc2d7c34d9dc47b993dbab9720e7af1cbd893cd1df4312d6aa113",
+    "reason": "Earlier generated delivery evidence retained with handoff"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "scope": "Checkpoint document links, actual route inventory and screenshot-source hashes; not a full-suite or deployment result",
+  "routes": 45,
+  "browserViews": 36,
+  "screenshots": 72,
+  "localLinksChecked": 88,
+  "runtimeCodeCommit": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df",
+  "documentGenerationCommit": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df"
+}

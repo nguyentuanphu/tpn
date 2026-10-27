@@ -12,6 +12,10 @@
 
 # Release core
 
+## Owner’s Desk approved implementation and one-hour handoff — 27 October 2026 AEDT
+
+The owner approved implementing the connected concept with actual game artwork/fonts/tokens, then explicitly requested one hour of work and a packaged/uploaded checkpoint with a next-chat prompt. This supersedes the earlier runtime pause. Work alone; keep existing Netlify Database. Runtime commits922c56c2 and35bcb63c implement the first connected slice; [current implementation and takeover](../studio-owner-desk-20261027/README.md). Corrected local Studio/management/browser/type tests pass,404 unit passes plus the existing legacy exclusion, and90 page/device fold combinations pass. Comprehensive all=true run40500953581 targets35bcb63c; final observed state is in the delivery record. No complete full-suite/deployment claim, new version, main merge, live SQL binding or paid activation. Code is frozen for packaging at the timebox.
+
 **You bring the cores' work together and hand it to the owner:** merge the core branches, run the full regression
 suite, bump the version, record new voices, update the docs, build the packages, report, and push and deploy only
 when the owner says so.

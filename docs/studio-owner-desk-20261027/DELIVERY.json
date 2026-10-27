@@ -1,0 +1,110 @@
+{
+  "repository": "nguyentuanphu/tpn",
+  "branch": "review/studio-finance-20261027",
+  "runtimeCodeCommit": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df",
+  "timebox": {
+    "startSydney": "2026-10-27T22:25:56+11:00",
+    "deadlineSydney": "2026-10-27T23:25:56+11:00"
+  },
+  "recordedAtSydney": "2026-10-27T23:10:27.621255+11:00",
+  "deploymentPerformed": false,
+  "mainMerged": false,
+  "newVersion": false,
+  "liveDatabaseBindingVerified": false,
+  "runtimeScope": "First connected Owner Desk slice; seven graph families, retained specialist tools; not all26 proposed graphs/editors",
+  "localChecks": {
+    "unitPassed": 404,
+    "existingLegacyUnitExclusions": 1,
+    "correctedFocused": "5/5: studio, ownerstudiofailures, managementstudio, ownerdesk, types",
+    "finalFocused": "3/3: ownerdesk, unit, types",
+    "foldPageDeviceCombinations": 90,
+    "sections": 1000,
+    "toggleChecks": 782,
+    "customPermissionViews": [
+      "desktop",
+      "phone"
+    ],
+    "browserViews": 36,
+    "screenshots": 72
+  },
+  "comprehensiveRun": {
+    "observedAtSydney": "2026-10-27T23:09:06.872360+11:00",
+    "run": "40500953581",
+    "headSha": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df",
+    "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40500953581",
+    "status": "in_progress",
+    "conclusion": "",
+    "artifactsAvailable": [
+      "share-postgres"
+    ],
+    "checksAvailable": 1,
+    "passedAvailable": 1,
+    "failedAvailable": [],
+    "retriedAvailable": [],
+    "sampleMarkers": [],
+    "suiteLevelSkips": [],
+    "jobs": [
+      {
+        "name": "which",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Management PostgreSQL",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "share (4)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "share (3)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "share (1)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "share (7)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "share (2)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "share (5)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "share (6)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "share (8)",
+        "status": "in_progress",
+        "conclusion": ""
+      }
+    ],
+    "limitation": "Only downloaded available result artifacts are counted. Missing/running shares are unknown. Full suite requires collector success and review of actual results."
+  },
+  "realPostgresCasesPassed": 17,
+  "packages": [],
+  "nextChat": "NEXT-CHAT.md",
+  "remaining": [
+    "Collect full-suite artifacts and collector outcome; fix failures before release",
+    "Finish contextual revision-safe content editors and true draft/review semantics",
+    "Build remaining compatible graphs; mature cohorts/handoff/due dates need new contracts",
+    "Verify existing Netlify DB binding, actual grants, retention/deletion and recovery",
+    "Complete physical-device/Windows and source/website alignment/rendering work"
+  ]
+}
