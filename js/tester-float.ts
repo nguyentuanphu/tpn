@@ -23,10 +23,14 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
     const b = bounds(), a = anchor.getBoundingClientRect();
     if (saved) { place(b.left + saved.x * (b.right - b.left), b.top + saved.y * (b.bottom - b.top)); return; }
     const preferred = { x: Math.max(b.left, Math.min(b.right, a.width > 0 ? a.right - button.offsetWidth : b.right)), y: Math.max(b.top, Math.min(b.bottom, a.height > 0 ? a.bottom + 8 : b.top + .55 * (b.bottom - b.top))) };
-    const panel = [...document.querySelectorAll(panels)].filter(p => p.getClientRects().length && getComputedStyle(p).visibility !== 'hidden').pop();
-    if (!panel) { place(preferred.x, preferred.y); return; }
+    const visiblePanels = [...document.querySelectorAll(panels)].filter(p => p.getClientRects().length && getComputedStyle(p).visibility !== 'hidden');
+    if (!visiblePanels.length) { place(preferred.x, preferred.y); return; }
     // The default must not sit over a newly opened panel's controls. Explicit user drags stay put.
-    const controls = [...panel.querySelectorAll('button, [role="button"], a, input, select, textarea')].filter(n => n.getClientRects().length && getComputedStyle(n).visibility !== 'hidden').map(n => n.getBoundingClientRect());
+    const controls = [...new Set(visiblePanels.flatMap(p => [...p.querySelectorAll('button, [role="button"], a, input, select, textarea')]))].filter(n => n.getClientRects().length && getComputedStyle(n).visibility !== 'hidden').map(n => {
+      const r = n.getBoundingClientRect();
+      const foreground = document.elementsFromPoint(r.x + r.width / 2, r.y + r.height / 2).find(e => e !== button && !button.contains(e));
+      return foreground === n || n.contains(foreground) ? r : null;
+    }).filter((r): r is DOMRect => r !== null);
     const candidates = [preferred, ...[b.left, b.right].flatMap(x => [0, .25, .5, .75, 1].map(t => ({ x, y: b.top + t * (b.bottom - b.top) })))];
     const width = button.offsetWidth, height = button.offsetHeight;
     const score = p => controls.reduce((sum, r) => sum + Math.max(0, Math.min(r.right, p.x + width + 4) - Math.max(r.left, p.x - 4)) * Math.max(0, Math.min(r.bottom, p.y + height + 4) - Math.max(r.top, p.y - 4)), 0);

@@ -137,6 +137,7 @@ jobs:
           # Preserve detector observations as well as outcomes when a synthetic freeze fails.
           cp tests/out/tester-freeze-observation.json share/ 2>/dev/null || true
           cp -r tests/out/owner-studio-folds share/ 2>/dev/null || true
+          cp -r tests/out/reported-screens share/ 2>/dev/null || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:

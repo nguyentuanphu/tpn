@@ -18,6 +18,9 @@ try{
   const reachable=()=>P.page.locator('.collision-control').evaluate(n=>{const r=n.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return top===n||n.contains(top);});
   for(let i=0;i<30&&!await reachable();i++)await P.page.waitForTimeout(50);
   assert.equal(await reachable(),true,'Default report position must yield to a real modal control');
+  await P.page.evaluate(()=>{const decoration=document.createElement('div');decoration.className='dialog collision-decoration';decoration.style.cssText='position:fixed;left:0;top:0;width:10px;height:10px;z-index:1;pointer-events:none';document.body.append(decoration);});
+  await P.page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
+  assert.equal(await reachable(),true,'A later decorative layer must not hide the active control from collision checks');
   assert.equal(await button.evaluate(b=>{const r=b.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('.tester-floating')===b;}),true,'Report button must remain reachable too');
   const before=await button.boundingBox();assert.ok(before);await P.page.mouse.move(before.x+32,before.y+32);await P.page.mouse.down();await P.page.mouse.move(100,200);await P.page.mouse.up();
   const dragged=await button.boundingBox();assert.ok(dragged);await P.page.evaluate(()=>document.querySelector('.report-collision-proof')?.append(document.createElement('p')));await P.page.waitForTimeout(150);const kept=await button.boundingBox();assert.ok(kept);assert.ok(Math.abs(kept.x-dragged.x)<2&&Math.abs(kept.y-dragged.y)<2,'User-dragged position must be preserved');
