@@ -44,6 +44,58 @@ jobs:
           gh api "repos/$GH_REPO/statuses/$sha" -f state=pending -f context='Full suite' \
             -f description='Running on 8 machines' -f target_url="$GITHUB_SERVER_URL/$GH_REPO/actions/runs/$GITHUB_RUN_ID" >/dev/null
 
+  postgres:
+    name: Management PostgreSQL
+    needs: which
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: management_ci_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d management_ci_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.which.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund
+      - name: Validate real SQL and finance transactions
+        id: sql
+        env:
+          MANAGEMENT_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/management_ci_test
+          MANAGEMENT_TEST_RESULT_PATH: postgres-evidence.json
+        run: node tests/management/postgres-integration.mjs
+      - name: Record SQL result for the full-suite summary
+        if: always()
+        env:
+          SQL_OUTCOME: ${{ steps.sql.outcome }}
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const ok=process.env.SQL_OUTCOME==='success';
+          const evidence=fs.existsSync('postgres-evidence.json')?JSON.parse(fs.readFileSync('postgres-evidence.json','utf8')):null;
+          fs.mkdirSync('share',{recursive:true});
+          fs.writeFileSync('share/suite-result.json',JSON.stringify({managementpostgres:{ok,note:ok?`${evidence.cases.length} real PostgreSQL transaction/migration/finance checks passed`:'SQL checks failed or did not complete; see job log'}}));
+          if(evidence)fs.writeFileSync('share/postgres-evidence.json',JSON.stringify(evidence,null,2));
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: share-postgres
+          path: share
+          retention-days: 7
+
   share:
     needs: which
     runs-on: ubuntu-latest
@@ -86,7 +138,7 @@ jobs:
           retention-days: 7
 
   collect:
-    needs: [which, share]
+    needs: [which, share, postgres]
     # (not when the run was cancelled, e.g. by a newer push: it would report every check as "did not run")
     if: ${{ !cancelled() && needs.which.result == 'success' }}
     runs-on: ubuntu-latest
