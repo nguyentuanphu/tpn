@@ -52,6 +52,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install audio verification tools
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
       - name: Get the checks ready (browser and test server)
         run: |
           # tests/package-lock.json points playwright at a folder on the Claude machines: install from package.json
