@@ -5,7 +5,7 @@
 // the emu in Aussie Corner, the panda in China Town and the peacock in India Village. Tap one to hear it; its
 // ℹ️ tells what it is, a bit of history, and shows real photos.
 import { T } from './i18n.js';
-import { heightAt, CITIES, CHINA, INDIA, AUSSIE } from './world.js';
+import { heightAt, WATER, PONDS, CITIES, CHINA, INDIA, AUSSIE } from './world.js';
 import { animalModel } from './animals.js';
 import { openPhotos } from './realworld.js';
 
@@ -17,7 +17,8 @@ export const CITY_REGION = {
 export const regionLabel = id => CITY_REGION[id] ? T(CITY_REGION[id][0], CITY_REGION[id][1]) : '';
 
 // [where, animal model, scale, sound, icon, name, about (what it is), history / story, photos (Wikipedia)]
-const SYMBOLS = [
+type SymbolDefinition = [where: string, kind: string, scale: number, sound: string, icon: string, name: [string,string], about: [string,string], story: [string,string], wiki: string[]];
+const SYMBOLS: SymbolDefinition[] = [
   ['brisbane', 'koala', 1.7, 'sniff', '🐨', ['The koala, symbol of Queensland', 'Gấu koala, biểu tượng bang Queensland'],
     ['Koalas live in gum trees and eat only eucalyptus leaves. They sleep up to 20 hours a day! A baby koala is called a joey and rides in its mum’s pouch.', 'Koala sống trên cây bạch đàn và chỉ ăn lá bạch đàn. Chúng ngủ tới 20 tiếng một ngày! Koala con gọi là joey, nằm trong túi của mẹ.'],
     ['In 1971 Queensland made the koala its animal emblem. Lone Pine in Brisbane, opened in 1927, is the world’s oldest koala sanctuary.', 'Năm 1971 bang Queensland chọn koala làm con vật biểu tượng. Lone Pine ở Brisbane, mở năm 1927, là khu bảo tồn koala lâu đời nhất thế giới.'], ['en:Koala']],
@@ -52,7 +53,9 @@ const SYMBOLS = [
 
 export function createSymbols(G, { sfx, dialog }) {
   const { scene, world } = G;
+  const swordLake = PONDS.find(p => p.id === 'hoguom');
   const spotFor = id => {
+    if (id === 'hanoi' && swordLake) return [swordLake.x+swordLake.r*.62, swordLake.z];
     const c = CITIES.find(k => k.id === id);
     if (c) { // a corner of the city square, away from the main street
       for (const [sx, sz] of [[1, -1], [-1, -1], [1, 1], [-1, 1]]) { const [x, z] = G.clearSpot(c.x + sx * (c.w - 3.5), c.z + sz * (c.d - 3.5), 1.4); if (Math.abs(x - c.x) < c.w + 4 && Math.abs(z - c.z) < c.d + 4) return [x, z]; }
@@ -64,15 +67,15 @@ export function createSymbols(G, { sfx, dialog }) {
   };
   const live = [], tags = [];
   for (const [where, kind, scale, sound, icon, name, about, story, wiki] of SYMBOLS) {
-    const [x, z] = spotFor(where), g = animalModel(kind); g.scale.setScalar(scale); g.position.set(x, heightAt(x, z), z); scene.add(g);
-    const A = { g, home: [x, z], tx: x, tz: z, wait: Math.random() * 4, speed: kind === 'turtle' || kind === 'koala' || kind === 'elephant' ? .45 : .8 };
+    const [x, z] = spotFor(where), water = where === 'hanoi' && kind === 'turtle' ? swordLake : null, g = animalModel(kind); g.scale.setScalar(scale); g.position.set(x, water ? WATER-.12 : heightAt(x, z), z); scene.add(g);
+    const A = { g, water, home: [x, z], tx: x, tz: z, wait: Math.random() * 4, speed: kind === 'turtle' || kind === 'koala' || kind === 'elephant' ? .45 : .8 };
     live.push(A);
     const speak = async () => {
       (sfx[sound] || sfx.pop)(); G.fx && G.fx(A.g.position.x, A.g.position.y + 2 * scale, A.g.position.z, '💛');
       const region = CITY_REGION[where];
       const k = await dialog(T(name[0], name[1]), [about, story, ...(region ? [[`Here it stands for all of ${region[0]}.`, `Ở đây nó đại diện cho cả ${region[1]}.`]] : [])],
         [['📷 See real photos', '📷 Xem ảnh thật'], ['👋 Bye', '👋 Tạm biệt']]);
-      if (k === 0) await new Promise(r => openPhotos(T(name[0], name[1]), wiki, { icon, onClose: r }));
+      if (k === 0) await new Promise<void>(resolve => { const options = { icon, onClose: resolve }; openPhotos(T(name[0], name[1]), wiki, options); });
     };
     const it = { id: 'sym_' + where, x, z, r: 2.6 * Math.max(1, scale * .8), icon, bubble: icon, label: () => T(name[0], name[1]), act: speak }; G.interactables.push(it); tags.push([it, A]);
   }
@@ -82,8 +85,15 @@ export function createSymbols(G, { sfx, dialog }) {
       const p = A.g.position; if (!G.heroes.some(h => Math.abs(h.pos.x - p.x) < 60 && Math.abs(h.pos.z - p.z) < 60)) continue;
       if (A.wait > 0) { A.wait -= dt; continue; }
       const dx = A.tx - p.x, dz = A.tz - p.z, d = Math.hypot(dx, dz);
-      if (d < .1) { A.wait = 2 + Math.random() * 5; const a = Math.random() * Math.PI * 2, r = Math.random() * 2.2; [A.tx, A.tz] = G.clearSpot(A.home[0] + Math.cos(a) * r, A.home[1] + Math.sin(a) * r, .6); continue; }
-      const st = Math.min(d, A.speed * dt); p.x += dx / d * st; p.z += dz / d * st; p.y = heightAt(p.x, p.z);
+      if (d < .1) {
+        A.wait = 2 + Math.random() * 5;
+        if (A.water) { // Stay in the eastern shallows: clear of Turtle Tower's islet and the bridge on the west.
+          const a=(Math.random()-.5)*1.1, r=A.water.r*(.5+Math.random()*.15);
+          A.tx=A.water.x+Math.cos(a)*r; A.tz=A.water.z+Math.sin(a)*r;
+        } else { const a = Math.random() * Math.PI * 2, r = Math.random() * 2.2; [A.tx, A.tz] = G.clearSpot(A.home[0] + Math.cos(a) * r, A.home[1] + Math.sin(a) * r, .6); }
+        continue;
+      }
+      const st = Math.min(d, A.speed * dt); p.x += dx / d * st; p.z += dz / d * st; p.y = A.water ? WATER-.12 : heightAt(p.x, p.z);
       A.g.rotation.y = Math.atan2(dx, dz);
     }
     for (const [it, A] of tags) { it.x = A.g.position.x; it.z = A.g.position.z; }

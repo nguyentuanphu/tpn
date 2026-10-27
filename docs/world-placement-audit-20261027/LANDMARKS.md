@@ -11,7 +11,7 @@
 | bondi | melbourne | sydney | meadow | Generic Lifesavers' Tower on the southern Australian coast; guide groups it with Sydney |
 | lighthouse | vungtau | vungtau | meadow | Checked against declared anchor; no automatic error from nearest-city distance alone |
 | turtle | hanoi | hanoi | meadow | Checked against declared anchor; no automatic error from nearest-city distance alone |
-| onepillar | hanoi | hanoi | meadow | Moved from market to Hà Nội; final garden clearance capture pending |
+| onepillar | hanoi | hanoi | meadow | Moved from market to Hà Nội; final garden and nearby-house clearance reviewed |
 | chuacau | hoian | danang | hoian | Hội An footbridge grouped under nearby Đà Nẵng |
 | longbien | hanoi | hanoi | meadow | Checked against declared anchor; no automatic error from nearest-city distance alone |
 | princes | melbourne | melbourne | meadow | Checked against declared anchor; no automatic error from nearest-city distance alone |

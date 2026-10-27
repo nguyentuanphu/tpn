@@ -233,6 +233,7 @@
     "../js/heritage.ts",
     "../js/myhouse.ts",
     "../js/farm.ts",
-    "./shallow-rivers.mts"
+    "./shallow-rivers.mts",
+    "../js/symbols.ts"
   ]
 }

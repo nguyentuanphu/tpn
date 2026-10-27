@@ -354,7 +354,7 @@ const ROWS: MarketRow[] = [
 ];
 // the cities: the main street from the main gate straight through the square; the kiosks just inside the gate on the
 // host's side (Bắc Ninh: the south side, clear of the Quan họ boat)
-for (const p of PLACES) if (p.kind === 'city') ROWS.push({ place: p.id, street: [p.gates[0], [-p.gates[0][0], -p.gates[0][1]]], w: ROAD_WIDTH.asphalt, side: p.id === 'bacninh' ? -1 : 1, at: 2.5, pitch: 3.8, city: true });
+for (const p of PLACES) if (p.kind === 'city') ROWS.push({ place: p.id, street: [p.gates[0], [-p.gates[0][0], -p.gates[0][1]]], w: ROAD_WIDTH.asphalt, side: p.id === 'bacninh' ? -1 : 1, at: p.id === 'bacninh' ? 3.2 : 2.5, pitch: 3.8, city: true });
 export const MARKET_ROWS = ROWS;
 const ROW_OF = new Map(ROWS.map(r => [r.place, r]));
 export const rowOf = place => ROW_OF.get(place) || null;

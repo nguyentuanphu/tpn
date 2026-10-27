@@ -118,7 +118,13 @@ export function createTraffic(G) {
   const where = sl => sl.v ? [sl.v.o.position.x, sl.v.o.position.z] : sl.mover ? pointAt(sl.mover.r, sl.mover.s) : [sl.x, sl.z];
   function copy(id) {
     const k = id + (real ? '|real' : '');
-    if (!tpl.has(k)) { const v = build(id, { real }); tpl.set(k, { v, wheelIdx: v.wheels.map(w => v.o.children.indexOf(w)) }); }
+    if (!tpl.has(k)) {
+      const v = build(id, { real });
+      // The legacy cart factory has an opaque painted windscreen but omitted the cabin description supplied by cars,
+      // buses and trams. Give the camera its window bounds; withRideView opens it only for the rider's render.
+      if (id === 'touristCart' && !v.cabin) v.cabin = { width: 1.5, length: 4.6, bottom: 1.05, top: 2.12, color: '#f4f4ee' };
+      tpl.set(k, { v, wheelIdx: v.wheels.map(w => v.o.children.indexOf(w)) });
+    }
     const { v, wheelIdx } = tpl.get(k), o = v.o.clone(true);
     return { ...v, o, wheels: wheelIdx.map(n => o.children[n]) };
   }

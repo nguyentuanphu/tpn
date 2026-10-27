@@ -46,8 +46,13 @@ export function familyDevicesHTML() {
 export function bindFamilyDevices(card, npcList = []) {
   const panel = card.querySelector('.family-device-panel'); if (!panel) return;
   const content = panel.querySelector('.fd-content'), status = panel.querySelector('.fd-status'); let timer = null, signature = '';
-  const state = message => { status.textContent = message; };
-  const run = fn => async () => { try { state(T('Working…', 'Đang thực hiện…')); await fn(); } catch (e) { state(e.message); } };
+  let statusRevision = 0;
+  const state = message => { status.textContent = message; statusRevision++; };
+  const run = fn => async () => {
+    state(T('Working…', 'Đang thực hiện…')); const started = statusRevision;
+    try { await fn(); } catch (e) { state(e.message); }
+    finally { if (statusRevision === started) state(''); } // Keep success/error messages and newer actions; clear a completed idle draw.
+  };
   const draw = async () => {
     if (!panel.isConnected) { clearInterval(timer); return; }
     const connection = familyDevice();

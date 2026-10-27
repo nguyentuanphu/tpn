@@ -8,12 +8,20 @@
     "worldplacementInitial": "pass; later checks include riverbed/boundary revisions",
     "familyuiartInitial": "pass on phone/tablet/computer, EN/VI; final settled captures and photo/shop controls to recheck",
     "camera": "pass (215/220 clear, 5 grazing views)",
-    "stalls": "pass: all 42 in 14 places, 5 walking sellers",
+    "stalls": "pass after actual building-footprint fix exposed 2.9m Bac Ninh clearance; moved market row 0.7m; all 42 stalls in 14 places and 5 walking sellers pass unchanged 3m building rule",
     "hanoivoice": "pass: 18 actual compact clips, choice/default/offline/background",
     "voicecover": "pass: 11149 lines, 2583 parts, 257 templates",
-    "familyquizprivate": "first attempt failed: one select 51px high due shared form selector; fixed explicit 64px rule, recheck pending",
-    "remaining": "suite continuing; shallow rivers/bridges/underpass/boats, visual contact sheets, final source/full GitHub suite pending"
+    "familyquizprivate": "pass after fixing the new shared-style select regression (64px restored); first attempt failed at 51px",
+    "remaining": "Fresh full GitHub suite and map artifact; final speed budgets/listening/physical-device review; unresolved geographic/exhibit flags; owner has not chosen a release version or approved deployment.",
+    "familyuiart": "pass: 24 settled EN/VI phone/tablet/computer captures, styled voice/device/shop controls, 44px parent and 64px child shop targets, family question grouping, My Home map. First expanded attempt used wrong test teardown; corrected real close flow passes.",
+    "rivers": "pass: all 14 rivers sampled, all 13 bridges and actual swimming underpasses, every ferry/raft route and pier, water rendering/cache, offline start",
+    "ownertransportpov": "pass: actual boarding and visible sightlines for bus, busAU, touristCart, tramModern, xichlo; both age groups; scoped visibility restored after render-error fixture",
+    "worldplacement": "pass: all 9 Chinese/Indian sites in correct districts; 37 original house coordinates/indices retained; turtle stays in pond over 125 simulated seconds; raised trees/rocks fade without fading people; family questions available before mission service starts; reported Hanoi obstruction point now unobstructed",
+    "types": "211 explicit files plus 54 server/Studio/tool files pass; renamed map/heritage/farm/My Home/symbol/suburb sources checked",
+    "visualReview": "Reviewed final paired contact sheets covering all 42 stalls, cottage front and furnished room, lake/turtle and monument placement, plus family controls/map EN/VI on phone/tablet/computer",
+    "github": "PR #649. Initial fast runner lacked FFmpeg; dependency added to fast/full workflows. Superseded full run cancelled; fresh exact-source run required after upload. Website passed. AI review did not finish (bot reports usage/time possible)."
   },
   "factExpansion": "draft only; not enabled/recorded",
-  "houseBuilder": "crafted cottage and 3D furnishings, existing 8-slot/save system; full free-placement construction not implemented"
+  "houseBuilder": "crafted cottage and 3D furnishings, existing 8-slot/save system; full free-placement construction not implemented",
+  "updatedAEDT": "2026-10-27T14:37:01.629687+11:00"
 }

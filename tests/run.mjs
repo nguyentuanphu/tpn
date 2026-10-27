@@ -4322,7 +4322,9 @@ await check('ownertransportpov', async () => {
         const {withRideView}=await import('/js/rideview.js');let raised=false;
         try{withRideView(h,()=>{throw Error('render failure fixture');});}catch(e){raised=e.message==='render failure fixture';}
         const restored=raised&&h.av.root.visible===own&&before.every(([child,visible])=>child.visible===visible);
-        const local=sl.v.o.worldToLocal(h.cam.position.clone()),cab=sl.v.cabin,insideWindow=!cab||(local.y>=cab.bottom&&local.y<=cab.top);
+        const local=sl.v.o.worldToLocal(h.cam.position.clone()),cab=sl.v.cabin;
+        if(kind==='touristCart'&&!cab)throw Error('Electric cart must use the scoped open-windscreen renderer');
+        const insideWindow=!cab||(local.y>=cab.bottom&&local.y<=cab.top);
         return {age,kind,seen,pov:h._pov,restored,insideWindow};
       }finally{h.scene.remove(target);target.geometry.dispose();target.material.dispose();}
     },{age,kind}); rows.push(r);

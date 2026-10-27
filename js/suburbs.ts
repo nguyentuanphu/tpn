@@ -12,7 +12,9 @@ import { registerName } from './i18n.js';
 const look = (style, color, hair, hairStyle, hat = 'none', skin = '#e8b48c') => ({ style, color, hair, hairStyle, hat, skin, back: 'none', glider: 0 });
 const BLACK = '#1d1412', GREY = '#cfcfcf';
 // [model, kind, room, name [en, vi], about [en, vi], person [name, look, kid, line, [side, out]]]
-const SUBURBS = {
+type HouseModel = {obj?: THREE.Object3D; geo?: THREE.BufferGeometry; w?: number; d?: number};
+type SuburbSpec = [model:()=>HouseModel, kind:string, room:string, name:[string,string], about:[string,string], person:[string,object,number,[string,string],number[]]];
+const SUBURBS: Record<string, SuburbSpec[]> = {
   hanoi: [
     [() => houseTube({ wall: '#f2d6a0', sign: ['Phở', 'Phở'] }), 'tube', 'tube', ['Grandma Hạnh’s phở shop', 'Quán phở bà Hạnh'],
       ['Phở comes from the north of Vietnam. Bà Hạnh simmers the beef bones all night so the broth is ready at sunrise, then adds rice noodles, herbs and a squeeze of lime.', 'Phở là món của miền Bắc. Bà Hạnh ninh xương bò suốt đêm để sáng sớm có nước dùng, rồi chan vào bánh phở, thêm rau thơm và vắt chanh.'],
@@ -82,7 +84,10 @@ export function createSuburbs(G) {
       // the house stands at the front of its levelled lot, facing the road
       const fx = Math.sin(L.rot), fz = Math.cos(L.rot), x = L.x + fx * (L.d - d) / 2 * .5, z = L.z + fz * (L.d - d) / 2 * .5, y = heightAt(x, z);
       const obj = m.obj || new THREE.Mesh(m.geo, toonVC()); obj.castShadow = obj.receiveShadow = true; obj.position.set(x, y, z); obj.rotation.y = L.rot; scene.add(obj);
-      const r = Math.max(m.w || 7, d) / 2 * .8; world.boxes.push({ x0: x - r, x1: x + r, z0: z - r, z1: z + r });
+      // Use the rotated drawing's actual footprint. A square based on the longest side blocked empty space
+      // beside narrow tube houses (reported at 179,-134), even where no wall was visible.
+      const bounds = new THREE.Box3().setFromObject(obj);
+      world.boxes.push({ x0: bounds.min.x, x1: bounds.max.x, z0: bounds.min.z, z1: bounds.max.z });
       registerName(person[0]);
       world.houses.push({ x, z, rot: L.rot, d, kind, info: { kind, room, name, about, people: [person], city: c.name } });
       built.push(name[0]);

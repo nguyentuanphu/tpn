@@ -61,6 +61,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install audio verification tools
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Get the checks ready (browser and test server)
         run: |
           cd tests && npm ci --no-audit --no-fund && npx playwright install --with-deps chromium

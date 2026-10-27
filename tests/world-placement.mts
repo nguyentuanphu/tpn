@@ -26,10 +26,21 @@ export async function worldPlacementCheck(browser:Browser){
    S.mark(a,b);S.step(1);const first=S.active();S.mark(a,b);S.step(1);const kept=S.active();S.step(1);const restored=S.active();im.getMatrixAt(0,matrix);
    geometry.dispose();material.dispose();return{first,kept,restored,y:matrix.elements[13],personOpaque:body.material===material};
   };
+  const reported={x:179,z:-134},point={...reported,y:runtimeGround()};
+  function runtimeGround(){return (window.__sv as unknown as import('../js/main.js').SvMain).world.groundAt(179,-134)+.1;}
+  (window.__sv as unknown as import('../js/main.js').SvMain).world.collide(point,.45);
+  if(Math.hypot(point.x-reported.x,point.z-reported.z)>.01)errors.push('invisible collision beside Hanoi house at 179,-134');
+  const U=await import(String('/js/ui-settings.js')),runtime=window.__sv as unknown as import('../js/main.js').SvMain,parents=runtime.parents;
+  try{runtime.parents=undefined;void U.openGrownups();if(!document.querySelector('#gFamilyQuiz')?.closest('[data-sec=family]'))errors.push('family questions unavailable before mission service starts');}
+  finally{runtime.parents=parents;document.querySelector<HTMLButtonElement>('.grownups .x')?.click();}
+  const pond=W.PONDS.find(p=>p.id==='hoguom'),{createSymbols}=await import(String('/js/symbols.js'));
+  const probe={scene:new THREE.Scene(),world:{updaters:[]},interactables:[],heroes:[{pos:{x:pond.x,z:pond.z}}],clearSpot:(x:number,z:number)=>[x,z]};
+  createSymbols(probe,{sfx:{},dialog:async()=>1});const turtle=probe.interactables.find(i=>i.id==='sym_hanoi');
+  for(let k=0;k<500;k++){for(const update of probe.world.updaters)update(.25);const distance=Math.hypot(turtle.x-pond.x,turtle.z-pond.z);if(distance<pond.islet+1.6||distance>pond.r*.75||W.heightAt(turtle.x,turtle.z)>=W.WATER)errors.push('Hoan Kiem turtle left its lake');}
   return{errors,houses:G.world.houses.map((h,i)=>({index:i,x:h.x,z:h.z,kind:h.kind})),tree:fixture('oak'),rock:fixture('rock'),mine:!!G.myHouse?.home};
  });
  assert.deepEqual(out.errors,[]);for(const h of baseline.houses){assert.deepEqual(out.houses[h.index],{index:h.index,x:h.x,z:h.z,kind:h.kind},'saved home index '+h.index+' must stay put');}
  for(const key of['tree','rock'])assert.deepEqual(out[key],{first:1,kept:1,restored:0,y:12,personOpaque:true},key+' fades after ground reshaping and restores its original matrix');
- assert.ok(out.mine);assert.deepEqual(P.errors,[]);return'9 heritage sites remain in China/India; Hanoi pagoda; all 37 saved house indices preserved; raised trees and rocks fade, stay faded and restore';
+ assert.ok(out.mine);assert.deepEqual(P.errors,[]);return'9 heritage sites in correct districts; Hanoi pagoda; 37 saved home indices preserved; Hoan Kiem turtle stays in its lake over 125 simulated seconds; raised trees/rocks fade without fading people';
  }finally{await P.ctx.close();}
 }
