@@ -8,6 +8,6 @@ Selected Northern conventions: spades < clubs < diamonds < hearts; singles and s
 
 This remains a child-friendly adaptation: no betting, final-two/four-of-a-kind fines or disqualification. The game now explicitly explains that limit. Regional house rules vary; do not describe this as every Northern variant.
 
-Sources reviewed: https://vi.wikipedia.org/wiki/Ti%E1%BA%BFn_l%C3%AAn (Northern section, article itself flags lack of citations), https://www.pagat.com/climbing/thirteen.html (general/Southern context, not independent proof of Northern specifics). Independent Northern source confirmation is still pending, as is human rules review. New corrected introduction needs Azure/FPT recording before release.
+Sources reviewed: https://vi.wikipedia.org/wiki/Ti%E1%BA%BFn_l%C3%AAn (Northern section, article itself flags lack of citations), https://www.pagat.com/climbing/thirteen.html (general/Southern context, not independent proof of Northern specifics). Independent Northern source confirmation is still pending, as is human rules review. The corrected introduction and required English mixed-language fragments were recorded and fully decoded in run40481288711; human listening remains pending.
 
 Dedicated tests cover every ordinary pair colour combination, all twos suit comparisons, matching/mismatched triples and runs, quads cutting twos, Southern compatibility and independent bot table modes.

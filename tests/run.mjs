@@ -1135,6 +1135,10 @@ await check('validate', async () => {
   return 'ROAD-001/002/003/004/011, VEH-001 and STALL-001…004 hold';
 });
 
+await check('autoplayreleasegates', async () => (await import('./autoplay-release-gates.mts')).autoplayReleaseGatesCheck(b));
+
+await check('legacyplans', async () => (await import('./legacy-play-plans.mts')).legacyPlayPlansCheck(b));
+
 await check('horsestability', async () => (await import('./horse-stability.mts')).horseStabilityCheck(b));
 
 await check('storyposes', async () => (await import('./story-pose-check.mts')).storyPoseCheck(b));

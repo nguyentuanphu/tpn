@@ -26,6 +26,7 @@ export function enrichment({data,dual,icon,esc}){
  ['game-colors',['Explore colours','Khám phá màu sắc'],['Listen, recognise and choose colours.','Lắng nghe, nhận biết và chọn màu.']],
  ['game-money',['Explore money choices','Tìm hiểu lựa chọn tiền bạc'],['A starting point for family conversations about coins and choices.','Điểm bắt đầu để cả nhà nói về tiền xu và lựa chọn.']]],'four'),
  folk:gallery([
+ ['game-goat',['Bịt mắt bắt dê · listen and follow','Bịt mắt bắt dê · nghe và đi theo'],['Guide the blindfolded friend toward the sound, catch only nearby and take turns. Original drawn children, with visual cues when sound is off.','Dẫn bạn bịt mắt theo tiếng gọi, bắt khi đến gần rồi đổi vai. Nhân vật được vẽ riêng, có chỉ dẫn hình khi tắt âm thanh.']],
  ['game-horse',['Cờ Cá Ngựa · gentle mode','Cờ Cá Ngựa · chế độ nhẹ nhàng'],['See the drawn horses and short track before playing together. Classic mode has the full board and different rules.','Xem quân ngựa và đường đi ngắn trước khi chơi cùng nhau. Chế độ thông thường có bàn đầy đủ và luật khác.']],
  ['game-cuopco',['Cướp Cờ · a guided screen adaptation','Cướp Cờ · bản hướng dẫn trên màn hình'],['Listen for the number, choose the matching child and bring the flag back.','Nghe số, chọn bạn mang số tương ứng và đưa cờ về.']],
  ['game-oanquan',['Ô Ăn Quan','Ô Ăn Quan'],['See the pits and counters before trying a turn.','Nhìn ô và quân trước khi thử một lượt.']],

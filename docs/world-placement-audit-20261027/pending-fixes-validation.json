@@ -40,7 +40,8 @@
       "seconds": 84,
       "actions": 108
     },
-    "voiceDeltaPolicyUnits": 5
+    "voiceDeltaPolicyUnits": 5,
+    "legacyplansSeconds": 141
   },
   "earlierFailures": [
     "TypeScript errors after helper JS-to-TS conversions: corrected",
@@ -51,7 +52,6 @@
   ],
   "pending": [
     "new exact-source GitHub full suite and official code map",
-    "reviewed38-unit recording job and delivery decode/coverage",
     "autoplay enabled/disabled/legacy integration",
     "fresh website source review/build",
     "elephant owner report not reproduced",
@@ -64,5 +64,18 @@
     "battery": "PASS177s",
     "startup": "FAIL timing budgets, first46664ms second51907ms freeze16691ms; secondKB value not recovered from truncated output"
   },
-  "aiReview": "unfinished"
+  "aiReview": "unfinished",
+  "recording": {
+    "run": 40481288711,
+    "commit": "842cb7ac6a7eb4f323c6dfa2f4a9dad3537cbbb4",
+    "azure": 76,
+    "fpt": 17,
+    "verifiedDeliveries": 93,
+    "fullDecode": true,
+    "optionalPackLines": 6680,
+    "optionalPackBytes": 88882017,
+    "coverage": "PASS",
+    "routing": "PASS",
+    "humanListening": "pending"
+  }
 }
