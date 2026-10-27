@@ -83,7 +83,11 @@ export async function managementHttp(req: Request, me, { reads, service, operati
       }
       if (path === 'devices') return managementJson(await reads.devices(q, context));
       if (path === 'children') return managementJson(await reads.children(q, context));
-      if (path.startsWith('devices/')) return managementJson(await reads.device(path.slice(8), q, context));
+      if (path.startsWith('devices/')) {
+        const id=path.slice(8),result=await reads.device(id,q,context);
+        if(service.configured())try{result['delivery']=await service.deviceDelivery(id);}catch{result.quality.push('device-delivery-unavailable');}
+        return managementJson(result);
+      }
       if (path === 'activities') return managementJson({ schemaVersion: 1, generatedAt: new Date().toISOString(), activities: catalogue(), quality: ['static-source-catalogue'] });
       if (path.startsWith('activities/')) {
         const result = await reads.activity(path.slice(11), q, context);

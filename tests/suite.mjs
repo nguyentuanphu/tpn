@@ -22,7 +22,7 @@ const JOBS = Math.max(1, Number(opt('--jobs', 3)) || 3), CHANGED = flag('--chang
 const SOLO = ['perf', 'startup', 'battery'];
 // (13 Oct trial: 3 at once overloaded the machine when these ran side by side) the heavy checks share one lane, one after
 // another; the everyday checks share the other lanes
-const HEAVY = ['ownerstudioperms', 'ownerstudiofolds', 'ownerround', 'ownerfamily', 'ownercapture', 'films', 'testerrewards', 'reading', 'facetoface', 'phone', 'chapter2', 'chapter3', 'studio', 'voicearea', 'solid', 'nametags', 'migrate', 'testerreport', 'camera', 'spill', 'games'];
+const HEAVY = ['ownerdesk', 'ownerstudioperms', 'ownerstudiofolds', 'ownerround', 'ownerfamily', 'ownercapture', 'films', 'testerrewards', 'reading', 'facetoface', 'phone', 'chapter2', 'chapter3', 'studio', 'voicearea', 'solid', 'nametags', 'migrate', 'testerreport', 'camera', 'spill', 'games'];
 // the slowest checks and the files that are theirs: in full when one of these changed, a sample otherwise
 const SLOW_OWN = {
   reading: [/^js\/games\/reading/, /^js\/content\/reading/],

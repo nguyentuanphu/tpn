@@ -120,3 +120,22 @@ test('fixed tester report is fixed in code, with deployment and verification exp
 test('management reads do not write source records or mutate injected objects',async()=>{
   const store=mem(entries());const before=JSON.stringify([...store.data]);await service(store).overview(period);await service(store).devices(period);assert.equal(JSON.stringify([...store.data]),before);
 });
+
+test('daily chart series separates missing days, observed inactivity and unique active installations',async()=>{
+  const previous=new Date(Date.parse(DATE)-864e5).toISOString().slice(0,10),missing=new Date(Date.parse(DATE)-2*864e5).toISOString().slice(0,10);
+  const store=mem({...entries(),['d/'+DATE+'/demo12345679']:record({mins:20}),['info/demo12345679']:info(),['d/'+previous+'/'+ID]:record({mins:0,tales:0,games:{}})});
+  const result=await service(store).overview({from:missing,to:DATE});
+  assert.deepEqual(result.dailySeries.map(d=>[d.date,d.activeDevices,d.mins]),[[missing,null,null],[previous,0,0],[DATE,2,30]]);
+  assert.equal(result.dailySeries[2].reportingBuckets,2);
+  const filtered=await service(store).overview({from:missing,to:DATE,build:'v1.02'});assert.ok(filtered.dailySeries.every(d=>d.activeDevices===null));
+});
+
+test('private device history and problem associations do not include a different installation',async()=>{
+  const other='demo12345679',tester=mem({
+    'p/1234567890abcdef':{k:'1234567890abcdef',title:'Matching synthetic problem',devices:[ID],firstAt:Date.parse(DATE+'T10:00:00Z'),lastAt:Date.parse(DATE+'T11:00:00Z')},
+    'p/1234567890abcdea':{k:'1234567890abcdea',title:'Other device private problem',devices:[other],firstAt:Date.parse(DATE+'T10:00:00Z'),lastAt:Date.parse(DATE+'T11:00:00Z')}});
+  const store=mem({...entries(),...entries(other,record({mins:99}))}),read=service(store,{testerStore:tester});
+  const result=await read.device(ID,period,{includeProfileContext:true});assert.equal(result.dailySeries[0].mins,10);
+  assert.deepEqual(result.relatedIssues.map(i=>i.title),['Matching synthetic problem']);
+  const noTester=await service(store).device(ID,period,{includeProfileContext:true});assert.deepEqual(noTester.relatedIssues,[]);assert.ok(noTester.quality.includes('tester-source-unavailable'));
+});

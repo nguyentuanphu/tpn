@@ -16,6 +16,21 @@ const owner={name:'owner',role:'owner'}, summary={name:'summary',role:'custom',p
 const reads={overview:async()=>({totals:{devices:1}}),devices:async(_q,options)=>({devices:[{id:'demo12345678',days:1,...(options?.includeProfileContext?{children:[{name:'Demo'}]}:{})}],nextCursor:null})};
 const fixture=()=>({reads,service:createManagementService({database:new MemoryManagementTestDatabase(),initialConfig:async()=>({releases:{},festivals:{},content:{}}),projector:async c=>({revision:c.revision,effectiveHash:c.effectiveHash})})});
 
+test('device delivery exposes only its exact current revision receipt, never another device or operator audit',async()=>{
+ const f=fixture(),id='demo12345678',other='demo12345679';
+ await f.service.changeConfig({scopeKey:'global',expectedRevision:0,kind:'rules',body:{releases:{}},reason:'Synthetic delivery check',eligibleDeviceIds:[id,other]},'private-operator');
+ await f.service.projectLatest();const c=await f.service.getConfig();
+ await f.service.receiveConfigReceipt({schemaVersion:1,deviceId:other,scopeKey:'global',revision:c.revision,effectiveHash:c.effectiveHash,fetchedAt:new Date().toISOString(),appliedAt:new Date().toISOString(),result:'applied',reasonCode:'none'});
+ const missing=await f.service.deviceDelivery(id);assert.equal(missing.target.revision,1);assert.equal(missing.receipt,null);assert.equal(missing.target.state,'available');
+ assert.ok(!JSON.stringify(missing).includes(other));assert.ok(!JSON.stringify(missing).includes('private-operator'));
+ const observed=await f.service.deviceDelivery(other);assert.equal(observed.receipt.result,'applied');
+ await f.service.changeConfig({scopeKey:'global',expectedRevision:1,kind:'rules',body:{releases:{}},reason:'New revision without receipt'},'private-operator');
+ const newer=await f.service.deviceDelivery(other);assert.equal(newer.target.revision,2);assert.equal(newer.receipt,null);assert.equal(newer.target.state,'pending_projection');
+ const dependencies={...f,reads:{...reads,device:async()=>({quality:[],device:{id}})}};
+ assert.equal((await managementHttp(request('devices/'+id),summary,dependencies)).status,403);
+ const response=await managementHttp(request('devices/'+id),owner,dependencies);assert.equal(response.status,200);assert.equal((await response.json()).delivery.target.revision,2);
+});
+
 test('management private routes require explicit grants; old editor and desktop key do not gain access',async()=>{
   for(const me of [{role:'editor',perms:PRESETS.editor},{role:'exe',perms:[]},{role:'viewer',perms:PRESETS.viewer}]) {
     assert.equal((await managementHttp(request('overview'),me,fixture())).status,403);

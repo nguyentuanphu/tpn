@@ -1,4 +1,5 @@
 import { mountFinance } from './finance.js';
+import { deskChart } from './desk-charts.js';
 // Private Studio management views. The game and public website never import this module.
 // Both Studio modes inject their existing authenticated API and EN/VI translator.
 export type ManagementKind = 'overview' | 'devices' | 'device' | 'children' | 'activities' | 'activity' | 'attention' | 'release' | 'operations' | 'changes' | 'finance';
@@ -12,6 +13,7 @@ export type ManagementOptions = {
   build?: string;
   online?: boolean;
   can?(permission: string): boolean;
+  area?: string;
   go?(kind: ManagementKind, id?: string, query?: ManagementQuery): void;
   navigate?(kind: ManagementKind, id?: string, query?: ManagementQuery): void;
 };
@@ -143,12 +145,14 @@ export async function renderManagement(P: HTMLElement, options: ManagementOption
     activities:['Activity catalogue','Danh mục hoạt động'], activity:['Activity details','Chi tiết hoạt động'], attention:['Needs attention','Cần xem xét'],
     release:['Release evidence','Bằng chứng phát hành'], operations:['Operations','Vận hành'], changes:['Configuration changes','Thay đổi cấu hình'],finance:['Finance','Tài chính']
   };
-  const navigation: ManagementKind[] = ['overview','devices','activities','attention','release','changes'];
+  let navigation: ManagementKind[] = ['overview','devices','activities','attention','release','changes'];
   if(options.can?.('finance.read')) navigation.push('finance');
   if(options.can?.('operations.read')) navigation.push('operations');
   if(profileContext)navigation.splice(2,0,'children');
+  if(options.area){const areas:Record<string,ManagementKind[]>={people:['devices','children'],game:['activities'],work:['attention','release','changes','operations','overview'],money:['finance']};navigation=navigation.filter(k=>(areas[options.area!]||[]).includes(k)&&options.can?.(k==='children'?'management.deviceDetail':k==='operations'?'operations.read':k==='finance'?'finance.read':'management.read'));}
   P.innerHTML = `<div class="mg-root"><h2>${esc(T(...labels[kind]))}</h2><p class="sub">${esc(T('Private management information for authorised Studio accounts. Child names stay associated with their reporting device.', 'Thông tin quản lý riêng cho tài khoản Studio được phép. Tên các con luôn gắn với máy gửi báo cáo.'))}</p><nav class="mg-nav" aria-label="${esc(T('Management views','Các trang quản lý'))}">${navigation.map(k => `<button type="button" class="btn small ${kind===k || kind==='device'&&k==='devices' || kind==='activity'&&k==='activities' ? '' : 'ghost'}" data-mg-nav="${k}">${esc(T(...labels[k]))}</button>`).join('')}</nav><form class="card mg-filters"><label>${esc(T('Period','Khoảng ngày'))}<select name="days">${['1','7','30'].map(d=>`<option value="${d}" ${q.days===d?'selected':''}>${esc(T(d+' day'+(d==='1'?'':'s'),d+' ngày'))}</option>`).join('')}</select></label><label>${esc(T('Build','Phiên bản'))}<input name="build" type="text" value="${esc(q.build)}" placeholder="${esc(T('All builds','Mọi phiên bản'))}" maxlength="24"></label><label>${esc(T('Traffic','Loại báo cáo'))}<select name="traffic">${['ordinary','authorised_test','synthetic_bot'].map(v=>`<option value="${v}" ${q.traffic===v?'selected':''}>${esc(trafficLabel(v,T))}</option>`).join('')}</select></label>${kind==='devices'||kind==='children' ? `<label class="mg-filter-search">${esc(T('Find a child or device','Tìm tên bé hoặc thiết bị'))}<input name="search" type="search" value="${esc(q.search)}" placeholder="${esc(T('Child name, device name or ID','Tên bé, tên máy hoặc mã máy'))}"></label><label>${esc(T('Device type','Loại thiết bị'))}<select name="deviceClass">${[['','All devices','Mọi thiết bị'],['phone','Phone','Điện thoại'],['tablet','Tablet','Máy tính bảng'],['computer','Computer','Máy tính']].map(([v,en,vi])=>`<option value="${v}" ${q.deviceClass===v?'selected':''}>${esc(T(en,vi))}</option>`).join('')}</select></label>` : ''}<button class="btn small" type="submit">${esc(T('Apply filters','Áp dụng bộ lọc'))}</button></form><div class="mg-content" aria-live="polite"><div class="card mg-loading" role="status">${esc(T('Loading reporting evidence…','Đang tải bằng chứng báo cáo…'))}</div></div></div>`;
   const root = P.querySelector<HTMLElement>('.mg-root'); if (!root) return;
+  if(options.area){const nav=root.querySelector('.mg-nav');if(nav&&navigation.length>1){const tools=document.createElement('details'),summary=document.createElement('summary');tools.className='mg-area-tools';summary.textContent=T('Related tools in this area','Công cụ liên quan trong mục này');nav.before(tools);tools.append(summary,nav);}else nav?.remove();}
   root.querySelectorAll<HTMLButtonElement>('[data-mg-nav]').forEach(b => { b.onclick = () => { const k = b.dataset.mgNav || ''; if (validKind(k)) navigate(k); }; });
   if(kind==='finance'){root.querySelector('.mg-filters')?.remove();await mountFinance(root.querySelector<HTMLElement>('.mg-content')!,options,q,next=>navigate('finance','',next));return;}
   const form = root.querySelector<HTMLFormElement>('form');
@@ -187,6 +191,17 @@ export async function renderManagement(P: HTMLElement, options: ManagementOption
     if (kind === 'operations') content = renderOperations(data,T);
     if (kind === 'changes') content = renderChanges(data,T,options.can);
     body.innerHTML = provenance(data,T)+content;
+    if(kind==='device'){
+      const series=rows(data.dailySeries),d=object(data.device),delivery=object(data.delivery),target=object(delivery.target),receipt=object(delivery.receipt);
+      body.insertAdjacentHTML('beforeend',deskChart({id:'G04',title:T('Reported play on this installation','Thời gian chơi được báo cáo trên bản cài đặt này'),unit:T('Minutes per device-local day','Phút theo ngày của máy'),points:series.map(v=>({label:text(v.date),value:finite(v.mins)})),line:true,
+        explanation:T('Device totals count reported active minutes, not total screen time or one child’s exact timeline. Missing retained buckets remain unavailable.','Tổng máy đếm phút hoạt động có báo cáo, không phải tổng thời gian màn hình hoặc dòng thời gian chính xác của một bé. Ngày thiếu dữ liệu lưu vẫn chưa có số liệu.'),source:'L01 · DAY-01/03 · management/devices/:id',limit:T('Selected installation and reporting period only.','Chỉ bản cài đặt và khoảng báo cáo đã chọn.')},T));
+      body.insertAdjacentHTML('beforeend',`<section class="card"><h3>${esc(T('Configuration delivery for this device','Cung cấp cấu hình cho máy này'))}</h3><p>${esc(target.revision?T('Current global snapshot revision','Phiên bản cấu hình toàn cục hiện tại')+' '+text(target.revision):T('No current configuration target is available.','Chưa có cấu hình đích hiện tại.'))}</p>${target.revision?`<p>${badge(target.state==='available'?'available':'pending',T)} ${badge(receipt.result||'unknown',T)}</p>`:''}<p class="note">${esc(T('This checks the current global snapshot, independent of the activity period above. Applied means this installation reported persisting the exact revision/hash; it does not prove every feature is available or every open screen has refreshed.','Kiểm tra cấu hình toàn cục hiện tại, độc lập kỳ hoạt động bên trên. Áp dụng nghĩa là bản cài đặt báo đã lưu đúng phiên bản/hàm băm; không chứng minh mọi tính năng đã mở hay màn hình đã làm mới.'))}</p>${options.can?.('management.read')?`<button class="btn small ghost" data-mg-open="changes">${esc(T('Inspect configuration history','Xem lịch sử cấu hình'))}</button>`:''}</section>`);
+      const issues=rows(data.relatedIssues);
+      body.insertAdjacentHTML('beforeend',`<section class="card"><h3>${esc(T('Problem evidence linked to this device','Bằng chứng vấn đề gắn với máy này'))}</h3>${issues.length?issues.map(i=>`<p><b>${esc(i.title||T('Reported problem','Vấn đề được báo cáo'))}</b> ${badge(i.status,T)} ${options.can?.('management.read')?`<button class="btn small ghost" data-mg-open="attention" data-mg-id="${esc(i.id)}">${esc(T('Open follow-up','Mở theo dõi'))}</button>`:''}</p>`).join(''):`<p>${esc(T('No permitted matching problem evidence was returned. Missing access and capped source device lists can hide associations.','Không có bằng chứng vấn đề phù hợp được phép trả về. Thiếu quyền hoặc danh sách máy bị giới hạn có thể che mất liên kết.'))}</p>`}<p class="note">${esc(T('Original private tester access is required. An observation alone does not prove the cause.','Cần quyền xem báo cáo người thử riêng. Một quan sát chưa chứng minh nguyên nhân.'))}</p></section>`);
+    }
+    if(kind==='changes'){
+      const latest=rows(data.changes)[0];if(latest)body.insertAdjacentHTML('afterbegin',deskChart({id:'G17',title:T('Latest revision: reporting cohort delivery','Phiên bản mới nhất: cung cấp cho nhóm báo cáo'),unit:T('Reporting installations in the fixed cohort','Bản cài đặt gửi báo cáo trong nhóm cố định'),points:['applied','rejected','unsupported','unconfirmed'].map(key=>({label:statusLabel(key==='unconfirmed'?'unknown':key,T),value:finite(latest[key])})),explanation:T('Exact revision/hash receipts are counted only within the reporting cohort fixed at save. Later revisions are not automatically counted as applied to this one.','Chỉ đếm biên nhận đúng phiên bản/hàm băm trong nhóm báo cáo cố định lúc lưu. Phiên bản mới hơn không tự được tính là đã áp dụng cho bản này.'),source:'L05 / L06 · CFG / RCPT · management/config',limit:T('Self-reported persistence; no receipt means unconfirmed.','Máy tự báo đã lưu; thiếu biên nhận nghĩa là chưa xác nhận.')},T));
+    }
     body.querySelectorAll<HTMLButtonElement>('[data-mg-open]').forEach(b => { b.onclick = () => {
       const k = b.dataset.mgOpen || ''; if (validKind(k)) navigate(k,b.dataset.mgId || '');
     }; });
@@ -195,6 +210,7 @@ export async function renderManagement(P: HTMLElement, options: ManagementOption
     if (lookup) lookup.onsubmit = e => { e.preventDefault(); const value = new FormData(lookup).get('activityId'); if(typeof value==='string' && value.trim()) navigate('activity',value.trim()); };
     if (kind === 'attention' && data.transactional === true && options.can?.('management.triage')) {
       mountAttentionEditor(body, data, options, () => navigate('attention', '', q));
+      if(id){const problem=body.querySelector<HTMLSelectElement>('[name=problem]');if(problem&&[...problem.options].some(o=>o.value===id)){problem.value=id;problem.dispatchEvent(new Event('change'));}}
     }
     if (kind === 'changes' && !id && data.configured === true && options.can?.('management.configure')) {
       await mountConfigEditor(body, data, options, () => navigate('changes', '', q));

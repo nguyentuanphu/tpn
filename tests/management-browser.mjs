@@ -8,6 +8,16 @@ import { MemoryManagementTestDatabase } from '../netlify/lib/management/storage/
 import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mjs';
 
 export async function managementBrowserCheck(browser) {
+  // The redesign replaces the old cross-area management menu with the five primary areas.
+  async function openTool(page,kind){
+    const pages={devices:['people','managementdevices'],activities:['game','managementactivities'],attention:['work','managementattention'],changes:['work','managementchanges'],operations:['work','managementoperations'],overview:['work','management'],finance:['money','money']};
+    const [area,target]=pages[kind];await page.locator('#tabs [data-k="'+area+'"]').click();if(kind==='finance'){await page.waitForSelector('[data-fin-period]');return;}
+    await page.waitForSelector('.desk-root .desk-tools');
+    const tool=page.locator('.desk-root [data-desk-route="'+target+'"]:visible').first();
+    if(!await tool.count())await page.locator('.desk-tools > summary').click();
+    await page.locator('.desk-root [data-desk-route="'+target+'"]:visible').first().click();
+  }
+
   const repo='family/management-validation',password='synthetic-management-password',site='http://localhost:8796';
   const gh=fakeGitHub(repo,{'content/custom.json':'{}','js/build.js':fs.readFileSync('../js/build.js')});
   const unroute=routeGitHub(gh),players=memoryBlobs(),today=new Date().toISOString().slice(0,10),id='demo12345678';
@@ -42,20 +52,20 @@ export async function managementBrowserCheck(browser) {
           await page.evaluate(()=>{location.hash='players/management';});
           await page.waitForSelector('.mg-content .mg-grid');
           assert.equal(await page.locator('.mg-error').count(),0);
-          await page.click('[data-mg-nav=devices]');await page.waitForSelector('[data-mg-open=device]');
+          await openTool(page,'devices');await page.waitForSelector('[data-mg-open=device]');
           assert.match(await page.locator('.mg-content').innerText(),/Demo/);
           await page.click('[data-mg-open=device]');await page.waitForSelector('.mg-child');
           assert.match(await page.locator('.mg-child').innerText(),/Demo/);
           assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'device details overflow');
           const filename=`${lang}-${width}-device.png`;await page.screenshot({path:path.join(output,filename),fullPage:true});captures.push(filename);
-          await page.click('[data-mg-nav=activities]');await page.waitForSelector('[data-mg-lookup]');
+          await openTool(page,'activities');await page.waitForSelector('[data-mg-lookup]');
           await page.locator('[name=activityId]').fill('oanquan');await page.locator('[data-mg-lookup] button').click();
           await page.waitForSelector('.mg-content .mg-facts');assert.equal(await page.locator('.mg-error').count(),0);
-          await page.click('[data-mg-nav=devices]');await page.waitForSelector('[data-mg-open=device]');
+          await openTool(page,'devices');await page.waitForSelector('[data-mg-open=device]');
           await page.locator('[name=search]').fill('nonexistent-synthetic');await page.locator('.mg-filters button').click();
           await page.waitForFunction(()=>!document.querySelector('[data-mg-open=device]')&&!document.querySelector('.mg-loading'));
           assert.equal(await page.locator('.mg-error').count(),0,'same-page filter navigation must reload');
-          await page.click('[data-mg-nav=attention]');await page.waitForSelector('[name=problem]');
+          await openTool(page,'attention');await page.waitForSelector('[name=problem]');
           await page.waitForFunction(()=>!!document.querySelector('.mg-attention h3')?.closest('details.fold'));
           const attentionFold=page.locator('.mg-attention details.fold').first();
           await attentionFold.locator(':scope > summary').click();
@@ -65,7 +75,7 @@ export async function managementBrowserCheck(browser) {
           await page.locator('[name=owner]').fill('Synthetic operator');await page.locator('[name=nextAction]').fill('Retest the reported activity');
           await page.locator('[name=reason]').fill('Synthetic triage validation');await page.locator('.mg-editor button[type=submit]').click();
           await page.waitForFunction(()=>document.querySelector('.mg-attention')?.textContent.includes('Synthetic operator'));
-          await page.click('[data-mg-nav=changes]');await page.waitForSelector('[name=configBody]');
+          await openTool(page,'changes');await page.waitForSelector('[name=configBody]');
           await page.waitForFunction(()=>!!document.querySelector('[name=configBody]')?.value);
           const before=await page.locator('[name=configBody]').inputValue();
           await page.locator('[name=configBody]').fill(JSON.stringify({...JSON.parse(before),releases:{managementTelemetry:{on:true}}}));
@@ -74,24 +84,24 @@ export async function managementBrowserCheck(browser) {
           const publicLive=await (await context.request.get(site+'/api/live')).json();
           assert.ok(publicLive.management.revision>0);assert.equal(publicLive.releases.managementTelemetry.on,true);
           const blocked=await context.request.post(site+'/studio/api/live',{headers:{'X-Studio':'1'},data:{releases:{}}});assert.equal(blocked.status(),409);
-          await page.click('[data-mg-nav=operations]');await page.waitForSelector('[name=operationKind]');
+          await openTool(page,'operations');await page.waitForSelector('[name=operationKind]');
           assert.match(await page.locator('.mg-content').innerText(),/4[,.]990/);
           if(width===390&&lang==='en'){
             await page.locator('[name=operationReason]').fill('Synthetic browser operation');await page.locator('.mg-editor button[type=submit]').click();
             await page.waitForFunction(()=>/Recorded operation/.test(document.querySelector('[data-operation-result]')?.textContent||''));
             assert.match(await page.locator('[data-operation-result]').innerText(),/Succeeded/);
-            await page.click('[data-mg-nav=overview]');await page.waitForSelector('.mg-content .mg-grid');
-            await page.click('[data-mg-nav=operations]');await page.waitForSelector('[name=operationKind]');
+            await openTool(page,'overview');await page.waitForSelector('.mg-content .mg-grid');
+            await openTool(page,'operations');await page.waitForSelector('[name=operationKind]');
             await page.selectOption('[name=operationKind]','bot');await page.locator('[name=operationReason]').fill('Synthetic bounded bot request');
             await page.locator('.mg-editor button[type=submit]').click();await page.waitForFunction(()=>/Recorded operation/.test(document.querySelector('[data-operation-result]')?.textContent||''));
             assert.match(await page.locator('[data-operation-result]').innerText(),/Queued/);assert.equal(sends,1);
-            await page.click('[data-mg-nav=overview]');await page.waitForSelector('.mg-content .mg-grid');
-            await page.click('[data-mg-nav=operations]');await page.waitForSelector('[name=operationKind]');
+            await openTool(page,'overview');await page.waitForSelector('.mg-content .mg-grid');
+            await openTool(page,'operations');await page.waitForSelector('[name=operationKind]');
             assert.match(await page.locator('.mg-content').innerText(),/42/);assert.match(await page.locator('.mg-content').innerText(),/Failed/);
           }
           assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'operations overflow');
           const opsFilename=`${lang}-${width}-operations.png`;await page.screenshot({path:path.join(output,opsFilename),fullPage:true});captures.push(opsFilename);
-          await page.click('[data-mg-nav=finance]');
+          await openTool(page,'finance');
           if(width===390&&lang==='en'){
             await page.waitForSelector('[data-fin-setup]');await page.locator('[data-fin-setup] [name=reason]').fill('Synthetic ledger setup');await page.locator('[data-fin-setup] button').click();
             await page.waitForSelector('[data-fin-line]');
@@ -99,10 +109,10 @@ export async function managementBrowserCheck(browser) {
             for(const [name,value]of Object.entries({provider:'Netlify',accountAlias:'synthetic-browser',sourceDocumentId:'browser-invoice',sourceLineId:'line-1',amount:'42.50',tax:'4.25',reason:'Synthetic browser invoice'}))await f.locator('[name='+name+']').fill(value);
             await f.locator('[name=reconciled]').check();await f.locator('button[type=submit]').click();await page.waitForSelector('[data-fin-confirm]');await page.click('[data-fin-confirm]');
             await page.waitForFunction(()=>document.querySelector('[data-fin-save-result]')?.textContent.includes('Saved'));
-            await page.click('[data-mg-nav=overview]');await page.waitForSelector('.mg-grid');await page.click('[data-mg-nav=finance]');await page.waitForSelector('[data-fin-edit]');
+            await openTool(page,'overview');await page.waitForSelector('.mg-grid');await openTool(page,'finance');await page.waitForSelector('[data-fin-edit]');
             assert.match(await page.locator('[data-fin-main]').innerText(),/AUD 42.50/);
             await page.click('[data-fin-edit]');await page.locator('[data-fin-line] [name=amount]').fill('50.25');await page.locator('[data-fin-line] [name=reason]').fill('Synthetic corrected invoice');await page.locator('[data-fin-line] button[type=submit]').click();await page.waitForSelector('[data-fin-confirm]');await page.click('[data-fin-confirm]');await page.waitForFunction(()=>document.querySelector('[data-fin-save-result]')?.textContent.includes('Saved'));
-            await page.click('[data-mg-nav=overview]');await page.waitForSelector('.mg-grid');await page.click('[data-mg-nav=finance]');await page.waitForSelector('[data-fin-history]');await page.click('[data-fin-history]');
+            await openTool(page,'overview');await page.waitForSelector('.mg-grid');await openTool(page,'finance');await page.waitForSelector('[data-fin-history]');await page.click('[data-fin-history]');
             await page.waitForFunction(()=>document.querySelector('[data-fin-history-result]')?.textContent.includes('Synthetic corrected invoice'));
             assert.match(await page.locator('[data-fin-main]').innerText(),/AUD 50.25/);
             const csvResponse=await context.request.get(site+'/studio/api/management/finance/export');assert.equal(csvResponse.status(),200);assert.equal(csvResponse.headers()['cache-control'],'private, no-store');

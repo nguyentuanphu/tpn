@@ -213,8 +213,11 @@ marketing/source/runvalley.log
 /js/world.js
 /js/worldedit.js
 /studio/ui/app.js
+/studio/ui/brand.js
+/studio/ui/desk-charts.js
 /studio/ui/finance.js
 /studio/ui/management.js
+/studio/ui/owner-desk.js
 /sw.js
 # --- end of tools/build.mts ---
 # --- made by tools/build.mts from .ts files (never committed; do not edit by hand) ---

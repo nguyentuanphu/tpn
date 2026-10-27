@@ -40,6 +40,13 @@ async function mapPool<T,R>(items:T[],fn:(v:T)=>Promise<R>,limit=16):Promise<R[]
 }
 const active = (r:Record<string,any>) => count(r.mins)>0 || sumValues(r.games)>0 || count(r.tales)>0;
 const dateRange = (q:ManagementQuery) => {const a:string[]=[];for(let t=Date.parse(q.from);t<=Date.parse(q.to);t+=864e5)a.push(day(t));return a;};
+// Absence of a retained bucket is unknown, not a measured inactive day.
+const dailySeries=(q:ManagementQuery,records:Daily[])=>dateRange(q).map(date=>{
+  const daily=records.filter(d=>d.date===date),known=daily.length>0;
+  return {date,reportingBuckets:daily.length,activeDevices:known?new Set(daily.filter(d=>active(d.value)).map(d=>d.id)).size:null,
+    mins:known?daily.reduce((n,d)=>n+count(d.value.mins),0):null,
+    errors:known?daily.reduce((n,d)=>n+sumValues(d.value.errs),0):null};
+});
 const statuses:Record<string,string>={new:'observed',fixing:'fixing',fixed:'fixed_in_code',confirmed:'verified',back:'reopened',notbug:'dismissed',dup:'duplicate'};
 const safeBuilds = (v:unknown) => Array.isArray(v)?[...new Set(v.filter(isBuild))]:[];
 
@@ -119,10 +126,11 @@ export function createManagementReadService(deps:Dependencies) {
     return [metric('M13','Website page views',views,'events',views,'Best-effort UTC-day page-view events, not unique visitors. Legacy device days differ.'),metric('M14','Website Play clicks',clicks,'clicks',clicks,'A Play click is not a confirmed successful game start.'),metric('M15','Website active reading time',seconds,'seconds',rows.filter(r=>Object.keys(r).length).length,'Best-effort UTC-day counts, not a complete visitor/session funnel.')];
   }
   async function catalogue(){const a=typeof deps.catalogue==='function'?await deps.catalogue():deps.catalogue||[];return Array.isArray(a)?a.filter(x=>x&&typeof x.id==='string'&&PROFILE.test(x.id)):[];}
-  async function issueRows(q:ManagementQuery){
+  async function issueRows(q:ManagementQuery,deviceId?:string){
     if(!deps.testerStore)return {items:[],quality:['tester-source-unavailable']};
     const s=await resolve(deps.testerStore), kk=await keys(s,'p/'), values=await mapPool(kk,k=>readJson(s,k)), items:Record<string,any>[]=[];
     for(const v of values){
+      if(deviceId&&(!Array.isArray(v.devices)||!v.devices.includes(deviceId)))continue;
       if(!/^[0-9a-f]{16}$/.test(v.k||''))continue;
       const lastAt=count(v.lastAt), firstAt=count(v.firstAt), builds=safeBuilds(v.builds), activityId=safeText(object(v.where).game,60);
       if(!lastAt||day(lastAt)<q.from||day(lastAt)>q.to||(q.build!=='all'&&!builds.includes(q.build)))continue;
@@ -141,11 +149,11 @@ export function createManagementReadService(deps:Dependencies) {
     const attentionSupported=!!deps.testerStore&&q.traffic==='ordinary'&&q.deviceClass==='all';
     const attention=attentionSupported?await issueRows({...q,cursor:'',search:'',child:'',status:'all'}):{items:[],quality:['tester-scope-unavailable']}, errors=rs.reduce((n,r)=>n+sumValues(r.errs),0),errorIds=new Set(s.daily.filter(d=>sumValues(d.value.errs)>0&&active(d.value)).map(d=>d.id));
     metrics.push(metric('M38','Affected-device error proportion',activeDevices?errorIds.size/activeDevices:null,'ratio',activeDevices,'Reporting active installations with observed game-code errors; not crash-free sessions.'));
-    return {...envelope(q,[...s.quality,...attention.quality]),metrics,totals:{devices:s.devices.length,activeDevices,mins:rs.reduce((n,r)=>n+count(r.mins),0),tales:rs.reduce((n,r)=>n+count(r.tales),0),onlineMins:rs.reduce((n,r)=>n+count(r.online),0),errors,stuck:rs.reduce((n,r)=>n+sumValues(r.stuck),0),activityStarts:rs.reduce((n,r)=>n+sumValues(r.games),0)},cards:[{id:'attention',status:attentionSupported?'observed':'unavailable',metricIds:[]},{id:'audience',status:'observed',metricIds:['M01','M02','M03']},{id:'experience',status:'observed',metricIds:['M08','M09','M10','M12','M38']},{id:'content',status:'observed',metricIds:['M04','M07']},{id:'release',status:'unavailable',metricIds:['M24']},{id:'operations',status:'unavailable',metricIds:[]}],attention:{open:attentionSupported?attention.items.filter(p=>!['verified','dismissed','duplicate'].includes(p.status)).length:null},capabilities:{exactAttempts:false,retention:false,finance:false}};
+    return {...envelope(q,[...s.quality,...attention.quality]),metrics,dailySeries:dailySeries(q,s.daily),totals:{devices:s.devices.length,activeDevices,mins:rs.reduce((n,r)=>n+count(r.mins),0),tales:rs.reduce((n,r)=>n+count(r.tales),0),onlineMins:rs.reduce((n,r)=>n+count(r.online),0),errors,stuck:rs.reduce((n,r)=>n+sumValues(r.stuck),0),activityStarts:rs.reduce((n,r)=>n+sumValues(r.games),0)},cards:[{id:'attention',status:attentionSupported?'observed':'unavailable',metricIds:[]},{id:'audience',status:'observed',metricIds:['M01','M02','M03']},{id:'experience',status:'observed',metricIds:['M08','M09','M10','M12','M38']},{id:'content',status:'observed',metricIds:['M04','M07']},{id:'release',status:'unavailable',metricIds:['M24']},{id:'operations',status:'unavailable',metricIds:[]}],attention:{open:attentionSupported?attention.items.filter(p=>!['verified','dismissed','duplicate'].includes(p.status)).length:null},capabilities:{exactAttempts:false,retention:false,finance:false}};
   }
   async function devices(raw:URLSearchParams|Record<string,unknown>={},options:ReadOptions={}){const q=query(raw),s=await snapshot(q,options),p=pageRows(s.devices as {id:string,sortAt:string}[],q,'devices');return {...envelope(q,s.quality),devices:p.rows.map(({sortAt,...v})=>v),total:p.total,nextCursor:p.nextCursor};}
   async function device(id:string,raw:URLSearchParams|Record<string,unknown>={},options:ReadOptions={}){
-    if(!DEVICE.test(id))throw new ManagementReadError('invalid_device','Invalid installation ID.');const q=query(raw),s=await snapshot(q,options),d=s.devices.find(d=>d.id===id);if(!d)throw new ManagementReadError('device_not_found','Installation not found in this scope.',404);const {sortAt,...v}=d;return {...envelope(q,s.quality),device:v};
+    if(!DEVICE.test(id))throw new ManagementReadError('invalid_device','Invalid installation ID.');const q=query(raw),s=await snapshot(q,options),d=s.devices.find(d=>d.id===id);if(!d)throw new ManagementReadError('device_not_found','Installation not found in this scope.',404);const {sortAt,...v}=d;const related=q.traffic==='ordinary'?await issueRows({...q,search:'',child:'',status:'all'},id):{items:[],quality:['tester-scope-unavailable']};return {...envelope(q,[...s.quality,...related.quality]),device:v,dailySeries:dailySeries(q,s.daily.filter(row=>row.id===id)),relatedIssues:related.items.slice(0,20)};
   }
   async function children(raw:URLSearchParams|Record<string,unknown>={},options:ReadOptions={}){
     if(!options.includeProfileContext)throw new ManagementReadError('permission_required','Child and device information requires restricted device-detail permission.',403);

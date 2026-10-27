@@ -168,6 +168,21 @@ export function createManagementService(options:Options={}) {
     });
   }
 
+  /** Private device detail: only the current public global snapshot and this device's matching receipt. */
+  async function deviceDelivery(deviceId:string) {
+    if(!DEVICE.test(deviceId))fail('invalid_device');
+    return db().transaction([],async tx=>{
+      const raw=await tx.get('configs','global');if(!raw)return {scopeKey:'global',target:null,receipt:null};
+      const current=config(raw),job=await tx.get('projection_jobs','global');
+      const saved=await tx.get('receipts',deviceId+'|'+configKey('global',current.revision));
+      const receipt=saved?.effectiveHash===current.effectiveHash?{revision:saved.revision,effectiveHash:saved.effectiveHash,fetchedAt:saved.fetchedAt,appliedAt:saved.appliedAt,result:saved.result,reasonCode:saved.reasonCode}:null;
+      return {scopeKey:'global',target:{revision:current.revision,effectiveHash:current.effectiveHash,
+        state:job?.state==='available'&&job.targetRevision===current.revision?'available':'pending_projection',
+        availableAt:job?.targetRevision===current.revision?job.availableAt??null:null},receipt,
+        quality:['global-snapshot-not-per-feature-entitlement','self-reported-persistence-not-screen-redraw']};
+    });
+  }
+
   const attentionStates=['observed','investigating','reproduced','fixing','fixed_in_code','deployed','verified','reopened','dismissed','duplicate'];
   const transitions:Record<string,string[]>={observed:['investigating','dismissed','duplicate'],investigating:['reproduced','dismissed','duplicate'],reproduced:['fixing','dismissed','duplicate'],fixing:['fixed_in_code','investigating'],fixed_in_code:['deployed','fixing'],deployed:['verified','reopened'],verified:['reopened'],reopened:['investigating','fixing'],dismissed:['reopened'],duplicate:['reopened']};
   async function updateAttention(id:string,input:unknown,actor:string) {
@@ -239,5 +254,5 @@ export function createManagementService(options:Options={}) {
     const selected=keys?events.filter(e=>keys.has(e.deviceId+'|'+e.attemptId)):events;
     return {...managementOutcomes(selected,{from,to,now:now()}),environment,traffic,generatedAt:iso(now())};
   }
-  return {configured,ingestEvents,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary,eventSummary};
+  return {configured,ingestEvents,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,deviceDelivery,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary,eventSummary};
 }

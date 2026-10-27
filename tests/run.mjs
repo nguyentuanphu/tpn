@@ -13,6 +13,7 @@ import { groundAudit } from './world-audit.mjs';
 import { studioCheck } from './studio-check.mjs';
 import { studioRepairCheck } from './studio-repair-check.mjs';
 import { managementBrowserCheck } from './management-browser.mjs';
+import { ownerDeskBrowserCheck } from './owner-desk-browser.mjs';
 // (round R privacy) friends save each other's device key when they first play together (＋👫); two test devices that are
 // already friends by code get each other's key here, the way that first game would have given it
 // the text of an element with each swapped drawing read back as its emoji (js/emojiswap.js keeps it in data-e)
@@ -1006,6 +1007,7 @@ await check('studio', async () => {
 
 await check('ownerstudiofailures', async () => studioRepairCheck(b));
 await check('managementstudio', async () => managementBrowserCheck(b));
+await check('ownerdesk', async () => ownerDeskBrowserCheck(b));
 
 await check('ground', async () => {
   // every building on dry, level ground (not over the river or the lake), no road floating, buried or in water,
