@@ -1,3 +1,9 @@
+# Open the screenshots
+
+- **[View all pages here on GitHub](GALLERY.md)** — no download needed.
+- **[View the 45-page desktop PDF](Studio-all-pages-desktop.pdf)**.
+- **[Download all screenshots and the offline gallery](Studio-screenshot-review.zip?raw=true)** — extract the ZIP, then open `index.html`.
+
 # Every Studio page — screenshot review
 
 27 October 2026 AEDT. Open **index.html** for the offline gallery, or **Studio-all-pages-desktop.pdf** for a bookmarked desktop review.
