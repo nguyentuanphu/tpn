@@ -388,3 +388,16 @@ deterministic collision/decorative-layer/scroll regressions; all6focusedchecks
 passed, including the historical replay, existing EN/VI report flows at3sizes,
 freeze reporting and types. No assertions weakened or skipped. Starting a new
 comprehensive run on committed code; no production release/version authorised.
+
+
+## Owner direction — redesign concepts first, 27 October 2026 AEDT
+
+The owner reviewed all-page screenshots and found the result confusing, with too
+much focus on Analytics. Pause runtime implementation and present substantially
+different concepts before proceeding. Three directions and desktop/phone mockups
+are in [the concept review](../studio-redesign-concepts-20261027/README.md).
+The existing engineering work is retained; no concept is implemented into the
+application or approved for production by these files. Public screenshot links
+were repaired using GitHub-hosted files because workspace links did not open in
+the owner's chat client. The existing comprehensive test run40470635366 can finish
+independently; do not report it as passed until actual artifacts are inspected.
