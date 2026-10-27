@@ -107,3 +107,12 @@ retained as discarded evidence, not passing release measurements:
 [discarded focused log](evidence/finance-discarded-overlap-2026-10-27.txt),
 [discarded timing log](evidence/finance-discarded-timing-overlap-2026-10-27.txt).
 Affected timing checks will be repeated in isolation.
+
+
+Post-review checks:
+
+- [Final local Finance suite](evidence/finance-final-local-suite-2026-10-27.json): **3/3 passed**, including **399 unit tests**, types and the full EN/VI authenticated management/finance browser flows after the overflow and settlement guards. The discarded overlapping run is not reused.
+- [Isolated speed rerun](evidence/finance-isolated-speed-2026-10-27.json): **3/3 passed**, with [exact output](evidence/finance-isolated-speed-details-2026-10-27.txt). Existing rendering debt remains: home 462 draws / village 393 draws against 250; 782,592 village triangles against 300,000. Title 1.0 s, valley ready 16.1 s initially / 16.6 s second start, longest freeze 3.8 s. These do not meet every rendering budget. The tiny subsequent mixed-voice language-argument change does not affect the disabled telemetry/default rendering path; its targeted regression is separate.
+- [Mixed voice regression](evidence/finance-mixed-voice-2026-10-27.json): **2/2 passed** (types + mixed-Hanoi voice check). A new actual-browser case plays English recorded audio while the interface is Vietnamese and asserts recorded success with language `en`. The composite source order, pauses, fallback, cancellation, warmup, male preview and private on-device speech checks remain intact.
+
+GitHub runs `40430213718` and `40430357563` were superseded by SQL-suite integration and financial safeguards. Run `40431137311` is superseded by the targeted spoken-language fix. Cancelled runs are not passing release evidence. The final suite must be recorded for the final application commit.

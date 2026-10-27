@@ -614,7 +614,7 @@ async function playPack(lang, text, my, forceHanoi=false, skipHanoi=false) {
       if (context?.state === 'running') {
         voiceDiag.recording = 'Default English + FPT Neo · FPT.AI-VITs · leminh';
         voiceDiag.audio = 'running';
-        await playBuffer(recording);
+        await playBuffer(recording,1,'recorded',lang);
         return true;
       }
       // Until Web Audio is unlocked, retain the complete recording's existing HTML audio fallback.
