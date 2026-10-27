@@ -146,7 +146,7 @@ const ABOUT = {
   missions: ['📝', 'Family missions', 'Nhiệm vụ gia đình', 'Real-life jobs the children see in the game (“Help set the table”); a grown-up ticks them on the device', 'Việc ngoài đời các con thấy trong game (“Giúp dọn bàn ăn”); người lớn đánh dấu trên máy'],
   children: ['👧', 'Children', 'Các con', 'Each child’s name, age, photo and progress', 'Tên, tuổi, ảnh và tiến bộ của từng con'],
   album: ['📸', 'Family album', 'Album gia đình', 'Family photos that arrive as postcards in the game', 'Ảnh gia đình đến thành bưu thiếp trong game'],
-  quiz: ['💛', 'Family quiz', 'Đố vui gia đình', 'Your own questions: “What is Grandma’s name?”', 'Câu hỏi của nhà mình: “Bà tên gì?”'],
+  quiz: ['💛', 'Family quiz', 'Đố vui gia đình', 'Shared questions for players of this site', 'Câu hỏi chung cho người chơi trang này'],
   stories: ['📖', 'Our stories', 'Truyện nhà mình', 'Write the family’s own picture stories', 'Viết truyện tranh của gia đình'],
   villagers: ['🧑', 'Villagers', 'Nhân vật', 'Names and photo faces of the people in the valley', 'Tên và ảnh khuôn mặt của mọi người trong thung lũng'],
   familycode: ['🔒', 'Family code', 'Mã gia đình', 'Family photos are private: type this code once on each child’s device', 'Ảnh gia đình được giữ riêng: gõ mã này một lần trên máy của mỗi con'],
@@ -246,6 +246,9 @@ function refold(P, page) {
 }
 function foldPage(P, page) {
   const closed = folds(), key = h => page + ':' + h.textContent.trim().slice(0, 60);
+  // Explicit overview panels use the same persistent fold store as automatically grouped cards.
+  const explicit=P.querySelectorAll('details[data-fold-id]') as NodeListOf<HTMLDetailsElement>;
+  explicit.forEach(d=>{if(d.dataset.foldBound)return;d.dataset.foldBound='1';const k=page+':'+d.dataset.foldId;d.open=!closed[k];d.addEventListener('toggle',()=>keepFold(k,d.open));});
   const make = (head, nodes, cls) => { if (!nodes.length) return; const d = document.createElement('details'), sm = document.createElement('summary'); d.className = 'fold ' + cls; d.open = !closed[key(head)];
     head.parentNode.insertBefore(d, head); sm.appendChild(head); d.appendChild(sm); nodes.forEach(n => d.appendChild(n)); const k = key(head); d.addEventListener('toggle', () => keepFold(k, d.open)); };
   // each card with a heading (not the ones that open and close already)
@@ -273,7 +276,7 @@ function explainPage(P, page) {
     missions: ['Real-life jobs for every child on this family\'s devices (up to 12); none by default. A grown-up confirms each one on the device, which gives coins and a sticker. Save puts your change in “Waiting to publish”; nothing reaches the children until you press Publish. Then every device of this family gets it the next time it opens the game online.', 'Việc thật ngoài đời cho mọi con trên các máy của gia đình (tối đa 12); mặc định không có. Người lớn xác nhận từng việc trên máy, con được xu và hình dán. Lưu đưa thay đổi vào “Đang chờ phát hành”; các con chưa thấy gì cho đến khi bạn bấm Phát hành. Sau đó mọi máy của gia đình nhận được khi mở game có mạng lần tới.'],
     villagers: ['Names and photo faces for villagers, on every device of this family. By default each villager keeps the game\'s own name and drawn face; a change made on a device itself still wins on that device. Save puts your change in “Waiting to publish”; nothing reaches the children until you press Publish. Then every device of this family gets it the next time it opens the game online.', 'Tên và ảnh mặt cho dân làng, trên mọi máy của gia đình. Mặc định mỗi người giữ tên và mặt vẽ của game; thay đổi làm ngay trên một máy vẫn được ưu tiên ở máy đó. Lưu đưa thay đổi vào “Đang chờ phát hành”; các con chưa thấy gì cho đến khi bạn bấm Phát hành. Sau đó mọi máy của gia đình nhận được khi mở game có mạng lần tới.'],
     stories: ['Your own picture stories on every child\'s Stories shelf, read aloud page by page; none by default. Save puts your change in “Waiting to publish”; nothing reaches the children until you press Publish. Then every device of this family gets it the next time it opens the game online.', 'Truyện tranh của gia đình trên kệ Truyện của mọi con, đọc to từng trang; mặc định không có. Lưu đưa thay đổi vào “Đang chờ phát hành”; các con chưa thấy gì cho đến khi bạn bấm Phát hành. Sau đó mọi máy của gia đình nhận được khi mở game có mạng lần tới.'],
-    quiz: ['Your own questions in the Family Quiz game, first on every child\'s Learning shelf; with no questions the game does not appear. Save puts your change in “Waiting to publish”; nothing reaches the children until you press Publish. Then every device of this family gets it the next time it opens the game online.', 'Câu hỏi của gia đình trong trò Đố vui gia đình, đứng đầu kệ Học của mọi con; không có câu hỏi thì trò không hiện. Lưu đưa thay đổi vào “Đang chờ phát hành”; các con chưa thấy gì cho đến khi bạn bấm Phát hành. Sau đó mọi máy của gia đình nhận được khi mở game có mạng lần tới.'],
+    quiz: ['Studio manages shared quiz content for this deployment. Do not enter private family details here. Use Grown-ups → Family questions in the game for questions kept on your device and in its save copy. Shared Studio changes follow the displayed Live or Publish status.', 'Studio quản lý câu đố chung của bản triển khai này. Không nhập thông tin riêng của gia đình ở đây. Dùng Phụ huynh → Câu hỏi gia đình trong game để giữ câu hỏi trên máy và trong bản sao lưu. Thay đổi chung trong Studio theo trạng thái Có hiệu lực ngay hoặc Cần phát hành được hiển thị.'],
     path: ['Which games the Simple screen shows in each area, for every child on this family\'s devices. By default every game is in its own area; hiding one here leaves it in the valley. Save puts your change in “Waiting to publish”; nothing reaches the children until you press Publish. Then every device of this family gets it the next time it opens the game online.', 'Trò nào hiện ở từng khu của màn hình Đơn giản, cho mọi con trên các máy của gia đình. Mặc định mỗi trò ở khu riêng của nó; ẩn ở đây thì trò vẫn còn trong thung lũng. Lưu đưa thay đổi vào “Đang chờ phát hành”; các con chưa thấy gì cho đến khi bạn bấm Phát hành. Sau đó mọi máy của gia đình nhận được khi mở game có mạng lần tới.'],
     music: ['Your own recordings (MP3, up to 4 MB) used instead of the built-in tune where you tick, on every device of this family; by default the game\'s own music plays. Save puts your change in “Waiting to publish”; nothing reaches the children until you press Publish. Then every device of this family gets it the next time it opens the game online.', 'Bản thu của gia đình (MP3, tối đa 4 MB) thay cho nhạc có sẵn ở chỗ bạn đánh dấu, trên mọi máy của gia đình; mặc định phát nhạc của game. Lưu đưa thay đổi vào “Đang chờ phát hành”; các con chưa thấy gì cho đến khi bạn bấm Phát hành. Sau đó mọi máy của gia đình nhận được khi mở game có mạng lần tới.'],
     album: ['Family photos that become postcards in the children\'s albums when they walk into the place you choose; none by default. Photos are private (see Family code). Save puts your change in “Waiting to publish”; nothing reaches the children until you press Publish. Then every device of this family gets it the next time it opens the game online.', 'Ảnh gia đình thành bưu thiếp trong album của các con khi đi vào nơi bạn chọn; mặc định không có. Ảnh là riêng tư (xem Mã gia đình). Lưu đưa thay đổi vào “Đang chờ phát hành”; các con chưa thấy gì cho đến khi bạn bấm Phát hành. Sau đó mọi máy của gia đình nhận được khi mở game có mạng lần tới.'],
@@ -599,7 +602,7 @@ PAGES.stories = async P => {
 PAGES.quiz = async P => {
   CONTENT.quiz = CONTENT.quiz || [];
   const draw = () => {
-    P.innerHTML = `<h2>💛 ${T('Family quiz', 'Đố vui gia đình')}</h2><p class="sub">${T('Your own questions (“What is Grandma’s name?”). The game “Family Quiz” appears first on the Learning shelf.', 'Câu hỏi của nhà mình (“Bà tên gì?”). Trò “Đố Vui Gia Đình” hiện đầu tiên trên kệ Học.')}</p>
+    P.innerHTML = `<h2>💛 ${T('Family quiz', 'Đố vui gia đình')}</h2><p class="sub">${T('These questions are published to players of this site. Use general questions only. Add private family questions in the game: Grown-ups → Family questions.', 'Câu hỏi ở đây được phát hành cho người chơi trang này. Chỉ dùng câu hỏi chung. Thêm câu hỏi riêng trong game: Phụ huynh → Câu hỏi gia đình.')}</p>
     ${CONTENT.quiz.map((q, i) => `<div class="card" data-i="${i}"><div class="row"><div style="flex:0 0 140px"><label>${T('Picture', 'Hình')}</label><input type="text" data-f="pic" value="${esc(q.pic || '')}">${pickBtn()}</div>
       <div><label>🇦🇺 ${T('Question', 'Câu hỏi')}</label><input type="text" data-f="q0" value="${esc(q.q[0])}"></div><div><label>🇻🇳 ${T('Question', 'Câu hỏi')}</label><input type="text" data-f="q1" value="${esc(q.q[1])}"></div><button class="btn small bad" data-rm style="flex:0 0 auto">🗑️</button></div>
       ${q.answers.map((a, j) => `<div class="row"><label style="flex:0 0 auto"><input type="radio" name="r${i}" data-right="${j}" ${q.right === j ? 'checked' : ''}> ${T('right', 'đúng')}</label><input type="text" data-a="${j}" data-l="0" value="${esc(a[0])}" placeholder="English"><input type="text" data-a="${j}" data-l="1" value="${esc(a[1])}" placeholder="Tiếng Việt"></div>`).join('')}
@@ -752,10 +755,10 @@ PAGES.releases = P => drawReleases(P, false);
 PAGES.lab = P => drawReleases(P, true);
 async function drawReleases(P, lab) {
   const myDraw = P.dataset.draw = String((+P.dataset.draw || 0) + 1), stale = () => P.dataset.draw !== myDraw || cur !== (lab ? 'lab' : 'releases');
-  const [{ RELEASES, RELEASE_GROUPS }, live] = await Promise.all([import(GAME + 'js/content/releases.js'), loadLive()]);
+  const [{ RELEASES, RELEASE_GROUPS }, live, {festivalSwitchedOn}] = await Promise.all([import(GAME + 'js/content/releases.js'), loadLive(),import(GAME+'js/content/festival-visibility.js')]);
   if (stale()) return;
   const R = live.releases || {}, inScope = x => lab === ['tester', 'autoplay'].includes(x.id);
-  const isOn = x => { const r = R[x.id] || {}; if (x.id === 'wayfind' && r.controlVersion !== 1) return false; return typeof r.on === 'boolean' ? r.on : x.def; };
+  const isOn = x => { const r = R[x.id] || {};if(x.id.startsWith('fest_'))return festivalSwitchedOn(live.festivals?.[x.id.slice(5)],r); if (x.id === 'wayfind' && r.controlVersion !== 1) return false; return typeof r.on === 'boolean' ? r.on : x.def; };
   const fmtDay = d => d ? new Date(d + 'T12:00:00').toLocaleDateString(LANG === 'vi' ? 'vi-VN' : 'en-AU', { day: 'numeric', month: 'short' }) : '';
   const status = (on, r) => { const today = isoDay(new Date()), out = [];
     if (!on) out.push(['off', '⏸️ ' + T('Off', 'Tắt')]);
@@ -931,31 +934,45 @@ async function drawReleases(P, lab) {
             delete out.nightlyBots;
           }
         }
-        await saveLive({ releases: out, festivals: latest.festivals || {} });
+        const festivals={...(latest.festivals||{})};
+        P.querySelectorAll('.relc[data-id^="fest_"]').forEach((card:HTMLElement)=>{const id=card.dataset.id,x=RELEASES.find(f=>f.id===id),on=card.querySelector<HTMLInputElement>('[data-r="on"]').checked;
+          if(on!==isOn(x))festivals[id.slice(5)]={...(festivals[id.slice(5)]||{}),on};
+        });
+        await saveLive({ releases: out, festivals });Object.keys(R).forEach(k=>delete R[k]);Object.assign(R,out);live.festivals=festivals;
       } catch (e) { fail(e); }
     };
 }
 PAGES.festivals = async P => {
-  const [{ FESTCAL, GROUPS }, L] = await Promise.all([import(GAME + 'js/content/festcal.js'), import(GAME + 'js/lunar.js')]), live = await loadLive(), F = live.festivals || {};
+  const [{ FESTCAL, GROUPS }, L, {festivalSwitchedOn}] = await Promise.all([import(GAME + 'js/content/festcal.js'), import(GAME + 'js/lunar.js'),import(GAME+'js/content/festival-visibility.js')]), live = await loadLive(), F = live.festivals || {};
   const pad = n => String(n).padStart(2, '0'), y = new Date().getFullYear();
   // this year's (or next year's, once it has passed) date, worked out like the game does
-  const dateOf = (f, yr) => { const w = f.when; return w.lunar ? L.lunarDay(w.lunar[0], w.lunar[1], yr) : w.date ? `${yr}-${pad(w.date[0])}-${pad(w.date[1])}` : w.easter != null ? L.easter(yr) : w.nth ? L.nthWeekday(yr, ...w.nth) : w.table ? w.table[yr] : null; };
+  const dateOf = (f, yr) => { const rule=F[f.id]||{};if(/^\d{4}-/.test(rule.date||'')&&+rule.date.slice(0,4)===yr)return rule.date;if(/^\d\d-\d\d$/.test(rule.date||''))return `${yr}-${rule.date}`;const w = f.when; return w.lunar ? L.lunarDay(w.lunar[0], w.lunar[1], yr) : w.date ? `${yr}-${pad(w.date[0])}-${pad(w.date[1])}` : w.easter != null ? L.easter(yr) : w.nth ? L.nthWeekday(yr, ...w.nth) : w.table ? w.table[yr] : null; };
   const next = f => { const a = dateOf(f, y), today = isoDay(new Date()); return a && a >= today ? a : dateOf(f, y + 1); };
-  const row = f => { const r = F[f.id] || {}, on = r.on !== false;
+  const row = f => { const r = F[f.id] || {}, on = festivalSwitchedOn(r,live.releases?.['fest_'+f.id]);
     return `<tr data-id="${f.id}"><td>${f.icon} ${esc(T(f.en, f.vi))}<div class="mini">${f.kind === 'quiet' ? T('quiet day', 'ngày yên lặng') : ''}</div></td>
       <td data-label="${T('Now', 'Hiện')}"><select data-f="on"><option value="true" ${on ? 'selected' : ''}>${T('On', 'Bật')}</option><option value="false" ${on ? '' : 'selected'}>${T('Off', 'Tắt')}</option></select></td>
-      <td data-label="${T('Next date', 'Ngày tới')}">${next(f) || '?'}</td><td data-label="${T('Move to', 'Đổi sang ngày')}"><input type="date" data-f="date" value="${/^\d{4}/.test(r.date || '') ? r.date : ''}"></td>
+      <td data-label="${T('Next date', 'Ngày tới')}">${next(f) || '?'}</td><td data-label="${T('Move to', 'Đổi sang ngày')}"><input type="date" data-f="date" value="${/^\d{4}/.test(r.date || '') ? r.date : /^\d\d-\d\d$/.test(r.date||'') ? y+'-'+r.date : ''}"></td>
       <td data-label="${T('Decorate days before', 'Trang trí trước (ngày)')}"><input type="number" min="0" max="60" data-f="buildup" value="${r.buildup ?? ''}" placeholder="${f.kind === 'quiet' ? 3 : 21}"></td>
       <td data-label="${T('Decorations', 'Trang trí')}"><select data-f="deco">${[[1, 'As before', 'Như trước'], [2, '2x', '2x'], [3, '3x', '3x'], [5, '5x', '5x'], [7, '7x', '7x']].map(([n, en, vi]) => `<option value="${n}" ${(+r.deco || 5) === n ? 'selected' : ''}>${T(en, vi)}</option>`).join('')}</select></td>
       <td><a class="btn small ghost" target="_blank" href="${GAME}?festival=${f.id}">${T('Preview', 'Xem thử')}</a></td></tr>`; };
   P.innerHTML = `<h2>📅 ${T('Festivals', 'Lễ hội')}</h2><p class="sub">${T('Every festival on its real date (lunar dates are worked out each year). Party festivals decorate their places for 3 weeks before, quiet days a few days. On the day: 08:00 present, 15:00 festival game, 18:30 show (17:30 for under-5s). Decorations: half in week 1, three quarters in week 2, all of it in the last week; 5x by default (Decorations column). In the last week and on the day, 5 festival items are hidden among them to find.', 'Mỗi lễ hội đúng ngày thật (ngày âm lịch tự tính mỗi năm). Lễ hội vui trang trí 3 tuần trước, ngày yên lặng vài ngày. Đúng ngày: 08:00 nhận quà, 15:00 trò chơi lễ hội, 18:30 trình diễn (17:30 cho bé dưới 5 tuổi). Trang trí: tuần đầu một nửa, tuần hai ba phần tư, tuần cuối đầy đủ; mặc định gấp 5 lần (cột Trang trí). Tuần cuối và đúng ngày có 5 món đồ lễ hội giấu giữa đồ trang trí để các con tìm.')}</p>
-    ${liveNote()}${Object.entries<[string, string]>(GROUPS).map(([g, [en, vi]]) => `<h3>${T(en, vi)}</h3><div class="card"><table class="rel"><thead><tr><th></th><th>${T('Now', 'Hiện')}</th><th>${T('Next date', 'Ngày tới')}</th><th>${T('Move to', 'Đổi sang ngày')}</th><th>${T('Decorate days before', 'Trang trí trước (ngày)')}</th><th>${T('Decorations', 'Trang trí')}</th><th></th></tr></thead><tbody>${FESTCAL.filter(f => f.group === g).map(row).join('')}</tbody></table></div>`).join('')}
+    <p class="note">${T('Off hides the festival on the website and in the game, including calendar notices, decorations, activities and previews. Open pages refresh the published settings automatically.','Tắt sẽ ẩn lễ hội trên trang web và trong trò chơi, gồm thông báo lịch, trang trí, hoạt động và phần xem thử. Trang đang mở tự cập nhật cài đặt đã lưu.')}</p>${liveNote()}${Object.entries<[string, string]>(GROUPS).map(([g, [en, vi]]) => `<h3>${T(en, vi)}</h3><div class="card"><table class="rel"><thead><tr><th></th><th>${T('Now', 'Hiện')}</th><th>${T('Next date', 'Ngày tới')}</th><th>${T('Move to', 'Đổi sang ngày')}</th><th>${T('Decorate days before', 'Trang trí trước (ngày)')}</th><th>${T('Decorations', 'Trang trí')}</th><th></th></tr></thead><tbody>${FESTCAL.filter(f => f.group === g).map(row).join('')}</tbody></table></div>`).join('')}
     <div class="bar"><button class="btn" id="save">💾 ${T('Save', 'Lưu')}</button></div>`;
   $('#save').onclick = async () => {
-    const out = {};
-    P.querySelectorAll<HTMLInputElement>('tr[data-id]').forEach(tr => { const id = tr.dataset.id, v = k => tr.querySelector<HTMLInputElement>(`[data-f="${k}"]`).value, r: Rule = {};
-      if (v('on') === 'false') r.on = false; if (v('date')) r.date = v('date'); if (v('buildup') !== '') r.buildup = +v('buildup'); if (+v('deco') !== 5) r.deco = +v('deco'); if (Object.keys(r).length) out[id] = r; });
-    await saveLive({ releases: live.releases || {}, festivals: out }).catch(fail);
+    try{
+      const latest=await loadLive(),out={...(latest.festivals||{})},releases={...(latest.releases||{})};
+      P.querySelectorAll<HTMLInputElement>('tr[data-id]').forEach(tr=>{
+        const id=tr.dataset.id,v=(k:string)=>tr.querySelector<HTMLInputElement>(`[data-f="${k}"]`).value,before=F[id]||{},r={...(out[id]||{})};
+        const on=v('on')==='true',was=festivalSwitchedOn(before,live.releases?.['fest_'+id]);
+        if(on!==was){r.on=on;releases['fest_'+id]={...(releases['fest_'+id]||{}),on};}
+        const initialDate=/^\d{4}/.test(before.date||'')?before.date:/^\d\d-\d\d$/.test(before.date||'')?y+'-'+before.date:'';
+        if(v('date')!==initialDate){if(v('date'))r.date=v('date');else delete r.date;}
+        if(v('buildup')!==String(before.buildup??'')){if(v('buildup')!=='')r.buildup=+v('buildup');else delete r.buildup;}
+        if(+v('deco')!==(Number(before.deco)||5)){if(+v('deco')!==5)r.deco=+v('deco');else delete r.deco;}
+        if(Object.keys(r).length)out[id]=r;else delete out[id];
+      });
+      await saveLive({releases,festivals:out});Object.keys(F).forEach(k=>delete F[k]);Object.assign(F,out);live.releases=releases;live.festivals=F;
+    }catch(e){fail(e);}
   };
 };
 // ---------- children: open a backup, see progress, change it, save a new backup ----------
@@ -1688,7 +1705,7 @@ PAGES.players = async P => {
     return [w.fps != null && `🎞️ ${w.fps} ${T('frames/s', 'khung/giây')}`, w.frameMs != null && `${w.frameMs} ms ${T('a frame', 'mỗi khung')}`, w.draws != null && `${w.draws} ${T('draws', 'lần vẽ')}`, w.ratio != null && `${T('sharpness', 'độ nét')} ${w.ratio}×`, `🔋 ${w.batteryPerHour != null ? pctH(w.batteryPerHour) : T('battery not given by this browser', 'trình duyệt này không cho biết pin')}`, w.charging && T('mostly charging', 'thường đang sạc')].filter(Boolean).join(' · '); };
   const more = (id, title, body) => `<details class="card more" data-more="${id}"><summary><b>${title}</b></summary>${body}</details>`;
   P.innerHTML = `<h2>📊 ${T('Analytics', 'Phân tích')} <button class="btn small" id="totesters">🐞 ${T('Tester reports', 'Báo cáo người thử')}</button></h2><p class="sub">${T('What the children play, for the last 30 days, from the game’s own website. A grown-up can switch it off on the device: Grown-ups → Advanced → Analytics.', 'Các con chơi gì trong 30 ngày qua, từ trang web của game. Người lớn có thể tắt trên máy: Người lớn → Nâng cao → Phân tích.')}</p>
-  <div class="tiles">${tiles.join('')}</div>
+  <details class="card analytics-overview" data-more="overview" data-fold-id="analytics-overview" open><summary><b>${T('At a glance', 'Tổng quan')}</b></summary><div class="tiles">${tiles.join('')}</div></details>
   ${(r.tips || []).length ? `<div class="card tips"><h3>💡 ${T('Worth doing', 'Nên làm')}</h3><ul>${r.tips.slice(0, 4).map(t => `<li>${esc(tipText(t))}</li>`).join('')}</ul>${r.tips.length > 4 ? `<p class="note">${T(`${r.tips.length - 4} more under More detail → Suggestions.`, `Còn ${r.tips.length - 4} gợi ý trong Thêm chi tiết → Gợi ý.`)}</p>` : ''}</div>` : ''}
   <div class="grid two"><div class="card"><h3>👨‍👩‍👧 ${T('Each child', 'Từng bé')}</h3>${kidRows ? `<table class="rows"><thead><tr><th>${T('Child', 'Bé')}</th><th>⏱️ ${T('30 days', '30 ngày')}</th><th>⭐ ${T('Favourite game', 'Trò thích nhất')}</th></tr></thead><tbody>${kidRows}</tbody></table>` : `<p class="note">${T('No children yet.', 'Chưa có bé nào.')}</p>`}</div>
     <div class="card"><h3>📱 ${T('Each kind of device', 'Từng loại máy')}</h3>${kindRows ? `<table class="rows kinds"><thead><tr><th>${T('Device', 'Máy')}</th><th>🎞️ ${T('frames/s', 'khung/giây')}</th><th>🏁 ${T('start', 'khởi động')}</th><th>🔋 ${T('battery', 'pin')}</th></tr></thead><tbody>${kindRows}</tbody></table>` : `<p class="note">${T('No devices yet.', 'Chưa có máy nào.')}</p>`}

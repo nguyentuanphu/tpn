@@ -7,6 +7,7 @@ import { settings } from '../state.js';
 import { sayIn } from '../voice.js';
 import { el, wait, pick, shuffle } from '../util.js';
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));   // a whole number from a to b
+import {playSnakes} from './snakes.js';
 import { LEARN } from '../words2.js';
 
 // ---------- First words: hear a Chinese or Hindi word, pick its picture ----------
@@ -77,49 +78,7 @@ register({
 });
 
 // ---------- Snakes and Ladders (Moksha Patam, a very old game from India) ----------
-register({
-  id: 'snakes', icon: '🐍', origin: 'in', name: () => T('Snakes and Ladders', 'Rắn và Thang'),
-  async run(api) {
-    const N = 25, LAD = { 3: 11, 8: 17, 14: 22 }, SNK = api.little ? {} : { 19: 7, 24: 15, 16: 5 };
-    const me = api.players[0], friendName = api.two ? (api.players[1].name || T('Friend', 'Bạn')) : 'Priya';
-    api.say('Snakes and ladders comes from India! Climb the ladders, and watch out for the snakes. Roll the dice!', 'Rắn và thang có từ Ấn Độ đó! Leo thang lên, cẩn thận con rắn nhé. Gieo xúc xắc nào!');
-    const pos = [1, 1];
-    const board = el('div', 'sl-board'); api.stage.appendChild(board);
-    const cells = [];
-    for (let row = 4; row >= 0; row--) for (let c = 0; c < 5; c++) {
-      const n = row * 5 + (row % 2 ? 5 - c : c + 1), cell = el('div', 'sl-cell' + (LAD[n] ? ' lad' : SNK[n] ? ' snk' : '') + (n === N ? ' end' : ''), `<small>${n}</small>${LAD[n] ? '🪜' : SNK[n] ? '🐍' : n === N ? '🏆' : ''}`);
-      cells[n] = cell; board.appendChild(cell);
-    }
-    const tokens = [el('span', 'sl-tok me', '🧒'), el('span', 'sl-tok fr', '👧🏽')];
-    const place = () => tokens.forEach((t, i) => cells[pos[i]].appendChild(t));
-    place();
-    const ui = el('div', 'sl-ui', `<div class="sl-die">🎲</div><button class="btn big primary sl-roll">🎲 ${T('Roll', 'Gieo')}</button><div class="sl-msg"></div>`); api.stage.appendChild(ui);
-    const die = ui.querySelector('.sl-die'), msg = ui.querySelector('.sl-msg'), rollB = ui.querySelector('.sl-roll');
-    // (r90, #416 #418) auto play rolls whenever Roll is ready, as a child would: the dice do the rest
-    api.plan(() => board.isConnected && rollB instanceof HTMLButtonElement && !rollB.disabled ? rollB : null, { maxActions: 400 });
-    const max = api.little ? 3 : 6;
-    const move = async (i, steps) => {
-      for (let s = 0; s < steps && pos[i] < N; s++) { pos[i]++; place(); api.sfx && api.sfx.tap && api.sfx.tap(); if (i === 0) sayIn(settings.lang, numWord(pos[i])); await wait(520); }
-      if (LAD[pos[i]]) { msg.textContent = T('A ladder! Climb up!', 'Cái thang! Leo lên nào!'); api.say('A ladder! Climb up!', 'Cái thang! Leo lên nào!'); await wait(700); pos[i] = LAD[pos[i]]; place(); await wait(600); }
-      else if (SNK[pos[i]]) { msg.textContent = T('Oh no, a snake! Slide down.', 'Ôi, con rắn! Trượt xuống rồi.'); api.say('Oh no, a snake! Slide down.', 'Ôi, con rắn! Trượt xuống rồi.'); await wait(700); pos[i] = SNK[pos[i]]; place(); await wait(600); }
-    };
-    for (;;) {
-      if (api.closed) return;
-      await new Promise<void>(res => { rollB.disabled = false; rollB.onclick = () => { rollB.disabled = true; res(); }; });
-      const n = rand(1, max); die.textContent = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][n - 1]; die.classList.remove('spin'); void die.offsetWidth; die.classList.add('spin');
-      api.say(`You rolled ${n}! Count with me.`, `Con được ${n}! Đếm cùng nhé.`); await wait(900);
-      await move(0, n);
-      if (pos[0] >= N) { api.right(); break; }
-      // the friend's turn (little ones always get there first)
-      let f = rand(1, max); if (api.little) f = Math.min(f, Math.max(0, N - 1 - pos[1]), Math.max(0, pos[0] - pos[1] + 1));
-      msg.textContent = T(`${friendName} rolls ${f}`, `${friendName} gieo được ${f}`); await wait(700);
-      if (f > 0) await move(1, f);
-      if (pos[1] >= N) { msg.textContent = T(`${friendName} got there first! Let's play again.`, `${friendName} về đích trước! Chơi lại nhé.`); api.say('So close! Let us play again.', 'Suýt nữa thôi! Chơi lại nhé.'); await wait(1500); pos[0] = pos[1] = 1; place(); }
-      msg.textContent = T('Your turn! Tap Roll.', 'Đến lượt con! Bấm Gieo.');
-    }
-    return api.win({ title: T('You reached the top!', 'Con về đích rồi!') });
-  }
-});
+register({id:'snakes',online:true,icon:'🐍',origin:'in',name:()=>T('Snakes and Ladders','Rắn và Thang'),run:playSnakes});
 
 // ---------- Rangoli: finish the mirror pattern ----------
 const RCOL = ['#ff4f9a', '#ffd23f', '#3cc7e8', '#2fb04f', '#8a5cf6', '#ff9f43'];

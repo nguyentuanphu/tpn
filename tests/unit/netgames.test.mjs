@@ -1,7 +1,7 @@
 // Games with friends online (js/netgames.js), on a pretend network of 3 devices: invitations, seats, moves, leaving.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createNetGames, rpsWinners } from '../../js/netgames.js';
+import { createNetGames, onlineDef, rpsWinners } from '../../js/netgames.js';
 
 function room(ids, answer = () => true) {
   const devs = {};
@@ -93,4 +93,21 @@ test('Tiến Lên miền Bắc: same suit for singles and runs, same colours for
     assert.equal(classify([c(2, 0), c(2, 1), c(3, 0), c(3, 1), c(4, 0), c(4, 1)]), null, 'no pairs in a row in the north');
   } finally { setNorth(false); }
   assert.ok(beats(classify([c(5, 0)]), classify([c(4, 3)])), 'miền Nam: any higher card');
+});
+
+
+test('Snakes metadata invites four seats and transport rejects client-selected dice/reserved-slot payloads', async () => {
+  const def = onlineDef('snakes');
+  assert.equal(def.max, 4);assert.equal(def.all,true);assert.equal(def.foundation.turnBased, true);
+  const d = room(['A', 'B']);d.A.g.invite('snakes', 1, 'B');await tick();
+  assert.equal(d.A.g.move(0,7),false);assert.equal(d.A.g.move(0,3),false);
+  assert.equal(d.A.g.move(4998,0),false);assert.equal(d.A.g.move(9997,2),false);assert.equal(d.A.g.move(9999,9999),false);
+  assert.equal(d.A.g.session.moves.size,0);
+  assert.equal(d.A.g.move(0,0),true);await tick();assert.equal(await d.B.g.next(0,0),0);
+});
+
+test('Tug transport accepts pull requests and rejects forged strengths or malformed reserved slots',async()=>{
+ const d=room(['A','B']);d.A.g.invite('tug',1);await tick();
+ assert.equal(d.A.g.move(0,2),false);assert.equal(d.A.g.move(0,0),false);assert.equal(d.A.g.move(4997,1),false);
+ assert.equal(d.A.g.move(0,1),true);await tick();assert.equal(await d.B.g.next(0,0),1);
 });

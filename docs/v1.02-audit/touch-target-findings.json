@@ -1,0 +1,86 @@
+[
+  {
+    "device": "phone",
+    "lang": "en",
+    "id": "fruitparade",
+    "minRequired": 64,
+    "smallControls": 2
+  },
+  {
+    "device": "phone",
+    "lang": "en",
+    "id": "cacuangua",
+    "minRequired": 44,
+    "smallControls": 3
+  },
+  {
+    "device": "phone",
+    "lang": "vi",
+    "id": "fruitparade",
+    "minRequired": 64,
+    "smallControls": 2
+  },
+  {
+    "device": "phone",
+    "lang": "vi",
+    "id": "cacuangua",
+    "minRequired": 44,
+    "smallControls": 3
+  },
+  {
+    "device": "tablet",
+    "lang": "en",
+    "id": "fruitparade",
+    "minRequired": 64,
+    "smallControls": 2
+  },
+  {
+    "device": "tablet",
+    "lang": "en",
+    "id": "cacuangua",
+    "minRequired": 44,
+    "smallControls": 3
+  },
+  {
+    "device": "tablet",
+    "lang": "vi",
+    "id": "fruitparade",
+    "minRequired": 64,
+    "smallControls": 2
+  },
+  {
+    "device": "tablet",
+    "lang": "vi",
+    "id": "cacuangua",
+    "minRequired": 44,
+    "smallControls": 3
+  },
+  {
+    "device": "computer",
+    "lang": "en",
+    "id": "fruitparade",
+    "minRequired": 64,
+    "smallControls": 2
+  },
+  {
+    "device": "computer",
+    "lang": "en",
+    "id": "cacuangua",
+    "minRequired": 44,
+    "smallControls": 3
+  },
+  {
+    "device": "computer",
+    "lang": "vi",
+    "id": "fruitparade",
+    "minRequired": 64,
+    "smallControls": 2
+  },
+  {
+    "device": "computer",
+    "lang": "vi",
+    "id": "cacuangua",
+    "minRequired": 44,
+    "smallControls": 3
+  }
+]

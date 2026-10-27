@@ -69,7 +69,8 @@ const EXPAND = {
   'explain_*_voice': EXPLAIN_KINDS.map(k => `explain_${k}_voice`),
   'money_*': MONEY_GAMES.map(g => 'money_' + g),
   'story_*': CHAPTERS.map(c => 'story_' + c.id),
-  'fest_*': FESTCAL.map(F => 'fest_' + F.id)
+  'fest_*': FESTCAL.map(F => 'fest_' + F.id),
+  'sparkleFruitParade_*': ['sparkleFruitParade_single', 'sparkleFruitParade_multi', 'sparkleFruitParade_tester']
 };
 
 test('every switch the game reads by name has a Studio control (Releases or Sparkle Lab)', () => {

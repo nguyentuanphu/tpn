@@ -1,0 +1,15 @@
+[
+  {
+    "orchardStillTesterOnly": true,
+    "fruitBarPublicForNonTester": true
+  },
+  {
+    "parentEntryDeduplicates": true,
+    "familyEntryAndRoundComplete": true,
+    "normalLightAnimationFinishes": true,
+    "pauseStateRestored": true
+  },
+  {
+    "closingOnlineStopsSession": true
+  }
+]

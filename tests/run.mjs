@@ -1,3 +1,6 @@
+import { installReportInputProbe, readReportInputProbe } from './report-input-probe.mts';
+import { waitObserved } from './wait-observed.mts';
+import { adventureWalkSnapshot, adventureDaySnapshot, seedAdventureWalk } from './adventure-snapshot.mts';
 // Sparkle Valley regression checks. Start the game first (python3 -m http.server 8765 in the repo), then:
 //   cd tests && npm install && node run.mjs            all checks
 //   node run.mjs games features                        only some
@@ -5,7 +8,7 @@
 // Multiplayer runs when a local PeerJS server is up on 127.0.0.1:9000 (see the README in this folder).
 import fs from 'fs';
 import os from 'os';
-import { launch, open, clear, noWelcome, start, URL, seedPlayers, takeCoverage } from './harness.mjs';
+import { launch, open, clear, noWelcome, start, URL, seedPlayers, takeCoverage, openAllGamesFixture } from './harness.mjs';
 import { groundAudit } from './world-audit.mjs';
 import { studioCheck } from './studio-check.mjs';
 import { studioRepairCheck } from './studio-repair-check.mjs';
@@ -46,7 +49,7 @@ const check = async (name, fn) => {
   const limit = new Promise((_, no) => { timer = setTimeout(() => no(new Error(`did not finish within ${CHECK_LIMIT / 60000} min (stopped so the later checks still run)`)), CHECK_LIMIT); });
   try { const running = fn(); running.catch(() => { }); const note = await Promise.race([running, limit]); results.push([name, true, note || '']); console.log(`✅ ${name} (${((Date.now() - t0) / 1000).toFixed(0)}s) ${note || ''}`); }
   catch (e) {
-    results.push([name, false, e.message]); console.log(`❌ ${name}: ${e.message}`);
+    const detail=String(e.message||e).replace(/\s+/g,' ').trim();results.push([name,false,detail]);console.log(`❌ ${name}: ${detail}`);
     // a picture of what was on screen when it failed (out/fail-<check>.png)
     try { const pg = b.contexts().flatMap(c => c.pages()).pop(); if (pg) await pg.screenshot({ path: `out/fail-${name}.png`, timeout: 10000 }); } catch (e2) { }
   }
@@ -245,7 +248,7 @@ await check('facetoface', async () => {
 });
 
 await check('games', async () => {
-  const P = await open(b, { w: 1024, h: 768 }); await clear(P.page);
+  const P = await openAllGamesFixture(b, { w: 1024, h: 768 }); await clear(P.page);
   const ids = await P.page.evaluate(async () => Object.keys((await import('/js/games/frame.js')).GAMES));
   const failed = [];
   for (const id of ids) {
@@ -590,7 +593,7 @@ await check('solid', async () => {
       const p = { x: sx, z: sz, y: W.groundAt(sx, sz) }, q = { ...p }; W.collide(q, .45); if (Math.hypot(q.x - p.x, q.z - p.z) > .01) continue; // start on open ground
       tried++;
       for (let s = 0; s < 40; s++) { const dx = cx - p.x, dz = cz - p.z, d = Math.hypot(dx, dz) || 1; p.x += dx / d * .15; p.z += dz / d * .15; W.collide(p, .45); p.y = W.groundAt(p.x, p.z, p.y + 1); }
-      if (W.solidAt(p.x, p.z)) bad.push(`walked into ${cx.toFixed(1)},${cz.toFixed(1)}`);
+      if (W.solidAt(p.x, p.z, p.y)) bad.push(`walked into ${cx.toFixed(1)},${cz.toFixed(1)}`);
     }
     let lost = 0; const lostAt = [];
     for (const it of G.interactables) {
@@ -689,6 +692,28 @@ await check('voicepack', async () => {
   ok(!errs.length, errs.join(' | '));
   return `first open downloads with a small bar (${first.map(x => '"' + x + '"').slice(0, 2).join(' → ')} … "${first[first.length - 1]}"), the next open shows and downloads nothing, and files the phone lost are fetched again`;
 });
+
+await check('folkplay', async () => (await import('./folk-court-browser.mts')).folkCourtBrowserCheck(b));
+
+await check('festivalbootstrap', async () => (await import('./festival-bootstrap.mts')).festivalBootstrapCheck(b));
+
+await check('mixedhanoivoice', async () => (await import('./mixed-hanoi-voice.mts')).mixedHanoiVoiceCheck(b));
+
+await check('familyreportprivacy', async () => (await import('./family-report-privacy.mts')).familyReportPrivacyCheck(b));
+
+await check('familyquizprivate', async () => (await import('./family-quiz-browser.mts')).familyQuizBrowserCheck(b));
+
+await check('familyquizcrypto', async () => (await import('./family-quiz-crypto.mts')).familyQuizCryptoCheck(b));
+
+await check('tugplay', async () => (await import('./tug-browser.mts')).tugBrowserCheck(b));
+
+await check('oaqplay', async () => (await import('./oanquan-browser.mts')).oaqBrowserCheck(b));
+
+await check('snakesplay', async () => (await import('./snakes-browser.mts')).snakesBrowserCheck(b));
+
+await check('horseplay', async () => (await import('./horse-browser.mts')).horseBrowserCheck(b));
+
+await check('hanoivoice', async () => (await import('./hanoi-voice.mts')).hanoiVoiceCheck(b));
 
 await check('voicebackground', async () => {
   // Owner, v1.01: male previews select the actual male file while female remains default.
@@ -862,7 +887,7 @@ await check('voicecover', async () => {
     // times; the interruptions are reported
     if (window.__sv) window.__sv.paused = true;
     const others = []; V.spoken.push(t => others.push(t));
-    for (const [key, line] of [['number', 'You rolled 47! Count with me.'], ['name', 'Zorbly is here! Hold on and kick your legs: tap, tap, tap!']]) {
+    for (const [key, line] of [['number', 'That costs 47. Sell some things first!'], ['name', 'Zorbly is here! Hold on and kick your legs: tap, tap, tap!']]) {
       res[key] = { parts: V.lineParts('en', line), cut: 0 };
       for (let k = 0; k < 3; k++) { others.length = 0; window.__speaks = 0; window.__srcs = 0; await V.sayAsync(line, line); if (!others.length) break; res[key].cut++; }
       res[key].speaks = window.__speaks; res[key].srcs = window.__srcs; res[key].diag = { ...V.voiceDiag }; // (why a part did not play, when it does not)
@@ -873,7 +898,7 @@ await check('voicecover', async () => {
   ok(g.number.parts && g.number.parts.some(p => p[1] === '47') && !g.number.speaks && g.number.srcs >= 3, 'a line with a number: ' + JSON.stringify(g.number));
   ok(g.name.parts && g.name.parts.some(p => p[1] === 'Zorbly') && !g.name.speaks && g.name.srcs >= 1, 'a line with a name: ' + JSON.stringify(g.name));
   ok(!errs.length, errs.join(' | '));
-  return `${r.lines} lines and ${r.parts} parts recorded, ${r.templates} templates, ${r.areas} areas; ${Object.entries(r.reasons).map(([k, v]) => `${v} × ${k}`).join('; ')}; "You rolled 47!" plays from ${g.number.srcs} recorded parts and a name in a gap is left out, never the phone's voice`;
+  return `${r.lines} lines and ${r.parts} parts recorded, ${r.templates} templates, ${r.areas} areas; ${Object.entries(r.reasons).map(([k, v]) => `${v} × ${k}`).join('; ')}; "That costs 47." plays from ${g.number.srcs} recorded parts and a name in a gap is left out, never the phone's voice`;
 });
 
 await check('voicearea', async () => {
@@ -1415,8 +1440,8 @@ await check('tester', async () => {
     const before = await P.page.evaluate(() => (JSON.parse(localStorage.getItem('sv2_tester_out') || '[]')).length + document.querySelectorAll('.testermark, .z-lb').length);
     if (before || got.length) out.push(lang + ': something was kept or sent before "I accept": ' + JSON.stringify({ before, got: got.length }));
     await P.page.click('.tagree .tg-yes'); await P.page.waitForSelector('.testermark', { timeout: 8000 }).catch(() => { }); await P.page.waitForTimeout(1500);
-    const on = await P.page.evaluate(async () => ({ mark: (document.querySelector('.testermark') || {}).textContent || '', lb: document.querySelectorAll('.hud .z-lb').length, build: (await import('/js/build.js')).SHOWN, lbSize: (r => r && Math.min(r.width, r.height))(document.querySelector('.hud .z-lb') && document.querySelector('.hud .z-lb').getBoundingClientRect()) }));
-    if (!on.mark.includes(on.build) || on.lb !== 1 || !(on.lbSize >= 44)) out.push(lang + ': after accepting, no tester mark with the version or no ladybird (44 px): ' + JSON.stringify(on));
+    const on = await P.page.evaluate(async () => ({ mark: (document.querySelector('.testermark') || {}).textContent || '', lb: document.querySelectorAll('.tester-floating.z-lb').length, build: (await import('/js/build.js')).SHOWN, lbSize: (r => r && Math.min(r.width, r.height))(document.querySelector('.tester-floating.z-lb') && document.querySelector('.tester-floating.z-lb').getBoundingClientRect()) }));
+    if (!on.mark.includes(on.build) || on.lb !== 1 || !(on.lbSize >= 64)) out.push(lang + ': after accepting, no tester mark with the version or no ladybird (64 px): ' + JSON.stringify(on));
     if (!got.some(x => x && x.accepted === true)) out.push(lang + ': the acceptance was not told');
     // Settings → Stop being a tester
     // (owner, 13 Oct AEDT) "Stop being a tester" is held down: a quick tap does nothing
@@ -1444,8 +1469,8 @@ await check('testerreport', async () => {
   // number on the ladybird, and send when back online; "Already reported → add to it" joins the open problem
   const P = await open(b, { w: 1024, h: 768, pre: testerPre({ on: true, devices: ['tester000001'] }, ACCEPTED) });
   let near = []; const got = await testerSite(P.ctx, () => ({ mine: [], open: near, retest: [], helped: 0, reports: 1 }));
-  await P.page.waitForFunction(() => window.__sv.tester && document.querySelector('.hud .z-lb'), null, { timeout: 15000 }); await clear(P.page);
-  const wait = async (f, ms = 12000) => { for (let t = 0; t < ms; t += 250) { const x = got.find(f); if (x) return x; await P.page.waitForTimeout(250); } return null; };
+  await P.page.waitForFunction(() => window.__sv.tester && document.querySelector('.tester-floating.z-lb'), null, { timeout: 15000 }); await clear(P.page);
+  const wait = (f, ms = 12000) => waitObserved(got, f, delay => P.page.waitForTimeout(delay), ms);
   const out = [];
   await P.page.evaluate(() => { setTimeout(() => { throw new Error('tester check boom'); }, 0); });
   const e = await wait(x => x && x.kind === 'auto' && x.auto === 'error' && /tester check boom/.test(x.detail));
@@ -1463,8 +1488,9 @@ await check('testerreport', async () => {
     fs.writeFileSync('out/tester-freeze-observation.json', JSON.stringify({ earlier: earlierFreezes, all: got.filter(x => x && x.auto === 'freeze') }, null, 2)); }
   // the ladybird: tap
   await clear(P.page); const n0 = got.length;
-  await P.page.locator('.hud .z-lb').first().dispatchEvent('pointerdown'); await P.page.locator('.hud .z-lb').first().dispatchEvent('pointerup');
-  await P.page.waitForSelector('.modal.tpanel .tp-shot', { timeout: 8000 });
+  await P.page.evaluate(installReportInputProbe);
+  await P.page.locator('.tester-floating.z-lb').first().click();
+  try { await P.page.waitForSelector('.modal.tpanel .tp-shot', { timeout: 8000 }); } catch (error) { fs.writeFileSync('out/tester-open-observation.json',JSON.stringify({...(await P.page.evaluate(readReportInputProbe)),errors:P.errors},null,2));throw error; }
   const shotFirst = await P.page.evaluate(() => /^data:image\/jpeg/.test(document.querySelector('.tp-shot').src));
   await P.page.click('.tp-k[data-k="looks"]'); await P.page.fill('.tpanel textarea', 'The bridge floats above the river'); await P.page.click('.tp-send');
   const t = await wait(x => x && x.kind === 'looks' && /bridge floats/.test(x.note || ''));
@@ -1472,7 +1498,7 @@ await check('testerreport', async () => {
   // long press: a quick report
   // (held until the quick report is made, like a child holding until something happens: on a slow machine one frame
   // can take half a second, and a fixed 1 s hold could let go before the 700 ms hold counted)
-  await P.page.locator('.hud .z-lb').first().dispatchEvent('pointerdown'); const quick = await wait(x => x && x.detail === 'quick'); await P.page.locator('.hud .z-lb').first().dispatchEvent('pointerup');
+  await P.page.locator('.tester-floating.z-lb').first().hover(); await P.page.mouse.down(); const quick = await wait(x => x && x.detail === 'quick'); await P.page.mouse.up();
   if (!quick) out.push('a long press made no quick report');
   // offline: waits with a number, then sends
   await P.ctx.setOffline(true); await P.page.evaluate(() => __sv.tester.openPanel(0)); await P.page.waitForSelector('.tpanel .tp-send'); await P.page.fill('.tpanel textarea', 'offline report'); await P.page.click('.tp-send'); await P.page.waitForTimeout(600);
@@ -1519,14 +1545,14 @@ await check('testernews', async () => {
   for (const lang of ['en', 'vi']) {
     const P = await open(b, { w: 390, h: 844, touch: true, lang, pre: `try { localStorage.setItem('sv2_playerid', 'tester000001'); localStorage.setItem('sv2_live', ${JSON.stringify(JSON.stringify(live))}); ${ACCEPTED} } catch (e) { }`,
       route: async ctx => { await ctx.route('**/api/live**', r => r.fulfill({ json: live })); await testerSite(ctx, () => ({ mine: [], open: [], retest: [], helped: 0, reports: 0, peeks: ['money_bahu'] })); } });
-    await clear(P.page); await P.page.waitForSelector('.hud .z-lb', { timeout: 20000 }); await P.page.waitForTimeout(9000);
+    await clear(P.page); await P.page.waitForSelector('.tester-floating.z-lb', { timeout: 20000 }); await P.page.waitForTimeout(9000);
     const r = await P.page.evaluate(async () => {
       const popup = [...document.querySelectorAll('.reward, .modal')].map(x => x.textContent).find(t => /Tester preview|Xem trước cho người thử/.test(t)) || '';
-      const dot = !document.querySelector('.hud .z-lb .lb-new')?.hidden;
+      const dot = !document.querySelector('.tester-floating.z-lb .lb-new')?.hidden;
       const T = await import('/js/tester.js'); await T.openPanel(0); await new Promise(res => setTimeout(res, 600));
       const rows = [...document.querySelectorAll('.tp-news .tp-news-row')].map(x => x.textContent.trim()), play = !!document.querySelector('.tp-news [data-try="bahu"]');
       document.querySelector('.modal.tpanel .x')?.click(); await new Promise(res => setTimeout(res, 400));
-      return { popup: popup.slice(0, 80), dot, rows, play, dotAfter: !document.querySelector('.hud .z-lb .lb-new')?.hidden };
+      return { popup: popup.slice(0, 80), dot, rows, play, dotAfter: !document.querySelector('.tester-floating.z-lb .lb-new')?.hidden };
     });
     if (r.popup) out.push(lang + ': a pop-up at the start: ' + r.popup);
     if (!r.dot || r.dotAfter) out.push(lang + ': the ladybird dot ' + JSON.stringify({ before: r.dot, after: r.dotAfter }));
@@ -1575,6 +1601,8 @@ await check('testerrewards', async () => {
   return 'on phone, tablet and computer: counted fixed list and quiet coins (more for a spoken note), the Silver Ladybird on the shirt (and in the look friends see), the tester hat, backpack and cape, five stickers, the week\'s star by the name, and the Tester\'s Corner';
 });
 
+await check('festivalsync', async () => (await import('./festival-sync.mts')).festivalSyncCheck(b));
+
 await check('festcal', async () => {
   // (round R, owner) the festival calendar: real dates, 3 weeks of build-up that grows each week, two festivals at once
   // in their own places, quiet days only a few days before, the day's timetable, Halloween trick-or-treat and keepsake
@@ -1587,7 +1615,7 @@ await check('festcal', async () => {
     out.rows = document.querySelectorAll('.pad .fcal-row').length; document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false;
     // Halloween: knock at five doors for a pumpkin lantern (owner, 10 Oct: children cannot start a festival, so the check
     // has an admin schedule it for today in Studio, as a grown-up would)
-    const h = __sv.heroes[0], C = (await import('/js/custom.js')).CUSTOM, d = new Date(), ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const h = __sv.heroes[0], C = (await import('/js/custom.js')).CUSTOM, ymd = (await import('/js/content/festival-visibility.js')).sydneyFestivalDate();
     C.releases = { ...(C.releases || {}), fest_halloween: { on: true, start: ymd, days: 1 } }; __sv.festivals.rebuild(); await new Promise(r => setTimeout(r, 2500));
     document.querySelectorAll('.dialog, .reward, .modal').forEach(e => e.remove());
     const doors = __sv.interactables.filter(i => i.id.startsWith('trick_')); out.doors = doors.length;
@@ -1622,7 +1650,7 @@ await check('festivals', async () => {
     out.startedByChild = G.festivals.active().some(a => a.F.id === far.F.id) || G.interactables.some(i => i.id === 'festival_' + far.F.id);
     __sv.openPad(0, 'cal'); await wait(500); out.calNote = (document.querySelector('.pad .note') || {}).textContent || ''; document.querySelectorAll('.modal').forEach(e => e.remove()); G.paused = false;
     // an admin schedules it for today in Studio: it is on, with its table
-    const d = new Date(), ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const ymd = (await import('/js/content/festival-visibility.js')).sydneyFestivalDate();
     C.releases = { ...(C.releases || {}), ['fest_' + far.F.id]: { on: true, start: ymd, days: 1 } }; G.festivals.rebuild(); await wait(300);
     out.adminOn = G.festivals.active().some(a => a.F.id === far.F.id && a.on) && G.interactables.some(i => i.id === 'festival_' + far.F.id);
     // (owner, 11 Oct, #32) even on its day, a calendar tap only tells: nobody is sent to the festival
@@ -1683,7 +1711,7 @@ await check('festhunt', async () => {
   const r = await P.page.evaluate(async () => {
     const G = __sv, W = await import('/js/world.js'), C = (await import('/js/custom.js')).CUSTOM, { FESTCAL } = await import('/js/content/festcal.js'), { HUNT } = await import('/js/content/festhunt.js');
     const wait = ms => new Promise(r => setTimeout(r, ms)), out = { bad: [] }, bad = out.bad;
-    const d = new Date(), ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const ymd = (await import('/js/content/festival-visibility.js')).sydneyFestivalDate();
     for (let k = 0; k < 40 && !G.festivals.count('village', 'tet', 4); k++) { G.festivals.rebuild(); await wait(300); }
     // the amount: 5x by default, as before at 1, and 7x at least as much as 5x; never on a road or street
     const total = c => c.pieces + c.strings + 2 * c.fronts, base = c => c.base.pieces + c.base.strings; let places = 0;
@@ -2963,7 +2991,7 @@ await check('noemoji', async () => {
   }, where).then(r => bad.push(...r));
   { const P = await open(b, { w: 820, h: 1180, touch: true, play: false, lang: 'vi' });
     await P.page.click('.screen.title .press', { force: true }); await P.page.waitForSelector('.screen.who'); await P.page.click('.modes button[data-m=split]'); await scan(P, 'who'); await P.ctx.close(); }
-  const P = await open(b, { w: 1180, h: 820, lang: 'vi' }); await clear(P.page);
+  const P = await openAllGamesFixture(b, { w: 1180, h: 820, lang: 'vi' }); await clear(P.page);
   await scan(P, 'valley');
   await P.page.evaluate(() => __sv.openGamesHub(0)); await P.page.waitForTimeout(500); await scan(P, 'Vui chơi'); await clear(P.page);
   for (const t of ['map', 'bag', 'log', 'album', 'passport', 'games', 'cam', 'friend']) { await P.page.evaluate(t => __sv.openPad(0, t), t); await P.page.waitForTimeout(400); await scan(P, 'Pad ' + t); await clear(P.page); }
@@ -3047,6 +3075,14 @@ await check('bridges', async () => {
   return `${r.n} bridges each over its water, ends on land, decks walkable; landmarks on their bridges: ${r.lm.join(', ')}; no road in water`;
 });
 
+await check('fruitbarfamily', async () => {
+  await ownerSmoke('orchard-fruitbar-browser.mts', ['--parent-entry-only']);
+  await ownerSmoke('orchard-fruitbar-browser.mts', ['--allocations-only']);
+  return 'Public non-tester entry, no adult gate, 64px counter taps, online cleanup and six EN/VI allocation/result layouts';
+});
+
+await check('bridgeunderpass', async () => (await import('./bridge-underpass.mts')).bridgeUnderpassCheck(b));
+
 await check('boats', async () => {
   // (round T2, RIVER-002/005/006) ride every boat end to end, 1 m at a time: the water under it and 1.5 m either side
   // is deep enough (at the piers a little shallower), every deck it passes is high enough over it, and every pier's land
@@ -3054,17 +3090,20 @@ await check('boats', async () => {
   const P = await open(b, { w: 900, h: 640 }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
     const W = await import('/js/world.js'), M = await import('/js/content/map.js'), G = __sv, bad = [], THREE = await import('/vendor/three.module.js');
+    await G.solidsReady;
     const F = G.ferries.ferries, info = [];
     for (const f of F) {
       const box = new THREE.Box3().setFromObject(f.model), tall = box.max.y - W.WATER, name = f.boat === 'vtboat' ? 'Vũng Tàu boat' : f.harbour ? 'harbour ferry' : f.line ? 'raft line' : f.loop ? 'lake ferry' : 'crossing raft';
-      let shallow = 0, low = 0, first = '';
+      let shallow = 0, low = 0, pierHits = 0, first = '';
       const stopPts = f.stops.map(s => f.path[s.i]);
       for (let i = 0; i < f.path.length - (f.loop ? 0 : 1); i++) { const a = f.path[i], c = f.path[(i + 1) % f.path.length], L = Math.hypot(c.x - a.x, c.z - a.z), n = Math.max(1, Math.ceil(L));
         for (let k = 0; k < n; k++) { const x = a.x + (c.x - a.x) * k / n, z = a.z + (c.z - a.z) * k / n, ux = -(c.z - a.z) / (L || 1), uz = (c.x - a.x) / (L || 1);
           const nearStop = stopPts.some(p => Math.hypot(p.x - x, p.z - z) < 6), lim = nearStop ? W.WATER - .25 : W.WATER - .8;
           const hs = [0, -1.5, 1.5].map(o => W.heightAt(x + ux * o, z + uz * o)); if ((nearStop ? hs[0] : Math.max(...hs)) > lim) { shallow++; if (!first) first = `${x.toFixed(0)},${z.toFixed(0)}`; }
-          const B = W.bridgeAt(x, z, 4); if (B && B.h - tall < .5) low++; } }
+          const B = W.bridgeAt(x, z, 4); if (B && B.h - tall < .5) low++;
+          if(B&&!nearStop&&G.world.underpassSolid){const N=Math.round(W.SIZE/.5);for(const o of[0,-1.5,1.5]){const gx=Math.floor((x+ux*o+W.HALF)/.5),gz=Math.floor((z+uz*o+W.HALF)/.5);if(G.world.underpassSolid[gz*N+gx])pierHits++;}} } }
       if (shallow) bad.push(`${name}: ${shallow} m too shallow (first at ${first})`);
+      if(pierHits)bad.push(`${name}: ${pierHits} hull samples intersect a real bridge support`);
       if (low) bad.push(`${name}: ${low} m under a deck too low for it`);
       for (const s of f.stops) { const p = s.dock && s.dock.pier && s.dock.pier.land; if (!p) continue; const rd = W.roadDist(p.x, p.z); if (!rd.road || rd.d > rd.road.w / 2 + 3) bad.push(`${name}: the pier at ${p.x.toFixed(0)},${p.z.toFixed(0)} (${s.name()}) joins no road (${rd.d.toFixed(1)} m)`); }
       // (owner, 18 Oct AEDT: "the boat docks are too far drop off the ground") walk each pier from the bank to its end: it
@@ -3431,7 +3470,7 @@ await check('adventure', async () => {
   // second tap can't start a game twice; a big kid taps once to look and again to play, sees ✨ on new games and can
   // search; Discover jumps to any area; Ông Cú cheers a new star; the landscape stands still in Calm mode; opening and
   // closing the screen 25 times leaves no extra listeners or elements behind
-  const P = await open(b, { w: 390, h: 844, touch: true, screen: 'simple' });
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, screen: 'simple' });
   await P.page.waitForSelector('.simple-screen:not([hidden]) .sp-catcard, .simple-screen:not([hidden]) .sp-stop', { timeout: 20000 });
   await P.page.evaluate(() => document.querySelectorAll('.dialog').forEach(d => d.remove()));
   const r = {};   // (Round V, owner 13 Oct: one page that scrolls down, each section's title then its own road, like Khám phá)
@@ -3759,7 +3798,7 @@ await check('playhub', async () => {
 await check('a11y', async () => {
   // accessibility rules (round I, ARCHITECTURE §9.6): UI-004 touch targets, A11Y-001 reduced motion, A11Y-002 readable
   // captions, A11Y-004 under-5s hear every game's instruction (A11Y-003 simple paths: the "simple" check)
-  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true }); await clear(P.page);
   const small = (min, sel = 'button, a[href], [role=button], input[type=checkbox], select') => P.page.evaluate(([min, sel]) => {
     const out = [];
     for (const e of document.querySelectorAll(sel)) {
@@ -3817,7 +3856,7 @@ await check('a11y', async () => {
 await check('unit', async () => {
   // Node unit tests (architecture §10): the L0 core (ids, events, seeded random, geometry), node --test tests/unit
   const { execFileSync } = await import('child_process');
-  let out = ''; try { out = execFileSync(process.execPath, ['--test', '--test-reporter=tap', ...fs.readdirSync('unit').filter(f => f.endsWith('.test.mjs')).map(f => 'unit/' + f)], { encoding: 'utf8' }); } catch (e) { ok(false, ((e.stdout || '') + '').split('\n').filter(l => /^not ok|Error/.test(l)).slice(0, 6).join(' | ')); }
+  let out = ''; try { out = execFileSync(process.execPath, ['--test', '--test-reporter=tap', ...fs.readdirSync('unit').filter(f => f.endsWith('.test.mjs')).map(f => 'unit/' + f)], { encoding: 'utf8' }); } catch (e) { const tap=String(e.stdout||''); fs.writeFileSync('out/unit-failure.tap',tap); ok(false, tap.split('\n').filter(l => /^not ok|Error|^\s*(?:error:|expected:|actual:|operator:)/.test(l)).slice(0, 20).join(' | ')); }
   const pass = (out.match(/^# pass (\d+)/m) || [])[1], fail = (out.match(/^# fail (\d+)/m) || [])[1];
   ok(+fail === 0 && +pass > 0, out.slice(-400));
   return `${pass} unit tests passed`;
@@ -6366,6 +6405,8 @@ await check('ownerhearts', async () => {
   return 'fall-damage handler protects under-5/easy/medium; older Hard loses hearts; zero-heart rescue returns to lastSafe and restores hearts/stamina (emulated runtime, not a physical fall/device test)';
 });
 
+await check('roomstartup', async () => (await import('./room-startup.mts')).roomStartupCheck(b));
+
 await check('ownerfamily', async () => {
   return await ownerSmoke('owner-family-smoke.mjs');
 });
@@ -6577,7 +6618,7 @@ await check('dailyadventure', async () => {
     const miss = await P.page.evaluate(async () => { const { ADVENTURES } = await import('/js/content/adventures.js'), out = [];
       for (const a of ADVENTURES) for (const s of a.steps) if (s.at && !__sv.adventure.where(s.at)) out.push(a.id + ':' + s.at); return out; });
     ok(!miss.length, `${tag}: spots not in the valley: ${miss.join(', ')}`);
-    await P.page.evaluate(age => { __sv.heroes[0].profile.age = age; __sv.adventure.force(0, 'house'); }, age);
+    await P.page.evaluate(seedAdventureWalk, age);
     await P.page.waitForTimeout(600);
     // HUD-4: the goal card shows the step, 3 dots, Go walk button and hear-again; a tap opens the window
     const card = await P.page.evaluate(() => { const c = document.querySelector('.hud .advcard'); if (!c || c.hidden) return null; const r = c.getBoundingClientRect(), hear = c.querySelector('.adv-hear').getBoundingClientRect(), walk = c.querySelector('.adv-walk').getBoundingClientRect();
@@ -6593,7 +6634,8 @@ await check('dailyadventure', async () => {
     ok(lang === 'vi' ? win.txt.includes('Phiêu lưu hôm nay') && !win.txt.includes("Today's adventure") : win.txt.includes("Today's adventure"), `${tag}: the window in the language`);
     await P.page.screenshot({ path: `out/dailyadventure-window-${w}.png` });
     await P.page.click('.modal.advwin .adv-go'); await P.page.waitForTimeout(500);
-    ok(await P.page.evaluate(() => !document.querySelector('.modal.advwin') && __sv.adventure.trails.size === 1 && !!(__sv.heroes[0].goal || __sv.adventure.trails.get(__sv.heroes[0])?.walk)), `${tag}: Let's go closes the window, shows the way and starts walking`);
+    const walkSnapshot = await P.page.evaluate(adventureWalkSnapshot);
+    ok(walkSnapshot.valid, `${tag}: Let's go closes the window, shows the way and starts walking ${JSON.stringify(walkSnapshot)}`);
     // play it: walk in, find, give (big kids count first), the chest
     const coins0 = await P.page.evaluate(async () => { const S = await import('/js/state.js'); return S.farm.coins; });
     await P.page.evaluate(async () => { const G = __sv, h = G.heroes[0], V = (await import('/js/content/map.js')).anchorOf('town'); h.pos.x = V[0]; h.pos.z = V[1] + 4; h.pos.y = (await import('/js/world.js')).heightAt(h.pos.x, h.pos.z); });
@@ -6635,16 +6677,9 @@ await check('dailyadventure', async () => {
       A.force(0, 'house'); A.next(h); const t = A.today(h).timer; S.settings.advLevel = 'gentle'; return !!t; });
     ok(timer === (age === 'big'), `${tag}: a Tricky timer only for 5 and over (${timer})`);
     // a missed day keeps its stamps; Grandpa Owl remembers yesterday's (D11); 7 stamps open the week chest (D10)
-    const days = await P.page.evaluate(async () => { const G = __sv, h = G.heroes[0], A = G.adventure, r = A.today(h), d = r.day;
-      Object.assign(r, { day: d - 1, stamps: [d - 5, d - 3], last: 'house', lastDay: d - 1, done: true, told: false });
-      const r2 = A.today(h); const kept = r2.stamps.length, fresh = r2.id && !r2.done && r2.day === d;
-      await new Promise(res => setTimeout(res, 1600)); const told = r2.told === d;
-      r2.stamps = [d - 6, d - 5, d - 4, d - 3, d - 2, d - 1]; const pet = h.profile.lanterns = h.profile.lanterns || {}; pet.pet = pet.pet || {}; pet.pet.hats = [];
-      r2.prizes = []; A.finish(h); await new Promise(res => setTimeout(res, 2500)); document.querySelectorAll('.advchest .adv-coin').forEach(c => c.click());
-      for (let k = 0; k < 20 && document.querySelector('.modal.advchest'); k++) { document.querySelectorAll('.advchest .adv-go:not([hidden])').forEach(b => b.click()); await new Promise(res => setTimeout(res, 500)); }
-      return { kept, fresh, told, chests: r2.chests, stamps: r2.stamps.length, hat: (h.profile.lanterns.pet.hats || []).includes('party') }; });
+    const days = await P.page.evaluate(adventureDaySnapshot);
     ok(days.kept === 2 && days.fresh, `${tag}: a missed day takes no stamp away; a new adventure today ${JSON.stringify(days)}`);
-    ok(days.told, `${tag}: Grandpa Owl remembers yesterday's adventure`);
+    ok(days.told, `${tag}: Grandpa Owl remembers yesterday's adventure ${JSON.stringify(days.diagnostic)}`);
     ok(days.chests === 1 && days.stamps === 0 && days.hat, `${tag}: seven stamps open the week chest: a hat ${JSON.stringify(days)}`);
     // the Adventures tab: today's on top, the rest behind "More adventures"; the switch off: as before
     await P.page.evaluate(() => __sv.openPad(0, 'log')); await P.page.waitForTimeout(500);
@@ -7194,26 +7229,33 @@ await check('animalvoices', async () => {
   // drawn-out tone), in the game and from the animals' sounds elsewhere; each file is in the offline list
   const sw = fs.readFileSync('../sw.js', 'utf8'), names = ['cow', 'sheep', 'pig', 'dog', 'cat', 'duck', 'hen', 'horse', 'frog', 'owl'];
   const offline = names.filter(n => !sw.includes(`'sounds/animals/${n}.mp3'`));
-  const pre = `window.__rec = []; window.__osc = 0;
-    const st = AudioBufferSourceNode.prototype.start; AudioBufferSourceNode.prototype.start = function (...a) { if (this.buffer && this.buffer.duration > .5) window.__rec.push(+this.buffer.duration.toFixed(2)); return st.apply(this, a); };
+  // The automatic welcome sticker lands after 650 ms and plays SFX.shhk(): two 0.8 s noise buffers and one oscillator.
+  // Seed it as already welcomed before the first sticker poll; it is unrelated to an animal's call.
+  const pre = `(${seedPlayers.toString()})();
+    { const profiles = JSON.parse(localStorage.getItem('sv2_profiles') || '[]');
+      profiles.forEach(p => { p.stickerBook = { ...(p.stickerBook || {}), welcomed: Date.now() }; });
+      localStorage.setItem('sv2_profiles', JSON.stringify(profiles)); }
+    window.__rec = []; window.__animalBuffers = []; window.__osc = 0;
+    const st = AudioBufferSourceNode.prototype.start; AudioBufferSourceNode.prototype.start = function (...a) { if (this.buffer && this.buffer.duration > .5) { window.__rec.push(+this.buffer.duration.toFixed(2)); window.__animalBuffers.push(this.buffer); } return st.apply(this, a); };
     const os = OscillatorNode.prototype.start; OscillatorNode.prototype.start = function (...a) { window.__osc++; return os.apply(this, a); };`;
-  const P = await open(b, { w: 390, h: 844, touch: true, pre, settings: { sound: true, music: false } }); await clear(P.page);
+  const P = await open(b, { w: 390, h: 844, touch: true, pre, settings: { sound: true, music: false } }); await noWelcome(P.page); await clear(P.page);
   await P.page.mouse.click(195, 420); await P.page.waitForTimeout(300); // (sound starts after a first tap, as on a phone)
   const r = await P.page.evaluate(async () => {
     const A = await import('/js/audio.js'), wait = ms => new Promise(r => setTimeout(r, ms)), out = {};
-    await A.loadAnimalCalls(8000); __sv.paused = true; await wait(600); // (the valley's own ducks and frogs stay quiet while it listens)
+    const loaded = await A.loadAnimalCalls(8000); if (!loaded) throw new Error('Real animal recordings did not finish loading.'); __sv.paused = true; await wait(600); // (the valley's own ducks and frogs stay quiet while it listens)
     for (const call of ['moo', 'baa', 'oink', 'woof', 'meow', 'quack', 'cluck', 'neigh', 'ribbit', 'hoot']) {
-      window.__rec.length = 0; window.__osc = 0; A.animalCall(call); await wait(150);
-      out[call] = { rec: window.__rec.slice(), tones: window.__osc, len: A.animalRecording(call) ? +A.animalRecording(call).duration.toFixed(2) : 0 };
+      window.__rec.length = 0; window.__animalBuffers.length = 0; window.__osc = 0; const stop = A.animalCall(call); await wait(150);
+      out[call] = { rec: window.__rec.slice(), tones: window.__osc, len: A.animalRecording(call) ? +A.animalRecording(call).duration.toFixed(2) : 0,
+        correctRecording: window.__animalBuffers.length === 1 && window.__animalBuffers[0] === A.animalRecording(call) }; stop();
     }
     return out;
   });
   // in the game itself: the first round's sound is a recording
-  const g = await P.page.evaluate(async () => { const wait = ms => new Promise(r => setTimeout(r, ms)); window.__rec.length = 0; window.__osc = 0; __sv.playGame(0, 'animalsounds', 'replay'); for (let i = 0; i < 40 && !window.__rec.length; i++) await wait(250); return { rec: window.__rec.slice(), tones: window.__osc }; });
+  const g = await P.page.evaluate(async () => { const A = await import('/js/audio.js'), wait = ms => new Promise(r => setTimeout(r, ms)); window.__rec.length = 0; window.__animalBuffers.length = 0; window.__osc = 0; __sv.playGame(0, 'animalsounds', 'replay'); for (let i = 0; i < 40 && !window.__rec.length; i++) await wait(250); return { rec: window.__rec.slice(), tones: window.__osc, realAnimal: window.__animalBuffers.length >= 1 && ['moo', 'baa', 'oink', 'woof', 'meow', 'quack', 'cluck', 'neigh', 'ribbit', 'hoot'].some(call => window.__animalBuffers[0] === A.animalRecording(call)) }; });
   const errs = P.errors; await P.ctx.close();
-  const bad = Object.entries(r).filter(([, v]) => !(v.rec.length === 1 && v.len >= .6 && v.len <= 3 && !v.tones)).map(([k, v]) => k + ' ' + JSON.stringify(v));
-  ok(!offline.length && !bad.length && g.rec.length >= 1 && !errs.length, JSON.stringify({ offline, bad, game: g, errs }));
-  return `10 animals play their real recordings (${Object.entries(r).map(([k, v]) => `${k} ${v.len} s`).join(', ')}), none drawn as tones; "Who Says That?" starts with a recording; all 10 files in the offline list`;
+  const bad = Object.entries(r).filter(([, v]) => !(v.rec.length === 1 && v.len >= .6 && v.len <= 3 && !v.tones && v.correctRecording)).map(([k, v]) => k + ' ' + JSON.stringify(v));
+  ok(!offline.length && !bad.length && g.rec.length >= 1 && g.realAnimal && !errs.length, JSON.stringify({ offline, bad, game: g, errs }));
+  return `10 animals play their real recordings (${Object.entries(r).map(([k, v]) => `${k} ${v.len} s`).join(', ')}), exact buffer identities, none drawn as tones; "Who Says That?" starts with a recording; all 10 files in the offline list`;
 });
 
 await check('realrides', async () => {
@@ -7233,7 +7275,10 @@ await check('realrides', async () => {
     yes.click(); await wait(800);
     const stops = [...document.querySelectorAll('.stoppick [data-k]')]; if (!stops.length) return { none: 'no stop picker' };
     // the farthest stop on the list
-    const list = G.world.busStops.filter(b => Math.hypot(b.x - h.pos.x, b.z - h.pos.z) > 12); let far = 0; list.forEach((b, k) => { if (Math.hypot(b.x - h.pos.x, b.z - h.pos.z) > Math.hypot(list[far].x - h.pos.x, list[far].z - h.pos.z)) far = k; });
+    const { destinationStops } = await import('/js/travel-stops.js');
+    const list = destinationStops(G.world.busStops, h.pos);
+    if (stops.length !== list.length) return { none: 'picker and destination model disagree', cards: stops.length, destinations: list.length };
+    let far = 0; list.forEach((b, k) => { if (Math.hypot(b.x - h.pos.x, b.z - h.pos.z) > Math.hypot(list[far].x - h.pos.x, list[far].z - h.pos.z)) far = k; });
     stops[far].click(); await go; await wait(500);
     const tr = sl.trip; if (!tr) return { none: 'no trip' };
     const p0 = [sl.v.o.position.x, sl.v.o.position.z], s0 = tr.s; await wait(3000); const along = tr.s - s0; // (game time: a slow test browser runs the game's clock slower)

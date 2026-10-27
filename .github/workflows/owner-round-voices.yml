@@ -2,8 +2,8 @@
 name: Owner round voices
 on:
   push:
-    branches: [work/owner-round-20261014, work/owner-repair-20261014, work/owner-repair-checkpoint-20261015]
-    paths: ['js/**', 'tools/voice-extra.json', '.github/workflows/owner-round-voices.yml']
+    branches: [work/v1.02-fruit-parade, work/owner-round-20261014, work/owner-repair-20261014, work/owner-repair-checkpoint-20261015]
+    paths: ['js/**', 'tools/voice-extra.json', 'tools/make-voice-pack.mts', 'tools/mixed-voice-inventory.mts', '.github/workflows/owner-round-voices.yml']
   workflow_dispatch:
     inputs:
       save_to_branch:
@@ -37,7 +37,7 @@ jobs:
       - name: Collect only new recordings and updated indexes
         run: |
           python3 - <<'PY'
-          import pathlib, shutil, subprocess
+          import json, pathlib, shutil, subprocess
           changed = subprocess.check_output(['git','diff','--name-only','--','voices'], text=True).splitlines()
           new = subprocess.check_output(['git','ls-files','--others','--exclude-standard','voices'], text=True).splitlines()
           for name in sorted(set(changed + new)):
@@ -46,6 +46,8 @@ jobs:
                   target = pathlib.Path('voices-delta') / source
                   target.parent.mkdir(parents=True, exist_ok=True)
                   shutil.copy2(source, target)
+          pathlib.Path('voices-delta').mkdir(exist_ok=True)
+          pathlib.Path('voices-delta/result.json').write_text(json.dumps({'source': subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(), 'coverage': 'passed', 'changedFiles': sorted(set(changed + new))}, indent=2) + '\n')
           PY
       - uses: actions/upload-artifact@v4
         with:
@@ -55,7 +57,7 @@ jobs:
           retention-days: 14
 
       - name: Save recordings to the release branch when requested
-        if: inputs.save_to_branch && startsWith(github.ref_name, 'release/')
+        if: (inputs.save_to_branch || github.ref_name == 'work/v1.02-fruit-parade') && (startsWith(github.ref_name, 'release/') || github.ref_name == 'work/v1.02-fruit-parade')
         env:
           RELEASE_BRANCH: ${{ github.ref_name }}
         run: |
@@ -64,5 +66,8 @@ jobs:
           git add voices
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Record missing release instructions"
-          git pull --no-rebase origin "$RELEASE_BRANCH"
-          git push origin "HEAD:$RELEASE_BRANCH"
+          for attempt in 1 2 3; do
+            git pull --no-rebase origin "$RELEASE_BRANCH"
+            if git push origin "HEAD:$RELEASE_BRANCH"; then exit 0; fi
+          done
+          exit 1

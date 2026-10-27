@@ -1,0 +1,17 @@
+[
+  {
+    "file": "temp/fpt-samples/story.mp3",
+    "format_name": "wav",
+    "duration": "6.300590"
+  },
+  {
+    "file": "temp/fpt-samples/instruction.mp3",
+    "format_name": "wav",
+    "duration": "4.470113"
+  },
+  {
+    "file": "temp/fpt-samples/greeting.mp3",
+    "format_name": "wav",
+    "duration": "5.617959"
+  }
+]

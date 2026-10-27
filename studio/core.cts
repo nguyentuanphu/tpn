@@ -478,7 +478,9 @@ function createStudio({ store, conf, online = false, local = {}, family = null }
     if (api === 'ping') return ok({ ok: true });
     if (api === 'info') {
       const ready = S.ok(), nv = ready ? await voiceCount() : 0; let version = '?';
-      try { version = /VERSION = '([^']+)'/.exec((await S.read('sw.js')).toString('utf8'))[1]; } catch (e) { }
+      try { version = /VERSION = '([^']+)'/.exec((await S.read('sw.ts')).toString('utf8'))[1]; } catch (e) {
+        try { version = /VERSION = '([^']+)'/.exec((await S.read('sw.js')).toString('utf8'))[1]; } catch (e) { }
+      }
       let unpublished = false; try { if (S.unpublished) unpublished = await S.unpublished(); else if (gh && conf.githubRepo) { if (!draftSeen || Date.now() - draftSeen.t > 30e3) draftSeen = { t: Date.now(), v: await ghStore().unpublished() }; unpublished = draftSeen.v; } } catch (e) { }
       return ok(Object.assign({ game: S.where, ok: ready, version, voices: nv, studio: STUDIO_VERSION, online, store: S.kind, unpublished,
         conf: { azure: !!conf.azureKey, azureRegion: conf.azureRegion || '', netlify: !!conf.netlifyToken, netlifySite: conf.netlifySite || '', github: !!conf.githubToken, githubRepo: conf.githubRepo || '', githubBranch: conf.githubBranch || 'main', piper: !!conf.piperExe, piperExe: conf.piperExe || '', piperModels: conf.piperModels || {}, siteUrl: conf.siteUrl || '', players: !!(online || (conf.siteUrl && conf.studioKey)), family: family ? family.where : '' } }, local.info ? local.info() : {}));

@@ -39,7 +39,8 @@ document.querySelectorAll('[data-open-menu]').forEach(b=>b.onclick=()=>menu.show
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&EMBED&&!document.querySelector('dialog[open]'))closeSite()});`;
 
 export function makeWebsite(html: string): { page: string, files: Map<string, Buffer> } {
-  let h = html;
+  let h = html.replace('window.svFestivalVisible=()=>true;', 'window.svFestivalVisible=()=>false;');
+  h=h.replace(/id="(quest-(?:daily-fest_|hunt-|festival-)[\w-]+)"/g,'id="$1" data-festival-visible="false"');
   h = cut(h, '<div class="demo-bar">', '</div></div>\n');
   h = cut(h, '<section id="game-stage"', '</section>\n');
   h = cut(h, '<dialog id="site-dialog"', '</dialog>\n');

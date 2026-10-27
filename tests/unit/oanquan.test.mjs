@@ -1,10 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import vm from 'node:vm';
-// Exercise the game's actual rules without loading its browser-only presentation imports.
-const source = fs.readFileSync(new URL('../../js/games/vietnam.js', import.meta.url), 'utf8');
-const simulate = vm.runInNewContext(source.slice(source.indexOf('const isQuan'), source.indexOf('register({')) + '\nsimulate');
+import {simulate} from '../../js/games/oanquan-core.js';
 const state = () => ({ seeds: Array(12).fill(0), big: Array(12).fill(false), score: [0, 0] });
 const total = s => s.seeds.reduce((a,b) => a+b,0) + s.big.filter(Boolean).length*10 + s.score[0]+s.score[1];
 

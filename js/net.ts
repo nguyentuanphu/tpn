@@ -1,3 +1,4 @@
+import {cleanFamilyQuiz,type FamilyQuestion} from './content/family-quiz.js';
 // Playing together from several devices: one device starts a room (a 6-digit code) and up to 5
 // friends join it, peer-to-peer through the free PeerJS service. The room's starter passes messages
 // between everyone, and everyone hears everyone through a live voice call.
@@ -22,7 +23,7 @@ import { managementEvidence } from './core/events.js';
 import { micMode } from './audio.js';
 import { Channel } from './relay.js';
 import { checkMsg } from './netmsg.js';
-import type { Remote } from '../types/net.js';
+import type { Remote,Msg } from '../types/net.js';
 import { MAP_VERSION } from './content/map.js';
 const PREFIX = 'sparkle-valley-v2-';
 export const MAX_ROOM = 6;
@@ -128,6 +129,7 @@ export const Net = {
   // comes from a game older than r57, which can't be told apart: r56 already has map 'D1', so it plays as before (owner,
   // 11 Oct: "let them in"; a game older still updates itself the next time it opens online). (Tests may change it.)
   mapVersion: MAP_VERSION,
+  _roomGeneration: 0,
   sameMap(m) { return m == null || m === this.mapVersion; },
   peer: null, conns: new Map(), calls: new Map(), cloud: null, door: null, cloudOn: false, _seen: new Set(), hostId: null, audios: new Map(), mic: null, code: null, role: null, muted: true, me: null, hello: null,
   knocking: false,           // (a newcomer) waiting at the door for the room's starter
@@ -240,18 +242,22 @@ export const Net = {
     if (this._off()) return null;
     // (r63, owner: "the microphone should always be off until the child turns it on"; on iPhone a try without a tap
     // could hang and every later tap did nothing) the microphone is asked for only by a tap on Mic (HUD) or in Friends
-    await prepare().catch(() => { }); if (!this.mic) this.emit('status', { key: 'mictap' });
-    this.close(true); this.setMuted(true);   // (Round V, owner 13 Oct) the microphone is always off when a room is made or joined: a tap turns it on
-    this.role = 'host'; this.hello = await this._withPub(hello); this._since = Date.now();
+    this.close(true); const generation=this._roomGeneration;
+    await prepare().catch(() => { }); if(generation!==this._roomGeneration||this._off())return null;
+    if (!this.mic) this.emit('status', { key: 'mictap' }); this.setMuted(true);   // (Round V, owner 13 Oct) the microphone is always off when a room is made or joined: a tap turns it on
+    this.role = 'host'; const greeting=await this._withPub(hello);
+    if(generation!==this._roomGeneration||this.role!=='host'||this._off())return null;
+    this.hello=greeting; this._since = Date.now();
     this.secret = b64(rnd(32));
     for (let tries = 0; tries < 4 && window.Peer; tries++) {
       this.code = newRoomCode();
       const ok = await new Promise(res => {
         const p = new window.Peer(PREFIX + this.code, peerOpts());
         const t = setTimeout(() => { try { p.destroy(); } catch (e) { } res('down'); }, 9000);   // the meeting service is not answering
-        p.on('open', id => { clearTimeout(t); this.peer = p; this.me = id; res(true); });
-        p.on('error', err => { clearTimeout(t); if (err.type === 'unavailable-id') { p.destroy(); res(false); } else { this.emit('status', { key: 'error', err }); res(true); } });
+        p.on('open', id => { clearTimeout(t);if(generation!==this._roomGeneration){p.destroy();res('cancelled');return;} this.peer = p; this.me = id; res(true); });
+        p.on('error', err => { clearTimeout(t);if(generation!==this._roomGeneration){p.destroy();res('cancelled');return;} if (err.type === 'unavailable-id') { p.destroy(); res(false); } else { this.emit('status', { key: 'error', err }); res(true); } });
       });
+      if(generation!==this._roomGeneration||this.role!=='host'||this._off())return null;
       if (ok === true || ok === 'down') break;
     }
     if (!this.code) this.code = newRoomCode();
@@ -261,8 +267,9 @@ export const Net = {
       this.peer.on('call', call => { if (!this._admitted.has(call.peer)) { try { call.close(); } catch (e) { } return; } call.answer(this.mic || this._silence()); this._call(call); });
       this.peer.on('disconnected', () => { try { this.peer.reconnect(); } catch (e) { } });
     }
-    await Promise.all([this._startDoor(), this._startMembers()]);
-    if (!this.peer && !this.door.connected) { this.emit('status', { key: 'error' }); return null; }
+    await Promise.allSettled([this._startDoor(), this._startMembers()]);
+    if(generation!==this._roomGeneration||this.role!=='host'||this._off())return null;
+    if (!this.peer && !this.door?.connected) { this.close(true); this.emit('status', { key: 'error' }); return null; }
     this._startPings(); this._wake(true);
     this.emit('status', { key: 'waiting', code: this.code });
     return this.code;
@@ -273,16 +280,17 @@ export const Net = {
     if (this._off() || !okRoom(code)) return;
     // (r63, owner: "the microphone should always be off until the child turns it on"; on iPhone a try without a tap
     // could hang and every later tap did nothing) the microphone is asked for only by a tap on Mic (HUD) or in Friends
-    await prepare().catch(() => { }); if (!this.mic) this.emit('status', { key: 'mictap' });
-    this.close(true); this.setMuted(true);   // (Round V, owner 13 Oct) the microphone is always off when a room is made or joined: a tap turns it on
-    hello = await this._withPub(hello);
-    this._managementStarted=Date.now(); this._managementDirect=managementEvidence.connection('direct');
+    this.close(true); const generation=this._roomGeneration;
+    await prepare().catch(() => { }); if(generation!==this._roomGeneration||this._off())return null;
+    if (!this.mic) this.emit('status', { key: 'mictap' }); this.setMuted(true);   // (Round V, owner 13 Oct) the microphone is always off when a room is made or joined: a tap turns it on
+    hello = await this._withPub(hello);if(generation!==this._roomGeneration||this._off())return null;
+    this._managementDirect=managementEvidence.connection('direct');
     this.role = 'guest'; this.code = code; this.hello = hello; this.hostId = PREFIX + code;
     this.hostPub = okPub(opts.hostPub) ? opts.hostPub : null; this._pinWeak = false;
     this._knock(true); this._heard = 0;
     this.emit('status', { key: 'connecting' });
     // the door on the cloud relay opens at the same time, so there is a second way in from the very start
-    const doorReady = this._startDoor();
+    const doorReady = this._startDoor().catch(()=>{});
     let p = null;
     if (window.Peer) {
       p = new window.Peer(peerOpts()); this.peer = p;
@@ -290,10 +298,12 @@ export const Net = {
       // calls only from players the starter introduced (the introduction can arrive a moment after the call rings)
       p.on('call', call => { let n = 0; const tryIt = () => { if (this.peer !== p) return; if (this.remotes[call.peer] && !this.knocking) { call.answer(this.mic || this._silence()); this._call(call); } else if (++n > 20) { try { call.close(); } catch (e) { } } else setTimeout(tryIt, 200); }; tryIt(); });
       p.on('disconnected', () => { try { p.reconnect(); } catch (e) { } });
-      this.me = await new Promise(res => { const t = setTimeout(() => res(null), 7000); p.on('open', id => { clearTimeout(t); res(id); }); });
+      const connectedId = await new Promise(res => { const t = setTimeout(() => res(null), 7000); p.on('open', id => { clearTimeout(t); res(id); }); });
+      if(generation!==this._roomGeneration||this.role!=='guest'||this._off())return null;
+      this.me=connectedId;
     }
     if (!this.me) this.me = 'sv-c-' + hex(rnd(5));
-    await doorReady;
+    await doorReady;if(generation!==this._roomGeneration||this.role!=='guest'||this._off())return null;
     const host = this.hostId;
     if (p && p.open) {
       const c = p.connect(host, { reliable: true }); this.conns.set(host, c);
@@ -306,6 +316,7 @@ export const Net = {
     // (knocking: the starter has heard the knock, so keep knocking for up to 2 minutes)
     const t0 = Date.now(); this._slowTold = false; let viaCloud = false;
     const watch = setInterval(() => {
+      if(generation!==this._roomGeneration){clearInterval(watch);return;}
       if (this.role !== 'guest' || this.code !== code) { clearInterval(watch); return; }
       const c = this.conns.get(host), s = (Date.now() - t0) / 1000, tick = Math.floor(s);
       if (this.remotes[host]) { clearInterval(watch); return; }
@@ -390,6 +401,7 @@ export const Net = {
       return;
     }
     if (d.t === 'bye') { this._gone(from); return; }
+    if(d.t==='gquiz'){void this._openFamilyQuiz(d,from);return;}
     if (d.t === 'photo') { this._openPhoto(d, from); return; }
     if (d.t === 'photoreq') { if (this.remotes[from] && this._photoTo) { const r = this.remotes[from]; this._photoTo.delete(from + r.pub); } this._sendPhoto(from); return; }
     if (d.t === 's') { if (this.remotes[from]) this.remotes[from].s = d; return; }
@@ -601,7 +613,7 @@ export const Net = {
   async _startDoor() {
     if (this.door) this.door.close();
     const ch = this.door = new Channel({ kind: 'room', code: this.code, onMsg: m => { if (this.door === ch) this._doorMsg(m); } });
-    await ch.start();
+    await ch.start();if(this.door!==ch)ch.close();
   },
   _doorMsg(m) {
     if (!m || typeof m !== 'object' || !okId(m.from) || m.from === this.me || (typeof m.to === 'string' && m.to !== this.me)) return;
@@ -623,6 +635,22 @@ export const Net = {
   },
   async _withPub(hello) { try { this.pub = await myPub(); } catch (e) { this.pub = null; } return Object.assign({}, hello || {}, this.pub ? { pub: this.pub } : {}); },
   // send my photo to one player, locked with our pair key (once per player; after they are in the room only)
+  // A private quiz round is sealed separately for each accepted player's key, as family photos are.
+  async sendFamilyQuiz(to:string,gid:string,questions:FamilyQuestion[],active:()=>boolean){
+    const quiz=cleanFamilyQuiz(questions),r=this.remotes[to],room=this.code,me=this.me,generation=this._roomGeneration,pub=r?.pub;
+    if(!quiz?.length||!room||!r||!okPub(pub)||this.knocking||!this.role||!/^[\w-]{1,12}$/.test(gid)||typeof active!=='function'||!active())return false;
+    try{const sealed=await sealFor(pub,{gid,questions:quiz});
+      if(sealed.ct.length>100000||this.code!==room||this.me!==me||this.knocking||this.remotes[to]?.pub!==pub||this._roomGeneration!==generation||!active())return false;
+      this.send({t:'gquiz',to,gid,...sealed});return true;
+    }catch{return false;}
+  },
+  async _openFamilyQuiz(d:Msg,from:string){
+    const r=this.remotes[from],room=this.code,me=this.me,generation=this._roomGeneration,pub=r?.pub;if(!room||!this.role||this.knocking||d.to!==me||!r||!okPub(pub)||typeof d.ct!=='string'||d.ct.length>100000||typeof d.iv!=='string')return;
+    try{const bytes=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(d.iv)},await pairKey(pub),unb64(d.ct)),value:unknown=JSON.parse(new TextDecoder().decode(bytes));
+      if(!value||typeof value!=='object'||Array.isArray(value))return;const payload=value as Record<string,unknown>;const quiz=cleanFamilyQuiz(payload.questions);
+      if(quiz?.length&&payload.gid===d.gid&&this.code===room&&this.me===me&&!this.knocking&&this.remotes[from]?.pub===pub&&this._roomGeneration===generation)this.emit('gquiz',{t:'gquiz',gid:d.gid,questions:quiz,from});
+    }catch{}
+  },
   async _sendPhoto(id) {
     const r = this.remotes[id], mine = this.hello && this.hello.photo, room = this.code, me = this.me; this._photoTo = this._photoTo || new Set();
     if (!r || !okPub(r.pub) || !mine || this.knocking || this._photoTo.has(id + r.pub)) return;
@@ -643,7 +671,7 @@ export const Net = {
       for (const r of Object.values(this.remotes)) if (!r.photo && okPub(r.pub) && (this._asked[r.id] || 0) < 2) { this._asked[r.id] = (this._asked[r.id] || 0) + 1; this.send({ t: 'photoreq', to: r.id }); } }, 4000);
   },
   async _openPhoto(d, from) {
-    const r = this.remotes[from], room = this.code, me = this.me; if (!r || !r.pub || typeof d.ct !== 'string' || d.ct.length > 160000) return;
+    const r = this.remotes[from], room = this.code, me = this.me; if (!r || !r.pub || typeof d.ct !== 'string' || d.ct.length > 1100000) return;
     try {
       const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(d.iv) }, await pairKey(r.pub), unb64(d.ct)), photo = okPhoto(new TextDecoder().decode(pt));
       const current = this.remotes[from];
@@ -810,6 +838,7 @@ export const Net = {
   },
 
   close(keepMic?: boolean) {
+    this._roomGeneration++;
     this._managementDirect=undefined;this._managementRelay=undefined;
     if (this.role && this.cloud && !this.knocking) try { this._cloudSend({ t: 'bye' }); } catch (e) { }
     if (this.role === 'guest' && this.knocking && this.door) try { this._doorSend({ t: 'bye', to: this.hostId }); } catch (e) { }

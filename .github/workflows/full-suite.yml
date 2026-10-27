@@ -13,6 +13,10 @@ on:
       pr:
         description: 'Pull request number (empty: the branch you run it on)'
         required: false
+      all:
+        description: 'Check every reading item, film and voice area instead of rotating samples'
+        type: boolean
+        default: false
 concurrency:
   group: full-suite-${{ github.event.pull_request.number || inputs.pr || github.ref }}
   cancel-in-progress: true
@@ -70,7 +74,7 @@ jobs:
       - name: Run this machine's share
         env:
           SV_SEED: ${{ github.run_id }}
-        run: cd tests && SV_URL=http://localhost:8765/ node suite.mjs --shard ${{ matrix.k }}/8 --no-solo --jobs 1
+        run: cd tests && SV_URL=http://localhost:8765/ node suite.mjs ${{ (inputs.all || github.head_ref == 'work/v1.02-fruit-parade') && '--all' || '' }} --shard ${{ matrix.k }}/8 --no-solo --jobs 1
       - name: Keep the results
         if: always()
         run: mkdir -p share; cp tests/out/suite-result.json share/ 2>/dev/null || true; cp -r tests/out/cover share/ 2>/dev/null || true; cp tests/out/fail-*.png share/ 2>/dev/null || true   # (each copy may find nothing: never fail the step for that, bash -e)

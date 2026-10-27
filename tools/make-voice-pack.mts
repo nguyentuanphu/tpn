@@ -28,6 +28,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import manifests from './voice-manifests.cts';
+import {collectMixedFragmentRecordings} from './mixed-voice-inventory.mts';
 import { collectLines, collectTemplates, partText, NUMBERS, areaOfLine, areaOfFile, readWhere, GROUPS, dynamicSays, corePri, nonCoreArea } from './voice-lines.mts';
 // (TypeScript sees nothing of a CommonJS file's module.exports: checked once here, then it has its own type)
 const isVoiceManifests = (m: unknown): m is VoiceManifests => typeof m === 'object' && m !== null && 'splitManifest' in m;
@@ -78,6 +79,10 @@ const pairs = collectLines().map(l => {
   }
 }
 for (const p of pairs) { const pri = corePri(p.from), alt = pri >= 40 ? 'games' : nonCoreArea(p.from); jobs.push({ lang: 'en', text: p.en, area: p.area, pri, alt }); jobs.push({ lang: 'vi', text: p.vi, area: p.area, pri, alt }); } // exactly what the game says (js/voice.js speak)
+// Optional Lê Minh mixed-language playback uses these public English pieces, while its Vietnamese pieces
+// live only in the separately reviewed FPT pack. Do not duplicate Vietnamese fragments in both Azure casts.
+for (const fragment of collectMixedFragmentRecordings(swapNames)) if (fragment.lang === 'en')
+  jobs.push({lang: 'en', text: fragment.text, area: fragment.area, part: true, pri: 40, alt: 'world'});
 for (const [lang, L] of Object.entries(LEARN)) for (const w of L.words) jobs.push({ lang, text: w[3], area: 'games' });
 // Chinese and Hindi sayings taught at the kiosks (js/cities.js: [words, meaning en, meaning vi, 'zh' | 'hi'])
 {

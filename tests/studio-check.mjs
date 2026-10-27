@@ -1,3 +1,4 @@
+import { readAnalyticsLayout } from './studio-analytics-layout.mts';
 // Sparkle Studio, both ways it runs, checked together (the exe and the online Studio must always be the same):
 //   · a pretend GitHub (in memory) stands in for the real one, so nothing real is touched
 //   · a pretend Netlify serves the site like Netlify does (netlify.toml's redirects, the two functions)
@@ -105,6 +106,8 @@ export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs
   const { makeStudio } = await import(toURL(path.join(ROOT, 'netlify/functions/studio.mts')));
   const { makeHello } = await import(toURL(path.join(ROOT, 'netlify/functions/hello.mts')));
   const { makeLive } = await import(toURL(path.join(ROOT, 'netlify/functions/live.mts')));
+  const { makeFestivalStatus } = await import(toURL(path.join(ROOT,'netlify/functions/festival-status.mts')));
+  const festivalStatus=makeFestivalStatus({liveStore:async()=>liveStore});
   const { makeFamily } = await import(toURL(path.join(ROOT, 'netlify/functions/family.mts')));
   const { makeTester } = await import(toURL(path.join(ROOT, 'netlify/functions/tester.mts'))); // (owner, 12 Oct) tester reports
   const now = () => testClock.t, tester = makeTester({ testerStore: async () => testerStore, liveStore: async () => liveStore, guardStore: async () => guardStore, now }), family = makeFamily({ familyStore: async () => familyStore, guardStore: async () => guardStore, now });
@@ -112,7 +115,7 @@ export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs
   const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp3': 'audio/mpeg', '.woff2': 'font/woff2' };
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${port}`); let p = decodeURIComponent(url.pathname);
-    const fn = p === '/api/hello' ? hello : p === '/api/live' ? live : p === '/api/tester' ? tester : p.startsWith('/api/family/') ? family : (p.startsWith('/studio/api/') || p.startsWith('/studio/content/')) ? studio : null;
+    const fn = p === '/api/hello' ? hello : p === '/api/live' ? live : p === '/api/festivals' ? festivalStatus : p === '/api/tester' ? tester : p.startsWith('/api/family/') ? family : (p.startsWith('/studio/api/') || p.startsWith('/studio/content/')) ? studio : null;
     if (fn) {
       const ch = []; for await (const c of req) ch.push(c);
       const r = await fn(new Request(url, { method: req.method, headers: req.headers, body: req.method === 'POST' ? Buffer.concat(ch) : undefined }), { geo: JSON.parse(req.headers['x-test-geo'] || '{}') }); // (Netlify gives the town from the connection; tests say it in a header)
@@ -535,10 +538,10 @@ export async function studioCheck(browser, open) {
         await pg.screenshot({ path: path.join(ROOT, 'tests/out', `studio-admins-${w}.png`) }); }
       { await pg.evaluate(() => document.querySelector('#tabs [data-k="players"]').click()); await pg.waitForSelector('.tiles .tile', { timeout: 15000 });
         // (r65, owner: "cleaner but still the details") five tiles, a row per child and per kind of device, the rest folded and closed at first
-        const look = await pg.evaluate(() => ({ tiles: document.querySelectorAll('#page > .tiles .tile').length, top: document.querySelector('#page').innerText, more: document.querySelectorAll('details.more').length, open: document.querySelectorAll('details.more[open]').length, kinds: document.querySelectorAll('table.kinds tbody tr').length }));
+        const look = await pg.evaluate(readAnalyticsLayout);
         const t = await pg.evaluate(() => (document.querySelectorAll('details.more').forEach(d => { d.open = true; }), document.querySelector('#page').innerText));
         ok(/3/.test(t), 'online players page');
-        if (!(look.tiles === 5 && look.more >= 5 && !look.open && look.kinds >= 2 && /(not reported yet|chưa có số liệu)/.test(look.top) && !/(usually ready in|thường sẵn sàng sau)/.test(look.top))) bad.push(`online ${w}px: the Analytics page is not five tiles, rows and folded detail: ` + JSON.stringify({ ...look, top: look.top.slice(0, 200) }));
+        if (!(look.tiles === 5 && look.visibleTiles === 5 && look.more >= 5 && !look.open && look.kinds >= 2 && /(not reported yet|chưa có số liệu)/.test(look.top) && !/(usually ready in|thường sẵn sàng sau)/.test(look.top))) bad.push(`online ${w}px: the Analytics page is not five tiles, rows and folded detail: ` + JSON.stringify({ ...look, top: look.top.slice(0, 200) }));
         // (r60, #36) start-up times: by kind of device and for each device, with the slowest step in words
         if (!(/(Tablet|Máy tính bảng) 21 s/.test(look.top) && /(usually ready in|thường sẵn sàng sau) 21 s \((slowest|chậm nhất): (things in the valley|đồ vật)\)/.test(t))) bad.push(`online ${w}px: start-up times not shown: ` + t.slice(0, 300));
         // (r65) the battery round's numbers, once the report has them (pretended here: field names agreed on the board)

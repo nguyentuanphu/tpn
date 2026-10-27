@@ -371,7 +371,7 @@ export function createRoads(G) {
   const mats = { asphalt: new THREE.MeshToonMaterial({ map: roadTexture('asphalt'), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }), dirt: new THREE.MeshToonMaterial({ map: roadTexture('dirt'), polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
     footpath: new THREE.MeshToonMaterial({ map: roadTexture('footpath'), polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }) };
   // the Dragon Bridge's deck first, so the road is laid on it rather than down in the river
-  { const B = DRAGON; world.platforms.push({ ...bridgeBox(B, B.a0, B.a1, -B.w / 2, B.w / 2), y: B.h + .1, apron: bridgeBox(B, B.a0 - 1.2, B.a1 + 1.2, -B.w / 2, B.w / 2) }); }   // (Round U: an apron like every bridge, js/world.js)
+  { const B = DRAGON; world.platforms.push({ ...bridgeBox(B, B.a0, B.a1, -B.w / 2, B.w / 2), y: B.h + .1, bridge: B.id, apron: bridgeBox(B, B.a0 - 1.2, B.a1 + 1.2, -B.w / 2, B.w / 2) }); }   // (Round U: an apron like every bridge, js/world.js)
   buildRoads(G, mats);
   // ---------- Đà Nẵng's Dragon Bridge (Cầu Rồng): a golden dragon arching along the road ----------
   // (round T: its model is drawn along the x axis, head at the far end; a bridge along z turns it, its mouth and its spray)
@@ -452,7 +452,7 @@ export function createRoads(G) {
       spray.visible = any; if (any) { spray.instanceMatrix.needsUpdate = true; spray.instanceColor.needsUpdate = true; }
     });
     G.interactables.push({ id: 'dragonshow', ...(([x, z]) => ({ x, z }))(W(len / 2 + 3, hw + 2.5)), r: 3, icon: '🐉', label: () => T('Ask the dragon to breathe fire and water', 'Nhờ rồng phun lửa và nước'), act: () => { start(0); SFX.tap(); } });
-    world.boxes.push(bridgeBox(B, B.a0, B.a1, hw - .1, hw + .3), bridgeBox(B, B.a0, B.a1, -hw - .3, -hw + .1));
+    world.boxes.push({ ...bridgeBox(B, B.a0, B.a1, hw - .1, hw + .3), bottom: y }, { ...bridgeBox(B, B.a0, B.a1, -hw - .3, -hw + .1), bottom: y });
     G.dragonBridge = br;
   }
 

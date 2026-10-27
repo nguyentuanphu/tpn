@@ -1,0 +1,64 @@
+{
+  "mergeCommit": "ff58000482f8113acd2ae54924bc7ef6d7ed6459",
+  "deployTrigger": "9bde35178c584c57c21831c762c8af1fe0e9dcba",
+  "checkedAEDT": "2026-10-27T09:08:17.878213+11:00",
+  "checks": {
+    "serviceWorker": {
+      "url": "https://sparklevalley.au/sw.js",
+      "status": 200,
+      "bytes": 15310,
+      "version": "sv-2026-10-25-v1.02"
+    },
+    "gameBuild": {
+      "url": "https://sparklevalley.au/js/build.js",
+      "status": 200,
+      "bytes": 658,
+      "version": "v1.02"
+    },
+    "website": {
+      "url": "https://sparklevalley.au/home/",
+      "status": 200,
+      "bytes": 1117961,
+      "version": "v1.02",
+      "guideLabel": true
+    },
+    "studioVersion": {
+      "url": "https://sparklevalley.au/studio/version.json",
+      "status": 200,
+      "bytes": 22,
+      "version": "v1.02"
+    },
+    "studioLogin": {
+      "url": "https://sparklevalley.au/studio/",
+      "status": 200,
+      "bytes": 1223
+    },
+    "publicFestivals": {
+      "url": "https://sparklevalley.au/api/festivals",
+      "status": 200,
+      "bytes": 321,
+      "schema": 1,
+      "noPrivateFields": true
+    },
+    "optionalVoiceManifest": {
+      "url": "https://sparklevalley.au/voices/fpt-leminh-v1/manifest.json",
+      "status": 200,
+      "bytes": 743852,
+      "units": 6663,
+      "signature": "d94fe5a6bf30e602d6f87a52682af9d6740f3aa0794f090cb8be6650322bd32d"
+    },
+    "newEnglishClip": {
+      "url": "https://sparklevalley.au/voices/en/f/00105ddc158a19c5.mp3",
+      "status": 200,
+      "bytes": 15552,
+      "sha256": "fa8b1e352a8f03ba286031f1ff05887a704e7b12ae54f10584a586f849a6c277"
+    },
+    "newLeMinhClip": {
+      "url": "https://sparklevalley.au/voices/fpt-leminh-v1/1b9b622526a2c94c.mp3",
+      "status": 200,
+      "bytes": 38706,
+      "sha256": "d6bc64576aeb510e394e43029b6c1f2b8233bc24ec83da0c5e73dac12364f7a5"
+    },
+    "netlifyDomainVersion": "v1.02"
+  }
+}

@@ -37,7 +37,7 @@ const rewardSnapshot={source:SOURCE_REF,stickers:stickers.STICKERS,themes:sticke
 fs.writeFileSync(new URL('./reward-snapshot.json',import.meta.url),JSON.stringify(rewardSnapshot,null,2)+'\n');
 console.log('Reward catalogue extracted:',rewardSnapshot.stickers.length,'stickers,',rewardSnapshot.collectibles.length,'collectibles');
 const lunar=run(read('js/lunar.js'));
-const gameCatalog=run(read('js/games/catalog.ts').split('export const GAME_LOADERS =')[0],{'../i18n.js':{T:(en,vi)=>[en,vi]},'../money.js':{curCode:()=> 'AUD'},'../custom.js':{customQuiz:()=>[{}]}}).GAME_CATALOG;
+const gameCatalog=run(read('js/games/catalog.ts').split('export const GAME_LOADERS =')[0],{'../i18n.js':{T:(en,vi)=>[en,vi]},'../money.js':{curCode:()=> 'AUD'},'../family-quiz-store.js':{familyQuizQuestions:()=>[{}]}}).GAME_CATALOG;
 const dates={};
 for(const year of [2026,2027])dates[year]=Object.fromEntries(festivals.FESTCAL.map(f=>{const w=f.when;let date=w.lunar?lunar.lunarDay(...w.lunar,year):w.date?`${year}-${String(w.date[0]).padStart(2,'0')}-${String(w.date[1]).padStart(2,'0')}`:w.easter!=null?lunar.easter(year):w.nth?lunar.nthWeekday(year,...w.nth):w.table?.[year]||null;return [f.id,date]}));
 fs.writeFileSync(new URL('./festival-snapshot.json',import.meta.url),JSON.stringify({source:SOURCE_REF,festivals:festivals.FESTCAL,dates,games:gameCatalog.map(g=>({id:g.id,name:g.name(),icon:g.icon,origin:g.origin||null})),plan:festivals.DAY_PLAN,buildup:festivals.BUILDUP},null,2)+'\n');

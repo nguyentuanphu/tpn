@@ -26,7 +26,7 @@ function registered(file) {
 }
 test('menu catalogue matches lazy game definitions, order, names and eligibility', () => {
   for (const hasQuiz of [false, true]) for (const lang of [0, 1]) for (const currency of ['AUD', 'VND']) {
-    const context = vm.createContext({ T: (...pair) => pair[lang], curCode: () => currency, customQuiz: () => hasQuiz ? [{}] : [] });
+    const context = vm.createContext({ T: (...pair) => pair[lang], curCode: () => currency, familyQuizQuestions: () => hasQuiz ? [{}] : [] });
     const c = vm.runInContext(text.replace(/^import .*;$/gm, '').replace(/export const/g, 'const') + '\n({catalog:GAME_CATALOG, groups:GAME_LOADERS})', context);
     const expected = Object.entries(c.groups).flatMap(([file, group]) => {
       const defs = registered(file).map(expression => vm.runInContext(expression, context));

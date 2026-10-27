@@ -15,7 +15,8 @@ export const EVENT_NAMES = [
   'SettingsChanged', 'LanguageChanged', 'SaveCompleted', 'SaveFailed',
   'PeerJoined', 'PeerLeft', 'DialogRequested', 'ToastRequested', 'HowToRequested',
   // added in round E (docs/ARCHITECTURE.md §6): a sticker, a postcard or a house decoration was earned or placed
-  'StickerEarned', 'PostcardEarned', 'HomeDecorated'
+  'StickerEarned', 'PostcardEarned', 'HomeDecorated',
+  'ArcadeAdventureTriggered'
 ];
 const KNOWN = new Set(EVENT_NAMES);
 

@@ -122,3 +122,10 @@ test("familyCode in settings is normalized and preserved in save copies", () => 
   const bad = { ...good, settings: { lang: "en", familyCode: "not-a-code!" } };
   assert.throws(() => readSaveCopy(JSON.stringify(bad)), /invalid family code/);
 });
+
+test('private parent questions round-trip in a save copy, while old files still load',()=>{
+  const familyQuiz=[{q:['A family question?','Câu hỏi gia đình?'],pic:'💛',answers:[['Yes','Có'],['No','Không']],right:0}];
+  const copy=createSaveCopy({...good,v:2,settings:{...good.settings,familyQuiz}});assert.deepEqual(readSaveCopy(JSON.stringify(copy)).settings.familyQuiz,familyQuiz);
+  assert.equal(readSaveCopyOrLegacy(JSON.stringify({...good,v:2})).settings.familyQuiz,undefined);
+  assert.throws(()=>readSaveCopy(JSON.stringify({...good,settings:{familyQuiz:[{bad:true}]}})),/family questions/);
+});

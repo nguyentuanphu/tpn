@@ -352,3 +352,11 @@ table.gtable { width: 100%; } table.gtable td { padding: 2px 0; }
 .gpanel > label:not(.chk) { display: grid; gap: 4px; font-size: 14px; } .gpanel select { min-height: 44px; min-width: 200px; }
 .gpanel label.chk { min-height: 44px; display: flex; align-items: center; gap: 8px; }
 #toast.act { pointer-events: auto; } #toast .undo { margin-left: 10px; min-height: 44px; background: #fff; color: #1f7a45; border: 0; }
+
+/* Analytics: equal-width cards remain inside their grid; long bilingual labels wrap. */
+.grid.two > * { min-width: 0; max-width: 100%; }
+.grid.two { align-items: start; }
+.tiles > .tile { height: 100%; box-sizing: border-box; }
+.tile .tx { margin-top: auto; }
+.analytics-overview > .tiles { margin-bottom: 16px; }
+.analytics-overview summary { overflow-wrap: anywhere; }
