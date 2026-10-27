@@ -6,7 +6,7 @@
     "startSydney": "2026-10-27T22:25:56+11:00",
     "deadlineSydney": "2026-10-27T23:25:56+11:00"
   },
-  "recordedAtSydney": "2026-10-27T23:10:27.621255+11:00",
+  "recordedAtSydney": "2026-10-27T23:21:38.348153+11:00",
   "deploymentPerformed": false,
   "mainMerged": false,
   "newVersion": false,
@@ -28,7 +28,7 @@
     "screenshots": 72
   },
   "comprehensiveRun": {
-    "observedAtSydney": "2026-10-27T23:09:06.872360+11:00",
+    "observedAtSydney": "2026-10-27T23:20:14.214304+11:00",
     "run": "40500953581",
     "headSha": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df",
     "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40500953581",
@@ -123,5 +123,8 @@
     "Build remaining compatible graphs; mature cohorts/handoff/due dates need new contracts",
     "Verify existing Netlify DB binding, actual grants, retention/deletion and recovery",
     "Complete physical-device/Windows and source/website alignment/rendering work"
-  ]
+  ],
+  "publicDeliveryVerification": "PUBLIC-DELIVERY-VERIFICATION.json",
+  "artifactCommit": "ca369949b4363b3845f930f7b36f0d8e16980c62",
+  "workingTreeWasCleanAfterPackaging": true
 }
