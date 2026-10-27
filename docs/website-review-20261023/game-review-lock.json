@@ -1,5 +1,5 @@
 {
-  "source": "a8185680ce5ff360a1d31dedbc87bb89d9c6ecbb",
+  "source": "db2c5c7e7154e91221b952ccc96d12c3e0f08ec8",
   "files": [
     {
       "file": "content/custom.json",
@@ -539,7 +539,7 @@
     },
     {
       "file": "js/content/map.ts",
-      "hash": "e4209318f7bc19b959572b6e0b38872305c45822"
+      "hash": "24c82f3f4c6d25565689bbb7fd8bd1f32d48e660"
     },
     {
       "file": "js/content/owllessons.js",
@@ -683,7 +683,7 @@
     },
     {
       "file": "js/familydevices.ts",
-      "hash": "26bdf5c56877226dfb0dff87dae6bd7c51f50a73"
+      "hash": "ae047cd70813d58e99a81a3082d631106741b2ff"
     },
     {
       "file": "js/farm.ts",
@@ -1366,16 +1366,16 @@
       "hash": "b7ff93d71219112868814c68a2a30ab0dda925ec"
     },
     {
-      "file": "js/suburbs.js",
-      "hash": "cdd4827768fda837e6fbf482d8e797142aded329"
+      "file": "js/suburbs.ts",
+      "hash": "e17ab03c596df6322b6e9ec3dc8408f5fc762d7e"
     },
     {
       "file": "js/surprises.js",
       "hash": "9ee91030b468d623e22f9673e4f4456085ac3263"
     },
     {
-      "file": "js/symbols.js",
-      "hash": "50e04c41713a15a7ba84886fe34ce7de8623084e"
+      "file": "js/symbols.ts",
+      "hash": "574da0df175cf2f8017f1cc935e24058e53f8a1b"
     },
     {
       "file": "js/tale-loader.ts",
@@ -1423,7 +1423,7 @@
     },
     {
       "file": "js/traffic.ts",
-      "hash": "ba29fefb2b7470ee8e005a0619d72206544917a1"
+      "hash": "bcdd99107de72738b88fae5dc7fa886311d96896"
     },
     {
       "file": "js/travel-stops.ts",
@@ -1435,7 +1435,7 @@
     },
     {
       "file": "js/ui-settings.ts",
-      "hash": "a30d482e1ce370702b69fe4f659cec9dfbb300c4"
+      "hash": "17eba460d9895da8c8be5ca01dd754c39ca323ac"
     },
     {
       "file": "js/ui.ts",
