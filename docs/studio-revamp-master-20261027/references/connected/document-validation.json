@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": 3535,
+  "scope": "Concept documentation, cross-references, existing pinned source bytes, embedded registry and offline browser evidence. Not runtime/full-suite/live database validation.",
+  "counts": {
+    "data_points": 279,
+    "graphs": 26,
+    "controls": 17,
+    "connections": 13,
+    "metrics": 38
+  }
+}

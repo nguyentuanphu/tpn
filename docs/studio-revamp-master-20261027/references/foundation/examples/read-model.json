@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-26T00:00:00Z",
+  "sourceAsOf": "2026-10-25T23:58:00Z",
+  "period": {
+    "from": "2026-10-19",
+    "to": "2026-10-25",
+    "basis": "legacy-device-day"
+  },
+  "scope": {
+    "traffic": "ordinary",
+    "build": "v1.01",
+    "deviceClass": "all"
+  },
+  "metrics": [
+    {
+      "id": "M08",
+      "value": 28,
+      "unit": "FPS",
+      "status": "observed",
+      "sampleCount": 40
+    },
+    {
+      "id": "M28",
+      "value": null,
+      "unit": "AUD",
+      "status": "unavailable",
+      "sampleCount": 0
+    }
+  ],
+  "quality": [
+    "reporting-devices-only",
+    "synthetic-example"
+  ],
+  "nextCursor": null
+}

@@ -1,0 +1,19 @@
+# Copy-paste takeover prompt
+
+```text
+Continue Sparkle Valley Studio in nguyentuanphu/tpn, branch review/studio-finance-20261027. Work with one agent. Read CLAUDE.md, HANDOFF.md, docs/cores/BOARD.md, docs/cores/release.md and the applicable managed-cloud runtime skill. Preserve user edits. No main merge, deploy, version change, paid provisioning, payment or destructive family-data work is authorised.
+
+Start with docs/studio-revamp-master-20261027/README.md, MASTER-DESIGN.md, STATUS.md, CONNECTIONS.md, MARKETING-AND-RESOURCES.md, FUNCTION-SWITCHES.md and BUILD-STEPS.md. Review VISUALS.md: these are future-design images with fictional data, not implemented screenshots. concept.json is the proposal model. Read evidence/ci-observation.json and CI-RESULT.md rather than assuming the prior run is still active. Source checkpoint35bcb63c and prior handoffde954765 are distinct from this docs-only consolidation.
+
+Owner wants Studio as the centre of management for the whole game, website, services and finance; Home must show a quick snapshot. Five primary areas: Home, People, Game & website, Work, Money; Settings separate. Marketing is within Game & website. Use actual game artwork/fonts/shared palette, stable accessible shells and EN/VI. Preserve all existing routes and detail return context. Do not focus solely on analytics.
+
+Audit all 13 domains and all required per-item controls before claiming completeness. A catalogue row is not proof of implementation/playability/control. Names stay tied to their reporting installation; do not merge by name or infer website visitor-to-child identity. Existing Netlify Database is selected: private per-context NETLIFY_DB_URL; MANAGEMENT_DATABASE_URL only for isolated development. Never expose credentials or copy production data/bindings into preview.
+
+The saved runtime has five-area shell, scoped People/device/report/delivery links, seven graph families, manual audited finance and bounded operations. Many contextual editors, private drafts/review, broader graphs, marketing attribution, function-switch panel, full-domain controls and live lifecycle validation remain pending. Existing config POST publishes; do not label it private Save draft. Revisioned publication is global; existing rule device selection is not dedicated scoped publication. Receipts prove reported revision/hash persistence, not every consumer's effect.
+
+Follow B00–B13 with named outputs and pass conditions. First reconcile actual CI and inventory/control coverage. Then deliver Home and one complete game→website→Studio item journey with proper draft/publication semantics. Build optional function Collect/Process/Show controls separately, parent Analytics off taking precedence; ensure off paths stop the actual relevant producers/jobs without touching saves or durable user-filed reports. Offline changes remain pending until received; measure game/network/server impact, never promise zero overhead.
+
+Use included references/connected (279-entry register,26 graph contracts,17 controls,13 connections), references/implementation (real previous screenshots/routes/validation) and references/foundation (finance/architecture) as detailed starting contracts. These document counts are not feature completion counts. Extend field/graph/control registers for new work.
+
+Use tests/suite.mjs, serial local runs and applicable GitHub full-suite policy. Retain failures/retries/unknowns. Inspect EN/VI screenshots at phone/tablet/computer sizes and disclose physical-device gaps. Keep STATUS, board, field maps and takeover notes current. Provide image previews and verified public HTTPS Markdown/download links: GitHub HTML displays code and previously did not work for the owner's iPhone. Package artifacts to the working branch; production release approval is separate.
+```

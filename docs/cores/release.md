@@ -1,3 +1,7 @@
+## Studio revamp handoff — 28 October 2026 AEDT
+
+Owner requests full consolidated artifacts and iPhone-viewable images for takeover. Work alone on review/studio-finance-20261027. [Master pack](../studio-revamp-master-20261027/README.md) records Home, all-domain controls, Marketing, resource switches, finance and numbered next tasks. Proposed controls remain proposals; no runtime/deployment change. Actual prior runtime35bcb63c run40500953581 now confirmed successful:253/253top-level checks,17real SQL cases, no retry records, all shares/collector inspected. See pack CI-RESULT.md for exact evidence and STATUS.md for unfinished implementation. Existing Netlify Database remains selected; binding and lifecycle validation still required.
+
 ## r90 / v1 — Front Desk Helper (24 Oct 2026 AEDT)
 - Branch: work/r90-more-content (184a5827)
 - Commit: feat(r90-stories): wire 54 tales into catalog, learn shelf, and unlock registry

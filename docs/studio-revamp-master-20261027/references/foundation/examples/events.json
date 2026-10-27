@@ -1,0 +1,250 @@
+{
+  "notice": "Independent schema examples, not one consistent attempt history. Synthetic; never submit to production.",
+  "events": [
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "00000001-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "00000001-1111-4111-8111-111111111111",
+      "eventName": "activity.started",
+      "data": {
+        "activityId": "oanquan",
+        "difficulty": "easy",
+        "mode": "solo"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "00000002-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "00000002-1111-4111-8111-111111111111",
+      "eventName": "activity.completed",
+      "data": {
+        "activityId": "oanquan"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "00000003-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "00000003-1111-4111-8111-111111111111",
+      "eventName": "activity.abandoned",
+      "data": {
+        "activityId": "oanquan",
+        "reason": "closed"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "00000004-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "00000004-1111-4111-8111-111111111111",
+      "eventName": "boot.started",
+      "data": {
+        "stage": "boot"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "00000005-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "00000005-1111-4111-8111-111111111111",
+      "eventName": "boot.ready",
+      "data": {
+        "stage": "first_playable",
+        "elapsedMs": 1800
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "00000006-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "00000006-1111-4111-8111-111111111111",
+      "eventName": "boot.failed",
+      "data": {
+        "stage": "world",
+        "reasonCode": "timeout"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "00000007-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "00000007-1111-4111-8111-111111111111",
+      "eventName": "story.opened",
+      "data": {
+        "storyId": "banhchung"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "00000008-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "00000008-1111-4111-8111-111111111111",
+      "eventName": "story.completed",
+      "data": {
+        "storyId": "banhchung"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "00000009-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "00000009-1111-4111-8111-111111111111",
+      "eventName": "connection.attempt",
+      "data": {
+        "transport": "relay"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "0000000a-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "0000000a-1111-4111-8111-111111111111",
+      "eventName": "connection.result",
+      "data": {
+        "transport": "relay",
+        "outcome": "success",
+        "elapsedMs": 900
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "0000000b-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "0000000b-1111-4111-8111-111111111111",
+      "eventName": "voice.result",
+      "data": {
+        "source": "recorded",
+        "outcome": "success",
+        "language": "vi"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "0000000c-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "0000000c-1111-4111-8111-111111111111",
+      "eventName": "update.result",
+      "data": {
+        "outcome": "success",
+        "reasonCode": "none"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "deviceId": "demo12345678",
+      "sessionId": "demo123456789012",
+      "attemptId": "0000000d-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "occurredAt": "2026-10-25T23:00:00Z",
+      "deviceDay": "2026-10-26",
+      "offsetMinutes": 660,
+      "build": "v1.01",
+      "sourceCommit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+      "environment": "staging",
+      "traffic": "synthetic_bot",
+      "eventId": "0000000d-1111-4111-8111-111111111111",
+      "eventName": "backup.result",
+      "data": {
+        "outcome": "cancelled",
+        "reasonCode": "user_cancelled"
+      }
+    }
+  ]
+}

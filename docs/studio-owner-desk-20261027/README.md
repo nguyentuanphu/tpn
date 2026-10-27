@@ -1,5 +1,7 @@
 # Studio Owner’s Desk — implementation checkpoint
 
+**Latest consolidated design/handoff:** [complete revamp pack](../studio-revamp-master-20261027/README.md), including iPhone-viewable concept images, done/pending status, marketing and optional-function controls, refreshed comprehensive CI evidence and numbered build steps. This original implementation report remains the runtime checkpoint record.
+
 27 October 2026 AEDT. The owner approved proceeding with the connected concept and required the game’s artwork and visual consistency. The owner then requested one hour of work, packaging/upload and a next-chat handoff. Work stays on `review/studio-finance-20261027`; no main merge, deployment or version bump.
 
 This is the first runtime slice of the [connected concept](https://github.com/nguyentuanphu/tpn/blob/993e5a06e50311e835e1c2e92aa7f0d47e4448c6/docs/studio-connected-concept-20261027/README.md), not completion of every proposed graph/editor. It uses actual authenticated Studio routes; review screenshots contain synthetic records only.
@@ -63,6 +65,8 @@ Existing HTTP private-detail gates remain enforced before device reads. Missing 
 | Desktop asset packaging | `studio/build-exe.sh` |
 
 ## Validation and next work
+
+[Optional functions and resource-control design](FUNCTION-SWITCHES.md) specifies independent collection, processing and visibility switches, parent-permission precedence, offline delivery limits and numbered implementation/acceptance steps. It is proposed work, not a newly implemented control panel.
 
 See [VALIDATION.md](VALIDATION.md) for exact results and limitations, [GALLERY.md](GALLERY.md) for desktop/tablet/phone screenshots, and [NEXT-CHAT.md](NEXT-CHAT.md) for the copy-paste takeover prompt. All screenshot records are fictional; browser emulation does not replace physical-device/Windows checks.
 

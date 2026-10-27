@@ -1,5 +1,7 @@
 # Next-chat takeover
 
+**Later consolidation:** start with [the complete revamp handoff](../studio-revamp-master-20261027/README.md). It adds Home-first design, all-domain coverage, marketing/resource switches, iPhone concept images and numbered builder instructions. Its CI-RESULT.md supersedes the in-progress CI observations below; the original checkpoint remains as history.
+
 This handoff records the owner’s one-hour checkpoint. Read the source snapshot/run status and package provenance saved alongside it; do not infer deployment or a green suite from this documentation.
 
 Runtime source is **35bcb63c0c9682bb9d32885063c8b7dc7b3c86df**. The current comprehensive **all=true** run is **40500953581**: https://github.com/nguyentuanphu/tpn/actions/runs/40500953581. Read `DELIVERY.json` for the latest observation at the hour boundary and package hashes. Everything after this runtime commit should be documentation/artifact changes unless a later handoff explicitly records another code fix.

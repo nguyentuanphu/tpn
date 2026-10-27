@@ -1,5 +1,7 @@
 # Docs: start here
 
+[Studio revamp: consolidated design, iPhone concepts and next-chat handoff](studio-revamp-master-20261027/README.md) records current implementation, pending work, full management scope and refreshed CI evidence.
+
 The game in this repository is **Sparkle Valley · Thung Lũng Lấp Lánh**. This page says where each kind of note lives.
 Nothing was deleted when the docs were tidied (owner, 24 Oct 2026 AEDT): old round reports moved into `history/`.
 

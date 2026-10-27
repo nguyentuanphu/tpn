@@ -1,0 +1,12 @@
+{
+  "createdAtSydney": "2026-10-28T09:28:18.268840+11:00",
+  "archive": "Studio-revamp-complete-handoff.zip",
+  "bytes": 28293487,
+  "sha256": "8c859f9b614d5a2f23e9f1c7c5eb8de3227881158cf07f74c30000c604858bb5",
+  "filesInArchive": 247,
+  "purpose": "Complete consolidated design/handoff with reference docs, static offline concept and images; not runtime source or a deployable Netlify ZIP",
+  "runtimeSourceCommit": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df",
+  "rootMarkdownLinksChecked": 20,
+  "imageViews": 21,
+  "allConceptDataFictional": true
+}
