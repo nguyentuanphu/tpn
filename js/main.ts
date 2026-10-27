@@ -1474,7 +1474,7 @@ G.rects = rects; G.faceToFace = () => G.heroes.length > 1 && faceToFace();
 G.lastPlayer = 0;
 const holders = [0, 1].map(() => { const w = document.createElement('div'); w.className = 'halfwrap'; return w; });
 G.halfBusy = i => !!holders[i] && holders[i].isConnected && [...holders[i].children].some(c => !c.classList.contains('out') && !c.classList.contains('confetti') && /(^|\s)(modal|gl|storybook|vc-pop|dialog|reward|chatwin|handpad)(\s|$)/.test(c.className));
-const NOT_A_WINDOW = /(^|\s)(hud|stick|facewrap|halfwrap|caption|title|confetti|fade|apfinger|testertoast|packbar)(\s|$)/;
+const NOT_A_WINDOW = /(^|\s)(hud|stick|facewrap|halfwrap|caption|title|confetti|fade|apfinger|testertoast|packbar|tester-floating|tpanel|tp-picture)(\s|$)/;
 function placeHolders() {
   const r = rects(), two = twoHalves();
   holders.forEach((w, i) => {

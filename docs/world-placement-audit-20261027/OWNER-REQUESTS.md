@@ -3,7 +3,7 @@
 Owner requests, 27 October 2026 AEDT. Work branch: work/voice-bitrate-32k. No version selected or deployment approval for these changes.
 
 - Audit every default house, landmark, stall and interaction; Terracotta Army must stay in China Town.
-- Check all 42 stalls for nearby buildings, visible sellers, approach space and camera obstruction. Region ownership alone is insufficient.
+- Check all stalls (43 after registering the sugarcane cart) for nearby buildings, visible sellers, approach space and camera obstruction. Region ownership alone is insufficient.
 - Make every river shallower, retaining bridge decks, dry approaches, child swimming, raft and ferry routes/clearance. Working target: 1.25m centre bed (previously 2.6–4.6m), above the 0.9m swim threshold. Verify all river segments plus every bridge and public water route.
 - Trees and other obstructions must fade when they block the view.
 - Keep the Lê Minh selector and family-photo/device/clothes controls consistent with the game's art. Shorten the voice preview/download buttons and keep both on one row in English and Vietnamese.

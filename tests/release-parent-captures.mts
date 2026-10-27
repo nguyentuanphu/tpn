@@ -2,10 +2,12 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {SHOWN} from '../js/build.js';
 import {createHash} from 'node:crypto';
 import {launch,open,clear,noWelcome} from './harness.mjs';
 import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mjs';
-const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'docs/v1.02-traditional-repairs/parent-studio-shots'),assets=path.join(root,'docs/website-review-20261023/assets/parent-controls');
+const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'docs/world-placement-audit-20261027/parent-studio-shots'),assets=path.join(root,'docs/website-review-20261023/assets/parent-controls');
 await fs.mkdir(out,{recursive:true});const browser=await launch(),files:unknown[]=[];
 try{
  for(const lang of ['en','vi']){
@@ -41,6 +43,6 @@ try{
   }
  }finally{await new Promise<void>(r=>server.close(()=>r()));unroute();}
  for(const file of await fs.readdir(assets))if(/^(settings|report)-(en|vi)\.png$/.test(file)){const bytes=await fs.readFile(path.join(assets,file));files.push({file,sha256:createHash('sha256').update(bytes).digest('hex')});}
- await fs.writeFile(path.join(assets,'manifest.json'),JSON.stringify({build:'v1.02',captured:'27 October 2026 AEDT',source:'Current release working tree; final immutable source recorded in the release review lock',method:'Actual running game, fresh synthetic profiles and empty report; current Studio with a synthetic server. Phone, tablet and computer, EN/VI. No real family data.',files},null,2)+'\n');
+ await fs.writeFile(path.join(assets,'manifest.json'),JSON.stringify({build:SHOWN,captured:'27 October 2026 AEDT',source:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),method:'Actual running game, fresh synthetic profiles and empty report; current Studio with a synthetic server. Phone, tablet and computer, EN/VI. No real family data.',files},null,2)+'\n');
  console.log('Captured current Settings, empty Play reports and Studio quiz guidance: 18 device/language screenshots plus four website assets.');
 }finally{await browser.close();}

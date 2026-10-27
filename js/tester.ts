@@ -321,11 +321,12 @@ const paintCount = () => { dispatchEvent(new Event('sv-report-queue')); const n 
 const fixedToSee = () => { const seen = get(KEY.seen, {}); return ((status && status.mine) || []).filter(p => ['fixed', 'confirmed'].includes(p.status) && !seen[p.k]); };
 function addUI() {
   const floatingSeats = new Set<number>();
-  // (each player's HUD gets the mark under its clock and, at the ladybird level, the ladybird with the zoom buttons; also
-  // the HUDs made after this: the game starts after the title screen)
+  // Each player gets a tester mark; the primary HUD anchors one shared floating report control.
+  // Also handle HUDs made after this mount, when the game starts after the title screen.
   const ensure = () => (G.huds || []).forEach((hud, i) => {
     const ck = hud.q && hud.q('.zoom'); if (ck && !ck.querySelector('.testermark')) { const mk = el('span', 'testermark', `${pic('🐞')}<span>${T('Tester', 'Người thử')} · ${SHOWN}</span>`); mk.setAttribute('aria-hidden', 'true'); ck.appendChild(mk); offs.push(() => mk.remove()); }
-    if (level !== 'ladybird') return;
+    // One shared device control, including split-screen; the report snapshot contains all players.
+    if (level !== 'ladybird' || i !== 0) return;
     const z = hud.q && hud.q('.zoomer'); if (!z || floatingSeats.has(i)) return;
     const b = el('button', 'z-lb', `${pic('🐞')}<i class="lb-n" hidden></i><i class="lb-ok" hidden>✓</i><i class="lb-new" hidden></i><kbd class="kb">L</kbd>`); b.setAttribute('aria-label', T('Report a problem (hold: quick report)', 'Báo lỗi (giữ: báo nhanh)'));
     floatingSeats.add(i);

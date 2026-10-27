@@ -40,7 +40,7 @@ try{
  for(const faded of[false,true]){
   const png=await P.page.evaluate(async faded=>{
    const G=window.__sv as unknown as import('../js/main.js').SvMain,{THREE}=await import(String('/js/gfx.js')),{heightAt}=await import(String('/js/world.js'));
-   const R=G.renderer,oldRatio=R.getPixelRatio(),oldSize=R.getSize(new THREE.Vector2()),sheet=document.createElement('canvas');sheet.width=1440;sheet.height=1430;const ctx=sheet.getContext('2d')!;ctx.fillStyle='#fff6e7';ctx.fillRect(0,0,sheet.width,sheet.height);
+   const R=G.renderer,oldRatio=R.getPixelRatio(),oldSize=R.getSize(new THREE.Vector2()),sheet=document.createElement('canvas');sheet.width=1440;sheet.height=Math.ceil(G.world.stalls.length/6)*204;const ctx=sheet.getContext('2d')!;ctx.fillStyle='#fff6e7';ctx.fillRect(0,0,sheet.width,sheet.height);
    try{R.setPixelRatio(1);R.setSize(480,360,false);R.setViewport(0,0,480,360);R.setScissorTest(false);G.scene.updateMatrixWorld(true);
     for(const[index,s]of G.world.stalls.entries()){
      G.seeThrough.step(1);const y=heightAt(s.x,s.z),fx=Math.sin(s.face||0),fz=Math.cos(s.face||0),c=new THREE.PerspectiveCamera(50,4/3,.1,400);c.layers.enable(1);c.position.set(s.x+fx*11+fz*3,y+7,s.z+fz*11-fx*3);c.lookAt(s.x,y+1.4,s.z);

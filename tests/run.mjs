@@ -1145,6 +1145,8 @@ await check('storyposes', async () => (await import('./story-pose-check.mts')).s
 
 await check('goatcircle', async () => (await import('./goat-browser.mts')).goatBrowserCheck(b));
 
+await check('ladybugsplit', async () => (await import('./ladybug-unified.mts')).ladybugUnifiedCheck(b,'split'));
+
 await check('ladybugunified', async () => (await import('./ladybug-unified.mts')).ladybugUnifiedCheck(b));
 
 await check('familyuiart', async () => (await import('./family-ui-art.mts')).familyUIArtCheck(b));
