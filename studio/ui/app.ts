@@ -132,7 +132,7 @@ const CAN = k => ROLE() === 'owner' || ((INFO && INFO.me && INFO.me.perms) || []
 const PAGE_NEEDS = { management: 'management.read', managementdevices: 'management.read', managementchildren: 'management.deviceDetail', managementdevice: 'management.deviceDetail', managementattention: 'management.read', managementactivities: 'management.read', managementactivity: 'management.read', managementrelease: 'management.read', managementfinance:'finance.read', managementoperations: 'operations.read', managementchanges: 'management.read', players: 'analytics', testers: 'testers', familycode: 'family', album: 'family', publish: 'publish' };
 const LANDING_GRANTS = { people:['management.read','management.deviceDetail','analytics','family','pages'], game:['management.read','pages','site'], work:['management.read','operations.read','testers','publish','site'], money:['finance.read'] };
 const canSee = k => k === 'home' || k === 'admins' ? true : LANDING_GRANTS[k] ? LANDING_GRANTS[k].some(CAN) : OWNER_ONLY.includes(k) ? ROLE() === 'owner' : CAN(PAGE_NEEDS[k] || 'pages');
-const SEC = () => SECTIONS.map(x => ({ ...x, pages: x.pages.filter(k => (INFO && INFO.online || !ONLINE_ONLY.includes(k)) && (!INFO?.managementOnly || k.startsWith('management') || ['home','people','game','work','money','admins','security','accesslog'].includes(k)) && canSee(k)) })).filter(x => x.pages.length);
+const SEC = () => SECTIONS.map(x => ({ ...x, pages: x.pages.filter(k => (INFO && INFO.online || !ONLINE_ONLY.includes(k)) && (INFO?.online!==false||!['money','managementfinance'].includes(k)) && (!INFO?.managementOnly || k.startsWith('management') || ['home','people','game','work','money','admins','security','accesslog'].includes(k)) && canSee(k)) })).filter(x => x.pages.length);
 // each page: its picture, its name and one line saying what it is for
 const ABOUT = {
   people: ['💛', 'People', 'Người chơi', 'Reported children, devices and permitted family tools', 'Các con được báo cáo, thiết bị và công cụ gia đình được phép'],
@@ -217,7 +217,7 @@ async function load(force) {
   if (force) SRC = null; // ↻ reads the game's files again (the Voices page keeps them while Studio is open)
   if (LOADED && !force) return;
   if (!DEVNAME) DEVNAME = await import(GAME + 'js/content/devname.js').catch(() => null);
-  INFO = await api('info'); document.body.classList.toggle('online', !!INFO.online);
+  INFO = await api('info'); document.body.classList.toggle('online', !!INFO.online);if(force||document.documentElement.dataset.gameBrand==='unavailable')void loadGameBrand();
   CONTENT = INFO.ok && !INFO.managementOnly && CAN('pages') ? await api('content') : {};
   // (r81) what the devices really get: the content pages' live sections win over custom.json
   if (INFO.ok && !INFO.managementOnly && CAN('pages') && liveOn()) { try { const L = await api('live/content'); for (const [k, v] of Object.entries((L && L.content) || {})) if (v && typeof v === 'object') CONTENT[k] = v; } catch (e) { } }
