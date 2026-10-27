@@ -1,7 +1,7 @@
 /** Private management storage contracts. No implementation is selected implicitly. */
 export type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 export type JsonObject = { [key: string]: Json };
-export type Namespace = 'configs' | 'config_versions' | 'changes' | 'projection_jobs' | 'receipts' | 'audit' | 'attention' | 'operations';
+export type Namespace = 'configs' | 'config_versions' | 'changes' | 'projection_jobs' | 'receipts' | 'audit' | 'attention' | 'operations' | 'finance_lines' | 'finance_versions' | 'finance_settings' | 'finance_budgets' | 'finance_batches';
 export type StoredEvent = {
   deviceId: string; eventId: string; attemptId: string; sessionId: string;
   eventName: string; occurredAt: string; receivedAt: string; build: string;

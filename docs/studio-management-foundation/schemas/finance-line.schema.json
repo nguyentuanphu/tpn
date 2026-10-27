@@ -1,25 +1,191 @@
 {
-  "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"urn:sparkle-valley:management:finance-line:v1",
-  "title":"PROPOSED finance line import, no billing credentials or documents",
-  "type":"object","additionalProperties":false,
-  "required":["schemaVersion","provider","accountAlias","sourceDocumentId","sourceLineId","kind","amountMinor","currency","taxMinor","periodStart","periodEnd","recognisedAt","category","expectedRevision"],
-  "properties":{
-    "schemaVersion":{"const":1},
-    "provider":{"type":"string","minLength":1,"maxLength":60},
-    "accountAlias":{"type":"string","minLength":1,"maxLength":60},
-    "sourceDocumentId":{"type":"string","minLength":1,"maxLength":100},
-    "sourceLineId":{"type":"string","minLength":1,"maxLength":100},
-    "kind":{"enum":["actual","estimate","commitment","credit","revenue"]},
-    "amountMinor":{"type":"integer","minimum":-9007199254740991,"maximum":9007199254740991},
-    "currency":{"type":"string","pattern":"^[A-Z]{3}$"},
-    "taxMinor":{"type":"integer","minimum":-9007199254740991,"maximum":9007199254740991},
-    "periodStart":{"type":"string","format":"date"},
-    "periodEnd":{"type":"string","format":"date"},
-    "recognisedAt":{"type":"string","format":"date-time"},
-    "paidAt":{"type":["string","null"],"format":"date-time"},
-    "category":{"enum":["hosting","storage","bandwidth","functions","ci","voice_generation","domain","other","revenue","refund","payment_fee"]},
-    "expectedRevision":{"type":"integer","minimum":0,"maximum":9007199254740991},
-    "fx":{"type":"object","additionalProperties":false,"required":["targetCurrency","rate","source","asOf"],"properties":{"targetCurrency":{"type":"string","pattern":"^[A-Z]{3}$"},"rate":{"type":"string","pattern":"^[0-9]{1,12}(\\.[0-9]{1,12})?$"},"source":{"type":"string","minLength":1,"maxLength":100},"asOf":{"type":"string","format":"date"}}}
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sparkle-valley:management:finance-line:v1",
+  "title": "Finance import line v1; server additionally validates signs, source identity, overflow and revisions",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "provider",
+    "accountAlias",
+    "sourceDocumentId",
+    "sourceLineId",
+    "kind",
+    "amountMinor",
+    "currency",
+    "taxMinor",
+    "periodStart",
+    "periodEnd",
+    "recognisedAt",
+    "category",
+    "expectedRevision"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "accountAlias": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "sourceDocumentId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "sourceLineId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "kind": {
+      "enum": [
+        "actual",
+        "estimate",
+        "commitment",
+        "credit",
+        "revenue"
+      ]
+    },
+    "amountMinor": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "enum": [
+        "AUD",
+        "USD",
+        "EUR",
+        "GBP",
+        "NZD",
+        "CAD",
+        "SGD",
+        "HKD",
+        "CNY",
+        "INR",
+        "VND",
+        "JPY",
+        "KWD",
+        "BHD"
+      ]
+    },
+    "taxMinor": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "periodStart": {
+      "type": "string",
+      "format": "date"
+    },
+    "periodEnd": {
+      "type": "string",
+      "format": "date"
+    },
+    "recognisedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "paidAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "category": {
+      "enum": [
+        "hosting",
+        "storage",
+        "bandwidth",
+        "functions",
+        "ci",
+        "voice_generation",
+        "domain",
+        "other",
+        "revenue",
+        "refund",
+        "payment_fee"
+      ]
+    },
+    "expectedRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "fx": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targetCurrency",
+        "rate",
+        "source",
+        "asOf"
+      ],
+      "properties": {
+        "targetCurrency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "enum": [
+            "AUD",
+            "USD",
+            "EUR",
+            "GBP",
+            "NZD",
+            "CAD",
+            "SGD",
+            "HKD",
+            "CNY",
+            "INR",
+            "VND",
+            "JPY",
+            "KWD",
+            "BHD"
+          ]
+        },
+        "rate": {
+          "type": "string",
+          "pattern": "^[0-9]{1,12}(\\.[0-9]{1,12})?$"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "costType": {
+      "enum": [
+        "fixed",
+        "variable",
+        "unallocated"
+      ]
+    },
+    "reconciled": {
+      "type": "boolean"
+    },
+    "voided": {
+      "type": "boolean"
+    },
+    "settles": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    }
   }
 }

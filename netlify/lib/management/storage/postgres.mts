@@ -1,5 +1,4 @@
-import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { managementMigrations } from './migrations.mts';
 import type { EventQuery, JsonObject, ManagementDatabase, ManagementTransaction, Namespace, StoredEvent } from '../transactional/types.mts';
 
 /** Structural pg Pool interface: callers supply the configured driver. */
@@ -28,7 +27,7 @@ function transaction(client: SqlClient): ManagementTransaction {
       return result.rows[0] ? object(result.rows[0].record_json) : null;
     },
     async put(namespace, key, value) {
-      const conflict = namespace === 'audit' || namespace === 'config_versions' ? '' : ' ON CONFLICT(namespace,record_key) DO UPDATE SET record_json=EXCLUDED.record_json';
+      const conflict = ['audit','config_versions','finance_versions','finance_batches'].includes(namespace) ? '' : ' ON CONFLICT(namespace,record_key) DO UPDATE SET record_json=EXCLUDED.record_json';
       await client.query('INSERT INTO management_records(namespace,record_key,record_json) VALUES($1,$2,$3::jsonb)' + conflict, [namespace,key,JSON.stringify(value)]);
     },
     async list(namespace, prefix='') {
@@ -79,20 +78,18 @@ export class PostgresManagementDatabase implements ManagementDatabase {
 
 /** Run explicitly from trusted migration tooling, never from an HTTP request. */
 export async function migrateManagement(pool:SqlPool):Promise<{version:number;applied:boolean}> {
-  const sql=await readFile(new URL('./001-management.sql',import.meta.url),'utf8');
-  const hash=createHash('sha256').update(sql).digest('hex'),client=await pool.connect();
+  const migrations=await managementMigrations(),client=await pool.connect();
   try {
     await client.query('BEGIN');
     await client.query("SELECT pg_advisory_xact_lock(hashtextextended('management:migrations',0))");
     await client.query('CREATE TABLE IF NOT EXISTS management_schema_migrations(version integer PRIMARY KEY,sha256 text NOT NULL,applied_at timestamptz NOT NULL DEFAULT now())');
-    const old=(await client.query('SELECT sha256 FROM management_schema_migrations WHERE version=1')).rows[0];
-    if (old && old.sha256!==hash) throw new Error('management_migration_checksum_mismatch');
-    if (!old) {
-      await client.query(sql);
-      await client.query('INSERT INTO management_schema_migrations(version,sha256) VALUES(1,$1)',[hash]);
+    const installed=(await client.query('SELECT version,sha256 FROM management_schema_migrations ORDER BY version')).rows;
+    if(installed.some((r,i)=>r.version!==migrations[i]?.version||r.sha256!==migrations[i]?.sha256))throw new Error('management_migration_checksum_mismatch');
+    let applied=false;
+    for(const migration of migrations.slice(installed.length)){
+      await client.query(migration.sql);
+      await client.query('INSERT INTO management_schema_migrations(version,sha256) VALUES($1,$2)',[migration.version,migration.sha256]);applied=true;
     }
-    await client.query('COMMIT');
-    return {version:1,applied:!old};
-  } catch(error) {try {await client.query('ROLLBACK');}catch {}throw error;}
-  finally {client.release();}
+    await client.query('COMMIT');return {version:migrations.at(-1)!.version,applied};
+  }catch(error){try{await client.query('ROLLBACK');}catch{}throw error;}finally{client.release();}
 }

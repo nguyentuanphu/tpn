@@ -22,6 +22,8 @@ export const ROLES = ['viewer', 'editor', 'owner', 'custom'];
 // admins, Security (exe keys, sign everyone out) and the Access log are never granted one by one: they come only with
 // the owner role, so nobody can give themselves more than they were given.
 export const PERMS = {
+  'finance.read': ['📊','See private finance ledger and budgets','Xem sổ tài chính và ngân sách riêng'],
+  'finance.write': ['✏️','Record and reconcile finance entries','Ghi và đối soát dữ liệu tài chính'],
   analytics:  ['📊', 'See Analytics (what the children play, the missing lines)', 'Xem Phân tích (các con chơi gì, câu còn thiếu)'],
   devices:    ['🏷️', 'Give devices a name in Analytics', 'Đặt tên máy trong Phân tích'],
   testers:    ['🐞', 'See tester reports', 'Xem báo cáo người thử'],
@@ -97,6 +99,8 @@ export async function fromCookie(S, pw, c) {
 export function needs(api, post) {
   if (api.startsWith('management/')) {
     const operation = api.split('?')[0];
+    if (!post && /^management\/finance(?:\/history\/(?:[a-f0-9]{64}|budget\/\d{4}-\d{2})|\/export)?$/.test(operation)) return 'finance.read';
+    if (post && /^management\/finance\/(settings|preview|commit|budget)$/.test(operation)) return 'finance.write';
     if (!post && (operation === 'management/children' || /^management\/devices\/[a-z0-9]{10,24}$/.test(operation))) return 'management.deviceDetail';
     if (!post && operation === 'management/operations') return 'operations.read';
     if (post && operation === 'management/operations/refresh') return 'operations.read';

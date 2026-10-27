@@ -50,3 +50,11 @@
 .mg-editor label { display: block; margin: 12px 0; }
 .mg-editor textarea, .mg-editor select { width: 100%; box-sizing: border-box; }
 .mg-editor textarea[name=configBody] { font-family: monospace; font-size: 14px; }
+
+.mg-table-wrap { overflow-x: auto; max-width:100%; }
+.mg-table-wrap td { vertical-align:top; overflow-wrap:anywhere; min-width:110px; padding:8px; }
+.mg-table-wrap th { text-align:left; padding:8px; }
+.mg-editor input { box-sizing:border-box; max-width:100%; }
+[data-fin-preview] { scroll-margin-top:24px; }
+[data-fin-history-result] { white-space:pre-wrap; overflow-wrap:anywhere; }
+.mg-editor input:not([type=checkbox]):not([type=radio]) { display:block; width:100%; min-height:44px; padding:9px 11px; border:1px solid var(--line); border-radius:10px; background:var(--bg); color:var(--ink); font:inherit; }

@@ -69,3 +69,26 @@ remains separate from the final passing results.
 [Documentation/build checks](evidence/operations-documentation-checks-2026-10-27.txt):
 902 consistency checks passed; all 133 generated game/UI JavaScript files are
 current. A final preflight still reports no database binding (expected exit 2).
+
+
+## Finance and current-release integration — 27 October 2026 AEDT
+
+The owner authorised finance and requested the full suite. Released v1.02
+(`b241286a`) was integrated locally first. Merge overlaps in voice, connections,
+live configuration and offline files were resolved while preserving both the
+released behavior and management evidence. No new version or production release
+was authorised.
+
+- [Focused local suite](evidence/finance-local-suite-2026-10-27.json): **3/3 passed**; 397 unit tests, types (196 explicit game/test files and 76 server/Studio/tool files), authenticated Finance setup/preview/save/correction/history/CSV duplicate checks, existing management/config/operations flows, actual game boot/voice/save observations, EN/VI at 390/820/1440. Eighteen screen captures include six Finance views. The recorded voice regression also passed in a preceding focused run.
+- [Real PostgreSQL](evidence/finance-postgres-2026-10-27.json): **17/17 passed**. New coverage includes migration v1→v2 preserving existing config records, concurrent duplicate finance commit, preserved correction versions and atomic rollback of ledger/version/audit writes after a synthetic storage failure. No production data or live provider is used.
+- Documentation consistency: **917 checks passed**, four schemas and existing positive/negative fixtures, seven diagrams and 160 local links. Historical design hashes remain pinned; current v1.02 drift is explicitly reported.
+- Initial finance type checks found four implementation type errors; these were fixed, not suppressed. Subsequent focused suites passed.
+
+The source follows [B01–B12 traceability](PLAN-TRACEABILITY.md). Finance uses the
+manual-first scope and explicit assumptions in [FINANCE.md](FINANCE.md). AUD and
+separate invoice/cash views are the proposed default, configurable before the
+first entry. No actual finance input is fabricated or committed.
+
+GitHub full-suite and fresh sequential speed validation are pending at this
+checkpoint. A final report will record the tested commit, run URL, failures and
+reruns rather than treating a workflow dispatch as a passing result.

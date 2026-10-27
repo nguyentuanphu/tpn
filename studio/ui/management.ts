@@ -1,6 +1,7 @@
+import { mountFinance } from './finance.js';
 // Private Studio management views. The game and public website never import this module.
 // Both Studio modes inject their existing authenticated API and EN/VI translator.
-export type ManagementKind = 'overview' | 'devices' | 'device' | 'children' | 'activities' | 'activity' | 'attention' | 'release' | 'operations' | 'changes';
+export type ManagementKind = 'overview' | 'devices' | 'device' | 'children' | 'activities' | 'activity' | 'attention' | 'release' | 'operations' | 'changes' | 'finance';
 export type ManagementQuery = Record<string, string>;
 export type ManagementOptions = {
   api(path: string, body?: unknown): Promise<unknown>;
@@ -20,7 +21,7 @@ const rows = (v: unknown): Row[] => Array.isArray(v) ? v.map(object) : [];
 const text = (v: unknown, fallback = ''): string => typeof v === 'string' ? v : typeof v === 'number' ? String(v) : fallback;
 const finite = (v: unknown): number | null => typeof v === 'number' && Number.isFinite(v) ? v : null;
 const esc = (v: unknown): string => text(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c));
-const validKind = (v: string): v is ManagementKind => ['overview', 'devices', 'device', 'children', 'activities', 'activity', 'attention', 'release', 'operations', 'changes'].includes(v);
+const validKind = (v: string): v is ManagementKind => ['overview', 'devices', 'device', 'children', 'activities', 'activity', 'attention', 'release', 'operations', 'changes','finance'].includes(v);
 const sequence = new WeakMap<HTMLElement, number>();
 const CSS_ID = 'studio-management-style';
 
@@ -140,14 +141,16 @@ export async function renderManagement(P: HTMLElement, options: ManagementOption
   const labels: Record<ManagementKind,[string,string]> = {
     overview:['Management overview','Tổng quan quản lý'], devices:['Devices and children','Thiết bị và các con'], device:['Device details','Chi tiết thiết bị'], children:['Children and their devices','Các con và máy của mình'],
     activities:['Activity catalogue','Danh mục hoạt động'], activity:['Activity details','Chi tiết hoạt động'], attention:['Needs attention','Cần xem xét'],
-    release:['Release evidence','Bằng chứng phát hành'], operations:['Operations','Vận hành'], changes:['Configuration changes','Thay đổi cấu hình']
+    release:['Release evidence','Bằng chứng phát hành'], operations:['Operations','Vận hành'], changes:['Configuration changes','Thay đổi cấu hình'],finance:['Finance','Tài chính']
   };
   const navigation: ManagementKind[] = ['overview','devices','activities','attention','release','changes'];
+  if(options.can?.('finance.read')) navigation.push('finance');
   if(options.can?.('operations.read')) navigation.push('operations');
   if(profileContext)navigation.splice(2,0,'children');
   P.innerHTML = `<div class="mg-root"><h2>${esc(T(...labels[kind]))}</h2><p class="sub">${esc(T('Private management information for authorised Studio accounts. Child names stay associated with their reporting device.', 'Thông tin quản lý riêng cho tài khoản Studio được phép. Tên các con luôn gắn với máy gửi báo cáo.'))}</p><nav class="mg-nav" aria-label="${esc(T('Management views','Các trang quản lý'))}">${navigation.map(k => `<button type="button" class="btn small ${kind===k || kind==='device'&&k==='devices' || kind==='activity'&&k==='activities' ? '' : 'ghost'}" data-mg-nav="${k}">${esc(T(...labels[k]))}</button>`).join('')}</nav><form class="card mg-filters"><label>${esc(T('Period','Khoảng ngày'))}<select name="days">${['1','7','30'].map(d=>`<option value="${d}" ${q.days===d?'selected':''}>${esc(T(d+' day'+(d==='1'?'':'s'),d+' ngày'))}</option>`).join('')}</select></label><label>${esc(T('Build','Phiên bản'))}<input name="build" type="text" value="${esc(q.build)}" placeholder="${esc(T('All builds','Mọi phiên bản'))}" maxlength="24"></label><label>${esc(T('Traffic','Loại báo cáo'))}<select name="traffic">${['ordinary','authorised_test','synthetic_bot'].map(v=>`<option value="${v}" ${q.traffic===v?'selected':''}>${esc(trafficLabel(v,T))}</option>`).join('')}</select></label>${kind==='devices'||kind==='children' ? `<label class="mg-filter-search">${esc(T('Find a child or device','Tìm tên bé hoặc thiết bị'))}<input name="search" type="search" value="${esc(q.search)}" placeholder="${esc(T('Child name, device name or ID','Tên bé, tên máy hoặc mã máy'))}"></label><label>${esc(T('Device type','Loại thiết bị'))}<select name="deviceClass">${[['','All devices','Mọi thiết bị'],['phone','Phone','Điện thoại'],['tablet','Tablet','Máy tính bảng'],['computer','Computer','Máy tính']].map(([v,en,vi])=>`<option value="${v}" ${q.deviceClass===v?'selected':''}>${esc(T(en,vi))}</option>`).join('')}</select></label>` : ''}<button class="btn small" type="submit">${esc(T('Apply filters','Áp dụng bộ lọc'))}</button></form><div class="mg-content" aria-live="polite"><div class="card mg-loading" role="status">${esc(T('Loading reporting evidence…','Đang tải bằng chứng báo cáo…'))}</div></div></div>`;
   const root = P.querySelector<HTMLElement>('.mg-root'); if (!root) return;
   root.querySelectorAll<HTMLButtonElement>('[data-mg-nav]').forEach(b => { b.onclick = () => { const k = b.dataset.mgNav || ''; if (validKind(k)) navigate(k); }; });
+  if(kind==='finance'){root.querySelector('.mg-filters')?.remove();await mountFinance(root.querySelector<HTMLElement>('.mg-content')!,options,q,next=>navigate('finance','',next));return;}
   const form = root.querySelector<HTMLFormElement>('form');
   if (form) form.onsubmit = e => {
     e.preventDefault(); const values = new FormData(form); const next = { ...q };

@@ -15,6 +15,7 @@
 // signed with it. Family photos live in the private store (netlify/lib/family.mts), never in GitHub.
 import crypto from 'crypto';
 import studioVersion from '../../studio/version.json' with { type: 'json' };
+import { createFinanceService } from '../lib/management/finance.mts';
 import { createOperationsControl } from '../lib/management/operations-control.mts';
 import { managementService, managementDatabase } from '../lib/management/runtime.mts';
 import { managementHttp, managementFailure } from '../lib/management/http.mts';
@@ -179,7 +180,7 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
     studio: studioVersion.studio, version: studioVersion.studio, me, perms: admins.PERMS, conf: { github: false, players: true }, waiting: 0, unpublished: false });
   if (route.startsWith('management/')) {
     const canReadReports = admins.allowed(me, 'testers', false);
-    try { return await managementHttp(req, me, { log, ...(route.startsWith('management/operations') ? { operations: operations() } : {}), catalogue: () => loadManagementCatalogue().entries,
+    try { return await managementHttp(req, me, { log, ...(route.startsWith('management/finance') ? {finance:createFinanceService({database:managementDb || managementDatabase(),now})}:{}), ...(route.startsWith('management/operations') ? { operations: operations() } : {}), catalogue: () => loadManagementCatalogue().entries,
       reads: createManagementReadService({ playersStore, parentAnalyticsStore,
         ...(canReadReports ? { testerStore } : {}),
         botStore: store('bot-players'), catalogue: () => loadManagementCatalogue().entries, now }),

@@ -213,6 +213,7 @@ marketing/source/runvalley.log
 /js/world.js
 /js/worldedit.js
 /studio/ui/app.js
+/studio/ui/finance.js
 /studio/ui/management.js
 /sw.js
 # --- end of tools/build.mts ---

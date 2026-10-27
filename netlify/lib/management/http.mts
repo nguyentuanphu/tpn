@@ -1,3 +1,4 @@
+import { round, bounded, bounds } from './finance-values.mts';
 import * as admins from '../admins.mts';
 import { ManagementError } from './transactional/types.mts';
 import { ManagementReadError } from './quality.mts';
@@ -19,7 +20,7 @@ export const managementFailure = (error) => error instanceof ManagementError || 
   : managementJson({ error: 'Management source unavailable. No change has been confirmed.', code: 'management_source_unavailable' }, 503);
 
 /** Called only after Studio authentication. Permissions are also checked here for direct callers. */
-export async function managementHttp(req: Request, me, { reads, service, operations = undefined, catalogue = () => [], log = async (..._args) => {} }) {
+export async function managementHttp(req: Request, me, { reads, service, operations = undefined, finance = undefined, catalogue = () => [], log = async (..._args) => {} }) {
   try {
     const url = new URL(req.url), route = decodeURIComponent(url.pathname.split('/studio/api/')[1] || '');
     const post = req.method === 'POST';
@@ -28,6 +29,31 @@ export async function managementHttp(req: Request, me, { reads, service, operati
     const path = route.slice('management/'.length), q = url.searchParams;
     const context = { includeProfileContext: admins.allowed(me, 'management/children', false) };
     await log(me.name, me.role, 'management', path);
+    if(path==='finance'||path.startsWith('finance/')) {
+      if(!finance)throw new ManagementError(503,'management_database_not_configured');
+      if(!post){
+        if(path==='finance'){
+          const result=await finance.snapshot({month:q.get('month')||new Date().toLocaleDateString('en-CA',{timeZone:'Australia/Sydney'}).slice(0,7),basis:q.get('basis')||'invoice'});
+          if(result.summary){result.summary.costPerActiveMinor=null;result.summary.costPerHourMinor=null;result.summary.denominators=null;
+            if(result.summary.comparable&&result.basis==='invoice')try{const period=bounds(result.month),usage=await reads.overview(new URLSearchParams({from:period.start,to:period.end,traffic:'ordinary'}));
+              const devices=usage.totals.activeDevices,mins=usage.totals.mins;
+              result.summary.denominators={reportingActiveInstallations:devices,reportedMinutes:mins,basis:'legacy_device_calendar_dates',limitations:['reporting_subset','analytics_opt_out_bias','not_unique_children_or_customers']};
+              if(Number.isSafeInteger(devices)&&devices>0)result.summary.costPerActiveMinor=bounded(round(BigInt(result.summary.actualCostMinor),BigInt(devices)));
+              if(Number.isSafeInteger(mins)&&mins>0)result.summary.costPerHourMinor=bounded(round(BigInt(result.summary.actualCostMinor)*60n,BigInt(mins)));
+            }catch{result.quality.push('finance_game_denominators_unavailable');}}
+          return managementJson(result);
+        }
+        if(path==='finance/export')return new Response(await finance.exportCsv(),{headers:{'Content-Type':'text/csv; charset=utf-8','Cache-Control':'private, no-store','Content-Disposition':'attachment; filename="studio-finance.csv"','X-Content-Type-Options':'nosniff'}});
+        if(path.startsWith('finance/history/budget/'))return managementJson(await finance.budgetHistory(path.slice('finance/history/budget/'.length)));
+        if(path.startsWith('finance/history/'))return managementJson(await finance.history(path.slice('finance/history/'.length)));
+      }else{const body=await managementBody(req);
+        if(path==='finance/settings')return managementJson(await finance.configure(body,me.name));
+        if(path==='finance/preview')return managementJson(await finance.preview(body));
+        if(path==='finance/commit')return managementJson(await finance.commit(body,me.name));
+        if(path==='finance/budget')return managementJson(await finance.budget(body,me.name));
+      }
+      throw new ManagementError(404,'finance_route_not_found');
+    }
     if (!post) {
       if (path === 'overview') {
         const result = await reads.overview(q);

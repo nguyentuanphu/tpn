@@ -85,6 +85,28 @@ export async function managementBrowserCheck(browser) {
           }
           assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'operations overflow');
           const opsFilename=`${lang}-${width}-operations.png`;await page.screenshot({path:path.join(output,opsFilename),fullPage:true});captures.push(opsFilename);
+          await page.click('[data-mg-nav=finance]');
+          if(width===390&&lang==='en'){
+            await page.waitForSelector('[data-fin-setup]');await page.locator('[data-fin-setup] [name=reason]').fill('Synthetic ledger setup');await page.locator('[data-fin-setup] button').click();
+            await page.waitForSelector('[data-fin-line]');
+            const f=page.locator('[data-fin-line]');
+            for(const [name,value]of Object.entries({provider:'Netlify',accountAlias:'synthetic-browser',sourceDocumentId:'browser-invoice',sourceLineId:'line-1',amount:'42.50',tax:'4.25',reason:'Synthetic browser invoice'}))await f.locator('[name='+name+']').fill(value);
+            await f.locator('[name=reconciled]').check();await f.locator('button[type=submit]').click();await page.waitForSelector('[data-fin-confirm]');await page.click('[data-fin-confirm]');
+            await page.waitForFunction(()=>document.querySelector('[data-fin-save-result]')?.textContent.includes('Saved'));
+            await page.click('[data-mg-nav=overview]');await page.waitForSelector('.mg-grid');await page.click('[data-mg-nav=finance]');await page.waitForSelector('[data-fin-edit]');
+            assert.match(await page.locator('[data-fin-main]').innerText(),/AUD 42.50/);
+            await page.click('[data-fin-edit]');await page.locator('[data-fin-line] [name=amount]').fill('50.25');await page.locator('[data-fin-line] [name=reason]').fill('Synthetic corrected invoice');await page.locator('[data-fin-line] button[type=submit]').click();await page.waitForSelector('[data-fin-confirm]');await page.click('[data-fin-confirm]');await page.waitForFunction(()=>document.querySelector('[data-fin-save-result]')?.textContent.includes('Saved'));
+            await page.click('[data-mg-nav=overview]');await page.waitForSelector('.mg-grid');await page.click('[data-mg-nav=finance]');await page.waitForSelector('[data-fin-history]');await page.click('[data-fin-history]');
+            await page.waitForFunction(()=>document.querySelector('[data-fin-history-result]')?.textContent.includes('Synthetic corrected invoice'));
+            assert.match(await page.locator('[data-fin-main]').innerText(),/AUD 50.25/);
+            const csvResponse=await context.request.get(site+'/studio/api/management/finance/export');assert.equal(csvResponse.status(),200);assert.equal(csvResponse.headers()['cache-control'],'private, no-store');
+            const preview=await context.request.post(site+'/studio/api/management/finance/preview',{headers:{'X-Studio':'1'},data:{csv:await csvResponse.text(),expectedSettingsRevision:1}});assert.equal(preview.status(),200);assert.equal((await preview.json()).rows[0].status,'duplicate');
+          }else await page.waitForSelector('[data-fin-line]');
+          assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'finance overflow');
+          // Collapse long entry forms for overview screenshots; every field is still accessible.
+          await page.locator('[data-fin-controls] details').evaluateAll(nodes=>nodes.forEach(n=>n.open=false));
+          await page.evaluate(()=>{window.scrollTo(0,0);document.querySelectorAll('.mg-table-wrap').forEach(el=>el.scrollLeft=0);});
+          const finFilename=`${lang}-${width}-finance.png`;await page.screenshot({path:path.join(output,finFilename),fullPage:true});captures.push(finFilename);
           assert.deepEqual(errors,[]);
         } finally {await context.close();}
       }
@@ -99,6 +121,6 @@ export async function managementBrowserCheck(browser) {
     } finally {await isolated.close();}
     await managementRuntimeBrowserCheck(browser);
     fs.writeFileSync(path.join(output,'capture-source.json'),JSON.stringify({capturedAt:new Date().toISOString(),fixture:'Synthetic records; real owner sign-in, Studio routes and UI; no production data',captures},null,2)+'\n');
-    return 'EN/VI: authenticated summary, child/device linkage, activity lookup and same-page filters at phone/tablet/desktop sizes; twelve captures; bounded operation submission, durable results and provider-run reconciliation';
+    return 'EN/VI: authenticated summary, child/device linkage, activity lookup and same-page filters at phone/tablet/desktop sizes; eighteen captures; finance setup, preview/save/correction/history/CSV duplicate checks; bounded operation submission, durable results and provider-run reconciliation';
   } finally {server.close();unroute();}
 }

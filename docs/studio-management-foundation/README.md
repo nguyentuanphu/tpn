@@ -8,6 +8,8 @@ Written 26 October 2026, Australia/Sydney (AEDT). Source baseline: `ac76cf6097a8
 
 The owner selected **Netlify Database** for SQL. See [Netlify setup and operational connections](NETLIFY-AND-OPERATIONS.md) for the native binding, game event map, controls and evidence limits.
 
+Finance is now authorised and implemented in code: [Finance handbook](FINANCE.md). [Plan-to-code traceability](PLAN-TRACEABILITY.md) maps every original B01–B12 ticket to its implementation and gaps.
+
 ## Open the visual guide first
 
 Open **[index.html](index.html)** in a browser. It works offline, including search and filters, without a server, external libraries or analytics. It explains the system, lets you search every registered data point, and links to the detailed instructions. A PDF can be produced with the browser's Print command; the Markdown remains the canonical narrative.

@@ -335,3 +335,15 @@ Owner authorizes routine fixes and branch work without repeated questions, conti
 ## v1.02 deployed · 27 October2026 AEDT
 
 PR #602 ready/squash-mergedff5800048 at9:03 am AEDT. The merge call returned502 but read-back confirmed success; no duplicate merge. Inherited historical skip-build markers prevented the first hosting build; clean empty trigger9bde35178 published the identical approved tree. Live verified9:08 am AEDT: SW/actualBUILD/homeguide/onlineStudio/publicfestivalendpoint/optional6663-unit manifest/sampled default and FPT bytes, plus Netlify domain. Evidence docs/v1.02/live-verification.json. Final exhaustive40377688415 on84c5c1d2a:248/248; welcomevoice and ownerreportedphonevi passed only on isolated second try. Related Checks/website/Fruit/OrchardStudio all green. Official exact map4529e90b6 recorded with release notes on main [skip netlify]. Final local8/8,battery169s,330units,196+51types; all1442 new English and340 reviewed FPT delta MP3s independently decoded, zero missing coverage. Issues589,584,509,573–576 closed Fixed in v1.02. Unresolved cart view/landmarks/obstruction/freeze reports, timing misses with baseline, physical listening/native camera/two-device and unfinished AI review remain. ZIP waived; no Studio executable.
+
+
+## Owner decision — Studio finance and full-suite continuation, 27 October 2026 AEDT
+
+Owner explicitly requested connecting this work to the recorded plan, continuing
+through the full suite and working on finance. This supersedes the earlier finance
+deferral. Continue with the primary agent alone. Manual-first B10 ledger, explicit
+finance grants, audit, currency/tax/FX, preview/import, reconciliation, budgets and
+conditional metrics are in scope. AUD with separate invoice/cash views is the
+proposed default (assumed pending reply; configurable before the first line).
+No payment changes, paid provisioning, version bump or new production deployment
+is authorised. Already released v1.02 was merged locally before new checks.

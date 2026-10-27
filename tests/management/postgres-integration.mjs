@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { PostgresManagementDatabase, migrateManagement } from '../../netlify/lib/management/storage/postgres.mts';
 import { createManagementService } from '../../netlify/lib/management/transactional/service.mts';
 import { managementPreflight } from '../../netlify/lib/management/preflight.mts';
+import { createFinanceService } from '../../netlify/lib/management/finance.mts';
 import { createOperationsControl } from '../../netlify/lib/management/operations-control.mts';
 import { makeManagement } from '../../netlify/functions/management.mts';
 
@@ -40,8 +41,8 @@ try{
     assert.equal((await pool.query("SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema=$1",[schema])).rows[0].n,0);
   });
   await check('real PostgreSQL migration applies once and repeats safely',async()=>{
-    assert.deepEqual(await migrateManagement(pool),{version:1,applied:true});
-    assert.deepEqual(await migrateManagement(pool),{version:1,applied:false});
+    assert.deepEqual(await migrateManagement(pool),{version:2,applied:true});
+    assert.deepEqual(await migrateManagement(pool),{version:2,applied:false});
     const repeated=await Promise.all([migrateManagement(pool),migrateManagement(pool)]);
     assert.ok(repeated.every(r=>r.applied===false));
   });
@@ -51,6 +52,18 @@ try{
     assert.equal((await managementPreflight(pool,{local:true})).migration,'mismatch');
     await pool.query('UPDATE management_schema_migrations SET sha256=$1 WHERE version=1',[createHash('sha256').update(fs.readFileSync(path.join(root,'netlify/lib/management/storage/001-management.sql'))).digest('hex')]);
     assert.equal((await managementPreflight(pool,{local:true})).ready,true);
+  });
+  await check('existing migration v1 upgrades to finance v2 without changing prior management records',async()=>{
+    const legacy=schema+'_v1';await admin.query(`CREATE SCHEMA ${legacy}`);const legacyPool=new Pool({connectionString,max:2,options:`-c search_path=${legacy}`});
+    try{
+      const sql=fs.readFileSync(path.join(root,'netlify/lib/management/storage/001-management.sql'),'utf8');await legacyPool.query(sql);
+      await legacyPool.query('CREATE TABLE management_schema_migrations(version integer PRIMARY KEY,sha256 text NOT NULL,applied_at timestamptz NOT NULL DEFAULT now())');
+      await legacyPool.query('INSERT INTO management_schema_migrations(version,sha256) VALUES(1,$1)',[createHash('sha256').update(sql).digest('hex')]);
+      await legacyPool.query("INSERT INTO management_records(namespace,record_key,record_json) VALUES('configs','preserved','{\"revision\":7}'::jsonb)");
+      assert.equal((await managementPreflight(legacyPool,{local:true})).ready,false);assert.deepEqual(await migrateManagement(legacyPool),{version:2,applied:true});
+      assert.equal((await legacyPool.query("SELECT record_json FROM management_records WHERE namespace='configs' AND record_key='preserved'")).rows[0].record_json.revision,7);
+      assert.equal((await managementPreflight(legacyPool,{local:true})).ready,true);
+    }finally{await legacyPool.end();await admin.query(`DROP SCHEMA ${legacy} CASCADE`);}
   });
   await check('SQL transaction rolls back all writes after failure',async()=>{
     await assert.rejects(database.transaction(['rollback-fixture'],async tx=>{
@@ -127,7 +140,7 @@ try{
   });
   await check('database constraints reject invalid event records',async()=>{
     await assert.rejects(pool.query("INSERT INTO management_records(namespace,record_key,record_json) VALUES('invalid','test','{}'::jsonb)"));
-    for(const namespace of ['audit','config_versions']) {
+    for(const namespace of ['audit','config_versions','finance_versions','finance_batches']) {
       await database.transaction([],tx=>tx.put(namespace,'synthetic-immutable-history',{value:1}));
       await assert.rejects(database.transaction([],tx=>tx.put(namespace,'synthetic-immutable-history',{value:2})));
       await database.transaction([],async tx=>assert.equal((await tx.get(namespace,'synthetic-immutable-history')).value,1));
@@ -148,6 +161,24 @@ try{
     await Promise.all([control.run(input,'test-owner'),control.run(input,'test-owner')]);assert.equal(sends,1);
     const rows=await database.transaction([],tx=>tx.list('audit','operation|'+input.operationId+'|'));assert.equal(rows.length,2);
     const reloaded=createOperationsControl({database,config:()=>({}),now:()=>now});assert.equal((await reloaded.run(input,'test-owner')).duplicate,true);assert.equal(sends,1);
+  });
+  await check('real SQL finance commits once under concurrent retry and preserves correction revisions',async()=>{
+    const finance=createFinanceService({database,now:()=>now});await finance.configure({expectedRevision:0,reportingCurrency:'AUD',reason:'Synthetic SQL setup'},'owner-test');
+    const line={schemaVersion:1,provider:'Netlify',accountAlias:'synthetic',sourceDocumentId:'test-invoice',sourceLineId:'test-line',kind:'actual',amountMinor:1000,taxMinor:100,currency:'AUD',periodStart:'2026-10-01',periodEnd:'2026-10-31',recognisedAt:'2026-10-01T00:00:00Z',paidAt:null,category:'hosting',expectedRevision:0,reconciled:true,costType:'fixed'};
+    const input={lines:[line],expectedSettingsRevision:1},preview=await finance.preview(input),commit={...input,operationId:randomUUID(),previewHash:preview.previewHash,reason:'Synthetic SQL import'};
+    const results=await Promise.all([finance.commit(commit,'owner-test'),finance.commit(commit,'owner-test')]);assert.equal(results.filter(r=>r.duplicate).length,1);
+    const changed={lines:[{...line,amountMinor:2000,expectedRevision:1}],expectedSettingsRevision:1},p2=await finance.preview(changed);await finance.commit({...changed,operationId:randomUUID(),previewHash:p2.previewHash,reason:'Correct synthetic invoice'},'owner-test');
+    const versions=(await finance.history(preview.rows[0].id)).versions;assert.deepEqual(versions.map(v=>v.body.amountMinor),[1000,2000]);
+    const persisted=(await pool.query("SELECT record_json FROM management_records WHERE namespace='finance_lines' AND record_key=$1",[preview.rows[0].id])).rows[0].record_json;assert.equal(persisted.revision,2);
+  });
+  await check('real SQL finance import rolls back every ledger, version and audit write on storage failure',async()=>{
+    let writes=0;const failing={transaction:(locks,work)=>database.transaction(locks,tx=>work({...tx,put:async(ns,key,value)=>{if(ns==='finance_lines'&&++writes===2)throw new Error('synthetic finance write failure');return tx.put(ns,key,value);}}))};
+    const finance=createFinanceService({database:failing,now:()=>now});
+    const line={schemaVersion:1,provider:'Netlify',accountAlias:'synthetic',sourceDocumentId:'rollback-invoice',sourceLineId:'one',kind:'actual',amountMinor:100,taxMinor:0,currency:'AUD',periodStart:'2026-10-01',periodEnd:'2026-10-31',recognisedAt:'2026-10-01T00:00:00Z',category:'hosting',expectedRevision:0};
+    const input={lines:[line,{...line,sourceLineId:'two'}],expectedSettingsRevision:1},preview=await finance.preview(input);
+    await assert.rejects(finance.commit({...input,operationId:randomUUID(),previewHash:preview.previewHash,reason:'Synthetic rollback check'},'owner-test'),/synthetic finance write failure/);
+    assert.equal((await pool.query("SELECT count(*)::int AS n FROM management_records WHERE namespace='finance_lines' AND record_json->'body'->>'sourceDocumentId'='rollback-invoice'")).rows[0].n,0);
+    assert.equal((await pool.query("SELECT count(*)::int AS n FROM management_records WHERE namespace='finance_versions' AND record_json->'body'->>'sourceDocumentId'='rollback-invoice'")).rows[0].n,0);
   });
   const record={scope:'Real local PostgreSQL transaction and management service integration with synthetic records only',
     date:new Date().toLocaleDateString('en-CA',{timeZone:'Australia/Sydney'})+' Australia/Sydney',server:version,passed:true,cases:passed};

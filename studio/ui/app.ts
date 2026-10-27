@@ -115,7 +115,7 @@ const SECTIONS = [
   { k: 'home', i: '🏠', en: 'Home', vi: 'Trang chính', pages: ['home'] },
   { k: 'family', i: '💛', en: 'Family', vi: 'Gia đình', pages: ['message', 'missions', 'children', 'album', 'quiz', 'stories', 'villagers', 'plots', 'familycode'] },
   { k: 'game', i: '🎮', en: 'Game', vi: 'Trò chơi', pages: ['releases', 'lab', 'festivals', 'looks', 'path', 'music', 'map', 'photos', 'play', 'voices', 'ads'] },
-  { k: 'players', i: '📊', en: 'Analytics', vi: 'Phân tích', pages: ['management', 'managementdevices', 'managementchildren', 'managementattention', 'managementactivities', 'managementactivity', 'managementdevice', 'managementrelease', 'managementoperations', 'managementchanges', 'players', 'testers'] },
+  { k: 'players', i: '📊', en: 'Analytics', vi: 'Phân tích', pages: ['management', 'managementdevices', 'managementchildren', 'managementattention', 'managementactivities', 'managementactivity', 'managementdevice', 'managementrelease', 'managementoperations', 'managementfinance', 'managementchanges', 'players', 'testers'] },
   { k: 'setup', i: '⚙️', en: 'Setup', vi: 'Thiết lập', pages: ['publish', 'site', 'check', 'settings', 'admins', 'security', 'accesslog'] }
 ];
 // who is signed in online (round O: each admin has an own account): a viewer sees the Analytics only; the 👥 Admins
@@ -126,7 +126,7 @@ const ONLINE_ONLY = ['admins', 'security', 'accesslog'], OWNER_ONLY = ['security
 // (owner, 14 Oct AEDT) each account has its own permissions (netlify/lib/admins.mts PERMS): a page shows only to those
 // who may open it, the rest of the dashboard follows. The exe on the family computer is the owner's: everything.
 const CAN = k => ROLE() === 'owner' || ((INFO && INFO.me && INFO.me.perms) || []).includes(k);
-const PAGE_NEEDS = { management: 'management.read', managementdevices: 'management.read', managementchildren: 'management.deviceDetail', managementdevice: 'management.deviceDetail', managementattention: 'management.read', managementactivities: 'management.read', managementactivity: 'management.read', managementrelease: 'management.read', managementoperations: 'operations.read', managementchanges: 'management.read', players: 'analytics', testers: 'testers', familycode: 'family', album: 'family', publish: 'publish' };
+const PAGE_NEEDS = { management: 'management.read', managementdevices: 'management.read', managementchildren: 'management.deviceDetail', managementdevice: 'management.deviceDetail', managementattention: 'management.read', managementactivities: 'management.read', managementactivity: 'management.read', managementrelease: 'management.read', managementfinance:'finance.read', managementoperations: 'operations.read', managementchanges: 'management.read', players: 'analytics', testers: 'testers', familycode: 'family', album: 'family', publish: 'publish' };
 const canSee = k => k === 'home' || k === 'admins' ? true : OWNER_ONLY.includes(k) ? ROLE() === 'owner' : CAN(PAGE_NEEDS[k] || 'pages');
 const SEC = () => SECTIONS.map(x => ({ ...x, pages: x.pages.filter(k => (INFO && INFO.online || !ONLINE_ONLY.includes(k)) && (!INFO?.managementOnly || k.startsWith('management') || ['admins','security','accesslog'].includes(k)) && canSee(k)) })).filter(x => x.pages.length && (x.k !== 'home' || CAN('pages')));
 // each page: its picture, its name and one line saying what it is for
@@ -140,6 +140,7 @@ const ABOUT = {
   managementactivity: ['🎮', 'Activity detail', 'Chi tiết hoạt động', '', ''],
   managementrelease: ['🆕', 'Release evidence', 'Bằng chứng phát hành', 'Reporting by originating build', 'Báo cáo theo phiên bản phát sinh'],
   managementoperations: ['🌐', 'Operations', 'Vận hành', 'Provider configuration and verified observations', 'Cấu hình nhà cung cấp và quan sát đã xác minh'],
+  managementfinance:['📊','Finance','Tài chính','Private ledger, budgets and financial evidence','Sổ riêng, ngân sách và bằng chứng tài chính'],
   managementchanges: ['📜', 'Configuration changes', 'Thay đổi cấu hình', 'Revisioned controls and device acknowledgements', 'Điều khiển theo phiên bản và xác nhận từ thiết bị'],
   home: ['🏠', 'Home', 'Trang chính', '', ''],
   message: ['💌', 'Message', 'Lời nhắn', 'A note the children see when they start playing', 'Lời nhắn các con thấy khi bắt đầu chơi'],
@@ -311,7 +312,7 @@ function explainPage(P, page) {
   const box = document.createElement('details'); box.className = 'studio-help'; box.innerHTML = `<summary>${T('How this section works', 'Cách dùng mục này')}</summary><p>${T2(text)}</p>`; P.prepend(box);
 }
 const PAGES: Record<string, (P: HTMLElement) => unknown> = {};
-const MANAGEMENT_PAGES = { management: 'overview', managementdevices: 'devices', managementchildren: 'children', managementdevice: 'device', managementattention: 'attention', managementactivities: 'activities', managementactivity: 'activity', managementrelease: 'release', managementoperations: 'operations', managementchanges: 'changes' } as const;
+const MANAGEMENT_PAGES = { management: 'overview', managementdevices: 'devices', managementchildren: 'children', managementdevice: 'device', managementattention: 'attention', managementactivities: 'activities', managementactivity: 'activity', managementrelease: 'release', managementoperations: 'operations', managementfinance:'finance', managementchanges: 'changes' } as const;
 for (const [page, kind] of Object.entries(MANAGEMENT_PAGES)) PAGES[page] = async P => {
   const { renderManagement } = await import('./management.js');
   const query = Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''));
