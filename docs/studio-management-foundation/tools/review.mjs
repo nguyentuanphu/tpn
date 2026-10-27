@@ -9,7 +9,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 if (!process.env.PLAYWRIGHT_BROWSERS_PATH && fs.existsSync('/workspace/.cache/ms-playwright'))
   process.env.PLAYWRIGHT_BROWSERS_PATH = '/workspace/.cache/ms-playwright';
 const { chromium } = await import('../../../tests/node_modules/playwright/index.mjs');
-const evidence = path.join(root, 'evidence'); fs.mkdirSync(evidence, { recursive: true });
+const evidence = path.join(root, 'evidence', 'current-guide'); fs.mkdirSync(evidence, { recursive: true });
 const errors = [], network = [], cases = [];
 const browser = await chromium.launch();
 try {
@@ -27,6 +27,11 @@ try {
       cases.push(`${width}px ${label}: fits viewport`);
     };
     await fit('overview');
+    await page.getByRole('button',{name:'Implementation status',exact:true}).click();
+    assert.equal(await page.locator('#implementation img').count(),4);
+    assert.equal(await page.locator('#implementation a[href="FINANCE.md"]').count(),1);
+    await fit('current implementation and finance links');
+    await page.screenshot({path:path.join(evidence,`implementation-${width}.png`),fullPage:true});
     await page.getByRole('button', { name: 'Explore data', exact: true }).click();
     assert.match(await page.locator('#count').innerText(), /137 of 137/);
     await page.getByLabel('Search data points').fill('battery');
@@ -60,12 +65,15 @@ try {
   await page.goto(pathToFileURL(path.join(root, 'images/07-home-wireframe.svg')).href);
   await page.setViewportSize({ width: 1200, height: 820 });
   await page.screenshot({ path: path.join(evidence, 'home-wireframe.png') });
+  await page.goto(pathToFileURL(path.join(root, 'current/finance-flow.svg')).href);
+  await page.setViewportSize({width:1200,height:750});
+  await page.screenshot({path:path.join(root,'current/finance-flow.png')});
   await page.close();
   assert.deepEqual(errors, [], 'No uncaught browser errors');
   assert.deepEqual(network, [], 'Offline artifact makes no HTTP requests');
   fs.writeFileSync(path.join(evidence, 'browser-review.json'), JSON.stringify({
-    scope: 'Documentation artifact only; proposed product acceptance is not executed',
-    date: '2026-10-26 Australia/Sydney (AEDT)', browser: await browser.version(),
+    scope: 'Offline historical register and current implementation/finance guide; runtime evidence is separate',
+    date: new Date().toLocaleDateString('en-CA',{timeZone:'Australia/Sydney'})+' Australia/Sydney', browser: await browser.version(),
     viewports: [390, 820, 1280], cases, errors, httpRequests: network.length,
     passed: true
   }, null, 2) + '\n');

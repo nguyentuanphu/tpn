@@ -1,0 +1,6 @@
+{
+  "scope": "Local synthetic developer database only; not Netlify production",
+  "migrationApplied": {"version": 2, "applied": true},
+  "readOnlyPreflight": {"schemaVersion": 2, "connected": true, "serverMajor": 17, "tls": false, "local": true, "schemaReady": true, "migration": "current", "ready": true, "writeAccess": "not_tested_read_only_preflight"},
+  "productionBindingAvailable": false
+}

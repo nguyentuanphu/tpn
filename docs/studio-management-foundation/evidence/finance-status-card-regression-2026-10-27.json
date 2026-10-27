@@ -1,0 +1,17 @@
+{
+  "managementstudio": {
+    "ok": true,
+    "secs": 44,
+    "note": "EN/VI: authenticated summary, child/device linkage, activity lookup and same-page filters at phone/tablet/desktop sizes; eighteen captures; finance setup, preview/save/correction/history/CSV duplicate checks; bounded operation submission, durable results and provider-run reconciliation"
+  },
+  "emoji": {
+    "ok": true,
+    "secs": 0,
+    "note": "820 different emoji in the game, 819 drawn, 0 not drawn (0 uses); left as they are: \ud83c\uddec\ud83c\udde7 (flags drawn by icons.js, and text symbols); no emoji in the docs"
+  },
+  "types": {
+    "ok": true,
+    "secs": 14,
+    "note": "196 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 76 TypeScript files of the server, Studio and tools; no errors"
+  }
+}

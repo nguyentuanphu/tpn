@@ -56,6 +56,12 @@ export async function managementBrowserCheck(browser) {
           await page.waitForFunction(()=>!document.querySelector('[data-mg-open=device]')&&!document.querySelector('.mg-loading'));
           assert.equal(await page.locator('.mg-error').count(),0,'same-page filter navigation must reload');
           await page.click('[data-mg-nav=attention]');await page.waitForSelector('[name=problem]');
+          await page.waitForFunction(()=>!!document.querySelector('.mg-attention h3')?.closest('details.fold'));
+          const attentionFold=page.locator('.mg-attention details.fold').first();
+          await attentionFold.locator(':scope > summary').click();
+          assert.equal(await attentionFold.locator('.mg-facts').isVisible(),false,'status-first attention cards must really collapse');
+          await attentionFold.locator(':scope > summary').click();
+          assert.equal(await attentionFold.locator('.mg-facts').isVisible(),true);
           await page.locator('[name=owner]').fill('Synthetic operator');await page.locator('[name=nextAction]').fill('Retest the reported activity');
           await page.locator('[name=reason]').fill('Synthetic triage validation');await page.locator('.mg-editor button[type=submit]').click();
           await page.waitForFunction(()=>document.querySelector('.mg-attention')?.textContent.includes('Synthetic operator'));

@@ -18,6 +18,8 @@ Every mutation records the actor, reason, time and revision. Line history retain
 
 ## Exact data flow
 
+![Finance source-to-Studio map](current/finance-flow.svg)
+
 ```mermaid
 flowchart LR
   F[Manual form or private CSV] --> P[Authenticated preview]
@@ -49,7 +51,7 @@ The finance API consumes aggregate gameplay denominators only. It does not join 
 ## Invoice, cash, tax and FX rules
 
 - **Invoice service-period view:** spread each original minor unit over inclusive service days. Earlier days receive indivisible remainder units. Select the requested calendar-month portion, then convert using the explicit FX rate and currency exponents. This is a documented operational allocation, not a statutory accounting policy. The entered recognition date remains preserved for source evidence; it does not replace the service-period allocation.
-- **Cash view:** include actual expense/credit/revenue only on its paid/received calendar date. A missing paid date means unpaid or unknown; it is shown separately and prevents a claim of complete cash reporting. Estimates and commitments are excluded.
+- **Cash view:** include actual expense/credit/revenue on the UTC calendar date of its canonical `paidAt` timestamp. The form writes its chosen calendar date at midnight UTC, preserving the entered day; it does not record a bank transaction time. For CSV, a timestamp with an offset is converted to UTC and can fall on a different day/month. To import a provider's payment calendar date, encode that date at midnight UTC. A configurable company time zone and bank-feed timestamp mapping remain future work. A missing paid date means unpaid or unknown; it is shown separately and prevents a claim of complete cash reporting. Estimates and commitments are excluded.
 - **Tax:** expense tax and revenue tax remain separate from tax-exclusive cost/income. A refund/credit has the appropriate negative amount/tax sign. The tool does not infer recoverable tax, GST treatment or a tax return.
 - **FX:** one original major unit equals the entered number of reporting-currency major units. Example: VND 10,000 × AUD 0.00006 = AUD 0.60 = 60 Australian cents. A positive decimal string is required, with provenance. Rounding is half away from zero. An FX result that exceeds the supported safe-integer range is rejected before saving. If combined totals exceed that range, only those totals become unavailable and the original ledger/history remain readable. Missing FX leaves that line unconverted and marks totals incomplete; it never becomes zero. Same-currency rates cannot contradict 1:1 conversion.
 - **Commitments:** only explicitly linked actual/credit lines reduce an outstanding commitment. Over-settlement clamps the outstanding reserve to zero; the full actual expense remains visible. Distinct unlinked actuals do not magically settle a contract. The remaining reserve is allocated proportionally across its original service period; this is an operational planning convention.
@@ -66,6 +68,8 @@ Contribution margin remains null: attributed variable cost and an approved reven
 ## CSV and correction workflow
 
 The [finance input schema](schemas/finance-line.schema.json) documents the wire fields; `finance-values.mts` also enforces source identity, signs, overflow and cross-record settlement rules. Use **Export ledger CSV** as the template. Source amounts are integer `amountMinor` and `taxMinor`; `expectedRevision` is 0 for a genuinely new line or the current revision for a correction. The export is authenticated and private/no-store. It includes voided rows so history is not silently dropped.
+
+For review before a database is connected, inspect the [synthetic CSV example](examples/finance-ledger-synthetic.csv). Every row is marked ExampleOnly/DEMO-ONLY, remains unreconciled, and uses an invented example FX quote. It is a format demonstration, never a real bill or a production import.
 
 1. Keep the header names. Import at most 200 lines / 180,000 characters at once.
 2. Keep source IDs stable. Preserve original currencies and service dates.

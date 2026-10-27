@@ -1480,7 +1480,10 @@ await check('testerreport', async () => {
   await P.page.waitForFunction(() => window.__sv?.tester?.mountedAt && window.__sv.tester.mountedAt() > 0 && performance.now() - window.__sv.tester.mountedAt() > 15200, null, { timeout: 30000 });
   const earlierFreezes = got.filter(x => x && x.auto === 'freeze');
   await P.page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => { const t = performance.now(); while (performance.now() - t < 2600) { } r(); }))));
-  { const fz = await wait(x => x && x.auto === 'freeze' && !earlierFreezes.includes(x), 6000); if (!fz) out.push('a frozen screen was not reported');
+  { const fz = await wait(x => x && x.auto === 'freeze' && !earlierFreezes.includes(x), 6000); if (!fz) {
+      const state = await P.page.evaluate(() => ({ visibility: document.visibilityState, focus: document.hasFocus(), mountedAt: window.__sv?.tester?.mountedAt?.(), now: performance.now(), queued: JSON.parse(localStorage.getItem('sv2_tester_out') || '[]').map(r => ({ auto: r.auto, detail: r.detail, hasShot: !!r.shot })) }));
+      out.push('a frozen screen was not reported: ' + JSON.stringify({ earlier: earlierFreezes.map(r => ({ detail: r.detail, log: r.log })), state }));
+    }
     // (#261) the report says the game's own code ran long (this freeze is a 2.6 s script), not only that frames stopped
     else { const scripts = [...JSON.stringify(fz.log || []).matchAll(/longest script (\d+) ms/g)];
       const why = scripts.find(m => +m[1] >= 1000) || scripts[scripts.length - 1] || null;

@@ -1,6 +1,6 @@
 # The handbook: understand before building
 
-> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices, deferred finance input, and asked for one active agent. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
+> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices and one active agent, and has now authorised manual-first finance and the full suite. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
 
 ## 1. What we are building
 

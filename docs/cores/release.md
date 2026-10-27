@@ -347,3 +347,22 @@ conditional metrics are in scope. AUD with separate invoice/cash views is the
 proposed default (assumed pending reply; configurable before the first line).
 No payment changes, paid provisioning, version bump or new production deployment
 is authorised. Already released v1.02 was merged locally before new checks.
+
+
+## Studio finance full-suite progress — 27 October 2026 AEDT
+
+Branch `review/studio-finance-20261027`, application checkpoint `3967cf91`.
+The first complete GitHub run [40431751008](https://github.com/nguyentuanphu/tpn/actions/runs/40431751008)
+failed: 247/250 checks passed. Failures were `emoji`, `ownerstudiofolds`,
+`testerreport`. `folkplay` and `ownerfamily` passed only after retry. All 17 real
+PostgreSQL cases passed within the SQL check. Published evidence retains failures.
+Corrected documentation passed all nine quick checks (399 unit cases). Management
+folding correction is under full-page browser validation. The unchanged synthetic
+freeze-report check passed locally; CI cause remains unconfirmed and additional
+diagnostics are retained for the corrected run. No check is weakened or skipped.
+No production release, new version, paid provisioning, payment changes or live
+financial input is authorised by these validation steps.
+
+- Owner reply, 27 October 2026 AEDT: **Existing Netlify Database (Recommended)**.
+  This confirms the existing native Netlify SQL selection. No live connection is
+  bound in this workspace; retain the private deployment-context `NETLIFY_DB_URL`.

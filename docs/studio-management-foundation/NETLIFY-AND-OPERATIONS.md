@@ -1,6 +1,6 @@
 # Netlify SQL, game evidence and Studio operations
 
-27 October 2026 AEDT. Finance entry remains deferred. Child first names remain linked to their reporting installation, subject to Analytics and name-reporting settings.
+27 October 2026 AEDT. Manual-first finance is now authorised and implemented; see [Finance handbook](FINANCE.md). Child first names remain linked to their reporting installation, subject to Analytics and name-reporting settings.
 
 ## What connects to what
 

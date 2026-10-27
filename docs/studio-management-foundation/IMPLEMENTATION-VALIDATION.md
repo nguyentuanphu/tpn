@@ -116,3 +116,47 @@ Post-review checks:
 - [Mixed voice regression](evidence/finance-mixed-voice-2026-10-27.json): **2/2 passed** (types + mixed-Hanoi voice check). A new actual-browser case plays English recorded audio while the interface is Vietnamese and asserts recorded success with language `en`. The composite source order, pauses, fallback, cancellation, warmup, male preview and private on-device speech checks remain intact.
 
 GitHub runs `40430213718` and `40430357563` were superseded by SQL-suite integration and financial safeguards. Run `40431137311` is superseded by the targeted spoken-language fix. Cancelled runs are not passing release evidence. The final suite must be recorded for the final application commit.
+
+
+### First complete GitHub run — failed, retained
+
+[Run 40431751008](https://github.com/nguyentuanphu/tpn/actions/runs/40431751008)
+checked application commit `3967cf91` on 27 October 2026, 12:18–13:20 AEDT.
+[All actual check outcomes](evidence/finance-first-full-github-2026-10-27.json):
+**247/250 passed**, three failures: `emoji` (raw status glyphs in five published
+text logs), `ownerstudiofolds` (management pages excluded from the shared folding
+behavior), and `testerreport` (no receipt for the injected freeze within its
+existing six-second wait, including retry). This is failed evidence.
+`folkplay` and `ownerfamily` passed only on retry and remain named here.
+The SQL check includes **17/17** real PostgreSQL cases.
+
+The published text logs now use plain PASS/FAIL markers, preserving outcomes and
+numbers. [Nine quick checks passed](evidence/finance-quick-corrected-2026-10-27.json),
+including all 399 unit cases and the documentation rule. New text evidence is
+normalized by `tools/normalize-evidence.mjs`; original structured payloads remain
+on GitHub, with Unicode escaped in published JSON. No assertion was weakened.
+
+Management pages now use the existing persistent Studio folding behavior.
+The unchanged freeze-report check passed locally in 58 seconds; its root cause on
+GitHub is not yet established. Additional failure diagnostics and CI artifact
+retention preserve earlier freeze reports and pending queue state for the next
+full run. Passing an isolated local check does not establish a passing full suite.
+
+
+### Studio contract corrections
+
+[Correction suite](evidence/finance-studio-correction-suite-2026-10-27.json):
+**5/5 passed**, including authenticated management/finance, types, documentation
+rule, unchanged freeze-report check and the Studio-wide folding audit.
+[Actual folding observations](evidence/finance-studio-folds-2026-10-27.json):
+82 page/device combinations, 928 sections, 758 close/reopen checks, no loose
+headings, stuck content, thin explanations, persistence failures or browser errors.
+Finance is included in the page discovery. The first partial correction exposed
+short help text; [its failed observations are retained](evidence/finance-fold-first-correction-2026-10-27.json).
+
+Each management page now explains its evidence, defaults and effect in EN/VI.
+The final small adjustment also folds status-first report cards without hiding
+the preceding status badge; a real authenticated regression exercises its hidden
+and visible facts on all three device sizes in both languages.
+
+[Final status-card regression](evidence/finance-status-card-regression-2026-10-27.json): **3/3 passed** (authenticated EN/VI management/finance, types and documentation rule) after that last adjustment. Eighteen refreshed runtime captures were inspected on phone, tablet and computer.

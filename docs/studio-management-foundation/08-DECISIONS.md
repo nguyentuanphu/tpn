@@ -1,6 +1,6 @@
 # Decisions, assumptions and unresolved prerequisites
 
-> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices, deferred finance input, and asked for one active agent. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
+> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices and one active agent, and has now authorised manual-first finance and the full suite. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
 
 This package is authorised design/documentation work. Proposed implementation defaults are recommendations, not claims of owner approval. A future builder must record the selected decision, date, actor and affected tickets before activating dependent behavior. Continue independent work while a prerequisite is unresolved; do not invent access or approval.
 
@@ -55,3 +55,29 @@ For D04 record actual/estimate/commitment treatment, invoice recognition period,
 - A heavy management SDK loaded before the game's playable screen.
 
 These boundaries protect delivery scope and clarify what a later proposal would need to change.
+
+
+## Current implementation decisions — 27 October 2026 AEDT
+
+- The owner selected **Netlify Database** for production SQL. Its context-specific
+  `NETLIFY_DB_URL` takes precedence over the development fallback. No paid database
+  was provisioned and the production binding remains unavailable in this workspace.
+- The owner explicitly authorised finance after initially deferring it. B10 now
+  has a manual ledger/import/reconciliation/budget implementation. See [Finance](FINANCE.md).
+- AUD with separate service-period and cash views is the proposed default, assumed
+  pending the optional reporting-basis reply. The operator chooses the reporting
+  currency explicitly before the first real entry. Tax-exclusive inputs and
+  separate tax display are explicit operational assumptions; statutory accounting
+  and revenue attribution remain reserved decisions.
+- Original currencies and FX provenance are retained. Missing FX/coverage, zero
+  game denominators and overflowing totals are unavailable, not fabricated zeros.
+- Existing source IDs and financial revisions are preserved. Corrections/voids are
+  audited; no payment, bank, billing change or automatic revenue model is introduced.
+- The primary agent continues alone. The latest request includes full-suite
+  validation; production deployment and a new version still need their own decision.
+
+[Plan-to-code traceability](PLAN-TRACEABILITY.md) records what remains incomplete.
+
+- 27 October 2026 AEDT: owner confirmed **Existing Netlify Database**. Keep the
+  context-specific native `NETLIFY_DB_URL` binding as the primary SQL connection;
+  no new paid provider is provisioned. The workspace still has no live binding.

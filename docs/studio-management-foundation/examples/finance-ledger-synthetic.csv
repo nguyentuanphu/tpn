@@ -1,0 +1,6 @@
+schemaVersion,provider,accountAlias,sourceDocumentId,sourceLineId,kind,amountMinor,currency,taxMinor,periodStart,periodEnd,recognisedAt,paidAt,category,expectedRevision,costType,reconciled,voided,settles,fxTargetCurrency,fxRate,fxSource,fxAsOf
+"1","ExampleOnly","synthetic-not-production","DEMO-ONLY-2026-10","1","actual","12000","AUD","1200","2026-10-01","2026-10-31","2026-10-26T00:00:00.000Z","","hosting","0","fixed","false","false","","","","",""
+"1","ExampleOnly","synthetic-not-production","DEMO-ONLY-2026-10","2","actual","2500","USD","0","2026-10-01","2026-10-31","2026-10-26T00:00:00.000Z","","voice_generation","0","variable","false","false","","AUD","1.5","EXAMPLE-NOT-A-MARKET-QUOTE","2026-10-26"
+"1","ExampleOnly","synthetic-not-production","DEMO-ONLY-2026-10","3","commitment","5000","AUD","0","2026-10-01","2026-10-31","2026-10-26T00:00:00.000Z","","ci","0","fixed","false","false","","","","",""
+"1","ExampleOnly","synthetic-not-production","DEMO-ONLY-2026-10","4","estimate","2000","AUD","0","2026-10-01","2026-10-31","2026-10-26T00:00:00.000Z","","bandwidth","0","unallocated","false","false","","","","",""
+"1","ExampleOnly","synthetic-not-production","DEMO-ONLY-CREDIT","1","credit","-500","AUD","-50","2026-10-01","2026-10-31","2026-10-26T00:00:00.000Z","","hosting","0","fixed","false","false","","","","",""

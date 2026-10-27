@@ -1,6 +1,6 @@
 # Sparkle Valley: Studio management foundation
 
-> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices, deferred finance input, and asked for one active agent. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
+> **Implementation update — 27 October 2026 AEDT:** the owner has authorised implementation, requested child names with their devices and one active agent, and has now authorised manual-first finance and the full suite. [Current implementation, limits and setup](IMPLEMENTATION.md) supersedes the earlier proposed-only scope below. The original data register remains a historical design baseline.
 
 Written 26 October 2026, Australia/Sydney (AEDT). Source baseline: `ac76cf6097a8071bf2da4be90fe81fd0af8201d6`, game and Studio `v1.01`.
 
@@ -69,3 +69,20 @@ After validation and evidence updates, make a portable copy with `python3 docs/s
 Edit the generator for registry/diagram/HTML changes, then regenerate. Edit narrative Markdown and schemas directly. Update the baseline only after rechecking source behavior. Commit the source and generated copies together. Do not put secret values, real child data, production screenshots or billing documents in this package. Example records are synthetic.
 
 This is a private single-organisation administration design. Multi-organisation billing, cloud synchronisation of children's progress and an educational assessment system are outside scope. No application deployment, financial transaction, credential grant or external message is authorised by these documents.
+
+
+## Publishing validation evidence
+
+Keep the original runner artifacts linked to their GitHub run. Documentation
+uses plain text rather than phone emoji, including copied console logs. Before
+adding a Markdown/text log, run:
+
+```sh
+node docs/studio-management-foundation/tools/normalize-evidence.mjs docs/studio-management-foundation/evidence/your-report.txt
+```
+
+This only replaces pictographic status markers with PASS/FAIL/NOTE or an explicit
+Unicode code-point label. It does not change numbers, outcomes or assertions.
+Keep structured result payloads intact; a reserialized JSON evidence copy may use
+Unicode escapes. Run the normal `emoji` check before publishing, along with the
+other required checks. Never edit a result from failed to passed.
