@@ -366,8 +366,8 @@ function setupInteractables() {
   G.interactables.push({ id: 'statue', x: world.statue.x, z: world.statue.z, r: 3.6, icon: '🪷', label: () => T('Lotus Statue', 'Tượng Sen'), act: statueTalk });
   GATHER.forEach(([item, x, z], k) => {
     const y = Math.max(heightAt(x, z), WATER) + .7, s = sprite(ITEMS[item].icon, 1.1); s.position.set(x, y, z); scene.add(s);
-    const st = G.gatherState[k] = { s, ready: 0 };
-    world.updaters.push((dt, t) => { s.visible = performance.now() > st.ready; s.position.y = y + Math.sin(t * 2 + k) * .12; });
+    const st = G.gatherState[k] = { s, ready: 0, baseY: y };
+    world.updaters.push((dt, t) => { s.visible = performance.now() > st.ready; s.position.y = st.baseY + Math.sin(t * 2 + k) * .12; });
     G.interactables.push({ st, id: 'g' + k, x, z, r: 2.4, icon: ITEMS[item].icon, label: () => T('Pick up ', 'Nhặt ') + ITEMS[item].name(), visible: () => performance.now() > st.ready,
       act: h => { st.ready = performance.now() + 120000; give(h, item, 1); } });
   });
@@ -1955,7 +1955,26 @@ G.reeds = createReeds(G); // (round T4a) reeds along the banks, water hyacinth i
 world.roadside = plantRoadside(G); // soft road edges and flowers, once everything stands
 G.signposts = createSignposts(G); // (round T4b, js/signposts.js) a picture signpost at every road junction
 G.nameTags = createNameTags(G); // (round T4b, js/nametags.js) names float over the places nearby, at most 4
-bootMark('roadside'); G.solidsReady = buildSolids(G); bootMark('solids'); // (no breath here: the solid map is read once everything below is placed too) // nobody walks through houses and things (js/solids.js)
+bootMark('roadside'); G.solidsReady = buildSolids(G);
+// Later buildings can cover an authored collectible. Keep its stable pickup ID and
+// cooldown, but move the picture and interaction together onto nearby open ground.
+void G.solidsReady.then(() => {
+  for (const b of world.buffalo || []) {
+    if (b.rider) continue;
+    const [x, z] = G.clearSpot(b.mesh.position.x, b.mesh.position.z, 1.1);
+    b.mesh.position.set(x, heightAt(x, z), z); b.home = [x, z]; b.tx = x; b.tz = z;
+  }
+  for (const it of G.interactables) {
+    if (!/^g\d+$/.test(it.id) || !it.st) continue;
+    const state = it.st as { s: THREE.Sprite; baseY: number };
+    const original = { x: it.x, z: it.z, y: world.groundAt(it.x, it.z) }, probe = { ...original };
+    world.collide(probe, .45);
+    if (Math.hypot(probe.x - original.x, probe.z - original.z) < .05) continue;
+    const [x, z] = G.clearSpot(it.x, it.z, .6);
+    it.x = x; it.z = z; state.baseY = Math.max(heightAt(x, z), WATER) + .7;
+    state.s.position.set(x, state.baseY, z);
+  }
+}); bootMark('solids'); // (no breath here: the solid map is read once everything below is placed too) // nobody walks through houses and things (js/solids.js)
 startPackBar(); // the recorded voices downloading: a small bar at the bottom (js/packbar.js)
 startCounting(G); // how many children play, and what they play, for Studio's report (js/players.js; Grown-ups can switch it off)
 // solid things the camera must never go inside: big, opaque, still-standing meshes (collected once, refreshed

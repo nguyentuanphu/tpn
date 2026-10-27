@@ -10,6 +10,11 @@ export function auditVoiceRoutes(){
  const inventory=read('docs/v1.02-orchard-arcade/voice-delta.json'),optional=read('voices/fpt-leminh-v1/manifest.json');
  const publicTexts=new Map<string,{text:string;source:string}>();
  for(const file of['docs/fpt-leminh-full-20261025/inventory.json','docs/fpt-v102-labels-20261026/inventory.json','docs/v1.02-orchard-arcade/voice-delta.json'])for(const l of read(file).lines)if(!held.has(l.id))publicTexts.set(l.id,{text:l.text,source:file});
+ const deltas=path.join(root,'docs/voice-recording-delta');
+ if(fs.existsSync(deltas))for(const name of fs.readdirSync(deltas).filter(f=>f.endsWith('.json'))){
+  const batch=JSON.parse(fs.readFileSync(path.join(deltas,name),'utf8'));
+  if(batch.status==='reviewed-public'&&Array.isArray(batch.lines))for(const line of batch.lines)if(!held.has(line.id))publicTexts.set(line.id,{text:line.text,source:'docs/voice-recording-delta/'+name});
+ }
  const missing:Array<{id:string;provider:string;voice:string;language:string;destination:string;reason:string}>=[];
  const counts:Record<string,number>={},ledger:Array<Record<string,unknown>>=[];
  for(const lang of['en','vi','zh','hi']){

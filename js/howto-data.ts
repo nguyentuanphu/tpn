@@ -191,9 +191,10 @@ const DEFAULTS: Record<string, HowToGuide> = {
   },
   goat: {
     origin: S('🇻🇳 🐐', 'Bịt mắt bắt dê, blindfold goat, is a favourite Vietnamese party game.', 'Bịt mắt bắt dê là trò chơi dân gian rất được yêu thích ở Việt Nam.'),
-    steps: [S('🌾🌾🌾 🐐', 'The goat is hiding in one haystack.', 'Chú dê đang trốn trong một đống rơm.'),
-      S('👆 🌾 ➡️', 'Tap a haystack. The hoof prints point towards the goat.', 'Chạm vào đống rơm. Dấu chân dê chỉ về phía chú dê.')],
-    real: S('🙈 🧒 🐐', 'For real: one friend wears a blindfold and tries to catch the others, who call out Baa baa!', 'Chơi thật: một bạn bịt mắt đi bắt, các bạn khác kêu Be be để trêu!')
+    steps: [S('👂 🧒', 'Listen for a friend calling. The sound rings and arrow show the way.', 'Nghe tiếng bạn gọi. Vòng âm thanh và mũi tên chỉ đường cho con.'),
+      S('⬆️ ➡️', 'Use the arrows to guide the blindfolded friend inside the circle.', 'Dùng mũi tên dẫn bạn bịt mắt đi trong vòng tròn.'),
+      S('🖐️ 🧒', 'When your friend is close, tap Catch. Then that friend wears the blindfold.', 'Khi đến gần bạn, chạm Bắt. Rồi bạn ấy làm người bịt mắt.')],
+    real: S('🧒 👧', 'For real: ask a grown-up to organise a gentle game in a clear, safe space. Everyone stays inside the circle.', 'Chơi thật: nhờ người lớn tổ chức trò chơi nhẹ nhàng ở chỗ trống, an toàn. Mọi người ở trong vòng tròn.')
   },
   // ---- puzzles and learning ----
   pattern: { steps: [S('🔴🔵🔴🔵 ❓', 'Look at the pattern.', 'Nhìn dãy hình nhé.'), S('👆 🔴', 'Tap what comes next!', 'Chạm vào hình tiếp theo!')] },

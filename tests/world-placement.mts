@@ -35,7 +35,7 @@ export async function worldPlacementCheck(browser:Browser){
   finally{runtime.parents=parents;document.querySelector<HTMLButtonElement>('.grownups .x')?.click();}
   const pond=W.PONDS.find(p=>p.id==='hoguom'),{createSymbols}=await import(String('/js/symbols.js'));
   const probe={scene:new THREE.Scene(),world:{updaters:[]},interactables:[],heroes:[{pos:{x:pond.x,z:pond.z}}],clearSpot:(x:number,z:number)=>[x,z]};
-  createSymbols(probe,{sfx:{},dialog:async()=>1});const turtle=probe.interactables.find(i=>i.id==='sym_hanoi');
+  createSymbols(probe,{sfx:{},dialog:async()=>1});const info=probe.interactables.find(i=>i.id==='sym_hanoi');let turtle;probe.scene.traverse(o=>{if(o.userData.rig?.kind==='turtle')turtle=o.position;});if(!turtle)throw Error('Turtle body missing');if(W.heightAt(info.x,info.z)<W.WATER+.3)errors.push('turtle information spot is not on dry bank');
   for(let k=0;k<500;k++){for(const update of probe.world.updaters)update(.25);const distance=Math.hypot(turtle.x-pond.x,turtle.z-pond.z);if(distance<pond.islet+1.6||distance>pond.r*.75||W.heightAt(turtle.x,turtle.z)>=W.WATER)errors.push('Hoan Kiem turtle left its lake');}
   return{errors,houses:G.world.houses.map((h,i)=>({index:i,x:h.x,z:h.z,kind:h.kind})),tree:fixture('oak'),rock:fixture('rock'),mine:!!G.myHouse?.home};
  });

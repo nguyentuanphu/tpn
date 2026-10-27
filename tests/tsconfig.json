@@ -234,6 +234,8 @@
     "../js/myhouse.ts",
     "../js/farm.ts",
     "./shallow-rivers.mts",
-    "../js/symbols.ts"
+    "../js/symbols.ts",
+    "../js/town.ts",
+    "../js/content/films/crow.ts"
   ]
 }

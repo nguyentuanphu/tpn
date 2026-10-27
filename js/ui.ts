@@ -579,10 +579,16 @@ export const openPad = Object.assign(function (game, i, tab) {
     x.font = 'bold 14px Fredoka, "Baloo 2", sans-serif';
     const dots = mapPlaces.map(pl => pt(pl.x, pl.z)), labels = [];
     const hits = (r, q) => r.x < q.x + q.w && q.x < r.x + r.w && r.y < q.y + q.h && q.y < r.y + r.h;
-    const cost = r => labels.filter(q => hits(r, q)).length * 10 + dots.filter(([a, b]) => hits(r, { x: a - 22, y: b - 22, w: 44, h: 44 })).length + (r.x < 0 || r.y < 0 || r.x + r.w > S || r.y + r.h > S ? 5 : 0);
+    const cost = r => labels.filter(q => hits(r, q)).length * 1000 + dots.filter(([a, b]) => hits(r, { x: a - 22, y: b - 22, w: 44, h: 44 })).length + (r.x < 0 || r.y < 0 || r.x + r.w > S || r.y + r.h > S ? 100000 : 0);
     mapPlaces.forEach((pl, i) => {
       const [a, b] = dots[i], w = x.measureText(pl.name()).width + 12;
       const tries = [[a - w / 2, b + 24], [a - w / 2, b - 44], [a + 25, b - 10], [a - 25 - w, b - 10], [a - w / 2, b + 46], [a - w / 2, b - 66]].map(([lx, ly]) => ({ x: lx, y: ly, w, h: 20 }));
+      // Dense clusters (the family home beside the farm shop) need more than six offsets.
+      // Search outward without moving the destination itself or hiding either name.
+      for (let radius = 24; radius <= 160; radius += 22) for (let j = 0; j < 16; j++) {
+        const angle = j * Math.PI / 8;
+        tries.push({ x: Math.max(2, Math.min(S - w - 2, a + Math.cos(angle) * radius - w / 2)), y: Math.max(2, Math.min(S - 22, b + Math.sin(angle) * radius - 10)), w, h: 20 });
+      }
       let best = tries[0], bc = Infinity; for (const r of tries) { const c = cost(r); if (c < bc) { best = r; bc = c; } if (!c) break; }
       labels.push(Object.assign(best, { name: pl.name() }));
     });
@@ -594,7 +600,7 @@ export const openPad = Object.assign(function (game, i, tab) {
       for (const [dx, dy, r] of [[-14, 4, 11], [0, -4, 15], [14, 3, 11], [0, 8, 13]]) { x.moveTo(a + dx * s + r * s, b + dy * s); x.arc(a + dx * s, b + dy * s, r * s, 0, Math.PI * 2); }
       x.fill(); x.restore(); };
     mapPlaces.forEach(pl => {
-      if (pl.under) return; const rg = regionAt(pl.x, pl.z), seen = pl.key === 'myhouse' || !!vis[rg], [a, b] = pt(pl.x, pl.z);
+      if (pl.under || pl.key === 'myhouse') return; const rg = regionAt(pl.x, pl.z), seen = !!vis[rg], [a, b] = pt(pl.x, pl.z);
       if (!seen) { cloud(a, b - 4); cv.clouds.push({ region: rg, name: pl.name() }); }
       else if (!lifted[rg]) { lifted[rg] = true; puffs.push([a, b - 4]); }
     });

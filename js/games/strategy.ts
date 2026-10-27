@@ -1,5 +1,5 @@
 // Planning and strategy puzzles: Tower of Hanoi, programming a robot, mazes and
-// "Blindfold Goat" (follow the clues to deduce where the goat hides).
+// the Vietnamese circle game Bịt mắt bắt dê (friends take turns as the blindfolded seeker).
 import { register, tapOne } from './frame.js';
 import { T } from '../i18n.js';
 import { shuffle, pick, el, wait } from '../util.js';
@@ -196,32 +196,8 @@ register({
   }
 });
 
-// ---------- Bịt mắt bắt dê: Blindfold Goat ----------
-const ARROW = (dx, dy) => ({ '0,-1': '⬆️', '0,1': '⬇️', '-1,0': '⬅️', '1,0': '➡️', '-1,-1': '↖️', '1,-1': '↗️', '-1,1': '↙️', '1,1': '↘️' }[Math.sign(dx) + ',' + Math.sign(dy)]);
+// ---------- Bịt mắt bắt dê: children taking turns in a blindfold/tag circle ----------
 register({
   id: 'goat', icon: '🐐', name: () => T('Blindfold Goat', 'Bịt Mắt Bắt Dê'),
-  async run(api) {
-    const rounds = 3, N = api.level <= 1 ? 3 : api.level === 2 ? 4 : 5;
-    api.say('A Vietnamese playground game! The goat is hiding in the hay. Each wrong haystack shows hoof prints pointing to the goat.', 'Trò chơi dân gian Bịt mắt bắt dê! Dê đang trốn trong đống rơm. Mỗi đống rơm sai sẽ có dấu chân chỉ về phía con dê.');
-    await wait(400);
-    for (let r = 0; r < rounds; r++) {
-      api.dots(rounds, r); api.stage.innerHTML = '';
-      const gx = Math.floor(Math.random() * N), gy = Math.floor(Math.random() * N);
-      const grid = el('div', 'goat-grid'); grid.style.setProperty('--n', N); api.stage.appendChild(grid);
-      const hay = Array.from({ length: N * N }, (_, i) => { const b = el('button', 'hay', '🌾'); b._x = i % N; b._y = Math.floor(i / N); grid.appendChild(b); return b; });
-      let tries = 0;
-      if (r > 0) api.show('Find the goat! Follow the hoof prints.', 'Tìm con dê! Đi theo dấu chân nhé.');
-      for (;;) {
-        const b = await tapOne(hay.filter(h => !h.disabled)); if (api.closed) return;
-        tries++; b.disabled = true;
-        if (b._x === gx && b._y === gy) { b.innerHTML = '🐐'; b.classList.add('right'); api.sfx.chime(); api.say(tries <= 2 ? 'Baa! You found me so fast!' : 'Baa! You found me!', tries <= 2 ? 'Be be! Con tìm ra nhanh quá!' : 'Be be! Con tìm thấy tớ rồi!'); break; }
-        const near = Math.max(Math.abs(b._x - gx), Math.abs(b._y - gy)) === 1;
-        b.innerHTML = `<span class="hoof">🐾</span><span class="dir">${ARROW(gx - b._x, gy - b._y)}</span>`; b.classList.add('miss');
-        api.sfx.pop(tries);
-        if (near) api.say('Baa! Very close!', 'Be be! Gần lắm rồi!'); else if (tries === 1) api.say('Follow the arrow!', 'Đi theo mũi tên nhé!');
-      }
-      await wait(1600);
-    }
-    api.dots(rounds, rounds); return api.win();
-  }
+  async run(api) { return (await import('./goat.js')).runGoat(api); }
 });

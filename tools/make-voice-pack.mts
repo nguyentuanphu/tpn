@@ -1,3 +1,4 @@
+import {readReviewedVoiceDelta} from './reviewed-voice-delta.mts';
 import {AZURE_VOICES,AZURE_OUTPUT_FORMAT} from './voice-providers.mts';
 // Makes the offline voice pack with ElevenLabs: every line the game speaks, saved as small MP3 files in
 // voices/. The game plays these instead of the device voice, with no internet needed, and keeps the whole
@@ -149,7 +150,14 @@ function saveManifest(man) {
 const otherOf = list => { const o: Record<string, string[]> = {}; for (const [h, j] of list) if (j.lang !== 'en') (o[j.lang] = o[j.lang] || []).push(h); return Object.fromEntries(Object.entries(o).map(([L, hs]) => [L, hs.join(' ')])); };
 const files = list.flatMap(([h, j]) => CAST[j.lang].map(s => [s, h, j]));
 const chars = files.reduce((a, [, , j]) => a + j.text.length, 0);
-const missing = files.filter(([s, h, j]) => !fs.existsSync(path.join(PACK_DIR, j.lang, s, h + '.mp3')));
+// A release may authorize only a frozen public delta. Keep the full list for indexes/areas,
+// but make no paid request for speech outside that reviewed batch.
+const reviewedFile=arg('reviewed-inventory');
+const reviewed=reviewedFile?readReviewedVoiceDelta(reviewedFile):null;
+if(reviewed&&flag('force'))throw Error('A reviewed delta cannot force replacement of existing recordings');
+const reviewedIds=reviewed?new Set(reviewed.lines.map(l=>l.lang+':'+l.id)):null;
+for(const line of reviewed?.lines||[])if(!list.some(([id,j])=>id===line.id&&j.lang===line.lang&&j.text===line.text))throw Error('Reviewed line missing from Azure inventory: '+line.id);
+const missing = files.filter(([s, h, j]) => (!reviewedIds||reviewedIds.has(j.lang+':'+h))&&!fs.existsSync(path.join(PACK_DIR, j.lang, s, h + '.mp3')));
 const need = missing.reduce((a, [, , j]) => a + j.text.length, 0);
 console.log('The voice pack, by language:');
 for (const L of Object.keys(CAST)) {

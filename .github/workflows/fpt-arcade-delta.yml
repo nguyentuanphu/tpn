@@ -5,15 +5,20 @@ on:
     paths:
       - docs/v1.02-orchard-arcade/voice-delta.json
   workflow_dispatch:
+    inputs:
+      inventory:
+        description: Optional reviewed public JSON under docs/voice-recording-delta; blank preserves the legacy arcade batch
+        required: false
+        type: string
 permissions:
   contents: write
 # Same provider lock as the baseline job: never run two FPT batches together.
 concurrency:
-  group: fpt-leminh-full-20261025
+  group: ${{ inputs.inventory && format('reviewed-public-{0}', github.run_id) || 'fpt-leminh-full-20261025' }}
   cancel-in-progress: false
 jobs:
   record:
-    if: startsWith(github.ref, 'refs/heads/work/') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/voices/')
+    if: (!inputs.inventory) && (startsWith(github.ref, 'refs/heads/work/') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/voices/'))
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
@@ -58,3 +63,11 @@ jobs:
           name: le-minh-arcade-delta
           path: temp/fpt-recordings/
           retention-days: 30
+
+  reviewed_public:
+    if: github.event_name == 'workflow_dispatch' && inputs.inventory != ''
+    uses: ./.github/workflows/public-voice-delta.yml
+    with:
+      inventory: ${{ inputs.inventory }}
+      save_to_branch: true
+    secrets: inherit

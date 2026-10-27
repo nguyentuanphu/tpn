@@ -84,10 +84,12 @@ export function createSuburbs(G) {
       // the house stands at the front of its levelled lot, facing the road
       const fx = Math.sin(L.rot), fz = Math.cos(L.rot), x = L.x + fx * (L.d - d) / 2 * .5, z = L.z + fz * (L.d - d) / 2 * .5, y = heightAt(x, z);
       const obj = m.obj || new THREE.Mesh(m.geo, toonVC()); obj.castShadow = obj.receiveShadow = true; obj.position.set(x, y, z); obj.rotation.y = L.rot; scene.add(obj);
-      // Use the rotated drawing's actual footprint. A square based on the longest side blocked empty space
-      // beside narrow tube houses (reported at 179,-134), even where no wall was visible.
-      const bounds = new THREE.Box3().setFromObject(obj);
-      world.boxes.push({ x0: bounds.min.x, x1: bounds.max.x, z0: bounds.min.z, z1: bounds.max.z });
+      // Roof eaves, yard trees and porches do not define a solid wall. Keep the authored
+      // house footprint oriented toward its road; an axis-aligned envelope alone blocks
+      // diagonal front doors and people standing outside their own houses.
+      const hw = (m.w || 9) / 2, hd = d / 2, co = Math.cos(L.rot), si = Math.sin(L.rot);
+      const ex = Math.abs(co) * hw + Math.abs(si) * hd, ez = Math.abs(si) * hw + Math.abs(co) * hd;
+      world.boxes.push({ x0: x - ex, x1: x + ex, z0: z - ez, z1: z + ez, cx: x, cz: z, rot: L.rot, hw, hd });
       registerName(person[0]);
       world.houses.push({ x, z, rot: L.rot, d, kind, info: { kind, room, name, about, people: [person], city: c.name } });
       built.push(name[0]);

@@ -12,6 +12,7 @@ import { heightAt, TOWN, PLAYGROUND } from './world.js';
 import { buildAvatar, nameAvatar } from './avatar.js';
 import { dist2 } from './util.js';
 import { addPole, addDrop } from './powerlines.js';
+import { TOWN_JUICE_CART, rowSlot } from './content/map.js';
 
 export const Box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
 export const Cyl = (r1, r2, h, s = 8) => new THREE.CylinderGeometry(r1, r2, h, s);
@@ -187,7 +188,7 @@ export function createTown(G) {
   // ---------- trees: jacaranda and gum trees (Sydney), banana and star-fruit trees (Bà Rịa) ----------
   const tree = (x, z, kind) => {
     const t = [];
-    if (kind === 'jacaranda') { t.push(P(Cyl(.25, .4, 3.4, 6), '#6b5040', [0, 1.7, 0])); [[0, 4.6, 0, 2.2, '#9c7fd6'], [1.6, 4.2, .5, 1.6, '#b39ce6'], [-1.5, 4.3, -.3, 1.7, '#8a6cc8'], [.2, 5.8, .2, 1.3, '#c3b0ee']].forEach(([a, b, c, r, col]) => t.push(P(new THREE.IcosahedronGeometry(r, 1), col, [a, b, c], [0, 0, 0], [1, .8, 1]))); }
+    if (kind === 'jacaranda') { t.push(P(Cyl(.25, .4, 3.4, 6), '#6b5040', [0, 1.7, 0])); ([[0, 4.6, 0, 2.2, '#9c7fd6'], [1.6, 4.2, .5, 1.6, '#b39ce6'], [-1.5, 4.3, -.3, 1.7, '#8a6cc8'], [.2, 5.8, .2, 1.3, '#c3b0ee']] as [number,number,number,number,string][]).forEach(([a, b, c, r, col]) => t.push(P(new THREE.IcosahedronGeometry(r, 1), col, [a, b, c], [0, 0, 0], [1, .8, 1]))); }
     if (kind === 'gum') { t.push(P(Cyl(.18, .32, 6, 6), '#e9e1d2', [0, 3, 0]), P(Cyl(.1, .14, 2.4, 5), '#e9e1d2', [.7, 5, 0], [0, 0, -.6])); [[0, 6.6, 0, 1.6], [1.4, 6, .4, 1.2], [-1, 6.2, -.5, 1.3]].forEach(([a, b, c, r]) => t.push(P(new THREE.IcosahedronGeometry(r, 0), '#7f9a6a', [a, b, c], [0, 0, 0], [1.2, .7, 1.2]))); }
     if (kind === 'banana') { t.push(P(Cyl(.15, .22, 2.6, 6), '#9aa65a', [0, 1.3, 0])); for (let k = 0; k < 6; k++) t.push(P(Box(.5, .05, 2.2), k % 2 ? '#5fa860' : '#4e9a52', [Math.cos(k) * .9, 2.7, Math.sin(k) * .9], [-.5 * Math.sin(k), -k, .5 * Math.cos(k)])); }
     if (kind === 'frangipani') { t.push(P(Cyl(.14, .22, 2, 6), '#8a7a6a', [0, 1, 0])); [[0, 2.4, 0, 1], [.7, 2.2, .3, .7]].forEach(([a, b, c, r]) => t.push(P(new THREE.IcosahedronGeometry(r, 1), '#4f9a62', [a, b, c]))); for (let k = 0; k < 8; k++) t.push(P(new THREE.SphereGeometry(.12, 5, 4), '#fff6dc', [Math.cos(k) * .7, 2.9 + (k % 3) * .1, Math.sin(k) * .7])); }
@@ -248,18 +249,22 @@ export function createTown(G) {
   world.boxes.push({ x0: X(8.1), x1: X(10.6), z0: S - .6, z1: S + .2 });
 
   // ---------- the sugarcane juice cart (nước mía) where Cô Tam, a secondary-school teacher, helps after school ----------
-  const cart = [], kx = X(-3.1), kz = N + 1.6;
+  const juiceSlot = rowSlot(TOWN_JUICE_CART.place, TOWN_JUICE_CART.slot, TOWN_JUICE_CART.depth);
+  const cart = [], kx = juiceSlot.x, kz = juiceSlot.z;
+  const sellerX = kx + TOWN_JUICE_CART.sellerSide, sellerZ = kz + TOWN_JUICE_CART.sellerBack;
   cart.push(P(Box(2.4, .9, 1), '#3a7fc2', [0, .75, 0]), P(Box(2.4, .9, .9), '#d6eef6', [0, 1.65, -.05]), P(Box(2.5, .08, 1.1), '#f4f4f4', [0, 2.12, 0]));
   cart.push(P(Cyl(.32, .32, .1, 12), '#2f3336', [-.9, .32, .55], [Math.PI / 2, 0, 0]), P(Cyl(.32, .32, .1, 12), '#2f3336', [.9, .32, .55], [Math.PI / 2, 0, 0]));
   cart.push(P(Box(.7, .6, .6), '#c8ccd0', [.7, 2.45, 0]), P(Cyl(.32, .32, .1, 12), '#8a9095', [.7, 2.5, .36], [Math.PI / 2, 0, 0]));
-  for (let k = 0; k < 8; k++) cart.push(P(Cyl(.05, .05, 2.6, 5), k % 2 ? '#7a5a6a' : '#8a6a5a', [-1.5 - (k % 3) * .12, 1.3, -.3 + k * .09], [0, 0, .12 + k * .02]));
-  cart.push(P(Cyl(.03, .03, 3, 4), '#8a8a8a', [-.3, 2.6, -.2]), P(new THREE.ConeGeometry(1.9, .7, 10), '#e84a3a', [-.3, 4, -.2]), P(new THREE.ConeGeometry(1.95, .25, 10), '#ffffff', [-.3, 3.68, -.2]));
+  for (let k = 0; k < 8; k++) cart.push(P(Cyl(.05, .05, 2.6, 5), k % 2 ? '#7a5a6a' : '#8a6a5a', [-1.3 - (k % 3) * .08, 1.3, -.3 + k * .09], [0, 0, .12 + k * .02]));
+  cart.push(P(Cyl(.03, .03, 3, 4), '#8a8a8a', [0, 2.6, 0]), P(new THREE.ConeGeometry(1.75, .7, 10), '#e84a3a', [0, 4, 0]), P(new THREE.ConeGeometry(1.8, .25, 10), '#ffffff', [0, 3.68, 0]));
   for (let k = 0; k < 3; k++) cart.push(P(Cyl(.09, .07, .25, 8), '#f3e9a8', [-.5 + k * .3, 2.3, .3]));
-  put(merge(cart), kx, kz); world.colliders.push({ x: kx, z: kz, r: 1.3 });
+  const cartMesh = put(merge(cart), kx, kz); cartMesh.rotation.y = juiceSlot.face; cartMesh.userData.townStall = 'nuocmia';
+  world.colliders.push({ x: kx, z: kz, r: 1.3 });
+  world.stalls.push({ id: 'nuocmia', place: TOWN_JUICE_CART.place, kind: 'cart', x: kx, z: kz, w: TOWN_JUICE_CART.width, d: TOWN_JUICE_CART.depth, face: juiceSlot.face, tap: 'nuocmia' });
   const stools = [];
-  [[-1.7, 1.3, '#e0453a'], [1.6, 1.4, '#3a78c8'], [2, .4, '#e0453a']].forEach(([dx, dz, c]) => stools.push(P(Cyl(.22, .26, .4, 8), c, [kx + dx, .2, kz + dz])));
-  stools.push(P(Box(.6, .45, .6), '#3a78c8', [kx + 1.9, .22, kz + 1.9]));
-  const sm = new THREE.Mesh(merge(stools), mat); sm.position.y = y0; sm.castShadow = true; scene.add(sm);
+  [[-1.45, 1.25, '#e0453a'], [.35, 1.25, '#3a78c8'], [1.45, -.9, '#e0453a']].forEach(([dx, dz, c]) => stools.push(P(Cyl(.22, .26, .4, 8), c, [kx + dx, .2, kz + dz])));
+  stools.push(P(Box(.6, .45, .6), '#3a78c8', [kx + 1.1, .22, kz + 1.1]));
+  const sm = new THREE.Mesh(merge(stools), mat); sm.position.y = y0; sm.castShadow = true; sm.userData.townStall = 'nuocmia'; scene.add(sm);
   // the card corner: two low tables under the gum tree by the street's gate, off the footpath so it stays clear.
   // Bác 2, Bác 3 and Bác 4 play Snap at one; anh Ba and Con Vật play Tiến Lên (southern style) at the other.
   const cardTable = (cx, cz) => {
@@ -282,7 +287,8 @@ export function createTown(G) {
     people.push(A); return A;
   };
   const L2 = (style, color, hair, hairStyle, hat = 'none', skin = '#e8b48c') => ({ style, color, hair, hairStyle, hat, skin });
-  const sau = person(L2('aodai', '#d94a6a', '#1d1412', 'long', 'nonla'), kx, kz - 1.1, 0);
+  const sau = person(L2('aodai', '#d94a6a', '#1d1412', 'long', 'nonla'), sellerX, sellerZ, juiceSlot.face);
+  sau.root.userData.townSeller = 'nuocmia';
   const players = [
     person(L2('shirt', '#ffffff', '#2a2a2a', 'short'), cxT - 1, czT, Math.PI / 2, true),
     person(L2('tunic', '#5b7fbf', '#8a8a8a', 'short'), cxT + 1, czT, -Math.PI / 2, true),
@@ -293,7 +299,7 @@ export function createTown(G) {
     person(L2('hoodie', '#3a78c8', '#1d1412', 'spiky'), cxL + 1, czL, -Math.PI / 2, true)
   ];
   players[5].root.scale.setScalar(.82);
-  ['Bác 2', 'Bác 3', 'Bác 4', 'Bi', 'Anh Ba', 'Con Vật'].forEach((n, k) => nameAvatar(players[k], n)); nameAvatar(sau, 'Cô Tam');
+  ['Bác 2', 'Bác 3', 'Bác 4', 'Bi', 'Anh Ba', 'Con Vật'].forEach((n, k) => nameAvatar(players[k], n, true, undefined)); nameAvatar(sau, 'Cô Tam', true, undefined);
   // teenagers kicking a shuttlecock (đá cầu) in the park
   const ring = [[X(-3), Z(14.5)], [X(0), Z(13)], [X(-.5), Z(16.5)]];
   const teens = ring.map(([x, z], k) => person(L2(['shirt', 'overalls', 'dress'][k], ['#3cc7e8', '#5fd39a', '#ff7eb8'][k], '#1d1412', ['spiky', 'short', 'ponytail'][k], 'none', '#e0aa80'), x, z, 0));
@@ -312,7 +318,7 @@ export function createTown(G) {
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; onLang(() => { draw(); t.needsUpdate = true; });
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false })); s.scale.set(3, .75, 1); s.position.set(x, y, z); scene.add(s); return s;
   };
-  tag('Cô Tam 🥤', kx, y0 + 2.6, kz - 1.1);
+  tag('Cô Tam 🥤', sellerX, y0 + 2.6, sellerZ);
   // the card players: Bác 2, Bác 3 and Bác 4 (and Bi from the villa watching)
   const yT = heightAt(cxT, czT), yL = heightAt(cxL, czL);
   tag('Bác 2', cxT - 1, yT + 2.05, czT); tag('Bác 3', cxT + 1, yT + 2.05, czT); tag('Bác 4', cxT, yT + 2.35, czT - .9);
@@ -323,7 +329,7 @@ export function createTown(G) {
 
   // ---------- things to do ----------
   const I = (id, x, z, r, icon, label, act) => G.interactables.push({ id, x, z, r, icon, label, act, bubble: icon });
-  I('nuocmia', kx, kz + 1.8, 3, '🥤', () => T('Sugarcane juice', 'Nước mía'), h => G.townTalk(h, 'sau'));
+  I('nuocmia', sellerX, kz - TOWN_JUICE_CART.depth / 2 - .5, 3, '🥤', () => T('Sugarcane juice', 'Nước mía'), h => G.townTalk(h, 'sau'));
   I('cards', cxT + 1.9, czT + .4, 2.6, '🃏', () => T('Card game', 'Đánh bài'), h => G.townTalk(h, 'tu'));
   I('tienlen', cxL + 1.9, czL + .4, 2.6, '🎴', () => T('Tiến Lên with anh Ba and Con Vật', 'Tiến Lên với anh Ba và Con Vật'), h => G.townTalk(h, 'tienlen'));
   I('dacau', X(-1.2), Z(13), 3.2, '🏸', () => T('Shuttlecock kicking', 'Đá cầu'), h => G.townTalk(h, 'tuan'));

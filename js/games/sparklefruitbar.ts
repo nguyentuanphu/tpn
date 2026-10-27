@@ -8,7 +8,7 @@ import { barStart, barApply, BAR_SYMBOLS } from './fruitbar-engine.js';
 import { ARCADE_STYLE, RING_CELLS, art, control, dom } from './arcade-board.js';
 
 /** Family arcade owns no profile coins, rewards or persistent balance. */
-interface FruitBarApi {online?:GameOnline;little:boolean;say(en:string,vi:string):void;closed:boolean;close():void;onCleanup(f:()=>void):void;}
+interface FruitBarApi {online?:GameOnline;little:boolean;say(en:string,vi:string):void;closed:boolean;close():void;onCleanup(f:()=>void):void;plan?(f:()=>Element|null,opts:{maxActions:number}):void;}
 function runFruitBar(api:FruitBarApi){
  const online=api.online;
  if(document.querySelector('.parent-arcade')){online?.leave?.();return;}
@@ -72,6 +72,17 @@ function runFruitBar(api:FruitBarApi){
   }
   if(testerArcadeAvailable('sparklefruitbar','multi'))root.append(control(T('Invite friends online','Mời bạn chơi trực tuyến'),()=>{finish();window.__sv.inviteGame('sparklefruitbar',undefined,1);}));
  }
+ // Use the same visible controls as a child: choose solo, add one free counter,
+ // lock it, watch the result and go to the next round. No direct state changes or rewards.
+ api.plan?.(()=>{
+  if(dead)return null;
+  if(!session)return root.querySelector('[data-bar-mode="1"]');
+  const s=session.state;
+  if(session.waiting||session.busy||!mine()||spinning)return null;
+  if(s.phase==='complete')return close;
+  if(s.phase==='result')return footer.querySelector('[data-bar-next]');
+  return s.bets[s.turn].some(Boolean)?footer.querySelector('[data-bar-ready]'):root.querySelector('[data-bar-adjust="0:1"]');
+ },{maxActions:80});
  return {close:finish};
 }
 

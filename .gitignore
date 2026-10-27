@@ -55,6 +55,7 @@ marketing/source/runvalley.log
 /js/content/family-quiz.js
 /js/content/familycode.js
 /js/content/festival-visibility.js
+/js/content/films/crow.js
 /js/content/fruit-parade.js
 /js/content/hanoi-pack-info.js
 /js/content/map.js
@@ -109,6 +110,9 @@ marketing/source/runvalley.log
 /js/games/fruitparade-session.js
 /js/games/fruitparade-style.js
 /js/games/fruitparade.js
+/js/games/goat-art.js
+/js/games/goat-core.js
+/js/games/goat.js
 /js/games/horse-session.js
 /js/games/learning-meta.js
 /js/games/learning.js
@@ -205,6 +209,7 @@ marketing/source/runvalley.log
 /js/tester-float.js
 /js/tester.js
 /js/testerrewards.js
+/js/town.js
 /js/trade.js
 /js/traffic.js
 /js/travel-stops.js

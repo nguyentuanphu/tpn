@@ -5,7 +5,7 @@
 import { THREE, toon, toonVC, P, merge, outline, sprite } from './gfx.js';
 import { T, nm, registerName } from './i18n.js';
 import { landmarkAt, inHeritageGrounds } from './content/map.js';
-import { heightAt, oldHeightAt, roadDist, VILLAGE, MARKET, AUSSIE, CHINA, INDIA, LAKE, WATER, APOSTLES, FESTGROUNDS, LEAFIES, HALF } from './world.js';
+import { heightAt, oldHeightAt, roadDist, VILLAGE, MARKET, AUSSIE, CHINA, INDIA, LAKE, WATER, APOSTLES, FESTGROUNDS, LEAFIES, SHRINES, HALF } from './world.js';
 import { buildAvatar } from './avatar.js';
 import { LANDMARKS, postcard } from './regions.js';
 import { ITEMS } from './data.js';
@@ -77,7 +77,7 @@ export function createHeritage(G, { give, sfx, say, toast }) {
   // find a clear, fairly flat spot near (x, z) (never over a hidden Leafy or another landmark's sign: round R, a landmark
   // covered two Leafies and Qutub Minar stood on Hampi's sign)
   const signs = [];
-  const free = (x, z, r) => [APOSTLES, ...Object.values(FESTGROUNDS)].every(f => dist2(f.x, f.z, x, z) > 17 + r) && LEAFIES.every(l => dist2(l.x, l.z, x, z) > r + 4) && signs.every(q => dist2(q.x, q.z, x, z) > r + 3) && world.colliders.every(c => dist2(c.x, c.z, x, z) > c.r + r) && world.boxes.every(b => x < b.x0 - r || x > b.x1 + r || z < b.z0 - r || z > b.z1 + r);
+  const free = (x, z, r) => [APOSTLES, ...Object.values(FESTGROUNDS)].every(f => dist2(f.x, f.z, x, z) > 17 + r) && SHRINES.every(s => dist2(s.x, s.z, x, z) > r + 4) && LEAFIES.every(l => dist2(l.x, l.z, x, z) > r + 4) && signs.every(q => dist2(q.x, q.z, x, z) > r + 3) && world.colliders.every(c => dist2(c.x, c.z, x, z) > c.r + r) && world.boxes.every(b => x < b.x0 - r || x > b.x1 + r || z < b.z0 - r || z > b.z1 + r);
   function spot(x, z, r, water = false, ok = null, wide = false, territory: string | null = null) {
     for (let k = 0; k < (wide ? 1200 : 400); k++) {
       // (17 Oct AEDT, PERF-001) the same tests as before, cheapest first, each only when the ones before it passed (none of

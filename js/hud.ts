@@ -33,7 +33,7 @@ type HudLast = { act?: string | null, little?: boolean, where?: boolean, h?: str
 type MiniMarker = { x: number, z: number, icon: string, size?: number, pin?: boolean, friend?: string };
 export class Hud {
   i: number; hero: Hero; game: SvMain; root: HTMLElement; q: (s: string) => HTMLElement;
-  mini: CanvasRenderingContext2D; wheel: HTMLCanvasElement; wctx: CanvasRenderingContext2D; navWatch: ResizeObserver;
+  mini: CanvasRenderingContext2D; wheel: HTMLCanvasElement; wctx: CanvasRenderingContext2D; navWatch: ResizeObserver; navFitFrame = 0;
   last: HudLast; nums?: number[]; rect?: HudRect; regionT: number; toastT: number; _miniT?: number; _musHeld?: boolean; _tt?: ReturnType<typeof setTimeout>; wheelA?: number;
   constructor(i: number, hero: Hero, game: SvMain) {
     this.i = i; this.hero = hero; this.game = game;
@@ -137,7 +137,10 @@ export class Hud {
     EMOTES.forEach(e => { const b = el('button', 'em', `<span>${e.icon}</span><small>${esc(T(e.en, e.vi))}</small>`); b.onclick = () => { this.toggleEmotes(false); game.emote(i, e.id); }; em.appendChild(b); });
     this.regionT = 0; this.toastT = 0; this.last = {};
     this.refreshWho();
-    this.navWatch = new ResizeObserver(() => this.fitQuest()); this.navWatch.observe(this.q('.hud-tr')); this.navWatch.observe(this.q('.hud-tl')); this.navWatch.observe(this.q('.quest')); // (r80: the adventure card and the language change their widths)
+    // Layout writes belong to the next frame, outside ResizeObserver delivery.
+    // Coalesce all three observed boxes; resizing the quest inside its own delivery
+    // otherwise produces the repeated browser loop-delivery notices.
+    this.navWatch = new ResizeObserver(() => { if (!this.navFitFrame) this.navFitFrame = requestAnimationFrame(() => { this.navFitFrame = 0; if (this.root.isConnected) this.fitQuest(); }); }); this.navWatch.observe(this.q('.hud-tr')); this.navWatch.observe(this.q('.hud-tl')); this.navWatch.observe(this.q('.quest')); // (r80: the adventure card and the language change their widths)
     // (daily adventure, chat C, 16 Oct AEDT) the goal card: js/adventure.js is loaded once, for every player's HUD
     if (!game.adventure && !game._advLoad) game._advLoad = import('./adventure.js').then(m => m.createAdventure(game)).catch(e => console.warn('daily adventure', e));
   }
@@ -303,7 +306,7 @@ export class Hud {
       c.beginPath(); c.arc(48, 48, R, -Math.PI / 2, -Math.PI / 2 + val * Math.PI * 2); c.stroke();
     }
   }
-  destroy() { this.navWatch?.disconnect(); this.root.remove(); }
+  destroy() { this.navWatch?.disconnect(); cancelAnimationFrame(this.navFitFrame); this.navFitFrame = 0; this.root.remove(); }
 }
 
 // The explorer's map. The whole valley is always shown (much easier for children to find things);

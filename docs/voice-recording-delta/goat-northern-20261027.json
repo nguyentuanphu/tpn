@@ -1,0 +1,395 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/games/goat.ts": "7ab683b16ac67d44a3a2135fbf7d47a5ee1a63c4463e86a8e2cd28282a90aa7b",
+    "js/games/tienlen.ts": "478b6372cb69e87b339242b82a67abc2375d97d010a8b4f1e16f8aa7092bafbc",
+    "js/howto-data.ts": "fb4c250c80fdfc3dedbbb1b517c18ceb1f5763f2625bd5cc1a05c142642ddfae"
+  },
+  "lines": [
+    {
+      "id": "61c75539-1167c3cc",
+      "lang": "en",
+      "text": "Listen for a friend calling. The sound rings and arrow show the way.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "cad06358-127d5562",
+      "lang": "vi",
+      "text": "Nghe tiếng bạn gọi. Vòng âm thanh và mũi tên chỉ đường cho con.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "90e6d4ce073df2c7",
+      "lang": "en",
+      "text": "Use the arrows to guide the blindfolded friend inside the circle.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "ab862a1d4448fa92",
+      "lang": "vi",
+      "text": "Dùng mũi tên dẫn bạn bịt mắt đi trong vòng tròn.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "d48eb7da-7b87cf08",
+      "lang": "en",
+      "text": "When your friend is close, tap Catch. Then that friend wears the blindfold.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "0b282a21-22dc2f22",
+      "lang": "vi",
+      "text": "Khi đến gần bạn, chạm Bắt. Rồi bạn ấy làm người bịt mắt.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "e07e0cd1-5283b76d",
+      "lang": "en",
+      "text": "For real: ask a grown-up to organise a gentle game in a clear, safe space. Everyone stays inside the circle.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "ecee4965-2f6ad76b",
+      "lang": "vi",
+      "text": "Chơi thật: nhờ người lớn tổ chức trò chơi nhẹ nhàng ở chỗ trống, an toàn. Mọi người ở trong vòng tròn.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "debf97d4-733a7c23",
+      "lang": "en",
+      "text": "Play Bịt mắt bắt dê! Guide the blindfolded friend. Listen, follow the call, then catch a friend nearby.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "2e6ec91741176d63",
+      "lang": "vi",
+      "text": "Cùng chơi Bịt mắt bắt dê! Dẫn bạn bịt mắt đi nào. Nghe tiếng gọi, đi theo, rồi bắt bạn ở gần nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "706c0f41-2249d5de",
+      "lang": "en",
+      "text": "Your friend is close. Catch!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "fea49d75-7ee86574",
+      "lang": "vi",
+      "text": "Bạn ở gần rồi. Bắt nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "71bf6723-3ae670d1",
+      "lang": "en",
+      "text": "Caught! Now your friend wears the blindfold.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "aa1b68df-1faf794b",
+      "lang": "vi",
+      "text": "Bắt được rồi! Giờ đến lượt bạn bịt mắt.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "76fb212434c687be",
+      "lang": "en",
+      "text": "Not close enough yet. Follow the call!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "cbb7f9a368b158dd",
+      "lang": "vi",
+      "text": "Chưa đủ gần đâu. Đi theo tiếng gọi nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "d09ccd12-53b33de2",
+      "lang": "en",
+      "text": "Up and left!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "87b90ee5-5a44a06a",
+      "lang": "vi",
+      "text": "Lên trên, sang trái nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "2688091a-43e2cd46",
+      "lang": "en",
+      "text": "Up!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "829fcf7e-5bf451c6",
+      "lang": "vi",
+      "text": "Lên trên nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "a4dee89b-307fe5b4",
+      "lang": "en",
+      "text": "Up and right!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "aa38fb91126908c4",
+      "lang": "vi",
+      "text": "Lên trên, sang phải nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "8b20e64a-3e12374c",
+      "lang": "en",
+      "text": "Left!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "bfdca21f-23313b39",
+      "lang": "vi",
+      "text": "Sang trái nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "89834ad3-78626224",
+      "lang": "en",
+      "text": "Right!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "c4fdc3db7b13581a",
+      "lang": "vi",
+      "text": "Sang phải nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "9b9104d36862a717",
+      "lang": "en",
+      "text": "Down and left!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "3cd59558-428843bd",
+      "lang": "vi",
+      "text": "Xuống dưới, sang trái nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "66fd1481-19a965d0",
+      "lang": "en",
+      "text": "Down!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "491c63e97d3858f4",
+      "lang": "vi",
+      "text": "Xuống dưới nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "a24e475c311a9bdd",
+      "lang": "en",
+      "text": "Down and right!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "05626ca0-4118f5d9",
+      "lang": "vi",
+      "text": "Xuống dưới, sang phải nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "1dfa99cc74af32dd",
+      "lang": "en",
+      "text": "Northern Tiến Lên! Singles and runs match suit, pairs match colour, and triples match suits. Twos are special. This gentle game has no last-card penalties.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/tienlen.ts"
+      ]
+    },
+    {
+      "id": "702715524f754eff",
+      "lang": "vi",
+      "text": "Tiến Lên miền Bắc! Bài lẻ và sảnh cùng chất, đôi cùng màu, bộ ba cùng các chất. Quân hai có luật riêng. Bản nhẹ nhàng này không phạt lá cuối.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/tienlen.ts"
+      ]
+    },
+    {
+      "id": "57a7602d-33e9fbb6",
+      "lang": "en",
+      "text": "Singles and runs match suit, pairs match colour, and triples match suits. Twos are special. This gentle game has no last-card penalties.",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/tienlen.ts"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "aeb0b110-46805b1e",
+      "lang": "en",
+      "text": "Northern",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/tienlen.ts"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "b407e3cc7401132d",
+      "lang": "en",
+      "text": "Play",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/goat.ts"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    },
+    {
+      "id": "debb35bd07184050",
+      "lang": "en",
+      "text": "Guide the blindfolded friend. Listen, follow the call, then catch a friend nearby.",
+      "area": "games",
+      "part": true,
+      "source": [
+        "js/games/goat.ts"
+      ],
+      "mixedFragment": "mixed-static-v1"
+    }
+  ]
+}

@@ -77,7 +77,7 @@ export function createSymbols(G, { sfx, dialog }) {
         [['📷 See real photos', '📷 Xem ảnh thật'], ['👋 Bye', '👋 Tạm biệt']]);
       if (k === 0) await new Promise<void>(resolve => { const options = { icon, onClose: resolve }; openPhotos(T(name[0], name[1]), wiki, options); });
     };
-    const it = { id: 'sym_' + where, x, z, r: 2.6 * Math.max(1, scale * .8), icon, bubble: icon, label: () => T(name[0], name[1]), act: speak }; G.interactables.push(it); tags.push([it, A]);
+    const it = { id: 'sym_' + where, x: water ? water.x + water.r + 1.2 : x, z, r: 2.6 * Math.max(1, scale * .8), icon, bubble: icon, label: () => T(name[0], name[1]), act: speak }; G.interactables.push(it); tags.push([it, A]);
   }
   // they wander a little round their spot (and the ℹ️ follows them)
   world.updaters.push((dt) => {
@@ -96,6 +96,6 @@ export function createSymbols(G, { sfx, dialog }) {
       const st = Math.min(d, A.speed * dt); p.x += dx / d * st; p.z += dz / d * st; p.y = A.water ? WATER-.12 : heightAt(p.x, p.z);
       A.g.rotation.y = Math.atan2(dx, dz);
     }
-    for (const [it, A] of tags) { it.x = A.g.position.x; it.z = A.g.position.z; }
+    for (const [it, A] of tags) { if (A.water) continue; it.x = A.g.position.x; it.z = A.g.position.z; }
   });
 }

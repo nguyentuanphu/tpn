@@ -1135,6 +1135,12 @@ await check('validate', async () => {
   return 'ROAD-001/002/003/004/011, VEH-001 and STALL-001…004 hold';
 });
 
+await check('horsestability', async () => (await import('./horse-stability.mts')).horseStabilityCheck(b));
+
+await check('storyposes', async () => (await import('./story-pose-check.mts')).storyPoseCheck(b));
+
+await check('goatcircle', async () => (await import('./goat-browser.mts')).goatBrowserCheck(b));
+
 await check('ladybugunified', async () => (await import('./ladybug-unified.mts')).ladybugUnifiedCheck(b));
 
 await check('familyuiart', async () => (await import('./family-ui-art.mts')).familyUIArtCheck(b));

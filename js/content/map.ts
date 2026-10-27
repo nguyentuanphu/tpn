@@ -261,7 +261,7 @@ export const LANDMARK_AT = {
   bondi: { place: 'melbourne', off: [26, 50] },  // the lifesavers' tower on the southern beach
   lighthouse: { place: 'vungtau', off: [12, 30] }, // on the beach below Vũng Tàu (round T3: moved here with Bạch Dinh)
   turtle: { place: 'hanoi', off: [-29, 3] },     // in Hồ Gươm by Hà Nội (round T2; was a small copy in the market)
-  onepillar: { place: 'hanoi', off: [19, 15] },   // Hà Nội heritage garden, clear of the lake and homes
+  onepillar: { place: 'hanoi', off: [14, 15] },   // Hà Nội heritage garden, clear of the lake and homes
   chuacau: { place: 'hoian', off: [0, -18] },    // the middle of Chùa Cầu over the Hội An canal (round T2; was a small copy in the market)
   longbien: { place: 'hanoi', off: [0, 35] },     // the middle of Long Biên bridge
   storybridge: { place: 'brisbane', off: [0, 31] }, // the middle of the Story Bridge
@@ -365,6 +365,10 @@ export function rowStreet(place) {
   const a = [ox + R.street[0][0], oz + R.street[0][1]], b = [ox + R.street[1][0], oz + R.street[1][1]], len = Math.hypot(b[0] - a[0], b[1] - a[1]), dx = (b[0] - a[0]) / len, dz = (b[1] - a[1]) / len;
   return { place, a, b, w: R.w, walking: !!R.walking, plain: !!R.plain, len, dx, dz, nx: dz * R.side, nz: -dx * R.side };
 }
+// Two Homes Street's custom sugarcane cart joins the same row as its food kiosks.
+// Include the umbrella and stools in this footprint, not just the narrow counter.
+export const TOWN_JUICE_CART = { place: 'town', slot: 2.15, width: 3.6, depth: 3.6, sellerSide: 1.55, sellerBack: .7 } as const;
+
 // slot i of a place's row for something `d` metres deep (across the street) and `span` slots long: where its middle
 // stands { x, z }, which way it faces (face: the yaw that looks at the street, as avatars and models use it), the step
 // along the row (ax, az) and towards the street (fx, fz). Its front is STALL.road off the street's edge.

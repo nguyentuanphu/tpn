@@ -52,6 +52,8 @@ All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed`
 
 ## Owner's decisions
 
+- 27 October2026 AEDT: owner authorized parallel work on pending fixes. Helpers were assigned separate story, card-rule, goat, autoplay, street-spacing and voice files; Release collected partial changes when their usage stopped. All local browser/regression runs remain sequential. No new version/deployment approval.
+
 - 27 October 2026 AEDT: retain the floating ladybird with every existing function, including Auto play. Remove the separate HUD shortcut when the floating control is present; preserve dragging and double-tap reset.
 
 - 27 October2026 AEDT: owner explicitly approved **“Yes, deploy v1.02 (Recommended)”** after the248/248 final regression, retry/timing/device/AI-review and unresolved-tester disclosures. ZIP waiver retained; Studio online only. Approval applies to this round only.

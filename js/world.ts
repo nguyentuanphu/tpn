@@ -1002,6 +1002,12 @@ export function createWorld(scene, quality) {
     if (b.back && d > 40 && !(W.heroesNear && W.heroesNear(m.position.x, m.position.z, 30))) { m.position.x = b.tx = b.home[0]; m.position.z = b.tz = b.home[1]; b.back = false; }
     else if (d < .5) { b.back = false; if (Math.random() < dt * .2) { b.tx = b.home[0] + (Math.random() - .5) * 16; b.tz = b.home[1] + (Math.random() - .5) * 16; } }
     else { const sp = b.back ? 3.2 : 1.2; b.yaw = Math.atan2(dx, dz); m.rotation.y = b.yaw; m.position.x += dx / d * dt * sp; m.position.z += dz / d * dt * sp; }
+    // Grazing animals must respect the same walls as their riders. A later house or
+    // landmark used to let them wander inside it, leaving no place to mount them.
+    if (W.collide) {
+      const x = m.position.x, z = m.position.z; W.collide(m.position, 1.1);
+      if (Math.hypot(m.position.x - x, m.position.z - z) > .05) { b.tx = m.position.x; b.tz = m.position.z; }
+    }
     m.position.y = heightAt(m.position.x, m.position.z); b.shadow.position.set(m.position.x, m.position.y + .05, m.position.z);
   }));
   // ducks on the lake and chickens in the village (just for company)
@@ -1060,6 +1066,16 @@ export function createWorld(scene, quality) {
     for (const b of W.boxes) {
       if (b.bottom != null && pos.y != null && pos.y + 1.6 < b.bottom) continue;
       if (pos.x < b.x0 - r || pos.x > b.x1 + r || pos.z < b.z0 - r || pos.z > b.z1 + r) continue;
+      if (b.rot != null) {
+        const co = Math.cos(b.rot), si = Math.sin(b.rot), dx = pos.x - b.cx, dz = pos.z - b.cz;
+        let lx = co * dx - si * dz, lz = si * dx + co * dz;
+        const hx = b.hw + r, hz = b.hd + r;
+        if (Math.abs(lx) > hx || Math.abs(lz) > hz) continue;
+        if (hx - Math.abs(lx) < hz - Math.abs(lz)) lx = (lx < 0 ? -1 : 1) * hx;
+        else lz = (lz < 0 ? -1 : 1) * hz;
+        pos.x = b.cx + co * lx + si * lz; pos.z = b.cz - si * lx + co * lz;
+        continue;
+      }
       const pen = [pos.x - (b.x0 - r), (b.x1 + r) - pos.x, pos.z - (b.z0 - r), (b.z1 + r) - pos.z], k = pen.indexOf(Math.min(...pen));
       if (k === 0) pos.x = b.x0 - r; else if (k === 1) pos.x = b.x1 + r; else if (k === 2) pos.z = b.z0 - r; else pos.z = b.z1 + r;
     }
