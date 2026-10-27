@@ -1135,6 +1135,8 @@ await check('validate', async () => {
   return 'ROAD-001/002/003/004/011, VEH-001 and STALL-001…004 hold';
 });
 
+await check('ladybugunified', async () => (await import('./ladybug-unified.mts')).ladybugUnifiedCheck(b));
+
 await check('familyuiart', async () => (await import('./family-ui-art.mts')).familyUIArtCheck(b));
 
 await check('worldplacement', async () => (await import('./world-placement.mts')).worldPlacementCheck(b));

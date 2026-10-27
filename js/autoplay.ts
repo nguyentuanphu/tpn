@@ -5,7 +5,7 @@
 // one after another. What went wrong is noted and sent to Studio at once with a picture and the last steps: an error,
 // something that did not open or close, a button covered or off the screen, a line with no recording, a slow screen,
 // a story that stopped, and the child getting stuck. Lists and timings: js/content/autoplay.js. Loaded only on the
-// devices Studio's Releases page allows (switch `autoplay`), from main.js; its button sits under the ladybird.
+// devices Studio's Releases page allows (switch `autoplay`), from main.js; tester devices open it from the floating ladybird.
 // While it runs the child never tires and nothing is counted for the players report. Stopping it never restarts the
 // game: the tester plays on from there. Progress goes back as Studio's tester rule says (js/keepcopy.js).
 import { T } from './i18n.js';
@@ -80,14 +80,16 @@ function oldPutBack() {
   location.reload();
 }
 
-// ---------- the button under the ladybird ----------
+// ---------- a shortcut only when no floating tester control exists ----------
 function buttons() {
   for (const hud of G.huds || []) {
     const z = hud.q && hud.q('.zoomer'); if (!z) continue;
-    if (z.querySelector('.z-lb')) { z.querySelector('.z-ap')?.remove(); continue; }
+    // The report button lives under document.body, outside the HUD stacking context.
+    // Looking inside z misses it and creates a duplicate shortcut beside the floating ladybird.
+    if (document.querySelector('.tester-floating.z-lb')) { z.querySelector('.z-ap')?.remove(); continue; }
     let b = z.querySelector('.z-ap');
     if (!b) {
-      b = el('button', 'z-ap', `${pic('🐞')}<i class="ap-n" hidden></i>`); b.setAttribute('aria-label', T('Auto play', 'Tự chơi'));
+      b = el('button', 'z-ap', `${pic('🤖')}<i class="ap-n" hidden></i>`); b.setAttribute('aria-label', T('Auto play', 'Tự chơi'));
       b.addEventListener('pointerdown', e => e.stopPropagation());
       b.onclick = e => { e.stopPropagation(); ui.open = !ui.open; put(UI, ui); draw(); };
       const lb = z.querySelector('.z-lb'); if (lb) lb.after(b); else z.appendChild(b);

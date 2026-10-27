@@ -329,6 +329,7 @@ function addUI() {
     const z = hud.q && hud.q('.zoomer'); if (!z || floatingSeats.has(i)) return;
     const b = el('button', 'z-lb', `${pic('🐞')}<i class="lb-n" hidden></i><i class="lb-ok" hidden>✓</i><i class="lb-new" hidden></i><kbd class="kb">L</kbd>`); b.setAttribute('aria-label', T('Report a problem (hold: quick report)', 'Báo lỗi (giữ: báo nhanh)'));
     floatingSeats.add(i);
+    z.querySelector('.z-ap')?.remove(); // The floating ladybird already contains the Auto play tab.
     offs.push(floatReportButton(b as HTMLButtonElement, z, i, signal => { void openPanel(i, fixedToSee().length ? 'fixed' : 'tester', signal); }, () => { void quickReport('quick'); })); paintCount();
   });
   ensure(); const ev = setInterval(ensure, 1000); offs.push(() => clearInterval(ev));

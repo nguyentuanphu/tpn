@@ -24,3 +24,14 @@ This expansion is not yet enabled or recorded. New public speech must pass the s
 Baseline inventory: 29 places, 55 landmarks, 37 houses, 42 stalls and 648 interactions. Nearest-anchor mismatches are flags, not automatic relocation instructions. Two Homes Street, Three Regions Market and the shared lake deliberately group exhibits. The beach tower is labelled Lifesavers' Tower in game, although its legacy ID is bondi. Do not silently call every exhibit a geographic error or move deliberate shared displays without reviewing their intended role.
 
 Custom Studio changes and family-built content are separate from the bundled default map. Preserve their data and layout stamps.
+
+## Additional owner reports under review
+
+- Check close houses/stalls on Two Homes Street and refresh GitHub bug intake.
+- The Elephants and the Mice: elephant head appears detached; reproduce the actual film poses.
+- Bịt mắt bắt dê should represent the traditional blindfold/tag game rather than a haystack puzzle.
+- Sheep should play its real bleat without speech spelling “Baa”; retain accessible captions.
+- Audit Tiến lên miền Bắc rules, including suits, pairs, triples, twos and turn resets.
+- The Thirsty Crow: place the crow at the jug when drinking, with its beak reaching the water.
+- Keep one floating ladybird with all functions, including Auto play; remove the duplicate HUD shortcut.
+- Investigate repeated ResizeObserver delivery notices separately from genuine failed game launches and unsupported autoplay tasks. Do not hide real exceptions.
