@@ -1,5 +1,5 @@
 {
-  "source": "db2c5c7e7154e91221b952ccc96d12c3e0f08ec8",
+  "source": "7589469d48c53fc8ec9e84317857b079dad26ea6",
   "files": [
     {
       "file": "content/custom.json",
@@ -243,7 +243,7 @@
     },
     {
       "file": "js/autoplay.ts",
-      "hash": "f864c8670ba66344707c5aa8b337f85beac5c7f6"
+      "hash": "e3076c534697d5bb389d294f3153114c80359e86"
     },
     {
       "file": "js/avatar.ts",
@@ -295,7 +295,7 @@
     },
     {
       "file": "js/content/activities.ts",
-      "hash": "027c181cc70890d8b04f207bb95955ead4e048d3"
+      "hash": "8e82d29f450eef9928f7c1fc4b55698b85dfc6cb"
     },
     {
       "file": "js/content/adventures.js",
@@ -418,8 +418,8 @@
       "hash": "97c9278b965f942733f9366d0bf6adbbee5d8b43"
     },
     {
-      "file": "js/content/films/crow.js",
-      "hash": "6c94124e0cc2565a0280f36566c0e5b660d5ad41"
+      "file": "js/content/films/crow.ts",
+      "hash": "ebadb4957ae49cf55298048dc4cf59f54a222ab3"
     },
     {
       "file": "js/content/films/dotkangaroo.js",
@@ -527,7 +527,7 @@
     },
     {
       "file": "js/content/hanoi-pack-info.ts",
-      "hash": "7f43f73d06020c88f733ea90da7b23ae8adeccfe"
+      "hash": "61d6062e4073c5fab439b567c5d01e7542ea435f"
     },
     {
       "file": "js/content/hoilang.js",
@@ -539,7 +539,7 @@
     },
     {
       "file": "js/content/map.ts",
-      "hash": "24c82f3f4c6d25565689bbb7fd8bd1f32d48e660"
+      "hash": "56673e758dba265e981022f49a710bd69af07c20"
     },
     {
       "file": "js/content/owllessons.js",
@@ -687,7 +687,7 @@
     },
     {
       "file": "js/farm.ts",
-      "hash": "9471c83bcee18a6406b944d00ecd69ec219e60ae"
+      "hash": "72102940484540362dcbd420c8b208fa9f68484b"
     },
     {
       "file": "js/feel.js",
@@ -763,7 +763,7 @@
     },
     {
       "file": "js/games/cacuangua.ts",
-      "hash": "746cfec3f198d760be6bc2c7914140f655360d1d"
+      "hash": "b96c428a6c3bba45ed44bc7e38c71561dd0af404"
     },
     {
       "file": "js/games/catalog.ts",
@@ -799,7 +799,7 @@
     },
     {
       "file": "js/games/farmgames.ts",
-      "hash": "c60c34558033101a4a44de4f6bf0804c925a851a"
+      "hash": "23bd73c8d37b3d45d2ef550f00c737ba1e29b79d"
     },
     {
       "file": "js/games/folk-court-rules.ts",
@@ -811,7 +811,7 @@
     },
     {
       "file": "js/games/folk.ts",
-      "hash": "47fb0b314d548a3824431a1652488617fe87d57d"
+      "hash": "f65c7e3b5e2bc20a4ba19e3f7170ae5e5e334c4b"
     },
     {
       "file": "js/games/folk2.ts",
@@ -848,6 +848,18 @@
     {
       "file": "js/games/fruitparade.ts",
       "hash": "17182658a65ed8e7bab835b2de160c5ee65878c9"
+    },
+    {
+      "file": "js/games/goat-art.ts",
+      "hash": "ae6154bc6cc7d2a638ec3fdf179a22c5aa4274b6"
+    },
+    {
+      "file": "js/games/goat-core.ts",
+      "hash": "14c5330854295765dbbe5e0ee39be72a4b348895"
+    },
+    {
+      "file": "js/games/goat.ts",
+      "hash": "374f64b307981be5ba1ebd005e52d628a8c4d61b"
     },
     {
       "file": "js/games/horse-session.ts",
@@ -967,7 +979,7 @@
     },
     {
       "file": "js/games/sparklefruitbar.ts",
-      "hash": "0edbd716aeb7b33496ea8b5297419b28ed6aebc2"
+      "hash": "91a7dad39d22b4441412f457af67c320d09f41a5"
     },
     {
       "file": "js/games/sparkleorchard.ts",
@@ -979,7 +991,7 @@
     },
     {
       "file": "js/games/strategy.ts",
-      "hash": "4fbf2d477799903f9c18e00bd9d37f95fc04dedb"
+      "hash": "bd88928ee434bc4d885e87745b5aa0d059eb31ad"
     },
     {
       "file": "js/games/talkgames.ts",
@@ -995,11 +1007,11 @@
     },
     {
       "file": "js/games/tienlen.ts",
-      "hash": "9eb73d37e75027217c353c59a09fdb90e39bb1b6"
+      "hash": "61d2f7fd3642cb1448b5961396fb8ff8c02a85eb"
     },
     {
       "file": "js/games/tienlenrules.ts",
-      "hash": "d85932ec7c73f329af4340763d051ad769e70262"
+      "hash": "9528c330d632a125ac9dcd98e0b8c2dbeb5aca07"
     },
     {
       "file": "js/games/trongnu-rules.ts",
@@ -1055,7 +1067,7 @@
     },
     {
       "file": "js/heritage.ts",
-      "hash": "a9077c6ac8a40d9caf8f0a0c0ed693c9cc0f0db3"
+      "hash": "b550044eb8fefe08ecc9a834f4585303fd2b5b80"
     },
     {
       "file": "js/hoilang.js",
@@ -1075,7 +1087,7 @@
     },
     {
       "file": "js/howto-data.ts",
-      "hash": "0d376ba1db46072837eccb5295bc1af9fae7c620"
+      "hash": "3f150d4a426e157fb62acf12be2907ee5775ad61"
     },
     {
       "file": "js/howto-player.ts",
@@ -1091,7 +1103,7 @@
     },
     {
       "file": "js/hud.ts",
-      "hash": "9b029d90d081eb90c9c82b6b060d2517ccc9daf1"
+      "hash": "55b0549d3bd319c7953f22c860603bf0b9132205"
     },
     {
       "file": "js/i18n.js",
@@ -1151,7 +1163,7 @@
     },
     {
       "file": "js/main.ts",
-      "hash": "23fa7e7b50435e406c5ec5971da296ba976b1f07"
+      "hash": "ae4b1c0d92613335501ce36a95fcaafb3869b3f7"
     },
     {
       "file": "js/mictest.ts",
@@ -1367,7 +1379,7 @@
     },
     {
       "file": "js/suburbs.ts",
-      "hash": "e17ab03c596df6322b6e9ec3dc8408f5fc762d7e"
+      "hash": "32afdaa949751af503babd74fe3d746e824ad140"
     },
     {
       "file": "js/surprises.js",
@@ -1375,7 +1387,7 @@
     },
     {
       "file": "js/symbols.ts",
-      "hash": "574da0df175cf2f8017f1cc935e24058e53f8a1b"
+      "hash": "b4395e576c81d29f9881e6fc3db314af3a5bf879"
     },
     {
       "file": "js/tale-loader.ts",
@@ -1403,7 +1415,7 @@
     },
     {
       "file": "js/tester.ts",
-      "hash": "c2c3a32f16484016b67a506944f74ffe38a95872"
+      "hash": "e3165809a61e77cff128940e4227d77432373ddf"
     },
     {
       "file": "js/testergate.js",
@@ -1414,8 +1426,8 @@
       "hash": "da2821b493e0c23805e36a0a1ab9fb30d0917a5f"
     },
     {
-      "file": "js/town.js",
-      "hash": "13b8ca26f5b91e269b3c0fc7f22c8bdbd83c1a32"
+      "file": "js/town.ts",
+      "hash": "6ac73a8e3d79ad4fa400cc7c9d5c58975306d51b"
     },
     {
       "file": "js/trade.ts",
@@ -1439,7 +1451,7 @@
     },
     {
       "file": "js/ui.ts",
-      "hash": "ce638da5b25f1662bfba4e1d6a0671ab8d55e67e"
+      "hash": "44ba024ba94c3b6b1a6533c72b284ce88a68bbf3"
     },
     {
       "file": "js/util.js",
@@ -1479,7 +1491,7 @@
     },
     {
       "file": "js/voice.ts",
-      "hash": "8ceb9a64477baf65a5e263ea2f4b52908d37cf7c"
+      "hash": "46315d71acddc567ff008cbafb8ca9841f30369f"
     },
     {
       "file": "js/voicepack.ts",
@@ -1507,7 +1519,7 @@
     },
     {
       "file": "js/world.ts",
-      "hash": "283b9664b1b82ca406cb05fcea60809d5035eda1"
+      "hash": "55e82e377a4aa2011df9e950d081d8b313742d23"
     },
     {
       "file": "js/worldcache.js",
@@ -1587,7 +1599,7 @@
     },
     {
       "file": "sw.ts",
-      "hash": "147907eaabd41cbb02123f3bdb525cd3d47b2da1"
+      "hash": "746f962b000fdd6c9aae19f59ffc0f56bbacc8c6"
     },
     {
       "file": "vendor/RoomEnvironment.js",
@@ -1615,7 +1627,7 @@
     },
     {
       "file": "voices/areas.json",
-      "hash": "b2e922040af78cc8f86c9f4b047ed65f6b36393b"
+      "hash": "8a45617fdf0d84e3f46ff47530b2b131cba157c9"
     },
     {
       "file": "voices/en/f/00039191206c6c56.mp3",
@@ -5082,6 +5094,10 @@
       "hash": "a606354f20a9bfd55eb0b106455800b543a23ec1"
     },
     {
+      "file": "voices/en/f/1dfa99cc74af32dd.mp3",
+      "hash": "d392e77d36e2c9441a39c348876c3ed106aeb3c0"
+    },
+    {
       "file": "voices/en/f/1dfb21cd-10c176a8.mp3",
       "hash": "d4efe1a4205924db6bc856960bbe4e4c7427ba27"
     },
@@ -6172,6 +6188,10 @@
     {
       "file": "voices/en/f/2686f25d-486e6c3f.mp3",
       "hash": "67c06067a13d914a7140a5732d15d995170131d5"
+    },
+    {
+      "file": "voices/en/f/2688091a-43e2cd46.mp3",
+      "hash": "101257971886a7ac65d8f3398393f83a32f2deba"
     },
     {
       "file": "voices/en/f/26893022-4b1b9f69.mp3",
@@ -11834,6 +11854,10 @@
       "hash": "cff119658cfe40bb2be5bcb0b16c461f35348eb7"
     },
     {
+      "file": "voices/en/f/57a7602d-33e9fbb6.mp3",
+      "hash": "78c393be1e5ede8d51a1e51fea9ba7055b5aed7e"
+    },
+    {
       "file": "voices/en/f/57adfd67-3a70cdf4.mp3",
       "hash": "ee515b0c153ff04453f6dd9f5b6773222c7477e9"
     },
@@ -13110,6 +13134,10 @@
       "hash": "a20326174bdb61f8eab9fe2dd5223f6977515484"
     },
     {
+      "file": "voices/en/f/61c75539-1167c3cc.mp3",
+      "hash": "6a25fca8c70ec2c20a829ec2c381237f2859d682"
+    },
+    {
       "file": "voices/en/f/61cf639a-79d87fc4.mp3",
       "hash": "63a9d4cddae87514978ac22f809d5353a942ecf0"
     },
@@ -13700,6 +13728,10 @@
     {
       "file": "voices/en/f/66eb73b1-313878fc.mp3",
       "hash": "68bc8f6f705a2b90905f098a15f27da58ef4a85e"
+    },
+    {
+      "file": "voices/en/f/66fd1481-19a965d0.mp3",
+      "hash": "131ddd76c125fbe2f2e0a01ea7d2c161fcebdb21"
     },
     {
       "file": "voices/en/f/67035972393746bd.mp3",
@@ -14746,6 +14778,10 @@
       "hash": "a7320d43f9459f5730af69d5122ed79dfc8e10d8"
     },
     {
+      "file": "voices/en/f/706c0f41-2249d5de.mp3",
+      "hash": "275a9ca9c1516e6e3862bb5fbdff0ce82fc7bf20"
+    },
+    {
       "file": "voices/en/f/706ec737-111f6b62.mp3",
       "hash": "e42fe9728a42c2606971be52bd13527067e99451"
     },
@@ -14864,6 +14900,10 @@
     {
       "file": "voices/en/f/71bb0cde-20d03e0e.mp3",
       "hash": "4281f0d8024067b9f0ef1e50fefcd66d013eb9ff"
+    },
+    {
+      "file": "voices/en/f/71bf6723-3ae670d1.mp3",
+      "hash": "f2f348511d6d0fb4ae2ad60100eb2d323ba344ce"
     },
     {
       "file": "voices/en/f/71cda9741aa132f7.mp3",
@@ -15504,6 +15544,10 @@
     {
       "file": "voices/en/f/76eecc41577045cf.mp3",
       "hash": "36120a45adfe2d88394f3a5fd464eaf7b3e5a4a8"
+    },
+    {
+      "file": "voices/en/f/76fb212434c687be.mp3",
+      "hash": "2be5ce95a465c31a46dc3f46d18070bec08b11e8"
     },
     {
       "file": "voices/en/f/77009fab2130c5b3.mp3",
@@ -17690,6 +17734,10 @@
       "hash": "4e68276003186fa22a9ca5be87b8ffa42cbcd6ef"
     },
     {
+      "file": "voices/en/f/89834ad3-78626224.mp3",
+      "hash": "ad91febe8231e9ebc90d4d7ad7e6127d4e32d5c5"
+    },
+    {
       "file": "voices/en/f/8985d1755d1d0fba.mp3",
       "hash": "f6d45453371ae1ded5ab9148f213909178d06f49"
     },
@@ -17884,6 +17932,10 @@
     {
       "file": "voices/en/f/8b1b4bbf-4a865721.mp3",
       "hash": "78e1d03dca9880840e3179589eca20a44d6ab94f"
+    },
+    {
+      "file": "voices/en/f/8b20e64a-3e12374c.mp3",
+      "hash": "f894c391dfcad1b8b7f719b961f51fe051a24be5"
     },
     {
       "file": "voices/en/f/8b42096f4b7b25d6.mp3",
@@ -18636,6 +18688,10 @@
     {
       "file": "voices/en/f/90c0ebba16fa5fa7.mp3",
       "hash": "31e50b24647f6f0f3cefdba60ce9882bb7351741"
+    },
+    {
+      "file": "voices/en/f/90e6d4ce073df2c7.mp3",
+      "hash": "6a787b65e09a2426e6fb2f70d28b3e6aa1926f5f"
     },
     {
       "file": "voices/en/f/90eaf2910337576d.mp3",
@@ -20018,6 +20074,10 @@
       "hash": "fe98d309527278ca4adabc887993075639665ea7"
     },
     {
+      "file": "voices/en/f/9b9104d36862a717.mp3",
+      "hash": "b57941077c203f97556e01952ef742ee7fa9ab81"
+    },
+    {
       "file": "voices/en/f/9b94d25e05ac1703.mp3",
       "hash": "872e6dbaf995652592836502512e0f31c41adee1"
     },
@@ -20790,6 +20850,10 @@
       "hash": "98d0edf40e9ddedfc4bedf3a02280317689bc000"
     },
     {
+      "file": "voices/en/f/a24e475c311a9bdd.mp3",
+      "hash": "94cc01afd59345ed4aa58aaba4805ef41a56f655"
+    },
+    {
       "file": "voices/en/f/a24f3d1f05178b0b.mp3",
       "hash": "12990a8b8d66db67c68b14352e725b58b8b4ea84"
     },
@@ -21072,6 +21136,10 @@
     {
       "file": "voices/en/f/a4cc80eb-59f1bf92.mp3",
       "hash": "552037dc301dc44f43592baf5c84b61def333482"
+    },
+    {
+      "file": "voices/en/f/a4dee89b-307fe5b4.mp3",
+      "hash": "55dd642f4004a1481917a1f676c352d4cf07b7f9"
     },
     {
       "file": "voices/en/f/a4ee74d754a95cd7.mp3",
@@ -22250,6 +22318,10 @@
       "hash": "de4ba0153f029631f6f71f0d278320d47b265ade"
     },
     {
+      "file": "voices/en/f/aeb0b110-46805b1e.mp3",
+      "hash": "d84ff431dc4680d42eb57be23672b1b65849f347"
+    },
+    {
       "file": "voices/en/f/aeb5c0281a93f644.mp3",
       "hash": "207e7f739f27fe759bcfbbdd2dd35fc492e80842"
     },
@@ -22840,6 +22912,10 @@
     {
       "file": "voices/en/f/b3e3273b1c7a19df.mp3",
       "hash": "3ef6d242a9acc2df45798916c85eeddd3fe365ba"
+    },
+    {
+      "file": "voices/en/f/b407e3cc7401132d.mp3",
+      "hash": "c70ec7fd60f1b7678515c8877b7ff1fa9e9c7762"
     },
     {
       "file": "voices/en/f/b40e234a-944ad25.mp3",
@@ -26230,6 +26306,10 @@
       "hash": "96dff0d8e3391391df1e6f58e6aeef1645e9fab3"
     },
     {
+      "file": "voices/en/f/d09ccd12-53b33de2.mp3",
+      "hash": "801795837a1985b558fbc56daab8eebb337565d9"
+    },
+    {
       "file": "voices/en/f/d09f55166032048a.mp3",
       "hash": "aef44f08424c9cb02c3e51415b306f1df75749d0"
     },
@@ -26680,6 +26760,10 @@
     {
       "file": "voices/en/f/d48bd814-327aee77.mp3",
       "hash": "748411e3789567240ea19a2978156cb97c1befdb"
+    },
+    {
+      "file": "voices/en/f/d48eb7da-7b87cf08.mp3",
+      "hash": "d5f2f2ef66d73d883290f133a5a52071f7cd056b"
     },
     {
       "file": "voices/en/f/d48f665a7c47785d.mp3",
@@ -27782,6 +27866,14 @@
       "hash": "41572c9cb550caf7c381d1a68f6ab3525a74031d"
     },
     {
+      "file": "voices/en/f/debb35bd07184050.mp3",
+      "hash": "9c247fb2a0590b885aa22e0f5d4a6c58995a59be"
+    },
+    {
+      "file": "voices/en/f/debf97d4-733a7c23.mp3",
+      "hash": "fef87b96f6c7ad92d7a3655a84b795d46ae62ab8"
+    },
+    {
       "file": "voices/en/f/deca95ab7c2b61f9.mp3",
       "hash": "917db0c08e9343d1552305cb4ce52c4205241fec"
     },
@@ -27964,6 +28056,10 @@
     {
       "file": "voices/en/f/e07b275c7e4a1a0f.mp3",
       "hash": "547c0f10f041df809426303960c1a82643073f23"
+    },
+    {
+      "file": "voices/en/f/e07e0cd1-5283b76d.mp3",
+      "hash": "2e9aeb7cc6151c7da81ea6b49c9fbc6293b407db"
     },
     {
       "file": "voices/en/f/e07f51a91ed4463b.mp3",
@@ -34906,6 +35002,10 @@
       "hash": "c00676b84a0c5e653b3cfcb54607383b862761d6"
     },
     {
+      "file": "voices/en/m/1dfa99cc74af32dd.mp3",
+      "hash": "c85b71b0df148dda1aceb381c1624777e977f83c"
+    },
+    {
       "file": "voices/en/m/1dfb21cd-10c176a8.mp3",
       "hash": "60e42c32ea8fe038ea9c8b22072e69aa8805b742"
     },
@@ -35996,6 +36096,10 @@
     {
       "file": "voices/en/m/2686f25d-486e6c3f.mp3",
       "hash": "15d90867c379f30708cdfb9e341f0f6205d16b52"
+    },
+    {
+      "file": "voices/en/m/2688091a-43e2cd46.mp3",
+      "hash": "369bf1394734746be3fce9ada448dad7db6a6733"
     },
     {
       "file": "voices/en/m/26893022-4b1b9f69.mp3",
@@ -41658,6 +41762,10 @@
       "hash": "7ae23220850b0632cfafed01b7d398f9efcb4896"
     },
     {
+      "file": "voices/en/m/57a7602d-33e9fbb6.mp3",
+      "hash": "e52e92beace64390f4f41c293d60e05d790413ba"
+    },
+    {
       "file": "voices/en/m/57adfd67-3a70cdf4.mp3",
       "hash": "9e1d92f23f2dd53ae8a4f8ca65db83a31de087b4"
     },
@@ -42934,6 +43042,10 @@
       "hash": "ac9caf73c1042bf62cf88a3d6c703b2023a59193"
     },
     {
+      "file": "voices/en/m/61c75539-1167c3cc.mp3",
+      "hash": "3a759c09e7f700b164ed748131d8e28d5704a3c0"
+    },
+    {
       "file": "voices/en/m/61cf639a-79d87fc4.mp3",
       "hash": "a6cc7341cf1045819e9684ff1c29f9219b7b87ce"
     },
@@ -43524,6 +43636,10 @@
     {
       "file": "voices/en/m/66eb73b1-313878fc.mp3",
       "hash": "9bf454cebba92127a5efa4df2f5979c3efb0803a"
+    },
+    {
+      "file": "voices/en/m/66fd1481-19a965d0.mp3",
+      "hash": "40b08b1e32b9daf76548c194f7009bb5679cefa9"
     },
     {
       "file": "voices/en/m/67035972393746bd.mp3",
@@ -44570,6 +44686,10 @@
       "hash": "a2476085b28f3eadda66b444fd0d8efab775e824"
     },
     {
+      "file": "voices/en/m/706c0f41-2249d5de.mp3",
+      "hash": "6240281d5d6e7f239cc6b9d420bf94a1b7cc3c2c"
+    },
+    {
       "file": "voices/en/m/706ec737-111f6b62.mp3",
       "hash": "210c05f71db4b350a1c9d9500fec707d0143dc7b"
     },
@@ -44688,6 +44808,10 @@
     {
       "file": "voices/en/m/71bb0cde-20d03e0e.mp3",
       "hash": "7935fcc51e78e87bd93de9edfc40308e908aa6b3"
+    },
+    {
+      "file": "voices/en/m/71bf6723-3ae670d1.mp3",
+      "hash": "00b50c4c968f8e43b9aa010ec86ad7de3669a7ec"
     },
     {
       "file": "voices/en/m/71cda9741aa132f7.mp3",
@@ -45328,6 +45452,10 @@
     {
       "file": "voices/en/m/76eecc41577045cf.mp3",
       "hash": "d3c7bb0ffa11084850724882d5f504c6db5f488d"
+    },
+    {
+      "file": "voices/en/m/76fb212434c687be.mp3",
+      "hash": "a5357c66bc2be13728814fe6fdf816d58d436cfe"
     },
     {
       "file": "voices/en/m/77009fab2130c5b3.mp3",
@@ -47514,6 +47642,10 @@
       "hash": "db03d6be6ac944232ea8b6d275dad4982b57a9d3"
     },
     {
+      "file": "voices/en/m/89834ad3-78626224.mp3",
+      "hash": "88a8d3e38c848af445b3ef45e65967255bf473cc"
+    },
+    {
       "file": "voices/en/m/8985d1755d1d0fba.mp3",
       "hash": "4647f84a7f3f24801c32b92af61d19d00fd49a97"
     },
@@ -47708,6 +47840,10 @@
     {
       "file": "voices/en/m/8b1b4bbf-4a865721.mp3",
       "hash": "2a3f73ff7a489899f6620631daaa45146046052d"
+    },
+    {
+      "file": "voices/en/m/8b20e64a-3e12374c.mp3",
+      "hash": "ab9f6bba59398d77dcfb7199be54e62befdaa467"
     },
     {
       "file": "voices/en/m/8b42096f4b7b25d6.mp3",
@@ -48460,6 +48596,10 @@
     {
       "file": "voices/en/m/90c0ebba16fa5fa7.mp3",
       "hash": "bb3bac312ca1ce580e2b259dd783be343007e9fb"
+    },
+    {
+      "file": "voices/en/m/90e6d4ce073df2c7.mp3",
+      "hash": "bd3efe3661b5f9ae4f20da38b4654eedd27cd194"
     },
     {
       "file": "voices/en/m/90eaf2910337576d.mp3",
@@ -49842,6 +49982,10 @@
       "hash": "e828d13df4edfdbe1963a0fe185ff57887e27311"
     },
     {
+      "file": "voices/en/m/9b9104d36862a717.mp3",
+      "hash": "3ffa8b736fadd60cf55d5135e63d50dc71cf6738"
+    },
+    {
       "file": "voices/en/m/9b94d25e05ac1703.mp3",
       "hash": "83bf651ebb20dc353fc848f0dea60baaf4fd42a5"
     },
@@ -50614,6 +50758,10 @@
       "hash": "56a24a73cae887d4c3a9d594e1cd3396bfa4acab"
     },
     {
+      "file": "voices/en/m/a24e475c311a9bdd.mp3",
+      "hash": "49714241dd9c16a3a049a3b0d98fdbb02cc87c8d"
+    },
+    {
       "file": "voices/en/m/a24f3d1f05178b0b.mp3",
       "hash": "b58f84739fb5ce61eef9ec4480dc2b3ff593937b"
     },
@@ -50896,6 +51044,10 @@
     {
       "file": "voices/en/m/a4cc80eb-59f1bf92.mp3",
       "hash": "11d4abcdd6c65473df6ed9398c38ce6973e970bd"
+    },
+    {
+      "file": "voices/en/m/a4dee89b-307fe5b4.mp3",
+      "hash": "bf49fa488f1e3699e1fe01bae3a90f8f77b687c1"
     },
     {
       "file": "voices/en/m/a4ee74d754a95cd7.mp3",
@@ -52074,6 +52226,10 @@
       "hash": "98f24c0ce11327c7fff192e122d42e01f48343c4"
     },
     {
+      "file": "voices/en/m/aeb0b110-46805b1e.mp3",
+      "hash": "3c42bf673d5af4bd839af94043048c9b76f7816e"
+    },
+    {
       "file": "voices/en/m/aeb5c0281a93f644.mp3",
       "hash": "fa55917d8bfdc7bdbdda7b9b6d3894d4f879f952"
     },
@@ -52664,6 +52820,10 @@
     {
       "file": "voices/en/m/b3e3273b1c7a19df.mp3",
       "hash": "875101d73247f572ec475f2dc4f04c35ac78c31c"
+    },
+    {
+      "file": "voices/en/m/b407e3cc7401132d.mp3",
+      "hash": "85e56b37a41253a310f3226179e853f276d14a15"
     },
     {
       "file": "voices/en/m/b40e234a-944ad25.mp3",
@@ -56054,6 +56214,10 @@
       "hash": "d2a602cad2798706f50a47ff06858edf399d91b8"
     },
     {
+      "file": "voices/en/m/d09ccd12-53b33de2.mp3",
+      "hash": "6800670bc8608b3df77005a91a891595dacc1f71"
+    },
+    {
       "file": "voices/en/m/d09f55166032048a.mp3",
       "hash": "b200e64782ce170bcc54af154d2172f814186154"
     },
@@ -56504,6 +56668,10 @@
     {
       "file": "voices/en/m/d48bd814-327aee77.mp3",
       "hash": "9d05bbae412ef6d4dac9146055a7adababf1da77"
+    },
+    {
+      "file": "voices/en/m/d48eb7da-7b87cf08.mp3",
+      "hash": "cf6bc5d4b004ff503ca5694bbbf66a852ceb1131"
     },
     {
       "file": "voices/en/m/d48f665a7c47785d.mp3",
@@ -57606,6 +57774,14 @@
       "hash": "4d8050c35d336e66834cdd35c557b1b57d39b79b"
     },
     {
+      "file": "voices/en/m/debb35bd07184050.mp3",
+      "hash": "a5987cf88617d8ed65f78214b0b39d30184061b8"
+    },
+    {
+      "file": "voices/en/m/debf97d4-733a7c23.mp3",
+      "hash": "7fabf1c1d85cda78863ad9634bc56e00e48188fc"
+    },
+    {
       "file": "voices/en/m/deca95ab7c2b61f9.mp3",
       "hash": "f15498a6204e4a2d28e33d7466a0a7ca51c9e2fa"
     },
@@ -57788,6 +57964,10 @@
     {
       "file": "voices/en/m/e07b275c7e4a1a0f.mp3",
       "hash": "37b9fc8b4a76cba8ea64927826b5fd239104d977"
+    },
+    {
+      "file": "voices/en/m/e07e0cd1-5283b76d.mp3",
+      "hash": "45b81add88960669eb7a71060b9d37d68fc20278"
     },
     {
       "file": "voices/en/m/e07f51a91ed4463b.mp3",
@@ -61826,6 +62006,10 @@
       "hash": "da6e5d085901ac5a397e6a03d77ac18d9606870e"
     },
     {
+      "file": "voices/fpt-leminh-v1/05626ca0-4118f5d9.mp3",
+      "hash": "c25787b89f6059432a983527f65d595747ea80c7"
+    },
+    {
       "file": "voices/fpt-leminh-v1/056a71b3206dd80d.mp3",
       "hash": "c64a5d324a1d358e4258aea0c5a38071ad8306a7"
     },
@@ -62336,6 +62520,10 @@
     {
       "file": "voices/fpt-leminh-v1/0b24997b761e0db7.mp3",
       "hash": "63726d7d1befa228788f116aba688294a9132581"
+    },
+    {
+      "file": "voices/fpt-leminh-v1/0b282a21-22dc2f22.mp3",
+      "hash": "74e94e19c93a93bce8ba0ca137ba38cbf5f052fe"
     },
     {
       "file": "voices/fpt-leminh-v1/0b2fb7fd-7610ac92.mp3",
@@ -65646,6 +65834,10 @@
       "hash": "35435fa4e122516d04618028fde6e3aff1b0c6ef"
     },
     {
+      "file": "voices/fpt-leminh-v1/2e6ec91741176d63.mp3",
+      "hash": "c956998c677c3f141fdbeed02f35d5b911427a6b"
+    },
+    {
       "file": "voices/fpt-leminh-v1/2e76ed6f601b0166.mp3",
       "hash": "ae23fba1be8b5178839e8665e4ca3595ac39a6f6"
     },
@@ -67098,6 +67290,10 @@
       "hash": "018f2021433e4fb62e17cf74befca6956d620040"
     },
     {
+      "file": "voices/fpt-leminh-v1/3cd59558-428843bd.mp3",
+      "hash": "d964e5ac523c9ca1aaf2de979a79dc367b6443ca"
+    },
+    {
       "file": "voices/fpt-leminh-v1/3cdaac65-22054b18.mp3",
       "hash": "68f13707b1ce34303742db684e1f70d5e8552f3a"
     },
@@ -68496,6 +68692,10 @@
     {
       "file": "voices/fpt-leminh-v1/4918ed4f-3d9544e3.mp3",
       "hash": "0d728ca1ed495948421a47684f66bd12b8f10b2b"
+    },
+    {
+      "file": "voices/fpt-leminh-v1/491c63e97d3858f4.mp3",
+      "hash": "5c8e325bb9978b4ff87a51ae9668a0ab09fc281d"
     },
     {
       "file": "voices/fpt-leminh-v1/491cbdb3-2d8aed88.mp3",
@@ -72770,6 +72970,10 @@
       "hash": "e6715370016e468fd8dd8f8c5fd1045152f19db9"
     },
     {
+      "file": "voices/fpt-leminh-v1/702715524f754eff.mp3",
+      "hash": "461e1603d85ce6f59fd61679a51b9a69015a5f78"
+    },
+    {
       "file": "voices/fpt-leminh-v1/7037b60e-7231ddb5.mp3",
       "hash": "ab1ae279b920ef67b35103319d27faf752c61f69"
     },
@@ -74730,6 +74934,10 @@
       "hash": "47cb68404c89cde1fda08f93e212c3450d211b16"
     },
     {
+      "file": "voices/fpt-leminh-v1/829fcf7e-5bf451c6.mp3",
+      "hash": "6b6b30ddbcffcedaf0381945fb486e48fe88d5e3"
+    },
+    {
       "file": "voices/fpt-leminh-v1/82a4b9241e6e6190.mp3",
       "hash": "4b6c29bd3124e7ef0884b7337d08e9c022af5af9"
     },
@@ -75316,6 +75524,10 @@
     {
       "file": "voices/fpt-leminh-v1/87b197f1416598a1.mp3",
       "hash": "d9def7f69994f0f74a6edbf72d3b93129b7a5434"
+    },
+    {
+      "file": "voices/fpt-leminh-v1/87b90ee5-5a44a06a.mp3",
+      "hash": "4e2a10c45f74b31c296e7d087eaa8f72ad3dbb23"
     },
     {
       "file": "voices/fpt-leminh-v1/87c4844420b2c9d6.mp3",
@@ -78922,6 +79134,10 @@
       "hash": "977e9e4fd47b72293fe33f3184dd5ab31b83fa50"
     },
     {
+      "file": "voices/fpt-leminh-v1/aa1b68df-1faf794b.mp3",
+      "hash": "45d007232259d892fd1a03ed3087cde9ed8e67ab"
+    },
+    {
       "file": "voices/fpt-leminh-v1/aa21d9bf-22994aaf.mp3",
       "hash": "d2549765799318b0f1c0af23338fac5c2f16a617"
     },
@@ -78936,6 +79152,10 @@
     {
       "file": "voices/fpt-leminh-v1/aa387752-22d10bf5.mp3",
       "hash": "44be0ad426035b1a07f04b6d0f741bf3cb137ef7"
+    },
+    {
+      "file": "voices/fpt-leminh-v1/aa38fb91126908c4.mp3",
+      "hash": "7630f325f2551aba7af6b6b0e0ee5bc7817749c7"
     },
     {
       "file": "voices/fpt-leminh-v1/aa431810-92ad5a5.mp3",
@@ -79072,6 +79292,10 @@
     {
       "file": "voices/fpt-leminh-v1/ab81274d0c776204.mp3",
       "hash": "4c8216daa6fed6405633a9e984ed57c0f0cb249c"
+    },
+    {
+      "file": "voices/fpt-leminh-v1/ab862a1d4448fa92.mp3",
+      "hash": "c6062da182e045e7c26b171987666079e70eacf7"
     },
     {
       "file": "voices/fpt-leminh-v1/ab92ba0879da85b6.mp3",
@@ -81294,6 +81518,10 @@
       "hash": "e0e724a1e2dc5b6b1df61e4492dc8880263aeffa"
     },
     {
+      "file": "voices/fpt-leminh-v1/bfdca21f-23313b39.mp3",
+      "hash": "204c36495b1fe95470625e2162824c5ba04a74e4"
+    },
+    {
       "file": "voices/fpt-leminh-v1/bfdeb47566166745.mp3",
       "hash": "ca3a59a3de7626865146d7fae27ea2f0822d279b"
     },
@@ -81824,6 +82052,10 @@
     {
       "file": "voices/fpt-leminh-v1/c4efcdaa-303e7e46.mp3",
       "hash": "89b2469920f4e36cd1de88011d5f368930ab9efd"
+    },
+    {
+      "file": "voices/fpt-leminh-v1/c4fdc3db7b13581a.mp3",
+      "hash": "e9e6554fc0c4e3d9d774c428344ea7c27aa50a62"
     },
     {
       "file": "voices/fpt-leminh-v1/c51a37e44e13bb6e.mp3",
@@ -82422,6 +82654,10 @@
       "hash": "1742491679a7fbf39ab62c903106f58faef09287"
     },
     {
+      "file": "voices/fpt-leminh-v1/cad06358-127d5562.mp3",
+      "hash": "2dd3a163d4aeab94e30cadfe422bbb0622e036c3"
+    },
+    {
       "file": "voices/fpt-leminh-v1/cad19e122ae15219.mp3",
       "hash": "9e447c5fbfed86d66034db355d92595e8b771baa"
     },
@@ -82520,6 +82756,10 @@
     {
       "file": "voices/fpt-leminh-v1/cb9dedeb-1d30de98.mp3",
       "hash": "c590ac6f4bfcfad6e9b9625adc44885dcc50989d"
+    },
+    {
+      "file": "voices/fpt-leminh-v1/cbb7f9a368b158dd.mp3",
+      "hash": "4a6eab82d3a3c721bd39bccec83938de56afe66d"
     },
     {
       "file": "voices/fpt-leminh-v1/cbbf2c527d47dd3a.mp3",
@@ -85994,6 +86234,10 @@
       "hash": "0ceeb6b9ee8b1f0c5d08b4a931cf55362d53fb94"
     },
     {
+      "file": "voices/fpt-leminh-v1/ecee4965-2f6ad76b.mp3",
+      "hash": "5cb74c56e083944d19418e0423b7602e738c76bd"
+    },
+    {
       "file": "voices/fpt-leminh-v1/ecf22643-4f871bdb.mp3",
       "hash": "4756c51c454bc9f341f736c76ed91bdfc52d8a7a"
     },
@@ -87802,6 +88046,10 @@
       "hash": "cc60427e8c71553d4e3b7dc44427138653d780c1"
     },
     {
+      "file": "voices/fpt-leminh-v1/fea49d75-7ee86574.mp3",
+      "hash": "309641cb0e1242d6c46d0124743029b754e79df0"
+    },
+    {
       "file": "voices/fpt-leminh-v1/feab39bd-17d348ca.mp3",
       "hash": "df0170f3d8b168ad914176c1a7a67c2b9f924c3a"
     },
@@ -87919,7 +88167,7 @@
     },
     {
       "file": "voices/fpt-leminh-v1/manifest.json",
-      "hash": "a11f61e0c21a51132811fffa0ff328b553a1c70c"
+      "hash": "bf738e0c6aa81ccd3f621707e0aef14398adec2b"
     },
     {
       "file": "voices/hi/m/009648b50b463859.mp3",
@@ -88011,23 +88259,23 @@
     },
     {
       "file": "voices/manifest-en.json",
-      "hash": "4e8a5db50d7ebdadac28b1497285e26aaa0ecff1"
+      "hash": "d5f90d3ab5b24244ed8de1e6ac811c77071b6e92"
     },
     {
       "file": "voices/manifest-hi.json",
-      "hash": "0073349b353ba8151eba6931d45aa314e3f59565"
+      "hash": "ee0e8cb87d4ba03884cdeae73d1694e5dadffae8"
     },
     {
       "file": "voices/manifest-vi.json",
-      "hash": "7c2ae3793329d3e00f8d512d55d99751cf049483"
+      "hash": "fa174402764cd31321aa128e240b7cedbc305bdb"
     },
     {
       "file": "voices/manifest-zh.json",
-      "hash": "27b809f869fc74987bdbd5078ba3f33c974a9f7e"
+      "hash": "3ffa40437781c57e657c01098ad80d595c2264f8"
     },
     {
       "file": "voices/manifest.json",
-      "hash": "a36ebf48b571e4345e244bf6a8a26242b327ebdf"
+      "hash": "124cfcad0ba97136c017f85003c71cebfd74a5f9"
     },
     {
       "file": "voices/vi/f/000df9031a712f99.mp3",
@@ -88598,6 +88846,10 @@
       "hash": "d98ef42e2256949b4726f749732c4fa2bbe30d24"
     },
     {
+      "file": "voices/vi/f/05626ca0-4118f5d9.mp3",
+      "hash": "bc3d8b0f9e5cb851ee10a7bd9d2e547f22a676d9"
+    },
+    {
       "file": "voices/vi/f/056a71b3206dd80d.mp3",
       "hash": "32a2d6410f093bdf3433a2fcbe5ec6872b8c8413"
     },
@@ -89068,6 +89320,10 @@
     {
       "file": "voices/vi/f/0b24997b761e0db7.mp3",
       "hash": "a82ef6eb2c52bd71786d45056eed520af7dfd228"
+    },
+    {
+      "file": "voices/vi/f/0b282a21-22dc2f22.mp3",
+      "hash": "1081dbd823036129783a73d644c2a6d0702f1f5f"
     },
     {
       "file": "voices/vi/f/0b2fb7fd-7610ac92.mp3",
@@ -92358,6 +92614,10 @@
       "hash": "b940972f8255de0731b5963d3cd511d0dde963b8"
     },
     {
+      "file": "voices/vi/f/2e6ec91741176d63.mp3",
+      "hash": "b14e9806769ead79d7b8e742ab3becc9c343e603"
+    },
+    {
       "file": "voices/vi/f/2e76ed6f601b0166.mp3",
       "hash": "0cb404728b4313bafe73b5a035ddc8088db7640a"
     },
@@ -93818,6 +94078,10 @@
       "hash": "6e9cbdd1e801dd32e7bcecf567fd1a1fdb38d7d4"
     },
     {
+      "file": "voices/vi/f/3cd59558-428843bd.mp3",
+      "hash": "2064f0f104fb00eaa323ceb9d21420e808829886"
+    },
+    {
       "file": "voices/vi/f/3cdaac65-22054b18.mp3",
       "hash": "981c1e679161aa3057925395dd2632dc637f7ba4"
     },
@@ -95184,6 +95448,10 @@
     {
       "file": "voices/vi/f/4918ed4f-3d9544e3.mp3",
       "hash": "701ad527f89c2f0a54ace060f96cd1c68362c34f"
+    },
+    {
+      "file": "voices/vi/f/491c63e97d3858f4.mp3",
+      "hash": "084f11beb6a0f50bd0ee640ebf1f38a50899ca8e"
     },
     {
       "file": "voices/vi/f/491cbdb3-2d8aed88.mp3",
@@ -99442,6 +99710,10 @@
       "hash": "05358e18adcd0474a1ffed2252b6fe5b55406c12"
     },
     {
+      "file": "voices/vi/f/702715524f754eff.mp3",
+      "hash": "4990b5c3c6787f5b15104f3517e5d7e853c0f9bb"
+    },
+    {
       "file": "voices/vi/f/7037b60e-7231ddb5.mp3",
       "hash": "af9d0f9a8fe7901719348c1aff56f5683fdfa5a4"
     },
@@ -101430,6 +101702,10 @@
       "hash": "121cdc6a5125498a1de32dcfc1426dac0736bb27"
     },
     {
+      "file": "voices/vi/f/829fcf7e-5bf451c6.mp3",
+      "hash": "98e2aaf2af92014b4323465f3b9afe5c8b69d011"
+    },
+    {
       "file": "voices/vi/f/82a4b9241e6e6190.mp3",
       "hash": "b566310ba521bb447251ea6aae2fdeb8b8afac11"
     },
@@ -102008,6 +102284,10 @@
     {
       "file": "voices/vi/f/87b197f1416598a1.mp3",
       "hash": "f15299ba09e2d57cf717c21936d2883dc55ff3a9"
+    },
+    {
+      "file": "voices/vi/f/87b90ee5-5a44a06a.mp3",
+      "hash": "d410abf64f987b23552502d1ad8581318d5d1b27"
     },
     {
       "file": "voices/vi/f/87c4844420b2c9d6.mp3",
@@ -105650,6 +105930,10 @@
       "hash": "b2b345e2596755be1f7a4f9c0abf59d45f978041"
     },
     {
+      "file": "voices/vi/f/aa1b68df-1faf794b.mp3",
+      "hash": "01d07993faecabaf877aa18c9a42ff2d65e652c6"
+    },
+    {
       "file": "voices/vi/f/aa21d9bf-22994aaf.mp3",
       "hash": "8105b8f9b4b0676fe74069f50d0cedee7c1cffbe"
     },
@@ -105664,6 +105948,10 @@
     {
       "file": "voices/vi/f/aa387752-22d10bf5.mp3",
       "hash": "7a9fd552d0b0c89856795ec4c326b0f31585bca2"
+    },
+    {
+      "file": "voices/vi/f/aa38fb91126908c4.mp3",
+      "hash": "072341f5cc7bc9f90883ba3bc52b31cdb6a85783"
     },
     {
       "file": "voices/vi/f/aa431810-92ad5a5.mp3",
@@ -105800,6 +106088,10 @@
     {
       "file": "voices/vi/f/ab81274d0c776204.mp3",
       "hash": "cec03c301fb30a7fc49667fb95591d01b3311b7b"
+    },
+    {
+      "file": "voices/vi/f/ab862a1d4448fa92.mp3",
+      "hash": "ec99e8703da30a02f92cbfdd98e3d7a5e8a3cda2"
     },
     {
       "file": "voices/vi/f/ab92ba0879da85b6.mp3",
@@ -108002,6 +108294,10 @@
       "hash": "c7d82e1801ccd36c81391b11e69cbedec2fe50a8"
     },
     {
+      "file": "voices/vi/f/bfdca21f-23313b39.mp3",
+      "hash": "88e62e04ac28d104e74244cd928694280b0513b3"
+    },
+    {
       "file": "voices/vi/f/bfdeb47566166745.mp3",
       "hash": "211b0bb86319de048766bca3f2f18b0c40df0e98"
     },
@@ -108532,6 +108828,10 @@
     {
       "file": "voices/vi/f/c4efcdaa-303e7e46.mp3",
       "hash": "07d820d1e8d72e7a5671125ad5ee16f3215c7aec"
+    },
+    {
+      "file": "voices/vi/f/c4fdc3db7b13581a.mp3",
+      "hash": "35cdf9269e1938da4945f023e4dcb403cfe5c7cf"
     },
     {
       "file": "voices/vi/f/c51a37e44e13bb6e.mp3",
@@ -109122,6 +109422,10 @@
       "hash": "97617673d481939660b6a254544feb22be848594"
     },
     {
+      "file": "voices/vi/f/cad06358-127d5562.mp3",
+      "hash": "be627ef94d903539692184aa72ad1ae1f73a888a"
+    },
+    {
       "file": "voices/vi/f/cad19e122ae15219.mp3",
       "hash": "e782be2cbedd044e347c9246be8fe4ec15e2e4b0"
     },
@@ -109224,6 +109528,10 @@
     {
       "file": "voices/vi/f/cb9dedeb-1d30de98.mp3",
       "hash": "fe352b4c3e432c1c857232866257f7f0c0f804e4"
+    },
+    {
+      "file": "voices/vi/f/cbb7f9a368b158dd.mp3",
+      "hash": "4b95dc16c953459dadac37b67a742e4048b00583"
     },
     {
       "file": "voices/vi/f/cbbf2c527d47dd3a.mp3",
@@ -112726,6 +113034,10 @@
       "hash": "1eb0b90fe514461c7963e876baeb048ebdc8935f"
     },
     {
+      "file": "voices/vi/f/ecee4965-2f6ad76b.mp3",
+      "hash": "b9f437e1324bc09c2642653c4f54b807fae7b039"
+    },
+    {
       "file": "voices/vi/f/ecf22643-4f871bdb.mp3",
       "hash": "0d94d7cfc605c052714319cf43451361496393d6"
     },
@@ -114530,6 +114842,10 @@
       "hash": "b8c4a73d49775ff0c1a6d6c8840adbd746a2709c"
     },
     {
+      "file": "voices/vi/f/fea49d75-7ee86574.mp3",
+      "hash": "8aaec08f4f2e13126f52a84e50d6e113ea113289"
+    },
+    {
       "file": "voices/vi/f/feab39bd-17d348ca.mp3",
       "hash": "5c32376b75061e6f42b953765fe8d1d45ea67b55"
     },
@@ -115214,6 +115530,10 @@
       "hash": "118a68d653d2c25f1dbb9e70b115371573a0bf28"
     },
     {
+      "file": "voices/vi/m/05626ca0-4118f5d9.mp3",
+      "hash": "068036d3f178d311a9878163436e8e924814c62d"
+    },
+    {
       "file": "voices/vi/m/056a71b3206dd80d.mp3",
       "hash": "82eeeb1e47d411da64707bc08b6c69c46c8246cc"
     },
@@ -115684,6 +116004,10 @@
     {
       "file": "voices/vi/m/0b24997b761e0db7.mp3",
       "hash": "dd59098bc5436dcfd91c0dd8051a902e44d12697"
+    },
+    {
+      "file": "voices/vi/m/0b282a21-22dc2f22.mp3",
+      "hash": "747b989f41b14622a254d3ca310e359d9ef884af"
     },
     {
       "file": "voices/vi/m/0b2fb7fd-7610ac92.mp3",
@@ -118974,6 +119298,10 @@
       "hash": "7a525c46aa48242c00e27a354cbc685a43c59192"
     },
     {
+      "file": "voices/vi/m/2e6ec91741176d63.mp3",
+      "hash": "23c260fc57aafdb67e4980cb374698a6c20c7110"
+    },
+    {
       "file": "voices/vi/m/2e76ed6f601b0166.mp3",
       "hash": "cb39e5a26d5db8c570ecb22618acd22d252722c1"
     },
@@ -120434,6 +120762,10 @@
       "hash": "5ff49017cb0bc00e2adcc64434a4a0e2a2551420"
     },
     {
+      "file": "voices/vi/m/3cd59558-428843bd.mp3",
+      "hash": "d5557bbbaaa310393741f65a6b59e1168e976e17"
+    },
+    {
       "file": "voices/vi/m/3cdaac65-22054b18.mp3",
       "hash": "38cb19d1c4a1b1aadb0209c1a3d4626c7d6d1c06"
     },
@@ -121800,6 +122132,10 @@
     {
       "file": "voices/vi/m/4918ed4f-3d9544e3.mp3",
       "hash": "a6107d4942dea7668b7a475f335ec1727f29d28c"
+    },
+    {
+      "file": "voices/vi/m/491c63e97d3858f4.mp3",
+      "hash": "0f5800969353018b2543cb6df51fbd27fd463ce5"
     },
     {
       "file": "voices/vi/m/491cbdb3-2d8aed88.mp3",
@@ -126058,6 +126394,10 @@
       "hash": "f74cc504c1bac2f30934abbefbb1596d82e1dd68"
     },
     {
+      "file": "voices/vi/m/702715524f754eff.mp3",
+      "hash": "e04ec75254faf8b8d97a53316fd71af2526579ed"
+    },
+    {
       "file": "voices/vi/m/7037b60e-7231ddb5.mp3",
       "hash": "d1b37934af7624b18cc6cc539475736fda7a7267"
     },
@@ -128046,6 +128386,10 @@
       "hash": "7744b37b85bdb36ebb2995820270374251078b1a"
     },
     {
+      "file": "voices/vi/m/829fcf7e-5bf451c6.mp3",
+      "hash": "96ff200b6f69f20ed13a09125763ba81ed76e4ed"
+    },
+    {
       "file": "voices/vi/m/82a4b9241e6e6190.mp3",
       "hash": "eeedba5bc1b8c74a9bafea2eea7629d1e5d2e640"
     },
@@ -128624,6 +128968,10 @@
     {
       "file": "voices/vi/m/87b197f1416598a1.mp3",
       "hash": "4cc2ecbf085042ff8f68e3ed3543de92b81e048b"
+    },
+    {
+      "file": "voices/vi/m/87b90ee5-5a44a06a.mp3",
+      "hash": "33b71ee2c2017142da959954216bd701b55e6a64"
     },
     {
       "file": "voices/vi/m/87c4844420b2c9d6.mp3",
@@ -132266,6 +132614,10 @@
       "hash": "76425eb80b9289e7dfd08a20532c11096c0798c5"
     },
     {
+      "file": "voices/vi/m/aa1b68df-1faf794b.mp3",
+      "hash": "7f23f5226944711028ab1ae0a86f0383875895fd"
+    },
+    {
       "file": "voices/vi/m/aa21d9bf-22994aaf.mp3",
       "hash": "c0bc50d5b32ac59f035cae5f49d25fdce7dbef78"
     },
@@ -132280,6 +132632,10 @@
     {
       "file": "voices/vi/m/aa387752-22d10bf5.mp3",
       "hash": "fe6029502a66988706a7e734d92eb1f52048b87c"
+    },
+    {
+      "file": "voices/vi/m/aa38fb91126908c4.mp3",
+      "hash": "1f44d13e3bd512ab9176760b67d9ca6a38749b92"
     },
     {
       "file": "voices/vi/m/aa431810-92ad5a5.mp3",
@@ -132416,6 +132772,10 @@
     {
       "file": "voices/vi/m/ab81274d0c776204.mp3",
       "hash": "98145082318c13f16a42fc34948cc66518994fb6"
+    },
+    {
+      "file": "voices/vi/m/ab862a1d4448fa92.mp3",
+      "hash": "08496e7721fa7f891d4eb5ca44b1a13f9839a958"
     },
     {
       "file": "voices/vi/m/ab92ba0879da85b6.mp3",
@@ -134618,6 +134978,10 @@
       "hash": "4fb085b41c686a54655aa69b0ea54fbc4fa57f7a"
     },
     {
+      "file": "voices/vi/m/bfdca21f-23313b39.mp3",
+      "hash": "f25e9a9174b1106fa166131900056e5c456e4b6c"
+    },
+    {
       "file": "voices/vi/m/bfdeb47566166745.mp3",
       "hash": "8fc058abe25b30ded099f70d85133ce2f939cdd1"
     },
@@ -135148,6 +135512,10 @@
     {
       "file": "voices/vi/m/c4efcdaa-303e7e46.mp3",
       "hash": "ad1a118310a43eeea532c687d1f8206590f86342"
+    },
+    {
+      "file": "voices/vi/m/c4fdc3db7b13581a.mp3",
+      "hash": "9c437078b88a4a2ce5bd29620aa0f5720a4b1068"
     },
     {
       "file": "voices/vi/m/c51a37e44e13bb6e.mp3",
@@ -135738,6 +136106,10 @@
       "hash": "6cb8574249155727b8d1233f9d9941dc57805ece"
     },
     {
+      "file": "voices/vi/m/cad06358-127d5562.mp3",
+      "hash": "256f2a1c574dbf35ec90507425bd658dc8e68544"
+    },
+    {
       "file": "voices/vi/m/cad19e122ae15219.mp3",
       "hash": "5886f13c8e045627f636b5cbbd6f2c97a17da3a3"
     },
@@ -135840,6 +136212,10 @@
     {
       "file": "voices/vi/m/cb9dedeb-1d30de98.mp3",
       "hash": "00033e7d247c7bc054dd1791280a8a838e168f46"
+    },
+    {
+      "file": "voices/vi/m/cbb7f9a368b158dd.mp3",
+      "hash": "694318a78917cb9b4a09d39a61badfd9bf50c5d3"
     },
     {
       "file": "voices/vi/m/cbbf2c527d47dd3a.mp3",
@@ -139342,6 +139718,10 @@
       "hash": "4b40b726ddd8aae1afe562a8ff8a0896594d38db"
     },
     {
+      "file": "voices/vi/m/ecee4965-2f6ad76b.mp3",
+      "hash": "ef35d0a5879000c4cd692665212bb7e9e903b2ce"
+    },
+    {
       "file": "voices/vi/m/ecf22643-4f871bdb.mp3",
       "hash": "e644b98d1ac52a196e103e7c15895854f45d94a2"
     },
@@ -141144,6 +141524,10 @@
     {
       "file": "voices/vi/m/fea43a2d72ccb403.mp3",
       "hash": "9eafafb4c7a6fe8b71d7b6b701a05c82a61edbe6"
+    },
+    {
+      "file": "voices/vi/m/fea49d75-7ee86574.mp3",
+      "hash": "1536d61fbefb22f3673bd458e4fd60f1a61c456b"
     },
     {
       "file": "voices/vi/m/feab39bd-17d348ca.mp3",

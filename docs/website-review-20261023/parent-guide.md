@@ -1,6 +1,6 @@
 # A parent-first Sparkle Valley website
 
-Editorial update 26 October 2026 AEDT. Game source: db2c5c7e7154e91221b952ccc96d12c3e0f08ec8. Full information about learning, folk games, shared play, parent choices and rewards is reviewed against that immutable source before release. This generated guide does not itself deploy the game.
+Editorial update 26 October 2026 AEDT. Game source: 7589469d48c53fc8ec9e84317857b079dad26ea6. Full information about learning, folk games, shared play, parent choices and rewards is reviewed against that immutable source before release. This generated guide does not itself deploy the game.
 
 [Interactive concept](prototype.html) · [Website review](README.md) · [Editable bilingual content](parent-content.mjs)
 
@@ -80,7 +80,7 @@ Keep the game's friendly cartoon characters, original owl, rounded shapes, cream
 
 **Try together afterwards / Cùng thử sau khi chơi:** Choose a cooperative gentle mode for a younger child. Shared games use the youngest invited child’s agreed mode where the game supports it; every activity has its own rules. / Chọn bản nhẹ nhàng hợp tác cho bé nhỏ. Trò chung dùng chế độ đã thống nhất theo bạn nhỏ nhất ở những trò có hỗ trợ; mỗi hoạt động có luật riêng.
 
-## Detailed shared games, modes and rewards
+## Detailed games, modes and rewards
 
 ### Cờ Cá Ngựa: choose a horse, count a route / Cờ Cá Ngựa: chọn quân, đếm đường đi
 
@@ -151,6 +151,26 @@ Available to everyone, not just parents, when Studio enables the public single-d
 Use a grown-up conversation to notice that chance can give different results and a multiplier is not a guarantee. This arcade is not an educational assessment or an earnings game. / Cùng người lớn nhận ra ngẫu nhiên có thể cho kết quả khác nhau, hệ số không phải lời hứa. Đây không phải đánh giá học tập hay trò kiếm thu nhập.
 
 Counters stay in this arcade session. There is no purchase, cash-out, exchange, permanent leaderboard, child-save balance or ordinary mini-game reward; no money has real-world value. / Điểm chỉ ở trong phiên trò này. Không mua, rút, đổi, bảng xếp hạng lâu dài, số dư vào bản lưu của trẻ hay thưởng mini-game thông thường; không có giá trị tiền ngoài đời.
+
+### Bịt mắt bắt dê: listen, follow and catch / Bịt mắt bắt dê: nghe, đi theo và bắt
+
+Press Listen, follow the direction and distance cues, then press Catch when close. Catching from far away gives another hint. A caught friend becomes the next seeker; complete three rounds. / Chạm Nghe, theo chỉ dẫn hướng và khoảng cách, rồi chạm Bắt khi đến gần. Nếu còn xa, trò sẽ chỉ thêm. Bạn bị bắt làm người đi tìm tiếp theo; hoàn thành ba lượt.
+
+Single-player screen activity with three virtual friends and larger visual hints for younger children. / Hoạt động một người chơi với ba bạn ảo và chỉ dẫn hình rõ hơn cho trẻ nhỏ.
+
+Name left, right, near and far together. Listen to the real call and compare it with the visible rings. / Cùng gọi tên trái, phải, gần và xa. Nghe tiếng gọi thật rồi so với vòng âm thanh.
+
+Complete three catches for the normal three-star finish and surprise chest picture. There is no separate goat-game badge. / Hoàn thành ba lượt bắt để nhận màn kết thúc ba sao và hình quà bất ngờ trong rương như các mini-game. Không có huy hiệu riêng cho trò này.
+
+### Northern Tiến Lên: compare the right patterns / Tiến Lên miền Bắc: so đúng kiểu bài
+
+Ordinary pairs must be the same colour; triples match all three suits and runs match suit and length. Twos beat other singles or pairs, and a quad can cut a single or pair of twos. Consecutive pairs are not a Northern play. / Đôi thường phải cùng màu; bộ ba cùng các chất, sảnh cùng chất và cùng số lá. Quân hai chặn bài lẻ hoặc đôi khác; tứ quý chặt một hoặc đôi hai. Bản miền Bắc không dùng đôi thông.
+
+Play against computer helpers here or with invited online friends. The Northern or Southern variant stays attached to its own table. / Chơi với bạn máy hoặc bạn được mời trực tuyến. Luật miền Bắc hay miền Nam được giữ riêng cho từng bàn.
+
+Sort by rank, suit and colour, then explain why a combination can or cannot beat the table. / Xếp theo số, chất và màu, rồi giải thích vì sao bộ bài chặn được hoặc không chặn được bài trên bàn.
+
+The completed hand uses the normal star-and-chest celebration; under-5s receive three finish stars. No betting or last-card penalties are used. / Ván hoàn thành dùng màn sao và rương quà như các mini-game; trẻ dưới 5 tuổi nhận ba sao kết thúc. Không cá cược hay phạt lá cuối.
 
 ## Vietnamese folk games
 
@@ -285,6 +305,26 @@ Usually 3+ / Thường từ 3 tuổi
 **Practice / Luyện tập:** Left/right vocabulary, alternating actions, listening to a beat and sustained attention. / Từ trái/phải, đổi thao tác, nghe nhịp và tập trung.
 
 **Family connection / Kết nối gia đình:** Clap an alternating rhythm together and notice how a real crew coordinates. This is screen rhythm practice, not a swimming or boat-safety lesson. / Cùng vỗ nhịp luân phiên và nhận ra đội thật phối hợp ra sao. Đây là tập nhịp trên màn hình, không phải bài học bơi hay an toàn thuyền.
+
+### Bịt mắt bắt dê · Blindfold circle tag / Bịt mắt bắt dê
+
+Usually 3+ / Thường từ 3 tuổi
+
+**How it plays / Cách chơi:** Guide a blindfolded child avatar around a circle. Listen for a friend, follow the sound rings and direction cues, then catch only when close. The friends take turns. / Dẫn nhân vật bịt mắt đi trong vòng tròn. Nghe bạn gọi, theo vòng âm thanh và hướng chỉ dẫn, rồi bắt khi đến gần. Các bạn lần lượt đổi vai.
+
+**Practice / Luyện tập:** Listening, spatial directions, judging distance and taking turns. Visual cues support play with sound off. / Lắng nghe, nhận biết hướng, ước lượng khoảng cách và luân phiên. Chỉ dẫn bằng hình hỗ trợ khi tắt âm thanh.
+
+**Family connection / Kết nối gia đình:** Share a memory of the traditional game. A grown-up can organise a gentle circle game in a clear space; younger children can begin with their eyes open. / Kể kỷ niệm chơi trò dân gian này. Người lớn có thể tổ chức chơi nhẹ nhàng ở chỗ trống; trẻ nhỏ có thể bắt đầu khi mở mắt.
+
+### Northern Tiến Lên · Card patterns / Tiến Lên miền Bắc
+
+Usually 5+, with family support / Thường từ 5 tuổi, có gia đình hỗ trợ
+
+**How it plays / Cách chơi:** Compare same-suit singles and runs, same-colour pairs and triples with matching suits. Twos and four of a kind have special rules. The on-screen guide explains the child-friendly adaptation. / So bài lẻ và sảnh cùng chất, đôi cùng màu, bộ ba cùng các chất. Quân hai và tứ quý có luật riêng. Hướng dẫn trong trò giải thích bản nhẹ nhàng cho trẻ.
+
+**Practice / Luyện tập:** Recognising matching sets, comparing rank, planning a hand and waiting for a turn. / Nhận biết bộ giống nhau, so thứ tự, tính cách đánh và chờ lượt.
+
+**Family connection / Kết nối gia đình:** Compare your family’s house rules with the written screen rules. This version has no betting or last-card penalties. / So luật nhà mình với luật trên màn hình. Bản này không cá cược hay phạt lá cuối.
 
 ## Vietnamese stories and conversation
 
