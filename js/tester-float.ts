@@ -29,7 +29,7 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
     const controls = [...new Set(visiblePanels.flatMap(p => [...p.querySelectorAll('button, [role="button"], a, input, select, textarea')]))].filter(n => n.getClientRects().length && getComputedStyle(n).visibility !== 'hidden').map(n => {
       const r = n.getBoundingClientRect();
       const foreground = document.elementsFromPoint(r.x + r.width / 2, r.y + r.height / 2).find(e => e !== button && !button.contains(e));
-      return foreground === n || n.contains(foreground) ? r : null;
+      return foreground === n || n.contains(foreground ?? null) ? r : null;
     }).filter((r): r is DOMRect => r !== null);
     const candidates = [preferred, ...[b.left, b.right].flatMap(x => [0, .25, .5, .75, 1].map(t => ({ x, y: b.top + t * (b.bottom - b.top) })))];
     const width = button.offsetWidth, height = button.offsetHeight;
