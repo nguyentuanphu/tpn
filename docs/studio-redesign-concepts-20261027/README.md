@@ -79,6 +79,8 @@ The next design review should cover **Today, one person/device detail, one game-
 
 The owner requested more detail: [Owner’s Desk walkthrough](OWNERS-DESK.md) expands the recommended direction into connected daily workflows, game/website publishing, child/device identity, money, mobile behaviour and a migration sequence. It remains a proposal; the owner has not selected a final direction.
 
+The subsequent [connected concept handbook](../studio-connected-concept-20261027/README.md) expands this into graph/control contracts, richer People detail, current API connections, a searchable field register and original visual diagrams. It records existing code and proposed additions separately.
+
 ## Preview and provenance
 
 Open `index.html` locally to switch concepts. Action buttons only display a concept notice. All numbers and work items are illustrative. No production API, provider credentials or family records are used. The screenshots are rendered directly from this checked-in HTML; `validation.json` records the layout and interaction checks.

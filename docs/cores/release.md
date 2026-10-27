@@ -392,6 +392,8 @@ comprehensive run on committed code; no production release/version authorised.
 
 ## Owner direction — redesign concepts first, 27 October 2026 AEDT
 
+Owner requested comprehensive connected concepts with graphs and richer user detail. [New handbook](../studio-connected-concept-20261027/README.md) maps279 field-family/refinement entries,26 graph concepts,17 controls,13 connections and actual API paths; existing/proposed status and production gaps remain explicit. Includes original diagrams, fictional chart data, searchable offline review and32 build acceptance scenarios. No runtime change/deploy; use concept review before migrating screens.
+
 Follow-up: owner requested further explanation. The [expanded Owner’s Desk proposal](../studio-redesign-concepts-20261027/OWNERS-DESK.md) records daily journeys, proposed data/action boundaries and staged migration. Concept A remains recommended, not selected. No runtime edits or new browser-validation claims in this documentation continuation.
 
 The owner reviewed all-page screenshots and found the result confusing, with too

@@ -1,0 +1,92 @@
+[
+  {
+    "path": "home/analytics.ts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "35d2e64ec4b9504d0fb89228f723e4f2e54d67e56e2604bfe330f01c7514485c"
+  },
+  {
+    "path": "js/core/events.ts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "00a2e61b5b8878f4ba2e0dfccbad5a443caf8b8be03161d29eeba1d82a0a08f8"
+  },
+  {
+    "path": "js/management-telemetry.ts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "588cec01da0ceff795b281834aab7f71621f95c4a1ad54b47f06a12439dc82fa"
+  },
+  {
+    "path": "js/players.ts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "bc56c27a66fa9c02955a5f95dec27c0a384297a1e4fdb3f1bf1db1f8145b45e2"
+  },
+  {
+    "path": "js/report.ts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "aa186e416f0859fdd5fd5b90da710ea1927e324af5bd87e97211f94099fcf6b0"
+  },
+  {
+    "path": "js/state.ts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "b1778ae0cc756cbebd8b65511a54bbcb55b9c2faf9bcbdd6007663148b444511"
+  },
+  {
+    "path": "netlify/functions/management.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "1d1d889908b77ddb0cb850a0671dacfec85b1bafb626fb86a9d71549f58761a3"
+  },
+  {
+    "path": "netlify/functions/parent-analytics.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "da92d9f19c4b7e364811fa631e426655a087b82a999e969bea76732ffff5219b"
+  },
+  {
+    "path": "netlify/lib/admins.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "333fb379c193589f1986486a6c53549ed3c4c93862ad0c42ed32ef660aaeb71e"
+  },
+  {
+    "path": "netlify/lib/management/catalogue.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "7b1623f2c530ed3fbb2834ebe9c0a138305d0506a647a147a47afd031f73cc06"
+  },
+  {
+    "path": "netlify/lib/management/finance-import.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "4703ba68793da5f04a9d75cbb1203c27a1bb425b30cd42325ec18089b5042161"
+  },
+  {
+    "path": "netlify/lib/management/finance-values.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "ad652ed6e825471433adef6b89b33a104e9b4e74b46091318f3dbfcbea480acb"
+  },
+  {
+    "path": "netlify/lib/management/finance.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "2806d7fe93c54682518c7d78da1903fe58e5e8829cb7c91c964355cb4ce3c553"
+  },
+  {
+    "path": "netlify/lib/management/http.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "3d50ada377d53329c11fab20b4bdbbe569274edbf8c24f893f4629ba558ad557"
+  },
+  {
+    "path": "netlify/lib/management/operations-control.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "b3e3808012a11cc77fc1677bafc28f22c706d36aad597651dd6a21166681a5e1"
+  },
+  {
+    "path": "netlify/lib/management/transactional/service.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "ec3744b3cee91cea869b8f2ae87c40f7743fa062e2c33cf7b0041d3c98a987da"
+  },
+  {
+    "path": "netlify/lib/management/transactional/validation.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "cc778cfe50d5f06cd6bd480ceed781ac824abcfd7035af49798719238eef0cb0"
+  },
+  {
+    "path": "tools/export-management-catalogue.mts",
+    "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7",
+    "sha256": "90afb27dbbca7b338cf783f4ee600c9a21748194b41ca369de9f1f2f99779017"
+  }
+]
