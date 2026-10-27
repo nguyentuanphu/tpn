@@ -392,6 +392,8 @@ comprehensive run on committed code; no production release/version authorised.
 
 ## Owner direction — redesign concepts first, 27 October 2026 AEDT
 
+Follow-up: owner requested further explanation. The [expanded Owner’s Desk proposal](../studio-redesign-concepts-20261027/OWNERS-DESK.md) records daily journeys, proposed data/action boundaries and staged migration. Concept A remains recommended, not selected. No runtime edits or new browser-validation claims in this documentation continuation.
+
 The owner reviewed all-page screenshots and found the result confusing, with too
 much focus on Analytics. Pause runtime implementation and present substantially
 different concepts before proceeding. Three directions and desktop/phone mockups

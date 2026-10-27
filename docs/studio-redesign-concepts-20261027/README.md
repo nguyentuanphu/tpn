@@ -77,6 +77,8 @@ Use **A as the Studio's main structure**. Use B's single-item editing inside Gam
 
 The next design review should cover **Today, one person/device detail, one game-and-website editor, and Money**, on desktop and phone. Review those task flows before migrating the existing pages. No runtime redesign is authorised by these concept files alone.
 
+The owner requested more detail: [Owner’s Desk walkthrough](OWNERS-DESK.md) expands the recommended direction into connected daily workflows, game/website publishing, child/device identity, money, mobile behaviour and a migration sequence. It remains a proposal; the owner has not selected a final direction.
+
 ## Preview and provenance
 
 Open `index.html` locally to switch concepts. Action buttons only display a concept notice. All numbers and work items are illustrative. No production API, provider credentials or family records are used. The screenshots are rendered directly from this checked-in HTML; `validation.json` records the layout and interaction checks.

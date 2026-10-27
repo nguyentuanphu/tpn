@@ -1,5 +1,7 @@
 ## Studio redesign review — 27 October 2026 AEDT
 
+- **Concept continuation:** owner asked to continue explaining the design. [Owner’s Desk walkthrough](../studio-redesign-concepts-20261027/OWNERS-DESK.md) now details connected workflows, device identity, shared game/website review, financial coverage, visual rules and migration stages. This develops a recommendation, not an owner-selected direction. Runtime redesign remains paused; no new UI or deployment claimed.
+
 - **Now:** owner found the Studio visually confusing and requested concepts before further implementation. Runtime redesign is paused. Three desktop/phone visual directions are prepared in [the concept review](../studio-redesign-concepts-20261027/README.md): Owner’s Desk, purpose-based workspaces, and Production Board. Recommendation: Owner’s Desk as the main structure, contextual item editing, optional work-board view. No production changes, new version or deployment. The already-started comprehensive code validation remains separate (run40470635366 on56dc6e48); its result must still be collected.
 
 ## Studio management implementation (27 October 2026 AEDT)
