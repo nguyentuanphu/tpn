@@ -32,6 +32,7 @@ export function normalLine(value:unknown){
  if(!['fixed','variable','unallocated'].includes(body.costType)||typeof body.reconciled!=='boolean'||typeof body.voided!=='boolean'||body.settles!==null&&!/^[a-f0-9]{64}$/.test(body.settles))fail('finance_invalid_line');
  if(body.settles&&!['actual','credit'].includes(body.kind)||body.reconciled&&['estimate','commitment'].includes(body.kind))fail('finance_invalid_reconciliation');
  if(b.fx!=null){const f=obj(b.fx);keys(f,['targetCurrency','rate','source','asOf']);const rate=rational(f.rate);if(body.currency===f.targetCurrency&&rate.n!==rate.d)fail('finance_invalid_fx');body.fx={targetCurrency:currency(f.targetCurrency),rate:f.rate,source:label(f.source),asOf:date(f.asOf)};}
+ if(body.fx){for(const amount of [BigInt(amountMinor),BigInt(taxMinor),BigInt(amountMinor)+BigInt(taxMinor)])bounded(convert(amount,body,body.fx.targetCurrency)!);}
  const id=hashJson([body.provider,body.accountAlias,body.sourceDocumentId,body.sourceLineId]);return {id,body,expectedRevision:revision(b.expectedRevision),hash:hashJson(body)};
 }
 /** Allocate exact original minor units evenly over calendar service days, earliest days receive remainder. */

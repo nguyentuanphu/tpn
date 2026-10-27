@@ -92,3 +92,18 @@ first entry. No actual finance input is fabricated or committed.
 GitHub full-suite and fresh sequential speed validation are pending at this
 checkpoint. A final report will record the tested commit, run URL, failures and
 reruns rather than treating a workflow dispatch as a passing result.
+
+
+Follow-up review found a financial overflow edge case: individually valid source
+amounts could overflow after FX or when combined. The implementation now rejects
+FX overflow before persistence and returns explicit unavailable totals for
+aggregate/budget overflow while preserving ledger access. Linked credits cannot
+create negative net settlement. Focused regression checks are being rerun before
+restarting the GitHub suite on this change.
+
+A local overlap was detected between the speed suite and an extra focused run.
+The extra run was terminated; its timeout and the overlapping timing log are
+retained as discarded evidence, not passing release measurements:
+[discarded focused log](evidence/finance-discarded-overlap-2026-10-27.txt),
+[discarded timing log](evidence/finance-discarded-timing-overlap-2026-10-27.txt).
+Affected timing checks will be repeated in isolation.

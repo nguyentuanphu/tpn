@@ -1,7 +1,7 @@
 import { hashJson } from './transactional/validation.mts';
 import { ManagementError } from './transactional/types.mts';
 import type { ManagementDatabase, ManagementTransaction, JsonObject } from './transactional/types.mts';
-import { obj,keys,revision,reason,currency,month,bounds,date,integer,bounded,allocate,convert,round,DAY,currencies } from './finance-values.mts';
+import { obj,keys,revision,reason,currency,month,bounds,date,integer,bounded,allocate,convert,round,DAY,currencies,MAX } from './finance-values.mts';
 import { normalImport,parseFinanceCsv,financeCsv } from './finance-import.mts';
 const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 const conflict=(code='finance_revision_conflict'):never=>{throw new ManagementError(409,code);};
@@ -20,8 +20,9 @@ export function createFinanceService({database,now=Date.now}:{database?:Manageme
   const proposed=new Map((await tx.list('finance_lines')).map(r=>[r.key,r.value]));
   for(const r of rows){if(r.body.fx&&r.body.fx.targetCurrency!==s.reportingCurrency)throw new ManagementError(422,'finance_fx_target_mismatch');const old=proposed.get(r.id);
    if(old?.hash!==r.hash&&Number(old?.revision??0)!==r.expectedRevision)conflict();proposed.set(r.id,{id:r.id,body:r.body});}
-  const settled=new Set<string>();for(const record of proposed.values()){const line=record.body as Record<string,any>;if(line.voided||!line.settles)continue;const c=proposed.get(line.settles)?.body as Record<string,any>|undefined;
-   if(!c||c.voided||c.kind!=='commitment'||c.currency!==line.currency||c.provider!==line.provider||c.accountAlias!==line.accountAlias||c.costType!==line.costType)throw new ManagementError(422,'finance_invalid_settlement');settled.add(line.settles);}
+  const settled=new Map<string,bigint>();for(const record of proposed.values()){const line=record.body as Record<string,any>;if(line.voided||!line.settles)continue;const c=proposed.get(line.settles)?.body as Record<string,any>|undefined;
+   if(!c||c.voided||c.kind!=='commitment'||c.currency!==line.currency||c.provider!==line.provider||c.accountAlias!==line.accountAlias||c.costType!==line.costType)throw new ManagementError(422,'finance_invalid_settlement');settled.set(line.settles,(settled.get(line.settles)??0n)+BigInt(line.amountMinor));}
+  if([...settled.values()].some(n=>n<0n))throw new ManagementError(422,'finance_invalid_settlement');
   // A commitment cannot disappear while posted actuals still reference it; void/reassign those first.
   return s;
  }
@@ -68,14 +69,15 @@ export function summarise(records:Array<{id:string;body:Record<string,any>}>,tar
   totals.expense+=amount;totals.tax+=tax;if(l.costType==='unallocated')unallocated++;else totals[l.costType]+=amount;
   if(l.costType==='variable')for(let t=Date.parse(start);t<=Date.parse(end);t+=DAY){const d=new Date(t).toISOString().slice(0,10),n=allocate(bounded(amount),l.periodStart>start?l.periodStart:start,l.periodEnd<end?l.periodEnd:end,d,d);daily.set(d,(daily.get(d)??0n)+n);}
  }
- const coverageComplete=!!budget?.coverageThrough&&budget.coverageThrough>=end,comparable=coverageComplete&&missingFx===0&&unreconciled===0&&(basis!=='cash'||unpaid===0);
+ const coverageComplete=!!budget?.coverageThrough&&budget.coverageThrough>=end;let comparable=coverageComplete&&missingFx===0&&unreconciled===0&&(basis!=='cash'||unpaid===0);
  const days=Number(end.slice(8)),day=Number(today.slice(8)),yesterday=new Date(Date.parse(today)-DAY).toISOString().slice(0,10);
  let forecast:bigint|null=null,forecastReason='insufficient_complete_days';
  if(basis!=='invoice')forecastReason='invoice_view_only';else if(m!==today.slice(0,7))forecastReason='current_month_only';else if(missingFx||unreconciled||unallocated)forecastReason='fx_reconciliation_or_cost_allocation_missing';else if(day>=8&&budget?.coverageThrough>=yesterday){let trailing=0n,spent=0n;for(const [d,n]of daily){if(d<today)spent+=n;if(d<today&&d>=new Date(Date.parse(today)-7*DAY).toISOString().slice(0,10))trailing+=n;}
   forecast=totals.fixed+totals.commitment+spent+round(trailing*BigInt(days-day+1),7n);forecastReason='fixed_actual_plus_outstanding_commitments_and_variable_trend';}
- const known=Object.fromEntries(Object.entries(totals).map(([k,v])=>[k,bounded(v)]));
- return {currency:target,minorDigits:currencies[target],basis,periodStart:start,periodEnd:end,known,missingFx,unreconciled,unallocated,unpaid,coverageThrough:budget?.coverageThrough??null,coverageComplete,comparable,
-  actualCostMinor:comparable?known.expense:null,budgetRemainingMinor:budget&&missingFx===0?bounded(BigInt(budget.amountMinor)-totals.expense):null,
-  commitmentAdjustedRemainingMinor:budget&&missingFx===0?bounded(BigInt(budget.amountMinor)-totals.expense-totals.commitment):null,
-  forecastMinor:forecast===null?null:bounded(forecast),forecastReason,contributionMarginMinor:null,contributionMarginReason:'approved_attribution_and_revenue_model_required'};
+ const overflowFields:string[]=[];const safeTotal=(name:string,value:bigint)=>{if(value>MAX||value< -MAX){overflowFields.push(name);return null;}return Number(value);};
+ const known=Object.fromEntries(Object.entries(totals).map(([k,v])=>[k,safeTotal(k,v)]));if(overflowFields.length)comparable=false;
+ return {currency:target,overflowFields,minorDigits:currencies[target],basis,periodStart:start,periodEnd:end,known,missingFx,unreconciled,unallocated,unpaid,coverageThrough:budget?.coverageThrough??null,coverageComplete,comparable,
+  actualCostMinor:comparable?known.expense:null,budgetRemainingMinor:budget&&missingFx===0?safeTotal('budgetRemaining',BigInt(budget.amountMinor)-totals.expense):null,
+  commitmentAdjustedRemainingMinor:budget&&missingFx===0?safeTotal('commitmentAdjustedRemaining',BigInt(budget.amountMinor)-totals.expense-totals.commitment):null,
+  forecastMinor:forecast===null?null:safeTotal('forecast',forecast),forecastReason,contributionMarginMinor:null,contributionMarginReason:'approved_attribution_and_revenue_model_required'};
 }

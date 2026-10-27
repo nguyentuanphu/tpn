@@ -85,3 +85,12 @@ test('cost per reporting installation/hour requires complete finance and non-zer
  const zero=await (await managementHttp(request(),read,{finance,service:{},reads:{overview:async()=>({totals:{activeDevices:0,mins:0}})}})).json();assert.equal(zero.summary.costPerActiveMinor,null);assert.equal(zero.summary.costPerHourMinor,null);
  const measured=await (await managementHttp(request(),read,{finance,service:{},reads:{overview:async()=>({totals:{activeDevices:4,mins:120}})}})).json();assert.equal(measured.summary.costPerActiveMinor,300);assert.equal(measured.summary.costPerHourMinor,600);assert.equal(measured.summary.denominators.limitations.includes('analytics_opt_out_bias'),true);
 });
+
+test('overflowing FX is rejected before persistence and aggregate/budget overflow keeps the ledger readable',async()=>{
+ assert.throws(()=>normalLine(line({currency:'USD',amountMinor:Number.MAX_SAFE_INTEGER,taxMinor:0,fx:{targetCurrency:'AUD',rate:'100',source:'Synthetic',asOf:'2026-10-01'}})),e=>e.code==='finance_amount_overflow');
+ const {finance}=await fixture();await save(finance,[line({amountMinor:Number.MAX_SAFE_INTEGER,taxMinor:0,costType:'fixed'}),line({sourceLineId:'two',amountMinor:Number.MAX_SAFE_INTEGER,taxMinor:0,costType:'fixed'})]);
+ const snapshot=await finance.snapshot({month:'2026-10'});assert.equal(snapshot.lines.length,2);assert.equal(snapshot.summary.known.expense,null);assert.equal(snapshot.summary.overflowFields.includes('expense'),true);assert.equal(snapshot.summary.actualCostMinor,null);
+});
+test('credits cannot create negative net settlement on a linked commitment',async()=>{
+ const {finance}=await fixture(),commitment=line({kind:'commitment',sourceLineId:'contract',reconciled:false});await save(finance,[commitment]);await assert.rejects(save(finance,[line({kind:'credit',sourceLineId:'excess-credit',amountMinor:-100,taxMinor:0,settles:normalLine(commitment).id})]),e=>e.code==='finance_invalid_settlement');
+});
