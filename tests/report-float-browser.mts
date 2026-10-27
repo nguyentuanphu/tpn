@@ -4,7 +4,7 @@ import { launch, open, clear, noWelcome } from './harness.mjs';
 
 async function reportFloatingBrowser(){
 const browser=await launch();
-const dir=new URL('../docs/v1.02-report-control/',import.meta.url);await fs.mkdir(dir,{recursive:true});
+const dir=new URL('../docs/studio-management-foundation/evidence/report-control-20261027/',import.meta.url);await fs.mkdir(dir,{recursive:true});
 const results:unknown[]=[];
 try{
  const P=await open(browser,{w:390,h:844,touch:true,lang:process.argv.includes('--lang-vi')?'vi':'en',settings:{online:false,countPlayers:false},route:async ctx=>{await ctx.route('**/api/**',r=>r.fulfill({json:{open:[],mine:[]}}));}});
@@ -25,7 +25,15 @@ try{
   const before=await button.boundingBox();assert.ok(before);await P.page.mouse.move(before.x+32,before.y+32);await P.page.mouse.down();await P.page.mouse.move(100,200);await P.page.mouse.up();
   const dragged=await button.boundingBox();assert.ok(dragged);await P.page.evaluate(()=>document.querySelector('.report-collision-proof')?.append(document.createElement('p')));await P.page.waitForTimeout(150);const kept=await button.boundingBox();assert.ok(kept);assert.ok(Math.abs(kept.x-dragged.x)<2&&Math.abs(kept.y-dragged.y)<2,'User-dragged position must be preserved');
   await button.focus();await P.page.keyboard.press('Home');assert.equal(await reachable(),true,'Reset default must still avoid the underlying control');
-  results.push({defaultAvoidsUnderlyingControl:true,reportRemainsReachable:true,userPositionPreserved:true,resetAvoidsControl:true});await P.ctx.close();return;
+  await P.page.evaluate(()=>document.querySelectorAll('.report-collision-proof,.collision-decoration').forEach(n=>n.remove()));await P.page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
+  await button.focus();await P.page.keyboard.press('Home');const initial=await button.boundingBox();assert.ok(initial);
+  await P.page.evaluate(r=>{const panel=document.createElement('div');panel.className='modal report-scroll-proof';panel.style.cssText='position:fixed;inset:0;display:block;overflow:auto;scroll-behavior:auto;padding:0;pointer-events:auto';panel.innerHTML=`<div style="position:relative;height:2000px"><button class="scroll-collision-control btn" style="position:absolute;left:${r.x}px;top:${r.y+200}px;width:64px;height:64px;min-height:64px">Scroll control</button></div>`;document.body.append(panel);},initial);
+  await P.page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
+  await P.page.locator('.report-scroll-proof').evaluate(n=>n.scrollTop=200);
+  const scrollReachable=()=>P.page.locator('.scroll-collision-control').evaluate(n=>{const r=n.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return top===n||n.contains(top);});
+  for(let i=0;i<30&&!await scrollReachable();i++)await P.page.waitForTimeout(50);
+  assert.equal(await scrollReachable(),true,'Scrolling a panel must not move its control underneath the default report button');
+  results.push({defaultAvoidsUnderlyingControl:true,decorativeLayersIgnored:true,reportRemainsReachable:true,userPositionPreserved:true,resetAvoidsControl:true,scrolledControlReachable:true});await P.ctx.close();return;
  }
  if(process.argv.includes('--slow-reset-only')){
   await button.click();await P.page.locator('.tpanel').waitFor();

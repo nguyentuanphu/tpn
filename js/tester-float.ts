@@ -43,7 +43,8 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
   const changed = (e: Event) => { if (e.target instanceof Element && e.target.closest(panels)) queueLayout(); };
   const observer = new MutationObserver(records => { if (records.some(r => r.target === document.body || r.target instanceof Element && r.target.closest(panels))) queueLayout(); });
   observer.observe(document.body, { childList: true, subtree: true });
-  document.addEventListener('click', changed, true); document.addEventListener('toggle', changed, true); document.fonts?.addEventListener('loadingdone', queueLayout);
+  const layoutEvents = ['click', 'toggle', 'scroll', 'input', 'transitionend', 'animationend'];
+  layoutEvents.forEach(k => document.addEventListener(k, changed, true)); document.fonts?.addEventListener('loadingdone', queueLayout);
   const remember = () => { const b = bounds(), r = button.getBoundingClientRect(); saved = { x: (r.left - b.left) / Math.max(1, b.right - b.left), y: (r.top - b.top) / Math.max(1, b.bottom - b.top) }; try { localStorage.setItem(key, JSON.stringify(saved)); } catch {} };
   const reset = () => { opening?.abort('reset'); clearTimeout(tap); stopHold(); lastTap = 0; saved = undefined; try { localStorage.removeItem(key); } catch {} layout(); };
   const start = (e: PointerEvent) => {
@@ -75,5 +76,5 @@ export function floatReportButton(button: HTMLButtonElement, anchor: HTMLElement
   button.addEventListener('pointerdown', start); button.addEventListener('pointermove', move); button.addEventListener('pointerup', end); button.addEventListener('pointercancel', end); button.addEventListener('lostpointercapture', end);
   button.addEventListener('keydown', keydown); button.addEventListener('click', click); button.addEventListener('dblclick', dblclick);
   addEventListener('resize', layout); visualViewport?.addEventListener('resize', layout); visualViewport?.addEventListener('scroll', layout); layout();
-  return () => { opening?.abort(); stopHold(); clearTimeout(tap); observer.disconnect(); if (relayout !== undefined) cancelAnimationFrame(relayout); document.removeEventListener('click', changed, true); document.removeEventListener('toggle', changed, true); document.fonts?.removeEventListener('loadingdone', queueLayout); removeEventListener('resize', layout); visualViewport?.removeEventListener('resize', layout); visualViewport?.removeEventListener('scroll', layout); button.remove(); };
+  return () => { opening?.abort(); stopHold(); clearTimeout(tap); observer.disconnect(); if (relayout !== undefined) cancelAnimationFrame(relayout); layoutEvents.forEach(k => document.removeEventListener(k, changed, true)); document.fonts?.removeEventListener('loadingdone', queueLayout); removeEventListener('resize', layout); visualViewport?.removeEventListener('resize', layout); visualViewport?.removeEventListener('scroll', layout); button.remove(); };
 }
