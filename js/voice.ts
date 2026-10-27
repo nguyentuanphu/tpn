@@ -128,7 +128,9 @@ let seq = 0;
 // say('Hello', 'Xin chào') speaks the current language (and the other one too in bilingual mode).
 // listeners that show captions for every spoken line (even when the voice is switched off)
 export const spoken = [];
-export function say(en, vi) { const t = swapNames(settings.lang === 'vi' ? (vi ?? en) : en, settings.lang); spoken.forEach(f => { try { f(t); } catch (e) { } }); speak(en, vi); }
+// A real sound can carry its own accessible caption without a second voice spelling the sound aloud.
+export function captionOnly(en: string, vi?: string): void { const t = swapNames(settings.lang === 'vi' ? (vi ?? en) : en, settings.lang); spoken.forEach(f => { try { f(t); } catch (e) { } }); }
+export function say(en, vi) { captionOnly(en, vi); speak(en, vi); }
 // The same, but resolves when it has finished speaking (used by the How-to-play films).
 export function sayAsync(en, vi) { return speak(en, vi); }
 // (owner, 13 Oct: soft music under the story films) how many lines are being spoken now; the theatre lowers its music

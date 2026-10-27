@@ -4,7 +4,7 @@ import { WILD } from './gather.js';
 import { THREE, toon, toonVC, P, merge, sprite, blobShadow } from './gfx.js';
 import { farm, saveFarm, saveProfiles } from './state.js';
 import { T } from './i18n.js';
-import { say } from './voice.js';
+import { say, captionOnly } from './voice.js';
 import { SFX } from './audio.js';
 import { fmt, spoken } from './money.js';
 import { el, esc, pick, shuffle, wait } from './util.js';
@@ -350,7 +350,7 @@ function petAnimal(G, h) {
   const A = G.farm.animals.slice().sort((a, b) => a.obj.position.distanceTo(h.pos) - b.obj.position.distanceTo(h.pos))[0];
   if (!A) { say('The barn is empty. Buy animals from Mr. Bear!', 'Chuồng trống. Mua con vật ở chỗ Bác Gấu nhé!'); return; }
   const d = ANIMALS[A.a.kind]; SFX[d.snd] && SFX[d.snd](); A.hop = .6; G.fx(A.obj.position.x, A.obj.position.y + 1.6, A.obj.position.z, '💕');
-  say({ cluck: 'Cluck cluck!', moo: 'Moo!', baa: 'Baa baa!', oink: 'Oink oink!', neigh: 'Neigh! Sparkle sparkle!' }[d.snd], { cluck: 'Cục ta cục tác!', moo: 'Ụm bò!', baa: 'Be be!', oink: 'Ủn ỉn!', neigh: 'Hí hí! Lấp lánh!' }[d.snd]);
+  captionOnly({ cluck: 'Cluck cluck!', moo: 'Moo!', baa: 'Baa baa!', oink: 'Oink oink!', neigh: 'Neigh! Sparkle sparkle!' }[d.snd], { cluck: 'Cục ta cục tác!', moo: 'Ụm bò!', baa: 'Be be!', oink: 'Ủn ỉn!', neigh: 'Hí hí! Lấp lánh!' }[d.snd]);
   G.job('pet');
 }
 export function petPet(G, P2) { const d = PETS[P2.kind]; SFX[d.snd] && SFX[d.snd](); G.fx(P2.obj.position.x, P2.obj.position.y + 1, P2.obj.position.z, '💕'); G.job('pet'); }
