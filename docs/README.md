@@ -1,5 +1,7 @@
 # Docs: start here
 
+[Studio revamp implementation progress](studio-revamp-progress-20261029/README.md): source inventory/control audit, actual Home changes, validation and remaining work. Continues the master concept below without changing its packaged snapshot.
+
 [Studio revamp: consolidated design, iPhone concepts and next-chat handoff](studio-revamp-master-20261027/README.md) records current implementation, pending work, full management scope and refreshed CI evidence.
 
 The game in this repository is **Sparkle Valley · Thung Lũng Lấp Lánh**. This page says where each kind of note lives.
