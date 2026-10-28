@@ -169,9 +169,9 @@ export function releaseNew(id, now = new Date()) {
 export const featureOn = (id, def = true) => { if (id === 'wayfind') { const r = liveRule(id); return !!(r && r.controlVersion === 1 && r.on === true && releaseOn(id, false)); } if (liveRule(id)) return releaseOn(id, def); const f = CUSTOM.features; return f && typeof f[id] === 'boolean' ? f[id] : def; };
 
 // ---------- Batch rollout (owner, 13 Oct AEDT; docs/cores/FEATURES.md "Batch calendar") ----------
-// Switching a feature off, or giving it a start date still to come, hides it only from children who never used it
-// (FEATURES.md, owner 8 Oct): what a child really used (rode, tapped, opened, finished a step) is kept on their profile
-// (profile.tried = { id: 'YYYY-MM-DD' }) and stays theirs. keptOn: on for these children (anyone playing who used it).
+// A future start date can retain access for children who already used a feature.
+// An explicit owner Off wins over that retention (the owner-approved explicit-off policy, owner 14 Oct). Usage
+// history stays on the profile so re-enabling does not erase earned progress.
 const today = () => new Date().toISOString().slice(0, 10);
 const tried = p => p && p.tried && typeof p.tried === 'object' ? p.tried : null;
 export const hasTried = (p, id) => { const t = tried(p); return !!(t && t[id]); };
@@ -179,7 +179,12 @@ export const hasTried = (p, id) => { const t = tried(p); return !!(t && t[id]); 
 export function markTried(p, id) { if (!p || hasTried(p, id)) return false; p.tried = tried(p) || {}; p.tried[id] = today(); return true; }
 // (the children playing now, set by js/main.js when a session starts: for lists that have no child at hand, the games)
 let PLAYERS = []; export const setPlayers = list => { PLAYERS = Array.isArray(list) ? list.filter(Boolean) : []; };
-export const keptOn = (id, profiles = PLAYERS, def = true) => id === 'wayfind' ? featureOn(id, false) : featureOn(id, def) || (profiles || []).some(p => hasTried(p, id));
+export const keptOn = (id, profiles = PLAYERS, def = true) => {
+  if (id === 'wayfind') return featureOn(id, false);
+  const rule = liveRule(id);
+  if (rule?.on === false || (!rule && CUSTOM.features?.[id] === false)) return false;
+  return featureOn(id, def) || (profiles || []).some(p => hasTried(p, id));
+};
 // what a save from before the rollout already shows a child used (nothing recorded profile.tried then)
 export const MONEY_GAMES = ['heodat', 'coinnote', 'needwant', 'cheaper', 'lixi', 'bahu', 'shoplist', 'waitgrow', 'shopkeep', 'barter'];
 const some = o => !!(o && typeof o === 'object' && Object.keys(o).length);

@@ -46,6 +46,10 @@ export async function ownerDeskBrowserCheck(browser){
    await save('device');await page.locator('#crumb .back').click();await page.waitForSelector('.desk-person-list');assert.equal(await page.locator('.desk-period select').inputValue(),'7','Back restores filter');
    await area(page,'game');await page.waitForSelector('[data-desk-search]');await page.locator('[data-desk-search]').fill('__no_match__');assert.equal(await page.locator('.desk-catalogue button:visible').count(),0,'search actually hides unmatched entries');await page.locator('[data-desk-search]').fill('oanquan');await page.waitForTimeout(50);
    const item=page.locator('.desk-catalogue [data-desk-route="managementactivity:game:oanquan"]');assert.equal(await item.isVisible(),true);await save('game');await item.click();await page.waitForSelector('.mg-content .mg-facts');assert.equal(await page.locator('.mg-error').count(),0,'kind:id preserved in navigation');
+   await area(page,'game');await page.locator('[data-desk-discovery]').selectOption('declared-only');await page.locator('[data-desk-search]').fill('aodai');
+   const declared=page.locator('.desk-catalogue [data-desk-route="managementactivity:game:aodai"]');assert.equal(await declared.isVisible(),true);
+   assert.match(await declared.innerText(),lang==='vi'?/Chỉ mới khai báo/:/Declared only/);assert.ok(await page.locator('.desk-catalogue [data-catalogue-state=declared-only]:visible').count()>0);assert.equal(await page.locator('.desk-catalogue [data-catalogue-state=catalogued]:visible').count(),0);await declared.click();
+   await page.waitForSelector('.mg-declared-only');assert.match(await page.locator('.mg-declared-only').innerText(),lang==='vi'?/chưa được tích hợp/:/not integrated/);await save('declared');
    await area(page,'work');await save('work');await area(page,'money');await page.waitForSelector('[data-chart="G21"]');await save('money');
    await ctx.close();
   }
@@ -68,6 +72,6 @@ export async function ownerDeskBrowserCheck(browser){
   assert.deepEqual(errors,[]);
   const sources=['studio/ui/app.ts','studio/ui/owner-desk.ts','studio/ui/owner-desk.css','studio/ui/brand.ts','studio/ui/desk-charts.ts','studio/ui/management.ts','netlify/lib/management/read.mts','studio/ui/index.html','studio/ui/finance.ts','netlify/lib/management/http.mts','netlify/lib/management/transactional/service.mts','css/style.css','css/fonts.css','js/art.ts','js/icons.js'];
   fs.writeFileSync(path.resolve(output,'../browser-validation.json'),JSON.stringify({passed:true,scope:'Actual Studio UI and authenticated routes, synthetic in-memory data only; browser emulation, not physical devices/live Netlify',captures,errors,sourceHashes:Object.fromEntries(sources.map(file=>[file,createHash('sha256').update(fs.readFileSync('../'+file)).digest('hex')]))},null,2)+'\n');
-  return 'Owner’s Desk: 5 areas, shared game palette/art, 36 EN/VI captures at 3 sizes, real device/problem links, restored filter, kind:id navigation and summary-only privacy';
+  return 'Owner’s Desk: 5 areas, shared game palette/art, 42 EN/VI captures at 3 sizes, real device/problem links, restored filter, kind:id navigation and summary-only privacy';
  }finally{undo();await new Promise(r=>server.close(r));}
 }

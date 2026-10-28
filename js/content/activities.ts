@@ -63,7 +63,7 @@ const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; ret
 export function gameInfo(id) {
   const [area, age, level] = GAME_INFO[id] || ['thinking', 5, 2], c = custom(id);
   // (batch rollout) each money game has its own Studio switch (money_<id>): off or not started yet, it is hidden unless a
-  // child playing has already played it
+  // child playing has already played it; an explicit Off still wins (the owner-approved explicit-off policy)
   // (r90) the second set of games is held back while Studio's New games switch is off (js/content/secondset.ts)
   const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id);
   const orchardHeld = id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','single');

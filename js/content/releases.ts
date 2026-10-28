@@ -60,7 +60,7 @@ RELEASES.push({ id: 'readingTrial', en: 'Reading games (trial): ten games in the
 RELEASE_GROUPS.trial = ['Trials', 'Thử nghiệm'];
 // (batch rollout, owner 13 Oct AEDT; docs/cores/FEATURES.md "Batch calendar") the Round U features and the festival hunt,
 // one switch each, and each money game on its own. All start on; a start date still to come or Off hides one only from
-// children who never used it (js/custom.js keptOn)
+// children who never used it during scheduling; explicit Off wins for everyone in its effective scope (the owner-approved explicit-off policy)
 RELEASES.push(
   { id: 'rideAny', en: 'Ride any vehicle: drive the parked cars and motorbikes', vi: 'Đi mọi loại xe: lái xe hơi và xe máy đang đậu', group: 'world', def: true },
   { id: 'busFares', en: 'Buses, trams and taxis take a passenger for a fare; bus stops with a picture timetable', vi: 'Xe buýt, tàu điện và taxi chở khách có trả tiền vé; trạm xe buýt có bảng giờ bằng hình', group: 'world', def: true },

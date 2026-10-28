@@ -23,7 +23,7 @@ export function managementDatabase() {
 export function managementService(liveStore, db = managementDatabase()) {
   const catalogue = loadManagementCatalogue();
   return createManagementService({ database: db,
-    catalogue: { activityIds: new Set(catalogue.entries.filter(x => x.kind === 'game').map(x => x.id)),
+    catalogue: { activityIds: new Set(catalogue.entries.filter(x => x.kind === 'game' && x.coverage.discovery !== 'declared-only').map(x => x.id)),
       storyIds: new Set(catalogue.entries.filter(x => x.kind === 'story').map(x => x.id)) },
     initialConfig: async () => {
       const S = await liveStore(), live = await readLive(S), content = await readContent(S);

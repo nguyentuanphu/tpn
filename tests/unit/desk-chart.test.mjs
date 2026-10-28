@@ -8,8 +8,8 @@ test('Home counts uncertain source evidence as review without counting one entry
  const good={kind:'game',coverage:{bilingual:true,metadata:true,implementation:true},guide:{sourceAligned:true}};
  const absent={kind:'story'};
  const failing={kind:'game',coverage:{bilingual:false,metadata:false,implementation:false},guide:{sourceAligned:false}};
- assert.deepEqual(summariseCatalogueEvidence([good,absent,failing]),{total:3,games:2,stories:1,review:2});
- assert.deepEqual(summariseCatalogueEvidence([]),{total:0,games:0,stories:0,review:0});
+ assert.deepEqual(summariseCatalogueEvidence([good,absent,failing]),{total:3,games:2,stories:1,declaredOnly:0,review:2});
+ assert.deepEqual(summariseCatalogueEvidence([]),{total:0,games:0,stories:0,declaredOnly:0,review:0});
 });
 test('chart gaps remain unknown and cannot draw a continuous line across absent observations',()=>{
  const markup=deskChart({...spec,points:[{label:'Day one',value:2},{label:'Missing day',value:null},{label:'Day three',value:3}]},T);

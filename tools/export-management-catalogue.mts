@@ -18,7 +18,7 @@ export type ManagementCatalogueEntry = {
   ageMin?: number; difficulty?: number; online?: boolean; learn?: boolean;
   sourceCommit: string | null; sourceFile: string; sourceHash: string;
   guide: { href: string | null; kind: 'section' | 'activity'; verified: boolean; reviewedSource: string | null; sourceAligned: boolean | null };
-  coverage: { bilingual: boolean; implementation: boolean; metadata: boolean; recordings: 'not-audited'; issues: string[] };
+  coverage: { bilingual: boolean; implementation: boolean; metadata: boolean; discovery: 'catalogued' | 'declared-only'; recordings: 'not-audited'; issues: string[] };
   unlock: { secondSet: boolean; featureId: string | null; finishesEach: number; prerequisites: string[] };
   requirements?: { familyQuestions: boolean };
 };
@@ -125,7 +125,7 @@ function git(root: string, args: string[]): string | null {
 }
 
 export function exportManagementCatalogue(root = ROOT): ManagementCatalogue {
-  const files = ['js/games/catalog.ts', 'js/content/activities.ts', 'js/games/learning-meta.ts', 'js/games/readingmenu.ts', 'js/learn.ts', 'js/talesdata.ts', 'js/content/secondset.ts', 'js/content/unlocks.ts', 'js/build.ts', 'home/index.html', 'docs/website-review-20261023/game-review-lock.json'];
+  const files = ['js/games/catalog.ts', 'js/content/activities.ts', 'js/games/learning-meta.ts', 'js/games/readingmenu.ts', 'js/learn.ts', 'js/talesdata.ts', 'js/content/secondset.ts', 'js/content/unlocks.ts', 'js/build.ts', 'home/index.html', 'docs/website-review-20261023/game-review-lock.json', 'js/games/drawing2.ts', 'js/games/crafts.ts', 'tools/export-management-catalogue.mts'];
   const sources = new Map(files.map(f => [f, fs.readFileSync(path.join(root, f), 'utf8')]));
   const src = (f: string) => sources.get(f) || '';
   const parsed = extractGameMetadata(src(files[0]), src(files[1]), src(files[2]), src(files[3]));
@@ -165,7 +165,7 @@ export function exportManagementCatalogue(root = ROOT): ManagementCatalogue {
     const issues = [...(!raw ? ['default-activity-metadata'] : []), ...(!loaderIds.has(game.id) && !isReading ? ['missing-lazy-loader'] : [])];
     entries.push({ id: game.id, kind: 'game', name: { en: text(game.name.en), vi: text(game.name.vi) }, area, ageMin: raw?.[1] || 5, difficulty: raw?.[2] || 2,
       online: game.online, learn: game.learn, sourceCommit: dirtyPaths.length ? null : validCommit, sourceFile: file, sourceHash: hash(src(file)),
-      guide: guideFor('game', game.id), coverage: { bilingual: !!game.name.en && !!game.name.vi, metadata: !!raw, implementation: loaderIds.has(game.id) || isReading, recordings: 'not-audited', issues },
+      guide: guideFor('game', game.id), coverage: { bilingual: !!game.name.en && !!game.name.vi, metadata: !!raw, implementation: loaderIds.has(game.id) || isReading, discovery: 'catalogued', recordings: 'not-audited', issues },
       unlock: { secondSet: secondGameIDs.has(game.id), featureId: secondGameIDs.has(game.id) ? 'newGames' : isReading ? 'readingTrial' : null, finishesEach: secondGameIDs.has(game.id) ? 3 : 0, prerequisites: secondGameIDs.has(game.id) ? [...(firstGames[area] || [])].sort() : [] },
       ...(game.id === 'familyquiz' ? { requirements: { familyQuestions: true } } : {}) });
   }
@@ -175,12 +175,36 @@ export function exportManagementCatalogue(root = ROOT): ManagementCatalogue {
     const file = story.id === 'banhchung' || story.id === 'sontinh' || story.id === 'tiddalik' || story.id === 'change' || story.id === 'monkey' ? 'js/learn.ts' : 'js/talesdata.ts';
     entries.push({ id: story.id, kind: 'story', name: { en: text(story.name.en), vi: text(story.name.vi) }, area: story.area,
       sourceCommit: dirtyPaths.length ? null : validCommit, sourceFile: file, sourceHash: hash(src(file)), guide: guideFor('story', story.id),
-      coverage: { bilingual: !!story.name.en && !!story.name.vi, metadata: true, implementation: story.pages > 0, recordings: 'not-audited', issues: [] },
+      coverage: { bilingual: !!story.name.en && !!story.name.vi, metadata: true, implementation: story.pages > 0, discovery: 'catalogued', recordings: 'not-audited', issues: [] },
       unlock: { secondSet: secondStoryIDs.has(story.id), featureId: secondStoryIDs.has(story.id) ? 'newStories' : null, finishesEach: secondStoryIDs.has(story.id) ? 3 : 0, prerequisites: secondStoryIDs.has(story.id) ? [...(firstStories[story.area] || [])] : [] } });
   }
-  for (const entry of entries) if (!entry.name.en || !entry.name.vi) throw new Error('Missing bilingual name: ' + entry.kind + ':' + entry.id);
-  entries.sort((a, b) => (a.kind + ':' + a.id).localeCompare(b.kind + ':' + b.id));
+  // Keep intended-but-unintegrated IDs visible to management without adding them
+  // to GAME_CATALOG, GAME_LOADERS or the player menu. A registration literal is
+  // source evidence only; it never sets implementation/playability true.
+  const registrations = new Map<string, { name: Pair; file: string }>();
+  const registrationPattern = new RegExp(`\\bregister\\s*\\(\\s*\\{\\s*id\\s*:\\s*(${Q})[\\s\\S]*?name\\s*:\\s*\\(\\)\\s*=>\\s*T\\s*\\(\\s*(${Q})\\s*,\\s*(${Q})\\s*\\)`, 'g');
+  for (const file of ['js/games/drawing2.ts', 'js/games/crafts.ts']) {
+    for (const m of src(file).matchAll(registrationPattern)) {
+      const id = quoted(m[1]);
+      if (registrations.has(id)) throw new Error('Duplicate declared registration: ' + id);
+      registrations.set(id, { name: { en: text(quoted(m[2])), vi: text(quoted(m[3])) }, file });
+    }
+  }
   const missing = [...secondGameIDs].filter(id => !seen.has('game:' + id)).map(id => 'game:' + id).concat([...secondStoryIDs].filter(id => !seen.has('story:' + id)).map(id => 'story:' + id)).sort();
+  for (const key of missing) {
+    const [kind, id] = key.split(':');
+    if (kind !== 'game') continue; // No invented story content or pages.
+    const found = registrations.get(id), area = Object.entries(secondGames).find(([, ids]) => ids.includes(id))?.[0] || 'unknown';
+    const file = found?.file || 'js/content/secondset.ts';
+    entries.push({ id, kind: 'game', name: found?.name || { en: id, vi: id }, area,
+      sourceCommit: dirtyPaths.length ? null : validCommit, sourceFile: file, sourceHash: hash(src(file)),
+      guide: { href: null, kind: 'section', verified: false, reviewedSource, sourceAligned: false },
+      coverage: { bilingual: !!found, metadata: false, implementation: false, discovery: 'declared-only', recordings: 'not-audited',
+        issues: ['declared-without-menu-integration', 'missing-lazy-loader', ...(found ? ['registration-not-runtime-verification'] : ['registration-not-found'])] },
+      unlock: { secondSet: true, featureId: 'newGames', finishesEach: 3, prerequisites: [...(firstGames[area] || [])].sort() } });
+  }
+  for (const entry of entries) if (!entry.name.en || !entry.name.vi) throw new Error('Missing name/ID: ' + entry.kind + ':' + entry.id);
+  entries.sort((a, b) => (a.kind + ':' + a.id).localeCompare(b.kind + ':' + b.id));
   return { schemaVersion: 1, generatedFrom: { commit: validCommit, dirty: dirtyPaths.length > 0, dirtyPaths, sourceHash, build }, website: { reviewedSource, sourceAligned: aligned, anchors }, entries,
     coverage: { games: entries.filter(e => e.kind === 'game').length, stories: stories.length, declaredSecondSetMissingMetadata: missing,
       limitations: ['Private family-authored content is excluded.', 'Website links are verified section anchors, not invented activity routes.', 'Recording playback coverage and runtime outcome are not audited by this static export.', 'Declared second-set IDs missing runtime metadata are coverage gaps, not playable catalogue entries.'] } };

@@ -8,7 +8,7 @@ export type CatalogueEntry = {
   ageMin?: number; difficulty?: number; online?: boolean; learn?: boolean;
   sourceCommit: string | null; sourceFile: string; sourceHash: string;
   guide: { href: string | null; kind: 'section' | 'activity'; verified: boolean; reviewedSource: string | null; sourceAligned: boolean | null };
-  coverage: { bilingual: boolean; implementation: boolean; metadata: boolean; recordings: 'not-audited'; issues: string[] };
+  coverage: { bilingual: boolean; implementation: boolean; metadata: boolean; discovery: 'catalogued' | 'declared-only'; recordings: 'not-audited'; issues: string[] };
   unlock: { secondSet: boolean; featureId: string | null; finishesEach: number; prerequisites: string[] };
   requirements?: { familyQuestions: boolean };
 };
@@ -35,8 +35,8 @@ export class CatalogueError extends Error {
 /** Small Home response; source review only, never a playable/control percentage. */
 export function summariseCatalogueEvidence(entries: Record<string, any>[]) {
   return { total: entries.length, games: entries.filter(e => e.kind === 'game').length,
-    stories: entries.filter(e => e.kind === 'story').length,
-    review: entries.filter(e => e.coverage?.bilingual !== true || e.coverage?.metadata !== true ||
+    stories: entries.filter(e => e.kind === 'story').length, declaredOnly: entries.filter(e => e.coverage?.discovery === 'declared-only').length,
+    review: entries.filter(e => e.coverage?.discovery === 'declared-only' || e.coverage?.bilingual !== true || e.coverage?.metadata !== true ||
       e.coverage?.implementation !== true || e.guide?.sourceAligned !== true).length };
 }
 
@@ -54,7 +54,7 @@ export function parseManagementCatalogue(value: unknown): Catalogue {
     const e: CatalogueEntry = { id, kind: kind as CatalogueEntry['kind'], name: { en: str(n.en), vi: str(n.vi) }, area: str(x.area, 60),
       sourceCommit: sha(x.sourceCommit), sourceFile: /^(js|home)\/[\w./-]+\.(?:ts|js)$/.test(str(x.sourceFile)) ? str(x.sourceFile) : '', sourceHash: HASH.test(str(x.sourceHash)) ? str(x.sourceHash) : '',
       guide: { href, kind: g.kind === 'activity' ? 'activity' : 'section', verified: !!href && g.verified === true, reviewedSource: sha(g.reviewedSource), sourceAligned: tri(g.sourceAligned) },
-      coverage: { bilingual: c.bilingual === true, implementation: c.implementation === true, metadata: c.metadata === true, recordings: 'not-audited', issues: list(c.issues, 30) },
+      coverage: { bilingual: c.bilingual === true, implementation: c.discovery !== 'declared-only' && c.implementation === true, metadata: c.discovery !== 'declared-only' && c.metadata === true, discovery: c.discovery === 'declared-only' ? 'declared-only' : 'catalogued', recordings: 'not-audited', issues: list(c.issues, 30) },
       unlock: { secondSet: u.secondSet === true, featureId: ID.test(str(u.featureId)) ? str(u.featureId) : null, finishesEach: integer(u.finishesEach, 0, 100, 0), prerequisites: list(u.prerequisites, 500).filter(x => ID.test(x)) } };
     if (kind === 'game') { e.ageMin = integer(x.ageMin, 2, 8, 5); e.difficulty = integer(x.difficulty, 1, 3, 2); e.online = x.online === true; e.learn = x.learn === true; }
     if (req.familyQuestions === true) e.requirements = { familyQuestions: true };
@@ -108,13 +108,17 @@ export function explainAvailability(entry: CatalogueEntry, options: Availability
   };
   const retained = (id: string, def = true) => {
     const f = feature(id, def), tried = id !== 'wayfind' && profiles.some(p => !!obj(p.tried)[id]);
+    const r = rule(id);
+    if (id !== 'wayfind' && (r?.on === false || (!r && obj(custom.features)[id] === false)))
+      return { on: false, reason: 'explicit_off', source: r ? 'release' : 'content' };
     return { ...f, on: f.on || tried, reason: !f.on && tried ? 'previously_tried_retained' : f.reason };
   };
   const push = (id: string, r: { on: boolean; reason: string; source: string }) => gates.push({ id, state: r.on ? 'open' : 'closed', reason: r.reason, source: r.source });
   if (entry.kind === 'game') {
+    if (entry.coverage.discovery === 'declared-only') gates.push({ id: 'runtime_integration', state: 'closed', reason: 'declared_without_menu_loader_integration', source: entry.sourceFile });
     const activity = obj(obj(custom.activities)[entry.id]);
     gates.push({ id: 'simple_screen_visibility', state: activity.hide === true ? 'closed' : 'open', reason: activity.hide === true ? 'hidden_on_simple_screen' : 'listed_when_other_gates_open', source: 'content.activities' });
-    if (entry.id.startsWith('rd_')) push('readingTrial', feature('readingTrial', true));
+    if (entry.id.startsWith('rd_')) push('readingTrial', retained('readingTrial', true));
     if (['heodat', 'coinnote', 'needwant', 'cheaper', 'lixi', 'bahu', 'shoplist', 'waitgrow', 'shopkeep', 'barter'].includes(entry.id)) push('money_' + entry.id, retained('money_' + entry.id));
     if (entry.requirements?.familyQuestions) gates.push({ id: 'family_questions', state: Array.isArray(custom.quiz) && custom.quiz.length > 0 ? 'open' : 'unknown', reason: 'requires_current_validated_family_questions', source: 'private content' });
   }

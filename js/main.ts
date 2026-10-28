@@ -1601,8 +1601,8 @@ async function newMoment(h) {
   fresh.forEach(r => { p.seenNew[r.id] = new Date().toISOString().slice(0, 10); }); save();
   await reward('🆕', T('New in the valley!', 'Mới trong thung lũng!'), fresh.map(r => T(r.en, r.vi)).join(' · '));
 }
-// (batch rollout, owner 13 Oct AEDT) a feature held back or switched off in Studio stays for a child who already used it:
-// G.keep(id) is on when its switch is on or anyone playing used it; G.tried(h, id) remembers a use (js/custom.js)
+// Retain used access during future scheduling, but an explicit owner Off wins
+// (the owner-approved explicit-off policy). G.tried remembers usage without removing saved progress (js/custom.ts).
 G.keep = (id, def = true) => keptOn(id, G.heroes.map(h => h.profile), def);
 G.tried = (h, id) => { const p = h && (h.profile || h); if (markTried(p, id)) save(); };
 function startSession(mode, chosen) {

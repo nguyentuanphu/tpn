@@ -4570,9 +4570,9 @@ await check('secondset', async () => {
 });
 
 await check('rollout', async () => {
-  // (batch rollout, owner 13 Oct AEDT; docs/cores/FEATURES.md "Batch calendar") every new Studio switch: off (or not started
-  // yet) hides its feature from a child who never used it, keeps it for a child who did (profile.tried), and brings it back
-  // when switched on; a release starting today shows the New! card; a tester device sees a batch 7 days early
+  // the owner-approved explicit-off policy: explicit Off wins over remembered usage. Future scheduling can retain
+  // access without deleting progress; On restores access. Keep actual feature probes,
+  // old-save migration, New cards and tester early-schedule checks.
   const out = [];
   const P = await open(b, { w: 1024, h: 700, schedule: true }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
@@ -4627,17 +4627,22 @@ await check('rollout', async () => {
         C.CUSTOM.releases.wayfind = {on:true,controlVersion:1}; const explicitOn = !!(await probe());
         C.CUSTOM.releases.wayfind = {on:false,controlVersion:1}; const explicitOff = !(await probe());
         if(previous) C.CUSTOM.releases.wayfind=previous; else delete C.CUSTOM.releases.wayfind;
-        res[id]={hidden:defaultHidden && legacyHidden && oldRuleHidden && explicitOff,kept:explicitOff,back:explicitOn};continue;
+        res[id]={hidden:defaultHidden && legacyHidden && oldRuleHidden && explicitOff,offAfterUse:explicitOff,back:explicitOn};continue;
       }
       delete p.tried; F[id] = false; const hidden = !(await probe());
-      C.markTried(p, id); const kept = !!(await probe());
+      C.markTried(p, id); const offAfterUse = !(await probe());
+      const history = JSON.stringify(p.tried), progressPreserved = C.hasTried(p,id);
+      C.CUSTOM.releases[id] = {on:true,start:'2099-01-01'};
+      const retainedDuringSchedule = !!(await probe());
+      const stillPreserved = JSON.stringify(p.tried) === history;
+      delete C.CUSTOM.releases[id];
       delete p.tried; F[id] = true; const back = !!(await probe());
-      res[id] = { hidden, kept, back };
+      res[id] = { hidden, offAfterUse, back, progressPreserved, retainedDuringSchedule, stillPreserved };
     }
-    for (const [id, probe] of Object.entries(scenery)) { F[id] = false; const hidden = !(await probe()); F[id] = true; const back = !!(await probe()); res[id] = { hidden, kept: true, back }; }
+    for (const [id, probe] of Object.entries(scenery)) { F[id] = false; const hidden = !(await probe()); F[id] = true; const back = !!(await probe()); res[id] = { hidden, offAfterUse: true, back }; }
     C.CUSTOM.releases = shipped;
     const sched = Object.entries(shipped).filter(([, r]) => r && r.start).map(([id, r]) => ({ id, before: C.releaseOn(id, true, new Date(new Date(r.start + 'T00:00:00').getTime() - 864e5)), on: C.releaseOn(id, true, new Date(r.start + 'T12:00:00')) }));
-    res.schedule = { hidden: sched.length >= 20 && sched.every(x => !x.before), kept: true, back: sched.every(x => x.on), n: sched.length };
+    res.schedule = { hidden: sched.length >= 20 && sched.every(x => !x.before), offAfterUse: true, back: sched.every(x => x.on), n: sched.length };
     // every new switch is in Studio's list, starts on, and says what it is in both languages
     const { RELEASES } = await import('/js/content/releases.js');
     const missing = Object.keys(probes).concat(Object.keys(scenery)).filter(id => { const x = RELEASES.find(r => r.id === id); return !x || x.def !== (id !== 'wayfind') || !x.en || !x.vi || x.en === x.vi; });
@@ -4649,7 +4654,7 @@ await check('rollout', async () => {
     const live = JSON.parse(localStorage.getItem('sv2_live') || '{}');
     return { res, missing, fromSave, day3: day(3), day9: day(9), live: !!live };
   });
-  for (const [id, x] of Object.entries(r.res)) if (!x.hidden || !x.kept || !x.back) out.push(id + ' ' + JSON.stringify(x));
+  for (const [id, x] of Object.entries(r.res)) if (!x.hidden || !x.offAfterUse || x.progressPreserved === false || x.retainedDuringSchedule === false || x.stillPreserved === false || !x.back) out.push(id + ' ' + JSON.stringify(x));
   if (r.missing.length) out.push('not in Studio\'s list as a switch that starts on: ' + r.missing.join(', '));
   if (!r.fromSave) out.push('an old save did not count as used');
   if (P.errors.length) out.push(P.errors.join(' '));
@@ -4672,7 +4677,14 @@ await check('rollout', async () => {
   if (Q.errors.length) out.push(Q.errors.join(' '));
   await Q.ctx.close();
   ok(!out.length, out.join(' | '));
-  return `${Object.keys(r.res).length} switches: off hides each from a child who never used it, a child who used it keeps it, on brings it back; an old save counts; the New! card on the start day; testers 7 days early`;
+  if (process.env.STUDIO_CONTROL_REVIEW_DIR) {
+    const folder = process.env.STUDIO_CONTROL_REVIEW_DIR;
+    fs.mkdirSync(folder, { recursive: true });
+    fs.writeFileSync(folder + '/rollout-evidence.json', JSON.stringify({ passed: true, features: r.res,
+      missingDeclarations: r.missing, oldSaveUsagePreserved: r.fromSave, scheduleAndTester: n,
+      scope: 'Actual game consumer probes with synthetic profiles; not physical-device or all-control certification' }, null, 2) + '\n');
+  }
+  return `${Object.keys(r.res).length} switches: explicit off hides each before and after use, progress stays intact, future schedules retain used access, on brings it back; an old save counts; the New! card on the start day; testers 7 days early`;
 });
 await check('questbar', async () => {
   // (Round V, owner 13 Oct, iPhone notes) a tap on the quest folds it to a small chip and hides the yellow arrow and the
