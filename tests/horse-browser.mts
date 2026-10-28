@@ -40,6 +40,7 @@ export async function horseBrowserCheck(browser:Browser){
    assert.equal(await P.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
    await P.page.locator('.gl-stage').evaluate(stage=>{stage.scrollTop=0;});
    const outside=await P.page.locator('.horse-roster,.horse-board,[data-horse-roll]').evaluateAll(nodes=>nodes.map(e=>{const r=e.getBoundingClientRect();return{cls:e.className,top:r.top,bottom:r.bottom,left:r.left,right:r.right};}).filter(r=>r.top<0||r.bottom>innerHeight+1||r.left<0||r.right>innerWidth+1));assert.deepEqual(outside,[],'the board, seats and roll control must fit the reviewed viewport: '+JSON.stringify(outside));
+   await P.page.locator('.gl[data-game-id=cacuangua]').evaluate(async layer=>{await new Promise<void>(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r())));await Promise.allSettled(layer.getAnimations().map(a=>a.finished));});
    await P.page.screenshot({path:`out/horse-board/${device}-${lang}-${little?'gentle':'classic'}.png`});
   }
   assert.deepEqual(P.errors,[]);return `Real human/helper gentle match finished in ${actions} actions; 16/56-cell boards, all four classic seats, real movement and 64px controls in12 bilingual/device layouts`;
