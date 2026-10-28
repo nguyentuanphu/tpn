@@ -194,6 +194,7 @@ export function exportManagementCatalogue(root = ROOT): ManagementCatalogue {
   for (const key of missing) {
     const [kind, id] = key.split(':');
     if (kind !== 'game') continue; // No invented story content or pages.
+    if (!ID.test(id)) throw new Error('Invalid declared game ID: ' + id);
     const found = registrations.get(id), area = Object.entries(secondGames).find(([, ids]) => ids.includes(id))?.[0] || 'unknown';
     const file = found?.file || 'js/content/secondset.ts';
     entries.push({ id, kind: 'game', name: found?.name || { en: id, vi: id }, area,

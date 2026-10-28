@@ -49,7 +49,7 @@ export async function ownerDeskBrowserCheck(browser){
    await area(page,'game');await page.locator('[data-desk-discovery]').selectOption('declared-only');await page.locator('[data-desk-search]').fill('aodai');
    const declared=page.locator('.desk-catalogue [data-desk-route="managementactivity:game:aodai"]');assert.equal(await declared.isVisible(),true);
    assert.match(await declared.innerText(),lang==='vi'?/Chỉ mới khai báo/:/Declared only/);assert.ok(await page.locator('.desk-catalogue [data-catalogue-state=declared-only]:visible').count()>0);assert.equal(await page.locator('.desk-catalogue [data-catalogue-state=catalogued]:visible').count(),0);await declared.click();
-   await page.waitForSelector('.mg-declared-only');assert.match(await page.locator('.mg-declared-only').innerText(),lang==='vi'?/chưa được tích hợp/:/not integrated/);await save('declared');
+   await page.waitForSelector('.mg-declared-only');assert.match(await page.locator('.mg-declared-only').innerText(),lang==='vi'?/chưa được tích hợp/:/not integrated/);await save('declared');await page.locator('#crumb .back').click();await page.waitForSelector('[data-desk-discovery]');assert.equal(await page.locator('[data-desk-discovery]').inputValue(),'declared-only','Back restores the integration filter');assert.equal(await page.locator('[data-desk-search]').inputValue(),'aodai','Back restores the content search');
    await area(page,'work');await save('work');await area(page,'money');await page.waitForSelector('[data-chart="G21"]');await save('money');
    await ctx.close();
   }
