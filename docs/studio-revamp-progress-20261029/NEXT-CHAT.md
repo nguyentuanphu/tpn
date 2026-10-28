@@ -1,5 +1,7 @@
 # Continuation after Home and source audit
 
+**Later implementation:** [explicit Off and declared-content continuation](../studio-control-continuation-20261029/NEXT-CHAT.md) supersedes this source/CI pointer. Current runtime d15b6af4/full run40789704114 includes the Home slice. Run40784169211 was superseded/cancelled; do not restart it or treat it as a full pass. The text below remains historical checkpoint context.
+
 Start with this folder's README.md, RESUME-STATE.md, HOME-FIELD-MAP.md, SCHEMA-CHANGES.md, INVENTORY.json/md, CONTROL-COVERAGE.json/md and VALIDATION.md. Then read the frozen master handbook in docs/studio-revamp-master-20261027 and the repository rules/board/release notes. Do not restart the existing foundation.
 
 Runtime revision for this slice: **17cb0c5c87ac7095cbebee2bb9a3010daed001db**. New comprehensive all=true run: **40784169211**, https://github.com/nguyentuanphu/tpn/actions/runs/40784169211. Its exact observed state belongs in VALIDATION.md/evidence; do not equate the earlier35bcb63c run's success with this one. Collect actual per-share results and collector, preserve failures/retries/unknowns and the appropriate code-map artifact. No concurrent local suites.

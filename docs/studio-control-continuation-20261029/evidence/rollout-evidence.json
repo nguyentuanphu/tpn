@@ -1,0 +1,225 @@
+{
+  "passed": true,
+  "features": {
+    "rideAny": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "busFares": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "rideBikes": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "xichloRides": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "wayfind": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true
+    },
+    "jobs": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "villagerTalk": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "singers": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "priceTags": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "sellersRemember": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "owlGuide": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "houseGuide": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "festHunt": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_heodat": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_coinnote": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_needwant": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_cheaper": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_lixi": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_bahu": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_shoplist": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_waitgrow": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_shopkeep": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "money_barter": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "progressPreserved": true,
+      "retainedDuringSchedule": true,
+      "stillPreserved": true
+    },
+    "animalHomes": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true
+    },
+    "festDecoBig": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true
+    },
+    "dayPlan": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true
+    },
+    "schedule": {
+      "hidden": true,
+      "offAfterUse": true,
+      "back": true,
+      "n": 20
+    }
+  },
+  "missingDeclarations": [],
+  "oldSaveUsagePreserved": true,
+  "scheduleAndTester": {
+    "card": "NEWNew in the valley!Village job boards: helping jobs for coins and a sticker",
+    "before": {
+      "wayfind": false,
+      "singers": false,
+      "jobs": true,
+      "isNew": true,
+      "keepWay": false
+    },
+    "tester": {
+      "wayfind": true,
+      "singers": false
+    },
+    "seen": true
+  },
+  "scope": "Actual game consumer probes with synthetic profiles; not physical-device or all-control certification"
+}

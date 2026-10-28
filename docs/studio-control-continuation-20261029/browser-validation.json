@@ -1,0 +1,360 @@
+{
+  "passed": true,
+  "scope": "Actual Studio UI and authenticated routes, synthetic in-memory data only; browser emulation, not physical devices/live Netlify",
+  "captures": [
+    {
+      "lang": "en",
+      "width": 390,
+      "height": 844,
+      "key": "today",
+      "file": "en-390-today.png",
+      "viewportFile": "en-390-today-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "height": 844,
+      "key": "people",
+      "file": "en-390-people.png",
+      "viewportFile": "en-390-people-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "height": 844,
+      "key": "device",
+      "file": "en-390-device.png",
+      "viewportFile": "en-390-device-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "height": 844,
+      "key": "game",
+      "file": "en-390-game.png",
+      "viewportFile": "en-390-game-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "height": 844,
+      "key": "declared",
+      "file": "en-390-declared.png",
+      "viewportFile": "en-390-declared-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "height": 844,
+      "key": "work",
+      "file": "en-390-work.png",
+      "viewportFile": "en-390-work-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "height": 844,
+      "key": "money",
+      "file": "en-390-money.png",
+      "viewportFile": "en-390-money-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 390,
+      "height": 844,
+      "key": "today",
+      "file": "vi-390-today.png",
+      "viewportFile": "vi-390-today-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 390,
+      "height": 844,
+      "key": "people",
+      "file": "vi-390-people.png",
+      "viewportFile": "vi-390-people-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 390,
+      "height": 844,
+      "key": "device",
+      "file": "vi-390-device.png",
+      "viewportFile": "vi-390-device-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 390,
+      "height": 844,
+      "key": "game",
+      "file": "vi-390-game.png",
+      "viewportFile": "vi-390-game-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 390,
+      "height": 844,
+      "key": "declared",
+      "file": "vi-390-declared.png",
+      "viewportFile": "vi-390-declared-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 390,
+      "height": 844,
+      "key": "work",
+      "file": "vi-390-work.png",
+      "viewportFile": "vi-390-work-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 390,
+      "height": 844,
+      "key": "money",
+      "file": "vi-390-money.png",
+      "viewportFile": "vi-390-money-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 820,
+      "height": 1180,
+      "key": "today",
+      "file": "en-820-today.png",
+      "viewportFile": "en-820-today-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 820,
+      "height": 1180,
+      "key": "people",
+      "file": "en-820-people.png",
+      "viewportFile": "en-820-people-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 820,
+      "height": 1180,
+      "key": "device",
+      "file": "en-820-device.png",
+      "viewportFile": "en-820-device-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 820,
+      "height": 1180,
+      "key": "game",
+      "file": "en-820-game.png",
+      "viewportFile": "en-820-game-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 820,
+      "height": 1180,
+      "key": "declared",
+      "file": "en-820-declared.png",
+      "viewportFile": "en-820-declared-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 820,
+      "height": 1180,
+      "key": "work",
+      "file": "en-820-work.png",
+      "viewportFile": "en-820-work-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 820,
+      "height": 1180,
+      "key": "money",
+      "file": "en-820-money.png",
+      "viewportFile": "en-820-money-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 820,
+      "height": 1180,
+      "key": "today",
+      "file": "vi-820-today.png",
+      "viewportFile": "vi-820-today-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 820,
+      "height": 1180,
+      "key": "people",
+      "file": "vi-820-people.png",
+      "viewportFile": "vi-820-people-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 820,
+      "height": 1180,
+      "key": "device",
+      "file": "vi-820-device.png",
+      "viewportFile": "vi-820-device-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 820,
+      "height": 1180,
+      "key": "game",
+      "file": "vi-820-game.png",
+      "viewportFile": "vi-820-game-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 820,
+      "height": 1180,
+      "key": "declared",
+      "file": "vi-820-declared.png",
+      "viewportFile": "vi-820-declared-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 820,
+      "height": 1180,
+      "key": "work",
+      "file": "vi-820-work.png",
+      "viewportFile": "vi-820-work-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 820,
+      "height": 1180,
+      "key": "money",
+      "file": "vi-820-money.png",
+      "viewportFile": "vi-820-money-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "height": 1000,
+      "key": "today",
+      "file": "en-1440-today.png",
+      "viewportFile": "en-1440-today-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "height": 1000,
+      "key": "people",
+      "file": "en-1440-people.png",
+      "viewportFile": "en-1440-people-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "height": 1000,
+      "key": "device",
+      "file": "en-1440-device.png",
+      "viewportFile": "en-1440-device-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "height": 1000,
+      "key": "game",
+      "file": "en-1440-game.png",
+      "viewportFile": "en-1440-game-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "height": 1000,
+      "key": "declared",
+      "file": "en-1440-declared.png",
+      "viewportFile": "en-1440-declared-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "height": 1000,
+      "key": "work",
+      "file": "en-1440-work.png",
+      "viewportFile": "en-1440-work-viewport.png"
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "height": 1000,
+      "key": "money",
+      "file": "en-1440-money.png",
+      "viewportFile": "en-1440-money-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 1440,
+      "height": 1000,
+      "key": "today",
+      "file": "vi-1440-today.png",
+      "viewportFile": "vi-1440-today-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 1440,
+      "height": 1000,
+      "key": "people",
+      "file": "vi-1440-people.png",
+      "viewportFile": "vi-1440-people-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 1440,
+      "height": 1000,
+      "key": "device",
+      "file": "vi-1440-device.png",
+      "viewportFile": "vi-1440-device-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 1440,
+      "height": 1000,
+      "key": "game",
+      "file": "vi-1440-game.png",
+      "viewportFile": "vi-1440-game-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 1440,
+      "height": 1000,
+      "key": "declared",
+      "file": "vi-1440-declared.png",
+      "viewportFile": "vi-1440-declared-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 1440,
+      "height": 1000,
+      "key": "work",
+      "file": "vi-1440-work.png",
+      "viewportFile": "vi-1440-work-viewport.png"
+    },
+    {
+      "lang": "vi",
+      "width": 1440,
+      "height": 1000,
+      "key": "money",
+      "file": "vi-1440-money.png",
+      "viewportFile": "vi-1440-money-viewport.png"
+    }
+  ],
+  "errors": [],
+  "sourceHashes": {
+    "studio/ui/app.ts": "87874ecf5386d688a59ef3ab81a45f478aa8a742a4e40ec4db44900b33b93cad",
+    "studio/ui/owner-desk.ts": "17c1ed2fb4836d52306bb9347e5804aa0ef6c6c5088c9fcc72fb91a1e83453d4",
+    "studio/ui/owner-desk.css": "a1b023f3ea07cfe8a2d0a34f73d53db20c5f2eb0180630f1c2ac55cf5952644b",
+    "studio/ui/brand.ts": "31baf1dac40d3afe1fbe8cc88ea86afdf7c9576b2e70f49c0600c8f24656411f",
+    "studio/ui/desk-charts.ts": "c565bde473941a45e48c4b90589453d7017da22ca7e1b3fb6745348a4c1e8b40",
+    "studio/ui/management.ts": "ec366a00ec7da25f49d2e624b9f0683c800a232ff77d3dc5385d38609eaf43fc",
+    "netlify/lib/management/read.mts": "52394e21fa4a8b6cbf516579f50d5bce158c8163f5c4a04b2557f7317b20b0b7",
+    "studio/ui/index.html": "805217e7fe11c553eff9a1503907a0bae68f0b1e087b39146f6b71880f31b33b",
+    "studio/ui/finance.ts": "adc1903bb85417f2b9f01a2ed6d1df97365ee033991a22c9788c80fc99461e0b",
+    "netlify/lib/management/http.mts": "249fa1c7b29ea71bce330f0c0744cd9e323ceb0e1cfe63c11b2fc319cfa75431",
+    "netlify/lib/management/transactional/service.mts": "f8e04d340ae81499f1d3023e242c571c910dc03d00daa0a1b28e99ac1e0eb7f0",
+    "css/style.css": "6786a5fac9cf4592af2dc0c5d6c5065dac7e773c06b4db6036fed83cddb18e1a",
+    "css/fonts.css": "39ebbc57389e5483f75d76d5af4df86b10bf64e3533b256c956197b2f7190b3e",
+    "js/art.ts": "c75c671b9a569dc7fcfe53889f65542cd4b34860ccc60f78b97ed834aafab365",
+    "js/icons.js": "59f5aa0182743f434936d936a5508c5038f55a8a8bf6a376df7f7f0223e9b4f7"
+  }
+}

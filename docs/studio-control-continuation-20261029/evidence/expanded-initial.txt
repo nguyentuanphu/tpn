@@ -1,0 +1,2 @@
+5/6 checks passed in 1 min (1 at a time)
+FAILED rules: named in code but not in the registry: UX-008

@@ -1,0 +1,15 @@
+{
+  "runtimeCommit": "d15b6af42eb775cc908d9024ea7bc3d38ad262e6",
+  "sourceHashesMatchCaptures": true,
+  "sourceCatalogueSha256": "2a0178e03449def682c64e910ef5b9b9a1d86a3d873e559811288f229dac06e8",
+  "catalogueGeneratedFrom": {
+    "commit": "48bb4bc4e72f4c1ade6ecdf6d713077cc08be106",
+    "dirty": false,
+    "dirtyPaths": [],
+    "sourceHash": "35ad2a6c231576b1a7cd97a3692fc347e935b6fc95ec5d02eed412197426f096",
+    "build": "v1.02"
+  },
+  "preservedHistoricalArtifacts": 19,
+  "browserViews": 42,
+  "physicalDeviceVerification": false
+}
