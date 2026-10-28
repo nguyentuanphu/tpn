@@ -114,7 +114,7 @@ RELEASES.push(
 
 // Orchard remains tester-only. Fruit Bar public modes serve all ages; preview still requires a tester.
 for (const [id,en,vi] of [['sparkleorchard','Orchard Quest','Nhiệm vụ vườn quả'],['sparklefruitbar','Fruit Bar','Bảng trái cây']]) {
- RELEASES.push({id:id+'_tester',en:en+': enable invited tester preview only',vi:vi+': chỉ bật bản thử cho người thử được mời',group:'tools',def:false},
+ RELEASES.push({id:id+'_tester',en:en+(id==='sparkleorchard'?': invited tester preview (works while tester modes are off; never opens for non-testers)':': enable invited tester preview only'),vi:vi+(id==='sparkleorchard'?': bản thử cho người thử được mời (dùng được khi các chế độ thử đang tắt; không mở cho người chưa thử)':': chỉ bật bản thử cho người thử được mời'),group:'tools',def:false},
  {id:id+'_single',en:en+(id==='sparklefruitbar'?': single-device play for everyone':': tester single-device play'),vi:vi+(id==='sparklefruitbar'?': mọi người chơi cùng máy':': người thử chơi cùng máy'),group:'tools',def:false},
  {id:id+'_multi',en:en+(id==='sparklefruitbar'?': online multiplayer for everyone':': tester online multiplayer'),vi:vi+(id==='sparklefruitbar'?': mọi người chơi nhiều máy':': người thử chơi nhiều máy'),group:'tools',def:false});
 }

@@ -5,7 +5,8 @@ import { orchardStart, orchardStop, orchardSessionTier } from '../js/games/parad
 import { barStart, barApply, barResult, BAR_SYMBOLS } from '../js/games/fruitbar-engine.ts';
 import { ArcadeSession, controlsArcadeTurn } from '../js/games/arcade-session.ts';
 import type { ArcadeOnline } from '../js/games/arcade-session.ts';
-import { testerArcadeAllowed, familyArcadeAllowed } from '../js/content/tester-arcades.ts';
+import { testerArcadeAllowed, familyArcadeAllowed, testerArcadeAvailable } from '../js/content/tester-arcades.ts';
+import { CUSTOM } from '../js/custom.js';
 
 test('Orchard is deterministic, every required picture exists and 1–4 seats can complete',()=>{
  for(let seats=1;seats<=4;seats++)for(let tier=0;tier<4;tier++){
@@ -20,8 +21,32 @@ test('Orchard validates inputs and assists after repeated misses without fake ra
  for(let i=0;i<4;i++)s=orchardStop(s,0)!;
  assert.equal(s.complete,true);assert.equal(s.combo,null);assert.equal(s.last,'key');
 });
-test('tester mode can never publish to a non-tester and master/mode off win',()=>{
- for(const tester of[false,true])for(const master of[false,true])for(const mode of[false,true])assert.equal(testerArcadeAllowed(tester,master,mode),tester&&master&&mode);
+// Owner report (29 Oct AEDT): Studio enabled all three previews, but Orchard alone was
+// hidden because it incorrectly required a second mode switch. Preview is an alternative
+// route for accepted testers, as with Fruit Parade and Fruit Bar; it never publishes Orchard.
+test('Orchard preview or requested mode admits accepted testers only; both off hides it',()=>{
+ for(const tester of[false,true])for(const preview of[false,true])for(const mode of[false,true])assert.equal(testerArcadeAllowed(tester,preview,mode),tester&&(preview||mode));
+ assert.equal(testerArcadeAllowed(true,true,false),true,'preview alone opens the invited tester game');
+ assert.equal(testerArcadeAllowed(true,false,true),true,'requested tester mode can run without preview');
+ assert.equal(testerArcadeAllowed(true,false,false),false,'all Orchard controls off hides it');
+ assert.equal(testerArcadeAllowed(false,true,true),false,'both switches on never grant non-testers access');
+});
+test('Orchard actual preview gate requires consent, global tester permission and selected-device eligibility',()=>{
+ const before=CUSTOM.releases,storage=Object.getOwnPropertyDescriptor(globalThis,'localStorage');
+ let consent={at:1,stopped:0};
+ Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem:(key:string)=>key==='sv2_playerid'?'orchardfixture01':key==='sv2_tester'?JSON.stringify(consent):null}});
+ try{
+  CUSTOM.releases={tester:{on:true},sparkleorchard_tester:{on:true},sparkleorchard_single:{on:false},sparkleorchard_multi:{on:false}};
+  assert.equal(testerArcadeAvailable('sparkleorchard','single'),true);
+  assert.equal(testerArcadeAvailable('sparkleorchard','multi'),true);
+  consent={at:0,stopped:0};assert.equal(testerArcadeAvailable('sparkleorchard','single'),false,'no agreement');
+  consent={at:1,stopped:1};assert.equal(testerArcadeAvailable('sparkleorchard','single'),false,'stopped testing');
+  consent={at:1,stopped:0};CUSTOM.releases.tester={on:false};assert.equal(testerArcadeAvailable('sparkleorchard','single'),false,'global tester switch off');
+  CUSTOM.releases.tester={on:true,devices:['anotherdevice']};assert.equal(testerArcadeAvailable('sparkleorchard','single'),false,'different invited device');
+  CUSTOM.releases.tester={on:true,devices:['orchardfixture01']};CUSTOM.releases.sparkleorchard_tester={on:false};CUSTOM.releases.sparkleorchard_single={on:true};
+  assert.equal(testerArcadeAvailable('sparkleorchard','single'),true);assert.equal(testerArcadeAvailable('sparkleorchard','multi'),false,'the other mode stays off when preview is off');
+  CUSTOM.releases.sparkleorchard_single={on:false};assert.equal(testerArcadeAvailable('sparkleorchard','single'),false,'all Orchard switches off');
+ }finally{CUSTOM.releases=before;if(storage)Object.defineProperty(globalThis,'localStorage',storage);else delete globalThis.localStorage;}
 });
 test('Family Fruit Bar public modes allow non-testers; preview alone requires accepted testers',()=>{
  for(const published of[false,true])for(const preview of[false,true])for(const tester of[false,true])assert.equal(familyArcadeAllowed(published,preview,tester),published||preview&&tester);

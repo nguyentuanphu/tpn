@@ -170,6 +170,7 @@ marketing/source/runvalley.log
 /js/install.js
 /js/keepcopy.js
 /js/lanterns.js
+/js/launch.js
 /js/learn.js
 /js/lotus.js
 /js/main.js
@@ -188,6 +189,7 @@ marketing/source/runvalley.log
 /js/printpage.js
 /js/recorder.js
 /js/relay.js
+/js/render-recovery.js
 /js/report-outbox.js
 /js/report.js
 /js/rideview.js

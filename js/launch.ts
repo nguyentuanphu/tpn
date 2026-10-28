@@ -1,9 +1,9 @@
 // Paint the Welcome shell before importing the world. Keep recovery reachable even if an import fails.
-const shell = document.getElementById('boot');
+const shell = document.getElementById('boot')!;
 const words = [
   ['Welcome to Sparkle Valley', 'Chào mừng đến Thung Lũng Lấp Lánh'],
   ['Opening the game…', 'Đang mở trò chơi…'],
-  ['The game could not finish loading. Check your connection and try again.', 'Trò chơi chưa tải xong. Kiểm tra kết nối rồi thử lại nhé.'],
+  ['The game could not finish opening. Your saved progress is kept. Try again.', 'Trò chơi chưa mở xong. Tiến trình đã lưu vẫn được giữ. Thử lại nhé.'],
   ['Try again', 'Thử lại'],
   ['A new update is available. Your progress stays saved.', 'Có bản cập nhật mới. Tiến trình của con vẫn được lưu.'],
   ['Update now', 'Cập nhật'],
@@ -16,8 +16,8 @@ shell.querySelector('h1').textContent = text[0]; shell.querySelector('p').textCo
 window.svLaunchProgress = (value, total, label) => {
   let meter = document.querySelector('.launch-progress');
   if (!meter) { meter = document.createElement('div'); meter.className = 'launch-progress'; meter.innerHTML = '<progress></progress><span role="status"></span>'; (document.querySelector('.screen.title, .bootwait') || shell).appendChild(meter); }
-  meter.querySelector('progress').max = total; meter.querySelector('progress').value = value;
-  meter.querySelector('span').textContent = label;
+  meter.querySelector('progress')!.max = total; meter.querySelector('progress')!.value = value;
+  meter.querySelector('span')!.textContent = label;
   if (value >= total) meter.remove();
 };
 // (owner point 10) the notice never sits over an activity: it waits while a game, talk, story or film is open (it had
@@ -65,7 +65,7 @@ window.svWatchUpdates = reg => {
   if (reg.waiting) { if (playing()) window.svOfferUpdate(); else reg.waiting.postMessage({ type: 'SKIP_WAITING' }); }
   reg.addEventListener('updatefound', () => { const next = reg.installing; next?.addEventListener('statechange', () => { if (next.state === 'installed' && navigator.serviceWorker.controller && playing()) window.svOfferUpdate(); }); });
   navigator.serviceWorker.addEventListener('controllerchange', () => { const was = had; had = true; if (!was) return; if (playing()) window.svOfferUpdate(); else location.reload(); });
-  let last = Date.now(); const check = force => { if (!force && Date.now() - last < (window.svUpdateGap ?? 60000)) return; last = Date.now(); reg.update().catch(() => { }); };
+  let last = Date.now(); const check = (force = false) => { if (!force && Date.now() - last < (window.svUpdateGap ?? 60000)) return; last = Date.now(); reg.update().catch(() => { }); };
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') check(); });
   addEventListener('online', () => check());
   setInterval(() => check(true), 30 * 60000);
@@ -73,16 +73,28 @@ window.svWatchUpdates = reg => {
 // (owner point 11, #140 #141 #184-#193) a part of the game that loads later (a story's film, a festival's decorations)
 // can be gone: this page is an older version whose files were replaced since it opened. Offer the update instead of a
 // broken activity. Code that catches its own import failure passes it here too.
-window.svModuleGone = e => { if (/import.*module|module.*fetch|module script/i.test(String(e?.message || e))) { window.svOfferUpdate(true); return true; } return false; };
+window.svModuleGone = e => { if (/import.*module|module.*fetch|module script/i.test(String(e && typeof e === 'object' && 'message' in e ? e.message : e))) { window.svOfferUpdate(true); return true; } return false; };
 addEventListener('unhandledrejection', e => window.svModuleGone(e.reason));
 await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 try { await import('./main.js'); }
 catch (error) {
-  console.error(error); document.body.appendChild(shell); shell.hidden = false; shell.querySelector('p').textContent = text[2];
-  shell.querySelector('progress').removeAttribute('value'); const retry = document.createElement('button'); retry.textContent = text[3]; retry.onclick = () => location.reload(); shell.appendChild(retry);
+  console.error(error); document.body.appendChild(shell); shell.hidden = false; shell.style.overflowY = 'auto';
+  // An early renderer failure used to replace this shell; recovery must not throw on missing children.
+  let heading = shell.querySelector('h1'); if (!heading) { heading = document.createElement('h1'); shell.prepend(heading); } heading.textContent = text[0];
+  let detail = shell.querySelector('p'); if (!detail) { detail = document.createElement('p'); shell.append(detail); }
+  const graphics = error instanceof Error && error.name === 'GraphicsUnavailableError';
+  detail.textContent = graphics
+    ? (lang === 'vi' ? 'Chưa khởi động được hình ảnh 3D. Đóng ứng dụng khác rồi thử lại. Tiến trình đã lưu vẫn được giữ.' : 'The 3D picture could not start. Close other apps, then try again. Your saved progress is kept.')
+    : navigator.onLine === false ? (lang === 'vi' ? 'Bản lưu trên máy chưa tải đủ. Kết nối mạng một lần rồi thử lại nhé.' : 'The saved game is not fully downloaded. Connect once, then try again.') : text[2];
+  Object.assign(detail.style, { maxWidth: 'min(640px,100%)', boxSizing: 'border-box', whiteSpace: 'normal', overflowWrap: 'anywhere', lineHeight: '1.4', borderRadius: '20px' });
+  shell.querySelector('progress')?.remove();
+  const retry = document.createElement('button'); retry.dataset.launchRetry = ''; retry.textContent = text[3]; retry.onclick = () => location.reload(); shell.appendChild(retry);
+
 }
 
 // Save the complete offline game after startup, so optional chunks do not compete with it.
 if ('serviceWorker' in navigator && location.protocol.startsWith('http') && !/localhost|127\.0\.0\.1/.test(location.hostname)) {
   navigator.serviceWorker.register('sw.js').then(reg => window.svWatchUpdates(reg)).catch(() => {});
 }
+
+export {};

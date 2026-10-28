@@ -74,6 +74,7 @@
     "../js/audio.ts",
     "../js/viwords.ts",
     "../js/main.ts",
+    "../js/launch.ts",
     "../js/world.ts",
     "../js/solids.ts",
     "../js/avatar.ts",
