@@ -16,6 +16,17 @@ const owner={name:'owner',role:'owner'}, summary={name:'summary',role:'custom',p
 const reads={overview:async()=>({totals:{devices:1}}),devices:async(_q,options)=>({devices:[{id:'demo12345678',days:1,...(options?.includeProfileContext?{children:[{name:'Demo'}]}:{})}],nextCursor:null})};
 const fixture=()=>({reads,service:createManagementService({database:new MemoryManagementTestDatabase(),initialConfig:async()=>({releases:{},festivals:{},content:{}}),projector:async c=>({revision:c.revision,effectiveHash:c.effectiveHash})})});
 
+test('Home catalogue summary is small, permission-gated and excludes per-item records',async()=>{
+ const dependencies={...fixture(),catalogue:()=>loadManagementCatalogue().entries};
+ const response=await managementHttp(request('activities?summary=1'),summary,dependencies);
+ assert.equal(response.status,200);const body=await response.json();
+ assert.ok(body.summary.total>0);assert.equal('activities' in body,false);
+ assert.ok(JSON.stringify(body).length<600,'Home does not download the full source catalogue');
+ assert.equal((await managementHttp(request('activities?summary=1'),{role:'custom',perms:[]},dependencies)).status,403);
+ const full=await (await managementHttp(request('activities'),summary,dependencies)).json();
+ assert.equal(full.activities.length,body.summary.total,'existing full catalogue route remains compatible');
+});
+
 test('device delivery exposes only its exact current revision receipt, never another device or operator audit',async()=>{
  const f=fixture(),id='demo12345678',other='demo12345679';
  await f.service.changeConfig({scopeKey:'global',expectedRevision:0,kind:'rules',body:{releases:{}},reason:'Synthetic delivery check',eligibleDeviceIds:[id,other]},'private-operator');

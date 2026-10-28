@@ -114,7 +114,7 @@ window.addEventListener('beforeunload', e => { if (unsaved()) { e.preventDefault
 // Five sections instead of seventeen tabs (round K, owner: "too many menus, confusing on the phone"): each section opens
 // as big cards, one per page; on a phone the sections are a bar at the bottom, on a computer a column on the left.
 const SECTIONS = [
-  { k: 'home', i: '🏠', en: 'Today', vi: 'Hôm nay', pages: ['home'] },
+  { k: 'home', i: '🏠', en: 'Home', vi: 'Trang chủ', pages: ['home'] },
   { k: 'people', i: '💛', en: 'People', vi: 'Người chơi', pages: ['people','managementchildren','managementdevices','managementdevice','players','children','familycode','album'] },
   { k: 'game', i: '🎮', en: 'Game & website', vi: 'Game & web', pages: ['game','managementactivities','managementactivity','message','missions','quiz','stories','villagers','plots','releases','festivals','looks','path','music','map','photos','play','voices','ads','site'] },
   { k: 'work', i: '🐞', en: 'Work', vi: 'Công việc', pages: ['work','managementattention','testers','managementrelease','managementchanges','managementoperations','lab','publish','check','management'] },
@@ -150,7 +150,7 @@ const ABOUT = {
   managementoperations: ['🌐', 'Operations', 'Vận hành', 'Provider configuration and verified observations', 'Cấu hình nhà cung cấp và quan sát đã xác minh'],
   managementfinance: ['📊','Finance','Tài chính','Private ledger, budgets and financial evidence','Sổ riêng, ngân sách và bằng chứng tài chính'],
   managementchanges: ['📜', 'Configuration changes', 'Thay đổi cấu hình', 'Revisioned controls and device acknowledgements', 'Điều khiển theo phiên bản và xác nhận từ thiết bị'],
-  home: ['🏠', 'Today', 'Hôm nay', '', ''],
+  home: ['🏠', 'Home', 'Trang chủ', '', ''],
   message: ['💌', 'Message', 'Lời nhắn', 'A note the children see when they start playing', 'Lời nhắn các con thấy khi bắt đầu chơi'],
   missions: ['📝', 'Family missions', 'Nhiệm vụ gia đình', 'Real-life jobs the children see in the game (“Help set the table”); a grown-up ticks them on the device', 'Việc ngoài đời các con thấy trong game (“Giúp dọn bàn ăn”); người lớn đánh dấu trên máy'],
   children: ['👧', 'Children', 'Các con', 'Each child’s name, age, photo and progress', 'Tên, tuổi, ảnh và tiến bộ của từng con'],

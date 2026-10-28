@@ -9,7 +9,7 @@ import {createFinanceService} from '../netlify/lib/management/finance.mts';
 
 export async function ownerDeskBrowserCheck(browser){
  const repo='synthetic/owner-desk',password='synthetic-desk-password-123',site='http://localhost:8897',device='demo12345678',other='demo12345679';
- const output=path.resolve('../docs/studio-owner-desk-20261027/screenshots');fs.mkdirSync(output,{recursive:true});
+ const output=path.resolve(process.env.STUDIO_OWNER_REVIEW_DIR||'../docs/studio-owner-desk-20261027/screenshots');fs.mkdirSync(output,{recursive:true});
  const gh=fakeGitHub(repo,{'content/custom.json':'{}','js/build.js':fs.readFileSync('../js/build.js'),'sw.js':fs.readFileSync('../sw.js')});const undo=routeGitHub(gh);
  const players=memoryBlobs(),testers=memoryBlobs(),web=memoryBlobs(),database=new MemoryManagementTestDatabase(),today=new Date().toISOString().slice(0,10),month=today.slice(0,7);
  for(const [id,name]of [[device,'Demo Linh'],[other,'Demo Minh']]){
@@ -33,6 +33,11 @@ export async function ownerDeskBrowserCheck(browser){
    await page.waitForFunction(()=>document.documentElement.dataset.gameBrand==='shared');
    assert.equal(await page.locator('#tabs button').count(),5);assert.equal(await page.locator('#tabs [aria-current="page"]').getAttribute('data-k'),'home');
    assert.equal(await page.locator('.desk-valley').getAttribute('src'),'/studio/game/icons/launch/valley-landscape.jpg');
+   assert.equal(await page.locator('.desk-heading h2').innerText(),lang==='vi'?'Trang chủ':'Home');
+   assert.equal(await page.locator('.desk-home-summary>div').count(),6,'Home keeps a bounded six-measure snapshot');
+   assert.ok(await page.locator('[data-home-priorities] .desk-priority').count()<=3,'Home limits priorities');
+   assert.equal(await page.locator('.desk-readiness').count(),1,'Home explains content/control audit limits');
+   assert.ok(!(await page.locator('.desk-home-summary').innerText()).includes('Demo Linh'),'Home contains no child names');
    const save=async key=>{assert.deepEqual(await page.evaluate(()=>[...(window.__svNoArt||[])]),[],'game drawings cover every visible icon');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,key+' overflow');await page.evaluate(()=>scrollTo(0,0));const file=`${lang}-${width}-${key}.png`;await page.screenshot({path:path.join(output,file),fullPage:true});const viewportFile=file.replace('.png','-viewport.png');await page.screenshot({path:path.join(output,viewportFile)});captures.push({lang,width,height,key,file,viewportFile});};
    assert.equal(await page.locator('.desk-public-links a').last().getAttribute('href'),'/home/');assert.ok((await page.evaluate(()=>getComputedStyle(document.body).fontFamily)).includes(lang==='vi'?'Baloo 2':'Fredoka'));await save('today');await area(page,'people');assert.match(await page.locator('.desk-person-list').innerText(),/Demo Linh/);await save('people');
    await page.locator('.desk-period select').selectOption('7');await page.locator('.desk-period button').click();await page.waitForFunction(()=>new URLSearchParams(location.hash.split('?')[1]).get('days')==='7'&&!!document.querySelector('.desk-person-list'));
@@ -50,6 +55,16 @@ export async function ownerDeskBrowserCheck(browser){
   const ctx=await browser.newContext(),requests=[];const login=await ctx.request.post(site+'/studio/api/login',{data:{name:'summary-fixture',password:'synthetic-summary-password'}});assert.equal(login.status(),200);assert.equal((await login.json()).step,undefined);const page=await ctx.newPage();page.on('request',r=>requests.push(r.url()));await page.goto(site+'/studio');await page.waitForSelector('.desk-body [data-chart="G01"]');await area(page,'people');
   assert.equal(await page.locator('#tabs [data-k="money"]').count(),0);assert.ok(!(await page.locator('#page').innerText()).includes('Demo Linh'));assert.ok(!requests.some(url=>/management\/(children|finance)/.test(url)));
   assert.equal((await ctx.request.get(site+'/studio/api/management/devices/'+device)).status(),403);assert.equal((await ctx.request.get(site+'/studio/api/management/finance')).status(),403);await ctx.close();
+  // Losing a public catalogue source must not turn unknown coverage into a healthy zero.
+  const missing=await browser.newContext();await missing.addInitScript(()=>localStorage.setItem('studioLang','en'));await missing.request.post(site+'/studio/api/login',{data:{password}});
+  const failedPage=await missing.newPage();await failedPage.route('**/studio/api/management/activities?summary=1',r=>r.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'synthetic_source_unavailable'})}));
+  await failedPage.goto(site+'/studio');await failedPage.waitForSelector('.desk-home-summary');
+  assert.match(await failedPage.locator('.desk-home-summary>div').nth(3).innerText(),/Unavailable/);
+  assert.match(await failedPage.locator('.desk-readiness').innerText(),/No completeness percentage/);
+  await failedPage.route('**/studio/api/management/overview?*',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({metrics:[{id:'M01',value:0},{id:'M04',value:0}],totals:{errors:0},dailySeries:[{date:today,reportingBuckets:0,activeDevices:null}],attention:{open:null}})}));
+  await failedPage.reload();await failedPage.waitForSelector('.desk-home-summary');
+  for(const index of [0,1,2])assert.match(await failedPage.locator('.desk-home-summary>div').nth(index).innerText(),/Unavailable/,'No retained source days is unknown, not observed zero');
+  await missing.close();
   assert.deepEqual(errors,[]);
   const sources=['studio/ui/app.ts','studio/ui/owner-desk.ts','studio/ui/owner-desk.css','studio/ui/brand.ts','studio/ui/desk-charts.ts','studio/ui/management.ts','netlify/lib/management/read.mts','studio/ui/index.html','studio/ui/finance.ts','netlify/lib/management/http.mts','netlify/lib/management/transactional/service.mts','css/style.css','css/fonts.css','js/art.ts','js/icons.js'];
   fs.writeFileSync(path.resolve(output,'../browser-validation.json'),JSON.stringify({passed:true,scope:'Actual Studio UI and authenticated routes, synthetic in-memory data only; browser emulation, not physical devices/live Netlify',captures,errors,sourceHashes:Object.fromEntries(sources.map(file=>[file,createHash('sha256').update(fs.readFileSync('../'+file)).digest('hex')]))},null,2)+'\n');

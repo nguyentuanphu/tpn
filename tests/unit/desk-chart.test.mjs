@@ -1,8 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {deskChart} from '../../studio/ui/desk-charts.ts';
+import {summariseCatalogueEvidence} from '../../netlify/lib/management/catalogue.mts';
 const T=(en)=>en;
 const spec={id:'example',title:'Reported play',unit:'minutes',explanation:'Reported subset',source:'L01',limit:'Missing is unknown',line:true};
+test('Home counts uncertain source evidence as review without counting one entry multiple times',()=>{
+ const good={kind:'game',coverage:{bilingual:true,metadata:true,implementation:true},guide:{sourceAligned:true}};
+ const absent={kind:'story'};
+ const failing={kind:'game',coverage:{bilingual:false,metadata:false,implementation:false},guide:{sourceAligned:false}};
+ assert.deepEqual(summariseCatalogueEvidence([good,absent,failing]),{total:3,games:2,stories:1,review:2});
+ assert.deepEqual(summariseCatalogueEvidence([]),{total:0,games:0,stories:0,review:0});
+});
 test('chart gaps remain unknown and cannot draw a continuous line across absent observations',()=>{
  const markup=deskChart({...spec,points:[{label:'Day one',value:2},{label:'Missing day',value:null},{label:'Day three',value:3}]},T);
  const path=/class="desk-line"/.test(markup)&&/<path d="([^"]+)"/.exec(markup)?.[1];

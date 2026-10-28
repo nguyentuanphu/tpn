@@ -32,6 +32,14 @@ export class CatalogueError extends Error {
   constructor(code: string) { super(code); this.name = 'CatalogueError'; this.code = code; }
 }
 
+/** Small Home response; source review only, never a playable/control percentage. */
+export function summariseCatalogueEvidence(entries: Record<string, any>[]) {
+  return { total: entries.length, games: entries.filter(e => e.kind === 'game').length,
+    stories: entries.filter(e => e.kind === 'story').length,
+    review: entries.filter(e => e.coverage?.bilingual !== true || e.coverage?.metadata !== true ||
+      e.coverage?.implementation !== true || e.guide?.sourceAligned !== true).length };
+}
+
 /** Only documented public fields survive even if the file is edited by hand. */
 export function parseManagementCatalogue(value: unknown): Catalogue {
   const root = obj(value), generated = obj(root.generatedFrom), website = obj(root.website), coverage = obj(root.coverage);

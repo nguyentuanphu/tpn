@@ -5,6 +5,7 @@ import { ManagementReadError } from './quality.mts';
 import { managementOperations } from './operations.mts';
 import { managementEnv } from './runtime.mts';
 import { metric } from './metrics.mts';
+import { summariseCatalogueEvidence } from './catalogue.mts';
 
 export const managementJson = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff' } });
@@ -88,7 +89,12 @@ export async function managementHttp(req: Request, me, { reads, service, operati
         if(service.configured())try{result['delivery']=await service.deviceDelivery(id);}catch{result.quality.push('device-delivery-unavailable');}
         return managementJson(result);
       }
-      if (path === 'activities') return managementJson({ schemaVersion: 1, generatedAt: new Date().toISOString(), activities: catalogue(), quality: ['static-source-catalogue'] });
+      if (path === 'activities') {
+        const entries = catalogue();
+        return managementJson({ schemaVersion: 1, generatedAt: new Date().toISOString(),
+          ...(q.get('summary') === '1' ? { summary: summariseCatalogueEvidence(entries) } : { activities: entries }),
+          quality: ['static-source-catalogue', 'not-a-playability-or-control-audit'] });
+      }
       if (path.startsWith('activities/')) {
         const result = await reads.activity(path.slice(11), q, context);
         if(service.configured()&&!q.get('child')&&!q.get('search')&&(!q.get('deviceClass')||q.get('deviceClass')==='all')) {
