@@ -35,3 +35,10 @@ Custom Studio changes and family-built content are separate from the bundled def
 - The Thirsty Crow: place the crow at the jug when drinking, with its beak reaching the water.
 - Keep one floating ladybird with all functions, including Auto play; remove the duplicate HUD shortcut.
 - Investigate repeated ResizeObserver delivery notices separately from genuine failed game launches and unsupported autoplay tasks. Do not hide real exceptions.
+
+## 29 October AEDT follow-up
+
+- Installed app turns white when reopened/returned to, across devices; iPad Air generic startup error misleadingly blames connection. Audit lifecycle restoration, startup error recovery and preserve all family saves. Physical reproduction still needed.
+- Studio enables three fruit previews but Orchard is missing. Correct inconsistent preview gating while retaining invited/accepted tester restriction and refresh Simple after live content/consent changes.
+- Preserve Simple scroll position after games/stories; intentional tab navigation may reset its own path.
+- Keep installation invitation/guide visible until installed or explicitly hidden; Settings access remains. Track observed install evidence on existing consented analytics device records, with iOS confirmed only after standalone launch and unconfirmed distinct from not installed.

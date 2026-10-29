@@ -1145,6 +1145,10 @@ await check('storyposes', async () => (await import('./story-pose-check.mts')).s
 
 await check('goatcircle', async () => (await import('./goat-browser.mts')).goatBrowserCheck(b));
 
+await check('installflow', async () => (await import('./install-browser.mts')).installFlowCheck(b));
+
+await check('installstudio', async () => (await import('./install-browser.mts')).installStudioCheck(b));
+
 await check('resumerecovery', async () => { const server = await serveFolder(await packedSite()); try { return await (await import('./resume-recovery.mts')).resumeRecoveryCheck(b,server.url); } finally { server.close(); } });
 
 await check('simplereturnfruit', async () => (await import('./simple-return-fruit.mts')).simpleReturnFruitCheck(b));

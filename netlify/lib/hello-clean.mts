@@ -19,7 +19,7 @@ export type HelloDay = { d: string, build: string, mins: number, games: Record<s
   hours: Record<number, number>, kids: Record<string, KidDay>, errs: Record<string, number>, stuck: Record<string, number>,
   quits: Record<string, number>, fps: [number, number, number], starts: Start[], bat: number[] };
 export type Hello = { id: string, hid: string, build: string, sid: string, started: number, lang: 'en' | 'vi' | '?', kids: number, days: HelloDay[],
-  kind: 'phone' | 'tablet' | 'computer' | '?', app: boolean, os: string, br: string, sc: string, fh?: string, lines: [string, string][], isRobot?: boolean, traffic?: string };
+  kind: 'phone' | 'tablet' | 'computer' | '?', app: boolean, install: '' | 'native' | 'standalone', os: string, br: string, sc: string, fh?: string, lines: [string, string][], isRobot?: boolean, traffic?: string };
 
 // as a regular expression tests it (`x || ''`), but as text
 export const txt = (v: unknown): string => v ? String(v) : '';
@@ -64,7 +64,7 @@ export function clean(input: unknown, now: number = Date.now()): Hello|null {
   return { id: txt(b.id), hid: /^[a-z0-9]{8,24}$/.test(txt(b.h)) ? txt(b.h) : '', build: WORD.test(txt(b.b)) ? txt(b.b) : '?', sid: /^[a-z0-9]{16}$/.test(txt(b.sid)) ? txt(b.sid) : '',
     started: typeof started === 'number' && Number.isSafeInteger(started) && started > 0 && started <= now + 300000 ? started : 0,
     lang: l === 'en' || l === 'vi' ? l : '?', kids: int(b.k, 8), days,
-    kind: d === 'phone' || d === 'tablet' || d === 'computer' ? d : '?', app: !!b.a,
+    kind: d === 'phone' || d === 'tablet' || d === 'computer' ? d : '?', app: b.a === true, install: b.a === true ? 'standalone' : b.install === 'native' || b.install === 'standalone' ? b.install : '',
     os: /^(iOS|iPadOS|Android|ChromeOS|Windows|macOS|Linux|other)$/.test(os) ? os : '?', br: /^(Safari|Chrome|Edge|Firefox|Samsung|other)$/.test(br) ? br : '?', sc: /^\d{2,5}x\d{2,5}$/.test(txt(b.sc)) ? txt(b.sc) : '',
     fh: FH.test(txt(b.fh)) ? txt(b.fh) : '',
     lines: (Array.isArray(b.v) ? b.v : []).slice(0, LINES.hello).filter(v => Array.isArray(v) && /^(en|vi|zh|hi)$/.test(txt(v[0])) && typeof v[1] === 'string' && v[1].trim() && v[1].length <= 300 && !/[\u0000-\u001f<>]/.test(v[1])).map(v => ([txt(v[0]), v[1].trim()] as [string, string])),

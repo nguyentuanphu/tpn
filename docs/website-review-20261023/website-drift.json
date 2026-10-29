@@ -1,5 +1,5 @@
 {
-  "source": "7589469d48c53fc8ec9e84317857b079dad26ea6",
+  "source": "0c9d51c7eaaf9756832ea0a0a141fd745bc723bb",
   "reviewedSource": "7589469d48c53fc8ec9e84317857b079dad26ea6",
   "coverage": {
     "valley": 17,
@@ -8,7 +8,9 @@
     "family": 15,
     "festivals": 24
   },
-  "changed": [],
+  "changed": [
+    "js/games/cacuangua.ts"
+  ],
   "coverageChanged": [],
-  "requiresEditorialReview": false
+  "requiresEditorialReview": true
 }

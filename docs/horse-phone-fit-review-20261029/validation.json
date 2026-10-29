@@ -1,0 +1,19 @@
+{
+  "source": "0c9d51c7eaaf9756832ea0a0a141fd745bc723bb",
+  "dateAEDT": "29 October 2026",
+  "cause": "Four classic seat cards repeated colour words and stable horse/number rows wrapped; phone Roll control overflowed.",
+  "change": "Compact home counters; full colour information in accessible labels; fixed 32px horse plus 12px number rows. Board size and 64px controls unchanged.",
+  "results": {
+    "horseplay": {
+      "ok": true,
+      "secs": 119,
+      "note": "Real human/helper gentle match finished in 30 actions; 16/56-cell boards, all four classic seats, real movement and 64px controls in12 bilingual/device layouts"
+    },
+    "horsestability": {
+      "ok": true,
+      "secs": 90,
+      "note": "board and die stay fixed through108 real roll/move actions in six EN/VI layouts; two/four-seat rosters and larger horses show team colours"
+    }
+  },
+  "captureCorrection": "Tablet VI gentle capture refreshed after waiting for the actual entry animation; the capture helper now waits for that animation too."
+}

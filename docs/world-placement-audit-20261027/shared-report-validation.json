@@ -1,0 +1,20 @@
+{
+  "source": "5d0149a89c2a22142f2057314856fd3b8315b19e",
+  "results": {
+    "two-players": {
+      "ok": true,
+      "secs": 104,
+      "note": ""
+    },
+    "facetoface": {
+      "ok": true,
+      "secs": 431,
+      "note": "tablet tall and wide: the far half, its buttons, joystick and windows face the far child; a computer stays side by side; children choose face to face or side by side on Who's playing? and with the switch on the line"
+    },
+    "ladybugsplit": {
+      "ok": true,
+      "secs": 263,
+      "note": "split: one floating ladybug, autoplay accessible inside it; both mount orders and remount, 2 device/language layouts"
+    }
+  }
+}
