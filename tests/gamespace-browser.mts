@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';import fs from 'node:fs/promises';import
 import {open,clear,noWelcome} from './harness.mjs';
 // (owner, 30 Oct 2026 AEDT: "put in the tool to ensure the game space is large enough; the space issue is across all
 // games") every game on a phone, big kid and under-5: the top (Leave, name, film, guide, level, stars) stays a small
-// band, the playing area keeps most of the screen, and the guide is at most two lines
+// band, the playing area keeps most of the screen, and the guide is at most two lines (its box keeps up to half a
+// line more so a longer hint never moves the board)
 const TOP_MAX={big:130,little:150},STAGE_MIN=.78;
 // the tester arcades open only on a tester's device, in their own screen
 const SKIP=new Set(['sparklefruitbar','sparkleorchard']);
@@ -16,9 +17,9 @@ export async function gameSpaceCheck(browser:Browser){
    if(!await P.page.locator('.gl .gl-stage').waitFor({timeout:10000}).then(()=>true,()=>false)){bad.push(`${id} (${age}) did not open`);await P.page.screenshot({path:`out/gamespace/${id}-${age}.png`});await P.page.evaluate(()=>(document.querySelector('.gl-x') as HTMLElement|null)?.click());await P.page.waitForTimeout(800);continue;}
    await P.page.waitForTimeout(500);
    const r=await P.page.evaluate(()=>{const q=(s:string)=>document.querySelector(s)!.getBoundingClientRect(),stage=q('.gl-stage'),help=document.querySelector('.gl-help') as HTMLElement,lh=parseFloat(getComputedStyle(help).lineHeight)||20;
-    return {top:Math.round(stage.top),share:+(stage.height/innerHeight).toFixed(2),guideLines:Math.round(help.getBoundingClientRect().height/lh),wide:document.querySelector('.gl-head')!.scrollWidth>innerWidth+1};});
+    return {top:Math.round(stage.top),share:+(stage.height/innerHeight).toFixed(2),guideLines:+(help.getBoundingClientRect().height/lh).toFixed(1),wide:document.querySelector('.gl-head')!.scrollWidth>innerWidth+1};});
    rows.push({id,age,...r});
-   if(r.top>TOP_MAX[age]||r.share<STAGE_MIN||r.guideLines>2||r.wide){bad.push(`${id} (${age}) ${JSON.stringify(r)}`);await P.page.screenshot({path:`out/gamespace/${id}-${age}.png`});}
+   if(r.top>TOP_MAX[age]||r.share<STAGE_MIN||r.guideLines>2.6||r.wide){bad.push(`${id} (${age}) ${JSON.stringify(r)}`);await P.page.screenshot({path:`out/gamespace/${id}-${age}.png`});}
    await P.page.evaluate(()=>(document.querySelector('.gl-x') as HTMLElement).click());await P.page.locator('.gl').first().waitFor({state:'detached',timeout:15000}).catch(()=>{});
   }
   await fs.writeFile('out/gamespace/rows.json',JSON.stringify(rows,null,1));
