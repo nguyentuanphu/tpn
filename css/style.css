@@ -3005,9 +3005,12 @@ body:has(.modal:not(.out), .gl, .wardrobe, .audio-tray, .dialog:not(.out), .stor
 .gl .mc-basket { position: relative; }
 .gl .mc-basket > .mc-label { position: absolute; right: 10px; bottom: 8px; width: 40px; height: 40px; opacity: .55; pointer-events: none; }
 .gl .mc-basket > .mc-label .art { width: 100%; height: 100%; }
-/* (UX-001) learning games: the question line keeps the height of three lines; a longer explanation scrolls inside it, so
+/* (UX-001) learning games: the question line keeps one height (two lines since 30 Oct 2026 AEDT); a longer explanation scrolls inside it, so
    the board never moves when the words change */
-.gl.learn .gl-help { line-height: 1.3; height: calc(1.3em * 3); min-height: 0; max-height: none; overflow-y: auto; box-sizing: content-box; }
+.gl.learn .gl-help { line-height: 1.3; height: calc(1.3em * 2); min-height: 0; max-height: none; overflow: hidden; box-sizing: content-box; }
+/* (owner, 30 Oct 2026 AEDT: "the guide takes too much space, it should be short") two lines now, like every game; a tap
+   shows the rest over the board for a moment, and the voice reads it all */
+.gl.learn .gl-help.open { height: auto; position: relative; z-index: 3; background: rgba(255, 255, 255, .95); border-radius: 12px; padding: 4px 8px; box-shadow: var(--shadow); }
 /* (r78, after the release pictures: on a computer one line of story sat in a box built for four) wide screens fit about
    twice the words on a line, so the box keeps room for 2 lines of the story and 1 spoken line there; phones keep 3 + 1 */
 @media (min-width: 700px) { .theatre .th-text { height: calc(var(--thp) * 1.35 * 2 + var(--thm) * 1.35 + 4px + 16px); } }

@@ -25,6 +25,8 @@ export async function snakesBrowserCheck(browser:Browser){
   await start('vi',true);let clicks=0,rounds=0;
   while(!await P.page.locator('.gl-win').count()&&rounds++<500){
    const button=P.page.locator('.snakes-controls button:not([disabled])');if(await button.count()){await button.click();clicks++;}else{await P.page.evaluate(()=>window.__snakesTest!.advance());await P.page.waitForTimeout(35);}
+   // (30 Oct 2026 AEDT) the die tumbles before the counters move (js/games/reveal.ts), so the board catches up within a moment
+   if(!await P.page.locator('.gl-win').count())await P.page.waitForFunction(()=>document.querySelector('.gl-win')||document.querySelector('.snakes-shared')?.getAttribute('data-positions')===window.__snakesTest!.positions().join(','),null,{timeout:3000}).catch(()=>{});
    if(!await P.page.locator('.gl-win').count())assert.equal(await P.page.locator('.snakes-shared').getAttribute('data-positions'),await P.page.evaluate(()=>window.__snakesTest!.positions().join(',')),'host board must match real invited peers after every move');
   }
   assert.ok(await P.page.locator('.gl-win').count(),'four-seat gentle board completes through real controls and invited transport');assert.ok(clicks>=3,'even the shortest ladder route takes three real host rolls');assert.ok(rounds>=12,'all four pieces must play the route');assert.equal(await P.page.evaluate(()=>window.__snakesTest!.complete()),true);assert.deepEqual(await P.page.evaluate(()=>window.__snakesTest!.positions()),[25,25,25,25]);
