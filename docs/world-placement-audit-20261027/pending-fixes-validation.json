@@ -1,0 +1,107 @@
+{
+  "dateAEDT": "27 October 2026",
+  "live": "v1.02",
+  "nextVersion": null,
+  "deploymentApproved": false,
+  "githubBaseline": {
+    "run": 40449651426,
+    "source": "9c5cc6804294abad76174be9a7fa2567b92c95b7",
+    "passed": 249,
+    "total": 253,
+    "failed": [
+      "solid",
+      "ground",
+      "mapnames",
+      "padmap"
+    ]
+  },
+  "localPassesAfterFixes": {
+    "unit": 353,
+    "types": {
+      "explicitFiles": 213,
+      "serverToolsFiles": 57
+    },
+    "solidSeconds": 258,
+    "groundSeconds": 68,
+    "worldplacementSeconds": 65,
+    "stalls": {
+      "seconds": 50,
+      "count": 43
+    },
+    "mapnamesSeconds": 173,
+    "padmapSeconds": 189,
+    "goatcircleSeconds": 110,
+    "storyposes": {
+      "seconds": 104,
+      "elephantPoses": 195,
+      "sips": 3
+    },
+    "horsestability": {
+      "seconds": 84,
+      "actions": 108
+    },
+    "voiceDeltaPolicyUnits": 5,
+    "legacyplansSeconds": 141
+  },
+  "earlierFailures": [
+    "TypeScript errors after helper JS-to-TS conversions: corrected",
+    "gather items and doors obstructed: corrected and solid rechecked",
+    "map labels and first-visit cloud: corrected and rechecked",
+    "one horse test lost page context; source unknown",
+    "horse board shifted49.6px in desktop VI: corrected and rechecked"
+  ],
+  "pending": [
+    "new exact-source GitHub full suite and official code map",
+    "autoplay enabled/disabled/legacy integration",
+    "fresh website source review/build",
+    "elephant owner report not reproduced",
+    "independent Northern rules and human review",
+    "physical-device and listening review",
+    "version and deployment approvals"
+  ],
+  "localSpeed": {
+    "perf": "FAIL worldMs12437 >6600",
+    "battery": "PASS177s",
+    "startup": "FAIL timing budgets, first46664ms second51907ms freeze16691ms; secondKB value not recovered from truncated output"
+  },
+  "aiReview": "unfinished",
+  "recording": {
+    "run": 40481288711,
+    "commit": "842cb7ac6a7eb4f323c6dfa2f4a9dad3537cbbb4",
+    "azure": 76,
+    "fpt": 17,
+    "verifiedDeliveries": 93,
+    "fullDecode": true,
+    "optionalPackLines": 6680,
+    "optionalPackBytes": 88882017,
+    "coverage": "PASS",
+    "routing": "PASS",
+    "humanListening": "pending"
+  },
+  "currentGitHub": {
+    "run": 40486378522,
+    "source": "5d0149a89c2a22142f2057314856fd3b8315b19e",
+    "status": "in progress",
+    "allReadingFilmsVoiceAreas": true,
+    "website": "passed",
+    "fastChecks": "7/7 passed: 353 units; 213 explicit plus 57 server/Studio/tool TypeScript files"
+  },
+  "ownerDecision": "27 October 2026 AEDT: keep preparing without a version",
+  "voiceDelta": {
+    "run": 40481288711,
+    "status": "passed",
+    "azure": 76,
+    "fptLeMinh": 17,
+    "all93FullDecode": true,
+    "existing6663Reused": true,
+    "leMinhPackClips": 6680,
+    "leMinhPackBytes": 88882017
+  },
+  "remainingReportedBugs": [
+    "Elephant head separation not reproduced",
+    "Kite Flying did-not-close report #650 pending reproduction",
+    "Full real-time autoplay navigation/quest reports pending verification",
+    "Independent Northern house-rule review",
+    "Physical-device/listening and AI review"
+  ]
+}

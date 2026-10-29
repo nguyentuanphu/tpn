@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "scope": "Full combined handoff. Partial/blocked/pending are not complete; no overall percent is inferred.",
+  "items": [
+    {
+      "id": "I01",
+      "priority": "P0",
+      "area": "integration",
+      "status": "pending",
+      "task": "Audit exact combined-source CI",
+      "reference": "CI.json",
+      "acceptance": "Inspect every share, collector, first failure, retry and sample/skip marker. Fix failures; import only source-matched official check maps/timing."
+    },
+    {
+      "id": "I02",
+      "priority": "P0",
+      "area": "voice",
+      "status": "blocked_environment",
+      "task": "Record twelve missing EN/VI guidance lines",
+      "reference": "../studio-content-website-20261029/VOICE.md",
+      "acceptance": "Use authorised speech binding and approved workflow; verify both f/m assets, manifests, decodes/playback and physical listening. No credentials available locally; never omit the lines to pass coverage."
+    },
+    {
+      "id": "I03",
+      "priority": "P0",
+      "area": "website",
+      "status": "pending_review",
+      "task": "Review the combined global website source/art lock",
+      "reference": "../website-review-20261023/WEBSITE-RULES.md",
+      "acceptance": "Review actual source deltas, all four bilingual destinations, reward and availability explanations, art, offline/update behaviour. Then record reviewed lock and rerun negative drift gate; do not merely bless hashes."
+    },
+    {
+      "id": "I04",
+      "priority": "P1",
+      "area": "games",
+      "status": "pending_design_and_implementation",
+      "task": "Implement spotdiff as actual comparison play",
+      "reference": "../studio-content-website-20261029/PENDING-WORK.md",
+      "acceptance": "Define rounds, differences, correct/incorrect targets, hints, accessible selection and completion; prove release/item/progress gates, inputs, save/exit and layouts before catalogue integration."
+    },
+    {
+      "id": "I05",
+      "priority": "P1",
+      "area": "games",
+      "status": "pending_design_and_implementation",
+      "task": "Implement hiddenpic as actual hidden-object play",
+      "reference": "../studio-content-website-20261029/PENDING-WORK.md",
+      "acceptance": "Define target placement, selection/hints, found state and completion; same functional/input/layout/gate/offline proof as I04."
+    },
+    {
+      "id": "I06",
+      "priority": "P1",
+      "area": "games",
+      "status": "pending_design_and_implementation",
+      "task": "Implement paperfold as actual folding play",
+      "reference": "../studio-content-website-20261029/PENDING-WORK.md",
+      "acceptance": "Define folds, crease interaction, steps and completion; boat painting alone does not satisfy it. Preserve stable ID and prove real progression."
+    },
+    {
+      "id": "I07",
+      "priority": "P1",
+      "area": "content decision",
+      "status": "blocked_decision",
+      "task": "Resolve distinct rongran intent",
+      "reference": "../studio-content-website-20261029/CONTENT-REVIEW.md",
+      "acceptance": "Record distinct intended behaviour/source; do not alias to dragon or delete either ID. Implement and validate only after the decision."
+    },
+    {
+      "id": "I08",
+      "priority": "P1",
+      "area": "controls",
+      "status": "implemented_needs_final_integration_review",
+      "task": "Advanced configuration recovery",
+      "reference": "../studio-control-recovery-20261029/CONTROL-JOURNEYS.md",
+      "acceptance": "Three editors now share reload-required uncertain-write guidance; invalid JSON sends no request. Combined isolated/browser evidence must remain green."
+    },
+    {
+      "id": "I09",
+      "priority": "P1",
+      "area": "operations",
+      "status": "pending",
+      "task": "Extend uncertain-result recovery to other operation forms",
+      "reference": "../studio-management-foundation/09-RUNBOOKS.md",
+      "acceptance": "Audit attention, finance and jobs for revision/idempotency keys, conflicts, lost responses and safe reread. Never automatically repeat an uncertain payment/provider action."
+    },
+    {
+      "id": "I10",
+      "priority": "P1",
+      "area": "functions",
+      "status": "partial",
+      "task": "Audit and control every optional producer family",
+      "reference": "../studio-functions-20261029/FUNCTION-REGISTRY.json",
+      "acceptance": "Only managementTelemetry has independent Collect/Process/Show. Legacy usage, website analytics, attribution, experiments and provider sync require their own contracts/consumers. Do not add fake switches."
+    },
+    {
+      "id": "I11",
+      "priority": "P1",
+      "area": "performance",
+      "status": "partial_local_observation",
+      "task": "Measure real resource budgets",
+      "reference": "evidence/reporting-budget.json",
+      "acceptance": "Local off/on observation is descriptive. Measure comparable cold/warm play, offline, server/SQL duration, traffic, memory and battery on actual devices/Netlify; set agreed limits and stop/expiry/backpressure behaviour."
+    },
+    {
+      "id": "I12",
+      "priority": "P1",
+      "area": "privacy and People",
+      "status": "partial",
+      "task": "Complete richer authorised People journeys and lifecycle",
+      "reference": "../studio-connected-concept-20261027/registry.json",
+      "acceptance": "Keep installation/profile/name separation, least privilege, consent and unavailable/stale states. Verify context correction, retention, deletion/export/restore and drilldowns; no marketing identity join."
+    },
+    {
+      "id": "I13",
+      "priority": "P1",
+      "area": "graphs",
+      "status": "partial",
+      "task": "Complete the remaining graph concepts",
+      "reference": "GRAPH-STATUS.json",
+      "acceptance": "Preserve all26contracts; seven IDs currently have view references. Each new view needs real source/denominator/time basis/null/freshness/grants and meaningful drilldown; no fabricated series."
+    },
+    {
+      "id": "I14",
+      "priority": "P1",
+      "area": "Home",
+      "status": "partial",
+      "task": "Finish the Home snapshot",
+      "reference": "../studio-revamp-master-20261027/MASTER-DESIGN.md",
+      "acceptance": "Keep at most3priorities and6figures; add second useful principal graph, readiness and meaningful recent work with honest source coverage. No composite health or invented urgency."
+    },
+    {
+      "id": "I15",
+      "priority": "P1",
+      "area": "marketing",
+      "status": "partial",
+      "task": "Build observable marketing decisions",
+      "reference": "../studio-revamp-master-20261027/MARKETING-AND-RESOURCES.md",
+      "acceptance": "Use actual website aggregate denominators/funnels first; review campaign attribution/experiments/privacy schema before collection. Do not infer visitors became named children or attribute missing revenue."
+    },
+    {
+      "id": "I16",
+      "priority": "P1",
+      "area": "Money",
+      "status": "partial",
+      "task": "Complete finance/provider decision views",
+      "reference": "../studio-management-foundation/FINANCE.md",
+      "acceptance": "Manual ledger/budgets/audit and exact currency graph labels exist. Finish real provider reconciliation, FX/tax/completeness, true due dates and useful trends; no bank/payments or complete profit claim."
+    },
+    {
+      "id": "I17",
+      "priority": "P0",
+      "area": "infrastructure",
+      "status": "blocked_environment",
+      "task": "Bind existing Netlify Database in the right preview context",
+      "reference": "../studio-management-foundation/NETLIFY-AND-OPERATIONS.md",
+      "acceptance": "Use native NETLIFY_DB_URL, secure isolated dev fallback only. Verify selected existing service, schema/grants, least privilege and read-only preflight. No binding available here; no provisioning or credentials in chat."
+    },
+    {
+      "id": "I18",
+      "priority": "P0",
+      "area": "database lifecycle",
+      "status": "pending_environment_and_review",
+      "task": "Validate migration/recovery/retention/deletion",
+      "reference": "../studio-management-foundation/09-RUNBOOKS.md",
+      "acceptance": "Review additive migrations001\u2013003 and backup/restore rehearsal in isolated preview. Validate retention/deletion/export without changing real saves or production rows."
+    },
+    {
+      "id": "I19",
+      "priority": "P0",
+      "area": "device review",
+      "status": "pending_physical_devices",
+      "task": "Physical iPhone/Android/tablet and desktop review",
+      "reference": "VISUALS.md",
+      "acceptance": "Real touch/keyboard/rotation/safe areas, readable graphs, voice listening, consent/offline/update and failure paths. Browser emulation is separate evidence."
+    },
+    {
+      "id": "I20",
+      "priority": "P0",
+      "area": "release",
+      "status": "pending",
+      "task": "Review old-install cold/warm/offline/update",
+      "reference": "INTEGRATION.md",
+      "acceptance": "Verify new art dependencies and policy leaf in offline manifest, cached previous-install update, code/source/website versions and eventual owner-selected version. No version changed in this branch."
+    },
+    {
+      "id": "I21",
+      "priority": "P1",
+      "area": "inventory",
+      "status": "partial",
+      "task": "Complete entity and control audit across13domains",
+      "reference": "source/SOURCE-INVENTORY.md",
+      "acceptance": "Public module/import manifest is not all runtime entities/instances/private records. Audit each intended item/control, actual write/consumer/effect and unresolved dependencies; no universal completeness percentage."
+    },
+    {
+      "id": "I22",
+      "priority": "P2",
+      "area": "scope",
+      "status": "pending_contract",
+      "task": "Dedicated device/cohort/role policy scope",
+      "reference": "../studio-functions-20261029/CONTRACT.md",
+      "acceptance": "Current publication is global. Define exact selectors, eligibility, grants, expiry/conflicts, effective precedence and receipt denominator before implementing targeting."
+    },
+    {
+      "id": "I23",
+      "priority": "P1",
+      "area": "data quality",
+      "status": "partial",
+      "task": "Complete freshness and large-data strategy",
+      "reference": "../studio-connected-concept-20261027/registry.json",
+      "acceptance": "Distinguish successful read from fresh evidence, stale/zero/no samples/not collected/unavailable. Add durable source watermarks and bounded rollups where actual volume requires them."
+    },
+    {
+      "id": "I24",
+      "priority": "P0",
+      "area": "release integration",
+      "status": "pending_owner_release",
+      "task": "Final integration and release package",
+      "reference": "NEXT-CHAT.md",
+      "acceptance": "Review the combined source, complete required gates, build exact source package, keep failures/limitations, then obtain separate owner main/deploy/version authority. Historical ZIPs are not this build."
+    }
+  ]
+}

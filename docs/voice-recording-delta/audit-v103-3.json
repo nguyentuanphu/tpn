@@ -1,0 +1,352 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/games/reading2.ts": "7758eaffd28a14033d8694d89f013ec35386ba22775d966cc234b7c69cc73193",
+    "js/games/shapes2.ts": "bfe7465654a312891dbe37ce426639cbfa322d3d6e0953ab16e3072eecb0fa7f",
+    "js/games/vietnam2.ts": "9391c22a0bc93b8f80d622f1c7d4baf654aef6a7944d312698fa758ba038b402",
+    "js/games/words2.ts": "6634446d9b05119815a01ec04c3b29fab44d3e3f0d5fa9e9b0482dd47b99b512"
+  },
+  "lines": [
+    {
+      "id": "8a036258-7578fc8f",
+      "lang": "vi",
+      "text": "Bạn bên hồ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "74746026197d92c6",
+      "lang": "vi",
+      "text": "Ruy băng hồng",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "9b39e65e-590addc",
+      "lang": "vi",
+      "text": "Hình dán ngôi sao",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "bbe7c95d4514bf59",
+      "lang": "vi",
+      "text": "Chọn trang bìa cho cuốn sách.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "120729e2-405c5d24",
+      "lang": "vi",
+      "text": "Ai có trong câu chuyện của con?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "9265fd9e5f85faf1",
+      "lang": "vi",
+      "text": "Mình đóng sách bằng gì nhé?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "881705e272d36c96",
+      "lang": "vi",
+      "text": "Chạm vào từng ô trống để lát sàn xanh vàng nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "3e94ecf8073aaeab",
+      "lang": "vi",
+      "text": "Xoay mũi tên đến khi chỉ vào ngôi sao nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "ee9fb6c0-6ce78628",
+      "lang": "vi",
+      "text": "Chạm từng cạnh để gấp lên thành chiếc hộp nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "2e41986c255c8b97",
+      "lang": "vi",
+      "text": "quả cam",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "9db918764b05ed2b",
+      "lang": "vi",
+      "text": "cái hộp",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "612e576971b8ce0e",
+      "lang": "vi",
+      "text": "con xúc xắc",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "12e9497e7c2fdeea",
+      "lang": "vi",
+      "text": "cái lon",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "18e4b81555ba39d3",
+      "lang": "vi",
+      "text": "cái trống",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "8afe02142c2d6aa4",
+      "lang": "vi",
+      "text": "Ghép đồ vật với khối của nó nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "57cf5b43-48fd14bc",
+      "lang": "vi",
+      "text": "mái nhà",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "9dea57817a5d2fec",
+      "lang": "vi",
+      "text": "miếng bánh pizza",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "3de736e62347d9b8",
+      "lang": "vi",
+      "text": "bánh xe",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "c61a0e6848a98d23",
+      "lang": "vi",
+      "text": "đồng hồ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "11c6cb5d623b4204",
+      "lang": "vi",
+      "text": "cánh cửa",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "3404bad5-12e00301",
+      "lang": "vi",
+      "text": "ô cửa sổ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "3c6a5f3b42d0fadd",
+      "lang": "vi",
+      "text": "Hình nào vừa với toa tàu?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "748674d2-6343d9fd",
+      "lang": "vi",
+      "text": "straight",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "d23dae5f486c7a8b",
+      "lang": "vi",
+      "text": "curve",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "dba3bd664aa05376",
+      "lang": "vi",
+      "text": "Thẳng hay cong?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "f3c928476ad94c18",
+      "lang": "vi",
+      "text": "Giờ dán giấy đỏ và viền vàng nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/vietnam2.ts"
+      ]
+    },
+    {
+      "id": "f0dcfde702a16419",
+      "lang": "vi",
+      "text": "Cuối cùng, thắp nến nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/vietnam2.ts"
+      ]
+    },
+    {
+      "id": "18ef42156c2da5af",
+      "lang": "vi",
+      "text": "Đánh nhịp múa lân: tùng, tùng, cắc, tùng! Theo chữ đang sáng nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/vietnam2.ts"
+      ]
+    },
+    {
+      "id": "d8137d6e1165bfe2",
+      "lang": "vi",
+      "text": "Nó thuộc nhóm nào?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/words2.ts"
+      ]
+    },
+    {
+      "id": "dd561bca4632b731",
+      "lang": "vi",
+      "text": "Mèo con ở đâu?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/words2.ts"
+      ]
+    },
+    {
+      "id": "b4946dc8-34060e65",
+      "lang": "vi",
+      "text": "Chú chim ở đâu?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/words2.ts"
+      ]
+    },
+    {
+      "id": "f4892d9b01bc40e2",
+      "lang": "vi",
+      "text": "Quả bóng ở đâu?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/words2.ts"
+      ]
+    },
+    {
+      "id": "d4488953-10b67f74",
+      "lang": "vi",
+      "text": "Cún con ở đâu?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/words2.ts"
+      ]
+    },
+    {
+      "id": "cc36d12473613271",
+      "lang": "vi",
+      "text": "Chú chuột ở đâu?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/words2.ts"
+      ]
+    }
+  ]
+}

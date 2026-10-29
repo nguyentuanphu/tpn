@@ -1541,6 +1541,20 @@ body.calm .sv2 .tt-floaters i { animation: none; }
 /* ---------- illustrated icons (js/art.js): drawn pictures that move a little, the way the thing would ---------- */
 svg.art { width: 1em; height: 1em; display: inline-block; vertical-align: middle; overflow: visible; }
 svg.art g { transform-box: view-box; }
+/* (owner, 29 Oct 2026 AEDT: "lots of games have very small pictures or answers with pictures, small kids won't know what
+   they are") a drawing takes its button's text size, so the answer pictures of the newer games came out 13 to 19 px on
+   a phone: on an answer button a picture is at least 44 px, 56 px for under-5s (measured on every game; tool buttons
+   such as Hint or Pass keep their size so their words are not covered) */
+.gl .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) svg.art { min-width: 44px; min-height: 44px; }
+.gl.little .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) svg.art { min-width: 56px; min-height: 56px; }
+.gl .gl-stage .bt-repeat svg.art { min-width: 30px; min-height: 30px; }
+/* (same) these games' boards are phone-sized: on a tablet or a computer they grow with the screen, so the pictures do too */
+@media (min-width: 700px) and (min-height: 700px) { .gl .gl-stage :is(.a2-board, .m2-board, .mu2-board, .n2-board, .out-board, .pl2-board, .rd2-board, .s2-board, .tk2-board, .tk2-wrap, .v2-board, .w2-board, .mn2-wrap, .nat2-board) { zoom: 1.25; } }
+@media (min-width: 1000px) and (min-height: 980px) { .gl .gl-stage :is(.a2-board, .m2-board, .mu2-board, .n2-board, .out-board, .pl2-board, .rd2-board, .s2-board, .tk2-board, .tk2-wrap, .v2-board, .w2-board, .mn2-wrap, .nat2-board) { zoom: 1.6; } }
+/* (a phone emoji in the words is swapped for a drawing in a wrapper of text size: it grows with the bigger picture) */
+.gl .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) .arti { width: 44px; height: 44px; vertical-align: middle; margin-right: 4px; }
+.gl.little .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) .arti { width: 56px; height: 56px; }
+.gl .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) .arti svg.art { min-width: 0; min-height: 0; }
 .emo { display: inline-block; line-height: 1; }
 .art .a-bob { animation: a-bob 2.4s ease-in-out infinite; }
 .art .a-bob2 { animation: a-bob 2.4s ease-in-out -1.2s infinite; }
@@ -3219,8 +3233,13 @@ body.calm .sv2 .press::after { animation: none; display: none; }
 .tp-news-row span { display: grid; } .tp-news-row small { opacity: .75; }
 
 /* v1.01: Home joins the Simple screen sound/parent controls; all remain 64px. */
-.sp-top { flex-wrap:wrap; }
-.sp-tools { display:flex; align-items:center; gap:8px; margin-left:auto; flex-shrink:0; }
+/* (owner, 29 Oct 2026 AEDT: "the speaker, sound, home and settings dropped a line, it should be on one line") one row: the
+   name shortens with dots before the buttons move down (the buttons keep their 64 px) */
+.sp-top { flex-wrap:nowrap; }
+.sp-top .sp-me { min-width:0; flex:0 1 auto; }
+.sp-top .sp-me b { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media (max-width: 420px) { .sp-top .sp-me b { display:none; } .sp-top .sp-me { padding-right:4px; } }
+.sp-tools { display:flex; align-items:center; gap:6px; margin-left:auto; flex-shrink:0; }
 .sp-tools > button { flex:none; width:64px; height:64px; min-width:64px; min-height:64px; }
 .sp-tools .sp-home { position:relative; display:grid; place-items:center; padding:0; border:0; border-radius:50%; background:#fff; box-shadow:0 4px 0 rgba(60,100,40,.3); }
 .sp-tools .sp-home .art { width:34px; height:34px; }
@@ -3266,3 +3285,26 @@ body.calm .sv2 .press::after { animation: none; display: none; }
 
 /* Reports opened from a game remain above that game or parent window. */
 .modal.tpanel, .modal.tp-picture { z-index:2147482999; }
+
+/* Shared hand-drawn form treatment, including controls outside .field wrappers. */
+.modal :is(select, textarea, input:not([type]), input[type=text], input[type=password], input[type=email], input[type=number]) {
+  box-sizing: border-box; max-width: 100%; min-width: 0; min-height: 44px;
+  font: inherit; color: var(--text); background-color: #fff;
+  border: 2px solid #ece4f8; border-radius: 16px; padding: 10px 14px;
+}
+.modal label:not(.tog) > :is(select, input:not([type]), input[type=text], input[type=password]) { display: block; width: 100%; margin-top: 6px; }
+.hanoi-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.hanoi-actions .btn { min-width: 0; min-height: 44px; padding: 12px 8px; font-size: clamp(14px, 3.6vw, 20px); white-space: nowrap; }
+.hanoi-actions .btn .art { flex: 0 0 auto; }
+/* (owner, 29 Oct 2026 AEDT: "all the drop-downs should be the same as the game artwork") every drop-down in the game,
+   not only those in a window: the game's font, a white rounded pill with the purple border and our own arrow */
+select:not([multiple]) { font: inherit; font-weight: 700; color: var(--text); background-color: #fff; border: 2px solid #ddd0f0; border-radius: 16px; min-height: 48px; padding: 8px 40px 8px 14px; box-shadow: 0 3px 0 rgba(90, 60, 130, .12); }
+select:not([multiple]), .modal select {
+  appearance: none; -webkit-appearance: none; padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='12' viewBox='0 0 16 12'%3E%3Cpath d='m3 3 5 5 5-5' fill='none' stroke='%238a5cf6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; background-size: 16px 12px;
+}
+.modal.shopk select { min-height: 64px; }
+/* Family Quiz keeps its larger, child-friendly controls inside the shared form theme. */
+.modal.family-questions :is(select, textarea, input:not([type]), input[type=text]) { min-height: 64px; }
+

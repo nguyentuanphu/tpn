@@ -1,4 +1,6 @@
 import { HOWTO, type HowToGuide } from './howto-registry.js';
+// (audit, 29 Oct 2026 AEDT) the guides for every game that had none
+import './howto-data2.js';
 const S = (pic, en, vi) => ({ pic, en, vi });
 const DEFAULTS: Record<string, HowToGuide> = {
   puppets: {
@@ -191,9 +193,10 @@ const DEFAULTS: Record<string, HowToGuide> = {
   },
   goat: {
     origin: S('🇻🇳 🐐', 'Bịt mắt bắt dê, blindfold goat, is a favourite Vietnamese party game.', 'Bịt mắt bắt dê là trò chơi dân gian rất được yêu thích ở Việt Nam.'),
-    steps: [S('🌾🌾🌾 🐐', 'The goat is hiding in one haystack.', 'Chú dê đang trốn trong một đống rơm.'),
-      S('👆 🌾 ➡️', 'Tap a haystack. The hoof prints point towards the goat.', 'Chạm vào đống rơm. Dấu chân dê chỉ về phía chú dê.')],
-    real: S('🙈 🧒 🐐', 'For real: one friend wears a blindfold and tries to catch the others, who call out Baa baa!', 'Chơi thật: một bạn bịt mắt đi bắt, các bạn khác kêu Be be để trêu!')
+    steps: [S('👂 🧒', 'Listen for a friend calling. The sound rings and arrow show the way.', 'Nghe tiếng bạn gọi. Vòng âm thanh và mũi tên chỉ đường cho con.'),
+      S('⬆️ ➡️', 'Use the arrows to guide the blindfolded friend inside the circle.', 'Dùng mũi tên dẫn bạn bịt mắt đi trong vòng tròn.'),
+      S('🖐️ 🧒', 'When your friend is close, tap Catch. Then that friend wears the blindfold.', 'Khi đến gần bạn, chạm Bắt. Rồi bạn ấy làm người bịt mắt.')],
+    real: S('🧒 👧', 'For real: ask a grown-up to organise a gentle game in a clear, safe space. Everyone stays inside the circle.', 'Chơi thật: nhờ người lớn tổ chức trò chơi nhẹ nhàng ở chỗ trống, an toàn. Mọi người ở trong vòng tròn.')
   },
   // ---- puzzles and learning ----
   pattern: { steps: [S('🔴🔵🔴🔵 ❓', 'Look at the pattern.', 'Nhìn dãy hình nhé.'), S('👆 🔴', 'Tap what comes next!', 'Chạm vào hình tiếp theo!')] },
@@ -233,3 +236,10 @@ const DEFAULTS: Record<string, HowToGuide> = {
   barter: { steps: [S('🐔 🥚', 'A friend has something to swap.', 'Một bạn có đồ muốn đổi.'), S('👆 🌽', 'Give what they ask for, or things worth the same number of dots.', 'Đưa thứ bạn ấy muốn, hoặc những thứ có số chấm bằng nhau.'), S('⚖️ 🤝', 'A fair trade makes everyone happy!', 'Đổi công bằng thì ai cũng vui!')] }
 };
 for (const [id, guide] of Object.entries(DEFAULTS)) if (!HOWTO[id]) HOWTO[id] = guide;
+
+// Second-set art: the same real input and Save action as the canvas, not puzzle rules.
+for (const id of ["stamps", "weave", "mosaic", "nonla", "aodai", "kitepaint", "shades", "shadowpic", "finishpic", "scene", "lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"]) HOWTO[id] = { steps: [
+  S('🎨', 'Look at your picture and choose where to start.', 'Nhìn bức tranh và chọn chỗ bắt đầu.'),
+  S('✏️', 'Paint with your finger or mouse. With a keyboard, use arrows and Space.', 'Vẽ bằng ngón tay hoặc chuột. Với bàn phím, dùng mũi tên và phím cách.'),
+  S('✅', 'Make twelve marks, then choose Keep in Album. Leaving early does not save a picture.', 'Tô mười hai nét rồi chọn Lưu vào Album. Thoát sớm không lưu tranh.')
+] };

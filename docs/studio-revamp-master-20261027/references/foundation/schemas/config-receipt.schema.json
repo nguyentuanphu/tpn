@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"urn:sparkle-valley:management:config-receipt:v1",
+  "title":"PROPOSED applied configuration acknowledgement",
+  "type":"object","additionalProperties":false,
+  "required":["schemaVersion","deviceId","scopeKey","revision","effectiveHash","fetchedAt","appliedAt","result","reasonCode"],
+  "properties":{
+    "schemaVersion":{"const":1},
+    "deviceId":{"type":"string","pattern":"^[a-z0-9]{12}$"},
+    "scopeKey":{"type":"string","pattern":"^(global|device:[a-z0-9]{12}|feature:[a-z0-9_-]{1,60})$"},
+    "revision":{"type":"integer","minimum":1,"maximum":9007199254740991},
+    "effectiveHash":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "fetchedAt":{"type":"string","format":"date-time","pattern":"Z$"},
+    "appliedAt":{"type":["string","null"],"format":"date-time"},
+    "result":{"enum":["applied","rejected","unsupported"]},
+    "reasonCode":{"enum":["none","invalid_config","incompatible_build","scope_mismatch","storage_failure"]}
+  },
+  "allOf":[
+    {"if":{"properties":{"result":{"const":"applied"}}},"then":{"properties":{"appliedAt":{"type":"string","format":"date-time","pattern":"Z$"},"reasonCode":{"const":"none"}}}},
+    {"if":{"properties":{"result":{"enum":["rejected","unsupported"]}}},"then":{"properties":{"appliedAt":{"type":"null"},"reasonCode":{"enum":["invalid_config","incompatible_build","scope_mismatch","storage_failure"]}}}}
+  ]
+}

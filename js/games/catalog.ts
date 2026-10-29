@@ -187,6 +187,29 @@ export const GAME_CATALOG = [
   { id: 'drawpath', icon: '🦆', name: () => T('Draw the Way', 'Vẽ Đường Đi') },
   { id: 'shapedraw', icon: '🔺', name: () => T('Draw a Shape', 'Vẽ Hình') },
   { id: 'copygrid', icon: '🖼️', name: () => T('Copy the Picture', 'Vẽ Lại Tranh') },
+  // Second art set: gated by newGames and the existing art progress requirements.
+  { id: 'stamps', icon: '🥔', name: () => T("Potato Stamps", "In Hình") },
+  { id: 'weave', icon: '🌾', name: () => T("Weave a Mat", "Đan Chiếu") },
+  { id: 'mosaic', icon: '🏺', name: () => T("Bát Tràng Tiles", "Ghép Gốm Bát Tràng") },
+  { id: 'nonla', icon: '👒', name: () => T("Paint a Nón Lá", "Vẽ Nón Lá") },
+  { id: 'aodai', icon: '🥻', name: () => T("Áo Dài Designer", "Thiết Kế Áo Dài") },
+  { id: 'kitepaint', icon: '🪁', name: () => T("Design a Kite", "Trang Trí Diều") },
+  { id: 'shades', icon: '🎨', name: () => T("Light and Dark Colours", "Màu Đậm Màu Nhạt") },
+  { id: 'shadowpic', icon: '👥', name: () => T("Light and Shadow", "Bóng và Hình") },
+  { id: 'finishpic', icon: '✏️', name: () => T("Finish the Picture", "Vẽ Nốt Bức Tranh") },
+  { id: 'scene', icon: '🏞️', name: () => T("Sticker Scene", "Dán Tranh Cảnh") },
+  { id: 'lacquer', icon: '🖼️', name: () => T("Lacquer Painting", "Tranh Sơn Mài") },
+  { id: 'scratch', icon: '✨', name: () => T("Scratch Art", "Tranh Cào") },
+  { id: 'bubblepaint', icon: '🫧', name: () => T("Bubble Paint", "Vẽ Bong Bóng") },
+  { id: 'fingerpaint', icon: '🖐️', name: () => T("Finger Painting", "Vẽ Bằng Ngón Tay") },
+  { id: 'weatherpaint', icon: '🌦️', name: () => T("Colour the Weather", "Tô Màu Thời Tiết") },
+  { id: 'thocam', icon: '🧶', name: () => T("Brocade Patterns", "Hoa Văn Thổ Cẩm") },
+  { id: 'pixelpic', icon: '👾', name: () => T("Pixel Picture", "Tranh Ô Vuông") },
+  { id: 'fireworks', icon: '🎆', name: () => T("Fireworks Painter", "Vẽ Pháo Hoa") },
+  { id: 'masks', icon: '🎭', name: () => T("Mid-Autumn Masks", "Làm Mặt Nạ Trung Thu") },
+  { id: 'makeface', icon: '😀', name: () => T("Make a Face", "Ghép Khuôn Mặt") },
+  { id: 'gallery', icon: '🖼️', name: () => T("My Little Gallery", "Phòng Tranh Của Em") },
+  { id: 'leafrub', icon: '🍃', name: () => T("Leaf Rubbings", "In Lá") },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -224,5 +247,8 @@ export const GAME_LOADERS = {
   'places2.js': { ids: ['cyclo', 'reunification', 'lighthouse', 'operaseats', 'outback', 'floating', 'airport', 'postcard'], load: () => import('./places2.js') },
   'outside.js': { ids: ['hideseek', 'duckgoose', 'redgreen', 'simon', 'eggspoon', 'chairs', 'kicktokick', 'nippers', 'hoops', 'tag'], load: () => import('./outside.js') },
     'money2.js': { ids: ['savegoal', 'pocketweek', 'pricetags', 'busfare', 'lemonade', 'party', 'recycle', 'tetmarket', 'bank', 'sharefair'], load: () => import('./money2.js') },
-  'drawing.js': { ids: ["dotdot","trace","mirror","colournum","lanternart","card","sand","drawpath","shapedraw","copygrid"], load: () => import('./drawing.js') }
+  'drawing.js': { ids: ["dotdot","trace","mirror","colournum","lanternart","card","sand","drawpath","shapedraw","copygrid"], load: () => import('./drawing.js') },
+  'drawing2.ts': { ids: ["stamps", "weave", "mosaic", "nonla", "aodai", "kitepaint", "shades", "shadowpic", "finishpic", "scene"], load: () => import('./drawing2.js') },
+  'crafts.ts': { ids: ["lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"], load: () => import('./crafts.js') },
+
 };

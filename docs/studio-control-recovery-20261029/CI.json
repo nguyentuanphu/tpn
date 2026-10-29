@@ -1,0 +1,11 @@
+{
+  "observedAtSydney": "2026-10-29T17:36:49.333863+11:00",
+  "run": 40830113190,
+  "headSha": "47782b13f08e67e8647d41614a52f4f0714cc195",
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40830113190",
+  "all": true,
+  "completePassVerified": false,
+  "observation": "evidence/current-ci/observation.json",
+  "supersededRun": 40829807143,
+  "limitation": "Running/missing shares are unknown. Inspect actual artifacts, first failures, retries, sample/skip markers and collector before claiming success."
+}

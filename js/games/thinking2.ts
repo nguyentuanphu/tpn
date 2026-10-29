@@ -2,8 +2,9 @@
 import { register, untilRight } from './frame.js';
 import { T } from '../i18n.js';
 import { el, wait } from '../util.js';
+import { pic } from '../art.js';
 
-type ChessPuzzle = { piece: string; pieceEn: string; pieceVi: string; from: number; target: number; blocked: number[] };
+type ChessPuzzle = { piece: string; pieceEn: string; pieceVi: string; from: number; target: number; blocked: number[]; screen?: boolean };
 type SeatPuzzle = { person: string; personEn: string; personVi: string; seat: number; clueEn: string; clueVi: string };
 type PipeCell = { kind: string; turns: number; want: number };
 
@@ -38,7 +39,7 @@ function style() {
 .tk2-pipe.straight i { left: 28px; right: 28px; top: 5px; bottom: 5px; border-left: 14px solid #4b9ec4; }
 .tk2-pipe.end i { left: 28px; right: 28px; top: 28px; bottom: 0; border-left: 14px solid #4b9ec4; }
 .tk2-pipe.source::after, .tk2-pipe.goal::after { position: absolute; top: 5px; right: 6px; font: 900 12px/1 var(--font, sans-serif); color: #266b8a; }
-.tk2-pipe.source::after { content: 'IN'; } .tk2-pipe.goal::after { content: 'OUT'; }
+.tk2-pipe .tk2-mark { position: absolute; top: 2px; right: 2px; width: 30px; height: 30px; } .tk2-pipe .tk2-mark svg.art { width: 100%; height: 100%; } /* (audit: drawings, not the English IN and OUT) */
 .tk2-pipe.flow { background: #c8f1ff; box-shadow: inset 0 0 0 5px #78cbe8; }
 .gl.little .tk2-square, .gl.little .tk2-card, .gl.little .tk2-seat, .gl.little .tk2-pipe { min-width: 64px; min-height: 64px; }
 `));
@@ -64,7 +65,7 @@ async function runMiniChess(api) {
   style();
   const puzzles: ChessPuzzle[] = [
     { piece: 'R', pieceEn: 'Rook', pieceVi: 'Xe', from: 0, target: 3, blocked: [5, 10] },
-    { piece: 'B', pieceEn: 'Bishop', pieceVi: 'Tượng', from: 12, target: 3, blocked: [1, 6] },
+    { piece: 'B', pieceEn: 'Bishop', pieceVi: 'Tượng', from: 12, target: 3, blocked: [1, 7] }, // (audit: 6 sat on its diagonal)
     { piece: 'N', pieceEn: 'Knight', pieceVi: 'Mã', from: 1, target: 8, blocked: [4, 15] }
   ];
   const wrap = el('div', 'tk2-wrap');
@@ -122,7 +123,7 @@ async function runCoTuong(api) {
   const puzzles: ChessPuzzle[] = [
     { piece: '車', pieceEn: 'Chariot', pieceVi: 'Xe', from: 4, target: 7, blocked: [0, 12] },
     { piece: '馬', pieceEn: 'Horse', pieceVi: 'Mã', from: 14, target: 5, blocked: [2, 11] },
-    { piece: '炮', pieceEn: 'Cannon', pieceVi: 'Pháo', from: 13, target: 1, blocked: [6, 10] }
+    { piece: '炮', pieceEn: 'Cannon', pieceVi: 'Pháo', from: 13, target: 1, blocked: [9, 6], screen: true } // (audit: a cannon takes only by jumping one piece)
   ];
   const wrap = el('div', 'tk2-wrap');
   const title = el('h2', 'tk2-title', T('Chinese Chess Puzzles', 'Cờ Tướng Nhỏ'));
@@ -140,7 +141,7 @@ async function runCoTuong(api) {
   for (let index = 0; index < puzzles.length; index++) {
     const puzzle = puzzles[index];
     round.textContent = roundLabel(index + 1, puzzles.length);
-    prompt.textContent = T(`Choose the ${puzzle.pieceEn}.`, `Chọn quân ${puzzle.pieceVi}.`);
+    prompt.textContent = puzzle.screen ? T(`Choose the ${puzzle.pieceEn}. A cannon jumps over exactly one piece to take.`, `Chọn quân ${puzzle.pieceVi}. Pháo phải nhảy qua đúng một quân mới ăn được.`) : T(`Choose the ${puzzle.pieceEn}.`, `Chọn quân ${puzzle.pieceVi}.`);
     status.textContent = '';
     cells.forEach(cell => { cell.className = 'tk2-square'; cell.textContent = ''; cell.disabled = false; cell.setAttribute('aria-label', T('Empty square', 'Ô trống')); });
     cells[puzzle.from].classList.add('friend');
@@ -192,30 +193,32 @@ async function runWhoSits(api) {
   api.stage.appendChild(wrap);
   api.say('Read the picture clue. Pick a friend, then choose their chair.', 'Nhìn gợi ý bằng hình. Chọn bạn, rồi chọn ghế của bạn ấy nhé.');
 
+  // (owner, 29 Oct 2026 AEDT audit) pictures, not the letters T, R and C; and the chairs stand in a new order each game
+  // (the answer was always chair 1, 2, 3 in turn)
   const people = [
-    { key: 'T', en: 'Teddy', vi: 'Gấu bông' },
-    { key: 'R', en: 'Rabbit', vi: 'Thỏ' },
-    { key: 'C', en: 'Cat', vi: 'Mèo' }
+    { key: 'T', icon: '🧸', en: 'Teddy', vi: 'Gấu bông' },
+    { key: 'R', icon: '🐰', en: 'Rabbit', vi: 'Thỏ' },
+    { key: 'C', icon: '🐱', en: 'Cat', vi: 'Mèo' }
   ];
   const cardButtons = people.map(person => {
-    const button: HTMLButtonElement = el('button', 'tk2-card', `<b>${person.key}</b> ${T(person.en, person.vi)}`);
+    const button: HTMLButtonElement = el('button', 'tk2-card', `${pic(person.icon)} ${T(person.en, person.vi)}`);
     button.type = 'button';
     button.dataset.person = person.key;
     cards.appendChild(button);
     return button;
   });
   const seatHints = [
-    { en: 'Window', vi: 'Cửa sổ' },
-    { en: 'Table', vi: 'Bàn nhỏ' },
-    { en: 'Plant', vi: 'Chậu cây' }
+    { icon: '🪟', en: 'Window', vi: 'Cửa sổ' },
+    { icon: '🪑', en: 'Table', vi: 'Bàn nhỏ' },
+    { icon: '🪴', en: 'Plant', vi: 'Chậu cây' }
   ];
   const seatButtons = seatHints.map((hint, index) => {
-    const button: HTMLButtonElement = el('button', 'tk2-seat', `<b>${index + 1}</b><small>${T(hint.en, hint.vi)}</small>`);
+    const button: HTMLButtonElement = el('button', 'tk2-seat', `<b>${pic(hint.icon)}</b><small>${T(hint.en, hint.vi)}</small>`);
     button.type = 'button';
     button.dataset.seat = String(index);
-    seats.appendChild(button);
     return button;
   });
+  [...seatButtons].sort(() => Math.random() - .5).forEach(button => seats.appendChild(button));
 
   let target: HTMLButtonElement | null = null;
   api.plan(() => target && target.isConnected ? target : null, { maxActions: puzzles.length * 2 + 4 });
@@ -234,7 +237,7 @@ async function runWhoSits(api) {
     const seated = await untilRight(api, seatButtons.filter(button => !button.disabled), button => button === seatButtons[puzzle.seat]);
     if (!seated || api.closed) return;
     seated.classList.add('placed');
-    seated.innerHTML = `<b>${puzzle.person}</b><small>${T(puzzle.personEn, puzzle.personVi)}</small>`;
+    seated.innerHTML = `<b>${pic(people.find(p => p.key === puzzle.person)!.icon)}</b><small>${T(puzzle.personEn, puzzle.personVi)}</small>`;
     picked.disabled = true;
     api.sfx.chime();
     api.praise();
@@ -253,16 +256,19 @@ async function runPipes(api) {
   style();
   const rounds: PipeCell[][] = [
     [
-      { kind: 'elbow', turns: 2, want: 1 }, { kind: 'straight', turns: 1, want: 1 }, { kind: 'elbow', turns: 0, want: 2 },
-      { kind: 'straight', turns: 3, want: 0 }, { kind: 'elbow', turns: 2, want: 0 }, { kind: 'straight', turns: 2, want: 0 },
-      { kind: 'end', turns: 0, want: 0 }, { kind: 'straight', turns: 1, want: 1 }, { kind: 'end', turns: 2, want: 0 }
+      { kind: 'end', turns: 0, want: 3 }, { kind: 'straight', turns: 0, want: 1 }, { kind: 'elbow', turns: 0, want: 2 },
+      { kind: 'straight', turns: 3, want: 0 }, { kind: 'elbow', turns: 2, want: 0 }, { kind: 'straight', turns: 1, want: 0 },
+      { kind: 'end', turns: 0, want: 0 }, { kind: 'straight', turns: 1, want: 1 }, { kind: 'end', turns: 0, want: 2 }
     ],
     [
-      { kind: 'elbow', turns: 3, want: 1 }, { kind: 'straight', turns: 2, want: 1 }, { kind: 'elbow', turns: 1, want: 2 },
+      { kind: 'end', turns: 1, want: 3 }, { kind: 'straight', turns: 2, want: 1 }, { kind: 'elbow', turns: 1, want: 2 },
       { kind: 'straight', turns: 1, want: 0 }, { kind: 'elbow', turns: 3, want: 0 }, { kind: 'straight', turns: 3, want: 0 },
-      { kind: 'end', turns: 1, want: 0 }, { kind: 'straight', turns: 0, want: 1 }, { kind: 'end', turns: 3, want: 0 }
+      { kind: 'end', turns: 1, want: 0 }, { kind: 'straight', turns: 0, want: 1 }, { kind: 'end', turns: 3, want: 2 }
     ]
   ];
+  // (owner, 29 Oct 2026 AEDT audit) turns are clockwise quarter turns: an elbow at 0 joins up and right, a straight at 0
+  // up and down, an end at 0 points down. Water enters at 0 (end pointing right), runs along the top, down the right
+  // side into 8 (end pointing up). Before, the start leaked downwards and the end pointed away from its pipe.
   const path = [0, 1, 2, 5, 8];
   const wrap = el('div', 'tk2-wrap');
   const title = el('h2', 'tk2-title', T('Water Pipes', 'Nối Ống Nước'));
@@ -293,7 +299,9 @@ async function runPipes(api) {
       grid.appendChild(button);
       return button;
     });
-    const draw = (index: number) => { buttons[index].innerHTML = pipeShape(cells[index]); };
+    const mark = (index: number) => index === path[0] ? `<span class="tk2-mark">${pic('💧')}</span>` : index === path[path.length - 1] ? `<span class="tk2-mark">${pic('🌱')}</span>` : '';
+    buttons.forEach((button, index) => { button.innerHTML = pipeShape(cells[index]) + mark(index); });
+    const draw = (index: number) => { buttons[index].innerHTML = pipeShape(cells[index]) + mark(index); };
     const done = () => path.every(index => cells[index].turns === cells[index].want);
     const next = () => path.find(index => cells[index].turns !== cells[index].want);
 
@@ -301,10 +309,11 @@ async function runPipes(api) {
       const needed = next();
       if (needed == null) break;
       target = buttons[needed];
-      const turned = await untilRight(api, buttons, button => button === buttons[needed]);
+      const turned = await untilRight(api, buttons, () => true); // (audit: any pipe turns, in any order)
       if (!turned || api.closed) return;
-      cells[needed].turns = (cells[needed].turns + 1) % 4;
-      draw(needed);
+      const at = buttons.indexOf(turned);
+      cells[at].turns = (cells[at].turns + 1) % 4;
+      draw(at);
       api.sfx.tap();
     }
     target = null;

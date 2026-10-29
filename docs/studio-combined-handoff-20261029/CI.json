@@ -1,0 +1,15 @@
+{
+  "observedAtSydney": "2026-10-29T19:54:40.663479+11:00",
+  "run": 40845340310,
+  "headSha": "eaa32d9b2ace117470e85ca6d712f1e033248ed5",
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40845340310",
+  "all": true,
+  "statusAtDispatch": "queued",
+  "completePassVerified": false,
+  "knownReleaseFailure": "voicecover: twelve guidance lines absent; no authorised speech binding",
+  "observation": "evidence/current-ci/observation.json",
+  "limitation": "Inspect actual artifacts and collector; queued/missing shares are unknown. No full current-source pass claimed.",
+  "statusAtLatestObservation": "in_progress",
+  "postgreSQLCasesPassed": 22,
+  "browserCollectorComplete": false
+}

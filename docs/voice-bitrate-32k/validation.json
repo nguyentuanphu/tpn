@@ -1,0 +1,37 @@
+{
+  "voiceroutes": {
+    "ok": true,
+    "secs": 1,
+    "note": "{\"counts\":{\"azure:en-AU-NatashaNeural\":7281,\"azure:en-AU-WilliamNeural\":7281,\"azure:vi-VN-HoaiMyNeural\":6407,\"azure:vi-VN-NamMinhNeural\":6407,\"fpt:leminh\":6663,\"azure:zh-CN-YunxiNeural\":22,\"azure:hi-IN-MadhurNeural\":22},\"missing\":0,\"optionalEncodingMatches\":true,\"privacyHeld\":19}"
+  },
+  "mixedhanoivoice": {
+    "ok": true,
+    "secs": 5,
+    "note": "Deterministic recorded-audio identity checks: selected English/VI composite order and pauses, whole-recording fallback before any partial playback, cancellation, warmup, female default, male preview and private on-device speech"
+  },
+  "hanoivoice": {
+    "ok": true,
+    "secs": 119,
+    "note": "18 real L\u00ea Minh files: female default avoids optional fetch, preview preserves choice, download survives Settings close, female character uses L\u00ea Minh offline, standard voice remains selectable"
+  },
+  "voicebackground": {
+    "ok": true,
+    "secs": 89,
+    "note": "real female and male MP3 previews with male opt-in still off; opt-in and explicit offline download continue with shared progress after Save & close"
+  },
+  "voicecover": {
+    "ok": true,
+    "secs": 57,
+    "note": "11149 lines and 2583 parts recorded, 257 templates, 27 areas; 435 \u00d7 built while playing (say with a variable): collected by tools/voice-harvest.mts into tools/voice-extra.json; every gap that is a name \u00d7 a child's, friend's or pet's name: shown, never recorded or spoken (HANDOFF rule 11); \"That costs 47.\" plays from 3 recorded parts and a name in a gap is left out, never the phone's voice"
+  },
+  "unit": {
+    "ok": true,
+    "secs": 73,
+    "note": "336 unit tests passed"
+  },
+  "types": {
+    "ok": true,
+    "secs": 31,
+    "note": "202 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 54 TypeScript files of the server, Studio and tools; no errors"
+  }
+}

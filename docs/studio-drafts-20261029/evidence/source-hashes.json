@@ -1,0 +1,15 @@
+{
+  "netlify/lib/admins.mts": "b717db85b7d907533f0696f501909272e341546f5a44485b8e5c82e3c731f61b",
+  "netlify/lib/management/http.mts": "20d5d53a3acf45fc2575ba775b94492b8a18d8c5e9ed9b11afc58d7f73b11a88",
+  "netlify/lib/management/transactional/service.mts": "21d4deff4dad231ae3a98168c8dd44010eaa1d09a8037c8cec3f12776f9598d9",
+  "netlify/lib/management/transactional/drafts.mts": "f9184605042613d70e7509c868b82add15aa14eedd13d2b70ee73064e9159e03",
+  "netlify/lib/management/transactional/types.mts": "ed85d24e52f9964827b6f6e8702d68cdc2a401a4d170476291f8a71a573e9fba",
+  "netlify/lib/management/storage/migrations.mts": "8c2123ad522e529c91cc33b0e944d2ba4cd575a14f25fcc3c7779b422a0afef7",
+  "netlify/lib/management/storage/postgres.mts": "1e4c073e9e474f91f15f221c51d3c4f9054c3e71ef9059783ce30701ac0234a6",
+  "netlify/lib/management/storage/memory-test.mts": "8779c76e54e3b5295bddc625b17b24f7cd776affe19035d650962a0ce366ce5c",
+  "netlify/lib/management/storage/003-config-drafts.sql": "ffe9eb4630dbcab7aa4e5e643b4dc8c112ea1228f0c759e1877ad07830eb2451",
+  "studio/ui/management.ts": "0acd2b2d1a45779131b629c495bf5a03c33096af7d1e43a68d0cb080c8a87026",
+  "tests/management-browser.mjs": "0f1ec7f611e3a579d1370ddd690316ee0b58876fd06508dfe25ab33fcea9b966",
+  "tests/management/postgres-integration.mjs": "e8ac4619770c9140d8ac77082cb3ce2786b57dcc3017e48c7b7cfa632140e8f5",
+  "tests/unit/management-drafts.test.mjs": "02c9eb6213ec5028c378d41a463e77ab66732f4a0e017f0ed4bb95884434a3bb"
+}

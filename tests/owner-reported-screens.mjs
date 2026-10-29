@@ -46,8 +46,9 @@ try {
      const matches=await P.page.locator(selector+' button, '+selector+' [role=button], '+selector+' a').evaluateAll((nodes,label)=>{const norm=s=>String(s).replace(/\s+/g,' ').trim();return nodes.map((n,i)=>({n,i})).filter(({n})=>norm((n.getAttribute('aria-label')||n.textContent||n.className).trim().slice(0,40))===norm(label)&&n.getClientRects().length&&getComputedStyle(n).visibility!=='hidden'&&!n.disabled).map(({i})=>i);},label);
      if(!matches.length)continue;found.add(row.issue);
      const control=P.page.locator(selector+' button, '+selector+' [role=button], '+selector+' a').nth(matches[0]);await control.evaluate(n=>n.scrollIntoView({block:'center',inline:'center',behavior:'instant'}));await P.page.waitForTimeout(100);
-     const r=await control.evaluate(n=>{const r=n.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {x:r.x,y:r.y,w:r.width,h:r.height,hit:top===n||n.contains(top),inViewport:r.x>=0&&r.y>=0&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1,className:n.className};});
+     const r=await control.evaluate(n=>{const r=n.getBoundingClientRect(),top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {x:r.x,y:r.y,w:r.width,h:r.height,hit:top===n||n.contains(top),inViewport:r.x>=0&&r.y>=0&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1,className:n.className,label:n.textContent?.trim(),occluder:top?{tag:top.tagName,className:top.className,text:top.textContent?.trim().slice(0,120),html:top.outerHTML.slice(0,350)}:null,reportButtons:[...document.querySelectorAll('.tester-floating')].map(b=>{const q=b.getBoundingClientRect();return{x:q.x,y:q.y,w:q.width,h:q.height};})};});
      const passed=r.hit&&r.inViewport;results.push({issue:row.issue,viewport,lang,panel,status:passed?'matched-current-control-reachable':'matched-current-control-blocked',...r});if(!passed)failures.push(row.issue);save();
+     if(!passed)await P.page.screenshot({path:'out/reported-screens/blocked-'+row.issue+'.png'});
     }
    }
    results.push(...wanted.filter(x=>!found.has(x.issue)).map(x=>({issue:x.issue,viewport,lang,panel,status:'unresolved-control-or-state-not-matched'})));

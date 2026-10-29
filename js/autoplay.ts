@@ -5,7 +5,7 @@
 // one after another. What went wrong is noted and sent to Studio at once with a picture and the last steps: an error,
 // something that did not open or close, a button covered or off the screen, a line with no recording, a slow screen,
 // a story that stopped, and the child getting stuck. Lists and timings: js/content/autoplay.js. Loaded only on the
-// devices Studio's Releases page allows (switch `autoplay`), from main.js; its button sits under the ladybird.
+// devices Studio's Releases page allows (switch `autoplay`), from main.js; tester devices open it from the floating ladybird.
 // While it runs the child never tires and nothing is counted for the players report. Stopping it never restarts the
 // game: the tester plays on from there. Progress goes back as Studio's tester rule says (js/keepcopy.js).
 import { T } from './i18n.js';
@@ -18,6 +18,9 @@ import { voiceMisses } from './voice.js';
 import { settings } from './state.js';
 import { BUILD } from './build.js';
 import { pic } from './art.js';
+import { resizeDeliveryNotice } from './tester-detection.js';
+import { fruitParadeAvailable } from './content/fruit-parade.js';
+import { testerArcadeAvailable } from './content/tester-arcades.js';
 import { takeCopy, putCopyBack, hasCopy } from './keepcopy.js';
 import { sendAutoplayReport, reportDelivery, reportingState, retryReports, quickReport } from './tester.js';
 import { AP_GROUPS, apSpeed, apGameSeconds, AP_SPEEDS, AP_OPEN_WAIT, AP_RIGHT, AP_STUCK, AP_PATH, AP_TRAIL, AP_QUESTS, apGroupOf, revertOf, AUTOPLAY_PROFILES, autoplayProfileFromEnv, childAction, optimalAutoplayChoice, stochasticAutoplayChoice } from './content/autoplay.js';
@@ -49,7 +52,9 @@ export function mountAutoplay(game) {
   root = el('div', 'apbox'); root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', T('Auto play check', 'Tự chơi để kiểm tra'));
   style(); document.body.appendChild(root); addEventListener('sv-report-delivery', () => { if (root && !run && ui.open) draw(); }); draw();
   finger = el('div', 'apfinger'); finger.setAttribute('aria-hidden', 'true'); finger.hidden = true; document.body.appendChild(finger);
-  addEventListener('error', e => errSink && errSink.push(String(e.message || e.error || 'error')));
+  // Delivery notices mean the browser deferred ResizeObserver work to its next frame,
+  // not that the game threw. Match the reporter's two exact notices; keep every real error.
+  addEventListener('error', e => { const message = String(e.message || e.error || 'error'); if (errSink && !resizeDeliveryNotice(message)) errSink.push(message); });
   addEventListener('unhandledrejection', e => errSink && errSink.push(String((e.reason && e.reason.message) || e.reason || 'error')));
   const ce = console.error; console.error = (...a) => { if (errSink) errSink.push(a.map(String).join(' ').slice(0, 200)); ce.apply(console, a); };
   btnTimer = setInterval(buttons, 1000); buttons();
@@ -80,14 +85,16 @@ function oldPutBack() {
   location.reload();
 }
 
-// ---------- the button under the ladybird ----------
+// ---------- a shortcut only when no floating tester control exists ----------
 function buttons() {
   for (const hud of G.huds || []) {
     const z = hud.q && hud.q('.zoomer'); if (!z) continue;
-    if (z.querySelector('.z-lb')) { z.querySelector('.z-ap')?.remove(); continue; }
+    // The report button lives under document.body, outside the HUD stacking context.
+    // Looking inside z misses it and creates a duplicate shortcut beside the floating ladybird.
+    if (document.querySelector('.tester-floating.z-lb')) { z.querySelector('.z-ap')?.remove(); continue; }
     let b = z.querySelector('.z-ap');
     if (!b) {
-      b = el('button', 'z-ap', `${pic('🐞')}<i class="ap-n" hidden></i>`); b.setAttribute('aria-label', T('Auto play', 'Tự chơi'));
+      b = el('button', 'z-ap', `${pic('🤖')}<i class="ap-n" hidden></i>`); b.setAttribute('aria-label', T('Auto play', 'Tự chơi'));
       b.addEventListener('pointerdown', e => e.stopPropagation());
       b.onclick = e => { e.stopPropagation(); ui.open = !ui.open; put(UI, ui); draw(); };
       const lb = z.querySelector('.z-lb'); if (lb) lb.after(b); else z.appendChild(b);
@@ -99,10 +106,15 @@ function buttons() {
 }
 
 // ---------- what to check ----------
+function gameAvailable(id: string): boolean {
+  if (id === 'fruitparade') return fruitParadeAvailable('single');
+  if (id === 'sparklefruitbar' || id === 'sparkleorchard') return testerArcadeAvailable(id, 'single');
+  return true;
+}
 function steps(all = false): AutoplayStep[] {
   const on = new Set(all ? AP_GROUPS.map(g => g.key) : ui.groups), S: AutoplayStep[] = [], add = (g: string, key: string, name: () => string, fn: AutoplayStep['fn'], many = false) => { if (on.has(g)) S.push({ g, key, name, fn, many }); };
   add('quests', 'quests', () => T('Follow the quests', 'Làm theo nhiệm vụ'), doQuests, true);
-  for (const id of Object.keys(GAMES)) add('games', 'game:' + id, () => (GAMES[id].name ? GAMES[id].name() : id), note => doGame(id, note));
+  for (const id of Object.keys(GAMES).filter(gameAvailable)) add('games', 'game:' + id, () => (GAMES[id].name ? GAMES[id].name() : id), note => doGame(id, note));
   for (const F of FESTCAL) add('festivals', 'fest:' + F.id, () => T(F.en, F.vi), note => doFestival(F, note));
   for (const t of G.TALES || []) add('stories', 'tale:' + t.id, () => t.title(), note => doTale(t, note));
   (G.PLACES || []).forEach((p, k) => add('places', 'place:' + (p.key || k), () => p.name(), note => doPlace(p, note)));
@@ -375,7 +387,10 @@ export type { AutoplayProfile, AutoplayAction } from './content/autoplay.js';
 type PlayResult = { won?: boolean; rights?: number; wrongs?: number; taps?: number; cant?: boolean };
 async function playGame(note): Promise<PlayResult> {
   const gl = document.querySelector('.gl'); if (!gl) return {};
-  const s = sp(), stage = gl.querySelector('.gl-stage') || gl, tried = new Set(), r: PlayResult = { won: false, rights: 0, wrongs: 0, taps: 0 };
+  // The family Fruit Bar has its own modal card above the shared frame. Observe
+  // the controls the child actually sees, including its sticky action footer.
+  const stage = gl.getAttribute('data-game-id') === 'sparklefruitbar' ? document.querySelector('.parent-arcade .card') || gl.querySelector('.gl-stage') || gl : gl.querySelector('.gl-stage') || gl;
+  const s = sp(), tried = new Set(), r: PlayResult = { won: false, rights: 0, wrongs: 0, taps: 0 };
   let last = Date.now();
   playWatch.on = k => { last = Date.now(); if (k === 'right') r.rights++; if (k === 'wrong') r.wrongs++; if (k === 'win') r.won = true; };
   const mo = new MutationObserver(() => { last = Date.now(); }); mo.observe(stage, { childList: true, subtree: true, attributes: true, characterData: true });
@@ -462,9 +477,11 @@ async function readTale(note) {
 // ---------- each kind of step ----------
 const closer = sel => async note => { const x = document.querySelector(sel); if (x && shown(x)) await tap(x, note); else if (x) x.click(); };
 async function doGame(id, note) {
+  // A live Studio switch can change after the run's list was built. Respect it.
+  if (!gameAvailable(id)) throw SKIP;
   const spot = G.gameSpot && G.gameSpot(id); if (spot) { if (!await go(spot.x, spot.z, Math.max(.35, (spot.r || 2) * .95), note)) return; const s = onScreen(spot.x, 1, spot.z); if (s) await fingerTo(s.x, s.y); }
   await closeAll(); G.playGame(0, id, 'replay');
-  if (!await until(() => document.querySelector('.gl'), AP_OPEN_WAIT)) { note(T('did not open', 'không mở được')); return; }
+  if (!await until(() => document.querySelector(`.gl[data-game-id="${CSS.escape(id)}"]`), AP_OPEN_WAIT)) { note(T('did not open', 'không mở được')); return; }
   const r = await playGame(note);
   if (r.cant) note(T('help: auto play could not work out how to play it', 'cần giúp: tự chơi chưa biết chơi trò này'));
   await until(() => !document.querySelector('.gl:not(.out)'), 1.5);

@@ -69,7 +69,7 @@ let hideCaption = () => { };
   // a long line is shown a sentence or two at a time, so the box never grows to cover the screen
   const chunks = text => {
     const out = []; let cur = '';
-    for (const p of text.split(/(?<=[.!?。…])\s+/)) {
+    for (const p of text.replace(/([.!?。…])\s+/g, '$1\u0001').split('\u0001')) { // (no lookbehind: older Safari)
       if (cur && (cur + ' ' + p).length > 90) { out.push(cur); cur = p; } else cur = cur ? cur + ' ' + p : p;
     }
     if (cur) out.push(cur);
@@ -514,6 +514,8 @@ export const openPad = Object.assign(function (game, i, tab) {
 
   function drawMap(body) {
     withSitePlaces(game.PLACES);
+    const mine = game.myHouse?.home;
+    const mapPlaces = mine ? [...game.PLACES, { key: 'myhouse', g: 'home', icon: '🏠', name: mine.name, x: mine.door.x, z: mine.door.z }] : game.PLACES;
     const S = 600, wrap = el('div', 'mapwrap'), cv = el('canvas', 'bigmap'); cv.width = cv.height = S; wrap.appendChild(cv); body.appendChild(wrap);
     body.appendChild(el('p', 'note center', T('Tap any picture on the map, or a place below, to fly there.', 'Chạm vào bất kỳ hình nào trên bản đồ, hoặc một nơi bên dưới, để bay đến đó.')));
     // the places, grouped by country and listed from north to south, like a real map: one group at a time,
@@ -525,11 +527,11 @@ export const openPad = Object.assign(function (game, i, tab) {
     // An with Hà Nội in the north, Huế and Hội An with Đà Nẵng in the centre, the Mekong with Sài Gòn), a shop or a stage
     const itemsOf = g => {
       if (g === 'homes') return named.map(hm => ({ icon: '🏠', name: hm.name, go: () => game.landBy(hero, hm.door.x, hm.door.z) }));
-      const all = game.PLACES.filter(pl => (pl.g || 'home') === g), tops = all.filter(pl => !pl.under).sort((a, b) => a.z - b.z), lms = game.LANDMARKS || [], out = [];
+      const all = mapPlaces.filter(pl => (pl.g || 'home') === g), tops = all.filter(pl => !pl.under).sort((a, b) => a.z - b.z), lms = game.LANDMARKS || [], out = [];
       // a landmark that is now a place of its own (Hội An) is listed as that place, no longer under the city near it
-      const homeOf = l => game.PLACES.some(pl => pl.key === l.id) ? l.id : LANDMARK_HOME[l.id];
+      const homeOf = l => mapPlaces.some(pl => pl.key === l.id) ? l.id : LANDMARK_HOME[l.id];
       for (const t of tops) {
-        out.push({ icon: t.icon, name: t.name, go: () => game.travelTo(hero, t.x, t.z, !['memory_e', 'memory_w'].includes(t.key)) });
+        out.push({ icon: t.icon, name: t.name, go: () => game.travelTo(hero, t.x, t.z, !['memory_e', 'memory_w', 'myhouse'].includes(t.key)) });
         all.filter(pl => pl.under && pl.under === t.key).forEach(pl => out.push({ sub: true, icon: pl.icon, name: pl.name, go: () => game.travelTo(hero, pl.x, pl.z) }));
         lms.filter(l => homeOf(l) === t.key).forEach(l => out.push({ sub: true, icon: l.icon, name: l.name, go: () => game.travelTo(hero, l.x, l.z) }));
       }
@@ -567,20 +569,26 @@ export const openPad = Object.assign(function (game, i, tab) {
     SHRINES.forEach(s => { const done = p.shrines[s.id]; const [a, b] = pt(s.x, s.z); x.fillStyle = done ? '#38c8f0' : '#ff8a2a'; x.strokeStyle = '#fff'; x.lineWidth = 3; x.beginPath(); x.arc(a, b, 11, 0, Math.PI * 2); x.fill(); x.stroke(); x.fillStyle = '#fff'; x.font = 'bold 13px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(done ? '✓' : '?', a, b + 1); spots.push({ x: s.x, z: s.z, name: GAMES[s.game] ? GAMES[s.game].name() : '' }); });
     TOWERS.forEach(t => { icon('🗼', t.x, t.z, 28); spots.push({ x: t.x, z: t.z, name: t.name() }); });
     // every main place, with a picture and its name
-    game.PLACES.forEach(pl => {
+    mapPlaces.forEach(pl => {
       const [a, b] = pt(pl.x, pl.z); x.fillStyle = 'rgba(255,255,255,.92)'; x.beginPath(); x.arc(a, b, 22, 0, Math.PI * 2); x.fill(); x.strokeStyle = '#ffb020'; x.lineWidth = 3; x.stroke();
       icon(pl.icon, pl.x, pl.z, 26);
-      spots.push({ x: pl.x, z: pl.z, name: pl.name(), r: 14, snapToNpc: !['memory_e', 'memory_w'].includes(pl.key) });
+      spots.push({ x: pl.x, z: pl.z, name: pl.name(), r: 14, snapToNpc: !['memory_e', 'memory_w', 'myhouse'].includes(pl.key) });
     });
     // (Release request, T1) each name goes under its picture, or above, right or left of it when that spot would cover
     // another name or picture, so places close together (the festival stage by Đà Nẵng) stay readable
     x.font = 'bold 14px Fredoka, "Baloo 2", sans-serif';
-    const dots = game.PLACES.map(pl => pt(pl.x, pl.z)), labels = [];
+    const dots = mapPlaces.map(pl => pt(pl.x, pl.z)), labels = [];
     const hits = (r, q) => r.x < q.x + q.w && q.x < r.x + r.w && r.y < q.y + q.h && q.y < r.y + r.h;
-    const cost = r => labels.filter(q => hits(r, q)).length * 10 + dots.filter(([a, b]) => hits(r, { x: a - 22, y: b - 22, w: 44, h: 44 })).length + (r.x < 0 || r.y < 0 || r.x + r.w > S || r.y + r.h > S ? 5 : 0);
-    game.PLACES.forEach((pl, i) => {
+    const cost = r => labels.filter(q => hits(r, q)).length * 1000 + dots.filter(([a, b]) => hits(r, { x: a - 22, y: b - 22, w: 44, h: 44 })).length + (r.x < 0 || r.y < 0 || r.x + r.w > S || r.y + r.h > S ? 100000 : 0);
+    mapPlaces.forEach((pl, i) => {
       const [a, b] = dots[i], w = x.measureText(pl.name()).width + 12;
       const tries = [[a - w / 2, b + 24], [a - w / 2, b - 44], [a + 25, b - 10], [a - 25 - w, b - 10], [a - w / 2, b + 46], [a - w / 2, b - 66]].map(([lx, ly]) => ({ x: lx, y: ly, w, h: 20 }));
+      // Dense clusters (the family home beside the farm shop) need more than six offsets.
+      // Search outward without moving the destination itself or hiding either name.
+      for (let radius = 24; radius <= 160; radius += 22) for (let j = 0; j < 16; j++) {
+        const angle = j * Math.PI / 8;
+        tries.push({ x: Math.max(2, Math.min(S - w - 2, a + Math.cos(angle) * radius - w / 2)), y: Math.max(2, Math.min(S - 22, b + Math.sin(angle) * radius - 10)), w, h: 20 });
+      }
       let best = tries[0], bc = Infinity; for (const r of tries) { const c = cost(r); if (c < bc) { best = r; bc = c; } if (!c) break; }
       labels.push(Object.assign(best, { name: pl.name() }));
     });
@@ -591,8 +599,8 @@ export const openPad = Object.assign(function (game, i, tab) {
     const cloud = (a, b, s = 1) => { x.save(); x.shadowColor = 'rgba(80,90,120,.3)'; x.shadowBlur = 6; x.shadowOffsetY = 2; x.fillStyle = 'rgba(255,255,255,.94)'; x.beginPath();
       for (const [dx, dy, r] of [[-14, 4, 11], [0, -4, 15], [14, 3, 11], [0, 8, 13]]) { x.moveTo(a + dx * s + r * s, b + dy * s); x.arc(a + dx * s, b + dy * s, r * s, 0, Math.PI * 2); }
       x.fill(); x.restore(); };
-    game.PLACES.forEach(pl => {
-      if (pl.under) return; const rg = regionAt(pl.x, pl.z), seen = !!vis[rg], [a, b] = pt(pl.x, pl.z);
+    mapPlaces.forEach(pl => {
+      if (pl.under || pl.key === 'myhouse') return; const rg = regionAt(pl.x, pl.z), seen = !!vis[rg], [a, b] = pt(pl.x, pl.z);
       if (!seen) { cloud(a, b - 4); cv.clouds.push({ region: rg, name: pl.name() }); }
       else if (!lifted[rg]) { lifted[rg] = true; puffs.push([a, b - 4]); }
     });
@@ -1014,7 +1022,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     const area = sec.area || sec.key, ids = sec.games.filter(id => GAMES[id]);
     const open = ids.filter(id => isOpen(p, id, 'game', area)), locked = ids.filter(id => !open.includes(id));
     const held = secondSetOf('game', area).filter(id => GAMES[id] && isHeld(id, 'game')).length, shown = openGamesHub.unfolded.has(area);
-    const lockTile = locked.length ? `<div class="hcard hfold" style="--hc:#b9a6e8"><button class="hplay" data-fold="${area}" aria-expanded="${shown}"><span class="hi">${pic('\u{1F512}')}</span><b>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock`, `Còn ${locked.length} trò để mở`)}</b><small>${shown ? '' : T('Tap to see', 'Chạm để xem')} ${progressOf(p, 'game', area).done}/3</small></button></div>` : '';
+    const lockTile = locked.length ? `<div class="hcard hfold" style="--hc:#b9a6e8"><button class="hplay" data-fold="${area}" aria-expanded="${shown}"><span class="hi">${pic('\u{1F512}')}</span><b>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock`, `Còn ${locked.length} trò để mở`)}</b><small>${shown ? '' : T('Play each game above 3 times', 'Chơi mỗi trò ở trên 3 lần')} · ${pic('⭐')} ${progressOf(p, 'game', area).done}/3</small></button></div>` : '';
     const soonTile = held ? `<div class="hcard hsoon" style="--hc:#9ad0ff"><button class="hplay" data-soon="game"><span class="hi">${pic('\u{1F51C}')}</span><b>${T('Coming soon', 'Sắp ra mắt')}</b><small>${T(`${held} new games`, `${held} trò mới`)}</small></button></div>` : '';
     return `<div class="hubgrid">${open.map((id, k) => gameCard(id, k, sec.key, true)).join('')}${lockTile}${shown ? locked.map((id, k) => gameCard(id, k + open.length, sec.key, false)).join('') : ''}${soonTile}</div>`;
   };

@@ -1,25 +1,24 @@
 {
   "build": "v1.02",
   "captured": "27 October 2026 AEDT",
-  "source": "a9c809cc1",
+  "source": "ac97bc1127a2184b49ce3ec92e050b3c1c5a5739",
   "method": "Actual running game, fresh synthetic profiles and empty report; current Studio with a synthetic server. Phone, tablet and computer, EN/VI. No real family data.",
   "files": [
     {
       "file": "report-en.png",
-      "sha256": "e1baa10a5be667e8ae69391cb47bbdefc7a47f1969e305c2398f68c2b17960e1"
+      "sha256": "7dc18595902266085db660d0699504215a2ec2a377b7eed66cfb197631b649f4"
     },
     {
       "file": "report-vi.png",
-      "sha256": "4bb033ab0eb1b9a83dccf67036d37d67d06ee64e84e4bbbb15918aabf741bc35"
+      "sha256": "d5d0ddc7c0cb7d949b17c7e82300a62578dcda52f5ee7c543928184faea94c85"
     },
     {
       "file": "settings-en.png",
-      "sha256": "2830e76e9bf4cbcf5fee51330334fd888dea38f978d23dd650b7c23ecac540d9"
+      "sha256": "10437225a5c57297530f31ff554193b33c06f62dec0f5de43e37520b9b80a888"
     },
     {
       "file": "settings-vi.png",
-      "sha256": "d98186d72de2d6bddc1610e46c743158559fba80211d7d4ca6b1ae178dfe2e2a"
+      "sha256": "aa880de83891b6d1629e94c09c4669ae17a56781c75082151d66879a19b7043b"
     }
-  ],
-  "reviewed": "All18 EN/VI phone/tablet/computer Settings/report/Studio images inspected 27 October 2026 AEDT. Scrollable Settings retains visible floating Save; report graph is actual empty synthetic play history."
+  ]
 }

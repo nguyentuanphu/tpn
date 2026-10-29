@@ -1,0 +1,9382 @@
+{
+  "capturedAEDT": "27/10/2026, 8:55:51 pm",
+  "mapVersion": "D3",
+  "myHouse": {
+    "position": [
+      9,
+      54
+    ]
+  },
+  "obstruction": {
+    "point": {
+      "x": 179,
+      "z": -134
+    },
+    "ground": 6.509636680932403,
+    "afterCollision": {
+      "x": 179,
+      "z": -134,
+      "y": 6.609636680932403
+    },
+    "colliders": [],
+    "boxes": [
+      {
+        "x0": 169.48584530012917,
+        "x1": 181.66089007880467,
+        "z0": -141.99870293713386,
+        "z1": -135.70923353279912,
+        "cx": 175.57336768946692,
+        "cz": -138.8539682349665,
+        "rot": 4.881489286485115,
+        "hw": 2.2,
+        "hd": 5.8
+      }
+    ]
+  },
+  "places": [
+    {
+      "id": "island",
+      "kind": "island",
+      "cc": "home",
+      "at": [
+        9,
+        -14
+      ],
+      "rx": 52,
+      "rz": 88,
+      "anchor": [
+        9,
+        -14
+      ]
+    },
+    {
+      "id": "plateau",
+      "kind": "site",
+      "cc": "home",
+      "at": [
+        9,
+        -76
+      ],
+      "r": 24,
+      "h": 8,
+      "anchor": [
+        9,
+        -76
+      ]
+    },
+    {
+      "id": "town",
+      "kind": "street",
+      "cc": "home",
+      "at": [
+        9,
+        -22
+      ],
+      "w": 26,
+      "d": 21,
+      "h": 4.6,
+      "street": {
+        "roadZ": -6
+      },
+      "anchor": [
+        9,
+        -22
+      ]
+    },
+    {
+      "id": "home",
+      "kind": "village",
+      "cc": "home",
+      "at": [
+        9,
+        40
+      ],
+      "r": 28,
+      "h": 4,
+      "anchor": [
+        9,
+        40
+      ]
+    },
+    {
+      "id": "hanoi",
+      "kind": "city",
+      "cc": "vn",
+      "at": [
+        153,
+        -135
+      ],
+      "w": 13,
+      "d": 13,
+      "h": 5,
+      "icon": "🐢",
+      "name": [
+        "Hà Nội",
+        "Hà Nội"
+      ],
+      "gates": [
+        [
+          0,
+          13
+        ]
+      ],
+      "anchor": [
+        153,
+        -135
+      ]
+    },
+    {
+      "id": "bacninh",
+      "kind": "city",
+      "cc": "vn",
+      "at": [
+        200,
+        -172
+      ],
+      "w": 16,
+      "d": 13,
+      "h": 6,
+      "icon": "🕰️",
+      "name": [
+        "Bắc Ninh",
+        "Bắc Ninh"
+      ],
+      "gates": [
+        [
+          -16,
+          0
+        ]
+      ],
+      "anchor": [
+        200,
+        -172
+      ]
+    },
+    {
+      "id": "paddies",
+      "kind": "site",
+      "cc": "vn",
+      "at": [
+        210,
+        -98
+      ],
+      "r": 16,
+      "h": 3,
+      "anchor": [
+        210,
+        -98
+      ]
+    },
+    {
+      "id": "village",
+      "kind": "village",
+      "cc": "vn",
+      "at": [
+        204,
+        -42
+      ],
+      "r": 34,
+      "h": 2.4,
+      "anchor": [
+        204,
+        -42
+      ]
+    },
+    {
+      "id": "lake",
+      "kind": "lake",
+      "at": [
+        120,
+        -74
+      ],
+      "r": 22,
+      "anchor": [
+        120,
+        -74
+      ]
+    },
+    {
+      "id": "danang",
+      "kind": "city",
+      "cc": "vn",
+      "at": [
+        153,
+        7
+      ],
+      "w": 13,
+      "d": 11,
+      "h": 4.3,
+      "icon": "🐉",
+      "name": [
+        "Đà Nẵng",
+        "Đà Nẵng"
+      ],
+      "gates": [
+        [
+          0,
+          -11
+        ],
+        [
+          0,
+          11
+        ],
+        [
+          -13,
+          0
+        ]
+      ],
+      "anchor": [
+        153,
+        7
+      ]
+    },
+    {
+      "id": "hoian",
+      "kind": "site",
+      "cc": "vn",
+      "at": [
+        170,
+        90
+      ],
+      "r": 14,
+      "anchor": [
+        170,
+        90
+      ]
+    },
+    {
+      "id": "market",
+      "kind": "street",
+      "cc": "vn",
+      "at": [
+        197,
+        114
+      ],
+      "w": 25,
+      "d": 13,
+      "h": 6,
+      "street": {
+        "roadZ": 0
+      },
+      "anchor": [
+        197,
+        114
+      ]
+    },
+    {
+      "id": "saigon",
+      "kind": "city",
+      "cc": "vn",
+      "at": [
+        153,
+        151
+      ],
+      "w": 13,
+      "d": 11,
+      "h": 4,
+      "icon": "🛵",
+      "name": [
+        "Hồ Chí Minh City",
+        "TP. Hồ Chí Minh"
+      ],
+      "gates": [
+        [
+          0,
+          -11
+        ],
+        [
+          13,
+          -6
+        ]
+      ],
+      "anchor": [
+        153,
+        151
+      ]
+    },
+    {
+      "id": "vungtau",
+      "kind": "city",
+      "cc": "vn",
+      "at": [
+        205,
+        151
+      ],
+      "w": 13,
+      "d": 11,
+      "h": 3.5,
+      "icon": "🏖️",
+      "name": [
+        "Bà Rịa–Vũng Tàu",
+        "Bà Rịa–Vũng Tàu"
+      ],
+      "gates": [
+        [
+          -13,
+          0
+        ]
+      ],
+      "anchor": [
+        205,
+        151
+      ]
+    },
+    {
+      "id": "brisbane",
+      "kind": "city",
+      "cc": "au",
+      "at": [
+        -132,
+        -137
+      ],
+      "w": 13,
+      "d": 11,
+      "h": 4.2,
+      "icon": "🐨",
+      "name": [
+        "Brisbane",
+        "Brisbane"
+      ],
+      "gates": [
+        [
+          0,
+          11
+        ],
+        [
+          0,
+          -11
+        ]
+      ],
+      "anchor": [
+        -132,
+        -137
+      ]
+    },
+    {
+      "id": "aussie",
+      "kind": "street",
+      "cc": "au",
+      "at": [
+        -100,
+        -65
+      ],
+      "w": 18,
+      "d": 28,
+      "h": 4,
+      "street": {
+        "roadZ": 0
+      },
+      "anchor": [
+        -100,
+        -65
+      ]
+    },
+    {
+      "id": "sydney",
+      "kind": "city",
+      "cc": "au",
+      "at": [
+        -132,
+        -4
+      ],
+      "w": 13,
+      "d": 13,
+      "h": 4,
+      "icon": "⛴️",
+      "name": [
+        "Sydney",
+        "Sydney"
+      ],
+      "gates": [
+        [
+          0,
+          -13
+        ],
+        [
+          0,
+          13
+        ]
+      ],
+      "anchor": [
+        -132,
+        -4
+      ]
+    },
+    {
+      "id": "melbourne",
+      "kind": "city",
+      "cc": "au",
+      "at": [
+        -132,
+        126
+      ],
+      "w": 13,
+      "d": 13,
+      "h": 4,
+      "icon": "🚋",
+      "name": [
+        "Melbourne",
+        "Melbourne"
+      ],
+      "gates": [
+        [
+          0,
+          -13
+        ]
+      ],
+      "anchor": [
+        -132,
+        126
+      ]
+    },
+    {
+      "id": "uluru",
+      "kind": "site",
+      "cc": "au",
+      "at": [
+        -196,
+        62
+      ],
+      "anchor": [
+        -196,
+        62
+      ]
+    },
+    {
+      "id": "apostles",
+      "kind": "site",
+      "cc": "au",
+      "at": [
+        -160,
+        182
+      ],
+      "anchor": [
+        -160,
+        182
+      ]
+    },
+    {
+      "id": "bamboo",
+      "kind": "site",
+      "at": [
+        -186,
+        -112
+      ],
+      "r": 28,
+      "anchor": [
+        -186,
+        -112
+      ]
+    },
+    {
+      "id": "china",
+      "kind": "village",
+      "cc": "asia",
+      "at": [
+        107,
+        -200
+      ],
+      "r": 22,
+      "h": 5.5,
+      "anchor": [
+        107,
+        -200
+      ]
+    },
+    {
+      "id": "india",
+      "kind": "village",
+      "cc": "asia",
+      "at": [
+        -94,
+        -200
+      ],
+      "r": 22,
+      "h": 5.5,
+      "anchor": [
+        -94,
+        -200
+      ]
+    },
+    {
+      "id": "choitrau",
+      "kind": "ground",
+      "cc": "vn",
+      "at": [
+        75,
+        -146
+      ],
+      "anchor": [
+        75,
+        -146
+      ]
+    },
+    {
+      "id": "duabo",
+      "kind": "ground",
+      "cc": "vn",
+      "at": [
+        76,
+        110
+      ],
+      "anchor": [
+        76,
+        110
+      ]
+    },
+    {
+      "id": "memory_e",
+      "kind": "plots",
+      "cc": "vn",
+      "at": [
+        153,
+        90
+      ],
+      "name": [
+        "Memory Village (east)",
+        "Làng Kỷ Niệm (bờ đông)"
+      ],
+      "anchor": [
+        153,
+        90
+      ]
+    },
+    {
+      "id": "memory_w",
+      "kind": "plots",
+      "cc": "au",
+      "at": [
+        -129,
+        44
+      ],
+      "name": [
+        "Memory Village (west)",
+        "Làng Kỷ Niệm (bờ tây)"
+      ],
+      "anchor": [
+        -129,
+        44
+      ]
+    },
+    {
+      "id": "playground",
+      "kind": "site",
+      "place": "town",
+      "off": [
+        -4,
+        9
+      ],
+      "r": 13,
+      "h": 4.6,
+      "anchor": [
+        5,
+        -13
+      ]
+    },
+    {
+      "id": "yard",
+      "kind": "plot",
+      "place": "town",
+      "off": [
+        28,
+        -30
+      ],
+      "w": 15.5,
+      "d": 12,
+      "rot": 0,
+      "h": 4.6,
+      "anchor": [
+        37,
+        -52
+      ]
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "opera",
+      "name": "Sydney Opera House",
+      "home": "sydney",
+      "plannedPlace": "sydney",
+      "planned": [
+        -98,
+        20
+      ],
+      "model": [
+        -98,
+        20
+      ],
+      "sign": [
+        -87.22215535341553,
+        17.800439868043984
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "memory_w",
+        "cc": "au",
+        "at": [
+          -129,
+          44
+        ],
+        "distance": 39.20459156782532
+      },
+      "expectedCountry": "au",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "harbour",
+      "name": "Harbour Bridge",
+      "home": "sydney",
+      "plannedPlace": "sydney",
+      "planned": [
+        -78,
+        -2
+      ],
+      "model": [
+        -78,
+        -2
+      ],
+      "sign": [
+        -71.6,
+        21
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "sydney",
+        "cc": "au",
+        "at": [
+          -132,
+          -4
+        ],
+        "distance": 54.037024344425184
+      },
+      "expectedCountry": "au",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "uluru",
+      "name": "Uluru",
+      "home": "uluru",
+      "plannedPlace": "uluru",
+      "planned": [
+        -196,
+        46
+      ],
+      "model": [
+        -196,
+        62
+      ],
+      "sign": [
+        -196,
+        46
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "uluru",
+        "cc": "au",
+        "at": [
+          -196,
+          62
+        ],
+        "distance": 0
+      },
+      "expectedCountry": "au",
+      "drift": 16,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "banana",
+      "name": "The Big Banana",
+      "home": "sydney",
+      "plannedPlace": "aussie",
+      "planned": [
+        -91,
+        -71
+      ],
+      "model": [
+        -91,
+        -71
+      ],
+      "sign": [
+        -84.29844473524828,
+        -65.7713140242047
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "aussie",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 10.816653826391969
+      },
+      "expectedCountry": "au",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "bondi",
+      "name": "Lifesavers' Tower",
+      "home": "sydney",
+      "plannedPlace": "melbourne",
+      "planned": [
+        -106,
+        176
+      ],
+      "model": [
+        -106,
+        176
+      ],
+      "sign": [
+        -101.8725873820297,
+        169.14693753997386
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 56.356011214421486
+      },
+      "expectedCountry": "au",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "lighthouse",
+      "name": "Vũng Tàu Lighthouse",
+      "home": "vungtau",
+      "plannedPlace": "vungtau",
+      "planned": [
+        217,
+        181
+      ],
+      "model": [
+        217,
+        181
+      ],
+      "sign": [
+        212.00844764974136,
+        176.83653928388566
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "vungtau",
+        "cc": "vn",
+        "at": [
+          205,
+          151
+        ],
+        "distance": 32.31098884280703
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "turtle",
+      "name": "Turtle Tower",
+      "home": "hanoi",
+      "plannedPlace": "hanoi",
+      "planned": [
+        124,
+        -132
+      ],
+      "model": [
+        124,
+        -132
+      ],
+      "sign": [
+        117.15324538335952,
+        -124.71151927906013
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 29.1547594742265
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "onepillar",
+      "name": "One Pillar Pagoda",
+      "home": "hanoi",
+      "plannedPlace": "hanoi",
+      "planned": [
+        167,
+        -120
+      ],
+      "model": [
+        167,
+        -120
+      ],
+      "sign": [
+        161.72143200771407,
+        -116.20701701153108
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "hanoi",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 20.518284528683193
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "chuacau",
+      "name": "Hội An Covered Bridge",
+      "home": "danang",
+      "plannedPlace": "hoian",
+      "planned": [
+        170,
+        72
+      ],
+      "model": [
+        170,
+        72
+      ],
+      "sign": [
+        174.2,
+        82
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "hoian",
+      "nearest": {
+        "id": "hoian",
+        "cc": "vn",
+        "at": [
+          170,
+          90
+        ],
+        "distance": 18
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "longbien",
+      "name": "Long Biên Bridge",
+      "home": "hanoi",
+      "plannedPlace": "hanoi",
+      "planned": [
+        153,
+        -100
+      ],
+      "model": [
+        153,
+        -100
+      ],
+      "sign": [
+        159.4,
+        -84
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 35
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "princes",
+      "name": "Princes Bridge",
+      "home": "melbourne",
+      "plannedPlace": "melbourne",
+      "planned": [
+        -132,
+        90
+      ],
+      "model": [
+        -132,
+        90
+      ],
+      "sign": [
+        -125.6,
+        105
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 36
+      },
+      "expectedCountry": "au",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "benthanh",
+      "name": "Bến Thành Clock Tower",
+      "home": "saigon",
+      "plannedPlace": "market",
+      "planned": [
+        221,
+        110
+      ],
+      "model": [
+        221,
+        110
+      ],
+      "sign": [
+        213.83811286773852,
+        106.43525979842188
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 24.331050121192874
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "vanmieu",
+      "name": "Temple of Literature",
+      "declaredCountry": "vn",
+      "home": "hanoi",
+      "planned": null,
+      "model": [
+        144.4,
+        -139
+      ],
+      "sign": [
+        149.4,
+        -139
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "hanoi",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "puppettheatre",
+      "name": "Water Puppet Theatre",
+      "declaredCountry": "vn",
+      "home": "hanoi",
+      "planned": null,
+      "model": [
+        161.6,
+        -139
+      ],
+      "sign": [
+        156.6,
+        -139
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "hanoi",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "bnclock",
+      "name": "Bắc Ninh Clock Tower",
+      "declaredCountry": "vn",
+      "home": "bacninh",
+      "planned": null,
+      "model": [
+        200,
+        -172
+      ],
+      "sign": [
+        194.8,
+        -172
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "bacninh",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 0
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "chuadau",
+      "name": "Dâu Pagoda",
+      "declaredCountry": "vn",
+      "home": "bacninh",
+      "planned": null,
+      "model": [
+        207,
+        -182
+      ],
+      "sign": [
+        201.6,
+        -182
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "bacninh",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 12.206555615733702
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "butthap",
+      "name": "Bút Tháp Pagoda",
+      "declaredCountry": "vn",
+      "home": "bacninh",
+      "planned": null,
+      "model": [
+        207,
+        -162
+      ],
+      "sign": [
+        201.6,
+        -162
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "bacninh",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 12.206555615733702
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "dendo",
+      "name": "Đô Temple",
+      "declaredCountry": "vn",
+      "home": "bacninh",
+      "planned": null,
+      "model": [
+        210.5,
+        -172
+      ],
+      "sign": [
+        205.1,
+        -172
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "bacninh",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 10.5
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "quanho",
+      "name": "Quan họ singing",
+      "declaredCountry": "vn",
+      "home": "bacninh",
+      "planned": null,
+      "model": [
+        193.5,
+        -182
+      ],
+      "sign": [
+        188.1,
+        -182
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "bacninh",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 11.926860441876563
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "goldenbridge",
+      "name": "Golden Bridge",
+      "declaredCountry": "vn",
+      "home": "danang",
+      "planned": null,
+      "model": [
+        161.6,
+        11
+      ],
+      "sign": [
+        156.6,
+        11
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "danang",
+      "nearest": {
+        "id": "danang",
+        "cc": "vn",
+        "at": [
+          153,
+          7
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "dragonbridge",
+      "name": "Dragon Bridge",
+      "declaredCountry": "vn",
+      "home": "danang",
+      "planned": null,
+      "model": [
+        153,
+        38
+      ],
+      "sign": [
+        159.4,
+        55
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "danang",
+        "cc": "vn",
+        "at": [
+          153,
+          7
+        ],
+        "distance": 31
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "cathedral",
+      "name": "Notre-Dame Cathedral, Sài Gòn",
+      "declaredCountry": "vn",
+      "home": "saigon",
+      "planned": null,
+      "model": [
+        161.6,
+        155
+      ],
+      "sign": [
+        156.6,
+        155
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "saigon",
+      "nearest": {
+        "id": "saigon",
+        "cc": "vn",
+        "at": [
+          153,
+          151
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "postoffice",
+      "name": "Sài Gòn Central Post Office",
+      "declaredCountry": "vn",
+      "home": "saigon",
+      "planned": null,
+      "model": [
+        144.4,
+        155
+      ],
+      "sign": [
+        149.4,
+        155
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "saigon",
+      "nearest": {
+        "id": "saigon",
+        "cc": "vn",
+        "at": [
+          153,
+          151
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "wheel",
+      "name": "Wheel of Brisbane",
+      "declaredCountry": "au",
+      "home": "brisbane",
+      "planned": null,
+      "model": [
+        -140.6,
+        -141
+      ],
+      "sign": [
+        -135.6,
+        -141
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "brisbane",
+      "nearest": {
+        "id": "brisbane",
+        "cc": "au",
+        "at": [
+          -132,
+          -137
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "au",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "lonepine",
+      "name": "Lone Pine Koala Sanctuary",
+      "declaredCountry": "au",
+      "home": "brisbane",
+      "planned": null,
+      "model": [
+        -123.4,
+        -141
+      ],
+      "sign": [
+        -128.4,
+        -141
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "brisbane",
+      "nearest": {
+        "id": "brisbane",
+        "cc": "au",
+        "at": [
+          -132,
+          -137
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "au",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "sydneytower",
+      "name": "Sydney Tower Eye",
+      "declaredCountry": "au",
+      "home": "sydney",
+      "planned": null,
+      "model": [
+        -123.4,
+        8.881784197001252e-16
+      ],
+      "sign": [
+        -128.4,
+        4.440892098500626e-16
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "sydney",
+      "nearest": {
+        "id": "sydney",
+        "cc": "au",
+        "at": [
+          -132,
+          -4
+        ],
+        "distance": 9.484724561103496
+      },
+      "expectedCountry": "au",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "lunapark",
+      "name": "Luna Park Sydney",
+      "declaredCountry": "au",
+      "home": "sydney",
+      "planned": null,
+      "model": [
+        -140.6,
+        -8.881784197001252e-16
+      ],
+      "sign": [
+        -135.6,
+        0
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "sydney",
+      "nearest": {
+        "id": "sydney",
+        "cc": "au",
+        "at": [
+          -132,
+          -4
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "au",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "flinders",
+      "name": "Flinders Street Station",
+      "declaredCountry": "au",
+      "home": "melbourne",
+      "planned": null,
+      "model": [
+        -123.4,
+        130
+      ],
+      "sign": [
+        -128.4,
+        130
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "melbourne",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "au",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "wtram",
+      "name": "Melbourne trams",
+      "declaredCountry": "au",
+      "home": "melbourne",
+      "planned": null,
+      "model": [
+        -140.6,
+        130
+      ],
+      "sign": [
+        -135.6,
+        130
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "melbourne",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 9.484724561103494
+      },
+      "expectedCountry": "au",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "bachdinh",
+      "name": "Bạch Dinh, the White Villa (Vũng Tàu)",
+      "declaredCountry": "vn",
+      "home": "vungtau",
+      "plannedPlace": "vungtau",
+      "planned": [
+        191,
+        134
+      ],
+      "model": [
+        191,
+        134
+      ],
+      "sign": [
+        194.8142435171666,
+        138.6315814137023
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 20.8806130178211
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "nhatron",
+      "name": "Nhà Tròn, the Round House (Bà Rịa)",
+      "declaredCountry": "vn",
+      "home": "saigon",
+      "plannedPlace": "town",
+      "planned": [
+        13.5,
+        -11.5
+      ],
+      "model": [
+        13.5,
+        -11.5
+      ],
+      "sign": [
+        10.230849164039068,
+        -15.922968778064789
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 11.423659658795863
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": true,
+      "homeMismatch": true
+    },
+    {
+      "id": "halong",
+      "name": "Hạ Long Bay",
+      "declaredCountry": "vn",
+      "home": "hanoi",
+      "plannedPlace": "lake",
+      "planned": [
+        111,
+        -79
+      ],
+      "model": [
+        114.23056197759786,
+        -77.20524334577897
+      ],
+      "sign": [
+        98.14606809696156,
+        -86.1410732794658
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "lake",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 69.59384470837566
+      },
+      "expectedCountry": "vn",
+      "drift": 3.695630140987009,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "hue",
+      "name": "Huế Imperial City",
+      "declaredCountry": "vn",
+      "home": "danang",
+      "plannedPlace": "danang",
+      "planned": [
+        195,
+        -7
+      ],
+      "model": [
+        193.63112399533048,
+        -1.7878815742694378
+      ],
+      "sign": [
+        196.12799754477834,
+        -11.471146647480417
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 41.527437410526446
+      },
+      "expectedCountry": "vn",
+      "drift": 5.388877434122993,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "myson",
+      "name": "Mỹ Sơn Sanctuary",
+      "declaredCountry": "vn",
+      "home": "danang",
+      "plannedPlace": "hoian",
+      "planned": [
+        202,
+        84
+      ],
+      "model": [
+        207.57322103924008,
+        93.22492315674074
+      ],
+      "sign": [
+        207.34869304520143,
+        84.72788913421894
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 23.310873449700594
+      },
+      "expectedCountry": "vn",
+      "drift": 10.777754868245978,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "phongnha",
+      "name": "Phong Nha caves",
+      "declaredCountry": "vn",
+      "home": "danang",
+      "plannedPlace": "paddies",
+      "planned": [
+        234,
+        -118
+      ],
+      "model": [
+        225.4885873488055,
+        -108.15338359226448
+      ],
+      "sign": [
+        221.47237228995834,
+        -95.78932209932903
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "paddies",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 68.74633453322592
+      },
+      "expectedCountry": "vn",
+      "drift": 13.01537552281916,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "trangan",
+      "name": "Tràng An",
+      "declaredCountry": "vn",
+      "home": "hanoi",
+      "plannedPlace": "hanoi",
+      "planned": [
+        123,
+        -157
+      ],
+      "model": [
+        104.2286598412583,
+        -129.06799705275665
+      ],
+      "sign": [
+        110.63293391248673,
+        -123.47914443163742
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 49.13076714082321
+      },
+      "expectedCountry": "vn",
+      "drift": 33.653528789712375,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "reef",
+      "name": "Great Barrier Reef",
+      "declaredCountry": "au",
+      "home": "brisbane",
+      "plannedPlace": "lake",
+      "planned": [
+        128,
+        -65
+      ],
+      "model": [
+        128.03880244984202,
+        -64.95634724392772
+      ],
+      "sign": [
+        136.609095970748,
+        -55.314767032908506
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "lake",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 74.3584203338885
+      },
+      "expectedCountry": "au",
+      "drift": 0.05840542120769647,
+      "countryMismatch": true,
+      "homeMismatch": true
+    },
+    {
+      "id": "sisters",
+      "name": "The Three Sisters, Blue Mountains",
+      "declaredCountry": "au",
+      "home": "sydney",
+      "plannedPlace": "sydney",
+      "planned": [
+        -162,
+        -44
+      ],
+      "model": [
+        -148.10824906325365,
+        -40.79075461963305
+      ],
+      "sign": [
+        -140.5154361133396,
+        -44.61164345701335
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "sydney",
+        "cc": "au",
+        "at": [
+          -132,
+          -4
+        ],
+        "distance": 40.16261088831082
+      },
+      "expectedCountry": "au",
+      "drift": 14.25762953649728,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "exhibition",
+      "name": "Royal Exhibition Building",
+      "declaredCountry": "au",
+      "home": "melbourne",
+      "plannedPlace": "melbourne",
+      "planned": [
+        -162,
+        136
+      ],
+      "model": [
+        -159.7426095007755,
+        142.93860130963085
+      ],
+      "sign": [
+        -156.98123182347365,
+        133.32742066814362
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 32.50490111105012
+      },
+      "expectedCountry": "au",
+      "drift": 7.296574538781882,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "kakadu",
+      "name": "Kakadu rock art",
+      "declaredCountry": "au",
+      "home": "uluru",
+      "plannedPlace": "uluru",
+      "planned": [
+        -186,
+        8
+      ],
+      "model": [
+        -199.5405932731461,
+        7.243472531079714
+      ],
+      "sign": [
+        -192.66141916438318,
+        2.2507815150718455
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "uluru",
+        "cc": "au",
+        "at": [
+          -196,
+          62
+        ],
+        "distance": 54.87087662121382
+      },
+      "expectedCountry": "au",
+      "drift": 13.561710806531764,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "forbidden",
+      "name": "The Forbidden City",
+      "declaredCountry": "cn",
+      "home": "china",
+      "plannedPlace": "china",
+      "planned": [
+        135,
+        -182
+      ],
+      "model": [
+        137.97413687421582,
+        -221.97542382331213
+      ],
+      "sign": [
+        129.81829229341352,
+        -216.18904333342056
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 37.977841003891335
+      },
+      "expectedCountry": "cn",
+      "drift": 40.08590774823492,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "heaven",
+      "name": "Temple of Heaven",
+      "declaredCountry": "cn",
+      "home": "china",
+      "plannedPlace": "china",
+      "planned": [
+        79,
+        -184
+      ],
+      "model": [
+        83.48852489249555,
+        -197.8857172767361
+      ],
+      "sign": [
+        91.95436385652638,
+        -198.64701264326425
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 23.60634773031808
+      },
+      "expectedCountry": "cn",
+      "drift": 14.593149077563746,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "terracotta",
+      "name": "Terracotta Army",
+      "declaredCountry": "cn",
+      "home": "china",
+      "plannedPlace": "china",
+      "planned": [
+        131,
+        -214
+      ],
+      "model": [
+        151.26054536342465,
+        -188.13824635534914
+      ],
+      "sign": [
+        143.05027677180072,
+        -190.3385848868923
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 45.822451651937605
+      },
+      "expectedCountry": "cn",
+      "drift": 32.853005950749775,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "potala",
+      "name": "Potala Palace",
+      "declaredCountry": "cn",
+      "home": "china",
+      "plannedPlace": "china",
+      "planned": [
+        83,
+        -216
+      ],
+      "model": [
+        78.76600065617816,
+        -226.84404212259045
+      ],
+      "sign": [
+        84.92612652569055,
+        -220.98717868967995
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 38.958456289056706
+      },
+      "expectedCountry": "cn",
+      "drift": 11.64130576868419,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "qutub",
+      "name": "Qutub Minar",
+      "declaredCountry": "in",
+      "home": "india",
+      "plannedPlace": "india",
+      "planned": [
+        -120,
+        -182
+      ],
+      "model": [
+        -122.66337239030534,
+        -200.21280998392504
+      ],
+      "sign": [
+        -114.16360665152591,
+        -200.1497038362741
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 28.664162378736567
+      },
+      "expectedCountry": "in",
+      "drift": 18.406520583749675,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "redfort",
+      "name": "Red Fort",
+      "declaredCountry": "in",
+      "home": "india",
+      "plannedPlace": "india",
+      "planned": [
+        -68,
+        -220
+      ],
+      "model": [
+        -74.07862063131499,
+        -217.42893578054694
+      ],
+      "sign": [
+        -80.47588396071562,
+        -211.83205969702445
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 26.469400416206973
+      },
+      "expectedCountry": "in",
+      "drift": 6.600000000000003,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "konark",
+      "name": "Konark Sun Temple",
+      "declaredCountry": "in",
+      "home": "india",
+      "plannedPlace": "india",
+      "planned": [
+        -68,
+        -184
+      ],
+      "model": [
+        -68,
+        -184
+      ],
+      "sign": [
+        -75.23909569198862,
+        -188.45482811814685
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 30.528675044947498
+      },
+      "expectedCountry": "in",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "hampi",
+      "name": "Hampi stone chariot",
+      "declaredCountry": "in",
+      "home": "india",
+      "plannedPlace": "india",
+      "planned": [
+        -120,
+        -218
+      ],
+      "model": [
+        -117.67280775459332,
+        -214.9826872464196
+      ],
+      "sign": [
+        -110.49046202661278,
+        -210.43692990096443
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 28.01575885300911
+      },
+      "expectedCountry": "in",
+      "drift": 3.8105117766515177,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "mahabodhi",
+      "name": "Mahabodhi Temple",
+      "declaredCountry": "in",
+      "home": "india",
+      "plannedPlace": "india",
+      "planned": [
+        -134,
+        -200
+      ],
+      "model": [
+        -142.5114126511945,
+        -190.15338359226448
+      ],
+      "sign": [
+        -134.18127718541288,
+        -191.84419497196578
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 49.50063648172173
+      },
+      "expectedCountry": "in",
+      "drift": 13.01537552281916,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "marble",
+      "name": "Marble Mountains (Ngũ Hành Sơn)",
+      "declaredCountry": "vn",
+      "home": "danang",
+      "planned": null,
+      "model": [
+        169.9419767906498,
+        -11.38394469163471
+      ],
+      "sign": [
+        163.84286514601587,
+        -4.765724602646215
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "danang",
+        "cc": "vn",
+        "at": [
+          153,
+          7
+        ],
+        "distance": 25.000000000000007
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "hoian",
+      "name": "Hội An Ancient Town",
+      "declaredCountry": "vn",
+      "home": "danang",
+      "planned": null,
+      "model": [
+        183,
+        94
+      ],
+      "sign": [
+        180.06608385012535,
+        85.49164316536356
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "hoian",
+      "nearest": {
+        "id": "hoian",
+        "cc": "vn",
+        "at": [
+          170,
+          90
+        ],
+        "distance": 13.601470508735444
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "thehuc",
+      "name": "Thê Húc Bridge, Hoàn Kiếm Lake",
+      "declaredCountry": "vn",
+      "home": "hanoi",
+      "planned": null,
+      "model": [
+        118.225,
+        -132
+      ],
+      "sign": [
+        111.225,
+        -132
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 34.90416343360775
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "cairang",
+      "name": "Cái Răng Floating Market (Mekong)",
+      "declaredCountry": "vn",
+      "home": "saigon",
+      "planned": null,
+      "model": [
+        172.48534123520585,
+        161.2137885697515
+      ],
+      "sign": [
+        164.5140652753489,
+        157.03542051848953
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "saigon",
+        "cc": "vn",
+        "at": [
+          153,
+          151
+        ],
+        "distance": 21.999999999999996
+      },
+      "expectedCountry": "vn",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "apostles",
+      "name": "The Twelve Apostles (Victoria)",
+      "declaredCountry": "au",
+      "home": "melbourne",
+      "planned": null,
+      "model": [
+        -160,
+        182
+      ],
+      "sign": [
+        -155.9750776405004,
+        173.95015528100075
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 62.609903369994115
+      },
+      "expectedCountry": "au",
+      "drift": null,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "storybridge",
+      "name": "Story Bridge (Queensland)",
+      "declaredCountry": "au",
+      "home": "brisbane",
+      "plannedPlace": "brisbane",
+      "planned": [
+        -132,
+        -106
+      ],
+      "model": [
+        -140.8,
+        -123
+      ],
+      "sign": [
+        -140.8,
+        -123
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "brisbane",
+      "nearest": {
+        "id": "brisbane",
+        "cc": "au",
+        "at": [
+          -132,
+          -137
+        ],
+        "distance": 16.536021286875517
+      },
+      "expectedCountry": "au",
+      "drift": 19.142622599842483,
+      "countryMismatch": false,
+      "homeMismatch": false
+    }
+  ],
+  "houses": [
+    {
+      "index": 0,
+      "x": 186,
+      "z": -56,
+      "kind": "village",
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 22.80350850198276
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 1,
+      "x": 200,
+      "z": -64,
+      "kind": "village",
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 22.360679774997894
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 2,
+      "x": 218,
+      "z": -62,
+      "kind": "village",
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 24.413111231467404
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 3,
+      "x": 226,
+      "z": -46,
+      "kind": "village",
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 22.360679774997894
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 4,
+      "x": 224,
+      "z": -28,
+      "kind": "village",
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 24.413111231467404
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 5,
+      "x": 184,
+      "z": -32,
+      "kind": "village",
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 22.360679774997898
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 6,
+      "x": 190,
+      "z": -20,
+      "kind": "village",
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 26.076809620810597
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 7,
+      "x": 210,
+      "z": -18,
+      "kind": "village",
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 24.73863375370596
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 8,
+      "x": -2.9000000000000004,
+      "z": -42,
+      "kind": "tube",
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 23.27251597915447
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 9,
+      "x": 1.5999999999999996,
+      "z": -42,
+      "kind": "tube",
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 21.325102578885758
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 10,
+      "x": 9.3,
+      "z": -43.400000000000006,
+      "kind": "villa",
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 21.402102700435773
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 11,
+      "x": 18.6,
+      "z": -44.4,
+      "kind": "brick",
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 24.370473938764505
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 12,
+      "x": -9.5,
+      "z": -16,
+      "kind": "raised",
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 19.448650338776726
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 13,
+      "x": 22,
+      "z": -10.8,
+      "kind": "cottage",
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 17.159254063041317
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 14,
+      "x": 93,
+      "z": -206,
+      "kind": "china",
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 15.231546211727817
+      },
+      "declaredCountry": "cn",
+      "studioCustom": false
+    },
+    {
+      "index": 15,
+      "x": 121,
+      "z": -206,
+      "kind": "china",
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 15.231546211727817
+      },
+      "declaredCountry": "cn",
+      "studioCustom": false
+    },
+    {
+      "index": 16,
+      "x": 95,
+      "z": -190,
+      "kind": "china",
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 15.620499351813312
+      },
+      "declaredCountry": "cn",
+      "studioCustom": false
+    },
+    {
+      "index": 17,
+      "x": 120,
+      "z": -190,
+      "kind": "china",
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 16.401219466856723
+      },
+      "declaredCountry": "cn",
+      "studioCustom": false
+    },
+    {
+      "index": 18,
+      "x": -107,
+      "z": -204,
+      "kind": "india",
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 13.601470508735444
+      },
+      "declaredCountry": "in",
+      "studioCustom": false
+    },
+    {
+      "index": 19,
+      "x": -81,
+      "z": -204,
+      "kind": "india",
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 13.601470508735444
+      },
+      "declaredCountry": "in",
+      "studioCustom": false
+    },
+    {
+      "index": 20,
+      "x": -106,
+      "z": -189,
+      "kind": "india",
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 16.278820596099706
+      },
+      "declaredCountry": "in",
+      "studioCustom": false
+    },
+    {
+      "index": 21,
+      "x": -82,
+      "z": -189,
+      "kind": "india",
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 16.278820596099706
+      },
+      "declaredCountry": "in",
+      "studioCustom": false
+    },
+    {
+      "index": 22,
+      "x": -8,
+      "z": -40.75,
+      "kind": "tube",
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 25.309336222034748
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 23,
+      "x": -2.6999999999999993,
+      "z": -17.3,
+      "kind": "home8",
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 12.608727136392474
+      },
+      "studioCustom": false
+    },
+    {
+      "index": 24,
+      "x": 164.5,
+      "z": -66,
+      "kind": "tube",
+      "city": [
+        "Hà Nội",
+        "Hà Nội"
+      ],
+      "expectedCity": "hanoi",
+      "region": "meadow",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 46.219584593546486
+      },
+      "declaredCountry": "vn",
+      "studioCustom": false
+    },
+    {
+      "index": 25,
+      "x": 175.57336768946692,
+      "z": -138.8539682349665,
+      "kind": "tube",
+      "city": [
+        "Hà Nội",
+        "Hà Nội"
+      ],
+      "expectedCity": "hanoi",
+      "region": "meadow",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 22.9
+      },
+      "declaredCountry": "vn",
+      "studioCustom": false
+    },
+    {
+      "index": 26,
+      "x": 174,
+      "z": -161.425,
+      "kind": "village",
+      "city": [
+        "Bắc Ninh",
+        "Bắc Ninh"
+      ],
+      "expectedCity": "bacninh",
+      "region": "meadow",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 28.068320665832495
+      },
+      "declaredCountry": "vn",
+      "studioCustom": false
+    },
+    {
+      "index": 27,
+      "x": 141.5,
+      "z": -14,
+      "kind": "tube",
+      "city": [
+        "Đà Nẵng",
+        "Đà Nẵng"
+      ],
+      "expectedCity": "danang",
+      "region": "meadow",
+      "nearest": {
+        "id": "danang",
+        "cc": "vn",
+        "at": [
+          153,
+          7
+        ],
+        "distance": 23.942639787625758
+      },
+      "declaredCountry": "vn",
+      "studioCustom": false
+    },
+    {
+      "index": 28,
+      "x": 141.55,
+      "z": -30,
+      "kind": "cottage",
+      "city": [
+        "Đà Nẵng",
+        "Đà Nẵng"
+      ],
+      "expectedCity": "danang",
+      "region": "meadow",
+      "nearest": {
+        "id": "danang",
+        "cc": "vn",
+        "at": [
+          153,
+          7
+        ],
+        "distance": 38.73115670877904
+      },
+      "declaredCountry": "vn",
+      "studioCustom": false
+    },
+    {
+      "index": 29,
+      "x": 164.5,
+      "z": 130,
+      "kind": "tube",
+      "city": [
+        "Hồ Chí Minh City",
+        "TP. Hồ Chí Minh"
+      ],
+      "expectedCity": "saigon",
+      "region": "meadow",
+      "nearest": {
+        "id": "saigon",
+        "cc": "vn",
+        "at": [
+          153,
+          151
+        ],
+        "distance": 23.942639787625758
+      },
+      "declaredCountry": "vn",
+      "studioCustom": false
+    },
+    {
+      "index": 30,
+      "x": 164.5,
+      "z": 104,
+      "kind": "tube",
+      "city": [
+        "Hồ Chí Minh City",
+        "TP. Hồ Chí Minh"
+      ],
+      "expectedCity": "saigon",
+      "region": "hoian",
+      "nearest": {
+        "id": "hoian",
+        "cc": "vn",
+        "at": [
+          170,
+          90
+        ],
+        "distance": 15.041608956491322
+      },
+      "declaredCountry": "vn",
+      "studioCustom": false
+    },
+    {
+      "index": 31,
+      "x": -142.35,
+      "z": -76,
+      "kind": "raised",
+      "city": [
+        "Brisbane",
+        "Brisbane"
+      ],
+      "expectedCity": "brisbane",
+      "region": "meadow",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 43.75525682703736
+      },
+      "declaredCountry": "au",
+      "studioCustom": false
+    },
+    {
+      "index": 32,
+      "x": -102,
+      "z": -160.55,
+      "kind": "cottage",
+      "city": [
+        "Brisbane",
+        "Brisbane"
+      ],
+      "expectedCity": "brisbane",
+      "region": "meadow",
+      "nearest": {
+        "id": "brisbane",
+        "cc": "au",
+        "at": [
+          -132,
+          -137
+        ],
+        "distance": 38.13925143470963
+      },
+      "declaredCountry": "au",
+      "studioCustom": false
+    },
+    {
+      "index": 33,
+      "x": -143.45,
+      "z": -27,
+      "kind": "cottage",
+      "city": [
+        "Sydney",
+        "Sydney"
+      ],
+      "expectedCity": "sydney",
+      "region": "meadow",
+      "nearest": {
+        "id": "sydney",
+        "cc": "au",
+        "at": [
+          -132,
+          -4
+        ],
+        "distance": 25.69245998342704
+      },
+      "declaredCountry": "au",
+      "studioCustom": false
+    },
+    {
+      "index": 34,
+      "x": -120.55000000000001,
+      "z": -29,
+      "kind": "cottage",
+      "city": [
+        "Sydney",
+        "Sydney"
+      ],
+      "expectedCity": "sydney",
+      "region": "meadow",
+      "nearest": {
+        "id": "sydney",
+        "cc": "au",
+        "at": [
+          -132,
+          -4
+        ],
+        "distance": 27.497318051039084
+      },
+      "declaredCountry": "au",
+      "studioCustom": false
+    },
+    {
+      "index": 35,
+      "x": -143.45,
+      "z": 55,
+      "kind": "cottage",
+      "city": [
+        "Melbourne",
+        "Melbourne"
+      ],
+      "expectedCity": "melbourne",
+      "region": "meadow",
+      "nearest": {
+        "id": "memory_w",
+        "cc": "au",
+        "at": [
+          -129,
+          44
+        ],
+        "distance": 18.160465302408955
+      },
+      "declaredCountry": "au",
+      "studioCustom": false
+    },
+    {
+      "index": 36,
+      "x": -111.78942059446094,
+      "z": 136.6609089712088,
+      "kind": "cottage",
+      "city": [
+        "Melbourne",
+        "Melbourne"
+      ],
+      "expectedCity": "melbourne",
+      "region": "meadow",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 22.850000000000005
+      },
+      "declaredCountry": "au",
+      "studioCustom": false
+    }
+  ],
+  "stalls": [
+    {
+      "index": 0,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 18.1,
+      "z": -21.5,
+      "id": "nuocmia",
+      "tap": "nuocmia",
+      "w": 3.6,
+      "d": 3.6,
+      "face": 3.141592653589793,
+      "kind": "cart",
+      "place": "town",
+      "nearestHouse": {
+        "x": 22,
+        "z": -10.8,
+        "kind": "cottage",
+        "distance": 11.38859078200635
+      },
+      "seller": [
+        {
+          "x": 19.650000000000002,
+          "z": -23.8,
+          "r": 3
+        }
+      ],
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 9.113725912051558
+      }
+    },
+    {
+      "index": 1,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 175,
+      "z": 107.7,
+      "id": "bahai",
+      "tap": "v_bahai",
+      "w": 2.8,
+      "d": 1.6,
+      "face": 0,
+      "kind": "stall",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 11.132834320154055
+      },
+      "seller": [
+        {
+          "x": 175,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "hoian",
+        "cc": "vn",
+        "at": [
+          170,
+          90
+        ],
+        "distance": 18.39266158009765
+      }
+    },
+    {
+      "index": 2,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 179,
+      "z": 107.3,
+      "id": "cothu",
+      "tap": "v_cothu",
+      "w": 0.8,
+      "d": 2.4,
+      "face": 0,
+      "kind": "pole",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 14.870776711389354
+      },
+      "seller": [
+        {
+          "x": 179,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 19.20650931325107
+      }
+    },
+    {
+      "index": 3,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 187,
+      "z": 107.7,
+      "id": "olai",
+      "tap": "v_olai",
+      "w": 2.8,
+      "d": 1.6,
+      "face": 0,
+      "kind": "stall",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 22.802192877001985
+      },
+      "seller": [
+        {
+          "x": 187,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 11.819052415485768
+      }
+    },
+    {
+      "index": 4,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 191,
+      "z": 107.7,
+      "id": "chunam",
+      "tap": "v_chunam",
+      "w": 2.8,
+      "d": 1.6,
+      "face": 0,
+      "kind": "stall",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 26.75705514439136
+      },
+      "seller": [
+        {
+          "x": 191,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 8.699999999999998
+      }
+    },
+    {
+      "index": 5,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 199,
+      "z": 107.7,
+      "id": "chutam",
+      "tap": "v_chutam",
+      "w": 2.8,
+      "d": 1.6,
+      "face": 0,
+      "kind": "stall",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 34.69783854939671
+      },
+      "seller": [
+        {
+          "x": 199,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 6.6098411478642936
+      }
+    },
+    {
+      "index": 6,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 207,
+      "z": 107.7,
+      "id": "cout",
+      "tap": "v_cout",
+      "w": 2.8,
+      "d": 1.6,
+      "face": 0,
+      "kind": "stall",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 42.660754798760884
+      },
+      "seller": [
+        {
+          "x": 207,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 11.819052415485768
+      }
+    },
+    {
+      "index": 7,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -114.6,
+      "z": -58.8,
+      "id": "gazza",
+      "tap": "v_gazza",
+      "w": 6.4,
+      "d": 2.4,
+      "face": 3.141592653589793,
+      "kind": "van",
+      "place": "aussie",
+      "nearestHouse": {
+        "x": -120.55000000000001,
+        "z": -29,
+        "kind": "cottage",
+        "distance": 30.38819672175366
+      },
+      "seller": [
+        {
+          "x": -118.3,
+          "z": -60.1,
+          "r": 3
+        }
+      ],
+      "region": "aussie",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 15.861904047118676
+      }
+    },
+    {
+      "index": 8,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -97.3,
+      "z": -58.5,
+      "id": "robbo",
+      "tap": "v_robbo",
+      "w": 3.4,
+      "d": 3,
+      "face": 3.141592653589793,
+      "kind": "tent",
+      "place": "aussie",
+      "nearestHouse": {
+        "x": -120.55000000000001,
+        "z": -29,
+        "kind": "cottage",
+        "distance": 37.56078407062345
+      },
+      "seller": [
+        {
+          "x": -97.3,
+          "z": -60.75,
+          "r": 3
+        }
+      ],
+      "region": "aussie",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 7.03846574190711
+      }
+    },
+    {
+      "index": 9,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -119,
+      "z": -70.4,
+      "id": "kelly",
+      "tap": "v_kelly",
+      "w": 0.8,
+      "d": 0.8,
+      "face": 0,
+      "kind": "shop",
+      "place": "aussie",
+      "nearestHouse": {
+        "x": -142.35,
+        "z": -76,
+        "kind": "raised",
+        "distance": 24.012132350126663
+      },
+      "seller": [
+        {
+          "x": -119,
+          "z": -69.4,
+          "r": 3
+        }
+      ],
+      "region": "aussie",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 19.752468200202223
+      }
+    },
+    {
+      "index": 10,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -109,
+      "z": -70.4,
+      "id": "davo",
+      "tap": "v_davo",
+      "w": 0.8,
+      "d": 0.8,
+      "face": 0,
+      "kind": "shop",
+      "place": "aussie",
+      "nearestHouse": {
+        "x": -142.35,
+        "z": -76,
+        "kind": "raised",
+        "distance": 33.816896664241675
+      },
+      "seller": [
+        {
+          "x": -109,
+          "z": -69.4,
+          "r": 3
+        }
+      ],
+      "region": "aussie",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 10.495713410721544
+      }
+    },
+    {
+      "index": 11,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -99,
+      "z": -70.4,
+      "id": "bev",
+      "tap": "v_bev",
+      "w": 0.8,
+      "d": 0.8,
+      "face": 0,
+      "kind": "shop",
+      "place": "aussie",
+      "nearestHouse": {
+        "x": -142.35,
+        "z": -76,
+        "kind": "raised",
+        "distance": 43.71021047764469
+      },
+      "seller": [
+        {
+          "x": -99,
+          "z": -69.4,
+          "r": 3
+        }
+      ],
+      "region": "aussie",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 5.491812087098399
+      }
+    },
+    {
+      "index": 12,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 147.6,
+      "z": -124.5,
+      "id": "k_bunca",
+      "tap": "v_k_bunca",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 1.5707963267948966,
+      "kind": "kiosk",
+      "place": "hanoi",
+      "nearestHouse": {
+        "x": 175.57336768946692,
+        "z": -138.8539682349665,
+        "kind": "tube",
+        "distance": 31.441146670891936
+      },
+      "seller": [
+        {
+          "x": 149.04999999999998,
+          "z": -124.5,
+          "r": 3
+        }
+      ],
+      "region": "hanoi",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 11.80720119249266
+      }
+    },
+    {
+      "index": 13,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 147.6,
+      "z": -128.3,
+      "id": "k_kemtt",
+      "tap": "v_k_kemtt",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 1.5707963267948966,
+      "kind": "kiosk",
+      "place": "hanoi",
+      "nearestHouse": {
+        "x": 175.57336768946692,
+        "z": -138.8539682349665,
+        "kind": "tube",
+        "distance": 29.89808598212925
+      },
+      "seller": [
+        {
+          "x": 149.04999999999998,
+          "z": -128.3,
+          "r": 3
+        }
+      ],
+      "region": "hanoi",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 8.605230967266358
+      }
+    },
+    {
+      "index": 14,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 187.2,
+      "z": -166.6,
+      "id": "k_phuthe",
+      "tap": "v_k_phuthe",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 3.141592653589793,
+      "kind": "kiosk",
+      "place": "bacninh",
+      "nearestHouse": {
+        "x": 174,
+        "z": -161.425,
+        "kind": "village",
+        "distance": 14.178174247765456
+      },
+      "seller": [
+        {
+          "x": 187.2,
+          "z": -168.04999999999998,
+          "r": 3
+        }
+      ],
+      "region": "bacninh",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 13.892443989449818
+      }
+    },
+    {
+      "index": 15,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 191,
+      "z": -166.6,
+      "id": "k_dongho",
+      "tap": "v_k_dongho",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 3.141592653589793,
+      "kind": "kiosk",
+      "place": "bacninh",
+      "nearestHouse": {
+        "x": 174,
+        "z": -161.425,
+        "kind": "village",
+        "distance": 17.77021735939096
+      },
+      "seller": [
+        {
+          "x": 191,
+          "z": -168.04999999999998,
+          "r": 3
+        }
+      ],
+      "region": "bacninh",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 10.495713410721544
+      }
+    },
+    {
+      "index": 16,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 158.4,
+      "z": -1.5,
+      "id": "k_miquang",
+      "tap": "v_k_miquang",
+      "w": 2.6,
+      "d": 1.4,
+      "face": -1.5707963267948966,
+      "kind": "kiosk",
+      "place": "danang",
+      "nearestHouse": {
+        "x": 141.5,
+        "z": -14,
+        "kind": "tube",
+        "distance": 21.020466217474823
+      },
+      "seller": [
+        {
+          "x": 156.95000000000002,
+          "z": -1.5,
+          "r": 3
+        }
+      ],
+      "region": "danang",
+      "nearest": {
+        "id": "danang",
+        "cc": "vn",
+        "at": [
+          153,
+          7
+        ],
+        "distance": 10.070253224224308
+      }
+    },
+    {
+      "index": 17,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 158.4,
+      "z": 2.3,
+      "id": "k_banhtrang",
+      "tap": "v_k_banhtrang",
+      "w": 2.6,
+      "d": 1.4,
+      "face": -1.5707963267948966,
+      "kind": "kiosk",
+      "place": "danang",
+      "nearestHouse": {
+        "x": 141.5,
+        "z": -14,
+        "kind": "tube",
+        "distance": 23.479778533878896
+      },
+      "seller": [
+        {
+          "x": 156.95000000000002,
+          "z": 2.3,
+          "r": 3
+        }
+      ],
+      "region": "danang",
+      "nearest": {
+        "id": "danang",
+        "cc": "vn",
+        "at": [
+          153,
+          7
+        ],
+        "distance": 7.158910531638181
+      }
+    },
+    {
+      "index": 18,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 158.4,
+      "z": 142.5,
+      "id": "k_comtam",
+      "tap": "v_k_comtam",
+      "w": 2.6,
+      "d": 1.4,
+      "face": -1.5707963267948966,
+      "kind": "kiosk",
+      "place": "saigon",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 130,
+        "kind": "tube",
+        "distance": 13.908989898623117
+      },
+      "seller": [
+        {
+          "x": 156.95000000000002,
+          "z": 142.5,
+          "r": 3
+        }
+      ],
+      "region": "saigon",
+      "nearest": {
+        "id": "saigon",
+        "cc": "vn",
+        "at": [
+          153,
+          151
+        ],
+        "distance": 10.070253224224308
+      }
+    },
+    {
+      "index": 19,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 158.4,
+      "z": 146.3,
+      "id": "k_banhxeo",
+      "tap": "v_k_banhxeo",
+      "w": 2.6,
+      "d": 1.4,
+      "face": -1.5707963267948966,
+      "kind": "kiosk",
+      "place": "saigon",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 130,
+        "kind": "tube",
+        "distance": 17.404022523543237
+      },
+      "seller": [
+        {
+          "x": 156.95000000000002,
+          "z": 146.3,
+          "r": 3
+        }
+      ],
+      "region": "saigon",
+      "nearest": {
+        "id": "saigon",
+        "cc": "vn",
+        "at": [
+          153,
+          151
+        ],
+        "distance": 7.158910531638173
+      }
+    },
+    {
+      "index": 20,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 194.5,
+      "z": 145.6,
+      "id": "k_banhkhot",
+      "tap": "v_k_banhkhot",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 0,
+      "kind": "kiosk",
+      "place": "vungtau",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 130,
+        "kind": "tube",
+        "distance": 33.813606728652886
+      },
+      "seller": [
+        {
+          "x": 194.5,
+          "z": 147.04999999999998,
+          "r": 3
+        },
+        {
+          "x": 9.5,
+          "z": -24.05,
+          "r": 3
+        }
+      ],
+      "region": "vungtau",
+      "nearest": {
+        "id": "vungtau",
+        "cc": "vn",
+        "at": [
+          205,
+          151
+        ],
+        "distance": 11.80720119249266
+      }
+    },
+    {
+      "index": 21,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 198.3,
+      "z": 145.6,
+      "id": "k_dua",
+      "tap": "v_k_dua",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 0,
+      "kind": "kiosk",
+      "place": "vungtau",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 130,
+        "kind": "tube",
+        "distance": 37.226334764518526
+      },
+      "seller": [
+        {
+          "x": 198.3,
+          "z": 147.04999999999998,
+          "r": 3
+        }
+      ],
+      "region": "vungtau",
+      "nearest": {
+        "id": "vungtau",
+        "cc": "vn",
+        "at": [
+          205,
+          151
+        ],
+        "distance": 8.605230967266358
+      }
+    },
+    {
+      "index": 22,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -126.6,
+      "z": -14.5,
+      "id": "k_anzac",
+      "tap": "v_k_anzac",
+      "w": 2.6,
+      "d": 1.4,
+      "face": -1.5707963267948966,
+      "kind": "kiosk",
+      "place": "sydney",
+      "nearestHouse": {
+        "x": -120.55000000000001,
+        "z": -29,
+        "kind": "cottage",
+        "distance": 15.711540344600198
+      },
+      "seller": [
+        {
+          "x": -128.04999999999998,
+          "z": -14.5,
+          "r": 3
+        }
+      ],
+      "region": "sydney",
+      "nearest": {
+        "id": "sydney",
+        "cc": "au",
+        "at": [
+          -132,
+          -4
+        ],
+        "distance": 11.80720119249266
+      }
+    },
+    {
+      "index": 23,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -126.6,
+      "z": -10.7,
+      "id": "k_fairybread",
+      "tap": "v_k_fairybread",
+      "w": 2.6,
+      "d": 1.4,
+      "face": -1.5707963267948966,
+      "kind": "kiosk",
+      "place": "sydney",
+      "nearestHouse": {
+        "x": -120.55000000000001,
+        "z": -29,
+        "kind": "cottage",
+        "distance": 19.2741407071755
+      },
+      "seller": [
+        {
+          "x": -128.04999999999998,
+          "z": -10.7,
+          "r": 3
+        }
+      ],
+      "region": "sydney",
+      "nearest": {
+        "id": "sydney",
+        "cc": "au",
+        "at": [
+          -132,
+          -4
+        ],
+        "distance": 8.605230967266367
+      }
+    },
+    {
+      "index": 24,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -126.6,
+      "z": 115.5,
+      "id": "k_babycino",
+      "tap": "v_k_babycino",
+      "w": 2.6,
+      "d": 1.4,
+      "face": -1.5707963267948966,
+      "kind": "kiosk",
+      "place": "melbourne",
+      "nearestHouse": {
+        "x": -111.78942059446094,
+        "z": 136.6609089712088,
+        "kind": "cottage",
+        "distance": 25.829001738657325
+      },
+      "seller": [
+        {
+          "x": -128.04999999999998,
+          "z": 115.5,
+          "r": 3
+        }
+      ],
+      "region": "melbourne",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 11.80720119249266
+      }
+    },
+    {
+      "index": 25,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -126.6,
+      "z": 119.3,
+      "id": "k_dimsim",
+      "tap": "v_k_dimsim",
+      "w": 2.6,
+      "d": 1.4,
+      "face": -1.5707963267948966,
+      "kind": "kiosk",
+      "place": "melbourne",
+      "nearestHouse": {
+        "x": -111.78942059446094,
+        "z": 136.6609089712088,
+        "kind": "cottage",
+        "distance": 22.820044317099306
+      },
+      "seller": [
+        {
+          "x": -128.04999999999998,
+          "z": 119.3,
+          "r": 3
+        }
+      ],
+      "region": "melbourne",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 8.60523096726637
+      }
+    },
+    {
+      "index": 26,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -137.4,
+      "z": -128.5,
+      "id": "k_mango",
+      "tap": "v_k_mango",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 1.5707963267948966,
+      "kind": "kiosk",
+      "place": "brisbane",
+      "nearestHouse": {
+        "x": -102,
+        "z": -160.55,
+        "kind": "cottage",
+        "distance": 47.75314125793194
+      },
+      "seller": [
+        {
+          "x": -135.95000000000002,
+          "z": -128.5,
+          "r": 3
+        }
+      ],
+      "region": "brisbane",
+      "nearest": {
+        "id": "brisbane",
+        "cc": "au",
+        "at": [
+          -132,
+          -137
+        ],
+        "distance": 10.070253224224308
+      }
+    },
+    {
+      "index": 27,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -137.4,
+      "z": -132.3,
+      "id": "k_lamington",
+      "tap": "v_k_lamington",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 1.5707963267948966,
+      "kind": "kiosk",
+      "place": "brisbane",
+      "nearestHouse": {
+        "x": -102,
+        "z": -160.55,
+        "kind": "cottage",
+        "distance": 45.29042393265932
+      },
+      "seller": [
+        {
+          "x": -135.95000000000002,
+          "z": -132.3,
+          "r": 3
+        }
+      ],
+      "region": "brisbane",
+      "nearest": {
+        "id": "brisbane",
+        "cc": "au",
+        "at": [
+          -132,
+          -137
+        ],
+        "distance": 7.158910531638173
+      }
+    },
+    {
+      "index": 28,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 175,
+      "z": -45.9,
+      "id": "k_trongnuoc",
+      "tap": "v_k_trongnuoc",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 0,
+      "kind": "kiosk",
+      "place": "village",
+      "nearestHouse": {
+        "x": 186,
+        "z": -56,
+        "kind": "village",
+        "distance": 14.933519344079615
+      },
+      "seller": [
+        {
+          "x": 175,
+          "z": -44.449999999999996,
+          "r": 3
+        }
+      ],
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 29.261066282690383
+      }
+    },
+    {
+      "index": 29,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 179,
+      "z": -45.9,
+      "id": "k_banhduc",
+      "tap": "v_k_banhduc",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 0,
+      "kind": "kiosk",
+      "place": "village",
+      "nearestHouse": {
+        "x": 186,
+        "z": -56,
+        "kind": "village",
+        "distance": 12.28861261493746
+      },
+      "seller": [
+        {
+          "x": 179,
+          "z": -44.449999999999996,
+          "r": 3
+        }
+      ],
+      "region": "village",
+      "nearest": {
+        "id": "village",
+        "cc": "vn",
+        "at": [
+          204,
+          -42
+        ],
+        "distance": 25.302371430362015
+      }
+    },
+    {
+      "index": 30,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 9.5,
+      "z": -22.6,
+      "id": "k_banhkhot",
+      "tap": "v_k_banhkhot",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 3.141592653589793,
+      "kind": "kiosk",
+      "place": "town",
+      "nearestHouse": {
+        "x": -2.6999999999999993,
+        "z": -17.3,
+        "kind": "home8",
+        "distance": 13.301503674397118
+      },
+      "seller": [
+        {
+          "x": 194.5,
+          "z": 147.04999999999998,
+          "r": 3
+        },
+        {
+          "x": 9.5,
+          "z": -24.05,
+          "r": 3
+        }
+      ],
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 0.7810249675906665
+      }
+    },
+    {
+      "index": 31,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 13.5,
+      "z": -22.6,
+      "id": "k_vegemite",
+      "tap": "v_k_vegemite",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 3.141592653589793,
+      "kind": "kiosk",
+      "place": "town",
+      "nearestHouse": {
+        "x": 22,
+        "z": -10.8,
+        "kind": "cottage",
+        "distance": 14.542695761102891
+      },
+      "seller": [
+        {
+          "x": 13.5,
+          "z": -24.05,
+          "r": 3
+        }
+      ],
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 4.539823785126467
+      }
+    },
+    {
+      "index": 32,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 101.6,
+      "z": -179.6,
+      "id": "k_tanghulu",
+      "tap": "v_k_tanghulu",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 1.5707963267948966,
+      "kind": "kiosk",
+      "place": "china",
+      "nearestHouse": {
+        "x": 95,
+        "z": -190,
+        "kind": "china",
+        "distance": 12.317467272130258
+      },
+      "seller": [
+        {
+          "x": 103.05,
+          "z": -179.6,
+          "r": 3
+        }
+      ],
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 21.102606474082776
+      }
+    },
+    {
+      "index": 33,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 101.6,
+      "z": -183.4,
+      "id": "k_baozi",
+      "tap": "v_k_baozi",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 1.5707963267948966,
+      "kind": "kiosk",
+      "place": "china",
+      "nearestHouse": {
+        "x": 95,
+        "z": -190,
+        "kind": "china",
+        "distance": 9.33380951166242
+      },
+      "seller": [
+        {
+          "x": 103.05,
+          "z": -183.4,
+          "r": 3
+        }
+      ],
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 17.456230979223434
+      }
+    },
+    {
+      "index": 34,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -99.4,
+      "z": -179.6,
+      "id": "k_samosa",
+      "tap": "v_k_samosa",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 1.5707963267948966,
+      "kind": "kiosk",
+      "place": "india",
+      "nearestHouse": {
+        "x": -106,
+        "z": -189,
+        "kind": "india",
+        "distance": 11.485643212288986
+      },
+      "seller": [
+        {
+          "x": -97.95,
+          "z": -179.6,
+          "r": 3
+        }
+      ],
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 21.102606474082776
+      }
+    },
+    {
+      "index": 35,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -99.4,
+      "z": -183.4,
+      "id": "k_lassi",
+      "tap": "v_k_lassi",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 1.5707963267948966,
+      "kind": "kiosk",
+      "place": "india",
+      "nearestHouse": {
+        "x": -106,
+        "z": -189,
+        "kind": "india",
+        "distance": 8.655634003352953
+      },
+      "seller": [
+        {
+          "x": -97.95,
+          "z": -183.4,
+          "r": 3
+        }
+      ],
+      "region": "india",
+      "nearest": {
+        "id": "india",
+        "cc": "in",
+        "at": [
+          -94,
+          -200
+        ],
+        "distance": 17.456230979223434
+      }
+    },
+    {
+      "index": 36,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -108.9,
+      "z": -59.3,
+      "id": "k_vanilla",
+      "tap": "v_k_vanilla",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 3.141592653589793,
+      "kind": "kiosk",
+      "place": "aussie",
+      "nearestHouse": {
+        "x": -120.55000000000001,
+        "z": -29,
+        "kind": "cottage",
+        "distance": 32.46247834038553
+      },
+      "seller": [
+        {
+          "x": -108.9,
+          "z": -60.75,
+          "r": 3
+        }
+      ],
+      "region": "aussie",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 10.568822072492285
+      }
+    },
+    {
+      "index": 37,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": -93.1,
+      "z": -59.3,
+      "id": "k_pavlova",
+      "tap": "v_k_pavlova",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 3.141592653589793,
+      "kind": "kiosk",
+      "place": "aussie",
+      "nearestHouse": {
+        "x": -120.55000000000001,
+        "z": -29,
+        "kind": "cottage",
+        "distance": 40.88511342775021
+      },
+      "seller": [
+        {
+          "x": -93.1,
+          "z": -60.75,
+          "r": 3
+        }
+      ],
+      "region": "aussie",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 8.949860334105786
+      }
+    },
+    {
+      "index": 38,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 183,
+      "z": 107.8,
+      "id": "k_banhcuon",
+      "tap": "v_k_banhcuon",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 0,
+      "kind": "kiosk",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 18.886238376129853
+      },
+      "seller": [
+        {
+          "x": 183,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 15.311433636338567
+      }
+    },
+    {
+      "index": 39,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 203,
+      "z": 107.8,
+      "id": "k_banhbo",
+      "tap": "v_k_banhbo",
+      "w": 2.6,
+      "d": 1.4,
+      "face": 0,
+      "kind": "kiosk",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 38.68707794600155
+      },
+      "seller": [
+        {
+          "x": 203,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 8.6278618440492
+      }
+    },
+    {
+      "index": 40,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 195,
+      "z": 107.8,
+      "id": "musiccorner",
+      "tap": "musiccorner",
+      "w": 2.8,
+      "d": 1.4,
+      "face": 0,
+      "kind": "stall",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 30.735809733924366
+      },
+      "seller": [
+        {
+          "x": 195,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 6.514598989960936
+      }
+    },
+    {
+      "index": 41,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 211,
+      "z": 107.8,
+      "id": "stall",
+      "tap": "stall",
+      "w": 2.8,
+      "d": 1.4,
+      "face": 0,
+      "kind": "stall",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 46.65501044903966
+      },
+      "seller": [
+        {
+          "x": 211,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 15.311433636338567
+      }
+    },
+    {
+      "index": 42,
+      "keys": [
+        "id",
+        "place",
+        "kind",
+        "x",
+        "z",
+        "w",
+        "d",
+        "face",
+        "tap"
+      ],
+      "x": 215.4,
+      "z": 107.45,
+      "id": "shop_clothes",
+      "tap": "shop_clothes",
+      "w": 3.6,
+      "d": 2.1,
+      "face": 0,
+      "kind": "stall",
+      "place": "market",
+      "nearestHouse": {
+        "x": 164.5,
+        "z": 104,
+        "kind": "tube",
+        "distance": 51.01678645308817
+      },
+      "seller": [
+        {
+          "x": 215.4,
+          "z": 109.25,
+          "r": 3
+        }
+      ],
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 19.53106499912384
+      }
+    }
+  ],
+  "interactables": [
+    {
+      "id": "npc_owl",
+      "x": 7,
+      "z": -84,
+      "region": "plateau"
+    },
+    {
+      "id": "npc_mai",
+      "x": 206,
+      "z": -53.6,
+      "region": "village"
+    },
+    {
+      "id": "npc_ba",
+      "x": 199.5,
+      "z": -29,
+      "region": "village"
+    },
+    {
+      "id": "npc_teo",
+      "x": 220,
+      "z": -22.4,
+      "region": "village"
+    },
+    {
+      "id": "npc_ti",
+      "x": 186,
+      "z": -39.5,
+      "region": "village"
+    },
+    {
+      "id": "npc_bong",
+      "x": 214,
+      "z": -38,
+      "region": "village"
+    },
+    {
+      "id": "npc_su",
+      "x": 211.5,
+      "z": -24,
+      "region": "village"
+    },
+    {
+      "id": "npc_jack",
+      "x": 2,
+      "z": -16,
+      "region": "town"
+    },
+    {
+      "id": "npc_mit",
+      "x": 6.5,
+      "z": -12.5,
+      "region": "town"
+    },
+    {
+      "id": "npc_bom",
+      "x": 10,
+      "z": -17,
+      "region": "town"
+    },
+    {
+      "id": "npc_ruby",
+      "x": 21.2,
+      "z": -18.6,
+      "region": "town"
+    },
+    {
+      "id": "npc_lan",
+      "x": -1,
+      "z": -10,
+      "region": "town"
+    },
+    {
+      "id": "npc_gourd",
+      "x": 178,
+      "z": -36,
+      "region": "village"
+    },
+    {
+      "id": "apple0",
+      "x": -185.69538403535262,
+      "z": -143.86210462544113,
+      "region": "bamboo"
+    },
+    {
+      "id": "apple1",
+      "x": 122.58682292886078,
+      "z": -22.954235156066716,
+      "region": "meadow"
+    },
+    {
+      "id": "apple2",
+      "x": -51.88789183739573,
+      "z": 109.02805896475911,
+      "region": "meadow"
+    },
+    {
+      "id": "apple3",
+      "x": 223.09062163112685,
+      "z": -79.23999581253156,
+      "region": "village"
+    },
+    {
+      "id": "apple4",
+      "x": -187.30192204238847,
+      "z": -48.40792146278545,
+      "region": "meadow"
+    },
+    {
+      "id": "apple5",
+      "x": 209.93591349106282,
+      "z": 2.6137385051697493,
+      "region": "meadow"
+    },
+    {
+      "id": "apple6",
+      "x": 194.28809594828635,
+      "z": 91.85767447343096,
+      "region": "meadow"
+    },
+    {
+      "id": "apple7",
+      "x": -28.712889819871634,
+      "z": -0.835706340149045,
+      "region": "meadow"
+    },
+    {
+      "id": "apple8",
+      "x": 49.18099633650854,
+      "z": -65.50949566299096,
+      "region": "meadow"
+    },
+    {
+      "id": "apple9",
+      "x": -75.42436992516741,
+      "z": -110.16604104079306,
+      "region": "meadow"
+    },
+    {
+      "id": "apple10",
+      "x": -64.45551303913817,
+      "z": -112.55335469031706,
+      "region": "meadow"
+    },
+    {
+      "id": "apple11",
+      "x": -163.928069639951,
+      "z": 100.37129401462153,
+      "region": "meadow"
+    },
+    {
+      "id": "apple12",
+      "x": -42.675922194030136,
+      "z": -130.17640637699515,
+      "region": "meadow"
+    },
+    {
+      "id": "apple13",
+      "x": -46.096459636464715,
+      "z": -102.3565053474158,
+      "region": "meadow"
+    },
+    {
+      "id": "apple14",
+      "x": -33.80707351025194,
+      "z": -102.88309673778713,
+      "region": "meadow"
+    },
+    {
+      "id": "apple15",
+      "x": 55.62008048873395,
+      "z": -133.31535682082176,
+      "region": "meadow"
+    },
+    {
+      "id": "buffalo0",
+      "x": 203.68590035189786,
+      "z": -93.41953345396821,
+      "region": "paddies"
+    },
+    {
+      "id": "buffalo1",
+      "x": 178.79579739781553,
+      "z": -24.730141425773063,
+      "region": "village"
+    },
+    {
+      "id": "sh_pattern",
+      "x": -7,
+      "z": -84,
+      "region": "plateau"
+    },
+    {
+      "id": "sh_count",
+      "x": 25,
+      "z": -86,
+      "region": "plateau"
+    },
+    {
+      "id": "sh_letters",
+      "x": 22,
+      "z": -62,
+      "region": "plateau"
+    },
+    {
+      "id": "sh_memory",
+      "x": -104,
+      "z": 24,
+      "region": "meadow"
+    },
+    {
+      "id": "sh_hanoi",
+      "x": 104,
+      "z": -146,
+      "region": "meadow"
+    },
+    {
+      "id": "sh_robot",
+      "x": 64,
+      "z": 150,
+      "region": "meadow"
+    },
+    {
+      "id": "sh_goat",
+      "x": -196,
+      "z": 110,
+      "region": "meadow"
+    },
+    {
+      "id": "sh_sort",
+      "x": 200,
+      "z": 14,
+      "region": "meadow"
+    },
+    {
+      "id": "sh_shapes",
+      "x": -60,
+      "z": 150,
+      "region": "meadow"
+    },
+    {
+      "id": "sh_colors",
+      "x": -104,
+      "z": -128,
+      "region": "meadow"
+    },
+    {
+      "id": "sh_maze",
+      "x": 52,
+      "z": -150,
+      "region": "meadow"
+    },
+    {
+      "id": "sh_numbers",
+      "x": -96,
+      "z": 84,
+      "region": "meadow"
+    },
+    {
+      "id": "tw_plateau",
+      "x": 10,
+      "z": -66,
+      "region": "plateau"
+    },
+    {
+      "id": "tw_bamboo",
+      "x": -176,
+      "z": -100,
+      "region": "bamboo"
+    },
+    {
+      "id": "tw_peaks",
+      "x": 40,
+      "z": -208,
+      "region": "mountain"
+    },
+    {
+      "id": "tw_lake",
+      "x": 140,
+      "z": -60,
+      "region": "lake"
+    },
+    {
+      "id": "lf0",
+      "x": -12,
+      "z": -90,
+      "region": "plateau"
+    },
+    {
+      "id": "lf1",
+      "x": 30,
+      "z": -60,
+      "region": "meadow"
+    },
+    {
+      "id": "lf2",
+      "x": 34,
+      "z": 48,
+      "region": "home"
+    },
+    {
+      "id": "lf3",
+      "x": -100,
+      "z": -150,
+      "region": "meadow"
+    },
+    {
+      "id": "lf4",
+      "x": -105,
+      "z": 20,
+      "region": "meadow"
+    },
+    {
+      "id": "lf5",
+      "x": -186,
+      "z": 0,
+      "region": "meadow"
+    },
+    {
+      "id": "lf6",
+      "x": -150,
+      "z": 96,
+      "region": "meadow"
+    },
+    {
+      "id": "lf7",
+      "x": 120,
+      "z": -60,
+      "region": "lake"
+    },
+    {
+      "id": "lf8",
+      "x": 60,
+      "z": 130,
+      "region": "meadow"
+    },
+    {
+      "id": "lf9",
+      "x": 186,
+      "z": 156,
+      "region": "meadow"
+    },
+    {
+      "id": "lf10",
+      "x": 200,
+      "z": -14,
+      "region": "village"
+    },
+    {
+      "id": "lf11",
+      "x": 214,
+      "z": -40,
+      "region": "village"
+    },
+    {
+      "id": "lf12",
+      "x": 175,
+      "z": -125,
+      "region": "meadow"
+    },
+    {
+      "id": "lf13",
+      "x": 130,
+      "z": -190,
+      "region": "china"
+    },
+    {
+      "id": "lf14",
+      "x": -30,
+      "z": -195,
+      "region": "mountain"
+    },
+    {
+      "id": "lf15",
+      "x": -60,
+      "z": -150,
+      "region": "meadow"
+    },
+    {
+      "id": "lf16",
+      "x": 70,
+      "z": -195,
+      "region": "china"
+    },
+    {
+      "id": "lf17",
+      "x": -200,
+      "z": -60,
+      "region": "meadow"
+    },
+    {
+      "id": "lf18",
+      "x": -200,
+      "z": 30,
+      "region": "meadow"
+    },
+    {
+      "id": "lf19",
+      "x": -30,
+      "z": 118,
+      "region": "meadow"
+    },
+    {
+      "id": "lf20",
+      "x": 110,
+      "z": 60,
+      "region": "meadow"
+    },
+    {
+      "id": "lf21",
+      "x": -90,
+      "z": 170,
+      "region": "meadow"
+    },
+    {
+      "id": "lf22",
+      "x": 210,
+      "z": -200,
+      "region": "mountain"
+    },
+    {
+      "id": "lf23",
+      "x": 108,
+      "z": 52,
+      "region": "meadow"
+    },
+    {
+      "id": "pot0",
+      "x": 5,
+      "z": -68,
+      "region": "plateau"
+    },
+    {
+      "id": "pot1",
+      "x": 202,
+      "z": -30,
+      "region": "village"
+    },
+    {
+      "id": "statue",
+      "x": 222,
+      "z": -44,
+      "region": "village"
+    },
+    {
+      "id": "g0",
+      "x": -176,
+      "z": -90,
+      "region": "bamboo"
+    },
+    {
+      "id": "g1",
+      "x": -200,
+      "z": -106,
+      "region": "bamboo"
+    },
+    {
+      "id": "g2",
+      "x": -162,
+      "z": 36,
+      "region": "meadow"
+    },
+    {
+      "id": "g3",
+      "x": -102,
+      "z": 94,
+      "region": "meadow"
+    },
+    {
+      "id": "g4",
+      "x": -184,
+      "z": -134,
+      "region": "bamboo"
+    },
+    {
+      "id": "g5",
+      "x": -99.99091198008328,
+      "z": -154.14963245431574,
+      "region": "meadow"
+    },
+    {
+      "id": "g6",
+      "x": -9,
+      "z": -64,
+      "region": "plateau"
+    },
+    {
+      "id": "g7",
+      "x": -60,
+      "z": -184,
+      "region": "india"
+    },
+    {
+      "id": "g8",
+      "x": 35,
+      "z": -72,
+      "region": "plateau"
+    },
+    {
+      "id": "g9",
+      "x": -21,
+      "z": 20,
+      "region": "meadow"
+    },
+    {
+      "id": "g10",
+      "x": 199.06066017177983,
+      "z": -58.93933982822018,
+      "region": "village"
+    },
+    {
+      "id": "g11",
+      "x": 192,
+      "z": -56,
+      "region": "village"
+    },
+    {
+      "id": "g12",
+      "x": 203,
+      "z": -100,
+      "region": "paddies"
+    },
+    {
+      "id": "g13",
+      "x": 216,
+      "z": -90,
+      "region": "paddies"
+    },
+    {
+      "id": "g14",
+      "x": 198,
+      "z": -88,
+      "region": "paddies"
+    },
+    {
+      "id": "g15",
+      "x": 123,
+      "z": 131,
+      "region": "meadow"
+    },
+    {
+      "id": "g16",
+      "x": 108,
+      "z": 161,
+      "region": "meadow"
+    },
+    {
+      "id": "g17",
+      "x": 145,
+      "z": 126,
+      "region": "meadow"
+    },
+    {
+      "id": "g18",
+      "x": 120,
+      "z": -104,
+      "region": "lake"
+    },
+    {
+      "id": "g19",
+      "x": 215.5,
+      "z": 92,
+      "region": "meadow"
+    },
+    {
+      "id": "g20",
+      "x": 183,
+      "z": 25,
+      "region": "meadow"
+    },
+    {
+      "id": "g21",
+      "x": -164.5,
+      "z": -121,
+      "region": "bamboo"
+    },
+    {
+      "id": "g22",
+      "x": 214,
+      "z": -106,
+      "region": "paddies"
+    },
+    {
+      "id": "g23",
+      "x": 128,
+      "z": -28,
+      "region": "meadow"
+    },
+    {
+      "id": "plot0",
+      "x": -5,
+      "z": 33,
+      "region": "home"
+    },
+    {
+      "id": "plot1",
+      "x": -2,
+      "z": 33,
+      "region": "home"
+    },
+    {
+      "id": "plot2",
+      "x": 1,
+      "z": 33,
+      "region": "home"
+    },
+    {
+      "id": "plot3",
+      "x": -5,
+      "z": 36,
+      "region": "home"
+    },
+    {
+      "id": "plot4",
+      "x": -2,
+      "z": 36,
+      "region": "home"
+    },
+    {
+      "id": "plot5",
+      "x": 1,
+      "z": 36,
+      "region": "home"
+    },
+    {
+      "id": "plot6",
+      "x": -5,
+      "z": 39,
+      "region": "home"
+    },
+    {
+      "id": "plot7",
+      "x": -2,
+      "z": 39,
+      "region": "home"
+    },
+    {
+      "id": "plot8",
+      "x": 1,
+      "z": 39,
+      "region": "home"
+    },
+    {
+      "id": "hay",
+      "x": 18.5,
+      "z": 42,
+      "region": "home"
+    },
+    {
+      "id": "crate",
+      "x": 21.5,
+      "z": 46.5,
+      "region": "home"
+    },
+    {
+      "id": "pen",
+      "x": 24,
+      "z": 36,
+      "region": "home"
+    },
+    {
+      "id": "bear",
+      "x": -12,
+      "z": 52,
+      "region": "home"
+    },
+    {
+      "id": "order",
+      "x": -15,
+      "z": 44,
+      "region": "home"
+    },
+    {
+      "id": "jobs",
+      "x": 2.5999999999999996,
+      "z": 49.4,
+      "region": "home"
+    },
+    {
+      "id": "wardrobe",
+      "x": 5.8,
+      "z": 49.6,
+      "region": "home"
+    },
+    {
+      "id": "easel",
+      "x": 14.6,
+      "z": 49.2,
+      "region": "home"
+    },
+    {
+      "id": "hutch",
+      "x": -11,
+      "z": 26,
+      "region": "home"
+    },
+    {
+      "id": "balloon",
+      "x": -18,
+      "z": 24,
+      "region": "home"
+    },
+    {
+      "id": "bubbles",
+      "x": 13,
+      "z": 28,
+      "region": "home"
+    },
+    {
+      "id": "blocks",
+      "x": 20,
+      "z": 58,
+      "region": "home"
+    },
+    {
+      "id": "feedfish",
+      "x": 8.8,
+      "z": 20,
+      "region": "home"
+    },
+    {
+      "id": "duckmaze",
+      "x": -2.8,
+      "z": 20,
+      "region": "home"
+    },
+    {
+      "id": "xylo",
+      "x": 203.4,
+      "z": -12,
+      "region": "village"
+    },
+    {
+      "id": "theatre",
+      "x": 230,
+      "z": -59,
+      "region": "village"
+    },
+    {
+      "id": "frog",
+      "x": 196.5,
+      "z": -44,
+      "region": "village"
+    },
+    {
+      "id": "chest",
+      "x": 75,
+      "z": -53,
+      "region": "meadow"
+    },
+    {
+      "id": "stage",
+      "x": 198,
+      "z": -11,
+      "region": "village"
+    },
+    {
+      "id": "nuocmia",
+      "x": 19.650000000000002,
+      "z": -23.8,
+      "region": "town"
+    },
+    {
+      "id": "cards",
+      "x": -12.700000000000001,
+      "z": -34.4,
+      "region": "town"
+    },
+    {
+      "id": "tienlen",
+      "x": -12.499999999999998,
+      "z": -39.4,
+      "region": "town"
+    },
+    {
+      "id": "dacau",
+      "x": 7.8,
+      "z": -9,
+      "region": "town"
+    },
+    {
+      "id": "v_bahai",
+      "x": 175,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "v_cothu",
+      "x": 179,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "v_olai",
+      "x": 187,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "v_chunam",
+      "x": 191,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "v_chutam",
+      "x": 199,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "v_cout",
+      "x": 207,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "v_kelly",
+      "x": -119,
+      "z": -69.4,
+      "region": "aussie"
+    },
+    {
+      "id": "v_davo",
+      "x": -109,
+      "z": -69.4,
+      "region": "aussie"
+    },
+    {
+      "id": "v_bev",
+      "x": -99,
+      "z": -69.4,
+      "region": "aussie"
+    },
+    {
+      "id": "v_gazza",
+      "x": -118.3,
+      "z": -60.1,
+      "region": "aussie"
+    },
+    {
+      "id": "v_robbo",
+      "x": -97.3,
+      "z": -60.75,
+      "region": "aussie"
+    },
+    {
+      "id": "g_datnieu",
+      "x": 193,
+      "z": 119.5,
+      "region": "market"
+    },
+    {
+      "id": "g_chichi",
+      "x": 204,
+      "z": 120.5,
+      "region": "market"
+    },
+    {
+      "id": "g_words",
+      "x": 176,
+      "z": 116.6,
+      "region": "market"
+    },
+    {
+      "id": "g_sackrace",
+      "x": -120,
+      "z": -56.5,
+      "region": "aussie"
+    },
+    {
+      "id": "g_parcel",
+      "x": -100,
+      "z": -44,
+      "region": "aussie"
+    },
+    {
+      "id": "g_cricket",
+      "x": -83.5,
+      "z": -42.5,
+      "region": "aussie"
+    },
+    {
+      "id": "pc_opera",
+      "x": -87.22215535341553,
+      "z": 17.800439868043984,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_harbour",
+      "x": -71.6,
+      "z": 21,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_uluru",
+      "x": -196,
+      "z": 46,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_banana",
+      "x": -84.29844473524828,
+      "z": -65.7713140242047,
+      "region": "aussie"
+    },
+    {
+      "id": "pc_bondi",
+      "x": -101.8725873820297,
+      "z": 169.14693753997386,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_lighthouse",
+      "x": 212.00844764974136,
+      "z": 176.83653928388566,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_turtle",
+      "x": 117.15324538335952,
+      "z": -124.71151927906013,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_onepillar",
+      "x": 161.72143200771407,
+      "z": -116.20701701153108,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_chuacau",
+      "x": 174.2,
+      "z": 82,
+      "region": "hoian"
+    },
+    {
+      "id": "pc_longbien",
+      "x": 159.4,
+      "z": -84,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_princes",
+      "x": -125.6,
+      "z": 105,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_benthanh",
+      "x": 213.83811286773852,
+      "z": 106.43525979842188,
+      "region": "market"
+    },
+    {
+      "id": "cn_pagoda",
+      "x": 108,
+      "z": -210,
+      "region": "china"
+    },
+    {
+      "id": "cn_wall",
+      "x": 107,
+      "z": -221,
+      "region": "china"
+    },
+    {
+      "id": "g_firstwords",
+      "x": 111,
+      "z": -196,
+      "region": "china"
+    },
+    {
+      "id": "g_tangram",
+      "x": 103.7788366846173,
+      "z": -195.15787801199423,
+      "region": "china"
+    },
+    {
+      "id": "g_dragon",
+      "x": 107,
+      "z": -194,
+      "region": "china"
+    },
+    {
+      "id": "in_taj",
+      "x": -94,
+      "z": -208,
+      "region": "india"
+    },
+    {
+      "id": "g_snakes",
+      "x": -97.40895958667733,
+      "z": -192.0893270217488,
+      "region": "india"
+    },
+    {
+      "id": "g_rangoli",
+      "x": -90,
+      "z": -204,
+      "region": "india"
+    },
+    {
+      "id": "g_firstwords",
+      "x": -94,
+      "z": -190,
+      "region": "india"
+    },
+    {
+      "id": "dragonshow",
+      "x": 146.7,
+      "z": 55,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_vanmieu",
+      "x": 149.4,
+      "z": -139,
+      "region": "hanoi"
+    },
+    {
+      "id": "pc_puppettheatre",
+      "x": 156.6,
+      "z": -139,
+      "region": "hanoi"
+    },
+    {
+      "id": "g_puppets",
+      "x": 150.4,
+      "z": -133.5,
+      "region": "hanoi"
+    },
+    {
+      "id": "pc_bnclock",
+      "x": 194.8,
+      "z": -172,
+      "region": "bacninh"
+    },
+    {
+      "id": "pc_chuadau",
+      "x": 201.6,
+      "z": -182,
+      "region": "bacninh"
+    },
+    {
+      "id": "pc_butthap",
+      "x": 201.6,
+      "z": -162,
+      "region": "bacninh"
+    },
+    {
+      "id": "pc_dendo",
+      "x": 205.1,
+      "z": -172,
+      "region": "bacninh"
+    },
+    {
+      "id": "npc_quanho",
+      "x": 188.9,
+      "z": -182,
+      "region": "bacninh"
+    },
+    {
+      "id": "pc_quanho",
+      "x": 188.1,
+      "z": -182,
+      "region": "bacninh"
+    },
+    {
+      "id": "g_dongho",
+      "x": 196.5,
+      "z": -169.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "pc_goldenbridge",
+      "x": 156.6,
+      "z": 11,
+      "region": "danang"
+    },
+    {
+      "id": "pc_dragonbridge",
+      "x": 159.4,
+      "z": 55,
+      "region": "meadow"
+    },
+    {
+      "id": "g_dragonfire",
+      "x": 155.6,
+      "z": 5.500000000000001,
+      "region": "danang"
+    },
+    {
+      "id": "pc_cathedral",
+      "x": 156.6,
+      "z": 155,
+      "region": "saigon"
+    },
+    {
+      "id": "pc_postoffice",
+      "x": 149.4,
+      "z": 155,
+      "region": "saigon"
+    },
+    {
+      "id": "g_traffic",
+      "x": 155.6,
+      "z": 149.5,
+      "region": "saigon"
+    },
+    {
+      "id": "g_kite",
+      "x": 203.5,
+      "z": 148.4,
+      "region": "vungtau"
+    },
+    {
+      "id": "pc_wheel",
+      "x": -135.6,
+      "z": -141,
+      "region": "brisbane"
+    },
+    {
+      "id": "pc_lonepine",
+      "x": -128.4,
+      "z": -141,
+      "region": "brisbane"
+    },
+    {
+      "id": "g_koala",
+      "x": -134.6,
+      "z": -135.5,
+      "region": "brisbane"
+    },
+    {
+      "id": "pc_sydneytower",
+      "x": -128.4,
+      "z": 4.440892098500626e-16,
+      "region": "sydney"
+    },
+    {
+      "id": "pc_lunapark",
+      "x": -135.6,
+      "z": 0,
+      "region": "sydney"
+    },
+    {
+      "id": "g_ferries",
+      "x": -129.4,
+      "z": -5.5,
+      "region": "sydney"
+    },
+    {
+      "id": "pc_flinders",
+      "x": -128.4,
+      "z": 130,
+      "region": "melbourne"
+    },
+    {
+      "id": "pc_wtram",
+      "x": -135.6,
+      "z": 130,
+      "region": "melbourne"
+    },
+    {
+      "id": "g_tram",
+      "x": -129.4,
+      "z": 124.5,
+      "region": "melbourne"
+    },
+    {
+      "id": "v_k_bunca",
+      "x": 149.04999999999998,
+      "z": -124.5,
+      "region": "hanoi"
+    },
+    {
+      "id": "v_k_kemtt",
+      "x": 149.04999999999998,
+      "z": -128.3,
+      "region": "hanoi"
+    },
+    {
+      "id": "v_k_phuthe",
+      "x": 187.2,
+      "z": -168.04999999999998,
+      "region": "bacninh"
+    },
+    {
+      "id": "v_k_dongho",
+      "x": 191,
+      "z": -168.04999999999998,
+      "region": "bacninh"
+    },
+    {
+      "id": "v_k_miquang",
+      "x": 156.95000000000002,
+      "z": -1.5,
+      "region": "danang"
+    },
+    {
+      "id": "v_k_banhtrang",
+      "x": 156.95000000000002,
+      "z": 2.3,
+      "region": "danang"
+    },
+    {
+      "id": "v_k_comtam",
+      "x": 156.95000000000002,
+      "z": 142.5,
+      "region": "saigon"
+    },
+    {
+      "id": "v_k_banhxeo",
+      "x": 156.95000000000002,
+      "z": 146.3,
+      "region": "saigon"
+    },
+    {
+      "id": "v_k_banhkhot",
+      "x": 194.5,
+      "z": 147.04999999999998,
+      "region": "vungtau"
+    },
+    {
+      "id": "v_k_dua",
+      "x": 198.3,
+      "z": 147.04999999999998,
+      "region": "vungtau"
+    },
+    {
+      "id": "v_k_anzac",
+      "x": -128.04999999999998,
+      "z": -14.5,
+      "region": "sydney"
+    },
+    {
+      "id": "v_k_fairybread",
+      "x": -128.04999999999998,
+      "z": -10.7,
+      "region": "sydney"
+    },
+    {
+      "id": "v_k_babycino",
+      "x": -128.04999999999998,
+      "z": 115.5,
+      "region": "melbourne"
+    },
+    {
+      "id": "v_k_dimsim",
+      "x": -128.04999999999998,
+      "z": 119.3,
+      "region": "melbourne"
+    },
+    {
+      "id": "v_k_mango",
+      "x": -135.95000000000002,
+      "z": -128.5,
+      "region": "brisbane"
+    },
+    {
+      "id": "v_k_lamington",
+      "x": -135.95000000000002,
+      "z": -132.3,
+      "region": "brisbane"
+    },
+    {
+      "id": "v_k_trongnuoc",
+      "x": 175,
+      "z": -44.449999999999996,
+      "region": "village"
+    },
+    {
+      "id": "v_k_banhduc",
+      "x": 179,
+      "z": -44.449999999999996,
+      "region": "village"
+    },
+    {
+      "id": "v_k_banhkhot",
+      "x": 9.5,
+      "z": -24.05,
+      "region": "town"
+    },
+    {
+      "id": "v_k_vegemite",
+      "x": 13.5,
+      "z": -24.05,
+      "region": "town"
+    },
+    {
+      "id": "v_k_tanghulu",
+      "x": 103.05,
+      "z": -179.6,
+      "region": "china"
+    },
+    {
+      "id": "v_k_baozi",
+      "x": 103.05,
+      "z": -183.4,
+      "region": "china"
+    },
+    {
+      "id": "v_k_samosa",
+      "x": -97.95,
+      "z": -179.6,
+      "region": "india"
+    },
+    {
+      "id": "v_k_lassi",
+      "x": -97.95,
+      "z": -183.4,
+      "region": "india"
+    },
+    {
+      "id": "v_k_vanilla",
+      "x": -108.9,
+      "z": -60.75,
+      "region": "aussie"
+    },
+    {
+      "id": "v_k_pavlova",
+      "x": -93.1,
+      "z": -60.75,
+      "region": "aussie"
+    },
+    {
+      "id": "v_k_banhcuon",
+      "x": 183,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "v_k_banhbo",
+      "x": 203,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "pc_bachdinh",
+      "x": 194.8142435171666,
+      "z": 138.6315814137023,
+      "region": "vungtau"
+    },
+    {
+      "id": "pc_nhatron",
+      "x": 10.230849164039068,
+      "z": -15.922968778064789,
+      "region": "town"
+    },
+    {
+      "id": "npc_bahue",
+      "x": -9.9,
+      "z": -33.8,
+      "region": "town"
+    },
+    {
+      "id": "npc_ongnghi",
+      "x": -6.7,
+      "z": -33.8,
+      "region": "town"
+    },
+    {
+      "id": "hk_h_traicay",
+      "x": -8.317364975750902,
+      "z": -32.1,
+      "region": "town"
+    },
+    {
+      "id": "hk_h_tauhu",
+      "x": 148.9,
+      "z": 157.8423500996936,
+      "region": "saigon"
+    },
+    {
+      "id": "hk_h_bunoc",
+      "x": 157.1,
+      "z": -143.7344482150247,
+      "region": "hanoi"
+    },
+    {
+      "id": "hk_h_bunrieu",
+      "x": 180.0288455342158,
+      "z": 116.6,
+      "region": "market"
+    },
+    {
+      "id": "hk_h_banhda",
+      "x": 180.5100155676805,
+      "z": -39.4,
+      "region": "village"
+    },
+    {
+      "id": "drive_24",
+      "x": 148.6,
+      "z": -130.2,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_25",
+      "x": 148.6,
+      "z": -131.3,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_26",
+      "x": 148.6,
+      "z": -135.7,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_27",
+      "x": 148.6,
+      "z": -136.8,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_28",
+      "x": 148.6,
+      "z": -141.5,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_29",
+      "x": 157.4,
+      "z": -128,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_30",
+      "x": 157.4,
+      "z": -129.1,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_31",
+      "x": 157.4,
+      "z": -130.2,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_32",
+      "x": 157.4,
+      "z": -133.8,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_33",
+      "x": 157.4,
+      "z": -134.9,
+      "region": "hanoi"
+    },
+    {
+      "id": "drive_36",
+      "x": 190,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "drive_37",
+      "x": 191.1,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "drive_38",
+      "x": 192.2,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "drive_39",
+      "x": 193.3,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "drive_40",
+      "x": 196.9,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "bike_41",
+      "x": 198,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "drive_42",
+      "x": 201.3,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "drive_43",
+      "x": 202.4,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "drive_44",
+      "x": 206,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "drive_45",
+      "x": 207.1,
+      "z": -176.4,
+      "region": "bacninh"
+    },
+    {
+      "id": "drive_46",
+      "x": 157.4,
+      "z": 4.199999999999999,
+      "region": "danang"
+    },
+    {
+      "id": "drive_47",
+      "x": 157.4,
+      "z": 7.499999999999998,
+      "region": "danang"
+    },
+    {
+      "id": "drive_48",
+      "x": 157.4,
+      "z": 8.599999999999998,
+      "region": "danang"
+    },
+    {
+      "id": "drive_49",
+      "x": 148.6,
+      "z": 2,
+      "region": "danang"
+    },
+    {
+      "id": "drive_50",
+      "x": 148.6,
+      "z": 5.6,
+      "region": "danang"
+    },
+    {
+      "id": "drive_51",
+      "x": 148.6,
+      "z": 6.699999999999999,
+      "region": "danang"
+    },
+    {
+      "id": "drive_52",
+      "x": 148.6,
+      "z": 7.799999999999999,
+      "region": "danang"
+    },
+    {
+      "id": "drive_53",
+      "x": 148.6,
+      "z": 8.899999999999999,
+      "region": "danang"
+    },
+    {
+      "id": "drive_55",
+      "x": 200.2,
+      "z": 146.6,
+      "region": "vungtau"
+    },
+    {
+      "id": "drive_56",
+      "x": 201.3,
+      "z": 146.6,
+      "region": "vungtau"
+    },
+    {
+      "id": "drive_57",
+      "x": 205.7,
+      "z": 146.6,
+      "region": "vungtau"
+    },
+    {
+      "id": "drive_58",
+      "x": 206.8,
+      "z": 146.6,
+      "region": "vungtau"
+    },
+    {
+      "id": "drive_59",
+      "x": 210.4,
+      "z": 146.6,
+      "region": "vungtau"
+    },
+    {
+      "id": "bike_60",
+      "x": 211.5,
+      "z": 146.6,
+      "region": "vungtau"
+    },
+    {
+      "id": "drive_61",
+      "x": 198,
+      "z": 155.4,
+      "region": "vungtau"
+    },
+    {
+      "id": "drive_62",
+      "x": 199.1,
+      "z": 155.4,
+      "region": "vungtau"
+    },
+    {
+      "id": "drive_63",
+      "x": 202.7,
+      "z": 155.4,
+      "region": "vungtau"
+    },
+    {
+      "id": "drive_64",
+      "x": 203.8,
+      "z": 155.4,
+      "region": "vungtau"
+    },
+    {
+      "id": "drive_65",
+      "x": -127.6,
+      "z": -132,
+      "region": "brisbane"
+    },
+    {
+      "id": "bike_66",
+      "x": -127.6,
+      "z": -137.2,
+      "region": "brisbane"
+    },
+    {
+      "id": "drive_67",
+      "x": -136.4,
+      "z": -11,
+      "region": "sydney"
+    },
+    {
+      "id": "bike_68",
+      "x": -136.4,
+      "z": -5.800000000000001,
+      "region": "sydney"
+    },
+    {
+      "id": "drive_69",
+      "x": -136.4,
+      "z": 119,
+      "region": "melbourne"
+    },
+    {
+      "id": "bike_70",
+      "x": -136.4,
+      "z": 124.2,
+      "region": "melbourne"
+    },
+    {
+      "id": "drive_72",
+      "x": -8.7,
+      "z": -34.6,
+      "region": "town"
+    },
+    {
+      "id": "drive_73",
+      "x": -7.5,
+      "z": -34.4,
+      "region": "town"
+    },
+    {
+      "id": "drive_74",
+      "x": 2.5999999999999996,
+      "z": -34.2,
+      "region": "town"
+    },
+    {
+      "id": "bike_75",
+      "x": 196.44109586271748,
+      "z": -28.206053340704333,
+      "region": "village"
+    },
+    {
+      "id": "bike_76",
+      "x": 197.34109586271748,
+      "z": -28.206053340704333,
+      "region": "village"
+    },
+    {
+      "id": "bike_77",
+      "x": 20,
+      "z": 34,
+      "region": "home"
+    },
+    {
+      "id": "bike_78",
+      "x": 20.9,
+      "z": 34,
+      "region": "home"
+    },
+    {
+      "id": "bike_79",
+      "x": 6.419121995605641,
+      "z": -21.63587886807097,
+      "region": "town"
+    },
+    {
+      "id": "bike_80",
+      "x": 7.3191219956056415,
+      "z": -21.63587886807097,
+      "region": "town"
+    },
+    {
+      "id": "bike_81",
+      "x": -102.58087800439436,
+      "z": -57.635878868070975,
+      "region": "aussie"
+    },
+    {
+      "id": "bike_82",
+      "x": -101.68087800439436,
+      "z": -57.635878868070975,
+      "region": "aussie"
+    },
+    {
+      "id": "xichlo_hanoi",
+      "x": 155,
+      "z": -127,
+      "region": "hanoi"
+    },
+    {
+      "id": "xichlo_saigon",
+      "x": 156.94876987239758,
+      "z": 143.66158660895047,
+      "region": "saigon"
+    },
+    {
+      "id": "ride_3",
+      "x": 62.79818181818181,
+      "z": -29.4,
+      "region": "meadow"
+    },
+    {
+      "id": "ride_8",
+      "x": 153,
+      "z": -52.27272727272728,
+      "region": "meadow"
+    },
+    {
+      "id": "ride_15",
+      "x": -133.4,
+      "z": -61.59090909090909,
+      "region": "meadow"
+    },
+    {
+      "id": "ride_20",
+      "x": 45.12918716020191,
+      "z": -173.4,
+      "region": "mountain"
+    },
+    {
+      "id": "ride_35",
+      "x": 150.8,
+      "z": -130,
+      "region": "hanoi"
+    },
+    {
+      "id": "ride_71",
+      "x": -134,
+      "z": 117,
+      "region": "melbourne"
+    },
+    {
+      "id": "busstop_1",
+      "x": 27,
+      "z": -22.2,
+      "region": "town"
+    },
+    {
+      "id": "busstop_2",
+      "x": 90,
+      "z": -22.2,
+      "region": "meadow"
+    },
+    {
+      "id": "busstop_3",
+      "x": 147.2,
+      "z": -116,
+      "region": "meadow"
+    },
+    {
+      "id": "busstop_4",
+      "x": 147.2,
+      "z": -10,
+      "region": "meadow"
+    },
+    {
+      "id": "busstop_5",
+      "x": -126.2,
+      "z": -120,
+      "region": "meadow"
+    },
+    {
+      "id": "busstop_6",
+      "x": -126.2,
+      "z": -23,
+      "region": "meadow"
+    },
+    {
+      "id": "busstop_7",
+      "x": -126.2,
+      "z": -154,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_halong",
+      "x": 98.14606809696156,
+      "z": -86.1410732794658,
+      "region": "lake"
+    },
+    {
+      "id": "pc_hue",
+      "x": 196.12799754477834,
+      "z": -11.471146647480417,
+      "region": "village"
+    },
+    {
+      "id": "pc_myson",
+      "x": 207.34869304520143,
+      "z": 84.72788913421894,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_phongnha",
+      "x": 221.47237228995834,
+      "z": -95.78932209932903,
+      "region": "paddies"
+    },
+    {
+      "id": "pc_trangan",
+      "x": 110.63293391248673,
+      "z": -123.47914443163742,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_reef",
+      "x": 136.609095970748,
+      "z": -55.314767032908506,
+      "region": "lake"
+    },
+    {
+      "id": "pc_sisters",
+      "x": -140.5154361133396,
+      "z": -44.61164345701335,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_exhibition",
+      "x": -156.98123182347365,
+      "z": 133.32742066814362,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_kakadu",
+      "x": -192.66141916438318,
+      "z": 2.2507815150718455,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_forbidden",
+      "x": 129.81829229341352,
+      "z": -216.18904333342056,
+      "region": "china"
+    },
+    {
+      "id": "pc_heaven",
+      "x": 91.95436385652638,
+      "z": -198.64701264326425,
+      "region": "china"
+    },
+    {
+      "id": "pc_terracotta",
+      "x": 143.05027677180072,
+      "z": -190.3385848868923,
+      "region": "china"
+    },
+    {
+      "id": "pc_potala",
+      "x": 84.92612652569055,
+      "z": -220.98717868967995,
+      "region": "china"
+    },
+    {
+      "id": "pc_qutub",
+      "x": -114.16360665152591,
+      "z": -200.1497038362741,
+      "region": "india"
+    },
+    {
+      "id": "pc_redfort",
+      "x": -80.47588396071562,
+      "z": -211.83205969702445,
+      "region": "india"
+    },
+    {
+      "id": "pc_konark",
+      "x": -75.23909569198862,
+      "z": -188.45482811814685,
+      "region": "india"
+    },
+    {
+      "id": "pc_hampi",
+      "x": -110.49046202661278,
+      "z": -210.43692990096443,
+      "region": "india"
+    },
+    {
+      "id": "pc_mahabodhi",
+      "x": -134.18127718541288,
+      "z": -191.84419497196578,
+      "region": "india"
+    },
+    {
+      "id": "cult0",
+      "x": 116,
+      "z": -198,
+      "region": "china"
+    },
+    {
+      "id": "cult1",
+      "x": 102.13796280880514,
+      "z": -206.66031272465202,
+      "region": "china"
+    },
+    {
+      "id": "cult2",
+      "x": -79.42677896075992,
+      "z": -180.77507684325926,
+      "region": "india"
+    },
+    {
+      "id": "cult3",
+      "x": -101.11212972718408,
+      "z": -198.3293131765924,
+      "region": "india"
+    },
+    {
+      "id": "cult4",
+      "x": 200.8155102606352,
+      "z": -22.433239731479667,
+      "region": "village"
+    },
+    {
+      "id": "cult5",
+      "x": 218.32719224540668,
+      "z": -50.98268724641959,
+      "region": "village"
+    },
+    {
+      "id": "cult6",
+      "x": -108,
+      "z": -27,
+      "region": "meadow"
+    },
+    {
+      "id": "cult7",
+      "x": -83.86203719119486,
+      "z": -105.66031272465202,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_coconut_0",
+      "x": 224.37922065569182,
+      "z": -40.51235947989309,
+      "region": "village"
+    },
+    {
+      "id": "crop_coconut_1",
+      "x": 226,
+      "z": -17.31301940371613,
+      "region": "village"
+    },
+    {
+      "id": "crop_jackfruit_0",
+      "x": 215.35793441943963,
+      "z": -0.5679857954966456,
+      "region": "village"
+    },
+    {
+      "id": "crop_jackfruit_1",
+      "x": 184.94266560493722,
+      "z": 0.5154379038495045,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_chilli_0",
+      "x": 170.0212862362522,
+      "z": -17.313019403716122,
+      "region": "village"
+    },
+    {
+      "id": "crop_chilli_1",
+      "x": 164.88787027281592,
+      "z": -48.32931317659239,
+      "region": "village"
+    },
+    {
+      "id": "crop_waterspinach_0",
+      "x": 172.34847848165887,
+      "z": -63.66966784270345,
+      "region": "village"
+    },
+    {
+      "id": "crop_waterspinach_1",
+      "x": 191.0212862362522,
+      "z": -81.94437368439645,
+      "region": "village"
+    },
+    {
+      "id": "crop_sweetpotato_0",
+      "x": 216.97871376374778,
+      "z": -81.94437368439645,
+      "region": "village"
+    },
+    {
+      "id": "crop_sweetpotato_1",
+      "x": 226,
+      "z": -66.68698059628389,
+      "region": "village"
+    },
+    {
+      "id": "crop_macadamia_0",
+      "x": -87.71384413353478,
+      "z": -16.28804245954116,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_macadamia_1",
+      "x": -95.79241283017359,
+      "z": -12.666180347451965,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_quandong_0",
+      "x": -106.44592380663023,
+      "z": -13.813719300773812,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_quandong_1",
+      "x": -113.43369481978706,
+      "z": -19.05844656400219,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_fingerlime_0",
+      "x": -112.28615586646522,
+      "z": -29.71195754045884,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_fingerlime_1",
+      "x": -103.94155343599782,
+      "z": -36.433694819787064,
+      "region": "aussie"
+    },
+    {
+      "id": "crop_bushtomato_0",
+      "x": -93.28804245954116,
+      "z": -35.28615586646522,
+      "region": "aussie"
+    },
+    {
+      "id": "crop_bushtomato_1",
+      "x": -86.56630518021294,
+      "z": -26.94155343599781,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_cnpeach_0",
+      "x": 135,
+      "z": -200,
+      "region": "china"
+    },
+    {
+      "id": "crop_cnpeach_1",
+      "x": 126.79898987322333,
+      "z": -180.20101012677668,
+      "region": "china"
+    },
+    {
+      "id": "crop_mandarin_0",
+      "x": 109.25739049922451,
+      "z": -165.06139869036915,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_mandarin_1",
+      "x": 87.20101012677668,
+      "z": -180.20101012677668,
+      "region": "china"
+    },
+    {
+      "id": "crop_bokchoy_0",
+      "x": 74.66433995230436,
+      "z": -200.74970124103928,
+      "region": "china"
+    },
+    {
+      "id": "crop_bokchoy_1",
+      "x": 89.52820237218336,
+      "z": -216.78167711964292,
+      "region": "china"
+    },
+    {
+      "id": "crop_snowpea_0",
+      "x": 107.2660337338286,
+      "z": -229.09987516723902,
+      "region": "china"
+    },
+    {
+      "id": "crop_snowpea_1",
+      "x": 126.79898987322332,
+      "z": -219.79898987322332,
+      "region": "china"
+    },
+    {
+      "id": "crop_mango_0",
+      "x": -66,
+      "z": -200,
+      "region": "india"
+    },
+    {
+      "id": "crop_mango_1",
+      "x": -80.27963075809166,
+      "z": -177.62994590732362,
+      "region": "india"
+    },
+    {
+      "id": "crop_brinjal_0",
+      "x": -91.74260950077549,
+      "z": -165.06139869036915,
+      "region": "meadow"
+    },
+    {
+      "id": "crop_brinjal_1",
+      "x": -113.79898987322332,
+      "z": -180.20101012677668,
+      "region": "india"
+    },
+    {
+      "id": "crop_ginger_0",
+      "x": -115.18448973936482,
+      "z": -194.43323973147966,
+      "region": "india"
+    },
+    {
+      "id": "crop_ginger_1",
+      "x": -113.53295613939473,
+      "z": -222.89886504046234,
+      "region": "india"
+    },
+    {
+      "id": "crop_marigold_0",
+      "x": -93.7339662661714,
+      "z": -229.09987516723902,
+      "region": "india"
+    },
+    {
+      "id": "crop_marigold_1",
+      "x": -71.31313985396076,
+      "z": -226.1283030498157,
+      "region": "india"
+    },
+    {
+      "id": "door0",
+      "x": 183.6412263500673,
+      "z": -60.31770620450063,
+      "region": "village"
+    },
+    {
+      "id": "door1",
+      "x": 200,
+      "z": -69.54,
+      "region": "village"
+    },
+    {
+      "id": "door2",
+      "x": 219.82040447303385,
+      "z": -67.88487277301374,
+      "region": "village"
+    },
+    {
+      "id": "door3",
+      "x": 230.7407062722526,
+      "z": -47.31609423683297,
+      "region": "village"
+    },
+    {
+      "id": "door4",
+      "x": 228.47907007716054,
+      "z": -24.739703810405384,
+      "region": "village"
+    },
+    {
+      "id": "door5",
+      "x": 177.84262660526431,
+      "z": -31.820130942624065,
+      "region": "village"
+    },
+    {
+      "id": "door6",
+      "x": 186.67672115168833,
+      "z": -16.37202291953707,
+      "region": "village"
+    },
+    {
+      "id": "door7",
+      "x": 209.76964313011956,
+      "z": -12.464791267486032,
+      "region": "village"
+    },
+    {
+      "id": "home_8_0",
+      "x": -4.5,
+      "z": -36.3,
+      "region": "town"
+    },
+    {
+      "id": "home_8_1",
+      "x": -1.2000000000000004,
+      "z": -36.3,
+      "region": "town"
+    },
+    {
+      "id": "door8",
+      "x": -2.9000000000000004,
+      "z": -35.8,
+      "region": "town"
+    },
+    {
+      "id": "home_9_0",
+      "x": 0.5999999999999996,
+      "z": -35.7,
+      "region": "town"
+    },
+    {
+      "id": "home_9_1",
+      "x": 2.5999999999999996,
+      "z": -35.7,
+      "region": "town"
+    },
+    {
+      "id": "home_9_2",
+      "x": 1.5999999999999996,
+      "z": -34.4,
+      "region": "town"
+    },
+    {
+      "id": "door9",
+      "x": 1.5999999999999996,
+      "z": -35.8,
+      "region": "town"
+    },
+    {
+      "id": "home_10_0",
+      "x": 8.4,
+      "z": -36.2,
+      "region": "town"
+    },
+    {
+      "id": "home_10_1",
+      "x": 10.600000000000001,
+      "z": -36.2,
+      "region": "town"
+    },
+    {
+      "id": "home_10_2",
+      "x": 11.9,
+      "z": -35.2,
+      "region": "town"
+    },
+    {
+      "id": "home_10_3",
+      "x": 13.200000000000001,
+      "z": -35.800000000000004,
+      "region": "town"
+    },
+    {
+      "id": "door10",
+      "x": 9.3,
+      "z": -37.00000000000001,
+      "region": "town"
+    },
+    {
+      "id": "home_11_0",
+      "x": 17.200000000000003,
+      "z": -37.599999999999994,
+      "region": "town"
+    },
+    {
+      "id": "home_11_1",
+      "x": 20,
+      "z": -37.599999999999994,
+      "region": "town"
+    },
+    {
+      "id": "door11",
+      "x": 18.6,
+      "z": -38.3,
+      "region": "town"
+    },
+    {
+      "id": "home_12_0",
+      "x": -7.6,
+      "z": -20.4,
+      "region": "town"
+    },
+    {
+      "id": "home_12_1",
+      "x": -10.7,
+      "z": -20.4,
+      "region": "town"
+    },
+    {
+      "id": "home_12_2",
+      "x": -8.9,
+      "z": -21.6,
+      "region": "town"
+    },
+    {
+      "id": "home_12_3",
+      "x": -10.3,
+      "z": -21.7,
+      "region": "town"
+    },
+    {
+      "id": "door12",
+      "x": -9.5,
+      "z": -20.7,
+      "region": "town"
+    },
+    {
+      "id": "door13",
+      "x": 22,
+      "z": -17.700000000000003,
+      "region": "town"
+    },
+    {
+      "id": "door14",
+      "x": 98.8,
+      "z": -206,
+      "region": "china"
+    },
+    {
+      "id": "door15",
+      "x": 115.2,
+      "z": -206,
+      "region": "china"
+    },
+    {
+      "id": "door16",
+      "x": 100.6843861514792,
+      "z": -191.15228211861137,
+      "region": "china"
+    },
+    {
+      "id": "door17",
+      "x": 114.3156138485208,
+      "z": -191.15228211861137,
+      "region": "china"
+    },
+    {
+      "id": "door18",
+      "x": -101.9,
+      "z": -204,
+      "region": "india"
+    },
+    {
+      "id": "door19",
+      "x": -86.1,
+      "z": -204,
+      "region": "india"
+    },
+    {
+      "id": "door20",
+      "x": -101.05854664927571,
+      "z": -190.26176019219807,
+      "region": "india"
+    },
+    {
+      "id": "door21",
+      "x": -86.94145335072429,
+      "z": -190.26176019219807,
+      "region": "india"
+    },
+    {
+      "id": "door22",
+      "x": -8,
+      "z": -35.8,
+      "region": "town"
+    },
+    {
+      "id": "house8",
+      "x": -2.699999999999999,
+      "z": -22,
+      "region": "town"
+    },
+    {
+      "id": "home_24_0",
+      "x": 158,
+      "z": -67.8,
+      "region": "meadow"
+    },
+    {
+      "id": "door24",
+      "x": 157.5,
+      "z": -66,
+      "region": "meadow"
+    },
+    {
+      "id": "home_25_0",
+      "x": 169.4690119183492,
+      "z": -135.9857212756511,
+      "region": "hanoi"
+    },
+    {
+      "id": "door25",
+      "x": 168.67321162718446,
+      "z": -137.67589934218196,
+      "region": "hanoi"
+    },
+    {
+      "id": "home_26_0",
+      "x": 176.4,
+      "z": -166.275,
+      "region": "meadow"
+    },
+    {
+      "id": "door26",
+      "x": 174,
+      "z": -166.57500000000002,
+      "region": "meadow"
+    },
+    {
+      "id": "home_27_0",
+      "x": 148,
+      "z": -12.2,
+      "region": "meadow"
+    },
+    {
+      "id": "door27",
+      "x": 148.5,
+      "z": -14,
+      "region": "meadow"
+    },
+    {
+      "id": "home_28_0",
+      "x": 148.45000000000002,
+      "z": -32.4,
+      "region": "meadow"
+    },
+    {
+      "id": "door28",
+      "x": 148.45000000000002,
+      "z": -30,
+      "region": "meadow"
+    },
+    {
+      "id": "home_29_0",
+      "x": 158,
+      "z": 128.2,
+      "region": "meadow"
+    },
+    {
+      "id": "door29",
+      "x": 157.5,
+      "z": 130,
+      "region": "meadow"
+    },
+    {
+      "id": "home_30_0",
+      "x": 158,
+      "z": 105.8,
+      "region": "hoian"
+    },
+    {
+      "id": "door30",
+      "x": 157.5,
+      "z": 104,
+      "region": "hoian"
+    },
+    {
+      "id": "home_31_0",
+      "x": -137.65,
+      "z": -73.6,
+      "region": "meadow"
+    },
+    {
+      "id": "door31",
+      "x": -137.65,
+      "z": -76,
+      "region": "meadow"
+    },
+    {
+      "id": "home_32_0",
+      "x": -104.4,
+      "z": -167.45000000000002,
+      "region": "meadow"
+    },
+    {
+      "id": "door32",
+      "x": -102,
+      "z": -167.45000000000002,
+      "region": "meadow"
+    },
+    {
+      "id": "home_33_0",
+      "x": -136.54999999999998,
+      "z": -24.6,
+      "region": "meadow"
+    },
+    {
+      "id": "door33",
+      "x": -136.54999999999998,
+      "z": -27,
+      "region": "meadow"
+    },
+    {
+      "id": "home_34_0",
+      "x": -127.45000000000002,
+      "z": -26.6,
+      "region": "meadow"
+    },
+    {
+      "id": "door34",
+      "x": -127.45000000000002,
+      "z": -29,
+      "region": "meadow"
+    },
+    {
+      "id": "home_35_0",
+      "x": -136.54999999999998,
+      "z": 57.4,
+      "region": "meadow"
+    },
+    {
+      "id": "door35",
+      "x": -136.54999999999998,
+      "z": 55,
+      "region": "meadow"
+    },
+    {
+      "id": "home_36_0",
+      "x": -119.0121417948601,
+      "z": 135.56441525882164,
+      "region": "melbourne"
+    },
+    {
+      "id": "door36",
+      "x": -117.89239643245742,
+      "z": 133.44164105430113,
+      "region": "melbourne"
+    },
+    {
+      "id": "sym_brisbane",
+      "x": -124.44454364826301,
+      "z": -146.444543648263,
+      "region": "brisbane"
+    },
+    {
+      "id": "sym_sydney",
+      "x": -122.5,
+      "z": -13.5,
+      "region": "sydney"
+    },
+    {
+      "id": "sym_melbourne",
+      "x": -122.5,
+      "z": 116.5,
+      "region": "melbourne"
+    },
+    {
+      "id": "sym_hanoi",
+      "x": 135.7,
+      "z": -132,
+      "region": "meadow"
+    },
+    {
+      "id": "sym_bacninh",
+      "x": 212.5,
+      "z": -181.5,
+      "region": "bacninh"
+    },
+    {
+      "id": "sym_danang",
+      "x": 162.5,
+      "z": -0.5,
+      "region": "danang"
+    },
+    {
+      "id": "sym_saigon",
+      "x": 162.5,
+      "z": 143.5,
+      "region": "saigon"
+    },
+    {
+      "id": "sym_aussie",
+      "x": -88,
+      "z": -56,
+      "region": "aussie"
+    },
+    {
+      "id": "sym_china",
+      "x": 114.05545635173699,
+      "z": -189.055456351737,
+      "region": "china"
+    },
+    {
+      "id": "sym_india",
+      "x": -100.25,
+      "z": -191,
+      "region": "india"
+    },
+    {
+      "id": "pc_marble",
+      "x": 163.84286514601587,
+      "z": -4.765724602646215,
+      "region": "danang"
+    },
+    {
+      "id": "pc_hoian",
+      "x": 180.06608385012535,
+      "z": 85.49164316536356,
+      "region": "hoian"
+    },
+    {
+      "id": "pc_thehuc",
+      "x": 111.225,
+      "z": -132,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_cairang",
+      "x": 164.5140652753489,
+      "z": 157.03542051848953,
+      "region": "saigon"
+    },
+    {
+      "id": "pc_apostles",
+      "x": -155.9750776405004,
+      "z": 173.95015528100075,
+      "region": "meadow"
+    },
+    {
+      "id": "pc_storybridge",
+      "x": -140.8,
+      "z": -123,
+      "region": "brisbane"
+    },
+    {
+      "id": "pg_marbles_hanoi",
+      "x": 147.06103446586542,
+      "z": -152.2001020067532,
+      "region": "meadow"
+    },
+    {
+      "id": "pg_goat_hanoi",
+      "x": 178.85859552231085,
+      "z": -150.24994456889084,
+      "region": "meadow"
+    },
+    {
+      "id": "pg_nemlon_saigon",
+      "x": 146.07148861139495,
+      "z": 172.59021869324147,
+      "region": "meadow"
+    },
+    {
+      "id": "pg_marbles_saigon",
+      "x": 162.13896553413457,
+      "z": 173.00010200675322,
+      "region": "meadow"
+    },
+    {
+      "id": "fest_choitrau",
+      "x": 83.81140977786643,
+      "z": -147.83277323379622,
+      "region": "meadow"
+    },
+    {
+      "id": "fest_duabo",
+      "x": 83.94403056077904,
+      "z": 114.22993835054469,
+      "region": "meadow"
+    },
+    {
+      "id": "myhouse_door",
+      "x": 9,
+      "z": 49.150000000000006,
+      "region": "home"
+    },
+    {
+      "id": "lv_well",
+      "x": 191.6,
+      "z": -47.4,
+      "region": "village"
+    },
+    {
+      "id": "lv_shrine",
+      "x": 207.20000000000002,
+      "z": -36.800000000000004,
+      "region": "village"
+    },
+    {
+      "id": "lv_bench",
+      "x": 194.01045456711836,
+      "z": -29.878430527168632,
+      "region": "village"
+    },
+    {
+      "id": "petyard",
+      "x": -6,
+      "z": 30,
+      "region": "home"
+    },
+    {
+      "id": "ferry0_0",
+      "x": 136.45937607996572,
+      "z": -78.41027652854696,
+      "region": "lake"
+    },
+    {
+      "id": "ferry0_1",
+      "x": 122.95896494744449,
+      "z": -57.218875888671974,
+      "region": "lake"
+    },
+    {
+      "id": "ferry1_0",
+      "x": 8.082713114738352,
+      "z": -152.19108716513472,
+      "region": "meadow"
+    },
+    {
+      "id": "ferry1_1",
+      "x": 12.93315314986267,
+      "z": -112.97771771662089,
+      "region": "meadow"
+    },
+    {
+      "id": "ferry1_2",
+      "x": 65.62189590390908,
+      "z": -4.302823878065182,
+      "region": "meadow"
+    },
+    {
+      "id": "ferry1_3",
+      "x": 17.378255317405372,
+      "z": 123.82882427101501,
+      "region": "meadow"
+    },
+    {
+      "id": "ferry2_0",
+      "x": -107.43332048068842,
+      "z": 3.599537304783262,
+      "region": "meadow"
+    },
+    {
+      "id": "ferry2_1",
+      "x": -45.4,
+      "z": -3,
+      "region": "meadow"
+    },
+    {
+      "id": "ferry3_0",
+      "x": 133.6,
+      "z": 156,
+      "region": "meadow"
+    },
+    {
+      "id": "ferry3_1",
+      "x": 198,
+      "z": 187.4,
+      "region": "meadow"
+    },
+    {
+      "id": "storytime",
+      "x": 210,
+      "z": -32,
+      "region": "village"
+    },
+    {
+      "id": "huntboard_lotus",
+      "x": 211,
+      "z": -47,
+      "region": "village"
+    },
+    {
+      "id": "huntboard_koala",
+      "x": -93,
+      "z": -70,
+      "region": "aussie"
+    },
+    {
+      "id": "huntboard_lantern",
+      "x": 114,
+      "z": -205,
+      "region": "china"
+    },
+    {
+      "id": "huntboard_peacock",
+      "x": -87,
+      "z": -205,
+      "region": "india"
+    },
+    {
+      "id": "musiccorner",
+      "x": 195,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "story_ribbon0",
+      "x": 180.58905312370692,
+      "z": -38.134693876573856,
+      "region": "village"
+    },
+    {
+      "id": "story_ribbon1",
+      "x": 171.45638505860128,
+      "z": -34.23111570016014,
+      "region": "village"
+    },
+    {
+      "id": "story_ribbon2",
+      "x": 169.6266093225709,
+      "z": -53.33048504137665,
+      "region": "village"
+    },
+    {
+      "id": "story_leaf0",
+      "x": 192.11365421550107,
+      "z": -31.525929750133447,
+      "region": "village"
+    },
+    {
+      "id": "story_leaf1",
+      "x": 190.80078650481346,
+      "z": -29.718922369172656,
+      "region": "village"
+    },
+    {
+      "id": "story_leaf2",
+      "x": 188.67652192618866,
+      "z": -30.409137770777747,
+      "region": "village"
+    },
+    {
+      "id": "story_leaf3",
+      "x": 188.67652192618866,
+      "z": -32.642721729489146,
+      "region": "village"
+    },
+    {
+      "id": "story_leaf4",
+      "x": 190.80078650481346,
+      "z": -33.33293713109424,
+      "region": "village"
+    },
+    {
+      "id": "story_c1_nam",
+      "x": 208.9,
+      "z": -31.599999999999998,
+      "region": "village"
+    },
+    {
+      "id": "story_c1_tale",
+      "x": 208.9,
+      "z": -31.599999999999998,
+      "region": "village"
+    },
+    {
+      "id": "story_c1_find",
+      "x": 190.21365421550107,
+      "z": -31.525929750133447,
+      "region": "village"
+    },
+    {
+      "id": "story_c1_hang",
+      "x": 190.51364923966074,
+      "z": -67.94409264493744,
+      "region": "village"
+    },
+    {
+      "id": "yard_start",
+      "x": -8.700000000000001,
+      "z": -32.199999999999996,
+      "region": "town"
+    },
+    {
+      "id": "yard_coach",
+      "x": 35.8,
+      "z": -44.64,
+      "region": "town"
+    },
+    {
+      "id": "yard_job_rel_driver",
+      "x": 34,
+      "z": -44.76,
+      "region": "town"
+    },
+    {
+      "id": "yard_job_rel_builder",
+      "x": 35.04,
+      "z": -44.76,
+      "region": "town"
+    },
+    {
+      "id": "yard_job_rel_digger",
+      "x": 36.08,
+      "z": -44.76,
+      "region": "town"
+    },
+    {
+      "id": "yard_truck",
+      "x": 32.6,
+      "z": -48,
+      "region": "meadow"
+    },
+    {
+      "id": "yard_dig",
+      "x": 41.8,
+      "z": -53.6,
+      "region": "meadow"
+    },
+    {
+      "id": "yard_build",
+      "x": 39.4,
+      "z": -48.4,
+      "region": "meadow"
+    },
+    {
+      "id": "yard_party",
+      "x": -8.700000000000001,
+      "z": -32.199999999999996,
+      "region": "town"
+    },
+    {
+      "id": "gift_today",
+      "x": 189.09497692414922,
+      "z": -179.59791321547064,
+      "region": "bacninh"
+    },
+    {
+      "id": "wf0",
+      "x": 46.49098257301375,
+      "z": 44.7520198719576,
+      "region": "meadow"
+    },
+    {
+      "id": "wf1",
+      "x": 46.32673103362322,
+      "z": -1.3927860790863633,
+      "region": "meadow"
+    },
+    {
+      "id": "wf2",
+      "x": 103.59148408751935,
+      "z": 172.6310507277958,
+      "region": "meadow"
+    },
+    {
+      "id": "wf3",
+      "x": 104.72712363582104,
+      "z": -35.419347246643156,
+      "region": "meadow"
+    },
+    {
+      "id": "wf4",
+      "x": -182.01026403577998,
+      "z": 127.63262709835544,
+      "region": "meadow"
+    },
+    {
+      "id": "wf5",
+      "x": -194.24022934166715,
+      "z": 92.02394882915542,
+      "region": "meadow"
+    },
+    {
+      "id": "wf6",
+      "x": -211.3046084274538,
+      "z": 140.63408084912226,
+      "region": "meadow"
+    },
+    {
+      "id": "wf7",
+      "x": -161.89834822434932,
+      "z": -123.6787617020309,
+      "region": "bamboo"
+    },
+    {
+      "id": "wf8",
+      "x": 105.39320952026173,
+      "z": 29.69065970275551,
+      "region": "meadow"
+    },
+    {
+      "id": "wf9",
+      "x": 165.29554789420217,
+      "z": 167.25157066248357,
+      "region": "meadow"
+    },
+    {
+      "id": "wf10",
+      "x": 64.84864481259137,
+      "z": 178.48924388643354,
+      "region": "meadow"
+    },
+    {
+      "id": "wf11",
+      "x": 90.53138930117711,
+      "z": -105.42523997370154,
+      "region": "meadow"
+    },
+    {
+      "id": "wf12",
+      "x": 112.09515905706212,
+      "z": 65.76371343573555,
+      "region": "meadow"
+    },
+    {
+      "id": "wf13",
+      "x": -184.32769284583628,
+      "z": -55.4021648154594,
+      "region": "meadow"
+    },
+    {
+      "id": "wf14",
+      "x": -51.20402059517801,
+      "z": -90.24737055413425,
+      "region": "meadow"
+    },
+    {
+      "id": "wf15",
+      "x": 213.9471019920893,
+      "z": 52.22653491189703,
+      "region": "meadow"
+    },
+    {
+      "id": "wl0",
+      "x": -175.12925402726978,
+      "z": -127.45707587571815,
+      "region": "bamboo"
+    },
+    {
+      "id": "wl1",
+      "x": -177.9139943770133,
+      "z": 175.20121678942814,
+      "region": "meadow"
+    },
+    {
+      "id": "wl2",
+      "x": 133.19765023421496,
+      "z": 62.948575406335294,
+      "region": "meadow"
+    },
+    {
+      "id": "wl3",
+      "x": 118.5049966070801,
+      "z": -148.35285765118897,
+      "region": "meadow"
+    },
+    {
+      "id": "wl4",
+      "x": -89.1791729722172,
+      "z": -132.62742355233058,
+      "region": "meadow"
+    },
+    {
+      "id": "wl5",
+      "x": -210.29585348442197,
+      "z": -83.34273527842015,
+      "region": "meadow"
+    },
+    {
+      "id": "wl6",
+      "x": 32.306757709011436,
+      "z": 159.3317117379047,
+      "region": "meadow"
+    },
+    {
+      "id": "wl7",
+      "x": 88.32857143133879,
+      "z": 12.147093778476119,
+      "region": "meadow"
+    },
+    {
+      "id": "wl8",
+      "x": -188.24170659296215,
+      "z": 108.77719292649999,
+      "region": "meadow"
+    },
+    {
+      "id": "wl9",
+      "x": 86.89532226184383,
+      "z": 82.8766404488124,
+      "region": "meadow"
+    },
+    {
+      "id": "wl10",
+      "x": -126.42796952510253,
+      "z": 170.78299309127033,
+      "region": "meadow"
+    },
+    {
+      "id": "wl11",
+      "x": 94.04445598134771,
+      "z": -120.65709173446521,
+      "region": "meadow"
+    },
+    {
+      "id": "wl12",
+      "x": -164.4719524611719,
+      "z": 120.26083988137543,
+      "region": "meadow"
+    },
+    {
+      "id": "wl13",
+      "x": -16.669610450044274,
+      "z": 2.599964418914169,
+      "region": "meadow"
+    },
+    {
+      "id": "wl14",
+      "x": 15.41649600956589,
+      "z": -88.6609607306309,
+      "region": "plateau"
+    },
+    {
+      "id": "wl15",
+      "x": 115.10818298906088,
+      "z": -108.57853999128565,
+      "region": "meadow"
+    },
+    {
+      "id": "wl16",
+      "x": 56.47112859878689,
+      "z": 126.47076108958572,
+      "region": "meadow"
+    },
+    {
+      "id": "wl17",
+      "x": -165.78075457829982,
+      "z": 87.97929658088833,
+      "region": "meadow"
+    },
+    {
+      "id": "wr0",
+      "x": 42.8575570252724,
+      "z": 112.33326350804418,
+      "region": "meadow"
+    },
+    {
+      "id": "wr1",
+      "x": -168.18317926721647,
+      "z": 6.578576748725027,
+      "region": "meadow"
+    },
+    {
+      "id": "wr2",
+      "x": 84.61106587667018,
+      "z": -45.59128722874448,
+      "region": "meadow"
+    },
+    {
+      "id": "wr3",
+      "x": -205.40310432901606,
+      "z": 37.04163709189743,
+      "region": "meadow"
+    },
+    {
+      "id": "wr4",
+      "x": -82.3564514843747,
+      "z": 143.9873613906093,
+      "region": "meadow"
+    },
+    {
+      "id": "wr5",
+      "x": -17.86092966562137,
+      "z": 175.30794175341725,
+      "region": "meadow"
+    },
+    {
+      "id": "wr6",
+      "x": -165.39245521416888,
+      "z": -50.001676382962614,
+      "region": "meadow"
+    },
+    {
+      "id": "wr7",
+      "x": -210.0559414923191,
+      "z": -136.9481919379905,
+      "region": "meadow"
+    },
+    {
+      "id": "wr8",
+      "x": -99.85660199541599,
+      "z": -24.470110049005598,
+      "region": "meadow"
+    },
+    {
+      "id": "wr9",
+      "x": -16.243783463723958,
+      "z": -78.30676485551521,
+      "region": "plateau"
+    },
+    {
+      "id": "wr10",
+      "x": -206.3292737142183,
+      "z": -45.79592359252274,
+      "region": "meadow"
+    },
+    {
+      "id": "wr11",
+      "x": -123.04261411773041,
+      "z": 19.747985643334687,
+      "region": "meadow"
+    },
+    {
+      "id": "wr12",
+      "x": 124.9901744350791,
+      "z": -26.25751107232645,
+      "region": "meadow"
+    },
+    {
+      "id": "wr13",
+      "x": 79.09598094178364,
+      "z": 47.56540093570948,
+      "region": "meadow"
+    },
+    {
+      "id": "wd0",
+      "x": -79.29814835777506,
+      "z": 173.24344142340124,
+      "region": "meadow"
+    },
+    {
+      "id": "wd1",
+      "x": 67.71294908365235,
+      "z": -121.67079668026417,
+      "region": "meadow"
+    },
+    {
+      "id": "wd2",
+      "x": 55.92299907002598,
+      "z": 152.34513111412525,
+      "region": "meadow"
+    },
+    {
+      "id": "wd3",
+      "x": -29.21465752646327,
+      "z": 117.54899294581264,
+      "region": "meadow"
+    },
+    {
+      "id": "wd4",
+      "x": -103.95212568109855,
+      "z": -147.65666391234845,
+      "region": "meadow"
+    },
+    {
+      "id": "wd5",
+      "x": -214.02388265589252,
+      "z": 81.93315488984808,
+      "region": "meadow"
+    },
+    {
+      "id": "wd6",
+      "x": 172.09196239244193,
+      "z": 10.721771435346454,
+      "region": "meadow"
+    },
+    {
+      "id": "wd7",
+      "x": 200.78185363439843,
+      "z": 66.10556684201583,
+      "region": "meadow"
+    },
+    {
+      "id": "wd8",
+      "x": -46.61693288479,
+      "z": 140.86637226864696,
+      "region": "meadow"
+    },
+    {
+      "id": "wd9",
+      "x": 142.24516060668975,
+      "z": -111.38131448999047,
+      "region": "meadow"
+    },
+    {
+      "id": "wd10",
+      "x": -113.44575569033623,
+      "z": -124.66117672389373,
+      "region": "meadow"
+    },
+    {
+      "id": "wd11",
+      "x": -107.33355979900807,
+      "z": 170.43902298202738,
+      "region": "meadow"
+    },
+    {
+      "id": "wd12",
+      "x": 144.57548120524734,
+      "z": 174.39553059870377,
+      "region": "meadow"
+    },
+    {
+      "id": "wd13",
+      "x": -35.96292257076129,
+      "z": 25.230925530195236,
+      "region": "meadow"
+    },
+    {
+      "id": "wd14",
+      "x": 0.8861678675748408,
+      "z": 155.03522861748934,
+      "region": "meadow"
+    },
+    {
+      "id": "wd15",
+      "x": -6.2906133104115725,
+      "z": 114.49972347356379,
+      "region": "meadow"
+    },
+    {
+      "id": "wd16",
+      "x": -20.572907254099846,
+      "z": -120.05385843571275,
+      "region": "meadow"
+    },
+    {
+      "id": "wd17",
+      "x": -42.329732661601156,
+      "z": -137.07783836172894,
+      "region": "meadow"
+    },
+    {
+      "id": "stall",
+      "x": 211,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "shop_clothes",
+      "x": 215.4,
+      "z": 109.25,
+      "region": "market"
+    },
+    {
+      "id": "fs0",
+      "x": 209.02305029709527,
+      "z": -28.203361402466143,
+      "region": "village"
+    },
+    {
+      "id": "fs1",
+      "x": 6.679339828220179,
+      "z": -15.88066017177982,
+      "region": "town"
+    },
+    {
+      "id": "fs2",
+      "x": 189.61418070123307,
+      "z": 119.44069181521431,
+      "region": "market"
+    },
+    {
+      "id": "fs3",
+      "x": -101.16666666666667,
+      "z": -47.666666666666664,
+      "region": "aussie"
+    },
+    {
+      "id": "fs4",
+      "x": 110.03746863940393,
+      "z": -192.80730040846325,
+      "region": "china"
+    },
+    {
+      "id": "fs5",
+      "x": -93.70447979333866,
+      "z": -198.0446635108744,
+      "region": "india"
+    },
+    {
+      "id": "fs6",
+      "x": 207.6574578963008,
+      "z": 150.1220754456429,
+      "region": "vungtau"
+    },
+    {
+      "id": "fs7",
+      "x": 182.91097496131485,
+      "z": -147.70927585448482,
+      "region": "meadow"
+    },
+    {
+      "id": "fs8",
+      "x": 146.30925761306662,
+      "z": 169.24455494715997,
+      "region": "meadow"
+    },
+    {
+      "id": "sing0",
+      "x": 217.52056094299627,
+      "z": -24.281433412050298,
+      "region": "village"
+    },
+    {
+      "id": "sing1",
+      "x": 15.81555268981408,
+      "z": -18.292579057877255,
+      "region": "town"
+    },
+    {
+      "id": "sing2",
+      "x": 199.2849472897456,
+      "z": 121.93847875715979,
+      "region": "market"
+    },
+    {
+      "id": "sing3",
+      "x": -94.28018223009907,
+      "z": -43.534776004726105,
+      "region": "aussie"
+    },
+    {
+      "id": "sing4",
+      "x": 115.67691429669559,
+      "z": -183.15139393881861,
+      "region": "china"
+    },
+    {
+      "id": "sing5",
+      "x": -91.79130450507841,
+      "z": -191.39981239524275,
+      "region": "india"
+    },
+    {
+      "id": "sing6",
+      "x": 214.5439423328684,
+      "z": 154.25396610758347,
+      "region": "vungtau"
+    },
+    {
+      "id": "sing7",
+      "x": 189.79745939788245,
+      "z": -143.57738519254426,
+      "region": "meadow"
+    },
+    {
+      "id": "sing8",
+      "x": 153.19574204963422,
+      "z": 173.37644560910053,
+      "region": "meadow"
+    },
+    {
+      "id": "hoilang0",
+      "x": 207.3584629509067,
+      "z": -24.566171695163415,
+      "region": "village"
+    },
+    {
+      "id": "hoilang1",
+      "x": 3.9558550468679696,
+      "z": -18.810272884365375,
+      "region": "town"
+    },
+    {
+      "id": "hoilang2",
+      "x": 187.9495933550445,
+      "z": 123.07788152251703,
+      "region": "market"
+    },
+    {
+      "id": "hoilang3",
+      "x": -104.21707331162217,
+      "z": -43.45545181081631,
+      "region": "aussie"
+    },
+    {
+      "id": "hoilang4",
+      "x": 108.37288129321536,
+      "z": -189.17011070116052,
+      "region": "china"
+    },
+    {
+      "id": "hoilang5",
+      "x": -97.45336998995084,
+      "z": -196.64973616733815,
+      "region": "india"
+    },
+    {
+      "id": "hoilang6",
+      "x": 211.65481158782683,
+      "z": 150.26755212708454,
+      "region": "vungtau"
+    },
+    {
+      "id": "hoilang7",
+      "x": 181.24638761512628,
+      "z": -144.0720861471821,
+      "region": "meadow"
+    },
+    {
+      "id": "hoilang8",
+      "x": 141.9863422679068,
+      "z": 172.02530158946314,
+      "region": "meadow"
+    },
+    {
+      "id": "secret_bell",
+      "x": -204,
+      "z": -126,
+      "region": "bamboo"
+    },
+    {
+      "id": "secret_bottle",
+      "x": -92,
+      "z": 180,
+      "region": "meadow"
+    },
+    {
+      "id": "secret_snowman",
+      "x": 176,
+      "z": -230,
+      "region": "mountain"
+    },
+    {
+      "id": "secret_ducks",
+      "x": 102.84,
+      "z": -91.16,
+      "region": "lake"
+    },
+    {
+      "id": "crossing_town_north",
+      "x": 9.2,
+      "z": -32.6,
+      "region": "town"
+    },
+    {
+      "id": "crossing_town_south",
+      "x": 0.7999999999999998,
+      "z": -23.4,
+      "region": "town"
+    },
+    {
+      "id": "crossing_aussie_north",
+      "x": -112.2,
+      "z": -70,
+      "region": "aussie"
+    },
+    {
+      "id": "crossing_aussie_south",
+      "x": -105.8,
+      "z": -60.4,
+      "region": "aussie"
+    },
+    {
+      "id": "villager_0",
+      "x": 19.650000000000002,
+      "z": -20.8,
+      "region": "town"
+    },
+    {
+      "id": "villager_1",
+      "x": -15.600000000000001,
+      "z": -34.8,
+      "region": "town"
+    },
+    {
+      "id": "villager_2",
+      "x": -15.399999999999999,
+      "z": -39.8,
+      "region": "town"
+    },
+    {
+      "id": "villager_3",
+      "x": 7.790426628734261,
+      "z": -5.587924005769641,
+      "region": "town"
+    },
+    {
+      "id": "villager_4",
+      "x": 173.05167372387444,
+      "z": 106.21922425019062,
+      "region": "market"
+    },
+    {
+      "id": "villager_5",
+      "x": 187,
+      "z": 106.3,
+      "region": "market"
+    },
+    {
+      "id": "villager_6",
+      "x": 191,
+      "z": 106.3,
+      "region": "market"
+    },
+    {
+      "id": "villager_7",
+      "x": 199,
+      "z": 106.3,
+      "region": "market"
+    },
+    {
+      "id": "villager_8",
+      "x": 207,
+      "z": 106.3,
+      "region": "market"
+    },
+    {
+      "id": "villager_9",
+      "x": 0,
+      "z": 0,
+      "region": "town"
+    },
+    {
+      "id": "villager_10",
+      "x": -97.3,
+      "z": -56.9,
+      "region": "aussie"
+    },
+    {
+      "id": "villager_11",
+      "x": 180.5100155676805,
+      "z": -39.4,
+      "region": "village"
+    },
+    {
+      "id": "villager_12",
+      "x": 143.96103446586542,
+      "z": -153.8001020067532,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_13",
+      "x": 145.46103446586542,
+      "z": -156.3001020067532,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_14",
+      "x": 175.75859552231086,
+      "z": -151.84994456889083,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_15",
+      "x": 176.84809258057052,
+      "z": -152.57684351852097,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_16",
+      "x": 159.03896553413458,
+      "z": 171.40010200675323,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_17",
+      "x": 160.17617674202475,
+      "z": 167.99511068507147,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_18",
+      "x": 69.69523209647392,
+      "z": -151.29865553304978,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_19",
+      "x": 75.32495866172778,
+      "z": -153.8609514213908,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_20",
+      "x": 81.91381290617446,
+      "z": -150.2200937309988,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_21",
+      "x": 83.30232008160472,
+      "z": -143.0514568650139,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_22",
+      "x": 77.84982491768147,
+      "z": -138.41788301735184,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_23",
+      "x": 67.08795641456044,
+      "z": 108.74481908426486,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_24",
+      "x": 70.80275015355491,
+      "z": 101.19670553213992,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_25",
+      "x": 78.90289865356952,
+      "z": 101.4810106581177,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_26",
+      "x": 84.4143713445805,
+      "z": 106.80651368008215,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_27",
+      "x": -5.3,
+      "z": -31.599999999999998,
+      "region": "town"
+    },
+    {
+      "id": "villager_28",
+      "x": 39.28515818727302,
+      "z": -45.67951692405487,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_29",
+      "x": 40.0909786135351,
+      "z": -45.66563085014579,
+      "region": "meadow"
+    },
+    {
+      "id": "villager_30",
+      "x": 40.92,
+      "z": -45.12,
+      "region": "meadow"
+    },
+    {
+      "id": "job_farm",
+      "x": 15.392304845413264,
+      "z": 36,
+      "region": "home"
+    },
+    {
+      "id": "job_village",
+      "x": 174,
+      "z": -29.700000000000003,
+      "region": "village"
+    },
+    {
+      "id": "job_china",
+      "x": 114.21421356237309,
+      "z": -178.5857864376269,
+      "region": "china"
+    },
+    {
+      "id": "job_india",
+      "x": -86.2,
+      "z": -180,
+      "region": "india"
+    },
+    {
+      "id": "job_town",
+      "x": -14.999999999999998,
+      "z": -43.8,
+      "region": "town"
+    },
+    {
+      "id": "job_uluru",
+      "x": -184,
+      "z": 42,
+      "region": "meadow"
+    },
+    {
+      "id": "job_hanoi",
+      "x": 160.73185165257814,
+      "z": -124.51763809020504,
+      "region": "hanoi"
+    },
+    {
+      "id": "job_bacninh",
+      "x": 184.5857864376269,
+      "z": -179.21421356237312,
+      "region": "bacninh"
+    },
+    {
+      "id": "job_danang",
+      "x": 145.78578643762688,
+      "z": -3.4142135623730954,
+      "region": "danang"
+    },
+    {
+      "id": "job_saigon",
+      "x": 147.2,
+      "z": 144,
+      "region": "saigon"
+    },
+    {
+      "id": "job_vungtau",
+      "x": 194,
+      "z": 158.8,
+      "region": "vungtau"
+    },
+    {
+      "id": "job_brisbane",
+      "x": -124.78578643762691,
+      "z": -126.58578643762691,
+      "region": "brisbane"
+    },
+    {
+      "id": "job_sydney",
+      "x": -139.53205080756888,
+      "z": -16,
+      "region": "sydney"
+    },
+    {
+      "id": "job_melbourne",
+      "x": -139.21421356237312,
+      "z": 113.58578643762691,
+      "region": "melbourne"
+    },
+    {
+      "id": "wander0",
+      "x": 1,
+      "z": 44,
+      "region": "home"
+    },
+    {
+      "id": "pat0",
+      "x": 4.756261434,
+      "z": -81.585420478,
+      "region": "plateau"
+    },
+    {
+      "id": "adv_find",
+      "x": 5.882338007204297,
+      "z": -80.15931885339853,
+      "region": "plateau"
+    },
+    {
+      "id": "adv_find",
+      "x": 11.361100623717794,
+      "z": -86.6440123581043,
+      "region": "plateau"
+    },
+    {
+      "id": "adv_find",
+      "x": 0.9206172264265371,
+      "z": -85.21700661147679,
+      "region": "plateau"
+    },
+    {
+      "id": "hunt_halloween_0",
+      "x": -109.89971332234934,
+      "z": -90.0227142595547,
+      "region": "aussie"
+    },
+    {
+      "id": "hunt_halloween_1",
+      "x": -91.61847872444311,
+      "z": -84.65382265746243,
+      "region": "aussie"
+    },
+    {
+      "id": "hunt_halloween_2",
+      "x": -84.17625089491811,
+      "z": -50.36254297935112,
+      "region": "aussie"
+    },
+    {
+      "id": "hunt_halloween_3",
+      "x": -94.11580515505305,
+      "z": -37.83207300345315,
+      "region": "aussie"
+    },
+    {
+      "id": "hunt_halloween_4",
+      "x": -108.49594815186904,
+      "z": -51.254391701765755,
+      "region": "aussie"
+    }
+  ],
+  "suspicions": [
+    {
+      "id": "banana",
+      "name": "The Big Banana",
+      "home": "sydney",
+      "plannedPlace": "aussie",
+      "planned": [
+        -91,
+        -71
+      ],
+      "model": [
+        -91,
+        -71
+      ],
+      "sign": [
+        -84.29844473524828,
+        -65.7713140242047
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "aussie",
+      "nearest": {
+        "id": "aussie",
+        "cc": "au",
+        "at": [
+          -100,
+          -65
+        ],
+        "distance": 10.816653826391969
+      },
+      "expectedCountry": "au",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "bondi",
+      "name": "Lifesavers' Tower",
+      "home": "sydney",
+      "plannedPlace": "melbourne",
+      "planned": [
+        -106,
+        176
+      ],
+      "model": [
+        -106,
+        176
+      ],
+      "sign": [
+        -101.8725873820297,
+        169.14693753997386
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "melbourne",
+        "cc": "au",
+        "at": [
+          -132,
+          126
+        ],
+        "distance": 56.356011214421486
+      },
+      "expectedCountry": "au",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "chuacau",
+      "name": "Hội An Covered Bridge",
+      "home": "danang",
+      "plannedPlace": "hoian",
+      "planned": [
+        170,
+        72
+      ],
+      "model": [
+        170,
+        72
+      ],
+      "sign": [
+        174.2,
+        82
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "hoian",
+      "nearest": {
+        "id": "hoian",
+        "cc": "vn",
+        "at": [
+          170,
+          90
+        ],
+        "distance": 18
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "benthanh",
+      "name": "Bến Thành Clock Tower",
+      "home": "saigon",
+      "plannedPlace": "market",
+      "planned": [
+        221,
+        110
+      ],
+      "model": [
+        221,
+        110
+      ],
+      "sign": [
+        213.83811286773852,
+        106.43525979842188
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "market",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 24.331050121192874
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "nhatron",
+      "name": "Nhà Tròn, the Round House (Bà Rịa)",
+      "declaredCountry": "vn",
+      "home": "saigon",
+      "plannedPlace": "town",
+      "planned": [
+        13.5,
+        -11.5
+      ],
+      "model": [
+        13.5,
+        -11.5
+      ],
+      "sign": [
+        10.230849164039068,
+        -15.922968778064789
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "town",
+      "nearest": {
+        "id": "town",
+        "cc": "home",
+        "at": [
+          9,
+          -22
+        ],
+        "distance": 11.423659658795863
+      },
+      "expectedCountry": "vn",
+      "drift": 0,
+      "countryMismatch": true,
+      "homeMismatch": true
+    },
+    {
+      "id": "halong",
+      "name": "Hạ Long Bay",
+      "declaredCountry": "vn",
+      "home": "hanoi",
+      "plannedPlace": "lake",
+      "planned": [
+        111,
+        -79
+      ],
+      "model": [
+        114.23056197759786,
+        -77.20524334577897
+      ],
+      "sign": [
+        98.14606809696156,
+        -86.1410732794658
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "lake",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 69.59384470837566
+      },
+      "expectedCountry": "vn",
+      "drift": 3.695630140987009,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "myson",
+      "name": "Mỹ Sơn Sanctuary",
+      "declaredCountry": "vn",
+      "home": "danang",
+      "plannedPlace": "hoian",
+      "planned": [
+        202,
+        84
+      ],
+      "model": [
+        207.57322103924008,
+        93.22492315674074
+      ],
+      "sign": [
+        207.34869304520143,
+        84.72788913421894
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "market",
+        "cc": "vn",
+        "at": [
+          197,
+          114
+        ],
+        "distance": 23.310873449700594
+      },
+      "expectedCountry": "vn",
+      "drift": 10.777754868245978,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "phongnha",
+      "name": "Phong Nha caves",
+      "declaredCountry": "vn",
+      "home": "danang",
+      "plannedPlace": "paddies",
+      "planned": [
+        234,
+        -118
+      ],
+      "model": [
+        225.4885873488055,
+        -108.15338359226448
+      ],
+      "sign": [
+        221.47237228995834,
+        -95.78932209932903
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "paddies",
+      "nearest": {
+        "id": "bacninh",
+        "cc": "vn",
+        "at": [
+          200,
+          -172
+        ],
+        "distance": 68.74633453322592
+      },
+      "expectedCountry": "vn",
+      "drift": 13.01537552281916,
+      "countryMismatch": false,
+      "homeMismatch": true
+    },
+    {
+      "id": "trangan",
+      "name": "Tràng An",
+      "declaredCountry": "vn",
+      "home": "hanoi",
+      "plannedPlace": "hanoi",
+      "planned": [
+        123,
+        -157
+      ],
+      "model": [
+        104.2286598412583,
+        -129.06799705275665
+      ],
+      "sign": [
+        110.63293391248673,
+        -123.47914443163742
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "meadow",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 49.13076714082321
+      },
+      "expectedCountry": "vn",
+      "drift": 33.653528789712375,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "reef",
+      "name": "Great Barrier Reef",
+      "declaredCountry": "au",
+      "home": "brisbane",
+      "plannedPlace": "lake",
+      "planned": [
+        128,
+        -65
+      ],
+      "model": [
+        128.03880244984202,
+        -64.95634724392772
+      ],
+      "sign": [
+        136.609095970748,
+        -55.314767032908506
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "lake",
+      "nearest": {
+        "id": "hanoi",
+        "cc": "vn",
+        "at": [
+          153,
+          -135
+        ],
+        "distance": 74.3584203338885
+      },
+      "expectedCountry": "au",
+      "drift": 0.05840542120769647,
+      "countryMismatch": true,
+      "homeMismatch": true
+    },
+    {
+      "id": "forbidden",
+      "name": "The Forbidden City",
+      "declaredCountry": "cn",
+      "home": "china",
+      "plannedPlace": "china",
+      "planned": [
+        135,
+        -182
+      ],
+      "model": [
+        137.97413687421582,
+        -221.97542382331213
+      ],
+      "sign": [
+        129.81829229341352,
+        -216.18904333342056
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 37.977841003891335
+      },
+      "expectedCountry": "cn",
+      "drift": 40.08590774823492,
+      "countryMismatch": false,
+      "homeMismatch": false
+    },
+    {
+      "id": "terracotta",
+      "name": "Terracotta Army",
+      "declaredCountry": "cn",
+      "home": "china",
+      "plannedPlace": "china",
+      "planned": [
+        131,
+        -214
+      ],
+      "model": [
+        151.26054536342465,
+        -188.13824635534914
+      ],
+      "sign": [
+        143.05027677180072,
+        -190.3385848868923
+      ],
+      "modelPointUsesSignFallback": false,
+      "region": "china",
+      "nearest": {
+        "id": "china",
+        "cc": "cn",
+        "at": [
+          107,
+          -200
+        ],
+        "distance": 45.822451651937605
+      },
+      "expectedCountry": "cn",
+      "drift": 32.853005950749775,
+      "countryMismatch": false,
+      "homeMismatch": false
+    }
+  ],
+  "errors": []
+}

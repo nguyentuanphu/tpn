@@ -1,27 +1,30 @@
 name: FPT Le Minh reviewed arcade delta
 on:
   push:
-    branches: [work/v1.02-fruit-parade]
+    branches: ['work/**', 'release/**', 'voices/**']
     paths:
       - docs/v1.02-orchard-arcade/voice-delta.json
-      - tools/fpt-arcade-delta.mts
-      - .github/workflows/fpt-arcade-delta.yml
   workflow_dispatch:
+    inputs:
+      inventory:
+        description: Optional reviewed public JSON under docs/voice-recording-delta; blank preserves the legacy arcade batch
+        required: false
+        type: string
 permissions:
   contents: write
 # Same provider lock as the baseline job: never run two FPT batches together.
 concurrency:
-  group: fpt-leminh-full-20261025
+  group: ${{ inputs.inventory && format('reviewed-public-{0}', github.run_id) || 'fpt-leminh-full-20261025' }}
   cancel-in-progress: false
 jobs:
   record:
-    if: github.ref == 'refs/heads/work/v1.02-fruit-parade'
+    if: (!inputs.inventory) && (startsWith(github.ref, 'refs/heads/work/') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/voices/'))
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: work/v1.02-fruit-parade
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@v4
@@ -37,6 +40,7 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
+          RECORDING_BRANCH: ${{ github.ref_name }}
         run: |
           if [ -f temp/fpt-recordings/arcade-delta.json ]; then
             gh auth setup-git
@@ -47,8 +51,8 @@ jobs:
               git commit -m 'Record reviewed Le Minh arcade delta [skip netlify]' -m 'Co-Authored-By: Claude <noreply@anthropic.com>'
               saved=false
               for attempt in 1 2 3; do
-                git pull --no-rebase origin work/v1.02-fruit-parade
-                if git push origin HEAD:work/v1.02-fruit-parade; then saved=true; break; fi
+                git pull --no-rebase origin "$RECORDING_BRANCH"
+                if git push origin "HEAD:$RECORDING_BRANCH"; then saved=true; break; fi
               done
               test "$saved" = true
             fi
@@ -59,3 +63,11 @@ jobs:
           name: le-minh-arcade-delta
           path: temp/fpt-recordings/
           retention-days: 30
+
+  reviewed_public:
+    if: github.event_name == 'workflow_dispatch' && inputs.inventory != ''
+    uses: ./.github/workflows/public-voice-delta.yml
+    with:
+      inventory: ${{ inputs.inventory }}
+      save_to_branch: true
+    secrets: inherit

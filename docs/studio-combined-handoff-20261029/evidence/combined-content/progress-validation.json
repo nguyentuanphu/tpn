@@ -1,0 +1,40 @@
+{
+  "provenance": {
+    "sourceHead": "125a54920fb4ed54a4b241abc5a414d156267235",
+    "capturedAt": "2026-10-29T06:58:59.796Z",
+    "timezone": "Australia/Sydney",
+    "synthetic": true,
+    "browser": "141.0.7390.37",
+    "screenshotOptions": {
+      "animations": "disabled"
+    },
+    "sourceFiles": {
+      "js/main.ts": "b03bc7f26e4fa849cbecd3b27f557ea79e9ce22288cecab75b4bd9fc664adbae",
+      "js/games/art-pad.ts": "635ec7c304fc0c383dad3c163680aff0f0caf9b12a2ff32310887d42fe502ab8",
+      "js/games/frame.ts": "8857a0d7f4ababf1d452105b11f846502de8cd31da24a4e941ca550d2796b151"
+    }
+  },
+  "before": {
+    "wins": 0,
+    "album": 0,
+    "coins": 30
+  },
+  "after": {
+    "wins": 1,
+    "album": 1,
+    "coins": 35,
+    "saved": 1
+  },
+  "exited": {
+    "wins": 1,
+    "album": 1,
+    "coins": 35
+  },
+  "restored": {
+    "wins": 1,
+    "album": 1,
+    "coins": 35
+  },
+  "oneCompletionOneReward": true,
+  "noRewardOnExit": true
+}

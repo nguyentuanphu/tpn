@@ -1,0 +1,24 @@
+{
+  "observedAt": "2026-10-27T19:12:47.181348+11:00",
+  "publicRepository": true,
+  "gallery": {
+    "url": "https://github.com/nguyentuanphu/tpn/blob/844b6ca8c0309b6e22b573bd3e40f902f5da7332/docs/studio-page-review-20261027/GALLERY.md",
+    "httpStatus": 200
+  },
+  "pdf": {
+    "url": "https://github.com/nguyentuanphu/tpn/blob/844b6ca8c0309b6e22b573bd3e40f902f5da7332/docs/studio-page-review-20261027/Studio-all-pages-desktop.pdf",
+    "httpStatus": 200,
+    "downloadBytesMatchOriginal": true
+  },
+  "zip": {
+    "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/844b6ca8c0309b6e22b573bd3e40f902f5da7332/docs/studio-page-review-20261027/Studio-screenshot-review.zip",
+    "httpStatus": 200,
+    "bytes": 47987955,
+    "sha256": "947db2d780185359a527441e5d9fc63716a620414c6e40190b52696b0d0f3636",
+    "archiveIntegrity": "passed"
+  },
+  "samplePng": {
+    "httpStatus": 200,
+    "bytesMatchOriginal": true
+  }
+}

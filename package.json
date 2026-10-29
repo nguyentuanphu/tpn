@@ -3,6 +3,7 @@
   "private": true,
   "description": "Sparkle Valley: the game needs no build step. These packages are only for the small Netlify functions (netlify/functions).",
   "dependencies": {
-    "@netlify/blobs": "^10.7.13"
+    "@netlify/blobs": "^10.7.13",
+    "pg": "8.16.3"
   }
 }

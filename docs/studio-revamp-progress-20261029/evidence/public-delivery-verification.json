@@ -1,0 +1,29 @@
+{
+  "commit": "5da58a9a",
+  "checks": [
+    {
+      "path": "README.md",
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 4423,
+      "sha256": "4889c4061c8ccfb626d708ee9105532872f4ead3d4571009b8fbddf3012efa34",
+      "matchesLocal": true
+    },
+    {
+      "path": "VISUALS.md",
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 1251,
+      "sha256": "421ad0dfcff9084b6d02a97bd34c69ea3149b4404e687b97219dfb017f0876e1",
+      "matchesLocal": true
+    },
+    {
+      "path": "screenshots/en-390-today-viewport.png",
+      "status": 200,
+      "contentType": "image/png",
+      "bytes": 77351,
+      "sha256": "8d200afa859b7e82d35d05d527401c4a94c0884f4db5a0387b8eb1febe9ad375",
+      "matchesLocal": true
+    }
+  ]
+}

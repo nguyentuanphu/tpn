@@ -29,6 +29,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install audio verification tools
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install server dependencies
+        run: npm ci --no-audit --no-fund
       - name: Install the test tools
         working-directory: tests
         # tests/package-lock.json points playwright at a folder on the Claude machines: install from package.json

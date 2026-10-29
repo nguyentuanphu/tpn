@@ -117,6 +117,7 @@ register({
           if (fed < n) api.wrong(bunny, `That is ${fed}. The bunny wants ${n}. A few more!`, `Mới có ${numWord(fed)} củ. Thỏ muốn ${numWord(n)} củ cơ. Thêm nữa nào!`);
           else api.wrong(bunny, `That is ${fed}, too many! The bunny wants ${n}. Take some back.`, `${numWord(fed)} củ, nhiều quá rồi! Thỏ chỉ muốn ${numWord(n)} củ. Lấy bớt ra nhé.`);
         };
+        api.plan(() => row.isConnected ? fed < n ? give : fed > n ? back : done : null, { maxActions: rounds * (max + 2) });
         api.onCleanup(() => res(false));
       });
       if (!ok || api.closed) return;
@@ -249,6 +250,13 @@ register({
     const tap = e => { e.preventDefault(); vy = -.55; (SFX as typeof SFX & { flap?: () => void }).flap ? (SFX as typeof SFX & { flap?: () => void }).flap() : SFX.jump(); };
     cv.addEventListener('pointerdown', tap);
     api.onCleanup(() => { done = true; cv.removeEventListener('pointerdown', tap); });
+    // Follow the next visible ring with normal pointer taps; never move the balloon directly.
+    api.plan(() => {
+      if (done || api.closed || !cv.isConnected) return null;
+      const target = rings.find(r => !r.hit && r.x >= x - .04);
+      if (!target || !(y > target.y + .025 || vy > .1 && y > target.y - .07)) return null;
+      const r = cv.getBoundingClientRect(); return { el: cv, x: r.left + r.width * .25, y: r.top + r.height * y, ms: 0 };
+    }, { maxActions: goal * 12 + 20 });
     const spawn = () => { if (!rings.length || rings[rings.length - 1].x < x + 1.2) rings.push({ x: x + 2 + Math.random() * .4, y: .25 + Math.random() * .5, hit: false }); if (Math.random() < .02) clouds.push({ x: x + 2.2, y: Math.random() < .5 ? .08 + Math.random() * .1 : .82 + Math.random() * .1, s: .5 + Math.random() * .5 }); };
     await new Promise<void>(res => {
       const frame = now => {

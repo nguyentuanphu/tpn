@@ -1,7 +1,8 @@
 {
   "//": "Start-up at tablet speed (check `startup`, Analytics & Infra, 11 Oct, #36): the packed copy the website serves, the processor 4 times slower, compressed like Netlify, the service worker on. 'max' is a ratchet that may only go down (lower it when a round improves it); timings are allowed 25 % slack, downloads 3 %. 'target' is where #36 should end up. First set 11 Oct AEST on main 6300d4b (two runs each on main and on core/analytics-infra: first start 1058 KB, title 1.0-1.1 s, ready 18.9-19.5 s; second start 0 KB, ready 18.4-19.1 s, longest freeze 4.5-4.9 s). Lowered 11 Oct: firstKB 1035 (stylesheet minified, scripts without kept names: 1058 -> 1032 KB). Machine speed (owner, 11 Oct AEDT): the check also times a fixed piece of work at the same slowed speed (machineMs, the middle of 7 tries) and stretches or shortens every time limit by measured / ref (between 0.5 and 3), so a slower computer is not failed for being slower; downloads are not stretched. ref measured 11 Oct AEDT on the machine where 56d9578 gives title 0.9 s, ready 19.2 s. Lowered 12 Oct AEDT: firstKB 1000 (r63, voice list after the title: 979 KB in two runs).",
   "firstKB": {
-    "max": 1000,
+    "max": 1040,
+    "raised": "owner, 29 Oct 2026 AEDT, by pop-up, for v1.03: 1000 to 1040 (live v1.02 1021, v1.03 1035 KB on the Release machine); shrink it again next round",
     "target": 800,
     "rule": "PERF-001",
     "what": "KB downloaded on the first start (compressed), up to a built valley"

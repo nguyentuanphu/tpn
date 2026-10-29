@@ -26,11 +26,12 @@ declare global {
   interface Window {
     __mixedVoiceBuffers?: Array<{ duration: number; frequencies: number[] }>;
     __mixedDeviceWords?: string[];
+    __mixedEvidence?: Array<{eventName:string;data:Record<string,string|number>}>;
   }
 }
 
 export async function mixedHanoiVoiceCheck(browser: Browser) {
-  const cases = ['standard', 'mixed', 'missing', 'corrupt', 'cancel', 'warm', 'preview', 'private', 'private-remote'] as const;
+  const cases = ['standard', 'mixed', 'mixed-ui-vi', 'missing', 'corrupt', 'cancel', 'warm', 'preview', 'private', 'private-remote'] as const;
   for (const mode of cases) {
     const context = await browser.newContext(), page = await context.newPage(), requests: string[] = [], errors: string[] = [];
     let release: () => void = () => {};
@@ -97,11 +98,16 @@ export async function mixedHanoiVoiceCheck(browser: Browser) {
           await page.evaluate(async text => (await import(String('/js/voice.js'))).warmVoiceLine(text), LINE);
           requests.length = 0;
         }
-        if (mode === 'preview') await page.evaluate(async () => (await import(String('/js/voice.js'))).previewPackVoice('m'));
+        if (mode === 'mixed-ui-vi') {
+          await page.evaluate(async text=>{const V=await import(String('/js/voice.js'));await V.warmVoiceLine(text);(await import(String('/js/state.js'))).settings.lang='vi';const E=(await import(String('/js/core/events.js'))).managementEvidence;window.__mixedEvidence=[];E.setEnabled(true);E.subscribe(e=>window.__mixedEvidence!.push(e));V.sayIn('en',text);},LINE);
+          await page.waitForFunction(()=>window.__mixedEvidence?.some(e=>e.eventName==='voice.result'));
+          const result=await page.evaluate(()=>window.__mixedEvidence!.find(e=>e.eventName==='voice.result')!.data);
+          assert.deepEqual(result,{source:'recorded',outcome:'success',language:'en'},'spoken language stays English when interface language is Vietnamese');
+        } else if (mode === 'preview') await page.evaluate(async () => (await import(String('/js/voice.js'))).previewPackVoice('m'));
         else await page.evaluate(async text => (await import(String('/js/voice.js'))).sayAsync(text, text), LINE);
         const recordings = await page.evaluate(() => window.__mixedVoiceBuffers!);
         assert.equal(recordings.length, 1, mode + ': a complete line uses one cancellable playback source: ' + JSON.stringify(recordings));
-        if (mode === 'mixed' || mode === 'warm') {
+        if (mode === 'mixed' || mode === 'warm' || mode === 'mixed-ui-vi') {
           assert.ok(Math.abs(recordings[0].duration - 1.06) < .01, JSON.stringify(recordings));
           assert.equal(recordings[0].frequencies.length, 4);
           recordings[0].frequencies.forEach((frequency, i) => assert.ok(Math.abs(frequency - (i % 2 ? 660 : 330)) < 30, JSON.stringify(recordings)));

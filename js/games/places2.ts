@@ -21,24 +21,28 @@ function style() {
 `));
 }
 
-async function runPlaceRounds(api: any, icon: string, prompt: [string, string], qs: Array<{ show: string; desc: [string, string]; choices: string[][]; answer: number }>, done: [string, string]) {
+async function runPlaceRounds(api: any, icon: string, prompt: [string, string], qs: Array<{ show: string; desc: [string, string]; choices: string[][]; answer: number | 'any' }>, done: [string, string]) {
   style(); api.say(prompt[0], prompt[1]); api.dots(qs.length, 0);
   const wrap = el('div', 'pl2-board'), stage = el('div', 'pl2-stage'), controls = el('div', 'pl2-controls');
   api.stage.appendChild(wrap); wrap.append(stage, controls);
+  await wait(1500);
   let k = 0;
   while (k < qs.length) {
     const q = qs[k];
-    stage.innerHTML = `<div class="pl2-big">${q.show}</div><div class="pl2-desc">${T(q.desc[0], q.desc[1])}</div>`;
+    stage.innerHTML = `<div class="pl2-big">${pic(q.show)}</div><div class="pl2-desc">${T(q.desc[0], q.desc[1])}</div>`;
+    api.say(q.desc[0], q.desc[1]);
     controls.innerHTML = '';
     const btns = q.choices.map((c, i) => {
       const b = el('button', 'pl2-btn', `<span>${T(c[0], c[1])}</span>`);
       b.dataset.i = String(i);
-      controls.appendChild(b);
       return b;
     });
-    const target = btns[q.answer];
+    // (owner, 29 Oct 2026 AEDT audit) the right answer was nearly always first: the buttons are mixed now, and a free
+    // choice (which way to ride, what to drink) takes either answer
+    [...btns].sort(() => Math.random() - .5).forEach(b => controls.appendChild(b));
+    const target = q.answer === 'any' ? btns[0] : btns[q.answer];
     api.plan(() => target, { maxActions: 6 });
-    const clicked = await untilRight(api, btns, (e: HTMLElement) => e === target);
+    const clicked = await untilRight(api, btns, (e: HTMLElement) => q.answer === 'any' || e === target);
     if (!clicked || api.closed) return;
     api.sfx.ding();
     k++; api.dots(qs.length, k);
@@ -61,13 +65,13 @@ register({
           show: '🏛️',
           desc: ['Turn left to the Old Quarter or right to the lake?', 'Rẽ trái vào Phố Cổ hay rẽ phải ra bờ hồ?'],
           choices: [['Lake', 'Bờ Hồ'], ['Old Quarter', 'Phố Cổ']],
-          answer: 1
+          answer: 'any'
         },
         {
           show: '🌸',
           desc: ['Stop for cool lotus tea or a sweet ice cream?', 'Dừng lại uống trà sen mát lành hay ăn que kem?'],
-          choices: [['Lotus Tea', 'Trà Sen'], ['Bookstore', 'Nhà Sách']],
-          answer: 0
+          choices: [['Lotus Tea', 'Trà Sen'], ['Ice Cream', 'Que Kem']],
+          answer: 'any'
         }
       ],
       ['What a wonderful cyclo ride!', 'Chuyến xích lô dạo phố thật thú vị!']
@@ -144,20 +148,20 @@ register({
         {
           show: '🎟️',
           desc: ['Ticket says: Row A for Grandpa Owl!', 'Vé ghi: Hàng A cho Ông Cú!'],
-          choices: [['Row A', 'Hàng A'], ['Row B', 'Hàng B']],
+          choices: [['Row A', 'Hàng A'], ['Row B', 'Hàng B'], ['Row C', 'Hàng C']],
           answer: 0
         },
         {
           show: '🎟️',
           desc: ['Ticket says: Row B for Little Possum!', 'Vé ghi: Hàng B cho Bé Thú Có Túi!'],
-          choices: [['Row C', 'Hàng C'], ['Row B', 'Hàng B']],
+          choices: [['Row A', 'Hàng A'], ['Row B', 'Hàng B'], ['Row C', 'Hàng C']],
           answer: 1
         },
         {
           show: '🎟️',
           desc: ['Ticket says: Row C for Koala family!', 'Vé ghi: Hàng C cho gia đình Koala!'],
-          choices: [['Row C', 'Hàng C'], ['Row D', 'Hàng D']],
-          answer: 0
+          choices: [['Row A', 'Hàng A'], ['Row B', 'Hàng B'], ['Row C', 'Hàng C']],
+          answer: 2
         },
         {
           show: '🎶',

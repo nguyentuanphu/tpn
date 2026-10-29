@@ -1,0 +1,2 @@
+# Documentation validation only; does not alter game dependencies.
+jsonschema==4.26.0

@@ -1,0 +1,35 @@
+# Workstream B integration handoff
+
+29 October 2026 AEDT. Branch `work/studio-content-website-20261029`, based on uploaded A checkpoint `f62a48c91247a40388d41ba4161df655ec825771`. Final delivered branch SHA is recorded in the response and is discoverable with `git rev-parse HEAD`; this file cannot embed its own future commit hash. The final runtime/layout/test/inventory implementation is `47a9079eef4d5e1b0e34283503fc934feb888da7`, including the unregistered pending definitions and anchored art actions. Generated website facts are pinned to that immutable source. Later changes concern tests, inventories and evidence unless the commit list says otherwise.
+
+## Pending B implementation
+
+[PENDING-WORK.md](PENDING-WORK.md) is the explicit remaining-work register: three unfinished art mechanics, unresolved rongran intent and twelve guidance recordings. These remain B/content work; the separate A-owned fixture and integration tasks are not substitutes for completing them.
+
+## What A can integrate
+
+- Twenty-two intended existing art activities: catalogue/lazy loaders, GAME_INFO metadata only, real canvas Save, pointer/keyboard input, game-drawn artwork, cell painting, stamping, scratch/leaf reveal, fireworks and open-ended painting. No child rewards/progress API was replaced. Shared item/release/progress checks are retained.
+- The three unfinished picture/folding definitions are retained as unregistered proposals in art-pending.ts, outside the real loader. `rongran` remains a declaration with unresolved intent. All four stable IDs stay visible as declared-only; they are not aliases and cannot be enabled through metadata.
+- Same-source bilingual art guides, actual artwork, exact item anchors, four navigation destinations and a general game/story availability explanation. Static guides are not advertised as live item consumers. Existing festival public projection remains a separate real live consumer.
+- Source extraction across 13 domains: module hashes, exported definitions, static/literal dynamic import references, typed content/unlock/guide dependencies, the refreshed explicit-declaration inventory, and shipped public media definitions. Private people, family data, provider invoices, bindings and runtime instances are not invented or exported.
+- Workstream-owned unit/browser tests, synthetic-only evidence, images with source hashes, voice gaps and the exact A-owned fixture reconciliation request.
+
+## Step-by-step integration
+
+1. Fetch this branch and review the full range from `f62a48c9` to its delivered HEAD. Integrate into A's working branch under the owner's existing rules. Do not merge main or deploy from B's handoff.
+2. Preserve A's Studio/editor/API/database/runtime changes. B has not changed studio/ui, netlify/lib/management, admins/live, custom/main/frame/learn/tales/unlocks or types/save.d.ts. activities.ts changes are confined to GAME_INFO. Resolve board additions additively; do not replace A's status.
+3. Reconcile A's two stale tests using A-TEST-REQUEST.md. Keep the fail-closed assertions and test all four remaining pending IDs. The existing catalogue test is unchanged; B fixed the content source organization so the real loader has only ten drawing2 registrations. B's new synthetic event test accepts all twenty-two integrated IDs and rejects all four pending IDs without any API/schema change.
+4. Reinstall the branch's locked tools if necessary: `npm ci`, `npm ci --prefix tests`, `npm ci --prefix tests/services`, `npm ci --prefix netlify/functions`. Use the pinned Playwright browser and `PLAYWRIGHT_BROWSERS_PATH=/workspace/.cache/ms-playwright`. Start the documented Python game server on 8765 and synthetic multiplayer services when checks need them. The managed command sandbox required the permitted execution mode for network/subprocesses/local sockets; this is not a missing credential.
+5. Generate JavaScript with `node tools/build.mts`. The three real offline additions are drawing2.js, crafts.js and art-pad.js. art-pending.js is deliberately unregistered and not an offline gameplay dependency. Existing version constants are unchanged; Release owns any eventual version selection and update rollout.
+6. Run serially through tests/suite.mjs. The focused B checks are contentart, contentpair, contentcaptures, contentprogress, contentvoice and contentwebsite; run unit/types and relevant existing regression checks too. Do not run a second local suite beside it. Preserve official check-map/check-times; the runner updates timing even with --only, so retain evidence separately and restore only its generated timing changes.
+7. Regenerate facts in the combined tree: `node tools/export-management-catalogue.mts`; `node docs/studio-revamp-progress-20261029/tools/audit.mts docs/studio-content-website-20261029/public-definitions`; `node tools/export-content-source-inventory.mts`. Commit relevant source first, then regenerate clean provenance. Inventory coverage is not runtime/control coverage.
+8. Review affected bilingual explanations, reward/availability claims and art against the combined immutable source. Run `SV_WEBSITE_SOURCE=<combined-source-sha> node docs/website-review-20261023/sync-website.mjs`, then `node tools/build-website.mts`. The global review lock was deliberately not advanced by B; source drift outside B remains for A. Only record a new global lock after the actual combined review, never to silence the gate.
+9. Run the changed selection. It requires the full suite because shared catalogue/test/build surfaces changed. Dispatch all=true on the appropriate integration branch per repository rules and inspect actual artifacts/collector. Do not cancel A's independent run or infer a full pass from a SQL job or partial share. See CI.json/VALIDATION.md for B's observed run state.
+10. Finish the missing recordings through the approved voice workflow when an authorised binding exists. VOICE.md lists them. The 76 existing EN/VI guidance assets were fetched and decoded locally; that does not substitute for audible review on physical devices.
+11. Perform final physical-device, cold/warm/offline/update and combined-tree review, then follow the owner's separate release approval. No real family save, production migration, paid service or payment was changed in B.
+
+## Review evidence
+
+See VALIDATION.md for actual passed/failed/stopped/unrun outcomes and retries; CONTENT-REVIEW.md for per-intent decisions; art-audit.json for all 26 IDs; CONNECTIONS.md for consumers and privacy boundaries; scoped-review.json for reviewed source/capture hashes. Screenshots are actual runtime frame/website captures using synthetic profiles, not frozen concept ZIPs. The shared frame captures use the same game artwork replacement module; the actual main-game reward/save/reload path is exercised separately. Physical devices are not claimed.
+
+The Netlify ZIP is a local review artifact only; evidence/packaging.json identifies it. It has not been deployed, attached to a release or used to change environment publication.

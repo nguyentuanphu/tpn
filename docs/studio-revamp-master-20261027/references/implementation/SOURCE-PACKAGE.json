@@ -1,0 +1,9 @@
+{
+  "file": "Studio-source-checkpoint.zip",
+  "bytes": 81664859,
+  "files": 723,
+  "sha256": "affe163ddfc2ed8e90d38e3385023ced1d5769743ad97454e32ff7692a730e00",
+  "sourceSnapshot": "23eb94427dc35ea43347ecfb97adcd2df9383b86",
+  "testedCommit": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df",
+  "purpose": "Cumulative source overlay since released v1.02; not a standalone Netlify/game ZIP"
+}

@@ -1,0 +1,109 @@
+\u274c contentprogress: locator.click: Error: strict mode violation: locator('.gl-x') resolved to 2 elements: 1) <button class="gl-x" aria-label="R\u1eddi \u0111i">\u2715</button> aka getByRole('button', { name: 'R\u1eddi \u0111i' }).first() 2) <button class="gl-x" aria-label="R\u1eddi \u0111i">\u2715</button> aka getByRole('button', { name: 'R\u1eddi \u0111i' }).nth(1) Call log: [2m - waiting for locator('.gl-x')[22m
+\u2705 contentwebsite (2s) 8 website language/layout/deep-link checks
+art stamps en 390
+art weave en 390
+art mosaic en 390
+art nonla en 390
+art aodai en 390
+art kitepaint en 390
+art shades en 390
+art shadowpic en 390
+art finishpic en 390
+art scene en 390
+art lacquer en 390
+art scratch en 390
+art bubblepaint en 390
+art fingerpaint en 390
+art weatherpaint en 390
+art thocam en 390
+art pixelpic en 390
+art fireworks en 390
+art masks en 390
+art makeface en 390
+art gallery en 390
+art leafrub en 390
+art stamps vi 820
+art weave vi 820
+art mosaic vi 820
+art nonla vi 820
+art aodai vi 820
+art kitepaint vi 820
+art shades vi 820
+art shadowpic vi 820
+art finishpic vi 820
+art scene vi 820
+art lacquer vi 820
+art scratch vi 820
+art bubblepaint vi 820
+art fingerpaint vi 820
+art weatherpaint vi 820
+art thocam vi 820
+art pixelpic vi 820
+art fireworks vi 820
+art masks vi 820
+art makeface vi 820
+art gallery vi 820
+art leafrub vi 820
+art stamps en 1440
+art weave en 1440
+art mosaic en 1440
+art nonla en 1440
+art aodai en 1440
+art kitepaint en 1440
+art shades en 1440
+art shadowpic en 1440
+art finishpic en 1440
+art scene en 1440
+art lacquer en 1440
+art scratch en 1440
+art bubblepaint en 1440
+art fingerpaint en 1440
+art weatherpaint en 1440
+art thocam en 1440
+art pixelpic en 1440
+art fireworks en 1440
+art masks en 1440
+art makeface en 1440
+art gallery en 1440
+art leafrub en 1440
+art stamps vi 390
+art weave vi 390
+art mosaic vi 390
+art nonla vi 390
+art aodai vi 390
+art kitepaint vi 390
+art shades vi 390
+art shadowpic vi 390
+art finishpic vi 390
+art scene vi 390
+art lacquer vi 390
+art scratch vi 390
+art bubblepaint vi 390
+art fingerpaint vi 390
+art weatherpaint vi 390
+art thocam vi 390
+art pixelpic vi 390
+art fireworks vi 390
+art masks vi 390
+art makeface vi 390
+art gallery vi 390
+art leafrub vi 390
+\u2705 contentart (264s) 88 art completions, gates, album cap, keyboard/pointer and exit checks
+\u2705 boot (65s)
+\u2705 contract (25s)
+\u2705 phone (222s) 10 screens checked on desktop, phone and tablet; a friend's Join button clear of the status
+\u274c emoji: emoji in the docs: docs/studio-content-website-20261029/evidence/failures/art-exit-fixture.txt \u2b50
+\u2705 preload (0s) up to date: 141 scripts
+\u2705 noemoji (258s) no phone emoji on Who's playing, the valley, Vui ch\u01a1i, 8 Pad tabs, Grown-ups, a speech box and 228 games; painted labels use the drawings
+\u2705 arch (0s) 327 files, 1368 imports; 0 circle groups (0 files in them); allowed: 0 groups, 0 files
+\u274c unit: not ok 126 - menu catalogue matches lazy game definitions, order, names and eligibility | error: |- | name: 'AssertionError' | expected: | actual: | operator: 'deepStrictEqual' | not ok 368 - declared-only management entries cannot become open from an unlock or release switch | error: |- | name: 'AssertionError' | expected: 26 | actual: 4 | operator: 'strictEqual' | not ok 369 - declared-only catalogue rows remain excluded from accepted runtime activity events | error: 'Missing expected rejection.' | name: 'AssertionError'
+\u2705 names (7s) 327 game files: every name is defined or imported
+\u2705 secondset (27s) held: one Coming soon tile (games and stories), no new game in the menu, the Simple screen or the story list, none can be opened; on: the games to unlock fold into one padlock tile (7 shown on a tap), the stories too (20)
+\u2705 rollout (93s) 27 switches: explicit off hides each before and after use, progress stays intact, future schedules retain used access, on brings it back; an old save counts; the New! card on the start day; testers 7 days early
+\u2705 bilingual (0s) every English line is English (names, songs and sayings on the allow list)
+\u2705 rules (0s) 112 rules, the same in the document and the code; 34 rule ids named by the checks, all known
+\u2705 types (16s) 196 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 79 TypeScript files of the server, Studio and tools; no errors
+\u2705 offline (40s) first screen: saved 3.4 s, offline 3.6 s (played into the valley), connection that never answers 6.8 s
+\u2705 website (254s) Welcome (computer, Vietnamese): Website opens the website in Vietnamese without starting the game; Close, Escape in the website, Escape on the page and Back to game each close it, the focus back on Website; messages from another window or asking anything else are ignored. phone: no Home button in the corner; Settings \u2192 Website (64 px) floats over Settings three times, the game paused, Close and Back to game come back to Settings with the focus on Website; the child, the goal and the tab unchanged. the website on its own (phone): no review controls, no Close, no sideways scrolling, Play goes to the game. the goal row clear of the player card, buttons, companion row and map, folded and open, with and without companions, Go and the goal shown when open (top: phone 54px, narrow 54px, landscape 54px, tablet 12px, computer 12px, two 50px, face 50px)
+
+16/19 checks passed

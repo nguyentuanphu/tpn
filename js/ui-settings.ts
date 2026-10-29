@@ -6,10 +6,10 @@ import { ac } from './audio.js';
 import { el } from './util.js';
 
 // Grown-ups settings load only when opened; the controls and data contracts are unchanged.
-import { events } from './core/events.js';
+import { events, managementEvidence } from './core/events.js';
 
 import { T, applyLang, nm, NPC_NAMES, defaultName } from './i18n.js';
-import { settings, saveSettings, profiles, saveProfiles, normalizeProfile, exportBackup, importBackup, backupAge, farm, resetFarm, saveFarm, MAX_KIDS, getSnapshot } from './state.js';
+import { settings, saveSettings, profiles, saveProfiles, normalizeProfile, exportBackup, importBackup, backupAge, farm, resetFarm, saveFarm, MAX_KIDS, getSnapshot, saveReadbackMatches } from './state.js';
 import { createSaveCopy, readSaveCopyOrLegacy } from './content/savecopy.js';
 import { FAMILY_CODE_PRIVACY, makeFamilyCode, normalizeFamilyCode, familyName, familyQrSvg } from './content/familycode.js';
 import { say, voicePack, voiceDiag, allowMobilePack, voiceMisses, clearVoiceMisses, voicesFor, onVoices, hasVietnamese, FAMILY_PHRASES, previewPackVoice, resumePackDownload, chooseVietnamesePack, downloadHanoiPack, previewHanoiVoice } from './voice.js';
@@ -107,6 +107,12 @@ function openCropper(title, done) {
 // can find this device in Studio's lists (testers, auto play)
 const myDeviceId = () => { try { return localStorage.getItem('sv2_playerid') || ''; } catch (e) { return ''; } };
 
+function familyQuestionsHTML(): string {
+  return `<h3>${pic('💛')} ${T('Family questions','Câu hỏi gia đình')}</h3>
+      <p class="note">${T('Write private questions your children can play on this device or with friends you invite. They are included in your save copy.','Viết câu hỏi riêng để con chơi trên máy này hoặc với bạn được mời. Câu hỏi được giữ trong bản sao lưu của bạn.')}</p>
+      <div class="actions"><button class="btn" id="gFamilyQuiz">${pic('💛')} ${T('Add or edit family questions','Thêm hoặc sửa câu hỏi gia đình')}</button></div>`;
+}
+
 function packStatusHTML() {
   const P = voicePack(), miss = voiceMisses().filter(m => m[0] === 'en' || m[0] === 'vi'), n = P ? Object.keys(P.lines).length : 0;
   return `<p class="note">${P ? '✅ ' + T(`${n.toLocaleString()} lines recorded with natural voices. They always play first, even offline; the phone's voice reads only a line that has no recording.`, `${n.toLocaleString('vi-VN')} câu đã thu bằng giọng tự nhiên. Luôn được phát trước, kể cả khi không có mạng; giọng của máy chỉ đọc câu chưa có bản ghi.`) : '⚠️ ' + T('The recorded voices have not loaded yet (they need the internet once).', 'Giọng đã thu chưa tải được (cần có mạng một lần).')}</p>
@@ -115,7 +121,7 @@ function packStatusHTML() {
     <p class="note">${T('Female voices are the default. Enable male recordings below for men, boys and grandpas. Downloads continue in the background while you play, even after Save & close.', 'Giọng nữ được dùng mặc định. Bật bản ghi giọng nam bên dưới cho đàn ông, bé trai và ông. Giọng đọc tiếp tục tải khi bạn chơi, kể cả sau khi Lưu và đóng.')}</p>
     <label>${T('Vietnamese recorded voice', 'Giọng đọc tiếng Việt đã thu')}<select id="gVietnamesePack"><option value="standard" ${settings.voiceViVariant!=='leminh'?'selected':''}>${T('Default voices (female unless male voices are enabled)', 'Giọng mặc định (giọng nữ nếu chưa bật giọng nam)')}</option><option value="leminh" ${settings.voiceViVariant==='leminh'?'selected':''}>${T('Lê Minh · Northern Vietnamese · all Vietnamese speech', 'Lê Minh · giọng Bắc · toàn bộ lời đọc tiếng Việt')}</option></select></label>
     <p class="note">${T(`${HANOI_PACK_INFO.lines.toLocaleString()} recordings · about ${Math.ceil(HANOI_PACK_INFO.bytes/1048576)} MB.`,`${HANOI_PACK_INFO.lines.toLocaleString('vi-VN')} bản thu · khoảng ${Math.ceil(HANOI_PACK_INFO.bytes/1048576)} MB.`)} ${T('Lê Minh is a large optional pack of public recordings. On Wi-Fi it downloads while you play. The download button also allows mobile data. Closing Settings keeps the download running while the game stays open; it resumes after reopening. Family names and answers are never sent to FPT.', 'Lê Minh là gói bản thu công khai dung lượng lớn, không bắt buộc. Có Wi-Fi sẽ tải khi bạn chơi. Nút tải cũng cho phép dùng dữ liệu di động. Đóng Cài đặt vẫn tiếp tục tải khi trò chơi còn mở; mở lại sẽ tải tiếp. Không gửi tên hay câu trả lời của gia đình đến FPT.')}</p>
-    <div class="actions"><button class="btn" id="gHanoiPreview">▶ ${T('Listen to Lê Minh', 'Nghe thử Lê Minh')}</button><button class="btn" id="gHanoiDownload">⬇️ ${T('Download Lê Minh for offline use', 'Tải Lê Minh để dùng ngoại tuyến')}</button></div><p class="note" id="gHanoiStatus" role="status"></p>
+    <div class="actions hanoi-actions"><button class="btn" id="gHanoiPreview">${pic('▶')} ${T('Listen', 'Nghe thử')}</button><button class="btn" id="gHanoiDownload">${pic('⬇️')} ${T('Save offline', 'Lưu ngoại tuyến')}</button></div><p class="note" id="gHanoiStatus" role="status"></p>
     <label class="tog"><input type="checkbox" id="gVoiceMale" ${settings.voiceMale === true ? 'checked' : ''}> ${T('Download and use optional male default voices (off by default; Lê Minh is selected separately above)', 'Tải và dùng giọng nam mặc định tùy chọn (tắt sẵn; Lê Minh chọn riêng bên trên)')}</label>
     ${P ? `<label class="tog"><input type="checkbox" id="gPackCell" ${settings.packCell === true ? 'checked' : ''}> ${T('Download the rest of the voices on mobile data too (on Wi-Fi they download by themselves)', 'Tải phần giọng đọc còn lại cả bằng dữ liệu di động (khi có Wi-Fi giọng đọc tự tải)')}</label>` : ''}
     ${miss.length ? `<details class="g-miss"><summary>📝 ${T(`${miss.length} lines on this device had no recording yet`, `${miss.length} câu trên máy này chưa có bản ghi`)}</summary>
@@ -281,9 +287,6 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
           <p class="note fam-code-msg" id="gFamCodeMsg" hidden></p>
         </div>`}
       </div>
-      <h3>${pic('💛')} ${T('Family questions','Câu hỏi gia đình')}</h3>
-      <p class="note">${T('Write private questions your children can play on this device or with friends you invite. They are included in your save copy.','Viết câu hỏi riêng để con chơi trên máy này hoặc với bạn được mời. Câu hỏi được giữ trong bản sao lưu của bạn.')}</p>
-      <div class="actions"><button class="btn" id="gFamilyQuiz">${pic('💛')} ${T('Add or edit family questions','Thêm hoặc sửa câu hỏi gia đình')}</button></div>
       <h3>${pic('💾')} ${T('Save a copy (Files / iCloud Drive)', 'Lưu một bản (Tệp / iCloud Drive)')}</h3>
       <p class="note">${T('Save a copy of your children’s progress to iCloud Drive, Google Drive or Files. Loading a copy checks the file and confirms with you before replacing anything.', 'Lưu một bản tiến trình vào iCloud Drive, Google Drive hoặc Tệp. Mở bản sao sẽ kiểm tra tệp và hỏi bạn trước khi thay thế.')}</p>
       <p class="note backup-when${backupAge() > 7 ? ' old' : ''}">${settings.lastBackup ? T('Last backup: ', 'Lần sao lưu gần nhất: ') + new Date(settings.lastBackup).toLocaleDateString(settings.lang === 'vi' ? 'vi-VN' : 'en-AU') + (backupAge() > 7 ? T(' (over a week ago)', ' (hơn một tuần trước)') : '') : T('No backup saved yet.', 'Chưa có bản sao lưu nào.')}</p>
@@ -291,7 +294,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       <p class="note">${T('The file stays in your own Drive or iCloud: Sparkle Valley has no server and never sees it.', 'Tệp nằm trong Drive hoặc iCloud của bạn: Thung Lũng Lấp Lánh không có máy chủ và không bao giờ xem tệp này.')}</p>
       
       </div></details>
-      ${window.__sv && window.__sv.parents ? window.__sv.parents.grownupsHTML(gOpen.has('family')) : '' /* (round S) family missions, week note, cards, dance, bedtime, birthdays: js/parents.js */}
+      ${window.__sv && window.__sv.parents ? window.__sv.parents.grownupsHTML(gOpen.has('family'), familyQuestionsHTML()) : `<details class="gsec family" data-sec="family" ${gOpen.has('family') ? 'open' : ''}><summary><span class="gi">${pic('💛')}</span><b>${T('Family', 'Gia đình')}</b></summary><div class="gbody">${familyQuestionsHTML()}</div></details>` /* Family questions also work before the world/mission service has finished starting. */}
 
       <details class="gsec" data-sec="note" ${gOpen.has('note') ? 'open' : ''}><summary><span class="gi">📜</span><b>${T('Note for grown-ups', 'Lưu ý cho người lớn')}</b></summary><div class="gbody">
       <ul class="gnote"><li>${T('Sparkle Valley is a free family game made for fun and learning. It is provided as it is, without any promise or warranty.', 'Thung Lũng Lấp Lánh là trò chơi gia đình miễn phí, làm ra để vui chơi và học hỏi. Trò chơi được cung cấp như hiện có, không kèm bất kỳ cam kết hay bảo đảm nào.')}</li><li>${T('A grown-up is responsible for the child’s play: when and how long they play, online play and chat, and the device itself.', 'Người lớn chịu trách nhiệm về việc chơi của trẻ: chơi lúc nào, chơi bao lâu, chơi trực tuyến, trò chuyện, và cả thiết bị.')}</li><li>${T('Games the valley suggests playing for real (tug of war, jump rope, hopscotch, đá cầu, kites, cooking…) need a grown-up watching, a safe place and the right equipment.', 'Các trò chơi được gợi ý chơi ngoài đời (kéo co, nhảy dây, nhảy lò cò, đá cầu, thả diều, nấu ăn…) cần có người lớn trông, chỗ chơi an toàn và dụng cụ phù hợp.')}</li><li>${T('Take a break every 20 to 30 minutes, and stop if a child feels unwell (tired eyes, dizziness, motion sickness).', 'Nghỉ giải lao sau mỗi 20 đến 30 phút, và dừng chơi nếu trẻ thấy khó chịu (mỏi mắt, chóng mặt, say xe).')}</li><li>${T('Places, festivals, food and history are told simply for children and may not be complete or exact.', 'Địa danh, lễ hội, món ăn và lịch sử được kể đơn giản cho trẻ, có thể chưa đầy đủ hoặc chưa chính xác hoàn toàn.')}</li><li>${T('Online friends, chat and real photos come from other people and services; the makers are not responsible for their content.', 'Bạn bè trực tuyến, trò chuyện và ảnh thật đến từ người khác và các dịch vụ khác; người làm game không chịu trách nhiệm về nội dung đó.')}</li><li>${T('As far as the law allows, the makers are not responsible for any loss, injury or damage from using the game.', 'Trong phạm vi pháp luật cho phép, người làm game không chịu trách nhiệm về bất kỳ mất mát, thương tích hay thiệt hại nào do việc sử dụng trò chơi.')}</li></ul>
@@ -423,17 +426,19 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
     };
     card.querySelector('#gFamilyQuiz').onclick=()=>import('./family-quiz-editor.js').then(M=>M.openFamilyQuestions(()=>{const y=m.scrollTop;draw();m.scrollTop=y;const b=card.querySelector('#gFamilyQuiz');if(b instanceof HTMLElement)b.focus({preventScroll:true});}));
     card.querySelector('#gSaveCopy').onclick = async () => {
+      const observed=managementEvidence.begin('backup.result',{operation:'export'});
+      try {
       const text = JSON.stringify(createSaveCopy(getSnapshot()), null, 2);
       const name = 'sparkle-valley-' + new Date().toISOString().slice(0, 10) + '.svsave';
       const file = new File([text], name, { type: 'application/json' });
       try {
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({ files: [file], title: name });
-          settings.lastBackup = Date.now(); saveSettings(); toast(T('Copy saved!', 'Đã lưu bản sao!'));
+          observed({outcome:'success',reasonCode:'none'}); settings.lastBackup = Date.now(); saveSettings(); toast(T('Copy saved!', 'Đã lưu bản sao!'));
           return;
         }
       } catch (e) {
-        if (e && e.name === 'AbortError') return;
+        if (e && e.name === 'AbortError') { observed({outcome:'cancelled',reasonCode:'user_cancelled'}); return; }
       }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
@@ -442,11 +447,13 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      settings.lastBackup = Date.now(); saveSettings(); toast(T('Copy downloaded!', 'Đã tải bản sao!'));
+      observed({outcome:'initiated',reasonCode:'none'}); settings.lastBackup = Date.now(); saveSettings(); toast(T('Copy downloaded!', 'Đã tải bản sao!'));
+      } catch(error) {observed({outcome:'failed',reasonCode:'storage'});throw error;}
     };
     card.querySelector('#gLoadCopy').onchange = async e => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
+      const observed=managementEvidence.begin('backup.result',{operation:'restore'});let reasonCode='invalid';
       try {
         const text = await f.text();
         const copy = readSaveCopyOrLegacy(text);
@@ -468,15 +475,18 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
           if (settings.familyCode) settings.familyCode = normalizeFamilyCode(settings.familyCode);
           if (copy.device) localStorage.setItem('sv2_playerid', copy.device);
           // An older copy has no device id; keep this device’s existing identity.
+          const expected=JSON.parse(JSON.stringify({profiles,settings,farm,...(copy.device?{device:copy.device}:{})}));reasonCode='storage';
           saveProfiles(true);
           saveSettings();
           saveFarm();
+          const confirmed=saveReadbackMatches(expected);observed({outcome:confirmed?'success':'failed',reasonCode:confirmed?'none':'storage'});
           syncFamTelemetry();
           toast(T('Copy loaded successfully!', 'Đã mở bản sao thành công!'));
           draw();
           after && after();
-        }
+        } else observed({outcome:'cancelled',reasonCode:'user_cancelled'});
       } catch (err) {
+        observed({outcome:'failed',reasonCode});
         alert(T('Could not read this file. It is not a valid Sparkle Valley save copy.', 'Không thể đọc tệp này. Tệp không phải bản sao lưu hợp lệ của Thung Lũng Lấp Lánh.'));
       }
     };

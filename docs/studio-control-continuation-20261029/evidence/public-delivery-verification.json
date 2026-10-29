@@ -1,0 +1,38 @@
+{
+  "artifactCommit": "3064e046",
+  "runtimeCommit": "d15b6af42eb775cc908d9024ea7bc3d38ad262e6",
+  "checks": [
+    {
+      "path": "README.md",
+      "httpStatus": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 3614,
+      "matchesLocal": true,
+      "sha256": "96cd0a82a872de1748bf23f3c83d1de44a5b64399e87c4d6325b0d6ba1fed637"
+    },
+    {
+      "path": "VISUALS.md",
+      "httpStatus": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 1606,
+      "matchesLocal": true,
+      "sha256": "41baacb26ccda917849b9bcfe3a5b5ed74a012018d68e1a48cc9d52eeb8a5977"
+    },
+    {
+      "path": "NEXT-CHAT.md",
+      "httpStatus": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 4126,
+      "matchesLocal": true,
+      "sha256": "6fac88e00258731be953c4ec79a9423af1270060c1c377aeb5e7d8b894e57e9b"
+    },
+    {
+      "path": "screenshots/en-390-declared-viewport.png",
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "bytes": 48082,
+      "matchesLocal": true,
+      "sha256": "eed0a0fbbd50de2340268d16e9ba0b060df52a68cde1cb8dc0f31ed66d94e519"
+    }
+  ]
+}

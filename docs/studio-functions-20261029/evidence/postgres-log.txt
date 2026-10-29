@@ -1,0 +1,23 @@
+PASS: read-only preflight detects a missing schema without creating tables
+PASS: real PostgreSQL migration applies once and repeats safely
+PASS: read-only preflight confirms migration and detects checksum drift
+PASS: existing migration v1 upgrades through finance v2 and private drafts v3 without changing prior management records
+PASS: existing finance v2 upgrades to draft v3 while preserving financial records
+PASS: SQL transaction rolls back all writes after failure
+PASS: real advisory locks serialize concurrent read-modify-write
+PASS: concurrent duplicate event ingestion stores and counts one event
+PASS: changed payload under same event ID is quarantined without replacing original
+PASS: invalid event batch has no partial committed events
+PASS: concurrent expected-revision configuration changes admit one editor
+PASS: configuration projection confirms matching revision and hash
+PASS: applied receipts are idempotent and unknown hashes are rejected
+PASS: SQL private draft review survives reload and racing publication commits exactly once
+PASS: SQL failed private publication rolls back config and immutable draft history together
+PASS: database constraints reject invalid event records
+PASS: public HTTP ingestion acknowledges SQL persistence and duplicate retries with child/device context
+PASS: SQL operation locks persist one dispatch and immutable audit across concurrent requests
+PASS: real SQL finance commits once under concurrent retry and preserves correction revisions
+PASS: real SQL finance import rolls back every ledger, version and audit write on storage failure
+PASS: SQL function policy publication preserves private draft history and collection independently from processing
+PASS: SQL collector disable and expiry reject stale clients without deleting accepted events
+PASS: 22 actual PostgreSQL integration cases.

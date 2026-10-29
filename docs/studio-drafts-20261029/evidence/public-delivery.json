@@ -1,0 +1,34 @@
+[
+  {
+    "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/84e754d2/docs/studio-drafts-20261029/README.md",
+    "status": 200,
+    "contentType": "text/plain; charset=utf-8",
+    "bytes": 4030,
+    "sha256": "984fbb165a591f87a1f6505be6dd585369decff099d9ffbc42f5ec630523d64d",
+    "matchesLocal": true
+  },
+  {
+    "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/84e754d2/docs/studio-drafts-20261029/VISUALS.md",
+    "status": 200,
+    "contentType": "text/plain; charset=utf-8",
+    "bytes": 961,
+    "sha256": "689446c344a694369e394db13d70ecb11aaa0155f49c777b51f03fc9e3adfc36",
+    "matchesLocal": true
+  },
+  {
+    "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/84e754d2/docs/studio-drafts-20261029/NEXT-CHAT.md",
+    "status": 200,
+    "contentType": "text/plain; charset=utf-8",
+    "bytes": 3289,
+    "sha256": "5dd39dfee6650dd2201f2569c158a7685dce9b39fb9b9429c8d3c1914b3e3bbc",
+    "matchesLocal": true
+  },
+  {
+    "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/84e754d2/docs/studio-drafts-20261029/screenshots/en-390-draft-actions-viewport.png",
+    "status": 200,
+    "contentType": "image/png",
+    "bytes": 56618,
+    "sha256": "929f00912d9b92698ace1bb403e302e8c757c33793ad2c3ad42b7df065854f1e",
+    "matchesLocal": true
+  }
+]

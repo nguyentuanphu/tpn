@@ -1,0 +1,475 @@
+{
+  "status": "archived and remote branches removed",
+  "remoteBranchCount": 75,
+  "candidateCount": 8,
+  "retainedCount": 67,
+  "policy": "Exact merged-PR head only; preserve protected, open PR, worktree, automation and original voice sources. Archive each exact tip before leased atomic deletion.",
+  "candidates": [
+    {
+      "name": "integration/r88-20261021",
+      "protected": false,
+      "sha": "94548988b1c97fe678b0809f444585774514bb13",
+      "mergedPR": 458,
+      "mergedAt": "2026-10-22T15:33:07Z",
+      "archiveTag": "archive/2026-10-27/integration/r88-20261021"
+    },
+    {
+      "name": "release/r82",
+      "protected": false,
+      "sha": "c5ac4fa45f25f6dd0282c55e9dbbffa303fa9c7b",
+      "mergedPR": 333,
+      "mergedAt": "2026-10-17T19:22:48Z",
+      "archiveTag": "archive/2026-10-27/release/r82"
+    },
+    {
+      "name": "release/r87",
+      "protected": false,
+      "sha": "799c2ec147fea0e52734dd7e501a6d43456c8e4e",
+      "mergedPR": 366,
+      "mergedAt": "2026-10-19T05:41:56Z",
+      "archiveTag": "archive/2026-10-27/release/r87"
+    },
+    {
+      "name": "release/r90-launch",
+      "protected": false,
+      "sha": "e6eda102efcd10ad4611b0729a69056e8a3c84a4",
+      "mergedPR": 500,
+      "mergedAt": "2026-10-24T02:31:41Z",
+      "archiveTag": "archive/2026-10-27/release/r90-launch"
+    },
+    {
+      "name": "release/r91",
+      "protected": false,
+      "sha": "ba118721c9ee58996f2c1c6abbf5afaed460d6f7",
+      "mergedPR": 506,
+      "mergedAt": "2026-10-24T20:39:49Z",
+      "archiveTag": "archive/2026-10-27/release/r91"
+    },
+    {
+      "name": "plan/save-copy-family-code",
+      "protected": false,
+      "sha": "79128bb15014c4ebc04d52f9b681e3c80feef6d4",
+      "reason": "exact tip is an ancestor of live main",
+      "archiveTag": "archive/2026-10-27/plan/save-copy-family-code"
+    },
+    {
+      "name": "release/r89",
+      "protected": false,
+      "sha": "86cca037eb6307eaf99bf810ed5b2c1df3d5ccea",
+      "reason": "exact tip is an ancestor of live main",
+      "archiveTag": "archive/2026-10-27/release/r89"
+    },
+    {
+      "name": "work/family-website-20261023",
+      "protected": false,
+      "sha": "5c2843b62889c6a84feffdee4ecd1bdb6ac00e73",
+      "reason": "exact tip is an ancestor of live main",
+      "archiveTag": "archive/2026-10-27/work/family-website-20261023"
+    }
+  ],
+  "retained": [
+    {
+      "name": "agents/implement-house-types-catalogue",
+      "protected": false,
+      "sha": "cc01fb34afa576139e107ca03bc2f94bf3c0ead4",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "agents/studio-map-vn-au-house-types-integration",
+      "protected": false,
+      "sha": "4c7631dff0d9c43fc9b2e2ce41cfc1eb6ab67f43",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "claude/codex-last-four-20261018",
+      "protected": false,
+      "sha": "659b096a0d93f23d2ab6c887f9eebd3f94ee3ee9",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "claude/new-session-52is33",
+      "protected": false,
+      "sha": "e37da005a688cc7463fb6d6a439de89e5b227dc1",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "claude/studio-live-takeover-r81-yavl1q",
+      "protected": false,
+      "sha": "6692c9beeeb4a8e760f09d4c9bd97b100c0d5bae",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "code-map",
+      "protected": false,
+      "sha": "4529e90b6d63dc739c37a5560669b58f16d6db5d",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "core/analytics-infra",
+      "protected": false,
+      "sha": "bf4c7b52ea8f142480b65c341a30cfd370b549ab",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/battery",
+      "protected": false,
+      "sha": "41e6ee8365c7100ea6ef425d45144f923a0567f2",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/front-desk",
+      "protected": false,
+      "sha": "c06f8d0333c384ecf478c1f6286d651e5f5d67a1",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/kid-ui",
+      "protected": false,
+      "sha": "60da187c5db0ac634a140cee25b45f06e66535f8",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/online",
+      "protected": false,
+      "sha": "bac233e1413e545fa6516af62b6109c42cb77280",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/play",
+      "protected": false,
+      "sha": "45d402a853d2410e5d809f64f8cf51e4ef4d9841",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/play-reading",
+      "protected": false,
+      "sha": "d1391814d517349de420ce877251120e69edd245",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/play-studio",
+      "protected": false,
+      "sha": "c2aa7aba1d6e4e5aba6e85bd86ae1ad638b7a4c5",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/release",
+      "protected": false,
+      "sha": "03bebbda693c88a71371277b8cbf1d5e7ba3c49d",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/rollout",
+      "protected": false,
+      "sha": "46953664697cde818172d2c0b7410ce56d0329bf",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/studio",
+      "protected": false,
+      "sha": "d385720eec6e9a0d87ae4728190fb4f236b8c955",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/voice-audio",
+      "protected": false,
+      "sha": "10fe549115b11014dba8da7e675689dc507afafa",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "core/world",
+      "protected": false,
+      "sha": "79acd14d90aa8c56f80e78aef7898dfd7f15587f",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "docs/facebook-vietnamese-20261023",
+      "protected": false,
+      "sha": "96eb1eac9491f1f42cbea35b8a4da9155c279ff2",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "docs/learning-banner-20261021",
+      "protected": false,
+      "sha": "3aa101f1abef03f6bdd0380e67aa66dc42536831",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "docs/pending-audit-20261020",
+      "protected": false,
+      "sha": "b7780bf8ac3a14bb72ea07fc28f865c71fd6f3bc",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "fix/tester-issues-no-mentions",
+      "protected": false,
+      "sha": "88872ac9b046ea553b0661c39f4303d799efbf0e",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "main",
+      "protected": false,
+      "sha": "b241286aa3b4c75247a65b900556643e3ddfc329",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "next/v1-version",
+      "protected": false,
+      "sha": "91f600d72f4e8f4ef2b65febed80eeb250d58116",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "plan/bugs-typescript-20261019",
+      "protected": false,
+      "sha": "924464ff3233a282610121e7cdf48174499c747c",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "release/hanoi-audit-20261025",
+      "protected": false,
+      "sha": "111b8ff9a3b97c8f672f1cce861780fca6fe89c5",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "release/r84",
+      "protected": false,
+      "sha": "ae59fdd48b877550b1a966fa2cbdcd7ba948fadf",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "release/r85",
+      "protected": false,
+      "sha": "1012c9dfdb316e94eb1bb78bd103072a0dec097f",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "release/r86",
+      "protected": false,
+      "sha": "86fab92cf56cf1adfaf8a9e711d17d7f8b42f8a6",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "release/voice-companions-20261019",
+      "protected": false,
+      "sha": "21d37dfca504c10b4e5f85d362f79419b5fc614b",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "studio-draft",
+      "protected": false,
+      "sha": "2f1f9d71a2dbd7abc0458012cbab38664b77b169",
+      "reason": "long-lived Studio draft or core workflow branch"
+    },
+    {
+      "name": "studio-exe",
+      "protected": false,
+      "sha": "b6bddab0ad71b895e367052f92e6427af9232146",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "voices/daily",
+      "protected": false,
+      "sha": "1ada5d0bf3c7d2277021cfea7fc863ba305c5f43",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "voices/run",
+      "protected": false,
+      "sha": "87e1843df214d8ddb3217af0f4af294d885ed68e",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "work/animals-rides-20261018",
+      "protected": false,
+      "sha": "787917c085633adccfee7a93112e794477a5af55",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/bag-centre-20261017",
+      "protected": false,
+      "sha": "afb9be0a720901362a4217c702228b67857899b4",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/bugs-typescript-20261019",
+      "protected": false,
+      "sha": "2e5e09e0b5171aa6d0ca69d371533e7aae13e45e",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/companion-voices-20261019",
+      "protected": false,
+      "sha": "b2e13e52aa96e2d693358591e77433903c687ae7",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/daily-adventure",
+      "protected": false,
+      "sha": "e37da005a688cc7463fb6d6a439de89e5b227dc1",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/feel-sound",
+      "protected": false,
+      "sha": "04bbd97ed75eb6f24553bc125bd2886131df6fb1",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/flaky-startup-20261018",
+      "protected": false,
+      "sha": "033af7fbff42b6631b50b6fef0f14e6e05521643",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/fpt-leminh-full-20261025",
+      "protected": false,
+      "sha": "838c0c46fc66c58f5e802e013d0e8e22d990948d",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "work/fpt-v102-labels-20261026",
+      "protected": false,
+      "sha": "715f260d128cc01ec8fa4f324d0bc32fdd4df1ca",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "work/fpt-voice-samples-20261025",
+      "protected": false,
+      "sha": "d5a64aa84785176ffded10defe36aee252860e68",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/lighter-load-20261017",
+      "protected": false,
+      "sha": "ffb2a5dddc4a2719dc9c42dfcbb3eaffc5937fd7",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/photo-links-20261017",
+      "protected": false,
+      "sha": "06f1488ba23c97eb7c47e2dd2ac55d3c5fd20736",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/plans-20261016",
+      "protected": false,
+      "sha": "4c4266460c18f4919bbdb8f8940a8f72008aef78",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/r79-20261016",
+      "protected": false,
+      "sha": "3d2d710d80e87cfccf1836adabfbb678dd5a3d13",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/r79-learning-20261016",
+      "protected": false,
+      "sha": "4b0d4a5b47b6718058d6821e45a9cb939a6fb292",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/r80-20261017",
+      "protected": false,
+      "sha": "254d9f595dc6c563d352162f1f32597ea613a082",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/r85-briefs-20261018",
+      "protected": false,
+      "sha": "52aa3b0113186c4a4a25d7314cbbb569788eb7f3",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/r90-more-content",
+      "protected": false,
+      "sha": "707a6a0297f120e06346e841c2256c22a70fe9c2",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/r91-front-desk",
+      "protected": false,
+      "sha": "60645b8d2084b6a4b41641e96b3a8b71bffb3827",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/s3-drawcalls-20261018",
+      "protected": false,
+      "sha": "601c32bc02a4a9a96631bafc347920226f19d925",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/save-copy-r90",
+      "protected": false,
+      "sha": "31b3deb2fdc61397236feb2390fc86a2af9c454f",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/sticker-book",
+      "protected": false,
+      "sha": "b1790ce4ef3ecae6d800bdb643cd2b2a8f5819df",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/studio-controls-20261018",
+      "protected": false,
+      "sha": "d92b6ba2c1fe916efe17ef7bf3aed824cf761de9",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/studio-live-20261017",
+      "protected": false,
+      "sha": "e0cf2bf5e3726e51b670de1da75d43202ca8deed",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/tester-offscreen-20261017",
+      "protected": false,
+      "sha": "ae1e51f68885b49fae5830cfddd2bc0cc3c2c5f8",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/ts-batch0-20261017",
+      "protected": false,
+      "sha": "cc73f94c3adb550d7462e3559b6f1b2e38306ada",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/ts-batch4-20261018",
+      "protected": false,
+      "sha": "90ba6fa036a6d88611fae16e6bf6e20892808e1f",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/ts-batch12-20261017",
+      "protected": false,
+      "sha": "08dc361439da741d88012678bed7452b3e84268d",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/typescript-plan-20261016",
+      "protected": false,
+      "sha": "75cbc0c0a53fd715bccaccdc3ca55671d9ba655c",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/v1.01-hanoi-voice",
+      "protected": false,
+      "sha": "ed9a5b0a20e984ba83e369dcda0f6d000b0883ff",
+      "reason": "no exact merged-PR proof"
+    },
+    {
+      "name": "work/v1.02-fruit-parade",
+      "protected": false,
+      "sha": "84c5c1d2a766bfec6de0e61d51158f620c405fc2",
+      "reason": "active PR/worktree or automation/voice source"
+    },
+    {
+      "name": "work/welcome-steady-20261017",
+      "protected": false,
+      "sha": "e83222fc124010462a13b2e24316e1966c4ed3aa",
+      "reason": "no exact merged-PR proof"
+    }
+  ],
+  "completedAEDT": "2026-10-27T09:45:20.315396+11:00"
+}

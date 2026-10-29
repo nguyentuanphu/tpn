@@ -1,0 +1,2117 @@
+{
+  "provenance": {
+    "sourceHead": "125a54920fb4ed54a4b241abc5a414d156267235",
+    "capturedAt": "2026-10-29T06:59:22.864Z",
+    "timezone": "Australia/Sydney",
+    "synthetic": true,
+    "browser": "141.0.7390.37",
+    "screenshotOptions": {
+      "animations": "disabled"
+    },
+    "sourceFiles": {
+      "js/games/art-pad.ts": "635ec7c304fc0c383dad3c163680aff0f0caf9b12a2ff32310887d42fe502ab8",
+      "js/games/drawing2.ts": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+      "js/games/crafts.ts": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+      "js/games/catalog.ts": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
+      "js/content/activities.ts": "ce8b39fa78979001542f3155c4aa3a59e35af552bff1602c60993c6ee1542f5b",
+      "js/art.ts": "c75c671b9a569dc7fcfe53889f65542cd4b34860ccc60f78b97ed834aafab365",
+      "css/style.css": "6786a5fac9cf4592af2dc0c5d6c5065dac7e773c06b4db6036fed83cddb18e1a",
+      "js/games/frame.ts": "8857a0d7f4ababf1d452105b11f846502de8cd31da24a4e941ca550d2796b151",
+      "js/state.ts": "b1778ae0cc756cbebd8b65511a54bbcb55b9c2faf9bcbdd6007663148b444511",
+      "js/howto-data.ts": "603a3c64743a1e30369b8ce481958f283473fd99f0dca168f15de29962aef29a",
+      "js/emojiswap.js": "46c7bdcd17a9a9ba623d29df68b969cb40c2e73d9951f9a3a796c8aebd65f530"
+    }
+  },
+  "results": [
+    {
+      "id": "stamps",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 1,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "weave",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 2,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "mosaic",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 3,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "nonla",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 4,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "aodai",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 5,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "kitepaint",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 6,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "shades",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 7,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "shadowpic",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 8,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "finishpic",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 9,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "scene",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 10,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "lacquer",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 11,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "scratch",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "bubblepaint",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "fingerpaint",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "weatherpaint",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "thocam",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "pixelpic",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "fireworks",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "masks",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "makeface",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "gallery",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "leafrub",
+      "lang": "en",
+      "width": 390,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "stamps",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 1,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "weave",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 2,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "mosaic",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 3,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "nonla",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 4,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "aodai",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 5,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "kitepaint",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 6,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "shades",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 7,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "shadowpic",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 8,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "finishpic",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 9,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "scene",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 10,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "lacquer",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 11,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "scratch",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "bubblepaint",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "fingerpaint",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "weatherpaint",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "thocam",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "pixelpic",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "fireworks",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "masks",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "makeface",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "gallery",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "leafrub",
+      "lang": "vi",
+      "width": 820,
+      "little": true,
+      "level": 2,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "touch"
+    },
+    {
+      "id": "stamps",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 1,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "weave",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 2,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "mosaic",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 3,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "nonla",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 4,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "aodai",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 5,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "kitepaint",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 6,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "shades",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 7,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "shadowpic",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 8,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "finishpic",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 9,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "scene",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 10,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "lacquer",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 11,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "scratch",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "bubblepaint",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "fingerpaint",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "weatherpaint",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "thocam",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "pixelpic",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "fireworks",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "masks",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "makeface",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "gallery",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "leafrub",
+      "lang": "en",
+      "width": 1440,
+      "little": false,
+      "level": 3,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "keyboard"
+    },
+    {
+      "id": "stamps",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 1,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "weave",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 2,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "mosaic",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 3,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "nonla",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 4,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "aodai",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 5,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "kitepaint",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 6,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "shades",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 7,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "shadowpic",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 8,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "finishpic",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 9,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "scene",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 10,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "lacquer",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 11,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "scratch",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "bubblepaint",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "fingerpaint",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "weatherpaint",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "thocam",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "pixelpic",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "fireworks",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "masks",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "makeface",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "gallery",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "leafrub",
+      "lang": "vi",
+      "width": 390,
+      "little": false,
+      "level": 5,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "stamps",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 1,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "weave",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 2,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "mosaic",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 3,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "nonla",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 4,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "aodai",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 5,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "kitepaint",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 6,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "shades",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 7,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "shadowpic",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 8,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "finishpic",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 9,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "scene",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 10,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "lacquer",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 11,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "scratch",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "bubblepaint",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "fingerpaint",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "weatherpaint",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "thocam",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "pixelpic",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "fireworks",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "masks",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "makeface",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "gallery",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    },
+    {
+      "id": "leafrub",
+      "lang": "en",
+      "width": 844,
+      "little": true,
+      "level": 1,
+      "paired": false,
+      "gates": {
+        "item": false,
+        "group": false,
+        "progress": false,
+        "preserved": true,
+        "allowed": true
+      },
+      "won": true,
+      "album": 12,
+      "earlyExit": true,
+      "input": "pointer"
+    }
+  ]
+}

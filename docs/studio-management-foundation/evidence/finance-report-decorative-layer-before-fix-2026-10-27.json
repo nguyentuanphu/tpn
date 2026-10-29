@@ -1,0 +1,9 @@
+{
+  "scope": "Expected failing deterministic evidence: a later decorative layer defeats the first placement fix",
+  "checks": {
+    "reportcollision": {
+      "ok": false,
+      "note": "report-float-browser.mts (status 1, signal none): node:internal/modules/run_main:107 triggerUncaughtException( ^ AssertionError [ERR_ASSERTION]: A later decorative layer must not hide the active control from collision checks false !== true at reportFloatingBrowser (file:///workspace/tpn/tests/report-float-browser.mts:23:10) at async file:///workspace/tpn/tests/report-float-browser.mts:81:1 { generatedMessage: false, code: 'ERR_ASSERTION', actual: false, expected: true, operator: 'strictEqual', diff: 'simple' } Node.js v24.19.0 Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node report-float-browser.mts --collision-only node:internal/modules/run_main:107 triggerUncaughtException( ^ AssertionError [ERR_ASSERTION]: A later decorative layer must not hide the active control from collision checks false !== true at reportFloatingBrowser (file:///workspace/tpn/tests/report-float-browser.mts:23:10) at async file:///workspace/tpn/tests/report-float-browser.mts:81:1 { generatedMessage: false, code: 'ERR_ASSERTION', actual: false, expected: true, operator: 'strictEqual', diff: 'simple' } Node.js v24.19.0"
+    }
+  }
+}

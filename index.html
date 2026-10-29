@@ -60,6 +60,7 @@
 <link rel="preload" href="css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="css/style.css"></noscript>
 <!-- preload:start (tools/preload.mts) -->
+<link rel="modulepreload" href="js/core/reporting-policy.js">
 <link rel="modulepreload" href="js/custom.js">
 <link rel="modulepreload" href="js/content/tester.js">
 <link rel="modulepreload" href="js/content/tester-arcades.js">
@@ -69,13 +70,16 @@
 <link rel="modulepreload" href="js/emojiswap.js">
 <link rel="modulepreload" href="vendor/three.module.js">
 <link rel="modulepreload" href="js/gfx.js">
+<link rel="modulepreload" href="js/content/map.js">
+<link rel="modulepreload" href="js/vendors.js">
 <link rel="modulepreload" href="js/seethrough.js">
 <link rel="modulepreload" href="js/rideview.js">
+<link rel="modulepreload" href="js/render-recovery.js">
 <link rel="modulepreload" href="vendor/RoomEnvironment.js">
 <link rel="modulepreload" href="js/build.js">
+<link rel="modulepreload" href="js/core/events.js">
 <link rel="modulepreload" href="js/content/shop.js">
 <link rel="modulepreload" href="js/state.js">
-<link rel="modulepreload" href="js/core/events.js">
 <link rel="modulepreload" href="js/i18n.js">
 <link rel="modulepreload" href="js/voice-index.js">
 <link rel="modulepreload" href="js/core/geo.js">
@@ -89,7 +93,6 @@
 <link rel="modulepreload" href="js/content/songs.js">
 <link rel="modulepreload" href="js/songs.js">
 <link rel="modulepreload" href="js/money.js">
-<link rel="modulepreload" href="js/content/map.js">
 <link rel="modulepreload" href="js/solids.js">
 <link rel="modulepreload" href="js/houses.js">
 <link rel="modulepreload" href="js/world.js">
@@ -130,12 +133,12 @@
 <link rel="modulepreload" href="js/listen.js">
 <link rel="modulepreload" href="js/chat.js">
 <link rel="modulepreload" href="js/words.js">
-<link rel="modulepreload" href="js/vendors.js">
 <link rel="modulepreload" href="js/snacks.js">
 <link rel="modulepreload" href="js/regions.js">
 <link rel="modulepreload" href="js/credits.js">
 <link rel="modulepreload" href="js/gather.js">
 <link rel="modulepreload" href="js/photos.js">
+<link rel="modulepreload" href="js/content/install-state.js">
 <link rel="modulepreload" href="js/install.js">
 <link rel="modulepreload" href="js/words2.js">
 <link rel="modulepreload" href="js/ui.js">
@@ -173,6 +176,7 @@
 <link rel="modulepreload" href="js/traffic.js">
 <link rel="modulepreload" href="js/content/releases.js">
 <link rel="modulepreload" href="js/worldcache.js">
+<link rel="modulepreload" href="js/home-decor-models.js">
 <link rel="modulepreload" href="js/myhouse.js">
 <link rel="modulepreload" href="js/printpage.js">
 <link rel="modulepreload" href="js/report.js">
@@ -214,6 +218,22 @@
 <button id="songBtn" hidden aria-label="Next song">🎶</button>
 <div id="boot" role="status"><picture><source media="(orientation: landscape)" srcset="icons/launch/valley-landscape.jpg"><img src="icons/launch/valley-portrait.jpg" alt=""></picture><h1>Welcome to Sparkle Valley</h1><p>Opening the game… · Đang mở trò chơi…</p><progress aria-label="Loading · Đang tải"></progress></div>
 <noscript>Please turn on JavaScript to play.</noscript>
+<script>
+/* (owner, 29 Oct 2026 AEDT: a first iPad Air stayed on the loading screen) the game needs iOS or iPadOS 15.4 or a
+   browser as new; an older one (iOS 12 cannot read the game's code at all) gets this note in both languages instead
+   of waiting forever. Written so that a very old browser can read it: no arrow functions, let, const or ?. */
+(function () {
+  var ok = false;
+  try { ok = typeof window.structuredClone === 'function'; } catch (e) { ok = false; }
+  if (ok) return;
+  window.svTooOld = true;
+  var b = document.getElementById('boot'); if (!b) return;
+  var g = b.querySelector('progress'); if (g && g.parentNode) g.parentNode.removeChild(g);
+  b.className = (b.className ? b.className + ' ' : '') + 'too-old';
+  b.querySelector('h1').textContent = 'This device is too old · Thiết bị này đã quá cũ';
+  b.querySelector('p').textContent = 'Sparkle Valley needs iPadOS or iOS 15.4 or newer (iPad Air 2, iPad 5th generation, iPhone 6s or newer; update in Settings, General, Software Update) or a newer browser. · Thung Lũng Lấp Lánh cần iPadOS hoặc iOS 15.4 trở lên (iPad Air 2, iPad đời 5, iPhone 6s hoặc mới hơn; cập nhật trong Cài đặt, Cài đặt chung, Cập nhật phần mềm) hoặc trình duyệt mới hơn.';
+})();
+</script>
 <script type="module" src="js/launch.js"></script>
 </body>
 </html>

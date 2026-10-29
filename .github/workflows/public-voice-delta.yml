@@ -1,0 +1,117 @@
+name: Record reviewed public voice delta
+on:
+  workflow_call:
+    inputs:
+      inventory:
+        required: true
+        type: string
+      save_to_branch:
+        type: boolean
+        default: false
+    secrets:
+      AZURE_SPEECH_KEY:
+        required: true
+      FPT_API_KEY:
+        required: true
+  workflow_dispatch:
+    inputs:
+      inventory:
+        description: Reviewed JSON under docs/voice-recording-delta
+        required: true
+        type: string
+      save_to_branch:
+        description: Preserve verified deliveries and original FPT receipts on this working branch
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: fpt-leminh-full-20261025
+  cancel-in-progress: false
+jobs:
+  record:
+    if: startsWith(github.ref, 'refs/heads/work/') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/voices/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.0
+      - name: Verify selected source and install audio tools before paid calls
+        env:
+          EXPECTED_SOURCE: ${{ github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE"
+          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+          node tools/build.mts
+      - name: Validate reviewed source and report missing-only costs
+        env:
+          INVENTORY: ${{ inputs.inventory }}
+        run: |
+          node tools/make-voice-pack.mts --engine azure --reviewed-inventory "$INVENTORY" --count
+          node tools/record-public-voice-delta.mts "$INVENTORY" --dry-run
+      - name: Record missing Azure female and male speech
+        env:
+          INVENTORY: ${{ inputs.inventory }}
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: australiaeast
+        run: node tools/make-voice-pack.mts --engine azure --reviewed-inventory "$INVENTORY"
+      - name: Record missing FPT Le Minh speech and publish compact verified copies
+        env:
+          INVENTORY: ${{ inputs.inventory }}
+          FPT_API_KEY: ${{ secrets.FPT_API_KEY }}
+        run: node tools/record-public-voice-delta.mts "$INVENTORY"
+      - name: Check complete routing and recorded speech coverage
+        env:
+          INVENTORY: ${{ inputs.inventory }}
+        run: |
+          node tools/verify-public-voice-delta.mts "$INVENTORY"
+          node tools/voice-routing-audit.mts
+          node tools/make-voice-pack.mts --cover
+      - name: Collect only changed voice files for the review artifact
+        if: always()
+        run: |
+          python3 - <<'PYART'
+          import pathlib, shutil, subprocess
+          changed = subprocess.check_output(['git','diff','--name-only','--','voices','docs/voice-bitrate-32k','js/content/hanoi-pack-info.ts','docs/voice-recording-delta'], text=True).splitlines()
+          changed += subprocess.check_output(['git','ls-files','--others','--exclude-standard','voices'], text=True).splitlines()
+          output = pathlib.Path('temp/public-voice-artifact')
+          output.mkdir(parents=True, exist_ok=True)
+          for name in sorted(set(changed)):
+              original = pathlib.Path(name)
+              if original.is_file():
+                  target = output / original
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copy2(original, target)
+          PYART
+      - name: Preserve partial originals and generated voice indexes
+        if: always() && inputs.save_to_branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE: ${{ github.sha }}
+          RECORDING_BRANCH: ${{ github.ref_name }}
+        run: |
+          gh auth setup-git
+          git config user.name 'Sparkle Valley voices'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/voice-recording-delta/ voices/ js/content/hanoi-pack-info.ts docs/voice-bitrate-32k/delivery-audit.json docs/voice-bitrate-32k/provider-ledger.json
+          if [ -d temp/fpt-public-delta ]; then git add -f temp/fpt-public-delta/; fi
+          if git diff --cached --quiet; then exit 0; fi
+          git fetch origin "$RECORDING_BRANCH"
+          test "$(git rev-parse FETCH_HEAD)" = "$SOURCE" || { echo 'Branch advanced; retained results are in the artifact. Integrate after review.'; exit 1; }
+          git pull --no-rebase origin "$RECORDING_BRANCH"
+          git commit -m 'Record reviewed public voice delta [skip netlify]' -m 'Co-Authored-By: Claude <noreply@anthropic.com>'
+          git push origin "HEAD:$RECORDING_BRANCH"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reviewed-public-voice-delta
+          path: |
+            temp/fpt-public-delta/
+            temp/public-voice-artifact/
+          retention-days: 30

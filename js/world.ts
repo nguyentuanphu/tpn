@@ -81,7 +81,7 @@ export const RIVERS = MAP.WATERS.filter(w => w.kind === 'river').map(w => ({ id:
 // (round T2) small round lakes and ponds (Hồ Gươm in Hà Nội, the billabong by Uluru): { id, x, z, r }
 export const PONDS = MAP.WATERS.filter(w => w.kind === 'pond').map(w => { const [x, z] = w.at || MAP.anchorOf(w.place).map((v, i) => v + ((w.off || [0, 0])[i])); return { id: w.id, x, z, r: w.r, islet: w.islet || 0, depth: w.depth || 2.4 }; });
 // how far (x, z) is from the deep middle of the nearest pond (0 inside it), and which pond
-export function pondDist(x, z) { let best = 1e9; PD_NEAR.id = null; for (const P of PONDS) { const dc = dist2(x, z, P.x, P.z); if (dc < P.islet + .8) continue; const d = Math.max(0, dc - P.r * .62); if (d < best) { best = d; PD_NEAR.id = P.id; } } return best; }
+export function pondDist(x, z) { let best = 1e9; PD_NEAR.id = null; for (const P of PONDS) { const dc = dist2(x, z, P.x, P.z); if (dc < P.islet + .8) continue; const d = Math.max(0, dc - P.r * (P.depth < 1.5 ? 1 : .62)); /* (owner, 29 Oct AEDT) a shallow pond's water reaches its radius */ if (d < best) { best = d; PD_NEAR.id = P.id; } } return best; }
 const PD_NEAR = { id: null };
 export const RIVER = (() => { const out = []; for (const id of [].concat(MAP.BOATS.find(b => b.id === 'raft').water)) RIVERS.find(r => r.id === id).pts.forEach((p, i) => { if (!(out.length && i === 0)) out.push(p.slice()); }); return out; })();
 export const CHINA = circle('china');  // (4.5 m: the road up from Đà Nẵng stays under 8 %)    // China Town: lanterns, tiled roofs, a pagoda and a little Great Wall
@@ -215,7 +215,7 @@ const flat = (h, x, z, c, r, fall, target) => { const R = r + fall, dx = x - c.x
 // The level ground round every village, town and city reaches WIDE metres further than the places themselves, so
 // there is always room to add new houses and buildings. It is switched on by widenFlatLand() once the whole world is
 // built, so everything already there keeps exactly its place (only lifted or lowered onto the new ground).
-let WIDE = 0, PADS = null, RB_ON = false, RB_COV = false;
+let WIDE = 0, PADS = null, RB_ON = false, RB_COV = false, HERITAGE_GROUNDS_ON = false;
 const RB_GRID = new Map(), RB_T = [], RB_D = new Float64Array(256), RB_Y = new Float64Array(256), RB_W = new Float64Array(256), RB_E = new Uint8Array(256), RB_P = new Uint8Array(256); // (past a road's very end there is no road)
 // the road beds: [{ ax, az, bx, bz, ya, yb, hw }], registered by js/roads.js before it switches them on
 export function setRoadBeds(segs) { RB_GRID.clear(); for (const S of segs) { const r = S.hw + 10; for (let i = Math.floor((Math.min(S.ax, S.bx) - r) / 8); i <= Math.floor((Math.max(S.ax, S.bx) + r) / 8); i++) for (let j = Math.floor((Math.min(S.az, S.bz) - r) / 8); j <= Math.floor((Math.max(S.az, S.bz) + r) / 8); j++) { const k = fpKey(i, j); if (!RB_GRID.has(k)) RB_GRID.set(k, []); RB_GRID.get(k).push(S); } } }
@@ -240,8 +240,8 @@ export function heightAt(x, z) {
   h = flat(h, x, z, VILLAGE, VILLAGE.r + WIDE, 16, VILLAGE.h);
   h = flat(h, x, z, HOME, HOME.r + WIDE * .8, 16, HOME.h);
   h = flat(h, x, z, PLAYGROUND, PLAYGROUND.r, 12, PLAYGROUND.h);
-  h = flat(h, x, z, CHINA, CHINA.r + WIDE, 18, CHINA.h);
-  h = flat(h, x, z, INDIA, INDIA.r + WIDE, 18, INDIA.h);
+  h = flat(h, x, z, CHINA, Math.max(CHINA.r + WIDE, HERITAGE_GROUNDS_ON ? MAP.HERITAGE_GROUNDS.china.radius : 0), 18, CHINA.h);
+  h = flat(h, x, z, INDIA, Math.max(INDIA.r + WIDE, HERITAGE_GROUNDS_ON ? MAP.HERITAGE_GROUNDS.india.radius : 0), 18, INDIA.h);
   h = flat(h, x, z, PADDIES, PADDIES.r, 12, PADDIES.h + (Math.floor((z - PADDIES.z) / 9) * .35));
   if (Math.abs(x - BAMBOO.x) < BAMBOO.r + 10 && Math.abs(z - BAMBOO.z) < BAMBOO.r + 10) h = flat(h, x, z, BAMBOO, BAMBOO.r - 10, 20, 5 + fbm(x * .03, z * .03, 2) * 2); // (farther: weight 0, no noise needed)
   const dl = dist2(x, z, LAKE.x, LAKE.z);
@@ -275,9 +275,11 @@ export function heightAt(x, z) {
   // the southern coast: a sandy beach, then the sea (its edge waves gently)
   { const cz = COAST.z + Math.sin(x * .025) * 4 + Math.sin(x * .07 + 1) * 2; h = lerp(h, Math.min(h, 1), smooth(cz - 26, cz - 8, z)); h = lerp(h, COAST.sea, smooth(cz - 6, cz + 8, z)); }
   const dr = riverDist(x, z);
-  h = lerp(h, -2.6 - mtn * 2, 1 - smooth(3.5, 11, dr));
+  // A shallow, even riverbed: keep the swimming channel below the 0.9 m threshold and the boat hulls clear.
+  // Water level, bridge decks and banks stay at their authored elevations.
+  h = lerp(h, WATER - MAP.WORLD.riverDepth, 1 - smooth(3.5, 11, dr));
   // (round T2) ponds: a round hollow with a gentle shore (after the places' flat ground, so a pond by a city stays wet)
-  let dpd = 1e9; for (const P of PONDS) { if (Math.abs(x - P.x) > P.r + 8 || Math.abs(z - P.z) > P.r + 8) continue; const d = dist2(x, z, P.x, P.z); if (d > P.r + 8) continue; dpd = Math.min(dpd, d - P.r); h = lerp(h, Math.min(h, 1), 1 - smooth(P.r, P.r + 6, d)); h = lerp(h, -P.depth, 1 - smooth(P.r * .55, P.r, d)); /* (r89) a pond's own depth: Hồ Gươm is shallow enough to wade */ if (P.islet) h = lerp(h, WATER + .5, 1 - smooth(P.islet, P.islet + 1.6, d)); }
+  let dpd = 1e9; for (const P of PONDS) { if (Math.abs(x - P.x) > P.r + 8 || Math.abs(z - P.z) > P.r + 8) continue; const d = dist2(x, z, P.x, P.z); if (d > P.r + 8) continue; dpd = Math.min(dpd, d - P.r); h = lerp(h, Math.min(h, 1), 1 - smooth(P.r, P.r + 6, d)); h = lerp(h, -P.depth, 1 - (P.depth < 1.5 ? smooth(P.r - .5, P.r + 2.5, d) : smooth(P.r * .55, P.r, d))); /* (r89) a pond's own depth: Hồ Gươm is shallow enough to wade; (owner, 29 Oct AEDT: "Hồ Gươm is on dry land") a shallow pond's floor stays down to its edge, so the water reaches its radius: rising from half way left its outer third dry (a deep pond, the billabong, was already full) */ if (P.islet) h = lerp(h, WATER + .5, 1 - smooth(P.islet, P.islet + 1.6, d)); }
   // Raised banks either side of each bridge.
   if (dr > 7) for (const B of BRIDGES) { const K = B.bank || (B.bank = bridgeBox(B, B.a0 - 10, B.a1 + (B.bankOut || 16), -8, 8)); if (x <= K.x0 || x >= K.x1 || z <= K.z0 || z >= K.z1) continue; // (round T2: a quick box test first, 13 bridges now)
     if (levelAt(x, z) != null) continue;   // (Round U: a bank never reaches inside a village or city: places stay flat to their gates)
@@ -337,8 +339,8 @@ export function regionAt(x, z) {
   if (dist2(x, z, PLATEAU.x, PLATEAU.z) < PLATEAU.r + 8 && heightAt(x, z) > PLATEAU.h - 2) return 'plateau'; // its top, from the map (round T lowered it to 8 m)
   for (const c of CITIES) if (x > c.x0 - 4 && x < c.x1 + 4 && z > c.z0 - 4 && z < c.z1 + 4) return c.id;
   if (dist2(x, z, VILLAGE.x, VILLAGE.z) < VILLAGE.r + 10) return 'village';
-  if (dist2(x, z, CHINA.x, CHINA.z) < CHINA.r + 8) return 'china';
-  if (dist2(x, z, INDIA.x, INDIA.z) < INDIA.r + 8) return 'india';
+  if (MAP.inHeritageGrounds('china', x, z) || dist2(x, z, CHINA.x, CHINA.z) < CHINA.r + 8) return 'china';
+  if (MAP.inHeritageGrounds('india', x, z) || dist2(x, z, INDIA.x, INDIA.z) < INDIA.r + 8) return 'india';
   if (dist2(x, z, HOME.x, HOME.z) < HOME.r + 6) return 'home';
   if (dist2(x, z, PADDIES.x, PADDIES.z) < PADDIES.r + 8) return 'paddies';
   if (x > TOWN.x0 - 3 && x < TOWN.x1 + 3 && z > TOWN.z0 - 3 && z < TOWN.z1 + 3) return 'town';
@@ -485,6 +487,9 @@ export const plotBox = P => { const c = Math.abs(Math.cos(P.rot)), s = Math.abs(
 // the ground as it was before the level land was widened (the same while the world is being built)
 export function oldHeightAt(x, z) { const w = WIDE; WIDE = 0; try { return heightAt(x, z); } finally { WIDE = w; } }
 export function createWorld(scene, quality) {
+  // Generate the legacy housing/garden lots above on the original terrain first: saved home/plot IDs must not shift.
+  // Then build the rendered terrain and all placed objects on the district's level heritage grounds.
+  HERITAGE_GROUNDS_ON = true;
   const wParts = {
     colliders: [], boxes: [], platforms: [], stalls: [], walks: [], houses: [], plants: [], overcast: 0, interactables: [], updaters: [], lanterns: [], shrineMeshes: {}, towerMeshes: {}, leafyMeshes: {},
     time: .36
@@ -997,6 +1002,12 @@ export function createWorld(scene, quality) {
     if (b.back && d > 40 && !(W.heroesNear && W.heroesNear(m.position.x, m.position.z, 30))) { m.position.x = b.tx = b.home[0]; m.position.z = b.tz = b.home[1]; b.back = false; }
     else if (d < .5) { b.back = false; if (Math.random() < dt * .2) { b.tx = b.home[0] + (Math.random() - .5) * 16; b.tz = b.home[1] + (Math.random() - .5) * 16; } }
     else { const sp = b.back ? 3.2 : 1.2; b.yaw = Math.atan2(dx, dz); m.rotation.y = b.yaw; m.position.x += dx / d * dt * sp; m.position.z += dz / d * dt * sp; }
+    // Grazing animals must respect the same walls as their riders. A later house or
+    // landmark used to let them wander inside it, leaving no place to mount them.
+    if (W.collide) {
+      const x = m.position.x, z = m.position.z; W.collide(m.position, 1.1);
+      if (Math.hypot(m.position.x - x, m.position.z - z) > .05) { b.tx = m.position.x; b.tz = m.position.z; }
+    }
     m.position.y = heightAt(m.position.x, m.position.z); b.shadow.position.set(m.position.x, m.position.y + .05, m.position.z);
   }));
   // ducks on the lake and chickens in the village (just for company)
@@ -1055,6 +1066,16 @@ export function createWorld(scene, quality) {
     for (const b of W.boxes) {
       if (b.bottom != null && pos.y != null && pos.y + 1.6 < b.bottom) continue;
       if (pos.x < b.x0 - r || pos.x > b.x1 + r || pos.z < b.z0 - r || pos.z > b.z1 + r) continue;
+      if (b.rot != null) {
+        const co = Math.cos(b.rot), si = Math.sin(b.rot), dx = pos.x - b.cx, dz = pos.z - b.cz;
+        let lx = co * dx - si * dz, lz = si * dx + co * dz;
+        const hx = b.hw + r, hz = b.hd + r;
+        if (Math.abs(lx) > hx || Math.abs(lz) > hz) continue;
+        if (hx - Math.abs(lx) < hz - Math.abs(lz)) lx = (lx < 0 ? -1 : 1) * hx;
+        else lz = (lz < 0 ? -1 : 1) * hz;
+        pos.x = b.cx + co * lx + si * lz; pos.z = b.cz - si * lx + co * lz;
+        continue;
+      }
       const pen = [pos.x - (b.x0 - r), (b.x1 + r) - pos.x, pos.z - (b.z0 - r), (b.z1 + r) - pos.z], k = pen.indexOf(Math.min(...pen));
       if (k === 0) pos.x = b.x0 - r; else if (k === 1) pos.x = b.x1 + r; else if (k === 2) pos.z = b.z0 - r; else pos.z = b.z1 + r;
     }
@@ -1067,8 +1088,10 @@ export function createWorld(scene, quality) {
 
 // (round T4a) the water map: rgb the colour of the water at each spot of the valley (each river its own, deeper darker),
 // alpha how near the shore it is (0.2 deep … 1 at the water's edge: the foam line). Painted once, kept on the device.
+// (owner, 29 Oct AEDT: "Hồ Gươm should be in a lake but it is on dry land") the two ponds keep a hint of their real green, but
+// read as water: the old jade green looked like grass from above
 const WATER_COLOURS = { hong: '#a8714c', mekong1: '#8f8a58', mekong2: '#8f8a58', saigon_r: '#5f8c8f', brisbane_r: '#5f8f86', yarra: '#7a8462', murray: '#7c8660',
-  hoguom: '#5d9a72', billabong: '#6c8c66', lake: '#3fb0c6', sydney_harbour: '#2f7fbf', hoian_canal: '#4f9aa6', sea: '#2a7fc0' };
+  hoguom: '#3a9a9c', billabong: '#4f8a84', lake: '#3fb0c6', sydney_harbour: '#2f7fbf', hoian_canal: '#4f9aa6', sea: '#2a7fc0' };
 export function paintWater(size = 256) {
   const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d');
   const img = x.createImageData(size, size), d = img.data, step = SIZE / size;

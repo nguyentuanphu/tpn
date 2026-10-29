@@ -1,3 +1,4 @@
+import { parseReportingPolicy } from '../../js/core/reporting-policy.ts';
 // Releases and festival changes that reach the children's devices at once (round R, owner: "instant, no deploy").
 // Sparkle Studio online saves them here (Netlify Blobs store "live", key "live"); the game reads them from /api/live.
 // Only well-formed values are kept, so nothing odd can reach a device.
@@ -48,7 +49,7 @@ export const saveLive = async (S, body, by) => { const v = { ...cleanLive(body),
 // device gets them from /api/live. A section kept here wins over the same one in content/custom.json; a section never
 // saved here leaves custom.json's in use. Only these sections and their own keys are kept, every text has a limit, and
 // the whole answer stays small, because it goes to every device each time the game opens.
-export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album'];
+export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album', 'itemAvailability', 'reportingPolicy'];
 export const CONTENT_MAX = 200 * 1024;
 export class LiveError extends Error { declare why: string; declare where: string; declare n: number; constructor(why: string, where: string, n: number) { super(why + ' ' + where); this.why = why; this.where = where; this.n = n; } }
 const BAD_KEY = new Set(['__proto__', 'constructor', 'prototype']);
@@ -83,6 +84,8 @@ const CLEAN = {
   plots: (v: Record<string, Plot>) => Object.fromEntries(entries(v, 200).map(([k, p]) => { const o: Plot = {}; if (p && typeof p === 'object') { put(o, 'type', txt(p.type, 30, 'plots')); put(o, 'name', pair(p.name, 80, 'plots')); if (HEX.test(p.color || '')) o.color = p.color;
     if (p.owner && typeof p.owner === 'object') { const w: Plot['owner'] = {}; put(w, 'name', txt(p.owner.name, 60, 'plots')); put(w, 'line', pair(p.owner.line, 200, 'plots')); if (Object.keys(w).length) o.owner = w; } } return [k, o]; }).filter(([, o]) => Object.keys(o).length)),
   activities: (v: Record<string, Activity>) => Object.fromEntries(entries(v, 400).map(([k, a]) => { const o: Activity = {}; if (a && typeof a === 'object') { if (/^[a-z]{2,20}$/.test(a.area || '')) o.area = a.area; if (typeof a.little === 'boolean') o.little = a.little; if (a.hide === true) o.hide = true; } return [k, o]; }).filter(([, o]) => Object.keys(o).length)),
+  reportingPolicy: v => { const policy=parseReportingPolicy(v);if(!policy)throw new LiveError('invalid','reportingPolicy',0);return policy; },
+  itemAvailability: v => Object.fromEntries(Object.entries(v && typeof v === 'object' && !Array.isArray(v) ? v : {}).filter(([key,value]) => /^(game|story):[a-z0-9][a-z0-9_-]{0,59}$/.test(key) && typeof value === 'boolean').slice(0,2000)),
   defaults: v => Object.fromEntries(entries(v, 30).filter(([, d]) => typeof d === 'boolean' || (typeof d === 'number' && Number.isFinite(d) && d >= 0 && d <= 1000) || (typeof d === 'string' && /^[\w-]{1,10}$/.test(d)))),
   features: v => Object.fromEntries(entries(v, 200).filter(([k, f]) => /^[\w-]{1,40}$/.test(k) && typeof f === 'boolean')),
   // the settings of the family's ads; a picture is a file of the game (content/ads/) and still comes with Publish

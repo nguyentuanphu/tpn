@@ -30,6 +30,9 @@ function style() {
 @keyframes v2-pulse { 0% { transform: scale(.95); opacity: .7; } 100% { transform: scale(1.08); opacity: 1; } }
 .v2-drum { width: min(240px, 65vw); height: min(240px, 65vw); border-radius: 50%; background: #da251d; border: 8px solid #ffde00; box-shadow: 0 8px 24px rgba(218, 37, 29, .35); display: flex; align-items: center; justify-content: center; cursor: pointer; touch-action: manipulation; position: relative; }
 .v2-drum:active { transform: scale(.94); }
+.v2-beat { font: 900 22px var(--font, sans-serif); color: #b9a8cc; display: flex; gap: 10px; }
+.v2-beat .now { color: #da251d; transform: scale(1.25); }
+.v2-stage .v2-beat + * { margin-top: 0; }
 .v2-pole { width: 14px; height: min(280px, 45vh); background: #c9a05a; border-radius: 7px; position: relative; box-shadow: 2px 2px 6px rgba(0,0,0,.15); }
 .v2-deco { position: absolute; transition: all .4s cubic-bezier(.34, 1.56, .64, 1); transform: scale(0); opacity: 0; font-size: 32px; }
 .v2-deco.on { transform: scale(1); opacity: 1; }
@@ -83,6 +86,9 @@ register({
     tieBtn.style.display = 'none';
     controls.appendChild(tieBtn);
     buttons.push(tieBtn);
+    // (owner, 29 Oct 2026 AEDT audit) the buttons stood in the wrapping order already: they are mixed now, and the order
+    // is the real one the grown-ups use (leaves, rice, beans, pork, then tie)
+    buttons.slice(0, 4).sort(() => Math.random() - .5).forEach(b => controls.insertBefore(b, tieBtn));
 
     let step = 0;
     while (step < 5) {
@@ -146,17 +152,22 @@ register({
     const btns = steps.map((s, idx) => {
       const b = el('button', 'v2-btn', `${pic(s.icon)} <span>${T(s.name[0], s.name[1])}</span>`);
       b.dataset.step = String(idx);
-      controls.appendChild(b);
       return b;
     });
+    // (owner, 29 Oct 2026 AEDT audit) the buttons stood in order: they are mixed now. The frame goes first and the candle
+    // last, as for a real lantern; the red paper and the gold trim go in either order
+    [...btns].sort(() => Math.random() - .5).forEach(b => controls.appendChild(b));
+    const allowed = (b: HTMLElement) => { const k = Number(b.dataset.step); return !b.hasAttribute('disabled') && (currentStep === 0 ? k === 0 : currentStep === 3 ? k === 3 : k === 1 || k === 2); };
 
     let currentStep = 0;
     while (currentStep < 4) {
-      api.plan(() => btns[currentStep] || null, { maxActions: 5 });
-      const target = btns[currentStep];
-      const clicked = await untilRight(api, btns, e => e === target);
+      api.plan(() => btns.find(allowed) || null, { maxActions: 5 });
+      const clicked = await untilRight(api, btns, allowed);
       if (!clicked || api.closed) return;
-      steps[currentStep].fn();
+      clicked.setAttribute('disabled', '');
+      steps[Number(clicked.dataset.step)].fn();
+      if (currentStep === 0) api.say('Now the red paper and the gold trim!', 'Giờ dán giấy đỏ và viền vàng nào!');
+      if (currentStep === 2) api.say('Last, light the candle!', 'Cuối cùng, thắp nến nhé!');
       currentStep++;
       api.dots(4, currentStep);
       await wait(350);
@@ -173,29 +184,36 @@ register({
   name: () => T('Lion Dance Drummer', 'Múa Lân Rộn Ràng'),
   async run(api) {
     style();
-    api.say('Beat the drum in time with the dancing lion! Tung-tung-cheng!',
-      'Gõ trống theo nhịp múa lân nào! Tùng tùng cắc tùng!');
+    api.say('Play the lion dance beat: tùng, tùng, cắc, tùng! Follow the bright word.',
+      'Đánh nhịp múa lân: tùng, tùng, cắc, tùng! Theo chữ đang sáng nhé.');
     const targetBeats = api.little ? 6 : 10;
     api.dots(targetBeats, 0);
     const wrap = el('div', 'v2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'v2-stage'); wrap.appendChild(stage);
-    const lion = el('div', '', pic('🦁')); lion.style.fontSize = '80px'; stage.appendChild(lion);
-    const drum = el('div', 'v2-drum', pic('🥁')); stage.appendChild(drum);
-
+    // (owner, 29 Oct 2026 AEDT audit) a real lion-dance beat: "tùng" on the drum skin and "cắc" on the rim, in the pattern
+    // the card shows (it counted any taps on the drum, with no beat at all)
+    stage.style.flexDirection = 'column'; stage.style.gap = '18px';
+    const lion = el('div', '', pic('🦁')); lion.style.fontSize = '84px'; stage.appendChild(lion);
+    const card = el('div', 'v2-beat'); stage.appendChild(card);
+    const controls = el('div', 'v2-controls'); wrap.appendChild(controls);
+    const tung = el('button', 'v2-btn', `${pic('🥁')} <span>${T('Tùng (drum)', 'Tùng (mặt trống)')}</span>`);
+    const cac = el('button', 'v2-btn', `${pic('drum:sticks')} <span>${T('Cắc (rim)', 'Cắc (tang trống)')}</span>`);
+    controls.append(tung, cac);
+    const pattern = ['tung', 'tung', 'cac', 'tung'];
     let beats = 0;
-    drum.onclick = () => {
-      if (beats >= targetBeats || api.closed) return;
+    const show = () => { card.innerHTML = pattern.map((p, i) => `<span class="${i === beats % 4 ? 'now' : ''}">${p === 'tung' ? 'Tùng' : 'Cắc'}</span>`).join(' '); };
+    show();
+    while (beats < targetBeats) {
+      const want = pattern[beats % 4] === 'tung' ? tung : cac;
+      api.plan(() => want, { maxActions: 4 });
+      const clicked = await untilRight(api, [tung, cac], e => e === want);
+      if (!clicked || api.closed) return;
       beats++;
       api.dots(targetBeats, beats);
-      api.sfx.pop(beats % 4);
+      if (want === tung) api.sfx.pop(beats % 4); else api.sfx.tap();
       lion.style.transform = `scale(${1 + (beats % 2 ? .2 : -.1)}) rotate(${beats % 2 ? 15 : -15}deg)`;
       setTimeout(() => { lion.style.transform = 'scale(1) rotate(0)'; }, 180);
-    };
-
-    api.plan(() => beats < targetBeats ? drum : null, { maxActions: targetBeats + 2 });
-    while (beats < targetBeats) {
-      await wait(100);
-      if (api.closed) return;
+      show();
     }
     api.say('The lion leaps and dances with your drum!', 'Chú lân nhảy múa theo tiếng trống của con thật hay!');
     await wait(1200);
@@ -237,13 +255,14 @@ register({
       return b;
     });
 
+    // (owner, 29 Oct 2026 AEDT audit) any order: each charm has its own place on the pole (it wanted one order nobody was told)
     let currentStep = 0;
     while (currentStep < 4) {
-      api.plan(() => btns[currentStep] || null, { maxActions: 5 });
-      const target = btns[currentStep];
-      const clicked = await untilRight(api, btns, e => e === target);
+      api.plan(() => btns.find(b => !b.hasAttribute('disabled')) || null, { maxActions: 5 });
+      const clicked = await untilRight(api, btns, e => !e.hasAttribute('disabled'));
       if (!clicked || api.closed) return;
-      decos[currentStep].classList.add('on');
+      clicked.setAttribute('disabled', '');
+      decos[Number(clicked.dataset.step)].classList.add('on');
       api.sfx.ding();
       currentStep++;
       api.dots(4, currentStep);

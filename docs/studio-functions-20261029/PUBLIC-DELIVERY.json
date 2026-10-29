@@ -1,0 +1,38 @@
+{
+  "observedAtSydney": "2026-10-29T16:01:53.869040+11:00",
+  "artifactCommit": "e2c4e96d6e1fe536f4e7e7be7773c8c8b7a6016b",
+  "files": [
+    {
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/e2c4e96d6e1fe536f4e7e7be7773c8c8b7a6016b/docs/studio-functions-20261029/README.md",
+      "status": 200,
+      "bytes": 3678,
+      "sha256": "46e7ec1d163753d7b0285592d9ee583cf69b7aae26a69a733907b2b7b34b0e59",
+      "matchesLocal": true
+    },
+    {
+      "path": "NEXT-CHAT.md",
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/e2c4e96d6e1fe536f4e7e7be7773c8c8b7a6016b/docs/studio-functions-20261029/NEXT-CHAT.md",
+      "status": 200,
+      "bytes": 5575,
+      "sha256": "1749fb549d94dcdb1facb8fb2828a98a5f0f83ee443acbb2eaf563bd5abd0dc0",
+      "matchesLocal": true
+    },
+    {
+      "path": "VISUALS.md",
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/e2c4e96d6e1fe536f4e7e7be7773c8c8b7a6016b/docs/studio-functions-20261029/VISUALS.md",
+      "status": 200,
+      "bytes": 969,
+      "sha256": "078aa995af0375c881450fb8610e39f1d184739d20abef80e15c99787e3f48bd",
+      "matchesLocal": true
+    },
+    {
+      "path": "screenshots/functions/en-390-functions-editor.png",
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/e2c4e96d6e1fe536f4e7e7be7773c8c8b7a6016b/docs/studio-functions-20261029/screenshots/functions/en-390-functions-editor.png",
+      "status": 200,
+      "bytes": 60804,
+      "sha256": "157f5a793dcc63804ad7a2a3f2ee32a6d89d585c1ada47923ee1454bd5e3b715",
+      "matchesLocal": true
+    }
+  ]
+}

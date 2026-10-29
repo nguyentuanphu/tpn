@@ -1,6 +1,6 @@
 # Parent settings and child play reports
 
-Source: f59deb8d59e99a6149cf4df875f78c9ad8467a56. Editorial update 26 October 2026 AEDT; source/capture review recorded separately. Existing game controls, not a new statistics backend.
+Source: 1d50a88b0c344edb4e30c7ee9305f4406af34061. Editorial update 26 October 2026 AEDT; source/capture review recorded separately. Existing game controls, not a new statistics backend.
 
 ## Reach the report
 
@@ -62,7 +62,7 @@ Grown-ups → Internet and playing online; Family photos and devices when availa
 
 A grown-up chooses whether to enable internet features such as friends and real-place maps. Family photo/device pairing and shared-content permissions depend on the available family features and granted access. / Người lớn chọn có bật nội dung internet như bạn bè và bản đồ nơi thật hay không. Ghép máy, ảnh gia đình và quyền dùng nội dung chung tùy tính năng gia đình sẵn có và quyền được cấp.
 
-Review who can connect and which sharing permissions are enabled. Add personal questions in Grown-ups → Family questions on your device; the public website does not collect them. Accepted invited players receive an encrypted round, while guests keep no saved question set. Studio’s shared quiz editor publishes general questions to this site and must not contain private family details. / Kiểm tra ai được kết nối và quyền chia sẻ đã bật. Thêm câu hỏi riêng trong Phụ huynh → Câu hỏi gia đình trên máy; trang web công khai không thu chúng. Bạn đã nhận lời mời nhận ván được mã hóa, còn máy khách không lưu bộ câu hỏi. Trình sửa câu đố chung trong Studio phát hành câu hỏi cho trang này, không dùng cho thông tin riêng của gia đình.
+Review who can connect and which sharing permissions are enabled. Add personal questions in Grown-ups → Family → Family questions on your device; the public website does not collect them. Accepted invited players receive an encrypted round, while guests keep no saved question set. Studio’s shared quiz editor publishes general questions to this site and must not contain private family details. / Kiểm tra ai được kết nối và quyền chia sẻ đã bật. Thêm câu hỏi riêng trong Phụ huynh → Gia đình → Câu hỏi gia đình trên máy; trang web công khai không thu chúng. Bạn đã nhận lời mời nhận ván được mã hóa, còn máy khách không lưu bộ câu hỏi. Trình sửa câu đố chung trong Studio phát hành câu hỏi cho trang này, không dùng cho thông tin riêng của gia đình.
 
 ## Manage the shared farm and pretend money / Quản lý nông trại chung và tiền trong trò chơi
 

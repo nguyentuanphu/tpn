@@ -55,8 +55,11 @@ marketing/source/runvalley.log
 /js/content/family-quiz.js
 /js/content/familycode.js
 /js/content/festival-visibility.js
+/js/content/films/crow.js
 /js/content/fruit-parade.js
 /js/content/hanoi-pack-info.js
+/js/content/install-state.js
+/js/content/map.js
 /js/content/releases.js
 /js/content/savecopy.js
 /js/content/secondset.js
@@ -66,6 +69,7 @@ marketing/source/runvalley.log
 /js/core/events.js
 /js/core/geo.js
 /js/core/ids.js
+/js/core/reporting-policy.js
 /js/core/rng.js
 /js/custom.js
 /js/extras.js
@@ -73,6 +77,7 @@ marketing/source/runvalley.log
 /js/family-quiz-editor.js
 /js/family-quiz-store.js
 /js/familydevices.js
+/js/farm.js
 /js/festival-live.js
 /js/festivals.js
 /js/film.js
@@ -80,6 +85,8 @@ marketing/source/runvalley.log
 /js/games/animals2.js
 /js/games/arcade-board.js
 /js/games/arcade-session.js
+/js/games/art-pad.js
+/js/games/art-pending.js
 /js/games/asia.js
 /js/games/bigthinkers.js
 /js/games/bigthinkers2.js
@@ -107,6 +114,9 @@ marketing/source/runvalley.log
 /js/games/fruitparade-session.js
 /js/games/fruitparade-style.js
 /js/games/fruitparade.js
+/js/games/goat-art.js
+/js/games/goat-core.js
+/js/games/goat.js
 /js/games/horse-session.js
 /js/games/learning-meta.js
 /js/games/learning.js
@@ -154,18 +164,25 @@ marketing/source/runvalley.log
 /js/games/vietnam2.js
 /js/games/words2.js
 /js/hanoi-pack.js
+/js/heritage.js
+/js/home-decor-models.js
 /js/howto-data.js
+/js/howto-data2.js
 /js/howto-player.js
 /js/howto-registry.js
 /js/howto.js
 /js/hud.js
+/js/i18n.js
 /js/install.js
 /js/keepcopy.js
 /js/lanterns.js
+/js/launch.js
 /js/learn.js
 /js/lotus.js
 /js/main.js
+/js/management-telemetry.js
 /js/mictest.js
+/js/myhouse.js
 /js/net.js
 /js/netgames.js
 /js/netmsg.js
@@ -179,6 +196,7 @@ marketing/source/runvalley.log
 /js/printpage.js
 /js/recorder.js
 /js/relay.js
+/js/render-recovery.js
 /js/report-outbox.js
 /js/report.js
 /js/rideview.js
@@ -191,18 +209,23 @@ marketing/source/runvalley.log
 /js/solids.js
 /js/state.js
 /js/studio-position.js
+/js/suburbs.js
+/js/symbols.js
 /js/tale-loader.js
 /js/tales-content.js
+/js/tales.js
 /js/talesdata.js
 /js/tester-detection.js
 /js/tester-float.js
 /js/tester.js
 /js/testerrewards.js
+/js/town.js
 /js/trade.js
 /js/traffic.js
 /js/travel-stops.js
 /js/ui-settings.js
 /js/ui.js
+/js/vehicles.js
 /js/viwords.js
 /js/voice-fragments.js
 /js/voice-index.js
@@ -211,7 +234,16 @@ marketing/source/runvalley.log
 /js/website.js
 /js/world.js
 /js/worldedit.js
+/js/yard.js
 /studio/ui/app.js
+/studio/ui/brand.js
+/studio/ui/control-feedback.js
+/studio/ui/desk-charts.js
+/studio/ui/finance.js
+/studio/ui/functions.js
+/studio/ui/item-workspace.js
+/studio/ui/management.js
+/studio/ui/owner-desk.js
 /sw.js
 # --- end of tools/build.mts ---
 # --- made by tools/build.mts from .ts files (never committed; do not edit by hand) ---
@@ -356,3 +388,9 @@ marketing/source/runvalley.log
 /js/games/familyquiz-core.js
 
 js/voice-fragments.js
+
+/temp/hanoi-delivery-cache/
+/temp/hanoi-delivery-stage-*/
+/temp/hanoi-originals-*/
+/js/yard.js
+/js/vehicles.js

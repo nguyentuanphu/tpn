@@ -5,23 +5,29 @@
 // until someone starts again. "Chặt": four of a kind or three pairs in a row can beat a 2.
 // The first to play all their cards wins the hand. Hints light up a good play, and little ones always get one.
 // (Round V, owner 13 Oct) Tiến Lên miền Bắc too (game 'tienlenbac'): a single card is beaten only by a higher card of the
-// same suit (a 2 beats any other single), a pair only by a higher pair of the same colours, a run (sảnh) is all one suit
-// and is beaten by a higher run of that suit; no pairs in a row; only four of a kind cuts a 2.
+// same suit (twos trump other singles and compare by suit), ordinary pairs must match colour, triples match all three
+// suits, and runs match suit and length; no consecutive pairs. A quad can cut a single or pair of twos.
 import { register } from './frame.js';
 import { el, esc } from '../util.js';
 import { stream } from '../core/rng.js';
 import { T } from '../i18n.js';
 
-import { RANKS, SUITS, card, byV, BOMB, classify, beats, choose, setNorth, isNorth } from './tienlenrules.js';
+import { RANKS, SUITS, card, byV, BOMB, classify, beats, choose, setNorth, rulesFor } from './tienlenrules.js';
 export { classify, beats, choose, setNorth };
 
 const TL = {
   id: 'tienlen', online: true, icon: '🎴', origin: 'vn', name: () => T('Tiến Lên (cards)', 'Tiến Lên miền Nam'),
-  async run(api) {
-    if (api.online) return tienlenOnline(api);
+  async run(api, north = false) {
+    const { classify, beats, choose, BOMB } = rulesFor(north);
+    if (north) {
+      const guide = el('details', 'tl-north-rules');
+      guide.innerHTML = `<summary>${T('Northern rules used here', 'Luật miền Bắc trong trò này')}</summary><p>${T('Singles and runs match suit. Pairs match colour; triples match all three suits. Twos trump other singles or pairs; four of a kind can cut one or two twos. Runs cannot include twos. This gentle version has no betting or last-card penalties.', 'Bài lẻ và sảnh cùng chất. Đôi cùng màu; bộ ba cùng các chất. Quân hai chặn bài lẻ hoặc đôi khác; tứ quý chặt một hoặc đôi hai. Sảnh không có quân hai. Bản nhẹ nhàng này không cá cược, không phạt lá cuối.')}</p>`;
+      api.stage.appendChild(guide);
+    }
+    if (api.online) return tienlenOnline(api, north);
     const little = api.little, strong = api.strong;
-    if (isNorth()) api.say('Tiến Lên miền Bắc! Beat the cards on the table with the same kind of play, higher and of the same suit. A run must be all one suit. Play all your cards first to win!',
-      'Tiến Lên miền Bắc! Đánh bài cao hơn bài trên bàn, cùng kiểu và cùng chất. Sảnh phải đồng chất. Ai đánh hết bài trước là thắng!');
+    if (north) api.say('Northern Tiến Lên! Singles and runs match suit, pairs match colour, and triples match suits. Twos are special. This gentle game has no last-card penalties.',
+      'Tiến Lên miền Bắc! Bài lẻ và sảnh cùng chất, đôi cùng màu, bộ ba cùng các chất. Quân hai có luật riêng. Bản nhẹ nhàng này không phạt lá cuối.');
     else api.say('Tiến Lên! Beat the cards on the table with the same kind of play, but higher. 3 is the lowest, 2 is the highest. Play all your cards first to win!',
       'Tiến Lên! Đánh bài cao hơn bài trên bàn, cùng một kiểu. 3 nhỏ nhất, 2 lớn nhất. Ai đánh hết bài trước là thắng!');
     const t = el('div', 'tl', `<div class="tl-opp"></div><div class="tl-table"><div class="tl-who"></div><div class="tl-pile"></div></div><div class="tl-msg"></div><div class="tl-hand"></div>
@@ -156,15 +162,16 @@ const TL = {
   }
 };
 // (Round V) miền Nam keeps its rules; miền Bắc plays the same game with the northern rules switched on for its length
-register({ ...TL, run: async api => { setNorth(false); return TL.run(api); } });
-register({ ...TL, id: 'tienlenbac', name: () => T('Tiến Lên, northern rules (cards)', 'Tiến Lên miền Bắc'), run: async api => { setNorth(true); try { return await TL.run(api); } finally { setNorth(false); } } });
+register({ ...TL, run: async api => TL.run(api, false) });
+register({ ...TL, id: 'tienlenbac', name: () => T('Tiến Lên, northern rules (cards)', 'Tiến Lên miền Bắc'), run: async api => TL.run(api, true) });
 
 // Tiến Lên with friends online (round G): 2 to 4 children, each on their own device (r63, owner: games with friends are
 // only between the players, so no computer players fill the table any more; with two, each gets 13 cards and the rest
 // stay in the deck). The same deal everywhere (shuffled from the game's own code), each child sees only their own
 // cards. A child's play travels as one number (which of their cards, or 0 for pass). One hand: the first to play all
 // cards wins.
-async function tienlenOnline(api) {
+async function tienlenOnline(api, north = false) {
+  const { classify, beats, choose } = rulesFor(north);
   const O = api.online, humans = O.names.length, seats = humans;
   const names = [...O.names], me = O.mine, r = stream('tienlen/' + O.seed);
   const RANKS = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2'], SUITS = ['♠', '♣', '♦', '♥'];

@@ -13,6 +13,7 @@ import crypto from 'crypto';
 import { spawn } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { start, seedPlayers } from './harness.mjs';
+import { PERMS } from '../netlify/lib/admins.mts';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // ---------- a pretend GitHub: blobs, trees, commits and branches in memory ----------
@@ -100,21 +101,24 @@ export function memoryBlobs() {
 // (round R privacy) a clock the tests move on, so every sign-in has a fresh two-step code
 export const testClock = { t: Date.now() };
 const toURL = p => pathToFileURL(p).href;
-export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs(), heldStore = memoryBlobs(), liveStore = memoryBlobs(), familyStore = memoryBlobs(), guardStore = memoryBlobs(), logStore = memoryBlobs(), testerStore = memoryBlobs(), parentAnalyticsStore = memoryBlobs() }) {
+export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs(), heldStore = memoryBlobs(), liveStore = memoryBlobs(), familyStore = memoryBlobs(), guardStore = memoryBlobs(), logStore = memoryBlobs(), testerStore = memoryBlobs(), parentAnalyticsStore = memoryBlobs(), managementDatabase = undefined, managementOperations = undefined }) {
   Object.assign(process.env, env);
   const { makeStudio } = await import(toURL(path.join(ROOT, 'netlify/functions/studio.mts')));
   const { makeHello } = await import(toURL(path.join(ROOT, 'netlify/functions/hello.mts')));
   const { makeLive } = await import(toURL(path.join(ROOT, 'netlify/functions/live.mts')));
+  const { makeManagement } = await import(toURL(path.join(ROOT,'netlify/functions/management.mts')));
+  const { managementService } = await import(toURL(path.join(ROOT,'netlify/lib/management/runtime.mts')));
   const { makeFestivalStatus } = await import(toURL(path.join(ROOT,'netlify/functions/festival-status.mts')));
   const festivalStatus=makeFestivalStatus({liveStore:async()=>liveStore});
   const { makeFamily } = await import(toURL(path.join(ROOT, 'netlify/functions/family.mts')));
   const { makeTester } = await import(toURL(path.join(ROOT, 'netlify/functions/tester.mts'))); // (owner, 12 Oct) tester reports
   const now = () => testClock.t, tester = makeTester({ testerStore: async () => testerStore, liveStore: async () => liveStore, guardStore: async () => guardStore, now }), family = makeFamily({ familyStore: async () => familyStore, guardStore: async () => guardStore, now });
-  const studio = makeStudio({ playersStore: async () => players, adminStore: async () => adminStore, heldStore: async () => heldStore, liveStore: async () => liveStore, familyStore: async () => familyStore, guardStore: async () => guardStore, logStore: async () => logStore, testerStore: async () => testerStore, parentAnalyticsStore: async () => parentAnalyticsStore, now }), hello = makeHello({ playersStore: async () => players, botStore: async () => players, guardStore: async () => guardStore }), live = makeLive({ liveStore: async () => liveStore });
+  const studio = makeStudio({ managementDatabase, managementOperations, playersStore: async () => players, adminStore: async () => adminStore, heldStore: async () => heldStore, liveStore: async () => liveStore, familyStore: async () => familyStore, guardStore: async () => guardStore, logStore: async () => logStore, testerStore: async () => testerStore, parentAnalyticsStore: async () => parentAnalyticsStore, now }), hello = makeHello({ playersStore: async () => players, botStore: async () => players, guardStore: async () => guardStore }), live = makeLive({ liveStore: async () => liveStore });
+  const managementEndpoint=makeManagement({service:()=>managementService(async()=>liveStore,managementDatabase),guardStore:async()=>guardStore,now});
   const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp3': 'audio/mpeg', '.woff2': 'font/woff2' };
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${port}`); let p = decodeURIComponent(url.pathname);
-    const fn = p === '/api/hello' ? hello : p === '/api/live' ? live : p === '/api/festivals' ? festivalStatus : p === '/api/tester' ? tester : p.startsWith('/api/family/') ? family : (p.startsWith('/studio/api/') || p.startsWith('/studio/content/')) ? studio : null;
+    const fn = p.startsWith('/api/management/') ? managementEndpoint : p === '/api/hello' ? hello : p === '/api/live' ? live : p === '/api/festivals' ? festivalStatus : p === '/api/tester' ? tester : p.startsWith('/api/family/') ? family : (p.startsWith('/studio/api/') || p.startsWith('/studio/content/')) ? studio : null;
     if (fn) {
       const ch = []; for await (const c of req) ch.push(c);
       const r = await fn(new Request(url, { method: req.method, headers: req.headers, body: req.method === 'POST' ? Buffer.concat(ch) : undefined }), { geo: JSON.parse(req.headers['x-test-geo'] || '{}') }); // (Netlify gives the town from the connection; tests say it in a header)
@@ -144,7 +148,8 @@ export async function studioCheck(browser, open) {
   // the exe's own server, on a copy of a small game folder, with its settings in a folder of its own
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sv-studio-')), game = path.join(tmp, 'game'), appdata = path.join(tmp, 'appdata');
   fs.cpSync(path.join(ROOT, 'js'), path.join(game, 'js'), { recursive: true }); // the game's code (the pages read it)
-  fs.cpSync(path.join(ROOT, 'vendor'), path.join(game, 'vendor'), { recursive: true }); // (the game list on the Simple screen page loads the 3D library too)
+  fs.cpSync(path.join(ROOT, 'vendor'), path.join(game, 'vendor'), { recursive: true });
+  for(const folder of ['css','fonts','icons/launch'])fs.cpSync(path.join(ROOT,folder),path.join(game,folder),{recursive:true}); // (the game list on the Simple screen page loads the 3D library too)
   for (const f of Object.keys(seed)) { fs.mkdirSync(path.dirname(path.join(game, f)), { recursive: true }); fs.writeFileSync(path.join(game, f), seed[f]); }
   fs.mkdirSync(path.join(appdata, 'SparkleStudio'), { recursive: true }); fs.writeFileSync(path.join(appdata, 'SparkleStudio', 'settings.json'), JSON.stringify({ gameDir: game, siteUrl: site, githubToken: 'test-token', githubRepo: repo }));
   // the exe is its own process: it reaches the same pretend GitHub over http (STUDIO_GITHUB_API, tests only)
@@ -326,7 +331,7 @@ export async function studioCheck(browser, open) {
     await hi({ id: 'bbbbbbbbbbbb', b: 'r37', l: 'en', m: 1, v: [['en', 'A brand new line!']] });
     const inb = (await call('/studio/api/inbox', { cookie: C })).j;
     ok(Array.isArray(inb) && inb.length === 2 && inb[0].text === 'A brand new line!' && inb[0].n === 2, 'inbox: ' + JSON.stringify(inb));
-    notes.push('players: 3 devices counted, nothing personal kept; inbox has 2 lines');
+    notes.push('players: 3 reporting devices counted, reported names scoped to their installations; inbox has 2 lines');
     // round L: a device with one child's day: name, games (started, won, left), places, stories, hours, errors, stuck, smoothness; the town from the connection
     { const today = new Date().toISOString().slice(0, 10);
       const st = await fetch(site + '/api/hello', { method: 'POST', headers: { 'x-test-geo': JSON.stringify({ city: 'Brisbane', subdivision: { code: 'QLD' }, country: { code: 'AU' } }) }, body: JSON.stringify({ id: 'dddddddddddd', b: 'r43', l: 'en', k: 1, d: 'tablet', a: true, os: 'iPadOS', br: 'Safari', sc: '820x1180',
@@ -507,6 +512,7 @@ export async function studioCheck(browser, open) {
       finally { globalThis.fetch = real; fs.rmSync(d, { recursive: true, force: true }); }
       notes.push('a Wikimedia or Flickr photo is listed by its address (nothing saved), one that does not answer is skipped, and ✕ takes a linked one off'); }
     // 6. the dashboard in a browser: online (signed in) and in the exe, on a desktop and a phone
+    const openLegacyAnalytics=async pg=>{await pg.locator('#tabs [data-k=people]').click();await pg.waitForSelector('.desk-body [data-chart]');await pg.locator('.desk-tools > summary').click();await pg.locator('[data-desk-route=players]').click();};
     const pages = ['home', 'message', 'players', 'testers', 'publish', 'check', 'settings', 'photos', 'releases', 'lab', 'festivals', 'familycode', 'missions', 'villagers', 'path', 'play', 'quiz', 'stories', 'looks', 'plots'], bad = [];
     // (Studio review, owner 10 Oct) every button and box 44 px or more on a phone and a tablet: these pages
     const TAPS = ['home', 'message', 'missions', 'album', 'quiz', 'stories', 'villagers', 'plots', 'looks', 'familycode', 'releases', 'lab', 'festivals', 'path', 'music', 'map', 'photos', 'play', 'voices', 'ads', 'publish', 'site', 'check', 'settings', 'testers'];
@@ -520,22 +526,26 @@ export async function studioCheck(browser, open) {
       // round K: five sections (a column on a computer, a bar at the bottom of a phone), each opening as cards
       const navOk = await pg.evaluate(touch => { const bs = [...document.querySelectorAll('#tabs button')], r = bs.map(b => b.getBoundingClientRect()); return bs.length === 5 && (touch ? r.every(x => x.bottom >= innerHeight - 2 - 40 && x.height >= 56) : r.every(x => x.left < 220)); }, touch);
       if (!navOk) bad.push(`online ${w}px: the five sections are not where they should be`);
-      await pg.evaluate(() => document.querySelector('#tabs [data-k="family"]').click()); await pg.waitForTimeout(400);
+      const familyTools=new Set();
+      for(const area of ['people','game']){
+        await pg.locator('#tabs [data-k="'+area+'"]').click();await pg.waitForSelector('.desk-body [data-chart]');await pg.locator('.desk-tools > summary').click();
+        for(const key of await pg.locator('.desk-tools [data-desk-route]').evaluateAll(nodes=>nodes.map(n=>n.dataset.deskRoute)))familyTools.add(key);
+      }
       // (round S: Family missions joined the Family section: eight cards)
       // (r60: Memory Villages joined the Family section: nine cards)
-      if (await pg.evaluate(() => document.querySelectorAll('#page .pcard').length) !== 9) bad.push(`online ${w}px: the Family section does not show its nine cards`);
+      if(!['message','missions','children','album','quiz','stories','villagers','plots','familycode'].every(key=>familyTools.has(key)))bad.push(`online ${w}px: a retained family tool is missing from People / Game & website`);
       for (const k of pages) { await pg.evaluate(k2 => { location.hash = k2; }, k); await pg.waitForTimeout(k === 'photos' ? 2500 : 900); const t = await pg.evaluate(() => document.querySelector('#page').innerText); if (await pg.evaluate(() => !!document.querySelector('#page .card.badtxt')) || !t.trim()) bad.push(`online ${w}px ${k}: ${t.slice(0, 80)}`);
         if (await pg.evaluate(() => document.scrollingElement.scrollWidth > innerWidth + 1)) bad.push(`online ${w}px ${k}: page scrolls sideways`);
         const emo = await pg.evaluate(SHOWN_EMOJI); if (emo.length) bad.push(`online ${w}px ${k}: phone emoji shown: ${emo.join(' ')}`); }
       // (owner, 14 Oct AEDT) Setup → Admins: each person's permissions, ticked one by one (da.mi has chosen ones)
       { await pg.evaluate(() => { location.hash = 'admins'; }); await pg.waitForSelector('tr.permrow details', { timeout: 15000 }).catch(() => { });
         await pg.evaluate(() => { const r = [...document.querySelectorAll('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); if (r) { r.querySelector('details').open = true; r.scrollIntoView(); } }); await pg.waitForTimeout(500);
-        const pm = await pg.evaluate(() => { const r = [...document.querySelectorAll('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); return r ? { n: r.querySelectorAll('[data-perm]').length, on: [...r.querySelectorAll('[data-perm]:checked')].map(x => x.dataset.perm), small: [...r.querySelectorAll('.perm')].filter(x => x.getBoundingClientRect().height < 44).length } : null; });
-        if (!pm || pm.n !== 13 || pm.on.join() !== 'pages,releases' || pm.small) bad.push(`online ${w}px admins: the permission ticks are not right: ${JSON.stringify(pm)}`);
+        const pm = await pg.evaluate(() => { const r = [...document.querySelectorAll('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); return r ? { n: r.querySelectorAll('[data-perm]').length, keys: [...r.querySelectorAll('[data-perm]')].map(x => x.dataset.perm).sort(), on: [...r.querySelectorAll('[data-perm]:checked')].map(x => x.dataset.perm), small: [...r.querySelectorAll('.perm')].filter(x => x.getBoundingClientRect().height < 44).length } : null; });
+        if (!pm || pm.n !== Object.keys(PERMS).length || JSON.stringify(pm.keys) !== JSON.stringify(Object.keys(PERMS).sort()) || pm.on.join() !== 'pages,releases' || pm.small) bad.push(`online ${w}px admins: the permission ticks are not right: ${JSON.stringify(pm)}`);
         if (await pg.evaluate(() => document.scrollingElement.scrollWidth > innerWidth + 1)) bad.push(`online ${w}px admins: page scrolls sideways`);
         const emo = await pg.evaluate(SHOWN_EMOJI); if (emo.length) bad.push(`online ${w}px admins: phone emoji shown: ${emo.join(' ')}`);
         await pg.screenshot({ path: path.join(ROOT, 'tests/out', `studio-admins-${w}.png`) }); }
-      { await pg.evaluate(() => document.querySelector('#tabs [data-k="players"]').click()); await pg.waitForSelector('.tiles .tile', { timeout: 15000 });
+      { await openLegacyAnalytics(pg); await pg.waitForSelector('.tiles .tile', { timeout: 15000 });
         // (r65, owner: "cleaner but still the details") five tiles, a row per child and per kind of device, the rest folded and closed at first
         const look = await pg.evaluate(readAnalyticsLayout);
         const t = await pg.evaluate(() => (document.querySelectorAll('details.more').forEach(d => { d.open = true; }), document.querySelector('#page').innerText));
@@ -546,7 +556,7 @@ export async function studioCheck(browser, open) {
         // (r65) the battery round's numbers, once the report has them (pretended here: field names agreed on the board)
         if (!touch) { await pg.route('**/studio/api/players', async rt => { const res = await rt.fetch(), j = await res.json(); j.power = { phone: { devices: 1, fps: 30, frameMs: 14, batteryPerHour: 31 }, computer: { devices: 1, fps: 60, frameMs: 9, batteryPerHour: 8.5 } };
             (j.devices || []).forEach((d, i) => { d.power = i ? { fps: 60, frameMs: 9, draws: 240, ratio: 1.5, mins: 40, batteryPerHour: null } : { fps: 30, frameMs: 14, draws: 310, ratio: 1, mins: 25, batteryPerHour: 31, charging: false }; }); await rt.fulfill({ response: res, json: j }); });
-          await pg.evaluate(() => { location.hash = 'home'; }); await pg.waitForTimeout(300); await pg.evaluate(() => document.querySelector('#tabs [data-k="players"]').click()); await pg.waitForSelector('.tiles .tile', { timeout: 15000 });
+          await pg.evaluate(() => { location.hash = 'home'; }); await pg.waitForTimeout(300); await openLegacyAnalytics(pg); await pg.waitForSelector('.tiles .tile', { timeout: 15000 });
           const pw = await pg.evaluate(() => (document.querySelectorAll('details.more').forEach(d => { d.open = true; }), { t: document.querySelector('#page').innerText, act: !!document.querySelector('.tile.tone-act'), red: [...document.querySelectorAll('table.kinds td.tone-act')].map(x => x.textContent) }));
           await pg.unroute('**/studio/api/players');
           if (!(/31 % (an hour|mỗi giờ)/.test(pw.t) && /8[.,]5 % (an hour|mỗi giờ)/.test(pw.t) && /310 (draws|lần vẽ)/.test(pw.t) && /(battery not given by this browser|trình duyệt này không cho biết pin)/.test(pw.t) && pw.act && pw.red.some(x => /31/.test(x)))) bad.push('the battery and frame numbers are not shown: ' + JSON.stringify({ act: pw.act, red: pw.red, t: pw.t.slice(0, 300) })); }

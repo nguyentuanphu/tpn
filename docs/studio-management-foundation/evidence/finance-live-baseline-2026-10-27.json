@@ -1,0 +1,27 @@
+{
+  "observedAt": "2026-10-27T17:32:46.760402+11:00",
+  "baseUrl": "https://sparklevalley.netlify.app",
+  "scope": "Read-only HTTP baseline of the existing live site, not validation or deployment of the new branch; no private sign-in or database probe",
+  "version": "v1.02",
+  "pages": [
+    {
+      "page": "game",
+      "status": 200,
+      "title": "Sparkle Valley",
+      "sha256": "722d55cff14a108b2aabafafda72bf44dfd486b1ed15c660045c9107fd8cd876"
+    },
+    {
+      "page": "parent website",
+      "status": 200,
+      "title": "Sparkle Valley | Family website \u00b7 Trang web gia \u0111\u00ecnh",
+      "sha256": "d5293088cca3f5b7161f9c33fb0ac2ff0a62ea96a7cf6592ce2129022ae21485"
+    },
+    {
+      "page": "Studio login",
+      "status": 200,
+      "title": "Sparkle Studio",
+      "sha256": "493bc505a506af2141231454012f7d617da69dfbd0b4a31402f1dedea28f1ea2"
+    }
+  ],
+  "buildScriptStatus": 200
+}

@@ -79,6 +79,9 @@ export async function hello(S, body, now = Date.now(), where: { city?: string, r
     const current=d.started?d.started>=(o.sessionStarted||0):!o.sessionStarted||rank(d.build)>=rank(o.build);
     Object.assign(o, {last:today,first:first<(o.first||first)?first:(o.first||first)});
     if(current)Object.assign(o,{kind:d.kind,app:d.app,os:d.os,br:d.br,sc:d.sc||o.sc||'',build:d.build,lang:d.lang,kids:d.kids,fh:d.fh||'',sessionStarted:d.started||o.sessionStarted||0});
+    // Confirmation is evidence observed at least once, not a claim that an app cannot later be uninstalled.
+    // Keep it independently of the latest session's browser/app context and stale concurrent hellos.
+    if (d.install) { o.installation = o.installation === 'standalone' || d.install === 'standalone' ? 'standalone' : 'native'; o.installationSeen = o.installationSeen || today; }
     if (loc.country || loc.city) o.loc = loc;
     await S.setJSON(k, o); }
   for (const x of d.days) {
@@ -224,7 +227,7 @@ async function details(S, sums: DaySum[], now: number) {
   const powerOf = b => !b || !b[0] ? null : { fps: b[9] ? Math.round(b[1] / b[9]) : null, frameMs: b[1] ? r1(b[2] / b[1]) : null, draws: b[1] ? Math.round(b[3] / b[1]) : null,
     ratio: Math.round(b[4] / b[0]) / 100, mins: b[0], batteryPerHour: b[6] >= 10 ? r1(b[7] / 10 / b[6] * 60) : null, charging: b[8] > b[6], idlePct: Math.round(100 * b[5] / b[0]) };
   const devices = Object.keys({ ...infos, ...devs, ...lives }).map(id => { const I = infos[id] || {}, D: Omit<Dev, 'id'> = devs[id] || { mins: 0, days: 0, tales: 0, kids: {}, errs: 0, stuck: 0, fps: [0, 0, 0] };
-    return { id, label: labels[id] || '', family: I.fh || '', kind: I.kind || '?', os: I.os || '?', br: I.br || '?', screen: I.sc || '', app: !!I.app, build: I.build || '?', lang: I.lang || '?', loc: I.loc || null, first: I.first || '', last: I.last || D.last || '',
+    return { id, label: labels[id] || '', family: I.fh || '', kind: I.kind || '?', os: I.os || '?', br: I.br || '?', screen: I.sc || '', app: !!I.app, installation: I.installation === 'standalone' || I.app ? 'standalone' : I.installation === 'native' ? 'native' : '', installationSeen: I.installationSeen || '', build: I.build || '?', lang: I.lang || '?', loc: I.loc || null, first: I.first || '', last: I.last || D.last || '',
       online: !!(lives[id] && lives[id].on && now - lives[id].at < LIVE_MS), activeVersions:[...new Set(Object.values(lives[id]?.sessions||{}).filter(s=>s.on&&now-s.at<LIVE_MS).map(s=>s.build))],seenAt: lives[id] ? new Date(lives[id].at).toISOString() : '', playingNow: lives[id] && lives[id].on && now - lives[id].at < LIVE_MS ? lives[id].kid || '' : '',
       mins: D.mins, days: D.days, tales: D.tales, errors: D.errs, stuck: D.stuck, fps: fpsOf(D.fps), slowMins: D.fps[2], startup: startupOf(D.starts || []), power: powerOf(D.bat),
       kids: Object.values(D.kids).sort((a, b) => b.mins - a.mins).map(K => ({ ...K, games: Object.entries(K.games).sort((a, b) => b[1][0] - a[1][0]).slice(0, 10).map(([g, v]) => [g, ...v]), places: top(K.places, 8) })) }; })
@@ -259,7 +262,8 @@ async function details(S, sums: DaySum[], now: number) {
   const famEntries = Object.entries(famMap).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
   const famLinked = famEntries.reduce((a, [, ids]) => a + ids.length, 0);
   const families = { count: famEntries.length, linkedDevices: famLinked, devicesPerFamily: famEntries.length ? +(famLinked / famEntries.length).toFixed(1) : 0, list: famEntries.slice(0, 50).map(([fh, ids]) => ({ fh, devices: ids.length, ids })) };
-  return { away30, families, latestBuilds:count(d=>d.build),startup, power, onlineNow: devices.filter(d => d.online).length, hours, places: top(places, 15), devices:devices.slice(0,100), deviceListTotal:devices.length, deviceListLimit:100, os: count(d => d.os), browsers: count(d => d.br), locations: count(d => d.loc ? [d.loc.city, d.loc.region, d.loc.country].filter(Boolean).join(', ') : '?'), problems, tips: tips.slice(0, 20) };
+  const installations = { confirmed: devices.filter(d => !!d.installation).length, lastStandalone: devices.filter(d => d.app).length, unconfirmed: devices.filter(d => !d.installation).length };
+  return { installations, away30, families, latestBuilds:count(d=>d.build),startup, power, onlineNow: devices.filter(d => d.online).length, hours, places: top(places, 15), devices:devices.slice(0,100), deviceListTotal:devices.length, deviceListLimit:100, os: count(d => d.os), browsers: count(d => d.br), locations: count(d => d.loc ? [d.loc.city, d.loc.region, d.loc.country].filter(Boolean).join(', ') : '?'), problems, tips: tips.slice(0, 20) };
 }
 // a name the family gives a device in Studio ("Na's iPad")
 export async function setLabel(S, id, label) { if (!ID.test(id || '')) return false; const l = String(label || '').replace(/[<>\u0000-\u001f]/g, '').trim().slice(0, 40); if (l) await S.set('label/' + id, l); else await S.delete('label/' + id); return true; }

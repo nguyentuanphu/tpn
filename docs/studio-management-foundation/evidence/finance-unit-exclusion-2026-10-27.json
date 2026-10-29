@@ -1,0 +1,9 @@
+{
+  "scope": "Existing conditional unit exclusion, read from the exact tested source; not a new skip",
+  "testedCommit": "35bffe6ad5d8ca757ed60a49be670bca08b38f86",
+  "mapVersion": "D3",
+  "excludedTest": "map: layout 'C' is the valley as it was (round T0 moved nothing)",
+  "source": "tests/unit/map.test.mjs:69",
+  "reason": "The historical C-layout-only assertion is intentionally conditional; current D3 bank-layout assertions remain enabled.",
+  "newSkipIntroduced": false
+}

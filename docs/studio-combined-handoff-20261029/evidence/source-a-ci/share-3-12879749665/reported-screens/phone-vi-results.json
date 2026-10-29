@@ -1,0 +1,1589 @@
+{
+  "sourceCommit": "47782b13f08e67e8647d41614a52f4f0714cc195",
+  "sourceFingerprints": {
+    "css/fonts.css": "39ebbc57389e5483f75d76d5af4df86b10bf64e3533b256c956197b2f7190b3e",
+    "css/style.css": "6786a5fac9cf4592af2dc0c5d6c5065dac7e773c06b4db6036fed83cddb18e1a",
+    "fonts/Baloo2-latin-600.woff2": "26fb4610d4bc976d2584ca15e66c11465dbc1f267a10dca668fcb3080dfe59c1",
+    "fonts/Baloo2-latin-ext-600.woff2": "dfd52ee2e67ff597c9a47238d59adcee2b27d8adf9245e2d53a46dd73db99dde",
+    "fonts/Baloo2-vietnamese-600.woff2": "fb54af34d6ce6b7c4211b20052150a7a01567cfa75818ac9cdd125e056fe861c",
+    "fonts/Fredoka-latin-500.woff2": "99d6c78e043710d4f83ed90716779798b7b04eb690f73e0ad0e8f32d1f0e98c2",
+    "fonts/Fredoka-latin-ext-500.woff2": "18a1723c878c0d8acc2e45a108fd62fbb976e408337804afa2908982fac13e2a",
+    "icons/icon-180.png": "54412f46f11ef1b5435ad9e6266f8b8d93abcb97abec04f8deb907157e0e4a24",
+    "icons/icon-192.png": "3c14897f35e0343222d9d1f68da0edf16bbfb587dacdd9d92ae259a9f3631a94",
+    "icons/icon-512.png": "4c3bc9e7a814a9c17c56c0dbd16e8a4b06a78a62f1e78d27d7de7d0c9fee2048",
+    "icons/launch/launch-1125x2436.png": "1e430c0f9c80333cd49e9294291b730d95526c5d68336e498162daa15962614e",
+    "icons/launch/launch-1136x640.png": "e9a7cc88e47f4f36f539f9cdff1031cbd6126721967d62a11e0335cdaaaa8196",
+    "icons/launch/launch-1170x2532.png": "cc709c4c77cbd3d47a39d01b1e27902ea53bedda49e526aa4d53847eac666c81",
+    "icons/launch/launch-1179x2556.png": "2d7759663943c8c9b86db62c7ed5ed84b2cd5ac0a20be780662dedceff17db87",
+    "icons/launch/launch-1206x2622.png": "52b33fb7dbd796af74e0cca621cca724cd3167c8082dc10ee04ee4213c48e485",
+    "icons/launch/launch-1242x2208.png": "3dbe755ea7a073c364c5136cb56d3e6fb2ff7bf0cd544884b89ac1e5153b967a",
+    "icons/launch/launch-1242x2688.png": "78d8a6278bf1e0e9a74f637308859048953de7d44c166c0828d1fcb2ba08b753",
+    "icons/launch/launch-1284x2778.png": "acc64d6ee7dc929154caaf6d750c1c475f7ac2b33c571c3264c47e901b925f6b",
+    "icons/launch/launch-1290x2796.png": "a60e0ddb87f0fd5204475d880aaa52bb4761582018a92b2412bfb7168d0136cf",
+    "icons/launch/launch-1320x2868.png": "43d927cb811781a6e1d91bdd6aa140efa16cc6a7c5629fe124cd19ba8c7f8d73",
+    "icons/launch/launch-1334x750.png": "3abd7e218fe672ec3bffe77ccd9a3b835c2695686a7e094c71676f3b81d55b1f",
+    "icons/launch/launch-1488x2266.png": "6bee5286bef4ed06e24cb8c06aac9b19bfa0c17e4868cb00acddf976fac5e71b",
+    "icons/launch/launch-1536x2048.png": "dd806f04f86844b7087715beac7f87bd58ef015f3c2bdfeb0dd349bcba37a6d5",
+    "icons/launch/launch-1620x2160.png": "fd31b15a7fd96f88eb271b634178ee298f93a0f6bccdaadf3c8f787219d18d5d",
+    "icons/launch/launch-1640x2360.png": "a3d0da46e4513b920963b107ac3e2515851dcac71da2039cccc19ba79d4d8561",
+    "icons/launch/launch-1668x2224.png": "4aa2f1afddf2a3cc595ebfc762132803619410c3f008cbffeb36582fcc4ba3e9",
+    "icons/launch/launch-1668x2388.png": "88b1e9b77862edc8927241054f6069d81490b26b99dcdb3e9c4a79943a1afc88",
+    "icons/launch/launch-1792x828.png": "daa9d25ea279853bab82efb7890754653d9d4152fc7fae9b0b5cf72c5617431e",
+    "icons/launch/launch-2048x1536.png": "8b6f7a82d83d5ff4f8edd411016b95174b426dcceab1c5b14a5a645c7b8cb422",
+    "icons/launch/launch-2048x2732.png": "c4a9b97f32e6d19094cb3b9c5988c11c407f6d0f294afda562dcec17949da77e",
+    "icons/launch/launch-2160x1620.png": "6351900088e9982091b3c4286f955a7445577053c7d3c37ce6c938f32e127d42",
+    "icons/launch/launch-2208x1242.png": "f8620c86404f619be95dba8798ff07422d0ffb4e1af193f75dc34447dfc6d34c",
+    "icons/launch/launch-2224x1668.png": "9378221d1c3966b9e19afdfc7383d506b4aae1bd2d9e7f7279dfacdb3dee4dd4",
+    "icons/launch/launch-2266x1488.png": "cb0a8136025f3b50c65bca0be3c8af5da49f8ec3ded2c46cabde281147d5e421",
+    "icons/launch/launch-2360x1640.png": "6f3c8cf908b5a9710ff6ec486cc5407b827658184862798981d89bb473d68acd",
+    "icons/launch/launch-2388x1668.png": "aa1fc127acef53448354f643fdd58451ef368754f98c620c29fbfbda494d78f1",
+    "icons/launch/launch-2436x1125.png": "82578969e83dd05912344e10e02dcb7692d3acfd7e4d175c8a6de2074699a32a",
+    "icons/launch/launch-2532x1170.png": "a519539f74a26909d7257b0435bc868157b5f667b4b5088273b31a99715642e9",
+    "icons/launch/launch-2556x1179.png": "86cff2ad72832bb7700a987d4b277ab51119b0775dab00578faf287edbdf21b1",
+    "icons/launch/launch-2622x1206.png": "48a1c23553909ce7808dc6b880b215721720ad6004f6bb08c2178301e1b6f524",
+    "icons/launch/launch-2688x1242.png": "99f12e7e5a85383c60041b78832eac921514bfe321ae55c202376c0a0bbf96eb",
+    "icons/launch/launch-2732x2048.png": "cbe67282a28eab30fe9821a499cb638643aaf494154acbf77057113187eba908",
+    "icons/launch/launch-2778x1284.png": "a662fe9940c92530a8c6f27714098568a516ab5f41839ff9a7a3b1d9de32641e",
+    "icons/launch/launch-2796x1290.png": "a297c1fd4c6c2be2e9dbcb9e5ff3ee2e0321833bc5b52cc828f220b0a57a66fb",
+    "icons/launch/launch-2868x1320.png": "2fa63ecb6a4a44339ec10bedda802ea7810774cae142c0ee74aceeebf81bf508",
+    "icons/launch/launch-640x1136.png": "fcbdaec62765e60309ee64dc111f8c9ded53a780ab90dec338dc49d251412b04",
+    "icons/launch/launch-750x1334.png": "8e80299fafb320d4cfdf73cdbd0b2ec9eeb62bcae54740f579c089234bb9a143",
+    "icons/launch/launch-828x1792.png": "dd38a291e6f9b89b0050311083b8056b79d8877c233f93d87aee6c2580a62c90",
+    "icons/launch/valley-landscape.jpg": "838a67f6371db1db996eadc8055fc370bf0b026561824fe98eb3cefa5ac21ad6",
+    "icons/launch/valley-portrait.jpg": "2dfa6e9d3bcd2a9eacfdc4dc55caeea48c04b420ae58527312f885bc3e8322b3",
+    "index.html": "de81f9d97e112aa509c6b14c1ea59abd29af867741c6cea007246ac7336fbebe",
+    "js/ads.js": "4f19773a7995fb9a2d7594f7bd03ecbc6d80ea52491d74eabe019f5a68cf089b",
+    "js/adventure.ts": "a7b9f5a615603789aefa08eecd1376856a4c3aa5e8521e186fc0b0525ce48fb1",
+    "js/animalhomes.js": "c183cf8d6b6916e584e22d204c347953cc3d6953de500deba13af961389bf14d",
+    "js/animals.js": "8103ab52f80d3a9763a12d819a0de85018d3feab9b42d079a4be98040079f570",
+    "js/art.ts": "c75c671b9a569dc7fcfe53889f65542cd4b34860ccc60f78b97ed834aafab365",
+    "js/asia.js": "93c88940a0f8859969aeefbd39e507927d1835467203976977a527464f7e6e31",
+    "js/audio.ts": "761e5be9d1e7b644d4c0660aeea15335dc0b656d6adbcf8f30d04e03049b1fa8",
+    "js/autoplay.ts": "e591580d606fc2acecb12e25a5ca1cdb58b578a8c3361b957fea3edc6259d648",
+    "js/avatar.ts": "001122bd119cf7146554e393d7daf16fcc5dc22e6dc67609e6b5c2b80573e5ec",
+    "js/boxes.js": "5965f38ea4df6229d409fd856f130e43dedb929893b4f1f594b4d6d871d890a5",
+    "js/build.ts": "3d10fa3a7f19e27753628d185324f7378e23a93d7e5db915c28d6c1207e2177d",
+    "js/cartoon.js": "42662eef606f97b802c3c126b7d3d6f3f058e76700ad6068dfe950cdba69a230",
+    "js/chat-player.ts": "8c10674ecf590bfbada0c5e127967961211e97dc05fe7fd58e107ec8797a9d85",
+    "js/chat.ts": "2339ad7800ed4c10a4f441d335cd7aa5629141ea97e1ea108bdac9d3ab1fdefa",
+    "js/chatter.js": "0ca3d9c821ed68ea7c35ae1e3c426929e7502c5d1e5adaf9821f4abe8f2bfb7b",
+    "js/chipinfo.js": "68febbd0b945ccc6a881466897586d7e0206e4b00aba967c7821f20a7baecd7a",
+    "js/cities.js": "d854ad2a50c85359735ab513e0243c8299ee46001af9106fd7a20dc1c23ec4df",
+    "js/claims.ts": "02f7d047b03b0a45b40bb8e9b1cc2e29fd77aab0734f0fa3c9807699f99ff938",
+    "js/commands.js": "9e5bbfd3e284edeb50d61addfa62cd128a4a539edbe4c8df07e809bd61b9370a",
+    "js/companion.js": "397cb096738b21e27d35e57770d19fb2740ced653a14a9898975d0ca0a815630",
+    "js/content/activities.ts": "43d029d53386648aaeb79065a2793a4ed93a63a73471008c61133ffc146f7fc7",
+    "js/content/adventures.js": "3ab415db49621dc88edbd332bdae143ba04f65c5cf72a5d617c4adfc54d5bd46",
+    "js/content/autoplay.ts": "069d7a406c8b180235f8c3cfeedaf9df561b7e78d1e8e60e3aad95802c0dfb49",
+    "js/content/boxes.js": "8ba05587afeef4b5d7cf132a052f2ff2933b362564044fef0ef495356a7882f8",
+    "js/content/build-types.ts": "116e56b550b75cb1768abe56cb28712cd4153fe7d71a5ff7898d1e0c36232446",
+    "js/content/chapter2films.js": "9cd4b086b963e00bf9651769b3ba44525cace9c4744c8e8aa48d01146fac9d09",
+    "js/content/chapter2hanoi.ts": "38f6c0a6faf83407191efbc3a1dd8856f94e12db8d1f87f8ec57e16fa44c42f0",
+    "js/content/chapter2props.js": "9f1fccee6e1af68a3da91b9e4afc26e6576d7e710e018abffd470058b741183f",
+    "js/content/chapter2text.ts": "fe71f6b067aaff40160c0b66d3ca93477a2b6e420ba36c7e5d11c722394a9703",
+    "js/content/chapter3films.js": "9f74974399eeaf9677dba4438b9844f89514947419d21334058d73bf656ba5d9",
+    "js/content/chapter3props.js": "3ef4a9b0545ecd65ce0c4d327b04beec9ccc7b31ada09192cce584d57edaaec6",
+    "js/content/chapter3sydney.js": "4a61fb2ba91f979e00d399d9746243bcf551f2ba334a30dd85ee75a28d4f0a4e",
+    "js/content/chapter3text.js": "4bbc022d4385b7c482b8a34e125baa090d85e5d2fcadb6e18a3710bbe49ceeec",
+    "js/content/chapters.ts": "888d9fabb9356668be7d5ff05daaf9b39e708b416db702a0025fd687269f5946",
+    "js/content/devname.js": "f9e05df0e04b52da074c8b8bab8b1bc31eff734cbbb3ba85942409e58c72c611",
+    "js/content/family-quiz.ts": "8caa92ee6da672ad1cc437c028e611cc9c40258249ac8149cd46abe947e423ab",
+    "js/content/familycode.ts": "c26f82b9caedd2f61295e4cc060db26ac7b6819a074b26105a2dfaf652dd938a",
+    "js/content/familymissions.js": "234beed82e14be8a59ee42dcbf26ba4474c637812a4b6851705f9d68183e5991",
+    "js/content/festcal.js": "2ab41190fd6e431e040722a70a958adb3c99aaf0c0eeb3c5b41f95ace4109faa",
+    "js/content/festhunt.js": "1c153b957a12c24534e726330489bf42735e8c1bed2a3a53f13e1cff8828573e",
+    "js/content/festival-visibility.ts": "6ae3fd22791a4e610377024f595865ec2777e6c40bc9bad7ef988b31a2a11d9a",
+    "js/content/film-looks.js": "8ae21d3fcd0ad0f801f56e6ec10dc5e53e5accd8e9f966dbadc6687c60d1e0c7",
+    "js/content/films.js": "b667864d2d8a8a91ac47f065c3793aecb2a7eb602a1a0892e1595202bea45d9a",
+    "js/content/films/baluoiriu.js": "2432f6dcbc05060554d0ac03a6be3114865f8585dab395f90fa6900a6d6e4713",
+    "js/content/films/birdcolours.js": "4acc6e7c54ce59f9af1239ad135508803cff0cca31894d6c414c910fb10b025d",
+    "js/content/films/bluejackal.js": "8f28519387127b00c6909f1d274e1ca954958b79220b6865c763197917d17b09",
+    "js/content/films/cachep.js": "ddd37f4cc96707664751803ef1052a605266c3e46a805b1f4943fbd85b2ce487",
+    "js/content/films/caytre.js": "6c5606436e599f362437951110e881ee03892de04946b277e578d6c6f94c971a",
+    "js/content/films/change.js": "4605b396631ca4197219e4cb73ea14a754f0af6c8c92ce45f4162ea2bf6dd72f",
+    "js/content/films/chucuoi.js": "f6cb6193e9407295d2abb30040bc6dc2ef63b3e6701ca98364f3d10384a2941c",
+    "js/content/films/cockien.js": "e059ddf4ac9c096e1112c4308e72900e27565cf4d4b4bc51c90aa7e482b1f62e",
+    "js/content/films/crow.js": "27782694d2583265f988786438335a188bd05d96c81f5d0e001f07b525b3691e",
+    "js/content/films/dotkangaroo.js": "cacf7f8b582e24a24a392e912cd14755ef7946d521df9c5f861f0e98f321dfc1",
+    "js/content/films/elephantmice.js": "6bcb2bbad86e92ea0ed922361f6a0c99d5297c5a6155f526192024853a2c25d0",
+    "js/content/films/emu.js": "75261af58874a6d4439e699dda4d3980d632ffffbdb12f4d1559160f2bba4b16",
+    "js/content/films/ganesha.js": "b66a11cd8fcefdbabd92860ea73792f6c3ef61d10d6536574c6b6e8fa24a72be",
+    "js/content/films/greatrace.js": "e787b3811101e68f920ed3082ed8f29908beb07185e7377e4e2e0d348041a2ac",
+    "js/content/films/kit.js": "ef7d0183c45be8a82e2e19ca1b9010ea4ca1d12a6ae62deb69d25b90375bdd83",
+    "js/content/films/kongrong.js": "d1a1bd35d5cf76aaebefa529494e6a4bfa1d7db5b6dc5b55a6363ba4339b28ef",
+    "js/content/films/lionrabbit.js": "f0cdb7c3612b81c03be02f756ea8ed20f001539f44abfe9c6d17721a65a9d4de",
+    "js/content/films/magicpudding.js": "95f591b44d214fdd780bb75b78aa27289b0748e306381ca43479d30d75c75522",
+    "js/content/films/maliang.js": "deb3916f51f13515510d473b18c19a45900367dd63a773907bebd502ff2ea99a",
+    "js/content/films/monkey.js": "fd9c9fe9fbb3eae77b7208b9fd59f7235bb776df93e3205fa155cb0a447bbd95",
+    "js/content/films/nhacmeo.js": "c43671b600ae045710e71a30ff30158ab57bc4baff69e9d2e87f6754b98a91d2",
+    "js/content/films/nian.js": "6c98a584f6d402e27597b64ca90cf23a1dcd69070142efdb0c956278062ca3d9",
+    "js/content/films/ongtao.js": "ceb6c17bfad5ee3cb7320eaaf139dac4c402e94267aeaedee871f2b662c3fb10",
+    "js/content/films/quabau.js": "31e36442133f28a5406a2b05df39f49cf493591c00725081818f66bc85b278ab",
+    "js/content/films/rainbowserpent.js": "099e9f154c4eabca0b70119559fb7afc71715de63c8b206ce1c1a8a5b2ab99b2",
+    "js/content/films/rongtien.js": "590c91dfab6e65ce63992b40e433ea515736af6265fe78a1c3789e402e1b891d",
+    "js/content/films/sodua.js": "710284a5ded29ff5c2b199c748315c77164579946a9eca25f70bcdf7422bf33c",
+    "js/content/films/sontinh.js": "408e13b69e6d235dece87c6f78df691c7c6efc2ba12239b32ac08c384871968f",
+    "js/content/films/tamcam.js": "129414154422ba8b68f4933121745f6dfe157b0942963b745ddfd5de0b998165",
+    "js/content/films/thachsanh.js": "8e281ac9920b17ecf455d28aad27565a05e642cdc12d6cbe12f96b1e9d183300",
+    "js/content/films/thayboi.js": "12fd60f9d8e175da7af289143320eafae5a4ab22626502fb1a5b5ed575d2f4c7",
+    "js/content/films/tiddalik.js": "457c1a33e93445768f8e553c3cb0be5dfbe7503116e4cb0ae68c74c7a47f2480",
+    "js/content/films/vusua.js": "67d744577ada281f5624eeb03c91ebfd162b570238cdc72dc37f2df8fd3fd664",
+    "js/content/films/weaver.js": "7cd58f39b2d67da5b5f80a692d3c9fcfe27d29d2dfe6d49fbd047499fe6b1a5d",
+    "js/content/fruit-parade.ts": "32141636ff4a6a50b5e557819563c8ed411976f0a2810127da244cad441bdf3c",
+    "js/content/hanoi-pack-info.ts": "6c49b684577098e846504d4a8787cf803136d033ad164270744899a80fb2b574",
+    "js/content/hoilang.js": "e1cd37f392bc8b0406f98414ae5c905381a7229976d63b4355709c11fecff250",
+    "js/content/jobs.js": "caee2257957836881008e1ac42a077e0a6029dceda0537b239014c37fb27983b",
+    "js/content/map.js": "43c60a2aff4160d4ce1cfcda4e6156b256027cbba53c675535a5c1f1b616c7e1",
+    "js/content/owllessons.js": "eb038ad8e3be671df5ce204ea1849f17253e8ec8f3b773f6b45b1a7fbe8ebb00",
+    "js/content/parents.js": "9c5f6d40268835336b03257ae9d412d77258481938a179cfa095e975356d5f54",
+    "js/content/reading.js": "f63d98168e9a688e5bc2b72a0861ea6e0b61ece0f7fa44d8b6607d0c802461d2",
+    "js/content/releases.ts": "533ca99cf9c0fc1b0e7a72ec45c4de312dfd03bf5d71430dc34ce78f37d021da",
+    "js/content/rules.js": "e9bdc87c49b26584bb767b234d64bf8f20164cdde9681969f5b9fe975b3c9564",
+    "js/content/savecopy.ts": "123254e810bf987a638f1d1421b513bc71dd055b1a50509a7dca7532446204de",
+    "js/content/secondset.ts": "2052a77ee27c649b0674477385d13cd488b2a2cc527a0819d9309e9dac314658",
+    "js/content/shop.js": "6b4e21e9e2da995391e9f4b32758ea37acc59be0c0fffde63821b79fe5d51e9a",
+    "js/content/songs.js": "4e2022f4ff5dfff311aa953dece2e345efd224f714613f4b0f375e1a7c6be4d7",
+    "js/content/stickers.js": "9c381964afe08b71cfb039d2f57429d4436d8d9716a316e466714373e4614b55",
+    "js/content/storyhelp.ts": "c53678c9bec856e9647165bf5869a04e0b3b1b42b4267290c058398ca96c2351",
+    "js/content/surprises.js": "0516d5277c8e335e611f7e601e04bc8c0409633f25663a35fbd49692856e1be1",
+    "js/content/talefilms.js": "847dbf5db4083924b182787da7abe63ced02f36331c559d05c69d89a3649e10e",
+    "js/content/tester-arcades.ts": "9a2e0b66ced0056df6319d19e060cf283a63be59f276c21f2fe8b7543df49250",
+    "js/content/tester.js": "cb646451b836c7387d55d95524733b70b751e4cfd10c54021f4841fc73e3a119",
+    "js/content/unlocks.ts": "04fda3b882906c65886661f31ac897c9f46ca77c7eada0159caaa06415495ec4",
+    "js/content/villagerlines.js": "c0dd7baa443369c851e9dbf9511387108cfc281376efda1f1255b5a361d4e21d",
+    "js/content/yard.js": "06c670a951ea35e98993c2d5c55b4b6ed335ea0602663dbb14f5ca892102dc9b",
+    "js/coop.js": "2b90a3c63b6cd68e6c4f17bb19687606ae9ca9f231b4df2d4aa6b14c7524ca51",
+    "js/core/events.ts": "00a2e61b5b8878f4ba2e0dfccbad5a443caf8b8be03161d29eeba1d82a0a08f8",
+    "js/core/geo.ts": "42d818eff69f07c57983116767bc2bfa4b04b4972699de3870cc3917affb91dc",
+    "js/core/ids.ts": "8efa8296e5d471a7f938c35964908b0c645ff3caf861641ffddf5f087e34200f",
+    "js/core/reporting-policy.ts": "977e8c61175cf8140053517af23e962aa0ef7cf98af50c582cbe6554cbf1a74b",
+    "js/core/rng.ts": "641570d444828b1fb6518721abdb3e72be48d8805d5d39c9a2b4c31e4c8c75bc",
+    "js/credits.js": "a362c13700a0cf584b556c6600e6036a5d7ca769898e7162db01b81f730e2485",
+    "js/custom.ts": "ba6628a43589f65da540afa5a82e990d54fc057332eb2d4f54b8e1780a49d9e9",
+    "js/data.js": "ab280b93ae1ca2f458f7e1526d615b777423cb42a47bc93a0fb8a35cefb369a5",
+    "js/dayplan.js": "bc612a39bcb8769cdb4b2486bcebc9e3058d5a2261b12020155e86068ac3dcd1",
+    "js/dinh.js": "d2acc294210bbddc1e18a70b52ece64ca1848b0184eb883e5375fbcea42db13d",
+    "js/emojiswap.js": "46c7bdcd17a9a9ba623d29df68b969cb40c2e73d9951f9a3a796c8aebd65f530",
+    "js/explain.js": "d8d1c18bc2a87d8f3380ca8cb4a23bdd18d2305944e7a4d068ab0fc9310f70c0",
+    "js/extras.ts": "a16fae4d0a6243ae5edd3fdcb025280c7fa731ab9b614c193fe25ae70bc7dabf",
+    "js/family-backup.ts": "687ed7f6b21998e68d88a334ef298d035a63acd522c507146a3b46466c1596b0",
+    "js/family-quiz-editor.ts": "63945049dc53187045cc231eb3cc54ebc88df26aa472d15d67cd3adf4192850a",
+    "js/family-quiz-store.ts": "492980e7dd733b844b73e099356d3e7c0d05f396f08dda5e502b6e562127704a",
+    "js/familycards.js": "b4809e0663a7064b36d1c71e6074a451e9d446a55bd43d8c7770a6e8cd53037c",
+    "js/familydevices.ts": "a1a392137cb80c63162bbc81f07b4ddb4d6df44b3eed74042cd72aada93cb83a",
+    "js/farm.js": "a514e903190b9042693d3198123a57b9341f51e36fd5036c62b92b4e712eb832",
+    "js/feel.js": "b3e9e64d1c8724d8f499f4303481d7b6dc5197a03a6e9e54355387ee80d5498d",
+    "js/ferry.js": "74359eaf3b5e3634780205eee9311401391668f86dd886120e1f0cb9a23e0119",
+    "js/festdecor.js": "518e4a4f445c2f8557f090032bb732369f515f02fe6ec9d0569d4ddfd3d056d4",
+    "js/festhunt.js": "f0e2044f072171b78161ae4e50f952ba18cb70f5fcd0f3449b17c4400225c583",
+    "js/festival-live.ts": "8fe68b2cbe0c8397e5c4eee896d8fe49ab5f773d67c54e0091d219068416e9b9",
+    "js/festivals.ts": "edbdb762e87d76ed4db8e0695a99db06df8cb1a83aa2b22bade0ceb213895d76",
+    "js/film.ts": "479010c20b49f49f183647ad2dcf838ee90e6c3a4080549f69ab31f0554ba8bb",
+    "js/folkshow.js": "ae4259dcb5b465ad60426a691ddc403abbd8d063edf1d8be5a465c7d6ee0d755",
+    "js/fun.js": "7ee20fbe83822207dc9b2e180c10e4db939b3e3fa556a04ba05b30951f7a1712",
+    "js/games/all.ts": "f2fcadf44c9ea7d90aa4058dc60332b7d87c0142ecdf970702da89997222bda8",
+    "js/games/animals2.ts": "5fe15de1c7d808f4bdc21ec2054ca53b4bb696332d77b8f0e89bb270034c419b",
+    "js/games/arcade-board.ts": "945a6e90cf75bbc59da757bdc9aab280b83ae1dde6ee0bdd118c11a935546476",
+    "js/games/arcade-session.ts": "b737212e38831d2dc24eb3a4beca2b2573b4cdc59e598606d4438928bc9c42c3",
+    "js/games/asia.ts": "3e957ad7334ecb049668bb85eea2812d9aa69025eb4e1623fa2acc79e3656089",
+    "js/games/bigthinkers.ts": "96892f28bc69dc2ca71b043073dad013e8af868975567ac0374799254a5ded84",
+    "js/games/bigthinkers2.ts": "1d43c2a0f7ce731485e5224d71e0eb8b1460ce086b1b1523c7eabe10ce00d20d",
+    "js/games/board-agreement.ts": "ffcc42085b5f6223fd7040cf56a11c4c23d2584dba1220de1bc557d830089020",
+    "js/games/cacuangua-core.ts": "61e839709062a01a80404f0b5689f91df8a18ec8fe751ef8d208338b9da9b6cb",
+    "js/games/cacuangua.ts": "e3bfe2b37aab33b989cb5e0d203f2f716e84cf71f0e64053244fbac611a9a14e",
+    "js/games/catalog.ts": "7df24cc837d9691f880ee83d3e3e88fb4fa1821ad693c213b29bf58bf61fb004",
+    "js/games/cities.ts": "426b34e8f21e45cef4833adf8740b13d2b88a3910f842bd5c7d7f448d23e4558",
+    "js/games/crafts.ts": "71f38c655bfb9c4e6c596a033a23a7b7e08085fd97347b92d71e3e0b7115bb31",
+    "js/games/drawing.ts": "0786853f024f390e4fd1e4a35fb3f7d2b9ba7c44f90493f4df26c3232b82959a",
+    "js/games/drawing2.ts": "bb6ba0eaf2bd22452d997e27655ac502dab1dc0a431b716d82bf4866af258828",
+    "js/games/drawshape.ts": "5f9e50b74d310d5f96d8af27b2505c92fda54f2ce0244be4aba1325b82b1f753",
+    "js/games/familyquiz-core.ts": "9062f167b9e102532fa6d5c0b77df3822f9ea4dc98d0cf60546957d5e74c16b6",
+    "js/games/familyquiz.ts": "a74756fe2a6f813e6964645f323a814a5ef63cb77315cf5b727fe5aad27d7b0a",
+    "js/games/farmgames.ts": "a73c91f4b60fa0ff40696ce7143dce7243581dbcbf18f25907eed342d4c6174c",
+    "js/games/folk-court-rules.ts": "f0cd68d627d361c3c3c57c9972c7e34839f16942459d5af7a512bf84e5064f17",
+    "js/games/folk-court.ts": "991ac83eac160f768a68fddf6a0c5224fbc537cb81d1cc8ee45d09acf6accdf0",
+    "js/games/folk.ts": "587a8d07234c8e41ae783556616c91f72af29e90926225a827b156093039260b",
+    "js/games/folk2.ts": "f97ab276bd85e94eecf4eb88dd5cb6577eb2551f26816312ab817e6bb14ef9f3",
+    "js/games/frame.ts": "8857a0d7f4ababf1d452105b11f846502de8cd31da24a4e941ca550d2796b151",
+    "js/games/fruitbar-engine.ts": "2bddae71b41d384893381935e60e64deb3ac6a3f5e474f31d33b499f4f99841e",
+    "js/games/fruitparade-core.ts": "a0c92ca82e4dfaf27e7ed671c11839adc50dd5f01740e7f58beae0a480c2bde6",
+    "js/games/fruitparade-engine.ts": "703836396809feb7a46b176ca84036ee18c7cb7bbd10e217dbde824f9cd19430",
+    "js/games/fruitparade-input.ts": "4a288b9cbb1225f29655166cd93bacced0832df1a1d1fc8c9475287e4ab11ccd",
+    "js/games/fruitparade-session.ts": "5675b03cedcffade83fd90d40ec54d4f62a69769882049d0310b02615e551314",
+    "js/games/fruitparade-style.ts": "fa4b0f564645b8aa3bc49a1821b26c4be6496da452b5fbc5fee65f181d2173c7",
+    "js/games/fruitparade.ts": "2ca93b3ad5e575f4ce3241b65bb2cca37ce78f39cff6207a171f9e9740a81011",
+    "js/games/horse-session.ts": "b1751665b6bc52d596d66ea5c4aea95173e0494a5c1c9e7786de1043373b13ea",
+    "js/games/learning-meta.ts": "e2ff12cc6123f4b656884b74e5208dee6006fc2367297872b1ce2502fd682f90",
+    "js/games/learning.ts": "202a1e1627e5e0771b4365d3dd8e49ac028d4739a3e4c72c5585dd39c6a40b68",
+    "js/games/market.ts": "84851224406dd426d5f261349d75db7d756f442d38fd8ded926770035c45858f",
+    "js/games/me2.ts": "3b0a407179d4bcbb7dd0ce1c944827da851da9045f326fcefc06a7eab81af7a5",
+    "js/games/money.ts": "fa480cdf8cdca76fef08b0ae930caf18192f9809e4107ec4ff2eecef32ded590",
+    "js/games/money2.ts": "6f912f0a57527e55a6767bc03982331b88998fc337cdd85c74a4af1d32fce225",
+    "js/games/moneylogic.ts": "7f0f8aa0a86faa07c26f5c61d21011764ed9060f8e415ec32a3b4a9428ea94b7",
+    "js/games/more.ts": "7ef879ccb1600a3d13682b84358bb839583933d85bc1598c93ef8d7686f59131",
+    "js/games/multiplayer-foundations.ts": "a58cc69ca86ab24af90789cd7b16ad9c8f8bb734341732c259e52a72c5188880",
+    "js/games/music.ts": "b63c380d724870e2423bf7b27dda0114640361e99b026d80829ac589a4bcfbcb",
+    "js/games/music2.ts": "59f313b6a35d7a798cc564ef7bcd7a120b38b98dd937acc4545f22e34102ad16",
+    "js/games/nature2.ts": "5e40d73d2c9fc51bdf15b4d22e3dcee49176116e5c5c19d2aef9d210f4841bc2",
+    "js/games/numbers2.ts": "34a563524b4eb3e56f533881f3a60b171aad859d968a64e6cdb83eb8c49aec9f",
+    "js/games/oanquan-core.ts": "b2a88a345a5af81c2b5c275e6cad7de258c9fcd2078b5ccb8de81edf2a9f9b38",
+    "js/games/oanquan-online.ts": "29df7eb0e4d5f2ce2a378a7acae5cbb651783ccd4e39dad323843f60eb243ef5",
+    "js/games/outside.ts": "6a90b9f57f84345849d54f5b0a7e50e34074caa097173fbeaa7bf14529e23e4e",
+    "js/games/parade-engine.ts": "59feb36c502b5c5b0cd39b4c004ad20a3fab9668d47d9f3fdd25a34dea62ac1e",
+    "js/games/pending-vietnam.ts": "d2b8b8caa7adcc4710d464eb1bdce13fc6cf94794bce2c62602d9b00f83e9474",
+    "js/games/places2.ts": "ade2bf4731cf2eb585028067b5221791a9ee58198ce4506073f1959e599a9d52",
+    "js/games/playwatch.ts": "ecae933fe8f2fb7eedfd336aeb7358d8d2d05230a32903e1a45f3e76ccee9299",
+    "js/games/reading.ts": "f5786fae4c9ae7351caf19fea0dd1fa71140b7bae8a99aa0620e29e44e94316f",
+    "js/games/reading2.ts": "27cd784168ab5d3ece7cca8f6aa4ad5b6ab0b41fca6dbe0ae93e74e0ea1dc6c8",
+    "js/games/readingmenu.ts": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
+    "js/games/registry.ts": "38ae95e3f2ceda249db7aec7774565a291cd4b50c269579af5e9fbd1ad287bd2",
+    "js/games/shapes2.ts": "ff42dc3cbb629ada7ad22f39b3c66c5a3517f1699a5b4963268be5e1288297f3",
+    "js/games/shared-board-session.ts": "ff29e9f1effe2af5a976b74e32f8cf2198a0f89c4c752866be3e55ac2b177c1c",
+    "js/games/snakes-core.ts": "c470a7174cc32569a6b054fc11713ff614ffcb68e93cb56dda5d4873fa790e93",
+    "js/games/snakes.ts": "87a0ef5c09837f82e29d2ccf534f0d4afe9e3c11e0a1f072a75871917da99a61",
+    "js/games/sparklefruitbar.ts": "1a708e7675bb7c58913676db48303bbd7c35f66d84c91c83d35d9ce094522251",
+    "js/games/sparkleorchard.ts": "573bcf964fd2ca903eae72d47a7f7d8b717285a9d0184c5cb395a192db2e85d0",
+    "js/games/storyhelp.ts": "92f00b976d725b328405229b0a1e128fb608f87d31590d8ea9b853df2708f62f",
+    "js/games/strategy.ts": "3841021759a3c4ff7623a71c3bca223474a7bf2312d88fbc53ebcacdb83d3a3f",
+    "js/games/talkgames.ts": "57e5436e9d6946f5b45aa8c52ce153a6b30c7e328781ad90d5205f391b8d6775",
+    "js/games/thinking.ts": "2604c8f8a3e6172aad1b6eb4851f8f583973b4b91b2dad86b98c470579f4c576",
+    "js/games/thinking2.ts": "3b9a714a103e4e1d6748054ba01108b34eb74b6d2380c6b870abe6f0c8287fd7",
+    "js/games/tienlen.ts": "e61c684a71479840d2769709c85d5101527b068dd1e29494f8c9a431383f6fe9",
+    "js/games/tienlenrules.ts": "a39bb321e845eff1f0b912d77b738466a74a37ab7295eebbbbc6b14b0fbcbd02",
+    "js/games/trongnu-rules.ts": "f7b760013c1a2661d2db1f767a029b07c6344fc9d6b33eff2e210404ffa24d27",
+    "js/games/trongnu.ts": "9130b86018778c848286ac0e712822146f15eeed552ff100cc038d3fbe2c7316",
+    "js/games/tug-core.ts": "f0c7c03b78d0d61f068ec47d8720feba713fe588ef13edc0b7849063bcc3e7ef",
+    "js/games/tug-online.ts": "fea77c92696956435cf8c670ee71f922178a483521f832b14cb7f99cd4596bcd",
+    "js/games/tug-session.ts": "5e5eb9110a09416c56db2cc5bc1f68e9fb632314b53f832a4cd7aa12dd50adb4",
+    "js/games/vietnam.ts": "9fcbc46f7feb2ffd40c6db6f9f90b7092be87e01f1fe5396c67d33a0ef366b86",
+    "js/games/vietnam2.ts": "770df0f9339880054cd7414889f53e87fd81ac415b571c23be34ccc92179cd69",
+    "js/games/words2.ts": "bcc4039ba808c7673050410ebac21146b4e1eb29b55620e07f37a6d929fa6995",
+    "js/gather.js": "8b0426e554f3bed8ffa38b9d2bb1ad7a8f4e9f7cbcb7d518eb9d458bf9af9fa0",
+    "js/gfx.js": "cde6d879c648e822513e41b57c0fbda67cc4734536b3c3fb86af57d19640560c",
+    "js/handpad.js": "c72139e3ea7058fa6496e7e0c2077429efcd7101cfc1093414e3b84fd795dd5a",
+    "js/hanoi-pack.ts": "dbf7caae57d0a63310469fd831cf8b5ea1df58c318035e0fcadf40f9fee7968f",
+    "js/hawkers.js": "6c5b31678113965ce0aac8c465337f3288c13d726f5cfdbd1d57b732c791c975",
+    "js/heritage.js": "ce049b4b81460c0b08ccf0d40d353abea6892e9c5571b4eec25ae6e867bb317f",
+    "js/hoilang.js": "95148fe5e7c93d4361c76fd56508be78bdee16b09c5ca76404dfb208e5662cc1",
+    "js/homes.js": "c39aee5861d1ad484a11de7038492b86a2600ae36494b5ec6b3c138d7e36c32e",
+    "js/houses.js": "39be87f1bd0f64507ab0b7ac690ce4afc9e77b3f46849e0fffdd091e64717427",
+    "js/howto-data.ts": "091b834ef1808d5e9f62c5beff422ebc51bac2690f665ab3e961bf641bc3d252",
+    "js/howto-player.ts": "c518bb74304684473d940c341156e5731c72d65a582779e7ac856c8896eed7e5",
+    "js/howto-registry.ts": "28cff10708159b549245e7eecc24ae32d918e7a00206133ee77fe5d7a1811a35",
+    "js/howto.ts": "8f53dcdf79d56459ce9e51db022555973b51542efee55dea855e3634ef5e852b",
+    "js/hud.ts": "b2e03365f43db62a043e519af76e5efb2a67c3046f56340cf8d5e3c7c154ee55",
+    "js/i18n.js": "65ba29a70e189aa374136fdb35e2dc81e6d5d5abd70c85287720fa3ea389ea08",
+    "js/icons.js": "59f5aa0182743f434936d936a5508c5038f55a8a8bf6a376df7f7f0223e9b4f7",
+    "js/input.js": "c83eee55535f3efad4bcd5034b738722043024628a5356584d47dda0d001bc02",
+    "js/install.ts": "ae2b470a67b0b39116dd938a753a3a58369c1a2c4464d3aef923bc659ebe9659",
+    "js/jobs.js": "aa901d522b02e72847bc24d663e89db3013aef87eb3a9c6937693958beb10cc5",
+    "js/keepcopy.ts": "9e7d93f733b3e680e0a32034850297d15c3ff34f21220f29c82d951db09fbc7b",
+    "js/kidplay.js": "a8b1e3b942879c6eac3136dabfdf5857f5d89b5d7b787d534eb52df5805b0ba5",
+    "js/kite.js": "ecbaa6f6b05ee8c1e6dd278328cb46507d36eaab4cdf0186df6cef2eb2a82622",
+    "js/lanterns.ts": "b8e4df1d6b01f95612e99129a82893d733d03eb50da95648bce058862f0bb9c4",
+    "js/launch.js": "e33c7c4a088ae42f087d2dde070ad4b4e49c6b2d4d4630681118f1b7197bc996",
+    "js/learn.ts": "6e8d0e6be3db2369a0667fb4b62d084f452cc732f5dafab7df881c3af07110c8",
+    "js/listen.js": "0ea9c872a54bd7c3c1b543e13211e9072026a715395688d3fe7f8b677f7998df",
+    "js/lotus.ts": "6e054e266932e852e04b814ec94438253b2a9e123236edc50d258adef993b55d",
+    "js/lunar.js": "b0a06ef1f507bb223d98f02d13bf403dc96df3c0a7f5b3dd721da8c20a2e8fd4",
+    "js/main.ts": "b03bc7f26e4fa849cbecd3b27f557ea79e9ce22288cecab75b4bd9fc664adbae",
+    "js/management-telemetry.ts": "66901de7079401724b1dbc91d757a594b66930d3d2e65fe01debd5f6dc22135e",
+    "js/mictest.ts": "a9077445f206b91df1afb3a708d799b70639fb6a556ce9a61dbbe4be6d4213b3",
+    "js/money.js": "0798ea7ee44d749bef4be70eaa68c8367af12443cb0c49c30a1fc6dad0851c4b",
+    "js/myhouse.js": "48c419e06483f58cabbcd3f3a7a729c9f55de152fac18c0cc8a82a52fae73a75",
+    "js/nametags.js": "7996c40847cc3f8c67f96b30e15accecc852740c6f12032261aec1b4fbb86b27",
+    "js/net.ts": "872fa645fdc0bb32cc554dce62d6b598ff33346b4a0f3eecab1e0e8435e16063",
+    "js/netgames.ts": "2d9f073c3553505cd316c38c0b0a92240b86c7c5d89ba3e5536b3bc25b7ce778",
+    "js/netmsg.ts": "c9fa4807dbd8fe7fbefda457f8ee3eacbef576a66a34de48bc21d0a09b03a199",
+    "js/openspot.js": "dd961f8417e63a82e839a27ad546665021cf6631ed8a7c7e0c582e03e3ea3148",
+    "js/owlguide.js": "733a0927cfb66e7777f9f1ac12f4466fd5e0235bebaf4d62b0bc1f392a1c6e60",
+    "js/package.json": "5a065fe7d8eab2a582f428e11c2ea63aaf70607a54f69cfd5c711b5c53d91b32",
+    "js/packbar.ts": "12ebb810183c21ffb53ed4fb6e7949393d68ad8c7e6b5b09ddd2ceeee7195c23",
+    "js/packhash.ts": "881eb77862278ec8eadfae8aec231a643309dc6438c1df41404cb6679258351a",
+    "js/parents.ts": "33fbd0af74af554f70f2a0f44d386b4c5365a7d33b83e62f4d46d7c578729448",
+    "js/passport.js": "aa50ca75189ba538aa732d3c71ea93b32e0129213aff749f7b7d44dd5afbecc9",
+    "js/pets.js": "b70f3c443ede551574c1f869e951d6f6c502c5cb6d0e45bd4734d973ab9bd6c9",
+    "js/photos.js": "64a578b9525ed3482d29688000942f2eb2fa732394bf9f94ca20d3c01bb7106f",
+    "js/placebook.js": "f873430522b27ff0a8ff7cf73779b480ceb3ff88ba0c89918ccc2174c3369355",
+    "js/places.js": "37b31303daef5108f0f5efc1ce226cacff34fbed0f99afb199b46bc3b4e78d45",
+    "js/player.ts": "e3954c63450d74a14ecab02067e137d321eee630cbd360d862a29d6a5241200e",
+    "js/players.ts": "f0102880a62f6e9fc3399919be96860aa927a051d18b40b233f91802156a23d0",
+    "js/plots.ts": "20de8ddb2d709153d9ae63684f25e494ad3333fb908a77fc0f3270562fd1da6e",
+    "js/popups.ts": "c9d9d03664ed4ed27b9600553a43b16d2aaabb081d120732ac29555d8e9e7aa1",
+    "js/powerlines.js": "c3395e219a22161eef37819b7b8382bce6ec7d249098fce504cd6ac34d22554d",
+    "js/pricetags.js": "deba789021062a6059e8aeac69516184e9bac8537a2a255979ec1fb31264c229",
+    "js/printpage.ts": "a8eca40437433ee06c1cf9ca470d7590d2578fba0ed94000f150de8d03007f7c",
+    "js/realworld.js": "d3a0f1f3ad970fa4eae48b385069b4db3cd4ddecfecca9896394efbd4c87c68f",
+    "js/recorder.ts": "c68777e9cc9e04adbcf69bb2fd0b3ec4e0c9adc5220bd104f01a46012dd723a9",
+    "js/reeds.js": "c322e288d1dd8476e00e555cca717a159758d89a17e55dfb4331afb813f21eeb",
+    "js/regions.js": "87e8ce7df73f291ce578f5561d59177cbf7ccf091f69999688015eeef8111e5b",
+    "js/regionsites.js": "412f4bc3957ea41c76581312538a38a099731983a50cd9c213e14e21b5c519bd",
+    "js/relay.ts": "8c6354d087e5e105f80b0e91d0763fa0859ffde870bef88c8fa0679c73079711",
+    "js/report-outbox.ts": "14065f9de663366efead6dadebbaaeabc6a0903d7b799f70c060f83c316b7c49",
+    "js/report.ts": "aa186e416f0859fdd5fd5b90da710ea1927e324af5bd87e97211f94099fcf6b0",
+    "js/rideview.ts": "2a9887b34175bdadf8846c344f2466b5bf618740caaad9b133c3a8d6ea5d82aa",
+    "js/roads.ts": "cc1683b7d537abac53c965366fae47b4739e6f9f475c864bf6a679e42469b25f",
+    "js/roomcode.ts": "158290dafd1722adb20ec66fb3ebd51fff8f8e988c4ca4647cef48e70209e5f8",
+    "js/screencapture.ts": "34a7016664ee3843a6c9c38cbb66ed993be6f55cc7604fa7c3ba36273c8949da",
+    "js/scrollhelp.js": "df3f1eb8aad80a17e97532fc8fd913d0287fad07c40d6e897c5927bd02ecf299",
+    "js/secrets.js": "4ae801bf7026dd37939a4826ae872073e51e178614816df0173c634fb250d2b2",
+    "js/seethrough.ts": "1a86abe85e3a919a8105fb3e59c7a4ffaee84e88971288dea9f425df0881c3ce",
+    "js/shop.ts": "2cf9ef420e9f3340ad3a43268d3ebcfb50f7017a0cc44b677dbe058730f3320c",
+    "js/showcase.js": "06b0783dfcaf39b72a892195ef3d6d729c74b807617ff1b216cbe2a1b72d220a",
+    "js/signposts.js": "d61c3c6c1c53d7d63a4aa49926ae61b8f5516c18b3db4f2910b5bab13f0164b9",
+    "js/simple.ts": "6fc44b5af9716e8818e0de0a10eb7d2b279ebc0bb9e2aefaf83cad14af5b1412",
+    "js/snacks.js": "758925aa12a5561b58342b35c3ff1c970023678d347a837c1f3dcf213c1b6beb",
+    "js/solids.ts": "51eabb28f737da2dc4def421d64e33aa0c3e29d03a80b068733e23f2dbafceec",
+    "js/songs.js": "8765af033fe7e34b3722381669cf5e7dec1469e5a93418b2aea2a433c52716df",
+    "js/soundsheet.js": "3d5c111ec670dab792e0ab84437c92daa0333ca45535ab669b65ba86573c1883",
+    "js/state.ts": "b1778ae0cc756cbebd8b65511a54bbcb55b9c2faf9bcbdd6007663148b444511",
+    "js/stickerfx.js": "d459398c78235740b304a0cbe69a2d42dca83f191efe584eee7fd23756521561",
+    "js/stickers.js": "80d689a024d78ee1228da86f414ade199de1c2452d32d3e7078f5fd88b708bcf",
+    "js/story.js": "f8e30704968ff04568ac5b18d0128a634de6186658c8ae604c26eec1a7bb419a",
+    "js/studio-position.ts": "a9ff6ee00d22586ab61e7f5716836376bef2c0827a9f76742807a0397bebc273",
+    "js/suburbs.js": "fb8c42a66d64d76b1e5599d5ae5ea67f60f883c7e9c814c9e434e2bc18f0db29",
+    "js/surprises.js": "a72c65cee15551a8a35f0b3a63853625b16b63c9d3e94eee80644703a1b49335",
+    "js/symbols.js": "1523080e4f1b759fc13dac501f5d3081479a7c80c375366e3e022fccf0a9d4d0",
+    "js/tale-loader.ts": "cfff0e1f9801825a37f985dffba5ba9faca5b396cd72ecc9faec98617f1b597f",
+    "js/tales-content.ts": "f88ae16dbdb2f57d38deb2b79374771efd06fd8c134b7b85c57364c5fd7dce6e",
+    "js/tales.ts": "c26b0297e8dcb015e306768b45960c125370ee363ec50d1cf12be97cbc95980f",
+    "js/talesdata.ts": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
+    "js/tester-detection.ts": "636c423c25aca3ae705f0afca1fd753f6bb7c6c62d18be97ea0c4656ae36b09a",
+    "js/tester-float.ts": "7cae0f4a6b870cf07684969c23b95c416926839520cb75fa0197a80013b30b93",
+    "js/tester.ts": "33d2f8e1ba0df859c74dfb7821449077e07c39452cbd64ec7ba1f4bfaf6f7758",
+    "js/testergate.js": "b57d0fbaa268c5b48e5727e141993b5cfb219b1e6ae55cafa52e3e39ee2003d6",
+    "js/testerrewards.ts": "fac426abef393dffa2981028d8d3e5841dad591569db5afe164f9fdc78e25f00",
+    "js/town.js": "93e24b0e59af00cd07febb07c36514d95077b5c88d02e73f4d731a3e242179aa",
+    "js/trade.ts": "61bc7491b6d78f19aa8299cdefff6e75eac580bea9140d6ce3f8cb3b6e760384",
+    "js/traffic.ts": "04c933ef1d9aa443cd3d7274344a6c198f8186a7b16c8ab3b279f7f5e3ca2a3c",
+    "js/travel-stops.ts": "479ecc93d74ef33d97ad5cc0ddf85a657ec9b621c61f9b8aadb2006f3c6e097a",
+    "js/twinchests.js": "02cde526f989bed1a06008093e68043765db261051a82002004e19a55ea25d92",
+    "js/ui-settings.ts": "84fe8c057cb803fdec313381d39ceff9739bb84bb86c8a0166636f9e74c8bfc4",
+    "js/ui.ts": "8114aa3231b8d1fea9a53c1a19cf4f8aa8b22aeefe3f206db372cd2c8ad1cbd4",
+    "js/util.js": "8f08270fd03cb8ffa28124e84d4a976ad0488d661ef44ea45834f92cdd205235",
+    "js/validate.js": "b092901173233ce49fb9e474db9732d6be32b9f7bdd8e385055e44b48a898bcd",
+    "js/vehicles.js": "e83a29268979c7c9116735356ea81272e3c2cf8ec64bbdc15eb7de67d9a4d267",
+    "js/vendors.js": "e7cd59135132a7907670c0129caa5b33a5620a6765ecc262cd82c094a070996b",
+    "js/villagertalk.js": "8515bb58ce344e40fd84bd7ba164f6d897704ff2336e224a9770030dc8d37529",
+    "js/viwords.ts": "e625052e66ec45a1cee49c0cbb8df16c9d4fab6326db98a248e383f1093c3895",
+    "js/vnfun.js": "0cd77883b9e0f5e88817a1818c284efafb5b660533c1f81e5b5c3efc0d4f3eb3",
+    "js/voice-fragments.ts": "16c86ec8acb09f81f1714637e956b96d37a4f27c16a15f60a13ab12e552515ba",
+    "js/voice-index.ts": "e12c3263fb179cd3429adabcd5d055254adaefb9ae801b56aa0934d26b9e6b91",
+    "js/voice.ts": "438381395bc4677a57d05b8dc0971cf6ff51a609fa9061c706e3caac5cfda1f0",
+    "js/voicepack.ts": "4b2ccdf60cc3e3d043c99f63fe081c789c4b14540ac24ed2ac616ae0b962d1dd",
+    "js/wayfind.js": "c6dd46304576040c1fc9cd45bcaf9d24ce6ec2d814e4187ff8f7c05562a645f0",
+    "js/weather.js": "9a1bc921600f5cea90d89a7cb1a4e2ef56cd0e82b754f6975a73678cb525f43e",
+    "js/website.ts": "d130dfd62ac7624e34b1b1f8e5f12d41416482e4eaf5631a93e628fa96bbaba7",
+    "js/words.js": "0a831a31f4fc605b59c490d57204e7ad0e0cc33eb41bb3057709ecb655fd1b28",
+    "js/words2.js": "37cd6e20e6add6e58370999071ed91e0df5d1dbf5db8673f3c3f0a94bbe95184",
+    "js/world.ts": "92a5d91c245183b0ad55fbfd0d23c7895e82750bf081dd33f86ec8fb3e0676ff",
+    "js/worldcache.js": "ff71ba85f3b2865138c0af828b921c4f0f0ddfda7125a349f92b90c8f8662081",
+    "js/worldedit.ts": "c49db79dfb3592251efc91f4d841ee8dc39c5f5c22d7058a7a510f8031b3c60e",
+    "js/yard.js": "0ec5354d9071e31d9a8f850f1a672a8f3ed66035454ae66fa01ce2d50cd0b718",
+    "vendor/RoomEnvironment.js": "50d8f22cdde960493b14ec130db62562226233ca45ca859b62306a96c5ad4d9a",
+    "vendor/anthropic-sdk.mjs": "7f586597557bfdaf3bf0b5e05b0073805178878032ce5959acad10399fa57ed3",
+    "vendor/peerjs.min.js": "ad5d8870d1e389914f9cba8d35be313c4327c69ee0a221e482e9bf7621136fe5",
+    "vendor/three.module.d.ts": "adf19067511ff782c561ad92375d2d061c963a3cd2c0e888db4e46ad5881c4fd",
+    "vendor/three.module.js": "3e690ac7d180b0aadf0891bea39eec643e29e2d3e75c99b18689518665f69ba6",
+    "voices/areas.json": "d0971e6d6a451ddfe048dd811d24bc73ff8673a1536c64856f7a6511d305b514",
+    "voices/manifest.json": "3b3718a6675783516fcd1dafefdb8272d5576fc95464bab0169bbc7d57152aee"
+  },
+  "group": "phone-vi",
+  "scope": "Chromium emulation at reported viewports; synthetic tester services; matched controls only, unresolved states explicit; no issue closed",
+  "results": [
+    {
+      "issue": 183,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 208,
+      "y": 56.5,
+      "w": 64,
+      "h": 80,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "7Lễ hội9",
+      "occluder": {
+        "tag": "SPAN",
+        "className": "",
+        "text": "7",
+        "html": "<span><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><rect x=\"6\" y=\"8\" width=\"36\" height=\"34\" rx=\"6\" fill=\"#fff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></rect><path d=\"M6 18h36\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></path><rect x=\"6\" y=\"8\" width=\"36"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 182,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 272,
+      "y": 56.5,
+      "w": 64,
+      "h": 80,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Bạn bè10",
+      "occluder": {
+        "tag": "SPAN",
+        "className": "",
+        "text": "",
+        "html": "<span><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><g class=\"a-ring\" style=\"transform-origin:24px 24px\"><path d=\"M14 6l6 8-4 4c2 5 6 9 11 11l4-4 8 6-3 6c-14 0-28-14-28-28z\" fill=\"#5fd36a\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></path></g><path d=\"M30 8c4 1 8 5 9 9M30 14c2 1 3 2 4 4\" stroke=\"#"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 165,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 14,
+      "y": 56.5,
+      "w": 64,
+      "h": 80,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Bản đồ1",
+      "occluder": {
+        "tag": "SPAN",
+        "className": "",
+        "text": "",
+        "html": "<span><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><path d=\"M5 12l12-5 14 5 12-5v29l-12 5-14-5-12 5z\" fill=\"#a8e6a1\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></path><path d=\"M17 7v29M31 12v29\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\" fill=\"none\"></path>"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 164,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 78,
+      "y": 56.5,
+      "w": 64,
+      "h": 80,
+      "hit": true,
+      "inViewport": true,
+      "className": "on",
+      "label": "Ba lô2",
+      "occluder": {
+        "tag": "SPAN",
+        "className": "",
+        "text": "",
+        "html": "<span><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><path d=\"M15 15c0-6 4-9 9-9s9 3 9 9\" fill=\"none\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></path><g class=\"a-wiggle\" style=\"transform-origin:24px 42px\"><rect x=\"8\" y=\"14\" width=\"32\" height=\"28\" rx=\"10\" fill=\"#ffb347\" stroke=\"#3b2a4f\" stroke-wid"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 155,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 208,
+      "y": 56.5,
+      "w": 64,
+      "h": 80,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "7Lễ hội9",
+      "occluder": {
+        "tag": "SPAN",
+        "className": "",
+        "text": "7",
+        "html": "<span><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><rect x=\"6\" y=\"8\" width=\"36\" height=\"34\" rx=\"6\" fill=\"#fff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></rect><path d=\"M6 18h36\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></path><rect x=\"6\" y=\"8\" width=\"36"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 154,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 272,
+      "y": 56.5,
+      "w": 64,
+      "h": 80,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Bạn bè10",
+      "occluder": {
+        "tag": "SPAN",
+        "className": "",
+        "text": "",
+        "html": "<span><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><g class=\"a-ring\" style=\"transform-origin:24px 24px\"><path d=\"M14 6l6 8-4 4c2 5 6 9 11 11l4-4 8 6-3 6c-14 0-28-14-28-28z\" fill=\"#5fd36a\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></path></g><path d=\"M30 8c4 1 8 5 9 9M30 14c2 1 3 2 4 4\" stroke=\"#"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 153,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 135.78125,
+      "y": 341.359375,
+      "w": 158,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Quần áo và phụ kiện",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "",
+        "text": "Quần áo và phụ kiện",
+        "html": "<button>Quần áo và phụ kiện</button>"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 152,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 168.78125,
+      "y": 341.359375,
+      "w": 92,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Đang mặc",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "",
+        "text": "Đang mặc",
+        "html": "<button>Đang mặc</button>"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 151,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 196.78125,
+      "y": 341.359375,
+      "w": 101.390625,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Diều sáo",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "",
+        "text": "Diều sáo",
+        "html": "<button><span class=\"arti\" data-e=\"🪁\"><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><g class=\"a-float\" style=\"transform-origin:24px 20px\"><path d=\"M24 4l14 16-14 16-14-16z\" fill=\"#ff7eb8\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></path><path d=\"M24 4v32M10 20h28\" stroke=\"#3b2a4f\" stroke-width=\""
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 149,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 304.171875,
+      "y": 341.359375,
+      "w": 94,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Cánh lượn",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "",
+        "text": "Cánh lượn",
+        "html": "<button>Cánh lượn</button>"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 147,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 124.5,
+      "y": 428.734375,
+      "w": 86.5,
+      "h": 109.1875,
+      "hit": true,
+      "inViewport": true,
+      "className": "slot",
+      "label": "2Gạo",
+      "occluder": {
+        "tag": "ellipse",
+        "className": {},
+        "text": "",
+        "html": "<ellipse cx=\"21\" cy=\"28\" rx=\"2.6\" ry=\"4\" fill=\"#ffd23f\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\" transform=\"rotate(-30 24 28)\"></ellipse>"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 181,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 338,
+      "y": 502.6875,
+      "w": 64,
+      "h": 67.5625,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Nhà",
+      "occluder": {
+        "tag": "rect",
+        "className": {},
+        "text": "",
+        "html": "<rect x=\"20\" y=\"29\" width=\"8\" height=\"13\" fill=\"#b07a4a\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></rect>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 404.5,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 163,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 40,
+      "y": 289.6875,
+      "w": 65.1875,
+      "h": 82.1875,
+      "hit": true,
+      "inViewport": true,
+      "className": "pst ",
+      "label": "Ghé thăm",
+      "occluder": {
+        "tag": "circle",
+        "className": {},
+        "text": "",
+        "html": "<circle cx=\"26\" cy=\"40\" r=\"3.6\" fill=\"#a77bff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 602.75,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 162,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 111.1875,
+      "y": 289.6875,
+      "w": 65.203125,
+      "h": 82.1875,
+      "hit": true,
+      "inViewport": true,
+      "className": "pst ",
+      "label": "Bưu thiếp 0/2",
+      "occluder": {
+        "tag": "circle",
+        "className": {},
+        "text": "",
+        "html": "<circle cx=\"26\" cy=\"40\" r=\"3.6\" fill=\"#a77bff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 602.75,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 161,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 182.390625,
+      "y": 289.6875,
+      "w": 65.203125,
+      "h": 82.1875,
+      "hit": true,
+      "inViewport": true,
+      "className": "pst ",
+      "label": "Chơi một trò",
+      "occluder": {
+        "tag": "circle",
+        "className": {},
+        "text": "",
+        "html": "<circle cx=\"26\" cy=\"40\" r=\"3.6\" fill=\"#a77bff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 602.75,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 160,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 253.59375,
+      "y": 289.6875,
+      "w": 65.203125,
+      "h": 82.1875,
+      "hit": true,
+      "inViewport": true,
+      "className": "pst ",
+      "label": "Thu hoạch",
+      "occluder": {
+        "tag": "circle",
+        "className": {},
+        "text": "",
+        "html": "<circle cx=\"26\" cy=\"40\" r=\"3.6\" fill=\"#a77bff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 602.75,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 159,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 40,
+      "y": 700.375,
+      "w": 65.1875,
+      "h": 82.1875,
+      "hit": true,
+      "inViewport": true,
+      "className": "pst ",
+      "label": "Ngày Anzac",
+      "occluder": {
+        "tag": "circle",
+        "className": {},
+        "text": "",
+        "html": "<circle cx=\"26\" cy=\"40\" r=\"3.6\" fill=\"#a77bff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 158,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 111.1875,
+      "y": 700.375,
+      "w": 65.203125,
+      "h": 82.1875,
+      "hit": true,
+      "inViewport": true,
+      "className": "pst ",
+      "label": "Tuần lễ Hòa giải",
+      "occluder": {
+        "tag": "circle",
+        "className": {},
+        "text": "",
+        "html": "<circle cx=\"26\" cy=\"40\" r=\"3.6\" fill=\"#a77bff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 157,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 182.390625,
+      "y": 700.375,
+      "w": 65.203125,
+      "h": 82.1875,
+      "hit": true,
+      "inViewport": true,
+      "className": "pst ",
+      "label": "Tuần lễ NAIDOC",
+      "occluder": {
+        "tag": "circle",
+        "className": {},
+        "text": "",
+        "html": "<circle cx=\"26\" cy=\"40\" r=\"3.6\" fill=\"#a77bff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 156,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "matched-current-control-reachable",
+      "x": 253.59375,
+      "y": 700.375,
+      "w": 65.203125,
+      "h": 82.1875,
+      "hit": true,
+      "inViewport": true,
+      "className": "pst ",
+      "label": "Lễ hội ánh sáng Diwali",
+      "occluder": {
+        "tag": "circle",
+        "className": {},
+        "text": "",
+        "html": "<circle cx=\"26\" cy=\"40\" r=\"3.6\" fill=\"#a77bff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 180,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 179,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 178,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 177,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 150,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 148,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 146,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 145,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 144,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 143,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 142,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal pad",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 176,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 162,
+      "y": 205,
+      "w": 131,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "on",
+      "label": "Tiếng Việt",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "on",
+        "text": "Tiếng Việt",
+        "html": "<button data-l=\"vi\" class=\"on\"><svg class=\"flag\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><g><rect width=\"30\" height=\"20\" rx=\"3\" fill=\"#da251d\"></rect><path d=\"M15.00 4.50L16.59 8.32L20.71 8.65L17.57 11.33L18.53 15.35L15.00 13.20L11.47 15.35L12.43 11.33L9.29 8.65L13.41 8.32Z\" fill=\"#ffde00\"></path></g><rect x=\".5\" y=\".5\" width=\"29\" height=\"19\" rx=\"3\""
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 206.25,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 175,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 43,
+      "y": 354,
+      "w": 344,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "qrow qset ",
+      "label": "Nhạc",
+      "occluder": {
+        "tag": "B",
+        "className": "",
+        "text": "Nhạc",
+        "html": "<b>Nhạc</b>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 206.25,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 174,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 43,
+      "y": 404,
+      "w": 344,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "qrow qset ",
+      "label": "Tiếng động",
+      "occluder": {
+        "tag": "B",
+        "className": "",
+        "text": "Tiếng động",
+        "html": "<b>Tiếng động</b>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 206.25,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 173,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 47,
+      "y": 412,
+      "w": 109.328125,
+      "h": 48,
+      "hit": true,
+      "inViewport": true,
+      "className": "on",
+      "label": "Tự nhiên",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "on",
+        "text": "Tự nhiên",
+        "html": "<button data-v=\"natural\" class=\"on\"><span class=\"arti\" data-e=\"🙂\"><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><g class=\"a-bob\" style=\"transform-origin:24px 24px\"><circle cx=\"24\" cy=\"24\" r=\"18\" fill=\"#ffd23f\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle><g class=\"a-blink\" style=\"transform"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 404.5,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 172,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 160.328125,
+      "y": 412,
+      "w": 109.328125,
+      "h": 48,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Dễ thương",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "",
+        "text": "Dễ thương",
+        "html": "<button data-v=\"cute\" class=\"\"><span class=\"arti\" data-e=\"🐣\"><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><g class=\"a-hop\" style=\"transform-origin:24px 40px\"><circle cx=\"24\" cy=\"24\" r=\"15\" fill=\"#ffd84a\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle><g class=\"a-blink\" style=\"transform-orig"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 404.5,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 171,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 273.65625,
+      "y": 412,
+      "w": 109.34375,
+      "h": 48,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Ông bà",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "",
+        "text": "Ông bà",
+        "html": "<button data-v=\"grandpa\" class=\"\"><span class=\"arti\" data-e=\"👴\"><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><g class=\"a-bob\" style=\"transform-origin:24px 42px\"><circle cx=\"24\" cy=\"26\" r=\"16\" fill=\"#f2c8a0\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle><path d=\"M8 24c0-12 8-17 16-17s16 5 1"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 404.5,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 170,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 44,
+      "y": 404.359375,
+      "w": 342,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "btn tst-stop hold",
+      "label": "Giữ để thôi làm người thử",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "btn tst-stop hold",
+        "text": "Giữ để thôi làm người thử",
+        "html": "<button class=\"btn tst-stop hold\" data-hold=\"stop\"><span class=\"ring\"></span>Giữ để thôi làm người thử</button>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 169,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 86.796875,
+      "y": 677.140625,
+      "w": 256.390625,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "grown qgrown",
+      "label": "Cài đặt phụ huynhnhấn giữ",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "grown qgrown",
+        "text": "Cài đặt phụ huynhnhấn giữ",
+        "html": "<button class=\"grown qgrown\"><span class=\"ring\"></span><span class=\"arti\" data-e=\"👨‍👩‍👧\"><svg class=\"art  \" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><g class=\"a-bob\" style=\"transform-origin:24px 42px\"><g transform=\"translate(-10 0) scale(.6)\"><circle cx=\"24\" cy=\"26\" r=\"16\" fill=\"#f2b98a\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" "
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 168,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 130.5,
+      "y": 401,
+      "w": 81.5,
+      "h": 70.359375,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Trên cao",
+      "occluder": {
+        "tag": "path",
+        "className": {},
+        "text": "",
+        "html": "<path d=\"M4 20c8 0 14 4 18 8 4-4 10-8 22-8-4 6-10 10-16 12l-6 8-6-8C10 30 6 26 4 20z\" fill=\"#8a5a2a\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></path>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 167,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 218,
+      "y": 401,
+      "w": 81.5,
+      "h": 70.359375,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Ngang phố",
+      "occluder": {
+        "tag": "rect",
+        "className": {},
+        "text": "",
+        "html": "<rect x=\"25\" y=\"20\" width=\"18\" height=\"22\" fill=\"#ffd27a\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></rect>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 166,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 305.5,
+      "y": 401,
+      "w": 81.5,
+      "h": 70.359375,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "Mặt của con",
+      "occluder": {
+        "tag": "circle",
+        "className": {},
+        "text": "",
+        "html": "<circle cx=\"24\" cy=\"24\" r=\"18\" fill=\"#ffd23f\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></circle>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 81,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 43,
+      "y": 404.359375,
+      "w": 344,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "qrow qset ",
+      "label": "Luôn ban ngày",
+      "occluder": {
+        "tag": "B",
+        "className": "",
+        "text": "Luôn ban ngày",
+        "html": "<b>Luôn ban ngày</b>"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 80,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 43,
+      "y": 404.359375,
+      "w": 344,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "qrow qset on",
+      "label": "Camera dễtự xoay theo con",
+      "occluder": {
+        "tag": "B",
+        "className": "",
+        "text": "Camera dễtự xoay theo con",
+        "html": "<b>Camera dễ<small>tự xoay theo con</small></b>"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 801,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 79,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 47,
+      "y": 205,
+      "w": 111,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "English",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "",
+        "text": "English",
+        "html": "<button data-l=\"en\" class=\"\"><svg class=\"flag\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><g><rect width=\"30\" height=\"20\" rx=\"3\" fill=\"#012169\"></rect><path d=\"M0 0l15 10M15 0L0 10\" stroke=\"#fff\" stroke-width=\"2.4\"></path><path d=\"M0 0l15 10M15 0L0 10\" stroke=\"#c8102e\" stroke-width=\"1\"></path><path d=\"M7.5 0v10M0 5h15\" stroke=\"#fff\" stroke-width=\"3.2\">"
+      },
+      "reportButtons": [
+        {
+          "x": 358,
+          "y": 206.25,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 78,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal tpanel",
+      "status": "unresolved-control-or-state-not-matched"
+    },
+    {
+      "issue": 77,
+      "viewport": "430x873",
+      "lang": "vi",
+      "panel": "modal grownups",
+      "status": "matched-current-control-reachable",
+      "x": 41,
+      "y": 394.25,
+      "w": 111,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "",
+      "label": "English",
+      "occluder": {
+        "tag": "BUTTON",
+        "className": "",
+        "text": "English",
+        "html": "<button data-l=\"en\" class=\"\"><svg class=\"flag\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><g><rect width=\"30\" height=\"20\" rx=\"3\" fill=\"#012169\"></rect><path d=\"M0 0l15 10M15 0L0 10\" stroke=\"#fff\" stroke-width=\"2.4\"></path><path d=\"M0 0l15 10M15 0L0 10\" stroke=\"#c8102e\" stroke-width=\"1\"></path><path d=\"M7.5 0v10M0 5h15\" stroke=\"#fff\" stroke-width=\"3.2\">"
+      },
+      "reportButtons": [
+        {
+          "x": 354,
+          "y": 525.03125,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 92,
+      "viewport": "428x879",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 43,
+      "y": 407.359375,
+      "w": 342,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "qrow qset on",
+      "label": "Điều khiển bằng giọng nói",
+      "occluder": {
+        "tag": "B",
+        "className": "",
+        "text": "Điều khiển bằng giọng nói",
+        "html": "<b>Điều khiển bằng giọng nói</b>"
+      },
+      "reportButtons": [
+        {
+          "x": 356,
+          "y": 607.25,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 91,
+      "viewport": "428x879",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 43,
+      "y": 407,
+      "w": 342,
+      "h": 64,
+      "hit": true,
+      "inViewport": true,
+      "className": "qrow qset ",
+      "label": "Giọng nói",
+      "occluder": {
+        "tag": "B",
+        "className": "",
+        "text": "Giọng nói",
+        "html": "<b>Giọng nói</b>"
+      },
+      "reportButtons": [
+        {
+          "x": 356,
+          "y": 807,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 89,
+      "viewport": "428x879",
+      "lang": "vi",
+      "panel": "modal qsettings",
+      "status": "matched-current-control-reachable",
+      "x": 43,
+      "y": 404,
+      "w": 81,
+      "h": 70.359375,
+      "hit": true,
+      "inViewport": true,
+      "className": "on",
+      "label": "Sau lưng",
+      "occluder": {
+        "tag": "rect",
+        "className": {},
+        "text": "",
+        "html": "<rect x=\"4\" y=\"14\" width=\"28\" height=\"22\" rx=\"5\" fill=\"#7a6aff\" stroke=\"#3b2a4f\" stroke-width=\"2.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"></rect>"
+      },
+      "reportButtons": [
+        {
+          "x": 356,
+          "y": 807,
+          "w": 64,
+          "h": 64
+        }
+      ]
+    },
+    {
+      "issue": 87,
+      "viewport": "428x581",
+      "lang": "vi",
+      "panel": "modal tpanel",
+      "status": "unresolved-control-or-state-not-matched"
+    }
+  ],
+  "failures": []
+}

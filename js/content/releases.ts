@@ -6,6 +6,7 @@ import { FESTCAL } from './festcal.js';
 // game: the money game it switches; icon: a festival's picture
 export type Release = { id: string, en: string, vi: string, group: string, def: boolean, icon?: string, game?: string };
 export const RELEASES: Release[] = [
+  { id: 'managementTelemetry', en: 'Detailed Studio reporting: activity attempts and configuration acknowledgements (Analytics consent still applies)', vi: 'Báo cáo Studio chi tiết: lượt hoạt động và xác nhận cấu hình (vẫn tuân theo cài đặt Phân tích)', group: 'tools', def: false },
   { id: 'autoplay', en: 'Auto play check (for grown-ups testing: a small window that plays everything; every device, or only the ticked ones)', vi: 'Tự chơi để kiểm tra (cho người lớn thử game: một cửa sổ nhỏ tự chơi mọi thứ; mọi máy, hoặc chỉ các máy được chọn)', group: 'tools', def: false },
   // (r90, owner 24 Oct AEDT: "hold them off until I want to release; switched off it should show as coming soon") the
   // second set of games and of stories (js/content/secondset.ts): off until the owner switches them on
@@ -59,7 +60,7 @@ RELEASES.push({ id: 'readingTrial', en: 'Reading games (trial): ten games in the
 RELEASE_GROUPS.trial = ['Trials', 'Thử nghiệm'];
 // (batch rollout, owner 13 Oct AEDT; docs/cores/FEATURES.md "Batch calendar") the Round U features and the festival hunt,
 // one switch each, and each money game on its own. All start on; a start date still to come or Off hides one only from
-// children who never used it (js/custom.js keptOn)
+// children who never used it during scheduling; explicit Off wins for everyone in its effective scope (the owner-approved explicit-off policy)
 RELEASES.push(
   { id: 'rideAny', en: 'Ride any vehicle: drive the parked cars and motorbikes', vi: 'Đi mọi loại xe: lái xe hơi và xe máy đang đậu', group: 'world', def: true },
   { id: 'busFares', en: 'Buses, trams and taxis take a passenger for a fare; bus stops with a picture timetable', vi: 'Xe buýt, tàu điện và taxi chở khách có trả tiền vé; trạm xe buýt có bảng giờ bằng hình', group: 'world', def: true },
@@ -114,7 +115,7 @@ RELEASES.push(
 
 // Orchard remains tester-only. Fruit Bar public modes serve all ages; preview still requires a tester.
 for (const [id,en,vi] of [['sparkleorchard','Orchard Quest','Nhiệm vụ vườn quả'],['sparklefruitbar','Fruit Bar','Bảng trái cây']]) {
- RELEASES.push({id:id+'_tester',en:en+': enable invited tester preview only',vi:vi+': chỉ bật bản thử cho người thử được mời',group:'tools',def:false},
+ RELEASES.push({id:id+'_tester',en:en+(id==='sparkleorchard'?': invited tester preview (works while tester modes are off; never opens for non-testers)':': enable invited tester preview only'),vi:vi+(id==='sparkleorchard'?': bản thử cho người thử được mời (dùng được khi các chế độ thử đang tắt; không mở cho người chưa thử)':': chỉ bật bản thử cho người thử được mời'),group:'tools',def:false},
  {id:id+'_single',en:en+(id==='sparklefruitbar'?': single-device play for everyone':': tester single-device play'),vi:vi+(id==='sparklefruitbar'?': mọi người chơi cùng máy':': người thử chơi cùng máy'),group:'tools',def:false},
  {id:id+'_multi',en:en+(id==='sparklefruitbar'?': online multiplayer for everyone':': tester online multiplayer'),vi:vi+(id==='sparklefruitbar'?': mọi người chơi nhiều máy':': người thử chơi nhiều máy'),group:'tools',def:false});
 }

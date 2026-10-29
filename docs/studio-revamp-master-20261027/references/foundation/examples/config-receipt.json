@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "deviceId": "demo12345678",
+  "scopeKey": "global",
+  "revision": 7,
+  "effectiveHash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "fetchedAt": "2026-10-25T23:00:00Z",
+  "appliedAt": "2026-10-25T23:00:01Z",
+  "result": "applied",
+  "reasonCode": "none"
+}

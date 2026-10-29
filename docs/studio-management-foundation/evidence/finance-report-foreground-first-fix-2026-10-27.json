@@ -1,0 +1,27 @@
+{
+  "scope": "Foreground selection regression and full floating flows pass; historical replay still exposes missing scroll response",
+  "checks": {
+    "emoji": {
+      "ok": true,
+      "secs": 0,
+      "note": "820 different emoji in the game, 819 drawn, 0 not drawn (0 uses); left as they are: \ud83c\uddec\ud83c\udde7 (flags drawn by icons.js, and text symbols); no emoji in the docs"
+    },
+    "types": {
+      "ok": true,
+      "secs": 14,
+      "note": "196 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 76 TypeScript files of the server, Studio and tools; no errors"
+    },
+    "ownerreportedphonevi": {
+      "ok": false,
+      "note": "owner-reported-screens.mjs (status 1, signal none): node:internal/modules/run_main:107 triggerUncaughtException( ^ AssertionError [ERR_ASSERTION]: Real matched reported controls remain blocked: 181 at file:///workspace/tpn/tests/owner-reported-screens.mjs:61:8 { generatedMessage: false, code: 'ERR_ASSERTION', actual: false, expected: true, operator: '==', diff: 'simple' } Node.js v24.19.0 phone-vi 430x873 vi modal pad: 20/31 controls matched phone-vi 430x873 vi modal qsettings: 14/14 controls matched phone-vi 430x873 vi modal tpanel: 0/1 controls matched phone-vi 430x873 vi modal grownups: 1/1 controls matched phone-vi 428x879 vi modal qsettings: 3/3 controls matched phone-vi 428x581 vi modal tpanel: 0/1 controls matched Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node owner-reported-screens.mjs phone-vi node:internal/modules/run_main:107 triggerUncaughtException( ^ AssertionError [ERR_ASSERTION]: Real matched reported controls remain blocked: 181 at file:///workspace/tpn/tests/owner-reported-screens.mjs:61:8 { generatedMessage: false, code: 'ERR_ASSERTION', actual: false, expected: true, operator: '==', diff: 'simple' } Node.js v24.19.0"
+    },
+    "reportcollision": {
+      "ok": true,
+      "secs": 138,
+      "note": "checking phone en checking phone vi checking tablet en checking tablet vi checking computer en checking computer vi [{\"device\":\"phone\",\"lang\":\"en\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"phone\",\"lang\":\"vi\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"tablet\",\"lang\":\"en\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"tablet\",\"lang\":\"vi\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"computer\",\"lang\":\"en\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"computer\",\"lang\":\"vi\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"reportDuringActualGame\":true,\"dragClampedToScreen\":true,\"positionRestoredOnRemount\":true},{\"duplicateBrisbaneRemoved\":true,\"physicalStopsPreserved\":true}]"
+    }
+  },
+  "blockedControl": [
+    181
+  ]
+}

@@ -1,0 +1,31 @@
+art stamps en 390
+art nonla en 390
+art scratch en 390
+art pixelpic en 390
+art stamps vi 820
+art nonla vi 820
+art scratch vi 820
+art pixelpic vi 820
+art stamps en 1440
+art nonla en 1440
+art scratch en 1440
+art pixelpic en 1440
+art stamps vi 390
+art nonla vi 390
+art scratch vi 390
+art pixelpic vi 390
+art stamps en 844
+art nonla en 844
+art scratch en 844
+art pixelpic en 844
+art stamps vi 320
+art nonla vi 320
+art scratch vi 320
+art pixelpic vi 320
+\u2705 contentcaptures (76s) 24 art completions, gates, album cap, keyboard/pointer and exit checks
+\u2705 contentprogress (21s) actual game orchestration: one win and five coins once, album persistence, exit without reward, reload preserves save
+\u2705 arch (0s) 328 files, 1370 imports; 0 circle groups (0 files in them); allowed: 0 groups, 0 files
+\u2705 names (8s) 328 game files: every name is defined or imported
+\u2705 types (17s) 196 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 79 TypeScript files of the server, Studio and tools; no errors
+
+5/5 checks passed

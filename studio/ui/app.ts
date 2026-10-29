@@ -1,9 +1,12 @@
+import { mountFunctions } from './functions.js';
 // Sparkle Studio dashboard (runs in the browser, talks to studio.cts on this computer).
 import { viMessage, PERM_VI } from './vi.js';
+import { loadGameBrand } from './brand.js';
 import type { StudioContent, StudioInfo, StudioDevice, Rule, BuildType } from '../../types/studio.d.ts';
 // a page's own element by its selector (a box, a button or a list: the input type covers what the pages use)
 const $ = <E extends Element = HTMLInputElement>(s: string) => document.querySelector<E>(s);
 let LANG = localStorage.getItem('studioLang') || 'vi';
+void loadGameBrand();
 const T = (en, vi) => LANG === 'vi' ? vi : en;
 // what a box, a list or a file chooser holds, from its event (TypeScript: an event's target is any element)
 const val = (e: Event) => e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement || e.target instanceof HTMLTextAreaElement ? e.target.value : '';
@@ -50,13 +53,14 @@ const isRobot = d => !!d && (/headless|playwright|puppeteer|lighthouse|bot/i.tes
 const HIDDEN = () => { try { return new Set(JSON.parse(localStorage.getItem('studioHiddenDevices') || '[]')); } catch (e) { return new Set(); } };
 const setHidden = (id, on) => { const h = HIDDEN(); on ? h.add(id) : h.delete(id); try { localStorage.setItem('studioHiddenDevices', JSON.stringify([...h])); } catch (e) { } };
 const devTitle = d => d.label || easyName(d.id);
+const devInstall = d => d.app ? T('Last reported in app', 'Lần báo gần nhất trong ứng dụng') : d.installation === 'standalone' ? T('App launch observed', 'Đã ghi nhận mở ứng dụng') : d.installation === 'native' ? T('Install confirmed by browser', 'Trình duyệt đã xác nhận cài') : T('Install unconfirmed', 'Chưa xác nhận cài');
 // one line about a device, e.g. "Tiên, Bin · Tablet · iOS · Safari · Sydney, AU · 2 h ago"
 // (owner, 13 Oct AEDT: a ticked iPhone got nothing) on an iPhone the Home Screen app and Safari keep their own storage,
 // so each is its own device here: the row says which one it is
 const devAbout = d => { const kids = devKids(d), what = [devKindName(d.kind), d.os, d.app ? T('Home Screen app', 'Ứng dụng Màn hình chính') : d.br ? T(`in ${d.br}`, `trong ${d.br}`) : ''].filter(x => x && x !== '?').join(' · ');
-  return [kids.length ? '🧒 ' + kids.join(', ') : '', what, devTown(d) ? '📍 ' + devTown(d) : '', devLast(d) ? '🕒 ' + devLast(d) : ''].filter(Boolean).join(' · '); };
+  return [kids.length ? '🧒 ' + kids.join(', ') : '', what, devInstall(d), devTown(d) ? '📍 ' + devTown(d) : '', devLast(d) ? '🕒 ' + devLast(d) : ''].filter(Boolean).join(' · '); };
 // (r85) the grey second line of a device card: device, system, browser (or the Home Screen app), town, last seen
-const devMeta = d => [devKindName(d.kind), d.os, d.app ? T('Home Screen app', 'Ứng dụng Màn hình chính') : d.br, devTown(d) ? '📍 ' + devTown(d) : '', devLast(d) ? '🕒 ' + devLast(d) : ''].filter(x => x && x !== '?').join(' · ');
+const devMeta = d => [devKindName(d.kind), d.os, d.app ? T('Home Screen app', 'Ứng dụng Màn hình chính') : d.br, devInstall(d), devTown(d) ? '📍 ' + devTown(d) : '', devLast(d) ? '🕒 ' + devLast(d) : ''].filter(x => x && x !== '?').join(' · ');
 const devHTML = d => `<b class="dname">${esc(devTitle(d))}</b>${isRobot(d) ? ` <span class="pill robot">🤖 ${T('probably a robot', 'có lẽ là máy tự động')}</span>` : ''} <span class="dabout">${esc(devAbout(d))}</span> <small class="mini">${esc(d.id)}</small>`;
 // a search box and "show robots" over a list of device rows (.devrow): a ticked device always stays in view
 const devFilter = list => { if (!list || list.querySelector('.devfind')) return; const bar = document.createElement('div'); bar.className = 'devfind row';
@@ -112,11 +116,12 @@ window.addEventListener('beforeunload', e => { if (unsaved()) { e.preventDefault
 // Five sections instead of seventeen tabs (round K, owner: "too many menus, confusing on the phone"): each section opens
 // as big cards, one per page; on a phone the sections are a bar at the bottom, on a computer a column on the left.
 const SECTIONS = [
-  { k: 'home', i: '🏠', en: 'Home', vi: 'Trang chính', pages: ['home'] },
-  { k: 'family', i: '💛', en: 'Family', vi: 'Gia đình', pages: ['message', 'missions', 'children', 'album', 'quiz', 'stories', 'villagers', 'plots', 'familycode'] },
-  { k: 'game', i: '🎮', en: 'Game', vi: 'Trò chơi', pages: ['releases', 'lab', 'festivals', 'looks', 'path', 'music', 'map', 'photos', 'play', 'voices', 'ads'] },
-  { k: 'players', i: '📊', en: 'Analytics', vi: 'Phân tích', pages: ['players', 'testers'] },
-  { k: 'setup', i: '⚙️', en: 'Setup', vi: 'Thiết lập', pages: ['publish', 'site', 'check', 'settings', 'admins', 'security', 'accesslog'] }
+  { k: 'home', i: '🏠', en: 'Home', vi: 'Trang chủ', pages: ['home'] },
+  { k: 'people', i: '💛', en: 'People', vi: 'Người chơi', pages: ['people','managementchildren','managementdevices','managementdevice','players','children','familycode','album'] },
+  { k: 'game', i: '🎮', en: 'Game & website', vi: 'Game & web', pages: ['game','managementactivities','managementactivity','message','missions','quiz','stories','villagers','plots','releases','festivals','looks','path','music','map','photos','play','voices','ads','site'] },
+  { k: 'work', i: '🐞', en: 'Work', vi: 'Công việc', pages: ['work','managementattention','testers','managementrelease','managementchanges','managementoperations','lab','publish','check','management'] },
+  { k: 'money', i: '🪙', en: 'Money', vi: 'Tài chính', pages: ['money','managementfinance'] },
+  { k: 'setup', i: '⚙️', en: 'Settings', vi: 'Cài đặt', pages: ['settings','admins','security','accesslog'], utility: true }
 ];
 // who is signed in online (round O: each admin has an own account): a viewer sees the Analytics only; the 👥 Admins
 // page is online only (the exe on the family's computer is the owner's)
@@ -126,12 +131,28 @@ const ONLINE_ONLY = ['admins', 'security', 'accesslog'], OWNER_ONLY = ['security
 // (owner, 14 Oct AEDT) each account has its own permissions (netlify/lib/admins.mts PERMS): a page shows only to those
 // who may open it, the rest of the dashboard follows. The exe on the family computer is the owner's: everything.
 const CAN = k => ROLE() === 'owner' || ((INFO && INFO.me && INFO.me.perms) || []).includes(k);
-const PAGE_NEEDS = { players: 'analytics', testers: 'testers', familycode: 'family', album: 'family', publish: 'publish' };
-const canSee = k => k === 'home' || k === 'admins' ? true : OWNER_ONLY.includes(k) ? ROLE() === 'owner' : CAN(PAGE_NEEDS[k] || 'pages');
-const SEC = () => SECTIONS.map(x => ({ ...x, pages: x.pages.filter(k => (INFO && INFO.online || !ONLINE_ONLY.includes(k)) && canSee(k)) })).filter(x => x.pages.length && (x.k !== 'home' || CAN('pages')));
+const PAGE_NEEDS = { management: 'management.read', managementdevices: 'management.read', managementchildren: 'management.deviceDetail', managementdevice: 'management.deviceDetail', managementattention: 'management.read', managementactivities: 'management.read', managementactivity: 'management.read', managementrelease: 'management.read', managementfinance:'finance.read', managementoperations: 'operations.read', managementchanges: 'management.read', players: 'analytics', testers: 'testers', familycode: 'family', album: 'family', publish: 'publish' };
+const LANDING_GRANTS = { people:['management.read','management.deviceDetail','analytics','family','pages'], game:['management.read','pages','site'], work:['management.read','operations.read','testers','publish','site'], money:['finance.read'] };
+const canSee = k => k === 'home' || k === 'admins' ? true : LANDING_GRANTS[k] ? LANDING_GRANTS[k].some(CAN) : OWNER_ONLY.includes(k) ? ROLE() === 'owner' : CAN(PAGE_NEEDS[k] || 'pages');
+const SEC = () => SECTIONS.map(x => ({ ...x, pages: x.pages.filter(k => (INFO && INFO.online || !ONLINE_ONLY.includes(k)) && (INFO?.online!==false||!['money','managementfinance'].includes(k)) && (!INFO?.managementOnly || k.startsWith('management') || ['home','people','game','work','money','admins','security','accesslog'].includes(k)) && canSee(k)) })).filter(x => x.pages.length);
 // each page: its picture, its name and one line saying what it is for
 const ABOUT = {
-  home: ['🏠', 'Home', 'Trang chính', '', ''],
+  people: ['💛', 'People', 'Người chơi', 'Reported children, devices and permitted family tools', 'Các con được báo cáo, thiết bị và công cụ gia đình được phép'],
+  game: ['🎮', 'Game & website', 'Game & trang web', 'Choose content and follow its public connections', 'Chọn nội dung và theo dõi kết nối công khai'],
+  work: ['🐞', 'Work & releases', 'Công việc & phát hành', 'Problems, responsibility, review and delivery evidence', 'Vấn đề, người phụ trách, duyệt và bằng chứng cung cấp'],
+  money: ['🪙', 'Money', 'Tài chính', 'Private recorded income, costs, budgets and coverage', 'Thu chi đã ghi, ngân sách và phạm vi sổ riêng'],
+  management: ['📊', 'Management overview', 'Tổng quan quản lý', 'Audience, play, experience and reporting quality', 'Người chơi, hoạt động, trải nghiệm và chất lượng báo cáo'],
+  managementdevices: ['📱', 'Device reporting', 'Báo cáo thiết bị', 'Reporting installations and play history', 'Bản cài đặt gửi báo cáo và lịch sử chơi'],
+  managementchildren: ['👧', 'Children and devices', 'Các con và thiết bị', 'Reported child names linked to each installation', 'Tên bé được báo cáo gắn với từng bản cài đặt'],
+  managementdevice: ['📱', 'Device detail', 'Chi tiết thiết bị', '', ''],
+  managementattention: ['🐞', 'Needs attention', 'Cần xem xét', 'Evidence from tester reports', 'Bằng chứng từ báo cáo người thử'],
+  managementactivities: ['🎮', 'Activity catalogue', 'Danh mục hoạt động', 'Game and website source facts', 'Thông tin nguồn game và trang web'],
+  managementactivity: ['🎮', 'Activity detail', 'Chi tiết hoạt động', '', ''],
+  managementrelease: ['🆕', 'Release evidence', 'Bằng chứng phát hành', 'Reporting by originating build', 'Báo cáo theo phiên bản phát sinh'],
+  managementoperations: ['🌐', 'Operations', 'Vận hành', 'Provider configuration and verified observations', 'Cấu hình nhà cung cấp và quan sát đã xác minh'],
+  managementfinance: ['📊','Finance','Tài chính','Private ledger, budgets and financial evidence','Sổ riêng, ngân sách và bằng chứng tài chính'],
+  managementchanges: ['📜', 'Configuration changes', 'Thay đổi cấu hình', 'Revisioned controls and device acknowledgements', 'Điều khiển theo phiên bản và xác nhận từ thiết bị'],
+  home: ['🏠', 'Home', 'Trang chủ', '', ''],
   message: ['💌', 'Message', 'Lời nhắn', 'A note the children see when they start playing', 'Lời nhắn các con thấy khi bắt đầu chơi'],
   missions: ['📝', 'Family missions', 'Nhiệm vụ gia đình', 'Real-life jobs the children see in the game (“Help set the table”); a grown-up ticks them on the device', 'Việc ngoài đời các con thấy trong game (“Giúp dọn bàn ăn”); người lớn đánh dấu trên máy'],
   children: ['👧', 'Children', 'Các con', 'Each child’s name, age, photo and progress', 'Tên, tuổi, ảnh và tiến bộ của từng con'],
@@ -164,9 +185,15 @@ const ABOUT = {
 };
 const sectionOf = k => SEC().find(x => x.k === k || x.pages.includes(k)) || SEC()[0];
 // #family → the Family cards; #family/quiz (or the old #quiz) → that page
-const route = () => { const h = location.hash.slice(1), [a, b] = h.split('/'); if (b && ABOUT[b]) return b; if (ABOUT[a] || SECTIONS.some(x => x.k === a)) return a; return 'home'; };
+const route = () => { const h = location.hash.slice(1).split('?')[0], [a, b] = h.split('/'); if (b && ABOUT[b]) return b; if(a==='family')return 'people';if (ABOUT[a] || SECTIONS.some(x => x.k === a)) return a; return 'home'; };
 let cur = route();
-const go = k => { if (k === cur || !leaveOk()) return; cur = k; const sec = sectionOf(k); location.hash = sec.k === k || sec.pages.length === 1 ? sec.k : sec.k + '/' + k; render(); };
+const viewScroll=new Map<string,number>(),detailOrigin=new Map<string,string>();
+function openHash(value:string){
+  const hash='#'+value.replace(/^#/, '');viewScroll.set(location.hash,window.scrollY);
+  if(hash!==location.hash&&/\/management(device|activity)(?:\?|$)/.test(hash))detailOrigin.set(hash,location.hash||'#home');
+  if(location.hash===hash)void render();else location.hash=hash;
+}
+const go = k => { if (k === cur || !leaveOk()) return; const sec=sectionOf(k);openHash(sec.k===k||sec.pages.length===1?sec.k:sec.k+'/'+k); };
 // the bar at the top: Publish when something is waiting, reload, language
 function head() {
   const pub = $('#pub'); if (!pub) return;
@@ -174,7 +201,10 @@ function head() {
 }
 function nav() {
   const sec = sectionOf(cur);
-  $('#tabs').innerHTML = SEC().map(x => `<button data-k="${x.k}" class="${x === sec ? 'on' : ''}"><span>${x.i}</span><small>${T(x.en, x.vi)}</small></button>`).join('');
+  document.documentElement.lang = LANG;
+  $('#tabs').setAttribute('aria-label',T('Studio areas','Các mục Studio'));
+  $('#tabs').innerHTML = SEC().filter(x=>!x.utility).map(x => `<button data-k="${x.k}" ${x.k===sec?.k?'aria-current="page"':''} class="${x.k === sec?.k ? 'on' : ''}"><span aria-hidden="true">${x.i}</span><small>${T(x.en, x.vi)}</small></button>`).join('');
+  const settings=$('#setup-link');if(settings){settings.hidden=!SEC().some(s=>s.k==='setup');settings.title=T('Settings','Cài đặt');settings.setAttribute('aria-label',settings.title);settings.onclick=()=>go('setup');}
   $('#tabs').querySelectorAll<HTMLInputElement>('button').forEach(b => b.onclick = () => go(b.dataset.k));
   document.querySelectorAll<HTMLInputElement>('[data-t]').forEach(e => { const [en, vi] = e.dataset.t.split('|'); e.textContent = T(en, vi); });
   document.querySelectorAll<HTMLInputElement>('.lang button[data-l]').forEach(b => { b.classList.toggle('on', b.dataset.l === LANG); b.onclick = () => { if (b.dataset.l === LANG || !leaveOk()) return; LANG = b.dataset.l; localStorage.setItem('studioLang', LANG); render(); }; });
@@ -189,10 +219,10 @@ async function load(force) {
   if (force) SRC = null; // ↻ reads the game's files again (the Voices page keeps them while Studio is open)
   if (LOADED && !force) return;
   if (!DEVNAME) DEVNAME = await import(GAME + 'js/content/devname.js').catch(() => null);
-  INFO = await api('info'); document.body.classList.toggle('online', !!INFO.online);
-  CONTENT = INFO.ok ? await api('content') : {};
+  INFO = await api('info'); document.body.classList.toggle('online', !!INFO.online);if(force||document.documentElement.dataset.gameBrand==='unavailable')void loadGameBrand();
+  CONTENT = INFO.ok && !INFO.managementOnly && CAN('pages') ? await api('content') : {};
   // (r81) what the devices really get: the content pages' live sections win over custom.json
-  if (INFO.ok && liveOn()) { try { const L = await api('live/content'); for (const [k, v] of Object.entries((L && L.content) || {})) if (v && typeof v === 'object') CONTENT[k] = v; } catch (e) { } }
+  if (INFO.ok && !INFO.managementOnly && CAN('pages') && liveOn()) { try { const L = await api('live/content'); for (const [k, v] of Object.entries((L && L.content) || {})) if (v && typeof v === 'object') CONTENT[k] = v; } catch (e) { } }
   LOADED = true;
 }
 const drawSection = (P, sec) => {
@@ -206,17 +236,17 @@ async function render(force?: boolean) {
   nav(); const P = $('#page'), crumb = $('#crumb'); P.dataset.render = String(sequence); DIRTY = false; KEPT = ''; if (SAVED_HERE !== cur) SAVED_HERE = '';
   if (!LOADED || force) P.innerHTML = `<div class="loading">✨ ${T('Loading…', 'Đang tải…')}</div>`;
   try {
-    await load(force); if (sequence !== renderSequence) return;
+    await load(force); if (sequence !== renderSequence) return;nav();
     if (INFO.perms) Object.values(INFO.perms).forEach(([, en, vi]) => { PERM_VI[en] = vi; });
     if (!SEC().some(x => x.k === cur || x.pages.includes(cur))) { cur = (SEC()[0] || { pages: ['admins'] }).pages[0]; nav(); }
     else if (!INFO.ok && cur !== 'settings') { cur = 'settings'; nav(); toast(T('First, choose the game folder.', 'Trước tiên, chọn thư mục game.')); }
     head();
     const sec = sectionOf(cur);
     // (owner, 12 Oct) the Analytics tab still opens Analytics itself (its section also holds the Tester reports page)
-    if (sec.k === cur && sec.pages.length > 1 && !ABOUT[sec.k]) { crumb.innerHTML = ''; drawSection(P, sec); KEPT = contentNow(); HASH = location.hash; window.scrollTo(0, 0); return; }
+    if (sec.k === cur && sec.pages.length > 1 && !ABOUT[sec.k]) { crumb.innerHTML = ''; drawSection(P, sec); KEPT = contentNow(); HASH = location.hash; window.scrollTo(0, viewScroll.get(location.hash)||0); return; }
     crumb.innerHTML = sec.pages.length > 1 && cur !== sec.k ? `<button class="back">← ${sec.i} ${T(sec.en, sec.vi)}</button>` : '';
-    if (crumb.firstElementChild instanceof HTMLElement) crumb.firstElementChild.onclick = () => go(sec.k);
-    const page = cur; await PAGES[page](P); if (sequence !== renderSequence || cur !== page) return; explainPage(P, cur); foldPage(P, cur); refold(P, page); KEPT = contentNow(); HASH = location.hash; paintState(); window.scrollTo(0, 0);
+    if (crumb.firstElementChild instanceof HTMLElement) crumb.firstElementChild.onclick = () => {const origin=detailOrigin.get(location.hash);if(origin&&leaveOk())openHash(origin);else if(!origin)go(sec.k);};
+    const page = cur; await PAGES[page](P); if (sequence !== renderSequence || cur !== page) return; explainPage(P, cur); foldPage(P, cur); refold(P, page); KEPT = contentNow(); HASH = location.hash; paintState(); window.scrollTo(0, viewScroll.get(location.hash)||0);
   } catch (e) { if (sequence === renderSequence && !e.signin) P.innerHTML = `<div class="card badtxt">${esc(e.message)}</div>`; }
 }
 
@@ -243,9 +273,12 @@ function foldPage(P, page) {
     head.parentNode.insertBefore(d, head); sm.appendChild(head); d.appendChild(sm); nodes.forEach(n => d.appendChild(n)); const k = key(head); d.addEventListener('toggle', () => keepFold(k, d.open)); };
   // each card with a heading (not the ones that open and close already)
   // (a card whose first row holds its heading, e.g. a story character's picture and name: that row is the summary)
-  P.querySelectorAll('.card').forEach(c => { if (c.closest('details') || c.matches('details, .stat, .signin, .pcard') || c.querySelector(':scope > details.fold')) return; const h = c.firstElementChild;
-    if (!h || !(/^H[34]$/.test(h.tagName) || (h.querySelector('h3, h4') && c.children.length > 1))) return;
-    make(h, [...c.childNodes].filter(n => n !== h), 'card-fold'); });
+  P.querySelectorAll('.card').forEach(c => { if (c.closest('details') || c.matches('details, .stat, .signin, .pcard') || c.querySelector(':scope > details.fold')) return; let h = c.firstElementChild;
+    // A status badge may precede a management card's heading. Keep that badge visible
+    // and fold the heading with its following content, without moving form controls twice.
+    if (!h || !(/^H[34]$/.test(h.tagName) || (h.querySelector('h3, h4') && c.children.length > 1))) h = c.querySelector(':scope > h3, :scope > h4');
+    if (!h) return;
+    const children = [...c.childNodes]; make(h, children.slice(children.indexOf(h) + 1), 'card-fold'); });
   // a heading on the page itself, with everything up to the next heading of the same size
   [...P.children].filter(e => /^H3$/.test(e.tagName)).forEach(h => { const nodes = []; let n = h.nextSibling; while (n && !(n.nodeType === 1 && /^H[23]$/.test(n.tagName))) { nodes.push(n); n = n.nextSibling; } make(h, nodes, 'part-fold'); });
 }
@@ -261,6 +294,21 @@ function liveBadge(P, page) {
 function explainPage(P, page) {
   if (P.querySelector('.studio-help')) return;
   const explanations = {
+    people: ['Read reported child names beside their installation and open the device for evidence. The default is 30 days of ordinary reporting. Name opt-out and server permissions still apply; this screen never edits a saved game.', 'Xem tên bé được báo cáo cạnh bản cài đặt rồi mở máy để xem bằng chứng. Mặc định 30 ngày báo cáo thông thường. Tắt báo tên và quyền máy chủ vẫn có hiệu lực; trang không sửa bản lưu game.'],
+    game: ['Choose a source-backed game or story to inspect usage, its website guide and review alignment. The default reporting period is 30 days. Editing tools state their own scope and publication timing; opening this catalogue publishes nothing.', 'Chọn trò hoặc truyện có nguồn để xem lượt dùng, hướng dẫn web và độ khớp duyệt. Mặc định kỳ báo cáo 30 ngày. Công cụ sửa ghi phạm vi và thời điểm xuất bản riêng; mở danh mục không phát hành gì.'],
+    work: ['Review observed problems, assign a responsible person and inspect release or configuration evidence. The default is 30 days of ordinary reporting. Work state, published code and device application are distinct; opening this page executes no provider action.', 'Xem vấn đề được ghi nhận, giao người phụ trách và kiểm tra bằng chứng phát hành hoặc cấu hình. Mặc định 30 ngày báo cáo thông thường. Trạng thái việc, mã đã xuất bản và máy áp dụng là riêng; mở trang không chạy tác vụ nhà cung cấp.'],
+    money: ['Private manual finance records for accounts with finance permission. The default is the current Sydney month and invoice service-period view. Preview changes no ledger; confirming saves audited records. Missing invoices and FX stay explicit, and no bank payment is made.', 'Sổ tài chính nhập thủ công riêng cho tài khoản có quyền. Mặc định tháng hiện tại theo Sydney và kỳ dịch vụ hóa đơn. Xem trước không sửa sổ; xác nhận lưu bản ghi có nhật ký. Hóa đơn và tỷ giá thiếu được ghi rõ, không thanh toán ngân hàng.'],
+    management: ['Private reporting for authorised administrators. The default period is 30 days of ordinary reporting devices. Missing evidence stays unavailable; opening this page changes no game settings.', 'Báo cáo riêng cho quản trị viên được phép. Mặc định xem 30 ngày từ máy báo cáo thông thường. Thiếu bằng chứng được ghi chưa có; mở trang không đổi cài đặt game.'],
+    managementdevices: ['Browse reporting installations and their reported children. Default filters cover 30 days of ordinary traffic. Analytics and name-reporting choices on each device limit what is available here; this page changes no saves.', 'Xem bản cài đặt gửi báo cáo và các con được báo cáo. Mặc định lọc 30 ngày báo cáo thông thường. Lựa chọn Phân tích và báo tên trên từng máy giới hạn dữ liệu ở đây; trang không sửa bản lưu.'],
+    managementchildren: ['Find reported child first names with their device. The same name on two devices is not proof of one person. Default filters cover 30 days of ordinary traffic; a device that declines name reporting stays unnamed.', 'Tìm tên bé được báo cáo cùng máy tương ứng. Trùng tên trên hai máy không chứng minh là một người. Mặc định xem 30 ngày báo cáo thông thường; máy không cho báo tên sẽ không hiện tên.'],
+    managementdevice: ['Inspect the selected reporting installation and its reported activity. The default period is 30 days. Names require device-detail permission and the device’s reporting consent; opening this view changes no local progress.', 'Xem bản cài đặt đã chọn và hoạt động được báo cáo. Mặc định xem 30 ngày. Tên cần quyền chi tiết thiết bị và sự đồng ý báo cáo trên máy; mở trang không đổi tiến trình trên máy.'],
+    managementattention: ['Review tester evidence and assign an owner or next action. Reports are not automatically verified bugs. Saving a permitted follow-up records a revision and audit immediately; it does not deploy a fix or change a child’s save.', 'Xem bằng chứng người thử, giao người phụ trách và bước tiếp theo. Báo cáo chưa tự thành lỗi đã xác minh. Lưu theo dõi được phép ghi phiên bản và nhật ký ngay; không triển khai bản sửa hay đổi bản lưu của bé.'],
+    managementactivities: ['Browse stable game and story IDs, source facts and available reporting evidence. Defaults cover ordinary traffic over 30 days. A catalogue entry does not prove that a recording exists or that every device has applied availability rules.', 'Xem mã trò và truyện ổn định, thông tin nguồn và bằng chứng báo cáo. Mặc định xem báo cáo thông thường trong 30 ngày. Có trong danh mục không chứng minh có bản thu hay mọi máy đã áp dụng quy tắc mở.'],
+    managementactivity: ['Inspect one activity’s source, availability and reported outcomes for the selected period. Missing measurements remain unknown. This read-only view links to evidence and does not edit or release the activity.', 'Xem nguồn, trạng thái mở và kết quả được báo cáo của một hoạt động trong kỳ đã chọn. Thiếu số liệu vẫn là chưa rõ. Trang chỉ đọc dẫn tới bằng chứng, không sửa hay phát hành hoạt động.'],
+    managementrelease: ['Enter a build to inspect deployment and reporting evidence. No build is selected by default. Observed provider results and device acknowledgements are distinct; opening this view never deploys or changes a release version.', 'Nhập phiên bản để xem bằng chứng triển khai và báo cáo. Mặc định chưa chọn phiên bản. Kết quả nhà cung cấp và xác nhận từ máy là riêng biệt; mở trang không triển khai hay đổi số phiên bản.'],
+    managementoperations: ['Review configured provider feeds and their last verified observations. Missing access stays unavailable. Bounded operations require permission, a reason and confirmation; a saved request is not proof that the provider completed it.', 'Xem nguồn nhà cung cấp được cấu hình và quan sát đã xác minh gần nhất. Thiếu quyền truy cập được ghi chưa có. Tác vụ giới hạn cần quyền, lý do và xác nhận; lưu yêu cầu không chứng minh nhà cung cấp đã hoàn tất.'],
+    managementfinance: ['Private manual ledger for administrators with explicit finance permission. Setup is required before the first entry. Preview writes nothing; confirmation saves reviewed rows with audit history. Missing invoices or FX leave totals incomplete, and this ledger makes no payments.', 'Sổ nhập thủ công riêng cho quản trị viên có quyền tài chính rõ ràng. Cần thiết lập trước bản ghi đầu. Xem trước không ghi gì; xác nhận lưu dòng đã duyệt cùng lịch sử. Thiếu hóa đơn hoặc tỷ giá làm tổng chưa đủ; sổ không thanh toán.'],
+    managementchanges: ['Inspect configuration versions and device receipts. Saving an authorised advanced edit records a revision immediately; publication and device application are separate. Default scope is global, and no action here rewrites children’s saved progress.', 'Xem phiên bản cấu hình và biên nhận từ máy. Lưu sửa nâng cao được phép ghi phiên bản ngay; xuất bản và máy áp dụng là riêng. Mặc định áp dụng toàn cục; không thao tác nào ở đây ghi lại tiến trình đã lưu của các con.'],
     home: ['The start page: what is waiting to publish, quick links to every section and the game itself. Nothing here changes the game on its own.', 'Trang đầu: những gì đang chờ phát hành, lối tắt tới từng mục và chính trò chơi. Không có gì ở đây tự thay đổi game.'],
     message: ['One family message for every child, shown and read aloud once a day when they start playing. Empty means no message. Save puts your change in “Waiting to publish”; nothing reaches the children until you press Publish. Then every device of this family gets it the next time it opens the game online.', 'Một lời nhắn cho mọi con, hiện và đọc to mỗi ngày một lần khi bắt đầu chơi. Để trống là không có lời nhắn. Lưu đưa thay đổi vào “Đang chờ phát hành”; các con chưa thấy gì cho đến khi bạn bấm Phát hành. Sau đó mọi máy của gia đình nhận được khi mở game có mạng lần tới.'],
     missions: ['Real-life jobs for every child on this family\'s devices (up to 12); none by default. A grown-up confirms each one on the device, which gives coins and a sticker. Save puts your change in “Waiting to publish”; nothing reaches the children until you press Publish. Then every device of this family gets it the next time it opens the game online.', 'Việc thật ngoài đời cho mọi con trên các máy của gia đình (tối đa 12); mặc định không có. Người lớn xác nhận từng việc trên máy, con được xu và hình dán. Lưu đưa thay đổi vào “Đang chờ phát hành”; các con chưa thấy gì cho đến khi bạn bấm Phát hành. Sau đó mọi máy của gia đình nhận được khi mở game có mạng lần tới.'],
@@ -287,7 +335,7 @@ function explainPage(P, page) {
     settings: ['Keys and the game folder for this Studio. Online, the keys live in Netlify\'s settings and are never shown or kept here; on the family\'s computer they apply to SparkleStudio.exe as soon as you save.', 'Khóa và thư mục game cho Studio này. Trực tuyến, khóa nằm trong cài đặt Netlify, không bao giờ hiện hay lưu ở đây; trên máy tính gia đình, khóa áp dụng cho SparkleStudio.exe ngay khi lưu.'],
     security: ['Two-step sign-in, trusted browsers, signing everyone out and keys for SparkleStudio.exe. Each change applies at once; signing everyone out ends every Studio session, yours included.', 'Đăng nhập hai bước, trình duyệt tin cậy, đăng xuất mọi người và khóa cho SparkleStudio.exe. Mỗi thay đổi có hiệu lực ngay; đăng xuất mọi người kết thúc mọi phiên Studio, kể cả của bạn.'],
     accesslog: ['The last 200 sign-ins and Analytics views, with town and country only (the connection address is never kept). Reading it changes nothing.', '200 lần đăng nhập và xem Phân tích gần nhất, chỉ có thành phố và quốc gia (không bao giờ giữ địa chỉ kết nối). Xem không thay đổi gì.'],
-    releases: ['These switches control game features. Dates and durations schedule availability. Testing controls are in Sparkle Lab. Save applies the rules online; connected games receive them when they refresh their settings.', 'Công tắc điều khiển tính năng game. Ngày và thời hạn đặt lịch mở. Điều khiển thử nghiệm nằm trong Phòng thử Sparkle. Lưu áp dụng quy tắc trên mạng; game nhận khi làm mới cài đặt.'],
+    releases: ['These switches control game features. Off overrides remembered use when a feature next checks its rule; saved progress stays intact. Future start dates can retain access for a child who already used a feature. Save applies rules online; connected games receive them when they refresh settings. An offline device remains unconfirmed, and an already open activity is not forcibly cancelled. Testing controls are in Sparkle Lab.', 'Công tắc điều khiển tính năng game. Tắt được ưu tiên hơn lịch sử sử dụng khi tính năng kiểm tra lại quy tắc; tiến trình vẫn được giữ. Ngày bắt đầu trong tương lai có thể giữ quyền dùng cho bé đã dùng tính năng. Lưu áp dụng quy tắc trên mạng; game nhận khi làm mới cài đặt. Máy ngoại tuyến chưa được xác nhận; hoạt động đang mở không bị ép hủy. Điều khiển thử nghiệm nằm trong Phòng thử Sparkle.'],
     lab: ['Tester and automatic checks apply to the selected devices; none selected means every device while enabled. Each device keeps its own progress policy. Save applies these rules online when connected games refresh their settings.', 'Báo lỗi và tự kiểm tra áp dụng cho các máy đã chọn; không chọn máy nào nghĩa là mọi máy khi bật. Mỗi máy giữ chính sách tiến trình riêng. Lưu áp dụng quy tắc trên mạng khi game làm mới cài đặt.'],
     admins: ['Choose a role or Custom to select each permission. Changes here save immediately. Permissions control what an admin can read or change; hiding a button does not grant or remove access.', 'Chọn vai trò hoặc Tùy chỉnh để chọn từng quyền. Thay đổi ở đây lưu ngay. Quyền quyết định quản trị viên có thể xem hay sửa gì; ẩn nút không cấp hoặc bỏ quyền.'],
     players: ['Measurements come from reporting devices. Missing data means unavailable or not measured yet. Use Performance to compare loading, frame smoothness and battery for each device.', 'Số liệu do các máy gửi về. Thiếu số liệu nghĩa là không có hoặc chưa đo. Dùng Hiệu năng để so tải, độ mượt và pin từng máy.']
@@ -298,33 +346,38 @@ function explainPage(P, page) {
   const S_LIVE = ['Save puts it live at once, with no Publish: every device of this family gets it the next time it opens the game online (about 30 seconds).' + (page === 'ads' ? ' A new picture still needs Publish.' : ''), 'Lưu là có hiệu lực ngay, không cần Phát hành: mọi máy của gia đình nhận được khi mở game có mạng lần tới (khoảng 30 giây).' + (page === 'ads' ? ' Hình mới vẫn cần Phát hành.' : '')];
   if (LIVE_PAGES[page] && liveOn()) text.forEach((t, i) => { text[i] = t.replace(S_PUB[i], S_LIVE[i]); });
   liveBadge(P, page);
-  const box = document.createElement('details'); box.className = 'studio-help'; box.innerHTML = `<summary>${T('How this section works', 'Cách dùng mục này')}</summary><p>${T2(text)}</p>`; P.prepend(box);
+  const box = document.createElement('details'); box.className = 'studio-help'; box.innerHTML = `<summary>${T('How this section works', 'Cách dùng mục này')}</summary><p>${T2(text)}</p>`; P.querySelector('.desk-root')||page==='money'?P.append(box):P.prepend(box);
 }
 const PAGES: Record<string, (P: HTMLElement) => unknown> = {};
-// ---------- home ----------
-PAGES.home = async P => {
-  const c = CONTENT;
-  // (owner, 10 Oct) on a phone the buttons come first and the numbers sit in a small row under them
-  const waiting = INFO.unpublished && CAN('edit') ? `<div class="card hwait"><p class="warn">✏️ ${T('You have saved changes that are not live yet: press Publish to send them to the children.', 'Bạn có thay đổi đã lưu nhưng chưa phát hành: bấm Phát hành để gửi tới các con.')}</p><button class="btn" id="hpub">🚀 ${T('Publish', 'Phát hành')}${INFO.waiting ? ` (${INFO.waiting})` : ''}</button></div>` : '';
-  P.innerHTML = `<div class="home"><h2>🏠 ${T('Welcome!', 'Xin chào!')}</h2><p class="sub">${liveOn() ? T('Change the game for your family here. Each section shows when your saves take effect.', 'Chỉnh trò chơi cho gia đình ở đây. Mỗi mục cho biết khi nào thay đổi đã lưu có hiệu lực.') : T('Change the game for your family here, then press Publish.', 'Chỉnh trò chơi cho gia đình ở đây, rồi bấm Phát hành.')}</p>${waiting}
-  <div class="grid stats">
-    <div class="card stat"><b>${esc(INFO.version)}</b><span>${T('Game version', 'Phiên bản game')}</span></div>
-    <div class="card stat"><b>${INFO.voices}</b><span>${T('Voice recordings', 'Bản ghi giọng đọc')}</span></div>
-    <div class="card stat"><b>${(c.tales || []).length}</b><span>${T('Family stories', 'Truyện của nhà mình')}</span></div>
-    <div class="card stat"><b>${(c.quiz || []).length}</b><span>${T('Quiz questions', 'Câu đố')}</span></div>
-    <div class="card stat"><b>${Object.keys(c.faces || {}).length}</b><span>${T('Photo faces', 'Ảnh khuôn mặt')}</span></div>
-  </div>
-  ${INFO.online ? `<div class="card hact"><p>☁️ ${T('Sparkle Studio online. The family’s files are kept in GitHub', 'Sparkle Studio trên mạng. Tệp của gia đình được giữ trong GitHub')}: <code>${esc(INFO.game)}</code></p>
-    <div class="row" style="max-width:520px"><button class="btn" id="play">▶ ${T('Open the game', 'Mở game')}</button><button class="btn ghost" id="out">🚪 ${T('Sign out', 'Đăng xuất')}</button></div>
-    <p class="note">${T('Pages marked Live save immediately. Pages marked Needs Publish keep changes in a draft until you Publish. The same Studio is in SparkleStudio.exe on the family computer.', 'Mục ghi Có hiệu lực ngay lưu là áp dụng ngay. Mục ghi Cần phát hành giữ thay đổi trong bản nháp cho tới khi bạn Phát hành. Studio này cũng có trong SparkleStudio.exe trên máy tính gia đình.')}</p></div>`
-  : `<div class="card hact"><p>${T('Game folder', 'Thư mục game')}: <code>${esc(INFO.game)}</code></p>
-    <div class="row" style="max-width:520px"><button class="btn" id="play">▶ ${T('Try the game here', 'Chơi thử tại đây')}</button><button class="btn ghost" id="folder">📂 ${T('Open the folder', 'Mở thư mục')}</button></div>
-    <p class="note">${liveOn() ? T('Pages marked Live save immediately to the connected family service. Other changes stay in this game folder until you Publish.', 'Mục ghi Có hiệu lực ngay lưu là áp dụng ngay qua dịch vụ gia đình đã kết nối. Thay đổi khác ở trong thư mục game này cho tới khi bạn Phát hành.') : T('Trying the game here uses this computer only; the children see changes after you Publish.', 'Chơi thử ở đây chỉ trên máy này; các con thấy thay đổi sau khi bạn Phát hành.')}</p></div>`}</div>`;
-  if ($('#hpub')) $('#hpub').onclick = () => go('publish');
-  $('#play').onclick = () => window.open(INFO.online ? '/' : GAME, '_blank');
-  if ($('#folder')) $('#folder').onclick = () => api('open', { folder: true }).catch(fail);
-  if ($('#out')) $('#out').onclick = async () => { await fetch(BASE + '/api/logout'); signIn(); };
+const MANAGEMENT_PAGES = { management: 'overview', managementdevices: 'devices', managementchildren: 'children', managementdevice: 'device', managementattention: 'attention', managementactivities: 'activities', managementactivity: 'activity', managementrelease: 'release', managementoperations: 'operations', managementfinance:'finance', managementchanges: 'changes' } as const;
+for (const [page, kind] of Object.entries(MANAGEMENT_PAGES)) PAGES[page] = async P => {
+  const { renderManagement } = await import('./management.js');
+  const query = Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''));
+  const { id, ...filters } = query;
+  return renderManagement(P, { api, T, kind, id, query: filters, area:sectionOf(cur).k, online: INFO.online === true, can: permission => !INFO.online && ['management.configure','management.triage','operations.run'].includes(permission) ? false : CAN(permission),
+    go: (next, nextId, nextQuery) => {
+      if (!leaveOk()) return;
+      const target = Object.keys(MANAGEMENT_PAGES).find(k => MANAGEMENT_PAGES[k] === next);
+      const q = new URLSearchParams({ ...nextQuery, ...(nextId ? { id: nextId } : {}) });
+      const hash = sectionOf(target).k+'/' + target + (q.size ? '?' + q : '');
+      openHash(hash);
+    } });
+}
+
+// Owner's Desk: connected landing pages reuse the existing permission-checked services.
+for(const kind of ['home','people','game','work'] as const) PAGES[kind]=async P=>{
+  const {renderOwnerDesk}=await import('./owner-desk.js');
+  const section=sectionOf(kind),query=Object.fromEntries(new URLSearchParams(location.hash.split('?')[1]||''));
+  return renderOwnerDesk(P,kind,{T,api,can:CAN,canPage:canSee,info:INFO,query,
+    tools:section.pages.filter(k=>k!==kind&&ABOUT[k]).map(key=>({key,icon:ABOUT[key][0],label:T(ABOUT[key][1],ABOUT[key][2]),description:T(ABOUT[key][3],ABOUT[key][4])})),
+    go:(page,id,nextQuery)=>{
+      if(!leaveOk())return;
+      const q=new URLSearchParams({...nextQuery,...(id?{id}:{})});
+      const hash=sectionOf(page).k+'/'+page+(q.size?'?'+q:'');
+      openHash(hash);
+    }});
 };
+PAGES.money=PAGES.managementfinance;
 // ---------- ads: small, inside the valley, OFF until switched on here; with a guide ----------
 // (r65) what an ad still needs before it can go live: a picture, both languages, who it is from, where it shows, and
 // an allowed link (https, no tracking, no link shorteners). `l` is the link as typed (the saved one keeps only https).
@@ -1577,6 +1630,7 @@ PAGES.settings = async P => {
     <p class="note">${T('Piper (free voices) and the zip work only in SparkleStudio.exe on the family computer.', 'Piper (giọng miễn phí) và tệp zip chỉ có trong SparkleStudio.exe trên máy tính gia đình.')}</p></div>
     <div class="bar"><button class="btn ghost" id="out">🚪 ${T('Sign out', 'Đăng xuất')}</button></div>`;
     $('#out').onclick = async () => { await fetch(BASE + '/api/logout'); signIn(); };
+    if(CAN('management.read')){const host=document.createElement('div');P.querySelector('h2')?.after(host);await mountFunctions(host,{T,api,can:CAN,go,onSaved:()=>{if(cur==='settings'&&host.isConnected)markSaved();}});}
     return;
   }
   P.innerHTML = `<h2>🔑 ${T('Settings', 'Cài đặt')}</h2><p class="sub">${T('Keys are kept only on this computer', 'Các khóa chỉ lưu trên máy tính này')} (<code>${esc(INFO.settingsFile)}</code>), ${T('never in the game.', 'không bao giờ nằm trong game.')}</p>
@@ -1632,7 +1686,7 @@ PAGES.players = async P => {
       ${K.places.length ? `<p class="note">📍 ${K.places.map(([p, n]) => `${esc(pname(p))} (${n})`).join(' · ')}</p>` : ''}</div>`;
   const devCard = d => `<div class="card dev devrow${isRobot(d) ? ' robot' : ''}" data-id="${esc(d.id)}" data-devrow="${esc(d.id)}"><div class="row" style="align-items:flex-start"><div style="flex:2">
       <h3>${{ phone: '📱', tablet: '📲', computer: '💻' }[d.kind] || '❔'} <span class="dlabel">${esc(devName(d))}</span> ${d.family ? `<span class="pill fam">👨‍👩‍👧 ${esc(easyName('fam-' + d.family))}</span> ` : ''}${d.online ? `<span class="pill live on">🟢 ${T('Playing now', 'Đang chơi')}${d.playingNow ? ' · ' + esc(d.playingNow) : ''}</span>` : `<span class="pill live">⚪ ${T('Offline', 'Không chơi')}${d.seenAt ? ' · ' + ago(d.seenAt) : ''}</span>`} <button class="btn small ghost" data-rename>✏️ ${T('Name it', 'Đặt tên')}</button></h3>
-      <p class="note">${esc(d.os)} · ${esc(d.br)}${d.screen ? ' · ' + esc(d.screen) : ''}${d.app ? ' · ' + T('installed app', 'đã cài như ứng dụng') : ''} · ${esc(d.build)}${d.activeVersions?.length ? ' · '+T('Active versions: ', 'Phiên bản đang chạy: ')+esc(d.activeVersions.join(', ')) : ''} · ${d.lang === 'vi' ? 'Tiếng Việt' : 'English'}<br>📍 ${esc(locName(d.loc))} · ${T('first seen', 'lần đầu')} ${when(d.first)} · ${T('last played', 'chơi gần nhất')} ${when(d.last)}</p></div>
+      <p class="note">${esc(d.os)} · ${esc(d.br)}${d.screen ? ' · ' + esc(d.screen) : ''} · ${esc(devInstall(d))} · ${esc(d.build)}${d.activeVersions?.length ? ' · '+T('Active versions: ', 'Phiên bản đang chạy: ')+esc(d.activeVersions.join(', ')) : ''} · ${d.lang === 'vi' ? 'Tiếng Việt' : 'English'}<br>📍 ${esc(locName(d.loc))} · ${T('first seen', 'lần đầu')} ${when(d.first)} · ${T('last played', 'chơi gần nhất')} ${when(d.last)}</p></div>
       <div style="flex:1;min-width:150px"><p>⏱️ <b>${hrs(d.mins)}</b> ${T('in 30 days', 'trong 30 ngày')}<br>📅 ${d.days} ${T('days played', 'ngày có chơi')}${d.fps != null ? `<br>🎞️ ${d.fps} ${T('frames/s', 'khung hình/giây')}` : ''}${d.errors ? `<br><span class="badtxt">🐞 ${d.errors} ${T('errors', 'lỗi')}</span>` : ''}${d.stuck ? `<br><span class="warn">🧱 ${T('stuck', 'bị kẹt')} ${d.stuck}×</span>` : ''}${startLine(d.startup)}</p></div></div>
       <div class="kids">${d.kids.map(kidCard).join('') || `<p class="note">${T('No per-child details yet (they start with version r43).', 'Chưa có chi tiết từng bé (bắt đầu từ bản r43).')}</p>`}</div></div>`;
   const pb = r.problems || { errors: [], stuck: [], quits: [], slow: [] };
@@ -1649,6 +1703,8 @@ PAGES.players = async P => {
     simple: () => T(`${t.name || 'A little one'} (under 5) mostly plays in the 3D valley on ${devName(t.d)}: the 🧸 Simple screen may be easier.`, `${t.name || 'Một bé'} (dưới 5 tuổi) hầu như chơi trong thung lũng 3D trên ${devName(t.d)}: 🧸 Màn hình đơn giản có thể dễ hơn.`)
   }[t.k] || (() => ''))();
   // (r65, owner: "a bit too much for the eyes; cleaner but still the details") five tiles, one row per child and per kind
+  // (owner, 29 Oct AEDT, keeping r65's five tiles) installations got a tile of their own, so the devices of the last 30
+  // days moved into the small line of "playing this week"
   // of device, and everything else folded under "More detail" (closed at first). One colour per meaning: green good,
   // amber watch, red act. The battery and frame numbers come from the battery round (field names on the board):
   // r.power[kind] = { devices, fps, frameMs, batteryPerHour } and each device's power = { fps, frameMs, draws, ratio,
@@ -1660,14 +1716,15 @@ PAGES.players = async P => {
   const spark = (vals, col) => { const v = vals.length > 1 ? vals : [0, ...vals, 0], mx = Math.max(1, ...v), w = 120, h = 30; return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="${v.map((x, i) => `${(i / (v.length - 1) * (w - 4) + 2).toFixed(1)},${(h - 3 - x / mx * (h - 6)).toFixed(1)}`).join(' ')}"/></svg>`; };
   const NOT_YET = T('not reported yet', 'chưa có số liệu'), PW = r.power || {}, devs = r.devices || [];
   const per = r.perDay || [], wk = per.slice(-7), weekMins = wk.reduce((a, d) => a + (d.mins || 0), 0);
+  const installs = r.installations || { confirmed: devs.filter(d => d.installation || d.app).length, lastStandalone: devs.filter(d => d.app).length, unconfirmed: devs.filter(d => !d.installation && !d.app).length };
   const fpsAll = median(devs.map(d => (d.power && d.power.fps) ?? d.fps)), startWorst = Math.max(...KINDS.map(k => r.startup && r.startup[k] ? r.startup[k].ready : -1));
   const batt = Math.max(...KINDS.map(k => PW[k] && PW[k].batteryPerHour != null ? PW[k].batteryPerHour : -1));
   const pctH = v => v == null || v < 0 ? NOT_YET : (Math.round(v * 10) / 10) + T(' % an hour', ' % mỗi giờ');
   const tile = (icon, value, label, extra?, t?) => `<div class="card tile ${t ? 'tone-' + t : ''}"><span class="tl">${icon} ${label}</span><b>${value}</b>${extra || ''}${t ? `<span class="tt">${TONE[t]}</span>` : ''}</div>`;
   const tiles = [
-    tile('👨‍👩‍👧', r.week.devices, T('playing this week', 'chơi tuần này'), spark(per.map(d => d.devices), '#8a5cf6') + `<span class="tx">${T('30 days', '30 ngày')}${r.onlineNow ? ' · 🟢 ' + T(`${r.onlineNow} playing now`, `${r.onlineNow} đang chơi`) : ''}</span>`),
+    tile('📲', installs.confirmed, T('installation observed', 'đã ghi nhận cài đặt'), `<span class="tx">${T(`${installs.lastStandalone} last reported in app · ${installs.unconfirmed} unconfirmed`, `${installs.lastStandalone} lần báo gần nhất trong ứng dụng · ${installs.unconfirmed} chưa xác nhận`)}</span>`),
+    tile('👨‍👩‍👧', r.week.devices, T('playing this week', 'chơi tuần này'), spark(per.map(d => d.devices), '#8a5cf6') + `<span class="tx">${T(`${r.month.devices} devices in 30 days`, `${r.month.devices} máy trong 30 ngày`)} · ${T(`${r.week.newDevices} new this week · ${r.allTime} ever`, `${r.week.newDevices} máy mới tuần này · ${r.allTime} từ trước tới nay`)}${r.families && r.families.count ? ' · 👨‍👩‍👧 ' + T(`${r.families.count} family (${r.families.devicesPerFamily}/fam)`, `${r.families.count} gia đình (${r.families.devicesPerFamily}/gđ)`) : ''}<br>${T('30 days', '30 ngày')}${r.onlineNow ? ' · 🟢 ' + T(`${r.onlineNow} playing now`, `${r.onlineNow} đang chơi`) : ''}</span>`),
     tile('⏱️', hrs(weekMins), T('played this week', 'đã chơi tuần này'), spark(per.map(d => d.mins || 0), '#ff7eb8') + `<span class="tx">${T('about', 'khoảng')} ${hrs(r.minsPerDevice)} ${T('a device a day', 'mỗi máy mỗi ngày')}</span>`),
-    tile('📱', r.month.devices, T('devices (30 days)', 'máy (30 ngày)'), `<span class="tx">${T(`${r.week.newDevices} new this week · ${r.allTime} ever`, `${r.week.newDevices} máy mới tuần này · ${r.allTime} từ trước tới nay`)}${r.families && r.families.count ? ' · 👨‍👩‍👧 ' + T(`${r.families.count} family (${r.families.devicesPerFamily}/fam)`, `${r.families.count} gia đình (${r.families.devicesPerFamily}/gđ)`) : ''}</span>`),
     tile('🏁', startWorst > 0 ? secs(startWorst) : '–', T('start-up', 'khởi động'), `<span class="tx">${KINDS.filter(k => r.startup && r.startup[k]).map(k => `${kindName(k)} ${secs(r.startup[k].ready)}`).join(' · ') || NOT_YET}</span>`, startWorst > 0 ? tone(startWorst, 10, 20) : ''),
     tile('🔋', fpsAll != null ? `${fpsAll}<small> ${T('frames/s', 'khung/giây')}</small>` : '–', T('battery and smoothness', 'pin và độ mượt'), `<span class="tx">🔋 ${T('battery', 'pin')}: ${pctH(batt)}</span>`, batt >= 0 ? (tone(batt, 12, 25) === 'act' || tone(fpsAll, 27, 20, true) === 'act' ? 'act' : tone(batt, 12, 25) === 'watch' || tone(fpsAll, 27, 20, true) === 'watch' ? 'watch' : 'good') : fpsAll != null ? tone(fpsAll, 27, 20, true) : '')];
   // one row per child: name, minutes, favourite game (the one started most), and where they play
@@ -1687,7 +1744,7 @@ PAGES.players = async P => {
       <p class="note">${T('Battery: only Chrome-based browsers tell it (not Safari on iPhone or Mac).', 'Pin: chỉ trình duyệt dựa trên Chrome cho biết (Safari trên iPhone và Mac thì không).')}</p></div></div>
   <h3 class="sec">🔎 ${T('More detail', 'Thêm chi tiết')}</h3>
   ${(r.tips || []).length > 4 ? more('tips', `💡 ${T('Suggestions', 'Gợi ý')} (${r.tips.length})`, `<ul>${r.tips.map(t => `<li>${esc(tipText(t))}</li>`).join('')}</ul>`) : ''}
-  ${more('devices', `👨‍👩‍👧 ${T('Each device and child', 'Từng máy và từng bé')} (${devs.length})`, `<div id="devlist">${devs.map(devCard).join('')}</div>` || `<p class="note">${T('No devices yet.', 'Chưa có máy nào.')}</p>`)}
+  ${more('devices', `👨‍👩‍👧 ${T('Each device and child', 'Từng máy và từng bé')} (${devs.length})`, `<p class="note install-observation-note">${T('An install event or app-window launch confirms installation at least once. On iPhone/iPad it is confirmed after opening the Home Screen app. Unconfirmed does not mean not installed; later removal cannot be detected. Only devices with Analytics on are observed, and Safari and its Home Screen app may appear separately.', 'Sự kiện cài đặt hoặc lần mở cửa sổ ứng dụng xác nhận đã cài ít nhất một lần. Trên iPhone/iPad, xác nhận sau khi mở từ màn hình chính. Chưa xác nhận không có nghĩa là chưa cài; không thể biết lần gỡ sau đó. Chỉ ghi nhận máy bật Phân tích; Safari và ứng dụng màn hình chính có thể hiện riêng.')}</p><div id="devlist">${devs.map(devCard).join('')}</div>` || `<p class="note">${T('No devices yet.', 'Chưa có máy nào.')}</p>`)}
   ${more('performance', `🏁 ${T('Performance: loading, frames and battery', 'Hiệu năng: tải, khung hình và pin')}`, `<p class="note">${T('Loading is time to a built valley. Frames measure smoothness during play; frame time is milliseconds to draw a picture. Battery is measured only where the browser reports it, while not charging. The loading column shows measured readiness and the slowest startup stage.', 'Tải là thời gian dựng xong thung lũng. Khung hình đo độ mượt khi chơi; thời gian khung hình là mili giây để vẽ một ảnh. Pin chỉ đo khi trình duyệt cung cấp và máy không sạc. Cột tải cho biết thời gian sẵn sàng đã đo và bước khởi động chậm nhất.')}</p><table class="mini"><thead><tr><th>${T('Device', 'Thiết bị')}</th><th>${T('Loading', 'Tải')}</th><th>${T('Frames and battery', 'Khung hình và pin')}</th></tr></thead><tbody>${devs.map(d => `<tr><td>${KICON[d.kind] || '❔'} ${esc(devName(d))}</td><td>${startLine(d.startup).replace(/^<br>/, '') || NOT_YET}</td><td>${powerLine(d)}</td></tr>`).join('') || `<tr><td class="note">${NOT_YET}</td></tr>`}</tbody></table>`)}
   ${more('time', `📅 ${T('Day by day and hour by hour', 'Theo ngày và theo giờ')}`, `
   <div class="card"><h3>📅 ${T('Devices each day (pink: new)', 'Số máy mỗi ngày (hồng: máy mới)')}</h3><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px">${bars}</svg></div>
@@ -1864,7 +1921,10 @@ PAGES.security = async P => {
       try { await api('trusted/forget', { id: tr.dataset.tid }); toast(T('Forgotten.', 'Đã quên.'), 'ok'); drawTrusted(); } catch (e) { fail(e); } }); };
   drawTrusted();
   $('#allout').onclick = async () => { if (!confirm(T('Sign everyone out, on every device? You sign in again yourself.', 'Đăng xuất mọi người trên mọi máy? Bạn sẽ đăng nhập lại.'))) return; try { await api('security/signout-all', {}); signIn(); } catch (e) { fail(e); } };
-  $('#kmake').onclick = async () => { try { const r = await api('keys/make', { label: $('#klabel').value }); $('#kout').innerHTML = `${T('Copy it now (it is not shown again):', 'Sao chép ngay (sẽ không hiện lại):')}<br><code style="user-select:all;word-break:break-all">${esc(r.key)}</code>`; } catch (e) { fail(e); } };
+  const grants = document.createElement('fieldset');
+  grants.innerHTML = `<legend>${T('Optional management access for this key', 'Quyền quản lý tùy chọn cho khóa này')}</legend>${['management.read', 'management.deviceDetail', 'operations.read'].map(k => `<label class="chk"><input type="checkbox" data-management-key value="${k}"> ${esc(T2((INFO.perms?.[k] || ['', k, k]).slice(1)))}</label>`).join('')}`;
+  $('#kmake').before(grants);
+  $('#kmake').onclick = async () => { try { const r = await api('keys/make', { label: $('#klabel').value, perms: [...document.querySelectorAll<HTMLInputElement>('[data-management-key]:checked')].map(x => x.value) }); $('#kout').innerHTML = `${T('Copy it now (it is not shown again):', 'Sao chép ngay (sẽ không hiện lại):')}<br><code style="user-select:all;word-break:break-all">${esc(r.key)}</code>`; } catch (e) { fail(e); } };
   P.querySelectorAll<HTMLInputElement>('[data-krm]').forEach(b => b.onclick = async () => { if (!confirm(T('Remove this key? That computer can no longer reach the website.', 'Xóa khóa này? Máy đó sẽ không đến được trang web nữa.'))) return; try { await api('keys/remove', { id: b.closest<HTMLInputElement>('tr').dataset.id }); PAGES.security(P); } catch (e) { fail(e); } });
 };
 // ---------- 📜 Access log (online, the owner; round R privacy): the last 200 ----------
@@ -1896,7 +1956,7 @@ function signIn() {
 }
 // (the browser's Back button, or a typed address: a page with changes not saved asks first, and stays if you say no)
 let HASH = location.hash;
-window.addEventListener('hashchange', () => { const k = route(); if (k === cur) { HASH = location.hash; return; } if (!leaveOk()) { history.replaceState(null, '', HASH || '#'); return; } HASH = location.hash; cur = k; render(); });
+window.addEventListener('hashchange', () => { const k = route(); if (k === cur) { const changed = HASH !== location.hash; HASH = location.hash; if (changed && (k.startsWith('management')||['home','people','game','work','money'].includes(k))) render(); return; } if (!leaveOk()) { history.replaceState(null, '', HASH || '#'); return; } HASH = location.hash; cur = k; render(); });
 // (owner, 12 Oct) the exe updates itself: a banner when GitHub has a newer Sparkle Studio; "Update now" swaps it in
 async function checkUpdate(manual) {
   if (!INFO || INFO.online) return null;

@@ -1,0 +1,195 @@
+{
+  "schema": 1,
+  "status": "verified-delivery",
+  "batch": "docs/voice-recording-delta/audit-v103-4.json",
+  "inventorySha256": "9d4de590762d507ee06f3022aedd4fff7471e3b346de0f242da48aecf254c284",
+  "encoding": {
+    "codec": "mp3",
+    "bitrate": 32000,
+    "sampleRate": 16000,
+    "channels": 1
+  },
+  "fullDecode": true,
+  "assets": [
+    {
+      "id": "d62b5431-4c33e8f3",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/d62b5431-4c33e8f3.mp3",
+      "bytes": 12096,
+      "sha256": "9824a3741c566a6591f28a9a1bd817af4c89c5a496ae60176e5b71dd4dfabd66",
+      "duration": 3.024
+    },
+    {
+      "id": "d62b5431-4c33e8f3",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/d62b5431-4c33e8f3.mp3",
+      "bytes": 11376,
+      "sha256": "8ee84e46ed6d818636d6dfeaa5d3f364bbfdd7716ad1a0ec88cae20163e5dcc6",
+      "duration": 2.844
+    },
+    {
+      "id": "d62b5431-4c33e8f3",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/d62b5431-4c33e8f3.mp3",
+      "bytes": 11313,
+      "sha256": "cac8364cb5096bee08a23b93ae2a1e914b4b8739f5ec7cc6f06139b41f7132c2",
+      "duration": 2.772
+    },
+    {
+      "id": "05ad9ea9-1923b72b",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/05ad9ea9-1923b72b.mp3",
+      "bytes": 23184,
+      "sha256": "7bdc0eef3c4ee90712281505325b7bd2f8e66db83f9bd7b30cbe95a8744b6acd",
+      "duration": 5.796
+    },
+    {
+      "id": "05ad9ea9-1923b72b",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/05ad9ea9-1923b72b.mp3",
+      "bytes": 23616,
+      "sha256": "014ebc7ef1cbd7117387c501144a3cfc728ecbcc8569584988c6e027710ad338",
+      "duration": 5.904
+    },
+    {
+      "id": "05ad9ea9-1923b72b",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/05ad9ea9-1923b72b.mp3",
+      "bytes": 23697,
+      "sha256": "f971e5a3620e07bbaa652f2aef9ca8347583d7df8cc04b3566b7dd08f530f860",
+      "duration": 5.868
+    },
+    {
+      "id": "5d0348da57d3e15c",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/5d0348da57d3e15c.mp3",
+      "bytes": 22176,
+      "sha256": "fa18cb20440d5cf042487eeaaba8099005ec33604de6f78d0f9cb4593b746f54",
+      "duration": 5.544
+    },
+    {
+      "id": "5d0348da57d3e15c",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/5d0348da57d3e15c.mp3",
+      "bytes": 22032,
+      "sha256": "6cfa65db8838887e4fff60367acc842b3b565cc9bd2711b8f1fefa49cf897ea1",
+      "duration": 5.508
+    },
+    {
+      "id": "5d0348da57d3e15c",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/5d0348da57d3e15c.mp3",
+      "bytes": 18369,
+      "sha256": "d940fc57cefc38eb50c1c1841e9afaa2af6896a79159d6eafc363df61dda9a10",
+      "duration": 4.536
+    },
+    {
+      "id": "7478f58b-3078a93b",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/7478f58b-3078a93b.mp3",
+      "bytes": 13536,
+      "sha256": "4d9401debf73098b1a690ae96c7268d9c3fa48e2e1462970a9657c2feb0d893e",
+      "duration": 3.384
+    },
+    {
+      "id": "7478f58b-3078a93b",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/7478f58b-3078a93b.mp3",
+      "bytes": 13392,
+      "sha256": "8a774a694ba99b0d62e41508503aa3c7d2258719db8ce57247e8d2baeea2ab64",
+      "duration": 3.348
+    },
+    {
+      "id": "7478f58b-3078a93b",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/7478f58b-3078a93b.mp3",
+      "bytes": 12753,
+      "sha256": "4dbf12476f28a2cb443bef9f1a3a91c39d0e30ba2d7c8d165ef25a7c2e6f9f18",
+      "duration": 3.132
+    },
+    {
+      "id": "79586c280f479c4e",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/79586c280f479c4e.mp3",
+      "bytes": 12672,
+      "sha256": "16baa13815b9e31250c70c4fe61bd199cbdf3e64ce38f9ec15f7cfab811d3192",
+      "duration": 3.168
+    },
+    {
+      "id": "79586c280f479c4e",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/79586c280f479c4e.mp3",
+      "bytes": 12960,
+      "sha256": "0fb09087c093e2ac8b5f248e45de140a20f8e65fcaac98247fdb10e09e207c81",
+      "duration": 3.24
+    },
+    {
+      "id": "79586c280f479c4e",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/79586c280f479c4e.mp3",
+      "bytes": 10737,
+      "sha256": "7ebba05e78a79ccd913e724ac448a121e2f6b0c489fd957724e75184c30acead",
+      "duration": 2.628
+    },
+    {
+      "id": "8a2c2827-54cc3622",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/8a2c2827-54cc3622.mp3",
+      "bytes": 16416,
+      "sha256": "05597ebb333ffde749ca615519c9f210d7d29bd18c89cec1625e5a3f2ee4519d",
+      "duration": 4.104
+    },
+    {
+      "id": "8a2c2827-54cc3622",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/8a2c2827-54cc3622.mp3",
+      "bytes": 15840,
+      "sha256": "8e93d3fd1716b18ee76ee34b7a2405bdb87b2aed244565b8621bc6feb34f3fd7",
+      "duration": 3.96
+    },
+    {
+      "id": "8a2c2827-54cc3622",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/8a2c2827-54cc3622.mp3",
+      "bytes": 15921,
+      "sha256": "1b8567aa1dbf187836766c37f29654c7f0823189322fec55ed31086a3b43ad54",
+      "duration": 3.924
+    }
+  ]
+}

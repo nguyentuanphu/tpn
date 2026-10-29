@@ -26,9 +26,9 @@ import { pic } from './art.js';
 import { saveProfiles, reduceMotion } from './state.js';
 import { GAMES, gameOpen } from './games/frame.js';
 import { holdButton, openGrownups, openFestivals } from './ui.js';
-import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, withSitePlaces } from './content/activities.js';
-import { featureOn } from './custom.js';
-import { isOpen } from './content/unlocks.js';
+import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, gameInfo, withSitePlaces } from './content/activities.js';
+import { featureOn, onLive } from './custom.js';
+import { isOpen, progressOf } from './content/unlocks.js';
 
 // a star drawn on the picture card (round I, owner: "stars without a strip, placed on the icon"): gold when earned
 const STAR = 'M12 1.8l3.1 6.4 7 1-5.1 4.9 1.2 7-6.2-3.3-6.2 3.3 1.2-7L1.9 9.2l7-1z';
@@ -65,9 +65,23 @@ export function createSimple(G) {
   let m = null, tab = 'games', cat = null, back = false, busy = false, sel = null, finding = false, lay = null; // cat: the open category (null: the cards); lay: where draw() put the stops
   let launched = 0, opened = false, starsBefore = 0; // a game or story started from here (when), and whether it is open yet
   const lastStars = {};
+  let catalogueDirty = false, fruitState = '';
+  // Studio can answer after the first screen; tester acceptance can also change locally later.
+  // Defer a refresh while an activity is open so its return position remains the same.
+  const fruitAvailability = () => ['fruitparade', 'sparkleorchard', 'sparklefruitbar'].map(id => `${id}:${gameInfo(id).hidden}`).join('|');
+  onLive(() => { catalogueDirty = true; });
   const hero = () => G.heroes[0];
   const solo = () => G.heroes.length === 1;
   const little = () => hero().profile.age !== 'big';
+  // (owner, 29 Oct 2026 AEDT: "those lock pads should tell the kids what to do") an area or shelf with games or stories
+  // still locked ends with a lock stop: how many are left, the stars of progress (0 to 3), and what to do when tapped
+  function lockStop(type, key, n, area) {
+    if (!n) return [];
+    const done = progressOf(hero().profile, type, area).done, game = type === 'game';
+    return [{ kind: 'lock', key: type + '-' + key, icon: '\u{1F512}', name: game ? T(`${n} more to unlock`, `Còn ${n} trò để mở`) : T(`${n} more to unlock`, `Còn ${n} truyện để mở`),
+      voice: game ? ['Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'] : ['Finish each story in this shelf 3 times to unlock more.', '\u0110\u1ecdc xong m\u1ed7i truy\u1ec7n trong k\u1ec7 n\u00e0y 3 l\u1ea7n \u0111\u1ec3 m\u1edf th\u00eam nh\u00e9.'],
+      stars: 0, max: 0, prog: done }];
+  }
   // every stop of one tab, by area (from the one activity list)
   function areasOf(t) {
     const p = hero().profile, lt = little();
@@ -75,7 +89,8 @@ export function createSimple(G) {
       const tales = G.TALES || [], known = TALE_AREAS.filter(a => a.key !== '💛').map(a => a.key);
       return TALE_AREAS.map(a => ({ area: a, items: tales.filter(x => a.key === '💛' ? !known.includes(x.flag) : x.flag === a.key)
         .filter(x => isOpen(p, x.id, 'tale', a.key === '🌍' ? 'world' : a.key))
-        .map(x => ({ kind: 'tale', key: x.id, icon: firstPic(x.pages[0][0]), badge: x.flag, name: x.title(), voice: both(x.title), stars: (p.tales || {})[x.id] ? 1 : 0, max: 1 })) }));
+        .map(x => ({ kind: 'tale', key: x.id, icon: firstPic(x.pages[0][0]), badge: x.flag, name: x.title(), voice: both(x.title), stars: (p.tales || {})[x.id] ? 1 : 0, max: 1 }))
+        .concat(lockStop('tale', a.key, tales.filter(x => (a.key === '💛' ? !known.includes(x.flag) : x.flag === a.key) && !isOpen(p, x.id, 'tale', a.key === '🌍' ? 'world' : a.key)).length, a.key === '🌍' ? 'world' : a.key)) }));
     }
     // (round R) the festival calendar opens the places tab: festivals happen in places, each in its own ones
     const cal = { kind: 'fest', key: 'cal', icon: '📅', name: T('Festival calendar', 'Lịch lễ hội'), voice: ['Festival calendar', 'Lịch lễ hội'], stars: 0, max: 0 };
@@ -86,7 +101,7 @@ export function createSimple(G) {
       .sort((x, y) => Number(x.area.key === 'asia') - Number(y.area.key === 'asia'));
     // (round N) the Music group starts with 🎵 Songs: lullabies, village tunes and festival songs to listen to
     const songs = { kind: 'songs', key: 'songs', icon: '🎵', name: T('Songs', 'Bài hát'), voice: ['Songs', 'Bài hát'], stars: 0, max: 0 };
-    return AREAS.map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, lt).filter(g => isOpen(p, g.id, 'game', a.key)).map(g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level }))) }));
+    return AREAS.map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, lt).filter(g => isOpen(p, g.id, 'game', a.key)).map(g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level }))).concat(lockStop('game', a.key, gamesIn(GAMES, a.key, lt).filter(g => !isOpen(p, g.id, 'game', a.key)).length, a.key)) }));
   }
   const tabOf = t => TABS.find(y => y.key === t);
   const groupsOf = t => areasOf(t).filter(a => a.items.length);
@@ -138,11 +153,28 @@ export function createSimple(G) {
   const road = pts => pts.map((q, k) => { if (!k) return `M${q.x},${q.y}`; const a = pts[k - 1], my = (a.y + q.y) / 2; return a.y === q.y || Math.abs(a.y - q.y) < 40 ? `C${(a.x + q.x) / 2},${a.y - 30} ${(a.x + q.x) / 2},${q.y + 30} ${q.x},${q.y}` : `C${a.x + (a.x < q.x ? 90 : -90)},${my} ${q.x + (a.x < q.x ? -90 : 90)},${my} ${q.x},${q.y}`; }).join(' ');
   const starsHTML = s => s.max ? `<span class="sp-stars n${s.max}" aria-hidden="true">${[...Array(s.max)].map((_, j) => `<svg class="${j < s.stars ? 'on' : ''}" viewBox="0 0 24 24"><path d="${STAR}"/></svg>`).join('')}</span>` : '';
   let list = [];
-  function draw() {
+  // (owner, 29 Oct 2026 AEDT: "after playing in simple screen, it goes back up to the top") the road is rebuilt after
+  // every game, story and resize; iPhone and iPad Safari set a scroll box back to the top when its content is replaced
+  // or it was hidden, so the place the child had scrolled to is put back (a tab, Back or a section still scroll on purpose)
+  let kept = null;
+  function draw(keep: unknown = false) {
+    if (!m) return;
+    const sc = m.querySelector('.sp-scroll'), at = kept || { top: sc.scrollTop, left: sc.scrollLeft };
+    kept = null;
+    drawRoad();
+    sc.scrollTop = at.top; sc.scrollLeft = at.left;
+    if (keep) requestAnimationFrame(() => { if (m && !m.hidden && sc.scrollTop !== at.top) { sc.scrollTop = at.top; sc.scrollLeft = at.left; } });
+  }
+  function drawRoad() {
     if (!m) return;
     const v = viewsOf(tab)[0], lt = little(), seen = lt ? null : seenSet();
-    list = v.items.map(s => ({ ...s, isNew: !!seen && s.kind !== 'head' && !seen.has(idOf(s)) }));
+    list = v.items.map(s => ({ ...s, isNew: !!seen && s.kind !== 'head' && s.kind !== 'lock' && !seen.has(idOf(s)) }));
     const path = m.querySelector('.sp-path'), sc = m.querySelector('.sp-scroll'), isWide = wide();
+    // Replacing a long path temporarily collapses its scroll range. Remember both axes before
+    // clearing it and restore them after layout, including game/story returns and live refreshes.
+    const position = { top: sc.scrollTop, left: sc.scrollLeft };
+    const restorePosition = () => { sc.scrollTop = position.top; sc.scrollLeft = position.left; };
+    fruitState = fruitAvailability(); catalogueDirty = false;
     m.classList.toggle('wide', isWide); m.classList.toggle('big', !lt);
     const bk = m.querySelector('.sp-back'); bk.hidden = !cat; m.classList.toggle('cards', !cat);
     m.querySelectorAll('.sp-tabs [data-tab]').forEach(b => { const on = b.dataset.tab === tab; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
@@ -151,9 +183,9 @@ export function createSimple(G) {
       lay = null; path.style.height = ''; path.style.width = '';
       list = []; const groups = groupsOf(tab);
       const stopHTML = (s, k) => `<button class="sp-stop${sel === idOf(s) ? ' sel' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
-        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${starsHTML(s)}</span>
-        <b class="sp-name">${esc(s.name)}</b>${!lt ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`;
-      path.innerHTML = groups.map(({ area, items }) => { const start = list.length; items.forEach(x => list.push({ ...x, cat: area.key, isNew: !!seen && !seen.has(idOf(x)) }));
+        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
+        <b class="sp-name">${esc(s.name)}</b>${!lt && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`;
+      path.innerHTML = groups.map(({ area, items }) => { const start = list.length; items.forEach(x => list.push({ ...x, cat: area.key, isNew: !!seen && x.kind !== 'lock' && !seen.has(idOf(x)) }));
         const got = items.reduce((a, x) => a + (x.stars || 0), 0), all = items.reduce((a, x) => a + (x.max || 0), 0);
         return `<section class="sp-sec" data-cat="${esc(area.key)}"><h3 class="sp-sectitle" role="heading" aria-level="2"><span class="sp-hpic">${pic(area.icon)}</span><b>${esc(area.name())}</b>${all ? `<span class="sp-count">${pic('⭐')} ${got}/${all}</span>` : ''}</h3>
           <div class="sp-secroad"><svg class="sp-road" aria-hidden="true"><path/><path class="dash"/></svg>${items.map((x, n) => stopHTML(list[start + n], start + n)).join('')}</div></section>`; }).join('') +
@@ -176,6 +208,7 @@ export function createSimple(G) {
       if (nb) { nb.classList.add('next'); const pr = path.getBoundingClientRect(), br = nb.getBoundingClientRect(), x = br.left - pr.left + br.width / 2, y = br.top - pr.top + path.scrollTop; const left = x > W / 2; owl.style.left = x + (left ? -84 : 84) + 'px'; owl.style.top = y + 60 + 'px'; owl.classList.toggle('left', left); }
       owl.onclick = () => { SFX.tap(); owl.classList.remove('cheer'); void owl.offsetWidth; owl.classList.add('cheer'); const x = list[next >= 0 ? next : 0]; if (x) say(x.voice[0], x.voice[1]); else { const t = tabOf(tab); say(t.say[0], t.say[1]); } };
       path.querySelectorAll('button.sp-stop').forEach(b => b.onclick = () => go(list[+b.dataset.k], b));
+      restorePosition();
       return;
     }
     const next = list.findIndex(s => s.max && !s.stars), H = sc.clientHeight || innerHeight - 80, W = path.clientWidth || innerWidth;
@@ -184,8 +217,8 @@ export function createSimple(G) {
     path.style.setProperty('--lw', L.lw + 'px');
     path.innerHTML = `<svg class="sp-road" aria-hidden="true"><path/><path class="dash"/></svg>` +
       list.map((s, k) => s.kind === 'head' ? `<div class="sp-stop grp" role="heading" aria-level="2" data-k="${k}" aria-label="${esc(s.name)}"><span class="sp-hpic">${pic(s.icon)}</span><b class="sp-name">${esc(s.name)}</b></div>` : `<button class="sp-stop${k === next ? ' next' : ''}${sel === idOf(s) ? ' sel' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
-        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${starsHTML(s)}</span>
-        <b class="sp-name">${esc(s.name)}</b>${!lt && s.kind !== 'head' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`).join('') +
+        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
+        <b class="sp-name">${esc(s.name)}</b>${!lt && s.kind !== 'head' && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`).join('') +
       `<button class="sp-owl" aria-label="${T('Ông Cú', 'Ông Cú')}">${pic('🦉')}</button>`;
     // measure the tallest stop (its name may take two or three lines), then place them all
     const btns = [...path.querySelectorAll('.sp-stop')], tall = Math.max(150, ...btns.filter(b => !b.classList.contains('grp')).map(b => b.offsetHeight));
@@ -200,13 +233,14 @@ export function createSimple(G) {
     if (q) { const left = isWide ? false : q.x > W / 2, dx = isWide ? 0 : left ? -84 : 84; owl.style.left = q.x + dx + 'px'; owl.style.top = (isWide ? q.y - 96 : q.y) + 'px'; owl.classList.toggle('left', left); owl.classList.toggle('up', isWide); }
     owl.onclick = () => { SFX.tap(); owl.classList.remove('cheer'); void owl.offsetWidth; owl.classList.add('cheer'); const s = list[next >= 0 ? next : 0]; if (s) say(s.voice[0], s.voice[1]); };
     path.querySelectorAll('button.sp-stop').forEach(b => b.onclick = () => go(list[+b.dataset.k], b));
+    restorePosition();
   }
   // the tap: grow, bounce and sparkle at once, say the name, then open it (twice-tapping can't start it twice)
   function go(s, btn) {
     if (busy || !s) return;
     if (s.kind === 'songs') { SFX.tap(); say(s.voice[0], s.voice[1]); G.openSongs(); return; }
     if (s.kind === 'fest') { SFX.tap(); say('Festival calendar', 'Lịch lễ hội'); openFestivals(G, 0); return; }
-    if (s.kind === 'head') { SFX.tap(); say(s.voice[0], s.voice[1]); return; }
+    if (s.kind === 'head' || s.kind === 'lock') { SFX.tap(); say(s.voice[0], s.voice[1]); return; }
     if (!little() && sel !== idOf(s)) { // a big kid: the first tap shows it, the second one plays it
       SFX.tap(); sel = idOf(s); say(s.voice[0], s.voice[1]);
       m.querySelectorAll('.sp-stop.sel').forEach(b => b.classList.remove('sel')); if (btn) btn.classList.add('sel');
@@ -260,7 +294,7 @@ export function createSimple(G) {
   }
   function show(t = '') {
     if (!solo() || !hero()) return;
-    if (t && t !== tab) { tab = t; cat = null; }
+    if (t && t !== tab) { tab = t; cat = null; kept = { top: 0, left: 0 }; }
     if (!m) {
       m = el('div', 'simple-screen');
       const p = hero().profile;
@@ -294,20 +328,20 @@ export function createSimple(G) {
     }
     busy = false; sel = null; discover(false);
     m.hidden = false; G.paused = true; document.body.classList.add('simple-on'); m.classList.toggle('still', reduceMotion());
-    choose('simple'); draw();
+    choose('simple'); draw(true);
     // a new star since the path was last open: Ông Cú cheers
     const who = hero().profile.name, now = totalStars(), owl = m.querySelector('.sp-owl');
     if (lastStars[who] != null && now > lastStars[who] && owl) { owl.classList.add('cheer'); say('Well done! You won a new star!', 'Giỏi lắm! Con được thêm một ngôi sao!'); }
     else { const x = TABS.find(y => y.key === tab); say(x.say[0], x.say[1]); }
     lastStars[who] = now;
   }
-  function hide() { if (m) m.hidden = true; document.body.classList.remove('simple-on'); G.paused = false; }
+  function hide() { if (m) { const sc = m.querySelector('.sp-scroll'); if (!m.hidden) kept = { top: sc.scrollTop, left: sc.scrollLeft }; m.hidden = true; } document.body.classList.remove('simple-on'); G.paused = false; }
   function leave() { back = false; hide(); }
   function choose(screen) { const p = hero() && hero().profile; if (p && p.screen !== screen) { p.screen = screen; saveProfiles(); } }
   // the game or story started from here is over: the path is free at once, with the stars brought up to date
   function settle() {
     if (!launched || !m || m.hidden || gameOpen() || document.querySelector('.theatre')) return;
-    launched = 0; busy = false; draw(); lastStars[hero().profile.name] = lastStars[hero().profile.name] ?? starsBefore;
+    launched = 0; busy = false; draw(true); lastStars[hero().profile.name] = lastStars[hero().profile.name] ?? starsBefore;
     if (totalStars() > starsBefore) { const owl = m.querySelector('.sp-owl'); if (owl) owl.classList.add('cheer'); say('Well done! You won a new star!', 'Giỏi lắm! Con được thêm một ngôi sao!'); }
     lastStars[hero().profile.name] = totalStars();
   }
@@ -321,6 +355,7 @@ export function createSimple(G) {
       else if (opened) settle();
       else if (!opened && Date.now() - launched > 6000) { launched = 0; busy = false; }
     }
+    if (m && !m.hidden && !busy && !gameOpen() && !document.querySelector('.theatre') && (catalogueDirty || fruitState !== fruitAvailability())) draw();
     if (m && !m.hidden && !gameOpen()) G.paused = true; // the valley stays still behind it, also after a talk box closes
     if (!back || !m || !m.hidden || G.paused || gameOpen() || document.querySelector('.modal, .dialog, .storybook, .theatre, .reward')) return;
     back = false; show();
@@ -330,7 +365,7 @@ export function createSimple(G) {
     // what the road shows now (for the checks): its categories and every stop on it
     // (Round U) the cards: every category of the tab; with one open, its stops
     // (Round V) one page: every section of the tab (its title and road) and every stop on it
-    get view() { if (!m) return null; return { cat, cats: groupsOf(tab).map(g => g.area.key), stops: list.filter(s => s.kind !== 'head').map(s => s.key), secs: m.querySelectorAll('.sp-sec').length }; },
+    get view() { if (!m) return null; return { cat, cats: groupsOf(tab).map(g => g.area.key), stops: list.filter(s => s.kind !== 'head' && s.kind !== 'lock').map(s => s.key), locks: list.filter(s => s.kind === 'lock').map(s => s.key), secs: m.querySelectorAll('.sp-sec').length }; },
     get cats() { return groupsOf(tab).map(g => g.area.key); },
     // open a category of a tab (tests, and anything that wants to take a child straight to one); null: the cards
     openGroup(t, key) { tab = t; if (key == null) backToCards(); else openCat(key, true); },

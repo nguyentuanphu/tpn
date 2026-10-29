@@ -39,7 +39,9 @@ register({
     const kid = w.querySelector('.wolf-kid'), wolf = w.querySelector('.wolf-w'), said = w.querySelector('.wolf-said'), clock = w.querySelector('.wolf-clock'), btns = w.querySelector('.wolf-btns'), steps = [...w.querySelectorAll('.wolf-steps i')];
     let pos = 0, caught = 0, dinnerAt = api.little ? 99 : Math.floor(rand(5, 10));
     const place = () => { kid.style.left = `calc(${6 + pos / N * 78}% - 20px)`; steps.forEach((s, k) => s.classList.toggle('on', k < pos)); };
-    const btn = (html, cls = '') => { btns.innerHTML = ''; const b = el('button', 'pill big ' + cls, html); btns.appendChild(b); return b; };
+    let planned: HTMLElement | null = null;
+    api.plan(() => planned?.isConnected ? planned : null, { maxActions: N * 4 + 12 });
+    const btn = (html, cls = '') => { btns.innerHTML = ''; const b = el('button', 'pill big ' + cls, html); btns.appendChild(b); planned = b; return b; };
     place();
     for (;;) {
       wolf.classList.remove('turned'); said.textContent = ''; clock.innerHTML = '';
@@ -72,6 +74,7 @@ register({
         const done = autoStop ? null : el('button', 'pill big done', '✋ ' + T('Stop', 'Dừng')); if (done) btns.appendChild(done);
         let taken = pos - start;
         while (true) {
+          planned = autoStop || taken < hr ? step : done;
           const b = await tapOne(done ? [step, done] : [step]); if (api.closed) return;
           if (b === done) break;
           if (pos >= N) break;
@@ -239,6 +242,16 @@ register({
     };
     let done;
     const finished = new Promise<void>(r => done = r);
+    // Aim at a visible remaining marble and perform the same pull/release gesture as a child.
+    api.plan(() => {
+      if (moving || api.closed || !c.isConnected) return null;
+      const target = balls.filter(b => !b.shooter && !b.gone && b.fade == null).sort((a, b) => Math.hypot(a.x - sh.x, a.y - sh.y) - Math.hypot(b.x - sh.x, b.y - sh.y))[0];
+      if (!target) return null;
+      const dx = target.x - sh.x, dy = target.y - sh.y, distance = Math.hypot(dx, dy) || 1, r = c.getBoundingClientRect();
+      const x = r.left + sh.x / w * r.width, y = r.top + sh.y / h * r.height;
+      const end = { x: clamp(x - dx / distance * r.width * .28, 8, innerWidth - 8), y: clamp(y - dy / distance * r.width * .28, 8, innerHeight - 8) };
+      return { el: c, x, y, ms: 450, path: [end] };
+    }, { maxActions: need * 12 });
     const tick = now => {
       if (api.closed) return;
       const dt = Math.min(.033, (now - last) / 1000); last = now;
@@ -387,6 +400,11 @@ register({
       vy = -Math.sqrt(2 * grav * h * (.45 + Math.random() * .15)); vx = (Math.random() - .5) * w * (api.little ? .25 : .5); kicks++; foot = .25;
       api.sfx.jump(); count(kicks); api.dots(need, kicks); if (kicks >= need) done();
     };
+    // The pointer tracks the visible shuttlecock while the finger approaches it.
+    api.plan(() => api.closed || kicks >= need || !c.isConnected ? null : {
+      el: c, get x() { const r = c.getBoundingClientRect(); return r.left + x / w * r.width; },
+      get y() { const r = c.getBoundingClientRect(); return r.top + y / h * r.height; }, ms: 0
+    }, { maxActions: need * 4 });
     const tick = now => {
       if (api.closed) return;
       const dt = Math.min(.04, (now - last) / 1000); last = now;

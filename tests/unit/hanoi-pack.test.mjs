@@ -7,7 +7,7 @@ const manifest={schema:1,provider:'FPT Neo',model:'FPT.AI-VITs',voice:'leminh',l
 function fixture(){
  const stored=new Map(),requests=[],progress=[];let available=true,allowed=true,corrupt=false,stopAfter=Infinity,quota=false;
  const absolute=u=>new URL(typeof u==='string'?u:u.url,'https://game.test/').href;
- const cache={keys:async()=>[...stored.keys()].map(url=>({url})),match:async u=>stored.get(absolute(u))?.clone(),put:async(u,r)=>{if(quota&&u.includes('.mp3'))throw Error('quota');stored.set(absolute(u),r.clone());}};
+ const cache={delete:async u=>stored.delete(absolute(u)),keys:async()=>[...stored.keys()].map(url=>({url})),match:async u=>stored.get(absolute(u))?.clone(),put:async(u,r)=>{if(quota&&u.includes('.mp3'))throw Error('quota');stored.set(absolute(u),r.clone());}};
  const storage={open:async name=>{assert.equal(name,HANOI_CACHE);return cache;}};
  const fetcher=async url=>{requests.push(url);if(!available)throw Error('offline');if(url.endsWith('manifest.json'))return Response.json(manifest);if(requests.filter(u=>u.includes('.mp3')).length===stopAfter)available=false;return new Response(corrupt?Buffer.alloc(body.length,1):body);};
  const create=()=>createHanoiPack({fetcher,storage,emit:p=>progress.push(p),allowed:()=>allowed,online:()=>available,pause:async()=>{},baseURL:()=> 'https://game.test/'});
@@ -38,3 +38,20 @@ test('recording lookup sends only canonical IDs to our own static pack, never pr
 });
 
 test('a full device never reports uncached downloads as saved',async()=>{const f=fixture();f.setQuota(true);assert.equal(await f.create().download(),0);assert.equal(f.progress.at(-1).state,'nostore');assert.equal([...f.stored.keys()].filter(u=>u.includes('.mp3')).length,0);});
+
+test('smaller pack upgrade retains verified old offline audio until a replacement is safely cached',async()=>{
+ const id='1234567812345678',oldBytes=Buffer.from('larger original recording'),newBytes=Buffer.from('compact recording');
+ const oldHash=createHash('sha256').update(oldBytes).digest('hex'),newHash=createHash('sha256').update(newBytes).digest('hex');
+ const old={...manifest,signature:'old',bytes:oldBytes.length,lines:{[id]:{bytes:oldBytes.length,sha256:oldHash}}};
+ const next={...manifest,signature:'new',bytes:newBytes.length,lines:{[id]:{bytes:newBytes.length,sha256:newHash}}};
+ const stored=new Map(),absolute=u=>new URL(typeof u==='string'?u:u.url,'https://game.test/').href;
+ const cache={match:async u=>stored.get(absolute(u))?.clone(),put:async(u,r)=>stored.set(absolute(u),r.clone()),delete:async u=>stored.delete(absolute(u)),keys:async()=>[...stored.keys()].map(url=>({url}))};
+ const oldURL=HANOI_ROOT+id+'.mp3?v='+oldHash.slice(0,16);await cache.put(HANOI_ROOT+'manifest.json',Response.json(old));await cache.put(oldURL,new Response(oldBytes));
+ let offline=true;
+ const service=createHanoiPack({storage:{open:async()=>cache},baseURL:()=> 'https://game.test/',fetcher:async u=>{if(u.endsWith('manifest.json'))return Response.json(next);if(offline)throw Error('offline');return new Response(newBytes);}});
+ const u=await service.recording(id);assert.notEqual(u,oldURL);
+ assert.deepEqual(Buffer.from(await(await service.audio(u)).arrayBuffer()),oldBytes);
+ assert.ok(await cache.match(oldURL),'old audio retained while offline');assert.equal(await cache.match(u),undefined);
+ offline=false;assert.deepEqual(Buffer.from(await(await service.audio(u)).arrayBuffer()),newBytes);
+ assert.equal(await cache.match(oldURL),undefined,'only delete original after replacement is verified and stored');assert.ok(await cache.match(u));
+});

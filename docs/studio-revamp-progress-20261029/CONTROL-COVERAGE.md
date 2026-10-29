@@ -1,0 +1,116 @@
+# Control source audit
+
+These are declarations and lexical call references, not verified working effects. No working-control percentage is claimed. G.keep wrappers are listed separately and linked to the js/main.ts retention bridge; dynamic aliases still need review.
+
+| Rule | Direct references | Wrapper references | Off retention caveat |
+|---|---:|---:|---|
+| managementTelemetry | 1 | 0 | consumer_semantics_still_require_review |
+| autoplay | 1 | 0 | consumer_semantics_still_require_review |
+| newGames | 1 | 0 | consumer_semantics_still_require_review |
+| newStories | 1 | 0 | consumer_semantics_still_require_review |
+| unlockAll | 1 | 0 | consumer_semantics_still_require_review |
+| tester | 4 | 0 | consumer_semantics_still_require_review |
+| traffic | 1 | 0 | consumer_semantics_still_require_review |
+| cityVehicles | 2 | 0 | consumer_semantics_still_require_review |
+| rideBikes | 0 | 0 | consumer_semantics_still_require_review |
+| xichloRides | 0 | 0 | consumer_semantics_still_require_review |
+| realVehicles | 1 | 0 | consumer_semantics_still_require_review |
+| powerPoles | 1 | 0 | consumer_semantics_still_require_review |
+| story_prologue | 0 | 0 | consumer_semantics_still_require_review |
+| story_ch1 | 0 | 0 | consumer_semantics_still_require_review |
+| story_ch2 | 0 | 0 | consumer_semantics_still_require_review |
+| story_ch3 | 0 | 0 | consumer_semantics_still_require_review |
+| story_yard | 1 | 2 | previously_tried_retention_may_override_off |
+| storyFilms | 2 | 0 | consumer_semantics_still_require_review |
+| yardHands | 1 | 1 | previously_tried_retention_may_override_off |
+| simpleStart | 1 | 0 | consumer_semantics_still_require_review |
+| storyActions | 1 | 0 | consumer_semantics_still_require_review |
+| companionGrow | 0 | 0 | consumer_semantics_still_require_review |
+| shortTalk | 3 | 0 | consumer_semantics_still_require_review |
+| dailySurprise | 1 | 0 | consumer_semantics_still_require_review |
+| saveGoal | 0 | 0 | consumer_semantics_still_require_review |
+| shop | 2 | 0 | consumer_semantics_still_require_review |
+| mysteryBox | 0 | 0 | consumer_semantics_still_require_review |
+| rankings | 0 | 0 | consumer_semantics_still_require_review |
+| collectibles | 0 | 0 | consumer_semantics_still_require_review |
+| hoilang | 1 | 1 | previously_tried_retention_may_override_off |
+| surprises | 1 | 1 | previously_tried_retention_may_override_off |
+| familyMissions | 0 | 0 | consumer_semantics_still_require_review |
+| weeklyNote | 0 | 0 | consumer_semantics_still_require_review |
+| certCard | 0 | 0 | consumer_semantics_still_require_review |
+| danceBreak | 0 | 0 | consumer_semantics_still_require_review |
+| bedtime | 0 | 0 | consumer_semantics_still_require_review |
+| birthday | 0 | 0 | consumer_semantics_still_require_review |
+| fest_tet | 0 | 0 | consumer_semantics_still_require_review |
+| fest_ramthang1 | 0 | 0 | consumer_semantics_still_require_review |
+| fest_giotohung | 0 | 0 | consumer_semantics_still_require_review |
+| fest_doanngo | 0 | 0 | consumer_semantics_still_require_review |
+| fest_vulan | 0 | 0 | consumer_semantics_still_require_review |
+| fest_midautumn | 0 | 0 | consumer_semantics_still_require_review |
+| fest_ongtao | 0 | 0 | consumer_semantics_still_require_review |
+| fest_thieunhi | 0 | 0 | consumer_semantics_still_require_review |
+| fest_quockhanh | 0 | 0 | consumer_semantics_still_require_review |
+| fest_nhagiao | 0 | 0 | consumer_semantics_still_require_review |
+| fest_easter | 0 | 0 | consumer_semantics_still_require_review |
+| fest_mothersday | 0 | 0 | consumer_semantics_still_require_review |
+| fest_fathersday | 0 | 0 | consumer_semantics_still_require_review |
+| fest_halloween | 0 | 0 | consumer_semantics_still_require_review |
+| fest_christmas | 0 | 0 | consumer_semantics_still_require_review |
+| fest_newyear | 0 | 0 | consumer_semantics_still_require_review |
+| fest_ausday | 0 | 0 | consumer_semantics_still_require_review |
+| fest_cleanup | 0 | 0 | consumer_semantics_still_require_review |
+| fest_harmony | 0 | 0 | consumer_semantics_still_require_review |
+| fest_holi | 0 | 0 | consumer_semantics_still_require_review |
+| fest_anzac | 0 | 0 | consumer_semantics_still_require_review |
+| fest_reconciliation | 0 | 0 | consumer_semantics_still_require_review |
+| fest_naidoc | 0 | 0 | consumer_semantics_still_require_review |
+| fest_diwali | 0 | 0 | consumer_semantics_still_require_review |
+| readingTrial | 1 | 0 | previously_tried_retention_may_override_off |
+| rideAny | 0 | 0 | consumer_semantics_still_require_review |
+| busFares | 0 | 0 | consumer_semantics_still_require_review |
+| wayfind | 2 | 3 | consumer_semantics_still_require_review |
+| jobs | 0 | 1 | previously_tried_retention_may_override_off |
+| villagerTalk | 0 | 1 | previously_tried_retention_may_override_off |
+| dayPlan | 0 | 1 | previously_tried_retention_may_override_off |
+| animalHomes | 0 | 1 | previously_tried_retention_may_override_off |
+| singers | 0 | 1 | previously_tried_retention_may_override_off |
+| priceTags | 1 | 1 | previously_tried_retention_may_override_off |
+| sellersRemember | 2 | 0 | previously_tried_retention_may_override_off |
+| houseGuide | 0 | 1 | previously_tried_retention_may_override_off |
+| owlGuide | 0 | 1 | previously_tried_retention_may_override_off |
+| festHunt | 1 | 2 | previously_tried_retention_may_override_off |
+| festDecoBig | 1 | 0 | consumer_semantics_still_require_review |
+| money_heodat | 0 | 0 | consumer_semantics_still_require_review |
+| money_coinnote | 0 | 0 | consumer_semantics_still_require_review |
+| money_needwant | 0 | 0 | consumer_semantics_still_require_review |
+| money_cheaper | 0 | 0 | consumer_semantics_still_require_review |
+| money_lixi | 0 | 0 | consumer_semantics_still_require_review |
+| money_bahu | 0 | 0 | consumer_semantics_still_require_review |
+| money_shoplist | 0 | 0 | consumer_semantics_still_require_review |
+| money_waitgrow | 0 | 0 | consumer_semantics_still_require_review |
+| money_shopkeep | 0 | 0 | consumer_semantics_still_require_review |
+| money_barter | 0 | 0 | consumer_semantics_still_require_review |
+| explain_hearts_note | 0 | 0 | consumer_semantics_still_require_review |
+| explain_hearts_voice | 0 | 0 | consumer_semantics_still_require_review |
+| explain_gift_note | 0 | 0 | consumer_semantics_still_require_review |
+| explain_gift_voice | 0 | 0 | consumer_semantics_still_require_review |
+| explain_gameLine | 1 | 0 | consumer_semantics_still_require_review |
+| explain_updateNotice | 0 | 0 | consumer_semantics_still_require_review |
+| explain_voiceAsk | 1 | 0 | consumer_semantics_still_require_review |
+| familyDevices | 2 | 0 | consumer_semantics_still_require_review |
+| adventure | 1 | 1 | previously_tried_retention_may_override_off |
+| sparkleFruitParade_single | 0 | 0 | consumer_semantics_still_require_review |
+| sparkleFruitParade_multi | 0 | 0 | consumer_semantics_still_require_review |
+| sparkleFruitParade_tester | 1 | 0 | consumer_semantics_still_require_review |
+| sparkleorchard_tester | 1 | 0 | consumer_semantics_still_require_review |
+| sparkleorchard_single | 1 | 0 | consumer_semantics_still_require_review |
+| sparkleorchard_multi | 1 | 0 | consumer_semantics_still_require_review |
+| sparklefruitbar_tester | 1 | 0 | consumer_semantics_still_require_review |
+| sparklefruitbar_single | 1 | 0 | consumer_semantics_still_require_review |
+| sparklefruitbar_multi | 1 | 0 | consumer_semantics_still_require_review |
+
+## Gaps
+
+- Per-item availability and explicit-off behaviour need runtime tests.
+- Current keptOn implementation can retain previously-tried features despite an Off rule; G.keep wrappers extend this beyond the three direct literal keptOn rule IDs.
+- Dedicated scoped revision publication and true private draft/review are not implemented.

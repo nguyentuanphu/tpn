@@ -15,6 +15,8 @@ function style() {
 .a2-btn { min-width: 64px; min-height: 64px; padding: 8px 16px; border-radius: 999px; border: 2px solid #3b2a4f; background: #fff; box-shadow: 0 3px 0 rgba(59, 42, 79, .2); font: 800 17px var(--font, sans-serif); color: #3b2a4f; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; touch-action: manipulation; }
 .a2-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(59, 42, 79, .2); }
 .a2-big { font-size: 72px; line-height: 1; text-align: center; }
+.a2-row { display: flex; align-items: center; justify-content: center; gap: 18px; }
+.a2-hole { font-size: 56px; }
 `));
 }
 
@@ -26,13 +28,15 @@ async function rounds(api: any, icon: string, prompt: [string, string], qs: Arra
   while (k < qs.length) {
     stage.innerHTML = `<div class="a2-big">${qs[k].show}</div>`;
     controls.innerHTML = '';
-    const btns = qs[k].choices.map((c, i) => {
-      const b = el('button', 'a2-btn', `<span>${T(c[0], c[1])}</span>`);
+    // (owner, 29 Oct 2026 AEDT audit) the answer was nearly always the first button: the order changes every round
+    const order = qs[k].choices.map((_, i) => i).sort(() => Math.random() - .5);
+    const btns = order.map(i => {
+      const c = qs[k].choices[i], b = el('button', 'a2-btn', `<span>${T(c[0], c[1])}</span>`);
       b.dataset.i = String(i);
       controls.appendChild(b);
       return b;
     });
-    const target = btns[qs[k].answer];
+    const target = btns[order.indexOf(qs[k].answer)];
     api.plan(() => target, { maxActions: 5 });
     const clicked = await untilRight(api, btns, (e: HTMLElement) => e === target);
     if (!clicked || api.closed) return;
@@ -56,7 +60,9 @@ register({
     api.dots(3, 0);
     const wrap = el('div', 'a2-board'), stage = el('div', 'a2-stage'), controls = el('div', 'a2-controls');
     api.stage.appendChild(wrap); wrap.append(stage, controls);
-    const crab = el('div', 'a2-big', pic('🦀')); stage.appendChild(crab);
+    // (owner, 29 Oct 2026 AEDT audit) the hole shows on the side the crab must walk to; before, nothing said which way
+    const row = el('div', 'a2-row'), holeL = el('div', 'a2-big a2-hole', pic('🕳️')), crab = el('div', 'a2-big', pic('🦀')), holeR = el('div', 'a2-big a2-hole', pic('🕳️'));
+    row.append(holeL, crab, holeR); stage.appendChild(row);
     const leftBtn = el('button', 'a2-btn', `<span>⬅️ ${T('Left', 'Trái')}</span>`);
     const rightBtn = el('button', 'a2-btn', `<span>${T('Right', 'Phải')} ➡️</span>`);
     controls.append(leftBtn, rightBtn);
@@ -65,10 +71,11 @@ register({
     let step = 0;
     while (step < 3) {
       const target = steps[step];
+      holeL.style.visibility = target === leftBtn ? 'visible' : 'hidden'; holeR.style.visibility = target === rightBtn ? 'visible' : 'hidden';
       api.plan(() => target, { maxActions: 4 });
       const clicked = await untilRight(api, [leftBtn, rightBtn], (e: HTMLElement) => e === target);
       if (!clicked || api.closed) return;
-      crab.style.transform = `translateX(${step % 2 ? '30px' : '-30px'})`;
+      crab.style.transform = `translateX(${target === rightBtn ? '30px' : '-30px'})`; await wait(250); crab.style.transform = '';
       api.sfx.pop(step);
       step++;
       api.dots(3, step);
@@ -105,9 +112,9 @@ register({
     return rounds(api, '🦘',
       ['Match each baby animal to its loving mum!', 'Tìm mẹ cho các con thú con đáng yêu nhé!'],
       [
-        { show: '🦘 + ?', choices: [['Joey', 'Chuột túi con'], ['Puppy', 'Cún con']], answer: 0 },
-        { show: '🐃 + ?', choices: [['Kitten', 'Mèo con'], ['Calf (nghé)', 'Chú nghé con']], answer: 1 },
-        { show: '🦆 + ?', choices: [['Duckling', 'Vịt con'], ['Piglet', 'Heo con']], answer: 0 }
+        { show: '🦘 + ?', choices: [['🦘 Joey', '🦘 Chuột túi con'], ['🐶 Puppy', '🐶 Cún con']], answer: 0 },
+        { show: '🐃 + ?', choices: [['🐱 Kitten', '🐱 Mèo con'], ['🐂 Calf (nghé)', '🐂 Chú nghé con']], answer: 1 },
+        { show: '🦆 + ?', choices: [['🐥 Duckling', '🐥 Vịt con'], ['🐷 Piglet', '🐷 Heo con']], answer: 0 }
       ],
       ['All the babies found their mothers!', 'Các bạn nhỏ đã tìm được mẹ rồi!']
     );
@@ -188,9 +195,9 @@ register({
     return rounds(api, '🐾',
       ['Whose tracks are these on the path?', 'Dấu chân trên đường là của bạn nào?'],
       [
-        { show: '🐾 🐾 (paws)', choices: [['🐕 Puppy dog', '🐕 Chú cún'], ['🦆 Duck', '🦆 Chú vịt']], answer: 0 },
-        { show: '👣 👣 (webbed)', choices: [['🦆 Duckling', '🦆 Chú vịt bầu'], ['🐱 Kitten', '🐱 Mèo con']], answer: 0 },
-        { show: '🐾 (tiny bird)', choices: [['🐦 Little sparrow', '🐦 Chim sẻ'], ['🐃 Big buffalo', '🐃 Chú trâu']], answer: 0 }
+        { show: pic('🐾'), choices: [['🐕 Puppy dog', '🐕 Chú cún'], ['🦆 Duck', '🦆 Chú vịt']], answer: 0 },
+        { show: pic('track:duck'), choices: [['🦆 Duckling', '🦆 Chú vịt bầu'], ['🐱 Kitten', '🐱 Mèo con']], answer: 0 },
+        { show: pic('track:bird'), choices: [['🐦 Little sparrow', '🐦 Chim sẻ'], ['🐃 Big buffalo', '🐃 Chú trâu']], answer: 0 }
       ],
       ['Track detective! You identified every paw and foot!', 'Thám tử dấu chân! Bé nhận biết mọi dấu chân thật tài!']
     );

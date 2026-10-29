@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "destinationBranch": "handoff/studio-combined-20261029",
+  "A": {
+    "branch": "review/studio-finance-20261027",
+    "uploadedCheckpoint": "fa917a069a623ae9583a14a9a75cc97dec7f51d0",
+    "includedTip": "eccefe60085cc38dfde64cedd8f6d9888dd9fd45",
+    "runtimeSource": "47782b13f08e67e8647d41614a52f4f0714cc195"
+  },
+  "B": {
+    "branch": "work/studio-content-website-20261029",
+    "includedTip": "c930f4615c65765cd75d60184da7309379530d69",
+    "runtimeSource": "47a9079eef4d5e1b0e34283503fc934feb888da7"
+  },
+  "commonBase": "f62a48c91247a40388d41ba4161df655ec825771",
+  "mergeCommit": "125a54920fb4ed54a4b241abc5a414d156267235",
+  "conflicts": [
+    {
+      "file": "sw.ts",
+      "resolution": "Union: A reporting-policy leaf plus B drawing2/crafts/art-pad dependencies; all previous entries preserved; no version change"
+    }
+  ],
+  "ancestryVerified": {
+    "A": true,
+    "B": true
+  },
+  "mainMerged": false,
+  "deploymentPerformed": false,
+  "versionChanged": false,
+  "newProductionMigration": false
+}

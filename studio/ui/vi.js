@@ -7,6 +7,14 @@ const ENV = 'Netlify (Site configuration → Environment variables)';
 export const PERM_VI = {};
 const LIVE_PART_VI = { Message: 'Lời nhắn', Missions: 'Nhiệm vụ', Quiz: 'Đố vui', 'Our stories': 'Truyện của nhà mình', Villagers: 'Nhân vật', 'Memory Villages': 'Làng Kỷ Niệm', 'Story characters': 'Nhân vật trong truyện', Ads: 'Quảng cáo', 'Family album': 'Album gia đình' };
 export const VI_MESSAGES = [
+  [/^Revisioned configuration is active\. Use Analytics → Configuration changes to save safely\.$/, () => 'Cấu hình theo phiên bản đã hoạt động. Vào Phân tích → Thay đổi cấu hình để lưu an toàn.'],
+  [/^Management edits require the signed-in online Studio\.$/, () => 'Cần đăng nhập Studio trực tuyến để sửa thông tin quản lý.'],
+  [/^Connect the website and a scoped Studio key in Settings\.$/, () => 'Kết nối trang web và khóa Studio có quyền phù hợp trong Cài đặt.'],
+  [/^Management source unavailable\. No change has been confirmed\.$/, () => 'Chưa truy cập được nguồn quản lý. Chưa xác nhận thay đổi nào.'],
+  [/^config_revision_conflict$/, () => 'Cấu hình đã được thay đổi ở nơi khác. Hãy tải lại phiên bản mới và xem lại trước khi lưu.'],
+  [/^management_database_not_configured$/, () => 'Chưa cấu hình cơ sở dữ liệu quản lý.'],
+  [/^permission_required$/, () => 'Cần quyền phù hợp để mở trang này.'],
+
   // (r81, owner 17 Oct AEDT) the content pages, live at once
   [/^Set the website and a Studio key in Settings to put these pages live at once\.$/, () => 'Hãy điền trang web và khóa Studio trong Cài đặt để các trang này có hiệu lực ngay.'],
   [/^Too much to go live at once \((\d+) KB; 200 KB at most\): make the stories or the quiz shorter, then Save again\.$/, (m) => `Quá nhiều để có hiệu lực ngay một lần (${m[1]} KB; tối đa 200 KB): hãy làm truyện hoặc câu đố ngắn lại, rồi bấm Lưu lần nữa.`],

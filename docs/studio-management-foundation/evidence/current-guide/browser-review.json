@@ -1,0 +1,36 @@
+{
+  "scope": "Offline historical register and current implementation/finance guide; runtime evidence is separate",
+  "date": "2026-10-27 Australia/Sydney",
+  "browser": "141.0.7390.37",
+  "viewports": [
+    390,
+    820,
+    1280
+  ],
+  "cases": [
+    "390px overview: fits viewport",
+    "390px current implementation and finance links: fits viewport",
+    "390px filtered data and expanded lineage: fits viewport",
+    "390px metric definition: fits viewport",
+    "390px build instructions: fits viewport",
+    "390px visual maps: fits viewport",
+    "390px: search, combined filters, lineage expansion, empty state, metric meaning and section reload passed",
+    "820px overview: fits viewport",
+    "820px current implementation and finance links: fits viewport",
+    "820px filtered data and expanded lineage: fits viewport",
+    "820px metric definition: fits viewport",
+    "820px build instructions: fits viewport",
+    "820px visual maps: fits viewport",
+    "820px: search, combined filters, lineage expansion, empty state, metric meaning and section reload passed",
+    "1280px overview: fits viewport",
+    "1280px current implementation and finance links: fits viewport",
+    "1280px filtered data and expanded lineage: fits viewport",
+    "1280px metric definition: fits viewport",
+    "1280px build instructions: fits viewport",
+    "1280px visual maps: fits viewport",
+    "1280px: search, combined filters, lineage expansion, empty state, metric meaning and section reload passed"
+  ],
+  "errors": [],
+  "httpRequests": 0,
+  "passed": true
+}

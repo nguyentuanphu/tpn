@@ -1,0 +1,147 @@
+art stamps vi 320
+art weave vi 320
+art mosaic vi 320
+art nonla vi 320
+art aodai vi 320
+art kitepaint vi 320
+art shades vi 320
+art shadowpic vi 320
+art finishpic vi 320
+art scene vi 320
+art lacquer vi 320
+art scratch vi 320
+art bubblepaint vi 320
+art fingerpaint vi 320
+art weatherpaint vi 320
+art thocam vi 320
+art pixelpic vi 320
+art fireworks vi 320
+art masks vi 320
+art makeface vi 320
+art gallery vi 320
+art leafrub vi 320
+\u2705 contentpair (68s) 22 art completions, gates, album cap, keyboard/pointer and exit checks
+\u2705 contentvoice (1s) 76 shipped guidance recordings fetched and decoded; 12 lines still need recording; physical listening separate
+\u2705 contentprogress (21s) actual game orchestration: one win and five coins once, album persistence, exit without reward, reload preserves save
+\u2705 contentwebsite (5s) 8 website language/layout/deep-link checks
+art stamps en 390
+art weave en 390
+art mosaic en 390
+art nonla en 390
+art aodai en 390
+art kitepaint en 390
+art shades en 390
+art shadowpic en 390
+art finishpic en 390
+art scene en 390
+art lacquer en 390
+art scratch en 390
+art bubblepaint en 390
+art fingerpaint en 390
+art weatherpaint en 390
+art thocam en 390
+art pixelpic en 390
+art fireworks en 390
+art masks en 390
+art makeface en 390
+art gallery en 390
+art leafrub en 390
+art stamps vi 820
+art weave vi 820
+art mosaic vi 820
+art nonla vi 820
+art aodai vi 820
+art kitepaint vi 820
+art shades vi 820
+art shadowpic vi 820
+art finishpic vi 820
+art scene vi 820
+art lacquer vi 820
+art scratch vi 820
+art bubblepaint vi 820
+art fingerpaint vi 820
+art weatherpaint vi 820
+art thocam vi 820
+art pixelpic vi 820
+art fireworks vi 820
+art masks vi 820
+art makeface vi 820
+art gallery vi 820
+art leafrub vi 820
+art stamps en 1440
+art weave en 1440
+art mosaic en 1440
+art nonla en 1440
+art aodai en 1440
+art kitepaint en 1440
+art shades en 1440
+art shadowpic en 1440
+art finishpic en 1440
+art scene en 1440
+art lacquer en 1440
+art scratch en 1440
+art bubblepaint en 1440
+art fingerpaint en 1440
+art weatherpaint en 1440
+art thocam en 1440
+art pixelpic en 1440
+art fireworks en 1440
+art masks en 1440
+art makeface en 1440
+art gallery en 1440
+art leafrub en 1440
+art stamps vi 390
+art weave vi 390
+art mosaic vi 390
+art nonla vi 390
+art aodai vi 390
+art kitepaint vi 390
+art shades vi 390
+art shadowpic vi 390
+art finishpic vi 390
+art scene vi 390
+art lacquer vi 390
+art scratch vi 390
+art bubblepaint vi 390
+art fingerpaint vi 390
+art weatherpaint vi 390
+art thocam vi 390
+art pixelpic vi 390
+art fireworks vi 390
+art masks vi 390
+art makeface vi 390
+art gallery vi 390
+art leafrub vi 390
+art stamps en 844
+art weave en 844
+art mosaic en 844
+art nonla en 844
+art aodai en 844
+art kitepaint en 844
+art shades en 844
+art shadowpic en 844
+art finishpic en 844
+art scene en 844
+art lacquer en 844
+art scratch en 844
+art bubblepaint en 844
+art fingerpaint en 844
+art weatherpaint en 844
+art thocam en 844
+art pixelpic en 844
+art fireworks en 844
+art masks en 844
+art makeface en 844
+art gallery en 844
+art leafrub en 844
+\u2705 contentart (337s) 110 art completions, gates, album cap, keyboard/pointer and exit checks
+\u2705 emoji (0s) 820 different emoji in the game, 819 drawn, 0 not drawn (0 uses); left as they are: \U0001f1ec\U0001f1e7 (flags drawn by icons.js, and text symbols); no emoji in the docs
+\u2705 preload (0s) up to date: 141 scripts
+\u2705 arch (0s) 328 files, 1370 imports; 0 circle groups (0 files in them); allowed: 0 groups, 0 files
+\u274c unit: not ok 369 - declared-only management entries cannot become open from an unlock or release switch | error: |- | name: 'AssertionError' | expected: 26 | actual: 4 | operator: 'strictEqual' | not ok 370 - declared-only catalogue rows remain excluded from accepted runtime activity events | error: 'Missing expected rejection.' | name: 'AssertionError'
+\u2705 names (7s) 328 game files: every name is defined or imported
+\u2705 bilingual (0s) every English line is English (names, songs and sayings on the allow list)
+\u2705 rules (0s) 112 rules, the same in the document and the code; 34 rule ids named by the checks, all known
+\u2705 types (17s) 196 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 79 TypeScript files of the server, Studio and tools; no errors
+
+12/13 checks passed

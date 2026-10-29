@@ -92,6 +92,7 @@ export function createLearning(G) {
   }
   // read one tale in the theatre, then remember it (three tales give a sticker)
   const readTale = async (h, t, sync = false) => {
+    if (!isOpen(h.profile,t.id,'tale',t.flag)) return;
     const p = h.profile; p.tales = p.tales || {}; p.taleReads = p.taleReads || {};
     // friends in the room: read it together? (round H)
     if (!sync && G.together && G.together()) { const k = await G.dialog('Bà Năm', [['Shall we read it together with your friends?', 'Mình đọc cùng các bạn nhé?']], [['👫 Together', '👫 Cùng nhau'], ['🙂 Just me', '🙂 Mình con']]); if (k === 0) { G.inviteGame('tale-' + t.id, null, 1); return; } }
@@ -106,7 +107,7 @@ export function createLearning(G) {
   // (r90) the stories a child can be offered: the second set is left out while Studio holds it (the Simple screen reads this)
   Object.defineProperty(G, 'TALES', { configurable: true, get: () => TALES.filter(t => !isHeld(t.id, 'tale')) }); G.readTaleNow = readTale;
   G.readTale = async (i, id) => {
-    const h = G.heroes[i], t = TALES.find(x => x.id === id); if (!h || !t) return;
+    const h = G.heroes[i], t = TALES.find(x => x.id === id); if (!h || !t || !isOpen(h.profile,t.id,'tale',t.flag)) return;
     if (G.storyteller && dist2(h.pos.x, h.pos.z, G.storyteller.x, G.storyteller.z) > 5) await G.landBy(h, G.storyteller.x, G.storyteller.z);
     say(`Come and sit down. Here is ${t.title()}.`, `Lại đây ngồi với bà. Bà kể chuyện ${t.title()} nhé.`);
     await new Promise(r => setTimeout(r, 1300));
@@ -120,7 +121,7 @@ export function createLearning(G) {
     const shelf = TALES.filter(t => t.flag === f && !isHeld(t.id, 'tale')), reads = p.tales || {};
     const open = shelf.filter(t => isOpen(p, t.id, 'tale', f)), locked = shelf.filter(t => !open.includes(t));
     const held = secondSetOf('tale', f).filter(id => TALES.some(t => t.id === id) && isHeld(id, 'tale')).length, shown = G.taleFolds.has(f);
-    const fold = locked.length ? `<button class="talecard talefold" data-fold-tale="${f}" aria-expanded="${shown}"><span>${pic('\u{1F512}')}</span><small>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock · Tap to see`, `Còn ${locked.length} truyện để mở · Chạm để xem`)}</small></button>` : '';
+    const fold = locked.length ? `<button class="talecard talefold" data-fold-tale="${f}" aria-expanded="${shown}"><span>${pic('\u{1F512}')}</span><small>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock · Read each story above 3 times`, `Còn ${locked.length} truyện để mở · Đọc mỗi truyện ở trên 3 lần`)}</small></button>` : '';
     const soon = held ? `<button class="talecard talesoon" data-soon="tale"><span>${pic('\u{1F51C}')}</span><small>${T(`Coming soon: ${held} new stories`, `Sắp ra mắt: ${held} truyện mới`)}</small></button>` : '';
     const cards = open.map(t => taleCard(t, true, reads[t.id])).join('') + fold + (shown ? locked.map(t => taleCard(t, false, reads[t.id])).join('') : '') + soon;
     if (!cards) return '';
@@ -131,7 +132,7 @@ export function createLearning(G) {
   }).join('');
   /** the fold and Coming soon taps on a shelf; `redraw` paints the shelves again */
   G.bindTaleShelf = (root, redraw) => {
-    root.querySelectorAll('[data-fold-tale]').forEach(b => b.onclick = () => { const f = b.dataset.foldTale; if (G.taleFolds.has(f)) G.taleFolds.delete(f); else G.taleFolds.add(f); redraw(); });
+    root.querySelectorAll('[data-fold-tale]').forEach(b => b.onclick = () => { const f = b.dataset.foldTale; if (G.taleFolds.has(f)) G.taleFolds.delete(f); else { G.taleFolds.add(f); say('Finish each story in this shelf 3 times to unlock more.', '\u0110\u1ecdc xong m\u1ed7i truy\u1ec7n trong k\u1ec7 n\u00e0y 3 l\u1ea7n \u0111\u1ec3 m\u1edf th\u00eam nh\u00e9.'); } redraw(); });
     root.querySelectorAll('[data-soon="tale"]').forEach(b => b.onclick = () => say('New stories are coming soon!', 'Truyện mới sắp ra mắt rồi!'));
     root.querySelectorAll('[data-locked-tale]').forEach(b => b.onclick = () => say('Finish each story in this shelf 3 times to unlock more.', '\u0110\u1ecdc xong m\u1ed7i truy\u1ec7n trong k\u1ec7 n\u00e0y 3 l\u1ea7n \u0111\u1ec3 m\u1edf th\u00eam nh\u00e9.'));
   };

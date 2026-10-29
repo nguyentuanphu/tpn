@@ -5,6 +5,7 @@ import './emojiswap.js'; // (first: no phone emoji on the page or on any canvas)
 import { THREE, sprite, P, merge, toonVC } from './gfx.js';
 import { createSeeThrough } from './seethrough.js';
 import { withRideView } from './rideview.js';
+import { mountRenderRecovery } from './render-recovery.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
 import { settings, saveSettings, saveProfiles, farm, profiles, claimTab } from './state.js';
 import { T, nm, onLang, registerName } from './i18n.js';
@@ -29,7 +30,7 @@ import { pic } from './art.js';
 import { openChat, personaByName, PERSONAS } from './chat.js';
 import { voiceCommand, voiceControlOn } from './commands.js';
 import { ITEMS, RECIPES, GATHER, STICKERS, QUESTS, dishInfo } from './data.js';
-import { openGame, gameOpen, GAMES } from './games/frame.js';
+import { canStartGame, openGame, gameOpen, GAMES } from './games/frame.js';
 import { gameInfo } from './content/activities.js';
 const gameInfoAge = id => { try { return gameInfo(id).ageMin; } catch (e) { return 0; } };
 import './games/all.js'; // every mini-game (js/games/all.js)
@@ -90,7 +91,7 @@ import { CUSTOM } from './custom.js';
 import { createFolkShow } from './folkshow.js';
 import { createAds } from './ads.js';
 import { buildSolids, solidCircleHit } from './solids.js';
-import { startCounting, countPlay, watchHero, noteReload } from './players.js';
+import { startCounting, countPlay, watchHero, noteReload, managementBootReady } from './players.js';
 import { startPackBar } from './packbar.js';
 import { codeHTML, bindCode, padHTML, boxHTML, animalSay } from './roomcode.js';
 // the family's defaults from Sparkle Studio: applied once each time they change there (a grown-up can still change
@@ -119,24 +120,31 @@ const quality = settings.quality === 'auto' ? ((navigator.hardwareConcurrency ||
 const PR_AUTO = 1.5; // (battery round) on Auto the picture is never drawn sharper than 1.5x the screen's pixels
 let renderer;
 try { renderer = new THREE.WebGLRenderer({ antialias: quality !== 'low', preserveDrawingBuffer: false, powerPreference: 'default' }); }
-catch (e) { $('#boot').innerHTML = `<p>${T('Sorry, this device cannot show the 3D world.', 'Xin lỗi, máy này không hiển thị được thế giới 3D.')}</p>`; throw e; }
+catch (cause) { const error = new Error('The 3D picture could not start.', { cause }); error.name = 'GraphicsUnavailableError'; throw error; }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, quality === 'low' ? 1.25 : quality === 'high' ? 2 : settings.quality === 'auto' ? PR_AUTO : 1.6));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NoToneMapping; // flat illustrated colours, exactly as painted
 if (quality !== 'low') { renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; }
 document.getElementById('stage').appendChild(renderer.domElement);
-// If the phone runs short of memory it can take the 3D picture away (the screen goes white and Safari may reload
-// the page). Save at once, show a friendly card, and if the picture does not come back by itself, reload: progress
-// is already saved, so the child carries on where they were.
-{
-  let lostT: ReturnType<typeof setTimeout> | 0 = 0;
-  renderer.domElement.addEventListener('webglcontextlost', e => {
-    e.preventDefault(); try { G.heroes.forEach(h => { if (h.profile && h.onGround && !h.towerClimb && !h.indoors) { h.profile.pos = { x: +h.lastSafe.x.toFixed(1), z: +h.lastSafe.z.toFixed(1) }; h.profile.posMap = MAP_VERSION; } }); saveProfiles(true); } catch (err) { }
-    if (!document.querySelector<HTMLElement>('.ctxlost')) document.body.appendChild(el('div', 'ctxlost', `<div>🌈</div><p>${T('One moment, the valley is coming back…', 'Chờ một chút, thung lũng đang trở lại…')}</p>`));
-    clearTimeout(lostT); lostT = setTimeout(() => { noteReload('3D picture lost', G); location.reload(); }, 4000); // (#355: noted for Studio's report)
-  });
-  renderer.domElement.addEventListener('webglcontextrestored', () => { clearTimeout(lostT); document.querySelectorAll<HTMLElement>('.ctxlost').forEach(e => e.remove()); });
-}
+// Suspended Home Screen apps need a fresh frame clock and drawing buffer on return.
+// Never start a reload timer in the background: it may fire before the browser restores WebGL.
+let resumeDrawing: (() => void) | undefined;
+let rememberRecoverySpot: (() => void) | undefined;
+const restoreContext = renderer.getContext().getExtension('WEBGL_lose_context');
+mountRenderRecovery({
+  canvas: renderer.domElement,
+  lost: () => renderer.getContext().isContextLost(),
+  restore: () => restoreContext?.restoreContext(),
+  refresh: () => resumeDrawing?.(),
+  save: () => { try { rememberRecoverySpot?.(); } catch {} finally { saveProfiles(true); } },
+  show: retry => {
+    if (document.querySelector('.ctxlost')) return;
+    const card = el('div', 'ctxlost', `<div>${pic('🌈')}</div><p>${T('The valley is coming back. Your saved progress is kept.', 'Thung lũng đang trở lại. Tiến trình đã lưu vẫn được giữ.')}</p>`);
+    const button = el('button', 'btn primary big', T('Try again', 'Thử lại')); button.style.minHeight = button.style.minWidth = '64px'; button.onclick = retry; card.append(button); document.body.append(card);
+  },
+  hide: () => document.querySelectorAll('.ctxlost').forEach(e => e.remove()),
+  reload: () => { noteReload('3D picture lost', G); location.reload(); }
+});
 const scene = new THREE.Scene();
 { // soft sky light bouncing off everything, so materials look real rather than flat
   const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), .04).texture; pm.dispose();
@@ -366,8 +374,8 @@ function setupInteractables() {
   G.interactables.push({ id: 'statue', x: world.statue.x, z: world.statue.z, r: 3.6, icon: '🪷', label: () => T('Lotus Statue', 'Tượng Sen'), act: statueTalk });
   GATHER.forEach(([item, x, z], k) => {
     const y = Math.max(heightAt(x, z), WATER) + .7, s = sprite(ITEMS[item].icon, 1.1); s.position.set(x, y, z); scene.add(s);
-    const st = G.gatherState[k] = { s, ready: 0 };
-    world.updaters.push((dt, t) => { s.visible = performance.now() > st.ready; s.position.y = y + Math.sin(t * 2 + k) * .12; });
+    const st = G.gatherState[k] = { s, ready: 0, baseY: y };
+    world.updaters.push((dt, t) => { s.visible = performance.now() > st.ready; s.position.y = st.baseY + Math.sin(t * 2 + k) * .12; });
     G.interactables.push({ st, id: 'g' + k, x, z, r: 2.4, icon: ITEMS[item].icon, label: () => T('Pick up ', 'Nhặt ') + ITEMS[item].name(), visible: () => performance.now() > st.ready,
       act: h => { st.ready = performance.now() + 120000; give(h, item, 1); } });
   });
@@ -497,7 +505,7 @@ G.mount = (h, b) => { h.mount(b); h.profile.quests.buffalo = true; save(); say('
 const fruitParadeModeOn = fruitParadeAvailable;
 
 async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number]) {
-  const h = G.heroes[i]; if (!h) return;
+  const h = G.heroes[i]; if (!h || !canStartGame(id,[h.profile])) return;
   if (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar',source === 'online'?'multi':'single')) return;
   if (id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard',source === 'online'?'multi':'single')) return;
   if (id === 'fruitparade' && !fruitParadeModeOn('single')) { hudFor(h).toast(T('Sparkle Fruit Parade is not available yet.', 'Diễu hành trái cây lấp lánh chưa mở.')); return; }
@@ -505,6 +513,7 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   G.paused = true; hush();
   // friends in the room: play it together? (round H: every game can be played together)
   if (G.together() && source !== 'online' && !shrine) { G.paused = false; const k = await dialog(T('Play together?', 'Chơi cùng nhau?'), [['Your friends are here. Play this game together?', 'Các bạn đang ở đây. Chơi trò này cùng nhau nhé?']], [['👫 Together', '👫 Cùng nhau'], ['🙂 Just me', '🙂 Mình con']]); if (k === 0) { G.inviteGame(id); return; } G.paused = true; }
+  if(!canStartGame(id,[h.profile])) { G.paused=false; return; }
   countPlay('game', id); // anonymous: how often each game is played (js/players.js)
   if (MONEY_GAMES.includes(id)) G.tried(h, 'money_' + id); else if (/^rd_/.test(id)) G.tried(h, 'readingTrial');   // (batch rollout) a money game played stays this child's
   const players = G.heroes.map(x => x.profile); if (G.heroes.length > 1 && i === 1) players.reverse();
@@ -760,7 +769,9 @@ const questDone = (p, q) => !!p.quests[q.id] || !!(q.check && q.check(p));
 // (round R, owner 9 Oct) the goal bar follows the lantern story; a side story (bà Huệ and ông Nghi's yard) shows there only
 // when the child chose to follow it on the Adventures page (profile.follow), or when the story has no step open right now
 const sideQuest = p => G.yard && G.yard.quest(p);
-function currentQuest(p) {
+// a quest step from the main list, the lantern story or a side story (js/yard.ts): the fields each may have
+type QuestStep = { id: string; icon?: string; title: () => string; at?: string; check?: (p) => boolean; story?: boolean; tale?: string[]; target?: () => { x: number; z: number } };
+function currentQuest(p): QuestStep | undefined {
   if (p.follow === 'yard' && sideQuest(p)) return sideQuest(p);
   return (G.lanterns && G.lanterns.quest(p)) || sideQuest(p) || QUESTS.find(q => !questDone(p, q));
 }
@@ -1126,8 +1137,9 @@ G.playGameOnline = async (id, level, online) => {
   if(id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi'))return;
   if(id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi'))return;
   if (id === 'fruitparade' && !fruitParadeModeOn('multi')) return;
+  const p = G.heroes[0]?.profile; if(!p || !canStartGame(id,[p])) return;
   if (gameOpen()) return; G.paused = true; hush();
-  const p = G.heroes[0].profile, little = p.age !== 'big';
+  const little = p.age !== 'big';
   const actId = makeId('act', id, String(++G.actCount)), playerIds = online.names.map((_, s) => s === online.mine ? makeId('player', p.id || 'guest') : makeId('player', 'online-' + s));
   events.emit('ActivityStarted', { activityId: actId, kind: 'game', defId: makeId('game', id), players: playerIds, source: 'online' });
   const res = await openGame(id, { players: [p], level, little, strong: false, online, style: 'village' });
@@ -1474,7 +1486,7 @@ G.rects = rects; G.faceToFace = () => G.heroes.length > 1 && faceToFace();
 G.lastPlayer = 0;
 const holders = [0, 1].map(() => { const w = document.createElement('div'); w.className = 'halfwrap'; return w; });
 G.halfBusy = i => !!holders[i] && holders[i].isConnected && [...holders[i].children].some(c => !c.classList.contains('out') && !c.classList.contains('confetti') && /(^|\s)(modal|gl|storybook|vc-pop|dialog|reward|chatwin|handpad)(\s|$)/.test(c.className));
-const NOT_A_WINDOW = /(^|\s)(hud|stick|facewrap|halfwrap|caption|title|confetti|fade|apfinger|testertoast|packbar)(\s|$)/;
+const NOT_A_WINDOW = /(^|\s)(hud|stick|facewrap|halfwrap|caption|title|confetti|fade|apfinger|testertoast|packbar|tester-floating|tpanel|tp-picture|ctxlost)(\s|$)/;
 function placeHolders() {
   const r = rects(), two = twoHalves();
   holders.forEach((w, i) => {
@@ -1587,6 +1599,7 @@ G.goodSpot = (x, z) => {
   return !W.colliders.some(c => c.r > 0 && c.top == null && Math.hypot(c.x - x, c.z - z) < c.r + .45) && !W.boxes.some(b => x > b.x0 - .45 && x < b.x1 + .45 && z > b.z0 - .45 && z < b.z1 + .45);
 };
 const keepSpot = () => G.heroes.forEach(h => { if (h.profile && h.onGround && !h.towerClimb && !h.indoors && G.goodSpot(h.lastSafe.x, h.lastSafe.z)) { h.profile.pos = { x: +h.lastSafe.x.toFixed(1), z: +h.lastSafe.z.toFixed(1) }; h.profile.posMap = MAP_VERSION; } }); // (round T: stamped with the layout)
+rememberRecoverySpot = keepSpot;
 // the "New!" moment (round R, owner): what Studio's Releases page marked new, once per child, at most three at a time
 // (round T) once, when a child who already played opens the valley's new layout
 async function grownMoment() {
@@ -1601,8 +1614,8 @@ async function newMoment(h) {
   fresh.forEach(r => { p.seenNew[r.id] = new Date().toISOString().slice(0, 10); }); save();
   await reward('🆕', T('New in the valley!', 'Mới trong thung lũng!'), fresh.map(r => T(r.en, r.vi)).join(' · '));
 }
-// (batch rollout, owner 13 Oct AEDT) a feature held back or switched off in Studio stays for a child who already used it:
-// G.keep(id) is on when its switch is on or anyone playing used it; G.tried(h, id) remembers a use (js/custom.js)
+// Retain used access during future scheduling, but an explicit owner Off wins
+// (the owner-approved explicit-off policy). G.tried remembers usage without removing saved progress (js/custom.ts).
 G.keep = (id, def = true) => keptOn(id, G.heroes.map(h => h.profile), def);
 G.tried = (h, id) => { const p = h && (h.profile || h); if (markTried(p, id)) save(); };
 function startSession(mode, chosen) {
@@ -1711,8 +1724,9 @@ function stillCheck(now) {
 // under-5s start on, the 🎵 Songs page, often left playing lullabies at bedtime, and the real photos)
 const worldHidden = () => (G.simple && G.simple.open) || !!document.querySelector<HTMLElement>('.songs, .realview');
 G.worldHidden = worldHidden;
+let frameRequest = 0;
 function frame(now) {
-  requestAnimationFrame(frame);
+  frameRequest = requestAnimationFrame(frame);
   if (framesSeen < 4 && ++framesSeen === 4) framesDone(); // (js/solids.js waits for these)
   if (!BAT.gate(BAT, now, BAT.capMs())) return; // (battery round)
   if (playing && !BAT.idle) adaptResolution(now - last - (FRAME_MS ? FRAME_MS - 1000 / 60 : 0)); // (the wait between frames is not slowness)
@@ -1955,7 +1969,26 @@ G.reeds = createReeds(G); // (round T4a) reeds along the banks, water hyacinth i
 world.roadside = plantRoadside(G); // soft road edges and flowers, once everything stands
 G.signposts = createSignposts(G); // (round T4b, js/signposts.js) a picture signpost at every road junction
 G.nameTags = createNameTags(G); // (round T4b, js/nametags.js) names float over the places nearby, at most 4
-bootMark('roadside'); G.solidsReady = buildSolids(G); bootMark('solids'); // (no breath here: the solid map is read once everything below is placed too) // nobody walks through houses and things (js/solids.js)
+bootMark('roadside'); G.solidsReady = buildSolids(G);
+// Later buildings can cover an authored collectible. Keep its stable pickup ID and
+// cooldown, but move the picture and interaction together onto nearby open ground.
+void G.solidsReady.then(() => {
+  for (const b of world.buffalo || []) {
+    if (b.rider) continue;
+    const [x, z] = G.clearSpot(b.mesh.position.x, b.mesh.position.z, 1.1);
+    b.mesh.position.set(x, heightAt(x, z), z); b.home = [x, z]; b.tx = x; b.tz = z;
+  }
+  for (const it of G.interactables) {
+    if (!/^g\d+$/.test(it.id) || !it.st) continue;
+    const state = it.st as { s: THREE.Sprite; baseY: number };
+    const original = { x: it.x, z: it.z, y: world.groundAt(it.x, it.z) }, probe = { ...original };
+    world.collide(probe, .45);
+    if (Math.hypot(probe.x - original.x, probe.z - original.z) < .05) continue;
+    const [x, z] = G.clearSpot(it.x, it.z, .6);
+    it.x = x; it.z = z; state.baseY = Math.max(heightAt(x, z), WATER) + .7;
+    state.s.position.set(x, state.baseY, z);
+  }
+}); bootMark('solids'); // (no breath here: the solid map is read once everything below is placed too) // nobody walks through houses and things (js/solids.js)
 startPackBar(); // the recorded voices downloading: a small bar at the bottom (js/packbar.js)
 startCounting(G); // how many children play, and what they play, for Studio's report (js/players.js; Grown-ups can switch it off)
 // solid things the camera must never go inside: big, opaque, still-standing meshes (collected once, refreshed
@@ -2037,8 +2070,15 @@ $('#songBtn').onclick = () => G.places.nextSong();
 resize();
 // (round R, faster launch) the first picture prepares every material's shader at once (a few seconds on a phone): the
 // title is already painted by then, and the valley is drawn behind it a frame later
-{ let go = false; const start = () => { if (go) return; go = true; bootMark('shaders'); requestAnimationFrame(frame); };
-  requestAnimationFrame(() => setTimeout(start, 30)); }
+{ let started = false;
+  const start = () => {
+    if (!started) { started = true; bootMark('shaders'); }
+    cancelAnimationFrame(frameRequest); last = performance.now(); BAT.due = 0; BAT.lastDrawn = 0;
+    resize(); frameRequest = requestAnimationFrame(frame);
+  };
+  resumeDrawing = start;
+  requestAnimationFrame(() => setTimeout(start, 30));
+}
 // (Round U, owner: rows and pages scroll by finger and mouse everywhere: js/scrollhelp.js; loaded after the title)
 import('./scrollhelp.js').then(m => m.installScrollHelp());
 // (Round U) every villager answers a tap with a fact or a saying of their region (js/villagertalk.js)
@@ -2054,6 +2094,6 @@ document.addEventListener('click', e => { const c = e.target instanceof Element 
 import('./state.js').then(S => { if (S.restoredFromCopy) setTimeout(() => toast(T('Your progress was brought back from the safe copy on this device.', 'Tiến trình chơi đã được khôi phục từ bản lưu dự phòng trên máy.')), 1200); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (playing) keepSpot(); save(); hush(); } });
 addEventListener('pagehide', () => { if (playing) keepSpot(); saveProfiles(true); });
-bootMark('ready'); G.bootTimes = bootTimes; bootDone();
+bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
 // (owner, 16 Oct AEDT) no device contacts the family service unless Studio switches the trial on, or on a tester device
 { const refresh = () => (featureOn('familyDevices', false) || G.tester) ? import('./familydevices.js').then(m => m.refreshDevicePhotos()).catch(() => {}) : null; refresh(); addEventListener('online', refresh); setInterval(refresh, 60000); }

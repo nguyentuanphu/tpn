@@ -20,7 +20,7 @@ fi
 npx --yes esbuild@0.25.10 studio.cts --bundle --platform=node --format=cjs --outfile=.build/studio.bundle.cjs --log-level=warning
 cat > .build/sea-config.json <<EOF
 { "main": ".build/studio.bundle.cjs", "output": ".build/studio.blob", "disableExperimentalSEAWarning": true, "useSnapshot": false, "useCodeCache": false,
-  "assets": { "index.html": "ui/index.html", "app.js": "ui/app.js", "style.css": "ui/style.css", "vi.js": "ui/vi.js", "lame.min.js": "ui/lame.min.js",
+  "assets": { "index.html": "ui/index.html", "app.js": "ui/app.js", "management.js": "ui/management.js", "management.css": "ui/management.css", "finance.js": "ui/finance.js", "brand.js": "ui/brand.js", "desk-charts.js": "ui/desk-charts.js", "owner-desk.js": "ui/owner-desk.js", "owner-desk.css": "ui/owner-desk.css", "style.css": "ui/style.css", "vi.js": "ui/vi.js", "lame.min.js": "ui/lame.min.js",
     "ads-guide/board-computer.jpg": "ui/ads-guide/board-computer.jpg", "ads-guide/card-computer.jpg": "ui/ads-guide/card-computer.jpg", "ads-guide/board-phone.jpg": "ui/ads-guide/board-phone.jpg", "ads-guide/card-phone.jpg": "ui/ads-guide/card-phone.jpg" } }
 EOF
 node --experimental-sea-config .build/sea-config.json

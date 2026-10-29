@@ -22,6 +22,8 @@ export const ROLES = ['viewer', 'editor', 'owner', 'custom'];
 // admins, Security (exe keys, sign everyone out) and the Access log are never granted one by one: they come only with
 // the owner role, so nobody can give themselves more than they were given.
 export const PERMS = {
+  'finance.read': ['📊','See private finance ledger and budgets','Xem sổ tài chính và ngân sách riêng'],
+  'finance.write': ['✏️','Record and reconcile finance entries','Ghi và đối soát dữ liệu tài chính'],
   analytics:  ['📊', 'See Analytics (what the children play, the missing lines)', 'Xem Phân tích (các con chơi gì, câu còn thiếu)'],
   devices:    ['🏷️', 'Give devices a name in Analytics', 'Đặt tên máy trong Phân tích'],
   testers:    ['🐞', 'See tester reports', 'Xem báo cáo người thử'],
@@ -34,10 +36,17 @@ export const PERMS = {
   familycode: ['🔢', 'Make a new family code', 'Tạo mã gia đình mới'],
   publish:    ['🚀', 'Publish to the children', 'Phát hành cho các con'],
   site:       ['🌐', 'Rebuild the website', 'Dựng lại trang web'],
-  deploy:     ['⚠️', 'Put code live: merge pull requests, bring back an older version', 'Đưa mã lên: gộp yêu cầu, quay lại phiên bản cũ']
+  deploy:     ['⚠️', 'Put code live: merge pull requests, bring back an older version', 'Đưa mã lên: gộp yêu cầu, quay lại phiên bản cũ'],
+  'management.read': ['📊', 'See management summaries and activity evidence', 'Xem tổng quan quản lý và dữ liệu hoạt động'],
+  'management.deviceDetail': ['👧', 'See child names associated with their devices', 'Xem tên các con gắn với từng thiết bị'],
+  'management.triage': ['🐞', 'Assign management issues and record follow-up', 'Phân công vấn đề và ghi việc tiếp theo'],
+  'management.configure': ['🆕', 'Apply revisioned management configuration', 'Áp dụng cấu hình quản lý theo phiên bản'],
+  'operations.read': ['🌐', 'See service and job readiness', 'Xem trạng thái dịch vụ và tác vụ'],
+  'operations.run': ['✅', 'Run bounded management maintenance jobs', 'Chạy tác vụ bảo trì quản lý có giới hạn']
 };
 const ALL = Object.keys(PERMS);
-export const PRESETS = { viewer: ['analytics', 'testers'], editor: ALL.filter(k => !['deploy', 'familycode'].includes(k)), owner: ALL };
+// Explicit grants preserve existing editor access without inheriting future capabilities.
+export const PRESETS = { viewer: ['analytics', 'testers'], editor: ['analytics', 'devices', 'testers', 'testerset', 'pages', 'edit', 'voices', 'releases', 'family', 'publish', 'site'], owner: ALL };
 export const permsOf = a => !a ? [] : a.role === 'custom' ? (Array.isArray(a.perms) ? a.perms.filter(k => PERMS[k]) : []) : (PRESETS[a.role] || PRESETS.viewer).slice();
 export const NAME = /^[a-z0-9][a-z0-9._@+-]{1,59}$/;
 const key = name => 'a/' + name;
@@ -88,10 +97,27 @@ export async function fromCookie(S, pw, c) {
 // the permission an action needs: null = anyone signed in; 'owner' = only an owner. Anything not named here is a
 // page of the dashboard: looking needs "pages", saving needs "edit"
 export function needs(api, post) {
+  if (api.startsWith('management/')) {
+    const operation = api.split('?')[0];
+    if (!post && /^management\/finance(?:\/history\/(?:[a-f0-9]{64}|budget\/\d{4}-\d{2})|\/export)?$/.test(operation)) return 'finance.read';
+    if (post && /^management\/finance\/(settings|preview|commit|budget)$/.test(operation)) return 'finance.write';
+    if (!post && (operation === 'management/children' || /^management\/devices\/[a-z0-9]{10,24}$/.test(operation))) return 'management.deviceDetail';
+    if (!post && operation === 'management/operations') return 'operations.read';
+    if (post && operation === 'management/operations/refresh') return 'operations.read';
+    if (post && /^management\/attention\/[a-zA-Z0-9_-]{1,80}$/.test(operation)) return 'management.triage';
+    if (!post&&operation==='management/functions')return 'management.read';
+    if (post&&operation==='management/functions/draft')return 'management.configure';
+    if (/^management\/items\/(?:game|story):[a-z0-9][a-z0-9_-]{0,59}(?:\/draft)?$/.test(operation)) return post ? 'management.configure' : 'management.read';
+    if (/^management\/drafts(?:\/[a-f0-9-]{36}(?:\/(?:review|publish))?)?$/.test(operation)) return 'management.configure';
+    if (post && ['management/config', 'management/config/project'].includes(operation)) return 'management.configure';
+    if (post && operation === 'management/operations/run') return 'operations.run';
+    if (!post && (/^management\/(overview|devices|activities|attention|config)$/.test(operation) || /^management\/(activities|releases|changes)\/[a-zA-Z0-9_.:-]{1,100}$/.test(operation))) return 'management.read';
+    return '__unknown_management__';
+  }
   if (['whoami', 'info', 'ping', 'admins/me'].includes(api)) return null;
   if (!post && api === 'content') return null; // (the dashboard opens with it)
   if (/^(admins|keys|security)\//.test(api) || api === 'log') return 'owner';
-  if (['players', 'inbox'].includes(api)) return post ? 'owner' : 'analytics';
+  if (['players', 'inbox', 'parent-analytics'].includes(api)) return post ? 'owner' : 'analytics';
   if (api === 'players/label') return 'devices';
   if (api === 'testers' || /^testers\/(problem|shot)\/[a-f0-9]{16}$/.test(api)) return post ? 'owner' : 'testers';
   if (api === 'testers/set') return 'testerset';
@@ -111,7 +137,10 @@ export function allowed(me, api, post) {
   if (role === 'owner') return true;
   // (round R privacy) SparkleStudio.exe's key: the players report, the inbox, the family photos and (r81) the content
   // pages' live sections, nothing else
-  if (role === 'exe') return post ? ['players/label', 'family/upload', 'family/remove', 'family/code/new', 'testers/set', 'live/content'].includes(api) : ['whoami', 'players', 'inbox', 'family/code', 'testers', 'live/content'].includes(api) || /^familyphoto\/[\w-]+$/.test(api) || /^testers\/(problem|shot)\/[a-f0-9]{16}$/.test(api);
+  if (role === 'exe') {
+    if (api.startsWith('management/')) return !post && ['management.read', 'management.deviceDetail', 'operations.read'].includes(needs(api, false)) && Array.isArray(me?.perms) && me.perms.includes(needs(api, false));
+    return post ? ['players/label', 'family/upload', 'family/remove', 'family/code/new', 'testers/set', 'live/content'].includes(api) : ['whoami', 'players', 'inbox', 'family/code', 'testers', 'live/content'].includes(api) || /^familyphoto\/[\w-]+$/.test(api) || /^testers\/(problem|shot)\/[a-f0-9]{16}$/.test(api);
+  }
   const need = needs(api, post); if (need === null) return true; if (need === 'owner') return false;
   const perms = typeof me === 'string' ? PRESETS[me] || [] : Array.isArray(me && me.perms) ? me.perms : permsOf(me);
   return perms.includes(need);
@@ -141,12 +170,13 @@ export async function resetTotp(S, name) { const a = await get(S, name); if (!a)
 // ---------- keys for SparkleStudio.exe (round R privacy) ----------
 // "svk.<id>.<secret>": shown once when made; kept as a hash, with the sign-out generation (Sign everyone out ends them)
 const keyHash = s => crypto.createHash('sha256').update('sparkle-studio-key:' + s).digest('base64url');
-export async function makeKey(S, label, by, gen) {
+export async function makeKey(S, label, by, gen, grants: string[] = []) {
   const id = crypto.randomBytes(5).toString('hex'), sec = crypto.randomBytes(24).toString('base64url');
-  await S.setJSON('k/' + id, { id, label: String(label || 'SparkleStudio.exe').replace(/[<>\u0000-\u001f]/g, '').trim().slice(0, 40) || 'SparkleStudio.exe', hash: keyHash(sec), at: new Date().toISOString(), by, gen });
+  const perms = [...new Set((Array.isArray(grants) ? grants : []).filter(k => ['management.read', 'management.deviceDetail', 'operations.read'].includes(k)))];
+  await S.setJSON('k/' + id, { id, label: String(label || 'SparkleStudio.exe').replace(/[<>\u0000-\u001f]/g, '').trim().slice(0, 40) || 'SparkleStudio.exe', hash: keyHash(sec), at: new Date().toISOString(), by, gen, perms });
   return `svk.${id}.${sec}`;
 }
-export async function listKeys(S) { const { blobs } = await S.list({ prefix: 'k/' }), out = []; for (const b of blobs.slice(0, 50)) { const k = await S.get(b.key, { type: 'json' }); if (k) out.push({ id: k.id, label: k.label, at: k.at, by: k.by }); } return out; }
+export async function listKeys(S) { const { blobs } = await S.list({ prefix: 'k/' }), out = []; for (const b of blobs.slice(0, 50)) { const k = await S.get(b.key, { type: 'json' }); if (k) out.push({ id: k.id, label: k.label, at: k.at, by: k.by, perms: Array.isArray(k.perms) ? k.perms : [] }); } return out; }
 export async function removeKey(S, id) { if (/^[0-9a-f]{10}$/.test(id || '')) await S.delete('k/' + id); return { ok: true }; }
 export async function fromKey(S, given, gen) {
   const m = /^svk\.([0-9a-f]{10})\.([\w-]{20,64})$/.exec(String(given || '').trim()); if (!m) return null;

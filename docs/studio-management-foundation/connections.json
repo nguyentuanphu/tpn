@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "ac76cf6097a8071bf2da4be90fe81fd0af8201d6",
+  "nodes": [
+    {
+      "id": "game",
+      "label": "Children's game",
+      "status": "existing",
+      "description": "Play, local progress, reports"
+    },
+    {
+      "id": "website",
+      "label": "Parent website /home",
+      "status": "existing",
+      "description": "Explanations, guides, Play entry"
+    },
+    {
+      "id": "studio",
+      "label": "Private Studio",
+      "status": "existing",
+      "description": "Same UI and engine online/local"
+    },
+    {
+      "id": "catalogue",
+      "label": "Versioned catalogues",
+      "status": "existing",
+      "description": "Activity, story, reward and release IDs"
+    },
+    {
+      "id": "live",
+      "label": "Public live settings",
+      "status": "existing",
+      "description": "/api/live; bounded public content"
+    },
+    {
+      "id": "players",
+      "label": "Game analytics",
+      "status": "existing",
+      "description": "/api/hello; players / bot-players"
+    },
+    {
+      "id": "webstats",
+      "label": "Website counts",
+      "status": "existing",
+      "description": "/api/parent-analytics; aggregate events"
+    },
+    {
+      "id": "support",
+      "label": "Private tester reports",
+      "status": "existing",
+      "description": "/api/tester; screenshots and receipts"
+    },
+    {
+      "id": "private",
+      "label": "Local saves / private photos",
+      "status": "existing",
+      "description": "Independent permissions and recovery"
+    },
+    {
+      "id": "build",
+      "label": "Reviewed build pipeline",
+      "status": "existing",
+      "description": "GitHub -> checks -> approved Netlify release"
+    },
+    {
+      "id": "management",
+      "label": "Management read models",
+      "status": "proposed",
+      "description": "Joins, definitions, provenance, pagination"
+    },
+    {
+      "id": "ledger",
+      "label": "Transactional event ledger",
+      "status": "proposed",
+      "description": "Attempt events, deduplication, rollups"
+    },
+    {
+      "id": "receipts",
+      "label": "Configuration receipts",
+      "status": "proposed",
+      "description": "Available -> received -> applied"
+    },
+    {
+      "id": "finance",
+      "label": "Private finance ledger",
+      "status": "proposed",
+      "description": "Manual/imported actuals and estimates"
+    }
+  ],
+  "connections": [
+    {
+      "id": "C01",
+      "source": "catalogue",
+      "target": "game",
+      "data_group": "CONTENT",
+      "label": "Game reads versioned facts",
+      "status": "existing"
+    },
+    {
+      "id": "C02",
+      "source": "catalogue",
+      "target": "build",
+      "data_group": "CONTENT",
+      "label": "Review and generate website",
+      "status": "existing"
+    },
+    {
+      "id": "C03",
+      "source": "build",
+      "target": "website",
+      "data_group": "CONTENT",
+      "label": "Publish reviewed parent explanations",
+      "status": "existing"
+    },
+    {
+      "id": "C04",
+      "source": "studio",
+      "target": "live",
+      "data_group": "LIVE",
+      "label": "Save approved live content",
+      "status": "existing"
+    },
+    {
+      "id": "C05",
+      "source": "live",
+      "target": "game",
+      "data_group": "LIVE",
+      "label": "Fetch and keep configuration",
+      "status": "existing"
+    },
+    {
+      "id": "C06",
+      "source": "game",
+      "target": "players",
+      "data_group": "DAY",
+      "label": "Send bounded daily analytics",
+      "status": "existing"
+    },
+    {
+      "id": "C07",
+      "source": "website",
+      "target": "webstats",
+      "data_group": "WEB",
+      "label": "Best-effort page and action counts",
+      "status": "existing"
+    },
+    {
+      "id": "C08",
+      "source": "game",
+      "target": "support",
+      "data_group": "ISSUE",
+      "label": "Entitled tester reports",
+      "status": "existing"
+    },
+    {
+      "id": "C09",
+      "source": "game",
+      "target": "private",
+      "data_group": "PRIVATE",
+      "label": "Local progress and separate photo access",
+      "status": "existing"
+    },
+    {
+      "id": "C10",
+      "source": "players",
+      "target": "studio",
+      "data_group": "ID",
+      "label": "Read usage and device reports",
+      "status": "existing"
+    },
+    {
+      "id": "C11",
+      "source": "webstats",
+      "target": "studio",
+      "data_group": "WEB",
+      "label": "Read aggregate website counts",
+      "status": "existing"
+    },
+    {
+      "id": "C12",
+      "source": "support",
+      "target": "studio",
+      "data_group": "ISSUE",
+      "label": "Triage and update status",
+      "status": "existing"
+    },
+    {
+      "id": "C13",
+      "source": "studio",
+      "target": "build",
+      "data_group": "OPS",
+      "label": "Draft/publish or approved code release",
+      "status": "existing"
+    },
+    {
+      "id": "C14",
+      "source": "players",
+      "target": "management",
+      "data_group": "DAY",
+      "label": "Adapt existing records without inventing detail",
+      "status": "proposed"
+    },
+    {
+      "id": "C15",
+      "source": "support",
+      "target": "management",
+      "data_group": "ISSUE",
+      "label": "Join issue evidence",
+      "status": "proposed"
+    },
+    {
+      "id": "C16",
+      "source": "webstats",
+      "target": "management",
+      "data_group": "WEB",
+      "label": "Keep site counts separate from game audience",
+      "status": "proposed"
+    },
+    {
+      "id": "C17",
+      "source": "catalogue",
+      "target": "management",
+      "data_group": "CONTENT",
+      "label": "Join by stable IDs and source revision",
+      "status": "proposed"
+    },
+    {
+      "id": "C18",
+      "source": "game",
+      "target": "ledger",
+      "data_group": "EVENT",
+      "label": "New optional measurement protocol",
+      "status": "proposed"
+    },
+    {
+      "id": "C19",
+      "source": "ledger",
+      "target": "management",
+      "data_group": "EVENT",
+      "label": "Validated deterministic rollups",
+      "status": "proposed"
+    },
+    {
+      "id": "C20",
+      "source": "game",
+      "target": "receipts",
+      "data_group": "DELIVERY",
+      "label": "New applied-revision acknowledgements",
+      "status": "proposed"
+    },
+    {
+      "id": "C21",
+      "source": "receipts",
+      "target": "management",
+      "data_group": "DELIVERY",
+      "label": "Observed delivery coverage",
+      "status": "proposed"
+    },
+    {
+      "id": "C22",
+      "source": "finance",
+      "target": "management",
+      "data_group": "MONEY",
+      "label": "Budget and cost summaries",
+      "status": "proposed"
+    },
+    {
+      "id": "C23",
+      "source": "management",
+      "target": "studio",
+      "data_group": "EVENT",
+      "label": "Unified screens and attention list",
+      "status": "proposed"
+    }
+  ]
+}

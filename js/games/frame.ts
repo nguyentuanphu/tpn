@@ -7,9 +7,11 @@ import { SFX, Music } from '../audio.js';
 import { el, wait, esc } from '../util.js';
 import { openHowTo } from '../howto.js';
 import { pic } from '../art.js';
-import { featureOn } from '../custom.js';
+import { featureOn, itemEnabled, keptOn, MONEY_GAMES } from '../custom.js';
 import { saveProfiles, normalizeLearn } from '../state.js';
 
+import { isOpen, isHeld } from '../content/unlocks.js';
+import { GAME_INFO } from '../content/activities.js';
 import { GAMES, register, SKILLS } from './registry.js';
 import { playWatch, tell, setPlan } from './playwatch.js';
 export { GAMES, register }; // (the list itself is in registry.js)
@@ -45,8 +47,15 @@ export { playWatch };
 const LEVELS = [['easy', 'Easy', 'Dễ'], ['medium', 'Medium', 'Vừa'], ['hard', 'Hard', 'Khó']];
 // (r79 learning, owner 16 Oct AEDT, I1) the level a learning game moved to, kept for "Play again" of the same game only
 let carry = null;
+// One policy check for ordinary entry and direct/online frame callers. Menu hiding is separate.
+export function canStartGame(id:string,players:Profile[]=[]):boolean {
+  if(!GAMES[id]||!itemEnabled('game',id)||isHeld(id,'game'))return false;
+  if(MONEY_GAMES.includes(id)&&!keptOn('money_'+id))return false;
+  if(id.startsWith('rd_')&&!keptOn('readingTrial'))return false;
+  return !players.length||players.some(p=>isOpen(p,id,'game',GAME_INFO[id]?.[0]||''));
+}
 export function openGame(id: string, { players, level = 1, style = 'shrine', partnerName = null, little = true, strong = false, nextId = null, completion = 'choose', online = null, levelPick = null }: GameOptions): Promise<GameResult> {
-  const def = GAMES[id]; if (!def) return Promise.resolve({ won: false });
+  const def = GAMES[id]; if (!def || !canStartGame(id,players)) return Promise.resolve({ won: false });
   const nextName = nextId && GAMES[nextId] ? GAMES[nextId].name() : '';
   if (current) current.close(false);
   return new Promise<GameResult>(resolve => {
