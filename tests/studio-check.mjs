@@ -106,16 +106,19 @@ export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs
   const { makeStudio } = await import(toURL(path.join(ROOT, 'netlify/functions/studio.mts')));
   const { makeHello } = await import(toURL(path.join(ROOT, 'netlify/functions/hello.mts')));
   const { makeLive } = await import(toURL(path.join(ROOT, 'netlify/functions/live.mts')));
+  const { makeManagement } = await import(toURL(path.join(ROOT,'netlify/functions/management.mts')));
+  const { managementService } = await import(toURL(path.join(ROOT,'netlify/lib/management/runtime.mts')));
   const { makeFestivalStatus } = await import(toURL(path.join(ROOT,'netlify/functions/festival-status.mts')));
   const festivalStatus=makeFestivalStatus({liveStore:async()=>liveStore});
   const { makeFamily } = await import(toURL(path.join(ROOT, 'netlify/functions/family.mts')));
   const { makeTester } = await import(toURL(path.join(ROOT, 'netlify/functions/tester.mts'))); // (owner, 12 Oct) tester reports
   const now = () => testClock.t, tester = makeTester({ testerStore: async () => testerStore, liveStore: async () => liveStore, guardStore: async () => guardStore, now }), family = makeFamily({ familyStore: async () => familyStore, guardStore: async () => guardStore, now });
   const studio = makeStudio({ managementDatabase, managementOperations, playersStore: async () => players, adminStore: async () => adminStore, heldStore: async () => heldStore, liveStore: async () => liveStore, familyStore: async () => familyStore, guardStore: async () => guardStore, logStore: async () => logStore, testerStore: async () => testerStore, parentAnalyticsStore: async () => parentAnalyticsStore, now }), hello = makeHello({ playersStore: async () => players, botStore: async () => players, guardStore: async () => guardStore }), live = makeLive({ liveStore: async () => liveStore });
+  const managementEndpoint=makeManagement({service:()=>managementService(async()=>liveStore,managementDatabase),guardStore:async()=>guardStore,now});
   const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp3': 'audio/mpeg', '.woff2': 'font/woff2' };
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${port}`); let p = decodeURIComponent(url.pathname);
-    const fn = p === '/api/hello' ? hello : p === '/api/live' ? live : p === '/api/festivals' ? festivalStatus : p === '/api/tester' ? tester : p.startsWith('/api/family/') ? family : (p.startsWith('/studio/api/') || p.startsWith('/studio/content/')) ? studio : null;
+    const fn = p.startsWith('/api/management/') ? managementEndpoint : p === '/api/hello' ? hello : p === '/api/live' ? live : p === '/api/festivals' ? festivalStatus : p === '/api/tester' ? tester : p.startsWith('/api/family/') ? family : (p.startsWith('/studio/api/') || p.startsWith('/studio/content/')) ? studio : null;
     if (fn) {
       const ch = []; for await (const c of req) ch.push(c);
       const r = await fn(new Request(url, { method: req.method, headers: req.headers, body: req.method === 'POST' ? Buffer.concat(ch) : undefined }), { geo: JSON.parse(req.headers['x-test-geo'] || '{}') }); // (Netlify gives the town from the connection; tests say it in a header)

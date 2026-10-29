@@ -32,7 +32,7 @@ export async function ownerDeskBrowserCheck(browser){
  try{
   for(const [width,height]of [[390,844],[820,1180],[1440,1000]])for(const lang of ['en','vi']){
    const ctx=await browser.newContext({viewport:{width,height},isMobile:width===390,hasTouch:width<1000}),page=await ctx.newPage();
-   page.on('pageerror',e=>errors.push({width,lang,message:e.message}));await page.addInitScript(lang=>localStorage.setItem('studioLang',lang),lang);
+   page.on('pageerror',e=>errors.push({width,lang,message:e.message}));page.on('dialog',async d=>{errors.push({width,lang,message:'unexpected-dialog: '+d.message()});await d.dismiss();});await page.addInitScript(lang=>localStorage.setItem('studioLang',lang),lang);
    await page.goto(site+'/studio');await page.fill('#pw',password);await page.click('#si button');await page.waitForSelector('.desk-body [data-chart="G01"]');
    await page.waitForFunction(()=>document.documentElement.dataset.gameBrand==='shared');
    assert.equal(await page.locator('#tabs button').count(),5);assert.equal(await page.locator('#tabs [aria-current="page"]').getAttribute('data-k'),'home');
@@ -68,6 +68,30 @@ export async function ownerDeskBrowserCheck(browser){
    assert.match(await declared.innerText(),lang==='vi'?/Chỉ mới khai báo/:/Declared only/);assert.ok(await page.locator('.desk-catalogue [data-catalogue-state=declared-only]:visible').count()>0);assert.equal(await page.locator('.desk-catalogue [data-catalogue-state=catalogued]:visible').count(),0);await declared.click();
    await page.waitForSelector('.mg-declared-only');await page.waitForSelector('[data-item-workspace]');assert.equal(await page.locator('[data-item-editor]').count(),0,'pending integration cannot be switched on');assert.match(await page.locator('.mg-declared-only').innerText(),lang==='vi'?/chưa được tích hợp/:/not integrated/);await save('declared');await page.locator('#crumb .back').click();await page.waitForSelector('[data-desk-discovery]');assert.equal(await page.locator('[data-desk-discovery]').inputValue(),'declared-only','Back restores the integration filter');assert.equal(await page.locator('[data-desk-search]').inputValue(),'aodai','Back restores the content search');
    await area(page,'work');await save('work');await area(page,'money');await page.waitForSelector('[data-chart="G21"]');await save('money');
+   await page.goto(site+'/studio/#setup/settings');await page.waitForSelector('[data-functions-editor]');
+   assert.equal(await page.locator('[data-functions-editor] textarea').count(),1,'function editor uses plain-language controls');
+   const beforePolicy=await (await ctx.request.get(site+'/api/live')).json();
+   for(const field of ['functionCollect','functionProcess','functionShow'])await page.locator('[name='+field+']').uncheck();
+   await page.locator('[name=functionReason]').fill('Synthetic policy shutoff review');await page.locator('[data-functions-editor] [type=submit]').click();
+   await page.waitForFunction(()=>/Private policy saved|Đã lưu chính sách riêng tư/.test(document.querySelector('[data-functions-result]')?.textContent||''));
+   assert.deepEqual(await (await ctx.request.get(site+'/api/live')).json(),beforePolicy,'function proposal remains private');
+   const policyDraft=await page.locator('[name=functionDraft]').inputValue();await page.locator('[data-functions-reload]').click();await page.waitForSelector('[name=functionDraft]');
+   await page.locator('[name=functionDraft]').selectOption(policyDraft);await page.waitForFunction(()=>!document.querySelector('[data-functions-review]')?.disabled);
+   if(width===390&&lang==='en'){
+    await page.locator('[name=functionProcess]').check();await page.locator('[data-functions-editor] [type=submit]').click();
+    await page.waitForFunction(()=>/Private policy saved/.test(document.querySelector('[data-functions-result]')?.textContent||''));
+    await page.locator('[data-functions-review]').click();await page.waitForFunction(()=>!document.querySelector('[data-functions-publish]')?.disabled);
+    assert.match(await page.locator('[data-functions-comparison]').innerText(),/AEDT|AEST/,'saved expiry is shown in Sydney time');
+    await page.locator('[name=functionProcess]').uncheck();assert.equal(await page.locator('[data-functions-publish]').isDisabled(),true,'editing resets review');
+    await page.locator('[data-functions-editor] [type=submit]').click();await page.waitForFunction(()=>/Private policy saved/.test(document.querySelector('[data-functions-result]')?.textContent||''));
+   }
+   await page.locator('[data-functions-review]').click();await page.waitForFunction(()=>!document.querySelector('[data-functions-publish]')?.disabled);await save('functions');await page.locator('[data-functions-editor]').screenshot({path:path.join(output,`${lang}-${width}-functions-editor.png`)});assert.ok(await page.locator('[data-functions-editor] label.chk').evaluateAll(els=>els.every(e=>e.getBoundingClientRect().height>=44)),'function toggle labels are touch-sized');
+   await page.locator('[data-functions-publish]').click();await page.waitForFunction(()=>/Published and available|Đã xuất bản và cung cấp/.test(document.querySelector('[data-functions-result]')?.textContent||''));
+   const publishedPolicy=await (await ctx.request.get(site+'/api/live')).json();assert.deepEqual(publishedPolicy.content.reportingPolicy,{schemaVersion:1,collect:false,process:false,show:false,expiresAt:null});
+   const overview=await (await ctx.request.get(site+'/studio/api/management/overview')).json();assert.equal(overview.optionalReporting.process,false);assert.equal(overview.optionalReporting.show,false);assert.equal('telemetry' in overview,false);
+   const event={schemaVersion:1,eventId:crypto.randomUUID(),attemptId:crypto.randomUUID(),deviceId:device,sessionId:'demo123456789012',eventName:'boot.started',occurredAt:new Date().toISOString(),deviceDay:today,offsetMinutes:660,build:'v1.02',sourceCommit:null,environment:'local',traffic:'synthetic_bot',data:{stage:'boot'}};
+   assert.equal((await ctx.request.post(site+'/api/management/events',{data:{schemaVersion:1,events:[event]}})).status(),410,'server rejects stale clients after collection Off');
+   await page.locator('#tabs [data-k=home]').click();await page.waitForSelector('.desk-home-summary');await page.waitForSelector('[data-home-functions]');assert.match(await page.locator('[data-home-functions]').innerText(),lang==='vi'?/Thu thập tắt/:/Collect off/);
    await ctx.close();
   }
   // A summary-only account sees no names, private device API, Money or finance request.
@@ -88,8 +112,8 @@ export async function ownerDeskBrowserCheck(browser){
   await missing.close();
   const itemControlEvidence=await itemControlRuntimeCheck(browser,projectedOff);
   assert.deepEqual(errors,[]);
-  const sources=['studio/ui/item-workspace.ts','netlify/lib/management/items.mts','js/custom.ts','js/games/frame.ts','js/tales.ts','studio/ui/app.ts','studio/ui/owner-desk.ts','studio/ui/owner-desk.css','studio/ui/brand.ts','studio/ui/desk-charts.ts','studio/ui/management.ts','netlify/lib/management/read.mts','studio/ui/index.html','studio/ui/finance.ts','netlify/lib/management/http.mts','netlify/lib/management/transactional/service.mts','css/style.css','css/fonts.css','js/art.ts','js/icons.js'];
+  const sources=['studio/ui/functions.ts','netlify/lib/management/functions.mts','js/core/reporting-policy.ts','js/management-telemetry.ts','js/players.ts','studio/ui/item-workspace.ts','netlify/lib/management/items.mts','js/custom.ts','js/games/frame.ts','js/tales.ts','studio/ui/app.ts','studio/ui/owner-desk.ts','studio/ui/owner-desk.css','studio/ui/brand.ts','studio/ui/desk-charts.ts','studio/ui/management.ts','netlify/lib/management/read.mts','studio/ui/index.html','studio/ui/finance.ts','netlify/lib/management/http.mts','netlify/lib/management/transactional/service.mts','css/style.css','css/fonts.css','js/art.ts','js/icons.js'];
   fs.writeFileSync(path.resolve(output,'../browser-validation.json'),JSON.stringify({passed:true,itemControlEvidence,scope:'Actual Studio UI and authenticated routes, synthetic in-memory data only; browser emulation, not physical devices/live Netlify',captures,errors,sourceHashes:Object.fromEntries(sources.map(file=>[file,createHash('sha256').update(fs.readFileSync('../'+file)).digest('hex')]))},null,2)+'\n');
-  return 'Owner’s Desk: 5 areas, shared game palette/art, 48 EN/VI captures at 3 sizes; item proposal save/resume/review/publish and actual game/story boundary checks, real device/problem links, restored filter, kind:id navigation and summary-only privacy';
+  return 'Owner’s Desk: 5 areas, shared game palette/art, 54 EN/VI captures at 3 sizes; function policy save/review/publication and server shutoff; item proposal save/resume/review/publish and actual game/story boundary checks, real device/problem links, restored filter, kind:id navigation and summary-only privacy';
  }finally{undo();await new Promise(r=>server.close(r));}
 }

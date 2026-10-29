@@ -1,3 +1,4 @@
+import { mountFunctions } from './functions.js';
 // Sparkle Studio dashboard (runs in the browser, talks to studio.cts on this computer).
 import { viMessage, PERM_VI } from './vi.js';
 import { loadGameBrand } from './brand.js';
@@ -1628,6 +1629,7 @@ PAGES.settings = async P => {
     <p class="note">${T('Piper (free voices) and the zip work only in SparkleStudio.exe on the family computer.', 'Piper (giọng miễn phí) và tệp zip chỉ có trong SparkleStudio.exe trên máy tính gia đình.')}</p></div>
     <div class="bar"><button class="btn ghost" id="out">🚪 ${T('Sign out', 'Đăng xuất')}</button></div>`;
     $('#out').onclick = async () => { await fetch(BASE + '/api/logout'); signIn(); };
+    if(CAN('management.read')){const host=document.createElement('div');P.querySelector('h2')?.after(host);await mountFunctions(host,{T,api,can:CAN,go,onSaved:()=>{if(cur==='settings'&&host.isConnected)markSaved();}});}
     return;
   }
   P.innerHTML = `<h2>🔑 ${T('Settings', 'Cài đặt')}</h2><p class="sub">${T('Keys are kept only on this computer', 'Các khóa chỉ lưu trên máy tính này')} (<code>${esc(INFO.settingsFile)}</code>), ${T('never in the game.', 'không bao giờ nằm trong game.')}</p>

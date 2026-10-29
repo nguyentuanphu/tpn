@@ -119,6 +119,9 @@ export async function openAllGamesFixture(browser,options={}) {
   C.releases={...(C.releases||{}),tester:{on:true},sparkleorchard_tester:{on:true},sparkleorchard_single:{on:true},sparkleorchard_multi:{on:true},sparklefruitbar_single:{on:true},sparklefruitbar_multi:{on:true}};
   if(!localStorage.getItem('sv2_playerid'))localStorage.setItem('sv2_playerid','arcadefixture01');
   localStorage.setItem('sv2_tester',JSON.stringify({at:Date.now(),b:'synthetic-fixture'}));
+  // This fixture tests every implementation, not earned access. Shared launch guards
+  // now enforce unlock progress even for direct opens; ordinary gating has dedicated tests.
+  const S=await import(String('/js/state.js'));for(const profile of S.profiles)profile.unlockAll=true;
   const gate=await import(String('/js/content/tester-arcades.js'));if(!gate.testerArcadeAvailable('sparklefruitbar','single'))throw Error('All-games fixture failed to enable public Fruit Bar');
   if(!gate.testerArcadeAvailable('sparkleorchard','single'))throw Error('All-games fixture failed to establish accepted tester eligibility');
  });return result;

@@ -1,3 +1,4 @@
+import { effectiveReportingPolicy } from './core/reporting-policy.js';
 // The family's own content pack, made with Sparkle Studio on the grown-up's computer (studio/): content/custom.json,
 // published with the game. Read once at start (offline it comes from the saved copy). Everything in it is optional:
 //   message  { en, vi }                  a note from the grown-ups, shown once a day when the children start playing
@@ -44,11 +45,12 @@ export const managementApplication = () => lastManagementApplication;
 // same ones in content/custom.json, which stays the fallback for a section Studio never saved live. The copy kept on this
 // device is used before any screen reads them; the website's answer replaces it as soon as it comes (screens that read
 // once at start get it the next time the game opens; Message and Missions follow onLive).
-export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album', 'itemAvailability'];
+export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album', 'itemAvailability', 'reportingPolicy'];
 // A global item Off is independent of menu placement, progress and tester previews.
+export const reportingPolicy = () => effectiveReportingPolicy(CUSTOM.reportingPolicy);
 export const itemEnabled = (kind: 'game' | 'story', id: string): boolean => CUSTOM.itemAvailability?.[kind + ':' + id] !== false;
 const BASE = { ...CUSTOM };
-const useContent = c => { for (const k of LIVE_SECTIONS) { const v = c && typeof c === 'object' ? c[k] : undefined; if (v && typeof v === 'object') CUSTOM[k] = v; else if (k in BASE) CUSTOM[k] = BASE[k]; else delete CUSTOM[k]; } };
+const useContent = c => { for (const k of LIVE_SECTIONS) { const v = c && typeof c === 'object' ? c[k] : undefined; if(k==='reportingPolicy'&&c&&Object.prototype.hasOwnProperty.call(c,k)) CUSTOM[k]=v; else if (v && typeof v === 'object') CUSTOM[k] = v; else if (k in BASE) CUSTOM[k] = BASE[k]; else delete CUSTOM[k]; } };
 useContent(LIVE.content);
 const str = v => typeof v === 'string' ? v.slice(0, 600) : '';
 // only well-formed pieces are used, so a hand-edited file can't break the game

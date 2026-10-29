@@ -105,6 +105,8 @@ export function needs(api, post) {
     if (!post && operation === 'management/operations') return 'operations.read';
     if (post && operation === 'management/operations/refresh') return 'operations.read';
     if (post && /^management\/attention\/[a-zA-Z0-9_-]{1,80}$/.test(operation)) return 'management.triage';
+    if (!post&&operation==='management/functions')return 'management.read';
+    if (post&&operation==='management/functions/draft')return 'management.configure';
     if (/^management\/items\/(?:game|story):[a-z0-9][a-z0-9_-]{0,59}(?:\/draft)?$/.test(operation)) return post ? 'management.configure' : 'management.read';
     if (/^management\/drafts(?:\/[a-f0-9-]{36}(?:\/(?:review|publish))?)?$/.test(operation)) return 'management.configure';
     if (post && ['management/config', 'management/config/project'].includes(operation)) return 'management.configure';

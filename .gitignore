@@ -66,6 +66,7 @@ marketing/source/runvalley.log
 /js/core/events.js
 /js/core/geo.js
 /js/core/ids.js
+/js/core/reporting-policy.js
 /js/core/rng.js
 /js/custom.js
 /js/extras.js
@@ -217,6 +218,7 @@ marketing/source/runvalley.log
 /studio/ui/brand.js
 /studio/ui/desk-charts.js
 /studio/ui/finance.js
+/studio/ui/functions.js
 /studio/ui/item-workspace.js
 /studio/ui/management.js
 /studio/ui/owner-desk.js

@@ -1,3 +1,4 @@
+import {effectiveReportingPolicy} from '../../js/core/reporting-policy.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -11,10 +12,10 @@ import {randomUUID} from 'node:crypto';
 // Execute the actual source module with synthetic platform dependencies. No real
 // fetch, private content, game save or shared global mutation is used.
 async function policy(live={}){
- const source=stripTypeScriptTypes(fs.readFileSync(new URL('../../js/custom.ts',import.meta.url),'utf8'),{mode:'strip'}).replace(/\bexport\s+/g,'');
- const context=vm.createContext({fetch:async()=>({ok:false}),AbortController,setTimeout,clearTimeout,
+ const source=stripTypeScriptTypes(fs.readFileSync(new URL('../../js/custom.ts',import.meta.url),'utf8'),{mode:'strip'}).replace(/^import[^\n]*$/gm,'').replace(/\bexport\s+/g,'');
+ const context=vm.createContext({effectiveReportingPolicy,fetch:async()=>({ok:false}),AbortController,setTimeout,clearTimeout,
   localStorage:{getItem:key=>key==='sv2_live'?JSON.stringify(live):null},navigator:{onLine:false}});
- return await new vm.Script('(async()=>{'+source+';return {CUSTOM,keptOn,featureOn,setPlayers,setPeeks,hasTried,markTried};})()').runInContext(context);
+ return await new vm.Script('(async()=>{'+source+';return {CUSTOM,reportingPolicy,keptOn,featureOn,setPlayers,setPeeks,hasTried,markTried};})()').runInContext(context);
 }
 test('explicit Off wins over tried history, default content and tester peeks without changing progress',async()=>{
  const C=await policy({releases:{readingTrial:{on:false}}});
@@ -53,5 +54,11 @@ test('server availability explanation follows explicit Off rather than retained 
   const entry=catalogue.entries.find(e=>e.id===id)||catalogue.entries.find(e=>e.id.startsWith('rd_'));
   assert.ok(entry);const result=explainAvailability(entry,{custom:{releases:{[key]:{on:false}}},profiles:[{tried:{[key]:'2026-10-01'}}],peeks:[key]});
   assert.equal(result.gates.find(g=>g.id===key).state,'closed');
+ }
+});
+
+test('malformed cached reporting policy remains an explicit fail-closed restriction rather than falling back to legacy',async()=>{
+ for(const raw of [false,null,'on',{schemaVersion:2,collect:true}]){
+  const C=await policy({content:{reportingPolicy:raw}});assert.equal(C.reportingPolicy().state,'invalid');assert.equal(C.reportingPolicy().collect,false);
  }
 });

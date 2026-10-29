@@ -1,7 +1,8 @@
+import { effectiveReportingPolicy } from '../../../../js/core/reporting-policy.ts';
 import { randomUUID } from 'node:crypto';
 import { ManagementError } from './types.mts';
 import type { JsonObject, ManagementDatabase, ManagementTransaction } from './types.mts';
-import { configBody, hashJson, integer, keys, one, record, text, UUID } from './validation.mts';
+import { assertReportingPolicyChange, configBody, hashJson, integer, keys, one, record, text, UUID } from './validation.mts';
 
 type Options={database:()=>ManagementDatabase;baseline:()=>Promise<JsonObject>;now:()=>number;
   writeConfig:(input:unknown,actor:string,tx:ManagementTransaction,reviewedHash?:string)=>Promise<{revision:number;changeId:string}>};
@@ -30,7 +31,7 @@ export function createConfigDrafts(options:Options){
   async function listDrafts(){return options.database().transaction([],async tx=>(await tx.list('config_drafts')).map(x=>x.value)
     .sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt))).slice(0,100));}
   async function saveDraft(input:unknown,actor:string,itemKey?:string,expectedBaseHash?:string){
-    if(itemKey!==undefined&&!/^(game|story):[a-z0-9][a-z0-9_-]{0,59}$/.test(itemKey))throw new ManagementError(400,'invalid_item_key');
+    if(itemKey!==undefined&&!/^(?:(game|story):[a-z0-9][a-z0-9_-]{0,59}|function:managementTelemetry)$/.test(itemKey))throw new ManagementError(400,'invalid_item_key');
     const b=record(input);keys(b,['id','expectedRevision','baseRevision','kind','body','reason'],['expectedRevision','baseRevision','kind','body','reason']);
     const id=b.id===undefined?randomUUID():idOf(b.id),expected=integer(b.expectedRevision),base=integer(b.baseRevision);
     const kind=one(b.kind,['rules','content']) as 'rules'|'content',reason=text(b.reason,600,3),by=text(actor,80);
@@ -43,7 +44,7 @@ export function createConfigDrafts(options:Options){
       if(expectedBaseHash!==undefined&&expectedBaseHash!==c.hash)conflict('draft_baseline_conflict');
       if(c.revision!==base)conflict('draft_baseline_conflict');
       if(old)matches(old,c);
-      const body=configBody(kind,b.body,c.body);
+      const body=configBody(kind,b.body,c.body);assertReportingPolicyChange(c.body,body,options.now());
       const draft:JsonObject={id,itemKey:itemKey??null,revision:expected+1,scopeKey:'global',kind,baseRevision:c.revision,baseHash:c.hash,
         body,effectiveHash:hashJson(body),reason,state:'draft',actor:by,updatedAt:stamp(),review:null};
       await persist(tx,draft);return draft;
@@ -54,6 +55,7 @@ export function createConfigDrafts(options:Options){
     const expected=integer(b.expectedRevision),by=text(actor,80);
     return options.database().transaction(['config:global','draft:'+id],async tx=>{
       const draft=await get(tx,id),c=await current(tx);
+      if(draft.itemKey==='function:managementTelemetry'&&['expired','invalid'].includes(effectiveReportingPolicy(record(record(draft.body).content??{}).reportingPolicy,options.now()).state))conflict('reporting_policy_expired_or_invalid');
       if(draft.revision!==expected||draft.effectiveHash!==b.effectiveHash)conflict('draft_revision_conflict');
       if(draft.state==='published')conflict('draft_already_published');matches(draft,c);
       // Report exact changed sections/rules. This is not a claim that a device received them.
@@ -73,6 +75,7 @@ export function createConfigDrafts(options:Options){
     id=idOf(id);const b=record(input);keys(b,['expectedRevision','effectiveHash']);const expected=integer(b.expectedRevision);
     return options.database().transaction(['config:global','draft:'+id],async tx=>{
       const draft=await get(tx,id),c=await current(tx);
+      if(draft.itemKey==='function:managementTelemetry'&&['expired','invalid'].includes(effectiveReportingPolicy(record(record(draft.body).content??{}).reportingPolicy,options.now()).state))conflict('reporting_policy_expired_or_invalid');
       if(draft.revision!==expected||draft.effectiveHash!==b.effectiveHash)conflict('draft_revision_conflict');
       if(draft.state!=='reviewed'||record(draft.review).effectiveHash!==draft.effectiveHash)conflict('draft_review_required');
       matches(draft,c);

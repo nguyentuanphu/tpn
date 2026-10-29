@@ -9,6 +9,7 @@ import { PostgresManagementDatabase, migrateManagement } from '../../netlify/lib
 import { createManagementService } from '../../netlify/lib/management/transactional/service.mts';
 import { managementPreflight } from '../../netlify/lib/management/preflight.mts';
 import { createFinanceService } from '../../netlify/lib/management/finance.mts';
+import { saveFunctionDraft } from '../../netlify/lib/management/functions.mts';
 import { createOperationsControl } from '../../netlify/lib/management/operations-control.mts';
 import { makeManagement } from '../../netlify/functions/management.mts';
 
@@ -214,6 +215,25 @@ try{
     await assert.rejects(finance.commit({...input,operationId:randomUUID(),previewHash:preview.previewHash,reason:'Synthetic rollback check'},'owner-test'),/synthetic finance write failure/);
     assert.equal((await pool.query("SELECT count(*)::int AS n FROM management_records WHERE namespace='finance_lines' AND record_json->'body'->>'sourceDocumentId'='rollback-invoice'")).rows[0].n,0);
     assert.equal((await pool.query("SELECT count(*)::int AS n FROM management_records WHERE namespace='finance_versions' AND record_json->'body'->>'sourceDocumentId'='rollback-invoice'")).rows[0].n,0);
+  });
+  await check('SQL function policy publication preserves private draft history and collection independently from processing',async()=>{
+    const baseline=await service.getConfig(),policy={schemaVersion:1,collect:true,process:false,show:false,expiresAt:new Date(now+3600000).toISOString()};
+    const d=await saveFunctionDraft({expectedRevision:0,baseRevision:baseline.revision,policy,reason:'Synthetic SQL temporary policy'},'owner-test',service,now);
+    assert.equal((await service.getConfig()).revision,baseline.revision);const r=await service.reviewDraft(d.id,{expectedRevision:d.revision,effectiveHash:d.effectiveHash},'owner-test');
+    await service.publishDraft(d.id,{expectedRevision:r.revision,effectiveHash:r.effectiveHash},'owner-test',[]);
+    assert.equal((await service.reportingState()).process,false);assert.equal((await service.getDraft(d.id)).itemKey,'function:managementTelemetry');
+    const event=makeEvent({eventName:'boot.started',data:{stage:'boot'}});assert.equal((await service.ingestEvents(batch([event]))).accepted.length,1);
+    await assert.rejects(service.eventSummary({from:'2026-10-25T00:00:00Z',to:'2026-10-26T00:00:01Z'}),e=>e.code==='optional_processing_paused');
+  });
+  await check('SQL collector disable and expiry reject stale clients without deleting accepted events',async()=>{
+    const countBefore=(await pool.query('SELECT count(*)::int AS n FROM management_events')).rows[0].n;
+    const baseline=await service.getConfig(),policy={schemaVersion:1,collect:false,process:true,show:true,expiresAt:new Date(now+3600000).toISOString()};
+    const d=await saveFunctionDraft({expectedRevision:0,baseRevision:baseline.revision,policy,reason:'Synthetic SQL collect Off'},'owner-test',service,now),r=await service.reviewDraft(d.id,{expectedRevision:d.revision,effectiveHash:d.effectiveHash},'owner-test');
+    await service.publishDraft(d.id,{expectedRevision:r.revision,effectiveHash:r.effectiveHash},'owner-test',[]);
+    const event=makeEvent({eventName:'boot.started',data:{stage:'boot'}});await assert.rejects(service.ingestEvents(batch([event])),e=>e.status===410);
+    const expired=createManagementService({database,now:()=>now+3600001});assert.equal((await expired.reportingState()).process,false);
+    await assert.rejects(expired.ingestEvents(batch([event])),e=>e.status===410);
+    assert.equal((await pool.query('SELECT count(*)::int AS n FROM management_events')).rows[0].n,countBefore);
   });
   const record={scope:'Real local PostgreSQL transaction and management service integration with synthetic records only',
     date:new Date().toLocaleDateString('en-CA',{timeZone:'Australia/Sydney'})+' Australia/Sydney',server:version,passed:true,cases:passed};

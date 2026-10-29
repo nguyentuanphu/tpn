@@ -60,6 +60,30 @@ export async function managementRuntimeBrowserCheck(browser){
   assert.ok(started,'real game boot emits started');assert.ok(ready,'real game boot emits ready');assert.equal(started.attemptId,ready.attemptId);assert.ok(ready.data.elapsedMs>=0);
   await game.page.evaluate(async()=>{const S=await import('/js/state.js');S.settings.countPlayers=false;(await import('/js/core/events.js')).events.emit('SettingsChanged');});
   assert.equal(await game.page.evaluate(()=>localStorage.getItem('sv2_management_out')),null);
+  const privacy=await game.page.evaluate(async()=>{
+   const S=await import('/js/state.js'),C=await import('/js/custom.js'),E=await import('/js/core/events.js');
+   const before=JSON.stringify(S.profiles),policy={schemaVersion:1,collect:true,process:true,show:true,expiresAt:new Date(Date.now()+60000).toISOString()};
+   C.CUSTOM.reportingPolicy=policy;S.settings.countPlayers=false;E.events.emit('SettingsChanged');
+   const parentWins=E.managementEvidence.emit('voice.result',{source:'device',language:'en',outcome:'unknown'})===null;
+   S.settings.countPlayers=true;C.CUSTOM.reportingPolicy={...policy,expiresAt:new Date(Date.now()+1500).toISOString()};E.events.emit('SettingsChanged');
+   await new Promise(r=>setTimeout(r,50));
+   const enabled=!!E.managementEvidence.emit('voice.result',{source:'device',language:'en',outcome:'unknown'});
+   await new Promise(r=>setTimeout(r,1800));
+   const expired=E.managementEvidence.emit('voice.result',{source:'device',language:'en',outcome:'unknown'})===null;
+   return {parentWins,enabled,expired,queueCleared:['sv2_management_out','sv2_management_bot_out'].every(k=>localStorage.getItem(k)===null),progressPreserved:JSON.stringify(S.profiles)===before,parentChoiceUnchanged:S.settings.countPlayers===true};
+  });
+  for(const [name,value]of Object.entries(privacy))assert.equal(value,true,name);
   assert.deepEqual(game.errors,[]);
  }finally{await game.ctx.close();}
+ const offRequests=[],offPolicy={schemaVersion:1,collect:false,process:false,show:true,expiresAt:null};
+ const off=await open(browser,{play:false,settings:{countPlayers:true},pre:`window.__svHelloTest=true;localStorage.setItem('sv2_live',JSON.stringify({releases:{managementTelemetry:{on:true}},content:{reportingPolicy:${JSON.stringify(offPolicy)}}}));`,route:async ctx=>{
+  await ctx.route('**/api/live',r=>r.fulfill({json:{releases:{managementTelemetry:{on:true}},content:{reportingPolicy:offPolicy}}}));
+  ctx.on('request',r=>offRequests.push(r.url()));
+ }});
+ try{
+  await off.page.waitForTimeout(1200);
+  assert.equal(offRequests.some(u=>u.includes('/js/management-telemetry.js')||u.includes('/api/management/')),false,'Off before startup does not load or upload optional management telemetry');
+  assert.equal(await off.page.evaluate(()=>localStorage.getItem('sv2_management_bot_out')),null);
+  assert.deepEqual(off.errors,[]);
+ }finally{await off.ctx.close();}
 }

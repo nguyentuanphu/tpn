@@ -30,15 +30,20 @@ export async function itemControlRuntimeCheck(browser,published){
    C.CUSTOM.itemAvailability={'game:oanquan':true,'game:crabwalk':true,'game:heodat':true,'game:rd_blend':true};C.setPeeks([]);
    C.CUSTOM.releases={newGames:{on:false},money_heodat:{on:false},readingTrial:{on:false}};
    const groupBlocks=['crabwalk','heodat','rd_blend'].map(id=>({id,allowed:F.canStartGame(id,[p])}));
+   C.CUSTOM.releases.newGames={on:true};
+   const lockedProfile={...p,admin:false,unlockAll:false,wins:{}};
+   const progressBlocked=F.canStartGame('crabwalk',[lockedProfile])===false;
+   for(const id of U.FIRST_SET_GAMES.animals)lockedProfile.wins[id]=3;
+   const progressUnlocked=F.canStartGame('crabwalk',[lockedProfile])===true;
    const restored=F.canStartGame('oanquan',[p]);
    // Real allowed frame can open and close after restoring this item, without changing progress.
    const pending=F.openGame('oanquan',{players:[p]});const opened=!!document.querySelector('.gl');document.querySelector('.gl-x')?.click();await pending;
-   return {blockedGames,blockedStories,missing,noLayers,hidden,held,groupBlocks,restored,opened,profilePreserved:JSON.stringify(p)===before};
+   return {blockedGames,blockedStories,missing,noLayers,hidden,held,groupBlocks,progressBlocked,progressUnlocked,restored,opened,profilePreserved:JSON.stringify(p)===before};
   },{entries,published});
   assert.deepEqual(result.missing,[],'every listed game has an actual registered definition');
   assert.equal(result.blockedGames.length,entries.filter(e=>e.kind==='game'&&e.coverage.discovery!=='declared-only').length);
   assert.equal(result.blockedStories.length,entries.filter(e=>e.kind==='story').length);
-  for(const key of ['noLayers','hidden','held','restored','opened','profilePreserved'])assert.equal(result[key],true,key);
+  for(const key of ['noLayers','hidden','held','progressBlocked','progressUnlocked','restored','opened','profilePreserved'])assert.equal(result[key],true,key);
   assert.ok(result.groupBlocks.every(g=>g.allowed===false),'item On cannot bypass group Off or remembered progress');
   return result;
  }finally{await context.close();}

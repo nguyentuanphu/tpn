@@ -1,3 +1,4 @@
+import {effectiveReportingPolicy} from '../../js/core/reporting-policy.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -60,8 +61,8 @@ test('item reads are available without SQL but cannot invent settings; private d
  const disconnected=await itemWorkspace(game,createManagementService());assert.equal(disconnected.settingsKnown,false);assert.equal(disconnected.settings,null);assert.equal(disconnected.expectation,null);
 });
 test('actual shared item policy separates game/story identities and Off overrides every saved profile without mutation',async()=>{
- const source=stripTypeScriptTypes(fs.readFileSync(new URL('../../js/custom.ts',import.meta.url),'utf8'),{mode:'strip'}).replace(/\bexport\s+/g,'');
- const context=vm.createContext({fetch:async()=>({ok:false}),AbortController,setTimeout,clearTimeout,localStorage:{getItem:()=>null},navigator:{onLine:false}});
+ const source=stripTypeScriptTypes(fs.readFileSync(new URL('../../js/custom.ts',import.meta.url),'utf8'),{mode:'strip'}).replace(/^import[^\n]*$/gm,'').replace(/\bexport\s+/g,'');
+ const context=vm.createContext({effectiveReportingPolicy,fetch:async()=>({ok:false}),AbortController,setTimeout,clearTimeout,localStorage:{getItem:()=>null},navigator:{onLine:false}});
  const C=await new vm.Script('(async()=>{'+source+';return {CUSTOM,itemEnabled,setPlayers,setPeeks};})()').runInContext(context);
  const profile={admin:true,unlockAll:true,wins:{oanquan:20},tried:{readingTrial:'2026-10-01'}},before=JSON.stringify(profile);C.setPlayers([profile]);C.setPeeks(['newGames']);
  for(const entry of entries){const key=entry.kind+':'+entry.id;C.CUSTOM.itemAvailability={[key]:false};assert.equal(C.itemEnabled(entry.kind,entry.id),false);assert.equal(C.itemEnabled(entry.kind==='game'?'story':'game',entry.id),true);}

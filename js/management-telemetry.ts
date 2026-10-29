@@ -62,7 +62,8 @@ export function createManagementTelemetry(options: ManagementOptions) {
   const maxBytes = Math.max(2048, Math.min(1000000, options.maxBytes || 1000000));
   let queue: Queue = { events: [], receipts: [], dropped: 0 }, timer: ReturnType<typeof globalThis.setTimeout> | number | null = null;
   let sending = false, retries = 0, nextAttemptAt = 0, stopped = false, generation = 0, storageFailure = false;
-  let batchLimit = 50;
+  let batchLimit = 50, serverDisabled=false;
+  let requestController:AbortController|null=null;
   const receiptKey = (r: ConfigReceipt) => `${r.deviceId}|${r.scopeKey}|${r.revision}|${r.effectiveHash}|${r.result}`;
   const eligible = () => !stopped && options.enabled() && ID.test(options.deviceId()) && SESSION.test(options.sessionId) && BUILD.test(options.build);
   const cancelTimer = () => { if (timer !== null) cancel(timer); timer = null; };
@@ -72,7 +73,7 @@ export function createManagementTelemetry(options: ManagementOptions) {
     catch { storageFailure = true; return false; }
   };
   const clear = () => {
-    generation++; queue = { events: [], receipts: [], dropped: 0 }; retries = 0; nextAttemptAt = 0; cancelTimer();
+    generation++; requestController?.abort(); queue = { events: [], receipts: [], dropped: 0 }; retries = 0; nextAttemptAt = 0; cancelTimer();
     try { options.storage?.removeItem(key); } catch { storageFailure = true; }
   };
   const prune = () => {
@@ -168,14 +169,15 @@ export function createManagementTelemetry(options: ManagementOptions) {
     if (now() < nextAttemptAt) { arm(nextAttemptAt - now()); return false; }
     cancelTimer(); prune();
     if (!queue.events.length && !queue.receipts.length) return true;
-    sending = true; const epoch = generation;
+    sending = true; const epoch = generation;requestController=new AbortController();
     try {
       const batch: ManagementEvent[] = [];
       for (const event of queue.events.slice(0, batchLimit)) { if (bytes({ schemaVersion: 1, events: [...batch, event] }) > MAX_BATCH_BYTES) break; batch.push(event); }
       if (batch.length) {
-        const res = await options.fetcher('/api/management/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ schemaVersion: 1, events: batch }), keepalive: closing });
+        const res = await options.fetcher('/api/management/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ schemaVersion: 1, events: batch }), keepalive: closing,signal:requestController.signal });
         if (epoch !== generation || !synchroniseConsent()) return false;
         if (!res.ok) {
+          if(res.status===410){clear();serverDisabled=true;stopped=true;return false;}
           if ([409, 413, 422].includes(res.status)) {
             if (batch.length > 1) batchLimit = Math.max(1, Math.floor(batch.length / 2));
             else {
@@ -196,7 +198,7 @@ export function createManagementTelemetry(options: ManagementOptions) {
       }
       const row = queue.receipts[0];
       if (row) {
-        const res = await options.fetcher('/api/management/config-receipts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(row), keepalive: closing });
+        const res = await options.fetcher('/api/management/config-receipts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(row), keepalive: closing,signal:requestController.signal });
         if (epoch !== generation || !synchroniseConsent()) return false;
         const ack = res.ok ? await res.json() : null;
         if (!res.ok || !object(ack) || ack.ok !== true) { retry(res); return false; }
@@ -204,12 +206,12 @@ export function createManagementTelemetry(options: ManagementOptions) {
       }
       retries = 0; nextAttemptAt = 0; arm(); return true;
     } catch { if (epoch === generation) retry(); return false; }
-    finally { sending = false; }
+    finally { sending = false;requestController=null; }
   }
 
   return { enqueue, receipt, flush, synchroniseConsent, start: () => { if (synchroniseConsent()) arm(); }, clear,
-    stop: () => { stopped = true; generation++; cancelTimer(); },
-    status: () => ({ events: queue.events.length, receipts: queue.receipts.length, dropped: queue.dropped, storageFailure, sending, nextAttemptAt }) };
+    stop: () => { stopped = true; generation++;requestController?.abort(); cancelTimer(); },
+    status: () => ({ serverDisabled,events: queue.events.length, receipts: queue.receipts.length, dropped: queue.dropped, storageFailure, sending, nextAttemptAt }) };
 }
 
 type Bus = { on(name: string, handler: (payload: Record<string, unknown>) => void): () => void };

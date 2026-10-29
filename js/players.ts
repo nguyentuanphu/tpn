@@ -28,7 +28,7 @@ import { voiceMisses, forgetVoiceMisses } from './voice.js';
 import { events, managementEvidence } from './core/events.js';
 import { id as makeId } from './core/ids.js';
 import { familyHash } from './content/familycode.js';
-import { featureOn, onLive, managementApplication } from './custom.js';
+import { featureOn, reportingPolicy, onLive, managementApplication } from './custom.js';
 
 const KEY = 'sv2_playerid', OUT = 'sv2_hello_out', SENT = 'sv2_voicesent', EVERY = 10 * 60e3;
 const BOT_OUT = 'sv2_bot_telemetry';
@@ -49,6 +49,7 @@ let management: ReturnType<typeof import('./management-telemetry.js').createMana
 let detachManagement: (() => void) | null = null, managementLoading = false, managementWatching = false;
 let managementQueueCleared = false, managementGame: any = null;
 let detachManagementEvidence: (() => void) | null = null;
+let policyExpiryTimer:ReturnType<typeof setTimeout>|null=null, managementPolicyRevision:string|null=null;
 let reportableBootStart = 0, reportableBootId: string | null = null;
 let observedUpdate: ReturnType<typeof managementEvidence.begin> | null = null;
 export function managementBootReady() {
@@ -57,10 +58,16 @@ export function managementBootReady() {
   if (elapsedMs>=0 && elapsedMs<=600000) managementEvidence.emit('boot.ready', {stage:'first_playable',elapsedMs}, reportableBootId);
   reportableBootId=null;
 }
-const managementEnabled = () => settings.countPlayers !== false && onSite() && featureOn('managementTelemetry', false);
+const managementEnabled = () => settings.countPlayers !== false && onSite() && featureOn('managementTelemetry', false) && reportingPolicy().collect;
 function startManagementCounting(G) {
   if (G) managementGame=G;
   const sync = () => {
+    if(policyExpiryTimer!==null)clearTimeout(policyExpiryTimer);policyExpiryTimer=null;
+    const expiresAt=reportingPolicy().expiresAt;
+    if(expiresAt&&managementEnabled()&&!heldByOtherTab()&&Date.parse(expiresAt)>Date.now())policyExpiryTimer=setTimeout(sync,Math.min(2147483647,Date.parse(expiresAt)-Date.now()+1));
+    const revision=String(managementApplication()?.revision??'legacy')+'|'+JSON.stringify(reportingPolicy());
+    if(management&&managementPolicyRevision!==revision){management.stop();management=null;detachManagement?.();detachManagement=null;detachManagementEvidence?.();detachManagementEvidence=null;}
+    managementPolicyRevision=revision;
     if (heldByOtherTab()) {
       managementEvidence.setEnabled(false); reportableBootId=null; detachManagementEvidence?.(); detachManagementEvidence=null;
       management?.stop(); management = null;

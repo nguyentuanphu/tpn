@@ -1,3 +1,4 @@
+import { parseReportingPolicy } from '../../../../js/core/reporting-policy.ts';
 import { createHash } from 'node:crypto';
 import { cleanLive, cleanContent } from '../../live.mts';
 import { ManagementError } from './types.mts';
@@ -111,4 +112,12 @@ export function configBody(kind:'rules'|'content',input:unknown,previous:JsonObj
   }
   if(Buffer.byteLength(canonicalJson(next))>256*1024)fail('config_too_large',413);
   return jsonObject(next);
+}
+
+/** All config entry points share the temporary-policy budget, including advanced edits. */
+export function assertReportingPolicyChange(previous:JsonObject,next:JsonObject,now:number){
+  const before=record(previous.content??{}).reportingPolicy,after=record(next.content??{}).reportingPolicy;
+  if(after===undefined||hashJson({policy:before??null})===hashJson({policy:after??null}))return;
+  const policy=parseReportingPolicy(after);if(!policy)fail('invalid_reporting_policy');
+  if(policy.expiresAt!==null&&(Date.parse(policy.expiresAt)<=now||Date.parse(policy.expiresAt)>now+86400000))fail('reporting_expiry_out_of_range');
 }

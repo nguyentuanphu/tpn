@@ -1,7 +1,8 @@
+import { effectiveReportingPolicy } from '../../../../js/core/reporting-policy.ts';
 import { randomUUID } from 'node:crypto';
 import { ManagementError, unavailable } from './types.mts';
 import type { EventQuery, Json, JsonObject, ManagementDatabase, ManagementTransaction, StoredEvent } from './types.mts';
-import { canonicalJson, configBody, DEVICE, fail, hashJson, instant, integer, jsonObject, keys, one, record, SCOPE, text, UUID, validateEventBatch } from './validation.mts';
+import { assertReportingPolicyChange, canonicalJson, configBody, DEVICE, fail, hashJson, instant, integer, jsonObject, keys, one, record, SCOPE, text, UUID, validateEventBatch } from './validation.mts';
 import type { Catalogue } from './validation.mts';
 import { createConfigDrafts } from './drafts.mts';
 import { managementOutcomes } from '../outcomes.mts';
@@ -40,9 +41,15 @@ export function createManagementService(options:Options={}) {
   const now=options.now??(()=>Date.now());
   const db=():ManagementDatabase=>{if(!options.database)throw unavailable();return options.database;};
   const configured=()=>!!options.database;
+  async function reportingState(tx?:ManagementTransaction) {
+    const read=async(t:ManagementTransaction)=>{const saved=await t.get('configs','global'),body=saved?.body??await baseConfig(options);return effectiveReportingPolicy(record(record(body).content??{}).reportingPolicy,now());};
+    return tx?read(tx):db().transaction([],read);
+  }
+  async function requireProcessing(){if(!(await reportingState()).process)throw new ManagementError(409,'optional_processing_paused');}
   async function ingestEvents(input:unknown) {
     const events=validateEventBatch(input,now(),options.catalogue),locks=events.map(e=>'event:'+e.deviceId+':'+e.eventId);
     const result=await db().transaction(locks,async tx=>{
+      if(!(await reportingState(tx)).collect)throw new ManagementError(410,'optional_collection_disabled');
       const accepted:string[]=[],duplicates:string[]=[],seen=new Map<string,StoredEvent>();let conflict=false;
       // Check every identity before inserting any new event. Quarantine survives the rejected batch.
       for(const e of events) {
@@ -80,6 +87,7 @@ export function createManagementService(options:Options={}) {
         const target=integer(b.rollbackRevision,0,expected),saved=await tx.get('config_versions',configKey(scopeKey,target));
         if(!saved)fail('unknown_rollback_revision');body=jsonObject(saved.body);
       }
+      assertReportingPolicyChange(previous,body,now());
       const revision=expected+1,at=now(),effectiveHash=hashJson(body),changeId=randomUUID();
       if(reviewedHash!==undefined&&effectiveHash!==reviewedHash)throw new ManagementError(409,'draft_baseline_conflict');
       const result:ConfigRecord={scopeKey,revision,body,effectiveHash,updatedAt:iso(at),actor:by};
@@ -233,6 +241,7 @@ export function createManagementService(options:Options={}) {
   async function operations(){return db().transaction([],async tx=>(await tx.list('operations')).map(x=>x.value));}
 
   async function attemptSummary(query:EventQuery,activityId?:string) {
+    await requireProcessing();
     const from=instant(query.from),to=instant(query.to);if(from>=to||Date.parse(from)<now()-90*86400000)fail('invalid_event_period');
     const environment=query.environment??'production',traffic=query.traffic??'ordinary';
     one(environment,['production','staging','local']);one(traffic,['ordinary','authorised_test','synthetic_bot']);
@@ -257,6 +266,7 @@ export function createManagementService(options:Options={}) {
     return {schemaVersion:1,from,to,environment,traffic,counts,eligible,completionRate:eligible?counts.completed/eligible:null,quality:['reporting-devices-only',...(events.some(e=>e.sourceCommit===null)?['unknown-source-provenance']:[])],generatedAt:iso(now())};
   }
   async function eventSummary(query:EventQuery,storyId?:string) {
+    await requireProcessing();
     const from=instant(query.from),to=instant(query.to);if(from>=to||Date.parse(from)<now()-90*86400000)fail('invalid_event_period');
     const environment=one(query.environment??'production',['production','staging','local']),traffic=one(query.traffic??'ordinary',['ordinary','authorised_test','synthetic_bot']);
     const events=await db().transaction([],tx=>tx.events({...query,from,to:iso(now()+1),environment,traffic,limit:10000}));
@@ -264,5 +274,5 @@ export function createManagementService(options:Options={}) {
     const selected=keys?events.filter(e=>keys.has(e.deviceId+'|'+e.attemptId)):events;
     return {...managementOutcomes(selected,{from,to,now:now()}),environment,traffic,generatedAt:iso(now())};
   }
-  return {...drafts,configured,ingestEvents,getEffectiveConfig,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,deviceDelivery,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary,eventSummary};
+  return {...drafts,reportingState,configured,ingestEvents,getEffectiveConfig,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,deviceDelivery,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary,eventSummary};
 }

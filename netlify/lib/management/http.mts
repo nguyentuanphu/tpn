@@ -1,3 +1,5 @@
+import { LiveError } from '../live.mts';
+import { functionWorkspace, saveFunctionDraft } from './functions.mts';
 import { round, bounded, bounds } from './finance-values.mts';
 import * as admins from '../admins.mts';
 import { ManagementError } from './transactional/types.mts';
@@ -17,9 +19,11 @@ export async function managementBody(req: Request) {
     size += value.byteLength; if (size > 250000) { await reader.cancel(); throw new ManagementError(413, 'body_too_large'); } chunks.push(value); }
   try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { throw new ManagementError(400, 'invalid_json'); }
 }
-export const managementFailure = (error) => error instanceof ManagementError || error instanceof ManagementReadError
+export const managementFailure = (error) => error instanceof LiveError ? managementJson({error:'invalid_live_content',code:'invalid_live_content'},400) : error instanceof ManagementError || error instanceof ManagementReadError
   ? managementJson({ error: error.message, code: error.code }, error.status)
   : managementJson({ error: 'Management source unavailable. No change has been confirmed.', code: 'management_source_unavailable' }, 503);
+
+const optionalPolicy=async service=>{if(!service.configured())return null;try{return await service.reportingState();}catch{return {state:'unavailable',installed:null,collect:null,process:null,show:null,expiresAt:null};}};
 
 /** Called only after Studio authentication. Permissions are also checked here for direct callers. */
 export async function managementHttp(req: Request, me, { reads, service, operations = undefined, finance = undefined, catalogue = () => [], log = async (..._args) => {} }) {
@@ -55,6 +59,15 @@ export async function managementHttp(req: Request, me, { reads, service, operati
         if(path==='finance/budget')return managementJson(await finance.budget(body,me.name));
       }
       throw new ManagementError(404,'finance_route_not_found');
+    }
+    if(path==='functions'||path==='functions/draft'){
+      const edit=admins.allowed(me,'management/config',true)&&admins.allowed(me,'live/content',true);
+      if(!post&&path==='functions')return managementJson(await functionWorkspace(service,edit));
+      if(post&&path==='functions/draft'){
+        if(!edit)return managementJson({error:'existing_edit_permission_required'},403);
+        return managementJson(await saveFunctionDraft(await managementBody(req),me.name,service));
+      }
+      throw new ManagementError(404,'function_route_not_found');
     }
     if(path.startsWith('items/')){
       const parts=path.split('/'),entry=itemEntry(catalogue(),parts[1]);
@@ -94,7 +107,9 @@ export async function managementHttp(req: Request, me, { reads, service, operati
     if (!post) {
       if (path === 'overview') {
         const result = await reads.overview(q);
-        if (service.configured() && !q.get('child') && (!q.get('deviceClass') || q.get('deviceClass') === 'all')) {
+        const policy=await optionalPolicy(service);
+        result['optionalReporting']=policy;
+        if (policy?.process&&policy?.show && !q.get('child') && (!q.get('deviceClass') || q.get('deviceClass') === 'all')) {
           try {
             const attempts = await service.attemptSummary({ from: result.period.from+'T00:00:00Z',
               to: new Date(Date.parse(result.period.to+'T00:00:00Z')+86400000).toISOString(),
@@ -133,7 +148,8 @@ export async function managementHttp(req: Request, me, { reads, service, operati
       }
       if (path.startsWith('activities/')) {
         const result = await reads.activity(path.slice(11), q, context);
-        if(service.configured()&&!q.get('child')&&!q.get('search')&&(!q.get('deviceClass')||q.get('deviceClass')==='all')) {
+        const policy=await optionalPolicy(service);result['optionalReporting']=policy;
+        if(policy?.process&&policy?.show&&!q.get('child')&&!q.get('search')&&(!q.get('deviceClass')||q.get('deviceClass')==='all')) {
           const query={from:result.period.from+'T00:00:00Z',to:new Date(Date.parse(result.period.to+'T00:00:00Z')+86400000).toISOString(),environment:'production',traffic:result.scope.traffic,...(result.scope.build==='all'?{}:{build:result.scope.build})};
           try {result['detailedOutcomes']=result.activity.kind==='story'?(await service.eventSummary(query,result.activity.id)).stories:await service.attemptSummary(query,result.activity.id);}
           catch{result.quality.push('detailed-outcomes-unavailable');}
