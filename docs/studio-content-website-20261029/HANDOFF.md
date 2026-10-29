@@ -2,6 +2,10 @@
 
 29 October 2026 AEDT. Branch `work/studio-content-website-20261029`, based on uploaded A checkpoint `f62a48c91247a40388d41ba4161df655ec825771`. Final delivered branch SHA is recorded in the response and is discoverable with `git rev-parse HEAD`; this file cannot embed its own future commit hash. The final runtime/layout/test/inventory implementation is `47a9079eef4d5e1b0e34283503fc934feb888da7`, including the unregistered pending definitions and anchored art actions. Generated website facts are pinned to that immutable source. Later changes concern tests, inventories and evidence unless the commit list says otherwise.
 
+## Pending B implementation
+
+[PENDING-WORK.md](PENDING-WORK.md) is the explicit remaining-work register: three unfinished art mechanics, unresolved rongran intent and twelve guidance recordings. These remain B/content work; the separate A-owned fixture and integration tasks are not substitutes for completing them.
+
 ## What A can integrate
 
 - Twenty-two intended existing art activities: catalogue/lazy loaders, GAME_INFO metadata only, real canvas Save, pointer/keyboard input, game-drawn artwork, cell painting, stamping, scratch/leaf reveal, fireworks and open-ended painting. No child rewards/progress API was replaced. Shared item/release/progress checks are retained.
