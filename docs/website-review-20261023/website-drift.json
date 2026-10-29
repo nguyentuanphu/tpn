@@ -1,6 +1,6 @@
 {
-  "source": "21baacec8cee828dcacabd21fff09dad3b8e01ea",
-  "reviewedSource": "7589469d48c53fc8ec9e84317857b079dad26ea6",
+  "source": "0af59aee75510b96826ef2d9d9cef69d78719a5f",
+  "reviewedSource": "21baacec8cee828dcacabd21fff09dad3b8e01ea",
   "coverage": {
     "valley": 17,
     "lantern": 24,
@@ -9,10 +9,13 @@
     "festivals": 24
   },
   "changed": [
-    "js/build.ts",
-    "js/games/cacuangua.ts",
-    "studio/version.json",
-    "sw.ts"
+    "js/content/releases.ts",
+    "js/hanoi-pack.ts",
+    "js/i18n.js",
+    "js/learn.ts",
+    "js/simple.ts",
+    "js/ui.ts",
+    "js/i18n.ts"
   ],
   "coverageChanged": [],
   "requiresEditorialReview": true

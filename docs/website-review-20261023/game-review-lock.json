@@ -1,5 +1,5 @@
 {
-  "source": "21baacec8cee828dcacabd21fff09dad3b8e01ea",
+  "source": "0af59aee75510b96826ef2d9d9cef69d78719a5f",
   "files": [
     {
       "file": "content/custom.json",
@@ -555,7 +555,7 @@
     },
     {
       "file": "js/content/releases.ts",
-      "hash": "2b9d4e123fb237b863792563faaf199fe9981513"
+      "hash": "45cceb135823811f3fd2f5602120fe5d9586006b"
     },
     {
       "file": "js/content/rules.js",
@@ -1059,7 +1059,7 @@
     },
     {
       "file": "js/hanoi-pack.ts",
-      "hash": "bfea2d278353a193098f9065ebb7b21e3bb92954"
+      "hash": "dca97e1a48d19ec11a4d9090078955537ff48e1b"
     },
     {
       "file": "js/hawkers.js",
@@ -1106,8 +1106,8 @@
       "hash": "55b0549d3bd319c7953f22c860603bf0b9132205"
     },
     {
-      "file": "js/i18n.js",
-      "hash": "00484dd47d14d3c96defe546d367825584deb3e7"
+      "file": "js/i18n.ts",
+      "hash": "f5b05505aabaa1e66d187fd2177d3bfaa942f40f"
     },
     {
       "file": "js/icons.js",
@@ -1147,7 +1147,7 @@
     },
     {
       "file": "js/learn.ts",
-      "hash": "e12d3f6812bb75479a9ab11623e83a50b9d0616f"
+      "hash": "1d18b4aa50d84225f568defcf6516d00f0660a7a"
     },
     {
       "file": "js/listen.js",
@@ -1339,7 +1339,7 @@
     },
     {
       "file": "js/simple.ts",
-      "hash": "b42ccf8943ca8eaf4d67d7a8c4b28ae3ee25cc54"
+      "hash": "ea2a19ed6f8a795fb1e2e1f1d3684c70e4b338ba"
     },
     {
       "file": "js/snacks.js",
@@ -1451,7 +1451,7 @@
     },
     {
       "file": "js/ui.ts",
-      "hash": "44ba024ba94c3b6b1a6533c72b284ce88a68bbf3"
+      "hash": "14b4d4da7b37064bf10b1d4c79ef01bfc2b10b37"
     },
     {
       "file": "js/util.js",
