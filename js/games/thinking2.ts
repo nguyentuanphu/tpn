@@ -39,7 +39,7 @@ function style() {
 .tk2-pipe.straight i { left: 28px; right: 28px; top: 5px; bottom: 5px; border-left: 14px solid #4b9ec4; }
 .tk2-pipe.end i { left: 28px; right: 28px; top: 28px; bottom: 0; border-left: 14px solid #4b9ec4; }
 .tk2-pipe.source::after, .tk2-pipe.goal::after { position: absolute; top: 5px; right: 6px; font: 900 12px/1 var(--font, sans-serif); color: #266b8a; }
-.tk2-pipe .tk2-mark { position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; } /* (audit: drawings, not the English IN and OUT) */
+.tk2-pipe .tk2-mark { position: absolute; top: 2px; right: 2px; width: 30px; height: 30px; } .tk2-pipe .tk2-mark svg.art { width: 100%; height: 100%; } /* (audit: drawings, not the English IN and OUT) */
 .tk2-pipe.flow { background: #c8f1ff; box-shadow: inset 0 0 0 5px #78cbe8; }
 .gl.little .tk2-square, .gl.little .tk2-card, .gl.little .tk2-seat, .gl.little .tk2-pipe { min-width: 64px; min-height: 64px; }
 `));
