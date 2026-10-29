@@ -51,6 +51,13 @@ const connections=modules.flatMap(m=>m.imports.map(i=>{
 }));
 const catalogue=exportManagementCatalogue(root);
 const items=catalogue.entries.map(e=>({key:e.kind+':'+e.id,domain:e.kind==='game'?'games':'stories',sourceFile:e.sourceFile,discovery:e.coverage.discovery,implementationReference:e.coverage.implementation,sourceHash:e.sourceHash,guide:e.guide,unlock:e.unlock,playability:'consult-browser-validation-not-inferred-from-metadata'}));
+const itemDependencies=catalogue.entries.flatMap(e=>{
+ const key=e.kind+':'+e.id;
+ return [{from:key,to:'source:'+e.sourceFile,relation:'defined-in',evidence:'source-reference'},
+ ...e.unlock.prerequisites.map(id=>({from:key,to:e.kind+':'+id,relation:'requires-three-finishes',evidence:'shared-progress-rule'})),
+ ...(e.unlock.featureId?[{from:key,to:'release:'+e.unlock.featureId,relation:'requires-release',evidence:'source-rule'}]:[]),
+ ...(e.guide.href?[{from:key,to:'website:'+e.guide.href,relation:'static-guide',evidence:e.guide.sourceAligned?'source-aligned':'anchor-only-combined-review-pending'}]:[])];
+});
 const boundaries=[
  ['people','Private installations/profiles','netlify/lib/management/read.mts','Installation-scoped reporting; never merge names into global people; excluded from public marketing.'],
  ['stories','Private authored stories/questions','js/custom.ts','Private records are not enumerated or copied.'],
@@ -63,6 +70,6 @@ const dirtyPaths=git('diff','--name-only','HEAD','--',...files).split('\n').filt
 const output={schemaVersion:1,sourceHead:git('log','-1','--format=%H','--',...files),sourceDirty:dirtyPaths.length>0,dirtyPaths,scope:'All tracked public code/config surfaces under the declared roots, plus new source files; not every runtime entity or private/provider record.',domains:domains.map(id=>({id,sourceModules:modules.filter(m=>m.domain===id).length,definitionCoverage:'module-manifest-complete-within-listed-roots',runtimeCoverage:'not_claimed'})),modules,items,boundaries,limitations:['Domain attribution is a reviewable filename-based grouping; shared imports cross domains.','Dynamic imports, DOM messages, runtime identifiers and API dispatch need consumer review beyond lexical import evidence.','Asset binaries and recording catalogues are covered by separate manifests; never interpreted as child/profile records.','No all-domain control/playability percentage is inferred.']};
 fs.mkdirSync(out,{recursive:true});
 fs.writeFileSync(path.join(out,'source-inventory.json'),JSON.stringify(output,null,2)+'\n');
-fs.writeFileSync(path.join(out,'source-connections.json'),JSON.stringify({schemaVersion:1,sourceHead:output.sourceHead,connections,boundaries},null,2)+'\n');
+fs.writeFileSync(path.join(out,'source-connections.json'),JSON.stringify({schemaVersion:1,sourceHead:output.sourceHead,connections,itemDependencies,boundaries},null,2)+'\n');
 fs.writeFileSync(path.join(out,'SOURCE-INVENTORY.md'),'# Public source inventory\n\n'+output.scope+'\n\n| Domain | Source modules | Runtime/private records |\n|---|---:|---|\n'+output.domains.map(d=>`| ${d.id} | ${d.sourceModules} | Not enumerated |`).join('\n')+'\n\nThe JSON records every inspected file hash, exported definition, source import and typed game/story ID. It distinguishes declarations, catalogue discovery, implementation references, unlock dependencies, static guides, runtime instances and provider evidence. Supplement with the existing public declaration audit in `public-definitions/`; that audit remains partial at the entity level.\n\n'+output.limitations.map(s=>'- '+s).join('\n')+'\n');
 console.log(`${modules.length} public source modules, ${items.length} typed content entries, ${connections.length} import connections across ${domains.length} domains`);
