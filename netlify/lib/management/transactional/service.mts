@@ -3,6 +3,7 @@ import { ManagementError, unavailable } from './types.mts';
 import type { EventQuery, Json, JsonObject, ManagementDatabase, ManagementTransaction, StoredEvent } from './types.mts';
 import { canonicalJson, configBody, DEVICE, fail, hashJson, instant, integer, jsonObject, keys, one, record, SCOPE, text, UUID, validateEventBatch } from './validation.mts';
 import type { Catalogue } from './validation.mts';
+import { createConfigDrafts } from './drafts.mts';
 import { managementOutcomes } from '../outcomes.mts';
 export { ManagementError } from './types.mts';
 export { hashJson, canonicalJson } from './validation.mts';
@@ -61,13 +62,13 @@ export function createManagementService(options:Options={}) {
     scopeKey=scope(scopeKey,options.catalogue);
     return db().transaction([],async tx=>{const value=await tx.get('configs',scopeKey);return value?config(value):null;});
   }
-  async function changeConfig(input:unknown,actor:string) {
+  async function writeConfig(input:unknown,actor:string,tx:ManagementTransaction,reviewedHash?:string) {
     const b=record(input);keys(b,['scopeKey','expectedRevision','kind','body','reason','eligibleDeviceIds','rollbackRevision'],['scopeKey','expectedRevision','kind','body','reason']);
     const scopeKey=scope(b.scopeKey,options.catalogue),expected=integer(b.expectedRevision),kind=one(b.kind,['rules','content']) as 'rules'|'content',reason=text(b.reason,600,3),by=actorName(actor);
     const ids=b.eligibleDeviceIds===undefined?[]:b.eligibleDeviceIds;
     if(!Array.isArray(ids)||ids.length>10000||ids.some(id=>typeof id!=='string'||!DEVICE.test(id)))fail('invalid_device_cohort');
     const cohort=[...new Set(ids as string[])].sort();
-    return db().transaction(['config:'+scopeKey],async tx=>{
+    {
       const oldRaw=await tx.get('configs',scopeKey),old=oldRaw?config(oldRaw):null;
       if((old?.revision??0)!==expected)throw new ManagementError(409,'config_revision_conflict');
       const previous=old?.body??await baseConfig(options);
@@ -77,6 +78,7 @@ export function createManagementService(options:Options={}) {
         if(!saved)fail('unknown_rollback_revision');body=jsonObject(saved.body);
       }
       const revision=expected+1,at=now(),effectiveHash=hashJson(body),changeId=randomUUID();
+      if(reviewedHash!==undefined&&effectiveHash!==reviewedHash)throw new ManagementError(409,'draft_baseline_conflict');
       const result:ConfigRecord={scopeKey,revision,body,effectiveHash,updatedAt:iso(at),actor:by};
       if(!old)await tx.put('config_versions',configKey(scopeKey,0),{scopeKey,revision:0,body:previous,effectiveHash:hashJson(previous),updatedAt:iso(at),actor:'legacy-baseline'});
       await tx.put('configs',scopeKey,jsonObject(result));
@@ -85,8 +87,13 @@ export function createManagementService(options:Options={}) {
       await tx.put('projection_jobs',scopeKey,{scopeKey,targetRevision:revision,state:'pending',attempts:0,nextAttemptAt:iso(at),lastErrorCode:null});
       await audit(tx,'config',scopeKey,revision,by,reason,{beforeHash:hashJson(previous),afterHash:effectiveHash},at);
       return {...result,changeId,state:'pending_projection'};
-    });
+    }
   }
+  async function changeConfig(input:unknown,actor:string) {
+    const key=scope(record(input).scopeKey,options.catalogue);
+    return db().transaction(['config:'+key],tx=>writeConfig(input,actor,tx));
+  }
+  const drafts=createConfigDrafts({database:db,baseline:()=>baseConfig(options),now,writeConfig});
 
   /** The SQL transaction holds the same advisory lock during write and read-back. */
   async function projectLatest(scopeKey='global') {
@@ -254,5 +261,5 @@ export function createManagementService(options:Options={}) {
     const selected=keys?events.filter(e=>keys.has(e.deviceId+'|'+e.attemptId)):events;
     return {...managementOutcomes(selected,{from,to,now:now()}),environment,traffic,generatedAt:iso(now())};
   }
-  return {configured,ingestEvents,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,deviceDelivery,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary,eventSummary};
+  return {...drafts,configured,ingestEvents,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,deviceDelivery,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary,eventSummary};
 }

@@ -27,7 +27,7 @@ function transaction(client: SqlClient): ManagementTransaction {
       return result.rows[0] ? object(result.rows[0].record_json) : null;
     },
     async put(namespace, key, value) {
-      const conflict = ['audit','config_versions','finance_versions','finance_batches'].includes(namespace) ? '' : ' ON CONFLICT(namespace,record_key) DO UPDATE SET record_json=EXCLUDED.record_json';
+      const conflict = ['audit','config_draft_versions','config_versions','finance_versions','finance_batches'].includes(namespace) ? '' : ' ON CONFLICT(namespace,record_key) DO UPDATE SET record_json=EXCLUDED.record_json';
       await client.query('INSERT INTO management_records(namespace,record_key,record_json) VALUES($1,$2,$3::jsonb)' + conflict, [namespace,key,JSON.stringify(value)]);
     },
     async list(namespace, prefix='') {

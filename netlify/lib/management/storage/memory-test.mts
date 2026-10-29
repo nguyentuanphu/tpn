@@ -10,7 +10,7 @@ export class MemoryManagementTestDatabase implements ManagementDatabase {
     const state=structuredClone(this.state),key=(n:Namespace,k:string)=>n+'|'+k;
     const tx:ManagementTransaction={
       get:async(n,k)=>structuredClone(state.records.get(key(n,k))??null),
-      put:async(n,k,v)=>{if(['audit','config_versions','finance_versions','finance_batches'].includes(n)&&state.records.has(key(n,k)))throw new Error('immutable_management_history');state.records.set(key(n,k),structuredClone(v));},
+      put:async(n,k,v)=>{if(['audit','config_draft_versions','config_versions','finance_versions','finance_batches'].includes(n)&&state.records.has(key(n,k)))throw new Error('immutable_management_history');state.records.set(key(n,k),structuredClone(v));},
       list:async(n,p='')=>[...state.records].filter(([k])=>k.startsWith(n+'|'+p)).sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>({key:k.slice(n.length+1),value:structuredClone(v)})),
       getEvent:async(d,i)=>structuredClone(state.events.get(d+'|'+i)??null),
       insertEvent:async(e)=>{const k=e.deviceId+'|'+e.eventId;if(state.events.has(k))throw new Error('duplicate_event');state.events.set(k,structuredClone(e));},

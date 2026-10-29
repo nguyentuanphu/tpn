@@ -55,6 +55,31 @@ export async function managementHttp(req: Request, me, { reads, service, operati
       }
       throw new ManagementError(404,'finance_route_not_found');
     }
+    if(path==='drafts'||path.startsWith('drafts/')) {
+      const parts=path.split('/'),id=parts[1],action=parts[2];
+      if(parts.length>3||(!post&&action))throw new ManagementError(404,'draft_route_not_found');
+      const permitted=d=>admins.allowed(me,d.kind==='rules'?'live':'live/content',true);
+      if(!post){
+        if(id){const draft=await service.getDraft(id);if(!permitted(draft))return managementJson({error:'existing_edit_permission_required'},403);return managementJson(draft);}
+        return managementJson({drafts:(await service.listDrafts()).filter(permitted)});
+      }
+      const body=await managementBody(req);
+      const draft=id?await service.getDraft(id):body;
+      if(!permitted(draft))return managementJson({error:'existing_edit_permission_required'},403);
+      if(!id)return managementJson(await service.saveDraft(body,me.name));
+      if(action==='review')return managementJson(await service.reviewDraft(id,body,me.name));
+      if(action==='publish'){
+        const eligibleDeviceIds:string[]=[];let cursor='';
+        do{const page=await reads.devices({limit:'100',...(cursor?{cursor}:{})});
+          eligibleDeviceIds.push(...page.devices.filter(d=>d.days>0).map(d=>d.id));
+          if(eligibleDeviceIds.length>10000)throw new ManagementError(503,'cohort_requires_rollup');cursor=page.nextCursor||'';
+        }while(cursor);
+        const changed=await service.publishDraft(id,body,me.name,eligibleDeviceIds);
+        const projection=await service.projectLatest('global').catch(()=>({ok:false,code:'projection_not_confirmed'}));
+        return managementJson({...changed,state:projection.ok?'available':'pending_projection',projection,cohortStatus:'reporting_installations_at_publish'},projection.ok?200:202);
+      }
+      throw new ManagementError(404,'draft_route_not_found');
+    }
     if (!post) {
       if (path === 'overview') {
         const result = await reads.overview(q);

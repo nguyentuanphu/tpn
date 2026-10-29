@@ -39,7 +39,7 @@ export async function managementBrowserCheck(browser) {
     return Response.json({workflow_runs:dispatched?[{id:42,path:'.github/workflows/nightly-child-bots.yml',display_title:'Child bots management:'+dispatched,status:'completed',conclusion:'failure',head_sha:'a'.repeat(40),run_attempt:1,created_at:new Date().toISOString(),updated_at:new Date().toISOString()}]:[]},{headers:{'x-ratelimit-limit':'5000','x-ratelimit-remaining':'4990'}});
   }});
   const server=await fakeNetlify({port:8796,players,liveStore,testerStore,managementDatabase,managementOperations,env:{STUDIO_PASSWORD:password,GITHUB_TOKEN:'fixture-token',GITHUB_REPO:repo,URL:site}});
-  const output=path.resolve('../docs/studio-management-foundation/screenshots/implementation');fs.mkdirSync(output,{recursive:true});
+  const output=path.resolve(process.env.STUDIO_MANAGEMENT_REVIEW_DIR||'../docs/studio-management-foundation/screenshots/implementation');fs.mkdirSync(output,{recursive:true});
   const captures=[];
   try {
     for(const [width,height] of [[390,844],[820,1180],[1440,1000]]) {
@@ -77,10 +77,27 @@ export async function managementBrowserCheck(browser) {
           await page.waitForFunction(()=>document.querySelector('.mg-attention')?.textContent.includes('Synthetic operator'));
           await openTool(page,'changes');await page.waitForSelector('[name=configBody]');
           await page.waitForFunction(()=>!!document.querySelector('[name=configBody]')?.value);
+          const publicChangesBefore=(await managementDatabase.transaction([],tx=>tx.list('changes'))).length;
           const before=await page.locator('[name=configBody]').inputValue();
           await page.locator('[name=configBody]').fill(JSON.stringify({...JSON.parse(before),releases:{managementTelemetry:{on:true}}}));
           await page.locator('[name=reason]').fill('Synthetic browser validation');await page.locator('.mg-editor button[type=submit]').click();
-          await page.waitForFunction(()=>/Saved and available|Đã lưu và cung cấp/.test(document.querySelector('[data-config-result]')?.textContent||''));
+          await page.waitForFunction(()=>/Private draft saved|Đã lưu bản nháp riêng tư/.test(document.querySelector('[data-config-result]')?.textContent||''));
+          assert.equal((await managementDatabase.transaction([],tx=>tx.list('changes'))).length,publicChangesBefore,'saving a draft adds no public change');
+          const draftId=await page.locator('[name=savedDraft]').inputValue();assert.ok(draftId);
+          // Navigate away and resume: draft content is server-persisted, not only in this form.
+          await openTool(page,'overview');await openTool(page,'changes');await page.waitForSelector('[name=savedDraft]');
+          await page.waitForFunction(id=>[...document.querySelector('[name=savedDraft]').options].some(o=>o.value===id),draftId);
+          await page.locator('[name=savedDraft]').selectOption(draftId);assert.match(await page.locator('[name=configBody]').inputValue(),/managementTelemetry/);
+          assert.equal(await page.locator('[data-draft-publish]').isDisabled(),true);
+          await page.locator('[data-draft-review]').click();await page.waitForFunction(()=>!document.querySelector('[data-draft-publish]').disabled);
+          await page.locator('.mg-editor').evaluate(el=>el.scrollIntoView({block:'start'}));
+          const draftFilename=`${lang}-${width}-draft-review.png`;await page.screenshot({path:path.join(output,draftFilename),fullPage:true});captures.push(draftFilename);
+          const draftViewport=`${lang}-${width}-draft-review-viewport.png`;await page.screenshot({path:path.join(output,draftViewport)});captures.push(draftViewport);
+          await page.locator('[data-draft-publish]').scrollIntoViewIfNeeded();
+          const actionsViewport=`${lang}-${width}-draft-actions-viewport.png`;await page.screenshot({path:path.join(output,actionsViewport)});captures.push(actionsViewport);
+          assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'draft review fits the device width');
+          await page.locator('[data-draft-publish]').click();
+          await page.waitForFunction(()=>/Published and available|Đã xuất bản và cung cấp/.test(document.querySelector('[data-config-result]')?.textContent||''));
           const publicLive=await (await context.request.get(site+'/api/live')).json();
           assert.ok(publicLive.management.revision>0);assert.equal(publicLive.releases.managementTelemetry.on,true);
           const blocked=await context.request.post(site+'/studio/api/live',{headers:{'X-Studio':'1'},data:{releases:{}}});assert.equal(blocked.status(),409);
@@ -137,6 +154,6 @@ export async function managementBrowserCheck(browser) {
     } finally {await isolated.close();}
     await managementRuntimeBrowserCheck(browser);
     fs.writeFileSync(path.join(output,'capture-source.json'),JSON.stringify({capturedAt:new Date().toISOString(),fixture:'Synthetic records; real owner sign-in, Studio routes and UI; no production data',captures},null,2)+'\n');
-    return 'EN/VI: authenticated summary, child/device linkage, activity lookup and same-page filters at phone/tablet/desktop sizes; eighteen captures; finance setup, preview/save/correction/history/CSV duplicate checks; bounded operation submission, durable results and provider-run reconciliation';
+    return 'EN/VI: authenticated summary, child/device linkage, activity lookup and same-page filters at phone/tablet/desktop sizes; private draft save/resume/review/publication; ' + captures.length + ' captures; finance setup, preview/save/correction/history/CSV duplicate checks; bounded operation submission, durable results and provider-run reconciliation';
   } finally {server.close();unroute();}
 }

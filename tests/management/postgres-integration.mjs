@@ -41,8 +41,8 @@ try{
     assert.equal((await pool.query("SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema=$1",[schema])).rows[0].n,0);
   });
   await check('real PostgreSQL migration applies once and repeats safely',async()=>{
-    assert.deepEqual(await migrateManagement(pool),{version:2,applied:true});
-    assert.deepEqual(await migrateManagement(pool),{version:2,applied:false});
+    assert.deepEqual(await migrateManagement(pool),{version:3,applied:true});
+    assert.deepEqual(await migrateManagement(pool),{version:3,applied:false});
     const repeated=await Promise.all([migrateManagement(pool),migrateManagement(pool)]);
     assert.ok(repeated.every(r=>r.applied===false));
   });
@@ -53,15 +53,30 @@ try{
     await pool.query('UPDATE management_schema_migrations SET sha256=$1 WHERE version=1',[createHash('sha256').update(fs.readFileSync(path.join(root,'netlify/lib/management/storage/001-management.sql'))).digest('hex')]);
     assert.equal((await managementPreflight(pool,{local:true})).ready,true);
   });
-  await check('existing migration v1 upgrades to finance v2 without changing prior management records',async()=>{
+  await check('existing migration v1 upgrades through finance v2 and private drafts v3 without changing prior management records',async()=>{
     const legacy=schema+'_v1';await admin.query(`CREATE SCHEMA ${legacy}`);const legacyPool=new Pool({connectionString,max:2,options:`-c search_path=${legacy}`});
     try{
       const sql=fs.readFileSync(path.join(root,'netlify/lib/management/storage/001-management.sql'),'utf8');await legacyPool.query(sql);
       await legacyPool.query('CREATE TABLE management_schema_migrations(version integer PRIMARY KEY,sha256 text NOT NULL,applied_at timestamptz NOT NULL DEFAULT now())');
       await legacyPool.query('INSERT INTO management_schema_migrations(version,sha256) VALUES(1,$1)',[createHash('sha256').update(sql).digest('hex')]);
       await legacyPool.query("INSERT INTO management_records(namespace,record_key,record_json) VALUES('configs','preserved','{\"revision\":7}'::jsonb)");
-      assert.equal((await managementPreflight(legacyPool,{local:true})).ready,false);assert.deepEqual(await migrateManagement(legacyPool),{version:2,applied:true});
+      assert.equal((await managementPreflight(legacyPool,{local:true})).ready,false);assert.deepEqual(await migrateManagement(legacyPool),{version:3,applied:true});
       assert.equal((await legacyPool.query("SELECT record_json FROM management_records WHERE namespace='configs' AND record_key='preserved'")).rows[0].record_json.revision,7);
+      assert.equal((await managementPreflight(legacyPool,{local:true})).ready,true);
+    }finally{await legacyPool.end();await admin.query(`DROP SCHEMA ${legacy} CASCADE`);}
+  });
+  await check('existing finance v2 upgrades to draft v3 while preserving financial records',async()=>{
+    const legacy=schema+'_v2';await admin.query(`CREATE SCHEMA ${legacy}`);const legacyPool=new Pool({connectionString,max:2,options:`-c search_path=${legacy}`});
+    try{
+      await legacyPool.query('CREATE TABLE management_schema_migrations(version integer PRIMARY KEY,sha256 text NOT NULL,applied_at timestamptz NOT NULL DEFAULT now())');
+      for(const [index,name]of ['001-management.sql','002-finance.sql'].entries()){
+        const sql=fs.readFileSync(path.join(root,'netlify/lib/management/storage',name),'utf8');await legacyPool.query(sql);
+        await legacyPool.query('INSERT INTO management_schema_migrations(version,sha256) VALUES($1,$2)',[index+1,createHash('sha256').update(sql).digest('hex')]);
+      }
+      await legacyPool.query(`INSERT INTO management_records(namespace,record_key,record_json) VALUES('finance_settings','preserved','{"revision":5,"reportingCurrency":"AUD"}'::jsonb)`);
+      assert.deepEqual(await migrateManagement(legacyPool),{version:3,applied:true});
+      assert.equal((await legacyPool.query("SELECT record_json FROM management_records WHERE namespace='finance_settings' AND record_key='preserved'")).rows[0].record_json.revision,5);
+      const db=new PostgresManagementDatabase(legacyPool);await db.transaction([],tx=>tx.put('config_drafts','synthetic-upgrade',{revision:1,state:'draft'}));
       assert.equal((await managementPreflight(legacyPool,{local:true})).ready,true);
     }finally{await legacyPool.end();await admin.query(`DROP SCHEMA ${legacy} CASCADE`);}
   });
@@ -138,9 +153,29 @@ try{
     assert.equal(JSON.stringify(changes).includes('demo12345678'),false,'summary history never exposes the private installation cohort');
     await assert.rejects(service.receiveConfigReceipt({...receipt,deviceId:'demo87654321',effectiveHash:'0'.repeat(64)}));
   });
+  await check('SQL private draft review survives reload and racing publication commits exactly once',async()=>{
+    const c=await service.getConfig(),input={expectedRevision:0,baseRevision:c.revision,kind:'rules',body:{releases:{managementTelemetry:{on:false}}},reason:'Synthetic SQL private draft'};
+    const d=await service.saveDraft(input,'draft-owner');assert.equal((await service.getConfig()).revision,c.revision);
+    const reload=createManagementService({database});assert.equal((await reload.getDraft(d.id)).state,'draft');
+    const r=await reload.reviewDraft(d.id,{expectedRevision:d.revision,effectiveHash:d.effectiveHash},'draft-owner');
+    const token={expectedRevision:r.revision,effectiveHash:r.effectiveHash};
+    const results=await Promise.allSettled([reload.publishDraft(d.id,token,'draft-owner',[]),reload.publishDraft(d.id,token,'draft-owner',[])]);
+    assert.equal(results.filter(x=>x.status==='fulfilled').length,1);assert.equal((await reload.getConfig()).revision,c.revision+1);
+    assert.equal((await reload.getDraft(d.id)).state,'published');
+    assert.equal((await database.transaction([],tx=>tx.list('config_draft_versions',d.id+'|'))).length,3);
+  });
+  await check('SQL failed private publication rolls back config and immutable draft history together',async()=>{
+    const c=await service.getConfig(),d=await service.saveDraft({expectedRevision:0,baseRevision:c.revision,kind:'rules',body:{releases:{}},reason:'Synthetic SQL draft rollback'},'draft-owner');
+    const r=await service.reviewDraft(d.id,{expectedRevision:d.revision,effectiveHash:d.effectiveHash},'draft-owner');
+    const failing={transaction:(locks,work)=>database.transaction(locks,tx=>work({...tx,put:async(ns,key,value)=>{if(ns==='config_drafts'&&value.state==='published')throw Error('synthetic draft publication failure');return tx.put(ns,key,value);}}))};
+    const broken=createManagementService({database:failing});
+    await assert.rejects(broken.publishDraft(d.id,{expectedRevision:r.revision,effectiveHash:r.effectiveHash},'draft-owner',[]),/synthetic draft publication failure/);
+    assert.equal((await service.getConfig()).revision,c.revision);assert.equal((await service.getDraft(d.id)).state,'reviewed');
+    assert.equal((await database.transaction([],tx=>tx.list('config_draft_versions',d.id+'|'))).length,2);
+  });
   await check('database constraints reject invalid event records',async()=>{
     await assert.rejects(pool.query("INSERT INTO management_records(namespace,record_key,record_json) VALUES('invalid','test','{}'::jsonb)"));
-    for(const namespace of ['audit','config_versions','finance_versions','finance_batches']) {
+    for(const namespace of ['audit','config_draft_versions','config_versions','finance_versions','finance_batches']) {
       await database.transaction([],tx=>tx.put(namespace,'synthetic-immutable-history',{value:1}));
       await assert.rejects(database.transaction([],tx=>tx.put(namespace,'synthetic-immutable-history',{value:2})));
       await database.transaction([],async tx=>assert.equal((await tx.get(namespace,'synthetic-immutable-history')).value,1));
