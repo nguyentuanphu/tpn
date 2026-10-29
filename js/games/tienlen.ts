@@ -13,6 +13,28 @@ import { stream } from '../core/rng.js';
 import { T } from '../i18n.js';
 
 import { RANKS, SUITS, card, byV, BOMB, classify, beats, choose, setNorth, rulesFor } from './tienlenrules.js';
+import { reduceMotion } from '../state.js';
+
+// (owner, 30 Oct 2026 AEDT: "add dealing animation to Tiến Lên") the deck is shuffled in the middle of the table, then
+// dealt one card at a time, each one flying to its player and staying in sight until it lands (the child's open face
+// up); calm mode deals quickly without the flight. Both the game on one device and the one with friends use it.
+async function dealOut(t: HTMLElement, order: number[], target: (who: number) => Element, land: (who: number) => void, opts: { little: boolean; closed: () => boolean; tap: () => void }) {
+  const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms)), calm = reduceMotion();
+  const deckEl = el('div', 'tl-deck', '<div class="tl-card back"></div><div class="tl-card back"></div><div class="tl-card back"></div>'); t.appendChild(deckEl);
+  if (!calm) { deckEl.classList.add('tl-shuffle'); for (let k = 0; k < 3 && !opts.closed(); k++) { opts.tap(); await sleep(260); } deckEl.classList.remove('tl-shuffle'); }
+  const box = t.getBoundingClientRect(), mid = (e: Element) => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top]; };
+  const from = mid(deckEl), gap = calm ? 12 : opts.little ? 70 : 100, fly = calm ? 0 : 420;
+  for (const who of order) {
+    if (opts.closed()) break;
+    if (!fly) { land(who); await sleep(gap); continue; }
+    const c = el('div', 'tl-card back tl-fly'); c.style.left = from[0] + 'px'; c.style.top = from[1] + 'px'; t.appendChild(c);
+    const [x, y] = mid(target(who)), turn = (who === 0 ? 0 : who % 2 ? -14 : 14);
+    requestAnimationFrame(() => { c.style.transform = `translate(${x - from[0]}px, ${y - from[1]}px) rotate(${turn}deg) scale(.85)`; });
+    setTimeout(() => { c.remove(); land(who); }, fly);
+    opts.tap(); await sleep(gap);
+  }
+  await sleep(fly + 60); deckEl.remove();
+}
 export { classify, beats, choose, setNorth };
 
 const TL = {
@@ -68,18 +90,9 @@ const TL = {
     // (owner, round G: "Tiến Lên should show the cards being dealt"); little ones get a quicker deal
     async function dealCards() {
       shown = [0, 0, 0]; drawOpp(); drawHand();
-      const deckEl = el('div', 'tl-deck', '<div class="tl-card back"></div><div class="tl-card back"></div><div class="tl-card back"></div>'); t.appendChild(deckEl);
-      const box = t.getBoundingClientRect(), mid = (e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top]; });
-      const from = mid(deckEl), to = [() => mid(handEl), () => mid(oppEl.children[0] || oppEl), () => mid(oppEl.children[1] || oppEl)];
-      const gap = little ? 28 : 45;
-      for (let k = 0; k < 39 && !api.closed; k++) {
-        const who = (turn + k) % 3, fly = el('div', 'tl-card back tl-fly'); fly.style.left = from[0] + 'px'; fly.style.top = from[1] + 'px'; t.appendChild(fly);
-        const [x, y] = to[who](); requestAnimationFrame(() => { fly.style.transform = `translate(${x - from[0]}px, ${y - from[1]}px) rotate(${(who - 1) * 12}deg) scale(.8)`; fly.style.opacity = '.2'; });
-        setTimeout(() => { fly.remove(); shown[who]++; if (who === 0) drawHand(); else drawOpp(); }, 320);
-        if (k % 3 === 0) api.sfx.tap();
-        await sleep(gap);
-      }
-      await sleep(360); deckEl.remove(); shown = null;
+      const order = Array.from({ length: 39 }, (_, k) => (turn + k) % 3);
+      await dealOut(t, order, who => who === 0 ? handEl : oppEl.children[who - 1] || oppEl, who => { shown[who]++; if (who === 0) drawHand(); else drawOpp(); }, { little, closed: () => api.closed, tap: () => api.sfx.tap() });
+      shown = null;
     }
     async function deal() {
       const deck = []; for (let r = 0; r < 13; r++) for (let s = 0; s < 4; s++) deck.push(card(r, s));
@@ -183,12 +196,12 @@ async function tienlenOnline(api, north = false) {
   api.stage.appendChild(t);
   const oppEl = t.querySelector('.tl-opp'), pileEl = t.querySelector('.tl-pile'), whoEl = t.querySelector('.tl-who'), msgEl = t.querySelector('.tl-msg'), handEl = t.querySelector('.tl-hand');
   const bPlay = t.querySelector('.play'), bPass = t.querySelector('.pass'), bHint = t.querySelector('.hint');
-  let table = null, lastBy = -1, passed = new Set(), sel = new Set(), step = 0;
+  let table = null, lastBy = -1, passed = new Set(), sel = new Set(), step = 0, shown: number[] | null = null; // shown: cards dealt so far, while dealing
   const lows = hands.map(h => h[0].v); let turn = lows.indexOf(Math.min(...lows));
   const others = () => [...Array(seats).keys()].filter(i => i !== me);
   const draw = () => {
-    oppEl.innerHTML = others().map(i => `<div class="tl-p ${turn === i ? 'on' : ''} ${passed.has(i) ? 'out' : ''}"><b>${esc(names[i])}</b><span class="n">🂠 ${hands[i].length}</span></div>`).join('');
-    handEl.innerHTML = hands[me].map(c => cardHTML(c, sel.has(c.v) ? 'sel' : '')).join('');
+    oppEl.innerHTML = others().map(i => `<div class="tl-p ${turn === i ? 'on' : ''} ${passed.has(i) ? 'out' : ''}"><b>${esc(names[i])}</b><span class="n">🂠 ${shown ? shown[i] : hands[i].length}</span></div>`).join('');
+    handEl.innerHTML = (shown ? hands[me].slice(0, shown[me]) : hands[me]).map(c => cardHTML(c, sel.has(c.v) ? 'sel' : '')).join('');
     handEl.querySelectorAll('.tl-card').forEach(e => { e.onclick = () => { if (turn !== me) return; const v = +e.dataset.v; sel.has(v) ? sel.delete(v) : sel.add(v); api.sfx.tap(); draw(); }; });
     pileEl.innerHTML = table ? table.cs.map(c => cardHTML(c)).join('') : `<span class="tl-free">${T('New round: play anything!', 'Vòng mới: đánh gì cũng được!')}</span>`;
     whoEl.textContent = table ? names[lastBy] : '';
@@ -204,6 +217,9 @@ async function tienlenOnline(api, north = false) {
   // a play as one number: which cards of that player's (sorted) hand, as bits; 0 = pass
   const enc = (i, cs) => cs.reduce((m, c) => m | (1 << hands[i].findIndex(x => x.v === c.v)), 0), dec = (i, m) => hands[i].filter((_, k) => m & (1 << k));
   api.say('Tiến Lên with your friends! Beat the cards on the table, or pass.', 'Tiến Lên với các bạn! Chặn bài trên bàn, hoặc bỏ lượt.');
+  shown = names.map(() => 0); draw();
+  await dealOut(t, Array.from({ length: 13 * seats }, (_, k) => k % seats), who => who === me ? handEl : oppEl.children[others().indexOf(who)] || oppEl, who => { shown![who]++; draw(); }, { little: api.little, closed: () => api.closed, tap: () => api.sfx.tap() });
+  shown = null; if (api.closed) return;
   while (!api.closed && hands.every(h => h.length)) {
     draw(); msgEl.textContent = turn === me ? (table ? T('Your turn: beat it, or pass.', 'Tới lượt con: chặn bài, hay bỏ lượt.') : T('Your turn: play anything.', 'Tới lượt con: đánh gì cũng được.')) : T(`${names[turn]}'s turn…`, `Lượt của ${names[turn]}…`);
     let cs = null;

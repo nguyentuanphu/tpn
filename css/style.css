@@ -1947,7 +1947,9 @@ body.calm .rv-img.on { animation: none; }
 .tl-deck { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); pointer-events: none; z-index: 3; }
 .tl-deck .tl-card { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); }
 .tl-deck .tl-card:nth-child(2) { margin: -2px 0 0 2px; } .tl-deck .tl-card:nth-child(3) { margin: -4px 0 0 4px; }
-.tl-fly { position: absolute; z-index: 4; pointer-events: none; margin: calc(clamp(56px, 16vw, 78px) / -2) 0 0 calc(clamp(38px, 11vw, 54px) / -2); transition: transform .3s ease-out, opacity .3s ease-in; }
+.tl-fly { position: absolute; z-index: 4; pointer-events: none; margin: calc(clamp(56px, 16vw, 78px) / -2) 0 0 calc(clamp(38px, 11vw, 54px) / -2); transition: transform .4s cubic-bezier(.2, .7, .3, 1); box-shadow: 0 6px 14px rgba(40, 20, 70, .3); }
+.tl-deck.tl-shuffle .tl-card:nth-child(1) { animation: tl-riffle .26s ease-in-out infinite alternate; } .tl-deck.tl-shuffle .tl-card:nth-child(3) { animation: tl-riffle .26s ease-in-out infinite alternate-reverse; }
+@keyframes tl-riffle { from { transform: translate(-90%, -50%) rotate(-10deg); } to { transform: translate(-10%, -50%) rotate(10deg); } }
 @media (prefers-reduced-motion: reduce) { .tl-fly { transition: none; } }
 
 /* Oẳn tù tì with friends online (js/games/more.js rpsOnline): everyone's hand, shown together */
