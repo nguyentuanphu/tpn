@@ -1783,6 +1783,24 @@ await check('festhunt', async () => {
   return `${r.places} festival places at 5x by default (as before at 1x, more at 7x), none on a road; build-up ${r.build.join(' → ')} in Lotus Village for Tết; Tết on: ${r.patches} patches, ${r.outside} outside its places, ${r.road} spots by the valley's roads, the nearest drawn within the budget; ${r.hunted} festivals hide 5 things each; Tết's five found: keepsake for the house and the Passport badge`;
 });
 
+await check('backagain', async () => {
+  // (owner, 29 Oct 2026 AEDT: white screen in the installed app) coming back to the game with its 3D picture taken away
+  // (iOS may not say so) reloads into the saved place; an ordinary return does not reload
+  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page); await noWelcome(P.page);
+  try {
+    await P.page.waitForTimeout(3000);
+    await P.page.evaluate(() => { window.__mark = 1; document.dispatchEvent(new Event('visibilitychange')); });
+    await P.page.waitForTimeout(5500);
+    const normal = await P.page.evaluate(() => window.__mark === 1);
+    await P.page.evaluate(() => { const c = document.querySelector('#stage canvas'), gl = c.getContext('webgl2') || c.getContext('webgl'); gl.getExtension('WEBGL_lose_context').loseContext(); document.dispatchEvent(new Event('visibilitychange')); });
+    await P.page.waitForTimeout(6500);
+    const reloaded = await P.page.evaluate(() => window.__mark !== 1).catch(() => true);
+    ok(normal, 'an ordinary return to the game reloaded it');
+    ok(reloaded, 'a lost 3D picture on return was not reloaded');
+    return 'an ordinary return keeps the game; a lost picture reloads into the saved place';
+  } finally { await P.ctx.close(); }
+});
+
 await check('guides', async () => {
   // (owner, 29 Oct 2026 AEDT: "the guide film on each game doesn't do anything") every game's How to play has real steps
   // in both languages (not the lone "Tap and try!" card), each step's pictures are our drawings, and a guide opens

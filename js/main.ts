@@ -130,8 +130,25 @@ document.getElementById('stage').appendChild(renderer.domElement);
 // is already saved, so the child carries on where they were.
 {
   let lostT: ReturnType<typeof setTimeout> | 0 = 0;
+  const savePlace = () => { try { G.heroes.forEach(h => { if (h.profile && h.onGround && !h.towerClimb && !h.indoors) { h.profile.pos = { x: +h.lastSafe.x.toFixed(1), z: +h.lastSafe.z.toFixed(1) }; h.profile.posMap = MAP_VERSION; } }); saveProfiles(true); } catch (err) { } };
+  // (owner, 29 Oct 2026 AEDT: a white screen in the installed app, on opening, coming back, after an update and while
+  // playing) iOS can take the 3D picture away while the app is in the background without saying so, or not start the
+  // frames again: each time the game comes back to the screen, both are checked after 4 s; a lost picture or frames
+  // that never came back save the place and reload into it, instead of a white screen
+  const backAgain = () => {
+    if (document.visibilityState !== 'visible' || !booted) return;
+    const since = performance.now();
+    setTimeout(() => {
+      if (document.visibilityState !== 'visible') return;
+      const lost = renderer.getContext().isContextLost(), stuck = lastFrameAt < since;
+      if (!lost && !stuck) return;
+      savePlace(); noteReload(lost ? '3D picture lost while away' : 'frames stopped while away', G); location.reload();
+    }, 4000);
+  };
+  document.addEventListener('visibilitychange', backAgain);
+  addEventListener('pageshow', e => { if (e.persisted) backAgain(); });
   renderer.domElement.addEventListener('webglcontextlost', e => {
-    e.preventDefault(); try { G.heroes.forEach(h => { if (h.profile && h.onGround && !h.towerClimb && !h.indoors) { h.profile.pos = { x: +h.lastSafe.x.toFixed(1), z: +h.lastSafe.z.toFixed(1) }; h.profile.posMap = MAP_VERSION; } }); saveProfiles(true); } catch (err) { }
+    e.preventDefault(); savePlace();
     if (!document.querySelector<HTMLElement>('.ctxlost')) document.body.appendChild(el('div', 'ctxlost', `<div>🌈</div><p>${T('One moment, the valley is coming back…', 'Chờ một chút, thung lũng đang trở lại…')}</p>`));
     clearTimeout(lostT); lostT = setTimeout(() => { noteReload('3D picture lost', G); location.reload(); }, 4000); // (#355: noted for Studio's report)
   });
@@ -1711,8 +1728,9 @@ function stillCheck(now) {
 // under-5s start on, the 🎵 Songs page, often left playing lullabies at bedtime, and the real photos)
 const worldHidden = () => (G.simple && G.simple.open) || !!document.querySelector<HTMLElement>('.songs, .realview');
 G.worldHidden = worldHidden;
+let lastFrameAt = 0;
 function frame(now) {
-  requestAnimationFrame(frame);
+  requestAnimationFrame(frame); lastFrameAt = performance.now();
   if (framesSeen < 4 && ++framesSeen === 4) framesDone(); // (js/solids.js waits for these)
   if (!BAT.gate(BAT, now, BAT.capMs())) return; // (battery round)
   if (playing && !BAT.idle) adaptResolution(now - last - (FRAME_MS ? FRAME_MS - 1000 / 60 : 0)); // (the wait between frames is not slowness)
