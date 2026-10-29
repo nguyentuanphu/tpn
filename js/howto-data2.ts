@@ -100,5 +100,19 @@ const GUIDES: Record<string, HowToGuide> = {
     real: S('🏖️ 🚩', 'For real: swim between the red and yellow flags.', 'Chơi thật: bơi giữa hai lá cờ đỏ và vàng.') },
   hoops: { steps: [S('⭕ 👆', 'Tap the hoop to push it along.', 'Chạm vòng để đẩy vòng lăn.'), S('⭕ 🏁', 'Keep pushing to the end of the path!', 'Đẩy tiếp tới cuối đường!')] },
   tag: { steps: [S('🧒 🏃', 'Your friend keeps running.', 'Bạn cứ chạy mãi.'), S('👆 🧒', 'Tap them to tag them!', 'Chạm vào bạn để bắt!'), S('🏃 🎉', 'Catch every friend!', 'Bắt hết các bạn!')] },
+  // js/games/money2.ts
+  savegoal: { steps: [S('🧸 🐷', 'Look at the price of the toy.', 'Nhìn giá của món đồ chơi.'), S('👆 🪙', 'Tap coins to put them in the money box.', 'Chạm tiền để bỏ vào ống heo.'), S('🎯 ✅', 'Stop when you have exactly enough. Too much bounces back!', 'Dừng khi vừa đủ. Nhiều quá là bị trả lại!')] },
+  pocketweek: { steps: [S('📅 🪙', 'Each day you get some pocket money.', 'Mỗi ngày con được ít tiền tiêu vặt.'), S('➕ 🍦', 'Add what you get; take away what you spend.', 'Cộng tiền được cho; trừ tiền đã tiêu.'), S('👆 ✅', 'Tap how much you have now.', 'Chạm số tiền con đang có.')] },
+  pricetags: { steps: [S('👀 🏷️', 'Read the two price tags.', 'Đọc hai thẻ giá.'), S('🤔 ⚖️', 'The smaller number costs less; the bigger costs more.', 'Số nhỏ hơn thì rẻ hơn; số lớn hơn thì đắt hơn.'), S('👆 ✅', 'Tap the one you are asked for.', 'Chạm món được hỏi.')] },
+  busfare: { steps: [S('🚌 👀', 'Hear the bus fare.', 'Nghe giá vé xe buýt.'), S('👆 🪙', 'Tap coins to pay, adding them up as you go.', 'Chạm tiền để trả, vừa trả vừa cộng.'), S('🚌 ✅', 'Pay exactly the fare and hop on!', 'Trả đúng giá vé rồi lên xe!')] },
+  lemonade: { steps: [S('🍋 🥤', 'Each cup has the same price.', 'Mỗi cốc cùng một giá.'), S('🔢 🥤', 'Count the cups the customer wants.', 'Đếm số cốc khách muốn mua.'), S('👆 ✅', 'Tap how much they pay altogether.', 'Chạm tổng số tiền khách trả.')] },
+  party: { steps: [S('💰 👀', 'Look how much money you have.', 'Nhìn xem con có bao nhiêu tiền.'), S('👆 🎈', 'Tap things to buy; the money left goes down.', 'Chạm món muốn mua; tiền còn lại sẽ bớt đi.'), S('🎂 ✅', 'Buy enough for the party without going over!', 'Mua đủ cho bữa tiệc mà không tiêu quá!')] },
+  recycle: { origin: S('🇦🇺 ♻️', 'In Australia you get 10 cents back for every can or bottle you return.', 'Ở Úc, mỗi vỏ lon hay chai trả lại được 10 xu.'),
+    steps: [S('🔢 🥫', 'Count the cans.', 'Đếm số vỏ lon.'), S('🪙 ➕', 'Each one gives some money back.', 'Mỗi vỏ lon được trả lại một ít tiền.'), S('👆 ✅', 'Tap how much you get altogether.', 'Chạm tổng số tiền con nhận được.')] },
+  tetmarket: { origin: S('🇻🇳 🌸', 'Before Tết, families shop at the flower market for peach blossoms, oranges and red envelopes.', 'Trước Tết, các gia đình đi chợ hoa mua cành đào, cam và bao lì xì.'),
+    steps: [S('🏷️ 👀', 'See the price.', 'Nhìn giá tiền.'), S('💵 🤔', 'You pay with one note. How much is left over?', 'Con trả bằng một tờ tiền. Còn dư bao nhiêu?'), S('👆 ✅', 'Tap the change you get back.', 'Chạm số tiền được thối lại.')] },
+  bank: { steps: [S('🏦 👀', 'See how much is in the bank.', 'Nhìn xem ngân hàng đang có bao nhiêu.'), S('➕ ➖', 'Putting in adds; taking out takes away.', 'Gửi vào là cộng; rút ra là trừ.'), S('👆 ✅', 'Tap how much is there now.', 'Chạm số tiền bây giờ.')] },
+  sharefair: { steps: [S('🪙 🧒', 'Share the coins between your friends.', 'Chia tiền cho các bạn.'), S('👆 🔁', 'Tap each friend in turn to give one coin.', 'Chạm lần lượt từng bạn để đưa một đồng.'), S('🤝 ✅', 'Round and round until everyone has the same!', 'Vòng này vòng khác cho đến khi ai cũng bằng nhau!')],
+    real: S('🍬 🤝', 'For real: share sweets one by one with a friend.', 'Chơi thật: chia kẹo từng chiếc với bạn.') },
 };
 for (const [id, guide] of Object.entries(GUIDES)) if (!HOWTO[id]) HOWTO[id] = guide;
