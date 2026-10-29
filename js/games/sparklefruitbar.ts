@@ -20,7 +20,7 @@ function runFruitBar(api:FruitBarApi){
  let session:ArcadeSession<ReturnType<typeof barStart>>|undefined,dead=false,helper=false,waitingAt=0;
  let timer:ReturnType<typeof setInterval>|undefined,frame=0,shown=-1,spinning=false,light=0,lastView='';
  const icon=(i:number)=>i>=6?dom('b','',i===6?'7':'BAR'):art(BAR_SYMBOLS[i].art);
- function finish(){if(dead)return;dead=true;if(timer)clearInterval(timer);cancelAnimationFrame(frame);session?.close();if(online)online.leave?.();observer.disconnect();m.remove();api.close();}
+ function finish(){if(dead)return;dead=true;if(timer)clearInterval(timer);clearInterval(idle);cancelAnimationFrame(frame);session?.close();if(online)online.leave?.();observer.disconnect();m.remove();api.close();}
  function start(seats:number,npc:boolean,fair:boolean){helper=npc;session=new ArcadeSession(barStart(online?.seed||`parent-bar-${Date.now()}`,seats,fair),online,barApply,paint);paint();timer=setInterval(()=>{
   if(!session||dead)return;if(!testerArcadeAvailable('sparklefruitbar',session.online?'multi':'single')){finish();return;}session.poll();
   if(session.waiting){if(!waitingAt)waitingAt=performance.now();paint();}else if(waitingAt){waitingAt=0;paint();}
@@ -60,10 +60,14 @@ function runFruitBar(api:FruitBarApi){
    dom('p','',BAR_SYMBOLS.map(x=>`${T(x.en,x.vi)}: ${s.fair?'12.5':x.weight}% ×${x.mult}`).join(' · ')),dom('p','',T('Family-hosted seeded results are shared across players. This is not a ranked or cheat-proof competition. No public leaderboard or real-world value.','Kết quả theo hạt giống được chia sẻ giữa người chơi trong phòng gia đình. Đây không phải cuộc thi xếp hạng hay chống gian lận. Không có bảng xếp hạng công khai hoặc giá trị ngoài đời.')));root.append(rules);
   if(session.waiting&&performance.now()-waitingAt>=30000){const b=control(T('Continue locally','Chơi tiếp trên máy này'),()=>{session!.continueLocally();helper=false;waitingAt=0;paint();});b.dataset.barContinue='';root.append(b);}
   if(resetView)root.scrollTop=0;
-  if(s.phase==='result'&&s.round!==shown){shown=s.round;animateResult(s.result!);}else highlight(s.result??0);
+  if(s.phase==='result'&&s.round!==shown){shown=s.round;animateResult(s.result!);}else highlight(s.phase==='result'?s.result??0:light%16);
  }
  function highlight(index:number){root.querySelectorAll<HTMLElement>('[data-bar-cell]').forEach((cell,i)=>cell.classList.toggle('on',i===index));}
- function animateResult(result:number){cancelAnimationFrame(frame);if(reduceMotion()){highlight(result);return;}spinning=true;const begin=performance.now();const tick=(now:number)=>{if(dead)return;const p=Math.min(1,(now-begin)/1800);light=Math.floor(48*(1-(1-p)**3));highlight(p===1?result:light%16);if(p<1)frame=requestAnimationFrame(tick);else{spinning=false;paint();}};frame=requestAnimationFrame(tick);}
+ // (owner, 29 Oct 2026 AEDT: "the fruit game circle doesn't run") the light runs round the ring by itself while counters are
+ // placed, and the spin goes three laps and slows onto the result (it lasted under 2 s, and not at all with Reduce Motion,
+ // which now gets a calmer, slower run: the moving light is how the game is played)
+ function animateResult(result:number){cancelAnimationFrame(frame);clearInterval(idle);spinning=true;const calm=reduceMotion(),laps=calm?1:3,steps=16*laps+((result-light%16+16)%16),start=light,begin=performance.now(),length=calm?2600:3200;const tick=(now:number)=>{if(dead)return;const p=Math.min(1,(now-begin)/length);const at=start+Math.round(steps*(1-(1-p)**3));highlight(at%16);if(p<1)frame=requestAnimationFrame(tick);else{light=at;spinning=false;highlight(result);paint();}};frame=requestAnimationFrame(tick);}
+ const idle=setInterval(()=>{if(dead||spinning||!session||session.state.phase==='result')return;light=(light+1)%16;highlight(light);},reduceMotion()?700:260);
  api.say(online?'Place your counters':'Choose how to play',online?'Chọn điểm ảo':'Chọn cách chơi');
  if(online){start(Math.min(4,online.names.length),false,false);}else{
   root.append(dom('h2','',T('Choose how to play','Chọn cách chơi')));
