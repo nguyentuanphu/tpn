@@ -1,4 +1,6 @@
 import { HOWTO, type HowToGuide } from './howto-registry.js';
+// (audit, 29 Oct 2026 AEDT) the guides for every game that had none
+import './howto-data2.js';
 const S = (pic, en, vi) => ({ pic, en, vi });
 const DEFAULTS: Record<string, HowToGuide> = {
   puppets: {

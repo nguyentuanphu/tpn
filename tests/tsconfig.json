@@ -104,6 +104,7 @@
     "../js/chat-player.ts",
     "../js/howto-registry.ts",
     "../js/howto-data.ts",
+    "../js/howto-data2.ts",
     "../js/howto.ts",
     "../js/howto-player.ts",
     "../js/games/readingmenu.ts",
