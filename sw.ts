@@ -140,5 +140,18 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
     e.respondWith(caches.open('sv-voices').then(c => c.match(req).then(hit => hit || fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; }))));
     return;
   }
+  // (owner, 30 Oct AEDT: a white screen for about 28 s when the Home Screen app first opened after v1.03) while an
+  // update is saving every file, the saved page can be slow to come out of storage: after a short wait the page comes
+  // from the internet instead; offline, the saved page still answers whenever storage is ready
+  if (req.mode === 'navigate') {
+    e.respondWith(new Promise<Response>(done => {
+      let over = false, net: Promise<Response> | null = null;
+      const give = (r: Response) => { if (!over) { over = true; done(r); } };
+      const fromNet = () => net || (net = fetch(req));
+      const t = setTimeout(() => fromNet().then(r => { if (r.ok) give(r); }, () => { }), QUICK);
+      saved(req).catch(() => undefined).then(hit => { clearTimeout(t); if (hit) give(hit); else fromNet().then(give, () => give(Response.error())); });
+    }));
+    return;
+  }
   e.respondWith(saved(req).then(hit => hit || fetch(req)));
 });

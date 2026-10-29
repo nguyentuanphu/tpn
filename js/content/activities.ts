@@ -30,7 +30,7 @@ export const AREAS = [
 
 // id: [area, youngest age (2 = everyone, 5 = big kids), how hard (1 easy · 2 a bit harder · 3 hardest)]
 export const GAME_INFO: Record<string, [string, number, number]> = {
-  bunny: ['animals', 2, 1], koala: ['animals', 2, 1], animalsounds: ['animals', 2, 1], duckmaze: ['animals', 2, 1], eggs: ['animals', 2, 1], oddone: ['animals', 3, 2], goat: ['vietnam', 3, 2],
+  bunny: ['animals', 2, 1], koala: ['animals', 2, 1], animalsounds: ['animals', 2, 1], duckmaze: ['animals', 2, 1], eggs: ['animals', 2, 1], oddone: ['animals', 3, 2], goat: ['vietnam', 3, 2], blindtag: ['vietnam', 3, 2],
   catchfish: ['animals', 2, 1], emueggs: ['animals', 2, 1], reefclean: ['animals', 3, 1],
   crabwalk: ['animals', 2, 1], whohome: ['animals', 2, 1], mumbaby: ['animals', 2, 1], feedzoo: ['animals', 3, 1], buffalo: ['animals', 3, 1], reefcount: ['animals', 3, 1], tracks: ['animals', 4, 2],
   myday: ['me', 2, 1], plate: ['me', 3, 1], kindchoice: ['me', 3, 1],

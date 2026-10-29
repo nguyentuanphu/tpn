@@ -193,6 +193,13 @@ const DEFAULTS: Record<string, HowToGuide> = {
   },
   goat: {
     origin: S('🇻🇳 🐐', 'Bịt mắt bắt dê, blindfold goat, is a favourite Vietnamese party game.', 'Bịt mắt bắt dê là trò chơi dân gian rất được yêu thích ở Việt Nam.'),
+    steps: [S('🌾🌾🌾 🐐', 'The goat is hiding in one haystack.', 'Chú dê đang trốn trong một đống rơm.'),
+      S('👆 🌾 ➡️', 'Tap a haystack. The hoof prints point towards the goat.', 'Chạm vào đống rơm. Dấu chân dê chỉ về phía chú dê.')],
+    real: S('🙈 🧒 🐐', 'For real: one friend wears a blindfold and tries to catch the others, who call out Baa baa!', 'Chơi thật: một bạn bịt mắt đi bắt, các bạn khác kêu Be be để trêu!'),
+  },
+  // (owner, 30 Oct 2026 AEDT) the circle game is Blindfold Tag; Bịt Mắt Bắt Dê is the haystack game again
+  blindtag: {
+    origin: S('🇻🇳 🐐', 'Bịt mắt bắt dê, blindfold goat, is a favourite Vietnamese party game.', 'Bịt mắt bắt dê là trò chơi dân gian rất được yêu thích ở Việt Nam.'),
     steps: [S('👂 🧒', 'Listen for a friend calling. The sound rings and arrow show the way.', 'Nghe tiếng bạn gọi. Vòng âm thanh và mũi tên chỉ đường cho con.'),
       S('⬆️ ➡️', 'Use the arrows to guide the blindfolded friend inside the circle.', 'Dùng mũi tên dẫn bạn bịt mắt đi trong vòng tròn.'),
       S('🖐️ 🧒', 'When your friend is close, tap Catch. Then that friend wears the blindfold.', 'Khi đến gần bạn, chạm Bắt. Rồi bạn ấy làm người bịt mắt.')],

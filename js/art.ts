@@ -167,6 +167,8 @@ add('👀 👁️', `${circ(15, 24, 10, '#fff')}${circ(33, 24, 10, '#fff')}` + g
 add('🔊 🔉 🔈 📢 📣', `<path d="M6 18h8l10-8v28l-10-8H6z" fill="#ffd23f" ${W}/>` + g('a-waves', `<path d="M30 17c3 3 3 11 0 14M35 12c6 6 6 18 0 24" stroke="${O}" stroke-width="2.6" ${N} stroke-linecap="round"/>`));
 add('🧒 👦', g('a-bob', face('#f2b98a', '#3a2418'), '24px 42px'));
 add('👧', g('a-bob', face('#f2b98a', '#3a2418', `<circle cx="9" cy="14" r="5" fill="#3a2418" ${W}/><circle cx="39" cy="14" r="5" fill="#3a2418" ${W}/><circle cx="39" cy="14" r="2" fill="#ff7eb8"/>`), '24px 42px'));
+// (owner, 30 Oct 2026 AEDT) Blindfold Tag: a child in a purple blindfold, its knot at the side (its own drawing)
+add('kid:blindfold', g('a-bob', face('#e8a878', '#3a2418', `<path d="M8 25c5-3 27-3 32 0v7c-5-2-27-2-32 0z" fill="#9b6bff" ${W}/><path d="M39 27l7-4-1 8z" fill="#9b6bff" ${W}/><path d="M39 30l6 5-7 1z" fill="#7c4fe0" ${W}/>`), '24px 42px'));
 add('🧒🧒🧒 👫 👬 👭', g('a-bob', `<g transform="translate(-9 6) scale(.62)">${face('#f2b98a', '#3a2418')}</g><g transform="translate(17 6) scale(.62)">${face('#ffe0c4', '#8a5a2b')}</g><g transform="translate(4 -3) scale(.66)">${face('#d9965f', '#1d1412')}</g>`, '24px 42px'));
 add('😊 🙂 😀 😄 😁 😋', g('a-bob', `${circ(24, 24, 18, '#ffd23f')}${eyes(18, 30, 21, 2.2)}<path d="M15 28q9 9 18 0" fill="#a8304a" ${W}/><circle cx="13" cy="28" r="3" fill="#ff8aa8" opacity=".6"/><circle cx="35" cy="28" r="3" fill="#ff8aa8" opacity=".6"/>`));
 add('😮 😲 😯', g('a-bob', `${circ(24, 24, 18, '#ffd23f')}${eyes(18, 30, 20, 2.4)}<ellipse cx="24" cy="31" rx="4" ry="5" fill="#a8304a" ${W}/>`));
