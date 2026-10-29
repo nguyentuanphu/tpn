@@ -121,4 +121,3 @@ Final source comparison: `git diff --name-status f62a48c91247a40388d41ba4161df65
 - `tests/unit/content-art.test.mjs`
 - `tools/export-content-source-inventory.mts`
 - `tools/export-management-catalogue.mts`
-

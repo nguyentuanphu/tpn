@@ -89,8 +89,8 @@ art makeface vi 390
 art gallery vi 390
 art leafrub vi 390
 \u2705 contentart (264s) 88 art completions, gates, album cap, keyboard/pointer and exit checks
-\u2705 boot (65s) 
-\u2705 contract (25s) 
+\u2705 boot (65s)
+\u2705 contract (25s)
 \u2705 phone (222s) 10 screens checked on desktop, phone and tablet; a friend's Join button clear of the status
 \u274c emoji: emoji in the docs: docs/studio-content-website-20261029/evidence/failures/art-exit-fixture.txt \u2b50
 \u2705 preload (0s) up to date: 141 scripts

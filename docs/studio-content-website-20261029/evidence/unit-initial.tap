@@ -766,7 +766,7 @@ not ok 126 - menu catalogue matches lazy game definitions, order, names and elig
     drawing2.ts
     + actual - expected
     ... Skipped lines
-    
+
       [
         'stamps',
         'weave',
@@ -780,7 +780,7 @@ not ok 126 - menu catalogue matches lazy game definitions, order, names and elig
         'scene',
     -   'paperfold'
       ]
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected:
@@ -2277,9 +2277,9 @@ not ok 368 - declared-only management entries cannot become open from an unlock 
   failureType: 'testCodeFailure'
   error: |-
     Expected values to be strictly equal:
-    
+
     4 !== 26
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected: 26
