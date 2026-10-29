@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceHead": "e9820e12c48de7f9661ee5293bb79048e16d8c0c",
+  "sourceHead": "3d7e330f74def637693418cf238e22d3bdac48d2",
   "connections": [
     {
       "from": "source:.github/workflows/full-suite.yml",
@@ -3675,6 +3675,24 @@
       "external": false
     },
     {
+      "from": "source:js/games/art-pending.ts",
+      "to": "source:js/i18n.js",
+      "specifier": "../i18n.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/games/art-pending.ts",
+      "to": "source:js/games/art-pad.ts",
+      "specifier": "./art-pad.js",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:js/games/asia.ts",
       "to": "source:js/games/frame.ts",
       "specifier": "./frame.js",
@@ -4398,7 +4416,7 @@
       "from": "source:js/games/drawing2.ts",
       "to": "source:js/i18n.js",
       "specifier": "../i18n.js",
-      "line": 3,
+      "line": 1,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -4407,7 +4425,7 @@
       "from": "source:js/games/drawing2.ts",
       "to": "source:js/games/art-pad.ts",
       "specifier": "./art-pad.js",
-      "line": 4,
+      "line": 2,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -20136,7 +20154,7 @@
     },
     {
       "from": "game:hiddenpic",
-      "to": "source:js/games/drawing2.ts",
+      "to": "source:js/games/art-pending.ts",
       "relation": "defined-in",
       "evidence": "source-reference"
     },
@@ -22680,7 +22698,7 @@
     },
     {
       "from": "game:paperfold",
-      "to": "source:js/games/drawing2.ts",
+      "to": "source:js/games/art-pending.ts",
       "relation": "defined-in",
       "evidence": "source-reference"
     },
@@ -26328,7 +26346,7 @@
     },
     {
       "from": "game:spotdiff",
-      "to": "source:js/games/drawing2.ts",
+      "to": "source:js/games/art-pending.ts",
       "relation": "defined-in",
       "evidence": "source-reference"
     },

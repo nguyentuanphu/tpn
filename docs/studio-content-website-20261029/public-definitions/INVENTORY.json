@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "scope": "public_static_source_inventory_partial_not_a_runtime_or_private_data_audit",
-  "auditedHead": "e9820e12c48de7f9661ee5293bb79048e16d8c0c",
+  "auditedHead": "3d7e330f74def637693418cf238e22d3bdac48d2",
   "allDomainsComplete": false,
   "domains": [
     {
@@ -2782,7 +2782,7 @@
       "id": "hiddenpic",
       "domain": "games",
       "label": "Hidden Pictures",
-      "sourceFile": "js/games/drawing2.ts",
+      "sourceFile": "js/games/art-pending.ts",
       "declaration": "GAME_CATALOG / reading registration",
       "controls": [
         "newGames"
@@ -2815,12 +2815,12 @@
         ],
         "registrationLiteralReferences": [
           {
-            "file": "js/games/drawing2.ts",
-            "line": 202
+            "file": "js/games/art-pending.ts",
+            "line": 25
           },
           {
-            "file": "js/games/drawing2.ts",
-            "line": 206
+            "file": "js/games/art-pending.ts",
+            "line": 29
           }
         ]
       }
@@ -2831,7 +2831,7 @@
       "id": "paperfold",
       "domain": "games",
       "label": "Paper Folding",
-      "sourceFile": "js/games/drawing2.ts",
+      "sourceFile": "js/games/art-pending.ts",
       "declaration": "GAME_CATALOG / reading registration",
       "controls": [
         "newGames"
@@ -2864,12 +2864,12 @@
         ],
         "registrationLiteralReferences": [
           {
-            "file": "js/games/drawing2.ts",
-            "line": 267
+            "file": "js/games/art-pending.ts",
+            "line": 44
           },
           {
-            "file": "js/games/drawing2.ts",
-            "line": 271
+            "file": "js/games/art-pending.ts",
+            "line": 48
           }
         ]
       }
@@ -2914,7 +2914,7 @@
       "id": "spotdiff",
       "domain": "games",
       "label": "Spot the Difference",
-      "sourceFile": "js/games/drawing2.ts",
+      "sourceFile": "js/games/art-pending.ts",
       "declaration": "GAME_CATALOG / reading registration",
       "controls": [
         "newGames"
@@ -2947,12 +2947,12 @@
         ],
         "registrationLiteralReferences": [
           {
-            "file": "js/games/drawing2.ts",
-            "line": 182
+            "file": "js/games/art-pending.ts",
+            "line": 7
           },
           {
-            "file": "js/games/drawing2.ts",
-            "line": 186
+            "file": "js/games/art-pending.ts",
+            "line": 11
           }
         ]
       }
@@ -20316,7 +20316,7 @@
     "missingDeclaredIds": 4
   },
   "sources": {
-    "home/index.html": "61274413cfbb1a31549eec69ebb58c9cbf348200637c5b88caf859b0a82fe754",
+    "home/index.html": "282c442fc74a937b4417a686fff85bb07ed3e773a6fe8ce252371f176b69753f",
     "js/adventure.ts": "a7b9f5a615603789aefa08eecd1376856a4c3aa5e8521e186fc0b0525ce48fb1",
     "js/animalhomes.js": "c183cf8d6b6916e584e22d204c347953cc3d6953de500deba13af961389bf14d",
     "js/content/adventures.js": "3ab415db49621dc88edbd332bdae143ba04f65c5cf72a5d617c4adfc54d5bd46",
@@ -20338,8 +20338,8 @@
     "js/festdecor.js": "518e4a4f445c2f8557f090032bb732369f515f02fe6ec9d0569d4ddfd3d056d4",
     "js/festivals.ts": "edbdb762e87d76ed4db8e0695a99db06df8cb1a83aa2b22bade0ceb213895d76",
     "js/folkshow.js": "ae4259dcb5b465ad60426a691ddc403abbd8d063edf1d8be5a465c7d6ee0d755",
+    "js/games/art-pending.ts": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
     "js/games/catalog.ts": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
-    "js/games/drawing2.ts": "99f4d2dedd99230fa74e73633bc9593d135fe4fb276debdce607975b75b9b877",
     "js/games/frame.ts": "8857a0d7f4ababf1d452105b11f846502de8cd31da24a4e941ca550d2796b151",
     "js/games/readingmenu.ts": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
     "js/games/shared-board-session.ts": "ff29e9f1effe2af5a976b74e32f8cf2198a0f89c4c752866be3e55ac2b177c1c",

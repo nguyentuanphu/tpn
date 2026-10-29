@@ -4,7 +4,7 @@ All tracked public code/config surfaces under the declared roots, plus new sourc
 
 | Domain | Source modules | Runtime/private records |
 |---|---:|---|
-| games | 79 | Not enumerated |
+| games | 80 | Not enumerated |
 | stories | 48 | Not enumerated |
 | quests | 5 | Not enumerated |
 | rewards | 11 | Not enumerated |

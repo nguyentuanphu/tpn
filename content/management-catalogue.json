@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "generatedFrom": {
-    "commit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+    "commit": "3d7e330f74def637693418cf238e22d3bdac48d2",
     "dirty": false,
     "dirtyPaths": [],
-    "sourceHash": "0eedd687111349195228a74e9e12e9f69bd56ea282455206932adfa3bf649bc2",
+    "sourceHash": "abc852fccbbbb4a500de76b185f8c441d99a14ad1c1255518b08833cef88690c",
     "build": "v1.02"
   },
   "website": {
@@ -319,7 +319,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -364,7 +364,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -410,7 +410,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -447,7 +447,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -500,7 +500,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -537,7 +537,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -574,7 +574,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -621,7 +621,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -669,7 +669,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -706,7 +706,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -752,7 +752,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -789,7 +789,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -842,7 +842,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -879,7 +879,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -924,7 +924,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -961,7 +961,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1009,7 +1009,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1052,7 +1052,7 @@
       "difficulty": 2,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1089,7 +1089,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1126,7 +1126,7 @@
       "difficulty": 3,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1163,7 +1163,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1208,7 +1208,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1255,7 +1255,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1306,7 +1306,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1343,7 +1343,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1380,7 +1380,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1417,7 +1417,7 @@
       "difficulty": 3,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1454,7 +1454,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1491,7 +1491,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1528,7 +1528,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1565,7 +1565,7 @@
       "difficulty": 3,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1602,7 +1602,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1650,7 +1650,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1687,7 +1687,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1732,7 +1732,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1769,7 +1769,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1816,7 +1816,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1862,7 +1862,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1899,7 +1899,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1946,7 +1946,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -1989,7 +1989,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2026,7 +2026,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2063,7 +2063,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2110,7 +2110,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2156,7 +2156,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2193,7 +2193,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2230,7 +2230,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2267,7 +2267,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2304,7 +2304,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2341,7 +2341,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2384,7 +2384,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2431,7 +2431,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2482,7 +2482,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2519,7 +2519,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2556,7 +2556,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2607,7 +2607,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2652,7 +2652,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2698,7 +2698,7 @@
       "difficulty": 2,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2738,7 +2738,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2783,7 +2783,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2820,7 +2820,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2857,7 +2857,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2910,7 +2910,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -2963,7 +2963,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3016,7 +3016,7 @@
       "difficulty": 3,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3053,7 +3053,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3099,7 +3099,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3144,7 +3144,7 @@
       "difficulty": 1,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3181,7 +3181,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3234,7 +3234,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3271,7 +3271,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3308,7 +3308,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3353,7 +3353,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3399,7 +3399,7 @@
       "difficulty": 3,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3436,7 +3436,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3469,9 +3469,9 @@
         "vi": "Tìm Hình Ẩn"
       },
       "area": "art",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
-      "sourceFile": "js/games/drawing2.ts",
-      "sourceHash": "99f4d2dedd99230fa74e73633bc9593d135fe4fb276debdce607975b75b9b877",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
+      "sourceFile": "js/games/art-pending.ts",
+      "sourceHash": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
       "guide": {
         "href": null,
         "kind": "section",
@@ -3526,7 +3526,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3577,7 +3577,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3628,7 +3628,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3665,7 +3665,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3702,7 +3702,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3749,7 +3749,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3800,7 +3800,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3841,7 +3841,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3878,7 +3878,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3931,7 +3931,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -3968,7 +3968,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4021,7 +4021,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4058,7 +4058,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4111,7 +4111,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4159,7 +4159,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4196,7 +4196,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4242,7 +4242,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4287,7 +4287,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4324,7 +4324,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4367,7 +4367,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4420,7 +4420,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4457,7 +4457,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4494,7 +4494,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4531,7 +4531,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4584,7 +4584,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4621,7 +4621,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4667,7 +4667,7 @@
       "difficulty": 2,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4704,7 +4704,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4751,7 +4751,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4799,7 +4799,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4836,7 +4836,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4873,7 +4873,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4926,7 +4926,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -4963,7 +4963,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5010,7 +5010,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5055,7 +5055,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5092,7 +5092,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5133,7 +5133,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5170,7 +5170,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5217,7 +5217,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5254,7 +5254,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5305,7 +5305,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5358,7 +5358,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5395,7 +5395,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5441,7 +5441,7 @@
       "difficulty": 3,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5478,7 +5478,7 @@
       "difficulty": 1,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5515,7 +5515,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5552,7 +5552,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5598,7 +5598,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5635,7 +5635,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5672,7 +5672,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5714,9 +5714,9 @@
         "vi": "Gấp Giấy"
       },
       "area": "art",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
-      "sourceFile": "js/games/drawing2.ts",
-      "sourceHash": "99f4d2dedd99230fa74e73633bc9593d135fe4fb276debdce607975b75b9b877",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
+      "sourceFile": "js/games/art-pending.ts",
+      "sourceHash": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
       "guide": {
         "href": null,
         "kind": "section",
@@ -5771,7 +5771,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5808,7 +5808,7 @@
       "difficulty": 3,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5856,7 +5856,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5893,7 +5893,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5930,7 +5930,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -5967,7 +5967,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -6015,7 +6015,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -6068,7 +6068,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -6109,7 +6109,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -6157,7 +6157,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -6202,7 +6202,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -6248,7 +6248,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -6296,7 +6296,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -6333,7 +6333,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -6370,7 +6370,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6421,7 +6421,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6472,7 +6472,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6509,7 +6509,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6560,7 +6560,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6611,7 +6611,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6662,7 +6662,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6713,7 +6713,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6764,7 +6764,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6801,7 +6801,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6852,7 +6852,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6889,7 +6889,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6940,7 +6940,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -6991,7 +6991,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7042,7 +7042,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7079,7 +7079,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7116,7 +7116,7 @@
       "difficulty": 3,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7153,7 +7153,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7190,7 +7190,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7241,7 +7241,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7278,7 +7278,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7315,7 +7315,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7352,7 +7352,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7389,7 +7389,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7426,7 +7426,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/readingmenu.ts",
       "sourceHash": "16360b7929be2ff61bf27e3ec0d2bc8ad0e78993de369ad97933d6b14db9769b",
       "guide": {
@@ -7463,7 +7463,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7511,7 +7511,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7562,7 +7562,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7607,7 +7607,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7652,7 +7652,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7689,7 +7689,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7735,7 +7735,7 @@
       "difficulty": 3,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7768,7 +7768,7 @@
         "vi": "rongran"
       },
       "area": "vietnam",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/content/secondset.ts",
       "sourceHash": "2052a77ee27c649b0674477385d13cd488b2a2cc527a0819d9309e9dac314658",
       "guide": {
@@ -7819,7 +7819,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7856,7 +7856,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7893,7 +7893,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7930,7 +7930,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -7978,7 +7978,7 @@
       "difficulty": 1,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8015,7 +8015,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8068,7 +8068,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8121,7 +8121,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8174,7 +8174,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8227,7 +8227,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8264,7 +8264,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8301,7 +8301,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8338,7 +8338,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8383,7 +8383,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8431,7 +8431,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8468,7 +8468,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8505,7 +8505,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8556,7 +8556,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8593,7 +8593,7 @@
       "difficulty": 2,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8630,7 +8630,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8667,7 +8667,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8712,7 +8712,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8755,7 +8755,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8792,7 +8792,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8829,7 +8829,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8866,7 +8866,7 @@
       "difficulty": 1,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8903,7 +8903,7 @@
       "difficulty": 1,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -8936,9 +8936,9 @@
         "vi": "Tìm Điểm Khác"
       },
       "area": "art",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
-      "sourceFile": "js/games/drawing2.ts",
-      "sourceHash": "99f4d2dedd99230fa74e73633bc9593d135fe4fb276debdce607975b75b9b877",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
+      "sourceFile": "js/games/art-pending.ts",
+      "sourceHash": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
       "guide": {
         "href": null,
         "kind": "section",
@@ -8993,7 +8993,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9046,7 +9046,7 @@
       "difficulty": 2,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9083,7 +9083,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9128,7 +9128,7 @@
       "difficulty": 3,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9165,7 +9165,7 @@
       "difficulty": 3,
       "online": false,
       "learn": true,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9202,7 +9202,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9253,7 +9253,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9290,7 +9290,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9336,7 +9336,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9384,7 +9384,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9437,7 +9437,7 @@
       "difficulty": 3,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9474,7 +9474,7 @@
       "difficulty": 3,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9511,7 +9511,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9556,7 +9556,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9593,7 +9593,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9638,7 +9638,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9675,7 +9675,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9720,7 +9720,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9757,7 +9757,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9794,7 +9794,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9841,7 +9841,7 @@
       "difficulty": 1,
       "online": true,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9878,7 +9878,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9915,7 +9915,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9960,7 +9960,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -9997,7 +9997,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -10050,7 +10050,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -10103,7 +10103,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -10148,7 +10148,7 @@
       "difficulty": 1,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -10193,7 +10193,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -10241,7 +10241,7 @@
       "difficulty": 2,
       "online": false,
       "learn": false,
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/games/catalog.ts",
       "sourceHash": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
       "guide": {
@@ -10274,7 +10274,7 @@
         "vi": "Anansi và Hũ Trí Khôn"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10307,7 +10307,7 @@
         "vi": "Kiến và Châu Chấu"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10340,7 +10340,7 @@
         "vi": "Sự tích Ba Cô Gái"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10394,7 +10394,7 @@
         "vi": "Ba lưỡi rìu"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10427,7 +10427,7 @@
         "vi": "Sự tích Bánh Chưng Bánh Giầy"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/learn.ts",
       "sourceHash": "6e8d0e6be3db2369a0667fb4b62d084f452cc732f5dafab7df881c3af07110c8",
       "guide": {
@@ -10460,7 +10460,7 @@
         "vi": "Chú Bilby Mùa Phục Sinh"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10500,7 +10500,7 @@
         "vi": "Ba Chú Dê Đực"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10533,7 +10533,7 @@
         "vi": "Câu Trả Lời Thông Minh Của Birbal"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10573,7 +10573,7 @@
         "vi": "Vì sao chim có nhiều màu"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10606,7 +10606,7 @@
         "vi": "Con chó rừng xanh"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10639,7 +10639,7 @@
         "vi": "Cá chép hóa rồng"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10672,7 +10672,7 @@
         "vi": "Sự tích Cái Chổi"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10726,7 +10726,7 @@
         "vi": "Ngọn Hải Đăng Nơi Mũi Đất"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10766,7 +10766,7 @@
         "vi": "Cây khế"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10799,7 +10799,7 @@
         "vi": "Sự tích Cây Nêu Ngày Tết"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10853,7 +10853,7 @@
         "vi": "Cây tre trăm đốt"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10886,7 +10886,7 @@
         "vi": "Hằng Nga trên cung trăng"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/learn.ts",
       "sourceHash": "6e8d0e6be3db2369a0667fb4b62d084f452cc732f5dafab7df881c3af07110c8",
       "guide": {
@@ -10919,7 +10919,7 @@
         "vi": "Sự tích Chim Khách"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -10973,7 +10973,7 @@
         "vi": "Chú Cuội cung trăng"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11006,7 +11006,7 @@
         "vi": "Cóc kiện trời"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11039,7 +11039,7 @@
         "vi": "Cờ Lau Tập Trận"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11093,7 +11093,7 @@
         "vi": "Sự tích Con Khỉ"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11147,7 +11147,7 @@
         "vi": "Con quạ thông minh"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11180,7 +11180,7 @@
         "vi": "Sự tích Con Dã Tràng"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11234,7 +11234,7 @@
         "vi": "Bé Dot và Kangaroo"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11267,7 +11267,7 @@
         "vi": "Vì Sao Có Đua Thuyền Rồng"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11307,7 +11307,7 @@
         "vi": "Sự tích dưa hấu"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11340,7 +11340,7 @@
         "vi": "Áo Gai Của Thú Lông Nhím"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11380,7 +11380,7 @@
         "vi": "Đàn voi và bầy chuột"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11413,7 +11413,7 @@
         "vi": "Vì sao chim Đà Điểu Emu không bay"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11446,7 +11446,7 @@
         "vi": "Bốn Người Bạn"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11486,7 +11486,7 @@
         "vi": "Thần Ganesha và quả xoài thần"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11519,7 +11519,7 @@
         "vi": "Chú Bé Bánh Gừng"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11552,7 +11552,7 @@
         "vi": "Thiên Nga Vàng"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11592,7 +11592,7 @@
         "vi": "Cuộc đua của mười hai con giáp"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11625,7 +11625,7 @@
         "vi": "Sự tích Hạt Lúa"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11679,7 +11679,7 @@
         "vi": "Sự tích Hoa Ban"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11733,7 +11733,7 @@
         "vi": "Sự tích Hoa Cúc Trắng"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11787,7 +11787,7 @@
         "vi": "Sự tích Hoa Mười Giờ"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11841,7 +11841,7 @@
         "vi": "Sự tích Hồ Ba Bể"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11895,7 +11895,7 @@
         "vi": "Sự tích Hồ Gươm"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11928,7 +11928,7 @@
         "vi": "Thỏ Ngọc"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -11968,7 +11968,7 @@
         "vi": "Một Ngày Của Koala"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12008,7 +12008,7 @@
         "vi": "Khổng Dung nhường lê"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12041,7 +12041,7 @@
         "vi": "Tiếng Cười Chim Kookaburra"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12081,7 +12081,7 @@
         "vi": "Sư Tử và Chuột"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12114,7 +12114,7 @@
         "vi": "Sư tử và chú thỏ thông minh"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12147,7 +12147,7 @@
         "vi": "Lưu Bình Dương Lễ"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12201,7 +12201,7 @@
         "vi": "Chim Lia Bắt Chước"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12241,7 +12241,7 @@
         "vi": "Chiếc bánh pudding thần kỳ"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12274,7 +12274,7 @@
         "vi": "Thần bút Mã Lương"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12307,7 +12307,7 @@
         "vi": "Cậu Bé Quả Đào"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12340,7 +12340,7 @@
         "vi": "Khỉ và Cá Sấu"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/learn.ts",
       "sourceHash": "6e8d0e6be3db2369a0667fb4b62d084f452cc732f5dafab7df881c3af07110c8",
       "guide": {
@@ -12373,7 +12373,7 @@
         "vi": "Chuột Gỡ Lưới Cho Sư Tử"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12413,7 +12413,7 @@
         "vi": "Ngu Công Dời Núi"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12453,7 +12453,7 @@
         "vi": "Hoa Mộc Lan"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12493,7 +12493,7 @@
         "vi": "Nàng Út Ống Tre"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12547,7 +12547,7 @@
         "vi": "Đeo nhạc cho mèo"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12580,7 +12580,7 @@
         "vi": "Quái thú Niên"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12613,7 +12613,7 @@
         "vi": "Ông Táo về trời"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12646,7 +12646,7 @@
         "vi": "Tôn Ngộ Không và Vườn Đào"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12686,7 +12686,7 @@
         "vi": "Đoàn Chim Cánh Cụt Nhỏ"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12726,7 +12726,7 @@
         "vi": "Thú Mỏ Vịt Khác Mọi Người"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12766,7 +12766,7 @@
         "vi": "Chuyện quả bầu"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12799,7 +12799,7 @@
         "vi": "Rắn Cầu Vồng"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12832,7 +12832,7 @@
         "vi": "Cô Gà Mái Đỏ"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12865,7 +12865,7 @@
         "vi": "Rùa Con Trên Rạn San Hô"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12905,7 +12905,7 @@
         "vi": "Con Rồng cháu Tiên"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12938,7 +12938,7 @@
         "vi": "Ông Thợ Giày và Những Chú Tí Hon"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -12971,7 +12971,7 @@
         "vi": "Sọ Dừa"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13004,7 +13004,7 @@
         "vi": "Sơn Tinh, Thủy Tinh"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/learn.ts",
       "sourceHash": "6e8d0e6be3db2369a0667fb4b62d084f452cc732f5dafab7df881c3af07110c8",
       "guide": {
@@ -13037,7 +13037,7 @@
         "vi": "Món Súp Đá"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13070,7 +13070,7 @@
         "vi": "Tấm Cám"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13103,7 +13103,7 @@
         "vi": "Tenali Raman và Những Chú Mèo"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13143,7 +13143,7 @@
         "vi": "Hậu Nghệ Bắn Mặt Trời"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13183,7 +13183,7 @@
         "vi": "Thạch Sanh"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13216,7 +13216,7 @@
         "vi": "Thánh Gióng"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13249,7 +13249,7 @@
         "vi": "Thần Trụ Trời"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13303,7 +13303,7 @@
         "vi": "Thầy bói xem voi"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13336,7 +13336,7 @@
         "vi": "Sự tích Cây Thì Là"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13390,7 +13390,7 @@
         "vi": "Tích Chu"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13444,7 +13444,7 @@
         "vi": "Chú Ếch Khát Nước Tiddalik"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/learn.ts",
       "sourceHash": "6e8d0e6be3db2369a0667fb4b62d084f452cc732f5dafab7df881c3af07110c8",
       "guide": {
@@ -13477,7 +13477,7 @@
         "vi": "Rùa và Đôi Ngỗng"
       },
       "area": "🇮🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13517,7 +13517,7 @@
         "vi": "Rùa và Thỏ"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13550,7 +13550,7 @@
         "vi": "Trạng Quỳnh Thông Minh"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13604,7 +13604,7 @@
         "vi": "Sự tích Trầu Cau"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13658,7 +13658,7 @@
         "vi": "Trê Cóc"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13712,7 +13712,7 @@
         "vi": "Củ Cải Khổng Lồ"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13745,7 +13745,7 @@
         "vi": "Thỏ và Cung Điện Dưới Biển"
       },
       "area": "🌍",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13778,7 +13778,7 @@
         "vi": "Sự tích cây vú sữa"
       },
       "area": "🇻🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13811,7 +13811,7 @@
         "vi": "Ngưu Lang Chức Nữ"
       },
       "area": "🇨🇳",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {
@@ -13844,7 +13844,7 @@
         "vi": "Vì Sao Gấu Túi Mũi Trần Đào Hang"
       },
       "area": "🇦🇺",
-      "sourceCommit": "6b054ee7f766977417fc7a9c5526a89008434bca",
+      "sourceCommit": "3d7e330f74def637693418cf238e22d3bdac48d2",
       "sourceFile": "js/talesdata.ts",
       "sourceHash": "d5791f357520423d92fbaf02fa05b6a864bd6ff863453e803877b274082535f2",
       "guide": {

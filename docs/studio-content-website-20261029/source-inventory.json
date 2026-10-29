@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "sourceHead": "e9820e12c48de7f9661ee5293bb79048e16d8c0c",
+  "sourceHead": "3d7e330f74def637693418cf238e22d3bdac48d2",
   "sourceDirty": false,
   "dirtyPaths": [],
   "scope": "All tracked public code/config surfaces under the declared roots, plus new source files; not every runtime entity or private/provider record.",
   "domains": [
     {
       "id": "games",
-      "sourceModules": 79,
+      "sourceModules": 80,
       "definitionCoverage": "module-manifest-complete-within-listed-roots",
       "runtimeCoverage": "not_claimed"
     },
@@ -375,7 +375,7 @@
       "key": "source:home/index.html",
       "file": "home/index.html",
       "domain": "website",
-      "sha256": "61274413cfbb1a31549eec69ebb58c9cbf348200637c5b88caf859b0a82fe754",
+      "sha256": "282c442fc74a937b4417a686fff85bb07ed3e773a6fe8ce252371f176b69753f",
       "classification": "source-definition",
       "definitions": [],
       "imports": [],
@@ -7564,6 +7564,34 @@
       "providerEvidence": "not_requested"
     },
     {
+      "key": "source:js/games/art-pending.ts",
+      "file": "js/games/art-pending.ts",
+      "domain": "games",
+      "sha256": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
+      "classification": "source-definition",
+      "definitions": [
+        {
+          "name": "PENDING_ART_DEFINITIONS",
+          "line": 5,
+          "type": "variable-definition"
+        }
+      ],
+      "imports": [
+        {
+          "specifier": "../i18n.js",
+          "kind": "static-import",
+          "line": 1
+        },
+        {
+          "specifier": "./art-pad.js",
+          "kind": "static-import",
+          "line": 2
+        }
+      ],
+      "instanceRecords": "not_enumerated",
+      "providerEvidence": "not_requested"
+    },
+    {
       "key": "source:js/games/asia.ts",
       "file": "js/games/asia.ts",
       "domain": "games",
@@ -8210,7 +8238,7 @@
       "key": "source:js/games/drawing2.ts",
       "file": "js/games/drawing2.ts",
       "domain": "games",
-      "sha256": "99f4d2dedd99230fa74e73633bc9593d135fe4fb276debdce607975b75b9b877",
+      "sha256": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
       "classification": "source-definition",
       "definitions": [],
       "imports": [
@@ -8222,12 +8250,12 @@
         {
           "specifier": "../i18n.js",
           "kind": "static-import",
-          "line": 3
+          "line": 1
         },
         {
           "specifier": "./art-pad.js",
           "kind": "static-import",
-          "line": 4
+          "line": 2
         }
       ],
       "instanceRecords": "not_enumerated",
@@ -23332,7 +23360,7 @@
       "key": "source:tools/export-management-catalogue.mts",
       "file": "tools/export-management-catalogue.mts",
       "domain": "quality",
-      "sha256": "e11cef0593b4aa108f2c1224e4c9296ec5503135f4b16e8f8104fbbfa48fbdb2",
+      "sha256": "ad5fccef16c3433cae7407cfd3696d3b125d0ff9e3d6992a3be340076463e8d4",
       "classification": "source-definition",
       "definitions": [
         {
@@ -26627,10 +26655,10 @@
     {
       "key": "game:hiddenpic",
       "domain": "games",
-      "sourceFile": "js/games/drawing2.ts",
+      "sourceFile": "js/games/art-pending.ts",
       "discovery": "declared-only",
       "implementationReference": false,
-      "sourceHash": "99f4d2dedd99230fa74e73633bc9593d135fe4fb276debdce607975b75b9b877",
+      "sourceHash": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
       "guide": {
         "href": null,
         "kind": "section",
@@ -28092,10 +28120,10 @@
     {
       "key": "game:paperfold",
       "domain": "games",
-      "sourceFile": "js/games/drawing2.ts",
+      "sourceFile": "js/games/art-pending.ts",
       "discovery": "declared-only",
       "implementationReference": false,
-      "sourceHash": "99f4d2dedd99230fa74e73633bc9593d135fe4fb276debdce607975b75b9b877",
+      "sourceHash": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
       "guide": {
         "href": null,
         "kind": "section",
@@ -30189,10 +30217,10 @@
     {
       "key": "game:spotdiff",
       "domain": "games",
-      "sourceFile": "js/games/drawing2.ts",
+      "sourceFile": "js/games/art-pending.ts",
       "discovery": "declared-only",
       "implementationReference": false,
-      "sourceHash": "99f4d2dedd99230fa74e73633bc9593d135fe4fb276debdce607975b75b9b877",
+      "sourceHash": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
       "guide": {
         "href": null,
         "kind": "section",

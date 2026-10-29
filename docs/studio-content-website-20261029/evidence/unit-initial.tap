@@ -1,0 +1,2674 @@
+TAP version 13
+# Subtest: the owner's first ten, twenty more and one for every festival in the game
+ok 1 - the owner's first ten, twenty more and one for every festival in the game
+  ---
+  duration_ms: 1.455558
+  type: 'test'
+  ...
+# Subtest: ADV-2: always 3 steps, each with a picture and a short line in both languages
+ok 2 - ADV-2: always 3 steps, each with a picture and a short line in both languages
+  ---
+  duration_ms: 4.133359
+  type: 'test'
+  ...
+# Subtest: every place is a real place that a road reaches; every new child can have one
+ok 3 - every place is a real place that a road reaches; every new child can have one
+  ---
+  duration_ms: 0.782826
+  type: 'test'
+  ...
+# Subtest: ADV-4: every reward is a real sticker and 10 coins (owner, 16 Oct AEDT)
+ok 4 - ADV-4: every reward is a real sticker and 10 coins (owner, 16 Oct AEDT)
+  ---
+  duration_ms: 0.226494
+  type: 'test'
+  ...
+# Subtest: ADV-3: a giver with a picture says it in at most 2 sentences; no child's name is ever spoken
+ok 5 - ADV-3: a giver with a picture says it in at most 2 sentences; no child's name is ever spoken
+  ---
+  duration_ms: 3.103239
+  type: 'test'
+  ...
+# Subtest: D2: one a day, the same all day, only unlocked places, no repeat within 7 days, festivals on their day
+ok 6 - D2: one a day, the same all day, only unlocked places, no repeat within 7 days, festivals on their day
+  ---
+  duration_ms: 10.870882
+  type: 'test'
+  ...
+# Subtest: ADV-5 and D10: stamps only fill up, a missed day takes none away, 7 open the week chest
+ok 7 - ADV-5 and D10: stamps only fill up, a missed day takes none away, 7 open the week chest
+  ---
+  duration_ms: 0.559847
+  type: 'test'
+  ...
+# Subtest: D11: Grandpa Owl remembers yesterday's adventure (never with a name)
+ok 8 - D11: Grandpa Owl remembers yesterday's adventure (never with a name)
+  ---
+  duration_ms: 0.208378
+  type: 'test'
+  ...
+# Subtest: the day is the Sydney date; "first play" keeps one adventure all through a play
+ok 9 - the day is the Sydney date; "first play" keeps one adventure all through a play
+  ---
+  duration_ms: 19.815923
+  type: 'test'
+  ...
+# Subtest: Orchard is deterministic, every required picture exists and 1–4 seats can complete
+ok 10 - Orchard is deterministic, every required picture exists and 1–4 seats can complete
+  ---
+  duration_ms: 2.647096
+  type: 'test'
+  ...
+# Subtest: Orchard validates inputs and assists after repeated misses without fake rare combos
+ok 11 - Orchard validates inputs and assists after repeated misses without fake rare combos
+  ---
+  duration_ms: 0.295717
+  type: 'test'
+  ...
+# Subtest: tester mode can never publish to a non-tester and master/mode off win
+ok 12 - tester mode can never publish to a non-tester and master/mode off win
+  ---
+  duration_ms: 0.143392
+  type: 'test'
+  ...
+# Subtest: Family Fruit Bar public modes allow non-testers; preview alone requires accepted testers
+ok 13 - Family Fruit Bar public modes allow non-testers; preview alone requires accepted testers
+  ---
+  duration_ms: 0.15602
+  type: 'test'
+  ...
+# Subtest: Fruit Bar locks separate allocations, shares result and debits each stake once
+ok 14 - Fruit Bar locks separate allocations, shares result and debits each stake once
+  ---
+  duration_ms: 0.822984
+  type: 'test'
+  ...
+# Subtest: Fruit Bar bounds inputs, rejects empty/over-budget rounds and finishes exactly at its limit
+ok 15 - Fruit Bar bounds inputs, rejects empty/over-budget rounds and finishes exactly at its limit
+  ---
+  duration_ms: 2.422285
+  type: 'test'
+  ...
+# Subtest: ordered host commands reject forged turns, recover lost/reordered commits and unsubscribe
+ok 16 - ordered host commands reject forged turns, recover lost/reordered commits and unsubscribe
+  ---
+  duration_ms: 1.237346
+  type: 'test'
+  ...
+# Subtest: a disconnected guest finishes a four-seat mission with helpers taking the other seats
+ok 17 - a disconnected guest finishes a four-seat mission with helpers taking the other seats
+  ---
+  duration_ms: 0.544323
+  type: 'test'
+  ...
+# Subtest: mixed-age devices derive and complete the same invitation mission at every shared level
+ok 18 - mixed-age devices derive and complete the same invitation mission at every shared level
+  ---
+  duration_ms: 1.092112
+  type: 'test'
+  ...
+# Subtest: actual game transport recovers a late renderer and repeated replay requests after packet loss
+ok 19 - actual game transport recovers a late renderer and repeated replay requests after packet loss
+  ---
+  duration_ms: 1.921566
+  type: 'test'
+  ...
+# Subtest: the window shows only where Studio allows it
+ok 20 - the window shows only where Studio allows it
+  ---
+  duration_ms: 0.846709
+  type: 'test'
+  ...
+# Subtest: progress goes back, rewards and grown-up settings stay
+ok 21 - progress goes back, rewards and grown-up settings stay
+  ---
+  duration_ms: 0.778459
+  type: 'test'
+  ...
+# Subtest: what goes back is Studio's choice; everything since becoming a tester by default
+ok 22 - what goes back is Studio's choice; everything since becoming a tester by default
+  ---
+  duration_ms: 1.194783
+  type: 'test'
+  ...
+# Subtest: both speeds move like a child; answers are mostly right; quests come first
+ok 23 - both speeds move like a child; answers are mostly right; quests come first
+  ---
+  duration_ms: 0.1764
+  type: 'test'
+  ...
+# Subtest: each device can keep progress or choose a different restore policy
+ok 24 - each device can keep progress or choose a different restore policy
+  ---
+  duration_ms: 0.240865
+  type: 'test'
+  ...
+# Subtest: legal-plan allowance follows child speed and is bounded without extending random play
+ok 25 - legal-plan allowance follows child speed and is bounded without extending random play
+  ---
+  duration_ms: 0.181848
+  type: 'test'
+  ...
+# Subtest: autoplay profiles support stochastic child behavior and optimal solver
+ok 26 - autoplay profiles support stochastic child behavior and optimal solver
+  ---
+  duration_ms: 0.530403
+  type: 'test'
+  ...
+# Subtest: the day is the AEST day (as js/kidplay.js)
+ok 27 - the day is the AEST day (as js/kidplay.js)
+  ---
+  duration_ms: 1.082698
+  type: 'test'
+  ...
+# Subtest: who gets boxes: 5 to 8 at Medium or Hard
+ok 28 - who gets boxes: 5 to 8 at Medium or Hard
+  ---
+  duration_ms: 0.225903
+  type: 'test'
+  ...
+# Subtest: one free box a day
+ok 29 - one free box a day
+  ---
+  duration_ms: 0.274224
+  type: 'test'
+  ...
+# Subtest: one more box for a finished quest, at most one a day; boxes are never sold
+ok 30 - one more box for a finished quest, at most one a day; boxes are never sold
+  ---
+  duration_ms: 4.166639
+  type: 'test'
+  ...
+# Subtest: duplicates become stars
+ok 31 - duplicates become stars
+  ---
+  duration_ms: 0.509151
+  type: 'test'
+  ...
+# Subtest: collectibles: fairies, dragons, stickers and decorations, rarer things less often
+ok 32 - collectibles: fairies, dragons, stickers and decorations, rarer things less often
+  ---
+  duration_ms: 5.118554
+  type: 'test'
+  ...
+# Subtest: rankings: the family on this device, four boards
+ok 33 - rankings: the family on this device, four boards
+  ---
+  duration_ms: 0.581398
+  type: 'test'
+  ...
+# Subtest: house catalogue has 15 stable Vietnamese and Australian IDs
+ok 34 - house catalogue has 15 stable Vietnamese and Australian IDs
+  ---
+  duration_ms: 1.31476
+  type: 'test'
+  ...
+# Subtest: every house type has bilingual names and its matching culture
+ok 35 - every house type has bilingual names and its matching culture
+  ---
+  duration_ms: 0.342425
+  type: 'test'
+  ...
+# Subtest: build: a .ts becomes the .js beside it, every line where it was, and it runs
+ok 36 - build: a .ts becomes the .js beside it, every line where it was, and it runs
+  ---
+  duration_ms: 250.200285
+  type: 'test'
+  ...
+# Subtest: build: --check finds a .js out of date, and a .ts that is gone takes its .js with it
+ok 37 - build: --check finds a .js out of date, and a .ts that is gone takes its .js with it
+  ---
+  duration_ms: 226.633137
+  type: 'test'
+  ...
+# Subtest: build: only type notes are allowed (no enum), and the error names the file
+ok 38 - build: only type notes are allowed (no enum), and the error names the file
+  ---
+  duration_ms: 72.89992
+  type: 'test'
+  ...
+# Subtest: build: a list written by tools/build.mjs (before the rename) is taken over, not kept twice
+ok 39 - build: a list written by tools/build.mjs (before the rename) is taken over, not kept twice
+  ---
+  duration_ms: 81.542093
+  type: 'test'
+  ...
+# Subtest: horse setup is deterministic, stable by seat and supports every advertised seat
+ok 40 - horse setup is deterministic, stable by seat and supports every advertised seat
+  ---
+  duration_ms: 2.045539
+  type: 'test'
+  ...
+# Subtest: one-die rolls do not mutate the board and advance a non-stalling shared stream
+ok 41 - one-die rolls do not mutate the board and advance a non-stalling shared stream
+  ---
+  duration_ms: 7.951534
+  type: 'test'
+  ...
+# Subtest: gentle launch consumes a die and advances the turn without captures
+ok 42 - gentle launch consumes a die and advances the turn without captures
+  ---
+  duration_ms: 0.158754
+  type: 'test'
+  ...
+# Subtest: classic launches use only 1 or 6, validated in the reducer itself
+ok 43 - classic launches use only 1 or 6, validated in the reducer itself
+  ---
+  duration_ms: 0.23049
+  type: 'test'
+  ...
+# Subtest: classic exact landings capture; intermediate pieces block a jump
+ok 44 - classic exact landings capture; intermediate pieces block a jump
+  ---
+  duration_ms: 0.346141
+  type: 'test'
+  ...
+# Subtest: classic home lanes finish in numbered slots 6,5,4,3
+ok 45 - classic home lanes finish in numbered slots 6,5,4,3
+  ---
+  duration_ms: 0.152334
+  type: 'test'
+  ...
+# Subtest: home entry cannot jump another horse and each home climb needs the next number
+ok 46 - home entry cannot jump another horse and each home climb needs the next number
+  ---
+  duration_ms: 0.234185
+  type: 'test'
+  ...
+# Subtest: all beginner horses finish at their separate home goals
+ok 47 - all beginner horses finish at their separate home goals
+  ---
+  duration_ms: 0.227556
+  type: 'test'
+  ...
+# Subtest: helper choices are deterministic, legal, and complete both rule variants
+ok 48 - helper choices are deterministic, legal, and complete both rule variants
+  ---
+  duration_ms: 33.344147
+  type: 'test'
+  ...
+# Subtest: horse commands reject malformed, stale and impossible input without mutating state
+ok 49 - horse commands reject malformed, stale and impossible input without mutating state
+  ---
+  duration_ms: 0.583482
+  type: 'test'
+  ...
+# (node:14173) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: integrated art has catalogue metadata, a real loader and existing release/progress dependencies
+ok 50 - integrated art has catalogue metadata, a real loader and existing release/progress dependencies
+  ---
+  duration_ms: 208.857265
+  type: 'test'
+  ...
+# Subtest: offline manifest includes both art groups and their new shared dependency
+ok 51 - offline manifest includes both art groups and their new shared dependency
+  ---
+  duration_ms: 0.410966
+  type: 'test'
+  ...
+# Subtest: public source graph covers all thirteen domains without claiming private records or runtime effects
+ok 52 - public source graph covers all thirteen domains without claiming private records or runtime effects
+  ---
+  duration_ms: 13.572569
+  type: 'test'
+  ...
+# Subtest: ids: Vietnamese names become ASCII slugs
+ok 53 - ids: Vietnamese names become ASCII slugs
+  ---
+  duration_ms: 1.94541
+  type: 'test'
+  ...
+# Subtest: ids: parse, kind and validity
+ok 54 - ids: parse, kind and validity
+  ---
+  duration_ms: 0.976241
+  type: 'test'
+  ...
+# Subtest: events: emit reaches listeners; off stops them; once fires once
+ok 55 - events: emit reaches listeners; off stops them; once fires once
+  ---
+  duration_ms: 1.616946
+  type: 'test'
+  ...
+# Subtest: events: a failing listener never stops the others; unknown names are refused
+ok 56 - events: a failing listener never stops the others; unknown names are refused
+  ---
+  duration_ms: 0.255026
+  type: 'test'
+  ...
+# Subtest: rng: named streams repeat and do not disturb each other
+ok 57 - rng: named streams repeat and do not disturb each other
+  ---
+  duration_ms: 0.443334
+  type: 'test'
+  ...
+# Subtest: rng: the same numbers as the old util.seeded (the world looks the same)
+ok 58 - rng: the same numbers as the old util.seeded (the world looks the same)
+  ---
+  duration_ms: 0.357858
+  type: 'test'
+  ...
+# Subtest: geo: distances, segments, polylines, boxes, angles
+ok 59 - geo: distances, segments, polylines, boxes, angles
+  ---
+  duration_ms: 0.400061
+  type: 'test'
+  ...
+# (node:14412) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/tpn/studio/ui/desk-charts.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /workspace/tpn/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Home counts uncertain source evidence as review without counting one entry multiple times
+ok 60 - Home counts uncertain source evidence as review without counting one entry multiple times
+  ---
+  duration_ms: 1.315872
+  type: 'test'
+  ...
+# Subtest: chart gaps remain unknown and cannot draw a continuous line across absent observations
+ok 61 - chart gaps remain unknown and cannot draw a continuous line across absent observations
+  ---
+  duration_ms: 12.321173
+  type: 'test'
+  ...
+# Subtest: chart untrusted labels are escaped and negative financial values remain signed and accessible
+ok 62 - chart untrusted labels are escaped and negative financial values remain signed and accessible
+  ---
+  duration_ms: 0.417546
+  type: 'test'
+  ...
+# Subtest: same installation on two versions stays one device; history and latest are distinct
+ok 63 - same installation on two versions stays one device; history and latest are distinct
+  ---
+  duration_ms: 9.593397
+  type: 'test'
+  ...
+# Subtest: delayed old tab does not replace the newer session version or double count resend
+ok 64 - delayed old tab does not replace the newer session version or double count resend
+  ---
+  duration_ms: 2.753593
+  type: 'test'
+  ...
+# Subtest: older untagged migrated history is unknown, not relabelled as upload-time build
+ok 65 - older untagged migrated history is unknown, not relabelled as upload-time build
+  ---
+  duration_ms: 0.304078
+  type: 'test'
+  ...
+# Subtest: duplicates within a day/build are dropped but different originating builds survive
+ok 66 - duplicates within a day/build are dropped but different originating builds survive
+  ---
+  duration_ms: 0.308095
+  type: 'test'
+  ...
+# Subtest: two tabs share identity and ending one leaves the other online
+ok 67 - two tabs share identity and ending one leaves the other online
+  ---
+  duration_ms: 4.06598
+  type: 'test'
+  ...
+# Subtest: legacy old-build upload cannot overwrite a known newer-session version
+ok 68 - legacy old-build upload cannot overwrite a known newer-session version
+  ---
+  duration_ms: 1.551479
+  type: 'test'
+  ...
+# Subtest: version totals cover every installation even when detail cards are capped
+ok 69 - version totals cover every installation even when detail cards are capped
+  ---
+  duration_ms: 22.286398
+  type: 'test'
+  ...
+# Subtest: analytics reads paginated lifetime count while daily totals are still loading
+ok 70 - analytics reads paginated lifetime count while daily totals are still loading
+  ---
+  duration_ms: 7.618083
+  type: 'test'
+  ...
+# Subtest: (r80) installations not seen for 30 days or more are listed by the version they last had
+ok 71 - (r80) installations not seen for 30 days or more are listed by the version they last had
+  ---
+  duration_ms: 1.77529
+  type: 'test'
+  ...
+# Subtest: neat shapes: a circle has no corners, a triangle 3, a square 4
+ok 72 - neat shapes: a circle has no corners, a triangle 3, a square 4
+  ---
+  duration_ms: 2.448984
+  type: 'test'
+  ...
+# Subtest: shaky shapes are still recognised at least 9 times in 10
+ok 73 - shaky shapes are still recognised at least 9 times in 10
+  ---
+  duration_ms: 22.349722
+  type: 'test'
+  ...
+# Subtest: an open or tiny stroke is not a shape
+ok 74 - an open or tiny stroke is not a shape
+  ---
+  duration_ms: 0.247295
+  type: 'test'
+  ...
+# Subtest: accepted story retains an inviter page arriving before its delayed start, with no foreign moves
+ok 75 - accepted story retains an inviter page arriving before its delayed start, with no foreign moves
+  ---
+  duration_ms: 1.692007
+  type: 'test'
+  ...
+# Subtest: pending story pages are replayed in move order despite relay reordering
+ok 76 - pending story pages are replayed in move order despite relay reordering
+  ---
+  duration_ms: 0.230029
+  type: 'test'
+  ...
+# Subtest: declining an accepted but not started story discards its pending pages and permission
+ok 77 - declining an accepted but not started story discards its pending pages and permission
+  ---
+  duration_ms: 0.283258
+  type: 'test'
+  ...
+# Subtest: removed devices do not exhaust pairing and recovery capacity
+ok 78 - removed devices do not exhaust pairing and recovery capacity
+  ---
+  duration_ms: 18.213908
+  type: 'test'
+  ...
+# Subtest: photo restore rejects oversized or invalid backups before changing existing photos
+ok 79 - photo restore rejects oversized or invalid backups before changing existing photos
+  ---
+  duration_ms: 2.982091
+  type: 'test'
+  ...
+# Subtest: thirty active devices still enforce the family capacity limit
+ok 80 - thirty active devices still enforce the family capacity limit
+  ---
+  duration_ms: 4.290331
+  type: 'test'
+  ...
+# Subtest: private families are isolated; a pairing code does not approve a device
+ok 81 - private families are isolated; a pairing code does not approve a device
+  ---
+  duration_ms: 0.88046
+  type: 'test'
+  ...
+# Subtest: expired codes fail; recovery and photo migration require the right private files
+ok 82 - expired codes fail; recovery and photo migration require the right private files
+  ---
+  duration_ms: 1.5992
+  type: 'test'
+  ...
+# Subtest: concurrent uploads to different characters are retained and rebind is explicit
+ok 83 - concurrent uploads to different characters are retained and rebind is explicit
+  ---
+  duration_ms: 0.960547
+  type: 'test'
+  ...
+# Subtest: moving a photo whose picture is missing refuses instead of writing an empty picture
+ok 84 - moving a photo whose picture is missing refuses instead of writing an empty picture
+  ---
+  duration_ms: 0.390887
+  type: 'test'
+  ...
+# Subtest: private questions are bounded bilingual data, copied safely and never markup or extra fields
+ok 85 - private questions are bounded bilingual data, copied safely and never markup or extra fields
+  ---
+  duration_ms: 1.995495
+  type: 'test'
+  ...
+# Subtest: local/gentle quizzes retry misses; classic turns score every seat and the host advances a reveal
+ok 86 - local/gentle quizzes retry misses; classic turns score every seat and the host advances a reveal
+  ---
+  duration_ms: 0.341865
+  type: 'test'
+  ...
+# Subtest: only the accepted inviter can share; declined players never receive questions and normal moves contain no text
+ok 87 - only the accepted inviter can share; declined players never receive questions and normal moves contain no text
+  ---
+  duration_ms: 3.97107
+  type: 'test'
+  ...
+# Subtest: a private snapshot received before start survives only an accepted matching invitation
+ok 88 - a private snapshot received before start survives only an accepted matching invitation
+  ---
+  duration_ms: 1.038984
+  type: 'test'
+  ...
+# Subtest: six invited seats with no guest copy finish the same immutable private quiz through legal shared turns
+ok 89 - six invited seats with no guest copy finish the same immutable private quiz through legal shared turns
+  ---
+  duration_ms: 6.195473
+  type: 'test'
+  ...
+# Subtest: family question wire messages accept sealed envelopes, never plaintext content
+ok 90 - family question wire messages accept sealed envelopes, never plaintext content
+  ---
+  duration_ms: 0.605604
+  type: 'test'
+  ...
+# Subtest: approved bilingual privacy notice matches exact specification
+ok 91 - approved bilingual privacy notice matches exact specification
+  ---
+  duration_ms: 0.723297
+  type: 'test'
+  ...
+# Subtest: makeFamilyCode creates an 8-character XXXX-XXXX code
+ok 92 - makeFamilyCode creates an 8-character XXXX-XXXX code
+  ---
+  duration_ms: 0.970512
+  type: 'test'
+  ...
+# Subtest: normalizeFamilyCode strips spaces and hyphens and rejects invalid inputs
+ok 93 - normalizeFamilyCode strips spaces and hyphens and rejects invalid inputs
+  ---
+  duration_ms: 0.138955
+  type: 'test'
+  ...
+# Subtest: familyHash matches Node SHA-256 first 16 hex chars and never exposes raw code
+ok 94 - familyHash matches Node SHA-256 first 16 hex chars and never exposes raw code
+  ---
+  duration_ms: 0.97587
+  type: 'test'
+  ...
+# Subtest: familyName produces the same friendly name from raw code or digest
+ok 95 - familyName produces the same friendly name from raw code or digest
+  ---
+  duration_ms: 0.429844
+  type: 'test'
+  ...
+# Subtest: familyQrSvg renders an offline SVG QR code with finder patterns
+ok 96 - familyQrSvg renders an offline SVG QR code with finder patterns
+  ---
+  duration_ms: 0.755545
+  type: 'test'
+  ...
+# Subtest: Vietnamese lunar dates
+ok 97 - Vietnamese lunar dates
+  ---
+  duration_ms: 2.352942
+  type: 'test'
+  ...
+# Subtest: Easter and nth Sundays
+ok 98 - Easter and nth Sundays
+  ---
+  duration_ms: 1.974784
+  type: 'test'
+  ...
+# Subtest: every festival has a date from 2026 to 2032
+ok 99 - every festival has a date from 2026 to 2032
+  ---
+  duration_ms: 1.468357
+  type: 'test'
+  ...
+# Subtest: live releases keep only well-formed values
+ok 100 - live releases keep only well-formed values
+  ---
+  duration_ms: 30.10696
+  type: 'test'
+  ...
+# Subtest: public festival endpoint excludes disabled festivals and all private fields
+ok 101 - public festival endpoint excludes disabled festivals and all private fields
+  ---
+  duration_ms: 23.031547
+  type: 'test'
+  ...
+# Subtest: festival endpoint returns unavailable instead of silently re-enabling on a store failure
+ok 102 - festival endpoint returns unavailable instead of silently re-enabling on a store failure
+  ---
+  duration_ms: 0.413601
+  type: 'test'
+  ...
+# Subtest: festival off and release off both override selection or preview
+ok 103 - festival off and release off both override selection or preview
+  ---
+  duration_ms: 0.764669
+  type: 'test'
+  ...
+# Subtest: public festival visibility respects release windows
+ok 104 - public festival visibility respects release windows
+  ---
+  duration_ms: 12.933987
+  type: 'test'
+  ...
+# Subtest: live festival rules take precedence over the same bundled rule
+ok 105 - live festival rules take precedence over the same bundled rule
+  ---
+  duration_ms: 0.257049
+  type: 'test'
+  ...
+# Subtest: published festival release dates use Sydney midnight on server and client
+ok 106 - published festival release dates use Sydney midnight on server and client
+  ---
+  duration_ms: 0.168399
+  type: 'test'
+  ...
+# Subtest: boot and public endpoint share the same allowed-only festival projection
+ok 107 - boot and public endpoint share the same allowed-only festival projection
+  ---
+  duration_ms: 0.854531
+  type: 'test'
+  ...
+# Subtest: scheduled game festivals and public visibility agree across Sydney midnight
+ok 108 - scheduled game festivals and public visibility agree across Sydney midnight
+  ---
+  duration_ms: 0.301365
+  type: 'test'
+  ...
+# Subtest: a cloth còn must fit through its hoop; a disc only needs to touch the coin
+ok 109 - a cloth còn must fit through its hoop; a disc only needs to touch the coin
+  ---
+  duration_ms: 0.926547
+  type: 'test'
+  ...
+# Subtest: the mouse uses the raised gate and the cat follows its route
+ok 110 - the mouse uses the raised gate and the cat follows its route
+  ---
+  duration_ms: 0.217761
+  type: 'test'
+  ...
+# Subtest: flag runners match called numbers, not flag colour or transformed icon text
+ok 111 - flag runners match called numbers, not flag colour or transformed icon text
+  ---
+  duration_ms: 0.120328
+  type: 'test'
+  ...
+# Subtest: a rowing crew alternates sides and older crews follow the beat
+ok 112 - a rowing crew alternates sides and older crews follow the beat
+  ---
+  duration_ms: 0.234236
+  type: 'test'
+  ...
+# Subtest: the hand-holding rhyme alternates pull/push for five four-beat verses
+ok 113 - the hand-holding rhyme alternates pull/push for five four-beat verses
+  ---
+  duration_ms: 0.726252
+  type: 'test'
+  ...
+# Subtest: preview requires tester entitlement and Trồng Nụ protects young/calm play
+ok 114 - preview requires tester entitlement and Trồng Nụ protects young/calm play
+  ---
+  duration_ms: 1.218017
+  type: 'test'
+  ...
+# Subtest: accepted invitations cannot switch games; closed listeners cannot retain a renderer
+ok 115 - accepted invitations cannot switch games; closed listeners cannot retain a renderer
+  ---
+  duration_ms: 0.784037
+  type: 'test'
+  ...
+# Subtest: parade age configs and deterministic lanes are playable for every advertised seat
+ok 116 - parade age configs and deterministic lanes are playable for every advertised seat
+  ---
+  duration_ms: 3.320019
+  type: 'test'
+  ...
+# Subtest: parade rejects duplicate, stale, out-of-range and future lane actions without changing state
+ok 117 - parade rejects duplicate, stale, out-of-range and future lane actions without changing state
+  ---
+  duration_ms: 0.207336
+  type: 'test'
+  ...
+# Subtest: ability adaptation stays within one step and never speeds up an under-five game
+ok 118 - ability adaptation stays within one step and never speeds up an under-five game
+  ---
+  duration_ms: 0.436794
+  type: 'test'
+  ...
+# Subtest: rainbow substitutes once, specials need their real combinations and partial results have bounded retries
+ok 119 - rainbow substitutes once, specials need their real combinations and partial results have bounded retries
+  ---
+  duration_ms: 0.273493
+  type: 'test'
+  ...
+# Subtest: four-player host commits shared results, rejects forged seats and resynchronizes lost/reordered packets
+ok 120 - four-player host commits shared results, rejects forged seats and resynchronizes lost/reordered packets
+  ---
+  duration_ms: 4.165147
+  type: 'test'
+  ...
+# Subtest: offline continuation preserves accepted stops and completes without a server
+ok 121 - offline continuation preserves accepted stops and completes without a server
+  ---
+  duration_ms: 0.421782
+  type: 'test'
+  ...
+# Subtest: createRound is deterministic and produces a bounded playable round
+ok 122 - createRound is deterministic and produces a bounded playable round
+  ---
+  duration_ms: 0.38619
+  type: 'test'
+  ...
+# Subtest: createRound changes the challenge when its seed changes
+ok 123 - createRound changes the challenge when its seed changes
+  ---
+  duration_ms: 0.418638
+  type: 'test'
+  ...
+# Subtest: isCorrectOrder accepts only an exact target permutation
+ok 124 - isCorrectOrder accepts only an exact target permutation
+  ---
+  duration_ms: 0.187707
+  type: 'test'
+  ...
+# Subtest: scoreRound rewards correct answers and never rewards an incorrect one
+ok 125 - scoreRound rewards correct answers and never rewards an incorrect one
+  ---
+  duration_ms: 0.110623
+  type: 'test'
+  ...
+# Subtest: menu catalogue matches lazy game definitions, order, names and eligibility
+not ok 126 - menu catalogue matches lazy game definitions, order, names and eligibility
+  ---
+  duration_ms: 267.296329
+  type: 'test'
+  location: '/workspace/tpn/tests/unit/game-catalog.test.mjs:27:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    drawing2.ts
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        'stamps',
+        'weave',
+        'mosaic',
+        'nonla',
+    ...
+        'shadowpic',
+    -   'spotdiff',
+    -   'hiddenpic',
+        'finishpic',
+        'scene',
+    -   'paperfold'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'stamps'
+    1: 'weave'
+    2: 'mosaic'
+    3: 'nonla'
+    4: 'aodai'
+    5: 'kitepaint'
+    6: 'shades'
+    7: 'shadowpic'
+    8: 'spotdiff'
+    9: 'hiddenpic'
+    10: 'finishpic'
+    11: 'scene'
+    12: 'paperfold'
+  actual:
+    0: 'stamps'
+    1: 'weave'
+    2: 'mosaic'
+    3: 'nonla'
+    4: 'aodai'
+    5: 'kitepaint'
+    6: 'shades'
+    7: 'shadowpic'
+    8: 'finishpic'
+    9: 'scene'
+  operator: 'deepStrictEqual'
+  stack: |-
+    file:///workspace/tpn/tests/unit/game-catalog.test.mjs:33:14
+    Array.flatMap (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/tpn/tests/unit/game-catalog.test.mjs:31:47)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.start (node:internal/test_runner/test:1242:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Subtest: reviewed optional Vietnamese fragments can extend the default inventory only with current exact source fingerprints
+ok 127 - reviewed optional Vietnamese fragments can extend the default inventory only with current exact source fingerprints
+  ---
+  duration_ms: 2.535412
+  type: 'test'
+  ...
+# Subtest: unreviewed markers, hashes, private names, held units and arbitrary source paths never enlarge the optional pack
+ok 128 - unreviewed markers, hashes, private names, held units and arbitrary source paths never enlarge the optional pack
+  ---
+  duration_ms: 2.16118
+  type: 'test'
+  ...
+# Subtest: editing a fragment source or its segmentation policy after review stops packaging
+ok 129 - editing a fragment source or its segmentation policy after review stops packaging
+  ---
+  duration_ms: 0.741123
+  type: 'test'
+  ...
+# Subtest: an optional reviewed fragment remains mandatory, while privacy-held names remain excluded from the coverage target
+ok 130 - an optional reviewed fragment remains mandatory, while privacy-held names remain excluded from the coverage target
+  ---
+  duration_ms: 0.173085
+  type: 'test'
+  ...
+# Subtest: staged recording receipts must match reviewed text identity, full bytes, checksum and finite decoded duration
+ok 131 - staged recording receipts must match reviewed text identity, full bytes, checksum and finite decoded duration
+  ---
+  duration_ms: 0.559786
+  type: 'test'
+  ...
+# Subtest: optional pack shares its job and resumes after an outage without downloading saved clips again
+ok 132 - optional pack shares its job and resumes after an outage without downloading saved clips again
+  ---
+  duration_ms: 28.969601
+  type: 'test'
+  ...
+# Subtest: wrong provider and corrupt files never become completed recordings
+ok 133 - wrong provider and corrupt files never become completed recordings
+  ---
+  duration_ms: 4.50617
+  type: 'test'
+  ...
+# Subtest: recording lookup sends only canonical IDs to our own static pack, never private speech
+ok 134 - recording lookup sends only canonical IDs to our own static pack, never private speech
+  ---
+  duration_ms: 0.97551
+  type: 'test'
+  ...
+# Subtest: a full device never reports uncached downloads as saved
+ok 135 - a full device never reports uncached downloads as saved
+  ---
+  duration_ms: 1.509238
+  type: 'test'
+  ...
+# Subtest: a value that only looks like text after coercion is kept as text, never as itself
+ok 136 - a value that only looks like text after coercion is kept as text, never as itself
+  ---
+  duration_ms: 1.681892
+  type: 'test'
+  ...
+# Subtest: a list where a map of games was expected keeps no made-up games
+ok 137 - a list where a map of games was expected keeps no made-up games
+  ---
+  duration_ms: 0.820711
+  type: 'test'
+  ...
+# Subtest: what is not a hello at all is dropped
+ok 138 - what is not a hello at all is dropped
+  ---
+  duration_ms: 0.531604
+  type: 'test'
+  ...
+# Subtest: an ordinary hello keeps its build, session and day
+ok 139 - an ordinary hello keeps its build, session and day
+  ---
+  duration_ms: 0.501671
+  type: 'test'
+  ...
+# Subtest: synthetic bot metadata is recognized and preserved in cleaned hello
+ok 140 - synthetic bot metadata is recognized and preserved in cleaned hello
+  ---
+  duration_ms: 0.252142
+  type: 'test'
+  ...
+# Subtest: real invited four-seat transport completes one shared classic horse match
+ok 141 - real invited four-seat transport completes one shared classic horse match
+  ---
+  duration_ms: 96.854339
+  type: 'test'
+  ...
+# Subtest: youngest accepted player sets gentle rules and cannot be upgraded by a later offer
+ok 142 - youngest accepted player sets gentle rules and cannot be upgraded by a later offer
+  ---
+  duration_ms: 2.520509
+  type: 'test'
+  ...
+# Subtest: missing horse commit recovers through real transport replay without duplicate turns
+ok 143 - missing horse commit recovers through real transport replay without duplicate turns
+  ---
+  duration_ms: 1.238968
+  type: 'test'
+  ...
+# Subtest: every apple-touch-startup-image exists at its screen size
+ok 144 - every apple-touch-startup-image exists at its screen size
+  ---
+  duration_ms: 24.213653
+  type: 'test'
+  ...
+# Subtest: each section keeps only its own keys and well-formed values
+ok 145 - each section keeps only its own keys and well-formed values
+  ---
+  duration_ms: 3.212261
+  type: 'test'
+  ...
+# Subtest: too long and too much are refused, not cut
+ok 146 - too long and too much are refused, not cut
+  ---
+  duration_ms: 29.797503
+  type: 'test'
+  ...
+# Subtest: saving keeps the other sections and never touches Releases; /api/live sends them without the admin
+ok 147 - saving keeps the other sections and never touches Releases; /api/live sends them without the admin
+  ---
+  duration_ms: 23.873541
+  type: 'test'
+  ...
+# Subtest: who may save them: "Change pages", and the exe key; a viewer may not
+ok 148 - who may save them: "Change pages", and the exe key; a viewer may not
+  ---
+  duration_ms: 0.446128
+  type: 'test'
+  ...
+# Subtest: online Studio: the owner saves a section live, a long text is refused with a message
+ok 149 - online Studio: the owner saves a section live, a long text is refused with a message
+  ---
+  duration_ms: 8.415539
+  type: 'test'
+  ...
+# Subtest: private drafts survive service reload and review never changes public config or receipts
+ok 150 - private drafts survive service reload and review never changes public config or receipts
+  ---
+  duration_ms: 5.549379
+  type: 'test'
+  ...
+# Subtest: publishing requires exact reviewed version; editing resets review and repeated publish cannot create another revision
+ok 151 - publishing requires exact reviewed version; editing resets review and repeated publish cannot create another revision
+  ---
+  duration_ms: 4.228109
+  type: 'test'
+  ...
+# Subtest: racing draft edits serialize and a competing public revision blocks stale review and publication
+ok 152 - racing draft edits serialize and a competing public revision blocks stale review and publication
+  ---
+  duration_ms: 2.075603
+  type: 'test'
+  ...
+# Subtest: legacy baseline hash drift is detected even before first managed revision; content removal publishes exactly
+ok 153 - legacy baseline hash drift is detected even before first managed revision; content removal publishes exactly
+  ---
+  duration_ms: 1.237616
+  type: 'test'
+  ...
+# Subtest: failed atomic draft publication rolls back config, change history and published state
+ok 154 - failed atomic draft publication rolls back config, change history and published state
+  ---
+  duration_ms: 1.14517
+  type: 'test'
+  ...
+# Subtest: legacy source changing during publication cannot publish a body different from the reviewed hash
+ok 155 - legacy source changing during publication cannot publish a body different from the reviewed hash
+  ---
+  duration_ms: 0.86761
+  type: 'test'
+  ...
+# Subtest: draft HTTP requires configure plus matching edit grant; summaries cannot read private proposals
+ok 156 - draft HTTP requires configure plus matching edit grant; summaries cannot read private proposals
+  ---
+  duration_ms: 23.845449
+  type: 'test'
+  ...
+# Subtest: disabled evidence performs no ID work; consent revocation discards buffered and in-flight observations
+ok 157 - disabled evidence performs no ID work; consent revocation discards buffered and in-flight observations
+  ---
+  duration_ms: 1.294019
+  type: 'test'
+  ...
+# Subtest: lazy observer preserves occurrence time and boot identity across module loading
+ok 158 - lazy observer preserves occurrence time and boot identity across module loading
+  ---
+  duration_ms: 0.804678
+  type: 'test'
+  ...
+# Subtest: connection outcomes are one-shot and retain transport, elapsed time and attempt identity
+ok 159 - connection outcomes are one-shot and retain transport, elapsed time and attempt identity
+  ---
+  duration_ms: 0.27047
+  type: 'test'
+  ...
+# Subtest: bounded bridge cannot accumulate unlimited records or emit after opt-out during buffer drain
+ok 160 - bounded bridge cannot accumulate unlimited records or emit after opt-out during buffer drain
+  ---
+  duration_ms: 0.625283
+  type: 'test'
+  ...
+# Subtest: only bounded evidence fields are accepted; unknown voice and initiated exports remain distinct
+ok 161 - only bounded evidence fields are accepted; unknown voice and initiated exports remain distinct
+  ---
+  duration_ms: 0.179475
+  type: 'test'
+  ...
+# Subtest: finance never activates a ledger without explicit settings and a database
+ok 162 - finance never activates a ledger without explicit settings and a database
+  ---
+  duration_ms: 15.801489
+  type: 'test'
+  ...
+# Subtest: preview is read-only; concurrent import retries persist one immutable revision and audit
+ok 163 - preview is read-only; concurrent import retries persist one immutable revision and audit
+  ---
+  duration_ms: 3.495629
+  type: 'test'
+  ...
+# Subtest: corrections require the expected revision and preserve original source evidence
+ok 164 - corrections require the expected revision and preserve original source evidence
+  ---
+  duration_ms: 3.716114
+  type: 'test'
+  ...
+# Subtest: one stale row rejects an entire multi-line import without partial writes
+ok 165 - one stale row rejects an entire multi-line import without partial writes
+  ---
+  duration_ms: 2.6088
+  type: 'test'
+  ...
+# Subtest: minor units, tax, currency, signs, timestamps and FX are strictly bounded
+ok 166 - minor units, tax, currency, signs, timestamps and FX are strictly bounded
+  ---
+  duration_ms: 0.722276
+  type: 'test'
+  ...
+# Subtest: integer calendar allocation preserves every source minor unit across partial periods
+ok 167 - integer calendar allocation preserves every source minor unit across partial periods
+  ---
+  duration_ms: 0.22377
+  type: 'test'
+  ...
+# Subtest: missing FX and incomplete imports never manufacture complete zero cost
+ok 168 - missing FX and incomplete imports never manufacture complete zero cost
+  ---
+  duration_ms: 1.583887
+  type: 'test'
+  ...
+# Subtest: invoice and cash views differ honestly, including credits, taxes, revenue refunds and estimates
+ok 169 - invoice and cash views differ honestly, including credits, taxes, revenue refunds and estimates
+  ---
+  duration_ms: 2.707114
+  type: 'test'
+  ...
+# Subtest: settled commitments are not double counted and cannot be voided while still referenced
+ok 170 - settled commitments are not double counted and cannot be voided while still referenced
+  ---
+  duration_ms: 1.988605
+  type: 'test'
+  ...
+# Subtest: forecast requires complete trailing days and classified, reconciled inputs
+ok 171 - forecast requires complete trailing days and classified, reconciled inputs
+  ---
+  duration_ms: 2.215209
+  type: 'test'
+  ...
+# Subtest: CSV roundtrips source fields without credentials and rejects malformed or duplicate headers
+ok 172 - CSV roundtrips source fields without credentials and rejects malformed or duplicate headers
+  ---
+  duration_ms: 1.582495
+  type: 'test'
+  ...
+# Subtest: finance routes deny ordinary analytics, editors and desktop keys; grants remain explicit
+ok 173 - finance routes deny ordinary analytics, editors and desktop keys; grants remain explicit
+  ---
+  duration_ms: 22.650536
+  type: 'test'
+  ...
+# Subtest: budget corrections keep immutable before/after evidence and reject competing editors
+ok 174 - budget corrections keep immutable before/after evidence and reject competing editors
+  ---
+  duration_ms: 1.650996
+  type: 'test'
+  ...
+# Subtest: cost per reporting installation/hour requires complete finance and non-zero comparable game totals
+ok 175 - cost per reporting installation/hour requires complete finance and non-zero comparable game totals
+  ---
+  duration_ms: 2.573438
+  type: 'test'
+  ...
+# Subtest: overflowing FX is rejected before persistence and aggregate/budget overflow keeps the ledger readable
+ok 176 - overflowing FX is rejected before persistence and aggregate/budget overflow keeps the ledger readable
+  ---
+  duration_ms: 1.15183
+  type: 'test'
+  ...
+# Subtest: credits cannot create negative net settlement on a linked commitment
+ok 177 - credits cannot create negative net settlement on a linked commitment
+  ---
+  duration_ms: 0.486067
+  type: 'test'
+  ...
+# Subtest: Home catalogue summary is small, permission-gated and excludes per-item records
+ok 178 - Home catalogue summary is small, permission-gated and excludes per-item records
+  ---
+  duration_ms: 34.491159
+  type: 'test'
+  ...
+# Subtest: device delivery exposes only its exact current revision receipt, never another device or operator audit
+ok 179 - device delivery exposes only its exact current revision receipt, never another device or operator audit
+  ---
+  duration_ms: 4.960039
+  type: 'test'
+  ...
+# Subtest: management private routes require explicit grants; old editor and desktop key do not gain access
+ok 180 - management private routes require explicit grants; old editor and desktop key do not gain access
+  ---
+  duration_ms: 1.72151
+  type: 'test'
+  ...
+# Subtest: summary device reads omit child context; private detail grants enable it
+ok 181 - summary device reads omit child context; private detail grants enable it
+  ---
+  duration_ms: 0.767683
+  type: 'test'
+  ...
+# Subtest: revisioned HTTP saves enforce both configuration and existing release permission
+ok 182 - revisioned HTTP saves enforce both configuration and existing release permission
+  ---
+  duration_ms: 3.294842
+  type: 'test'
+  ...
+# Subtest: public live uses one projected snapshot and strips private actor data
+ok 183 - public live uses one projected snapshot and strips private actor data
+  ---
+  duration_ms: 5.358948
+  type: 'test'
+  ...
+# Subtest: database absence and private errors never become fabricated success or leaked diagnostics
+ok 184 - database absence and private errors never become fabricated success or leaked diagnostics
+  ---
+  duration_ms: 1.441407
+  type: 'test'
+  ...
+# Subtest: public event endpoint rejects cross-origin writes and unsupported methods
+ok 185 - public event endpoint rejects cross-origin writes and unsupported methods
+  ---
+  duration_ms: 0.99557
+  type: 'test'
+  ...
+# Subtest: catalogue contains public source facts and verified website anchors only
+ok 186 - catalogue contains public source facts and verified website anchors only
+  ---
+  duration_ms: 3.62578
+  type: 'test'
+  ...
+# Subtest: attempt completion preserves missing outcomes and rejects conflicting lifecycle evidence
+ok 187 - attempt completion preserves missing outcomes and rejects conflicting lifecycle evidence
+  ---
+  duration_ms: 8.326468
+  type: 'test'
+  ...
+# Subtest: conditional publication conflict stays pending and never reports available
+ok 188 - conditional publication conflict stays pending and never reports available
+  ---
+  duration_ms: 4.432381
+  type: 'test'
+  ...
+# Subtest: attention follow-up enforces ordered states, evidence, conflicts and audit history
+ok 189 - attention follow-up enforces ordered states, evidence, conflicts and audit history
+  ---
+  duration_ms: 1.459685
+  type: 'test'
+  ...
+# (node:14658) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every source item has a typed workspace with explicit consumers, dependencies and static website limits
+ok 190 - every source item has a typed workspace with explicit consumers, dependencies and static website limits
+  ---
+  duration_ms: 34.245937
+  type: 'test'
+  ...
+# Subtest: item proposal changes only the selected typed item and placement while retaining unrelated settings
+ok 191 - item proposal changes only the selected typed item and placement while retaining unrelated settings
+  ---
+  duration_ms: 4.533841
+  type: 'test'
+  ...
+# Subtest: item drafts cannot be overwritten from a different item or generic editor and declared-only enable fails closed
+ok 192 - item drafts cannot be overwritten from a different item or generic editor and declared-only enable fails closed
+  ---
+  duration_ms: 1.367138
+  type: 'test'
+  ...
+# Subtest: stale item draft cannot overwrite newer public settings and unchanged inherited placement is preserved
+ok 193 - stale item draft cannot overwrite newer public settings and unchanged inherited placement is preserved
+  ---
+  duration_ms: 1.261732
+  type: 'test'
+  ...
+# Subtest: item reads are available without SQL but cannot invent settings; private drafts need both configure and edit
+ok 194 - item reads are available without SQL but cannot invent settings; private drafts need both configure and edit
+  ---
+  duration_ms: 26.939775
+  type: 'test'
+  ...
+# Subtest: actual shared item policy separates game/story identities and Off overrides every saved profile without mutation
+ok 195 - actual shared item policy separates game/story identities and Off overrides every saved profile without mutation
+  ---
+  duration_ms: 7.338499
+  type: 'test'
+  ...
+# Subtest: production database URLs require verified TLS even when URL parameters try to disable it
+ok 196 - production database URLs require verified TLS even when URL parameters try to disable it
+  ---
+  duration_ms: 2.740024
+  type: 'test'
+  ...
+# Subtest: provider feeds keep exact run IDs, attempts, quota observations and sanitized outcomes
+ok 197 - provider feeds keep exact run IDs, attempts, quota observations and sanitized outcomes
+  ---
+  duration_ms: 22.746107
+  type: 'test'
+  ...
+# Subtest: concurrent duplicate dispatches send one provider request and immutable request bodies conflict
+ok 198 - concurrent duplicate dispatches send one provider request and immutable request bodies conflict
+  ---
+  duration_ms: 4.286626
+  type: 'test'
+  ...
+# Subtest: uncertain delivery is not retried and a later exact provider run resolves its failed outcome
+ok 199 - uncertain delivery is not retried and a later exact provider run resolves its failed outcome
+  ---
+  duration_ms: 2.341105
+  type: 'test'
+  ...
+# Subtest: stale feeds preserve prior observations without presenting old jobs as fresh successful checks
+ok 200 - stale feeds preserve prior observations without presenting old jobs as fresh successful checks
+  ---
+  duration_ms: 1.797513
+  type: 'test'
+  ...
+# Subtest: database checks and configuration retries record actual maintenance outcomes
+ok 201 - database checks and configuration retries record actual maintenance outcomes
+  ---
+  duration_ms: 1.620121
+  type: 'test'
+  ...
+# Subtest: operation routes enforce run/read scopes and existing website or configuration permission
+ok 202 - operation routes enforce run/read scopes and existing website or configuration permission
+  ---
+  duration_ms: 4.949214
+  type: 'test'
+  ...
+# Subtest: a malformed provider payload stays unavailable and missing quotas are not fabricated
+ok 203 - a malformed provider payload stays unavailable and missing quotas are not fabricated
+  ---
+  duration_ms: 0.374192
+  type: 'test'
+  ...
+# Subtest: Netlify native database binding takes precedence to preserve deploy-context branch isolation
+ok 204 - Netlify native database binding takes precedence to preserve deploy-context branch isolation
+  ---
+  duration_ms: 0.199935
+  type: 'test'
+  ...
+# Subtest: unrelated workflows cannot resolve a bot operation even with the same title UUID
+ok 205 - unrelated workflows cannot resolve a bot operation even with the same title UUID
+  ---
+  duration_ms: 2.388875
+  type: 'test'
+  ...
+# Subtest: outcome summaries keep boot failures, missing results, voice unknowns and initiated downloads distinct
+ok 206 - outcome summaries keep boot failures, missing results, voice unknowns and initiated downloads distinct
+  ---
+  duration_ms: 13.78949
+  type: 'test'
+  ...
+# Subtest: per-story and per-activity summaries retain conflicting matched terminals instead of hiding them
+ok 207 - per-story and per-activity summaries retain conflicting matched terminals instead of hiding them
+  ---
+  duration_ms: 1.289684
+  type: 'test'
+  ...
+# Subtest: synthetic traffic is isolated and invalid source/result claims are rejected before persistence
+ok 208 - synthetic traffic is isolated and invalid source/result claims are rejected before persistence
+  ---
+  duration_ms: 1.298396
+  type: 'test'
+  ...
+# Subtest: game and story IDs are distinct and legacy story totals do not become per-story usage
+ok 209 - game and story IDs are distinct and legacy story totals do not become per-story usage
+  ---
+  duration_ms: 5.705961
+  type: 'test'
+  ...
+# Subtest: management query rejects invalid dates, unknown inputs, unsafe periods and filters
+ok 210 - management query rejects invalid dates, unknown inputs, unsafe periods and filters
+  ---
+  duration_ms: 0.708636
+  type: 'test'
+  ...
+# Subtest: weighted FPS and battery unavailability retain measurement denominators
+ok 211 - weighted FPS and battery unavailability retain measurement denominators
+  ---
+  duration_ms: 2.401294
+  type: 'test'
+  ...
+# Subtest: measured zero battery loss is different from no measurement
+ok 212 - measured zero battery loss is different from no measurement
+  ---
+  duration_ms: 0.965084
+  type: 'test'
+  ...
+# Subtest: build-specific reads use originating daily build, exclude mixed days and retain latest sender separately
+ok 213 - build-specific reads use originating daily build, exclude mixed days and retain latest sender separately
+  ---
+  duration_ms: 2.208038
+  type: 'test'
+  ...
+# Subtest: 125 installations paginate without capped totals or duplicate rows on tied timestamps
+ok 214 - 125 installations paginate without capped totals or duplicate rows on tied timestamps
+  ---
+  duration_ms: 34.932625
+  type: 'test'
+  ...
+# Subtest: child identity stays paired with installation and names require restricted-context option
+ok 215 - child identity stays paired with installation and names require restricted-context option
+  ---
+  duration_ms: 1.908616
+  type: 'test'
+  ...
+# Subtest: latest blank reported name does not resurrect an older name
+ok 216 - latest blank reported name does not resurrect an older name
+  ---
+  duration_ms: 0.471255
+  type: 'test'
+  ...
+# Subtest: activity usage labels profile participations and never invents attempts
+ok 217 - activity usage labels profile participations and never invents attempts
+  ---
+  duration_ms: 0.694615
+  type: 'test'
+  ...
+# Subtest: website Play-click counter is not presented as game-start conversion
+ok 218 - website Play-click counter is not presented as game-start conversion
+  ---
+  duration_ms: 0.878176
+  type: 'test'
+  ...
+# Subtest: test traffic uses a separately supplied store and missing classification is explicit
+ok 219 - test traffic uses a separately supplied store and missing classification is explicit
+  ---
+  duration_ms: 0.593486
+  type: 'test'
+  ...
+# Subtest: fixed tester report is fixed in code, with deployment and verification explicitly unconfirmed
+ok 220 - fixed tester report is fixed in code, with deployment and verification explicitly unconfirmed
+  ---
+  duration_ms: 0.613286
+  type: 'test'
+  ...
+# Subtest: management reads do not write source records or mutate injected objects
+ok 221 - management reads do not write source records or mutate injected objects
+  ---
+  duration_ms: 0.973426
+  type: 'test'
+  ...
+# Subtest: daily chart series separates missing days, observed inactivity and unique active installations
+ok 222 - daily chart series separates missing days, observed inactivity and unique active installations
+  ---
+  duration_ms: 0.591573
+  type: 'test'
+  ...
+# Subtest: private device history and problem associations do not include a different installation
+ok 223 - private device history and problem associations do not include a different installation
+  ---
+  duration_ms: 0.571463
+  type: 'test'
+  ...
+# Subtest: permanent rejection isolates an invalid attempt so later valid reports can progress
+ok 224 - permanent rejection isolates an invalid attempt so later valid reports can progress
+  ---
+  duration_ms: 4.268008
+  type: 'test'
+  ...
+# Subtest: management collection is gated and only durable bounded events are sent with explicit unknown source
+ok 225 - management collection is gated and only durable bounded events are sent with explicit unknown source
+  ---
+  duration_ms: 0.395363
+  type: 'test'
+  ...
+# Subtest: lost acknowledgement retains event ID and retry body across reload; acknowledgement removes only named events
+ok 226 - lost acknowledgement retains event ID and retry body across reload; acknowledgement removes only named events
+  ---
+  duration_ms: 2.919178
+  type: 'test'
+  ...
+# Subtest: HTTP success without a committed-ID acknowledgement does not clear queue
+ok 227 - HTTP success without a committed-ID acknowledgement does not clear queue
+  ---
+  duration_ms: 0.420481
+  type: 'test'
+  ...
+# Subtest: analytics opt-out clears only management queue, including an in-flight lost acknowledgement
+ok 228 - analytics opt-out clears only management queue, including an in-flight lost acknowledgement
+  ---
+  duration_ms: 0.316397
+  type: 'test'
+  ...
+# Subtest: name reporting opt-out discards old named retry bodies and omits names from new events
+ok 229 - name reporting opt-out discards old named retry bodies and omits names from new events
+  ---
+  duration_ms: 0.34542
+  type: 'test'
+  ...
+# Subtest: storage quota failures are nonblocking and never transmit an undurable newly collected event
+ok 230 - storage quota failures are nonblocking and never transmit an undurable newly collected event
+  ---
+  duration_ms: 0.378398
+  type: 'test'
+  ...
+# Subtest: retry-after is honoured, only one flush runs, and stopping prevents stale response rewriting queue
+ok 231 - retry-after is honoured, only one flush runs, and stopping prevents stale response rewriting queue
+  ---
+  duration_ms: 0.648066
+  type: 'test'
+  ...
+# Subtest: queue limits evict a whole attempt rather than only its terminal event; old events expire
+ok 232 - queue limits evict a whole attempt rather than only its terminal event; old events expire
+  ---
+  duration_ms: 0.436554
+  type: 'test'
+  ...
+# Subtest: arbitrary payload fields, room codes, unknown names and invalid receipts are refused
+ok 233 - arbitrary payload fields, room codes, unknown names and invalid receipts are refused
+  ---
+  duration_ms: 0.549812
+  type: 'test'
+  ...
+# Subtest: config receipt survives failure and is removed only after explicit successful committed response
+ok 234 - config receipt survives failure and is removed only after explicit successful committed response
+  ---
+  duration_ms: 0.58897
+  type: 'test'
+  ...
+# Subtest: activity adapter counts one attempt for multiple profile participants and one terminal outcome
+ok 235 - activity adapter counts one attempt for multiple profile participants and one terminal outcome
+  ---
+  duration_ms: 0.574497
+  type: 'test'
+  ...
+# Subtest: map: every id is unique in its list and well-formed (WORLD-008)
+ok 236 - map: every id is unique in its list and well-formed (WORLD-008)
+  ---
+  duration_ms: 1.007767
+  type: 'test'
+  ...
+# Subtest: map: every reference resolves (WORLD-009)
+ok 237 - map: every reference resolves (WORLD-009)
+  ---
+  duration_ms: 0.571513
+  type: 'test'
+  ...
+# Subtest: map: every place, road, bridge, landmark and spot is inside the valley
+ok 238 - map: every place, road, bridge, landmark and spot is inside the valley
+  ---
+  duration_ms: 2.130584
+  type: 'test'
+  ...
+# Subtest: map: a city road ends exactly on one of the city's gates (ROAD-007), and every gate is on the city's edge
+ok 239 - map: a city road ends exactly on one of the city's gates (ROAD-007), and every gate is on the city's edge
+  ---
+  duration_ms: 0.323207
+  type: 'test'
+  ...
+# Subtest: map: saved spots and Studio content belong to a layout (round T migration)
+ok 240 - map: saved spots and Studio content belong to a layout (round T migration)
+  ---
+  duration_ms: 0.34625
+  type: 'test'
+  ...
+# Subtest: map: layout 'C' is the valley as it was (round T0 moved nothing)
+ok 241 - map: layout 'C' is the valley as it was (round T0 moved nothing) # SKIP
+  ---
+  duration_ms: 0.082652
+  type: 'test'
+  ...
+# Subtest: banks: Vietnam east of the river, Australia west, north to south; the home island between the river arms
+ok 242 - banks: Vietnam east of the river, Australia west, north to south; the home island between the river arms
+  ---
+  duration_ms: 0.538715
+  type: 'test'
+  ...
+# Subtest: the real coins and notes
+ok 243 - the real coins and notes
+  ---
+  duration_ms: 2.281757
+  type: 'test'
+  ...
+# Subtest: sums in both currencies
+ok 244 - sums in both currencies
+  ---
+  duration_ms: 0.158604
+  type: 'test'
+  ...
+# Subtest: change-making: fewest coins and notes, exact
+ok 245 - change-making: fewest coins and notes, exact
+  ---
+  duration_ms: 4.69603
+  type: 'test'
+  ...
+# Subtest: giving change in the shop
+ok 246 - giving change in the shop
+  ---
+  duration_ms: 0.25107
+  type: 'test'
+  ...
+# Subtest: which is cheaper
+ok 247 - which is cheaper
+  ---
+  duration_ms: 0.336897
+  type: 'test'
+  ...
+# Subtest: Ba Hũ: Save, Spend and Share
+ok 248 - Ba Hũ: Save, Spend and Share
+  ---
+  duration_ms: 0.329587
+  type: 'test'
+  ...
+# Subtest: Wait and Grow: simple interest
+ok 249 - Wait and Grow: simple interest
+  ---
+  duration_ms: 0.236829
+  type: 'test'
+  ...
+# Subtest: Đổi Hàng: fair trades
+ok 250 - Đổi Hàng: fair trades
+  ---
+  duration_ms: 0.240885
+  type: 'test'
+  ...
+# Subtest: answers near the right one
+ok 251 - answers near the right one
+  ---
+  duration_ms: 0.31153
+  type: 'test'
+  ...
+# Subtest: adapter metadata declares bounded cooperative/turn-based roster semantics
+ok 252 - adapter metadata declares bounded cooperative/turn-based roster semantics
+  ---
+  duration_ms: 0.699192
+  type: 'test'
+  ...
+# Subtest: move validators and turn helpers are deterministic
+ok 253 - move validators and turn helpers are deterministic
+  ---
+  duration_ms: 0.175729
+  type: 'test'
+  ...
+# Subtest: team round and quiz adapters resolve bounded results
+ok 254 - team round and quiz adapters resolve bounded results
+  ---
+  duration_ms: 0.640905
+  type: 'test'
+  ...
+# Subtest: Batch A: new games have valid move ranges and metadata
+ok 255 - Batch A: new games have valid move ranges and metadata
+  ---
+  duration_ms: 0.158373
+  type: 'test'
+  ...
+# Subtest: all five shared games use board reducers and distinguish command, config, ACK and replay slots
+ok 256 - all five shared games use board reducers and distinguish command, config, ACK and replay slots
+  ---
+  duration_ms: 1.119072
+  type: 'test'
+  ...
+# Subtest: team and board renderers retain offline and online paths
+ok 257 - team and board renderers retain offline and online paths
+  ---
+  duration_ms: 1.039995
+  type: 'test'
+  ...
+# Subtest: Caro: one friend is asked, says yes, both get the same seats
+ok 258 - Caro: one friend is asked, says yes, both get the same seats
+  ---
+  duration_ms: 7.114393
+  type: 'test'
+  ...
+# Subtest: Caro: moves arrive in order on the other device
+ok 259 - Caro: moves arrive in order on the other device
+  ---
+  duration_ms: 5.689556
+  type: 'test'
+  ...
+# Subtest: Oẳn tù tì: everyone is asked; those who say no are left out; all hands are shown together
+ok 260 - Oẳn tù tì: everyone is asked; those who say no are left out; all hands are shown together
+  ---
+  duration_ms: 81.640969
+  type: 'test'
+  ...
+# Subtest: a player who leaves ends their waits with null, and the others are told
+ok 261 - a player who leaves ends their waits with null, and the others are told
+  ---
+  duration_ms: 6.361067
+  type: 'test'
+  ...
+# Subtest: nobody says yes: the inviter is told, no game starts
+ok 262 - nobody says yes: the inviter is told, no game starts
+  ---
+  duration_ms: 5.025687
+  type: 'test'
+  ...
+# Subtest: moves from someone not in the game, or for another game, are ignored
+ok 263 - moves from someone not in the game, or for another game, are ignored
+  ---
+  duration_ms: 4.989694
+  type: 'test'
+  ...
+# Subtest: rpsWinners: rock, paper, scissors for any number of hands
+ok 264 - rpsWinners: rock, paper, scissors for any number of hands
+  ---
+  duration_ms: 0.383216
+  type: 'test'
+  ...
+# Subtest: (round R privacy) a game opens only after this child said yes to the one who asked
+ok 265 - (round R privacy) a game opens only after this child said yes to the one who asked
+  ---
+  duration_ms: 10.412246
+  type: 'test'
+  ...
+# Subtest: Caro (r63): the board size the inviter chose reaches every device, and a size out of range is dropped
+ok 266 - Caro (r63): the board size the inviter chose reaches every device, and a size out of range is dropped
+  ---
+  duration_ms: 10.17117
+  type: 'test'
+  ...
+# Subtest: Tiến Lên miền Bắc: same suit for singles and runs, same colours for pairs, only four of a kind cuts a 2
+ok 267 - Tiến Lên miền Bắc: same suit for singles and runs, same colours for pairs, only four of a kind cuts a 2
+  ---
+  duration_ms: 2.266886
+  type: 'test'
+  ...
+# Subtest: Snakes metadata invites four seats and transport rejects client-selected dice/reserved-slot payloads
+ok 268 - Snakes metadata invites four seats and transport rejects client-selected dice/reserved-slot payloads
+  ---
+  duration_ms: 10.043291
+  type: 'test'
+  ...
+# Subtest: Tug transport accepts pull requests and rejects forged strengths or malformed reserved slots
+ok 269 - Tug transport accepts pull requests and rejects forged strengths or malformed reserved slots
+  ---
+  duration_ms: 10.697021
+  type: 'test'
+  ...
+# Subtest: enough in the pile: five seeds from your own pile, nothing borrowed
+ok 270 - enough in the pile: five seeds from your own pile, nothing borrowed
+  ---
+  duration_ms: 1.851903
+  type: 'test'
+  ...
+# Subtest: a short pile borrows the rest from the other player, and it goes back at the end
+ok 271 - a short pile borrows the rest from the other player, and it goes back at the end
+  ---
+  duration_ms: 0.361113
+  type: 'test'
+  ...
+# Subtest: the top player borrows too; with nothing left anywhere no seeds go out
+ok 272 - the top player borrows too; with nothing left anywhere no seeds go out
+  ---
+  duration_ms: 0.292993
+  type: 'test'
+  ...
+# Subtest: a debt bigger than what is left gives back only what there is
+ok 273 - a debt bigger than what is left gives back only what there is
+  ---
+  duration_ms: 0.174668
+  type: 'test'
+  ...
+# Subtest: shared Ô Ăn Quan preserves all70 seeds through sowing, borrowing and final repayment
+ok 274 - shared Ô Ăn Quan preserves all70 seeds through sowing, borrowing and final repayment
+  ---
+  duration_ms: 4.494453
+  type: 'test'
+  ...
+# Subtest: Ô Ăn Quan rejects opponent/mandarin/empty/fractional choices without advancing a turn
+ok 275 - Ô Ăn Quan rejects opponent/mandarin/empty/fractional choices without advancing a turn
+  ---
+  duration_ms: 0.667024
+  type: 'test'
+  ...
+# Subtest: real invited Ô Ăn Quan seats finish one shared game; invalid, future and forged commits change nothing
+ok 276 - real invited Ô Ăn Quan seats finish one shared game; invalid, future and forged commits change nothing
+  ---
+  duration_ms: 8.45657
+  type: 'test'
+  ...
+# Subtest: Ô Ăn Quan recovers a lost capture/sow commit without sowing twice
+ok 277 - Ô Ăn Quan recovers a lost capture/sow commit without sowing twice
+  ---
+  duration_ms: 3.120635
+  type: 'test'
+  ...
+# Subtest: an empty mandarin pit permits a capture beyond it in either direction
+ok 278 - an empty mandarin pit permits a capture beyond it in either direction
+  ---
+  duration_ms: 1.014206
+  type: 'test'
+  ...
+# Subtest: a chained capture cannot skip over a mandarin stone
+ok 279 - a chained capture cannot skip over a mandarin stone
+  ---
+  duration_ms: 0.143362
+  type: 'test'
+  ...
+# Subtest: a full mandarin pit stops relay sowing; a mandarin beyond an empty pit can be captured
+ok 280 - a full mandarin pit stops relay sowing; a mandarin beyond an empty pit can be captured
+  ---
+  duration_ms: 0.139055
+  type: 'test'
+  ...
+# Subtest: report arriving in the final permitted tick is observed without a longer deadline
+ok 281 - report arriving in the final permitted tick is observed without a longer deadline
+  ---
+  duration_ms: 0.724429
+  type: 'test'
+  ...
+# Subtest: absent report fails within the original wait budget
+ok 282 - absent report fails within the original wait budget
+  ---
+  duration_ms: 0.229739
+  type: 'test'
+  ...
+# Subtest: already observed report needs no polling delay
+ok 283 - already observed report needs no polling delay
+  ---
+  duration_ms: 0.131304
+  type: 'test'
+  ...
+# Subtest: encrypted photo survives a same-key hello refresh during image loading and decryption
+ok 284 - encrypted photo survives a same-key hello refresh during image loading and decryption
+  ---
+  duration_ms: 24.817599
+  type: 'test'
+  ...
+# Subtest: photo awaits cannot send to a removed player, new key, new room or waiting knocker
+ok 285 - photo awaits cannot send to a removed player, new key, new room or waiting knocker
+  ---
+  duration_ms: 9.13471
+  type: 'test'
+  ...
+# Subtest: BROKERS returns default secure websocket brokers
+ok 286 - BROKERS returns default secure websocket brokers
+  ---
+  duration_ms: 1.211407
+  type: 'test'
+  ...
+# Subtest: topicFor and keyFor derive deterministic encrypted topics and keys
+ok 287 - topicFor and keyFor derive deterministic encrypted topics and keys
+  ---
+  duration_ms: 14.708035
+  type: 'test'
+  ...
+# Subtest: seal and open correctly encrypt and decrypt payloads with AES-GCM
+ok 288 - seal and open correctly encrypt and decrypt payloads with AES-GCM
+  ---
+  duration_ms: 6.189484
+  type: 'test'
+  ...
+# Subtest: okRoom enforces 6-digit room code format
+ok 289 - okRoom enforces 6-digit room code format
+  ---
+  duration_ms: 0.339732
+  type: 'test'
+  ...
+# Subtest: channel reconnects and subscribes again after a websocket close
+ok 290 - channel reconnects and subscribes again after a websocket close
+  ---
+  duration_ms: 26.695349
+  type: 'test'
+  ...
+# Subtest: heartbeat re-announces only admitted cloud guests and stops after leaving
+ok 291 - heartbeat re-announces only admitted cloud guests and stops after leaving
+  ---
+  duration_ms: 0.730188
+  type: 'test'
+  ...
+# Subtest: a viewer still sees Analytics and tester reports only, and changes nothing
+ok 292 - a viewer still sees Analytics and tester reports only, and changes nothing
+  ---
+  duration_ms: 1.325557
+  type: 'test'
+  ...
+# Subtest: an editor does what it did before: every page and Publish, not code live, not a new family code, not the admins
+ok 293 - an editor does what it did before: every page and Publish, not code live, not a new family code, not the admins
+  ---
+  duration_ms: 0.207436
+  type: 'test'
+  ...
+# Subtest: a chosen set allows exactly what is ticked; admins, keys, security and the log never come one by one
+ok 294 - a chosen set allows exactly what is ticked; admins, keys, security and the log never come one by one
+  ---
+  duration_ms: 0.335064
+  type: 'test'
+  ...
+# Subtest: saving an account keeps its chosen permissions, drops unknown ones, and a preset clears them
+ok 295 - saving an account keeps its chosen permissions, drops unknown ones, and a preset clears them
+  ---
+  duration_ms: 94.251294
+  type: 'test'
+  ...
+# Subtest: a closing game clears only its own plan and allowance
+ok 296 - a closing game clears only its own plan and allowance
+  ---
+  duration_ms: 0.688536
+  type: 'test'
+  ...
+# Subtest: an allowance that is not a positive count of taps counts as none
+ok 297 - an allowance that is not a positive count of taps counts as none
+  ---
+  duration_ms: 0.163351
+  type: 'test'
+  ...
+# Subtest: a broken listener never breaks the game
+ok 298 - a broken listener never breaks the game
+  ---
+  duration_ms: 0.206154
+  type: 'test'
+  ...
+# Subtest: an older or damaged saved policy falls back to the safe choices
+ok 299 - an older or damaged saved policy falls back to the safe choices
+  ---
+  duration_ms: 1.017802
+  type: 'test'
+  ...
+# Subtest: TOTP matches RFC 6238 (SHA-1) and takes one step either side
+ok 300 - TOTP matches RFC 6238 (SHA-1) and takes one step either side
+  ---
+  duration_ms: 2.619185
+  type: 'test'
+  ...
+# Subtest: Studio sign-in: the owner by password, admins in two steps, short passwords, lockout, log, sign everyone out, exe key, family photos
+ok 301 - Studio sign-in: the owner by password, admins in two steps, short passwords, lockout, log, sign everyone out, exe key, family photos
+  ---
+  duration_ms: 8678.578821
+  type: 'test'
+  ...
+# Subtest: hello: rate limit per connection, missing-line caps; /api/live without the admin
+ok 302 - hello: rate limit per connection, missing-line caps; /api/live without the admin
+  ---
+  duration_ms: 21.659746
+  type: 'test'
+  ...
+# Subtest: the service worker never keeps family photos
+ok 303 - the service worker never keeps family photos
+  ---
+  duration_ms: 0.448552
+  type: 'test'
+  ...
+# Subtest: Studio engine: photos go to the family store, the move to private storage, a photo taken off is deleted
+ok 304 - Studio engine: photos go to the family store, the move to private storage, a photo taken off is deleted
+  ---
+  duration_ms: 5.595078
+  type: 'test'
+  ...
+# Subtest: legacy report without client ID survives queue parsing
+ok 305 - legacy report without client ID survives queue parsing
+  ---
+  duration_ms: 1.807828
+  type: 'test'
+  ...
+# Subtest: invalid old storage is detected rather than overwritten as an empty queue
+ok 306 - invalid old storage is detected rather than overwritten as an empty queue
+  ---
+  duration_ms: 0.307825
+  type: 'test'
+  ...
+# Subtest: quota fallback keeps every report identity/text and admits omitted pictures
+ok 307 - quota fallback keeps every report identity/text and admits omitted pictures
+  ---
+  duration_ms: 0.369465
+  type: 'test'
+  ...
+# Subtest: storage denial returns failure; it never claims queued
+ok 308 - storage denial returns failure; it never claims queued
+  ---
+  duration_ms: 0.198963
+  type: 'test'
+  ...
+# Subtest: Hội làng: three events a day, 17:30 instead of 19:00 for under-5s
+ok 309 - Hội làng: three events a day, 17:30 instead of 19:00 for under-5s
+  ---
+  duration_ms: 2.052289
+  type: 'test'
+  ...
+# Subtest: Hội làng: on the AEST clock, late arrivals join for 15 minutes, then told the next one
+ok 310 - Hội làng: on the AEST clock, late arrivals join for 15 minutes, then told the next one
+  ---
+  duration_ms: 0.578083
+  type: 'test'
+  ...
+# Subtest: Hội làng: prizes in order, once per event; under-5s for joining, big kids for a win
+ok 311 - Hội làng: prizes in order, once per event; under-5s for joining, big kids for a win
+  ---
+  duration_ms: 0.185994
+  type: 'test'
+  ...
+# Subtest: surprises: at most 3 a session, spaced out, nothing new while one waits
+ok 312 - surprises: at most 3 a session, spaced out, nothing new while one waits
+  ---
+  duration_ms: 0.520207
+  type: 'test'
+  ...
+# Subtest: surprises: timely ones first, each only when it can be enjoyed
+ok 313 - surprises: timely ones first, each only when it can be enjoyed
+  ---
+  duration_ms: 0.394793
+  type: 'test'
+  ...
+# Subtest: family missions: write, show to the child, tick once behind the gate
+ok 314 - family missions: write, show to the child, tick once behind the gate
+  ---
+  duration_ms: 0.817136
+  type: 'test'
+  ...
+# Subtest: weekly note from the play report days
+ok 315 - weekly note from the play report days
+  ---
+  duration_ms: 0.651031
+  type: 'test'
+  ...
+# Subtest: dance break, bedtime and birthday on the AEST clock
+ok 316 - dance break, bedtime and birthday on the AEST clock
+  ---
+  duration_ms: 0.349976
+  type: 'test'
+  ...
+# Subtest: valid copy parses and returns expected structure
+ok 317 - valid copy parses and returns expected structure
+  ---
+  duration_ms: 1.525201
+  type: 'test'
+  ...
+# Subtest: invalid JSON rejected
+ok 318 - invalid JSON rejected
+  ---
+  duration_ms: 0.39323
+  type: 'test'
+  ...
+# Subtest: too-large copy rejected
+ok 319 - too-large copy rejected
+  ---
+  duration_ms: 57.895685
+  type: 'test'
+  ...
+# Subtest: wrong app rejected
+ok 320 - wrong app rejected
+  ---
+  duration_ms: 4.812882
+  type: 'test'
+  ...
+# Subtest: wrong version rejected
+ok 321 - wrong version rejected
+  ---
+  duration_ms: 0.271301
+  type: 'test'
+  ...
+# Subtest: future saved timestamp rejected
+ok 322 - future saved timestamp rejected
+  ---
+  duration_ms: 0.303608
+  type: 'test'
+  ...
+# Subtest: invalid device id rejected
+ok 323 - invalid device id rejected
+  ---
+  duration_ms: 0.311549
+  type: 'test'
+  ...
+# Subtest: missing profiles array rejected
+ok 324 - missing profiles array rejected
+  ---
+  duration_ms: 0.207165
+  type: 'test'
+  ...
+# Subtest: profile with bad age rejected
+ok 325 - profile with bad age rejected
+  ---
+  duration_ms: 0.303678
+  type: 'test'
+  ...
+# Subtest: profile with non-object look rejected
+ok 326 - profile with non-object look rejected
+  ---
+  duration_ms: 0.345269
+  type: 'test'
+  ...
+# Subtest: farm with non-number coins rejected
+ok 327 - farm with non-number coins rejected
+  ---
+  duration_ms: 0.28486
+  type: 'test'
+  ...
+# Subtest: profile array length limit enforced
+ok 328 - profile array length limit enforced
+  ---
+  duration_ms: 0.428473
+  type: 'test'
+  ...
+# Subtest: settings must be object
+ok 329 - settings must be object
+  ---
+  duration_ms: 0.23013
+  type: 'test'
+  ...
+# Subtest: farm must be object
+ok 330 - farm must be object
+  ---
+  duration_ms: 0.219003
+  type: 'test'
+  ...
+# Subtest: prototype keys are rejected
+ok 331 - prototype keys are rejected
+  ---
+  duration_ms: 0.27755
+  type: 'test'
+  ...
+# Subtest: copy creation upgrades the internal snapshot and removes secrets
+ok 332 - copy creation upgrades the internal snapshot and removes secrets
+  ---
+  duration_ms: 1.031162
+  type: 'test'
+  ...
+# Subtest: duplicate profile ids are rejected
+ok 333 - duplicate profile ids are rejected
+  ---
+  duration_ms: 0.282928
+  type: 'test'
+  ...
+# Subtest: legacy v2 backup file is accepted by readSaveCopyOrLegacy
+ok 334 - legacy v2 backup file is accepted by readSaveCopyOrLegacy
+  ---
+  duration_ms: 0.26383
+  type: 'test'
+  ...
+# Subtest: familyCode in settings is normalized and preserved in save copies
+ok 335 - familyCode in settings is normalized and preserved in save copies
+  ---
+  duration_ms: 0.455893
+  type: 'test'
+  ...
+# Subtest: private parent questions round-trip in a save copy, while old files still load
+ok 336 - private parent questions round-trip in a save copy, while old files still load
+  ---
+  duration_ms: 0.794052
+  type: 'test'
+  ...
+# Subtest: waiting service worker activates first and reloads only after controllerchange
+ok 337 - waiting service worker activates first and reloads only after controllerchange
+  ---
+  duration_ms: 3.232982
+  type: 'test'
+  ...
+# Subtest: prices: a nice thing costs about one day of play
+ok 338 - prices: a nice thing costs about one day of play
+  ---
+  duration_ms: 1.391223
+  type: 'test'
+  ...
+# Subtest: the catalogue: every kind of thing, both languages, about twice the choice for girls and for boys
+ok 339 - the catalogue: every kind of thing, both languages, about twice the choice for girls and for boys
+  ---
+  duration_ms: 5.68464
+  type: 'test'
+  ...
+# Subtest: two default outfits
+ok 340 - two default outfits
+  ---
+  duration_ms: 0.225273
+  type: 'test'
+  ...
+# Subtest: what a child already wears counts as owned
+ok 341 - what a child already wears counts as owned
+  ---
+  duration_ms: 0.483073
+  type: 'test'
+  ...
+# Subtest: buying takes game coins and never more than there are
+ok 342 - buying takes game coins and never more than there are
+  ---
+  duration_ms: 0.402674
+  type: 'test'
+  ...
+# Subtest: wearing: only what is owned, in its own slot, and the avatar reads it
+ok 343 - wearing: only what is owned, in its own slot, and the avatar reads it
+  ---
+  duration_ms: 0.368103
+  type: 'test'
+  ...
+# Subtest: clothes in a trade: the same set both ways; the other set only as a gift of its own clothes
+ok 344 - clothes in a trade: the same set both ways; the other set only as a gift of its own clothes
+  ---
+  duration_ms: 0.545615
+  type: 'test'
+  ...
+# Subtest: r79: nothing is shared; every thing for both sets has a girls' version in its own colour
+ok 345 - r79: nothing is shared; every thing for both sets has a girls' version in its own colour
+  ---
+  duration_ms: 4.742895
+  type: 'test'
+  ...
+# Subtest: r79: a child wears only their own set; the other set is bought as a gift box, never worn
+ok 346 - r79: a child wears only their own set; the other set is bought as a gift box, never worn
+  ---
+  duration_ms: 0.265552
+  type: 'test'
+  ...
+# Subtest: r79: an older save is put right once: shared things become her set's version, the other set becomes gift boxes
+ok 347 - r79: an older save is put right once: shared things become her set's version, the other set becomes gift boxes
+  ---
+  duration_ms: 0.579556
+  type: 'test'
+  ...
+# Subtest: r79: a gift box goes only to a child of the set it was made for
+ok 348 - r79: a gift box goes only to a child of the set it was made for
+  ---
+  duration_ms: 0.223149
+  type: 'test'
+  ...
+# Subtest: Snakes uses advancing seeded rolls and immutable legal destinations for all four seats
+ok 349 - Snakes uses advancing seeded rolls and immutable legal destinations for all four seats
+  ---
+  duration_ms: 6.771634
+  type: 'test'
+  ...
+# Subtest: four real invited Snakes seats share one complete board and reject client-selected dice/future turns
+ok 350 - four real invited Snakes seats share one complete board and reject client-selected dice/future turns
+  ---
+  duration_ms: 8.048738
+  type: 'test'
+  ...
+# Subtest: Snakes agrees on gentle rules for any younger seat and finishes every piece
+ok 351 - Snakes agrees on gentle rules for any younger seat and finishes every piece
+  ---
+  duration_ms: 3.405917
+  type: 'test'
+  ...
+# Subtest: lost Snakes commit recovers without replaying a roll; reconnects cannot inject future steps
+ok 352 - lost Snakes commit recovers without replaying a roll; reconnects cannot inject future steps
+  ---
+  duration_ms: 1.590257
+  type: 'test'
+  ...
+# Subtest: a board waiting for a mode acknowledgement can explicitly continue locally
+ok 353 - a board waiting for a mode acknowledgement can explicitly continue locally
+  ---
+  duration_ms: 0.48754
+  type: 'test'
+  ...
+# Subtest: start timings are checked: numbers capped, odd rows and step names dropped, at most 6 a day
+ok 354 - start timings are checked: numbers capped, odd rows and step names dropped, at most 6 a day
+  ---
+  duration_ms: 2.549303
+  type: 'test'
+  ...
+# Subtest: the report shows each device's usual start-up and the median by kind of device
+ok 355 - the report shows each device's usual start-up and the median by kind of device
+  ---
+  duration_ms: 12.273774
+  type: 'test'
+  ...
+# Subtest: the ten themes the owner named, each with a colour, a prize song and a house decoration
+ok 356 - the ten themes the owner named, each with a colour, a prize song and a house decoration
+  ---
+  duration_ms: 1.614343
+  type: 'test'
+  ...
+# Subtest: every sticker: a unique id, a drawing, both names, a hint in both languages, a way to earn it and a sound
+ok 357 - every sticker: a unique id, a drawing, both names, a hint in both languages, a way to earn it and a sound
+  ---
+  duration_ms: 1.151159
+  type: 'test'
+  ...
+# Subtest: every page has exactly 9 (3 x 3) and one welcome sticker, so no page is ever empty (STK-1, STK-3)
+ok 358 - every page has exactly 9 (3 x 3) and one welcome sticker, so no page is ever empty (STK-1, STK-3)
+  ---
+  duration_ms: 1.297845
+  type: 'test'
+  ...
+# Subtest: earning events that exist: surprises, festivals, and the older reward stickers each in one place
+ok 359 - earning events that exist: surprises, festivals, and the older reward stickers each in one place
+  ---
+  duration_ms: 1.828158
+  type: 'test'
+  ...
+# Subtest: a new player gets 3 in the first minutes and the words are in both languages
+ok 360 - a new player gets 3 in the first minutes and the words are in both languages
+  ---
+  duration_ms: 0.186275
+  type: 'test'
+  ...
+# Subtest: give, has and count: once with a New! badge, again only counts; seen() takes the badge away (STK-5)
+ok 361 - give, has and count: once with a New! badge, again only counts; seen() takes the badge away (STK-5)
+  ---
+  duration_ms: 1.595134
+  type: 'test'
+  ...
+# Subtest: a sticker earned again: 1 in 20 turns it shiny, once (S7)
+ok 362 - a sticker earned again: 1 in 20 turns it shiny, once (S7)
+  ---
+  duration_ms: 1.218167
+  type: 'test'
+  ...
+# Subtest: an old save keeps every treasure, place, postcard, older sticker and family card (S3, UX-009)
+ok 363 - an old save keeps every treasure, place, postcard, older sticker and family card (S3, UX-009)
+  ---
+  duration_ms: 1.759947
+  type: 'test'
+  ...
+# Subtest: a full page and its prize, and a page that would be empty gets its welcome sticker
+ok 364 - a full page and its prize, and a page that would be empty gets its welcome sticker
+  ---
+  duration_ms: 1.895398
+  type: 'test'
+  ...
+# Subtest: talking to someone and tapping an animal give their stickers (acted, meet)
+ok 365 - talking to someone and tapping an animal give their stickers (acted, meet)
+  ---
+  duration_ms: 1.340107
+  type: 'test'
+  ...
+# (node:14890) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: explicit Off wins over tried history, default content and tester peeks without changing progress
+ok 366 - explicit Off wins over tried history, default content and tester peeks without changing progress
+  ---
+  duration_ms: 4.590174
+  type: 'test'
+  ...
+# Subtest: future rollout can retain used access while a new profile waits
+ok 367 - future rollout can retain used access while a new profile waits
+  ---
+  duration_ms: 4.071809
+  type: 'test'
+  ...
+# Subtest: declared-only management entries cannot become open from an unlock or release switch
+not ok 368 - declared-only management entries cannot become open from an unlock or release switch
+  ---
+  duration_ms: 7.547228
+  type: 'test'
+  location: '/workspace/tpn/tests/unit/studio-off-policy.test.mjs:35:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    4 !== 26
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 26
+  actual: 4
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/tpn/tests/unit/studio-off-policy.test.mjs:37:9)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: declared-only catalogue rows remain excluded from accepted runtime activity events
+not ok 369 - declared-only catalogue rows remain excluded from accepted runtime activity events
+  ---
+  duration_ms: 6.616355
+  type: 'test'
+  location: '/workspace/tpn/tests/unit/studio-off-policy.test.mjs:45:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (file:///workspace/tpn/tests/unit/studio-off-policy.test.mjs:48:2)
+    async Test.run (node:internal/test_runner/test:1389:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: server availability explanation follows explicit Off rather than retained money/reading access
+ok 370 - server availability explanation follows explicit Off rather than retained money/reading access
+  ---
+  duration_ms: 4.224445
+  type: 'test'
+  ...
+# Subtest: every switch the game reads by name has a Studio control (Releases or Sparkle Lab)
+ok 371 - every switch the game reads by name has a Studio control (Releases or Sparkle Lab)
+  ---
+  duration_ms: 56.758767
+  type: 'test'
+  ...
+# Subtest: every switch the game builds from a list has a Studio control for each one
+ok 372 - every switch the game builds from a list has a Studio control for each one
+  ---
+  duration_ms: 37.285798
+  type: 'test'
+  ...
+# Subtest: no switch is read in a way this check cannot see
+ok 373 - no switch is read in a way this check cannot see
+  ---
+  duration_ms: 34.460438
+  type: 'test'
+  ...
+# Subtest: the story films can be switched in Studio (owner, 18 Oct AEDT)
+ok 374 - the story films can be switched in Studio (owner, 18 Oct AEDT)
+  ---
+  duration_ms: 33.768747
+  type: 'test'
+  ...
+# Subtest: every Releases card has a group Studio shows, both languages and its own id
+ok 375 - every Releases card has a group Studio shows, both languages and its own id
+  ---
+  duration_ms: 0.607596
+  type: 'test'
+  ...
+# Subtest: the Defaults page and content/custom.json switch only what Releases also has
+ok 376 - the Defaults page and content/custom.json switch only what Releases also has
+  ---
+  duration_ms: 2.279074
+  type: 'test'
+  ...
+# Subtest: lazy tale catalogue preserves identity, titles, page pictures and custom family stories
+ok 377 - lazy tale catalogue preserves identity, titles, page pictures and custom family stories
+  ---
+  duration_ms: 9.592847
+  type: 'test'
+  ...
+# Subtest: page turns arriving during a slow download are retained without republishing stale page zero
+ok 378 - page turns arriving during a slow download are retained without republishing stale page zero
+  ---
+  duration_ms: 1.333158
+  type: 'test'
+  ...
+# Subtest: failed or missing tale bodies reject without pretending the tale was read
+ok 379 - failed or missing tale bodies reject without pretending the tale was read
+  ---
+  duration_ms: 0.4949
+  type: 'test'
+  ...
+# Subtest: only the browser ResizeObserver delivery notices are ignored
+ok 380 - only the browser ResizeObserver delivery notices are ignored
+  ---
+  duration_ms: 0.782665
+  type: 'test'
+  ...
+# Subtest: tester lists show public versions, retaining old stored rounds privately
+ok 381 - tester lists show public versions, retaining old stored rounds privately
+  ---
+  duration_ms: 0.184543
+  type: 'test'
+  ...
+# Subtest: the game decides who is a tester and at which level
+ok 382 - the game decides who is a tester and at which level
+  ---
+  duration_ms: 2.141941
+  type: 'test'
+  ...
+# Subtest: Studio keeps each tester device's level and the sneak peeks, and nothing odd
+ok 383 - Studio keeps each tester device's level and the sneak peeks, and nothing odd
+  ---
+  duration_ms: 0.611743
+  type: 'test'
+  ...
+# Subtest: only tester devices are heard; reports are checked and grouped into problems
+ok 384 - only tester devices are heard; reports are checked and grouped into problems
+  ---
+  duration_ms: 15.829632
+  type: 'test'
+  ...
+# Subtest: reporter attribution: auto detector, signed-in player, family shared device
+ok 385 - reporter attribution: auto detector, signed-in player, family shared device
+  ---
+  duration_ms: 1.914285
+  type: 'test'
+  ...
+# Subtest: a device may send 60 reports a day, a connection 150 (PRIV-014)
+ok 386 - a device may send 60 reports a day, a connection 150 (PRIV-014)
+  ---
+  duration_ms: 13.464001
+  type: 'test'
+  ...
+# Subtest: fixed in a version: the device sees it, replays it, confirms it; help counts for badges and the star
+ok 387 - fixed in a version: the device sees it, replays it, confirms it; help counts for badges and the star
+  ---
+  duration_ms: 3.284627
+  type: 'test'
+  ...
+# Subtest: /api/tester: reports in, status out, refused for others
+ok 388 - /api/tester: reports in, status out, refused for others
+  ---
+  duration_ms: 24.822889
+  type: 'test'
+  ...
+# Subtest: each problem goes to the core it most likely belongs to (tools/tester-issues.mts)
+ok 389 - each problem goes to the core it most likely belongs to (tools/tester-issues.mts)
+  ---
+  duration_ms: 2.959397
+  type: 'test'
+  ...
+# Subtest: a new issue only for a problem seen on the live build or the one before it (owner, 17 Oct AEDT)
+ok 390 - a new issue only for a problem seen on the live build or the one before it (owner, 17 Oct AEDT)
+  ---
+  duration_ms: 0.324529
+  type: 'test'
+  ...
+# Subtest: issue text never mentions a GitHub account (\#472: "tap: Send @45,375" pinged the user 45)
+ok 391 - issue text never mentions a GitHub account (\#472: "tap: Send @45,375" pinged the user 45)
+  ---
+  duration_ms: 3.631399
+  type: 'test'
+  ...
+# Subtest: a report retry with its client ID returns the receipt without counting another report
+ok 392 - a report retry with its client ID returns the receipt without counting another report
+  ---
+  duration_ms: 0.547688
+  type: 'test'
+  ...
+# Subtest: Studio retains per-device progress, speed and autoplay choices and rejects invalid values
+ok 393 - Studio retains per-device progress, speed and autoplay choices and rejects invalid values
+  ---
+  duration_ms: 0.228097
+  type: 'test'
+  ...
+# Subtest: tester summary uses the Sydney day across the UTC date boundary
+ok 394 - tester summary uses the Sydney day across the UTC date boundary
+  ---
+  duration_ms: 0.268236
+  type: 'test'
+  ...
+# Subtest: the problem list reads the store many at a time (r89: the robot got 504 from one-by-one reads)
+ok 395 - the problem list reads the store many at a time (r89: the robot got 504 from one-by-one reads)
+  ---
+  duration_ms: 24.909712
+  type: 'test'
+  ...
+# Subtest: a GitHub issue closed with "Fixed in rNN" sets the Studio problem (r89 two-way sync)
+ok 396 - a GitHub issue closed with "Fixed in rNN" sets the Studio problem (r89 two-way sync)
+  ---
+  duration_ms: 0.721345
+  type: 'test'
+  ...
+# Subtest: a point release (r89.1, owner 23 Oct AEDT) is a build like any other and sits between r89 and r90
+ok 397 - a point release (r89.1, owner 23 Oct AEDT) is a build like any other and sits between r89 and r90
+  ---
+  duration_ms: 1.364754
+  type: 'test'
+  ...
+# Subtest: v numbers from r91 on (owner, 24 Oct 2026 AEDT): v1.01, v1.02 ... v2.00, newer than every r build
+ok 398 - v numbers from r91 on (owner, 24 Oct 2026 AEDT): v1.01, v1.02 ... v2.00, newer than every r build
+  ---
+  duration_ms: 1.736402
+  type: 'test'
+  ...
+# Subtest: an issue closed with "Fixed in v1.01." is fixed in v1.01
+ok 399 - an issue closed with "Fixed in v1.01." is fixed in v1.01
+  ---
+  duration_ms: 0.177222
+  type: 'test'
+  ...
+# Subtest: destination picker keeps one nearest stop per place without deleting physical stops
+ok 400 - destination picker keeps one nearest stop per place without deleting physical stops
+  ---
+  duration_ms: 1.479443
+  type: 'test'
+  ...
+# Subtest: team strength is fair with odd seats; gentle tug requires every friend and24 pulls
+ok 401 - team strength is fair with odd seats; gentle tug requires every friend and24 pulls
+  ---
+  duration_ms: 2.348626
+  type: 'test'
+  ...
+# Subtest: six actual accepted seats complete cooperative Tug with simultaneous pulls inside unchanged message limits
+ok 402 - six actual accepted seats complete cooperative Tug with simultaneous pulls inside unchanged message limits
+  ---
+  duration_ms: 17.124412
+  type: 'test'
+  ...
+# Subtest: six-seat classic Tug shares the winning team without letting a client move another player
+ok 403 - six-seat classic Tug shares the winning team without letting a client move another player
+  ---
+  duration_ms: 10.772789
+  type: 'test'
+  ...
+# Subtest: lost Tug commit and duplicate request recover without counting a pull twice
+ok 404 - lost Tug commit and duplicate request recover without counting a pull twice
+  ---
+  duration_ms: 2.029986
+  type: 'test'
+  ...
+# Subtest: missing mode confirmation holds the rope; replayed config agrees on the youngest friend
+ok 405 - missing mode confirmation holds the rope; replayed config agrees on the youngest friend
+  ---
+  duration_ms: 1.437832
+  type: 'test'
+  ...
+# Subtest: disconnect pauses commits; explicit local continuation retains progress and allows all seats
+ok 406 - disconnect pauses commits; explicit local continuation retains progress and allows all seats
+  ---
+  duration_ms: 1.042879
+  type: 'test'
+  ...
+# Subtest: future, forged and outsider Tug commands cannot change the accepted shared rope
+ok 407 - future, forged and outsider Tug commands cannot change the accepted shared rope
+  ---
+  duration_ms: 0.857856
+  type: 'test'
+  ...
+# Subtest: the exact five turtle-counting utterances are present in the maintained voice inventory
+ok 408 - the exact five turtle-counting utterances are present in the maintained voice inventory
+  ---
+  duration_ms: 82.401481
+  type: 'test'
+  ...
+# Subtest: first-set games and tales are always open by default
+ok 409 - first-set games and tales are always open by default
+  ---
+  duration_ms: 1.397573
+  type: 'test'
+  ...
+# Subtest: second-set game is locked until each first-set game is finished 3 times
+ok 410 - second-set game is locked until each first-set game is finished 3 times
+  ---
+  duration_ms: 0.49431
+  type: 'test'
+  ...
+# Subtest: migration of old profile: tales boolean becomes taleReads count of 1
+ok 411 - migration of old profile: tales boolean becomes taleReads count of 1
+  ---
+  duration_ms: 0.178674
+  type: 'test'
+  ...
+# Subtest: unlockAll flag opens all games and stories regardless of wins
+ok 412 - unlockAll flag opens all games and stories regardless of wins
+  ---
+  duration_ms: 0.179775
+  type: 'test'
+  ...
+# Subtest: held in Studio (New games / New stories off): a second-set game or story never opens, not even with unlock all
+ok 413 - held in Studio (New games / New stories off): a second-set game or story never opens, not even with unlock all
+  ---
+  duration_ms: 0.210461
+  type: 'test'
+  ...
+# Subtest: voice cache serves saved en list immediately and isolates refresh messages
+ok 414 - voice cache serves saved en list immediately and isolates refresh messages
+  ---
+  duration_ms: 24.998464
+  type: 'test'
+  ...
+# Subtest: voice cache serves saved legacy list immediately and isolates refresh messages
+ok 415 - voice cache serves saved legacy list immediately and isolates refresh messages
+  ---
+  duration_ms: 1.708521
+  type: 'test'
+  ...
+# Subtest: mixed voice pieces preserve food/place words, numbers and boundary pauses
+ok 416 - mixed voice pieces preserve food/place words, numbers and boundary pauses
+  ---
+  duration_ms: 4.907303
+  type: 'test'
+  ...
+# Subtest: language shards preserve every line, gender and template without duplicating lines
+ok 417 - language shards preserve every line, gender and template without duplicating lines
+  ---
+  duration_ms: 33.908037
+  type: 'test'
+  ...
+# Subtest: every advertised recording exists in its language and slot
+ok 418 - every advertised recording exists in its language and slot
+  ---
+  duration_ms: 106.195917
+  type: 'test'
+  ...
+# Subtest: only selected languages are requested; bilingual and explicit learning languages join safely
+ok 419 - only selected languages are requested; bilingual and explicit learning languages join safely
+  ---
+  duration_ms: 17.005137
+  type: 'test'
+  ...
+# Subtest: concurrent requests deduplicate, failures retry and background refresh wins stale fetch
+ok 420 - concurrent requests deduplicate, failures retry and background refresh wins stale fetch
+  ---
+  duration_ms: 3.90257
+  type: 'test'
+  ...
+# Subtest: a different language or recording date does not invalidate an existing saved language
+ok 421 - a different language or recording date does not invalidate an existing saved language
+  ---
+  duration_ms: 32.032915
+  type: 'test'
+  ...
+# Subtest: an old offline aggregate can seed only the selected language without fetching all languages
+ok 422 - an old offline aggregate can seed only the selected language without fetching all languages
+  ---
+  duration_ms: 14.546578
+  type: 'test'
+  ...
+# Subtest: offline completion ignores unselected EN/VI but includes explicitly loaded learning-language recordings
+ok 423 - offline completion ignores unselected EN/VI but includes explicitly loaded learning-language recordings
+  ---
+  duration_ms: 0.287845
+  type: 'test'
+  ...
+# Subtest: female voice default policy and opt-in settings
+ok 424 - female voice default policy and opt-in settings
+  ---
+  duration_ms: 0.587417
+  type: 'test'
+  ...
+# Subtest: device voices collapse Standard and Enhanced Linh into one preferred option
+ok 425 - device voices collapse Standard and Enhanced Linh into one preferred option
+  ---
+  duration_ms: 79.03907
+  type: 'test'
+  ...
+# Subtest: acknowledging missing voices cancels the pending stale persistence timer
+ok 426 - acknowledging missing voices cancels the pending stale persistence timer
+  ---
+  duration_ms: 0.616509
+  type: 'test'
+  ...
+# Subtest: voice pack preview wakes Web Audio before playing
+ok 427 - voice pack preview wakes Web Audio before playing
+  ---
+  duration_ms: 0.682848
+  type: 'test'
+  ...
+# Subtest: voice-daily: game lines pass, a pet name is held, nothing else changes
+ok 428 - voice-daily: game lines pass, a pet name is held, nothing else changes
+  ---
+  duration_ms: 8099.139459
+  type: 'test'
+  ...
+1..428
+# tests 428
+# suites 0
+# pass 424
+# fail 3
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 25491.038494
