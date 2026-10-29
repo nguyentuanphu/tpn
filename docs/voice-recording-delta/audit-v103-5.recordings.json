@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "status": "verified-delivery",
+  "batch": "docs/voice-recording-delta/audit-v103-5.json",
+  "inventorySha256": "d8c3de030f2b649c9699b53a54ba9d890f501696b983734de7fa2434663648df",
+  "encoding": {
+    "codec": "mp3",
+    "bitrate": 32000,
+    "sampleRate": 16000,
+    "channels": 1
+  },
+  "fullDecode": true,
+  "assets": [
+    {
+      "id": "ff61a8d63bbf2b5d",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/ff61a8d63bbf2b5d.mp3",
+      "bytes": 17568,
+      "sha256": "ed2aa1bb033398702e9576d623d02a802751647f832f65cb625b7d5df0c5bb46",
+      "duration": 4.392
+    },
+    {
+      "id": "ff61a8d63bbf2b5d",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/ff61a8d63bbf2b5d.mp3",
+      "bytes": 17712,
+      "sha256": "e8413538ac3b2ccf3c97990f1b83b2281007416705f089e51cb5d2f07c648633",
+      "duration": 4.428
+    },
+    {
+      "id": "ff61a8d63bbf2b5d",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/ff61a8d63bbf2b5d.mp3",
+      "bytes": 15921,
+      "sha256": "516272cf0656210400f711b99c7e9f78cb1532b6840504d2663d50466acb8639",
+      "duration": 3.924
+    },
+    {
+      "id": "6772e57b-52ad0a18",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/6772e57b-52ad0a18.mp3",
+      "bytes": 11232,
+      "sha256": "835459ed127c0bb2b28f0612f30d6a92755a3ae27cd688438e7e309a7c1047e4",
+      "duration": 2.808
+    },
+    {
+      "id": "6772e57b-52ad0a18",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/6772e57b-52ad0a18.mp3",
+      "bytes": 11376,
+      "sha256": "eac296f3f3bfb586cac23c4247851261dd95bf1b70da2133afc3b0cd5ddb5719",
+      "duration": 2.844
+    },
+    {
+      "id": "6772e57b-52ad0a18",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/6772e57b-52ad0a18.mp3",
+      "bytes": 9873,
+      "sha256": "403987beae41e1fe61b6088f3e4cc8af7fe108172d3b93cc53e10605e985d810",
+      "duration": 2.412
+    },
+    {
+      "id": "8a64479b-6175c983",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/8a64479b-6175c983.mp3",
+      "bytes": 14688,
+      "sha256": "070a6971fc6b2abbd99ca880e1857979a4d0ad8a6a9cabd2d9f74714ec042e35",
+      "duration": 3.672
+    },
+    {
+      "id": "8a64479b-6175c983",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/8a64479b-6175c983.mp3",
+      "bytes": 14544,
+      "sha256": "145b6d029f3af6918a216607dab6e9737f38b15b11834e48d75fad634bcb20d0",
+      "duration": 3.636
+    },
+    {
+      "id": "8a64479b-6175c983",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/8a64479b-6175c983.mp3",
+      "bytes": 14913,
+      "sha256": "ee05a838588d8460db70ca0f44ae69a0ba141a86df3d921c1e4214d13f4d7dfa",
+      "duration": 3.672
+    },
+    {
+      "id": "865b47b6-129fccf4",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/865b47b6-129fccf4.mp3",
+      "bytes": 13968,
+      "sha256": "5dda7cbb690988fa98cb8dd8c9f6c6748b5989af3b7dfbb704bf7256be1c4cfd",
+      "duration": 3.492
+    },
+    {
+      "id": "865b47b6-129fccf4",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/865b47b6-129fccf4.mp3",
+      "bytes": 14256,
+      "sha256": "abcf0dc9089e4963c87c4055e69a8b39c9fe89a53fe052a3c71847fd00917c04",
+      "duration": 3.564
+    },
+    {
+      "id": "865b47b6-129fccf4",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/865b47b6-129fccf4.mp3",
+      "bytes": 13905,
+      "sha256": "a7eb91eaca50025eac430aeb4f3219c8d655c39e121ae83f3c93588cb56d49c5",
+      "duration": 3.42
+    }
+  ]
+}

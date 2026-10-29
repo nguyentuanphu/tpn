@@ -16,40 +16,7 @@
     "azure:hi-IN-MadhurNeural": 22
   },
   "privacyHeld": 19,
-  "missing": [
-    {
-      "id": "ff61a8d63bbf2b5d",
-      "provider": "fpt",
-      "voice": "leminh",
-      "language": "vi",
-      "destination": "voices/fpt-leminh-v1/ff61a8d63bbf2b5d.mp3",
-      "reason": "Missing required public recording"
-    },
-    {
-      "id": "6772e57b-52ad0a18",
-      "provider": "fpt",
-      "voice": "leminh",
-      "language": "vi",
-      "destination": "voices/fpt-leminh-v1/6772e57b-52ad0a18.mp3",
-      "reason": "Missing required public recording"
-    },
-    {
-      "id": "8a64479b-6175c983",
-      "provider": "fpt",
-      "voice": "leminh",
-      "language": "vi",
-      "destination": "voices/fpt-leminh-v1/8a64479b-6175c983.mp3",
-      "reason": "Missing required public recording"
-    },
-    {
-      "id": "865b47b6-129fccf4",
-      "provider": "fpt",
-      "voice": "leminh",
-      "language": "vi",
-      "destination": "voices/fpt-leminh-v1/865b47b6-129fccf4.mp3",
-      "reason": "Missing required public recording"
-    }
-  ],
+  "missing": [],
   "optionalEncodingMatches": true,
   "ledger": [
     {
@@ -237293,52 +237260,88 @@
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-HoaiMyNeural",
+      "text": "Tiết kiệm để mua nhé! Giá ghi trên ống heo.",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/vi/f/ff61a8d63bbf2b5d.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "1d7c14929076396ef7ca98a094af8b84671b2c805c44365cd1c382f004dbd520",
+      "deliverySha256": "516272cf0656210400f711b99c7e9f78cb1532b6840504d2663d50466acb8639",
+      "masterBytes": 78412,
+      "deliveryBytes": 15921
     },
     {
       "id": "ff61a8d63bbf2b5d",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-NamMinhNeural",
+      "text": "Tiết kiệm để mua nhé! Giá ghi trên ống heo.",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/vi/m/ff61a8d63bbf2b5d.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "1d7c14929076396ef7ca98a094af8b84671b2c805c44365cd1c382f004dbd520",
+      "deliverySha256": "516272cf0656210400f711b99c7e9f78cb1532b6840504d2663d50466acb8639",
+      "masterBytes": 78412,
+      "deliveryBytes": 15921
     },
     {
       "id": "ff61a8d63bbf2b5d",
       "language": "vi",
       "provider": "fpt",
       "voice": "leminh",
+      "text": "Tiết kiệm để mua nhé! Giá ghi trên ống heo.",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/fpt-leminh-v1/ff61a8d63bbf2b5d.mp3",
-      "masterKind": "verified FPT recording receipt"
+      "masterKind": "verified FPT recording receipt",
+      "masterSha256": "1d7c14929076396ef7ca98a094af8b84671b2c805c44365cd1c382f004dbd520",
+      "deliverySha256": "516272cf0656210400f711b99c7e9f78cb1532b6840504d2663d50466acb8639",
+      "masterBytes": 78412,
+      "deliveryBytes": 15921
     },
     {
       "id": "6772e57b-52ad0a18",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-HoaiMyNeural",
+      "text": "Xem giá vé rồi trả tiền nhé!",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/vi/f/6772e57b-52ad0a18.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "c58159350c4c9ab6de08a0147564364063172104755006df8d21acd6f0fa4f15",
+      "deliverySha256": "403987beae41e1fe61b6088f3e4cc8af7fe108172d3b93cc53e10605e985d810",
+      "masterBytes": 48632,
+      "deliveryBytes": 9873
     },
     {
       "id": "6772e57b-52ad0a18",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-NamMinhNeural",
+      "text": "Xem giá vé rồi trả tiền nhé!",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/vi/m/6772e57b-52ad0a18.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "c58159350c4c9ab6de08a0147564364063172104755006df8d21acd6f0fa4f15",
+      "deliverySha256": "403987beae41e1fe61b6088f3e4cc8af7fe108172d3b93cc53e10605e985d810",
+      "masterBytes": 48632,
+      "deliveryBytes": 9873
     },
     {
       "id": "6772e57b-52ad0a18",
       "language": "vi",
       "provider": "fpt",
       "voice": "leminh",
+      "text": "Xem giá vé rồi trả tiền nhé!",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/fpt-leminh-v1/6772e57b-52ad0a18.mp3",
-      "masterKind": "verified FPT recording receipt"
+      "masterKind": "verified FPT recording receipt",
+      "masterSha256": "c58159350c4c9ab6de08a0147564364063172104755006df8d21acd6f0fa4f15",
+      "deliverySha256": "403987beae41e1fe61b6088f3e4cc8af7fe108172d3b93cc53e10605e985d810",
+      "masterBytes": 48632,
+      "deliveryBytes": 9873
     },
     {
       "id": "b95279a040ab7679",
@@ -237521,26 +237524,44 @@
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-HoaiMyNeural",
+      "text": "Công bằng! Các bạn có bằng nhau.",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/vi/f/8a64479b-6175c983.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "39e2591c9b1dea39530a9dd795ddf0b0a8ea1440128c7935a844869fea872b88",
+      "deliverySha256": "ee05a838588d8460db70ca0f44ae69a0ba141a86df3d921c1e4214d13f4d7dfa",
+      "masterBytes": 73710,
+      "deliveryBytes": 14913
     },
     {
       "id": "8a64479b-6175c983",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-NamMinhNeural",
+      "text": "Công bằng! Các bạn có bằng nhau.",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/vi/m/8a64479b-6175c983.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "39e2591c9b1dea39530a9dd795ddf0b0a8ea1440128c7935a844869fea872b88",
+      "deliverySha256": "ee05a838588d8460db70ca0f44ae69a0ba141a86df3d921c1e4214d13f4d7dfa",
+      "masterBytes": 73710,
+      "deliveryBytes": 14913
     },
     {
       "id": "8a64479b-6175c983",
       "language": "vi",
       "provider": "fpt",
       "voice": "leminh",
+      "text": "Công bằng! Các bạn có bằng nhau.",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/fpt-leminh-v1/8a64479b-6175c983.mp3",
-      "masterKind": "verified FPT recording receipt"
+      "masterKind": "verified FPT recording receipt",
+      "masterSha256": "39e2591c9b1dea39530a9dd795ddf0b0a8ea1440128c7935a844869fea872b88",
+      "deliverySha256": "ee05a838588d8460db70ca0f44ae69a0ba141a86df3d921c1e4214d13f4d7dfa",
+      "masterBytes": 73710,
+      "deliveryBytes": 14913
     },
     {
       "id": "41b622206279ae7c",
@@ -239439,26 +239460,44 @@
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-HoaiMyNeural",
+      "text": "Nhiều tiếng quá! Nghe lại nhé!",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/vi/f/865b47b6-129fccf4.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "b4957089d34c58d9ec81175b57150b29a2d24425b275df8904abb17b464ab879",
+      "deliverySha256": "a7eb91eaca50025eac430aeb4f3219c8d655c39e121ae83f3c93588cb56d49c5",
+      "masterBytes": 68485,
+      "deliveryBytes": 13905
     },
     {
       "id": "865b47b6-129fccf4",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-NamMinhNeural",
+      "text": "Nhiều tiếng quá! Nghe lại nhé!",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/vi/m/865b47b6-129fccf4.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "b4957089d34c58d9ec81175b57150b29a2d24425b275df8904abb17b464ab879",
+      "deliverySha256": "a7eb91eaca50025eac430aeb4f3219c8d655c39e121ae83f3c93588cb56d49c5",
+      "masterBytes": 68485,
+      "deliveryBytes": 13905
     },
     {
       "id": "865b47b6-129fccf4",
       "language": "vi",
       "provider": "fpt",
       "voice": "leminh",
+      "text": "Nhiều tiếng quá! Nghe lại nhé!",
+      "source": "docs/voice-recording-delta/audit-v103-5.json",
       "delivery": "voices/fpt-leminh-v1/865b47b6-129fccf4.mp3",
-      "masterKind": "verified FPT recording receipt"
+      "masterKind": "verified FPT recording receipt",
+      "masterSha256": "b4957089d34c58d9ec81175b57150b29a2d24425b275df8904abb17b464ab879",
+      "deliverySha256": "a7eb91eaca50025eac430aeb4f3219c8d655c39e121ae83f3c93588cb56d49c5",
+      "masterBytes": 68485,
+      "deliveryBytes": 13905
     },
     {
       "id": "eddf6805-205e0d93",

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "inventory": "0e27f1e81da68d5d0d8c2d46b32664c98b47b377716922c84046bd6b4b9bc7fe",
+  "inventory": "82f85bb6276907aa0100e12a69370a56aad5ac5dc74461a94fa3ca7d09340f44",
   "voice": {
     "provider": "FPT Neo",
     "model": "FPT.AI-VITs",
@@ -3231,7 +3231,31 @@
       "sha256": "0e1afd0ab2fe6d8285f1a59d6818418c1a318fa7c9135e4e123c4b3c87a0db93",
       "bytes": 78412,
       "duration": 3.892245
+    },
+    "ff61a8d63bbf2b5d": {
+      "identity": "917e9a909d977fe53ebc38e8f28f35663ffa247bbee17725d09e4d7ddc157f08",
+      "sha256": "1d7c14929076396ef7ca98a094af8b84671b2c805c44365cd1c382f004dbd520",
+      "bytes": 78412,
+      "duration": 3.892245
+    },
+    "6772e57b-52ad0a18": {
+      "identity": "16d4476e3d34c005eb1fff70c5b455e9882ed019792f8a36bab0516571f5be15",
+      "sha256": "c58159350c4c9ab6de08a0147564364063172104755006df8d21acd6f0fa4f15",
+      "bytes": 48632,
+      "duration": 2.403265
+    },
+    "8a64479b-6175c983": {
+      "identity": "0bfd06933936e908b9986ee22187c7428d3dfae753a490e49f93164793cb2cc5",
+      "sha256": "39e2591c9b1dea39530a9dd795ddf0b0a8ea1440128c7935a844869fea872b88",
+      "bytes": 73710,
+      "duration": 3.657143
+    },
+    "865b47b6-129fccf4": {
+      "identity": "a337a74256ebd9e364fad1524cfe367ee811f94d8a8794e6e8661e44d5632d57",
+      "sha256": "b4957089d34c58d9ec81175b57150b29a2d24425b275df8904abb17b464ab879",
+      "bytes": 68485,
+      "duration": 3.395918
     }
   },
-  "updated": "2026-10-29T09:57:55.103Z"
+  "updated": "2026-10-29T12:49:40.010Z"
 }

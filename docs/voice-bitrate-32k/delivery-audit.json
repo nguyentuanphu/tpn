@@ -5,10 +5,10 @@
     "sampleRate": 16000,
     "channels": 1
   },
-  "units": 7200,
-  "masterBytes": 466477193,
-  "deliveryBytes": 94817481,
-  "signature": "f9864bece24ef075b5fd50b5a72c35f2d5d740eed8c2c36e1f9c6d144340d8c5",
+  "units": 7204,
+  "masterBytes": 466746432,
+  "deliveryBytes": 94872093,
+  "signature": "7d7aeaebb0eab849a187d9b7985feb02c8db4a0dd99024a8acab03150f3c4040",
   "fullDecode": "passed for every newly encoded clip; resumed clips verified against their completed encoding receipts",
   "originalPackageBackup": "temp/hanoi-originals-VFBnNA",
   "files": {
@@ -58148,6 +58148,42 @@
       "deliveryBytes": 15921,
       "deliveryDuration": 3.924,
       "inventory": "docs/voice-recording-delta/audit-v103-4.json"
+    },
+    "ff61a8d63bbf2b5d": {
+      "masterSha256": "1d7c14929076396ef7ca98a094af8b84671b2c805c44365cd1c382f004dbd520",
+      "masterBytes": 78412,
+      "masterDuration": 3.892245,
+      "deliverySha256": "516272cf0656210400f711b99c7e9f78cb1532b6840504d2663d50466acb8639",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/audit-v103-5.json"
+    },
+    "6772e57b-52ad0a18": {
+      "masterSha256": "c58159350c4c9ab6de08a0147564364063172104755006df8d21acd6f0fa4f15",
+      "masterBytes": 48632,
+      "masterDuration": 2.403265,
+      "deliverySha256": "403987beae41e1fe61b6088f3e4cc8af7fe108172d3b93cc53e10605e985d810",
+      "deliveryBytes": 9873,
+      "deliveryDuration": 2.412,
+      "inventory": "docs/voice-recording-delta/audit-v103-5.json"
+    },
+    "8a64479b-6175c983": {
+      "masterSha256": "39e2591c9b1dea39530a9dd795ddf0b0a8ea1440128c7935a844869fea872b88",
+      "masterBytes": 73710,
+      "masterDuration": 3.657143,
+      "deliverySha256": "ee05a838588d8460db70ca0f44ae69a0ba141a86df3d921c1e4214d13f4d7dfa",
+      "deliveryBytes": 14913,
+      "deliveryDuration": 3.672,
+      "inventory": "docs/voice-recording-delta/audit-v103-5.json"
+    },
+    "865b47b6-129fccf4": {
+      "masterSha256": "b4957089d34c58d9ec81175b57150b29a2d24425b275df8904abb17b464ab879",
+      "masterBytes": 68485,
+      "masterDuration": 3.395918,
+      "deliverySha256": "a7eb91eaca50025eac430aeb4f3219c8d655c39e121ae83f3c93588cb56d49c5",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/audit-v103-5.json"
     }
   }
 }
