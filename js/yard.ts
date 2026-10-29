@@ -18,7 +18,7 @@ import { YARD_STEPS, YARD_LINES, RELATIVES, JOBS, ANH2, COACH, GUESTS } from './
 const st = p => { const s = p.yard = p.yard && typeof p.yard === 'object' ? p.yard : {}; s.done = s.done || {}; s.jobs = s.jobs || {}; return s; };
 const look = ([style, color, hair, hairStyle]) => ({ style, color, hat: 'none', back: 'none', hair, hairStyle, skin: '#e2b088', glider: 0 });
 const ease = u => u < .5 ? 2 * u * u : 1 - (-2 * u + 2) ** 2 / 2;
-const tween = (sec, fn) => new Promise(res => { const t0 = performance.now(); const step = () => { const u = Math.min(1, (performance.now() - t0) / 1000 / sec); fn(ease(u), u); if (u < 1) requestAnimationFrame(step); else res(); }; step(); });
+const tween = (sec, fn) => new Promise<void>(res => { const t0 = performance.now(); const step = () => { const u = Math.min(1, (performance.now() - t0) / 1000 / sec); fn(ease(u), u); if (u < 1) requestAnimationFrame(step); else res(); }; step(); });
 
 export function createYard(G, { dialog, say, reward, save }) {
   const { scene, world } = G;
@@ -83,7 +83,7 @@ export function createYard(G, { dialog, say, reward, save }) {
   const guests = GUESTS.map(g => ({ g, A: person(g.look, g.name) }));
   guests.forEach(({ A }, k) => { A.root.position.set(shop.x + 2.4 + k * 1.1, heightAt(shop.x + 2.4 + k * 1.1, shop.z + 2.2), shop.z + 2.2); A.root.rotation.y = Math.PI; });
   const others = COACH.map((n, k) => person(['shirt', COLORS[k % 4], '#2a2a2a', /^O |^Chị /.test(n) ? 'long' : 'short'], n));
-  const JOB_AT = [[-5.5, 5.2], [SITE[0] - 3.2, SITE[1] + 3.2], [SITE[0] + 3.5, SITE[1] - 5]];
+  const JOB_AT: [number, number][] = [[-5.5, 5.2], [SITE[0] - 3.2, SITE[1] + 3.2], [SITE[0] + 3.5, SITE[1] - 5]];
   const putAt = (A, lx, lz, face = 0) => { const c = W(lx, lz); A.root.position.set(c.x, heightAt(c.x, c.z), c.z); A.root.rotation.y = ry + face; A.root.userData.lx = lx; A.root.userData.lz = lz; };
   putAt(anh2, 5.2, -2.8, .3);
 
@@ -172,7 +172,7 @@ export function createYard(G, { dialog, say, reward, save }) {
     await tween(1, u => { truck.o.position.set(-5.5, 0, 2.5 + (from[1] - 2.5) * u); });
     let p = pad(`<p>${T('Tap the stones to load the truck!', 'Chạm vào đá để xúc lên xe!')}</p><button class="hp-big" data-hp="load">${pic('🪨')}</button><div class="hp-bar"><i></i></div>`);
     say(...YARD_LINES.handLoad);
-    await until(new Promise(res => { let n = 0; p.querySelector('[data-hp=load]').onclick = () => { n++; TU.load.visible = true; TU.load.scale.set(.4 + n * .2, .15 + n * .1, .6 + n * .4); p.querySelector('.hp-bar i').style.width = (n / 3 * 100) + '%'; if (n >= 3) res(); }; }), p);
+    await until(new Promise<void>(res => { let n = 0; p.querySelector<HTMLElement>('[data-hp=load]').onclick = () => { n++; TU.load.visible = true; TU.load.scale.set(.4 + n * .2, .15 + n * .1, .6 + n * .4); p.querySelector<HTMLElement>('.hp-bar i').style.width = (n / 3 * 100) + '%'; if (n >= 3) res(); }; }), p);
     p.remove();
     // drive: hold the pedal; the truck rolls to the building site while it is held
     p = pad(`<p>${T('Hold the pedal to drive!', 'Giữ bàn đạp để lái xe!')}</p><button class="hp-big hp-pedal" data-hp="pedal">${pic('🚚')}</button><div class="hp-bar"><i></i></div>`);
@@ -181,7 +181,7 @@ export function createYard(G, { dialog, say, reward, save }) {
     await frames(dt => { if (pedal.down) { u = Math.min(1, u + dt * .3); truck.wheels.forEach(w => { w.rotation.x += dt * 6; }); }
       truck.o.position.set(a0.x + (to[0] + 1.5 - a0.x) * u, 0, a0.z + (to[1] - 2.5 - a0.z) * u);
       // the child walks beside the cab, so the camera follows the truck
-      if (driver) { const c = W(truck.o.position.x + 2.2, truck.o.position.z + 1); driver.pos.x = c.x; driver.pos.z = c.z; } truck.o.rotation.y = turn0 + Math.sin(u * Math.PI) * .25; p.querySelector('.hp-bar i').style.width = (u * 100) + '%'; return u >= 1; }, p);
+      if (driver) { const c = W(truck.o.position.x + 2.2, truck.o.position.z + 1); driver.pos.x = c.x; driver.pos.z = c.z; } truck.o.rotation.y = turn0 + Math.sin(u * Math.PI) * .25; p.querySelector<HTMLElement>('.hp-bar i').style.width = (u * 100) + '%'; return u >= 1; }, p);
     p.remove();
     // tip: pull the lever down
     p = pad(`<p>${T('Pull the lever down to tip it out!', 'Kéo cần xuống để đổ đất đá!')}</p><div class="hp-slot" data-hp="lever"><b></b></div>`);
@@ -208,7 +208,7 @@ export function createYard(G, { dialog, say, reward, save }) {
     walls.visible = true; walls.scale.y = .01; roof.visible = false;
     let p = pad(`<p>${T('Tap to lay the bricks!', 'Chạm để xây gạch!')}</p><button class="hp-big" data-hp="brick">${pic('🧱')}</button><div class="hp-bar"><i></i></div>`);
     say(...YARD_LINES.handBrick);
-    await until(new Promise(res => { let k = 0; p.querySelector('[data-hp=brick]').onclick = () => { k++; const a = walls.scale.y, b = k / n * 2.6; tween(.25, u => { walls.scale.y = a + (b - a) * u; }); p.querySelector('.hp-bar i').style.width = (k / n * 100) + '%'; if (k >= n) setTimeout(res, 300); }; }), p);
+    await until(new Promise<void>(res => { let k = 0; p.querySelector<HTMLElement>('[data-hp=brick]').onclick = () => { k++; const a = walls.scale.y, b = k / n * 2.6; tween(.25, u => { walls.scale.y = a + (b - a) * u; }); p.querySelector<HTMLElement>('.hp-bar i').style.width = (k / n * 100) + '%'; if (k >= n) setTimeout(res, 300); }; }), p);
     p.remove();
     // the roof: drag it down onto the walls
     roof.visible = true; roof.position.y = 5.6;

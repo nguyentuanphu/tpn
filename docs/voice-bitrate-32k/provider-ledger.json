@@ -7,11 +7,11 @@
     "channels": 1
   },
   "counts": {
-    "azure:en-AU-NatashaNeural": 7702,
-    "azure:en-AU-WilliamNeural": 7702,
-    "azure:vi-VN-HoaiMyNeural": 6777,
-    "azure:vi-VN-NamMinhNeural": 6777,
-    "fpt:leminh": 7033,
+    "azure:en-AU-NatashaNeural": 7701,
+    "azure:en-AU-WilliamNeural": 7701,
+    "azure:vi-VN-HoaiMyNeural": 6776,
+    "azure:vi-VN-NamMinhNeural": 6776,
+    "fpt:leminh": 7032,
     "azure:zh-CN-YunxiNeural": 22,
     "azure:hi-IN-MadhurNeural": 22
   },
@@ -20354,24 +20354,6 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/da7cb225-b02e7ef.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "f4d32bbf-37c04863",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/f4d32bbf-37c04863.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "f4d32bbf-37c04863",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/f4d32bbf-37c04863.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -188282,50 +188264,6 @@
       "deliverySha256": "bdb2cb518d32fa32b2c21d6d4707371af02811a6f38fba914727b15338680591",
       "masterBytes": 35571,
       "deliveryBytes": 7424
-    },
-    {
-      "id": "36731c2e7b9a9085",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "text": "Trò chơi chưa tải xong. Kiểm tra kết nối rồi thử lại nhé.",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/f/36731c2e7b9a9085.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "3698f4e486f5f3fc5fc283b0394c43ab17496b119fe0536534474783b7d1550c",
-      "deliverySha256": "8e3ea4093e4b0e5745df353fab7cf64cf6f920d7419b56a16d67fb9e4f9f3476",
-      "masterBytes": 88338,
-      "deliveryBytes": 17936
-    },
-    {
-      "id": "36731c2e7b9a9085",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "text": "Trò chơi chưa tải xong. Kiểm tra kết nối rồi thử lại nhé.",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/m/36731c2e7b9a9085.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "3698f4e486f5f3fc5fc283b0394c43ab17496b119fe0536534474783b7d1550c",
-      "deliverySha256": "8e3ea4093e4b0e5745df353fab7cf64cf6f920d7419b56a16d67fb9e4f9f3476",
-      "masterBytes": 88338,
-      "deliveryBytes": 17936
-    },
-    {
-      "id": "36731c2e7b9a9085",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "text": "Trò chơi chưa tải xong. Kiểm tra kết nối rồi thử lại nhé.",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/fpt-leminh-v1/36731c2e7b9a9085.mp3",
-      "masterKind": "verified FPT recording receipt",
-      "masterSha256": "3698f4e486f5f3fc5fc283b0394c43ab17496b119fe0536534474783b7d1550c",
-      "deliverySha256": "8e3ea4093e4b0e5745df353fab7cf64cf6f920d7419b56a16d67fb9e4f9f3476",
-      "masterBytes": 88338,
-      "deliveryBytes": 17936
     },
     {
       "id": "0683927d38347693",

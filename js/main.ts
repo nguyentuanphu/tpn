@@ -769,7 +769,9 @@ const questDone = (p, q) => !!p.quests[q.id] || !!(q.check && q.check(p));
 // (round R, owner 9 Oct) the goal bar follows the lantern story; a side story (bà Huệ and ông Nghi's yard) shows there only
 // when the child chose to follow it on the Adventures page (profile.follow), or when the story has no step open right now
 const sideQuest = p => G.yard && G.yard.quest(p);
-function currentQuest(p) {
+// a quest step from the main list, the lantern story or a side story (js/yard.ts): the fields each may have
+type QuestStep = { id: string; icon?: string; title: () => string; at?: string; check?: (p) => boolean; story?: boolean; tale?: string[]; target?: () => { x: number; z: number } };
+function currentQuest(p): QuestStep | undefined {
   if (p.follow === 'yard' && sideQuest(p)) return sideQuest(p);
   return (G.lanterns && G.lanterns.quest(p)) || sideQuest(p) || QUESTS.find(q => !questDone(p, q));
 }

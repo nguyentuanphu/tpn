@@ -7,7 +7,7 @@
 // and side covers have the real shapes instead of boxes.
 import { THREE, P, merge, toonSmooth, outline } from './gfx.js';
 
-const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+const V3 = (...p: number[]) => new THREE.Vector3(p[0], p[1], p[2]);
 const CHROME = '#d8dee2', BLACK = '#26292c', TYRE = '#2b2e31', RUBBER = '#3a3d40', STEEL = '#9aa4a8';
 // (owner, round R: "older kids should have more real models") two looks: the toy look (soft toon shading and a dark
 // outline) for under-5s, and the real look for older children: painted metal, shiny chrome, rubber, no outline,
@@ -21,7 +21,8 @@ const isRubber = c => c === TYRE || c === BLACK || c === RUBBER || c === '#23252
 function solid(parts, line = .012) {
   if (REAL) {
     const g = new THREE.Group();
-    for (const [kind, test] of [['chrome', isChrome], ['rubber', isRubber], ['paint', c => !isChrome(c) && !isRubber(c)]]) {
+    const kinds: [string, (c) => boolean][] = [['chrome', isChrome], ['rubber', isRubber], ['paint', c => !isChrome(c) && !isRubber(c)]];
+    for (const [kind, test] of kinds) {
       const ps = parts.filter(p => test(p.color)); if (!ps.length) continue;
       const m = new THREE.Mesh(merge(ps), realMat(kind)); m.castShadow = true; g.add(m);
     }
@@ -42,7 +43,7 @@ const bend = (pts, r, color, seg = 24) => P(new THREE.TubeGeometry(new THREE.Cat
 function side(pts, w, color, x = 0, bevel = .025, corner = 0) {
   const s = new THREE.Shape();
   if (corner) {
-    const n = pts.length, at = (i, j, r) => { const [ax, ay] = pts[i], [bx, by] = pts[j], d = Math.hypot(bx - ax, by - ay) || 1, k = Math.min(r, d / 2) / d; return [ax + (bx - ax) * k, ay + (by - ay) * k]; };
+    const n = pts.length, at = (i, j, r): [number, number] => { const [ax, ay] = pts[i], [bx, by] = pts[j], d = Math.hypot(bx - ax, by - ay) || 1, k = Math.min(r, d / 2) / d; return [ax + (bx - ax) * k, ay + (by - ay) * k]; };
     for (let i = 0; i < n; i++) { const a = at(i, (i + n - 1) % n, corner), b = at(i, (i + 1) % n, corner); if (i) s.lineTo(...a); else s.moveTo(...a); s.quadraticCurveTo(pts[i][0], pts[i][1], ...b); }
     s.closePath();
   } else { s.moveTo(pts[0][0], pts[0][1]); s.splineThru([...pts.slice(1), pts[0]].map(([a, b]) => new THREE.Vector2(a, b))); }
@@ -54,7 +55,7 @@ const ball = (r, color, pos, scl = [1, 1, 1], seg = 18) => P(new THREE.SphereGeo
 const box = (w, h, d, color, pos, rot = [0, 0, 0]) => P(new THREE.BoxGeometry(w, h, d), color, pos, rot);
 const disc = (r, t, color, pos, seg = 20) => P(new THREE.CylinderGeometry(r, r, t, seg), color, pos, [0, 0, Math.PI / 2]);
 // a wheel standing in the y-z plane, centred on (0,0,0): tyre, rim, hub and spokes (or a cast wheel's five arms)
-function wheel({ r, tyre = .045, rim = CHROME, spokes = 18, cast = false, knobby = false, hubR = .05, width }) {
+function wheel({ r, tyre = .045, rim = CHROME, spokes = 18, cast = false, knobby = false, hubR = .05, width = 0 }) {
   const motor = spokes <= 18 || cast;   // (bicycles ask for more spokes)
   if (REAL) { tyre *= .78; spokes = Math.max(spokes, 32); }
   const parts = [P(new THREE.TorusGeometry(r - tyre, tyre, 10, 36), TYRE, [0, 0, 0], [0, Math.PI / 2, 0], [1, 1, width ? width / (tyre * 2) : 1]),   // the tyre
@@ -323,6 +324,13 @@ export function ute(color = '#f4f4ee') {
       box(.8, .1, .3, '#2b2e31', [0, .48, 2.32]), P(new THREE.TorusGeometry(.12, .025, 6, 14), CHROME, [0, .6, 2.36])] });
   return { ...v, name: ['Ute', 'Xe bán tải Úc'] };
 }
+// cậu Tâm's little truck on Two Homes Street (owner, 29 Oct AEDT: it was a solid model that could not be driven): the
+// ute's white cab with the family's blue cargo box, driven from the left as in Vietnam
+export function tamTruck() {
+  const v = ute('#f2f2f2'), left = (p: number[]) => [-p[0], p[1], p[2]];
+  v.o.add(solid([box(1.62, 1.3, 2.2, '#3a78c8', [0, 1.62, -1.2]), box(1.66, .08, 2.24, '#2f63a8', [0, 2.3, -1.2])]));
+  return { ...v, seat: left(v.seat), grips: v.grips.map(left), feet: v.feet.map(left), wheelAt: left(v.wheelAt) };
+}
 // a family SUV
 export function suv(color = '#2f5a8a', lhd = false) {
   const v = car({ color, lhd, L: 4.4, wheelbase: 2.7, R: .36, body: [[2.15, .42], [2.2, .85], [1.4, 1.0], [-2.1, 1.02], [-2.2, .9], [-2.15, .42]], glass: [[1.4, 1.0], [.85, 1.62], [-1.85, 1.62], [-2.05, 1.02]], roof: [[.85, 1.6], [-1.85, 1.6], [-1.82, 1.67], [.82, 1.67]],
@@ -466,4 +474,4 @@ export function seatRider(A, v, at, grips, feet, scale = .9, attach = true) {
 export function build(id, { real = false, args = [] } = {}) { REAL = real; try { return VEHICLES[id](...args); } finally { REAL = false; } }
 // every vehicle by id, for Sparkle Studio and the valley's traffic
 export const VEHICLES = { honda67, cub, dream, scooter, xichlo, baGac, postie, trailBike, quadBike, roadster, miniBike, roadBike, bmx, kidsBike, packBike,
-  sedan, taxi, ute, suv, bus: () => bus(true), busAU: () => bus(false), tram: () => tram('w'), tramModern: () => tram('e'), touristCart, coach, dumpTruck, excavator };
+  sedan, taxi, ute, suv, bus: () => bus(true), busAU: () => bus(false), tram: () => tram('w'), tramModern: () => tram('e'), touristCart, tamTruck, coach, dumpTruck, excavator };

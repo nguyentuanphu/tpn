@@ -431,6 +431,7 @@ Owner additionally asks guide visible until installed or explicitly hidden, plus
   - Heritage sites: each map spot is now the clear ground the site stands on (the Forbidden City had moved 40 m onto the Terracotta Army's spot). China follows the real map: Beijing's Forbidden City and Temple of Heaven together in the east, the Terracotta Army (Xi'an) north-west, the Potala Palace (Lhasa) south-west of it.
 - Merged: the leftover branch `handover/release-local-20261029` and the Studio combined branch. Studio Analytics keeps r65's five tiles (installations got a tile; the 30-day devices moved into "playing this week").
 - Lê Minh: the six sentence pieces in Saving Goal, Pay for the Bus, Fair Share and the echo game became whole lines, so they can be recorded.
+- GitHub run on d884ccadb, fixed: `types` (js/yard.ts typed after its rename; currentQuest has one step type; js/vehicles.ts renamed, then typed), `ridingcamera` (the truck is a vehicle model: build('tamTruck')), `resumerecovery` (the launch message no longer says to check the connection; it is shown only, never spoken, so it is not a voice line), `ownerdesk` (its event used the UTC date with an AEDT offset, so after 13:00 UTC it failed as inconsistent_device_day before the Off answer), `voiceroutes` (Lê Minh batch 5 saved, 439f7bc91).
 ## Owner decision — Studio finance and full-suite continuation, 27 October 2026 AEDT
 
 Owner explicitly requested connecting this work to the recorded plan, continuing

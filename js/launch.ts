@@ -4,11 +4,13 @@ if (window.svTooOld) throw new Error('This device is too old for Sparkle Valley'
 const shell = document.getElementById('boot')!;
 // No optional module is fetched by the launch shell. The consented controller listens later.
 const managementNotice = (eventName: string, data: Record<string, string> = {}) => { try { dispatchEvent(new CustomEvent('sv-management-notice', { detail: { eventName, data } })); } catch { /* reporting never stops the game */ } };
+const shownOnly = (en: string, vi: string) => [en, vi];
 const words = [
   ['Welcome to Sparkle Valley', 'Chào mừng đến Thung Lũng Lấp Lánh'],
   ['Opening the game…', 'Đang mở trò chơi…'],
-  // (the recorded v1.02 wording: a reworded line would need a new Lê Minh recording, and launch text is not a reviewed source)
-  ['The game could not finish loading. Check your connection and try again.', 'Trò chơi chưa tải xong. Kiểm tra kết nối rồi thử lại nhé.'],
+  // (shown only, never spoken: no voice is loaded on the launch screen, so it is not a line to record; a render that
+  // stopped is not a connection problem, so it no longer says to check the connection)
+  shownOnly('The game could not finish opening. Your saved progress is kept. Try again.', 'Trò chơi chưa mở xong. Tiến trình đã lưu vẫn được giữ. Thử lại nhé.'),
   ['Try again', 'Thử lại'],
   ['A new update is available. Your progress stays saved.', 'Có bản cập nhật mới. Tiến trình của con vẫn được lưu.'],
   ['Update now', 'Cập nhật'],

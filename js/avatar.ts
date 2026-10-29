@@ -351,7 +351,7 @@ export const spriteGlow = c => glow(c);
 // the head, ears, hands and legs take the skin colour sampled from the photo, so the edge of the photo blends in.
 const NAMED: Record<string, SvAvatar[]> = {}; // villager name -> their avatars
 const baseOf = n => String(n).replace(/\s+[^\p{L}\p{N}]+$/u, '').trim();
-export function nameAvatar(A, name, remember = true, stableId) { // remember: false for people in a room that is torn down later
+export function nameAvatar(A, name, remember = true, stableId?) { // remember: false for people in a room that is torn down later
   if (!A || !name) return A; const legacy = baseOf(name), id = stableId || legacy; A.faceLegacy = legacy; if (remember) (NAMED[id] = NAMED[id] || []).push(A);
   const f = familyOwnFace(id) || familyOwnFace(legacy) || (settings.npcFaces || {})[legacy] || customFace(legacy); if (f) setFace(A, f);
   return A;
