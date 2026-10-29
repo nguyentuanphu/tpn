@@ -114,5 +114,20 @@ const GUIDES: Record<string, HowToGuide> = {
   bank: { steps: [S('🏦 👀', 'See how much is in the bank.', 'Nhìn xem ngân hàng đang có bao nhiêu.'), S('➕ ➖', 'Putting in adds; taking out takes away.', 'Gửi vào là cộng; rút ra là trừ.'), S('👆 ✅', 'Tap how much is there now.', 'Chạm số tiền bây giờ.')] },
   sharefair: { steps: [S('🪙 🧒', 'Share the coins between your friends.', 'Chia tiền cho các bạn.'), S('👆 🔁', 'Tap each friend in turn to give one coin.', 'Chạm lần lượt từng bạn để đưa một đồng.'), S('🤝 ✅', 'Round and round until everyone has the same!', 'Vòng này vòng khác cho đến khi ai cũng bằng nhau!')],
     real: S('🍬 🤝', 'For real: share sweets one by one with a friend.', 'Chơi thật: chia kẹo từng chiếc với bạn.') },
+  // js/games/reading2.ts
+  rd_blend: { steps: [S('👂 🔤', 'Listen to the sounds, one by one.', 'Nghe từng âm một.'), S('🔤 ➕', 'Say them faster and faster until they make a word.', 'Đọc nhanh dần cho tới khi thành một từ.'), S('👆 🐱', 'Tap the picture of that word.', 'Chạm vào hình của từ đó.')] },
+  rd_hats: { origin: S('🇻🇳 🎩', 'Vietnamese letters can wear a little hat: a becomes â, e becomes ê, o becomes ô.', 'Chữ Việt có thể đội mũ: a thành â, e thành ê, o thành ô.'),
+    steps: [S('👀 🔤', 'Look at the letter.', 'Nhìn chữ cái.'), S('👆 🎩', 'Tap the same letter wearing a pointy hat.', 'Chạm chữ đó khi đội chiếc mũ nhọn.')] },
+  rd_endings: { steps: [S('👂 🐱', 'Hear the word.', 'Nghe từ.'), S('🤔 🎩', 'Which word ends with the same sound? Cat, hat!', 'Từ nào có cùng vần? Cá, lá!'), S('👆 ✅', 'Tap the rhyming word.', 'Chạm vào từ cùng vần.')] },
+  rd_compound: { steps: [S('👀 ➕', 'Read the two small words.', 'Đọc hai từ nhỏ.'), S('🌧️ 🎀', 'Put them together: rain and bow make rainbow.', 'Ghép lại: cầu và vồng thành cầu vồng.'), S('👆 🌈', 'Tap what they make.', 'Chạm vào thứ chúng tạo thành.')] },
+  rd_labels: { steps: [S('👀 🍎', 'Look at the picture.', 'Nhìn bức tranh.'), S('🔤 👀', 'Read the words on the buttons.', 'Đọc chữ trên các nút.'), S('👆 ✅', 'Tap the word that names the picture.', 'Chạm chữ là tên của bức tranh.')] },
+  rd_signs: { steps: [S('👀 🛑', 'Look at the sign.', 'Nhìn biển báo.'), S('🔤 👆', 'Read the words and tap what the sign says.', 'Đọc chữ và chạm vào điều biển báo nói.')],
+    real: S('🚶 🛑', 'For real: read the signs on your next walk.', 'Chơi thật: đọc biển báo khi đi dạo nhé.') },
+  rd_questions: { steps: [S('👂 ❓', 'Listen for the question word.', 'Nghe từ để hỏi.'), S('🧑 🏞️', 'Who is a person, Where is a place, What is a thing.', 'Ai là người, Ở đâu là nơi chốn, Cái gì là đồ vật.'), S('👆 ✅', 'Tap the answer that fits.', 'Chạm câu trả lời phù hợp.')] },
+  rd_many: { steps: [S('🔢 🍎', 'Count the pictures.', 'Đếm hình.'), S('🔤 👀', 'Read the words: one apple, or three apples?', 'Đọc chữ: một quả táo, hay ba quả táo?'), S('👆 ✅', 'Tap the words that match.', 'Chạm chữ hợp với hình.')] },
+  rd_caps: { steps: [S('🔠 👀', 'Look at the big letter.', 'Nhìn chữ hoa.'), S('🔤 👆', 'Tap its small letter. Careful: b and d look alike!', 'Chạm chữ thường của nó. Cẩn thận: b và d trông giống nhau!')] },
+  rd_poem: { steps: [S('👂 📜', 'Listen to the line of the poem.', 'Nghe câu thơ.'), S('🤔 🎶', 'Which word sounds right at the end?', 'Từ nào nghe hợp vần ở cuối?'), S('👆 ✅', 'Tap the rhyming word.', 'Chạm vào từ cùng vần.')] },
+  rd_missing: { steps: [S('👀 🐱', 'Look at the picture and the word with a gap.', 'Nhìn tranh và từ còn thiếu.'), S('🗣️ 🔤', 'Say the word slowly.', 'Đọc chậm từ đó.'), S('👆 ✅', 'Tap the letter that fills the gap.', 'Chạm chữ cái điền vào chỗ trống.')] },
+  rd_book: { steps: [S('📖 👆', 'Choose a cover, the friends in your story and a ribbon.', 'Chọn bìa, các bạn trong truyện và dải ruy băng.'), S('📖 💛', 'Any choice is yours! The book goes in your Album.', 'Chọn gì cũng được! Cuốn sách được lưu vào Album.')] },
 };
 for (const [id, guide] of Object.entries(GUIDES)) if (!HOWTO[id]) HOWTO[id] = guide;
