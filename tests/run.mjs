@@ -1,5 +1,5 @@
 import { contentProgressCheck } from './content-progress-browser.mjs';
-import { contentWebsiteCheck } from './content-website-browser.mjs';
+import { contentWebsiteCheck, contentVoiceCheck } from './content-website-browser.mjs';
 import { contentArtCheck } from './content-art-browser.mjs';
 import { installReportInputProbe, readReportInputProbe } from './report-input-probe.mts';
 import { waitObserved } from './wait-observed.mts';
@@ -101,6 +101,8 @@ async function serveFolder(root, { gzip = false } = {}) {
   return Object.assign(S, { url: `http://127.0.0.2:${srv.address().port}/`, close: () => { srv.closeAllConnections(); srv.close(); } });
 }
 let b = await launch();
+
+await check('contentvoice', async () => contentVoiceCheck(b));
 
 await check('contentprogress', async () => contentProgressCheck(b));
 

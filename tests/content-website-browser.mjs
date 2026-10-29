@@ -27,3 +27,22 @@ export async function contentWebsiteCheck(browser){
  }
  fs.writeFileSync(folder+'/website-validation.json',JSON.stringify({provenance,results},null,2)+'\n');return `${results.length} website language/layout/deep-link checks`;
 }
+export async function contentVoiceCheck(browser){
+ const provenance=contentEvidence(browser,['voices/manifest-en.json','voices/manifest-vi.json','js/voicepack.ts','js/packhash.ts']);
+ const audit=JSON.parse(fs.readFileSync(folder+'/voice-audit.json')),urls=[];
+ for(const line of audit.lines.filter(l=>l.recorded)){
+  const manifest=JSON.parse(fs.readFileSync(`../voices/manifest-${line.lang}.json`));
+  for(const voice of manifest.lines[line.hash]){const url=`voices/${line.lang}/${voice}/${line.hash}.mp3`;assert.ok(fs.existsSync('../'+url),url);urls.push(url);}
+ }
+ const context=await browser.newContext(),page=await context.newPage();
+ await context.route('**/__content-voice',r=>r.fulfill({contentType:'text/html',body:'<!doctype html><title>Synthetic voice asset validation</title>'}));
+ try{
+  await page.goto(URL+'__content-voice');
+  const results=await page.evaluate(async urls=>{
+   const audio=new AudioContext(),results=[];
+   try{for(const url of urls){const response=await fetch('/'+url);if(!response.ok)throw Error(url+' HTTP '+response.status);const buffer=await audio.decodeAudioData(await response.arrayBuffer());if(!(buffer.duration>0))throw Error(url+' empty recording');results.push({url,duration:buffer.duration,sampleRate:buffer.sampleRate});}}
+   finally{await audio.close();}return results;
+  },[...new Set(urls)]);
+  assert.ok(results.length>0);fs.writeFileSync(folder+'/voice-validation.json',JSON.stringify({provenance,decoded:results.length,results,missingLines:audit.lines.filter(l=>!l.recorded)},null,2)+'\n');return `${results.length} shipped guidance recordings fetched and decoded; ${audit.lines.filter(l=>!l.recorded).length} lines still need recording; physical listening separate`;
+ }finally{await context.close();}
+}

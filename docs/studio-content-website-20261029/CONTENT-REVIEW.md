@@ -10,12 +10,12 @@ Four require a separate content decision/implementation:
 
 | ID | Evidence | Why it stays declared-only | Next action |
 |---|---|---|---|
-| spotdiff | drawing2 registration, two apple illustrations, generic painting | No pair-generation/difference target or verified detection rule | Define actual comparison rounds and accessible target rules before integrating |
-| hiddenpic | drawing2 registration, leaf/key illustrations, generic painting | No hidden-object targets or found-state logic | Define target list, placement, hints and completion rules |
-| paperfold | drawing2 registration, boat illustration, generic painting | No folds, step sequence or crease interaction | Define intended folding interaction and progression |
+| spotdiff | Retained art-pending proposal (originally drawing2), two apple illustrations, generic painting | No pair-generation/difference target or verified detection rule | Define actual comparison rounds and accessible target rules before integrating |
+| hiddenpic | Retained art-pending proposal (originally drawing2), leaf/key illustrations, generic painting | No hidden-object targets or found-state logic | Define target list, placement, hints and completion rules |
+| paperfold | Retained art-pending proposal (originally drawing2), boat illustration, generic painting | No folds, step sequence or crease interaction | Define intended folding interaction and progression |
 | rongran | SECOND_SET_GAMES.vietnam only | No implementation/registration; dragon already exists as its own stable ID | Owner/content decision on distinct intent; do not alias or delete |
 
-Loading drawing2 deliberately does not register its three unfinished activities. Studio must continue to show them as declared-only; metadata is not playability proof. Other second-set declarations remain unchanged.
+The three unfinished drawing2 definitions are retained in art-pending.ts as unregistered proposals, outside the real loader. Loading drawing2 cannot register them. Studio must continue to show them as declared-only; metadata is not playability proof. Other second-set declarations remain unchanged.
 
 Input and lifecycle: pointer capture ends on up/cancel/lost capture; keyboard arrows move the brush and Space/Enter paints. There are no activity timers. Autoplay uses the existing real pointer-path contract and Save control. Twelve marks enable Save; saving writes a PNG to each participating profile’s local album, keeping the latest twelve. Early exit saves nothing. Shared frame celebration supplies stars; actual game orchestration owns wins/levels and route-dependent coins (five from an ordinary menu, eight for a place, twelve for a folk interaction). No content module writes those progress/reward counters directly.
 

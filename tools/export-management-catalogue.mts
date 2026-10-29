@@ -125,7 +125,7 @@ function git(root: string, args: string[]): string | null {
 }
 
 export function exportManagementCatalogue(root = ROOT): ManagementCatalogue {
-  const files = ['js/games/catalog.ts', 'js/content/activities.ts', 'js/games/learning-meta.ts', 'js/games/readingmenu.ts', 'js/learn.ts', 'js/talesdata.ts', 'js/content/secondset.ts', 'js/content/unlocks.ts', 'js/build.ts', 'home/index.html', 'docs/website-review-20261023/game-review-lock.json', 'js/games/drawing2.ts', 'js/games/crafts.ts', 'js/games/art-pad.ts', 'tools/export-management-catalogue.mts'];
+  const files = ['js/games/catalog.ts', 'js/content/activities.ts', 'js/games/learning-meta.ts', 'js/games/readingmenu.ts', 'js/learn.ts', 'js/talesdata.ts', 'js/content/secondset.ts', 'js/content/unlocks.ts', 'js/build.ts', 'home/index.html', 'docs/website-review-20261023/game-review-lock.json', 'js/games/drawing2.ts', 'js/games/crafts.ts', 'js/games/art-pad.ts', 'js/games/art-pending.ts', 'tools/export-management-catalogue.mts'];
   const sources = new Map(files.map(f => [f, fs.readFileSync(path.join(root, f), 'utf8')]));
   const src = (f: string) => sources.get(f) || '';
   const parsed = extractGameMetadata(src(files[0]), src(files[1]), src(files[2]), src(files[3]));
@@ -182,8 +182,8 @@ export function exportManagementCatalogue(root = ROOT): ManagementCatalogue {
   // to GAME_CATALOG, GAME_LOADERS or the player menu. A registration literal is
   // source evidence only; it never sets implementation/playability true.
   const registrations = new Map<string, { name: Pair; file: string }>();
-  const registrationPattern = new RegExp(`\\bregister\\s*\\(\\s*\\{\\s*id\\s*:\\s*(${Q})[\\s\\S]*?name\\s*:\\s*\\(\\)\\s*=>\\s*T\\s*\\(\\s*(${Q})\\s*,\\s*(${Q})\\s*\\)`, 'g');
-  for (const file of ['js/games/drawing2.ts', 'js/games/crafts.ts']) {
+  const registrationPattern = new RegExp(`\\{\\s*id\\s*:\\s*(${Q})\\s*,\\s*icon\\s*:\\s*${Q}\\s*,\\s*name\\s*:\\s*\\(\\)\\s*=>\\s*T\\s*\\(\\s*(${Q})\\s*,\\s*(${Q})\\s*\\)`, 'g');
+  for (const file of ['js/games/drawing2.ts', 'js/games/crafts.ts', 'js/games/art-pending.ts']) {
     for (const m of src(file).matchAll(registrationPattern)) {
       const id = quoted(m[1]);
       if (registrations.has(id)) throw new Error('Duplicate declared registration: ' + id);

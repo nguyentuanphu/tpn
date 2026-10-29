@@ -6,19 +6,19 @@ const folder='../docs/studio-content-website-20261029';
 export async function contentArtCheck(browser){
  const provenance=contentEvidence(browser,['js/games/art-pad.ts', 'js/games/drawing2.ts', 'js/games/crafts.ts', 'js/games/catalog.ts', 'js/content/activities.ts','js/art.ts','css/style.css','js/games/frame.ts','js/state.ts','js/howto-data.ts']);
  const active=JSON.parse(fs.readFileSync(folder+'/art-audit.json')).filter(r=>r.discovery==='catalogued'),results=[];
- for(const [lang,w,h,little] of [['en',390,844,true],['vi',820,1180,true],['en',1440,900,false],['vi',390,844,false]]){
+ for(const [lang,w,h,little,level] of [['en',390,844,true,1],['vi',820,1180,true,2],['en',1440,900,false,3],['vi',390,844,false,5],['en',844,390,true,1]]){
   const context=await browser.newContext({viewport:{width:w,height:h},hasTouch:little}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   for(const route of ['**/content/custom.json','**/api/live'])await context.route(route,r=>r.fulfill({json:{}}));
   await context.route('**/__content-art',r=>r.fulfill({contentType:'text/html',body:'<!doctype html><link rel="stylesheet" href="/css/style.css"><body></body>'}));
   try{
    await page.goto(URL+'__content-art');
-   await page.evaluate(async lang=>{
+   await page.evaluate(async({lang,little})=>{
     localStorage.setItem('sv2_profiles',JSON.stringify([{id:'synthetic-art',name:'Example',age:'little',difficulty:'easy',created:1}]));
     const S=await import('/js/state.js');Object.assign(S.settings,{lang,voice:false,music:false,sound:false});
     const C=await import('/js/custom.js');await C.liveBoot;C.CUSTOM.releases={newGames:{on:true}};C.setPeeks([]);await import('/js/games/all.js');
-    const U=await import('/js/content/unlocks.js'),p=S.profiles[0];Object.assign(p,{id:'synthetic-art',age:'little',admin:false,unlockAll:false,wins:Object.fromEntries(U.FIRST_SET_GAMES.art.map(id=>[id,3]))});delete p.album;
+    const U=await import('/js/content/unlocks.js'),p=S.profiles[0];Object.assign(p,{id:'synthetic-art',age:little?'little':'big',admin:false,unlockAll:false,wins:Object.fromEntries(U.FIRST_SET_GAMES.art.map(id=>[id,3]))});delete p.album;
     window.artProfile=p;window.artFrame=await import('/js/games/frame.js');window.artCustom=C;
-   },lang);
+   },{lang,little});
    for(const {id} of active){
     console.log(`art ${id} ${lang} ${w}`);
     const gates=await page.evaluate(async id=>{
@@ -29,8 +29,9 @@ export async function contentArtCheck(browser){
      return {item,group,progress,preserved:JSON.stringify(p)===before,allowed:F.canStartGame(id,[p])};
     },id);assert.deepEqual(gates,{item:false,group:false,progress:false,preserved:true,allowed:true},id+' gates');
     const before=await page.evaluate(()=>({album:artProfile.album?.length||0,wins:JSON.stringify(artProfile.wins)}));
-    await page.evaluate(({id,little})=>{window.artResult=artFrame.openGame(id,{players:[artProfile],little,completion:'return'});},{id,little});
+    await page.evaluate(({id,little,level})=>{window.artResult=artFrame.openGame(id,{players:[artProfile],little,level,completion:'return'});},{id,little,level});
     await page.waitForFunction(()=>document.querySelectorAll('.artpad-row button').length===7);
+    await page.locator('.artpad canvas').scrollIntoViewIfNeeded();
     const canvas=page.locator('.artpad canvas');
     if(w===1440){await canvas.focus();for(let i=0;i<12;i++){await page.keyboard.press('ArrowRight');await page.keyboard.press('Space');}}
     else if(little&&w===820){const box=await canvas.boundingBox();for(let i=0;i<12;i++)await page.touchscreen.tap(box.x+20+i*6,box.y+40+i%3*12);}
@@ -42,7 +43,7 @@ export async function contentArtCheck(browser){
     const after=await page.evaluate(async()=>({result:await artResult,album:artProfile.album.length,png:artProfile.album.at(-1).startsWith('data:image/png;base64,'),wins:JSON.stringify(artProfile.wins)}));
     assert.equal(after.result.won,true,id+' complete');assert.equal(after.album,Math.min(12,before.album+1));assert.equal(after.png,true);assert.equal(after.wins,before.wins,'caller progress');
     await page.evaluate(id=>{window.artResult=artFrame.openGame(id,{players:[artProfile]});},id);await page.locator('.gl-x').click();assert.equal((await page.evaluate(()=>artResult)).won,false);await page.waitForSelector('.artpad',{state:'detached'});assert.equal(await page.locator('.artpad').count(),0);
-    results.push({id,lang,width:w,little,gates,won:true,album:after.album,earlyExit:true,input:w===1440?'keyboard':little&&w===820?'touch':'pointer'});
+    results.push({id,lang,width:w,little,level,gates,won:true,album:after.album,earlyExit:true,input:w===1440?'keyboard':little&&w===820?'touch':'pointer'});
    }
    assert.deepEqual(await page.evaluate(()=>['spotdiff','hiddenpic','paperfold','rongran'].filter(id=>artFrame.GAMES[id])),[]);assert.deepEqual(errors,[]);
   }catch(error){await page.screenshot({animations:'disabled',path:folder+'/screenshots/failed-art.png'});fs.writeFileSync(folder+'/failed-art.txt',String(error)+'\n'+errors.join('\n')+'\n'+await page.locator('body').innerText());throw error;}finally{await context.close();}
