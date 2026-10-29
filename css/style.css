@@ -1541,6 +1541,17 @@ body.calm .sv2 .tt-floaters i { animation: none; }
 /* ---------- illustrated icons (js/art.js): drawn pictures that move a little, the way the thing would ---------- */
 svg.art { width: 1em; height: 1em; display: inline-block; vertical-align: middle; overflow: visible; }
 svg.art g { transform-box: view-box; }
+/* (owner, 29 Oct 2026 AEDT: "lots of games have very small pictures or answers with pictures, small kids won't know what
+   they are") a drawing takes its button's text size, so the answer pictures of the newer games came out 13 to 19 px on
+   a phone: on an answer button a picture is at least 44 px, 56 px for under-5s (measured on every game; tool buttons
+   such as Hint or Pass keep their size so their words are not covered) */
+.gl .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) svg.art { min-width: 44px; min-height: 44px; }
+.gl.little .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) svg.art { min-width: 56px; min-height: 56px; }
+.gl .gl-stage .bt-repeat svg.art { min-width: 30px; min-height: 30px; }
+/* (a phone emoji in the words is swapped for a drawing in a wrapper of text size: it grows with the bigger picture) */
+.gl .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) .arti { width: 44px; height: 44px; vertical-align: middle; margin-right: 4px; }
+.gl.little .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) .arti { width: 56px; height: 56px; }
+.gl .gl-stage :is(.a2-btn, .m2-btn, .mu2-btn, .w2-btn, .v2-btn, .out-btn, .mn2-coin, .rd2-btn, .n2-btn, .s2-btn, .pl2-btn, .tk2-card, .tk2-seat, .mg-jar) .arti svg.art { min-width: 0; min-height: 0; }
 .emo { display: inline-block; line-height: 1; }
 .art .a-bob { animation: a-bob 2.4s ease-in-out infinite; }
 .art .a-bob2 { animation: a-bob 2.4s ease-in-out -1.2s infinite; }
