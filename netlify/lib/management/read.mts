@@ -13,6 +13,9 @@ export type CatalogueEntry = { id: string; kind: string; name: {en: string,vi: s
 type Dependencies = {
   playersStore: StoreSource; botStore?: StoreSource; parentAnalyticsStore?: StoreSource; testerStore?: StoreSource;
   catalogue?: CatalogueEntry[] | (()=>Promise<CatalogueEntry[]> | CatalogueEntry[]); now?: ()=>number;
+  // (owner, 30 Oct 2026 AEDT: "Studio loads too slow, especially after selecting the date") the live Studio names its
+  // store here so finished days are kept between requests; without a name (the tests) every read is fresh
+  cacheKey?: string;
 };
 type ReadOptions = {includeProfileContext?: boolean};
 type Daily = {id: string; date: string; value: Record<string,any>};
@@ -37,6 +40,19 @@ async function keys(s: ManagementStore,prefix: string,max=50000) {
 async function mapPool<T,R>(items:T[],fn:(v:T)=>Promise<R>,limit=16):Promise<R[]> {
   const out:R[]=new Array(items.length); let i=0;
   await Promise.all(Array.from({length:Math.min(limit,items.length)},async()=>{while(i<items.length){const j=i++;out[j]=await fn(items[j]);}}));return out;
+}
+// A finished day (two or more days ago) changes only when a device that was offline sends it late, so it is kept for
+// 10 minutes; today and yesterday, and the device names and details (a renamed device shows at once), are always read
+// fresh. Shared by every request on this server instance (overview, devices and children each read the whole period).
+const DAY_MS = 10 * 60e3, CACHE_MAX = 600;
+const cache = new Map<string, {at: number, value: unknown}>();
+async function cached<T>(key: string | null, ms: number, load: () => Promise<T>): Promise<T> {
+  if (!key) return load();
+  const hit = cache.get(key), now = Date.now();
+  if (hit && now - hit.at < ms) return hit.value as T;
+  const value = await load();
+  if (cache.size >= CACHE_MAX) { const oldest = cache.keys().next().value; if (oldest !== undefined) cache.delete(oldest); }
+  cache.set(key, {at: now, value}); return value;
 }
 const active = (r:Record<string,any>) => count(r.mins)>0 || sumValues(r.games)>0 || count(r.tales)>0;
 const dateRange = (q:ManagementQuery) => {const a:string[]=[];for(let t=Date.parse(q.from);t<=Date.parse(q.to);t+=864e5)a.push(day(t));return a;};
@@ -63,11 +79,14 @@ export function createManagementReadService(deps:Dependencies) {
   async function snapshot(q:ManagementQuery,options:ReadOptions={}) {
     if(q.child&&!options.includeProfileContext)throw new ManagementReadError('permission_required','Child search requires restricted device-detail permission.',403);
     const s=await source(q), quality:string[]=[];
-    const daily:Daily[]=[];
-    for(const date of dateRange(q)){
-      const kk=await keys(s,`d/${date}/`), values=await mapPool(kk,k=>readJson(s,k));
-      kk.forEach((k,i)=>{const id=k.slice(`d/${date}/`.length);if(DEVICE.test(id)&&Object.keys(values[i]).length)daily.push({id,date,value:values[i]});});
-    }
+    const base=deps.cacheKey?deps.cacheKey+':'+q.traffic:null, recent=day(clock()-2*864e5);
+    // the days are read side by side (they were read one after another: 30 rounds for a 30-day period)
+    const days=await mapPool(dateRange(q),date=>cached(base&&date<recent?base+':d:'+date:null,DAY_MS,async()=>{
+      const kk=await keys(s,`d/${date}/`), values=await mapPool(kk,k=>readJson(s,k)), rows:Daily[]=[];
+      kk.forEach((k,i)=>{const id=k.slice(`d/${date}/`.length);if(DEVICE.test(id)&&Object.keys(values[i]).length)rows.push({id,date,value:values[i]});});
+      return rows;
+    }),8);
+    const daily:Daily[]=days.flat();
     const [ik,lk,pk]=await Promise.all([keys(s,'info/'),keys(s,'label/'),keys(s,'live/')]);
     const infos=new Map<string,Record<string,any>>(),labels=new Map<string,string>(),lives=new Map<string,Record<string,any>>();
     await Promise.all([
