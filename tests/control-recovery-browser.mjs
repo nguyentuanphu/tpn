@@ -40,6 +40,19 @@ export async function controlRecoveryBrowserCheck(browser,site,output){
      check(family+' pending is distinct from available',/pending|đang chờ/.test(host.querySelector('[data-'+prefix+'-result]').textContent));
      check(family+' pending cannot publish twice',host.querySelector('[data-'+prefix+'-publish]').disabled);
     }
+    // The advanced JSON editor uses the same uncertain-write recovery boundary.
+    const {renderManagement}=await import('/studio/ui/management.js');
+    let fail='',writes=0,readFails=false;
+    const advanced={id:'synthetic-advanced',revision:1,state:'draft',kind:'content',reason:'Synthetic advanced edits',baseRevision:1,effectiveHash:'synthetic-hash',body:{content:{message:{en:'Synthetic retained value'}}}};
+    const api=async(url,body)=>{if(body!==undefined){writes++;if(fail)throw Object.assign(Error(fail),{raw:fail});return url.endsWith('/review')?{...advanced,revision:2,state:'reviewed'}:advanced;}if(url==='management/drafts'){if(readFails)throw Error('synthetic_draft_read_failure');return {drafts:[]};}return {configured:true,config:{revision:1,body:{content:{}}},changes:[]};};
+    const mount=()=>renderManagement(host,{T,api,can,kind:'changes',online:true});
+    for(const code of ['draft_baseline_conflict','draft_revision_conflict','synthetic_lost_response']){
+     fail='';await mount();const form=host.querySelector('form.mg-editor'),input=form.querySelector('[name=configBody]'),reason=form.querySelector('[name=reason]');reason.value='Synthetic advanced edits';input.value='{bad';const initial=writes;form.requestSubmit();await new Promise(r=>setTimeout(r));check('advanced invalid JSON sends no request',writes===initial);check('advanced syntax error can be corrected',!form.querySelector('[type=submit]').disabled);
+     input.value=JSON.stringify({content:{message:{en:'Synthetic retained value'}}});form.requestSubmit();await new Promise(r=>setTimeout(r));form.querySelector('[data-draft-review]').click();await new Promise(r=>setTimeout(r));check('advanced review enables publish',!form.querySelector('[data-draft-publish]').disabled);
+     const before=input.value;fail=code;form.querySelector('[data-draft-publish]').click();await new Promise(r=>setTimeout(r));check('advanced '+code+' blocks writes',['[type=submit]','[data-draft-review]','[data-draft-publish]'].every(q=>form.querySelector(q).disabled));check('advanced '+code+' retains JSON',input.value===before);const count=writes;form.requestSubmit();form.querySelector('[name=savedDraft]').dispatchEvent(new Event('change'));await new Promise(r=>setTimeout(r));check('advanced recovery cannot be bypassed',writes===count&&form.querySelector('[data-draft-publish]').disabled);
+     fail='';form.querySelector('[data-config-reload]').click();await new Promise(r=>setTimeout(r));check('advanced reload recovers',!host.querySelector('form.mg-editor [type=submit]').disabled);
+    }
+    readFails=true;await mount();check('advanced unavailable draft list blocks saving',host.querySelector('form.mg-editor [type=submit]').disabled);check('advanced failed read allows reload',!host.querySelector('[data-config-reload]').disabled);
     return checks;
    },lang);
    assert.ok(result.length>=60);await page.screenshot({path:path.join(output,`${lang}-${width}-control-recovery.png`),fullPage:true});evidence.push({width,height,lang,assertions:result.length});

@@ -5,7 +5,7 @@ import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {createRequire} from 'node:module';
 import {exportManagementCatalogue} from './export-management-catalogue.mts';
-const root=process.cwd(),out=path.join(root,'docs/studio-content-website-20261029');
+const root=process.cwd(),out=path.resolve(root,process.argv[2]||'docs/studio-content-website-20261029');
 const ts=createRequire(path.join(root,'tests/package.json'))('typescript');
 const git=(...args:string[])=>execFileSync('git',args,{encoding:'utf8'}).trim();
 const files=[...new Set([...git('ls-files','--','js','home','netlify','studio','tools','types','.github/workflows','index.html','sw.ts','css').split('\n'),...git('ls-files','--others','--exclude-standard','--','js','home','tools').split('\n')])].filter(f=>/\.(?:[cm]?[jt]s|tsx|html|css|ya?ml)$/.test(f)&&fs.statSync(f).isFile()).sort();

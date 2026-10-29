@@ -1,3 +1,4 @@
+import {managementPolicyBudgetCheck} from './management-policy-budget-browser.mjs';
 import { contentProgressCheck } from './content-progress-browser.mjs';
 import { contentWebsiteCheck, contentVoiceCheck } from './content-website-browser.mjs';
 import { contentArtCheck, contentPairCheck, contentCaptureCheck } from './content-art-browser.mjs';
@@ -1021,6 +1022,7 @@ await check('studio', async () => {
 });
 
 await check('ownerstudiofailures', async () => studioRepairCheck(b));
+await check('managementbudget', async () => managementPolicyBudgetCheck(b));
 await check('managementstudio', async () => managementBrowserCheck(b));
 await check('ownerdesk', async () => ownerDeskBrowserCheck(b));
 
@@ -3203,11 +3205,12 @@ await check('roadtone', async () => {
   const P = await open(b, { w: 900, h: 640 }); await clear(P.page);
   const mats = await P.page.evaluate(() => { const s = new Set(); __sv.scene.traverse(o => { if (o.userData.road && o.material && o.material.map) s.add(o.material.uuid); }); return s.size; });
   // (round T4a, ROAD-015) the markings: a yellow centre dash on Vietnam's roads, light concrete kerbs on Australia's
+  // Compare plain asphalt over 3,584 pixels, away from kerbs/markings; random speckles are not the regional base colour.
   const mark = await P.page.evaluate(async () => {
     const M = await import('/js/content/map.js'), { THREE } = await import('/js/gfx.js'), mid = id => { const R = M.ROADS.find(r => r.id === id), [a, c] = R.pts; return [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2]; };
-    const at = ([x, z], px, py) => { let got = null; __sv.scene.traverse(o => { if (got || !o.userData.road || !o.material || !o.material.map) return; o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox;
-      if (x > bb.min.x && x < bb.max.x && z > bb.min.z && z < bb.max.z) { const im = o.material.map.image, g = im.getContext('2d'); got = [...g.getImageData(px, py, 1, 1).data].slice(0, 3); } }); return got; };
-    return { vnDash: at(mid('vn_north'), 31, 60), auKerb: at(mid('link_au'), 1, 60), auMid: at(mid('link_au'), 20, 60), vnMid: at(mid('vn_north'), 20, 60), vnKerb: at(mid('vn_north'), 0, 60) };
+    const at = ([x, z], px, py, width = 1, height = 1) => { let got = null; __sv.scene.traverse(o => { if (got || !o.userData.road || !o.material || !o.material.map) return; o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox;
+      if (x > bb.min.x && x < bb.max.x && z > bb.min.z && z < bb.max.z) { const im = o.material.map.image, g = im.getContext('2d'); const data = g.getImageData(px, py, width, height).data, sum = [0,0,0]; for(let i=0;i<data.length;i+=4)for(let k=0;k<3;k++)sum[k]+=data[i+k]; got=sum.map(v=>v/(width*height)); } }); return got; };
+    return { vnDash: at(mid('vn_north'), 31, 60), auKerb: at(mid('link_au'), 1, 60), auMid: at(mid('link_au'), 10, 0, 14, 256), vnMid: at(mid('vn_north'), 10, 0, 14, 256), vnKerb: at(mid('vn_north'), 0, 60) };
   });
   const errs = P.errors; await P.ctx.close();
   { const [r, g, bl] = mark.vnDash || [0, 0, 0]; ok(r > 200 && g > 150 && bl < 120, `Vietnam's road has no yellow centre dash: rgb ${mark.vnDash}`); }

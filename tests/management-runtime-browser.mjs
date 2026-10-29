@@ -1,6 +1,6 @@
 // Actual game save/voice sources in an isolated browser document. Synthetic data only.
 import assert from 'node:assert/strict';
-import { URL, open } from './harness.mjs';
+import { URL, open, noWelcome } from './harness.mjs';
 export async function managementRuntimeBrowserCheck(browser){
  const context=await browser.newContext();
  try{
@@ -54,6 +54,8 @@ export async function managementRuntimeBrowserCheck(browser){
  }});
  try{
   await game.page.waitForFunction(()=>window.__sv?.bootTimes);
+  // Keep the unrelated 8-second welcome sticker outside this policy-preservation window.
+  await noWelcome(game.page);
   await game.page.waitForTimeout(1800);
   const queue=await game.page.evaluate(()=>['sv2_management_out','sv2_management_bot_out'].flatMap(k=>{try{return JSON.parse(localStorage.getItem(k)||'{}').events||[];}catch{return [];}}));
   const events=[...received,...queue],started=events.find(e=>e.eventName==='boot.started'),ready=events.find(e=>e.eventName==='boot.ready');
@@ -62,7 +64,7 @@ export async function managementRuntimeBrowserCheck(browser){
   assert.equal(await game.page.evaluate(()=>localStorage.getItem('sv2_management_out')),null);
   const privacy=await game.page.evaluate(async()=>{
    const S=await import('/js/state.js'),C=await import('/js/custom.js'),E=await import('/js/core/events.js');
-   const before=JSON.stringify(S.profiles),policy={schemaVersion:1,collect:true,process:true,show:true,expiresAt:new Date(Date.now()+60000).toISOString()};
+   const before=JSON.stringify(S.profiles),beforeValues=JSON.parse(before),policy={schemaVersion:1,collect:true,process:true,show:true,expiresAt:new Date(Date.now()+60000).toISOString()};
    C.CUSTOM.reportingPolicy=policy;S.settings.countPlayers=false;E.events.emit('SettingsChanged');
    const parentWins=E.managementEvidence.emit('voice.result',{source:'device',language:'en',outcome:'unknown'})===null;
    S.settings.countPlayers=true;C.CUSTOM.reportingPolicy={...policy,expiresAt:new Date(Date.now()+1500).toISOString()};E.events.emit('SettingsChanged');
@@ -70,9 +72,9 @@ export async function managementRuntimeBrowserCheck(browser){
    const enabled=!!E.managementEvidence.emit('voice.result',{source:'device',language:'en',outcome:'unknown'});
    await new Promise(r=>setTimeout(r,1800));
    const expired=E.managementEvidence.emit('voice.result',{source:'device',language:'en',outcome:'unknown'})===null;
-   return {parentWins,enabled,expired,queueCleared:['sv2_management_out','sv2_management_bot_out'].every(k=>localStorage.getItem(k)===null),progressPreserved:JSON.stringify(S.profiles)===before,parentChoiceUnchanged:S.settings.countPlayers===true};
+   return {parentWins,enabled,expired,queueCleared:['sv2_management_out','sv2_management_bot_out'].every(k=>localStorage.getItem(k)===null),progressPreserved:JSON.stringify(S.profiles)===before,changedProfileFields:S.profiles.flatMap((p,i)=>[...new Set([...Object.keys(p),...Object.keys(beforeValues[i]||{})])].filter(k=>JSON.stringify(p[k])!==JSON.stringify(beforeValues[i]?.[k])).map(k=>i+'.'+k)),parentChoiceUnchanged:S.settings.countPlayers===true};
   });
-  for(const [name,value]of Object.entries(privacy))assert.equal(value,true,name);
+  for(const [name,value]of Object.entries(privacy))if(name!=='changedProfileFields')assert.equal(value,true,name+(name==='progressPreserved'?' changed fields: '+privacy.changedProfileFields.join(', '):''));
   const blockedOnline=await game.page.evaluate(async()=>{
    const C=await import('/js/custom.js'),G=window.__sv,before={acts:G.actCount,paused:G.paused,progress:JSON.stringify(G.heroes[0].profile)},old=C.CUSTOM.itemAvailability;
    C.CUSTOM.itemAvailability={...old,'game:oanquan':false};await G.playGameOnline('oanquan',1,{});C.CUSTOM.itemAvailability=old;

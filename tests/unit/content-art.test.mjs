@@ -26,7 +26,7 @@ test('integrated art events are accepted and all four unresolved IDs remain reje
  const {managementService}=await import('../../netlify/lib/management/runtime.mts');
  const {MemoryManagementTestDatabase}=await import('../../netlify/lib/management/storage/memory-test.mts');
  const {randomUUID}=await import('node:crypto');
- const service=managementService(async()=>null,new MemoryManagementTestDatabase());
+ const service=managementService(async()=>({get:async()=>null}),new MemoryManagementTestDatabase());
  const event=id=>({schemaVersion:1,eventId:randomUUID(),deviceId:'demo12345678',sessionId:'demo123456789012',attemptId:randomUUID(),eventName:'activity.started',occurredAt:new Date().toISOString(),deviceDay:new Date().toISOString().slice(0,10),offsetMinutes:0,build:'v1.02',sourceCommit:null,environment:'production',traffic:'ordinary',data:{activityId:id,difficulty:'easy',mode:'solo'}});
  const active=JSON.parse(read('docs/studio-content-website-20261029/art-audit.json')).filter(r=>r.discovery==='catalogued');
  await assert.doesNotReject(service.ingestEvents({schemaVersion:1,events:active.map(r=>event(r.id))}));

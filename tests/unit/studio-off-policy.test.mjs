@@ -35,7 +35,7 @@ test('future rollout can retain used access while a new profile waits',async()=>
 });
 test('declared-only management entries cannot become open from an unlock or release switch',()=>{
  const catalogue=loadManagementCatalogue(),declared=catalogue.entries.filter(e=>e.coverage.discovery==='declared-only');
- assert.equal(declared.length,26);assert.equal(declared.filter(e=>e.coverage.bilingual).length,25);
+ assert.deepEqual(declared.map(e=>e.id).sort(),['hiddenpic','paperfold','rongran','spotdiff']);assert.equal(declared.filter(e=>e.coverage.bilingual).length,3);
  assert.ok(declared.every(e=>!e.coverage.implementation&&!e.coverage.metadata));
  assert.equal(new Set(catalogue.entries.map(e=>e.kind+':'+e.id)).size,catalogue.entries.length);
  for(const e of declared){const a=explainAvailability(e,{custom:{releases:{newGames:{on:true},unlockAll:{on:true}}},profiles:[{admin:true,unlockAll:true}]});assert.equal(a.result,'closed');assert.ok(a.gates.some(g=>g.id==='runtime_integration'&&g.state==='closed'));}
@@ -44,9 +44,10 @@ test('declared-only management entries cannot become open from an unlock or rele
  assert.equal(contradictory.entries[0].coverage.implementation,false);assert.equal(contradictory.entries[0].coverage.metadata,false);
 });
 test('declared-only catalogue rows remain excluded from accepted runtime activity events',async()=>{
- const service=managementService(async()=>null,new MemoryManagementTestDatabase());
- const event={schemaVersion:1,eventId:randomUUID(),deviceId:'demo12345678',sessionId:'demo123456789012',attemptId:randomUUID(),eventName:'activity.started',occurredAt:new Date().toISOString(),deviceDay:new Date().toISOString().slice(0,10),offsetMinutes:0,build:'v1.02',sourceCommit:null,environment:'production',traffic:'ordinary',data:{activityId:'aodai',difficulty:'easy',mode:'solo'}};
- await assert.rejects(service.ingestEvents({schemaVersion:1,events:[event]}),e=>e.code==='unknown_catalogue_id');
+ const service=managementService(async()=>({get:async()=>null}),new MemoryManagementTestDatabase());
+ const event={schemaVersion:1,eventId:randomUUID(),deviceId:'demo12345678',sessionId:'demo123456789012',attemptId:randomUUID(),eventName:'activity.started',occurredAt:new Date().toISOString(),deviceDay:new Date().toISOString().slice(0,10),offsetMinutes:0,build:'v1.02',sourceCommit:null,environment:'production',traffic:'ordinary',data:{activityId:'paperfold',difficulty:'easy',mode:'solo'}};
+ for(const activityId of ['hiddenpic','paperfold','rongran','spotdiff'])await assert.rejects(service.ingestEvents({schemaVersion:1,events:[{...event,eventId:randomUUID(),data:{...event.data,activityId}}]}),e=>e.code==='unknown_catalogue_id');
+ const accepted=await service.ingestEvents({schemaVersion:1,events:[{...event,eventId:randomUUID(),data:{...event.data,activityId:'aodai'}}]});assert.equal(accepted.accepted.length,1);
 });
 test('server availability explanation follows explicit Off rather than retained money/reading access',()=>{
  const catalogue=loadManagementCatalogue();

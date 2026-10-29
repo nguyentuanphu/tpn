@@ -1,11 +1,11 @@
 // Small accessible SVG charts. Numbers come from scoped API responses, never fixtures.
 export type ChartPoint = {label:string;value:number|null;target?:string};
-export type ChartSpec = {id:string;title:string;unit:string;points:ChartPoint[];explanation:string;source:string;limit:string;line?:boolean};
+export type ChartSpec = {id:string;title:string;unit:string;points:ChartPoint[];explanation:string;source:string;limit:string;line?:boolean;formatValue?:(value:number)=>string};
 const escape = (s:unknown) => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 export function deskChart(spec:ChartSpec,T:(en:string,vi:string)=>string):string {
  const values=spec.points.filter(p=>p.value!==null&&Number.isFinite(p.value));
  const max=Math.max(1,...values.map(p=>Math.abs(p.value!))),height=Math.max(120,spec.line?180:values.length*45+20),width=520;
- const fmt=(n:number)=>new Intl.NumberFormat(T('en-AU','vi-VN'),{maximumFractionDigits:1}).format(n);
+ const fmt=spec.formatValue||((n:number)=>new Intl.NumberFormat(T('en-AU','vi-VN'),{maximumFractionDigits:1}).format(n));
  let svg='';
  if(values.length&&spec.line){
   const x=(i:number)=>40+i*(width-75)/Math.max(1,spec.points.length-1),y=(n:number)=>height-35-(height-65)*n/max;
