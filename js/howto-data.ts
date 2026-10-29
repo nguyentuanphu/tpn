@@ -236,7 +236,7 @@ for (const [id, guide] of Object.entries(DEFAULTS)) if (!HOWTO[id]) HOWTO[id] = 
 
 // Second-set art: the same real input and Save action as the canvas, not puzzle rules.
 for (const id of ["stamps", "weave", "mosaic", "nonla", "aodai", "kitepaint", "shades", "shadowpic", "finishpic", "scene", "lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"]) HOWTO[id] = { steps: [
-  S('🎨', 'Choose a colour for your picture.', 'Chọn màu cho bức tranh của con.'),
+  S('🎨', 'Look at your picture and choose where to start.', 'Nhìn bức tranh và chọn chỗ bắt đầu.'),
   S('✏️', 'Paint with your finger or mouse. With a keyboard, use arrows and Space.', 'Vẽ bằng ngón tay hoặc chuột. Với bàn phím, dùng mũi tên và phím cách.'),
   S('✅', 'Make twelve marks, then choose Keep in Album. Leaving early does not save a picture.', 'Tô mười hai nét rồi chọn Lưu vào Album. Thoát sớm không lưu tranh.')
 ] };

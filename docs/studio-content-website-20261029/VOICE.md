@@ -8,8 +8,8 @@
 - scene (vi): Chọn màu rồi chạm để dán hình tam giác vào phong cảnh nhé!
 - bubblepaint (en): Choose a colour and tap to paint bubble rings!
 - bubblepaint (vi): Chọn màu rồi chạm để vẽ vòng bong bóng nhé!
-- shared-art-howto (en): Choose a colour for your picture.
-- shared-art-howto (vi): Chọn màu cho bức tranh của con.
+- shared-art-howto (en): Look at your picture and choose where to start.
+- shared-art-howto (vi): Nhìn bức tranh và chọn chỗ bắt đầu.
 - shared-art-howto (en): Paint with your finger or mouse. With a keyboard, use arrows and Space.
 - shared-art-howto (vi): Vẽ bằng ngón tay hoặc chuột. Với bàn phím, dùng mũi tên và phím cách.
 - shared-art-howto (en): Make twelve marks, then choose Keep in Album. Leaving early does not save a picture.

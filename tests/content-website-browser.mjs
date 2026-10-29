@@ -1,8 +1,10 @@
+import {contentEvidence} from './content-evidence.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {URL} from './harness.mjs';
 const folder='../docs/studio-content-website-20261029';
 export async function contentWebsiteCheck(browser){
+ const provenance=contentEvidence(browser,['home/index.html', 'docs/website-review-20261023/art-content.mjs', 'docs/website-review-20261023/navigation.mjs']);
  const results=[];
  for(const [width,height]of [[390,844],[820,1180],[1440,900],[844,390]]){
   const context=await browser.newContext({viewport:{width,height}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -23,5 +25,5 @@ export async function contentWebsiteCheck(browser){
    assert.deepEqual(errors,[]);
   }finally{await context.close();}
  }
- fs.writeFileSync(folder+'/website-validation.json',JSON.stringify(results,null,2)+'\n');return `${results.length} website language/layout/deep-link checks`;
+ fs.writeFileSync(folder+'/website-validation.json',JSON.stringify({provenance,results},null,2)+'\n');return `${results.length} website language/layout/deep-link checks`;
 }

@@ -1,8 +1,10 @@
+import {contentEvidence} from './content-evidence.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {URL} from './harness.mjs';
 const folder='../docs/studio-content-website-20261029';
 export async function contentArtCheck(browser){
+ const provenance=contentEvidence(browser,['js/games/art-pad.ts', 'js/games/drawing2.ts', 'js/games/crafts.ts', 'js/games/catalog.ts', 'js/content/activities.ts','js/art.ts','css/style.css','js/games/frame.ts','js/state.ts','js/howto-data.ts']);
  const active=JSON.parse(fs.readFileSync(folder+'/art-audit.json')).filter(r=>r.discovery==='catalogued'),results=[];
  for(const [lang,w,h,little] of [['en',390,844,true],['vi',820,1180,true],['en',1440,900,false],['vi',390,844,false]]){
   const context=await browser.newContext({viewport:{width:w,height:h},hasTouch:little}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -34,7 +36,7 @@ export async function contentArtCheck(browser){
     else if(little&&w===820){const box=await canvas.boundingBox();for(let i=0;i<12;i++)await page.touchscreen.tap(box.x+20+i*6,box.y+40+i%3*12);}
     else {const box=await canvas.boundingBox();await page.mouse.move(box.x+20,box.y+30);await page.mouse.down();for(let i=0;i<14;i++)await page.mouse.move(box.x+25+i*6,box.y+40+i%3*12);await page.mouse.up();}
     const save=page.locator('.artpad-row button').last();assert.equal(await save.isEnabled(),true,id+' save');
-    const layout=await page.evaluate(()=>{const r=document.querySelector('.artpad canvas').getBoundingClientRect();return {fits:r.left>=0&&r.right<=innerWidth,min:Math.min(...[...document.querySelectorAll('.artpad button')].map(b=>b.getBoundingClientRect().height))};});assert.equal(layout.fits,true,id+' fits');assert.ok(layout.min>=(little?64:44),id+' targets');
+    const layout=await page.evaluate(()=>{const r=document.querySelector('.artpad canvas').getBoundingClientRect();return {fits:r.left>=0&&r.right<=innerWidth,min:Math.min(...[...document.querySelectorAll('.artpad button')].map(b=>b.getBoundingClientRect()).filter(r=>r.width>0).map(r=>r.height))};});assert.equal(layout.fits,true,id+' fits');assert.ok(layout.min>=(little?64:44),id+' targets');
     if(['stamps','nonla','scratch','pixelpic'].includes(id))await page.screenshot({animations:'disabled',path:`${folder}/screenshots/${id}-${lang}-${w}.png`});
     await save.click();await page.waitForSelector('.gl-win');await page.waitForFunction(()=>!document.querySelector('.gl'));
     const after=await page.evaluate(async()=>({result:await artResult,album:artProfile.album.length,png:artProfile.album.at(-1).startsWith('data:image/png;base64,'),wins:JSON.stringify(artProfile.wins)}));
@@ -45,5 +47,5 @@ export async function contentArtCheck(browser){
    assert.deepEqual(await page.evaluate(()=>['spotdiff','hiddenpic','paperfold','rongran'].filter(id=>artFrame.GAMES[id])),[]);assert.deepEqual(errors,[]);
   }catch(error){await page.screenshot({animations:'disabled',path:folder+'/screenshots/failed-art.png'});fs.writeFileSync(folder+'/failed-art.txt',String(error)+'\n'+errors.join('\n')+'\n'+await page.locator('body').innerText());throw error;}finally{await context.close();}
  }
- fs.writeFileSync(folder+'/browser-validation.json',JSON.stringify({synthetic:true,results},null,2)+'\n');return `${results.length} art completions, gates, album cap, keyboard/pointer and exit checks`;
+ fs.writeFileSync(folder+'/browser-validation.json',JSON.stringify({provenance,results},null,2)+'\n');return `${results.length} art completions, gates, album cap, keyboard/pointer and exit checks`;
 }

@@ -49,6 +49,14 @@ export async function runArtPad(api: any, options: {
   api.onCleanup(() => { closed = true; painting = false; });
   await options.drawGuide(g, w, h);
   if (closed || api.closed) return;
+  // Cell guides use the same geometry as the painting tool.
+  if (options.id === 'pixelpic' || options.id === 'mosaic') {
+    const cell = w / (api.little ? 8 : 12);
+    g.fillStyle = options.id === 'mosaic' ? '#e9ecef' : '#f1f5f9'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#adb5bd'; g.lineWidth = 1;
+    for (let x = 0; x <= w; x += cell) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
+    for (let y = 0; y <= h; y += cell) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+  }
   // Scratch/rubbing use a separate image revealed only where the brush moves.
   const reveal = document.createElement('canvas'); reveal.width = canvas.width; reveal.height = canvas.height;
   const rg = reveal.getContext('2d')!;
@@ -66,6 +74,7 @@ export async function runArtPad(api: any, options: {
     b.onclick = () => { colour = i; buttons.forEach((button, j) => button.setAttribute('aria-pressed', String(j === i))); };
     row.appendChild(b); return b;
   });
+  row.style.display = ['scratch', 'leafrub', 'lacquer'].includes(options.id) ? 'none' : '';
   const done = el('button', '', `${pic('✅')} ${T('Keep in Album', 'Lưu vào Album')}`);
   done.disabled = true;
   const actions = el('div', 'artpad-row'); actions.appendChild(done);
@@ -122,5 +131,5 @@ export async function runArtPad(api: any, options: {
     p.album.push(png); if (p.album.length > 12) p.album.splice(0, p.album.length - 12);
   }
   saveProfiles(); api.dots(3, 3);
-  return api.win({title:T(...options.winTitle)});
+  return api.win({title:T(...options.winTitle),titleVi:options.winTitle[1]});
 }
