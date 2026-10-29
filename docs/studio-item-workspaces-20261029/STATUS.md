@@ -27,3 +27,7 @@ Broader phone/contract/film/story/reading/online regression and exact-current-so
 ## Assigned to B
 
 Concrete content integration/playability for intended26pending IDs; complete public13-domain source/dependency inventory; website content/art/source alignment; per-item gameplay/voice/layout evidence. B branches from the uploaded A checkpoint and preserves A's shared control/runtime/API files. Exact ownership and integration order: TWO-CHAT-PLAN.md.
+
+## CI observation at upload
+
+Earlier exact-source draft run40793180243 reports completed/success for06483b71; its complete artifact audit still belongs to A and is not proof of the new runtime. New all=true run40814664317 targetsb4ad5beb (0409b5d9 runtime plus9efa00f6 catalogue and docs): https://github.com/nguyentuanphu/tpn/actions/runs/40814664317. It is queued/running, not yet a full pass. Inspect its actual artifacts/collector before claiming success.
