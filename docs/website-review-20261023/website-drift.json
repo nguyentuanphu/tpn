@@ -1,5 +1,5 @@
 {
-  "source": "ca001617f4b8932423fb541258e2b6b1c87b881e",
+  "source": "4711e3dd7d0db6467caf233fe89add74c6b66dec",
   "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
   "coverage": {
     "valley": 17,
@@ -33,6 +33,7 @@
     "sw.ts",
     "content/management-catalogue.json",
     "js/games/art-pad.ts",
+    "js/games/art-pending.ts",
     "js/management-telemetry.ts",
     "js/tales.ts"
   ],
