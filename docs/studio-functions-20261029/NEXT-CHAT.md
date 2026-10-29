@@ -1,3 +1,5 @@
+Latest continuation: [control recovery and field guide](../studio-control-recovery-20261029/NEXT-CHAT.md). The source and pending CI state below describe an older checkpoint; run40820891228 completed253/253 after two isolated retries.
+
 # Continue workstream A
 
 Continue Sparkle Valley Studio in nguyentuanphu/tpn on review/studio-finance-20261027, working alone. Read repository rules, latest board/release notes, this folder README.md, CONTRACT.md, VALIDATION.md and current CI.json. Read the two-chat ownership plan in docs/studio-item-workspaces-20261029/. Workstream B owns concrete pending game integrations, content inventory and website alignment; do not overwrite those files. A owns Studio/API/shared control boundaries, policy, business views and final integration. No deployment/main/version/payment/provisioning/production migration/private-save deletion is authorised.

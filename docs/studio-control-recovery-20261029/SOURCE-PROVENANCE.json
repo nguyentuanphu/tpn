@@ -1,0 +1,19 @@
+{
+  "recordedAtSydney": "2026-10-29T17:36:49.333863+11:00",
+  "runtimeSourceCommit": "47782b13f08e67e8647d41614a52f4f0714cc195",
+  "recoveryBase": "6450144fc6f0749dfac2510b5be65185b175bb6c",
+  "sourceHashes": "evidence/source-hashes.json",
+  "sourceHashesMatch": true,
+  "unitPasses": 434,
+  "recoveryAssertions": 564,
+  "recoveryConfigurations": 6,
+  "authenticatedViews": 58,
+  "screenshots": 128,
+  "managementScreenshots": 36,
+  "physicalDeviceValidation": false,
+  "syntheticData": true,
+  "SQLChanges": false,
+  "gameRuntimeChanges": false,
+  "deploymentPerformed": false,
+  "fullCurrentSourcePassVerified": false
+}

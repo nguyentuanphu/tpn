@@ -11,8 +11,15 @@
   "managementPNGs": 36,
   "syntheticData": true,
   "physicalDeviceValidation": false,
-  "fullCurrentSourcePassVerified": false,
+  "fullCurrentSourcePassVerified": true,
   "readingCoverage": "rotating sample, not exhaustive",
   "deploymentPerformed": false,
-  "BContentWorkMerged": false
+  "BContentWorkMerged": false,
+  "fullRun": 40820891228,
+  "cleanFirstPass": false,
+  "isolatedRetries": [
+    "managementstudio",
+    "roadtone"
+  ],
+  "scopeNote": "This provenance describes e843a174 only. Later recovery source has separate evidence."
 }

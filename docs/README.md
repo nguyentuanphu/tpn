@@ -1,5 +1,7 @@
 # Docs: start here
 
+[Latest Studio control recovery and field guide](studio-control-recovery-20261029/README.md): conflict/unknown-result recovery, real delivery navigation, current evidence and pending work.
+
 [Latest Studio function controls and continuation](studio-functions-20261029/README.md): actual Collect/Process/Show implementation, field connections, screenshots, validation and pending work.
 
 [Current Studio item workspaces and two-chat plan](studio-item-workspaces-20261029/README.md): actual checkpoint, file ownership and copyable second-chat prompt.

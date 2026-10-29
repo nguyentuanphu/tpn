@@ -5,7 +5,19 @@
   "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40820891228",
   "all": true,
   "statusAtDispatch": "pending",
-  "completePassVerified": false,
+  "completePassVerified": true,
   "observation": "evidence/current-ci/observation.json",
-  "limitation": "Inspect actual share artifacts and collector before claiming complete success; historical passes do not establish current-source success."
+  "limitation": "Complete pass for e843a174 only, after two isolated retries. Not evidence for later recovery source; legacy unit exclusion remains documented.",
+  "status": "completed",
+  "conclusion": "success",
+  "checks": 253,
+  "shareArtifacts": 9,
+  "collector": "success",
+  "retriedChecks": [
+    "managementstudio",
+    "roadtone"
+  ],
+  "cleanFirstPass": false,
+  "sampleMarkers": [],
+  "suiteLevelSkips": []
 }
