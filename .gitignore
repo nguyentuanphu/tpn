@@ -194,6 +194,7 @@ marketing/source/runvalley.log
 /js/studio-position.js
 /js/tale-loader.js
 /js/tales-content.js
+/js/tales.js
 /js/talesdata.js
 /js/tester-detection.js
 /js/tester-float.js
@@ -216,6 +217,7 @@ marketing/source/runvalley.log
 /studio/ui/brand.js
 /studio/ui/desk-charts.js
 /studio/ui/finance.js
+/studio/ui/item-workspace.js
 /studio/ui/management.js
 /studio/ui/owner-desk.js
 /sw.js

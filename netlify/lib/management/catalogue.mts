@@ -86,7 +86,7 @@ type Gate = { id: string; state: 'open' | 'closed' | 'unknown'; reason: string; 
 export function explainAvailability(entry: CatalogueEntry, options: AvailabilityOptions = {}) {
   const live = obj(options.live), custom = obj(options.custom), now = options.now || new Date();
   const profiles = (options.profiles || []).map(obj), peeks = options.peeks || [], early = Math.max(0, Math.min(30, options.earlyDays || 0));
-  const gates: Gate[] = [];
+  const gates: Gate[] = [{ id: 'item_availability', state: obj(custom.itemAvailability)[entry.kind+':'+entry.id] === false ? 'closed' : 'open', reason: obj(custom.itemAvailability)[entry.kind+':'+entry.id] === false ? 'explicit_item_off' : 'item_allows_other_gates', source: 'content.itemAvailability' }];
   const rule = (id: string) => {
     const l = obj(live.releases), c = obj(custom.releases);
     return id in l && l[id] && typeof l[id] === 'object' ? obj(l[id]) : id in c && c[id] && typeof c[id] === 'object' ? obj(c[id]) : null;

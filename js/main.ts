@@ -29,7 +29,7 @@ import { pic } from './art.js';
 import { openChat, personaByName, PERSONAS } from './chat.js';
 import { voiceCommand, voiceControlOn } from './commands.js';
 import { ITEMS, RECIPES, GATHER, STICKERS, QUESTS, dishInfo } from './data.js';
-import { openGame, gameOpen, GAMES } from './games/frame.js';
+import { canStartGame, openGame, gameOpen, GAMES } from './games/frame.js';
 import { gameInfo } from './content/activities.js';
 const gameInfoAge = id => { try { return gameInfo(id).ageMin; } catch (e) { return 0; } };
 import './games/all.js'; // every mini-game (js/games/all.js)
@@ -497,7 +497,7 @@ G.mount = (h, b) => { h.mount(b); h.profile.quests.buffalo = true; save(); say('
 const fruitParadeModeOn = fruitParadeAvailable;
 
 async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number]) {
-  const h = G.heroes[i]; if (!h) return;
+  const h = G.heroes[i]; if (!h || !canStartGame(id,[h.profile])) return;
   if (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar',source === 'online'?'multi':'single')) return;
   if (id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard',source === 'online'?'multi':'single')) return;
   if (id === 'fruitparade' && !fruitParadeModeOn('single')) { hudFor(h).toast(T('Sparkle Fruit Parade is not available yet.', 'Diễu hành trái cây lấp lánh chưa mở.')); return; }
@@ -505,6 +505,7 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   G.paused = true; hush();
   // friends in the room: play it together? (round H: every game can be played together)
   if (G.together() && source !== 'online' && !shrine) { G.paused = false; const k = await dialog(T('Play together?', 'Chơi cùng nhau?'), [['Your friends are here. Play this game together?', 'Các bạn đang ở đây. Chơi trò này cùng nhau nhé?']], [['👫 Together', '👫 Cùng nhau'], ['🙂 Just me', '🙂 Mình con']]); if (k === 0) { G.inviteGame(id); return; } G.paused = true; }
+  if(!canStartGame(id,[h.profile])) { G.paused=false; return; }
   countPlay('game', id); // anonymous: how often each game is played (js/players.js)
   if (MONEY_GAMES.includes(id)) G.tried(h, 'money_' + id); else if (/^rd_/.test(id)) G.tried(h, 'readingTrial');   // (batch rollout) a money game played stays this child's
   const players = G.heroes.map(x => x.profile); if (G.heroes.length > 1 && i === 1) players.reverse();

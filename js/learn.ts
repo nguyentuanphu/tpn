@@ -92,6 +92,7 @@ export function createLearning(G) {
   }
   // read one tale in the theatre, then remember it (three tales give a sticker)
   const readTale = async (h, t, sync = false) => {
+    if (!isOpen(h.profile,t.id,'tale',t.flag)) return;
     const p = h.profile; p.tales = p.tales || {}; p.taleReads = p.taleReads || {};
     // friends in the room: read it together? (round H)
     if (!sync && G.together && G.together()) { const k = await G.dialog('Bà Năm', [['Shall we read it together with your friends?', 'Mình đọc cùng các bạn nhé?']], [['👫 Together', '👫 Cùng nhau'], ['🙂 Just me', '🙂 Mình con']]); if (k === 0) { G.inviteGame('tale-' + t.id, null, 1); return; } }
@@ -106,7 +107,7 @@ export function createLearning(G) {
   // (r90) the stories a child can be offered: the second set is left out while Studio holds it (the Simple screen reads this)
   Object.defineProperty(G, 'TALES', { configurable: true, get: () => TALES.filter(t => !isHeld(t.id, 'tale')) }); G.readTaleNow = readTale;
   G.readTale = async (i, id) => {
-    const h = G.heroes[i], t = TALES.find(x => x.id === id); if (!h || !t) return;
+    const h = G.heroes[i], t = TALES.find(x => x.id === id); if (!h || !t || !isOpen(h.profile,t.id,'tale',t.flag)) return;
     if (G.storyteller && dist2(h.pos.x, h.pos.z, G.storyteller.x, G.storyteller.z) > 5) await G.landBy(h, G.storyteller.x, G.storyteller.z);
     say(`Come and sit down. Here is ${t.title()}.`, `Lại đây ngồi với bà. Bà kể chuyện ${t.title()} nhé.`);
     await new Promise(r => setTimeout(r, 1300));

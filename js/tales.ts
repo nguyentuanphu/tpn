@@ -1,3 +1,4 @@
+import { heldTale } from './content/secondset.js';
 import { loadTale } from './tale-loader.js';
 // The tale theatre: a fairy tale read aloud page by page (in the language chosen in settings), over a
 // living picture (tales with a film are acted in 3D instead: js/film.js, js/content/films.js). Each page's pictures become little actors on a painted stage: birds fly, frogs hop,
@@ -9,14 +10,14 @@ import { SFX, Music } from './audio.js';
 import { el, esc, wait, flip } from './util.js';
 import { CAST, SCENES } from './cartoon.js';
 import { pic, hasArt } from './art.js';
-import { featureOn } from './custom.js';
+import { featureOn, itemEnabled } from './custom.js';
 import { managementEvidence } from './core/events.js';
 
 const seg = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
-const graphemes = s => seg ? [...seg.segment(s)].map(x => x.segment).filter(x => x.trim()) : Array.from(s).filter(x => x.trim() && !/[‍️]/.test(x));
+const graphemes = (s:string):string[] => seg ? [...seg.segment(s)].map(x => x.segment).filter(x => x.trim()) : Array.from(s).filter(x => x.trim() && !/[‍️]/.test(x));
 
 // how each picture moves
-const MOVES = [
+const MOVES: Array<[RegExp,string]> = [
   [/🐦|🕊|🦅|🐝|🦋|🪁|☁|🦚|🐦‍⬛|🧚|🦉|🐉|✨|⭐|🌟/u, 'fly'],
   [/🐟|🐠|🐊|🐢|🐍|🦈|🐬|🚣|⛵|🛶/u, 'swim'],
   [/🐸|🐇|🦘|🐒|🐭|🐿|🐐|🐓/u, 'hop'],
@@ -25,18 +26,19 @@ const MOVES = [
   [/❤|💖|💚|💞|💕/u, 'beat'], [/🏃|💨|🐴|🦤|🏁/u, 'run'], [/🥚|🎁|🍉|🥭|🍈|🍏|🎃|🥥/u, 'wobble'],
   [/👦|👧|👩|👨|🧑|👵|👴|👶|👸|🤴|🧙|🐘|🐂|🦁|🐯|🐱|🐺|🐼|🐨|🧒/u, 'talk']
 ];
-const moveOf = e => (MOVES.find(([re]) => re.test(e)) || [0, 'float'])[1];
+const moveOf = e => MOVES.find(([re]) => re.test(e))?.[1] || 'float';
 // which painted stage suits the words of this page
-const STAGES = [
+const STAGES: Array<[RegExp,string]> = [
   [/night|moon|star|dark|milky|lantern|howl/i, 'night'], [/sea|river|lake|water|flood|island|swim|boat|well|rain/i, 'sea'],
   [/mountain|hill|sky|cloud|fly|flew|heaven|clouds/i, 'sky'], [/forest|bush|tree|bamboo|jungle|wood/i, 'forest'],
   [/king|palace|prince|princess|emperor|queen|festival/i, 'palace'], [/rice|field|farm|garden|village|plant|seed/i, 'field'],
   [/desert|hot|dry|thirsty/i, 'desert']
 ];
-export const stageOf = en => (STAGES.find(([re]) => re.test(en)) || [0, 'meadow'])[1];
+export const stageOf = en => STAGES.find(([re]) => re.test(en))?.[1] || 'meadow';
 
 // sync (round H, reading together online): { send(page), listen(fn) } — a page turned here turns for every friend reading
-export async function openTheatre(tale, { name = '', onDone, startPage = 0, sync = null } = {}) {
+export async function openTheatre(tale, { name = '', onDone = undefined, startPage = 0, sync = null }: {name?: string;onDone?: (...args: any[])=>void;startPage?:number;sync?:any} = {}) {
+  if (!itemEnabled('story', tale.id) || heldTale(tale.id)) return null;
   try { ({ tale, sync, startPage } = await loadTale(tale, sync, startPage)); }
   catch (e) { window.svModuleGone?.(e); return null; }
   const storyId = typeof tale.id === 'string' && !tale.id.startsWith('my_') ? tale.id : '';
@@ -97,7 +99,7 @@ export async function openTheatre(tale, { name = '', onDone, startPage = 0, sync
       publish(fromFriend);
       m.querySelector('.th-prev').disabled = k === 0;
       m.querySelector('.th-next').innerHTML = (k === tale.pages.length - 1 ? pic('🏁') : '▶') + `<small>${k === tale.pages.length - 1 ? T('End', 'Hết') : T('Next', 'Sau')}</small>`;
-      SFX.page ? SFX.page() : SFX.tap();
+      const pageSound=(SFX as typeof SFX & {page?:()=>void}).page; pageSound ? pageSound() : SFX.tap();
       await wait(450); if (!alive || my !== token) return;
       // characters stop walking once they are in place, and talk while the page is read
       setTimeout(() => actors.querySelectorAll('.th-c').forEach(a => a.classList.remove('walking')), 1900);
@@ -115,7 +117,7 @@ export async function openTheatre(tale, { name = '', onDone, startPage = 0, sync
       publish(fromFriend);
       m.querySelector('.th-prev').disabled = k === 0;
       m.querySelector('.th-next').innerHTML = (k === tale.pages.length - 1 ? pic('🏁') : '▶') + `<small>${k === tale.pages.length - 1 ? T('End', 'Hết') : T('Next', 'Sau')}</small>`;
-      SFX.page ? SFX.page() : SFX.tap();
+      const pageSound=(SFX as typeof SFX & {page?:()=>void}).page; pageSound ? pageSound() : SFX.tap();
       const played = film.page(k);
       await wait(350 / rate()); if (!alive || my !== token) return;
       // (owner, 13 Oct: films that did not start by themselves) the words are never waited for longer than they could

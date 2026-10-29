@@ -44,7 +44,9 @@ export const managementApplication = () => lastManagementApplication;
 // same ones in content/custom.json, which stays the fallback for a section Studio never saved live. The copy kept on this
 // device is used before any screen reads them; the website's answer replaces it as soon as it comes (screens that read
 // once at start get it the next time the game opens; Message and Missions follow onLive).
-export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album'];
+export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album', 'itemAvailability'];
+// A global item Off is independent of menu placement, progress and tester previews.
+export const itemEnabled = (kind: 'game' | 'story', id: string): boolean => CUSTOM.itemAvailability?.[kind + ':' + id] !== false;
 const BASE = { ...CUSTOM };
 const useContent = c => { for (const k of LIVE_SECTIONS) { const v = c && typeof c === 'object' ? c[k] : undefined; if (v && typeof v === 'object') CUSTOM[k] = v; else if (k in BASE) CUSTOM[k] = BASE[k]; else delete CUSTOM[k]; } };
 useContent(LIVE.content);

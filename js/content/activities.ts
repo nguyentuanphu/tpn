@@ -7,7 +7,7 @@ import { fruitParadeAvailable } from './fruit-parade.js';
 // The family's Studio can move a game to another area, hide it, or open it to under-5s (content/custom.json
 // "activities": { id: { area, little, hide } }).
 import { T } from '../i18n.js';
-import { CUSTOM, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
+import { CUSTOM, itemEnabled, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
 import { heldGame } from './secondset.js';
 
@@ -68,7 +68,7 @@ export function gameInfo(id) {
   const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id);
   const orchardHeld = id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','single');
   const fruitHeld = id === 'fruitparade' && !fruitParadeAvailable('single');
-  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld };
+  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: !itemEnabled('game', id) || (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld };
 }
 // the games of one area for a child: under-5s only see the ones made for them
 export const gamesIn = (games, area, little) => Object.keys(games).map(gameInfo).filter(g => g.area === area && !g.hidden && (!little || g.ageMin < 5));

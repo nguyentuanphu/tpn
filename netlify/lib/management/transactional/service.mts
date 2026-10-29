@@ -58,6 +58,9 @@ export function createManagementService(options:Options={}) {
     return {accepted:result.accepted,duplicates:result.duplicates,rejected:result.rejected};
   }
 
+  async function getEffectiveConfig() {
+    return db().transaction([],async tx=>{const saved=await tx.get('configs','global');return saved?config(saved):{scopeKey:'global',revision:0,body:await baseConfig(options),actor:'legacy-baseline',effectiveHash:'',updatedAt:null};});
+  }
   async function getConfig(scopeKey='global'):Promise<ConfigRecord|null> {
     scopeKey=scope(scopeKey,options.catalogue);
     return db().transaction([],async tx=>{const value=await tx.get('configs',scopeKey);return value?config(value):null;});
@@ -261,5 +264,5 @@ export function createManagementService(options:Options={}) {
     const selected=keys?events.filter(e=>keys.has(e.deviceId+'|'+e.attemptId)):events;
     return {...managementOutcomes(selected,{from,to,now:now()}),environment,traffic,generatedAt:iso(now())};
   }
-  return {...drafts,configured,ingestEvents,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,deviceDelivery,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary,eventSummary};
+  return {...drafts,configured,ingestEvents,getEffectiveConfig,getConfig,changeConfig,projectLatest,receiveConfigReceipt,changeCoverage,listChanges,deviceDelivery,updateAttention,listAttention,auditHistory,recordOperation,operations,attemptSummary,eventSummary};
 }

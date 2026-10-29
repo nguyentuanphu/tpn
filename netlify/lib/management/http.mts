@@ -5,6 +5,7 @@ import { ManagementReadError } from './quality.mts';
 import { managementOperations } from './operations.mts';
 import { managementEnv } from './runtime.mts';
 import { metric } from './metrics.mts';
+import { itemEntry, itemWorkspace, saveItemDraft } from './items.mts';
 import { summariseCatalogueEvidence } from './catalogue.mts';
 
 export const managementJson = (body, status = 200) => new Response(JSON.stringify(body), {
@@ -54,6 +55,16 @@ export async function managementHttp(req: Request, me, { reads, service, operati
         if(path==='finance/budget')return managementJson(await finance.budget(body,me.name));
       }
       throw new ManagementError(404,'finance_route_not_found');
+    }
+    if(path.startsWith('items/')){
+      const parts=path.split('/'),entry=itemEntry(catalogue(),parts[1]);
+      const edit=admins.allowed(me,'management/config',true)&&admins.allowed(me,'live/content',true);
+      if(req.method==='GET'&&parts.length===2)return managementJson(await itemWorkspace(entry,service,edit));
+      if(post&&parts.length===3&&parts[2]==='draft'){
+        if(!edit)return managementJson({error:'existing_edit_permission_required'},403);
+        return managementJson(await saveItemDraft(entry,await managementBody(req),me.name,service));
+      }
+      throw new ManagementError(404,'item_route_not_found');
     }
     if(path==='drafts'||path.startsWith('drafts/')) {
       const parts=path.split('/'),id=parts[1],action=parts[2];

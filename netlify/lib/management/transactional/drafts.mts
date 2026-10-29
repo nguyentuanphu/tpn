@@ -29,19 +29,22 @@ export function createConfigDrafts(options:Options){
   async function getDraft(id:string){id=idOf(id);return options.database().transaction([],tx=>get(tx,id));}
   async function listDrafts(){return options.database().transaction([],async tx=>(await tx.list('config_drafts')).map(x=>x.value)
     .sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt))).slice(0,100));}
-  async function saveDraft(input:unknown,actor:string){
+  async function saveDraft(input:unknown,actor:string,itemKey?:string,expectedBaseHash?:string){
+    if(itemKey!==undefined&&!/^(game|story):[a-z0-9][a-z0-9_-]{0,59}$/.test(itemKey))throw new ManagementError(400,'invalid_item_key');
     const b=record(input);keys(b,['id','expectedRevision','baseRevision','kind','body','reason'],['expectedRevision','baseRevision','kind','body','reason']);
     const id=b.id===undefined?randomUUID():idOf(b.id),expected=integer(b.expectedRevision),base=integer(b.baseRevision);
     const kind=one(b.kind,['rules','content']) as 'rules'|'content',reason=text(b.reason,600,3),by=text(actor,80);
     return options.database().transaction(['config:global','draft:'+id],async tx=>{
       const old=await tx.get('config_drafts',id),c=await current(tx);
       if(Number(old?.revision??0)!==expected)conflict('draft_revision_conflict');
+      if(old&&(old.itemKey??null)!==(itemKey??null))conflict('draft_workspace_mismatch');
       if(old?.state==='published')conflict('draft_already_published');
       if(old&&old.kind!==kind)conflict('draft_kind_immutable');
+      if(expectedBaseHash!==undefined&&expectedBaseHash!==c.hash)conflict('draft_baseline_conflict');
       if(c.revision!==base)conflict('draft_baseline_conflict');
       if(old)matches(old,c);
       const body=configBody(kind,b.body,c.body);
-      const draft:JsonObject={id,revision:expected+1,scopeKey:'global',kind,baseRevision:c.revision,baseHash:c.hash,
+      const draft:JsonObject={id,itemKey:itemKey??null,revision:expected+1,scopeKey:'global',kind,baseRevision:c.revision,baseHash:c.hash,
         body,effectiveHash:hashJson(body),reason,state:'draft',actor:by,updatedAt:stamp(),review:null};
       await persist(tx,draft);return draft;
     });

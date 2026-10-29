@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {itemControlRuntimeCheck} from './item-control-runtime.mjs';
 import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mjs';
 import {MemoryManagementTestDatabase} from '../netlify/lib/management/storage/memory-test.mts';
 import {createFinanceService} from '../netlify/lib/management/finance.mts';
@@ -22,8 +23,11 @@ export async function ownerDeskBrowserCheck(browser){
  const finance=createFinanceService({database});await finance.configure({expectedRevision:0,reportingCurrency:'AUD',reason:'Synthetic UI review only'},'Synthetic owner');
  const importBody={expectedSettingsRevision:1,lines:[{schemaVersion:1,provider:'ExampleOnly',accountAlias:'synthetic',sourceDocumentId:'DEMO-INVOICE',sourceLineId:'1',kind:'actual',amountMinor:1200,taxMinor:120,currency:'AUD',periodStart:month+'-01',periodEnd:today,recognisedAt:today+'T00:00:00Z',paidAt:null,category:'hosting',expectedRevision:0,costType:'fixed'}]};
  const preview=await finance.preview(importBody);await finance.commit({...importBody,previewHash:preview.previewHash,operationId:crypto.randomUUID(),reason:'Synthetic UI fixture only'},'Synthetic owner');
- const server=await fakeNetlify({port:8897,players,testerStore:testers,parentAnalyticsStore:web,managementDatabase:database,env:{STUDIO_PASSWORD:password,GITHUB_TOKEN:'synthetic-token',GITHUB_REPO:repo,URL:site}});
- const captures=[],errors=[];
+ const liveStore=memoryBlobs();let liveEtag=0;const liveSet=liveStore.setJSON;
+ liveStore.getWithMetadata=async key=>{const data=await liveStore.get(key,{type:'json'});return data?{data,etag:String(liveEtag)}:null;};
+ liveStore.setJSON=async(key,value)=>{await liveSet(key,value);liveEtag++;return {modified:true};};
+ const server=await fakeNetlify({port:8897,liveStore,players,testerStore:testers,parentAnalyticsStore:web,managementDatabase:database,env:{STUDIO_PASSWORD:password,GITHUB_TOKEN:'synthetic-token',GITHUB_REPO:repo,URL:site}});
+ const captures=[],errors=[];let projectedOff=null;
  const area=async(page,key)=>{await page.locator(`#tabs [data-k="${key}"]`).click();await page.waitForFunction(key=>document.querySelector('#tabs [aria-current=page]')?.getAttribute('data-k')===key,key);await page.waitForFunction(()=>!document.querySelector('.desk-body [role=status]')||!!document.querySelector('.desk-source-warning'));await page.waitForTimeout(100);};
  try{
   for(const [width,height]of [[390,844],[820,1180],[1440,1000]])for(const lang of ['en','vi']){
@@ -46,10 +50,23 @@ export async function ownerDeskBrowserCheck(browser){
    await save('device');await page.locator('#crumb .back').click();await page.waitForSelector('.desk-person-list');assert.equal(await page.locator('.desk-period select').inputValue(),'7','Back restores filter');
    await area(page,'game');await page.waitForSelector('[data-desk-search]');await page.locator('[data-desk-search]').fill('__no_match__');assert.equal(await page.locator('.desk-catalogue button:visible').count(),0,'search actually hides unmatched entries');await page.locator('[data-desk-search]').fill('oanquan');await page.waitForTimeout(50);
    const item=page.locator('.desk-catalogue [data-desk-route="managementactivity:game:oanquan"]');assert.equal(await item.isVisible(),true);await save('game');await item.click();await page.waitForSelector('.mg-content .mg-facts');assert.equal(await page.locator('.mg-error').count(),0,'kind:id preserved in navigation');
+   await page.waitForSelector('[data-item-editor]');
+   const itemForm=page.locator('[data-item-editor]');
+   const beforePublic=await (await ctx.request.get(site+'/api/live')).json();
+   await itemForm.locator('[name=itemEnabled]').selectOption('false');await itemForm.locator('[name=itemReason]').fill('Synthetic item off review');
+   await itemForm.locator('[type=submit]').click();await page.waitForFunction(()=>/Private proposal saved|Đã lưu đề xuất riêng tư/.test(document.querySelector('[data-item-result]')?.textContent||''));
+   assert.deepEqual(await (await ctx.request.get(site+'/api/live')).json(),beforePublic,'item Save stays private');
+   const itemDraft=await itemForm.locator('[name=itemDraft]').inputValue();assert.ok(itemDraft);assert.equal(await itemForm.locator('[data-item-publish]').isDisabled(),true);
+   await page.locator('[data-item-reload]').click();await page.waitForSelector('[data-item-editor] [name=itemDraft]');await page.locator('[name=itemDraft]').selectOption(itemDraft);
+   await page.waitForFunction(()=>document.querySelector('[name=itemEnabled]')?.value==='false'&&!document.querySelector('[data-item-review]')?.disabled);
+   await page.locator('[data-item-review]').click();await page.waitForFunction(()=>!document.querySelector('[data-item-publish]')?.disabled);await save('item-review');
+   await page.locator('[data-item-publish]').click();await page.waitForFunction(()=>/Published and available|Đã xuất bản và cung cấp/.test(document.querySelector('[data-item-result]')?.textContent||''));
+   projectedOff=await (await ctx.request.get(site+'/api/live')).json();assert.equal(projectedOff.content.itemAvailability['game:oanquan'],false);
+   await page.locator('[data-item-reload]').click();await page.waitForSelector('[data-item-editor]');assert.equal(await page.locator('[name=itemEnabled]').inputValue(),'false');
    await area(page,'game');await page.locator('[data-desk-discovery]').selectOption('declared-only');await page.locator('[data-desk-search]').fill('aodai');
    const declared=page.locator('.desk-catalogue [data-desk-route="managementactivity:game:aodai"]');assert.equal(await declared.isVisible(),true);
    assert.match(await declared.innerText(),lang==='vi'?/Chỉ mới khai báo/:/Declared only/);assert.ok(await page.locator('.desk-catalogue [data-catalogue-state=declared-only]:visible').count()>0);assert.equal(await page.locator('.desk-catalogue [data-catalogue-state=catalogued]:visible').count(),0);await declared.click();
-   await page.waitForSelector('.mg-declared-only');assert.match(await page.locator('.mg-declared-only').innerText(),lang==='vi'?/chưa được tích hợp/:/not integrated/);await save('declared');await page.locator('#crumb .back').click();await page.waitForSelector('[data-desk-discovery]');assert.equal(await page.locator('[data-desk-discovery]').inputValue(),'declared-only','Back restores the integration filter');assert.equal(await page.locator('[data-desk-search]').inputValue(),'aodai','Back restores the content search');
+   await page.waitForSelector('.mg-declared-only');await page.waitForSelector('[data-item-workspace]');assert.equal(await page.locator('[data-item-editor]').count(),0,'pending integration cannot be switched on');assert.match(await page.locator('.mg-declared-only').innerText(),lang==='vi'?/chưa được tích hợp/:/not integrated/);await save('declared');await page.locator('#crumb .back').click();await page.waitForSelector('[data-desk-discovery]');assert.equal(await page.locator('[data-desk-discovery]').inputValue(),'declared-only','Back restores the integration filter');assert.equal(await page.locator('[data-desk-search]').inputValue(),'aodai','Back restores the content search');
    await area(page,'work');await save('work');await area(page,'money');await page.waitForSelector('[data-chart="G21"]');await save('money');
    await ctx.close();
   }
@@ -69,9 +86,10 @@ export async function ownerDeskBrowserCheck(browser){
   await failedPage.reload();await failedPage.waitForSelector('.desk-home-summary');
   for(const index of [0,1,2])assert.match(await failedPage.locator('.desk-home-summary>div').nth(index).innerText(),/Unavailable/,'No retained source days is unknown, not observed zero');
   await missing.close();
+  const itemControlEvidence=await itemControlRuntimeCheck(browser,projectedOff);
   assert.deepEqual(errors,[]);
-  const sources=['studio/ui/app.ts','studio/ui/owner-desk.ts','studio/ui/owner-desk.css','studio/ui/brand.ts','studio/ui/desk-charts.ts','studio/ui/management.ts','netlify/lib/management/read.mts','studio/ui/index.html','studio/ui/finance.ts','netlify/lib/management/http.mts','netlify/lib/management/transactional/service.mts','css/style.css','css/fonts.css','js/art.ts','js/icons.js'];
-  fs.writeFileSync(path.resolve(output,'../browser-validation.json'),JSON.stringify({passed:true,scope:'Actual Studio UI and authenticated routes, synthetic in-memory data only; browser emulation, not physical devices/live Netlify',captures,errors,sourceHashes:Object.fromEntries(sources.map(file=>[file,createHash('sha256').update(fs.readFileSync('../'+file)).digest('hex')]))},null,2)+'\n');
-  return 'Owner’s Desk: 5 areas, shared game palette/art, 42 EN/VI captures at 3 sizes, real device/problem links, restored filter, kind:id navigation and summary-only privacy';
+  const sources=['studio/ui/item-workspace.ts','netlify/lib/management/items.mts','js/custom.ts','js/games/frame.ts','js/tales.ts','studio/ui/app.ts','studio/ui/owner-desk.ts','studio/ui/owner-desk.css','studio/ui/brand.ts','studio/ui/desk-charts.ts','studio/ui/management.ts','netlify/lib/management/read.mts','studio/ui/index.html','studio/ui/finance.ts','netlify/lib/management/http.mts','netlify/lib/management/transactional/service.mts','css/style.css','css/fonts.css','js/art.ts','js/icons.js'];
+  fs.writeFileSync(path.resolve(output,'../browser-validation.json'),JSON.stringify({passed:true,itemControlEvidence,scope:'Actual Studio UI and authenticated routes, synthetic in-memory data only; browser emulation, not physical devices/live Netlify',captures,errors,sourceHashes:Object.fromEntries(sources.map(file=>[file,createHash('sha256').update(fs.readFileSync('../'+file)).digest('hex')]))},null,2)+'\n');
+  return 'Owner’s Desk: 5 areas, shared game palette/art, 48 EN/VI captures at 3 sizes; item proposal save/resume/review/publish and actual game/story boundary checks, real device/problem links, restored filter, kind:id navigation and summary-only privacy';
  }finally{undo();await new Promise(r=>server.close(r));}
 }

@@ -1,4 +1,5 @@
 import { mountFinance } from './finance.js';
+import { mountItemWorkspace } from './item-workspace.js';
 import { deskChart } from './desk-charts.js';
 // Private Studio management views. The game and public website never import this module.
 // Both Studio modes inject their existing authenticated API and EN/VI translator.
@@ -167,6 +168,9 @@ export async function renderManagement(P: HTMLElement, options: ManagementOption
     body.innerHTML = empty(T,'Enter a build above to inspect its release evidence. No release is deployed from this view.','Nhập phiên bản ở trên để xem bằng chứng phát hành. Trang này không tự triển khai phiên bản.'); return;
   }
   if ((kind==='device' || kind==='activity') && !id) { body.innerHTML = empty(T); return; }
+  let itemHost:HTMLElement|null=null;
+  const mountItem=(key:string)=>{if(itemHost)return;itemHost=document.createElement('div');itemHost.className='mg-item-workspace';body.before(itemHost);void mountItemWorkspace(itemHost,key,options);};
+  if(kind==='activity'&&/^(game|story):[a-z0-9][a-z0-9_-]{0,59}$/.test(id))mountItem(id);
   const endpoint = kind==='device' ? 'devices/'+encodeURIComponent(id) : kind==='activity' ? 'activities/'+encodeURIComponent(id) : kind==='release' ? 'releases/'+encodeURIComponent(id || q.build || options.build || '') : kind==='changes' ? id?'changes/'+encodeURIComponent(id):'config' : kind;
   try {
     const requestQuery={...q};
@@ -179,6 +183,7 @@ export async function renderManagement(P: HTMLElement, options: ManagementOption
     const data = object(await options.api('management/'+endpoint+queryString(requestQuery)));
     if (!current()) return;
     if (data.error) throw new Error(text(data.error));
+    if(kind==='activity'&&!itemHost&&['game','story'].includes(text(object(data.activity).kind)))mountItem(text(object(data.activity).kind)+':'+text(object(data.activity).id));
     if(kind==='activity'){
       const item=object(data.activity??data.catalogue??data.item),heading=root.querySelector('h2'),intro=root.querySelector('.sub');
       if(heading)heading.textContent=pair(item.name,T)||id;
