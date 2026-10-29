@@ -81,7 +81,7 @@ export const RIVERS = MAP.WATERS.filter(w => w.kind === 'river').map(w => ({ id:
 // (round T2) small round lakes and ponds (Hồ Gươm in Hà Nội, the billabong by Uluru): { id, x, z, r }
 export const PONDS = MAP.WATERS.filter(w => w.kind === 'pond').map(w => { const [x, z] = w.at || MAP.anchorOf(w.place).map((v, i) => v + ((w.off || [0, 0])[i])); return { id: w.id, x, z, r: w.r, islet: w.islet || 0, depth: w.depth || 2.4 }; });
 // how far (x, z) is from the deep middle of the nearest pond (0 inside it), and which pond
-export function pondDist(x, z) { let best = 1e9; PD_NEAR.id = null; for (const P of PONDS) { const dc = dist2(x, z, P.x, P.z); if (dc < P.islet + .8) continue; const d = Math.max(0, dc - P.r * .62); if (d < best) { best = d; PD_NEAR.id = P.id; } } return best; }
+export function pondDist(x, z) { let best = 1e9; PD_NEAR.id = null; for (const P of PONDS) { const dc = dist2(x, z, P.x, P.z); if (dc < P.islet + .8) continue; const d = Math.max(0, dc - P.r * (P.depth < 1.5 ? 1 : .62)); /* (owner, 29 Oct AEDT) a shallow pond's water reaches its radius */ if (d < best) { best = d; PD_NEAR.id = P.id; } } return best; }
 const PD_NEAR = { id: null };
 export const RIVER = (() => { const out = []; for (const id of [].concat(MAP.BOATS.find(b => b.id === 'raft').water)) RIVERS.find(r => r.id === id).pts.forEach((p, i) => { if (!(out.length && i === 0)) out.push(p.slice()); }); return out; })();
 export const CHINA = circle('china');  // (4.5 m: the road up from Đà Nẵng stays under 8 %)    // China Town: lanterns, tiled roofs, a pagoda and a little Great Wall
@@ -279,7 +279,7 @@ export function heightAt(x, z) {
   // Water level, bridge decks and banks stay at their authored elevations.
   h = lerp(h, WATER - MAP.WORLD.riverDepth, 1 - smooth(3.5, 11, dr));
   // (round T2) ponds: a round hollow with a gentle shore (after the places' flat ground, so a pond by a city stays wet)
-  let dpd = 1e9; for (const P of PONDS) { if (Math.abs(x - P.x) > P.r + 8 || Math.abs(z - P.z) > P.r + 8) continue; const d = dist2(x, z, P.x, P.z); if (d > P.r + 8) continue; dpd = Math.min(dpd, d - P.r); h = lerp(h, Math.min(h, 1), 1 - smooth(P.r, P.r + 6, d)); h = lerp(h, -P.depth, 1 - smooth(P.r * .55, P.r, d)); /* (r89) a pond's own depth: Hồ Gươm is shallow enough to wade */ if (P.islet) h = lerp(h, WATER + .5, 1 - smooth(P.islet, P.islet + 1.6, d)); }
+  let dpd = 1e9; for (const P of PONDS) { if (Math.abs(x - P.x) > P.r + 8 || Math.abs(z - P.z) > P.r + 8) continue; const d = dist2(x, z, P.x, P.z); if (d > P.r + 8) continue; dpd = Math.min(dpd, d - P.r); h = lerp(h, Math.min(h, 1), 1 - smooth(P.r, P.r + 6, d)); h = lerp(h, -P.depth, 1 - (P.depth < 1.5 ? smooth(P.r - .5, P.r + 2.5, d) : smooth(P.r * .55, P.r, d))); /* (r89) a pond's own depth: Hồ Gươm is shallow enough to wade; (owner, 29 Oct AEDT: "Hồ Gươm is on dry land") a shallow pond's floor stays down to its edge, so the water reaches its radius: rising from half way left its outer third dry (a deep pond, the billabong, was already full) */ if (P.islet) h = lerp(h, WATER + .5, 1 - smooth(P.islet, P.islet + 1.6, d)); }
   // Raised banks either side of each bridge.
   if (dr > 7) for (const B of BRIDGES) { const K = B.bank || (B.bank = bridgeBox(B, B.a0 - 10, B.a1 + (B.bankOut || 16), -8, 8)); if (x <= K.x0 || x >= K.x1 || z <= K.z0 || z >= K.z1) continue; // (round T2: a quick box test first, 13 bridges now)
     if (levelAt(x, z) != null) continue;   // (Round U: a bank never reaches inside a village or city: places stay flat to their gates)
@@ -1088,8 +1088,10 @@ export function createWorld(scene, quality) {
 
 // (round T4a) the water map: rgb the colour of the water at each spot of the valley (each river its own, deeper darker),
 // alpha how near the shore it is (0.2 deep … 1 at the water's edge: the foam line). Painted once, kept on the device.
+// (owner, 29 Oct AEDT: "Hồ Gươm should be in a lake but it is on dry land") the two ponds keep a hint of their real green, but
+// read as water: the old jade green looked like grass from above
 const WATER_COLOURS = { hong: '#a8714c', mekong1: '#8f8a58', mekong2: '#8f8a58', saigon_r: '#5f8c8f', brisbane_r: '#5f8f86', yarra: '#7a8462', murray: '#7c8660',
-  hoguom: '#5d9a72', billabong: '#6c8c66', lake: '#3fb0c6', sydney_harbour: '#2f7fbf', hoian_canal: '#4f9aa6', sea: '#2a7fc0' };
+  hoguom: '#3a9a9c', billabong: '#4f8a84', lake: '#3fb0c6', sydney_harbour: '#2f7fbf', hoian_canal: '#4f9aa6', sea: '#2a7fc0' };
 export function paintWater(size = 256) {
   const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d');
   const img = x.createImageData(size, size), d = img.data, step = SIZE / size;

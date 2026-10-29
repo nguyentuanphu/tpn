@@ -65,6 +65,9 @@ export function createYard(G, { dialog, say, reward, save }) {
   coach.position.set(-3, 0, 10.5); coach.rotation.y = Math.PI / 2; yard.add(coach); coach.userData.noSolid = true; // (it comes and goes with the story: never an invisible wall)
   truck.o.position.set(-5.5, 0, 2.5); truck.o.rotation.y = Math.PI / 2; yard.add(truck.o);
   digger.o.position.set(SITE[0] + .5, 0, SITE[1] - 5); digger.o.rotation.y = 0; yard.add(digger.o);
+  // (owner, 29 Oct AEDT) the truck and the excavator drive and dig in the story, so they are left out of the still solid
+  // map: they were walls where they were first parked, wherever they had gone
+  truck.o.userData.noSolid = digger.o.userData.noSolid = true;
   const TU = truck.o.userData, DU = digger.o.userData;
   // solid things
   for (const [lx, lz, hw, hd] of [[6.6, -5.2, 1.7, 1.4], [-6, -4, 1.4, 1.4]]) { const c = W(lx, lz), r = Math.max(hw, hd) * S; world.boxes.push({ x0: c.x - r, x1: c.x + r, z0: c.z - r, z1: c.z + r }); }

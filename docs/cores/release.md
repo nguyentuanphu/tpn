@@ -422,6 +422,15 @@ Owner additionally asks guide visible until installed or explicitly hidden, plus
 - Pictures: answer pictures on the newer games' buttons were 13 to 19 px on a phone; now 44 px, 56 px for under-5s (measured on every game).
 - Recorded 2178 new voice files (Azure, en and vi, woman and man).
 - Open for the owner: the Northern Tiến Lên house rules (independent review); the white screen in the installed app was not reproduced (v1.03 shrinks the voice pack from about 416 MB to 85 MB; a screen recording would help if it happens again).
+- Owner's screenshots, 29 Oct AEDT (v1.02 tester build), fixed: the Fruit Bar light runs round; one bus card per destination; the dropdowns look like the game; the Simple screen's top buttons stay on one line.
+- Owner's screenshots, 29 Oct AEDT, vehicles and landmarks:
+  - cậu Tâm's truck on Two Homes Street is a real vehicle ("Drive the truck / Lái xe tải").
+  - Parked vehicles and the yard's dump truck and excavator are no longer walls in the walking map; they left invisible walls behind when driven or moved in the story.
+  - The electric cart's view was already opened on 27 Oct (db2c5c7e7, after v1.02).
+  - Hồ Gươm: the water reaches the lake's edge (the outer third was dry), and it is a jade-teal that reads as water (the old green looked like grass from above).
+  - Heritage sites: each map spot is now the clear ground the site stands on (the Forbidden City had moved 40 m onto the Terracotta Army's spot). China follows the real map: Beijing's Forbidden City and Temple of Heaven together in the east, the Terracotta Army (Xi'an) north-west, the Potala Palace (Lhasa) south-west of it.
+- Merged: the leftover branch `handover/release-local-20261029` and the Studio combined branch. Studio Analytics keeps r65's five tiles (installations got a tile; the 30-day devices moved into "playing this week").
+- Lê Minh: the six sentence pieces in Saving Goal, Pay for the Bus, Fair Share and the echo game became whole lines, so they can be recorded.
 ## Owner decision — Studio finance and full-suite continuation, 27 October 2026 AEDT
 
 Owner explicitly requested connecting this work to the recorded plan, continuing

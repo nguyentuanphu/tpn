@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceHead": "6f13d553c1e8209fd2e11debd39411399e85413b",
+  "sourceHead": "83458020fca5190377e8b30295b37e969ea37d08",
   "connections": [
     {
       "from": "source:.github/workflows/full-suite.yml",
@@ -8133,7 +8133,7 @@
       "from": "source:js/launch.ts",
       "to": "source:js/main.ts",
       "specifier": "./main.js",
-      "line": 86,
+      "line": 87,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9319,7 +9319,7 @@
     },
     {
       "from": "source:js/main.ts",
-      "to": "source:js/yard.js",
+      "to": "source:js/yard.ts",
       "specifier": "./yard.js",
       "line": 1913,
       "evidence": "literal-dynamic-import",
@@ -13029,7 +13029,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/wayfind.js",
       "specifier": "./wayfind.js",
-      "line": 228,
+      "line": 238,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -14520,7 +14520,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/gfx.js",
       "specifier": "./gfx.js",
       "line": 1,
@@ -14529,7 +14529,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
@@ -14538,7 +14538,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/world.ts",
       "specifier": "./world.js",
       "line": 8,
@@ -14547,7 +14547,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/custom.ts",
       "specifier": "./custom.js",
       "line": 9,
@@ -14556,7 +14556,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/avatar.ts",
       "specifier": "./avatar.js",
       "line": 10,
@@ -14565,7 +14565,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/vehicles.js",
       "specifier": "./vehicles.js",
       "line": 11,
@@ -14574,7 +14574,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/openspot.js",
       "specifier": "./openspot.js",
       "line": 12,
@@ -14583,7 +14583,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/art.ts",
       "specifier": "./art.js",
       "line": 13,
@@ -14592,7 +14592,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/handpad.js",
       "specifier": "./handpad.js",
       "line": 14,
@@ -14601,7 +14601,7 @@
       "external": false
     },
     {
-      "from": "source:js/yard.js",
+      "from": "source:js/yard.ts",
       "to": "source:js/content/yard.js",
       "specifier": "./content/yard.js",
       "line": 15,
@@ -17913,7 +17913,7 @@
     },
     {
       "from": "game:aodai",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-aodai",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -18291,7 +18291,7 @@
     },
     {
       "from": "game:bubblepaint",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-bubblepaint",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -20181,7 +20181,7 @@
     },
     {
       "from": "game:fingerpaint",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-fingerpaint",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -20289,7 +20289,7 @@
     },
     {
       "from": "game:finishpic",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-finishpic",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -20397,7 +20397,7 @@
     },
     {
       "from": "game:fireworks",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-fireworks",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -20655,7 +20655,7 @@
     },
     {
       "from": "game:gallery",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-gallery",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -21477,7 +21477,7 @@
     },
     {
       "from": "game:kitepaint",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-kitepaint",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -21597,7 +21597,7 @@
     },
     {
       "from": "game:lacquer",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-lacquer",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -21717,7 +21717,7 @@
     },
     {
       "from": "game:leafrub",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-leafrub",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -22101,7 +22101,7 @@
     },
     {
       "from": "game:makeface",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-makeface",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -22245,7 +22245,7 @@
     },
     {
       "from": "game:masks",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-masks",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -22623,7 +22623,7 @@
     },
     {
       "from": "game:mosaic",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-mosaic",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -23121,7 +23121,7 @@
     },
     {
       "from": "game:nonla",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-nonla",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -23805,7 +23805,7 @@
     },
     {
       "from": "game:pixelpic",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-pixelpic",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -26211,7 +26211,7 @@
     },
     {
       "from": "game:scene",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-scene",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -26319,7 +26319,7 @@
     },
     {
       "from": "game:scratch",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-scratch",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -26427,7 +26427,7 @@
     },
     {
       "from": "game:shades",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-shades",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -26535,7 +26535,7 @@
     },
     {
       "from": "game:shadowpic",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-shadowpic",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -27243,7 +27243,7 @@
     },
     {
       "from": "game:stamps",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-stamps",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -27699,7 +27699,7 @@
     },
     {
       "from": "game:thocam",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-thocam",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -28227,7 +28227,7 @@
     },
     {
       "from": "game:weatherpaint",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-weatherpaint",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -28335,7 +28335,7 @@
     },
     {
       "from": "game:weave",
-      "to": "website:/home/#games",
+      "to": "website:/home/#art-weave",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },

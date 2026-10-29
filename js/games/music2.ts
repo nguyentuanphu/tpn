@@ -163,7 +163,7 @@ register({
       await wait(700);
       hitBtn.onclick = null; hitBtn.disabled = true;
       if (api.closed) return;
-      if (extra) { api.sfx.no(); api.say(`Just ${targetBeats} beats. Listen again!`, `Chỉ ${targetBeats} tiếng thôi. Nghe lại nhé!`); await wait(1200); continue; }
+      if (extra) { api.sfx.no(); api.say("Too many beats! Listen again!", "Nhiều tiếng quá! Nghe lại nhé!"); await wait(1200); continue; }
       round++;
       api.dots(rounds, round);
       api.sfx.ding();

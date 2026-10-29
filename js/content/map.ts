@@ -273,22 +273,26 @@ export const LANDMARK_AT = {
   // the UNESCO sites (js/heritage.js)
   halong: { place: 'lake', off: [-9, -5] },
   hue: { place: 'danang', off: [42, -14] },
-  myson: { place: 'hoian', off: [32, -6] },
-  phongnha: { place: 'paddies', off: [24, -20] },
-  trangan: { place: 'hanoi', off: [-30, -22] },
+  myson: { place: 'hoian', off: [38, 3] },
+  phongnha: { place: 'paddies', off: [15, -10] },
+  trangan: { place: 'hanoi', off: [-49, 6] },
   reef: { place: 'lake', off: [8, 9] },
-  sisters: { place: 'sydney', off: [-30, -40] },
+  sisters: { place: 'sydney', off: [-16, -37] },
   exhibition: { place: 'melbourne', off: [-30, 10] },
-  kakadu: { place: 'uluru', off: [10, -54] },
-  forbidden: { place: 'china', off: [28, 18] },
-  heaven: { place: 'china', off: [-28, 16] },
-  terracotta: { place: 'china', off: [24, -14] },
-  potala: { place: 'china', off: [-24, -16] },
-  qutub: { place: 'india', off: [-26, 18] },
+  kakadu: { place: 'uluru', off: [-4, -55] },
+  // (owner, 29 Oct AEDT: "have you checked all the landmarks... eg the terracotta army") each spot is now the clear ground
+  // the site really stands on (several were moved 10 to 40 m by the search for clear ground, the Forbidden City onto the
+  // Terracotta Army's spot), and China follows the real map: Beijing's Forbidden City and Temple of Heaven together in
+  // the east, the Terracotta Army (Xi'an) in the north-west, the Potala Palace (Lhasa) south-west of it
+  forbidden: { place: 'china', off: [31, -22] },
+  heaven: { place: 'china', off: [44, 12] },
+  terracotta: { place: 'china', off: [-43.1, -26.2] },
+  potala: { place: 'china', off: [-50.6, 7] },
+  qutub: { place: 'india', off: [-29, 0] },
   redfort: { place: 'india', off: [26, -20] },
   konark: { place: 'india', off: [26, 16] },
   hampi: { place: 'india', off: [-26, -18] },
-  mahabodhi: { place: 'india', off: [-40, 0] }
+  mahabodhi: { place: 'india', off: [-49, 10] }
 };
 // which place each landmark belongs to in the real world (the Pad map lists it under that place; moved from js/ui.js)
 export const LANDMARK_HOME = { bnclock: 'bacninh', chuadau: 'bacninh', butthap: 'bacninh', dendo: 'bacninh', quanho: 'bacninh',

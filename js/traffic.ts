@@ -33,9 +33,17 @@ import { SFX } from './audio.js';
 //     with too few coins ride free: never punished), to the next stop; Jump gets off sooner
 //   · a moving private car or motorbike never gives a lift: children don't get into a stranger's vehicle
 //   · every bus route has a stop with a shelter and a picture timetable at each end, where the bus waits
-const DRIVE = new Set(['honda67', 'cub', 'dream', 'scooter', 'postie', 'sedan', 'suv', 'ute', 'taxi', 'miniBike', 'bmx', 'roadster', 'roadBike', 'kidsBike']);
+const DRIVE = new Set(['honda67', 'cub', 'dream', 'scooter', 'postie', 'sedan', 'suv', 'ute', 'taxi', 'miniBike', 'bmx', 'roadster', 'roadBike', 'kidsBike', 'tamTruck']);
 const FARE = { bus: 2, busAU: 2, tramModern: 2, taxi: 4, touristCart: 2 };
-const CARS = new Set(['sedan', 'suv', 'ute', 'taxi']);
+const CARS = new Set(['sedan', 'suv', 'ute', 'taxi', 'tamTruck']);
+// cậu Tâm's little truck on Two Homes Street (owner, 29 Oct AEDT: it was a solid model that could not be driven): the
+// ute's white cab with the family's blue cargo box, driven from the left as in Vietnam
+function tamTruck(real) {
+  const v = build('ute', { real, args: ['#f2f2f2'] }), left = p => [-p[0], p[1], p[2]];
+  const load = new THREE.Mesh(merge([P(new THREE.BoxGeometry(1.62, 1.3, 2.2), '#3a78c8', [0, 1.62, -1.2]), P(new THREE.BoxGeometry(1.66, .08, 2.24), '#2f63a8', [0, 2.3, -1.2])]), toonVC());
+  load.castShadow = true; v.o.add(load);
+  return { ...v, seat: left(v.seat), grips: v.grips.map(left), feet: v.feet.map(left), wheelAt: left(v.wheelAt) };
+}
 
 const look = (style, color, hair, hairStyle, hat = 'none', skin = '#e0aa80') => ({ style, color, hair, hairStyle, hat, skin, back: 'none', glider: 0 });
 const VN_RIDERS = [look('shirt', '#3a78c8', '#1d1412', 'short', 'cap'), look('aodai', '#ffffff', '#1d1412', 'long', 'nonla'), look('shirt', '#e8c25a', '#1d1412', 'short'), look('shirt', '#ff7eb8', '#1d1412', 'ponytail'), look('shirt', '#5a8a3a', '#1d1412', 'short', 'nonla')];
@@ -120,7 +128,7 @@ export function createTraffic(G) {
   function copy(id) {
     const k = id + (real ? '|real' : '');
     if (!tpl.has(k)) {
-      const v = build(id, { real });
+      const v = id === 'tamTruck' ? tamTruck(real) : build(id, { real });
       // The legacy cart factory has an opaque painted windscreen but omitted the cabin description supplied by cars,
       // buses and trams. Give the camera its window bounds; withRideView opens it only for the rider's render.
       if (id === 'touristCart' && !v.cabin) v.cabin = { width: 1.5, length: 4.6, bottom: 1.05, top: 2.12, color: '#f4f4ee' };
@@ -133,6 +141,8 @@ export function createTraffic(G) {
     const at = where(sl), yaw0 = sl.v ? sl.v.o.rotation.y : sl.yaw || 0;
     if (sl.v) scene.remove(sl.v.o);
     const v = sl.v = copy(sl.id);
+    // (owner, 29 Oct AEDT) a vehicle can be driven away, so it is never part of the still solid map: it would leave an invisible wall
+    v.o.userData.moving = true;
     if (TWO_WHEEL.has(sl.id) && !sl.rideable && v.seat && sl.mover) {
       const list = sl.cc === 'au' ? AU_RIDERS : VN_RIDERS, A = buildAvatar(list[Math.floor(R2() * list.length)]);
       A.anim('idle', 0, 0); seatRider(A, v, v.seat, v.grips, v.feet); sl.rider = A;
@@ -170,7 +180,7 @@ export function createTraffic(G) {
   for (const sl of slots.filter(s => s.rideable)) {
     const bike = ['miniBike', 'bmx', 'roadster', 'roadBike', 'kidsBike'].includes(sl.id), car = CARS.has(sl.id);
     G.interactables.push({ id: (bike ? 'bike_' : 'drive_') + slots.indexOf(sl), get x() { return where(sl)[0]; }, get z() { return where(sl)[1]; }, r: car ? 2.8 : 2.2, icon: bike ? '🚲' : car ? '🚗' : '🛵',
-      label: () => bike ? T('Ride the bicycle', 'Đạp xe') : car ? T('Drive the car', 'Lái xe hơi') : T('Ride the motorbike', 'Chạy xe máy'), visible: h => !sl.taken && !h.riding && !h.carry && (!sl.feat || keep(sl.feat)),
+      label: () => bike ? T('Ride the bicycle', 'Đạp xe') : sl.id === 'tamTruck' ? T('Drive the truck', 'Lái xe tải') : car ? T('Drive the car', 'Lái xe hơi') : T('Ride the motorbike', 'Chạy xe máy'), visible: h => !sl.taken && !h.riding && !h.carry && (!sl.feat || keep(sl.feat)),
       act: (h, game) => { if (!sl.v) make(sl); sl.taken = h; if (sl.feat) tried(h, sl.feat); const v = sl.v; h.mount({ vehicle: v, mesh: v.o, shadow: { position: new THREE.Vector3() }, yaw: v.o.rotation.y, speed: sl.id === 'roadBike' ? 8 : car ? 9 : bike ? 6 : 8, slot: sl, quiet: true });
         const hud = G.huds && G.huds[G.heroes.indexOf(h)]; if (hud && hud.toast) hud.toast(T('Press Jump to get off', 'Bấm Nhảy để xuống xe')); } });
   }

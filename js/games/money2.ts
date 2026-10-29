@@ -94,7 +94,8 @@ register({
     for (let r = 0; r < rounds; r++) {
       const goal = unit(code) * (api.little ? 2 + r : 3 + r * 2) + (r === 2 && !api.little ? small(code) : 0);
       const [icon, name] = toys[r];
-      api.say(`Save ${said(goal, code)[0]} for ${name[0]}.`, `Tiết kiệm ${said(goal, code)[1]} để mua ${name[1]}.`);
+      // (one whole line, so Lê Minh can record it: the price is on the money box)
+      api.say("Save up to buy it! The price is on the money box.", "Tiết kiệm để mua nhé! Giá ghi trên ống heo.");
       const ok = await makeAmount(api, wrap, code, goal, [small(code), unit(code), big(code)],
         sum => `${pic(icon)} ${pic("🐷")} ${money(sum, code)} / ${money(goal, code)}`);
       if (!ok) return;
@@ -167,7 +168,7 @@ register({
     for (let r = 0; r < rounds; r++) {
       const fare = code === "VND" ? [7000, 12000, 15000][r] : [150, 220, 350][r];
       const coins = code === "VND" ? [1000, 2000, 5000, 10000] : [10, 20, 50, 100, 200];
-      api.say(`The fare is ${said(fare, code)[0]}.`, `Giá vé là ${said(fare, code)[1]}.`);
+      api.say("Look at the fare and pay it!", "Xem giá vé rồi trả tiền nhé!");   // (the fare is on the screen; a whole line Lê Minh can record)
       const ok = await makeAmount(api, wrap, code, fare, api.little ? coins.slice(-3) : coins, sum => `${pic("🚌")} ${T("Fare", "Giá vé")} ${money(fare, code)} · ${T("Paid", "Đã trả")} ${money(sum, code)}`);
       if (!ok) return;
       api.sfx.ding(); api.say("Thank you! Hop on!", "Cảm ơn! Lên xe nào!");
@@ -322,7 +323,7 @@ register({
         tapped.querySelector(".mn2-pile").insertAdjacentHTML("beforeend", cash(code, coin));
         pile--; show(); api.sfx.coin();
       }
-      api.say(`Fair! ${each} each.`, `Công bằng! Mỗi bạn ${each}.`);
+      api.say("Fair! Everyone has the same.", "Công bằng! Các bạn có bằng nhau.");
       api.sfx.ding(); api.dots(rounds, r + 1);
       await wait(1200);
     }

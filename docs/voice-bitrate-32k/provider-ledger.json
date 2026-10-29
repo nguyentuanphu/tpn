@@ -7,70 +7,46 @@
     "channels": 1
   },
   "counts": {
-    "azure:en-AU-NatashaNeural": 7703,
-    "azure:en-AU-WilliamNeural": 7703,
-    "azure:vi-VN-HoaiMyNeural": 6779,
-    "azure:vi-VN-NamMinhNeural": 6779,
-    "fpt:leminh": 7035,
+    "azure:en-AU-NatashaNeural": 7702,
+    "azure:en-AU-WilliamNeural": 7702,
+    "azure:vi-VN-HoaiMyNeural": 6777,
+    "azure:vi-VN-NamMinhNeural": 6777,
+    "fpt:leminh": 7033,
     "azure:zh-CN-YunxiNeural": 22,
     "azure:hi-IN-MadhurNeural": 22
   },
   "privacyHeld": 19,
   "missing": [
     {
-      "id": "c95a8163-6e3de4bc",
+      "id": "ff61a8d63bbf2b5d",
       "provider": "fpt",
       "voice": "leminh",
       "language": "vi",
-      "destination": "voices/fpt-leminh-v1/c95a8163-6e3de4bc.mp3",
+      "destination": "voices/fpt-leminh-v1/ff61a8d63bbf2b5d.mp3",
       "reason": "Missing required public recording"
     },
     {
-      "id": "1c722848-67f3156f",
+      "id": "6772e57b-52ad0a18",
       "provider": "fpt",
       "voice": "leminh",
       "language": "vi",
-      "destination": "voices/fpt-leminh-v1/1c722848-67f3156f.mp3",
+      "destination": "voices/fpt-leminh-v1/6772e57b-52ad0a18.mp3",
       "reason": "Missing required public recording"
     },
     {
-      "id": "649ed4b9-4a94a6e2",
+      "id": "8a64479b-6175c983",
       "provider": "fpt",
       "voice": "leminh",
       "language": "vi",
-      "destination": "voices/fpt-leminh-v1/649ed4b9-4a94a6e2.mp3",
+      "destination": "voices/fpt-leminh-v1/8a64479b-6175c983.mp3",
       "reason": "Missing required public recording"
     },
     {
-      "id": "008f5228-4b44b8ef",
+      "id": "865b47b6-129fccf4",
       "provider": "fpt",
       "voice": "leminh",
       "language": "vi",
-      "destination": "voices/fpt-leminh-v1/008f5228-4b44b8ef.mp3",
-      "reason": "Missing required public recording"
-    },
-    {
-      "id": "b6414e9b-2f3211e1",
-      "provider": "fpt",
-      "voice": "leminh",
-      "language": "vi",
-      "destination": "voices/fpt-leminh-v1/b6414e9b-2f3211e1.mp3",
-      "reason": "Missing required public recording"
-    },
-    {
-      "id": "517d622a-3f564f32",
-      "provider": "fpt",
-      "voice": "leminh",
-      "language": "vi",
-      "destination": "voices/fpt-leminh-v1/517d622a-3f564f32.mp3",
-      "reason": "Missing required public recording"
-    },
-    {
-      "id": "bd5ac03e-37122b68",
-      "provider": "fpt",
-      "voice": "leminh",
-      "language": "vi",
-      "destination": "voices/fpt-leminh-v1/bd5ac03e-37122b68.mp3",
+      "destination": "voices/fpt-leminh-v1/865b47b6-129fccf4.mp3",
       "reason": "Missing required public recording"
     }
   ],
@@ -20415,20 +20391,20 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "3398f33e-32abf214",
+      "id": "f4d32bbf-37c04863",
       "language": "en",
       "provider": "azure",
       "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/3398f33e-32abf214.mp3",
+      "delivery": "voices/en/f/f4d32bbf-37c04863.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "3398f33e-32abf214",
+      "id": "f4d32bbf-37c04863",
       "language": "en",
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/3398f33e-32abf214.mp3",
+      "delivery": "voices/en/m/f4d32bbf-37c04863.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -40443,6 +40419,42 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
+      "id": "82d9ab7a4dfb546a",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-NatashaNeural",
+      "delivery": "voices/en/f/82d9ab7a4dfb546a.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "82d9ab7a4dfb546a",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-WilliamNeural",
+      "delivery": "voices/en/m/82d9ab7a4dfb546a.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "18e6cb603f64ef07",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-NatashaNeural",
+      "delivery": "voices/en/f/18e6cb603f64ef07.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "18e6cb603f64ef07",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-WilliamNeural",
+      "delivery": "voices/en/m/18e6cb603f64ef07.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
       "id": "d59d188743c3e7ea",
       "language": "en",
       "provider": "azure",
@@ -40511,6 +40523,24 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/00d186042fc5a008.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "67369edf-8dc0527",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-NatashaNeural",
+      "delivery": "voices/en/f/67369edf-8dc0527.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "67369edf-8dc0527",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-WilliamNeural",
+      "delivery": "voices/en/m/67369edf-8dc0527.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -41285,6 +41315,24 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/7616c5745c2e89f6.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "7df1561b0036c9a4",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-NatashaNeural",
+      "delivery": "voices/en/f/7df1561b0036c9a4.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "7df1561b0036c9a4",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-WilliamNeural",
+      "delivery": "voices/en/m/7df1561b0036c9a4.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -87839,60 +87887,6 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "7def15c51f3def18",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/7def15c51f3def18.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "7def15c51f3def18",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/7def15c51f3def18.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "4d161adb-22bbc9c2",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/4d161adb-22bbc9c2.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "4d161adb-22bbc9c2",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/4d161adb-22bbc9c2.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "7a2f2173705c875b",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/7a2f2173705c875b.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "7a2f2173705c875b",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/7a2f2173705c875b.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
       "id": "6d4fff7e02dae960",
       "language": "en",
       "provider": "azure",
@@ -88141,42 +88135,6 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/97c10106-7442c728.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "842e6fc8-47983582",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/842e6fc8-47983582.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "842e6fc8-47983582",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/842e6fc8-47983582.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "2922f081-4e798157",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/2922f081-4e798157.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "2922f081-4e798157",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/2922f081-4e798157.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -188359,30 +188317,48 @@
       "deliveryBytes": 7424
     },
     {
-      "id": "c95a8163-6e3de4bc",
+      "id": "36731c2e7b9a9085",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-HoaiMyNeural",
-      "delivery": "voices/vi/f/c95a8163-6e3de4bc.mp3",
+      "text": "Trò chơi chưa tải xong. Kiểm tra kết nối rồi thử lại nhé.",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/f/36731c2e7b9a9085.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "3698f4e486f5f3fc5fc283b0394c43ab17496b119fe0536534474783b7d1550c",
+      "deliverySha256": "8e3ea4093e4b0e5745df353fab7cf64cf6f920d7419b56a16d67fb9e4f9f3476",
+      "masterBytes": 88338,
+      "deliveryBytes": 17936
     },
     {
-      "id": "c95a8163-6e3de4bc",
+      "id": "36731c2e7b9a9085",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-NamMinhNeural",
-      "delivery": "voices/vi/m/c95a8163-6e3de4bc.mp3",
+      "text": "Trò chơi chưa tải xong. Kiểm tra kết nối rồi thử lại nhé.",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/m/36731c2e7b9a9085.mp3",
       "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "3698f4e486f5f3fc5fc283b0394c43ab17496b119fe0536534474783b7d1550c",
+      "deliverySha256": "8e3ea4093e4b0e5745df353fab7cf64cf6f920d7419b56a16d67fb9e4f9f3476",
+      "masterBytes": 88338,
+      "deliveryBytes": 17936
     },
     {
-      "id": "c95a8163-6e3de4bc",
+      "id": "36731c2e7b9a9085",
       "language": "vi",
       "provider": "fpt",
       "voice": "leminh",
-      "delivery": "voices/fpt-leminh-v1/c95a8163-6e3de4bc.mp3",
-      "masterKind": "verified FPT recording receipt"
+      "text": "Trò chơi chưa tải xong. Kiểm tra kết nối rồi thử lại nhé.",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/fpt-leminh-v1/36731c2e7b9a9085.mp3",
+      "masterKind": "verified FPT recording receipt",
+      "masterSha256": "3698f4e486f5f3fc5fc283b0394c43ab17496b119fe0536534474783b7d1550c",
+      "deliverySha256": "8e3ea4093e4b0e5745df353fab7cf64cf6f920d7419b56a16d67fb9e4f9f3476",
+      "masterBytes": 88338,
+      "deliveryBytes": 17936
     },
     {
       "id": "0683927d38347693",
@@ -237313,6 +237289,58 @@
       "deliveryBytes": 16929
     },
     {
+      "id": "ff61a8d63bbf2b5d",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "delivery": "voices/vi/f/ff61a8d63bbf2b5d.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "ff61a8d63bbf2b5d",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "delivery": "voices/vi/m/ff61a8d63bbf2b5d.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "ff61a8d63bbf2b5d",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "delivery": "voices/fpt-leminh-v1/ff61a8d63bbf2b5d.mp3",
+      "masterKind": "verified FPT recording receipt"
+    },
+    {
+      "id": "6772e57b-52ad0a18",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "delivery": "voices/vi/f/6772e57b-52ad0a18.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "6772e57b-52ad0a18",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "delivery": "voices/vi/m/6772e57b-52ad0a18.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "6772e57b-52ad0a18",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "delivery": "voices/fpt-leminh-v1/6772e57b-52ad0a18.mp3",
+      "masterKind": "verified FPT recording receipt"
+    },
+    {
       "id": "b95279a040ab7679",
       "language": "vi",
       "provider": "azure",
@@ -237487,6 +237515,32 @@
       "deliverySha256": "266e971d9072a1799c6d0be406ecab46d98d637bf37f80b7e692860a2b3954bf",
       "masterBytes": 50722,
       "deliveryBytes": 10305
+    },
+    {
+      "id": "8a64479b-6175c983",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "delivery": "voices/vi/f/8a64479b-6175c983.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "8a64479b-6175c983",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "delivery": "voices/vi/m/8a64479b-6175c983.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "8a64479b-6175c983",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "delivery": "voices/fpt-leminh-v1/8a64479b-6175c983.mp3",
+      "masterKind": "verified FPT recording receipt"
     },
     {
       "id": "41b622206279ae7c",
@@ -239379,6 +239433,32 @@
       "deliverySha256": "56bf27dbc6ebdf234540771eb48f706b6a86902ed010f936f745b8cd771c4535",
       "masterBytes": 25645,
       "deliveryBytes": 5409
+    },
+    {
+      "id": "865b47b6-129fccf4",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "delivery": "voices/vi/f/865b47b6-129fccf4.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "865b47b6-129fccf4",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "delivery": "voices/vi/m/865b47b6-129fccf4.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "865b47b6-129fccf4",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "delivery": "voices/fpt-leminh-v1/865b47b6-129fccf4.mp3",
+      "masterKind": "verified FPT recording receipt"
     },
     {
       "id": "eddf6805-205e0d93",
@@ -319471,110 +319551,6 @@
       "deliveryBytes": 6560
     },
     {
-      "id": "1c722848-67f3156f",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "delivery": "voices/vi/f/1c722848-67f3156f.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "1c722848-67f3156f",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "delivery": "voices/vi/m/1c722848-67f3156f.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "1c722848-67f3156f",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "delivery": "voices/fpt-leminh-v1/1c722848-67f3156f.mp3",
-      "masterKind": "verified FPT recording receipt"
-    },
-    {
-      "id": "649ed4b9-4a94a6e2",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "delivery": "voices/vi/f/649ed4b9-4a94a6e2.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "649ed4b9-4a94a6e2",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "delivery": "voices/vi/m/649ed4b9-4a94a6e2.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "649ed4b9-4a94a6e2",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "delivery": "voices/fpt-leminh-v1/649ed4b9-4a94a6e2.mp3",
-      "masterKind": "verified FPT recording receipt"
-    },
-    {
-      "id": "008f5228-4b44b8ef",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "delivery": "voices/vi/f/008f5228-4b44b8ef.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "008f5228-4b44b8ef",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "delivery": "voices/vi/m/008f5228-4b44b8ef.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "008f5228-4b44b8ef",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "delivery": "voices/fpt-leminh-v1/008f5228-4b44b8ef.mp3",
-      "masterKind": "verified FPT recording receipt"
-    },
-    {
-      "id": "b6414e9b-2f3211e1",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "delivery": "voices/vi/f/b6414e9b-2f3211e1.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "b6414e9b-2f3211e1",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "delivery": "voices/vi/m/b6414e9b-2f3211e1.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "b6414e9b-2f3211e1",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "delivery": "voices/fpt-leminh-v1/b6414e9b-2f3211e1.mp3",
-      "masterKind": "verified FPT recording receipt"
-    },
-    {
       "id": "5bfda57200a0e3fb",
       "language": "vi",
       "provider": "azure",
@@ -320233,58 +320209,6 @@
       "deliverySha256": "c5b55879f3b93f47bed80e639813528d23c11651fd94bd1c662e6f0c3fc71b0d",
       "masterBytes": 77367,
       "deliveryBytes": 15632
-    },
-    {
-      "id": "517d622a-3f564f32",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "delivery": "voices/vi/f/517d622a-3f564f32.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "517d622a-3f564f32",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "delivery": "voices/vi/m/517d622a-3f564f32.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "517d622a-3f564f32",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "delivery": "voices/fpt-leminh-v1/517d622a-3f564f32.mp3",
-      "masterKind": "verified FPT recording receipt"
-    },
-    {
-      "id": "bd5ac03e-37122b68",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "delivery": "voices/vi/f/bd5ac03e-37122b68.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "bd5ac03e-37122b68",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "delivery": "voices/vi/m/bd5ac03e-37122b68.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "bd5ac03e-37122b68",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "delivery": "voices/fpt-leminh-v1/bd5ac03e-37122b68.mp3",
-      "masterKind": "verified FPT recording receipt"
     },
     {
       "id": "fb156de619fb6864",

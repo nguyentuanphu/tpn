@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "sourceHead": "6f13d553c1e8209fd2e11debd39411399e85413b",
+  "sourceHead": "83458020fca5190377e8b30295b37e969ea37d08",
   "scope": "Public shipped language-pack definitions and bundled fonts/icons/vendor references. No line text, photos, names, device IDs or private family recordings are exported.",
   "manifests": [
     {
       "file": "voices/manifest-en.json",
-      "sha256": "a0277d4d9fd68340f01ae9201163b1785a13b0c9ef7bcfe39fcaab2c84884561",
+      "sha256": "95c862f2f6ad2f7dd347f70955258ccc30ed8d22fab0f6472a5b8663a479f665",
       "language": "en",
       "recordings": [
         {
@@ -12181,6 +12181,57 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
+          "key": "voice:en:31e49571-14667e9d",
+          "language": "en",
+          "id": "31e49571-14667e9d",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/31e49571-14667e9d.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/31e49571-14667e9d.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:en:7e6ee594181044bd",
+          "language": "en",
+          "id": "7e6ee594181044bd",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/7e6ee594181044bd.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/7e6ee594181044bd.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:en:a9f277cf4365f54f",
+          "language": "en",
+          "id": "a9f277cf4365f54f",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/a9f277cf4365f54f.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/a9f277cf4365f54f.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
           "key": "voice:en:f20aa9d2-592d6530",
           "language": "en",
           "id": "f20aa9d2-592d6530",
@@ -19145,6 +19196,23 @@
             },
             {
               "file": "voices/en/m/da7cb225-b02e7ef.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:en:f4d32bbf-37c04863",
+          "language": "en",
+          "id": "f4d32bbf-37c04863",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/f4d32bbf-37c04863.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/f4d32bbf-37c04863.mp3",
               "present": true
             }
           ],
@@ -33754,6 +33822,23 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
+          "key": "voice:en:de817879-c591d93",
+          "language": "en",
+          "id": "de817879-c591d93",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/de817879-c591d93.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/de817879-c591d93.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
           "key": "voice:en:54394db3-30409003",
           "language": "en",
           "id": "54394db3-30409003",
@@ -34689,6 +34774,23 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
+          "key": "voice:en:f79ba8bc-3fb903bc",
+          "language": "en",
+          "id": "f79ba8bc-3fb903bc",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/f79ba8bc-3fb903bc.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/f79ba8bc-3fb903bc.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
           "key": "voice:en:8c390c6701d7bcd6",
           "language": "en",
           "id": "8c390c6701d7bcd6",
@@ -34972,6 +35074,23 @@
             },
             {
               "file": "voices/en/m/5080b2d5596e6874.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:en:50d8a35a-759fad8c",
+          "language": "en",
+          "id": "50d8a35a-759fad8c",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/50d8a35a-759fad8c.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/50d8a35a-759fad8c.mp3",
               "present": true
             }
           ],
@@ -37953,6 +38072,40 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
+          "key": "voice:en:82d9ab7a4dfb546a",
+          "language": "en",
+          "id": "82d9ab7a4dfb546a",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/82d9ab7a4dfb546a.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/82d9ab7a4dfb546a.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:en:18e6cb603f64ef07",
+          "language": "en",
+          "id": "18e6cb603f64ef07",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/18e6cb603f64ef07.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/18e6cb603f64ef07.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
           "key": "voice:en:d59d188743c3e7ea",
           "language": "en",
           "id": "d59d188743c3e7ea",
@@ -38015,6 +38168,23 @@
             },
             {
               "file": "voices/en/m/00d186042fc5a008.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:en:67369edf-8dc0527",
+          "language": "en",
+          "id": "67369edf-8dc0527",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/67369edf-8dc0527.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/67369edf-8dc0527.mp3",
               "present": true
             }
           ],
@@ -38746,6 +38916,23 @@
             },
             {
               "file": "voices/en/m/7616c5745c2e89f6.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:en:7df1561b0036c9a4",
+          "language": "en",
+          "id": "7df1561b0036c9a4",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/en/f/7df1561b0036c9a4.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/en/m/7df1561b0036c9a4.mp3",
               "present": true
             }
           ],
@@ -82697,57 +82884,6 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
-          "key": "voice:en:7def15c51f3def18",
-          "language": "en",
-          "id": "7def15c51f3def18",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/7def15c51f3def18.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/7def15c51f3def18.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:4d161adb-22bbc9c2",
-          "language": "en",
-          "id": "4d161adb-22bbc9c2",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/4d161adb-22bbc9c2.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/4d161adb-22bbc9c2.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:7a2f2173705c875b",
-          "language": "en",
-          "id": "7a2f2173705c875b",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/7a2f2173705c875b.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/7a2f2173705c875b.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
           "key": "voice:en:6d4fff7e02dae960",
           "language": "en",
           "id": "6d4fff7e02dae960",
@@ -82980,40 +83116,6 @@
             },
             {
               "file": "voices/en/m/97c10106-7442c728.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:842e6fc8-47983582",
-          "language": "en",
-          "id": "842e6fc8-47983582",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/842e6fc8-47983582.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/842e6fc8-47983582.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:2922f081-4e798157",
-          "language": "en",
-          "id": "2922f081-4e798157",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/2922f081-4e798157.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/2922f081-4e798157.mp3",
               "present": true
             }
           ],
@@ -130839,131 +130941,12 @@
             }
           ],
           "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:31e49571-14667e9d",
-          "language": "en",
-          "id": "31e49571-14667e9d",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/31e49571-14667e9d.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/31e49571-14667e9d.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:7e6ee594181044bd",
-          "language": "en",
-          "id": "7e6ee594181044bd",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/7e6ee594181044bd.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/7e6ee594181044bd.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:a9f277cf4365f54f",
-          "language": "en",
-          "id": "a9f277cf4365f54f",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/a9f277cf4365f54f.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/a9f277cf4365f54f.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:3398f33e-32abf214",
-          "language": "en",
-          "id": "3398f33e-32abf214",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/3398f33e-32abf214.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/3398f33e-32abf214.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:de817879-c591d93",
-          "language": "en",
-          "id": "de817879-c591d93",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/de817879-c591d93.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/de817879-c591d93.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:f79ba8bc-3fb903bc",
-          "language": "en",
-          "id": "f79ba8bc-3fb903bc",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/f79ba8bc-3fb903bc.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/f79ba8bc-3fb903bc.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:en:50d8a35a-759fad8c",
-          "language": "en",
-          "id": "50d8a35a-759fad8c",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/en/f/50d8a35a-759fad8c.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/en/m/50d8a35a-759fad8c.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
         }
       ]
     },
     {
       "file": "voices/manifest-vi.json",
-      "sha256": "73dc2764ae889647039a92f51b6048bbb5cf27eaa30c65ac7d010aa01a17c38d",
+      "sha256": "e121dfdac6396611a75bb4a1f84f20b8a5e098e6bb077f02c5a6bdba7267ef2b",
       "language": "vi",
       "recordings": [
         {
@@ -143054,6 +143037,57 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
+          "key": "voice:vi:d62b5431-4c33e8f3",
+          "language": "vi",
+          "id": "d62b5431-4c33e8f3",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/d62b5431-4c33e8f3.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/d62b5431-4c33e8f3.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:vi:05ad9ea9-1923b72b",
+          "language": "vi",
+          "id": "05ad9ea9-1923b72b",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/05ad9ea9-1923b72b.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/05ad9ea9-1923b72b.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:vi:5d0348da57d3e15c",
+          "language": "vi",
+          "id": "5d0348da57d3e15c",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/5d0348da57d3e15c.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/5d0348da57d3e15c.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
           "key": "voice:vi:139eb5ed24dc01f6",
           "language": "vi",
           "id": "139eb5ed24dc01f6",
@@ -150052,6 +150086,23 @@
             },
             {
               "file": "voices/vi/m/992a3dad-3ff15856.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:vi:36731c2e7b9a9085",
+          "language": "vi",
+          "id": "36731c2e7b9a9085",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/36731c2e7b9a9085.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/36731c2e7b9a9085.mp3",
               "present": true
             }
           ],
@@ -164678,6 +164729,23 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
+          "key": "voice:vi:7478f58b-3078a93b",
+          "language": "vi",
+          "id": "7478f58b-3078a93b",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/7478f58b-3078a93b.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/7478f58b-3078a93b.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
           "key": "voice:vi:b013debc5e59c8d8",
           "language": "vi",
           "id": "b013debc5e59c8d8",
@@ -165647,6 +165715,23 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
+          "key": "voice:vi:79586c280f479c4e",
+          "language": "vi",
+          "id": "79586c280f479c4e",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/79586c280f479c4e.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/79586c280f479c4e.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
           "key": "voice:vi:6108e1566b40b82b",
           "language": "vi",
           "id": "6108e1566b40b82b",
@@ -165930,6 +166015,23 @@
             },
             {
               "file": "voices/vi/m/708203172372026d.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:vi:8a2c2827-54cc3622",
+          "language": "vi",
+          "id": "8a2c2827-54cc3622",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/8a2c2827-54cc3622.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/8a2c2827-54cc3622.mp3",
               "present": true
             }
           ],
@@ -168911,6 +169013,40 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
+          "key": "voice:vi:ff61a8d63bbf2b5d",
+          "language": "vi",
+          "id": "ff61a8d63bbf2b5d",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/ff61a8d63bbf2b5d.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/ff61a8d63bbf2b5d.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:vi:6772e57b-52ad0a18",
+          "language": "vi",
+          "id": "6772e57b-52ad0a18",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/6772e57b-52ad0a18.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/6772e57b-52ad0a18.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
           "key": "voice:vi:b95279a040ab7679",
           "language": "vi",
           "id": "b95279a040ab7679",
@@ -168973,6 +169109,23 @@
             },
             {
               "file": "voices/vi/m/fc581a7317fd6802.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:vi:8a64479b-6175c983",
+          "language": "vi",
+          "id": "8a64479b-6175c983",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/8a64479b-6175c983.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/8a64479b-6175c983.mp3",
               "present": true
             }
           ],
@@ -169704,6 +169857,23 @@
             },
             {
               "file": "voices/vi/m/96d28b1b2681271a.mp3",
+              "present": true
+            }
+          ],
+          "playback": "not_inferred_from_file_presence"
+        },
+        {
+          "key": "voice:vi:865b47b6-129fccf4",
+          "language": "vi",
+          "id": "865b47b6-129fccf4",
+          "classification": "shipped-recording-definition",
+          "assets": [
+            {
+              "file": "voices/vi/f/865b47b6-129fccf4.mp3",
+              "present": true
+            },
+            {
+              "file": "voices/vi/m/865b47b6-129fccf4.mp3",
               "present": true
             }
           ],
@@ -200684,74 +200854,6 @@
           "playback": "not_inferred_from_file_presence"
         },
         {
-          "key": "voice:vi:1c722848-67f3156f",
-          "language": "vi",
-          "id": "1c722848-67f3156f",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/1c722848-67f3156f.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/1c722848-67f3156f.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:649ed4b9-4a94a6e2",
-          "language": "vi",
-          "id": "649ed4b9-4a94a6e2",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/649ed4b9-4a94a6e2.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/649ed4b9-4a94a6e2.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:008f5228-4b44b8ef",
-          "language": "vi",
-          "id": "008f5228-4b44b8ef",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/008f5228-4b44b8ef.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/008f5228-4b44b8ef.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:b6414e9b-2f3211e1",
-          "language": "vi",
-          "id": "b6414e9b-2f3211e1",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/b6414e9b-2f3211e1.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/b6414e9b-2f3211e1.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
           "key": "voice:vi:5bfda57200a0e3fb",
           "language": "vi",
           "id": "5bfda57200a0e3fb",
@@ -201001,40 +201103,6 @@
             },
             {
               "file": "voices/vi/m/c7ca30444d7a8396.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:517d622a-3f564f32",
-          "language": "vi",
-          "id": "517d622a-3f564f32",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/517d622a-3f564f32.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/517d622a-3f564f32.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:bd5ac03e-37122b68",
-          "language": "vi",
-          "id": "bd5ac03e-37122b68",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/bd5ac03e-37122b68.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/bd5ac03e-37122b68.mp3",
               "present": true
             }
           ],
@@ -246085,125 +246153,6 @@
             },
             {
               "file": "voices/vi/m/e5e02d6e5318b260.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:d62b5431-4c33e8f3",
-          "language": "vi",
-          "id": "d62b5431-4c33e8f3",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/d62b5431-4c33e8f3.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/d62b5431-4c33e8f3.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:05ad9ea9-1923b72b",
-          "language": "vi",
-          "id": "05ad9ea9-1923b72b",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/05ad9ea9-1923b72b.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/05ad9ea9-1923b72b.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:5d0348da57d3e15c",
-          "language": "vi",
-          "id": "5d0348da57d3e15c",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/5d0348da57d3e15c.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/5d0348da57d3e15c.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:c95a8163-6e3de4bc",
-          "language": "vi",
-          "id": "c95a8163-6e3de4bc",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/c95a8163-6e3de4bc.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/c95a8163-6e3de4bc.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:7478f58b-3078a93b",
-          "language": "vi",
-          "id": "7478f58b-3078a93b",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/7478f58b-3078a93b.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/7478f58b-3078a93b.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:79586c280f479c4e",
-          "language": "vi",
-          "id": "79586c280f479c4e",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/79586c280f479c4e.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/79586c280f479c4e.mp3",
-              "present": true
-            }
-          ],
-          "playback": "not_inferred_from_file_presence"
-        },
-        {
-          "key": "voice:vi:8a2c2827-54cc3622",
-          "language": "vi",
-          "id": "8a2c2827-54cc3622",
-          "classification": "shipped-recording-definition",
-          "assets": [
-            {
-              "file": "voices/vi/f/8a2c2827-54cc3622.mp3",
-              "present": true
-            },
-            {
-              "file": "voices/vi/m/8a2c2827-54cc3622.mp3",
               "present": true
             }
           ],

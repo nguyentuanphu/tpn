@@ -229,13 +229,9 @@ export function createTown(G) {
   bits.push(P(Box(.06, 1.5, .06), '#d0d0d0', [X(-16.4), .75, S + 1.1]), P(Box(.06, 1.5, .06), '#d0d0d0', [X(-15), .75, S + 1.1]), P(Box(1.5, .05, .05), '#d0d0d0', [X(-15.7), 1.48, S + 1.1]));
   ['#ff9ec4', '#8fd3ff', '#ffe27a', '#b9f0a8'].forEach((c, k) => bits.push(P(Box(.3, .38, .04), c, [X(-16.2) + k * .33, 1.2, S + 1.1]), P(Box(.42, .1, .045), c, [X(-16.2) + k * .33, 1.36, S + 1.1])));
   world.colliders.push({ x: X(-15.7), z: S + 1.1, r: .7 });
-  // cậu Tâm's little truck, parked at the kerb outside the villa (the family run trucks and sell phones)
-  {
-    const t = [P(Box(3.2, 1.3, 1.5), '#3a78c8', [-.5, 1.05, 0]), P(Box(1.2, 1.1, 1.45), '#f2f2f2', [1.6, .95, 0]), P(Box(.05, .5, 1.2), '#9fd3e8', [2.21, 1.2, 0]), P(Box(4.4, .2, 1.4), '#4a4a4a', [.1, .35, 0])];
-    [[-1.4, .75], [-1.4, -.75], [1.5, .75], [1.5, -.75]].forEach(([x, z]) => t.push(P(Cyl(.32, .32, .2, 12), '#2f3336', [x, .32, z], [Math.PI / 2, 0, 0])));
-    const tm = new THREE.Mesh(merge(t), mat); tm.position.set(X(4.2), y0, Z(-8.5)); tm.castShadow = true; scene.add(tm);
-    world.boxes.push({ x0: X(1.9), x1: X(6.5), z0: Z(-9.3), z1: Z(-7.7) });
-  }
+  // cậu Tâm's little truck, parked at the kerb outside the villa (the family run trucks and sell phones): a real vehicle
+  // children can drive (js/traffic.js 'tamTruck'; owner, 29 Oct AEDT: it was a solid model that could not be driven)
+  TOWN_PARKED.push([X(4.2), Z(-8.5), Math.PI / 2, 'tamTruck']);
   const bm = new THREE.Mesh(merge(bits), mat); bm.position.y = y0; bm.castShadow = true; scene.add(bm);
   // shop boards in both languages
   const board = (text, x, y, z, rot = 0, w = 2.4) => {

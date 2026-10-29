@@ -7,7 +7,8 @@ const managementNotice = (eventName: string, data: Record<string, string> = {}) 
 const words = [
   ['Welcome to Sparkle Valley', 'Chào mừng đến Thung Lũng Lấp Lánh'],
   ['Opening the game…', 'Đang mở trò chơi…'],
-  ['The game could not finish opening. Your saved progress is kept. Try again.', 'Trò chơi chưa mở xong. Tiến trình đã lưu vẫn được giữ. Thử lại nhé.'],
+  // (the recorded v1.02 wording: a reworded line would need a new Lê Minh recording, and launch text is not a reviewed source)
+  ['The game could not finish loading. Check your connection and try again.', 'Trò chơi chưa tải xong. Kiểm tra kết nối rồi thử lại nhé.'],
   ['Try again', 'Thử lại'],
   ['A new update is available. Your progress stays saved.', 'Có bản cập nhật mới. Tiến trình của con vẫn được lưu.'],
   ['Update now', 'Cập nhật'],

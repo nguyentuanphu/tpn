@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/games/money2.ts": "e66751f03e81abb859e44ecb8db3f7e707d6fcbf24d8e508a09ff2ce01a86fc6",
+    "js/games/music2.ts": "1c7c13855446e97b8de78804ca690e765f6d15b2d3c8ba440b3621ce50f6e516"
+  },
+  "lines": [
+    {
+      "id": "ff61a8d63bbf2b5d",
+      "lang": "vi",
+      "text": "Tiết kiệm để mua nhé! Giá ghi trên ống heo.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "6772e57b-52ad0a18",
+      "lang": "vi",
+      "text": "Xem giá vé rồi trả tiền nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "8a64479b-6175c983",
+      "lang": "vi",
+      "text": "Công bằng! Các bạn có bằng nhau.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "865b47b6-129fccf4",
+      "lang": "vi",
+      "text": "Nhiều tiếng quá! Nghe lại nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/music2.ts"
+      ]
+    }
+  ]
+}
