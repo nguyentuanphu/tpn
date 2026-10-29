@@ -126,7 +126,8 @@ export function createManagementReadService(deps:Dependencies) {
       const mins=records.reduce((n,r)=>n+count(r.mins),0), errors=records.reduce((n,r)=>n+sumValues(r.errs),0), last=safeText(info.last,10)||ds.at(-1)?.date||'';
       const seenAt=count(l.at)?new Date(l.at).toISOString():'';
       const loc=object(info.loc),place={city:safeText(loc.city,40),region:safeText(loc.region,40),country:safeText(loc.country,3)};
-      const device={id,label:labels.get(id)||'',place,kind:['phone','tablet','computer'].includes(info.kind)?info.kind:'?',os:safeText(info.os,20),br:safeText(info.br,20),build:isBuild(info.build)?info.build:'?',first:safeText(info.first,10),last,activityLast:ds.at(-1)?.date||'',seenAt,sortAt:seenAt||last,
+      // (owner, 30 Oct 2026 AEDT: "used most should be up") lists put the most-played devices first, then the latest seen
+      const device={id,label:labels.get(id)||'',place,kind:['phone','tablet','computer'].includes(info.kind)?info.kind:'?',os:safeText(info.os,20),br:safeText(info.br,20),build:isBuild(info.build)?info.build:'?',first:safeText(info.first,10),last,activityLast:ds.at(-1)?.date||'',seenAt,sortAt:String(Math.min(count(mins),999999999)).padStart(9,'0')+'|'+(seenAt||last),
         online:l.on===true&&count(l.at)>clock()-5*60e3&&count(l.at)<=clock()+300000,mins,days:records.filter(active).length,tales:records.reduce((n,r)=>n+count(r.tales),0),errors,stuck:records.reduce((n,r)=>n+sumValues(r.stuck),0),fps:perf.fps,startup:perf.startup,power:perf.power,
         usageBuilds:[...new Set(records.flatMap(r=>Object.keys(object(r.builds)).length?Object.keys(object(r.builds)):isBuild(r.build)?[r.build]:[]))],...(options.includeProfileContext?{children:childRows}:{})};
       const basic=[id,device.label,device.kind,device.os,device.br,device.build].join(' ').toLocaleLowerCase();

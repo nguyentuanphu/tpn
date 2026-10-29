@@ -154,3 +154,8 @@ test('overview today summary: devices, minutes, favourite and left-early games, 
   assert.deepEqual(t.versions,{newest:'v1.03',onNewest:1,older:1});
   for(const p of t.places)assert.deepEqual(Object.keys(p).sort(),['city','country','devices','region']);
 });
+
+test('device lists put the most-played devices first (owner, 30 Oct 2026 AEDT)',async()=>{
+  const read=service(mem({...entries('lite12345678',record({mins:5})),...entries('busy12345678',record({mins:90})),...entries('mid123456789',record({mins:30}))}));
+  assert.deepEqual((await read.devices(period)).devices.map(d=>d.id),['busy12345678','mid123456789','lite12345678']);
+});

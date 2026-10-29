@@ -126,8 +126,8 @@ window.addEventListener('beforeunload', e => { if (unsaved()) { e.preventDefault
 // as big cards, one per page; on a phone the sections are a bar at the bottom, on a computer a column on the left.
 const SECTIONS = [
   { k: 'home', i: '🏠', en: 'Home', vi: 'Trang chủ', pages: ['home'] },
-  { k: 'people', i: '💛', en: 'People', vi: 'Người chơi', pages: ['people','managementchildren','managementdevices','managementdevice','players','children','familycode','album'] },
-  { k: 'game', i: '🎮', en: 'Game & website', vi: 'Game & web', pages: ['game','managementactivities','managementactivity','message','missions','quiz','stories','villagers','plots','releases','festivals','looks','path','music','map','photos','play','voices','ads','site'] },
+  { k: 'people', i: '💛', en: 'People', vi: 'Người chơi', pages: ['people','players','managementdevices','managementchildren','managementdevice','children','familycode','album'] },
+  { k: 'game', i: '🎮', en: 'Game & website', vi: 'Game & web', pages: ['game','releases','managementactivities','managementactivity','message','missions','quiz','stories','villagers','plots','festivals','looks','path','music','map','photos','play','voices','ads','site'] },
   { k: 'work', i: '🐞', en: 'Work', vi: 'Công việc', pages: ['work','managementattention','testers','managementrelease','managementchanges','managementoperations','lab','publish','check','management'] },
   { k: 'money', i: '🪙', en: 'Money', vi: 'Tài chính', pages: ['money','managementfinance'] },
   { k: 'setup', i: '⚙️', en: 'Settings', vi: 'Cài đặt', pages: ['settings','admins','security','accesslog'], utility: true }
@@ -363,7 +363,7 @@ for (const [page, kind] of Object.entries(MANAGEMENT_PAGES)) PAGES[page] = async
   const { renderManagement } = await import('./management.js');
   const query = Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''));
   const { id, ...filters } = query;
-  return renderManagement(P, { api, T, kind, id, query: filters, area:sectionOf(cur).k, online: INFO.online === true, can: permission => !INFO.online && ['management.configure','management.triage','operations.run'].includes(permission) ? false : CAN(permission),
+  return renderManagement(P, { api, T, kind, id, deviceName: (devId, label) => devTitle({ id: devId, label }), query: filters, area:sectionOf(cur).k, online: INFO.online === true, can: permission => !INFO.online && ['management.configure','management.triage','operations.run'].includes(permission) ? false : CAN(permission),
     go: (next, nextId, nextQuery) => {
       if (!leaveOk()) return;
       const target = Object.keys(MANAGEMENT_PAGES).find(k => MANAGEMENT_PAGES[k] === next);
@@ -377,7 +377,7 @@ for (const [page, kind] of Object.entries(MANAGEMENT_PAGES)) PAGES[page] = async
 for(const kind of ['home','people','game','work'] as const) PAGES[kind]=async P=>{
   const {renderOwnerDesk}=await import('./owner-desk.js');
   const section=sectionOf(kind),query=Object.fromEntries(new URLSearchParams(location.hash.split('?')[1]||''));
-  return renderOwnerDesk(P,kind,{T,api,can:CAN,canPage:canSee,info:INFO,query,
+  return renderOwnerDesk(P,kind,{T,api,can:CAN,deviceName:(devId,label)=>devTitle({id:devId,label}),canPage:canSee,info:INFO,query,
     tools:section.pages.filter(k=>k!==kind&&ABOUT[k]).map(key=>({key,icon:ABOUT[key][0],label:T(ABOUT[key][1],ABOUT[key][2]),description:T(ABOUT[key][3],ABOUT[key][4])})),
     go:(page,id,nextQuery)=>{
       if(!leaveOk())return;

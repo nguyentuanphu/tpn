@@ -1,6 +1,6 @@
 import {deskChart,type ChartPoint} from './desk-charts.js';
 type Row=Record<string,any>;
-type DeskOptions={T:(en:string,vi:string)=>string;api:(path:string,body?:unknown)=>Promise<any>;can:(permission:string)=>boolean;canPage:(page:string)=>boolean;go:(page:string,id?:string,query?:Record<string,string>)=>void;info:Row;tools:{key:string;label:string;description:string;icon:string}[];query?:Record<string,string>};
+type DeskOptions={T:(en:string,vi:string)=>string;api:(path:string,body?:unknown)=>Promise<any>;can:(permission:string)=>boolean;canPage:(page:string)=>boolean;go:(page:string,id?:string,query?:Record<string,string>)=>void;info:Row;tools:{key:string;label:string;description:string;icon:string}[];query?:Record<string,string>;deviceName?:(id:string,label:string)=>string};
 const escape=(s:unknown)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const rows=(v:unknown):Row[]=>Array.isArray(v)?v:[];
 const catalogueViews=new WeakMap<HTMLElement,{info:Row;search:string;discovery:string}>();
@@ -70,7 +70,7 @@ async function renderHome(P:HTMLElement,options:DeskOptions,stamp:string|undefin
  }).catch(()=>{if(!alive())return;for(const k of ['tiles','minutes','places','games'])fill(k,failed);});
  api('management/devices'+scope+'&limit=8').then(r=>{
   const list=rows(r?.devices);
-  fill('devices',list.length?list.map(d=>`<button type="button" class="today-device" data-desk-route="managementdevice:${escape(d.id)}"><span><b>${escape(d.label||T('Device without a name','Máy chưa đặt tên'))}</b>${d.online?` <span class="pill ok">${escape(T('playing now','đang chơi'))}</span>`:''}</span><small>${escape([deviceType(d.kind,T),d.build,placeName(d.place||{}),T(`${mins(d.mins,T)} played`,`đã chơi ${mins(d.mins,T)}`),T(`last ${shortDate(d.last,T)}`,`lần cuối ${shortDate(d.last,T)}`)].filter(Boolean).join(' · '))}</small></button>`).join('')+(options.canPage('managementdevices')?quietLink('managementdevices',T(`All ${r?.total??list.length} devices`,`Tất cả ${r?.total??list.length} máy`)):''):`<p>${escape(T('No devices reported in this period.','Chưa có máy báo cáo trong khoảng này.'))}</p>`);
+  fill('devices',list.length?list.map(d=>`<button type="button" class="today-device" data-desk-route="managementdevice:${escape(d.id)}"><span><b>${escape(options.deviceName?options.deviceName(d.id,d.label||''):d.label||T('Device without a name','Máy chưa đặt tên'))}</b>${d.online?` <span class="pill ok">${escape(T('playing now','đang chơi'))}</span>`:''}</span><small>${escape([deviceType(d.kind,T),d.build,placeName(d.place||{}),T(`${mins(d.mins,T)} played`,`đã chơi ${mins(d.mins,T)}`),T(`last ${shortDate(d.last,T)}`,`lần cuối ${shortDate(d.last,T)}`)].filter(Boolean).join(' · '))}</small></button>`).join('')+(options.canPage('managementdevices')?quietLink('managementdevices',T(`All ${r?.total??list.length} devices`,`Tất cả ${r?.total??list.length} máy`)):''):`<p>${escape(T('No devices reported in this period.','Chưa có máy báo cáo trong khoảng này.'))}</p>`);
  }).catch(()=>fill('devices',failed));
  api('management/attention'+scope+'&limit=8').then(r=>{
   const open=rows(r?.items).filter(i=>!['verified','dismissed','duplicate'].includes(i.status));

@@ -112,6 +112,15 @@ test('hello: rate limit per connection, missing-line caps; /api/live without the
   assert.equal(j.by, undefined); assert.deepEqual(j.releases, { a: { on: true } });
 });
 
+test('hello: the device gets back the name it was given in Studio, and only its own', async () => {
+  const P = mem(), G = mem(), hello = makeHello({ playersStore: async () => P, guardStore: async () => G });
+  await P.set('label/dddddddddddd', 'Bà’s phone'); await P.set('label/eeeeeeeeeeee', 'Other');
+  const send = b => hello(new Request('https://x/api/hello', { method: 'POST', body: JSON.stringify(b) }), { ip: '192.0.2.9' });
+  const named = await send({ id: 'dddddddddddd', m: 1 });
+  assert.equal(named.status, 204); assert.equal(decodeURIComponent(named.headers.get('X-SV-Device-Name')), 'Bà’s phone');
+  assert.equal((await send({ id: 'ffffffffffff', m: 1 })).headers.get('X-SV-Device-Name'), null);
+});
+
 test('the service worker never keeps family photos', () => {
   const sw = fs.readFileSync(new URL('../../sw.js', import.meta.url), 'utf8');
   const fetchAt = sw.indexOf("addEventListener('fetch'"), bypass = sw.indexOf("url.pathname.includes('/api/')) return;");
