@@ -1,0 +1,2418 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/games/animals2.ts": "b334a71af3bb677ef8e355c78ead153ed08c3f21f130cc2b0f58d7f182a35a9f",
+    "js/games/money2.ts": "51923db4d20b425bac7f208a672a34c6536f17adc9b828d4025a51e2d58759cb",
+    "js/games/music2.ts": "5b51d4d959528b2d8de931f89218bfc954d552f94fe02c7781e22d414744d2fb",
+    "js/games/numbers2.ts": "d1d422c8e9c56de777808af40aee613e4935d9e480178f9b61e256fbb6a70f8a",
+    "js/games/outside.ts": "52196f79f4d5096f974d8d4804ceb78f72bcb24b4538f46b089b2419cc66baa3",
+    "js/games/places2.ts": "4ac75a7b61a8edf50259d51d0d812dfd4e130716b8ff7461815da598de4b24d8",
+    "js/games/reading2.ts": "7758eaffd28a14033d8694d89f013ec35386ba22775d966cc234b7c69cc73193",
+    "js/games/shapes2.ts": "bfe7465654a312891dbe37ce426639cbfa322d3d6e0953ab16e3072eecb0fa7f",
+    "js/howto-data2.ts": "7a08509571968fc161ef32e2ede2890c8e65f03000021f56ced657e5c082dc51"
+  },
+  "lines": [
+    {
+      "id": "c5423c885958caba",
+      "lang": "vi",
+      "text": "Nhìn biển báo.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "2597cdea-40d4bd2d",
+      "lang": "vi",
+      "text": "Đọc chữ và chạm vào điều biển báo nói.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "1ffce13a-7a3e5cdd",
+      "lang": "vi",
+      "text": "Chơi thật: đọc biển báo khi đi dạo nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "95459757-605c2630",
+      "lang": "vi",
+      "text": "Nghe từ để hỏi.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "8e077dc44bca9f1d",
+      "lang": "vi",
+      "text": "Ai là người, Ở đâu là nơi chốn, Cái gì là đồ vật.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "628f832e-a776e5f",
+      "lang": "vi",
+      "text": "Chạm câu trả lời phù hợp.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "45f18850-56638547",
+      "lang": "vi",
+      "text": "Đếm hình.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "236abff4-14fc5ea5",
+      "lang": "vi",
+      "text": "Đọc chữ: một quả táo, hay ba quả táo?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "3bc0a19c-5b2d84c4",
+      "lang": "vi",
+      "text": "Chạm chữ hợp với hình.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e15325ae5259d1af",
+      "lang": "vi",
+      "text": "Nhìn chữ hoa.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "49c78a76-433c560",
+      "lang": "vi",
+      "text": "Chạm chữ thường của nó. Cẩn thận: b và d trông giống nhau!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "ee83855323434d37",
+      "lang": "vi",
+      "text": "Nghe câu thơ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "204220dc-78d24021",
+      "lang": "vi",
+      "text": "Từ nào nghe hợp vần ở cuối?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "f575a544554db954",
+      "lang": "vi",
+      "text": "Nhìn tranh và từ còn thiếu.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "6ed59e986f0e0046",
+      "lang": "vi",
+      "text": "Đọc chậm từ đó.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "4cb002c032c82693",
+      "lang": "vi",
+      "text": "Chạm chữ cái điền vào chỗ trống.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e5520ee00f9a9c97",
+      "lang": "vi",
+      "text": "Chọn bìa, các bạn trong truyện và dải ruy băng.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "84d77940-3701de24",
+      "lang": "vi",
+      "text": "Chọn gì cũng được! Cuốn sách được lưu vào Album.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "983b704430d792b3",
+      "lang": "vi",
+      "text": "Tìm chấm số một.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e01a3a121ee51810",
+      "lang": "vi",
+      "text": "Chạm các chấm theo thứ tự: một, hai, ba...",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "70792dfc-3a18b1ff",
+      "lang": "vi",
+      "text": "Xem hiện ra hình gì nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "8bf02208-14e268f1",
+      "lang": "vi",
+      "text": "Tìm đường chấm chấm.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e223298553c06442",
+      "lang": "vi",
+      "text": "Đặt ngón tay lên và đi theo hết một vòng.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "8d97a88362a47943",
+      "lang": "vi",
+      "text": "Đi hết đường để thấy bức tranh!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "b981d21d63a52150",
+      "lang": "vi",
+      "text": "Bức tranh có hai bên, như con bướm.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "a1696522-6d6fc555",
+      "lang": "vi",
+      "text": "Vẽ ở một bên.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "9bb30e6f2112efa7",
+      "lang": "vi",
+      "text": "Bên kia vẽ theo con, như soi gương!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "ba13a48d-1c8b45f2",
+      "lang": "vi",
+      "text": "Mỗi số có một màu riêng.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "fef454d0-61eebb3e",
+      "lang": "vi",
+      "text": "Chạm một màu, rồi chạm mọi ô có số của màu đó.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "73594cfc-2527611e",
+      "lang": "vi",
+      "text": "Tô hết các ô là xong bức tranh!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "eb6df0726aeb281c",
+      "lang": "vi",
+      "text": "Tết Trung Thu, trẻ em Việt Nam rước đèn lồng dưới trăng rằm.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "704f31ef-7f855686",
+      "lang": "vi",
+      "text": "Chọn hình đèn lồng.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "f5741740-3fdd829b",
+      "lang": "vi",
+      "text": "Chạm một màu, rồi chạm từng phần. Dán thêm hình!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "47d51d7e066c09ab",
+      "lang": "vi",
+      "text": "Đèn lồng được lưu vào Album.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "567d2d9f-79686fad",
+      "lang": "vi",
+      "text": "Chọn dịp tặng thiệp.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "8dd24dca288dc978",
+      "lang": "vi",
+      "text": "Chạm một hình, rồi chạm thiệp để dán. Hoặc vẽ!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "0751ebed-4bf94898",
+      "lang": "vi",
+      "text": "Thiệp được lưu vào Album để đem tặng.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "bb885f4072f0ebff",
+      "lang": "vi",
+      "text": "Chơi thật: làm thiệp giấy tặng người con yêu.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "143a745f1a91bc77",
+      "lang": "vi",
+      "text": "Vẽ trên cát bằng ngón tay.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "3c52a21c2f80ca8b",
+      "lang": "vi",
+      "text": "Vẽ xong? Chạm con sóng để xoá đi.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "238aada0-4a0d8735",
+      "lang": "vi",
+      "text": "Rồi vẽ hình mới nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "a96b42a3-104a5120",
+      "lang": "vi",
+      "text": "Vịt con muốn tới cái ao.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "02ad277e-32979bde",
+      "lang": "vi",
+      "text": "Vẽ một đường từ vịt con tới mặt nước.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "0965005a-a11c8ff",
+      "lang": "vi",
+      "text": "Đi vòng qua những hòn đá!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e8c13d140b27bb7a",
+      "lang": "vi",
+      "text": "Nghe tên hình.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "19afba124123ad13",
+      "lang": "vi",
+      "text": "Vẽ bằng ngón tay, một nét liền.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "1912743042aeed42",
+      "lang": "vi",
+      "text": "Có góc là tam giác hay hình vuông, tròn là hình tròn!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "938554f43240ec8e",
+      "lang": "vi",
+      "text": "Nhìn bức tranh nhỏ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "2878c43f-288f7bfc",
+      "lang": "vi",
+      "text": "Chạm một màu, rồi chạm đúng các ô trên tranh của con.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "59314ddf5672c0cb",
+      "lang": "vi",
+      "text": "Làm cho giống hệt nhau!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "40c4def27b5697a4",
+      "lang": "vi",
+      "text": "Nhìn đồng hồ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e0ac85f50a695779",
+      "lang": "vi",
+      "text": "Kim ngắn chỉ giờ; kim dài chỉ phút.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "694e2021-3b15d325",
+      "lang": "vi",
+      "text": "Chạm giờ đồng hồ đang chỉ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "80c38536-7a0f9531",
+      "lang": "vi",
+      "text": "Nhìn hai nhóm trái cây.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "94abc9f25d2eea12",
+      "lang": "vi",
+      "text": "Đếm tất cả. Quả bị gạch là bị bớt đi.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "56dbf503-17e77649",
+      "lang": "vi",
+      "text": "Chạm vào kết quả.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "f5c089252ef761fb",
+      "lang": "vi",
+      "text": "Từ trái nghĩa khác nhau hoàn toàn: to và nhỏ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "c555eeed-3c96cdb1",
+      "lang": "vi",
+      "text": "Nhìn từ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "dfe156ec-692658cc",
+      "lang": "vi",
+      "text": "Chạm từ trái nghĩa với nó.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "44acd6e9-dc86209",
+      "lang": "vi",
+      "text": "Nghe tiếng con vật. Chạm loa để nghe lại.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "cb984a52-1314dad2",
+      "lang": "vi",
+      "text": "Con gì kêu như vậy?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "3b51813d-529e233e",
+      "lang": "vi",
+      "text": "Chạm vào con vật.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "455059c9-7ddfa38e",
+      "lang": "vi",
+      "text": "Nhìn tranh và đọc từ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "2f3e153f-3374f04a",
+      "lang": "vi",
+      "text": "Nghe âm đầu tiên của nó.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "0197657a-52e19383",
+      "lang": "vi",
+      "text": "Chạm chữ cái bắt đầu.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "0eed5464-799f21ae",
+      "lang": "vi",
+      "text": "Nhìn các ví dụ. Chúng giống nhau ở điểm nào?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e983810462d1005a",
+      "lang": "vi",
+      "text": "Có thể là màu, hình hay kích thước.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "ade9e3af5d6e640c",
+      "lang": "vi",
+      "text": "Chọn thêm hình theo cùng quy luật.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "c6555831-ba05f01",
+      "lang": "vi",
+      "text": "Nhìn các bức tranh trong truyện.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "665b35161ccb25d2",
+      "lang": "vi",
+      "text": "Chọn việc xảy ra trước.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "0a4f0baa-504025ed",
+      "lang": "vi",
+      "text": "Rồi việc tiếp theo, cho tới hết.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "3980940a-245687da",
+      "lang": "vi",
+      "text": "Tìm lá cờ ở cuối đường.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "17559bb22cab7391",
+      "lang": "vi",
+      "text": "Bước lên những bông hoa ngay cạnh con.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "02aacca26c3c9a89",
+      "lang": "vi",
+      "text": "Đừng bước vào vũng nước!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "3c28e017-2d57ffca",
+      "lang": "vi",
+      "text": "Nghe và nhìn quy luật.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "22fbd0b07e6dcca9",
+      "lang": "vi",
+      "text": "Chọn hình tiếp theo.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e87be28b44b14ec5",
+      "lang": "vi",
+      "text": "Nhìn nét viền của bức tranh.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "d35df973-2c4d291a",
+      "lang": "vi",
+      "text": "Chọn một hình, rồi chạm chỗ vừa với nó. Con cũng có thể kéo.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "3dee88d74bd98ea2",
+      "lang": "vi",
+      "text": "Ghép kín mọi nét viền!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "0b269ac2-5ed1abdc",
+      "lang": "vi",
+      "text": "Nhìn các hình trong vườn theo thứ tự.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "6559ac7c-670fa2d9",
+      "lang": "vi",
+      "text": "Rồi chọn lại theo đúng thứ tự.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "22c3e9ff606eae5b",
+      "lang": "vi",
+      "text": "Quên? Con có thể xem lại bất cứ lúc nào.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "eef82912-6a4b934b",
+      "lang": "vi",
+      "text": "Chạm vào hình của nó.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "5bdeb099258377ce",
+      "lang": "vi",
+      "text": "Con cũng có thể nói to từ đó!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "7ad4d633023e9dbf",
+      "lang": "vi",
+      "text": "Bỏ trái cây vào giỏ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "c507ee70-4327d284",
+      "lang": "vi",
+      "text": "Mình cùng đếm từng quả.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "04be99e63021a341",
+      "lang": "vi",
+      "text": "Dừng lại đúng số được hỏi!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "67fa742b50a77240",
+      "lang": "vi",
+      "text": "Nghe câu chuyện nhỏ về Lá.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "152fbae326c2f26f",
+      "lang": "vi",
+      "text": "Lá cảm thấy thế nào?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "10ee624b-160a70cb",
+      "lang": "vi",
+      "text": "Chạm khuôn mặt đúng. Rồi nghĩ: điều gì có thể giúp bạn?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "89fd327a-706aaf2",
+      "lang": "vi",
+      "text": "Đọc tên từng hình.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "351670a1719c24c0",
+      "lang": "vi",
+      "text": "Chạm mọi hình bắt đầu bằng âm đó.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "37e15c3206941e7b",
+      "lang": "vi",
+      "text": "Bánh chưng là bánh vuông gia đình Việt nào cũng gói ngày Tết.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "0f6be530-7037eeda",
+      "lang": "vi",
+      "text": "Gói theo thứ tự: lá dong trước, rồi gạo nếp.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "509f0eed3c18fdd0",
+      "lang": "vi",
+      "text": "Rồi đỗ xanh, rồi thịt ở giữa.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "ad92257577dbf72a",
+      "lang": "vi",
+      "text": "Cuối cùng, buộc lạt thật chặt!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "42d03908-5b5dd656",
+      "lang": "vi",
+      "text": "Đèn ông sao năm cánh rực sáng trong đêm Trung Thu.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "057cd8e2-7048ebd8",
+      "lang": "vi",
+      "text": "Trước hết làm khung tre.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "9d5823f5-5895ed82",
+      "lang": "vi",
+      "text": "Rồi dán giấy đỏ và viền vàng, trước sau đều được.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "fb1d0180-2aecdbf4",
+      "lang": "vi",
+      "text": "Cuối cùng, thắp nến!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "aef37605-171c43e",
+      "lang": "vi",
+      "text": "Trung Thu và Tết, lân múa theo tiếng trống: tùng, tùng, cắc, tùng!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "4e9dcad9-20a54cf7",
+      "lang": "vi",
+      "text": "Nhìn chữ đang sáng trong nhịp.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "2af1a4f97a7a1acc",
+      "lang": "vi",
+      "text": "Tùng: chạm mặt trống. Cắc: chạm tang trống.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "b8a523ab21837e98",
+      "lang": "vi",
+      "text": "Giữ đúng nhịp là lân nhảy múa!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "bea3f931-1db65eed",
+      "lang": "vi",
+      "text": "Trước Tết, các gia đình dựng cây nêu bằng tre, treo bùa may mắn.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "c08e53931a5dd450",
+      "lang": "vi",
+      "text": "Chạm từng món để treo lên cây: lá tre, cá chép, chuông gió, cờ đỏ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "6758b43d534f829d",
+      "lang": "vi",
+      "text": "Thứ tự nào cũng được! Treo đủ nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "4ad2daf1451a4724",
+      "lang": "vi",
+      "text": "Mèo đuổi chuột: các bạn nắm tay thành vòng tròn, giơ tay lên làm cổng.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "9cae3ab11369d60b",
+      "lang": "vi",
+      "text": "Tìm cổng có tay đang giơ cao.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "f8a4527c617109a0",
+      "lang": "vi",
+      "text": "Chạm cổng đó để dẫn chuột chui qua.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "a8bf541f02635ed7",
+      "lang": "vi",
+      "text": "Chui vào rồi chui ra, trước khi mèo đuổi kịp!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "d6edd10a0d7de1d9",
+      "lang": "vi",
+      "text": "Cướp cờ: hai đội xếp hàng, ai được gọi số thì chạy lên cướp cờ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "2c9f749e60f4f6a1",
+      "lang": "vi",
+      "text": "Nghe số được gọi.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "85935c10-5e4498a5",
+      "lang": "vi",
+      "text": "Chạm số đó để chạy lên lấy cờ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "816f4e74-47ac1953",
+      "lang": "vi",
+      "text": "Rồi chạm để mang cờ về vạch đội mình!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "fe5005ae-1ce68649",
+      "lang": "vi",
+      "text": "Kéo cưa lừa xẻ: hai bạn nắm tay, kéo qua đẩy lại theo bài đồng dao.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "9c036e8c-7dc3fc2b",
+      "lang": "vi",
+      "text": "Nghe đồng dao và tiếng trống.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "c6e44a94719b394e",
+      "lang": "vi",
+      "text": "Kéo rồi đẩy, lần lượt.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "69ff5ab5283b0d1c",
+      "lang": "vi",
+      "text": "Chạm đúng nhịp, khi đèn ở phần sáng!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "ff88dd4f7d074cf0",
+      "lang": "vi",
+      "text": "Đánh đáo: các bạn ném đồng đáo cho rơi trúng vạch.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "4d91939c-419301ee",
+      "lang": "vi",
+      "text": "Ngắm trái hoặc phải vào mục tiêu.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "68bf113d-54e52387",
+      "lang": "vi",
+      "text": "Bạn lớn chọn thêm lực ném.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "7d277cca587f7a4e",
+      "lang": "vi",
+      "text": "Chạm Ném. Trúng mục tiêu ba lần!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "4363a403-5da035ac",
+      "lang": "vi",
+      "text": "Ném còn: hội xuân, mọi người ném quả còn qua vòng tròn trên đỉnh cây cao.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "0be3ad58-6cc669af",
+      "lang": "vi",
+      "text": "Ngắm trái hoặc phải vào vòng.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "c67f0033-6d16711b",
+      "lang": "vi",
+      "text": "Chọn ném mạnh hay nhẹ.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "367bb4af-60059777",
+      "lang": "vi",
+      "text": "Chạm Ném cho còn bay qua vòng!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e2c7a834182c9dc6",
+      "lang": "vi",
+      "text": "Trồng nụ trồng hoa: hai bạn chồng chân và tay, càng lúc càng cao, cho các bạn khác nhảy qua.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "57a34663-c9edcad",
+      "lang": "vi",
+      "text": "Nhìn chồng chân tay cao bao nhiêu.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "8a664e58-1ef427e6",
+      "lang": "vi",
+      "text": "Chạm để nhảy qua.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "4f1fd851-2a0f27c7",
+      "lang": "vi",
+      "text": "Mỗi lần lại cao thêm!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "1ed4046e-f69174d",
+      "lang": "vi",
+      "text": "Đua thuyền diễn ra trên sông trong các lễ hội Việt Nam, cả đội chèo theo tiếng trống.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "89a85c400dca2f03",
+      "lang": "vi",
+      "text": "Chèo trái rồi chèo phải, lần lượt.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "b30015c0-32822b09",
+      "lang": "vi",
+      "text": "Chạm theo nhịp trống.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e47f783c-56891bd1",
+      "lang": "vi",
+      "text": "Chèo tới vạch đích!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "882bd706-2e768e1b",
+      "lang": "vi",
+      "text": "Cờ cá ngựa là trò đua ngựa của Việt Nam với bốn màu ngựa.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "56605b84-43a91c5d",
+      "lang": "vi",
+      "text": "Đổ xúc xắc.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "3e0aaed501db021c",
+      "lang": "vi",
+      "text": "Ra 1 hoặc 6 thì ngựa được xuất chuồng, và được đổ thêm.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "e5f5a79170a4bcb3",
+      "lang": "vi",
+      "text": "Đi hết vòng rồi vào chuồng đích. Đến đúng ô có ngựa khác là đá nó về chuồng!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "d7e40091-5902b9fa",
+      "lang": "vi",
+      "text": "Nhìn các tranh cần tìm.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "c06bf470-500fb6a3",
+      "lang": "vi",
+      "text": "Các ô tranh chạy. Chạm ô để dừng khi tranh ở giữa.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "9dc0fa63-4f68598c",
+      "lang": "vi",
+      "text": "Tìm đủ là có đoàn trái cây diễu hành!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "87d1536f1f8969c9",
+      "lang": "vi",
+      "text": "Đặt điểm chơi miễn phí lên các trái cây con chọn.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "ec48d7af-45fc92bd",
+      "lang": "vi",
+      "text": "Chạm Bắt đầu: đèn chạy vòng rồi dừng ở một trái.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "d691e84944f233c6",
+      "lang": "vi",
+      "text": "Điểm trên trái đó được nhân thêm. Chỉ là điểm chơi, không phải tiền thật.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "d5d3ca5a-61ad105c",
+      "lang": "vi",
+      "text": "Nhìn tranh vườn quả cần tìm.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "ba846e99-6c0b4952",
+      "lang": "vi",
+      "text": "Đèn chạy quanh vườn. Chạm Dừng để đèn đứng yên.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "cae9cedc4bfff7e4",
+      "lang": "vi",
+      "text": "Dừng đúng tranh là đầy giỏ!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "d502b55462a6409a",
+      "lang": "vi",
+      "text": "🦘 Chuột túi con",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "a71f3550-602b0a79",
+      "lang": "vi",
+      "text": "🐂 Chú nghé con",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "c98a376b-54313d7",
+      "lang": "vi",
+      "text": "🐥 Vịt con",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "bc51d4a0726f81f7",
+      "lang": "vi",
+      "text": "🐷 Heo con",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "516f4a6e-5c8298d4",
+      "lang": "vi",
+      "text": "Nhiều quá! Thử tờ nhỏ hơn nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "b95279a040ab7679",
+      "lang": "vi",
+      "text": "Cảm ơn! Lên xe nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "fe97c2704bd1b02a",
+      "lang": "vi",
+      "text": "Không đủ tiền mua món đó rồi!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "319eb69f654515ed",
+      "lang": "vi",
+      "text": "Ôi, không còn món nào vừa túi tiền! Thử lại với món rẻ hơn nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "fc581a7317fd6802",
+      "lang": "vi",
+      "text": "Chia cho các bạn khác trước đã!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "41b622206279ae7c",
+      "lang": "vi",
+      "text": "Bỏ tiền vào ống heo cho đến khi vừa đủ nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "a61cb23949feda12",
+      "lang": "vi",
+      "text": "quả bóng",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts",
+        "js/games/shapes2.ts"
+      ]
+    },
+    {
+      "id": "e6408781-2f9a546b",
+      "lang": "vi",
+      "text": "chú gấu bông",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "d0a276072f48511d",
+      "lang": "vi",
+      "text": "quyển sách",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "e757b9d92fd5fae8",
+      "lang": "vi",
+      "text": "Mỗi ngày con được tiền tiêu vặt. Đếm xem con có bao nhiêu nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "d15e20e475e78fa3",
+      "lang": "vi",
+      "text": "Đọc thẻ giá. Món nào rẻ hơn, món nào đắt hơn?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "ea0e74df-29dfe483",
+      "lang": "vi",
+      "text": "Món nào đắt hơn?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "23e88b645e0e20db",
+      "lang": "vi",
+      "text": "Trả bác tài đúng tiền vé bằng tiền của con nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "9f58174c-13239247",
+      "lang": "vi",
+      "text": "Bán nước chanh! Tính xem mỗi khách trả bao nhiêu.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "a183f513265e20fb",
+      "lang": "vi",
+      "text": "Mũ tiệc",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "723c9efd-186392f5",
+      "lang": "vi",
+      "text": "Mỗi vỏ lon trả lại được 1.000 đồng. Con được bao nhiêu tiền?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "73943dab0e6c2a5c",
+      "lang": "vi",
+      "text": "Mỗi vỏ lon trả lại được 10 xu. Con được bao nhiêu tiền?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "6fe0d6ef-5b6c7b4f",
+      "lang": "vi",
+      "text": "Đi chợ Tết! Trả bằng một tờ tiền rồi tính tiền thối nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "b2d03967-42b11c9e",
+      "lang": "vi",
+      "text": "cành đào",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "7c0551df0-20646f",
+      "lang": "vi",
+      "text": "xấp bao lì xì",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "80a8ed667d1d0bf3",
+      "lang": "vi",
+      "text": "túi cam",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "f6ad2577-77e7a36f",
+      "lang": "vi",
+      "text": "Gửi tiền vào và rút tiền ra. Nhớ xem trong ngân hàng còn bao nhiêu nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "98588be6-64e1a102",
+      "lang": "vi",
+      "text": "Chia tiền để bạn nào cũng bằng nhau. Mỗi bạn một, lần lượt nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/money2.ts"
+      ]
+    },
+    {
+      "id": "77279598-30cfe59b",
+      "lang": "vi",
+      "text": "Nghe nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/music2.ts"
+      ]
+    },
+    {
+      "id": "96d28b1b2681271a",
+      "lang": "vi",
+      "text": "Đến lượt con!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/music2.ts"
+      ]
+    },
+    {
+      "id": "18a13f47-3407306b",
+      "lang": "vi",
+      "text": "Cùng nhảy trên tia số nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "d11cca4f-6ff9b15",
+      "lang": "vi",
+      "text": "Khung mười có mấy hạt?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "f5d78120-13d7a87",
+      "lang": "vi",
+      "text": "Đếm các hạt trong khung mười nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "27292eaa-43ab3c12",
+      "lang": "vi",
+      "text": "Mặt xúc xắc có mấy chấm?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "420b287e-6a1f9f6a",
+      "lang": "vi",
+      "text": "Đếm chấm trên xúc xắc nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "97f8bedb-1d8b6b72",
+      "lang": "vi",
+      "text": "Xếp táo thành từng đôi: chẵn hay lẻ?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "3655bd0f68a2dc9c",
+      "lang": "vi",
+      "text": "Chú sâu dài mấy khối?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "c583c060-170e85b1",
+      "lang": "vi",
+      "text": "Cùng đo bằng khối nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "3e908167-31a45648",
+      "lang": "vi",
+      "text": "Tìm số đứng trước hoặc đứng sau nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "81b2a014-5d72816c",
+      "lang": "vi",
+      "text": "Số trước số sau, bé biết hết rồi!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "2dd03ab4-7861ed28",
+      "lang": "vi",
+      "text": "Chia đôi bánh pizza nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/numbers2.ts"
+      ]
+    },
+    {
+      "id": "a9da160f51db9d3c",
+      "lang": "vi",
+      "text": "Các bạn đang trốn! Tìm sau những cái cây nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "4930c826-194f5e4a",
+      "lang": "vi",
+      "text": "Không có ở đây!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "6778c569-23b3ac45",
+      "lang": "vi",
+      "text": "Chạm bạn đang sáng để nói Vịt. Khi nào thích, chạm Ngỗng rồi chạy nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "4230cc286835d001",
+      "lang": "vi",
+      "text": "Vịt!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "83805f895c6366c5",
+      "lang": "vi",
+      "text": "Ngỗng! Chạy vòng quanh nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "fd313cea4c881163",
+      "lang": "vi",
+      "text": "Con về chỗ kịp mọi vòng rồi!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "7677e1bf-a720917",
+      "lang": "vi",
+      "text": "Đèn xanh: chạm Đi! Đèn đỏ: đứng yên, đừng chạm!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "6689f0f5-4cc22232",
+      "lang": "vi",
+      "text": "Đèn đỏ! Lùi lại một bước.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "b82bad90163b5113",
+      "lang": "vi",
+      "text": "Chỉ làm khi nghe Simon bảo! Nếu không, chạm Đứng yên.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "d8661e062133061b",
+      "lang": "vi",
+      "text": "Giỏi! Simon đâu có bảo!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "431517d7-56588ed5",
+      "lang": "vi",
+      "text": "Con chỉ làm khi Simon bảo thôi!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "2d4a754318554998",
+      "lang": "vi",
+      "text": "Chạm Bước khi quả trứng nằm yên ở giữa thìa nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "462a456c60dc4867",
+      "lang": "vi",
+      "text": "Trứng lắc! Đợi trứng nằm yên đã.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "7f6bbcf5-15387111",
+      "lang": "vi",
+      "text": "Nhạc vang thì đi vòng quanh. Nhạc dừng thì chạm ngay một ghế trống!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "7040cac3-2ed4a3d6",
+      "lang": "vi",
+      "text": "Đợi nhạc dừng đã!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "27e45d34-2ed38680",
+      "lang": "vi",
+      "text": "Bạn bơi cần giúp sẽ giơ một tay lên. Tìm bạn ấy và ném phao nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "d69d0838-6d28f161",
+      "lang": "vi",
+      "text": "Đuổi bắt các bạn nào! Các bạn chạy liên tục đó.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    },
+    {
+      "id": "88ed6a4e-cbab967",
+      "lang": "vi",
+      "text": "Que Kem",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/places2.ts"
+      ]
+    },
+    {
+      "id": "6076641955d4f912",
+      "lang": "vi",
+      "text": "Nghe các âm rồi ghép thành một từ nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "163f31f16dc960f6",
+      "lang": "vi",
+      "text": "Ghép các âm lại. Đó là hình nào?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "e24b679f-2e66845a",
+      "lang": "vi",
+      "text": "Đội chiếc mũ nhỏ lên chữ cái là thành chữ mới. Tìm chữ có đội mũ nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "130d7f26-708d5ecf",
+      "lang": "vi",
+      "text": "Tìm từ có cùng vần nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "8865381e649eb4f5",
+      "lang": "vi",
+      "text": "Ghép hai từ nhỏ thành một từ mới nào!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "28d966a2477795e8",
+      "lang": "vi",
+      "text": "Ghép hai từ lại. Thành từ gì?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "78cef77a00a23dac",
+      "lang": "vi",
+      "text": "Đọc chữ và tìm đúng tên cho bức tranh nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "fbc0fbe4-72f24a3c",
+      "lang": "vi",
+      "text": "Bức tranh này là chữ nào?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "7afdb607-217968bc",
+      "lang": "vi",
+      "text": "TRẺ EM QUA ĐƯỜNG",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "c3e3b9d016414473",
+      "lang": "vi",
+      "text": "TRẠM XE BUÝT",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "f4dc4b23-77615945",
+      "lang": "vi",
+      "text": "Biển này ghi chữ gì?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "9640643e-10f99e62",
+      "lang": "vi",
+      "text": "Nghe từ để hỏi: Ai, Cái gì hay Ở đâu!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "429e44f638f929d3",
+      "lang": "vi",
+      "text": "bác sĩ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "1b5b3691-2d11f77",
+      "lang": "vi",
+      "text": "cây đàn",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "98be011d-e2856cd",
+      "lang": "vi",
+      "text": "công viên",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "3246202c-31e0b812",
+      "lang": "vi",
+      "text": "cái gối",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "8c6e29203bbb3d6a",
+      "lang": "vi",
+      "text": "CÁI GÌ rơi xuống từ đám mây mưa?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "47cf793522d9eac7",
+      "lang": "vi",
+      "text": "Cá sống Ở ĐÂU?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "2527286c0-c7a810",
+      "lang": "vi",
+      "text": "dưới nước",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "99d12185-40cc97c9",
+      "lang": "vi",
+      "text": "cô giáo",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "ef42740a-1460b687",
+      "lang": "vi",
+      "text": "cái thìa",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "4a7b7dc67ab38ec4",
+      "lang": "vi",
+      "text": "Đọc chữ hợp với bức tranh: một, hay nhiều?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "acb72660-32e4ad36",
+      "lang": "vi",
+      "text": "Chữ nào hợp với bức tranh?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "37aa06f01daa09ae",
+      "lang": "vi",
+      "text": "Một và nhiều, con đọc thật đúng!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "2caf7095-19734a05",
+      "lang": "vi",
+      "text": "Điền từ còn thiếu cho đúng vần bài thơ nhỏ nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "7971f471500840df",
+      "lang": "vi",
+      "text": "\"Ngôi sao nhỏ ở trên trời, lung linh tỏa sáng khắp...\"",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "5a5c6e05-7417e356",
+      "lang": "vi",
+      "text": "\"Chú ếch xanh ngồi bên hồ, cất lời hát ca líu...\"",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "511de8c55c736585",
+      "lang": "vi",
+      "text": "\"Ong vàng bay khắp vườn hoa, chăm chỉ hút mật gần...\"",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "39b267df-6977e977",
+      "lang": "vi",
+      "text": "Nhìn tranh và điền chữ cái còn thiếu nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "d64746e446f0bcff",
+      "lang": "vi",
+      "text": "Thiếu chữ cái nào?",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "b417a1e4-20e29d58",
+      "lang": "vi",
+      "text": "Thung Lũng Nắng",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "a7b4c7a81064af27",
+      "lang": "vi",
+      "text": "Đêm Đầy Sao",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "66c5bc6158693e24",
+      "lang": "vi",
+      "text": "Thú cưng nhỏ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    },
+    {
+      "id": "7d75603e-4c8338f1",
+      "lang": "vi",
+      "text": "Chim non",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/reading2.ts"
+      ]
+    }
+  ]
+}
