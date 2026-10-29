@@ -411,6 +411,8 @@ Owner additionally asks guide visible until installed or explicitly hidden, plus
 
 ### Owner's decisions
 - Version: **v1.03** (owner chose it by pop-up, 29 Oct 2026 AEDT). Live stays v1.02 until "yes, deploy".
+- **"Yes, deploy"** for v1.03 (owner, pop-up, 30 Oct 2026 about 3:30 am AEDT), after the GitHub full suite passed on fea32bed5.
+- First-download budget: owner allowed **1040 KB** for v1.03 (was 1000; v1.03 measures 1035, live v1.02 1021). To shrink again next round (sticker data could load later).
 - iPad Air 1st generation (iOS 12) and other devices older than iOS/iPadOS 15.4: a **friendly bilingual "this device is too old" message** instead of a stuck loading screen.
 - The audit of the v1.01/v1.02 games: **hold v1.03 for the guides**: every game gets a real How to play, the rules are checked and fixed, the new lines are recorded, then v1.03 ships.
 - Second set of games and stories: they show only when the Studio switches **New games** and **New stories** ("For little ones") are on; "Unlock all" alone does not turn them on. Orchard Quest needs its tester switch by design.
