@@ -11,7 +11,8 @@ export async function gameSpaceCheck(browser:Browser){
   const bad:string[]=[],rows:unknown[]=[];
   for(const age of ['big','little']as const)for(const id of ids){
    await P.page.evaluate(([id,age])=>{const G=window.__sv as any;G.heroes[0].profile.age=age;void G.playGame(0,id,'replay');},[id,age]);
-   await P.page.locator('.gl .gl-stage').waitFor({timeout:20000});await P.page.waitForTimeout(500);
+   if(!await P.page.locator('.gl .gl-stage').waitFor({timeout:20000}).then(()=>true,()=>false)){bad.push(`${id} (${age}) did not open`);await P.page.screenshot({path:`out/gamespace/${id}-${age}.png`});await P.page.evaluate(()=>(document.querySelector('.gl-x') as HTMLElement|null)?.click());await P.page.waitForTimeout(800);continue;}
+   await P.page.waitForTimeout(500);
    const r=await P.page.evaluate(()=>{const q=(s:string)=>document.querySelector(s)!.getBoundingClientRect(),stage=q('.gl-stage'),help=document.querySelector('.gl-help') as HTMLElement,lh=parseFloat(getComputedStyle(help).lineHeight)||20;
     return {top:Math.round(stage.top),share:+(stage.height/innerHeight).toFixed(2),guideLines:Math.round(help.getBoundingClientRect().height/lh),wide:document.querySelector('.gl-head')!.scrollWidth>innerWidth+1};});
    rows.push({id,age,...r});
