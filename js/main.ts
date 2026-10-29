@@ -30,7 +30,7 @@ import { pic } from './art.js';
 import { openChat, personaByName, PERSONAS } from './chat.js';
 import { voiceCommand, voiceControlOn } from './commands.js';
 import { ITEMS, RECIPES, GATHER, STICKERS, QUESTS, dishInfo } from './data.js';
-import { openGame, gameOpen, GAMES } from './games/frame.js';
+import { canStartGame, openGame, gameOpen, GAMES } from './games/frame.js';
 import { gameInfo } from './content/activities.js';
 const gameInfoAge = id => { try { return gameInfo(id).ageMin; } catch (e) { return 0; } };
 import './games/all.js'; // every mini-game (js/games/all.js)
@@ -91,7 +91,7 @@ import { CUSTOM } from './custom.js';
 import { createFolkShow } from './folkshow.js';
 import { createAds } from './ads.js';
 import { buildSolids, solidCircleHit } from './solids.js';
-import { startCounting, countPlay, watchHero, noteReload } from './players.js';
+import { startCounting, countPlay, watchHero, noteReload, managementBootReady } from './players.js';
 import { startPackBar } from './packbar.js';
 import { codeHTML, bindCode, padHTML, boxHTML, animalSay } from './roomcode.js';
 // the family's defaults from Sparkle Studio: applied once each time they change there (a grown-up can still change
@@ -505,7 +505,7 @@ G.mount = (h, b) => { h.mount(b); h.profile.quests.buffalo = true; save(); say('
 const fruitParadeModeOn = fruitParadeAvailable;
 
 async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number]) {
-  const h = G.heroes[i]; if (!h) return;
+  const h = G.heroes[i]; if (!h || !canStartGame(id,[h.profile])) return;
   if (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar',source === 'online'?'multi':'single')) return;
   if (id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard',source === 'online'?'multi':'single')) return;
   if (id === 'fruitparade' && !fruitParadeModeOn('single')) { hudFor(h).toast(T('Sparkle Fruit Parade is not available yet.', 'Diễu hành trái cây lấp lánh chưa mở.')); return; }
@@ -513,6 +513,7 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   G.paused = true; hush();
   // friends in the room: play it together? (round H: every game can be played together)
   if (G.together() && source !== 'online' && !shrine) { G.paused = false; const k = await dialog(T('Play together?', 'Chơi cùng nhau?'), [['Your friends are here. Play this game together?', 'Các bạn đang ở đây. Chơi trò này cùng nhau nhé?']], [['👫 Together', '👫 Cùng nhau'], ['🙂 Just me', '🙂 Mình con']]); if (k === 0) { G.inviteGame(id); return; } G.paused = true; }
+  if(!canStartGame(id,[h.profile])) { G.paused=false; return; }
   countPlay('game', id); // anonymous: how often each game is played (js/players.js)
   if (MONEY_GAMES.includes(id)) G.tried(h, 'money_' + id); else if (/^rd_/.test(id)) G.tried(h, 'readingTrial');   // (batch rollout) a money game played stays this child's
   const players = G.heroes.map(x => x.profile); if (G.heroes.length > 1 && i === 1) players.reverse();
@@ -1134,8 +1135,9 @@ G.playGameOnline = async (id, level, online) => {
   if(id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi'))return;
   if(id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi'))return;
   if (id === 'fruitparade' && !fruitParadeModeOn('multi')) return;
+  const p = G.heroes[0]?.profile; if(!p || !canStartGame(id,[p])) return;
   if (gameOpen()) return; G.paused = true; hush();
-  const p = G.heroes[0].profile, little = p.age !== 'big';
+  const little = p.age !== 'big';
   const actId = makeId('act', id, String(++G.actCount)), playerIds = online.names.map((_, s) => s === online.mine ? makeId('player', p.id || 'guest') : makeId('player', 'online-' + s));
   events.emit('ActivityStarted', { activityId: actId, kind: 'game', defId: makeId('game', id), players: playerIds, source: 'online' });
   const res = await openGame(id, { players: [p], level, little, strong: false, online, style: 'village' });
@@ -1610,8 +1612,8 @@ async function newMoment(h) {
   fresh.forEach(r => { p.seenNew[r.id] = new Date().toISOString().slice(0, 10); }); save();
   await reward('🆕', T('New in the valley!', 'Mới trong thung lũng!'), fresh.map(r => T(r.en, r.vi)).join(' · '));
 }
-// (batch rollout, owner 13 Oct AEDT) a feature held back or switched off in Studio stays for a child who already used it:
-// G.keep(id) is on when its switch is on or anyone playing used it; G.tried(h, id) remembers a use (js/custom.js)
+// Retain used access during future scheduling, but an explicit owner Off wins
+// (the owner-approved explicit-off policy). G.tried remembers usage without removing saved progress (js/custom.ts).
 G.keep = (id, def = true) => keptOn(id, G.heroes.map(h => h.profile), def);
 G.tried = (h, id) => { const p = h && (h.profile || h); if (markTried(p, id)) save(); };
 function startSession(mode, chosen) {
@@ -2090,6 +2092,6 @@ document.addEventListener('click', e => { const c = e.target instanceof Element 
 import('./state.js').then(S => { if (S.restoredFromCopy) setTimeout(() => toast(T('Your progress was brought back from the safe copy on this device.', 'Tiến trình chơi đã được khôi phục từ bản lưu dự phòng trên máy.')), 1200); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (playing) keepSpot(); save(); hush(); } });
 addEventListener('pagehide', () => { if (playing) keepSpot(); saveProfiles(true); });
-bootMark('ready'); G.bootTimes = bootTimes; bootDone();
+bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
 // (owner, 16 Oct AEDT) no device contacts the family service unless Studio switches the trial on, or on a tester device
 { const refresh = () => (featureOn('familyDevices', false) || G.tester) ? import('./familydevices.js').then(m => m.refreshDevicePhotos()).catch(() => {}) : null; refresh(); addEventListener('online', refresh); setInterval(refresh, 60000); }

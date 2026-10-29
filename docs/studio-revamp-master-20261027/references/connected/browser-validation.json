@@ -1,0 +1,143 @@
+{
+  "passed": true,
+  "sourceHashes": {
+    "review.html": "21e383b127fffe85314c5cdd0ddd5927cc29316b9fd5f6d8a8a5a512cf59c721",
+    "registry.json": "9cd1f388b0018f2ce63890a0646b5d9682c042ffe8f275b72747d972f1245aa9",
+    "tools/review.mjs": "6a8802d94a13dd470d50b4438e0f1e32ae6e91d1ae745e977e8ca6f288453ef2"
+  },
+  "scope": "Offline concept handbook only; fictional data; not application, database or physical-device validation",
+  "results": [
+    {
+      "device": "desktop",
+      "view": "graphs",
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "screenshots/graphs-desktop.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "desktop",
+      "view": "people",
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "screenshots/people-desktop.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "desktop",
+      "view": "connections",
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "screenshots/connections-desktop.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "desktop",
+      "view": "controls",
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "screenshots/controls-desktop.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "desktop",
+      "view": "data",
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "screenshots/data-desktop.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "tablet",
+      "view": "graphs",
+      "width": 820,
+      "height": 1180,
+      "screenshot": "screenshots/graphs-tablet.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "tablet",
+      "view": "people",
+      "width": 820,
+      "height": 1180,
+      "screenshot": "screenshots/people-tablet.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "tablet",
+      "view": "connections",
+      "width": 820,
+      "height": 1180,
+      "screenshot": "screenshots/connections-tablet.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "tablet",
+      "view": "controls",
+      "width": 820,
+      "height": 1180,
+      "screenshot": "screenshots/controls-tablet.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "tablet",
+      "view": "data",
+      "width": 820,
+      "height": 1180,
+      "screenshot": "screenshots/data-tablet.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "phone",
+      "view": "graphs",
+      "width": 390,
+      "height": 844,
+      "screenshot": "screenshots/graphs-phone.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "phone",
+      "view": "people",
+      "width": 390,
+      "height": 844,
+      "screenshot": "screenshots/people-phone.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "phone",
+      "view": "connections",
+      "width": 390,
+      "height": 844,
+      "screenshot": "screenshots/connections-phone.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "phone",
+      "view": "controls",
+      "width": 390,
+      "height": 844,
+      "screenshot": "screenshots/controls-phone.png",
+      "noPageOverflow": true
+    },
+    {
+      "device": "phone",
+      "view": "data",
+      "width": 390,
+      "height": 844,
+      "screenshot": "screenshots/data-phone.png",
+      "noPageOverflow": true
+    }
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "interactions": [
+    "five-section navigation",
+    "graph definitions",
+    "connection inspection including proposed-only path",
+    "control permission/explanation",
+    "concept-only action notice",
+    "field and evidence-class search",
+    "empty search",
+    "accessible chart data table"
+  ]
+}

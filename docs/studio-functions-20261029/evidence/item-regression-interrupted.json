@@ -1,0 +1,14 @@
+{
+  "completedPasses": [
+    "contract",
+    "phone",
+    "managementstudio"
+  ],
+  "interrupted": "filmstart",
+  "notRun": [
+    "reading"
+  ],
+  "reason": "filmstart is an exhaustive all-film/all-page pass; delegated to GitHub per full-suite policy, not counted as passed or skipped",
+  "source": "pre-policy item implementation browser build",
+  "completedLog": "item-regression-interrupted.log"
+}

@@ -24,6 +24,8 @@ test('each section keeps only its own keys and well-formed values', () => {
     looks: { chi: { style: 'dress', color: '#ff0000', hair: 'red', extra: 1 }, nam: { style: 'dress' } },
     plots: { p1: { type: 'house', name: ['Home', 'Nhà'], owner: { name: 'Bà', line: ['Hi', 'Chào'], age: 90 }, color: '#00ff00', at: [1, 2] } },
     activities: { cats: { area: 'animals', little: true, hide: true, top: 1 }, dogs: { area: 'BAD AREA' } },
+    reportingPolicy:{schemaVersion:1,collect:false,process:false,show:true,expiresAt:null},
+    itemAvailability: {'game:cats':false,'story:cats':true,'cats':false,'game:bad!':true,'game:odd':'no'},
     defaults: { restMins: 30, lang: 'vi', calm: true, bad: { a: 1 }, long: 'x'.repeat(40) },
     features: { traffic: false, powerPoles: true, odd: 'yes' },
     ads: { enabled: true, perDay: 99, items: [{ image: 'content/ads/a.png', by: 'Shop', en: 'Books', vi: 'Sách', link: 'https://shop.test/', where: ['boards', 'popup'], track: 1 }, { image: '../secret.png', en: 'x' }] },
@@ -31,6 +33,7 @@ test('each section keeps only its own keys and well-formed values', () => {
     music: [{ file: 'content/music/a.mp3' }], world: { npcs: [] }, releases: { traffic: { on: false } }
   });
   assert.deepEqual(Object.keys(c).sort(), LIVE_SECTIONS.slice().sort());
+  assert.deepEqual(c.itemAvailability,{'game:cats':false,'story:cats':true});
   assert.deepEqual(c.message, { en: 'Hello', vi: 'Chào con' });
   assert.deepEqual(c.missions, [{ id: 'm1', en: 'Set the table', vi: 'Dọn bàn' }]);
   assert.deepEqual(c.quiz, [{ q: ['Who?', 'Ai?'], answers: [['Ba', 'Ba'], ['Me', 'Mẹ']], right: 1, pic: 'cat' }]);

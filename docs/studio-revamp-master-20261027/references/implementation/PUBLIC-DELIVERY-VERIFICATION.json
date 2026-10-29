@@ -1,0 +1,32 @@
+{
+  "recordedAtSydney": "2026-10-27T23:21:38.348153+11:00",
+  "scope": "Actual public GitHub page requests and downloaded archive byte/hash/CRC checks; no workspace links or PDF required",
+  "checks": [
+    {
+      "url": "https://github.com/nguyentuanphu/tpn/blob/ca369949b4363b3845f930f7b36f0d8e16980c62/docs/studio-owner-desk-20261027/README.md",
+      "httpStatus": 200
+    },
+    {
+      "url": "https://github.com/nguyentuanphu/tpn/blob/ca369949b4363b3845f930f7b36f0d8e16980c62/docs/studio-owner-desk-20261027/GALLERY.md",
+      "httpStatus": 200
+    },
+    {
+      "url": "https://github.com/nguyentuanphu/tpn/blob/ca369949b4363b3845f930f7b36f0d8e16980c62/docs/studio-owner-desk-20261027/NEXT-CHAT.md",
+      "httpStatus": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/ca369949b4363b3845f930f7b36f0d8e16980c62/docs/studio-owner-desk-20261027/Studio-source-checkpoint.zip",
+      "bytes": 81664859,
+      "sha256": "affe163ddfc2ed8e90d38e3385023ced1d5769743ad97454e32ff7692a730e00",
+      "downloadHashMatched": true,
+      "archiveCrcPassed": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/ca369949b4363b3845f930f7b36f0d8e16980c62/docs/studio-owner-desk-20261027/Studio-owner-review.zip",
+      "bytes": 13639560,
+      "sha256": "59252de399d16ec2e24b7670b196829d8e9d573fd49b2ec8a99b44e3a5aa68cd",
+      "downloadHashMatched": true,
+      "archiveCrcPassed": true
+    }
+  ]
+}

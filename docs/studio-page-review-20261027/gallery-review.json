@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "screenStates": 135,
+  "sourceImages": 267,
+  "cases": [
+    "desktop: 45 screens, correct device images, no overflow, Family filter, page search, image viewer, full-page switch and previous/next passed",
+    "tablet: 45 screens, correct device images, no overflow, Family filter, page search, image viewer, full-page switch and previous/next passed",
+    "phone: 45 screens, correct device images, no overflow, Family filter, page search, image viewer, full-page switch and previous/next passed"
+  ],
+  "errors": []
+}

@@ -1,0 +1,5 @@
+PASS perf (76s) start 2.6 MB in 4.6 s (map picture kept on the device), home 449 draws, village 357 draws / 733k triangles, largest texture 1024px, after 10 games +0.0 MB and 1 elements; over budget (being reduced): drawCalls 357 (budget 250), triangles 733081 (budget 300000), drawCallsHome 449 (budget 250)
+PASS battery (82s) caps (ms a frame) {"computerAuto":16.7,"computerFast":33.3,"computerPretty":16.7,"computerPrettyPlus":0,"phoneAuto":33.3,"phonePretty":16.7}; frame gate a second at 60/120/144 Hz: 60/61/61 (cap 60), 31/31/31 (cap 30), title 21/21, idle 9/9; measured in the test browser: title 1 a second, valley 6, idle after 17 s 6.7; pixel ratio 1.5 on a 3x screen; 168/168 far people still, 0 near moving; statistics [1,147,2746,61962,35,0,0,0,1,25] sent once, nothing with Analytics off
+PASS startup (52s) machine 157 ms (x0.87 of the reference); tablet speed: first start 1014 KB, title 0.9 s, valley ready 15.3 s; second start 0 KB from the network, ready 17.7 s, longest freeze 3.5 s; slowest steps things 5.2 s, world 3.2 s, roads 1.4 s, ready 1.1 s
+
+3/3 checks passed

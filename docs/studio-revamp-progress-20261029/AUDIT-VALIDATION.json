@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "scope": "Document/source consistency, not execution/playability/control-effect tests",
+  "items": 936,
+  "domains": 13,
+  "completeInventoryClaim": false,
+  "declaredRules": 104,
+  "sourceHashesChecked": 59,
+  "auditToolSha256": "a8b61ae7205ff3aa396b9a9fdcfd9900a867e06ee2dca06692636a0db26df804"
+}

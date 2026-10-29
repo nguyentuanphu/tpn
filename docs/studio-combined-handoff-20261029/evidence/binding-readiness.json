@@ -1,0 +1,17 @@
+{
+  "observedAtSydney": "2026-10-29T18:10:36.230784+11:00",
+  "databaseReadOnlyPreflight": {
+    "ready": false,
+    "code": "management_database_not_configured",
+    "exitCode": 2
+  },
+  "presenceOnly": {
+    "NETLIFY_DB_URL": false,
+    "MANAGEMENT_DATABASE_URL": false,
+    "AZURE_SPEECH_KEY": false,
+    "AZURE_KEY": false,
+    "AZURE_REGION": false
+  },
+  "credentialValuesRead": false,
+  "productionConnectionAttempted": false
+}

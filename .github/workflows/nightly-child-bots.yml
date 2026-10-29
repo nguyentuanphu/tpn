@@ -1,4 +1,5 @@
 name: Child bot gameplay
+run-name: "Child bots management:${{ inputs.management_operation_id || github.run_id }}"
 on:
   workflow_dispatch:
     inputs:
@@ -16,6 +17,10 @@ on:
         type: string
       slot:
         description: 'UTC scheduled slot (empty for manual run)'
+        required: false
+        type: string
+      management_operation_id:
+        description: 'Studio operation UUID (empty for existing manual/scheduled runs)'
         required: false
         type: string
 permissions:
@@ -37,9 +42,11 @@ jobs:
           COUNT: ${{ inputs.count }}
           PROFILE: ${{ inputs.profile }}
           DURATION: ${{ inputs.duration }}
-        run: node -e 'const {COUNT:c,PROFILE:p,DURATION:d}=process.env; if(!/^(10|[1-9])$/.test(c)||!/^(30|[12][0-9]|[1-9])$/.test(d)||!(["chaos-toddler","gentle-explorer","max-competence"].includes(p))) process.exit(1)'
+          OPERATION: ${{ inputs.management_operation_id }}
+        run: node -e 'const {COUNT:c,PROFILE:p,DURATION:d,OPERATION:o}=process.env; if(o&&!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(o))process.exit(1); if(!/^(10|[1-9])$/.test(c)||!/^(30|[12][0-9]|[1-9])$/.test(d)||!(["chaos-toddler","gentle-explorer","max-competence"].includes(p))) process.exit(1)'
       - name: Install browser dependencies and build TypeScript game
         run: |
+          npm ci --no-audit --no-fund
           cd tests && npm install --no-package-lock --no-save --no-audit --no-fund && npx playwright install --with-deps chromium
           cd .. && node tools/build.mts
       - name: Start local game server

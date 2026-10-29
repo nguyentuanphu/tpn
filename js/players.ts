@@ -21,14 +21,15 @@
 // Offline play counts too: minutes, games and stories wait in a small outbox on the device (per day, at most 14 days)
 // and go when the internet is back. The outbox is only emptied when the website says it got them; each send has a
 // one-time id, so a copy that arrives twice is counted once.
-import { settings, profiles } from './state.js';
+import { settings, profiles, heldByOtherTab } from './state.js';
 import { BUILD } from './build.js';
 import { Net } from './net.js';
 import { voiceMisses, forgetVoiceMisses } from './voice.js';
-import { events } from './core/events.js';
+import { events, managementEvidence } from './core/events.js';
 import { id as makeId } from './core/ids.js';
 import { familyHash } from './content/familycode.js';
 import { INSTALL_CONFIRMATION_KEY, installEvidence, standaloneDisplay } from './content/install-state.js';
+import { featureOn, reportingPolicy, onLive, managementApplication } from './custom.js';
 
 const KEY = 'sv2_playerid', OUT = 'sv2_hello_out', SENT = 'sv2_voicesent', EVERY = 10 * 60e3;
 const BOT_OUT = 'sv2_bot_telemetry';
@@ -42,6 +43,86 @@ const id = () => { let v = ''; try { v = localStorage.getItem(KEY) || ''; if (!/
 const rnd = n => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => 'abcdefghijklmnopqrstuvwxyz0123456789'[b % 36]).join('');
 // A session is a running tab, not a new device; updates retain KEY above.
 const SESSION = rnd(16), SESSION_STARTED = Date.now();
+
+// Management detail collection is separate from legacy counters, opt-in by release switch and
+// lazy-loaded only for the reportable boot phase when explicitly enabled. Analytics off clears only its own waiting reports.
+let management: ReturnType<typeof import('./management-telemetry.js').createManagementTelemetry> | null = null;
+let detachManagement: (() => void) | null = null, managementLoading = false, managementWatching = false;
+let managementQueueCleared = false, managementGame: any = null;
+let detachManagementEvidence: (() => void) | null = null;
+let policyExpiryTimer:ReturnType<typeof setTimeout>|null=null, managementPolicyRevision:string|null=null;
+let reportableBootStart = 0, reportableBootId: string | null = null;
+let observedUpdate: ReturnType<typeof managementEvidence.begin> | null = null;
+export function managementBootReady() {
+  if (!reportableBootId) return;
+  const elapsedMs = Date.now()-reportableBootStart;
+  if (elapsedMs>=0 && elapsedMs<=600000) managementEvidence.emit('boot.ready', {stage:'first_playable',elapsedMs}, reportableBootId);
+  reportableBootId=null;
+}
+const managementEnabled = () => settings.countPlayers !== false && onSite() && featureOn('managementTelemetry', false) && reportingPolicy().collect;
+function startManagementCounting(G) {
+  if (G) managementGame=G;
+  const sync = () => {
+    if(policyExpiryTimer!==null)clearTimeout(policyExpiryTimer);policyExpiryTimer=null;
+    const expiresAt=reportingPolicy().expiresAt;
+    if(expiresAt&&managementEnabled()&&!heldByOtherTab()&&Date.parse(expiresAt)>Date.now())policyExpiryTimer=setTimeout(sync,Math.min(2147483647,Date.parse(expiresAt)-Date.now()+1));
+    const revision=String(managementApplication()?.revision??'legacy')+'|'+JSON.stringify(reportingPolicy());
+    if(management&&managementPolicyRevision!==revision){management.stop();management=null;detachManagement?.();detachManagement=null;detachManagementEvidence?.();detachManagementEvidence=null;}
+    managementPolicyRevision=revision;
+    if (heldByOtherTab()) {
+      managementEvidence.setEnabled(false); reportableBootId=null; detachManagementEvidence?.(); detachManagementEvidence=null;
+      management?.stop(); management = null;
+      if (detachManagement) { detachManagement(); detachManagement = null; }
+      return; // A superseded tab must never erase or rewrite the new tab's queue.
+    }
+    if (!managementEnabled()) {
+      managementEvidence.setEnabled(false); reportableBootId=null; detachManagementEvidence?.(); detachManagementEvidence=null;
+      if (management) { management.synchroniseConsent(); management.stop(); management = null; }
+      if (detachManagement) { detachManagement(); detachManagement = null; }
+      if (!managementQueueCleared) { for (const key of ['sv2_management_out', 'sv2_management_bot_out']) try { localStorage.removeItem(key); } catch { } managementQueueCleared = true; }
+      return;
+    }
+    managementQueueCleared = false; managementEvidence.setEnabled(true);
+    if (management) { management.synchroniseConsent(); management.start(); return; }
+    if (managementLoading) return;
+    managementLoading = true;
+    import('./management-telemetry.js').then(({ createManagementTelemetry, attachActivityTelemetry }) => {
+      if (!managementEnabled() || heldByOtherTab()) return;
+      let storage: Storage | null = null; try { storage = localStorage; } catch { }
+      const source = typeof document !== 'undefined' ? document.querySelector<HTMLMetaElement>('meta[name="sv-source-commit"]')?.content : null;
+      management = createManagementTelemetry({ storage, fetcher: (url, options) => fetch(url, options), enabled: managementEnabled,
+        deviceId: id, sessionId: SESSION, build: BUILD, sourceCommit: source || null,
+        traffic: isBotEnv() ? 'synthetic_bot' : 'ordinary', environment: /^(localhost|127\.)/.test(location.hostname) ? 'local' : 'production',
+        profiles: () => ((managementGame && managementGame.heroes) || []).map(h => h.profile).filter(Boolean).map(p => ({ id: p.id, name: p.name, age: p.age === 'big' ? 'big' : 'little' })),
+        reportNames: () => settings.reportNames !== false, online: () => navigator.onLine !== false, visible: () => document.visibilityState === 'visible' });
+      detachManagement = attachActivityTelemetry(management, events, e => {
+        const heroes = (managementGame && managementGame.heroes) || [], game = String(e.defId || '').replace(/^game:/, ''), p = heroes[0]?.profile;
+        const diff = p?.gameDiff?.[game] || p?.difficulty;
+        return { difficulty: diff === 'hard' ? 'hard' : diff === 'medium' ? 'medium' : 'easy', mode: e.source === 'online' ? 'online' : Array.isArray(e.players) && e.players.length > 1 ? 'local_two' : 'solo' };
+      });
+      detachManagementEvidence = managementEvidence.subscribe(event => { management?.enqueue(event.eventName,event.data,event.attemptId,event.occurredAt); });
+      const applied = managementApplication(); if (applied) management.receipt(applied);
+      management.start();
+    }).catch(() => { /* optional analytics never blocks play */ }).finally(() => { managementLoading = false; });
+  };
+  sync();
+  if (managementWatching) return; managementWatching = true;
+  onLive(sync); events.on('SettingsChanged', sync);
+  addEventListener('sv-held', sync);
+  addEventListener('sv-management-notice', event => {
+    if (!(event instanceof CustomEvent)) return;
+    const detail=event.detail;if(!detail||typeof detail!=='object')return;
+    if(detail.eventName==='update.started') observedUpdate=managementEvidence.begin('update.result');
+    else if(detail.eventName==='update.result'){observedUpdate?.(detail.data);observedUpdate=null;}
+    else if(detail.eventName==='boot.failed') managementEvidence.emit('boot.failed',detail.data);
+  });
+  // Existing setting writers do not all emit SettingsChanged; this bounded guard also observes opt-out.
+  setInterval(sync, 1000);
+  addEventListener('online', () => { sync(); management?.flush(); });
+  addEventListener('pagehide', () => { management?.flush(true); });
+  document.addEventListener('visibilitychange', () => { sync(); if (document.visibilityState === 'visible') management?.flush(); });
+  addEventListener('sv-management-config-applied', e => { sync(); if (e instanceof CustomEvent) management?.receipt(e.detail); });
+}
 const onSite = () => !!window.__svHelloTest || (/^https:$/.test(location.protocol) && !/^(localhost|127\.|\[::1\])/.test(location.hostname) && !/[?&]studio=1/.test(location.search) && !location.pathname.startsWith('/studio'));
 const kind = () => { const w = Math.min(screen.width, screen.height), touch = matchMedia('(pointer: coarse)').matches; return !touch ? 'computer' : w < 600 ? 'phone' : 'tablet'; };
 const installed = () => standaloneDisplay(navigator.standalone, matchMedia('(display-mode: standalone)').matches, matchMedia('(display-mode: minimal-ui)').matches);
@@ -206,6 +287,7 @@ function watchEnds(G) {
 }
 export function startCounting(G) {
   listen();
+  startManagementCounting(G);
   recordStart(G);
   watchEnds(G);
   if (window.__svHelloTest === 'manual') return; // (tests send by hand)
@@ -227,4 +309,12 @@ export function startCounting(G) {
   // the first hello soon after starting (a child who plays two minutes still counts), and whatever waited from before
   setTimeout(() => { bump(d => { d.m = Math.max(d.m, 1); }); flush(false); }, 90e3);
   setTimeout(() => flush(false), 5000);
+}
+
+// Begin only the reportable phase: imports/parse failures before this module are invisible.
+// The existing event module has no network or storage side effects while the switch is off.
+startManagementCounting(null);
+if (managementEnabled() && !heldByOtherTab()) {
+  reportableBootStart=Date.now();
+  reportableBootId=managementEvidence.emit('boot.started',{stage:'boot'},undefined,reportableBootStart);
 }

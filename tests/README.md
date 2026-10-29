@@ -1,6 +1,6 @@
 # Sparkle Valley checks
 
-1. In the repo folder: `python3 -m http.server 8765`
+1. In the repo folder: `npm ci` for the server dependencies, then `python3 -m http.server 8765`
 2. Here: `npm install` (Playwright; in the cloud sandbox Chromium is already in `/opt/pw-browsers`), then:
    - **a change:** `node suite.mjs --changed` (only the checks for what changed since main; `--list` shows them and why)
    - **a release, before "yes, deploy":** `node suite.mjs` (all checks, 3 at a time, speed checks alone; refreshes `check-map.json`

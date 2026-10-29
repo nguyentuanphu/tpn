@@ -5,13 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sparkle Studio</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 6l11 29 31 3-24 20 8 31-26-17-26 17 8-31L8 38l31-3z' fill='%23ffd23f' stroke='%233b2a4f' stroke-width='6' stroke-linejoin='round'/></svg>">
+<link rel="stylesheet" href="/studio/game/css/fonts.css">
 <link rel="stylesheet" href="/studio/ui/style.css">
+<link rel="stylesheet" href="/studio/ui/owner-desk.css">
 </head>
 <body>
 <header>
-  <div class="brand">✨ <b>Sparkle Studio</b> <small data-t="The grown-ups' dashboard for Sparkle Valley|Bảng điều khiển của người lớn cho Thung Lũng Lấp Lánh"></small></div>
+  <div class="brand">✨ <b><span class="studio-title-prefix">Sparkle </span>Studio</b> <small data-t="The grown-ups' dashboard for Sparkle Valley|Bảng điều khiển của người lớn cho Thung Lũng Lấp Lánh"></small></div>
   <div class="actions">
     <button id="pub" class="pub" hidden></button>
+    <button id="setup-link" class="icon" title="Settings" aria-label="Settings">⚙️</button>
     <button id="reload" class="icon" title="Reload" aria-label="Reload">↻</button>
     <div class="lang"><button data-l="en">EN</button><button data-l="vi">VI</button></div>
     <button id="quit" class="icon" title="Close" aria-label="Close">⏻</button>

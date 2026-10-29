@@ -1,0 +1,71 @@
+{
+  "label": "FICTIONAL DESIGN DATA \u2014 not measured project performance",
+  "days": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "reporting_installations": [
+    38,
+    44,
+    41,
+    55,
+    60,
+    78,
+    72
+  ],
+  "play_minutes": [
+    420,
+    500,
+    460,
+    630,
+    690,
+    960,
+    850
+  ],
+  "website": {
+    "page_view_events": 920,
+    "play_click_events": 168
+  },
+  "game": {
+    "reportable_boot_starts": 121,
+    "ready": 99,
+    "failed": 8,
+    "pending_unknown": 14
+  },
+  "delivery": {
+    "fixed_cohort": 40,
+    "applied_exact": 28,
+    "rejected": 3,
+    "unsupported": 1,
+    "unconfirmed": 8
+  },
+  "costs": {
+    "currency": "AUD",
+    "coverage": "Partial fictional ledger",
+    "hosting": [
+      38,
+      40,
+      43
+    ],
+    "voice": [
+      12,
+      24,
+      17
+    ],
+    "ci": [
+      8,
+      10,
+      9
+    ],
+    "months": [
+      "Jul",
+      "Aug",
+      "Sep"
+    ]
+  }
+}

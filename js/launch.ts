@@ -2,6 +2,8 @@
 // (owner, 29 Oct 2026 AEDT) index.html already told a too-old device so (window.svTooOld): nothing more starts here
 if (window.svTooOld) throw new Error('This device is too old for Sparkle Valley');
 const shell = document.getElementById('boot')!;
+// No optional module is fetched by the launch shell. The consented controller listens later.
+const managementNotice = (eventName: string, data: Record<string, string> = {}) => { try { dispatchEvent(new CustomEvent('sv-management-notice', { detail: { eventName, data } })); } catch { /* reporting never stops the game */ } };
 const words = [
   ['Welcome to Sparkle Valley', 'Chào mừng đến Thung Lũng Lấp Lánh'],
   ['Opening the game…', 'Đang mở trò chơi…'],
@@ -63,10 +65,13 @@ addEventListener('sv-held', () => {
 // shortest time between two asks, set by the check).
 const playing = () => !!window.__sv?.heroes?.length;
 window.svWatchUpdates = reg => {
+  let updateAttempt = false;
+  const beginUpdate = () => { if (!updateAttempt) {updateAttempt=true;managementNotice('update.started');} };
+  const updateOutcome = (outcome,reasonCode='none') => { if(updateAttempt)managementNotice('update.result',{outcome,reasonCode}); updateAttempt=false; };
   let had = !!navigator.serviceWorker.controller; // (the very first visit: nothing to update from, only the next time)
-  if (reg.waiting) { if (playing()) window.svOfferUpdate(); else reg.waiting.postMessage({ type: 'SKIP_WAITING' }); }
-  reg.addEventListener('updatefound', () => { const next = reg.installing; next?.addEventListener('statechange', () => { if (next.state === 'installed' && navigator.serviceWorker.controller && playing()) window.svOfferUpdate(); }); });
-  navigator.serviceWorker.addEventListener('controllerchange', () => { const was = had; had = true; if (!was) return; if (playing()) window.svOfferUpdate(); else location.reload(); });
+  if (reg.waiting) { beginUpdate(); if (playing()) window.svOfferUpdate(); else reg.waiting.postMessage({ type: 'SKIP_WAITING' }); }
+  reg.addEventListener('updatefound', () => { beginUpdate(); const next = reg.installing; next?.addEventListener('statechange', () => { if (next.state === 'redundant') updateOutcome('failed', 'invalid'); if (next.state === 'installed' && navigator.serviceWorker.controller && playing()) window.svOfferUpdate(); }); });
+  navigator.serviceWorker.addEventListener('controllerchange', () => { updateOutcome('success'); const was = had; had = true; if (!was) return; if (playing()) window.svOfferUpdate(); else location.reload(); });
   let last = Date.now(); const check = (force = false) => { if (!force && Date.now() - last < (window.svUpdateGap ?? 60000)) return; last = Date.now(); reg.update().catch(() => { }); };
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') check(); });
   addEventListener('online', () => check());
@@ -80,6 +85,7 @@ addEventListener('unhandledrejection', e => window.svModuleGone(e.reason));
 await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 try { await import('./main.js'); }
 catch (error) {
+  managementNotice('boot.failed', { stage: 'boot', reasonCode: /import.*module|module.*fetch|module script/i.test(String(error instanceof Error ? error.message : error)) ? 'resource_missing' : 'exception' });
   console.error(error); document.body.appendChild(shell); shell.hidden = false; shell.style.overflowY = 'auto';
   // An early renderer failure used to replace this shell; recovery must not throw on missing children.
   let heading = shell.querySelector('h1'); if (!heading) { heading = document.createElement('h1'); shell.prepend(heading); } heading.textContent = text[0];

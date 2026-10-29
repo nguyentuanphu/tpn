@@ -1,3 +1,5 @@
+> Studio integration handoff: [start here](STUDIO-START-HERE.md) on `handoff/studio-combined-20261029`. Both workstreams and original plans are included; this is development work, not a deployed release.
+
 # TPN — Handoff
 
 The game in this repository is **Sparkle Valley · Thung Lũng Lấp Lánh**: it is built, named and shown to players under that name. "TPN" is only the repository's name.

@@ -1,0 +1,64 @@
+{
+  "observedAtSydney": "2026-10-29T20:03:00.673904+11:00",
+  "artifactCommit": "98d57899ed006e31675d68f4540851c2a377bc4a",
+  "files": [
+    {
+      "path": "STUDIO-START-HERE.md",
+      "status": 200,
+      "bytes": 975,
+      "sha256": "1be4530583d8d58a951389628f7df81903a0f803f5d147141690ec202cf7bc7b",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/98d57899ed006e31675d68f4540851c2a377bc4a/STUDIO-START-HERE.md"
+    },
+    {
+      "path": "docs/studio-combined-handoff-20261029/README.md",
+      "status": 200,
+      "bytes": 3724,
+      "sha256": "018100d358b8fdc1cbdde0e649ec431a7def2b7437519e2d9feeffc90b157a1b",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/98d57899ed006e31675d68f4540851c2a377bc4a/docs/studio-combined-handoff-20261029/README.md"
+    },
+    {
+      "path": "docs/studio-combined-handoff-20261029/NEXT-CHAT.md",
+      "status": 200,
+      "bytes": 5813,
+      "sha256": "003517ff27195e5bc1bc4ea76a3580c32301102c7deddc16354b0461a2ca140c",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/98d57899ed006e31675d68f4540851c2a377bc4a/docs/studio-combined-handoff-20261029/NEXT-CHAT.md"
+    },
+    {
+      "path": "docs/studio-combined-handoff-20261029/WORK-REGISTER.md",
+      "status": 200,
+      "bytes": 7025,
+      "sha256": "aa0e73f0958ac0f3bdd03063ad6a53b23644053d7a4fe04f9e78e771e8ee49dc",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/98d57899ed006e31675d68f4540851c2a377bc4a/docs/studio-combined-handoff-20261029/WORK-REGISTER.md"
+    },
+    {
+      "path": "docs/cores/BOARD.md",
+      "status": 200,
+      "bytes": 166350,
+      "sha256": "ee3f636e2b901a8858dece96ee7a664a664940bf1995453fc4449299c956457e",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/98d57899ed006e31675d68f4540851c2a377bc4a/docs/cores/BOARD.md"
+    },
+    {
+      "path": "docs/studio-combined-handoff-20261029/screenshots/studio/en-390-functions-editor.png",
+      "status": 200,
+      "bytes": 60741,
+      "sha256": "cd85688e33c49ea852021cfc37286573949fa8c0d27604e98399265470b21f70",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/98d57899ed006e31675d68f4540851c2a377bc4a/docs/studio-combined-handoff-20261029/screenshots/studio/en-390-functions-editor.png"
+    },
+    {
+      "path": "docs/studio-combined-handoff-20261029/Studio-combined-review.zip",
+      "status": 200,
+      "bytes": 68349573,
+      "sha256": "b390346348e090454cfb58b66d554d77e07d120488f61845694e187578a7859a",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/98d57899ed006e31675d68f4540851c2a377bc4a/docs/studio-combined-handoff-20261029/Studio-combined-review.zip"
+    }
+  ],
+  "runtimeMatchesDispatchedCICommit": "eaa32d9b2ace117470e85ca6d712f1e033248ed5",
+  "deploymentPerformed": false
+}

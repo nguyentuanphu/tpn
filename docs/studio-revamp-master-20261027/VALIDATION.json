@@ -1,0 +1,185 @@
+{
+  "artifactOnly": true,
+  "allExamplesFictional": true,
+  "language": "English concept; EN/VI runtime requirement retained",
+  "browserEmulationNotPhysicalDevices": true,
+  "checks": [
+    {
+      "page": "home",
+      "size": "phone",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "people",
+      "size": "phone",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "game",
+      "size": "phone",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "marketing",
+      "size": "phone",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "work",
+      "size": "phone",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "money",
+      "size": "phone",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "settings",
+      "size": "phone",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "home",
+      "size": "tablet",
+      "width": 820,
+      "height": 1180,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "people",
+      "size": "tablet",
+      "width": 820,
+      "height": 1180,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "game",
+      "size": "tablet",
+      "width": 820,
+      "height": 1180,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "marketing",
+      "size": "tablet",
+      "width": 820,
+      "height": 1180,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "work",
+      "size": "tablet",
+      "width": 820,
+      "height": 1180,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "money",
+      "size": "tablet",
+      "width": 820,
+      "height": 1180,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "settings",
+      "size": "tablet",
+      "width": 820,
+      "height": 1180,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "home",
+      "size": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "people",
+      "size": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "game",
+      "size": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "marketing",
+      "size": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "work",
+      "size": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "money",
+      "size": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    },
+    {
+      "page": "settings",
+      "size": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "horizontalOverflow": false,
+      "visiblePages": 1
+    }
+  ],
+  "errors": [],
+  "network": "Local static assets only; no API or external requests",
+  "limitations": [
+    "Not an implemented application screenshot",
+    "No production or live Netlify validation",
+    "No new runtime code tested by this artifact review"
+  ],
+  "rootMarkdownLinksChecked": 20,
+  "referenceSnapshotLinkPolicy": "Original cross-handbook relative links retain original context; references/README.md explains online originals."
+}

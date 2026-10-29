@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "status": "future_design_concept_not_runtime",
+  "sourceRuntime": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df",
+  "navigation": [
+    "Home",
+    "People",
+    "Game & website",
+    "Work",
+    "Money"
+  ],
+  "settingsSeparate": true,
+  "marketingWithin": "Game & website",
+  "homeLimits": {
+    "priorities": 3,
+    "summaryCards": 6,
+    "principalGraphs": 2
+  },
+  "domains": [
+    "Games & learning",
+    "Stories & family",
+    "Quests & missions",
+    "Rewards & economy",
+    "Festivals & schedules",
+    "World & transport",
+    "Multiplayer & social",
+    "Voice & media",
+    "Website & acquisition",
+    "People & devices",
+    "Quality & releases",
+    "Services & operations",
+    "Finance"
+  ],
+  "functionControls": [
+    "Collect",
+    "Process",
+    "Show"
+  ],
+  "requiredStates": [
+    "zero",
+    "no samples",
+    "not collected",
+    "unknown",
+    "unavailable",
+    "stale"
+  ],
+  "conceptPages": [
+    "home",
+    "people",
+    "game",
+    "marketing",
+    "work",
+    "money",
+    "settings"
+  ],
+  "allSampleValuesFictional": true,
+  "fullInventoryAuditRequired": true,
+  "dedicatedScopedPublicationImplemented": false,
+  "privateDraftBackendImplemented": false
+}

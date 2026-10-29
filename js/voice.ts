@@ -5,7 +5,7 @@ import { settings, saveSettings, profiles } from './state.js';
 import { ac, unlockers } from './audio.js';
 import { swapNames } from './i18n.js';
 import { packHash, lineHash, partText } from './packhash.js';
-import { events } from './core/events.js';
+import { events, managementEvidence } from './core/events.js';
 import { viRuns, mixed } from './viwords.js';
 import { mixedVoiceFragments } from './voice-fragments.js';
 import { CUSTOM } from './custom.js';
@@ -107,7 +107,8 @@ function utter(text, lang) {
 // Device speech, as a promise that resolves when the line has been spoken.
 // Long lines are split at sentence ends: some phones cut long utterances off or rush them.
 function deviceSpeak(text, lang, my, localVoice:SpeechSynthesisVoice|null=null) {
-  if (!window.speechSynthesis) return Promise.resolve();
+  const observed=managementEvidence.begin('voice.result',{source:'device',language:lang});
+  if (!window.speechSynthesis) {observed({outcome:'failed'});return Promise.resolve();}
   try { speechSynthesis.resume(); } catch (e) { }
   const parts = String(text).match(/[^.!?。…]+[.!?。…]*\s*/g) || [text];
   let chunks = []; for (const p of parts) { const last = chunks.length - 1; if (last >= 0 && (chunks[last] + p).length < 160) chunks[last] += p; else chunks.push(p); }
@@ -116,12 +117,12 @@ function deviceSpeak(text, lang, my, localVoice:SpeechSynthesisVoice|null=null) 
   chunks = chunks.map(c => [lang, c]);
   if (!localVoice && lang === 'en' && mixed(text) && voicesFor('vi').length) chunks = chunks.flatMap(([, c]) => viRuns(c)).filter(([, c]) => /[\p{L}\d]/u.test(c));
   return new Promise<void>(res => {
-    let left = chunks.length, ended = false;
-    const end = () => { if (!ended) { ended = true; res(); } };
-    chunks.forEach(([l, c]) => { const u = utter(c.trim(), l); if(localVoice){u.voice=localVoice;u.lang=localVoice.lang;} u.onend = u.onerror = () => { if (--left <= 0) end(); }; try { speechSynthesis.speak(u); } catch (e) { end(); } });
+    let left = chunks.length, ended = false, failed = false;
+    const end = (outcome='success') => { if (!ended) { ended = true; observed({outcome:my!==seq?'cancelled':outcome}); res(); } };
+    chunks.forEach(([l, c]) => { const u = utter(c.trim(), l); if(localVoice){u.voice=localVoice;u.lang=localVoice.lang;} u.onend = () => { if (--left <= 0) end(failed?'failed':'success'); }; u.onerror = () => { failed=true; if(--left<=0)end('failed'); }; try { speechSynthesis.speak(u); } catch (e) { end('failed'); } });
     // in case the device never reports the end
-    setTimeout(end, 1500 + String(text).length * 95);
-    const poll = setInterval(() => { if (my !== seq) { clearInterval(poll); end(); } if (ended) clearInterval(poll); }, 200);
+    setTimeout(() => end('unknown'), 1500 + String(text).length * 95);
+    const poll = setInterval(() => { if (my !== seq) { clearInterval(poll); end('cancelled'); } if (ended) clearInterval(poll); }, 200);
   });
 }
 let seq = 0;
@@ -324,10 +325,11 @@ export function playClip(lang, id, my = null) {
   const c = clips[lang + ':' + id]; if (!c) return false;
   // A family line inherits its narration token; a direct preview replaces the current voice.
   if (my == null) { my = ++seq; activeSpeech.clear(); told(); }
-  if (my !== seq) return Promise.resolve();
+  const observed=managementEvidence.begin('voice.result',{source:'family',language:lang});
+  if (my !== seq) { observed({outcome:'cancelled'}); return Promise.resolve(); }
   stopPlayback();
-  if (c.decoded) return playBuffer(c.decoded);
-  return decode(c.data).then(buf => { c.decoded = buf; if (my === seq) return playBuffer(buf); }).catch(() => { });
+  if (c.decoded) return playBuffer(c.decoded,1,'family',lang,observed);
+  return decode(c.data).then(buf => { c.decoded = buf; if (my === seq) return playBuffer(buf,1,'family',lang,observed); observed({outcome:'cancelled'}); }).catch(() => { observed({outcome:'failed'}); });
 }
 // (a decoder that never answers falls back to the plain player after 5 s)
 function decode(data) { const a = ac(); return a ? Promise.race([a.decodeAudioData(data.slice(0)), new Promise((_, no) => setTimeout(() => no(new Error('slow decode')), 5000))]) : Promise.reject(new Error('no audio')); }
@@ -337,7 +339,9 @@ const SILENT = (() => { const b = new Uint8Array(46), v = new DataView(b.buffer)
   return 'data:audio/wav;base64,' + btoa(String.fromCharCode(...b)); })();
 let player = null, primed = false;
 let cancelUrlPlayback = null;
+let cancelBufferObservation:(()=>void)|null=null;
 function stopPlayback() {
+  cancelBufferObservation?.();cancelBufferObservation=null;
   const source = playing; playing = null;
   try { source?.stop(); } catch (e) { }
   if (cancelUrlPlayback) cancelUrlPlayback();
@@ -353,17 +357,17 @@ unlockers.push(() => {
     if (p) p.then(() => { primed = true; if (player.src === SILENT) player.pause(); }).catch(() => { });
   } catch (e) { }
 });
-function playUrl(url, rate = 1) {
+function playUrl(url, rate = 1, language=settings.lang, observed=managementEvidence.begin('voice.result',{source:'recorded',language})) {
   player = player || (typeof Audio !== 'undefined' ? new Audio() : null);
-  if (!player) return Promise.resolve(false);
+  if (!player) { observed({outcome:'failed'}); return Promise.resolve(false); }
   if (cancelUrlPlayback) cancelUrlPlayback();
   // (owner, 13 Oct: some films did not start by themselves) a recording the phone never starts, or that stalls, used to
   // leave the line "speaking" for ever, so the story's page never turned: it gives up after 6 s without a start, and a
   // started one ends at its own length plus 1.5 s at the latest
   return new Promise(res => {
     let done = false, t0 = null, t1 = null;
-    const end = ok => { if (done) return; done = true; clearTimeout(t0); clearTimeout(t1); if (cancelUrlPlayback === cancel) { cancelUrlPlayback = null; player.onended = player.onerror = player.onplaying = player.onloadedmetadata = null; } res(ok); };
-    const cancel = () => { try { player.pause(); } catch (e) { } end(true); };
+    const end = (ok,outcome=ok?'success':'failed') => { if (done) return; done = true; observed({outcome}); clearTimeout(t0); clearTimeout(t1); if (cancelUrlPlayback === cancel) { cancelUrlPlayback = null; player.onended = player.onerror = player.onplaying = player.onloadedmetadata = null; } res(ok); };
+    const cancel = () => { try { player.pause(); } catch (e) { } end(true,'cancelled'); };
     cancelUrlPlayback = cancel;
     t0 = setTimeout(() => { try { player.pause(); } catch (e) { } end(false); }, 6000);
     const applyRate = () => {
@@ -377,18 +381,26 @@ function playUrl(url, rate = 1) {
       player.pause(); player.src = url; applyRate();
       player.onloadedmetadata = applyRate;
       player.onended = () => end(true); player.onerror = () => end(false);
-      player.onplaying = () => { applyRate(); clearTimeout(t0); const d = player.duration; t1 = setTimeout(() => end(true), ((isFinite(d) && d > 0 ? d / rate : 30) + 1.5) * 1000); };
+      player.onplaying = () => { applyRate(); clearTimeout(t0); const d = player.duration; t1 = setTimeout(() => end(true,'unknown'), ((isFinite(d) && d > 0 ? d / rate : 30) + 1.5) * 1000); };
       player.play().catch(() => end(false));
     } catch (e) { end(false); }
   });
 }
 // why the recorded voice did or did not play last time (Grown-ups shows it, to help find phone problems)
 export const voiceDiag = { pack: 'loading', lastMiss: '', audio: '', recording: '' };
-function playBuffer(buf, rate = 1) {
-  const a = ac(); if (!a) return Promise.resolve();
+function playBuffer(buf, rate = 1, source='recorded', language=settings.lang, observed=managementEvidence.begin('voice.result',{source,language})) {
+  const a = ac(); if (!a) { observed({outcome:'failed'}); return Promise.resolve(); }
   stopPlayback();
-  const s = a.createBufferSource(); s.buffer = buf; s.playbackRate.value = rate; s.connect(a.destination); s.start(); playing = s;
-  return new Promise(res => { s.onended = res; setTimeout(res, buf.duration / rate * 1000 + 400); });
+  const s = a.createBufferSource(); s.buffer = buf; s.playbackRate.value = rate; s.connect(a.destination);
+  try { s.start(); } catch(error) { observed({outcome:'failed'}); throw error; } playing = s;
+  return new Promise<void>(res => {
+    let done=false;
+    const finish=(outcome:string)=>{if(done)return;done=true;observed({outcome});if(cancelBufferObservation===cancel)cancelBufferObservation=null;res();};
+    const cancel=()=>finish('cancelled');cancelBufferObservation=cancel;
+    s.onended=()=>finish('success');
+    // Keep the original watchdog resolution; lack of onended is an unknown observation.
+    setTimeout(()=>finish('unknown'),buf.duration/rate*1000+400);
+  });
 }
 
 // ---------- Offline voice pack (voices/, made with tools/make-voice-pack.mts) ----------
@@ -604,7 +616,7 @@ async function playPack(lang, text, my, forceHanoi=false, skipHanoi=false) {
       if (context?.state === 'running') {
         voiceDiag.recording = 'Default English + FPT Neo · FPT.AI-VITs · leminh';
         voiceDiag.audio = 'running';
-        await playBuffer(recording);
+        await playBuffer(recording,1,'recorded',lang);
         return true;
       }
       // Until Web Audio is unlocked, retain the complete recording's existing HTML audio fallback.
@@ -613,15 +625,16 @@ async function playPack(lang, text, my, forceHanoi=false, skipHanoi=false) {
   const hanoi=!skipHanoi&&lang==='vi'&&!previewSlot&&(forceHanoi||hanoiSelected())?await(await hanoiPack()).recording(packKey(lang,text)||lineHash(lang,text)):null;
   if(my!==seq)return true;
   if(forceHanoi&&!hanoi)return false;
+  const observed=managementEvidence.begin('voice.result',{source:'recorded',language:lang});
   const fallback=()=>hanoi&&!forceHanoi?playPack(lang,text,my,false,true):false;
   voiceDiag.recording=hanoi?'FPT Neo · FPT.AI-VITs · leminh':'Default recorded voices';
   const k = hanoi?'fpt-leminh-v1|'+hanoi:'pack|' + slot + '|' + lang + '|' + text;
   const url = hanoi||packUrl(lang, text, slot), rate=hanoi?(STYLE_RATE[settings.voiceStyle]||1):packRate(slot), a = ac();
   const response=async(signal?:AbortSignal)=>hanoi?(await hanoiPack()).audio(hanoi,signal):fetch(url,signal?{signal}:undefined);
   const urlPlayback=async()=>{
-    if(!hanoi)return playUrl(url,rate);
-    const r=await response();if(!r)return false;const blob=URL.createObjectURL(await r.blob());
-    try{return await playUrl(blob,rate);}finally{URL.revokeObjectURL(blob);}
+    if(!hanoi)return playUrl(url,rate,lang,observed);
+    const r=await response();if(!r){observed({outcome:'failed'});return false;}const blob=URL.createObjectURL(await r.blob());
+    try{return await playUrl(blob,rate,lang,observed);}finally{URL.revokeObjectURL(blob);}
   };
   if (a && a.state !== 'running' && typeof document !== 'undefined' && !document.hidden) {
     try { await Promise.race([a.resume(), new Promise(r => setTimeout(r, 250))]); } catch (e) { }
@@ -632,16 +645,16 @@ async function playPack(lang, text, my, forceHanoi=false, skipHanoi=false) {
   if (!buf) {
     // (a slow phone network: the line is given up after 8 s, never waited for for ever)
     const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null, tm = ctl && setTimeout(() => ctl.abort(), 8000);
-    let data; try { const r = await response(ctl?.signal); if (!r?.ok) { voiceDiag.lastMiss = 'file ' + (r?.status||'unavailable'); return fallback(); } data = await r.arrayBuffer(); } catch (e) { voiceDiag.lastMiss = 'file slow'; return fallback(); } finally { clearTimeout(tm); }
-    try { buf = await decode(data); } catch (e) { if (my !== seq) return true; voiceDiag.lastMiss = 'decode'; return urlPlayback(); }
+    let data; try { const r = await response(ctl?.signal); if (!r?.ok) { voiceDiag.lastMiss = 'file ' + (r?.status||'unavailable');observed({outcome:'failed'}); return fallback(); } data = await r.arrayBuffer(); } catch (e) { voiceDiag.lastMiss = 'file slow';observed({outcome:my!==seq?'cancelled':'failed'}); return fallback(); } finally { clearTimeout(tm); }
+    try { buf = await decode(data); } catch (e) { if (my !== seq) {observed({outcome:'cancelled'});return true;} voiceDiag.lastMiss = 'decode'; return urlPlayback(); }
     mem.set(k, buf); if (mem.size > 120) mem.delete(mem.keys().next().value);
   }
-  if (my !== seq) return true;
+  if (my !== seq) { observed({outcome:'cancelled'}); return true; }
   if (a.state !== 'running') {
     try { await Promise.race([a.resume(), new Promise(r => setTimeout(r, 200))]); } catch (e) { }
     if (a.state !== 'running') return urlPlayback();
   }
-  voiceDiag.audio = 'running'; await playBuffer(buf, rate); return true;
+  voiceDiag.audio = 'running'; await playBuffer(buf, rate,'recorded',lang,observed); return true;
 }
 
 // ---------- Recorded lines kept in memory ----------

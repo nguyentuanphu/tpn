@@ -1,3 +1,5 @@
+> Studio integration handoff: [start here](STUDIO-START-HERE.md) on `handoff/studio-combined-20261029`. Both workstreams and original plans are included; this is development work, not a deployed release.
+
 # TPN
 
 An open-world 3D adventure for children aged 2 to 8, in **English and Vietnamese**. Each child plays as their own character with their own face photo. They explore a valley, solve thinking puzzles in shrines, grow a farm, play traditional Vietnamese games with the village kids, and follow a story.

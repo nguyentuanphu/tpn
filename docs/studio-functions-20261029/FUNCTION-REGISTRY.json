@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "scope": "global",
+  "functions": [
+    {
+      "id": "managementTelemetry",
+      "capability": "implemented",
+      "collect": [
+        "js/players.ts",
+        "js/management-telemetry.ts",
+        "netlify/lib/management/transactional/service.mts:ingestEvents"
+      ],
+      "process": [
+        "attemptSummary",
+        "eventSummary"
+      ],
+      "show": [
+        "management/overview",
+        "management/activities/:id"
+      ]
+    },
+    {
+      "id": "legacyAnalytics",
+      "capability": "separate-existing-controls",
+      "collect": [
+        "js/players.ts:/api/hello"
+      ],
+      "process": [
+        "legacy reporting reads"
+      ],
+      "show": [
+        "Home",
+        "People"
+      ]
+    },
+    {
+      "id": "marketingAttribution",
+      "capability": "not-implemented",
+      "collect": [],
+      "process": [],
+      "show": []
+    },
+    {
+      "id": "experiments",
+      "capability": "not-implemented",
+      "collect": [],
+      "process": [],
+      "show": []
+    },
+    {
+      "id": "providerSync",
+      "capability": "not-implemented",
+      "collect": [],
+      "process": [],
+      "show": []
+    },
+    {
+      "id": "saves-and-gameplay",
+      "capability": "protected",
+      "collect": [],
+      "process": [],
+      "show": []
+    }
+  ]
+}

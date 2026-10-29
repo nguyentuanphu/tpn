@@ -1,0 +1,65 @@
+[
+  {
+    "device": "phone",
+    "lang": "en",
+    "aboveModal": true,
+    "dragWithoutReport": true,
+    "doubleTapResets": true,
+    "reportOpens": true,
+    "target64": true
+  },
+  {
+    "device": "phone",
+    "lang": "vi",
+    "aboveModal": true,
+    "dragWithoutReport": true,
+    "doubleTapResets": true,
+    "reportOpens": true,
+    "target64": true
+  },
+  {
+    "device": "tablet",
+    "lang": "en",
+    "aboveModal": true,
+    "dragWithoutReport": true,
+    "doubleTapResets": true,
+    "reportOpens": true,
+    "target64": true
+  },
+  {
+    "device": "tablet",
+    "lang": "vi",
+    "aboveModal": true,
+    "dragWithoutReport": true,
+    "doubleTapResets": true,
+    "reportOpens": true,
+    "target64": true
+  },
+  {
+    "device": "computer",
+    "lang": "en",
+    "aboveModal": true,
+    "dragWithoutReport": true,
+    "doubleTapResets": true,
+    "reportOpens": true,
+    "target64": true
+  },
+  {
+    "device": "computer",
+    "lang": "vi",
+    "aboveModal": true,
+    "dragWithoutReport": true,
+    "doubleTapResets": true,
+    "reportOpens": true,
+    "target64": true
+  },
+  {
+    "reportDuringActualGame": true,
+    "dragClampedToScreen": true,
+    "positionRestoredOnRemount": true
+  },
+  {
+    "duplicateBrisbaneRemoved": true,
+    "physicalStopsPreserved": true
+  }
+]

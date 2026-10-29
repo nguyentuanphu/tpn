@@ -6,10 +6,10 @@ import { ac } from './audio.js';
 import { el } from './util.js';
 
 // Grown-ups settings load only when opened; the controls and data contracts are unchanged.
-import { events } from './core/events.js';
+import { events, managementEvidence } from './core/events.js';
 
 import { T, applyLang, nm, NPC_NAMES, defaultName } from './i18n.js';
-import { settings, saveSettings, profiles, saveProfiles, normalizeProfile, exportBackup, importBackup, backupAge, farm, resetFarm, saveFarm, MAX_KIDS, getSnapshot } from './state.js';
+import { settings, saveSettings, profiles, saveProfiles, normalizeProfile, exportBackup, importBackup, backupAge, farm, resetFarm, saveFarm, MAX_KIDS, getSnapshot, saveReadbackMatches } from './state.js';
 import { createSaveCopy, readSaveCopyOrLegacy } from './content/savecopy.js';
 import { FAMILY_CODE_PRIVACY, makeFamilyCode, normalizeFamilyCode, familyName, familyQrSvg } from './content/familycode.js';
 import { say, voicePack, voiceDiag, allowMobilePack, voiceMisses, clearVoiceMisses, voicesFor, onVoices, hasVietnamese, FAMILY_PHRASES, previewPackVoice, resumePackDownload, chooseVietnamesePack, downloadHanoiPack, previewHanoiVoice } from './voice.js';
@@ -426,17 +426,19 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
     };
     card.querySelector('#gFamilyQuiz').onclick=()=>import('./family-quiz-editor.js').then(M=>M.openFamilyQuestions(()=>{const y=m.scrollTop;draw();m.scrollTop=y;const b=card.querySelector('#gFamilyQuiz');if(b instanceof HTMLElement)b.focus({preventScroll:true});}));
     card.querySelector('#gSaveCopy').onclick = async () => {
+      const observed=managementEvidence.begin('backup.result',{operation:'export'});
+      try {
       const text = JSON.stringify(createSaveCopy(getSnapshot()), null, 2);
       const name = 'sparkle-valley-' + new Date().toISOString().slice(0, 10) + '.svsave';
       const file = new File([text], name, { type: 'application/json' });
       try {
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({ files: [file], title: name });
-          settings.lastBackup = Date.now(); saveSettings(); toast(T('Copy saved!', 'Đã lưu bản sao!'));
+          observed({outcome:'success',reasonCode:'none'}); settings.lastBackup = Date.now(); saveSettings(); toast(T('Copy saved!', 'Đã lưu bản sao!'));
           return;
         }
       } catch (e) {
-        if (e && e.name === 'AbortError') return;
+        if (e && e.name === 'AbortError') { observed({outcome:'cancelled',reasonCode:'user_cancelled'}); return; }
       }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
@@ -445,11 +447,13 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      settings.lastBackup = Date.now(); saveSettings(); toast(T('Copy downloaded!', 'Đã tải bản sao!'));
+      observed({outcome:'initiated',reasonCode:'none'}); settings.lastBackup = Date.now(); saveSettings(); toast(T('Copy downloaded!', 'Đã tải bản sao!'));
+      } catch(error) {observed({outcome:'failed',reasonCode:'storage'});throw error;}
     };
     card.querySelector('#gLoadCopy').onchange = async e => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
+      const observed=managementEvidence.begin('backup.result',{operation:'restore'});let reasonCode='invalid';
       try {
         const text = await f.text();
         const copy = readSaveCopyOrLegacy(text);
@@ -471,15 +475,18 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
           if (settings.familyCode) settings.familyCode = normalizeFamilyCode(settings.familyCode);
           if (copy.device) localStorage.setItem('sv2_playerid', copy.device);
           // An older copy has no device id; keep this device’s existing identity.
+          const expected=JSON.parse(JSON.stringify({profiles,settings,farm,...(copy.device?{device:copy.device}:{})}));reasonCode='storage';
           saveProfiles(true);
           saveSettings();
           saveFarm();
+          const confirmed=saveReadbackMatches(expected);observed({outcome:confirmed?'success':'failed',reasonCode:confirmed?'none':'storage'});
           syncFamTelemetry();
           toast(T('Copy loaded successfully!', 'Đã mở bản sao thành công!'));
           draw();
           after && after();
-        }
+        } else observed({outcome:'cancelled',reasonCode:'user_cancelled'});
       } catch (err) {
+        observed({outcome:'failed',reasonCode});
         alert(T('Could not read this file. It is not a valid Sparkle Valley save copy.', 'Không thể đọc tệp này. Tệp không phải bản sao lưu hợp lệ của Thung Lũng Lấp Lánh.'));
       }
     };

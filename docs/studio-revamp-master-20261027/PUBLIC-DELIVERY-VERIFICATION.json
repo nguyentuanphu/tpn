@@ -1,0 +1,69 @@
+{
+  "commit": "5f8e11cdddc21dd8b40e19c437ed49600a8ca82f",
+  "checks": [
+    {
+      "path": "README.md",
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 3560,
+      "sha256": "08b85ff16fca52c5ee2f3b6c1a6ac2d77ba7ed394c5ac6aa187f0220e6d50173",
+      "matchesLocal": true
+    },
+    {
+      "path": "VISUALS.md",
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 1084,
+      "sha256": "28cd8f8eea4eb478d327ec0765c71c33ab2f043516c2085733b17088f2ee05a5",
+      "matchesLocal": true
+    },
+    {
+      "path": "NEXT-CHAT.md",
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 3814,
+      "sha256": "3b2bb78fa4fdc6aa771bece9a0e8c50c86211924c37d2c23ac8f9693d8cef6f6",
+      "matchesLocal": true
+    },
+    {
+      "path": "STATUS.md",
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 4719,
+      "sha256": "ccabf2f16d12b4b944fecb07ad59d9099ee20fd1fef4b06ac007af90b9d39fc8",
+      "matchesLocal": true
+    },
+    {
+      "path": "images/home-phone.png",
+      "status": 200,
+      "contentType": "image/png",
+      "bytes": 197728,
+      "sha256": "094cc47f04e9abc6707ad22c52f388c6cc72212d64d2c0a2c42d1566b043e6ae",
+      "matchesLocal": true
+    },
+    {
+      "path": "images/home-phone-viewport.png",
+      "status": 200,
+      "contentType": "image/png",
+      "bytes": 121862,
+      "sha256": "9dec179890bf0a28c3b3a4b61648c3b973369dcca1af479cb5dd19c972a478c6",
+      "matchesLocal": true
+    },
+    {
+      "path": "images/settings-phone.png",
+      "status": 200,
+      "contentType": "image/png",
+      "bytes": 206075,
+      "sha256": "284469f568a39fbe65e24b7a0a99e68a0381b87553d38098489310797096fad5",
+      "matchesLocal": true
+    },
+    {
+      "path": "Studio-revamp-complete-handoff.zip",
+      "status": 200,
+      "contentType": "application/zip",
+      "bytes": 28293487,
+      "sha256": "8c859f9b614d5a2f23e9f1c7c5eb8de3227881158cf07f74c30000c604858bb5",
+      "matchesLocal": true
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+PASS: 893 consistency checks; 137 data points; 38 metrics; 23 connections; 32 requirements; 12 tickets; 25 acceptance scenarios; 106 local links.
+PASS: four schemas, sixteen valid records and eight deliberately invalid fixtures; seven SVGs; deterministic generation.
+These checks validate the documentation package, not proposed production features.

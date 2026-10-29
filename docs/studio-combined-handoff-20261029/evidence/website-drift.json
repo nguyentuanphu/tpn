@@ -1,0 +1,43 @@
+{
+  "source": "80ca4f94a784da5b486f391685880f81b66629a2",
+  "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+  "coverage": {
+    "valley": 17,
+    "lantern": 24,
+    "daily": 56,
+    "family": 15,
+    "festivals": 24
+  },
+  "changed": [
+    "index.html",
+    "js/content/activities.ts",
+    "js/content/releases.ts",
+    "js/content/unlocks.ts",
+    "js/core/events.ts",
+    "js/custom.ts",
+    "js/games/catalog.ts",
+    "js/games/crafts.ts",
+    "js/games/drawing2.ts",
+    "js/games/frame.ts",
+    "js/howto-data.ts",
+    "js/launch.js",
+    "js/learn.ts",
+    "js/main.ts",
+    "js/net.ts",
+    "js/players.ts",
+    "js/state.ts",
+    "js/tales.js",
+    "js/tester-float.ts",
+    "js/ui-settings.ts",
+    "js/voice.ts",
+    "sw.ts",
+    "content/management-catalogue.json",
+    "js/core/reporting-policy.ts",
+    "js/games/art-pad.ts",
+    "js/games/art-pending.ts",
+    "js/management-telemetry.ts",
+    "js/tales.ts"
+  ],
+  "coverageChanged": [],
+  "requiresEditorialReview": true
+}

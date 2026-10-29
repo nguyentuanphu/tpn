@@ -1,0 +1,9 @@
+{
+  ".gitignore": "de497b2c64d99fe27e8372528576e5f29bece605953228406a57692a8c01e827",
+  "studio/ui/control-feedback.ts": "61425b2d835ec1c9d39b64ae202ea67c3317ac321b46608ffe59e821b6f5d291",
+  "studio/ui/functions.ts": "143bc21606f85253a6ed1907ff1fa35986e55f332ba90af2d479bfb94a817070",
+  "studio/ui/item-workspace.ts": "e38eeacb33cbccb87da1f2728a867b50578810f2e7c01afba63d99dd964d3a98",
+  "studio/ui/management.ts": "f5af01808f36efb9a8ae5e4dce3f2e7848060684515511577c2b32b9ccc72eb4",
+  "tests/control-recovery-browser.mjs": "0eaa181391a3abeddaa9d216989e452da7ca3245f117fe2ba192784f7cb2ac29",
+  "tests/owner-desk-browser.mjs": "4e24e2cc2d4e81388349a6db63e02123f6311befb58384f61b36bd16e0afd8a3"
+}

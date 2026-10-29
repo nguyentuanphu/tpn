@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "scope": [
+    "item-workspace",
+    "managementTelemetry-function-editor"
+  ],
+  "states": [
+    {
+      "id": "loading",
+      "meaning": "No current setting confirmed",
+      "writeButtonsMayBeEnabled": false,
+      "next": "Wait for read"
+    },
+    {
+      "id": "unavailable",
+      "meaning": "No editor or writes",
+      "writeButtonsMayBeEnabled": false,
+      "next": "Retry loading after access/source check"
+    },
+    {
+      "id": "editable",
+      "meaning": "Private unsaved edits",
+      "writeButtonsMayBeEnabled": true,
+      "next": "Save private proposal"
+    },
+    {
+      "id": "saved",
+      "meaning": "Exact private revision/hash",
+      "writeButtonsMayBeEnabled": true,
+      "next": "Review saved proposal"
+    },
+    {
+      "id": "reviewed",
+      "meaning": "Exact reviewed revision/hash",
+      "writeButtonsMayBeEnabled": true,
+      "next": "Publish or edit and save/review again"
+    },
+    {
+      "id": "recovery_required",
+      "meaning": "Outcome may be unknown; visible fields retained",
+      "writeButtonsMayBeEnabled": false,
+      "next": "Copy needed edits, reload workspace and inspect server evidence"
+    },
+    {
+      "id": "pending_projection",
+      "meaning": "Publication committed; public delivery unconfirmed",
+      "writeButtonsMayBeEnabled": false,
+      "next": "Inspect configuration history and existing projection retry"
+    },
+    {
+      "id": "available",
+      "meaning": "Public snapshot read-back confirmed",
+      "writeButtonsMayBeEnabled": false,
+      "next": "Inspect exact revision/hash receipts separately"
+    },
+    {
+      "id": "device_unconfirmed",
+      "meaning": "Missing receipt, including Off/opted-out devices",
+      "writeButtonsMayBeEnabled": false,
+      "next": "Retain unconfirmed; do not infer feature effect"
+    }
+  ],
+  "transitions": {
+    "failedRequest": "recovery_required",
+    "recovery_required+pickerChange": "recovery_required",
+    "recovery_required+inputChange": "recovery_required",
+    "recovery_required+reload": "loading"
+  },
+  "serverAuthority": [
+    "management.read",
+    "management.configure",
+    "edit",
+    "expectedRevision",
+    "baseRevision",
+    "effectiveHash"
+  ],
+  "noAutomaticRebase": true,
+  "noProofOfRollbackFromNetworkError": true,
+  "noNewAutomaticRequests": true
+}

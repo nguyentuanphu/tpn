@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "metrics": [
+    {
+      "id": "M01",
+      "label": "Reporting active installations",
+      "data_group": "DAY",
+      "status": "existing-derived",
+      "formula": "Count distinct id with m>0 or game starts>0 or stories opened>0 within period",
+      "unit": "installations",
+      "limitation": "Do not label unique children or total audience.",
+      "build_ticket": "B02"
+    },
+    {
+      "id": "M02",
+      "label": "New observed installations",
+      "data_group": "ID",
+      "status": "existing-derived",
+      "formula": "Count distinct id whose earliest retained observed play date is in period",
+      "unit": "installations",
+      "limitation": "Cleared storage and late first reports change this.",
+      "build_ticket": "B02"
+    },
+    {
+      "id": "M03",
+      "label": "Currently reporting online",
+      "data_group": "ID",
+      "status": "existing-derived",
+      "formula": "Count devices with active session presence newer than LIVE_MS (5 minutes)",
+      "unit": "installations",
+      "limitation": "Presence is approximate; stale means unconfirmed/offline.",
+      "build_ticket": "B03"
+    },
+    {
+      "id": "M04",
+      "label": "Play time",
+      "data_group": "DAY",
+      "status": "existing-derived",
+      "formula": "Sum accepted days[].m for eligible ordinary traffic; exclude bot store",
+      "unit": "minutes",
+      "limitation": "Menu/paused time follows existing producer hooks; not total screen time.",
+      "build_ticket": "B02"
+    },
+    {
+      "id": "M05",
+      "label": "Completion participation ratio",
+      "data_group": "KID",
+      "status": "existing-derived",
+      "formula": "Sum g[id][1] / sum g[id][0] over matching profile/device/day buckets",
+      "unit": "ratio",
+      "limitation": "Not attempt conversion: split-screen creates two participations and late terminal events can cross windows.",
+      "build_ticket": "B05"
+    },
+    {
+      "id": "M06",
+      "label": "Early-exit participation ratio",
+      "data_group": "KID",
+      "status": "existing-derived",
+      "formula": "Sum g[id][2] / sum g[id][0] over matching buckets",
+      "unit": "ratio",
+      "limitation": "Do not infer difficulty or dissatisfaction as a confirmed cause.",
+      "build_ticket": "B05"
+    },
+    {
+      "id": "M07",
+      "label": "Story opens",
+      "data_group": "DAY",
+      "status": "existing-derived",
+      "formula": "Sum days[].t",
+      "unit": "opens",
+      "limitation": "No existing completion count should be invented.",
+      "build_ticket": "B05"
+    },
+    {
+      "id": "M08",
+      "label": "Sampled FPS",
+      "data_group": "PERF",
+      "status": "existing-derived",
+      "formula": "sum f[0] / sum f[1] when f[1]>0",
+      "unit": "FPS",
+      "limitation": "Weighted by samples; do not average device averages.",
+      "build_ticket": "B03"
+    },
+    {
+      "id": "M09",
+      "label": "Low-FPS samples",
+      "data_group": "PERF",
+      "status": "existing-derived",
+      "formula": "sum f[2] / sum f[1] when f[1]>0",
+      "unit": "ratio",
+      "limitation": "Current threshold below 20 FPS.",
+      "build_ticket": "B03"
+    },
+    {
+      "id": "M10",
+      "label": "Startup median",
+      "data_group": "PERF",
+      "status": "existing-derived",
+      "formula": "Median retained st[][2], split by st[][3] and originating build",
+      "unit": "milliseconds",
+      "limitation": "Capped samples, not population p95.",
+      "build_ticket": "B03"
+    },
+    {
+      "id": "M11",
+      "label": "Measured active drawing FPS",
+      "data_group": "BAT",
+      "status": "existing-derived",
+      "formula": "sum b[1] / sum b[9] when seconds>0",
+      "unit": "FPS",
+      "limitation": "Exclude idle and unmeasured intervals.",
+      "build_ticket": "B03"
+    },
+    {
+      "id": "M12",
+      "label": "Battery loss per measured hour",
+      "data_group": "BAT",
+      "status": "existing-derived",
+      "formula": "(sum b[7]/10) / (sum b[6]/60) when battery minutes>0",
+      "unit": "percentage points/hour",
+      "limitation": "Unavailable on many browsers; never watts or device energy cost.",
+      "build_ticket": "B03"
+    },
+    {
+      "id": "M13",
+      "label": "Website page views",
+      "data_group": "WEB",
+      "status": "existing-derived",
+      "formula": "Sum pageViews counters for selected allowlisted routes",
+      "unit": "events",
+      "limitation": "Not unique visitors, visits or people.",
+      "build_ticket": "B03"
+    },
+    {
+      "id": "M14",
+      "label": "Website Play clicks",
+      "data_group": "WEB",
+      "status": "existing-derived",
+      "formula": "Sum playConversions",
+      "unit": "clicks",
+      "limitation": "Existing counter name does not mean a successful game start.",
+      "build_ticket": "B03"
+    },
+    {
+      "id": "M15",
+      "label": "Website reading time",
+      "data_group": "WEB",
+      "status": "existing-derived",
+      "formula": "Sum activeTimeTotalSec",
+      "unit": "seconds",
+      "limitation": "Best-effort; no per-visitor retention or complete session funnel.",
+      "build_ticket": "B03"
+    },
+    {
+      "id": "M16",
+      "label": "Affected reporting devices",
+      "data_group": "ISSUE",
+      "status": "existing-derived",
+      "formula": "Distinct report id per problem/build within retained evidence",
+      "unit": "installations",
+      "limitation": "Unreported devices are unknown; reporting count differs from total incidence.",
+      "build_ticket": "B04"
+    },
+    {
+      "id": "M17",
+      "label": "Open confirmed regressions",
+      "data_group": "ISSUE",
+      "status": "proposed",
+      "formula": "Count triaged problems with confirmed regression classification and nonterminal status",
+      "unit": "problems",
+      "limitation": "Existing auto reports do not prove regression.",
+      "build_ticket": "B04"
+    },
+    {
+      "id": "M18",
+      "label": "Observed D7 return",
+      "data_group": "EVENT",
+      "status": "proposed",
+      "formula": "Eligible cohort installations observed active on cohortDay+7 / installations first active on cohortDay; exact-day definition",
+      "unit": "ratio",
+      "limitation": "Only matured cohorts; late data window 7 days; label provisional; no cross-device person identity.",
+      "build_ticket": "B08"
+    },
+    {
+      "id": "M19",
+      "label": "Attempt completion",
+      "data_group": "EVENT",
+      "status": "proposed",
+      "formula": "Distinct completed attemptIds / eligible started attemptIds from same start cohort",
+      "unit": "ratio",
+      "limitation": "Include pending outcomes separately; abandoned/expired definitions in contracts.",
+      "build_ticket": "B08"
+    },
+    {
+      "id": "M20",
+      "label": "Boot readiness",
+      "data_group": "EVENT",
+      "status": "proposed",
+      "formula": "Distinct boot IDs with ready / distinct reportable boot starts in start cohort",
+      "unit": "ratio",
+      "limitation": "Never captures failures before instrumentation can run/send.",
+      "build_ticket": "B08"
+    },
+    {
+      "id": "M21",
+      "label": "First playable time p95",
+      "data_group": "EVENT",
+      "status": "proposed",
+      "formula": "Nearest-rank p95 of matched readyAt-startedAt within comparable build/device cohort",
+      "unit": "milliseconds",
+      "limitation": "Show n; target at least 20 samples before directional status.",
+      "build_ticket": "B08"
+    },
+    {
+      "id": "M22",
+      "label": "Connection success",
+      "data_group": "EVENT",
+      "status": "proposed",
+      "formula": "Successful connection attemptIds / eligible connection attemptIds",
+      "unit": "ratio",
+      "limitation": "Separate direct/relay and failures/timeouts; exclude synthetic runs.",
+      "build_ticket": "B08"
+    },
+    {
+      "id": "M23",
+      "label": "Recorded voice success",
+      "data_group": "EVENT",
+      "status": "proposed",
+      "formula": "Successful recorded playback events / attempted recorded playback events",
+      "unit": "ratio",
+      "limitation": "Requires source/outcome instrumentation; missing-line inbox is not a denominator.",
+      "build_ticket": "B08"
+    },
+    {
+      "id": "M24",
+      "label": "Applied configuration coverage",
+      "data_group": "DELIVERY",
+      "status": "proposed",
+      "formula": "Eligible cohort devices acknowledging revision or later compatible effective hash / fixed eligible cohort size",
+      "unit": "ratio",
+      "limitation": "Denominator from last-30-day reporting cohort snapshot; missing offline devices stay unconfirmed.",
+      "build_ticket": "B09"
+    },
+    {
+      "id": "M25",
+      "label": "Confirmed report recovery time",
+      "data_group": "ISSUE",
+      "status": "proposed",
+      "formula": "Median verifiedAt-firstReportedAt for comparable resolved cases",
+      "unit": "hours",
+      "limitation": "Separate fixed-in-code, deployed and verified.",
+      "build_ticket": "B04"
+    },
+    {
+      "id": "M26",
+      "label": "Content recording coverage",
+      "data_group": "CONTENT",
+      "status": "proposed",
+      "formula": "Required static language/voice keys with playable verified recordings / required keys",
+      "unit": "ratio",
+      "limitation": "Bounded static catalogue; dynamic lines and family recordings separately scoped.",
+      "build_ticket": "B05"
+    },
+    {
+      "id": "M27",
+      "label": "Website review coverage",
+      "data_group": "CONTENT",
+      "status": "proposed",
+      "formula": "Changed catalogue items with current source-linked review / items requiring review",
+      "unit": "ratio",
+      "limitation": "Review lock is evidence of reviewed work, not automatic prose correctness.",
+      "build_ticket": "B05"
+    },
+    {
+      "id": "M28",
+      "label": "Actual operating cost",
+      "data_group": "MONEY",
+      "status": "proposed",
+      "formula": "Sum recognised actual expense lines in period after explicit currency conversion",
+      "unit": "reporting currency",
+      "limitation": "Exclude estimates; show import completeness and tax basis.",
+      "build_ticket": "B10"
+    },
+    {
+      "id": "M29",
+      "label": "Budget remaining",
+      "data_group": "MONEY",
+      "status": "proposed",
+      "formula": "Approved period budget - recognised actual costs - separately reserved commitments",
+      "unit": "reporting currency",
+      "limitation": "Display actual-only and commitment-adjusted balances separately.",
+      "build_ticket": "B10"
+    },
+    {
+      "id": "M30",
+      "label": "Monthly forecast",
+      "data_group": "MONEY",
+      "status": "proposed",
+      "formula": "Fixed monthly commitments + variable actual-to-date + remainingDays * trailing-7-complete-day variable mean",
+      "unit": "reporting currency",
+      "limitation": "Avoid double-counting commitments; insufficient coverage -> unavailable.",
+      "build_ticket": "B10"
+    },
+    {
+      "id": "M31",
+      "label": "Cost per reporting active installation",
+      "data_group": "MONEY",
+      "status": "proposed",
+      "formula": "Comparable recognised actual operating cost / M01",
+      "unit": "currency/installation",
+      "limitation": "Reporting subset denominator; not acquisition cost or unique customer cost.",
+      "build_ticket": "B10"
+    },
+    {
+      "id": "M32",
+      "label": "Cost per reported play hour",
+      "data_group": "MONEY",
+      "status": "proposed",
+      "formula": "Comparable actual operating cost / (M04/60)",
+      "unit": "currency/reported hour",
+      "limitation": "Reporting opt-outs bias denominator.",
+      "build_ticket": "B10"
+    },
+    {
+      "id": "M33",
+      "label": "Contribution margin",
+      "data_group": "MONEY",
+      "status": "proposed",
+      "formula": "Recognised revenue - refunds - payment fees - attributed variable cost",
+      "unit": "reporting currency",
+      "limitation": "Only after approved revenue model and accounting definitions.",
+      "build_ticket": "B10"
+    },
+    {
+      "id": "M34",
+      "label": "Quota headroom",
+      "data_group": "OPS",
+      "status": "proposed",
+      "formula": "Provider limit - current billed/observed usage in matching billing window",
+      "unit": "provider units",
+      "limitation": "Unknown limit or stale feed means unavailable.",
+      "build_ticket": "B11"
+    },
+    {
+      "id": "M35",
+      "label": "Job success",
+      "data_group": "OPS",
+      "status": "proposed",
+      "formula": "Successful terminal workflow runs / terminal eligible runs",
+      "unit": "ratio",
+      "limitation": "Queued/running/cancelled/retried visible separately.",
+      "build_ticket": "B11"
+    },
+    {
+      "id": "M36",
+      "label": "Delivery delay",
+      "data_group": "DELIVERY",
+      "status": "proposed",
+      "formula": "Applied receipt timestamp - availableAt for eligible compatible devices",
+      "unit": "seconds",
+      "limitation": "Device clock can be wrong; validate and show receipt-time alternative.",
+      "build_ticket": "B09"
+    },
+    {
+      "id": "M37",
+      "label": "Days-to-quota estimate",
+      "data_group": "OPS",
+      "status": "proposed",
+      "formula": "Remaining quota / trailing-7-day matching usage mean",
+      "unit": "days",
+      "limitation": "Only when same units/window and positive measured rate.",
+      "build_ticket": "B11"
+    },
+    {
+      "id": "M38",
+      "label": "Affected-device error proportion",
+      "data_group": "DAY",
+      "status": "existing-derived",
+      "formula": "Distinct active reporting installations with error>0 / distinct active reporting installations",
+      "unit": "ratio",
+      "limitation": "Not crash-free sessions; no existing complete session outcomes.",
+      "build_ticket": "B03"
+    }
+  ]
+}

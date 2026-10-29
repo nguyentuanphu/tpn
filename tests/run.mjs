@@ -1,3 +1,7 @@
+import {managementPolicyBudgetCheck} from './management-policy-budget-browser.mjs';
+import { contentProgressCheck } from './content-progress-browser.mjs';
+import { contentWebsiteCheck, contentVoiceCheck } from './content-website-browser.mjs';
+import { contentArtCheck, contentPairCheck, contentCaptureCheck } from './content-art-browser.mjs';
 import { installReportInputProbe, readReportInputProbe } from './report-input-probe.mts';
 import { waitObserved } from './wait-observed.mts';
 import { adventureWalkSnapshot, adventureDaySnapshot, seedAdventureWalk } from './adventure-snapshot.mts';
@@ -12,6 +16,8 @@ import { launch, open, clear, noWelcome, start, URL, seedPlayers, takeCoverage, 
 import { groundAudit } from './world-audit.mjs';
 import { studioCheck } from './studio-check.mjs';
 import { studioRepairCheck } from './studio-repair-check.mjs';
+import { managementBrowserCheck } from './management-browser.mjs';
+import { ownerDeskBrowserCheck } from './owner-desk-browser.mjs';
 // (round R privacy) friends save each other's device key when they first play together (＋👫); two test devices that are
 // already friends by code get each other's key here, the way that first game would have given it
 // the text of an element with each swapped drawing read back as its emoji (js/emojiswap.js keeps it in data-e)
@@ -96,6 +102,18 @@ async function serveFolder(root, { gzip = false } = {}) {
   return Object.assign(S, { url: `http://127.0.0.2:${srv.address().port}/`, close: () => { srv.closeAllConnections(); srv.close(); } });
 }
 let b = await launch();
+
+await check('contentcaptures', async () => contentCaptureCheck(b));
+
+await check('contentpair', async () => contentPairCheck(b));
+
+await check('contentvoice', async () => contentVoiceCheck(b));
+
+await check('contentprogress', async () => contentProgressCheck(b));
+
+await check('contentwebsite', async () => contentWebsiteCheck(b));
+
+await check('contentart', async () => contentArtCheck(b));
 
 await check('boot', async () => {
   for (const [w, h, touch] of [[390, 844, true], [1024, 768, true], [1280, 800, false]]) {
@@ -1006,6 +1024,9 @@ await check('studio', async () => {
 });
 
 await check('ownerstudiofailures', async () => studioRepairCheck(b));
+await check('managementbudget', async () => managementPolicyBudgetCheck(b));
+await check('managementstudio', async () => managementBrowserCheck(b));
+await check('ownerdesk', async () => ownerDeskBrowserCheck(b));
 
 await check('ground', async () => {
   // every building on dry, level ground (not over the river or the lake), no road floating, buried or in water,
@@ -1506,7 +1527,10 @@ await check('testerreport', async () => {
   await P.page.waitForFunction(() => window.__sv?.tester?.mountedAt && window.__sv.tester.mountedAt() > 0 && performance.now() - window.__sv.tester.mountedAt() > 15200, null, { timeout: 30000 });
   const earlierFreezes = got.filter(x => x && x.auto === 'freeze');
   await P.page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => { const t = performance.now(); while (performance.now() - t < 2600) { } r(); }))));
-  { const fz = await wait(x => x && x.auto === 'freeze' && !earlierFreezes.includes(x), 6000); if (!fz) out.push('a frozen screen was not reported');
+  { const fz = await wait(x => x && x.auto === 'freeze' && !earlierFreezes.includes(x), 6000); if (!fz) {
+      const state = await P.page.evaluate(() => ({ visibility: document.visibilityState, focus: document.hasFocus(), mountedAt: window.__sv?.tester?.mountedAt?.(), now: performance.now(), queued: JSON.parse(localStorage.getItem('sv2_tester_out') || '[]').map(r => ({ auto: r.auto, detail: r.detail, hasShot: !!r.shot })) }));
+      out.push('a frozen screen was not reported: ' + JSON.stringify({ earlier: earlierFreezes.map(r => ({ detail: r.detail, log: r.log })), state }));
+    }
     // (#261) the report says the game's own code ran long (this freeze is a 2.6 s script), not only that frames stopped
     else { const scripts = [...JSON.stringify(fz.log || []).matchAll(/longest script (\d+) ms/g)];
       const why = scripts.find(m => +m[1] >= 1000) || scripts[scripts.length - 1] || null;
@@ -3239,11 +3263,12 @@ await check('roadtone', async () => {
   const P = await open(b, { w: 900, h: 640 }); await clear(P.page);
   const mats = await P.page.evaluate(() => { const s = new Set(); __sv.scene.traverse(o => { if (o.userData.road && o.material && o.material.map) s.add(o.material.uuid); }); return s.size; });
   // (round T4a, ROAD-015) the markings: a yellow centre dash on Vietnam's roads, light concrete kerbs on Australia's
+  // Compare plain asphalt over 3,584 pixels, away from kerbs/markings; random speckles are not the regional base colour.
   const mark = await P.page.evaluate(async () => {
     const M = await import('/js/content/map.js'), { THREE } = await import('/js/gfx.js'), mid = id => { const R = M.ROADS.find(r => r.id === id), [a, c] = R.pts; return [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2]; };
-    const at = ([x, z], px, py) => { let got = null; __sv.scene.traverse(o => { if (got || !o.userData.road || !o.material || !o.material.map) return; o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox;
-      if (x > bb.min.x && x < bb.max.x && z > bb.min.z && z < bb.max.z) { const im = o.material.map.image, g = im.getContext('2d'); got = [...g.getImageData(px, py, 1, 1).data].slice(0, 3); } }); return got; };
-    return { vnDash: at(mid('vn_north'), 31, 60), auKerb: at(mid('link_au'), 1, 60), auMid: at(mid('link_au'), 20, 60), vnMid: at(mid('vn_north'), 20, 60), vnKerb: at(mid('vn_north'), 0, 60) };
+    const at = ([x, z], px, py, width = 1, height = 1) => { let got = null; __sv.scene.traverse(o => { if (got || !o.userData.road || !o.material || !o.material.map) return; o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox;
+      if (x > bb.min.x && x < bb.max.x && z > bb.min.z && z < bb.max.z) { const im = o.material.map.image, g = im.getContext('2d'); const data = g.getImageData(px, py, width, height).data, sum = [0,0,0]; for(let i=0;i<data.length;i+=4)for(let k=0;k<3;k++)sum[k]+=data[i+k]; got=sum.map(v=>v/(width*height)); } }); return got; };
+    return { vnDash: at(mid('vn_north'), 31, 60), auKerb: at(mid('link_au'), 1, 60), auMid: at(mid('link_au'), 10, 0, 14, 256), vnMid: at(mid('vn_north'), 10, 0, 14, 256), vnKerb: at(mid('vn_north'), 0, 60) };
   });
   const errs = P.errors; await P.ctx.close();
   { const [r, g, bl] = mark.vnDash || [0, 0, 0]; ok(r > 200 && g > 150 && bl < 120, `Vietnam's road has no yellow centre dash: rgb ${mark.vnDash}`); }
@@ -4623,9 +4648,9 @@ await check('secondset', async () => {
 });
 
 await check('rollout', async () => {
-  // (batch rollout, owner 13 Oct AEDT; docs/cores/FEATURES.md "Batch calendar") every new Studio switch: off (or not started
-  // yet) hides its feature from a child who never used it, keeps it for a child who did (profile.tried), and brings it back
-  // when switched on; a release starting today shows the New! card; a tester device sees a batch 7 days early
+  // the owner-approved explicit-off policy: explicit Off wins over remembered usage. Future scheduling can retain
+  // access without deleting progress; On restores access. Keep actual feature probes,
+  // old-save migration, New cards and tester early-schedule checks.
   const out = [];
   const P = await open(b, { w: 1024, h: 700, schedule: true }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
@@ -4680,17 +4705,22 @@ await check('rollout', async () => {
         C.CUSTOM.releases.wayfind = {on:true,controlVersion:1}; const explicitOn = !!(await probe());
         C.CUSTOM.releases.wayfind = {on:false,controlVersion:1}; const explicitOff = !(await probe());
         if(previous) C.CUSTOM.releases.wayfind=previous; else delete C.CUSTOM.releases.wayfind;
-        res[id]={hidden:defaultHidden && legacyHidden && oldRuleHidden && explicitOff,kept:explicitOff,back:explicitOn};continue;
+        res[id]={hidden:defaultHidden && legacyHidden && oldRuleHidden && explicitOff,offAfterUse:explicitOff,back:explicitOn};continue;
       }
       delete p.tried; F[id] = false; const hidden = !(await probe());
-      C.markTried(p, id); const kept = !!(await probe());
+      C.markTried(p, id); const offAfterUse = !(await probe());
+      const history = JSON.stringify(p.tried), progressPreserved = C.hasTried(p,id);
+      C.CUSTOM.releases[id] = {on:true,start:'2099-01-01'};
+      const retainedDuringSchedule = !!(await probe());
+      const stillPreserved = JSON.stringify(p.tried) === history;
+      delete C.CUSTOM.releases[id];
       delete p.tried; F[id] = true; const back = !!(await probe());
-      res[id] = { hidden, kept, back };
+      res[id] = { hidden, offAfterUse, back, progressPreserved, retainedDuringSchedule, stillPreserved };
     }
-    for (const [id, probe] of Object.entries(scenery)) { F[id] = false; const hidden = !(await probe()); F[id] = true; const back = !!(await probe()); res[id] = { hidden, kept: true, back }; }
+    for (const [id, probe] of Object.entries(scenery)) { F[id] = false; const hidden = !(await probe()); F[id] = true; const back = !!(await probe()); res[id] = { hidden, offAfterUse: true, back }; }
     C.CUSTOM.releases = shipped;
     const sched = Object.entries(shipped).filter(([, r]) => r && r.start).map(([id, r]) => ({ id, before: C.releaseOn(id, true, new Date(new Date(r.start + 'T00:00:00').getTime() - 864e5)), on: C.releaseOn(id, true, new Date(r.start + 'T12:00:00')) }));
-    res.schedule = { hidden: sched.length >= 20 && sched.every(x => !x.before), kept: true, back: sched.every(x => x.on), n: sched.length };
+    res.schedule = { hidden: sched.length >= 20 && sched.every(x => !x.before), offAfterUse: true, back: sched.every(x => x.on), n: sched.length };
     // every new switch is in Studio's list, starts on, and says what it is in both languages
     const { RELEASES } = await import('/js/content/releases.js');
     const missing = Object.keys(probes).concat(Object.keys(scenery)).filter(id => { const x = RELEASES.find(r => r.id === id); return !x || x.def !== (id !== 'wayfind') || !x.en || !x.vi || x.en === x.vi; });
@@ -4702,7 +4732,7 @@ await check('rollout', async () => {
     const live = JSON.parse(localStorage.getItem('sv2_live') || '{}');
     return { res, missing, fromSave, day3: day(3), day9: day(9), live: !!live };
   });
-  for (const [id, x] of Object.entries(r.res)) if (!x.hidden || !x.kept || !x.back) out.push(id + ' ' + JSON.stringify(x));
+  for (const [id, x] of Object.entries(r.res)) if (!x.hidden || !x.offAfterUse || x.progressPreserved === false || x.retainedDuringSchedule === false || x.stillPreserved === false || !x.back) out.push(id + ' ' + JSON.stringify(x));
   if (r.missing.length) out.push('not in Studio\'s list as a switch that starts on: ' + r.missing.join(', '));
   if (!r.fromSave) out.push('an old save did not count as used');
   if (P.errors.length) out.push(P.errors.join(' '));
@@ -4725,7 +4755,14 @@ await check('rollout', async () => {
   if (Q.errors.length) out.push(Q.errors.join(' '));
   await Q.ctx.close();
   ok(!out.length, out.join(' | '));
-  return `${Object.keys(r.res).length} switches: off hides each from a child who never used it, a child who used it keeps it, on brings it back; an old save counts; the New! card on the start day; testers 7 days early`;
+  if (process.env.STUDIO_CONTROL_REVIEW_DIR) {
+    const folder = process.env.STUDIO_CONTROL_REVIEW_DIR;
+    fs.mkdirSync(folder, { recursive: true });
+    fs.writeFileSync(folder + '/rollout-evidence.json', JSON.stringify({ passed: true, features: r.res,
+      missingDeclarations: r.missing, oldSaveUsagePreserved: r.fromSave, scheduleAndTester: n,
+      scope: 'Actual game consumer probes with synthetic profiles; not physical-device or all-control certification' }, null, 2) + '\n');
+  }
+  return `${Object.keys(r.res).length} switches: explicit off hides each before and after use, progress stays intact, future schedules retain used access, on brings it back; an old save counts; the New! card on the start day; testers 7 days early`;
 });
 await check('questbar', async () => {
   // (Round V, owner 13 Oct, iPhone notes) a tap on the quest folds it to a small chip and hides the yellow arrow and the
@@ -5128,9 +5165,16 @@ await check('netgames', async () => {
   await B.page.waitForFunction(() => Object.keys(__sv.partners).length > 0, null, { timeout: 45000 });
   await A.page.waitForFunction(() => Object.keys(__Net.remotes).length > 0, null, { timeout: 30000 });
   for (const P of [A, B]) await P.page.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; });
+  const waitInvitation=async stage=>{
+    try{await B.page.waitForSelector('.dialog .dch',{timeout:20000});}
+    catch(error){
+      const peers=await Promise.all([A,B].map(async P=>P.page.evaluate(async()=>({session:__sv.netGames.session?{game:__sv.netGames.session.game,mine:__sv.netGames.session.mine,seats:__sv.netGames.session.seats.length}:null,frameOpen:(await import('/js/games/frame.js')).gameOpen(),visibleFrame:!!document.querySelector('.gl'),dialogs:document.querySelectorAll('.dialog').length,remotes:Object.keys(__Net.remotes).length,room:!!__Net.room}))));
+      throw Error(stage+' invitation was not visible: '+JSON.stringify(peers)+'; '+error.message);
+    }
+  };
   // Caro: A asks from the Friends tab, B says yes
   await A.page.evaluate(async () => { __sv.openPad(0, 'friend'); await new Promise(r => setTimeout(r, 500)); document.querySelector('[data-caro]').click(); await new Promise(r => setTimeout(r, 400)); document.querySelector('.gamelevel [data-size="3"]').click(); document.querySelector('.gamelevel [data-lvl="1"]').click(); });
-  await B.page.waitForSelector('.dialog .dch', { timeout: 20000 }); const ask = await B.page.evaluate(() => document.querySelector('.dialog .dtext').textContent); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
+  await waitInvitation('Caro'); const ask = await B.page.evaluate(() => document.querySelector('.dialog .dtext').textContent); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
   for (const P of [A, B]) { await P.page.waitForSelector('.gl .caro', { timeout: 20000 }); ok(await P.page.locator('.caro-c').count() === 9, 'Selected 3 × 3 board must reach both players'); }
   // (a placed piece is marked .put: its emoji is swapped for a drawing, so the text is empty)
   const tap = async (P, i) => { await P.page.waitForFunction(i => { const c = document.querySelectorAll('.caro-c')[i]; return c && !c.classList.contains('put'); }, i); await P.page.evaluate(i => document.querySelectorAll('.caro-c')[i].click(), i); };
@@ -5143,10 +5187,17 @@ await check('netgames', async () => {
   for (const P of [A, B]) await P.page.waitForSelector('.gl-win', { timeout: 20000 });
   const caro = { a: await A.page.evaluate(() => document.querySelector('.gl-win p').textContent), b: await B.page.evaluate(() => document.querySelector('.gl-win p').textContent), wonCells: await B.page.evaluate(() => document.querySelectorAll('.caro-c.win').length) };
   ok(/Host Demo/.test(caro.a) && /Host Demo/.test(caro.b), 'Same assigned player must win on both boards: '+JSON.stringify(caro));
-  for (const P of [A, B]) { await P.page.evaluate(() => document.querySelector('.gl-tapout')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))); await P.page.waitForTimeout(800); await P.page.evaluate(() => { document.querySelectorAll('.gl, .modal').forEach(m => m.remove()); __sv.paused = false; }); }
+  // The celebration installs its outside-tap listener after400ms. Do not remove its DOM
+  // before the real frame/session resolves, or the next invitation can be rejected as busy.
+  for (const P of [A, B]) {
+    await P.page.waitForTimeout(500);
+    await P.page.evaluate(() => document.querySelector('.gl-tapout')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })));
+    await P.page.waitForFunction(async()=>!(await import('/js/games/frame.js')).gameOpen()&&!__sv.netGames.session,null,{timeout:10000});
+    await clear(P.page);
+  }
   // Oẳn tù tì with everyone: A rock, B scissors, three times
   await A.page.evaluate(async () => { __sv.openPad(0, 'friend'); await new Promise(r => setTimeout(r, 500)); document.querySelector('[data-rpsall]').click(); await new Promise(r => setTimeout(r, 400)); document.querySelector('.gamelevel [data-lvl="1"]')?.click(); });
-  await B.page.waitForSelector('.dialog .dch', { timeout: 20000 }); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
+  await waitInvitation('Oan tu ti'); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
   for (const P of [A, B]) await P.page.waitForSelector('.gl .rps-room', { timeout: 20000 });
   let hands = null;
   for (let round = 0; round < 3; round++) {
@@ -6430,6 +6481,12 @@ await check('ownerreportedphoneen', async () => {
 });
 await check('ownerreportedphonevi', async () => {
   return await ownerSmoke('owner-reported-screens.mjs', ['phone-vi']);
+});
+await check('reportcollision', async () => {
+  return await ownerSmoke('report-float-browser.mts', ['--collision-only']);
+});
+await check('reportfloating', async () => {
+  return await ownerSmoke('report-float-browser.mts');
 });
 await check('ownerautoplaynavigation', async () => {
   return await ownerSmoke('owner-autoplay-navigation.mjs');

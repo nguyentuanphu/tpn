@@ -1,0 +1,23 @@
+{
+  "observedAtSydney": "2026-10-29T16:01:22.258334+11:00",
+  "run": 40820891228,
+  "headSha": "e843a174aaee04d75774ce8206fa4e325368032f",
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40820891228",
+  "all": true,
+  "statusAtDispatch": "pending",
+  "completePassVerified": true,
+  "observation": "evidence/current-ci/observation.json",
+  "limitation": "Complete pass for e843a174 only, after two isolated retries. Not evidence for later recovery source; legacy unit exclusion remains documented.",
+  "status": "completed",
+  "conclusion": "success",
+  "checks": 253,
+  "shareArtifacts": 9,
+  "collector": "success",
+  "retriedChecks": [
+    "managementstudio",
+    "roadtone"
+  ],
+  "cleanFirstPass": false,
+  "sampleMarkers": [],
+  "suiteLevelSkips": []
+}

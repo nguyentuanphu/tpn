@@ -1,0 +1,10 @@
+[
+  {
+    "defaultAvoidsUnderlyingControl": true,
+    "decorativeLayersIgnored": true,
+    "reportRemainsReachable": true,
+    "userPositionPreserved": true,
+    "resetAvoidsControl": true,
+    "scrolledControlReachable": true
+  }
+]

@@ -1,0 +1,60 @@
+{
+  "scope": "Design concepts only; illustrative data; no application or backend changes",
+  "passed": true,
+  "results": [
+    {
+      "concept": "a",
+      "device": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "a-desktop.png",
+      "noHorizontalOverflow": true
+    },
+    {
+      "concept": "b",
+      "device": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "b-desktop.png",
+      "noHorizontalOverflow": true
+    },
+    {
+      "concept": "c",
+      "device": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "screenshot": "c-desktop.png",
+      "noHorizontalOverflow": true
+    },
+    {
+      "concept": "a",
+      "device": "phone",
+      "width": 390,
+      "height": 1000,
+      "screenshot": "a-phone.png",
+      "noHorizontalOverflow": true
+    },
+    {
+      "concept": "b",
+      "device": "phone",
+      "width": 390,
+      "height": 1000,
+      "screenshot": "b-phone.png",
+      "noHorizontalOverflow": true
+    },
+    {
+      "concept": "c",
+      "device": "phone",
+      "width": 390,
+      "height": 1000,
+      "screenshot": "c-phone.png",
+      "noHorizontalOverflow": true
+    }
+  ],
+  "errors": [],
+  "interactions": [
+    "concept switching",
+    "concept-only action notice",
+    "phone stage selection"
+  ]
+}

@@ -1,0 +1,1172 @@
+[
+  {
+    "view": "desktop",
+    "tab": "management",
+    "finished": true,
+    "title": "",
+    "heads": 19,
+    "loose": [],
+    "folds": 30,
+    "help": 189,
+    "toggled": {
+      "ok": 8,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementdevices",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 220,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementchildren",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 211,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementdevice",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 221,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementattention",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 225,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementactivities",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 302,
+    "help": 236,
+    "toggled": {
+      "ok": 300,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementactivity",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 208,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementrelease",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 222,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementoperations",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 12,
+    "help": 231,
+    "toggled": {
+      "ok": 10,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementfinance",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 2,
+    "help": 276,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "managementchanges",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 247,
+    "toggled": {
+      "ok": 2,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "home",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 135,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "message",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 255,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "missions",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 300,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "children",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 166,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "album",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 296,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "quiz",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 265,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "stories",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 237,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "villagers",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 334,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "familycode",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 2,
+    "help": 225,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "releases",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 11,
+    "help": 211,
+    "toggled": {
+      "ok": 10,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "lab",
+    "finished": true,
+    "title": "",
+    "heads": 4,
+    "loose": [],
+    "folds": 14,
+    "help": 226,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "looks",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 4,
+    "help": 277,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "plots",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 4,
+    "help": 236,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "festivals",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 4,
+    "help": 267,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "path",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 14,
+    "help": 313,
+    "toggled": {
+      "ok": 13,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "music",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 340,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "map",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 2,
+    "help": 386,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "photos",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 313,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "play",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 332,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "voices",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 210,
+    "toggled": {
+      "ok": 2,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "ads",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 256,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "players",
+    "finished": true,
+    "title": "",
+    "heads": 17,
+    "loose": [],
+    "folds": 11,
+    "help": 175,
+    "toggled": {
+      "ok": 4,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "testers",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 2,
+    "help": 208,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "publish",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 4,
+    "help": 223,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "site",
+    "finished": true,
+    "title": "",
+    "heads": 2,
+    "loose": [],
+    "folds": 3,
+    "help": 176,
+    "toggled": {
+      "ok": 2,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "check",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 94,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "settings",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 197,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "admins",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 184,
+    "toggled": {
+      "ok": 2,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "security",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 5,
+    "help": 181,
+    "toggled": {
+      "ok": 4,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "tab": "accesslog",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 137,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "desktop",
+    "persistence": {
+      "fold": "The lantern story6 of 6 on\n      All onA",
+      "closedAfterReload": true
+    }
+  },
+  {
+    "view": "desktop",
+    "errors": []
+  },
+  {
+    "view": "phone",
+    "tab": "management",
+    "finished": true,
+    "title": "",
+    "heads": 19,
+    "loose": [],
+    "folds": 30,
+    "help": 189,
+    "toggled": {
+      "ok": 8,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementdevices",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 220,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementchildren",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 211,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementdevice",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 221,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementattention",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 225,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementactivities",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 302,
+    "help": 236,
+    "toggled": {
+      "ok": 300,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementactivity",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 208,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementrelease",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 222,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementoperations",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 12,
+    "help": 231,
+    "toggled": {
+      "ok": 10,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementfinance",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 2,
+    "help": 276,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "managementchanges",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 247,
+    "toggled": {
+      "ok": 2,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "home",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 135,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "message",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 255,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "missions",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 300,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "children",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 166,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "album",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 296,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "quiz",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 265,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "stories",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 237,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "villagers",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 334,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "familycode",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 2,
+    "help": 225,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "releases",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 11,
+    "help": 211,
+    "toggled": {
+      "ok": 10,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "lab",
+    "finished": true,
+    "title": "",
+    "heads": 4,
+    "loose": [],
+    "folds": 14,
+    "help": 226,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "looks",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 4,
+    "help": 277,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "plots",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 4,
+    "help": 236,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "festivals",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 4,
+    "help": 267,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "path",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 14,
+    "help": 313,
+    "toggled": {
+      "ok": 13,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "music",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 340,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "map",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 2,
+    "help": 386,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "photos",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 313,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "play",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 332,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "voices",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 210,
+    "toggled": {
+      "ok": 2,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "ads",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 256,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "players",
+    "finished": true,
+    "title": "",
+    "heads": 17,
+    "loose": [],
+    "folds": 11,
+    "help": 175,
+    "toggled": {
+      "ok": 4,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "testers",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 2,
+    "help": 208,
+    "toggled": {
+      "ok": 1,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "publish",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 4,
+    "help": 223,
+    "toggled": {
+      "ok": 3,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "site",
+    "finished": true,
+    "title": "",
+    "heads": 2,
+    "loose": [],
+    "folds": 3,
+    "help": 176,
+    "toggled": {
+      "ok": 2,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "check",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 94,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "settings",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 197,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "admins",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 3,
+    "help": 184,
+    "toggled": {
+      "ok": 2,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "security",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 5,
+    "help": 181,
+    "toggled": {
+      "ok": 4,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "tab": "accesslog",
+    "finished": true,
+    "title": "",
+    "heads": 0,
+    "loose": [],
+    "folds": 1,
+    "help": 137,
+    "toggled": {
+      "ok": 0,
+      "stuck": []
+    }
+  },
+  {
+    "view": "phone",
+    "persistence": {
+      "fold": "The lantern story6 of 6 on\n      All onA",
+      "closedAfterReload": true
+    }
+  },
+  {
+    "view": "phone",
+    "errors": []
+  }
+]

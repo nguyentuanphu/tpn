@@ -7,6 +7,8 @@ export type Difficulty = 'easy' | 'medium' | 'hard';
 
 /** a child's profile (one per child on this device), as js/state.ts normalizeProfile makes every saved one */
 export interface Profile {
+  /** Existing local unlock/progress fields; item availability never changes these. */
+  admin?: boolean; unlockAll?: boolean; wins?: Record<string,number>; taleReads?: Record<string,number>; tales?: Record<string,boolean>;
   id: string; name: string; photo: string | null; age: Age; difficulty: Difficulty; gameDiff?: Record<string, Difficulty>;
   look: Record<string, any>; created: number; levels?: Record<string, number>; pos?: any; screen?: 'simple' | 'valley';
   /** the backpack: item id → how many */

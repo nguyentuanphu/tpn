@@ -1,0 +1,487 @@
+{
+  "provenance": {
+    "sourceHead": "34b614d29a6aa0e3f8432344278ec46ed6965a04",
+    "capturedAt": "2026-10-29T04:47:22.523Z",
+    "timezone": "Australia/Sydney",
+    "synthetic": true,
+    "browser": "141.0.7390.37",
+    "screenshotOptions": {
+      "animations": "disabled"
+    },
+    "sourceFiles": {
+      "voices/manifest-en.json": "533891e93249c89ab5b0853752ce09d665a1f30190a47ede1eea8d101d785ba2",
+      "voices/manifest-vi.json": "037aab530809f50583874de4a668d430ce77fb8cb09ab3a2af6754c39744de6b",
+      "js/voicepack.ts": "4b2ccdf60cc3e3d043c99f63fe081c789c4b14540ac24ed2ac616ae0b962d1dd",
+      "js/packhash.ts": "881eb77862278ec8eadfae8aec231a643309dc6438c1df41404cb6679258351a"
+    }
+  },
+  "decoded": 76,
+  "results": [
+    {
+      "url": "voices/en/f/8acefeea41ca4f6b.mp3",
+      "duration": 3.7439909297052156,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/8acefeea41ca4f6b.mp3",
+      "duration": 3.06,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/dceaf06c-3b37654d.mp3",
+      "duration": 3.3479818594104307,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/dceaf06c-3b37654d.mp3",
+      "duration": 3.3839909297052153,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/b10f399f5e47ffc6.mp3",
+      "duration": 4.535986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/b10f399f5e47ffc6.mp3",
+      "duration": 4.32,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/3e2d9a930c2c2d49.mp3",
+      "duration": 3.7439909297052156,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/3e2d9a930c2c2d49.mp3",
+      "duration": 3.78,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/7fa7af26-13d65030.mp3",
+      "duration": 3.671995464852608,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/7fa7af26-13d65030.mp3",
+      "duration": 3.131995464852608,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/39c9c6697518038e.mp3",
+      "duration": 4.031995464852607,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/39c9c6697518038e.mp3",
+      "duration": 3.96,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/3cdc0d773d64e2a1.mp3",
+      "duration": 4.247981859410431,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/3cdc0d773d64e2a1.mp3",
+      "duration": 4.0679818594104304,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/5757d0875bd761ac.mp3",
+      "duration": 3.6359863945578232,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/5757d0875bd761ac.mp3",
+      "duration": 3.3839909297052153,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/df86b5ce7f261f44.mp3",
+      "duration": 3.06,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/df86b5ce7f261f44.mp3",
+      "duration": 2.447981859410431,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/56d4cf2535da4edc.mp3",
+      "duration": 3.5639909297052155,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/56d4cf2535da4edc.mp3",
+      "duration": 3.455986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/f508b2f4-3ebd0eb0.mp3",
+      "duration": 4.14,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/f508b2f4-3ebd0eb0.mp3",
+      "duration": 3.4919954648526077,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/db92abc96596e591.mp3",
+      "duration": 3.3119954648526075,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/db92abc96596e591.mp3",
+      "duration": 3.275986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/fea8fb3572da18d6.mp3",
+      "duration": 4.14,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/fea8fb3572da18d6.mp3",
+      "duration": 3.3119954648526075,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/e6fa1bd6-2978bc18.mp3",
+      "duration": 3.96,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/e6fa1bd6-2978bc18.mp3",
+      "duration": 3.815986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/29f08430-66ec3ca0.mp3",
+      "duration": 3.6,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/29f08430-66ec3ca0.mp3",
+      "duration": 3.167981859410431,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/e2ea72c07d1cd8bd.mp3",
+      "duration": 3.78,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/e2ea72c07d1cd8bd.mp3",
+      "duration": 3.671995464852608,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/578e7097-47484b81.mp3",
+      "duration": 3.815986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/578e7097-47484b81.mp3",
+      "duration": 3.131995464852608,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/5a9b74990-260d16.mp3",
+      "duration": 3.78,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/5a9b74990-260d16.mp3",
+      "duration": 3.78,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/81208cf3-3a0aca6d.mp3",
+      "duration": 4.715986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/81208cf3-3a0aca6d.mp3",
+      "duration": 3.7439909297052156,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/41b9824d50a729cb.mp3",
+      "duration": 4.031995464852607,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/41b9824d50a729cb.mp3",
+      "duration": 3.8519954648526076,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/97e7f18f3c76d40a.mp3",
+      "duration": 3.6359863945578232,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/97e7f18f3c76d40a.mp3",
+      "duration": 2.987981859410431,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/31233cce-486a7fc2.mp3",
+      "duration": 3.6,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/31233cce-486a7fc2.mp3",
+      "duration": 3.6,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/6116f4147674e62e.mp3",
+      "duration": 4.427981859410431,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/6116f4147674e62e.mp3",
+      "duration": 3.96,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/3c07f2dc-43ead684.mp3",
+      "duration": 3.5639909297052155,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/3c07f2dc-43ead684.mp3",
+      "duration": 3.527981859410431,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/3bcfe3f8088e9c05.mp3",
+      "duration": 4.427981859410431,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/3bcfe3f8088e9c05.mp3",
+      "duration": 3.671995464852608,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/be49752a5f19699a.mp3",
+      "duration": 3.3839909297052153,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/be49752a5f19699a.mp3",
+      "duration": 3.3839909297052153,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/dd19906238f0bd85.mp3",
+      "duration": 4.175986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/dd19906238f0bd85.mp3",
+      "duration": 3.6,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/1e2b5ad9-52c8a216.mp3",
+      "duration": 3.96,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/1e2b5ad9-52c8a216.mp3",
+      "duration": 3.9239909297052153,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/c1410b4a-c045480.mp3",
+      "duration": 4.391995464852608,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/c1410b4a-c045480.mp3",
+      "duration": 3.527981859410431,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/79dcb4a20679f102.mp3",
+      "duration": 3.5639909297052155,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/79dcb4a20679f102.mp3",
+      "duration": 3.6359863945578232,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/05758a4551973cbe.mp3",
+      "duration": 3.527981859410431,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/05758a4551973cbe.mp3",
+      "duration": 2.8439909297052153,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/c22d6881-1c59f653.mp3",
+      "duration": 3.815986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/c22d6881-1c59f653.mp3",
+      "duration": 3.8519954648526076,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/29e67f6b-a845d10.mp3",
+      "duration": 4.535986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/29e67f6b-a845d10.mp3",
+      "duration": 4.0679818594104304,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/a11253fa430263a7.mp3",
+      "duration": 3.671995464852608,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/a11253fa430263a7.mp3",
+      "duration": 3.6,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/2a57829e359301ce.mp3",
+      "duration": 3.6359863945578232,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/2a57829e359301ce.mp3",
+      "duration": 3.095986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/aa21d9bf-22994aaf.mp3",
+      "duration": 3.3119954648526075,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/aa21d9bf-22994aaf.mp3",
+      "duration": 3.275986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/f/5d64a957-17e81351.mp3",
+      "duration": 4.535986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/en/m/5d64a957-17e81351.mp3",
+      "duration": 3.815986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/f/a42ffb3e-3825db36.mp3",
+      "duration": 3.995986394557823,
+      "sampleRate": 44100
+    },
+    {
+      "url": "voices/vi/m/a42ffb3e-3825db36.mp3",
+      "duration": 3.8879818594104307,
+      "sampleRate": 44100
+    }
+  ],
+  "missingLines": [
+    {
+      "id": "stamps",
+      "lang": "en",
+      "text": "Choose a colour, then tap to stamp circles!",
+      "hash": "f79ba8bc-3fb903bc",
+      "recorded": false
+    },
+    {
+      "id": "stamps",
+      "lang": "vi",
+      "text": "Chọn màu rồi chạm để in hình tròn nhé!",
+      "hash": "79586c280f479c4e",
+      "recorded": false
+    },
+    {
+      "id": "scene",
+      "lang": "en",
+      "text": "Choose a colour and tap to add triangle stickers to your countryside!",
+      "hash": "50d8a35a-759fad8c",
+      "recorded": false
+    },
+    {
+      "id": "scene",
+      "lang": "vi",
+      "text": "Chọn màu rồi chạm để dán hình tam giác vào phong cảnh nhé!",
+      "hash": "8a2c2827-54cc3622",
+      "recorded": false
+    },
+    {
+      "id": "bubblepaint",
+      "lang": "en",
+      "text": "Choose a colour and tap to paint bubble rings!",
+      "hash": "de817879-c591d93",
+      "recorded": false
+    },
+    {
+      "id": "bubblepaint",
+      "lang": "vi",
+      "text": "Chọn màu rồi chạm để vẽ vòng bong bóng nhé!",
+      "hash": "7478f58b-3078a93b",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "en",
+      "text": "Look at your picture and choose where to start.",
+      "hash": "31e49571-14667e9d",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "vi",
+      "text": "Nhìn bức tranh và chọn chỗ bắt đầu.",
+      "hash": "d62b5431-4c33e8f3",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "en",
+      "text": "Paint with your finger or mouse. With a keyboard, use arrows and Space.",
+      "hash": "7e6ee594181044bd",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "vi",
+      "text": "Vẽ bằng ngón tay hoặc chuột. Với bàn phím, dùng mũi tên và phím cách.",
+      "hash": "05ad9ea9-1923b72b",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "en",
+      "text": "Make twelve marks, then choose Keep in Album. Leaving early does not save a picture.",
+      "hash": "a9f277cf4365f54f",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "vi",
+      "text": "Tô mười hai nét rồi chọn Lưu vào Album. Thoát sớm không lưu tranh.",
+      "hash": "5d0348da57d3e15c",
+      "recorded": false
+    }
+  ]
+}

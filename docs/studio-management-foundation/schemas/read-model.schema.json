@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sparkle-valley:management:read-model:v1",
+  "title": "PROPOSED Studio summary response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "generatedAt", "sourceAsOf", "period", "scope", "metrics", "quality", "nextCursor"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "sourceAsOf": {"type": ["string", "null"], "format": "date-time"},
+    "period": {"type": "object", "additionalProperties": false, "required": ["from", "to", "basis"], "properties": {"from": {"type": "string", "format": "date"}, "to": {"type": "string", "format": "date"}, "basis": {"enum": ["legacy-device-day", "UTC", "Australia/Sydney"]}}},
+    "scope": {"type": "object", "additionalProperties": false, "required": ["traffic", "build", "deviceClass"], "properties": {"traffic": {"enum": ["ordinary", "authorised_test", "synthetic_bot"]}, "build": {"type": "string", "maxLength": 24}, "deviceClass": {"enum": ["all", "phone", "tablet", "computer"]}}},
+    "metrics": {"type": "array", "maxItems": 100, "items": {"type": "object", "additionalProperties": false, "required": ["id", "value", "unit", "status", "sampleCount"], "properties": {"id": {"type": "string", "pattern": "^M[0-9]{2}$"}, "value": {"type": ["number", "null"]}, "unit": {"type": "string", "maxLength": 48}, "status": {"enum": ["observed", "estimated", "unavailable", "insufficient"]}, "sampleCount": {"type": "integer", "minimum": 0}}, "allOf": [{"if": {"properties": {"status": {"enum": ["unavailable", "insufficient"]}}}, "then": {"properties": {"value": {"type": "null"}}}}]}},
+    "quality": {"type": "array", "maxItems": 20, "uniqueItems": true, "items": {"type": "string", "maxLength": 80}},
+    "nextCursor": {"type": ["string", "null"], "maxLength": 1024}
+  }
+}

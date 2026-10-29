@@ -1,0 +1,13 @@
+# Continue workstream A
+
+Work alone on review/studio-finance-20261027. Read CLAUDE.md, HANDOFF.md, latest docs/cores/BOARD.md and release.md, the two-chat ownership plan, this README, CONTROL-JOURNEYS, ITEM-FIELDS and VALIDATION. Preserve B's concrete game/content/website files. No main/deploy/version/payment/provisioning/live SQL migration/private-save deletion is authorised.
+
+This slice adds Studio-only recovery and configuration/receipt links to item-workspace.ts and functions.ts with shared control-feedback.ts. On read failure, Retry loading is available. On failed writes/reads of saved proposals, preserve visible edits, block Save/Review/Publish until a workspace reload, give specific bilingual recovery guidance and never assume a lost response rolled back publication. Selecting another saved draft must not clear the block. This is UI recovery; server grants/revision/hash checks remain authoritative. No auto-rebase, extra polling, telemetry or migration.
+
+Prior exact runtime e843a174 full all=true run40820891228 completed success253/253 and all9shares/collector. Two checks required isolated retries: managementstudio first failed progressPreserved, roadtone first failed the single-pixel regional asphalt difference. Do not call this a clean first-pass suite or infer later source is green. The live-world profile includes position/play state which may change independently; investigate before changing its whole-profile assertion. Road textures contain random speckles; the existing test samples a single asphalt pixel. Both causes need evidence, not assertions waived by retry success.
+
+Next: inspect the exact CI for this new runtime; finish recovery coverage for the advanced JSON editor and other operation forms, delivery detail and stale-data journeys; implement remaining business views and optional families only after producer/consumer audit; measure comparable game/resource effects; validate the existing Netlify Database binding, grants, recovery/retention/deletion in preview; review the combined B game/website source and physical devices. Keep old packages frozen and upload new Markdown/PNG evidence for iPhone review.
+
+Final visual follow-up moves the advanced JSON editor below configuration receipt graph/history. Actual phone navigation asserts that evidence precedes the form. Run40829807143 on6450144f was started before this ordering follow-up and will be superseded; final source/run are recorded in CI.json.
+
+Latest runtime source: 47782b13f08e67e8647d41614a52f4f0714cc195. Exact-source all=true run40830113190. Read CI.json and its actual observation before reporting success.

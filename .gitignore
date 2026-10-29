@@ -69,6 +69,7 @@ marketing/source/runvalley.log
 /js/core/events.js
 /js/core/geo.js
 /js/core/ids.js
+/js/core/reporting-policy.js
 /js/core/rng.js
 /js/custom.js
 /js/extras.js
@@ -84,6 +85,8 @@ marketing/source/runvalley.log
 /js/games/animals2.js
 /js/games/arcade-board.js
 /js/games/arcade-session.js
+/js/games/art-pad.js
+/js/games/art-pending.js
 /js/games/asia.js
 /js/games/bigthinkers.js
 /js/games/bigthinkers2.js
@@ -177,6 +180,7 @@ marketing/source/runvalley.log
 /js/learn.js
 /js/lotus.js
 /js/main.js
+/js/management-telemetry.js
 /js/mictest.js
 /js/myhouse.js
 /js/net.js
@@ -209,6 +213,7 @@ marketing/source/runvalley.log
 /js/symbols.js
 /js/tale-loader.js
 /js/tales-content.js
+/js/tales.js
 /js/talesdata.js
 /js/tester-detection.js
 /js/tester-float.js
@@ -229,6 +234,14 @@ marketing/source/runvalley.log
 /js/world.js
 /js/worldedit.js
 /studio/ui/app.js
+/studio/ui/brand.js
+/studio/ui/control-feedback.js
+/studio/ui/desk-charts.js
+/studio/ui/finance.js
+/studio/ui/functions.js
+/studio/ui/item-workspace.js
+/studio/ui/management.js
+/studio/ui/owner-desk.js
 /sw.js
 # --- end of tools/build.mts ---
 # --- made by tools/build.mts from .ts files (never committed; do not edit by hand) ---

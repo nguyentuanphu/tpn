@@ -1,0 +1,4 @@
+waiting for server to start.... done
+server started
+PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+Local synthetic PostgreSQL is ready. No external provider was provisioned.

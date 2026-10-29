@@ -1,3 +1,45 @@
+## Combined Studio handoff — 29 October 2026 AEDT
+
+**Current branch: `handoff/studio-combined-20261029`. Ready for the next integration chat, not production release.** Both source histories and all original plans are included: A47782b13/fa917a06 plus B47a9079e/c930f461, merge125a5492; reconciled implementation80ca4f94, combined facts/source**eaa32d9b**. [Single start page](../../STUDIO-START-HERE.md), [current handbook](../studio-combined-handoff-20261029/README.md), [full remaining-work register](../studio-combined-handoff-20261029/WORK-REGISTER.md), [takeover prompt](../studio-combined-handoff-20261029/NEXT-CHAT.md). Earlier status paragraphs below are historical.
+
+- **Completed in consolidation:** cache union, exact4pending-ID fixtures, valid synthetic live-store adapters, advanced-editor uncertain-write recovery, diagnosed welcome-sticker fixture isolation, averaged asphalt check without reducing its threshold, exact readable Money graph labels, local off/on observations and fresh public source exports.438units;702recovery assertions;58Studio views;229game/92story Off probes;228eligible game opens;110art completions plus paired/layout/main-progress evidence; six folk games both ages; accessibility/offline/website checks pass. See validation for initial failures and corrections.
+- **Cannot complete with current environment:**12guidance recordings (no authorised speech key; voicecover remains failed); existing Netlify Database binding/preview grants/restore/retention/deletion (no secure binding; read-only preflight exit2); real provider/invoice evidence; physical iPhone/Android/tablet/Windows and audible listening. No credentials were read or copied, and no paid substitute was provisioned.
+- **Open content decision:**rongran has no distinct resolved intent; do not alias to dragon. spotdiff/hiddenpic/paperfold remain unfinished mechanics and declared-only. B handed off these gaps explicitly; completion of its handoff did not mean those games were finished.
+- **Remaining integration/development:** global combined website/art/source review (lock intentionally unchanged;28source deltas flagged); exact-current-source full CI and source-matched maps; other optional function families; richer People/marketing/Work/Money,19remaining graph concepts/Home second graph, all-domain entity/control audit, targeting and other-form recovery. All24tasks and pass conditions are in WORK-REGISTER.json.
+- **CI:** new all=true [40845340310](https://github.com/nguyentuanphu/tpn/actions/runs/40845340310) targetseaa32d9b2ace117470e85ca6d712f1e033248ed5; queued/running, no full pass claim. Old B259-check run failed6checks; old A253-check success required2isolated retries; those records are preserved, not treated as current-source proof. Current voicecover still fails12missing lines; no assertions skipped/removed.
+
+Latest evidence: A recovery run40830113190 completed252/253with managementstudio still failed on retry. The local welcome-sticker reproduction/correction is recorded; no old failure waived. Combined run40845340310 has passed its22real PostgreSQL cases; browser/collector still incomplete.
+
+No main/deploy/version/payment/provisioning/production migration/private-save mutation. Next chat should use the combined branch, not restart from main, old split branches or frozen ZIPs.
+
+## Studio control recovery — 29 October 2026 AEDT
+
+Workstream A runtime **47782b13** (recovery base6450144f) adds bilingual recovery to item/function editors: unavailable-read retry, specific conflict/expiry/access/uncertain-result guidance, retained visible edits and write locking until a fresh workspace read. Both link to real configuration/receipt history; that view now presents evidence before the advanced JSON editor. [Handbook, field connections and handoff](../studio-control-recovery-20261029/README.md). Local focused5/5 then3/3 pass,434units;564recovery assertions across6EN/VI/device configurations,58authenticated views, final ownerdesk/managementstudio/types3/3. Earlier exact-source e843a174 [40820891228](https://github.com/nguyentuanphu/tpn/actions/runs/40820891228) completed253/253 with22real SQL cases but managementstudio/roadtone needed isolated retries; not a clean first pass. New all=true [40830113190](https://github.com/nguyentuanphu/tpn/actions/runs/40830113190) is pending/running. Advanced-editor recovery, broader business views/optional families, Netlify binding/lifecycle, physical devices and B integration remain. No new game module/telemetry/polling/SQL migration, main/deploy/version/payment action. B ownership remains unchanged.
+
+## Studio reporting controls — 29 October 2026 AEDT
+
+Workstream A runtime **e843a174** (function base113a0e5b) implements the first actual **Collect / Process / Show** family in Settings, using private Save/Review/Publish, expiry, server ingestion protection, parent opt-out precedence and a compact Home status. [Current handbook, screenshots and exact connections](../studio-functions-20261029/README.md). Local434unit passes,22real PostgreSQL cases,54EN/VI views at3sizes, actual207game/92story Off boundary probes; final managementstudio/preload/netgames/types4/4 pass. The reading regression is sampled; interrupted local exhaustive film work is not a pass. Old item CI had3failures including retries; corrected fixtures and online cleanup pass locally. New exact-source all=true [40820891228](https://github.com/nguyentuanphu/tpn/actions/runs/40820891228) is pending/running, not a verified full pass. See CI.json and VALIDATION.md before reporting results. Other optional families, broader business views, live Netlify binding/lifecycle, physical devices and combined B integration remain; no deploy/main/version/payment/production migration. B ownership is unchanged.
+
+## Two-chat Studio work split —29October2026AEDT
+
+Owner requested two workstreams. A stays on review/studio-finance-20261027 and owns Studio/shared control boundaries, business views, SQL/delivery and final integration. B starts work/studio-content-website-20261029 from A's uploaded checkpoint and owns concrete content integrations,13-domain source inventory and website alignment. [Exact boundaries/prompt](../studio-item-workspaces-20261029/TWO-CHAT-PLAN.md). A implementation0409b5d9/catalogue9efa00f6: plain-language item proposals, item Off across shared starts,424units/types/arch/emoji pass; corrected ownerdesk48EN/VI views/3sizes and actual207game/92story Off boundary probes pass. Full current-source/physical-device/regression review still pending; no deploy/version/live migration. B must not overwrite A's runtime/API/editor files. [Status](../studio-item-workspaces-20261029/STATUS.md).
+
+## Studio private draft/review/publication — 29 October 2026 AEDT
+
+Owner asked to continue; working alone on `review/studio-finance-20261027`. Runtime **06483b71** implements private persisted drafts and immutable versions, exact baseline/draft revision/hash review, atomic global publication and grants, plus a resumable bilingual advanced editor. Save/Review has no public snapshot/game effect. Migration003 is additive and not applied to Netlify here. Final local6/6,418units,20actual PostgreSQL cases, phone10screens/3sizes and signed-in EN/VI draft flow pass. Initial browser history-count assertion error preserved and corrected; no runtime failure waived. [Current handbook](../studio-drafts-20261029/README.md) and [validation](../studio-drafts-20261029/VALIDATION.md). Latest exact-source exhaustive CI remains pending; inspect CI.json rather than infer full green. Contextual plain-language item editor and full Collect/Process/Show panel remain next. Existing Netlify Database selected/unbound locally. No main/deploy/version/payment/provisioning/live-migration/private-save change.
+
+## Studio control continuation — 29 October 2026 AEDT
+
+Owner explicitly requested continued work; implementation continues alone on review/studio-finance-20261027 under existing authority. Runtime **d15b6af4** includes shared explicit-Off precedence, preserved usage/progress and scheduled retention, plus honest declared-only Studio content records and pending-filter/Back/detail clarity.27actual switch probes,411unit passes, corrected8/8, layout/reading5/5 (SAMPLE), final5/5 and clean-export1/1 passed. No tests weakened; an obsolete retention expectation was replaced under the later explicit-Off policy and extended with progress/scheduling checks. [Current handbook/evidence](../studio-control-continuation-20261029/README.md). All=true40789704114 now verifies this exact source;17real SQL cases pass, complete browser/collector result pending. Home-only40784169211 was superseded/cancelled after132available passes, remaining unknown. Existing Netlify Database remains selected/unbound locally. No main merge, deploy, version, payment, provisioning or private-save mutation. Continue full planned suite; this is an implementation checkpoint, not a complete-product/release approval.
+
+## Studio revamp continuation — 29 October 2026 AEDT
+
+Owner requests continued implementation and a clear pending-work report; prior implementation authority persists. Work alone on review/studio-finance-20261027. [Progress and pending work](../studio-revamp-progress-20261029/README.md) records partial936-record source inventory/104rule audit, explicit-off retention caveats, actual Home implementation and bounded catalogue summary. Corrected focused3/3 then expanded6/6 pass (406units); final Studio/fold/permission/recovery6/6 pass (90page/device combinations,1004folds,784successful close/reopens). Exact-runtime17cb0c5c all=true run40784169211 is in progress;17SQL cases passed, full browser result pending. No new game collection, production database access, deployment/version/payment changes. Master artifacts remain a frozen delivered design snapshot; new evidence is in the progress folder.
+
+## Studio revamp handoff — 28 October 2026 AEDT
+
+Owner requests full consolidated artifacts and iPhone-viewable images for takeover. Work alone on review/studio-finance-20261027. [Master pack](../studio-revamp-master-20261027/README.md) records Home, all-domain controls, Marketing, resource switches, finance and numbered next tasks. Proposed controls remain proposals; no runtime/deployment change. Actual prior runtime35bcb63c run40500953581 now confirmed successful:253/253top-level checks,17real SQL cases, no retry records, all shares/collector inspected. See pack CI-RESULT.md for exact evidence and STATUS.md for unfinished implementation. Existing Netlify Database remains selected; binding and lifecycle validation still required.
+
 ## r90 / v1 — Front Desk Helper (24 Oct 2026 AEDT)
 - Branch: work/r90-more-content (184a5827)
 - Commit: feat(r90-stories): wire 54 tales into catalog, learn shelf, and unlock registry
@@ -11,6 +53,10 @@
 - Blocker: AZURE_SPEECH_KEY missing locally; narration lines queued for Release runner
 
 # Release core
+
+## Owner’s Desk approved implementation and one-hour handoff — 27 October 2026 AEDT
+
+The owner approved implementing the connected concept with actual game artwork/fonts/tokens, then explicitly requested one hour of work and a packaged/uploaded checkpoint with a next-chat prompt. This supersedes the earlier runtime pause. Work alone; keep existing Netlify Database. Runtime commits922c56c2 and35bcb63c implement the first connected slice; [current implementation and takeover](../studio-owner-desk-20261027/README.md). Corrected local Studio/management/browser/type tests pass,404 unit passes plus the existing legacy exclusion, and90 page/device fold combinations pass. Comprehensive all=true run40500953581 targets35bcb63c; final observed state is in the delivery record. No complete full-suite/deployment claim, new version, main merge, live SQL binding or paid activation. Code is frozen for packaging at the timebox.
 
 **You bring the cores' work together and hand it to the owner:** merge the core branches, run the full regression
 suite, bump the version, record new voices, update the docs, build the packages, report, and push and deploy only
@@ -51,6 +97,7 @@ round); the full suite green before a report; times in AEST; no keys or personal
 All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed` after every merge (it always includes `types unit arch rules`).
 
 ## Owner's decisions
+- 27 October 2026 AEDT, Studio implementation session: manage and implement the project; initially parallelise with subagents, then continue with one active agent. Collect children's first names alongside their reporting devices, preserving Analytics/reportNames opt-outs. Defer finance input. User asked for a PostgreSQL provider recommendation; Netlify Database is recommended, with no paid provisioning or production credential configured. Deployment/version approval remains separate. See [implementation](../studio-management-foundation/IMPLEMENTATION.md).
 
 - 27 October2026 AEDT: owner authorized parallel work on pending fixes. Helpers were assigned separate story, card-rule, goat, autoplay, street-spacing and voice files; Release collected partial changes when their usage stopped. All local browser/regression runs remain sequential. No new version/deployment approval.
 
@@ -279,6 +326,21 @@ Owner instructed Release to take over and finish, explicitly waiving the final Z
 
 Owner explicitly approved “Yes, deploy v1.01 after checks pass (Recommended)”; ZIP waived. Final release head ba118721 passed **233/233** in run 40126459616, with `roadtone` second try. All branch checks green before PR #506 was made ready and squash-merged as **aa728084**. Live `/sw.js`, `/js/build.js` and `/home` plus Netlify-domain service worker verified v1.01 at **7:41 am AEDT**; exact evidence in `docs/v1.01/live-verification.json`. Official code-map **c863b373** from that run committed on main with `[skip netlify]`. #499, #448 and #449 closed “Fixed in v1.01”; unrelated reports remain open. Studio online only. [Final report](../v1.01/RELEASE-REPORT.md) retains timing failures/baseline comparisons, physical-device limits, QR workflow and unfinished AI review.
 
+## Studio management implementation checkpoint · 27 October 2026 AEDT
+
+Branch `work`; v1.01 unchanged. Owner-directed private child/device reporting, source catalogue, PostgreSQL transactions, activity outbox, global revisioned configuration/projector/receipts, follow-up controls, scoped permissions and EN/VI UI are integrated. 267 unit tests and types passed; 11 real PostgreSQL integration cases passed; management browser flows passed at phone/tablet/computer sizes in EN/VI, including configuration save/public readback and follow-up editing. Broader Studio regression, phone, battery, performance and startup passed; rendering budgets remain over target and are recorded rather than waived. Full GitHub suite, physical devices, Windows execution, production provider binding, retention/restore work and additional outcome instrumentation remain open. No release version, main merge or deployment approved. [Implementation](../studio-management-foundation/IMPLEMENTATION.md) · [evidence](../studio-management-foundation/IMPLEMENTATION-VALIDATION.md).
+
+
+## Owner decisions — 27 October 2026 AEDT, Studio operations
+
+- Use Netlify Database for SQL, including its context-specific `NETLIFY_DB_URL`.
+- Continue with the primary agent alone after integrating the saved helper contribution.
+- Child first names remain linked to their reporting devices; finance input is deferred.
+- No version change, push, production migration or deployment is authorised by this implementation round.
+
+Current work: game outcome hooks and provider operations integrated; SQL preflight
+and 14 real local PostgreSQL cases passed. Final browser/runtime, types and 285-unit checks passed; five layout/speed checks
+passed with rendering debt. Handoff packaging complete. Production Netlify database access is unbound here.
 
 ## 25 October 2026 AEDT — typed arcades, independent helper audit
 
@@ -360,3 +422,71 @@ Owner additionally asks guide visible until installed or explicitly hidden, plus
 - Pictures: answer pictures on the newer games' buttons were 13 to 19 px on a phone; now 44 px, 56 px for under-5s (measured on every game).
 - Recorded 2178 new voice files (Azure, en and vi, woman and man).
 - Open for the owner: the Northern Tiến Lên house rules (independent review); the white screen in the installed app was not reproduced (v1.03 shrinks the voice pack from about 416 MB to 85 MB; a screen recording would help if it happens again).
+## Owner decision — Studio finance and full-suite continuation, 27 October 2026 AEDT
+
+Owner explicitly requested connecting this work to the recorded plan, continuing
+through the full suite and working on finance. This supersedes the earlier finance
+deferral. Continue with the primary agent alone. Manual-first B10 ledger, explicit
+finance grants, audit, currency/tax/FX, preview/import, reconciliation, budgets and
+conditional metrics are in scope. AUD with separate invoice/cash views is the
+proposed default (assumed pending reply; configurable before the first line).
+No payment changes, paid provisioning, version bump or new production deployment
+is authorised. Already released v1.02 was merged locally before new checks.
+
+
+## Studio finance full-suite progress — 27 October 2026 AEDT
+
+Branch `review/studio-finance-20261027`, application checkpoint `3967cf91`.
+The first complete GitHub run [40431751008](https://github.com/nguyentuanphu/tpn/actions/runs/40431751008)
+failed: 247/250 checks passed. Failures were `emoji`, `ownerstudiofolds`,
+`testerreport`. `folkplay` and `ownerfamily` passed only after retry. All 17 real
+PostgreSQL cases passed within the SQL check. Published evidence retains failures.
+Corrected documentation passed all nine quick checks (399 unit cases). Management
+folding correction is under full-page browser validation. The unchanged synthetic
+freeze-report check passed locally; CI cause remains unconfirmed and additional
+diagnostics are retained for the corrected run. No check is weakened or skipped.
+No production release, new version, paid provisioning, payment changes or live
+financial input is authorised by these validation steps.
+
+- Owner reply, 27 October 2026 AEDT: **Existing Netlify Database (Recommended)**.
+  This confirms the existing native Netlify SQL selection. No live connection is
+  bound in this workspace; retain the private deployment-context `NETLIFY_DB_URL`.
+
+Comprehensive verification update, 27 October 2026 AEDT: application frozen at
+`35bffe6a`; [run 40459786851](https://github.com/nguyentuanphu/tpn/actions/runs/40459786851)
+uses `all=true` for every reading item, film and voice area. All 17 SQL cases passed,
+eight browser shards are still active. Default corrected run 40457933192 was
+superseded/cancelled because legacy `.js` slow-source matching can miss `.ts`
+changes; it is not full-suite pass evidence. Handbook now includes field/API
+mapping and the manual finance procedure. No application changes after `35bffe6a`.
+
+
+Owner requested every Studio page for review after concern about Analytics focus.
+Captured41pages,3sectionmenus and sign-in at3sizes:135states,267sourcePNGs,
+45-page desktopPDF and offlinegallery in `docs/studio-page-review-20261027`.
+Delivered the review ZIP separately; synthetic records only.
+
+Full comprehensive run40459786851 on35bffe6a failed249/250: historical Vietnamese
+Home control181 was covered by the default floating report button. hoilang
+passed on retry. Exact failed evidence is retained. Fixed in649d0a60 after
+deterministic collision/decorative-layer/scroll regressions; all6focusedchecks
+passed, including the historical replay, existing EN/VI report flows at3sizes,
+freeze reporting and types. No assertions weakened or skipped. Starting a new
+comprehensive run on committed code; no production release/version authorised.
+
+
+## Owner direction — redesign concepts first, 27 October 2026 AEDT
+
+Owner requested comprehensive connected concepts with graphs and richer user detail. [New handbook](../studio-connected-concept-20261027/README.md) maps279 field-family/refinement entries,26 graph concepts,17 controls,13 connections and actual API paths; existing/proposed status and production gaps remain explicit. Includes original diagrams, fictional chart data, searchable offline review and32 build acceptance scenarios. No runtime change/deploy; use concept review before migrating screens.
+
+Follow-up: owner requested further explanation. The [expanded Owner’s Desk proposal](../studio-redesign-concepts-20261027/OWNERS-DESK.md) records daily journeys, proposed data/action boundaries and staged migration. Concept A remains recommended, not selected. No runtime edits or new browser-validation claims in this documentation continuation.
+
+The owner reviewed all-page screenshots and found the result confusing, with too
+much focus on Analytics. Pause runtime implementation and present substantially
+different concepts before proceeding. Three directions and desktop/phone mockups
+are in [the concept review](../studio-redesign-concepts-20261027/README.md).
+The existing engineering work is retained; no concept is implemented into the
+application or approved for production by these files. Public screenshot links
+were repaired using GitHub-hosted files because workspace links did not open in
+the owner's chat client. The existing comprehensive test run40470635366 can finish
+independently; do not report it as passed until actual artifacts are inspected.

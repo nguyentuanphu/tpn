@@ -7,7 +7,7 @@ import { fruitParadeAvailable } from './fruit-parade.js';
 // The family's Studio can move a game to another area, hide it, or open it to under-5s (content/custom.json
 // "activities": { id: { area, little, hide } }).
 import { T } from '../i18n.js';
-import { CUSTOM, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
+import { CUSTOM, itemEnabled, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
 import { heldGame } from './secondset.js';
 
@@ -47,6 +47,28 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   colors: ['art', 2, 1], dongho: ['art', 3, 1], rangoli: ['art', 3, 2], jigsaw: ['art', 3, 2], tangram: ['art', 4, 2],
   // (r89) the ten drawing games
   dotdot: ['art', 3, 1], trace: ['art', 2, 1], mirror: ['art', 2, 1], colournum: ['art', 4, 2], lanternart: ['art', 2, 1], card: ['art', 3, 1], sand: ['art', 2, 1], drawpath: ['art', 3, 2], shapedraw: ['art', 4, 2], copygrid: ['art', 5, 3],
+  stamps: ['art', 2, 1],
+  weave: ['art', 2, 1],
+  mosaic: ['art', 3, 1],
+  nonla: ['art', 2, 1],
+  aodai: ['art', 2, 1],
+  kitepaint: ['art', 2, 1],
+  shades: ['art', 2, 1],
+  shadowpic: ['art', 2, 1],
+  finishpic: ['art', 2, 1],
+  scene: ['art', 2, 1],
+  lacquer: ['art', 2, 1],
+  scratch: ['art', 2, 1],
+  bubblepaint: ['art', 2, 1],
+  fingerpaint: ['art', 2, 1],
+  weatherpaint: ['art', 2, 1],
+  thocam: ['art', 3, 1],
+  pixelpic: ['art', 3, 1],
+  fireworks: ['art', 2, 1],
+  masks: ['art', 2, 1],
+  makeface: ['art', 2, 1],
+  gallery: ['art', 2, 1],
+  leafrub: ['art', 2, 1],
   counting: ['numbers', 2, 1], numbers: ['numbers', 3, 1], moreless: ['numbers', 3, 2], dragonfire: ['numbers', 3, 1], sums: ['numbers', 5, 3], clock: ['numbers', 5, 3], days: ['numbers', 5, 2],
   shapes: ['shapes', 2, 1], pattern: ['shapes', 3, 2], sorting: ['shapes', 2, 1], tower: ['shapes', 2, 1], memory: ['shapes', 3, 2], sudoku: ['shapes', 5, 3], hanoi: ['shapes', 5, 3],
   letters: ['words', 4, 2], phonics: ['words', 4, 2], opposites: ['words', 4, 2], words: ['words', 5, 2], firstwords: ['words', 5, 3],
@@ -63,12 +85,12 @@ const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; ret
 export function gameInfo(id) {
   const [area, age, level] = GAME_INFO[id] || ['thinking', 5, 2], c = custom(id);
   // (batch rollout) each money game has its own Studio switch (money_<id>): off or not started yet, it is hidden unless a
-  // child playing has already played it
+  // child playing has already played it; an explicit Off still wins (the owner-approved explicit-off policy)
   // (r90) the second set of games is held back while Studio's New games switch is off (js/content/secondset.ts)
   const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id);
   const orchardHeld = id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','single');
   const fruitHeld = id === 'fruitparade' && !fruitParadeAvailable('single');
-  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld };
+  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: !itemEnabled('game', id) || (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld };
 }
 // the games of one area for a child: under-5s only see the ones made for them
 export const gamesIn = (games, area, little) => Object.keys(games).map(gameInfo).filter(g => g.area === area && !g.hidden && (!little || g.ageMin < 5));

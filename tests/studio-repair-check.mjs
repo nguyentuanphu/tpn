@@ -39,9 +39,9 @@ export async function studioRepairCheck(browser) {
     releaseHeld(); await pg.waitForTimeout(1200);
     if (!await pg.locator('[data-id="traffic"]').count() || await pg.locator('.tiles .tile').count()) bad.push('Late Analytics response overwrote Releases after navigation');
     fs.mkdirSync(path.join(root, 'tests/out'), { recursive: true }); await pg.screenshot({ path: path.join(root, 'tests/out/studio-repair-failures.png') });
-    await pg.evaluate(() => { location.hash = 'game'; }); await pg.waitForSelector('.pcard[data-p=lab]');
+    await pg.locator('#tabs [data-k=work]').click();await pg.waitForSelector('.desk-body .desk-queue, .desk-body .card');await pg.locator('.desk-tools > summary').click();await pg.waitForSelector('[data-desk-route=lab]');
     await pg.screenshot({ path: path.join(root, 'tests/out/studio-lab-menu.png') });
-    fs.writeFileSync(path.join(root, 'tests/out/studio-repair-capture-source.json'),JSON.stringify({capturedAt:new Date().toISOString(),fixture:'Synthetic authenticated Studio with in-memory GitHub/live store; HTTP503 device lookup and held Analytics response',viewport:{width:1180,height:800},sourceFingerprints:Object.fromEntries(['studio/ui/app.js','studio/ui/style.css'].filter(p=>fs.existsSync(path.join(root,p))).map(p=>[p,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,p))).digest('hex')]))},null,2));
+    fs.writeFileSync(path.join(root, 'tests/out/studio-repair-capture-source.json'),JSON.stringify({capturedAt:new Date().toISOString(),fixture:'Synthetic authenticated Studio with in-memory GitHub/live store; HTTP503 device lookup and held Analytics response',viewport:{width:1180,height:800},sourceFingerprints:Object.fromEntries(['studio/ui/app.js','studio/ui/style.css','studio/ui/owner-desk.js','studio/ui/owner-desk.css','studio/ui/brand.js'].filter(p=>fs.existsSync(path.join(root,p))).map(p=>[p,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,p))).digest('hex')]))},null,2));
     if (bad.length) throw Error(bad.join(' | '));
     return 'Failed device lookup preserves unseen policies/levels with explicit error; late Analytics response cannot overwrite Releases; unrelated traffic retained';
   } finally { releaseHeld(); await ctx.close(); await new Promise(resolve => server.close(resolve)); unroute(); }

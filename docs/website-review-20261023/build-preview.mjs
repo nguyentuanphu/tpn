@@ -1,3 +1,4 @@
+import {artSection} from './art-content.mjs';
 // Rebuild the self-contained design proposal; this does not touch game files.
 import fs from 'node:fs';
 import {simplifyNavigation} from './navigation.mjs';
@@ -47,7 +48,7 @@ const expanded=`<section class="parent-intro"><div class="intro-drawing">${icon(
 const parentCenter=parentControls({data,dual,icon,esc,source:snapshot.source});
 fs.writeFileSync(path.join(here,'parent-controls-guide.md'),parentCenter.markdown);
 const visual=enrichment({data,dual,icon,esc}),quiz=familyQuiz({dual,icon}),rewards=rewardSections({dual,icon}),festivals=festivalSections({dual,icon,esc,data});
-let enriched=expanded;
+let enriched=expanded.replace('<section class="section" id="folk">',artSection({readGame,dual,icon,esc})+'<section class="section" id="folk">');
 for(const [section,images] of Object.entries({games:visual.photos.learning,folk:visual.photos.folk,stories:visual.photos.stories,parents:visual.photos.parents})){
  const start=enriched.indexOf(`id="${section}"`),at=enriched.indexOf('</div>',enriched.indexOf('</h2>',start));
  // Add after the complete section lede (its closing paragraph and wrapper).

@@ -1,3 +1,4 @@
+import { effectiveReportingPolicy } from './core/reporting-policy.js';
 // The family's own content pack, made with Sparkle Studio on the grown-up's computer (studio/): content/custom.json,
 // published with the game. Read once at start (offline it comes from the saved copy). Everything in it is optional:
 //   message  { en, vi }                  a note from the grown-ups, shown once a day when the children start playing
@@ -35,14 +36,21 @@ export const CUSTOM:Record<string,any> = data && typeof data === 'object' ? data
 const LIVE_KEY = 'sv2_live', liveFns:Array<()=>void> = [];
 let LIVE:Record<string,any> = {}; try { LIVE = JSON.parse(localStorage.getItem(LIVE_KEY) || '{}') || {}; } catch (e) { LIVE = {}; }
 export const onLive = f => liveFns.push(f);
+// The optional management client reads only the receipt metadata, never this public content body.
+// This keeps a fetch that finishes before the game starts counting from losing its application evidence.
+let lastManagementApplication = null;
+export const managementApplication = () => lastManagementApplication;
 // (r81, owner 17 Oct AEDT) the content pages are live too: LIVE.content's sections (Message, Missions, Quiz, Our stories,
 // Villagers, Story characters, Memory Villages, Simple screen, Defaults, Ads settings, photo links) take the place of the
 // same ones in content/custom.json, which stays the fallback for a section Studio never saved live. The copy kept on this
 // device is used before any screen reads them; the website's answer replaces it as soon as it comes (screens that read
 // once at start get it the next time the game opens; Message and Missions follow onLive).
-export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album'];
+export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album', 'itemAvailability', 'reportingPolicy'];
+// A global item Off is independent of menu placement, progress and tester previews.
+export const reportingPolicy = () => effectiveReportingPolicy(CUSTOM.reportingPolicy);
+export const itemEnabled = (kind: 'game' | 'story', id: string): boolean => CUSTOM.itemAvailability?.[kind + ':' + id] !== false;
 const BASE = { ...CUSTOM };
-const useContent = c => { for (const k of LIVE_SECTIONS) { const v = c && typeof c === 'object' ? c[k] : undefined; if (v && typeof v === 'object') CUSTOM[k] = v; else if (k in BASE) CUSTOM[k] = BASE[k]; else delete CUSTOM[k]; } };
+const useContent = c => { for (const k of LIVE_SECTIONS) { const v = c && typeof c === 'object' ? c[k] : undefined; if(k==='reportingPolicy'&&c&&Object.prototype.hasOwnProperty.call(c,k)) CUSTOM[k]=v; else if (v && typeof v === 'object') CUSTOM[k] = v; else if (k in BASE) CUSTOM[k] = BASE[k]; else delete CUSTOM[k]; } };
 useContent(LIVE.content);
 const str = v => typeof v === 'string' ? v.slice(0, 600) : '';
 // only well-formed pieces are used, so a hand-edited file can't break the game
@@ -125,7 +133,15 @@ export const liveBoot:Promise<Record<string,any>|null>|null = typeof fetch === '
  ? fetch('api/live', { cache: 'no-store' }).then(r => r.ok && /json/.test(r.headers.get('content-type') || '') ? r.json() : null).then(j => {
     if (!j || typeof j !== 'object' || Array.isArray(j)) return null; const was = JSON.stringify(LIVE), wasC = JSON.stringify(LIVE.content || null); LIVE = j; useContent(j.content);
     if (wasC !== JSON.stringify(j.content || null) && inGame && familyRefs().length && (familyCode() || fromExe())) refreshFamilyPhotos().catch(() => { });
-    try { localStorage.setItem(LIVE_KEY, JSON.stringify(j)); } catch (e) { }
+    let kept = false;
+    try { localStorage.setItem(LIVE_KEY, JSON.stringify(j)); kept = true; } catch (e) { }
+    const m = j.management;
+    if (m && typeof m.scopeKey === 'string' && /^(global|device:[a-z0-9]{12}|feature:[a-z0-9_-]{1,60})$/.test(m.scopeKey) && Number.isSafeInteger(m.revision) && m.revision > 0 && /^[0-9a-f]{64}$/.test(m.effectiveHash || '')) {
+      const stamp = new Date().toISOString();
+      lastManagementApplication = { scopeKey: m.scopeKey, revision: m.revision, effectiveHash: m.effectiveHash,
+        fetchedAt: stamp, appliedAt: kept ? stamp : null, result: kept ? 'applied' : 'rejected', reasonCode: kept ? 'none' : 'storage_failure' };
+      if (typeof dispatchEvent === 'function' && typeof CustomEvent === 'function') dispatchEvent(new CustomEvent('sv-management-config-applied', { detail: lastManagementApplication }));
+    }
     if (JSON.stringify(j) !== was) liveFns.forEach(f => { try { f(); } catch (e) { } });
     return j;
   }).catch(() => null) : null;
@@ -157,9 +173,9 @@ export function releaseNew(id, now = new Date()) {
 export const featureOn = (id, def = true) => { if (id === 'wayfind') { const r = liveRule(id); return !!(r && r.controlVersion === 1 && r.on === true && releaseOn(id, false)); } if (liveRule(id)) return releaseOn(id, def); const f = CUSTOM.features; return f && typeof f[id] === 'boolean' ? f[id] : def; };
 
 // ---------- Batch rollout (owner, 13 Oct AEDT; docs/cores/FEATURES.md "Batch calendar") ----------
-// Switching a feature off, or giving it a start date still to come, hides it only from children who never used it
-// (FEATURES.md, owner 8 Oct): what a child really used (rode, tapped, opened, finished a step) is kept on their profile
-// (profile.tried = { id: 'YYYY-MM-DD' }) and stays theirs. keptOn: on for these children (anyone playing who used it).
+// A future start date can retain access for children who already used a feature.
+// An explicit owner Off wins over that retention (the owner-approved explicit-off policy, owner 14 Oct). Usage
+// history stays on the profile so re-enabling does not erase earned progress.
 const today = () => new Date().toISOString().slice(0, 10);
 const tried = p => p && p.tried && typeof p.tried === 'object' ? p.tried : null;
 export const hasTried = (p, id) => { const t = tried(p); return !!(t && t[id]); };
@@ -167,7 +183,12 @@ export const hasTried = (p, id) => { const t = tried(p); return !!(t && t[id]); 
 export function markTried(p, id) { if (!p || hasTried(p, id)) return false; p.tried = tried(p) || {}; p.tried[id] = today(); return true; }
 // (the children playing now, set by js/main.js when a session starts: for lists that have no child at hand, the games)
 let PLAYERS = []; export const setPlayers = list => { PLAYERS = Array.isArray(list) ? list.filter(Boolean) : []; };
-export const keptOn = (id, profiles = PLAYERS, def = true) => id === 'wayfind' ? featureOn(id, false) : featureOn(id, def) || (profiles || []).some(p => hasTried(p, id));
+export const keptOn = (id, profiles = PLAYERS, def = true) => {
+  if (id === 'wayfind') return featureOn(id, false);
+  const rule = liveRule(id);
+  if (rule?.on === false || (!rule && CUSTOM.features?.[id] === false)) return false;
+  return featureOn(id, def) || (profiles || []).some(p => hasTried(p, id));
+};
 // what a save from before the rollout already shows a child used (nothing recorded profile.tried then)
 export const MONEY_GAMES = ['heodat', 'coinnote', 'needwant', 'cheaper', 'lixi', 'bahu', 'shoplist', 'waitgrow', 'shopkeep', 'barter'];
 const some = o => !!(o && typeof o === 'object' && Object.keys(o).length);

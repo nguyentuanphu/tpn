@@ -1,0 +1,13 @@
+{
+  "archive": "sparkle-valley-netlify.zip",
+  "sha256": "3631b3d79eceebba91a61984cba6ad3ea199cef001e7d71c0942fcc6f9c83d3e",
+  "bytes": 736546258,
+  "files": 35806,
+  "integrity": "passed",
+  "containsStudio": false,
+  "containsFunctions": false,
+  "scope": "Static game and parent website only; repository deployment required for Studio/SQL Functions; not deployed",
+  "testedApplicationCommit": "35bffe6ad5d8ca757ed60a49be670bca08b38f86",
+  "gameSourceUnchangedSince": "3967cf91",
+  "voiceBuildAndHomeMatchCurrentWorkspace": true
+}

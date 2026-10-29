@@ -3,6 +3,7 @@ import type { Profile, Farm, Settings } from '../types/save.js';
 // Settings, player profiles and saving. Everything lives in localStorage on this device;
 // grown-ups can export/import a backup file to move progress between devices.
 import { BUILD } from './build.js';
+import { managementEvidence } from './core/events.js';
 import { sortClothes } from './content/shop.js';
 const KEY_SETTINGS = 'sv2_settings', KEY_PROFILES = 'sv2_profiles';
 
@@ -228,6 +229,8 @@ export function removeProfile(id) { const i = profiles.findIndex(p => p.id === i
 // into Google Drive or iCloud Drive ("Save to Files"). Otherwise the file is downloaded.
 // Resolves to 'shared', 'downloaded' or 'cancelled'.
 export async function exportBackup({ share = true } = {}) {
+  const observed=managementEvidence.begin('backup.result',{operation:'export'});
+  try {
   // Phones only allow some file types in the share sheet (not .json), so the backup is a plain .txt file.
   const name = 'sparkle-valley-backup-' + new Date().toISOString().slice(0, 10) + '.txt';
   // the lines this device had to say without a recording travel along, so Sparkle Studio can record them
@@ -239,22 +242,29 @@ export async function exportBackup({ share = true } = {}) {
   if (share && navigator.canShare) {
     try {
       const file = new File([text], name, { type: 'text/plain' });
-      if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return done('shared'); }
-    } catch (e) { if (e && e.name === 'AbortError') return 'cancelled'; }
+      if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); observed({outcome:'success',reasonCode:'none'}); return done('shared'); }
+    } catch (e) { if (e && e.name === 'AbortError') {observed({outcome:'cancelled',reasonCode:'user_cancelled'});return 'cancelled';} }
   }
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' })); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  return done('downloaded');
+  observed({outcome:'initiated',reasonCode:'none'}); return done('downloaded');
+  } catch(error) {observed({outcome:'failed',reasonCode:'storage'});throw error;}
 }
 // Days since the last backup (Infinity if never).
 export const backupAge = () => settings.lastBackup ? (Date.now() - settings.lastBackup) / 864e5 : Infinity;
 export async function importBackup(file) {
+  const observed=managementEvidence.begin('backup.result',{operation:'restore'});
+  let reasonCode='invalid';
+  try {
   const data = JSON.parse(await file.text());
   if (!data || data.app !== 'sparkle-valley' || !Array.isArray(data.profiles)) throw new Error('bad file');
   profiles.splice(0, profiles.length, ...data.profiles.map(normalizeProfile));
   Object.assign(settings, data.settings || {}); dropOldVoice(); dropOldFestival(); // (round R privacy, 9 Oct) an old backup brings no voice key back
   if (data.farm) Object.assign(farm, newFarm(), data.farm);
+  const expected=JSON.parse(JSON.stringify({profiles,settings,farm}));reasonCode='storage';
   saveSettings(); saveProfiles(true);
+  const confirmed=saveReadbackMatches(expected);observed({outcome:confirmed?'success':'failed',reasonCode:confirmed?'none':'storage'});
+  } catch(error) {observed({outcome:'failed',reasonCode});throw error;}
 }
 
 // r79 learning (chat 2)
@@ -269,3 +279,8 @@ export function normalizeLearn(v) {
 }
 
 export const getSnapshot = () => snapshot();
+
+/** Confirms browser-local readback only; never reports save contents or an off-device backup. */
+export function saveReadbackMatches(expected: {profiles?:unknown;settings?:unknown;farm?:unknown;device?:unknown}):boolean {
+  try {const stored=snapshot();return ['profiles','settings','farm','device'].every(key=>!(key in expected)||JSON.stringify(stored[key])===JSON.stringify(expected[key]));}catch{return false;}
+}

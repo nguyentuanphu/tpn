@@ -1,0 +1,28 @@
+{
+  "scope": "Real local PostgreSQL transaction and management service integration with synthetic records only",
+  "date": "2026-10-29 Australia/Sydney",
+  "server": "PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "passed": true,
+  "cases": [
+    "read-only preflight detects a missing schema without creating tables",
+    "real PostgreSQL migration applies once and repeats safely",
+    "read-only preflight confirms migration and detects checksum drift",
+    "existing migration v1 upgrades through finance v2 and private drafts v3 without changing prior management records",
+    "existing finance v2 upgrades to draft v3 while preserving financial records",
+    "SQL transaction rolls back all writes after failure",
+    "real advisory locks serialize concurrent read-modify-write",
+    "concurrent duplicate event ingestion stores and counts one event",
+    "changed payload under same event ID is quarantined without replacing original",
+    "invalid event batch has no partial committed events",
+    "concurrent expected-revision configuration changes admit one editor",
+    "configuration projection confirms matching revision and hash",
+    "applied receipts are idempotent and unknown hashes are rejected",
+    "SQL private draft review survives reload and racing publication commits exactly once",
+    "SQL failed private publication rolls back config and immutable draft history together",
+    "database constraints reject invalid event records",
+    "public HTTP ingestion acknowledges SQL persistence and duplicate retries with child/device context",
+    "SQL operation locks persist one dispatch and immutable audit across concurrent requests",
+    "real SQL finance commits once under concurrent retry and preserves correction revisions",
+    "real SQL finance import rolls back every ledger, version and audit write on storage failure"
+  ]
+}

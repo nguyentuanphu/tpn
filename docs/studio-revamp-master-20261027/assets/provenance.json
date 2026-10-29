@@ -1,0 +1,19 @@
+{
+  "sourceCommit": "35bcb63c0c9682bb9d32885063c8b7dc7b3c86df",
+  "assets": [
+    "icons/launch/valley-landscape.jpg",
+    "fonts/Fredoka-latin-500.woff2"
+  ],
+  "paletteSource": "css/style.css :root",
+  "tokens": {
+    "text": "#3b2558",
+    "paper": "#fff6e4",
+    "cyan": "#29b6f6",
+    "cyan2": "#7a4fd6",
+    "gold": "#ffb020",
+    "green": "#43c463",
+    "red": "#ff5a6a",
+    "purple": "#8a5cf6"
+  },
+  "purpose": "Review concept, no runtime game changes"
+}

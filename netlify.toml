@@ -20,7 +20,7 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  included_files = ["studio/version.json"]
+  included_files = ["studio/version.json", "content/management-catalogue.json", "netlify/lib/management/storage/001-management.sql", "netlify/lib/management/storage/002-finance.sql"]
 
 # Parent website at /home (and direct URL sparklevalley.au/home)
 [[redirects]]

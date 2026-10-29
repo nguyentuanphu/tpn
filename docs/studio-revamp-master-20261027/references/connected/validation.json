@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "scope": "Concept register structure and existing source-path validation only; no production/database claims",
+  "data_points": 279,
+  "historical_field_families": 137,
+  "current_refinements": 122,
+  "proposed_refinements": 20,
+  "graphs": 26,
+  "controls": 17,
+  "connections": 13,
+  "historical_metrics": 38,
+  "source_commit": "a1f82e740e95bcd491f075980b8b891be79419e7"
+}

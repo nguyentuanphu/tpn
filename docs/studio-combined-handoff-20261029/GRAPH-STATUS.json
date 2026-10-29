@@ -1,0 +1,898 @@
+{
+  "schemaVersion": 1,
+  "scope": "Original 26 graph contracts; view references do not prove live data, provider coverage or physical-device behaviour.",
+  "graphs": [
+    {
+      "id": "G01",
+      "title": "Reporting audience over time",
+      "destination": "Today / People",
+      "visual": "line",
+      "metric_ids": [
+        "M01",
+        "M02"
+      ],
+      "connections": [
+        "L01"
+      ],
+      "data_ids": [
+        "DAY-01",
+        "DAY-03",
+        "DAY-04",
+        "DAY-05",
+        "ID-01"
+      ],
+      "definition": "Distinct reporting active installations per day; new means first retained observation. Never sum daily distincts into monthly distincts.",
+      "drilldown": "Return to days and permitted device records.",
+      "limitation": "Cleared storage, opt-out and missing days bias audience; no global unique-child count.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [],
+      "currentStatus": "implemented_view_with_source_limits",
+      "currentSourceFiles": [
+        "studio/ui/owner-desk.ts"
+      ]
+    },
+    {
+      "id": "G02",
+      "title": "Reported profiles and device mix",
+      "destination": "People",
+      "visual": "bars",
+      "metric_ids": [
+        "M01",
+        "M03"
+      ],
+      "connections": [
+        "L01"
+      ],
+      "data_ids": [
+        "ID-07",
+        "ID-08",
+        "ID-10",
+        "ID-11",
+        "KID-01",
+        "KID-02"
+      ],
+      "definition": "Count reporting installation/profile pairs and distinct installations separately; group device/OS/browser and age band. Approximate online presence uses the current 5-minute freshness window, not permanent live status.",
+      "drilldown": "Open selected device group then an authorised device.",
+      "limitation": "Profiles are not globally deduplicated children. Name reporting can be off.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "EV-03",
+        "EV-15",
+        "EV-16",
+        "EV-17",
+        "UX-01",
+        "UX-02",
+        "UX-03",
+        "UX-04",
+        "UX-05",
+        "UX-09"
+      ],
+      "currentStatus": "implemented_view_with_source_limits",
+      "currentSourceFiles": [
+        "studio/ui/owner-desk.ts"
+      ]
+    },
+    {
+      "id": "G03",
+      "title": "New and returning reporting installations",
+      "destination": "People",
+      "visual": "stacked bars",
+      "metric_ids": [
+        "M02",
+        "M18"
+      ],
+      "connections": [
+        "L01",
+        "L02"
+      ],
+      "data_ids": [
+        "ID-01",
+        "DAY-01",
+        "EVENT-02",
+        "EVENT-03"
+      ],
+      "definition": "New: first retained active day in window. Returning: active earlier in retained history. Exact-day D7 uses only matured cohorts and is a separate proposed metric.",
+      "drilldown": "Open cohort definition and permissible records.",
+      "limitation": "Retention job, rollups and mature cohort reporting remain work; not all historical first-ever dates are known.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "EV-03",
+        "EV-07",
+        "EV-09"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G04",
+      "title": "Reported play pattern",
+      "destination": "People / selected device",
+      "visual": "hour-by-day heatmap",
+      "metric_ids": [
+        "M04"
+      ],
+      "connections": [
+        "L01"
+      ],
+      "data_ids": [
+        "DAY-01",
+        "DAY-03",
+        "DAY-07",
+        "KID-03",
+        "KID-04"
+      ],
+      "definition": "Sum reported minutes per device-local hour/day; label timezone basis. Profile participation minutes may overlap in shared play.",
+      "drilldown": "Open selected day and activity summary.",
+      "limitation": "Reported active play is not total screen time; no precise minute-by-minute timeline from daily buckets.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [],
+      "currentStatus": "implemented_view_with_source_limits",
+      "currentSourceFiles": [
+        "studio/ui/management.ts"
+      ]
+    },
+    {
+      "id": "G05",
+      "title": "Website engagement",
+      "destination": "Game & website / Website",
+      "visual": "line + bars",
+      "metric_ids": [
+        "M13",
+        "M14",
+        "M15"
+      ],
+      "connections": [
+        "L03"
+      ],
+      "data_ids": [
+        "WEB-01",
+        "WEB-02",
+        "WEB-03",
+        "WEB-04",
+        "WEB-05",
+        "WEB-06",
+        "WEB-07",
+        "WEB-08"
+      ],
+      "definition": "Page views, Play clicks and reported active seconds shown as separate event series. Clicks/views is an event ratio, not person conversion.",
+      "drilldown": "Open route/language/device aggregate.",
+      "limitation": "Best-effort dropped requests and opt-out; no unique visitor or session linkage.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [],
+      "currentStatus": "implemented_view_with_source_limits",
+      "currentSourceFiles": [
+        "studio/ui/owner-desk.ts"
+      ]
+    },
+    {
+      "id": "G06",
+      "title": "Website-to-play connection",
+      "destination": "Game & website / Website",
+      "visual": "separate stages; future matched funnel",
+      "metric_ids": [
+        "M13",
+        "M14",
+        "M20"
+      ],
+      "connections": [
+        "L03",
+        "L02",
+        "L13"
+      ],
+      "data_ids": [
+        "WEB-01",
+        "WEB-06",
+        "EVENT-06"
+      ],
+      "definition": "Current website views/clicks and game boot observations are separate panels. Matched funnel only after L13 exists, with eligible handoff denominator and pending/expired outcomes.",
+      "drilldown": "Inspect stage definition and current gap.",
+      "limitation": "No numerical conversion arrow between unmatched populations; no cross-device attribution.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "EV-03",
+        "EV-05",
+        "EV-06",
+        "EV-07",
+        "OBS-06",
+        "OBS-07",
+        "HAND-01",
+        "HAND-02",
+        "HAND-03",
+        "HAND-04",
+        "HAND-05",
+        "HAND-06",
+        "HAND-07",
+        "HAND-08"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G07",
+      "title": "Activity popularity",
+      "destination": "Game & website",
+      "visual": "ranked bars",
+      "metric_ids": [
+        "M04",
+        "M07"
+      ],
+      "connections": [
+        "L01",
+        "L04"
+      ],
+      "data_ids": [
+        "DAY-04",
+        "DAY-05",
+        "KID-05",
+        "CONTENT-01",
+        "CONTENT-03"
+      ],
+      "definition": "Game starts per kind:id where available; story opens historically aggregate, named story attempts only from detailed events.",
+      "drilldown": "Open one game/story editor with evidence.",
+      "limitation": "A popular activity is not proof of learning benefit or quality.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "CAT-01",
+        "CAT-02",
+        "CAT-03",
+        "CAT-04",
+        "OBS-01",
+        "OBS-08"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G08",
+      "title": "Activity outcomes",
+      "destination": "Game & website / selected activity",
+      "visual": "stacked outcomes",
+      "metric_ids": [
+        "M05",
+        "M06",
+        "M19"
+      ],
+      "connections": [
+        "L01",
+        "L02",
+        "L04"
+      ],
+      "data_ids": [
+        "KID-06",
+        "KID-07",
+        "KID-08",
+        "EVENT-05"
+      ],
+      "definition": "Detailed attempts: completed/abandoned/pending/unknown/inconsistent within same start cohort. Legacy participation ratios kept separately.",
+      "drilldown": "Open outcome definition and anonymous attempt evidence; names need detail permission.",
+      "limitation": "Do not mix attempt and profile-participation denominators; no causal difficulty claim.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "EV-03",
+        "EV-05",
+        "EV-06",
+        "EV-07",
+        "OBS-01",
+        "OBS-02",
+        "OBS-03",
+        "OBS-04",
+        "OBS-05"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G09",
+      "title": "Built-in story journeys",
+      "destination": "Game & website / selected story",
+      "visual": "opened and completed bars",
+      "metric_ids": [
+        "M07"
+      ],
+      "connections": [
+        "L02",
+        "L04"
+      ],
+      "data_ids": [
+        "EVENT-07",
+        "CONTENT-03"
+      ],
+      "definition": "Match built-in opened/completed events by device+attemptId+storyId; pending/unknown separate. Completion follows actual instrumented final-page condition.",
+      "drilldown": "Open story and recording/review details.",
+      "limitation": "Earlier aggregate opens cannot be backfilled into per-story completion.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "EV-03",
+        "EV-05",
+        "EV-07",
+        "OBS-08",
+        "OBS-09"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G10",
+      "title": "Startup experience",
+      "destination": "Work / experience",
+      "visual": "median and p95 lines",
+      "metric_ids": [
+        "M10",
+        "M20",
+        "M21"
+      ],
+      "connections": [
+        "L01",
+        "L02"
+      ],
+      "data_ids": [
+        "PERF-04",
+        "PERF-05",
+        "PERF-06",
+        "PERF-07",
+        "PERF-08",
+        "EVENT-06"
+      ],
+      "definition": "Split legacy capped startup samples from reportable boot attempts. For proposed p95 use matched ready-start nearest-rank distribution, show n; no directional status below 20.",
+      "drilldown": "Open build/device cohort and startup-stage evidence.",
+      "limitation": "Failures before instrumentation invisible; first picture and first playable are different measures. p95 chart requires validated rollup implementation.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "EV-03",
+        "EV-05",
+        "EV-06",
+        "EV-07",
+        "OBS-06",
+        "OBS-07"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G11",
+      "title": "Smoothness and reported errors",
+      "destination": "Work / experience",
+      "visual": "lines + affected-device bars",
+      "metric_ids": [
+        "M08",
+        "M09",
+        "M38"
+      ],
+      "connections": [
+        "L01"
+      ],
+      "data_ids": [
+        "PERF-01",
+        "PERF-02",
+        "PERF-03",
+        "DAY-09",
+        "DAY-10"
+      ],
+      "definition": "Weighted FPS=sum samples/count; low-FPS count/count; error-affected distinct active devices/active devices.",
+      "drilldown": "Open selected build/device and problem evidence.",
+      "limitation": "Low FPS <20 at current legacy threshold; stuck detection is not a confirmed defect.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G12",
+      "title": "Measured battery behaviour",
+      "destination": "Work / experience",
+      "visual": "qualified bars",
+      "metric_ids": [
+        "M11",
+        "M12"
+      ],
+      "connections": [
+        "L01"
+      ],
+      "data_ids": [
+        "BAT-01",
+        "BAT-02",
+        "BAT-07",
+        "BAT-08",
+        "BAT-09",
+        "BAT-10"
+      ],
+      "definition": "Battery percentage-point loss / measured battery hours; active drawing FPS excludes idle and unmeasured intervals.",
+      "drilldown": "Inspect supported samples and measurement definitions.",
+      "limitation": "Many browsers cannot measure battery; not watts, monetary energy cost or all-device battery performance.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G13",
+      "title": "Reported connection outcomes",
+      "destination": "Work / experience",
+      "visual": "stacked bars",
+      "metric_ids": [
+        "M22"
+      ],
+      "connections": [
+        "L02"
+      ],
+      "data_ids": [
+        "EVENT-08"
+      ],
+      "definition": "Success / eligible matched connection-attempt starts; pending/unknown remain in denominator; direct/relay split.",
+      "drilldown": "Inspect outcome codes without room codes or media.",
+      "limitation": "Current hooks cover guest join; host/reconnect coverage incomplete.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "EV-03",
+        "EV-05",
+        "EV-07",
+        "OBS-10",
+        "OBS-11",
+        "OBS-12"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G14",
+      "title": "Voice playback evidence",
+      "destination": "Game & website / Voice",
+      "visual": "stacked source/language bars",
+      "metric_ids": [
+        "M23"
+      ],
+      "connections": [
+        "L02",
+        "L04"
+      ],
+      "data_ids": [
+        "EVENT-09",
+        "CONTENT-08"
+      ],
+      "definition": "Current recorded success rate: confirmed successes / confirmed success-or-failure observations; cancelled/unknown shown separately, not hidden in denominator.",
+      "drilldown": "Open affected asset context where safely known.",
+      "limitation": "Browser playback completion is not proof of audibility; no speech content collection. Current wire event is voice.result, not legacy proposal voice.playback/result.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "OBS-13",
+        "OBS-14",
+        "OBS-15"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G15",
+      "title": "Content and website review coverage",
+      "destination": "Game & website",
+      "visual": "coverage matrix",
+      "metric_ids": [
+        "M26",
+        "M27"
+      ],
+      "connections": [
+        "L04"
+      ],
+      "data_ids": [
+        "CONTENT-01",
+        "CONTENT-03",
+        "CONTENT-07",
+        "CONTENT-08"
+      ],
+      "definition": "Rows=kind:id; columns EN/VI metadata, implementation, reviewed guide source and recording audit. Counts use explicit required-item inventory.",
+      "drilldown": "Open missing item and reviewer action.",
+      "limitation": "Catalogue recordings currently not-audited. Anchor exists does not mean source alignment; missing review is not complete coverage.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "CAT-01",
+        "CAT-02",
+        "CAT-03",
+        "CAT-04",
+        "CAT-06",
+        "CAT-08",
+        "CAT-09",
+        "CAT-10",
+        "CAT-11",
+        "CAT-12",
+        "CAT-13"
+      ],
+      "currentStatus": "implemented_view_with_source_limits",
+      "currentSourceFiles": [
+        "studio/ui/owner-desk.ts"
+      ]
+    },
+    {
+      "id": "G16",
+      "title": "Release adoption",
+      "destination": "Work / releases",
+      "visual": "stacked version bars",
+      "metric_ids": [
+        "M01"
+      ],
+      "connections": [
+        "L01",
+        "L04"
+      ],
+      "data_ids": [
+        "ID-04",
+        "DAY-02",
+        "CONTENT-06"
+      ],
+      "definition": "Observed sender-build distribution across distinct reporting devices; daily-originating build separately labelled.",
+      "drilldown": "Open version cohort and review evidence.",
+      "limitation": "Sender build is not all gameplay within a retained bucket; no claim about non-reporting installs.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "EV-11",
+        "CAT-06"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G17",
+      "title": "Configuration delivery",
+      "destination": "Work / change",
+      "visual": "stacked states + delay distribution",
+      "metric_ids": [
+        "M24",
+        "M36"
+      ],
+      "connections": [
+        "L05",
+        "L06"
+      ],
+      "data_ids": [
+        "DELIVERY-01",
+        "DELIVERY-02",
+        "DELIVERY-03",
+        "DELIVERY-04",
+        "DELIVERY-05"
+      ],
+      "definition": "Exact revision/hash applied receipts / fixed eligible reporting cohort saved with change; rejected/unsupported/unconfirmed separate; later/new devices shown outside cohort.",
+      "drilldown": "Open revision → eligible devices → available permitted receipt.",
+      "limitation": "Actual current service counts exact revision/hash; do not use historical metric wording that credits arbitrary later revisions. Device clock skew can invalidate delay.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "RCPT-01",
+        "RCPT-02",
+        "RCPT-03",
+        "RCPT-04",
+        "RCPT-05",
+        "RCPT-06",
+        "RCPT-07",
+        "RCPT-08",
+        "RCPT-09",
+        "CFG-01",
+        "CFG-06",
+        "CFG-07",
+        "CFG-09",
+        "CFG-12",
+        "CFG-13",
+        "CFG-14"
+      ],
+      "currentStatus": "implemented_view_with_source_limits",
+      "currentSourceFiles": [
+        "studio/ui/management.ts"
+      ]
+    },
+    {
+      "id": "G18",
+      "title": "Problems and recovery",
+      "destination": "Work",
+      "visual": "trend + ageing bars",
+      "metric_ids": [
+        "M16",
+        "M17",
+        "M25"
+      ],
+      "connections": [
+        "L07",
+        "L08"
+      ],
+      "data_ids": [
+        "ISSUE-02",
+        "ISSUE-11",
+        "OPS-05"
+      ],
+      "definition": "New/open/verified work by date, unique reporting devices by issue/build; proposed verified recovery duration=verifiedAt-firstReportAt for qualified cases.",
+      "drilldown": "Open original report plus separate follow-up and verification.",
+      "limitation": "Observed report rate is not total defect incidence; confirmed regression and recovery charts need validated classification/time fields.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "TASK-01",
+        "TASK-02",
+        "TASK-03",
+        "TASK-04",
+        "TASK-05",
+        "TASK-06",
+        "TASK-07",
+        "TASK-08",
+        "TASK-09",
+        "TASK-10",
+        "TASK-11",
+        "TASK-12",
+        "TASK-13",
+        "TASK-14",
+        "UX-06"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G19",
+      "title": "Jobs and service readiness",
+      "destination": "Work / services",
+      "visual": "run timeline + status table",
+      "metric_ids": [
+        "M34",
+        "M35",
+        "M37"
+      ],
+      "connections": [
+        "L09"
+      ],
+      "data_ids": [
+        "OPS-06",
+        "OPS-07"
+      ],
+      "definition": "Terminal successful eligible provider runs / terminal eligible observed runs; queued/running/unknown separate. Quota forecast only matching real provider window/usage.",
+      "drilldown": "Open provider observation, run or durable operation.",
+      "limitation": "Provider credentials/feeds may be absent/stale. Do not invent quotas or convert dispatch accepted into success.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G20",
+      "title": "Recorded cost trend",
+      "destination": "Money",
+      "visual": "stacked monthly columns",
+      "metric_ids": [
+        "M28"
+      ],
+      "connections": [
+        "L10"
+      ],
+      "data_ids": [
+        "MONEY-01",
+        "MONEY-02",
+        "MONEY-03",
+        "MONEY-04",
+        "MONEY-06"
+      ],
+      "definition": "Eligible nonvoid expense/credit original minor units allocated by service days, converted explicitly; cash view uses paidAt UTC date separately.",
+      "drilldown": "Open category → invoice line → immutable history.",
+      "limitation": "Current manual-ledger coverage must be visible; missing FX means unavailable comparable totals, not zero.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "FIN-01",
+        "FIN-02",
+        "FIN-03",
+        "FIN-04",
+        "FIN-05",
+        "FIN-06",
+        "FIN-07",
+        "FIN-08",
+        "FIN-09",
+        "FIN-10",
+        "FIN-11",
+        "FIN-12",
+        "FIN-13",
+        "FIN-14",
+        "FIN-15",
+        "FIN-16",
+        "FIN-17",
+        "FIN-18",
+        "FIN-19",
+        "FIN-20",
+        "FIN-21",
+        "FIN-22",
+        "FIN-23",
+        "FCTL-01",
+        "FCTL-06",
+        "FCTL-08",
+        "FCTL-09"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G21",
+      "title": "Budget and commitments",
+      "destination": "Money",
+      "visual": "budget bar + commitments",
+      "metric_ids": [
+        "M29"
+      ],
+      "connections": [
+        "L10"
+      ],
+      "data_ids": [
+        "MONEY-03",
+        "MONEY-04",
+        "MONEY-05"
+      ],
+      "definition": "Budget minus recognised actual expense minus remaining separately reserved commitments; link settlements to avoid double counting.",
+      "drilldown": "Open budget, commitment and linked actuals.",
+      "limitation": "Estimates are distinct; credits and commitment settlement must pass service constraints.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "FIN-06",
+        "FIN-07",
+        "FIN-08",
+        "FIN-16",
+        "FIN-18",
+        "FIN-19",
+        "FCTL-06",
+        "FCTL-07"
+      ],
+      "currentStatus": "implemented_view_with_source_limits",
+      "currentSourceFiles": [
+        "studio/ui/finance.ts"
+      ]
+    },
+    {
+      "id": "G22",
+      "title": "Recorded cash and upcoming obligations",
+      "destination": "Money",
+      "visual": "cash trend + due-date list",
+      "metric_ids": [
+        "M28"
+      ],
+      "connections": [
+        "L10"
+      ],
+      "data_ids": [
+        "MONEY-03",
+        "MONEY-04"
+      ],
+      "definition": "Cash trend from paidAt records only. A true due-date schedule is proposed and requires explicit dueAt/settlement data; existing commitments alone do not prove due dates.",
+      "drilldown": "Open payment-status evidence or obligation.",
+      "limitation": "No bank balance, live payment verification or bank-payment action. A missing dueAt cannot become overdue.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "FIN-06",
+        "FIN-07",
+        "FIN-08",
+        "FIN-13",
+        "FIN-19",
+        "UX-12"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G23",
+      "title": "Qualified operating forecast",
+      "destination": "Money",
+      "visual": "actual line + forecast band",
+      "metric_ids": [
+        "M30"
+      ],
+      "connections": [
+        "L10"
+      ],
+      "data_ids": [
+        "MONEY-02",
+        "MONEY-03",
+        "MONEY-04",
+        "MONEY-05"
+      ],
+      "definition": "Use fixed commitments plus variable actual-to-date plus remaining days times trailing 7 complete-day variable mean, only when required coverage is asserted.",
+      "drilldown": "Open basis, covered dates and assumptions.",
+      "limitation": "Forecast is an estimate, not cash runway. Band must have an explicit method before numeric uncertainty limits are shown.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "FIN-06",
+        "FIN-07",
+        "FIN-10",
+        "FIN-11",
+        "FIN-16",
+        "FCTL-06",
+        "FCTL-08"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G24",
+      "title": "Cost per reporting activity",
+      "destination": "Money",
+      "visual": "unit-cost lines",
+      "metric_ids": [
+        "M31",
+        "M32"
+      ],
+      "connections": [
+        "L10",
+        "L01"
+      ],
+      "data_ids": [
+        "MONEY-03",
+        "MONEY-06",
+        "MONEY-08",
+        "DAY-03",
+        "ID-01"
+      ],
+      "definition": "Comparable operating cost / reporting active installations; cost / (reported minutes/60). Show period, currency, coverage and actual denominator.",
+      "drilldown": "Open invoice numerator and reporting usage denominator subject to permissions.",
+      "limitation": "Not cost per unique child/customer; more complete analytics can change the ratio without a true cost change.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "FIN-07",
+        "FIN-08",
+        "FIN-20",
+        "FIN-21",
+        "FIN-22",
+        "FIN-23",
+        "FCTL-06",
+        "FCTL-08"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G25",
+      "title": "Revenue and contribution",
+      "destination": "Money",
+      "visual": "qualified waterfall",
+      "metric_ids": [
+        "M33"
+      ],
+      "connections": [
+        "L10"
+      ],
+      "data_ids": [
+        "MONEY-07",
+        "MONEY-08"
+      ],
+      "definition": "Recognised eligible revenue - refunds - payment fees - explicitly attributed variable costs, using documented allocation; require approved revenue definition.",
+      "drilldown": "Open each contributing record and allocation.",
+      "limitation": "Deferred until revenue/attribution policy and sufficient records exist; no assumed monetisation of children.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "FIN-06",
+        "FIN-07",
+        "FIN-08",
+        "FIN-14",
+        "FIN-16",
+        "FIN-20",
+        "FIN-21"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    },
+    {
+      "id": "G26",
+      "title": "Update and backup observations",
+      "destination": "Work / experience; People / device",
+      "visual": "stacked result bars",
+      "metric_ids": [],
+      "connections": [
+        "L02"
+      ],
+      "data_ids": [
+        "EVENT-10",
+        "PRIVATE-02"
+      ],
+      "definition": "Count update.result and backup.result by operation/outcome; initiated/cancelled/failed/succeeded separate. No reuse of boot-readiness formula for this chart.",
+      "drilldown": "Inspect safe reason codes and relevant device if authorised.",
+      "limitation": "Browser export completion does not prove durable off-device backup or restore recoverability.",
+      "ui_status": "proposed_graph_ui",
+      "refined_data_ids": [
+        "EV-03",
+        "EV-05",
+        "EV-07",
+        "OBS-16",
+        "OBS-17",
+        "OBS-18",
+        "OBS-19",
+        "OBS-20"
+      ],
+      "currentStatus": "pending_concept",
+      "currentSourceFiles": []
+    }
+  ]
+}

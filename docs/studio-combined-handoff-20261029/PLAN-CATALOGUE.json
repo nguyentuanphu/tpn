@@ -1,0 +1,871 @@
+{
+  "schemaVersion": 1,
+  "scope": "All preserved Markdown under Studio and website handbooks, including historical copies. Counts are files, not implemented features.",
+  "currentStatus": "docs/studio-combined-handoff-20261029/STATUS.md",
+  "documents": [
+    {
+      "path": "docs/studio-connected-concept-20261027/API-MAP.md",
+      "title": "Current routes and the proposed control interface",
+      "sha256": "3246e0b8c9d23f9c88ce415724967cd6c7c6aad9c62cac70c813090b6de8b07a",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-connected-concept-20261027/BUILD-AND-ACCEPTANCE.md",
+      "title": "Builder handoff, sequencing and acceptance",
+      "sha256": "d014c0d0f6924fb34ec0c56197b1e15f42c56134e874a8fcbdcc9501f9791414",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-connected-concept-20261027/CONNECTIONS.md",
+      "title": "Connections, identity and ownership",
+      "sha256": "02ffb87802816734721c7f6030698e60ab83138f3b1fdad11e4d17f2ff82a2b9",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-connected-concept-20261027/CONTROLS.md",
+      "title": "Control contracts: purpose, scope, connection and confirmation",
+      "sha256": "3e963912d07f727bb4702db4c52a51c6bd449cd2842308c2579c2e633d4a2d6c",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-connected-concept-20261027/DATA-MAP.md",
+      "title": "Field-by-field data and connection register",
+      "sha256": "3090db642a78bec240c6a0ca7ae350c85815c7604b77e4c6cb3976255717efe8",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-connected-concept-20261027/GRAPHS.md",
+      "title": "Graph catalogue: what each graph means and connects to",
+      "sha256": "7c9528f70b55d3a171b4252072e0565019e215cb214c39e4640e30343c6be8aa",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-connected-concept-20261027/README.md",
+      "title": "Studio connected concept: owner review handbook",
+      "sha256": "f0a809513320b3139e919f875c2c16c3bb5a5354be96aa492836c3edf6b19433",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-connected-concept-20261027/SCREENS.md",
+      "title": "Screen concepts and richer People detail",
+      "sha256": "a8a6b106692707264fe4a4fd9c99cd851a29edee4cbff4be4ac4874db087e5a0",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-connected-concept-20261027/VISUALS.md",
+      "title": "Visual walkthrough",
+      "sha256": "7a99a81bea133918673b461379f7844b20ee0045a8f7d1748d5c76dd16c0af50",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/A-TEST-REQUEST.md",
+      "title": "A-owned fixture updates required at integration",
+      "sha256": "23c01ea4c819cb716b8c53c376fe8fe444662b9f1d2171e11a755574ccd95c78",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/CHANGED-FILES.md",
+      "title": "Changed files",
+      "sha256": "f7631e66228bd80e49c489ea1c90338273f741975fe9d76452d9b7116291d19c",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/CONNECTIONS.md",
+      "title": "Definitions, consumers and record boundaries",
+      "sha256": "b157c2b7aa4db9e8a0e312938d228f7f34c206b77fc81d72cfc821bcc9ad0e3d",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/CONTENT-REVIEW.md",
+      "title": "Content investigation and review",
+      "sha256": "03dfbbfc030016ebfc6806c8d9ff38b9f39e3112173b7edef081e955f26ee981",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/HANDOFF.md",
+      "title": "Workstream B integration handoff",
+      "sha256": "8f8b1d1070639f89b88c4a1c558698176f243aa35da875ab472e98aad4cd3c82",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/PENDING-WORK.md",
+      "title": "Pending workstream B work",
+      "sha256": "2a8c94b821afbaae920c5c0115d953aa8735a8711d5d0ca45da0dc3b50e41276",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/README.md",
+      "title": "Workstream B: content and website",
+      "sha256": "002d4d009da2c78b8b425ffdc8a246392bc833a88e3bde59a7b499900cc36188",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/SOURCE-INVENTORY.md",
+      "title": "Public source inventory",
+      "sha256": "598ad4ebbed222c25b712ba3fb92da507fbfdaa94dbd79a8e617744fc9a90d1b",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/VALIDATION.md",
+      "title": "Validation and remaining issues",
+      "sha256": "632ffc3eee2c963bce06ef8719a2c11f41e9f571223662167d2d4255d9bf9b2d",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/VOICE.md",
+      "title": "Guidance recordings",
+      "sha256": "004d37c4f33a59c9d56edd20bfbb3835bdcc90bdf9d4f79c198e781f8e9e3ad9",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/public-definitions/CONTROL-COVERAGE.md",
+      "title": "Control source audit",
+      "sha256": "63ca07d37f14dfa56245b52c6900ecba2bfa40b4e1c9ed7961082f761bc39d3b",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-content-website-20261029/public-definitions/INVENTORY.md",
+      "title": "Source inventory audit",
+      "sha256": "ce62a5bd8a07fbf8cab833b0b2d95c322bdcb9ed584de5e9b8a052efd6cc0a97",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-continuation-20261029/CONTROL-COVERAGE.md",
+      "title": "Control source audit",
+      "sha256": "1699b06752a760e94cdf146410fe7951182056847eb3f1458b1e36e9a0e744bc",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-continuation-20261029/CONTROL-VERIFICATION.md",
+      "title": "Actual switch verification",
+      "sha256": "4dae2ac10b620a93c1b0eb6b99f254a282674bbe63c7ff226a3791c030aeaa56",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-continuation-20261029/FIELD-CONTRACTS.md",
+      "title": "Additive field and control contract",
+      "sha256": "9e74692563672aa8a5b3797c68f6775b28b972bfe259edf7172092e4e53dcc3a",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-continuation-20261029/INVENTORY.md",
+      "title": "Source inventory audit",
+      "sha256": "b19f191520be0e205d1f167bd2500bf879a05662e52f3df49f157d327f8bcb91",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-continuation-20261029/NEXT-CHAT.md",
+      "title": "Continue after explicit Off and declared-content integration",
+      "sha256": "0dcc915b811ce2ecf7616b6c0ce2b62cf3ed502504346c7f57f5dc09bac76e5c",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-continuation-20261029/README.md",
+      "title": "Studio control and pending-content continuation",
+      "sha256": "96cd0a82a872de1748bf23f3c83d1de44a5b64399e87c4d6325b0d6ba1fed637",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-continuation-20261029/VALIDATION.md",
+      "title": "Validation record",
+      "sha256": "b17f272315e7f8191af3d6f6ed1c215aead817dd98dce564cd5b851f3622b659",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-continuation-20261029/VISUALS.md",
+      "title": "Actual Studio continuation screenshots",
+      "sha256": "41baacb26ccda917849b9bcfe3a5b5ed74a012018d68e1a48cc9d52eeb8a5977",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-recovery-20261029/CONTROL-JOURNEYS.md",
+      "title": "From a proposal to a confirmed result",
+      "sha256": "a3535798ffa921b7ce357cd4c3b23e6ad04c345aea648c532e3094c061cfef2c",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-recovery-20261029/ITEM-FIELDS.md",
+      "title": "Exact item field connections",
+      "sha256": "62472a1d28df31da6fcfe5015d0c5c2e2bd525e629986ac2560d19bb820dc5a5",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-recovery-20261029/NEXT-CHAT.md",
+      "title": "Continue workstream A",
+      "sha256": "29ada8d71aeb4a89de878081adc8087dfe1343b672f30c626f5c0785c46c588e",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-recovery-20261029/README.md",
+      "title": "Studio control recovery and delivery",
+      "sha256": "fb64c386b00f8c2852df7f6b74872cb304d10b5d9728f609fc4ea5dbf856c5ce",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-recovery-20261029/VALIDATION.md",
+      "title": "Validation and remaining work",
+      "sha256": "f5bdb844af888fa2a6601ba6a6e78725777ecfbad3f72c944bd37f1dd12c875a",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-control-recovery-20261029/VISUALS.md",
+      "title": "Actual review screens",
+      "sha256": "30dff80b441d1092224cd1fa16ac989cbb40e671ecadb362683c2763e7876b30",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-drafts-20261029/CONTRACT.md",
+      "title": "Draft contract and builder notes",
+      "sha256": "f83d0bca676775c881f08b25de24570bd9526de0e55272f509055c185a857f58",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-drafts-20261029/NEXT-CHAT.md",
+      "title": "Next-chat prompt",
+      "sha256": "5dd39dfee6650dd2201f2569c158a7685dce9b39fb9b9429c8d3c1914b3e3bbc",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-drafts-20261029/README.md",
+      "title": "Private configuration drafts: continuation",
+      "sha256": "984fbb165a591f87a1f6505be6dd585369decff099d9ffbc42f5ec630523d64d",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-drafts-20261029/VALIDATION.md",
+      "title": "Validation and release limits",
+      "sha256": "cac3183f4971f82bd0f9f5f089ebb5583397a24bd9649fba8be294f6e5f67b87",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-drafts-20261029/VISUALS.md",
+      "title": "Actual private draft review screens",
+      "sha256": "689446c344a694369e394db13d70ecb11aaa0155f49c777b51f03fc9e3adfc36",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-functions-20261029/CONTRACT.md",
+      "title": "Detailed reporting policy: fields and connections",
+      "sha256": "b60ea56429635a002c726e075cb181a4fbe43757eca2840fa462ca942f7be75a",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-functions-20261029/NEXT-CHAT.md",
+      "title": "Continue workstream A",
+      "sha256": "35a0e37dca7867171f2b78793235b37b8d955f53413917d8e0f9a0e5f0578339",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-functions-20261029/README.md",
+      "title": "Studio functions and resource controls",
+      "sha256": "46e7ec1d163753d7b0285592d9ee583cf69b7aae26a69a733907b2b7b34b0e59",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-functions-20261029/VALIDATION.md",
+      "title": "Validation and release limits",
+      "sha256": "c1e8b86252d3cc2ed94a4d6e5ee1302da02d1ee7a471c5a92702bd9b282fe77f",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-functions-20261029/VISUALS.md",
+      "title": "Actual Studio function controls",
+      "sha256": "078aa995af0375c881450fb8610e39f1d184739d20abef80e15c99787e3f48bd",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-item-workspaces-20261029/README.md",
+      "title": "Studio item workspaces and two-chat continuation",
+      "sha256": "f61fffc7dcafa4aba57c367d048583f88366af6d954594b4554244e321007f0e",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-item-workspaces-20261029/SECOND-CHAT-PROMPT.md",
+      "title": "Prompt for the second chat",
+      "sha256": "9e009bfc150849abc887637c2b699938fc012bd42911984fe61ed63b979fdd12",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-item-workspaces-20261029/STATUS.md",
+      "title": "Current checkpoint and workstream handoff",
+      "sha256": "3043549b66fbc47d520cc45776d8a2818dba3a85f4a93f93568bfd9cf3147aa5",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-item-workspaces-20261029/TWO-CHAT-PLAN.md",
+      "title": "Two-chat ownership and remaining work",
+      "sha256": "5c3e6c7c3e7dc5ee3e436171f7edc44eaabd9e732f668db9fe6da73f534acdfb",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/01-CURRENT-SYSTEM.md",
+      "title": "Current system: evidence, authority and gaps",
+      "sha256": "503d32d274bc7acc6d4d0d28a20f9fedf2d300f94c2e96341cb04373e9f3793f",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/02-DATA-DICTIONARY.md",
+      "title": "Data dictionary and exact connection register",
+      "sha256": "b752b545b98e38685139379ce6e90786f1ffce40f4ae27d3437dc3be42afc38f",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/03-METRICS.md",
+      "title": "Metric definitions",
+      "sha256": "9d785901ff8b7a4aec15010f104485f6ec44c3075149f57c97d0bbafb7a87214",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/04-CONTRACTS.md",
+      "title": "Builder contracts: data, APIs, storage and failure behavior",
+      "sha256": "8cabf3aae4e799e1b11019e0b8044856f65ec91e887c944ff0f91a8e869b5c9b",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/05-SCREENS-AND-OPERATIONS.md",
+      "title": "Studio screens, permissions and daily decisions",
+      "sha256": "65764f84243389858ae953cdd4991e3fcfe8beb16d918ff46bd2f11713ab3a85",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/06-BUILD-PLAN.md",
+      "title": "Ordered implementation tickets",
+      "sha256": "57a9feb7c480fcad9eb23750ae9e3ec57af596caa05306abd017d7acd63c5ca3",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/07-VALIDATION.md",
+      "title": "Acceptance and evidence plan",
+      "sha256": "c27c7f1965053102470ca9cba1567574ae738b1baee9baf8391c149585dee753",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/08-DECISIONS.md",
+      "title": "Decisions, assumptions and unresolved prerequisites",
+      "sha256": "7e55c00521ee1bd58af140199f01de19da0382e5e7ae63442baeba6e807a95ed",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/09-RUNBOOKS.md",
+      "title": "Operating handbook and recovery procedures",
+      "sha256": "905ec494469fe37a9d1316b8ece7dee7088490a27e33c6efdde5f32913c99241",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/FINANCE.md",
+      "title": "Finance handbook: private manual ledger",
+      "sha256": "ee77606f6df0b11e55988a82a43b3f47210432a68eb74d66bd846572bfc905eb",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/HANDBOOK.md",
+      "title": "The handbook: understand before building",
+      "sha256": "6e168d349cd9d1b7e53d586b6a2a5a2079dfcc073fb5b17e59fa6d460edd58e6",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/IMPLEMENTATION-VALIDATION.md",
+      "title": "Implementation validation",
+      "sha256": "443142c63e89be09d0da518bf3d64861fbd2380461ed162ecc5cad8b1c2cc04b",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/IMPLEMENTATION.md",
+      "title": "Studio implementation and operator handbook",
+      "sha256": "42548056972eee4affd5aa5089d5a197eb43ea6f5b8dd2fdf72736a612d9c22c",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/NETLIFY-AND-OPERATIONS.md",
+      "title": "Netlify SQL, game evidence and Studio operations",
+      "sha256": "43af93adca1cff82c50aee8228f3fda631db018f5408c36ac16dd8d5e3eb2519",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/PLAN-TRACEABILITY.md",
+      "title": "Recorded plan → implementation and remaining work",
+      "sha256": "0a0a2a0f001a8df767f8aa1c41ed6b82d868097eda7fd65c54c8131dcb082aa8",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/README.md",
+      "title": "Sparkle Valley: Studio management foundation",
+      "sha256": "968300947958195152c4baeef3e75f46a4b9670c554bbd3bbc39e8dc2906041d",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-management-foundation/VALIDATION-REPORT.md",
+      "title": "Foundation validation report",
+      "sha256": "da5cc09c77d5bd2f75f87fc34b2e8c431b9a26558c12f062ed6523c0168810b5",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-owner-desk-20261027/FUNCTION-SWITCHES.md",
+      "title": "Optional functions and resource controls",
+      "sha256": "e71fabb88833dea8e9416944f14d38126b185d999cb96e8a06e09a914b8c2fb3",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-owner-desk-20261027/GALLERY.md",
+      "title": "Studio Owner’s Desk screenshot review",
+      "sha256": "0ad4d0e9c24826431027a9ff7e2e284f1a1ff2b2552d8b18961313774a60949a",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-owner-desk-20261027/NEXT-CHAT.md",
+      "title": "Next-chat takeover",
+      "sha256": "87215e42eac10f6a0654a3780d1cc4ede76100b1117aef68c7bf3b250388bef4",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-owner-desk-20261027/README.md",
+      "title": "Studio Owner’s Desk — implementation checkpoint",
+      "sha256": "318344966318b80bc5032e141043131ac8a79029191958de702f52ad191263fc",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-owner-desk-20261027/ROUTE-MAP.md",
+      "title": "Route and capability disposition",
+      "sha256": "84f79a5fc115b818ba9ac4239933ce974f4d6fde7ffab24623798fef4a83057c",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-owner-desk-20261027/VALIDATION.md",
+      "title": "Validation and release limits",
+      "sha256": "31a7df8909fb52c238a081bc2e048f1290f5822de366fe79119139c950dbe40d",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-page-review-20261027/GALLERY.md",
+      "title": "Studio screenshots — all pages",
+      "sha256": "6778b3874afe55c5a90556ef2058ca077dbd55183758a5aaa033db6344d2d157",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-page-review-20261027/README.md",
+      "title": "Open the screenshots",
+      "sha256": "b09f5ad70a54754443eadfac224941d72bf49a2cee9ace1828bbb477dbfeffdf",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-page-review-20261027/REVIEW-NOTES.md",
+      "title": "Items to review",
+      "sha256": "3728fc874b60a2c7036062103108f9eb9ed0502877fab4e6ba67781a932134cb",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-redesign-concepts-20261027/OWNERS-DESK.md",
+      "title": "Owner’s Desk: how the proposed Studio would work",
+      "sha256": "7f657bdbcb88a567fbf4abf758625594cc79d640df579b20319349814fc7de51",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-redesign-concepts-20261027/README.md",
+      "title": "Studio redesign: concepts before implementation",
+      "sha256": "fd59717e97363a469e7327ba7c8e03f0a0baef8d7b8c1b10203355a95dab281f",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/BUILD-STEPS.md",
+      "title": "Numbered builder instructions",
+      "sha256": "9d97e8d1b4df79f25268155f229f1275e373c8d7610ac97db2451afef494fab6",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/CI-RESULT.md",
+      "title": "Refreshed comprehensive verification",
+      "sha256": "0f461f39443e05b0499598588bfb10a833ff6cb112d1244ecfe106e2b8af4627",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/CONNECTIONS.md",
+      "title": "Connections and field contracts",
+      "sha256": "9a015a6cb8fe9582814206fbc6aba2b0fa4df5dc8dad3a9bf799a5aa0e5ec8b0",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/FUNCTION-SWITCHES.md",
+      "title": "Optional functions and resource controls",
+      "sha256": "e71fabb88833dea8e9416944f14d38126b185d999cb96e8a06e09a914b8c2fb3",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/MARKETING-AND-RESOURCES.md",
+      "title": "Marketing decisions and game protection",
+      "sha256": "6cfb224d7b9c7c4c3b03b38f0b0123f55e44e253e2414f9cad9703883a3a78a6",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/MASTER-DESIGN.md",
+      "title": "Master design",
+      "sha256": "1c31abdbd6bafcf1ee883d9f1f9933950d88f04016fae142d654c6556477b9e3",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/NEXT-CHAT.md",
+      "title": "Copy-paste takeover prompt",
+      "sha256": "3b2bb78fa4fdc6aa771bece9a0e8c50c86211924c37d2c23ac8f9693d8cef6f6",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/README.md",
+      "title": "Sparkle Valley Studio — complete revamp handoff",
+      "sha256": "08b85ff16fca52c5ee2f3b6c1a6ac2d77ba7ed394c5ac6aa187f0220e6d50173",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/STATUS.md",
+      "title": "What is done and what is pending",
+      "sha256": "ccabf2f16d12b4b944fecb07ad59d9099ee20fd1fef4b06ac007af90b9d39fc8",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/VISUALS.md",
+      "title": "iPhone visual concept",
+      "sha256": "28cd8f8eea4eb478d327ec0765c71c33ab2f043516c2085733b17088f2ee05a5",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/README.md",
+      "title": "Reference snapshots",
+      "sha256": "770f1a6e1d7babef873edf93e3b0f391f2f613c51031ed218cb7ce083a085802",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/connected/API-MAP.md",
+      "title": "Current routes and the proposed control interface",
+      "sha256": "3246e0b8c9d23f9c88ce415724967cd6c7c6aad9c62cac70c813090b6de8b07a",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/connected/BUILD-AND-ACCEPTANCE.md",
+      "title": "Builder handoff, sequencing and acceptance",
+      "sha256": "d014c0d0f6924fb34ec0c56197b1e15f42c56134e874a8fcbdcc9501f9791414",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/connected/CONNECTIONS.md",
+      "title": "Connections, identity and ownership",
+      "sha256": "02ffb87802816734721c7f6030698e60ab83138f3b1fdad11e4d17f2ff82a2b9",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/connected/CONTROLS.md",
+      "title": "Control contracts: purpose, scope, connection and confirmation",
+      "sha256": "3e963912d07f727bb4702db4c52a51c6bd449cd2842308c2579c2e633d4a2d6c",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/connected/DATA-MAP.md",
+      "title": "Field-by-field data and connection register",
+      "sha256": "3090db642a78bec240c6a0ca7ae350c85815c7604b77e4c6cb3976255717efe8",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/connected/GRAPHS.md",
+      "title": "Graph catalogue: what each graph means and connects to",
+      "sha256": "7c9528f70b55d3a171b4252072e0565019e215cb214c39e4640e30343c6be8aa",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/connected/README.md",
+      "title": "Studio connected concept: owner review handbook",
+      "sha256": "f0a809513320b3139e919f875c2c16c3bb5a5354be96aa492836c3edf6b19433",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/connected/SCREENS.md",
+      "title": "Screen concepts and richer People detail",
+      "sha256": "a8a6b106692707264fe4a4fd9c99cd851a29edee4cbff4be4ac4874db087e5a0",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/connected/VISUALS.md",
+      "title": "Visual walkthrough",
+      "sha256": "7a99a81bea133918673b461379f7844b20ee0045a8f7d1748d5c76dd16c0af50",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/01-CURRENT-SYSTEM.md",
+      "title": "Current system: evidence, authority and gaps",
+      "sha256": "503d32d274bc7acc6d4d0d28a20f9fedf2d300f94c2e96341cb04373e9f3793f",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/02-DATA-DICTIONARY.md",
+      "title": "Data dictionary and exact connection register",
+      "sha256": "b752b545b98e38685139379ce6e90786f1ffce40f4ae27d3437dc3be42afc38f",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/03-METRICS.md",
+      "title": "Metric definitions",
+      "sha256": "9d785901ff8b7a4aec15010f104485f6ec44c3075149f57c97d0bbafb7a87214",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/04-CONTRACTS.md",
+      "title": "Builder contracts: data, APIs, storage and failure behavior",
+      "sha256": "8cabf3aae4e799e1b11019e0b8044856f65ec91e887c944ff0f91a8e869b5c9b",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/05-SCREENS-AND-OPERATIONS.md",
+      "title": "Studio screens, permissions and daily decisions",
+      "sha256": "65764f84243389858ae953cdd4991e3fcfe8beb16d918ff46bd2f11713ab3a85",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/06-BUILD-PLAN.md",
+      "title": "Ordered implementation tickets",
+      "sha256": "57a9feb7c480fcad9eb23750ae9e3ec57af596caa05306abd017d7acd63c5ca3",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/07-VALIDATION.md",
+      "title": "Acceptance and evidence plan",
+      "sha256": "c27c7f1965053102470ca9cba1567574ae738b1baee9baf8391c149585dee753",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/08-DECISIONS.md",
+      "title": "Decisions, assumptions and unresolved prerequisites",
+      "sha256": "7e55c00521ee1bd58af140199f01de19da0382e5e7ae63442baeba6e807a95ed",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/09-RUNBOOKS.md",
+      "title": "Operating handbook and recovery procedures",
+      "sha256": "905ec494469fe37a9d1316b8ece7dee7088490a27e33c6efdde5f32913c99241",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/FINANCE.md",
+      "title": "Finance handbook: private manual ledger",
+      "sha256": "ee77606f6df0b11e55988a82a43b3f47210432a68eb74d66bd846572bfc905eb",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/HANDBOOK.md",
+      "title": "The handbook: understand before building",
+      "sha256": "6e168d349cd9d1b7e53d586b6a2a5a2079dfcc073fb5b17e59fa6d460edd58e6",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/IMPLEMENTATION-VALIDATION.md",
+      "title": "Implementation validation",
+      "sha256": "443142c63e89be09d0da518bf3d64861fbd2380461ed162ecc5cad8b1c2cc04b",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/IMPLEMENTATION.md",
+      "title": "Studio implementation and operator handbook",
+      "sha256": "42548056972eee4affd5aa5089d5a197eb43ea6f5b8dd2fdf72736a612d9c22c",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/NETLIFY-AND-OPERATIONS.md",
+      "title": "Netlify SQL, game evidence and Studio operations",
+      "sha256": "43af93adca1cff82c50aee8228f3fda631db018f5408c36ac16dd8d5e3eb2519",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/PLAN-TRACEABILITY.md",
+      "title": "Recorded plan → implementation and remaining work",
+      "sha256": "0a0a2a0f001a8df767f8aa1c41ed6b82d868097eda7fd65c54c8131dcb082aa8",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/README.md",
+      "title": "Sparkle Valley: Studio management foundation",
+      "sha256": "968300947958195152c4baeef3e75f46a4b9670c554bbd3bbc39e8dc2906041d",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/foundation/VALIDATION-REPORT.md",
+      "title": "Foundation validation report",
+      "sha256": "da5cc09c77d5bd2f75f87fc34b2e8c431b9a26558c12f062ed6523c0168810b5",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/implementation/FUNCTION-SWITCHES.md",
+      "title": "Optional functions and resource controls",
+      "sha256": "e71fabb88833dea8e9416944f14d38126b185d999cb96e8a06e09a914b8c2fb3",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/implementation/GALLERY.md",
+      "title": "Studio Owner’s Desk screenshot review",
+      "sha256": "0ad4d0e9c24826431027a9ff7e2e284f1a1ff2b2552d8b18961313774a60949a",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/implementation/NEXT-CHAT.md",
+      "title": "Next-chat takeover",
+      "sha256": "87215e42eac10f6a0654a3780d1cc4ede76100b1117aef68c7bf3b250388bef4",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/implementation/README.md",
+      "title": "Studio Owner’s Desk — implementation checkpoint",
+      "sha256": "318344966318b80bc5032e141043131ac8a79029191958de702f52ad191263fc",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/implementation/ROUTE-MAP.md",
+      "title": "Route and capability disposition",
+      "sha256": "84f79a5fc115b818ba9ac4239933ce974f4d6fde7ffab24623798fef4a83057c",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-master-20261027/references/implementation/VALIDATION.md",
+      "title": "Validation and release limits",
+      "sha256": "31a7df8909fb52c238a081bc2e048f1290f5822de366fe79119139c950dbe40d",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/CATALOGUE-RECONCILIATION.md",
+      "title": "Declared game discovery reconciliation",
+      "sha256": "3d72864de4bc1edb65a0bf03b71a0bc64c1498c664b245bdf414f31283e52733",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/CONTROL-COVERAGE.md",
+      "title": "Control source audit",
+      "sha256": "6e139c4993bd669af7f47d4603ba7b32adb2b585b26f29dac52ecabcb9ad0ae7",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/HOME-FIELD-MAP.md",
+      "title": "Home field and action map",
+      "sha256": "1786e5193da256a6ab2421df0b9f6eed76f8f56cf74e02ae17a5dad7e9c427ee",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/INVENTORY.md",
+      "title": "Source inventory audit",
+      "sha256": "b19f191520be0e205d1f167bd2500bf879a05662e52f3df49f157d327f8bcb91",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/NEXT-CHAT.md",
+      "title": "Continuation after Home and source audit",
+      "sha256": "f72aff52be198d44407f47fc925e6d9562e7a9c19ea032a2f43a1cbbe5310b18",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/README.md",
+      "title": "Studio revamp implementation continuation",
+      "sha256": "4889c4061c8ccfb626d708ee9105532872f4ead3d4571009b8fbddf3012efa34",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/RESUME-STATE.md",
+      "title": "Resume state",
+      "sha256": "9e76f38408f3ad1f70940db3bb1050158f535553289b2d446f0df37d5b9dc2ff",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/SCHEMA-CHANGES.md",
+      "title": "Schema and resource changes in this slice",
+      "sha256": "781dd8fba06d2d6c92ed94424566d2f46203bc3356e0e296b38da7a1bc36e270",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/VALIDATION.md",
+      "title": "Validation — Home continuation",
+      "sha256": "3d3ed60d4fafb573d1f969ffff09bd2546bcbd62e17397a2de22dd4d3d01fd92",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/studio-revamp-progress-20261029/VISUALS.md",
+      "title": "Actual Studio review images",
+      "sha256": "421ad0dfcff9084b6d02a97bd34c69ea3149b4404e687b97219dfb017f0876e1",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/website-review-20261023/README.md",
+      "title": "Current private website preview",
+      "sha256": "974cee8d0cdc0d829d6938bc12fc606dbd5601ba10d650e388652e0367092b6b",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/website-review-20261023/RELEASE-HANDOFF.md",
+      "title": "Release handoff: family website, parent controls and game integration",
+      "sha256": "caef96aaa16eade68ff9b479bc2079c90ed3fda07a63079612c82ba9c12022c9",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/website-review-20261023/RELEASE-PROMPT.md",
+      "title": "RELEASE-PROMPT",
+      "sha256": "d9e566bc685a26b01bb04f3815c5ba48b6ce0230f6aa9ee1a23b0b5161bbb25d",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/website-review-20261023/WEBSITE-RULES.md",
+      "title": "Website and game consistency contract",
+      "sha256": "9a4eb68820481396c3f487a692a336109e74fe96f83bc8f50f1398b70fd47c8d",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/website-review-20261023/festival-guide.md",
+      "title": "Festivals, decorations and activities / Lễ hội, trang trí và hoạt động",
+      "sha256": "507570a3c19b8f4f06e7ccda15c8787ba3ce40a596ea8777f74ab2ff9c3fe0e2",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/website-review-20261023/parent-controls-guide.md",
+      "title": "Parent settings and child play reports",
+      "sha256": "fa312a86e8d6d4d6544d89e97dff1201f2baae6cd61dfd547ae26ea5b2ec6f3a",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/website-review-20261023/parent-guide.md",
+      "title": "A parent-first Sparkle Valley website",
+      "sha256": "8c42053e22187a4d465562dca5421cdab162fccf189b3afbb8e99b6ca3ed5964",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/website-review-20261023/quest-guide.md",
+      "title": "Sparkle Valley: full quest guide / Hướng dẫn nhiệm vụ đầy đủ",
+      "sha256": "907de3143b96a224184c4cbd6a306ee61cc5ab8ab0d74389ef8efefe3d3b6f2b",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/website-review-20261023/rewards-guide.md",
+      "title": "Prizes & badges / Quà thưởng và huy hiệu",
+      "sha256": "96fa923ecf20a8954beedec07ea40023d858280e69064892efc127193034f2dd",
+      "authority": "original_contract_or_historical_record; current status is STATUS.md and WORK-REGISTER.json"
+    },
+    {
+      "path": "docs/owner-repair-20261014/STUDIO-LIVE-TAKEOVER-PROMPT.md",
+      "title": "Takeover prompt for the Studio live chat (17 October 2026 AEDT, round r81)",
+      "sha256": "49b388d80b253d97176a13e94cbbdc4b58a3e5241245f0266dd80c75534d5ea5",
+      "authority": "historical_core_or_takeover_record; current status is STATUS.md"
+    },
+    {
+      "path": "docs/owner-repair-20261014/STUDIO-LIVE-CHAT-PROMPT.md",
+      "title": "Prompt for the Studio live chat (17 October 2026 AEDT, for round r81)",
+      "sha256": "f4a78300640bbd1b8c9037dc8fd3ea2499ae36bdaa7d5e99a095a068c01d370e",
+      "authority": "historical_core_or_takeover_record; current status is STATUS.md"
+    },
+    {
+      "path": "docs/cores/tasks/studio-review.md",
+      "title": "Task brief: Studio review and improvements (Studio core)",
+      "sha256": "e4c083590a656ff5b93c3b2cda0de35c6d93514432f28c6fefc942dcf5993fd0",
+      "authority": "historical_core_or_takeover_record; current status is STATUS.md"
+    },
+    {
+      "path": "docs/cores/tasks/studio-r65.md",
+      "title": "Brief: Studio, three fixes (Studio core, branch `core/studio`)",
+      "sha256": "8b0ad5de10d1fb9f50ac8b52259c5337528bd00083fb6ae7effa64fdcd96e1fa",
+      "authority": "historical_core_or_takeover_record; current status is STATUS.md"
+    },
+    {
+      "path": "docs/cores/studio.md",
+      "title": "Studio core",
+      "sha256": "aa75237b17b17db55ae8839e585f061f1f05ad60e1283d5d2bd5cb25b7b6f979",
+      "authority": "historical_core_or_takeover_record; current status is STATUS.md"
+    }
+  ]
+}
