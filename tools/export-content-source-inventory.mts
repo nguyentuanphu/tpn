@@ -30,8 +30,9 @@ const modules=files.map(file=>{
  function visit(node:any){
   if(ts.isImportDeclaration(node)||ts.isExportDeclaration(node)){
    const ref=node.moduleSpecifier?.text;
-   if(typeof ref==='string')imports.push({specifier:ref,line:ast.getLineAndCharacterOfPosition(node.pos).line+1});
+   if(typeof ref==='string')imports.push({specifier:ref,kind:'static-import',line:ast.getLineAndCharacterOfPosition(node.pos).line+1});
   }
+  if(ts.isCallExpression(node)&&node.expression.kind===ts.SyntaxKind.ImportKeyword&&ts.isStringLiteral(node.arguments[0]))imports.push({specifier:node.arguments[0].text,kind:'literal-dynamic-import',line:ast.getLineAndCharacterOfPosition(node.getStart(ast)).line+1});
   if(node.modifiers?.some((m:any)=>m.kind===ts.SyntaxKind.ExportKeyword)){
    const line=ast.getLineAndCharacterOfPosition(node.getStart(ast)).line+1;
    if(node.name?.text)definitions.push({name:node.name.text,line,type:ts.SyntaxKind[node.kind]});
@@ -46,7 +47,7 @@ const byPath=new Map(modules.map(m=>[m.file,m]));
 const connections=modules.flatMap(m=>m.imports.map(i=>{
  const base=path.posix.normalize(path.posix.join(path.posix.dirname(m.file),i.specifier));
  const target=i.specifier.startsWith('.')?[base,base.replace(/\.js$/,'.ts'),base.replace(/\.cjs$/,'.cts'),base.replace(/\.mjs$/,'.mts')].find(f=>byPath.has(f)):null;
- return {from:m.key,to:target?'source:'+target:null,specifier:i.specifier,line:i.line,evidence:'static-import',runtimeEffect:'not_proven',external:!i.specifier.startsWith('.')};
+ return {from:m.key,to:target?'source:'+target:null,specifier:i.specifier,line:i.line,evidence:i.kind,runtimeEffect:'not_proven',external:!i.specifier.startsWith('.')};
 }));
 const catalogue=exportManagementCatalogue(root);
 const items=catalogue.entries.map(e=>({key:e.kind+':'+e.id,domain:e.kind==='game'?'games':'stories',sourceFile:e.sourceFile,discovery:e.coverage.discovery,implementationReference:e.coverage.implementation,sourceHash:e.sourceHash,guide:e.guide,unlock:e.unlock,playability:'consult-browser-validation-not-inferred-from-metadata'}));
@@ -58,7 +59,8 @@ const boundaries=[
  ['services','Database/provider state','netlify/lib/management/connection.mts','Bindings and credentials remain private; source does not prove service readiness.'],
  ['website','Marketing observations','home/analytics.ts','Consent-based aggregates; Play clicks do not prove game starts or identify children.']
 ].map(([domain,label,file,limit])=>({domain,label,file,classification:'private-or-provider-record-boundary',enumerated:false,limit}));
-const output={schemaVersion:1,sourceHead:git('rev-parse','HEAD'),scope:'All tracked public code/config surfaces under the declared roots, plus new source files; not every runtime entity or private/provider record.',domains:domains.map(id=>({id,sourceModules:modules.filter(m=>m.domain===id).length,definitionCoverage:'module-manifest-complete-within-listed-roots',runtimeCoverage:'not_claimed'})),modules,items,boundaries,limitations:['Domain attribution is a reviewable filename-based grouping; shared imports cross domains.','Dynamic imports, DOM messages, runtime identifiers and API dispatch need consumer review beyond lexical import evidence.','Asset binaries and recording catalogues are covered by separate manifests; never interpreted as child/profile records.','No all-domain control/playability percentage is inferred.']};
+const dirtyPaths=git('diff','--name-only','HEAD','--',...files).split('\n').filter(Boolean);
+const output={schemaVersion:1,sourceHead:git('log','-1','--format=%H','--',...files),sourceDirty:dirtyPaths.length>0,dirtyPaths,scope:'All tracked public code/config surfaces under the declared roots, plus new source files; not every runtime entity or private/provider record.',domains:domains.map(id=>({id,sourceModules:modules.filter(m=>m.domain===id).length,definitionCoverage:'module-manifest-complete-within-listed-roots',runtimeCoverage:'not_claimed'})),modules,items,boundaries,limitations:['Domain attribution is a reviewable filename-based grouping; shared imports cross domains.','Dynamic imports, DOM messages, runtime identifiers and API dispatch need consumer review beyond lexical import evidence.','Asset binaries and recording catalogues are covered by separate manifests; never interpreted as child/profile records.','No all-domain control/playability percentage is inferred.']};
 fs.mkdirSync(out,{recursive:true});
 fs.writeFileSync(path.join(out,'source-inventory.json'),JSON.stringify(output,null,2)+'\n');
 fs.writeFileSync(path.join(out,'source-connections.json'),JSON.stringify({schemaVersion:1,sourceHead:output.sourceHead,connections,boundaries},null,2)+'\n');

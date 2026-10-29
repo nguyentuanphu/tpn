@@ -16,7 +16,7 @@ export async function contentWebsiteCheck(browser){
     assert.equal(await page.locator('#art-guide svg').count(),22);
     assert.ok((await page.locator('#art-guide').innerText()).includes(lang==='en'?'newest 12':'12 bức'));
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-    await page.locator('#art-nonla').scrollIntoViewIfNeeded();await page.screenshot({path:`${folder}/screenshots/website-art-${lang}-${width}.png`});
+    await page.locator('#art-nonla').scrollIntoViewIfNeeded();await page.screenshot({animations:'disabled',path:`${folder}/screenshots/website-art-${lang}-${width}.png`});
     assert.equal(await page.locator('#art-nonla').evaluate(e=>e.open),true);
     results.push({width,height,lang,fourDestinations:true,artItems:22,deepLink:true,noOverflow:true});
    }
