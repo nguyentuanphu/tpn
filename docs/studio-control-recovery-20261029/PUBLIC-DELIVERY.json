@@ -1,0 +1,54 @@
+{
+  "observedAtSydney": "2026-10-29T17:38:01.364559+11:00",
+  "artifactCommit": "261d609eb49a2baa5b47f91b0090425149607805",
+  "files": [
+    {
+      "path": "README.md",
+      "status": 200,
+      "bytes": 1700,
+      "sha256": "fb64c386b00f8c2852df7f6b74872cb304d10b5d9728f609fc4ea5dbf856c5ce",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/261d609eb49a2baa5b47f91b0090425149607805/docs/studio-control-recovery-20261029/README.md"
+    },
+    {
+      "path": "CONTROL-JOURNEYS.md",
+      "status": 200,
+      "bytes": 4792,
+      "sha256": "a3535798ffa921b7ce357cd4c3b23e6ad04c345aea648c532e3094c061cfef2c",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/261d609eb49a2baa5b47f91b0090425149607805/docs/studio-control-recovery-20261029/CONTROL-JOURNEYS.md"
+    },
+    {
+      "path": "ITEM-FIELDS.md",
+      "status": 200,
+      "bytes": 3547,
+      "sha256": "62472a1d28df31da6fcfe5015d0c5c2e2bd525e629986ac2560d19bb820dc5a5",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/261d609eb49a2baa5b47f91b0090425149607805/docs/studio-control-recovery-20261029/ITEM-FIELDS.md"
+    },
+    {
+      "path": "NEXT-CHAT.md",
+      "status": 200,
+      "bytes": 2626,
+      "sha256": "29ada8d71aeb4a89de878081adc8087dfe1343b672f30c626f5c0785c46c588e",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/261d609eb49a2baa5b47f91b0090425149607805/docs/studio-control-recovery-20261029/NEXT-CHAT.md"
+    },
+    {
+      "path": "VISUALS.md",
+      "status": 200,
+      "bytes": 840,
+      "sha256": "30dff80b441d1092224cd1fa16ac989cbb40e671ecadb362683c2763e7876b30",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/261d609eb49a2baa5b47f91b0090425149607805/docs/studio-control-recovery-20261029/VISUALS.md"
+    },
+    {
+      "path": "screenshots/en-390-functions-editor.png",
+      "status": 200,
+      "bytes": 60741,
+      "sha256": "cd85688e33c49ea852021cfc37286573949fa8c0d27604e98399265470b21f70",
+      "matchesLocal": true,
+      "url": "https://raw.githubusercontent.com/nguyentuanphu/tpn/261d609eb49a2baa5b47f91b0090425149607805/docs/studio-control-recovery-20261029/screenshots/en-390-functions-editor.png"
+    }
+  ]
+}
