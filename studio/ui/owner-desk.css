@@ -28,3 +28,22 @@ nav#tabs button span{display:grid;place-items:center;width:30px;flex:none}nav#ta
 @media(max-width:600px){body>header{gap:6px;padding-left:12px;padding-right:12px}.brand{gap:4px}.brand b{font-size:17px}.brand>.arti{display:none}.actions{gap:4px}.actions .icon{width:44px;height:44px}.actions .pub{font-size:12px;padding:8px;max-width:90px}.lang button{padding:6px;min-width:44px}.studio-title-prefix{display:none}.brand b{font-size:16px}.actions .pub{max-width:56px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.desk-valley{display:none}.desk-heading{margin-bottom:18px}.desk-heading h2{font-size:29px}.desk-period{gap:10px}.desk-period .note{width:100%}.desk-columns{grid-template-columns:1fr;gap:0}.desk-summary{gap:14px;grid-template-columns:1fr}.desk-summary>div{display:flex;align-items:baseline;gap:16px}.desk-summary strong{font-size:24px;min-width:80px}.desk-summary span{font-size:14px}.desk-decision{padding:18px;gap:12px}.desk-decision-art,.desk-decision-art .arti,.desk-decision-art svg{width:44px;height:44px}.desk-decision h3{font-size:22px}.desk-root .card{padding:18px}.desk-work-row{align-items:flex-start;gap:12px}.desk-work-row .desk-text{flex:none}.desk-chart svg text{font-size:19px}.desk-person-list>button,.desk-tool-list>button,.desk-catalogue>button{gap:10px}.desk-person-list small{font-size:14px}.desk-public-links .btn{flex:1;text-align:center}}
 @media(prefers-reduced-motion:reduce){.desk-root *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 @media(max-width:600px){.desk-home-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.desk-home-summary>div{display:block;padding:12px}.desk-home-summary strong{min-width:0;font-size:23px}.desk-home-summary small{font-size:12px}.desk-priority{display:block}.desk-priority .desk-text{padding-bottom:0}.desk-root[data-desk-area=home] .desk-heading{gap:12px}.desk-root[data-desk-area=home] .desk-valley{display:block;width:90px;height:76px}.desk-root[data-desk-area=home] .desk-heading h2{font-size:27px}}
+/* (owner, 30 Oct 2026 AEDT) Home: "Today in Sparkle Valley" */
+.today-health{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.today-health .pill{display:inline-block;border-radius:999px;padding:4px 12px;font-size:14px;background:var(--line)}
+.today-health .pill.ok,.today-device .pill.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.today-health .pill.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.today-health .pill.bad{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.today-tiles{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr));margin:0 0 12px}
+@media (min-width:760px){.today-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.today-tile b{display:block;font-size:28px;line-height:1.1}
+.today-tile span{font-size:13px;color:var(--soft)}
+.today-list{list-style:none;margin:0;padding:0}
+.today-list li{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;padding:6px 0;border-top:1px solid var(--line)}
+.today-list li:first-child{border-top:0}
+.today-games li{display:grid;grid-template-columns:minmax(6em,9em) 1fr auto;gap:10px}
+.today-bar{display:block;height:8px;border-radius:4px;background:var(--line)}
+.today-bar i{display:block;height:8px;border-radius:4px;background:var(--accent)}
+.today-device{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:44px;padding:8px 0;border:0;border-top:1px solid var(--line);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.today-device:first-of-type{border-top:0}
+.today-device small{color:var(--soft)}
