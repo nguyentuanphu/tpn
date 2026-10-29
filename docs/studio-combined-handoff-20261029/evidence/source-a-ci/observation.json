@@ -1,0 +1,87 @@
+{
+  "observedAtSydney": "2026-10-29T19:56:12.070771+11:00",
+  "run": "40830113190",
+  "headSha": "47782b13f08e67e8647d41614a52f4f0714cc195",
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40830113190",
+  "status": "completed",
+  "conclusion": "failure",
+  "artifactsAvailable": [
+    "share-6",
+    "share-1",
+    "share-2",
+    "share-4",
+    "share-8",
+    "share-7",
+    "share-5",
+    "share-3",
+    "share-postgres"
+  ],
+  "checksAvailable": 253,
+  "passedAvailable": 252,
+  "failedAvailable": [
+    "managementstudio"
+  ],
+  "retriedAvailable": [
+    "managementstudio"
+  ],
+  "sampleMarkers": [],
+  "suiteLevelSkips": [],
+  "jobs": [
+    {
+      "name": "which",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Management PostgreSQL",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (7)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (6)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (5)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (1)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (8)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (2)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (3)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "collect",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "limitation": "Only downloaded available result artifacts are counted. Missing/running shares are unknown. Full suite requires collector success and review of actual results."
+}

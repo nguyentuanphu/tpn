@@ -1,5 +1,7 @@
 # Docs: start here
 
+**Current Studio integration:** [one-branch combined handbook](studio-combined-handoff-20261029/README.md) and [next-chat prompt](studio-combined-handoff-20261029/NEXT-CHAT.md). Both workstreams, original plans and unresolved work are together on `handoff/studio-combined-20261029`. Earlier handbooks remain historical references.
+
 [Latest Studio control recovery and field guide](studio-control-recovery-20261029/README.md): conflict/unknown-result recovery, real delivery navigation, current evidence and pending work.
 
 [Latest Studio function controls and continuation](studio-functions-20261029/README.md): actual Collect/Process/Show implementation, field connections, screenshots, validation and pending work.

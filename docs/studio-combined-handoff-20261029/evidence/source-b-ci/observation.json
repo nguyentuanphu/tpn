@@ -1,0 +1,98 @@
+{
+  "observedAtSydney": "2026-10-29T17:52:05.885081+11:00",
+  "run": "40823547500",
+  "headSha": "ba9f7c43b87734bbcb7620787afd4a32f4275f74",
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40823547500",
+  "status": "completed",
+  "conclusion": "failure",
+  "artifactsAvailable": [
+    "share-1",
+    "share-2",
+    "share-7",
+    "share-4",
+    "share-5",
+    "share-3",
+    "share-6",
+    "share-8",
+    "share-postgres"
+  ],
+  "checksAvailable": 259,
+  "passedAvailable": 253,
+  "failedAvailable": [
+    "unit",
+    "voicecover",
+    "a11y",
+    "folkplay",
+    "games",
+    "ownerdesk"
+  ],
+  "retriedAvailable": [
+    "unit",
+    "voicecover",
+    "a11y",
+    "folkplay",
+    "games",
+    "ownerdesk",
+    "reportingflow"
+  ],
+  "sampleMarkers": [],
+  "suiteLevelSkips": [],
+  "jobs": [
+    {
+      "name": "which",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Management PostgreSQL",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (1)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (6)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (7)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (8)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (5)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (2)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (3)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "collect",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "limitation": "Only downloaded available result artifacts are counted. Missing/running shares are unknown. Full suite requires collector success and review of actual results."
+}

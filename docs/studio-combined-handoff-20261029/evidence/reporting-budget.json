@@ -1,0 +1,4056 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T07:06:03.627Z",
+  "sourceHead": "125a54920fb4ed54a4b241abc5a414d156267235",
+  "sourceHashes": {
+    "js/players.ts": "f0102880a62f6e9fc3399919be96860aa927a051d18b40b233f91802156a23d0",
+    "js/management-telemetry.ts": "66901de7079401724b1dbc91d757a594b66930d3d2e65fe01debd5f6dc22135e",
+    "js/core/reporting-policy.ts": "977e8c61175cf8140053517af23e962aa0ef7cf98af50c582cbe6554cbf1a74b",
+    "tests/management-policy-budget-browser.mjs": "ac96dc02208dcc61144c066e82a6648c2e80f353263dcc862dab8f985c605b7c"
+  },
+  "synthetic": true,
+  "browser": "141.0.7390.37",
+  "samples": [
+    {
+      "collect": false,
+      "process": false,
+      "show": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "observedMs": 1550.7999999970198,
+      "animationCallbacks": 11,
+      "heapBeforeBytes": 322000000,
+      "heapAfterBytes": 322000000,
+      "resources": [
+        {
+          "name": "http://localhost:8765/icons/launch/valley-portrait.jpg",
+          "encodedBodySize": 4565,
+          "transferSize": 4865
+        },
+        {
+          "name": "http://localhost:8765/fonts/Fredoka-latin-500.woff2",
+          "encodedBodySize": 29732,
+          "transferSize": 30032
+        },
+        {
+          "name": "http://localhost:8765/css/fonts.css",
+          "encodedBodySize": 4340,
+          "transferSize": 4640
+        },
+        {
+          "name": "http://localhost:8765/css/style.css",
+          "encodedBodySize": 346167,
+          "transferSize": 346467
+        },
+        {
+          "name": "http://localhost:8765/js/core/reporting-policy.js",
+          "encodedBodySize": 1641,
+          "transferSize": 1941
+        },
+        {
+          "name": "http://localhost:8765/js/content/tester.js",
+          "encodedBodySize": 8695,
+          "transferSize": 8995
+        },
+        {
+          "name": "http://localhost:8765/js/custom.js",
+          "encodedBodySize": 21857,
+          "transferSize": 22157
+        },
+        {
+          "name": "http://localhost:8765/js/content/tester-arcades.js",
+          "encodedBodySize": 1804,
+          "transferSize": 2104
+        },
+        {
+          "name": "http://localhost:8765/js/content/fruit-parade.js",
+          "encodedBodySize": 688,
+          "transferSize": 988
+        },
+        {
+          "name": "http://localhost:8765/js/art.js",
+          "encodedBodySize": 164586,
+          "transferSize": 164886
+        },
+        {
+          "name": "http://localhost:8765/js/icons.js",
+          "encodedBodySize": 8064,
+          "transferSize": 8364
+        },
+        {
+          "name": "http://localhost:8765/js/emojiswap.js",
+          "encodedBodySize": 11157,
+          "transferSize": 11457
+        },
+        {
+          "name": "http://localhost:8765/js/gfx.js",
+          "encodedBodySize": 6307,
+          "transferSize": 6607
+        },
+        {
+          "name": "http://localhost:8765/vendor/three.module.js",
+          "encodedBodySize": 670681,
+          "transferSize": 670981
+        },
+        {
+          "name": "http://localhost:8765/js/rideview.js",
+          "encodedBodySize": 3433,
+          "transferSize": 3733
+        },
+        {
+          "name": "http://localhost:8765/js/seethrough.js",
+          "encodedBodySize": 8740,
+          "transferSize": 9040
+        },
+        {
+          "name": "http://localhost:8765/vendor/RoomEnvironment.js",
+          "encodedBodySize": 3747,
+          "transferSize": 4047
+        },
+        {
+          "name": "http://localhost:8765/js/build.js",
+          "encodedBodySize": 658,
+          "transferSize": 958
+        },
+        {
+          "name": "http://localhost:8765/js/core/events.js",
+          "encodedBodySize": 8493,
+          "transferSize": 8793
+        },
+        {
+          "name": "http://localhost:8765/js/state.js",
+          "encodedBodySize": 21044,
+          "transferSize": 21344
+        },
+        {
+          "name": "http://localhost:8765/js/content/shop.js",
+          "encodedBodySize": 16941,
+          "transferSize": 17241
+        },
+        {
+          "name": "http://localhost:8765/js/voice-index.js",
+          "encodedBodySize": 3384,
+          "transferSize": 3684
+        },
+        {
+          "name": "http://localhost:8765/js/core/geo.js",
+          "encodedBodySize": 2572,
+          "transferSize": 2872
+        },
+        {
+          "name": "http://localhost:8765/js/core/rng.js",
+          "encodedBodySize": 2252,
+          "transferSize": 2552
+        },
+        {
+          "name": "http://localhost:8765/js/i18n.js",
+          "encodedBodySize": 9434,
+          "transferSize": 9734
+        },
+        {
+          "name": "http://localhost:8765/js/util.js",
+          "encodedBodySize": 2516,
+          "transferSize": 2816
+        },
+        {
+          "name": "http://localhost:8765/js/viwords.js",
+          "encodedBodySize": 5724,
+          "transferSize": 6024
+        },
+        {
+          "name": "http://localhost:8765/js/audio.js",
+          "encodedBodySize": 39941,
+          "transferSize": 40241
+        },
+        {
+          "name": "http://localhost:8765/js/packhash.js",
+          "encodedBodySize": 1381,
+          "transferSize": 1681
+        },
+        {
+          "name": "http://localhost:8765/js/voice-fragments.js",
+          "encodedBodySize": 1364,
+          "transferSize": 1664
+        },
+        {
+          "name": "http://localhost:8765/js/voice.js",
+          "encodedBodySize": 45870,
+          "transferSize": 46170
+        },
+        {
+          "name": "http://localhost:8765/js/content/songs.js",
+          "encodedBodySize": 7029,
+          "transferSize": 7329
+        },
+        {
+          "name": "http://localhost:8765/js/money.js",
+          "encodedBodySize": 3438,
+          "transferSize": 3738
+        },
+        {
+          "name": "http://localhost:8765/js/songs.js",
+          "encodedBodySize": 3693,
+          "transferSize": 3993
+        },
+        {
+          "name": "http://localhost:8765/js/content/map.js",
+          "encodedBodySize": 38307,
+          "transferSize": 38607
+        },
+        {
+          "name": "http://localhost:8765/js/solids.js",
+          "encodedBodySize": 12655,
+          "transferSize": 12955
+        },
+        {
+          "name": "http://localhost:8765/js/houses.js",
+          "encodedBodySize": 15560,
+          "transferSize": 15860
+        },
+        {
+          "name": "http://localhost:8765/js/world.js",
+          "encodedBodySize": 114399,
+          "transferSize": 114699
+        },
+        {
+          "name": "http://localhost:8765/js/avatar.js",
+          "encodedBodySize": 48406,
+          "transferSize": 48706
+        },
+        {
+          "name": "http://localhost:8765/js/vehicles.js",
+          "encodedBodySize": 51634,
+          "transferSize": 51934
+        },
+        {
+          "name": "http://localhost:8765/js/studio-position.js",
+          "encodedBodySize": 967,
+          "transferSize": 1267
+        },
+        {
+          "name": "http://localhost:8765/js/player.js",
+          "encodedBodySize": 25471,
+          "transferSize": 25771
+        },
+        {
+          "name": "http://localhost:8765/js/explain.js",
+          "encodedBodySize": 1869,
+          "transferSize": 2169
+        },
+        {
+          "name": "http://localhost:8765/js/hud.js",
+          "encodedBodySize": 29268,
+          "transferSize": 29568
+        },
+        {
+          "name": "http://localhost:8765/js/feel.js",
+          "encodedBodySize": 5922,
+          "transferSize": 6222
+        },
+        {
+          "name": "http://localhost:8765/js/input.js",
+          "encodedBodySize": 6481,
+          "transferSize": 6781
+        },
+        {
+          "name": "http://localhost:8765/js/content/family-quiz.js",
+          "encodedBodySize": 1434,
+          "transferSize": 1734
+        },
+        {
+          "name": "http://localhost:8765/js/relay.js",
+          "encodedBodySize": 10642,
+          "transferSize": 10942
+        },
+        {
+          "name": "http://localhost:8765/js/netmsg.js",
+          "encodedBodySize": 10033,
+          "transferSize": 10333
+        },
+        {
+          "name": "http://localhost:8765/js/content/secondset.js",
+          "encodedBodySize": 4360,
+          "transferSize": 4660
+        },
+        {
+          "name": "http://localhost:8765/js/net.js",
+          "encodedBodySize": 72591,
+          "transferSize": 72891
+        },
+        {
+          "name": "http://localhost:8765/js/content/unlocks.js",
+          "encodedBodySize": 3665,
+          "transferSize": 3965
+        },
+        {
+          "name": "http://localhost:8765/js/content/activities.js",
+          "encodedBodySize": 13562,
+          "transferSize": 13862
+        },
+        {
+          "name": "http://localhost:8765/js/popups.js",
+          "encodedBodySize": 8255,
+          "transferSize": 8555
+        },
+        {
+          "name": "http://localhost:8765/js/content/festcal.js",
+          "encodedBodySize": 17846,
+          "transferSize": 18146
+        },
+        {
+          "name": "http://localhost:8765/js/content/stickers.js",
+          "encodedBodySize": 34453,
+          "transferSize": 34753
+        },
+        {
+          "name": "http://localhost:8765/js/stickers.js",
+          "encodedBodySize": 7781,
+          "transferSize": 8081
+        },
+        {
+          "name": "http://localhost:8765/js/core/ids.js",
+          "encodedBodySize": 2084,
+          "transferSize": 2384
+        },
+        {
+          "name": "http://localhost:8765/js/stickerfx.js",
+          "encodedBodySize": 7349,
+          "transferSize": 7649
+        },
+        {
+          "name": "http://localhost:8765/js/placebook.js",
+          "encodedBodySize": 3892,
+          "transferSize": 4192
+        },
+        {
+          "name": "http://localhost:8765/js/familycards.js",
+          "encodedBodySize": 3725,
+          "transferSize": 4025
+        },
+        {
+          "name": "http://localhost:8765/js/ads.js",
+          "encodedBodySize": 6823,
+          "transferSize": 7123
+        },
+        {
+          "name": "http://localhost:8765/js/data.js",
+          "encodedBodySize": 11477,
+          "transferSize": 11777
+        },
+        {
+          "name": "http://localhost:8765/js/games/registry.js",
+          "encodedBodySize": 1230,
+          "transferSize": 1530
+        },
+        {
+          "name": "http://localhost:8765/js/howto-registry.js",
+          "encodedBodySize": 516,
+          "transferSize": 816
+        },
+        {
+          "name": "http://localhost:8765/js/games/playwatch.js",
+          "encodedBodySize": 2737,
+          "transferSize": 3037
+        },
+        {
+          "name": "http://localhost:8765/js/howto.js",
+          "encodedBodySize": 982,
+          "transferSize": 1282
+        },
+        {
+          "name": "http://localhost:8765/js/games/frame.js",
+          "encodedBodySize": 26724,
+          "transferSize": 27024
+        },
+        {
+          "name": "http://localhost:8765/js/realworld.js",
+          "encodedBodySize": 15785,
+          "transferSize": 16085
+        },
+        {
+          "name": "http://localhost:8765/js/story.js",
+          "encodedBodySize": 16762,
+          "transferSize": 17062
+        },
+        {
+          "name": "http://localhost:8765/js/town.js",
+          "encodedBodySize": 30730,
+          "transferSize": 31030
+        },
+        {
+          "name": "http://localhost:8765/js/powerlines.js",
+          "encodedBodySize": 4319,
+          "transferSize": 4619
+        },
+        {
+          "name": "http://localhost:8765/js/chat.js",
+          "encodedBodySize": 11280,
+          "transferSize": 11580
+        },
+        {
+          "name": "http://localhost:8765/js/listen.js",
+          "encodedBodySize": 2937,
+          "transferSize": 3237
+        },
+        {
+          "name": "http://localhost:8765/js/vendors.js",
+          "encodedBodySize": 7519,
+          "transferSize": 7819
+        },
+        {
+          "name": "http://localhost:8765/js/words.js",
+          "encodedBodySize": 8778,
+          "transferSize": 9078
+        },
+        {
+          "name": "http://localhost:8765/js/snacks.js",
+          "encodedBodySize": 4684,
+          "transferSize": 4984
+        },
+        {
+          "name": "http://localhost:8765/js/regions.js",
+          "encodedBodySize": 39471,
+          "transferSize": 39771
+        },
+        {
+          "name": "http://localhost:8765/js/credits.js",
+          "encodedBodySize": 7306,
+          "transferSize": 7606
+        },
+        {
+          "name": "http://localhost:8765/js/gather.js",
+          "encodedBodySize": 13311,
+          "transferSize": 13611
+        },
+        {
+          "name": "http://localhost:8765/js/photos.js",
+          "encodedBodySize": 2100,
+          "transferSize": 2400
+        },
+        {
+          "name": "http://localhost:8765/js/install.js",
+          "encodedBodySize": 6157,
+          "transferSize": 6457
+        },
+        {
+          "name": "http://localhost:8765/js/words2.js",
+          "encodedBodySize": 2680,
+          "transferSize": 2980
+        },
+        {
+          "name": "http://localhost:8765/js/ui.js",
+          "encodedBodySize": 114260,
+          "transferSize": 114560
+        },
+        {
+          "name": "http://localhost:8765/js/commands.js",
+          "encodedBodySize": 7397,
+          "transferSize": 7697
+        },
+        {
+          "name": "http://localhost:8765/js/family-quiz-store.js",
+          "encodedBodySize": 898,
+          "transferSize": 1198
+        },
+        {
+          "name": "http://localhost:8765/js/games/learning-meta.js",
+          "encodedBodySize": 2872,
+          "transferSize": 3172
+        },
+        {
+          "name": "http://localhost:8765/js/games/catalog.js",
+          "encodedBodySize": 25033,
+          "transferSize": 25333
+        },
+        {
+          "name": "http://localhost:8765/js/games/all.js",
+          "encodedBodySize": 1024,
+          "transferSize": 1324
+        },
+        {
+          "name": "http://localhost:8765/js/animals.js",
+          "encodedBodySize": 25496,
+          "transferSize": 25796
+        },
+        {
+          "name": "http://localhost:8765/js/farm.js",
+          "encodedBodySize": 37300,
+          "transferSize": 37600
+        },
+        {
+          "name": "http://localhost:8765/js/places.js",
+          "encodedBodySize": 7520,
+          "transferSize": 7820
+        },
+        {
+          "name": "http://localhost:8765/js/chatter.js",
+          "encodedBodySize": 7840,
+          "transferSize": 8140
+        },
+        {
+          "name": "http://localhost:8765/js/asia.js",
+          "encodedBodySize": 14683,
+          "transferSize": 14983
+        },
+        {
+          "name": "http://localhost:8765/js/homes.js",
+          "encodedBodySize": 40283,
+          "transferSize": 40583
+        },
+        {
+          "name": "http://localhost:8765/js/heritage.js",
+          "encodedBodySize": 38153,
+          "transferSize": 38453
+        },
+        {
+          "name": "http://localhost:8765/js/pets.js",
+          "encodedBodySize": 19979,
+          "transferSize": 20279
+        },
+        {
+          "name": "http://localhost:8765/js/ferry.js",
+          "encodedBodySize": 23688,
+          "transferSize": 23988
+        },
+        {
+          "name": "http://localhost:8765/js/passport.js",
+          "encodedBodySize": 7506,
+          "transferSize": 7806
+        },
+        {
+          "name": "http://localhost:8765/js/lunar.js",
+          "encodedBodySize": 4943,
+          "transferSize": 5243
+        },
+        {
+          "name": "http://localhost:8765/js/content/festival-visibility.js",
+          "encodedBodySize": 3097,
+          "transferSize": 3397
+        },
+        {
+          "name": "http://localhost:8765/js/festival-live.js",
+          "encodedBodySize": 2617,
+          "transferSize": 2917
+        },
+        {
+          "name": "http://localhost:8765/js/festivals.js",
+          "encodedBodySize": 48939,
+          "transferSize": 49239
+        },
+        {
+          "name": "http://localhost:8765/js/weather.js",
+          "encodedBodySize": 7779,
+          "transferSize": 8079
+        },
+        {
+          "name": "http://localhost:8765/js/fun.js",
+          "encodedBodySize": 13580,
+          "transferSize": 13880
+        },
+        {
+          "name": "http://localhost:8765/js/tale-loader.js",
+          "encodedBodySize": 1366,
+          "transferSize": 1666
+        },
+        {
+          "name": "http://localhost:8765/js/learn.js",
+          "encodedBodySize": 25187,
+          "transferSize": 25487
+        },
+        {
+          "name": "http://localhost:8765/js/talesdata.js",
+          "encodedBodySize": 14053,
+          "transferSize": 14353
+        },
+        {
+          "name": "http://localhost:8765/js/cartoon.js",
+          "encodedBodySize": 13785,
+          "transferSize": 14085
+        },
+        {
+          "name": "http://localhost:8765/js/tales.js",
+          "encodedBodySize": 15676,
+          "transferSize": 15976
+        },
+        {
+          "name": "http://localhost:8765/js/roads.js",
+          "encodedBodySize": 51036,
+          "transferSize": 51336
+        },
+        {
+          "name": "http://localhost:8765/js/nametags.js",
+          "encodedBodySize": 4411,
+          "transferSize": 4711
+        },
+        {
+          "name": "http://localhost:8765/js/signposts.js",
+          "encodedBodySize": 10936,
+          "transferSize": 11236
+        },
+        {
+          "name": "http://localhost:8765/js/showcase.js",
+          "encodedBodySize": 6513,
+          "transferSize": 6813
+        },
+        {
+          "name": "http://localhost:8765/js/travel-stops.js",
+          "encodedBodySize": 815,
+          "transferSize": 1115
+        },
+        {
+          "name": "http://localhost:8765/js/traffic.js",
+          "encodedBodySize": 32023,
+          "transferSize": 32323
+        },
+        {
+          "name": "http://localhost:8765/js/content/releases.js",
+          "encodedBodySize": 22180,
+          "transferSize": 22480
+        },
+        {
+          "name": "http://localhost:8765/js/myhouse.js",
+          "encodedBodySize": 10957,
+          "transferSize": 11257
+        },
+        {
+          "name": "http://localhost:8765/js/worldcache.js",
+          "encodedBodySize": 3144,
+          "transferSize": 3444
+        },
+        {
+          "name": "http://localhost:8765/js/printpage.js",
+          "encodedBodySize": 4589,
+          "transferSize": 4889
+        },
+        {
+          "name": "http://localhost:8765/js/coop.js",
+          "encodedBodySize": 4622,
+          "transferSize": 4922
+        },
+        {
+          "name": "http://localhost:8765/js/report.js",
+          "encodedBodySize": 9265,
+          "transferSize": 9565
+        },
+        {
+          "name": "http://localhost:8765/js/twinchests.js",
+          "encodedBodySize": 6614,
+          "transferSize": 6914
+        },
+        {
+          "name": "http://localhost:8765/js/claims.js",
+          "encodedBodySize": 2156,
+          "transferSize": 2456
+        },
+        {
+          "name": "http://localhost:8765/js/games/multiplayer-foundations.js",
+          "encodedBodySize": 3600,
+          "transferSize": 3900
+        },
+        {
+          "name": "http://localhost:8765/js/netgames.js",
+          "encodedBodySize": 11389,
+          "transferSize": 11689
+        },
+        {
+          "name": "http://localhost:8765/js/simple.js",
+          "encodedBodySize": 33863,
+          "transferSize": 34163
+        },
+        {
+          "name": "http://localhost:8765/js/kite.js",
+          "encodedBodySize": 4817,
+          "transferSize": 5117
+        },
+        {
+          "name": "http://localhost:8765/js/cities.js",
+          "encodedBodySize": 64992,
+          "transferSize": 65292
+        },
+        {
+          "name": "http://localhost:8765/js/hawkers.js",
+          "encodedBodySize": 7570,
+          "transferSize": 7870
+        },
+        {
+          "name": "http://localhost:8765/js/suburbs.js",
+          "encodedBodySize": 11712,
+          "transferSize": 12012
+        },
+        {
+          "name": "http://localhost:8765/js/content/build-types.js",
+          "encodedBodySize": 6099,
+          "transferSize": 6399
+        },
+        {
+          "name": "http://localhost:8765/js/worldedit.js",
+          "encodedBodySize": 11382,
+          "transferSize": 11682
+        },
+        {
+          "name": "http://localhost:8765/js/plots.js",
+          "encodedBodySize": 2353,
+          "transferSize": 2653
+        },
+        {
+          "name": "http://localhost:8765/js/symbols.js",
+          "encodedBodySize": 12765,
+          "transferSize": 13065
+        },
+        {
+          "name": "http://localhost:8765/js/reeds.js",
+          "encodedBodySize": 4797,
+          "transferSize": 5097
+        },
+        {
+          "name": "http://localhost:8765/js/regionsites.js",
+          "encodedBodySize": 12829,
+          "transferSize": 13129
+        },
+        {
+          "name": "http://localhost:8765/js/lotus.js",
+          "encodedBodySize": 18021,
+          "transferSize": 18321
+        },
+        {
+          "name": "http://localhost:8765/js/vnfun.js",
+          "encodedBodySize": 18936,
+          "transferSize": 19236
+        },
+        {
+          "name": "http://localhost:8765/js/folkshow.js",
+          "encodedBodySize": 21773,
+          "transferSize": 22073
+        },
+        {
+          "name": "http://localhost:8765/js/players.js",
+          "encodedBodySize": 30036,
+          "transferSize": 30336
+        },
+        {
+          "name": "http://localhost:8765/js/content/familycode.js",
+          "encodedBodySize": 11112,
+          "transferSize": 11412
+        },
+        {
+          "name": "http://localhost:8765/js/trade.js",
+          "encodedBodySize": 13252,
+          "transferSize": 13552
+        },
+        {
+          "name": "http://localhost:8765/js/packbar.js",
+          "encodedBodySize": 4978,
+          "transferSize": 5278
+        },
+        {
+          "name": "http://localhost:8765/js/roomcode.js",
+          "encodedBodySize": 2702,
+          "transferSize": 3002
+        },
+        {
+          "name": "http://localhost:8765/js/secrets.js",
+          "encodedBodySize": 11850,
+          "transferSize": 12150
+        },
+        {
+          "name": "http://localhost:8765/js/launch.js",
+          "encodedBodySize": 9340,
+          "transferSize": 9640
+        },
+        {
+          "name": "http://localhost:8765/fonts/Fredoka-latin-ext-500.woff2",
+          "encodedBodySize": 4576,
+          "transferSize": 4876
+        },
+        {
+          "name": "http://localhost:8765/content/custom.json",
+          "encodedBodySize": 207,
+          "transferSize": 507
+        },
+        {
+          "name": "http://localhost:8765/js/main.js",
+          "encodedBodySize": 204645,
+          "transferSize": 204945
+        },
+        {
+          "name": "http://localhost:8765/content/custom.json",
+          "encodedBodySize": 207,
+          "transferSize": 507
+        },
+        {
+          "name": "http://localhost:8765/api/live",
+          "encodedBodySize": 160,
+          "transferSize": 460
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-latin-600.woff2",
+          "encodedBodySize": 33188,
+          "transferSize": 33488
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-latin-ext-600.woff2",
+          "encodedBodySize": 27384,
+          "transferSize": 27684
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-vietnamese-600.woff2",
+          "encodedBodySize": 9888,
+          "transferSize": 10188
+        },
+        {
+          "name": "http://localhost:8765/js/content/autoplay.js",
+          "encodedBodySize": 10376,
+          "transferSize": 10676
+        },
+        {
+          "name": "http://localhost:8765/js/testergate.js",
+          "encodedBodySize": 848,
+          "transferSize": 1148
+        },
+        {
+          "name": "http://localhost:8765/js/lanterns.js",
+          "encodedBodySize": 27273,
+          "transferSize": 27573
+        },
+        {
+          "name": "http://localhost:8765/js/yard.js",
+          "encodedBodySize": 23439,
+          "transferSize": 23739
+        },
+        {
+          "name": "http://localhost:8765/js/kidplay.js",
+          "encodedBodySize": 12842,
+          "transferSize": 13142
+        },
+        {
+          "name": "http://localhost:8765/js/content/chapters.js",
+          "encodedBodySize": 10355,
+          "transferSize": 10655
+        },
+        {
+          "name": "http://localhost:8765/js/companion.js",
+          "encodedBodySize": 9156,
+          "transferSize": 9456
+        },
+        {
+          "name": "http://localhost:8765/js/openspot.js",
+          "encodedBodySize": 3204,
+          "transferSize": 3504
+        },
+        {
+          "name": "http://localhost:8765/js/dinh.js",
+          "encodedBodySize": 3888,
+          "transferSize": 4188
+        },
+        {
+          "name": "http://localhost:8765/js/handpad.js",
+          "encodedBodySize": 2717,
+          "transferSize": 3017
+        },
+        {
+          "name": "http://localhost:8765/js/content/yard.js",
+          "encodedBodySize": 8906,
+          "transferSize": 9206
+        },
+        {
+          "name": "http://localhost:8765/js/shop.js",
+          "encodedBodySize": 23295,
+          "transferSize": 23595
+        },
+        {
+          "name": "http://localhost:8765/js/boxes.js",
+          "encodedBodySize": 11213,
+          "transferSize": 11513
+        },
+        {
+          "name": "http://localhost:8765/js/content/boxes.js",
+          "encodedBodySize": 7895,
+          "transferSize": 8195
+        },
+        {
+          "name": "http://localhost:8765/js/hoilang.js",
+          "encodedBodySize": 17064,
+          "transferSize": 17364
+        },
+        {
+          "name": "http://localhost:8765/js/parents.js",
+          "encodedBodySize": 29957,
+          "transferSize": 30257
+        },
+        {
+          "name": "http://localhost:8765/js/surprises.js",
+          "encodedBodySize": 15964,
+          "transferSize": 16264
+        },
+        {
+          "name": "http://localhost:8765/js/content/hoilang.js",
+          "encodedBodySize": 5705,
+          "transferSize": 6005
+        },
+        {
+          "name": "http://localhost:8765/js/content/familymissions.js",
+          "encodedBodySize": 4243,
+          "transferSize": 4543
+        },
+        {
+          "name": "http://localhost:8765/js/content/parents.js",
+          "encodedBodySize": 9681,
+          "transferSize": 9981
+        },
+        {
+          "name": "http://localhost:8765/js/content/surprises.js",
+          "encodedBodySize": 7344,
+          "transferSize": 7644
+        },
+        {
+          "name": "http://localhost:8765/voices/manifest-en.json",
+          "encodedBodySize": 183123,
+          "transferSize": 183423
+        },
+        {
+          "name": "http://localhost:8765/js/games/readingmenu.js",
+          "encodedBodySize": 8788,
+          "transferSize": 9088
+        },
+        {
+          "name": "http://localhost:8765/js/voicepack.js",
+          "encodedBodySize": 19958,
+          "transferSize": 20258
+        },
+        {
+          "name": "http://localhost:8765/js/scrollhelp.js",
+          "encodedBodySize": 3975,
+          "transferSize": 4275
+        },
+        {
+          "name": "http://localhost:8765/js/villagertalk.js",
+          "encodedBodySize": 4243,
+          "transferSize": 4543
+        },
+        {
+          "name": "http://localhost:8765/js/pricetags.js",
+          "encodedBodySize": 3036,
+          "transferSize": 3336
+        },
+        {
+          "name": "http://localhost:8765/js/jobs.js",
+          "encodedBodySize": 7472,
+          "transferSize": 7772
+        },
+        {
+          "name": "http://localhost:8765/js/wayfind.js",
+          "encodedBodySize": 11094,
+          "transferSize": 11394
+        },
+        {
+          "name": "http://localhost:8765/js/animalhomes.js",
+          "encodedBodySize": 5073,
+          "transferSize": 5373
+        },
+        {
+          "name": "http://localhost:8765/js/content/villagerlines.js",
+          "encodedBodySize": 6372,
+          "transferSize": 6672
+        },
+        {
+          "name": "http://localhost:8765/js/content/jobs.js",
+          "encodedBodySize": 8296,
+          "transferSize": 8596
+        },
+        {
+          "name": "http://localhost:8765/js/dayplan.js",
+          "encodedBodySize": 5902,
+          "transferSize": 6202
+        },
+        {
+          "name": "http://localhost:8765/js/adventure.js",
+          "encodedBodySize": 34407,
+          "transferSize": 34707
+        },
+        {
+          "name": "http://localhost:8765/js/content/adventures.js",
+          "encodedBodySize": 42779,
+          "transferSize": 43079
+        },
+        {
+          "name": "http://localhost:8765/js/festdecor.js",
+          "encodedBodySize": 18772,
+          "transferSize": 19072
+        },
+        {
+          "name": "http://localhost:8765/js/festhunt.js",
+          "encodedBodySize": 9018,
+          "transferSize": 9318
+        },
+        {
+          "name": "http://localhost:8765/js/content/festhunt.js",
+          "encodedBodySize": 6912,
+          "transferSize": 7212
+        }
+      ],
+      "boot": {
+        "start": 711,
+        "world": 1559,
+        "people": 1628,
+        "town": 1869,
+        "roads": 2257,
+        "pretraffic": 2539,
+        "traffic": 2549,
+        "things": 3878,
+        "wideland": 4051,
+        "levelled": 4152,
+        "roadside": 4367,
+        "solids": 4375,
+        "ready": 4570,
+        "shaders": 5274
+      },
+      "requestCount": 194,
+      "optionalRequests": 0,
+      "optionalRequestBodyBytes": 0,
+      "optionalModuleRequests": 0,
+      "resourceEncodedBytes": 4178080
+    },
+    {
+      "collect": true,
+      "process": false,
+      "show": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "observedMs": 1604,
+      "animationCallbacks": 15,
+      "heapBeforeBytes": 342000000,
+      "heapAfterBytes": 342000000,
+      "resources": [
+        {
+          "name": "http://localhost:8765/icons/launch/valley-portrait.jpg",
+          "encodedBodySize": 4565,
+          "transferSize": 4865
+        },
+        {
+          "name": "http://localhost:8765/css/fonts.css",
+          "encodedBodySize": 4340,
+          "transferSize": 4640
+        },
+        {
+          "name": "http://localhost:8765/fonts/Fredoka-latin-500.woff2",
+          "encodedBodySize": 29732,
+          "transferSize": 30032
+        },
+        {
+          "name": "http://localhost:8765/css/style.css",
+          "encodedBodySize": 346167,
+          "transferSize": 346467
+        },
+        {
+          "name": "http://localhost:8765/js/core/reporting-policy.js",
+          "encodedBodySize": 1641,
+          "transferSize": 1941
+        },
+        {
+          "name": "http://localhost:8765/js/custom.js",
+          "encodedBodySize": 21857,
+          "transferSize": 22157
+        },
+        {
+          "name": "http://localhost:8765/js/content/tester.js",
+          "encodedBodySize": 8695,
+          "transferSize": 8995
+        },
+        {
+          "name": "http://localhost:8765/js/content/tester-arcades.js",
+          "encodedBodySize": 1804,
+          "transferSize": 2104
+        },
+        {
+          "name": "http://localhost:8765/js/content/fruit-parade.js",
+          "encodedBodySize": 688,
+          "transferSize": 988
+        },
+        {
+          "name": "http://localhost:8765/js/emojiswap.js",
+          "encodedBodySize": 11157,
+          "transferSize": 11457
+        },
+        {
+          "name": "http://localhost:8765/js/icons.js",
+          "encodedBodySize": 8064,
+          "transferSize": 8364
+        },
+        {
+          "name": "http://localhost:8765/js/art.js",
+          "encodedBodySize": 164586,
+          "transferSize": 164886
+        },
+        {
+          "name": "http://localhost:8765/js/gfx.js",
+          "encodedBodySize": 6307,
+          "transferSize": 6607
+        },
+        {
+          "name": "http://localhost:8765/vendor/three.module.js",
+          "encodedBodySize": 670681,
+          "transferSize": 670981
+        },
+        {
+          "name": "http://localhost:8765/js/seethrough.js",
+          "encodedBodySize": 8740,
+          "transferSize": 9040
+        },
+        {
+          "name": "http://localhost:8765/js/rideview.js",
+          "encodedBodySize": 3433,
+          "transferSize": 3733
+        },
+        {
+          "name": "http://localhost:8765/vendor/RoomEnvironment.js",
+          "encodedBodySize": 3747,
+          "transferSize": 4047
+        },
+        {
+          "name": "http://localhost:8765/js/core/events.js",
+          "encodedBodySize": 8493,
+          "transferSize": 8793
+        },
+        {
+          "name": "http://localhost:8765/js/build.js",
+          "encodedBodySize": 658,
+          "transferSize": 958
+        },
+        {
+          "name": "http://localhost:8765/js/i18n.js",
+          "encodedBodySize": 9434,
+          "transferSize": 9734
+        },
+        {
+          "name": "http://localhost:8765/js/content/shop.js",
+          "encodedBodySize": 16941,
+          "transferSize": 17241
+        },
+        {
+          "name": "http://localhost:8765/js/state.js",
+          "encodedBodySize": 21044,
+          "transferSize": 21344
+        },
+        {
+          "name": "http://localhost:8765/js/voice-index.js",
+          "encodedBodySize": 3384,
+          "transferSize": 3684
+        },
+        {
+          "name": "http://localhost:8765/js/core/geo.js",
+          "encodedBodySize": 2572,
+          "transferSize": 2872
+        },
+        {
+          "name": "http://localhost:8765/js/core/rng.js",
+          "encodedBodySize": 2252,
+          "transferSize": 2552
+        },
+        {
+          "name": "http://localhost:8765/js/util.js",
+          "encodedBodySize": 2516,
+          "transferSize": 2816
+        },
+        {
+          "name": "http://localhost:8765/js/packhash.js",
+          "encodedBodySize": 1381,
+          "transferSize": 1681
+        },
+        {
+          "name": "http://localhost:8765/js/audio.js",
+          "encodedBodySize": 39941,
+          "transferSize": 40241
+        },
+        {
+          "name": "http://localhost:8765/js/viwords.js",
+          "encodedBodySize": 5724,
+          "transferSize": 6024
+        },
+        {
+          "name": "http://localhost:8765/js/voice-fragments.js",
+          "encodedBodySize": 1364,
+          "transferSize": 1664
+        },
+        {
+          "name": "http://localhost:8765/js/voice.js",
+          "encodedBodySize": 45870,
+          "transferSize": 46170
+        },
+        {
+          "name": "http://localhost:8765/js/content/songs.js",
+          "encodedBodySize": 7029,
+          "transferSize": 7329
+        },
+        {
+          "name": "http://localhost:8765/js/songs.js",
+          "encodedBodySize": 3693,
+          "transferSize": 3993
+        },
+        {
+          "name": "http://localhost:8765/js/money.js",
+          "encodedBodySize": 3438,
+          "transferSize": 3738
+        },
+        {
+          "name": "http://localhost:8765/js/content/map.js",
+          "encodedBodySize": 38307,
+          "transferSize": 38607
+        },
+        {
+          "name": "http://localhost:8765/js/solids.js",
+          "encodedBodySize": 12655,
+          "transferSize": 12955
+        },
+        {
+          "name": "http://localhost:8765/js/houses.js",
+          "encodedBodySize": 15560,
+          "transferSize": 15860
+        },
+        {
+          "name": "http://localhost:8765/js/studio-position.js",
+          "encodedBodySize": 967,
+          "transferSize": 1267
+        },
+        {
+          "name": "http://localhost:8765/js/world.js",
+          "encodedBodySize": 114399,
+          "transferSize": 114699
+        },
+        {
+          "name": "http://localhost:8765/js/avatar.js",
+          "encodedBodySize": 48406,
+          "transferSize": 48706
+        },
+        {
+          "name": "http://localhost:8765/js/vehicles.js",
+          "encodedBodySize": 51634,
+          "transferSize": 51934
+        },
+        {
+          "name": "http://localhost:8765/js/player.js",
+          "encodedBodySize": 25471,
+          "transferSize": 25771
+        },
+        {
+          "name": "http://localhost:8765/js/explain.js",
+          "encodedBodySize": 1869,
+          "transferSize": 2169
+        },
+        {
+          "name": "http://localhost:8765/js/feel.js",
+          "encodedBodySize": 5922,
+          "transferSize": 6222
+        },
+        {
+          "name": "http://localhost:8765/js/hud.js",
+          "encodedBodySize": 29268,
+          "transferSize": 29568
+        },
+        {
+          "name": "http://localhost:8765/js/input.js",
+          "encodedBodySize": 6481,
+          "transferSize": 6781
+        },
+        {
+          "name": "http://localhost:8765/js/content/family-quiz.js",
+          "encodedBodySize": 1434,
+          "transferSize": 1734
+        },
+        {
+          "name": "http://localhost:8765/js/relay.js",
+          "encodedBodySize": 10642,
+          "transferSize": 10942
+        },
+        {
+          "name": "http://localhost:8765/js/netmsg.js",
+          "encodedBodySize": 10033,
+          "transferSize": 10333
+        },
+        {
+          "name": "http://localhost:8765/js/content/secondset.js",
+          "encodedBodySize": 4360,
+          "transferSize": 4660
+        },
+        {
+          "name": "http://localhost:8765/js/net.js",
+          "encodedBodySize": 72591,
+          "transferSize": 72891
+        },
+        {
+          "name": "http://localhost:8765/js/content/activities.js",
+          "encodedBodySize": 13562,
+          "transferSize": 13862
+        },
+        {
+          "name": "http://localhost:8765/js/content/unlocks.js",
+          "encodedBodySize": 3665,
+          "transferSize": 3965
+        },
+        {
+          "name": "http://localhost:8765/js/content/festcal.js",
+          "encodedBodySize": 17846,
+          "transferSize": 18146
+        },
+        {
+          "name": "http://localhost:8765/js/popups.js",
+          "encodedBodySize": 8255,
+          "transferSize": 8555
+        },
+        {
+          "name": "http://localhost:8765/js/content/stickers.js",
+          "encodedBodySize": 34453,
+          "transferSize": 34753
+        },
+        {
+          "name": "http://localhost:8765/js/stickers.js",
+          "encodedBodySize": 7781,
+          "transferSize": 8081
+        },
+        {
+          "name": "http://localhost:8765/js/core/ids.js",
+          "encodedBodySize": 2084,
+          "transferSize": 2384
+        },
+        {
+          "name": "http://localhost:8765/js/stickerfx.js",
+          "encodedBodySize": 7349,
+          "transferSize": 7649
+        },
+        {
+          "name": "http://localhost:8765/js/placebook.js",
+          "encodedBodySize": 3892,
+          "transferSize": 4192
+        },
+        {
+          "name": "http://localhost:8765/js/familycards.js",
+          "encodedBodySize": 3725,
+          "transferSize": 4025
+        },
+        {
+          "name": "http://localhost:8765/js/data.js",
+          "encodedBodySize": 11477,
+          "transferSize": 11777
+        },
+        {
+          "name": "http://localhost:8765/js/ads.js",
+          "encodedBodySize": 6823,
+          "transferSize": 7123
+        },
+        {
+          "name": "http://localhost:8765/js/games/registry.js",
+          "encodedBodySize": 1230,
+          "transferSize": 1530
+        },
+        {
+          "name": "http://localhost:8765/js/howto.js",
+          "encodedBodySize": 982,
+          "transferSize": 1282
+        },
+        {
+          "name": "http://localhost:8765/js/howto-registry.js",
+          "encodedBodySize": 516,
+          "transferSize": 816
+        },
+        {
+          "name": "http://localhost:8765/js/story.js",
+          "encodedBodySize": 16762,
+          "transferSize": 17062
+        },
+        {
+          "name": "http://localhost:8765/js/games/playwatch.js",
+          "encodedBodySize": 2737,
+          "transferSize": 3037
+        },
+        {
+          "name": "http://localhost:8765/js/games/frame.js",
+          "encodedBodySize": 26724,
+          "transferSize": 27024
+        },
+        {
+          "name": "http://localhost:8765/js/realworld.js",
+          "encodedBodySize": 15785,
+          "transferSize": 16085
+        },
+        {
+          "name": "http://localhost:8765/js/town.js",
+          "encodedBodySize": 30730,
+          "transferSize": 31030
+        },
+        {
+          "name": "http://localhost:8765/js/powerlines.js",
+          "encodedBodySize": 4319,
+          "transferSize": 4619
+        },
+        {
+          "name": "http://localhost:8765/js/listen.js",
+          "encodedBodySize": 2937,
+          "transferSize": 3237
+        },
+        {
+          "name": "http://localhost:8765/js/words.js",
+          "encodedBodySize": 8778,
+          "transferSize": 9078
+        },
+        {
+          "name": "http://localhost:8765/js/snacks.js",
+          "encodedBodySize": 4684,
+          "transferSize": 4984
+        },
+        {
+          "name": "http://localhost:8765/js/chat.js",
+          "encodedBodySize": 11280,
+          "transferSize": 11580
+        },
+        {
+          "name": "http://localhost:8765/js/vendors.js",
+          "encodedBodySize": 7519,
+          "transferSize": 7819
+        },
+        {
+          "name": "http://localhost:8765/js/regions.js",
+          "encodedBodySize": 39471,
+          "transferSize": 39771
+        },
+        {
+          "name": "http://localhost:8765/js/credits.js",
+          "encodedBodySize": 7306,
+          "transferSize": 7606
+        },
+        {
+          "name": "http://localhost:8765/js/gather.js",
+          "encodedBodySize": 13311,
+          "transferSize": 13611
+        },
+        {
+          "name": "http://localhost:8765/js/photos.js",
+          "encodedBodySize": 2100,
+          "transferSize": 2400
+        },
+        {
+          "name": "http://localhost:8765/js/install.js",
+          "encodedBodySize": 6157,
+          "transferSize": 6457
+        },
+        {
+          "name": "http://localhost:8765/js/words2.js",
+          "encodedBodySize": 2680,
+          "transferSize": 2980
+        },
+        {
+          "name": "http://localhost:8765/js/commands.js",
+          "encodedBodySize": 7397,
+          "transferSize": 7697
+        },
+        {
+          "name": "http://localhost:8765/js/ui.js",
+          "encodedBodySize": 114260,
+          "transferSize": 114560
+        },
+        {
+          "name": "http://localhost:8765/js/games/learning-meta.js",
+          "encodedBodySize": 2872,
+          "transferSize": 3172
+        },
+        {
+          "name": "http://localhost:8765/js/family-quiz-store.js",
+          "encodedBodySize": 898,
+          "transferSize": 1198
+        },
+        {
+          "name": "http://localhost:8765/js/games/catalog.js",
+          "encodedBodySize": 25033,
+          "transferSize": 25333
+        },
+        {
+          "name": "http://localhost:8765/js/games/all.js",
+          "encodedBodySize": 1024,
+          "transferSize": 1324
+        },
+        {
+          "name": "http://localhost:8765/js/animals.js",
+          "encodedBodySize": 25496,
+          "transferSize": 25796
+        },
+        {
+          "name": "http://localhost:8765/js/farm.js",
+          "encodedBodySize": 37300,
+          "transferSize": 37600
+        },
+        {
+          "name": "http://localhost:8765/js/places.js",
+          "encodedBodySize": 7520,
+          "transferSize": 7820
+        },
+        {
+          "name": "http://localhost:8765/js/asia.js",
+          "encodedBodySize": 14683,
+          "transferSize": 14983
+        },
+        {
+          "name": "http://localhost:8765/js/homes.js",
+          "encodedBodySize": 40283,
+          "transferSize": 40583
+        },
+        {
+          "name": "http://localhost:8765/js/chatter.js",
+          "encodedBodySize": 7840,
+          "transferSize": 8140
+        },
+        {
+          "name": "http://localhost:8765/js/heritage.js",
+          "encodedBodySize": 38153,
+          "transferSize": 38453
+        },
+        {
+          "name": "http://localhost:8765/js/pets.js",
+          "encodedBodySize": 19979,
+          "transferSize": 20279
+        },
+        {
+          "name": "http://localhost:8765/js/ferry.js",
+          "encodedBodySize": 23688,
+          "transferSize": 23988
+        },
+        {
+          "name": "http://localhost:8765/js/passport.js",
+          "encodedBodySize": 7506,
+          "transferSize": 7806
+        },
+        {
+          "name": "http://localhost:8765/js/lunar.js",
+          "encodedBodySize": 4943,
+          "transferSize": 5243
+        },
+        {
+          "name": "http://localhost:8765/js/content/festival-visibility.js",
+          "encodedBodySize": 3097,
+          "transferSize": 3397
+        },
+        {
+          "name": "http://localhost:8765/js/festival-live.js",
+          "encodedBodySize": 2617,
+          "transferSize": 2917
+        },
+        {
+          "name": "http://localhost:8765/js/weather.js",
+          "encodedBodySize": 7779,
+          "transferSize": 8079
+        },
+        {
+          "name": "http://localhost:8765/js/festivals.js",
+          "encodedBodySize": 48939,
+          "transferSize": 49239
+        },
+        {
+          "name": "http://localhost:8765/js/fun.js",
+          "encodedBodySize": 13580,
+          "transferSize": 13880
+        },
+        {
+          "name": "http://localhost:8765/js/talesdata.js",
+          "encodedBodySize": 14053,
+          "transferSize": 14353
+        },
+        {
+          "name": "http://localhost:8765/js/tale-loader.js",
+          "encodedBodySize": 1366,
+          "transferSize": 1666
+        },
+        {
+          "name": "http://localhost:8765/js/cartoon.js",
+          "encodedBodySize": 13785,
+          "transferSize": 14085
+        },
+        {
+          "name": "http://localhost:8765/js/tales.js",
+          "encodedBodySize": 15676,
+          "transferSize": 15976
+        },
+        {
+          "name": "http://localhost:8765/js/learn.js",
+          "encodedBodySize": 25187,
+          "transferSize": 25487
+        },
+        {
+          "name": "http://localhost:8765/js/showcase.js",
+          "encodedBodySize": 6513,
+          "transferSize": 6813
+        },
+        {
+          "name": "http://localhost:8765/js/roads.js",
+          "encodedBodySize": 51036,
+          "transferSize": 51336
+        },
+        {
+          "name": "http://localhost:8765/js/signposts.js",
+          "encodedBodySize": 10936,
+          "transferSize": 11236
+        },
+        {
+          "name": "http://localhost:8765/js/nametags.js",
+          "encodedBodySize": 4411,
+          "transferSize": 4711
+        },
+        {
+          "name": "http://localhost:8765/js/travel-stops.js",
+          "encodedBodySize": 815,
+          "transferSize": 1115
+        },
+        {
+          "name": "http://localhost:8765/js/traffic.js",
+          "encodedBodySize": 32023,
+          "transferSize": 32323
+        },
+        {
+          "name": "http://localhost:8765/js/worldcache.js",
+          "encodedBodySize": 3144,
+          "transferSize": 3444
+        },
+        {
+          "name": "http://localhost:8765/js/content/releases.js",
+          "encodedBodySize": 22180,
+          "transferSize": 22480
+        },
+        {
+          "name": "http://localhost:8765/js/myhouse.js",
+          "encodedBodySize": 10957,
+          "transferSize": 11257
+        },
+        {
+          "name": "http://localhost:8765/js/printpage.js",
+          "encodedBodySize": 4589,
+          "transferSize": 4889
+        },
+        {
+          "name": "http://localhost:8765/js/report.js",
+          "encodedBodySize": 9265,
+          "transferSize": 9565
+        },
+        {
+          "name": "http://localhost:8765/js/claims.js",
+          "encodedBodySize": 2156,
+          "transferSize": 2456
+        },
+        {
+          "name": "http://localhost:8765/js/twinchests.js",
+          "encodedBodySize": 6614,
+          "transferSize": 6914
+        },
+        {
+          "name": "http://localhost:8765/js/coop.js",
+          "encodedBodySize": 4622,
+          "transferSize": 4922
+        },
+        {
+          "name": "http://localhost:8765/js/games/multiplayer-foundations.js",
+          "encodedBodySize": 3600,
+          "transferSize": 3900
+        },
+        {
+          "name": "http://localhost:8765/js/netgames.js",
+          "encodedBodySize": 11389,
+          "transferSize": 11689
+        },
+        {
+          "name": "http://localhost:8765/js/simple.js",
+          "encodedBodySize": 33863,
+          "transferSize": 34163
+        },
+        {
+          "name": "http://localhost:8765/js/cities.js",
+          "encodedBodySize": 64992,
+          "transferSize": 65292
+        },
+        {
+          "name": "http://localhost:8765/js/kite.js",
+          "encodedBodySize": 4817,
+          "transferSize": 5117
+        },
+        {
+          "name": "http://localhost:8765/js/hawkers.js",
+          "encodedBodySize": 7570,
+          "transferSize": 7870
+        },
+        {
+          "name": "http://localhost:8765/js/suburbs.js",
+          "encodedBodySize": 11712,
+          "transferSize": 12012
+        },
+        {
+          "name": "http://localhost:8765/js/content/build-types.js",
+          "encodedBodySize": 6099,
+          "transferSize": 6399
+        },
+        {
+          "name": "http://localhost:8765/js/plots.js",
+          "encodedBodySize": 2353,
+          "transferSize": 2653
+        },
+        {
+          "name": "http://localhost:8765/js/symbols.js",
+          "encodedBodySize": 12765,
+          "transferSize": 13065
+        },
+        {
+          "name": "http://localhost:8765/js/reeds.js",
+          "encodedBodySize": 4797,
+          "transferSize": 5097
+        },
+        {
+          "name": "http://localhost:8765/js/worldedit.js",
+          "encodedBodySize": 11382,
+          "transferSize": 11682
+        },
+        {
+          "name": "http://localhost:8765/js/regionsites.js",
+          "encodedBodySize": 12829,
+          "transferSize": 13129
+        },
+        {
+          "name": "http://localhost:8765/js/vnfun.js",
+          "encodedBodySize": 18936,
+          "transferSize": 19236
+        },
+        {
+          "name": "http://localhost:8765/js/folkshow.js",
+          "encodedBodySize": 21773,
+          "transferSize": 22073
+        },
+        {
+          "name": "http://localhost:8765/js/lotus.js",
+          "encodedBodySize": 18021,
+          "transferSize": 18321
+        },
+        {
+          "name": "http://localhost:8765/js/content/familycode.js",
+          "encodedBodySize": 11112,
+          "transferSize": 11412
+        },
+        {
+          "name": "http://localhost:8765/js/players.js",
+          "encodedBodySize": 30036,
+          "transferSize": 30336
+        },
+        {
+          "name": "http://localhost:8765/js/packbar.js",
+          "encodedBodySize": 4978,
+          "transferSize": 5278
+        },
+        {
+          "name": "http://localhost:8765/js/roomcode.js",
+          "encodedBodySize": 2702,
+          "transferSize": 3002
+        },
+        {
+          "name": "http://localhost:8765/js/secrets.js",
+          "encodedBodySize": 11850,
+          "transferSize": 12150
+        },
+        {
+          "name": "http://localhost:8765/js/trade.js",
+          "encodedBodySize": 13252,
+          "transferSize": 13552
+        },
+        {
+          "name": "http://localhost:8765/js/launch.js",
+          "encodedBodySize": 9340,
+          "transferSize": 9640
+        },
+        {
+          "name": "http://localhost:8765/fonts/Fredoka-latin-ext-500.woff2",
+          "encodedBodySize": 4576,
+          "transferSize": 4876
+        },
+        {
+          "name": "http://localhost:8765/content/custom.json",
+          "encodedBodySize": 207,
+          "transferSize": 507
+        },
+        {
+          "name": "http://localhost:8765/js/main.js",
+          "encodedBodySize": 204645,
+          "transferSize": 204945
+        },
+        {
+          "name": "http://localhost:8765/content/custom.json",
+          "encodedBodySize": 207,
+          "transferSize": 507
+        },
+        {
+          "name": "http://localhost:8765/api/live",
+          "encodedBodySize": 181,
+          "transferSize": 481
+        },
+        {
+          "name": "http://localhost:8765/js/management-telemetry.js",
+          "encodedBodySize": 17993,
+          "transferSize": 18293
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-latin-600.woff2",
+          "encodedBodySize": 33188,
+          "transferSize": 33488
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-latin-ext-600.woff2",
+          "encodedBodySize": 27384,
+          "transferSize": 27684
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-vietnamese-600.woff2",
+          "encodedBodySize": 9888,
+          "transferSize": 10188
+        },
+        {
+          "name": "http://localhost:8765/js/content/autoplay.js",
+          "encodedBodySize": 10376,
+          "transferSize": 10676
+        },
+        {
+          "name": "http://localhost:8765/js/testergate.js",
+          "encodedBodySize": 848,
+          "transferSize": 1148
+        },
+        {
+          "name": "http://localhost:8765/js/lanterns.js",
+          "encodedBodySize": 27273,
+          "transferSize": 27573
+        },
+        {
+          "name": "http://localhost:8765/js/yard.js",
+          "encodedBodySize": 23439,
+          "transferSize": 23739
+        },
+        {
+          "name": "http://localhost:8765/js/kidplay.js",
+          "encodedBodySize": 12842,
+          "transferSize": 13142
+        },
+        {
+          "name": "http://localhost:8765/api/management/events",
+          "encodedBodySize": 69,
+          "transferSize": 369
+        },
+        {
+          "name": "http://localhost:8765/js/openspot.js",
+          "encodedBodySize": 3204,
+          "transferSize": 3504
+        },
+        {
+          "name": "http://localhost:8765/js/content/yard.js",
+          "encodedBodySize": 8906,
+          "transferSize": 9206
+        },
+        {
+          "name": "http://localhost:8765/js/handpad.js",
+          "encodedBodySize": 2717,
+          "transferSize": 3017
+        },
+        {
+          "name": "http://localhost:8765/js/companion.js",
+          "encodedBodySize": 9156,
+          "transferSize": 9456
+        },
+        {
+          "name": "http://localhost:8765/js/content/chapters.js",
+          "encodedBodySize": 10355,
+          "transferSize": 10655
+        },
+        {
+          "name": "http://localhost:8765/js/dinh.js",
+          "encodedBodySize": 3888,
+          "transferSize": 4188
+        },
+        {
+          "name": "http://localhost:8765/js/shop.js",
+          "encodedBodySize": 23295,
+          "transferSize": 23595
+        },
+        {
+          "name": "http://localhost:8765/js/boxes.js",
+          "encodedBodySize": 11213,
+          "transferSize": 11513
+        },
+        {
+          "name": "http://localhost:8765/js/content/boxes.js",
+          "encodedBodySize": 7895,
+          "transferSize": 8195
+        },
+        {
+          "name": "http://localhost:8765/js/hoilang.js",
+          "encodedBodySize": 17064,
+          "transferSize": 17364
+        },
+        {
+          "name": "http://localhost:8765/js/surprises.js",
+          "encodedBodySize": 15964,
+          "transferSize": 16264
+        },
+        {
+          "name": "http://localhost:8765/js/parents.js",
+          "encodedBodySize": 29957,
+          "transferSize": 30257
+        },
+        {
+          "name": "http://localhost:8765/voices/manifest-en.json",
+          "encodedBodySize": 183123,
+          "transferSize": 183423
+        },
+        {
+          "name": "http://localhost:8765/js/content/hoilang.js",
+          "encodedBodySize": 5705,
+          "transferSize": 6005
+        },
+        {
+          "name": "http://localhost:8765/js/content/surprises.js",
+          "encodedBodySize": 7344,
+          "transferSize": 7644
+        },
+        {
+          "name": "http://localhost:8765/js/content/familymissions.js",
+          "encodedBodySize": 4243,
+          "transferSize": 4543
+        },
+        {
+          "name": "http://localhost:8765/js/content/parents.js",
+          "encodedBodySize": 9681,
+          "transferSize": 9981
+        },
+        {
+          "name": "http://localhost:8765/js/voicepack.js",
+          "encodedBodySize": 19958,
+          "transferSize": 20258
+        },
+        {
+          "name": "http://localhost:8765/js/games/readingmenu.js",
+          "encodedBodySize": 8788,
+          "transferSize": 9088
+        },
+        {
+          "name": "http://localhost:8765/js/scrollhelp.js",
+          "encodedBodySize": 3975,
+          "transferSize": 4275
+        },
+        {
+          "name": "http://localhost:8765/js/pricetags.js",
+          "encodedBodySize": 3036,
+          "transferSize": 3336
+        },
+        {
+          "name": "http://localhost:8765/js/villagertalk.js",
+          "encodedBodySize": 4243,
+          "transferSize": 4543
+        },
+        {
+          "name": "http://localhost:8765/js/jobs.js",
+          "encodedBodySize": 7472,
+          "transferSize": 7772
+        },
+        {
+          "name": "http://localhost:8765/js/wayfind.js",
+          "encodedBodySize": 11094,
+          "transferSize": 11394
+        },
+        {
+          "name": "http://localhost:8765/js/animalhomes.js",
+          "encodedBodySize": 5073,
+          "transferSize": 5373
+        },
+        {
+          "name": "http://localhost:8765/js/content/villagerlines.js",
+          "encodedBodySize": 6372,
+          "transferSize": 6672
+        },
+        {
+          "name": "http://localhost:8765/js/content/jobs.js",
+          "encodedBodySize": 8296,
+          "transferSize": 8596
+        },
+        {
+          "name": "http://localhost:8765/api/management/events",
+          "encodedBodySize": 69,
+          "transferSize": 369
+        },
+        {
+          "name": "http://localhost:8765/js/dayplan.js",
+          "encodedBodySize": 5902,
+          "transferSize": 6202
+        },
+        {
+          "name": "http://localhost:8765/js/adventure.js",
+          "encodedBodySize": 34407,
+          "transferSize": 34707
+        },
+        {
+          "name": "http://localhost:8765/js/content/adventures.js",
+          "encodedBodySize": 42779,
+          "transferSize": 43079
+        },
+        {
+          "name": "http://localhost:8765/js/festdecor.js",
+          "encodedBodySize": 18772,
+          "transferSize": 19072
+        },
+        {
+          "name": "http://localhost:8765/js/festhunt.js",
+          "encodedBodySize": 9018,
+          "transferSize": 9318
+        },
+        {
+          "name": "http://localhost:8765/js/content/festhunt.js",
+          "encodedBodySize": 6912,
+          "transferSize": 7212
+        }
+      ],
+      "boot": {
+        "start": 709,
+        "world": 1615,
+        "people": 1684,
+        "town": 1940,
+        "roads": 2347,
+        "pretraffic": 2650,
+        "traffic": 2662,
+        "things": 3972,
+        "wideland": 4140,
+        "levelled": 4242,
+        "roadside": 4472,
+        "solids": 4481,
+        "ready": 4677,
+        "shaders": 5394
+      },
+      "requestCount": 197,
+      "optionalRequests": 2,
+      "optionalRequestBodyBytes": 875,
+      "optionalModuleRequests": 1,
+      "resourceEncodedBytes": 4196232
+    },
+    {
+      "collect": true,
+      "process": false,
+      "show": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "observedMs": 1626.1000000089407,
+      "animationCallbacks": 13,
+      "heapBeforeBytes": 322000000,
+      "heapAfterBytes": 322000000,
+      "resources": [
+        {
+          "name": "http://localhost:8765/icons/launch/valley-portrait.jpg",
+          "encodedBodySize": 4565,
+          "transferSize": 4865
+        },
+        {
+          "name": "http://localhost:8765/css/fonts.css",
+          "encodedBodySize": 4340,
+          "transferSize": 4640
+        },
+        {
+          "name": "http://localhost:8765/fonts/Fredoka-latin-500.woff2",
+          "encodedBodySize": 29732,
+          "transferSize": 30032
+        },
+        {
+          "name": "http://localhost:8765/css/style.css",
+          "encodedBodySize": 346167,
+          "transferSize": 346467
+        },
+        {
+          "name": "http://localhost:8765/js/core/reporting-policy.js",
+          "encodedBodySize": 1641,
+          "transferSize": 1941
+        },
+        {
+          "name": "http://localhost:8765/js/content/tester.js",
+          "encodedBodySize": 8695,
+          "transferSize": 8995
+        },
+        {
+          "name": "http://localhost:8765/js/custom.js",
+          "encodedBodySize": 21857,
+          "transferSize": 22157
+        },
+        {
+          "name": "http://localhost:8765/js/content/tester-arcades.js",
+          "encodedBodySize": 1804,
+          "transferSize": 2104
+        },
+        {
+          "name": "http://localhost:8765/js/content/fruit-parade.js",
+          "encodedBodySize": 688,
+          "transferSize": 988
+        },
+        {
+          "name": "http://localhost:8765/js/art.js",
+          "encodedBodySize": 164586,
+          "transferSize": 164886
+        },
+        {
+          "name": "http://localhost:8765/js/icons.js",
+          "encodedBodySize": 8064,
+          "transferSize": 8364
+        },
+        {
+          "name": "http://localhost:8765/js/emojiswap.js",
+          "encodedBodySize": 11157,
+          "transferSize": 11457
+        },
+        {
+          "name": "http://localhost:8765/vendor/three.module.js",
+          "encodedBodySize": 670681,
+          "transferSize": 670981
+        },
+        {
+          "name": "http://localhost:8765/js/gfx.js",
+          "encodedBodySize": 6307,
+          "transferSize": 6607
+        },
+        {
+          "name": "http://localhost:8765/js/seethrough.js",
+          "encodedBodySize": 8740,
+          "transferSize": 9040
+        },
+        {
+          "name": "http://localhost:8765/vendor/RoomEnvironment.js",
+          "encodedBodySize": 3747,
+          "transferSize": 4047
+        },
+        {
+          "name": "http://localhost:8765/js/rideview.js",
+          "encodedBodySize": 3433,
+          "transferSize": 3733
+        },
+        {
+          "name": "http://localhost:8765/js/build.js",
+          "encodedBodySize": 658,
+          "transferSize": 958
+        },
+        {
+          "name": "http://localhost:8765/js/core/events.js",
+          "encodedBodySize": 8493,
+          "transferSize": 8793
+        },
+        {
+          "name": "http://localhost:8765/js/content/shop.js",
+          "encodedBodySize": 16941,
+          "transferSize": 17241
+        },
+        {
+          "name": "http://localhost:8765/js/state.js",
+          "encodedBodySize": 21044,
+          "transferSize": 21344
+        },
+        {
+          "name": "http://localhost:8765/js/voice-index.js",
+          "encodedBodySize": 3384,
+          "transferSize": 3684
+        },
+        {
+          "name": "http://localhost:8765/js/i18n.js",
+          "encodedBodySize": 9434,
+          "transferSize": 9734
+        },
+        {
+          "name": "http://localhost:8765/js/core/geo.js",
+          "encodedBodySize": 2572,
+          "transferSize": 2872
+        },
+        {
+          "name": "http://localhost:8765/js/core/rng.js",
+          "encodedBodySize": 2252,
+          "transferSize": 2552
+        },
+        {
+          "name": "http://localhost:8765/js/util.js",
+          "encodedBodySize": 2516,
+          "transferSize": 2816
+        },
+        {
+          "name": "http://localhost:8765/js/audio.js",
+          "encodedBodySize": 39941,
+          "transferSize": 40241
+        },
+        {
+          "name": "http://localhost:8765/js/viwords.js",
+          "encodedBodySize": 5724,
+          "transferSize": 6024
+        },
+        {
+          "name": "http://localhost:8765/js/packhash.js",
+          "encodedBodySize": 1381,
+          "transferSize": 1681
+        },
+        {
+          "name": "http://localhost:8765/js/voice-fragments.js",
+          "encodedBodySize": 1364,
+          "transferSize": 1664
+        },
+        {
+          "name": "http://localhost:8765/js/voice.js",
+          "encodedBodySize": 45870,
+          "transferSize": 46170
+        },
+        {
+          "name": "http://localhost:8765/js/content/songs.js",
+          "encodedBodySize": 7029,
+          "transferSize": 7329
+        },
+        {
+          "name": "http://localhost:8765/js/songs.js",
+          "encodedBodySize": 3693,
+          "transferSize": 3993
+        },
+        {
+          "name": "http://localhost:8765/js/money.js",
+          "encodedBodySize": 3438,
+          "transferSize": 3738
+        },
+        {
+          "name": "http://localhost:8765/js/solids.js",
+          "encodedBodySize": 12655,
+          "transferSize": 12955
+        },
+        {
+          "name": "http://localhost:8765/js/content/map.js",
+          "encodedBodySize": 38307,
+          "transferSize": 38607
+        },
+        {
+          "name": "http://localhost:8765/js/houses.js",
+          "encodedBodySize": 15560,
+          "transferSize": 15860
+        },
+        {
+          "name": "http://localhost:8765/js/world.js",
+          "encodedBodySize": 114399,
+          "transferSize": 114699
+        },
+        {
+          "name": "http://localhost:8765/js/studio-position.js",
+          "encodedBodySize": 967,
+          "transferSize": 1267
+        },
+        {
+          "name": "http://localhost:8765/js/vehicles.js",
+          "encodedBodySize": 51634,
+          "transferSize": 51934
+        },
+        {
+          "name": "http://localhost:8765/js/avatar.js",
+          "encodedBodySize": 48406,
+          "transferSize": 48706
+        },
+        {
+          "name": "http://localhost:8765/js/player.js",
+          "encodedBodySize": 25471,
+          "transferSize": 25771
+        },
+        {
+          "name": "http://localhost:8765/js/explain.js",
+          "encodedBodySize": 1869,
+          "transferSize": 2169
+        },
+        {
+          "name": "http://localhost:8765/js/input.js",
+          "encodedBodySize": 6481,
+          "transferSize": 6781
+        },
+        {
+          "name": "http://localhost:8765/js/feel.js",
+          "encodedBodySize": 5922,
+          "transferSize": 6222
+        },
+        {
+          "name": "http://localhost:8765/js/hud.js",
+          "encodedBodySize": 29268,
+          "transferSize": 29568
+        },
+        {
+          "name": "http://localhost:8765/js/content/family-quiz.js",
+          "encodedBodySize": 1434,
+          "transferSize": 1734
+        },
+        {
+          "name": "http://localhost:8765/js/relay.js",
+          "encodedBodySize": 10642,
+          "transferSize": 10942
+        },
+        {
+          "name": "http://localhost:8765/js/netmsg.js",
+          "encodedBodySize": 10033,
+          "transferSize": 10333
+        },
+        {
+          "name": "http://localhost:8765/js/net.js",
+          "encodedBodySize": 72591,
+          "transferSize": 72891
+        },
+        {
+          "name": "http://localhost:8765/js/content/secondset.js",
+          "encodedBodySize": 4360,
+          "transferSize": 4660
+        },
+        {
+          "name": "http://localhost:8765/js/content/activities.js",
+          "encodedBodySize": 13562,
+          "transferSize": 13862
+        },
+        {
+          "name": "http://localhost:8765/js/content/unlocks.js",
+          "encodedBodySize": 3665,
+          "transferSize": 3965
+        },
+        {
+          "name": "http://localhost:8765/js/content/festcal.js",
+          "encodedBodySize": 17846,
+          "transferSize": 18146
+        },
+        {
+          "name": "http://localhost:8765/js/popups.js",
+          "encodedBodySize": 8255,
+          "transferSize": 8555
+        },
+        {
+          "name": "http://localhost:8765/js/core/ids.js",
+          "encodedBodySize": 2084,
+          "transferSize": 2384
+        },
+        {
+          "name": "http://localhost:8765/js/stickers.js",
+          "encodedBodySize": 7781,
+          "transferSize": 8081
+        },
+        {
+          "name": "http://localhost:8765/js/content/stickers.js",
+          "encodedBodySize": 34453,
+          "transferSize": 34753
+        },
+        {
+          "name": "http://localhost:8765/js/stickerfx.js",
+          "encodedBodySize": 7349,
+          "transferSize": 7649
+        },
+        {
+          "name": "http://localhost:8765/js/placebook.js",
+          "encodedBodySize": 3892,
+          "transferSize": 4192
+        },
+        {
+          "name": "http://localhost:8765/js/familycards.js",
+          "encodedBodySize": 3725,
+          "transferSize": 4025
+        },
+        {
+          "name": "http://localhost:8765/js/data.js",
+          "encodedBodySize": 11477,
+          "transferSize": 11777
+        },
+        {
+          "name": "http://localhost:8765/js/ads.js",
+          "encodedBodySize": 6823,
+          "transferSize": 7123
+        },
+        {
+          "name": "http://localhost:8765/js/games/registry.js",
+          "encodedBodySize": 1230,
+          "transferSize": 1530
+        },
+        {
+          "name": "http://localhost:8765/js/story.js",
+          "encodedBodySize": 16762,
+          "transferSize": 17062
+        },
+        {
+          "name": "http://localhost:8765/js/games/playwatch.js",
+          "encodedBodySize": 2737,
+          "transferSize": 3037
+        },
+        {
+          "name": "http://localhost:8765/js/howto.js",
+          "encodedBodySize": 982,
+          "transferSize": 1282
+        },
+        {
+          "name": "http://localhost:8765/js/howto-registry.js",
+          "encodedBodySize": 516,
+          "transferSize": 816
+        },
+        {
+          "name": "http://localhost:8765/js/games/frame.js",
+          "encodedBodySize": 26724,
+          "transferSize": 27024
+        },
+        {
+          "name": "http://localhost:8765/js/realworld.js",
+          "encodedBodySize": 15785,
+          "transferSize": 16085
+        },
+        {
+          "name": "http://localhost:8765/js/town.js",
+          "encodedBodySize": 30730,
+          "transferSize": 31030
+        },
+        {
+          "name": "http://localhost:8765/js/powerlines.js",
+          "encodedBodySize": 4319,
+          "transferSize": 4619
+        },
+        {
+          "name": "http://localhost:8765/js/listen.js",
+          "encodedBodySize": 2937,
+          "transferSize": 3237
+        },
+        {
+          "name": "http://localhost:8765/js/chat.js",
+          "encodedBodySize": 11280,
+          "transferSize": 11580
+        },
+        {
+          "name": "http://localhost:8765/js/words.js",
+          "encodedBodySize": 8778,
+          "transferSize": 9078
+        },
+        {
+          "name": "http://localhost:8765/js/vendors.js",
+          "encodedBodySize": 7519,
+          "transferSize": 7819
+        },
+        {
+          "name": "http://localhost:8765/js/snacks.js",
+          "encodedBodySize": 4684,
+          "transferSize": 4984
+        },
+        {
+          "name": "http://localhost:8765/js/regions.js",
+          "encodedBodySize": 39471,
+          "transferSize": 39771
+        },
+        {
+          "name": "http://localhost:8765/js/credits.js",
+          "encodedBodySize": 7306,
+          "transferSize": 7606
+        },
+        {
+          "name": "http://localhost:8765/js/photos.js",
+          "encodedBodySize": 2100,
+          "transferSize": 2400
+        },
+        {
+          "name": "http://localhost:8765/js/install.js",
+          "encodedBodySize": 6157,
+          "transferSize": 6457
+        },
+        {
+          "name": "http://localhost:8765/js/gather.js",
+          "encodedBodySize": 13311,
+          "transferSize": 13611
+        },
+        {
+          "name": "http://localhost:8765/js/words2.js",
+          "encodedBodySize": 2680,
+          "transferSize": 2980
+        },
+        {
+          "name": "http://localhost:8765/js/commands.js",
+          "encodedBodySize": 7397,
+          "transferSize": 7697
+        },
+        {
+          "name": "http://localhost:8765/js/ui.js",
+          "encodedBodySize": 114260,
+          "transferSize": 114560
+        },
+        {
+          "name": "http://localhost:8765/js/family-quiz-store.js",
+          "encodedBodySize": 898,
+          "transferSize": 1198
+        },
+        {
+          "name": "http://localhost:8765/js/games/learning-meta.js",
+          "encodedBodySize": 2872,
+          "transferSize": 3172
+        },
+        {
+          "name": "http://localhost:8765/js/games/catalog.js",
+          "encodedBodySize": 25033,
+          "transferSize": 25333
+        },
+        {
+          "name": "http://localhost:8765/js/games/all.js",
+          "encodedBodySize": 1024,
+          "transferSize": 1324
+        },
+        {
+          "name": "http://localhost:8765/js/animals.js",
+          "encodedBodySize": 25496,
+          "transferSize": 25796
+        },
+        {
+          "name": "http://localhost:8765/js/farm.js",
+          "encodedBodySize": 37300,
+          "transferSize": 37600
+        },
+        {
+          "name": "http://localhost:8765/js/places.js",
+          "encodedBodySize": 7520,
+          "transferSize": 7820
+        },
+        {
+          "name": "http://localhost:8765/js/asia.js",
+          "encodedBodySize": 14683,
+          "transferSize": 14983
+        },
+        {
+          "name": "http://localhost:8765/js/chatter.js",
+          "encodedBodySize": 7840,
+          "transferSize": 8140
+        },
+        {
+          "name": "http://localhost:8765/js/homes.js",
+          "encodedBodySize": 40283,
+          "transferSize": 40583
+        },
+        {
+          "name": "http://localhost:8765/js/pets.js",
+          "encodedBodySize": 19979,
+          "transferSize": 20279
+        },
+        {
+          "name": "http://localhost:8765/js/heritage.js",
+          "encodedBodySize": 38153,
+          "transferSize": 38453
+        },
+        {
+          "name": "http://localhost:8765/js/passport.js",
+          "encodedBodySize": 7506,
+          "transferSize": 7806
+        },
+        {
+          "name": "http://localhost:8765/js/lunar.js",
+          "encodedBodySize": 4943,
+          "transferSize": 5243
+        },
+        {
+          "name": "http://localhost:8765/js/ferry.js",
+          "encodedBodySize": 23688,
+          "transferSize": 23988
+        },
+        {
+          "name": "http://localhost:8765/js/festival-live.js",
+          "encodedBodySize": 2617,
+          "transferSize": 2917
+        },
+        {
+          "name": "http://localhost:8765/js/content/festival-visibility.js",
+          "encodedBodySize": 3097,
+          "transferSize": 3397
+        },
+        {
+          "name": "http://localhost:8765/js/festivals.js",
+          "encodedBodySize": 48939,
+          "transferSize": 49239
+        },
+        {
+          "name": "http://localhost:8765/js/weather.js",
+          "encodedBodySize": 7779,
+          "transferSize": 8079
+        },
+        {
+          "name": "http://localhost:8765/js/talesdata.js",
+          "encodedBodySize": 14053,
+          "transferSize": 14353
+        },
+        {
+          "name": "http://localhost:8765/js/fun.js",
+          "encodedBodySize": 13580,
+          "transferSize": 13880
+        },
+        {
+          "name": "http://localhost:8765/js/tale-loader.js",
+          "encodedBodySize": 1366,
+          "transferSize": 1666
+        },
+        {
+          "name": "http://localhost:8765/js/cartoon.js",
+          "encodedBodySize": 13785,
+          "transferSize": 14085
+        },
+        {
+          "name": "http://localhost:8765/js/learn.js",
+          "encodedBodySize": 25187,
+          "transferSize": 25487
+        },
+        {
+          "name": "http://localhost:8765/js/tales.js",
+          "encodedBodySize": 15676,
+          "transferSize": 15976
+        },
+        {
+          "name": "http://localhost:8765/js/roads.js",
+          "encodedBodySize": 51036,
+          "transferSize": 51336
+        },
+        {
+          "name": "http://localhost:8765/js/showcase.js",
+          "encodedBodySize": 6513,
+          "transferSize": 6813
+        },
+        {
+          "name": "http://localhost:8765/js/signposts.js",
+          "encodedBodySize": 10936,
+          "transferSize": 11236
+        },
+        {
+          "name": "http://localhost:8765/js/nametags.js",
+          "encodedBodySize": 4411,
+          "transferSize": 4711
+        },
+        {
+          "name": "http://localhost:8765/js/travel-stops.js",
+          "encodedBodySize": 815,
+          "transferSize": 1115
+        },
+        {
+          "name": "http://localhost:8765/js/traffic.js",
+          "encodedBodySize": 32023,
+          "transferSize": 32323
+        },
+        {
+          "name": "http://localhost:8765/js/content/releases.js",
+          "encodedBodySize": 22180,
+          "transferSize": 22480
+        },
+        {
+          "name": "http://localhost:8765/js/myhouse.js",
+          "encodedBodySize": 10957,
+          "transferSize": 11257
+        },
+        {
+          "name": "http://localhost:8765/js/worldcache.js",
+          "encodedBodySize": 3144,
+          "transferSize": 3444
+        },
+        {
+          "name": "http://localhost:8765/js/printpage.js",
+          "encodedBodySize": 4589,
+          "transferSize": 4889
+        },
+        {
+          "name": "http://localhost:8765/js/report.js",
+          "encodedBodySize": 9265,
+          "transferSize": 9565
+        },
+        {
+          "name": "http://localhost:8765/js/coop.js",
+          "encodedBodySize": 4622,
+          "transferSize": 4922
+        },
+        {
+          "name": "http://localhost:8765/js/games/multiplayer-foundations.js",
+          "encodedBodySize": 3600,
+          "transferSize": 3900
+        },
+        {
+          "name": "http://localhost:8765/js/netgames.js",
+          "encodedBodySize": 11389,
+          "transferSize": 11689
+        },
+        {
+          "name": "http://localhost:8765/js/claims.js",
+          "encodedBodySize": 2156,
+          "transferSize": 2456
+        },
+        {
+          "name": "http://localhost:8765/js/twinchests.js",
+          "encodedBodySize": 6614,
+          "transferSize": 6914
+        },
+        {
+          "name": "http://localhost:8765/js/simple.js",
+          "encodedBodySize": 33863,
+          "transferSize": 34163
+        },
+        {
+          "name": "http://localhost:8765/js/cities.js",
+          "encodedBodySize": 64992,
+          "transferSize": 65292
+        },
+        {
+          "name": "http://localhost:8765/js/hawkers.js",
+          "encodedBodySize": 7570,
+          "transferSize": 7870
+        },
+        {
+          "name": "http://localhost:8765/js/suburbs.js",
+          "encodedBodySize": 11712,
+          "transferSize": 12012
+        },
+        {
+          "name": "http://localhost:8765/js/kite.js",
+          "encodedBodySize": 4817,
+          "transferSize": 5117
+        },
+        {
+          "name": "http://localhost:8765/js/plots.js",
+          "encodedBodySize": 2353,
+          "transferSize": 2653
+        },
+        {
+          "name": "http://localhost:8765/js/worldedit.js",
+          "encodedBodySize": 11382,
+          "transferSize": 11682
+        },
+        {
+          "name": "http://localhost:8765/js/reeds.js",
+          "encodedBodySize": 4797,
+          "transferSize": 5097
+        },
+        {
+          "name": "http://localhost:8765/js/content/build-types.js",
+          "encodedBodySize": 6099,
+          "transferSize": 6399
+        },
+        {
+          "name": "http://localhost:8765/js/symbols.js",
+          "encodedBodySize": 12765,
+          "transferSize": 13065
+        },
+        {
+          "name": "http://localhost:8765/js/vnfun.js",
+          "encodedBodySize": 18936,
+          "transferSize": 19236
+        },
+        {
+          "name": "http://localhost:8765/js/regionsites.js",
+          "encodedBodySize": 12829,
+          "transferSize": 13129
+        },
+        {
+          "name": "http://localhost:8765/js/folkshow.js",
+          "encodedBodySize": 21773,
+          "transferSize": 22073
+        },
+        {
+          "name": "http://localhost:8765/js/lotus.js",
+          "encodedBodySize": 18021,
+          "transferSize": 18321
+        },
+        {
+          "name": "http://localhost:8765/js/content/familycode.js",
+          "encodedBodySize": 11112,
+          "transferSize": 11412
+        },
+        {
+          "name": "http://localhost:8765/js/players.js",
+          "encodedBodySize": 30036,
+          "transferSize": 30336
+        },
+        {
+          "name": "http://localhost:8765/js/packbar.js",
+          "encodedBodySize": 4978,
+          "transferSize": 5278
+        },
+        {
+          "name": "http://localhost:8765/js/roomcode.js",
+          "encodedBodySize": 2702,
+          "transferSize": 3002
+        },
+        {
+          "name": "http://localhost:8765/js/trade.js",
+          "encodedBodySize": 13252,
+          "transferSize": 13552
+        },
+        {
+          "name": "http://localhost:8765/js/secrets.js",
+          "encodedBodySize": 11850,
+          "transferSize": 12150
+        },
+        {
+          "name": "http://localhost:8765/js/launch.js",
+          "encodedBodySize": 9340,
+          "transferSize": 9640
+        },
+        {
+          "name": "http://localhost:8765/fonts/Fredoka-latin-ext-500.woff2",
+          "encodedBodySize": 4576,
+          "transferSize": 4876
+        },
+        {
+          "name": "http://localhost:8765/content/custom.json",
+          "encodedBodySize": 207,
+          "transferSize": 507
+        },
+        {
+          "name": "http://localhost:8765/js/main.js",
+          "encodedBodySize": 204645,
+          "transferSize": 204945
+        },
+        {
+          "name": "http://localhost:8765/content/custom.json",
+          "encodedBodySize": 207,
+          "transferSize": 507
+        },
+        {
+          "name": "http://localhost:8765/api/live",
+          "encodedBodySize": 181,
+          "transferSize": 481
+        },
+        {
+          "name": "http://localhost:8765/js/management-telemetry.js",
+          "encodedBodySize": 17993,
+          "transferSize": 18293
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-latin-600.woff2",
+          "encodedBodySize": 33188,
+          "transferSize": 33488
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-latin-ext-600.woff2",
+          "encodedBodySize": 27384,
+          "transferSize": 27684
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-vietnamese-600.woff2",
+          "encodedBodySize": 9888,
+          "transferSize": 10188
+        },
+        {
+          "name": "http://localhost:8765/js/content/autoplay.js",
+          "encodedBodySize": 10376,
+          "transferSize": 10676
+        },
+        {
+          "name": "http://localhost:8765/js/testergate.js",
+          "encodedBodySize": 848,
+          "transferSize": 1148
+        },
+        {
+          "name": "http://localhost:8765/js/lanterns.js",
+          "encodedBodySize": 27273,
+          "transferSize": 27573
+        },
+        {
+          "name": "http://localhost:8765/js/yard.js",
+          "encodedBodySize": 23439,
+          "transferSize": 23739
+        },
+        {
+          "name": "http://localhost:8765/js/kidplay.js",
+          "encodedBodySize": 12842,
+          "transferSize": 13142
+        },
+        {
+          "name": "http://localhost:8765/api/management/events",
+          "encodedBodySize": 69,
+          "transferSize": 369
+        },
+        {
+          "name": "http://localhost:8765/js/content/chapters.js",
+          "encodedBodySize": 10355,
+          "transferSize": 10655
+        },
+        {
+          "name": "http://localhost:8765/js/dinh.js",
+          "encodedBodySize": 3888,
+          "transferSize": 4188
+        },
+        {
+          "name": "http://localhost:8765/js/companion.js",
+          "encodedBodySize": 9156,
+          "transferSize": 9456
+        },
+        {
+          "name": "http://localhost:8765/js/openspot.js",
+          "encodedBodySize": 3204,
+          "transferSize": 3504
+        },
+        {
+          "name": "http://localhost:8765/js/handpad.js",
+          "encodedBodySize": 2717,
+          "transferSize": 3017
+        },
+        {
+          "name": "http://localhost:8765/js/content/yard.js",
+          "encodedBodySize": 8906,
+          "transferSize": 9206
+        },
+        {
+          "name": "http://localhost:8765/js/boxes.js",
+          "encodedBodySize": 11213,
+          "transferSize": 11513
+        },
+        {
+          "name": "http://localhost:8765/js/shop.js",
+          "encodedBodySize": 23295,
+          "transferSize": 23595
+        },
+        {
+          "name": "http://localhost:8765/js/content/boxes.js",
+          "encodedBodySize": 7895,
+          "transferSize": 8195
+        },
+        {
+          "name": "http://localhost:8765/js/hoilang.js",
+          "encodedBodySize": 17064,
+          "transferSize": 17364
+        },
+        {
+          "name": "http://localhost:8765/js/surprises.js",
+          "encodedBodySize": 15964,
+          "transferSize": 16264
+        },
+        {
+          "name": "http://localhost:8765/js/parents.js",
+          "encodedBodySize": 29957,
+          "transferSize": 30257
+        },
+        {
+          "name": "http://localhost:8765/js/content/hoilang.js",
+          "encodedBodySize": 5705,
+          "transferSize": 6005
+        },
+        {
+          "name": "http://localhost:8765/js/content/surprises.js",
+          "encodedBodySize": 7344,
+          "transferSize": 7644
+        },
+        {
+          "name": "http://localhost:8765/js/content/parents.js",
+          "encodedBodySize": 9681,
+          "transferSize": 9981
+        },
+        {
+          "name": "http://localhost:8765/js/content/familymissions.js",
+          "encodedBodySize": 4243,
+          "transferSize": 4543
+        },
+        {
+          "name": "http://localhost:8765/voices/manifest-en.json",
+          "encodedBodySize": 183123,
+          "transferSize": 183423
+        },
+        {
+          "name": "http://localhost:8765/js/games/readingmenu.js",
+          "encodedBodySize": 8788,
+          "transferSize": 9088
+        },
+        {
+          "name": "http://localhost:8765/js/scrollhelp.js",
+          "encodedBodySize": 3975,
+          "transferSize": 4275
+        },
+        {
+          "name": "http://localhost:8765/js/pricetags.js",
+          "encodedBodySize": 3036,
+          "transferSize": 3336
+        },
+        {
+          "name": "http://localhost:8765/js/villagertalk.js",
+          "encodedBodySize": 4243,
+          "transferSize": 4543
+        },
+        {
+          "name": "http://localhost:8765/js/animalhomes.js",
+          "encodedBodySize": 5073,
+          "transferSize": 5373
+        },
+        {
+          "name": "http://localhost:8765/js/jobs.js",
+          "encodedBodySize": 7472,
+          "transferSize": 7772
+        },
+        {
+          "name": "http://localhost:8765/js/wayfind.js",
+          "encodedBodySize": 11094,
+          "transferSize": 11394
+        },
+        {
+          "name": "http://localhost:8765/js/voicepack.js",
+          "encodedBodySize": 19958,
+          "transferSize": 20258
+        },
+        {
+          "name": "http://localhost:8765/js/content/jobs.js",
+          "encodedBodySize": 8296,
+          "transferSize": 8596
+        },
+        {
+          "name": "http://localhost:8765/js/content/villagerlines.js",
+          "encodedBodySize": 6372,
+          "transferSize": 6672
+        },
+        {
+          "name": "http://localhost:8765/api/management/events",
+          "encodedBodySize": 69,
+          "transferSize": 369
+        },
+        {
+          "name": "http://localhost:8765/js/dayplan.js",
+          "encodedBodySize": 5902,
+          "transferSize": 6202
+        },
+        {
+          "name": "http://localhost:8765/js/adventure.js",
+          "encodedBodySize": 34407,
+          "transferSize": 34707
+        },
+        {
+          "name": "http://localhost:8765/js/content/adventures.js",
+          "encodedBodySize": 42779,
+          "transferSize": 43079
+        },
+        {
+          "name": "http://localhost:8765/js/festdecor.js",
+          "encodedBodySize": 18772,
+          "transferSize": 19072
+        },
+        {
+          "name": "http://localhost:8765/js/festhunt.js",
+          "encodedBodySize": 9018,
+          "transferSize": 9318
+        },
+        {
+          "name": "http://localhost:8765/js/content/festhunt.js",
+          "encodedBodySize": 6912,
+          "transferSize": 7212
+        }
+      ],
+      "boot": {
+        "start": 679,
+        "world": 1617,
+        "people": 1685,
+        "town": 1928,
+        "roads": 2320,
+        "pretraffic": 2618,
+        "traffic": 2629,
+        "things": 3983,
+        "wideland": 4151,
+        "levelled": 4255,
+        "roadside": 4481,
+        "solids": 4490,
+        "ready": 4682,
+        "shaders": 5422
+      },
+      "requestCount": 197,
+      "optionalRequests": 2,
+      "optionalRequestBodyBytes": 875,
+      "optionalModuleRequests": 1,
+      "resourceEncodedBytes": 4196232
+    },
+    {
+      "collect": false,
+      "process": false,
+      "show": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "observedMs": 1630.4000000059605,
+      "animationCallbacks": 12,
+      "heapBeforeBytes": 364000000,
+      "heapAfterBytes": 364000000,
+      "resources": [
+        {
+          "name": "http://localhost:8765/icons/launch/valley-portrait.jpg",
+          "encodedBodySize": 4565,
+          "transferSize": 4865
+        },
+        {
+          "name": "http://localhost:8765/fonts/Fredoka-latin-500.woff2",
+          "encodedBodySize": 29732,
+          "transferSize": 30032
+        },
+        {
+          "name": "http://localhost:8765/css/fonts.css",
+          "encodedBodySize": 4340,
+          "transferSize": 4640
+        },
+        {
+          "name": "http://localhost:8765/css/style.css",
+          "encodedBodySize": 346167,
+          "transferSize": 346467
+        },
+        {
+          "name": "http://localhost:8765/js/custom.js",
+          "encodedBodySize": 21857,
+          "transferSize": 22157
+        },
+        {
+          "name": "http://localhost:8765/js/core/reporting-policy.js",
+          "encodedBodySize": 1641,
+          "transferSize": 1941
+        },
+        {
+          "name": "http://localhost:8765/js/content/tester.js",
+          "encodedBodySize": 8695,
+          "transferSize": 8995
+        },
+        {
+          "name": "http://localhost:8765/js/content/tester-arcades.js",
+          "encodedBodySize": 1804,
+          "transferSize": 2104
+        },
+        {
+          "name": "http://localhost:8765/js/content/fruit-parade.js",
+          "encodedBodySize": 688,
+          "transferSize": 988
+        },
+        {
+          "name": "http://localhost:8765/js/art.js",
+          "encodedBodySize": 164586,
+          "transferSize": 164886
+        },
+        {
+          "name": "http://localhost:8765/js/icons.js",
+          "encodedBodySize": 8064,
+          "transferSize": 8364
+        },
+        {
+          "name": "http://localhost:8765/js/emojiswap.js",
+          "encodedBodySize": 11157,
+          "transferSize": 11457
+        },
+        {
+          "name": "http://localhost:8765/vendor/three.module.js",
+          "encodedBodySize": 670681,
+          "transferSize": 670981
+        },
+        {
+          "name": "http://localhost:8765/js/seethrough.js",
+          "encodedBodySize": 8740,
+          "transferSize": 9040
+        },
+        {
+          "name": "http://localhost:8765/js/gfx.js",
+          "encodedBodySize": 6307,
+          "transferSize": 6607
+        },
+        {
+          "name": "http://localhost:8765/vendor/RoomEnvironment.js",
+          "encodedBodySize": 3747,
+          "transferSize": 4047
+        },
+        {
+          "name": "http://localhost:8765/js/rideview.js",
+          "encodedBodySize": 3433,
+          "transferSize": 3733
+        },
+        {
+          "name": "http://localhost:8765/js/build.js",
+          "encodedBodySize": 658,
+          "transferSize": 958
+        },
+        {
+          "name": "http://localhost:8765/js/core/events.js",
+          "encodedBodySize": 8493,
+          "transferSize": 8793
+        },
+        {
+          "name": "http://localhost:8765/js/content/shop.js",
+          "encodedBodySize": 16941,
+          "transferSize": 17241
+        },
+        {
+          "name": "http://localhost:8765/js/voice-index.js",
+          "encodedBodySize": 3384,
+          "transferSize": 3684
+        },
+        {
+          "name": "http://localhost:8765/js/state.js",
+          "encodedBodySize": 21044,
+          "transferSize": 21344
+        },
+        {
+          "name": "http://localhost:8765/js/core/geo.js",
+          "encodedBodySize": 2572,
+          "transferSize": 2872
+        },
+        {
+          "name": "http://localhost:8765/js/i18n.js",
+          "encodedBodySize": 9434,
+          "transferSize": 9734
+        },
+        {
+          "name": "http://localhost:8765/js/core/rng.js",
+          "encodedBodySize": 2252,
+          "transferSize": 2552
+        },
+        {
+          "name": "http://localhost:8765/js/util.js",
+          "encodedBodySize": 2516,
+          "transferSize": 2816
+        },
+        {
+          "name": "http://localhost:8765/js/audio.js",
+          "encodedBodySize": 39941,
+          "transferSize": 40241
+        },
+        {
+          "name": "http://localhost:8765/js/viwords.js",
+          "encodedBodySize": 5724,
+          "transferSize": 6024
+        },
+        {
+          "name": "http://localhost:8765/js/packhash.js",
+          "encodedBodySize": 1381,
+          "transferSize": 1681
+        },
+        {
+          "name": "http://localhost:8765/js/voice-fragments.js",
+          "encodedBodySize": 1364,
+          "transferSize": 1664
+        },
+        {
+          "name": "http://localhost:8765/js/voice.js",
+          "encodedBodySize": 45870,
+          "transferSize": 46170
+        },
+        {
+          "name": "http://localhost:8765/js/content/songs.js",
+          "encodedBodySize": 7029,
+          "transferSize": 7329
+        },
+        {
+          "name": "http://localhost:8765/js/songs.js",
+          "encodedBodySize": 3693,
+          "transferSize": 3993
+        },
+        {
+          "name": "http://localhost:8765/js/money.js",
+          "encodedBodySize": 3438,
+          "transferSize": 3738
+        },
+        {
+          "name": "http://localhost:8765/js/content/map.js",
+          "encodedBodySize": 38307,
+          "transferSize": 38607
+        },
+        {
+          "name": "http://localhost:8765/js/solids.js",
+          "encodedBodySize": 12655,
+          "transferSize": 12955
+        },
+        {
+          "name": "http://localhost:8765/js/houses.js",
+          "encodedBodySize": 15560,
+          "transferSize": 15860
+        },
+        {
+          "name": "http://localhost:8765/js/world.js",
+          "encodedBodySize": 114399,
+          "transferSize": 114699
+        },
+        {
+          "name": "http://localhost:8765/js/studio-position.js",
+          "encodedBodySize": 967,
+          "transferSize": 1267
+        },
+        {
+          "name": "http://localhost:8765/js/avatar.js",
+          "encodedBodySize": 48406,
+          "transferSize": 48706
+        },
+        {
+          "name": "http://localhost:8765/js/vehicles.js",
+          "encodedBodySize": 51634,
+          "transferSize": 51934
+        },
+        {
+          "name": "http://localhost:8765/js/player.js",
+          "encodedBodySize": 25471,
+          "transferSize": 25771
+        },
+        {
+          "name": "http://localhost:8765/js/explain.js",
+          "encodedBodySize": 1869,
+          "transferSize": 2169
+        },
+        {
+          "name": "http://localhost:8765/js/feel.js",
+          "encodedBodySize": 5922,
+          "transferSize": 6222
+        },
+        {
+          "name": "http://localhost:8765/js/hud.js",
+          "encodedBodySize": 29268,
+          "transferSize": 29568
+        },
+        {
+          "name": "http://localhost:8765/js/input.js",
+          "encodedBodySize": 6481,
+          "transferSize": 6781
+        },
+        {
+          "name": "http://localhost:8765/js/content/family-quiz.js",
+          "encodedBodySize": 1434,
+          "transferSize": 1734
+        },
+        {
+          "name": "http://localhost:8765/js/relay.js",
+          "encodedBodySize": 10642,
+          "transferSize": 10942
+        },
+        {
+          "name": "http://localhost:8765/js/netmsg.js",
+          "encodedBodySize": 10033,
+          "transferSize": 10333
+        },
+        {
+          "name": "http://localhost:8765/js/content/secondset.js",
+          "encodedBodySize": 4360,
+          "transferSize": 4660
+        },
+        {
+          "name": "http://localhost:8765/js/net.js",
+          "encodedBodySize": 72591,
+          "transferSize": 72891
+        },
+        {
+          "name": "http://localhost:8765/js/content/activities.js",
+          "encodedBodySize": 13562,
+          "transferSize": 13862
+        },
+        {
+          "name": "http://localhost:8765/js/content/unlocks.js",
+          "encodedBodySize": 3665,
+          "transferSize": 3965
+        },
+        {
+          "name": "http://localhost:8765/js/content/festcal.js",
+          "encodedBodySize": 17846,
+          "transferSize": 18146
+        },
+        {
+          "name": "http://localhost:8765/js/popups.js",
+          "encodedBodySize": 8255,
+          "transferSize": 8555
+        },
+        {
+          "name": "http://localhost:8765/js/content/stickers.js",
+          "encodedBodySize": 34453,
+          "transferSize": 34753
+        },
+        {
+          "name": "http://localhost:8765/js/stickers.js",
+          "encodedBodySize": 7781,
+          "transferSize": 8081
+        },
+        {
+          "name": "http://localhost:8765/js/stickerfx.js",
+          "encodedBodySize": 7349,
+          "transferSize": 7649
+        },
+        {
+          "name": "http://localhost:8765/js/core/ids.js",
+          "encodedBodySize": 2084,
+          "transferSize": 2384
+        },
+        {
+          "name": "http://localhost:8765/js/placebook.js",
+          "encodedBodySize": 3892,
+          "transferSize": 4192
+        },
+        {
+          "name": "http://localhost:8765/js/familycards.js",
+          "encodedBodySize": 3725,
+          "transferSize": 4025
+        },
+        {
+          "name": "http://localhost:8765/js/data.js",
+          "encodedBodySize": 11477,
+          "transferSize": 11777
+        },
+        {
+          "name": "http://localhost:8765/js/ads.js",
+          "encodedBodySize": 6823,
+          "transferSize": 7123
+        },
+        {
+          "name": "http://localhost:8765/js/games/registry.js",
+          "encodedBodySize": 1230,
+          "transferSize": 1530
+        },
+        {
+          "name": "http://localhost:8765/js/howto-registry.js",
+          "encodedBodySize": 516,
+          "transferSize": 816
+        },
+        {
+          "name": "http://localhost:8765/js/howto.js",
+          "encodedBodySize": 982,
+          "transferSize": 1282
+        },
+        {
+          "name": "http://localhost:8765/js/games/frame.js",
+          "encodedBodySize": 26724,
+          "transferSize": 27024
+        },
+        {
+          "name": "http://localhost:8765/js/games/playwatch.js",
+          "encodedBodySize": 2737,
+          "transferSize": 3037
+        },
+        {
+          "name": "http://localhost:8765/js/powerlines.js",
+          "encodedBodySize": 4319,
+          "transferSize": 4619
+        },
+        {
+          "name": "http://localhost:8765/js/story.js",
+          "encodedBodySize": 16762,
+          "transferSize": 17062
+        },
+        {
+          "name": "http://localhost:8765/js/realworld.js",
+          "encodedBodySize": 15785,
+          "transferSize": 16085
+        },
+        {
+          "name": "http://localhost:8765/js/town.js",
+          "encodedBodySize": 30730,
+          "transferSize": 31030
+        },
+        {
+          "name": "http://localhost:8765/js/chat.js",
+          "encodedBodySize": 11280,
+          "transferSize": 11580
+        },
+        {
+          "name": "http://localhost:8765/js/listen.js",
+          "encodedBodySize": 2937,
+          "transferSize": 3237
+        },
+        {
+          "name": "http://localhost:8765/js/vendors.js",
+          "encodedBodySize": 7519,
+          "transferSize": 7819
+        },
+        {
+          "name": "http://localhost:8765/js/words.js",
+          "encodedBodySize": 8778,
+          "transferSize": 9078
+        },
+        {
+          "name": "http://localhost:8765/js/snacks.js",
+          "encodedBodySize": 4684,
+          "transferSize": 4984
+        },
+        {
+          "name": "http://localhost:8765/js/regions.js",
+          "encodedBodySize": 39471,
+          "transferSize": 39771
+        },
+        {
+          "name": "http://localhost:8765/js/credits.js",
+          "encodedBodySize": 7306,
+          "transferSize": 7606
+        },
+        {
+          "name": "http://localhost:8765/js/photos.js",
+          "encodedBodySize": 2100,
+          "transferSize": 2400
+        },
+        {
+          "name": "http://localhost:8765/js/words2.js",
+          "encodedBodySize": 2680,
+          "transferSize": 2980
+        },
+        {
+          "name": "http://localhost:8765/js/gather.js",
+          "encodedBodySize": 13311,
+          "transferSize": 13611
+        },
+        {
+          "name": "http://localhost:8765/js/install.js",
+          "encodedBodySize": 6157,
+          "transferSize": 6457
+        },
+        {
+          "name": "http://localhost:8765/js/ui.js",
+          "encodedBodySize": 114260,
+          "transferSize": 114560
+        },
+        {
+          "name": "http://localhost:8765/js/commands.js",
+          "encodedBodySize": 7397,
+          "transferSize": 7697
+        },
+        {
+          "name": "http://localhost:8765/js/games/learning-meta.js",
+          "encodedBodySize": 2872,
+          "transferSize": 3172
+        },
+        {
+          "name": "http://localhost:8765/js/family-quiz-store.js",
+          "encodedBodySize": 898,
+          "transferSize": 1198
+        },
+        {
+          "name": "http://localhost:8765/js/games/all.js",
+          "encodedBodySize": 1024,
+          "transferSize": 1324
+        },
+        {
+          "name": "http://localhost:8765/js/games/catalog.js",
+          "encodedBodySize": 25033,
+          "transferSize": 25333
+        },
+        {
+          "name": "http://localhost:8765/js/animals.js",
+          "encodedBodySize": 25496,
+          "transferSize": 25796
+        },
+        {
+          "name": "http://localhost:8765/js/places.js",
+          "encodedBodySize": 7520,
+          "transferSize": 7820
+        },
+        {
+          "name": "http://localhost:8765/js/farm.js",
+          "encodedBodySize": 37300,
+          "transferSize": 37600
+        },
+        {
+          "name": "http://localhost:8765/js/asia.js",
+          "encodedBodySize": 14683,
+          "transferSize": 14983
+        },
+        {
+          "name": "http://localhost:8765/js/chatter.js",
+          "encodedBodySize": 7840,
+          "transferSize": 8140
+        },
+        {
+          "name": "http://localhost:8765/js/homes.js",
+          "encodedBodySize": 40283,
+          "transferSize": 40583
+        },
+        {
+          "name": "http://localhost:8765/js/heritage.js",
+          "encodedBodySize": 38153,
+          "transferSize": 38453
+        },
+        {
+          "name": "http://localhost:8765/js/pets.js",
+          "encodedBodySize": 19979,
+          "transferSize": 20279
+        },
+        {
+          "name": "http://localhost:8765/js/ferry.js",
+          "encodedBodySize": 23688,
+          "transferSize": 23988
+        },
+        {
+          "name": "http://localhost:8765/js/lunar.js",
+          "encodedBodySize": 4943,
+          "transferSize": 5243
+        },
+        {
+          "name": "http://localhost:8765/js/passport.js",
+          "encodedBodySize": 7506,
+          "transferSize": 7806
+        },
+        {
+          "name": "http://localhost:8765/js/content/festival-visibility.js",
+          "encodedBodySize": 3097,
+          "transferSize": 3397
+        },
+        {
+          "name": "http://localhost:8765/js/festival-live.js",
+          "encodedBodySize": 2617,
+          "transferSize": 2917
+        },
+        {
+          "name": "http://localhost:8765/js/weather.js",
+          "encodedBodySize": 7779,
+          "transferSize": 8079
+        },
+        {
+          "name": "http://localhost:8765/js/festivals.js",
+          "encodedBodySize": 48939,
+          "transferSize": 49239
+        },
+        {
+          "name": "http://localhost:8765/js/fun.js",
+          "encodedBodySize": 13580,
+          "transferSize": 13880
+        },
+        {
+          "name": "http://localhost:8765/js/talesdata.js",
+          "encodedBodySize": 14053,
+          "transferSize": 14353
+        },
+        {
+          "name": "http://localhost:8765/js/tale-loader.js",
+          "encodedBodySize": 1366,
+          "transferSize": 1666
+        },
+        {
+          "name": "http://localhost:8765/js/cartoon.js",
+          "encodedBodySize": 13785,
+          "transferSize": 14085
+        },
+        {
+          "name": "http://localhost:8765/js/tales.js",
+          "encodedBodySize": 15676,
+          "transferSize": 15976
+        },
+        {
+          "name": "http://localhost:8765/js/learn.js",
+          "encodedBodySize": 25187,
+          "transferSize": 25487
+        },
+        {
+          "name": "http://localhost:8765/js/showcase.js",
+          "encodedBodySize": 6513,
+          "transferSize": 6813
+        },
+        {
+          "name": "http://localhost:8765/js/roads.js",
+          "encodedBodySize": 51036,
+          "transferSize": 51336
+        },
+        {
+          "name": "http://localhost:8765/js/signposts.js",
+          "encodedBodySize": 10936,
+          "transferSize": 11236
+        },
+        {
+          "name": "http://localhost:8765/js/nametags.js",
+          "encodedBodySize": 4411,
+          "transferSize": 4711
+        },
+        {
+          "name": "http://localhost:8765/js/travel-stops.js",
+          "encodedBodySize": 815,
+          "transferSize": 1115
+        },
+        {
+          "name": "http://localhost:8765/js/worldcache.js",
+          "encodedBodySize": 3144,
+          "transferSize": 3444
+        },
+        {
+          "name": "http://localhost:8765/js/traffic.js",
+          "encodedBodySize": 32023,
+          "transferSize": 32323
+        },
+        {
+          "name": "http://localhost:8765/js/content/releases.js",
+          "encodedBodySize": 22180,
+          "transferSize": 22480
+        },
+        {
+          "name": "http://localhost:8765/js/myhouse.js",
+          "encodedBodySize": 10957,
+          "transferSize": 11257
+        },
+        {
+          "name": "http://localhost:8765/js/report.js",
+          "encodedBodySize": 9265,
+          "transferSize": 9565
+        },
+        {
+          "name": "http://localhost:8765/js/printpage.js",
+          "encodedBodySize": 4589,
+          "transferSize": 4889
+        },
+        {
+          "name": "http://localhost:8765/js/coop.js",
+          "encodedBodySize": 4622,
+          "transferSize": 4922
+        },
+        {
+          "name": "http://localhost:8765/js/twinchests.js",
+          "encodedBodySize": 6614,
+          "transferSize": 6914
+        },
+        {
+          "name": "http://localhost:8765/js/claims.js",
+          "encodedBodySize": 2156,
+          "transferSize": 2456
+        },
+        {
+          "name": "http://localhost:8765/js/games/multiplayer-foundations.js",
+          "encodedBodySize": 3600,
+          "transferSize": 3900
+        },
+        {
+          "name": "http://localhost:8765/js/netgames.js",
+          "encodedBodySize": 11389,
+          "transferSize": 11689
+        },
+        {
+          "name": "http://localhost:8765/js/simple.js",
+          "encodedBodySize": 33863,
+          "transferSize": 34163
+        },
+        {
+          "name": "http://localhost:8765/js/cities.js",
+          "encodedBodySize": 64992,
+          "transferSize": 65292
+        },
+        {
+          "name": "http://localhost:8765/js/kite.js",
+          "encodedBodySize": 4817,
+          "transferSize": 5117
+        },
+        {
+          "name": "http://localhost:8765/js/hawkers.js",
+          "encodedBodySize": 7570,
+          "transferSize": 7870
+        },
+        {
+          "name": "http://localhost:8765/js/suburbs.js",
+          "encodedBodySize": 11712,
+          "transferSize": 12012
+        },
+        {
+          "name": "http://localhost:8765/js/reeds.js",
+          "encodedBodySize": 4797,
+          "transferSize": 5097
+        },
+        {
+          "name": "http://localhost:8765/js/worldedit.js",
+          "encodedBodySize": 11382,
+          "transferSize": 11682
+        },
+        {
+          "name": "http://localhost:8765/js/content/build-types.js",
+          "encodedBodySize": 6099,
+          "transferSize": 6399
+        },
+        {
+          "name": "http://localhost:8765/js/plots.js",
+          "encodedBodySize": 2353,
+          "transferSize": 2653
+        },
+        {
+          "name": "http://localhost:8765/js/symbols.js",
+          "encodedBodySize": 12765,
+          "transferSize": 13065
+        },
+        {
+          "name": "http://localhost:8765/js/regionsites.js",
+          "encodedBodySize": 12829,
+          "transferSize": 13129
+        },
+        {
+          "name": "http://localhost:8765/js/content/familycode.js",
+          "encodedBodySize": 11112,
+          "transferSize": 11412
+        },
+        {
+          "name": "http://localhost:8765/js/vnfun.js",
+          "encodedBodySize": 18936,
+          "transferSize": 19236
+        },
+        {
+          "name": "http://localhost:8765/js/players.js",
+          "encodedBodySize": 30036,
+          "transferSize": 30336
+        },
+        {
+          "name": "http://localhost:8765/js/folkshow.js",
+          "encodedBodySize": 21773,
+          "transferSize": 22073
+        },
+        {
+          "name": "http://localhost:8765/js/lotus.js",
+          "encodedBodySize": 18021,
+          "transferSize": 18321
+        },
+        {
+          "name": "http://localhost:8765/js/packbar.js",
+          "encodedBodySize": 4978,
+          "transferSize": 5278
+        },
+        {
+          "name": "http://localhost:8765/js/trade.js",
+          "encodedBodySize": 13252,
+          "transferSize": 13552
+        },
+        {
+          "name": "http://localhost:8765/js/roomcode.js",
+          "encodedBodySize": 2702,
+          "transferSize": 3002
+        },
+        {
+          "name": "http://localhost:8765/js/launch.js",
+          "encodedBodySize": 9340,
+          "transferSize": 9640
+        },
+        {
+          "name": "http://localhost:8765/js/secrets.js",
+          "encodedBodySize": 11850,
+          "transferSize": 12150
+        },
+        {
+          "name": "http://localhost:8765/fonts/Fredoka-latin-ext-500.woff2",
+          "encodedBodySize": 4576,
+          "transferSize": 4876
+        },
+        {
+          "name": "http://localhost:8765/content/custom.json",
+          "encodedBodySize": 207,
+          "transferSize": 507
+        },
+        {
+          "name": "http://localhost:8765/js/main.js",
+          "encodedBodySize": 204645,
+          "transferSize": 204945
+        },
+        {
+          "name": "http://localhost:8765/content/custom.json",
+          "encodedBodySize": 207,
+          "transferSize": 507
+        },
+        {
+          "name": "http://localhost:8765/api/live",
+          "encodedBodySize": 160,
+          "transferSize": 460
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-latin-600.woff2",
+          "encodedBodySize": 33188,
+          "transferSize": 33488
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-latin-ext-600.woff2",
+          "encodedBodySize": 27384,
+          "transferSize": 27684
+        },
+        {
+          "name": "http://localhost:8765/fonts/Baloo2-vietnamese-600.woff2",
+          "encodedBodySize": 9888,
+          "transferSize": 10188
+        },
+        {
+          "name": "http://localhost:8765/js/content/autoplay.js",
+          "encodedBodySize": 10376,
+          "transferSize": 10676
+        },
+        {
+          "name": "http://localhost:8765/js/testergate.js",
+          "encodedBodySize": 848,
+          "transferSize": 1148
+        },
+        {
+          "name": "http://localhost:8765/js/lanterns.js",
+          "encodedBodySize": 27273,
+          "transferSize": 27573
+        },
+        {
+          "name": "http://localhost:8765/js/kidplay.js",
+          "encodedBodySize": 12842,
+          "transferSize": 13142
+        },
+        {
+          "name": "http://localhost:8765/js/yard.js",
+          "encodedBodySize": 23439,
+          "transferSize": 23739
+        },
+        {
+          "name": "http://localhost:8765/js/content/chapters.js",
+          "encodedBodySize": 10355,
+          "transferSize": 10655
+        },
+        {
+          "name": "http://localhost:8765/js/dinh.js",
+          "encodedBodySize": 3888,
+          "transferSize": 4188
+        },
+        {
+          "name": "http://localhost:8765/js/handpad.js",
+          "encodedBodySize": 2717,
+          "transferSize": 3017
+        },
+        {
+          "name": "http://localhost:8765/js/companion.js",
+          "encodedBodySize": 9156,
+          "transferSize": 9456
+        },
+        {
+          "name": "http://localhost:8765/js/openspot.js",
+          "encodedBodySize": 3204,
+          "transferSize": 3504
+        },
+        {
+          "name": "http://localhost:8765/js/content/yard.js",
+          "encodedBodySize": 8906,
+          "transferSize": 9206
+        },
+        {
+          "name": "http://localhost:8765/js/shop.js",
+          "encodedBodySize": 23295,
+          "transferSize": 23595
+        },
+        {
+          "name": "http://localhost:8765/js/boxes.js",
+          "encodedBodySize": 11213,
+          "transferSize": 11513
+        },
+        {
+          "name": "http://localhost:8765/js/content/boxes.js",
+          "encodedBodySize": 7895,
+          "transferSize": 8195
+        },
+        {
+          "name": "http://localhost:8765/js/hoilang.js",
+          "encodedBodySize": 17064,
+          "transferSize": 17364
+        },
+        {
+          "name": "http://localhost:8765/js/surprises.js",
+          "encodedBodySize": 15964,
+          "transferSize": 16264
+        },
+        {
+          "name": "http://localhost:8765/js/parents.js",
+          "encodedBodySize": 29957,
+          "transferSize": 30257
+        },
+        {
+          "name": "http://localhost:8765/voices/manifest-en.json",
+          "encodedBodySize": 183123,
+          "transferSize": 183423
+        },
+        {
+          "name": "http://localhost:8765/js/content/hoilang.js",
+          "encodedBodySize": 5705,
+          "transferSize": 6005
+        },
+        {
+          "name": "http://localhost:8765/js/content/surprises.js",
+          "encodedBodySize": 7344,
+          "transferSize": 7644
+        },
+        {
+          "name": "http://localhost:8765/js/content/familymissions.js",
+          "encodedBodySize": 4243,
+          "transferSize": 4543
+        },
+        {
+          "name": "http://localhost:8765/js/content/parents.js",
+          "encodedBodySize": 9681,
+          "transferSize": 9981
+        },
+        {
+          "name": "http://localhost:8765/js/voicepack.js",
+          "encodedBodySize": 19958,
+          "transferSize": 20258
+        },
+        {
+          "name": "http://localhost:8765/js/games/readingmenu.js",
+          "encodedBodySize": 8788,
+          "transferSize": 9088
+        },
+        {
+          "name": "http://localhost:8765/js/scrollhelp.js",
+          "encodedBodySize": 3975,
+          "transferSize": 4275
+        },
+        {
+          "name": "http://localhost:8765/js/villagertalk.js",
+          "encodedBodySize": 4243,
+          "transferSize": 4543
+        },
+        {
+          "name": "http://localhost:8765/js/pricetags.js",
+          "encodedBodySize": 3036,
+          "transferSize": 3336
+        },
+        {
+          "name": "http://localhost:8765/js/jobs.js",
+          "encodedBodySize": 7472,
+          "transferSize": 7772
+        },
+        {
+          "name": "http://localhost:8765/js/wayfind.js",
+          "encodedBodySize": 11094,
+          "transferSize": 11394
+        },
+        {
+          "name": "http://localhost:8765/js/animalhomes.js",
+          "encodedBodySize": 5073,
+          "transferSize": 5373
+        },
+        {
+          "name": "http://localhost:8765/js/content/villagerlines.js",
+          "encodedBodySize": 6372,
+          "transferSize": 6672
+        },
+        {
+          "name": "http://localhost:8765/js/content/jobs.js",
+          "encodedBodySize": 8296,
+          "transferSize": 8596
+        },
+        {
+          "name": "http://localhost:8765/js/dayplan.js",
+          "encodedBodySize": 5902,
+          "transferSize": 6202
+        },
+        {
+          "name": "http://localhost:8765/js/adventure.js",
+          "encodedBodySize": 34407,
+          "transferSize": 34707
+        },
+        {
+          "name": "http://localhost:8765/js/content/adventures.js",
+          "encodedBodySize": 42779,
+          "transferSize": 43079
+        },
+        {
+          "name": "http://localhost:8765/js/festdecor.js",
+          "encodedBodySize": 18772,
+          "transferSize": 19072
+        },
+        {
+          "name": "http://localhost:8765/js/festhunt.js",
+          "encodedBodySize": 9018,
+          "transferSize": 9318
+        },
+        {
+          "name": "http://localhost:8765/js/content/festhunt.js",
+          "encodedBodySize": 6912,
+          "transferSize": 7212
+        }
+      ],
+      "boot": {
+        "start": 708,
+        "world": 1576,
+        "people": 1642,
+        "town": 1875,
+        "roads": 2261,
+        "pretraffic": 2544,
+        "traffic": 2554,
+        "things": 3852,
+        "wideland": 4021,
+        "levelled": 4121,
+        "roadside": 4346,
+        "solids": 4354,
+        "ready": 4543,
+        "shaders": 5272
+      },
+      "requestCount": 194,
+      "optionalRequests": 0,
+      "optionalRequestBodyBytes": 0,
+      "optionalModuleRequests": 0,
+      "resourceEncodedBytes": 4178080
+    }
+  ],
+  "limitations": [
+    "Four alternating cold browser contexts; one synthetic phone viewport, local uncompressed source server and mocked ingestion.",
+    "Not physical hardware, battery measurement, production traffic, server execution duration, database cost or Netlify billing.",
+    "Frame callbacks and non-standard heap observations are descriptive; no performance threshold or statistical equivalence is asserted.",
+    "Policy On still requires the existing release gate, parent permission and eligible context; this test does not enable production reporting.",
+    "Legacy analytics remains separate. No zero-impact or all-optional-family guarantee."
+  ]
+}

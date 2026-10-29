@@ -1,0 +1,100 @@
+{
+  "provenance": {
+    "sourceHead": "125a54920fb4ed54a4b241abc5a414d156267235",
+    "capturedAt": "2026-10-29T06:59:18.639Z",
+    "timezone": "Australia/Sydney",
+    "synthetic": true,
+    "browser": "141.0.7390.37",
+    "screenshotOptions": {
+      "animations": "disabled"
+    },
+    "sourceFiles": {
+      "home/index.html": "1ec77b1094c7680d3872e1a7e7d90c1bf16898949c98ba922794aaed16a0f937",
+      "docs/website-review-20261023/art-content.mjs": "cbc038af1386bef264897084c010cc2d07a4263e150770dc3ff7a2027dbd0fce",
+      "docs/website-review-20261023/navigation.mjs": "254e47fc732a8ed9af4474e1642d1da0e1eaf93c071818264396bffea045fec1",
+      "docs/website-review-20261023/parent-content.mjs": "5a1c41e505324b5b7eef3a93255671f5ef108e06fe884d40e8137016cdddacbd"
+    }
+  },
+  "results": [
+    {
+      "width": 390,
+      "height": 844,
+      "lang": "en",
+      "fourDestinations": true,
+      "artItems": 22,
+      "deepLink": true,
+      "noOverflow": true,
+      "availabilityExplained": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "lang": "vi",
+      "fourDestinations": true,
+      "artItems": 22,
+      "deepLink": true,
+      "noOverflow": true,
+      "availabilityExplained": true
+    },
+    {
+      "width": 820,
+      "height": 1180,
+      "lang": "en",
+      "fourDestinations": true,
+      "artItems": 22,
+      "deepLink": true,
+      "noOverflow": true,
+      "availabilityExplained": true
+    },
+    {
+      "width": 820,
+      "height": 1180,
+      "lang": "vi",
+      "fourDestinations": true,
+      "artItems": 22,
+      "deepLink": true,
+      "noOverflow": true,
+      "availabilityExplained": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "lang": "en",
+      "fourDestinations": true,
+      "artItems": 22,
+      "deepLink": true,
+      "noOverflow": true,
+      "availabilityExplained": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "lang": "vi",
+      "fourDestinations": true,
+      "artItems": 22,
+      "deepLink": true,
+      "noOverflow": true,
+      "availabilityExplained": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lang": "en",
+      "fourDestinations": true,
+      "artItems": 22,
+      "deepLink": true,
+      "noOverflow": true,
+      "availabilityExplained": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lang": "vi",
+      "fourDestinations": true,
+      "artItems": 22,
+      "deepLink": true,
+      "noOverflow": true,
+      "availabilityExplained": true
+    }
+  ]
+}
