@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceHead": "a5a11e5bbe65be9710e9cfa8f0199b35129696fd",
+  "sourceHead": "6f13d553c1e8209fd2e11debd39411399e85413b",
   "connections": [
     {
       "from": "source:.github/workflows/full-suite.yml",
@@ -49,7 +49,7 @@
     },
     {
       "from": "source:js/ads.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 8,
       "evidence": "static-import",
@@ -103,7 +103,7 @@
     },
     {
       "from": "source:js/adventure.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 19,
       "evidence": "static-import",
@@ -220,7 +220,7 @@
     },
     {
       "from": "source:js/adventure.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 32,
       "evidence": "static-import",
@@ -319,7 +319,7 @@
     },
     {
       "from": "source:js/asia.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -400,7 +400,7 @@
     },
     {
       "from": "source:js/autoplay.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -490,8 +490,8 @@
     },
     {
       "from": "source:js/autoplay.ts",
-      "to": "source:js/keepcopy.ts",
-      "specifier": "./keepcopy.js",
+      "to": "source:js/tester-detection.ts",
+      "specifier": "./tester-detection.js",
       "line": 20,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
@@ -499,8 +499,8 @@
     },
     {
       "from": "source:js/autoplay.ts",
-      "to": "source:js/tester.ts",
-      "specifier": "./tester.js",
+      "to": "source:js/content/fruit-parade.ts",
+      "specifier": "./content/fruit-parade.js",
       "line": 21,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
@@ -508,8 +508,8 @@
     },
     {
       "from": "source:js/autoplay.ts",
-      "to": "source:js/content/autoplay.ts",
-      "specifier": "./content/autoplay.js",
+      "to": "source:js/content/tester-arcades.ts",
+      "specifier": "./content/tester-arcades.js",
       "line": 22,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
@@ -517,27 +517,9 @@
     },
     {
       "from": "source:js/autoplay.ts",
-      "to": "source:js/content/autoplay.ts",
-      "specifier": "./content/autoplay.js",
+      "to": "source:js/keepcopy.ts",
+      "specifier": "./keepcopy.js",
       "line": 23,
-      "evidence": "static-import",
-      "runtimeEffect": "not_proven",
-      "external": false
-    },
-    {
-      "from": "source:js/autoplay.ts",
-      "to": "source:js/content/autoplay.ts",
-      "specifier": "./content/autoplay.js",
-      "line": 371,
-      "evidence": "static-import",
-      "runtimeEffect": "not_proven",
-      "external": false
-    },
-    {
-      "from": "source:js/autoplay.ts",
-      "to": "source:js/content/autoplay.ts",
-      "specifier": "./content/autoplay.js",
-      "line": 372,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -546,7 +528,52 @@
       "from": "source:js/autoplay.ts",
       "to": "source:js/tester.ts",
       "specifier": "./tester.js",
-      "line": 564,
+      "line": 24,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/autoplay.ts",
+      "to": "source:js/content/autoplay.ts",
+      "specifier": "./content/autoplay.js",
+      "line": 25,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/autoplay.ts",
+      "to": "source:js/content/autoplay.ts",
+      "specifier": "./content/autoplay.js",
+      "line": 26,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/autoplay.ts",
+      "to": "source:js/content/autoplay.ts",
+      "specifier": "./content/autoplay.js",
+      "line": 383,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/autoplay.ts",
+      "to": "source:js/content/autoplay.ts",
+      "specifier": "./content/autoplay.js",
+      "line": 384,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/autoplay.ts",
+      "to": "source:js/tester.ts",
+      "specifier": "./tester.js",
+      "line": 581,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -589,7 +616,7 @@
     },
     {
       "from": "source:js/boxes.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -670,7 +697,7 @@
     },
     {
       "from": "source:js/chat-player.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -823,7 +850,7 @@
     },
     {
       "from": "source:js/chatter.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -841,7 +868,7 @@
     },
     {
       "from": "source:js/chipinfo.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -886,7 +913,7 @@
     },
     {
       "from": "source:js/cities.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 6,
       "evidence": "static-import",
@@ -904,7 +931,7 @@
     },
     {
       "from": "source:js/cities.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 8,
       "evidence": "static-import",
@@ -1003,7 +1030,7 @@
     },
     {
       "from": "source:js/commands.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -1129,7 +1156,7 @@
     },
     {
       "from": "source:js/content/activities.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 2,
       "evidence": "static-import",
@@ -1147,7 +1174,7 @@
     },
     {
       "from": "source:js/content/activities.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./map.js",
       "line": 10,
       "evidence": "static-import",
@@ -1246,7 +1273,7 @@
     },
     {
       "from": "source:js/content/chapter2hanoi.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 10,
       "evidence": "static-import",
@@ -1444,7 +1471,7 @@
     },
     {
       "from": "source:js/content/chapter3sydney.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 10,
       "evidence": "static-import",
@@ -1686,7 +1713,7 @@
       "external": false
     },
     {
-      "from": "source:js/content/films/crow.js",
+      "from": "source:js/content/films/crow.ts",
       "to": "source:js/content/films/kit.js",
       "specifier": "./kit.js",
       "line": 1,
@@ -2002,7 +2029,7 @@
     },
     {
       "from": "source:js/content/songs.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -2272,7 +2299,7 @@
     },
     {
       "from": "source:js/content/talefilms.js",
-      "to": "source:js/content/films/crow.js",
+      "to": "source:js/content/films/crow.ts",
       "specifier": "./films/crow.js",
       "line": 33,
       "evidence": "literal-dynamic-import",
@@ -2371,7 +2398,7 @@
     },
     {
       "from": "source:js/coop.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -2479,7 +2506,7 @@
     },
     {
       "from": "source:js/credits.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -2523,8 +2550,17 @@
       "external": false
     },
     {
+      "from": "source:js/custom.ts",
+      "to": "source:js/core/reporting-policy.ts",
+      "specifier": "./core/reporting-policy.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:js/data.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -2533,7 +2569,7 @@
     },
     {
       "from": "source:js/data.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 2,
       "evidence": "static-import",
@@ -2605,7 +2641,7 @@
     },
     {
       "from": "source:js/explain.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
@@ -2614,7 +2650,7 @@
     },
     {
       "from": "source:js/extras.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -2659,7 +2695,7 @@
     },
     {
       "from": "source:js/family-quiz-editor.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -2740,7 +2776,7 @@
     },
     {
       "from": "source:js/familycards.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -2821,7 +2857,7 @@
     },
     {
       "from": "source:js/familydevices.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -2847,7 +2883,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/gather.js",
       "specifier": "./gather.js",
       "line": 1,
@@ -2856,7 +2892,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/gfx.js",
       "specifier": "./gfx.js",
       "line": 3,
@@ -2865,7 +2901,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/state.ts",
       "specifier": "./state.js",
       "line": 4,
@@ -2874,8 +2910,8 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
-      "to": "source:js/i18n.js",
+      "from": "source:js/farm.ts",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -2883,7 +2919,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/voice.ts",
       "specifier": "./voice.js",
       "line": 6,
@@ -2892,7 +2928,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/audio.ts",
       "specifier": "./audio.js",
       "line": 7,
@@ -2901,7 +2937,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/money.js",
       "specifier": "./money.js",
       "line": 8,
@@ -2910,7 +2946,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/util.js",
       "specifier": "./util.js",
       "line": 9,
@@ -2919,7 +2955,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/world.ts",
       "specifier": "./world.js",
       "line": 10,
@@ -2928,7 +2964,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/ui.ts",
       "specifier": "./ui.js",
       "line": 11,
@@ -2937,7 +2973,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/animals.js",
       "specifier": "./animals.js",
       "line": 68,
@@ -2946,7 +2982,7 @@
       "external": false
     },
     {
-      "from": "source:js/farm.js",
+      "from": "source:js/farm.ts",
       "to": "source:js/animals.js",
       "specifier": "./animals.js",
       "line": 71,
@@ -3001,7 +3037,7 @@
     },
     {
       "from": "source:js/ferry.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -3028,7 +3064,7 @@
     },
     {
       "from": "source:js/ferry.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 8,
       "evidence": "static-import",
@@ -3064,7 +3100,7 @@
     },
     {
       "from": "source:js/festdecor.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -3091,7 +3127,7 @@
     },
     {
       "from": "source:js/festhunt.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
@@ -3154,7 +3190,7 @@
     },
     {
       "from": "source:js/festivals.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 15,
       "evidence": "static-import",
@@ -3316,7 +3352,7 @@
     },
     {
       "from": "source:js/film.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 21,
       "evidence": "static-import",
@@ -3379,7 +3415,7 @@
     },
     {
       "from": "source:js/folkshow.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 10,
       "evidence": "static-import",
@@ -3460,7 +3496,7 @@
     },
     {
       "from": "source:js/fun.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -3604,7 +3640,7 @@
     },
     {
       "from": "source:js/games/animals2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -3640,7 +3676,7 @@
     },
     {
       "from": "source:js/games/art-pad.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -3676,7 +3712,7 @@
     },
     {
       "from": "source:js/games/art-pending.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -3703,7 +3739,7 @@
     },
     {
       "from": "source:js/games/asia.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -3766,7 +3802,7 @@
     },
     {
       "from": "source:js/games/bigthinkers.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -3811,7 +3847,7 @@
     },
     {
       "from": "source:js/games/bigthinkers2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 2,
       "evidence": "static-import",
@@ -3865,7 +3901,7 @@
     },
     {
       "from": "source:js/games/cacuangua.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -3928,7 +3964,7 @@
     },
     {
       "from": "source:js/games/catalog.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -4306,7 +4342,7 @@
     },
     {
       "from": "source:js/games/cities.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -4333,7 +4369,7 @@
     },
     {
       "from": "source:js/games/crafts.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -4360,7 +4396,7 @@
     },
     {
       "from": "source:js/games/drawing.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 6,
       "evidence": "static-import",
@@ -4414,7 +4450,7 @@
     },
     {
       "from": "source:js/games/drawing2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -4450,7 +4486,7 @@
     },
     {
       "from": "source:js/games/familyquiz.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -4558,7 +4594,7 @@
     },
     {
       "from": "source:js/games/farmgames.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -4612,7 +4648,7 @@
     },
     {
       "from": "source:js/games/folk-court.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -4684,7 +4720,7 @@
     },
     {
       "from": "source:js/games/folk.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -4729,7 +4765,7 @@
     },
     {
       "from": "source:js/games/folk2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -4801,7 +4837,7 @@
     },
     {
       "from": "source:js/games/frame.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -4972,7 +5008,7 @@
     },
     {
       "from": "source:js/games/fruitparade.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 2,
       "evidence": "static-import",
@@ -5052,6 +5088,60 @@
       "external": false
     },
     {
+      "from": "source:js/games/goat.ts",
+      "to": "source:js/i18n.ts",
+      "specifier": "../i18n.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/games/goat.ts",
+      "to": "source:js/util.js",
+      "specifier": "../util.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/games/goat.ts",
+      "to": "source:js/state.ts",
+      "specifier": "../state.js",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/games/goat.ts",
+      "to": "source:js/audio.ts",
+      "specifier": "../audio.js",
+      "line": 3,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/games/goat.ts",
+      "to": "source:js/games/goat-core.ts",
+      "specifier": "./goat-core.js",
+      "line": 4,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/games/goat.ts",
+      "to": "source:js/games/goat-art.ts",
+      "specifier": "./goat-art.js",
+      "line": 5,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:js/games/horse-session.ts",
       "to": "source:js/games/arcade-session.ts",
       "specifier": "./arcade-session.js",
@@ -5098,7 +5188,7 @@
     },
     {
       "from": "source:js/games/learning.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -5152,7 +5242,7 @@
     },
     {
       "from": "source:js/games/market.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 2,
       "evidence": "static-import",
@@ -5197,7 +5287,7 @@
     },
     {
       "from": "source:js/games/me2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -5233,7 +5323,7 @@
     },
     {
       "from": "source:js/games/money.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -5296,9 +5386,9 @@
     },
     {
       "from": "source:js/games/money2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
-      "line": 1,
+      "line": 6,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5307,7 +5397,7 @@
       "from": "source:js/games/money2.ts",
       "to": "source:js/art.ts",
       "specifier": "../art.js",
-      "line": 2,
+      "line": 7,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5316,7 +5406,7 @@
       "from": "source:js/games/money2.ts",
       "to": "source:js/util.js",
       "specifier": "../util.js",
-      "line": 3,
+      "line": 8,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5325,7 +5415,7 @@
       "from": "source:js/games/money2.ts",
       "to": "source:js/money.js",
       "specifier": "../money.js",
-      "line": 4,
+      "line": 9,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5334,7 +5424,7 @@
       "from": "source:js/games/money2.ts",
       "to": "source:js/games/moneylogic.ts",
       "specifier": "./moneylogic.js",
-      "line": 5,
+      "line": 10,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5359,7 +5449,7 @@
     },
     {
       "from": "source:js/games/more.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 8,
       "evidence": "static-import",
@@ -5395,7 +5485,7 @@
     },
     {
       "from": "source:js/games/music.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -5431,7 +5521,7 @@
     },
     {
       "from": "source:js/games/music2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -5457,6 +5547,15 @@
       "external": false
     },
     {
+      "from": "source:js/games/music2.ts",
+      "to": "source:js/audio.ts",
+      "specifier": "../audio.js",
+      "line": 6,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:js/games/nature2.ts",
       "to": "source:js/games/frame.ts",
       "specifier": "./frame.js",
@@ -5467,7 +5566,7 @@
     },
     {
       "from": "source:js/games/nature2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -5503,9 +5602,9 @@
     },
     {
       "from": "source:js/games/numbers2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
-      "line": 2,
+      "line": 6,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5514,7 +5613,7 @@
       "from": "source:js/games/numbers2.ts",
       "to": "source:js/art.ts",
       "specifier": "../art.js",
-      "line": 3,
+      "line": 7,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5523,14 +5622,14 @@
       "from": "source:js/games/numbers2.ts",
       "to": "source:js/util.js",
       "specifier": "../util.js",
-      "line": 4,
+      "line": 8,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/games/oanquan-online.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -5593,7 +5692,7 @@
     },
     {
       "from": "source:js/games/outside.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -5638,7 +5737,7 @@
     },
     {
       "from": "source:js/games/pending-vietnam.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -5674,7 +5773,7 @@
     },
     {
       "from": "source:js/games/places2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -5701,7 +5800,7 @@
     },
     {
       "from": "source:js/games/reading.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -5773,9 +5872,9 @@
     },
     {
       "from": "source:js/games/reading2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
-      "line": 4,
+      "line": 10,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5784,7 +5883,7 @@
       "from": "source:js/games/reading2.ts",
       "to": "source:js/art.ts",
       "specifier": "../art.js",
-      "line": 5,
+      "line": 11,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5793,7 +5892,7 @@
       "from": "source:js/games/reading2.ts",
       "to": "source:js/util.js",
       "specifier": "../util.js",
-      "line": 6,
+      "line": 12,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5802,7 +5901,7 @@
       "from": "source:js/games/reading2.ts",
       "to": "source:js/state.ts",
       "specifier": "../state.js",
-      "line": 7,
+      "line": 13,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5827,7 +5926,7 @@
     },
     {
       "from": "source:js/games/readingmenu.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 6,
       "evidence": "static-import",
@@ -5881,9 +5980,9 @@
     },
     {
       "from": "source:js/games/shapes2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
-      "line": 2,
+      "line": 6,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5892,7 +5991,7 @@
       "from": "source:js/games/shapes2.ts",
       "to": "source:js/art.ts",
       "specifier": "../art.js",
-      "line": 3,
+      "line": 7,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5901,7 +6000,7 @@
       "from": "source:js/games/shapes2.ts",
       "to": "source:js/util.js",
       "specifier": "../util.js",
-      "line": 4,
+      "line": 8,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -5944,7 +6043,7 @@
     },
     {
       "from": "source:js/games/snakes.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -6016,7 +6115,7 @@
     },
     {
       "from": "source:js/games/sparklefruitbar.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -6097,7 +6196,7 @@
     },
     {
       "from": "source:js/games/sparkleorchard.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 2,
       "evidence": "static-import",
@@ -6160,7 +6259,7 @@
     },
     {
       "from": "source:js/games/storyhelp.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -6250,7 +6349,7 @@
     },
     {
       "from": "source:js/games/strategy.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -6267,6 +6366,15 @@
       "external": false
     },
     {
+      "from": "source:js/games/strategy.ts",
+      "to": "source:js/games/goat.ts",
+      "specifier": "./goat.js",
+      "line": 202,
+      "evidence": "literal-dynamic-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:js/games/talkgames.ts",
       "to": "source:js/games/frame.ts",
       "specifier": "./frame.js",
@@ -6277,7 +6385,7 @@
     },
     {
       "from": "source:js/games/talkgames.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 11,
       "evidence": "static-import",
@@ -6349,7 +6457,7 @@
     },
     {
       "from": "source:js/games/thinking.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -6412,7 +6520,7 @@
     },
     {
       "from": "source:js/games/thinking2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 2,
       "evidence": "static-import",
@@ -6424,6 +6532,15 @@
       "to": "source:js/util.js",
       "specifier": "../util.js",
       "line": 3,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/games/thinking2.ts",
+      "to": "source:js/art.ts",
+      "specifier": "../art.js",
+      "line": 4,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -6457,7 +6574,7 @@
     },
     {
       "from": "source:js/games/tienlen.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 12,
       "evidence": "static-import",
@@ -6475,7 +6592,7 @@
     },
     {
       "from": "source:js/games/trongnu.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -6511,7 +6628,7 @@
     },
     {
       "from": "source:js/games/tug-online.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -6592,7 +6709,7 @@
     },
     {
       "from": "source:js/games/vietnam.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -6664,7 +6781,7 @@
     },
     {
       "from": "source:js/games/vietnam2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -6709,7 +6826,7 @@
     },
     {
       "from": "source:js/games/words2.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -6745,7 +6862,7 @@
     },
     {
       "from": "source:js/gather.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -6772,7 +6889,7 @@
     },
     {
       "from": "source:js/gather.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 8,
       "evidence": "static-import",
@@ -6826,7 +6943,7 @@
     },
     {
       "from": "source:js/hawkers.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -6844,7 +6961,7 @@
     },
     {
       "from": "source:js/hawkers.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 6,
       "evidence": "static-import",
@@ -6906,7 +7023,7 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
+      "from": "source:js/heritage.ts",
       "to": "source:js/gfx.js",
       "specifier": "./gfx.js",
       "line": 1,
@@ -6915,8 +7032,8 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
-      "to": "source:js/i18n.js",
+      "from": "source:js/heritage.ts",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -6924,8 +7041,8 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
-      "to": "source:js/content/map.js",
+      "from": "source:js/heritage.ts",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 6,
       "evidence": "static-import",
@@ -6933,7 +7050,7 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
+      "from": "source:js/heritage.ts",
       "to": "source:js/world.ts",
       "specifier": "./world.js",
       "line": 7,
@@ -6942,7 +7059,7 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
+      "from": "source:js/heritage.ts",
       "to": "source:js/avatar.ts",
       "specifier": "./avatar.js",
       "line": 8,
@@ -6951,7 +7068,7 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
+      "from": "source:js/heritage.ts",
       "to": "source:js/regions.js",
       "specifier": "./regions.js",
       "line": 9,
@@ -6960,7 +7077,7 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
+      "from": "source:js/heritage.ts",
       "to": "source:js/data.js",
       "specifier": "./data.js",
       "line": 10,
@@ -6969,7 +7086,7 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
+      "from": "source:js/heritage.ts",
       "to": "source:js/gather.js",
       "specifier": "./gather.js",
       "line": 11,
@@ -6978,7 +7095,7 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
+      "from": "source:js/heritage.ts",
       "to": "source:js/util.js",
       "specifier": "./util.js",
       "line": 12,
@@ -6987,7 +7104,7 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
+      "from": "source:js/heritage.ts",
       "to": "source:js/chatter.js",
       "specifier": "./chatter.js",
       "line": 13,
@@ -6996,7 +7113,7 @@
       "external": false
     },
     {
-      "from": "source:js/heritage.js",
+      "from": "source:js/heritage.ts",
       "to": "source:js/homes.js",
       "specifier": "./homes.js",
       "line": 14,
@@ -7015,7 +7132,7 @@
     },
     {
       "from": "source:js/hoilang.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 13,
       "evidence": "static-import",
@@ -7087,7 +7204,7 @@
     },
     {
       "from": "source:js/hoilang.js",
-      "to": "source:js/myhouse.js",
+      "to": "source:js/myhouse.ts",
       "specifier": "./myhouse.js",
       "line": 21,
       "evidence": "static-import",
@@ -7122,6 +7239,15 @@
       "external": false
     },
     {
+      "from": "source:js/home-decor-models.ts",
+      "to": "source:js/gfx.js",
+      "specifier": "./gfx.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:js/homes.js",
       "to": "source:js/gfx.js",
       "specifier": "./gfx.js",
@@ -7132,7 +7258,7 @@
     },
     {
       "from": "source:js/homes.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 6,
       "evidence": "static-import",
@@ -7150,7 +7276,7 @@
     },
     {
       "from": "source:js/homes.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 8,
       "evidence": "static-import",
@@ -7222,7 +7348,7 @@
     },
     {
       "from": "source:js/houses.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -7239,8 +7365,26 @@
       "external": false
     },
     {
+      "from": "source:js/howto-data.ts",
+      "to": "source:js/howto-data2.ts",
+      "specifier": "./howto-data2.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/howto-data2.ts",
+      "to": "source:js/howto-registry.ts",
+      "specifier": "./howto-registry.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:js/howto-player.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -7366,7 +7510,7 @@
     },
     {
       "from": "source:js/howto.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -7420,7 +7564,7 @@
     },
     {
       "from": "source:js/hud.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -7429,7 +7573,7 @@
     },
     {
       "from": "source:js/hud.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -7557,13 +7701,13 @@
       "from": "source:js/hud.ts",
       "to": "source:js/adventure.ts",
       "specifier": "./adventure.js",
-      "line": 142,
+      "line": 145,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/i18n.js",
+      "from": "source:js/i18n.ts",
       "to": "source:js/state.ts",
       "specifier": "./state.js",
       "line": 1,
@@ -7572,7 +7716,7 @@
       "external": false
     },
     {
-      "from": "source:js/i18n.js",
+      "from": "source:js/i18n.ts",
       "to": "source:js/core/events.ts",
       "specifier": "./core/events.js",
       "line": 3,
@@ -7581,7 +7725,7 @@
       "external": false
     },
     {
-      "from": "source:js/i18n.js",
+      "from": "source:js/i18n.ts",
       "to": "source:js/custom.ts",
       "specifier": "./custom.js",
       "line": 4,
@@ -7591,7 +7735,7 @@
     },
     {
       "from": "source:js/install.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -7608,6 +7752,33 @@
       "external": false
     },
     {
+      "from": "source:js/install.ts",
+      "to": "source:js/art.ts",
+      "specifier": "./art.js",
+      "line": 4,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/install.ts",
+      "to": "source:js/popups.ts",
+      "specifier": "./popups.js",
+      "line": 5,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/install.ts",
+      "to": "source:js/content/install-state.ts",
+      "specifier": "./content/install-state.js",
+      "line": 6,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:js/jobs.js",
       "to": "source:js/gfx.js",
       "specifier": "./gfx.js",
@@ -7618,7 +7789,7 @@
     },
     {
       "from": "source:js/jobs.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -7672,7 +7843,7 @@
     },
     {
       "from": "source:js/jobs.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 11,
       "evidence": "static-import",
@@ -7708,7 +7879,7 @@
     },
     {
       "from": "source:js/kidplay.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
@@ -7825,7 +7996,7 @@
     },
     {
       "from": "source:js/lanterns.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 14,
       "evidence": "static-import",
@@ -7959,10 +8130,10 @@
       "external": false
     },
     {
-      "from": "source:js/launch.js",
+      "from": "source:js/launch.ts",
       "to": "source:js/main.ts",
       "specifier": "./main.js",
-      "line": 84,
+      "line": 86,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -7996,7 +8167,7 @@
     },
     {
       "from": "source:js/learn.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 9,
       "evidence": "static-import",
@@ -8041,7 +8212,7 @@
     },
     {
       "from": "source:js/learn.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 14,
       "evidence": "static-import",
@@ -8104,7 +8275,7 @@
     },
     {
       "from": "source:js/learn.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 21,
       "evidence": "static-import",
@@ -8140,7 +8311,7 @@
     },
     {
       "from": "source:js/lotus.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 12,
       "evidence": "static-import",
@@ -8248,9 +8419,18 @@
     },
     {
       "from": "source:js/main.ts",
+      "to": "source:js/render-recovery.ts",
+      "specifier": "./render-recovery.js",
+      "line": 7,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/main.ts",
       "to": null,
       "specifier": "../vendor/RoomEnvironment.js",
-      "line": 7,
+      "line": 8,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8259,16 +8439,16 @@
       "from": "source:js/main.ts",
       "to": "source:js/state.ts",
       "specifier": "./state.js",
-      "line": 8,
+      "line": 9,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/main.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
-      "line": 9,
+      "line": 10,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8277,7 +8457,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/voice.ts",
       "specifier": "./voice.js",
-      "line": 10,
+      "line": 11,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8286,7 +8466,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/audio.ts",
       "specifier": "./audio.js",
-      "line": 11,
+      "line": 12,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8295,7 +8475,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/icons.js",
       "specifier": "./icons.js",
-      "line": 12,
+      "line": 13,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8304,7 +8484,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/songs.js",
       "specifier": "./songs.js",
-      "line": 13,
+      "line": 14,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8313,7 +8493,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/content/songs.js",
       "specifier": "./content/songs.js",
-      "line": 14,
+      "line": 15,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8322,7 +8502,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/money.js",
       "specifier": "./money.js",
-      "line": 15,
+      "line": 16,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8331,7 +8511,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/util.js",
       "specifier": "./util.js",
-      "line": 16,
+      "line": 17,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8340,7 +8520,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/world.ts",
       "specifier": "./world.js",
-      "line": 17,
+      "line": 18,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8349,16 +8529,16 @@
       "from": "source:js/main.ts",
       "to": "source:js/studio-position.ts",
       "specifier": "./studio-position.js",
-      "line": 18,
+      "line": 19,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/main.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
-      "line": 19,
+      "line": 20,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8367,7 +8547,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/avatar.ts",
       "specifier": "./avatar.js",
-      "line": 20,
+      "line": 21,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8376,7 +8556,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/player.ts",
       "specifier": "./player.js",
-      "line": 21,
+      "line": 22,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8385,7 +8565,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/hud.ts",
       "specifier": "./hud.js",
-      "line": 22,
+      "line": 23,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8394,7 +8574,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/input.js",
       "specifier": "./input.js",
-      "line": 23,
+      "line": 24,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8403,7 +8583,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/net.ts",
       "specifier": "./net.js",
-      "line": 24,
+      "line": 25,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8412,7 +8592,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/ui.ts",
       "specifier": "./ui.js",
-      "line": 25,
+      "line": 26,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8421,7 +8601,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/popups.ts",
       "specifier": "./popups.js",
-      "line": 26,
+      "line": 27,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8430,7 +8610,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/art.ts",
       "specifier": "./art.js",
-      "line": 27,
+      "line": 28,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8439,7 +8619,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/chat.ts",
       "specifier": "./chat.js",
-      "line": 28,
+      "line": 29,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8448,7 +8628,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/commands.js",
       "specifier": "./commands.js",
-      "line": 29,
+      "line": 30,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8457,7 +8637,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/data.js",
       "specifier": "./data.js",
-      "line": 30,
+      "line": 31,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8466,7 +8646,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/games/frame.ts",
       "specifier": "./games/frame.js",
-      "line": 31,
+      "line": 32,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8475,7 +8655,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/content/activities.ts",
       "specifier": "./content/activities.js",
-      "line": 32,
+      "line": 33,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8484,7 +8664,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/games/all.ts",
       "specifier": "./games/all.js",
-      "line": 34,
+      "line": 35,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8493,16 +8673,16 @@
       "from": "source:js/main.ts",
       "to": "source:js/howto.ts",
       "specifier": "./howto.js",
-      "line": 35,
+      "line": 36,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/main.ts",
-      "to": "source:js/farm.js",
+      "to": "source:js/farm.ts",
       "specifier": "./farm.js",
-      "line": 36,
+      "line": 37,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8511,16 +8691,16 @@
       "from": "source:js/main.ts",
       "to": "source:js/places.js",
       "specifier": "./places.js",
-      "line": 37,
+      "line": 38,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/main.ts",
-      "to": "source:js/town.js",
+      "to": "source:js/town.ts",
       "specifier": "./town.js",
-      "line": 38,
+      "line": 39,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8529,7 +8709,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/regions.js",
       "specifier": "./regions.js",
-      "line": 39,
+      "line": 40,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8538,7 +8718,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/gather.js",
       "specifier": "./gather.js",
-      "line": 40,
+      "line": 41,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8547,7 +8727,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/animals.js",
       "specifier": "./animals.js",
-      "line": 41,
+      "line": 42,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8556,16 +8736,16 @@
       "from": "source:js/main.ts",
       "to": "source:js/asia.js",
       "specifier": "./asia.js",
-      "line": 42,
+      "line": 43,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/main.ts",
-      "to": "source:js/heritage.js",
+      "to": "source:js/heritage.ts",
       "specifier": "./heritage.js",
-      "line": 43,
+      "line": 44,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8574,7 +8754,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/pets.js",
       "specifier": "./pets.js",
-      "line": 44,
+      "line": 45,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8583,7 +8763,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/ferry.js",
       "specifier": "./ferry.js",
-      "line": 45,
+      "line": 46,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8592,7 +8772,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/passport.js",
       "specifier": "./passport.js",
-      "line": 46,
+      "line": 47,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8601,7 +8781,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/festivals.ts",
       "specifier": "./festivals.js",
-      "line": 47,
+      "line": 48,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8610,7 +8790,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/festival-live.ts",
       "specifier": "./festival-live.js",
-      "line": 48,
+      "line": 49,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8619,7 +8799,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/content/festival-visibility.ts",
       "specifier": "./content/festival-visibility.js",
-      "line": 49,
+      "line": 50,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8628,7 +8808,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/content/festcal.js",
       "specifier": "./content/festcal.js",
-      "line": 50,
+      "line": 51,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8637,7 +8817,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/weather.js",
       "specifier": "./weather.js",
-      "line": 51,
+      "line": 52,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8646,7 +8826,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/fun.js",
       "specifier": "./fun.js",
-      "line": 52,
+      "line": 53,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8655,7 +8835,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/learn.ts",
       "specifier": "./learn.js",
-      "line": 53,
+      "line": 54,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8664,7 +8844,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/showcase.js",
       "specifier": "./showcase.js",
-      "line": 54,
+      "line": 55,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8673,7 +8853,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/roads.ts",
       "specifier": "./roads.js",
-      "line": 55,
+      "line": 56,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8682,7 +8862,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/signposts.js",
       "specifier": "./signposts.js",
-      "line": 56,
+      "line": 57,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8691,7 +8871,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/nametags.js",
       "specifier": "./nametags.js",
-      "line": 57,
+      "line": 58,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8700,7 +8880,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/traffic.ts",
       "specifier": "./traffic.js",
-      "line": 58,
+      "line": 59,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8709,7 +8889,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/content/releases.ts",
       "specifier": "./content/releases.js",
-      "line": 59,
+      "line": 60,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8718,7 +8898,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/custom.ts",
       "specifier": "./custom.js",
-      "line": 60,
+      "line": 61,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8727,7 +8907,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/worldcache.js",
       "specifier": "./worldcache.js",
-      "line": 61,
+      "line": 62,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8736,7 +8916,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/core/events.ts",
       "specifier": "./core/events.js",
-      "line": 62,
+      "line": 63,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8745,7 +8925,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/placebook.js",
       "specifier": "./placebook.js",
-      "line": 63,
+      "line": 64,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8754,7 +8934,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/familycards.js",
       "specifier": "./familycards.js",
-      "line": 64,
+      "line": 65,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8763,16 +8943,16 @@
       "from": "source:js/main.ts",
       "to": "source:js/stickers.js",
       "specifier": "./stickers.js",
-      "line": 65,
+      "line": 66,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/main.ts",
-      "to": "source:js/myhouse.js",
+      "to": "source:js/myhouse.ts",
       "specifier": "./myhouse.js",
-      "line": 66,
+      "line": 67,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8781,7 +8961,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/report.ts",
       "specifier": "./report.js",
-      "line": 67,
+      "line": 68,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8790,7 +8970,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/coop.js",
       "specifier": "./coop.js",
-      "line": 68,
+      "line": 69,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8799,7 +8979,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/twinchests.js",
       "specifier": "./twinchests.js",
-      "line": 69,
+      "line": 70,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8808,7 +8988,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/claims.ts",
       "specifier": "./claims.js",
-      "line": 70,
+      "line": 71,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8817,7 +8997,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/netgames.ts",
       "specifier": "./netgames.js",
-      "line": 71,
+      "line": 72,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8826,7 +9006,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/simple.ts",
       "specifier": "./simple.js",
-      "line": 72,
+      "line": 73,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8835,7 +9015,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/core/ids.ts",
       "specifier": "./core/ids.js",
-      "line": 73,
+      "line": 74,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8844,7 +9024,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/cities.js",
       "specifier": "./cities.js",
-      "line": 74,
+      "line": 75,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8853,7 +9033,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/chatter.js",
       "specifier": "./chatter.js",
-      "line": 75,
+      "line": 76,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8862,7 +9042,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/kite.js",
       "specifier": "./kite.js",
-      "line": 76,
+      "line": 77,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8871,16 +9051,16 @@
       "from": "source:js/main.ts",
       "to": "source:js/hawkers.js",
       "specifier": "./hawkers.js",
-      "line": 77,
+      "line": 78,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/main.ts",
-      "to": "source:js/suburbs.js",
+      "to": "source:js/suburbs.ts",
       "specifier": "./suburbs.js",
-      "line": 78,
+      "line": 79,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8889,7 +9069,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/plots.ts",
       "specifier": "./plots.js",
-      "line": 79,
+      "line": 80,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8898,16 +9078,16 @@
       "from": "source:js/main.ts",
       "to": "source:js/reeds.js",
       "specifier": "./reeds.js",
-      "line": 80,
+      "line": 81,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/main.ts",
-      "to": "source:js/symbols.js",
+      "to": "source:js/symbols.ts",
       "specifier": "./symbols.js",
-      "line": 81,
+      "line": 82,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8916,7 +9096,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/regionsites.js",
       "specifier": "./regionsites.js",
-      "line": 82,
+      "line": 83,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8925,7 +9105,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/vnfun.js",
       "specifier": "./vnfun.js",
-      "line": 83,
+      "line": 84,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8934,7 +9114,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/lotus.ts",
       "specifier": "./lotus.js",
-      "line": 84,
+      "line": 85,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8943,7 +9123,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/tales.ts",
       "specifier": "./tales.js",
-      "line": 85,
+      "line": 86,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8952,7 +9132,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/worldedit.ts",
       "specifier": "./worldedit.js",
-      "line": 86,
+      "line": 87,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8961,7 +9141,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/powerlines.js",
       "specifier": "./powerlines.js",
-      "line": 87,
+      "line": 88,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8970,7 +9150,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/custom.ts",
       "specifier": "./custom.js",
-      "line": 88,
+      "line": 89,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8979,7 +9159,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/folkshow.js",
       "specifier": "./folkshow.js",
-      "line": 89,
+      "line": 90,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8988,7 +9168,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/ads.js",
       "specifier": "./ads.js",
-      "line": 90,
+      "line": 91,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -8997,7 +9177,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/solids.ts",
       "specifier": "./solids.js",
-      "line": 91,
+      "line": 92,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9006,7 +9186,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/players.ts",
       "specifier": "./players.js",
-      "line": 92,
+      "line": 93,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9015,7 +9195,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/packbar.ts",
       "specifier": "./packbar.js",
-      "line": 93,
+      "line": 94,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9024,7 +9204,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/roomcode.ts",
       "specifier": "./roomcode.js",
-      "line": 94,
+      "line": 95,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9033,7 +9213,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/trade.ts",
       "specifier": "./trade.js",
-      "line": 105,
+      "line": 106,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9042,7 +9222,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/secrets.js",
       "specifier": "./secrets.js",
-      "line": 106,
+      "line": 107,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9051,7 +9231,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/story.js",
       "specifier": "./story.js",
-      "line": 107,
+      "line": 108,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9060,7 +9240,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/ui.ts",
       "specifier": "./ui.js",
-      "line": 108,
+      "line": 109,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9069,7 +9249,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/owlguide.js",
       "specifier": "./owlguide.js",
-      "line": 618,
+      "line": 626,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9078,7 +9258,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/soundsheet.js",
       "specifier": "./soundsheet.js",
-      "line": 982,
+      "line": 990,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9087,7 +9267,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/games/familyquiz.ts",
       "specifier": "./games/familyquiz.js",
-      "line": 1126,
+      "line": 1134,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9096,7 +9276,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/mictest.ts",
       "specifier": "./mictest.js",
-      "line": 1372,
+      "line": 1381,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9105,7 +9285,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/content/autoplay.ts",
       "specifier": "./content/autoplay.js",
-      "line": 1891,
+      "line": 1902,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9114,7 +9294,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/autoplay.ts",
       "specifier": "./autoplay.js",
-      "line": 1892,
+      "line": 1903,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9123,7 +9303,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/testergate.js",
       "specifier": "./testergate.js",
-      "line": 1895,
+      "line": 1906,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9132,7 +9312,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/lanterns.ts",
       "specifier": "./lanterns.js",
-      "line": 1902,
+      "line": 1913,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9141,7 +9321,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/yard.js",
       "specifier": "./yard.js",
-      "line": 1902,
+      "line": 1913,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9150,7 +9330,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/kidplay.js",
       "specifier": "./kidplay.js",
-      "line": 1902,
+      "line": 1913,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9159,7 +9339,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/shop.ts",
       "specifier": "./shop.js",
-      "line": 1924,
+      "line": 1935,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9168,7 +9348,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/boxes.js",
       "specifier": "./boxes.js",
-      "line": 1924,
+      "line": 1935,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9177,7 +9357,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/hoilang.js",
       "specifier": "./hoilang.js",
-      "line": 1943,
+      "line": 1954,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9186,7 +9366,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/surprises.js",
       "specifier": "./surprises.js",
-      "line": 1943,
+      "line": 1954,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9195,7 +9375,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/parents.ts",
       "specifier": "./parents.js",
-      "line": 1943,
+      "line": 1954,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9204,7 +9384,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/games/readingmenu.ts",
       "specifier": "./games/readingmenu.js",
-      "line": 1948,
+      "line": 1959,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9213,7 +9393,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/custom.ts",
       "specifier": "./custom.js",
-      "line": 1948,
+      "line": 1959,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9222,7 +9402,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/scrollhelp.js",
       "specifier": "./scrollhelp.js",
-      "line": 2044,
+      "line": 2081,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9231,7 +9411,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/villagertalk.js",
       "specifier": "./villagertalk.js",
-      "line": 2046,
+      "line": 2083,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9240,7 +9420,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/dayplan.js",
       "specifier": "./dayplan.js",
-      "line": 2046,
+      "line": 2083,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9249,7 +9429,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/pricetags.js",
       "specifier": "./pricetags.js",
-      "line": 2047,
+      "line": 2084,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9258,7 +9438,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/jobs.js",
       "specifier": "./jobs.js",
-      "line": 2048,
+      "line": 2085,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9267,7 +9447,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/wayfind.js",
       "specifier": "./wayfind.js",
-      "line": 2049,
+      "line": 2086,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9276,7 +9456,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/animalhomes.js",
       "specifier": "./animalhomes.js",
-      "line": 2052,
+      "line": 2089,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9285,7 +9465,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/chipinfo.js",
       "specifier": "./chipinfo.js",
-      "line": 2054,
+      "line": 2091,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9294,7 +9474,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/state.ts",
       "specifier": "./state.js",
-      "line": 2055,
+      "line": 2092,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9303,7 +9483,7 @@
       "from": "source:js/main.ts",
       "to": "source:js/familydevices.ts",
       "specifier": "./familydevices.js",
-      "line": 2060,
+      "line": 2097,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9328,7 +9508,7 @@
     },
     {
       "from": "source:js/mictest.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -9381,136 +9561,145 @@
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/gfx.js",
-      "specifier": "./gfx.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/home-decor-models.ts",
+      "specifier": "./home-decor-models.js",
       "line": 1,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/i18n.js",
-      "specifier": "./i18n.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/gfx.js",
+      "specifier": "./gfx.js",
       "line": 6,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/voice.ts",
-      "specifier": "./voice.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/i18n.ts",
+      "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/audio.ts",
-      "specifier": "./audio.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/voice.ts",
+      "specifier": "./voice.js",
       "line": 8,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/state.ts",
-      "specifier": "./state.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/audio.ts",
+      "specifier": "./audio.js",
       "line": 9,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/world.ts",
-      "specifier": "./world.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/state.ts",
+      "specifier": "./state.js",
       "line": 10,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/money.js",
-      "specifier": "./money.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/world.ts",
+      "specifier": "./world.js",
       "line": 11,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/custom.ts",
-      "specifier": "./custom.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/money.js",
+      "specifier": "./money.js",
       "line": 12,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/familycards.js",
-      "specifier": "./familycards.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/custom.ts",
+      "specifier": "./custom.js",
       "line": 13,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/core/events.ts",
-      "specifier": "./core/events.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/familycards.js",
+      "specifier": "./familycards.js",
       "line": 14,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/core/ids.ts",
-      "specifier": "./core/ids.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/core/events.ts",
+      "specifier": "./core/events.js",
       "line": 15,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/art.ts",
-      "specifier": "./art.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/core/ids.ts",
+      "specifier": "./core/ids.js",
       "line": 16,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/util.js",
-      "specifier": "./util.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/art.ts",
+      "specifier": "./art.js",
       "line": 17,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
-      "to": "source:js/ui.ts",
-      "specifier": "./ui.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/util.js",
+      "specifier": "./util.js",
       "line": 18,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
-      "from": "source:js/myhouse.js",
+      "from": "source:js/myhouse.ts",
+      "to": "source:js/ui.ts",
+      "specifier": "./ui.js",
+      "line": 19,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/myhouse.ts",
       "to": "source:js/content/festcal.js",
       "specifier": "./content/festcal.js",
-      "line": 19,
+      "line": 20,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -9616,7 +9805,7 @@
     },
     {
       "from": "source:js/net.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 26,
       "evidence": "static-import",
@@ -9661,7 +9850,7 @@
     },
     {
       "from": "source:js/netmsg.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 36,
       "evidence": "static-import",
@@ -9688,7 +9877,7 @@
     },
     {
       "from": "source:js/owlguide.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -9751,7 +9940,7 @@
     },
     {
       "from": "source:js/packbar.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -9787,7 +9976,7 @@
     },
     {
       "from": "source:js/parents.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -9877,7 +10066,7 @@
     },
     {
       "from": "source:js/parents.ts",
-      "to": "source:js/myhouse.js",
+      "to": "source:js/myhouse.ts",
       "specifier": "./myhouse.js",
       "line": 26,
       "evidence": "static-import",
@@ -9922,7 +10111,7 @@
     },
     {
       "from": "source:js/passport.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -9967,7 +10156,7 @@
     },
     {
       "from": "source:js/passport.js",
-      "to": "source:js/heritage.js",
+      "to": "source:js/heritage.ts",
       "specifier": "./heritage.js",
       "line": 8,
       "evidence": "static-import",
@@ -10012,7 +10201,7 @@
     },
     {
       "from": "source:js/pets.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -10057,7 +10246,7 @@
     },
     {
       "from": "source:js/pets.js",
-      "to": "source:js/farm.js",
+      "to": "source:js/farm.ts",
       "specifier": "./farm.js",
       "line": 9,
       "evidence": "static-import",
@@ -10093,7 +10282,7 @@
     },
     {
       "from": "source:js/placebook.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -10183,7 +10372,7 @@
     },
     {
       "from": "source:js/places.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -10363,9 +10552,18 @@
     },
     {
       "from": "source:js/players.ts",
+      "to": "source:js/content/install-state.ts",
+      "specifier": "./content/install-state.js",
+      "line": 30,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/players.ts",
       "to": "source:js/custom.ts",
       "specifier": "./custom.js",
-      "line": 30,
+      "line": 31,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -10374,7 +10572,7 @@
       "from": "source:js/players.ts",
       "to": "source:js/management-telemetry.ts",
       "specifier": "./management-telemetry.js",
-      "line": 81,
+      "line": 89,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -10408,7 +10606,7 @@
     },
     {
       "from": "source:js/popups.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -10498,7 +10696,7 @@
     },
     {
       "from": "source:js/pricetags.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -10525,7 +10723,7 @@
     },
     {
       "from": "source:js/realworld.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -10642,7 +10840,7 @@
     },
     {
       "from": "source:js/regions.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 10,
       "evidence": "static-import",
@@ -10678,7 +10876,7 @@
     },
     {
       "from": "source:js/regions.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 14,
       "evidence": "static-import",
@@ -10696,7 +10894,7 @@
     },
     {
       "from": "source:js/regions.js",
-      "to": "source:js/town.js",
+      "to": "source:js/town.ts",
       "specifier": "./town.js",
       "line": 16,
       "evidence": "static-import",
@@ -10777,7 +10975,7 @@
     },
     {
       "from": "source:js/regionsites.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -10813,7 +11011,7 @@
     },
     {
       "from": "source:js/report.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -10930,7 +11128,7 @@
     },
     {
       "from": "source:js/roads.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -10966,7 +11164,7 @@
     },
     {
       "from": "source:js/roads.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 8,
       "evidence": "static-import",
@@ -10984,7 +11182,7 @@
     },
     {
       "from": "source:js/roomcode.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
@@ -11011,7 +11209,7 @@
     },
     {
       "from": "source:js/secrets.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 3,
       "evidence": "static-import",
@@ -11047,7 +11245,7 @@
     },
     {
       "from": "source:js/secrets.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 7,
       "evidence": "static-import",
@@ -11073,6 +11271,15 @@
       "external": false
     },
     {
+      "from": "source:js/seethrough.ts",
+      "to": "source:js/vendors.js",
+      "specifier": "./vendors.js",
+      "line": 6,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:js/shop.ts",
       "to": "source:js/gfx.js",
       "specifier": "./gfx.js",
@@ -11083,7 +11290,7 @@
     },
     {
       "from": "source:js/shop.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 9,
       "evidence": "static-import",
@@ -11119,7 +11326,7 @@
     },
     {
       "from": "source:js/shop.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 13,
       "evidence": "static-import",
@@ -11209,7 +11416,7 @@
     },
     {
       "from": "source:js/showcase.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 6,
       "evidence": "static-import",
@@ -11236,7 +11443,7 @@
     },
     {
       "from": "source:js/signposts.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
@@ -11272,7 +11479,7 @@
     },
     {
       "from": "source:js/simple.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -11373,14 +11580,14 @@
       "from": "source:js/simple.ts",
       "to": "source:js/website.ts",
       "specifier": "./website.js",
-      "line": 287,
+      "line": 321,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/snacks.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -11488,7 +11695,7 @@
     },
     {
       "from": "source:js/solids.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 12,
       "evidence": "static-import",
@@ -11497,7 +11704,7 @@
     },
     {
       "from": "source:js/songs.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -11551,7 +11758,7 @@
     },
     {
       "from": "source:js/soundsheet.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -11623,7 +11830,7 @@
     },
     {
       "from": "source:js/stickerfx.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -11704,7 +11911,7 @@
     },
     {
       "from": "source:js/stickerfx.js",
-      "to": "source:js/myhouse.js",
+      "to": "source:js/myhouse.ts",
       "specifier": "./myhouse.js",
       "line": 31,
       "evidence": "literal-dynamic-import",
@@ -11731,7 +11938,7 @@
     },
     {
       "from": "source:js/story.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -11776,7 +11983,7 @@
     },
     {
       "from": "source:js/studio-position.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 1,
       "evidence": "static-import",
@@ -11784,7 +11991,7 @@
       "external": false
     },
     {
-      "from": "source:js/suburbs.js",
+      "from": "source:js/suburbs.ts",
       "to": "source:js/gfx.js",
       "specifier": "./gfx.js",
       "line": 1,
@@ -11793,7 +12000,7 @@
       "external": false
     },
     {
-      "from": "source:js/suburbs.js",
+      "from": "source:js/suburbs.ts",
       "to": "source:js/world.ts",
       "specifier": "./world.js",
       "line": 6,
@@ -11802,7 +12009,7 @@
       "external": false
     },
     {
-      "from": "source:js/suburbs.js",
+      "from": "source:js/suburbs.ts",
       "to": "source:js/houses.js",
       "specifier": "./houses.js",
       "line": 7,
@@ -11811,8 +12018,8 @@
       "external": false
     },
     {
-      "from": "source:js/suburbs.js",
-      "to": "source:js/town.js",
+      "from": "source:js/suburbs.ts",
+      "to": "source:js/town.ts",
       "specifier": "./town.js",
       "line": 8,
       "evidence": "static-import",
@@ -11820,8 +12027,8 @@
       "external": false
     },
     {
-      "from": "source:js/suburbs.js",
-      "to": "source:js/i18n.js",
+      "from": "source:js/suburbs.ts",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 9,
       "evidence": "static-import",
@@ -11839,7 +12046,7 @@
     },
     {
       "from": "source:js/surprises.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 16,
       "evidence": "static-import",
@@ -11911,7 +12118,7 @@
     },
     {
       "from": "source:js/surprises.js",
-      "to": "source:js/myhouse.js",
+      "to": "source:js/myhouse.ts",
       "specifier": "./myhouse.js",
       "line": 24,
       "evidence": "static-import",
@@ -11946,8 +12153,8 @@
       "external": false
     },
     {
-      "from": "source:js/symbols.js",
-      "to": "source:js/i18n.js",
+      "from": "source:js/symbols.ts",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -11955,7 +12162,7 @@
       "external": false
     },
     {
-      "from": "source:js/symbols.js",
+      "from": "source:js/symbols.ts",
       "to": "source:js/world.ts",
       "specifier": "./world.js",
       "line": 7,
@@ -11964,7 +12171,7 @@
       "external": false
     },
     {
-      "from": "source:js/symbols.js",
+      "from": "source:js/symbols.ts",
       "to": "source:js/animals.js",
       "specifier": "./animals.js",
       "line": 8,
@@ -11973,7 +12180,7 @@
       "external": false
     },
     {
-      "from": "source:js/symbols.js",
+      "from": "source:js/symbols.ts",
       "to": "source:js/realworld.js",
       "specifier": "./realworld.js",
       "line": 9,
@@ -11983,7 +12190,7 @@
     },
     {
       "from": "source:js/tales-content.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -12019,7 +12226,7 @@
     },
     {
       "from": "source:js/tales.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 2,
       "evidence": "static-import",
@@ -12118,7 +12325,7 @@
     },
     {
       "from": "source:js/talesdata.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -12154,7 +12361,7 @@
     },
     {
       "from": "source:js/tester.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -12354,7 +12561,7 @@
       "from": "source:js/tester.ts",
       "to": "source:js/autoplay.ts",
       "specifier": "./autoplay.js",
-      "line": 511,
+      "line": 513,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12363,7 +12570,7 @@
       "from": "source:js/tester.ts",
       "to": "source:js/autoplay.ts",
       "specifier": "./autoplay.js",
-      "line": 550,
+      "line": 552,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12372,7 +12579,7 @@
       "from": "source:js/tester.ts",
       "to": "source:js/testerrewards.ts",
       "specifier": "./testerrewards.js",
-      "line": 570,
+      "line": 572,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12406,7 +12613,7 @@
     },
     {
       "from": "source:js/testerrewards.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -12486,7 +12693,7 @@
       "external": false
     },
     {
-      "from": "source:js/town.js",
+      "from": "source:js/town.ts",
       "to": "source:js/gfx.js",
       "specifier": "./gfx.js",
       "line": 1,
@@ -12495,7 +12702,7 @@
       "external": false
     },
     {
-      "from": "source:js/town.js",
+      "from": "source:js/town.ts",
       "to": "source:js/houses.js",
       "specifier": "./houses.js",
       "line": 6,
@@ -12504,8 +12711,8 @@
       "external": false
     },
     {
-      "from": "source:js/town.js",
-      "to": "source:js/i18n.js",
+      "from": "source:js/town.ts",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
@@ -12513,7 +12720,7 @@
       "external": false
     },
     {
-      "from": "source:js/town.js",
+      "from": "source:js/town.ts",
       "to": "source:js/voice.ts",
       "specifier": "./voice.js",
       "line": 8,
@@ -12522,7 +12729,7 @@
       "external": false
     },
     {
-      "from": "source:js/town.js",
+      "from": "source:js/town.ts",
       "to": "source:js/audio.ts",
       "specifier": "./audio.js",
       "line": 9,
@@ -12531,7 +12738,7 @@
       "external": false
     },
     {
-      "from": "source:js/town.js",
+      "from": "source:js/town.ts",
       "to": "source:js/world.ts",
       "specifier": "./world.js",
       "line": 10,
@@ -12540,7 +12747,7 @@
       "external": false
     },
     {
-      "from": "source:js/town.js",
+      "from": "source:js/town.ts",
       "to": "source:js/avatar.ts",
       "specifier": "./avatar.js",
       "line": 11,
@@ -12549,7 +12756,7 @@
       "external": false
     },
     {
-      "from": "source:js/town.js",
+      "from": "source:js/town.ts",
       "to": "source:js/util.js",
       "specifier": "./util.js",
       "line": 12,
@@ -12558,10 +12765,19 @@
       "external": false
     },
     {
-      "from": "source:js/town.js",
+      "from": "source:js/town.ts",
       "to": "source:js/powerlines.js",
       "specifier": "./powerlines.js",
       "line": 13,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/town.ts",
+      "to": "source:js/content/map.ts",
+      "specifier": "./content/map.js",
+      "line": 14,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12586,7 +12802,7 @@
     },
     {
       "from": "source:js/trade.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
@@ -12687,7 +12903,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/gfx.js",
       "specifier": "./gfx.js",
-      "line": 1,
+      "line": 2,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12696,7 +12912,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/vehicles.js",
       "specifier": "./vehicles.js",
-      "line": 14,
+      "line": 15,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12705,16 +12921,16 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/world.ts",
       "specifier": "./world.js",
-      "line": 15,
+      "line": 16,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:js/traffic.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
-      "line": 16,
+      "line": 17,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12723,7 +12939,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/avatar.ts",
       "specifier": "./avatar.js",
-      "line": 18,
+      "line": 19,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12732,15 +12948,6 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/custom.ts",
       "specifier": "./custom.js",
-      "line": 19,
-      "evidence": "static-import",
-      "runtimeEffect": "not_proven",
-      "external": false
-    },
-    {
-      "from": "source:js/traffic.ts",
-      "to": "source:js/town.js",
-      "specifier": "./town.js",
       "line": 20,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
@@ -12748,9 +12955,18 @@
     },
     {
       "from": "source:js/traffic.ts",
-      "to": "source:js/i18n.js",
-      "specifier": "./i18n.js",
+      "to": "source:js/town.ts",
+      "specifier": "./town.js",
       "line": 21,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:js/traffic.ts",
+      "to": "source:js/i18n.ts",
+      "specifier": "./i18n.js",
+      "line": 22,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12759,7 +12975,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/popups.ts",
       "specifier": "./popups.js",
-      "line": 22,
+      "line": 23,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12768,7 +12984,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/art.ts",
       "specifier": "./art.js",
-      "line": 23,
+      "line": 24,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12777,7 +12993,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/util.js",
       "specifier": "./util.js",
-      "line": 24,
+      "line": 25,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12786,7 +13002,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/state.ts",
       "specifier": "./state.js",
-      "line": 25,
+      "line": 26,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12795,7 +13011,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/voice.ts",
       "specifier": "./voice.js",
-      "line": 26,
+      "line": 27,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12804,7 +13020,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/audio.ts",
       "specifier": "./audio.js",
-      "line": 27,
+      "line": 28,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12813,7 +13029,7 @@
       "from": "source:js/traffic.ts",
       "to": "source:js/wayfind.js",
       "specifier": "./wayfind.js",
-      "line": 221,
+      "line": 228,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -12829,7 +13045,7 @@
     },
     {
       "from": "source:js/twinchests.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
@@ -12973,7 +13189,7 @@
     },
     {
       "from": "source:js/ui-settings.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 9,
       "evidence": "static-import",
@@ -13155,7 +13371,7 @@
       "from": "source:js/ui-settings.ts",
       "to": "source:js/net.ts",
       "specifier": "./net.js",
-      "line": 317,
+      "line": 320,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -13164,7 +13380,7 @@
       "from": "source:js/ui-settings.ts",
       "to": "source:js/net.ts",
       "specifier": "./net.js",
-      "line": 324,
+      "line": 327,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -13173,7 +13389,7 @@
       "from": "source:js/ui-settings.ts",
       "to": "source:js/net.ts",
       "specifier": "./net.js",
-      "line": 338,
+      "line": 341,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -13182,7 +13398,7 @@
       "from": "source:js/ui-settings.ts",
       "to": "source:js/players.ts",
       "specifier": "./players.js",
-      "line": 381,
+      "line": 384,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -13191,7 +13407,7 @@
       "from": "source:js/ui-settings.ts",
       "to": "source:js/family-quiz-editor.ts",
       "specifier": "./family-quiz-editor.js",
-      "line": 424,
+      "line": 427,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -13200,7 +13416,7 @@
       "from": "source:js/ui-settings.ts",
       "to": "source:js/games/familyquiz.ts",
       "specifier": "./games/familyquiz.js",
-      "line": 471,
+      "line": 474,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -13243,7 +13459,7 @@
     },
     {
       "from": "source:js/ui.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 6,
       "evidence": "static-import",
@@ -13396,7 +13612,7 @@
     },
     {
       "from": "source:js/ui.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 31,
       "evidence": "static-import",
@@ -13587,7 +13803,7 @@
       "from": "source:js/ui.ts",
       "to": "source:js/ui-settings.ts",
       "specifier": "./ui-settings.js",
-      "line": 969,
+      "line": 977,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -13639,7 +13855,7 @@
     },
     {
       "from": "source:js/validate.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 7,
       "evidence": "static-import",
@@ -13657,7 +13873,7 @@
     },
     {
       "from": "source:js/vendors.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 1,
       "evidence": "static-import",
@@ -13666,7 +13882,7 @@
     },
     {
       "from": "source:js/villagertalk.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -13702,7 +13918,7 @@
     },
     {
       "from": "source:js/villagertalk.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 8,
       "evidence": "static-import",
@@ -13738,7 +13954,7 @@
     },
     {
       "from": "source:js/vnfun.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 8,
       "evidence": "static-import",
@@ -13828,7 +14044,7 @@
     },
     {
       "from": "source:js/voice.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -13884,7 +14100,7 @@
       "from": "source:js/voice.ts",
       "to": "source:js/voicepack.ts",
       "specifier": "./voicepack.js",
-      "line": 443,
+      "line": 445,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -13893,7 +14109,7 @@
       "from": "source:js/voice.ts",
       "to": "source:js/hanoi-pack.ts",
       "specifier": "./hanoi-pack.js",
-      "line": 450,
+      "line": 452,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -13927,7 +14143,7 @@
     },
     {
       "from": "source:js/voicepack.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -13954,7 +14170,7 @@
     },
     {
       "from": "source:js/wayfind.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 4,
       "evidence": "static-import",
@@ -14026,7 +14242,7 @@
     },
     {
       "from": "source:js/weather.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -14080,7 +14296,7 @@
     },
     {
       "from": "source:js/website.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 1,
       "evidence": "static-import",
@@ -14143,7 +14359,7 @@
     },
     {
       "from": "source:js/world.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 5,
       "evidence": "static-import",
@@ -14179,7 +14395,7 @@
     },
     {
       "from": "source:js/world.ts",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 9,
       "evidence": "static-import",
@@ -14206,7 +14422,7 @@
     },
     {
       "from": "source:js/worldcache.js",
-      "to": "source:js/content/map.js",
+      "to": "source:js/content/map.ts",
       "specifier": "./content/map.js",
       "line": 11,
       "evidence": "static-import",
@@ -14251,7 +14467,7 @@
     },
     {
       "from": "source:js/worldedit.ts",
-      "to": "source:js/town.js",
+      "to": "source:js/town.ts",
       "specifier": "./town.js",
       "line": 12,
       "evidence": "static-import",
@@ -14269,7 +14485,7 @@
     },
     {
       "from": "source:js/worldedit.ts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 14,
       "evidence": "static-import",
@@ -14314,7 +14530,7 @@
     },
     {
       "from": "source:js/yard.js",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "./i18n.js",
       "line": 7,
       "evidence": "static-import",
@@ -14925,6 +15141,15 @@
       "external": false
     },
     {
+      "from": "source:netlify/lib/live.mts",
+      "to": "source:js/core/reporting-policy.ts",
+      "specifier": "../../js/core/reporting-policy.ts",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:netlify/lib/management/catalogue.mts",
       "to": null,
       "specifier": "node:fs",
@@ -15024,10 +15249,55 @@
       "external": false
     },
     {
+      "from": "source:netlify/lib/management/functions.mts",
+      "to": "source:js/core/reporting-policy.ts",
+      "specifier": "../../../js/core/reporting-policy.ts",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:netlify/lib/management/functions.mts",
+      "to": "source:netlify/lib/management/transactional/types.mts",
+      "specifier": "./transactional/types.mts",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:netlify/lib/management/functions.mts",
+      "to": "source:netlify/lib/management/transactional/validation.mts",
+      "specifier": "./transactional/validation.mts",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:netlify/lib/management/http.mts",
+      "to": "source:netlify/lib/live.mts",
+      "specifier": "../live.mts",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:netlify/lib/management/http.mts",
+      "to": "source:netlify/lib/management/functions.mts",
+      "specifier": "./functions.mts",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:netlify/lib/management/http.mts",
       "to": "source:netlify/lib/management/finance-values.mts",
       "specifier": "./finance-values.mts",
-      "line": 1,
+      "line": 2,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15036,7 +15306,7 @@
       "from": "source:netlify/lib/management/http.mts",
       "to": "source:netlify/lib/admins.mts",
       "specifier": "../admins.mts",
-      "line": 1,
+      "line": 3,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15045,7 +15315,7 @@
       "from": "source:netlify/lib/management/http.mts",
       "to": "source:netlify/lib/management/transactional/types.mts",
       "specifier": "./transactional/types.mts",
-      "line": 2,
+      "line": 4,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15054,7 +15324,7 @@
       "from": "source:netlify/lib/management/http.mts",
       "to": "source:netlify/lib/management/quality.mts",
       "specifier": "./quality.mts",
-      "line": 3,
+      "line": 5,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15063,7 +15333,7 @@
       "from": "source:netlify/lib/management/http.mts",
       "to": "source:netlify/lib/management/operations.mts",
       "specifier": "./operations.mts",
-      "line": 4,
+      "line": 6,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15072,7 +15342,7 @@
       "from": "source:netlify/lib/management/http.mts",
       "to": "source:netlify/lib/management/runtime.mts",
       "specifier": "./runtime.mts",
-      "line": 5,
+      "line": 7,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15081,7 +15351,7 @@
       "from": "source:netlify/lib/management/http.mts",
       "to": "source:netlify/lib/management/metrics.mts",
       "specifier": "./metrics.mts",
-      "line": 6,
+      "line": 8,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15090,7 +15360,7 @@
       "from": "source:netlify/lib/management/http.mts",
       "to": "source:netlify/lib/management/items.mts",
       "specifier": "./items.mts",
-      "line": 7,
+      "line": 9,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15099,7 +15369,7 @@
       "from": "source:netlify/lib/management/http.mts",
       "to": "source:netlify/lib/management/catalogue.mts",
       "specifier": "./catalogue.mts",
-      "line": 8,
+      "line": 10,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15385,21 +15655,21 @@
     },
     {
       "from": "source:netlify/lib/management/transactional/drafts.mts",
+      "to": "source:js/core/reporting-policy.ts",
+      "specifier": "../../../../js/core/reporting-policy.ts",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:netlify/lib/management/transactional/drafts.mts",
       "to": null,
       "specifier": "node:crypto",
       "line": 1,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": true
-    },
-    {
-      "from": "source:netlify/lib/management/transactional/drafts.mts",
-      "to": "source:netlify/lib/management/transactional/types.mts",
-      "specifier": "./types.mts",
-      "line": 1,
-      "evidence": "static-import",
-      "runtimeEffect": "not_proven",
-      "external": false
     },
     {
       "from": "source:netlify/lib/management/transactional/drafts.mts",
@@ -15412,14 +15682,32 @@
     },
     {
       "from": "source:netlify/lib/management/transactional/drafts.mts",
-      "to": "source:netlify/lib/management/transactional/validation.mts",
-      "specifier": "./validation.mts",
+      "to": "source:netlify/lib/management/transactional/types.mts",
+      "specifier": "./types.mts",
       "line": 3,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
+      "from": "source:netlify/lib/management/transactional/drafts.mts",
+      "to": "source:netlify/lib/management/transactional/validation.mts",
+      "specifier": "./validation.mts",
+      "line": 4,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:netlify/lib/management/transactional/service.mts",
+      "to": "source:js/core/reporting-policy.ts",
+      "specifier": "../../../../js/core/reporting-policy.ts",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:netlify/lib/management/transactional/service.mts",
       "to": null,
       "specifier": "node:crypto",
@@ -15432,7 +15720,7 @@
       "from": "source:netlify/lib/management/transactional/service.mts",
       "to": "source:netlify/lib/management/transactional/types.mts",
       "specifier": "./types.mts",
-      "line": 1,
+      "line": 2,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15441,15 +15729,6 @@
       "from": "source:netlify/lib/management/transactional/service.mts",
       "to": "source:netlify/lib/management/transactional/types.mts",
       "specifier": "./types.mts",
-      "line": 2,
-      "evidence": "static-import",
-      "runtimeEffect": "not_proven",
-      "external": false
-    },
-    {
-      "from": "source:netlify/lib/management/transactional/service.mts",
-      "to": "source:netlify/lib/management/transactional/validation.mts",
-      "specifier": "./validation.mts",
       "line": 3,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
@@ -15466,9 +15745,18 @@
     },
     {
       "from": "source:netlify/lib/management/transactional/service.mts",
+      "to": "source:netlify/lib/management/transactional/validation.mts",
+      "specifier": "./validation.mts",
+      "line": 5,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:netlify/lib/management/transactional/service.mts",
       "to": "source:netlify/lib/management/transactional/drafts.mts",
       "specifier": "./drafts.mts",
-      "line": 5,
+      "line": 6,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15477,7 +15765,7 @@
       "from": "source:netlify/lib/management/transactional/service.mts",
       "to": "source:netlify/lib/management/outcomes.mts",
       "specifier": "../outcomes.mts",
-      "line": 6,
+      "line": 7,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15486,7 +15774,7 @@
       "from": "source:netlify/lib/management/transactional/service.mts",
       "to": "source:netlify/lib/management/transactional/types.mts",
       "specifier": "./types.mts",
-      "line": 7,
+      "line": 8,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15495,7 +15783,16 @@
       "from": "source:netlify/lib/management/transactional/service.mts",
       "to": "source:netlify/lib/management/transactional/validation.mts",
       "specifier": "./validation.mts",
-      "line": 8,
+      "line": 9,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:netlify/lib/management/transactional/validation.mts",
+      "to": "source:js/core/reporting-policy.ts",
+      "specifier": "../../../../js/core/reporting-policy.ts",
+      "line": 1,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15513,15 +15810,6 @@
       "from": "source:netlify/lib/management/transactional/validation.mts",
       "to": "source:netlify/lib/live.mts",
       "specifier": "../../live.mts",
-      "line": 1,
-      "evidence": "static-import",
-      "runtimeEffect": "not_proven",
-      "external": false
-    },
-    {
-      "from": "source:netlify/lib/management/transactional/validation.mts",
-      "to": "source:netlify/lib/management/transactional/types.mts",
-      "specifier": "./types.mts",
       "line": 2,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
@@ -15532,6 +15820,15 @@
       "to": "source:netlify/lib/management/transactional/types.mts",
       "specifier": "./types.mts",
       "line": 3,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:netlify/lib/management/transactional/validation.mts",
+      "to": "source:netlify/lib/management/transactional/types.mts",
+      "specifier": "./types.mts",
+      "line": 4,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15592,6 +15889,15 @@
     },
     {
       "from": "source:studio/ui/app.ts",
+      "to": "source:studio/ui/functions.ts",
+      "specifier": "./functions.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:studio/ui/app.ts",
       "to": "source:studio/ui/vi.js",
       "specifier": "./vi.js",
       "line": 1,
@@ -15603,7 +15909,7 @@
       "from": "source:studio/ui/app.ts",
       "to": "source:studio/ui/brand.ts",
       "specifier": "./brand.js",
-      "line": 2,
+      "line": 3,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15612,7 +15918,7 @@
       "from": "source:studio/ui/app.ts",
       "to": "source:types/studio.d.ts",
       "specifier": "../../types/studio.d.ts",
-      "line": 3,
+      "line": 4,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15621,7 +15927,7 @@
       "from": "source:studio/ui/app.ts",
       "to": "source:studio/ui/management.ts",
       "specifier": "./management.js",
-      "line": 352,
+      "line": 354,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15630,7 +15936,7 @@
       "from": "source:studio/ui/app.ts",
       "to": "source:studio/ui/owner-desk.ts",
       "specifier": "./owner-desk.js",
-      "line": 367,
+      "line": 369,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15648,6 +15954,33 @@
       "from": "source:studio/ui/finance.ts",
       "to": "source:studio/ui/desk-charts.ts",
       "specifier": "./desk-charts.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:studio/ui/functions.ts",
+      "to": "source:studio/ui/control-feedback.ts",
+      "specifier": "./control-feedback.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:studio/ui/item-workspace.ts",
+      "to": "source:studio/ui/control-feedback.ts",
+      "specifier": "./control-feedback.js",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:studio/ui/management.ts",
+      "to": "source:studio/ui/control-feedback.ts",
+      "specifier": "./control-feedback.js",
       "line": 1,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
@@ -15666,7 +15999,7 @@
       "from": "source:studio/ui/management.ts",
       "to": "source:studio/ui/item-workspace.ts",
       "specifier": "./item-workspace.js",
-      "line": 1,
+      "line": 2,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15675,7 +16008,7 @@
       "from": "source:studio/ui/management.ts",
       "to": "source:studio/ui/desk-charts.ts",
       "specifier": "./desk-charts.js",
-      "line": 2,
+      "line": 3,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15754,9 +16087,27 @@
     },
     {
       "from": "source:tools/build-hanoi-pack.mts",
+      "to": "source:tools/voice-delivery.mts",
+      "specifier": "./voice-delivery.mts",
+      "line": 4,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/build-hanoi-pack.mts",
+      "to": "source:tools/voice-providers.mts",
+      "specifier": "./voice-providers.mts",
+      "line": 5,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/build-hanoi-pack.mts",
       "to": "source:tools/fpt-recorder.mts",
       "specifier": "./fpt-recorder.mts",
-      "line": 4,
+      "line": 6,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -15765,7 +16116,7 @@
       "from": "source:tools/build-hanoi-pack.mts",
       "to": "source:tools/hanoi-pack-policy.mts",
       "specifier": "./hanoi-pack-policy.mts",
-      "line": 5,
+      "line": 7,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -16267,7 +16618,7 @@
     },
     {
       "from": "source:tools/fpt-arcade-inventory.mts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../js/i18n.js",
       "line": 7,
       "evidence": "literal-dynamic-import",
@@ -16324,6 +16675,24 @@
       "to": "source:tools/fpt-voice-test.mts",
       "specifier": "./fpt-voice-test.mts",
       "line": 6,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/fpt-recorder.mts",
+      "to": "source:tools/voice-providers.mts",
+      "specifier": "./voice-providers.mts",
+      "line": 9,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/fpt-recorder.mts",
+      "to": "source:tools/voice-providers.mts",
+      "specifier": "./voice-providers.mts",
+      "line": 10,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -16438,9 +16807,27 @@
     },
     {
       "from": "source:tools/make-voice-pack.mts",
+      "to": "source:tools/reviewed-voice-delta.mts",
+      "specifier": "./reviewed-voice-delta.mts",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/make-voice-pack.mts",
+      "to": "source:tools/voice-providers.mts",
+      "specifier": "./voice-providers.mts",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/make-voice-pack.mts",
       "to": null,
       "specifier": "fs",
-      "line": 1,
+      "line": 2,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": true
@@ -16449,7 +16836,7 @@
       "from": "source:tools/make-voice-pack.mts",
       "to": null,
       "specifier": "path",
-      "line": 27,
+      "line": 29,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": true
@@ -16458,7 +16845,7 @@
       "from": "source:tools/make-voice-pack.mts",
       "to": null,
       "specifier": "url",
-      "line": 28,
+      "line": 30,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": true
@@ -16467,7 +16854,7 @@
       "from": "source:tools/make-voice-pack.mts",
       "to": "source:tools/voice-manifests.cts",
       "specifier": "./voice-manifests.cts",
-      "line": 29,
+      "line": 31,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -16476,7 +16863,7 @@
       "from": "source:tools/make-voice-pack.mts",
       "to": "source:tools/mixed-voice-inventory.mts",
       "specifier": "./mixed-voice-inventory.mts",
-      "line": 30,
+      "line": 32,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -16485,16 +16872,16 @@
       "from": "source:tools/make-voice-pack.mts",
       "to": "source:tools/voice-lines.mts",
       "specifier": "./voice-lines.mts",
-      "line": 31,
+      "line": 33,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
     {
       "from": "source:tools/make-voice-pack.mts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../js/i18n.js",
-      "line": 39,
+      "line": 41,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -16503,7 +16890,7 @@
       "from": "source:tools/make-voice-pack.mts",
       "to": "source:js/words2.js",
       "specifier": "../js/words2.js",
-      "line": 40,
+      "line": 42,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -16512,7 +16899,7 @@
       "from": "source:tools/make-voice-pack.mts",
       "to": "source:js/packhash.ts",
       "specifier": "../js/packhash.js",
-      "line": 41,
+      "line": 43,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -16521,7 +16908,7 @@
       "from": "source:tools/make-voice-pack.mts",
       "to": "source:js/viwords.ts",
       "specifier": "../js/viwords.js",
-      "line": 42,
+      "line": 44,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -16530,7 +16917,7 @@
       "from": "source:tools/make-voice-pack.mts",
       "to": "source:js/content/reading.js",
       "specifier": "../js/content/reading.js",
-      "line": 120,
+      "line": 122,
       "evidence": "literal-dynamic-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -16707,6 +17094,150 @@
       "external": true
     },
     {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": null,
+      "specifier": "node:fs/promises",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": null,
+      "specifier": "node:path",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": null,
+      "specifier": "node:url",
+      "line": 3,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": null,
+      "specifier": "node:crypto",
+      "line": 4,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": null,
+      "specifier": "node:child_process",
+      "line": 5,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": "source:tools/reviewed-voice-delta.mts",
+      "specifier": "./reviewed-voice-delta.mts",
+      "line": 6,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": "source:tools/fpt-voice-test.mts",
+      "specifier": "./fpt-voice-test.mts",
+      "line": 7,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": "source:tools/fpt-recorder.mts",
+      "specifier": "./fpt-recorder.mts",
+      "line": 8,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": "source:tools/hanoi-pack-policy.mts",
+      "specifier": "./hanoi-pack-policy.mts",
+      "line": 9,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": "source:tools/voice-delivery.mts",
+      "specifier": "./voice-delivery.mts",
+      "line": 10,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/record-public-voice-delta.mts",
+      "to": "source:tools/voice-providers.mts",
+      "specifier": "./voice-providers.mts",
+      "line": 11,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/reviewed-voice-delta.mts",
+      "to": null,
+      "specifier": "node:fs",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/reviewed-voice-delta.mts",
+      "to": null,
+      "specifier": "node:crypto",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/reviewed-voice-delta.mts",
+      "to": "source:tools/voice-lines.mts",
+      "specifier": "./voice-lines.mts",
+      "line": 3,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/reviewed-voice-delta.mts",
+      "to": "source:tools/mixed-voice-inventory.mts",
+      "specifier": "./mixed-voice-inventory.mts",
+      "line": 4,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/reviewed-voice-delta.mts",
+      "to": "source:js/packhash.ts",
+      "specifier": "../js/packhash.js",
+      "line": 5,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:tools/rules-from-doc.mts",
       "to": null,
       "specifier": "fs",
@@ -16815,6 +17346,60 @@
       "external": false
     },
     {
+      "from": "source:tools/verify-public-voice-delta.mts",
+      "to": null,
+      "specifier": "node:fs",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/verify-public-voice-delta.mts",
+      "to": null,
+      "specifier": "node:path",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/verify-public-voice-delta.mts",
+      "to": null,
+      "specifier": "node:crypto",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/verify-public-voice-delta.mts",
+      "to": null,
+      "specifier": "node:child_process",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/verify-public-voice-delta.mts",
+      "to": "source:tools/reviewed-voice-delta.mts",
+      "specifier": "./reviewed-voice-delta.mts",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/verify-public-voice-delta.mts",
+      "to": "source:tools/voice-providers.mts",
+      "specifier": "./voice-providers.mts",
+      "line": 3,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
       "from": "source:tools/voice-daily.mts",
       "to": null,
       "specifier": "fs",
@@ -16852,10 +17437,64 @@
     },
     {
       "from": "source:tools/voice-daily.mts",
-      "to": "source:js/i18n.js",
+      "to": "source:js/i18n.ts",
       "specifier": "../js/i18n.js",
       "line": 17,
       "evidence": "literal-dynamic-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/voice-delivery.mts",
+      "to": null,
+      "specifier": "node:fs/promises",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/voice-delivery.mts",
+      "to": null,
+      "specifier": "node:os",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/voice-delivery.mts",
+      "to": null,
+      "specifier": "node:path",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/voice-delivery.mts",
+      "to": null,
+      "specifier": "node:child_process",
+      "line": 3,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/voice-delivery.mts",
+      "to": null,
+      "specifier": "node:util",
+      "line": 4,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/voice-delivery.mts",
+      "to": "source:tools/voice-providers.mts",
+      "specifier": "./voice-providers.mts",
+      "line": 5,
+      "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
     },
@@ -16936,6 +17575,42 @@
       "to": "source:js/packhash.ts",
       "specifier": "../js/packhash.js",
       "line": 99,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": false
+    },
+    {
+      "from": "source:tools/voice-routing-audit.mts",
+      "to": null,
+      "specifier": "node:fs",
+      "line": 1,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/voice-routing-audit.mts",
+      "to": null,
+      "specifier": "node:path",
+      "line": 2,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/voice-routing-audit.mts",
+      "to": null,
+      "specifier": "node:url",
+      "line": 3,
+      "evidence": "static-import",
+      "runtimeEffect": "not_proven",
+      "external": true
+    },
+    {
+      "from": "source:tools/voice-routing-audit.mts",
+      "to": "source:tools/voice-providers.mts",
+      "specifier": "./voice-providers.mts",
+      "line": 4,
       "evidence": "static-import",
       "runtimeEffect": "not_proven",
       "external": false
@@ -17238,7 +17913,7 @@
     },
     {
       "from": "game:aodai",
-      "to": "website:/home/#art-aodai",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -17299,6 +17974,12 @@
     {
       "from": "game:banhchung",
       "to": "game:dragon",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:banhchung",
+      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -17610,7 +18291,7 @@
     },
     {
       "from": "game:bubblepaint",
-      "to": "website:/home/#art-bubblepaint",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -17653,12 +18334,6 @@
     {
       "from": "game:buffalo",
       "to": "game:eggs",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:buffalo",
-      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -17892,12 +18567,6 @@
     },
     {
       "from": "game:catchfish",
-      "to": "game:goat",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:catchfish",
       "to": "game:koala",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
@@ -17953,6 +18622,12 @@
     {
       "from": "game:cayneu",
       "to": "game:dragon",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:cayneu",
+      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -18306,12 +18981,6 @@
     },
     {
       "from": "game:crabwalk",
-      "to": "game:goat",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:crabwalk",
       "to": "game:koala",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
@@ -18379,6 +19048,12 @@
     {
       "from": "game:cuopco",
       "to": "game:dragon",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:cuopco",
+      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -18534,6 +19209,12 @@
     },
     {
       "from": "game:danhdao",
+      "to": "game:goat",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:danhdao",
       "to": "game:oanquan",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
@@ -18673,6 +19354,12 @@
     {
       "from": "game:denongsao",
       "to": "game:dragon",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:denongsao",
+      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -18919,6 +19606,12 @@
     {
       "from": "game:duathuyen",
       "to": "game:dragon",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:duathuyen",
+      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -19201,12 +19894,6 @@
     {
       "from": "game:emueggs",
       "to": "game:eggs",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:emueggs",
-      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -19344,12 +20031,6 @@
     },
     {
       "from": "game:feedzoo",
-      "to": "game:goat",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:feedzoo",
       "to": "game:koala",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
@@ -19500,7 +20181,7 @@
     },
     {
       "from": "game:fingerpaint",
-      "to": "website:/home/#art-fingerpaint",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -19608,7 +20289,7 @@
     },
     {
       "from": "game:finishpic",
-      "to": "website:/home/#art-finishpic",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -19716,7 +20397,7 @@
     },
     {
       "from": "game:fireworks",
-      "to": "website:/home/#art-fireworks",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -19974,7 +20655,7 @@
     },
     {
       "from": "game:gallery",
-      "to": "website:/home/#art-gallery",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -20508,6 +21189,12 @@
     },
     {
       "from": "game:keocua",
+      "to": "game:goat",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:keocua",
       "to": "game:oanquan",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
@@ -20790,7 +21477,7 @@
     },
     {
       "from": "game:kitepaint",
-      "to": "website:/home/#art-kitepaint",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -20910,7 +21597,7 @@
     },
     {
       "from": "game:lacquer",
-      "to": "website:/home/#art-lacquer",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -21030,7 +21717,7 @@
     },
     {
       "from": "game:leafrub",
-      "to": "website:/home/#art-leafrub",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -21414,7 +22101,7 @@
     },
     {
       "from": "game:makeface",
-      "to": "website:/home/#art-makeface",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -21558,7 +22245,7 @@
     },
     {
       "from": "game:masks",
-      "to": "website:/home/#art-masks",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -21685,6 +22372,12 @@
     {
       "from": "game:meochuot",
       "to": "game:dragon",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:meochuot",
+      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -21930,7 +22623,7 @@
     },
     {
       "from": "game:mosaic",
-      "to": "website:/home/#art-mosaic",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -21979,6 +22672,12 @@
     {
       "from": "game:mualan",
       "to": "game:dragon",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:mualan",
+      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -22045,12 +22744,6 @@
     {
       "from": "game:mumbaby",
       "to": "game:eggs",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:mumbaby",
-      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -22171,6 +22864,12 @@
     {
       "from": "game:nemcon",
       "to": "game:dragon",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:nemcon",
+      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -22422,7 +23121,7 @@
     },
     {
       "from": "game:nonla",
-      "to": "website:/home/#art-nonla",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -23106,7 +23805,7 @@
     },
     {
       "from": "game:pixelpic",
-      "to": "website:/home/#art-pixelpic",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -25044,12 +25743,6 @@
     },
     {
       "from": "game:reefclean",
-      "to": "game:goat",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:reefclean",
       "to": "game:koala",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
@@ -25099,12 +25792,6 @@
     {
       "from": "game:reefcount",
       "to": "game:eggs",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:reefcount",
-      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -25260,6 +25947,12 @@
     },
     {
       "from": "game:rongran",
+      "to": "game:goat",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:rongran",
       "to": "game:oanquan",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
@@ -25518,7 +26211,7 @@
     },
     {
       "from": "game:scene",
-      "to": "website:/home/#art-scene",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -25626,7 +26319,7 @@
     },
     {
       "from": "game:scratch",
-      "to": "website:/home/#art-scratch",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -25734,7 +26427,7 @@
     },
     {
       "from": "game:shades",
-      "to": "website:/home/#art-shades",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -25842,7 +26535,7 @@
     },
     {
       "from": "game:shadowpic",
-      "to": "website:/home/#art-shadowpic",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -26550,7 +27243,7 @@
     },
     {
       "from": "game:stamps",
-      "to": "website:/home/#art-stamps",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -27006,7 +27699,7 @@
     },
     {
       "from": "game:thocam",
-      "to": "website:/home/#art-thocam",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -27210,12 +27903,6 @@
     },
     {
       "from": "game:tracks",
-      "to": "game:goat",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:tracks",
       "to": "game:koala",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
@@ -27295,6 +27982,12 @@
     {
       "from": "game:trongnu",
       "to": "game:dragon",
+      "relation": "requires-three-finishes",
+      "evidence": "shared-progress-rule"
+    },
+    {
+      "from": "game:trongnu",
+      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },
@@ -27534,7 +28227,7 @@
     },
     {
       "from": "game:weatherpaint",
-      "to": "website:/home/#art-weatherpaint",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -27642,7 +28335,7 @@
     },
     {
       "from": "game:weave",
-      "to": "website:/home/#art-weave",
+      "to": "website:/home/#games",
       "relation": "static-guide",
       "evidence": "anchor-only-combined-review-pending"
     },
@@ -27733,12 +28426,6 @@
     {
       "from": "game:whohome",
       "to": "game:eggs",
-      "relation": "requires-three-finishes",
-      "evidence": "shared-progress-rule"
-    },
-    {
-      "from": "game:whohome",
-      "to": "game:goat",
       "relation": "requires-three-finishes",
       "evidence": "shared-progress-rule"
     },

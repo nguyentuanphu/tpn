@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/games/crafts.ts": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "js/games/drawing2.ts": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "js/howto-data.ts": "c49487741f73028ba5448685b0e17710b8ac4bf271910a6c4122314938c890db"
+  },
+  "lines": [
+    {
+      "id": "d62b5431-4c33e8f3",
+      "lang": "vi",
+      "text": "Nhìn bức tranh và chọn chỗ bắt đầu.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "05ad9ea9-1923b72b",
+      "lang": "vi",
+      "text": "Vẽ bằng ngón tay hoặc chuột. Với bàn phím, dùng mũi tên và phím cách.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "5d0348da57d3e15c",
+      "lang": "vi",
+      "text": "Tô mười hai nét rồi chọn Lưu vào Album. Thoát sớm không lưu tranh.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "7478f58b-3078a93b",
+      "lang": "vi",
+      "text": "Chọn màu rồi chạm để vẽ vòng bong bóng nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/crafts.ts"
+      ]
+    },
+    {
+      "id": "79586c280f479c4e",
+      "lang": "vi",
+      "text": "Chọn màu rồi chạm để in hình tròn nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/drawing2.ts"
+      ]
+    },
+    {
+      "id": "8a2c2827-54cc3622",
+      "lang": "vi",
+      "text": "Chọn màu rồi chạm để dán hình tam giác vào phong cảnh nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/drawing2.ts"
+      ]
+    }
+  ]
+}

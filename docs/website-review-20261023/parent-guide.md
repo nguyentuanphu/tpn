@@ -136,7 +136,7 @@ Successful picture results show their own celebration and progress toward the pa
 
 A separate ring of pictures has a moving light. Read the small mission set, then stop the light on a needed picture. Mark each mission picture found before finishing. Calm mode offers a deliberate Change/Stop action. This is a separate game from the three-lane Fruit Parade. / Một vòng tranh riêng có đèn di chuyển. Nhìn bộ tranh nhiệm vụ nhỏ rồi dừng đèn ở tranh còn cần. Đánh dấu đủ tranh nhiệm vụ trước khi xong. Bản nhẹ chuyển động có thao tác Đổi/Dừng chủ động. Đây là trò riêng với Diễu hành ba dải.
 
-Orchard remains an invited-tester preview. Studio must enable its tester and relevant single-device or multiplayer mode; the public catalogue alone does not grant access. Up to four accepted online players share mission progress. / Vườn Quả vẫn là bản thử cho người được mời. Studio cần bật quyền thử và chế độ cùng máy hoặc nhiều máy tương ứng; có trong danh mục không tự cấp quyền. Tối đa bốn người đã nhận lời qua mạng chia sẻ tiến trình nhiệm vụ.
+Orchard remains for accepted invited testers. Studio can enable its preview, or a specific tester single-device/multiplayer mode; preview also works while those mode switches are off. Being listed in the public guide does not grant access. Up to four accepted online players share mission progress. / Vườn Quả vẫn chỉ dành cho người thử được mời đã đồng ý. Studio có thể bật bản thử hoặc từng chế độ thử cùng máy/nhiều máy; bản thử vẫn dùng được khi các chế độ đó tắt. Có trong hướng dẫn công khai không tự cấp quyền. Tối đa bốn người đã nhận lời qua mạng chia sẻ tiến trình nhiệm vụ.
 
 Recognise pictures, remember which are still needed and take turns choosing a target. A grown-up can point to one missing mission picture. / Nhận biết tranh, nhớ tranh còn thiếu và lần lượt chọn mục tiêu. Người lớn có thể chỉ một tranh nhiệm vụ còn cần.
 
@@ -397,6 +397,18 @@ Yes. Some activities support two children on one device, and specific games shar
 ### What does “skills to practise” mean? / “Kỹ năng có thể luyện tập” nghĩa là gì?
 
 Each note explains what an activity invites children to explore. Use it to choose play, start conversations and notice which tasks feel comfortable or need a little help. / Mỗi ghi chú giải thích điều bé có thể khám phá trong hoạt động. Cha mẹ dùng để chọn trò chơi, bắt đầu trò chuyện và nhận ra việc nào bé làm thoải mái, việc nào cần giúp thêm.
+
+### How do we add the game to our Home Screen? / Thêm trò chơi vào màn hình chính thế nào?
+
+Use Add to Home Screen in the game. The guide stays available until installation is confirmed or you choose Hide; Settings can reopen it. Chrome/Android may show a native installation prompt. On iPhone/iPad, Safari requires Share → Add to Home Screen → Add; a website cannot complete those steps for you. Let the first offline download finish before relying on offline play. / Chọn Thêm vào màn hình chính trong trò chơi. Hướng dẫn vẫn hiện đến khi xác nhận cài đặt hoặc bạn chọn Ẩn; có thể mở lại từ Cài đặt. Chrome/Android có thể hiện hộp cài đặt của trình duyệt. Trên iPhone/iPad, Safari yêu cầu Chia sẻ → Thêm vào màn hình chính → Thêm; trang web không thể tự làm thay. Chờ tải ngoại tuyến lần đầu xong rồi mới dùng khi mất mạng.
+
+### Can installation be seen in the game’s Analytics? / Phân tích có biết máy đã cài trò chơi không?
+
+Only with Analytics enabled, existing device statistics can include a confirmed installation event or an app launch. On iPhone/iPad, confirmation happens when the game is opened from the Home Screen, not when the guide is viewed. Unconfirmed means no confirmation has arrived; it does not mean the app is absent. A past confirmation cannot prove an app was never uninstalled. Turning Analytics off stops this reporting too. / Chỉ khi bật Phân tích, thống kê máy hiện có mới có thể gồm sự kiện cài đặt đã xác nhận hoặc lần mở dạng ứng dụng. Trên iPhone/iPad, chỉ xác nhận khi mở từ màn hình chính, không phải khi xem hướng dẫn. Chưa xác nhận nghĩa là chưa nhận được tín hiệu, không có nghĩa máy chưa cài. Xác nhận trước đây không chứng minh ứng dụng chưa từng bị gỡ. Tắt Phân tích cũng dừng gửi thông tin này.
+
+### Why can an activity in the guide be unavailable in our game? / Vì sao hoạt động trong hướng dẫn lại chưa mở trong trò chơi?
+
+A game or story can be held for a later collection, need earlier activities finished three times, or be switched off individually. Turning an item on does not skip a held collection or progress requirements. Hide removes a game from the Simple screen only. An individual Off setting stops new entries after the device receives it; an activity already running can finish. Offline devices keep their last fetched settings. These guides describe the released source and do not confirm availability on your device. Closing an activity does not erase earlier progress. / Trò chơi hoặc truyện có thể được giữ cho đợt sau, cần hoàn thành các hoạt động trước đó ba lần, hoặc bị tắt riêng. Bật một mục không bỏ qua đợt đang giữ hay điều kiện tiến độ. Ẩn chỉ bỏ trò khỏi màn hình Đơn giản. Tắt riêng chặn lần mở mới sau khi thiết bị nhận cài đặt; hoạt động đang chơi vẫn có thể hoàn thành. Thiết bị ngoại tuyến giữ cài đặt tải lần cuối. Hướng dẫn mô tả mã nguồn đã phát hành, không xác nhận tình trạng mở trên thiết bị. Đóng hoạt động không xóa tiến độ đã có.
 
 ## Source and scope
 

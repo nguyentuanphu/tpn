@@ -1,6 +1,6 @@
 # Sparkle Valley: full quest guide / Hướng dẫn nhiệm vụ đầy đủ
 
-Reviewed 23 October 2026 AEDT against [source b241286aa3b4c75247a65b900556643e3ddfc329](https://github.com/nguyentuanphu/Sparkle-Valley/tree/b241286aa3b4c75247a65b900556643e3ddfc329).
+Facts generated from [source b241286aa3b4c75247a65b900556643e3ddfc329](https://github.com/nguyentuanphu/Sparkle-Valley/tree/b241286aa3b4c75247a65b900556643e3ddfc329).
 
 [Open the interactive Quest Guide](prototype.html#quest-guide) · [Website review](README.md) · [Prizes and badges](rewards-guide.md)
 

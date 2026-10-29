@@ -1,6 +1,6 @@
 # Festivals, decorations and activities / Lễ hội, trang trí và hoạt động
 
-Reviewed 23 October 2026 AEDT. Source: [b241286aa3b4c75247a65b900556643e3ddfc329](https://github.com/nguyentuanphu/Sparkle-Valley/tree/b241286aa3b4c75247a65b900556643e3ddfc329). [Interactive festival directory](prototype.html#festivals) · [Folk games and parent learning guide](parent-guide.md) · [Quest Guide](quest-guide.md) · [Prizes and badges](rewards-guide.md)
+Facts generated from source: [b241286aa3b4c75247a65b900556643e3ddfc329](https://github.com/nguyentuanphu/Sparkle-Valley/tree/b241286aa3b4c75247a65b900556643e3ddfc329). [Interactive festival directory](prototype.html#festivals) · [Folk games and parent learning guide](parent-guide.md) · [Quest Guide](quest-guide.md) · [Prizes and badges](rewards-guide.md)
 
 ## Join, watch or explore / Tham gia, xem hoặc khám phá
 
