@@ -7,7 +7,15 @@
     "key": "game:stamps",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 6,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -25,6 +33,52 @@
     "guidance": {
       "en": "Choose a colour, then tap to stamp circles!",
       "vi": "Chọn màu rồi chạm để in hình tròn nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🥔",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-stamps",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -35,7 +89,15 @@
     "key": "game:weave",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -53,6 +115,52 @@
     "guidance": {
       "en": "Paint coloured strands across the woven reed mat!",
       "vi": "Vẽ nếp cói màu sắc lên chiếc chiếu đan nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🌾",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-weave",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -63,7 +171,15 @@
     "key": "game:mosaic",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -81,6 +197,52 @@
     "guidance": {
       "en": "Paint ceramic glazes on your Bát Tràng tile artwork!",
       "vi": "Tô màu men gốm rực rỡ lên bức tranh Bát Tràng nhé!"
+    },
+    "area": "art",
+    "ageMin": 3,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🏺",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-mosaic",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -91,7 +253,15 @@
     "key": "game:nonla",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 6,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -109,6 +279,52 @@
     "guidance": {
       "en": "Paint bamboo and lotus onto your conical hat!",
       "vi": "Vẽ cành tre và hoa sen lên chiếc nón lá xinh xắn nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "👒",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-nonla",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -119,7 +335,15 @@
     "key": "game:aodai",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -137,6 +361,52 @@
     "guidance": {
       "en": "Design colorful silk patterns on the Áo Dài dress!",
       "vi": "Tự tay tô vẽ tà áo dài lụa thướt tha nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🥻",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-aodai",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -147,7 +417,15 @@
     "key": "game:kitepaint",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -165,6 +443,52 @@
     "guidance": {
       "en": "Paint bright wings on your flute kite!",
       "vi": "Tô cánh diều sáo thật rực rỡ để bay cao nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🪁",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-kitepaint",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -175,7 +499,15 @@
     "key": "game:shades",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -193,6 +525,52 @@
     "guidance": {
       "en": "Blend pastel and deep shades together on the canvas!",
       "vi": "Pha phối các dải màu đậm nhạt hòa quyện nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🎨",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-shades",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -203,7 +581,15 @@
     "key": "game:shadowpic",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -221,6 +607,52 @@
     "guidance": {
       "en": "Trace around shadows to capture secret animal shapes!",
       "vi": "Vẽ nét quanh chiếc bóng để giữ lại hình các bạn thú nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "👥",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-shadowpic",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -231,12 +663,62 @@
     "key": "game:spotdiff",
     "sourceFile": "js/games/art-pending.ts",
     "discovery": "declared-only",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "playability": "not_established",
+      "loader": null
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
-    "recordings": "not yet audited",
+    "recordings": {
+      "en": {
+        "hash": "2483bf5e6ba36d1d",
+        "present": true,
+        "playback": "not-audited-unreleased-proposal"
+      },
+      "vi": {
+        "hash": "58eea9f1-38ebd37d",
+        "present": true,
+        "playback": "not-audited-unreleased-proposal"
+      }
+    },
     "save": "device profile.album, newest 12 PNGs",
-    "reward": "shared frame stars; caller-owned progress and reward rules"
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "area": "art",
+    "ageMin": null,
+    "difficulty": null,
+    "sourceHash": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🔍",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": "Not catalogued or registered; cannot be enabled as playable",
+    "exit": null,
+    "progressOwner": null,
+    "offlineAssets": [],
+    "guidance": {
+      "status": "Unreleased source proposal, not gameplay evidence",
+      "en": "Circle the differences between the twin pictures!",
+      "vi": "Khoanh tròn những điểm khác nhau giữa hai bức tranh nhé!"
+    }
   },
   {
     "id": "hiddenpic",
@@ -246,12 +728,62 @@
     "key": "game:hiddenpic",
     "sourceFile": "js/games/art-pending.ts",
     "discovery": "declared-only",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "playability": "not_established",
+      "loader": null
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
-    "recordings": "not yet audited",
+    "recordings": {
+      "en": {
+        "hash": "2c36e41a-77f9b77c",
+        "present": true,
+        "playback": "not-audited-unreleased-proposal"
+      },
+      "vi": {
+        "hash": "3bfda111-3523e16e",
+        "present": true,
+        "playback": "not-audited-unreleased-proposal"
+      }
+    },
     "save": "device profile.album, newest 12 PNGs",
-    "reward": "shared frame stars; caller-owned progress and reward rules"
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "area": "art",
+    "ageMin": null,
+    "difficulty": null,
+    "sourceHash": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🕵️",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": "Not catalogued or registered; cannot be enabled as playable",
+    "exit": null,
+    "progressOwner": null,
+    "offlineAssets": [],
+    "guidance": {
+      "status": "Unreleased source proposal, not gameplay evidence",
+      "en": "Highlight the hidden treasures tucked behind leaves!",
+      "vi": "Tô nổi bật những vật ẩn giấu đằng sau vòm lá nhé!"
+    }
   },
   {
     "id": "finishpic",
@@ -261,7 +793,15 @@
     "key": "game:finishpic",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -279,6 +819,52 @@
     "guidance": {
       "en": "Draw the missing side to complete the happy picture!",
       "vi": "Vẽ nốt nửa còn thiếu để hoàn thiện bức tranh vui nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "✏️",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-finishpic",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -289,7 +875,15 @@
     "key": "game:scene",
     "sourceFile": "js/games/drawing2.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -307,6 +901,52 @@
     "guidance": {
       "en": "Choose a colour and tap to add triangle stickers to your countryside!",
       "vi": "Chọn màu rồi chạm để dán hình tam giác vào phong cảnh nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🏞️",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "drawing2.ts",
+      "asset": "js/games/drawing2.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/drawing2.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-scene",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -317,12 +957,62 @@
     "key": "game:paperfold",
     "sourceFile": "js/games/art-pending.ts",
     "discovery": "declared-only",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "playability": "not_established",
+      "loader": null
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
-    "recordings": "not yet audited",
+    "recordings": {
+      "en": {
+        "hash": "20a4254f2e401e8b",
+        "present": true,
+        "playback": "not-audited-unreleased-proposal"
+      },
+      "vi": {
+        "hash": "d641efd37a041fa6",
+        "present": true,
+        "playback": "not-audited-unreleased-proposal"
+      }
+    },
     "save": "device profile.album, newest 12 PNGs",
-    "reward": "shared frame stars; caller-owned progress and reward rules"
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "area": "art",
+    "ageMin": null,
+    "difficulty": null,
+    "sourceHash": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "📄",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": "Not catalogued or registered; cannot be enabled as playable",
+    "exit": null,
+    "progressOwner": null,
+    "offlineAssets": [],
+    "guidance": {
+      "status": "Unreleased source proposal, not gameplay evidence",
+      "en": "Fold paper creases and color your origami boat!",
+      "vi": "Vẽ nếp gấp và tô màu chiếc thuyền giấy origami nhé!"
+    }
   },
   {
     "id": "lacquer",
@@ -332,7 +1022,15 @@
     "key": "game:lacquer",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -350,6 +1048,52 @@
     "guidance": {
       "en": "Gently rub gold leaf onto the dark lacquer board!",
       "vi": "Thoa dát vàng quỳ lấp lánh lên vóc gỗ sơn mài nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🖼️",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-lacquer",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -360,7 +1104,15 @@
     "key": "game:scratch",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 6,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -378,6 +1130,52 @@
     "guidance": {
       "en": "Scratch away the dark coat to reveal rainbow colors underneath!",
       "vi": "Cào lớp phủ đen để lộ dải màu cầu vồng rực rỡ nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "✨",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-scratch",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -388,7 +1186,15 @@
     "key": "game:bubblepaint",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -406,6 +1212,52 @@
     "guidance": {
       "en": "Choose a colour and tap to paint bubble rings!",
       "vi": "Chọn màu rồi chạm để vẽ vòng bong bóng nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🫧",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-bubblepaint",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -416,7 +1268,15 @@
     "key": "game:fingerpaint",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -434,6 +1294,52 @@
     "guidance": {
       "en": "Paint with your fingertips directly on the canvas!",
       "vi": "Dùng ngón tay chấm tô màu trực tiếp lên tranh nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🖐️",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-fingerpaint",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -444,7 +1350,15 @@
     "key": "game:weatherpaint",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -462,6 +1376,52 @@
     "guidance": {
       "en": "Paint gentle rain, sunbeams, and clouds in the sky!",
       "vi": "Tô màu cho nắng ấm và hạt mưa dịu dàng nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🌦️",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-weatherpaint",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -472,7 +1432,15 @@
     "key": "game:thocam",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -490,6 +1458,52 @@
     "guidance": {
       "en": "Paint vibrant ethnic geometric patterns on woven cloth!",
       "vi": "Tô màu dải thổ cẩm vùng cao rực rỡ nhé!"
+    },
+    "area": "art",
+    "ageMin": 3,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🧶",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-thocam",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -500,7 +1514,15 @@
     "key": "game:pixelpic",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 6,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -518,6 +1540,52 @@
     "guidance": {
       "en": "Fill grid squares to paint a cute retro pixel character!",
       "vi": "Tô màu ô vuông để tạo nhân vật pixel ngộ nghĩnh nhé!"
+    },
+    "area": "art",
+    "ageMin": 3,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "👾",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-pixelpic",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -528,7 +1596,15 @@
     "key": "game:fireworks",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -546,6 +1622,52 @@
     "guidance": {
       "en": "Draw glowing fireworks bursts across the midnight sky!",
       "vi": "Vẽ những chùm pháo hoa lấp lánh đêm Giao Thừa nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🎆",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-fireworks",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -556,7 +1678,15 @@
     "key": "game:masks",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -574,6 +1704,52 @@
     "guidance": {
       "en": "Decorate festival masks with bright paint!",
       "vi": "Tô màu chiếc mặt nạ giấy bồi đón Rằm tháng Tám nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🎭",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-masks",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -584,7 +1760,15 @@
     "key": "game:makeface",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -602,6 +1786,52 @@
     "guidance": {
       "en": "Paint smiles, eyes, and expressions on a cheerful face!",
       "vi": "Tô nụ cười và ánh mắt rạng rỡ lên khuôn mặt nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "😀",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-makeface",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -612,7 +1842,15 @@
     "key": "game:gallery",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -630,6 +1868,52 @@
     "guidance": {
       "en": "Paint and frame your picture for your home exhibition!",
       "vi": "Vẽ và lồng khung cho bức tranh triển lãm nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🖼️",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-gallery",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -640,7 +1924,15 @@
     "key": "game:leafrub",
     "sourceFile": "js/games/crafts.ts",
     "discovery": "catalogued",
-    "runtimeEvidence": "pending",
+    "runtimeEvidence": {
+      "functionalScenarios": 5,
+      "functionalReport": "browser-validation.json",
+      "twoProfileScenarios": 1,
+      "twoProfileReport": "paired-browser-validation.json",
+      "finalLayoutScenarios": 0,
+      "finalLayoutReport": "capture-validation.json",
+      "note": "Full functional kernel coverage preceded the final shared-footer layout correction; final representative layout/persistence checks are separate."
+    },
     "group": "newGames",
     "unlock": "Every first-set art game completed three times",
     "recordings": {
@@ -658,6 +1950,52 @@
     "guidance": {
       "en": "Rub wax crayons across the leaf to reveal delicate veins!",
       "vi": "Chà sáp màu lên lá để hiện đường gân lá kỳ diệu nhé!"
+    },
+    "area": "art",
+    "ageMin": 2,
+    "difficulty": 1,
+    "sourceHash": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
+    "unlockDependencies": [
+      "game:card",
+      "game:colors",
+      "game:colournum",
+      "game:copygrid",
+      "game:dongho",
+      "game:dotdot",
+      "game:drawpath",
+      "game:jigsaw",
+      "game:lanternart",
+      "game:mirror",
+      "game:rangoli",
+      "game:sand",
+      "game:shapedraw",
+      "game:tangram",
+      "game:trace"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": "🍃",
+      "renderer": "js/art.ts",
+      "fonts": "bundled game fonts"
+    },
+    "entry": {
+      "catalogue": "js/games/catalog.ts",
+      "loader": "crafts.ts",
+      "asset": "js/games/crafts.js",
+      "sharedBoundary": "js/games/frame.ts"
+    },
+    "offlineAssets": [
+      "js/games/crafts.js",
+      "js/games/art-pad.js"
+    ],
+    "exit": "Shared Leave control; no art save before Keep in Album",
+    "progressOwner": "js/main.ts; content never writes wins/coins",
+    "guide": {
+      "href": "/home/#art-leafrub",
+      "kind": "section",
+      "verified": true,
+      "reviewedSource": "f59deb8d59e99a6149cf4df875f78c9ad8467a56",
+      "sourceAligned": false
     }
   },
   {
@@ -665,6 +2003,41 @@
     "key": "game:rongran",
     "sourceFile": "js/content/secondset.ts",
     "discovery": "declared-only",
-    "reason": "No registration or implementation; distinct dragon ID exists. Intent unresolved."
+    "reason": "No registration or implementation; distinct dragon ID exists. Intent unresolved.",
+    "area": "vietnam",
+    "ageMin": null,
+    "difficulty": null,
+    "sourceHash": "2052a77ee27c649b0674477385d13cd488b2a2cc527a0819d9309e9dac314658",
+    "unlockDependencies": [
+      "game:cacuangua",
+      "game:caro",
+      "game:chuyen",
+      "game:datnieu",
+      "game:dragon",
+      "game:oanquan",
+      "game:oantuti",
+      "game:tienlen",
+      "game:tienlenbac"
+    ],
+    "groupRelease": "newGames",
+    "artwork": {
+      "iconKey": null,
+      "renderer": null,
+      "fonts": "bundled game fonts"
+    },
+    "runtimeEvidence": {
+      "playability": "not_established",
+      "loader": null
+    },
+    "entry": "Not catalogued or registered; cannot be enabled as playable",
+    "exit": null,
+    "progressOwner": null,
+    "offlineAssets": [],
+    "guidance": {
+      "status": "Unknown: no registration or literal guidance found; do not borrow dragon guidance."
+    },
+    "recordings": {
+      "status": "Unknown intent; no recording identity inferred."
+    }
   }
 ]

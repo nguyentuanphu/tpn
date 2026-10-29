@@ -1,6 +1,6 @@
 # Prizes & badges / Quà thưởng và huy hiệu
 
-Reviewed 23 October 2026 AEDT against source [47a9079eef4d5e1b0e34283503fc934feb888da7](https://github.com/nguyentuanphu/Sparkle-Valley/tree/47a9079eef4d5e1b0e34283503fc934feb888da7). [Interactive prize showcase](prototype.html#rewards) · [Quest Guide](quest-guide.md)
+Facts generated from source [47a9079eef4d5e1b0e34283503fc934feb888da7](https://github.com/nguyentuanphu/Sparkle-Valley/tree/47a9079eef4d5e1b0e34283503fc934feb888da7). [Interactive prize showcase](prototype.html#rewards) · [Quest Guide](quest-guide.md)
 
 These are rewards available under the reviewed rules, not a record of any child's saved collection. Age, difficulty, family choices, already-owned items and remaining stickers affect availability. The website does not grant prizes. / Đây là quà theo quy tắc đã kiểm tra, không phải bộ sưu tập đã lưu của bé. Tuổi, độ khó, lựa chọn gia đình, món đã có và hình dán còn lại ảnh hưởng nội dung. Trang web không trao quà.
 

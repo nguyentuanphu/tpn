@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceHead": "3d7e330f74def637693418cf238e22d3bdac48d2",
+  "sourceHead": "a5a11e5bbe65be9710e9cfa8f0199b35129696fd",
   "sourceDirty": false,
   "dirtyPaths": [],
   "scope": "All tracked public code/config surfaces under the declared roots, plus new source files; not every runtime entity or private/provider record.",
@@ -375,7 +375,7 @@
       "key": "source:home/index.html",
       "file": "home/index.html",
       "domain": "website",
-      "sha256": "282c442fc74a937b4417a686fff85bb07ed3e773a6fe8ce252371f176b69753f",
+      "sha256": "1ec77b1094c7680d3872e1a7e7d90c1bf16898949c98ba922794aaed16a0f937",
       "classification": "source-definition",
       "definitions": [],
       "imports": [],
@@ -7524,7 +7524,7 @@
       "key": "source:js/games/art-pad.ts",
       "file": "js/games/art-pad.ts",
       "domain": "games",
-      "sha256": "8d8b1417deca6a105a3ace011ae9a25d0c99effbda54e318157eef35198b6693",
+      "sha256": "635ec7c304fc0c383dad3c163680aff0f0caf9b12a2ff32310887d42fe502ab8",
       "classification": "source-definition",
       "definitions": [
         {
@@ -23318,7 +23318,7 @@
       "key": "source:tools/export-content-source-inventory.mts",
       "file": "tools/export-content-source-inventory.mts",
       "domain": "quality",
-      "sha256": "69394d4ffff1f955ee92d638a5f623a985ce91a08ec654a6a00ebe1c50958ce3",
+      "sha256": "cd59eb7bc48c3cc1ae58dc03c97bccdf9f224910ca7860b3d00cdf264020b1be",
       "classification": "source-definition",
       "definitions": [],
       "imports": [

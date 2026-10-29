@@ -18,7 +18,7 @@ All tracked public code/config surfaces under the declared roots, plus new sourc
 | services | 179 | Not enumerated |
 | finance | 4 | Not enumerated |
 
-The JSON records every inspected file hash, exported definition, source import and typed game/story ID. It distinguishes declarations, catalogue discovery, implementation references, unlock dependencies, static guides, runtime instances and provider evidence. Supplement with the existing public declaration audit in `public-definitions/`; that audit remains partial at the entity level.
+The JSON records every inspected file hash, exported definition, source import and typed game/story ID. media-inventory.json enumerates shipped recording definitions across four languages and bundled font/icon/vendor references without exporting spoken text or private media. It distinguishes declarations, catalogue discovery, implementation references, unlock dependencies, static guides, runtime instances and provider evidence. Supplement with the existing public declaration audit in `public-definitions/`; that audit remains partial at the entity level.
 
 - Domain attribution is a reviewable filename-based grouping; shared imports cross domains.
 - Dynamic imports, DOM messages, runtime identifiers and API dispatch need consumer review beyond lexical import evidence.

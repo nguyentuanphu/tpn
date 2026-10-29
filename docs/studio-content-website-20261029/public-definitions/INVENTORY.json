@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "scope": "public_static_source_inventory_partial_not_a_runtime_or_private_data_audit",
-  "auditedHead": "3d7e330f74def637693418cf238e22d3bdac48d2",
+  "auditedHead": "a5a11e5bbe65be9710e9cfa8f0199b35129696fd",
   "allDomainsComplete": false,
   "domains": [
     {
@@ -20316,7 +20316,7 @@
     "missingDeclaredIds": 4
   },
   "sources": {
-    "home/index.html": "282c442fc74a937b4417a686fff85bb07ed3e773a6fe8ce252371f176b69753f",
+    "home/index.html": "1ec77b1094c7680d3872e1a7e7d90c1bf16898949c98ba922794aaed16a0f937",
     "js/adventure.ts": "a7b9f5a615603789aefa08eecd1376856a4c3aa5e8521e186fc0b0525ce48fb1",
     "js/animalhomes.js": "c183cf8d6b6916e584e22d204c347953cc3d6953de500deba13af961389bf14d",
     "js/content/adventures.js": "3ab415db49621dc88edbd332bdae143ba04f65c5cf72a5d617c4adfc54d5bd46",
