@@ -338,3 +338,19 @@ Focused tests now pass for world/ground/43 stalls/map labels/solid access, tradi
 Elephant detachment is still unreproduced, not marked fixed. Independent Northern house-rule review, physical-device/listening checks, AI review and speed-budget results remain explicit limits. Broader science facts and a free-placement home builder remain follow-ups. Owner version choice and fresh deployment approval are still required.
 
 - 27 October 2026 AEDT: owner explicitly selected **Keep preparing without a version** again. Do not assign v1.03 or any new number; continue verification on the unversioned branch. Fresh version choice and deployment approval remain required.
+
+## v1.03 · 29 October 2026 AEDT
+
+### Owner's decisions
+- Version: **v1.03** (owner chose it by pop-up, 29 Oct 2026 AEDT). Live stays v1.02 until "yes, deploy".
+- iPad Air 1st generation (iOS 12) and other devices older than iOS/iPadOS 15.4: a **friendly bilingual "this device is too old" message** instead of a stuck loading screen.
+- The audit of the v1.01/v1.02 games: **hold v1.03 for the guides**: every game gets a real How to play, the rules are checked and fixed, the new lines are recorded, then v1.03 ships.
+- Second set of games and stories: they show only when the Studio switches **New games** and **New stories** ("For little ones") are on; "Unlock all" alone does not turn them on. Orchard Quest needs its tester switch by design.
+
+### Progress notes
+- Fixed: iPad Air 2 stuck at "could not finish loading" (regex lookbehind in i18n broke Safari 15; `AbortSignal.timeout`); lock stops on the Simple screen and story shelf say what to do ("Play each game above 3 times"); Simple screen keeps its scroll place after a game (owner, iPhone and iPad).
+- Audit: 30 game files read; wrong or missing rules rebuilt in animals2, nature2, me2, thinking2 (chess bishop and cannon puzzles, pipes), music2, words2, numbers2, shapes2, places2, outside (Play Outside: hide and seek, duck duck goose, red light green light, Simon says, egg and spoon, musical chairs, nippers, tag), money2, reading2, vietnam2. Older traditional games read and correct: Ô Ăn Quan, Tiến Lên, Cờ Cá Ngựa, folk-court games, Oẳn Tù Tì, Snap, Chuyền, Rồng Rắn Lên Mây, Caro, Mr Wolf.
+- Guides: all 206 games have a How to play of two or more steps in both languages (js/howto-data2.ts); new check `guides`.
+- Pictures: answer pictures on the newer games' buttons were 13 to 19 px on a phone; now 44 px, 56 px for under-5s (measured on every game).
+- Recorded 2178 new voice files (Azure, en and vi, woman and man).
+- Open for the owner: the Northern Tiến Lên house rules (independent review); the white screen in the installed app was not reproduced (v1.03 shrinks the voice pack from about 416 MB to 85 MB; a screen recording would help if it happens again).
