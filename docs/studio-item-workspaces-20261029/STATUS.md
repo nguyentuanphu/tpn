@@ -1,3 +1,5 @@
+Current continuation: [Studio function controls](../studio-functions-20261029/README.md) supersedes the A pending-work/CI status below. The two-chat ownership split remains in force.
+
 # Current checkpoint and workstream handoff
 
 29 October 2026 AEDT. Runtime/test implementation0409b5d9; clean-source catalogue9efa00f6. Branch review/studio-finance-20261027. This chat remains workstream A; the owner starts chat B with SECOND-CHAT-PROMPT.md. No deployment/version/main merge or live migration.

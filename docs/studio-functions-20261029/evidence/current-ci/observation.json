@@ -1,0 +1,17 @@
+{
+  "observedAtSydney": "2026-10-29T16:00:58.467868+11:00",
+  "run": "40820891228",
+  "headSha": "e843a174aaee04d75774ce8206fa4e325368032f",
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40820891228",
+  "status": "pending",
+  "conclusion": "",
+  "artifactsAvailable": [],
+  "checksAvailable": 0,
+  "passedAvailable": 0,
+  "failedAvailable": [],
+  "retriedAvailable": [],
+  "sampleMarkers": [],
+  "suiteLevelSkips": [],
+  "jobs": [],
+  "limitation": "Only downloaded available result artifacts are counted. Missing/running shares are unknown. Full suite requires collector success and review of actual results."
+}

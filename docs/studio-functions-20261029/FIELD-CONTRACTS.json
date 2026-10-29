@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "functionId": "managementTelemetry",
+  "scope": "global",
+  "publicPath": "content.reportingPolicy",
+  "fields": [
+    {"id":"schemaVersion","type":"integer","allowed":[1],"consumer":"shared pure parser"},
+    {"id":"collect","type":"boolean","consumer":"client eligibility and transactional event persistence","parentChoiceWins":true,"requiresExistingRelease":true},
+    {"id":"process","type":"boolean","consumer":"attemptSummary/eventSummary on-demand analysis","backgroundWorkerExists":false},
+    {"id":"show","type":"boolean","consumer":"optional Studio HTTP event enrichment","stopsCollection":false},
+    {"id":"expiresAt","type":"UTC ISO timestamp or null","maxFutureSecondsAtChangedWrite":86400,"requiredWhenAny":["collect","process"],"expiryEffect":{"collect":false,"process":false,"show":"preserve"}}
+  ],
+  "privateContext":"function:managementTelemetry",
+  "writeGrants":["management.configure","edit"],
+  "readGrant":"management.read",
+  "joins":["draft UUID and revision","global baseline revision/hash","published config revision/hash","private change/audit record","reported installation receipt"],
+  "clientCeilings":{"batchEvents":50,"batchBytes":64000,"queueEvents":5000,"queueBytes":1000000,"queueAgeDays":30,"receipts":100},
+  "clientQueuesCleared":["sv2_management_out","sv2_management_bot_out"],
+  "dataNotChanged":["saved progress","family data","legacy usage queue","manual problem-report outbox","game availability","accepted SQL events"],
+  "newAutomaticServerRetention":false,
+  "sourceFreshness":"current config read, not proof of client effects",
+  "physicalDeviceBudgetVerified":false,
+  "completeAllFunctionCoverage":false
+}

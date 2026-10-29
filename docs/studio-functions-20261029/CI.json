@@ -1,0 +1,11 @@
+{
+  "observedAtSydney": "2026-10-29T16:01:22.258334+11:00",
+  "run": 40820891228,
+  "headSha": "e843a174aaee04d75774ce8206fa4e325368032f",
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40820891228",
+  "all": true,
+  "statusAtDispatch": "pending",
+  "completePassVerified": false,
+  "observation": "evidence/current-ci/observation.json",
+  "limitation": "Inspect actual share artifacts and collector before claiming complete success; historical passes do not establish current-source success."
+}

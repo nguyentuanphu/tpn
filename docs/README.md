@@ -1,5 +1,7 @@
 # Docs: start here
 
+[Latest Studio function controls and continuation](studio-functions-20261029/README.md): actual Collect/Process/Show implementation, field connections, screenshots, validation and pending work.
+
 [Current Studio item workspaces and two-chat plan](studio-item-workspaces-20261029/README.md): actual checkpoint, file ownership and copyable second-chat prompt.
 
 [Latest Studio private drafts](studio-drafts-20261029/README.md): actual save/review/publish workflow, schema/API contract, validation, screenshots and remaining work.
