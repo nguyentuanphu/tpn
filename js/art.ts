@@ -693,6 +693,8 @@ add('track:duck', `<ellipse cx="24" cy="26" rx="21" ry="17" fill="#d9c09a"/>` + 
 add('track:bird', `<ellipse cx="24" cy="26" rx="21" ry="17" fill="#e9f3fb"/>` + birdFoot(14, 33, -8) + birdFoot(25, 22, 6) + birdFoot(35, 12, -6));
 // (owner, 29 Oct 2026 AEDT audit) an emu egg is big and dark green, not a hen's white egg
 add('egg:emu', `<ellipse cx="24" cy="26" rx="14" ry="18" fill="#2f5d46" ${W}/><ellipse cx="19" cy="18" rx="4" ry="6" fill="#5f8f74"/><path d="M14 30q4 3 8 1M26 36q4 1 7-2" stroke="#244a37" stroke-width="1.6" ${N}/>`);
+// (audit, 29 Oct 2026 AEDT) a child standing still, arms down, for Simon Says "Stay still"
+add('🧍', `${circ(24, 10, 7, '#f2b98a')}<path d="M17 9q7-8 14 0" fill="#3a2418"/>${dot(21.5, 11, 1.2)}${dot(26.5, 11, 1.2)}<rect x="17" y="18" width="14" height="15" rx="4" fill="#6fa8ff" ${W}/><path d="M17 21v11M31 21v11" stroke="#f2b98a" stroke-width="3.4" stroke-linecap="round"/><path d="M21 33v11M27 33v11" stroke="#3b4a6b" stroke-width="4" stroke-linecap="round"/>`);
 // (audit, 29 Oct 2026 AEDT) a green caterpillar of round segments, for Measure with Blocks
 add('🐛', g('a-walk', `${[8, 16, 24].map((x, i) => circ(x, 30 - (i % 2) * 3, 7, i % 2 ? '#8fd16a' : '#6cc04a')).join('')}${circ(34, 24, 9, '#6cc04a')}${dot(31, 22, 1.8)}${dot(37, 22, 1.8)}<path d="M31 28q3 2 6 0M32 15l-3-6M37 15l2-6" stroke="${O}" stroke-width="2" fill="none" stroke-linecap="round"/>`));
 // (audit, 29 Oct 2026 AEDT) a window with four panes and a curtain, for Who Sits Where
