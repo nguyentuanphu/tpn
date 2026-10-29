@@ -1,5 +1,5 @@
 {
-  "source": "7589469d48c53fc8ec9e84317857b079dad26ea6",
+  "source": "21baacec8cee828dcacabd21fff09dad3b8e01ea",
   "files": [
     {
       "file": "content/custom.json",
@@ -255,7 +255,7 @@
     },
     {
       "file": "js/build.ts",
-      "hash": "3493153c2abb9c2a16717928e062fc908dd77296"
+      "hash": "0bcb6ce97ea5dec42e9b60dfa3d0fcfdcfbc2fad"
     },
     {
       "file": "js/cartoon.js",
@@ -763,7 +763,7 @@
     },
     {
       "file": "js/games/cacuangua.ts",
-      "hash": "b96c428a6c3bba45ed44bc7e38c71561dd0af404"
+      "hash": "1e558de68ef08d6ce65e1145071b9806d419c3c9"
     },
     {
       "file": "js/games/catalog.ts",
@@ -1595,11 +1595,11 @@
     },
     {
       "file": "studio/version.json",
-      "hash": "d28084e4bcb6899ca1de7005c94bbe0679792f24"
+      "hash": "35056c2ac118c316946603e2d2431c8213901fc1"
     },
     {
       "file": "sw.ts",
-      "hash": "746f962b000fdd6c9aae19f59ffc0f56bbacc8c6"
+      "hash": "703d8f909fd427105b64252401e928d7c65f54cc"
     },
     {
       "file": "vendor/RoomEnvironment.js",

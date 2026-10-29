@@ -1,5 +1,5 @@
 {
-  "source": "7589469d48c53fc8ec9e84317857b079dad26ea6",
+  "source": "21baacec8cee828dcacabd21fff09dad3b8e01ea",
   "reviewedSource": "7589469d48c53fc8ec9e84317857b079dad26ea6",
   "coverage": {
     "valley": 17,
@@ -8,7 +8,12 @@
     "family": 15,
     "festivals": 24
   },
-  "changed": [],
+  "changed": [
+    "js/build.ts",
+    "js/games/cacuangua.ts",
+    "studio/version.json",
+    "sw.ts"
+  ],
   "coverageChanged": [],
-  "requiresEditorialReview": false
+  "requiresEditorialReview": true
 }
