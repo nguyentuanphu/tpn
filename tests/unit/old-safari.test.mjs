@@ -34,3 +34,11 @@ test('no built-in that Safari 15 lacks, outside a guard (AbortSignal.timeout, to
   }
   assert.deepEqual(bad, []);
 });
+
+test('the too-old note in index.html is written so that iOS 12 can read it, and comes before the game', () => {
+  const html = fs.readFileSync(new URL('index.html', root), 'utf8'), at = html.indexOf('window.svTooOld = true');
+  assert.ok(at > 0 && at < html.indexOf('<script type="module"'), 'the check runs before the game');
+  const script = html.slice(html.lastIndexOf('<script>', at), html.indexOf('</script>', at)).replace(/\/\*[\s\S]*?\*\//g, '');
+  for (const bad of ['=>', 'let ', 'const ', '?.', '??', '`', 'class ']) assert.ok(!script.includes(bad), 'old browsers cannot read ' + bad);
+  assert.ok(/Thiết bị này đã quá cũ/.test(script) && /too old/.test(script), 'both languages');
+});

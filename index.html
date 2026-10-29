@@ -215,6 +215,22 @@
 <button id="songBtn" hidden aria-label="Next song">🎶</button>
 <div id="boot" role="status"><picture><source media="(orientation: landscape)" srcset="icons/launch/valley-landscape.jpg"><img src="icons/launch/valley-portrait.jpg" alt=""></picture><h1>Welcome to Sparkle Valley</h1><p>Opening the game… · Đang mở trò chơi…</p><progress aria-label="Loading · Đang tải"></progress></div>
 <noscript>Please turn on JavaScript to play.</noscript>
+<script>
+/* (owner, 29 Oct 2026 AEDT: a first iPad Air stayed on the loading screen) the game needs iOS or iPadOS 15.4 or a
+   browser as new; an older one (iOS 12 cannot read the game's code at all) gets this note in both languages instead
+   of waiting forever. Written so that a very old browser can read it: no arrow functions, let, const or ?. */
+(function () {
+  var ok = false;
+  try { ok = typeof window.structuredClone === 'function'; } catch (e) { ok = false; }
+  if (ok) return;
+  window.svTooOld = true;
+  var b = document.getElementById('boot'); if (!b) return;
+  var g = b.querySelector('progress'); if (g && g.parentNode) g.parentNode.removeChild(g);
+  b.className = (b.className ? b.className + ' ' : '') + 'too-old';
+  b.querySelector('h1').textContent = 'This device is too old · Thiết bị này đã quá cũ';
+  b.querySelector('p').textContent = 'Sparkle Valley needs iPadOS or iOS 15.4 or newer (iPad Air 2, iPad 5th generation, iPhone 6s or newer; update in Settings, General, Software Update) or a newer browser. · Thung Lũng Lấp Lánh cần iPadOS hoặc iOS 15.4 trở lên (iPad Air 2, iPad đời 5, iPhone 6s hoặc mới hơn; cập nhật trong Cài đặt, Cài đặt chung, Cập nhật phần mềm) hoặc trình duyệt mới hơn.';
+})();
+</script>
 <script type="module" src="js/launch.js"></script>
 </body>
 </html>

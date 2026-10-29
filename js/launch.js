@@ -1,4 +1,6 @@
 // Paint the Welcome shell before importing the world. Keep recovery reachable even if an import fails.
+// (owner, 29 Oct 2026 AEDT) index.html already told a too-old device so (window.svTooOld): nothing more starts here
+if (window.svTooOld) throw new Error('This device is too old for Sparkle Valley');
 const shell = document.getElementById('boot');
 const words = [
   ['Welcome to Sparkle Valley', 'Chào mừng đến Thung Lũng Lấp Lánh'],
