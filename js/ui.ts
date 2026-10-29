@@ -1002,7 +1002,7 @@ export function nextGameAfter(id) {
   return null;
 }
 const HUB_COLORS = ['#ff7eb8', '#ffb52e', '#5fd39a', '#3cc7e8', '#9a6bff', '#ff8a5a'];
-const openGamesHubProperties: { last?: string; scroll?: number; unfolded: Set<string> } = { unfolded: new Set() };
+const openGamesHubProperties: { last?: string; scroll?: number; unfolded: Set<string>; soon?: string } = { unfolded: new Set() };
 export const openGamesHub = Object.assign(function (game, i, onClose) {
   const p = game.heroes[i].profile;
   const m = modal('hub', ''), card = m.querySelector('.card');
@@ -1023,7 +1023,10 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     const open = ids.filter(id => isOpen(p, id, 'game', area)), locked = ids.filter(id => !open.includes(id));
     const held = secondSetOf('game', area).filter(id => GAMES[id] && isHeld(id, 'game')).length, shown = openGamesHub.unfolded.has(area);
     const lockTile = locked.length ? `<div class="hcard hfold" style="--hc:#b9a6e8"><button class="hplay" data-fold="${area}" aria-expanded="${shown}"><span class="hi">${pic('\u{1F512}')}</span><b>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock`, `Còn ${locked.length} trò để mở`)}</b><small>${shown ? '' : T('Play each game above 3 times', 'Chơi mỗi trò ở trên 3 lần')} · ${pic('⭐')} ${progressOf(p, 'game', area).done}/3</small></button></div>` : '';
-    const soonTile = held ? `<div class="hcard hsoon" style="--hc:#9ad0ff"><button class="hplay" data-soon="game"><span class="hi">${pic('\u{1F51C}')}</span><b>${T('Coming soon', 'Sắp ra mắt')}</b><small>${T(`${held} new games`, `${held} trò mới`)}</small></button></div>` : '';
+    // (owner, 30 Oct 2026 AEDT: "it doesn't say how many stars are needed; give a guide so kids understand what they
+    // need") the tile shows how far the child is (each game here won 3 times) and opens the list of those games
+    const prog = progressOf(p, 'game', area), ready = prog.perGame.filter(g => g.n >= 3).length, total = prog.perGame.length, soonOpen = openGamesHub.soon === area;
+    const soonTile = held ? `<div class="hcard hsoon" style="--hc:#9ad0ff"><button class="hplay" data-soon="${area}" aria-expanded="${soonOpen}"><span class="hi">${pic('\u{1F51C}')}</span><b>${T(`${held} new games coming`, `Sắp có ${held} trò mới`)}</b><small>${total ? T(`Win each game 3 times: ${ready}/${total}`, `Thắng mỗi trò 3 lần: ${ready}/${total}`) : T('On their way!', 'Sắp đến rồi!')}</small><span class="hsoonbar" aria-hidden="true"><i style="width:${total ? Math.round(ready / total * 100) : 100}%"></i></span></button></div>${soonOpen && total ? `<div class="hsoonlist"><p>${T('Win each of these games 3 times to open the new games:', 'Thắng mỗi trò này 3 lần để mở trò mới nhé:')}</p>${prog.perGame.map(g => `<div class="hsoonrow${g.n >= 3 ? ' done' : ''}"><span class="hi">${pic(GAMES[g.id]?.icon || '\u{1F3AE}')}</span><b>${esc(GAMES[g.id]?.name() || g.id)}</b><span class="hsoonstars">${[0, 1, 2].map(k => pic(k < g.n ? '\u2B50' : '\u2606')).join('')}</span></div>`).join('')}${ready === total ? `<p class="hsoonok">${T('All done! The new games are on their way.', 'Xong hết rồi! Trò mới đang trên đường đến.')}</p>` : ''}</div>` : ''}` : '';
     return `<div class="hubgrid">${open.map((id, k) => gameCard(id, k, sec.key, true)).join('')}${lockTile}${shown ? locked.map((id, k) => gameCard(id, k + open.length, sec.key, false)).join('') : ''}${soonTile}</div>`;
   };
   const body = key => {
@@ -1051,7 +1054,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     if (game.bindTaleShelf) game.bindTaleShelf(root, () => { openGamesHub.scroll = root.scrollTop; draw(); });
     root.querySelectorAll('[data-songs]').forEach(b => b.onclick = () => { SFX.tap(); close(); game.openSongs(b.dataset.songs); });
     root.querySelectorAll('[data-fold]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.fold; if (openGamesHub.unfolded.has(k)) openGamesHub.unfolded.delete(k); else { openGamesHub.unfolded.add(k); say('Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'); } openGamesHub.scroll = root.scrollTop; draw(); });
-    root.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => { SFX.tap(); say('New games are coming soon!', 'Trò chơi mới sắp ra mắt rồi!'); });
+    root.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.soon; openGamesHub.soon = openGamesHub.soon === k ? '' : k; if (openGamesHub.soon) say('Win each game here 3 times to open the new games!', 'Thắng mỗi trò ở đây 3 lần để mở trò mới nhé!'); openGamesHub.scroll = root.scrollTop; draw(); });
     root.querySelectorAll('[data-play]').forEach(b => b.onclick = () => { const id = b.dataset.play; close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); });
     root.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { close(); game.goToGame(i, b.dataset.go); });
     root.querySelectorAll('[data-how]').forEach(b => b.onclick = () => { const id = b.dataset.how; openHowTo(id, { onPlay: () => { close(); game.playGame(i, id, 'hub'); } }); });

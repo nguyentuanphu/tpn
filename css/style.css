@@ -667,7 +667,11 @@ button { color: var(--text); }
 /* (r90, owner 24 Oct AEDT) the games still to unlock fold into one padlock tile, the ones held in Studio into "Coming soon" */
 .hcard.locked .hplay { opacity: .6; }
 .hcard.hfold .hplay, .hcard.hsoon .hplay { outline: 3px dashed rgba(255, 255, 255, .85); outline-offset: -8px; }
-.hcard.hsoon .hplay { color: #3b2a4f; } .hcard.hsoon .hplay b, .hcard.hfold .hplay b { text-shadow: none; }
+.hcard.hsoon .hplay { color: #3b2a4f; }
+.hsoonbar { display: block; width: 70%; height: 10px; margin: 6px auto 0; border-radius: 6px; background: rgba(255, 255, 255, .7); overflow: hidden; } .hsoonbar i { display: block; height: 100%; background: #ffb020; border-radius: 6px; }
+.hsoonlist { grid-column: 1 / -1; background: #fff; border-radius: 18px; padding: 10px 12px; box-shadow: var(--shadow); color: #3b2a4f; } .hsoonlist p { margin: 4px 0 8px; font-weight: 600; }
+.hsoonrow { display: flex; align-items: center; gap: 10px; min-height: 48px; border-top: 1px solid #eee4f7; } .hsoonrow .hi .art { width: 36px; height: 36px; } .hsoonrow b { flex: 1; }
+.hsoonstars { display: flex; gap: 2px; } .hsoonstars .art { width: 24px; height: 24px; } .hsoonrow.done { background: #f1fbea; border-radius: 10px; } .hsoonok { color: #2f9a5a; } .hcard.hsoon .hplay b, .hcard.hfold .hplay b { text-shadow: none; }
 .talecard.locked { opacity: .6; }
 .talecard.talefold, .talecard.talesoon { background: linear-gradient(160deg, #f1ebff, #ddd0ff); box-shadow: 0 4px 0 #a98ee8; outline: 3px dashed #fff; outline-offset: -7px; }
 .hplay b { font-size: 15px; text-shadow: 0 2px 0 rgba(0, 0, 0, .15); line-height: 1.15; text-align: center; } .hplay small { font-size: 11px; letter-spacing: 1px; }
