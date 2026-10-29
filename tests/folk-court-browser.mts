@@ -5,6 +5,8 @@ import {open,clear,noWelcome} from './harness.mjs';
 const IDS=['meochuot','cuopco','keocua','danhdao','nemcon','duathuyen'];
 export async function folkCourtBrowserCheck(browser:Browser){
  const P=await open(browser,{w:390,h:844,touch:true,lang:'vi',settings:{voice:false,sound:false,music:false,autoPack:false,online:false,countPlayers:false}});await clear(P.page);await noWelcome(P.page);
+ // The play-through fixture earns the original category prerequisites; it does not bypass runtime gates.
+ await P.page.evaluate(async()=>{const U=await import(String('/js/content/unlocks.js'));for(const id of U.FIRST_SET_GAMES.vietnam)window.__sv.heroes[0].profile.wins[id]=3;});
  const close=async()=>{if(await P.page.locator('.gl-win').count())await P.page.locator('.gl-win').waitFor({state:'detached',timeout:10000});if(await P.page.locator('.gl .gl-x').count()){await P.page.locator('.gl .gl-x').click();await P.page.locator('.gl').waitFor({state:'detached'});}await clear(P.page);};
  const start=async(id:string,little:boolean,lang:string)=>{
   await close();await P.page.evaluate(async({id,little,lang})=>{const G=window.__sv as unknown as import('../js/main.js').SvMain,S=await import(String('/js/state.js'));S.settings.lang=lang;G.heroes[0].profile.age=little?'little':'big';void G.playGame(0,id,'replay');},{id,little,lang});

@@ -73,6 +73,13 @@ export async function managementRuntimeBrowserCheck(browser){
    return {parentWins,enabled,expired,queueCleared:['sv2_management_out','sv2_management_bot_out'].every(k=>localStorage.getItem(k)===null),progressPreserved:JSON.stringify(S.profiles)===before,parentChoiceUnchanged:S.settings.countPlayers===true};
   });
   for(const [name,value]of Object.entries(privacy))assert.equal(value,true,name);
+  const blockedOnline=await game.page.evaluate(async()=>{
+   const C=await import('/js/custom.js'),G=window.__sv,before={acts:G.actCount,paused:G.paused,progress:JSON.stringify(G.heroes[0].profile)},old=C.CUSTOM.itemAvailability;
+   C.CUSTOM.itemAvailability={...old,'game:oanquan':false};await G.playGameOnline('oanquan',1,{});C.CUSTOM.itemAvailability=old;
+   return {noAttempt:G.actCount===before.acts,pauseUnchanged:G.paused===before.paused,progressPreserved:JSON.stringify(G.heroes[0].profile)===before.progress,noFrame:!document.querySelector('.gl')};
+  });
+  for(const [name,value]of Object.entries(blockedOnline))assert.equal(value,true,'blocked online '+name);
+
   assert.deepEqual(game.errors,[]);
  }finally{await game.ctx.close();}
  const offRequests=[],offPolicy={schemaVersion:1,collect:false,process:false,show:true,expiresAt:null};

@@ -1127,8 +1127,9 @@ G.playGameOnline = async (id, level, online) => {
   if(id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi'))return;
   if(id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi'))return;
   if (id === 'fruitparade' && !fruitParadeModeOn('multi')) return;
+  const p = G.heroes[0]?.profile; if(!p || !canStartGame(id,[p])) return;
   if (gameOpen()) return; G.paused = true; hush();
-  const p = G.heroes[0].profile, little = p.age !== 'big';
+  const little = p.age !== 'big';
   const actId = makeId('act', id, String(++G.actCount)), playerIds = online.names.map((_, s) => s === online.mine ? makeId('player', p.id || 'guest') : makeId('player', 'online-' + s));
   events.emit('ActivityStarted', { activityId: actId, kind: 'game', defId: makeId('game', id), players: playerIds, source: 'online' });
   const res = await openGame(id, { players: [p], level, little, strong: false, online, style: 'village' });

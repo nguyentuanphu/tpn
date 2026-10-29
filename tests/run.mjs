@@ -5087,9 +5087,16 @@ await check('netgames', async () => {
   await B.page.waitForFunction(() => Object.keys(__sv.partners).length > 0, null, { timeout: 45000 });
   await A.page.waitForFunction(() => Object.keys(__Net.remotes).length > 0, null, { timeout: 30000 });
   for (const P of [A, B]) await P.page.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; });
+  const waitInvitation=async stage=>{
+    try{await B.page.waitForSelector('.dialog .dch',{timeout:20000});}
+    catch(error){
+      const peers=await Promise.all([A,B].map(async P=>P.page.evaluate(async()=>({session:__sv.netGames.session?{game:__sv.netGames.session.game,mine:__sv.netGames.session.mine,seats:__sv.netGames.session.seats.length}:null,frameOpen:(await import('/js/games/frame.js')).gameOpen(),visibleFrame:!!document.querySelector('.gl'),dialogs:document.querySelectorAll('.dialog').length,remotes:Object.keys(__Net.remotes).length,room:!!__Net.room}))));
+      throw Error(stage+' invitation was not visible: '+JSON.stringify(peers)+'; '+error.message);
+    }
+  };
   // Caro: A asks from the Friends tab, B says yes
   await A.page.evaluate(async () => { __sv.openPad(0, 'friend'); await new Promise(r => setTimeout(r, 500)); document.querySelector('[data-caro]').click(); await new Promise(r => setTimeout(r, 400)); document.querySelector('.gamelevel [data-size="3"]').click(); document.querySelector('.gamelevel [data-lvl="1"]').click(); });
-  await B.page.waitForSelector('.dialog .dch', { timeout: 20000 }); const ask = await B.page.evaluate(() => document.querySelector('.dialog .dtext').textContent); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
+  await waitInvitation('Caro'); const ask = await B.page.evaluate(() => document.querySelector('.dialog .dtext').textContent); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
   for (const P of [A, B]) { await P.page.waitForSelector('.gl .caro', { timeout: 20000 }); ok(await P.page.locator('.caro-c').count() === 9, 'Selected 3 × 3 board must reach both players'); }
   // (a placed piece is marked .put: its emoji is swapped for a drawing, so the text is empty)
   const tap = async (P, i) => { await P.page.waitForFunction(i => { const c = document.querySelectorAll('.caro-c')[i]; return c && !c.classList.contains('put'); }, i); await P.page.evaluate(i => document.querySelectorAll('.caro-c')[i].click(), i); };
@@ -5102,10 +5109,17 @@ await check('netgames', async () => {
   for (const P of [A, B]) await P.page.waitForSelector('.gl-win', { timeout: 20000 });
   const caro = { a: await A.page.evaluate(() => document.querySelector('.gl-win p').textContent), b: await B.page.evaluate(() => document.querySelector('.gl-win p').textContent), wonCells: await B.page.evaluate(() => document.querySelectorAll('.caro-c.win').length) };
   ok(/Host Demo/.test(caro.a) && /Host Demo/.test(caro.b), 'Same assigned player must win on both boards: '+JSON.stringify(caro));
-  for (const P of [A, B]) { await P.page.evaluate(() => document.querySelector('.gl-tapout')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))); await P.page.waitForTimeout(800); await P.page.evaluate(() => { document.querySelectorAll('.gl, .modal').forEach(m => m.remove()); __sv.paused = false; }); }
+  // The celebration installs its outside-tap listener after400ms. Do not remove its DOM
+  // before the real frame/session resolves, or the next invitation can be rejected as busy.
+  for (const P of [A, B]) {
+    await P.page.waitForTimeout(500);
+    await P.page.evaluate(() => document.querySelector('.gl-tapout')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })));
+    await P.page.waitForFunction(async()=>!(await import('/js/games/frame.js')).gameOpen()&&!__sv.netGames.session,null,{timeout:10000});
+    await clear(P.page);
+  }
   // Oẳn tù tì with everyone: A rock, B scissors, three times
   await A.page.evaluate(async () => { __sv.openPad(0, 'friend'); await new Promise(r => setTimeout(r, 500)); document.querySelector('[data-rpsall]').click(); await new Promise(r => setTimeout(r, 400)); document.querySelector('.gamelevel [data-lvl="1"]')?.click(); });
-  await B.page.waitForSelector('.dialog .dch', { timeout: 20000 }); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
+  await waitInvitation('Oan tu ti'); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
   for (const P of [A, B]) await P.page.waitForSelector('.gl .rps-room', { timeout: 20000 });
   let hands = null;
   for (let round = 0; round < 3; round++) {
