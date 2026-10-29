@@ -1,3 +1,4 @@
+import {controlRecoveryBrowserCheck} from './control-recovery-browser.mjs';
 // Actual signed-in Studio + real routes, synthetic stores/providers only.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -63,6 +64,7 @@ export async function ownerDeskBrowserCheck(browser){
    await page.locator('[data-item-publish]').click();await page.waitForFunction(()=>/Published and available|Đã xuất bản và cung cấp/.test(document.querySelector('[data-item-result]')?.textContent||''));
    projectedOff=await (await ctx.request.get(site+'/api/live')).json();assert.equal(projectedOff.content.itemAvailability['game:oanquan'],false);
    await page.locator('[data-item-reload]').click();await page.waitForSelector('[data-item-editor]');assert.equal(await page.locator('[name=itemEnabled]').inputValue(),'false');
+   if(width===390){await page.locator('[data-item-history]').click();await page.waitForSelector('[data-chart=G17]');assert.match(page.url(),/work\/managementchanges/);await save('item-delivery');await page.goBack();await page.waitForSelector('[data-item-editor]');}
    await area(page,'game');await page.locator('[data-desk-discovery]').selectOption('declared-only');await page.locator('[data-desk-search]').fill('aodai');
    const declared=page.locator('.desk-catalogue [data-desk-route="managementactivity:game:aodai"]');assert.equal(await declared.isVisible(),true);
    assert.match(await declared.innerText(),lang==='vi'?/Chỉ mới khai báo/:/Declared only/);assert.ok(await page.locator('.desk-catalogue [data-catalogue-state=declared-only]:visible').count()>0);assert.equal(await page.locator('.desk-catalogue [data-catalogue-state=catalogued]:visible').count(),0);await declared.click();
@@ -91,9 +93,11 @@ export async function ownerDeskBrowserCheck(browser){
    const overview=await (await ctx.request.get(site+'/studio/api/management/overview')).json();assert.equal(overview.optionalReporting.process,false);assert.equal(overview.optionalReporting.show,false);assert.equal('telemetry' in overview,false);
    const event={schemaVersion:1,eventId:crypto.randomUUID(),attemptId:crypto.randomUUID(),deviceId:device,sessionId:'demo123456789012',eventName:'boot.started',occurredAt:new Date().toISOString(),deviceDay:today,offsetMinutes:660,build:'v1.02',sourceCommit:null,environment:'local',traffic:'synthetic_bot',data:{stage:'boot'}};
    assert.equal((await ctx.request.post(site+'/api/management/events',{data:{schemaVersion:1,events:[event]}})).status(),410,'server rejects stale clients after collection Off');
+   if(width===390){await page.locator('[data-functions-history]').click();await page.waitForSelector('[data-chart=G17]');assert.match(page.url(),/work\/managementchanges/);await save('function-delivery');}
    await page.locator('#tabs [data-k=home]').click();await page.waitForSelector('.desk-home-summary');await page.waitForSelector('[data-home-functions]');assert.match(await page.locator('[data-home-functions]').innerText(),lang==='vi'?/Thu thập tắt/:/Collect off/);
    await ctx.close();
   }
+  const controlRecoveryEvidence=await controlRecoveryBrowserCheck(browser,site,output);
   // A summary-only account sees no names, private device API, Money or finance request.
   const owner=await browser.newContext();assert.equal((await owner.request.post(site+'/studio/api/login',{data:{password}})).status(),200);
   assert.equal((await owner.request.post(site+'/studio/api/admins/save',{headers:{'X-Studio':'1'},data:{name:'summary-fixture',password:'synthetic-summary-password',role:'custom',perms:['management.read']}})).status(),200);assert.equal((await owner.request.post(site+'/studio/api/admins/twostep',{headers:{'X-Studio':'1'},data:{name:'summary-fixture',on:false}})).status(),200);await owner.close();
@@ -112,8 +116,8 @@ export async function ownerDeskBrowserCheck(browser){
   await missing.close();
   const itemControlEvidence=await itemControlRuntimeCheck(browser,projectedOff);
   assert.deepEqual(errors,[]);
-  const sources=['studio/ui/functions.ts','netlify/lib/management/functions.mts','js/core/reporting-policy.ts','js/management-telemetry.ts','js/players.ts','studio/ui/item-workspace.ts','netlify/lib/management/items.mts','js/custom.ts','js/games/frame.ts','js/tales.ts','studio/ui/app.ts','studio/ui/owner-desk.ts','studio/ui/owner-desk.css','studio/ui/brand.ts','studio/ui/desk-charts.ts','studio/ui/management.ts','netlify/lib/management/read.mts','studio/ui/index.html','studio/ui/finance.ts','netlify/lib/management/http.mts','netlify/lib/management/transactional/service.mts','css/style.css','css/fonts.css','js/art.ts','js/icons.js'];
-  fs.writeFileSync(path.resolve(output,'../browser-validation.json'),JSON.stringify({passed:true,itemControlEvidence,scope:'Actual Studio UI and authenticated routes, synthetic in-memory data only; browser emulation, not physical devices/live Netlify',captures,errors,sourceHashes:Object.fromEntries(sources.map(file=>[file,createHash('sha256').update(fs.readFileSync('../'+file)).digest('hex')]))},null,2)+'\n');
-  return 'Owner’s Desk: 5 areas, shared game palette/art, 54 EN/VI captures at 3 sizes; function policy save/review/publication and server shutoff; item proposal save/resume/review/publish and actual game/story boundary checks, real device/problem links, restored filter, kind:id navigation and summary-only privacy';
+  const sources=['studio/ui/control-feedback.ts','studio/ui/functions.ts','netlify/lib/management/functions.mts','js/core/reporting-policy.ts','js/management-telemetry.ts','js/players.ts','studio/ui/item-workspace.ts','netlify/lib/management/items.mts','js/custom.ts','js/games/frame.ts','js/tales.ts','studio/ui/app.ts','studio/ui/owner-desk.ts','studio/ui/owner-desk.css','studio/ui/brand.ts','studio/ui/desk-charts.ts','studio/ui/management.ts','netlify/lib/management/read.mts','studio/ui/index.html','studio/ui/finance.ts','netlify/lib/management/http.mts','netlify/lib/management/transactional/service.mts','css/style.css','css/fonts.css','js/art.ts','js/icons.js'];
+  fs.writeFileSync(path.resolve(output,'../browser-validation.json'),JSON.stringify({passed:true,controlRecoveryScope:'Actual editor source in an isolated document with injected failure responses; authenticated publication/delivery navigation checked separately',controlRecoveryEvidence,itemControlEvidence,scope:'Actual Studio UI and authenticated routes, synthetic in-memory data only; browser emulation, not physical devices/live Netlify',captures,errors,sourceHashes:Object.fromEntries(sources.map(file=>[file,createHash('sha256').update(fs.readFileSync('../'+file)).digest('hex')]))},null,2)+'\n');
+  return 'Owner’s Desk: 5 areas, shared game palette/art, 58 EN/VI captures at 3 sizes; function policy save/review/publication and server shutoff; item proposal save/resume/review/publish and actual game/story boundary checks, real device/problem links, restored filter, kind:id navigation and summary-only privacy';
  }finally{undo();await new Promise(r=>server.close(r));}
 }
