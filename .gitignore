@@ -233,6 +233,7 @@ marketing/source/runvalley.log
 /js/website.js
 /js/world.js
 /js/worldedit.js
+/js/yard.js
 /studio/ui/app.js
 /studio/ui/brand.js
 /studio/ui/control-feedback.js
@@ -390,3 +391,4 @@ js/voice-fragments.js
 /temp/hanoi-delivery-cache/
 /temp/hanoi-delivery-stage-*/
 /temp/hanoi-originals-*/
+/js/yard.js
