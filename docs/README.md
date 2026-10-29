@@ -1,5 +1,7 @@
 # Docs: start here
 
+[Current Studio item workspaces and two-chat plan](studio-item-workspaces-20261029/README.md): actual checkpoint, file ownership and copyable second-chat prompt.
+
 [Latest Studio private drafts](studio-drafts-20261029/README.md): actual save/review/publish workflow, schema/API contract, validation, screenshots and remaining work.
 
 [Latest Studio control continuation](studio-control-continuation-20261029/README.md): explicit Off behaviour, declared-only content, actual switch evidence, current CI and next implementation steps.
