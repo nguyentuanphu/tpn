@@ -1,6 +1,6 @@
 # Parent settings and child play reports
 
-Source: b241286aa3b4c75247a65b900556643e3ddfc329. Editorial update 26 October 2026 AEDT; source/capture review recorded separately. Existing game controls, not a new statistics backend.
+Source: 1d50a88b0c344edb4e30c7ee9305f4406af34061. Editorial update 26 October 2026 AEDT; source/capture review recorded separately. Existing game controls, not a new statistics backend.
 
 ## Reach the report
 

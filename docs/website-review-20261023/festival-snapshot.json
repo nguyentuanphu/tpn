@@ -1,5 +1,5 @@
 {
-  "source": "b241286aa3b4c75247a65b900556643e3ddfc329",
+  "source": "1d50a88b0c344edb4e30c7ee9305f4406af34061",
   "festivals": [
     {
       "id": "tet",
@@ -2497,6 +2497,204 @@
         "Vẽ Lại Tranh"
       ],
       "icon": "🖼️",
+      "origin": null
+    },
+    {
+      "id": "stamps",
+      "name": [
+        "Potato Stamps",
+        "In Hình"
+      ],
+      "icon": "🥔",
+      "origin": null
+    },
+    {
+      "id": "weave",
+      "name": [
+        "Weave a Mat",
+        "Đan Chiếu"
+      ],
+      "icon": "🌾",
+      "origin": null
+    },
+    {
+      "id": "mosaic",
+      "name": [
+        "Bát Tràng Tiles",
+        "Ghép Gốm Bát Tràng"
+      ],
+      "icon": "🏺",
+      "origin": null
+    },
+    {
+      "id": "nonla",
+      "name": [
+        "Paint a Nón Lá",
+        "Vẽ Nón Lá"
+      ],
+      "icon": "👒",
+      "origin": null
+    },
+    {
+      "id": "aodai",
+      "name": [
+        "Áo Dài Designer",
+        "Thiết Kế Áo Dài"
+      ],
+      "icon": "🥻",
+      "origin": null
+    },
+    {
+      "id": "kitepaint",
+      "name": [
+        "Design a Kite",
+        "Trang Trí Diều"
+      ],
+      "icon": "🪁",
+      "origin": null
+    },
+    {
+      "id": "shades",
+      "name": [
+        "Light and Dark Colours",
+        "Màu Đậm Màu Nhạt"
+      ],
+      "icon": "🎨",
+      "origin": null
+    },
+    {
+      "id": "shadowpic",
+      "name": [
+        "Light and Shadow",
+        "Bóng và Hình"
+      ],
+      "icon": "👥",
+      "origin": null
+    },
+    {
+      "id": "finishpic",
+      "name": [
+        "Finish the Picture",
+        "Vẽ Nốt Bức Tranh"
+      ],
+      "icon": "✏️",
+      "origin": null
+    },
+    {
+      "id": "scene",
+      "name": [
+        "Sticker Scene",
+        "Dán Tranh Cảnh"
+      ],
+      "icon": "🏞️",
+      "origin": null
+    },
+    {
+      "id": "lacquer",
+      "name": [
+        "Lacquer Painting",
+        "Tranh Sơn Mài"
+      ],
+      "icon": "🖼️",
+      "origin": null
+    },
+    {
+      "id": "scratch",
+      "name": [
+        "Scratch Art",
+        "Tranh Cào"
+      ],
+      "icon": "✨",
+      "origin": null
+    },
+    {
+      "id": "bubblepaint",
+      "name": [
+        "Bubble Paint",
+        "Vẽ Bong Bóng"
+      ],
+      "icon": "🫧",
+      "origin": null
+    },
+    {
+      "id": "fingerpaint",
+      "name": [
+        "Finger Painting",
+        "Vẽ Bằng Ngón Tay"
+      ],
+      "icon": "🖐️",
+      "origin": null
+    },
+    {
+      "id": "weatherpaint",
+      "name": [
+        "Colour the Weather",
+        "Tô Màu Thời Tiết"
+      ],
+      "icon": "🌦️",
+      "origin": null
+    },
+    {
+      "id": "thocam",
+      "name": [
+        "Brocade Patterns",
+        "Hoa Văn Thổ Cẩm"
+      ],
+      "icon": "🧶",
+      "origin": null
+    },
+    {
+      "id": "pixelpic",
+      "name": [
+        "Pixel Picture",
+        "Tranh Ô Vuông"
+      ],
+      "icon": "👾",
+      "origin": null
+    },
+    {
+      "id": "fireworks",
+      "name": [
+        "Fireworks Painter",
+        "Vẽ Pháo Hoa"
+      ],
+      "icon": "🎆",
+      "origin": null
+    },
+    {
+      "id": "masks",
+      "name": [
+        "Mid-Autumn Masks",
+        "Làm Mặt Nạ Trung Thu"
+      ],
+      "icon": "🎭",
+      "origin": null
+    },
+    {
+      "id": "makeface",
+      "name": [
+        "Make a Face",
+        "Ghép Khuôn Mặt"
+      ],
+      "icon": "😀",
+      "origin": null
+    },
+    {
+      "id": "gallery",
+      "name": [
+        "My Little Gallery",
+        "Phòng Tranh Của Em"
+      ],
+      "icon": "🖼️",
+      "origin": null
+    },
+    {
+      "id": "leafrub",
+      "name": [
+        "Leaf Rubbings",
+        "In Lá"
+      ],
+      "icon": "🍃",
       "origin": null
     }
   ],
