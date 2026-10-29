@@ -25,3 +25,12 @@ test('the caption still splits a long line after each sentence, as it did with l
   for (const t of ['One. Two! Three? Four… Five。 Six', 'No stop here', 'Mr. Bear  went home.  Then slept'])
     assert.deepEqual(split(t), t.split(/(?<=[.!?。…])\s+/), t);
 });
+
+test('no built-in that Safari 15 lacks, outside a guard (AbortSignal.timeout, toSorted, Object.groupBy, withResolvers)', () => {
+  const bad = [];
+  for (const f of shipped) {
+    const text = fs.readFileSync(new URL(f, root), 'utf8');
+    text.split('\n').forEach((line, i) => { if (/AbortSignal\.timeout\(|\.toSorted\(|\.toReversed\(|\.toSpliced\(|Object\.groupBy\(|Map\.groupBy\(|Promise\.withResolvers\(|Array\.fromAsync\(/.test(line)) bad.push(`${f}:${i + 1}`); });
+  }
+  assert.deepEqual(bad, []);
+});

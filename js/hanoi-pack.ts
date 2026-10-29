@@ -1,6 +1,8 @@
 /** Optional, pre-recorded public speech. This service never sends text to a speech provider. */
 export const HANOI_ROOT='/voices/fpt-leminh-v1/';
 export const HANOI_CACHE='sv-voices-fpt-leminh-v1';
+// (owner, 29 Oct 2026 AEDT) AbortSignal.timeout is missing before Safari 16 (an iPad Air 2): a signal that aborts after ms
+const timeoutSignal=(ms:number):AbortSignal=>{const c=new AbortController();setTimeout(()=>c.abort(),ms);return c.signal;};
 export type HanoiManifest={schema:1;provider:'FPT Neo';model:'FPT.AI-VITs';voice:'leminh';language:'vi';signature:string;bytes:number;lines:Record<string,{bytes:number;sha256:string}>};
 export type HanoiProgress={state:'loading'|'ready'|'waiting'|'nostore';done:number;total:number;bytes:number;provider:'Lê Minh';known?:boolean};
 const valid=(m:HanoiManifest)=>m?.schema===1&&m.provider==='FPT Neo'&&m.model==='FPT.AI-VITs'&&m.voice==='leminh'&&m.language==='vi'&&!!m.lines&&Object.entries(m.lines).every(([id,l])=>/^[a-f0-9-]{8,40}$/.test(id)&&l.bytes>0&&/^[a-f0-9]{64}$/.test(l.sha256));
@@ -10,7 +12,7 @@ export function createHanoiPack({fetcher=fetch,storage=globalThis.caches,allowed
  const load=():Promise<HanoiManifest|null>=>{
   if(manifest)return Promise.resolve(manifest);if(loading)return loading;
   loading=(async()=>{let cache:Cache|undefined;try{cache=await storage?.open(HANOI_CACHE);}catch{}
-   try{const r=await fetcher(HANOI_ROOT+'manifest.json',{cache:'no-store',signal:AbortSignal.timeout(8000)});if(r.ok){const m=await r.clone().json();if(valid(m)){
+   try{const r=await fetcher(HANOI_ROOT+'manifest.json',{cache:'no-store',signal:timeoutSignal(8000)});if(r.ok){const m=await r.clone().json();if(valid(m)){
     try{const old=await cache?.match(HANOI_ROOT+'manifest.json'),prior=old&&await old.clone().json();if(valid(prior)&&prior.signature!==m.signature){previous=prior;await cache?.put(HANOI_ROOT+'previous-manifest.json',old!);}
      else{const kept=await(await cache?.match(HANOI_ROOT+'previous-manifest.json'))?.json();if(valid(kept))previous=kept;}}catch{}
     manifest=m;try{await cache?.put(HANOI_ROOT+'manifest.json',r);}catch{}return m;}}}catch{}
@@ -25,7 +27,7 @@ export function createHanoiPack({fetcher=fetch,storage=globalThis.caches,allowed
   let cache:Cache|undefined;try{cache=await storage?.open(HANOI_CACHE);const saved=await cache?.match(u);if(saved)return saved;}catch{}
   // Preserve verified old offline speech until its smaller replacement is safely cached.
   const legacy=async()=>{if(signal?.aborted)return null;if(!previous?.lines[id]||previous.lines[id].sha256===m.lines[id].sha256)return null;try{const r=await cache?.match(url(previous,id));if(!r)return null;const b=await r.clone().arrayBuffer(),hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',b))].map(x=>x.toString(16).padStart(2,'0')).join('');return b.byteLength===previous.lines[id].bytes&&hash===previous.lines[id].sha256?r:null;}catch{return null;}};
-  try{const r=await fetcher(u,{signal:signal||AbortSignal.timeout(15000)});if(!r.ok)return legacy();
+  try{const r=await fetcher(u,{signal:signal||timeoutSignal(15000)});if(!r.ok)return legacy();
    const data=await r.clone().arrayBuffer();if(data.byteLength!==m.lines[id].bytes)return legacy();
    const digest=[...new Uint8Array(await crypto.subtle.digest('SHA-256',data))].map(b=>b.toString(16).padStart(2,'0')).join('');
    if(digest!==m.lines[id].sha256)return legacy();try{await cache?.put(u,r.clone());if(cache&&previous?.lines[id]&&url(previous,id)!==u)await cache.delete(url(previous,id));}catch{storageFailed=true;}return r;
