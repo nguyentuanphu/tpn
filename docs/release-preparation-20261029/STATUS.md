@@ -1,3 +1,5 @@
+> **Retrieval correction:** this checkpoint is uploaded on `handover/release-local-20261029`, not the current shared work branch. Source/evidence checkpoint: `07967f1ba7e0f326c75170ab1ab41735037e73af`. During the required pull, the shared `work/voice-bitrate-32k` branch had advanced to `7a0b19110` with another chat's game, voice and recovery work. The attempted merge produced conflicts in runtime and generated website files, so it was aborted; no force push or overwrite was performed. Fetch this handover branch and review/cherry-pick or merge deliberately into the current release work. Do not blindly replace newer game logic, recordings, version decisions or recovery code with this older checkpoint. Instructions below describe this checkpoint's original state and need reconciliation with the newer shared branch.
+
 # Unversioned release preparation · 29 October 2026 AEDT
 
 Branch `work/voice-bitrate-32k`, draft PR #649. Live remains **v1.02**. Owner explicitly chose **Keep preparing without a version** again. No new number, merge or deployment is authorised. ZIP waived; Studio online only.
