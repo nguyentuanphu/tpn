@@ -309,6 +309,48 @@
       "text": "Chà sáp màu lên lá để hiện đường gân lá kỳ diệu nhé!",
       "hash": "a42ffb3e-3825db36",
       "recorded": true
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "en",
+      "text": "Choose a colour for your picture.",
+      "hash": "5dcf34d2-1b7daef6",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "vi",
+      "text": "Chọn màu cho bức tranh của con.",
+      "hash": "0c4c3186-5a328fa2",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "en",
+      "text": "Paint with your finger or mouse. With a keyboard, use arrows and Space.",
+      "hash": "7e6ee594181044bd",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "vi",
+      "text": "Vẽ bằng ngón tay hoặc chuột. Với bàn phím, dùng mũi tên và phím cách.",
+      "hash": "05ad9ea9-1923b72b",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "en",
+      "text": "Make twelve marks, then choose Keep in Album. Leaving early does not save a picture.",
+      "hash": "a9f277cf4365f54f",
+      "recorded": false
+    },
+    {
+      "id": "shared-art-howto",
+      "lang": "vi",
+      "text": "Tô mười hai nét rồi chọn Lưu vào Album. Thoát sớm không lưu tranh.",
+      "hash": "5d0348da57d3e15c",
+      "recorded": false
     }
   ]
 }

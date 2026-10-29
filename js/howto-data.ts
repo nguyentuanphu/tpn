@@ -233,3 +233,10 @@ const DEFAULTS: Record<string, HowToGuide> = {
   barter: { steps: [S('🐔 🥚', 'A friend has something to swap.', 'Một bạn có đồ muốn đổi.'), S('👆 🌽', 'Give what they ask for, or things worth the same number of dots.', 'Đưa thứ bạn ấy muốn, hoặc những thứ có số chấm bằng nhau.'), S('⚖️ 🤝', 'A fair trade makes everyone happy!', 'Đổi công bằng thì ai cũng vui!')] }
 };
 for (const [id, guide] of Object.entries(DEFAULTS)) if (!HOWTO[id]) HOWTO[id] = guide;
+
+// Second-set art: the same real input and Save action as the canvas, not puzzle rules.
+for (const id of ["stamps", "weave", "mosaic", "nonla", "aodai", "kitepaint", "shades", "shadowpic", "finishpic", "scene", "lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"]) HOWTO[id] = { steps: [
+  S('🎨', 'Choose a colour for your picture.', 'Chọn màu cho bức tranh của con.'),
+  S('✏️', 'Paint with your finger or mouse. With a keyboard, use arrows and Space.', 'Vẽ bằng ngón tay hoặc chuột. Với bàn phím, dùng mũi tên và phím cách.'),
+  S('✅', 'Make twelve marks, then choose Keep in Album. Leaving early does not save a picture.', 'Tô mười hai nét rồi chọn Lưu vào Album. Thoát sớm không lưu tranh.')
+] };

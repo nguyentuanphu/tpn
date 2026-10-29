@@ -108,9 +108,9 @@ export async function runArtPad(api: any, options: {
   api.plan(() => {
     if (closed) return null;
     if (!done.disabled) return done;
-    const b = el('button', '', T('Paint', 'Tô'));
-    b.onclick = () => { for (let i = 0; i < 12; i++) mark(w * (.15 + i * .06), h * (.4 + .1 * (i % 2)), i > 0); };
-    return b;
+    const rect = canvas.getBoundingClientRect();
+    const path = Array.from({length:14}, (_, i) => ({x:rect.left + rect.width * (.15 + i * .045), y:rect.top + rect.height * (.4 + .1 * (i % 2))}));
+    return {el:canvas, x:path[0].x, y:path[0].y, ms:700, path};
   }, {maxActions:3});
   const saved = await Promise.race([new Promise<boolean>(resolve => { done.onclick = () => { if (!done.disabled) resolve(true); }; }), stopped]);
   if (!saved || closed || api.closed) return;

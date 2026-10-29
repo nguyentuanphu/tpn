@@ -31,6 +31,7 @@ export async function contentArtCheck(browser){
     await page.waitForFunction(()=>document.querySelectorAll('.artpad-row button').length===7);
     const canvas=page.locator('.artpad canvas');
     if(w===1440){await canvas.focus();for(let i=0;i<12;i++){await page.keyboard.press('ArrowRight');await page.keyboard.press('Space');}}
+    else if(little&&w===820){const box=await canvas.boundingBox();for(let i=0;i<12;i++)await page.touchscreen.tap(box.x+20+i*6,box.y+40+i%3*12);}
     else {const box=await canvas.boundingBox();await page.mouse.move(box.x+20,box.y+30);await page.mouse.down();for(let i=0;i<14;i++)await page.mouse.move(box.x+25+i*6,box.y+40+i%3*12);await page.mouse.up();}
     const save=page.locator('.artpad-row button').last();assert.equal(await save.isEnabled(),true,id+' save');
     const layout=await page.evaluate(()=>{const r=document.querySelector('.artpad canvas').getBoundingClientRect();return {fits:r.left>=0&&r.right<=innerWidth,min:Math.min(...[...document.querySelectorAll('.artpad button')].map(b=>b.getBoundingClientRect().height))};});assert.equal(layout.fits,true,id+' fits');assert.ok(layout.min>=(little?64:44),id+' targets');
@@ -39,7 +40,7 @@ export async function contentArtCheck(browser){
     const after=await page.evaluate(async()=>({result:await artResult,album:artProfile.album.length,png:artProfile.album.at(-1).startsWith('data:image/png;base64,'),wins:JSON.stringify(artProfile.wins)}));
     assert.equal(after.result.won,true,id+' complete');assert.equal(after.album,Math.min(12,before.album+1));assert.equal(after.png,true);assert.equal(after.wins,before.wins,'caller progress');
     await page.evaluate(id=>{window.artResult=artFrame.openGame(id,{players:[artProfile]});},id);await page.locator('.gl-x').click();assert.equal((await page.evaluate(()=>artResult)).won,false);await page.waitForSelector('.artpad',{state:'detached'});assert.equal(await page.locator('.artpad').count(),0);
-    results.push({id,lang,width:w,little,gates,won:true,album:after.album,earlyExit:true,input:w===1440?'keyboard':'pointer'});
+    results.push({id,lang,width:w,little,gates,won:true,album:after.album,earlyExit:true,input:w===1440?'keyboard':little&&w===820?'touch':'pointer'});
    }
    assert.deepEqual(await page.evaluate(()=>['spotdiff','hiddenpic','paperfold','rongran'].filter(id=>artFrame.GAMES[id])),[]);assert.deepEqual(errors,[]);
   }catch(error){await page.screenshot({path:folder+'/screenshots/failed-art.png'});fs.writeFileSync(folder+'/failed-art.txt',String(error)+'\n'+errors.join('\n')+'\n'+await page.locator('body').innerText());throw error;}finally{await context.close();}
