@@ -1,0 +1,74 @@
+[
+  {
+    "width": 390,
+    "height": 844,
+    "lang": "en",
+    "fourDestinations": true,
+    "artItems": 22,
+    "deepLink": true,
+    "noOverflow": true
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "lang": "vi",
+    "fourDestinations": true,
+    "artItems": 22,
+    "deepLink": true,
+    "noOverflow": true
+  },
+  {
+    "width": 820,
+    "height": 1180,
+    "lang": "en",
+    "fourDestinations": true,
+    "artItems": 22,
+    "deepLink": true,
+    "noOverflow": true
+  },
+  {
+    "width": 820,
+    "height": 1180,
+    "lang": "vi",
+    "fourDestinations": true,
+    "artItems": 22,
+    "deepLink": true,
+    "noOverflow": true
+  },
+  {
+    "width": 1440,
+    "height": 900,
+    "lang": "en",
+    "fourDestinations": true,
+    "artItems": 22,
+    "deepLink": true,
+    "noOverflow": true
+  },
+  {
+    "width": 1440,
+    "height": 900,
+    "lang": "vi",
+    "fourDestinations": true,
+    "artItems": 22,
+    "deepLink": true,
+    "noOverflow": true
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "lang": "en",
+    "fourDestinations": true,
+    "artItems": 22,
+    "deepLink": true,
+    "noOverflow": true
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "lang": "vi",
+    "fourDestinations": true,
+    "artItems": 22,
+    "deepLink": true,
+    "noOverflow": true
+  }
+]

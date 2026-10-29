@@ -1,0 +1,11 @@
+{
+  "zip": "sparkle-valley-netlify.zip",
+  "bytes": 736576834,
+  "required": [
+    "js/games/drawing2.js",
+    "js/games/crafts.js",
+    "js/games/art-pad.js",
+    "home/index.html"
+  ],
+  "allPresent": true
+}

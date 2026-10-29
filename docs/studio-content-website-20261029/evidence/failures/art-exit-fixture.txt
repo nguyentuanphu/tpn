@@ -1,0 +1,21 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+1 !== 0
+
+
+✕
+Potato Stamps
+⭐ 0
+📺
+Choose a colour, then tap to stamp circles!
+Red
+Yellow
+Green
+Blue
+Purple
+Pink
+
+Paint with your finger or mouse. Keyboard: arrows move, Space paints. Make 12 marks, then keep your picture. Your album keeps the latest 12 pictures.
+
+ Keep in Album
+🦉
