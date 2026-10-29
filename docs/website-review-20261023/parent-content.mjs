@@ -820,3 +820,9 @@ export const gameGuides = [
     ]
   }
 ];
+
+// Availability is separate from the static guide, individual saves and Simple-screen listings.
+faq.push([
+  ['Why can an activity in the guide be unavailable in our game?', 'Vì sao hoạt động trong hướng dẫn lại chưa mở trong trò chơi?'],
+  ['A game or story can be held for a later collection, need earlier activities finished three times, or be switched off individually. Turning an item on does not skip a held collection or progress requirements. Hide removes a game from the Simple screen only. An individual Off setting stops new entries after the device receives it; an activity already running can finish. Offline devices keep their last fetched settings. These guides describe the released source and do not confirm availability on your device. Closing an activity does not erase earlier progress.', 'Trò chơi hoặc truyện có thể được giữ cho đợt sau, cần hoàn thành các hoạt động trước đó ba lần, hoặc bị tắt riêng. Bật một mục không bỏ qua đợt đang giữ hay điều kiện tiến độ. Ẩn chỉ bỏ trò khỏi màn hình Đơn giản. Tắt riêng chặn lần mở mới sau khi thiết bị nhận cài đặt; hoạt động đang chơi vẫn có thể hoàn thành. Thiết bị ngoại tuyến giữ cài đặt tải lần cuối. Hướng dẫn mô tả mã nguồn đã phát hành, không xác nhận tình trạng mở trên thiết bị. Đóng hoạt động không xóa tiến độ đã có.']
+]);

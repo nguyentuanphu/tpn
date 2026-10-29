@@ -1,3 +1,6 @@
+import { contentProgressCheck } from './content-progress-browser.mjs';
+import { contentWebsiteCheck, contentVoiceCheck } from './content-website-browser.mjs';
+import { contentArtCheck, contentPairCheck, contentCaptureCheck } from './content-art-browser.mjs';
 import { installReportInputProbe, readReportInputProbe } from './report-input-probe.mts';
 import { waitObserved } from './wait-observed.mts';
 import { adventureWalkSnapshot, adventureDaySnapshot, seedAdventureWalk } from './adventure-snapshot.mts';
@@ -98,6 +101,18 @@ async function serveFolder(root, { gzip = false } = {}) {
   return Object.assign(S, { url: `http://127.0.0.2:${srv.address().port}/`, close: () => { srv.closeAllConnections(); srv.close(); } });
 }
 let b = await launch();
+
+await check('contentcaptures', async () => contentCaptureCheck(b));
+
+await check('contentpair', async () => contentPairCheck(b));
+
+await check('contentvoice', async () => contentVoiceCheck(b));
+
+await check('contentprogress', async () => contentProgressCheck(b));
+
+await check('contentwebsite', async () => contentWebsiteCheck(b));
+
+await check('contentart', async () => contentArtCheck(b));
 
 await check('boot', async () => {
   for (const [w, h, touch] of [[390, 844, true], [1024, 768, true], [1280, 800, false]]) {

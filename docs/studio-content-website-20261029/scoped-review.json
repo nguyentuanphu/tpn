@@ -1,0 +1,296 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "29 October 2026 AEDT",
+  "baseSource": "f62a48c91247a40388d41ba4161df655ec825771",
+  "implementationSource": "47a9079eef4d5e1b0e34283503fc934feb888da7",
+  "scope": "B-owned concrete content and website changes only, not final combined A/B editorial or release approval",
+  "sources": [
+    {
+      "file": "js/games/art-pad.ts",
+      "scope": "shared concrete art lifecycle, input, drawing and anchored footer",
+      "sha256": "635ec7c304fc0c383dad3c163680aff0f0caf9b12a2ff32310887d42fe502ab8"
+    },
+    {
+      "file": "js/games/drawing2.ts",
+      "scope": "ten real registrations and retained original guides",
+      "sha256": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4"
+    },
+    {
+      "file": "js/games/crafts.ts",
+      "scope": "twelve real registrations and retained original guides",
+      "sha256": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f"
+    },
+    {
+      "file": "js/games/art-pending.ts",
+      "scope": "three unregistered unfinished proposals",
+      "sha256": "e6d4311cd08e8987c226d450c9c76363e9224f234ef407d6f4367d72dc86b3a5"
+    },
+    {
+      "file": "js/games/catalog.ts",
+      "scope": "22 catalogue entries and loader groups",
+      "sha256": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9"
+    },
+    {
+      "file": "js/content/activities.ts",
+      "scope": "GAME_INFO additions only; A gate functions unchanged",
+      "sha256": "ce8b39fa78979001542f3155c4aa3a59e35af552bff1602c60993c6ee1542f5b"
+    },
+    {
+      "file": "js/howto-data.ts",
+      "scope": "shared bilingual art guidance",
+      "sha256": "603a3c64743a1e30369b8ce481958f283473fd99f0dca168f15de29962aef29a"
+    },
+    {
+      "file": "sw.ts",
+      "scope": "three offline additions only; version unchanged",
+      "sha256": "0c99f34e465f7937882d1aef468f079bc71ad84a340eacc88bfa49c46c66c08b"
+    },
+    {
+      "file": "docs/website-review-20261023/art-content.mjs",
+      "scope": "source-backed descriptions/art/age and availability",
+      "sha256": "cbc038af1386bef264897084c010cc2d07a4263e150770dc3ff7a2027dbd0fce"
+    },
+    {
+      "file": "docs/website-review-20261023/parent-content.mjs",
+      "scope": "general activity/story availability FAQ",
+      "sha256": "5a1c41e505324b5b7eef3a93255671f5ef108e06fe884d40e8137016cdddacbd"
+    },
+    {
+      "file": "docs/website-review-20261023/navigation.mjs",
+      "scope": "art links within four destinations",
+      "sha256": "254e47fc732a8ed9af4474e1642d1da0e1eaf93c071818264396bffea045fec1"
+    },
+    {
+      "file": "home/index.html",
+      "scope": "generated source-pinned public output",
+      "sha256": "1ec77b1094c7680d3872e1a7e7d90c1bf16898949c98ba922794aaed16a0f937"
+    },
+    {
+      "file": "docs/website-review-20261023/build-quest-guide.mjs",
+      "scope": "Factual source provenance header; does not backdate or imply a new global editorial review",
+      "sha256": "6774a30aa8b38e1a92b7448ee5e155d76f75ad7709d9334730f5818f9c9d066b"
+    },
+    {
+      "file": "docs/website-review-20261023/build-rewards-guide.mjs",
+      "scope": "Factual source provenance header; does not backdate or imply a new global editorial review",
+      "sha256": "389421958c8a4f96176e4e4d1129077fb3425c1f99e14a623ca7f9d8e5660174"
+    },
+    {
+      "file": "docs/website-review-20261023/build-festival-guide.mjs",
+      "scope": "Factual source provenance header; does not backdate or imply a new global editorial review",
+      "sha256": "2e11ec3fadc38d52865f389af521f387fabebc2cfc8c06757ca0a4891c2cacb9"
+    }
+  ],
+  "finalReportSourceHashesMatch": {
+    "captures": {
+      "js/games/art-pad.ts": true,
+      "js/games/drawing2.ts": true,
+      "js/games/crafts.ts": true,
+      "js/games/catalog.ts": true,
+      "js/content/activities.ts": true,
+      "js/art.ts": true,
+      "css/style.css": true,
+      "js/games/frame.ts": true,
+      "js/state.ts": true,
+      "js/howto-data.ts": true,
+      "js/emojiswap.js": true
+    },
+    "progress": {
+      "js/main.ts": true,
+      "js/games/art-pad.ts": true,
+      "js/games/frame.ts": true
+    },
+    "website": {
+      "home/index.html": true,
+      "docs/website-review-20261023/art-content.mjs": true,
+      "docs/website-review-20261023/navigation.mjs": true,
+      "docs/website-review-20261023/parent-content.mjs": true
+    },
+    "voice": {
+      "voices/manifest-en.json": true,
+      "voices/manifest-vi.json": true,
+      "js/voicepack.ts": true,
+      "js/packhash.ts": true
+    }
+  },
+  "captures": [
+    {
+      "file": "screenshots/nonla-en-1440.png",
+      "sha256": "9382f192f52de85debe11042b54937be89b9a2370aa2ea187c2889e1192aeeba"
+    },
+    {
+      "file": "screenshots/nonla-en-390.png",
+      "sha256": "b53f8d24a5d0f9ba8bff11f86951b49ecc0fd4eb18cbb7c0c12e386e97214362"
+    },
+    {
+      "file": "screenshots/nonla-en-844.png",
+      "sha256": "8fe3036bb164eec83ac2af136554d35b1f195387fe61f47bb7eb048df12a4f50"
+    },
+    {
+      "file": "screenshots/nonla-vi-320.png",
+      "sha256": "4b52429d5c6e98742c9cf222b0ea2a6b3c573168314f504825ab33e35f63a5c2"
+    },
+    {
+      "file": "screenshots/nonla-vi-390.png",
+      "sha256": "f973df092a7444d43a3c903075781999d336024292801dcbfec0706b70dcddd9"
+    },
+    {
+      "file": "screenshots/nonla-vi-820.png",
+      "sha256": "c153220a72f57fb5713c58b8c7ad8531fcdd06f2e5be1ddad92d3047cee9362a"
+    },
+    {
+      "file": "screenshots/pixelpic-en-1440.png",
+      "sha256": "57dab40623a2fafbf39d961fbea241b1fe72a0f47cde7accf246e5356a0d00ec"
+    },
+    {
+      "file": "screenshots/pixelpic-en-390.png",
+      "sha256": "59181e89a4853e7ed7ce2028b79f9c6dd31088d9283f4b2dde65fda13b5dc4aa"
+    },
+    {
+      "file": "screenshots/pixelpic-en-844.png",
+      "sha256": "c6b161f3e74d99b1a361295658b93e14a2f10ba1169bfd2d07712591fb6e1c2f"
+    },
+    {
+      "file": "screenshots/pixelpic-vi-320.png",
+      "sha256": "39703603ebfc8d10659b9afec667fd59c4379d048f13275af0a660b4f9f523eb"
+    },
+    {
+      "file": "screenshots/pixelpic-vi-390.png",
+      "sha256": "8a893407a2ed951c67d2edeba2adc5f06b67e2e96d01e63bba8c87c52e27d51f"
+    },
+    {
+      "file": "screenshots/pixelpic-vi-820.png",
+      "sha256": "ac99681235eb42bae2427da44d29b348d608d03d3b8b7db4acac9add6fe887aa"
+    },
+    {
+      "file": "screenshots/scratch-en-1440.png",
+      "sha256": "3f2561a4ea6569d7194e848fcde9b3f26a390412abba662f5131aac39ddb890e"
+    },
+    {
+      "file": "screenshots/scratch-en-390.png",
+      "sha256": "51747b39fa1815af17c87bed69f56de777eafe83d5c9c23252ab3c18c0cc7edb"
+    },
+    {
+      "file": "screenshots/scratch-en-844.png",
+      "sha256": "0baf5f8f6f7bb97f9630d8e64e3cd4b3b3ae32bf8e0101c43a4fa50d7aabeb7c"
+    },
+    {
+      "file": "screenshots/scratch-vi-320.png",
+      "sha256": "7c938eaa9d076d3a63f6b8da0670fb5dde0f60a9960ee4cbb2986a37b69d2fea"
+    },
+    {
+      "file": "screenshots/scratch-vi-390.png",
+      "sha256": "3dccca597951899d33a9fae76b3ba30756486938acd1210cd6159b5133dd516a"
+    },
+    {
+      "file": "screenshots/scratch-vi-820.png",
+      "sha256": "3199a2b3e4562010904b916fb7b101d18f2a0b499104250d100c15e30192c9e9"
+    },
+    {
+      "file": "screenshots/stamps-en-1440.png",
+      "sha256": "dd187776a749cbba380ba90ed12981357aa8b28b76199f9f15accbe0dd900b47"
+    },
+    {
+      "file": "screenshots/stamps-en-390.png",
+      "sha256": "673dd5d13ad4d687dda2e1d080f57f5f213fd6ede31d2a216ff1d85d0b07a08b"
+    },
+    {
+      "file": "screenshots/stamps-en-844.png",
+      "sha256": "dd91a0920d9d3cf1f5b2939c0322da90586b795d297db1144dc441c40cd77306"
+    },
+    {
+      "file": "screenshots/stamps-vi-320.png",
+      "sha256": "11949bfac7d1ccdadd4324a96c5acfb799db50b69ae08bb44218d8e718fc89e8"
+    },
+    {
+      "file": "screenshots/stamps-vi-390.png",
+      "sha256": "c124b44c3cdfa8feb81b9a464bd4d79311ee436794afc6056394af72d1f4e753"
+    },
+    {
+      "file": "screenshots/stamps-vi-820.png",
+      "sha256": "33c73e30dd15180228877108d6124c19c290118017747e2f7ee2fd5d299a210f"
+    },
+    {
+      "file": "screenshots/website-art-en-1440.png",
+      "sha256": "d4281d13793f002fbb234cd5b942f9c496d29a9931618867a5575545042fc9f6"
+    },
+    {
+      "file": "screenshots/website-art-en-390.png",
+      "sha256": "822d27f99b0f2e9fc06cc09e3311b26630f4ac7cb31b1f316380d295a126aef1"
+    },
+    {
+      "file": "screenshots/website-art-en-820.png",
+      "sha256": "114885225cf1430d5fb0f9c9e19d583fb31ed77d96ec2fb752d61f75d350defb"
+    },
+    {
+      "file": "screenshots/website-art-en-844.png",
+      "sha256": "b5f1932dcd2f92ca6980bffdced84f0cc799fa347dbf7b63a4970bc4829aeda6"
+    },
+    {
+      "file": "screenshots/website-art-vi-1440.png",
+      "sha256": "13122d60ce768673526ea50ea8802ab5d4f2c557076a4f1f3e472ca9a17cb0dd"
+    },
+    {
+      "file": "screenshots/website-art-vi-390.png",
+      "sha256": "87066e6f7a6beb67fde7d0dd5883a87ea76f8713c02810879008f0f0240f8d30"
+    },
+    {
+      "file": "screenshots/website-art-vi-820.png",
+      "sha256": "6a8148d90b973beaa5805eab9d6d3838bc0a24f3ca37c08aec03686eb2faab6c"
+    },
+    {
+      "file": "screenshots/website-art-vi-844.png",
+      "sha256": "b7f6c9ddb8ead11de55636fd6f6372e392317e58abf4d69277ccd60425f50d9e"
+    },
+    {
+      "file": "screenshots/website-availability-en-1440.png",
+      "sha256": "a8c59a1affdd70250e8e4334748b5f199abfa81da8d09c6e90ba0326d9e87a41"
+    },
+    {
+      "file": "screenshots/website-availability-en-390.png",
+      "sha256": "fea334f2afda133329911e2062cf37a99cec17a639d993f32cfd10ec45f1d3cc"
+    },
+    {
+      "file": "screenshots/website-availability-en-820.png",
+      "sha256": "8df758e091475c8f538e09795f6559661b831a560871e4f75c182c2ce70098a6"
+    },
+    {
+      "file": "screenshots/website-availability-en-844.png",
+      "sha256": "17c6887760c193a86ec7cfab69e36017b14f815f11ac47ce98e38a99e42fa43a"
+    },
+    {
+      "file": "screenshots/website-availability-vi-1440.png",
+      "sha256": "53c9be884733316f97945047091efcf14582ba0bc9060d9f6aca42d584a85745"
+    },
+    {
+      "file": "screenshots/website-availability-vi-390.png",
+      "sha256": "121253bc9832906df64e94ed5378cca5a0f2cd77b599f1e7dfba4ac9df7c1416"
+    },
+    {
+      "file": "screenshots/website-availability-vi-820.png",
+      "sha256": "2ac7cc62d3dab2f169e0f292defa27660163c688ca2272505be635a7cf97f968"
+    },
+    {
+      "file": "screenshots/website-availability-vi-844.png",
+      "sha256": "c8a1e5556ad7d60bbd7e1303b20817613b104ed44b09e2e0a4b7fe3c1760d0f5"
+    }
+  ],
+  "visuallyInspectedExamples": [
+    "screenshots/stamps-en-844.png",
+    "screenshots/scratch-vi-320.png",
+    "screenshots/nonla-en-390.png",
+    "screenshots/nonla-vi-820.png",
+    "screenshots/pixelpic-en-1440.png",
+    "screenshots/website-art-en-390.png",
+    "screenshots/website-art-en-1440.png",
+    "screenshots/website-availability-vi-820.png"
+  ],
+  "method": "Actual Playwright runtime frames with real artwork replacement, game CSS/fonts and isolated synthetic profiles; animations completed for stable capture. Physical devices not asserted.",
+  "globalReviewLockChanged": false,
+  "combinedTreeReview": "pending_A",
+  "functionalReportsBeforeFinalFooter": [
+    "browser-validation.json",
+    "paired-browser-validation.json"
+  ],
+  "finalLayoutReport": "capture-validation.json"
+}

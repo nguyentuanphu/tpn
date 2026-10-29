@@ -1,6 +1,6 @@
 # A parent-first Sparkle Valley website
 
-Editorial update 26 October 2026 AEDT. Game source: f59deb8d59e99a6149cf4df875f78c9ad8467a56. Full information about learning, folk games, shared play, parent choices and rewards is reviewed against that immutable source before release. This generated guide does not itself deploy the game.
+Editorial update 26 October 2026 AEDT. Game source: 47a9079eef4d5e1b0e34283503fc934feb888da7. Full information about learning, folk games, shared play, parent choices and rewards is reviewed against that immutable source before release. This generated guide does not itself deploy the game.
 
 [Interactive concept](prototype.html) · [Website review](README.md) · [Editable bilingual content](parent-content.mjs)
 
@@ -357,6 +357,10 @@ Yes. Some activities support two children on one device, and specific games shar
 ### What does “skills to practise” mean? / “Kỹ năng có thể luyện tập” nghĩa là gì?
 
 Each note explains what an activity invites children to explore. Use it to choose play, start conversations and notice which tasks feel comfortable or need a little help. / Mỗi ghi chú giải thích điều bé có thể khám phá trong hoạt động. Cha mẹ dùng để chọn trò chơi, bắt đầu trò chuyện và nhận ra việc nào bé làm thoải mái, việc nào cần giúp thêm.
+
+### Why can an activity in the guide be unavailable in our game? / Vì sao hoạt động trong hướng dẫn lại chưa mở trong trò chơi?
+
+A game or story can be held for a later collection, need earlier activities finished three times, or be switched off individually. Turning an item on does not skip a held collection or progress requirements. Hide removes a game from the Simple screen only. An individual Off setting stops new entries after the device receives it; an activity already running can finish. Offline devices keep their last fetched settings. These guides describe the released source and do not confirm availability on your device. Closing an activity does not erase earlier progress. / Trò chơi hoặc truyện có thể được giữ cho đợt sau, cần hoàn thành các hoạt động trước đó ba lần, hoặc bị tắt riêng. Bật một mục không bỏ qua đợt đang giữ hay điều kiện tiến độ. Ẩn chỉ bỏ trò khỏi màn hình Đơn giản. Tắt riêng chặn lần mở mới sau khi thiết bị nhận cài đặt; hoạt động đang chơi vẫn có thể hoàn thành. Thiết bị ngoại tuyến giữ cài đặt tải lần cuối. Hướng dẫn mô tả mã nguồn đã phát hành, không xác nhận tình trạng mở trên thiết bị. Đóng hoạt động không xóa tiến độ đã có.
 
 ## Source and scope
 

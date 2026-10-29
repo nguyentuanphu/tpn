@@ -1,0 +1,18 @@
+{
+  "zip": "sparkle-valley-netlify.zip",
+  "bytes": 736578616,
+  "sha256": "7ae31a2724a2c3f669e2d7616b6ae9da6f816d4af12533de6910280e541f5b51",
+  "packagingHead": "a5a11e5bbe65be9710e9cfa8f0199b35129696fd",
+  "implementationSource": "47a9079eef4d5e1b0e34283503fc934feb888da7",
+  "websiteSource": "47a9079eef4d5e1b0e34283503fc934feb888da7",
+  "requiredAssets": [
+    "js/games/drawing2.js",
+    "js/games/crafts.js",
+    "js/games/art-pad.js",
+    "home/index.html"
+  ],
+  "allPresent": true,
+  "sourceBytesMatch": true,
+  "zipCRC": "passed",
+  "deploymentPerformed": false
+}
