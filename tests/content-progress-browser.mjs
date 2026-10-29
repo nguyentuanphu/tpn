@@ -21,5 +21,5 @@ export async function contentProgressCheck(browser){
   const exited=await page.evaluate(async()=>{const S=await import('/js/state.js'),p=__sv.heroes[0].profile;return {wins:p.wins.nonla,album:p.album.length,coins:S.farm.coins};});assert.deepEqual(exited,{wins:after.wins,album:after.album,coins:after.coins});
   await page.reload();const restored=await page.evaluate(async()=>{const S=await import('/js/state.js'),p=S.profiles[0];return {wins:p.wins.nonla,album:p.album.length,coins:S.farm.coins};});assert.deepEqual(restored,exited);
   const result={provenance,before,after,exited,restored,oneCompletionOneReward:true,noRewardOnExit:true};fs.writeFileSync(folder+'/progress-validation.json',JSON.stringify(result,null,2)+'\n');return 'actual game orchestration: one win and five coins once, album persistence, exit without reward, reload preserves save';
- }finally{await P.ctx.close();}
+ }finally{await P.ctx.unrouteAll({behavior:'wait'});await P.ctx.close();}
 }

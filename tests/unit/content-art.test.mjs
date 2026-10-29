@@ -19,6 +19,7 @@ test('public source graph covers all thirteen domains without claiming private r
  const inventory=JSON.parse(read('docs/studio-content-website-20261029/source-inventory.json')),graph=JSON.parse(read('docs/studio-content-website-20261029/source-connections.json'));
  assert.equal(inventory.domains.length,13);assert.ok(inventory.domains.every(d=>d.sourceModules>0));assert.equal(new Set(inventory.modules.map(m=>m.key)).size,inventory.modules.length);
  assert.ok(inventory.boundaries.every(b=>b.enumerated===false));assert.ok(graph.connections.every(c=>['static-import','literal-dynamic-import'].includes(c.evidence)&&c.runtimeEffect==='not_proven'));
+ const media=JSON.parse(read('docs/studio-content-website-20261029/media-inventory.json'));assert.deepEqual(media.manifests.map(m=>m.language).sort(),['en','hi','vi','zh']);assert.equal(media.missingAssets.length,0);assert.ok(media.manifests.every(m=>m.recordings.length>0));
  assert.ok(inventory.modules.some(m=>m.file==='js/games/art-pad.ts'));assert.ok(graph.connections.some(c=>c.from==='source:js/games/drawing2.ts'&&c.to==='source:js/games/art-pad.ts'));
 });
 test('integrated art events are accepted and all four unresolved IDs remain rejected using a synthetic database',async()=>{
