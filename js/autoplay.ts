@@ -379,7 +379,7 @@ function targets(stage) {
   for (const e of stage.querySelectorAll('div, span, i, b, svg, img')) { if (list.length > 80) break; if (!list.includes(e) && getComputedStyle(e).cursor === 'pointer') list.push(e); }
   // (the innermost button: a square with its arrow buttons inside is tapped by its arrows; a picture inside a button is the button)
   const btn = e => e.matches('button, [role=button]');
-  return list.filter(e => shown(e) && !e.closest('.gl-head') && !(btn(e) ? list.some(o => o !== e && e.contains(o) && btn(o)) : list.some(o => o !== e && o.contains(e) && btn(o))));
+  return list.filter(e => shown(e) && !e.closest('.gl-head, .gl-status') && !(btn(e) ? list.some(o => o !== e && e.contains(o) && btn(o)) : list.some(o => o !== e && o.contains(e) && btn(o))));
 }
 export { AUTOPLAY_PROFILES, autoplayProfileFromEnv, childAction, optimalAutoplayChoice, stochasticAutoplayChoice } from './content/autoplay.js';
 export type { AutoplayProfile, AutoplayAction } from './content/autoplay.js';

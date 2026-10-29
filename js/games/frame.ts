@@ -73,20 +73,24 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
       <div class="gl-head">
         <button class="gl-x" aria-label="${T('Leave', 'Rời đi')}">✕</button>
         <div class="gl-title"><span class="gl-icon">${pic(def.icon)}</span><span>${esc(def.name())}</span></div>
-        <div class="gl-status"><div class="gl-dots"></div>
-          ${levelPick ? `<button class="gl-lvl" aria-label="${T('How hard', 'Độ khó')}">${esc(T(...(LEVELS.find(l => l[0] === levelPick.value) || LEVELS[0]).slice(1)))} ▾</button>` : ''}
-          <div class="starbox">⭐ <b>0</b></div>
-        </div>
+        <div class="gl-dots"></div>
         <button class="gl-how" aria-label="${T('How to play', 'Cách chơi')}">📺</button>
       </div>
-      <div class="gl-help"></div>
+      <!-- (owner, 30 Oct 2026 AEDT: "the upper part takes too much space") the level and stars share the guide's line;
+           the guide shows two short lines (tap for the rest, the voice says it all) so the game gets the room -->
+      <div class="gl-guide"><div class="gl-help"></div><div class="gl-status">
+          ${levelPick ? `<button class="gl-lvl" aria-label="${T('How hard', 'Độ khó')}">${esc(T(...(LEVELS.find(l => l[0] === levelPick.value) || LEVELS[0]).slice(1)))} ▾</button>` : ''}
+          <div class="starbox">⭐ <b>0</b></div>
+        </div></div>
       <div class="gl-stage"></div>
       <div class="mascot">🦉</div><div class="mascot-say"></div>`;
     dispatchEvent(new Event('sv-hide-caption')); document.body.appendChild(layer);
     const stage = layer.querySelector('.gl-stage'), dots = layer.querySelector('.gl-dots'), help = layer.querySelector('.gl-help');
+    help.addEventListener('click', () => help.classList.toggle('open'));
     const setHelp = (en, vi, capital = false) => {
       const before = help.offsetHeight, text = T(en, vi);
       help.textContent = capital ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+      help.classList.remove('open');
       // Retain the largest guidance height so selecting a piece cannot move its drop target.
       help.style.setProperty('--gl-guide-height', Math.max(before, help.offsetHeight) + 'px');
     };
@@ -94,7 +98,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     let closed = false, winning = false;
     const prevMusic = Music.key; Music.play(GAME_MUSIC[id] || 'think');
     const api = {
-      stage, level, players, two: players.length > 1, partnerName, T, el, online,
+      stage, level, difficulty: levelPick?.value || 'easy', players, two: players.length > 1, partnerName, T, el, online,
       little,   // under-5 mode: everything gentle, nobody can lose
       strong,   // computer opponents play to win (big kids on medium or hard)
       say: (en, vi) => { setHelp(en, vi, true); say(en, vi); },

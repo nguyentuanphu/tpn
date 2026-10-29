@@ -1166,6 +1166,8 @@ await check('storyposes', async () => (await import('./story-pose-check.mts')).s
 
 await check('goatcircle', async () => (await import('./goat-browser.mts')).goatBrowserCheck(b));
 
+await check('gamespace', async () => (await import('./gamespace-browser.mts')).gameSpaceCheck(b));
+
 await check('installflow', async () => (await import('./install-browser.mts')).installFlowCheck(b));
 
 await check('installstudio', async () => (await import('./install-browser.mts')).installStudioCheck(b));
