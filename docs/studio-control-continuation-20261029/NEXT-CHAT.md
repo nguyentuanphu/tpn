@@ -1,3 +1,5 @@
+Latest continuation: [private draft/review implementation and takeover](../studio-drafts-20261029/NEXT-CHAT.md). This earlier prompt is historical.
+
 # Continue after explicit Off and declared-content integration
 
 ```text

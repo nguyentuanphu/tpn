@@ -1,5 +1,7 @@
 # Docs: start here
 
+[Latest Studio private drafts](studio-drafts-20261029/README.md): actual save/review/publish workflow, schema/API contract, validation, screenshots and remaining work.
+
 [Latest Studio control continuation](studio-control-continuation-20261029/README.md): explicit Off behaviour, declared-only content, actual switch evidence, current CI and next implementation steps.
 
 [Studio revamp implementation progress](studio-revamp-progress-20261029/README.md): source inventory/control audit, actual Home changes, validation and remaining work. Continues the master concept below without changing its packaged snapshot.

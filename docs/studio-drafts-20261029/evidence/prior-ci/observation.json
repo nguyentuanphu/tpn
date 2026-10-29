@@ -1,0 +1,75 @@
+{
+  "observedAtSydney": "2026-10-29T11:19:32.258410+11:00",
+  "run": "40789704114",
+  "headSha": "d15b6af42eb775cc908d9024ea7bc3d38ad262e6",
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40789704114",
+  "status": "completed",
+  "conclusion": "cancelled",
+  "artifactsAvailable": [
+    "share-postgres"
+  ],
+  "checksAvailable": 1,
+  "passedAvailable": 1,
+  "failedAvailable": [],
+  "retriedAvailable": [],
+  "sampleMarkers": [],
+  "suiteLevelSkips": [],
+  "jobs": [
+    {
+      "name": "which",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Management PostgreSQL",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "share (8)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "name": "share (4)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "name": "share (5)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "name": "share (3)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "name": "share (6)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "name": "share (2)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "name": "share (1)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "name": "share (7)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "name": "collect",
+      "status": "completed",
+      "conclusion": "cancelled"
+    }
+  ],
+  "limitation": "Only downloaded available result artifacts are counted. Missing/running shares are unknown. Full suite requires collector success and review of actual results."
+}

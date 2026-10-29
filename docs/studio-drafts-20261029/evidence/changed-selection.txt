@@ -1,0 +1,2 @@
+Full suite: .gitignore changed and no check names it.
+samples this run (seed 498120): voicearea, reading; in full (their files changed): films

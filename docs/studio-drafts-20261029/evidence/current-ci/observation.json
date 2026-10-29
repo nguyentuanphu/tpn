@@ -1,0 +1,68 @@
+{
+  "observedAtSydney": "2026-10-29T11:19:33.619250+11:00",
+  "run": "40793180243",
+  "headSha": "06483b71f8757d8b75cc58ad5acedd1383709701",
+  "url": "https://github.com/nguyentuanphu/tpn/actions/runs/40793180243",
+  "status": "in_progress",
+  "conclusion": "",
+  "artifactsAvailable": [],
+  "checksAvailable": 0,
+  "passedAvailable": 0,
+  "failedAvailable": [],
+  "retriedAvailable": [],
+  "sampleMarkers": [],
+  "suiteLevelSkips": [],
+  "jobs": [
+    {
+      "name": "which",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Management PostgreSQL",
+      "status": "in_progress",
+      "conclusion": ""
+    },
+    {
+      "name": "share (3)",
+      "status": "in_progress",
+      "conclusion": ""
+    },
+    {
+      "name": "share (4)",
+      "status": "in_progress",
+      "conclusion": ""
+    },
+    {
+      "name": "share (6)",
+      "status": "in_progress",
+      "conclusion": ""
+    },
+    {
+      "name": "share (2)",
+      "status": "in_progress",
+      "conclusion": ""
+    },
+    {
+      "name": "share (5)",
+      "status": "in_progress",
+      "conclusion": ""
+    },
+    {
+      "name": "share (7)",
+      "status": "in_progress",
+      "conclusion": ""
+    },
+    {
+      "name": "share (8)",
+      "status": "in_progress",
+      "conclusion": ""
+    },
+    {
+      "name": "share (1)",
+      "status": "in_progress",
+      "conclusion": ""
+    }
+  ],
+  "limitation": "Only downloaded available result artifacts are counted. Missing/running shares are unknown. Full suite requires collector success and review of actual results."
+}
