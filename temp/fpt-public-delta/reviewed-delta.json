@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "inventory": "8d8af0f8a3c4d41cbe8f1c35da37be73480f339889065b870d0f97da2aa564a6",
+  "inventory": "0e27f1e81da68d5d0d8c2d46b32664c98b47b377716922c84046bd6b4b9bc7fe",
   "voice": {
     "provider": "FPT Neo",
     "model": "FPT.AI-VITs",
@@ -3195,7 +3195,43 @@
       "sha256": "ca1eb8183e10e4b3f443fca4ba4e2cd3cca5de64c5c4c51920a21c126ee7c521",
       "bytes": 34004,
       "duration": 1.671837
+    },
+    "d62b5431-4c33e8f3": {
+      "identity": "7fbce1c12cca4ce49e97e02b2894157f2ab10a866f92504ac655108390b2d8ff",
+      "sha256": "4c2c642a16c6f6a4eae9fdf1f4345ebc952d4ab6806dff5af5b665214f5f1cb7",
+      "bytes": 55424,
+      "duration": 2.742857
+    },
+    "05ad9ea9-1923b72b": {
+      "identity": "5d8e956d86e90803fbd66f09371179c078fde39204554a30d99fe77ad6e830a0",
+      "sha256": "c87e29828d4bbaddec7386f8f5ac26e50d8b32aef6c5271e5a889b761a46ca94",
+      "bytes": 117596,
+      "duration": 5.851429
+    },
+    "5d0348da57d3e15c": {
+      "identity": "2f4c2936db86d775804990acf69600b6fca680b22e5ada55344d5473f4900678",
+      "sha256": "4fa97e5512d5d430a093b5e90347ad4229ed5209f25920ff9e9c4d4e8b0216a8",
+      "bytes": 90428,
+      "duration": 4.493061
+    },
+    "7478f58b-3078a93b": {
+      "identity": "1fea831cad1f7fe3b763b5143755526d532b6578758e9d8f8053e0ceadc08ccc",
+      "sha256": "c4fec9b803863829e423afdb1a58c3bd0178f066fca09314b2644da5da431f29",
+      "bytes": 62738,
+      "duration": 3.108571
+    },
+    "79586c280f479c4e": {
+      "identity": "2f882cd1ddf92a5a329b66516e79cdd57ff4d21679688b3021f5fd6fb0b51af1",
+      "sha256": "5a680252b83df41dc41c8b060356e61e892c34ec53bb44647b924b89b5415b0a",
+      "bytes": 52289,
+      "duration": 2.586122
+    },
+    "8a2c2827-54cc3622": {
+      "identity": "ee75b582def1b9bd6474da2e684b1b86dbcc9d9c3c50fd458e9fec04b688aec4",
+      "sha256": "0e1afd0ab2fe6d8285f1a59d6818418c1a318fa7c9135e4e123c4b3c87a0db93",
+      "bytes": 78412,
+      "duration": 3.892245
     }
   },
-  "updated": "2026-10-29T09:37:14.165Z"
+  "updated": "2026-10-29T09:57:55.103Z"
 }
