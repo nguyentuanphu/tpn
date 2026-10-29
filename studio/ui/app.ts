@@ -27,12 +27,12 @@ import(GAME + 'js/emojiswap.js').catch(() => { });
 // (owner, 10 Oct) the servers answer in English: in Vietnamese, every answer is shown in Vietnamese (studio/ui/vi.js)
 const say = m => LANG === 'vi' ? viMessage(m) : String(m ?? '');
 // e.raw keeps the server's own words (the Voices page looks at them to stop early)
-// (owner, 30 Oct 2026 AEDT: "pages load slow") a report read is kept for 30 seconds, so moving between Home, People and
-// Analytics, or choosing a period and back, does not ask the server again; any save and the Reload button clear it
+// (owner, 30 Oct 2026 AEDT: "pages load slow") a management report read is kept for 30 seconds, so moving between Home,
+// People and Game, or choosing a period and back, does not ask the server again; any save and the Reload button clear it
 const READS = new Map<string, { at: number, value: Promise<any> }>(), READ_MS = 30e3;
 const api = (p: string, body?: unknown) => {
   if (body !== undefined) { READS.clear(); return apiNow(p, body); }
-  if (!/^(players|management\/(overview|devices|children|attention|activities))(\?|$)/.test(p)) return apiNow(p);
+  if (!/^management\/(overview|devices|children|attention|activities)(\?|$)/.test(p)) return apiNow(p); // (the older Analytics report keeps its own day sums on the server and is always read fresh)
   const hit = READS.get(p); if (hit && Date.now() - hit.at < READ_MS) return hit.value;
   const value = apiNow(p); READS.set(p, { at: Date.now(), value }); value.catch(() => READS.delete(p)); return value;
 };
