@@ -1,0 +1,670 @@
+[
+  {
+    "id": "stamps",
+    "icon": "🥔",
+    "en": "Potato Stamps",
+    "vi": "In Hình",
+    "key": "game:stamps",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "f79ba8bc-3fb903bc",
+        "present": false
+      },
+      "vi": {
+        "hash": "79586c280f479c4e",
+        "present": false
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Choose a colour, then tap to stamp circles!",
+      "vi": "Chọn màu rồi chạm để in hình tròn nhé!"
+    }
+  },
+  {
+    "id": "weave",
+    "icon": "🌾",
+    "en": "Weave a Mat",
+    "vi": "Đan Chiếu",
+    "key": "game:weave",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "8acefeea41ca4f6b",
+        "present": true
+      },
+      "vi": {
+        "hash": "dceaf06c-3b37654d",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Paint coloured strands across the woven reed mat!",
+      "vi": "Vẽ nếp cói màu sắc lên chiếc chiếu đan nhé!"
+    }
+  },
+  {
+    "id": "mosaic",
+    "icon": "🏺",
+    "en": "Bát Tràng Tiles",
+    "vi": "Ghép Gốm Bát Tràng",
+    "key": "game:mosaic",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "b10f399f5e47ffc6",
+        "present": true
+      },
+      "vi": {
+        "hash": "3e2d9a930c2c2d49",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Paint ceramic glazes on your Bát Tràng tile artwork!",
+      "vi": "Tô màu men gốm rực rỡ lên bức tranh Bát Tràng nhé!"
+    }
+  },
+  {
+    "id": "nonla",
+    "icon": "👒",
+    "en": "Paint a Nón Lá",
+    "vi": "Vẽ Nón Lá",
+    "key": "game:nonla",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "7fa7af26-13d65030",
+        "present": true
+      },
+      "vi": {
+        "hash": "39c9c6697518038e",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Paint bamboo and lotus onto your conical hat!",
+      "vi": "Vẽ cành tre và hoa sen lên chiếc nón lá xinh xắn nhé!"
+    }
+  },
+  {
+    "id": "aodai",
+    "icon": "🥻",
+    "en": "Áo Dài Designer",
+    "vi": "Thiết Kế Áo Dài",
+    "key": "game:aodai",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "3cdc0d773d64e2a1",
+        "present": true
+      },
+      "vi": {
+        "hash": "5757d0875bd761ac",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Design colorful silk patterns on the Áo Dài dress!",
+      "vi": "Tự tay tô vẽ tà áo dài lụa thướt tha nhé!"
+    }
+  },
+  {
+    "id": "kitepaint",
+    "icon": "🪁",
+    "en": "Design a Kite",
+    "vi": "Trang Trí Diều",
+    "key": "game:kitepaint",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "df86b5ce7f261f44",
+        "present": true
+      },
+      "vi": {
+        "hash": "56d4cf2535da4edc",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Paint bright wings on your flute kite!",
+      "vi": "Tô cánh diều sáo thật rực rỡ để bay cao nhé!"
+    }
+  },
+  {
+    "id": "shades",
+    "icon": "🎨",
+    "en": "Light and Dark Colours",
+    "vi": "Màu Đậm Màu Nhạt",
+    "key": "game:shades",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "f508b2f4-3ebd0eb0",
+        "present": true
+      },
+      "vi": {
+        "hash": "db92abc96596e591",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Blend pastel and deep shades together on the canvas!",
+      "vi": "Pha phối các dải màu đậm nhạt hòa quyện nhé!"
+    }
+  },
+  {
+    "id": "shadowpic",
+    "icon": "👥",
+    "en": "Light and Shadow",
+    "vi": "Bóng và Hình",
+    "key": "game:shadowpic",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "fea8fb3572da18d6",
+        "present": true
+      },
+      "vi": {
+        "hash": "e6fa1bd6-2978bc18",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Trace around shadows to capture secret animal shapes!",
+      "vi": "Vẽ nét quanh chiếc bóng để giữ lại hình các bạn thú nhé!"
+    }
+  },
+  {
+    "id": "spotdiff",
+    "icon": "🔍",
+    "en": "Spot the Difference",
+    "vi": "Tìm Điểm Khác",
+    "key": "game:spotdiff",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "declared-only",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": "not yet audited",
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules"
+  },
+  {
+    "id": "hiddenpic",
+    "icon": "🕵️",
+    "en": "Hidden Pictures",
+    "vi": "Tìm Hình Ẩn",
+    "key": "game:hiddenpic",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "declared-only",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": "not yet audited",
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules"
+  },
+  {
+    "id": "finishpic",
+    "icon": "✏️",
+    "en": "Finish the Picture",
+    "vi": "Vẽ Nốt Bức Tranh",
+    "key": "game:finishpic",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "29f08430-66ec3ca0",
+        "present": true
+      },
+      "vi": {
+        "hash": "e2ea72c07d1cd8bd",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Draw the missing side to complete the happy picture!",
+      "vi": "Vẽ nốt nửa còn thiếu để hoàn thiện bức tranh vui nhé!"
+    }
+  },
+  {
+    "id": "scene",
+    "icon": "🏞️",
+    "en": "Sticker Scene",
+    "vi": "Dán Tranh Cảnh",
+    "key": "game:scene",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "50d8a35a-759fad8c",
+        "present": false
+      },
+      "vi": {
+        "hash": "8a2c2827-54cc3622",
+        "present": false
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Choose a colour and tap to add triangle stickers to your countryside!",
+      "vi": "Chọn màu rồi chạm để dán hình tam giác vào phong cảnh nhé!"
+    }
+  },
+  {
+    "id": "paperfold",
+    "icon": "📄",
+    "en": "Paper Folding",
+    "vi": "Gấp Giấy",
+    "key": "game:paperfold",
+    "sourceFile": "js/games/drawing2.ts",
+    "discovery": "declared-only",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": "not yet audited",
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules"
+  },
+  {
+    "id": "lacquer",
+    "icon": "🖼️",
+    "en": "Lacquer Painting",
+    "vi": "Tranh Sơn Mài",
+    "key": "game:lacquer",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "578e7097-47484b81",
+        "present": true
+      },
+      "vi": {
+        "hash": "5a9b74990-260d16",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Gently rub gold leaf onto the dark lacquer board!",
+      "vi": "Thoa dát vàng quỳ lấp lánh lên vóc gỗ sơn mài nhé!"
+    }
+  },
+  {
+    "id": "scratch",
+    "icon": "✨",
+    "en": "Scratch Art",
+    "vi": "Tranh Cào",
+    "key": "game:scratch",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "81208cf3-3a0aca6d",
+        "present": true
+      },
+      "vi": {
+        "hash": "41b9824d50a729cb",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Scratch away the dark coat to reveal rainbow colors underneath!",
+      "vi": "Cào lớp phủ đen để lộ dải màu cầu vồng rực rỡ nhé!"
+    }
+  },
+  {
+    "id": "bubblepaint",
+    "icon": "🫧",
+    "en": "Bubble Paint",
+    "vi": "Vẽ Bong Bóng",
+    "key": "game:bubblepaint",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "de817879-c591d93",
+        "present": false
+      },
+      "vi": {
+        "hash": "7478f58b-3078a93b",
+        "present": false
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Choose a colour and tap to paint bubble rings!",
+      "vi": "Chọn màu rồi chạm để vẽ vòng bong bóng nhé!"
+    }
+  },
+  {
+    "id": "fingerpaint",
+    "icon": "🖐️",
+    "en": "Finger Painting",
+    "vi": "Vẽ Bằng Ngón Tay",
+    "key": "game:fingerpaint",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "97e7f18f3c76d40a",
+        "present": true
+      },
+      "vi": {
+        "hash": "31233cce-486a7fc2",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Paint with your fingertips directly on the canvas!",
+      "vi": "Dùng ngón tay chấm tô màu trực tiếp lên tranh nhé!"
+    }
+  },
+  {
+    "id": "weatherpaint",
+    "icon": "🌦️",
+    "en": "Colour the Weather",
+    "vi": "Tô Màu Thời Tiết",
+    "key": "game:weatherpaint",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "6116f4147674e62e",
+        "present": true
+      },
+      "vi": {
+        "hash": "3c07f2dc-43ead684",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Paint gentle rain, sunbeams, and clouds in the sky!",
+      "vi": "Tô màu cho nắng ấm và hạt mưa dịu dàng nhé!"
+    }
+  },
+  {
+    "id": "thocam",
+    "icon": "🧶",
+    "en": "Brocade Patterns",
+    "vi": "Hoa Văn Thổ Cẩm",
+    "key": "game:thocam",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "3bcfe3f8088e9c05",
+        "present": true
+      },
+      "vi": {
+        "hash": "be49752a5f19699a",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Paint vibrant ethnic geometric patterns on woven cloth!",
+      "vi": "Tô màu dải thổ cẩm vùng cao rực rỡ nhé!"
+    }
+  },
+  {
+    "id": "pixelpic",
+    "icon": "👾",
+    "en": "Pixel Picture",
+    "vi": "Tranh Ô Vuông",
+    "key": "game:pixelpic",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "dd19906238f0bd85",
+        "present": true
+      },
+      "vi": {
+        "hash": "1e2b5ad9-52c8a216",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Fill grid squares to paint a cute retro pixel character!",
+      "vi": "Tô màu ô vuông để tạo nhân vật pixel ngộ nghĩnh nhé!"
+    }
+  },
+  {
+    "id": "fireworks",
+    "icon": "🎆",
+    "en": "Fireworks Painter",
+    "vi": "Vẽ Pháo Hoa",
+    "key": "game:fireworks",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "c1410b4a-c045480",
+        "present": true
+      },
+      "vi": {
+        "hash": "79dcb4a20679f102",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Draw glowing fireworks bursts across the midnight sky!",
+      "vi": "Vẽ những chùm pháo hoa lấp lánh đêm Giao Thừa nhé!"
+    }
+  },
+  {
+    "id": "masks",
+    "icon": "🎭",
+    "en": "Mid-Autumn Masks",
+    "vi": "Làm Mặt Nạ Trung Thu",
+    "key": "game:masks",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "05758a4551973cbe",
+        "present": true
+      },
+      "vi": {
+        "hash": "c22d6881-1c59f653",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Decorate festival masks with bright paint!",
+      "vi": "Tô màu chiếc mặt nạ giấy bồi đón Rằm tháng Tám nhé!"
+    }
+  },
+  {
+    "id": "makeface",
+    "icon": "😀",
+    "en": "Make a Face",
+    "vi": "Ghép Khuôn Mặt",
+    "key": "game:makeface",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "29e67f6b-a845d10",
+        "present": true
+      },
+      "vi": {
+        "hash": "a11253fa430263a7",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Paint smiles, eyes, and expressions on a cheerful face!",
+      "vi": "Tô nụ cười và ánh mắt rạng rỡ lên khuôn mặt nhé!"
+    }
+  },
+  {
+    "id": "gallery",
+    "icon": "🖼️",
+    "en": "My Little Gallery",
+    "vi": "Phòng Tranh Của Em",
+    "key": "game:gallery",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "2a57829e359301ce",
+        "present": true
+      },
+      "vi": {
+        "hash": "aa21d9bf-22994aaf",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Paint and frame your picture for your home exhibition!",
+      "vi": "Vẽ và lồng khung cho bức tranh triển lãm nhé!"
+    }
+  },
+  {
+    "id": "leafrub",
+    "icon": "🍃",
+    "en": "Leaf Rubbings",
+    "vi": "In Lá",
+    "key": "game:leafrub",
+    "sourceFile": "js/games/crafts.ts",
+    "discovery": "catalogued",
+    "runtimeEvidence": "pending",
+    "group": "newGames",
+    "unlock": "Every first-set art game completed three times",
+    "recordings": {
+      "en": {
+        "hash": "5d64a957-17e81351",
+        "present": true
+      },
+      "vi": {
+        "hash": "a42ffb3e-3825db36",
+        "present": true
+      }
+    },
+    "save": "device profile.album, newest 12 PNGs",
+    "reward": "shared frame stars; caller-owned progress and reward rules",
+    "guidance": {
+      "en": "Rub wax crayons across the leaf to reveal delicate veins!",
+      "vi": "Chà sáp màu lên lá để hiện đường gân lá kỳ diệu nhé!"
+    }
+  },
+  {
+    "id": "rongran",
+    "key": "game:rongran",
+    "sourceFile": "js/content/secondset.ts",
+    "discovery": "declared-only",
+    "reason": "No registration or implementation; distinct dragon ID exists. Intent unresolved."
+  }
+]

@@ -1,0 +1,314 @@
+{
+  "method": "Existing lineHash and per-language manifest membership; playback is separate evidence.",
+  "credential": "AZURE_SPEECH_KEY absent; no recordings requested or fabricated.",
+  "lines": [
+    {
+      "id": "stamps",
+      "lang": "en",
+      "text": "Choose a colour, then tap to stamp circles!",
+      "hash": "f79ba8bc-3fb903bc",
+      "recorded": false
+    },
+    {
+      "id": "stamps",
+      "lang": "vi",
+      "text": "Chọn màu rồi chạm để in hình tròn nhé!",
+      "hash": "79586c280f479c4e",
+      "recorded": false
+    },
+    {
+      "id": "weave",
+      "lang": "en",
+      "text": "Paint coloured strands across the woven reed mat!",
+      "hash": "8acefeea41ca4f6b",
+      "recorded": true
+    },
+    {
+      "id": "weave",
+      "lang": "vi",
+      "text": "Vẽ nếp cói màu sắc lên chiếc chiếu đan nhé!",
+      "hash": "dceaf06c-3b37654d",
+      "recorded": true
+    },
+    {
+      "id": "mosaic",
+      "lang": "en",
+      "text": "Paint ceramic glazes on your Bát Tràng tile artwork!",
+      "hash": "b10f399f5e47ffc6",
+      "recorded": true
+    },
+    {
+      "id": "mosaic",
+      "lang": "vi",
+      "text": "Tô màu men gốm rực rỡ lên bức tranh Bát Tràng nhé!",
+      "hash": "3e2d9a930c2c2d49",
+      "recorded": true
+    },
+    {
+      "id": "nonla",
+      "lang": "en",
+      "text": "Paint bamboo and lotus onto your conical hat!",
+      "hash": "7fa7af26-13d65030",
+      "recorded": true
+    },
+    {
+      "id": "nonla",
+      "lang": "vi",
+      "text": "Vẽ cành tre và hoa sen lên chiếc nón lá xinh xắn nhé!",
+      "hash": "39c9c6697518038e",
+      "recorded": true
+    },
+    {
+      "id": "aodai",
+      "lang": "en",
+      "text": "Design colorful silk patterns on the Áo Dài dress!",
+      "hash": "3cdc0d773d64e2a1",
+      "recorded": true
+    },
+    {
+      "id": "aodai",
+      "lang": "vi",
+      "text": "Tự tay tô vẽ tà áo dài lụa thướt tha nhé!",
+      "hash": "5757d0875bd761ac",
+      "recorded": true
+    },
+    {
+      "id": "kitepaint",
+      "lang": "en",
+      "text": "Paint bright wings on your flute kite!",
+      "hash": "df86b5ce7f261f44",
+      "recorded": true
+    },
+    {
+      "id": "kitepaint",
+      "lang": "vi",
+      "text": "Tô cánh diều sáo thật rực rỡ để bay cao nhé!",
+      "hash": "56d4cf2535da4edc",
+      "recorded": true
+    },
+    {
+      "id": "shades",
+      "lang": "en",
+      "text": "Blend pastel and deep shades together on the canvas!",
+      "hash": "f508b2f4-3ebd0eb0",
+      "recorded": true
+    },
+    {
+      "id": "shades",
+      "lang": "vi",
+      "text": "Pha phối các dải màu đậm nhạt hòa quyện nhé!",
+      "hash": "db92abc96596e591",
+      "recorded": true
+    },
+    {
+      "id": "shadowpic",
+      "lang": "en",
+      "text": "Trace around shadows to capture secret animal shapes!",
+      "hash": "fea8fb3572da18d6",
+      "recorded": true
+    },
+    {
+      "id": "shadowpic",
+      "lang": "vi",
+      "text": "Vẽ nét quanh chiếc bóng để giữ lại hình các bạn thú nhé!",
+      "hash": "e6fa1bd6-2978bc18",
+      "recorded": true
+    },
+    {
+      "id": "finishpic",
+      "lang": "en",
+      "text": "Draw the missing side to complete the happy picture!",
+      "hash": "29f08430-66ec3ca0",
+      "recorded": true
+    },
+    {
+      "id": "finishpic",
+      "lang": "vi",
+      "text": "Vẽ nốt nửa còn thiếu để hoàn thiện bức tranh vui nhé!",
+      "hash": "e2ea72c07d1cd8bd",
+      "recorded": true
+    },
+    {
+      "id": "scene",
+      "lang": "en",
+      "text": "Choose a colour and tap to add triangle stickers to your countryside!",
+      "hash": "50d8a35a-759fad8c",
+      "recorded": false
+    },
+    {
+      "id": "scene",
+      "lang": "vi",
+      "text": "Chọn màu rồi chạm để dán hình tam giác vào phong cảnh nhé!",
+      "hash": "8a2c2827-54cc3622",
+      "recorded": false
+    },
+    {
+      "id": "lacquer",
+      "lang": "en",
+      "text": "Gently rub gold leaf onto the dark lacquer board!",
+      "hash": "578e7097-47484b81",
+      "recorded": true
+    },
+    {
+      "id": "lacquer",
+      "lang": "vi",
+      "text": "Thoa dát vàng quỳ lấp lánh lên vóc gỗ sơn mài nhé!",
+      "hash": "5a9b74990-260d16",
+      "recorded": true
+    },
+    {
+      "id": "scratch",
+      "lang": "en",
+      "text": "Scratch away the dark coat to reveal rainbow colors underneath!",
+      "hash": "81208cf3-3a0aca6d",
+      "recorded": true
+    },
+    {
+      "id": "scratch",
+      "lang": "vi",
+      "text": "Cào lớp phủ đen để lộ dải màu cầu vồng rực rỡ nhé!",
+      "hash": "41b9824d50a729cb",
+      "recorded": true
+    },
+    {
+      "id": "bubblepaint",
+      "lang": "en",
+      "text": "Choose a colour and tap to paint bubble rings!",
+      "hash": "de817879-c591d93",
+      "recorded": false
+    },
+    {
+      "id": "bubblepaint",
+      "lang": "vi",
+      "text": "Chọn màu rồi chạm để vẽ vòng bong bóng nhé!",
+      "hash": "7478f58b-3078a93b",
+      "recorded": false
+    },
+    {
+      "id": "fingerpaint",
+      "lang": "en",
+      "text": "Paint with your fingertips directly on the canvas!",
+      "hash": "97e7f18f3c76d40a",
+      "recorded": true
+    },
+    {
+      "id": "fingerpaint",
+      "lang": "vi",
+      "text": "Dùng ngón tay chấm tô màu trực tiếp lên tranh nhé!",
+      "hash": "31233cce-486a7fc2",
+      "recorded": true
+    },
+    {
+      "id": "weatherpaint",
+      "lang": "en",
+      "text": "Paint gentle rain, sunbeams, and clouds in the sky!",
+      "hash": "6116f4147674e62e",
+      "recorded": true
+    },
+    {
+      "id": "weatherpaint",
+      "lang": "vi",
+      "text": "Tô màu cho nắng ấm và hạt mưa dịu dàng nhé!",
+      "hash": "3c07f2dc-43ead684",
+      "recorded": true
+    },
+    {
+      "id": "thocam",
+      "lang": "en",
+      "text": "Paint vibrant ethnic geometric patterns on woven cloth!",
+      "hash": "3bcfe3f8088e9c05",
+      "recorded": true
+    },
+    {
+      "id": "thocam",
+      "lang": "vi",
+      "text": "Tô màu dải thổ cẩm vùng cao rực rỡ nhé!",
+      "hash": "be49752a5f19699a",
+      "recorded": true
+    },
+    {
+      "id": "pixelpic",
+      "lang": "en",
+      "text": "Fill grid squares to paint a cute retro pixel character!",
+      "hash": "dd19906238f0bd85",
+      "recorded": true
+    },
+    {
+      "id": "pixelpic",
+      "lang": "vi",
+      "text": "Tô màu ô vuông để tạo nhân vật pixel ngộ nghĩnh nhé!",
+      "hash": "1e2b5ad9-52c8a216",
+      "recorded": true
+    },
+    {
+      "id": "fireworks",
+      "lang": "en",
+      "text": "Draw glowing fireworks bursts across the midnight sky!",
+      "hash": "c1410b4a-c045480",
+      "recorded": true
+    },
+    {
+      "id": "fireworks",
+      "lang": "vi",
+      "text": "Vẽ những chùm pháo hoa lấp lánh đêm Giao Thừa nhé!",
+      "hash": "79dcb4a20679f102",
+      "recorded": true
+    },
+    {
+      "id": "masks",
+      "lang": "en",
+      "text": "Decorate festival masks with bright paint!",
+      "hash": "05758a4551973cbe",
+      "recorded": true
+    },
+    {
+      "id": "masks",
+      "lang": "vi",
+      "text": "Tô màu chiếc mặt nạ giấy bồi đón Rằm tháng Tám nhé!",
+      "hash": "c22d6881-1c59f653",
+      "recorded": true
+    },
+    {
+      "id": "makeface",
+      "lang": "en",
+      "text": "Paint smiles, eyes, and expressions on a cheerful face!",
+      "hash": "29e67f6b-a845d10",
+      "recorded": true
+    },
+    {
+      "id": "makeface",
+      "lang": "vi",
+      "text": "Tô nụ cười và ánh mắt rạng rỡ lên khuôn mặt nhé!",
+      "hash": "a11253fa430263a7",
+      "recorded": true
+    },
+    {
+      "id": "gallery",
+      "lang": "en",
+      "text": "Paint and frame your picture for your home exhibition!",
+      "hash": "2a57829e359301ce",
+      "recorded": true
+    },
+    {
+      "id": "gallery",
+      "lang": "vi",
+      "text": "Vẽ và lồng khung cho bức tranh triển lãm nhé!",
+      "hash": "aa21d9bf-22994aaf",
+      "recorded": true
+    },
+    {
+      "id": "leafrub",
+      "lang": "en",
+      "text": "Rub wax crayons across the leaf to reveal delicate veins!",
+      "hash": "5d64a957-17e81351",
+      "recorded": true
+    },
+    {
+      "id": "leafrub",
+      "lang": "vi",
+      "text": "Chà sáp màu lên lá để hiện đường gân lá kỳ diệu nhé!",
+      "hash": "a42ffb3e-3825db36",
+      "recorded": true
+    }
+  ]
+}

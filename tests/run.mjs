@@ -1,3 +1,4 @@
+import { contentArtCheck } from './content-art-browser.mjs';
 import { installReportInputProbe, readReportInputProbe } from './report-input-probe.mts';
 import { waitObserved } from './wait-observed.mts';
 import { adventureWalkSnapshot, adventureDaySnapshot, seedAdventureWalk } from './adventure-snapshot.mts';
@@ -98,6 +99,8 @@ async function serveFolder(root, { gzip = false } = {}) {
   return Object.assign(S, { url: `http://127.0.0.2:${srv.address().port}/`, close: () => { srv.closeAllConnections(); srv.close(); } });
 }
 let b = await launch();
+
+await check('contentart', async () => contentArtCheck(b));
 
 await check('boot', async () => {
   for (const [w, h, touch] of [[390, 844, true], [1024, 768, true], [1280, 800, false]]) {

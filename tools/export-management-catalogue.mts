@@ -125,7 +125,7 @@ function git(root: string, args: string[]): string | null {
 }
 
 export function exportManagementCatalogue(root = ROOT): ManagementCatalogue {
-  const files = ['js/games/catalog.ts', 'js/content/activities.ts', 'js/games/learning-meta.ts', 'js/games/readingmenu.ts', 'js/learn.ts', 'js/talesdata.ts', 'js/content/secondset.ts', 'js/content/unlocks.ts', 'js/build.ts', 'home/index.html', 'docs/website-review-20261023/game-review-lock.json', 'js/games/drawing2.ts', 'js/games/crafts.ts', 'tools/export-management-catalogue.mts'];
+  const files = ['js/games/catalog.ts', 'js/content/activities.ts', 'js/games/learning-meta.ts', 'js/games/readingmenu.ts', 'js/learn.ts', 'js/talesdata.ts', 'js/content/secondset.ts', 'js/content/unlocks.ts', 'js/build.ts', 'home/index.html', 'docs/website-review-20261023/game-review-lock.json', 'js/games/drawing2.ts', 'js/games/crafts.ts', 'js/games/art-pad.ts', 'tools/export-management-catalogue.mts'];
   const sources = new Map(files.map(f => [f, fs.readFileSync(path.join(root, f), 'utf8')]));
   const src = (f: string) => sources.get(f) || '';
   const parsed = extractGameMetadata(src(files[0]), src(files[1]), src(files[2]), src(files[3]));
@@ -147,7 +147,7 @@ export function exportManagementCatalogue(root = ROOT): ManagementCatalogue {
   const aligned = validCommit && reviewedSource ? validCommit === reviewedSource && dirtyPaths.length === 0 : null;
   const anchors = [...new Set([...src('home/index.html').matchAll(/\bid=["']([a-z0-9_-]+)["']/gi)].map(m => m[1]))].sort();
   const guideFor = (kind: 'game' | 'story', id: string): ManagementCatalogueEntry['guide'] => {
-    const preferred = id === 'familyquiz' ? 'guide-familyquiz' : kind === 'game' ? 'games' : 'guides';
+    const preferred = kind === 'game' && anchors.includes('art-' + id) ? 'art-' + id : id === 'familyquiz' ? 'guide-familyquiz' : kind === 'game' ? 'games' : 'guides';
     const found = anchors.includes(preferred);
     return { href: found ? '/home/#' + preferred : null, kind: 'section', verified: found, reviewedSource, sourceAligned: aligned };
   };
