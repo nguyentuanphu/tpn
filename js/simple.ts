@@ -352,7 +352,7 @@ export function createSimple(G) {
     // what the road shows now (for the checks): its categories and every stop on it
     // (Round U) the cards: every category of the tab; with one open, its stops
     // (Round V) one page: every section of the tab (its title and road) and every stop on it
-    get view() { if (!m) return null; return { cat, cats: groupsOf(tab).map(g => g.area.key), stops: list.filter(s => s.kind !== 'head').map(s => s.key), secs: m.querySelectorAll('.sp-sec').length }; },
+    get view() { if (!m) return null; return { cat, cats: groupsOf(tab).map(g => g.area.key), stops: list.filter(s => s.kind !== 'head' && s.kind !== 'lock').map(s => s.key), locks: list.filter(s => s.kind === 'lock').map(s => s.key), secs: m.querySelectorAll('.sp-sec').length }; },
     get cats() { return groupsOf(tab).map(g => g.area.key); },
     // open a category of a tab (tests, and anything that wants to take a child straight to one); null: the cards
     openGroup(t, key) { tab = t; if (key == null) backToCards(); else openCat(key, true); },
