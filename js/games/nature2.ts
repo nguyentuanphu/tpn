@@ -70,7 +70,7 @@ register({
     let collected = 0;
     while (collected < target) {
       stage.innerHTML = '';
-      const egg = el('button', 'n2-float', pic('🥚'));
+      const egg = el('button', 'n2-float', pic('egg:emu'));
       egg.style.left = rand(20, 260) + 'px';
       egg.style.top = rand(20, 220) + 'px';
       egg.setAttribute('aria-label', T('Emu egg', 'Trứng đà điểu'));
@@ -96,7 +96,7 @@ register({
   name: () => T('Great Barrier Reef Cleaner', 'Bảo Vệ Rạn San Hô'),
   async run(api) {
     style();
-    api.say('Pick up the bottles and nets so the sea turtles and corals stay safe!',
+    api.say('Pick up the plastic and old nets so the sea turtles and corals stay safe!',
       'Thu gom rác và lưới để rùa biển cùng rạn san hô luôn an toàn nhé!');
     const target = api.little ? 4 : 6;
     api.dots(target, 0);
@@ -107,7 +107,7 @@ register({
 
     let cleaned = 0;
     while (cleaned < target) {
-      const junk = el('button', 'n2-float', pic(cleaned % 2 ? '🍾' : '🕸️'));
+      const junk = el('button', 'n2-float', pic(['🥤', '🕸️', '🛍️'][cleaned % 3])); // (audit: a plastic cup and bag, not a champagne bottle)
       junk.style.left = rand(20, 260) + 'px';
       junk.style.top = rand(20, 180) + 'px';
       junk.setAttribute('aria-label', T('Litter', 'Rác'));

@@ -41,12 +41,13 @@ register({
 
     const display = el('div', '', pic('🌅')); display.style.fontSize = '80px'; stage.appendChild(display);
     const controls = el('div', 'm2-controls'); wrap.appendChild(controls);
+    // (owner, 29 Oct 2026 AEDT audit) the buttons stood in the right order already: they are mixed up now
     const btns = routine.map((r, idx) => {
       const b = el('button', 'm2-btn', `${pic(r.icon)} <span>${T(r.name[0], r.name[1])}</span>`);
       b.dataset.step = String(idx);
-      controls.appendChild(b);
       return b;
     });
+    [...btns].sort(() => Math.random() - .5).forEach(b => controls.appendChild(b));
 
     let currentStep = 0;
     while (currentStep < 4) {
@@ -54,6 +55,7 @@ register({
       const target = btns[currentStep];
       const clicked = await untilRight(api, btns, e => e === target);
       if (!clicked || api.closed) return;
+      target.disabled = true;
       display.innerHTML = pic(routine[currentStep].icon);
       api.sfx.pop(currentStep);
       currentStep++;
@@ -100,13 +102,14 @@ register({
       return b;
     });
 
+    // (owner, 29 Oct 2026 AEDT audit) any order: the plate needs each kind of food once (it took one fixed order)
     let currentStep = 0;
     while (currentStep < 4) {
-      api.plan(() => btns[currentStep] || null, { maxActions: 5 });
-      const target = btns[currentStep];
-      const clicked = await untilRight(api, btns, e => e === target);
+      api.plan(() => btns.find(b => !b.disabled) || null, { maxActions: 5 });
+      const clicked = await untilRight(api, btns, e => !e.disabled);
       if (!clicked || api.closed) return;
-      slots[currentStep].classList.add('on');
+      clicked.disabled = true;
+      slots[Number(clicked.dataset.step)].classList.add('on');
       api.sfx.pop(currentStep);
       currentStep++;
       api.dots(4, currentStep);
@@ -147,12 +150,13 @@ register({
       return b;
     });
 
+    // (owner, 29 Oct 2026 AEDT audit) every kind choice is right, in any order (it took one fixed order)
     let current = 0;
     while (current < targetChoices) {
-      api.plan(() => btns[current] || null, { maxActions: 5 });
-      const target = btns[current];
-      const clicked = await untilRight(api, btns, e => e === target);
+      api.plan(() => btns.find(b => !b.disabled) || null, { maxActions: 5 });
+      const clicked = await untilRight(api, btns, e => !e.disabled);
       if (!clicked || api.closed) return;
+      clicked.disabled = true;
       heart.style.transform = 'scale(1.3)';
       setTimeout(() => { heart.style.transform = 'scale(1)'; }, 200);
       api.sfx.chime();

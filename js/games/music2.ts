@@ -1,9 +1,15 @@
 // Music additions (owner, 23 Oct 2026 AEDT):
 // Đàn Tranh, Bush Band, Drum Echo, Loud and Quiet, and Song Steps.
-import { register, untilRight } from './frame.js';
+import { register, untilRight, tapOne } from './frame.js';
 import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el, wait } from '../util.js';
+import { tone, noise } from '../audio.js';
+
+// (owner, 29 Oct 2026 AEDT audit) a drum beat, and a sound that is really loud or really soft
+const beat = () => { tone(110, .22, { to: 60, vol: .3 }); noise(.08, { freq: 300, vol: .12 }); };
+const loudSound = () => { tone(150, .9, { type: 'sawtooth', to: 110, vol: .4, filter: 'lowpass', ff: 900 }); noise(.5, { freq: 500, vol: .25 }); };
+const quietSound = () => { [0, .18].forEach(t => tone(1300, .08, { at: t, to: 1600, vol: .02 })); };
 
 let styled = false;
 function style() {
@@ -92,14 +98,15 @@ register({
       return b;
     });
 
+    // (owner, 29 Oct 2026 AEDT audit) the band plays whatever the child taps (it wanted one fixed order nobody was told)
     let current = 0;
     while (current < targetPlays) {
-      const target = btns[current % 3];
-      api.plan(() => target, { maxActions: 4 });
-      const clicked = await untilRight(api, btns, e => e === target);
+      api.plan(() => btns[current % 3], { maxActions: 4 });
+      const clicked = await untilRight(api, btns, () => true);
       if (!clicked || api.closed) return;
-      display.innerHTML = pic(insts[current % 3].icon);
-      api.sfx.pop(current % 3);
+      const idx = Number(clicked.dataset.idx);
+      display.innerHTML = pic(insts[idx].icon);
+      api.sfx.pop(idx * 2);
       current++;
       api.dots(targetPlays, current);
       await wait(300);
@@ -128,20 +135,35 @@ register({
     const hitBtn = el('button', 'mu2-btn', `${pic('🥁')} <span>${T('Tap drum', 'Đánh trống')}</span>`);
     controls.appendChild(hitBtn);
 
+    // (owner, 29 Oct 2026 AEDT audit) the leader drum really plays now (it only said a number), and the echo is checked:
+    // too many taps start the round again
     let round = 0;
+    hitBtn.disabled = true;
     while (round < rounds) {
       const targetBeats = (round % 3) + 2;
-      api.say(`Echo back ${targetBeats} drum beats!`, `Đánh đáp lại ${targetBeats} tiếng trống nhé!`);
+      api.say('Listen!', 'Nghe nhé!');
+      await wait(900);
+      for (let i = 0; i < targetBeats; i++) {
+        if (api.closed) return;
+        beat(); drum.style.transform = 'scale(1.25)';
+        await wait(260); drum.style.transform = 'scale(1)'; await wait(260);
+      }
+      api.say('Your turn!', 'Đến lượt con!');
+      hitBtn.disabled = false;
       let hits = 0;
-      hitBtn.onclick = () => {
-        hits++;
-        api.sfx.pop(hits % 4);
-      };
       api.plan(() => hits < targetBeats ? hitBtn : null, { maxActions: targetBeats + 2 });
       while (hits < targetBeats) {
-        await wait(150);
-        if (api.closed) return;
+        const clicked = await tapOne([hitBtn], api);
+        if (!clicked || api.closed) return;
+        hits++; beat();
       }
+      // a short wait: an extra tap means the echo was too long
+      let extra = false;
+      hitBtn.onclick = () => { extra = true; };
+      await wait(700);
+      hitBtn.onclick = null; hitBtn.disabled = true;
+      if (api.closed) return;
+      if (extra) { api.sfx.no(); api.say(`Just ${targetBeats} beats. Listen again!`, `Chỉ ${targetBeats} tiếng thôi. Nghe lại nhé!`); await wait(1200); continue; }
       round++;
       api.dots(rounds, round);
       api.sfx.ding();
@@ -172,11 +194,17 @@ register({
     const quietBtn = el('button', 'mu2-btn', `${pic('🐭')} <span>${T('Quiet', 'Nhỏ')}</span>`);
     controls.appendChild(loudBtn); controls.appendChild(quietBtn);
 
-    const answers = [loudBtn, quietBtn, loudBtn];
+    // (owner, 29 Oct 2026 AEDT audit) a mixed order every game, a really loud roar or a tiny squeak (both were
+    // ordinary pops, always loud, quiet, loud), and the drum on stage plays it again
+    const answers = [loudBtn, quietBtn, Math.random() < .5 ? loudBtn : quietBtn].sort(() => Math.random() - .5);
     let current = 0;
+    let play = () => {};
+    iconEl.style.cursor = 'pointer';
+    iconEl.onclick = () => play();
     while (current < rounds) {
       const target = answers[current];
-      if (target === loudBtn) api.sfx.pop(5); else api.sfx.tap();
+      play = target === loudBtn ? loudSound : quietSound;
+      await wait(400); play();
       api.plan(() => target, { maxActions: 4 });
       const clicked = await untilRight(api, [loudBtn, quietBtn], e => e === target);
       if (!clicked || api.closed) return;
@@ -208,12 +236,15 @@ register({
     const lines = ['Kìa con bướm vàng', 'Xòe đôi cánh', 'Tung cánh bay lên trời', 'Em ngồi xem'];
 
     const controls = el('div', 'mu2-controls'); wrap.appendChild(controls);
+    // (owner, 29 Oct 2026 AEDT audit) the lines were numbered 1 to 4 in the right order, so the answer was shown:
+    // they are mixed up now, and a line already sung goes onto the stage
+    const sung = el('div', ''); sung.style.cssText = 'font: 800 16px var(--font, sans-serif); color: #3b2a4f; text-align: center;'; stage.appendChild(sung);
     const btns = lines.map((l, idx) => {
-      const b = el('button', 'mu2-btn', `<span>${idx + 1}. ${l}</span>`);
+      const b = el('button', 'mu2-btn', `<span>${l}</span>`);
       b.dataset.idx = String(idx);
-      controls.appendChild(b);
       return b;
     });
+    [...btns].sort(() => Math.random() - .5).forEach(b => controls.appendChild(b));
 
     let current = 0;
     while (current < 4) {
@@ -221,6 +252,8 @@ register({
       api.plan(() => target, { maxActions: 5 });
       const clicked = await untilRight(api, btns, e => e === target);
       if (!clicked || api.closed) return;
+      target.disabled = true;
+      sung.appendChild(el('div', '', lines[current]));
       api.sfx.pop(current);
       current++;
       api.dots(4, current);
