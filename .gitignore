@@ -225,6 +225,7 @@ marketing/source/runvalley.log
 /js/travel-stops.js
 /js/ui-settings.js
 /js/ui.js
+/js/vehicles.js
 /js/viwords.js
 /js/voice-fragments.js
 /js/voice-index.js
@@ -392,3 +393,4 @@ js/voice-fragments.js
 /temp/hanoi-delivery-stage-*/
 /temp/hanoi-originals-*/
 /js/yard.js
+/js/vehicles.js
