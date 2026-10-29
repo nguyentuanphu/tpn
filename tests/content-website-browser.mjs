@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import {URL} from './harness.mjs';
 const folder='../docs/studio-content-website-20261029';
 export async function contentWebsiteCheck(browser){
- const provenance=contentEvidence(browser,['home/index.html', 'docs/website-review-20261023/art-content.mjs', 'docs/website-review-20261023/navigation.mjs']);
+ const provenance=contentEvidence(browser,['home/index.html', 'docs/website-review-20261023/art-content.mjs', 'docs/website-review-20261023/navigation.mjs','docs/website-review-20261023/parent-content.mjs']);
  const results=[];
  for(const [width,height]of [[390,844],[820,1180],[1440,900],[844,390]]){
   const context=await browser.newContext({viewport:{width,height}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -20,7 +20,12 @@ export async function contentWebsiteCheck(browser){
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     await page.locator('#art-nonla').scrollIntoViewIfNeeded();await page.screenshot({animations:'disabled',path:`${folder}/screenshots/website-art-${lang}-${width}.png`});
     assert.equal(await page.locator('#art-nonla').evaluate(e=>e.open),true);
-    results.push({width,height,lang,fourDestinations:true,artItems:22,deepLink:true,noOverflow:true});
+    await page.evaluate(()=>location.hash='#faq');await page.waitForFunction(()=>!document.querySelector('.family-page').hidden);
+    const availability=page.locator('#faq .parent-faq').last();if(!await availability.evaluate(e=>e.open))await availability.locator('summary').click();
+    assert.ok((await availability.innerText()).includes(lang==='en'?'Offline devices':'Thiết bị ngoại tuyến'));
+    await availability.scrollIntoViewIfNeeded();await page.screenshot({animations:'disabled',path:`${folder}/screenshots/website-availability-${lang}-${width}.png`});
+    await page.evaluate(()=>location.hash='#art-nonla');await page.waitForFunction(()=>document.querySelector('#art-nonla').open&&!document.querySelector('.learn-page').hidden);
+    results.push({width,height,lang,fourDestinations:true,artItems:22,deepLink:true,noOverflow:true,availabilityExplained:true});
    }
    assert.deepEqual(errors,[]);
   }finally{await context.close();}
