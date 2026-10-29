@@ -231,22 +231,22 @@
     },
     {
       "asset": "assets/game-previews/game-horse-en.jpg",
-      "source": "docs/horse-stability-review-20261027/shots/phone-en.png",
-      "sha256": "4763b6ea59ea2faba3dac4d1443f50db1d563b3356a7d7dadb1fb180d85c62fb",
+      "source": "docs/horse-phone-fit-review-20261029/horse-stability/phone-en.png",
+      "sha256": "d4ae3381ed15af55a069f825699d109a52deb758fa69d280e480873e1f0b03c8",
       "width": 390,
       "height": 844,
-      "captureSourceCommit": "bae2862c2d82b6e78f5de8fda657f65689a5caee",
-      "reviewedAgainst": "bae2862c2d82b6e78f5de8fda657f65689a5caee",
+      "captureSourceCommit": "0c9d51c7eaaf9756832ea0a0a141fd745bc723bb",
+      "reviewedAgainst": "0c9d51c7eaaf9756832ea0a0a141fd745bc723bb",
       "syntheticProfiles": true
     },
     {
       "asset": "assets/game-previews/game-horse-vi.jpg",
-      "source": "docs/horse-stability-review-20261027/shots/phone-vi.png",
-      "sha256": "8ae2f09e34865cbb92c0528255c337553d79e4b7380c1c9be467399c71efc64c",
+      "source": "docs/horse-phone-fit-review-20261029/horse-stability/phone-vi.png",
+      "sha256": "ce4236ed01b50d21252391e411635bc13dd1f485b24d65d9f8fb4abaa46ea680",
       "width": 390,
       "height": 844,
-      "captureSourceCommit": "bae2862c2d82b6e78f5de8fda657f65689a5caee",
-      "reviewedAgainst": "bae2862c2d82b6e78f5de8fda657f65689a5caee",
+      "captureSourceCommit": "0c9d51c7eaaf9756832ea0a0a141fd745bc723bb",
+      "reviewedAgainst": "0c9d51c7eaaf9756832ea0a0a141fd745bc723bb",
       "syntheticProfiles": true
     }
   ]

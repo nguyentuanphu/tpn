@@ -47,7 +47,7 @@ export interface StudioInfo {
 
 /** a device in the players report (Sparkle Lab, Analytics) */
 export interface StudioDevice {
-  id: string; label?: string; kind?: string; os?: string; br?: string; app?: boolean; fps?: number | null; online?: boolean;
+  id: string; label?: string; kind?: string; os?: string; br?: string; app?: boolean; installation?: '' | 'native' | 'standalone'; installationSeen?: string; fps?: number | null; online?: boolean;
   seenAt?: string; last?: string; loc?: { city?: string, country?: string }; kids?: { name?: string }[];
   [k: string]: any;
 }

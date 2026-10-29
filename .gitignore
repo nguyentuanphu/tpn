@@ -58,6 +58,7 @@ marketing/source/runvalley.log
 /js/content/films/crow.js
 /js/content/fruit-parade.js
 /js/content/hanoi-pack-info.js
+/js/content/install-state.js
 /js/content/map.js
 /js/content/releases.js
 /js/content/savecopy.js
@@ -172,6 +173,7 @@ marketing/source/runvalley.log
 /js/install.js
 /js/keepcopy.js
 /js/lanterns.js
+/js/launch.js
 /js/learn.js
 /js/lotus.js
 /js/main.js
@@ -190,6 +192,7 @@ marketing/source/runvalley.log
 /js/printpage.js
 /js/recorder.js
 /js/relay.js
+/js/render-recovery.js
 /js/report-outbox.js
 /js/report.js
 /js/rideview.js

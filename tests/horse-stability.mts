@@ -10,7 +10,7 @@ export async function horseStabilityCheck(browser:Browser){
  for(const [device,w,h]of [['phone',390,844],['tablet',820,1180],['computer',1280,850]]as const)for(const lang of ['en','vi']){
   console.log('horse stability',device,lang);
   await P.page.setViewportSize({width:w,height:h});await P.page.evaluate(async lang=>{const G=window.__sv as any;(await import(String('/js/state.js'))).settings.lang=lang;G.heroes[0].profile.age=lang==='en'?'little':'big';void G.playGame(0,'cacuangua','replay');},lang);
-  await P.page.locator('.horse-race').waitFor();await P.page.locator('.horse-settings-box').evaluate((d:HTMLDetailsElement)=>{d.open=true;});await P.page.locator('.horse-settings input').uncheck();await P.page.locator('.horse-settings button').click();await P.page.locator('.horse-settings-box').evaluate((d:HTMLDetailsElement)=>{d.open=false;});await settled();
+  await P.page.locator('.horse-race').waitFor();await P.page.locator('.horse-settings-box').evaluate((d:HTMLDetailsElement)=>{d.open=true;});if(lang==='vi')await P.page.locator('.horse-settings select').nth(1).selectOption('4');await P.page.locator('.horse-settings input').uncheck();await P.page.locator('.horse-settings button').click();if(lang==='vi')assert.equal(await P.page.locator('.horse-player').count(),4);await P.page.locator('.horse-settings-box').evaluate((d:HTMLDetailsElement)=>{d.open=false;});await settled();
   const before=await rects();
   for(let k=0;k<18;k++){
    const choice=P.page.locator('.horse-moves button:not([disabled])').first();if(await choice.count())await choice.click();else await P.page.locator('[data-horse-roll]').click();await settled();
@@ -19,6 +19,6 @@ export async function horseStabilityCheck(browser:Browser){
   const colours=await P.page.locator('.horse-stable svg,.horse-token svg').evaluateAll(nodes=>nodes.map(n=>n.innerHTML));assert.ok(colours.some(s=>s.includes('#cf475c'))&&colours.some(s=>s.includes('#347fbd')),'horses show team coat colours');
   await P.page.screenshot({path:`out/horse-stability/${device}-${lang}.png`});await P.page.locator('.gl .gl-x').click();await P.page.locator('.gl').waitFor({state:'detached'});
  }
- assert.deepEqual(P.errors,[]);return'board and die stay fixed through108 real roll/move actions in six EN/VI layouts; larger horses show team colours';
+ assert.deepEqual(P.errors,[]);return'board and die stay fixed through108 real roll/move actions in six EN/VI layouts; two/four-seat rosters and larger horses show team colours';
  }finally{await P.ctx.close();}
 }

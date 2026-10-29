@@ -1,0 +1,116 @@
+{
+  "scope": "Actual autoplay Kite then Sack Race, isolated from world navigation, synthetic device/network writes blocked",
+  "errors": [],
+  "report": {
+    "at": "2026-10-28T23:12:28.376Z",
+    "build": "v1.02",
+    "speed": "x5",
+    "total": 2,
+    "done": [
+      {
+        "g": "games",
+        "key": "game:kite",
+        "name": "Kite Flying",
+        "ok": true,
+        "skipped": false,
+        "problems": [],
+        "notes": [],
+        "said": "won: 5 ✓, 0 ✗, 13 taps",
+        "secs": 18.8,
+        "fps": 44
+      },
+      {
+        "g": "games",
+        "key": "game:sackrace",
+        "name": "Sack Race",
+        "ok": true,
+        "skipped": false,
+        "problems": [],
+        "notes": [],
+        "said": "won: 0 ✓, 0 ✗, 90 taps",
+        "secs": 65,
+        "fps": 52
+      }
+    ],
+    "perRun": true,
+    "reportIds": [],
+    "reportState": "disabled"
+  },
+  "trail": [
+    [
+      1793229141268,
+      "profile",
+      "max-competence:tap:Hop!"
+    ],
+    [
+      1793229141949,
+      "tap",
+      "runner"
+    ],
+    [
+      1793229141950,
+      "profile",
+      "max-competence:tap:runner"
+    ],
+    [
+      1793229142654,
+      "tap",
+      "runner"
+    ],
+    [
+      1793229142654,
+      "profile",
+      "max-competence:tap:runner"
+    ],
+    [
+      1793229143256,
+      "tap",
+      "runner"
+    ],
+    [
+      1793229143256,
+      "profile",
+      "max-competence:tap:runner"
+    ],
+    [
+      1793229143868,
+      "tap",
+      "Hop!"
+    ],
+    [
+      1793229143872,
+      "profile",
+      "max-competence:tap:Hop!"
+    ],
+    [
+      1793229144581,
+      "tap",
+      "runner"
+    ],
+    [
+      1793229144581,
+      "profile",
+      "max-competence:tap:runner"
+    ],
+    [
+      1793229145285,
+      "tap",
+      "Hop!"
+    ],
+    [
+      1793229145286,
+      "profile",
+      "max-competence:tap:Hop!"
+    ],
+    [
+      1793229145888,
+      "tap",
+      "runner"
+    ],
+    [
+      1793229145888,
+      "profile",
+      "max-competence:tap:runner"
+    ]
+  ]
+}

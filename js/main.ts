@@ -5,6 +5,7 @@ import './emojiswap.js'; // (first: no phone emoji on the page or on any canvas)
 import { THREE, sprite, P, merge, toonVC } from './gfx.js';
 import { createSeeThrough } from './seethrough.js';
 import { withRideView } from './rideview.js';
+import { mountRenderRecovery } from './render-recovery.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
 import { settings, saveSettings, saveProfiles, farm, profiles, claimTab } from './state.js';
 import { T, nm, onLang, registerName } from './i18n.js';
@@ -119,41 +120,31 @@ const quality = settings.quality === 'auto' ? ((navigator.hardwareConcurrency ||
 const PR_AUTO = 1.5; // (battery round) on Auto the picture is never drawn sharper than 1.5x the screen's pixels
 let renderer;
 try { renderer = new THREE.WebGLRenderer({ antialias: quality !== 'low', preserveDrawingBuffer: false, powerPreference: 'default' }); }
-catch (e) { $('#boot').innerHTML = `<p>${T('Sorry, this device cannot show the 3D world.', 'Xin lỗi, máy này không hiển thị được thế giới 3D.')}</p>`; throw e; }
+catch (cause) { const error = new Error('The 3D picture could not start.', { cause }); error.name = 'GraphicsUnavailableError'; throw error; }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, quality === 'low' ? 1.25 : quality === 'high' ? 2 : settings.quality === 'auto' ? PR_AUTO : 1.6));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NoToneMapping; // flat illustrated colours, exactly as painted
 if (quality !== 'low') { renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; }
 document.getElementById('stage').appendChild(renderer.domElement);
-// If the phone runs short of memory it can take the 3D picture away (the screen goes white and Safari may reload
-// the page). Save at once, show a friendly card, and if the picture does not come back by itself, reload: progress
-// is already saved, so the child carries on where they were.
-{
-  let lostT: ReturnType<typeof setTimeout> | 0 = 0;
-  const savePlace = () => { try { G.heroes.forEach(h => { if (h.profile && h.onGround && !h.towerClimb && !h.indoors) { h.profile.pos = { x: +h.lastSafe.x.toFixed(1), z: +h.lastSafe.z.toFixed(1) }; h.profile.posMap = MAP_VERSION; } }); saveProfiles(true); } catch (err) { } };
-  // (owner, 29 Oct 2026 AEDT: a white screen in the installed app, on opening, coming back, after an update and while
-  // playing) iOS can take the 3D picture away while the app is in the background without saying so, or not start the
-  // frames again: each time the game comes back to the screen, both are checked after 4 s; a lost picture or frames
-  // that never came back save the place and reload into it, instead of a white screen
-  const backAgain = () => {
-    if (document.visibilityState !== 'visible' || !booted) return;
-    const since = performance.now();
-    setTimeout(() => {
-      if (document.visibilityState !== 'visible') return;
-      const lost = renderer.getContext().isContextLost(), stuck = lastFrameAt < since;
-      if (!lost && !stuck) return;
-      savePlace(); noteReload(lost ? '3D picture lost while away' : 'frames stopped while away', G); location.reload();
-    }, 4000);
-  };
-  document.addEventListener('visibilitychange', backAgain);
-  addEventListener('pageshow', e => { if (e.persisted) backAgain(); });
-  renderer.domElement.addEventListener('webglcontextlost', e => {
-    e.preventDefault(); savePlace();
-    if (!document.querySelector<HTMLElement>('.ctxlost')) document.body.appendChild(el('div', 'ctxlost', `<div>🌈</div><p>${T('One moment, the valley is coming back…', 'Chờ một chút, thung lũng đang trở lại…')}</p>`));
-    clearTimeout(lostT); lostT = setTimeout(() => { noteReload('3D picture lost', G); location.reload(); }, 4000); // (#355: noted for Studio's report)
-  });
-  renderer.domElement.addEventListener('webglcontextrestored', () => { clearTimeout(lostT); document.querySelectorAll<HTMLElement>('.ctxlost').forEach(e => e.remove()); });
-}
+// Suspended Home Screen apps need a fresh frame clock and drawing buffer on return.
+// Never start a reload timer in the background: it may fire before the browser restores WebGL.
+let resumeDrawing: (() => void) | undefined;
+let rememberRecoverySpot: (() => void) | undefined;
+const restoreContext = renderer.getContext().getExtension('WEBGL_lose_context');
+mountRenderRecovery({
+  canvas: renderer.domElement,
+  lost: () => renderer.getContext().isContextLost(),
+  restore: () => restoreContext?.restoreContext(),
+  refresh: () => resumeDrawing?.(),
+  save: () => { try { rememberRecoverySpot?.(); } catch {} finally { saveProfiles(true); } },
+  show: retry => {
+    if (document.querySelector('.ctxlost')) return;
+    const card = el('div', 'ctxlost', `<div>${pic('🌈')}</div><p>${T('The valley is coming back. Your saved progress is kept.', 'Thung lũng đang trở lại. Tiến trình đã lưu vẫn được giữ.')}</p>`);
+    const button = el('button', 'btn primary big', T('Try again', 'Thử lại')); button.style.minHeight = button.style.minWidth = '64px'; button.onclick = retry; card.append(button); document.body.append(card);
+  },
+  hide: () => document.querySelectorAll('.ctxlost').forEach(e => e.remove()),
+  reload: () => { noteReload('3D picture lost', G); location.reload(); }
+});
 const scene = new THREE.Scene();
 { // soft sky light bouncing off everything, so materials look real rather than flat
   const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), .04).texture; pm.dispose();
@@ -1491,7 +1482,7 @@ G.rects = rects; G.faceToFace = () => G.heroes.length > 1 && faceToFace();
 G.lastPlayer = 0;
 const holders = [0, 1].map(() => { const w = document.createElement('div'); w.className = 'halfwrap'; return w; });
 G.halfBusy = i => !!holders[i] && holders[i].isConnected && [...holders[i].children].some(c => !c.classList.contains('out') && !c.classList.contains('confetti') && /(^|\s)(modal|gl|storybook|vc-pop|dialog|reward|chatwin|handpad)(\s|$)/.test(c.className));
-const NOT_A_WINDOW = /(^|\s)(hud|stick|facewrap|halfwrap|caption|title|confetti|fade|apfinger|testertoast|packbar|tester-floating|tpanel|tp-picture)(\s|$)/;
+const NOT_A_WINDOW = /(^|\s)(hud|stick|facewrap|halfwrap|caption|title|confetti|fade|apfinger|testertoast|packbar|tester-floating|tpanel|tp-picture|ctxlost)(\s|$)/;
 function placeHolders() {
   const r = rects(), two = twoHalves();
   holders.forEach((w, i) => {
@@ -1604,6 +1595,7 @@ G.goodSpot = (x, z) => {
   return !W.colliders.some(c => c.r > 0 && c.top == null && Math.hypot(c.x - x, c.z - z) < c.r + .45) && !W.boxes.some(b => x > b.x0 - .45 && x < b.x1 + .45 && z > b.z0 - .45 && z < b.z1 + .45);
 };
 const keepSpot = () => G.heroes.forEach(h => { if (h.profile && h.onGround && !h.towerClimb && !h.indoors && G.goodSpot(h.lastSafe.x, h.lastSafe.z)) { h.profile.pos = { x: +h.lastSafe.x.toFixed(1), z: +h.lastSafe.z.toFixed(1) }; h.profile.posMap = MAP_VERSION; } }); // (round T: stamped with the layout)
+rememberRecoverySpot = keepSpot;
 // the "New!" moment (round R, owner): what Studio's Releases page marked new, once per child, at most three at a time
 // (round T) once, when a child who already played opens the valley's new layout
 async function grownMoment() {
@@ -1728,9 +1720,9 @@ function stillCheck(now) {
 // under-5s start on, the 🎵 Songs page, often left playing lullabies at bedtime, and the real photos)
 const worldHidden = () => (G.simple && G.simple.open) || !!document.querySelector<HTMLElement>('.songs, .realview');
 G.worldHidden = worldHidden;
-let lastFrameAt = 0;
+let frameRequest = 0;
 function frame(now) {
-  requestAnimationFrame(frame); lastFrameAt = performance.now();
+  frameRequest = requestAnimationFrame(frame);
   if (framesSeen < 4 && ++framesSeen === 4) framesDone(); // (js/solids.js waits for these)
   if (!BAT.gate(BAT, now, BAT.capMs())) return; // (battery round)
   if (playing && !BAT.idle) adaptResolution(now - last - (FRAME_MS ? FRAME_MS - 1000 / 60 : 0)); // (the wait between frames is not slowness)
@@ -2074,8 +2066,15 @@ $('#songBtn').onclick = () => G.places.nextSong();
 resize();
 // (round R, faster launch) the first picture prepares every material's shader at once (a few seconds on a phone): the
 // title is already painted by then, and the valley is drawn behind it a frame later
-{ let go = false; const start = () => { if (go) return; go = true; bootMark('shaders'); requestAnimationFrame(frame); };
-  requestAnimationFrame(() => setTimeout(start, 30)); }
+{ let started = false;
+  const start = () => {
+    if (!started) { started = true; bootMark('shaders'); }
+    cancelAnimationFrame(frameRequest); last = performance.now(); BAT.due = 0; BAT.lastDrawn = 0;
+    resize(); frameRequest = requestAnimationFrame(frame);
+  };
+  resumeDrawing = start;
+  requestAnimationFrame(() => setTimeout(start, 30));
+}
 // (Round U, owner: rows and pages scroll by finger and mouse everywhere: js/scrollhelp.js; loaded after the title)
 import('./scrollhelp.js').then(m => m.installScrollHelp());
 // (Round U) every villager answers a tap with a fact or a saying of their region (js/villagertalk.js)

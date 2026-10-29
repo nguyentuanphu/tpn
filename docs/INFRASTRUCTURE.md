@@ -86,7 +86,7 @@ Netlify Blobs needs no key; it is attached to the site automatically.
 
 Parents see the same list in plain words, folded under the Use the internet switch (`netListHTML` in `js/extras.js`). Nothing a parent or child sees names Sparkle Studio (owner, 10 Oct: it is for the admin only; check `nostudio`).
 
-- **Player hello:** random device id, build, language, number of profiles, minutes, games, stories, device type, installed or not, minutes online, and ≤ 15 game lines that had no recording.
+- **Player hello:** random device id, build, language, number of profiles, minutes, games, stories, device type, observed install confirmation and last reported app/browser context (with Analytics on; unconfirmed is not uninstalled), minutes online, and ≤ 15 game lines that had no recording.
   - Never names, photos, places or anything typed.
   - Off switch: Grown-ups → Advanced → Count players.
 - **Online play:** names, outfits, positions and the player photo go to the other players only.

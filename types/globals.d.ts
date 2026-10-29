@@ -10,13 +10,18 @@ declare global {
    *  (the whole shared game object gets its own type later in the TypeScript plan) */
   type SvHero = { profile: import('../js/state.js').Profile };
   type SvThing = { id?: string, x: number, z: number, act(hero: SvHero, game: SvGame): Promise<unknown> | void };
-  type SvGame = Partial<Pick<import('../js/main.js').SvMain, 'inviteGame' | 'tester' | 'screenFacts' | 'parents' | 'farm' | 'addCoins' | 'listenFriends' | 'npcs' | 'changePlayer' | 'homes' | 'scene' | 'plots' | 'getViews' | 'setView' | 'snapshot' | 'zoomBy' | 'currentQuest' | 'questTarget' | 'lanterns' | 'autoplay' | 'landBy' | 'seeThrough' | 'goodSpot' | 'gameSpot' | 'clearSpot' | 'solidsReady'>> & { heroes: import('../js/main.js').SvMain['heroes'], interactables: SvThing[], paused?: boolean, renderer?: { setPixelRatio(ratio: number): void },
+  type SvGame = Partial<Pick<import('../js/main.js').SvMain, 'inviteGame' | 'tester' | 'screenFacts' | 'parents' | 'farm' | 'addCoins' | 'listenFriends' | 'npcs' | 'changePlayer' | 'homes' | 'scene' | 'plots' | 'getViews' | 'setView' | 'snapshot' | 'zoomBy' | 'save' | 'currentQuest' | 'questTarget' | 'lanterns' | 'autoplay' | 'landBy' | 'seeThrough' | 'goodSpot' | 'gameSpot' | 'clearSpot' | 'solidsReady'>> & { heroes: import('../js/main.js').SvMain['heroes'], interactables: SvThing[], paused?: boolean, renderer?: { setPixelRatio(ratio: number): void },
     playGame?(player: number, id: string, how: string): void, openPad?(player: number, tab: string): void, _owlAuto?: boolean,
     bootTimes?: Record<string, number>,
     /** Studio's map view reads the valley's boxes and round colliders (studio/ui/app.ts) */
     world?: { boxes: { x0: number, x1: number, z0: number, z1: number, room?: unknown, [k: string]: unknown }[], colliders: { x: number, z: number, r: number }[] } };
   interface Window {
     svModuleGone?: (error: unknown) => void;
+    /** set by the small check in index.html on a device too old for the game (owner, 29 Oct 2026 AEDT) */
+    svTooOld?: boolean;
+    svOfferUpdate?: (needed?: boolean) => void;
+    svWatchUpdates?: (registration: ServiceWorkerRegistration) => void;
+    svUpdateGap?: number;
     /** the game object, for the checks and the tools (js/main.js) */
     __sv: SvGame;
     /** the checks and tools/voice-harvest.mts hear every line the game says (js/voice.ts) */

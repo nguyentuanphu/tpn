@@ -26,8 +26,8 @@ import { pic } from './art.js';
 import { saveProfiles, reduceMotion } from './state.js';
 import { GAMES, gameOpen } from './games/frame.js';
 import { holdButton, openGrownups, openFestivals } from './ui.js';
-import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, withSitePlaces } from './content/activities.js';
-import { featureOn } from './custom.js';
+import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, gameInfo, withSitePlaces } from './content/activities.js';
+import { featureOn, onLive } from './custom.js';
 import { isOpen, progressOf } from './content/unlocks.js';
 
 // a star drawn on the picture card (round I, owner: "stars without a strip, placed on the icon"): gold when earned
@@ -65,6 +65,11 @@ export function createSimple(G) {
   let m = null, tab = 'games', cat = null, back = false, busy = false, sel = null, finding = false, lay = null; // cat: the open category (null: the cards); lay: where draw() put the stops
   let launched = 0, opened = false, starsBefore = 0; // a game or story started from here (when), and whether it is open yet
   const lastStars = {};
+  let catalogueDirty = false, fruitState = '';
+  // Studio can answer after the first screen; tester acceptance can also change locally later.
+  // Defer a refresh while an activity is open so its return position remains the same.
+  const fruitAvailability = () => ['fruitparade', 'sparkleorchard', 'sparklefruitbar'].map(id => `${id}:${gameInfo(id).hidden}`).join('|');
+  onLive(() => { catalogueDirty = true; });
   const hero = () => G.heroes[0];
   const solo = () => G.heroes.length === 1;
   const little = () => hero().profile.age !== 'big';
@@ -165,6 +170,11 @@ export function createSimple(G) {
     const v = viewsOf(tab)[0], lt = little(), seen = lt ? null : seenSet();
     list = v.items.map(s => ({ ...s, isNew: !!seen && s.kind !== 'head' && s.kind !== 'lock' && !seen.has(idOf(s)) }));
     const path = m.querySelector('.sp-path'), sc = m.querySelector('.sp-scroll'), isWide = wide();
+    // Replacing a long path temporarily collapses its scroll range. Remember both axes before
+    // clearing it and restore them after layout, including game/story returns and live refreshes.
+    const position = { top: sc.scrollTop, left: sc.scrollLeft };
+    const restorePosition = () => { sc.scrollTop = position.top; sc.scrollLeft = position.left; };
+    fruitState = fruitAvailability(); catalogueDirty = false;
     m.classList.toggle('wide', isWide); m.classList.toggle('big', !lt);
     const bk = m.querySelector('.sp-back'); bk.hidden = !cat; m.classList.toggle('cards', !cat);
     m.querySelectorAll('.sp-tabs [data-tab]').forEach(b => { const on = b.dataset.tab === tab; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
@@ -198,6 +208,7 @@ export function createSimple(G) {
       if (nb) { nb.classList.add('next'); const pr = path.getBoundingClientRect(), br = nb.getBoundingClientRect(), x = br.left - pr.left + br.width / 2, y = br.top - pr.top + path.scrollTop; const left = x > W / 2; owl.style.left = x + (left ? -84 : 84) + 'px'; owl.style.top = y + 60 + 'px'; owl.classList.toggle('left', left); }
       owl.onclick = () => { SFX.tap(); owl.classList.remove('cheer'); void owl.offsetWidth; owl.classList.add('cheer'); const x = list[next >= 0 ? next : 0]; if (x) say(x.voice[0], x.voice[1]); else { const t = tabOf(tab); say(t.say[0], t.say[1]); } };
       path.querySelectorAll('button.sp-stop').forEach(b => b.onclick = () => go(list[+b.dataset.k], b));
+      restorePosition();
       return;
     }
     const next = list.findIndex(s => s.max && !s.stars), H = sc.clientHeight || innerHeight - 80, W = path.clientWidth || innerWidth;
@@ -222,6 +233,7 @@ export function createSimple(G) {
     if (q) { const left = isWide ? false : q.x > W / 2, dx = isWide ? 0 : left ? -84 : 84; owl.style.left = q.x + dx + 'px'; owl.style.top = (isWide ? q.y - 96 : q.y) + 'px'; owl.classList.toggle('left', left); owl.classList.toggle('up', isWide); }
     owl.onclick = () => { SFX.tap(); owl.classList.remove('cheer'); void owl.offsetWidth; owl.classList.add('cheer'); const s = list[next >= 0 ? next : 0]; if (s) say(s.voice[0], s.voice[1]); };
     path.querySelectorAll('button.sp-stop').forEach(b => b.onclick = () => go(list[+b.dataset.k], b));
+    restorePosition();
   }
   // the tap: grow, bounce and sparkle at once, say the name, then open it (twice-tapping can't start it twice)
   function go(s, btn) {
@@ -343,6 +355,7 @@ export function createSimple(G) {
       else if (opened) settle();
       else if (!opened && Date.now() - launched > 6000) { launched = 0; busy = false; }
     }
+    if (m && !m.hidden && !busy && !gameOpen() && !document.querySelector('.theatre') && (catalogueDirty || fruitState !== fruitAvailability())) draw();
     if (m && !m.hidden && !gameOpen()) G.paused = true; // the valley stays still behind it, also after a talk box closes
     if (!back || !m || !m.hidden || G.paused || gameOpen() || document.querySelector('.modal, .dialog, .storybook, .theatre, .reward')) return;
     back = false; show();

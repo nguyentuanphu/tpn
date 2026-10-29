@@ -16,10 +16,10 @@
     ]
   },
   "localPassesAfterFixes": {
-    "unit": 351,
+    "unit": 353,
     "types": {
       "explicitFiles": 213,
-      "serverToolsFiles": 56
+      "serverToolsFiles": 57
     },
     "solidSeconds": 258,
     "groundSeconds": 68,
@@ -77,5 +77,31 @@
     "coverage": "PASS",
     "routing": "PASS",
     "humanListening": "pending"
-  }
+  },
+  "currentGitHub": {
+    "run": 40486378522,
+    "source": "5d0149a89c2a22142f2057314856fd3b8315b19e",
+    "status": "in progress",
+    "allReadingFilmsVoiceAreas": true,
+    "website": "passed",
+    "fastChecks": "7/7 passed: 353 units; 213 explicit plus 57 server/Studio/tool TypeScript files"
+  },
+  "ownerDecision": "27 October 2026 AEDT: keep preparing without a version",
+  "voiceDelta": {
+    "run": 40481288711,
+    "status": "passed",
+    "azure": 76,
+    "fptLeMinh": 17,
+    "all93FullDecode": true,
+    "existing6663Reused": true,
+    "leMinhPackClips": 6680,
+    "leMinhPackBytes": 88882017
+  },
+  "remainingReportedBugs": [
+    "Elephant head separation not reproduced",
+    "Kite Flying did-not-close report #650 pending reproduction",
+    "Full real-time autoplay navigation/quest reports pending verification",
+    "Independent Northern house-rule review",
+    "Physical-device/listening and AI review"
+  ]
 }

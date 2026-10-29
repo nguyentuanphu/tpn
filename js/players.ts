@@ -2,7 +2,7 @@
 // The first time, this device makes up a random number for itself. Every 10 minutes of play (and when the game is
 // put away) it says hello to the game's own website (netlify/functions/hello.mts) with only:
 //   that number · the build · the language · how many children's profiles · minutes played · which games were
-//   started and how many stories were opened since the last hello · phone, tablet or computer · installed or not
+//   started and how many stories were opened since the last hello · phone, tablet or computer · last app/browser context and bounded install evidence
 //   · minutes played with friends online
 //   · up to 15 lines of the game's own text it had to read with the machine voice (so Sparkle Studio can record
 //     them: the "missing lines inbox"), never a line with a child's name in it
@@ -28,6 +28,7 @@ import { voiceMisses, forgetVoiceMisses } from './voice.js';
 import { events } from './core/events.js';
 import { id as makeId } from './core/ids.js';
 import { familyHash } from './content/familycode.js';
+import { INSTALL_CONFIRMATION_KEY, installEvidence, standaloneDisplay } from './content/install-state.js';
 
 const KEY = 'sv2_playerid', OUT = 'sv2_hello_out', SENT = 'sv2_voicesent', EVERY = 10 * 60e3;
 const BOT_OUT = 'sv2_bot_telemetry';
@@ -43,11 +44,12 @@ const rnd = n => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => 'abc
 const SESSION = rnd(16), SESSION_STARTED = Date.now();
 const onSite = () => !!window.__svHelloTest || (/^https:$/.test(location.protocol) && !/^(localhost|127\.|\[::1\])/.test(location.hostname) && !/[?&]studio=1/.test(location.search) && !location.pathname.startsWith('/studio'));
 const kind = () => { const w = Math.min(screen.width, screen.height), touch = matchMedia('(pointer: coarse)').matches; return !touch ? 'computer' : w < 600 ? 'phone' : 'tablet'; };
-const installed = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const installed = () => standaloneDisplay(navigator.standalone, matchMedia('(display-mode: standalone)').matches, matchMedia('(display-mode: minimal-ui)').matches);
+const installation = () => { let saved: unknown = ''; try { saved = localStorage.getItem(INSTALL_CONFIRMATION_KEY); } catch {} return installEvidence(saved, installed()); };
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }; // the child's own day
 
 // the outbox: { days: { 'YYYY-MM-DD': { m, g: {game: n}, t, o } }, pending?: { h, days[], v[] } }, kept on the device until the website has it
-type OutDay = { d?: string; build?: string; m: number; g: Record<string, number>; t: number; o: number; fc?: number; h?: Record<number, number>; c?: Record<string, { n: string; a: string; m: number; g: Record<string, number[]>; p: Record<string, number>; t: number; sm: number }>; e?: Record<string, number>; s?: Record<string, number>; q?: Record<string, number>; f?: number[]; st?: (number | string)[][]; b?: number[] };
+type OutDay = { d?: string; build?: string; m: number; g: Record<string, number>; t: number; o: number; fc?: number; ic?: number; h?: Record<number, number>; c?: Record<string, { n: string; a: string; m: number; g: Record<string, number[]>; p: Record<string, number>; t: number; sm: number }>; e?: Record<string, number>; s?: Record<string, number>; q?: Record<string, number>; f?: number[]; st?: (number | string)[][]; b?: number[] };
 type Outbox = { days: Record<string, OutDay>; pending?: { h: string; days: (OutDay & { d: string; build: string })[]; v: string[][] } };
 const readOut = (): Outbox => { try { const o = JSON.parse(localStorage.getItem(outKey()) || '{}'); return o && o.days ? o : { days: {} }; } catch (e) { return { days: {} }; } };
 // (r80, owner 17 Oct AEDT: devices offline for a long time) the last 30 days played are kept until sent (was 14: a
@@ -97,7 +99,7 @@ export async function flush(closing) {
   if (sending || settings.countPlayers === false || !onSite()) return false;
   const o = readOut();
   if (!o.pending) {
-    const days = Object.entries(o.days).filter(([, d]) => d.m || d.t || d.o || d.fc || Object.keys(d.g||{}).length || Object.keys(d.e || {}).length || (d.st || []).length).map(([d, x]) => ({ d:d.slice(0,10), build:x.build||'?', m: x.m, g: x.g, t: x.t, o: x.o, h: x.h || {}, c: x.c || {}, e: x.e || {}, s: x.s || {}, q: x.q || {}, f: x.f || [0, 0, 0], st: x.st || [], b: x.b || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] })).slice(0,42);
+    const days = Object.entries(o.days).filter(([, d]) => d.m || d.t || d.o || d.fc || d.ic || Object.keys(d.g||{}).length || Object.keys(d.e || {}).length || (d.st || []).length).map(([d, x]) => ({ d:d.slice(0,10), build:x.build||'?', m: x.m, g: x.g, t: x.t, o: x.o, h: x.h || {}, c: x.c || {}, e: x.e || {}, s: x.s || {}, q: x.q || {}, f: x.f || [0, 0, 0], st: x.st || [], b: x.b || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] })).slice(0,42);
     if (!days.length) return false;
     const miss = newMisses();
     o.pending = { h: rnd(16), days, v: miss.out }; for(const d of days){delete o.days[d.d+'|'+d.build];if(d.build==='?')delete o.days[d.d];}writeOut(o);
@@ -105,7 +107,7 @@ export async function flush(closing) {
   if (navigator.onLine === false) return false; // waits for the 'online' event
   const me = id(); if (!me) return false;
   const bot = isBotEnv();
-  const P = o.pending, payload: Record<string, unknown> = { id: me, h: P.h, b: BUILD, sid:SESSION, started:SESSION_STARTED, l: settings.lang, k: (profiles || []).length, d: kind(), a: installed(), os: osOf(), br: browserOf(), sc: `${Math.round(screen.width)}x${Math.round(screen.height)}`, fh: familyHash(settings.familyCode), days: P.days.map(d=>({...d,build:d.build||'?'})), v: P.v };
+  const P = o.pending, payload: Record<string, unknown> = { id: me, h: P.h, b: BUILD, sid:SESSION, started:SESSION_STARTED, l: settings.lang, k: (profiles || []).length, d: kind(), a: installed(), install: installation(), os: osOf(), br: browserOf(), sc: `${Math.round(screen.width)}x${Math.round(screen.height)}`, fh: familyHash(settings.familyCode), days: P.days.map(d=>({...d,build:d.build||'?'})), v: P.v };
   if (bot) { payload.isRobot = true; payload.traffic = 'synthetic_bot'; }
   const body = JSON.stringify(payload);
   if (closing) { try { navigator.sendBeacon && navigator.sendBeacon('/api/hello', new Blob([body], { type: 'application/json' })); } catch (e) { } return false; } // confirmed by the next send
@@ -122,6 +124,8 @@ const acts = new Map(); // activity id → { game, players }
 let listening = false;
 function listen() {
   if (listening) return; listening = true;
+  // Use the same opt-in outbox and hello endpoint; no installation telemetry is sent with Analytics off.
+  addEventListener('sv-install-observed', () => { bump(d => { d.ic = 1; }); void flush(false); });
   events.on('ActivityStarted', e => { const g = String(e.defId || '').split(':')[1]; if (!g || !/^[\w-]{1,32}$/.test(g)) return; acts.set(e.activityId, { g, players: e.players || [] }); if (acts.size > 50) acts.delete(acts.keys().next().value);
     bump(d => { for (const pid of e.players || []) { const p = profileOf(pid); if (p) { const c = kidOf(d, p); c.g[g] = c.g[g] || [0, 0, 0]; c.g[g][0]++; } } }); });
   const ended = (e, slot) => { const a = acts.get(e.activityId); if (!a) return; acts.delete(e.activityId);
