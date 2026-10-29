@@ -1,6 +1,6 @@
 # A parent-first Sparkle Valley website
 
-Editorial update 26 October 2026 AEDT. Game source: 0af59aee75510b96826ef2d9d9cef69d78719a5f. Full information about learning, folk games, shared play, parent choices and rewards is reviewed against that immutable source before release. This generated guide does not itself deploy the game.
+Editorial update 26 October 2026 AEDT. Game source: b241286aa3b4c75247a65b900556643e3ddfc329. Full information about learning, folk games, shared play, parent choices and rewards is reviewed against that immutable source before release. This generated guide does not itself deploy the game.
 
 [Interactive concept](prototype.html) · [Website review](README.md) · [Editable bilingual content](parent-content.mjs)
 
