@@ -3320,3 +3320,14 @@ select:not([multiple]), .modal select {
 /* Family Quiz keeps its larger, child-friendly controls inside the shared form theme. */
 .modal.family-questions :is(select, textarea, input:not([type]), input[type=text]) { min-height: 64px; }
 
+/* (owner, 30 Oct 2026 AEDT) chance moments are seen happening: js/games/reveal.ts */
+.sv-tumble { display: inline-block; animation: sv-tumble .3s linear infinite; }
+@keyframes sv-tumble { 0% { transform: rotate(0) translateY(0); } 25% { transform: rotate(90deg) translateY(-4px); } 50% { transform: rotate(180deg) translateY(0); } 75% { transform: rotate(270deg) translateY(-4px); } 100% { transform: rotate(360deg) translateY(0); } }
+.sv-landed { display: inline-block; animation: sv-landed .4s ease-out; }
+@keyframes sv-landed { 0% { transform: scale(1.35); } 60% { transform: scale(.92); } 100% { transform: scale(1); } }
+.sv-shake { display: inline-block; animation: sv-shake var(--sv-beat, 330ms) ease-in-out infinite; }
+@keyframes sv-shake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+.sv-shake-calm { opacity: .7; }
+.sv-rollin { animation: sv-rollin .8s cubic-bezier(.2, .9, .3, 1.2) both; }
+@keyframes sv-rollin { 0% { transform: translate(-120px, -40px) rotate(-540deg) scale(.6); opacity: 0; } 60% { transform: translate(8px, 0) rotate(20deg) scale(1.05); opacity: 1; } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .sv-rollin, .sv-tumble, .sv-shake { animation: none; } }

@@ -66,7 +66,9 @@ function runFruitBar(api:FruitBarApi){
  // (owner, 29 Oct 2026 AEDT: "the fruit game circle doesn't run") the light runs round the ring by itself while counters are
  // placed, and the spin goes three laps and slows onto the result (it lasted under 2 s, and not at all with Reduce Motion,
  // which now gets a calmer, slower run: the moving light is how the game is played)
- function animateResult(result:number){cancelAnimationFrame(frame);clearInterval(idle);spinning=true;const calm=reduceMotion(),laps=calm?1:3,steps=16*laps+((result-light%16+16)%16),start=light,begin=performance.now(),length=calm?2600:3200;const tick=(now:number)=>{if(dead)return;const p=Math.min(1,(now-begin)/length);const at=start+Math.round(steps*(1-(1-p)**3));highlight(at%16);if(p<1)frame=requestAnimationFrame(tick);else{light=at;spinning=false;highlight(result);paint();}};frame=requestAnimationFrame(tick);}
+ // (owner, 30 Oct 2026 AEDT: "fruit bar lighting should run") the chase pauses while a spin runs (idle checks spinning)
+ // and goes on in the next round; it used to be stopped for good by the first spin
+ function animateResult(result:number){cancelAnimationFrame(frame);spinning=true;const calm=reduceMotion(),laps=calm?1:3,steps=16*laps+((result-light%16+16)%16),start=light,begin=performance.now(),length=calm?2600:3200;const tick=(now:number)=>{if(dead)return;const p=Math.min(1,(now-begin)/length);const at=start+Math.round(steps*(1-(1-p)**3));highlight(at%16);if(p<1)frame=requestAnimationFrame(tick);else{light=at;spinning=false;highlight(result);paint();}};frame=requestAnimationFrame(tick);}
  const idle=setInterval(()=>{if(dead||spinning||!session||session.state.phase==='result')return;light=(light+1)%16;highlight(light);},reduceMotion()?700:260);
  api.say(online?'Place your counters':'Choose how to play',online?'Chọn điểm ảo':'Chọn cách chơi');
  if(online){start(Math.min(4,online.names.length),false,false);}else{

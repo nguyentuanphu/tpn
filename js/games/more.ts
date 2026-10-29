@@ -6,6 +6,7 @@
 // Same gentle rules as every game: "try again" until it's right, and little ones can't lose.
 import { rpsWinners } from '../netgames.js';
 import { register, untilRight, choiceButtons, tapOne } from './frame.js';
+import { shake } from './reveal.js';
 import { T, numWord } from '../i18n.js';
 import { shuffle, pick, el, wait, esc } from '../util.js';
 
@@ -92,6 +93,8 @@ register({
       // little ones (and every few rounds) the friend "happens" to lose
       let me = Math.floor(Math.random() * 3); if (api.little || round % 3 === 2) me = (you + 2) % 3;
       round++;
+      // oẳn... tù... tì! both fists shake on the count before the hands open (js/games/reveal.ts)
+      face.innerHTML = `<span class="you">🤛</span><b>VS</b><span class="me">🤜</span>`; await shake(face, 3); if (api.closed) return;
       face.innerHTML = `<span class="you">${RPS[you][0]}</span><b>VS</b><span class="me">${RPS[me][0]}</span>`; api.sfx.pop(3);
       await wait(500);
       if (you === me) { api.say('The same! Again: oẳn tù tì!', 'Hòa rồi! Lại nào: oẳn tù tì!'); }

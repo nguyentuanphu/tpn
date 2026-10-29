@@ -106,7 +106,7 @@ register({
   run: api => rounds(api, numbers(3, 1, 6).map(n => ({
     ask: ['How many dots on the dice?', 'Mặt xúc xắc có mấy chấm?'], answer: String(n), others: near(n, 1, 6),
     draw: stage => {
-      const d = el('div', 'n2-die');
+      const d = el('div', 'n2-die sv-rollin'); // (owner, 30 Oct 2026 AEDT) the die is thrown in and lands
       for (let i = 0; i < 9; i++) d.appendChild(el('i', PIPS[n].includes(i) ? 'on' : ''));
       stage.appendChild(d);
     }
