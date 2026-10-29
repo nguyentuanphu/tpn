@@ -27,7 +27,16 @@ import(GAME + 'js/emojiswap.js').catch(() => { });
 // (owner, 10 Oct) the servers answer in English: in Vietnamese, every answer is shown in Vietnamese (studio/ui/vi.js)
 const say = m => LANG === 'vi' ? viMessage(m) : String(m ?? '');
 // e.raw keeps the server's own words (the Voices page looks at them to stop early)
-const api = async (p: string, body?: unknown) => { const r = await fetch(BASE + '/api/' + p, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Studio': '1' }, body: JSON.stringify(body) }); const j = await r.json().catch(() => ({})); if (r.status === 401 && j.signin) { signIn(); throw Object.assign(new Error(T('Please sign in.', 'Vui lòng đăng nhập.')), { signin: true }); } if (!r.ok) { const raw = String(j.error || r.status); throw Object.assign(new Error(say(raw)), { raw }); } return j; };
+// (owner, 30 Oct 2026 AEDT: "pages load slow") a report read is kept for 30 seconds, so moving between Home, People and
+// Analytics, or choosing a period and back, does not ask the server again; any save and the Reload button clear it
+const READS = new Map<string, { at: number, value: Promise<any> }>(), READ_MS = 30e3;
+const api = (p: string, body?: unknown) => {
+  if (body !== undefined) { READS.clear(); return apiNow(p, body); }
+  if (!/^(players|management\/(overview|devices|children|attention|activities))(\?|$)/.test(p)) return apiNow(p);
+  const hit = READS.get(p); if (hit && Date.now() - hit.at < READ_MS) return hit.value;
+  const value = apiNow(p); READS.set(p, { at: Date.now(), value }); value.catch(() => READS.delete(p)); return value;
+};
+const apiNow = async (p: string, body?: unknown) => { const r = await fetch(BASE + '/api/' + p, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Studio': '1' }, body: JSON.stringify(body) }); const j = await r.json().catch(() => ({})); if (r.status === 401 && j.signin) { signIn(); throw Object.assign(new Error(T('Please sign in.', 'Vui lòng đăng nhập.')), { signin: true }); } if (!r.ok) { const raw = String(j.error || r.status); throw Object.assign(new Error(say(raw)), { raw }); } return j; };
 // (owner, 10 Oct: "missing feedback after a save") the message is bigger, sits above the bar at the bottom of a phone,
 // stays 5 seconds (7 for a problem) and is green when something worked
 const toast: ((m: string, kind?: string) => void) & { t?: ReturnType<typeof setTimeout> } = (m, kind = '') => { const t = $('#toast'); t.textContent = m; t.className = 'on ' + kind; clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), kind === 'bad' ? 7000 : 5000); };
@@ -209,7 +218,7 @@ function nav() {
   document.querySelectorAll<HTMLInputElement>('[data-t]').forEach(e => { const [en, vi] = e.dataset.t.split('|'); e.textContent = T(en, vi); });
   document.querySelectorAll<HTMLInputElement>('.lang button[data-l]').forEach(b => { b.classList.toggle('on', b.dataset.l === LANG); b.onclick = () => { if (b.dataset.l === LANG || !leaveOk()) return; LANG = b.dataset.l; localStorage.setItem('studioLang', LANG); render(); }; });
   if ($('#pub')) $('#pub').onclick = () => go('publish');
-  if ($('#reload')) $('#reload').onclick = () => { if (leaveOk()) render(true); };
+  if ($('#reload')) $('#reload').onclick = () => { if (leaveOk()) { READS.clear(); render(true); } };
   head();
 }
 // the status and the family's content are fetched once and kept while you move between pages (round K: online, every
