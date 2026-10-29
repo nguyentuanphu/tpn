@@ -148,7 +148,19 @@ export function createSimple(G) {
   const road = pts => pts.map((q, k) => { if (!k) return `M${q.x},${q.y}`; const a = pts[k - 1], my = (a.y + q.y) / 2; return a.y === q.y || Math.abs(a.y - q.y) < 40 ? `C${(a.x + q.x) / 2},${a.y - 30} ${(a.x + q.x) / 2},${q.y + 30} ${q.x},${q.y}` : `C${a.x + (a.x < q.x ? 90 : -90)},${my} ${q.x + (a.x < q.x ? -90 : 90)},${my} ${q.x},${q.y}`; }).join(' ');
   const starsHTML = s => s.max ? `<span class="sp-stars n${s.max}" aria-hidden="true">${[...Array(s.max)].map((_, j) => `<svg class="${j < s.stars ? 'on' : ''}" viewBox="0 0 24 24"><path d="${STAR}"/></svg>`).join('')}</span>` : '';
   let list = [];
-  function draw() {
+  // (owner, 29 Oct 2026 AEDT: "after playing in simple screen, it goes back up to the top") the road is rebuilt after
+  // every game, story and resize; iPhone and iPad Safari set a scroll box back to the top when its content is replaced
+  // or it was hidden, so the place the child had scrolled to is put back (a tab, Back or a section still scroll on purpose)
+  let kept = null;
+  function draw(keep: unknown = false) {
+    if (!m) return;
+    const sc = m.querySelector('.sp-scroll'), at = kept || { top: sc.scrollTop, left: sc.scrollLeft };
+    kept = null;
+    drawRoad();
+    sc.scrollTop = at.top; sc.scrollLeft = at.left;
+    if (keep) requestAnimationFrame(() => { if (m && !m.hidden && sc.scrollTop !== at.top) { sc.scrollTop = at.top; sc.scrollLeft = at.left; } });
+  }
+  function drawRoad() {
     if (!m) return;
     const v = viewsOf(tab)[0], lt = little(), seen = lt ? null : seenSet();
     list = v.items.map(s => ({ ...s, isNew: !!seen && s.kind !== 'head' && s.kind !== 'lock' && !seen.has(idOf(s)) }));
@@ -270,7 +282,7 @@ export function createSimple(G) {
   }
   function show(t = '') {
     if (!solo() || !hero()) return;
-    if (t && t !== tab) { tab = t; cat = null; }
+    if (t && t !== tab) { tab = t; cat = null; kept = { top: 0, left: 0 }; }
     if (!m) {
       m = el('div', 'simple-screen');
       const p = hero().profile;
@@ -304,20 +316,20 @@ export function createSimple(G) {
     }
     busy = false; sel = null; discover(false);
     m.hidden = false; G.paused = true; document.body.classList.add('simple-on'); m.classList.toggle('still', reduceMotion());
-    choose('simple'); draw();
+    choose('simple'); draw(true);
     // a new star since the path was last open: Ông Cú cheers
     const who = hero().profile.name, now = totalStars(), owl = m.querySelector('.sp-owl');
     if (lastStars[who] != null && now > lastStars[who] && owl) { owl.classList.add('cheer'); say('Well done! You won a new star!', 'Giỏi lắm! Con được thêm một ngôi sao!'); }
     else { const x = TABS.find(y => y.key === tab); say(x.say[0], x.say[1]); }
     lastStars[who] = now;
   }
-  function hide() { if (m) m.hidden = true; document.body.classList.remove('simple-on'); G.paused = false; }
+  function hide() { if (m) { const sc = m.querySelector('.sp-scroll'); if (!m.hidden) kept = { top: sc.scrollTop, left: sc.scrollLeft }; m.hidden = true; } document.body.classList.remove('simple-on'); G.paused = false; }
   function leave() { back = false; hide(); }
   function choose(screen) { const p = hero() && hero().profile; if (p && p.screen !== screen) { p.screen = screen; saveProfiles(); } }
   // the game or story started from here is over: the path is free at once, with the stars brought up to date
   function settle() {
     if (!launched || !m || m.hidden || gameOpen() || document.querySelector('.theatre')) return;
-    launched = 0; busy = false; draw(); lastStars[hero().profile.name] = lastStars[hero().profile.name] ?? starsBefore;
+    launched = 0; busy = false; draw(true); lastStars[hero().profile.name] = lastStars[hero().profile.name] ?? starsBefore;
     if (totalStars() > starsBefore) { const owl = m.querySelector('.sp-owl'); if (owl) owl.classList.add('cheer'); say('Well done! You won a new star!', 'Giỏi lắm! Con được thêm một ngôi sao!'); }
     lastStars[hero().profile.name] = totalStars();
   }
