@@ -15,8 +15,8 @@ import { CUSTOM, customName } from './custom.js';
 const NAMES_EN = {
   'Ông Cú': 'Grandpa Owl', 'Ông Bầu': 'Grandpa Gourd', 'Lấp Lánh': 'Sparkle', 'Rồng con': 'Little Dragon', 'Anh 2': 'Big Brother Hai', 'Anh Bảy': 'Big Brother Bảy', 'Anh Quân': 'Big Brother Quân', 'Chú Hùng': 'Uncle Hùng', 'Chú Sơn Diệu': 'Uncle Sơn Diệu', 'Chú Sơn Cường': 'Uncle Sơn Cường', 'Chị Huyền': 'Big Sister Huyền', 'Anh Trọng': 'Big Brother Trọng', 'Mây Cau Có': 'Grumpy Cloud', 'Cô Mai': 'Auntie Mai', 'Bác Ba': 'Uncle Ba',
   'Cô Sáu': 'Auntie Sáu', 'Chú Tư': 'Uncle Tư', 'Anh Tuấn': 'Big Brother Tuấn', 'Bà Hai': 'Grandma Hai', 'Cô Thu': 'Auntie Thu',
-  'O Lài': 'Auntie Lài', 'Chú Năm': 'Uncle Năm', 'Chú Tám': 'Uncle Tám', 'Cô Út': 'Auntie Út', 'Bà Năm': 'Grandma Năm', 'Bà Nội': 'Grandma', 'Bà Hạnh': 'Grandma Hạnh', 'Cô Mai': 'Auntie Mai', 'Ông Tú': 'Grandpa Tú', 'Chị Thơm': 'Big Sister Thơm', 'Cô Liên': 'Auntie Liên', 'Chú Hải': 'Uncle Hải', 'Dì Bảy': 'Auntie Bảy', 'Cô Vy': 'Auntie Vy',
-  'Anh Hai': 'Big Brother Hai', 'Cô Hạnh': 'Miss Hạnh', 'Bác Gấu': 'Mr. Bear', 'Cô Mei': 'Miss Mei', 'Bà Lin': 'Grandma Lin', 'Bà Asha': 'Grandma Asha', 'Bà Huệ': 'Grandma Huệ', 'Ông Nghi': 'Grandpa Nghi', 'Bác 2': 'Uncle Hai', 'Bác 3': 'Uncle Ba', 'Bác 4': 'Uncle Tư', 'Cậu Tâm': 'Uncle Tâm', 'Mợ An': 'Auntie An', 'Cô Tam': 'Miss Tam', 'Chú Trung': 'Uncle Trung', 'Chú Thuận': 'Uncle Thuận', 'Mợ Phương': 'Auntie Phương', 'O Thủy': 'Auntie Thủy', 'O Thúy': 'Auntie Thúy', 'Bác Sơn': 'Uncle Sơn', 'Chú Sự': 'Uncle Sự', 'Em Hà': 'Little Hà', 'O Thương': 'Auntie Thương', 'Dượng Dũng': 'Uncle Dũng', 'Chị Thúy': 'Big Sister Thúy', 'Anh Ba': 'Big Brother Ba', 'Cu Bin': 'Little Bin', 'Út Lì': 'Little Lì', 'Bà Năm': 'Grandma Năm', 'Bà Hạnh': 'Grandma Hạnh', 'Cô Mai': 'Auntie Mai', 'Ông Tú': 'Grandpa Tú', 'Chị Thơm': 'Big Sister Thơm', 'Cô Liên': 'Auntie Liên', 'Chú Hải': 'Uncle Hải', 'Dì Bảy': 'Auntie Bảy', 'Cô Vy': 'Auntie Vy'
+  'O Lài': 'Auntie Lài', 'Chú Năm': 'Uncle Năm', 'Chú Tám': 'Uncle Tám', 'Cô Út': 'Auntie Út', 'Bà Năm': 'Grandma Năm', 'Bà Nội': 'Grandma', 'Bà Hạnh': 'Grandma Hạnh', 'Ông Tú': 'Grandpa Tú', 'Chị Thơm': 'Big Sister Thơm', 'Cô Liên': 'Auntie Liên', 'Chú Hải': 'Uncle Hải', 'Dì Bảy': 'Auntie Bảy', 'Cô Vy': 'Auntie Vy',
+  'Anh Hai': 'Big Brother Hai', 'Cô Hạnh': 'Miss Hạnh', 'Bác Gấu': 'Mr. Bear', 'Cô Mei': 'Miss Mei', 'Bà Lin': 'Grandma Lin', 'Bà Asha': 'Grandma Asha', 'Bà Huệ': 'Grandma Huệ', 'Ông Nghi': 'Grandpa Nghi', 'Bác 2': 'Uncle Hai', 'Bác 3': 'Uncle Ba', 'Bác 4': 'Uncle Tư', 'Cậu Tâm': 'Uncle Tâm', 'Mợ An': 'Auntie An', 'Cô Tam': 'Miss Tam', 'Chú Trung': 'Uncle Trung', 'Chú Thuận': 'Uncle Thuận', 'Mợ Phương': 'Auntie Phương', 'O Thủy': 'Auntie Thủy', 'O Thúy': 'Auntie Thúy', 'Bác Sơn': 'Uncle Sơn', 'Chú Sự': 'Uncle Sự', 'Em Hà': 'Little Hà', 'O Thương': 'Auntie Thương', 'Dượng Dũng': 'Uncle Dũng', 'Chị Thúy': 'Big Sister Thúy', 'Anh Ba': 'Big Brother Ba', 'Cu Bin': 'Little Bin', 'Út Lì': 'Little Lì'
 };
 const NAMES_VI = { 'Mrs Kelly': 'Cô Kelly', 'Aunty Bev': 'Dì Bev', 'Uncle Robbo': 'Chú Robbo', 'Mr. Bear': 'Bác Gấu' };
 const ALIAS = { 'Mr. Bear': 'Bác Gấu' }; // two spellings of one character
@@ -33,19 +33,22 @@ function nameRE() {
   const key = custom.join('|');
   if (!RE || key !== reKey) {
     const keys = [...new Set([...Object.keys(NAMES_EN), ...Object.keys(NAMES_VI), ...custom])].sort((a, b) => b.length - a.length);
-    RE = new RegExp('(?<![\\p{L}])(' + keys.map(esc).join('|') + ')(?![\\p{L}])', 'gu'); reKey = key;
+    // (owner, 29 Oct 2026 AEDT: an iPad stopped at "could not finish loading") no lookbehind: Safari before 16.4 cannot
+    // read it, and one such pattern stops the whole game from starting; the letter before a name is kept and put back
+    RE = new RegExp('(^|[^\\p{L}])(' + keys.map(esc).join('|') + ')(?![\\p{L}])', 'gu'); reKey = key;
   }
   return RE;
 }
 // swap people's names inside any text for the given language
 // "Bé" (little one) in front of a child's name is a title too: "Bé Na" is "Little Na" in English.
-const BE_EN = /(?<![\p{L}])Bé (?=\p{Lu})/gu, BE_VI = /(?<![\p{L}])Little (?=\p{Lu})/gu;
-export const swapNames = (text, lang = settings.lang) => typeof text !== 'string' ? text : text.replace(nameRE(), m => {
+const BE_EN = /(^|[^\p{L}])Bé (?=\p{Lu})/gu, BE_VI = /(^|[^\p{L}])Little (?=\p{Lu})/gu;
+export const swapNames = (text, lang = settings.lang) => typeof text !== 'string' ? text : text.replace(nameRE(), (_, before, m) => {
   const id = ALIAS[m] || m, c = (settings.npcNames || {})[id], f = customName(id); // the device's own name first, then the family's content pack
-  return (c && c[lang]) || (f && typeof f[lang] === 'string' && f[lang]) || defaultName(id, lang);
-}).replace(lang === 'vi' ? BE_VI : BE_EN, lang === 'vi' ? 'Bé ' : 'Little ');
+  return before + ((c && c[lang]) || (f && typeof f[lang] === 'string' && f[lang]) || defaultName(id, lang));
+}).replace(lang === 'vi' ? BE_VI : BE_EN, lang === 'vi' ? '$1Bé ' : '$1Little ');
 export const nm = name => swapNames(name);
-export const T = (en, vi) => (settings.lang === 'vi' ? swapNames(vi, 'vi') : swapNames(en, 'en'));
+// (English, Vietnamese); callers may also spread a pair kept as a list: T(...[en, vi])
+export const T = (...[en, vi]: (string | number)[]) => (settings.lang === 'vi' ? swapNames(vi, 'vi') : swapNames(en, 'en'));
 // Things drawn into the 3D world (signs, name tags) register here to redraw when the language changes.
 const langListeners = [];
 export const onLang = f => { langListeners.push(f); };

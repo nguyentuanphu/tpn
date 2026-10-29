@@ -69,7 +69,7 @@ let hideCaption = () => { };
   // a long line is shown a sentence or two at a time, so the box never grows to cover the screen
   const chunks = text => {
     const out = []; let cur = '';
-    for (const p of text.split(/(?<=[.!?。…])\s+/)) {
+    for (const p of text.replace(/([.!?。…])\s+/g, '$1\u0001').split('\u0001')) { // (no lookbehind: older Safari)
       if (cur && (cur + ' ' + p).length > 90) { out.push(cur); cur = p; } else cur = cur ? cur + ' ' + p : p;
     }
     if (cur) out.push(cur);
@@ -1022,7 +1022,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     const area = sec.area || sec.key, ids = sec.games.filter(id => GAMES[id]);
     const open = ids.filter(id => isOpen(p, id, 'game', area)), locked = ids.filter(id => !open.includes(id));
     const held = secondSetOf('game', area).filter(id => GAMES[id] && isHeld(id, 'game')).length, shown = openGamesHub.unfolded.has(area);
-    const lockTile = locked.length ? `<div class="hcard hfold" style="--hc:#b9a6e8"><button class="hplay" data-fold="${area}" aria-expanded="${shown}"><span class="hi">${pic('\u{1F512}')}</span><b>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock`, `Còn ${locked.length} trò để mở`)}</b><small>${shown ? '' : T('Tap to see', 'Chạm để xem')} ${progressOf(p, 'game', area).done}/3</small></button></div>` : '';
+    const lockTile = locked.length ? `<div class="hcard hfold" style="--hc:#b9a6e8"><button class="hplay" data-fold="${area}" aria-expanded="${shown}"><span class="hi">${pic('\u{1F512}')}</span><b>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock`, `Còn ${locked.length} trò để mở`)}</b><small>${shown ? '' : T('Play each game above 3 times', 'Chơi mỗi trò ở trên 3 lần')} · ${pic('⭐')} ${progressOf(p, 'game', area).done}/3</small></button></div>` : '';
     const soonTile = held ? `<div class="hcard hsoon" style="--hc:#9ad0ff"><button class="hplay" data-soon="game"><span class="hi">${pic('\u{1F51C}')}</span><b>${T('Coming soon', 'Sắp ra mắt')}</b><small>${T(`${held} new games`, `${held} trò mới`)}</small></button></div>` : '';
     return `<div class="hubgrid">${open.map((id, k) => gameCard(id, k, sec.key, true)).join('')}${lockTile}${shown ? locked.map((id, k) => gameCard(id, k + open.length, sec.key, false)).join('') : ''}${soonTile}</div>`;
   };
