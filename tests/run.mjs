@@ -1783,6 +1783,34 @@ await check('festhunt', async () => {
   return `${r.places} festival places at 5x by default (as before at 1x, more at 7x), none on a road; build-up ${r.build.join(' → ')} in Lotus Village for Tết; Tết on: ${r.patches} patches, ${r.outside} outside its places, ${r.road} spots by the valley's roads, the nearest drawn within the budget; ${r.hunted} festivals hide 5 things each; Tết's five found: keepsake for the house and the Passport badge`;
 });
 
+await check('guides', async () => {
+  // (owner, 29 Oct 2026 AEDT: "the guide film on each game doesn't do anything") every game's How to play has real steps
+  // in both languages (not the lone "Tap and try!" card), each step's pictures are our drawings, and a guide opens
+  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const { GAMES } = await import('/js/games/registry.js'), { HOWTO } = await import('/js/howto-registry.js'); await import('/js/howto-data.js');
+    const C = await import('/js/content/films.js'), { hasArt } = await import('/js/art.js'), bad = [];
+    for (const id of Object.keys(GAMES)) {
+      if (C.GUIDES[id]) continue;
+      const h = HOWTO[id], steps = (h && h.steps) || [];
+      if (steps.length < 2) { bad.push(id + ': ' + steps.length + ' step(s)'); continue; }
+      for (const st of [...steps, h.origin, h.real].filter(Boolean)) {
+        if (!st.en || !st.vi || st.en === st.vi) bad.push(id + ': a step not in both languages');
+        // (as the player shows them: a word of pictures is drawn whole, or picture by picture; letters and digits stay text)
+        const seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+        for (const e of String(st.pic || '').split(/\s+/).filter(Boolean)) if (!hasArt(e)) for (const { segment: q } of seg.segment(e)) if (/\p{Extended_Pictographic}/u.test(q) && !hasArt(q)) bad.push(id + ': ' + q + ' not drawn');
+      }
+    }
+    const { openHowTo } = await import('/js/howto.js'); await openHowTo('numline', {}); await new Promise(res => setTimeout(res, 2500));
+    const m = document.querySelector('.howto'), cap = m && m.querySelector('.ht-cap');
+    return { bad, games: Object.keys(GAMES).length, cap: cap ? cap.textContent.trim() : '' };
+  });
+  await P.ctx.close();
+  ok(!r.bad.length, 'guides: ' + r.bad.slice(0, 12).join(' | '));
+  ok(r.cap && !/Tap and try/i.test(r.cap), 'the Number Line guide shows its own step, not "Tap and try": ' + r.cap);
+  return `${r.games} games, each with a How to play of two or more steps in both languages, pictures drawn`;
+});
+
 await check('films', async () => {
   // (round R, owner: "the animations should be detailed and comprehensive, not drawings standing for the scenes")
   // every page of the pilot story and guide films plays to its end, the child's turn waits for a tap, and closing frees it
