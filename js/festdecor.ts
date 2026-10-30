@@ -6,7 +6,7 @@ import { roadDist, heightAt, TOWN, AUSSIE, MARKET, ROADS } from './world.js';
 import { T } from './i18n.js';
 import { liveRule, festivalRule, featureOn } from './custom.js';
 
-const day = s => { const d = new Date(s + 'T00:00:00'); return isNaN(d) ? null : d; };
+const day = s => { const d = new Date(s + 'T00:00:00'); return isNaN(d.getTime()) ? null : d; };
 // an admin's schedule in Studio's Releases page (fest_<id> with a start date): the festival is on from that day, for its
 // days there (or the festival's own length)
 export function scheduled(F, now) {
@@ -135,7 +135,7 @@ export function createDecor(free) {
     for (let x = box.x0 + 1; x <= box.x1 - 1; x += 2) for (let z = box.z0 + 1; z <= box.z1 - 1; z += 2) {
       if (o.x0 == null && Math.hypot(x - o.x, z - o.z) > (o.r || 24)) continue;
       const d = roadDist(x, z); if (d.road && d.d < d.road.w / 2 + 2.6) continue;
-      if (onStreet(key.replace('+', ''), o, x, z) || onStreet(key.replace('+', ''), o, x + 2, z) || onStreet(key.replace('+', ''), o, x - 2, z) || onStreet(key.replace('+', ''), o, x, z + 2) || onStreet(key.replace('+', ''), o, x, z - 2)) continue;
+      if (onStreet(key.split('+')[0], o, x, z) || onStreet(key.split('+')[0], o, x + 2, z) || onStreet(key.split('+')[0], o, x - 2, z) || onStreet(key.split('+')[0], o, x, z + 2) || onStreet(key.split('+')[0], o, x, z - 2)) continue;
       if (free(x, z, .9)) out.push({ x, z, a: Math.atan2(o.x - x, o.z - z) || 0 });
     }
     return (openCache[key] = out);
@@ -147,8 +147,13 @@ export function createDecor(free) {
     const add = (x, z, r, kind = 'piece') => items.push({ x, z, kind, parts: r.parts, glows: r.glows });
     const region = o.w && o.d ? { ...o, x0:o.x0-20,x1:o.x1+20,z0:o.z0-20,z1:o.z1+20 } : o.x0 == null ? { ...o, r:(o.r||24)+20 } : o, rk=region===o?key:key+'+';
     const alternatives=streetSpots(rk,region,GAP[mm||decoOf(F)]).concat(openSpots(rk,region)).map(q=>({q,n:order(q,F.id+'|'+key)})).sort((a,b)=>a.n-b.n).map(v=>v.q);
-    let next=0, extra=0, relocated=0;
-    const putPiece=(at,i)=>{let q=at;if(!q||!available(q)){q=null;while(next<alternatives.length){const p=alternatives[next++];if(available(p)){q=p;break;}}}if(!q)return;if(q!==at)relocated++;occupy(q);add(q.x,q.z,piece(F.theme,i,q.x,heightAt(q.x,q.z),q.z,q.a));};
+    let next=0, extra=0, relocated=0, wider=0;
+    // (30 Oct 2026 AEDT: two festivals in town at once used up its ground and Teachers' Day lost 38 of 83 pieces) when every
+    // spot near the place is taken, open ground a little further out (20 m more, then 40 m) takes the rest, so the amount
+    // set in Studio is always placed
+    const widen=()=>{if(wider>=2)return false;wider++;const pad=20+20*wider,o2=o.w&&o.d?{...o,x0:o.x0-pad,x1:o.x1+pad,z0:o.z0-pad,z1:o.z1+pad}:o.x0==null?{...o,r:(o.r||24)+pad}:{...o,x0:o.x0-pad,x1:o.x1+pad,z0:o.z0-pad,z1:o.z1+pad};
+      const more=openSpots(key+'+'.repeat(wider+1),o2).map(q=>({q,n:order(q,F.id+'|'+key)})).sort((a,b)=>a.n-b.n).map(v=>v.q);alternatives.push(...more);return more.length>0;};
+    const putPiece=(at,i)=>{let q=at;if(!q||!available(q)){q=null;while(!q){while(next<alternatives.length){const p=alternatives[next++];if(available(p)){q=p;break;}}if(!q&&!widen())break;}}if(!q)return;if(q!==at)relocated++;occupy(q);add(q.x,q.z,piece(F.theme,i,q.x,heightAt(q.x,q.z),q.z,q.a));};
     // Keep one strand per route and reserve its support footprints before scattering pieces.
     L.strings.forEach(([a,b,high])=>{const k=wireKey(a,b);if(wires.has(k)||!canSupport(a)||!canSupport(b)){extra++;return;}wires.add(k);occupy(a,'support');occupy(b,'support');const h=high?6.2:3.2;add((a.x+b.x)/2,(a.z+b.z)/2,bunting([a.x,heightAt(a.x,a.z)+h,a.z],[b.x,heightAt(b.x,b.z)+h,b.z],bc,bk),'string');});
     L.pieces.forEach((q,i)=>putPiece(q,i));

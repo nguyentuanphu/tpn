@@ -158,9 +158,10 @@ export function createMyHouse(G) {
     events.emit('HomeDecorated', { playerId: makeId('player', p.id || 'guest'), spot: k, item: from.key.startsWith('card:') ? makeId('postcard', 'family', from.key.slice(5)) : makeId('decor', from.key), price: 0 });
   }
   // (owner, 30 Oct 2026 AEDT: "my house should be shown so I can see the door and enter") the farmhouse is one of the
-  // houses whose front the camera turns to when the child stands near it (js/player.js), so its door is in view instead
+  // fronts the camera turns to when the child stands near it (js/player.js), so its door is in view instead
   // of the house fading between the camera and the child
-  if (G.world && Array.isArray(G.world.houses)) G.world.houses.push({ x: home.hs.x, z: home.hs.z, rot: home.hs.rot, d: home.hs.d, kind: 'myhouse' });
+  // (its own list: the festivals decorate world.houses and the farmhouse is not one of theirs)
+  if (G.world) (G.world.fronts = G.world.fronts || []).push({ x: home.hs.x, z: home.hs.z, rot: home.hs.rot, d: home.hs.d, kind: 'myhouse' });
   G.interactables.push({ id: 'myhouse_door', x: door.x, z: door.z, r: 1.6, icon: '🏠', label: () => T('My house', 'Nhà của con'), act: h => {
     if (G.homes.inside() && G.homes.inside() !== home) return G.homes.enter(h, home);
     if (!G.homes.inside()) home.owner = h; G.homes.enter(h, home);

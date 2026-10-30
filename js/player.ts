@@ -243,7 +243,7 @@ export class Hero {
       // 0.8 s standing still (was 2 s) and turns about three times faster, still easing in and out
       const calm = this.stillT > .8 && this.manualCamT <= 0 && !this.towerClimb;
       if (!calm) this._houseFront = null;
-      else if (!this._houseFront || !facing(this._houseFront)) this._houseFront = (this.world.houses || []).filter(facing).sort((a, b) => Math.hypot(p.x - a.x, p.z - a.z) - Math.hypot(p.x - b.x, p.z - b.z))[0] || null;
+      else if (!this._houseFront || !facing(this._houseFront)) this._houseFront = [...(this.world.houses || []), ...(this.world.fronts || [])].filter(facing).sort((a, b) => Math.hypot(p.x - a.x, p.z - a.z) - Math.hypot(p.x - b.x, p.z - b.z))[0] || null;
       if (calm && this._houseFront) this.camYaw = easeYaw(this.camYaw, this._houseFront.rot, dt, 2, 1.3);
       // standing still next to a landmark: slowly turn so it is in front of the camera
       else if (this._lm && (this._lmF || 0) > .25 && Math.hypot(p.x - this._lm.x, p.z - this._lm.z) > 2 && this.stillT > 2 && this.manualCamT <= 0 && !this.towerClimb) this.camYaw = easeYaw(this.camYaw, Math.atan2(p.x - this._lm.x, p.z - this._lm.z), dt, .6, .35);
