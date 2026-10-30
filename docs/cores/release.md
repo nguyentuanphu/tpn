@@ -527,3 +527,12 @@ independently; do not report it as passed until actual artifacts are inspected.
   battery passes; perf world 8.8 s over 6.6 s and startup first ready 46.8 s over 34.2 s (over on this machine at v1.03
   too); first download 1016 KB passes. After the green run: version set (sw.ts, js/build.ts, studio/version.json), the
   website re-synced and recorded as reviewed (source links only; no text affected), code map from run 41077834394.
+
+## Round after v1.04 (branch work/after-v104-20261031, PR #725)
+
+- **Owner, 31 Oct 2026 AEDT:** "Change all the gates to a welcome sign for each village, make it simple but noticeable;
+  the gates are to be hidden and can be switched on and off in Studio." Done: Studio switch `gates` (Releases, group
+  World, off unless switched on, read when the valley is built, like `powerPoles`). Off: a wooden welcome sign beside the
+  main road into each village and city (5 m board in the place's own gate colours, "Welcome to …" in both languages, a
+  small roof and a box of flowers), 4 m before the place. On: the gates as before. `world.gates` lists one entry per
+  place either way (kind `sign` or `gate`), so the roads and gates checks still count one welcome per place.

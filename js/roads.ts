@@ -6,6 +6,7 @@ import { T, onLang } from './i18n.js';
 import { SFX } from './audio.js';
 import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox, PADDIES, PLOTS, plotBox } from './world.js';
 import { settings } from './state.js';
+import { featureOn } from './custom.js';
 import { remember } from './worldmemo.js';
 import { ROAD_TONES } from './content/map.js';
 // HARD RULE (owner, round 30): the steepest a road may climb: asphalt 8 %, dirt 12 % (checked by `roadshape`)
@@ -418,6 +419,21 @@ const STYLES = {
   ], sign: { y: 4.5, w: 6.2, h: 1, bg: '#ffffff', fg: '#4a2a78' }, posts: hs })
 };
 export const GATE_STYLE = { hanoi: 'ohquan', bacninh: 'kinhbac', danang: 'golden', saigon: 'saigon', vungtau: 'seaside', sydney: 'coathanger', melbourne: 'iron', brisbane: 'queenslander', aussie: 'timber', china: 'paifang', india: 'mughal', home: 'farm', town: 'twohomes' };
+// A welcome sign beside the road into a place (instead of a gate across it): two posts, a wide board in the place's gate
+// colours with "Welcome to …" in both languages, a little roof and a box of flowers. It stands beside the road, 3.2 m
+// from its edge to the board's middle and 4 m before the place, turned so the words face whoever comes in along the road.
+export function welcomeSign(scene, world, x, z, rot, text, style, hw) {
+  const make = STYLES[style], look = make ? make(3).sign : { bg: '#c62828', fg: '#ffe27a' };
+  const sx = x - Math.cos(rot) * (hw + 3.2), sz = z + Math.sin(rot) * (hw + 3.2), y = heightAt(sx, sz), W2 = 2.5;
+  const parts = [P(new THREE.BoxGeometry(.28, 4.4, .28), '#7a5232', [-W2 - .1, 2.2, 0]), P(new THREE.BoxGeometry(.28, 4.4, .28), '#7a5232', [W2 + .1, 2.2, 0]),
+    P(new THREE.BoxGeometry(W2 * 2 + .9, .2, .7), '#9a3b2a', [0, 4.45, 0]), P(new THREE.BoxGeometry(W2 * 2 + 1.1, .12, .9), '#6e2a1e', [0, 4.6, 0]),
+    ...[-1, 1].map(s => P(new THREE.SphereGeometry(.24, 10, 8), '#ffd23f', [s * (W2 + .1), 4.85, 0])),
+    P(new THREE.BoxGeometry(W2 * 2, .4, .6), '#8a5a34', [0, .22, .55]), ...[-2, -1.2, -.4, .4, 1.2, 2].map((o, k) => P(new THREE.SphereGeometry(.26, 8, 6), ['#ff5fa2', '#ffd23f', '#ff8a3d', '#c77dff', '#ff5fa2', '#ffd23f'][k], [o, .55, .55]))];
+  const m = new THREE.Mesh(merge(parts), toonVC()); m.position.set(sx, y, sz); m.rotation.y = rot; m.castShadow = true; scene.add(m); outline(m, .02, '#4a3a2a');
+  const sg = gateSign(text, W2 * 2, 1.9, look.bg, look.fg); sg.position.set(0, 3.15, 0); m.add(sg);
+  for (const s of [-1, 1]) world.colliders.push({ x: sx + Math.cos(rot) * s * (W2 + .1), z: sz - Math.sin(rot) * s * (W2 + .1), r: .35 });
+  return m;
+}
 export function localGate(scene, world, x, z, rot, text, style, span = 7.5) {
   const make = STYLES[style]; if (!make) return goldenGate(scene, world, x, z, rot, text, span);
   const hs = span / 2, g = make(hs);
@@ -532,8 +548,12 @@ export function createRoads(G) {
     const id = String(idRaw || '');
     if (!id || mainEnd[id] !== R.id + ':' + k) return;
     const n = R.pts.length, [x, z] = R.pts[k ? n - 1 : 0], [px, pz] = R.pts[k ? n - 2 : 1];
-    world.gates.push({ place: id, road: R.id, x, z });
-    localGate(scene, world, x, z, Math.atan2(x - px, z - pz), () => T('Welcome to ', 'Chào mừng đến ') + REGION_NAMES[id](), GATE_STYLE[id] || 'golden', Math.max(7.5, R.w + 2.3)); // (R7: the opening is the road plus more than 1 m each side)
+    // (owner, 31 Oct 2026 AEDT: "change all the gates to a welcome sign for each village, simple but noticeable; the gates
+    // hidden and switched on and off in Studio") Studio's "gates" switch, off unless switched on, read when the valley is built
+    const gate = featureOn('gates', false), rot = Math.atan2(x - px, z - pz), text = () => T('Welcome to ', 'Chào mừng đến ') + REGION_NAMES[id]();
+    world.gates.push({ place: id, road: R.id, x, z, kind: gate ? 'gate' : 'sign' });
+    if (gate) localGate(scene, world, x, z, rot, text, GATE_STYLE[id] || 'golden', Math.max(7.5, R.w + 2.3)); // (R7: the opening is the road plus more than 1 m each side)
+    else welcomeSign(scene, world, x - (x - px) / Math.hypot(x - px, z - pz) * 4, z - (z - pz) / Math.hypot(x - px, z - pz) * 4, rot, text, GATE_STYLE[id] || 'golden', R.w / 2);
   });
   G.goldenGate = (x, z, r, t, span) => goldenGate(scene, world, x, z, r, t, span);
 }
