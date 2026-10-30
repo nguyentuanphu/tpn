@@ -1,7 +1,7 @@
 import { voicePackSignature } from './voice-index.js';
 // The voice pack downloading to the device (split from js/voice.js in round R item 12, so it is fetched only when the
 // download starts, not before the title screen: PERF-001). js/voice.js starts it once the pack's list has arrived.
-import { settings, saveSettings, profiles } from './state.js';
+import { settings, saveSettings, profiles, autoPackOn } from './state.js';
 import { events } from './core/events.js';
 import { T } from './i18n.js';
 import { featureOn } from './custom.js';
@@ -26,7 +26,8 @@ export function startPack(pack, emit, here) {
   if (changed) { areaRevision++; AREAS = null; areasTried = null; groupOfHash = null; }
   // (an address that can't keep files, like http://192.168.… on a phone: the voices still play, from the internet)
   if (!('caches' in window)) { setTimeout(() => packEmit({ state: 'nostore', total: packFiles().length }), 3000); return; }
-  if (settings.autoPack === false) return;
+  // (31 Oct 2026 AEDT) voices online unless the whole pack is kept here; recordings kept the old way still move into bundles
+  if (!autoPackOn()) { valleyBuilt().then(() => voiceStore('sv-voices').migrate()).catch(() => { }); return; }
   if (packStarted) { if (changed) checkPack().catch(() => { }); return; }
   packStarted = true;
   setTimeout(() => { checkPack().catch(() => { }); }, 6000);
@@ -229,7 +230,7 @@ export async function savePackOffline(progress?: (done: number, total: number) =
     if (n === urls.length) packEmit({state:'ready',total:n});
     else packEmit({state:'waiting',left:urls.length-n});
     return n;
-  })().finally(() => { manualSave = null; if (settings.autoPack !== false) refreshPack(); });
+  })().finally(() => { manualSave = null; if (autoPackOn()) refreshPack(); });
   try { return await manualSave; }
   finally { if (progress) manualListeners.delete(progress); }
 }

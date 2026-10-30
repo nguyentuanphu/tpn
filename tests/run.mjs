@@ -715,6 +715,42 @@ await check('voicepack', async () => {
   return `first open downloads with a small bar (${first.map(x => '"' + x + '"').slice(0, 2).join(' → ')} … "${first[first.length - 1]}"), the next open shows and downloads nothing, and files the phone lost are fetched again`;
 });
 
+await check('voiceonline', async () => {
+  // (owner, 31 Oct 2026 AEDT: "voices play online; download only to play offline; the Welcome says the voices are
+  // online; with no internet and no voices, tell the user what to download and how") a new device downloads no voice
+  // pack by itself: the Welcome says the voices play over the internet and how to keep them, a line heard is kept, and
+  // with no internet a grown-up is told where to keep them all
+  const P = await open(b, { w: 390, h: 844, touch: true, play: false, lang: 'en', settings: { autoPack: null, voice: true } });
+  const mp3 = []; P.page.on('request', q => { if (/\/voices\/.*\.mp3/.test(q.url())) mp3.push(q.url()); });
+  await P.page.waitForSelector('.screen.title .tt-voice', { timeout: 60000 });
+  const note = await P.page.$eval('.screen.title .tt-voice', e => ({ shown: !e.hidden && e.getBoundingClientRect().height > 0, text: e.innerText }));
+  await P.page.screenshot({ path: 'out/voiceonline-welcome-phone.png' });
+  ok(note.shown && /over the internet/.test(note.text) && /Keep all voices on this device/.test(note.text), 'the Welcome note: ' + JSON.stringify(note));
+  await start(P.page); await clear(P.page);
+  await P.page.mouse.click(195, 420); await P.page.waitForTimeout(20000);
+  const r = await P.page.evaluate(async () => {
+    const V = await import('/js/voice.js'), S = (await import('/js/voicestore.js')).voiceStore('sv-voices');
+    for (let i = 0; i < 60 && !V.voicePack(); i++) await new Promise(r => setTimeout(r, 250));
+    if (window.__sv) window.__sv.paused = true;
+    let rec = null; window.__svVoiceLog = (l, t, has) => { if (has && !rec) rec = t; };
+    for (const ph of V.FAMILY_PHRASES) { V.sayIn('en', ph.en); if (rec) break; }
+    await new Promise(r => setTimeout(r, 2500)); await S.flush();
+    return { rec, kept: await S.count(), saved: !!(await import('/js/state.js')).settings.packSaved };
+  });
+  ok(mp3.length < 60, `a new device downloaded ${mp3.length} recordings by itself (the voices play online)`);
+  ok(r.rec && r.kept >= 1 && !r.saved, 'a line heard over the internet is kept: ' + JSON.stringify(r));
+  // no internet: a line not kept cannot play, and a grown-up is told what to keep and where
+  await P.ctx.setOffline(true);
+  await P.page.evaluate(async () => { const V = await import('/js/voice.js'); for (const ph of V.FAMILY_PHRASES.slice(-6)) V.sayIn('en', ph.en); });
+  const card = await P.page.waitForSelector('.voice-offline', { timeout: 15000 }).then(() => P.page.$eval('.voice-offline', e => ({ text: e.innerText, buttons: [...e.querySelectorAll('button')].map(x => Math.round(x.getBoundingClientRect().height)) })), () => null);
+  await P.page.screenshot({ path: 'out/voiceonline-offline-phone.png' });
+  ok(card && /No internet/.test(card.text) && /Keep all voices on this device/.test(card.text) && card.buttons.every(h => h >= 44), 'the offline note: ' + JSON.stringify(card));
+  await P.page.click('.voice-offline button:last-child'); await P.page.waitForTimeout(300);
+  ok(!(await P.page.$('.voice-offline')), 'OK closes the offline note');
+  const errs = P.errors.filter(e => !/Failed to fetch|ERR_INTERNET_DISCONNECTED|NetworkError|net::/.test(e)); await P.ctx.close(); ok(!errs.length, errs.join('\n'));
+  return `the Welcome says the voices play online and how to keep them; a new device downloaded ${mp3.length} recordings by itself; ${r.kept} heard kept; offline a grown-up is told "Keep all voices on this device" (buttons ${card.buttons.join('/')} px)`;
+});
+
 await check('folkplay', async () => (await import('./folk-court-browser.mts')).folkCourtBrowserCheck(b));
 
 await check('festivalbootstrap', async () => (await import('./festival-bootstrap.mts')).festivalBootstrapCheck(b));

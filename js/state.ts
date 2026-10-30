@@ -128,6 +128,10 @@ if (dropOldVoice() | dropOldFestival()) store.set(KEY_SETTINGS, settings);
 // fewer moving effects: Calm mode, or the device's own "Reduce motion" setting (round I accessibility rule A11Y-001)
 export const reduceMotion = () => !!settings.calm || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 export const saveSettings = () => store.set(KEY_SETTINGS, settings);
+// (owner, 31 Oct 2026 AEDT: "voices online, download only to play offline") whether this device keeps the whole voice
+// pack by itself: a grown-up chose it ("Keep all voices on this device"), or the device had saved voices before (it keeps
+// them up to date as before). Otherwise each line plays over the internet and is kept once heard.
+export const autoPackOn = () => settings.autoPack === true || (settings.autoPack == null && !!(settings.packSaved || settings.packCore));
 
 // Clothing: a style plus any colour. Dresses and shirt-and-shorts work for girls and boys alike.
 export const STYLES = ['dress', 'shirt', 'aodai', 'tunic', 'overalls', 'hoodie'];

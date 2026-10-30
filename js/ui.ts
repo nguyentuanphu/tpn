@@ -5,7 +5,7 @@ import { AREAS, gamesIn, withSitePlaces } from './content/activities.js';
 import type { Profile } from '../types/save.js';
 import type { SvMain } from './main.js';
 import { T, applyLang, nm } from './i18n.js';
-import { settings, saveSettings, profiles, saveProfiles, addProfile, removeProfile, STYLES, OUTFIT_COLORS, HATS, BACKS, HAIR, SKIN, HAIRSTYLES, GLIDERS, farm, saveFarm, MAX_KIDS, reduceMotion } from './state.js';
+import { settings, saveSettings, profiles, saveProfiles, addProfile, removeProfile, STYLES, OUTFIT_COLORS, HATS, BACKS, HAIR, SKIN, HAIRSTYLES, GLIDERS, farm, saveFarm, MAX_KIDS, reduceMotion, autoPackOn } from './state.js';
 import { say, spoken, warmVoiceLine } from './voice.js';
 
 import { SFX, Music, ac } from './audio.js';
@@ -117,7 +117,7 @@ export function showTitle(onStart) {
       <div class="logo"><div class="logo-main"></div><div class="logo-sub"></div></div>
     </div>
     <button class="press"><span class="tt-play">▶</span><span class="tt-press" elementtiming="title"></span></button>
-    <div class="tt-panel"><div class="title-foot"></div><div class="title-learn"></div></div>
+    <div class="tt-panel"><div class="title-foot"></div><div class="title-learn"></div><div class="tt-voice"></div></div>
     <div class="tt-build" aria-hidden="true">${SHOWN}</div>`);
   document.body.appendChild(s);
   const redraw = () => {
@@ -134,6 +134,11 @@ export function showTitle(onStart) {
     s.querySelector('.sitebtn-l').textContent = T('Website', 'Trang web'); s.querySelector('.sitebtn').setAttribute('aria-label', T('Sparkle Valley website for families', 'Trang web Thung Lũng Lấp Lánh cho gia đình'));
     s.querySelector('.title-foot').innerHTML = flagBtns();
     s.querySelector('.title-learn').innerHTML = learnBtns(); bindLearn(s, redraw);
+    // (owner, 31 Oct 2026 AEDT) the voices play over the internet unless a grown-up kept them all on the device; the
+    // Welcome says so, and how to keep them for playing offline
+    const vn = s.querySelector('.tt-voice') as HTMLElement; vn.hidden = autoPackOn() && !!settings.packSaved;
+    vn.innerHTML = both('Voices play over the internet. To play offline with voices: Grown-ups → Sound and voices → Keep all voices on this device.',
+      'Giọng nói phát qua mạng. Để chơi offline có giọng nói: Người lớn → Âm thanh và giọng nói → Lưu tất cả giọng đọc vào máy.');
     bindLang(s, redraw);
     const top = s.querySelector('.title-top'); top.innerHTML = '';
     const b = installButton(); if (b) top.appendChild(b);
