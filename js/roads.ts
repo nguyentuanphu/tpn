@@ -424,7 +424,10 @@ export const GATE_STYLE = { hanoi: 'ohquan', bacninh: 'kinhbac', danang: 'golden
 // from its edge to the board's middle and 4 m before the place, turned so the words face whoever comes in along the road.
 export function welcomeSign(scene, world, x, z, rot, text, style, hw) {
   const make = STYLES[style], look = make ? make(3).sign : { bg: '#c62828', fg: '#ffe27a' };
-  const sx = x - Math.cos(rot) * (hw + 3.2), sz = z + Math.sin(rot) * (hw + 3.2), y = heightAt(sx, sz), W2 = 2.5;
+  // (on the other side of the road where the first would cover a spare garden plot: a covered plot is dropped, js/world.ts)
+  const W2 = 2.5, onPlot = (px, pz) => PLOTS.some(P => { const B = plotBox(P); return px > B.x0 - W2 - .5 && px < B.x1 + W2 + .5 && pz > B.z0 - 1 && pz < B.z1 + 1 || px > B.x0 - 1 && px < B.x1 + 1 && pz > B.z0 - W2 - .5 && pz < B.z1 + W2 + .5; });
+  const side = onPlot(x - Math.cos(rot) * (hw + 3.2), z + Math.sin(rot) * (hw + 3.2)) && !onPlot(x + Math.cos(rot) * (hw + 3.2), z - Math.sin(rot) * (hw + 3.2)) ? -1 : 1;
+  const sx = x - side * Math.cos(rot) * (hw + 3.2), sz = z + side * Math.sin(rot) * (hw + 3.2), y = heightAt(sx, sz);
   const parts = [P(new THREE.BoxGeometry(.28, 4.4, .28), '#7a5232', [-W2 - .1, 2.2, 0]), P(new THREE.BoxGeometry(.28, 4.4, .28), '#7a5232', [W2 + .1, 2.2, 0]),
     P(new THREE.BoxGeometry(W2 * 2 + .9, .2, .7), '#9a3b2a', [0, 4.45, 0]), P(new THREE.BoxGeometry(W2 * 2 + 1.1, .12, .9), '#6e2a1e', [0, 4.6, 0]),
     ...[-1, 1].map(s => P(new THREE.SphereGeometry(.24, 10, 8), '#ffd23f', [s * (W2 + .1), 4.85, 0])),
