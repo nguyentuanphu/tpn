@@ -3344,3 +3344,11 @@ select:not([multiple]), .modal select {
 .sv-rollin { animation: sv-rollin .8s cubic-bezier(.2, .9, .3, 1.2) both; }
 @keyframes sv-rollin { 0% { transform: translate(-120px, -40px) rotate(-540deg) scale(.6); opacity: 0; } 60% { transform: translate(8px, 0) rotate(20deg) scale(1.05); opacity: 1; } 100% { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .sv-rollin, .sv-tumble, .sv-shake { animation: none; } }
+/* (owner, 30 Oct 2026 AEDT: "the Simple screen on iPhone looks very cramped") round buttons without words on top (their
+   names stay for screen readers), the spoken line's caption at the bottom above the tabs instead of over the first game,
+   names wrapped to the width of their card, smaller cards on short phones */
+.sp-sound small, .sp-home small { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.sp-sound, .sp-home { border-radius: 50%; }
+body.touch:has(.simple-screen:not([hidden])) .caption { top: auto; bottom: calc(env(safe-area-inset-bottom) + 96px); }
+.simple-screen:not(.wide) .sp-name { max-width: min(var(--lw, 168px), 136px); font-size: 16px; }
+@media (max-height: 720px) { .simple-screen:not(.wide) .sp-pic { width: 88px; height: 88px; border-radius: 26px; } .simple-screen:not(.wide) .sp-pic .art, .simple-screen:not(.wide) .sp-pic .emo { width: 60px; height: 60px; font-size: 52px; } }
