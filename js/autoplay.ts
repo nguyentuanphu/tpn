@@ -532,6 +532,9 @@ async function doTap(it, note) {
   step_('tap', (typeof it.label === 'function' ? it.label() : it.id) || it.id); G.goAndDo(h, it);
   await hold(.6); await until(() => !h.goal, 6); await hold(.4);
   await settle(sp().talk + 30, note);
+  // (#361 #427, quest Treo đèn lồng ở đình làng) the rope and the film after it can outlast that on a slow device:
+  // keep doing what the story shows for up to two more minutes before calling it unfinished
+  for (const end = Date.now() + 120e3; G.lanterns?.busy(h.profile) && Date.now() < end;) await settle(10, note);
   if (G.lanterns?.busy(h.profile)) note(T('help: auto play could not finish this story activity', 'cần giúp: tự chơi chưa làm xong hoạt động trong truyện này'));
   const w = topOpen(); if (w) { await hold(sp().talk); offScreen(w, note); }
 }
