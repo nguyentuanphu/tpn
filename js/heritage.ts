@@ -98,7 +98,16 @@ export function createHeritage(G, { give, sfx, say, toast }) {
   const place = (parts, x, z, rot, ol = true) => { const m = new THREE.Mesh(merge(parts), toonVC()); const y = Math.min(heightAt(x, z), heightAt(x + 2, z), heightAt(x - 2, z), heightAt(x, z + 2), heightAt(x, z - 2)); m.position.set(x, y - .05, z); m.rotation.y = rot; m.castShadow = m.receiveShadow = true; scene.add(m); if (ol) outline(m, .03, '#4a3a3f'); return m; };
   // (tester's notes, 12 Oct) a floating (i) sign can be tapped: the child walks up to it and reads it
   const tappable = (sg, it) => { sg.userData.it = it; (G.tapTargets = G.tapTargets || []).push(sg); };
-  const info = (x, y, z) => { const s = sprite('ℹ️', 1.5); s.position.set(x, y, z); scene.add(s); world.updaters.push((dt, t) => { s.position.y = y + Math.sin(t * 2 + x) * .25; }); return s; };
+  // (owner, 30 Oct 2026 AEDT: "signs are hard to find; join them down to the ground so a child can run to them") the (i)
+  // stands on a wooden post with a glowing ring at its foot, seen from afar, and bobs a little above the post
+  const info = (x, y, z) => {
+    const g0 = heightAt(x, z), s = sprite('ℹ️', 1.8); s.position.set(x, y + .4, z); scene.add(s);
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(.09, .12, Math.max(.5, y - g0), 8), toon('#8a5a3b')); post.position.set(x, g0 + Math.max(.5, y - g0) / 2, z); scene.add(post);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(.9, 1.3, 28), new THREE.MeshBasicMaterial({ color: '#ffd86b', transparent: true, opacity: .75, depthWrite: false }));
+    ring.rotation.x = -Math.PI / 2; ring.position.set(x, g0 + .06, z); scene.add(ring);
+    world.updaters.push((dt, t) => { s.position.y = y + .4 + Math.sin(t * 2 + x) * .2; const k = 1 + .18 * Math.sin(t * 3 + x); ring.scale.set(k, k, k); ring.material.opacity = .5 + .3 * Math.sin(t * 3 + x); });
+    return s;
+  };
   const face = (x, z, tx, tz) => Math.atan2(tx - x, tz - z);
 
   // ---------- landmarks ----------

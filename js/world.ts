@@ -1091,7 +1091,7 @@ export function createWorld(scene, quality) {
 // (owner, 29 Oct AEDT: "Hồ Gươm should be in a lake but it is on dry land") the two ponds keep a hint of their real green, but
 // read as water: the old jade green looked like grass from above
 const WATER_COLOURS = { hong: '#a8714c', mekong1: '#8f8a58', mekong2: '#8f8a58', saigon_r: '#5f8c8f', brisbane_r: '#5f8f86', yarra: '#7a8462', murray: '#7c8660',
-  hoguom: '#3a9a9c', billabong: '#4f8a84', lake: '#3fb0c6', sydney_harbour: '#2f7fbf', hoian_canal: '#4f9aa6', sea: '#2a7fc0' };
+  hoguom: '#5fbcb6', billabong: '#4f8a84', lake: '#3fb0c6', sydney_harbour: '#2f7fbf', hoian_canal: '#4f9aa6', sea: '#2a7fc0' };
 export function paintWater(size = 256) {
   const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d');
   const img = x.createImageData(size, size), d = img.data, step = SIZE / size;

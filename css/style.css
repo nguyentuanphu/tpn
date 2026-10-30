@@ -669,6 +669,12 @@ button { color: var(--text); }
 .hcard.hfold .hplay, .hcard.hsoon .hplay { outline: 3px dashed rgba(255, 255, 255, .85); outline-offset: -8px; }
 .hcard.hsoon .hplay { color: #3b2a4f; }
 .hsoonbar { display: block; width: 70%; height: 10px; margin: 6px auto 0; border-radius: 6px; background: rgba(255, 255, 255, .7); overflow: hidden; } .hsoonbar i { display: block; height: 100%; background: #ffb020; border-radius: 6px; }
+.hsoonbubble { grid-column: 1 / -1; position: relative; margin: 14px 8px 4px; padding: 12px 14px; background: #fff; border-radius: 28px; box-shadow: var(--shadow); color: #3b2a4f; animation: hsb-pop .35s cubic-bezier(.2, .9, .3, 1.3); }
+.hsoonbubble > p { margin: 0 0 6px; font-weight: 700; }
+.hsb-dot { position: absolute; background: #fff; border-radius: 50%; box-shadow: var(--shadow); } .hsb-dot.a { width: 18px; height: 18px; left: 28px; top: -16px; } .hsb-dot.b { width: 10px; height: 10px; left: 18px; top: -30px; }
+.hsb-games { display: flex; flex-wrap: wrap; gap: 6px 12px; } .hsb-games > span { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; min-height: 40px; } .hsb-games .hi .art { width: 30px; height: 30px; }
+@keyframes hsb-pop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hsoonbubble { animation: none; } }
 .hsoonlist { grid-column: 1 / -1; background: #fff; border-radius: 18px; padding: 10px 12px; box-shadow: var(--shadow); color: #3b2a4f; } .hsoonlist p { margin: 4px 0 8px; font-weight: 600; }
 .hsoonrow { display: flex; align-items: center; gap: 10px; min-height: 48px; border-top: 1px solid #eee4f7; } .hsoonrow .hi .art { width: 36px; height: 36px; } .hsoonrow b { flex: 1; }
 .hsoonstars { display: flex; gap: 2px; } .hsoonstars .art { width: 24px; height: 24px; } .hsoonrow.done { background: #f1fbea; border-radius: 10px; } .hsoonok { color: #2f9a5a; } .hcard.hsoon .hplay b, .hcard.hfold .hplay b { text-shadow: none; }
@@ -1534,6 +1540,8 @@ body.calm .sv2 .tt-floaters i { animation: none; }
 @keyframes pulse { 50% { transform: scale(1.08); } }
 .choice .tnum { display: block; font-size: clamp(22px, 6vw, 34px); font-weight: 800; line-height: 1.1; white-space: nowrap; }
 .choices:has(.tnum) .choice { min-width: 0; padding: 10px 12px; }
+/* (owner, 30 Oct 2026 AEDT: "5 giờ should be under the line") the words for the time always sit on their own line under the clock time */
+.choice:has(.tnum) { flex-direction: column; align-items: center; justify-content: center; gap: 2px; } .choice:has(.tnum) small { display: block; text-align: center; }
 /* shortcuts to each section of a long page (Grown-ups, Bag) */
 .jumpnav { position: sticky; top: -2px; z-index: 3; display: flex; gap: 6px; overflow-x: auto; padding: 8px 2px; margin: 4px 0 8px; background: inherit; backdrop-filter: blur(6px); scrollbar-width: none; }
 .jumpnav::-webkit-scrollbar { display: none; }

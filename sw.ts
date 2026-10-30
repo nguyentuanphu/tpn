@@ -32,6 +32,8 @@ const FILES = [
 // network answers quickly, otherwise the saved copy after a short wait: a connection that never answers (Wi-Fi with no
 // internet, weak phone signal) must never keep the game from starting. The network's answer still refreshes the copy.
 const QUICK = 1500;
+// (owner, 30 Oct 2026 AEDT: "within 2 to 3 s something light must show") the start page waits at most a second for storage
+const NAV_QUICK = 1000;
 const PHOTO_HOST = /^https:\/\/((upload|thumb)\.wikimedia\.org|live\.staticflickr\.com|farm\d+\.staticflickr\.com)\//;
 function quick(e, cacheName, req, fallback) {
   return caches.open(cacheName).then(c => {
@@ -148,7 +150,7 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
       let over = false, net: Promise<Response> | null = null;
       const give = (r: Response) => { if (!over) { over = true; done(r); } };
       const fromNet = () => net || (net = fetch(req));
-      const t = setTimeout(() => fromNet().then(r => { if (r.ok) give(r); }, () => { }), QUICK);
+      const t = setTimeout(() => fromNet().then(r => { if (r.ok) give(r); }, () => { }), NAV_QUICK);
       saved(req).catch(() => undefined).then(hit => { clearTimeout(t); if (hit) give(hit); else fromNet().then(give, () => give(Response.error())); });
     }));
     return;

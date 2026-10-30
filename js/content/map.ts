@@ -119,7 +119,7 @@ export const WATERS = [
   { id: 'yarra', kind: 'river', w: .6, pts: [[-156, 84], [-146, 90], [-118, 90], [-96, 98], [-70, 118], [-36, 130], [12, 136]] },
   { id: 'murray', kind: 'river', w: .7, pts: [[-238, 150], [-190, 154], [-132, 154], [-80, 156], [-30, 162], [14, 168]] },
   // small round lakes: Hồ Gươm (Hoàn Kiếm Lake) by Hà Nội with the Turtle Tower in it; a billabong in the outback
-  { id: 'hoguom', kind: 'pond', place: 'hanoi', off: [-29, 3], r: 10.5, islet: 2.6, depth: .8 },   // (the Turtle Tower stands on its little island; r89, owner: bigger and shallow enough to wade in)
+  { id: 'hoguom', kind: 'pond', place: 'hanoi', off: [-29, 3], r: 10.5, islet: 2.6, depth: .45 },   // (the Turtle Tower stands on its little island; r89, owner: bigger and shallow enough to wade in; owner, 30 Oct 2026 AEDT: "too deep, make it shallower": knee deep)
   { id: 'billabong', kind: 'pond', at: [-204, 22], r: 8 }
 ];
 
