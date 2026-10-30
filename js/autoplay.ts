@@ -201,7 +201,9 @@ async function tap(b, note) {
   // (#337-#349, r82: a tester filing a report while auto play ran) the tester's own report window and ladybird are not a
   // problem of the game's
   const tester = top && top.closest && top.closest('.tpanel, .z-lb, .ap-float');
-    if (top && top !== b && !b.contains(top) && !top.contains(b) && !(root && root.contains(top)) && !(box && box.contains(top)) && !tester && note) note(T('a button covered by something: ', 'một nút bị che: ') + label(b) + ' (' + label(top) + ')');
+  // (quest Sự tích dưa hấu) the story a speech bubble announces opening over that bubble is what the tap was for
+  const opened = !!(top && top.closest && top.closest('.theatre, .storybook') && b.closest && b.closest('.dialog'));
+    if (top && top !== b && !b.contains(top) && !top.contains(b) && !(root && root.contains(top)) && !(box && box.contains(top)) && !tester && !opened && note) note(T('a button covered by something: ', 'một nút bị che: ') + label(b) + ' (' + label(top) + ')');
   if (x < 0 || y < 0 || x > innerWidth || y > innerHeight) { if (note) note(T('a button off the screen: ', 'một nút ngoài màn hình: ') + label(b)); }
   step_('tap', label(b)); fire(b, x, y); click(b);
   return true;
