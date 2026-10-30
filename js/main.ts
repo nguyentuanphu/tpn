@@ -16,7 +16,7 @@ import { openSongs } from './songs.js';
 import { songsFor, VN_AREAS, familySongs } from './content/songs.js';
 import { fmt } from './money.js';
 import { el, esc, $, dist2, pick, wait, clamp } from './util.js';
-import { createWorld, levelUnderBuildings, widenFlatLand, paintMap, paintWater, heightAt, regionAt, REGION_NAMES, MARKET, CHINA, INDIA, SHRINES, TOWERS, LEAFIES, VILLAGE, HOME, PLAYGROUND, REVEAL_R, WATER, PLATEAU, TOWN, AUSSIE, LAKE, ULURU, HALF, STUDIO_ON_MAP, PARKED } from './world.js';
+import { createWorld, levelUnderBuildings, widenFlatLand, paintMap, paintWater, paintMapRows, paintWaterRows, heightAt, regionAt, REGION_NAMES, MARKET, CHINA, INDIA, SHRINES, TOWERS, LEAFIES, VILLAGE, HOME, PLAYGROUND, REVEAL_R, WATER, PLATEAU, TOWN, AUSSIE, LAKE, ULURU, HALF, STUDIO_ON_MAP, PARKED } from './world.js';
 import { studioPosition } from './studio-position.js';
 import { landmarkAt, MAP_VERSION, onThisMap, rowSlot } from './content/map.js';
 import { buildAvatar, nameAvatar, applyNpcFaces, buildOwl, buildGourd, avatarURL, OUTLINED, showStill } from './avatar.js';
@@ -173,8 +173,8 @@ const roadMemo = recall('roads'); // (js/worldmemo.ts) read while the valley sta
 await preload(); // (the ground's kept heights, needed by the first step)
 const world = createWorld(scene, quality); bootMark('world'); await breathe();
 // the map picture: read back from the device when this build painted it before (js/worldcache.js)
-const waterPic = cachedCanvas('water', 256, paintWater, bootReady); waterPic.onReady = () => world.waterMap(waterPic.canvas); // (round T4a) each river's colour and the foam along the shores
-const mapPic = cachedCanvas('map', 320, paintMap, bootReady); // (round T: 320 px for the 480 m valley) bootMark('map');
+const waterPic = cachedCanvas('water', 256, paintWater, bootReady, paintWaterRows); waterPic.onReady = () => world.waterMap(waterPic.canvas); // (round T4a) each river's colour and the foam along the shores
+const mapPic = cachedCanvas('map', 320, paintMap, bootReady, paintMapRows); // (round T: 320 px for the 480 m valley) bootMark('map');
 mapPic.onReady = () => { G.fogMaps = {}; }; // (a map shown before the picture was ready is drawn again)
 const titleCam = new THREE.PerspectiveCamera(50, 1, .3, 1200);
 

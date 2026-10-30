@@ -10,7 +10,7 @@
 // game: the tester plays on from there. Progress goes back as Studio's tester rule says (js/keepcopy.js).
 import { T } from './i18n.js';
 import { el, esc } from './util.js';
-import { GAMES, playWatch } from './games/frame.js';
+import { GAMES, playWatch, canStartGame } from './games/frame.js';
 import { CUSTOM, liveRule } from './custom.js';
 import { sydneyFestivalDate } from './content/festival-visibility.js';
 import { FESTCAL } from './content/festcal.js';
@@ -108,6 +108,9 @@ function buttons() {
 
 // ---------- what to check ----------
 function gameAvailable(id: string): boolean {
+  // (#674 #675) a game this child has not unlocked yet, or one Studio holds, is skipped as the Play menu skips it: the
+  // game itself refuses to open it, so it is not a game that did not open
+  const p = G.heroes && G.heroes[0] && G.heroes[0].profile; if (!canStartGame(id, p ? [p] : [])) return false;
   if (id === 'fruitparade') return fruitParadeAvailable('single');
   if (id === 'sparklefruitbar' || id === 'sparkleorchard') return testerArcadeAvailable(id, 'single');
   return true;

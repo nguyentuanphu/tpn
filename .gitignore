@@ -235,6 +235,7 @@ marketing/source/runvalley.log
 /js/voicepack.js
 /js/website.js
 /js/world.js
+/js/worldcache.js
 /js/worldedit.js
 /js/worldmemo.js
 /js/yard.js
@@ -397,4 +398,3 @@ js/voice-fragments.js
 /temp/hanoi-originals-*/
 /js/yard.js
 /js/vehicles.js
-/js/worldcache.js

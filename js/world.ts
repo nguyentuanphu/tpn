@@ -1128,7 +1128,11 @@ export function createWorld(scene, quality) {
 // read as water: the old jade green looked like grass from above
 const WATER_COLOURS = { hong: '#a8714c', mekong1: '#8f8a58', mekong2: '#8f8a58', saigon_r: '#5f8c8f', brisbane_r: '#5f8f86', yarra: '#7a8462', murray: '#7c8660',
   hoguom: '#5fbcb6', billabong: '#4f8a84', lake: '#3fb0c6', sydney_harbour: '#2f7fbf', hoian_canal: '#4f9aa6', sea: '#2a7fc0' };
-export function paintWater(size = 256) {
+// (#36, 31 Oct AEDT) both pictures are painted a few rows at a time (js/worldcache.ts slices them between frames, so the
+// first start does not freeze for seconds as the child walks in); paintWater/paintMap still paint all at once
+const runAll = (g: Generator<unknown, HTMLCanvasElement>) => { let r = g.next(); while (!r.done) r = g.next(); return r.value; };
+export function paintWater(size = 256) { return runAll(paintWaterRows(size)); }
+export function* paintWaterRows(size = 256): Generator<unknown, HTMLCanvasElement> {
   const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d');
   const img = x.createImageData(size, size), d = img.data, step = SIZE / size;
   const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)), cols = {}, base = rgb('#2f8fc8');   // sRGB bytes, as the shader reads them
@@ -1139,6 +1143,7 @@ export function paintWater(size = 256) {
     if (riverDist(wx, wz) < 30 && RV_NEAR.id) return RV_NEAR.id; return wz > COAST.z - 30 ? 'sea' : null; };
   const col = new Float32Array(size * size * 3);
   for (let j = 0; j < size; j++) for (let i = 0; i < size; i++) {
+    if (i === 0 && j && !(j & 7)) yield;
     const wx = -HALF + (i + .5) * step, wz = -HALF + (j + .5) * step, h = heightAt(wx, wz), deep = Math.max(0, WATER - h);
     const w = which(wx, wz), cc = cols[w] || base, dk = 1 - clamp(deep / 7, 0, 1) * .3, k = j * size + i;
     col[k * 3] = cc[0] * dk; col[k * 3 + 1] = cc[1] * dk; col[k * 3 + 2] = cc[2] * dk;
@@ -1157,10 +1162,12 @@ export function paintWater(size = 256) {
   x.putImageData(img, 0, 0); return c;
 }
 // Paint a top-down picture of the world for the map and minimap.
-export function paintMap(size = 256) {
+export function paintMap(size = 256) { return runAll(paintMapRows(size)); }
+export function* paintMapRows(size = 256): Generator<unknown, HTMLCanvasElement> {
   const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d');
   const img = x.createImageData(size, size), d = img.data, step = SIZE / size;
   for (let j = 0; j < size; j++) for (let i = 0; i < size; i++) {
+    if (i === 0 && j && !(j & 7)) yield;
     const wx = -HALF + (i + .5) * step, wz = -HALF + (j + .5) * step, h = heightAt(wx, wz);
     const shade = clamp(1 + (heightAt(wx - 1, wz - 1) - h) * .12, .7, 1.25);
     let r, g, b;
