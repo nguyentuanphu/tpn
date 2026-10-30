@@ -4064,8 +4064,9 @@ await check('houseguide', async () => {
     return { first, n1, seen, unpaused, help: !!help, again, n2: lines.length - n1, quiet, lines: lines.slice(0, 4), paused: G.paused };
   });
   const errs = P.errors; await P.ctx.close();
-  ok(r.first && r.n1 === 4 && r.seen && r.unpaused && r.help && r.again && r.n2 === 4 && r.quiet && !r.paused && r.lines.every(l => l.length > 20 && !/[✨]/.test(l)) && !errs.length, JSON.stringify(Object.assign(r, { errs })));
-  return '4 steps the first time in the house, not again on the next visit; the ❓ sign repeats them';
+  // (owner, 30 Oct 2026 AEDT) the guide has six steps now: moving things, the trophy board and the hammer for upgrades were added
+  ok(r.first && r.n1 === 6 && r.seen && r.unpaused && r.help && r.again && r.n2 === 6 && r.quiet && !r.paused && r.lines.every(l => l.length > 20 && !/[✨]/.test(l)) && !errs.length, JSON.stringify(Object.assign(r, { errs })));
+  return '6 steps the first time in the house, not again on the next visit; the ❓ sign repeats them';
 });
 
 await check('guide', async () => {
