@@ -178,7 +178,7 @@ jobs:
           path: tests/shards
       - name: Join the results
         id: join
-        run: cd tests && node suite.mjs --collect shards; s=$?; cat out/suite-summary.md >> "$GITHUB_STEP_SUMMARY"; exit $s
+        run: cd tests && node suite.mjs --collect shards ${{ inputs.only && format('--only {0}', inputs.only) || '' }}; s=$?; cat out/suite-summary.md >> "$GITHUB_STEP_SUMMARY"; exit $s
       - uses: actions/upload-artifact@v4
         if: always()
         with:

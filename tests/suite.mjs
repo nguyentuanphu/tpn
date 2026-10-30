@@ -197,7 +197,9 @@ if (flag('--collect')) {
     for (const [n, r] of Object.entries(readJSON(path.join(dir, d, 'suite-result.json'), {}))) results.set(n, r);
     const cov = path.join(dir, d, 'cover'); if (fs.existsSync(cov)) for (const f of fs.readdirSync(cov)) fs.copyFileSync(path.join(cov, f), path.join(HERE, 'out/cover', f));
   }
-  for (const n of ALL.filter(n => !SOLO.includes(n))) if (!results.has(n)) results.set(n, { ok: false, note: 'did not run (its machine stopped)' });
+  // (30 Oct AEDT) a run of chosen checks (--only, as the machines had) misses only the chosen ones
+  const chosen = opt('--only', '') ? opt('--only', '').split(',').filter(n => ALL.includes(n)) : ALL;
+  for (const n of chosen.filter(n => !SOLO.includes(n))) if (!results.has(n)) results.set(n, { ok: false, note: 'did not run (its machine stopped)' });
   for (const [n, r] of results) if (r.ok && r.secs) times[n] = r.secs;
   fs.writeFileSync(TIMES_F, JSON.stringify(Object.fromEntries(Object.entries(times).sort()), null, 0).replace(/,"/g, ',\n"') + '\n');
   const m = buildMap(ALL); fs.writeFileSync(MAP_F, JSON.stringify(m));
