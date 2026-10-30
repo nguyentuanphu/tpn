@@ -257,16 +257,16 @@ export function plantRoadside(G) {
     for (let i = 1; i < n - 6; i++) {
       along += Math.hypot(L.pts[i][0] - L.pts[i - 1][0], L.pts[i][1] - L.pts[i - 1][1]); if (i < 6 || L.deck[i]) continue;
       const [px, pz] = L.pts[i - 1], [x, z] = L.pts[i], D = Math.hypot(x - px, z - pz) || 1, ux = -(z - pz) / D, uz = (x - px) / D;
-      const at = (o, sd, pad) => { const cx = x + ux * sd * o, cz = z + uz * sd * o; return edgeDist(cx, cz) >= 1.1 && riverDist(cx, cz) >= 5 && heightAt(cx, cz) > WATER + .5 && free(cx, cz, pad) && roadDist(cx, cz) > hw - .1 ? [cx, heightAt(cx, cz), cz] : null; };
-      if (along >= nextLamp) { const q = at(hw + .9, side, .6); if (q) { (vn ? lampVN : lampAU).push(q); world.colliders.push({ x: q[0], z: q[2], r: .22 }); nextLamp = along + 24; side = -side; } }
+      const at = (o, sd, pad) => { const cx = x + ux * sd * o, cz = z + uz * sd * o; return edgeDist(cx, cz) >= 1.1 && riverDist(cx, cz) >= 5 && heightAt(cx, cz) > WATER + .5 && free(cx, cz, pad) && roadDist(cx, cz).d > hw - .1 ? [cx, heightAt(cx, cz), cz] : null; };
+      if (along >= nextLamp) { const q = at(hw + 1.4, side, .6); if (q) { (vn ? lampVN : lampAU).push(q); world.colliders.push({ x: q[0], z: q[2], r: .22 }); nextLamp = along + 24; side = -side; } }
       if (along >= nextPlant) { const q = at(hw + (vn ? 2.2 : 3.6), -side, vn ? .9 : 1.4); if (q) { (vn ? bushes : gums).push(q); world.colliders.push({ x: q[0], z: q[2], r: vn ? .5 : .45 }); nextPlant = along + (vn ? 34 : 46); } }
     }
   });
-  const place = (geo, list, mat) => { if (!list.length) return null; const parts = list.map(([x, y, z], j) => { const g = geo.clone(); g.rotateY(j * 1.7); g.translate(x, y, z); return g; }); const m = new THREE.Mesh(merge(parts), mat); m.castShadow = true; m.userData.noSolid = true; scene.add(m); return m; }; // (their colliders keep children out; added after the solid map, they would change its saved copy's key)
-  const lampGeo = col => merge([P(new THREE.CylinderGeometry(.07, .1, 4, 6), col, [0, 2, 0]), P(new THREE.CylinderGeometry(.05, .05, .9, 5), col, [.38, 3.9, 0], [0, 0, Math.PI / 2]),
+  const place = (parts, list, mat) => { if (!list.length) return null; const all = []; list.forEach(([x, y, z], j) => parts.forEach(p => { const g = p.g.clone(); g.rotateY(j * 1.7); g.translate(x, y, z); all.push({ g, color: p.color }); })); const m = new THREE.Mesh(merge(all), mat); m.castShadow = true; m.userData.noSolid = true; scene.add(m); return m; }; // (their colliders keep children out; added after the solid map, they would change its saved copy's key)
+  const lampGeo = col => ([P(new THREE.CylinderGeometry(.07, .1, 4, 6), col, [0, 2, 0]), P(new THREE.CylinderGeometry(.05, .05, .9, 5), col, [.38, 3.9, 0], [0, 0, Math.PI / 2]),
     P(new THREE.ConeGeometry(.22, .22, 8), col, [.8, 3.82, 0]), P(new THREE.SphereGeometry(.13, 8, 6), '#fff4c2', [.8, 3.68, 0]), P(new THREE.CylinderGeometry(.16, .2, .25, 6), '#7a7a7a', [0, .12, 0])]);
-  const bushGeo = merge([P(new THREE.IcosahedronGeometry(.6, 1), '#4f8f3e', [0, .55, 0], [0, 0, 0], [1.2, .9, 1]), ...[[.35, .9, .2], [-.3, .85, -.25], [.05, 1.05, -.1], [-.2, .7, .4], [.4, .6, -.3]].map(([x, y, z]) => P(new THREE.IcosahedronGeometry(.2, 0), '#e0328c', [x, y, z]))]);
-  const gumGeo = merge([P(new THREE.CylinderGeometry(.16, .28, 5.4, 6), '#e9e1d2', [0, 2.7, 0]), P(new THREE.CylinderGeometry(.09, .13, 2.2, 5), '#e9e1d2', [.6, 4.6, 0], [0, 0, -.6]),
+  const bushGeo = ([P(new THREE.IcosahedronGeometry(.6, 1), '#4f8f3e', [0, .55, 0], [0, 0, 0], [1.2, .9, 1]), ...[[.35, .9, .2], [-.3, .85, -.25], [.05, 1.05, -.1], [-.2, .7, .4], [.4, .6, -.3]].map(([x, y, z]) => P(new THREE.IcosahedronGeometry(.2, 0), '#e0328c', [x, y, z]))]);
+  const gumGeo = ([P(new THREE.CylinderGeometry(.16, .28, 5.4, 6), '#e9e1d2', [0, 2.7, 0]), P(new THREE.CylinderGeometry(.09, .13, 2.2, 5), '#e9e1d2', [.6, 4.6, 0], [0, 0, -.6]),
     ...[[0, 6, 0, 1.5], [1.3, 5.5, .4, 1.1], [-.9, 5.7, -.5, 1.2]].map(([a, b, c, r]) => P(new THREE.IcosahedronGeometry(r, 1), '#7a9a6a', [a, b, c]))]);
   const solidMat = toonVC(); place(lampGeo('#b3261e'), lampVN, solidMat); place(lampGeo('#e07b26'), lampAU, solidMat); place(bushGeo, bushes, solidMat); place(gumGeo, gums, solidMat);
   // (#34 Concept D, owner plan 30 Oct AEDT) paddy dikes (bờ ruộng): low earth paths along the rice terraces' steps (every 9 m)
