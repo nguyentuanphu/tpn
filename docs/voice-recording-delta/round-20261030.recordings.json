@@ -1,0 +1,315 @@
+{
+  "schema": 1,
+  "status": "verified-delivery",
+  "batch": "docs/voice-recording-delta/round-20261030.json",
+  "inventorySha256": "e94d1ac4fd3de7cf145f9935f6d94633897faa60c3a4f7557c281e2321ff44e7",
+  "encoding": {
+    "codec": "mp3",
+    "bitrate": 32000,
+    "sampleRate": 16000,
+    "channels": 1
+  },
+  "fullDecode": true,
+  "assets": [
+    {
+      "id": "15bfbc6171375c15",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/15bfbc6171375c15.mp3",
+      "bytes": 20304,
+      "sha256": "3c306245e5a83b839eec4d70d20821abcc0d2723a6761cd3d24526e9b58420ba",
+      "duration": 5.076
+    },
+    {
+      "id": "15bfbc6171375c15",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/15bfbc6171375c15.mp3",
+      "bytes": 20016,
+      "sha256": "852939f85a6bb81bb917bc1ea4ae751f228b27ae4c0cfb7c90b179c5c3a296c3",
+      "duration": 5.004
+    },
+    {
+      "id": "15bfbc6171375c15",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/15bfbc6171375c15.mp3",
+      "bytes": 17649,
+      "sha256": "9c322c4511370142611530b5e443ed3ccb8daee9f6f6c6126ba9642762f41538",
+      "duration": 4.356
+    },
+    {
+      "id": "46841a88-50c1aac4",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/46841a88-50c1aac4.mp3",
+      "bytes": 19296,
+      "sha256": "b93a919e2ae089d1841e29bd81d6f4f01d5934804f3eb59fdd172da276cde85b",
+      "duration": 4.824
+    },
+    {
+      "id": "46841a88-50c1aac4",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/46841a88-50c1aac4.mp3",
+      "bytes": 19728,
+      "sha256": "5344a336676cd925c1f990f0ac0717b454411f313b97f80b00eb65d226909af4",
+      "duration": 4.932
+    },
+    {
+      "id": "46841a88-50c1aac4",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/46841a88-50c1aac4.mp3",
+      "bytes": 18657,
+      "sha256": "061e324665adecc77fd6ecf40085e8603c719931c8a0d4904278f54338892eec",
+      "duration": 4.608
+    },
+    {
+      "id": "9f76504a-612a5f20",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/9f76504a-612a5f20.mp3",
+      "bytes": 14688,
+      "sha256": "ab324a5b8f493981c50549850d85fcae09a02c445a6f385f05b4101e35d29c8e",
+      "duration": 3.672
+    },
+    {
+      "id": "9f76504a-612a5f20",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/9f76504a-612a5f20.mp3",
+      "bytes": 14976,
+      "sha256": "31fee2e65eb8c706690b40fd4b651b5b520a2e67003c8faeba93dc3101e49f12",
+      "duration": 3.744
+    },
+    {
+      "id": "9f76504a-612a5f20",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/9f76504a-612a5f20.mp3",
+      "bytes": 16353,
+      "sha256": "b3070d894d4cffce99121f8515a9e8b8681dc0617ade9e688fda37ba211f5b6d",
+      "duration": 4.032
+    },
+    {
+      "id": "4573450417a3884d",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/4573450417a3884d.mp3",
+      "bytes": 12672,
+      "sha256": "0097a04c3e156bada30abe98e6aa25953be1a1eb4a20e3d10950dda1a7e733d4",
+      "duration": 3.168
+    },
+    {
+      "id": "4573450417a3884d",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/4573450417a3884d.mp3",
+      "bytes": 12528,
+      "sha256": "7c82efd51753f010582cf2d1d0fd5940f73cbc21a3f4bd11bd2875d40c21160f",
+      "duration": 3.132
+    },
+    {
+      "id": "4573450417a3884d",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/4573450417a3884d.mp3",
+      "bytes": 11601,
+      "sha256": "970cea9fe7125c72cc0e31e7184d19734bdf4435778aa148379663ca5d291f93",
+      "duration": 2.844
+    },
+    {
+      "id": "e3dc1df06dab0318",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/e3dc1df06dab0318.mp3",
+      "bytes": 18000,
+      "sha256": "3f56474805b16d6c71b2c650f308e8e1a272b948c0d12c961f67c5ca9dd864bc",
+      "duration": 4.5
+    },
+    {
+      "id": "e3dc1df06dab0318",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/e3dc1df06dab0318.mp3",
+      "bytes": 18000,
+      "sha256": "40933b47e48c5756607f8deaceb2ee7c7b54368ab004e6a1a667194e6040feae",
+      "duration": 4.5
+    },
+    {
+      "id": "e3dc1df06dab0318",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/e3dc1df06dab0318.mp3",
+      "bytes": 18801,
+      "sha256": "2b4b266f8d3d180983b8a9034d1847809526caa4df2ae2a1805b0fd2ab7f3994",
+      "duration": 4.644
+    },
+    {
+      "id": "201c11fd6dcb1338",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/201c11fd6dcb1338.mp3",
+      "bytes": 18288,
+      "sha256": "157344d969af38d2ab3cd9b971dda513044e0435856d9ba3eb0200070a1622a7",
+      "duration": 4.572
+    },
+    {
+      "id": "201c11fd6dcb1338",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/201c11fd6dcb1338.mp3",
+      "bytes": 18288,
+      "sha256": "6af7bbca4dc1a3eb0d8d9b3f73b9146c569b9272a3bf8b92c5634d6cd799848d",
+      "duration": 4.572
+    },
+    {
+      "id": "201c11fd6dcb1338",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/201c11fd6dcb1338.mp3",
+      "bytes": 17649,
+      "sha256": "34dd73fcbac72862b1d0650a6c0c860961d100b8c8d39c36e175914bbd0289d6",
+      "duration": 4.356
+    },
+    {
+      "id": "3a60231806aacab7",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/3a60231806aacab7.mp3",
+      "bytes": 20592,
+      "sha256": "1ddde643270e8263ec5f6045a0043ec409866ad5f95b8cacafa39a3b080468c6",
+      "duration": 5.148
+    },
+    {
+      "id": "3a60231806aacab7",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/3a60231806aacab7.mp3",
+      "bytes": 19728,
+      "sha256": "8a37d2829a564fb2d836b305a06dd0b688c43512aa95a6a054fe3771b66e4386",
+      "duration": 4.932
+    },
+    {
+      "id": "3a60231806aacab7",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/3a60231806aacab7.mp3",
+      "bytes": 19377,
+      "sha256": "b6f383ae160ffc0d77da7e1e53dab2d053656b4279a0ec35626f0d7eea3e2684",
+      "duration": 4.788
+    },
+    {
+      "id": "f2732983-30849487",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/f2732983-30849487.mp3",
+      "bytes": 14976,
+      "sha256": "d87e210c2a0348c5e5d0dec6d06d67b6bd0565682c36daea430de1f571e85da7",
+      "duration": 3.744
+    },
+    {
+      "id": "f2732983-30849487",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/f2732983-30849487.mp3",
+      "bytes": 14256,
+      "sha256": "25977da592fd3110c0af5e65cc7238db96231b3ca64eb9915dd3b74855a481dc",
+      "duration": 3.564
+    },
+    {
+      "id": "f2732983-30849487",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/f2732983-30849487.mp3",
+      "bytes": 14049,
+      "sha256": "4f6102c1cf31d1917fc2f55c8d2f4a46f9c1e18f9ed47dd3ea52652aa536a41b",
+      "duration": 3.456
+    },
+    {
+      "id": "7e43448e26d197f1",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/7e43448e26d197f1.mp3",
+      "bytes": 35424,
+      "sha256": "3ee859f5c0b851516c1f176e2485b25c4e28347417a906a72e6edd7c2decd168",
+      "duration": 8.856
+    },
+    {
+      "id": "7e43448e26d197f1",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/7e43448e26d197f1.mp3",
+      "bytes": 34992,
+      "sha256": "2cf1909038d297eb2f01447ef3ac2bee5c82a9557de64032fcd53b77ed2ff26f",
+      "duration": 8.748
+    },
+    {
+      "id": "7e43448e26d197f1",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/7e43448e26d197f1.mp3",
+      "bytes": 34065,
+      "sha256": "64053c6435372898c118e0fadf41678fe68d0847a160cdc8c54e89a34051d9c6",
+      "duration": 8.46
+    },
+    {
+      "id": "ad112c8d3722b847",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/ad112c8d3722b847.mp3",
+      "bytes": 8064,
+      "sha256": "799d9010289f5b2b71f2bf419265ac8c400604787a15f3f36e1de273154d1e3f",
+      "duration": 2.016
+    },
+    {
+      "id": "ad112c8d3722b847",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/ad112c8d3722b847.mp3",
+      "bytes": 8352,
+      "sha256": "c38989da35223af9f566665ff097154804181969960eb498e5f797c3240f6005",
+      "duration": 2.088
+    },
+    {
+      "id": "ad112c8d3722b847",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/ad112c8d3722b847.mp3",
+      "bytes": 6273,
+      "sha256": "aec5b6b48aaeb7e7b9bdb473fcea8590dc894b6505d65086af18a421a34101fd",
+      "duration": 1.512
+    }
+  ]
+}
