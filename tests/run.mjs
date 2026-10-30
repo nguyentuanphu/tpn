@@ -3295,6 +3295,8 @@ await check('friendgames', async () => {
       const G = __sv, wait = ms => new Promise(res => setTimeout(res, ms));
       const online = { mine: 0, names: ['Bé Na', 'Bé Bin'], seed: 'r63test', size: size || undefined, move() { }, next: () => new Promise(() => { }), onMove() { }, all: () => new Promise(() => { }) };
       G.playGameOnline(game, 2, online); await wait(2500);
+      // (30 Oct 2026 AEDT) the cards are dealt one at a time now: wait for the deal to finish (up to 8 s more)
+      if (game === 'tienlen') for (let k = 0; k < 40 && document.querySelectorAll('.tl-hand .tl-card').length < 13; k++) await wait(200);
       if (game === 'tienlen') { const opp = [...document.querySelectorAll('.tl-opp .tl-p b')].map(e => e.textContent), mine = document.querySelectorAll('.tl-hand .tl-card').length; return { opp, mine, text: document.body.textContent.includes('Anh Ba') || document.body.textContent.includes('Con Vật') }; }
       const cells = [...document.querySelectorAll('.caro-c')], w = cells.length ? cells[0].getBoundingClientRect().width : 0, wrap = document.querySelector('.caro-wrap');
       return { cells: cells.length, w, scrolls: !!wrap && wrap.scrollWidth > wrap.clientWidth, pageWide: document.documentElement.scrollWidth > innerWidth + 1 };
@@ -4632,13 +4634,14 @@ await check('secondset', async () => {
     const out = {};
     C.releases = { ...(C.releases || {}), newGames: { on: false }, newStories: { on: false } };
     let body = await hub('learn');
-    out.offSoon = !!body.querySelector('[data-soon="game"]'); out.offNoNew = !plays(body).some(id => newIds.includes(id)); out.offNoFold = !body.querySelector('[data-fold]');
+    // (30 Oct 2026 AEDT) the Coming soon tile names its group now (data-soon="learn"), so it is found by its tile
+    out.offSoon = !!body.querySelector('.hsoon [data-soon]'); out.offNoNew = !plays(body).some(id => newIds.includes(id)); out.offNoFold = !body.querySelector('[data-fold]');
     out.offSimple = !A.gamesIn(F.GAMES, 'numbers', false).some(g => newIds.includes(g.id)); out.offTales = !__sv.TALES.some(t => Object.values(U.SECOND_SET_TALES).flat().includes(t.id));
     out.offShut = !U.isOpen({ unlockAll: true }, 'numline', 'game', 'numbers');
     body = await hub('tales'); out.offTaleSoon = !!body.querySelector('[data-soon="tale"]');
     C.releases.newGames = { on: true }; C.releases.newStories = { on: true }; p.unlockAll = false; p.admin = false;
     body = await hub('learn');
-    const fold = body.querySelector('[data-fold]'); out.onFold = !!fold; out.onHidden = !body.querySelector('.hcard.locked'); out.onNoSoon = !body.querySelector('[data-soon="game"]');
+    const fold = body.querySelector('[data-fold]'); out.onFold = !!fold; out.onHidden = !body.querySelector('.hcard.locked'); out.onNoSoon = !body.querySelector('.hsoon [data-soon]');
     fold?.click(); await wait(300); body = document.querySelector('.hubbody'); out.onShown = body.querySelectorAll('.hcard.locked').length;
     body = await hub('tales'); const tf = body.querySelector('[data-fold-tale]'); out.taleFold = !!tf; tf?.click(); await wait(300); out.taleShown = document.querySelectorAll('.hubbody .talecard.locked').length;
     await shut();

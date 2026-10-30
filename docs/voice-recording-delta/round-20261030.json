@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/myhouse.ts": "424dda58b29b69ea74355b77d0dcd8493f99466342a0093460760f4f091c6e50",
+    "js/ui.ts": "78e57bb287bf0b59142be13aa9000732e55ae164f804e040e6dc1fed0e134fae",
+    "js/games/goat.ts": "ec31a6ad3ee79b49911441b5f1120b7fe437baf04764b2b62190fd9768a7174d",
+    "js/games/catalog.ts": "f57a88aded9a3db138e4698d43b087b54170f59fac62c23e281fbabfa43f975b",
+    "js/games/strategy.ts": "0ad8c65b5c5a4c6bc8975750e569fb0b8f38dd6da34f92265171ad2fbf3d7b3c"
+  },
+  "lines": [
+    {
+      "id": "15bfbc6171375c15",
+      "lang": "vi",
+      "text": "Nhà con đẹp hơn rồi! Có thêm chỗ mới để trang trí đó.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/myhouse.ts"
+      ]
+    },
+    {
+      "id": "46841a88-50c1aac4",
+      "lang": "vi",
+      "text": "Con để dành xu bằng cách chơi trò chơi, rồi quay lại nâng cấp nhà nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/myhouse.ts"
+      ]
+    },
+    {
+      "id": "9f76504a-612a5f20",
+      "lang": "vi",
+      "text": "Xong rồi! Đặt ở đây đẹp quá.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/myhouse.ts"
+      ]
+    },
+    {
+      "id": "4573450417a3884d",
+      "lang": "vi",
+      "text": "Giờ chạm vào chỗ con muốn đặt nó nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/myhouse.ts"
+      ]
+    },
+    {
+      "id": "e3dc1df06dab0318",
+      "lang": "vi",
+      "text": "Chạm lại vào món đồ để đổi, chuyển sang chỗ khác hoặc cất đi.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/myhouse.ts"
+      ]
+    },
+    {
+      "id": "201c11fd6dcb1338",
+      "lang": "vi",
+      "text": "Nhãn dán và kỷ vật của con tự hiện lên bảng ở bức tường phía sau.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/myhouse.ts"
+      ]
+    },
+    {
+      "id": "3a60231806aacab7",
+      "lang": "vi",
+      "text": "Để dành xu rồi chạm vào cái búa cạnh cửa để nhà con rộng và đẹp hơn nhé!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/myhouse.ts"
+      ]
+    },
+    {
+      "id": "f2732983-30849487",
+      "lang": "vi",
+      "text": "Thắng mỗi trò ở đây 3 lần để mở trò mới nhé!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/ui.ts"
+      ]
+    },
+    {
+      "id": "7e43448e26d197f1",
+      "lang": "vi",
+      "text": "Cùng chơi Bịt mắt bắt bạn! Dẫn bạn bịt mắt đi nào. Nghe tiếng gọi, đi theo, rồi bắt bạn ở gần nhé.",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/goat.ts"
+      ]
+    },
+    {
+      "id": "ad112c8d3722b847",
+      "lang": "vi",
+      "text": "Bịt Mắt Bắt Bạn",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/catalog.ts",
+        "js/games/strategy.ts"
+      ]
+    }
+  ]
+}

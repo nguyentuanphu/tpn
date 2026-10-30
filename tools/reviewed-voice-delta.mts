@@ -7,7 +7,8 @@ import {lineHash} from '../js/packhash.js';
 export type PublicVoiceLine={id:string;lang:'en'|'vi';text:string;area:string;part:boolean;mixedFragment?:string;source:string[]};
 export type ReviewedVoiceDelta={schema:1;status:'reviewed-public';sourceHashes:Record<string,string>;lines:PublicVoiceLine[]};
 const hash=(bytes:string|Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
-export const publicGameSource=(file:string)=>/^js\/games\/[\w-]+\.ts$/.test(file)||file==='js/howto-data.ts'||file==='js/howto-data2.ts';
+// (30 Oct 2026 AEDT) My House and the Play menu speak fixed public lines too (the line checks below still refuse names and templates)
+export const publicGameSource=(file:string)=>/^js\/games\/[\w-]+\.ts$/.test(file)||file==='js/howto-data.ts'||file==='js/howto-data2.ts'||file==='js/myhouse.ts'||file==='js/ui.ts';
 export function validateReviewedVoiceDelta(value:unknown,readSource:(file:string)=>string|Uint8Array=path=>fs.readFileSync(path),pairs=collectLines(),readFragments=()=>collectMixedFragmentRecordings(text=>text)):ReviewedVoiceDelta{
  const d=value as ReviewedVoiceDelta;
  if(!d||d.schema!==1||d.status!=='reviewed-public'||!d.sourceHashes||!Array.isArray(d.lines)||!d.lines.length||d.lines.length>250)throw Error('Invalid reviewed public speech batch');
