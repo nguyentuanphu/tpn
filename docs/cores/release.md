@@ -543,3 +543,11 @@ independently; do not report it as passed until actual artifacts are inspected.
   voices/fpt-leminh-v1/__store/); sw.ts cuts a recording out of its bundle; recordings kept the old way move into bundles
   in the background, each single file deleted only after its bundle is saved; small bundles merge. The same recorded
   voices, offline as before. Bug reports now carry this start's timings to confirm the cause on the phone.
+- **Owner, 31 Oct 2026 AEDT (pop-up): voices play online, downloaded only to play offline.** "Như recommend phía trên,
+  và chỗ welcome screen báo là giọng nói dùng online, nếu chơi offline mà ko có giọng nói thì báo cho người dùng, báo cho
+  người dùng cần tải gì và lựa chọn như thế nào khi chơi offline". A new device no longer downloads the voice pack by
+  itself (a device that already kept it keeps refreshing it); a line heard is kept in the voice store. The Welcome shows a
+  small bilingual note (voices play over the internet; Grown-ups → Sound and voices → Keep all voices on this device),
+  hidden once all voices are kept; the Grown-ups voice section explains the choice and the size (about 250 MB per
+  language, on Wi-Fi); with no internet a one-time card (Grown-ups / OK, 48 px) says what to keep and where. Less
+  Netlify traffic: a family downloads only the lines it hears unless it chooses offline. Check: voiceonline.
