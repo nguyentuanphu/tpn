@@ -4,7 +4,7 @@
 import { THREE, toonVC, P, merge, outline } from './gfx.js';
 import { T, onLang } from './i18n.js';
 import { SFX } from './audio.js';
-import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox } from './world.js';
+import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox, PADDIES } from './world.js';
 import { settings } from './state.js';
 import { remember } from './worldmemo.js';
 import { ROAD_TONES } from './content/map.js';
@@ -84,10 +84,13 @@ function profile(R, world, pts, anchors = null) {
   const hw = R.w / 2, deck = [], apron = [], base = pts.map(([x, z], i) => {
     const [px, pz] = pts[Math.max(0, i - 1)], [nx, nz] = pts[Math.min(pts.length - 1, i + 1)], L = Math.hypot(nx - px, nz - pz) || 1, ux = -(nz - pz) / L, uz = (nx - px) / L;
     // a real bridge deck: the deck is well above the ground under it (near the ends the bank is the ground)
-    const d = deckAt(world, x, z), g0 = heightAt(x, z), onDeck = d != null && DECK_CORE && g0 < d - 1; deck.push(onDeck); if (onDeck) return d;
+    // (30 Oct AEDT, faster first start) the ground is asked only where its answer is used
+    const d = deckAt(world, x, z), onDeck = d != null && DECK_CORE && heightAt(x, z) < d - 1; deck.push(onDeck); if (onDeck) return d;
     // (Round U, owner: "different elevation when connecting roads or bridges") over the deck's apron at each end the road
     // is held at the deck's own height, so it meets the deck without a step (it keeps its bed: the ground follows it)
     if (d != null) { apron[i] = true; return d; }
+    // inside a village or city the level rule below sets this point, so the ground is not asked
+    if (levelAt(x, z) != null && riverDist(x, z) > 13 && !bridgeAt(x, z, 9, 12, 18)) return 0;
     let y = -1e9; for (const s of [-1, -.5, 0, .5, 1]) y = Math.max(y, heightAt(x + ux * hw * s, z + uz * hw * s)); return y;
   });
   // HARD RULE: inside a village or city the road runs at the place's own level (places are flat); on a bridge, on its deck
@@ -266,10 +269,18 @@ export function plantRoadside(G) {
   const gumGeo = merge([P(new THREE.CylinderGeometry(.16, .28, 5.4, 6), '#e9e1d2', [0, 2.7, 0]), P(new THREE.CylinderGeometry(.09, .13, 2.2, 5), '#e9e1d2', [.6, 4.6, 0], [0, 0, -.6]),
     ...[[0, 6, 0, 1.5], [1.3, 5.5, .4, 1.1], [-.9, 5.7, -.5, 1.2]].map(([a, b, c, r]) => P(new THREE.IcosahedronGeometry(r, 1), '#7a9a6a', [a, b, c]))]);
   const solidMat = toonVC(); place(lampGeo('#b3261e'), lampVN, solidMat); place(lampGeo('#e07b26'), lampAU, solidMat); place(bushGeo, bushes, solidMat); place(gumGeo, gums, solidMat);
+  // (#34 Concept D, owner plan 30 Oct AEDT) paddy dikes (bờ ruộng): low earth paths along the rice terraces' steps (every 9 m)
+  // and across them, with shallow water glinting in each field; children walk along them (no solid, nothing to climb)
+  const dikes = [], pools = [], R = (PADDIES.r || 16) - 1.5, inside = (x, z) => Math.hypot(x - PADDIES.x, z - PADDIES.z) < R;
+  for (let k = -1; k <= 1; k++) { const z = PADDIES.z + k * 9, half = Math.sqrt(Math.max(0, R * R - (z - PADDIES.z) ** 2)); if (half > 2) dikes.push(P(new THREE.BoxGeometry(half * 2, .3, .7), '#a8834f', [PADDIES.x, Math.max(heightAt(PADDIES.x, z - .5), heightAt(PADDIES.x, z + .5)) + .1, z])); }
+  for (const zc of [-13.5, -4.5, 4.5, 13.5].map(o => PADDIES.z + o)) for (const x of [-8, 0, 8].map(o => PADDIES.x + o)) if (inside(x, zc - 4) && inside(x, zc + 4)) dikes.push(P(new THREE.BoxGeometry(.6, .26, 8.3), '#a8834f', [x, heightAt(x, zc) + .1, zc]));
+  for (let zc = PADDIES.z - 13.5; zc < PADDIES.z + 14; zc += 9) for (const xc of [-12, -4, 4, 12]) { const x = PADDIES.x + xc; if (!inside(x - 3.4, zc) || !inside(x + 3.4, zc) || !inside(x, zc - 3.8) || !inside(x, zc + 3.8)) continue; pools.push(P(new THREE.PlaneGeometry(7.2, 8.1), '#7cc3d6', [x, heightAt(x, zc) + .05, zc], [-Math.PI / 2, 0, 0])); }
+  if (dikes.length) { const m = new THREE.Mesh(merge(dikes), toonVC()); m.receiveShadow = true; m.userData.noSolid = true; scene.add(m); }
+  if (pools.length) { const m = new THREE.Mesh(merge(pools), toonVC({ transparent: true, opacity: .55, depthWrite: false })); m.userData.noSolid = true; scene.add(m); }
   // only roads near a player show their flowers
   let t0 = 0; world.updaters.push(dt => { if ((t0 -= dt) > 0) return; t0 = .5;
     for (const g of groups) { const S = g.meshes[0].boundingSphere, on = G.heroes.some(h => Math.hypot(h.pos.x - S.center.x, h.pos.z - S.center.z) < S.radius + 70); g.meshes.forEach(M => M.visible = on); } });
-  return { count: groups.reduce((a, g) => a + g.spots.length, 0), lamps: lampVN.length + lampAU.length, bushes: bushes.length, gums: gums.length };
+  return { count: groups.reduce((a, g) => a + g.spots.length, 0), lamps: lampVN.length + lampAU.length, bushes: bushes.length, gums: gums.length, dikes: dikes.length, pools: pools.length };
 }
 
 // the welcome sign on a gate: big words that follow the language

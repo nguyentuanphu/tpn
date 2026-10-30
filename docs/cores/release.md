@@ -508,3 +508,17 @@ application or approved for production by these files. Public screenshot links
 were repaired using GitHub-hosted files because workspace links did not open in
 the owner's chat client. The existing comprehensive test run40470635366 can finish
 independently; do not report it as passed until actual artifacts are inspected.
+
+## Round 30 Oct 2026 AEDT (branch work/studio-home-20261030, PR #653): progress, night
+
+- Solid map: its second look waits until play has started (the valley now builds behind Welcome and Who's playing, so
+  nothing moved during the look and the result depended on timing); animals and empty meshes are left out. `solid`
+  passed three times in a row locally with the same 44117 cells (commit 1578b0bd).
+- GitHub run of 16 chosen checks (run 340, e0e5e988): all 16 passed; `gamespace` only on a second try (Lì Xì on a
+  tablet filled 56% with two envelopes). Fixed: the lantern row keeps the scene's width (now 90%); `gamespace` passes
+  locally. A chosen-checks run now sums only those checks (it listed every other check as "did not run").
+- Roads (#34, Concept D): paddy dikes (bờ ruộng) along and across the rice terraces with shallow water in each field.
+- Start-up: the road profile asks the ground's height only where the answer is used (about 0.3 s less on a cold start
+  here; identical heights). `startup` here: first download 1016 KB (passes), first start ready 46.8 s against 34.2 s
+  (over, as in the last two rounds on this machine); the profile shows `heightAt` at 4.2 of 10.5 s (540,000 calls, 89%
+  at new points, so a cache would not help). The area-by-area build (#36) is not finished this round.
