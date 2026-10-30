@@ -588,7 +588,10 @@ export function createWorld(scene, quality) {
   const keptHS = keptFloats('ground-start', pa.count);
   if (keptHS) HS.set(keptHS); else { for (let i = 0; i < pa.count; i++) HS[i] = heightAt(pa.getX(i), pa.getZ(i)); rememberFloats('ground-start', HS); }
   for (let i = 0; i < pa.count; i++) pa.setY(i, HS[i]);
-  for (let i = 0; i < pa.count; i++) {
+  // (the ground's colours are kept on the device the same way: the same numbers, read back instead of worked out)
+  const keptCols = keptFloats('ground-colours', pa.count * 3);
+  if (keptCols) cols.set(keptCols);
+  else for (let i = 0; i < pa.count; i++) {
     const x = pa.getX(i), z = pa.getZ(i), h = HS[i];
     const ex = i % row < seg ? HS[i + 1] : HS[i - 1], sz = i < pa.count - row ? HS[i + row] : HS[i - row];
     const sl = (Math.abs(ex - h) + Math.abs(sz - h)) * 1.5 / step;
@@ -609,6 +612,7 @@ export function createWorld(scene, quality) {
     if (h < -1.5) c.copy(C.deep);
     cols[i * 3] = c.r; cols[i * 3 + 1] = c.g; cols[i * 3 + 2] = c.b;
   }
+  if (!keptCols) rememberFloats('ground-colours', cols);
   tg.setAttribute('color', new THREE.BufferAttribute(cols, 3)); tg.computeVertexNormals();
   // fine detail (grass blades, pebbles, soil) painted into a tiling texture and blended over the ground colours
   const dc = document.createElement('canvas'); dc.width = dc.height = 256; const dx = dc.getContext('2d');

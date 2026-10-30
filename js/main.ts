@@ -151,7 +151,7 @@ const scene = new THREE.Scene();
   const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), .04).texture; pm.dispose();
 }
 // how long each start-up step takes (ms since this file began; tests/run.mjs "perf" and Grown-ups › Advanced read it)
-const BOOT0 = performance.now(), bootTimes = { start: Math.round(BOOT0) }, bootMark = k => { bootTimes[k] = Math.round(performance.now() - BOOT0); const steps = ['world', 'people', 'town', 'roads', 'pretraffic', 'traffic', 'things', 'wideland', 'levelled', 'roadside', 'solids', 'shaders', 'ready']; const n = steps.indexOf(k); if (n >= 0) window.svLaunchProgress?.(n + 1, steps.length, T(`Preparing the valley: ${n + 1}/${steps.length}`, `Chuẩn bị thung lũng: ${n + 1}/${steps.length}`)); };
+const BOOT0 = performance.now(), bootTimes: Record<string, number> = { start: Math.round(BOOT0) }, bootMark = k => { bootTimes[k] = Math.round(performance.now() - BOOT0); const steps = ['world', 'people', 'town', 'roads', 'pretraffic', 'traffic', 'things', 'wideland', 'levelled', 'roadside', 'solids', 'shaders', 'ready']; const n = steps.indexOf(k); if (n >= 0) window.svLaunchProgress?.(n + 1, steps.length, T(`Preparing the valley: ${n + 1}/${steps.length}`, `Chuẩn bị thung lũng: ${n + 1}/${steps.length}`)); };
 // (round R, faster launch) the title and "Who's playing?" show at once; the valley is built behind them in steps, with a
 // breath between steps so the screen keeps answering taps. Pressing Go before it is ready waits a moment (startWhenBuilt).
 let framesSeen = 0, framesDone = null; const firstFrames = new Promise(r => { framesDone = r; });
@@ -1971,10 +1971,7 @@ bootMark('things'); widenFlatLand(world, scene); bootMark('wideland'); await bre
 createAds(G); // the family's own signboards (only when Sparkle Studio switched ads on)
 world.levelled = levelUnderBuildings(world, scene); bootMark('levelled'); await breathe();
 G.plots = createPlots(G); // (round T3) the Memory Villages' garden plots and the spare ones by each city, on their levelled ground
-G.reeds = createReeds(G); // (round T4a) reeds along the banks, water hyacinth in the quiet waters (two draws)
-world.roadside = plantRoadside(G); // soft road edges and flowers, once everything stands
 G.signposts = createSignposts(G); // (round T4b, js/signposts.js) a picture signpost at every road junction
-G.nameTags = createNameTags(G); // (round T4b, js/nametags.js) names float over the places nearby, at most 4
 bootMark('roadside'); G.solidsReady = buildSolids(G);
 // Later buildings can cover an authored collectible. Keep its stable pickup ID and
 // cooldown, but move the picture and interaction together onto nearby open ground.
@@ -2101,5 +2098,9 @@ import('./state.js').then(S => { if (S.restoredFromCopy) setTimeout(() => toast(
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (playing) keepSpot(); save(); hush(); } });
 addEventListener('pagehide', () => { if (playing) keepSpot(); saveProfiles(true); });
 bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
+// (owner, 30 Oct 2026 AEDT: "load where the child is first, then the rest while in game") what only decorates the valley
+// and nobody bumps into (reeds, flowers along the roads, the floating place names) is made just after the child can
+// start, a step at a time between frames, on the ground's final shape
+void (async () => { await breathe(); G.reeds = createReeds(G); await breathe(); world.roadside = plantRoadside(G); await breathe(); G.nameTags = createNameTags(G); bootTimes.decor = Math.round(performance.now() - BOOT0); })();
 // (owner, 16 Oct AEDT) no device contacts the family service unless Studio switches the trial on, or on a tester device
 { const refresh = () => (featureOn('familyDevices', false) || G.tester) ? import('./familydevices.js').then(m => m.refreshDevicePhotos()).catch(() => {}) : null; refresh(); addEventListener('online', refresh); setInterval(refresh, 60000); }
