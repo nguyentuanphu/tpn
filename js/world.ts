@@ -8,6 +8,7 @@ import { houseVillage } from './houses.js';
 import { settings } from './state.js';
 import { CUSTOM } from './custom.js';
 
+import { keptFloats, rememberFloats } from './worldmemo.js';
 import * as MAP from './content/map.js';
 
 // (round T) every position comes from js/content/map.js: the exports below are built from it, so the files that
@@ -582,7 +583,11 @@ export function createWorld(scene, quality) {
   // (round T2) the slope from the next grid points east and south (already worked out), scaled to 1.5 m as before:
   // two more heightAt calls per point made the valley a quarter of a second slower to build
   const row = seg + 1, step = SIZE / seg, HS = new Float32Array(pa.count);
-  for (let i = 0; i < pa.count; i++) { HS[i] = heightAt(pa.getX(i), pa.getZ(i)); pa.setY(i, HS[i]); }
+  // (owner, 30 Oct 2026 AEDT: "it loads too long") the ground's heights are kept on the device after the first start of
+  // a build (js/worldmemo.ts) and read back: the same numbers, without working out every point again
+  const keptHS = keptFloats('ground-start', pa.count);
+  if (keptHS) HS.set(keptHS); else { for (let i = 0; i < pa.count; i++) HS[i] = heightAt(pa.getX(i), pa.getZ(i)); rememberFloats('ground-start', HS); }
+  for (let i = 0; i < pa.count; i++) pa.setY(i, HS[i]);
   for (let i = 0; i < pa.count; i++) {
     const x = pa.getX(i), z = pa.getZ(i), h = HS[i];
     const ex = i % row < seg ? HS[i + 1] : HS[i - 1], sz = i < pa.count - row ? HS[i + row] : HS[i - row];
@@ -1208,12 +1213,12 @@ export function levelUnderBuildings(world, scene) {
 // Widen the level land round every village, town and city (see WIDE), after everything is placed: the ground is
 // reshaped, and whatever stands where the ground changed (trees, signs, props, people, roads) moves up or down with
 // it, keeping its place on the map.
-export function widenFlatLand(world, scene, metres = 10) { reshapeGround(world, scene, () => { WIDE = metres; }); }
+export function widenFlatLand(world, scene, metres = 10) { reshapeGround(world, scene, () => { WIDE = metres; }, 'ground-wide-' + metres); }
 // switch the road beds on (js/roads.js) and reshape the ground the same careful way
-export function roadBedsOn(world, scene) { reshapeGround(world, scene, () => { RB_ON = true; }); }
+export function roadBedsOn(world, scene) { reshapeGround(world, scene, () => { RB_ON = true; }, 'ground-roadbeds'); }
 // Change the ground (change() alters what heightAt returns), then reshape the terrain and move whatever stands where
 // the ground changed (trees, signs, props, people, roads) up or down with it, so nothing shifts on the map.
-function reshapeGround(world, scene, change) {
+function reshapeGround(world, scene, change, memo = '') {
   const keep = [], inst = [], roads = [];
   for (const o of scene.children) {
     if (o === world.terrain || o.isLight || !o.position) continue;
@@ -1228,7 +1233,10 @@ function reshapeGround(world, scene, change) {
   const topOld = world.roadTop ? [...world.roadTop.keys()].map(k => [k, heightAt(Math.round(k / 8192) / 2, (k - Math.round(k / 8192) * 8192) / 2)]) : [];
   change();
   const t = world.terrain;
-  if (t) { const pa = t.geometry.attributes.position; for (let i = 0; i < pa.count; i++) pa.setY(i, heightAt(pa.getX(i), pa.getZ(i))); pa.needsUpdate = true; t.geometry.computeVertexNormals(); t.geometry.computeBoundingSphere(); }
+  // (the ground's new heights: kept on the device after the first start of a build, js/worldmemo.ts)
+  if (t) { const pa = t.geometry.attributes.position, kept = memo ? keptFloats(memo, pa.count) : null;
+    if (kept) for (let i = 0; i < pa.count; i++) pa.setY(i, kept[i]);
+    else { const ys = new Float32Array(pa.count); for (let i = 0; i < pa.count; i++) { ys[i] = heightAt(pa.getX(i), pa.getZ(i)); pa.setY(i, ys[i]); } if (memo) rememberFloats(memo, ys); } pa.needsUpdate = true; t.geometry.computeVertexNormals(); t.geometry.computeBoundingSphere(); }
   for (const [o, h0] of keep) { const d = heightAt(o.position.x, o.position.z) - h0; if (Math.abs(d) > .01) o.position.y += d; }
   inst.forEach((o, k) => { let ch = false; for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); m4.decompose(p, q, sc); const d = heightAt(p.x, p.z) - instOld[k][i]; if (Math.abs(d) > .01) { p.y += d; m4.compose(p, q, sc); o.setMatrixAt(i, m4); ch = true; } } if (ch) { o.instanceMatrix.needsUpdate = true; o.computeBoundingSphere && o.computeBoundingSphere(); } });
   roads.forEach((o, k) => { const pa = o.geometry.attributes.position; let ch = false; for (let i = 0; i < pa.count; i++) { const d = heightAt(pa.getX(i), pa.getZ(i)) - roadOld[k][i]; if (Math.abs(d) > .01) { pa.setY(i, pa.getY(i) + d); ch = true; } } if (ch) { pa.needsUpdate = true; o.geometry.computeVertexNormals(); o.geometry.computeBoundingSphere(); } });

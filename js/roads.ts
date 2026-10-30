@@ -6,6 +6,7 @@ import { T, onLang } from './i18n.js';
 import { SFX } from './audio.js';
 import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox } from './world.js';
 import { settings } from './state.js';
+import { remember } from './worldmemo.js';
 import { ROAD_TONES } from './content/map.js';
 // HARD RULE (owner, round 30): the steepest a road may climb: asphalt 8 %, dirt 12 % (checked by `roadshape`)
 export const ROAD_GRADE = { asphalt: .08, dirt: .12, footpath: .15 };
@@ -135,7 +136,13 @@ function ribbonGeo(R, pts, ys) {
 }
 // all roads: profiles, joints matched, road beds registered and switched on (the ground is reshaped), then the ribbons
 function buildRoads(G, mats) {
-  const { scene, world } = G, all = ROADS.map(R => { const pts = denseLine(R); return { R, pts, extraFix: new Map<number, number>(), jEnd: [false, false], ...profile(R, world, pts) }; });
+  // (owner, 30 Oct 2026 AEDT: "it loads too long") the finished heights of every road are kept on the device
+  // (js/worldmemo.ts): on the next start of the same build they are read back instead of worked out (about a third of
+  // the start-up time on a phone); the result is the same numbers, so the roads and the ground under them are the same
+  const lines = ROADS.map(R => denseLine(R)), memo = G.roadMemo;
+  const restored = Array.isArray(memo) && memo.length === ROADS.length && memo.every((k, i) => k && Array.isArray(k.ys) && k.ys.length === lines[i].length);
+  const { scene, world } = G, all = ROADS.map((R, i) => { const pts = lines[i], k = restored ? memo[i] : null; return { R, pts, extraFix: new Map<number, number>(), jEnd: k ? k.jEnd : [false, false], ...(k ? { ys: k.ys, deck: k.deck, apron: k.apron, fixed: k.fixed } : profile(R, world, pts)) }; });
+  if (!restored) {
   // a road whose end meets another road takes that road's exact surface height wherever the two overlap; its own
   // smooth, gentle profile is then worked out again around those fixed points (twice, so joints settle)
   const yOn = (B, x, z) => { let bd = 1e9, by = 0; for (let j = 0; j < B.pts.length - 1; j++) { const [ax, az] = B.pts[j], [bx, bz] = B.pts[j + 1], dx = bx - ax, dz = bz - az, t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz || 1))), d = Math.hypot(x - ax - dx * t, z - az - dz * t); if (d < bd) { bd = d; by = B.ys[j] + (B.ys[j + 1] - B.ys[j]) * t; } } return { d: bd, y: by }; };
@@ -173,6 +180,8 @@ function buildRoads(G, mats) {
     });
     if (anchors.size) Object.assign(A, profile(A.R, world, A.pts, anchors));
   });
+  remember('roads', all.map(A => ({ ys: A.ys, deck: A.deck, apron: A.apron, fixed: A.fixed, jEnd: A.jEnd })));
+  }
   const segs = [];
   for (const A of all) for (let i = 0; i < A.pts.length - 1; i++) if (!A.deck[i] && !A.deck[i + 1]) segs.push({ r: all.indexOf(A), tip: !!A.jEnd && ((A.jEnd[0] && i < 4) || (A.jEnd[1] && i > A.pts.length - 6)), first: i === 0, last: i === A.pts.length - 2, ax: A.pts[i][0], az: A.pts[i][1], bx: A.pts[i + 1][0], bz: A.pts[i + 1][1], ya: A.ys[i], yb: A.ys[i + 1], hw: A.R.w / 2 });
   setRoadBeds(segs); roadBedsOn(world, scene);

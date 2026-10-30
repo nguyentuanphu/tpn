@@ -61,6 +61,7 @@ import { createTraffic } from './traffic.js';
 import { RELEASES } from './content/releases.js';
 import { liveBoot, releaseNew, featureOn, releaseOn, liveRule, onLive, keptOn, markTried, triedFromSave, setPlayers, MONEY_GAMES } from './custom.js';
 import { cachedCanvas } from './worldcache.js';
+import { recall, preload } from './worldmemo.js';
 import { events } from './core/events.js';
 import { createPlaceBook } from './placebook.js';
 import { createFamilyCards } from './familycards.js';
@@ -164,8 +165,12 @@ async function startWhenBuilt(mode, chosen) {
   startSession(mode, chosen);
 }
 document.getElementById('boot')?.remove();
-showTitle(async () => { await bootReady; showWho((mode, chosen) => startWhenBuilt(mode, chosen)); });
+// (owner, 30 Oct 2026 AEDT: "it loads too long") "Who's playing?" opens at the first tap; only Go waits for the valley,
+// with its progress bar (js/launch.js), and only when it is not built yet
+showTitle(async () => { showWho((mode, chosen) => startWhenBuilt(mode, chosen)); });
 await breathe();
+const roadMemo = recall('roads'); // (js/worldmemo.ts) read while the valley starts building
+await preload(); // (the ground's kept heights, needed by the first step)
 const world = createWorld(scene, quality); bootMark('world'); await breathe();
 // the map picture: read back from the device when this build painted it before (js/worldcache.js)
 const waterPic = cachedCanvas('water', 256, paintWater, bootReady); waterPic.onReady = () => world.waterMap(waterPic.canvas); // (round T4a) each river's colour and the foam along the shores
@@ -209,6 +214,7 @@ export interface SvMain {
   coop?: ReturnType<typeof createCoop>; familyCards?: ReturnType<typeof createFamilyCards>; parents?: ReturnType<typeof import('./parents.js').createParents>;
   boxes?: ReturnType<typeof import('./boxes.js').createBoxes>; surprises?: ReturnType<typeof import('./surprises.js').createSurprises>; myHouse?: ReturnType<typeof createMyHouse> | null;
   solidsReady?: ReturnType<typeof buildSolids>;
+  roadMemo?: unknown; // the roads' heights kept from the last start of this build (js/worldmemo.ts, js/roads.js)
   // parts other modules add (js/homes.js, js/traffic.js, js/wayfind.js, js/autoplay.js, js/tester.js, js/fun.js, js/chatter.js, js/learn.js…)
   homes?: { list: SvHome[], enter(h: SvHeroT, home: SvHome): void, inside(): SvHome | null, isInside(h: SvHeroT): boolean, [k: string]: unknown }; traffic?: { apply(big: boolean): void, [k: string]: unknown };
   wayfind?: { open(i: number): void, stop(quiet?: boolean): void, [k: string]: unknown }; autoplay?: { running(): boolean, unmount(): void, [k: string]: unknown };
@@ -1873,7 +1879,7 @@ const walkedAway = () => {
 };
 onLang(() => G.huds.forEach(hd => hd.refreshWho && hd.refreshWho()));
 createAsia(G);
-bootMark('town'); createRoads(G); bootMark('roads'); await breathe();
+bootMark('town'); G.roadMemo = await roadMemo; createRoads(G); bootMark('roads'); await breathe();
 createCities(G);
 createHawkers(G);
 createSuburbs(G); // speciality buildings along the roads out of each city (before the homes are made)
