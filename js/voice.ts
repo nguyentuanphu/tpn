@@ -449,6 +449,8 @@ events.on('PlayerEnteredVillage', e => { const a = String(e && e.villageId || ''
 let hanoiService: ReturnType<typeof import('./hanoi-pack.js').createHanoiPack> | null = null;
 let hanoiLoading: Promise<NonNullable<typeof hanoiService>> | null = null;
 const hanoiSelected=()=>settings.voiceViVariant==='leminh';
+// (31 Oct 2026 AEDT) recordings waiting to be written into a bundle (js/voicestore.ts) are written when the page goes away
+addEventListener('pagehide', () => { import('./voicestore.js').then(m => m.voiceStore('sv-voices').flush()).catch(() => { }); hanoiService?.flush?.().catch(() => { }); });
 const hanoiPack=()=>hanoiLoading||(hanoiLoading=Promise.all([import('./hanoi-pack.js'),voicePackMod()]).then(([m,p])=>hanoiService=m.createHanoiPack({allowed:()=>hanoiSelected()&&(settings.packCell===true||p.packNet()==='wifi'),emit:packEmit})));
 const resumeHanoi=()=>{if(hanoiSelected())void hanoiPack().then(p=>p.download()).catch(()=>{});};
 let hanoiAutoScheduled=false;

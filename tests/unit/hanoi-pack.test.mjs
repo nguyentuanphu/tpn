@@ -7,7 +7,7 @@ const manifest={schema:1,provider:'FPT Neo',model:'FPT.AI-VITs',voice:'leminh',l
 function fixture(){
  const stored=new Map(),requests=[],progress=[];let available=true,allowed=true,corrupt=false,stopAfter=Infinity,quota=false;
  const absolute=u=>new URL(typeof u==='string'?u:u.url,'https://game.test/').href;
- const cache={delete:async u=>stored.delete(absolute(u)),keys:async()=>[...stored.keys()].map(url=>({url})),match:async u=>stored.get(absolute(u))?.clone(),put:async(u,r)=>{if(quota&&u.includes('.mp3'))throw Error('quota');stored.set(absolute(u),r.clone());}};
+ const cache={delete:async u=>stored.delete(absolute(u)),keys:async()=>[...stored.keys()].map(url=>({url})),match:async u=>stored.get(absolute(u))?.clone(),put:async(u,r)=>{if(quota&&(u.includes('.mp3')||u.includes('/__store/b')))throw Error('quota');stored.set(absolute(u),r.clone());}}; // (31 Oct AEDT: recordings are kept in bundles, js/voicestore.ts)
  const storage={open:async name=>{assert.equal(name,HANOI_CACHE);return cache;}};
  const fetcher=async url=>{requests.push(url);if(!available)throw Error('offline');if(url.endsWith('manifest.json'))return Response.json(manifest);if(requests.filter(u=>u.includes('.mp3')).length===stopAfter)available=false;return new Response(corrupt?Buffer.alloc(body.length,1):body);};
  const create=()=>createHanoiPack({fetcher,storage,emit:p=>progress.push(p),allowed:()=>allowed,online:()=>available,pause:async()=>{},baseURL:()=> 'https://game.test/'});
@@ -53,5 +53,7 @@ test('smaller pack upgrade retains verified old offline audio until a replacemen
  assert.deepEqual(Buffer.from(await(await service.audio(u)).arrayBuffer()),oldBytes);
  assert.ok(await cache.match(oldURL),'old audio retained while offline');assert.equal(await cache.match(u),undefined);
  offline=false;assert.deepEqual(Buffer.from(await(await service.audio(u)).arrayBuffer()),newBytes);
- assert.equal(await cache.match(oldURL),undefined,'only delete original after replacement is verified and stored');assert.ok(await cache.match(u));
+ assert.equal(await cache.match(oldURL),undefined,'only delete original after replacement is verified and stored');
+ // (31 Oct AEDT) the replacement is kept in a bundle with one index (js/voicestore.ts), not as a single file
+ await service.flush();const index=await(await cache.match(HANOI_ROOT+'__store/index.json')).json();assert.ok(index.files[u.slice(1)],'replacement kept in the bundle index');
 });

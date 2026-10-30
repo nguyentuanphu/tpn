@@ -692,16 +692,19 @@ await check('voicepack', async () => {
   await P.ctx.addInitScript(() => { window.__packLog = []; new MutationObserver(() => { const e = document.querySelector('.packbar span'); if (e && window.__packLog[window.__packLog.length - 1] !== e.textContent) window.__packLog.push(e.textContent); }).observe(document, { subtree: true, childList: true, characterData: true }); });
   let firstLoad = true;
   const openAgain = async () => { if (firstLoad) { firstLoad = false; await P.page.goto(URL); } else await P.page.reload(); await start(P.page); await clear(P.page); await P.page.waitForFunction(() => window.__packLog.some(x => /✓/.test(x)), null, { timeout: 60000 }).catch(() => { }); return P.page.evaluate(() => window.__packLog); };
-  const state = () => P.page.evaluate(async () => { const c = await caches.open('sv-voices'); return { files: (await c.keys()).filter(r => /\/voices\/.+\.mp3$/.test(r.url)).length, saved: JSON.parse(localStorage.getItem('sv2_settings')).packSaved || '' }; });
+  // (31 Oct 2026 AEDT) the recordings are kept as a few bundles with one index (js/voicestore.ts): counted through it, and no
+  // single recording files may be left in the store
+  const state = () => P.page.evaluate(async () => { const c = await caches.open('sv-voices'), S = (await import(String('/js/voicestore.js'))).voiceStore('sv-voices'); await S.flush();
+    return { files: [...await S.keys()].filter(k => /^voices\/.+\.mp3$/.test(k)).length, singles: (await c.keys()).filter(r => /\.mp3$/.test(r.url)).length, saved: JSON.parse(localStorage.getItem('sv2_settings')).packSaved || '' }; });
   const first = await openAgain(), s1 = await state();
-  ok(first.some(x => /%/.test(x)) && first.some(x => /✓/.test(x)) && s1.files >= 24 && s1.saved === 'vi:test-vi', 'first open: ' + JSON.stringify({ first: first.slice(0, 4), s1 }));
+  ok(first.some(x => /%/.test(x)) && first.some(x => /✓/.test(x)) && s1.files >= 24 && !s1.singles && s1.saved === 'vi:test-vi', 'first open: ' + JSON.stringify({ first: first.slice(0, 4), s1 }));
   // next open: everything is there, so nothing downloads and the bar says nothing (round O, owner: it looked as if the
   // voices loaded on every start, and listing all the files each time cost battery)
   await P.page.reload(); await start(P.page); await clear(P.page); await P.page.waitForTimeout(10000);
   const second = await P.page.evaluate(() => window.__packLog);
   ok(!second.length, 'next open: ' + JSON.stringify(second));
   // the phone cleared some files: the next open fetches only those, quietly with the bar
-  await P.page.evaluate(async () => { const c = await caches.open('sv-voices'); const ks = (await c.keys()).filter(r => /\.mp3$/.test(r.url)); for (const r of ks.slice(0, 5)) await c.delete(r); });
+  await P.page.evaluate(async () => { const S = (await import(String('/js/voicestore.js'))).voiceStore('sv-voices'); for (const k of [...await S.keys()].slice(0, 5)) await S.forget(k); await S.tidy(); });
   const third = await openAgain(), s3 = await state();
   await P.page.screenshot({ path: 'out/voicepack-phone.png' });
   const errs = P.errors; await P.ctx.close();
@@ -757,16 +760,16 @@ await check('voicebackground', async () => {
     await P.page.waitForSelector('.grownups #xPackSave');
     await P.page.evaluate(()=>document.querySelectorAll('.grownups details').forEach(d=>d.open=true));
     await P.page.locator('#xPackSave').click();
-    const before=await P.page.evaluate(async()=>(await (await caches.open('sv-voices')).keys()).filter(r=>/\.mp3$/.test(r.url)).length);
+    const before=await P.page.evaluate(async()=>(await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()).size);
     await P.page.locator('#gDone').click();
     await P.page.waitForSelector('.grownups',{state:'detached'});
     // Playwright 1.56 treats a returned Promise as truthy; poll asynchronous CacheStorage explicitly.
     for(let attempt=0;attempt<240;attempt++){
-      const count=await P.page.evaluate(async()=>(await (await caches.open('sv-voices')).keys()).filter(r=>/\.mp3$/.test(r.url)).length);
+      const count=await P.page.evaluate(async()=>(await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()).size);
       if(count>before+6)break;
       await P.page.waitForTimeout(250);
     }
-    const result=await P.page.evaluate(async()=>({open:!!document.querySelector('.grownups'),male:(await import('/js/state.js')).settings.voiceMale,auto:(await import('/js/state.js')).settings.autoPack,progress:document.querySelector('.packbar')?.textContent,files:(await (await caches.open('sv-voices')).keys()).filter(r=>/\.mp3$/.test(r.url)).length}));
+    const result=await P.page.evaluate(async()=>({open:!!document.querySelector('.grownups'),male:(await import('/js/state.js')).settings.voiceMale,auto:(await import('/js/state.js')).settings.autoPack,progress:document.querySelector('.packbar')?.textContent,files:(await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()).size}));
     ok(!result.open&&result.male&&result.auto&&result.progress&&result.files>before+6,'settings close stopped background download/progress: '+JSON.stringify({before,result}));
     await P.page.waitForFunction(()=>/✓/.test(document.querySelector('.packbar')?.textContent||''),null,{timeout:60000});
     ok(!P.errors.length,P.errors.join(' | '));
@@ -874,7 +877,7 @@ await check('ownervoicewifi', async () => {
       const s=JSON.parse(localStorage.getItem('sv2_settings')||'{}');
       return s.packLangs==='vi' && window.__ownerPackProgress.some(e=>e.state==='ready' && !e.core);
     },null,{timeout:20000});
-    const urls=await P.page.evaluate(async()=> (await (await caches.open('sv-voices')).keys()).map(r=>r.url));
+    const urls=await P.page.evaluate(async()=> [...await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()]);
     ok(groups.every(g=>urls.some(u=>u.endsWith('/vi_'+g+'.mp3'))),'full selected Vietnamese pack automatically completed on Wi-Fi: '+JSON.stringify(got));
     ok(!got.some(u=>u.endsWith('/en_games.mp3')),'old-language remaining areas should stop after the in-flight batch');
     const progress=await P.page.evaluate(()=>window.__ownerPackProgress);

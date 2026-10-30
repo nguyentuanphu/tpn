@@ -536,3 +536,10 @@ independently; do not report it as passed until actual artifacts are inspected.
   main road into each village and city (5 m board in the place's own gate colours, "Welcome to …" in both languages, a
   small roof and a box of flowers), 4 m before the place. On: the gates as before. `world.gates` lists one entry per
   place either way (kind `sign` or `gate`), so the roads and gates checks still count one welcome per place.
+- **Owner, 31 Oct 2026 AEDT (pop-up): "Gom giọng nói trước"** (bundle the voices first, no release until it is done).
+  The installed app stayed white for about 30 s on an iPhone; other installed web apps open at once. The likely cause is
+  the offline store: a phone keeps 14,000 to 21,000 single recordings (Vietnamese 14,424 files, Lê Minh 7,215, English
+  16,134). js/voicestore.ts keeps them as bundles of about 3 MB with one index per store (voices/__store/ and
+  voices/fpt-leminh-v1/__store/); sw.ts cuts a recording out of its bundle; recordings kept the old way move into bundles
+  in the background, each single file deleted only after its bundle is saved; small bundles merge. The same recorded
+  voices, offline as before. Bug reports now carry this start's timings to confirm the cause on the phone.

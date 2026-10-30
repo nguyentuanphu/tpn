@@ -17,7 +17,7 @@ try {
   await P.page.evaluate(async pack=>{const V=await import('/js/voicepack.js');V.startPack(pack,e=>window.__indexProgress.push(e),()=> 'nearby');},makePack(true));release();
   let result;
   for(let n=0;n<200;n++){
-    result=await P.page.evaluate(async()=>{const c=await caches.open('sv-voices');return {files:(await c.keys()).map(r=>r.url),saved:JSON.parse(localStorage.getItem('sv2_settings')||'{}').packSaved,progress:window.__indexProgress};});
+    result=await P.page.evaluate(async()=>{const S=(await import(String('/js/voicestore.js'))).voiceStore('sv-voices');return {files:[...await S.keys()],saved:JSON.parse(localStorage.getItem('sv2_settings')||'{}').packSaved,progress:window.__indexProgress};});
     if(result.saved?.endsWith(':refreshed')&&result.files.some(u=>u.endsWith('/fixture_en_games.mp3')))break;await P.page.waitForTimeout(100);
   }
   assert.ok(result.saved?.endsWith(':refreshed'),JSON.stringify({got,result}));
