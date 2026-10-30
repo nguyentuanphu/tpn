@@ -509,6 +509,8 @@ add('🏊 🏊‍♀️ 🏊‍♂️', g('a-swim', `${circ(16, 20, 6, '#f2b98a'
 const house = (roof, wall, extra = '') => `<path d="M6 22L24 8l18 14z" fill="${roof}" ${W}/><rect x="10" y="22" width="28" height="18" fill="${wall}" ${W}/>${extra}`;
 const wheel = (x, y, r = 4) => `${circ(x, y, r, '#2f3336')}${dot(x, y, 1.4, '#cfcfd8')}`;
 add('🪣', g('a-swing', `<path d="M10 16h28l-4 26H14z" fill="#5fb6ff" ${W}/><path d="M10 16c0-10 28-10 28 0" ${W} ${N}/><path d="M12 22h24" stroke="#fff" stroke-width="2.4" opacity=".6"/>`, '24px 6px'));
+// (owner, 30 Oct 2026 AEDT) move a decoration in My House: a little box hopping along a dotted arrow to its new spot
+add('🔀', g('a-tap', `<rect x="6" y="24" width="14" height="14" rx="3" fill="#ffcf6b" ${W}/><path d="M14 18c4-10 18-12 24-4" stroke="#9b6bff" stroke-width="4" stroke-linecap="round" stroke-dasharray="4 5" ${N}/><path d="M33 9l7 6-8 3z" fill="#9b6bff" ${W}/><rect x="28" y="26" width="14" height="14" rx="3" fill="#fff6d6" stroke="#c9a24a" stroke-width="2.5" stroke-dasharray="3 3"/>`, '24px 30px'));
 add('🔨', g('a-tap', `<path d="M22 20l16 20" stroke="#a8743a" stroke-width="5" stroke-linecap="round"/><path d="M6 14l14-10 8 10-14 10z" fill="#8a94a0" ${W}/>`, '38px 40px'));
 add('⛏️ ⛏', g('a-tap', `<path d="M14 40L34 14" stroke="#a8743a" stroke-width="4" stroke-linecap="round"/><path d="M8 18c10-10 24-12 34-6-10-2-20 0-28 8z" fill="#8a94a0" ${W}/>`, '14px 40px'));
 add('🪏', g('a-tap', `<path d="M10 40L32 12" stroke="#a8743a" stroke-width="4" stroke-linecap="round"/><path d="M30 6l12 8-6 8c-4 2-8 0-10-2z" fill="#8a94a0" ${W}/><path d="M6 36l8 8" stroke="${O}" stroke-width="4" stroke-linecap="round"/>`, '10px 40px'));
