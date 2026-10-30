@@ -199,7 +199,7 @@ export interface SvMain {
   actCount: number; events: typeof events; settings: typeof settings; world: typeof world; scene: typeof scene; pads: typeof pads;
   heroes: SvHeroT[]; huds: Hud[]; mode: string; partner: unknown; zoom: number; fogMaps: Record<string, HTMLCanvasElement>;
   regionOf: (string | null)[]; interactables: SvItem[]; gatherState: Record<string, unknown>; bubbles: { s: THREE.Sprite, target: { pos: THREE.Vector3 }, until?: number }[];
-  paused?: boolean; lastPlayer?: number; firstFrames?: typeof firstFrames; renderer?: typeof renderer; npcs?: typeof NPCS;
+  paused?: boolean; lastPlayer?: number; firstFrames?: typeof firstFrames; whenPlaying?: Promise<void>; renderer?: typeof renderer; npcs?: typeof NPCS;
   halfBusy?: (i?: number) => boolean; quality?: typeof quality; battery?: { frameMs: number, titleMs: number, idleMs: number, idleFps: number, [k: string]: unknown };
   // places, people and things of the valley (each made by its own module)
   farm?: ReturnType<typeof createFarm>; ferries?: ReturnType<typeof createFerries>; festivals?: ReturnType<typeof createFestivals>;
@@ -269,6 +269,9 @@ const G: SvMain = {
   fogMaps: {}, regionOf: [], interactables: [], gatherState: {}, bubbles: []
 };
 G.firstFrames = firstFrames; // (the valley has been drawn a few times: js/solids.js)
+// (the solid map's second look waits for play: on Welcome and Who's playing nothing in the valley moves yet, so animals and
+// cars standing still there were counted or not by timing, and the saved map was missed: check solid)
+let playStarted: () => void = () => {}; G.whenPlaying = new Promise<void>(r => { playStarted = r; });
 // (round R, owner) two children on one screen: each child's windows sit in their own half and pause only that child, so
 // the other keeps playing. With two halves "paused" means the half of whoever touched last (G.lastPlayer); alone it is a flag.
 let pausedFlag = false;
@@ -1654,7 +1657,7 @@ function startSession(mode, chosen) {
   // (round R) the "New!" moment: something Studio released in the last few days, shown once to each child
   setTimeout(() => newMoment(G.heroes[0]), 4000);
   if (G.valleyGrew) setTimeout(grownMoment, 2500);
-  resize(); G.paused = false; playing = true; G.listenFriends();
+  resize(); G.paused = false; playing = true; playStarted(); G.listenFriends();
   // a note from the grown-ups (Sparkle Studio), once a day
   // (r81, owner 17 Oct AEDT) Studio's message is live: a new one that arrives while playing is shown too (once)
   { const familyMsg = () => { const M = CUSTOM.message, today = new Date().toDateString(), sig = M ? String(M.en || '') + '|' + String(M.vi || '') : '';

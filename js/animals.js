@@ -27,7 +27,7 @@ function make(kind, build, shadow) {
   const sh = blobShadow(); sh.scale.setScalar(shadow); g.add(sh);
   const rig = { kind, root, legs: [], ears: [], gait: 'walk', wag: 0, sway: 0, seed: Math.random() * 10, ph: 0, sp: 0, px: null, pz: null };
   build(root, rig);
-  g.userData.rig = rig; LIVE.add(g);
+  g.userData.rig = rig; g.userData.moving = true; LIVE.add(g); // (an animal wanders: never part of the solid map, js/solids.js, even if it stands still while the map is made)
   return g;
 }
 

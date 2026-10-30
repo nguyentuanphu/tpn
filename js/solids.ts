@@ -34,11 +34,14 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
     const m = o.material; if (!m || (Array.isArray(m) ? m.some(x => x.transparent) : m.transparent)) return; // glass, water, verges, sprites
     const g = o.geometry; if (!g || !g.attributes.position) return; if (!g.boundingBox) g.computeBoundingBox();
     if (o instanceof THREE.InstancedMesh && g.boundingBox.max.y - g.boundingBox.min.y < 1.4) return; // grass and flowers
+    // (a placeholder squashed to a point, filled in later or never, blocks nothing; counted, it made the saved map's key
+    // depend on whether it was there yet: check solid)
+    if (g.boundingBox.isEmpty() || g.boundingBox.max.distanceTo(g.boundingBox.min) < .01) return;
     cand.push({ o, m0: o.matrixWorld.clone() });
   });
   // (the second look waits until the valley has been drawn for a few frames, so things that walk or drive have moved and
   // are left out: round R, the title shows before the first frame)
-  return new Promise<SolidStats>(resolve => (G.firstFrames || Promise.resolve()).then(() => setTimeout(() => {
+  return new Promise<SolidStats>(resolve => Promise.all([G.firstFrames || Promise.resolve(), G.whenPlaying || Promise.resolve()]).then(() => setTimeout(() => {
     const t0 = performance.now(); scene.updateMatrixWorld(true);
     const still = cand.filter(c => c.o.parent && c.o.matrixWorld.equals(c.m0)).map(c => c.o);
     const gcache = new Float32Array(N * N).fill(NaN), ground = (x, z) => { const k = idx(x, z); if (k < 0) return W.groundAt(x, z); let g = gcache[k]; if (g !== g) g = gcache[k] = W.groundAt(Math.floor((x + HALF) / CELL) * CELL - HALF + CELL / 2, Math.floor((z + HALF) / CELL) * CELL - HALF + CELL / 2); return g; };
