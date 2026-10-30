@@ -105,16 +105,15 @@ export function createKidPlay(G, { say, save }) {
       const s = hasPet(h) ? pet(h.profile) : null, x = s && nextHat(h);
       const showFeed = grow() && !!s, fedToday = s && s.fed === day(), showGoal = goal() && !!x, can = x && farm.coins >= x.price;
       const key = [showFeed, fedToday, level(h), showGoal, x && x.id, can, farm.coins, G.huds[h.i] && G.huds[h.i].root.className].join('|'); if (key === c.key) continue; c.key = key;
-      // (a phone has room for the goal only when it can be bought: then it pulses)
+      // (owner, 30 Oct 2026 AEDT: "small chip should show") a phone's top row has no room beside the mini-map, so there the
+      // goal is a small chip (picture and count) under the clock, shown while saving too; it pulses when the hat can be bought
       const narrow = G.huds[h.i] && G.huds[h.i].root.classList.contains('small');
-      c.feed.hidden = !showFeed; c.goal.hidden = !showGoal || (narrow && !can);
+      const home = narrow ? G.huds[h.i].root.querySelector('.hud-tr .zoom') : null;
+      if (home && c.goal.previousElementSibling !== home) home.after(c.goal); else if (!home && c.goal.parentElement !== c.feed.parentElement) c.feed.after(c.goal);
+      c.feed.hidden = !showFeed; c.goal.hidden = !showGoal;
       if (showFeed) { c.feed.innerHTML = fedToday ? (level(h) >= 3 ? pic('✨') + `<small>${T('Trick', 'Biểu diễn')}</small>` : pic('😊') + `<small>${T('Full', 'No rồi')}</small>`) : pic('🍓') + `<small>${T('Feed', 'Cho ăn')}</small>`;
         c.feed.setAttribute('aria-label', fedToday ? T('Do a trick', 'Biểu diễn') : T('Feed your friend', 'Cho bạn ăn')); c.feed.classList.toggle('ready', !fedToday); }
       if (showGoal) { c.goal.innerHTML = pic('🎯') + `<small>${narrow ? '' : T(x.en, x.vi) + ' '}${Math.min(farm.coins, x.price)}/${x.price}</small>`; c.goal.classList.toggle('ready', !!can); c.goal.setAttribute('aria-label', T('About your companion hat goal', 'Về mục tiêu mũ cho bạn đồng hành')); }
-      // (r79 A6) on a phone the chips sit on the player card's level and never slide under the mini-map: with no room, the
-      // goal chip (a hat ready to buy) takes the trick chip's place; only if it still has no room does it step aside
-      if (narrow && !c.goal.hidden) requestAnimationFrame(() => { const mm = G.huds[h.i]?.root.querySelector('.mini-wrap'), over = () => { const g = c.goal.getBoundingClientRect(); return mm && g.width && g.right > mm.getBoundingClientRect().left - 4; };
-        if (over() && !c.feed.hidden) c.feed.hidden = true; if (over()) c.goal.hidden = true; });
     }
   }
 
