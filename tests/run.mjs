@@ -3354,7 +3354,8 @@ await check('gates', async () => {
   // gate on a road's end, from 8 m outside to 3 m inside (through the gate onto the square), along the road: nothing
   // solid stops them and the ground never steps more than 25 cm from one half metre to the next (a bridge deck on the way
   // is the `bridges` check's)
-  const P = await open(b, { w: 900, h: 640, play: false });
+  // (30 Oct AEDT) the solid map is made once a child plays (js/solids.js waits for play), so the check starts playing
+  const P = await open(b, { w: 900, h: 640 });
   await P.page.waitForFunction(() => __sv.world && __sv.world.solidAt, null, { timeout: 90000 });
   const r = await P.page.evaluate(async () => {
     const W = __sv.world, w = await import('/js/world.js'), M = await import('/js/content/map.js'), bad = []; let n = 0, worst = 0;
