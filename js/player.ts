@@ -29,7 +29,7 @@ export interface Hero {
   fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount;
   safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number;
   easyT?: number; stillT?: number; steerYaw?: number; goal?: { x: number, z: number }; goalT?: number; view?: string; zoom?: number;
-  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string;
+  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean; _rideOf?: unknown;
   _camFreeT?: number; _camHitRay?: boolean; _camK?: number; _camLift?: number; _lmF?: number; _lm?: { x: number, z: number };
   _houseFront?: { x: number, z: number, rot: number, d: number }; indoors?: unknown; ferry?: unknown;
   carry?: (dt: number, t: number, pad: HeroPad) => CarryResult | void; carryVehicle?: RideVehicle;
@@ -196,7 +196,7 @@ export class Hero {
     this.fallStart = null;
     if (fell > 14 && !this.gliding) game.hurt(this, fell > 30 ? 2 : 1);
   }
-  mount(b) { this.riding = b; b.rider = this; this.gliding = false; this.pos.copy(b.mesh.position); this.yaw = b.yaw; if (!b.quiet) SFX.moo(); }
+  mount(b) { this.riding = b; b.rider = this; this._rideNew = true; this.gliding = false; this.pos.copy(b.mesh.position); this.yaw = b.yaw; if (!b.quiet) SFX.moo(); }
   dismount() { const b = this.riding; if (!b) return; b.rider = null; b.tx = b.mesh.position.x; b.tz = b.mesh.position.z; if (b.home) { b.tx = b.home[0]; b.tz = b.home[1]; b.back = true; }   // (Round V, owner 13 Oct) an animal runs back home when the child gets off
     if (b.slot) b.slot.taken = null; if (b.vehicle) this.av.torso.rotation.set(0, 0, 0), this.av.torso.position.set(0, 0, 0), this.av.head.position.set(0, 1.33, 0), this.av.armL.scale.y = this.av.armR.scale.y = 1; this.riding = null; this.pos.x += Math.cos(this.yaw) * 1.8; this.pos.z -= Math.sin(this.yaw) * 1.8; this.pos.y = this.world.groundAt(this.pos.x, this.pos.z); }
 
@@ -220,12 +220,12 @@ export class Hero {
     const A = this.av, p = this.pos;
     // (owner, 30 Oct 2026 AEDT) driving, riding or sitting in a vehicle starts in Street view (Ngang phố); getting off
     // goes back to the view the child had. Behind me is still there (the rider's eyes) with the View button
-    const rode = !!(this.riding || this.carryVehicle);
-    if (rode !== !!this._rode) {
-      this._rode = rode;
-      if (rode) { this._viewBefore = this.view || 'follow'; if (game.setView) game.setView(this.i, 'street', true); else this.view = 'street'; }
-      else { const back = this._viewBefore || 'follow'; if (game.setView) game.setView(this.i, back, true); else this.view = back; }
-    }
+    // (a passenger stays one until the ride lets go of them; getting off and on again before a frame still counts as on)
+    const seated = this.carry && this.state === 'sit' ? this.carry : null, rode = !!(this.riding || this.carryVehicle || seated || (this._rode && this.carry)), view = (id: string) => { if (game.setView) game.setView(this.i, id, true); else this.view = id; };
+    const of = this.riding || this.carryVehicle || seated || this._rideOf; if (of !== this._rideOf) { this._rideNew = this._rideNew || !!of; this._rideOf = of; }
+    if (rode && (this._rideNew || !this._rode)) { if (!this._rode) this._viewBefore = this.view || 'follow'; this._rode = true; view('street'); }
+    else if (!rode && this._rode) { this._rode = false; this._rideOf = null; view(this._viewBefore || 'follow'); }
+    this._rideNew = false;
     A.root.position.set(p.x, p.y + rideY, p.z); A.root.rotation.y = this.yaw;
     A.anim(this.state, t, this.speed);
     A.root.children[1].visible = this.state !== 'swim'; // blob shadow

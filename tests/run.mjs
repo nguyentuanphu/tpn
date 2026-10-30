@@ -4387,7 +4387,7 @@ await check('ownertransportpov', async () => {
       h.place(i.x+2,i.z); window.__povBoard=i.act(h,G);
     }, {age,kind});
     if(kind!=='xichlo'){await P.page.locator('.dialog .dchoices button').first().click();await P.page.locator('.stoppick [data-next]').click();}
-    await P.page.evaluate(async()=>{await window.__povBoard; const G=__sv,h=G.heroes[0]; const sl=G.traffic.slots.find(s=>s.passenger===h); if(!sl)throw Error('Boarding failed'); sl.mover.wait=100; h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},0,G); G.setView(0,'follow',true); /* (30 Oct AEDT) boarding starts in Street view; this checks the rider's eyes */ for(let k=0;k<90;k++)h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},k/60,G);});
+    await P.page.evaluate(async()=>{await window.__povBoard; const G=__sv,h=G.heroes[0]; const sl=G.traffic.slots.find(s=>s.passenger===h); if(!sl)throw Error('Boarding failed'); sl.mover.wait=100; for(let k=0;k<30;k++)h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},k/60,G); if(h.view!=='street')throw Error('Boarding did not start in Street view: '+h.view+' '+(sl.id||'')+' '+!!h.carryVehicle); G.setView(0,'follow',true); /* (30 Oct AEDT) boarding starts in Street view; this checks the rider's eyes */ for(let k=0;k<60;k++)h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},k/60,G);});
     // Synthetic targets prove the actual rendered sightline, not just camera coordinates.
     const r=await P.page.evaluate(async({age,kind})=>{
       const G=__sv,h=G.heroes[0],sl=G.traffic.slots.find(s=>s.passenger===h),{THREE}=await import('/js/gfx.js');
