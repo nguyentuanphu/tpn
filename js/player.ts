@@ -29,7 +29,7 @@ export interface Hero {
   fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount;
   safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number;
   easyT?: number; stillT?: number; steerYaw?: number; goal?: { x: number, z: number }; goalT?: number; view?: string; zoom?: number;
-  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean; _rideOf?: unknown;
+  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean;
   _camFreeT?: number; _camHitRay?: boolean; _camK?: number; _camLift?: number; _lmF?: number; _lm?: { x: number, z: number };
   _houseFront?: { x: number, z: number, rot: number, d: number }; indoors?: unknown; ferry?: unknown;
   carry?: (dt: number, t: number, pad: HeroPad) => CarryResult | void; carryVehicle?: RideVehicle;
@@ -222,13 +222,12 @@ export class Hero {
 
   finish(dt, t, game, rideY) {
     const A = this.av, p = this.pos;
-    // (owner, 30 Oct 2026 AEDT) driving, riding or sitting in a vehicle starts in Street view (Ngang phố); getting off
-    // goes back to the view the child had. Behind me is still there (the rider's eyes) with the View button
-    // (a passenger stays one until the ride lets go of them; getting off and on again before a frame still counts as on)
-    const seated = this.carry && this.state === 'sit' ? this.carry : null, rode = !!(this.riding || this.carryVehicle || seated || (this._rode && this.carry)), view = (id: string) => { if (game.setView) game.setView(this.i, id, true); else this.view = id; };
-    const of = this.riding || this.carryVehicle || seated || this._rideOf; if (of !== this._rideOf) { this._rideNew = this._rideNew || !!of; this._rideOf = of; }
+    // (owner, 30 Oct 2026 AEDT) when the child drives (a car, a motorbike, a bicycle) or rides the buffalo or the cow, the
+    // camera starts in Street view (Ngang phố); getting off goes back to the child's own view. Riding as a passenger (bus,
+    // tram, taxi, xích lô: someone else drives) keeps the usual camera. Behind me (the rider's eyes) stays on View
+    const rode = !!this.riding, view = (id: string) => { if (game.setView) game.setView(this.i, id, true); else this.view = id; };
     if (rode && (this._rideNew || !this._rode)) { if (!this._rode) this._viewBefore = this.view || 'follow'; this._rode = true; view('street'); }
-    else if (!rode && this._rode) { this._rode = false; this._rideOf = null; view(this._viewBefore || 'follow'); }
+    else if (!rode && this._rode) { this._rode = false; view(this._viewBefore || 'follow'); }
     this._rideNew = false;
     A.root.position.set(p.x, p.y + rideY, p.z); A.root.rotation.y = this.yaw;
     A.anim(this.state, t, this.speed);
@@ -302,6 +301,7 @@ export class Hero {
     let gy;
     if (this.ferry) { gy = Math.max(WATER, heightAt(want.x, want.z)) + .7; for (const pl of this.world.platforms) if (pl.y > target.y + 1.5 && want.x > pl.x0 - 1 && want.x < pl.x1 + 1 && want.z > pl.z0 - 1 && want.z < pl.z1 + 1) want.y = Math.min(want.y, pl.y - .8); }
     else gy = this.world.groundAt(want.x, want.z) + .7;
+    if (this.riding && this.riding.swims) gy = Math.max(gy, WATER + .7);   // (a swimming buffalo or cow: the camera stays above the water)
     if (want.y < gy) want.y = gy;
     // (Round V, owner 13 Oct: "the camera angle should be point of view") riding an animal or a vehicle, or sitting in a bus,
     // tram, taxi or xích lô: the camera rides at the child's eyes, looking ahead (the grown-ups' switch ridePov turns it off)
