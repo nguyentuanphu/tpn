@@ -1976,7 +1976,7 @@ bootMark('roadside'); G.solidsReady = buildSolids(G);
 // Later buildings can cover an authored collectible. Keep its stable pickup ID and
 // cooldown, but move the picture and interaction together onto nearby open ground.
 void G.solidsReady.then(() => {
-  for (const b of world.buffalo || []) {
+  for (const b of world.rideAnimals || world.buffalo || []) {
     if (b.rider) continue;
     const [x, z] = G.clearSpot(b.mesh.position.x, b.mesh.position.z, 1.1);
     b.mesh.position.set(x, heightAt(x, z), z); b.home = [x, z]; b.tx = x; b.tz = z;

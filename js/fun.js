@@ -29,7 +29,7 @@ export function createFun(G) {
   // returns true when the tap was used
   G.tapReact = (h, ray) => {
     const people = scene.children.filter(c => c.userData.avatar || c.userData.react);
-    const targets = [...world.plants.filter(m => m.userData.kind !== 'rock'), ...world.critters.map(c => c.s), ...(G.pets ? G.pets.meshes() : []), ...G.npcs.map(n => n.obj), ...(G.farm ? G.farm.animalObjs() : []), ...(world.buffalo || []).map(b => b.mesh), ...(G.pets && G.pets.yardMeshes ? G.pets.yardMeshes() : []), ...people];
+    const targets = [...world.plants.filter(m => m.userData.kind !== 'rock'), ...world.critters.map(c => c.s), ...(G.pets ? G.pets.meshes() : []), ...G.npcs.map(n => n.obj), ...(G.farm ? G.farm.animalObjs() : []), ...(world.rideAnimals || world.buffalo || []).map(b => b.mesh), ...(G.pets && G.pets.yardMeshes ? G.pets.yardMeshes() : []), ...people];
     const hit = ray.intersectObjects(targets, true)[0]; if (!hit || hit.distance > 45) return false;
     if (hit.object.isInstancedMesh && hit.distance > 26) return false; // far-away trees: tapping there walks there
     let o = hit.object;
@@ -60,7 +60,7 @@ export function createFun(G) {
   // (feel and sound, owner plan 16 Oct AEDT) a tapped animal (buffalo, farm animals, pets) does one of three happy
   // moves, so tapping again is a little surprise: a bounce, a wiggle or a big stretch, with a heart, a sparkle or a
   // note. Only its size and tilt change, so the animal's own walking is left alone. Calm mode: a small bounce only.
-  const isAnimal = o => (world.buffalo || []).some(b => b.mesh === o) || (G.pets && G.pets.meshes().includes(o)) || (G.farm && G.farm.animalObjs().includes(o));
+  const isAnimal = o => (world.rideAnimals || world.buffalo || []).some(b => b.mesh === o) || (G.pets && G.pets.meshes().includes(o)) || (G.farm && G.farm.animalObjs().includes(o));
   const moves = [];
   const animalMove = o => {
     if (moves.some(m => m.o === o)) return;
@@ -87,7 +87,7 @@ export function createFun(G) {
     say('Let\u2019s go!', 'Đi thôi!'); // the line the Go button already says, so it is always a recorded voice
   };
   // the water buffaloes moo when tapped (riding is still the button)
-  (world.buffalo || []).forEach(b => { b.mesh.userData.react = () => { SFX.moo(); G.fx(b.mesh.position.x, b.mesh.position.y + 2.2, b.mesh.position.z, '💨'); }; });
+  (world.rideAnimals || world.buffalo || []).forEach(b => { b.mesh.userData.react = () => { SFX.moo(); G.fx(b.mesh.position.x, b.mesh.position.y + 2.2, b.mesh.position.z, '💨'); }; });
   // register villagers: hop, wave and say hello, then walk over to talk
   G.npcs.forEach(n => { n.obj.userData.react = h => { hops.push({ o: n.obj, t: 0, y: n.obj.position.y }); SFX.hee(); G.fx(n.x, n.obj.position.y + 2.6, n.z, '👋'); const it = G.interactables.find(i => i.id === 'npc_' + n.id); if (it) G.goAndDo(h, it); }; });
   world.updaters.push(dt => {

@@ -4,7 +4,7 @@ import { seatRider } from './vehicles.js';
 import { vehicleEye } from './rideview.js';
 import { THREE } from './gfx.js';
 import { buildAvatar } from './avatar.js';
-import { WATER, heightAt, surfaceAt } from './world.js';
+import { WATER, RIDE_SWIM, heightAt, surfaceAt } from './world.js';
 import { clamp, lerp, angleLerp } from './util.js';
 import { SFX } from './audio.js';
 
@@ -17,7 +17,7 @@ const GRAV = 22, WALK = 5.5, RUN = 9.5, SWIM = 3.4, CLIMB = 2.6, GLIDE = 8, RIDE
 import type { Profile } from '../types/save.js';
 export type RideVehicle = { o: THREE.Object3D, wheels: THREE.Object3D[], wr: number, seat: number[], grips?: number[][], feet?: number[][], wheelAt?: number[],
   cabin?: { width: number, length: number, bottom: number, top: number, color: string } };
-type RideMount = { mesh: THREE.Object3D, shadow: THREE.Object3D, yaw: number, rider?: Hero | null, speed?: number, quiet?: boolean,
+type RideMount = { mesh: THREE.Object3D, shadow: THREE.Object3D, yaw: number, rider?: Hero | null, speed?: number, quiet?: boolean, swims?: boolean,
   tx?: number, tz?: number, back?: boolean, home?: number[], slot?: { taken: unknown }, vehicle?: RideVehicle, firstPersonHide?: THREE.Object3D[] };
 type CarryResult = { x: number, y: number, z: number, yaw?: number, swim?: boolean, state?: string, rest?: boolean, speed?: number, rideY?: number, vehicle?: RideVehicle };
 type HeroPad = { mx: number, mz: number, cdx: number, cdy: number, run?: boolean, jump(): boolean, act?(): boolean };
@@ -111,21 +111,25 @@ export class Hero {
     if (this.riding) {
       if (jump || pad.act()) { this.dismount(); }
       else {
-        const b0 = this.riding, sp = (b0.speed || RIDE) * mag; this.speed = lerp(this.speed, sp, Math.min(1, dt * 4));
+        // (owner, 30 Oct 2026 AEDT: "both buffalo and cows ... can ride and swim through water") a buffalo or a cow swims:
+        // in deep water it floats with its back and head above the water, a little slower, bobbing; vehicles still stop
+        const b0 = this.riding, swimmer = !!b0.swims, afloat = (y: number) => swimmer ? Math.max(y, WATER - RIDE_SWIM) : y;
+        const inWater = swimmer && ground < WATER - RIDE_SWIM, sp = (b0.speed || RIDE) * mag * (inWater ? .65 : 1); this.speed = lerp(this.speed, sp, Math.min(1, dt * 4));
         if (mag > .05) this.yaw = angleLerp(this.yaw, Math.atan2(mx, mz), Math.min(1, dt * 6));
         const nx = p.x + Math.sin(this.yaw) * this.speed * dt, nz = p.z + Math.cos(this.yaw) * this.speed * dt;
         // (#354, owner 17 Oct AEDT: "all animals and vehicles can travel anywhere") the real ground under the next step, as
-        // walking uses it: a bridge's deck, a pier or a platform counts, not the river bed below it; deep water still stops
+        // walking uses it: a bridge's deck, a pier or a platform counts, not the river bed below it; deep water stops a vehicle
         const g = W.groundAt(nx, nz, p.y + .5);
-        if (g > WATER - .4 && Math.abs(g - ground) < 1.5) { p.x = nx; p.z = nz; }
+        if ((swimmer || g > WATER - .4) && Math.abs(afloat(g) - afloat(ground)) < 1.5) { p.x = nx; p.z = nz; }
         // (#354) a ride takes 0.8 m each side, about a bicycle's or a buffalo's width: wide enough not to brush through
         // walls, narrow enough for every bridge a child walks over (Chùa Cầu's covered bridge is 3.2 m wide; 1.2 m did not fit)
-        W.collide(p, .8); p.y = W.groundAt(p.x, p.z, p.y + .5);
-        const b = this.riding; b.mesh.position.set(p.x, p.y, p.z); b.mesh.rotation.y = this.yaw; b.shadow.position.set(p.x, p.y + .05, p.z);
+        W.collide(p, .8); const under = W.groundAt(p.x, p.z, p.y + .5); p.y = afloat(under);
+        const bob = swimmer && under < WATER - RIDE_SWIM ? Math.sin(t * 2.4) * .06 : 0;
+        const b = this.riding; b.mesh.position.set(p.x, p.y + bob, p.z); b.mesh.rotation.y = this.yaw; b.shadow.position.set(p.x, p.y + .05, p.z); b.shadow.visible = !bob;
         // (round R) a bicycle: its wheels roll, and the child sits on its saddle with hands on the grips and feet on the pedals
         if (b.vehicle) { const v = b.vehicle; v.wheels.forEach(w => { w.rotation.x += this.speed * dt / v.wr; }); this.state = 'ride'; this.finish(dt, t, game, 0);
           this.av.rig.position.y = 0; b.mesh.updateMatrixWorld(true); seatRider(this.av, v, v.seat, v.grips, v.feet, this.av.root.scale.x, false); return; }
-        this.state = 'ride'; this.finish(dt, t, game, 1.6); return;
+        this.state = 'ride'; this.finish(dt, t, game, 1.6 + bob); return;
       }
     }
 

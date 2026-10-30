@@ -1,7 +1,7 @@
 {
   "provenance": {
-    "sourceHead": "34b614d29a6aa0e3f8432344278ec46ed6965a04",
-    "capturedAt": "2026-10-29T04:47:49.637Z",
+    "sourceHead": "e836411391f8d33f55a58917b03199f568d51c39",
+    "capturedAt": "2026-10-30T06:44:29.570Z",
     "timezone": "Australia/Sydney",
     "synthetic": true,
     "browser": "141.0.7390.37",
@@ -9,16 +9,17 @@
       "animations": "disabled"
     },
     "sourceFiles": {
-      "js/games/art-pad.ts": "8d8b1417deca6a105a3ace011ae9a25d0c99effbda54e318157eef35198b6693",
+      "js/games/art-pad.ts": "635ec7c304fc0c383dad3c163680aff0f0caf9b12a2ff32310887d42fe502ab8",
       "js/games/drawing2.ts": "cb1b4ecfc6f698f877e51cef66eac7b47da741a6c2a52395bbda07404cff66b4",
       "js/games/crafts.ts": "365582b983c45eca75c14077295ff4baa2072dac8850541e53117ba2b7796d6f",
-      "js/games/catalog.ts": "b55bf49afa869a455c148d501e71205d6089414fd920dd2c3e4156995c0f09b9",
-      "js/content/activities.ts": "ce8b39fa78979001542f3155c4aa3a59e35af552bff1602c60993c6ee1542f5b",
-      "js/art.ts": "c75c671b9a569dc7fcfe53889f65542cd4b34860ccc60f78b97ed834aafab365",
-      "css/style.css": "6786a5fac9cf4592af2dc0c5d6c5065dac7e773c06b4db6036fed83cddb18e1a",
-      "js/games/frame.ts": "8857a0d7f4ababf1d452105b11f846502de8cd31da24a4e941ca550d2796b151",
+      "js/games/catalog.ts": "f57a88aded9a3db138e4698d43b087b54170f59fac62c23e281fbabfa43f975b",
+      "js/content/activities.ts": "f6a24837f905e6d2910a5b0a85ea1576d9c985635088f84adfe34930e0a7e670",
+      "js/art.ts": "bd194026445df5719246857a690424db8c63b6ec3c30b8e8e92572b842b4ff76",
+      "css/style.css": "7f0f84f4d49dbbb8815c4dc1f8bddd0dacde2b336856d306ee727ffe2afe84b4",
+      "js/games/frame.ts": "4a29ceff7e89682ce5d2e11c97fa9566432ffa79eff49e7e99251120c7a9fc1c",
       "js/state.ts": "b1778ae0cc756cbebd8b65511a54bbcb55b9c2faf9bcbdd6007663148b444511",
-      "js/howto-data.ts": "603a3c64743a1e30369b8ce481958f283473fd99f0dca168f15de29962aef29a"
+      "js/howto-data.ts": "4652155c0539cb751bcac996093db21a15b3df60c9c51f83c8340ab26ea76ba3",
+      "js/emojiswap.js": "46c7bdcd17a9a9ba623d29df68b969cb40c2e73d9951f9a3a796c8aebd65f530"
     }
   },
   "results": [

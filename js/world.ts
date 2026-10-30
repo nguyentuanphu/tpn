@@ -20,6 +20,8 @@ export const MAP_VERSION = MAP.MAP_VERSION;
 export const STUDIO_ON_MAP = MAP.onThisMap(CUSTOM.world && typeof CUSTOM.world === 'object' ? CUSTOM.world.map : null);
 export const PARKED = STUDIO_ON_MAP ? null : { map: (CUSTOM.world && CUSTOM.world.map) || 'C', world: CUSTOM.world || null, npcs: CUSTOM.npcs || null };
 export const SIZE = MAP.WORLD.size, HALF = SIZE / 2, WATER = MAP.WORLD.water;
+// how far a swimming buffalo or cow sits below the water line (its back and head stay above it, and so does the rider)
+export const RIDE_SWIM = 1.05;
 const MTN = MAP.WORLD.mountains, EDGE = MAP.WORLD.edge, SADDLES = MAP.SADDLES, RELIEF = MAP.RELIEF, COAST = MAP.WORLD.coast, RAMP = MAP.WORLD.ramp;
 
 // Only nearby ridge segments can change the terrain. The 1.5-width boxes include the full 1.4-width falloff.
@@ -496,7 +498,8 @@ export function createWorld(scene, quality) {
     time: .36
   };
   // (TypeScript, r86) what the valley's object gets after it is made: here, and by js/solids.js, js/roads.js, js/main.ts…
-  type SvWorldMore = { underpassSolid?: Uint8Array, fronts?: { x: number, z: number, rot: number, d: number, kind: string }[], terrain?: THREE.Mesh, groundCover?: THREE.InstancedMesh[], critters?: unknown, fireflies?: unknown, buffalo?: { id: string, mesh: THREE.Mesh, shadow: THREE.Object3D, firstPersonHide?: THREE.Object3D[], home: number[], tx: number, tz: number, rider: unknown, yaw: number, back?: boolean }[],
+  type SvRideAnimal = { id: string, kind: string, swims: boolean, mesh: THREE.Mesh, shadow: THREE.Object3D, firstPersonHide?: THREE.Object3D[], home: number[], tx: number, tz: number, rider: unknown, yaw: number, back?: boolean };
+  type SvWorldMore = { underpassSolid?: Uint8Array, fronts?: { x: number, z: number, rot: number, d: number, kind: string }[], terrain?: THREE.Mesh, groundCover?: THREE.InstancedMesh[], critters?: unknown, fireflies?: unknown, buffalo?: SvRideAnimal[], cows?: SvRideAnimal[], rideAnimals?: SvRideAnimal[],
     pots?: { x: number, z: number, [k: string]: unknown }[], statue?: { x: number, z: number, [k: string]: unknown },
     groundAt?: (x: number, z: number, y?: number) => number, platformAt?: (x: number, z: number, y?: number) => unknown, collide?: (pos: { x: number, y?: number, z: number }, r?: number) => unknown,
     update?: (dt: number, t: number) => void, updateSky?: (dt: number, camPos: THREE.Vector3, focus?: THREE.Vector3) => void, isNight?: () => boolean,
@@ -995,16 +998,40 @@ export function createWorld(scene, quality) {
   ]);
   // A separate draw preserves the exterior but lets a rider see past the large storybook horns.
   const buffaloHorns = merge([P(new THREE.TorusGeometry(.7, .12, 5, 12, Math.PI), '#d8d0c0', [0, 2.2, 1.9])]);
-  W.buffalo = [];
-  [[PADDIES.x - 6, PADDIES.z + 4], [V.x - 26, V.z + 18]].forEach(([x, z], i) => {
-    const m = new THREE.Mesh(buffaloGeo, toonVC()); m.position.set(x, heightAt(x, z), z); m.userData.moving = true; scene.add(m); // it wanders and rests: never part of the solid map (js/solids.js)
-    const horns = new THREE.Mesh(buffaloHorns, m.material); m.add(horns);
-    const sh = blobShadow(); sh.scale.setScalar(2.2); scene.add(sh);
-    const b = { id: 'buffalo' + i, mesh: m, shadow: sh, firstPersonHide: [horns], home: [x, z], tx: x, tz: z, rider: null, yaw: 0 };
-    W.buffalo.push(b);
-    W.interactables.push({ id: b.id, get x() { return m.position.x; }, get z() { return m.position.z; }, r: 3, icon: '🐃', label: () => T('Ride buffalo', 'Cưỡi trâu'), visible: () => !b.rider, act: (pl, game) => game.mount(pl, b) });
+  // (owner, 30 Oct 2026 AEDT) the Vietnamese yellow cow (bò vàng) beside the grey water buffalo: golden coat, a hump over
+  // the shoulders, a dewlap, short horns turning up, ears out to the side and a dark tail tuft. Both can be ridden, and
+  // both swim: in deep water they float with the head and back above it (js/player.ts)
+  const coat = '#c98a4b', dark = '#a86b35', cream = '#efd2a8', hoof = '#3a2a22';
+  const cowGeo = merge([
+    P(new THREE.CapsuleGeometry(.58, 1.25, 4, 10), coat, [0, 1.45, 0], [Math.PI / 2, 0, 0]),
+    P(new THREE.SphereGeometry(.42, 10, 8), dark, [0, 1.98, .7], [0, 0, 0], [1, .65, 1.15]),
+    P(new THREE.SphereGeometry(.5, 10, 8), '#ddb07a', [0, 1.18, .05], [0, 0, 0], [.95, .45, 1.6]),
+    P(new THREE.CapsuleGeometry(.26, .5, 4, 8), coat, [0, 1.72, 1.32], [-.9, 0, 0]),
+    P(new THREE.SphereGeometry(.3, 8, 6), '#d9a26a', [0, 1.22, 1.3], [0, 0, 0], [.4, 1, .8]),
+    P(new THREE.CapsuleGeometry(.27, .42, 4, 8), coat, [0, 1.74, 1.8], [1.15, 0, 0]),
+    P(new THREE.SphereGeometry(.25, 10, 8), cream, [0, 1.5, 2.06], [0, 0, 0], [1.05, .8, 1]),
+    ...[-1, 1].flatMap(s => [P(new THREE.SphereGeometry(.05, 6, 5), hoof, [s * .09, 1.48, 2.3]),
+      P(new THREE.SphereGeometry(.2, 8, 6), dark, [s * .4, 1.92, 1.62], [0, 0, s * .4], [1.3, .45, .7]),
+      P(new THREE.SphereGeometry(.08, 6, 5), '#ffffff', [s * .23, 1.9, 1.98]), P(new THREE.SphereGeometry(.05, 6, 5), hoof, [s * .25, 1.91, 2.04])]),
+    ...[[.36, .85], [-.36, .85], [.36, -.85], [-.36, -.85]].flatMap(([x, z]) => [P(new THREE.CylinderGeometry(.13, .11, 1.05, 7), coat, [x, .6, z]), P(new THREE.CylinderGeometry(.12, .13, .16, 7), hoof, [x, .08, z])]),
+    P(new THREE.CylinderGeometry(.035, .035, .9, 5), coat, [0, 1.15, -1.32], [.18, 0, 0]), P(new THREE.SphereGeometry(.1, 6, 5), hoof, [0, .7, -1.4], [0, 0, 0], [1, 1.6, 1])
+  ]);
+  const cowHorns = merge([-1, 1].flatMap(s => [P(new THREE.CylinderGeometry(.06, .08, .16, 6), '#efe4cc', [s * .2, 2.0, 1.66], [0, 0, s * -.9]),
+    P(new THREE.ConeGeometry(.06, .26, 6), '#efe4cc', [s * .3, 2.14, 1.66], [0, 0, s * -.3])]));
+  W.buffalo = []; W.cows = []; W.rideAnimals = [];
+  const RIDE_ANIMALS = [
+    { kind: 'buffalo', list: W.buffalo, geo: buffaloGeo, horns: buffaloHorns, icon: '🐃', label: () => T('Ride buffalo', 'Cưỡi trâu'), at: [[PADDIES.x - 6, PADDIES.z + 4], [V.x - 26, V.z + 18]] },
+    { kind: 'cow', list: W.cows, geo: cowGeo, horns: cowHorns, icon: '🐄', label: () => T('Ride the cow', 'Cưỡi bò'), at: [[PADDIES.x + 7, PADDIES.z - 5], [V.x - 20, V.z + 26]] }
+  ];
+  for (const R of RIDE_ANIMALS) R.at.forEach(([x, z], i) => {
+    const m = new THREE.Mesh(R.geo, toonVC()); m.position.set(x, heightAt(x, z), z); m.userData.moving = true; scene.add(m); // it wanders and rests: never part of the solid map (js/solids.js)
+    const horns = new THREE.Mesh(R.horns, m.material); m.add(horns);
+    const sh = blobShadow(); sh.scale.setScalar(R.kind === 'cow' ? 1.9 : 2.2); scene.add(sh);
+    const b = { id: R.kind + i, kind: R.kind, swims: true, mesh: m, shadow: sh, firstPersonHide: [horns], home: [x, z], tx: x, tz: z, rider: null, yaw: 0 };
+    R.list.push(b); W.rideAnimals.push(b);
+    W.interactables.push({ id: b.id, get x() { return m.position.x; }, get z() { return m.position.z; }, r: 3, icon: R.icon, label: R.label, visible: () => !b.rider, act: (pl, game) => game.mount(pl, b) });
   });
-  W.updaters.push((dt, t) => W.buffalo.forEach(b => {
+  W.updaters.push((dt, t) => W.rideAnimals.forEach(b => {
     if (b.rider) return;
     const m = b.mesh, dx = b.tx - m.position.x, dz = b.tz - m.position.z, d = Math.hypot(dx, dz);
     // (Round V, owner 13 Oct) after a ride it runs back home; from far away, out of every child's sight, it is simply home again
@@ -1017,7 +1044,7 @@ export function createWorld(scene, quality) {
       const x = m.position.x, z = m.position.z; W.collide(m.position, 1.1);
       if (Math.hypot(m.position.x - x, m.position.z - z) > .05) { b.tx = m.position.x; b.tz = m.position.z; }
     }
-    m.position.y = heightAt(m.position.x, m.position.z); b.shadow.position.set(m.position.x, m.position.y + .05, m.position.z);
+    m.position.y = Math.max(heightAt(m.position.x, m.position.z), WATER - RIDE_SWIM); b.shadow.position.set(m.position.x, m.position.y + .05, m.position.z);
   }));
   // ducks on the lake and chickens in the village (just for company)
   const critters = [];

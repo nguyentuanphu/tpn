@@ -3358,3 +3358,8 @@ body.touch:has(.simple-screen:not([hidden])) .caption { top: auto; bottom: calc(
 .hud.small .hud-tr > .c-goal .art { width: 24px; height: 24px; }
 .hud.small .hud-tr > .c-goal.ready { background: #fff4c8; box-shadow: 0 0 0 2px #ffd23f, var(--shadow); animation: chipPulse 1.6s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .hud.small .hud-tr > .c-goal.ready { animation: none; } }
+/* (owner, 30 Oct 2026 AEDT) the companion's hats in the shop and the mirror: a later hat waits behind a lock */
+.kitem.locked, .wit.locked { opacity: .55; filter: grayscale(.5); }
+.kitem[data-pet], .wit[data-pet] { position: relative; }
+.kitem[data-pet] .klock, .wit[data-pet] .klock { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; }
+.kitem[data-pet] .klock .art, .wit[data-pet] .klock .art { width: 24px; height: 24px; }

@@ -7618,6 +7618,45 @@ await check('oanquanrules', async () => {
   return `a two-player game finishes through ${result.taps} legal square/direction taps; autoplay waits while seeds move`;
 });
 
+// (owner, 30 Oct 2026 AEDT) the Vietnamese yellow cow beside the water buffalo: both are ridden, both swim across deep
+// water with the rider's head above it and climb out again; the cow has its own drawing
+await check('ridecowswim', async () => {
+  const P = await open(b, { w: 900, h: 640 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const G = __sv, h = G.heroes[0], Wm = await import('/js/world.js'), A = await import('/js/art.js'), W = G.world, L = Wm.LAKE, out = [];
+    const pad = { mx: 0, mz: 0, cdx: 0, cdy: 0, jump: () => false, act: () => false };
+    for (const animal of [W.cows[0], W.buffalo[0]]) {
+      G.paused = true; G.mount(h, animal);
+      let sx = L.x; for (let d = 0; d < 90; d++) if (Wm.heightAt(L.x + d, L.z) > Wm.WATER + .2) { sx = L.x + d + 3; break; }
+      h.pos.set(sx, Wm.heightAt(sx, L.z), L.z); h.goal = { x: L.x, z: L.z }; let deep = 0, low = 0, headLow = 0;
+      for (let k = 0; k < 900; k++) { h.update(1 / 60, pad, k / 60, G); if (Wm.heightAt(h.pos.x, h.pos.z) < Wm.WATER - 3) { deep++; if (h.pos.y < Wm.WATER - Wm.RIDE_SWIM - .01) low++; if (h.av.root.position.y + 1 < Wm.WATER) headLow++; } }
+      const far = Math.hypot(h.pos.x - L.x, h.pos.z - L.z); h.goal = { x: sx + 6, z: L.z }; for (let k = 0; k < 1200; k++) h.update(1 / 60, pad, k / 60, G);
+      out.push({ kind: animal.kind, riding: !!h.riding, deep, low, headLow, reached: far < 3, out: Wm.heightAt(h.pos.x, h.pos.z) > Wm.WATER });
+      h.dismount(); G.paused = false;
+    }
+    const labels = G.interactables.filter(i => /^(cow|buffalo)\d$/.test(i.id)).map(i => i.label());
+    return { rows: out, cows: W.cows.length, labels, cowArt: A.pic('🐄') !== A.pic('🐂') };
+  });
+  await P.ctx.close();
+  ok(r.cows >= 2 && r.labels.filter(l => /cow/i.test(l)).length >= 2 && r.cowArt, JSON.stringify(r));
+  ok(r.rows.every(x => x.riding && x.deep > 60 && !x.low && !x.headLow && x.reached && x.out), JSON.stringify(r.rows));
+  return r.rows.map(x => `${x.kind}: swam ${(x.deep / 60).toFixed(1)} s over deep water, head above it, out again`).join('; ');
+});
+// (owner, 30 Oct 2026 AEDT: "where do I manage accessories for companions?") the companion's hats in the shop and the mirror
+await check('companionhats', async () => {
+  const P = await open(b, { w: 390, h: 844, touch: true, lang: 'vi' }); await clear(P.page);
+  await P.page.evaluate(async () => { const G = __sv, h = G.heroes[0], S = await import('/js/state.js'); h.profile.lanterns = { ...(h.profile.lanterns || {}), companion: 'firefly', chapters: { ch1: true }, pet: { feeds: 0, hats: ['party'], hat: 'party' } }; S.farm.coins = 60; G.shop.openShop(0); });
+  await P.page.locator('[data-ptab]').click();
+  const locked = await P.page.locator('[data-pet="crown"]').isDisabled();
+  await P.page.locator('[data-pet="flower"]').click();
+  const bought = await P.page.evaluate(async () => { const p = __sv.heroes[0].profile, S = await import('/js/state.js'); return p.lanterns.pet.hats.includes('flower') && p.lanterns.pet.hat === 'flower' && S.farm.coins === 15; });
+  await P.page.locator('[data-go="wardrobe"]').click(); await P.page.locator('[data-pwtab]').click();
+  await P.page.locator('.wit[data-pet="flower"]').click(); const off = await P.page.evaluate(() => __sv.heroes[0].profile.lanterns.pet.hat == null);
+  await P.page.locator('.wit[data-pet="party"]').click(); const on = await P.page.evaluate(() => __sv.heroes[0].profile.lanterns.pet.hat === 'party');
+  const errors = P.errors.slice(); await P.ctx.close();
+  ok(locked && bought && off && on && !errors.length, JSON.stringify({ locked, bought, off, on, errors }));
+  return 'the shop sells the next hat (45 coins), later hats wait locked; the mirror takes a hat off and puts another on';
+});
 await check('ridingcamera', async () => (await import('./riding-camera.mts')).ridingCameraCheck(b));
 // (r89) the ten drawing games: auto play finishes each; buttons big enough on phone, tablet and computer
 await check('drawinggames', async () => (await import('./drawing-games.mts')).drawingGamesCheck(b));
