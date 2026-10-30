@@ -42,7 +42,7 @@ export function roadTexture(kind, tint = null, style = null) {
       g.fillStyle = '#e9e4d4'; g.fillRect(2, 0, 3, 256); g.fillRect(59, 0, 3, 256);
       g.fillStyle = style === 'vn' ? '#f2c230' : '#f6f1e4'; g.fillRect(30, 20, 4, 90); g.fillRect(30, 148, 4, 90); }
   } else {
-    g.fillStyle = '#c0764a'; g.fillRect(0, 0, 64, 256); // (round T4a, Concept D) Bà Rịa's warm red earth
+    g.fillStyle = style === 'outback' ? '#d9792e' : '#c0764a'; g.fillRect(0, 0, 64, 256); // (round T4a, Concept D) Bà Rịa's warm red earth; (#34) near Uluru the orange outback
     for (let i = 0; i < 700; i++) { g.fillStyle = Math.random() < .5 ? 'rgba(255,225,190,.12)' : 'rgba(90,40,20,.12)'; g.fillRect(Math.random() * 64, Math.random() * 256, 2 + Math.random() * 2, 2); }
     g.fillStyle = 'rgba(110,55,30,.28)'; g.fillRect(14, 0, 7, 256); g.fillRect(43, 0, 7, 256); // the two darker wheel tracks
     g.fillStyle = '#b9b0a0'; for (let y = 6; y < 256; y += 22) { g.fillRect(0, y, 3, 5); g.fillRect(61, y + 11, 3, 5); } // edging stones
@@ -190,7 +190,10 @@ function buildRoads(G, mats) {
   // (round T2) one shared material per road colour, so tinting adds no draw calls of its own (round T4a: with the region's
   // markings: a yellow centre dash in Vietnam, kerbs in Australia)
   const toned = {}, matFor = R => { const t = R.kind === 'asphalt' && ROAD_TONES[R.tone]; if (!t) return mats[R.kind]; return toned[t] || (toned[t] = new THREE.MeshToonMaterial({ map: roadTexture('asphalt', t, R.tone === 'vn' || R.tone === 'au' ? R.tone : null), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })); };
-  for (const A of all) { const m = new THREE.Mesh(ribbonGeo(A.R, A.pts, A.ys), matFor(A.R)); m.receiveShadow = true; m.userData.road = true; scene.add(m); }
+  // (#34, Concept D) a dirt road out round Uluru is the orange-red of the outback, like the ground there (js/world.ts)
+  let outbackMat = null; const outback = pts => { const [x, z] = pts[Math.floor(pts.length / 2)] || [0, 0]; return x < -174 && z > -90; };
+  const matOf = A => A.R.kind === 'dirt' && outback(A.pts) ? outbackMat || (outbackMat = new THREE.MeshToonMaterial({ map: roadTexture('dirt', null, 'outback'), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })) : matFor(A.R);
+  for (const A of all) { const m = new THREE.Mesh(ribbonGeo(A.R, A.pts, A.ys), matOf(A)); m.receiveShadow = true; m.userData.road = true; scene.add(m); }
 }
 
 // HARD RULE: road edges are soft, with flowers growing alongside. A soft verge fades from the road into the grass on
@@ -242,10 +245,31 @@ export function plantRoadside(G) {
     for (const M of [stems, heads]) { M.computeBoundingSphere(); M.userData.noCam = true; scene.add(M); }
     groups.push({ meshes: [stems, heads], spots });
   });
+  // (#34, Concept D) along the main roads: red lamp posts and bougainvillea on the Vietnam side, orange lamp posts and gum
+  // trees on the Australian side; one merged mesh for each, so the draw calls stay the same
+  const lampVN = [], lampAU = [], bushes = [], gums = [];
+  lines.forEach((L, k) => {
+    const R = ROADS[k], n = L.pts.length; if (R.kind !== 'asphalt' || (R.tone !== 'vn' && R.tone !== 'au') || n < 12) return;
+    const hw = R.w / 2, vn = R.tone === 'vn'; let along = 0, nextLamp = 12, nextPlant = 20, side = 1;
+    for (let i = 1; i < n - 6; i++) {
+      along += Math.hypot(L.pts[i][0] - L.pts[i - 1][0], L.pts[i][1] - L.pts[i - 1][1]); if (i < 6 || L.deck[i]) continue;
+      const [px, pz] = L.pts[i - 1], [x, z] = L.pts[i], D = Math.hypot(x - px, z - pz) || 1, ux = -(z - pz) / D, uz = (x - px) / D;
+      const at = (o, sd, pad) => { const cx = x + ux * sd * o, cz = z + uz * sd * o; return edgeDist(cx, cz) >= 1.1 && riverDist(cx, cz) >= 5 && heightAt(cx, cz) > WATER + .5 && free(cx, cz, pad) && roadDist(cx, cz) > hw - .1 ? [cx, heightAt(cx, cz), cz] : null; };
+      if (along >= nextLamp) { const q = at(hw + .9, side, .6); if (q) { (vn ? lampVN : lampAU).push(q); world.colliders.push({ x: q[0], z: q[2], r: .22 }); nextLamp = along + 24; side = -side; } }
+      if (along >= nextPlant) { const q = at(hw + (vn ? 2.2 : 3.6), -side, vn ? .9 : 1.4); if (q) { (vn ? bushes : gums).push(q); world.colliders.push({ x: q[0], z: q[2], r: vn ? .5 : .45 }); nextPlant = along + (vn ? 34 : 46); } }
+    }
+  });
+  const place = (geo, list, mat) => { if (!list.length) return null; const parts = list.map(([x, y, z], j) => { const g = geo.clone(); g.rotateY(j * 1.7); g.translate(x, y, z); return g; }); const m = new THREE.Mesh(merge(parts), mat); m.castShadow = true; scene.add(m); return m; };
+  const lampGeo = col => merge([P(new THREE.CylinderGeometry(.07, .1, 4, 6), col, [0, 2, 0]), P(new THREE.CylinderGeometry(.05, .05, .9, 5), col, [.38, 3.9, 0], [0, 0, Math.PI / 2]),
+    P(new THREE.ConeGeometry(.22, .22, 8), col, [.8, 3.82, 0]), P(new THREE.SphereGeometry(.13, 8, 6), '#fff4c2', [.8, 3.68, 0]), P(new THREE.CylinderGeometry(.16, .2, .25, 6), '#7a7a7a', [0, .12, 0])]);
+  const bushGeo = merge([P(new THREE.IcosahedronGeometry(.6, 1), '#4f8f3e', [0, .55, 0], [0, 0, 0], [1.2, .9, 1]), ...[[.35, .9, .2], [-.3, .85, -.25], [.05, 1.05, -.1], [-.2, .7, .4], [.4, .6, -.3]].map(([x, y, z]) => P(new THREE.IcosahedronGeometry(.2, 0), '#e0328c', [x, y, z]))]);
+  const gumGeo = merge([P(new THREE.CylinderGeometry(.16, .28, 5.4, 6), '#e9e1d2', [0, 2.7, 0]), P(new THREE.CylinderGeometry(.09, .13, 2.2, 5), '#e9e1d2', [.6, 4.6, 0], [0, 0, -.6]),
+    ...[[0, 6, 0, 1.5], [1.3, 5.5, .4, 1.1], [-.9, 5.7, -.5, 1.2]].map(([a, b, c, r]) => P(new THREE.IcosahedronGeometry(r, 1), '#7a9a6a', [a, b, c]))]);
+  const solidMat = toonVC(); place(lampGeo('#b3261e'), lampVN, solidMat); place(lampGeo('#e07b26'), lampAU, solidMat); place(bushGeo, bushes, solidMat); place(gumGeo, gums, solidMat);
   // only roads near a player show their flowers
   let t0 = 0; world.updaters.push(dt => { if ((t0 -= dt) > 0) return; t0 = .5;
     for (const g of groups) { const S = g.meshes[0].boundingSphere, on = G.heroes.some(h => Math.hypot(h.pos.x - S.center.x, h.pos.z - S.center.z) < S.radius + 70); g.meshes.forEach(M => M.visible = on); } });
-  return { count: groups.reduce((a, g) => a + g.spots.length, 0) };
+  return { count: groups.reduce((a, g) => a + g.spots.length, 0), lamps: lampVN.length + lampAU.length, bushes: bushes.length, gums: gums.length };
 }
 
 // the welcome sign on a gate: big words that follow the language
