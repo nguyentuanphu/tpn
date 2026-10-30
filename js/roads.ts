@@ -4,7 +4,7 @@
 import { THREE, toonVC, P, merge, outline } from './gfx.js';
 import { T, onLang } from './i18n.js';
 import { SFX } from './audio.js';
-import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox, PADDIES } from './world.js';
+import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox, PADDIES, PLOTS, plotBox } from './world.js';
 import { settings } from './state.js';
 import { remember } from './worldmemo.js';
 import { ROAD_TONES } from './content/map.js';
@@ -251,13 +251,15 @@ export function plantRoadside(G) {
   // (#34, Concept D) along the main roads: red lamp posts and bougainvillea on the Vietnam side, orange lamp posts and gum
   // trees on the Australian side; one merged mesh for each, so the draw calls stay the same
   const lampVN = [], lampAU = [], bushes = [], gums = [];
+  // (check plots) never on a garden plot kept for a future building
+  const plotFree = (x, z, pad) => !PLOTS.some(P => { const B = plotBox(P); return x > B.x0 - pad && x < B.x1 + pad && z > B.z0 - pad && z < B.z1 + pad; });
   lines.forEach((L, k) => {
     const R = ROADS[k], n = L.pts.length; if (R.kind !== 'asphalt' || (R.tone !== 'vn' && R.tone !== 'au') || n < 12) return;
     const hw = R.w / 2, vn = R.tone === 'vn'; let along = 0, nextLamp = 12, nextPlant = 20, side = 1;
     for (let i = 1; i < n - 6; i++) {
       along += Math.hypot(L.pts[i][0] - L.pts[i - 1][0], L.pts[i][1] - L.pts[i - 1][1]); if (i < 6 || L.deck[i]) continue;
       const [px, pz] = L.pts[i - 1], [x, z] = L.pts[i], D = Math.hypot(x - px, z - pz) || 1, ux = -(z - pz) / D, uz = (x - px) / D;
-      const at = (o, sd, pad) => { const cx = x + ux * sd * o, cz = z + uz * sd * o; return edgeDist(cx, cz) >= 1.1 && riverDist(cx, cz) >= 5 && heightAt(cx, cz) > WATER + .5 && free(cx, cz, pad) && roadDist(cx, cz).d > hw - .1 ? [cx, heightAt(cx, cz), cz] : null; };
+      const at = (o, sd, pad) => { const cx = x + ux * sd * o, cz = z + uz * sd * o; return edgeDist(cx, cz) >= 1.1 && riverDist(cx, cz) >= 5 && heightAt(cx, cz) > WATER + .5 && free(cx, cz, pad) && plotFree(cx, cz, pad) && roadDist(cx, cz).d > hw - .1 ? [cx, heightAt(cx, cz), cz] : null; };
       if (along >= nextLamp) { const q = at(hw + 1.4, side, .6); if (q) { (vn ? lampVN : lampAU).push(q); world.colliders.push({ x: q[0], z: q[2], r: .22 }); nextLamp = along + 24; side = -side; } }
       if (along >= nextPlant) { const q = at(hw + (vn ? 2.2 : 3.6), -side, vn ? .9 : 1.4); if (q) { (vn ? bushes : gums).push(q); world.colliders.push({ x: q[0], z: q[2], r: vn ? .5 : .45 }); nextPlant = along + (vn ? 34 : 46); } }
     }
