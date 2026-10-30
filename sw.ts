@@ -33,7 +33,7 @@ const FILES = [
 // internet, weak phone signal) must never keep the game from starting. The network's answer still refreshes the copy.
 const QUICK = 1500;
 // (owner, 30 Oct 2026 AEDT: "within 2 to 3 s something light must show") the start page waits at most a second for storage
-const NAV_QUICK = 1000;
+const NAV_QUICK = 1000, NAV_LIMIT = 6000;
 const PHOTO_HOST = /^https:\/\/((upload|thumb)\.wikimedia\.org|live\.staticflickr\.com|farm\d+\.staticflickr\.com)\//;
 function quick(e, cacheName, req, fallback) {
   return caches.open(cacheName).then(c => {
@@ -145,13 +145,21 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
   // (owner, 30 Oct AEDT: a white screen for about 28 s when the Home Screen app first opened after v1.03) while an
   // update is saving every file, the saved page can be slow to come out of storage: after a short wait the page comes
   // from the internet instead; offline, the saved page still answers whenever storage is ready
+  // (owner, 30 Oct 2026 AEDT: "Safari couldn't open the page because the server stopped responding" in the installed app,
+  // which plays offline) the game's own start page never ends on that error: the internet gets at most 6 s, and when it
+  // fails, is slow or answers with an error, the saved game opens (also when the address carries something extra); a saved
+  // page that came through a redirect is passed on clean, as Safari refuses a redirected page from here
   if (req.mode === 'navigate') {
+    const root = new URL('./', worker.location.href), game = url.pathname === root.pathname || url.pathname === root.pathname + 'index.html';
+    const clean = (r: Response | undefined) => r && r.redirected ? r.blob().then(b => new Response(b, { status: r.status, statusText: r.statusText, headers: r.headers })) : Promise.resolve(r);
+    const shell = () => saved(new Request(root.href)).then(r => r || saved(new Request(root.href + 'index.html')));
     e.respondWith(new Promise<Response>(done => {
       let over = false, net: Promise<Response> | null = null;
       const give = (r: Response) => { if (!over) { over = true; done(r); } };
-      const fromNet = () => net || (net = fetch(req));
+      const fromNet = () => net || (net = Promise.race([fetch(req), new Promise<Response>((_, no) => setTimeout(() => no(new Error('slow')), NAV_LIMIT))]));
+      const fallback = () => (game ? shell().then(clean) : Promise.resolve(undefined)).then(r => give(r || Response.error()), () => give(Response.error()));
       const t = setTimeout(() => fromNet().then(r => { if (r.ok) give(r); }, () => { }), NAV_QUICK);
-      saved(req).catch(() => undefined).then(hit => { clearTimeout(t); if (hit) give(hit); else fromNet().then(give, () => give(Response.error())); });
+      saved(req).catch(() => undefined).then(clean).then(hit => { clearTimeout(t); if (hit) give(hit); else fromNet().then(r => { if (r.ok || !game) give(r); else fallback(); }, fallback); });
     }));
     return;
   }
