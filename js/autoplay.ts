@@ -350,6 +350,18 @@ async function settle(secs, note: ProblemNote = () => { }) {
         await swipe(x, r.top + r.height * .1, x, r.top + r.height * .97);
         await until(() => !w.isConnected, 2); continue;
       }
+      // (quest Quạt bếp và bưng bát) the other hand controls, as a child uses them: a pedal or fan button is held down,
+      // a handle in a slot is dragged down (the digger's arm down and up again), a big button is tapped
+      const c = [...w.querySelectorAll<HTMLElement>('[data-hp]')].find(e => e.dataset.hp !== 'x' && shown(e));
+      if (c) {
+        const r = c.getBoundingClientRect(), x = r.left + r.width / 2;
+        if (c.classList.contains('hp-slot')) {
+          await swipe(x, r.top + r.height * .1, x, r.top + r.height * .97);
+          if (c.dataset.hp === 'arm') await swipe(x, r.top + r.height * .97, x, r.top + r.height * .05);
+        } else if (c.classList.contains('hp-pedal')) await press({ el: c, x, y: r.top + r.height / 2, ms: 3000 });
+        else await tap(c, note);
+        continue;
+      }
       note(T('help: auto play could not work out these hand controls', 'cần giúp: tự chơi chưa biết dùng bảng điều khiển này'));
       return;
     }
