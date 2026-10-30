@@ -1,5 +1,5 @@
 {
-  "source": "e142268901a4aed8752e40de04fd2cff362d75f8",
+  "source": "4929966b2d5d9e02ef53d18643d383a82828ac4b",
   "reviewedSource": "e142268901a4aed8752e40de04fd2cff362d75f8",
   "coverage": {
     "valley": 17,
@@ -8,7 +8,30 @@
     "family": 15,
     "festivals": 24
   },
-  "changed": [],
+  "changed": [
+    "css/fonts.css",
+    "css/style.css",
+    "js/animals.js",
+    "js/art.ts",
+    "js/autoplay.ts",
+    "js/build.ts",
+    "js/content/chapter2hanoi.ts",
+    "js/fun.js",
+    "js/games/folk-court.ts",
+    "js/games/folk2.ts",
+    "js/games/money.ts",
+    "js/hud.ts",
+    "js/kidplay.js",
+    "js/main.ts",
+    "js/player.ts",
+    "js/roads.ts",
+    "js/shop.ts",
+    "js/solids.ts",
+    "js/vehicles.ts",
+    "js/world.ts",
+    "studio/version.json",
+    "sw.ts"
+  ],
   "coverageChanged": [],
-  "requiresEditorialReview": false
+  "requiresEditorialReview": true
 }

@@ -522,3 +522,8 @@ independently; do not report it as passed until actual artifacts are inspected.
   here; identical heights). `startup` here: first download 1016 KB (passes), first start ready 46.8 s against 34.2 s
   (over, as in the last two rounds on this machine); the profile shows `heightAt` at 4.2 of 10.5 s (540,000 calls, 89%
   at new points, so a cache would not help). The area-by-area build (#36) is not finished this round.
+- **v1.04, owner's "yes, deploy" (31 Oct 2026, about 3:40 am AEDT, by pop-up), version v1.04 (pop-up).** PR #653 at
+  e3c84f90 passed the GitHub full suite 279/279 (run 41077834394; installflow and r87ui on a second try). Local speed:
+  battery passes; perf world 8.8 s over 6.6 s and startup first ready 46.8 s over 34.2 s (over on this machine at v1.03
+  too); first download 1016 KB passes. After the green run: version set (sw.ts, js/build.ts, studio/version.json), the
+  website re-synced and recorded as reviewed (source links only; no text affected), code map from run 41077834394.
