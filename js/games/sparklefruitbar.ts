@@ -53,7 +53,7 @@ function runFruitBar(api:FruitBarApi){
    const ready=control(T('Lock allocations / Start','Chốt điểm / Bắt đầu'),()=>command(900));ready.dataset.barReady='';ready.disabled=!s.bets[s.turn].some(Boolean)||!mine()||session.waiting||queued.length>0||helper&&!session.online&&s.turn!==0;actions.append(clear,repeat,refill);footer.append(ready);if(queued.length||!mine()||session.waiting||helper&&!session.online&&s.turn!==0)actions.querySelectorAll('button').forEach(b=>b.disabled=true);root.append(actions);
   }else{
    root.append(dom('p','',T(`Biggest returns: ${s.biggest.join(' · ')}`,`Điểm nhận lớn nhất: ${s.biggest.join(' · ')}`)));
-   if(s.phase==='result'){const next=control(s.round>=s.limit?T('Finish session','Kết thúc phiên'):T('Next round','Lượt tiếp theo'),()=>command(901));next.dataset.barNext='';next.disabled=!mine()||session.waiting||spinning||(!reduceMotion()&&s.round!==shown);footer.append(next);}
+   if(s.phase==='result'){const next=control(s.round>=s.limit?T('Finish session','Kết thúc phiên'):T('Next round','Lượt tiếp theo'),()=>command(901));next.dataset.barNext='';next.disabled=!mine()||session.waiting||spinning||s.round!==shown;footer.append(next);}
    else root.append(dom('h2','',T('Session complete. These counters stay in this arcade only.','Phiên chơi kết thúc. Điểm ảo chỉ nằm trong trò này.')));
   }
   const rules=dom('details'),summary=dom('summary','',T('Rules and exact frequencies','Luật chơi và tần suất chính xác'));rules.append(summary,dom('p','',T('Each selected counter is deducted once. Return = allocation × multiplier on the final symbol. Choose 0–100 per symbol. The default challenge lasts 20 rounds; refills are always free.','Mỗi điểm đã chọn được trừ một lần. Điểm nhận = điểm đặt × hệ số của hình cuối. Chọn 0–100 mỗi hình. Phiên mặc định có 20 lượt; nạp điểm luôn miễn phí.')),
@@ -66,6 +66,7 @@ function runFruitBar(api:FruitBarApi){
  // (owner, 29 Oct 2026 AEDT: "the fruit game circle doesn't run") the light runs round the ring by itself while counters are
  // placed, and the spin goes three laps and slows onto the result (it lasted under 2 s, and not at all with Reduce Motion,
  // which now gets a calmer, slower run: the moving light is how the game is played)
+ // Next round waits for the spin with Reduce Motion too: a tap during the spin used to look ready and do nothing.
  // (owner, 30 Oct 2026 AEDT: "fruit bar lighting should run") the chase pauses while a spin runs (idle checks spinning)
  // and goes on in the next round; it used to be stopped for good by the first spin
  function animateResult(result:number){cancelAnimationFrame(frame);spinning=true;const calm=reduceMotion(),laps=calm?1:3,steps=16*laps+((result-light%16+16)%16),start=light,begin=performance.now(),length=calm?2600:3200;const tick=(now:number)=>{if(dead)return;const p=Math.min(1,(now-begin)/length);const at=start+Math.round(steps*(1-(1-p)**3));highlight(at%16);if(p<1)frame=requestAnimationFrame(tick);else{light=at;spinning=false;highlight(result);paint();}};frame=requestAnimationFrame(tick);}

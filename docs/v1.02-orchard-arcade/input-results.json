@@ -1,6 +1,7 @@
 [
   {
-    "nonTesterCannotOpenEither": true
+    "orchardStillTesterOnly": true,
+    "fruitBarPublicForNonTester": true
   },
   {
     "orchardKeyboardFromModeChoice": true,

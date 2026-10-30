@@ -48,7 +48,8 @@ export async function checkParadeBrowser() {
     await P.page.waitForFunction(() => window.__sv.heroes[0].profile.wins.fruitparade === 1);
     observations.push({ localCoopCompleted: true, rounds, controls: heights.length, progressSaved: true, errors: P.errors });
     await clear(P.page);
-    await P.page.evaluate(() => { void window.__sv.playGame(0, 'trongnu', 'replay'); });
+    // Trồng Nụ is in the second set (v1.03): it opens after the Vietnamese originals are won, so this fresh player unlocks it.
+    await P.page.evaluate(() => { window.__sv.heroes[0].profile.unlockAll = true; void window.__sv.playGame(0, 'trongnu', 'replay'); });
     await P.page.locator('[data-tn-jump]').waitFor();await P.page.waitForTimeout(450);
     await P.page.screenshot({path:new URL('phone-vi-trongnu.png',out).pathname});
     for(let i=0;i<4;i++){await P.page.locator('[data-tn-jump]').click();await P.page.waitForTimeout(500);}
@@ -56,7 +57,7 @@ export async function checkParadeBrowser() {
     observations.push({trongNuCompleted:true,firstUseBothGamesOffline:true, errors:P.errors});
     await P.ctx.setOffline(false);
     await P.page.locator('.gl-win').click({position:{x:20,y:20}});await P.page.locator('.gl').waitFor({state:'detached'});
-    await P.page.evaluate(async()=>{const S=await import('/js/state.js');S.settings.calm=false;void window.__sv.playGame(0,'trongnu','replay');});
+    await P.page.evaluate(async()=>{const S=await import('/js/state.js');S.settings.calm=false;window.__sv.heroes[0].profile.unlockAll=true;void window.__sv.playGame(0,'trongnu','replay');});
     await P.page.locator('[data-tn-jump]').waitFor();await P.page.locator('[data-tn-jump]').click();await P.page.waitForTimeout(370);
     await P.page.screenshot({path:new URL('phone-vi-trongnu-jumping.png',out).pathname});
     const jumpVisible=await P.page.evaluate(()=>{const child=document.querySelector('.tn-jumper')!.getBoundingClientRect(),board=document.querySelector('.tn-picture')!.getBoundingClientRect();return child.top>=board.top&&child.left>=board.left&&child.right<=board.right;});
@@ -71,7 +72,7 @@ export async function checkParadeBrowser() {
       await P.page.locator('[data-parade-action=local]').click();await P.page.locator('.parade-player').nth(1).waitFor();await P.page.waitForTimeout(450);
       await P.page.screenshot({path:new URL(`${device}-${lang}-local.png`,out).pathname});
       await P.page.locator('.gl .gl-x').click();await P.page.locator('.gl').waitFor({state:'detached'});
-      await P.page.evaluate(()=>{void window.__sv.playGame(0,'trongnu','replay');});await P.page.locator('[data-tn-jump]').waitFor();await P.page.waitForTimeout(450);
+      await P.page.evaluate(()=>{window.__sv.heroes[0].profile.unlockAll=true;void window.__sv.playGame(0,'trongnu','replay');});await P.page.locator('[data-tn-jump]').waitFor();await P.page.waitForTimeout(450);
       await P.page.screenshot({path:new URL(`${device}-${lang}-trongnu.png`,out).pathname});
       await P.page.locator('.gl .gl-x').click();await P.page.locator('.gl').waitFor({state:'detached'});
     }
