@@ -56,7 +56,8 @@ export function mountAutoplay(game) {
   // not that the game threw. Match the reporter's two exact notices; keep every real error.
   addEventListener('error', e => { const message = String(e.message || e.error || 'error'); if (errSink && !resizeDeliveryNotice(message)) errSink.push(message); });
   addEventListener('unhandledrejection', e => errSink && errSink.push(String((e.reason && e.reason.message) || e.reason || 'error')));
-  const ce = console.error; console.error = (...a) => { if (errSink) errSink.push(a.map(String).join(' ').slice(0, 200)); ce.apply(console, a); };
+  // (#654-#682) a page error passed on to console.error carries the same browser delivery notice: not a game error either
+  const ce = console.error; console.error = (...a) => { const m = a.map(String).join(' '); if (errSink && !/ResizeObserver loop (?:limit exceeded|completed with undelivered notifications)/.test(m)) errSink.push(m.slice(0, 200)); ce.apply(console, a); };
   btnTimer = setInterval(buttons, 1000); buttons();
   G.autoplay = { unmount, running: () => !!run, trail: () => trail.slice(),
     profile: () => selectedProfile,
