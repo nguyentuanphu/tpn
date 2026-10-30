@@ -467,6 +467,18 @@ export function seatRider(A, v, at, grips, feet, scale = .9, attach = true) {
   }
   if (grips) { const r = Math.max(aim(A.armL, W(grips[0]), .42 * scale), aim(A.armR, W(grips[1]), .42 * scale)); if (r > 1) { A.armL.scale.y = A.armR.scale.y = Math.min(1.35, r); } }
   if (feet) { aim(A.legL, W(feet[0]), .56 * scale); aim(A.legR, W(feet[1]), .56 * scale); }
+  // (owner, 30 Oct 2026 AEDT: "the head pokes through the roof") a seated child is taller than a car's cabin: sink into the
+  // seat until the head is under the roof (the closed body hides the hips), then reach for the wheel and pedals again
+  if (v.cabin) {
+    A.root.updateMatrixWorld(true); const top = new THREE.Box3().setFromObject(A.head).max, head = o.worldToLocal(top.clone()).y;
+    const over = head - (v.cabin.top - .03);
+    if (over > 0) {
+      if (attach) A.root.position.y -= over; else A.root.position.y -= over * o.scale.y;
+      A.root.updateMatrixWorld(true);
+      if (grips) { const r = Math.max(aim(A.armL, W(grips[0]), .42 * scale), aim(A.armR, W(grips[1]), .42 * scale)); A.armL.scale.y = A.armR.scale.y = r > 1 ? Math.min(1.35, r) : 1; }
+      if (feet) { aim(A.legL, W(feet[0]), .56 * scale); aim(A.legR, W(feet[1]), .56 * scale); }
+    }
+  }
   return A;
 }
 

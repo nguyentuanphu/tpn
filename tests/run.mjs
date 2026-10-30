@@ -4387,7 +4387,7 @@ await check('ownertransportpov', async () => {
       h.place(i.x+2,i.z); window.__povBoard=i.act(h,G);
     }, {age,kind});
     if(kind!=='xichlo'){await P.page.locator('.dialog .dchoices button').first().click();await P.page.locator('.stoppick [data-next]').click();}
-    await P.page.evaluate(async()=>{await window.__povBoard; const G=__sv,h=G.heroes[0]; const sl=G.traffic.slots.find(s=>s.passenger===h); if(!sl)throw Error('Boarding failed'); sl.mover.wait=100; for(let k=0;k<90;k++)h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},k/60,G);});
+    await P.page.evaluate(async()=>{await window.__povBoard; const G=__sv,h=G.heroes[0]; const sl=G.traffic.slots.find(s=>s.passenger===h); if(!sl)throw Error('Boarding failed'); sl.mover.wait=100; h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},0,G); G.setView(0,'follow',true); /* (30 Oct AEDT) boarding starts in Street view; this checks the rider's eyes */ for(let k=0;k<90;k++)h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},k/60,G);});
     // Synthetic targets prove the actual rendered sightline, not just camera coordinates.
     const r=await P.page.evaluate(async({age,kind})=>{
       const G=__sv,h=G.heroes[0],sl=G.traffic.slots.find(s=>s.passenger===h),{THREE}=await import('/js/gfx.js');
@@ -4466,6 +4466,7 @@ await check('ride', async () => {
     // drive a parked car
     const car = I.find(i => /^drive_/.test(i.id) && /car/i.test(i.label())); if (car) { h.place(car.x + 1, car.z); car.act(h, G); out.driving = !!h.riding && !!h.riding.vehicle;
       // (Round V, owner 13 Oct) the camera rides at the child's eyes, looking ahead
+      h.finish(1 / 60, 0, G, 0); out.streetFirst = h.view === 'street'; G.setView(0, 'follow', true); // (owner, 30 Oct 2026 AEDT) driving starts in Street view; Behind me is the rider's eyes
       for (let k = 0; k < 60; k++) h.finish(1 / 60, k / 60, G, 0); const eyeUp = h.cam.position.y - h.pos.y, eyeNear = Math.hypot(h.cam.position.x - h.pos.x, h.cam.position.z - h.pos.z); out.pov = eyeUp > .8 && eyeUp < 2.6 && eyeNear < 1.2;
       // drive it away and get off: (owner, 17 Oct AEDT, #354: "stay where left"; was: back once the child walked 20 m
       // away) it waits where it was left while the child is 40 m away, and goes back to its parking spot once every child
@@ -4508,7 +4509,7 @@ await check('ride', async () => {
   }, age);
   r.big = await bus('big'); r.little = await bus('little');
   const errs = P.errors; await P.ctx.close();
-  ok(r.drive >= 20 && r.bike >= 4 && r.rides >= 4 && r.stops >= 4 && !r.lift && r.driving && r.off && r.big.on && r.big.paid > 0 && r.little.on && r.little.paid === 0 && r.big.picks >= 3 && r.big.arrived && r.pov && r.carStays && r.carBack && r.buffHome && r.bridgeCount >= 10 && !r.bridges.length && !errs.length, JSON.stringify(Object.assign(r, { errs })));
+  ok(r.drive >= 20 && r.bike >= 4 && r.rides >= 4 && r.stops >= 4 && !r.lift && r.driving && r.streetFirst && r.off && r.big.on && r.big.paid > 0 && r.little.on && r.little.paid === 0 && r.big.picks >= 3 && r.big.arrived && r.pov && r.carStays && r.carBack && r.buffHome && r.bridgeCount >= 10 && !r.bridges.length && !errs.length, JSON.stringify(Object.assign(r, { errs })));
   return `${r.drive} parked cars and motorbikes to drive, ${r.bike} bicycles, ${r.rides} buses, trams and taxis to ride (big kid paid ${r.big.paid}, under-5 free), ${r.stops} bus stops, each stop a choice of ${r.big.picks} places and the child arrives there; the camera rides at the child's eyes; a car left behind waits where it was left and goes back to its spot once every child is far away; a buffalo runs home; a bicycle rides over all ${r.bridgeCount} bridges; no lifts from strangers`;
 });
 

@@ -243,7 +243,7 @@ export interface SvMain {
   openPad?: (i: number, tab?: string) => void; closePad?: () => void; closePadNow?: () => void; openGamesHub?: (i: number) => void; openQuick?: (i: number) => void;
   openWardrobe?: (i: number) => void; openWhere?: (i: number) => void; openTrade?: (i: number, id?: string) => void; openSongs?: (start?: unknown) => void;
   openSound?: (anchor?: Element) => Promise<unknown>; openPlayTogether?: () => void; mapCard?: () => void; avatarPreview?: (i: number) => void;
-  rebuildHero?: (i: number) => void; changePlayer?: () => void; cycleView?: (i: number) => void; setView?: (i: number, id: string) => void;
+  rebuildHero?: (i: number) => void; changePlayer?: () => void; cycleView?: (i: number) => void; setView?: (i: number, id: string, quiet?: boolean) => void;
   zoomBy?: (i: number, f: number, quiet?: boolean) => void; snapshot?: (i: number, max?: number, q?: number) => string; screenFacts?: () => Record<string, unknown>;
   camBlockers?: () => THREE.Object3D[]; camBlockerMats?: () => unknown; farCull?: (now: number) => void; fogMapFor?: (p: { id: string }) => HTMLCanvasElement;
   setAudio?: (kind: string, on: boolean) => void; toggleAudio?: (kind: string) => void; toggleMute?: () => Promise<void>; voiceCommand?: (i: number) => void;
@@ -1583,7 +1583,7 @@ renderer.domElement.addEventListener('wheel', e => { const r = rects(), k = Math
 const VIEWS = [['follow', '🎥', 'Behind me', 'Sau lưng'], ['high', '🦅', 'High up', 'Trên cao'], ['street', '🏘️', 'Street view', 'Ngang phố'], ['face', '😊', 'My face', 'Mặt của con']];
 G.VIEWS = VIEWS;
 G.getViews = i => { const h = G.heroes[i], riding = h && (h.riding || (h.carry && h.state === 'sit')) && settings.ridePov !== false; return riding ? VIEWS.map(v => v[0] === 'follow' ? ['follow', v[1], 'Rider’s eyes', 'Qua mắt người cưỡi'] : v) : VIEWS; };
-G.setView = (i, id) => { const h = G.heroes[i]; if (!h) return; h.view = id; h.manualCamT = 0; const views = G.getViews(i), v = views.find(v => v[0] === id) || views[0]; G.huds[i] && G.huds[i].toast(v[1] + ' ' + T(v[2], v[3])); const b = G.huds[i] && G.huds[i].q('.z-view'); if (b) b.firstChild.textContent = v[1]; };
+G.setView = (i, id, quiet) => { const h = G.heroes[i]; if (!h) return; h.view = id; h.manualCamT = 0; const views = G.getViews(i), v = views.find(v => v[0] === id) || views[0]; !quiet && G.huds[i] && G.huds[i].toast(v[1] + ' ' + T(v[2], v[3])); const b = G.huds[i] && G.huds[i].q('.z-view'); if (b) { const k = b.querySelector('kbd'); b.innerHTML = pic(v[1]); if (k) b.append(k); } }; // (the button shows our drawing of the view: writing the emoji as text left it blank)
 G.cycleView = i => { const h = G.heroes[i]; if (!h) return; SFX.tap(); const k = VIEWS.findIndex(v => v[0] === (h.view || 'follow')); G.setView(i, VIEWS[(k + 1) % VIEWS.length][0]); };
 G.zoomBy = (i, f, quiet) => {
   const h = G.heroes[i]; if (!h) return;

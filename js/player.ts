@@ -29,7 +29,7 @@ export interface Hero {
   fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount;
   safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number;
   easyT?: number; stillT?: number; steerYaw?: number; goal?: { x: number, z: number }; goalT?: number; view?: string; zoom?: number;
-  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean;
+  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string;
   _camFreeT?: number; _camHitRay?: boolean; _camK?: number; _camLift?: number; _lmF?: number; _lm?: { x: number, z: number };
   _houseFront?: { x: number, z: number, rot: number, d: number }; indoors?: unknown; ferry?: unknown;
   carry?: (dt: number, t: number, pad: HeroPad) => CarryResult | void; carryVehicle?: RideVehicle;
@@ -218,6 +218,14 @@ export class Hero {
 
   finish(dt, t, game, rideY) {
     const A = this.av, p = this.pos;
+    // (owner, 30 Oct 2026 AEDT) driving, riding or sitting in a vehicle starts in Street view (Ngang phố); getting off
+    // goes back to the view the child had. Behind me is still there (the rider's eyes) with the View button
+    const rode = !!(this.riding || this.carryVehicle);
+    if (rode !== !!this._rode) {
+      this._rode = rode;
+      if (rode) { this._viewBefore = this.view || 'follow'; if (game.setView) game.setView(this.i, 'street', true); else this.view = 'street'; }
+      else { const back = this._viewBefore || 'follow'; if (game.setView) game.setView(this.i, back, true); else this.view = back; }
+    }
     A.root.position.set(p.x, p.y + rideY, p.z); A.root.rotation.y = this.yaw;
     A.anim(this.state, t, this.speed);
     A.root.children[1].visible = this.state !== 'swim'; // blob shadow
