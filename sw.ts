@@ -66,7 +66,7 @@ worker.addEventListener('message', (e: ExtendableMessageEvent) => { if (e.data?.
 // (r80) this version's own copy first: the one older copy kept below is only for a game still open from before (its
 // lazy parts); answering from it first had every updated device running the version before (r78 ran r77's files)
 const saved = req => caches.open(VERSION).then(c => c.match(req, { ignoreSearch: true })).then(hit => hit || caches.match(req, { ignoreSearch: true }));
-worker.addEventListener('activate', (e: ExtendableEvent) => { e.waitUntil(caches.keys().then(keys => { const old = keys.filter(k => k !== 'sv-family' && /^sv-20/.test(k) && k !== VERSION); const keep = old.slice(-1); return Promise.all(old.filter(k => !keep.includes(k)).map(k => caches.delete(k))); }).then(() => worker.clients.claim())); });
+worker.addEventListener('activate', (e: ExtendableEvent) => { e.waitUntil(Promise.resolve(worker.registration.navigationPreload?.enable()).catch(() => { })); e.waitUntil(caches.keys().then(keys => { const old = keys.filter(k => k !== 'sv-family' && /^sv-20/.test(k) && k !== VERSION); const keep = old.slice(-1); return Promise.all(old.filter(k => !keep.includes(k)).map(k => caches.delete(k))); }).then(() => worker.clients.claim())); });
 worker.addEventListener('fetch', (e: FetchEvent) => {
   const req = e.request;
   if (req.method !== 'GET') return;
@@ -156,7 +156,10 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
     e.respondWith(new Promise<Response>(done => {
       let over = false, net: Promise<Response> | null = null;
       const give = (r: Response) => { if (!over) { over = true; done(r); } };
-      const fromNet = () => net || (net = Promise.race([fetch(req), new Promise<Response>((_, no) => setTimeout(() => no(new Error('slow')), NAV_LIMIT))]));
+      // (owner, 31 Oct 2026 AEDT: the installed app stays white for about 30 s) the browser asks the website for the start
+      // page while this worker is still starting (navigation preload, switched on below), so the answer is already on its way
+      const ask = () => Promise.resolve(e.preloadResponse).then(r => r || fetch(req), () => fetch(req));
+      const fromNet = () => net || (net = Promise.race([ask(), new Promise<Response>((_, no) => setTimeout(() => no(new Error('slow')), NAV_LIMIT))]));
       const fallback = () => (game ? shell().then(clean) : Promise.resolve(undefined)).then(r => give(r || Response.error()), () => give(Response.error()));
       const t = setTimeout(() => fromNet().then(r => { if (r.ok) give(r); }, () => { }), NAV_QUICK);
       saved(req).catch(() => undefined).then(clean).then(hit => { clearTimeout(t); if (hit) give(hit); else fromNet().then(r => { if (r.ok || !game) give(r); else fallback(); }, fallback); });

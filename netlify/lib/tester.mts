@@ -45,7 +45,7 @@ export function cleanReport(b, now = Date.now()) {
     join: PK.test(b.join || '') ? b.join : '',
     errors: (Array.isArray(b.errors) ? b.errors : []).slice(-TLIMITS.errors).map(e => txt(e, 200)).filter(Boolean),
     log: (Array.isArray(b.log) ? b.log : []).slice(-TLIMITS.log).filter(e => Array.isArray(e)).map(([t, k, s]) => [num(t, -600, 600) || 0, txt(k, 12), txt(s, 120)]),
-    dev: (d => ({ os: txt(d.os, 20), br: txt(d.br, 20), sc: txt(d.sc, 12), lang: txt(d.lang, 4), fps: num(d.fps, 0, 240), mem: num(d.mem, 0, 64), label: txt(d.label, 40) }))(b.dev && typeof b.dev === 'object' ? b.dev : {}),
+    dev: (d => ({ os: txt(d.os, 20), br: txt(d.br, 20), sc: txt(d.sc, 12), lang: txt(d.lang, 4), fps: num(d.fps, 0, 240), mem: num(d.mem, 0, 64), label: txt(d.label, 40), start: d.start && typeof d.start === 'object' ? { sw: num(d.start.sw, 0, 600000), page: num(d.start.page, 0, 600000), dom: num(d.start.dom, 0, 600000) } : null }))(b.dev && typeof b.dev === 'object' ? b.dev : {}),
     players: (Array.isArray(b.players) ? b.players : []).slice(0, 8).filter(p => p && typeof p === 'object').map(p => ({ name: txt(p.name, 30), age: txt(p.age, 10), coins: num(p.coins, 0, 1e7), stars: num(p.stars, 0, 1e5), level: txt(p.level, 20) })),
     reporter,
     count: num(b.count, 1, 999) || 1

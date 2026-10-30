@@ -53,6 +53,7 @@ function bodyOf(p, d) {
     `- Where: ${[p.where && p.where.game, p.where && p.where.window, p.where && p.where.area].filter(Boolean).join(' · ') || '?'} (${r.where ? `${r.where.x}, ${r.where.z}` : ''})`,
     r.note ? `- Tester's note${r.spoken ? ' (spoken)' : ''}: ${r.note}` : '', r.detail ? `- Detail: ${r.detail}` : '',
     r.dev ? `- Device: ${r.dev.os} ${r.dev.br} ${r.dev.sc}, ${r.dev.lang}, ${r.dev.fps || '?'} fps, build ${r.b}` : '',
+    r.dev?.start ? `- This start: helper ${r.dev.start.sw} ms, start page ${r.dev.start.page} ms, page readable ${r.dev.start.dom} ms after the tap` : '',
     (r.errors || []).length ? '\n**Errors**\n```\n' + r.errors.slice(-10).join('\n') + '\n```' : '',
     (r.log || []).length ? '\n<details><summary>The last 30 seconds</summary>\n\n' + r.log.map(([t, k, s]) => `- ${t} s ${k}: ${s}`).join('\n') + '\n</details>' : '',
     '', 'Screenshots, every report and the status: Studio → Analytics → Tester reports. Mark it fixed there (or say "Fixed in rNN" in the round) and the testers\' devices replay it on the new version.'].filter(x => x !== '').join('\n');
