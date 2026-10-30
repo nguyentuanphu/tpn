@@ -466,11 +466,14 @@ async function readTale(note) {
   const th = document.querySelector('.theatre'); if (!th) return;
   const page = () => [...th.querySelectorAll('.th-dots i')].findIndex(i => i.classList.contains('on'));
   const a = th.querySelector('.th-auto'); if (a && !a.classList.contains('on')) await tap(a, note);
-  let at = page(), since = Date.now(); const end = Date.now() + (sp().page ? 180 : 420) * 1000;
+  let at = page(), since = Date.now(), nudged = false; const end = Date.now() + (sp().page ? 180 : 420) * 1000;
   while (th.isConnected && !th.classList.contains('out') && Date.now() < end) {
     if (sp().page) { await hold(sp().page); const n = th.querySelector('.th-next'); if (n && th.isConnected) await tap(n, note); }
     else await hold(1);
-    const p = page(); if (p !== at) { at = p; since = Date.now(); step_('page', String(p + 1)); }
+    const p = page(); if (p !== at) { at = p; since = Date.now(); nudged = false; step_('page', String(p + 1)); }
+    // (#361 #427 #620, quest:L_c1_tale) a page that does not turn by itself (its film or voice never says it is over) is
+    // turned with Next, as a child would; only a story that will not move on with Next either is a problem
+    else if (!nudged && Date.now() - since > 25000) { const n = th.querySelector('.th-next'); if (n && th.isConnected) { nudged = true; step_('nudge', String(at + 1)); await tap(n, note); } }
     else if (Date.now() - since > 45000) { note(T(`the story stopped on page ${at + 1}`, `truyện dừng ở trang ${at + 1}`)); break; }
   }
 }
