@@ -259,7 +259,7 @@ export function plantRoadside(G) {
       if (along >= nextPlant) { const q = at(hw + (vn ? 2.2 : 3.6), -side, vn ? .9 : 1.4); if (q) { (vn ? bushes : gums).push(q); world.colliders.push({ x: q[0], z: q[2], r: vn ? .5 : .45 }); nextPlant = along + (vn ? 34 : 46); } }
     }
   });
-  const place = (geo, list, mat) => { if (!list.length) return null; const parts = list.map(([x, y, z], j) => { const g = geo.clone(); g.rotateY(j * 1.7); g.translate(x, y, z); return g; }); const m = new THREE.Mesh(merge(parts), mat); m.castShadow = true; scene.add(m); return m; };
+  const place = (geo, list, mat) => { if (!list.length) return null; const parts = list.map(([x, y, z], j) => { const g = geo.clone(); g.rotateY(j * 1.7); g.translate(x, y, z); return g; }); const m = new THREE.Mesh(merge(parts), mat); m.castShadow = true; m.userData.noSolid = true; scene.add(m); return m; }; // (their colliders keep children out; added after the solid map, they would change its saved copy's key)
   const lampGeo = col => merge([P(new THREE.CylinderGeometry(.07, .1, 4, 6), col, [0, 2, 0]), P(new THREE.CylinderGeometry(.05, .05, .9, 5), col, [.38, 3.9, 0], [0, 0, Math.PI / 2]),
     P(new THREE.ConeGeometry(.22, .22, 8), col, [.8, 3.82, 0]), P(new THREE.SphereGeometry(.13, 8, 6), '#fff4c2', [.8, 3.68, 0]), P(new THREE.CylinderGeometry(.16, .2, .25, 6), '#7a7a7a', [0, .12, 0])]);
   const bushGeo = merge([P(new THREE.IcosahedronGeometry(.6, 1), '#4f8f3e', [0, .55, 0], [0, 0, 0], [1.2, .9, 1]), ...[[.35, .9, .2], [-.3, .85, -.25], [.05, 1.05, -.1], [-.2, .7, .4], [.4, .6, -.3]].map(([x, y, z]) => P(new THREE.IcosahedronGeometry(.2, 0), '#e0328c', [x, y, z]))]);
