@@ -50,7 +50,8 @@ export async function playAim(api:FolkApi,kind:AimGame){
   const shot=throwResult(kind,aim,power,target)!;const ball=view.field.querySelector<SVGGElement>('[data-folk-ball]')!;view.controls.querySelectorAll('button').forEach(n=>n.disabled=true);
   if(!reduceMotion()){flight=ball.animate([{transform:'translate(200px,290px)'},{transform:`translate(${(200+shot.x)/2}px,${kind==='con'?Math.max(15,shot.y-50):(290+shot.y)/2}px)`},{transform:`translate(${shot.x}px,${shot.y}px)`}],{duration:650,fill:'forwards'});try{await flight.finished;}catch{}if(api.closed)return;}
   if(shot.hit){api.right(launch);round++;aim=200;power=kind==='con'?4:3;}else api.wrong(launch);
-  view.controls.querySelectorAll('button').forEach(n=>n.disabled=false);
+  // (check folkplay) after the last hit the buttons stay off: the win comes next, and a throw tapped in between had nothing to do
+  if(round<targets.length)view.controls.querySelectorAll('button').forEach(n=>n.disabled=false);
  }if(!api.closed){api.dots(3,3);return view.win();}
 }
 export async function playCatMouse(api:FolkApi){

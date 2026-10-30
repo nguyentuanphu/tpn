@@ -4,7 +4,7 @@ import { seatRider } from './vehicles.js';
 import { vehicleEye } from './rideview.js';
 import { THREE } from './gfx.js';
 import { buildAvatar } from './avatar.js';
-import { WATER, heightAt, surfaceAt } from './world.js';
+import { WATER, RIDE_SWIM, heightAt, surfaceAt } from './world.js';
 import { clamp, lerp, angleLerp } from './util.js';
 import { SFX } from './audio.js';
 
@@ -17,7 +17,7 @@ const GRAV = 22, WALK = 5.5, RUN = 9.5, SWIM = 3.4, CLIMB = 2.6, GLIDE = 8, RIDE
 import type { Profile } from '../types/save.js';
 export type RideVehicle = { o: THREE.Object3D, wheels: THREE.Object3D[], wr: number, seat: number[], grips?: number[][], feet?: number[][], wheelAt?: number[],
   cabin?: { width: number, length: number, bottom: number, top: number, color: string } };
-type RideMount = { mesh: THREE.Object3D, shadow: THREE.Object3D, yaw: number, rider?: Hero | null, speed?: number, quiet?: boolean,
+type RideMount = { mesh: THREE.Object3D, shadow: THREE.Object3D, yaw: number, rider?: Hero | null, speed?: number, quiet?: boolean, swims?: boolean,
   tx?: number, tz?: number, back?: boolean, home?: number[], slot?: { taken: unknown }, vehicle?: RideVehicle, firstPersonHide?: THREE.Object3D[] };
 type CarryResult = { x: number, y: number, z: number, yaw?: number, swim?: boolean, state?: string, rest?: boolean, speed?: number, rideY?: number, vehicle?: RideVehicle };
 type HeroPad = { mx: number, mz: number, cdx: number, cdy: number, run?: boolean, jump(): boolean, act?(): boolean };
@@ -29,7 +29,7 @@ export interface Hero {
   fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount;
   safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number;
   easyT?: number; stillT?: number; steerYaw?: number; goal?: { x: number, z: number }; goalT?: number; view?: string; zoom?: number;
-  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean;
+  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean;
   _camFreeT?: number; _camHitRay?: boolean; _camK?: number; _camLift?: number; _lmF?: number; _lm?: { x: number, z: number };
   _houseFront?: { x: number, z: number, rot: number, d: number }; indoors?: unknown; ferry?: unknown;
   carry?: (dt: number, t: number, pad: HeroPad) => CarryResult | void; carryVehicle?: RideVehicle;
@@ -111,21 +111,25 @@ export class Hero {
     if (this.riding) {
       if (jump || pad.act()) { this.dismount(); }
       else {
-        const b0 = this.riding, sp = (b0.speed || RIDE) * mag; this.speed = lerp(this.speed, sp, Math.min(1, dt * 4));
+        // (owner, 30 Oct 2026 AEDT: "both buffalo and cows ... can ride and swim through water") a buffalo or a cow swims:
+        // in deep water it floats with its back and head above the water, a little slower, bobbing; vehicles still stop
+        const b0 = this.riding, swimmer = !!b0.swims, afloat = (y: number) => swimmer ? Math.max(y, WATER - RIDE_SWIM) : y;
+        const inWater = swimmer && ground < WATER - RIDE_SWIM, sp = (b0.speed || RIDE) * mag * (inWater ? .65 : 1); this.speed = lerp(this.speed, sp, Math.min(1, dt * 4));
         if (mag > .05) this.yaw = angleLerp(this.yaw, Math.atan2(mx, mz), Math.min(1, dt * 6));
         const nx = p.x + Math.sin(this.yaw) * this.speed * dt, nz = p.z + Math.cos(this.yaw) * this.speed * dt;
         // (#354, owner 17 Oct AEDT: "all animals and vehicles can travel anywhere") the real ground under the next step, as
-        // walking uses it: a bridge's deck, a pier or a platform counts, not the river bed below it; deep water still stops
+        // walking uses it: a bridge's deck, a pier or a platform counts, not the river bed below it; deep water stops a vehicle
         const g = W.groundAt(nx, nz, p.y + .5);
-        if (g > WATER - .4 && Math.abs(g - ground) < 1.5) { p.x = nx; p.z = nz; }
+        if ((swimmer || g > WATER - .4) && Math.abs(afloat(g) - afloat(ground)) < 1.5) { p.x = nx; p.z = nz; }
         // (#354) a ride takes 0.8 m each side, about a bicycle's or a buffalo's width: wide enough not to brush through
         // walls, narrow enough for every bridge a child walks over (Chùa Cầu's covered bridge is 3.2 m wide; 1.2 m did not fit)
-        W.collide(p, .8); p.y = W.groundAt(p.x, p.z, p.y + .5);
-        const b = this.riding; b.mesh.position.set(p.x, p.y, p.z); b.mesh.rotation.y = this.yaw; b.shadow.position.set(p.x, p.y + .05, p.z);
+        W.collide(p, .8); const under = W.groundAt(p.x, p.z, p.y + .5); p.y = afloat(under);
+        const bob = swimmer && under < WATER - RIDE_SWIM ? Math.sin(t * 2.4) * .06 : 0;
+        const b = this.riding; b.mesh.position.set(p.x, p.y + bob, p.z); b.mesh.rotation.y = this.yaw; b.shadow.position.set(p.x, p.y + .05, p.z); b.shadow.visible = !bob;
         // (round R) a bicycle: its wheels roll, and the child sits on its saddle with hands on the grips and feet on the pedals
         if (b.vehicle) { const v = b.vehicle; v.wheels.forEach(w => { w.rotation.x += this.speed * dt / v.wr; }); this.state = 'ride'; this.finish(dt, t, game, 0);
           this.av.rig.position.y = 0; b.mesh.updateMatrixWorld(true); seatRider(this.av, v, v.seat, v.grips, v.feet, this.av.root.scale.x, false); return; }
-        this.state = 'ride'; this.finish(dt, t, game, 1.6); return;
+        this.state = 'ride'; this.finish(dt, t, game, 1.6 + bob); return;
       }
     }
 
@@ -196,7 +200,7 @@ export class Hero {
     this.fallStart = null;
     if (fell > 14 && !this.gliding) game.hurt(this, fell > 30 ? 2 : 1);
   }
-  mount(b) { this.riding = b; b.rider = this; this.gliding = false; this.pos.copy(b.mesh.position); this.yaw = b.yaw; if (!b.quiet) SFX.moo(); }
+  mount(b) { this.riding = b; b.rider = this; this._rideNew = true; this.gliding = false; this.pos.copy(b.mesh.position); this.yaw = b.yaw; if (!b.quiet) SFX.moo(); }
   dismount() { const b = this.riding; if (!b) return; b.rider = null; b.tx = b.mesh.position.x; b.tz = b.mesh.position.z; if (b.home) { b.tx = b.home[0]; b.tz = b.home[1]; b.back = true; }   // (Round V, owner 13 Oct) an animal runs back home when the child gets off
     if (b.slot) b.slot.taken = null; if (b.vehicle) this.av.torso.rotation.set(0, 0, 0), this.av.torso.position.set(0, 0, 0), this.av.head.position.set(0, 1.33, 0), this.av.armL.scale.y = this.av.armR.scale.y = 1; this.riding = null; this.pos.x += Math.cos(this.yaw) * 1.8; this.pos.z -= Math.sin(this.yaw) * 1.8; this.pos.y = this.world.groundAt(this.pos.x, this.pos.z); }
 
@@ -218,6 +222,13 @@ export class Hero {
 
   finish(dt, t, game, rideY) {
     const A = this.av, p = this.pos;
+    // (owner, 30 Oct 2026 AEDT) when the child drives (a car, a motorbike, a bicycle) or rides the buffalo or the cow, the
+    // camera starts in Street view (Ngang phố); getting off goes back to the child's own view. Riding as a passenger (bus,
+    // tram, taxi, xích lô: someone else drives) keeps the usual camera. Behind me (the rider's eyes) stays on View
+    const rode = !!this.riding, view = (id: string) => { if (game.setView) game.setView(this.i, id, true); else this.view = id; };
+    if (rode && (this._rideNew || !this._rode)) { if (!this._rode) this._viewBefore = this.view || 'follow'; this._rode = true; view('street'); }
+    else if (!rode && this._rode) { this._rode = false; view(this._viewBefore || 'follow'); }
+    this._rideNew = false;
     A.root.position.set(p.x, p.y + rideY, p.z); A.root.rotation.y = this.yaw;
     A.anim(this.state, t, this.speed);
     A.root.children[1].visible = this.state !== 'swim'; // blob shadow
@@ -228,7 +239,9 @@ export class Hero {
     // everything when walking towards the camera). It waits a moment so small turns don't spin it.
     // (tester's notes, 12 Oct) inside a house: the camera stays inside the room, close and looking down, and does not
     // swing round, so the child does not keep walking into the walls or out of the door
-    if (easy && this.indoors) { this.easyT = 0; this.camPitch += (.95 - this.camPitch) * Math.min(1, dt * 2); }
+    // (owner, 30 Oct 2026 AEDT: the decorations on the walls were out of view) still fixed and calm, but from the door looking
+    // into the room at a gentler slope, so the back wall and what hangs on it show above the child
+    if (easy && this.indoors) { this.easyT = 0; this.camPitch += (.3 - this.camPitch) * Math.min(1, dt * 2); if (this.manualCamT <= 0) this.camYaw = easeYaw(this.camYaw, 0, dt, 2, 1.3); }
     else if (easy) {
       if (this.speed > .8 && !this.towerClimb && this.manualCamT <= 0) { this.easyT = (this.easyT || 0) + dt; this.stillT = 0; // calmer: only after walking the same way for a moment, slowly, and it stops once roughly behind
         const off = Math.abs(Math.atan2(Math.sin(this.yaw + Math.PI - this.camYaw), Math.cos(this.yaw + Math.PI - this.camYaw)));
@@ -241,14 +254,16 @@ export class Hero {
       // 0.8 s standing still (was 2 s) and turns about three times faster, still easing in and out
       const calm = this.stillT > .8 && this.manualCamT <= 0 && !this.towerClimb;
       if (!calm) this._houseFront = null;
-      else if (!this._houseFront || !facing(this._houseFront)) this._houseFront = (this.world.houses || []).filter(facing).sort((a, b) => Math.hypot(p.x - a.x, p.z - a.z) - Math.hypot(p.x - b.x, p.z - b.z))[0] || null;
+      else if (!this._houseFront || !facing(this._houseFront)) this._houseFront = [...(this.world.houses || []), ...(this.world.fronts || [])].filter(facing).sort((a, b) => Math.hypot(p.x - a.x, p.z - a.z) - Math.hypot(p.x - b.x, p.z - b.z))[0] || null;
       if (calm && this._houseFront) this.camYaw = easeYaw(this.camYaw, this._houseFront.rot, dt, 2, 1.3);
       // standing still next to a landmark: slowly turn so it is in front of the camera
       else if (this._lm && (this._lmF || 0) > .25 && Math.hypot(p.x - this._lm.x, p.z - this._lm.z) > 2 && this.stillT > 2 && this.manualCamT <= 0 && !this.towerClimb) this.camYaw = easeYaw(this.camYaw, Math.atan2(p.x - this._lm.x, p.z - this._lm.z), dt, .6, .35);
       // near a landmark, step back and look more level so the whole building fits on screen
       const lf = this._lmF = lerp(this._lmF || 0, game.landmarkFrame ? game.landmarkFrame(this) : 0, Math.min(1, dt * 1.5));
       // camera views (🎥 button): behind (normal), high up, at street level, or the child's face
-      const view = this.view || 'follow', base = view === 'high' ? 1.05 : view === 'street' ? .12 : .55;
+      // (owner, 30 Oct 2026 AEDT: inside My House the decorations on the walls were above the top of the screen) indoors the
+      // camera looks more level, so the walls and what hangs on them are in view
+      const view = this.view || 'follow', base = view === 'high' ? 1.05 : view === 'street' ? .12 : this.indoors ? .32 : .55;
       this.camPitch += ((this.towerClimb ? .25 : game.lookUpT > 0 ? .1 : base - lf * .12 + Math.max(0, (this.zoom || 1) - 1) * .45) - this.camPitch) * Math.min(1, dt * 1.5);
     }
     else if (this.manualCamT <= 0 && this.speed > 1 && !this.towerClimb) this.camYaw = easeYaw(this.camYaw, this.yaw + Math.PI, dt, .4, .4);
@@ -286,6 +301,7 @@ export class Hero {
     let gy;
     if (this.ferry) { gy = Math.max(WATER, heightAt(want.x, want.z)) + .7; for (const pl of this.world.platforms) if (pl.y > target.y + 1.5 && want.x > pl.x0 - 1 && want.x < pl.x1 + 1 && want.z > pl.z0 - 1 && want.z < pl.z1 + 1) want.y = Math.min(want.y, pl.y - .8); }
     else gy = this.world.groundAt(want.x, want.z) + .7;
+    if (this.riding && this.riding.swims) gy = Math.max(gy, WATER + .7);   // (a swimming buffalo or cow: the camera stays above the water)
     if (want.y < gy) want.y = gy;
     // (Round V, owner 13 Oct: "the camera angle should be point of view") riding an animal or a vehicle, or sitting in a bus,
     // tram, taxi or xích lô: the camera rides at the child's eyes, looking ahead (the grown-ups' switch ridePov turns it off)

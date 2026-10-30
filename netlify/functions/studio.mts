@@ -181,7 +181,7 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
   if (route.startsWith('management/')) {
     const canReadReports = admins.allowed(me, 'testers', false);
     try { return await managementHttp(req, me, { log, ...(route.startsWith('management/finance') ? {finance:createFinanceService({database:managementDb || managementDatabase(),now})}:{}), ...(route.startsWith('management/operations') ? { operations: operations() } : {}), catalogue: () => loadManagementCatalogue().entries,
-      reads: createManagementReadService({ playersStore, parentAnalyticsStore,
+      reads: createManagementReadService({ playersStore, parentAnalyticsStore, cacheKey: 'players',
         ...(canReadReports ? { testerStore } : {}),
         botStore: store('bot-players'), catalogue: () => loadManagementCatalogue().entries, now }),
       service: managementService(liveStore, managementDb) }); } catch (error) { return managementFailure(error); }

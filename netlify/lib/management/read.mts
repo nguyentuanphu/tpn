@@ -13,6 +13,9 @@ export type CatalogueEntry = { id: string; kind: string; name: {en: string,vi: s
 type Dependencies = {
   playersStore: StoreSource; botStore?: StoreSource; parentAnalyticsStore?: StoreSource; testerStore?: StoreSource;
   catalogue?: CatalogueEntry[] | (()=>Promise<CatalogueEntry[]> | CatalogueEntry[]); now?: ()=>number;
+  // (owner, 30 Oct 2026 AEDT: "Studio loads too slow, especially after selecting the date") the live Studio names its
+  // store here so finished days are kept between requests; without a name (the tests) every read is fresh
+  cacheKey?: string;
 };
 type ReadOptions = {includeProfileContext?: boolean};
 type Daily = {id: string; date: string; value: Record<string,any>};
@@ -37,6 +40,19 @@ async function keys(s: ManagementStore,prefix: string,max=50000) {
 async function mapPool<T,R>(items:T[],fn:(v:T)=>Promise<R>,limit=16):Promise<R[]> {
   const out:R[]=new Array(items.length); let i=0;
   await Promise.all(Array.from({length:Math.min(limit,items.length)},async()=>{while(i<items.length){const j=i++;out[j]=await fn(items[j]);}}));return out;
+}
+// A finished day (two or more days ago) changes only when a device that was offline sends it late, so it is kept for
+// 10 minutes; today and yesterday, and the device names and details (a renamed device shows at once), are always read
+// fresh. Shared by every request on this server instance (overview, devices and children each read the whole period).
+const DAY_MS = 10 * 60e3, CACHE_MAX = 600;
+const cache = new Map<string, {at: number, value: unknown}>();
+async function cached<T>(key: string | null, ms: number, load: () => Promise<T>): Promise<T> {
+  if (!key) return load();
+  const hit = cache.get(key), now = Date.now();
+  if (hit && now - hit.at < ms) return hit.value as T;
+  const value = await load();
+  if (cache.size >= CACHE_MAX) { const oldest = cache.keys().next().value; if (oldest !== undefined) cache.delete(oldest); }
+  cache.set(key, {at: now, value}); return value;
 }
 const active = (r:Record<string,any>) => count(r.mins)>0 || sumValues(r.games)>0 || count(r.tales)>0;
 const dateRange = (q:ManagementQuery) => {const a:string[]=[];for(let t=Date.parse(q.from);t<=Date.parse(q.to);t+=864e5)a.push(day(t));return a;};
@@ -63,11 +79,14 @@ export function createManagementReadService(deps:Dependencies) {
   async function snapshot(q:ManagementQuery,options:ReadOptions={}) {
     if(q.child&&!options.includeProfileContext)throw new ManagementReadError('permission_required','Child search requires restricted device-detail permission.',403);
     const s=await source(q), quality:string[]=[];
-    const daily:Daily[]=[];
-    for(const date of dateRange(q)){
-      const kk=await keys(s,`d/${date}/`), values=await mapPool(kk,k=>readJson(s,k));
-      kk.forEach((k,i)=>{const id=k.slice(`d/${date}/`.length);if(DEVICE.test(id)&&Object.keys(values[i]).length)daily.push({id,date,value:values[i]});});
-    }
+    const base=deps.cacheKey?deps.cacheKey+':'+q.traffic:null, recent=day(clock()-2*864e5);
+    // the days are read side by side (they were read one after another: 30 rounds for a 30-day period)
+    const days=await mapPool(dateRange(q),date=>cached(base&&date<recent?base+':d:'+date:null,DAY_MS,async()=>{
+      const kk=await keys(s,`d/${date}/`), values=await mapPool(kk,k=>readJson(s,k)), rows:Daily[]=[];
+      kk.forEach((k,i)=>{const id=k.slice(`d/${date}/`.length);if(DEVICE.test(id)&&Object.keys(values[i]).length)rows.push({id,date,value:values[i]});});
+      return rows;
+    }),8);
+    const daily:Daily[]=days.flat();
     const [ik,lk,pk]=await Promise.all([keys(s,'info/'),keys(s,'label/'),keys(s,'live/')]);
     const infos=new Map<string,Record<string,any>>(),labels=new Map<string,string>(),lives=new Map<string,Record<string,any>>();
     await Promise.all([
@@ -106,7 +125,9 @@ export function createManagementReadService(deps:Dependencies) {
       const childRows:{profileId:string,name:string,age:string,mins:number,simpleMins:number,tales:number,games:any[],places:{placeId:string,entries:number}[]}[]=[...children.values()].map(c=>({profileId:c.profileId,name:c.name,age:c.age,mins:c.mins,simpleMins:c.simpleMins,tales:c.tales,games:[...c.games.values()].sort((a,b)=>a.activityId.localeCompare(b.activityId)),places:[...c.places].map(([placeId,entries])=>({placeId,entries}))}));
       const mins=records.reduce((n,r)=>n+count(r.mins),0), errors=records.reduce((n,r)=>n+sumValues(r.errs),0), last=safeText(info.last,10)||ds.at(-1)?.date||'';
       const seenAt=count(l.at)?new Date(l.at).toISOString():'';
-      const device={id,label:labels.get(id)||'',kind:['phone','tablet','computer'].includes(info.kind)?info.kind:'?',os:safeText(info.os,20),br:safeText(info.br,20),build:isBuild(info.build)?info.build:'?',first:safeText(info.first,10),last,activityLast:ds.at(-1)?.date||'',seenAt,sortAt:seenAt||last,
+      const loc=object(info.loc),place={city:safeText(loc.city,40),region:safeText(loc.region,40),country:safeText(loc.country,3)};
+      // (owner, 30 Oct 2026 AEDT: "used most should be up") lists put the most-played devices first, then the latest seen
+      const device={id,label:labels.get(id)||'',place,kind:['phone','tablet','computer'].includes(info.kind)?info.kind:'?',os:safeText(info.os,20),br:safeText(info.br,20),build:isBuild(info.build)?info.build:'?',first:safeText(info.first,10),last,activityLast:ds.at(-1)?.date||'',seenAt,sortAt:String(Math.min(count(mins),999999999)).padStart(9,'0')+'|'+(seenAt||last),
         online:l.on===true&&count(l.at)>clock()-5*60e3&&count(l.at)<=clock()+300000,mins,days:records.filter(active).length,tales:records.reduce((n,r)=>n+count(r.tales),0),errors,stuck:records.reduce((n,r)=>n+sumValues(r.stuck),0),fps:perf.fps,startup:perf.startup,power:perf.power,
         usageBuilds:[...new Set(records.flatMap(r=>Object.keys(object(r.builds)).length?Object.keys(object(r.builds)):isBuild(r.build)?[r.build]:[]))],...(options.includeProfileContext?{children:childRows}:{})};
       const basic=[id,device.label,device.kind,device.os,device.br,device.build].join(' ').toLocaleLowerCase();
@@ -116,6 +137,33 @@ export function createManagementReadService(deps:Dependencies) {
       devices.push(device);
     }
     const eligible=new Set(devices.map(d=>d.id));return {devices,daily:selected.filter(d=>eligible.has(d.id)),quality};
+  }
+  // (owner, 30 Oct 2026 AEDT) Studio's first page: devices, new devices, play time, favourite games, places and versions,
+  // in one answer. Counts only; places are town, state and country from the connection.
+  async function todaySummary(q:ManagementQuery,s:{devices:Record<string,any>[],daily:Daily[]}){
+    const today=day(clock()),rs=s.daily.map(d=>d.value),names=new Map((await catalogue()).map(a=>[a.id,{en:safeText(object(a.name).en,80),vi:safeText(object(a.name).vi,80)}]));
+    const games=new Map<string,{starts:number,quits:number}>(),hours=new Array(24).fill(0),places=new Map<string,{city:string,region:string,country:string,devices:number}>(),builds=new Map<string,number>();
+    for(const r of rs){
+      for(const [id,n]of Object.entries(object(r.games))){if(!PROFILE.test(id))continue;const g=games.get(id)||{starts:0,quits:0};g.starts+=count(n);games.set(id,g);}
+      for(const [id,n]of Object.entries(object(r.quits))){if(!PROFILE.test(id))continue;const g=games.get(id)||{starts:0,quits:0};g.quits+=count(n);games.set(id,g);}
+      for(const [h,n]of Object.entries(object(r.hours))){const i=Number(h);if(Number.isInteger(i)&&i>=0&&i<24)hours[i]+=count(n);}
+    }
+    const active=new Set(s.daily.filter(d=>count(d.value.mins)>0||sumValues(d.value.games)>0).map(d=>d.id));
+    for(const d of s.devices){if(!active.has(d.id))continue;
+      const pl=object(d.place),key=[pl.city,pl.region,pl.country].join('|');if(pl.city||pl.country){const e=places.get(key)||{city:String(pl.city||''),region:String(pl.region||''),country:String(pl.country||''),devices:0};e.devices++;places.set(key,e);}
+      if(isBuild(d.build))builds.set(d.build,(builds.get(d.build)||0)+1);}
+    const named=(id:string)=>({id,name:names.get(id)||{en:id,vi:id}});
+    const ranked=[...games].map(([id,g])=>({...named(id),starts:g.starts,quits:g.quits}));
+    let busiest=-1,best=0;for(let h=0;h<24;h++){const two=hours[h]+hours[(h+1)%24];if(two>best){best=two;busiest=h;}}
+    const newest=[...builds.keys()].sort((a,b)=>buildRank(b)-buildRank(a))[0]||null;
+    return {
+      devicesToday:new Set(s.daily.filter(d=>d.date===today).map(d=>d.id)).size,devicesInPeriod:active.size,newDevices:s.devices.filter(d=>active.has(d.id)&&d.first>=q.from&&d.first<=q.to).length,devicesEver:s.devices.length,
+      minsToday:s.daily.filter(d=>d.date===today).reduce((n,d)=>n+count(d.value.mins),0),minsInPeriod:rs.reduce((n,r)=>n+count(r.mins),0),busiestHour:busiest,
+      topGames:ranked.sort((a,b)=>b.starts-a.starts).slice(0,5),
+      leftEarly:ranked.filter(g=>g.starts>=3&&g.quits*2>=g.starts).sort((a,b)=>b.quits/b.starts-a.quits/a.starts).slice(0,3),
+      places:[...places.values()].sort((a,b)=>b.devices-a.devices).slice(0,8),
+      versions:{newest,onNewest:newest?builds.get(newest)||0:0,older:[...builds].filter(([b])=>b!==newest).reduce((n,[,c])=>n+c,0)}
+    };
   }
   async function parentMetrics(q:ManagementQuery){
     const ids=[['M13','Website page views','events'],['M14','Website Play clicks','clicks'],['M15','Website active reading time','seconds']];
@@ -149,7 +197,7 @@ export function createManagementReadService(deps:Dependencies) {
     const attentionSupported=!!deps.testerStore&&q.traffic==='ordinary'&&q.deviceClass==='all';
     const attention=attentionSupported?await issueRows({...q,cursor:'',search:'',child:'',status:'all'}):{items:[],quality:['tester-scope-unavailable']}, errors=rs.reduce((n,r)=>n+sumValues(r.errs),0),errorIds=new Set(s.daily.filter(d=>sumValues(d.value.errs)>0&&active(d.value)).map(d=>d.id));
     metrics.push(metric('M38','Affected-device error proportion',activeDevices?errorIds.size/activeDevices:null,'ratio',activeDevices,'Reporting active installations with observed game-code errors; not crash-free sessions.'));
-    return {...envelope(q,[...s.quality,...attention.quality]),metrics,dailySeries:dailySeries(q,s.daily),totals:{devices:s.devices.length,activeDevices,mins:rs.reduce((n,r)=>n+count(r.mins),0),tales:rs.reduce((n,r)=>n+count(r.tales),0),onlineMins:rs.reduce((n,r)=>n+count(r.online),0),errors,stuck:rs.reduce((n,r)=>n+sumValues(r.stuck),0),activityStarts:rs.reduce((n,r)=>n+sumValues(r.games),0)},cards:[{id:'attention',status:attentionSupported?'observed':'unavailable',metricIds:[]},{id:'audience',status:'observed',metricIds:['M01','M02','M03']},{id:'experience',status:'observed',metricIds:['M08','M09','M10','M12','M38']},{id:'content',status:'observed',metricIds:['M04','M07']},{id:'release',status:'unavailable',metricIds:['M24']},{id:'operations',status:'unavailable',metricIds:[]}],attention:{open:attentionSupported?attention.items.filter(p=>!['verified','dismissed','duplicate'].includes(p.status)).length:null},capabilities:{exactAttempts:false,retention:false,finance:false}};
+    return {...envelope(q,[...s.quality,...attention.quality]),metrics,today:await todaySummary(q,s),dailySeries:dailySeries(q,s.daily),totals:{devices:s.devices.length,activeDevices,mins:rs.reduce((n,r)=>n+count(r.mins),0),tales:rs.reduce((n,r)=>n+count(r.tales),0),onlineMins:rs.reduce((n,r)=>n+count(r.online),0),errors,stuck:rs.reduce((n,r)=>n+sumValues(r.stuck),0),activityStarts:rs.reduce((n,r)=>n+sumValues(r.games),0)},cards:[{id:'attention',status:attentionSupported?'observed':'unavailable',metricIds:[]},{id:'audience',status:'observed',metricIds:['M01','M02','M03']},{id:'experience',status:'observed',metricIds:['M08','M09','M10','M12','M38']},{id:'content',status:'observed',metricIds:['M04','M07']},{id:'release',status:'unavailable',metricIds:['M24']},{id:'operations',status:'unavailable',metricIds:[]}],attention:{open:attentionSupported?attention.items.filter(p=>!['verified','dismissed','duplicate'].includes(p.status)).length:null},capabilities:{exactAttempts:false,retention:false,finance:false}};
   }
   async function devices(raw:URLSearchParams|Record<string,unknown>={},options:ReadOptions={}){const q=query(raw),s=await snapshot(q,options),p=pageRows(s.devices as {id:string,sortAt:string}[],q,'devices');return {...envelope(q,s.quality),devices:p.rows.map(({sortAt,...v})=>v),total:p.total,nextCursor:p.nextCursor};}
   async function device(id:string,raw:URLSearchParams|Record<string,unknown>={},options:ReadOptions={}){

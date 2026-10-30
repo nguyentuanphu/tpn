@@ -139,3 +139,23 @@ test('private device history and problem associations do not include a different
   assert.deepEqual(result.relatedIssues.map(i=>i.title),['Matching synthetic problem']);
   const noTester=await service(store).device(ID,period,{includeProfileContext:true});assert.deepEqual(noTester.relatedIssues,[]);assert.ok(noTester.quality.includes('tester-source-unavailable'));
 });
+
+// (owner, 30 Oct 2026 AEDT) Studio's first page reads devices, play time, favourite games, places and versions in one answer
+test('overview today summary: devices, minutes, favourite and left-early games, places by town, versions',async()=>{
+  const B='demo87654321',C='demo11112222';
+  const store=mem({...entries(ID,record({mins:30,games:{oanquan:4,maze:3},quits:{maze:2},hours:{'16':20,'17':10}}),info({loc:{city:'Sydney',region:'NSW',country:'AU'},build:'v1.03'})),
+    ...entries(B,record({mins:12,games:{oanquan:1},hours:{'9':5}}),info({first:DATE,loc:{city:'Ba Ria',region:'',country:'VN'},build:'v1.02'})),
+    ...entries(C,record({mins:0,games:{}}),info({first:'2026-10-01',build:'v1.03'}))});
+  const t=(await service(store,{catalogue}).overview(period)).today;
+  assert.equal(t.devicesInPeriod,2);assert.equal(t.minsInPeriod,42);assert.equal(t.busiestHour,16);
+  assert.deepEqual(t.topGames.map(g=>[g.id,g.starts]),[['oanquan',5],['maze',3]]);assert.equal(t.topGames[0].name.vi,'Ô Ăn Quan');
+  assert.deepEqual(t.leftEarly.map(g=>g.id),['maze']);
+  assert.deepEqual(t.places.map(p=>[p.city,p.country,p.devices]),[['Sydney','AU',1],['Ba Ria','VN',1]]);
+  assert.deepEqual(t.versions,{newest:'v1.03',onNewest:1,older:1});
+  for(const p of t.places)assert.deepEqual(Object.keys(p).sort(),['city','country','devices','region']);
+});
+
+test('device lists put the most-played devices first (owner, 30 Oct 2026 AEDT)',async()=>{
+  const read=service(mem({...entries('lite12345678',record({mins:5})),...entries('busy12345678',record({mins:90})),...entries('mid123456789',record({mins:30}))}));
+  assert.deepEqual((await read.devices(period)).devices.map(d=>d.id),['busy12345678','mid123456789','lite12345678']);
+});

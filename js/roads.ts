@@ -4,8 +4,9 @@
 import { THREE, toonVC, P, merge, outline } from './gfx.js';
 import { T, onLang } from './i18n.js';
 import { SFX } from './audio.js';
-import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox } from './world.js';
+import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox, PADDIES, PLOTS, plotBox } from './world.js';
 import { settings } from './state.js';
+import { remember } from './worldmemo.js';
 import { ROAD_TONES } from './content/map.js';
 // HARD RULE (owner, round 30): the steepest a road may climb: asphalt 8 %, dirt 12 % (checked by `roadshape`)
 export const ROAD_GRADE = { asphalt: .08, dirt: .12, footpath: .15 };
@@ -41,7 +42,7 @@ export function roadTexture(kind, tint = null, style = null) {
       g.fillStyle = '#e9e4d4'; g.fillRect(2, 0, 3, 256); g.fillRect(59, 0, 3, 256);
       g.fillStyle = style === 'vn' ? '#f2c230' : '#f6f1e4'; g.fillRect(30, 20, 4, 90); g.fillRect(30, 148, 4, 90); }
   } else {
-    g.fillStyle = '#c0764a'; g.fillRect(0, 0, 64, 256); // (round T4a, Concept D) Bà Rịa's warm red earth
+    g.fillStyle = style === 'outback' ? '#d9792e' : '#c0764a'; g.fillRect(0, 0, 64, 256); // (round T4a, Concept D) Bà Rịa's warm red earth; (#34) near Uluru the orange outback
     for (let i = 0; i < 700; i++) { g.fillStyle = Math.random() < .5 ? 'rgba(255,225,190,.12)' : 'rgba(90,40,20,.12)'; g.fillRect(Math.random() * 64, Math.random() * 256, 2 + Math.random() * 2, 2); }
     g.fillStyle = 'rgba(110,55,30,.28)'; g.fillRect(14, 0, 7, 256); g.fillRect(43, 0, 7, 256); // the two darker wheel tracks
     g.fillStyle = '#b9b0a0'; for (let y = 6; y < 256; y += 22) { g.fillRect(0, y, 3, 5); g.fillRect(61, y + 11, 3, 5); } // edging stones
@@ -83,10 +84,13 @@ function profile(R, world, pts, anchors = null) {
   const hw = R.w / 2, deck = [], apron = [], base = pts.map(([x, z], i) => {
     const [px, pz] = pts[Math.max(0, i - 1)], [nx, nz] = pts[Math.min(pts.length - 1, i + 1)], L = Math.hypot(nx - px, nz - pz) || 1, ux = -(nz - pz) / L, uz = (nx - px) / L;
     // a real bridge deck: the deck is well above the ground under it (near the ends the bank is the ground)
-    const d = deckAt(world, x, z), g0 = heightAt(x, z), onDeck = d != null && DECK_CORE && g0 < d - 1; deck.push(onDeck); if (onDeck) return d;
+    // (30 Oct AEDT, faster first start) the ground is asked only where its answer is used
+    const d = deckAt(world, x, z), onDeck = d != null && DECK_CORE && heightAt(x, z) < d - 1; deck.push(onDeck); if (onDeck) return d;
     // (Round U, owner: "different elevation when connecting roads or bridges") over the deck's apron at each end the road
     // is held at the deck's own height, so it meets the deck without a step (it keeps its bed: the ground follows it)
     if (d != null) { apron[i] = true; return d; }
+    // inside a village or city the level rule below sets this point, so the ground is not asked
+    if (levelAt(x, z) != null && riverDist(x, z) > 13 && !bridgeAt(x, z, 9, 12, 18)) return 0;
     let y = -1e9; for (const s of [-1, -.5, 0, .5, 1]) y = Math.max(y, heightAt(x + ux * hw * s, z + uz * hw * s)); return y;
   });
   // HARD RULE: inside a village or city the road runs at the place's own level (places are flat); on a bridge, on its deck
@@ -135,7 +139,13 @@ function ribbonGeo(R, pts, ys) {
 }
 // all roads: profiles, joints matched, road beds registered and switched on (the ground is reshaped), then the ribbons
 function buildRoads(G, mats) {
-  const { scene, world } = G, all = ROADS.map(R => { const pts = denseLine(R); return { R, pts, extraFix: new Map<number, number>(), jEnd: [false, false], ...profile(R, world, pts) }; });
+  // (owner, 30 Oct 2026 AEDT: "it loads too long") the finished heights of every road are kept on the device
+  // (js/worldmemo.ts): on the next start of the same build they are read back instead of worked out (about a third of
+  // the start-up time on a phone); the result is the same numbers, so the roads and the ground under them are the same
+  const lines = ROADS.map(R => denseLine(R)), memo = G.roadMemo;
+  const restored = Array.isArray(memo) && memo.length === ROADS.length && memo.every((k, i) => k && Array.isArray(k.ys) && k.ys.length === lines[i].length);
+  const { scene, world } = G, all = ROADS.map((R, i) => { const pts = lines[i], k = restored ? memo[i] : null; return { R, pts, extraFix: new Map<number, number>(), jEnd: k ? k.jEnd : [false, false], ...(k ? { ys: k.ys, deck: k.deck, apron: k.apron, fixed: k.fixed } : profile(R, world, pts)) }; });
+  if (!restored) {
   // a road whose end meets another road takes that road's exact surface height wherever the two overlap; its own
   // smooth, gentle profile is then worked out again around those fixed points (twice, so joints settle)
   const yOn = (B, x, z) => { let bd = 1e9, by = 0; for (let j = 0; j < B.pts.length - 1; j++) { const [ax, az] = B.pts[j], [bx, bz] = B.pts[j + 1], dx = bx - ax, dz = bz - az, t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz || 1))), d = Math.hypot(x - ax - dx * t, z - az - dz * t); if (d < bd) { bd = d; by = B.ys[j] + (B.ys[j + 1] - B.ys[j]) * t; } } return { d: bd, y: by }; };
@@ -173,6 +183,8 @@ function buildRoads(G, mats) {
     });
     if (anchors.size) Object.assign(A, profile(A.R, world, A.pts, anchors));
   });
+  remember('roads', all.map(A => ({ ys: A.ys, deck: A.deck, apron: A.apron, fixed: A.fixed, jEnd: A.jEnd })));
+  }
   const segs = [];
   for (const A of all) for (let i = 0; i < A.pts.length - 1; i++) if (!A.deck[i] && !A.deck[i + 1]) segs.push({ r: all.indexOf(A), tip: !!A.jEnd && ((A.jEnd[0] && i < 4) || (A.jEnd[1] && i > A.pts.length - 6)), first: i === 0, last: i === A.pts.length - 2, ax: A.pts[i][0], az: A.pts[i][1], bx: A.pts[i + 1][0], bz: A.pts[i + 1][1], ya: A.ys[i], yb: A.ys[i + 1], hw: A.R.w / 2 });
   setRoadBeds(segs); roadBedsOn(world, scene);
@@ -181,7 +193,10 @@ function buildRoads(G, mats) {
   // (round T2) one shared material per road colour, so tinting adds no draw calls of its own (round T4a: with the region's
   // markings: a yellow centre dash in Vietnam, kerbs in Australia)
   const toned = {}, matFor = R => { const t = R.kind === 'asphalt' && ROAD_TONES[R.tone]; if (!t) return mats[R.kind]; return toned[t] || (toned[t] = new THREE.MeshToonMaterial({ map: roadTexture('asphalt', t, R.tone === 'vn' || R.tone === 'au' ? R.tone : null), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })); };
-  for (const A of all) { const m = new THREE.Mesh(ribbonGeo(A.R, A.pts, A.ys), matFor(A.R)); m.receiveShadow = true; m.userData.road = true; scene.add(m); }
+  // (#34, Concept D) a dirt road out round Uluru is the orange-red of the outback, like the ground there (js/world.ts)
+  let outbackMat = null; const outback = pts => { const [x, z] = pts[Math.floor(pts.length / 2)] || [0, 0]; return x < -174 && z > -90; };
+  const matOf = A => A.R.kind === 'dirt' && outback(A.pts) ? outbackMat || (outbackMat = new THREE.MeshToonMaterial({ map: roadTexture('dirt', null, 'outback'), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })) : matFor(A.R);
+  for (const A of all) { const m = new THREE.Mesh(ribbonGeo(A.R, A.pts, A.ys), matOf(A)); m.receiveShadow = true; m.userData.road = true; scene.add(m); }
 }
 
 // HARD RULE: road edges are soft, with flowers growing alongside. A soft verge fades from the road into the grass on
@@ -233,10 +248,41 @@ export function plantRoadside(G) {
     for (const M of [stems, heads]) { M.computeBoundingSphere(); M.userData.noCam = true; scene.add(M); }
     groups.push({ meshes: [stems, heads], spots });
   });
+  // (#34, Concept D) along the main roads: red lamp posts and bougainvillea on the Vietnam side, orange lamp posts and gum
+  // trees on the Australian side; one merged mesh for each, so the draw calls stay the same
+  const lampVN = [], lampAU = [], bushes = [], gums = [];
+  // (check plots) never on a garden plot kept for a future building
+  const plotFree = (x, z, pad) => !PLOTS.some(P => { const B = plotBox(P); return x > B.x0 - pad && x < B.x1 + pad && z > B.z0 - pad && z < B.z1 + pad; });
+  lines.forEach((L, k) => {
+    const R = ROADS[k], n = L.pts.length; if (R.kind !== 'asphalt' || (R.tone !== 'vn' && R.tone !== 'au') || n < 12) return;
+    const hw = R.w / 2, vn = R.tone === 'vn'; let along = 0, nextLamp = 12, nextPlant = 20, side = 1;
+    for (let i = 1; i < n - 6; i++) {
+      along += Math.hypot(L.pts[i][0] - L.pts[i - 1][0], L.pts[i][1] - L.pts[i - 1][1]); if (i < 6 || L.deck[i]) continue;
+      const [px, pz] = L.pts[i - 1], [x, z] = L.pts[i], D = Math.hypot(x - px, z - pz) || 1, ux = -(z - pz) / D, uz = (x - px) / D;
+      const at = (o, sd, pad) => { const cx = x + ux * sd * o, cz = z + uz * sd * o; return edgeDist(cx, cz) >= 1.1 && riverDist(cx, cz) >= 5 && heightAt(cx, cz) > WATER + .5 && free(cx, cz, pad) && plotFree(cx, cz, pad) && roadDist(cx, cz).d > hw - .1 ? [cx, heightAt(cx, cz), cz] : null; };
+      if (along >= nextLamp) { const q = at(hw + 1.4, side, .6); if (q) { (vn ? lampVN : lampAU).push(q); world.colliders.push({ x: q[0], z: q[2], r: .22 }); nextLamp = along + 24; side = -side; } }
+      if (along >= nextPlant) { const q = at(hw + (vn ? 2.2 : 3.6), -side, vn ? .9 : 1.4); if (q) { (vn ? bushes : gums).push(q); world.colliders.push({ x: q[0], z: q[2], r: vn ? .5 : .45 }); nextPlant = along + (vn ? 34 : 46); } }
+    }
+  });
+  const place = (parts, list, mat) => { if (!list.length) return null; const all = []; list.forEach(([x, y, z], j) => parts.forEach(p => { const g = p.g.clone(); g.rotateY(j * 1.7); g.translate(x, y, z); all.push({ g, color: p.color }); })); const m = new THREE.Mesh(merge(all), mat); m.castShadow = true; m.userData.noSolid = true; scene.add(m); return m; }; // (their colliders keep children out; added after the solid map, they would change its saved copy's key)
+  const lampGeo = col => ([P(new THREE.CylinderGeometry(.07, .1, 4, 6), col, [0, 2, 0]), P(new THREE.CylinderGeometry(.05, .05, .9, 5), col, [.38, 3.9, 0], [0, 0, Math.PI / 2]),
+    P(new THREE.ConeGeometry(.22, .22, 8), col, [.8, 3.82, 0]), P(new THREE.SphereGeometry(.13, 8, 6), '#fff4c2', [.8, 3.68, 0]), P(new THREE.CylinderGeometry(.16, .2, .25, 6), '#7a7a7a', [0, .12, 0])]);
+  const bushGeo = ([P(new THREE.IcosahedronGeometry(.6, 1), '#4f8f3e', [0, .55, 0], [0, 0, 0], [1.2, .9, 1]), ...[[.35, .9, .2], [-.3, .85, -.25], [.05, 1.05, -.1], [-.2, .7, .4], [.4, .6, -.3]].map(([x, y, z]) => P(new THREE.IcosahedronGeometry(.2, 0), '#e0328c', [x, y, z]))]);
+  const gumGeo = ([P(new THREE.CylinderGeometry(.16, .28, 5.4, 6), '#e9e1d2', [0, 2.7, 0]), P(new THREE.CylinderGeometry(.09, .13, 2.2, 5), '#e9e1d2', [.6, 4.6, 0], [0, 0, -.6]),
+    ...[[0, 6, 0, 1.5], [1.3, 5.5, .4, 1.1], [-.9, 5.7, -.5, 1.2]].map(([a, b, c, r]) => P(new THREE.IcosahedronGeometry(r, 1), '#7a9a6a', [a, b, c]))]);
+  const solidMat = toonVC(); place(lampGeo('#b3261e'), lampVN, solidMat); place(lampGeo('#e07b26'), lampAU, solidMat); place(bushGeo, bushes, solidMat); place(gumGeo, gums, solidMat);
+  // (#34 Concept D, owner plan 30 Oct AEDT) paddy dikes (bờ ruộng): low earth paths along the rice terraces' steps (every 9 m)
+  // and across them, with shallow water glinting in each field; children walk along them (no solid, nothing to climb)
+  const dikes = [], pools = [], R = (PADDIES.r || 16) - 1.5, inside = (x, z) => Math.hypot(x - PADDIES.x, z - PADDIES.z) < R;
+  for (let k = -1; k <= 1; k++) { const z = PADDIES.z + k * 9, half = Math.sqrt(Math.max(0, R * R - (z - PADDIES.z) ** 2)); if (half > 2) dikes.push(P(new THREE.BoxGeometry(half * 2, .3, .7), '#a8834f', [PADDIES.x, Math.max(heightAt(PADDIES.x, z - .5), heightAt(PADDIES.x, z + .5)) + .1, z])); }
+  for (const zc of [-13.5, -4.5, 4.5, 13.5].map(o => PADDIES.z + o)) for (const x of [-8, 0, 8].map(o => PADDIES.x + o)) if (inside(x, zc - 4) && inside(x, zc + 4)) dikes.push(P(new THREE.BoxGeometry(.6, .26, 8.3), '#a8834f', [x, heightAt(x, zc) + .1, zc]));
+  for (let zc = PADDIES.z - 13.5; zc < PADDIES.z + 14; zc += 9) for (const xc of [-12, -4, 4, 12]) { const x = PADDIES.x + xc; if (!inside(x - 3.4, zc) || !inside(x + 3.4, zc) || !inside(x, zc - 3.8) || !inside(x, zc + 3.8)) continue; pools.push(P(new THREE.PlaneGeometry(7.2, 8.1), '#7cc3d6', [x, heightAt(x, zc) + .05, zc], [-Math.PI / 2, 0, 0])); }
+  if (dikes.length) { const m = new THREE.Mesh(merge(dikes), toonVC()); m.receiveShadow = true; m.userData.noSolid = true; scene.add(m); }
+  if (pools.length) { const m = new THREE.Mesh(merge(pools), toonVC({ transparent: true, opacity: .55, depthWrite: false })); m.userData.noSolid = true; scene.add(m); }
   // only roads near a player show their flowers
   let t0 = 0; world.updaters.push(dt => { if ((t0 -= dt) > 0) return; t0 = .5;
     for (const g of groups) { const S = g.meshes[0].boundingSphere, on = G.heroes.some(h => Math.hypot(h.pos.x - S.center.x, h.pos.z - S.center.z) < S.radius + 70); g.meshes.forEach(M => M.visible = on); } });
-  return { count: groups.reduce((a, g) => a + g.spots.length, 0) };
+  return { count: groups.reduce((a, g) => a + g.spots.length, 0), lamps: lampVN.length + lampAU.length, bushes: bushes.length, gums: gums.length, dikes: dikes.length, pools: pools.length };
 }
 
 // the welcome sign on a gate: big words that follow the language

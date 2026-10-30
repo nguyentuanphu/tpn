@@ -233,8 +233,9 @@ export function createHanoi(G, ctx: StoryContext) {
     bunca: () => ({ x: jobAt[0], z: jobAt[1] }),
     // (a big kid is pointed at the lake and reads the clue; an under-5 is pointed at the right spot)
     // (tester's notes, 12 Oct) a big kid's light shines on the nearest place still to look at (it shone on the shore,
-    // where nothing could be tapped); after the clue is found, on the shore again
-    clues: p => { if (p && !big(p)) return { x: lanternAt.x, z: lanternAt.z };
+    // where nothing could be tapped); after the clue is found, on the lantern by the stone turtle, where "Pick up the
+    // lantern" waits (#620 #647: it shone on the shore again, where there was nothing to tap)
+    clues: p => { if (p && (!big(p) || clueFound(p))) return { x: lanternAt.x, z: lanternAt.z };
       const h = G.heroes.find(x => x.profile === p), left = p && !clueFound(p) ? clueObjs.filter(c => !looked(p).includes(c.k)) : [];
       const c = h && left.length ? left.sort((a, b) => Math.hypot(a.x - h.pos.x, a.z - h.pos.z) - Math.hypot(b.x - h.pos.x, b.z - h.pos.z))[0] : left[0];
       return c ? { x: c.x, z: c.z } : { x: front.x, z: front.z }; },

@@ -20,7 +20,7 @@ const GAME_MUSIC = {
   cacuangua:'strategy',cuopco:'folk',meochuot:'folk',danhdao:'strategy',nemcon:'folk',keocua:'none',duathuyen:'none',
   music: 'none', firstwords: 'twinkle', tangram: 'think', snakes: 'party2', rangoli: 'twinkle',
   pattern: 'think', counting: 'twinkle', letters: 'twinkle', numbers: 'think', shapes: 'think', colors: 'twinkle', sorting: 'think', memory: 'twinkle',
-  hanoi: 'strategy', robot: 'strategy', maze: 'strategy', goat: 'folk', oanquan: 'strategy', caro: 'strategy', hopscotch: 'folk', tug: 'village2', mrwolf: 'folk', datnieu: 'folk', kite: 'fly', chichi: 'folk', sackrace: 'party2', cricket: 'village2', parcel: 'none', words: 'twinkle', snap: 'village2', tienlen: 'village2', tienlenbac: 'village2', oantuti: 'folk', nemlon: 'party2', familyquiz: 'twinkle', moreless: 'think', days: 'twinkle', bodyparts: 'twinkle', eggs: 'farm', sudoku: 'think', dacau: 'party2', chuyen: 'village2', dragon: 'folk', marbles: 'strategy', skipping: 'party2',
+  hanoi: 'strategy', robot: 'strategy', maze: 'strategy', goat: 'folk', blindtag: 'folk', oanquan: 'strategy', caro: 'strategy', hopscotch: 'folk', tug: 'village2', mrwolf: 'folk', datnieu: 'folk', kite: 'fly', chichi: 'folk', sackrace: 'party2', cricket: 'village2', parcel: 'none', words: 'twinkle', snap: 'village2', tienlen: 'village2', tienlenbac: 'village2', oantuti: 'folk', nemlon: 'party2', familyquiz: 'twinkle', moreless: 'think', days: 'twinkle', bodyparts: 'twinkle', eggs: 'farm', sudoku: 'think', dacau: 'party2', chuyen: 'village2', dragon: 'folk', marbles: 'strategy', skipping: 'party2',
   market: 'money', order: 'farm', sortout: 'money', bunny: 'farm', jigsaw: 'twinkle', oddone: 'pond', tower: 'think', duckmaze: 'pond',
   balloon: 'fly', bubbles: 'party2', tune: 'none',
   sayfind: 'twinkle', marketcount: 'money', soundhunt: 'twinkle',   // (r79 learning) the talk-and-touch games
@@ -73,28 +73,49 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
       <div class="gl-head">
         <button class="gl-x" aria-label="${T('Leave', 'Rời đi')}">✕</button>
         <div class="gl-title"><span class="gl-icon">${pic(def.icon)}</span><span>${esc(def.name())}</span></div>
-        <div class="gl-status"><div class="gl-dots"></div>
-          ${levelPick ? `<button class="gl-lvl" aria-label="${T('How hard', 'Độ khó')}">${esc(T(...(LEVELS.find(l => l[0] === levelPick.value) || LEVELS[0]).slice(1)))} ▾</button>` : ''}
-          <div class="starbox">⭐ <b>0</b></div>
-        </div>
+        <div class="gl-dots"></div>
         <button class="gl-how" aria-label="${T('How to play', 'Cách chơi')}">📺</button>
       </div>
-      <div class="gl-help"></div>
+      <!-- (owner, 30 Oct 2026 AEDT: "the upper part takes too much space") the level and stars share the guide's line;
+           the guide shows two short lines (tap for the rest, the voice says it all) so the game gets the room -->
+      <div class="gl-guide"><div class="gl-help"></div><div class="gl-status">
+          ${levelPick ? `<button class="gl-lvl" aria-label="${T('How hard', 'Độ khó')}">${esc(T(...(LEVELS.find(l => l[0] === levelPick.value) || LEVELS[0]).slice(1)))} ▾</button>` : ''}
+          <div class="starbox">⭐ <b>0</b></div>
+        </div></div>
       <div class="gl-stage"></div>
       <div class="mascot">🦉</div><div class="mascot-say"></div>`;
     dispatchEvent(new Event('sv-hide-caption')); document.body.appendChild(layer);
     const stage = layer.querySelector('.gl-stage'), dots = layer.querySelector('.gl-dots'), help = layer.querySelector('.gl-help');
+    help.addEventListener('click', () => help.classList.toggle('open'));
     const setHelp = (en, vi, capital = false) => {
       const before = help.offsetHeight, text = T(en, vi);
       help.textContent = capital ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+      help.classList.remove('open');
       // Retain the largest guidance height so selecting a piece cannot move its drop target.
       help.style.setProperty('--gl-guide-height', Math.max(before, help.offsetHeight) + 'px');
     };
     const cleanups = [];
+    // (owner, 30 Oct 2026 AEDT: "grow to fill" on tablets and computers) a game drawn small in the middle of a big screen
+    // grows to fill it: the stage zooms so its pieces take the room (at most 2.4x). Drawing games (a canvas) keep their
+    // size so a finger lands where it draws; phones keep today's layout.
+    const fit = () => {
+      if (closed || Math.min(innerWidth, innerHeight) < 600 || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
+      const z = parseFloat(stage.style.zoom) || 1, box = stage.getBoundingClientRect(), kids = [...stage.children].filter(e => e.tagName !== 'STYLE' && e.getBoundingClientRect().height > 0);
+      if (!kids.length) return;
+      const rs = kids.map(e => e.getBoundingClientRect()), w = (Math.max(...rs.map(r => r.right)) - Math.min(...rs.map(r => r.left))) / z, h = (Math.max(...rs.map(r => r.bottom)) - Math.min(...rs.map(r => r.top))) / z;
+      if (!w || !h) return;
+      const next = Math.max(1, Math.min(2.4, Math.min(box.width / w, box.height / h) * .9));
+      if (Math.abs(next - z) > .06) stage.style.zoom = String(Math.round(next * 100) / 100);
+    };
+    let fitTimer: ReturnType<typeof setTimeout> | undefined;
+    const fitSoon = () => { clearTimeout(fitTimer); fitTimer = setTimeout(fit, 120); };
+    const fitWatch = new MutationObserver(fitSoon); fitWatch.observe(stage, { childList: true });
+    addEventListener('resize', fitSoon); setTimeout(fit, 400);
+    cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitSoon); clearTimeout(fitTimer); });
     let closed = false, winning = false;
     const prevMusic = Music.key; Music.play(GAME_MUSIC[id] || 'think');
     const api = {
-      stage, level, players, two: players.length > 1, partnerName, T, el, online,
+      stage, level, difficulty: levelPick?.value || 'easy', players, two: players.length > 1, partnerName, T, el, online,
       little,   // under-5 mode: everything gentle, nobody can lose
       strong,   // computer opponents play to win (big kids on medium or hard)
       say: (en, vi) => { setHelp(en, vi, true); say(en, vi); },

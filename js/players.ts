@@ -196,6 +196,7 @@ export async function flush(closing) {
   try {
     const r = await fetch('/api/hello', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true });
     if (r.status !== 204) return false;
+    try { const n = r.headers.get('X-SV-Device-Name'); if (n) localStorage.setItem('sv2_devicename', decodeURIComponent(n).slice(0, 40)); else localStorage.removeItem('sv2_devicename'); } catch (e) { } // (owner, 30 Oct AEDT) the name given in Studio
     const now = readOut(); if (now.pending && now.pending.h === P.h) delete now.pending; writeOut(now);
     markSent(P.v); forgetVoiceMisses(P.v); lastSent = Date.now(); return true;
   } catch (e) { return false; } finally { sending = false; }

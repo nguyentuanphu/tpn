@@ -11,6 +11,9 @@ import { settings } from '../state.js';
 import { sayAsync, hush, spoken } from '../voice.js';
 import { pic } from '../art.js';
 import { shuffle, pick, el, wait, esc } from '../util.js';
+// (30 Oct 2026 AEDT) on a big screen the game's stage may be zoomed to fill it (js/games/frame.ts): a dragged tile
+// follows the finger in the stage's own units
+const stageZoom = (e: Element) => parseFloat(e.closest<HTMLElement>('.gl-stage')?.style.zoom || '') || 1;
 import { READ, nameOf, soundOf, wordsOf, bare, picWords, VI_MARKS } from '../content/reading.js';
 
 const lang = () => settings.lang === 'vi' ? 'vi' : 'en';
@@ -189,7 +192,7 @@ async function sounds(api, c) {
 function dragTap(tile, slotsEl, onPlace) {
   let sx = 0, sy = 0, moved = false, id = null;
   tile.addEventListener('pointerdown', e => { id = e.pointerId; sx = e.clientX; sy = e.clientY; moved = false; try { tile.setPointerCapture(id); } catch (x) { } });
-  tile.addEventListener('pointermove', e => { if (id !== e.pointerId) return; const dx = e.clientX - sx, dy = e.clientY - sy; if (!moved && Math.hypot(dx, dy) > 12) { moved = true; tile.classList.add('drag'); } if (moved) tile.style.transform = `translate(${dx}px, ${dy}px)`; });
+  tile.addEventListener('pointermove', e => { if (id !== e.pointerId) return; const dx = e.clientX - sx, dy = e.clientY - sy; if (!moved && Math.hypot(dx, dy) > 12) { moved = true; tile.classList.add('drag'); } if (moved) tile.style.transform = `translate(${dx / stageZoom(tile)}px, ${dy / stageZoom(tile)}px)`; });
   const end = e => {
     if (id !== e.pointerId) return; id = null;
     if (moved) { tile.classList.remove('drag'); tile.style.transform = ''; const b = slotsEl.getBoundingClientRect(); if (e.clientX > b.left - 30 && e.clientX < b.right + 30 && e.clientY > b.top - 60 && e.clientY < b.bottom + 60) onPlace(tile); }

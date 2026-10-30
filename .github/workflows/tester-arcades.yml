@@ -36,6 +36,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22.22.0
+      # The Studio step imports the Netlify functions, which need the root packages (pg), as in full-suite.yml
+      - name: Install root dependencies
+        run: npm ci --no-audit --no-fund
       - name: Install existing dependencies and browser
         working-directory: tests
         run: npm ci --no-audit --no-fund && npx playwright install --with-deps chromium

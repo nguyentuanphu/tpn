@@ -205,7 +205,7 @@ export function createSimple(G) {
         r.style.height = Math.max(0, L.h - 70) + 'px'; });
       // Ông Cú beside the one to try next
       const next = list.findIndex(x => x.max && !x.stars), nb = path.querySelector(`.sp-stop[data-k="${next >= 0 ? next : 0}"]`), owl = path.querySelector('.sp-owl');
-      if (nb) { nb.classList.add('next'); const pr = path.getBoundingClientRect(), br = nb.getBoundingClientRect(), x = br.left - pr.left + br.width / 2, y = br.top - pr.top + path.scrollTop; const left = x > W / 2; owl.style.left = x + (left ? -84 : 84) + 'px'; owl.style.top = y + 60 + 'px'; owl.classList.toggle('left', left); }
+      if (nb) { nb.classList.add('next'); const pr = path.getBoundingClientRect(), br = nb.getBoundingClientRect(), x = br.left - pr.left + br.width / 2, y = br.top - pr.top + path.scrollTop; const left = x > W / 2; owl.style.left = x + (left ? -96 : 96) + 'px'; owl.style.top = y + 60 + 'px'; owl.classList.toggle('left', left); }
       owl.onclick = () => { SFX.tap(); owl.classList.remove('cheer'); void owl.offsetWidth; owl.classList.add('cheer'); const x = list[next >= 0 ? next : 0]; if (x) say(x.voice[0], x.voice[1]); else { const t = tabOf(tab); say(t.say[0], t.say[1]); } };
       path.querySelectorAll('button.sp-stop').forEach(b => b.onclick = () => go(list[+b.dataset.k], b));
       restorePosition();
@@ -230,7 +230,7 @@ export function createSimple(G) {
     path.style.height = h + 'px'; path.style.width = isWide ? w + 'px' : '';
     // Ông Cú stands beside the one to try next, on the side with room, and points at it
     const owl = path.querySelector('.sp-owl'), q = L.pts[next >= 0 ? next : 0];
-    if (q) { const left = isWide ? false : q.x > W / 2, dx = isWide ? 0 : left ? -84 : 84; owl.style.left = q.x + dx + 'px'; owl.style.top = (isWide ? q.y - 96 : q.y) + 'px'; owl.classList.toggle('left', left); owl.classList.toggle('up', isWide); }
+    if (q) { const left = isWide ? false : q.x > W / 2, dx = isWide ? 0 : left ? -96 : 96; owl.style.left = q.x + dx + 'px'; owl.style.top = (isWide ? q.y - 96 : q.y) + 'px'; owl.classList.toggle('left', left); owl.classList.toggle('up', isWide); }
     owl.onclick = () => { SFX.tap(); owl.classList.remove('cheer'); void owl.offsetWidth; owl.classList.add('cheer'); const s = list[next >= 0 ? next : 0]; if (s) say(s.voice[0], s.voice[1]); };
     path.querySelectorAll('button.sp-stop').forEach(b => b.onclick = () => go(list[+b.dataset.k], b));
     restorePosition();
@@ -300,8 +300,7 @@ export function createSimple(G) {
       const p = hero().profile;
       m.innerHTML = `<div class="sp-scene">${SCENE}</div><div class="sp-top"><span class="sp-me">${p.photo ? `<img src="${p.photo}" alt="">` : pic('🙂')}<b>${esc(p.name)}</b></span>
         <button class="sp-back" hidden aria-label="${T('Back', 'Quay lại')}">${pic('⬅️')}<small>${T('Back', 'Quay lại')}</small></button>
-        <div class="sp-tools"><button class="sp-again" aria-label="${T('Say it again', 'Nói lại')}">${pic('🔊')}</button>
-        <button class="sp-sound" aria-label="${T('Sound on or off', 'Bật tắt âm thanh')}">${pic('🎵')}<small>${T('Sound', 'Âm thanh')}</small></button>
+        <div class="sp-tools"><button class="sp-sound" aria-label="${T('Sound on or off', 'Bật tắt âm thanh')}">${pic('🎵')}<small>${T('Sound', 'Âm thanh')}</small></button>
         <button class="sp-home" aria-label="${T('Home', 'Trang chủ')}">${pic('🏠')}<small>${T('Home', 'Trang chủ')}</small></button>
         <button class="grown sp-grown"><span class="ring"></span>${pic('⚙️')}<small>${T('Grown-ups: press and hold', 'Người lớn: nhấn giữ')}</small></button></div></div>
         <div class="sp-scroll"><div class="sp-path"></div></div>
@@ -313,7 +312,8 @@ export function createSimple(G) {
       m.querySelector('.sp-back').onclick = () => { if (busy) return; SFX.tap(); backToCards(); const x = tabOf(tab); say(x.say[0], x.say[1]); };
       m.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { if (busy) return; SFX.tap(); discover(false); tab = b.dataset.tab; cat = null; sel = null; draw(); const sc = m.querySelector('.sp-scroll'); sc.scrollTop = 0; sc.scrollLeft = 0; const x = TABS.find(y => y.key === tab); say(x.say[0], x.say[1]); });
       m.querySelector('.sp-sound').onclick = () => { SFX.tap(); G.openSound(); };   // (Round U) music, sounds and voice
-      m.querySelector('.sp-again').onclick = () => { SFX.tap(); const x = TABS.find(y => y.key === tab); say(x.say[0], x.say[1]); };
+      // (owner, 30 Oct 2026 AEDT: "the Simple screen looks very cramped") the top row keeps sound, home and grown-ups;
+      // "say it again" is the owl now (a tap on Ông Cú says it again)
       m.querySelector('.sp-discover').onclick = () => { if (busy) return; SFX.tap(); discover(!finding); if (finding) say('Where shall we go?', 'Mình đi đâu nào?'); };
       // Parent website: floating over this screen (js/website.ts), its Play button reads "Back to game" and closes it, so the
       // child is back where they were (owner, 24 Oct AEDT: a new tab started the whole game again from the Home Screen app)

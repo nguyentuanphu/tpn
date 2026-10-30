@@ -667,7 +667,17 @@ button { color: var(--text); }
 /* (r90, owner 24 Oct AEDT) the games still to unlock fold into one padlock tile, the ones held in Studio into "Coming soon" */
 .hcard.locked .hplay { opacity: .6; }
 .hcard.hfold .hplay, .hcard.hsoon .hplay { outline: 3px dashed rgba(255, 255, 255, .85); outline-offset: -8px; }
-.hcard.hsoon .hplay { color: #3b2a4f; } .hcard.hsoon .hplay b, .hcard.hfold .hplay b { text-shadow: none; }
+.hcard.hsoon .hplay { color: #3b2a4f; }
+.hsoonbar { display: block; width: 70%; height: 10px; margin: 6px auto 0; border-radius: 6px; background: rgba(255, 255, 255, .7); overflow: hidden; } .hsoonbar i { display: block; height: 100%; background: #ffb020; border-radius: 6px; }
+.hsoonbubble { grid-column: 1 / -1; position: relative; margin: 14px 8px 4px; padding: 12px 14px; background: #fff; border-radius: 28px; box-shadow: var(--shadow); color: #3b2a4f; animation: hsb-pop .35s cubic-bezier(.2, .9, .3, 1.3); }
+.hsoonbubble > p { margin: 0 0 6px; font-weight: 700; }
+.hsb-dot { position: absolute; background: #fff; border-radius: 50%; box-shadow: var(--shadow); } .hsb-dot.a { width: 18px; height: 18px; left: 28px; top: -16px; } .hsb-dot.b { width: 10px; height: 10px; left: 18px; top: -30px; }
+.hsb-games { display: flex; flex-wrap: wrap; gap: 6px 12px; } .hsb-games > span { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; min-height: 40px; } .hsb-games .hi .art { width: 30px; height: 30px; }
+@keyframes hsb-pop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hsoonbubble { animation: none; } }
+.hsoonlist { grid-column: 1 / -1; background: #fff; border-radius: 18px; padding: 10px 12px; box-shadow: var(--shadow); color: #3b2a4f; } .hsoonlist p { margin: 4px 0 8px; font-weight: 600; }
+.hsoonrow { display: flex; align-items: center; gap: 10px; min-height: 48px; border-top: 1px solid #eee4f7; } .hsoonrow .hi .art { width: 36px; height: 36px; } .hsoonrow b { flex: 1; }
+.hsoonstars { display: flex; gap: 2px; } .hsoonstars .art { width: 24px; height: 24px; } .hsoonrow.done { background: #f1fbea; border-radius: 10px; } .hsoonok { color: #2f9a5a; } .hcard.hsoon .hplay b, .hcard.hfold .hplay b { text-shadow: none; }
 .talecard.locked { opacity: .6; }
 .talecard.talefold, .talecard.talesoon { background: linear-gradient(160deg, #f1ebff, #ddd0ff); box-shadow: 0 4px 0 #a98ee8; outline: 3px dashed #fff; outline-offset: -7px; }
 .hplay b { font-size: 15px; text-shadow: 0 2px 0 rgba(0, 0, 0, .15); line-height: 1.15; text-align: center; } .hplay small { font-size: 11px; letter-spacing: 1px; }
@@ -1462,7 +1472,7 @@ body.calm .sv2 .tt-floaters i { animation: none; }
 .sv2 .logo.vi .logo-main { font-weight: 600; }
 .sv2 .logo.vi .logo-main { font-size: clamp(40px, 11vw, 96px); }
 /* narrow phones: the progress dots go on their own row under the title, so long game names stay readable */
-@media (max-width: 480px) { .gl-head { flex-wrap: wrap; row-gap: 4px; } .gl-dots { order: 5; flex-basis: 100%; justify-content: center; } }
+
 /* phones: Talk, Music and Sound sit in a small row under the clock (they don't fit in the dock) */
 .hud .tools { display: flex; gap: 6px; justify-content: center; margin-top: 6px; pointer-events: auto; }
 .hud .tools:empty { display: none; }
@@ -1530,6 +1540,8 @@ body.calm .sv2 .tt-floaters i { animation: none; }
 @keyframes pulse { 50% { transform: scale(1.08); } }
 .choice .tnum { display: block; font-size: clamp(22px, 6vw, 34px); font-weight: 800; line-height: 1.1; white-space: nowrap; }
 .choices:has(.tnum) .choice { min-width: 0; padding: 10px 12px; }
+/* (owner, 30 Oct 2026 AEDT: "5 giờ should be under the line") the words for the time always sit on their own line under the clock time */
+.choice:has(.tnum) { flex-direction: column; align-items: center; justify-content: center; gap: 2px; } .choice:has(.tnum) small { display: block; text-align: center; }
 /* shortcuts to each section of a long page (Grown-ups, Bag) */
 .jumpnav { position: sticky; top: -2px; z-index: 3; display: flex; gap: 6px; overflow-x: auto; padding: 8px 2px; margin: 4px 0 8px; background: inherit; backdrop-filter: blur(6px); scrollbar-width: none; }
 .jumpnav::-webkit-scrollbar { display: none; }
@@ -1943,7 +1955,9 @@ body.calm .rv-img.on { animation: none; }
 .tl-deck { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); pointer-events: none; z-index: 3; }
 .tl-deck .tl-card { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); }
 .tl-deck .tl-card:nth-child(2) { margin: -2px 0 0 2px; } .tl-deck .tl-card:nth-child(3) { margin: -4px 0 0 4px; }
-.tl-fly { position: absolute; z-index: 4; pointer-events: none; margin: calc(clamp(56px, 16vw, 78px) / -2) 0 0 calc(clamp(38px, 11vw, 54px) / -2); transition: transform .3s ease-out, opacity .3s ease-in; }
+.tl-fly { position: absolute; z-index: 4; pointer-events: none; margin: calc(clamp(56px, 16vw, 78px) / -2) 0 0 calc(clamp(38px, 11vw, 54px) / -2); transition: transform .4s cubic-bezier(.2, .7, .3, 1); box-shadow: 0 6px 14px rgba(40, 20, 70, .3); }
+.tl-deck.tl-shuffle .tl-card:nth-child(1) { animation: tl-riffle .26s ease-in-out infinite alternate; } .tl-deck.tl-shuffle .tl-card:nth-child(3) { animation: tl-riffle .26s ease-in-out infinite alternate-reverse; }
+@keyframes tl-riffle { from { transform: translate(-90%, -50%) rotate(-10deg); } to { transform: translate(-10%, -50%) rotate(10deg); } }
 @media (prefers-reduced-motion: reduce) { .tl-fly { transition: none; } }
 
 /* Oẳn tù tì with friends online (js/games/more.js rpsOnline): everyone's hand, shown together */
@@ -2746,18 +2760,26 @@ details.ocard.friends:not([open]) > summary::after { transform: rotate(-90deg); 
 .gl { overflow: hidden; }
 .gl-head, .gl-help { flex-shrink: 0; }
 .gl-stage { min-height: 0; overflow: auto; justify-content: flex-start; justify-content: safe center; }
-.gl-status { display: flex; align-items: center; gap: 12px; flex: none; }
-.gl-head .gl-status .starbox { position: static; margin: 0; font-size: 20px; }
-@media (max-width: 480px) {
-  .gl-head .gl-status { display: flex; align-items: center; gap: 8px; order: 5; flex-basis: 100%; width: 100%; }
-  .gl-status .gl-dots { flex: 1; flex-basis: auto; order: 0; justify-content: center; }
-  .gl-head .gl-status .starbox { position: static; flex: none; font-size: 18px; margin: 0; }
-}
+/* (owner, 30 Oct 2026 AEDT: "the upper part takes too much space, level and stars on the guide's line, the name may wrap")
+   one row for Leave, the name (two lines at most), the round dots and the film; one row for the guide (two lines,
+   tap for the rest) with the level and the stars beside it; everything else is the game's */
+.gl-head { flex-wrap: nowrap; }
+.gl-head .gl-dots { order: 0; flex: none; flex-basis: auto; gap: 4px; }
+.gl-head .gl-dots i { width: 12px; height: 12px; }
+.gl-title > span:last-child { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.gl-guide { display: flex; align-items: center; gap: 8px; padding: 0 12px; flex-shrink: 0; position: relative; z-index: 1; }
+.gl-guide .gl-help { flex: 1; min-width: 0; padding: 0; text-align: left; font-size: clamp(15px, 2.2vw, 20px); line-height: 1.25; min-height: min(var(--gl-guide-height, 1.25em), 2.5em); max-height: none;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+.gl-guide .gl-help.open { display: block; -webkit-line-clamp: unset; }
+.gl-status { display: flex; align-items: center; gap: 8px; flex: none; }
+.gl .gl-status .starbox { position: static; margin: 0; font-size: 18px; padding: 4px 12px; }
+@media (max-width: 480px) { .gl-guide .gl-help { font-size: 15px; } .gl-head .gl-x, .gl-head .gl-how { width: 46px; height: 46px; } .gl-head { padding: 8px 10px; } }
 
 .gl-title, .gl-title > span:last-child { min-width: 0; overflow-wrap: anywhere; }
 .gl-help { min-height: min(var(--gl-guide-height, 1.4em), 30vh); max-height: 30vh; overflow: auto; }
 .gl.little .gl-head .gl-x, .gl.little .gl-head .gl-how { width: 64px; height: 64px; }
-.gl.little .gl-head button { min-width: 64px; min-height: 64px; }
+.gl.little :is(.gl-head, .gl-status) button { min-width: 64px; min-height: 64px; }
+.gl.little .gl-head .gl-x, .gl.little .gl-head .gl-how { width: 64px; height: 64px; }
 .gl .choice.bt-piece { width: 64px; height: 64px; min-width: 64px; min-height: 64px; }
 .gl.little .choice.bt-piece { width: 80px; height: 80px; }
 .gl[data-game-id="shapebuilders"] .gl-stage { gap: 8px; padding: 8px; }
@@ -2991,9 +3013,12 @@ body:has(.modal:not(.out), .gl, .wardrobe, .audio-tray, .dialog:not(.out), .stor
 .gl .mc-basket { position: relative; }
 .gl .mc-basket > .mc-label { position: absolute; right: 10px; bottom: 8px; width: 40px; height: 40px; opacity: .55; pointer-events: none; }
 .gl .mc-basket > .mc-label .art { width: 100%; height: 100%; }
-/* (UX-001) learning games: the question line keeps the height of three lines; a longer explanation scrolls inside it, so
+/* (UX-001) learning games: the question line keeps one height (two lines since 30 Oct 2026 AEDT); a longer explanation scrolls inside it, so
    the board never moves when the words change */
-.gl.learn .gl-help { line-height: 1.3; height: calc(1.3em * 3); min-height: 0; max-height: none; overflow-y: auto; box-sizing: content-box; }
+.gl.learn .gl-help { line-height: 1.3; height: calc(1.3em * 2); min-height: 0; max-height: none; overflow: hidden; box-sizing: content-box; }
+/* (owner, 30 Oct 2026 AEDT: "the guide takes too much space, it should be short") two lines now, like every game; a tap
+   shows the rest over the board for a moment, and the voice reads it all */
+.gl.learn .gl-help.open { height: auto; position: relative; z-index: 3; background: rgba(255, 255, 255, .95); border-radius: 12px; padding: 4px 8px; box-shadow: var(--shadow); }
 /* (r78, after the release pictures: on a computer one line of story sat in a box built for four) wide screens fit about
    twice the words on a line, so the box keeps room for 2 lines of the story and 1 spoken line there; phones keep 3 + 1 */
 @media (min-width: 700px) { .theatre .th-text { height: calc(var(--thp) * 1.35 * 2 + var(--thm) * 1.35 + 4px + 16px); } }
@@ -3308,3 +3333,33 @@ select:not([multiple]), .modal select {
 /* Family Quiz keeps its larger, child-friendly controls inside the shared form theme. */
 .modal.family-questions :is(select, textarea, input:not([type]), input[type=text]) { min-height: 64px; }
 
+/* (owner, 30 Oct 2026 AEDT) chance moments are seen happening: js/games/reveal.ts */
+.sv-tumble { display: inline-block; animation: sv-tumble .3s linear infinite; }
+@keyframes sv-tumble { 0% { transform: rotate(0) translateY(0); } 25% { transform: rotate(90deg) translateY(-4px); } 50% { transform: rotate(180deg) translateY(0); } 75% { transform: rotate(270deg) translateY(-4px); } 100% { transform: rotate(360deg) translateY(0); } }
+.sv-landed { display: inline-block; animation: sv-landed .4s ease-out; }
+@keyframes sv-landed { 0% { transform: scale(1.35); } 60% { transform: scale(.92); } 100% { transform: scale(1); } }
+.sv-shake { display: inline-block; animation: sv-shake var(--sv-beat, 330ms) ease-in-out infinite; }
+@keyframes sv-shake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+.sv-shake-calm { opacity: .7; }
+.sv-rollin { animation: sv-rollin .8s cubic-bezier(.2, .9, .3, 1.2) both; }
+@keyframes sv-rollin { 0% { transform: translate(-120px, -40px) rotate(-540deg) scale(.6); opacity: 0; } 60% { transform: translate(8px, 0) rotate(20deg) scale(1.05); opacity: 1; } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .sv-rollin, .sv-tumble, .sv-shake { animation: none; } }
+/* (owner, 30 Oct 2026 AEDT: "the Simple screen on iPhone looks very cramped") round buttons without words on top (their
+   names stay for screen readers), the spoken line's caption at the bottom above the tabs instead of over the first game,
+   names wrapped to the width of their card, smaller cards on short phones */
+.sp-sound small, .sp-home small { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.sp-sound, .sp-home { border-radius: 50%; }
+body.touch:has(.simple-screen:not([hidden])) .caption { top: auto; bottom: calc(env(safe-area-inset-bottom) + 96px); }
+.simple-screen:not(.wide) .sp-name { max-width: min(var(--lw, 168px), 136px); font-size: 16px; }
+@media (max-height: 720px) { .simple-screen:not(.wide) .sp-pic { width: 88px; height: 88px; border-radius: 26px; } .simple-screen:not(.wide) .sp-pic .art, .simple-screen:not(.wide) .sp-pic .emo { width: 60px; height: 60px; font-size: 52px; } }
+/* (owner, 30 Oct 2026 AEDT) on a phone the coin goal sits under the clock: picture and count, 44 px to tap */
+.hud.small .hud-tr > .c-goal { height: 44px; min-width: 0; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .92); box-shadow: var(--shadow); font: inherit; font-size: 12px; font-weight: 700; color: var(--text); padding: 0 10px 0 4px; gap: 2px; display: inline-flex; align-items: center; pointer-events: auto; cursor: pointer; }
+.hud.small .hud-tr > .c-goal[hidden] { display: none; }
+.hud.small .hud-tr > .c-goal .art { width: 24px; height: 24px; }
+.hud.small .hud-tr > .c-goal.ready { background: #fff4c8; box-shadow: 0 0 0 2px #ffd23f, var(--shadow); animation: chipPulse 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .hud.small .hud-tr > .c-goal.ready { animation: none; } }
+/* (owner, 30 Oct 2026 AEDT) the companion's hats in the shop and the mirror: a later hat waits behind a lock */
+.kitem.locked, .wit.locked { opacity: .55; filter: grayscale(.5); }
+.kitem[data-pet], .wit[data-pet] { position: relative; }
+.kitem[data-pet] .klock, .wit[data-pet] .klock { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; }
+.kitem[data-pet] .klock .art, .wit[data-pet] .klock .art { width: 24px; height: 24px; }

@@ -58,3 +58,4 @@
 [data-fin-preview] { scroll-margin-top:24px; }
 [data-fin-history-result] { white-space:pre-wrap; overflow-wrap:anywhere; }
 .mg-editor input:not([type=checkbox]):not([type=radio]) { display:block; width:100%; min-height:44px; padding:9px 11px; border:1px solid var(--line); border-radius:10px; background:var(--bg); color:var(--ink); font:inherit; }
+.mg-device .mg-id-top { margin: -4px 0 8px; font-size: 12px; }

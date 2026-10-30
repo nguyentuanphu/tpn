@@ -1166,6 +1166,8 @@ await check('storyposes', async () => (await import('./story-pose-check.mts')).s
 
 await check('goatcircle', async () => (await import('./goat-browser.mts')).goatBrowserCheck(b));
 
+await check('gamespace', async () => (await import('./gamespace-browser.mts')).gameSpaceCheck(b));
+
 await check('installflow', async () => (await import('./install-browser.mts')).installFlowCheck(b));
 
 await check('installstudio', async () => (await import('./install-browser.mts')).installStudioCheck(b));
@@ -3293,6 +3295,8 @@ await check('friendgames', async () => {
       const G = __sv, wait = ms => new Promise(res => setTimeout(res, ms));
       const online = { mine: 0, names: ['Bé Na', 'Bé Bin'], seed: 'r63test', size: size || undefined, move() { }, next: () => new Promise(() => { }), onMove() { }, all: () => new Promise(() => { }) };
       G.playGameOnline(game, 2, online); await wait(2500);
+      // (30 Oct 2026 AEDT) the cards are dealt one at a time now: wait for the deal to finish (up to 8 s more)
+      if (game === 'tienlen') for (let k = 0; k < 40 && document.querySelectorAll('.tl-hand .tl-card').length < 13; k++) await wait(200);
       if (game === 'tienlen') { const opp = [...document.querySelectorAll('.tl-opp .tl-p b')].map(e => e.textContent), mine = document.querySelectorAll('.tl-hand .tl-card').length; return { opp, mine, text: document.body.textContent.includes('Anh Ba') || document.body.textContent.includes('Con Vật') }; }
       const cells = [...document.querySelectorAll('.caro-c')], w = cells.length ? cells[0].getBoundingClientRect().width : 0, wrap = document.querySelector('.caro-wrap');
       return { cells: cells.length, w, scrolls: !!wrap && wrap.scrollWidth > wrap.clientWidth, pageWide: document.documentElement.scrollWidth > innerWidth + 1 };
@@ -3350,7 +3354,8 @@ await check('gates', async () => {
   // gate on a road's end, from 8 m outside to 3 m inside (through the gate onto the square), along the road: nothing
   // solid stops them and the ground never steps more than 25 cm from one half metre to the next (a bridge deck on the way
   // is the `bridges` check's)
-  const P = await open(b, { w: 900, h: 640, play: false });
+  // (30 Oct AEDT) the solid map is made once a child plays (js/solids.js waits for play), so the check starts playing
+  const P = await open(b, { w: 900, h: 640 });
   await P.page.waitForFunction(() => __sv.world && __sv.world.solidAt, null, { timeout: 90000 });
   const r = await P.page.evaluate(async () => {
     const W = __sv.world, w = await import('/js/world.js'), M = await import('/js/content/map.js'), bad = []; let n = 0, worst = 0;
@@ -4062,8 +4067,9 @@ await check('houseguide', async () => {
     return { first, n1, seen, unpaused, help: !!help, again, n2: lines.length - n1, quiet, lines: lines.slice(0, 4), paused: G.paused };
   });
   const errs = P.errors; await P.ctx.close();
-  ok(r.first && r.n1 === 4 && r.seen && r.unpaused && r.help && r.again && r.n2 === 4 && r.quiet && !r.paused && r.lines.every(l => l.length > 20 && !/[✨]/.test(l)) && !errs.length, JSON.stringify(Object.assign(r, { errs })));
-  return '4 steps the first time in the house, not again on the next visit; the ❓ sign repeats them';
+  // (owner, 30 Oct 2026 AEDT) the guide has six steps now: moving things, the trophy board and the hammer for upgrades were added
+  ok(r.first && r.n1 === 6 && r.seen && r.unpaused && r.help && r.again && r.n2 === 6 && r.quiet && !r.paused && r.lines.every(l => l.length > 20 && !/[✨]/.test(l)) && !errs.length, JSON.stringify(Object.assign(r, { errs })));
+  return '6 steps the first time in the house, not again on the next visit; the ❓ sign repeats them';
 });
 
 await check('guide', async () => {
@@ -4382,7 +4388,7 @@ await check('ownertransportpov', async () => {
       h.place(i.x+2,i.z); window.__povBoard=i.act(h,G);
     }, {age,kind});
     if(kind!=='xichlo'){await P.page.locator('.dialog .dchoices button').first().click();await P.page.locator('.stoppick [data-next]').click();}
-    await P.page.evaluate(async()=>{await window.__povBoard; const G=__sv,h=G.heroes[0]; const sl=G.traffic.slots.find(s=>s.passenger===h); if(!sl)throw Error('Boarding failed'); sl.mover.wait=100; for(let k=0;k<90;k++)h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},k/60,G);});
+    await P.page.evaluate(async()=>{await window.__povBoard; const G=__sv,h=G.heroes[0]; const sl=G.traffic.slots.find(s=>s.passenger===h); if(!sl)throw Error('Boarding failed'); sl.mover.wait=100; const before=h.view||'follow'; for(let k=0;k<90;k++)h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},k/60,G); if((h.view||'follow')!==before)throw Error('A passenger ride changed the camera view (owner, 30 Oct AEDT: someone else drives, the usual camera stays): '+h.view);});
     // Synthetic targets prove the actual rendered sightline, not just camera coordinates.
     const r=await P.page.evaluate(async({age,kind})=>{
       const G=__sv,h=G.heroes[0],sl=G.traffic.slots.find(s=>s.passenger===h),{THREE}=await import('/js/gfx.js');
@@ -4461,6 +4467,7 @@ await check('ride', async () => {
     // drive a parked car
     const car = I.find(i => /^drive_/.test(i.id) && /car/i.test(i.label())); if (car) { h.place(car.x + 1, car.z); car.act(h, G); out.driving = !!h.riding && !!h.riding.vehicle;
       // (Round V, owner 13 Oct) the camera rides at the child's eyes, looking ahead
+      h.finish(1 / 60, 0, G, 0); out.streetFirst = h.view === 'street'; G.setView(0, 'follow', true); // (owner, 30 Oct 2026 AEDT) driving starts in Street view; Behind me is the rider's eyes
       for (let k = 0; k < 60; k++) h.finish(1 / 60, k / 60, G, 0); const eyeUp = h.cam.position.y - h.pos.y, eyeNear = Math.hypot(h.cam.position.x - h.pos.x, h.cam.position.z - h.pos.z); out.pov = eyeUp > .8 && eyeUp < 2.6 && eyeNear < 1.2;
       // drive it away and get off: (owner, 17 Oct AEDT, #354: "stay where left"; was: back once the child walked 20 m
       // away) it waits where it was left while the child is 40 m away, and goes back to its parking spot once every child
@@ -4503,7 +4510,7 @@ await check('ride', async () => {
   }, age);
   r.big = await bus('big'); r.little = await bus('little');
   const errs = P.errors; await P.ctx.close();
-  ok(r.drive >= 20 && r.bike >= 4 && r.rides >= 4 && r.stops >= 4 && !r.lift && r.driving && r.off && r.big.on && r.big.paid > 0 && r.little.on && r.little.paid === 0 && r.big.picks >= 3 && r.big.arrived && r.pov && r.carStays && r.carBack && r.buffHome && r.bridgeCount >= 10 && !r.bridges.length && !errs.length, JSON.stringify(Object.assign(r, { errs })));
+  ok(r.drive >= 20 && r.bike >= 4 && r.rides >= 4 && r.stops >= 4 && !r.lift && r.driving && r.streetFirst && r.off && r.big.on && r.big.paid > 0 && r.little.on && r.little.paid === 0 && r.big.picks >= 3 && r.big.arrived && r.pov && r.carStays && r.carBack && r.buffHome && r.bridgeCount >= 10 && !r.bridges.length && !errs.length, JSON.stringify(Object.assign(r, { errs })));
   return `${r.drive} parked cars and motorbikes to drive, ${r.bike} bicycles, ${r.rides} buses, trams and taxis to ride (big kid paid ${r.big.paid}, under-5 free), ${r.stops} bus stops, each stop a choice of ${r.big.picks} places and the child arrives there; the camera rides at the child's eyes; a car left behind waits where it was left and goes back to its spot once every child is far away; a buffalo runs home; a bicycle rides over all ${r.bridgeCount} bridges; no lifts from strangers`;
 });
 
@@ -4629,13 +4636,14 @@ await check('secondset', async () => {
     const out = {};
     C.releases = { ...(C.releases || {}), newGames: { on: false }, newStories: { on: false } };
     let body = await hub('learn');
-    out.offSoon = !!body.querySelector('[data-soon="game"]'); out.offNoNew = !plays(body).some(id => newIds.includes(id)); out.offNoFold = !body.querySelector('[data-fold]');
+    // (30 Oct 2026 AEDT) the Coming soon tile names its group now (data-soon="learn"), so it is found by its tile
+    out.offSoon = !!body.querySelector('.hsoon [data-soon]'); out.offNoNew = !plays(body).some(id => newIds.includes(id)); out.offNoFold = !body.querySelector('[data-fold]');
     out.offSimple = !A.gamesIn(F.GAMES, 'numbers', false).some(g => newIds.includes(g.id)); out.offTales = !__sv.TALES.some(t => Object.values(U.SECOND_SET_TALES).flat().includes(t.id));
     out.offShut = !U.isOpen({ unlockAll: true }, 'numline', 'game', 'numbers');
     body = await hub('tales'); out.offTaleSoon = !!body.querySelector('[data-soon="tale"]');
     C.releases.newGames = { on: true }; C.releases.newStories = { on: true }; p.unlockAll = false; p.admin = false;
     body = await hub('learn');
-    const fold = body.querySelector('[data-fold]'); out.onFold = !!fold; out.onHidden = !body.querySelector('.hcard.locked'); out.onNoSoon = !body.querySelector('[data-soon="game"]');
+    const fold = body.querySelector('[data-fold]'); out.onFold = !!fold; out.onHidden = !body.querySelector('.hcard.locked'); out.onNoSoon = !body.querySelector('.hsoon [data-soon]');
     fold?.click(); await wait(300); body = document.querySelector('.hubbody'); out.onShown = body.querySelectorAll('.hcard.locked').length;
     body = await hub('tales'); const tf = body.querySelector('[data-fold-tale]'); out.taleFold = !!tf; tf?.click(); await wait(300); out.taleShown = document.querySelectorAll('.hubbody .talecard.locked').length;
     await shut();
@@ -7611,6 +7619,45 @@ await check('oanquanrules', async () => {
   return `a two-player game finishes through ${result.taps} legal square/direction taps; autoplay waits while seeds move`;
 });
 
+// (owner, 30 Oct 2026 AEDT) the Vietnamese yellow cow beside the water buffalo: both are ridden, both swim across deep
+// water with the rider's head above it and climb out again; the cow has its own drawing
+await check('ridecowswim', async () => {
+  const P = await open(b, { w: 900, h: 640 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const G = __sv, h = G.heroes[0], Wm = await import('/js/world.js'), A = await import('/js/art.js'), W = G.world, L = Wm.LAKE, out = [];
+    const pad = { mx: 0, mz: 0, cdx: 0, cdy: 0, jump: () => false, act: () => false };
+    for (const animal of [W.cows[0], W.buffalo[0]]) {
+      G.paused = true; G.mount(h, animal);
+      let sx = L.x; for (let d = 0; d < 90; d++) if (Wm.heightAt(L.x + d, L.z) > Wm.WATER + .2) { sx = L.x + d + 3; break; }
+      h.pos.set(sx, Wm.heightAt(sx, L.z), L.z); h.goal = { x: L.x, z: L.z }; let deep = 0, low = 0, headLow = 0;
+      for (let k = 0; k < 900; k++) { h.update(1 / 60, pad, k / 60, G); if (Wm.heightAt(h.pos.x, h.pos.z) < Wm.WATER - 3) { deep++; if (h.pos.y < Wm.WATER - Wm.RIDE_SWIM - .01) low++; if (h.av.root.position.y + 1 < Wm.WATER) headLow++; } }
+      const far = Math.hypot(h.pos.x - L.x, h.pos.z - L.z); h.goal = { x: sx + 6, z: L.z }; for (let k = 0; k < 1200; k++) h.update(1 / 60, pad, k / 60, G);
+      out.push({ kind: animal.kind, riding: !!h.riding, deep, low, headLow, reached: far < 3, out: Wm.heightAt(h.pos.x, h.pos.z) > Wm.WATER });
+      h.dismount(); G.paused = false;
+    }
+    const labels = G.interactables.filter(i => /^(cow|buffalo)\d$/.test(i.id)).map(i => i.label());
+    return { rows: out, cows: W.cows.length, labels, cowArt: A.pic('🐄') !== A.pic('🐂') };
+  });
+  await P.ctx.close();
+  ok(r.cows >= 2 && r.labels.filter(l => /cow/i.test(l)).length >= 2 && r.cowArt, JSON.stringify(r));
+  ok(r.rows.every(x => x.riding && x.deep > 60 && !x.low && !x.headLow && x.reached && x.out), JSON.stringify(r.rows));
+  return r.rows.map(x => `${x.kind}: swam ${(x.deep / 60).toFixed(1)} s over deep water, head above it, out again`).join('; ');
+});
+// (owner, 30 Oct 2026 AEDT: "where do I manage accessories for companions?") the companion's hats in the shop and the mirror
+await check('companionhats', async () => {
+  const P = await open(b, { w: 390, h: 844, touch: true, lang: 'vi' }); await clear(P.page);
+  await P.page.evaluate(async () => { const G = __sv, h = G.heroes[0], S = await import('/js/state.js'); h.profile.lanterns = { ...(h.profile.lanterns || {}), companion: 'firefly', chapters: { ch1: true }, pet: { feeds: 0, hats: ['party'], hat: 'party' } }; S.farm.coins = 60; G.shop.openShop(0); });
+  await P.page.locator('[data-ptab]').click();
+  const locked = await P.page.locator('[data-pet="crown"]').isDisabled();
+  await P.page.locator('[data-pet="flower"]').click();
+  const bought = await P.page.evaluate(async () => { const p = __sv.heroes[0].profile, S = await import('/js/state.js'); return p.lanterns.pet.hats.includes('flower') && p.lanterns.pet.hat === 'flower' && S.farm.coins === 15; });
+  await P.page.locator('[data-go="wardrobe"]').click(); await P.page.locator('[data-pwtab]').click();
+  await P.page.locator('.wit[data-pet="flower"]').click(); const off = await P.page.evaluate(() => __sv.heroes[0].profile.lanterns.pet.hat == null);
+  await P.page.locator('.wit[data-pet="party"]').click(); const on = await P.page.evaluate(() => __sv.heroes[0].profile.lanterns.pet.hat === 'party');
+  const errors = P.errors.slice(); await P.ctx.close();
+  ok(locked && bought && off && on && !errors.length, JSON.stringify({ locked, bought, off, on, errors }));
+  return 'the shop sells the next hat (45 coins), later hats wait locked; the mirror takes a hat off and puts another on';
+});
 await check('ridingcamera', async () => (await import('./riding-camera.mts')).ridingCameraCheck(b));
 // (r89) the ten drawing games: auto play finishes each; buttons big enough on phone, tablet and computer
 await check('drawinggames', async () => (await import('./drawing-games.mts')).drawingGamesCheck(b));

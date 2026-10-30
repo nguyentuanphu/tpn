@@ -27,7 +27,16 @@ import(GAME + 'js/emojiswap.js').catch(() => { });
 // (owner, 10 Oct) the servers answer in English: in Vietnamese, every answer is shown in Vietnamese (studio/ui/vi.js)
 const say = m => LANG === 'vi' ? viMessage(m) : String(m ?? '');
 // e.raw keeps the server's own words (the Voices page looks at them to stop early)
-const api = async (p: string, body?: unknown) => { const r = await fetch(BASE + '/api/' + p, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Studio': '1' }, body: JSON.stringify(body) }); const j = await r.json().catch(() => ({})); if (r.status === 401 && j.signin) { signIn(); throw Object.assign(new Error(T('Please sign in.', 'Vui lòng đăng nhập.')), { signin: true }); } if (!r.ok) { const raw = String(j.error || r.status); throw Object.assign(new Error(say(raw)), { raw }); } return j; };
+// (owner, 30 Oct 2026 AEDT: "pages load slow") a management report read is kept for 30 seconds, so moving between Home,
+// People and Game, or choosing a period and back, does not ask the server again; any save and the Reload button clear it
+const READS = new Map<string, { at: number, value: Promise<any> }>(), READ_MS = 30e3;
+const api = (p: string, body?: unknown) => {
+  if (body !== undefined) { READS.clear(); return apiNow(p, body); }
+  if (!/^management\/(overview|devices|children|attention|activities)(\?|$)/.test(p)) return apiNow(p); // (the older Analytics report keeps its own day sums on the server and is always read fresh)
+  const hit = READS.get(p); if (hit && Date.now() - hit.at < READ_MS) return hit.value;
+  const value = apiNow(p); READS.set(p, { at: Date.now(), value }); value.catch(() => READS.delete(p)); return value;
+};
+const apiNow = async (p: string, body?: unknown) => { const r = await fetch(BASE + '/api/' + p, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Studio': '1' }, body: JSON.stringify(body) }); const j = await r.json().catch(() => ({})); if (r.status === 401 && j.signin) { signIn(); throw Object.assign(new Error(T('Please sign in.', 'Vui lòng đăng nhập.')), { signin: true }); } if (!r.ok) { const raw = String(j.error || r.status); throw Object.assign(new Error(say(raw)), { raw }); } return j; };
 // (owner, 10 Oct: "missing feedback after a save") the message is bigger, sits above the bar at the bottom of a phone,
 // stays 5 seconds (7 for a problem) and is green when something worked
 const toast: ((m: string, kind?: string) => void) & { t?: ReturnType<typeof setTimeout> } = (m, kind = '') => { const t = $('#toast'); t.textContent = m; t.className = 'on ' + kind; clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), kind === 'bad' ? 7000 : 5000); };
@@ -117,8 +126,8 @@ window.addEventListener('beforeunload', e => { if (unsaved()) { e.preventDefault
 // as big cards, one per page; on a phone the sections are a bar at the bottom, on a computer a column on the left.
 const SECTIONS = [
   { k: 'home', i: '🏠', en: 'Home', vi: 'Trang chủ', pages: ['home'] },
-  { k: 'people', i: '💛', en: 'People', vi: 'Người chơi', pages: ['people','managementchildren','managementdevices','managementdevice','players','children','familycode','album'] },
-  { k: 'game', i: '🎮', en: 'Game & website', vi: 'Game & web', pages: ['game','managementactivities','managementactivity','message','missions','quiz','stories','villagers','plots','releases','festivals','looks','path','music','map','photos','play','voices','ads','site'] },
+  { k: 'people', i: '💛', en: 'People', vi: 'Người chơi', pages: ['people','players','managementdevices','managementchildren','managementdevice','children','familycode','album'] },
+  { k: 'game', i: '🎮', en: 'Game & website', vi: 'Game & web', pages: ['game','releases','managementactivities','managementactivity','message','missions','quiz','stories','villagers','plots','festivals','looks','path','music','map','photos','play','voices','ads','site'] },
   { k: 'work', i: '🐞', en: 'Work', vi: 'Công việc', pages: ['work','managementattention','testers','managementrelease','managementchanges','managementoperations','lab','publish','check','management'] },
   { k: 'money', i: '🪙', en: 'Money', vi: 'Tài chính', pages: ['money','managementfinance'] },
   { k: 'setup', i: '⚙️', en: 'Settings', vi: 'Cài đặt', pages: ['settings','admins','security','accesslog'], utility: true }
@@ -209,7 +218,7 @@ function nav() {
   document.querySelectorAll<HTMLInputElement>('[data-t]').forEach(e => { const [en, vi] = e.dataset.t.split('|'); e.textContent = T(en, vi); });
   document.querySelectorAll<HTMLInputElement>('.lang button[data-l]').forEach(b => { b.classList.toggle('on', b.dataset.l === LANG); b.onclick = () => { if (b.dataset.l === LANG || !leaveOk()) return; LANG = b.dataset.l; localStorage.setItem('studioLang', LANG); render(); }; });
   if ($('#pub')) $('#pub').onclick = () => go('publish');
-  if ($('#reload')) $('#reload').onclick = () => { if (leaveOk()) render(true); };
+  if ($('#reload')) $('#reload').onclick = () => { if (leaveOk()) { READS.clear(); render(true); } };
   head();
 }
 // the status and the family's content are fetched once and kept while you move between pages (round K: online, every
@@ -354,7 +363,7 @@ for (const [page, kind] of Object.entries(MANAGEMENT_PAGES)) PAGES[page] = async
   const { renderManagement } = await import('./management.js');
   const query = Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''));
   const { id, ...filters } = query;
-  return renderManagement(P, { api, T, kind, id, query: filters, area:sectionOf(cur).k, online: INFO.online === true, can: permission => !INFO.online && ['management.configure','management.triage','operations.run'].includes(permission) ? false : CAN(permission),
+  return renderManagement(P, { api, T, kind, id, deviceName: (devId, label) => devTitle({ id: devId, label }), query: filters, area:sectionOf(cur).k, online: INFO.online === true, can: permission => !INFO.online && ['management.configure','management.triage','operations.run'].includes(permission) ? false : CAN(permission),
     go: (next, nextId, nextQuery) => {
       if (!leaveOk()) return;
       const target = Object.keys(MANAGEMENT_PAGES).find(k => MANAGEMENT_PAGES[k] === next);
@@ -368,7 +377,7 @@ for (const [page, kind] of Object.entries(MANAGEMENT_PAGES)) PAGES[page] = async
 for(const kind of ['home','people','game','work'] as const) PAGES[kind]=async P=>{
   const {renderOwnerDesk}=await import('./owner-desk.js');
   const section=sectionOf(kind),query=Object.fromEntries(new URLSearchParams(location.hash.split('?')[1]||''));
-  return renderOwnerDesk(P,kind,{T,api,can:CAN,canPage:canSee,info:INFO,query,
+  return renderOwnerDesk(P,kind,{T,api,can:CAN,deviceName:(devId,label)=>devTitle({id:devId,label}),canPage:canSee,info:INFO,query,
     tools:section.pages.filter(k=>k!==kind&&ABOUT[k]).map(key=>({key,icon:ABOUT[key][0],label:T(ABOUT[key][1],ABOUT[key][2]),description:T(ABOUT[key][3],ABOUT[key][4])})),
     go:(page,id,nextQuery)=>{
       if(!leaveOk())return;

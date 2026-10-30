@@ -29,7 +29,12 @@ export async function ridingCameraCheck(browser: Browser): Promise<string> {
           const current:string[]=[];h.riding.mesh.traverse(o=>{if(o instanceof THREE.Mesh)current.push(...points(o.geometry));});
           if(JSON.stringify(points(original).sort())!==JSON.stringify(current.sort()))throw Error('buffalo exterior geometry changed');original.dispose();
         }
-        const pad={mx:0,mz:0,cdx:0,cdy:0,jump:()=>false,act:()=>false};for(let k=0;k<180;k++)h.update(1/60,pad,k/60,G);
+        const pad={mx:0,mz:0,cdx:0,cdy:0,jump:()=>false,act:()=>false};h.update(1/60,pad,0,G);
+        // (owner, 30 Oct 2026 AEDT) getting on starts in Street view, the head stays under a car's roof; the rest of this
+        // check is of Behind me (the rider's eyes), which the child chooses with View
+        if(h.view!=='street')throw Error(`${age}/${kind}: getting on did not start in Street view (${h.view})`);
+        if(h.riding.vehicle?.cabin){const top=h.riding.vehicle.o.worldToLocal(new THREE.Box3().setFromObject(h.av.head).max.clone()).y;if(top>h.riding.vehicle.cabin.top)throw Error(`${age}/${kind}: head ${top.toFixed(2)} above the roof ${h.riding.vehicle.cabin.top.toFixed(2)}`);}
+        G.setView(0,'follow',true);for(let k=0;k<180;k++)h.update(1/60,pad,k/60,G);
         const restore=(h.riding.firstPersonHide||[]).map(o=>[o,o.visible] as const), {withRideView}=await import('../js/rideview.js');
         let renderFailed=false;try{withRideView(h,()=>{throw Error('render fixture');});}catch{renderFailed=true;}
         if(!renderFailed||restore.some(([o,visible])=>o.visible!==visible))throw Error('mount appearance not restored after render failure');

@@ -1,13 +1,14 @@
 [
   {
-    "nonTesterCannotOpenEither": true
+    "orchardStillTesterOnly": true,
+    "fruitBarPublicForNonTester": true
   },
   {
     "orchardLocalCoopCompletes": true
   },
   {
     "bilingualDeviceCaptures": 12,
-    "parentGateBeforeControls": true,
+    "familyModeChoiceNoAdultGate": true,
     "parentLocalSharedRound": true
   },
   {
@@ -19,5 +20,10 @@
   },
   {
     "orchardGuestNpcContinuationCompletes": true
+  },
+  {
+    "parentTwoBrowserSharedResult": true,
+    "parentNoChildSaveWrites": true,
+    "parentTemporaryDisconnectRetained": true
   }
 ]

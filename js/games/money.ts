@@ -51,7 +51,7 @@ body.calm .mg-pay.hint, body.calm .mg-jar.hint, body.calm .mg-shelf button.hint 
 .mg-jar .mg-coins { display: flex; flex-wrap: wrap; justify-content: center; gap: 1px; min-height: 22px; font-size: 20px; }
 .mg-env { font-size: clamp(56px, 14vw, 80px); line-height: 1; display: inline-flex; flex-direction: column; align-items: center; background: transparent; box-shadow: none; }
 .mg-env.open { opacity: .45; } .mg-env .mg-row { gap: 2px; } .mg-env .mg-cash { width: 40px; height: 40px; } .mg-env .mg-cash.note { width: 64px; height: 40px; }
-.mg-tet { font-size: 40px; display: flex; gap: 18px; justify-content: center; }
+.mg-tet { font-size: 40px; display: flex; gap: 18px; justify-content: space-between; width: min(320px, 90vw); margin: 0 auto; }
 .mg-list { display: flex; gap: 10px; padding: 8px 14px; background: #fffbe8; border: 2px solid #c9a05a; border-radius: 14px; font-size: clamp(36px, 9vw, 50px); }
 .mg-list .done { opacity: .35; }
 .mg-shelf { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 96vw; }

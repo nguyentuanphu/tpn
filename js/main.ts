@@ -61,6 +61,7 @@ import { createTraffic } from './traffic.js';
 import { RELEASES } from './content/releases.js';
 import { liveBoot, releaseNew, featureOn, releaseOn, liveRule, onLive, keptOn, markTried, triedFromSave, setPlayers, MONEY_GAMES } from './custom.js';
 import { cachedCanvas } from './worldcache.js';
+import { recall, preload } from './worldmemo.js';
 import { events } from './core/events.js';
 import { createPlaceBook } from './placebook.js';
 import { createFamilyCards } from './familycards.js';
@@ -150,7 +151,7 @@ const scene = new THREE.Scene();
   const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), .04).texture; pm.dispose();
 }
 // how long each start-up step takes (ms since this file began; tests/run.mjs "perf" and Grown-ups › Advanced read it)
-const BOOT0 = performance.now(), bootTimes = { start: Math.round(BOOT0) }, bootMark = k => { bootTimes[k] = Math.round(performance.now() - BOOT0); const steps = ['world', 'people', 'town', 'roads', 'pretraffic', 'traffic', 'things', 'wideland', 'levelled', 'roadside', 'solids', 'shaders', 'ready']; const n = steps.indexOf(k); if (n >= 0) window.svLaunchProgress?.(n + 1, steps.length, T(`Preparing the valley: ${n + 1}/${steps.length}`, `Chuẩn bị thung lũng: ${n + 1}/${steps.length}`)); };
+const BOOT0 = performance.now(), bootTimes: Record<string, number> = { start: Math.round(BOOT0) }, bootMark = k => { bootTimes[k] = Math.round(performance.now() - BOOT0); const steps = ['world', 'people', 'town', 'roads', 'pretraffic', 'traffic', 'things', 'wideland', 'levelled', 'roadside', 'solids', 'shaders', 'ready']; const n = steps.indexOf(k); if (n >= 0) window.svLaunchProgress?.(n + 1, steps.length, T(`Preparing the valley: ${n + 1}/${steps.length}`, `Chuẩn bị thung lũng: ${n + 1}/${steps.length}`)); };
 // (round R, faster launch) the title and "Who's playing?" show at once; the valley is built behind them in steps, with a
 // breath between steps so the screen keeps answering taps. Pressing Go before it is ready waits a moment (startWhenBuilt).
 let framesSeen = 0, framesDone = null; const firstFrames = new Promise(r => { framesDone = r; });
@@ -164,8 +165,12 @@ async function startWhenBuilt(mode, chosen) {
   startSession(mode, chosen);
 }
 document.getElementById('boot')?.remove();
-showTitle(async () => { await bootReady; showWho((mode, chosen) => startWhenBuilt(mode, chosen)); });
+// (owner, 30 Oct 2026 AEDT: "it loads too long") "Who's playing?" opens at the first tap; only Go waits for the valley,
+// with its progress bar (js/launch.js), and only when it is not built yet
+showTitle(async () => { showWho((mode, chosen) => startWhenBuilt(mode, chosen)); });
 await breathe();
+const roadMemo = recall('roads'); // (js/worldmemo.ts) read while the valley starts building
+await preload(); // (the ground's kept heights, needed by the first step)
 const world = createWorld(scene, quality); bootMark('world'); await breathe();
 // the map picture: read back from the device when this build painted it before (js/worldcache.js)
 const waterPic = cachedCanvas('water', 256, paintWater, bootReady); waterPic.onReady = () => world.waterMap(waterPic.canvas); // (round T4a) each river's colour and the foam along the shores
@@ -194,7 +199,7 @@ export interface SvMain {
   actCount: number; events: typeof events; settings: typeof settings; world: typeof world; scene: typeof scene; pads: typeof pads;
   heroes: SvHeroT[]; huds: Hud[]; mode: string; partner: unknown; zoom: number; fogMaps: Record<string, HTMLCanvasElement>;
   regionOf: (string | null)[]; interactables: SvItem[]; gatherState: Record<string, unknown>; bubbles: { s: THREE.Sprite, target: { pos: THREE.Vector3 }, until?: number }[];
-  paused?: boolean; lastPlayer?: number; firstFrames?: typeof firstFrames; renderer?: typeof renderer; npcs?: typeof NPCS;
+  paused?: boolean; lastPlayer?: number; firstFrames?: typeof firstFrames; whenPlaying?: Promise<void>; renderer?: typeof renderer; npcs?: typeof NPCS;
   halfBusy?: (i?: number) => boolean; quality?: typeof quality; battery?: { frameMs: number, titleMs: number, idleMs: number, idleFps: number, [k: string]: unknown };
   // places, people and things of the valley (each made by its own module)
   farm?: ReturnType<typeof createFarm>; ferries?: ReturnType<typeof createFerries>; festivals?: ReturnType<typeof createFestivals>;
@@ -209,6 +214,7 @@ export interface SvMain {
   coop?: ReturnType<typeof createCoop>; familyCards?: ReturnType<typeof createFamilyCards>; parents?: ReturnType<typeof import('./parents.js').createParents>;
   boxes?: ReturnType<typeof import('./boxes.js').createBoxes>; surprises?: ReturnType<typeof import('./surprises.js').createSurprises>; myHouse?: ReturnType<typeof createMyHouse> | null;
   solidsReady?: ReturnType<typeof buildSolids>;
+  roadMemo?: unknown; // the roads' heights kept from the last start of this build (js/worldmemo.ts, js/roads.js)
   // parts other modules add (js/homes.js, js/traffic.js, js/wayfind.js, js/autoplay.js, js/tester.js, js/fun.js, js/chatter.js, js/learn.js…)
   homes?: { list: SvHome[], enter(h: SvHeroT, home: SvHome): void, inside(): SvHome | null, isInside(h: SvHeroT): boolean, [k: string]: unknown }; traffic?: { apply(big: boolean): void, [k: string]: unknown };
   wayfind?: { open(i: number): void, stop(quiet?: boolean): void, [k: string]: unknown }; autoplay?: { running(): boolean, unmount(): void, [k: string]: unknown };
@@ -237,7 +243,7 @@ export interface SvMain {
   openPad?: (i: number, tab?: string) => void; closePad?: () => void; closePadNow?: () => void; openGamesHub?: (i: number) => void; openQuick?: (i: number) => void;
   openWardrobe?: (i: number) => void; openWhere?: (i: number) => void; openTrade?: (i: number, id?: string) => void; openSongs?: (start?: unknown) => void;
   openSound?: (anchor?: Element) => Promise<unknown>; openPlayTogether?: () => void; mapCard?: () => void; avatarPreview?: (i: number) => void;
-  rebuildHero?: (i: number) => void; changePlayer?: () => void; cycleView?: (i: number) => void; setView?: (i: number, id: string) => void;
+  rebuildHero?: (i: number) => void; changePlayer?: () => void; cycleView?: (i: number) => void; setView?: (i: number, id: string, quiet?: boolean) => void;
   zoomBy?: (i: number, f: number, quiet?: boolean) => void; snapshot?: (i: number, max?: number, q?: number) => string; screenFacts?: () => Record<string, unknown>;
   camBlockers?: () => THREE.Object3D[]; camBlockerMats?: () => unknown; farCull?: (now: number) => void; fogMapFor?: (p: { id: string }) => HTMLCanvasElement;
   setAudio?: (kind: string, on: boolean) => void; toggleAudio?: (kind: string) => void; toggleMute?: () => Promise<void>; voiceCommand?: (i: number) => void;
@@ -263,6 +269,9 @@ const G: SvMain = {
   fogMaps: {}, regionOf: [], interactables: [], gatherState: {}, bubbles: []
 };
 G.firstFrames = firstFrames; // (the valley has been drawn a few times: js/solids.js)
+// (the solid map's second look waits for play: on Welcome and Who's playing nothing in the valley moves yet, so animals and
+// cars standing still there were counted or not by timing, and the saved map was missed: check solid)
+let playStarted: () => void = () => {}; G.whenPlaying = new Promise<void>(r => { playStarted = r; });
 // (round R, owner) two children on one screen: each child's windows sit in their own half and pause only that child, so
 // the other keeps playing. With two halves "paused" means the half of whoever touched last (G.lastPlayer); alone it is a flag.
 let pausedFlag = false;
@@ -1577,7 +1586,7 @@ renderer.domElement.addEventListener('wheel', e => { const r = rects(), k = Math
 const VIEWS = [['follow', '🎥', 'Behind me', 'Sau lưng'], ['high', '🦅', 'High up', 'Trên cao'], ['street', '🏘️', 'Street view', 'Ngang phố'], ['face', '😊', 'My face', 'Mặt của con']];
 G.VIEWS = VIEWS;
 G.getViews = i => { const h = G.heroes[i], riding = h && (h.riding || (h.carry && h.state === 'sit')) && settings.ridePov !== false; return riding ? VIEWS.map(v => v[0] === 'follow' ? ['follow', v[1], 'Rider’s eyes', 'Qua mắt người cưỡi'] : v) : VIEWS; };
-G.setView = (i, id) => { const h = G.heroes[i]; if (!h) return; h.view = id; h.manualCamT = 0; const views = G.getViews(i), v = views.find(v => v[0] === id) || views[0]; G.huds[i] && G.huds[i].toast(v[1] + ' ' + T(v[2], v[3])); const b = G.huds[i] && G.huds[i].q('.z-view'); if (b) b.firstChild.textContent = v[1]; };
+G.setView = (i, id, quiet) => { const h = G.heroes[i]; if (!h) return; h.view = id; h.manualCamT = 0; const views = G.getViews(i), v = views.find(v => v[0] === id) || views[0]; !quiet && G.huds[i] && G.huds[i].toast(v[1] + ' ' + T(v[2], v[3])); const b = G.huds[i] && G.huds[i].q('.z-view'); if (b) { const k = b.querySelector('kbd'); b.innerHTML = pic(v[1]); if (k) b.append(k); } }; // (the button shows our drawing of the view: writing the emoji as text left it blank)
 G.cycleView = i => { const h = G.heroes[i]; if (!h) return; SFX.tap(); const k = VIEWS.findIndex(v => v[0] === (h.view || 'follow')); G.setView(i, VIEWS[(k + 1) % VIEWS.length][0]); };
 G.zoomBy = (i, f, quiet) => {
   const h = G.heroes[i]; if (!h) return;
@@ -1648,7 +1657,7 @@ function startSession(mode, chosen) {
   // (round R) the "New!" moment: something Studio released in the last few days, shown once to each child
   setTimeout(() => newMoment(G.heroes[0]), 4000);
   if (G.valleyGrew) setTimeout(grownMoment, 2500);
-  resize(); G.paused = false; playing = true; G.listenFriends();
+  resize(); G.paused = false; playing = true; playStarted(); G.listenFriends();
   // a note from the grown-ups (Sparkle Studio), once a day
   // (r81, owner 17 Oct AEDT) Studio's message is live: a new one that arrives while playing is shown too (once)
   { const familyMsg = () => { const M = CUSTOM.message, today = new Date().toDateString(), sig = M ? String(M.en || '') + '|' + String(M.vi || '') : '';
@@ -1873,7 +1882,7 @@ const walkedAway = () => {
 };
 onLang(() => G.huds.forEach(hd => hd.refreshWho && hd.refreshWho()));
 createAsia(G);
-bootMark('town'); createRoads(G); bootMark('roads'); await breathe();
+bootMark('town'); G.roadMemo = await roadMemo; createRoads(G); bootMark('roads'); await breathe();
 createCities(G);
 createHawkers(G);
 createSuburbs(G); // speciality buildings along the roads out of each city (before the homes are made)
@@ -1965,15 +1974,12 @@ bootMark('things'); widenFlatLand(world, scene); bootMark('wideland'); await bre
 createAds(G); // the family's own signboards (only when Sparkle Studio switched ads on)
 world.levelled = levelUnderBuildings(world, scene); bootMark('levelled'); await breathe();
 G.plots = createPlots(G); // (round T3) the Memory Villages' garden plots and the spare ones by each city, on their levelled ground
-G.reeds = createReeds(G); // (round T4a) reeds along the banks, water hyacinth in the quiet waters (two draws)
-world.roadside = plantRoadside(G); // soft road edges and flowers, once everything stands
 G.signposts = createSignposts(G); // (round T4b, js/signposts.js) a picture signpost at every road junction
-G.nameTags = createNameTags(G); // (round T4b, js/nametags.js) names float over the places nearby, at most 4
 bootMark('roadside'); G.solidsReady = buildSolids(G);
 // Later buildings can cover an authored collectible. Keep its stable pickup ID and
 // cooldown, but move the picture and interaction together onto nearby open ground.
 void G.solidsReady.then(() => {
-  for (const b of world.buffalo || []) {
+  for (const b of world.rideAnimals || world.buffalo || []) {
     if (b.rider) continue;
     const [x, z] = G.clearSpot(b.mesh.position.x, b.mesh.position.z, 1.1);
     b.mesh.position.set(x, heightAt(x, z), z); b.home = [x, z]; b.tx = x; b.tz = z;
@@ -2095,5 +2101,9 @@ import('./state.js').then(S => { if (S.restoredFromCopy) setTimeout(() => toast(
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (playing) keepSpot(); save(); hush(); } });
 addEventListener('pagehide', () => { if (playing) keepSpot(); saveProfiles(true); });
 bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
+// (owner, 30 Oct 2026 AEDT: "load where the child is first, then the rest while in game") what only decorates the valley
+// and nobody bumps into (reeds, flowers along the roads, the floating place names) is made just after the child can
+// start, a step at a time between frames, on the ground's final shape
+void (async () => { await breathe(); G.reeds = createReeds(G); await breathe(); world.roadside = plantRoadside(G); await breathe(); G.nameTags = createNameTags(G); bootTimes.decor = Math.round(performance.now() - BOOT0); })();
 // (owner, 16 Oct AEDT) no device contacts the family service unless Studio switches the trial on, or on a tester device
 { const refresh = () => (featureOn('familyDevices', false) || G.tester) ? import('./familydevices.js').then(m => m.refreshDevicePhotos()).catch(() => {}) : null; refresh(); addEventListener('online', refresh); setInterval(refresh, 60000); }

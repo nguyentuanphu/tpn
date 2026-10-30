@@ -5,6 +5,7 @@
 // production analytics clean.
 import { hello } from '../lib/players.mts';
 import { ipOf, ipKey, count } from '../lib/guard.mts';
+import { ID } from '../lib/hello-clean.mts';
 
 const blobs = () => import('@netlify/blobs').then(m => m.getStore({ name: 'players', consistency: 'strong' }));
 // (Analytics Telemetry Isolation, bot-3) synthetic bot runs never reach the real players' store: they land in
@@ -25,7 +26,10 @@ export const makeHello = ({ playersStore = blobs, botStore = botBlobs, guardStor
   // synthetic bot telemetry is written to its own bucket (sv2_bot_telemetry on the device), never the players' one
   const S = await (isBotHello(body) ? botStore() : playersStore());
   const ok = await hello(S, body, Date.now(), where, { ip }).catch(() => false);
-  return new Response(null, { status: ok ? 204 : 400 });
+  // (owner, 30 Oct 2026 AEDT: one device name across Studio and the game) the name the family gave this device in Studio
+  // goes back to the device, so its Settings shows the same name
+  const label = ok && body && ID.test(String(body.id || '')) ? await Promise.resolve(S.get('label/' + body.id)).catch(() => null) : null;
+  return new Response(null, { status: ok ? 204 : 400, headers: label ? { 'X-SV-Device-Name': encodeURIComponent(String(label).slice(0, 40)) } : {} });
 };
 export default makeHello();
 export const config = { path: '/api/hello' };

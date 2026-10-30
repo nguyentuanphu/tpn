@@ -60,11 +60,13 @@ function bodyOf(p, d) {
 
 // (r89, owner 23 Oct AEDT: "two-way sync") an issue Release or the owner closed on GitHub sets the problem's status in
 // Studio too: closed as done with a comment "Fixed in rNN" → fixed in rNN (the testers' devices then replay it); closed as
-// not planned → not a bug. The newest "Fixed in" or "came back" comment decides, so a problem that came back and was
+// not planned → not a bug; closed as a duplicate → duplicate. The newest "Fixed in" or "came back" comment decides, so a problem that came back and was
 // fixed again is fixed again. Nothing is set for an open issue, or one closed with no version named.
 export function statusFromIssue(iss: { state?: string, state_reason?: string | null }, comments: { body?: string }[]): { status?: string, fixedIn?: string } | null {
   if (iss.state !== 'closed') return null;
   if (iss.state_reason === 'not_planned') return { status: 'notbug' };
+  // (owner, 30 Oct 2026 AEDT) closed as a duplicate (the speed readings grouped under #36, repeats of one report) → duplicate
+  if (iss.state_reason === 'duplicate') return { status: 'dup' };
   for (const c of [...comments].reverse()) {
     const b = String(c.body || ''); if (/came back on/i.test(b)) return null;
     const m = /\bfixed in (r\d{1,4}(?:\.\d{1,2})?|v\d{1,2}\.\d{2})(?!\d|\.\d)/i.exec(b); if (m) return { fixedIn: m[1].toLowerCase() };

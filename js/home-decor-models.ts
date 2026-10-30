@@ -8,7 +8,10 @@ export function homeDecoration(key: string, icon: string, wall = false) {
   const cyl = (r:number,b:number,h:number,c:string,x=0,y=h/2,z=0) => parts.push(P(new THREE.CylinderGeometry(r,b,h,12),c,[x,y,z]));
   const picture = () => { const s=sprite(icon,wall?.85:.7);s.position.set(0,wall?0:1.05,.075);g.add(s); };
   if(wall) {
-    box(1.25,1.05,.12,'#b77952',0,0);box(1.08,.88,.14,'#fff9e9',0,0);picture();
+    // (owner, 30 Oct 2026 AEDT: "the wall hangings don't look right") a thin frame flat on the wall with the picture drawn
+    // on its face, not a box with a picture floating in front that turned to the camera
+    box(1.25,1.05,.05,'#b77952',0,0);box(1.08,.88,.06,'#fff9e9',0,0);
+    const face=sprite(icon,.8),flat=new THREE.Mesh(new THREE.PlaneGeometry(.8,.8),new THREE.MeshBasicMaterial({map:face.material.map,transparent:true}));flat.position.set(0,0,.04);flat.userData.roomShape=true;g.add(flat);
   } else if(key==='teddy') {
     ball(.34,'#c18a5e',0,.4);ball(.29,'#dca679',0,.91);
     for(const side of[-1,1]){ball(.12,'#b67c54',side*.23,1.12);ball(.14,'#c18a5e',side*.32,.52);ball(.17,'#b67c54',side*.2,.15);ball(.035,'#382644',side*.09,.95,.26);}

@@ -136,6 +136,8 @@ register({
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
+    // (#683, #686) auto play hops when the child's runner has landed, as a child would
+    api.plan(() => !place.includes(0) && air[0] <= 0 && btn.isConnected ? btn : null, { maxActions: 30 });
     await finished; if (api.closed) return; await wait(600);
     const p = place.indexOf(0) + 1;
     return api.win({ title: p === 1 ? T('You won the sack race!', 'Con về nhất cuộc đua bao bố!') : T(`You came ${p === 2 ? '2nd' : '3rd'}! What a hopper!`, `Con về ${p === 2 ? 'nhì' : 'ba'}! Nhảy giỏi quá!`) });

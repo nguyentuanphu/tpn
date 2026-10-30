@@ -40,15 +40,15 @@ export class Hud {
     const root = this.root = el('div', 'hud');
     root.innerHTML = `
       <div class="hud-tl">
-        <div class="pcard" role="button" aria-label="${T('Settings', 'Cài đặt')}"><img class="pav" alt=""><i class="pgear">${ICONS.gear}</i><div class="pinfo"><b class="pname"></b><div class="hearts"></div></div></div>
-        <div class="chips"><button class="chip c-money" data-chip="money" title="${T('Coins', 'Đồng xu')}"></button><button class="chip c-orbs" data-chip="orbs" title="${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}"></button><button class="chip c-leafy" data-chip="leafy" title="${T('Leafies', 'Bạn Lá')}"></button></div>
+        <div class="pcard" role="button" aria-label="${T('Settings', 'Cài đặt')}" data-l-aria-label="Settings|Cài đặt"><img class="pav" alt=""><i class="pgear">${ICONS.gear}</i><div class="pinfo"><b class="pname"></b><div class="hearts"></div></div></div>
+        <div class="chips"><button class="chip c-money" data-chip="money" title="${T('Coins', 'Đồng xu')}" data-l-title="Coins|Đồng xu"></button><button class="chip c-orbs" data-chip="orbs" title="${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}" data-l-title="Sparkle Orbs|Ngọc Lấp Lánh"></button><button class="chip c-leafy" data-chip="leafy" title="${T('Leafies', 'Bạn Lá')}" data-l-title="Leafies|Bạn Lá"></button></div>
         <div class="hud-btns">
-          <button class="simplesw" aria-label="${T('Big pictures screen', 'Màn hình hình to')}"><span>${ICONS.bigTiles}</span><b>${T('Big pictures', 'Hình to')}</b></button>
+          <button class="simplesw" aria-label="${T('Big pictures screen', 'Màn hình hình to')}" data-l-aria-label="Big pictures screen|Màn hình hình to"><span>${ICONS.bigTiles}</span><b><span data-l="Big pictures|Hình to">${T('Big pictures', 'Hình to')}</span></b></button>
         </div>
       </div>
       <div class="quest">
-        <button class="q-say" aria-label="${T('Hear the goal again', 'Nghe lại nhiệm vụ')}"><span class="q-icon">📍</span><span class="q-text"></span></button>
-        <button class="q-go">▶ ${T('Go', 'Đi')}<kbd class="kb">F</kbd></button>
+        <button class="q-say" aria-label="${T('Hear the goal again', 'Nghe lại nhiệm vụ')}" data-l-aria-label="Hear the goal again|Nghe lại nhiệm vụ"><span class="q-icon">📍</span><span class="q-text"></span></button>
+        <button class="q-go">▶ <span data-l="Go|Đi">${T('Go', 'Đi')}</span><kbd class="kb">F</kbd></button>
         <button class="q-fam" hidden></button>
       </div>
       <div class="hud-tr">
@@ -57,23 +57,23 @@ export class Hud {
         <button class="friendchip" hidden><span class="fc-arrow">➤</span><span class="fc-txt"></span><span class="fc-sig"></span></button>
         <div class="tools"></div>
       </div>
-      <div class="zoomer"><button class="z-tray" aria-expanded="false" aria-label="${T('View: zoom, camera and where', 'Xem: phóng to, góc nhìn và chỉ đường')}">${ICONS.view}<small>${T('View', 'Xem')}</small></button><div class="ztray"><button class="z-in" aria-label="${T('Zoom in', 'Phóng to')}">${ICONS.zoomIn}<kbd class="kb">+</kbd></button><button class="z-out" aria-label="${T('Zoom out', 'Thu nhỏ')}">${ICONS.zoomOut}<kbd class="kb">−</kbd></button><button class="z-view" aria-label="${T('Camera view', 'Góc nhìn')}">${pic('🎥')}<kbd class="kb">V</kbd></button><button class="z-where" aria-label="${T('Where is…? Show me the way', 'Ở đâu? Chỉ đường cho con')}" title="${T('Where is…?', 'Ở đâu?')}">${pic('🧭')}<kbd class="kb">Y</kbd></button></div></div>
+      <div class="zoomer"><button class="z-tray" aria-expanded="false" aria-label="${T('View: zoom, camera and where', 'Xem: phóng to, góc nhìn và chỉ đường')}" data-l-aria-label="View: zoom, camera and where|Xem: phóng to, góc nhìn và chỉ đường">${ICONS.view}<small><span data-l="View|Xem">${T('View', 'Xem')}</span></small></button><div class="ztray"><button class="z-in" aria-label="${T('Zoom in', 'Phóng to')}" data-l-aria-label="Zoom in|Phóng to">${ICONS.zoomIn}<kbd class="kb">+</kbd></button><button class="z-out" aria-label="${T('Zoom out', 'Thu nhỏ')}" data-l-aria-label="Zoom out|Thu nhỏ">${ICONS.zoomOut}<kbd class="kb">−</kbd></button><button class="z-view" aria-label="${T('Camera view', 'Góc nhìn')}" data-l-aria-label="Camera view|Góc nhìn">${pic('🎥')}<kbd class="kb">V</kbd></button><button class="z-where" aria-label="${T('Where is…? Show me the way', 'Ở đâu? Chỉ đường cho con')}" data-l-aria-label="Where is…? Show me the way|Ở đâu? Chỉ đường cho con" title="${T('Where is…?', 'Ở đâu?')}" data-l-title="Where is…?|Ở đâu?">${pic('🧭')}<kbd class="kb">Y</kbd></button></div></div>
       <div class="region"></div>
       <div class="htoast"></div>
       <canvas class="wheel" width="96" height="96"></canvas>
       <div class="dock">
-        <button class="dk games" aria-label="${T('Play: games, festivals, stories and songs', 'Vui chơi: trò chơi, lễ hội, truyện và bài hát')}"><span>${ICONS.games}</span><small>${T('Play', 'Vui chơi')}</small><kbd class="kb">G</kbd></button>
-        <button class="dk map"><span>${ICONS.map}</span><small>${T('Map', 'Bản đồ')}</small><kbd class="kb">M</kbd></button>
-        <button class="dk bag"><span>${ICONS.bag}</span><small>${T('Bag', 'Ba lô')}</small><kbd class="kb">B</kbd></button>
-        <button class="dk voicecmd" hidden><span>${ICONS.ask}</span><small>${T('Ask', 'Hỏi')}</small><kbd class="kb">K</kbd></button>
-        <button class="dk chat"><span>${ICONS.talk}</span><small>${T('Talk', 'Nói')}</small><kbd class="kb">T</kbd></button>
-        <button class="dk call" hidden><span>${ICONS.callOff}</span><small>${T('Mic off', 'Micrô tắt')}</small><kbd class="kb">C</kbd></button>
-        <button class="dk mus" hidden><span>${ICONS.music}</span><small>${T('Music', 'Nhạc')}</small><kbd class="kb">N</kbd></button>
-        <button class="dk snd"><span>${ICONS.sound}</span><small>${T('Sound', 'Tiếng')}</small><kbd class="kb">O</kbd></button>
+        <button class="dk games" aria-label="${T('Play: games, festivals, stories and songs', 'Vui chơi: trò chơi, lễ hội, truyện và bài hát')}" data-l-aria-label="Play: games, festivals, stories and songs|Vui chơi: trò chơi, lễ hội, truyện và bài hát"><span>${ICONS.games}</span><small><span data-l="Play|Vui chơi">${T('Play', 'Vui chơi')}</span></small><kbd class="kb">G</kbd></button>
+        <button class="dk map"><span>${ICONS.map}</span><small><span data-l="Map|Bản đồ">${T('Map', 'Bản đồ')}</span></small><kbd class="kb">M</kbd></button>
+        <button class="dk bag"><span>${ICONS.bag}</span><small><span data-l="Bag|Ba lô">${T('Bag', 'Ba lô')}</span></small><kbd class="kb">B</kbd></button>
+        <button class="dk voicecmd" hidden><span>${ICONS.ask}</span><small><span data-l="Ask|Hỏi">${T('Ask', 'Hỏi')}</span></small><kbd class="kb">K</kbd></button>
+        <button class="dk chat"><span>${ICONS.talk}</span><small><span data-l="Talk|Nói">${T('Talk', 'Nói')}</span></small><kbd class="kb">T</kbd></button>
+        <button class="dk call" hidden><span>${ICONS.callOff}</span><small><span data-l="Mic off|Micrô tắt">${T('Mic off', 'Micrô tắt')}</span></small><kbd class="kb">C</kbd></button>
+        <button class="dk mus" hidden><span>${ICONS.music}</span><small><span data-l="Music|Nhạc">${T('Music', 'Nhạc')}</span></small><kbd class="kb">N</kbd></button>
+        <button class="dk snd"><span>${ICONS.sound}</span><small><span data-l="Sound|Tiếng">${T('Sound', 'Tiếng')}</span></small><kbd class="kb">O</kbd></button>
       </div>
       <button class="act" hidden><span class="ai"></span><span class="al"></span><kbd class="kb">E</kbd></button>
       <div class="hud-br">
-        <div class="moves"><button class="mv run">${ICONS.run}<small>${T('Run', 'Chạy')}</small><kbd class="kb">Shift</kbd></button><button class="mv jump">${ICONS.jump}<small>${T('Jump', 'Nhảy')}</small><kbd class="kb">Space</kbd></button></div>
+        <div class="moves"><button class="mv run">${ICONS.run}<small><span data-l="Run|Chạy">${T('Run', 'Chạy')}</span></small><kbd class="kb">Shift</kbd></button><button class="mv jump">${ICONS.jump}<small><span data-l="Jump|Nhảy">${T('Jump', 'Nhảy')}</span></small><kbd class="kb">Space</kbd></button></div>
       </div>
       <div class="emotes" hidden></div>
       <button class="bigprompt" hidden></button>`;
@@ -173,7 +173,14 @@ export class Hud {
     root.style.setProperty('--quest-below-top', (nav.offsetTop + nav.offsetHeight + 12) + 'px');
     root.classList.toggle('quest-below-nav', !quest.classList.contains('fold') && root.clientWidth - reserve < 180);
   }
-  refreshWho() { const p = this.hero.profile, av = this.q('.pav'); if (av instanceof HTMLImageElement) av.src = avatarURL(p); this.q('.pname').textContent = nm(p.name); this.q('.pname').classList.toggle('starname', !!(p.look && p.look.star)); } // (owner, 12 Oct: this week's star tester gets a gold star by the name)
+  // (owner, 30 Oct 2026 AEDT: "changing to English still shows Xem") the bar's words are written once when it is made;
+  // each carries both languages (data-l "en|vi", data-l-aria-label, data-l-title) and is rewritten when the language changes
+  relabel() {
+    const pick = (v: string) => { const [en, vi] = v.split('|'); return T(en, vi); };
+    this.root.querySelectorAll<HTMLElement>('[data-l]').forEach(e => { e.textContent = pick(e.dataset.l || ''); });
+    for (const at of ['aria-label', 'title']) this.root.querySelectorAll<HTMLElement>(`[data-l-${at}]`).forEach(e => e.setAttribute(at, pick(e.getAttribute(`data-l-${at}`) || '')));
+  }
+  refreshWho() { this.relabel(); const p = this.hero.profile, av = this.q('.pav'); if (av instanceof HTMLImageElement) av.src = avatarURL(p); this.q('.pname').textContent = nm(p.name); this.q('.pname').classList.toggle('starname', !!(p.look && p.look.star)); } // (owner, 12 Oct: this week's star tester gets a gold star by the name)
   toggleEmotes(v?: boolean) { const e = this.q('.emotes'); e.hidden = v == null ? !e.hidden : !v; }
   layout(r: HudRect, two?: boolean) {
     Object.assign(this.root.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px', height: r.h + 'px', transform: r.rot ? `rotate(${r.rot}deg)` : '' });

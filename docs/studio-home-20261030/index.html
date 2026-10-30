@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio Home Mock-up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #fbf7ff; --card: #ffffff; --ink: #3b2a4f; --soft: #7a6a8f; --line: #e6dcf5; --accent: #8a5cf6; --accent2: #ff7eb8; --ok: #2f9a5a; --bad: #d2232a; --warn: #c98a00; --okbg: #e9f7ee; --warnbg: #fff6dc; --badbg: #fdeaea; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #1b1626; --card: #251e33; --ink: #f2ecff; --soft: #b9aed0; --line: #3a3150; --accent: #a98bff; --accent2: #ff8ec4; --okbg: #1f3a2a; --warnbg: #3a3018; --badbg: #3d1f24; } }
+:root[data-theme="dark"] { --bg: #1b1626; --card: #251e33; --ink: #f2ecff; --soft: #b9aed0; --line: #3a3150; --accent: #a98bff; --accent2: #ff8ec4; --okbg: #1f3a2a; --warnbg: #3a3018; --badbg: #3d1f24; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.4 'Fredoka', 'Segoe UI', system-ui, sans-serif; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 16px; }
+.note { font-size: 13px; color: var(--soft); }
+header { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+h1 { font-size: 22px; margin: 0; font-weight: 600; }
+h2 { font-size: 17px; margin: 0 0 8px; font-weight: 600; }
+.pill { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 13px; background: var(--line); }
+.pill.ok { background: var(--okbg); color: var(--ok); } .pill.warn { background: var(--warnbg); color: var(--warn); } .pill.bad { background: var(--badbg); color: var(--bad); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+.grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 760px) { .grid.two { grid-template-columns: 1fr 1fr; } .grid.three { grid-template-columns: 1fr 1fr 1fr; } }
+.health { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.tiles { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 12px; }
+@media (min-width: 760px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.tile b { display: block; font-size: 28px; font-weight: 600; line-height: 1.1; }
+.tile span { font-size: 13px; color: var(--soft); }
+ul.list { list-style: none; margin: 0; padding: 0; }
+ul.list li { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); min-height: 44px; align-items: center; }
+ul.list li:first-child { border-top: 0; }
+.bar { height: 8px; border-radius: 4px; background: var(--accent); }
+.barrow { background: var(--line); border-radius: 4px; }
+ul.games li { display: grid; grid-template-columns: 9em 1fr 3em; gap: 10px; }
+ul.games li > span:last-child { text-align: right; }
+.dev { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 10px 0; border-top: 1px solid var(--line); }
+.dev:first-child { border-top: 0; }
+.dev .name { font-weight: 600; }
+.dev .meta { font-size: 13px; color: var(--soft); grid-column: 1 / -1; }
+.todo li a { color: var(--accent); text-decoration: none; font-weight: 500; }
+.spark { width: 100%; height: 56px; display: block; }
+.mt { margin-top: 12px; }
+.legend { font-size: 13px; color: var(--soft); margin: 4px 0 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="note">Mock-up for the owner, 30 Oct 2026 AEDT. Sample numbers, not real data. Studio shows every label in English and Tiếng Việt.</p>
+
+  <header>
+    <h1>Today in Sparkle Valley</h1>
+    <span class="note">Updated 9:42 am AEDT · opens from a running summary, about 1 second</span>
+  </header>
+
+  <!-- 1. health: one line -->
+  <div class="health">
+    <span class="pill ok">Live v1.03 · since 30 Oct 6:16 am</span>
+    <span class="pill ok">11 of 14 devices updated</span>
+    <span class="pill warn">3 devices still on v1.02</span>
+    <span class="pill bad">1 device could not finish loading</span>
+  </div>
+
+  <!-- 2. the numbers -->
+  <div class="tiles">
+    <div class="card tile"><b>9</b><span>devices played today</span></div>
+    <div class="card tile"><b>14</b><span>this week · 18 in 30 days</span></div>
+    <div class="card tile"><b>2</b><span>new devices this week · 23 ever</span></div>
+    <div class="card tile"><b>6 h 40 m</b><span>played this week · about 28 m a device a day</span></div>
+  </div>
+
+  <div class="grid two">
+    <!-- 3. waiting on you -->
+    <div class="card">
+      <h2>Waiting on you</h2>
+      <ul class="list todo">
+        <li><span>2 new tester reports</span><a href="#">Open</a></li>
+        <li><span>1 family photo to approve</span><a href="#">Open</a></li>
+        <li><span>Festival: Lantern night starts in 4 days</span><a href="#">Check</a></li>
+      </ul>
+    </div>
+
+    <!-- 4. problems in plain words -->
+    <div class="card">
+      <h2>Problems since v1.03</h2>
+      <ul class="list">
+        <li><span><b>Bé Na's iPad</b> could not finish loading twice (iPad Air 2, iPadOS 15)</span><span class="pill bad">Look</span></li>
+        <li><span><b>Kitchen tablet</b> runs slowly, about 22 frames a second</span><span class="pill warn">Tip</span></li>
+        <li><span>3 devices still on v1.02: open the game with the internet on</span><span class="pill warn">Wait</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid two mt">
+    <!-- 5. play time -->
+    <div class="card">
+      <h2>Minutes played, last 30 days</h2>
+      <svg class="spark" viewBox="0 0 300 56" preserveAspectRatio="none" aria-label="Minutes played each day for 30 days">
+        <polyline fill="none" stroke="var(--accent2)" stroke-width="3" stroke-linejoin="round" points="0,44 10,40 20,46 30,38 40,30 50,34 60,26 70,40 80,36 90,28 100,22 110,30 120,24 130,34 140,20 150,26 160,18 170,24 180,30 190,22 200,16 210,24 220,20 230,14 240,22 250,18 260,12 270,20 280,10 290,14 300,8"/>
+      </svg>
+      <p class="legend">Today 1 h 52 m · this week 6 h 40 m · busiest time 4 to 6 pm</p>
+    </div>
+
+    <!-- 6. where they play -->
+    <div class="card">
+      <h2>Where they play</h2>
+      <ul class="list">
+        <li><span>Sydney, NSW, AU</span><span>6 devices</span></li>
+        <li><span>Bà Rịa, VN</span><span>4 devices</span></li>
+        <li><span>Brisbane, QLD, AU</span><span>2 devices</span></li>
+        <li><span>Hồ Chí Minh, VN</span><span>2 devices</span></li>
+      </ul>
+      <p class="legend">Town and country from the internet connection, never an address.</p>
+    </div>
+  </div>
+
+  <div class="grid two mt">
+    <!-- 7. favourite games -->
+    <div class="card">
+      <h2>Favourite games this week</h2>
+      <ul class="list games">
+        <li><span>Fruit Bar</span><span class="barrow"><span class="bar" style="display:block;width:100%"></span></span><span>74 m</span></li>
+        <li><span>Ô Ăn Quan</span><span class="barrow"><span class="bar" style="display:block;width:70%"></span></span><span>52 m</span></li>
+        <li><span>Drive the truck</span><span class="barrow"><span class="bar" style="display:block;width:55%"></span></span><span>41 m</span></li>
+        <li><span>Saving Goal</span><span class="barrow"><span class="bar" style="display:block;width:38%"></span></span><span>28 m</span></li>
+        <li><span>Cờ Cá Ngựa</span><span class="barrow"><span class="bar" style="display:block;width:30%"></span></span><span>22 m</span></li>
+      </ul>
+      <h2 class="mt">Started but rarely finished</h2>
+      <ul class="list">
+        <li><span>Echo the Beat</span><span>9 starts · 2 finished</span></li>
+        <li><span>Pay for the Bus</span><span>6 starts · 1 finished</span></li>
+      </ul>
+      <p class="legend">A game children leave early may be too hard, unclear or broken.</p>
+    </div>
+
+    <!-- 8. devices with names -->
+    <div class="card">
+      <h2>Devices</h2>
+      <div class="dev"><span class="name">Bé Na's iPad</span><span class="pill ok">playing now</span><span class="meta">Tablet · v1.03 · Sydney, AU · 2 children · 41 m today</span></div>
+      <div class="dev"><span class="name">Bà's phone</span><span class="pill">2 h ago</span><span class="meta">Phone · v1.03 · Bà Rịa, VN · 1 child · 18 m today</span></div>
+      <div class="dev"><span class="name">Kitchen tablet</span><span class="pill warn">slow</span><span class="meta">Tablet · v1.03 · Sydney, AU · 2 children · 12 m today</span></div>
+      <div class="dev"><span class="name">Blue Otter (new)</span><span class="pill">yesterday</span><span class="meta">Phone · v1.02 · Brisbane, AU · joined 28 Oct</span></div>
+      <p class="legend">The family's name for each device, or its easy name. Tap a device for its full history.</p>
+    </div>
+  </div>
+
+  <p class="note mt">Opens fast because the server keeps one small running summary, updated as each device reports, instead of reading every device record on each visit. Charts and the device list fill in after the numbers, so the page is never blank.</p>
+</div>
+</body>
+</html>

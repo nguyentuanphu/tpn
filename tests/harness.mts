@@ -44,6 +44,8 @@ export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'so
   await page.goto(url);
   await page.waitForSelector('.screen.title', { timeout: 90000 });
   // the test browser draws in software: draw fewer pixels so checks run quicker
+  // (30 Oct AEDT) the Welcome screen now shows while the valley is still being built: wait for the valley's drawing first
+  if (fast) await page.waitForFunction(() => !!window.__sv?.renderer, null, { timeout: 90000 });
   if (fast) await page.evaluate(() => { const r = window.__sv.renderer; if (r) { r.setPixelRatio(.35); dispatchEvent(new Event('resize')); } });
   if (!play) return { ctx, page, errors };
   await start(page, mode, screen);

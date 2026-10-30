@@ -17,8 +17,14 @@ on:
         description: 'Check every reading item, film and voice area instead of rotating samples'
         type: boolean
         default: false
+      # (Release, 30 Oct AEDT) a chosen set of checks on the 8 machines while the Release machine runs its own: no "Full
+      # suite" status, no pull request summary and no code map (those come only from a whole run)
+      only:
+        description: 'Only these checks, comma-separated (empty: every check)'
+        required: false
+        default: ''
 concurrency:
-  group: full-suite-${{ github.event.pull_request.number || inputs.pr || github.ref }}
+  group: full-suite-${{ github.event.pull_request.number || inputs.pr || github.ref }}${{ inputs.only && '-only' || '' }}
   cancel-in-progress: true
 permissions:
   contents: read
@@ -128,7 +134,7 @@ jobs:
       - name: Run this machine's share
         env:
           SV_SEED: ${{ github.run_id }}
-        run: cd tests && SV_URL=http://localhost:8765/ node suite.mjs ${{ (inputs.all || github.head_ref == 'work/v1.02-fruit-parade') && '--all' || '' }} --shard ${{ matrix.k }}/8 --no-solo --jobs 1
+        run: cd tests && SV_URL=http://localhost:8765/ node suite.mjs ${{ (inputs.all || github.head_ref == 'work/v1.02-fruit-parade') && '--all' || '' }} ${{ inputs.only && format('--only {0}', inputs.only) || '' }} --shard ${{ matrix.k }}/8 --no-solo --jobs 1
       - name: Keep the results
         if: always()
         run: |
@@ -172,7 +178,7 @@ jobs:
           path: tests/shards
       - name: Join the results
         id: join
-        run: cd tests && node suite.mjs --collect shards; s=$?; cat out/suite-summary.md >> "$GITHUB_STEP_SUMMARY"; exit $s
+        run: cd tests && node suite.mjs --collect shards ${{ inputs.only && format('--only {0}', inputs.only) || '' }}; s=$?; cat out/suite-summary.md >> "$GITHUB_STEP_SUMMARY"; exit $s
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -186,7 +192,7 @@ jobs:
       # Release takes them with: git fetch origin code-map && git checkout FETCH_HEAD -- tests/check-map.json tests/check-times.json
       # A failed push here (two runs at once) never fails the suite.)
       - name: Keep the code map on the branch code-map
-        if: always() && hashFiles('tests/check-map.json') != ''
+        if: always() && !inputs.only && hashFiles('tests/check-map.json') != ''
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
@@ -203,7 +209,7 @@ jobs:
             commit -qm "Code map from run $GITHUB_RUN_ID ($REF at ${SHA:0:8}) [skip netlify]" || exit 0
           git push -q "$url" HEAD:refs/heads/code-map
       - name: Tell the pull request
-        if: always()
+        if: always() && !inputs.only
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}

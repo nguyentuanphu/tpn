@@ -95,6 +95,21 @@ export function createShop(G, { say, save }) {
   G.interactables.push({ id: 'shop_clothes', x: front.x, z: front.z, r: 3, icon: '🛍️', label: () => T('Clothes shop', 'Cửa hàng quần áo'), visible: () => on(), act: h => openShop(h.i) });
   stall.visible = on(); world.updaters.push(() => { stall.visible = on(); });
 
+  // ---------- the companion's hats ----------
+  // (owner, 30 Oct 2026 AEDT: "where do I manage accessories for companions?") a tab in the shop and the mirror, shown once
+  // a child has a companion: the hats bought with the coin goal are put on or taken off with a tap, and in the shop the
+  // next hat can be bought (the same rule as the coin goal: the hats come in order; js/kidplay.js)
+  const PET_ICON = { party: '🎉', flower: '🌸', nonla: '👒', crown: '👑' };
+  const petOf = p => { if (!G.kidplay || !(p.lanterns && p.lanterns.companion)) return null; const s = p.lanterns.pet = p.lanterns.pet || {}; s.hats = s.hats || []; return s; };
+  const petTab = (p, on, attr) => petOf(p) ? `<button class="ktab ${on ? 'on' : ''}" ${attr} aria-label="${T('My companion’s hats', 'Mũ của bạn đồng hành')}">${pic('🐾')}</button>` : '';
+  const petGrid = (h, shop) => { const s = petOf(h.profile), next = G.kidplay.nextHat(h);
+    return G.kidplay.HATS.map(x => { const have = s.hats.includes(x.id), on = s.hat === x.id, buyable = !!next && next.id === x.id, cls = shop ? 'kitem' : 'wit';
+      return `<button class="${cls} ${have ? 'have' : ''} ${on ? 'on' : ''} ${!have && !(shop && buyable) ? 'locked' : ''} ${buyable && farm.coins < x.price ? 'poor' : ''}" data-pet="${x.id}" aria-pressed="${on}" aria-label="${T(x.en, x.vi)}"${!have && !(shop && buyable) ? ' disabled' : ''}>${pic(PET_ICON[x.id] || '🎩')}<small>${escName(T(x.en, x.vi))}</small>${have ? (on ? `<span class="ktick">${pic('✅')}</span>` : '') : buyable ? coins(x.price) : `<span class="klock">${pic('🔒')}</span>`}</button>`; }).join(''); };
+  // a tap on a hat the companion has: put it on, or take it off; in the shop, the next hat is bought
+  const petTap = (h, id, done) => { const s = petOf(h.profile); if (!s) return;
+    if (s.hats.includes(id)) { s.hat = s.hat === id ? null : id; save(); SFX.pop(1); done(); return; }
+    const next = G.kidplay.nextHat(h); if (next && next.id === id) { G.kidplay.buy(h, id); done(); } };
+
   // ---------- the shop screen ----------
   let tab = 'hat';
   function openShop(i, host?) {
@@ -112,7 +127,7 @@ export function createShop(G, { say, save }) {
       card.innerHTML = `${host ? '' : `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button>`}
         <div class="khead"><span class="kbig">${pic('🛍️')}</span><h2>${T('Clothes shop', 'Cửa hàng quần áo')}</h2>${coins(farm.coins)}</div>
         <div class="shop-collections">${[['all', 'All', 'Tất cả'], ['b', 'Men / boys', 'Nam / bé trai'], ['g', 'Ladies / girls', 'Nữ / bé gái']].map(([key, en, vi]) => `<button class="btn ${collection === key ? 'primary' : ''}" data-set="${key}">${T(en, vi)}</button>`).join('')}</div><label>${T('Buying for', 'Mua cho')} <select class="shop-recipient">${profiles.map(q => `<option value="${q.id}" ${recipient.id === q.id ? 'selected' : ''}>${escName(q.name)}</option>`).join('')}</select></label><p class="note">${T('Your own collection is for you to wear. Clothes from the other collection are gifts: they wait, wrapped, in your Backpack until you give them to a friend.', 'Bộ đồ của con là để con mặc. Đồ của bộ kia là quà: được gói trong Ba lô cho đến khi con tặng bạn.')}</p><img class="shop-preview" alt="${T('Your outfit preview', 'Xem trước trang phục')}" src="${G.avatarPreview(i)}"><div class="ktabs">${SLOTS.map(s => `<button class="ktab ${s.id === tab ? 'on' : ''}" data-tab="${s.id}" aria-label="${T(s.en, s.vi)}">${pic(s.icon)}</button>`).join('')}
-          <button class="ktab alt" data-go="wardrobe" aria-label="${T('My wardrobe', 'Tủ đồ của con')}">${pic('🪞')}</button></div>
+          ${petTab(p, tab === 'pet', 'data-ptab="1"')}<button class="ktab alt" data-go="wardrobe" aria-label="${T('My wardrobe', 'Tủ đồ của con')}">${pic('🪞')}</button></div>
         <div class="kgrid">${list.map(it => { const gift = isGift(it), have = !gift && owns(recipient, it.id), worn = recipient === p && p.look[it.slot] === it.id;
           return `<button class="kitem ${have ? 'have' : ''} ${worn ? 'on' : ''} ${gift ? 'gift' : ''} ${!have && farm.coins < priceOf(it) ? 'poor' : ''}" data-id="${it.id}" aria-label="${T(it.en, it.vi)}${gift ? ' · ' + T('a gift to give', 'quà để tặng') : ''}">${itemSVG(it)}${gift ? `<span class="kgift">${pic('🎁')}</span>` : ''}${have ? `<span class="ktick">${pic('✅')}</span>` : coins(priceOf(it))}</button>`; }).join('')}</div>
         ${hidden || more ? `<button class="btn kmore">${more ? T('Fewer', 'Bớt lại') : T('More', 'Xem thêm')}</button>` : ''}
@@ -123,6 +138,9 @@ export function createShop(G, { say, save }) {
       const mb = card.querySelector('.kmore'); if (mb) mb.onclick = () => { more = !more; SFX.tap(); draw(); };
       card.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; pick = null; SFX.tap(); const s = SLOTS.find(x => x.id === tab); say(s.en, s.vi); draw(); });
       card.querySelector('[data-go="wardrobe"]').onclick = () => { openWardrobe(i, draw, card); };
+      const pt = card.querySelector('[data-ptab]'); if (pt) pt.onclick = () => { tab = 'pet'; pick = null; SFX.tap(); say('Save coins for a hat for your companion. Choose Buy when you are ready.', 'Để dành tiền mua mũ cho bạn đồng hành. Chọn Mua khi con đã sẵn sàng.'); draw(); };
+      if (tab === 'pet') { if (!petOf(p)) { tab = 'hat'; draw(); return; } const g = card.querySelector('.kgrid'); if (g) g.innerHTML = petGrid(h, true); card.querySelectorAll('.shop-collections, .kmore').forEach(e => e.remove());
+        card.querySelectorAll('[data-pet]').forEach(b => b.onclick = () => petTap(h, b.dataset.pet, draw)); return; }
       card.querySelectorAll('.kitem').forEach(b => b.onclick = () => {
         const it = ITEM[b.dataset.id];
         // owned: one tap puts it on (or takes it off), right away
@@ -162,13 +180,17 @@ export function createShop(G, { say, save }) {
       m.innerHTML = `<div class="whead"><h2>${pic('🪞')} ${T('My mirror', 'Gương của con')}</h2><button class="x btn" aria-label="${T('Done', 'Xong')}">${T('Done', 'Xong')}</button></div>
         <div class="wmirror"><img class="wbig" alt="${T('You, in what you are wearing', 'Con, với đồ đang mặc')}" src="${G.avatarPreview(i)}"></div>
         <p class="note whow">${T('Tap a picture to wear it. Tap it again to take it off.', 'Chạm vào hình để mặc. Chạm lần nữa để cởi ra.')}</p>
-        <div class="ktabs wtabs" role="tablist">${SLOTS.map(x => `<button class="ktab ${x.id === s.id ? 'on' : ''}" role="tab" aria-selected="${x.id === s.id}" data-wtab="${x.id}" aria-label="${T(x.en, x.vi)}">${pic(x.icon)}<b class="wn">${count(x.id)}</b></button>`).join('')}</div>
+        <div class="ktabs wtabs" role="tablist">${SLOTS.map(x => `<button class="ktab ${x.id === s.id ? 'on' : ''}" role="tab" aria-selected="${x.id === s.id}" data-wtab="${x.id}" aria-label="${T(x.en, x.vi)}">${pic(x.icon)}<b class="wn">${count(x.id)}</b></button>`).join('')}${petTab(p, wtab === 'pet', 'data-pwtab="1"')}</div>
         <h3 class="wkind">${T(s.en, s.vi)}</h3>
         <div class="wgrid">${list.map(it => { const on = p.look[s.id] === it.id; return `<button class="wit ${on ? 'on' : ''}" data-k="${s.id}" data-v="${it.id}" aria-pressed="${on}" aria-label="${T(it.en, it.vi)}">${itemSVG(it)}<small>${escName(T(it.en, it.vi))}</small>${on ? `<span class="ktick">${pic('✅')}</span>` : ''}</button>`; }).join('')}${hats.map(x => { const on = p.look.hat === x; return `<button class="wit ${on ? 'on' : ''}" data-k="hat" data-v="${x}" data-won="1" aria-pressed="${on}">${pic(HAT_ICON[x])}<small>${escName(HAT_NAME[x] ? HAT_NAME[x]() : '')}</small>${on ? `<span class="ktick">${pic('✅')}</span>` : ''}</button>`; }).join('')}
           ${list.length + hats.length ? '' : `<p class="note wnone">${T('Nothing here yet. Find some in the Shop!', 'Chưa có gì. Tìm mua ở Cửa hàng nhé!')}</p>`}</div>`;
       m.querySelector('.x').onclick = () => { if (!host) m.remove(); else m.classList.remove('wardrobe-content', 'mirror', 'little'); saveProfiles(); SFX.chime(); say(...SHOP_LINES.wear); onClose && onClose(); if (scroller) requestAnimationFrame(() => { scroller.scrollTop = keepY; }); };
+      const pw = m.querySelector('[data-pwtab]'); if (pw) pw.onclick = () => { wtab = 'pet'; SFX.tap(); say('Save coins for a hat for your companion. Choose Buy when you are ready.', 'Để dành tiền mua mũ cho bạn đồng hành. Chọn Mua khi con đã sẵn sàng.'); draw(); };
+      if (wtab === 'pet') { if (!petOf(p)) { wtab = 'hat'; draw(); return; } const h = G.heroes[i], kind = m.querySelector('.wkind'), g = m.querySelector('.wgrid');
+        if (kind) kind.textContent = T('My companion’s hats', 'Mũ của bạn đồng hành'); if (g) g.innerHTML = petGrid(h, false) + (G.kidplay.nextHat(h) ? `<p class="note wnone">${T('The next hat is in the Shop.', 'Mũ tiếp theo có ở Cửa hàng.')}</p>` : '');
+        m.querySelectorAll('[data-pet]').forEach(b => b.onclick = () => petTap(h, b.dataset.pet, draw)); }
       m.querySelectorAll('[data-wtab]').forEach(b => b.onclick = () => { wtab = b.dataset.wtab; SFX.tap(); const x = SLOTS.find(y => y.id === wtab); say(x.en, x.vi); draw(); });
-      m.querySelectorAll('.wit').forEach(b => b.onclick = () => {
+      m.querySelectorAll('.wit:not([data-pet])').forEach(b => b.onclick = () => {
         const k = b.dataset.k, v = b.dataset.v, off = p.look[k] === v;
         const ok = b.dataset.won ? (p.look.hat = off ? 'none' : v, true) : wear(p, k, off ? 'none' : v);
         if (ok) { SFX.pop(1); G.rebuildHero(i); saveProfiles(); if (!off) say(...SHOP_LINES.wear); draw(); }

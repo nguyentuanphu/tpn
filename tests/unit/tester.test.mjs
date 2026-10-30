@@ -164,6 +164,8 @@ test('the problem list reads the store many at a time (r89: the robot got 504 fr
 test('a GitHub issue closed with "Fixed in rNN" sets the Studio problem (r89 two-way sync)', async () => {
   const { statusFromIssue } = await import('../../tools/tester-issues.mts');
   assert.equal(statusFromIssue({ state: 'open' }, [{ body: 'Fixed in r89' }]), null, 'an open issue sets nothing');
+  assert.deepEqual(statusFromIssue({ state: 'closed', state_reason: 'duplicate' }, []), { status: 'dup' }, 'closed as a duplicate is a duplicate in Studio');
+  assert.deepEqual(statusFromIssue({ state: 'closed', state_reason: 'completed' }, [{ body: 'Fixed in v1.03 (live 30 Oct 2026, 6:16 am AEDT): ...' }]), { fixedIn: 'v1.03' }, 'a v number names the fix');
   assert.deepEqual(statusFromIssue({ state: 'closed', state_reason: 'completed' }, [{ body: 'looked at it' }, { body: 'Fixed in R89 (autoplay plans).' }]), { fixedIn: 'r89' });
   assert.deepEqual(statusFromIssue({ state: 'closed', state_reason: 'not_planned' }, []), { status: 'notbug' });
   assert.equal(statusFromIssue({ state: 'closed', state_reason: 'completed' }, [{ body: 'no version' }]), null, 'no version named: nothing set');

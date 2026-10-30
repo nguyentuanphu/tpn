@@ -8,6 +8,7 @@ import { houseVillage } from './houses.js';
 import { settings } from './state.js';
 import { CUSTOM } from './custom.js';
 
+import { keptFloats, rememberFloats } from './worldmemo.js';
 import * as MAP from './content/map.js';
 
 // (round T) every position comes from js/content/map.js: the exports below are built from it, so the files that
@@ -19,6 +20,8 @@ export const MAP_VERSION = MAP.MAP_VERSION;
 export const STUDIO_ON_MAP = MAP.onThisMap(CUSTOM.world && typeof CUSTOM.world === 'object' ? CUSTOM.world.map : null);
 export const PARKED = STUDIO_ON_MAP ? null : { map: (CUSTOM.world && CUSTOM.world.map) || 'C', world: CUSTOM.world || null, npcs: CUSTOM.npcs || null };
 export const SIZE = MAP.WORLD.size, HALF = SIZE / 2, WATER = MAP.WORLD.water;
+// how far a swimming buffalo or cow sits below the water line (its back and head stay above it, and so does the rider)
+export const RIDE_SWIM = 1.05;
 const MTN = MAP.WORLD.mountains, EDGE = MAP.WORLD.edge, SADDLES = MAP.SADDLES, RELIEF = MAP.RELIEF, COAST = MAP.WORLD.coast, RAMP = MAP.WORLD.ramp;
 
 // Only nearby ridge segments can change the terrain. The 1.5-width boxes include the full 1.4-width falloff.
@@ -495,7 +498,8 @@ export function createWorld(scene, quality) {
     time: .36
   };
   // (TypeScript, r86) what the valley's object gets after it is made: here, and by js/solids.js, js/roads.js, js/main.ts…
-  type SvWorldMore = { underpassSolid?: Uint8Array, terrain?: THREE.Mesh, groundCover?: THREE.InstancedMesh[], critters?: unknown, fireflies?: unknown, buffalo?: { id: string, mesh: THREE.Mesh, shadow: THREE.Object3D, firstPersonHide?: THREE.Object3D[], home: number[], tx: number, tz: number, rider: unknown, yaw: number, back?: boolean }[],
+  type SvRideAnimal = { id: string, kind: string, swims: boolean, mesh: THREE.Mesh, shadow: THREE.Object3D, firstPersonHide?: THREE.Object3D[], home: number[], tx: number, tz: number, rider: unknown, yaw: number, back?: boolean };
+  type SvWorldMore = { underpassSolid?: Uint8Array, fronts?: { x: number, z: number, rot: number, d: number, kind: string }[], terrain?: THREE.Mesh, groundCover?: THREE.InstancedMesh[], critters?: unknown, fireflies?: unknown, buffalo?: SvRideAnimal[], cows?: SvRideAnimal[], rideAnimals?: SvRideAnimal[],
     pots?: { x: number, z: number, [k: string]: unknown }[], statue?: { x: number, z: number, [k: string]: unknown },
     groundAt?: (x: number, z: number, y?: number) => number, platformAt?: (x: number, z: number, y?: number) => unknown, collide?: (pos: { x: number, y?: number, z: number }, r?: number) => unknown,
     update?: (dt: number, t: number) => void, updateSky?: (dt: number, camPos: THREE.Vector3, focus?: THREE.Vector3) => void, isNight?: () => boolean,
@@ -582,8 +586,15 @@ export function createWorld(scene, quality) {
   // (round T2) the slope from the next grid points east and south (already worked out), scaled to 1.5 m as before:
   // two more heightAt calls per point made the valley a quarter of a second slower to build
   const row = seg + 1, step = SIZE / seg, HS = new Float32Array(pa.count);
-  for (let i = 0; i < pa.count; i++) { HS[i] = heightAt(pa.getX(i), pa.getZ(i)); pa.setY(i, HS[i]); }
-  for (let i = 0; i < pa.count; i++) {
+  // (owner, 30 Oct 2026 AEDT: "it loads too long") the ground's heights are kept on the device after the first start of
+  // a build (js/worldmemo.ts) and read back: the same numbers, without working out every point again
+  const keptHS = keptFloats('ground-start', pa.count);
+  if (keptHS) HS.set(keptHS); else { for (let i = 0; i < pa.count; i++) HS[i] = heightAt(pa.getX(i), pa.getZ(i)); rememberFloats('ground-start', HS); }
+  for (let i = 0; i < pa.count; i++) pa.setY(i, HS[i]);
+  // (the ground's colours are kept on the device the same way: the same numbers, read back instead of worked out)
+  const keptCols = keptFloats('ground-colours', pa.count * 3);
+  if (keptCols) cols.set(keptCols);
+  else for (let i = 0; i < pa.count; i++) {
     const x = pa.getX(i), z = pa.getZ(i), h = HS[i];
     const ex = i % row < seg ? HS[i + 1] : HS[i - 1], sz = i < pa.count - row ? HS[i + row] : HS[i - row];
     const sl = (Math.abs(ex - h) + Math.abs(sz - h)) * 1.5 / step;
@@ -604,6 +615,7 @@ export function createWorld(scene, quality) {
     if (h < -1.5) c.copy(C.deep);
     cols[i * 3] = c.r; cols[i * 3 + 1] = c.g; cols[i * 3 + 2] = c.b;
   }
+  if (!keptCols) rememberFloats('ground-colours', cols);
   tg.setAttribute('color', new THREE.BufferAttribute(cols, 3)); tg.computeVertexNormals();
   // fine detail (grass blades, pebbles, soil) painted into a tiling texture and blended over the ground colours
   const dc = document.createElement('canvas'); dc.width = dc.height = 256; const dx = dc.getContext('2d');
@@ -986,16 +998,40 @@ export function createWorld(scene, quality) {
   ]);
   // A separate draw preserves the exterior but lets a rider see past the large storybook horns.
   const buffaloHorns = merge([P(new THREE.TorusGeometry(.7, .12, 5, 12, Math.PI), '#d8d0c0', [0, 2.2, 1.9])]);
-  W.buffalo = [];
-  [[PADDIES.x - 6, PADDIES.z + 4], [V.x - 26, V.z + 18]].forEach(([x, z], i) => {
-    const m = new THREE.Mesh(buffaloGeo, toonVC()); m.position.set(x, heightAt(x, z), z); m.userData.moving = true; scene.add(m); // it wanders and rests: never part of the solid map (js/solids.js)
-    const horns = new THREE.Mesh(buffaloHorns, m.material); m.add(horns);
-    const sh = blobShadow(); sh.scale.setScalar(2.2); scene.add(sh);
-    const b = { id: 'buffalo' + i, mesh: m, shadow: sh, firstPersonHide: [horns], home: [x, z], tx: x, tz: z, rider: null, yaw: 0 };
-    W.buffalo.push(b);
-    W.interactables.push({ id: b.id, get x() { return m.position.x; }, get z() { return m.position.z; }, r: 3, icon: '🐃', label: () => T('Ride buffalo', 'Cưỡi trâu'), visible: () => !b.rider, act: (pl, game) => game.mount(pl, b) });
+  // (owner, 30 Oct 2026 AEDT) the Vietnamese yellow cow (bò vàng) beside the grey water buffalo: golden coat, a hump over
+  // the shoulders, a dewlap, short horns turning up, ears out to the side and a dark tail tuft. Both can be ridden, and
+  // both swim: in deep water they float with the head and back above it (js/player.ts)
+  const coat = '#c98a4b', dark = '#a86b35', cream = '#efd2a8', hoof = '#3a2a22';
+  const cowGeo = merge([
+    P(new THREE.CapsuleGeometry(.58, 1.25, 4, 10), coat, [0, 1.45, 0], [Math.PI / 2, 0, 0]),
+    P(new THREE.SphereGeometry(.42, 10, 8), dark, [0, 1.98, .7], [0, 0, 0], [1, .65, 1.15]),
+    P(new THREE.SphereGeometry(.5, 10, 8), '#ddb07a', [0, 1.18, .05], [0, 0, 0], [.95, .45, 1.6]),
+    P(new THREE.CapsuleGeometry(.26, .5, 4, 8), coat, [0, 1.72, 1.32], [-.9, 0, 0]),
+    P(new THREE.SphereGeometry(.3, 8, 6), '#d9a26a', [0, 1.22, 1.3], [0, 0, 0], [.4, 1, .8]),
+    P(new THREE.CapsuleGeometry(.27, .42, 4, 8), coat, [0, 1.74, 1.8], [1.15, 0, 0]),
+    P(new THREE.SphereGeometry(.25, 10, 8), cream, [0, 1.5, 2.06], [0, 0, 0], [1.05, .8, 1]),
+    ...[-1, 1].flatMap(s => [P(new THREE.SphereGeometry(.05, 6, 5), hoof, [s * .09, 1.48, 2.3]),
+      P(new THREE.SphereGeometry(.2, 8, 6), dark, [s * .4, 1.92, 1.62], [0, 0, s * .4], [1.3, .45, .7]),
+      P(new THREE.SphereGeometry(.08, 6, 5), '#ffffff', [s * .23, 1.9, 1.98]), P(new THREE.SphereGeometry(.05, 6, 5), hoof, [s * .25, 1.91, 2.04])]),
+    ...[[.36, .85], [-.36, .85], [.36, -.85], [-.36, -.85]].flatMap(([x, z]) => [P(new THREE.CylinderGeometry(.13, .11, 1.05, 7), coat, [x, .6, z]), P(new THREE.CylinderGeometry(.12, .13, .16, 7), hoof, [x, .08, z])]),
+    P(new THREE.CylinderGeometry(.035, .035, .9, 5), coat, [0, 1.15, -1.32], [.18, 0, 0]), P(new THREE.SphereGeometry(.1, 6, 5), hoof, [0, .7, -1.4], [0, 0, 0], [1, 1.6, 1])
+  ]);
+  const cowHorns = merge([-1, 1].flatMap(s => [P(new THREE.CylinderGeometry(.06, .08, .16, 6), '#efe4cc', [s * .2, 2.0, 1.66], [0, 0, s * -.9]),
+    P(new THREE.ConeGeometry(.06, .26, 6), '#efe4cc', [s * .3, 2.14, 1.66], [0, 0, s * -.3])]));
+  W.buffalo = []; W.cows = []; W.rideAnimals = [];
+  const RIDE_ANIMALS = [
+    { kind: 'buffalo', list: W.buffalo, geo: buffaloGeo, horns: buffaloHorns, icon: '🐃', label: () => T('Ride buffalo', 'Cưỡi trâu'), at: [[PADDIES.x - 6, PADDIES.z + 4], [V.x - 26, V.z + 18]] },
+    { kind: 'cow', list: W.cows, geo: cowGeo, horns: cowHorns, icon: '🐄', label: () => T('Ride the cow', 'Cưỡi bò'), at: [[PADDIES.x + 7, PADDIES.z - 5], [V.x - 20, V.z + 26]] }
+  ];
+  for (const R of RIDE_ANIMALS) R.at.forEach(([x, z], i) => {
+    const m = new THREE.Mesh(R.geo, toonVC()); m.position.set(x, heightAt(x, z), z); m.userData.moving = true; scene.add(m); // it wanders and rests: never part of the solid map (js/solids.js)
+    const horns = new THREE.Mesh(R.horns, m.material); m.add(horns);
+    const sh = blobShadow(); sh.scale.setScalar(R.kind === 'cow' ? 1.9 : 2.2); scene.add(sh);
+    const b = { id: R.kind + i, kind: R.kind, swims: true, mesh: m, shadow: sh, firstPersonHide: [horns], home: [x, z], tx: x, tz: z, rider: null, yaw: 0 };
+    R.list.push(b); W.rideAnimals.push(b);
+    W.interactables.push({ id: b.id, get x() { return m.position.x; }, get z() { return m.position.z; }, r: 3, icon: R.icon, label: R.label, visible: () => !b.rider, act: (pl, game) => game.mount(pl, b) });
   });
-  W.updaters.push((dt, t) => W.buffalo.forEach(b => {
+  W.updaters.push((dt, t) => W.rideAnimals.forEach(b => {
     if (b.rider) return;
     const m = b.mesh, dx = b.tx - m.position.x, dz = b.tz - m.position.z, d = Math.hypot(dx, dz);
     // (Round V, owner 13 Oct) after a ride it runs back home; from far away, out of every child's sight, it is simply home again
@@ -1008,7 +1044,7 @@ export function createWorld(scene, quality) {
       const x = m.position.x, z = m.position.z; W.collide(m.position, 1.1);
       if (Math.hypot(m.position.x - x, m.position.z - z) > .05) { b.tx = m.position.x; b.tz = m.position.z; }
     }
-    m.position.y = heightAt(m.position.x, m.position.z); b.shadow.position.set(m.position.x, m.position.y + .05, m.position.z);
+    m.position.y = Math.max(heightAt(m.position.x, m.position.z), WATER - RIDE_SWIM); b.shadow.position.set(m.position.x, m.position.y + .05, m.position.z);
   }));
   // ducks on the lake and chickens in the village (just for company)
   const critters = [];
@@ -1091,7 +1127,7 @@ export function createWorld(scene, quality) {
 // (owner, 29 Oct AEDT: "Hồ Gươm should be in a lake but it is on dry land") the two ponds keep a hint of their real green, but
 // read as water: the old jade green looked like grass from above
 const WATER_COLOURS = { hong: '#a8714c', mekong1: '#8f8a58', mekong2: '#8f8a58', saigon_r: '#5f8c8f', brisbane_r: '#5f8f86', yarra: '#7a8462', murray: '#7c8660',
-  hoguom: '#3a9a9c', billabong: '#4f8a84', lake: '#3fb0c6', sydney_harbour: '#2f7fbf', hoian_canal: '#4f9aa6', sea: '#2a7fc0' };
+  hoguom: '#5fbcb6', billabong: '#4f8a84', lake: '#3fb0c6', sydney_harbour: '#2f7fbf', hoian_canal: '#4f9aa6', sea: '#2a7fc0' };
 export function paintWater(size = 256) {
   const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d');
   const img = x.createImageData(size, size), d = img.data, step = SIZE / size;
@@ -1208,12 +1244,12 @@ export function levelUnderBuildings(world, scene) {
 // Widen the level land round every village, town and city (see WIDE), after everything is placed: the ground is
 // reshaped, and whatever stands where the ground changed (trees, signs, props, people, roads) moves up or down with
 // it, keeping its place on the map.
-export function widenFlatLand(world, scene, metres = 10) { reshapeGround(world, scene, () => { WIDE = metres; }); }
+export function widenFlatLand(world, scene, metres = 10) { reshapeGround(world, scene, () => { WIDE = metres; }, 'ground-wide-' + metres); }
 // switch the road beds on (js/roads.js) and reshape the ground the same careful way
-export function roadBedsOn(world, scene) { reshapeGround(world, scene, () => { RB_ON = true; }); }
+export function roadBedsOn(world, scene) { reshapeGround(world, scene, () => { RB_ON = true; }, 'ground-roadbeds'); }
 // Change the ground (change() alters what heightAt returns), then reshape the terrain and move whatever stands where
 // the ground changed (trees, signs, props, people, roads) up or down with it, so nothing shifts on the map.
-function reshapeGround(world, scene, change) {
+function reshapeGround(world, scene, change, memo = '') {
   const keep = [], inst = [], roads = [];
   for (const o of scene.children) {
     if (o === world.terrain || o.isLight || !o.position) continue;
@@ -1228,7 +1264,10 @@ function reshapeGround(world, scene, change) {
   const topOld = world.roadTop ? [...world.roadTop.keys()].map(k => [k, heightAt(Math.round(k / 8192) / 2, (k - Math.round(k / 8192) * 8192) / 2)]) : [];
   change();
   const t = world.terrain;
-  if (t) { const pa = t.geometry.attributes.position; for (let i = 0; i < pa.count; i++) pa.setY(i, heightAt(pa.getX(i), pa.getZ(i))); pa.needsUpdate = true; t.geometry.computeVertexNormals(); t.geometry.computeBoundingSphere(); }
+  // (the ground's new heights: kept on the device after the first start of a build, js/worldmemo.ts)
+  if (t) { const pa = t.geometry.attributes.position, kept = memo ? keptFloats(memo, pa.count) : null;
+    if (kept) for (let i = 0; i < pa.count; i++) pa.setY(i, kept[i]);
+    else { const ys = new Float32Array(pa.count); for (let i = 0; i < pa.count; i++) { ys[i] = heightAt(pa.getX(i), pa.getZ(i)); pa.setY(i, ys[i]); } if (memo) rememberFloats(memo, ys); } pa.needsUpdate = true; t.geometry.computeVertexNormals(); t.geometry.computeBoundingSphere(); }
   for (const [o, h0] of keep) { const d = heightAt(o.position.x, o.position.z) - h0; if (Math.abs(d) > .01) o.position.y += d; }
   inst.forEach((o, k) => { let ch = false; for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); m4.decompose(p, q, sc); const d = heightAt(p.x, p.z) - instOld[k][i]; if (Math.abs(d) > .01) { p.y += d; m4.compose(p, q, sc); o.setMatrixAt(i, m4); ch = true; } } if (ch) { o.instanceMatrix.needsUpdate = true; o.computeBoundingSphere && o.computeBoundingSphere(); } });
   roads.forEach((o, k) => { const pa = o.geometry.attributes.position; let ch = false; for (let i = 0; i < pa.count; i++) { const d = heightAt(pa.getX(i), pa.getZ(i)) - roadOld[k][i]; if (Math.abs(d) > .01) { pa.setY(i, pa.getY(i) + d); ch = true; } } if (ch) { pa.needsUpdate = true; o.geometry.computeVertexNormals(); o.geometry.computeBoundingSphere(); } });

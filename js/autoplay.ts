@@ -56,7 +56,8 @@ export function mountAutoplay(game) {
   // not that the game threw. Match the reporter's two exact notices; keep every real error.
   addEventListener('error', e => { const message = String(e.message || e.error || 'error'); if (errSink && !resizeDeliveryNotice(message)) errSink.push(message); });
   addEventListener('unhandledrejection', e => errSink && errSink.push(String((e.reason && e.reason.message) || e.reason || 'error')));
-  const ce = console.error; console.error = (...a) => { if (errSink) errSink.push(a.map(String).join(' ').slice(0, 200)); ce.apply(console, a); };
+  // (#654-#682) a page error passed on to console.error carries the same browser delivery notice: not a game error either
+  const ce = console.error; console.error = (...a) => { const m = a.map(String).join(' '); if (errSink && !/ResizeObserver loop (?:limit exceeded|completed with undelivered notifications)/.test(m)) errSink.push(m.slice(0, 200)); ce.apply(console, a); };
   btnTimer = setInterval(buttons, 1000); buttons();
   G.autoplay = { unmount, running: () => !!run, trail: () => trail.slice(),
     profile: () => selectedProfile,
@@ -200,7 +201,9 @@ async function tap(b, note) {
   // (#337-#349, r82: a tester filing a report while auto play ran) the tester's own report window and ladybird are not a
   // problem of the game's
   const tester = top && top.closest && top.closest('.tpanel, .z-lb, .ap-float');
-    if (top && top !== b && !b.contains(top) && !top.contains(b) && !(root && root.contains(top)) && !(box && box.contains(top)) && !tester && note) note(T('a button covered by something: ', 'một nút bị che: ') + label(b) + ' (' + label(top) + ')');
+  // (quest Sự tích dưa hấu) the story a speech bubble announces opening over that bubble is what the tap was for
+  const opened = !!(top && top.closest && top.closest('.theatre, .storybook') && b.closest && b.closest('.dialog'));
+    if (top && top !== b && !b.contains(top) && !top.contains(b) && !(root && root.contains(top)) && !(box && box.contains(top)) && !tester && !opened && note) note(T('a button covered by something: ', 'một nút bị che: ') + label(b) + ' (' + label(top) + ')');
   if (x < 0 || y < 0 || x > innerWidth || y > innerHeight) { if (note) note(T('a button off the screen: ', 'một nút ngoài màn hình: ') + label(b)); }
   step_('tap', label(b)); fire(b, x, y); click(b);
   return true;
@@ -349,6 +352,18 @@ async function settle(secs, note: ProblemNote = () => { }) {
         await swipe(x, r.top + r.height * .1, x, r.top + r.height * .97);
         await until(() => !w.isConnected, 2); continue;
       }
+      // (quest Quạt bếp và bưng bát) the other hand controls, as a child uses them: a pedal or fan button is held down,
+      // a handle in a slot is dragged down (the digger's arm down and up again), a big button is tapped
+      const c = [...w.querySelectorAll<HTMLElement>('[data-hp]')].find(e => e.dataset.hp !== 'x' && shown(e));
+      if (c) {
+        const r = c.getBoundingClientRect(), x = r.left + r.width / 2;
+        if (c.classList.contains('hp-slot')) {
+          await swipe(x, r.top + r.height * .1, x, r.top + r.height * .97);
+          if (c.dataset.hp === 'arm') await swipe(x, r.top + r.height * .97, x, r.top + r.height * .05);
+        } else if (c.classList.contains('hp-pedal')) await press({ el: c, x, y: r.top + r.height / 2, ms: 3000 });
+        else await tap(c, note);
+        continue;
+      }
       note(T('help: auto play could not work out these hand controls', 'cần giúp: tự chơi chưa biết dùng bảng điều khiển này'));
       return;
     }
@@ -379,7 +394,7 @@ function targets(stage) {
   for (const e of stage.querySelectorAll('div, span, i, b, svg, img')) { if (list.length > 80) break; if (!list.includes(e) && getComputedStyle(e).cursor === 'pointer') list.push(e); }
   // (the innermost button: a square with its arrow buttons inside is tapped by its arrows; a picture inside a button is the button)
   const btn = e => e.matches('button, [role=button]');
-  return list.filter(e => shown(e) && !e.closest('.gl-head') && !(btn(e) ? list.some(o => o !== e && e.contains(o) && btn(o)) : list.some(o => o !== e && o.contains(e) && btn(o))));
+  return list.filter(e => shown(e) && !e.closest('.gl-head, .gl-status') && !(btn(e) ? list.some(o => o !== e && e.contains(o) && btn(o)) : list.some(o => o !== e && o.contains(e) && btn(o))));
 }
 export { AUTOPLAY_PROFILES, autoplayProfileFromEnv, childAction, optimalAutoplayChoice, stochasticAutoplayChoice } from './content/autoplay.js';
 export type { AutoplayProfile, AutoplayAction } from './content/autoplay.js';
@@ -465,11 +480,14 @@ async function readTale(note) {
   const th = document.querySelector('.theatre'); if (!th) return;
   const page = () => [...th.querySelectorAll('.th-dots i')].findIndex(i => i.classList.contains('on'));
   const a = th.querySelector('.th-auto'); if (a && !a.classList.contains('on')) await tap(a, note);
-  let at = page(), since = Date.now(); const end = Date.now() + (sp().page ? 180 : 420) * 1000;
+  let at = page(), since = Date.now(), nudged = false; const end = Date.now() + (sp().page ? 180 : 420) * 1000;
   while (th.isConnected && !th.classList.contains('out') && Date.now() < end) {
     if (sp().page) { await hold(sp().page); const n = th.querySelector('.th-next'); if (n && th.isConnected) await tap(n, note); }
     else await hold(1);
-    const p = page(); if (p !== at) { at = p; since = Date.now(); step_('page', String(p + 1)); }
+    const p = page(); if (p !== at) { at = p; since = Date.now(); nudged = false; step_('page', String(p + 1)); }
+    // (#361 #427 #620, quest:L_c1_tale) a page that does not turn by itself (its film or voice never says it is over) is
+    // turned with Next, as a child would; only a story that will not move on with Next either is a problem
+    else if (!nudged && Date.now() - since > 25000) { const n = th.querySelector('.th-next'); if (n && th.isConnected) { nudged = true; step_('nudge', String(at + 1)); await tap(n, note); } }
     else if (Date.now() - since > 45000) { note(T(`the story stopped on page ${at + 1}`, `truyện dừng ở trang ${at + 1}`)); break; }
   }
 }
@@ -516,6 +534,9 @@ async function doTap(it, note) {
   step_('tap', (typeof it.label === 'function' ? it.label() : it.id) || it.id); G.goAndDo(h, it);
   await hold(.6); await until(() => !h.goal, 6); await hold(.4);
   await settle(sp().talk + 30, note);
+  // (#361 #427, quest Treo đèn lồng ở đình làng) the rope and the film after it can outlast that on a slow device:
+  // keep doing what the story shows for up to two more minutes before calling it unfinished
+  for (const end = Date.now() + 120e3; G.lanterns?.busy(h.profile) && Date.now() < end;) await settle(10, note);
   if (G.lanterns?.busy(h.profile)) note(T('help: auto play could not finish this story activity', 'cần giúp: tự chơi chưa làm xong hoạt động trong truyện này'));
   const w = topOpen(); if (w) { await hold(sp().talk); offScreen(w, note); }
 }

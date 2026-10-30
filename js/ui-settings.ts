@@ -106,6 +106,8 @@ function openCropper(title, done) {
 // (owner, 13 Oct AEDT) this device's id for the Analytics (js/players.js makes it), shown with its easy name so a grown-up
 // can find this device in Studio's lists (testers, auto play)
 const myDeviceId = () => { try { return localStorage.getItem('sv2_playerid') || ''; } catch (e) { return ''; } };
+// (owner, 30 Oct 2026 AEDT) the same name as in Studio: the one given there (js/players.js keeps it), else the easy name
+const myDeviceName = () => { try { return localStorage.getItem('sv2_devicename') || easyName(myDeviceId(), settings.lang); } catch (e) { return easyName(myDeviceId(), settings.lang); } };
 
 function familyQuestionsHTML(): string {
   return `<h3>${pic('💛')} ${T('Family questions','Câu hỏi gia đình')}</h3>
@@ -269,7 +271,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       </div></details>
       <details class="gsec" data-sec="data" ${gOpen.has('data') ? 'open' : ''}><summary><span class="gi">📊</span><b>${T('Analytics and backup', 'Phân tích và sao lưu')}</b></summary><div class="gbody">
       <div class="field"><label>📊 ${T('Analytics', 'Phân tích')}</label><div class="seg cnt"><button data-c="1" class="${settings.countPlayers !== false ? 'on' : ''}">${T('On', 'Bật')}</button><button data-c="0" class="${settings.countPlayers === false ? 'on' : ''}">${T('Off', 'Tắt')}</button></div></div>
-      <p class="note devid">📱 ${T('This device\'s name', 'Tên máy này')}: <b>${esc(easyName(myDeviceId(), settings.lang))}</b> · ${esc(profiles.map(p => p.name).filter(Boolean).join(', ') || T('no players yet', 'chưa có người chơi'))} · <small>${esc(myDeviceId() || '–')}</small></p>
+      <p class="note devid">📱 ${T('This device\'s name', 'Tên máy này')}: <b>${esc(myDeviceName())}</b> · ${esc(profiles.map(p => p.name).filter(Boolean).join(', ') || T('no players yet', 'chưa có người chơi'))} · <small>${esc(myDeviceId() || '–')}</small></p>
       <h3>${pic('👨‍👩‍👧')} ${T('Family code', 'Mã gia đình')}</h3>
       <p class="note fam-privacy">${esc(T(FAMILY_CODE_PRIVACY.en, FAMILY_CODE_PRIVACY.vi))}</p>
       <div class="fam-code-box" id="gFamCodeBox">

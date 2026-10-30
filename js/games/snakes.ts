@@ -1,3 +1,4 @@
+import {tumble} from './reveal.js';
 import {T} from '../i18n.js';
 import {pic} from '../art.js';
 import {dom,control} from './arcade-board.js';
@@ -21,13 +22,16 @@ export async function playSnakes(api:Api){
  const wait=dom('div','snakes-wait',T('Waiting for friends. Your board stays here.','Đang chờ bạn. Bàn cờ vẫn được giữ ở đây.')),leave=control(T('Continue on this device','Chơi tiếp trên máy này'),()=>session.continueLocally());wait.append(leave);
  const rules=dom('details'),summary=dom('summary','',T('Our screen rules','Luật chơi trên màn hình'));rules.append(summary,dom('p','',T('Follow the numbered path from 1 to 25. A ladder goes up; a snake slides down. Reaching or passing 25 finishes. Little ones use smaller rolls and no snakes, and help every piece reach the top.','Đi theo các số từ 1 đến 25. Thang đưa lên, rắn đưa xuống. Tới hoặc vượt 25 là về đích. Bé nhỏ gieo số nhỏ, không gặp rắn và cùng đưa mọi quân lên đích.')));
  actions.append(roll,helperLabel);root.append(style,roster,board,status,actions,wait,rules);api.stage.append(root);
- let session:SharedBoardSession<SnakesState>,dead=false,won=false,explained=false,timer:ReturnType<typeof setTimeout>|undefined,finish:(v:unknown)=>void;
+ let session:SharedBoardSession<SnakesState>,rolling=false,shownRolls=0,dead=false,won=false,explained=false,timer:ReturnType<typeof setTimeout>|undefined,finish:(v:unknown)=>void;
  const completed=new Promise<unknown>(resolve=>{finish=resolve;});
  const seats=api.online?.names.length||2,mine=api.online?.mine||0,names=Array.from({length:seats},(_,i)=>api.online?.names[i]||api.players[i]?.name||T('Helper','Bạn máy'));
  const render=()=>{
   if(dead)return;clearTimeout(timer);const s=session?.state;wait.hidden=!session?.waiting;helperLabel.hidden=!!session?.online;leave.hidden=!s;
   if(!s){roll.disabled=true;status.textContent=T('Choosing gentle shared rules for the youngest friend…','Chọn luật chung nhẹ nhàng theo bạn nhỏ tuổi nhất…');return;}
   if(!explained){explained=true;if(s.gentle)api.say(...GENTLE_INTRO);else api.say('Snakes and ladders comes from India! Climb the ladders, and watch out for the snakes. Roll the dice!','Rắn và thang có từ Ấn Độ đó! Leo thang lên, cẩn thận con rắn nhé. Gieo xúc xắc nào!');}
+  // a new roll tumbles on the die first; the counters move once it has landed (js/games/reveal.ts)
+  if(rolling)return;
+  if(s.rolls>shownRolls&&s.die){shownRolls=s.rolls;rolling=true;roll.disabled=true;roll.innerHTML='<span></span> '+T('Rolling…','Đang gieo…');void tumble(roll.querySelector('span')!,dieFace,s.die).then(()=>{rolling=false;render();});return;}
   root.dataset.players=String(s.positions.length);root.dataset.turn=String(s.turn);root.dataset.roll=String(s.die);root.dataset.mode=s.gentle?'gentle':'classic';root.dataset.positions=s.positions.join(',');
   board.replaceChildren();for(let row=4;row>=0;row--)for(let col=0;col<5;col++){
    const n=row*5+(row%2?5-col:col+1),cell=dom('div','snakes-cell'+(LADDERS[n]?' ladder':!s.gentle&&SNAKES[n]?' snake':''));cell.dataset.square=String(n);cell.append(dom('small','',String(n)));if(n===25)cell.insertAdjacentHTML('beforeend',pic('🏆'));cell.setAttribute('aria-label',String(n)+(LADDERS[n]?T(' ladder to '+LADDERS[n],' thang lên '+LADDERS[n]):!s.gentle&&SNAKES[n]?T(' snake to '+SNAKES[n],' rắn xuống '+SNAKES[n]):''));
@@ -36,12 +40,14 @@ export async function playSnakes(api:Api){
   board.insertAdjacentHTML('beforeend',routes(s.gentle));
   roster.replaceChildren();names.forEach((name,seat)=>{const e=dom('span',seat===s.turn?'on':'',`${seat+1} · ${name}: ${s.positions[seat]}/25`);e.style.setProperty('--seat',COLOURS[seat]);roster.append(e);});
   status.textContent=s.complete?T('You reached the top!','Con về đích rồi!'):s.die?T(`Rolled ${s.die}. ${names[s.turn]}: tap Roll.`,`Gieo được ${s.die}. ${names[s.turn]}: bấm Gieo.`):T(`${names[s.turn]}: tap Roll.`,`${names[s.turn]}: bấm Gieo.`);
-  roll.disabled=s.complete||session.waiting||session.busy||!controlsArcadeTurn(s.turn,mine,session.online,helper.checked);roll.innerHTML=(s.die?dieFace(s.die):pic('🎲'))+' '+T('Roll','Gieo')+(s.die?' · '+s.die:'');api.dots(seats,s.positions.filter(p=>p===25).length);
+  roll.disabled=rolling||s.complete||session.waiting||session.busy||!controlsArcadeTurn(s.turn,mine,session.online,helper.checked);
+  // a new roll tumbles on the die before the counter moves on (js/games/reveal.ts)
+  shownRolls=s.rolls;roll.innerHTML=(s.die?dieFace(s.die):pic('🎲'))+' '+T('Roll','Gieo')+(s.die?' · '+s.die:'');api.dots(seats,s.positions.filter(p=>p===25).length);
   if(s.complete&&!won){won=true;api.right();void api.win({title:T('You reached the top!','Con về đích rồi!'),titleVi:'Con về đích rồi!'}).then(finish);return;}
-  if(!session.online&&helper.checked&&s.turn!==mine&&!s.complete){const index=session.core!.index;timer=setTimeout(()=>{if(!dead&&index===session.core?.index)session.submit(0);},650);}
+  if(!rolling&&!session.online&&helper.checked&&s.turn!==mine&&!s.complete){const index=session.core!.index;timer=setTimeout(()=>{if(!dead&&index===session.core?.index)session.submit(0);},650);}
  };
  session=new SharedBoardSession({online:api.online,gentle:api.little,seats,seed:api.online?.seed||'snakes-'+Date.now(),initial:snakesStart,reduce:snakesCommand,changed:()=>queueMicrotask(render)});helper.onchange=render;render();
 
- api.plan(()=>!roll.disabled?roll:null,{maxActions:4990});const poll=setInterval(()=>{session.poll();render();},1000);
+ api.plan(()=>!rolling&&!roll.disabled?roll:null,{maxActions:4990});const poll=setInterval(()=>{session.poll();render();},1000);
  api.onCleanup(()=>{dead=true;clearInterval(poll);clearTimeout(timer);session.close();finish(null);});return completed;
 }

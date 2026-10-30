@@ -34,15 +34,18 @@ export async function ownerDeskBrowserCheck(browser){
   for(const [width,height]of [[390,844],[820,1180],[1440,1000]])for(const lang of ['en','vi']){
    const ctx=await browser.newContext({viewport:{width,height},isMobile:width===390,hasTouch:width<1000}),page=await ctx.newPage();
    page.on('pageerror',e=>errors.push({width,lang,message:e.message}));page.on('dialog',async d=>{errors.push({width,lang,message:'unexpected-dialog: '+d.message()});await d.dismiss();});await page.addInitScript(lang=>localStorage.setItem('studioLang',lang),lang);
-   await page.goto(site+'/studio');await page.fill('#pw',password);await page.click('#si button');await page.waitForSelector('.desk-body [data-chart="G01"]');
+   await page.goto(site+'/studio');await page.fill('#pw',password);await page.click('#si button');await page.waitForSelector('[data-today="tiles"] .today-tile');
    await page.waitForFunction(()=>document.documentElement.dataset.gameBrand==='shared');
    assert.equal(await page.locator('#tabs button').count(),5);assert.equal(await page.locator('#tabs [aria-current="page"]').getAttribute('data-k'),'home');
    assert.equal(await page.locator('.desk-valley').getAttribute('src'),'/studio/game/icons/launch/valley-landscape.jpg');
-   assert.equal(await page.locator('.desk-heading h2').innerText(),lang==='vi'?'Trang chủ':'Home');
-   assert.equal(await page.locator('.desk-home-summary>div').count(),6,'Home keeps a bounded six-measure snapshot');
-   assert.ok(await page.locator('[data-home-priorities] .desk-priority').count()<=3,'Home limits priorities');
-   assert.equal(await page.locator('.desk-readiness').count(),1,'Home explains content/control audit limits');
-   assert.ok(!(await page.locator('.desk-home-summary').innerText()).includes('Demo Linh'),'Home contains no child names');
+   // (owner, 30 Oct 2026 AEDT) Home is "Today in Sparkle Valley": devices, new devices, minutes, favourite games, places
+   assert.equal(await page.locator('.desk-heading h2').innerText(),lang==='vi'?'Hôm nay ở Thung Lũng Lấp Lánh':'Today in Sparkle Valley');
+   assert.equal(await page.locator('.today-tile').count(),4,'Home keeps a bounded four-number snapshot');
+   await page.waitForSelector('[data-today="waiting"] ul, [data-today="waiting"] p:not([role])');
+   assert.ok(await page.locator('[data-today="waiting"] li').count()<=3,'Home limits what is waiting');
+   await page.waitForSelector('[data-today="devices"] .today-device');
+   assert.ok(await page.locator('[data-today="devices"] .today-device').count()>=1,'Home lists devices by name');
+   assert.ok(!(await page.locator('.desk-body').innerText()).includes('Demo Linh'),'Home contains no child names');
    const save=async key=>{assert.deepEqual(await page.evaluate(()=>[...(window.__svNoArt||[])]),[],'game drawings cover every visible icon');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,key+' overflow');await page.evaluate(()=>scrollTo(0,0));const file=`${lang}-${width}-${key}.png`;await page.screenshot({path:path.join(output,file),fullPage:true});const viewportFile=file.replace('.png','-viewport.png');await page.screenshot({path:path.join(output,viewportFile)});captures.push({lang,width,height,key,file,viewportFile});};
    assert.equal(await page.locator('.desk-public-links a').last().getAttribute('href'),'/home/');assert.ok((await page.evaluate(()=>getComputedStyle(document.body).fontFamily)).includes(lang==='vi'?'Baloo 2':'Fredoka'));await save('today');await area(page,'people');assert.match(await page.locator('.desk-person-list').innerText(),/Demo Linh/);await save('people');
    await page.locator('.desk-period select').selectOption('7');await page.locator('.desk-period button').click();await page.waitForFunction(()=>new URLSearchParams(location.hash.split('?')[1]).get('days')==='7'&&!!document.querySelector('.desk-person-list'));
@@ -96,25 +99,25 @@ export async function ownerDeskBrowserCheck(browser){
    const event={schemaVersion:1,eventId:crypto.randomUUID(),attemptId:crypto.randomUUID(),deviceId:device,sessionId:'demo123456789012',eventName:'boot.started',occurredAt:new Date(sentAt).toISOString(),deviceDay:new Date(sentAt+660*60000).toISOString().slice(0,10),offsetMinutes:660,build:'v1.02',sourceCommit:null,environment:'local',traffic:'synthetic_bot',data:{stage:'boot'}};
    assert.equal((await ctx.request.post(site+'/api/management/events',{data:{schemaVersion:1,events:[event]}})).status(),410,'server rejects stale clients after collection Off');
    if(width===390){await page.locator('[data-functions-history]').click();await page.waitForSelector('[data-chart=G17]');assert.match(page.url(),/work\/managementchanges/);assert.equal(await page.locator('.mg-content').evaluate(e=>!!(e.querySelector('[data-chart=G17]').compareDocumentPosition(e.querySelector('form.mg-editor'))&Node.DOCUMENT_POSITION_FOLLOWING)),true,'delivery evidence precedes advanced editor');await save('function-delivery');}
-   await page.locator('#tabs [data-k=home]').click();await page.waitForSelector('.desk-home-summary');await page.waitForSelector('[data-home-functions]');assert.match(await page.locator('[data-home-functions]').innerText(),lang==='vi'?/Thu thập tắt/:/Collect off/);
+   await page.locator('#tabs [data-k=home]').click();await page.waitForSelector('[data-today="tiles"] .today-tile');await page.waitForFunction(()=>/collect off|thu thập tắt/i.test(document.querySelector('[data-today="health"]')?.textContent||''));
    await ctx.close();
   }
   const controlRecoveryEvidence=await controlRecoveryBrowserCheck(browser,site,output);
   // A summary-only account sees no names, private device API, Money or finance request.
   const owner=await browser.newContext();assert.equal((await owner.request.post(site+'/studio/api/login',{data:{password}})).status(),200);
   assert.equal((await owner.request.post(site+'/studio/api/admins/save',{headers:{'X-Studio':'1'},data:{name:'summary-fixture',password:'synthetic-summary-password',role:'custom',perms:['management.read']}})).status(),200);assert.equal((await owner.request.post(site+'/studio/api/admins/twostep',{headers:{'X-Studio':'1'},data:{name:'summary-fixture',on:false}})).status(),200);await owner.close();
-  const ctx=await browser.newContext(),requests=[];const login=await ctx.request.post(site+'/studio/api/login',{data:{name:'summary-fixture',password:'synthetic-summary-password'}});assert.equal(login.status(),200);assert.equal((await login.json()).step,undefined);const page=await ctx.newPage();page.on('request',r=>requests.push(r.url()));await page.goto(site+'/studio');await page.waitForSelector('.desk-body [data-chart="G01"]');await area(page,'people');
+  const ctx=await browser.newContext(),requests=[];const login=await ctx.request.post(site+'/studio/api/login',{data:{name:'summary-fixture',password:'synthetic-summary-password'}});assert.equal(login.status(),200);assert.equal((await login.json()).step,undefined);const page=await ctx.newPage();page.on('request',r=>requests.push(r.url()));await page.goto(site+'/studio');await page.waitForSelector('[data-today="tiles"] .today-tile');await area(page,'people');
   assert.equal(await page.locator('#tabs [data-k="money"]').count(),0);assert.ok(!(await page.locator('#page').innerText()).includes('Demo Linh'));assert.ok(!requests.some(url=>/management\/(children|finance)/.test(url)));
   assert.equal((await ctx.request.get(site+'/studio/api/management/devices/'+device)).status(),403);assert.equal((await ctx.request.get(site+'/studio/api/management/finance')).status(),403);await ctx.close();
-  // Losing a public catalogue source must not turn unknown coverage into a healthy zero.
+  // Losing a source must not turn unknown numbers into a healthy zero.
   const missing=await browser.newContext();await missing.addInitScript(()=>localStorage.setItem('studioLang','en'));await missing.request.post(site+'/studio/api/login',{data:{password}});
-  const failedPage=await missing.newPage();await failedPage.route('**/studio/api/management/activities?summary=1',r=>r.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'synthetic_source_unavailable'})}));
-  await failedPage.goto(site+'/studio');await failedPage.waitForSelector('.desk-home-summary');
-  assert.match(await failedPage.locator('.desk-home-summary>div').nth(3).innerText(),/Unavailable/);
-  assert.match(await failedPage.locator('.desk-readiness').innerText(),/No completeness percentage/);
+  const failedPage=await missing.newPage();await failedPage.route('**/studio/api/management/overview?*',r=>r.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'synthetic_source_unavailable'})}));
+  await failedPage.goto(site+'/studio');await failedPage.waitForSelector('[data-today="tiles"] .desk-source-warning');
+  assert.match(await failedPage.locator('[data-today="tiles"]').innerText(),/Could not load/);assert.doesNotMatch(await failedPage.locator('[data-today="tiles"]').innerText(),/\b0\b/);
+  await failedPage.unroute('**/studio/api/management/overview?*');
   await failedPage.route('**/studio/api/management/overview?*',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({metrics:[{id:'M01',value:0},{id:'M04',value:0}],totals:{errors:0},dailySeries:[{date:today,reportingBuckets:0,activeDevices:null}],attention:{open:null}})}));
-  await failedPage.reload();await failedPage.waitForSelector('.desk-home-summary');
-  for(const index of [0,1,2])assert.match(await failedPage.locator('.desk-home-summary>div').nth(index).innerText(),/Unavailable/,'No retained source days is unknown, not observed zero');
+  await failedPage.reload();await failedPage.waitForSelector('[data-today="tiles"] .today-tile');
+  for(const index of [0,1,2])assert.match(await failedPage.locator('.today-tile b').nth(index).innerText(),/^–$/,'A missing count is unknown, not observed zero');
   await missing.close();
   const itemControlEvidence=await itemControlRuntimeCheck(browser,projectedOff);
   assert.deepEqual(errors,[]);

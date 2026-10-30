@@ -97,6 +97,11 @@ round); the full suite green before a report; times in AEST; no keys or personal
 All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed` after every merge (it always includes `types unit arch rules`).
 
 ## Owner's decisions
+- 30 October 2026 AEDT (night): this round also fixes every open bug, brings the first download back under 1030 KB, and builds the rest of the valley while the child plays; asked about the two on-hold issues, the owner chose "Both now": #34 (roads and dirt roads redesigned to the Concept D drawings) and the deeper part of #36 (the valley built area by area as the child walks) are in this round too.
+- 30 October 2026 AEDT (afternoon): the coin goal (saving for the companion's hat) shows on phones too, as a small chip under the clock with the picture and the count, while saving as well as when the hat can be bought (pop-up answer: "small chip should show"). Driving, riding or sitting in a vehicle starts in Street view (Ngang phố) and getting off returns to the child's own view; Behind me (the rider's eyes) stays on the View button. A seated child's head stays under a car's roof. The play bar's words follow a language change (it kept "Xem" after switching to English), and the camera view button keeps its drawing (it went blank). Asked how to add the FPT key: environment variable FPT_API_KEY (the GitHub secret already exists).
+- 30 October 2026 AEDT (evening): companion hats are managed in a Companion tab in the shop and the mirror (pop-up answer: "Companion tab in the shop (Recommended)"): owned hats are put on or taken off with a tap, the shop sells the next hat in order, later ones wait locked. A Vietnamese yellow cow (bò vàng) with a hump and short horns joins the two water buffalo; both are ridden and both swim across deep water with the rider's head above it.
+- 30 October 2026 AEDT (evening, replaces the afternoon's ride camera rule): Street view (Ngang phố) starts only when the child drives (car, motorbike, bicycle) or rides the buffalo or the cow (pop-up answer: "Street view too"); riding as a passenger (bus, tram, taxi, xích lô) keeps the usual camera. While an animal swims the camera stays above the water.
+
 - 27 October 2026 AEDT, Studio implementation session: manage and implement the project; initially parallelise with subagents, then continue with one active agent. Collect children's first names alongside their reporting devices, preserving Analytics/reportNames opt-outs. Defer finance input. User asked for a PostgreSQL provider recommendation; Netlify Database is recommended, with no paid provisioning or production credential configured. Deployment/version approval remains separate. See [implementation](../studio-management-foundation/IMPLEMENTATION.md).
 
 - 27 October2026 AEDT: owner authorized parallel work on pending fixes. Helpers were assigned separate story, card-rule, goat, autoplay, street-spacing and voice files; Release collected partial changes when their usage stopped. All local browser/regression runs remain sequential. No new version/deployment approval.
@@ -503,3 +508,22 @@ application or approved for production by these files. Public screenshot links
 were repaired using GitHub-hosted files because workspace links did not open in
 the owner's chat client. The existing comprehensive test run40470635366 can finish
 independently; do not report it as passed until actual artifacts are inspected.
+
+## Round 30 Oct 2026 AEDT (branch work/studio-home-20261030, PR #653): progress, night
+
+- Solid map: its second look waits until play has started (the valley now builds behind Welcome and Who's playing, so
+  nothing moved during the look and the result depended on timing); animals and empty meshes are left out. `solid`
+  passed three times in a row locally with the same 44117 cells (commit 1578b0bd).
+- GitHub run of 16 chosen checks (run 340, e0e5e988): all 16 passed; `gamespace` only on a second try (Lì Xì on a
+  tablet filled 56% with two envelopes). Fixed: the lantern row keeps the scene's width (now 90%); `gamespace` passes
+  locally. A chosen-checks run now sums only those checks (it listed every other check as "did not run").
+- Roads (#34, Concept D): paddy dikes (bờ ruộng) along and across the rice terraces with shallow water in each field.
+- Start-up: the road profile asks the ground's height only where the answer is used (about 0.3 s less on a cold start
+  here; identical heights). `startup` here: first download 1016 KB (passes), first start ready 46.8 s against 34.2 s
+  (over, as in the last two rounds on this machine); the profile shows `heightAt` at 4.2 of 10.5 s (540,000 calls, 89%
+  at new points, so a cache would not help). The area-by-area build (#36) is not finished this round.
+- **v1.04, owner's "yes, deploy" (31 Oct 2026, about 3:40 am AEDT, by pop-up), version v1.04 (pop-up).** PR #653 at
+  e3c84f90 passed the GitHub full suite 279/279 (run 41077834394; installflow and r87ui on a second try). Local speed:
+  battery passes; perf world 8.8 s over 6.6 s and startup first ready 46.8 s over 34.2 s (over on this machine at v1.03
+  too); first download 1016 KB passes. After the green run: version set (sw.ts, js/build.ts, studio/version.json), the
+  website re-synced and recorded as reviewed (source links only; no text affected), code map from run 41077834394.
