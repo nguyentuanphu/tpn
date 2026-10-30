@@ -250,17 +250,18 @@ export function plantRoadside(G) {
   });
   // (#34, Concept D) along the main roads: red lamp posts and bougainvillea on the Vietnam side, orange lamp posts and gum
   // trees on the Australian side; one merged mesh for each, so the draw calls stay the same
-  const lampVN = [], lampAU = [], bushes = [], gums = [];
+  const lampVN = [], lampAU = [], bushes = [], gums = [], benches = [];
   // (check plots) never on a garden plot kept for a future building
   const plotFree = (x, z, pad) => !PLOTS.some(P => { const B = plotBox(P); return x > B.x0 - pad && x < B.x1 + pad && z > B.z0 - pad && z < B.z1 + pad; });
   lines.forEach((L, k) => {
     const R = ROADS[k], n = L.pts.length; if (R.kind !== 'asphalt' || (R.tone !== 'vn' && R.tone !== 'au') || n < 12) return;
-    const hw = R.w / 2, vn = R.tone === 'vn'; let along = 0, nextLamp = 12, nextPlant = 20, side = 1;
+    const hw = R.w / 2, vn = R.tone === 'vn'; let along = 0, nextLamp = 12, nextPlant = 20, nextBench = 32, side = 1;
     for (let i = 1; i < n - 6; i++) {
       along += Math.hypot(L.pts[i][0] - L.pts[i - 1][0], L.pts[i][1] - L.pts[i - 1][1]); if (i < 6 || L.deck[i]) continue;
       const [px, pz] = L.pts[i - 1], [x, z] = L.pts[i], D = Math.hypot(x - px, z - pz) || 1, ux = -(z - pz) / D, uz = (x - px) / D;
       const at = (o, sd, pad) => { const cx = x + ux * sd * o, cz = z + uz * sd * o; return edgeDist(cx, cz) >= 1.1 && riverDist(cx, cz) >= 5 && heightAt(cx, cz) > WATER + .5 && free(cx, cz, pad) && plotFree(cx, cz, pad) && roadDist(cx, cz).d > hw - .1 ? [cx, heightAt(cx, cz), cz] : null; };
       if (along >= nextLamp) { const q = at(hw + 1.4, side, .6); if (q) { (vn ? lampVN : lampAU).push(q); world.colliders.push({ x: q[0], z: q[2], r: .22 }); nextLamp = along + 24; side = -side; } }
+      if (!vn && along >= nextBench) { const q = at(hw + 2, side, .8); if (q) { benches.push([q[0], q[1], q[2], Math.atan2(-ux * side, -uz * side)]); world.colliders.push({ x: q[0], z: q[2], r: .7 }); nextBench = along + 52; } }
       if (along >= nextPlant) { const q = at(hw + (vn ? 2.2 : 3.6), -side, vn ? .9 : 1.4); if (q) { (vn ? bushes : gums).push(q); world.colliders.push({ x: q[0], z: q[2], r: vn ? .5 : .45 }); nextPlant = along + (vn ? 34 : 46); } }
     }
   });
@@ -279,10 +280,24 @@ export function plantRoadside(G) {
   for (let zc = PADDIES.z - 13.5; zc < PADDIES.z + 14; zc += 9) for (const xc of [-12, -4, 4, 12]) { const x = PADDIES.x + xc; if (!inside(x - 3.4, zc) || !inside(x + 3.4, zc) || !inside(x, zc - 3.8) || !inside(x, zc + 3.8)) continue; pools.push(P(new THREE.PlaneGeometry(7.2, 8.1), '#7cc3d6', [x, heightAt(x, zc) + .05, zc], [-Math.PI / 2, 0, 0])); }
   if (dikes.length) { const m = new THREE.Mesh(merge(dikes), toonVC()); m.receiveShadow = true; m.userData.noSolid = true; scene.add(m); }
   if (pools.length) { const m = new THREE.Mesh(merge(pools), toonVC({ transparent: true, opacity: .55, depthWrite: false })); m.userData.noSolid = true; scene.add(m); }
+  // (#34 Concept D) a park bench with a green bin beside it along the Australian main roads, facing the road
+  const benchParts = [P(new THREE.BoxGeometry(1.5, .08, .45), '#8a5a34', [0, .45, 0]), P(new THREE.BoxGeometry(1.5, .4, .07), '#8a5a34', [0, .72, -.22], [-.15, 0, 0]),
+    ...[[-.65, -.15], [.65, -.15], [-.65, .15], [.65, .15]].map(([x, z]) => P(new THREE.BoxGeometry(.07, .45, .07), '#3d3d3d', [x, .22, z])),
+    P(new THREE.CylinderGeometry(.24, .2, .75, 10), '#2f7d4a', [1.15, .38, 0]), P(new THREE.CylinderGeometry(.26, .26, .08, 10), '#256a3c', [1.15, .79, 0])];
+  const seats = benches.map(([x, y, z, yaw]) => benchParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; })).flat();
+  if (seats.length) { const m = new THREE.Mesh(merge(seats), toonVC()); m.castShadow = true; m.userData.noSolid = true; scene.add(m); }
+  // (#34 Concept D) round basket boats (thúng chai) pulled up on Vũng Tàu's beach and floating just off it
+  const boats = [], boatParts = [P(new THREE.SphereGeometry(.85, 14, 7, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), '#7a5530', [0, .55, 0]), P(new THREE.TorusGeometry(.85, .06, 6, 18), '#4a3218', [0, .55, 0], [Math.PI / 2, 0, 0]),
+    P(new THREE.CylinderGeometry(.03, .03, 1.6, 5), '#9a7448', [.3, .65, .1], [0, 0, 1.1]), P(new THREE.BoxGeometry(.25, .04, .12), '#9a7448', [.98, .95, .1], [0, 0, 1.1])];
+  for (const [x, z] of [[186, 187], [190, 189], [204, 189], [192, 199], [200, 201]]) { const h = heightAt(x, z), dry = h > WATER + .05;
+    if (dry && h > WATER + 1.6 || !free(x, z, 1.2) || !plotFree(x, z, 1)) continue;
+    const y = dry ? h - .5 : WATER - .45, yaw = (x * 7 + z) % 6.3; boats.push(...boatParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; }));
+    if (dry) world.colliders.push({ x, z, r: .9 }); }
+  if (boats.length) { const m = new THREE.Mesh(merge(boats), toonVC()); m.castShadow = true; m.userData.noSolid = true; scene.add(m); }
   // only roads near a player show their flowers
   let t0 = 0; world.updaters.push(dt => { if ((t0 -= dt) > 0) return; t0 = .5;
     for (const g of groups) { const S = g.meshes[0].boundingSphere, on = G.heroes.some(h => Math.hypot(h.pos.x - S.center.x, h.pos.z - S.center.z) < S.radius + 70); g.meshes.forEach(M => M.visible = on); } });
-  return { count: groups.reduce((a, g) => a + g.spots.length, 0), lamps: lampVN.length + lampAU.length, bushes: bushes.length, gums: gums.length, dikes: dikes.length, pools: pools.length };
+  return { count: groups.reduce((a, g) => a + g.spots.length, 0), lamps: lampVN.length + lampAU.length, bushes: bushes.length, gums: gums.length, dikes: dikes.length, pools: pools.length, benches: benches.length, boats: boats.length / 4 };
 }
 
 // the welcome sign on a gate: big words that follow the language
