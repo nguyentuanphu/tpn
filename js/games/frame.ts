@@ -96,7 +96,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     };
     const cleanups = [];
     // (owner, 30 Oct 2026 AEDT: "grow to fill" on tablets and computers) a game drawn small in the middle of a big screen
-    // grows to fill it: the stage zooms so its pieces take the room (at most 1.8x). Drawing games (a canvas) keep their
+    // grows to fill it: the stage zooms so its pieces take the room (at most 2.4x). Drawing games (a canvas) keep their
     // size so a finger lands where it draws; phones keep today's layout.
     const fit = () => {
       if (closed || Math.min(innerWidth, innerHeight) < 600 || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
@@ -104,7 +104,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
       if (!kids.length) return;
       const rs = kids.map(e => e.getBoundingClientRect()), w = (Math.max(...rs.map(r => r.right)) - Math.min(...rs.map(r => r.left))) / z, h = (Math.max(...rs.map(r => r.bottom)) - Math.min(...rs.map(r => r.top))) / z;
       if (!w || !h) return;
-      const next = Math.max(1, Math.min(1.8, Math.min(box.width / w, box.height / h) * .9));
+      const next = Math.max(1, Math.min(2.4, Math.min(box.width / w, box.height / h) * .9));
       if (Math.abs(next - z) > .06) stage.style.zoom = String(Math.round(next * 100) / 100);
     };
     let fitTimer: ReturnType<typeof setTimeout> | undefined;
