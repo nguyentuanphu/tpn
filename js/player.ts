@@ -228,7 +228,9 @@ export class Hero {
     // everything when walking towards the camera). It waits a moment so small turns don't spin it.
     // (tester's notes, 12 Oct) inside a house: the camera stays inside the room, close and looking down, and does not
     // swing round, so the child does not keep walking into the walls or out of the door
-    if (easy && this.indoors) { this.easyT = 0; this.camPitch += (.95 - this.camPitch) * Math.min(1, dt * 2); }
+    // (owner, 30 Oct 2026 AEDT: the decorations on the walls were out of view) still fixed and calm, but from the door looking
+    // into the room at a gentler slope, so the back wall and what hangs on it show above the child
+    if (easy && this.indoors) { this.easyT = 0; this.camPitch += (.3 - this.camPitch) * Math.min(1, dt * 2); if (this.manualCamT <= 0) this.camYaw = easeYaw(this.camYaw, 0, dt, 2, 1.3); }
     else if (easy) {
       if (this.speed > .8 && !this.towerClimb && this.manualCamT <= 0) { this.easyT = (this.easyT || 0) + dt; this.stillT = 0; // calmer: only after walking the same way for a moment, slowly, and it stops once roughly behind
         const off = Math.abs(Math.atan2(Math.sin(this.yaw + Math.PI - this.camYaw), Math.cos(this.yaw + Math.PI - this.camYaw)));
@@ -248,7 +250,9 @@ export class Hero {
       // near a landmark, step back and look more level so the whole building fits on screen
       const lf = this._lmF = lerp(this._lmF || 0, game.landmarkFrame ? game.landmarkFrame(this) : 0, Math.min(1, dt * 1.5));
       // camera views (🎥 button): behind (normal), high up, at street level, or the child's face
-      const view = this.view || 'follow', base = view === 'high' ? 1.05 : view === 'street' ? .12 : .55;
+      // (owner, 30 Oct 2026 AEDT: inside My House the decorations on the walls were above the top of the screen) indoors the
+      // camera looks more level, so the walls and what hangs on them are in view
+      const view = this.view || 'follow', base = view === 'high' ? 1.05 : view === 'street' ? .12 : this.indoors ? .32 : .55;
       this.camPitch += ((this.towerClimb ? .25 : game.lookUpT > 0 ? .1 : base - lf * .12 + Math.max(0, (this.zoom || 1) - 1) * .45) - this.camPitch) * Math.min(1, dt * 1.5);
     }
     else if (this.manualCamT <= 0 && this.speed > 1 && !this.towerClimb) this.camYaw = easeYaw(this.camYaw, this.yaw + Math.PI, dt, .4, .4);
