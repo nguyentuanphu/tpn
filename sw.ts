@@ -7,7 +7,7 @@ const worker = self;
 // Offline support: cache the whole game on first visit, then serve from the cache.
 // Bump VERSION whenever files change so devices pick up the update. Updates only replace the game's files:
 // saved progress (localStorage, IndexedDB, and the 'sv-save' copy) and the voice pack are never deleted.
-const VERSION = 'sv-2026-10-31-v1.04';
+const VERSION = 'sv-2026-10-31-v1.05';
 const FILES = [
   'js/content/tester-arcades.js', 'js/games/parade-engine.js', 'js/games/arcade-session.js', 'js/games/arcade-board.js', 'js/games/sparkleorchard.js', 'js/games/fruitbar-engine.js', 'js/games/sparklefruitbar.js',
   'js/games/trongnu.js', 'js/games/trongnu-rules.js',
