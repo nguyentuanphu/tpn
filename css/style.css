@@ -599,6 +599,9 @@ button { color: var(--text); }
 .dock { left: calc(var(--pad) + env(safe-area-inset-left)); bottom: calc(var(--pad) + env(safe-area-inset-bottom)); display: flex; gap: 8px; align-items: flex-end; pointer-events: auto; }
 .dk { width: 64px; height: 64px; border: 0; border-radius: 20px; background: rgba(255, 255, 255, .94); box-shadow: 0 4px 0 rgba(90, 60, 130, .18), var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; }
 .dk span { font-size: 28px; line-height: 1; } .dk small { font-size: 11px; margin-top: 2px; }
+/* (owner, 31 Oct 2026 AEDT, tablet and computer: "Play, Map, Bag are over the font") the word inside a label keeps the label's
+   size; the icon's size (.dk span) is for the picture only */
+.hud .dock .dk small > span[data-l] { font-size: inherit; line-height: inherit; }
 .dk.games { width: 84px; height: 84px; border-radius: 26px; background: linear-gradient(160deg, #ff8ac0, #ff5f9e 55%, #e8458a); color: #fff; box-shadow: 0 5px 0 #b8306a, 0 10px 24px rgba(232, 69, 138, .45); animation: goPulse 2.4s ease-in-out infinite; }
 .dk.games span { font-size: 40px; } .dk.games small { font-size: 13px; }
 .dk.map { background: linear-gradient(160deg, #7fe0ff, #36b8f0); color: #fff; box-shadow: 0 4px 0 #1f86c0, var(--shadow); }
