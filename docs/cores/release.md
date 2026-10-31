@@ -551,3 +551,11 @@ independently; do not report it as passed until actual artifacts are inspected.
   hidden once all voices are kept; the Grown-ups voice section explains the choice and the size (about 250 MB per
   language, on Wi-Fi); with no internet a one-time card (Grown-ups / OK, 48 px) says what to keep and where. Less
   Netlify traffic: a family downloads only the lines it hears unless it chooses offline. Check: voiceonline.
+- **v1.05, owner's "yes, deploy" (31 Oct 2026, about 4:35 pm AEDT, in chat: "You can deploy now and put on note to check on
+  the festivalsync next round. You can use v1.05 for this round").** PR #725. GitHub full suite at 1211d00e: 279/280
+  (run 41166167210; tugplay on a second try). The one red, `festivalsync`, is red on main (v1.04) too since 31 Oct
+  (workflow run 41172071003, only=festivalsync) and green on this machine every time (also with TZ Australia/Sydney);
+  its assertions now name their step (08e0c5ad). **Next round: find and fix festivalsync (owner).** Local: perf and
+  battery pass; startup first ready 35.2 s over 28.0 s (main 36.7 s, also over). Orchard check failed 1 of 3 locally
+  (a test page closed early), green on its own workflow. After the yes: version set (sw.ts, js/build.ts,
+  studio/version.json), website re-synced and recorded as reviewed (source links only).

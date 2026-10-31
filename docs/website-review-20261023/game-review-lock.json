@@ -1,5 +1,5 @@
 {
-  "source": "bb16c6b0ae7af447a60ee88f33ad92d6cb4f27c8",
+  "source": "f5767238d1e9f4f398c2f8c8c68f63de138af343",
   "files": [
     {
       "file": "content/custom.json",
@@ -259,7 +259,7 @@
     },
     {
       "file": "js/build.ts",
-      "hash": "a062013cf750ce5ff2479511c7d39eee17568a3e"
+      "hash": "f98884d13e0f4b1be1f363443c9e7d7ddf50f3dd"
     },
     {
       "file": "js/cartoon.js",
@@ -1639,11 +1639,11 @@
     },
     {
       "file": "studio/version.json",
-      "hash": "ef0e74a1bccbd743c320c35db934184d95e3885a"
+      "hash": "829bd9be1b113030916ecbdd6ee5aaee8948a7b4"
     },
     {
       "file": "sw.ts",
-      "hash": "f31d19f1f6d9be658966a78d2bfe2ff28b5be6fc"
+      "hash": "8da3435b713058087cc10771fdace28306ca1f3e"
     },
     {
       "file": "vendor/RoomEnvironment.js",
