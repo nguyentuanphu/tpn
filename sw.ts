@@ -7,7 +7,7 @@ const worker = self;
 // Offline support: cache the whole game on first visit, then serve from the cache.
 // Bump VERSION whenever files change so devices pick up the update. Updates only replace the game's files:
 // saved progress (localStorage, IndexedDB, and the 'sv-save' copy) and the voice pack are never deleted.
-const VERSION = 'sv-2026-10-31-v1.04';
+const VERSION = 'sv-2026-10-31-v1.05';
 const FILES = [
   'js/content/tester-arcades.js', 'js/games/parade-engine.js', 'js/games/arcade-session.js', 'js/games/arcade-board.js', 'js/games/sparkleorchard.js', 'js/games/fruitbar-engine.js', 'js/games/sparklefruitbar.js',
   'js/games/trongnu.js', 'js/games/trongnu-rules.js',
@@ -66,7 +66,21 @@ worker.addEventListener('message', (e: ExtendableMessageEvent) => { if (e.data?.
 // (r80) this version's own copy first: the one older copy kept below is only for a game still open from before (its
 // lazy parts); answering from it first had every updated device running the version before (r78 ran r77's files)
 const saved = req => caches.open(VERSION).then(c => c.match(req, { ignoreSearch: true })).then(hit => hit || caches.match(req, { ignoreSearch: true }));
-worker.addEventListener('activate', (e: ExtendableEvent) => { e.waitUntil(caches.keys().then(keys => { const old = keys.filter(k => k !== 'sv-family' && /^sv-20/.test(k) && k !== VERSION); const keep = old.slice(-1); return Promise.all(old.filter(k => !keep.includes(k)).map(k => caches.delete(k))); }).then(() => worker.clients.claim())); });
+worker.addEventListener('activate', (e: ExtendableEvent) => { e.waitUntil(Promise.resolve(worker.registration.navigationPreload?.enable()).catch(() => { })); e.waitUntil(caches.keys().then(keys => { const old = keys.filter(k => k !== 'sv-family' && /^sv-20/.test(k) && k !== VERSION); const keep = old.slice(-1); return Promise.all(old.filter(k => !keep.includes(k)).map(k => caches.delete(k))); }).then(() => worker.clients.claim())); });
+// (owner, 31 Oct 2026 AEDT: the installed app stayed white for about 30 s) the voices are kept as a few big bundles with
+// one index (js/voicestore.ts); a recording is cut out of its bundle here. The index is read once and again whenever the
+// game says it changed; the last bundles read are kept in memory for the next lines.
+const STORE_DIRS: Record<string, string> = { 'sv-voices': 'voices/__store/', 'sv-voices-fpt-leminh-v1': 'voices/fpt-leminh-v1/__store/' };
+type StoreIndex = { v: 1, next: number, files: Record<string, [number, number, number]> };
+const storeIndexes = new Map<string, Promise<StoreIndex | null>>(), bundles = new Map<string, Blob>();
+const storeIndex = (name: string) => { let p = storeIndexes.get(name); if (!p) { p = caches.open(name).then(c => c.match(new URL(STORE_DIRS[name] + 'index.json', worker.registration.scope).href)).then(r => r ? r.json() : null).catch(() => null); storeIndexes.set(name, p); } return p; };
+async function fromStore(name: string, url: URL): Promise<Response | null> {
+  const ix = await storeIndex(name), f = ix && ix.files[url.pathname.replace(/^\//, '') + url.search]; if (!f) return null;
+  const key = name + ':' + f[0]; let blob = bundles.get(key);
+  if (!blob) { const r = await (await caches.open(name)).match(new URL(STORE_DIRS[name] + 'b' + f[0] + '.bin', worker.registration.scope).href); if (!r) return null; blob = await r.blob(); bundles.set(key, blob); if (bundles.size > 3) bundles.delete(bundles.keys().next().value as string); }
+  return new Response(blob.slice(f[1], f[1] + f[2], 'audio/mpeg'), { headers: { 'Content-Type': 'audio/mpeg' } });
+}
+worker.addEventListener('message', (e: ExtendableMessageEvent) => { if (e.data?.type === 'SV_VOICE_STORE') { storeIndexes.delete(String(e.data.name)); for (const k of [...bundles.keys()]) if (k.startsWith(String(e.data.name) + ':')) bundles.delete(k); } });
 worker.addEventListener('fetch', (e: FetchEvent) => {
   const req = e.request;
   if (req.method !== 'GET') return;
@@ -91,7 +105,7 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
   if(url.pathname.startsWith('/voices/fpt-leminh-v1/')){
     e.respondWith(caches.open('sv-voices-fpt-leminh-v1').then(async c=>{
       if(url.pathname.endsWith('/manifest.json')){try{const r=await fetch(req);if(r.ok){e.waitUntil(c.put(req,r.clone()));return r;}}catch{}const saved=await c.match(req);return saved||new Response('Offline',{status:503});}
-      return(await c.match(req))||fetch(req); // The voice service verifies the checksum before storing MP3s.
+      return(await fromStore('sv-voices-fpt-leminh-v1',url))||(await c.match(req))||fetch(req); // The voice service verifies the checksum before storing MP3s.
     }));return;
   }
   if (/\/voices\/manifest(?:-(?:en|vi|zh|hi))?\.json$/.test(url.pathname)) { // the saved list at once (slow phone data must never mean the phone's voice), refreshed behind
@@ -139,7 +153,8 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
     return;
   }
   if (url.pathname.includes('/voices/') && url.pathname.endsWith('.mp3')) {
-    e.respondWith(caches.open('sv-voices').then(c => c.match(req).then(hit => hit || fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; }))));
+    // (31 Oct 2026 AEDT) from its bundle, else a recording kept the old way, else the internet (the game keeps it, in a bundle)
+    e.respondWith(fromStore('sv-voices', url).then(hit => hit || caches.open('sv-voices').then(c => c.match(req)).then(hit2 => hit2 || fetch(req))));
     return;
   }
   // (owner, 30 Oct AEDT: a white screen for about 28 s when the Home Screen app first opened after v1.03) while an
@@ -156,7 +171,10 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
     e.respondWith(new Promise<Response>(done => {
       let over = false, net: Promise<Response> | null = null;
       const give = (r: Response) => { if (!over) { over = true; done(r); } };
-      const fromNet = () => net || (net = Promise.race([fetch(req), new Promise<Response>((_, no) => setTimeout(() => no(new Error('slow')), NAV_LIMIT))]));
+      // (owner, 31 Oct 2026 AEDT: the installed app stays white for about 30 s) the browser asks the website for the start
+      // page while this worker is still starting (navigation preload, switched on below), so the answer is already on its way
+      const ask = () => Promise.resolve(e.preloadResponse).then(r => r || fetch(req), () => fetch(req));
+      const fromNet = () => net || (net = Promise.race([ask(), new Promise<Response>((_, no) => setTimeout(() => no(new Error('slow')), NAV_LIMIT))]));
       const fallback = () => (game ? shell().then(clean) : Promise.resolve(undefined)).then(r => give(r || Response.error()), () => give(Response.error()));
       const t = setTimeout(() => fromNet().then(r => { if (r.ok) give(r); }, () => { }), NAV_QUICK);
       saved(req).catch(() => undefined).then(clean).then(hit => { clearTimeout(t); if (hit) give(hit); else fromNet().then(r => { if (r.ok || !game) give(r); else fallback(); }, fallback); });

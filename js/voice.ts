@@ -1,9 +1,9 @@
 import { createVoiceIndex, voiceLanguages } from './voice-index.js';
 // Talking voice in English and Vietnamese using the device's own natural voices.
 // Premium/enhanced/neural voices are picked first; grown-ups can choose a voice in settings.
-import { settings, saveSettings, profiles } from './state.js';
+import { settings, saveSettings, profiles, autoPackOn } from './state.js';
 import { ac, unlockers } from './audio.js';
-import { swapNames } from './i18n.js';
+import { swapNames, T } from './i18n.js';
 import { packHash, lineHash, partText } from './packhash.js';
 import { events, managementEvidence } from './core/events.js';
 import { viRuns, mixed } from './viwords.js';
@@ -430,7 +430,7 @@ navigator.serviceWorker?.addEventListener('message', e => {
 addEventListener('click', () => loadPack(), { once: true, passive: true });
 // Language/settings changes fetch only the newly selected index. Saved MP3s are kept.
 for (const ev of ['LanguageChanged', 'SettingsChanged']) events.on(ev, () => { if (packReady) loadPack(); });
-{ const t0 = Date.now(), wait = setInterval(() => { const g = window.__sv; if (packReady) return clearInterval(wait); if ((g && g.bootTimes) || Date.now() - t0 > 30000) { clearInterval(wait); setTimeout(() => { if (settings.voice || settings.autoPack !== false) loadPack(); }, 3000); } }, 500); }
+{ const t0 = Date.now(), wait = setInterval(() => { const g = window.__sv; if (packReady) return clearInterval(wait); if ((g && g.bootTimes) || Date.now() - t0 > 30000) { clearInterval(wait); setTimeout(() => { if (settings.voice || autoPackOn()) loadPack(); }, 3000); } }, 500); }
 const waitPack = async (langs = voiceLanguages(settings)) => {
   if (PACK && langs.every(l => voiceIndex.has(l))) return;
   let timer;
@@ -449,6 +449,29 @@ events.on('PlayerEnteredVillage', e => { const a = String(e && e.villageId || ''
 let hanoiService: ReturnType<typeof import('./hanoi-pack.js').createHanoiPack> | null = null;
 let hanoiLoading: Promise<NonNullable<typeof hanoiService>> | null = null;
 const hanoiSelected=()=>settings.voiceViVariant==='leminh';
+// (owner, 31 Oct 2026 AEDT: "voices online; when playing offline without voices, tell the user what to download and how")
+// a recorded line heard over the internet is kept (in a bundle, js/voicestore.ts) so it plays again without it; with no
+// internet and the line not kept, a grown-up is told once a visit what to download and where
+const keepHeard = (url: string, r: Response) => { import('./voicestore.js').then(async m => { const s = m.voiceStore('sv-voices'); if (!(await s.has(url))) await s.add(url, await r.arrayBuffer()); }).catch(() => { }); };
+let offlineTold = false;
+function offlineNote() {
+  if (offlineTold || typeof document === 'undefined' || autoPackOn() && settings.packSaved) return; offlineTold = true;
+  const card = document.createElement('div'); card.className = 'voice-offline'; card.setAttribute('role', 'status');
+  card.style.cssText = 'position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 184px);transform:translateX(-50%);z-index:70;width:min(360px,calc(100% - 32px));box-sizing:border-box;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.97);box-shadow:0 6px 24px rgba(60,30,90,.25);color:#3a2a20;font:600 14px/1.4 var(--font);text-align:center';
+  const p = document.createElement('p'); p.style.margin = '0 0 8px';
+  p.textContent = T('No internet, so the voices can’t play now (lines already heard still do). To play offline with voices, a grown-up goes to Grown-ups → Sound and voices → “Keep all voices on this device”, on Wi-Fi.', 'Không có mạng nên giọng nói chưa phát được (những câu đã nghe vẫn phát). Để chơi offline có giọng nói, người lớn vào Người lớn → Âm thanh và giọng nói → “Lưu tất cả giọng đọc vào máy”, khi có Wi-Fi.');
+  const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;justify-content:center;flex-wrap:wrap';
+  const btn = (text: string, bg: string, go: () => void) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.style.cssText = `min-height:48px;min-width:120px;flex:1 1 130px;padding:6px 12px;border:0;border-radius:12px;font:700 14px/1.2 var(--font);color:#fff;background:${bg}`; b.onclick = () => { card.remove(); go(); }; return b; };
+  row.append(btn(T('Grown-ups', 'Người lớn'), 'var(--purple, #8a5cf6)', () => { import('./ui.js').then(m => m.openGrownups()).catch(() => { }); }), btn(T('OK', 'Đã hiểu'), '#9a8aa8', () => { }));
+  card.append(p, row); document.body.appendChild(card); setTimeout(() => card.remove(), 20000);
+}
+// fetch a recorded line of the voice pack (through the offline helper: from its bundle when kept)
+async function packFetch(url: string, init?: RequestInit) {
+  try { const r = await fetch(url, init); if (r.ok) keepHeard(url, r.clone()); else if (navigator.onLine === false) offlineNote(); return r; }
+  catch (e) { if (!(e instanceof DOMException && e.name === 'AbortError')) offlineNote(); throw e; }
+}
+// (31 Oct 2026 AEDT) recordings waiting to be written into a bundle (js/voicestore.ts) are written when the page goes away
+addEventListener('pagehide', () => { import('./voicestore.js').then(m => m.voiceStore('sv-voices').flush()).catch(() => { }); hanoiService?.flush?.().catch(() => { }); });
 const hanoiPack=()=>hanoiLoading||(hanoiLoading=Promise.all([import('./hanoi-pack.js'),voicePackMod()]).then(([m,p])=>hanoiService=m.createHanoiPack({allowed:()=>hanoiSelected()&&(settings.packCell===true||p.packNet()==='wifi'),emit:packEmit})));
 const resumeHanoi=()=>{if(hanoiSelected())void hanoiPack().then(p=>p.download()).catch(()=>{});};
 let hanoiAutoScheduled=false;
@@ -530,7 +553,7 @@ async function mixedRecording(text: string, my?: number): Promise<AudioBuffer | 
     if (!buffer) {
       const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 8000);
       try {
-        const response = part.hanoi ? await service.audio(part.url, controller.signal) : await fetch(part.url, { signal: controller.signal });
+        const response = part.hanoi ? await service.audio(part.url, controller.signal) : await packFetch(part.url, { signal: controller.signal });
         if (!response?.ok) return null;
         buffer = await decode(await response.arrayBuffer()) as AudioBuffer;
       } catch { return null; }
@@ -578,7 +601,7 @@ export async function warmVoiceLine(en: string, vi?: string) {
       const hanoi=lang==='vi'&&hanoiSelected()?await(await hanoiPack()).recording(packKey(lang,text)||lineHash(lang,text)):null;
       const k = hanoi?'fpt-leminh-v1|'+hanoi:'pack|' + slot + '|' + lang + '|' + text;
       if (mem.has(k)) continue;
-      const r = hanoi?await(await hanoiPack()).audio(hanoi):await fetch(packUrl(lang, text, slot));
+      const r = hanoi?await(await hanoiPack()).audio(hanoi):await packFetch(packUrl(lang, text, slot));
       if (!r?.ok) continue;
       const buf = await decode(await r.arrayBuffer());
       mem.set(k, buf);
@@ -630,7 +653,7 @@ async function playPack(lang, text, my, forceHanoi=false, skipHanoi=false) {
   voiceDiag.recording=hanoi?'FPT Neo · FPT.AI-VITs · leminh':'Default recorded voices';
   const k = hanoi?'fpt-leminh-v1|'+hanoi:'pack|' + slot + '|' + lang + '|' + text;
   const url = hanoi||packUrl(lang, text, slot), rate=hanoi?(STYLE_RATE[settings.voiceStyle]||1):packRate(slot), a = ac();
-  const response=async(signal?:AbortSignal)=>hanoi?(await hanoiPack()).audio(hanoi,signal):fetch(url,signal?{signal}:undefined);
+  const response=async(signal?:AbortSignal)=>hanoi?(await hanoiPack()).audio(hanoi,signal):packFetch(url,signal?{signal}:undefined);
   const urlPlayback=async()=>{
     if(!hanoi)return playUrl(url,rate,lang,observed);
     const r=await response();if(!r){observed({outcome:'failed'});return false;}const blob=URL.createObjectURL(await r.blob());

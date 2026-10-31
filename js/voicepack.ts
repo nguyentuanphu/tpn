@@ -1,10 +1,11 @@
 import { voicePackSignature } from './voice-index.js';
 // The voice pack downloading to the device (split from js/voice.js in round R item 12, so it is fetched only when the
 // download starts, not before the title screen: PERF-001). js/voice.js starts it once the pack's list has arrived.
-import { settings, saveSettings, profiles } from './state.js';
+import { settings, saveSettings, profiles, autoPackOn } from './state.js';
 import { events } from './core/events.js';
 import { T } from './i18n.js';
 import { featureOn } from './custom.js';
+import { voiceStore, storeKey } from './voicestore.js';
 
 let PACK = null, packEmit = e => { }, hereArea = () => null, packStarted = false;
 let manualSave: Promise<number> | null = null;
@@ -25,7 +26,8 @@ export function startPack(pack, emit, here) {
   if (changed) { areaRevision++; AREAS = null; areasTried = null; groupOfHash = null; }
   // (an address that can't keep files, like http://192.168.… on a phone: the voices still play, from the internet)
   if (!('caches' in window)) { setTimeout(() => packEmit({ state: 'nostore', total: packFiles().length }), 3000); return; }
-  if (settings.autoPack === false) return;
+  // (31 Oct 2026 AEDT) voices online unless the whole pack is kept here; recordings kept the old way still move into bundles
+  if (!autoPackOn()) { valleyBuilt().then(() => voiceStore('sv-voices').migrate()).catch(() => { }); return; }
   if (packStarted) { if (changed) checkPack().catch(() => { }); return; }
   packStarted = true;
   setTimeout(() => { checkPack().catch(() => { }); }, 6000);
@@ -104,11 +106,12 @@ async function checkPack() {
   try {
     await valleyBuilt();
     if (PACK.signatures && langs.some(L => !PACK.signatures[L])) return; // Wait for every selected index before marking it saved.
-    const cache = await caches.open('sv-voices');
+    // (31 Oct 2026 AEDT) kept as a few big bundles (js/voicestore.ts); recordings kept the old way move into them first
+    const store = voiceStore('sv-voices'); await store.migrate();
     // (round O, owner: "does it load the voice pack every time? it should be once, unless there are new voices") once
     // the whole pack is on the device, a start only looks at 16 files picked at random, says nothing and downloads
     // nothing; the full check (listing every file) runs only for a new pack, or when a file has gone missing
-    const quick = async list => { const pick = list.length <= 64 ? list : Array.from({ length: 16 }, () => list[Math.floor(Math.random() * list.length)]); return (await Promise.all(pick.map(u => cache.match(u).then(Boolean)))).every(Boolean); };
+    const quick = async list => { const pick = list.length <= 64 ? list : Array.from({ length: 16 }, () => list[Math.floor(Math.random() * list.length)]); return (await Promise.all(pick.map(u => store.has(u)))).every(Boolean); };
     if (packIsSaved(langs) && await quick(packFiles(null, langs))) { packEmit({ state: 'ready', quiet: true, known: true, total: packFiles(null, langs).length }); return; }
     await loadAreas();
     // a pack made by area whose list could not be fetched (a bad connection): nothing is downloaded until it can be,
@@ -117,7 +120,7 @@ async function checkPack() {
     const order = packOrder(), core = packFiles(['core'], langs);
     // only the core is wanted for now (mobile data, no yes yet) and it is all here: nothing to show, maybe a question
     if (!mayFetchRest() && settings.packCore === packSig() + '|' + langs.join('') && await quick(core)) { packEmit({ state: 'ready', quiet: true, known: true, core: true, total: core.length }); askRest().catch(() => { }); return; }
-    const have = new Set((await cache.keys()).map(r => r.url)), abs = u => new URL(u, location.href).href;
+    const have = await store.keys(), abs = u => storeKey(u);
     const missingOf = gs => packFiles(gs, langs).filter(u => !have.has(abs(u)));
     const want = mayFetchRest() ? order : ['core'];
     // (r63, owner: the bar showed 108 %) the files to fetch are fixed now: a language or setting changed while it runs
@@ -139,18 +142,20 @@ async function checkPack() {
         if (manualSave) return; // the explicit job takes over after this batch
         if (languageChanged()) return; // finish only the current batch, then start the new selected language
         if (g !== 'core' && !mayFetchRest()) break;
-        await Promise.all(miss.slice(i, i + 6).map(async u => { try { const r = await fetch(u); if (r.ok) { await cache.put(u, r); have.add(abs(u)); pending.delete(u); done = Math.min(total, done + 1); } } catch (e) { } }));
+        await Promise.all(miss.slice(i, i + 6).map(async u => { try { const r = await fetch(u); if (r.ok) { await store.add(u, await r.arrayBuffer()); have.add(abs(u)); pending.delete(u); done = Math.min(total, done + 1); } } catch (e) { } }));
         packEmit({ state: 'loading', ...progress(), area: g });
         if (offline()) { packEmit({ state: 'waiting', left: total - done }); return; } // goes on when the internet is back
         await rest(g === 'core' ? PACK_REST.core : PACK_REST.rest);
       }
       if (languageChanged()) return;
+      await store.flush(); // (each area is written as it finishes)
       if (g === 'core' && !missingOf(['core']).length) settings.packCore = packSig() + '|' + langs.join('');
     }
     if (!missingOf(want).length) { donePack(want, langs); packEmit({ state: 'ready', core: want.length === 1 }); if (want.length === 1) askRest().catch(() => { }); }
     else if (!mayFetchRest() && !missingOf(['core']).length) { saveSettings(); packEmit({ state: 'ready', core: true }); askRest().catch(() => { }); }
     else packEmit({ state: 'waiting', left: missingOf(want).length });
   } finally {
+    await voiceStore('sv-voices').flush().catch(() => { }); // (what came in so far is kept, whatever stopped the download)
     checking = false;
     // A language/connection/settings event during an in-flight request must not be lost.
     if (!manualSave && (recheck || languageChanged())) { recheck = false; setTimeout(() => checkPack().catch(() => { }), 0); }
@@ -171,7 +176,7 @@ async function askRest() {
   const rest = packOrder().filter(g => g !== 'core'); if (!rest.length) return;
   // how much is still to come (a device that kept an older pack has most of it already)
   const all = packFiles(rest); if (!all.length) return;
-  const have = new Set((await (await caches.open('sv-voices')).keys()).map(r => r.url)), miss = all.filter(u => !have.has(new URL(u, location.href).href)).length;
+  const have = await voiceStore('sv-voices').keys(), miss = all.filter(u => !have.has(storeKey(u))).length;
   if (!miss) return;
   let bytes = 0; for (const g of rest) for (const L of packLangs().concat(['zh', 'hi'])) bytes += (AREAS && AREAS.size && AREAS.size[g] && AREAS.size[g][L]) || 0;
   packEmit({ state: 'ask', mb: Math.max(1, Math.round(bytes * miss / all.length / 1048576)) });
@@ -208,7 +213,7 @@ export async function savePackOffline(progress?: (done: number, total: number) =
     // the window joins the same job; closing/redrawing it cannot stop the work.
     while (checking) await rest(25);
     if (!PACK) return 0;
-    const cache = await caches.open('sv-voices'), urls = packFiles();
+    const store = voiceStore('sv-voices'), urls = packFiles(); await store.migrate();
     let n = 0;
     const notify = () => {
       packEmit({state:'loading',done:n,total:urls.length,saved:n,fullTotal:urls.length});
@@ -216,15 +221,16 @@ export async function savePackOffline(progress?: (done: number, total: number) =
     };
     notify();
     for (let i = 0; i < urls.length; i += 6) {
-      await Promise.all(urls.slice(i, i + 6).map(async u => { if (await cache.match(u)) { n++; return; } try { const r = await fetch(u); if (r.ok) { await cache.put(u, r); n++; } } catch (e) { } }));
+      await Promise.all(urls.slice(i, i + 6).map(async u => { if (await store.has(u)) { n++; return; } try { const r = await fetch(u); if (r.ok) { await store.add(u, await r.arrayBuffer()); n++; } } catch (e) { } }));
       notify();
       if (offline()) break;
       await rest(PACK_REST.core);
     }
+    await store.flush();
     if (n === urls.length) packEmit({state:'ready',total:n});
     else packEmit({state:'waiting',left:urls.length-n});
     return n;
-  })().finally(() => { manualSave = null; if (settings.autoPack !== false) refreshPack(); });
+  })().finally(() => { manualSave = null; if (autoPackOn()) refreshPack(); });
   try { return await manualSave; }
   finally { if (progress) manualListeners.delete(progress); }
 }

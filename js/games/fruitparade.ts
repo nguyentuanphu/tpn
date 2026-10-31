@@ -154,7 +154,6 @@ async function run(api: ParadeApi) {
     const action = target.dataset.paradeAction;
     if (action === 'solo') start(1, false);
     else if (action === 'npc') start(2, true);
-    else if (action === 'local') start(2, false);
     else if (action === 'calm') { calm = !calm;paint(); }
     else if (action === 'stop') stop(Number(target.dataset.seat), Number(target.dataset.lane));
     else if (action === 'change' && session?.view.state) { const key = keyOf(Number(target.dataset.seat), Number(target.dataset.lane));clocks.set(key, (Math.round((clocks.get(key) || 0) / session.view.state.round.config.interval) + 1) * session.view.state.round.config.interval);draw();api.sfx.tap(); }
@@ -206,7 +205,7 @@ async function run(api: ParadeApi) {
     api.say('Who will play?', 'Ai cùng chơi nào?');
     const intro = node('section', 'parade-intro');intro.append(artwork('🍎'), node('h2', '', T('Let’s make a fruit parade!', 'Cùng làm đoàn trái cây vui nhé!')));
     const choices = node('div', 'parade-choices');
-    for (const [action, art, en, vi] of [['solo', '🍎', 'Play alone', 'Chơi một mình'], ['npc', '🦉', 'Play with a helper', 'Chơi cùng bạn máy'], ['local', '🧒', 'Two players here', 'Hai bạn cùng máy']]) {
+    for (const [action, art, en, vi] of [['solo', '🍎', 'Play alone', 'Chơi một mình'], ['npc', '🦉', 'Play with a helper', 'Chơi cùng bạn máy']]) {   // (owner, 31 Oct 2026 AEDT) together: in the Friends section
       const b = button(T(en, vi), action, action === 'solo' ? 'parade-primary' : 'parade-friend');b.prepend(artwork(art));choices.append(b);
     }
     intro.append(choices);root.append(intro);

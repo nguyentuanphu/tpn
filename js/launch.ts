@@ -47,7 +47,24 @@ window.svOfferUpdate = (needed = false) => {
   const n = document.createElement('aside'); n.className = 'update-notice'; n.setAttribute('role', 'status');
   const label = document.createElement('span'); label.textContent = text[4];
   const button = document.createElement('button'); button.textContent = text[5];
-  button.onclick = async () => { const g = window.__sv; if (busy()) { label.textContent = lang === 'vi' ? 'Đóng hoạt động trước khi cập nhật nhé.' : 'Close the activity before updating.'; return; } g?.save?.(); const reg = await navigator.serviceWorker?.getRegistration(); if (reg?.waiting) { navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), { once: true }); reg.waiting.postMessage({ type: 'SKIP_WAITING' }); } else location.reload(); };
+  // (owner, 31 Oct 2026 AEDT, iPhone: "there is an update but tapping it does nothing") while the new version is still
+  // downloading its files there is nothing to switch to yet, and a plain reload brought back the same old version and
+  // the same notice. Now the tap says it is downloading, asks the website for the new version if none is coming, waits
+  // until it is ready (up to 2 minutes), switches to it and reloads; a switch that does not answer reloads after 6 s.
+  let updating = false;
+  button.onclick = async () => {
+    const g = window.__sv; if (busy()) { label.textContent = lang === 'vi' ? 'Đóng hoạt động trước khi cập nhật nhé.' : 'Close the activity before updating.'; return; }
+    if (updating) return; updating = true; g?.save?.(); button.disabled = true;
+    label.textContent = lang === 'vi' ? 'Đang tải bản cập nhật… Con chờ một chút nhé.' : 'Downloading the update… Just a moment.';
+    const reg = await navigator.serviceWorker?.getRegistration().catch(() => undefined);
+    const reload = () => location.reload();
+    if (!reg) return reload();
+    const until = (ok: () => boolean, ms: number) => new Promise<boolean>(res => { const t0 = Date.now(); const tick = () => { if (ok()) res(true); else if (Date.now() - t0 > ms) res(false); else setTimeout(tick, 400); }; tick(); });
+    if (!reg.waiting && !reg.installing) { await reg.update().catch(() => { }); await until(() => !!(reg.waiting || reg.installing), 8000); }
+    if (reg.installing) await until(() => !reg.installing, 120000);
+    if (reg.waiting) { navigator.serviceWorker.addEventListener('controllerchange', reload, { once: true }); reg.waiting.postMessage({ type: 'SKIP_WAITING' }); setTimeout(reload, 6000); }
+    else reload();
+  };
   const close = document.createElement('button'); close.textContent = '×'; close.setAttribute('aria-label', lang === 'vi' ? 'Để sau' : 'Later'); close.onclick = () => { clearInterval(watch); n.remove(); };
   n.append(label, button, close); document.body.appendChild(n); n.hidden = busy();
   const watch = setInterval(() => { if (!n.isConnected) return clearInterval(watch); const b = busy(); if (n.hidden !== b) { n.hidden = b; if (!b) label.textContent = text[4]; } }, 500);

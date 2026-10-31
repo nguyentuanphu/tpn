@@ -692,16 +692,19 @@ await check('voicepack', async () => {
   await P.ctx.addInitScript(() => { window.__packLog = []; new MutationObserver(() => { const e = document.querySelector('.packbar span'); if (e && window.__packLog[window.__packLog.length - 1] !== e.textContent) window.__packLog.push(e.textContent); }).observe(document, { subtree: true, childList: true, characterData: true }); });
   let firstLoad = true;
   const openAgain = async () => { if (firstLoad) { firstLoad = false; await P.page.goto(URL); } else await P.page.reload(); await start(P.page); await clear(P.page); await P.page.waitForFunction(() => window.__packLog.some(x => /✓/.test(x)), null, { timeout: 60000 }).catch(() => { }); return P.page.evaluate(() => window.__packLog); };
-  const state = () => P.page.evaluate(async () => { const c = await caches.open('sv-voices'); return { files: (await c.keys()).filter(r => /\/voices\/.+\.mp3$/.test(r.url)).length, saved: JSON.parse(localStorage.getItem('sv2_settings')).packSaved || '' }; });
+  // (31 Oct 2026 AEDT) the recordings are kept as a few bundles with one index (js/voicestore.ts): counted through it, and no
+  // single recording files may be left in the store
+  const state = () => P.page.evaluate(async () => { const c = await caches.open('sv-voices'), S = (await import(String('/js/voicestore.js'))).voiceStore('sv-voices'); await S.flush();
+    return { files: [...await S.keys()].filter(k => /^voices\/.+\.mp3$/.test(k)).length, singles: (await c.keys()).filter(r => /\.mp3$/.test(r.url)).length, saved: JSON.parse(localStorage.getItem('sv2_settings')).packSaved || '' }; });
   const first = await openAgain(), s1 = await state();
-  ok(first.some(x => /%/.test(x)) && first.some(x => /✓/.test(x)) && s1.files >= 24 && s1.saved === 'vi:test-vi', 'first open: ' + JSON.stringify({ first: first.slice(0, 4), s1 }));
+  ok(first.some(x => /%/.test(x)) && first.some(x => /✓/.test(x)) && s1.files >= 24 && !s1.singles && s1.saved === 'vi:test-vi', 'first open: ' + JSON.stringify({ first: first.slice(0, 4), s1 }));
   // next open: everything is there, so nothing downloads and the bar says nothing (round O, owner: it looked as if the
   // voices loaded on every start, and listing all the files each time cost battery)
   await P.page.reload(); await start(P.page); await clear(P.page); await P.page.waitForTimeout(10000);
   const second = await P.page.evaluate(() => window.__packLog);
   ok(!second.length, 'next open: ' + JSON.stringify(second));
   // the phone cleared some files: the next open fetches only those, quietly with the bar
-  await P.page.evaluate(async () => { const c = await caches.open('sv-voices'); const ks = (await c.keys()).filter(r => /\.mp3$/.test(r.url)); for (const r of ks.slice(0, 5)) await c.delete(r); });
+  await P.page.evaluate(async () => { const S = (await import(String('/js/voicestore.js'))).voiceStore('sv-voices'); for (const k of [...await S.keys()].slice(0, 5)) await S.forget(k); await S.tidy(); });
   const third = await openAgain(), s3 = await state();
   await P.page.screenshot({ path: 'out/voicepack-phone.png' });
   const errs = P.errors; await P.ctx.close();
@@ -710,6 +713,42 @@ await check('voicepack', async () => {
   ok(counts.length >= 2 && counts[0] > 0 && counts[0] < counts[1], 'resumed progress must include voices already cached: ' + JSON.stringify({ resumed, counts }));
   ok(!errs.length, errs.join(' | '));
   return `first open downloads with a small bar (${first.map(x => '"' + x + '"').slice(0, 2).join(' → ')} … "${first[first.length - 1]}"), the next open shows and downloads nothing, and files the phone lost are fetched again`;
+});
+
+await check('voiceonline', async () => {
+  // (owner, 31 Oct 2026 AEDT: "voices play online; download only to play offline; the Welcome says the voices are
+  // online; with no internet and no voices, tell the user what to download and how") a new device downloads no voice
+  // pack by itself: the Welcome says the voices play over the internet and how to keep them, a line heard is kept, and
+  // with no internet a grown-up is told where to keep them all
+  const P = await open(b, { w: 390, h: 844, touch: true, play: false, lang: 'en', settings: { autoPack: null, voice: true } });
+  const mp3 = []; P.page.on('request', q => { if (/\/voices\/.*\.mp3/.test(q.url())) mp3.push(q.url()); });
+  await P.page.waitForSelector('.screen.title .tt-voice', { timeout: 60000 });
+  const note = await P.page.$eval('.screen.title .tt-voice', e => ({ shown: !e.hidden && e.getBoundingClientRect().height > 0, text: e.innerText }));
+  await P.page.screenshot({ path: 'out/voiceonline-welcome-phone.png' });
+  ok(note.shown && /over the internet/.test(note.text) && /Keep all voices on this device/.test(note.text), 'the Welcome note: ' + JSON.stringify(note));
+  await start(P.page); await clear(P.page);
+  await P.page.mouse.click(195, 420); await P.page.waitForTimeout(20000);
+  const r = await P.page.evaluate(async () => {
+    const V = await import('/js/voice.js'), S = (await import('/js/voicestore.js')).voiceStore('sv-voices');
+    for (let i = 0; i < 60 && !V.voicePack(); i++) await new Promise(r => setTimeout(r, 250));
+    if (window.__sv) window.__sv.paused = true;
+    let rec = null; window.__svVoiceLog = (l, t, has) => { if (has && !rec) rec = t; };
+    for (const ph of V.FAMILY_PHRASES) { V.sayIn('en', ph.en); if (rec) break; }
+    await new Promise(r => setTimeout(r, 2500)); await S.flush();
+    return { rec, kept: await S.count(), saved: !!(await import('/js/state.js')).settings.packSaved };
+  });
+  ok(mp3.length < 60, `a new device downloaded ${mp3.length} recordings by itself (the voices play online)`);
+  ok(r.rec && r.kept >= 1 && !r.saved, 'a line heard over the internet is kept: ' + JSON.stringify(r));
+  // no internet: a line not kept cannot play, and a grown-up is told what to keep and where
+  await P.ctx.setOffline(true);
+  await P.page.evaluate(async () => { const V = await import('/js/voice.js'); for (const ph of V.FAMILY_PHRASES.slice(-6)) V.sayIn('en', ph.en); });
+  const card = await P.page.waitForSelector('.voice-offline', { timeout: 15000 }).then(() => P.page.$eval('.voice-offline', e => ({ text: e.innerText, buttons: [...e.querySelectorAll('button')].map(x => Math.round(x.getBoundingClientRect().height)) })), () => null);
+  await P.page.screenshot({ path: 'out/voiceonline-offline-phone.png' });
+  ok(card && /No internet/.test(card.text) && /Keep all voices on this device/.test(card.text) && card.buttons.every(h => h >= 44), 'the offline note: ' + JSON.stringify(card));
+  await P.page.click('.voice-offline button:last-child'); await P.page.waitForTimeout(300);
+  ok(!(await P.page.$('.voice-offline')), 'OK closes the offline note');
+  const errs = P.errors.filter(e => !/Failed to fetch|ERR_INTERNET_DISCONNECTED|NetworkError|net::/.test(e)); await P.ctx.close(); ok(!errs.length, errs.join('\n'));
+  return `the Welcome says the voices play online and how to keep them; a new device downloaded ${mp3.length} recordings by itself; ${r.kept} heard kept; offline a grown-up is told "Keep all voices on this device" (buttons ${card.buttons.join('/')} px)`;
 });
 
 await check('folkplay', async () => (await import('./folk-court-browser.mts')).folkCourtBrowserCheck(b));
@@ -757,16 +796,16 @@ await check('voicebackground', async () => {
     await P.page.waitForSelector('.grownups #xPackSave');
     await P.page.evaluate(()=>document.querySelectorAll('.grownups details').forEach(d=>d.open=true));
     await P.page.locator('#xPackSave').click();
-    const before=await P.page.evaluate(async()=>(await (await caches.open('sv-voices')).keys()).filter(r=>/\.mp3$/.test(r.url)).length);
+    const before=await P.page.evaluate(async()=>(await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()).size);
     await P.page.locator('#gDone').click();
     await P.page.waitForSelector('.grownups',{state:'detached'});
     // Playwright 1.56 treats a returned Promise as truthy; poll asynchronous CacheStorage explicitly.
     for(let attempt=0;attempt<240;attempt++){
-      const count=await P.page.evaluate(async()=>(await (await caches.open('sv-voices')).keys()).filter(r=>/\.mp3$/.test(r.url)).length);
+      const count=await P.page.evaluate(async()=>(await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()).size);
       if(count>before+6)break;
       await P.page.waitForTimeout(250);
     }
-    const result=await P.page.evaluate(async()=>({open:!!document.querySelector('.grownups'),male:(await import('/js/state.js')).settings.voiceMale,auto:(await import('/js/state.js')).settings.autoPack,progress:document.querySelector('.packbar')?.textContent,files:(await (await caches.open('sv-voices')).keys()).filter(r=>/\.mp3$/.test(r.url)).length}));
+    const result=await P.page.evaluate(async()=>({open:!!document.querySelector('.grownups'),male:(await import('/js/state.js')).settings.voiceMale,auto:(await import('/js/state.js')).settings.autoPack,progress:document.querySelector('.packbar')?.textContent,files:(await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()).size}));
     ok(!result.open&&result.male&&result.auto&&result.progress&&result.files>before+6,'settings close stopped background download/progress: '+JSON.stringify({before,result}));
     await P.page.waitForFunction(()=>/✓/.test(document.querySelector('.packbar')?.textContent||''),null,{timeout:60000});
     ok(!P.errors.length,P.errors.join(' | '));
@@ -874,7 +913,7 @@ await check('ownervoicewifi', async () => {
       const s=JSON.parse(localStorage.getItem('sv2_settings')||'{}');
       return s.packLangs==='vi' && window.__ownerPackProgress.some(e=>e.state==='ready' && !e.core);
     },null,{timeout:20000});
-    const urls=await P.page.evaluate(async()=> (await (await caches.open('sv-voices')).keys()).map(r=>r.url));
+    const urls=await P.page.evaluate(async()=> [...await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()]);
     ok(groups.every(g=>urls.some(u=>u.endsWith('/vi_'+g+'.mp3'))),'full selected Vietnamese pack automatically completed on Wi-Fi: '+JSON.stringify(got));
     ok(!got.some(u=>u.endsWith('/en_games.mp3')),'old-language remaining areas should stop after the in-flight batch');
     const progress=await P.page.evaluate(()=>window.__ownerPackProgress);
@@ -4751,8 +4790,9 @@ await check('rollout', async () => {
   const Q = await open(b, { w: 1024, h: 700, pre });
   const n = await Q.page.evaluate(async () => {
     const G = __sv, C = await import('/js/custom.js'), wait = ms => new Promise(r => setTimeout(r, ms)); let card = '';
-    for (let k = 0; k < 160 && !card; k++) { await wait(250); const c = document.querySelector('.reward');   // (up to 40 s: under a busy suite the card waits for other pop-ups)
-      if (c && /New in the valley/.test(c.textContent)) card = c.textContent; }
+    // (31 Oct AEDT) every card on screen: on a festival day the festival's card can be the first one
+    for (let k = 0; k < 160 && !card; k++) { await wait(250); const c = [...document.querySelectorAll('.reward')].find(e => /New in the valley/.test(e.textContent));   // (up to 40 s: under a busy suite the card waits for other pop-ups)
+      if (c) card = c.textContent; }
     const before = { wayfind: C.releaseOn('wayfind'), singers: C.releaseOn('singers'), jobs: C.releaseOn('jobs'), isNew: C.releaseNew('jobs'), keepWay: G.keep('wayfind') };
     C.setPeeks([], 7); const tester = { wayfind: C.releaseOn('wayfind'), singers: C.releaseOn('singers') }; C.setPeeks([]);
     return { card: card.slice(0, 160), before, tester, seen: !!(G.heroes[0].profile.seenNew || {}).jobs };

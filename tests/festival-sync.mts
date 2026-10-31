@@ -29,9 +29,9 @@ export async function festivalSyncCheck(browser:Browser){
   const active=()=>game!.page.evaluate(async()=>{const F=await import(String('/js/festivals.js'));return F.activeFestivals().some(a=>a.F.id==='halloween');});
   await refresh(game.page);assert.equal(await active(),false,'manual selection cannot override Studio off');
   await game.page.evaluate(async()=>{(await import(String('/js/custom.js'))).setPeeks(['fest_halloween']);});assert.equal(await active(),false,'tester preview cannot override Studio off');
-  await save(true);assert.ok((await state()).enabled.includes('halloween'));await refresh(page);await refresh(game.page);assert.equal(await active(),true);
-  await page.locator('[data-festival-filter=all]').click();assert.equal(await page.locator('#festival-halloween').isVisible(),true);
-  const raw=await store.get('live',{type:'json'});assert.equal(raw.releases.fest_halloween.on,true);assert.equal(raw.festivals.halloween.on,true);assert.equal(raw.releases.traffic.on,false);assert.equal(raw.festivals.halloween.date,'10-30');assert.equal(raw.festivals.halloween.deco,3);
+  await save(true);assert.ok((await state()).enabled.includes('halloween'));await refresh(page);await refresh(game.page);assert.equal(await active(),true,'Studio on: the game shows Halloween');
+  await page.locator('[data-festival-filter=all]').click();assert.equal(await page.locator('#festival-halloween').isVisible(),true,'Studio on: the website lists Halloween under All');
+  const raw=await store.get('live',{type:'json'});assert.equal(raw.releases.fest_halloween.on,true,'stored release fest_halloween on');assert.equal(raw.festivals.halloween.on,true,'stored festival halloween on');assert.equal(raw.releases.traffic.on,false);assert.equal(raw.festivals.halloween.date,'10-30');assert.equal(raw.festivals.halloween.deco,3);
   await game.page.evaluate(()=>{void(window.__sv as unknown as import('../js/main.js').SvMain).festivals.visit(0,'halloween');});await game.page.locator('[data-festival-owner=halloween]').waitFor();
   await save(false);await refresh(page);await refresh(game.page);await game.page.locator('[data-festival-owner=halloween]:not(.out)').waitFor({state:'detached'});assert.equal(await active(),false);
   // A stale guide link must not reveal an off festival.
@@ -45,9 +45,9 @@ export async function festivalSyncCheck(browser:Browser){
   await studio.evaluate(()=>{location.hash='game/releases';});
   await studio.locator('.relc[data-id=fest_halloween]').waitFor();
   const toggle=studio.locator('.relc[data-id=fest_halloween] [data-r=on]');
-  assert.equal(await toggle.isChecked(),false);
+  assert.equal(await toggle.isChecked(),false,'Studio toggle starts off');
   await toggle.check();await Promise.all([studio.waitForResponse(r=>r.url().endsWith('/studio/api/live')&&r.request().method()==='POST'),studio.click('#save')]);
-  assert.ok((await state()).enabled.includes('halloween'));assert.equal((await store.get('live',{type:'json'})).festivals.halloween.on,true);
+  assert.ok((await state()).enabled.includes('halloween'));assert.equal((await store.get('live',{type:'json'})).festivals.halloween.on,true,'Releases toggle stores festival halloween on');
   await studio.locator('.relc[data-id^=fest_] [data-r=on]').evaluateAll(inputs=>inputs.forEach(input=>{(input as HTMLInputElement).checked=false;input.dispatchEvent(new Event('change',{bubbles:true}));}));
   await Promise.all([studio.waitForResponse(r=>r.url().endsWith('/studio/api/live')&&r.request().method()==='POST'),studio.click('#save')]);
   assert.deepEqual((await state()).enabled,[]);await refresh(page);await refresh(game.page);

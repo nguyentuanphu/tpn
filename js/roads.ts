@@ -6,6 +6,7 @@ import { T, onLang } from './i18n.js';
 import { SFX } from './audio.js';
 import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox, PADDIES, PLOTS, plotBox } from './world.js';
 import { settings } from './state.js';
+import { featureOn } from './custom.js';
 import { remember } from './worldmemo.js';
 import { ROAD_TONES } from './content/map.js';
 // HARD RULE (owner, round 30): the steepest a road may climb: asphalt 8 %, dirt 12 % (checked by `roadshape`)
@@ -250,17 +251,18 @@ export function plantRoadside(G) {
   });
   // (#34, Concept D) along the main roads: red lamp posts and bougainvillea on the Vietnam side, orange lamp posts and gum
   // trees on the Australian side; one merged mesh for each, so the draw calls stay the same
-  const lampVN = [], lampAU = [], bushes = [], gums = [];
+  const lampVN = [], lampAU = [], bushes = [], gums = [], benches = [];
   // (check plots) never on a garden plot kept for a future building
   const plotFree = (x, z, pad) => !PLOTS.some(P => { const B = plotBox(P); return x > B.x0 - pad && x < B.x1 + pad && z > B.z0 - pad && z < B.z1 + pad; });
   lines.forEach((L, k) => {
     const R = ROADS[k], n = L.pts.length; if (R.kind !== 'asphalt' || (R.tone !== 'vn' && R.tone !== 'au') || n < 12) return;
-    const hw = R.w / 2, vn = R.tone === 'vn'; let along = 0, nextLamp = 12, nextPlant = 20, side = 1;
+    const hw = R.w / 2, vn = R.tone === 'vn'; let along = 0, nextLamp = 12, nextPlant = 20, nextBench = 32, side = 1;
     for (let i = 1; i < n - 6; i++) {
       along += Math.hypot(L.pts[i][0] - L.pts[i - 1][0], L.pts[i][1] - L.pts[i - 1][1]); if (i < 6 || L.deck[i]) continue;
       const [px, pz] = L.pts[i - 1], [x, z] = L.pts[i], D = Math.hypot(x - px, z - pz) || 1, ux = -(z - pz) / D, uz = (x - px) / D;
       const at = (o, sd, pad) => { const cx = x + ux * sd * o, cz = z + uz * sd * o; return edgeDist(cx, cz) >= 1.1 && riverDist(cx, cz) >= 5 && heightAt(cx, cz) > WATER + .5 && free(cx, cz, pad) && plotFree(cx, cz, pad) && roadDist(cx, cz).d > hw - .1 ? [cx, heightAt(cx, cz), cz] : null; };
       if (along >= nextLamp) { const q = at(hw + 1.4, side, .6); if (q) { (vn ? lampVN : lampAU).push(q); world.colliders.push({ x: q[0], z: q[2], r: .22 }); nextLamp = along + 24; side = -side; } }
+      if (!vn && along >= nextBench) { const q = at(hw + 2, side, .8); if (q) { benches.push([q[0], q[1], q[2], Math.atan2(-ux * side, -uz * side)]); world.colliders.push({ x: q[0], z: q[2], r: .7 }); nextBench = along + 52; } }
       if (along >= nextPlant) { const q = at(hw + (vn ? 2.2 : 3.6), -side, vn ? .9 : 1.4); if (q) { (vn ? bushes : gums).push(q); world.colliders.push({ x: q[0], z: q[2], r: vn ? .5 : .45 }); nextPlant = along + (vn ? 34 : 46); } }
     }
   });
@@ -279,10 +281,25 @@ export function plantRoadside(G) {
   for (let zc = PADDIES.z - 13.5; zc < PADDIES.z + 14; zc += 9) for (const xc of [-12, -4, 4, 12]) { const x = PADDIES.x + xc; if (!inside(x - 3.4, zc) || !inside(x + 3.4, zc) || !inside(x, zc - 3.8) || !inside(x, zc + 3.8)) continue; pools.push(P(new THREE.PlaneGeometry(7.2, 8.1), '#7cc3d6', [x, heightAt(x, zc) + .05, zc], [-Math.PI / 2, 0, 0])); }
   if (dikes.length) { const m = new THREE.Mesh(merge(dikes), toonVC()); m.receiveShadow = true; m.userData.noSolid = true; scene.add(m); }
   if (pools.length) { const m = new THREE.Mesh(merge(pools), toonVC({ transparent: true, opacity: .55, depthWrite: false })); m.userData.noSolid = true; scene.add(m); }
+  // (#34 Concept D) a park bench with a green bin beside it along the Australian main roads, facing the road
+  const benchParts = [P(new THREE.BoxGeometry(1.5, .08, .45), '#8a5a34', [0, .45, 0]), P(new THREE.BoxGeometry(1.5, .4, .07), '#8a5a34', [0, .72, -.22], [-.15, 0, 0]),
+    ...[[-.65, -.15], [.65, -.15], [-.65, .15], [.65, .15]].map(([x, z]) => P(new THREE.BoxGeometry(.07, .45, .07), '#3d3d3d', [x, .22, z])),
+    P(new THREE.CylinderGeometry(.24, .2, .75, 10), '#2f7d4a', [1.15, .38, 0]), P(new THREE.CylinderGeometry(.26, .26, .08, 10), '#256a3c', [1.15, .79, 0])];
+  const seats = benches.map(([x, y, z, yaw]) => benchParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; })).flat();
+  if (seats.length) { const m = new THREE.Mesh(merge(seats), toonVC()); m.castShadow = true; m.userData.noSolid = true; scene.add(m); }
+  // (#34 Concept D) round basket boats (thúng chai) pulled up on Vũng Tàu's beach and floating just off it
+  const boats = [], boatParts = [P(new THREE.SphereGeometry(.85, 14, 7, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), '#7a5530', [0, .55, 0]), P(new THREE.TorusGeometry(.85, .06, 6, 18), '#4a3218', [0, .55, 0], [Math.PI / 2, 0, 0]),
+    P(new THREE.CylinderGeometry(.03, .03, 1.6, 5), '#9a7448', [.3, .65, .1], [0, 0, 1.1]), P(new THREE.BoxGeometry(.25, .04, .12), '#9a7448', [.98, .95, .1], [0, 0, 1.1])];
+  const VT = CITIES.find(c => c.id === 'vungtau'), at = (dx: number, dz: number) => [VT.x + dx, VT.z + dz];
+  for (const [x, z] of VT ? [at(-19, 36), at(-15, 38), at(-1, 38), at(-13, 48), at(-5, 50)] : []) { const h = heightAt(x, z), dry = h > WATER + .05;
+    if (dry && h > WATER + 1.6 || !free(x, z, 1.2) || !plotFree(x, z, 1)) continue;
+    const y = dry ? h - .5 : WATER - .45, yaw = (x * 7 + z) % 6.3; boats.push(...boatParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; }));
+    if (dry) world.colliders.push({ x, z, r: .9 }); }
+  if (boats.length) { const m = new THREE.Mesh(merge(boats), toonVC()); m.castShadow = true; m.userData.noSolid = true; scene.add(m); }
   // only roads near a player show their flowers
   let t0 = 0; world.updaters.push(dt => { if ((t0 -= dt) > 0) return; t0 = .5;
     for (const g of groups) { const S = g.meshes[0].boundingSphere, on = G.heroes.some(h => Math.hypot(h.pos.x - S.center.x, h.pos.z - S.center.z) < S.radius + 70); g.meshes.forEach(M => M.visible = on); } });
-  return { count: groups.reduce((a, g) => a + g.spots.length, 0), lamps: lampVN.length + lampAU.length, bushes: bushes.length, gums: gums.length, dikes: dikes.length, pools: pools.length };
+  return { count: groups.reduce((a, g) => a + g.spots.length, 0), lamps: lampVN.length + lampAU.length, bushes: bushes.length, gums: gums.length, dikes: dikes.length, pools: pools.length, benches: benches.length, boats: boats.length / 4 };
 }
 
 // the welcome sign on a gate: big words that follow the language
@@ -403,6 +420,24 @@ const STYLES = {
   ], sign: { y: 4.5, w: 6.2, h: 1, bg: '#ffffff', fg: '#4a2a78' }, posts: hs })
 };
 export const GATE_STYLE = { hanoi: 'ohquan', bacninh: 'kinhbac', danang: 'golden', saigon: 'saigon', vungtau: 'seaside', sydney: 'coathanger', melbourne: 'iron', brisbane: 'queenslander', aussie: 'timber', china: 'paifang', india: 'mughal', home: 'farm', town: 'twohomes' };
+// A welcome sign beside the road into a place (instead of a gate across it): two posts, a wide board in the place's gate
+// colours with "Welcome to …" in both languages, a little roof and a box of flowers. It stands beside the road, 3.2 m
+// from its edge to the board's middle and 4 m before the place, turned so the words face whoever comes in along the road.
+export function welcomeSign(scene, world, x, z, rot, text, style, hw) {
+  const make = STYLES[style], look = make ? make(3).sign : { bg: '#c62828', fg: '#ffe27a' };
+  // (on the other side of the road where the first would cover a spare garden plot: a covered plot is dropped, js/world.ts)
+  const W2 = 2.5, onPlot = (px, pz) => PLOTS.some(P => { const B = plotBox(P); return px > B.x0 - W2 - .5 && px < B.x1 + W2 + .5 && pz > B.z0 - 1 && pz < B.z1 + 1 || px > B.x0 - 1 && px < B.x1 + 1 && pz > B.z0 - W2 - .5 && pz < B.z1 + W2 + .5; });
+  const side = onPlot(x - Math.cos(rot) * (hw + 3.2), z + Math.sin(rot) * (hw + 3.2)) && !onPlot(x + Math.cos(rot) * (hw + 3.2), z - Math.sin(rot) * (hw + 3.2)) ? -1 : 1;
+  const sx = x - side * Math.cos(rot) * (hw + 3.2), sz = z + side * Math.sin(rot) * (hw + 3.2), y = heightAt(sx, sz);
+  const parts = [P(new THREE.BoxGeometry(.28, 4.4, .28), '#7a5232', [-W2 - .1, 2.2, 0]), P(new THREE.BoxGeometry(.28, 4.4, .28), '#7a5232', [W2 + .1, 2.2, 0]),
+    P(new THREE.BoxGeometry(W2 * 2 + .9, .2, .7), '#9a3b2a', [0, 4.45, 0]), P(new THREE.BoxGeometry(W2 * 2 + 1.1, .12, .9), '#6e2a1e', [0, 4.6, 0]),
+    ...[-1, 1].map(s => P(new THREE.SphereGeometry(.24, 10, 8), '#ffd23f', [s * (W2 + .1), 4.85, 0])),
+    P(new THREE.BoxGeometry(W2 * 2, .4, .6), '#8a5a34', [0, .22, .55]), ...[-2, -1.2, -.4, .4, 1.2, 2].map((o, k) => P(new THREE.SphereGeometry(.26, 8, 6), ['#ff5fa2', '#ffd23f', '#ff8a3d', '#c77dff', '#ff5fa2', '#ffd23f'][k], [o, .55, .55]))];
+  const m = new THREE.Mesh(merge(parts), toonVC()); m.position.set(sx, y, sz); m.rotation.y = rot; m.castShadow = true; scene.add(m); outline(m, .02, '#4a3a2a');
+  const sg = gateSign(text, W2 * 2, 1.9, look.bg, look.fg); sg.position.set(0, 3.15, 0); m.add(sg);
+  for (const s of [-1, 1]) world.colliders.push({ x: sx + Math.cos(rot) * s * (W2 + .1), z: sz - Math.sin(rot) * s * (W2 + .1), r: .35 });
+  return m;
+}
 export function localGate(scene, world, x, z, rot, text, style, span = 7.5) {
   const make = STYLES[style]; if (!make) return goldenGate(scene, world, x, z, rot, text, span);
   const hs = span / 2, g = make(hs);
@@ -517,8 +552,12 @@ export function createRoads(G) {
     const id = String(idRaw || '');
     if (!id || mainEnd[id] !== R.id + ':' + k) return;
     const n = R.pts.length, [x, z] = R.pts[k ? n - 1 : 0], [px, pz] = R.pts[k ? n - 2 : 1];
-    world.gates.push({ place: id, road: R.id, x, z });
-    localGate(scene, world, x, z, Math.atan2(x - px, z - pz), () => T('Welcome to ', 'Chào mừng đến ') + REGION_NAMES[id](), GATE_STYLE[id] || 'golden', Math.max(7.5, R.w + 2.3)); // (R7: the opening is the road plus more than 1 m each side)
+    // (owner, 31 Oct 2026 AEDT: "change all the gates to a welcome sign for each village, simple but noticeable; the gates
+    // hidden and switched on and off in Studio") Studio's "gates" switch, off unless switched on, read when the valley is built
+    const gate = featureOn('gates', false), rot = Math.atan2(x - px, z - pz), text = () => T('Welcome to ', 'Chào mừng đến ') + REGION_NAMES[id]();
+    world.gates.push({ place: id, road: R.id, x, z, kind: gate ? 'gate' : 'sign' });
+    if (gate) localGate(scene, world, x, z, rot, text, GATE_STYLE[id] || 'golden', Math.max(7.5, R.w + 2.3)); // (R7: the opening is the road plus more than 1 m each side)
+    else welcomeSign(scene, world, x - (x - px) / Math.hypot(x - px, z - pz) * 4, z - (z - pz) / Math.hypot(x - px, z - pz) * 4, rot, text, GATE_STYLE[id] || 'golden', R.w / 2);
   });
   G.goldenGate = (x, z, r, t, span) => goldenGate(scene, world, x, z, r, t, span);
 }

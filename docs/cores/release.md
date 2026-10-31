@@ -527,3 +527,35 @@ independently; do not report it as passed until actual artifacts are inspected.
   battery passes; perf world 8.8 s over 6.6 s and startup first ready 46.8 s over 34.2 s (over on this machine at v1.03
   too); first download 1016 KB passes. After the green run: version set (sw.ts, js/build.ts, studio/version.json), the
   website re-synced and recorded as reviewed (source links only; no text affected), code map from run 41077834394.
+
+## Round after v1.04 (branch work/after-v104-20261031, PR #725)
+
+- **Owner, 31 Oct 2026 AEDT:** "Change all the gates to a welcome sign for each village, make it simple but noticeable;
+  the gates are to be hidden and can be switched on and off in Studio." Done: Studio switch `gates` (Releases, group
+  World, off unless switched on, read when the valley is built, like `powerPoles`). Off: a wooden welcome sign beside the
+  main road into each village and city (5 m board in the place's own gate colours, "Welcome to …" in both languages, a
+  small roof and a box of flowers), 4 m before the place. On: the gates as before. `world.gates` lists one entry per
+  place either way (kind `sign` or `gate`), so the roads and gates checks still count one welcome per place.
+- **Owner, 31 Oct 2026 AEDT (pop-up): "Gom giọng nói trước"** (bundle the voices first, no release until it is done).
+  The installed app stayed white for about 30 s on an iPhone; other installed web apps open at once. The likely cause is
+  the offline store: a phone keeps 14,000 to 21,000 single recordings (Vietnamese 14,424 files, Lê Minh 7,215, English
+  16,134). js/voicestore.ts keeps them as bundles of about 3 MB with one index per store (voices/__store/ and
+  voices/fpt-leminh-v1/__store/); sw.ts cuts a recording out of its bundle; recordings kept the old way move into bundles
+  in the background, each single file deleted only after its bundle is saved; small bundles merge. The same recorded
+  voices, offline as before. Bug reports now carry this start's timings to confirm the cause on the phone.
+- **Owner, 31 Oct 2026 AEDT (pop-up): voices play online, downloaded only to play offline.** "Như recommend phía trên,
+  và chỗ welcome screen báo là giọng nói dùng online, nếu chơi offline mà ko có giọng nói thì báo cho người dùng, báo cho
+  người dùng cần tải gì và lựa chọn như thế nào khi chơi offline". A new device no longer downloads the voice pack by
+  itself (a device that already kept it keeps refreshing it); a line heard is kept in the voice store. The Welcome shows a
+  small bilingual note (voices play over the internet; Grown-ups → Sound and voices → Keep all voices on this device),
+  hidden once all voices are kept; the Grown-ups voice section explains the choice and the size (about 250 MB per
+  language, on Wi-Fi); with no internet a one-time card (Grown-ups / OK, 48 px) says what to keep and where. Less
+  Netlify traffic: a family downloads only the lines it hears unless it chooses offline. Check: voiceonline.
+- **v1.05, owner's "yes, deploy" (31 Oct 2026, about 4:35 pm AEDT, in chat: "You can deploy now and put on note to check on
+  the festivalsync next round. You can use v1.05 for this round").** PR #725. GitHub full suite at 1211d00e: 279/280
+  (run 41166167210; tugplay on a second try). The one red, `festivalsync`, is red on main (v1.04) too since 31 Oct
+  (workflow run 41172071003, only=festivalsync) and green on this machine every time (also with TZ Australia/Sydney);
+  its assertions now name their step (08e0c5ad). **Next round: find and fix festivalsync (owner).** Local: perf and
+  battery pass; startup first ready 35.2 s over 28.0 s (main 36.7 s, also over). Orchard check failed 1 of 3 locally
+  (a test page closed early), green on its own workflow. After the yes: version set (sw.ts, js/build.ts,
+  studio/version.json), website re-synced and recorded as reviewed (source links only).

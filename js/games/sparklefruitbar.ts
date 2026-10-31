@@ -6,6 +6,9 @@ import { testerArcadeAvailable } from '../content/tester-arcades.js';
 import { ArcadeSession } from './arcade-session.js';
 import { barStart, barApply, BAR_SYMBOLS } from './fruitbar-engine.js';
 import { ARCADE_STYLE, RING_CELLS, art, control, dom } from './arcade-board.js';
+// (owner, 31 Oct 2026 AEDT: "the betting place is too big, you have to scroll down to see it") each fruit is one small
+// card: its picture and name on top, then − amount + in one row, two cards a row on a phone and four on a tablet
+const BAR_STYLE=`.arcade-allocations{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}.arcade-bet{grid-template-columns:auto minmax(0,1fr);align-items:center;gap:4px 6px;padding:6px;border-radius:14px}.arcade-bet>:first-child .art,.arcade-bet>.art{width:30px;height:30px}.arcade-bet label{font-size:14px;text-align:left;line-height:1.15}.arcade-bet .arcade-adjust{grid-column:1/-1;justify-content:center;align-items:center;gap:4px}.arcade.arcade-family .arcade-bet .arcade-adjust button.btn{min-width:52px;width:52px;max-width:52px;padding:0;flex:0 0 52px}.arcade-bet input{width:44px;max-width:none;min-height:64px;padding:0;font-size:16px}`;
 
 /** Family arcade owns no profile coins, rewards or persistent balance. */
 interface FruitBarApi {online?:GameOnline;little:boolean;say(en:string,vi:string):void;closed:boolean;close():void;onCleanup(f:()=>void):void;plan?(f:()=>Element|null,opts:{maxActions:number}):void;}
@@ -15,7 +18,7 @@ function runFruitBar(api:FruitBarApi){
  if(!testerArcadeAvailable('sparklefruitbar',online?'multi':'single')&&(online||!testerArcadeAvailable('sparklefruitbar','multi')))return;
 
  const m=modal('parent-arcade',''),card=m.querySelector('.card') as HTMLElement;card.replaceChildren();
- const style=dom('style');style.textContent=ARCADE_STYLE;const close=control('✕',()=>finish());close.setAttribute('aria-label',T('Close','Đóng'));close.classList.add('x');
+ const style=dom('style');style.textContent=ARCADE_STYLE+BAR_STYLE;const close=control('✕',()=>finish());close.setAttribute('aria-label',T('Close','Đóng'));close.classList.add('x');
  const root=dom('div','arcade arcade-family');root.dataset.parentArcade='';const header=dom('div','parent-arcade-header');header.append(dom('b','',T('Sparkle Fruit Bar','Bảng Trái Cây Lấp Lánh')),close);const footer=dom('div','parent-arcade-footer');card.append(style,header,root,footer);
  let session:ArcadeSession<ReturnType<typeof barStart>>|undefined,dead=false,helper=false,waitingAt=0;
  let timer:ReturnType<typeof setInterval>|undefined,frame=0,shown=-1,spinning=false,light=0,lastView='';
@@ -43,7 +46,7 @@ function runFruitBar(api:FruitBarApi){
   const status=dom('p','arcade-status',session.waiting?T('Waiting for your friend…','Đang chờ bạn…'):s.phase==='allocate'?T(`Player ${s.turn+1} chooses.`,`Người chơi ${s.turn+1} chọn.`):T('Shared round result','Kết quả lượt chơi chung'));status.setAttribute('role','status');root.append(status);
   if(s.phase==='allocate'){
    const allocations=dom('div','arcade-allocations');BAR_SYMBOLS.forEach((symbol,i)=>{
-    const cell=dom('div','arcade-bet');cell.append(icon(i));const label=dom('label','',`${T(symbol.en,symbol.vi)} ×${symbol.mult}`),input=dom('input');input.type='number';input.min='0';input.max='100';input.step='1';input.value=String(s.bets[s.turn][i]);input.dataset.barBet=String(i);input.disabled=!mine()||session!.waiting||helper&&!session!.online&&s.turn!==0;input.onchange=()=>{const n=Number(input.value);if(!Number.isInteger(n)||n<0||n>100||!session!.submit(i*101+n))input.value=String(session!.state.bets[s.turn][i]);};label.append(input);cell.append(label);const adjust=dom('div','arcade-adjust');for(const [text,delta] of [['−',-1],['+',1]] as const){const button=control(text,()=>{const amount=session!.state.bets[session!.state.turn][i]+delta;if(amount>=0&&amount<=100)session!.submit(i*101+amount);});button.setAttribute('aria-label',T(delta>0?'Add one':'Take one away',delta>0?'Thêm một':'Bớt một')+' '+T(symbol.en,symbol.vi));button.dataset.barAdjust=String(i)+':'+delta;button.disabled=input.disabled||session!.busy||delta<0&&s.bets[s.turn][i]===0||delta>0&&s.bets[s.turn][i]===100;adjust.append(button);}cell.append(adjust);allocations.append(cell);
+    const cell=dom('div','arcade-bet');cell.append(icon(i));const label=dom('label','',`${T(symbol.en,symbol.vi)} ×${symbol.mult}`),input=dom('input');input.type='number';input.min='0';input.max='100';input.step='1';input.value=String(s.bets[s.turn][i]);input.dataset.barBet=String(i);input.disabled=!mine()||session!.waiting||helper&&!session!.online&&s.turn!==0;input.onchange=()=>{const n=Number(input.value);if(!Number.isInteger(n)||n<0||n>100||!session!.submit(i*101+n))input.value=String(session!.state.bets[s.turn][i]);};input.setAttribute('aria-label',`${T(symbol.en,symbol.vi)} ×${symbol.mult}`);cell.append(label);const adjust=dom('div','arcade-adjust');for(const [text,delta] of [['−',-1],['+',1]] as const){const button=control(text,()=>{const amount=session!.state.bets[session!.state.turn][i]+delta;if(amount>=0&&amount<=100)session!.submit(i*101+amount);});button.setAttribute('aria-label',T(delta>0?'Add one':'Take one away',delta>0?'Thêm một':'Bớt một')+' '+T(symbol.en,symbol.vi));button.dataset.barAdjust=String(i)+':'+delta;button.disabled=input.disabled||session!.busy||delta<0&&s.bets[s.turn][i]===0||delta>0&&s.bets[s.turn][i]===100;adjust.append(button);}adjust.insertBefore(input,adjust.lastChild);cell.append(adjust);allocations.append(cell);
    });root.append(allocations);
    const actions=dom('div','arcade-actions');
    // One acknowledged command at a time also supports remote round-trip latency.
@@ -74,10 +77,10 @@ function runFruitBar(api:FruitBarApi){
  api.say(online?'Place your counters':'Choose how to play',online?'Chọn điểm ảo':'Chọn cách chơi');
  if(online){start(Math.min(4,online.names.length),false,false);}else{
   root.append(dom('h2','',T('Choose how to play','Chọn cách chơi')));
-  for(const [label,vi,seats,npc,fair]of [['Play on my own','Chơi một mình',1,false,false],['Equal frequencies','Các hình có cơ hội bằng nhau',1,false,true],['Two players here','Hai người cùng máy',2,false,false],['With a practice helper','Cùng bạn hỗ trợ tập chơi',2,true,false]]as const){
+  for(const [label,vi,seats,npc,fair]of [['Play on my own','Chơi một mình',1,false,false],['Equal frequencies','Các hình có cơ hội bằng nhau',1,false,true],['With a practice helper','Cùng bạn hỗ trợ tập chơi',2,true,false]]as const){
    if(!testerArcadeAvailable('sparklefruitbar','single'))continue;const b=control(T(label,vi),()=>start(seats,npc,fair));b.dataset.barMode=String(seats)+(npc?'npc':fair?'fair':'');root.append(b);
   }
-  if(testerArcadeAvailable('sparklefruitbar','multi'))root.append(control(T('Invite friends online','Mời bạn chơi trực tuyến'),()=>{finish();window.__sv.inviteGame('sparklefruitbar',undefined,1);}));
+  // (owner, 31 Oct 2026 AEDT) from Play or the valley: on my own or with a helper; playing together is in the Friends section
  }
  // Use the same visible controls as a child: choose solo, add one free counter,
  // lock it, watch the result and go to the next round. No direct state changes or rewards.

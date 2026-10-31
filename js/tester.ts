@@ -76,7 +76,11 @@ const playersNow = () => (profiles || []).slice(0, 8).map(p => ({ name: nm(p.nam
 const osOf = (ua = navigator.userAgent) => /iPhone|iPod/.test(ua) ? 'iOS' : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPadOS' : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'Windows' : /Mac/.test(ua) ? 'macOS' : 'other';
 const brOf = (ua = navigator.userAgent) => /Edg\//.test(ua) ? 'Edge' : /Firefox|FxiOS/.test(ua) ? 'Firefox' : /CriOS|Chrome/.test(ua) ? 'Chrome' : /Safari/.test(ua) ? 'Safari' : 'other';
 let fpsNow = 0;
-const devNow = () => ({ os: osOf(), br: brOf(), sc: `${innerWidth}x${innerHeight}`, lang: settings.lang, fps: Math.round(fpsNow), mem: navigator.deviceMemory || 0 });
+// (owner, 31 Oct 2026 AEDT: the installed app stayed white for about 30 s) how this start went, in ms from the tap: when
+// the offline helper started (sw), when the start page arrived (page), when it could be read (dom); 0 when unknown
+const startNow = () => { const n = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined; if (!n) return null;
+  const ms = (v: number) => Math.max(0, Math.round(v)); return { sw: ms(n.workerStart), page: ms(n.responseStart), dom: ms(n.domInteractive) }; };
+const devNow = () => ({ os: osOf(), br: brOf(), sc: `${innerWidth}x${innerHeight}`, lang: settings.lang, fps: Math.round(fpsNow), mem: navigator.deviceMemory || 0, start: startNow() });
 
 // ---------- the picture of the screen ----------
 // (the 3D view keeps no picture between frames, so it is copied right after the next frame is drawn; the window on top
@@ -324,7 +328,7 @@ function addUI() {
   // Each player gets a tester mark; the primary HUD anchors one shared floating report control.
   // Also handle HUDs made after this mount, when the game starts after the title screen.
   const ensure = () => (G.huds || []).forEach((hud, i) => {
-    const ck = hud.q && hud.q('.zoom'); if (ck && !ck.querySelector('.testermark')) { const mk = el('span', 'testermark', `${pic('🐞')}<span>${T('Tester', 'Người thử')} · ${SHOWN}</span>`); mk.setAttribute('aria-hidden', 'true'); ck.appendChild(mk); offs.push(() => mk.remove()); }
+    const ck = hud.q && hud.q('.zoom'); if (ck && !ck.querySelector('.testermark')) { const mk = el('span', 'testermark', `${pic('🐞')}<span><span class="tm-w">${T('Tester', 'Người thử')} · </span>${SHOWN}</span>`); mk.setAttribute('aria-hidden', 'true'); ck.appendChild(mk); offs.push(() => mk.remove()); }
     // One shared device control, including split-screen; the report snapshot contains all players.
     if (level !== 'ladybird' || i !== 0) return;
     const z = hud.q && hud.q('.zoomer'); if (!z || floatingSeats.has(i)) return;

@@ -5,7 +5,7 @@ import { AREAS, gamesIn, withSitePlaces } from './content/activities.js';
 import type { Profile } from '../types/save.js';
 import type { SvMain } from './main.js';
 import { T, applyLang, nm } from './i18n.js';
-import { settings, saveSettings, profiles, saveProfiles, addProfile, removeProfile, STYLES, OUTFIT_COLORS, HATS, BACKS, HAIR, SKIN, HAIRSTYLES, GLIDERS, farm, saveFarm, MAX_KIDS, reduceMotion } from './state.js';
+import { settings, saveSettings, profiles, saveProfiles, addProfile, removeProfile, STYLES, OUTFIT_COLORS, HATS, BACKS, HAIR, SKIN, HAIRSTYLES, GLIDERS, farm, saveFarm, MAX_KIDS, reduceMotion, autoPackOn } from './state.js';
 import { say, spoken, warmVoiceLine } from './voice.js';
 
 import { SFX, Music, ac } from './audio.js';
@@ -117,7 +117,7 @@ export function showTitle(onStart) {
       <div class="logo"><div class="logo-main"></div><div class="logo-sub"></div></div>
     </div>
     <button class="press"><span class="tt-play">▶</span><span class="tt-press" elementtiming="title"></span></button>
-    <div class="tt-panel"><div class="title-foot"></div><div class="title-learn"></div></div>
+    <div class="tt-panel"><div class="title-foot"></div><div class="title-learn"></div><div class="tt-voice"></div></div>
     <div class="tt-build" aria-hidden="true">${SHOWN}</div>`);
   document.body.appendChild(s);
   const redraw = () => {
@@ -134,6 +134,11 @@ export function showTitle(onStart) {
     s.querySelector('.sitebtn-l').textContent = T('Website', 'Trang web'); s.querySelector('.sitebtn').setAttribute('aria-label', T('Sparkle Valley website for families', 'Trang web Thung Lũng Lấp Lánh cho gia đình'));
     s.querySelector('.title-foot').innerHTML = flagBtns();
     s.querySelector('.title-learn').innerHTML = learnBtns(); bindLearn(s, redraw);
+    // (owner, 31 Oct 2026 AEDT) the voices play over the internet unless a grown-up kept them all on the device; the
+    // Welcome says so, and how to keep them for playing offline
+    const vn = s.querySelector('.tt-voice') as HTMLElement; vn.hidden = autoPackOn() && !!settings.packSaved;
+    vn.innerHTML = both('Voices play over the internet. To play offline with voices: Grown-ups → Sound and voices → Keep all voices on this device.',
+      'Giọng nói phát qua mạng. Để chơi offline có giọng nói: Người lớn → Âm thanh và giọng nói → Lưu tất cả giọng đọc vào máy.');
     bindLang(s, redraw);
     const top = s.querySelector('.title-top'); top.innerHTML = '';
     const b = installButton(); if (b) top.appendChild(b);
@@ -188,7 +193,9 @@ export function showWho(onGo) {
     const naturalHeight = whoCard.getBoundingClientRect().height;
     [...whoCard.children].filter(n => n !== whoAction).forEach(n => whoBody.appendChild(n)); whoCard.prepend(whoBody); whoAction.classList.add('who-footer');
     // Keep the original compact opening size across redraws; additional choices scroll inside.
-    if (shellHeight === null) shellHeight = naturalHeight;
+    // (owner, 31 Oct 2026 AEDT, tablet: the names under the faces were cut off) the opening card is never shorter than the
+    // one-player choice needs: it grows when the fonts or pictures arrive after the first measure
+    if (shellHeight === null || mode === 'solo' && naturalHeight > shellHeight) shellHeight = naturalHeight;
     whoCard.style.height = `${shellHeight}px`;
     s.querySelectorAll('.modes button').forEach(b => b.onclick = () => { mode = b.dataset.m; chosen = chosen.slice(0, mode === 'split' ? 2 : 1); SFX.tap(); draw(); });
     s.querySelectorAll('.pick[data-id]').forEach(b => b.onclick = () => {
@@ -203,6 +210,7 @@ export function showWho(onGo) {
     holdButton(s.querySelector('.grown'), () => openGrownups(draw));
   };
   draw();
+  document.fonts?.ready.then(() => { if (s.isConnected && profiles.length) draw(); }).catch(() => { });
 }
 // ---------- Rename characters ----------
 // (owner, 13 Oct AEDT: "within each, all the categories should be collapsible") each heading inside a part opens and
@@ -1054,7 +1062,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     if (game.bindTaleShelf) game.bindTaleShelf(root, () => { openGamesHub.scroll = root.scrollTop; draw(); });
     root.querySelectorAll('[data-songs]').forEach(b => b.onclick = () => { SFX.tap(); close(); game.openSongs(b.dataset.songs); });
     root.querySelectorAll('[data-fold]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.fold; if (openGamesHub.unfolded.has(k)) openGamesHub.unfolded.delete(k); else { openGamesHub.unfolded.add(k); say('Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'); } openGamesHub.scroll = root.scrollTop; draw(); });
-    root.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.soon; openGamesHub.soon = openGamesHub.soon === k ? '' : k; if (openGamesHub.soon) say('Win each game here 3 times to open the new games!', 'Thắng mỗi trò ở đây 3 lần để mở trò mới nhé!'); openGamesHub.scroll = root.scrollTop; draw(); });
+    root.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.soon; openGamesHub.soon = openGamesHub.soon === k ? '' : k; if (openGamesHub.soon) say('Win each game here 3 times to open the new games!', 'Thắng mỗi trò ở đây 3 lần để mở trò mới nhé!'); openGamesHub.scroll = root.scrollTop; draw(); if (openGamesHub.soon) root.querySelector('.hsoonbubble')?.scrollIntoView({ block: 'nearest', behavior: reduceMotion() ? 'auto' : 'smooth' }); });
     root.querySelectorAll('[data-play]').forEach(b => b.onclick = () => { const id = b.dataset.play; close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); });
     root.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { close(); game.goToGame(i, b.dataset.go); });
     root.querySelectorAll('[data-how]').forEach(b => b.onclick = () => { const id = b.dataset.how; openHowTo(id, { onPlay: () => { close(); game.playGame(i, id, 'hub'); } }); });

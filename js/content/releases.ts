@@ -21,6 +21,8 @@ export const RELEASES: Release[] = [
   { id: 'xichloRides', en: 'Xích lô rides', vi: 'Đi xích lô', group: 'world', def: true },
   { id: 'realVehicles', en: 'Real-looking vehicles for older children', vi: 'Xe như thật cho các con lớn', group: 'world', def: true },
   { id: 'powerPoles', en: 'Power poles and wires', vi: 'Cột điện và dây điện', group: 'world', def: false },
+  // (owner, 31 Oct 2026 AEDT) off: a welcome sign beside the road into each village and city instead (on the next start)
+  { id: 'gates', en: 'Welcome gates over the roads into each village and city (off: a welcome sign beside the road)', vi: 'Cổng chào trên đường vào mỗi làng và thành phố (tắt: biển chào mừng bên đường)', group: 'world', def: false },
   { id: 'story_prologue', en: 'Story: The Lanterns Blow Away (prologue, companion)', vi: 'Truyện: Đèn Lồng Bay Mất (mở đầu, bạn đồng hành)', group: 'story', def: true },
   { id: 'story_ch1', en: 'Story chapter 1: Lotus Village', vi: 'Truyện chương 1: Làng Sen', group: 'story', def: true },
   { id: 'story_ch2', en: 'Story chapter 2: Hà Nội (Tèo\'s challenge, Văn Miếu, Cầu Thê Húc lights up, Trung Thu parade)', vi: 'Truyện chương 2: Hà Nội (Tèo thách đấu, Văn Miếu, Cầu Thê Húc sáng đèn, rước đèn Trung Thu)', group: 'story', def: true }, // (owner 10 Oct: off until an admin switches it on or schedules it)

@@ -16,20 +16,18 @@ const CACHE = 'sv-world';
 const SIG = (() => { let h = 0; const t = JSON.stringify(CUSTOM || {}); for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return BUILD + '_' + MAP_VERSION + '_' + (h >>> 0).toString(36); })(); // (round T: and the layout of the valley)
 const urlOf = name => `./__sv-world/${SIG}/${name}.png`;
 
-/**
- * @param {string} name
- * @param {number} size
- * @param {(size: number) => HTMLCanvasElement} paint
- */
-export function cachedCanvas(name, size, paint, after = null) {
+// rows (31 Oct AEDT, #36): the same picture a few rows at a time; painted in slices between frames when nothing waits for
+// it, so the first start does not freeze for seconds as the child walks in (now() still paints at once when asked first)
+export function cachedCanvas(name: string, size: number, paint: (size: number) => HTMLCanvasElement, after: Promise<unknown> | null = null, rows: ((size: number) => Generator<unknown, HTMLCanvasElement>) | null = null) {
   const c = document.createElement('canvas'); c.width = c.height = size;
+  let slicing = false;
   const st = {
-    canvas: c, ready: false, /** @type {null | 'cache' | 'painted'} */ from: null, ms: 0, /** @type {null | (() => void)} */ onReady: null,
-    // the picture now: painted here and then if it is not ready yet
-    now() { if (!st.ready) { const t0 = performance.now(); fill(paint(size)); st.from = 'painted'; st.ms = Math.round(performance.now() - t0); keep(); } return c; }
+    canvas: c, ready: false, from: null as null | 'cache' | 'painted', ms: 0, onReady: null as null | (() => void),
+    // the picture now: painted here and then if it is not ready yet (while it is being painted in slices, as far as it got)
+    now() { if (!st.ready && !slicing) { const t0 = performance.now(); fill(paint(size)); st.from = 'painted'; st.ms = Math.round(performance.now() - t0); keep(); } return c; }
   };
   const has = () => typeof caches !== 'undefined';
-  const fill = src => { c.getContext('2d').drawImage(src, 0, 0, size, size); st.ready = true; if (st.onReady) st.onReady(); };
+  const fill = (src: CanvasImageSource) => { c.getContext('2d')?.drawImage(src, 0, 0, size, size); st.ready = true; if (st.onReady) st.onReady(); };
   const keep = () => {
     if (!has()) return;
     c.toBlob(b => {
@@ -41,7 +39,13 @@ export function cachedCanvas(name, size, paint, after = null) {
     }, 'image/png');
   };
   // paint after the title screen is up, not before it (and, with `after`, once the valley is built: round R, faster launch)
-  const later = () => (after || Promise.resolve()).then(() => setTimeout(() => st.now(), 0));
+  const sliced = (make: (size: number) => Generator<unknown, HTMLCanvasElement>) => {
+    const g = make(size); let ms = 0; slicing = true;
+    const tick = () => { if (st.ready) { slicing = false; return; } const t0 = performance.now(); let r = g.next(); while (!r.done && performance.now() - t0 < 10) r = g.next(); ms += performance.now() - t0;
+      if (!r.done) { setTimeout(tick, 0); return; } slicing = false; fill(r.value); st.from = 'painted'; st.ms = Math.round(ms); keep(); };
+    tick();
+  };
+  const later = () => (after || Promise.resolve()).then(() => setTimeout(() => { if (st.ready) return; if (rows) sliced(rows); else st.now(); }, 0));
   if (!has()) later();
   else caches.open(CACHE).then(k => k.match(urlOf(name))).then(r => r ? r.blob() : null).then(b => b ? createImageBitmap(b) : null)
     .then(bm => { if (st.ready) return; if (bm) { fill(bm); st.from = 'cache'; } else later(); }).catch(later);

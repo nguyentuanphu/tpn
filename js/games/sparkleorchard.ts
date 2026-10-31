@@ -36,7 +36,7 @@ async function run(api:OrchardApi){
   if(s.complete&&!ending){ending=true;void api.win({title:T(...ORCHARD_COMPLETION),titleVi:ORCHARD_COMPLETION[1]}).then(resolve);}
  }
  function highlight(){root.querySelectorAll<HTMLElement>('[data-cell]').forEach((cell,i)=>cell.classList.toggle('on',i===position));root.dataset.position=String(position);}
- const choices=dom('div','arcade-actions');if(api.online)start(Math.min(4,api.online.names.length),false);else{root.append(dom('h2','',T('Who will explore the orchard?','Ai cùng khám phá vườn quả?')));for(const [mode,en,vi,seats,npc]of [['solo','Just me','Mình con',1,false],['npc','With a helper','Cùng bạn hỗ trợ',2,true],['local','Two players here','Hai bạn cùng máy',2,false]]as const){const b=control(T(en,vi),()=>start(seats,npc));b.dataset.orchardMode=mode;choices.append(b);}root.append(choices);api.say('Who will explore the orchard?','Ai cùng khám phá vườn quả?');}
+ const choices=dom('div','arcade-actions');if(api.online)start(Math.min(4,api.online.names.length),false);else{root.append(dom('h2','',T('Who will explore the orchard?','Ai cùng khám phá vườn quả?')));for(const [mode,en,vi,seats,npc]of [['solo','Just me','Mình con',1,false],['npc','With a helper','Cùng bạn hỗ trợ',2,true]]as const){const b=control(T(en,vi),()=>start(seats,npc));b.dataset.orchardMode=mode;choices.append(b);}root.append(choices);api.say('Who will explore the orchard?','Ai cùng khám phá vườn quả?');}
  function key(e:KeyboardEvent){if((e.code==='Space'||e.code==='Enter')&&!(e.target instanceof HTMLButtonElement)){e.preventDefault();stop();}}
  root.tabIndex=-1;root.addEventListener('keydown',key);
  let lastPoll=0,lastNpc=0,pressed=false;
