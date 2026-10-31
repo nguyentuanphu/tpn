@@ -328,7 +328,7 @@ function addUI() {
   // Each player gets a tester mark; the primary HUD anchors one shared floating report control.
   // Also handle HUDs made after this mount, when the game starts after the title screen.
   const ensure = () => (G.huds || []).forEach((hud, i) => {
-    const ck = hud.q && hud.q('.zoom'); if (ck && !ck.querySelector('.testermark')) { const mk = el('span', 'testermark', `${pic('🐞')}<span>${T('Tester', 'Người thử')} · ${SHOWN}</span>`); mk.setAttribute('aria-hidden', 'true'); ck.appendChild(mk); offs.push(() => mk.remove()); }
+    const ck = hud.q && hud.q('.zoom'); if (ck && !ck.querySelector('.testermark')) { const mk = el('span', 'testermark', `${pic('🐞')}<span><span class="tm-w">${T('Tester', 'Người thử')} · </span>${SHOWN}</span>`); mk.setAttribute('aria-hidden', 'true'); ck.appendChild(mk); offs.push(() => mk.remove()); }
     // One shared device control, including split-screen; the report snapshot contains all players.
     if (level !== 'ladybird' || i !== 0) return;
     const z = hud.q && hud.q('.zoomer'); if (!z || floatingSeats.has(i)) return;

@@ -1842,7 +1842,7 @@ body.calm .rv-img.on { animation: none; }
 
 /* the Games box keeps one height whichever tab is open (it used to jump up and down when tabs were tapped) */
 .hub .card { height: min(86vh, 780px); height: min(86dvh, 780px); }
-.hub .card .hubbody { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.hub .card .hubbody { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; } /* (owner, 31 Oct 2026 AEDT: hard to scroll on iPhone and tablet once the Coming soon bubble is open) a finger always scrolls the list */
 .hub .card .hubtabs { flex: 0 0 auto; }
 
 /* every window: the closing button row floats at the bottom, a single closing button too, and ✕ stays at the top */
@@ -2513,6 +2513,12 @@ button.chip { font: inherit; color: inherit; cursor: pointer; }
 .testermark { display: flex; align-items: center; gap: 4px; width: max-content; margin: 4px auto 0; pointer-events: none;
   padding: 2px 10px 2px 4px; border-radius: 999px; background: rgba(40, 24, 70, .62); color: #fff; font: 700 12px Fredoka, "Baloo 2", sans-serif; opacity: .85; }
 .testermark .art { width: 18px; height: 18px; }
+/* (owner, 31 Oct 2026 AEDT, iPhone: the clock and the tester mark crowded the round map and the goal marker at its edge,
+   and the mark ran off the screen) the clock and the mark stay below the map with a gap, and on a phone the mark shows
+   just the ladybird and the version, inside the column under the map */
+.hud .hud-tr .zoom { margin-top: 4px; }
+.hud.small .testermark .tm-w { display: none; }
+.hud.small .testermark { max-width: 100%; }
 .zoomer .z-lb { position: relative; }
 /* (the ladybird makes the column one button taller: centred a little lower so it stays clear of the tester mark) */
 .zoomer:has(.z-lb) { transform: translateY(-50%); }
