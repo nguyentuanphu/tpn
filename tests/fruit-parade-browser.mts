@@ -33,7 +33,7 @@ export async function checkParadeBrowser() {
     while (!await P.page.locator('.gl-win').count()) {
       if (++rounds > 4) throw new Error('Parade did not finish within bounded missions');
       const targets = await P.page.locator('.parade-lane').evaluateAll(lanes => lanes.map(lane => ({ seat: Number(lane.closest<HTMLElement>('[data-seat]')!.dataset.seat), lane: Number((lane as HTMLElement).dataset.lane), target: lane.querySelector<HTMLElement>('.parade-hint')!.dataset.target })));
-      for (const target of targets) {
+      for (const target of targets.filter(t => t.seat === 0)) {   // (the helper plays seat 1 by itself)
         const lane = P.page.locator(`.parade-player[data-seat="${target.seat}"] .parade-lane[data-lane="${target.lane}"]`);
         for (let n = 0; n < 10 && target.target && await lane.locator('.parade-window').getAttribute('data-symbol') !== target.target; n++) await lane.locator('[data-parade-action=change]').click();
         await lane.locator('[data-parade-action=stop]').click();
@@ -46,7 +46,7 @@ export async function checkParadeBrowser() {
     }
     await P.page.locator('.gl-win').click({position:{x:20,y:20}});await P.page.locator('.gl').waitFor({state:'detached'});
     await P.page.waitForFunction(() => window.__sv.heroes[0].profile.wins.fruitparade === 1);
-    observations.push({ localCoopCompleted: true, rounds, controls: heights.length, progressSaved: true, errors: P.errors });
+    observations.push({ helperCompleted: true, rounds, controls: heights.length, progressSaved: true, errors: P.errors });
     await clear(P.page);
     // Trồng Nụ is in the second set (v1.03): it opens after the Vietnamese originals are won, so this fresh player unlocks it.
     await P.page.evaluate(() => { window.__sv.heroes[0].profile.unlockAll = true; void window.__sv.playGame(0, 'trongnu', 'replay'); });
