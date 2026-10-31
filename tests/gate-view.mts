@@ -6,7 +6,9 @@ import { open, clear, noWelcome } from './harness.mjs';
 // #369: the reported Hanoi position, with the camera looking through its real entrance gate.
 export async function gateViewCheck(browser: Browser): Promise<string> {
   const dir = 'out/gate-view'; fs.mkdirSync(dir, { recursive: true });
-  const P = await open(browser, { w: 430, h: 517, touch: true });
+  // (owner, 31 Oct 2026 AEDT) the gates are hidden unless Studio switches them on (a welcome sign stands beside the road
+  // instead); this check is about the camera seeing through a gate, so it plays with Studio's 'gates' switch on
+  const P = await open(browser, { w: 430, h: 517, touch: true, pre: `try { const l = JSON.parse(localStorage.getItem('sv2_live') || '{}'); l.releases = { ...(l.releases || {}), gates: { on: true } }; localStorage.setItem('sv2_live', JSON.stringify(l)); } catch (e) { }` });
   const rows: { name: string; hit: boolean; faded: boolean; restored: boolean; collidersIntact: boolean }[] = [];
   try {
     await clear(P.page); await noWelcome(P.page);

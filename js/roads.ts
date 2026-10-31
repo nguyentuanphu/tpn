@@ -290,7 +290,8 @@ export function plantRoadside(G) {
   // (#34 Concept D) round basket boats (thúng chai) pulled up on Vũng Tàu's beach and floating just off it
   const boats = [], boatParts = [P(new THREE.SphereGeometry(.85, 14, 7, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), '#7a5530', [0, .55, 0]), P(new THREE.TorusGeometry(.85, .06, 6, 18), '#4a3218', [0, .55, 0], [Math.PI / 2, 0, 0]),
     P(new THREE.CylinderGeometry(.03, .03, 1.6, 5), '#9a7448', [.3, .65, .1], [0, 0, 1.1]), P(new THREE.BoxGeometry(.25, .04, .12), '#9a7448', [.98, .95, .1], [0, 0, 1.1])];
-  for (const [x, z] of [[186, 187], [190, 189], [204, 189], [192, 199], [200, 201]]) { const h = heightAt(x, z), dry = h > WATER + .05;
+  const VT = CITIES.find(c => c.id === 'vungtau'), at = (dx: number, dz: number) => [VT.x + dx, VT.z + dz];
+  for (const [x, z] of VT ? [at(-19, 36), at(-15, 38), at(-1, 38), at(-13, 48), at(-5, 50)] : []) { const h = heightAt(x, z), dry = h > WATER + .05;
     if (dry && h > WATER + 1.6 || !free(x, z, 1.2) || !plotFree(x, z, 1)) continue;
     const y = dry ? h - .5 : WATER - .45, yaw = (x * 7 + z) % 6.3; boats.push(...boatParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; }));
     if (dry) world.colliders.push({ x, z, r: .9 }); }
