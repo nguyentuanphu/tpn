@@ -21,12 +21,12 @@ export async function checkParadeBrowser() {
     await P.ctx.setOffline(true);
 
     await P.page.evaluate(() => { void window.__sv.playGame(0, 'fruitparade', 'replay'); });
-    await P.page.locator('[data-parade-action=solo]').waitFor();
+    await P.page.locator('[data-parade-action=solo]').waitFor();assert.equal(await P.page.locator('[data-parade-action=local]').count(),0,'two players here is in the Friends section, not here (owner, 31 Oct 2026 AEDT)');
     await P.page.screenshot({ path: new URL('phone-vi-choices.png', out).pathname });
-    await P.page.locator('[data-parade-action=local]').click();
+    await P.page.locator('[data-parade-action=npc]').click();
     await P.page.locator('.parade-player').nth(1).waitFor();
     await P.page.waitForTimeout(450);
-    await P.page.screenshot({ path: new URL('phone-vi-local.png', out).pathname });
+    await P.page.screenshot({ path: new URL('phone-vi-helper.png', out).pathname });
     const heights = await P.page.locator('.parade button').evaluateAll(buttons => buttons.map(button => button.getBoundingClientRect().height));
     assert.ok(heights.every(height => height >= 64), `64px controls: ${JSON.stringify(heights)}`);
     let rounds = 0;
@@ -68,9 +68,9 @@ export async function checkParadeBrowser() {
       await P.page.setViewportSize({width:Number(w),height:Number(h)});
       await P.page.evaluate(async language=>{const S=await import('/js/state.js');S.settings.lang=language;const I=await import('/js/i18n.js');I.applyLang();},lang);
       await clear(P.page);
-      await P.page.evaluate(()=>{void window.__sv.playGame(0,'fruitparade','replay');});await P.page.locator('[data-parade-action=local]').waitFor();
-      await P.page.locator('[data-parade-action=local]').click();await P.page.locator('.parade-player').nth(1).waitFor();await P.page.waitForTimeout(450);
-      await P.page.screenshot({path:new URL(`${device}-${lang}-local.png`,out).pathname});
+      await P.page.evaluate(()=>{void window.__sv.playGame(0,'fruitparade','replay');});await P.page.locator('[data-parade-action=npc]').waitFor();
+      await P.page.locator('[data-parade-action=npc]').click();await P.page.locator('.parade-player').nth(1).waitFor();await P.page.waitForTimeout(450);
+      await P.page.screenshot({path:new URL(`${device}-${lang}-helper.png`,out).pathname});
       await P.page.locator('.gl .gl-x').click();await P.page.locator('.gl').waitFor({state:'detached'});
       await P.page.evaluate(()=>{window.__sv.heroes[0].profile.unlockAll=true;void window.__sv.playGame(0,'trongnu','replay');});await P.page.locator('[data-tn-jump]').waitFor();await P.page.waitForTimeout(450);
       await P.page.screenshot({path:new URL(`${device}-${lang}-trongnu.png`,out).pathname});
