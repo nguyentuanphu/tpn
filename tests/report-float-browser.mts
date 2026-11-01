@@ -63,6 +63,9 @@ try{
   await P.page.waitForTimeout(300);await P.page.screenshot({path:new URL(`${device}-${lang}.png`,dir).pathname});
   await P.page.locator('.tpanel .tp-head > .x').click();await P.page.locator('.tpanel').waitFor({state:'detached'});
   await P.page.evaluate(()=>document.querySelector('.report-layer-proof')?.remove());
+  // Back to the default spot, so the next pass really drags: from the middle to the middle is a tap, which opens a report
+  // (the ladybird now hides while the report is open, so that report covered it).
+  await button.focus();await P.page.keyboard.press('Home');
   results.push({device,lang,aboveModal:true,dragWithoutReport:true,doubleTapResets:true,reportOpens:true,target64:true});
  }
  await P.page.setViewportSize({width:390,height:844});
