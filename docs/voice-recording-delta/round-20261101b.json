@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/main.ts": "e0010dc1b78f98bf4ac8a9ae05dd20bc7c5456002c888a7beca5efe608951493",
+    "js/school.ts": "4c129933c73d4176ba35d7925f5415131117292b21400a3e85dc5945ab0b997d"
+  },
+  "lines": [
+    {
+      "id": "64fefb5f-1cd8b2e7",
+      "lang": "vi",
+      "text": "Con muốn chơi với bạn nào?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/main.ts"
+      ]
+    },
+    {
+      "id": "bdc72e1f17cc549b",
+      "lang": "vi",
+      "text": "Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/school.ts"
+      ]
+    },
+    {
+      "id": "f13525dd32bc2252",
+      "lang": "vi",
+      "text": "📚 Học thôi!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/school.ts"
+      ]
+    },
+    {
+      "id": "2eb1a90a2d432244",
+      "lang": "vi",
+      "text": "Trường Học Vui",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/main.ts"
+      ]
+    }
+  ]
+}
