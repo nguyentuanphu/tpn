@@ -5,10 +5,10 @@
     "sampleRate": 16000,
     "channels": 1
   },
-  "units": 7214,
-  "masterBytes": 467608398,
-  "deliveryBytes": 95046567,
-  "signature": "2315db4dba061bd5ed2d946e364522e4e30d2b6222d2a394aedd2f829556fbb8",
+  "units": 7434,
+  "masterBytes": 480626669,
+  "deliveryBytes": 97698003,
+  "signature": "498e91123114ee82d702fb8f119ded5ca76aad2dad588883ef915814e4b3b0b7",
   "fullDecode": "passed for every newly encoded clip; resumed clips verified against their completed encoding receipts",
   "originalPackageBackup": "temp/hanoi-originals-VFBnNA",
   "files": {
@@ -58274,6 +58274,1986 @@
       "deliveryBytes": 6273,
       "deliveryDuration": 1.512,
       "inventory": "docs/voice-recording-delta/round-20261030.json"
+    },
+    "dc8d4788012eb779": {
+      "masterSha256": "6806c3421ce64f4e711d572e699f994bacae395964e97f4a557c884686246594",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "f7c08092593ef65f79cdd185dcc4bb7ab2508b42f9207f35f216ce4c07afdb0c",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "bebe94b2524984c7": {
+      "masterSha256": "4fc2b0219c6586b8cd06f7c1083299b61595da26f2d8ffa7ddc9c2ad09a84346",
+      "masterBytes": 42363,
+      "masterDuration": 2.089796,
+      "deliverySha256": "00b4c39fee191271dec682f7a032b9e68606ed72093c6892699b633fd0af0028",
+      "deliveryBytes": 8721,
+      "deliveryDuration": 2.124,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "60ad7c0c0-492c7a": {
+      "masterSha256": "4b85568aac1e4ed192d5c0b794547dd3265df3f8c74004cc04c7213e5c433ea3",
+      "masterBytes": 31392,
+      "masterDuration": 1.541224,
+      "deliverySha256": "2a202571fcc641b6788c0fa641b360222a4e8f4a174654b3d2082b87d04dc1ec",
+      "deliveryBytes": 6417,
+      "deliveryDuration": 1.548,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "fb86384f-7b9e31bb": {
+      "masterSha256": "f7c92dc5503396d9527fd1286dbca9079c1951129558080082a58f4462a78e8d",
+      "masterBytes": 29824,
+      "masterDuration": 1.462857,
+      "deliverySha256": "3574440e8ff94c9ae4b70962d870f964643b94451ab145db31c1d691450b6baf",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "ab5cea8c-620d0a4": {
+      "masterSha256": "d9dd32209319c1a8f82965fab93fe3964aea0bd0d2516f13d4a28a7878a54fd5",
+      "masterBytes": 24600,
+      "masterDuration": 1.201633,
+      "deliverySha256": "0e3cdebda0b7bb56059266db7168efcb3d1d35a8bb8f15d80350040a61baebd6",
+      "deliveryBytes": 5121,
+      "deliveryDuration": 1.224,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "af91c27f-3528c650": {
+      "masterSha256": "842efc44a447d07f20190f857fa8c5bec8f2c7c79ccaede7447c37b90d9b2ad2",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "08c5e68fb7e4a582ef952c940778d70a329c493585a148c6581446ef0fa8ed7b",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "c0abbac3-53313a60": {
+      "masterSha256": "43c18f0144d7c808b52ea4a22257063649a7c45ae71708e73e14ba51bdcf0924",
+      "masterBytes": 30869,
+      "masterDuration": 1.515102,
+      "deliverySha256": "f787ecb8926acc6d5ebde162642ce99b307c7788d06b61523281b15c451be3ff",
+      "deliveryBytes": 6417,
+      "deliveryDuration": 1.548,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "ff12cbe7-65a9b77e": {
+      "masterSha256": "d92fa4123b2f130e125e89a636e5f51ac4280545df6d090bf835b3f676ec3961",
+      "masterBytes": 41318,
+      "masterDuration": 2.037551,
+      "deliverySha256": "1e95a8c4f748af70b7f7c09f9e8724c48b0e921e01c10104c95fe490daa82508",
+      "deliveryBytes": 8577,
+      "deliveryDuration": 2.088,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "7e7022a1617ec8a4": {
+      "masterSha256": "a77863e3dec3e3013496cf8628a6898a4d85c38644f80768a847510beebdb6f6",
+      "masterBytes": 29824,
+      "masterDuration": 1.462857,
+      "deliverySha256": "673d7684b881d588444de3c7884ab1f8042359d3a81afc10b8aae7a56ffaa920",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "8e0550d3-45504de5": {
+      "masterSha256": "47875ab635373382fbdb61716a261e6c147efa3c43078367cec5ad61dbbd0dfe",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "fd0d8135668c80bbfc83133ccb5947d3aa97624e23685f9ad30619e3e94dc943",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "fdee1eeb-710a7bc4": {
+      "masterSha256": "93f76065f5d8477da8e8fe3763c7938e28bd01ba4f591abc24aa4cf7fbb44123",
+      "masterBytes": 40796,
+      "masterDuration": 2.011429,
+      "deliverySha256": "5a2cf44501831de295793f38588d18fe7d8aebc00a2dd4012192f8e1c9f37ca2",
+      "deliveryBytes": 8433,
+      "deliveryDuration": 2.052,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "71170e4d14753bb4": {
+      "masterSha256": "558ace76b134a49cdfcb01e8206fc3436d2d07964a626c707582a29e9750e074",
+      "masterBytes": 28257,
+      "masterDuration": 1.38449,
+      "deliverySha256": "11722e3a931e38af1676f27a80caf2b116f289a4c524a1a1881cbdd703daf8bd",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "5717f56e-3e2a47ce": {
+      "masterSha256": "229380b7b2adb753eccedd484e5994c584ff8eb3705ef2ef74ad5349eef40bec",
+      "masterBytes": 29824,
+      "masterDuration": 1.462857,
+      "deliverySha256": "dbcd8f11cd51baea1189513eb4ac17e97900e708d7512fa57fab7fdf5642f9d5",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "d810034e77244d73": {
+      "masterSha256": "851c92f6e70e7a9dd585f96dcdb29cfd6b053d071dc350a476b606db39b2bc76",
+      "masterBytes": 31392,
+      "masterDuration": 1.541224,
+      "deliverySha256": "708db2c1bbdd2b82d4f6f9073debb3c19e12236673d6adc680cd090285ba4f77",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "aa733c73-63ab24c7": {
+      "masterSha256": "4c4448065b008320ee572b3477c0627aaae0254e973c1ebe8e88b7a654d75f08",
+      "masterBytes": 34526,
+      "masterDuration": 1.697959,
+      "deliverySha256": "97939a19dc4b563b57458f9802e040103f668e5dd4763c6d2e0fa953ea9bdb51",
+      "deliveryBytes": 7137,
+      "deliveryDuration": 1.728,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "7a9cf0e000044ad3": {
+      "masterSha256": "a2c9dc03a4f1411b2751940d19a0af6c190ffa56538cb197148b00d9fae98dc2",
+      "masterBytes": 41841,
+      "masterDuration": 2.063673,
+      "deliverySha256": "0af69b636554760e533550077360ce35f6d85ed608b2a6598d572feb5060d7fd",
+      "deliveryBytes": 8577,
+      "deliveryDuration": 2.088,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "241040a5-67818d1e": {
+      "masterSha256": "7b18c4cdca8113c5e0d740d8e5263367059f52ce80dcc0df9ea620d4606b10fd",
+      "masterBytes": 30347,
+      "masterDuration": 1.48898,
+      "deliverySha256": "b16e40852e3299ef57368ab2e15794432b953454338312f4cfa86a6f386165be",
+      "deliveryBytes": 6273,
+      "deliveryDuration": 1.512,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "31d5b23f7a1f4c7e": {
+      "masterSha256": "feba0b9e559770f4e75377c4cde3fc062c68179a290ccdd6b4180262910c9c3f",
+      "masterBytes": 30869,
+      "masterDuration": 1.515102,
+      "deliverySha256": "9cb4e42817ead477fb2c5b4eee4a11483a0318b2e306297bb82c5adb3c8d0aad",
+      "deliveryBytes": 6417,
+      "deliveryDuration": 1.548,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "eda092c804c2c94b": {
+      "masterSha256": "2afc8cb66d6c9302f0e405447c74f575dfb5d206108aa4ceb9fa9920d0b50cda",
+      "masterBytes": 38706,
+      "masterDuration": 1.906939,
+      "deliverySha256": "648db6e3169c2b6ded1f4ff5b3163e2e13981965c9b0f3aeb1e3ef4fb081f91a",
+      "deliveryBytes": 8001,
+      "deliveryDuration": 1.944,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "bfe496b9-17c858a7": {
+      "masterSha256": "25698d2dbfb8502a876d60f16605c6d60ac3e46da3b9f601a939a7c4919cf6a8",
+      "masterBytes": 36616,
+      "masterDuration": 1.802449,
+      "deliverySha256": "b63a4476e4056970fc67ab45b746fa02f33de8e83925fecaad3f5c678fb9ac78",
+      "deliveryBytes": 7569,
+      "deliveryDuration": 1.836,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "07392a31-7ce31b60": {
+      "masterSha256": "1bd9f1de74933aeaaa6655e012f7dbd2516350ee45a36295281fbc0b99d66ed7",
+      "masterBytes": 34004,
+      "masterDuration": 1.671837,
+      "deliverySha256": "967af5fa8d4cc94dc86cb3376de69daf2dc6554fd54d829e78f070a108f24478",
+      "deliveryBytes": 6993,
+      "deliveryDuration": 1.692,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a745afb7-4f8aee0e": {
+      "masterSha256": "9c227d0c3d7866595807d8f124dd65c6bce049e96d6f3d3c4e81492005b6ec2d",
+      "masterBytes": 28779,
+      "masterDuration": 1.410612,
+      "deliverySha256": "0fe0c679637f7c165c98a23ed08977f6837ce72b45d67e07a834896b0fa28e6d",
+      "deliveryBytes": 5985,
+      "deliveryDuration": 1.44,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "44b6447a-63a06b37": {
+      "masterSha256": "f1682bab76e92629089da2cb1cb402d5f5049be9c9f855b7a0b4b9c03ae33980",
+      "masterBytes": 60126,
+      "masterDuration": 2.977959,
+      "deliverySha256": "e61a6c89ce1731714f62812a524ebcc3f7d11730c1d756698529542a6b5de350",
+      "deliveryBytes": 12177,
+      "deliveryDuration": 2.988,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "f0822622-63f76b0b": {
+      "masterSha256": "c38c55b4882b371ce71e03afb81eb85f08f531c053c7bfdc3b026aed6c742310",
+      "masterBytes": 71098,
+      "masterDuration": 3.526531,
+      "deliverySha256": "2bb87fb350f0b4fc7ff554064ce4ca4182304a214a5f998eafc564e5370b8666",
+      "deliveryBytes": 14481,
+      "deliveryDuration": 3.564,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "154999dc7f5ceeff": {
+      "masterSha256": "2e6d6b4dfdb601ec54416f6ea69ad3e565d477c82da87cd6fc268ee188db4838",
+      "masterBytes": 82069,
+      "masterDuration": 4.075102,
+      "deliverySha256": "abbee9ea09c91cac6edfae1d759c945f19283f64dc3eab585ea502675bce90d7",
+      "deliveryBytes": 16641,
+      "deliveryDuration": 4.104,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "67bd0f0b-34ac3a7d": {
+      "masterSha256": "c832f7167860dcfef60cca1518962c2bae57181e6398281f588c89cc52a6dfd6",
+      "masterBytes": 94085,
+      "masterDuration": 4.675918,
+      "deliverySha256": "9bbae968edc6a264ae59cf5832219b20a66a5fbb26174f8ac6a0b1162dc29e7f",
+      "deliveryBytes": 18945,
+      "deliveryDuration": 4.68,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e27f8e4a3f92f0f9": {
+      "masterSha256": "0a91cb9564aa2a6b5c19c827244c737f055f21ad09c7f59ac9b3505fd0c4f879",
+      "masterBytes": 70053,
+      "masterDuration": 3.474286,
+      "deliverySha256": "b966984ffe0c0de7a68f4600150293391a35108cdc4c39acbe0f01f63a1a443b",
+      "deliveryBytes": 14193,
+      "deliveryDuration": 3.492,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "cfa0d6081a23cb67": {
+      "masterSha256": "1a2ce6af06ce0e18addbb31563708971a5491122e6cd88f648ae2bd51413592e",
+      "masterBytes": 67963,
+      "masterDuration": 3.369796,
+      "deliverySha256": "2e18458eeb861a76209404d8b114868316795f9573ca0c10154133e506e66663",
+      "deliveryBytes": 13761,
+      "deliveryDuration": 3.384,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "80c3437921821257": {
+      "masterSha256": "9dbfedada9032648008999ee6f1be4cfa1b50f4755dd0c07281deffc9d76d045",
+      "masterBytes": 65873,
+      "masterDuration": 3.265306,
+      "deliverySha256": "65db0f45b2c9e6cfc2b720bcbc469e108dd453317365a54f60a3b1f1d1e51881",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e45651ae-43e6d7f8": {
+      "masterSha256": "5a398da818de722e5c038b6d5a44cb0771cc464202ec88e5e0e7abfc12c97d4b",
+      "masterBytes": 89906,
+      "masterDuration": 4.466939,
+      "deliverySha256": "b6e3048799bc18c3e49a3d86ebf86164eb346829121c67c7da5aea98282e9db2",
+      "deliveryBytes": 18225,
+      "deliveryDuration": 4.5,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "35a8947c-210c9e92": {
+      "masterSha256": "203161543eadb62e3f8c516fbae9cea6178307dd96a32981b01074aac9533068",
+      "masterBytes": 65873,
+      "masterDuration": 3.265306,
+      "deliverySha256": "586635b561ef76f284dfc33c86e86e6d24235ad8a642e5c7d5c284680f031e4a",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "987727c0-2c583614": {
+      "masterSha256": "414b9b19f428af60fefb461fa1b31e68926692a4b0cf396e76972d6482b938af",
+      "masterBytes": 64306,
+      "masterDuration": 3.186939,
+      "deliverySha256": "0963a64dfa7579ad6a673b479a62fb616dd2d33f9caadb5cf208ffbb7cbfd9ec",
+      "deliveryBytes": 13041,
+      "deliveryDuration": 3.204,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "06162ea91d3db7fe": {
+      "masterSha256": "9409436d29147c6aeeb28e884357c22d147e45d9d8a275fc1995809fc85a6b9c",
+      "masterBytes": 66396,
+      "masterDuration": 3.291429,
+      "deliverySha256": "819f87105f9a1ae061969801910389032f9510b45c722b649891293dedb18f9e",
+      "deliveryBytes": 13473,
+      "deliveryDuration": 3.312,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "5a1ac92c-d3f6e73": {
+      "masterSha256": "51cb8fd320a9e6889b6c27a66c55721153810c638e826fa21fe79d6733d74950",
+      "masterBytes": 78934,
+      "masterDuration": 3.918367,
+      "deliverySha256": "ae20e8d8c9dbc64e2bf673f894a8041cbae86d8f61a09db6fc7b0971ff495e37",
+      "deliveryBytes": 16065,
+      "deliveryDuration": 3.96,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "2f408aae2d56c1bc": {
+      "masterSha256": "6913bd87e6bded01379664d8ec60af682e871f1e774f4cb4de048aed2c5aa9e9",
+      "masterBytes": 88338,
+      "masterDuration": 4.388571,
+      "deliverySha256": "1a4d7c3b5943171496fb0ecce37211ae3c5bd2843e87863253fe8dd207e4f860",
+      "deliveryBytes": 17937,
+      "deliveryDuration": 4.428,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "75a535e4250fb6d4": {
+      "masterSha256": "f7fe472462b7c40edc5e8f63a909f2b70d8274c666782c89f3c0bd2b1e5eff11",
+      "masterBytes": 84159,
+      "masterDuration": 4.179592,
+      "deliverySha256": "a97ee394a33177bffa4750deb59be9c85474d2b2c65d7030a8c75042780330b4",
+      "deliveryBytes": 17073,
+      "deliveryDuration": 4.212,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "fffffcc7-7c9d93c": {
+      "masterSha256": "19f3095a53b0dc2ef270f0f7f6b6de32e771049d44a8f0962140872efc8fcb2b",
+      "masterBytes": 64306,
+      "masterDuration": 3.186939,
+      "deliverySha256": "a6887a2d21117eef314458cb1bf235deb4f807e5d53bae863dffa17d6931a129",
+      "deliveryBytes": 13041,
+      "deliveryDuration": 3.204,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "77e3851853097b91": {
+      "masterSha256": "1e6a7b214d3930ba295188e51e91727bb98511d39ca7ba5378fa68c84d9e09f7",
+      "masterBytes": 119685,
+      "masterDuration": 5.955918,
+      "deliverySha256": "d4721c6649da4f1a238cf5da4d95f9bfda1edb7d7e83b53eb2e53a7d34dda5c4",
+      "deliveryBytes": 24129,
+      "deliveryDuration": 5.976,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "bc56857026c58c19": {
+      "masterSha256": "a836dfd00177b5ed63ae6b9e44a6b2b5ceb60fa7053e4a9fa88522a74b8322f1",
+      "masterBytes": 84159,
+      "masterDuration": 4.179592,
+      "deliverySha256": "1e928c044e541490758f30367b98b1c4bb7e48a97d1e2e5b6cefdf88abed8b48",
+      "deliveryBytes": 17073,
+      "deliveryDuration": 4.212,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "ac3ca601-3a6f06fd": {
+      "masterSha256": "b6bd524a59809d5ed959d14fab2c0b898fd5ea26db3c0566dae838e3967512c0",
+      "masterBytes": 67441,
+      "masterDuration": 3.343673,
+      "deliverySha256": "a1315e8be943085113f3cb7c79656a7eadc84e7a3642a384805c99a5745737c4",
+      "deliveryBytes": 13617,
+      "deliveryDuration": 3.348,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "8e81f57d-623f6c8": {
+      "masterSha256": "1baec45097b7974ecdc9cb6592ad9cfb4d3a91dedf889886b70b934caf385fb2",
+      "masterBytes": 65351,
+      "masterDuration": 3.239184,
+      "deliverySha256": "8f4729b0f325420fbc810ae505ede424789e9257c15660d797aa1a67648e7f6a",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "db0719313d50c466": {
+      "masterSha256": "d2a8a8e025abed507d13d241c438d2a370cea889a08cd284faabdda82f80ff3b",
+      "masterBytes": 89906,
+      "masterDuration": 4.466939,
+      "deliverySha256": "bbaa89b19b8abad80f2aeb1447e86ccbe8d43bc43a8ecc916c8aebb9a7db7866",
+      "deliveryBytes": 18225,
+      "deliveryDuration": 4.5,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e275c51b765fc1bb": {
+      "masterSha256": "b0bb09a2f33cf4772978caee8fcb4caf6a6e57fd37c665496b1b43b8b8092d6a",
+      "masterBytes": 75800,
+      "masterDuration": 3.761633,
+      "deliverySha256": "b15fb526aea407bf70f1ac032b6b4f85c02a8df705176e335e169d9c96ff376e",
+      "deliveryBytes": 15345,
+      "deliveryDuration": 3.78,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "2093e26e-720f4395": {
+      "masterSha256": "5c0a1dbbbcb9e85b9103b501bb28524bf264f82b3faa965feb9b317ee9cd4379",
+      "masterBytes": 61694,
+      "masterDuration": 3.056327,
+      "deliverySha256": "bb8e7bff157636cb7fbccdfbe938abdd3960e88451cb3f963ef260ba75450015",
+      "deliveryBytes": 12609,
+      "deliveryDuration": 3.096,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "2f24f3d0-307076e": {
+      "masterSha256": "06c40e331ae0fb5ce2b87262984263b982b496eabaed22fba53987ae14938352",
+      "masterBytes": 69530,
+      "masterDuration": 3.448163,
+      "deliverySha256": "0fc91ac69e14c28a070a17a5b83149df824d0fe6c6825e83da061ab23cf68586",
+      "deliveryBytes": 14193,
+      "deliveryDuration": 3.492,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a23a7f2404bfb8c1": {
+      "masterSha256": "edbc1d4555ccb727e8a9ab9fe5a2128cd5fb047a839e3610cb6cd5086455cb54",
+      "masterBytes": 85204,
+      "masterDuration": 4.231837,
+      "deliverySha256": "01e3882abe30558165d28e6cbd9ac0f50d88f80e65f25f42489924144c2bb7cf",
+      "deliveryBytes": 17217,
+      "deliveryDuration": 4.248,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e37b3021-6ed0306": {
+      "masterSha256": "9a7d232f5152fd0ce7cdf874fadbd22c633b4e1dc242d01833582f69c4d0f179",
+      "masterBytes": 46543,
+      "masterDuration": 2.298776,
+      "deliverySha256": "5cffafc16f4666b9ef0a3ff4a652dafaad4c89be028cc6c6f2f0a1f6112a2518",
+      "deliveryBytes": 9585,
+      "deliveryDuration": 2.34,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e01d0c62-2bbb4b94": {
+      "masterSha256": "39292e68bd2926c4e2961f8e0abce455321d25cd35b3ffc424ec8bb48db8ab49",
+      "masterBytes": 82069,
+      "masterDuration": 4.075102,
+      "deliverySha256": "096cf72d394b4c8ddecbbb17f1978ebd938cbf1749fd2fc8c71a497d6fd66f78",
+      "deliveryBytes": 16641,
+      "deliveryDuration": 4.104,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "f225009c-196a5281": {
+      "masterSha256": "e4ba5c4a6565a93bd9ae63ef71447a56fef6159caaa8d41f6fc597d78d70d24f",
+      "masterBytes": 42363,
+      "masterDuration": 2.089796,
+      "deliverySha256": "ab3e6d81d7f90e58067668dd3e8bfa976381e48de2694fe37f8078f0f6bf665c",
+      "deliveryBytes": 8721,
+      "deliveryDuration": 2.124,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "32634d5b-1107489b": {
+      "masterSha256": "97d59606316fb480e9a065010798351aa0bc0d64d18542dee836d5b198f99e4f",
+      "masterBytes": 43930,
+      "masterDuration": 2.168163,
+      "deliverySha256": "488b14f28da1435bf9cd35038edc75cdebb181554dd66dfef9b93ee1d0d3db40",
+      "deliveryBytes": 9009,
+      "deliveryDuration": 2.196,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "0ad4f4b6-7255493f": {
+      "masterSha256": "d2f5c2bf5b2d01099129f92aaad411892e3d04ac341deacd32da1b0d148bffce",
+      "masterBytes": 74755,
+      "masterDuration": 3.709388,
+      "deliverySha256": "5bb27c39aa2a3a7df152085b6d3e76c64aeb801a7d4005c2a2485968646e0146",
+      "deliveryBytes": 15201,
+      "deliveryDuration": 3.744,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "ab213b180dbd74ec": {
+      "masterSha256": "fd2eb29a321ee4767a0c17e5a84d463096c192d3294bfcd67851a96c2ce63e71",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "1976cc31fa9eed7af9fd11770ce88dab4ab1af4fbd658bfebddba3c5e7ee7884",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "fe44a3f0463ac2b1": {
+      "masterSha256": "98bf2fd10e2d4616b6fd84c4ffd41a1367a6765b39221ce06b548fc25a0023b8",
+      "masterBytes": 18330,
+      "masterDuration": 0.888163,
+      "deliverySha256": "0d4c4573bf41981d8d170bc95aa281d23ad5f0625345764fc139d769a73a4364",
+      "deliveryBytes": 3969,
+      "deliveryDuration": 0.936,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "b2b1fab4-272d3aba": {
+      "masterSha256": "c928311eeb55d54386a66b23ebd6f5418b77e67760478e1f3ba455dc6115fa58",
+      "masterBytes": 33481,
+      "masterDuration": 1.645714,
+      "deliverySha256": "14157d964b051c782dddccff0b91d7f98f60b6f9dfd8036f981ddac79834d26c",
+      "deliveryBytes": 6993,
+      "deliveryDuration": 1.692,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "abe173d24e826c0e": {
+      "masterSha256": "e5b4a9c14060770cc0456d9eac299975cc321a5e4fa210c22098fbf0be495fed",
+      "masterBytes": 21465,
+      "masterDuration": 1.044898,
+      "deliverySha256": "5703cafb815ebff28a2c1dd670f2aa5b910d4a504e9afb9502ed1a5f2a22bc1a",
+      "deliveryBytes": 4545,
+      "deliveryDuration": 1.08,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e20a37f47ec79f20": {
+      "masterSha256": "3bcf55a0c0bf283a0c2c16a96f5b6bca5d24be2fd2b0006155909c13a29bb402",
+      "masterBytes": 41841,
+      "masterDuration": 2.063673,
+      "deliverySha256": "d8afb2e0c20882ba43edbf96d2e8c077c2ee5f17b4603bad145763617505f872",
+      "deliveryBytes": 8577,
+      "deliveryDuration": 2.088,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "8c1e96f5-700577c3": {
+      "masterSha256": "3b7596a17c4b4b18502e4ef01939162d63eeb7465d317c5faa84505357aa5111",
+      "masterBytes": 42885,
+      "masterDuration": 2.115918,
+      "deliverySha256": "bd0d1f5d2e78be99a8549b38db61ae7669e6a5811b0c9409560b0e8fc1cec0d1",
+      "deliveryBytes": 8721,
+      "deliveryDuration": 2.124,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "2bc040172ecf14ea": {
+      "masterSha256": "54c887bd142f08b365bba709a954745cc9ed0108e684e3dbaba3507625cdd648",
+      "masterBytes": 37138,
+      "masterDuration": 1.828571,
+      "deliverySha256": "c9b76a5308afcfadf8c7595c61ad5345cbd45128559b81a98f47b072ee773b80",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "d453c6cb-26aaec0a": {
+      "masterSha256": "9503dc971c3a3bc5f6acd3dec76d4294f9df71213aec09db1c06377ad009aa65",
+      "masterBytes": 48110,
+      "masterDuration": 2.377143,
+      "deliverySha256": "e9420639abe3a2f2c366258ba3019eaed42fdd832b7a3c50c6620daad5407175",
+      "deliveryBytes": 9873,
+      "deliveryDuration": 2.412,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a7d638a5-2c7f562a": {
+      "masterSha256": "f0c434ac4fc2a6dfef5584532abf6cb71bc475922d7c747eda444ee790145fa5",
+      "masterBytes": 34004,
+      "masterDuration": 1.671837,
+      "deliverySha256": "4706cd8a8aadeab596491dbc7d1a189252f540ccdca6c860b699a60753de9453",
+      "deliveryBytes": 6993,
+      "deliveryDuration": 1.692,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "c084490c-35bfb4c4": {
+      "masterSha256": "bf61f5e9224f076d598f0272da1a53d50c1c032145d7a05cf365936bfa6893a6",
+      "masterBytes": 42885,
+      "masterDuration": 2.115918,
+      "deliverySha256": "e63380d0a09de0c6e684d278995c8c5af7d867e4b1b5faf0da6642a11e691329",
+      "deliveryBytes": 8865,
+      "deliveryDuration": 2.16,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "7cf3911523c5ea33": {
+      "masterSha256": "1f5cd1dfcb59865468c95245b3a4843d9809b5aa868eb9b877bcd1c2fbe85ffa",
+      "masterBytes": 48632,
+      "masterDuration": 2.403265,
+      "deliverySha256": "f0a7bfc9f8a404f61c8b89caf3bf84d626cd79bfd220df1a5e80e821b2df029f",
+      "deliveryBytes": 9873,
+      "deliveryDuration": 2.412,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "b16c20af7f041aab": {
+      "masterSha256": "ac930a7229d0ccabcad604f9f7de9e420533930b9e9d903b91e11620de9e3c35",
+      "masterBytes": 69008,
+      "masterDuration": 3.422041,
+      "deliverySha256": "cc51415679a5dc361ce0d57044061b6a498aec7d296a53c3ccac89f92ac225d4",
+      "deliveryBytes": 14049,
+      "deliveryDuration": 3.456,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "9b67283f1a7232d6": {
+      "masterSha256": "18ac8cfdfaf909d5a36bdcefdfe2f436f28eab941fe77f4cfbea4b9cbaec644b",
+      "masterBytes": 91473,
+      "masterDuration": 4.545306,
+      "deliverySha256": "f021b9b7d06981ce9f5e0a55db31c9faca318bfcedbafba8716715a6d9a8cd50",
+      "deliveryBytes": 18513,
+      "deliveryDuration": 4.572,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "19d4293c-7c7ccc55": {
+      "masterSha256": "a615429d635c11da60f6e9e277f9c25d056b3315aa66e1149f70c0dee859f647",
+      "masterBytes": 59604,
+      "masterDuration": 2.951837,
+      "deliverySha256": "57dbbd6aba6a24f97a6480d1ab315191af5dd0e8f51ec378dfd9c7515bf2d10d",
+      "deliveryBytes": 12177,
+      "deliveryDuration": 2.988,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "675ffbcd-6a33bece": {
+      "masterSha256": "f9ae72a2602a1a6bc83af0a424073566d142cfaad2aed0ffe6fc1ff2eb8df5b8",
+      "masterBytes": 72143,
+      "masterDuration": 3.578776,
+      "deliverySha256": "1c1426caf6c0fd8f6bf64ea43898bdc5ab94220db4ee045e8509f69e0bc85909",
+      "deliveryBytes": 14625,
+      "deliveryDuration": 3.6,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "bfa79b3a-7d13bc96": {
+      "masterSha256": "0a51281b646e9f9d9ab17852a986b09b5eccffb69cd317d36da275980b0ecbf0",
+      "masterBytes": 65873,
+      "masterDuration": 3.265306,
+      "deliverySha256": "5eeabe8ed40a856aadd55e3ec04823424c595258a27ca769e7d57c57a5559b1a",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "d7f6107c26f1db34": {
+      "masterSha256": "7b021a055a5ad5a3b7a15fcc94197a3d0be2a698339834ae102353ba03636199",
+      "masterBytes": 69530,
+      "masterDuration": 3.448163,
+      "deliverySha256": "e022eccd7e6f27050fc8b40a0c4adfd330977df7d51e753037ae25c51cab2e2c",
+      "deliveryBytes": 14193,
+      "deliveryDuration": 3.492,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "6ae0ae545a842621": {
+      "masterSha256": "1ce9b09bc0cc1e46d4ea289f9c055fce65f817e99de7ed79a36bbc50422f7f20",
+      "masterBytes": 50200,
+      "masterDuration": 2.481633,
+      "deliverySha256": "153b8ca9dc031d246ebc37c49ef118404482ad86ec47226e0d9534614af13d15",
+      "deliveryBytes": 10305,
+      "deliveryDuration": 2.52,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e60ded6a-5cdc89d5": {
+      "masterSha256": "9fd7a5630193bed293acd52e3b260e7ec1b2a1ac0b57227c9c8e9bbe29792bae",
+      "masterBytes": 76322,
+      "masterDuration": 3.787755,
+      "deliverySha256": "bad7c08e688e0f36b1eebfe08802c9a5ac14223a89cbdc572cd16a3f3bbf4a9f",
+      "deliveryBytes": 15489,
+      "deliveryDuration": 3.816,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "d9c9f36e-e05ebd4": {
+      "masterSha256": "cf64a43b0d0ed00c7e2e7edf419f1bcce71c9533dde43901e70dd3fad6650b03",
+      "masterBytes": 54902,
+      "masterDuration": 2.716735,
+      "deliverySha256": "ce675eb100e307e54b9a798539e58dd4072e87386a0410371f7f87c119f7ae76",
+      "deliveryBytes": 11169,
+      "deliveryDuration": 2.736,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a5ad083a-14e97c6d": {
+      "masterSha256": "8d00f6590c0984a348b1efab8d74512becd4888fa54a6c075467d05836d35fad",
+      "masterBytes": 72143,
+      "masterDuration": 3.578776,
+      "deliverySha256": "3483b9eaacb801218a15d58311328795af083c27b947a9e1599f9ed6032d8eda",
+      "deliveryBytes": 14625,
+      "deliveryDuration": 3.6,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "31fc1778-1ca4c5b8": {
+      "masterSha256": "ef366b9d0b640ef45954f18c5631d28cb2b689851660462f98bdd68d42bb19ef",
+      "masterBytes": 61171,
+      "masterDuration": 3.030204,
+      "deliverySha256": "dca2a06cf420a00439c0cf32836ac1eab49793dadd88bb42f9fbf572c921bcec",
+      "deliveryBytes": 12465,
+      "deliveryDuration": 3.06,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "298451f7-31039e25": {
+      "masterSha256": "c2603c7be288ccdc8c2d94c3854e812e0f261def2ea6b276e0a1be95cf16dfdd",
+      "masterBytes": 51245,
+      "masterDuration": 2.533878,
+      "deliverySha256": "6ac1b350e0b2a39f1889d885fc5c3aca8fda19745443aac179ec48e10a9bbcb5",
+      "deliveryBytes": 10449,
+      "deliveryDuration": 2.556,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "3ffa97e4-2bbee34d": {
+      "masterSha256": "8cd97d5d1a78b75f866e4cd3dd4b9a909c0b399b732b0a5690283afc55dbe3de",
+      "masterBytes": 69008,
+      "masterDuration": 3.422041,
+      "deliverySha256": "68930452494019c6f832e250a070a2b7a12770b5890e7410481797765a15704b",
+      "deliveryBytes": 14049,
+      "deliveryDuration": 3.456,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "fb3471f61991eaaf": {
+      "masterSha256": "9cabe120a12218592ffde408d671bd9674dc0ca749e0fd7a427fc56be51d5297",
+      "masterBytes": 65873,
+      "masterDuration": 3.265306,
+      "deliverySha256": "6cf2b8ff04f1f676702db430183a4aa491d401a9645340ae2dfe42dfd3d1a524",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "93f8f75a292ddd2a": {
+      "masterSha256": "b4798eabe3beae664dfa734d13a64155cce6b49b9395be40e69d3f0207228c2c",
+      "masterBytes": 64828,
+      "masterDuration": 3.213061,
+      "deliverySha256": "a3c6adbfa66aff4da5f3bcbf5851b8d57b58bdd5cfc2c66b63bc105224f2566c",
+      "deliveryBytes": 13185,
+      "deliveryDuration": 3.24,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "13706c82767f4c5d": {
+      "masterSha256": "f6267e0641e8c6abacee2bb8e775dd058e5edce47cf41bbbb269e6f0778536e8",
+      "masterBytes": 44975,
+      "masterDuration": 2.220408,
+      "deliverySha256": "62b45051cc002bc5749601c3a8299bc360673d14826a8210f01ea71e1c7df78c",
+      "deliveryBytes": 9297,
+      "deliveryDuration": 2.268,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "11e7772d-29239016": {
+      "masterSha256": "36bc0257571f2850ead7f3481bdb302d0880ac99f336dd9714ae266fd7510362",
+      "masterBytes": 71098,
+      "masterDuration": 3.526531,
+      "deliverySha256": "c034ab8e979ac3a947999b430a93a5cb72ca1a4291df5cfa2416995336b9c7f6",
+      "deliveryBytes": 14481,
+      "deliveryDuration": 3.564,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "0719f549-4b98590e": {
+      "masterSha256": "ab2c2bf3c2ca87407bfbc1a09456def05e7fcfad1780ddd08450c313561bc5e8",
+      "masterBytes": 103489,
+      "masterDuration": 5.146122,
+      "deliverySha256": "400addc736fa54789c13febba9701984c16dbff8087b7a683af03e7de4e9762d",
+      "deliveryBytes": 20961,
+      "deliveryDuration": 5.184,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "6f60d9e4-e35f3da": {
+      "masterSha256": "218da8d9e1164bc8a8bd4a20fb88b7611e01ad71710ef2a0a8d6daf16e771224",
+      "masterBytes": 90428,
+      "masterDuration": 4.493061,
+      "deliverySha256": "e924e9d8c1cfefe0d5a61c09532abc9405f1aa34a68bc70ce07d4ef6acbc3c8e",
+      "deliveryBytes": 18369,
+      "deliveryDuration": 4.536,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "31ce6f8a-390d640": {
+      "masterSha256": "3ad1250645525056489f78d24bd20adc74bd7d4a1ef1cda8c20f0eec88b85f50",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "1dc632f54de7a0a612954c9d224ad62ea259d5bc545c891bcb44ba7603ea8b5f",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "93b8cccd4ed17147": {
+      "masterSha256": "c1066f90834046e7c4168923ec4a0564c17d0ce8c7506d24903be1ab7d275c09",
+      "masterBytes": 69008,
+      "masterDuration": 3.422041,
+      "deliverySha256": "b1f449406d5587eaf590777ccb25a2a744c2a74262bcc8c234b75ce07434a6c7",
+      "deliveryBytes": 14049,
+      "deliveryDuration": 3.456,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "be156a1e-32cf53d": {
+      "masterSha256": "870db1a48bbab2be746904890287b3fe23f8454906ff484ef2b156965aa97ab8",
+      "masterBytes": 58559,
+      "masterDuration": 2.899592,
+      "deliverySha256": "8bf8c44d1bdc0773999659f70fa2ff9012a0f0fe58345d5da7102132205af9cd",
+      "deliveryBytes": 11889,
+      "deliveryDuration": 2.916,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "50baaf45-6d53080c": {
+      "masterSha256": "a57250b96b3b31727bde541710d8b82c8287ba55583aaa4a0baf05c06c0c32ab",
+      "masterBytes": 65873,
+      "masterDuration": 3.265306,
+      "deliverySha256": "72cdd5ca9034f46f2146ab03da9a07850bfec28e8e1a8a7b2fac24bb05c6d10d",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "9d38217067ea565c": {
+      "masterSha256": "0d95d82fea688c1daad2cd5d0eeeae6c6b64702b3cb303f317a9c11960da1d36",
+      "masterBytes": 85204,
+      "masterDuration": 4.231837,
+      "deliverySha256": "d47317420bfdf967c0b5aab69ccd1dda8c21b12db0b3f1563f4b9faa2e25fcd0",
+      "deliveryBytes": 17217,
+      "deliveryDuration": 4.248,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "da9aa21a39077ee9": {
+      "masterSha256": "0d05a5be5a8488d15d249b4e255dac4c9e29cc7ee0a7e2031de68aafc4b3f62a",
+      "masterBytes": 60126,
+      "masterDuration": 2.977959,
+      "deliverySha256": "eb7552082240da9fd118dee5320963097e6d0cb881de2f37c98440590c5d3fb2",
+      "deliveryBytes": 12321,
+      "deliveryDuration": 3.024,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "39fbf7ef-580a3462": {
+      "masterSha256": "97a2f46685e89f9375bedf851a7264f2ebf558aa0dddb9753f1d62ffd0d07a9f",
+      "masterBytes": 25645,
+      "masterDuration": 1.253878,
+      "deliverySha256": "6e4110ffaa1acef17c24d0ff33f94e10a768fc6974fe90f29db7a32b03c6d4df",
+      "deliveryBytes": 5265,
+      "deliveryDuration": 1.26,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "44a27fa024e41c81": {
+      "masterSha256": "b47d15c8c58572141d1dd4a201f5bfdacda9fda1c25108c3c883a238e1b169a6",
+      "masterBytes": 59604,
+      "masterDuration": 2.951837,
+      "deliverySha256": "32d12ef4624593d6c84916feb5b8337fdc751f795b73176ea27649b06978f6d1",
+      "deliveryBytes": 12177,
+      "deliveryDuration": 2.988,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "794ee5914eac807b": {
+      "masterSha256": "7ada93213dc7591e84b544a6b5e91fe04c72aa34d5c4c0cf5d42154a7ed1b35d",
+      "masterBytes": 63783,
+      "masterDuration": 3.160816,
+      "deliverySha256": "1187b6836c418c7c065b9b7e6d2b6d9166176a8283852c0bfb37f2848b462f81",
+      "deliveryBytes": 13041,
+      "deliveryDuration": 3.204,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "3c962fb8276f2f4b": {
+      "masterSha256": "5e76dce0a20d18e90f3649c9f5fc8252c393243bb5c82486364acbe7360c7a05",
+      "masterBytes": 53334,
+      "masterDuration": 2.638367,
+      "deliverySha256": "f2f8d1184ba8fb56b13a10e58a9c16c615dde467063ad45edfa57896f01b0fc5",
+      "deliveryBytes": 10881,
+      "deliveryDuration": 2.664,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e5550a2c61260801": {
+      "masterSha256": "3cdbc4e0a35710096f6e34df5b84e8c4bb33ca9af160c9a8df3c81a52ba3a80a",
+      "masterBytes": 65873,
+      "masterDuration": 3.265306,
+      "deliverySha256": "01cb323b0b12745a1df4b741d36f2cd30336c70166221e1fa6bce8dc22468e6e",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "9e94b106-5928a00f": {
+      "masterSha256": "aac6bd11885eca2bcb732c2729d3577bf0d7483963456f7ec1d987cff8dbefdd",
+      "masterBytes": 33481,
+      "masterDuration": 1.645714,
+      "deliverySha256": "d70c793e4c049bcc74393c7ebc78f37521f86646c0f7021a7d6a1dbca7e06192",
+      "deliveryBytes": 6993,
+      "deliveryDuration": 1.692,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "b4728236656a20e0": {
+      "masterSha256": "87f16a177b598ffca1336f5c6bda0f545d5839d71f7ded6ee194d515fd42967a",
+      "masterBytes": 68485,
+      "masterDuration": 3.395918,
+      "deliverySha256": "b44c8b15f12566babbc53edc0caf15587799a81b1701215f0a9301c8f88e8e2f",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "c4f403c0-631619c4": {
+      "masterSha256": "3665f873786ad8b25c592894221d48cc19a141764f6b8df972da1113e2826505",
+      "masterBytes": 28779,
+      "masterDuration": 1.410612,
+      "deliverySha256": "5c704159cfe5c86ab4f1f75663857a1a9fde4367ab215acf055ae440379b6186",
+      "deliveryBytes": 5985,
+      "deliveryDuration": 1.44,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "2c4945755f0319c1": {
+      "masterSha256": "e4f46632bf6102040c076c88f3c8fa97d074b0fa001808c9b3a36d6209831ed7",
+      "masterBytes": 102967,
+      "masterDuration": 5.12,
+      "deliverySha256": "6d4a32bd589bd81a376c56af660bd3925d42f68ef9ecaa95ab50cef0b1050dab",
+      "deliveryBytes": 20817,
+      "deliveryDuration": 5.148,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "cfc52c5e-33d9d534": {
+      "masterSha256": "c70a665738149da1a15fdd491e5d96fac2f490f83cc1f1500fddd6c3c2f0d06e",
+      "masterBytes": 21987,
+      "masterDuration": 1.07102,
+      "deliverySha256": "39774f2593a46c643011a51537b944e995f44115cc596bcf776ba6377020dc61",
+      "deliveryBytes": 4545,
+      "deliveryDuration": 1.08,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "24a5eb660686d4d6": {
+      "masterSha256": "f592b4cf7d34548b2f6851d21bda1a7a8a42ea399efebdb0ecdfacdc5acdf44d",
+      "masterBytes": 62216,
+      "masterDuration": 3.082449,
+      "deliverySha256": "7c79efd6eca648a45acc207f185e49f76fb129ed22cd0a7b1ef4f32b3fe02faf",
+      "deliveryBytes": 12609,
+      "deliveryDuration": 3.096,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "bc0fbbdb79a02392": {
+      "masterSha256": "103a2f93ee9753ab7ef2663a8fda2bb3f89ddc72bc53805767f06ffc0ef76dfc",
+      "masterBytes": 76845,
+      "masterDuration": 3.813878,
+      "deliverySha256": "9afb4351d18cab3f5ba95391287391c259584338c7ec1d85d1a8cda376598c32",
+      "deliveryBytes": 15633,
+      "deliveryDuration": 3.852,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e2655990-532ee52f": {
+      "masterSha256": "78c3fcd78841ab67a60f3598ddf7884f99f040b166596c8f8134e3ddc6ec0b5f",
+      "masterBytes": 37138,
+      "masterDuration": 1.828571,
+      "deliverySha256": "64e626b3e2a40215cec4d6fbcf573d268d833c8896c2c1dd2e261a37aeba583b",
+      "deliveryBytes": 7569,
+      "deliveryDuration": 1.836,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "90ca1b57-62bec0c6": {
+      "masterSha256": "d06f876b5c1049c660cd0b11414893315b430f32975b5087edb044bfd81983e5",
+      "masterBytes": 83114,
+      "masterDuration": 4.127347,
+      "deliverySha256": "f6472d82eb092007b41c02c3c3ea2a5f87c3d4c567bd1973cde059108a53519e",
+      "deliveryBytes": 16785,
+      "deliveryDuration": 4.14,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "853878d4-2d24127d": {
+      "masterSha256": "e784f1ccf4222da2c57542c7688a8e99a9dc1aa0d7b0c86c2c93688547ef4571",
+      "masterBytes": 22510,
+      "masterDuration": 1.097143,
+      "deliverySha256": "d97349f5b0eeb0175f51cc2c916296c8511a3b6727207f34f0fe8fa4e693bce3",
+      "deliveryBytes": 4689,
+      "deliveryDuration": 1.116,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "cd9a372d75609dac": {
+      "masterSha256": "b9bf662a8797385bfa9449b67d7249f9c43209789db43d6385110ca5ffb3145a",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "81985fc9afd5898e7ea2c02bcf89f755ed2e57b5541655dd6297c1fd9c8a2e31",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a6ac1918-39fb63a4": {
+      "masterSha256": "ad14165daa3f3323195db8abe0f77d321840b4a5b195f36feafdb78de0428722",
+      "masterBytes": 35571,
+      "masterDuration": 1.750204,
+      "deliverySha256": "11b2f6b11a7844bc6bd609a9a05a1981dc59d7baf7608fb4b9030c4ab5d7efb7",
+      "deliveryBytes": 7281,
+      "deliveryDuration": 1.764,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "ccd2237d4565cd2c": {
+      "masterSha256": "5097c2122d0c0fb4055c9a7fe8b5383b0c4e8b7363eeae60756286c1730a3401",
+      "masterBytes": 33481,
+      "masterDuration": 1.645714,
+      "deliverySha256": "f23502edc4a76e4c8332e27a31cda020eb897617fd6cfb4f0eb810cbb8692871",
+      "deliveryBytes": 6849,
+      "deliveryDuration": 1.656,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "c21a02a057c79fd8": {
+      "masterSha256": "028d68a1428c588b8b061766224bc9ed7270e3f286191e4927f59f195c6e95f2",
+      "masterBytes": 92518,
+      "masterDuration": 4.597551,
+      "deliverySha256": "0a9fec20a9e48834ebf4733b972c706ecfca0b9ca62a7abc9edb3e516c3d7370",
+      "deliveryBytes": 18657,
+      "deliveryDuration": 4.608,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e7315187-1c028229": {
+      "masterSha256": "f359817d2c1aa89a3ead587591fc33c5b386a3fa44bfe9a0e3a21366c0a9317a",
+      "masterBytes": 83636,
+      "masterDuration": 4.153469,
+      "deliverySha256": "872f7993a46536dc758b4cbc52e352a03ebfd2a9c0b2a0a131b0b13e2891674c",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "89de876a4cb32b6a": {
+      "masterSha256": "cd52c46d7bc65dd5cc83df1eef987bad7e9349f0bf3fc367ee8f94fc069f2d5b",
+      "masterBytes": 83114,
+      "masterDuration": 4.127347,
+      "deliverySha256": "797d711a8c3d9cd77599d6aeea6b02ae6cd2d0051f612d4696a82248d9ab9716",
+      "deliveryBytes": 16785,
+      "deliveryDuration": 4.14,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "0d5b4572-3f60ebd7": {
+      "masterSha256": "2645fcfb05fddb305415bff2acb262a7f42926abb7e78514b4cba15a455b3ff7",
+      "masterBytes": 78412,
+      "masterDuration": 3.892245,
+      "deliverySha256": "5a4a163508357a4a19de059c778104120c973296d8b1165ce606fe723e9cb337",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e2f62af4-d143c71": {
+      "masterSha256": "c179c394ca830c5d1a1b373798fb7ff1a642da8f3f5dabbc2e52ec05092b258c",
+      "masterBytes": 66396,
+      "masterDuration": 3.291429,
+      "deliverySha256": "0abaee28213d36a2b989871b6db1238c5a87075fa5be66ed5f40da19c8c1102d",
+      "deliveryBytes": 13473,
+      "deliveryDuration": 3.312,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "dc6a83a53fa3aea1": {
+      "masterSha256": "6501271de2af91d7de08bc69318f7dea96d944a07c5314a2b7fa61492dd766c9",
+      "masterBytes": 61694,
+      "masterDuration": 3.056327,
+      "deliverySha256": "f1391e90f0fa988743039f8fcb57912d820c02a7591311aa60883e9048be9d31",
+      "deliveryBytes": 12609,
+      "deliveryDuration": 3.096,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "47b77c6e01296bb7": {
+      "masterSha256": "4fb10042f25250b4b880ee881ec4a5b35984df2d38e5deec7923d3e326ae6a86",
+      "masterBytes": 31392,
+      "masterDuration": 1.541224,
+      "deliverySha256": "56d7ffd0b58f4cad1850cfe2c15178654fbfaafd2515e60d7a4de413c8122213",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "54384818-6a697001": {
+      "masterSha256": "24c631e4fcd84ca8f2b6e540fc3d280802b05a7c22d6e789e99c94a16ea44a61",
+      "masterBytes": 25645,
+      "masterDuration": 1.253878,
+      "deliverySha256": "2dc7b84f3f47c500600f88b589ff596962e812529cc39ec47f3e205dbc097269",
+      "deliveryBytes": 5265,
+      "deliveryDuration": 1.26,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "2871d95b0e51643d": {
+      "masterSha256": "d3111eb3c60b001e07259197e2ea339c114cf912609eacdeb9564ed471cdc7cc",
+      "masterBytes": 95130,
+      "masterDuration": 4.728163,
+      "deliverySha256": "26b7111da08113d4e9da33ed25bd550d04a9cbce2ea358db6187cff3e42132c2",
+      "deliveryBytes": 19233,
+      "deliveryDuration": 4.752,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "86067011-5193a549": {
+      "masterSha256": "c70f2037dbf34be620395148aba018750c5ae0d1baca3b64e1e0d1b3b7453c3c",
+      "masterBytes": 67963,
+      "masterDuration": 3.369796,
+      "deliverySha256": "b0079cc7f5105b1d410ec3449827b3196b350506c3306681b489e73eb82e90b2",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "4f79e0a407505d25": {
+      "masterSha256": "6c74a538f31a7184b4ab92f8d37374a83e44b5769d415fdf6d61aecee85e2b06",
+      "masterBytes": 104534,
+      "masterDuration": 5.198367,
+      "deliverySha256": "550d1808ebefdd0b0cdb128fe6cbf0f779a7b4107c96597242e93b1a9cf89c1d",
+      "deliveryBytes": 21105,
+      "deliveryDuration": 5.22,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "83e3855367215ff3": {
+      "masterSha256": "11d8b0d7fade639f9fd5cada3ecd6fc62e9d48efbb7a99d9d270be385bdefbb8",
+      "masterBytes": 129612,
+      "masterDuration": 6.452245,
+      "deliverySha256": "7e0b02215a1c1a50dc2b58a19486044b15a645ef8cd9ff43bb905f2b9e069dd8",
+      "deliveryBytes": 26145,
+      "deliveryDuration": 6.48,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "17e24f9b-22d499fb": {
+      "masterSha256": "538486b1afe46eb2fbce7a6b616077539506d236e857361b63ce72408da0def5",
+      "masterBytes": 119163,
+      "masterDuration": 5.929796,
+      "deliverySha256": "d7541600ec938a3540b8193a8b34fa23596c329f56d67a9787f380db933205be",
+      "deliveryBytes": 24129,
+      "deliveryDuration": 5.976,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "1435e52c3addd991": {
+      "masterSha256": "4b7cc8fa3653b8316ef196b86de6592d404d37b20622a786605574d1e0a1240c",
+      "masterBytes": 86249,
+      "masterDuration": 4.284082,
+      "deliverySha256": "89e8efd569cdb4723012e43cebc37a4fd0bf0b327731651eb359e46c185b7660",
+      "deliveryBytes": 17505,
+      "deliveryDuration": 4.32,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "bc7c6301103e77cf": {
+      "masterSha256": "00cac70f54404502469e83794d45b82b43438998d2711f7ab20f0000fdb85b8d",
+      "masterBytes": 67441,
+      "masterDuration": 3.343673,
+      "deliverySha256": "05fcb9af2fb5d78e8a77e2a0289547d020f75a956b05d24184f56ab672997323",
+      "deliveryBytes": 13617,
+      "deliveryDuration": 3.348,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "4223bde043283369": {
+      "masterSha256": "f79c4ca1a9d7da326d27475b3890e59c8d06530b00e057984cdb9e3e354f8995",
+      "masterBytes": 74232,
+      "masterDuration": 3.683265,
+      "deliverySha256": "14679d8a64b50cdd100155f2da36d10487b2060c6eba53d0e9f44b0f6d0b8a22",
+      "deliveryBytes": 15057,
+      "deliveryDuration": 3.708,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "8e63c5ca242d1a34": {
+      "masterSha256": "700c74292a599baec1e5a1bd1e002aec84cc6a9ee6da02c4e0464e5d1a1598db",
+      "masterBytes": 72665,
+      "masterDuration": 3.604898,
+      "deliverySha256": "addcea17589caf57006faee926fd752f545bd643483e4b2ddd9d0f45e83777ab",
+      "deliveryBytes": 14769,
+      "deliveryDuration": 3.636,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "500465f224894626": {
+      "masterSha256": "5b21ba219fe933bb93e6e0a570b4e8a716e24e3f3448e43f239d354424760f81",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "b45334da8e9cf6f67b3491dbc2187f2798c680039eea1cba598a0a0fc5668232",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e887acd36ea1476f": {
+      "masterSha256": "1bb34cc03bcfa01cad54a8a0f8eafbe65615ba265c879eb4871e2c84ae79f1d4",
+      "masterBytes": 110804,
+      "masterDuration": 5.511837,
+      "deliverySha256": "c9d69f2442d53f4e49dd0199bd92759406f02fc1f37fba918191db603a68bb76",
+      "deliveryBytes": 22401,
+      "deliveryDuration": 5.544,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "b22cb733-77a25533": {
+      "masterSha256": "da278ee8d7943b46ab3d3f7ae5fbfaf911d31a7caba3dbcc285a23a319159855",
+      "masterBytes": 93563,
+      "masterDuration": 4.649796,
+      "deliverySha256": "c5d4e9b0aeb8e1c7d9c12c6d768b3242748902d25adb5096e31cf54ea366ed24",
+      "deliveryBytes": 18945,
+      "deliveryDuration": 4.68,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "4b98d2eb-795af09c": {
+      "masterSha256": "74fa3431df204bbdf142ae44876e34b6e40bcb8dc3695f2899ec3c2bcc9ddf4e",
+      "masterBytes": 93041,
+      "masterDuration": 4.623673,
+      "deliverySha256": "2f61eef65a0ed3c184c79369ac5224225dcd6e9c846b50ad1cb5f8683d4695d9",
+      "deliveryBytes": 18801,
+      "deliveryDuration": 4.644,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "d42bee08-83e5182": {
+      "masterSha256": "88c9ee597716bed86c88ae40c2139ea5207a00ffe863dbb2f6d5a54e76490c2a",
+      "masterBytes": 85204,
+      "masterDuration": 4.231837,
+      "deliverySha256": "e906df7bbda8bdaade31571cebb637a81bf43f250107de6ccfe681f4b24c4c46",
+      "deliveryBytes": 17217,
+      "deliveryDuration": 4.248,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "302d44e6099a3daf": {
+      "masterSha256": "447f1f0ee3fc1a7ee74a3e8c3634b5a6d0ece70bb114a76efc7050ba0f1d467b",
+      "masterBytes": 75800,
+      "masterDuration": 3.761633,
+      "deliverySha256": "80106b8c499f4afb2ac0c42b248fc292af1898e4fa64e142d053b1587a9ac971",
+      "deliveryBytes": 15345,
+      "deliveryDuration": 3.78,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "6706cc6c6297d33c": {
+      "masterSha256": "2c287dd6ee0cc61ff270d485a43dcecf5b2a160b810e2b12e1079eeb05e9a180",
+      "masterBytes": 84159,
+      "masterDuration": 4.179592,
+      "deliverySha256": "05f389aae0070bfc0fe1aac1f7f7d5b4980f8fbdd298fb39485559c72cfad67f",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "3ff587101cbc73ad": {
+      "masterSha256": "503127756e2e74247195dcf90b3d7e0bb59343c38bfee307988717918a9f4147",
+      "masterBytes": 96175,
+      "masterDuration": 4.780408,
+      "deliverySha256": "8521a553d4e9a31e05ffa215927e9a99585278bdcc7449194a3dcbecf25452f9",
+      "deliveryBytes": 19521,
+      "deliveryDuration": 4.824,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "5a5b58eb6e8535a5": {
+      "masterSha256": "bdc28c999e6a217323548a722cc12a3fb83f696f07c3f99c9584384cbd5d8ce9",
+      "masterBytes": 22510,
+      "masterDuration": 1.097143,
+      "deliverySha256": "9b0050e3c5244ed67de61496e70706c050802cfd5c56279bfd41290c137bd952",
+      "deliveryBytes": 4689,
+      "deliveryDuration": 1.116,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "71791d625b025507": {
+      "masterSha256": "10e067804de8fd29bf092331ad62c5dc2be969f73caf7fafb22ac2331489661d",
+      "masterBytes": 31914,
+      "masterDuration": 1.567347,
+      "deliverySha256": "5afdb2c1860bfb1c30b9ef1d36bdfe54eb2e0e5baab015125a65caf30da6a0f3",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "1b3814713309ae35": {
+      "masterSha256": "d9acf38b521d6be48b62b24fa94bfc1622b14ac6af589417bdfd46a741248de2",
+      "masterBytes": 39228,
+      "masterDuration": 1.933061,
+      "deliverySha256": "de2e48adaf5c049d959baddd58e48bcb0d713fff100e114aa8d7998ab5601b98",
+      "deliveryBytes": 8001,
+      "deliveryDuration": 1.944,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "ebcc7cfa-7ac67871": {
+      "masterSha256": "2920d866babf490cef0ce14012a2829558dec7e61481d34d595f86374fd83c9e",
+      "masterBytes": 41841,
+      "masterDuration": 2.063673,
+      "deliverySha256": "a34e497be2fdc4d5bed56405d21938dddcb62a37fbe3254934177891fc80c589",
+      "deliveryBytes": 8577,
+      "deliveryDuration": 2.088,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "f5f1bf8f406a2664": {
+      "masterSha256": "ec4f49e072d8d2ec390af320a4f2fd7853f6e4a30eff9c0c6a8ed2893b8c4c9e",
+      "masterBytes": 27212,
+      "masterDuration": 1.332245,
+      "deliverySha256": "82badd76ba223ebeb94142ed288e8b8f0b249ae46c7eaaae26b90b2444068bea",
+      "deliveryBytes": 5553,
+      "deliveryDuration": 1.332,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e1f589850d84a302": {
+      "masterSha256": "507a1459eaa5cadcb4be19f79cbf02838953d08fd0cb48a45f6ec170c04d3929",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "d5cccea34b19b05f9fdd5a0f17939a0ca6048514c2a48c77c2eca10354d4fcc5",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "90af5e155f2609bb": {
+      "masterSha256": "2ebb8303683db4c870b2c26dd202535ca59be5788eb0530827900c812a9077f8",
+      "masterBytes": 84681,
+      "masterDuration": 4.205714,
+      "deliverySha256": "cd7367a7bf3cc5c6f63eeabe22bc8748acd6f132cda899e0acc3a665dc2a5130",
+      "deliveryBytes": 17217,
+      "deliveryDuration": 4.248,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a6c34641-3c20e31e": {
+      "masterSha256": "db046493b20a6870a19150fdaa891d3d16a6a4f482566dcc6e9a9a5e17f39e4d",
+      "masterBytes": 86771,
+      "masterDuration": 4.310204,
+      "deliverySha256": "5c1b5ea74e4187108c7662eaf9b702fba7bc23be6a35dc70ef47ac8e162fe528",
+      "deliveryBytes": 17505,
+      "deliveryDuration": 4.32,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "bfe4f6a2-1cdd6b87": {
+      "masterSha256": "99e8832ae79f9a15a80670a8e740f951dff1fe9cbcd20a0feee00ef54cc1d0f0",
+      "masterBytes": 59081,
+      "masterDuration": 2.925714,
+      "deliverySha256": "d93f8ca053ff503a2b6eef3580efcfb2826588e970d79206617bd29606caa91a",
+      "deliveryBytes": 12033,
+      "deliveryDuration": 2.952,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "0e9678c3-547b0190": {
+      "masterSha256": "fccb674f41c01d3aabbbaf690700510200d7e857e08d961225a38113ed78190f",
+      "masterBytes": 44453,
+      "masterDuration": 2.194286,
+      "deliverySha256": "36b4761ccf59ef9b4c47f88e6b3f2cb49196147ac36a75c3f190fb7a91598301",
+      "deliveryBytes": 9009,
+      "deliveryDuration": 2.196,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "027fe711-28bac1e": {
+      "masterSha256": "b54819550a37a78fa44945741838dbc4ea0d0ebdd45e94db9e31b4a7bfe5b8b9",
+      "masterBytes": 73710,
+      "masterDuration": 3.657143,
+      "deliverySha256": "1c6f8cb1afc1309793084b7b9ea9839c97d501b395b7b2d83a1dd0578c420695",
+      "deliveryBytes": 15057,
+      "deliveryDuration": 3.708,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a415e65d-74b69316": {
+      "masterSha256": "a908b22b83ced98c949797b7e92907793bfc5f6d895c35c8af585806af451fc3",
+      "masterBytes": 55947,
+      "masterDuration": 2.76898,
+      "deliverySha256": "a74cb77bb58e9ec74e92349753acb410e57fb29860cefa73ce4a8c2a72ffc89b",
+      "deliveryBytes": 11457,
+      "deliveryDuration": 2.808,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "fad28e7f6453ece3": {
+      "masterSha256": "73ee3a373b49e5765aab3eb7f84be1a23ad6fa5ad22a61dc7f7fe273431e7a41",
+      "masterBytes": 82069,
+      "masterDuration": 4.075102,
+      "deliverySha256": "c2eb507090e6bfd9082aed13d298284bb423fb73768e154883193a966ba57c59",
+      "deliveryBytes": 16641,
+      "deliveryDuration": 4.104,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "cd072cb9-1aac12da": {
+      "masterSha256": "3460c92cfd59241540cea7e0a108956e086df32e8da627b130906bee54b4b05f",
+      "masterBytes": 47065,
+      "masterDuration": 2.324898,
+      "deliverySha256": "450bb832899f97df0e4a442b4092436bdf2f58702bd82879a9c7da1e3c66e078",
+      "deliveryBytes": 9585,
+      "deliveryDuration": 2.34,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "0d1983fc-5ca3c143": {
+      "masterSha256": "7a1cb2c7a3a1dfd2a0574b5b210f13f6cdef4960ebee84a0926ba8faa1c2d631",
+      "masterBytes": 62216,
+      "masterDuration": 3.082449,
+      "deliverySha256": "df340639be6e85fcb78eeb8ca93ea062756530e4ad42348fe18d3b04eb0e8add",
+      "deliveryBytes": 12753,
+      "deliveryDuration": 3.132,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "221b2b6b-43902014": {
+      "masterSha256": "c9a1564436c9aa1c0e423c81ed45aaf843f7da9edc1e1ed05d1b6ef7fab65d35",
+      "masterBytes": 62738,
+      "masterDuration": 3.108571,
+      "deliverySha256": "98901348ebbc046a94541717b9ee52c1f5c69f3b386bad6284d63386abf90ba5",
+      "deliveryBytes": 12753,
+      "deliveryDuration": 3.132,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "f2a1930c0fcec7c7": {
+      "masterSha256": "c0ab18b39c16b5e25c2cb0f13c92a8613752e06f2228b5621f3ca706b5750662",
+      "masterBytes": 71620,
+      "masterDuration": 3.552653,
+      "deliverySha256": "9fd27982a4bd95c22ab36ba3612886356725d25b720dd28290f20fd0c6bda309",
+      "deliveryBytes": 14481,
+      "deliveryDuration": 3.564,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "9524992122609f72": {
+      "masterSha256": "94876b1f7d1313df3047001b7e51708734d12bdde43dfa18bd4419d31d43243d",
+      "masterBytes": 69008,
+      "masterDuration": 3.422041,
+      "deliverySha256": "6caa51fdfc5e41cd4ed6b903a9461efe04cb10cf3e8f3484aa757df09699187c",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "30703d97-fa70821": {
+      "masterSha256": "e7f5c485ba444ec4823175d35c08c2fef8875bf014adc3c5a4d0004959fc9ee2",
+      "masterBytes": 78412,
+      "masterDuration": 3.892245,
+      "deliverySha256": "37bd3f206df48b14cb5c51afdc628983e2d6b19821166da376e0fbd4675514fe",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "b548dc14427fefde": {
+      "masterSha256": "4da119b6559520d5b8c2f79ff8c70f5979373bdb8dc5dd34ee80915bd31a5417",
+      "masterBytes": 75277,
+      "masterDuration": 3.73551,
+      "deliverySha256": "7ed06e8b0298aea90df74282db05a00bdedc30636a4a566f4fd74b16ade5f9b2",
+      "deliveryBytes": 15201,
+      "deliveryDuration": 3.744,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "17d4c5f4422e3594": {
+      "masterSha256": "cc566052b3dd3ad416ee9133ebb8760a1de174b4d36ff5d71d00fdaf5c0c933e",
+      "masterBytes": 92518,
+      "masterDuration": 4.597551,
+      "deliverySha256": "8462931f10b15221ad00c304d8323daebeab98e10d4f6ed8ce6c54659e0cfd3a",
+      "deliveryBytes": 18657,
+      "deliveryDuration": 4.608,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "64f01b43-1ae90f45": {
+      "masterSha256": "f8d9294b575e77a2ebd6a09fa3f97681ea28bba8f8cbcaf3b799eec828e889ed",
+      "masterBytes": 50200,
+      "masterDuration": 2.481633,
+      "deliverySha256": "0f952fb584b6f0ede685ab7162be4512e3b0d57d7677e69517f193206feccaf2",
+      "deliveryBytes": 10161,
+      "deliveryDuration": 2.484,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "48684a12230d4abf": {
+      "masterSha256": "bd2cbb09c5ed2613d55d04a315fa0da2eb3e6d5c942c89a3daa0762e94ed818d",
+      "masterBytes": 46543,
+      "masterDuration": 2.298776,
+      "deliverySha256": "cf23de2ae70b91f19a556a0aed22ddf4740daefa385207800627fc72595f670d",
+      "deliveryBytes": 9441,
+      "deliveryDuration": 2.304,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "7a08bd315884b5b0": {
+      "masterSha256": "5dde84304e1f96647c282bc06b58a8b731b1bbfc57d4f4b3e8fd5c7f1673bfe3",
+      "masterBytes": 41841,
+      "masterDuration": 2.063673,
+      "deliverySha256": "1efa1fdeb809cb4cadffec2ead297829b4ca17304c1f1ea5e851358b7e1b6024",
+      "deliveryBytes": 8577,
+      "deliveryDuration": 2.088,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "89bb4d6a05816430": {
+      "masterSha256": "142cf4284a4d0fd8f9927deede82ef524c05a0f70188caee9df43f68255a019e",
+      "masterBytes": 78412,
+      "masterDuration": 3.892245,
+      "deliverySha256": "213a9825a02ff4966f1817901a2bf77a6164b996808c09ea9c6c70508b83cad4",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "246b72927de6ef5e": {
+      "masterSha256": "74b30e280ae6ae3a04abb6c9f233d590347db635b2a5e388e6def50e08815367",
+      "masterBytes": 48110,
+      "masterDuration": 2.377143,
+      "deliverySha256": "50538af041e400652f6c8f8b4e16b08d61e971264ce6a02d13ef3621a4706549",
+      "deliveryBytes": 9873,
+      "deliveryDuration": 2.412,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "5fa52ff83b7cb3d7": {
+      "masterSha256": "7e0d6b44b876f11200b6fac2a2268eb5dacf3ee1bd58927ac090928696a59d5d",
+      "masterBytes": 97743,
+      "masterDuration": 4.858776,
+      "deliverySha256": "d88c9f0735de74caf062ad1fb0960f2e70665597cfc5bd04f097e413af36817d",
+      "deliveryBytes": 19809,
+      "deliveryDuration": 4.896,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "f4722e51-51e20948": {
+      "masterSha256": "39e5efa205b022ea2132b8f6a96e7b670a503f05f0000b6e9c17a0b6d713bf2b",
+      "masterBytes": 131702,
+      "masterDuration": 6.556735,
+      "deliverySha256": "660a3f06bff4fdd61f92dc990bfe8e533bf855d1f9cb89459d3db13d2394ad97",
+      "deliveryBytes": 26577,
+      "deliveryDuration": 6.588,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "8251d2bf-58f2c268": {
+      "masterSha256": "0483d917ff1d839c17309503b99a79042b1e64b302e02491015b9367fbd82e25",
+      "masterBytes": 107147,
+      "masterDuration": 5.32898,
+      "deliverySha256": "4338dd98e4cd4f0d9faeb7c75e8a0c0870ef10873a765e01d3f39420808b48c1",
+      "deliveryBytes": 21681,
+      "deliveryDuration": 5.364,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "5622f3cf-67b72e4a": {
+      "masterSha256": "01a7c31666bd87d6aa94a515fd000b6f452b0cd299c9697a9d0e9ef82d00de17",
+      "masterBytes": 103489,
+      "masterDuration": 5.146122,
+      "deliverySha256": "aa68762326eb11f22825c26dded6514ab7814f54607d13b702af27d6ec32f8aa",
+      "deliveryBytes": 20961,
+      "deliveryDuration": 5.184,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "999e64ba-3d03271": {
+      "masterSha256": "54894d5bf475cf037b4f4f09f7bb9a81c92cdaccb77cceab1bea1d964f10d297",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "406039c7406f3eeb08108b2634aec6b75d7c69e2d2deed9fc64c01ead77ba2b7",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "bd27d6be7c941979": {
+      "masterSha256": "241a5dca347c2bc1f20d585d5b21e12203cbe95094a367942c88a9f3d2933204",
+      "masterBytes": 122298,
+      "masterDuration": 6.086531,
+      "deliverySha256": "95cc24714be61baf636c20fe2b00f52172515aad360db2a1214938fe4169075c",
+      "deliveryBytes": 24705,
+      "deliveryDuration": 6.12,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "0cdd0cec3bc8d6e4": {
+      "masterSha256": "bcc9335b1d1cf491fda10dad777551a6a08474557e9da8e7999f551b2a1b7303",
+      "masterBytes": 96698,
+      "masterDuration": 4.806531,
+      "deliverySha256": "58e5c9d8799d1936446e3e4d387ab727af148bbb6343822b81674c38b521e107",
+      "deliveryBytes": 19665,
+      "deliveryDuration": 4.86,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "9180b3e4-4560e7f9": {
+      "masterSha256": "5cd2bb45e7edcfa1c2fdc42a3d1dae2d9fda742b8179abdc55a3792025aa356f",
+      "masterBytes": 141628,
+      "masterDuration": 7.053061,
+      "deliverySha256": "ddbda5fee7c2d6067a95fba6f3ebca3a88ed6aade0cbb793547978cfddde82b9",
+      "deliveryBytes": 28449,
+      "deliveryDuration": 7.056,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "41564f657eefa79a": {
+      "masterSha256": "268bcfe0987a1edfa1e896d3f126703df5b96a5567e9988c4e52f0aa57a860af",
+      "masterBytes": 102967,
+      "masterDuration": 5.12,
+      "deliverySha256": "4148aa2510faf546fd7e67e82e2a20fd2699a15bf86b750bccd3d09ce744a575",
+      "deliveryBytes": 20817,
+      "deliveryDuration": 5.148,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "84aab235-1c763e97": {
+      "masterSha256": "5bd8febe230d4d896c393b6df66d56ca8a5326f82d42d208ba4b718ba51d2604",
+      "masterBytes": 100877,
+      "masterDuration": 5.01551,
+      "deliverySha256": "bb9fd45885ead998a05b26d2e53aa017947c43da3d84eafbb76fe27a33311dd5",
+      "deliveryBytes": 20385,
+      "deliveryDuration": 5.04,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a231e1f65b77174a": {
+      "masterSha256": "9f567748f1d7edb961b26c53643b665924bc2b86d3eea3db8b7c3d1aa92b4dc9",
+      "masterBytes": 108192,
+      "masterDuration": 5.381224,
+      "deliverySha256": "2fa5cf4c8526cc71334e36786e1b0f745abfa38a2720c77764d8390caa9b757d",
+      "deliveryBytes": 21825,
+      "deliveryDuration": 5.4,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "8c2e57d3-5957651e": {
+      "masterSha256": "60d5f0f90c43cd142f30a25b3e11936a1274cce881e512e3ff6a6f9ade182238",
+      "masterBytes": 71620,
+      "masterDuration": 3.552653,
+      "deliverySha256": "b7a7a411aaea35868956693ecbc48458cc09a9a94055a5df1119609283c7f76b",
+      "deliveryBytes": 14481,
+      "deliveryDuration": 3.564,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e0e8e83f-782247c": {
+      "masterSha256": "6e264c08891121802178397163451e36a7e6090469a04493d0499e9d4c0552f6",
+      "masterBytes": 118118,
+      "masterDuration": 5.877551,
+      "deliverySha256": "390070963ffa669db25225238e0a6f52e5c655a1e8f2fb3126dc6aebde50eefa",
+      "deliveryBytes": 23841,
+      "deliveryDuration": 5.904,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a34ef5a9-47146527": {
+      "masterSha256": "c993eef9049bf3495eba6c631f2f2f647fe5f831ba5517897edd5a2da10fb0ad",
+      "masterBytes": 94608,
+      "masterDuration": 4.702041,
+      "deliverySha256": "366282fd4492acc9b04f6c856c90a62abacfce2b9dbb1f0ee72616b9b35e2ad5",
+      "deliveryBytes": 19233,
+      "deliveryDuration": 4.752,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "012d48d03271ab2d": {
+      "masterSha256": "976b3f4ede332e89c964e1574618b5386cd87ef032d26b39705871f313fd01e3",
+      "masterBytes": 58036,
+      "masterDuration": 2.873469,
+      "deliverySha256": "d118db24918d816c2fff27a80124be85c91a51d2db5bb0eb096b125374c0f5b9",
+      "deliveryBytes": 11889,
+      "deliveryDuration": 2.916,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "33f33b740-248ffe": {
+      "masterSha256": "78c4a02c47d2567ccfb87be7ba7df97a34bb3289bd92f27dd0df2474cb3213d0",
+      "masterBytes": 83636,
+      "masterDuration": 4.153469,
+      "deliverySha256": "3f99692de32d9d584382d912be801644ae67b0ed52e0774f389ae20f338a9565",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e196ca2963396216": {
+      "masterSha256": "8df55845e0565dafef93c6818dca863bb755ad9ca6d8f40c77fd76acc8bf226c",
+      "masterBytes": 61694,
+      "masterDuration": 3.056327,
+      "deliverySha256": "2c705f361fba72d4f2e8405b194044b5b43c4be0db0f4678374aa2e73a13da89",
+      "deliveryBytes": 12609,
+      "deliveryDuration": 3.096,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "35534170-54ac3313": {
+      "masterSha256": "21e2ac24770734e90785e4f2267074950df90f77140dd0207422659fb8314eb1",
+      "masterBytes": 111326,
+      "masterDuration": 5.537959,
+      "deliverySha256": "6a26754c1011f6983f57df0b47b62c7e46167431010c0c9d5c3678b40c0c0a7c",
+      "deliveryBytes": 22401,
+      "deliveryDuration": 5.544,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "921091a36de6b641": {
+      "masterSha256": "0d3164b8e163b8aadc28d3f89448f830951a90c73c811b934ef6b1178f163bcc",
+      "masterBytes": 100355,
+      "masterDuration": 4.989388,
+      "deliverySha256": "62f64df4441fcece28a6f3770f47f79bb38db4605fabaf3ebac582c68b80c4df",
+      "deliveryBytes": 20241,
+      "deliveryDuration": 5.004,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "cbaab52f-39c1b536": {
+      "masterSha256": "dc2b2a48e5a312f162ef60fbd36ab5cdd21d105b0fa226bb6576c60c2005bba6",
+      "masterBytes": 112894,
+      "masterDuration": 5.616327,
+      "deliverySha256": "39ce5357383b33fddf00323601a1ff39158def2cc75eb452c7304a8d9ae7fc0b",
+      "deliveryBytes": 22833,
+      "deliveryDuration": 5.652,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e31179b645c25412": {
+      "masterSha256": "c0a2cd664759eab8902bee1e0b9156d40e5feb11ffba918dbc6aafdcdbc717f3",
+      "masterBytes": 95130,
+      "masterDuration": 4.728163,
+      "deliverySha256": "b32f29d4f8f35e000e3753c872b717d93d62175164d65142b7000d801cdfe70b",
+      "deliveryBytes": 19233,
+      "deliveryDuration": 4.752,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "045844b138453cdb": {
+      "masterSha256": "644c40ceaea7d2ee1e475ec8ca65de435e524deff9eda82073be461231995a60",
+      "masterBytes": 93563,
+      "masterDuration": 4.649796,
+      "deliverySha256": "0f614aa7d28ab4cbd1e977d440a165390d625bef4df54b17704dec107f06234f",
+      "deliveryBytes": 18945,
+      "deliveryDuration": 4.68,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "0a66e42d-1fa511b7": {
+      "masterSha256": "a605900f953fa0b74019cfe0f62f15e3938750f10bdbdf811e91d1d61840241f",
+      "masterBytes": 99832,
+      "masterDuration": 4.963265,
+      "deliverySha256": "5beee5c6d95bf7c887b9d26de171369c6c96623ac822cc38cb300c76322bd585",
+      "deliveryBytes": 20241,
+      "deliveryDuration": 5.004,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "5bcf1e2431556a1a": {
+      "masterSha256": "5542684aeef06622391217fa87f9aa24a9dcbbe386b16a93139ff6bd39963880",
+      "masterBytes": 92518,
+      "masterDuration": 4.597551,
+      "deliverySha256": "b13535d918b5a9e84b46ec32abbfd9c337fb093797e8c672df2326281096159c",
+      "deliveryBytes": 18657,
+      "deliveryDuration": 4.608,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "ed932b973300731e": {
+      "masterSha256": "596226a5ef40d30646b4464e00377a7014e8505b39d44c22c316c02192ee062a",
+      "masterBytes": 108714,
+      "masterDuration": 5.407347,
+      "deliverySha256": "ac713717d4516e1ec52b08f3ff7afe71b85f27f18836545ae13e7360867c7bbf",
+      "deliveryBytes": 21969,
+      "deliveryDuration": 5.436,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "d6ebae6b-4445927f": {
+      "masterSha256": "99f7365728f5b511c6910d3c2f38dcaba63e467abb79d08e34e19458614bfad6",
+      "masterBytes": 31392,
+      "masterDuration": 1.541224,
+      "deliverySha256": "14b75eb37b114240485b70838beeb322b48269d18e1180a4da952e279db6bbed",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "24e24fb47c377f13": {
+      "masterSha256": "5c1bed88e2fbc7ce05eb9d1d9819d72b39f7b951b249eea0b20b79ea43783a9b",
+      "masterBytes": 37138,
+      "masterDuration": 1.828571,
+      "deliverySha256": "9faf2c08521a7c3d605986959d935667039c81596dde2c0405f8bb89457baf8a",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "b9beddc75eec2689": {
+      "masterSha256": "f111a98f15507093c81101a6430ddfd648eb176cc1bb267394e780238d339d6e",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "846bda63f86e9203998a4dca011943ad6d57a821fe2393f1623f0e01f9331e94",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "b6158cab-2c1abf19": {
+      "masterSha256": "f9bb41d0180ca533d96a5af461609df8f5580e5d05db36b25412ff8ca47eeeee",
+      "masterBytes": 40273,
+      "masterDuration": 1.985306,
+      "deliverySha256": "40b19fb5de7050b197e134f2fa6dc2292ff3df659a8fca986540e881311a449f",
+      "deliveryBytes": 8289,
+      "deliveryDuration": 2.016,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "c581ded8465cec69": {
+      "masterSha256": "bf2fdd9cf471465d2f03969ca54a2b3f358b0c6a101cc5e884578c2e59ca09a3",
+      "masterBytes": 29824,
+      "masterDuration": 1.462857,
+      "deliverySha256": "a2d234ebd257642ddfb6eca59fe93c712c93235d551d984cb174ad690c16043c",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "fc73d31d4add7671": {
+      "masterSha256": "489b421475da8d92477fe0ebfbf7a41d799073b857aa110a226a64ca8eadc203",
+      "masterBytes": 40273,
+      "masterDuration": 1.985306,
+      "deliverySha256": "1591d133919f3a7bc69012543d4bf8a10dfd5cb82a66bcd73e6391076fa6afe8",
+      "deliveryBytes": 8289,
+      "deliveryDuration": 2.016,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "403c635e1e152a60": {
+      "masterSha256": "9d9fec8ea99e9b8629bf8c1d9f0ccfffde4017ac33f9ec09c6b768e0a961e935",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "f4a3cb337b533d356ce16d2be65d035f2dd25b36dfcc3c61af9bc5932917656e",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "9d2629e6-64729a00": {
+      "masterSha256": "713f94be930cc435edf38fcde92ba6d0f2aca45bcb2dbd77093f41898643f3e6",
+      "masterBytes": 33481,
+      "masterDuration": 1.645714,
+      "deliverySha256": "3b29f45efbe83c703c736b7253b9fe7478ec6750cc052c9f7ab5ca288bb06386",
+      "deliveryBytes": 6849,
+      "deliveryDuration": 1.656,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e170ea2f37070d74": {
+      "masterSha256": "a14dcdad0690c01d2d0d381d60bb547b2f0770864f2b7ac7a2481354fd7dbc96",
+      "masterBytes": 30869,
+      "masterDuration": 1.515102,
+      "deliverySha256": "fc538b8dee3f6b4705acec4ade175658db5f77b41f44633b508a560e01d9e07c",
+      "deliveryBytes": 6273,
+      "deliveryDuration": 1.512,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "57bdb78e5d878f00": {
+      "masterSha256": "dff88b95160666135cb13a130227aafb356b114776f6d8f1f42993ed8700cd9e",
+      "masterBytes": 21987,
+      "masterDuration": 1.07102,
+      "deliverySha256": "26f85028e8165b9096e76b6d2c4f77a9f09d33cda9957ae2a6b60414ea27294c",
+      "deliveryBytes": 4689,
+      "deliveryDuration": 1.116,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "0212250e-6a68bcac": {
+      "masterSha256": "6ac5fe445a18c991f7cb3a6dbab132070729a304f9da8a5c516ee783e9f82ad0",
+      "masterBytes": 27734,
+      "masterDuration": 1.358367,
+      "deliverySha256": "c5f30a638f13e18c0bf475e330f4ebe75b6c4f242f6e3203f5e56a279fb02c95",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "dac3d62b-64f6ff4b": {
+      "masterSha256": "3fa2f481b09f54e9f1869422179bfc3e1b36570c59c0d8c72dd7b8c81711dabc",
+      "masterBytes": 24077,
+      "masterDuration": 1.17551,
+      "deliverySha256": "c1d6df2e892d41a0ddcdd95802859871972a5f533ae68f9a58c5de802375e4e6",
+      "deliveryBytes": 4977,
+      "deliveryDuration": 1.188,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "07e7462b2b489574": {
+      "masterSha256": "e55c64eeb15e3c8baf9ee7fca8f5a23bcf09f72dec2496bc04fb73145f3c0c86",
+      "masterBytes": 25645,
+      "masterDuration": 1.253878,
+      "deliverySha256": "1db6615ff728e06d43077783d0e1ae7c5a6f9d3b980463e2f3fe6ff9ccefd734",
+      "deliveryBytes": 5265,
+      "deliveryDuration": 1.26,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "c9fe81916ea2798a": {
+      "masterSha256": "239a5c1a1ed6efba7fc1f974400daf6f88e0a5774f7486743e16fd2799bd97f3",
+      "masterBytes": 20420,
+      "masterDuration": 0.992653,
+      "deliverySha256": "2f69b947bd7b8ba32082f942514b9fb5987063b88ef2739a6b7be59cc78a1018",
+      "deliveryBytes": 4257,
+      "deliveryDuration": 1.008,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "89e812d1-341f09b3": {
+      "masterSha256": "74322b3240b965d9835a8c2dd3a8390b2c0a8f5e2e7e2a1082e3283a6535b1ee",
+      "masterBytes": 19898,
+      "masterDuration": 0.966531,
+      "deliverySha256": "e8bed9ec54f9354d8d39062024c4f2bfeecd1ad9259a049f6502013d0eb0b436",
+      "deliveryBytes": 4257,
+      "deliveryDuration": 1.008,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "c7fe7e6b-490043a8": {
+      "masterSha256": "a99c44032096247b04098b8f2443d37ae00cfc76e97b353735e891a01c601ae7",
+      "masterBytes": 24600,
+      "masterDuration": 1.201633,
+      "deliverySha256": "16babce03dd3d859cb5f6179b7ef991f956a632ff714797760a7ef191bab4099",
+      "deliveryBytes": 5121,
+      "deliveryDuration": 1.224,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "25e536ce-57760b2f": {
+      "masterSha256": "830f2299e152187fcfda765520f1cff3df7e79487c76f37cd358f30b5750f18a",
+      "masterBytes": 27212,
+      "masterDuration": 1.332245,
+      "deliverySha256": "76aac8a37246755821409837ff9171dfd8ea2af23804bf1e95138c88971c7886",
+      "deliveryBytes": 5697,
+      "deliveryDuration": 1.368,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "92e44f65265b1d97": {
+      "masterSha256": "7be8b639bd31c8c56d180fc470aea09d98c9e034386028a2f71d23c474fba00c",
+      "masterBytes": 25645,
+      "masterDuration": 1.253878,
+      "deliverySha256": "5fab865c7170fc0e6eb7419bb0ca250fe66a9833272593477ddc40f98b2a9e1f",
+      "deliveryBytes": 5265,
+      "deliveryDuration": 1.26,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "860090ee-5f8f28fd": {
+      "masterSha256": "52819bfd85d832360113042507ac438db018cc759b112564a57edff70ebc9273",
+      "masterBytes": 17285,
+      "masterDuration": 0.835918,
+      "deliverySha256": "e9861e864ce98eecd2d65cd40e35bcb8a6350149b40bd0e09df9686687a8fd90",
+      "deliveryBytes": 3681,
+      "deliveryDuration": 0.864,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "8be4446012e5b1a9": {
+      "masterSha256": "4db80914d8c4a8046fd2a825652ce6676b5c07a22c5b186b92b5d21da24a0fb4",
+      "masterBytes": 20420,
+      "masterDuration": 0.992653,
+      "deliverySha256": "f447d5dd09268aa623079aa4afbe3a6a5101d53f17eee0cef7f78daf96212039",
+      "deliveryBytes": 4257,
+      "deliveryDuration": 1.008,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "84008dc85815db20": {
+      "masterSha256": "aca14a51eed1eed3e92e8ce9687e60623c29b4ce6caf0b8eb86432250506b303",
+      "masterBytes": 16763,
+      "masterDuration": 0.809796,
+      "deliverySha256": "e90eafe57e0e6999633704f6fb86bf535f40d0a15d234d53ec04b549730c7a99",
+      "deliveryBytes": 3537,
+      "deliveryDuration": 0.828,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "2fe9c3ba090adb62": {
+      "masterSha256": "a9d740c2f46b73a721cf230da4c23dfedfc5966321639f11d3b804dca5ef2781",
+      "masterBytes": 27734,
+      "masterDuration": 1.358367,
+      "deliverySha256": "8f302685dbc1855e60d04044f8b22a238ab8e8950f5280aa3668f88cc90af020",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a3e8e756-4f30c6c1": {
+      "masterSha256": "00efbfbdb1b27d1c506f997a94e4c17d09ce5ce0419bb99b5bb7b178762efb87",
+      "masterBytes": 27212,
+      "masterDuration": 1.332245,
+      "deliverySha256": "fc700a0d37bca96fc25b616ddfbc16b8277b9c75e3e6ecb005c69afbf61fd2ab",
+      "deliveryBytes": 5697,
+      "deliveryDuration": 1.368,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a4e8e8e954fcc6f6": {
+      "masterSha256": "787557490fbde274cf70a58306eb85b9c0cb547e577201866b3bc07d4cb277f3",
+      "masterBytes": 23032,
+      "masterDuration": 1.123265,
+      "deliverySha256": "568fa43c39af049b56c98c09701a0b54ba1c363c3aa3a9e006fb1714135e06df",
+      "deliveryBytes": 4833,
+      "deliveryDuration": 1.152,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "d1ff39c03d7ec214": {
+      "masterSha256": "1347eb072e95589c990bd93e3bc8a57e5124d4cb46696cde46910741318dc1ed",
+      "masterBytes": 20420,
+      "masterDuration": 0.992653,
+      "deliverySha256": "791529a333e6ba24cc721fa47ae576b36da23236d38fa2a50a179a8730af141e",
+      "deliveryBytes": 4257,
+      "deliveryDuration": 1.008,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "d7ff4332-7a2411f6": {
+      "masterSha256": "1f36f010f7ab209ec6fcf2873b7e732299a0d5f60aecb703b8e076fc9e1bb119",
+      "masterBytes": 27734,
+      "masterDuration": 1.358367,
+      "deliverySha256": "485d3198cdc7d84dd074b089b71337b84e3970a6e225110c758acb7fa5f81065",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "05e2c5d7-597e4554": {
+      "masterSha256": "9721e33e1cb249c43e3362d3885bdfba4e2444e191092dba37ec9abd8ab1e2a9",
+      "masterBytes": 25645,
+      "masterDuration": 1.253878,
+      "deliverySha256": "d918ddfaf26fd2674aaeb7d6699f59c1227b0c9a67a1fe068503cbd04f6dfa8b",
+      "deliveryBytes": 5409,
+      "deliveryDuration": 1.296,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "6605fef7-561128ae": {
+      "masterSha256": "5e31d073d1967483baafe86adf75b02dacfbdc8a4968776b84920aa33a0dbecb",
+      "masterBytes": 24077,
+      "masterDuration": 1.17551,
+      "deliverySha256": "858e27072b3ca1cbb7c49adb5ace9dbdde3592ef6358a285e5cfd393cc8fa92d",
+      "deliveryBytes": 4977,
+      "deliveryDuration": 1.188,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "8fe39f15-267c56a5": {
+      "masterSha256": "e192daadcc16e4ed238a64fa4715490aff3c0cb97328bf123406984b3d820097",
+      "masterBytes": 24077,
+      "masterDuration": 1.17551,
+      "deliverySha256": "6ee80c237c14196d64f4447159b4d679d15c05e4b695fa8314be27a18de17ada",
+      "deliveryBytes": 5121,
+      "deliveryDuration": 1.224,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "6806021d61939491": {
+      "masterSha256": "657223dcc596dcecb98eaa64323608f66c48622716dde0f74593d862455795ff",
+      "masterBytes": 17808,
+      "masterDuration": 0.862041,
+      "deliverySha256": "d5caa8d270cc94d3921e12344e26c1ba34776eb0b223c6d097164b962ec430a4",
+      "deliveryBytes": 3825,
+      "deliveryDuration": 0.9,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "1d845f8957bafd0a": {
+      "masterSha256": "b1c807b60e92212334eaa158ed59be2502a99079e20de4327dfa5c3281d1af6c",
+      "masterBytes": 26167,
+      "masterDuration": 1.28,
+      "deliverySha256": "47d1cb6f2598a152b28745e80017f0198130ed633430019c6ddc80df388f24ff",
+      "deliveryBytes": 5409,
+      "deliveryDuration": 1.296,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "dd15d55f210b4789": {
+      "masterSha256": "70a9b1a0696f27e0d4052e3a898675b41e477d90fb72b4956cfc5b45150d2aaf",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "624d6fd1ecf40f095d179755896800e73151600bb3168f9ff774de34d5242e9e",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "4f8ef36a3a326b51": {
+      "masterSha256": "f34b6f68fa857457e751728be201e8a1ebb5fd7043f31a16aa2bdd8ba4fbe8b9",
+      "masterBytes": 27212,
+      "masterDuration": 1.332245,
+      "deliverySha256": "7fbee45c0e225f9770693fb16c29f5b2cea79d9f30cfb55efa86b5a0cca4885e",
+      "deliveryBytes": 5697,
+      "deliveryDuration": 1.368,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "843c451a59412bb1": {
+      "masterSha256": "de4be01d40b001e675ed3b8ed2220be7d30693646064f370c1ae7e8f9d7af8a1",
+      "masterBytes": 25645,
+      "masterDuration": 1.253878,
+      "deliverySha256": "7982bfa4da7740268502db2c6f2569d3ef7799d3ef5191bbda9a59cf9b21880b",
+      "deliveryBytes": 5409,
+      "deliveryDuration": 1.296,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "792927781edeba6c": {
+      "masterSha256": "abe6e2fe6f9608f6458356ec83b1d867695d281e6b6a7d2ce5b0798c4484815b",
+      "masterBytes": 30347,
+      "masterDuration": 1.48898,
+      "deliverySha256": "ae79b53b6dfc7d864bca9aa0bc408608c1618deb54fb583e495529b9f7cd43ea",
+      "deliveryBytes": 6273,
+      "deliveryDuration": 1.512,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "a80f2bb0-12aa1631": {
+      "masterSha256": "6e8295acfe9c61f6cf04bee29f3ffee9e1eb059f71671300c6d339b512a275ad",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "d74b7b3dc239ff9e7a766b397769fc5e18e50386883aa2b20403446572260079",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "8d588184-127b1869": {
+      "masterSha256": "d0f7a914ffbfb637d4e56ceb41bcf65aaa12b8c2e07bf2395c0f9a752b4117e6",
+      "masterBytes": 26689,
+      "masterDuration": 1.306122,
+      "deliverySha256": "f5d10ed491ff090cf8602403207df326572f199554bcb592517c02cec71ea5bc",
+      "deliveryBytes": 5553,
+      "deliveryDuration": 1.332,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "e4ef1a2372dbd46c": {
+      "masterSha256": "128808f0a0e9b6597fb8cc95b962fbe62ef7920b5d66feadc0a3867676f2b546",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "06b58f0fdccfb586c1eba26d9059f60603950076531933d5e64e24ea25b22942",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "38ad76fa-2311ac32": {
+      "masterSha256": "674dd2a104a94b75e835e2d9449c0d5cda7ae672299aa5fec68560365c81e54b",
+      "masterBytes": 27212,
+      "masterDuration": 1.332245,
+      "deliverySha256": "e49f8134a09bcc0665392cc1a47620c3b54785f3e581582befb8b712cc88a7cb",
+      "deliveryBytes": 5697,
+      "deliveryDuration": 1.368,
+      "inventory": "docs/voice-recording-delta/round-20261101.json"
     }
   }
 }
