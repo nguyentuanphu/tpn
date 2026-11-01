@@ -1625,6 +1625,22 @@ await check('testerreport', async () => {
   return `${got.length} reports: an error, a game that did not open and a frozen screen by themselves, each with a picture, the last 30 seconds, the players and the device; the ladybird (picture first, then a kind and a note), a long-press quick report, offline reports waiting with a number and sending when back online, and "already reported → add to it"; the retest of a fixed problem, and the auto play check\'s findings sent once`;
 });
 
+await check('testerretest', async () => {
+  // (#736 #674 #675) auto play files its problems with its step as the game ("game:<id>"); once fixed, the tester device
+  // replays the problem: it must open the game itself (it opened nothing, took that as still broken and reported
+  // "did not open: game:<id>")
+  const P = await open(b, { w: 1024, h: 768, pre: testerPre({ on: true, devices: ['tester000001'] }, ACCEPTED) });
+  const g1 = 'memory', st = { mine: [], open: [], retest: [{ k: 'dddddddddddddddd', title: 'autoplay: Memory Match: did not close', status: 'fixed', fixedIn: 'r1', kind: 'auto', auto: 'autoplay', where: { game: 'game:' + g1, area: 'autoplay', window: 'games', place: '', x: 0, z: 0 } }], helped: 0, reports: 1 };
+  const got = await testerSite(P.ctx, () => st);
+  await P.page.waitForFunction(() => window.__sv.tester && window.__sv.tester.retest, null, { timeout: 15000 }); await clear(P.page);
+  await P.page.evaluate(() => document.querySelectorAll('.modal, .dialog').forEach(e => e.remove()));
+  const opened = await P.page.evaluate(async g1 => { await __sv.tester.refresh(); __sv.paused = false; let seen = false; const mo = new MutationObserver(() => { if (document.querySelector(`.gl[data-game-id="${g1}"]`)) seen = true; }); mo.observe(document.body, { childList: true, subtree: true }); await __sv.tester.retest(); mo.disconnect(); return seen; }, g1);
+  await P.page.waitForTimeout(500);
+  const rt = got.find(x => x && x.k === 'dddddddddddddddd'), noopen = got.filter(x => x && x.auto === 'noopen');
+  const errs = P.errors.filter(x => !/net::ERR_INTERNET_DISCONNECTED|Failed to fetch/.test(x)); await P.ctx.close();
+  ok(opened && rt && rt.fixed === true && !noopen.length && !errs.length, JSON.stringify({ opened, rt, noopen, errs }));
+  return 'a fixed auto play problem filed as "game:memory" is replayed in Memory Match itself and told as still fixed, with no "did not open"';
+});
 await check('testernews', async () => {
   // (r90, owner 23 Oct AEDT: "when I log in there is a pop up that I test a new release, very annoying; any release or new
   // game for testers should be shown as a list within the ladybug") no "Tester preview" pop-up at the start; the ladybird
@@ -2456,9 +2472,16 @@ await check('chapter3', async () => {
     // the clues by the harbour
     await pg.evaluate(() => { const S = __sv.lanterns.sydney; __sv.heroes[0].place(S.front[0], S.front[1] + 1); }); await w(2500); await calm();
     const lead = await pg.evaluate(() => { const c = __sv.lanterns.companions.of(__sv.heroes[0]); return c && c.lead ? !!c.lead.high : false; });
+    // (#735) where the quest light shines: on a place a child can tap ("Look here" before the clue, the lantern after)
+    const aim = () => pg.evaluate(() => { const G = __sv, h = G.heroes[0], t = G.currentQuest(h.profile).target(), S = G.lanterns.sydney;
+      const near = G.interactables.filter(i => i.visible && i.visible(h) && i.act && Number.isFinite(i.x)).map(i => ({ id: i.id, d: Math.hypot(i.x - t.x, i.z - t.z) })).sort((a, b) => a.d - b.d)[0];
+      return { tap: near && near.d < 2.5 ? near.id : null, lantern: Math.hypot(t.x - S.lanternAt[0], t.z - S.lanternAt[1]) }; });
+    const aimBefore = await aim();
     await act('story_clue3_1'); await w(300);
     const wrongFound = await pg.evaluate(() => !!(__sv.heroes[0].profile.lanterns.act || {}).clue3);
-    await act('story_clue3_0'); await w(300); await act('story_c3_find'); await step();
+    await act('story_clue3_0'); await w(300); const aimAfter = await aim(); await act('story_c3_find'); await step();
+    if (!/^story_clue3_/.test(aimBefore.tap || '') && !(age !== 'big' && aimBefore.lantern < 1)) out.push('the quest light did not shine on a place to look: ' + JSON.stringify(aimBefore));
+    if (aimAfter.lantern > 1 || aimAfter.tap !== 'story_c3_find') out.push('after the clue the quest light did not shine on Pick up the lantern: ' + JSON.stringify(aimAfter));
     const carrying = await pg.evaluate(() => __sv.heroes[0].profile.lanterns.carrying);
     pg.evaluate(() => { const it = __sv.interactables.find(i => i.id === 'story_c3_hang'); it.act(__sv.heroes[0]); }); await w(1500);
     const roped = await pg.evaluate(() => { const el = document.querySelector('.handpad [data-hp=rope]'); if (!el) return false; const r = el.getBoundingClientRect(), ev = (t, y) => el.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 9, clientX: r.left + 20, clientY: r.top + r.height * y }));
@@ -4873,6 +4896,46 @@ await check('autoplaycover', async () => {
   const errs = P.errors; await P.ctx.close();
   ok(r.plain === 1 && r.tester === 0 && r.ladybird === 0 && !errs.length, JSON.stringify({ r, errs }));
   return 'a button under something else is reported; under the tester\'s own report window or ladybird it is not';
+});
+await check('autoplayhidden', async () => {
+  // (#687-#694, #727, #730-#733) a tester's auto play with its tab in the background reported "stuck at …; still stuck;
+  // slow: 0 frames a second" a minute apart: the valley is not drawn while the page is hidden, so nobody moves. The page
+  // is hidden here as the browser does it (document.hidden, no animation frames) in the middle of a walk.
+  const P = await open(b, { w: 900, h: 640, pre: `try { localStorage.setItem('sv2_playerid', 'apcheck00001'); localStorage.setItem('sv2_live', JSON.stringify({ releases: { autoplay: { on: true, devices: ['apcheck00001'] } }, festivals: {} })); } catch (e) { }
+    (() => { let bg = false; const held = [], raf = window.requestAnimationFrame.bind(window);
+      window.requestAnimationFrame = cb => { if (bg) { held.push(cb); return -1; } return raf(cb); };
+      Object.defineProperty(Document.prototype, 'hidden', { configurable: true, get() { return bg; } });
+      Object.defineProperty(Document.prototype, 'visibilityState', { configurable: true, get() { return bg ? 'hidden' : 'visible'; } });
+      window.__bg = on => { bg = on; document.dispatchEvent(new Event('visibilitychange')); if (!on) for (const cb of held.splice(0)) raf(cb); }; })();` });
+  await P.page.waitForFunction(() => window.__sv && __sv.autoplay && __sv.autoplay.walkTo, null, { timeout: 20000 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const G = __sv, h = G.heroes[0], x0 = h.pos.x, z0 = h.pos.z; let target = null;
+    for (let k = 0; k < 64 && !target; k++) { const a = k / 64 * Math.PI * 2, x = x0 + Math.cos(a) * 8, z = z0 + Math.sin(a) * 8; if (!G.goodSpot(x, z)) continue;
+      let clear = true; for (let t = 0; t <= 16; t++) if (!G.goodSpot(x0 + (x - x0) * t / 16, z0 + (z - z0) * t / 16)) clear = false; if (clear) target = { x, z }; }
+    if (!target) return { none: true };
+    const walking = G.autoplay.walkTo(target.x, target.z, 'fast');
+    await new Promise(res => setTimeout(res, 400)); window.__bg(true); await new Promise(res => setTimeout(res, 500)); const at = { x: h.pos.x, z: h.pos.z };
+    await new Promise(res => setTimeout(res, 7500)); const still = Math.hypot(h.pos.x - at.x, h.pos.z - at.z); window.__bg(false);
+    const res = await Promise.race([walking, new Promise(res => setTimeout(() => res({ timeout: true }), 120000))]);
+    return { res, still, left: Math.hypot(h.pos.x - target.x, h.pos.z - target.z) };
+  });
+  const errs = P.errors; await P.ctx.close();
+  ok(!r.none && r.still < .05 && r.res && !r.res.timeout && !r.res.problems.length && r.left <= 2.05 && !errs.length, JSON.stringify({ r, errs }));
+  return `walking with the page hidden for 8 s (the child stood still, ${r.still.toFixed(2)} m) went on when it came back and arrived with no "stuck"`;
+});
+await check('autoplayfruitbar', async () => {
+  // (#728 #730-#733) auto play left the Sparkle Fruit Bar as "could not work out how to play it" after 25 s (it watched the
+  // empty frame under the Bar's own card) and closed it with the frame's Leave, under that card ("a button covered")
+  const R = { autoplay: { on: true, devices: ['apcheck00001'] }, tester: { on: true, devices: ['apcheck00001'] }, sparklefruitbar_tester: { on: true }, sparklefruitbar_single: { on: true } };
+  const P = await open(b, { w: 929, h: 1129, pre: `try { localStorage.setItem('sv2_playerid', 'apcheck00001'); localStorage.setItem('sv2_tester', JSON.stringify({ at: Date.now() })); localStorage.setItem('sv2_live', ${JSON.stringify(JSON.stringify({ releases: R, festivals: {} }))}); } catch (e) { }`,
+    route: async ctx => { await ctx.route('**/api/live**', rt => rt.fulfill({ contentType: 'application/json', body: JSON.stringify({ releases: R, festivals: {} }) })); await ctx.route('**/api/tester**', rt => rt.fulfill({ contentType: 'application/json', body: '{"ok":true,"mine":[],"open":[]}' })); } });
+  await P.page.waitForFunction(() => window.__sv && __sv.autoplay, null, { timeout: 20000 }); await clear(P.page);
+  await P.page.evaluate(() => { __sv.gameSpot = () => null; __sv.autoplay.start(['game:sparklefruitbar'], 'x5'); });
+  await P.page.waitForFunction(() => !__sv.autoplay.running() && (JSON.parse(localStorage.getItem('sv2_autoplay_report') || '{}').done || []).length === 1, null, { timeout: 300000 });
+  const r = await P.page.evaluate(() => ({ row: JSON.parse(localStorage.getItem('sv2_autoplay_report')).done[0], open: !!document.querySelector('.gl, .parent-arcade') }));
+  const errs = P.errors; await P.ctx.close();
+  ok(r.row.key === 'game:sparklefruitbar' && r.row.ok && !r.row.skipped && r.row.problems.length === 0 && !r.open && !errs.length, JSON.stringify({ r, errs }));
+  return `auto play played the Fruit Bar to the end (${r.row.said}) and closed it with its own ✕, no problems`;
 });
 
 await check('ownerautoplaytransport', async () => {
