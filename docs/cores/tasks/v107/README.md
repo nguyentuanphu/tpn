@@ -15,7 +15,7 @@ Before starting, read CLAUDE.md, HANDOFF.md, docs/cores/README.md and docs/plan-
   - Never weaken, skip or delete a check to make it pass.
   - The game server for browser checks is `python3 -m http.server 8765` in the repo root. Online checks need `node tests/services/start.cjs`.
 - **Pull requests:** you may open a draft pull request for your branch, titled "v1.07 <your name>: ...". Keep it a draft.
-- **Other helpers:**
+- **Other helpers** (the first six; seven more were added the same morning: split-code, roads, studio, family-code, launch, old-bugs and rules, with briefs in this folder):
   - tester-bugs: the tester reports.
   - typescript: moves the remaining `.js` files to `.ts`.
   - split-tests: splits `tests/run.mjs`.
@@ -47,3 +47,10 @@ Your own part is in your brief file in this folder (`<name>-brief.md`).
 - Name: startup. Branch: work/v107-startup.
 - Name: bug-robot. Branch: work/v107-bug-robot.
 - Name: levels. Branch: work/v107-levels.
+- Name: split-code. Branch: work/v107-split-code.
+- Name: roads. Branch: work/v107-roads.
+- Name: studio. Branch: work/v107-studio.
+- Name: family-code. Branch: work/v107-family-code.
+- Name: launch. Branch: work/v107-launch.
+- Name: old-bugs. Branch: work/v107-old-bugs.
+- Name: rules. Branch: work/v107-rules.
