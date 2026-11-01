@@ -3973,6 +3973,75 @@ await check('hocvui', async () => {
   return `Fun learning tab with four corners (${hub.plays.length} own games, ${hub.links.length} links; the linked games stay in their own tab and open from the link); the same four areas on the Simple screen; ${NEW.length} new games won by real taps at Easy and Talent (${NEW.map(id => `${id} ${played[id + ':easy'].shown}→${played[id + ':talent'].shown}`).join(', ')}); pictures in tests/out/hocvui`;
 });
 
+await check('school', async () => {
+  // (Học vui phase 4, owner's plan 1 Nov 2026 AEDT, docs/learn-tab/PLAN.md) Trường Học Vui on Two Homes Street: the
+  // building and its yard stand on dry, level ground, off every road, street and verge, on nobody else's ground; a child
+  // can walk to Cô Tam at the door from the middle of the street (the valley's own walking rule, G.goodSpot, after the
+  // solid map is made); Cô Tam is there with her juice-cart look while the juice cart keeps its own Cô Tam; the school
+  // is on the map and in "Where is…?"; and on a phone, a real tap on the Act button by her says her greeting and a tap on
+  // "Yes, let's learn!" opens the Play hub on the Fun learning tab
+  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const G = __sv, W = await import('/js/world.js'), S = G.school, out = { bad: [] }; await G.solidsReady;
+    // ("Where is…?" switched on as the wayfind check does: Studio switch 'wayfind')
+    const C = await import('/js/custom.js'); C.CUSTOM.releases = { ...(C.CUSTOM.releases || {}), wayfind: { on: true, controlVersion: 1 } };
+    for (let k = 0; k < 50 && !G.wayfind; k++) await new Promise(r => setTimeout(r, 100));
+    if (!S || !S.house || !S.house.parent) return { bad: ['no school built'] };
+    // the ground: the building and its yard, every half metre
+    const { x, z, w, d, yard, front, box } = S; let n = 0;
+    for (let px = x - w / 2 - .5; px <= x + w / 2 + .5; px += .5) for (let pz = front - yard; pz <= z + d / 2 + .5; pz += .5) { n++;
+      const rd = W.roadDist(px, pz), h = W.heightAt(px, pz);
+      if (rd.road && rd.d < rd.road.w / 2 + 1.5) { out.bad.push(`on ${rd.road.id} or its verge at ${px.toFixed(1)},${pz.toFixed(1)}`); break; }
+      if (W.edgeDist(px, pz) < 1.5) { out.bad.push(`on a street at ${px.toFixed(1)},${pz.toFixed(1)}`); break; }
+      if (h < W.WATER + .5) { out.bad.push(`in the water at ${px.toFixed(1)},${pz.toFixed(1)}`); break; }
+      if (Math.abs(h - W.heightAt(x, z)) > .25) { out.bad.push(`not level at ${px.toFixed(1)},${pz.toFixed(1)}`); break; } }
+    const others = G.world.boxes.filter(o => o !== box && !o.room && o.x0 < box.x1 && o.x1 > box.x0 && o.z0 < box.z1 && o.z1 > box.z0);
+    if (others.length) out.bad.push(`overlaps ${others.length} other buildings`);
+    if ((G.world.houses || []).some(hs => Math.hypot(hs.x - x, hs.z - z) < (w + d) / 2)) out.bad.push('a house stands on it');
+    if (G.world.colliders.some(c => c.r > .45 && c.x > box.x0 && c.x < box.x1 && c.z > box.z0 && c.z < box.z1)) out.bad.push('a tree or post inside it');
+    if (Math.hypot(x - W.TOWN.x, z - W.TOWN.z) > 45) out.bad.push('not on Two Homes Street');
+    // walking: from the middle of the street to Cô Tam's spot, on the ground a child can stand on (0.5 m steps)
+    const s = S.spot, s0 = { x: W.TOWN.x - 4, z: W.TOWN.roadZ }, x0 = Math.min(s0.x, s.x) - 12, z0 = Math.min(s0.z, s.z) - 12, x1 = Math.max(s0.x, s.x) + 12, z1 = Math.max(s0.z, s.z) + 12;
+    const N = Math.ceil((x1 - x0) / .5) + 1, M = Math.ceil((z1 - z0) / .5) + 1, seen = new Uint8Array(N * M), q = [];
+    const at = (i, j) => G.goodSpot(x0 + i * .5, z0 + j * .5), push = (i, j) => { if (i < 0 || j < 0 || i >= N || j >= M || seen[j * N + i]) return; seen[j * N + i] = 1; if (at(i, j)) q.push([i, j]); };
+    push(Math.round((s0.x - x0) / .5), Math.round((s0.z - z0) / .5)); out.startOk = q.length === 1; let reached = false;
+    while (q.length && !reached) { const [i, j] = q.shift(); if (Math.hypot(x0 + i * .5 - s.x, z0 + j * .5 - s.z) < .6) reached = true; push(i + 1, j); push(i - 1, j); push(i, j + 1); push(i, j - 1); }
+    out.reached = reached; out.spotOk = G.goodSpot(s.x, s.z);
+    // Cô Tam: at the door, named, facing the yard; the juice cart's Cô Tam still at the cart
+    const A = S.avatar, t = S.teacher, cart = G.interactables.find(i => i.id === 'nuocmia');
+    out.teacher = !!A.root.parent && Math.hypot(A.root.position.x - t.x, A.root.position.z - t.z) < .05 && Math.abs(A.root.position.z - front) < 1.5 && A.look.style === 'aodai';
+    out.cart = !!cart && G.scene.children.some(o => o.userData && o.userData.townSeller === 'nuocmia');
+    // the map and Where is…?
+    const pl = G.PLACES.find(p => p.key === 'school'); out.place = !!pl && Math.hypot(pl.x - s.x, pl.z - s.z) < 1 && pl.name() === 'Fun Learning School';
+    out.where = !!(G.wayfind && G.wayfind.targets().some(o => o.id === 'school'));
+    out.tris = (() => { let k = 0; for (const o of [S.house, S.yardMesh, S.flag, S.pole]) { const g = o.geometry; k += (g.index ? g.index.count : g.attributes.position.count) / 3; } return k; })();
+    out.n = n; return out;
+  });
+  ok(!r.bad.length, 'where it stands: ' + r.bad.join('; '));
+  ok(r.startOk && r.spotOk && r.reached, `a child can't walk to Cô Tam from the street (start ${r.startOk}, her spot ${r.spotOk}, reached ${r.reached})`);
+  ok(r.teacher && r.cart, `Cô Tam at the school door ${r.teacher}, still at the juice cart ${r.cart}`);
+  ok(r.place && r.where, `on the map ${r.place}, in Where is ${r.where}`);
+  ok(r.tris < 3000, `the school costs ${r.tris} triangles (want under 3000)`);
+  // a real tap: walk up to her, tap the Act button, hear her greeting, tap "Yes, let's learn!"
+  await P.page.evaluate(() => { const G = __sv, h = G.heroes[0], s = G.school.spot; h.place(s.x, s.z - .6); h.yaw = 0; G.paused = false; });
+  const act = await P.page.waitForFunction(() => { const b = document.querySelector('.hud .act'); return b && !b.hidden && /Tam/.test(b.textContent) && b.getBoundingClientRect(); }, null, { timeout: 15000 }).then(() => P.page.evaluate(() => { const q = document.querySelector('.hud .act').getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2, w: q.width, h: q.height }; }), () => null);
+  ok(act, 'no Act button by Cô Tam');
+  ok(act.w >= 44 && act.h >= 44, `the Act button is ${Math.round(act.w)}×${Math.round(act.h)} px`);
+  await P.page.touchscreen.tap(act.x, act.y);
+  const box = await P.page.waitForSelector('.dialog:not(.out) .dch', { timeout: 10000 }).then(() => P.page.evaluate(() => { const D = document.querySelector('.dialog:not(.out)'), c = D.querySelector('.dch').getBoundingClientRect();
+    return { name: D.querySelector('.dname').textContent, text: D.querySelector('.dtext').textContent, x: c.left + c.width / 2, y: c.top + c.height / 2, h: c.height, n: D.querySelectorAll('.dch').length }; }), () => null);
+  ok(box, 'tapping Cô Tam opened no speech box');
+  ok(/Tam/.test(box.name) && box.text === 'Welcome to the Fun Learning School! Shall we learn something fun today?' && box.n === 2 && box.h >= 44, 'her greeting: ' + JSON.stringify(box));
+  await P.page.touchscreen.tap(box.x, box.y);
+  const hub = await P.page.waitForSelector('.hub .hubtabs [data-tab="hocvui"].on', { timeout: 10000 }).then(() => P.page.evaluate(() => ({ title: document.querySelector('.hub .hubbody h3')?.textContent || '', areas: document.querySelectorAll('.hub .hubbody .hubarea').length })), () => null);
+  ok(hub && /Fun learning/.test(hub.title) && hub.areas === 4, 'the tap did not open the Fun learning tab: ' + JSON.stringify(hub));
+  // in Vietnamese too: her line and the sign's words
+  const vi = await P.page.evaluate(async () => { document.querySelectorAll('.modal, .hub, .dialog').forEach(e => e.remove()); __sv.paused = false; const L = await import('/js/school.js'); return L.SCHOOL_GREETING[1]; });
+  ok(vi === 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?', 'Vietnamese greeting ' + vi);
+  ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
+  return `on dry level ground by Two Homes Street, off the roads (${r.n} spots); walkable from the street to Cô Tam; she stands at the door (the cart keeps hers); on the map and in Where is; ${r.tris} triangles; a tap on the phone says her greeting and opens the Fun learning tab`;
+});
+
 await check('quiet', async () => {
   // round M (owner: sound kept playing after leaving the game, until it was killed): when the game goes to the
   // background (another app, the lock screen) the audio engine sleeps, music stops scheduling and videos pause; when
