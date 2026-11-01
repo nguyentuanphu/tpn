@@ -362,7 +362,7 @@ export function openEditor(profile, after) {
       <p class="note">${T('Little: everything is spoken, games stay gentle and nobody can lose. Big kid: harder levels, more reading, and real opponents in strategy games.', 'Bé nhỏ: mọi thứ đều được đọc to, trò chơi nhẹ nhàng và không ai thua. Bé lớn: cấp độ khó hơn, đọc nhiều hơn, và có đối thủ thật trong trò chơi chiến thuật.')}</p></div>
     <div class="field"><span>${T('Start screen', 'Màn hình đầu')}</span><div class="seg age scr"><button data-s="simple"><span class="ai">🧸</span><b>${T('Simple', 'Đơn giản')}</b><small>${T('big pictures', 'hình to')}</small></button><button data-s="valley"><span class="ai">🌳</span><b>${T('Valley', 'Thung lũng')}</b><small>${T('walk and explore', 'đi khám phá')}</small></button></div>
       <p class="note">${T('Simple: a path of big pictures, one tap to play. Valley: the whole 3D world. The child can switch any time.', 'Đơn giản: một con đường hình to, chạm một lần là chơi. Thung lũng: cả thế giới 3D. Bé đổi lúc nào cũng được.')}</p></div>
-    <div class="field"><span>${T('Difficulty', 'Độ khó')}</span><div class="seg diff"><button data-d="easy">🌱 ${T('Easy', 'Dễ')}</button><button data-d="medium">🌿 ${T('Medium', 'Vừa')}</button><button data-d="hard">🌳 ${T('Hard', 'Khó')}</button><button data-d="talent">🌟 ${T('Talent', 'Tài năng')}</button></div></div>
+    <div class="field"><span>${T('Difficulty', 'Độ khó')}</span><div class="seg diff"><button data-d="easy">🌱 ${T('Easy', 'Dễ')}</button><button data-d="medium">🌿 ${T('Medium', 'Vừa')}</button><button data-d="hard">🌳 ${T('Hard', 'Khó')}</button><button data-d="talent" class="talentbtn">🌟 ${T('Talent', 'Tài năng')}</button></div></div>
     <div class="field"><span>${T('Clothes', 'Trang phục')}</span><div class="chips" id="cOut"></div><div class="chips" id="cCol"></div></div>
     <div class="field"><span>${T('Hat', 'Mũ')}</span><div class="chips" id="cHat"></div></div>
     <div class="field"><span>${T('On the back', 'Sau lưng')}</span><div class="chips" id="cBack"></div></div>
@@ -409,13 +409,13 @@ export function openEditor(profile, after) {
   chips('#cBack', BACKS, 'back', v => ({ none: '🙂', wings: '🧚', cape: '🦸' }[v]));
   chips('#cHs', HAIRSTYLES, 'hairStyle', v => ({ short: '💇', buns: '🎀', long: '👩', ponytail: '🐴', spiky: '🦔' }[v]));
   let age = p.age || 'little';
-  const ageBtns = () => m.querySelectorAll('.seg.age:not(.scr) button').forEach(b => { b.classList.toggle('on', b.dataset.a === age); b.onclick = () => { age = b.dataset.a; ageBtns(); }; });
+  const ageBtns = () => m.querySelectorAll('.seg.age:not(.scr) button').forEach(b => { b.classList.toggle('on', b.dataset.a === age); b.onclick = () => { age = b.dataset.a; ageBtns(); diffBtns(); }; });
   ageBtns();
   let scr = p.screen || null; // unset: follows the age (under 5: Simple)
   const scrBtns = () => m.querySelectorAll('.seg.scr button').forEach(b => { b.classList.toggle('on', b.dataset.s === (scr || (age === 'big' ? 'valley' : 'simple'))); b.onclick = () => { scr = b.dataset.s; scrBtns(); }; });
   scrBtns(); m.querySelectorAll('.seg.age:not(.scr) button').forEach(b => b.addEventListener('click', () => scrBtns()));
   let diff = p.difficulty || 'easy';
-  const diffBtns = () => m.querySelectorAll('.seg.diff button').forEach(b => { b.classList.toggle('on', b.dataset.d === diff); b.onclick = () => { diff = b.dataset.d; diffBtns(); }; });
+  const diffBtns = () => m.querySelectorAll('.seg.diff button').forEach(b => { b.hidden = b.dataset.d === 'talent' && age !== 'big'; if (b.hidden && diff === 'talent') diff = 'hard'; b.classList.toggle('on', b.dataset.d === diff); b.onclick = () => { diff = b.dataset.d; diffBtns(); }; });
   diffBtns();
   chips('#cHair', HAIR, 'hair', v => `<span class="sw" style="background:${v}"></span>`);
   chips('#cSkin', SKIN, 'skin', v => `<span class="sw" style="background:${v}"></span>`);

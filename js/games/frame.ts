@@ -295,7 +295,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     if (lv) lv.onclick = () => {
       SFX.tap(); if (layer.querySelector('.gl-lvlpick')) return;
       const pk = el('div', 'gl-lvlpick');
-      pk.innerHTML = `<div class="gl-lvlcard"><h3>${T('How hard?', 'Khó hay dễ?')}</h3>${LEVELS.map(([k, en, vi]) => `<button data-l="${k}" class="${k === levelPick.value ? 'on' : ''}">${esc(T(en, vi))}</button>`).join('')}</div>`;
+      pk.innerHTML = `<div class="gl-lvlcard"><h3>${T('How hard?', 'Khó hay dễ?')}</h3>${LEVELS.filter(([k]) => k !== 'talent' || !little).map(([k, en, vi]) => `<button data-l="${k}" class="${k === levelPick.value ? 'on' : ''}">${esc(T(en, vi))}</button>`).join('')}</div>`;
       layer.appendChild(pk); say('How hard?', 'Khó hay dễ?');
       pk.onclick = e => { if (e.target === pk) pk.remove(); };
       pk.querySelectorAll('[data-l]').forEach(b => b.onclick = () => { SFX.tap(); pk.remove(); if (b.dataset.l !== levelPick.value) finish(false, { restart: b.dataset.l }); });

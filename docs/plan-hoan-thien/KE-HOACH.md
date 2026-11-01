@@ -124,7 +124,14 @@ Hai phần đi kèm là dọn lỗi tồn đọng và chuẩn bị ra mắt dị
   - Chơi được offline.
 - **Việc có trả tiền** (quảng cáo trả phí, App Store, gian hàng) chỉ làm khi anh quyết định.
 
-## Anh cần quyết định
+## Quyết định của anh (1/11/2026)
+
+- Không giới hạn tính năng mới trong thời gian hoàn thiện; ưu tiên vẫn là ba trọng tâm trên.
+- Talent mở cho mọi bé lớn (5–8 tuổi) ở mọi game; bé nhỏ không thấy.
+- Máy chuẩn: một iPhone, một iPad và một Android tầm trung lấy từ báo cáo tester.
+- Ngày ra mắt chưa cố định: hoàn thiện trước, và Studio có một công tắc để hẹn ngày ra mắt sau.
+
+## Câu hỏi đã hỏi
 
 1. **Hạn chế tính năng mới** trong thời gian hoàn thiện, như mục "Nguyên tắc" ở trên: có đồng ý không?
 2. **Ba máy chuẩn** để đo khởi động: anh và tester đang dùng máy nào?
