@@ -44,7 +44,8 @@ export const SCHEMA: Record<string, Kind> = {
   // heard the room's starter yet" (a newcomer let in through the cloud asks for the welcome again)
   // (Online, r57) map: the knocker's map layout (MAP_VERSION); a knock from another layout is turned away (js/net.js)
   hello: { fields: { name: text(40), look: any, friend: word(8), pub: text(100), w: bool, map: word(8) }, size: 3000, per: 6, sec: 10 },
-  s: { fields: { x: num(-W, W), y: num(-60, 120), z: num(-W, W), yaw: num(-100, 100), st: word(16), sp: num(0, 50) }, need: ['x', 'y', 'z', 'yaw'], size: 600, per: 40, sec: 1 },
+  // (#744, v1.06) rv: what the friend rides ('v' + the vehicle's place in the valley's list, or an animal's id); rm: the vehicle's model
+  s: { fields: { x: num(-W, W), y: num(-60, 120), z: num(-W, W), yaw: num(-100, 100), st: word(16), sp: num(0, 50), rv: word(16), rm: word(16) }, need: ['x', 'y', 'z', 'yaw'], size: 600, per: 40, sec: 1 },
   ping: { fields: { ts: num(0, 1e14) }, size: 600, per: 3, sec: 2 },
   pong: { fields: { ts: num(0, 1e14) }, size: 600, per: 6, sec: 2 },
   bye: { fields: {}, size: 600, per: 4, sec: 5 },

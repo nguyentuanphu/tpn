@@ -22,11 +22,14 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
   const earlyQuiz=new Map();
   const early = new Map(); // bounded early moves, only from an inviter this child accepted
   let session = null;          // the game being played: { gid, game, seats, mine, level, moves: Map(n → Map(seat → mv)), waiters }
+  // (#742/#743, v1.06) "Play again" from a friend who played this game with me, while my game is still on its last
+  // screen: kept until I choose (Play again says yes; finishing says no) instead of a "no" at once
+  let held = null, heldAt = 0;
   const api = {
     get session() { return session; },
     // invite one friend (to) or everyone in the room (to omitted) to a game
     // (r63) opts.size: Caro's board, chosen by the one who invites (3 to 19 squares a side)
-    invite(game, level, to, opts: { size?: number } = {}) {
+    invite(game, level, to, opts: { size?: number, wait?: number } = {}) {
       const def = defOf(game); if (!def || session) return null;
       const gid = newGid(), asked = new Set(to ? [to] : net.ids());
       if (!asked.size) return null;
@@ -34,9 +37,11 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
       const a = { gid, game, level, size, yes: new Set(), no: new Set(), asked, timer: undefined as ReturnType<typeof setTimeout> | undefined };
       asks.set(gid, a);
       for (const id of asked) net.send({ t: 'gask', to: id, gid, game, level, size });
-      a.timer = setTimeout(() => go(gid), waitMs);
+      a.timer = setTimeout(() => go(gid), Math.max(waitMs, Math.min(60000, opts.wait || 0)));
       return gid;
     },
+    // the friend's "Play again" kept for this game (once), or null
+    takeRematch(game) { const d = held; held = null; return d && d.game === game && Date.now() - heldAt < 60000 ? d : null; },
     // my answer to an invitation
     answer(d, yes) { if (yes) { said.set(d.gid, { from: d.from, game: d.game }); if (said.size > 20) { const oldest = said.keys().next().value; said.delete(oldest); early.delete(oldest);earlyQuiz.delete(oldest); } } else { said.delete(d.gid); early.delete(d.gid);earlyQuiz.delete(d.gid); } net.send({ t: yes ? 'gyes' : 'gno', to: d.from, gid: d.gid }); },
     familyQuiz(){return session?.game==='familyquiz'?session.quiz:null;},
@@ -65,7 +70,15 @@ export function createNetGames({ net, me, onAsk, onStart, onEnd, waitMs = 12000 
     // (from the network)
     receive(d) {
       if(d.t==='gbye'&&said.get(d.gid)?.from===d.from){said.delete(d.gid);earlyQuiz.delete(d.gid);early.delete(d.gid);return;}
-      if (d.t === 'gask') { if (!defOf(d.game) || session) return api.answer(d, false); onAsk && onAsk(d); return; }
+      if (d.t === 'gask') {
+        if (!defOf(d.game)) return api.answer(d, false);
+        if (session) { if (session.game === d.game && session.seats.includes(d.from) && !held) { held = d; heldAt = Date.now(); return; } return api.answer(d, false); }
+        // (#742/#743) two friends asked each other for the same game at once (both tapped Play again): one game, the one
+        // asked by the lower id; the other drops its own invitation and says yes
+        const mine = [...asks.values()].find(a => a.game === d.game && a.asked.has(d.from));
+        if (mine) { if (me() > d.from) { asks.delete(mine.gid); clearTimeout(mine.timer); api.answer(d, true); } return; }
+        onAsk && onAsk(d); return;
+      }
       if (d.t === 'gyes' || d.t === 'gno') { const a = asks.get(d.gid); if (!a || !a.asked.has(d.from)) return; (d.t === 'gyes' ? a.yes : a.no).add(d.from); if (a.yes.size + a.no.size >= a.asked.size || a.yes.size + 1 >= defOf(a.game).max) go(d.gid); return; }
       // (round R privacy, 9 Oct) before, any player could open a game here by naming this child in the seats; now only the
       // one who asked, and only after this child said yes (the child who invites starts it themselves, in go())
