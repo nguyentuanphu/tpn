@@ -55,7 +55,7 @@ const TONE_WHY: Pair[] = [
   ['The broken mark: the voice breaks, then jumps up.', 'Dấu ngã: giọng ngắt rồi vút lên.'],
   ['The heavy dot: the voice drops short and low.', 'Dấu nặng: giọng nặng, ngắn và thấp.']
 ];
-register({ id: 'vi_tones', async run(api) {
+register({ id: 'vi_tones', learn: true, icon: 'vi:tones', name: () => T('Tone Detective', 'Thám Tử Dấu Thanh'), async run(api) {
   style();
   const lv = lvOf(api), rounds = [4, 5, 5, 6, 7][lv];
   // the marks a level asks about: under-5s two of the three easiest, Easy those three, Medium adds the heavy dot,
@@ -102,7 +102,7 @@ const STEP_ASK: Record<string, Pair> = {
   tone: ['Which tone mark does it need?', 'Tiếng này cần dấu thanh gì?']
 };
 const withTone = (w: BuildWord, tone: number) => w[2] + RHYMES[w[3]][tone];
-register({ id: 'vi_build', async run(api) {
+register({ id: 'vi_build', learn: true, icon: 'vi:build', name: () => T('Build a Syllable', 'Bé Ghép Vần'), async run(api) {
   style();
   const lv = lvOf(api), rounds = [4, 4, 5, 5, 6][lv], nOpts = [2, 2, 3, 4, 5][lv];
   // under-5s only choose the first sound; Easy also the rhyme; from Medium the tone mark too

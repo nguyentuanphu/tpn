@@ -199,7 +199,7 @@ const FLOAT: Thing[] = [
   th('✏️', ['Pencil', 'Bút chì'], true, 3, ['The pencil is made of wood, so it floats.', 'Bút chì làm bằng gỗ nên nổi.'])
 ];
 const SURFACE = 58, FLOOR = 84; // the water's top and the tub's floor (% of the scene's height)
-register({ id: 'sci_float', async run(api) {
+register({ id: 'sci_float', learn: true, icon: 'sci:float', name: () => T('Float or Sink?', 'Nổi hay Chìm?'), async run(api) {
   const lv = lvOf(api), [n, per] = PLAN[lv], used = new Set<Thing>(), rounds: Round[] = [];
   for (let r = 0; r < n; r++) {
     const set = pickSet(FLOAT, lv, per, used); let btns: HTMLElement[] = [];
@@ -247,7 +247,7 @@ const MAGNET: Thing[] = [
   th('🔔', ['Brass bell', 'Chuông đồng'], false, 3, ['The bell is metal, but it is brass. Magnets do not pull every metal.', 'Cái chuông bằng kim loại, nhưng là đồng thau. Nam châm không hút mọi kim loại.']),
   th('🏺', ['Clay pot', 'Bình đất'], false, 3, ['The pot is made of clay, so the magnet does not pull it.', 'Cái bình làm bằng đất nung nên nam châm không hút.'])
 ];
-register({ id: 'sci_magnet', async run(api) {
+register({ id: 'sci_magnet', learn: true, icon: 'sci:magnet', name: () => T('Magnet Pull', 'Nam Châm Hút'), async run(api) {
   const lv = lvOf(api), [n, per] = PLAN[lv], used = new Set<Thing>(), rounds: Round[] = [];
   for (let r = 0; r < n; r++) {
     const set = pickSet(MAGNET, lv, per, used); let btns: HTMLElement[] = [], mag: HTMLElement = null;
@@ -287,7 +287,7 @@ register({ id: 'sci_magnet', async run(api) {
 // ---------- 3. Ramps ----------
 const BALLS: { c: string; name: Pair }[] = [{ c: '#e8433a', name: ['Red ball', 'Bóng đỏ'] }, { c: '#3b6fe0', name: ['Blue ball', 'Bóng xanh dương'] }, { c: '#43c463', name: ['Green ball', 'Bóng xanh lá'] }, { c: '#ffb020', name: ['Yellow ball', 'Bóng vàng'] }];
 const miniRamp = (h: number, c: string, grass = false) => `<svg class="sx-mini" viewBox="0 0 60 40" aria-hidden="true"><path d="M4 ${36 - h * .5}L34 36H4z" fill="#ffb347" stroke="#3b2a4f" stroke-width="2.4" stroke-linejoin="round"/><path d="M34 36h24" stroke="${grass ? '#43c463' : '#3b2a4f'}" stroke-width="${grass ? 5 : 2.4}"/><circle cx="9" cy="${36 - h * .5 - 6}" r="5" fill="${c}" stroke="#3b2a4f" stroke-width="2"/></svg>`;
-register({ id: 'sci_ramp', async run(api) {
+register({ id: 'sci_ramp', learn: true, icon: 'sci:ramp', name: () => T('Rolling Ramps', 'Dốc Lăn Bóng'), async run(api) {
   const lv = lvOf(api), n = [3, 3, 3, 4, 3][lv], lanes = [2, 2, 3, 3, 4][lv], rounds: Round[] = [];
   const RUN = 300, BASE = 70, G = 420;
   for (let r = 0; r < n; r++) {
@@ -352,7 +352,7 @@ function leverOf(lv: number, r: number): Lever {
   const [W, dB, w] = (lv === 3 ? L3 : L4)[r % 5], n = lv === 3 ? 4 : 5;
   return { W, dB, w, seats: Array.from({ length: n }, (_, k) => k + 1), n, ask: 'closest' };
 }
-register({ id: 'sci_seesaw', async run(api) {
+register({ id: 'sci_seesaw', learn: true, icon: 'sci:seesaw', name: () => T('Seesaw Lift', 'Bập Bênh Nâng Bạn'), async run(api) {
   const lv = lvOf(api), n = [3, 3, 3, 4, 3][lv], rounds: Round[] = [];
   for (let r = 0; r < n; r++) {
     const L = leverOf(lv, r), lifts = (d: number) => L.w * d > L.W * L.dB, best = L.seats.find(lifts), numbers = lv >= 3;
@@ -430,7 +430,7 @@ const SHADOW_WHY: Record<string, Pair> = {
   away: ['When the lamp moves away, it shines more from the side, so the shadow gets longer.', 'Khi đèn ra xa, ánh sáng chiếu xiên hơn, nên bóng dài ra.'],
   star: ['Light goes in a straight line from the lamp, past the top of the teddy, to the end of the shadow.', 'Ánh sáng đi thẳng từ đèn, qua đỉnh đầu gấu bông, tới cuối cái bóng.']
 };
-register({ id: 'sci_shadow', async run(api) {
+register({ id: 'sci_shadow', learn: true, icon: 'sci:shadow', name: () => T('Lamp and Shadow', 'Đèn và Bóng'), async run(api) {
   const lv = lvOf(api), rounds: Round[] = [];
   for (const R of shadowRounds(lv)) {
     let lamp: HTMLElement = null, shade: SVGPathElement = null, ray: SVGPathElement = null, rings: HTMLElement[] = [];
@@ -487,7 +487,7 @@ const bottleSVG = (fill: number, c: string) => `<svg viewBox="0 0 40 100" aria-h
 // a tapped bottle: the more water, the lower the note (the water makes it shake more slowly)
 const pitch = (fill: number) => 1100 - 640 * fill;
 const ring = (fill: number) => { const f = pitch(fill); tone(f, .9, { type: 'sine', vol: .2 }); tone(f * 2.76, .35, { type: 'sine', vol: .05 }); };
-register({ id: 'sci_sound', async run(api) {
+register({ id: 'sci_sound', learn: true, icon: 'sci:sound', name: () => T('Bottle Music', 'Nhạc Chai Nước'), async run(api) {
   const lv = lvOf(api), n = [3, 3, 4, 4, 3][lv], count = [2, 2, 3, 4, 5][lv], rounds: Round[] = [];
   for (let r = 0; r < n; r++) {
     const fills = lv <= 1 ? shuffle([.18, .86]) : lv === 2 ? shuffle([.15, .5, .85]) : lv === 3 ? shuffle([.2, .4, .6, .8]) : shuffle([.15, .32, .5, .68, .85]);

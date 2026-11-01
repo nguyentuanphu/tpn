@@ -260,8 +260,8 @@ export const GAME_LOADERS = {
     'money2.js': { ids: ['savegoal', 'pocketweek', 'pricetags', 'busfare', 'lemonade', 'party', 'recycle', 'tetmarket', 'bank', 'sharefair'], load: () => import('./money2.js') },
   'drawing.js': { ids: ["dotdot","trace","mirror","colournum","lanternart","card","sand","drawpath","shapedraw","copygrid"], load: () => import('./drawing.js') },
   'drawing2.ts': { ids: ["stamps", "weave", "mosaic", "nonla", "aodai", "kitepaint", "shades", "shadowpic", "finishpic", "scene"], load: () => import('./drawing2.js') },
+  'crafts.ts': { ids: ["lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"], load: () => import('./crafts.js') },
   'science.ts': { ids: ['sci_float', 'sci_magnet', 'sci_ramp', 'sci_seesaw', 'sci_shadow', 'sci_sound'], load: () => import('./science.js') },
   'tiengviet.ts': { ids: ['vi_tones', 'vi_build'], load: () => import('./tiengviet.js') },
-  'crafts.ts': { ids: ["lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"], load: () => import('./crafts.js') },
 
 };
