@@ -18,7 +18,7 @@ export async function reportingFlowCheck(browser: Browser): Promise<string> {
   const green=(p:number[])=>p[1]>140&&p[0]<80;
   assert.ok(green(capture.full.world),'full capture lost world when nested images were omitted');assert.ok(capture.full.control[0]>180&&capture.full.control[2]>100&&capture.full.control[1]<90,'capture lost interface');assert.ok(green(capture.scene.world)&&green(capture.scene.control),'scene capture retained interface');fs.writeFileSync(dir+'/capture.json',JSON.stringify(capture,null,2));
  }finally{await fixture.close();}
- let mode:'ok'|'hang'|'invalid'|'server-error'='ok';const requests:string[]=[],release:(()=>void)[]=[];
+ let mode:'ok'|'hang'|'invalid'|'server-error'|'limit'='ok';const requests:string[]=[],release:(()=>void)[]=[];
  const P=await open(browser,{w:430,h:873,touch:true,route:async ctx=>{
   await ctx.route('**/content/custom.json*',r=>r.fulfill({json:{}}));await ctx.route('**/api/live**',r=>r.fulfill({json:{releases:{tester:{on:true,devices:['tester000001']}}}}));
   await ctx.route('**/api/tester**',async r=>{if(r.request().method()!=='POST')return r.fulfill({json:{ok:true,mine:[],open:[]}});const body=r.request().postDataJSON();requests.push(body.clientId||'other');if(mode==='hang'){await new Promise<void>(resolve=>release.push(resolve));await r.abort().catch(()=>{});return;}if(mode==='invalid')return r.fulfill({json:{ok:true}});if(mode==='server-error')return r.fulfill({status:503,json:{error:'fixture unavailable'}});if(mode==='limit')return r.fulfill({status:429,json:{error:'too many reports today'}});return r.fulfill({json:{ok:true,rid:'receipt-'+body.clientId,k:'fixture-problem'}});});

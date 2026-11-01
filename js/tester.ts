@@ -36,7 +36,7 @@ import type { ReportEntry } from './report-outbox.js';
 type Where = { area: string; place: string; game: string; window: string; x: number; z: number };
 type Problem = { spoken?: boolean; k: string; title: string; status?: string; fixedIn?: string; n?: number; auto?: string; where?: Where };
 type TesterStatus = { open?: Problem[]; mine?: Problem[]; retest?: Problem[]; reports?: number; helped?: number; peeks?: string[] };
-type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regionOf'> & {
+type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regionOf' | 'travelTo'> & {
   playGame?: SvMain['playGame'] & { __tester?: boolean };
   tester?: TesterApi;
   autoplay?: { running(): boolean; attach?(body: HTMLElement, close: () => void): void; detach?(): void; stop?(): void; start?(items: unknown, speed: string): void; open?(): void };
@@ -340,7 +340,7 @@ async function tryAgain(p) {
   const g = gameName(p), h = G.heroes && G.heroes[0];
   if (g) { let id = g.id; if (!id) { const { GAMES } = await import('./games/registry.js'); id = Object.keys(GAMES).find(k => { try { const x = GAMES[k]; return [x.name(), x.en, x.vi].includes(g.name); } catch (e) { return false; } }); }
     if (id) { G.playGame?.(0, id, 'tester'); return; } }
-  const at = spotOf(p); if (at && h && G.travelTo) await G.travelTo(h, at.x, at.z, false);
+  const at = spotOf(p); if (at && h && G.travelTo) await (G.travelTo as unknown as (h: unknown, x: number, z: number, snapToNpc?: boolean) => Promise<unknown>)(h, at.x, at.z, false);
 }
 const fixedToSee = () => { const seen = get(KEY.seen, {}); return ((status && status.mine) || []).filter(p => ['fixed', 'confirmed'].includes(p.status) && !seen[p.k]); };
 function addUI() {
