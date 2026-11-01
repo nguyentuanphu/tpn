@@ -28,7 +28,7 @@ import { GAMES, gameOpen } from './games/frame.js';
 import { holdButton, openGrownups, openFestivals } from './ui.js';
 import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, gameInfo, withSitePlaces } from './content/activities.js';
 import { featureOn, onLive } from './custom.js';
-import { isOpen, progressOf } from './content/unlocks.js';
+import { isOpen, isHeld, progressOf, secondSetOf } from './content/unlocks.js';
 
 // a star drawn on the picture card (round I, owner: "stars without a strip, placed on the icon"): gold when earned
 const STAR = 'M12 1.8l3.1 6.4 7 1-5.1 4.9 1.2 7-6.2-3.3-6.2 3.3 1.2-7L1.9 9.2l7-1z';
@@ -80,7 +80,38 @@ export function createSimple(G) {
     const done = progressOf(hero().profile, type, area).done, game = type === 'game';
     return [{ kind: 'lock', key: type + '-' + key, icon: '\u{1F512}', name: game ? T(`${n} more to unlock`, `Còn ${n} trò để mở`) : T(`${n} more to unlock`, `Còn ${n} truyện để mở`),
       voice: game ? ['Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'] : ['Finish each story in this shelf 3 times to unlock more.', '\u0110\u1ecdc xong m\u1ed7i truy\u1ec7n trong k\u1ec7 n\u00e0y 3 l\u1ea7n \u0111\u1ec3 m\u1edf th\u00eam nh\u00e9.'],
-      stars: 0, max: 0, prog: done }];
+      stars: 0, max: 0, prog: done, type, area }];
+  }
+  // (owner, 1 Nov 2026 AEDT: "the coming soon game pad doesn't show on the Simple screen") an area with new games still
+  // held back in Studio ends with a Coming soon stop, as in Play; tapping it (or a lock stop) opens the guide below
+  function soonStop(area) {
+    const held = secondSetOf('game', area).filter(id => GAMES[id] && isHeld(id, 'game'));
+    if (!held.length) return [];
+    return [{ kind: 'lock', key: 'soon-' + area, icon: '\u{1F51C}', name: T(`${held.length} new games coming`, `Sắp có ${held.length} trò mới`),
+      voice: ['Win each game here 3 times to open the new games!', 'Thắng mỗi trò ở đây 3 lần để mở trò mới nhé!'],
+      stars: 0, max: 0, prog: progressOf(hero().profile, 'game', area).done, type: 'game', area, soon: held }];
+  }
+  // (owner, 1 Nov 2026 AEDT: "it should tell what's needed to access these additional games") the guide of a lock or
+  // Coming soon stop: the games on their way, then each game to win (or story to read) 3 times with the stars so far
+  function guide(s) {
+    const prog = progressOf(hero().profile, s.type, s.area), tale = s.type === 'tale';
+    const nameOf = id => tale ? ((G.TALES || []).find(x => x.id === id)?.title() || id) : (GAMES[id]?.name() || id);
+    const iconOf = id => tale ? firstPic(((G.TALES || []).find(x => x.id === id)?.pages || [['📖']])[0][0]) : (GAMES[id]?.icon || '\u{1F3AE}');
+    const ready = prog.perGame.filter(g => g.n >= 3).length, total = prog.perGame.length;
+    m.querySelector('.sp-guide')?.remove();
+    const g = el('div', 'sp-guide', `<div class="sp-gcard" role="dialog" aria-label="${esc(s.name)}">
+      <button class="sp-gx" aria-label="${esc(T('Close', 'Đóng'))}">✕</button>
+      <h3><span class="sp-gpic">${pic(s.icon)}</span>${esc(s.name)}</h3>
+      ${s.soon ? `<p>${T('Coming soon:', 'Sắp có:')}</p><div class="sp-gsoon">${s.soon.map(id => `<span><span class="sp-gpic">${pic(GAMES[id].icon)}</span>${esc(GAMES[id].name())}</span>`).join('')}</div>` : ''}
+      ${total ? `<p>${tale ? T('Read each of these stories 3 times to open more:', 'Đọc mỗi truyện này 3 lần để mở thêm nhé:') : T('Win each of these games 3 times to open the new games:', 'Thắng mỗi trò này 3 lần để mở trò mới nhé:')}</p>
+        <div class="sp-glist">${prog.perGame.map(x => `<div class="sp-grow${x.n >= 3 ? ' done' : ''}"><span class="sp-gpic">${pic(iconOf(x.id))}</span><b>${esc(nameOf(x.id))}</b><span class="sp-gstars">${[0, 1, 2].map(k => pic(k < x.n ? '\u2B50' : '\u2606')).join('')}</span></div>`).join('')}</div>
+        <p class="sp-gcount">${ready === total ? T('All done! The new games are on their way.', 'Xong hết rồi! Trò mới đang trên đường đến.') : T(`${ready} of ${total} done`, `Xong ${ready} trên ${total}`)}</p>`
+      : `<p>${T('They are on their way!', 'Sắp đến rồi!')}</p>`}
+    </div>`);
+    const close = () => { SFX.tap(); g.remove(); };
+    g.addEventListener('click', e => { if (e.target === g) close(); });
+    g.querySelector('.sp-gx').addEventListener('click', close);
+    m.appendChild(g);
   }
   // every stop of one tab, by area (from the one activity list)
   function areasOf(t) {
@@ -101,7 +132,7 @@ export function createSimple(G) {
       .sort((x, y) => Number(x.area.key === 'asia') - Number(y.area.key === 'asia'));
     // (round N) the Music group starts with 🎵 Songs: lullabies, village tunes and festival songs to listen to
     const songs = { kind: 'songs', key: 'songs', icon: '🎵', name: T('Songs', 'Bài hát'), voice: ['Songs', 'Bài hát'], stars: 0, max: 0 };
-    return AREAS.map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', a.key)).map(g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level, plus: lt && g.ageMin >= 5 }))).concat(lockStop('game', a.key, gamesIn(GAMES, a.key, false).filter(g => !isOpen(p, g.id, 'game', a.key)).length, a.key)) }));
+    return AREAS.map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', a.key)).map(g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level, plus: lt && g.ageMin >= 5 }))).concat(lockStop('game', a.key, gamesIn(GAMES, a.key, false).filter(g => !isOpen(p, g.id, 'game', a.key)).length, a.key)).concat(soonStop(a.key)) }));
   }
   const tabOf = t => TABS.find(y => y.key === t);
   const groupsOf = t => areasOf(t).filter(a => a.items.length);
@@ -240,7 +271,8 @@ export function createSimple(G) {
     if (busy || !s) return;
     if (s.kind === 'songs') { SFX.tap(); say(s.voice[0], s.voice[1]); G.openSongs(); return; }
     if (s.kind === 'fest') { SFX.tap(); say('Festival calendar', 'Lịch lễ hội'); openFestivals(G, 0); return; }
-    if (s.kind === 'head' || s.kind === 'lock') { SFX.tap(); say(s.voice[0], s.voice[1]); return; }
+    if (s.kind === 'head') { SFX.tap(); say(s.voice[0], s.voice[1]); return; }
+    if (s.kind === 'lock') { SFX.tap(); say(s.voice[0], s.voice[1]); guide(s); return; }
     if (!little() && sel !== idOf(s)) { // a big kid: the first tap shows it, the second one plays it
       SFX.tap(); sel = idOf(s); say(s.voice[0], s.voice[1]);
       m.querySelectorAll('.sp-stop.sel').forEach(b => b.classList.remove('sel')); if (btn) btn.classList.add('sel');

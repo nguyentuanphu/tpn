@@ -3624,6 +3624,8 @@ await check('adventure', async () => {
     return { cats: cats.length, inOrder: JSON.stringify(order) === JSON.stringify(cats), heads, missed: want.filter(id => !stops.includes(id)), notDrawn: out.notDrawn, tooBig: out.tooBig, stops: stops.length };
   });
   // places: China and India (asia) always come last
+  // (owner, 1 Nov 2026 AEDT) a lock stop says what to do: its guide lists each game to win 3 times with the stars so far
+  r.guide = await P.page.evaluate(async () => { const s = [...document.querySelectorAll('.sp-stop')].find(e => /more to unlock|trò để mở/.test(e.textContent)); if (!s) return 'no lock stop'; s.click(); await new Promise(r => setTimeout(r, 200)); const g = document.querySelector('.sp-guide'), rows = g ? g.querySelectorAll('.sp-grow').length : 0, x = g && g.querySelector('.sp-gx'), xr = x && x.getBoundingClientRect(); x && x.click(); return rows && xr.width >= 64 && !document.querySelector('.sp-guide') ? 'ok' : 'guide rows ' + rows; });
   r.placesLast = await P.page.evaluate(() => { __sv.simple.show('places'); const c = __sv.simple.view.cats; return c[c.length - 1]; });
   await P.page.evaluate(() => __sv.simple.show('games'));
   // Discover: a big picture for every area; tapping Music goes there
@@ -3663,6 +3665,7 @@ await check('adventure', async () => {
   r.big.search = await B.page.evaluate(() => [...document.querySelectorAll('.sp-found .sp-card b')].map(b => b.textContent));
   errs.push(...B.errors); await B.ctx.close();
   ok(!r.list.missing.length && !r.list.extra.length && !r.list.badArea.length, 'activity list: ' + JSON.stringify(r.list));
+  ok(r.guide === 'ok', 'lock guide: ' + r.guide);
   ok(r.walk.cats >= 5 && r.walk.heads === r.walk.cats && r.walk.inOrder && r.placesLast === 'asia' && !r.walk.missed.length && !r.walk.notDrawn.length && !r.walk.tooBig.length, 'under-5 path: ' + JSON.stringify(r.walk));
   ok(r.find.cards >= 18 && !r.find.search && r.music === 'music', 'discover: ' + JSON.stringify(r.find) + ' ' + r.music);
   ok(r.starts === 1, 'a double tap started the game ' + r.starts + ' times');
@@ -4685,7 +4688,7 @@ await check('secondset', async () => {
     C.releases.newGames = { on: true }; C.releases.newStories = { on: true }; p.unlockAll = false; p.admin = false;
     body = await hub('learn');
     const fold = body.querySelector('[data-fold]'); out.onFold = !!fold; out.onHidden = !body.querySelector('.hcard.locked'); out.onNoSoon = !body.querySelector('.hsoon [data-soon]');
-    fold?.click(); await wait(300); body = document.querySelector('.hubbody'); out.onShown = body.querySelectorAll('.hcard.locked').length;
+    fold?.click(); await wait(300); body = document.querySelector('.hubbody'); out.onShown = body.querySelectorAll('.hcard.locked').length; out.onGuide = body.querySelectorAll('.hlockguide .hsoonrow').length; // (owner, 1 Nov 2026 AEDT) the unfolded padlock says what to do first
     body = await hub('tales'); const tf = body.querySelector('[data-fold-tale]'); out.taleFold = !!tf; tf?.click(); await wait(300); out.taleShown = document.querySelectorAll('.hubbody .talecard.locked').length;
     await shut();
     return out;
