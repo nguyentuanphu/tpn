@@ -4046,7 +4046,7 @@ await check('school', async () => {
   // "Yes, let's learn!" opens the Play hub on the Fun learning tab
   const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
-    const G = __sv, W = await import('/js/world.js'), S = G.school, out = { bad: [] }; await G.solidsReady;
+    const G = __sv, W = await import('/js/world.js'); await G.schoolReady; const S = G.school, out = { bad: [] }; await G.solidsReady;
     // ("Where is…?" switched on as the wayfind check does: Studio switch 'wayfind')
     const C = await import('/js/custom.js'); C.CUSTOM.releases = { ...(C.CUSTOM.releases || {}), wayfind: { on: true, controlVersion: 1 } };
     for (let k = 0; k < 50 && !G.wayfind; k++) await new Promise(r => setTimeout(r, 100));
@@ -4088,7 +4088,7 @@ await check('school', async () => {
   ok(r.place && r.where && r.flyTo === 'school', `on the map ${r.place}, in Where is ${r.where}, flying there lands by ${r.flyTo}`);
   ok(r.tris < 3000, `the school costs ${r.tris} triangles (want under 3000)`);
   // a real tap: walk up to her, tap the Act button, hear her greeting, tap "Yes, let's learn!"
-  await P.page.evaluate(() => { const G = __sv, h = G.heroes[0], s = G.school.spot; h.place(s.x, s.z - .6); h.yaw = 0; G.paused = false; });
+  await P.page.evaluate(async () => { const G = __sv; await G.schoolReady; const h = G.heroes[0], s = G.school.spot; h.place(s.x, s.z - .6); h.yaw = 0; G.paused = false; });
   const act = await P.page.waitForFunction(() => { const b = document.querySelector('.hud .act'); return b && !b.hidden && /Tam/.test(b.textContent) && b.getBoundingClientRect(); }, null, { timeout: 15000 }).then(() => P.page.evaluate(() => { const q = document.querySelector('.hud .act').getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2, w: q.width, h: q.height }; }), () => null);
   ok(act, 'no Act button by Cô Tam');
   ok(act.w >= 44 && act.h >= 44, `the Act button is ${Math.round(act.w)}×${Math.round(act.h)} px`);

@@ -21,13 +21,8 @@ import { dist2 } from './util.js';
 import { TOWN_SCHOOL } from './content/map.js';
 
 /** the school's place: the building's middle (x, z), its size, the yard in front (north, -z) and where Cô Tam stands */
-export const SCHOOL = { x: TOWN.x + TOWN_SCHOOL.off[0], z: TOWN.z + TOWN_SCHOOL.off[1], w: TOWN_SCHOOL.w, d: TOWN_SCHOOL.d, yard: TOWN_SCHOOL.yard,
-  get front() { return this.z - this.d / 2; },
-  get teacher() { return { x: this.x - 1.5, z: this.front - .9 }; },
-  /** where the child stands to talk to her, on the yard */
-  get spot() { return { x: this.x - 1.5, z: this.front - 2.1 }; },
-  /** the school's point on the map and its floating name: the yard, east of the door (so the name is not over Cô Tam's) */
-  get place() { return { x: this.x + 2, z: this.front - 2.4 }; } };
+import { SCHOOL } from './content/school-place.js';
+export { SCHOOL };
 export const SCHOOL_GREETING = ['Welcome to the Fun Learning School! Shall we learn something fun today?', 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?'];
 
 // the building, front facing +z (turned to face the road when placed)

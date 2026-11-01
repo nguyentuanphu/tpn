@@ -2,7 +2,8 @@ import { isOpen, isHeld, progressOf, secondSetOf } from './content/unlocks.js';
 // Screens and pop-ups: title, who's playing, grown-ups settings, photo editor, NPC dialogue,
 // the Sparkle Pad (map, backpack, adventure log, album, camera), cooking, shop and online play.
 import { AREAS, gamesIn, linksIn, gameInfo, withSitePlaces } from './content/activities.js';
-import { CORNERS } from './content/hocvui.js';
+// (the Học vui corners, as in js/content/hocvui.ts; written here so the content loads only with its games: PERF-001)
+const CORNERS = ['hv_vi', 'hv_en', 'hv_math', 'hv_sci'] as const;
 import type { Profile } from '../types/save.js';
 import type { SvMain } from './main.js';
 import { T, applyLang, nm } from './i18n.js';
@@ -49,7 +50,7 @@ import { LEARN } from './words2.js';
 import { SONG_GROUPS, SONG_LIST, familySongs } from './content/songs.js';
 import { originFlags, ICONS } from './icons.js';
 import { pic } from './art.js';
-import { COMPANIONS } from './content/chapters.js';
+import { COMPANIONS } from './content/companions.js';
 
 const PET_ICON = { puppy: '🐶', kitty: '🐱', bunny: '🐰', panda: '🐼', joey: '🦘', calf: '🐃' };
 // the companion's and pets' hats (js/kidplay.js HATS), drawn as in the shop's Companion tab

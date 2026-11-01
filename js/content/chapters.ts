@@ -66,10 +66,9 @@ export const STORY_TALES: Record<string, StoryTale> = {
     ['🥁🎆', 'That night Lotus Village held its festival: drums, games and lanterns everywhere. One lantern is home. Many more to find!', 'Đêm đó Làng Sen mở hội: tiếng trống, trò chơi và đèn lồng khắp nơi. Một chiếc đèn đã về nhà. Còn nhiều chiếc nữa đang chờ!']] }
 };
 
-export const COMPANIONS = {
-  firefly: { icon: '✨', en: 'Sparkle the firefly', vi: 'Đom đóm Lấp Lánh', name: 'Lấp Lánh' },
-  dragon: { icon: '🐉', en: 'Little Dragon', vi: 'Rồng con', name: 'Rồng con' }
-};
+// (the companions are in their own small file: the Bag needs them at start, the story's text can wait; PERF-001)
+import { COMPANIONS } from './companions.js';
+export { COMPANIONS };
 
 // what is said during the story's actions ([en, vi]; no names, so the recordings fit every child)
 export const STORY_LINES: Record<string, StoryPair> = {

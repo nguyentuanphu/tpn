@@ -39,7 +39,8 @@ import { openHowTo } from './howto.js';
 import { createFarm, jobProgress, ensureJobs } from './farm.js';
 import { createPlaces } from './places.js';
 import { createTown } from './town.js';
-import { createSchool, SCHOOL } from './school.js';
+import { SCHOOL } from './content/school-place.js';
+import type { createSchool } from './school.js';
 import { createRegions, LANDMARKS } from './regions.js';
 import { createGathering } from './gather.js';
 import { tickAnimals } from './animals.js';
@@ -211,7 +212,7 @@ export interface SvMain {
   placeBook?: ReturnType<typeof createPlaceBook>; places?: ReturnType<typeof createPlaces>; plots?: ReturnType<typeof createPlots>;
   reeds?: ReturnType<typeof createReeds>; report?: ReturnType<typeof createReport>; secrets?: ReturnType<typeof createSecrets>;
   seeThrough?: ReturnType<typeof createSeeThrough>; shop?: ReturnType<typeof import('./shop.js').createShop>; signposts?: ReturnType<typeof createSignposts>;
-  simple?: ReturnType<typeof createSimple>; town?: ReturnType<typeof createTown>; school?: ReturnType<typeof createSchool>; weather?: ReturnType<typeof createWeather>;
+  simple?: ReturnType<typeof createSimple>; town?: ReturnType<typeof createTown>; school?: ReturnType<typeof createSchool>; schoolReady?: Promise<unknown>; weather?: ReturnType<typeof createWeather>;
   yard?: ReturnType<typeof createYard>; chests?: ReturnType<typeof createTwinChests>; claims?: ReturnType<typeof createClaims>;
   coop?: ReturnType<typeof createCoop>; familyCards?: ReturnType<typeof createFamilyCards>; parents?: ReturnType<typeof import('./parents.js').createParents>;
   boxes?: ReturnType<typeof import('./boxes.js').createBoxes>; surprises?: ReturnType<typeof import('./surprises.js').createSurprises>; myHouse?: ReturnType<typeof createMyHouse> | null;
@@ -1927,8 +1928,9 @@ bootMark('people'); G.farm = createFarm(G); world.updaters.push(G.farm.update); 
 G.places = createPlaces(G); world.updaters.push(G.places.update);
 world.heroesNear = (x, z, r) => G.heroes.some(h => dist2(h.pos.x, h.pos.z, x, z) < r);   // (Round V) a ridden animal goes home out of every child's sight
 G.town = createTown(G);
-G.school = createSchool(G); // (Học vui phase 4) Trường Học Vui at the west end of Two Homes Street, Cô Tam at its door (js/school.js)
-if (G.school) Object.assign(G.PLACES.find(p => p.key === 'school'), G.school.place);
+// (Học vui phase 4) Trường Học Vui at the west end of Two Homes Street, Cô Tam at its door (js/school.js); loaded after the
+// title screen, so it is not in the start-up download (PERF-001); G.schoolReady says when it stands
+G.schoolReady = import('./school.js').then(m => { G.school = m.createSchool(G); if (G.school) Object.assign(G.PLACES.find(p => p.key === 'school'), G.school.place); return G.school; });
 G.GAMES_ICON = id => (GAMES[id] || {}).icon || "🎮";
 createRegions(G);
 G.dialog = (name, lines, choices) => dialog(name, lines, choices);

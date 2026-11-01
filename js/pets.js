@@ -11,7 +11,8 @@ import { animalModel, PETS } from './farm.js';
 import { fmt, spoken } from './money.js';
 import { el, esc, dist2, wait } from './util.js';
 import { modal, toast } from './ui.js';
-import { buildHat } from './kidplay.js';
+// (PERF-001) the hats' drawings (js/kidplay.js) load when a pet first wears one, not with the game's start
+let buildHat = null;
 
 export const MAX_PETS = 2;
 // little pets were easy to lose in the grass: they are shown a bit bigger (the smallest the most)
@@ -20,6 +21,8 @@ const PET_SCALE = { puppy: 1.3, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4
 // it sits on top of the head, at the front of the model, sized to the pet
 const _box = new THREE.Box3();
 export function putHat(obj, id) {
+  if (id && !buildHat) { import('./kidplay.js').then(m => { buildHat = m.buildHat; if (obj.userData.wantHat === id) putHat(obj, id); }); obj.userData.wantHat = id; return null; }
+  obj.userData.wantHat = id;
   if (obj.userData.hat) { obj.remove(obj.userData.hat); obj.userData.hat = null; }
   if (!id) return null;
   const at = obj.position.clone(), rot = obj.rotation.y; obj.position.set(0, 0, 0); obj.rotation.y = 0; obj.updateMatrixWorld(true);
