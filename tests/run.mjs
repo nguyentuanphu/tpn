@@ -1834,8 +1834,12 @@ await check('festhunt', async () => {
     // the hunt: every festival hides five things when it is on
     const H0 = () => G.festivals.hunt(); for (let k = 0; k < 20 && !(H0() && H0().items().length); k++) await wait(300);
     const hunted = [];
-    for (const F of FESTCAL) { C.releases = { ['fest_' + F.id]: { on: true, start: ymd, days: 1 } }; G.festivals.rebuild(); await wait(250);
-      const n = H0() ? H0().items().filter(i => i.F === F.id).length : 0; if (n !== 5) bad.push(`${F.id}: ${n} hunt things, not 5`); else hunted.push(F.id);
+    // (1 Nov 2026 AEDT) the other festivals are switched off while one is tried: around 1 Nov the real Diwali build-up
+    // filled India, Holi's place, so Holi (never at the same time in real life) had no room for its hunt
+    for (const F of FESTCAL) { C.releases = Object.fromEntries(FESTCAL.map(x => ['fest_' + x.id, x === F ? { on: true, start: ymd, days: 1 } : { on: false }])); G.festivals.rebuild();
+      // (1 Nov 2026 AEDT) the hunt is set after its module loads and the place is decorated: wait for it (up to 4 s) rather
+      // than a fixed 250 ms, which was too short beside the real Diwali build-up around 1 Nov
+      let n = 0; for (let k = 0; k < 16; k++) { await wait(250); n = H0() ? H0().items().filter(i => i.F === F.id).length : 0; if (n === 5) break; } if (n !== 5) bad.push(`${F.id}: ${n} hunt things, not 5`); else hunted.push(F.id);
       if (!HUNT[F.id]) bad.push(`${F.id}: nothing to hunt`); }
     out.hunted = hunted.length;
     // Tết's hunt: four say "keep looking", the fifth gives the keepsake and the badge; the Passport shows it
