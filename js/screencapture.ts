@@ -12,9 +12,12 @@ const inlineStyle = (style: CSSStyleDeclaration) => Array.from(style, key => `${
 // getComputedStyle for each of its thousands of nodes and drawings, ran as one block and no frame was drawn until it
 // ended; the child's taps on the play button queued up behind it.) The copy now gives the browser a turn every few ms,
 // so frames keep coming and taps are answered while a report is being made.
-let sliceAt = 0;
-const SLICE_MS = 8;
-export const captureBreathe = async () => { if (performance.now() - sliceAt < SLICE_MS) return; await new Promise(r => setTimeout(r, 0)); sliceAt = performance.now(); };
+// (1 Nov 2026 AEDT) the slice of work grows with the browser's turn: when a frame takes long to draw (two players on one
+// tablet), a fixed 8 ms slice made the copy wait for a frame every 8 ms and the report panel took 43 s to open. Now the
+// copy works at least as long as it last waited (8 to 120 ms), so it never takes more than about twice its own time and no
+// pause is longer than 120 ms
+let sliceAt = 0, slice = 8;
+export const captureBreathe = async () => { if (performance.now() - sliceAt < slice) return; const t0 = performance.now(); await new Promise(r => setTimeout(r, 0)); sliceAt = performance.now(); slice = Math.max(8, Math.min(120, sliceAt - t0)); };
 // (#745) the copy of each element carried every one of its ~350 resolved styles: 2 MB of text for a game screen, which
 // the browser then had to read back as one picture (over a second on its own). A style is now left out where the copy
 // gets the same value anyway: an inherited one equal to its parent's, any other equal both to the browser's own default
