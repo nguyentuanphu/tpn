@@ -1748,6 +1748,23 @@ await check('memoryfps', async () => {
   return `Talent, ${r.cards} cards, CPU 4x slower: ${r.fps} frames a second, no moving stars on face-down cards`;
 });
 
+await check('cairangwalk', async () => {
+  // (#726, 1 Nov 2026 AEDT, tester at 166,161: "stuck, can't get past here") from the meadow (172,168) a child walks into
+  // Sài Gòn past the Cái Răng floating market, and up close to its boats: only the boats are solid, not a 6 m circle
+  const P = await open(b, { w: 700, h: 500 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => { const G = __sv, W = await import('/js/world.js'); await G.solidsReady;
+    const city = W.CITIES.find(c => c.id === 'saigon'), lm = (await import('/js/regions.js')).LANDMARKS.find(l => l.id === 'cairang');
+    const walk = (a, t, pad = 30) => { const x0 = Math.min(a.x, t.x) - pad, z0 = Math.min(a.z, t.z) - pad, x1 = Math.max(a.x, t.x) + pad, z1 = Math.max(a.z, t.z) + pad, N = Math.ceil((x1 - x0) / .5) + 1, M = Math.ceil((z1 - z0) / .5) + 1, seen = new Uint8Array(N * M), q = [];
+      const push = (i, j) => { if (i < 0 || j < 0 || i >= N || j >= M || seen[j * N + i]) return; seen[j * N + i] = 1; if (G.goodSpot(x0 + i * .5, z0 + j * .5)) q.push([i, j]); };
+      push(Math.round((a.x - x0) / .5), Math.round((a.z - z0) / .5));
+      for (let h = 0; h < q.length; h++) { const [i, j] = q[h]; if (Math.hypot(x0 + i * .5 - t.x, z0 + j * .5 - t.z) < 1.2) return true; push(i + 1, j); push(i - 1, j); push(i, j + 1); push(i, j - 1); } return false; };
+    const big = G.world.colliders.filter(o => lm && Math.hypot(o.x - (lm.mx ?? lm.x), o.z - (lm.mz ?? lm.z)) < 2 && o.r >= 5).length;
+    return { toCity: walk({ x: 172, z: 168 }, { x: 166, z: 161 }) && walk({ x: 166, z: 161 }, { x: city.x, z: city.z }, 40), big, market: lm ? [lm.mx ?? lm.x, lm.mz ?? lm.z] : null }; });
+  await P.ctx.close();
+  ok(r.toCity && r.big === 0, JSON.stringify(r));
+  return 'from the meadow into Sài Gòn past the floating market; only its boats are solid';
+});
+
 await check('launchbanner', async () => {
   // (owner, 1 Nov 2026 AEDT) Studio's launch date on the website: Coming soon with the days left before it, Open now with
   // Play now from it, nothing while no date is set; in English and Vietnamese
