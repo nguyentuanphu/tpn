@@ -56,12 +56,12 @@
   },
   "companionGrow": {
    "on": true,
-   "start": "2026-12-12",
+   "start": "2026-11-01",
    "newDays": 7
   },
   "saveGoal": {
    "on": true,
-   "start": "2026-12-12",
+   "start": "2026-11-01",
    "newDays": 7
   },
   "priceTags": {

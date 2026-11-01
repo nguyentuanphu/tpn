@@ -1661,7 +1661,7 @@ await check('testerrewards', async () => {
   const out = [];
   for (const [w, h, touch, name] of [[390, 844, true, 'phone'], [820, 1180, true, 'tablet'], [1180, 760, false, 'computer']]) {
     // (the website is pretended before the page loads: the device asks for its status as soon as it starts)
-    const P = await open(b, { w, h, touch, pre: testerPre({ on: true, devices: ['tester000001'] }, ACCEPTED), route: ctx => testerSite(ctx, () => ({ mine: [{ k: 'bbbbbbbbbbbbbbbb', title: 'The bridge floats', status: 'fixed', fixedIn: 'r67', kind: 'looks', spoken: true }], open: [], retest: [], helped: 10, helpedKinds: ['broken', 'looks', 'words', 'sound', 'idea'], reports: 12, star: true })) });
+    const P = await open(b, { w, h, touch, pre: testerPre({ on: true, devices: ['tester000001'] }, ACCEPTED), route: ctx => testerSite(ctx, () => ({ mine: [{ k: 'bbbbbbbbbbbbbbbb', title: 'The bridge floats', status: 'fixed', fixedIn: 'r67', kind: 'looks', spoken: true, where: { game: 'counting', x: 0, z: 0 } }], open: [], retest: [], helped: 10, helpedKinds: ['broken', 'looks', 'words', 'sound', 'idea'], reports: 12, star: true })) });
     const coins0 = await P.page.evaluate(() => JSON.parse(localStorage.getItem('sv2_farm') || '{}').coins || 0);
     await P.page.waitForFunction(() => window.__sv.testerRewards, null, { timeout: 15000 });
     for (let i = 0; i < 40; i++) { await P.page.waitForTimeout(500); const d = await P.page.$('.dialog'); if (d && /Ông Cú|Ong Cu/.test(await d.innerText())) break; await P.page.evaluate(() => document.querySelectorAll('.reward').forEach(r => r.click())); }
@@ -1674,12 +1674,15 @@ await check('testerrewards', async () => {
     await clear(P.page); await P.page.evaluate(async()=>{await (await import('/js/tester.js')).openPanel(0,'fixed');});
     await P.page.waitForSelector('.testing-fixed:not([hidden]) [data-fok="1"]');
     const fixedList=await P.page.evaluate(()=>({targets64:[...document.querySelectorAll('.testing-fixed button')].every(b=>{const r=b.getBoundingClientRect();return r.height>=64&&r.width>=64}),rows:document.querySelectorAll('.testing-fixed [data-fok="1"]').length,coins:document.querySelector('.tm-coins')?.textContent,badge:document.querySelector('.z-lb .lb-ok')?.textContent,legacy:/\br67\b/.test(document.querySelector('.tpanel').textContent),popup:!!document.querySelector('.tfixed'),linked:document.querySelector('[data-test-tab="fixed"]')?.getAttribute('aria-controls')==='testing-fixed'}));
+    const again=await P.page.evaluate(()=>!!document.querySelector('.testing-fixed [data-again]'));if(!again)out.push(name+': no Try again on a fixed problem with its game'); // (owner, 1 Nov 2026 AEDT)
     if(!fixedList.targets64||fixedList.rows!==1||!fixedList.coins?.includes('+25')||fixedList.badge!=='1'||fixedList.legacy||fixedList.popup||!fixedList.linked)out.push(name+': fixed list '+JSON.stringify(fixedList));
     await P.page.locator('.testing-fixed [data-fok="1"]').click();
     const coinsOnce=await P.page.evaluate(async()=>{await (await import('/js/tester.js')).refresh();return (await import('/js/state.js')).farm.coins});
     await P.page.waitForTimeout(600);
     const afterCheck=await P.page.evaluate(async()=>({coins:(await import('/js/state.js')).farm.coins,badgeHidden:document.querySelector('.z-lb .lb-ok')?.hidden,fixedCount:document.querySelector('[data-test-tab=fixed]')?.textContent}));
     if(afterCheck.coins!==coinsOnce||!afterCheck.badgeHidden||!/\(0\)/.test(afterCheck.fixedCount))out.push(name+': answered fix repeated '+JSON.stringify(afterCheck));
+    // (owner, 1 Nov 2026 AEDT) Try again opens the problem's game straight away
+    if(name==='computer'){await clear(P.page);const opened=await P.page.evaluate(async()=>{const T=await import('/js/tester.js');localStorage.removeItem('sv2_tester_seen');await T.refresh();await T.openPanel(0,'fixed');await new Promise(r=>setTimeout(r,400));const b=document.querySelector('.testing-fixed [data-again]');if(!b)return 'no button';b.click();for(let k=0;k<40;k++){await new Promise(r=>setTimeout(r,200));if(document.querySelector('.gl'))return 'game';}return 'no game';});if(opened!=='game')out.push('Try again: '+opened);await P.page.evaluate(()=>document.querySelector('.gl .gl-x')?.click());await P.page.waitForTimeout(500);}
     // the Tester's Corner and the badge drawn on the shirt
     await clear(P.page); await P.page.evaluate(() => __sv.testerRewards.corner()); await P.page.waitForSelector('.tcorner .tc-badge.on', { timeout: 5000 }).catch(() => { });
     const c = await P.page.evaluate(() => { const card = document.querySelector('.tcorner .card'), r = card && card.getBoundingClientRect(); return { on: document.querySelectorAll('.tcorner .tc-badge.on').length, st: document.querySelectorAll('.tcorner .tc-st.on').length, fixed: document.querySelectorAll('.tcorner .tm-row').length, wide: card ? card.scrollWidth <= card.clientWidth + 2 && r.right <= innerWidth + 1 : false }; });
