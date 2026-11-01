@@ -5,10 +5,10 @@
     "sampleRate": 16000,
     "channels": 1
   },
-  "units": 7434,
-  "masterBytes": 480626669,
-  "deliveryBytes": 97698003,
-  "signature": "498e91123114ee82d702fb8f119ded5ca76aad2dad588883ef915814e4b3b0b7",
+  "units": 7438,
+  "masterBytes": 480829557,
+  "deliveryBytes": 97739511,
+  "signature": "77f298c48e53b4a30bdb66fd2f1ab11dc327691dfde5fc42e057af026288abeb",
   "fullDecode": "passed for every newly encoded clip; resumed clips verified against their completed encoding receipts",
   "originalPackageBackup": "temp/hanoi-originals-VFBnNA",
   "files": {
@@ -60254,6 +60254,42 @@
       "deliveryBytes": 5697,
       "deliveryDuration": 1.368,
       "inventory": "docs/voice-recording-delta/round-20261101.json"
+    },
+    "64fefb5f-1cd8b2e7": {
+      "masterSha256": "90959ea0440efa34e40d05570509eb1993ec513d3b7de588e51daa3408840d9f",
+      "masterBytes": 47065,
+      "masterDuration": 2.324898,
+      "deliverySha256": "86a72a4037f55b42cb52ec58b6a7098043e9f63b6b6f0ce41f707361c2f0ef5d",
+      "deliveryBytes": 9585,
+      "deliveryDuration": 2.34,
+      "inventory": "docs/voice-recording-delta/round-20261101b.json"
+    },
+    "bdc72e1f17cc549b": {
+      "masterSha256": "7a5c7ff1f2640701a9bf87e6161ae458f3d5cd833eca5cbd3401fe167b7d71a8",
+      "masterBytes": 96175,
+      "masterDuration": 4.780408,
+      "deliverySha256": "5e38541f82901a159c76551c5dafeae2c0e6867cde04a560e01865954455fd2d",
+      "deliveryBytes": 19521,
+      "deliveryDuration": 4.824,
+      "inventory": "docs/voice-recording-delta/round-20261101b.json"
+    },
+    "f13525dd32bc2252": {
+      "masterSha256": "9a3a00f8004d5aa3dc87e7eadf0062baa3eeb703633e6ac405a8c66c7e5c5ee9",
+      "masterBytes": 27212,
+      "masterDuration": 1.332245,
+      "deliverySha256": "726ad08cb270550acfbed6b11eb45b82e103dfa925d1357ba157aa105904c6b4",
+      "deliveryBytes": 5697,
+      "deliveryDuration": 1.368,
+      "inventory": "docs/voice-recording-delta/round-20261101b.json"
+    },
+    "2eb1a90a2d432244": {
+      "masterSha256": "82210452aa291be50232a39bbcdda51be0f11667e49bff1d9bab6e7392c16749",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "c623e1e72ba2726cc8943cb38b1c380f61925ef4b534b4f001e653774f3657a5",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/round-20261101b.json"
     }
   }
 }
