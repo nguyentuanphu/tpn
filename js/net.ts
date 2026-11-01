@@ -243,9 +243,10 @@ export const Net = {
     // (r63, owner: "the microphone should always be off until the child turns it on"; on iPhone a try without a tap
     // could hang and every later tap did nothing) the microphone is asked for only by a tap on Mic (HUD) or in Friends
     this.close(true); const generation=this._roomGeneration;
-    await prepare().catch(() => { }); if(generation!==this._roomGeneration||this._off())return null;
+    const slow = (step: string, t0: number) => { const ms = Math.round(performance.now() - t0); if (ms > 150) (globalThis as { svTrail?: (k: string, s: string) => void }).svTrail?.('net', `host ${step} ${ms} ms`); }; // (#739)
+    let t0 = performance.now(); await prepare().catch(() => { }); slow('prepare', t0); if(generation!==this._roomGeneration||this._off())return null;
     if (!this.mic) this.emit('status', { key: 'mictap' }); this.setMuted(true);   // (Round V, owner 13 Oct) the microphone is always off when a room is made or joined: a tap turns it on
-    this.role = 'host'; const greeting=await this._withPub(hello);
+    this.role = 'host'; t0 = performance.now(); const greeting=await this._withPub(hello); slow('keys', t0);
     if(generation!==this._roomGeneration||this.role!=='host'||this._off())return null;
     this.hello=greeting; this._since = Date.now();
     this.secret = b64(rnd(32));
