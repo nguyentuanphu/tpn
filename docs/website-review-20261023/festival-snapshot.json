@@ -1,5 +1,5 @@
 {
-  "source": "f5767238d1e9f4f398c2f8c8c68f63de138af343",
+  "source": "73c52d449595932eb541770e7806e3c82df941f4",
   "festivals": [
     {
       "id": "tet",
@@ -2704,6 +2704,78 @@
         "In Lá"
       ],
       "icon": "🍃",
+      "origin": null
+    },
+    {
+      "id": "sci_float",
+      "name": [
+        "Float or Sink?",
+        "Nổi hay Chìm?"
+      ],
+      "icon": "sci:float",
+      "origin": null
+    },
+    {
+      "id": "sci_magnet",
+      "name": [
+        "Magnet Pull",
+        "Nam Châm Hút"
+      ],
+      "icon": "sci:magnet",
+      "origin": null
+    },
+    {
+      "id": "sci_ramp",
+      "name": [
+        "Rolling Ramps",
+        "Dốc Lăn Bóng"
+      ],
+      "icon": "sci:ramp",
+      "origin": null
+    },
+    {
+      "id": "sci_seesaw",
+      "name": [
+        "Seesaw Lift",
+        "Bập Bênh Nâng Bạn"
+      ],
+      "icon": "sci:seesaw",
+      "origin": null
+    },
+    {
+      "id": "sci_shadow",
+      "name": [
+        "Lamp and Shadow",
+        "Đèn và Bóng"
+      ],
+      "icon": "sci:shadow",
+      "origin": null
+    },
+    {
+      "id": "sci_sound",
+      "name": [
+        "Bottle Music",
+        "Nhạc Chai Nước"
+      ],
+      "icon": "sci:sound",
+      "origin": null
+    },
+    {
+      "id": "vi_tones",
+      "name": [
+        "Tone Detective",
+        "Thám Tử Dấu Thanh"
+      ],
+      "icon": "vi:tones",
+      "origin": null
+    },
+    {
+      "id": "vi_build",
+      "name": [
+        "Build a Syllable",
+        "Bé Ghép Vần"
+      ],
+      "icon": "vi:build",
       "origin": null
     }
   ],

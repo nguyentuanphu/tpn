@@ -97,6 +97,7 @@ round); the full suite green before a report; times in AEST; no keys or personal
 All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed` after every merge (it always includes `types unit arch rules`).
 
 ## Owner's decisions
+- 2 November 2026 AEDT (pop-up answers on the v1.06 round report): "Sửa hết rồi deploy" (fix everything, then deploy) and the version v1.06. Release fixes every red check on GitHub and deploys once the full suite is green; perf's start-up download (over its ratchet on v1.05 too, +42 KB this round) stays for the next round's start-up work.
 - 1 November 2026 AEDT (after v1.05, pop-up answer "làm tất cả"): the next round fixes every open bug: the seven tester reports on v1.05 (#738-#745: pets and companion merged into one renamed Bag section; accepting a game invite opens the game; every play-together game inside Play together, and "follow" on the friend; play again after playing with a friend stays in the game; a friend's driving is seen; the 2-3 s freezes), the ResizeObserver false reports, the autoplay reports, festivalsync (#737) and the older bugs. It also: (1) audits every game's difficulty levels so each level really changes the play and the look; (2) adds a hardest level, Talent, for gifted children; (3) checks every Play game shows on the Simple screen when it is switched on; (4) adds a new tab for learning Vietnamese and English in a fun way, plus maths and physics; (5) checks that NPCs say their facts (science and physics facts were asked for earlier but the owner did not hear any).
 - 1 November 2026 AEDT (pop-up answers): the learning space is "Cả hai": a Learn tab in Play for quick entry AND a school in the valley that leads to the same lessons (Tiếng Việt, English, Maths, Science), short 3-5 minute lessons with voice and stars, levels by age including Talent. Physics is taught as playable experiments (pop-up answer "Thí nghiệm chơi được (Recommended)"): float or sink, magnets, slopes and rolling, levers, light and shadow, sound; the child tries, guesses, then sees the result.
 - 1 November 2026 AEDT (pop-up answers): villager talk opens in v1.06 (was held to 19 Dec 2026; "Mở ngay trong v1.06 (Recommended)"), with the 18 drafted science and physics facts added and more written to reach about 40 lines, recorded in both languages. The Simple screen shows every switched-on game like Play, also to under-5s, with a small "5+" tag on the games for 5 and up (owner's own answer: "Hiện đủ nhưng để tag cho 5+"). The 28 ResizeObserver reports (#695-#724 except #703) were closed as browser notices from one v1.03 device.
@@ -568,3 +569,15 @@ independently; do not report it as passed until actual artifacts are inspected.
   battery pass; startup first ready 35.2 s over 28.0 s (main 36.7 s, also over). Orchard check failed 1 of 3 locally
   (a test page closed early), green on its own workflow. After the yes: version set (sw.ts, js/build.ts,
   studio/version.json), website re-synced and recorded as reviewed (source links only).
+
+- **v1.06, owner's "yes, deploy" once everything is fixed (2 Nov 2026 AEDT, pop-up: "Sửa hết rồi deploy", version v1.06).** PR #779.
+  Fun learning tab (four corners, six science experiments, Tone Detective, Build a Syllable), Trường Học Vui with Cô Tam,
+  four levels in every game with Talent for big kids, villagers' science facts, Simple screen shows every game with 5+ tags,
+  Coming soon and unlock guides, Pets & Buddy in the Bag, coin goal on every device, Studio launch date for the website,
+  real photos for every landmark and symbol animal, tester panel Try again / Go there / real send reasons, play-together
+  fixes (#740-#744, passengers, Caro with three), report picture without freezes (#745) and quick in two-player mode,
+  auto play paused while hidden, festivalsync's fixed date. GitHub full suite at cc46c8017: 291/293 (preload, ladybugsplit
+  fixed in e89a2ef74; ownerautoplay2x passed on its second try). Local: battery and startup pass; perf startMB 2.73 over
+  its ratchet (v1.05's main is over too; +42 KB this round). Lê Minh: 224 Vietnamese lines recorded by the reviewed
+  workflow; voiceroutes 0 missing. Open: #729/#734 (Memory Match frame rate, needs a real device), #726 (walk onto the
+  Cái Răng floating market: a World decision), #375 (report screen size), #739 (iPhone freeze, no clue in the log).
