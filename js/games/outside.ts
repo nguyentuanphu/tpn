@@ -3,6 +3,11 @@ import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el, wait, rand, shuffle } from '../util.js';
 
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
+// get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
+
 let styled = false;
 function style() {
   if (styled) return; styled = true;
@@ -38,7 +43,9 @@ register({
   async run(api) {
     style();
     api.say('Your friends are hiding! Look behind the trees to find them.', 'Các bạn đang trốn! Tìm sau những cái cây nhé.');
-    const target = api.little ? 3 : 5;
+    // more friends and more trees each level; on Talent a friend may creep to another tree after an empty look
+    const target = lv(api, 3, 4, 5, 6, 6), nTrees = lv(api, 3, 4, 5, 6, 6);
+    mark(api, target, nTrees, api.talent ? 'sneak' : '');
     api.dots(target, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
@@ -46,13 +53,13 @@ register({
     let found = 0;
     while (found < target && !api.closed) {
       stage.innerHTML = '';
-      const trees = shuffle(spots).slice(0, api.little ? 3 : 4 + (api.level >= 3 ? 1 : 0)).map(([x, y], i) => {
+      const trees = shuffle(spots).slice(0, nTrees).map(([x, y], i) => {
         const b = el('button', 'out-float', pic(i % 2 ? '🌲' : '🌳'));
         b.style.left = x + 'px'; b.style.top = y + 'px'; b.style.fontSize = '52px';
         b.setAttribute('aria-label', T('Tree', 'Cái cây'));
         stage.appendChild(b); return b;
       });
-      const hiding = trees[Math.floor(Math.random() * trees.length)];
+      let hiding = trees[Math.floor(Math.random() * trees.length)];
       api.plan(() => hiding.isConnected && !hiding.disabled ? hiding : null, { maxActions: 8 });
       for (;;) {
         const tapped = await tapOne<HTMLButtonElement>(trees.filter(t => !t.disabled), api);
@@ -61,6 +68,9 @@ register({
         if (tapped === hiding) break;
         tapped.style.opacity = '.45'; api.sfx.shut();
         api.say('Not here!', 'Không có ở đây!');
+        // Talent: the friend may sneak to another tree nobody has looked behind yet
+        const free = trees.filter(t => !t.disabled && t !== hiding);
+        if (api.talent && free.length > 1 && Math.random() < .5) hiding = free[Math.floor(Math.random() * free.length)];
       }
       hiding.innerHTML = pic('🙈'); api.sfx.tada();
       api.say('Found you!', 'Tìm thấy rồi!');
@@ -82,13 +92,15 @@ register({
   async run(api) {
     style();
     api.say('Tap the glowing friend to say Duck. When you like, tap Goose and run!', 'Chạm bạn đang sáng để nói Vịt. Khi nào thích, chạm Ngỗng rồi chạy nhé!');
-    const rounds = api.little ? 3 : 4;
+    // more rounds and a bigger circle each level; on Talent only the first friend glows, then you keep the place yourself
+    const rounds = lv(api, 3, 3, 4, 5, 6), players = lv(api, 5, 5, 6, 7, 8);
+    mark(api, rounds, players, api.talent ? 'noglow' : '');
     api.dots(rounds, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
     const controls = el('div', 'out-controls'); wrap.appendChild(controls);
     const goose = el('button', 'out-btn', `${pic('🦆')} <span>${T('Goose!', 'Ngỗng!')}</span>`); controls.appendChild(goose);
-    const players = 5 + (api.level >= 3 ? 1 : 0), radius = 95, cx = 135, cy = 125;
+    const radius = 95, cx = 135, cy = 125;
     const kids = Array.from({ length: players }, (_, i) => {
       const ang = -Math.PI / 2 + (i * 2 * Math.PI) / players;
       const b = el('button', 'out-float out-circle', pic(i % 2 ? '👧' : '🧒'));
@@ -99,7 +111,7 @@ register({
     for (let r = 0; r < rounds && !api.closed; r++) {
       let ducks = 0; goose.disabled = true;
       for (;;) {
-        kids.forEach((k, i) => k.classList.toggle('hint', i === at));
+        kids.forEach((k, i) => k.classList.toggle('hint', i === at && (!api.talent || ducks === 0)));
         // (auto play says goose after two or three ducks)
         api.plan(() => ducks >= 2 + (r % 2) ? goose : kids[at], { maxActions: 6 });
         const tapped = await tapOne([...kids, goose].filter(b => !b.disabled), api);
@@ -134,7 +146,9 @@ register({
   async run(api) {
     style();
     api.say('Green light: tap Walk! Red light: freeze, do not tap!', 'Đèn xanh: chạm Đi! Đèn đỏ: đứng yên, đừng chạm!');
-    const steps = api.little ? 4 : 6;
+    // a longer walk and quicker lights each level; on Talent a step on red sends you back two
+    const steps = lv(api, 4, 5, 6, 8, 10), greenMs = lv(api, 2600, 2400, 1800, 1300, 1000), redMs = lv(api, 1400, 1600, 1400, 1100, 900), back = api.talent ? 2 : 1;
+    mark(api, steps, greenMs, redMs, back);
     api.dots(steps, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
@@ -149,7 +163,7 @@ register({
     // the light changes by itself: longer greens for little ones
     (async () => {
       while (alive && !api.closed) {
-        await wait(green ? (api.little ? 2600 : 1800) + rand(0, 900) : 1400 + rand(0, 900));
+        await wait(green ? greenMs + rand(0, 900) : redMs + rand(0, 900));
         if (!alive || api.closed) return;
         green = !green; light.innerHTML = pic(green ? '🟢' : '🔴');
         api.say(green ? 'Green light!' : 'Red light!', green ? 'Đèn xanh!' : 'Đèn đỏ!');
@@ -161,7 +175,7 @@ register({
         const tapped = await tapOne([walk], api);
         if (!tapped || api.closed) return;
         if (green) { pos++; api.sfx.pop(pos); }
-        else { api.sfx.no(); api.say('Red light! Back one step.', 'Đèn đỏ! Lùi lại một bước.'); pos = Math.max(0, pos - 1); }
+        else { api.sfx.no(); api.say('Red light! Back one step.', 'Đèn đỏ! Lùi lại một bước.'); pos = Math.max(0, pos - back); }
         place();
       }
     } finally { alive = false; }
@@ -180,7 +194,9 @@ register({
   async run(api) {
     style();
     api.say('Do it only when you hear Simon says! If not, tap Stay still.', 'Chỉ làm khi nghe Simon bảo! Nếu không, chạm Đứng yên.');
-    const rounds = api.little ? 4 : 6;
+    // more rounds and more actions to choose from each level; on Talent half the calls leave out "Simon says"
+    const rounds = lv(api, 4, 5, 6, 8, 10), others = lv(api, 1, 1, 2, 3, 4), tricks = api.talent ? Math.floor(rounds / 2) : 2;
+    mark(api, rounds, others, tricks);
     api.dots(rounds, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
@@ -192,7 +208,7 @@ register({
       { emoji: '🙌', en: 'hands up', vi: 'giơ hai tay' }
     ];
     // two or more rounds leave out "Simon says", in a mixed order
-    const simonSays = shuffle(Array.from({ length: rounds }, (_, i) => i >= 2));
+    const simonSays = shuffle(Array.from({ length: rounds }, (_, i) => i >= tricks));
     await wait(2500);
     for (let r = 0; r < rounds && !api.closed; r++) {
       const act = actions[Math.floor(Math.random() * actions.length)], says = simonSays[r];
@@ -201,7 +217,7 @@ register({
       stage.appendChild(call);
       api.say((says ? 'Simon says, ' : '') + act.en + '!', (says ? 'Simon bảo, ' : '') + act.vi + '!');
       const row = el('div', 'out-controls'); stage.appendChild(row);
-      const btns = shuffle(actions).slice(0, api.little ? 2 : 3).filter(a => a !== act).slice(0, api.little ? 1 : 2).concat([act]).map(a => {
+      const btns = shuffle(actions).filter(a => a !== act).slice(0, others).concat([act]).map(a => {
         const b = el('button', 'out-btn', `${pic(a.emoji)} <span>${T(a.en, a.vi)}</span>`); b.dataset.act = a.emoji; return b;
       });
       const still = el('button', 'out-btn', `${pic('🧍')} <span>${T('Stay still', 'Đứng yên')}</span>`); still.dataset.act = 'still';
@@ -229,7 +245,9 @@ register({
   async run(api) {
     style();
     api.say('Tap Step when the egg sits still in the middle!', 'Chạm Bước khi quả trứng nằm yên ở giữa thìa nhé!');
-    const steps = api.little ? 4 : 6;
+    // a longer race and a shorter still moment each level; on Talent a step while it wobbles costs you one step back
+    const steps = lv(api, 4, 5, 6, 8, 9), stillMs = lv(api, 1500, 1300, 1000, 750, 550), rollMs = lv(api, 800, 900, 800, 650, 550);
+    mark(api, steps, stillMs, rollMs, api.talent ? 'drop' : '');
     api.dots(steps, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
@@ -246,7 +264,7 @@ register({
       const ways = [0, -18, 0, 16, 0, -14, 0, 20];
       for (let i = 0; alive && !api.closed; i = (i + 1) % ways.length) {
         tilt = ways[i]; egg.style.transform = `rotate(${tilt}deg) translateX(${tilt / 2}px)`;
-        await wait(tilt === 0 ? (api.little ? 1500 : 1000) : 800);
+        await wait(tilt === 0 ? stillMs : rollMs);
       }
     })();
     api.plan(() => tilt === 0 ? step : null, { maxActions: steps * 3 });
@@ -255,7 +273,9 @@ register({
       while (pos < steps) {
         const tapped = await tapOne([step], api);
         if (!tapped || api.closed) return;
-        if (tilt !== 0) { api.sfx.no(); api.say('Wobble! Wait until it is still.', 'Trứng lắc! Đợi trứng nằm yên đã.'); continue; }
+        if (tilt !== 0) { api.sfx.no(); api.say('Wobble! Wait until it is still.', 'Trứng lắc! Đợi trứng nằm yên đã.');
+          if (api.talent && pos > 0) { pos--; api.dots(steps, pos); racer.style.left = (20 + pos * (220 / steps)) + 'px'; }
+          continue; }
         pos++; api.sfx.pop(pos); api.dots(steps, pos);
         racer.style.left = (20 + pos * (220 / steps)) + 'px';
       }
@@ -275,7 +295,9 @@ register({
   async run(api) {
     style();
     api.say('Walk while the music plays. When it stops, tap an empty chair!', 'Nhạc vang thì đi vòng quanh. Nhạc dừng thì chạm ngay một ghế trống!');
-    const rounds = api.little ? 3 : 4;
+    // more rounds and quicker friends each level; on Hard and Talent more friends race for the seats (one is always left)
+    const rounds = lv(api, 3, 3, 4, 5, 6), friendMs = lv(api, 600, 900, 600, 450, 300), friends = lv(api, 1, 1, 1, 2, 3);
+    mark(api, rounds, friendMs, friends);
     api.dots(rounds, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
@@ -310,8 +332,11 @@ register({
       if (api.closed) return;
       note.style.visibility = 'hidden';
       api.say('Music stopped! Sit quick!', 'Nhạc dừng! Ngồi ngay!');
-      const friendChair = chairs[Math.floor(Math.random() * count)];
-      setTimeout(() => { if (!friendChair.disabled) { friendChair.disabled = true; friendChair.innerHTML = pic('👧'); } }, 600);
+      // the friends sit down one after another, and always leave one chair free
+      for (let f = 0; f < Math.min(friends, count - 1); f++) setTimeout(() => {
+        const free = chairs.filter(c => !c.disabled); if (free.length < 2) return;
+        const friendChair = free[Math.floor(Math.random() * free.length)]; friendChair.disabled = true; friendChair.innerHTML = pic('👧');
+      }, friendMs * (f + 1));
       const sat = await tapping;
       if (!sat || api.closed) return;
       sat.disabled = true; sat.innerHTML = pic('🧒');
@@ -331,7 +356,10 @@ register({
   async run(api) {
     style();
     api.say('Kick the footy to your friend and back!', 'Đá bóng cho bạn rồi nhận lại từ bạn nhé!');
-    const passes = api.little ? 4 : 6;
+    // more passes and a faster ball each level; from Medium your friend's kick lands somewhere new, and on Hard and Talent the
+    // ball keeps bouncing about until you catch it
+    const passes = lv(api, 4, 5, 6, 8, 10), flyS = lv(api, .7, .8, .6, .45, .35), bounceMs = lv(api, 0, 0, 0, 1800, 1100);
+    mark(api, passes, flyS, bounceMs);
     api.dots(passes, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
@@ -346,13 +374,16 @@ register({
     for (let p = 0; p < passes && !api.closed; p++) {
       const targetX = side === 0 ? 240 : 40;
       api.plan(() => ball.isConnected ? ball : null, { maxActions: passes * 2 });
+      const bouncing = side === 0 && p > 0 && bounceMs ? setInterval(() => { ball.style.left = rand(20, 260) + 'px'; ball.style.top = rand(30, 200) + 'px'; }, bounceMs) : 0;
       const clicked = await untilRight(api, [ball], () => true);
+      clearInterval(bouncing);
       if (!clicked || api.closed) return;
 
-      ball.style.transition = 'left 0.7s ease, top 0.7s ease';
-      ball.style.left = targetX + 'px';
-      ball.style.top = side === 0 ? '100px' : '180px';
-      await wait(800);
+      const anywhere = side === 1 && !api.little && api.smart > 0;   // the friend's return kick lands somewhere new
+      ball.style.transition = `left ${flyS}s ease, top ${flyS}s ease`;
+      ball.style.left = (anywhere ? rand(20, 260) : targetX) + 'px';
+      ball.style.top = (anywhere ? rand(30, 200) : side === 0 ? 100 : 180) + 'px';
+      await wait(flyS * 1000 + 100);
       api.sfx.pop(p);
       api.dots(passes, p + 1);
       side = 1 - side;
@@ -373,7 +404,9 @@ register({
   async run(api) {
     style();
     api.say('A swimmer who needs help raises one arm. Find them and throw the ring!', 'Bạn bơi cần giúp sẽ giơ một tay lên. Tìm bạn ấy và ném phao nhé!');
-    const target = api.little ? 3 : 5;
+    // more rescues and more swimmers each level; on Talent the raised arm only shows now and then, so watch closely
+    const target = lv(api, 3, 4, 5, 6, 7), nSwim = lv(api, 3, 4, 5, 6, 6);
+    mark(api, target, nSwim, api.talent ? 'blink' : '');
     api.dots(target, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
@@ -382,7 +415,7 @@ register({
     let rescued = 0;
     while (rescued < target && !api.closed) {
       stage.innerHTML = '';
-      const swimmers = shuffle(spots).slice(0, api.little ? 3 : 4).map(([x, y]) => {
+      const swimmers = shuffle(spots).slice(0, nSwim).map(([x, y]) => {
         const b = el('button', 'out-float', pic('🏊'));
         b.style.left = x + 'px'; b.style.top = y + 'px'; b.style.fontSize = '44px';
         b.setAttribute('aria-label', T('Swimmer', 'Bạn đang bơi'));
@@ -391,7 +424,9 @@ register({
       const help = swimmers[Math.floor(Math.random() * swimmers.length)];
       help.innerHTML = pic('🙋'); help.setAttribute('aria-label', T('Swimmer needs help', 'Bạn bơi cần giúp đỡ'));
       api.plan(() => help.isConnected ? help : null, { maxActions: 4 });
+      let up = true; const blink = api.talent ? setInterval(() => { up = !up; help.innerHTML = pic(up ? '🙋' : '🏊'); }, 1200) : 0;
       const clicked = await untilRight(api, swimmers, b => b === help);
+      clearInterval(blink);
       if (!clicked || api.closed) return;
       help.innerHTML = pic('🛟'); api.sfx.splash();
       rescued++;
@@ -411,7 +446,10 @@ register({
   async run(api) {
     style();
     api.say('Push the hoop along the path to the finish!', 'Đẩy vòng lăn theo đường đến đích nhé!');
-    const steps = api.little ? 4 : 6;
+    // the hoop wobbles: from Medium it must be pushed again soon or it rolls back a step (less time each level), and it rolls
+    // faster
+    const steps = lv(api, 4, 6, 6, 6, 6), keepMs = lv(api, 0, 0, 2600, 1700, 1100), rollS = lv(api, .8, .8, .7, .55, .45);
+    mark(api, steps, keepMs, rollS);
     api.dots(steps, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
@@ -430,18 +468,26 @@ register({
       { x: 270, y: 140 }
     ].slice(0, steps);
 
-    for (let s = 0; s < steps && !api.closed; s++) {
+    const start = { x: 58, y: 168 };
+    for (let s = 0; s < steps && !api.closed;) {
       const pt = path[s];
-      api.plan(() => hoop.isConnected ? hoop : null, { maxActions: steps * 2 });
+      api.plan(() => hoop.isConnected ? hoop : null, { maxActions: steps * 4 });
+      const asked = performance.now();
       const clicked = await untilRight(api, [hoop], () => true);
       if (!clicked || api.closed) return;
+      if (keepMs && s > 0 && performance.now() - asked > keepMs) {
+        // too slow: the hoop wobbled and rolled back one step
+        s--; const b = s > 0 ? path[s - 1] : start; api.sfx.no(); api.dots(steps, s);
+        hoop.style.transition = `left ${rollS}s ease, top ${rollS}s ease`; hoop.style.left = (b.x - 28) + 'px'; hoop.style.top = (b.y - 28) + 'px';
+        await wait(rollS * 1000 + 100); continue;
+      }
 
-      hoop.style.transition = 'left 0.8s ease, top 0.8s ease';
+      hoop.style.transition = `left ${rollS}s ease, top ${rollS}s ease`;
       hoop.style.left = (pt.x - 28) + 'px';
       hoop.style.top = (pt.y - 28) + 'px';
-      await wait(900);
+      await wait(rollS * 1000 + 100);
       api.sfx.pop(s);
-      api.dots(steps, s + 1);
+      s++; api.dots(steps, s);
       await wait(200);
     }
     api.say('The hoop rolled all the way to the finish!', 'Vòng đã lăn đến tận đích rồi!');
@@ -459,7 +505,9 @@ register({
   async run(api) {
     style();
     api.say('Chase and tag your friends! They keep running.', 'Đuổi bắt các bạn nào! Các bạn chạy liên tục đó.');
-    const target = api.little ? 3 : 5;
+    // more friends to tag and faster runners each level
+    const target = lv(api, 3, 4, 5, 6, 7), hopMs = lv(api, 1800, 1500, 1200, 900, 700), moveS = lv(api, .9, .8, .6, .45, .35);
+    mark(api, target, hopMs, moveS);
     api.dots(target, 0);
     const wrap = el('div', 'out-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'out-stage'); wrap.appendChild(stage);
@@ -467,12 +515,12 @@ register({
     while (tagged < target && !api.closed) {
       stage.innerHTML = '';
       const friend = el('button', 'out-float', pic(tagged % 2 ? '👧' : '🧒'));
-      friend.style.cssText += `font-size: 44px; transition: left ${api.little ? .9 : .6}s, top ${api.little ? .9 : .6}s;`;
+      friend.style.cssText += `font-size: 44px; transition: left ${moveS}s, top ${moveS}s;`;
       const hop = () => { friend.style.left = rand(10, 240) + 'px'; friend.style.top = rand(20, 200) + 'px'; };
       hop();
       friend.setAttribute('aria-label', T('Friend running', 'Bạn đang chạy'));
       stage.appendChild(friend);
-      const runner = setInterval(hop, api.little ? 1800 : 1200);
+      const runner = setInterval(hop, hopMs);
       api.plan(() => friend.isConnected ? friend : null, { maxActions: 4 });
       const clicked = await tapOne([friend], api);
       clearInterval(runner);

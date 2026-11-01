@@ -3709,6 +3709,37 @@ await check('gamelevel', async () => {
   return 'Easy · Medium · Hard in the game bar (44 px, on screen at 390 px); Hard starts it again at Hard and is remembered; the festival calendar is only a calendar (nothing to visit, no decorations choice)';
 });
 
+await check('levelsb', async () => {
+  // (owner, 1 Nov 2026 AEDT: "the difficulty levels often don't change anything, the game looks the same"; group B games) a big
+  // kid opens each sampled game at Easy and at Talent: what the game set up must differ (the values each game puts on its stage
+  // as data-lv: counts, speeds, board sizes, choices), Caro's board must grow (3 × 3 to 7 × 7) and Tiến Lên's Hint must go
+  const IDS = ['hideseek', 'simon', 'redgreen', 'tag', 'puppets', 'dragonfire', 'tram', 'koala', 'snap', 'dacau', 'caro', 'hopscotch', 'whohome', 'buffalo', 'plate', 'kindchoice', 'drumecho', 'loudquiet', 'emueggs', 'reefclean', 'airport', 'tienlen', 'banhchung', 'mualan'];
+  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const r = await P.page.evaluate(async ids => {
+    const w = t => new Promise(res => setTimeout(res, t)), p = __sv.heroes[0].profile, out = {};
+    p.age = 'big'; p.unlockAll = true;
+    for (const id of ids) {
+      const row = {};
+      for (const d of ['easy', 'talent']) {
+        p.gameDiff = { ...(p.gameDiff || {}), [id]: d }; __sv.playGame(0, id, 'hub');
+        let gl = null; for (let k = 0; k < 40 && !gl; k++) { await w(150); gl = document.querySelector('.gl:not(.out)'); }
+        if (!gl) { row[d] = null; continue; }
+        await w(700);
+        const st = gl.querySelector('.gl-stage'), hint = gl.querySelector('.tl-b.hint');
+        row[d] = { lv: st.dataset.lv || '', talent: gl.dataset.talent === '1', caro: gl.querySelectorAll('.caro-c').length, hint: hint ? getComputedStyle(hint).display !== 'none' : null };
+        gl.querySelector('.gl-x').click(); await w(500); document.querySelectorAll('.dialog,.reward,.modal').forEach(e => e.remove());
+      }
+      out[id] = row;
+    }
+    return out;
+  }, IDS);
+  const errs = P.errors; await P.ctx.close();
+  const opened = IDS.filter(id => r[id].easy && r[id].talent), same = opened.filter(id => !r[id].easy.lv || r[id].easy.lv === r[id].talent.lv || r[id].easy.talent || !r[id].talent.talent);
+  ok(opened.length >= 12 && !same.length && r.caro.easy?.caro === 9 && r.caro.talent?.caro === 49 && r.tienlen.easy?.hint === true && r.tienlen.talent?.hint === false && !errs.length,
+    JSON.stringify({ missing: IDS.filter(id => !opened.includes(id)), same: same.map(id => [id, r[id]]), caro: r.caro, tienlen: r.tienlen, errs }));
+  return `${opened.length} group B games play differently at Easy and at Talent (e.g. ${opened.slice(0, 3).map(id => `${id} ${r[id].easy.lv} → ${r[id].talent.lv}`).join('; ')}); Caro 3 × 3 → 7 × 7; Tiến Lên has no Hint on Talent`;
+});
+
 await check('quiet', async () => {
   // round M (owner: sound kept playing after leaving the game, until it was killed): when the game goes to the
   // background (another app, the lock screen) the audio engine sleeps, music stops scheduling and videos pause; when

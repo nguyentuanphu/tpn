@@ -6,8 +6,13 @@ import {tone,noise} from '../audio.js';
 import {tapOne} from './frame.js';
 import {dom,control} from './arcade-board.js';
 import {throwResult,initialChase,passGate,flagRunner,initialRowing,rowStroke,sawAction,type AimGame,type Target} from './folk-court-rules.js';
-export type FolkApi={stage:HTMLElement;little:boolean;level:number;closed:boolean;say(en:string,vi:string):void;show(en:string,vi:string):void;right(e?:HTMLElement):void;wrong(e?:HTMLElement):void;dots(total:number,done:number):void;sfx:{tap():void;pop(n:number):void};plan(fn:()=>HTMLElement|null,options:{maxActions:number}):void;onCleanup(fn:()=>void):void;win(extra:{title:string;titleVi:string}):Promise<unknown>};
+export type FolkApi={stage:HTMLElement;little:boolean;level:number;smart?:number;talent?:boolean;closed:boolean;say(en:string,vi:string):void;show(en:string,vi:string):void;right(e?:HTMLElement):void;wrong(e?:HTMLElement):void;dots(total:number,done:number):void;sfx:{tap():void;pop(n:number):void};plan(fn:()=>HTMLElement|null,options:{maxActions:number}):void;onCleanup(fn:()=>void):void;win(extra:{title:string;titleVi:string}):Promise<unknown>};
 type Pair=[string,string];
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") 0 under-5s and Easy, 1 Medium, 2 Hard, 3 Talent; the values a
+// game uses are on its stage (data-lv) for the checks
+const smartOf=(api:FolkApi)=>api.little?0:Math.max(0,Math.min(3,api.smart||0));
+const mark=(api:FolkApi,...v:unknown[])=>{api.stage.dataset.lv=v.join(',');};
+const mixed=<E>(list:E[])=>[...list].sort(()=>Math.random()-.5);
 const WORDS:Record<string,{intro:Pair;win:Pair;about:Pair}>={
  con:{intro:['Throw the cloth còn through the high hoop. Choose your aim and throw!','Ném quả còn bằng vải qua vòng trên cao. Chỉnh hướng rồi ném nhé!'],win:['The còn flew through the hoop!','Quả còn bay qua vòng rồi!'],about:['Ném Còn is played at festivals by Tày, Thái, Mường and other communities. A colourful cloth ball and its streamers fly through a hoop high on a pole. This is a gentle screen version.','Ném còn có trong lễ hội của người Tày, Thái, Mường và các cộng đồng khác. Quả còn bằng vải nhiều màu, có tua, bay qua vòng trên cột cao. Đây là bản chơi nhẹ nhàng trên màn hình.']},
  disc:{intro:['Slide your disc at the pretend coins. Choose your aim and strength!','Trượt viên đáo vào các đồng xu đồ chơi. Chỉnh hướng và lực nhé!'],win:['You found the right aim!','Con ngắm trúng rồi!'],about:['Đánh Đáo has many regional versions. In this screen version, a flat disc slides from a line to hit toy coins. Nothing is taken from your backpack.','Đánh đáo có nhiều cách chơi theo vùng. Trong bản màn hình này, viên đáo dẹt trượt từ vạch để chạm đồng xu đồ chơi. Không lấy vật gì trong ba lô.']},
@@ -28,20 +33,26 @@ function setup(api:FolkApi,key:string){
  const button=(label:Pair,icon:string,action:string)=>{const b=control(T(...label),()=>{});b.dataset.folkAction=action;const p=dom('span');p.innerHTML=pic(icon);b.prepend(p);controls.append(b);return b;};
  api.say(...words.intro);return{root,field,readout,controls,hint,button,win:()=>api.win({title:T(...words.win),titleVi:words.win[1]})};
 }
+// each level beats a little faster and the bright beat is narrower (Easy 1.1 s, Medium 1 s, Hard 0.85 s, Talent 0.7 s)
 function rhythm(api:FolkApi,root:HTMLElement){
- const meter=dom('div','folk-meter'),sweet=dom('i'),beat=dom('b');meter.setAttribute('role','img');meter.setAttribute('aria-label',T('Drumbeat: the bright middle is the beat','Nhịp trống: phần sáng ở giữa là nhịp'));meter.append(sweet,beat);root.querySelector('.folk-controls')!.before(meter);sweet.style.left='38%';sweet.style.width='50%';const began=performance.now();
- let used=-1;const phase=()=>((performance.now()-began)%1000)/1000,cycle=()=>Math.floor((performance.now()-began)/1000),ready=()=>api.little||reduceMotion()||cycle()!==used&&phase()>=.38&&phase()<=.88;
- let sounded=-1;const timer=setInterval(()=>{if(!root.isConnected||document.hidden)return;const cycle=Math.floor((performance.now()-began)/1000);if(cycle!==sounded&&phase()>=.5){sounded=cycle;tone(130,.12,{type:'sine',to:65,vol:.1,attack:.003});noise(.035,{freq:800,vol:.025});}beat.style.left=(api.little||reduceMotion()?50:phase()*94)+'%';},80);api.onCleanup(()=>clearInterval(timer));return{ready,accept:()=>{used=cycle();},stop:()=>clearInterval(timer)};
+ const sm=smartOf(api),period=[1100,1000,850,700][sm],lo=[.3,.38,.45,.5][sm],hi=[.95,.88,.82,.78][sm];
+ const meter=dom('div','folk-meter'),sweet=dom('i'),beat=dom('b');meter.setAttribute('role','img');meter.setAttribute('aria-label',T('Drumbeat: the bright middle is the beat','Nhịp trống: phần sáng ở giữa là nhịp'));meter.append(sweet,beat);root.querySelector('.folk-controls')!.before(meter);sweet.style.left=lo*100+'%';sweet.style.width=(hi-lo)*100+'%';const began=performance.now();
+ let used=-1;const phase=()=>((performance.now()-began)%period)/period,cycle=()=>Math.floor((performance.now()-began)/period),ready=()=>api.little||reduceMotion()||cycle()!==used&&phase()>=lo&&phase()<=hi;
+ let sounded=-1;const timer=setInterval(()=>{if(!root.isConnected||document.hidden)return;const cycle=Math.floor((performance.now()-began)/period);if(cycle!==sounded&&phase()>=.5){sounded=cycle;tone(130,.12,{type:'sine',to:65,vol:.1,attack:.003});noise(.035,{freq:800,vol:.025});}beat.style.left=(api.little||reduceMotion()?50:phase()*94)+'%';},80);api.onCleanup(()=>clearInterval(timer));return{ready,accept:()=>{used=cycle();},stop:()=>clearInterval(timer)};
 }
 export async function playAim(api:FolkApi,kind:AimGame){
  const view=setup(api,kind),left=view.button(['Aim left','Ngắm trái'],'⬅️','left'),right=view.button(['Aim right','Ngắm phải'],'➡️','right');
  const down=api.little?null:view.button(['Less strength','Giảm lực'],'⬇️','down'),up=api.little?null:view.button(['More strength','Tăng lực'],'⬆️','up'),launch=view.button(['Throw','Ném'],'🎯','throw');
  let aim=200,power=kind==='con'?4:3,round=0,flight:Animation|null=null;api.onCleanup(()=>flight?.cancel());
- const targets:Target[]=[{x:200,y:kind==='con'?60:120,radius:api.little?38:22},{x:125,y:kind==='con'?60:120,radius:api.little?38:22},{x:275,y:api.little?(kind==='con'?60:120):(kind==='con'?120:180),radius:api.little?38:22}];
+ // a smaller target each level; Hard and Talent put more targets in new places, and on Talent the dotted aim line is gone
+ const sm=smartOf(api),radius=api.little?38:[30,24,18,15][sm],ys=kind==='con'?[60,120]:[120,180];
+ const fixed:Target[]=[{x:200,y:kind==='con'?60:120,radius},{x:125,y:kind==='con'?60:120,radius},{x:275,y:api.little?(kind==='con'?60:120):(kind==='con'?120:180),radius}];
+ const targets:Target[]=sm>=2?Array.from({length:sm===3?5:4},()=>({x:75+25*Math.floor(Math.random()*11),y:ys[Math.floor(Math.random()*2)],radius})):fixed;
+ mark(api,targets.length,radius,api.talent?'noline':'');
  while(!api.closed&&round<targets.length){
-  const target=targets[round],targetPower=(300-target.y)/60;api.dots(3,round);
+  const target=targets[round],targetPower=(300-target.y)/60;api.dots(targets.length,round);
   const targetArt=kind==='con'?`<path d="M${target.x} 300V${target.y+27}" stroke="#79583d" stroke-width="9"/><circle cx="${target.x}" cy="${target.y}" r="${target.radius}" fill="#fff6e455" stroke="#dd5e8f" stroke-width="9"/><path d="M${target.x-target.radius} ${target.y}l-13 24M${target.x+target.radius} ${target.y}l13 24" stroke="#ffb020" stroke-width="5"/>`:`<path d="M40 270H360" stroke="#79583d" stroke-width="4" stroke-dasharray="8 8"/><ellipse cx="${target.x}" cy="${target.y}" rx="${target.radius}" ry="${target.radius*.65}" fill="#ffe280" stroke="#aa7b24" stroke-width="4"/><circle cx="${target.x}" cy="${target.y}" r="8" fill="none" stroke="#aa7b24" stroke-width="3"/>`;
-  view.field.innerHTML=svg(targetArt+child(68,280,'#ff6fae')+`<path d="M200 290Q${aim} 190 ${aim} ${300-power*60}" fill="none" stroke="#8a5cf6" stroke-width="3" stroke-dasharray="6 7"/><g data-folk-ball transform="translate(200 290)"><circle r="13" fill="${kind==='con'?'#ff6fae':'#a4c2e7'}" stroke="#3a2a20" stroke-width="3"/>${kind==='con'?'<path d="M-10 7l-7 24M0 12v28M10 7l9 24" stroke="#ffb020" stroke-width="5"/>':''}</g>`,kind==='disc');
+  view.field.innerHTML=svg(targetArt+child(68,280,'#ff6fae')+`${api.talent?'':`<path d="M200 290Q${aim} 190 ${aim} ${300-power*60}" fill="none" stroke="#8a5cf6" stroke-width="3" stroke-dasharray="6 7"/>`}<g data-folk-ball transform="translate(200 290)"><circle r="13" fill="${kind==='con'?'#ff6fae':'#a4c2e7'}" stroke="#3a2a20" stroke-width="3"/>${kind==='con'?'<path d="M-10 7l-7 24M0 12v28M10 7l9 24" stroke="#ffb020" stroke-width="5"/>':''}</g>`,kind==='disc');
   view.readout.textContent=api.little?T('Line up with the target, then throw.','Ngắm theo mục tiêu rồi ném nhé.'):T(`Aim left or right · strength ${power} of 4.`,`Ngắm trái hoặc phải · lực ${power} / 4.`);left.disabled=aim<=50;right.disabled=aim>=350;if(up)up.disabled=power===4;if(down)down.disabled=power===1;
   view.hint(Math.abs(aim-target.x)>(kind==='con'?Math.max(0,target.radius-13):target.radius+13)?(aim<target.x?right:left):power!==targetPower?(power<targetPower?up:down):launch);
   const b=await tapOne([left,right,...(up?[up,down]:[]),launch],api);if(!b||api.closed)return;
@@ -52,52 +63,64 @@ export async function playAim(api:FolkApi,kind:AimGame){
   if(shot.hit){api.right(launch);round++;aim=200;power=kind==='con'?4:3;}else api.wrong(launch);
   // (check folkplay) after the last hit the buttons stay off: the win comes next, and a throw tapped in between had nothing to do
   if(round<targets.length)view.controls.querySelectorAll('button').forEach(n=>n.disabled=false);
- }if(!api.closed){api.dots(3,3);return view.win();}
+ }if(!api.closed){api.dots(targets.length,targets.length);return view.win();}
 }
 export async function playCatMouse(api:FolkApi){
  const view=setup(api,'chase'),symbols=['🌸','☀️','⭐','💧'],buttons=symbols.map((icon,i)=>view.button([`Gate ${i+1}`,`Cổng ${i+1}`],icon,String(i)));let state=initialChase();
+ // from Medium the gate buttons change places each turn; on Hard and Talent the arms come down again after a moment, so look fast
+ const sm=smartOf(api),armsMs=[0,0,2200,1100][sm];mark(api,sm>=1?'mixed':'',armsMs);let lower:ReturnType<typeof setTimeout>|undefined;api.onCleanup(()=>clearTimeout(lower));
  while(!api.closed&&!state.done){
   api.dots(4,state.passed);const gates=[[200,70],[315,175],[200,275],[85,175]];
   let people='';for(let i=0;i<8;i++){const a=i*Math.PI/4;people+=child(200+Math.sin(a)*125,175+Math.cos(a)*95,['#ff6fae','#8a5cf6','#43c463','#ffb020'][i%4]);}
-  const [gx,gy]=gates[state.open],inside=state.passed%2===0,lifted=child(gx-38,gy+15,'#ff6fae',0,'right')+child(gx+38,gy+15,'#29b6f6',0,'left'),badges=gates.map(([x,y],i)=>`<g transform="translate(${x} ${y-26})"><circle r="15" fill="${['#ffb7d5','#ffe280','#ccbaff','#a1e1f0'][i]}" stroke="#3a2a20" stroke-width="2"/><text text-anchor="middle" y="6" font-size="20" fill="#443262">${i+1}</text></g>`).join('');view.field.innerHTML=svg(`<ellipse cx="200" cy="175" rx="125" ry="95" fill="none" stroke="#79583d" stroke-width="6" stroke-dasharray="28 8"/>${people}<path d="M${gx-25} ${gy-10}L${gx} ${gy-65}L${gx+25} ${gy-10}" fill="none" stroke="#ffb020" stroke-width="14"/>${lifted}${badges}${animal(inside?190:gx,inside?185:gy)}${animal(inside?gx+20:230,inside?gy+14:205,true)}`);
+  const [gx,gy]=gates[state.open],inside=state.passed%2===0,badges=gates.map(([x,y],i)=>`<g transform="translate(${x} ${y-26})"><circle r="15" fill="${['#ffb7d5','#ffe280','#ccbaff','#a1e1f0'][i]}" stroke="#3a2a20" stroke-width="2"/><text text-anchor="middle" y="6" font-size="20" fill="#443262">${i+1}</text></g>`).join('');
+  const draw=(raised:boolean)=>{const lifted=child(gx-38,gy+15,'#ff6fae',0,raised?'right':null)+child(gx+38,gy+15,'#29b6f6',0,raised?'left':null);view.field.innerHTML=svg(`<ellipse cx="200" cy="175" rx="125" ry="95" fill="none" stroke="#79583d" stroke-width="6" stroke-dasharray="28 8"/>${people}${raised?`<path d="M${gx-25} ${gy-10}L${gx} ${gy-65}L${gx+25} ${gy-10}" fill="none" stroke="#ffb020" stroke-width="14"/>`:''}${lifted}${badges}${animal(inside?190:gx,inside?185:gy)}${animal(inside?gx+20:230,inside?gy+14:205,true)}`);};
+  draw(true);clearTimeout(lower);if(armsMs)lower=setTimeout(()=>{if(!api.closed)draw(false);},armsMs);
+  if(sm>=1)mixed(buttons).forEach(b=>view.controls.append(b));
   view.readout.textContent=T('Find the raised arms. Lead the mouse through that gate.','Tìm các cánh tay đang giơ cao. Dẫn chuột qua cổng ấy.');view.hint(buttons[state.open]);
-  const b=await tapOne(buttons,api);if(!b||api.closed)return;const next=passGate(state,Number(b.dataset.folkAction),api.little)!;
+  const b=await tapOne(buttons,api);if(!b||api.closed)return;clearTimeout(lower);const next=passGate(state,Number(b.dataset.folkAction),api.little)!;
   if(next.passed>state.passed)api.right(b);else api.wrong(b);state=next;
  }if(!api.closed){api.dots(4,4);return view.win();}
 }
 const CALLS:Pair[]=[['Number one! Take the flag and bring it home!','Số một! Lấy cờ rồi mang về đội nhé!'],['Number two! Take the flag and bring it home!','Số hai! Lấy cờ rồi mang về đội nhé!'],['Number three! Take the flag and bring it home!','Số ba! Lấy cờ rồi mang về đội nhé!']];
 export async function playFlag(api:FolkApi){
  const view=setup(api,'flag'),numbers=[1,2,3].map(n=>{const b=control(String(n),()=>{});b.classList.add('folk-number');b.dataset.folkAction=String(n);view.controls.append(b);return b;}),home=view.button(['Bring the flag home','Mang cờ về đội'],'⬅️','home');home.hidden=true;
- for(let round=0;round<3&&!api.closed;round++){
-  api.dots(3,round);const called=[2,1,3][round];if(round)api.say(...CALLS[called-1]);let carrying=false,returnSteps=0;
+ // more calls each level; from Hard the number buttons change places, and on Talent the called number is only shown for a moment
+ const sm=smartOf(api),rounds=[3,4,5,6][sm];mark(api,rounds,sm>=2?'mixed':'',api.talent?'memory':'');
+ for(let round=0;round<rounds&&!api.closed;round++){
+  api.dots(rounds,round);const called=round<3?[2,1,3][round]:1+Math.floor(Math.random()*3);if(round)api.say(...CALLS[called-1]);let carrying=false,returnSteps=0,shown=performance.now();
+  if(sm>=2)mixed(numbers).forEach(b=>view.controls.insertBefore(b,home));
   while(!api.closed&&returnSteps<=3){
    const x=carrying?200-returnSteps*46:65,enemy=carrying?240-returnSteps*36:335;let players='';
    for(let i=0;i<3;i++){players+=child(i===called-1?x:65,100+i*85,'#ff6fae')+child(i===called-1?enemy:335,100+i*85,'#29b6f6');players+=`<text x="37" y="${80+i*85}" text-anchor="middle" font-size="22" fill="#59466c">${i+1}</text><text x="365" y="${80+i*85}" text-anchor="middle" font-size="22" fill="#59466c">${i+1}</text>`;}
    view.field.innerHTML=svg('<path d="M42 38V312M358 38V312" stroke="#fff9e9" stroke-width="6"/><circle cx="200" cy="176" r="24" fill="#fff9e9" stroke="#79583d" stroke-width="3"/>'+players+`<g transform="translate(${carrying?x+15:200} ${carrying?80+(called-1)*85:125})"><path d="M0 0v55" stroke="#79583d" stroke-width="4"/><path d="M0 0h35l-8 12 8 12H0Z" fill="#ff6fae" stroke="#3a2a20" stroke-width="2"/></g>`);
-   numbers.forEach(b=>b.hidden=carrying);home.hidden=!carrying;view.hint(carrying?home:numbers[called-1]);view.readout.textContent=carrying?T('Flag in hand! Return to your own line.','Có cờ rồi! Trở về vạch đội mình.'):T(`The called number is ${called}.`,`Số được gọi là ${called}.`);
+   numbers.forEach(b=>b.hidden=carrying);home.hidden=!carrying;view.hint(carrying?home:numbers[called-1]);view.readout.textContent=carrying?T('Flag in hand! Return to your own line.','Có cờ rồi! Trở về vạch đội mình.'):api.talent&&performance.now()-shown>1500?T('Which number was called?','Số nào đã được gọi?'):T(`The called number is ${called}.`,`Số được gọi là ${called}.`);
+   if(api.talent&&!carrying&&performance.now()-shown<=1500){const t=setTimeout(()=>{if(!carrying&&view.readout.isConnected)view.readout.textContent=T('Which number was called?','Số nào đã được gọi?');},1500);api.onCleanup(()=>clearTimeout(t));}
    if(returnSteps===3)break;
    const b=await tapOne(carrying?[home]:numbers,api);if(!b||api.closed)return;
    if(carrying){returnSteps++;api.sfx.tap();}else if(flagRunner(called,Number(b.dataset.folkAction))){carrying=true;api.sfx.tap();}else api.wrong(b);
   }api.right(home);
- }if(!api.closed){api.dots(3,3);return view.win();}
+ }if(!api.closed){api.dots(rounds,rounds);return view.win();}
 }
 const RHYME:Pair[]=[['Pull saw, pull saw','Kéo cưa lừa xẻ'],['The strong worker','Ông thợ nào khỏe'],['Shares the king’s rice','Về ăn cơm vua'],['The worker who loses','Ông thợ nào thua'],['Goes back to mum for milk','Về bú tí mẹ']];
 export async function playSaw(api:FolkApi){
+ mark(api,[1100,1000,850,700][smartOf(api)],api.talent?'noreminder':'');
  const view=setup(api,'saw'),verse=dom('p','folk-verse');view.root.prepend(verse);const pull=view.button(['Pull','Kéo'],'⬅️','pull'),push=view.button(['Push','Đẩy'],'➡️','push'),clock=rhythm(api,view.root),ready=clock.ready;let beat=0,lastVerse=-1;
  while(!api.closed&&beat<20){
   verse.textContent=T(...RHYME[Math.floor(beat/4)]);if(beat>0&&Math.floor(beat/4)!==lastVerse){lastVerse=Math.floor(beat/4);api.say(...RHYME[lastVerse]);}
   const expected=sawAction(beat),lean=beat%2?10:-10;api.dots(5,Math.floor(beat/4));view.field.innerHTML=svg(`<path d="M80 278Q200 240 320 278" fill="none" stroke="#79583d" stroke-width="6"/>${child(140,230,'#ff6fae',lean)}${child(260,230,'#29b6f6',lean)}<path d="M151 202Q200 ${182+lean} 249 202M151 224L200 245 249 224" fill="none" stroke="#3a2a20" stroke-width="6" stroke-linecap="round"/>`);
-  view.readout.textContent=expected==='pull'?T('Pull together with the rhyme.','Cùng kéo theo tiếng đồng dao.'):T('Push together with the rhyme.','Cùng đẩy theo tiếng đồng dao.');view.hint(()=>ready()?(expected==='pull'?pull:push):null);
+  // (Talent: no pull or push reminder, keep the rhythm yourself)
+  view.readout.textContent=api.talent?T('Keep the rhythm with the rhyme.','Giữ nhịp theo đồng dao.'):expected==='pull'?T('Pull together with the rhyme.','Cùng kéo theo tiếng đồng dao.'):T('Push together with the rhyme.','Cùng đẩy theo tiếng đồng dao.');view.hint(()=>ready()?(expected==='pull'?pull:push):null);
   const b=await tapOne([pull,push],api);if(!b||api.closed)return;
   if(b.dataset.folkAction===expected&&ready()){clock.accept();beat++;api.sfx.tap();if(beat%4===0)api.right(b);}else api.wrong(b);
  }if(!api.closed){clock.stop();api.dots(5,5);return view.win();}
 }
 function boat(x:number,y:number,color:string){let crew='';for(let i=0;i<4;i++)crew+=child(x-55+i*28,y-8,color,5);crew+=child(x+63,y-6,color);return crew+`<g stroke="#3a2a20" stroke-width="3" stroke-linejoin="round"><path d="M${x-92} ${y}Q${x} ${y+14} ${x+92} ${y}L${x+66} ${y+31}H${x-60}Z" fill="#c88855"/><path d="M${x-75} ${y+5}l-18 39m47-38-12 42m58-39 0 43m37-43 15 39" stroke="${color}" stroke-width="7"/><ellipse cx="${x+63}" cy="${y-18}" rx="13" ry="9" fill="#ffb020"/><path d="M${x+53} ${y-34}l10 16m10-16-10 16"/><path d="M${x+88} ${y-52}v55m0-55h30l-10 12 10 12h-30" fill="${color}"/></g>`;}
 export async function playRowing(api:FolkApi){
+ mark(api,[1100,1000,850,700][smartOf(api)],api.talent?'noreminder':'');
  const view=setup(api,'rowing'),left=view.button(['Row left','Chèo trái'],'⬅️','left'),right=view.button(['Row right','Chèo phải'],'➡️','right'),clock=rhythm(api,view.root),ready=clock.ready;let state=initialRowing();
  while(!api.closed&&state.distance<120){
   api.dots(12,state.strokes);const draw=()=>{view.field.innerHTML=svg('<path d="M0 124Q100 101 200 131T400 120V320H0Z" fill="#75cae8"/><path d="M0 207Q80 187 160 207T320 207T480 207M0 294Q80 274 160 294T320 294T480 294" fill="none" stroke="#e1faff" stroke-width="4"/>'+boat(110+state.distance*1.15,250,'#ff6fae')+boat(110+state.helper*1.15,144,'#8a5cf6')+'<path d="M340 98V312" stroke="#fff9e9" stroke-width="6" stroke-dasharray="10 9"/>');};draw();
-  view.readout.textContent=T(`Crew: ${state.distance} of 120 metres. ${state.next==='left'?'Left paddle':'Right paddle'} next!`,`Đội mình: ${state.distance} / 120 mét. Tiếp theo chèo ${state.next==='left'?'trái':'phải'} nhé!`);view.hint(()=>ready()?(state.next==='left'?left:right):null);
+  view.readout.textContent=api.talent?T(`Crew: ${state.distance} of 120 metres.`,`Đội mình: ${state.distance} / 120 mét.`):T(`Crew: ${state.distance} of 120 metres. ${state.next==='left'?'Left paddle':'Right paddle'} next!`,`Đội mình: ${state.distance} / 120 mét. Tiếp theo chèo ${state.next==='left'?'trái':'phải'} nhé!`);view.hint(()=>ready()?(state.next==='left'?left:right):null);
   const b=await tapOne([left,right],api);if(!b||api.closed)return;const next=rowStroke(state,b.dataset.folkAction as 'left'|'right',ready(),api.little)!;
   if(next.distance>state.distance){clock.accept();api.sfx.pop(next.strokes);if(next.strokes%3===0)api.right(b);}else api.wrong(b);state=next;draw();
  }if(!api.closed){clock.stop();api.dots(12,12);return view.win();}

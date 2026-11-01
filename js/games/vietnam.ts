@@ -9,6 +9,8 @@ import { el, wait, pick } from '../util.js';
 // ---------- Ô ăn quan (Mandarin Square Capturing) ----------
 // Squares 1–5 belong to the bottom player, 7–11 to the top player, 0 and 6 are the mandarins.
 import {simulate,refill,repay,owner} from './oanquan-core.js';
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") the values a game uses are on its stage (data-lv) for the checks
+const markLv = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 import {playOnlineOaq} from './oanquan-online.js';
 import {playOnlineTug} from './tug-online.js';
 register({
@@ -57,13 +59,17 @@ register({
       st = s; draw();
       if (took) api.say(`Captured ${took}!`, `Ăn được ${took} hạt!`);
     };
+    // (owner, 1 Nov 2026 AEDT) Tèo thinks harder each level: Easy often plays any move, Medium mostly the best capture, Hard
+    // always the best capture, and Talent also looks at the child's best answer and plays the move that leaves the least
+    const smart = api.little ? 0 : Math.max(0, Math.min(3, api.smart || 0)), careless = [.55, .2, 0, 0][smart];
+    markLv(api, careless, smart === 3 ? 'lookahead' : '');
+    const bestReply = s => { let best = 0; for (let i = 1; i <= 5; i++) if (s.seeds[i]) for (const d of [1, -1]) best = Math.max(best, simulate(s, i, d).s.score[0] - s.score[0]); return best; };
     const pickAI = () => {
       const opts = [];
-      for (let i = 7; i <= 11; i++) if (st.seeds[i]) for (const d of [1, -1]) { const r = simulate(st, i, d); opts.push({ i, d, gain: r.s.score[1] - st.score[1] }); }
+      for (let i = 7; i <= 11; i++) if (st.seeds[i]) for (const d of [1, -1]) { const r = simulate(st, i, d); opts.push({ i, d, gain: r.s.score[1] - st.score[1] - (smart === 3 ? bestReply(r.s) : 0) }); }
       opts.sort((a, b) => b.gain - a.gain);
       if (api.little) return opts[opts.length - 1];          // little kids: Tèo plays the gentlest move
-      if (api.strong) return opts[0];                         // big kids on medium/hard: Tèo plays to win
-      return Math.random() < .55 ? pick(opts) : opts[0];
+      return Math.random() < careless ? pick(opts) : opts[0];
     };
     let turn = 0, choosing = false, directionButtons = null, plannedMove = null;
     // Autoplay uses the same legal choices as a child, and waits through sowing and Tèo's turn.
@@ -133,7 +139,11 @@ register({
   async run(api) {
     // (r63, owner: with friends the board can be bigger) online the inviter's size (3 to 19): 3 in a row on 3 × 3, 4 up to
     // 6 × 6, 5 (like real cờ caro) on bigger boards, which scroll so every square stays big enough to tap
-    const O = api.online, N = O && O.size >= 3 && O.size <= 19 ? O.size : api.level <= 1 ? 3 : 6, K = N <= 3 ? 3 : N <= 6 ? 4 : 5, P = ['🌸', '🍀'];
+    // (owner, 1 Nov 2026 AEDT) a bigger board each level for big kids: Easy 3 × 3 (three in a row), Medium 5 × 5 and Hard 6 × 6 (four),
+    // Talent 7 × 7 with five in a row, like real cờ caro; Bống also thinks harder each level
+    const smart = api.little ? 0 : Math.max(0, Math.min(3, api.smart || 0));
+    const O = api.online, N = O && O.size >= 3 && O.size <= 19 ? O.size : api.little ? (api.level <= 1 ? 3 : 6) : [3, 5, 6, 7][smart], K = N <= 3 ? 3 : N <= 6 ? 4 : 5, P = ['🌸', '🍀'];
+    if (!O) markLv(api, N, K, smart);
     const names = O ? O.names : api.two ? [api.players[0].name, api.players[1].name] : [api.players[0].name, 'Bống'];
     const b = Array(N * N).fill(-1);
     const grid = el('div', 'caro' + (N > 6 ? ' big' : '')); grid.style.setProperty('--n', N);
@@ -155,6 +165,8 @@ register({
       const win = test(1); if (win != null && !api.little) return win;
       const block = test(0); if (block != null && (api.strong || (!api.little && api.level > 1) || Math.random() < .5)) return block;
       if (api.little) { const safe = free.filter(i => { b[i] = 1; const w = lineAt(i, 1); b[i] = -1; return !w; }); if (safe.length) return pick(safe); }
+      // Hard: Bống builds her own lines most of the time; Talent: always, the way a careful player does
+      if (smart >= 2 && Math.random() < (smart === 3 ? 1 : .7)) return plannedSquare(1);
       const c = Math.floor(N / 2) * N + Math.floor(N / 2); if (b[c] < 0 && Math.random() < .7) return c;
       const near = free.filter(i => { const x = i % N, y = Math.floor(i / N); return [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1]].some(([dx, dy]) => b[(y + dy) * N + x + dx] === 1 && x + dx >= 0 && x + dx < N); });
       return pick(near.length && Math.random() < .6 ? near : free);
@@ -199,7 +211,10 @@ register({
 register({
   id: 'hopscotch', icon: '🦶', name: () => T('Hopscotch', 'Nhảy Lò Cò'),
   async run(api) {
-    const rounds = 3, N = api.level <= 1 ? 6 : api.level === 2 ? 8 : 10, back = api.level >= 3;
+    // the level sets the court and the hop back; on Talent you also pick up the stone on the way back, from the square before it,
+    // as in the playground game
+    const rounds = 3, N = api.level <= 1 ? 6 : api.level === 2 ? 8 : 10, back = api.level >= 3, pickUp = back && !!api.talent;
+    markLv(api, N, back ? 'back' : '', pickUp ? 'pickup' : '');
     const LAYOUT = { 6: [[1], [2], [3], [4, 5], [6]], 8: [[1], [2], [3], [4, 5], [6], [7, 8]], 10: [[1], [2], [3], [4, 5], [6], [7, 8], [9], [10]] }[N];
     api.say('Nhảy lò cò! Throw the stone, then hop on every number in order. Skip the square with the stone!', 'Nhảy lò cò! Ném viên đá, rồi nhảy lần lượt theo số. Nhớ bỏ qua ô có viên đá nhé!');
     for (let r = 0; r < rounds; r++) {
@@ -215,12 +230,21 @@ register({
       if (back) for (let n = N - 1; n >= 1; n--) if (n !== stone) path.push(n);
       for (let k = 0; k < path.length; k++) {
         const want = path[k];
+        // Talent: standing on the square before the stone on the way back, pick the stone up first
+        if (pickUp && k >= N - 1 && want === stone - 1 && sq[stone].classList.contains('stone')) {
+          api.show('Pick up the stone!', 'Nhặt viên đá lên!');
+          for (;;) { const b = await tapOne(Object.values(sq)); if (api.closed) return; if (b._n === stone) { b.querySelector('.pebble')?.remove(); b.classList.remove('stone'); api.sfx.pop(3); break; } api.wrong(b, 'Pick up the stone!', 'Nhặt viên đá lên!'); }
+        }
         for (;;) {
           const b = await tapOne(Object.values(sq)); if (api.closed) return;
           if (b._n === want) { b.classList.remove('hopped'); void b.offsetWidth; b.classList.add('hopped'); api.sfx.jump(); sayIn(settings.lang, numWord(want)); break; }
           if (b._n === stone) api.wrong(b, `Skip the stone! Hop to ${want}.`, `Bỏ qua viên đá! Nhảy sang ô ${numWord(want)}.`);
           else api.wrong(b, `Hop to ${want}!`, `Nhảy vào ô ${numWord(want)}!`);
         }
+      }
+      if (pickUp && sq[stone].classList.contains('stone')) {   // (the stone on square 1: picked up from square 2 at the end)
+        api.show('Pick up the stone!', 'Nhặt viên đá lên!');
+        for (;;) { const b = await tapOne(Object.values(sq)); if (api.closed) return; if (b._n === stone) { b.querySelector('.pebble')?.remove(); b.classList.remove('stone'); api.sfx.pop(3); break; } api.wrong(b, 'Pick up the stone!', 'Nhặt viên đá lên!'); }
       }
       sq[stone].classList.add('right'); api.praise(); await wait(1400);
     }
@@ -249,7 +273,9 @@ register({
       b0.onclick = () => pull(-1); if (b1) b1.onclick = () => pull(1);
       // (r90, #423 #445) auto play pulls as fast as a child taps (the plan is asked again after each tap)
       api.plan(() => field.isConnected && done < 0 ? b0 : null, { maxActions: 400 });
-      const aiRate = api.little ? 1.4 : ([1.9, 2.3, 2.8, 3.2, 3.6][Math.min(4, api.level - 1)] + (api.strong ? .4 : 0) + attempt * -.25);
+      // Talent: the village kids pull harder still
+      const aiRate = api.little ? 1.4 : ([1.9, 2.3, 2.8, 3.2, 3.6][Math.max(0, Math.min(4, api.level - 1))] + (api.strong ? .4 : 0) + (api.talent ? .5 : 0) + attempt * -.25);
+      if (!api.two) markLv(api, aiRate);
       await new Promise<void>(res => {
         const tick = now => {
           if (api.closed) return res();

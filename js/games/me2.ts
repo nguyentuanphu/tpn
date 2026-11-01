@@ -5,6 +5,13 @@ import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el, wait } from '../util.js';
 
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
+// get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
+// a button's label: on Talent only the words
+const label = (api, icon: string, name: string[]) => api.talent ? `<span>${T(name[0], name[1])}</span>` : `${pic(icon)} <span>${T(name[0], name[1])}</span>`;
+
 let styled = false;
 function style() {
   if (styled) return; styled = true;
@@ -28,29 +35,36 @@ register({
     style();
     api.say('Put your daily routine in order from morning to bedtime!',
       'Sắp xếp các hoạt động trong ngày từ sáng đến tối nhé!');
-    api.dots(4, 0);
+    // a longer day each level (breakfast, dinner and a bath join in); on Talent the buttons show only words
+    const parts = lv(api, ['wake', 'brush', 'play', 'sleep'], ['wake', 'brush', 'play', 'sleep'], ['wake', 'brush', 'breakfast', 'play', 'sleep'], ['wake', 'brush', 'breakfast', 'play', 'dinner', 'sleep'], ['wake', 'brush', 'breakfast', 'play', 'dinner', 'bath', 'sleep']);
+    mark(api, parts.length, api.talent ? 'words' : '');
+    const total = parts.length;
+    api.dots(total, 0);
     const wrap = el('div', 'm2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'm2-stage'); wrap.appendChild(stage);
 
-    const routine = [
+    const day = [
       { id: 'wake', icon: '🌅', name: ['Wake up', 'Thức dậy'] },
       { id: 'brush', icon: '🪥', name: ['Brush teeth', 'Đánh răng'] },
+      { id: 'breakfast', icon: '🥣', name: ['Breakfast', 'Ăn sáng'] },
       { id: 'play', icon: '🎒', name: ['School & play', 'Đi học & chơi'] },
+      { id: 'dinner', icon: '🍜', name: ['Dinner', 'Ăn tối'] },
+      { id: 'bath', icon: '🛁', name: ['Bath time', 'Tắm'] },
       { id: 'sleep', icon: '🌙', name: ['Bedtime story', 'Đi ngủ'] }
-    ];
+    ], routine = day.filter(r => parts.includes(r.id));
 
     const display = el('div', '', pic('🌅')); display.style.fontSize = '80px'; stage.appendChild(display);
     const controls = el('div', 'm2-controls'); wrap.appendChild(controls);
     // (owner, 29 Oct 2026 AEDT audit) the buttons stood in the right order already: they are mixed up now
     const btns = routine.map((r, idx) => {
-      const b = el('button', 'm2-btn', `${pic(r.icon)} <span>${T(r.name[0], r.name[1])}</span>`);
+      const b = el('button', 'm2-btn', label(api, r.icon, r.name));
       b.dataset.step = String(idx);
       return b;
     });
     [...btns].sort(() => Math.random() - .5).forEach(b => controls.appendChild(b));
 
     let currentStep = 0;
-    while (currentStep < 4) {
+    while (currentStep < total) {
       api.plan(() => btns[currentStep] || null, { maxActions: 5 });
       const target = btns[currentStep];
       const clicked = await untilRight(api, btns, e => e === target);
@@ -59,7 +73,7 @@ register({
       display.innerHTML = pic(routine[currentStep].icon);
       api.sfx.pop(currentStep);
       currentStep++;
-      api.dots(4, currentStep);
+      api.dots(total, currentStep);
       await wait(300);
     }
     api.say('A happy, healthy day from morning until night!', 'Một ngày thật vui vẻ và khỏe mạnh từ sáng đến tối!');
@@ -95,18 +109,23 @@ register({
     });
 
     const controls = el('div', 'm2-controls'); wrap.appendChild(controls);
+    // treats that do not belong on the plate join the choices each level (tapping one is a gentle "not this"); on Talent the
+    // buttons show only words
+    const treats = [{ icon: '🍭', name: ['Lollipop', 'Kẹo mút'] }, { icon: '🍟', name: ['Chips', 'Khoai tây chiên'] }, { icon: '🥤', name: ['Fizzy drink', 'Nước ngọt có ga'] }, { icon: '🍫', name: ['Chocolate', 'Sô-cô-la'] }].slice(0, lv(api, 0, 0, 1, 2, 4));
+    mark(api, 4 + treats.length, api.talent ? 'words' : '');
     const btns = foods.map((f, idx) => {
-      const b = el('button', 'm2-btn', `${pic(f.icon)} <span>${T(f.name[0], f.name[1])}</span>`);
+      const b = el('button', 'm2-btn', label(api, f.icon, f.name));
       b.dataset.step = String(idx);
-      controls.appendChild(b);
       return b;
     });
+    const junk = treats.map(f => { const b = el('button', 'm2-btn', label(api, f.icon, f.name)); b.dataset.treat = '1'; return b; });
+    const all = btns.concat(junk); (treats.length ? [...all].sort(() => Math.random() - .5) : all).forEach(b => controls.appendChild(b));
 
     // (owner, 29 Oct 2026 AEDT audit) any order: the plate needs each kind of food once (it took one fixed order)
     let currentStep = 0;
     while (currentStep < 4) {
       api.plan(() => btns.find(b => !b.disabled) || null, { maxActions: 5 });
-      const clicked = await untilRight(api, btns, e => !e.disabled);
+      const clicked = await untilRight(api, all, e => !e.disabled && !e.dataset.treat);
       if (!clicked || api.closed) return;
       clicked.disabled = true;
       slots[Number(clicked.dataset.step)].classList.add('on');
@@ -130,6 +149,9 @@ register({
     api.say('Choose a kind thing to do: share toys, help friends, or say thank you!',
       'Chọn một hành động tốt: chia sẻ đồ chơi, giúp bạn, hay nói lời cảm ơn!');
     const targetChoices = api.little ? 3 : 4;
+    // unkind choices join the kind ones each level (tapping one is a gentle "not this"); on Talent the buttons show only words
+    const unkind = [{ icon: '😠', name: ['Shout at a friend', 'Quát bạn'] }, { icon: '😢', name: ['Take a toy away', 'Giật đồ chơi của bạn'] }, { icon: '🗑️', name: ['Throw litter', 'Vứt rác bừa bãi'] }, { icon: '😡', name: ['Push in the line', 'Chen hàng'] }].slice(0, lv(api, 0, 0, 1, 2, 4));
+    mark(api, targetChoices + unkind.length, api.talent ? 'words' : '');
     api.dots(targetChoices, 0);
     const wrap = el('div', 'm2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'm2-stage'); wrap.appendChild(stage);
@@ -144,17 +166,18 @@ register({
 
     const controls = el('div', 'm2-controls'); wrap.appendChild(controls);
     const btns = choices.slice(0, targetChoices).map((c, idx) => {
-      const b = el('button', 'm2-btn', `${pic(c.icon)} <span>${T(c.name[0], c.name[1])}</span>`);
+      const b = el('button', 'm2-btn', label(api, c.icon, c.name));
       b.dataset.step = String(idx);
-      controls.appendChild(b);
       return b;
     });
+    const bad = unkind.map(c => { const b = el('button', 'm2-btn', label(api, c.icon, c.name)); b.dataset.unkind = '1'; return b; });
+    const all = btns.concat(bad); (bad.length ? [...all].sort(() => Math.random() - .5) : all).forEach(b => controls.appendChild(b));
 
     // (owner, 29 Oct 2026 AEDT audit) every kind choice is right, in any order (it took one fixed order)
     let current = 0;
     while (current < targetChoices) {
       api.plan(() => btns.find(b => !b.disabled) || null, { maxActions: 5 });
-      const clicked = await untilRight(api, btns, e => !e.disabled);
+      const clicked = await untilRight(api, all, e => !e.disabled && !e.dataset.unkind);
       if (!clicked || api.closed) return;
       clicked.disabled = true;
       heart.style.transform = 'scale(1.3)';

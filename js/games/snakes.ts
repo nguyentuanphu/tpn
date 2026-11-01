@@ -6,7 +6,7 @@ import {SharedBoardSession} from './shared-board-session.js';
 import {controlsArcadeTurn,type ArcadeOnline} from './arcade-session.js';
 import {snakesStart,snakesCommand,LADDERS,SNAKES,type SnakesState} from './snakes-core.js';
 import type {Profile} from '../../types/save.js';
-type Api={stage:HTMLElement;players:Profile[];little:boolean;two:boolean;level:number;online?:ArcadeOnline;closed:boolean;say(en:string,vi:string):void;show(en:string,vi:string):void;right():void;dots(total:number,done:number):void;sfx:{tap():void};plan(fn:()=>HTMLElement|null,opts:{maxActions:number}):void;onCleanup(fn:()=>void):void;win(extra:{title:string;titleVi:string}):Promise<unknown>};
+type Api={stage:HTMLElement;players:Profile[];little:boolean;two:boolean;level:number;smart?:number;talent?:boolean;online?:ArcadeOnline;closed:boolean;say(en:string,vi:string):void;show(en:string,vi:string):void;right():void;dots(total:number,done:number):void;sfx:{tap():void};plan(fn:()=>HTMLElement|null,opts:{maxActions:number}):void;onCleanup(fn:()=>void):void;win(extra:{title:string;titleVi:string}):Promise<unknown>};
 const point=(n:number)=>{const row=Math.floor((n-1)/5),column=(n-1)%5;return{x:50+100*(row%2?4-column:column),y:50+100*(4-row)};};
 function routes(gentle:boolean){
  let shapes='';for(const[from,to]of Object.entries(LADDERS)){const a=point(Number(from)),b=point(to),dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy),nx=-dy/len*9,ny=dx/len*9;shapes+=`<g stroke="#a87536" stroke-width="5" stroke-linecap="round"><path d="M${a.x+nx} ${a.y+ny}L${b.x+nx} ${b.y+ny}M${a.x-nx} ${a.y-ny}L${b.x-nx} ${b.y-ny}"/>`;for(let i=0;i<=6;i++){const t=i/6,x=a.x+t*dx,y=a.y+t*dy;shapes+=`<path d="M${x+nx} ${y+ny}L${x-nx} ${y-ny}"/>`;}shapes+='</g>';}
@@ -16,6 +16,13 @@ function routes(gentle:boolean){
 const dieFace=(n:number)=>{const layouts=[[],[[18,18]],[[9,9],[27,27]],[[9,9],[18,18],[27,27]],[[9,9],[27,9],[9,27],[27,27]],[[9,9],[27,9],[18,18],[9,27],[27,27]],[[9,9],[27,9],[9,18],[27,18],[9,27],[27,27]]];return `<svg class="snakes-die" width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><rect x="1" y="1" width="34" height="34" rx="9" fill="#fff6df" stroke="#79583d" stroke-width="2"/>${layouts[n].map(([x,y])=>`<circle class="die-pip" cx="${x}" cy="${y}" r="3" fill="#59466c"/>`).join('')}</svg>`;};
 const GENTLE_INTRO:[string,string]=['Count your steps and climb the ladders. Together we bring every piece home!','Đếm các bước và leo thang. Cùng đưa mọi quân về đích nhé!'];
 const COLOURS=['#b4366a','#245c9a','#246644','#816011'];
+// (owner, 1 Nov 2026 AEDT) Talent's exact finish, the old playground rule: a roll that would pass 25 leaves the piece where it is
+function exactFinish(s:SnakesState,value:number):SnakesState|null{
+ const next=snakesCommand(s,value);if(!next||s.positions[s.turn]+next.die<=25)return next;
+ const positions=[...s.positions];positions[s.turn]=s.positions[s.turn];let turn=s.turn;
+ for(let n=1;n<=positions.length;n++){const t=(s.turn+n)%positions.length;if(positions[t]<25){turn=t;break;}}
+ return{...next,positions,landed:s.positions[s.turn],destination:s.positions[s.turn],winner:s.winner,complete:false,turn};
+}
 export async function playSnakes(api:Api){
  const root=dom('section','snakes-shared'),style=dom('style');style.textContent=`.snakes-shared{width:min(100%,650px);display:grid;gap:12px;margin:auto;padding:6px;color:#443262}.snakes-shared button{min-height:64px;min-width:64px}.snakes-board{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:min(100%,440px,max(240px,calc(100dvh - 525px)));aspect-ratio:1;margin:auto;gap:4px}.snakes-board>svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}.snakes-cell{border:2px solid #9e81bd;border-radius:12px;background:#fff7de;position:relative;min-width:0;padding:4px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;align-content:center}.snakes-cell>small{position:absolute;top:3px;left:5px;font-weight:700}.snakes-cell>.art{width:32px;height:32px}.snakes-cell.ladder{background:#dcf5dd}.snakes-cell.snake{background:#ffdfe9}.snakes-token{position:relative;z-index:3;width:22px;height:22px;border-radius:50%;border:2px solid #fff;color:white;display:grid;place-items:center;font-size:14px;font-weight:700;box-shadow:0 0 0 1px #59466c}.snakes-roster,.snakes-controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.snakes-roster>span{border:3px solid var(--seat);border-radius:12px;padding:5px;background:#fff}.snakes-roster .on{box-shadow:0 0 0 3px #ffbf38}.snakes-status{text-align:center;min-height:2.8em;font-weight:700}.snakes-controls .art{width:34px;height:34px}.snakes-shared details{padding:10px;background:#fff7df;border-radius:15px}.snakes-shared summary{min-height:64px;display:flex;align-items:center;cursor:pointer}.snakes-shared .snakes-wait{background:#fff1bd;padding:12px;border-radius:15px}.snakes-shared [hidden]{display:none!important}@media(min-width:1000px){.snakes-shared{grid-template-columns:minmax(0,1fr) 210px;align-items:center}.snakes-roster{grid-column:1/3;grid-row:1}.snakes-board{grid-column:1;grid-row:2/6;width:100%}.snakes-status{grid-column:2;grid-row:2}.snakes-controls{grid-column:2;grid-row:3}.snakes-shared details{grid-column:2;grid-row:4}.snakes-wait{grid-column:1/3;grid-row:6}}`;
  const board=dom('div','snakes-board'),roster=dom('div','snakes-roster'),status=dom('p','snakes-status'),actions=dom('div','snakes-controls'),roll=control(T('Roll','Gieo'),()=>{if(session.submit(0))api.sfx.tap();}),helperLabel=dom('label'),helper=dom('input');helper.type='checkbox';helper.checked=!api.two;helperLabel.append(helper,document.createTextNode(T('Play with a helper','Chơi cùng bạn máy')));helperLabel.style.minHeight='64px';helperLabel.style.display='flex';helperLabel.style.alignItems='center';helper.style.width=helper.style.height='28px';
@@ -24,7 +31,10 @@ export async function playSnakes(api:Api){
  actions.append(roll,helperLabel);root.append(style,roster,board,status,actions,wait,rules);api.stage.append(root);
  let session:SharedBoardSession<SnakesState>,rolling=false,shownRolls=0,dead=false,won=false,explained=false,timer:ReturnType<typeof setTimeout>|undefined,finish:(v:unknown)=>void;
  const completed=new Promise<unknown>(resolve=>{finish=resolve;});
- const seats=api.online?.names.length||2,mine=api.online?.mine||0,names=Array.from({length:seats},(_,i)=>api.online?.names[i]||api.players[i]?.name||T('Helper','Bạn máy'));
+ // (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") playing alone with helpers, more helpers join each level:
+ // one on Easy and Medium, two on Hard, three on Talent, where you must also land exactly on 25
+ const sm=api.little?0:Math.max(0,Math.min(3,api.smart||0)),exact=!api.online&&!!api.talent;let told=false;
+ const seats=api.online?.names.length||(api.two?2:[2,2,3,4][sm]),mine=api.online?.mine||0,names=Array.from({length:seats},(_,i)=>api.online?.names[i]||api.players[i]?.name||T('Helper','Bạn máy'));
  const render=()=>{
   if(dead)return;clearTimeout(timer);const s=session?.state;wait.hidden=!session?.waiting;helperLabel.hidden=!!session?.online;leave.hidden=!s;
   if(!s){roll.disabled=true;status.textContent=T('Choosing gentle shared rules for the youngest friend…','Chọn luật chung nhẹ nhàng theo bạn nhỏ tuổi nhất…');return;}
@@ -39,6 +49,7 @@ export async function playSnakes(api:Api){
   }
   board.insertAdjacentHTML('beforeend',routes(s.gentle));
   roster.replaceChildren();names.forEach((name,seat)=>{const e=dom('span',seat===s.turn?'on':'',`${seat+1} · ${name}: ${s.positions[seat]}/25`);e.style.setProperty('--seat',COLOURS[seat]);roster.append(e);});
+  if(exact&&!told&&!s.complete&&s.positions[mine]>=19){told=true;api.show('Land exactly on 25 to finish!','Phải đi đúng ô 25 mới về đích!');}
   status.textContent=s.complete?T('You reached the top!','Con về đích rồi!'):s.die?T(`Rolled ${s.die}. ${names[s.turn]}: tap Roll.`,`Gieo được ${s.die}. ${names[s.turn]}: bấm Gieo.`):T(`${names[s.turn]}: tap Roll.`,`${names[s.turn]}: bấm Gieo.`);
   roll.disabled=rolling||s.complete||session.waiting||session.busy||!controlsArcadeTurn(s.turn,mine,session.online,helper.checked);
   // a new roll tumbles on the die before the counter moves on (js/games/reveal.ts)
@@ -46,7 +57,8 @@ export async function playSnakes(api:Api){
   if(s.complete&&!won){won=true;api.right();void api.win({title:T('You reached the top!','Con về đích rồi!'),titleVi:'Con về đích rồi!'}).then(finish);return;}
   if(!rolling&&!session.online&&helper.checked&&s.turn!==mine&&!s.complete){const index=session.core!.index;timer=setTimeout(()=>{if(!dead&&index===session.core?.index)session.submit(0);},650);}
  };
- session=new SharedBoardSession({online:api.online,gentle:api.little,seats,seed:api.online?.seed||'snakes-'+Date.now(),initial:snakesStart,reduce:snakesCommand,changed:()=>queueMicrotask(render)});helper.onchange=render;render();
+ api.stage.dataset.lv=[seats,exact?'exact':''].join(',');
+ session=new SharedBoardSession({online:api.online,gentle:api.little,seats,seed:api.online?.seed||'snakes-'+Date.now(),initial:snakesStart,reduce:exact?exactFinish:snakesCommand,changed:()=>queueMicrotask(render)});helper.onchange=render;render();
 
  api.plan(()=>!rolling&&!roll.disabled?roll:null,{maxActions:4990});const poll=setInterval(()=>{session.poll();render();},1000);
  api.onCleanup(()=>{dead=true;clearInterval(poll);clearTimeout(timer);session.close();finish(null);});return completed;
