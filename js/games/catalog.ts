@@ -211,6 +211,16 @@ export const GAME_CATALOG = [
   { id: 'makeface', icon: '😀', name: () => T("Make a Face", "Ghép Khuôn Mặt") },
   { id: 'gallery', icon: '🖼️', name: () => T("My Little Gallery", "Phòng Tranh Của Em") },
   { id: 'leafrub', icon: '🍃', name: () => T("Leaf Rubbings", "In Lá") },
+  // (Học vui, owner's plan 1 Nov 2026 AEDT) the six science experiments: guess, try, then hear why (js/games/science.ts)
+  { id: 'sci_float', learn: true, icon: 'sci:float', name: () => T('Float or Sink?', 'Nổi hay Chìm?') },
+  { id: 'sci_magnet', learn: true, icon: 'sci:magnet', name: () => T('Magnet Pull', 'Nam Châm Hút') },
+  { id: 'sci_ramp', learn: true, icon: 'sci:ramp', name: () => T('Rolling Ramps', 'Dốc Lăn Bóng') },
+  { id: 'sci_seesaw', learn: true, icon: 'sci:seesaw', name: () => T('Seesaw Lift', 'Bập Bênh Nâng Bạn') },
+  { id: 'sci_shadow', learn: true, icon: 'sci:shadow', name: () => T('Lamp and Shadow', 'Đèn và Bóng') },
+  { id: 'sci_sound', learn: true, icon: 'sci:sound', name: () => T('Bottle Music', 'Nhạc Chai Nước') },
+  // the two Tiếng Việt games: hear a tone and pick its mark; build a syllable (js/games/tiengviet.ts)
+  { id: 'vi_tones', learn: true, icon: 'vi:tones', name: () => T('Tone Detective', 'Thám Tử Dấu Thanh') },
+  { id: 'vi_build', learn: true, icon: 'vi:build', name: () => T('Build a Syllable', 'Bé Ghép Vần') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -250,6 +260,8 @@ export const GAME_LOADERS = {
     'money2.js': { ids: ['savegoal', 'pocketweek', 'pricetags', 'busfare', 'lemonade', 'party', 'recycle', 'tetmarket', 'bank', 'sharefair'], load: () => import('./money2.js') },
   'drawing.js': { ids: ["dotdot","trace","mirror","colournum","lanternart","card","sand","drawpath","shapedraw","copygrid"], load: () => import('./drawing.js') },
   'drawing2.ts': { ids: ["stamps", "weave", "mosaic", "nonla", "aodai", "kitepaint", "shades", "shadowpic", "finishpic", "scene"], load: () => import('./drawing2.js') },
+  'science.ts': { ids: ['sci_float', 'sci_magnet', 'sci_ramp', 'sci_seesaw', 'sci_shadow', 'sci_sound'], load: () => import('./science.js') },
+  'tiengviet.ts': { ids: ['vi_tones', 'vi_build'], load: () => import('./tiengviet.js') },
   'crafts.ts': { ids: ["lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"], load: () => import('./crafts.js') },
 
 };

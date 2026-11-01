@@ -58,6 +58,7 @@ marketing/source/runvalley.log
 /js/content/films/crow.js
 /js/content/fruit-parade.js
 /js/content/hanoi-pack-info.js
+/js/content/hocvui.js
 /js/content/install-state.js
 /js/content/map.js
 /js/content/releases.js
@@ -118,6 +119,7 @@ marketing/source/runvalley.log
 /js/games/goat-art.js
 /js/games/goat-core.js
 /js/games/goat.js
+/js/games/hocvui-meta.js
 /js/games/horse-session.js
 /js/games/learning-meta.js
 /js/games/learning.js
@@ -144,6 +146,7 @@ marketing/source/runvalley.log
 /js/games/readingmenu.js
 /js/games/registry.js
 /js/games/reveal.js
+/js/games/science.js
 /js/games/shapes2.js
 /js/games/shared-board-session.js
 /js/games/snakes-core.js
@@ -155,6 +158,7 @@ marketing/source/runvalley.log
 /js/games/talkgames.js
 /js/games/thinking.js
 /js/games/thinking2.js
+/js/games/tiengviet.js
 /js/games/tienlen.js
 /js/games/tienlenrules.js
 /js/games/trongnu-rules.js

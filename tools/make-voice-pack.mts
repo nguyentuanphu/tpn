@@ -121,6 +121,10 @@ try {
 // (js/content/reading.js), in the language being read; English sounds ("/s/") are made from their phonetic spelling below
 const READING = await import('../js/content/reading.js');
 for (const l of READING.readingLines()) jobs.push({ lang: l.lang, text: l.text, area: 'games', pri: 40, alt: 'games' });
+// (Học vui, owner's plan 1 Nov 2026 AEDT) the Vietnamese syllables and words the two Tiếng Việt games say on their own
+// (js/content/hocvui.js): ma, má, mà…, cá vàng, and the picture words of Build a Syllable, always in Vietnamese
+const HOCVUI = await import('../js/content/hocvui.js');
+for (const l of HOCVUI.hocvuiLines()) jobs.push({ lang: l.lang, text: l.text, area: 'games', pri: 40, alt: 'games' });
 const readingSsml = (j, v) => { const L = /^\/(\w+)\/$/.exec(j.lang === 'en' ? j.text : ''), ipa = L && READING.SOUND_IPA[L[1]]; return ipa ? `<speak version='1.0' xml:lang='en-AU'><voice name='${v}'><phoneme alphabet='ipa' ph='${ipa}'>${L[1]}</phoneme></voice></speak>` : null; };
 // one job per recording; a line used in several areas downloads with the first it is needed in (the core first)
 const RANK = a => a === 'core' ? 0 : a === 'world' ? 3 : GROUPS.includes(a) ? 2 : 1;
