@@ -319,6 +319,17 @@ function testerNews(): NewsItem[] {
   return [...ids].map(id => RELEASES.find(r => r.id === id)).filter(r => !!r).map(r => { const x = liveRule(r.id); return { id: r.id, en: r.en, vi: r.vi, game: r.game, start: x && typeof x.start === 'string' ? x.start : undefined }; });
 }
 const NEWS_SEEN = 'sv2_tester_news';
+// (owner, 1 Nov 2026 AEDT: "take it to that feature to test it straight away") a new feature with a place in the valley:
+// Go there walks the child to the nearest thing it shows (an id prefix of the valley's taps); the Bag's features open the Bag
+const NEWS_GO: Record<string, RegExp | 'bag'> = { jobs: /^job_/, villagerTalk: /^villager_/, singers: /^sing\d/, rideAny: /^drive_/, busFares: /^busstop_/, rideBikes: /^bike_/, xichloRides: /^xichlo_/, dailySurprise: /^gift_today$/, companionGrow: 'bag', saveGoal: 'bag', collectibles: 'bag', mysteryBox: 'bag' };
+async function goToNews(id: string) {
+  const how = NEWS_GO[id], h = G.heroes && G.heroes[0]; if (!how || !h) return;
+  if (how === 'bag') { (G as unknown as { openPad?: (i: number, tab: string) => void }).openPad?.(0, 'bag'); return; }
+  const list = ((G as unknown as { interactables?: Array<{ id: string; x: number; z: number; visible?: (h: unknown) => boolean }> }).interactables || []).filter(i => how.test(i.id) && Number.isFinite(i.x) && (!i.visible || i.visible(h)));
+  if (!list.length) return;
+  const near = list.reduce((a, b) => Math.hypot(a.x - h.pos.x, a.z - h.pos.z) <= Math.hypot(b.x - h.pos.x, b.z - h.pos.z) ? a : b);
+  if (G.travelTo) await (G.travelTo as unknown as (h: unknown, x: number, z: number, snapToNpc?: boolean) => Promise<unknown>)(h, near.x, near.z, false);
+}
 const newsUnseen = () => { let seen: string[] = []; try { seen = JSON.parse(localStorage.getItem(NEWS_SEEN) || '[]'); } catch (e) { } return testerNews().filter(n => !seen.includes(n.id)).length; };
 const markNewsSeen = () => { try { localStorage.setItem(NEWS_SEEN, JSON.stringify(testerNews().map(n => n.id))); } catch (e) { } paintCount(); };
 function newsHTML() {
@@ -326,7 +337,7 @@ function newsHTML() {
   const when = (s?: string) => { if (!s) return T('to test now', 'thử ngay'); const d = new Date(s + 'T00:00:00'); return T(`for everyone from ${d.getDate()}/${d.getMonth() + 1}`, `mọi người có từ ${d.getDate()}/${d.getMonth() + 1}`); };
   // (owner, 1 Nov 2026 AEDT: "this part is too big, make it collapsible") folded unless the tester opened it last time
   let open = false; try { open = localStorage.getItem('sv2_tester_news_open') === '1'; } catch (e) { }
-  return `<details class="tp-news"${open ? ' open' : ''}><summary>${pic('🐞')} ${T(`New to test (${list.length})`, `Mới để thử (${list.length})`)}</summary><div class="tp-news-list">${list.map(n => `<div class="tp-news-row"><span><b>${esc(T(n.en, n.vi))}</b><small>${when(n.start)}</small></span>${n.game ? `<button class="btn" data-try="${esc(n.game)}">${T('Play', 'Chơi')}</button>` : ''}</div>`).join('')}</div></details>`;
+  return `<details class="tp-news"${open ? ' open' : ''}><summary>${pic('🐞')} ${T(`New to test (${list.length})`, `Mới để thử (${list.length})`)}</summary><div class="tp-news-list">${list.map(n => `<div class="tp-news-row"><span><b>${esc(T(n.en, n.vi))}</b><small>${when(n.start)}</small></span>${n.game ? `<button class="btn" data-try="${esc(n.game)}">${T('Play', 'Chơi')}</button>` : NEWS_GO[n.id] ? `<button class="btn" data-go-news="${esc(n.id)}">${T('Go there', 'Đến đó')}</button>` : ''}</div>`).join('')}</div></details>`;
 }
 
 // ---------- the ladybird and the tester mark ----------
@@ -414,6 +425,7 @@ export async function openPanel(i = 0, initialTab = 'tester', signal?: AbortSign
   bindReportViewport(m);
   const card = m.querySelector<HTMLElement>('.card'), ta = card.querySelector<HTMLTextAreaElement>('textarea');
   card.querySelector<HTMLDetailsElement>('.tp-news')?.addEventListener('toggle', e => { try { localStorage.setItem('sv2_tester_news_open', (e.currentTarget as HTMLDetailsElement).open ? '1' : '0'); } catch (x) { } });
+  card.querySelectorAll<HTMLButtonElement>('[data-go-news]').forEach(b => b.onclick = () => { m.close(); G.paused = was; void goToNews(b.dataset.goNews); });
   markNewsSeen(); card.querySelectorAll<HTMLButtonElement>('[data-try]').forEach(b => b.onclick = () => { m.close(); G.paused = was; G.playGame?.(i, b.dataset.try, 'tester'); });
   const full = card.querySelector<HTMLInputElement>('.tp-full');
   full.onchange = () => { selectedShot = full.checked ? pic0 : scenePic; card.querySelector<HTMLImageElement>('.tp-shot').src = selectedShot; };

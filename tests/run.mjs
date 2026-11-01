@@ -1641,13 +1641,14 @@ await check('testernews', async () => {
       const popup = [...document.querySelectorAll('.reward, .modal')].map(x => x.textContent).find(t => /Tester preview|Xem trước cho người thử/.test(t)) || '';
       const dot = !document.querySelector('.tester-floating.z-lb .lb-new')?.hidden;
       const T = await import('/js/tester.js'); await T.openPanel(0); await new Promise(res => setTimeout(res, 600));
-      const rows = [...document.querySelectorAll('.tp-news .tp-news-row')].map(x => x.textContent.trim()), play = !!document.querySelector('.tp-news [data-try="bahu"]');
+      const rows = [...document.querySelectorAll('.tp-news .tp-news-row')].map(x => x.textContent.trim()), play = !!document.querySelector('.tp-news [data-try="bahu"]'), go = !!document.querySelector('.tp-news [data-go-news="singers"]'), folded = !document.querySelector('.tp-news')?.open; // (owner, 1 Nov 2026 AEDT) Go there for a feature in the valley; the list starts folded
       document.querySelector('.modal.tpanel .x')?.click(); await new Promise(res => setTimeout(res, 400));
-      return { popup: popup.slice(0, 80), dot, rows, play, dotAfter: !document.querySelector('.tester-floating.z-lb .lb-new')?.hidden };
+      return { popup: popup.slice(0, 80), dot, rows, play, go, folded, dotAfter: !document.querySelector('.tester-floating.z-lb .lb-new')?.hidden };
     });
     if (r.popup) out.push(lang + ': a pop-up at the start: ' + r.popup);
     if (!r.dot || r.dotAfter) out.push(lang + ': the ladybird dot ' + JSON.stringify({ before: r.dot, after: r.dotAfter }));
     if (r.rows.length !== 2 || !r.play) out.push(lang + ': the list ' + JSON.stringify(r.rows));
+    if (!r.go || !r.folded) out.push(lang + ': Go there / folded ' + JSON.stringify({ go: r.go, folded: r.folded }));
     if (P.errors.length) out.push(lang + ': ' + P.errors.slice(0, 2).join(' | '));
     await P.ctx.close();
   }
