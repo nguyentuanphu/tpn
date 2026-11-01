@@ -5689,12 +5689,17 @@ await check('togetheragain', async () => {
     return Math.hypot(m.x - P.pos.x, m.z - P.pos.z) < .6 && up > 1.4 && { up: +up.toFixed(2) }; }, cow, { timeout: 20000 }).then(h => h.jsonValue()).catch(() => null);
   await A.page.evaluate(() => __sv.heroes[0].dismount());
   const off = await B.page.waitForFunction(id => { const P = Object.values(__sv.partners)[0], b = __sv.world.rideAnimals.find(x => x.id === id); return !P.ride && !b.rider; }, cow, { timeout: 20000 }).then(() => true).catch(() => false);
+  // (owner, 1 Nov 2026 AEDT) A rides a bus or tram as a passenger: B sees that vehicle where A sits, and it goes when A gets off
+  const pas = await A.page.evaluate(() => { const G = __sv, h = G.heroes[0], sl = G.traffic.slots.find(s => /^(bus|tram)/.test(s.id) && s.v && !s.passenger); if (!sl) return null; sl.passenger = h; return { idx: G.traffic.slots.indexOf(sl), id: sl.id }; });
+  const passengerSeen = pas && await B.page.waitForFunction(idx => { const P = Object.values(__sv.partners)[0], sl = __sv.traffic.slots[idx]; return !!P && !!P.ride && !!P.ride.v && sl && P.ride.v === sl.v && Math.hypot(sl.v.o.position.x - P.pos.x, sl.v.o.position.z - P.pos.z) < 3; }, pas.idx, { timeout: 20000 }).then(() => true).catch(() => false);
+  if (pas) await A.page.evaluate(idx => { __sv.traffic.slots[idx].passenger = null; }, pas.idx);
+  const passengerOff = pas && await B.page.waitForFunction(() => { const P = Object.values(__sv.partners)[0]; return !!P && !P.ride; }, null, { timeout: 20000 }).then(() => true).catch(() => false);
   const errs = [...A.errors, ...B.errors]; await A.ctx.close(); await B.ctx.close();
   const games = [g1, g2, g3];
   ok(!tab.outside && tab.together && !missing.length && find.rows === 1 && find.follow && find.big >= 44 && find.following
     && !into.pads && !into.modals.length && into.front
     && games.every(g => Array.isArray(g) && g[0] && g[0] === g[1]) && new Set(games.map(g => g[0])).size === 3 && waiting.open && !waiting.dialogs && after.every(a => !a.dialogs)
-    && bike.riding && seen && !seen.missed && left && animal && off && !errs.length, JSON.stringify({ tab, missing, find, into, games, waiting, after, bike, seen, left, cow, animal, off, errs }));
+    && bike.riding && seen && !seen.missed && left && animal && off && pas && passengerSeen && passengerOff && !errs.length, JSON.stringify({ tab, missing, find, into, games, waiting, after, bike, seen, left, cow, animal, off, pas, passengerSeen, passengerOff, errs }));
   return `Friends page: no game buttons outside Play together (${tab.inside.length} inside, ${need.join(', ')} among them); "${find.follow}" on the friend's row (${Math.round(find.big)} px) follows; a yes to Tiến Lên miền Bắc leaves no Friends page in front; Play again tapped first by one, then by both at once: two more Caro rounds together; B sees A on the ${bike.id} (moved ${seen.moved} m, rider ${seen.riderUp} m up) and on the buffalo (${animal.up} m up), each left where A got off`;
 });
 

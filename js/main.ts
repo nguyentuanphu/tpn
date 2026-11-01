@@ -1734,7 +1734,9 @@ setInterval(() => {
   sentAt = nowMs;
   // (#744, v1.06) what I ride travels too, so friends see me on the bicycle, car or buffalo and see it move
   const rd = h0.riding as (NonNullable<SvHeroT['riding']> & { id?: string, slot?: { id?: string } }) | null, slots = (G.traffic?.slots || []) as unknown[];
-  const ride = !rd ? {} : rd.slot && slots.includes(rd.slot) ? { rv: 'v' + slots.indexOf(rd.slot), rm: rd.slot.id } : rd.id ? { rv: rd.id } : {};
+  // (owner, 1 Nov 2026 AEDT) riding as a passenger (bus, tram, taxi, xích lô) travels too, with pa: friends see the vehicle
+  const pas = !rd ? (slots as Array<{ id?: string, passenger?: unknown }>).findIndex(sl => sl && sl.passenger === h0) : -1;
+  const ride = !rd ? (pas >= 0 ? { rv: 'v' + pas, rm: (slots[pas] as { id?: string }).id, pa: 1 } : {}) : rd.slot && slots.includes(rd.slot) ? { rv: 'v' + slots.indexOf(rd.slot), rm: rd.slot.id } : rd.id ? { rv: rd.id } : {};
   Net.send({ t: 's', x: +h0.pos.x.toFixed(2), y: +h0.pos.y.toFixed(2), z: +h0.pos.z.toFixed(2), yaw: +h0.yaw.toFixed(2), st: idle && !rd ? 'idle' : h0.state, sp: idle ? 0 : +h0.speed.toFixed(1), ...ride });
 }, 100);
 // Sharp on phones that can manage it: with Graphics on Auto, the 3D picture is drawn at up to 2× the screen's
@@ -1865,7 +1867,10 @@ function frame(now) {
     P.pos.lerp(_np.set(s.x, s.y, s.z), Math.min(1, dt * 10)); P.yaw = s.yaw;
     const rv = friendRide(P, s);
     P.av.root.position.copy(P.pos); P.av.root.rotation.y = P.yaw; P.av.anim(s.st || 'idle', t, s.sp || 0); P.tag.position.set(P.pos.x, P.pos.y + 2.0, P.pos.z);
-    if (rv && rv.v) { const v = rv.v, A = P.av as unknown as Parameters<typeof seatRider>[0]; v.o.position.copy(P.pos); v.o.rotation.y = P.yaw; v.wheels.forEach(w => { w.rotation.x += (s.sp || 0) * dt / v.wr; }); A.rig.position.y = 0; seatRider(A, v, v.seat, v.grips, v.feet, A.root.scale.x, false); }
+    if (rv && rv.v && s.pa) { // a passenger: the vehicle is placed so its passenger seat is where the friend sits (P.pos)
+      const v = rv.v as RideCar & { passenger?: number[], seat: number[] }, seat = v.passenger || (/^(bus|tram)/.test(s.rm || '') ? [-.45, v.seat[1], 0] : [-(v.seat[0] || .45), v.seat[1], v.seat[2] - (s.rm === 'touristCart' ? .9 : 0)]), c = Math.cos(P.yaw), sn = Math.sin(P.yaw);
+      v.o.rotation.y = P.yaw; v.o.position.set(P.pos.x - (seat[0] * c + seat[2] * sn), P.pos.y - (seat[1] - .55), P.pos.z - (-seat[0] * sn + seat[2] * c)); }
+    else if (rv && rv.v) { const v = rv.v, A = P.av as unknown as Parameters<typeof seatRider>[0]; v.o.position.copy(P.pos); v.o.rotation.y = P.yaw; v.wheels.forEach(w => { w.rotation.x += (s.sp || 0) * dt / v.wr; }); A.rig.position.y = 0; seatRider(A, v, v.seat, v.grips, v.feet, A.root.scale.x, false); }
     else if (rv && rv.animal) { const b = rv.animal; b.mesh.position.copy(P.pos); b.mesh.rotation.y = P.yaw; b.shadow.position.set(P.pos.x, P.pos.y + .05, P.pos.z); P.av.root.position.y += 1.6; P.tag.position.y += 1.6; }
   }
   // bubbles
