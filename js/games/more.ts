@@ -11,6 +11,9 @@ import { T, numWord } from '../i18n.js';
 import { shuffle, pick, el, wait, esc } from '../util.js';
 
 const THINGS = ['🍎', '⭐', '🐟', '🌸', '🎈', '🐞', '🍓', '🚗'];
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
 
 // ---------- More or Less? ----------
 register({
@@ -20,6 +23,8 @@ register({
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       let a = 1 + Math.floor(Math.random() * max), b = 1 + Math.floor(Math.random() * max); if (a === b) b = a === max ? a - 1 : a + 1;
+      // (levels) Talent: up to 16 on a side and the two sides only one or two apart
+      if (api.talent) { a = 6 + Math.floor(Math.random() * 9); b = a + (Math.random() < .5 ? -1 : 1) * (1 + Math.floor(Math.random() * 2)); }
       const askMore = api.level <= 1 || Math.random() < .55, ta = pick(THINGS), tb = pick(THINGS.filter(t => t !== ta));
       api.say(askMore ? 'Which side has MORE?' : 'Which side has LESS?', askMore ? 'Bên nào NHIỀU hơn?' : 'Bên nào ÍT hơn?');
       const btns = choiceButtons(api, [[a, ta], [b, tb]], ([n, t]) => `<span class="ml-grp">${Array.from({ length: n }, () => `<i>${t}</i>`).join('')}</span>`, 'choice ml');
@@ -41,12 +46,13 @@ register({
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const k = Math.floor(Math.random() * 7), nxt = (k + 1) % 7, before = api.level >= 3 && r % 2;
+      // (levels) more days to choose from on Hard and Talent; Talent: today is not lit up on the strip
       const want = before ? (k + 6) % 7 : nxt;
-      const strip = el('div', 'daystrip', DAYS.map((d, i) => `<span class="${i === k ? 'on' : ''}">${T(d[0], d[1])}</span>`).join(''));
+      const strip = el('div', 'daystrip', DAYS.map((d, i) => `<span class="${i === k && !api.talent ? 'on' : ''}">${T(d[0], d[1])}</span>`).join(''));
       api.stage.appendChild(strip);
       if (before) api.say(`Today is ${DAYS[k][0]}. What was yesterday?`, `Hôm nay là ${DAYS[k][1]}. Hôm qua là thứ mấy?`);
       else api.say(`Today is ${DAYS[k][0]}. What is tomorrow?`, `Hôm nay là ${DAYS[k][1]}. Ngày mai là thứ mấy?`);
-      const opts = shuffle([want, ...shuffle([0, 1, 2, 3, 4, 5, 6].filter(i => i !== want && i !== k)).slice(0, 2)]);
+      const opts = shuffle([want, ...shuffle([0, 1, 2, 3, 4, 5, 6].filter(i => i !== want && i !== k)).slice(0, lv(api, 2, 2, 3, 4))]);
       // (tester's notes, 12 Oct) whole day names, never "THai" or "Mon", in cards that fit them
       const btns = choiceButtons(api, opts, i => `<b>${T(DAYS[i as number][0], DAYS[i as number][1])}</b>`, 'choice big day');
       const ok = await untilRight(api, btns, e => e._v === want); if (!ok) return;
@@ -65,9 +71,9 @@ register({
     const rounds = 5, pool = shuffle(BODY).slice(0, rounds);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const [, en, vi] = pool[r], useIt = api.level >= 2 && r % 2;
+      const [, en, vi] = pool[r], useIt = api.talent || api.level >= 2 && r % 2;   // (levels) Talent: always "what do we use to…"; more to choose from
       if (useIt) api.say(`What do we use to ${USE[en][0]}?`, `Mình dùng gì để ${USE[en][1]}?`); else api.say(`Where are the ${en}? Tap them!`, `${vi[0].toUpperCase() + vi.slice(1)} đâu? Chạm vào nhé!`);
-      const opts = shuffle([pool[r], ...shuffle(BODY.filter(b => b !== pool[r])).slice(0, api.little ? 2 : 3)]);
+      const opts = shuffle([pool[r], ...shuffle(BODY.filter(b => b !== pool[r])).slice(0, api.little ? 2 : lv(api, 3, 3, 4, 5))]);
       const btns = choiceButtons(api, opts, ([i, e, v]) => `<span class="big">${i}</span><small>${T(e, v)}</small>`);
       const ok = await untilRight(api, btns, e => e._v === pool[r]); if (!ok) return;
       api.say(useIt ? `Yes! We ${USE[en][0]} with our ${en}.` : `${en[0].toUpperCase() + en.slice(1)}!`, useIt ? `Đúng rồi! Mình ${USE[en][1]} bằng ${vi}.` : `${vi[0].toUpperCase() + vi.slice(1)}!`); await wait(1300);
@@ -82,7 +88,9 @@ register({
   id: 'oantuti', online: true, icon: '✌️', origin: 'vn', name: () => T('Oẳn Tù Tì', 'Oẳn Tù Tì'),
   async run(api) {
     if (api.online) return rpsOnline(api);
-    const need = api.little ? 2 : 3; let wins = 0, round = 0;
+    // (levels) more wins to reach from Hard; the friend lets you win every 3rd round on Easy, every 4th on Medium, never on
+    // Hard; on Talent it watches which hand you show most and plays the hand that beats it half the time
+    const need = api.little ? 2 : lv(api, 3, 3, 4, 5), gift = lv(api, 3, 4, 0, 0), shown = [0, 0, 0]; let wins = 0, round = 0;
     api.say('Oẳn tù tì, ra cái gì, ra cái này! Rock beats scissors, scissors beat paper, paper beats rock.', 'Oẳn tù tì, ra cái gì, ra cái này! Búa thắng kéo, kéo thắng bao, bao thắng búa.');
     while (wins < need && !api.closed) {
       api.dots(need, wins); api.stage.innerHTML = '';
@@ -91,7 +99,10 @@ register({
       const b = await tapOne(btns); if (api.closed) return;
       const you = RPS.indexOf(b._v);
       // little ones (and every few rounds) the friend "happens" to lose
-      let me = Math.floor(Math.random() * 3); if (api.little || round % 3 === 2) me = (you + 2) % 3;
+      let me = Math.floor(Math.random() * 3);
+      if (api.talent && round > 1 && Math.random() < .5) me = (shown.indexOf(Math.max(...shown)) + 1) % 3;
+      if (api.little || gift && round % gift === gift - 1) me = (you + 2) % 3;
+      shown[you]++;
       round++;
       // oẳn... tù... tì! both fists shake on the count before the hands open (js/games/reveal.ts)
       face.innerHTML = `<span class="you">🤛</span><b>VS</b><span class="me">🤜</span>`; await shake(face, 3); if (api.closed) return;
@@ -143,9 +154,10 @@ register({
     const rounds = 3;
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const n = (api.little ? 2 : 3) + r + Math.floor(Math.random() * (api.level + 1)), hay = el('div', 'egghay');
-      const spots = shuffle(Array.from({ length: 12 }, (_, i) => i)).slice(0, n);
-      for (let i = 0; i < 12; i++) { const s = el('button', 'eggspot', spots.includes(i) ? '🥚' : pick(['🌾', '🌾', '🪺', '🌿'])); s._egg = spots.includes(i); hay.appendChild(s); }
+      // (levels) Talent: a bigger field of hay (16 spots) with more eggs hidden in it
+      const field = api.talent ? 16 : 12, n = (api.little ? 2 : 3) + r + Math.floor(Math.random() * (api.level + 1)) + (api.talent ? 2 : 0), hay = el('div', 'egghay');
+      const spots = shuffle(Array.from({ length: field }, (_, i) => i)).slice(0, n);
+      for (let i = 0; i < field; i++) { const s = el('button', 'eggspot', spots.includes(i) ? '🥚' : pick(['🌾', '🌾', '🪺', '🌿'])); s._egg = spots.includes(i); hay.appendChild(s); }
       const basket = el('div', 'eggbasket', `🧺 <b>0</b>`); api.stage.append(hay, basket);
       api.say(`The hens laid eggs in the hay! Find all ${n} eggs.`, `Gà mái đẻ trứng trong rơm! Tìm đủ ${numWord(n)} quả trứng nhé.`);
       let got = 0;
@@ -169,7 +181,7 @@ function latin(n) { // a random latin square: each picture once per row and colu
 register({
   id: 'sudoku', icon: '🧩', name: () => T('Picture Sudoku', 'Sudoku Hình'),
   async run(api) {
-    const rounds = 2, n = api.little || api.level <= 1 ? 3 : 4, holes = n === 3 ? 3 : [4, 5, 6, 7, 8][api.level - 1];
+    const rounds = 2, n = api.little || api.level <= 1 ? 3 : 4, holes = n === 3 ? 3 : api.talent ? 10 : [4, 5, 6, 7, 8][api.level - 1];   // (levels) Talent: ten empty squares
     api.say('Each picture once in every row and every column. Tap an empty square, then the picture that fits.', 'Mỗi hình chỉ một lần trong mỗi hàng và mỗi cột. Chạm ô trống, rồi chọn hình hợp.');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -197,7 +209,7 @@ register({
 register({
   id: 'nemlon', icon: '🩴', origin: 'vn', name: () => T('Can Knock-Down', 'Ném Lon'),
   async run(api) {
-    const rounds = 3, throws = api.little ? 99 : [6, 5, 5, 4, 4][api.level - 1];
+    const rounds = 3, throws = api.little ? 99 : api.talent ? 3 : [6, 5, 5, 4, 4][api.level - 1];   // (levels) Talent: 3 throws, a faster arrow, a smaller target
     api.say('Stack the cans, then throw your sandal! Tap THROW when the arrow points at the cans.', 'Chồng lon lên, rồi ném dép! Bấm NÉM khi mũi tên chỉ đúng chồng lon nhé.');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -207,7 +219,7 @@ register({
       const btn = el('button', 'sn-btn', T('THROW!', 'NÉM!'));
       yard.append(stack, aim, sandal); api.stage.append(yard, btn);
       const target = .25 + Math.random() * .5; stack.style.left = target * 100 + '%';
-      let x = 0, dir = 1, raf = 0, left = n, used = 0, speed = api.little ? .35 : .45 + api.level * .12, last = performance.now();
+      let x = 0, dir = 1, raf = 0, left = n, used = 0, speed = api.little ? .35 : .45 + api.level * .12 + (api.talent ? .2 : 0), last = performance.now();
       const loop = now => { const dt = (now - last) / 1000; last = now; x += dir * speed * dt; if (x > 1) { x = 1; dir = -1; } if (x < 0) { x = 0; dir = 1; } aim.style.left = x * 100 + '%'; raf = requestAnimationFrame(loop); };
       raf = requestAnimationFrame(loop); api.onCleanup(() => cancelAnimationFrame(raf));
       await new Promise<void>(res => {
@@ -216,7 +228,7 @@ register({
           sandal.style.transition = 'none'; sandal.style.left = x * 100 + '%'; sandal.style.bottom = '0%'; void sandal.offsetWidth;
           sandal.style.transition = 'bottom .45s ease-out, transform .45s'; sandal.style.bottom = '62%'; sandal.style.transform = 'rotate(540deg)'; api.sfx.whoosh && api.sfx.whoosh();
           await wait(460);
-          const near = Math.abs(x - target), hitW = api.little ? .2 : [.16, .13, .11, .09, .08][api.level - 1];
+          const near = Math.abs(x - target), hitW = api.little ? .2 : api.talent ? .065 : [.16, .13, .11, .09, .08][api.level - 1];
           if (near < hitW) {
             const cans = [...stack.querySelectorAll('.nl-can:not(.down)')], hit = near < hitW / 2 ? cans.length : Math.ceil(cans.length / 2);
             cans.slice(-hit).forEach((c, i) => setTimeout(() => { c.classList.add('down'); c.style.setProperty('--dx', ((Math.random() - .5) * 160) + 'px'); api.sfx.pop(i); }, i * 80));

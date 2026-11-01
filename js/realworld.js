@@ -17,6 +17,8 @@ import { settings } from './state.js';
 
 // id → [Wikipedia article(s) the photos are taken from in Studio (lang:Title; the first names the photos/ key), latitude, longitude]
 export const REAL = {
+  // (owner, 1 Nov 2026 AEDT: every landmark has real photos) the two bridges that had none
+  longbien: [['en:Long Biên Bridge'], 21.0434, 105.8590], princes: [['en:Princes Bridge'], -37.8189, 144.9681],
   opera: [['en:Sydney Opera House'], -33.8568, 151.2153], harbour: [['en:Sydney Harbour Bridge'], -33.8523, 151.2108], uluru: [['en:Uluru'], -25.3444, 131.0369],
   banana: [['en:Big Banana'], -30.2766, 153.1365], bondi: [['en:Bondi Beach'], -33.8915, 151.2767], lighthouse: [['vi:Hải đăng Vũng Tàu', 'en:Vũng Tàu'], 10.3348, 107.0773],
   turtle: [['en:Turtle Tower', 'en:Hoàn Kiếm Lake'], 21.0277, 105.8522], onepillar: [['en:One Pillar Pagoda'], 21.0359, 105.8336], chuacau: [['en:Japanese Covered Bridge'], 15.8771, 108.3262],

@@ -7,7 +7,7 @@ import {HorseSession} from './horse-session.js';
 import {tumble} from './reveal.js';
 import {COLORS,globalPos,legalMoves,npcChooseMove,ringLength,type Mode,type NPCDifficulty,type GameState} from './cacuangua-core.js';
 import type {Profile} from '../../types/save.js';
-type Api={stage:HTMLElement;players:Profile[];difficulty?:string;little:boolean;two:boolean;strong:boolean;level:number;online?:ArcadeOnline;closed:boolean;say(en:string,vi:string):void;right(e?:HTMLElement):void;sfx:{tap():void};plan(fn:()=>HTMLElement|null,opts:{maxActions:number}):void;onCleanup(fn:()=>void):void;win(extra:{title:string;titleVi:string}):Promise<unknown>};
+type Api={stage:HTMLElement;players:Profile[];difficulty?:string;little:boolean;two:boolean;strong:boolean;level:number;smart?:number;talent?:boolean;online?:ArcadeOnline;closed:boolean;say(en:string,vi:string):void;right(e?:HTMLElement):void;sfx:{tap():void};plan(fn:()=>HTMLElement|null,opts:{maxActions:number}):void;onCleanup(fn:()=>void):void;win(extra:{title:string;titleVi:string}):Promise<unknown>};
 const INK=['#cf475c','#347fbd','#22825d','#a97a12'];
 const FINISH:[string,string]=['The horses are home!','Ngựa về chuồng rồi!'];
 const NAMES:[string,string][]=[['Red','Đỏ'],['Blue','Xanh dương'],['Green','Xanh lá'],['Yellow','Vàng']];
@@ -52,7 +52,11 @@ async function run(api:Api){
  const count=dom('select');count.setAttribute('aria-label',T('Number of players','Số người chơi'));for(let i=2;i<=4;i++){const o=dom('option','',T(`${i} players`,`${i} người chơi`));o.value=String(i);count.append(o);}
  const helper=dom('input');helper.type='checkbox';helper.checked=!api.two;const helperLabel=dom('label','',T('Helpers play the other colours','Bạn máy chơi các màu còn lại'));helperLabel.prepend(helper);
  const difficulty=dom('select');difficulty.setAttribute('aria-label',T('Helper difficulty','Độ khó bạn máy'));for(const[value,en,vi]of[['easy','Gentle helper','Bạn máy nhẹ nhàng'],['standard','Thinking helper','Bạn máy suy nghĩ'],['hard','Careful helper','Bạn máy thận trọng']]){const o=dom('option','',T(en,vi));o.value=value;difficulty.append(o);}// (owner, 30 Oct 2026 AEDT: Hard gave the short track and gentle helpers) the game's level picks the rules and helpers
- difficulty.value=api.difficulty==='hard'?'hard':api.difficulty==='medium'?'standard':api.difficulty==='easy'?'easy':api.strong?'hard':api.little?'easy':'standard';
+ difficulty.value=api.difficulty==='hard'||api.difficulty==='talent'?'hard':api.difficulty==='medium'?'standard':api.difficulty==='easy'?'easy':api.strong?'hard':api.little?'easy':'standard';
+ // (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") playing alone, more helper horses join each level: two
+ // players on Easy and Medium, three on Hard, all four on Talent (where the careful helpers also move quicker)
+ const sm=api.little?0:Math.max(0,Math.min(3,api.smart||0));if(!api.two&&!api.online)count.value=String([2,2,3,4][sm]);
+ api.stage.dataset.lv=[mode.value,count.value,difficulty.value].join(',');
  const roll=control(T('Roll the die','Tung xúc xắc'),()=>submit(0));roll.dataset.horseRoll='';actions.append(roll);
  const leave=control(T('Continue here with helpers','Chơi tiếp ở đây với bạn máy'),()=>{session.continueLocally();helper.checked=true;render();});wait.append(dom('p','',T('Waiting for friends. Your board stays here.','Đang chờ bạn. Bàn cờ vẫn được giữ ở đây.')),leave);
  let session:HorseSession,rolling=false,shownRolls=0,dead=false,won=false,npcTimer:ReturnType<typeof setTimeout>|undefined,previousFinished=0,lastWaiting=false,finish:(v:unknown)=>void;
@@ -75,7 +79,7 @@ async function run(api:Api){
   moves.replaceChildren();for(const move of legalMoves(state)){const pos=state.players[state.turn].horses[move.horse].pos,mn=MARK_NAMES[move.horse],b=control(pos<0?T('Out of the stable','Ra khỏi chuồng'):T(`Go ${move.steps}`,`Đi ${move.steps} bước`),()=>submit(move.horse+1));b.setAttribute('aria-label',T(`Horse with the ${mn[0]}: `,`Ngựa ${mn[1]}: `)+b.textContent);b.dataset.horseChoice=String(move.horse);b.style.setProperty('--seat',INK[colorOf(state,state.turn)]);b.disabled=!can;const icon=dom('span');icon.innerHTML=horseArt(INK[colorOf(state,state.turn)]);b.prepend(icon,markOf(move.horse));moves.append(b);}
   const finished=state.players[session.mine]?.finishedCount||0;if(finished>previousFinished){api.right();previousFinished=finished;}
   if(state.winner&&!won){won=true;void api.win({title:T(...FINISH),titleVi:FINISH[1]}).then(finish);return;}
-  if(!rolling&&!session.online&&helper.checked&&state.turn!==session.mine&&!state.winner){const index=session.core!.index;npcTimer=setTimeout(()=>{if(dead||index!==session.core?.index)return;const s=session.state!;session.submit(s.pendingMove?npcChooseMove(s,difficulty.value as NPCDifficulty).horse+1:0);},api.little?550:350);}
+  if(!rolling&&!session.online&&helper.checked&&state.turn!==session.mine&&!state.winner){const index=session.core!.index;npcTimer=setTimeout(()=>{if(dead||index!==session.core?.index)return;const s=session.state!;session.submit(s.pendingMove?npcChooseMove(s,difficulty.value as NPCDifficulty).horse+1:0);},api.little?550:api.talent?220:350);}
  };
  const changed=()=>queueMicrotask(render);
  const submit=(value:number)=>{if(session.submit(value))api.sfx.tap();};

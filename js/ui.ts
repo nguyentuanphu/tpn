@@ -1,7 +1,9 @@
 import { isOpen, isHeld, progressOf, secondSetOf } from './content/unlocks.js';
 // Screens and pop-ups: title, who's playing, grown-ups settings, photo editor, NPC dialogue,
 // the Sparkle Pad (map, backpack, adventure log, album, camera), cooking, shop and online play.
-import { AREAS, gamesIn, withSitePlaces } from './content/activities.js';
+import { AREAS, gamesIn, linksIn, gameInfo, withSitePlaces } from './content/activities.js';
+// (the Học vui corners, as in js/content/hocvui.ts; written here so the content loads only with its games: PERF-001)
+const CORNERS = ['hv_vi', 'hv_en', 'hv_math', 'hv_sci'] as const;
 import type { Profile } from '../types/save.js';
 import type { SvMain } from './main.js';
 import { T, applyLang, nm } from './i18n.js';
@@ -48,8 +50,13 @@ import { LEARN } from './words2.js';
 import { SONG_GROUPS, SONG_LIST, familySongs } from './content/songs.js';
 import { originFlags, ICONS } from './icons.js';
 import { pic } from './art.js';
+import { COMPANIONS } from './content/companions.js';
 
 const PET_ICON = { puppy: '🐶', kitty: '🐱', bunny: '🐰', panda: '🐼', joey: '🦘', calf: '🐃' };
+// the companion's and pets' hats (js/kidplay.js HATS), drawn as in the shop's Companion tab
+const PAL_HAT_ICON = { party: '🎉', flower: '🌸', nonla: '👒', crown: '👑' };
+// (issue #738) the Backpack section that holds the pets and the companion together, and their hats
+export const PALS_NAME = () => T('Pets & Buddy', 'Thú cưng & Bạn đồng hành');
 export const STYLE_ICON = { dress: '👗', shirt: '👕', aodai: '🥻', tunic: '🧥', overalls: '👖', hoodie: '🧶' };
 export const STYLE_NAME = { dress: () => T('Dress', 'Váy'), shirt: () => T('Shirt & shorts', 'Áo và quần đùi'), aodai: () => 'Áo dài', tunic: () => T('Explorer', 'Nhà thám hiểm'), overalls: () => T('Overalls', 'Quần yếm'), hoodie: () => T('Hoodie', 'Áo nỉ') };
 // big text and calm mode change the whole page
@@ -362,7 +369,7 @@ export function openEditor(profile, after) {
       <p class="note">${T('Little: everything is spoken, games stay gentle and nobody can lose. Big kid: harder levels, more reading, and real opponents in strategy games.', 'Bé nhỏ: mọi thứ đều được đọc to, trò chơi nhẹ nhàng và không ai thua. Bé lớn: cấp độ khó hơn, đọc nhiều hơn, và có đối thủ thật trong trò chơi chiến thuật.')}</p></div>
     <div class="field"><span>${T('Start screen', 'Màn hình đầu')}</span><div class="seg age scr"><button data-s="simple"><span class="ai">🧸</span><b>${T('Simple', 'Đơn giản')}</b><small>${T('big pictures', 'hình to')}</small></button><button data-s="valley"><span class="ai">🌳</span><b>${T('Valley', 'Thung lũng')}</b><small>${T('walk and explore', 'đi khám phá')}</small></button></div>
       <p class="note">${T('Simple: a path of big pictures, one tap to play. Valley: the whole 3D world. The child can switch any time.', 'Đơn giản: một con đường hình to, chạm một lần là chơi. Thung lũng: cả thế giới 3D. Bé đổi lúc nào cũng được.')}</p></div>
-    <div class="field"><span>${T('Difficulty', 'Độ khó')}</span><div class="seg diff"><button data-d="easy">🌱 ${T('Easy', 'Dễ')}</button><button data-d="medium">🌿 ${T('Medium', 'Vừa')}</button><button data-d="hard">🌳 ${T('Hard', 'Khó')}</button></div></div>
+    <div class="field"><span>${T('Difficulty', 'Độ khó')}</span><div class="seg diff"><button data-d="easy">🌱 ${T('Easy', 'Dễ')}</button><button data-d="medium">🌿 ${T('Medium', 'Vừa')}</button><button data-d="hard">🌳 ${T('Hard', 'Khó')}</button><button data-d="talent" class="talentbtn">🌟 ${T('Talent', 'Tài năng')}</button></div></div>
     <div class="field"><span>${T('Clothes', 'Trang phục')}</span><div class="chips" id="cOut"></div><div class="chips" id="cCol"></div></div>
     <div class="field"><span>${T('Hat', 'Mũ')}</span><div class="chips" id="cHat"></div></div>
     <div class="field"><span>${T('On the back', 'Sau lưng')}</span><div class="chips" id="cBack"></div></div>
@@ -409,13 +416,13 @@ export function openEditor(profile, after) {
   chips('#cBack', BACKS, 'back', v => ({ none: '🙂', wings: '🧚', cape: '🦸' }[v]));
   chips('#cHs', HAIRSTYLES, 'hairStyle', v => ({ short: '💇', buns: '🎀', long: '👩', ponytail: '🐴', spiky: '🦔' }[v]));
   let age = p.age || 'little';
-  const ageBtns = () => m.querySelectorAll('.seg.age:not(.scr) button').forEach(b => { b.classList.toggle('on', b.dataset.a === age); b.onclick = () => { age = b.dataset.a; ageBtns(); }; });
+  const ageBtns = () => m.querySelectorAll('.seg.age:not(.scr) button').forEach(b => { b.classList.toggle('on', b.dataset.a === age); b.onclick = () => { age = b.dataset.a; ageBtns(); diffBtns(); }; });
   ageBtns();
   let scr = p.screen || null; // unset: follows the age (under 5: Simple)
   const scrBtns = () => m.querySelectorAll('.seg.scr button').forEach(b => { b.classList.toggle('on', b.dataset.s === (scr || (age === 'big' ? 'valley' : 'simple'))); b.onclick = () => { scr = b.dataset.s; scrBtns(); }; });
   scrBtns(); m.querySelectorAll('.seg.age:not(.scr) button').forEach(b => b.addEventListener('click', () => scrBtns()));
   let diff = p.difficulty || 'easy';
-  const diffBtns = () => m.querySelectorAll('.seg.diff button').forEach(b => { b.classList.toggle('on', b.dataset.d === diff); b.onclick = () => { diff = b.dataset.d; diffBtns(); }; });
+  const diffBtns = () => m.querySelectorAll('.seg.diff button').forEach(b => { b.hidden = b.dataset.d === 'talent' && age !== 'big'; if (b.hidden && diff === 'talent') diff = 'hard'; b.classList.toggle('on', b.dataset.d === diff); b.onclick = () => { diff = b.dataset.d; diffBtns(); }; });
   diffBtns();
   chips('#cHair', HAIR, 'hair', v => `<span class="sw" style="background:${v}"></span>`);
   chips('#cSkin', SKIN, 'skin', v => `<span class="sw" style="background:${v}"></span>`);
@@ -653,9 +660,27 @@ export const openPad = Object.assign(function (game, i, tab) {
     const items = Object.entries<number>(p.inv).filter(([id, n]) => n > 0 && ITEMS[id] && !isGem(id)), gems = Object.entries<number>(p.inv).filter(([id, n]) => n > 0 && isGem(id)).sort((a, b) => WILD[b[0]].sell - WILD[a[0]].sell);
     const bought = Object.entries<number>(p.bought || {}).filter(([id, n]) => n > 0 && snackOf(id));
     const dishes = Object.entries<number>(p.dishes).filter(([, n]) => n > 0);
+    // (issue #738, tester on an iPhone 430x517, 31 Oct 2026 AEDT: "I can't see the pets in the Bag; put the pets and the
+    // companion in one place, where their accessories are bought and managed too") the pets were one button above the coins:
+    // no heading, so no chip in the sticky jump row and no fold, and on a short phone it scrolled away for good; the
+    // companion and its hats were only in the shop. Now one section, first in the Bag and first in the jump row: the
+    // companion, each pet, adopting, and the hats (put on whoever should wear it, or buy the next one)
+    const pals = (() => {
+      const kp = game.kidplay, comp = p.lanterns && p.lanterns.companion && COMPANIONS[p.lanterns.companion], pets = (p.pets || []).slice(0, game.pets?.max || 2), petNm = pt => game.pets?.nameOf ? game.pets.nameOf(pt) : (pt.name || '');
+      const ps = (p.lanterns && p.lanterns.pet) || {}, owned = (ps.hats || []), next = kp && (comp || pets.length) ? kp.nextHat(hero) : null;
+      const badge = id => id && PAL_HAT_ICON[id] ? `<i class="pal-hat">${pic(PAL_HAT_ICON[id])}</i>` : '';
+      const friends = (comp ? `<button class="slot pal" data-pal="buddy" title="${esc(T(comp.en, comp.vi))}"><span>${pic(comp.icon)}</span>${badge(ps.hat)}<small>${esc(comp.name)}</small></button>` : '')
+        + pets.map((pt, k) => `<button class="slot pal" data-pal="${k}" title="${esc(petNm(pt))}"><span>${pic(PET_ICON[pt.kind] || '🐾')}</span>${badge(pt.hat)}<small>${esc(petNm(pt))}</small></button>`).join('')
+        + (() => { const yard = pets.length >= (game.pets?.max || 2), nm = yard ? T('Pet yard', 'Sân thú cưng') : T('Adopt a pet', 'Nhận nuôi'), tip = yard ? T('Pet yard: name and care for your pets', 'Sân thú cưng: đặt tên và chăm sóc thú cưng') : T('Adopt a pet: choose a friend to follow you', 'Nhận nuôi: chọn một bạn thú đi theo con');
+          return `<button class="slot pal" data-adopt="1" title="${esc(tip)}"><span>${pic('🐾')}</span><small>${nm}</small></button>`; })();
+      const hats = kp && (comp || pets.length) ? kp.HATS.map(x => { const have = owned.includes(x.id), buyable = next && next.id === x.id, who = have && kp.wearerOf ? kp.wearerOf(hero, x.id) : null;
+        return `<button class="slot pal-hatslot ${who != null ? 'on' : ''} ${!have && !buyable ? 'locked' : ''}" data-phat="${x.id}" title="${esc(T(x.en, x.vi))}"><span>${pic(PAL_HAT_ICON[x.id] || '🎩')}</span>${have ? '' : buyable ? `<b class="pal-price">${fmt(x.price)}</b>` : `<i class="pal-lock">${pic('🔒')}</i>`}<small>${esc(T(x.en, x.vi))}</small></button>`; }).join('') : '';
+      return `<h3 class="bag-pals-h">${pic('🐾')} ${PALS_NAME()} <small>${T('tap one', 'chạm để xem')}</small></h3>
+      <div class="slots bag-pals">${friends}</div>${hats ? `<p class="note pal-hatnote">${T('Hats for your friends: tap one to put it on, or buy the next one.', 'Mũ cho các bạn: chạm để đội cho bạn nào, hoặc mua mũ tiếp theo.')}</p><div class="slots bag-pal-hats">${hats}</div>` : ''}`;
+    })();
     body.innerHTML = `
-      ${(p.pets || []).length ? `<button class="btn wide" id="bagPets">🐾 ${T('My pets', 'Thú cưng của con')}: ${(p.pets || []).map(pt => (PET_ICON[pt.kind] || '🐾') + ' ' + esc(pt.name || '')).join('  ')}</button>` : ''}
       <div class="bag-top"><button class="chip bagc" data-chip="money" title="${T('Coins', 'Đồng xu')}"><i>💰</i><b>${fmt(farm.coins)}</b><small>${T('Coins', 'Đồng xu')}</small></button><button class="chip bagc" data-chip="orbs" title="${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}"><i>🔮</i><b>${p.orbs}</b><small>${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}</small></button><button class="chip bagc" data-chip="leafy" title="${T('Leafies', 'Bạn Lá')}"><i>🍃</i><b>${Object.keys(p.leafies).length}/24</b><small>${T('Leafies', 'Bạn Lá')}</small></button></div>
+      ${pals}
       <h3>${T('Food', 'Món ăn')} <small>${T('tap to eat', 'chạm để ăn')}</small></h3>
       <div class="slots">${dishes.map(([id, n]) => { const r = dishInfo(id) || { icon: '🥘', name: () => T('Mystery stew', 'Món hầm bí ẩn') }; return `<button class="slot" data-eat="${id}" title="${esc(r.name() + ' · ' + T('tap to eat: hearts and energy back', 'chạm để ăn: thêm tim và sức'))}"><span>${r.icon}</span><b>${n}</b><small>${esc(r.name())}</small></button>`; }).join('') || `<p class="note">${T('Cook at a cooking pot to make food.', 'Nấu ăn ở nồi nấu để có món ăn.')}</p>`}</div>
       <h3>🛍️ ${T('From shops and stalls', 'Mua ở quán và sạp')} <small>${T('tap to eat', 'chạm để ăn')}</small></h3>
@@ -705,7 +730,36 @@ export const openPad = Object.assign(function (game, i, tab) {
       p.inv[id]--; if (p.inv[id] <= 0) delete p.inv[id]; farm.coins += w.sell; saveFarm(); game.save(); SFX.coin();
       say(`Sold! Now you have ${money(farm.coins)}.`, `Bán rồi! Giờ con có ${money(farm.coins)}.`); game.job && game.job('sell', 1, hero); draw();
     });
-    if (body.querySelector('#bagPets')) body.querySelector('#bagPets').onclick = () => { m.close(); game.closePad(i); setTimeout(() => game.pets.openAdopt(hero), 220); };
+    // (#738) Pets & Buddy: a friend says who it is and offers what it can do; a hat offers who can wear it, or Buy
+    const toPets = () => { close(); setTimeout(() => game.pets.openAdopt(hero), 220); };
+    body.querySelectorAll('[data-adopt]').forEach(b => b.onclick = () => { SFX.tap(); toPets(); });
+    body.querySelectorAll('[data-pal]').forEach(b => b.onclick = () => { SFX.tap();
+      const art = b.querySelector('svg, .art')?.outerHTML || '', name = b.querySelector('small')?.textContent || '';
+      if (b.dataset.pal === 'buddy') { const canFeed = !!game.kidplay;
+        helpCard(name, art, 'Your companion flies with you and lights the way. Feed it once a day and it grows. Choose a hat for it below.', 'Bạn đồng hành bay cùng con và soi đường. Cho bạn ăn mỗi ngày để bạn lớn lên. Chọn mũ cho bạn ở bên dưới.', canFeed ? T('Feed', 'Cho ăn') : '', ok => { if (ok) { game.kidplay.feed(hero); draw(); } }); return; }
+      helpCard(name, art, 'Your pet follows you, sniffs out hidden Leafies and saves you in deep water. Choose a hat for it below.', 'Thú cưng đi theo con, tìm bạn Lá Lá đang trốn và cứu con dưới nước sâu. Chọn mũ cho bạn ở bên dưới.', T('Name and care', 'Đặt tên và chăm sóc'), ok => { if (ok) toPets(); }); });
+    body.querySelectorAll('[data-phat]').forEach(b => b.onclick = () => {
+      const kp = game.kidplay, id = b.dataset.phat, x = kp && kp.HATS.find(y => y.id === id); if (!x) return; SFX.tap();
+      const ps = (p.lanterns && p.lanterns.pet) || {}, have = (ps.hats || []).includes(id), next = kp.nextHat(hero), name = T(x.en, x.vi), art = b.querySelector('svg, .art')?.outerHTML || '';
+      body.querySelector('.bag-help')?.remove();
+      let en, vi, btns = '';
+      if (have) {
+        const who = kp.wearerOf(hero, id), comp = p.lanterns && p.lanterns.companion && COMPANIONS[p.lanterns.companion];
+        const opts = [...(comp ? [['buddy', comp.name]] : []), ...(p.pets || []).slice(0, game.pets?.max || 2).map((pt, k) => [String(k), game.pets.nameOf(pt)])];
+        en = `${x.en}. Who should wear it?`; vi = `${x.vi}. Bạn nào đội mũ này?`;
+        btns = opts.map(([k, nm]) => `<button class="btn ${String(who) === k ? 'on' : 'primary'} bh-wear" data-to="${k}" aria-pressed="${String(who) === k}">${esc(nm)}</button>`).join('') + (who != null ? `<button class="btn bh-off">${T('Take off', 'Cởi ra')}</button>` : '');
+      } else if (next && next.id === id) {
+        const can = farm.coins >= x.price;
+        en = `${x.en} costs ${money(x.price)}. ${can ? 'Choose Buy when you are ready.' : 'Keep saving coins for it!'}`; vi = `${x.vi} giá ${money(x.price)}. ${can ? 'Chọn Mua khi con đã sẵn sàng.' : 'Để dành thêm tiền nhé!'}`;
+        if (can) btns = `<button class="btn primary bh-buy">${T('Buy', 'Mua')} · ${fmt(x.price)}</button>`;
+      } else { en = `${x.en}: buy the hats before it first.`; vi = `${x.vi}: mua những chiếc mũ trước nó trước nhé.`; }
+      const c = el('div', 'bag-help', `<div>${art}<b>${esc(name)}</b></div><p>${esc(T(en, vi))}</p><div class="actions">${btns}<button class="btn bh-close">${T('Not now', 'Để sau')}</button></div>`);
+      c.setAttribute('role', 'region'); c.setAttribute('aria-label', name); body.appendChild(c); say(en, vi);
+      c.querySelector('.bh-close').onclick = () => c.remove();
+      c.querySelectorAll('.bh-wear').forEach(w => w.onclick = () => { const k = w.dataset.to; if (kp.wearHat(hero, k === 'buddy' ? 'buddy' : +k, id)) { SFX.pop ? SFX.pop(1) : SFX.ok(); say('What a lovely hat!', 'Mũ đẹp quá!'); } draw(); });
+      c.querySelector('.bh-off')?.addEventListener('click', () => { const who = kp.wearerOf(hero, id); if (who != null) kp.wearHat(hero, who, null); SFX.tap(); draw(); });
+      c.querySelector('.bh-buy')?.addEventListener('click', () => { kp.buy(hero, id); draw(); });
+    });
     body.querySelectorAll('[data-hat]').forEach(b => b.onclick = () => { p.look.hat = b.dataset.hat; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
     body.querySelectorAll('[data-wear]').forEach(b => b.onclick = () => { const it = ITEM[b.dataset.wear]; if (it && wearItem(p, it.slot, it.id)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-unwear]').forEach(b => b.onclick = () => { if (wearItem(p, b.dataset.unwear, 'none')) { saveProfiles(); game.rebuildHero(i); SFX.tap(); draw(); } });
@@ -728,7 +782,7 @@ export const openPad = Object.assign(function (game, i, tab) {
     body.querySelectorAll('[data-gl]').forEach(b => b.onclick = () => { p.look.glider = +b.dataset.gl; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
     // Help is the first tap; every change requires an explicit action inside the same Bag.
     for (const b of body.querySelectorAll('.slot')) {
-      if (b.dataset.eat || b.dataset.snack || b.dataset.gift) continue;
+      if (b.dataset.eat || b.dataset.snack || b.dataset.gift || b.dataset.pal || b.dataset.adopt || b.dataset.phat) continue;
       const oldAction = b.onclick, name = b.querySelector('small')?.textContent || b.title || T('Item', 'Đồ dùng');
       const it = ITEM[b.dataset.wear], ingredient = b.dataset.ing, treasure = WILD[b.dataset.sellgem];
       let en = 'Keep this item in your Backpack and use its action when you need it.', vi = 'Giữ món này trong Ba lô và chọn hành động khi cần.';
@@ -992,6 +1046,9 @@ export const folkGames = () => FOLK_SHOW;
 // game the family moves in Studio moves in both. Inside a tab the games are grouped under their area's name.
 const HUB_TABS = [
   { key: 'learn', icon: '📚', short: () => T('Learning', 'Học'), title: () => T('Numbers, letters, shapes and me', 'Số, chữ, hình và em'), areas: ['numbers', 'words', 'shapes', 'me', 'money'] }, // (round S: the money games join Learning)
+  // (Học vui, owner's plan 1 Nov 2026 AEDT, docs/learn-tab/PLAN.md) Fun learning: the four corners Tiếng Việt, English,
+  // Maths and Science. Their own games are listed here; existing games keep their own tab and show here as links
+  { key: 'hocvui', icon: 'hv:tab', short: () => T('Fun learning', 'Học vui'), title: () => T('Fun learning: Vietnamese, English, Maths and Science', 'Học vui: Tiếng Việt, Tiếng Anh, Toán và Khoa học'), areas: [...CORNERS] as string[] },
   { key: 'folk', icon: '🪁', short: () => T('Folk games', 'Dân gian'), title: () => T('Folk games to play together', 'Trò chơi dân gian chơi cùng nhau'), areas: ['vietnam', 'play'] },
   { key: 'animals', icon: '🐶', short: () => T('Animals and music', 'Con vật, âm nhạc'), title: () => T('Animals and music', 'Con vật và âm nhạc'), areas: ['animals', 'music'] },
   { key: 'art', icon: '🎨', short: () => T('Pictures', 'Tranh'), title: () => T('Colours, pictures and puzzles', 'Màu sắc, tranh và ghép hình'), areas: ['art'] },
@@ -1001,7 +1058,11 @@ const HUB_TABS = [
 HUB_TABS[0].areas.splice(HUB_TABS[0].areas.indexOf('words') + 1, 0, 'reading'); // (Play reading trial) the Reading corner in the Learning tab
 const AREA_OF = Object.fromEntries(AREAS.map(a => [a.key, a]));
 // each tab with its games (built when asked, so the family's Studio changes are in it)
-const hubSections = () => HUB_TABS.map(t => ({ ...t, groups: t.areas.map(a => ({ area: AREA_OF[a], games: gamesIn(GAMES, a, false).map(g => g.id) })).filter(g => g.games.length) })).map(t => ({ ...t, games: t.groups.flatMap(g => g.games) }));
+// (Học vui) a corner also lists the existing games linked into it (links: shown, never counted as the tab's own games,
+// so every game stays in exactly one tab)
+const hubSections = () => HUB_TABS.map(t => ({ ...t, groups: t.areas.map(a => ({ area: AREA_OF[a], games: gamesIn(GAMES, a, false).map(g => g.id), links: linksIn(GAMES, a, false).map(g => g.id) })).filter(g => g.games.length || g.links.length) })).map(t => ({ ...t, games: t.groups.flatMap(g => g.games) }));
+// the tab a game really lives in (for a link tile's little home badge)
+const homeTabOf = id => HUB_TABS.find(t => t.areas.includes(gameInfo(id).area));
 export const HUB = HUB_TABS;
 // The game after this one in the Games hub (the tab the child last used first), for "Next game" after a win.
 export function nextGameAfter(id) {
@@ -1026,8 +1087,18 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
       const g = GAMES[id], lv = p.levels[id] || 1;
       return `<div class="hcard ${open ? "" : "locked"}" style="--hc:${HUB_COLORS[(k + key.length) % HUB_COLORS.length]}"><button class="hplay" data-play="${id}" ${open ? "" : "disabled"}><span class="hi">${pic(open ? g.icon : '\u{1F512}')}</span><b>${esc(g.name())}</b><small>${'⭐'.repeat(lv)}${'☆'.repeat(5 - lv)}</small></button><button class="hgo" data-go="${id}" aria-label="${T('Go there', 'Đi đến đó')}">📍</button><button class="hhow" data-how="${id}" aria-label="${T('How to play', 'Cách chơi')}">📺</button>${g.origin ? `<span class="hflag">${originFlags(g.origin)}</span>` : ''}</div>`;
   };
+  // (owner, 1 Nov 2026 AEDT: "it should tell what's needed to access these additional games, currently it only expands
+  // to show the new games") the unfolded padlock first says what to do: each game above won 3 times, with the stars so far
+  const lockGuide = area => { const prog = progressOf(p, 'game', area), ready = prog.perGame.filter(g => g.n >= 3).length, total = prog.perGame.length;
+    return total ? `<div class="hsoonlist hlockguide"><p>${T('Win each of these games 3 times to unlock the games below:', 'Thắng mỗi trò này 3 lần để mở các trò bên dưới nhé:')}</p>${prog.perGame.map(g => `<div class="hsoonrow${g.n >= 3 ? ' done' : ''}"><span class="hi">${pic(GAMES[g.id]?.icon || '\u{1F3AE}')}</span><b>${esc(GAMES[g.id]?.name() || g.id)}</b><span class="hsoonstars">${[0, 1, 2].map(k => pic(k < g.n ? '\u2B50' : '\u2606')).join('')}</span></div>`).join('')}<p class="hsoonok">${ready === total ? T('All done!', 'Xong hết rồi!') : T(`${ready} of ${total} done`, `Xong ${ready} trên ${total}`)}</p></div>` : ''; };
+  // (Học vui) a link to a game that lives in another tab: it plays the same game, and a small badge shows its home tab
+  const linkCard = (id, k, key) => {
+    const g = GAMES[id], lv = p.levels[id] || 1, home = homeTabOf(id);
+    return `<div class="hcard hlink" style="--hc:${HUB_COLORS[(k + key.length) % HUB_COLORS.length]}"><button class="hplay" data-link="${id}"><span class="hi">${pic(g.icon)}</span><b>${esc(g.name())}</b><small>${'⭐'.repeat(lv)}${'☆'.repeat(5 - lv)}</small></button><button class="hhow" data-how="${id}" aria-label="${T('How to play', 'Cách chơi')}">📺</button>${home ? `<span class="hfrom" title="${esc(T('Also in', 'Cũng có ở') + ' ' + home.short())}">${pic(home.icon)}</span>` : ''}</div>`;
+  };
   const card2 = sec => {
     const area = sec.area || sec.key, ids = sec.games.filter(id => GAMES[id]);
+    const links = (sec.links || []).filter(id => GAMES[id] && isOpen(p, id, 'game', gameInfo(id).area));
     const open = ids.filter(id => isOpen(p, id, 'game', area)), locked = ids.filter(id => !open.includes(id));
     const heldIds = secondSetOf('game', area).filter(id => GAMES[id] && isHeld(id, 'game')), held = heldIds.length, shown = openGamesHub.unfolded.has(area);
     const lockTile = locked.length ? `<div class="hcard hfold" style="--hc:#b9a6e8"><button class="hplay" data-fold="${area}" aria-expanded="${shown}"><span class="hi">${pic('\u{1F512}')}</span><b>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock`, `Còn ${locked.length} trò để mở`)}</b><small>${shown ? '' : T('Play each game above 3 times', 'Chơi mỗi trò ở trên 3 lần')} · ${pic('⭐')} ${progressOf(p, 'game', area).done}/3</small></button></div>` : '';
@@ -1035,7 +1106,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     // need") the tile shows how far the child is (each game here won 3 times) and opens the list of those games
     const prog = progressOf(p, 'game', area), ready = prog.perGame.filter(g => g.n >= 3).length, total = prog.perGame.length, soonOpen = openGamesHub.soon === area;
     const soonTile = held ? `<div class="hcard hsoon" style="--hc:#9ad0ff"><button class="hplay" data-soon="${area}" aria-expanded="${soonOpen}"><span class="hi">${pic('\u{1F51C}')}</span><b>${T(`${held} new games coming`, `Sắp có ${held} trò mới`)}</b><small>${total ? T(`Win each game 3 times: ${ready}/${total}`, `Thắng mỗi trò 3 lần: ${ready}/${total}`) : T('On their way!', 'Sắp đến rồi!')}</small><span class="hsoonbar" aria-hidden="true"><i style="width:${total ? Math.round(ready / total * 100) : 100}%"></i></span></button></div>${soonOpen ? `<div class="hsoonbubble" role="dialog" aria-label="${T('New games coming', 'Trò mới sắp có')}"><i class="hsb-dot a"></i><i class="hsb-dot b"></i><p>${T('Coming soon:', 'Sắp có:')}</p><div class="hsb-games">${heldIds.map(id => `<span><span class="hi">${pic(GAMES[id].icon)}</span>${esc(GAMES[id].name())}</span>`).join('')}</div></div>` : ''}${soonOpen && total ? `<div class="hsoonlist"><p>${T('Win each of these games 3 times to open the new games:', 'Thắng mỗi trò này 3 lần để mở trò mới nhé:')}</p>${prog.perGame.map(g => `<div class="hsoonrow${g.n >= 3 ? ' done' : ''}"><span class="hi">${pic(GAMES[g.id]?.icon || '\u{1F3AE}')}</span><b>${esc(GAMES[g.id]?.name() || g.id)}</b><span class="hsoonstars">${[0, 1, 2].map(k => pic(k < g.n ? '\u2B50' : '\u2606')).join('')}</span></div>`).join('')}${ready === total ? `<p class="hsoonok">${T('All done! The new games are on their way.', 'Xong hết rồi! Trò mới đang trên đường đến.')}</p>` : ''}</div>` : ''}` : '';
-    return `<div class="hubgrid">${open.map((id, k) => gameCard(id, k, sec.key, true)).join('')}${lockTile}${shown ? locked.map((id, k) => gameCard(id, k + open.length, sec.key, false)).join('') : ''}${soonTile}</div>`;
+    return `<div class="hubgrid">${open.map((id, k) => gameCard(id, k, sec.key, true)).join('')}${links.map((id, k) => linkCard(id, k + open.length, sec.key)).join('')}${lockTile}${shown ? lockGuide(area) + locked.map((id, k) => gameCard(id, k + open.length, sec.key, false)).join('') : ''}${soonTile}</div>`;
   };
   const body = key => {
     if (key === 'fest') return `<h3>📅 ${T('Festival calendar', 'Lịch lễ hội')}</h3>${festCalendarHTML(game)}`;
@@ -1045,7 +1116,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
       const fam = familySongs().length, groups = SONG_GROUPS.filter(g => g.key === 'family' ? fam : SONG_LIST.some(s => s.group === g.key && Music.has(s.key)));
       return `<h3>🎵 ${T('Songs: tap to listen', 'Bài hát: chạm để nghe')}</h3><div class="festrow songrow">${groups.map(g => `<button class="festbtn" data-songs="${g.key}"><span>${pic(g.icon)}</span><b>${esc(g.name())}</b></button>`).join('')}</div>`;
     }
-    const sec = SECS.find(x => x.key === key) || SECS[0]; return `<h3>${sec.icon} ${esc(sec.title())}</h3>${sec.groups.map(g => `${sec.groups.length > 1 ? `<h4 class="hubarea">${pic(g.area.icon)} ${esc(g.area.name())}</h4>` : ''}${card2({ key: sec.key + g.area.key, area: g.area.key, games: g.games })}`).join('')}`;
+    const sec = SECS.find(x => x.key === key) || SECS[0]; return `<h3>${/^[a-z]+:/.test(sec.icon) ? pic(sec.icon) : sec.icon} ${esc(sec.title())}</h3>${sec.groups.map(g => `${sec.groups.length > 1 ? `<h4 class="hubarea">${pic(g.area.icon)} ${esc(g.area.name())}</h4>` : ''}${card2({ key: sec.key + g.area.key, area: g.area.key, games: g.games, links: g.links })}`).join('')}`;
   };
   card.innerHTML = `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>🎮 ${T('Play', 'Vui chơi')}</h2>
     <div class="hubtabs" role="tablist">${tabs.map(t => `<button role="tab" data-tab="${t.key}"><span>${pic(t.icon)}</span><small>${esc(t.short())}</small></button>`).join('')}</div>
@@ -1064,6 +1135,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     root.querySelectorAll('[data-fold]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.fold; if (openGamesHub.unfolded.has(k)) openGamesHub.unfolded.delete(k); else { openGamesHub.unfolded.add(k); say('Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'); } openGamesHub.scroll = root.scrollTop; draw(); });
     root.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.soon; openGamesHub.soon = openGamesHub.soon === k ? '' : k; if (openGamesHub.soon) say('Win each game here 3 times to open the new games!', 'Thắng mỗi trò ở đây 3 lần để mở trò mới nhé!'); openGamesHub.scroll = root.scrollTop; draw(); if (openGamesHub.soon) root.querySelector('.hsoonbubble')?.scrollIntoView({ block: 'nearest', behavior: reduceMotion() ? 'auto' : 'smooth' }); });
     root.querySelectorAll('[data-play]').forEach(b => b.onclick = () => { const id = b.dataset.play; close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); });
+    root.querySelectorAll('[data-link]').forEach(b => b.onclick = () => { const id = b.dataset.link; close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); });
     root.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { close(); game.goToGame(i, b.dataset.go); });
     root.querySelectorAll('[data-how]').forEach(b => b.onclick = () => { const id = b.dataset.how; openHowTo(id, { onPlay: () => { close(); game.playGame(i, id, 'hub'); } }); });
   };

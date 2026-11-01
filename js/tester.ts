@@ -36,7 +36,7 @@ import type { ReportEntry } from './report-outbox.js';
 type Where = { area: string; place: string; game: string; window: string; x: number; z: number };
 type Problem = { spoken?: boolean; k: string; title: string; status?: string; fixedIn?: string; n?: number; auto?: string; where?: Where };
 type TesterStatus = { open?: Problem[]; mine?: Problem[]; retest?: Problem[]; reports?: number; helped?: number; peeks?: string[] };
-type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regionOf'> & {
+type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regionOf' | 'travelTo'> & {
   playGame?: SvMain['playGame'] & { __tester?: boolean };
   tester?: TesterApi;
   autoplay?: { running(): boolean; attach?(body: HTMLElement, close: () => void): void; detach?(): void; stop?(): void; start?(items: unknown, speed: string): void; open?(): void };
@@ -120,14 +120,15 @@ export async function sendAutoplayReport(rep) {
   for (const d of rep.done || []) if (d.problems?.length) { const id = await autoReport('autoplay', `${d.name || d.key}: ${d.problems.join('; ')}`.slice(0, 200), { area: 'autoplay', place: '', game: d.g === 'games' ? d.key : '', window: d.g || '', x: 0, z: 0 }); if (id) ids.push(id);else failed=true; }
   return { state: failed?'storage-failed':ids.length ? 'queued' : 'no-problems', ids };
 }
-type FlushSummary = { state: 'disabled' | 'offline' | 'empty' | 'sent' | 'retry' | 'storage'; sent: number; queued: number };
+type FlushSummary = { state: 'disabled' | 'offline' | 'empty' | 'sent' | 'retry' | 'storage' | 'limit' | 'notTester'; sent: number; queued: number; dropped?: number };
 const REPORT_TIMEOUT_MS = 15000;
 const offline = () => navigator.onLine === false;
 let flushing = false, flushJob: Promise<FlushSummary> | null = null;
 let lastFlush: FlushSummary | null = null;
 function flush(): Promise<FlushSummary> {
   if (flushJob) return flushJob;
-  const result = (state: FlushSummary['state'], sent = 0): FlushSummary => ({ state, sent, queued: queue().length });
+  let dropped = 0;
+  const result = (state: FlushSummary['state'], sent = 0): FlushSummary => ({ state, sent, queued: queue().length, dropped });
   if (!live || navigator.onLine === false) {
     lastFlush = result(live ? 'offline' : 'disabled');
     dispatchEvent(new Event('sv-report-queue'));
@@ -141,7 +142,7 @@ function flush(): Promise<FlushSummary> {
   }
   flushing = true;
   flushJob = Promise.resolve().then(async () => {
-    let sent = 0;
+    let sent = 0; dropped = 0;
     const attempted = new Set<string>();
     while (live && navigator.onLine !== false) {
       const r = queue().find(row => !attempted.has(row.clientId));
@@ -153,7 +154,13 @@ function flush(): Promise<FlushSummary> {
         const res = await fetch(URL_(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(r), signal: abort.signal });
         if (!res.ok) {
           delivery(r.clientId, { state: 'retry', status: res.status });
-          if ([400, 413].includes(res.status)) continue;
+          // (owner, 1 Nov 2026 AEDT: "Retry queued reports always says it could not send, with internet") the reason is kept
+          // and said: too big sends again without its picture; a report the server can never take leaves the queue; the
+          // day's limit and a device that is not a tester stop the round with their own message
+          if (res.status === 413 && r.shot) { const q = queue(), k = q.findIndex(x => x.clientId === r.clientId); if (k >= 0) { q[k] = { ...q[k], shot: undefined, shotDropped: true }; if (!keep(q)) return result('storage', sent); } attempted.delete(r.clientId); continue; }
+          if (res.status === 400 || res.status === 413) { const q = queue(), k = q.findIndex(x => x.clientId === r.clientId); if (k >= 0) { q.splice(k, 1); if (!keep(q)) return result('storage', sent); } delivery(r.clientId, { state: 'rejected', status: res.status }); dropped++; paintCount(); continue; }
+          if (res.status === 429) return result('limit', sent);
+          if (res.status === 403) return result('notTester', sent);
           return result('retry', sent);
         }
         const receipt: unknown = await res.json();
@@ -312,16 +319,44 @@ function testerNews(): NewsItem[] {
   return [...ids].map(id => RELEASES.find(r => r.id === id)).filter(r => !!r).map(r => { const x = liveRule(r.id); return { id: r.id, en: r.en, vi: r.vi, game: r.game, start: x && typeof x.start === 'string' ? x.start : undefined }; });
 }
 const NEWS_SEEN = 'sv2_tester_news';
+// (owner, 1 Nov 2026 AEDT: "take it to that feature to test it straight away") a new feature with a place in the valley:
+// Go there walks the child to the nearest thing it shows (an id prefix of the valley's taps); the Bag's features open the Bag
+const NEWS_GO: Record<string, RegExp | 'bag'> = { jobs: /^job_/, villagerTalk: /^villager_/, singers: /^sing\d/, rideAny: /^drive_/, busFares: /^busstop_/, rideBikes: /^bike_/, xichloRides: /^xichlo_/, dailySurprise: /^gift_today$/, companionGrow: 'bag', saveGoal: 'bag', collectibles: 'bag', mysteryBox: 'bag' };
+async function goToNews(id: string) {
+  const how = NEWS_GO[id], h = G.heroes && G.heroes[0]; if (!how || !h) return;
+  if (how === 'bag') { (G as unknown as { openPad?: (i: number, tab: string) => void }).openPad?.(0, 'bag'); return; }
+  const list = ((G as unknown as { interactables?: Array<{ id: string; x: number; z: number; visible?: (h: unknown) => boolean }> }).interactables || []).filter(i => how.test(i.id) && Number.isFinite(i.x) && (!i.visible || i.visible(h)));
+  if (!list.length) return;
+  const near = list.reduce((a, b) => Math.hypot(a.x - h.pos.x, a.z - h.pos.z) <= Math.hypot(b.x - h.pos.x, b.z - h.pos.z) ? a : b);
+  if (G.travelTo) await (G.travelTo as unknown as (h: unknown, x: number, z: number, snapToNpc?: boolean) => Promise<unknown>)(h, near.x, near.z, false);
+}
 const newsUnseen = () => { let seen: string[] = []; try { seen = JSON.parse(localStorage.getItem(NEWS_SEEN) || '[]'); } catch (e) { } return testerNews().filter(n => !seen.includes(n.id)).length; };
 const markNewsSeen = () => { try { localStorage.setItem(NEWS_SEEN, JSON.stringify(testerNews().map(n => n.id))); } catch (e) { } paintCount(); };
 function newsHTML() {
   const list = testerNews(); if (!list.length) return '';
   const when = (s?: string) => { if (!s) return T('to test now', 'thử ngay'); const d = new Date(s + 'T00:00:00'); return T(`for everyone from ${d.getDate()}/${d.getMonth() + 1}`, `mọi người có từ ${d.getDate()}/${d.getMonth() + 1}`); };
-  return `<details class="tp-news" open><summary>${pic('🐞')} ${T(`New to test (${list.length})`, `Mới để thử (${list.length})`)}</summary><div class="tp-news-list">${list.map(n => `<div class="tp-news-row"><span><b>${esc(T(n.en, n.vi))}</b><small>${when(n.start)}</small></span>${n.game ? `<button class="btn" data-try="${esc(n.game)}">${T('Play', 'Chơi')}</button>` : ''}</div>`).join('')}</div></details>`;
+  // (owner, 1 Nov 2026 AEDT: "this part is too big, make it collapsible") folded unless the tester opened it last time
+  let open = false; try { open = localStorage.getItem('sv2_tester_news_open') === '1'; } catch (e) { }
+  return `<details class="tp-news"${open ? ' open' : ''}><summary>${pic('🐞')} ${T(`New to test (${list.length})`, `Mới để thử (${list.length})`)}</summary><div class="tp-news-list">${list.map(n => `<div class="tp-news-row"><span><b>${esc(T(n.en, n.vi))}</b><small>${when(n.start)}</small></span>${n.game ? `<button class="btn" data-try="${esc(n.game)}">${T('Play', 'Chơi')}</button>` : NEWS_GO[n.id] ? `<button class="btn" data-go-news="${esc(n.id)}">${T('Go there', 'Đến đó')}</button>` : ''}</div>`).join('')}</div></details>`;
 }
 
 // ---------- the ladybird and the tester mark ----------
 const paintCount = () => { dispatchEvent(new Event('sv-report-queue')); const n = queue().length, fixed = fixedToSee().length, fresh = newsUnseen(); document.querySelectorAll('.z-lb').forEach(b => { b.querySelector<HTMLElement>('.lb-n').textContent = n ? String(n) : ''; b.querySelector<HTMLElement>('.lb-n').hidden = !n; const ok = b.querySelector<HTMLElement>('.lb-ok'); ok.hidden = !fixed; if (fixed) ok.textContent = String(fixed); const nw = b.querySelector<HTMLElement>('.lb-new'); if (nw) nw.hidden = !fresh; }); };
+// a fixed problem that can be tried again: its game (by id, or by the name in an auto play title), or its spot in the
+// valley. The game list loads only when Try again is tapped (it is not needed to start the game)
+// (#736 #674 #675) auto play's reports name the game as its step, "game:sparkleorchard" (that stays: it is part of the
+// problem's key); the game itself is "sparkleorchard": a replay of "game:…" opened nothing and was taken as a game that
+// did not open, and as the problem still being there
+const gameIdOf = (w): string => String(w && w.game || '').replace(/^game:/, '');
+const gameName = p => { const w = p && p.where || {}; if (w.game) return { id: gameIdOf(w) }; const m = /^autoplay: ([^:]+):/.exec(p && p.title || ''); return m ? { name: m[1].trim() } : null; };
+const spotOf = p => { const w = p && p.where || {}; let x = +w.x, z = +w.z; const m = /(-?\d+),\s*(-?\d+)/.exec(p && p.title || ''); if ((!x && !z || !Number.isFinite(x)) && m) { x = +m[1]; z = +m[2]; } return Number.isFinite(x) && Number.isFinite(z) && (x || z) ? { x, z } : null; };
+const tryable = p => !!(gameName(p) || spotOf(p));
+async function tryAgain(p) {
+  const g = gameName(p), h = G.heroes && G.heroes[0];
+  if (g) { let id = g.id; if (!id) { const { GAMES } = await import('./games/registry.js'); id = Object.keys(GAMES).find(k => { try { const x = GAMES[k]; return [x.name(), x.en, x.vi].includes(g.name); } catch (e) { return false; } }); }
+    if (id) { G.playGame?.(0, id, 'tester'); return; } }
+  const at = spotOf(p); if (at && h && G.travelTo) await (G.travelTo as unknown as (h: unknown, x: number, z: number, snapToNpc?: boolean) => Promise<unknown>)(h, at.x, at.z, false);
+}
 const fixedToSee = () => { const seen = get(KEY.seen, {}); return ((status && status.mine) || []).filter(p => ['fixed', 'confirmed'].includes(p.status) && !seen[p.k]); };
 function addUI() {
   const floatingSeats = new Set<number>();
@@ -393,6 +428,8 @@ export async function openPanel(i = 0, initialTab = 'tester', signal?: AbortSign
     <div class="actions"><button class="btn primary tp-send">${T('Send', 'Gửi')}</button></div>`);
   bindReportViewport(m);
   const card = m.querySelector<HTMLElement>('.card'), ta = card.querySelector<HTMLTextAreaElement>('textarea');
+  card.querySelector<HTMLDetailsElement>('.tp-news')?.addEventListener('toggle', e => { try { localStorage.setItem('sv2_tester_news_open', (e.currentTarget as HTMLDetailsElement).open ? '1' : '0'); } catch (x) { } });
+  card.querySelectorAll<HTMLButtonElement>('[data-go-news]').forEach(b => b.onclick = () => { m.close(); G.paused = was; void goToNews(b.dataset.goNews); });
   markNewsSeen(); card.querySelectorAll<HTMLButtonElement>('[data-try]').forEach(b => b.onclick = () => { m.close(); G.paused = was; G.playGame?.(i, b.dataset.try, 'tester'); });
   const full = card.querySelector<HTMLInputElement>('.tp-full');
   full.onchange = () => { selectedShot = full.checked ? pic0 : scenePic; card.querySelector<HTMLImageElement>('.tp-shot').src = selectedShot; };
@@ -426,11 +463,14 @@ export async function openPanel(i = 0, initialTab = 'tester', signal?: AbortSign
     }
     if (tab==='fixed') {
       const list = fixedToSee(), seen = get(KEY.seen, {});
-      fixedBody.innerHTML = `<div class="tm-head actions"><button class="btn primary tp-all-fixed">${T('All fixed', 'Tất cả đã hết lỗi')}</button></div><div class="tm-list">${list.length ? list.map(p => `<div class="tm-row s-fixed"><b>${esc(p.title)}</b><small class="tm-coins">+${C.COINS.helped + (p.spoken ? C.COINS.spoken : 0)} ${pic('🪙')}</small><div class="actions"><button class="btn primary" data-fok='1' data-fk='${esc(p.k)}'>${T('Yes, fixed', 'Đã hết lỗi')}</button><button class="btn" data-fok='0' data-fk='${esc(p.k)}'>${T('Still wrong', 'Vẫn còn lỗi')}</button></div></div>`).join('') : `<p class="note">${T('Nothing waiting to be checked.', 'Không còn lỗi nào cần kiểm tra.')}</p>`}</div>`;
+      fixedBody.innerHTML = `<div class="tm-head actions"><button class="btn primary tp-all-fixed">${T('All fixed', 'Tất cả đã hết lỗi')}</button></div><div class="tm-list">${list.length ? list.map(p => `<div class="tm-row s-fixed"><b>${esc(p.title)}</b><small class="tm-coins">+${C.COINS.helped + (p.spoken ? C.COINS.spoken : 0)} ${pic('🪙')}</small><div class="actions">${tryable(p) ? `<button class="btn tp-again" data-again='${esc(p.k)}'>${pic('🔁')} ${T('Try again', 'Thử lại')}</button>` : ''}<button class="btn primary" data-fok='1' data-fk='${esc(p.k)}'>${T('Yes, fixed', 'Đã hết lỗi')}</button><button class="btn" data-fok='0' data-fk='${esc(p.k)}'>${T('Still wrong', 'Vẫn còn lỗi')}</button></div></div>`).join('') : `<p class="note">${T('Nothing waiting to be checked.', 'Không còn lỗi nào cần kiểm tra.')}</p>`}</div>`;
       fixedBody.querySelector<HTMLButtonElement>('.tp-all-fixed')?.addEventListener('click', () => {
         list.forEach(p => { seen[p.k] = 1; tell({ k: p.k, fixed: true }); });
         put(KEY.seen, seen); paintCount(); selectTab('tester');
       });
+      // (owner, 1 Nov 2026 AEDT: "a Try again button that takes the character to that situation") a game opens again; a
+      // spot in the valley (stuck there, a freeze) takes the child there; then Yes, fixed / Still wrong as before
+      fixedBody.querySelectorAll<HTMLButtonElement>('[data-again]').forEach(b => b.onclick = () => { const p = list.find(x => x.k === b.dataset.again); if (p) { m.close(); G.paused = false; void tryAgain(p); } });
       fixedBody.querySelectorAll<HTMLButtonElement>('[data-fok]').forEach(b => b.onclick = () => {
         const k = b.dataset.fk, ok = b.dataset.fok === '1';
         seen[k] = 1; put(KEY.seen, seen); paintCount(); tell({ k, fixed: ok });
@@ -450,7 +490,10 @@ export async function openPanel(i = 0, initialTab = 'tester', signal?: AbortSign
     deliveryStatus.textContent = queueStorageError ? T('Could not read saved reports. Your draft stays here.', 'Chưa đọc được báo cáo đã lưu. Nội dung đang viết vẫn ở đây.')
       : navigator.onLine === false ? T(`${n} reports saved on this device. They will send when online.`, `${n} báo cáo đã lưu trên máy này. Báo cáo sẽ gửi khi có mạng.`)
       : flushing ? T(`Sending saved reports. ${n} waiting.`, `Đang gửi báo cáo đã lưu. Còn ${n} báo cáo.`)
+      : n && lastFlush?.state === 'limit' ? T(`${n} reports waiting: this device has sent today's limit of reports. They will send tomorrow.`, `${n} báo cáo đang chờ: máy này đã gửi đủ số báo cáo cho hôm nay. Ngày mai báo cáo sẽ tự gửi.`)
+      : n && lastFlush?.state === 'notTester' ? T(`${n} reports waiting: this device is not on the testers' list in Studio yet.`, `${n} báo cáo đang chờ: máy này chưa có trong danh sách tester ở Studio.`)
       : n ? T(`${n} reports still waiting. Try again.`, `${n} báo cáo còn đang chờ. Thử gửi lại nhé.`)
+      : lastFlush?.dropped ? T(`${lastFlush.dropped} reports could not be accepted and were removed. Nothing waiting.`, `${lastFlush.dropped} báo cáo không gửi được nên đã bỏ đi. Không còn báo cáo chờ.`)
       : lastFlush?.sent ? T(`Reports sent: ${lastFlush.sent}. Nothing waiting.`, `Đã gửi ${lastFlush.sent} báo cáo. Không còn báo cáo chờ.`)
       : T('No reports waiting to send. Sent reports are in My reports.', 'Không có báo cáo chờ gửi. Báo cáo đã gửi nằm trong Báo cáo của tôi.');
   };
@@ -493,7 +536,7 @@ async function retest() {
   for (const p of status.retest) {
     const tag = 'rt:' + p.k + ':' + BUILD; if (done[tag]) continue;
     if (G.paused || document.querySelector('.gl, .modal, .theatre, .storybook')) return; // (only when the child is free)
-    const game = p.where && p.where.game, before = errors.length; let again = false;
+    const game = gameIdOf(p.where), before = errors.length; let again = false;
     if (game && G.playGame) { G.playGame(0, game, 'replay'); await new Promise(r => setTimeout(r, 8000)); again = !document.querySelector('.gl') || errors.length > before; document.querySelector<HTMLElement>('.gl .gl-x')?.click(); }
     else if (p.auto === 'error') { await new Promise(r => setTimeout(r, 8000)); again = errors.slice(before).some(e => p.title.includes(e.split(' @ ')[0].slice(0, 40))); }
     else continue; // (a problem that cannot be replayed by itself waits for the tester's Yes or Still wrong)
@@ -590,6 +633,9 @@ function stop() { live = false; offs.splice(0).forEach(f => { try { f(); } catch
 // js/testergate.js: this device is a tester at this level ('' = no longer)
 export function mountTester(game: TesterGame, lv: string) {
   G = game; level = lv;
+  // (#739, 1 Nov 2026 AEDT: an iPhone froze 2.3 s on the Friends page and Safari tells no long script) the room's slow steps
+  // write themselves into the last 30 seconds of a report, so the next one says which step it was
+  (globalThis as { svTrail?: (k: string, s: string) => void }).svTrail = (k, s) => note(k, s);
   G.tester = { level, openPanel, autoReport, refresh, retest, nightly, settings: settingsRows, status: () => status, mountedAt: () => mounted, unmount: () => { stop(); delete G.tester; } };
   // (the agreement waits until a child is in the valley, not over the title screen)
   if (accepted()) start(); else if (!(get(KEY.acc, null) || {}).stopped) { const wait = setInterval(() => { if (!G.tester) return clearInterval(wait); if (G.heroes && G.heroes.length && !G.paused) { clearInterval(wait); setTimeout(agreement, 1200); } }, 500); }

@@ -1,9 +1,9 @@
 import { T } from '../i18n.js';
 import { reduceMotion } from '../state.js';
-import { FLOWER_STACKS, trongNuReady } from './trongnu-rules.js';
+import { FLOWER_STACKS, trongNuReady, TRONGNU_CYCLE } from './trongnu-rules.js';
 import { paradeInput } from './fruitparade-input.js';
 
-type JumpApi = { stage: HTMLElement; closed: boolean; tier(): number; onCleanup(fn: () => void): void; say(en: string, vi: string): void; show(en: string, vi: string): void; right(element?: HTMLElement): void; dots(n: number, done: number): void; sfx: { tap(): void }; plan(fn: () => Element | null, options: { maxActions: number }): void; win(extra: { title: string; titleVi: string }): Promise<unknown> };
+type JumpApi = { stage: HTMLElement; closed: boolean; talent?: boolean; tier(): number; onCleanup(fn: () => void): void; say(en: string, vi: string): void; show(en: string, vi: string): void; right(element?: HTMLElement): void; dots(n: number, done: number): void; sfx: { tap(): void }; plan(fn: () => Element | null, options: { maxActions: number }): void; win(extra: { title: string; titleVi: string }): Promise<unknown> };
 const W = 'stroke="#3b2a4f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"';
 const child = (shirt: string, seated = false) => `<circle cx="0" cy="-60" r="17" fill="#ffc99b" ${W}/><path d="M-16-63q16-24 32 0" fill="#624352" ${W}/><circle cx="-5" cy="-59" r="2" fill="#3b2a4f"/><circle cx="6" cy="-59" r="2" fill="#3b2a4f"/><path d="M-4-52q4 4 8 0" fill="none" ${W}/><path d="M-12-40h24l6 27h-36z" fill="${shirt}" ${W}/>${seated ? `<path d="M-8-13q25-9 43 3l40-5M5-13q23 15 40 5l25-3" fill="none" ${W}/>` : `<path d="M-10-13l-5 15h-10M10-13l5 15h10" fill="none" ${W}/>`}<path d="M-13-36l-16 15M13-36l16 15" fill="none" ${W}/>`;
 function drawing(level: number) {
@@ -27,6 +27,9 @@ export async function playTrongNu(api: JumpApi) {
   const jump = document.createElement('button');jump.type = 'button';jump.dataset.tnJump = 'true';jump.textContent = T('JUMP!', 'NHẢY NÀO!');
   root.append(style, heading, levels, board, cue, jump, feedback);api.stage.append(root);
   const calm = reduceMotion();root.dataset.calm = String(calm);
+  // (owner, 1 Nov 2026 AEDT) a narrower moment and a quicker stack each level; Talent is tier 4
+  const tier = () => api.talent ? 4 : api.tier(), cycle = TRONGNU_CYCLE[Math.max(0, Math.min(4, tier()))];
+  api.stage.dataset.lv = [tier(), cycle].join(',');
   let level = 0, elapsed = 0, previous = 0, frame = 0, busy = false, dead = false, timer: ReturnType<typeof setTimeout> | undefined;
   let finish: () => void = () => {};const done = new Promise<void>(resolve => { finish = resolve; });
   function paint() {
@@ -36,7 +39,7 @@ export async function playTrongNu(api: JumpApi) {
   }
   jump.onclick = () => {
     if (dead || busy || api.closed) return;
-    const ready = trongNuReady(elapsed % 3400 / 3400, api.tier(), calm);
+    const ready = trongNuReady(elapsed % cycle / cycle, tier(), calm);
     if (!ready) { feedback.textContent = T('Watch the tick. We can try whenever we are ready.', 'Nhìn dấu tích nhé. Mình sẵn sàng thì nhảy, không cần vội.');api.sfx.tap();return; }
     busy = true;jump.disabled = true;api.sfx.tap();board.querySelector('.tn-jumper')?.classList.add('tn-hop');
     feedback.textContent = T('Over the stack! Lovely jumping!', 'Qua chồng chân tay rồi! Nhảy giỏi quá!');api.right(jump);
@@ -56,12 +59,12 @@ export async function playTrongNu(api: JumpApi) {
     if (dead || api.closed) return;
     const dt = previous ? Math.min(100, now - previous) : 0;previous = now;
     if (!busy && !document.hidden) elapsed += dt;
-    const ready = trongNuReady(elapsed % 3400 / 3400, api.tier(), calm);root.dataset.ready = String(ready);
+    const ready = trongNuReady(elapsed % cycle / cycle, tier(), calm);root.dataset.ready = String(ready);
     const text = ready ? T('Ready… jump!', 'Sẵn sàng… nhảy nào!') : T('Watch for the tick…', 'Chờ dấu tích nhé…');if (cue.textContent !== text) cue.textContent = text;
     input.poll();frame = requestAnimationFrame(animate);
   }
   api.onCleanup(() => { dead = true;clearTimeout(timer);cancelAnimationFrame(frame);removeEventListener('keydown', keyboard, true);input.dispose();jump.onclick = null;api.stage.classList.remove('tn-stage');finish(); });
-  api.plan(() => !busy && trongNuReady(elapsed % 3400 / 3400, api.tier(), calm) ? jump : null, { maxActions: 8 });
+  api.plan(() => !busy && trongNuReady(elapsed % cycle / cycle, tier(), calm) ? jump : null, { maxActions: 8 });
   api.say('Two friends stack their feet and hands. Help our friend jump over them!', 'Hai bạn chồng chân và tay lên nhau. Giúp bạn cùng nhảy qua nhé!');
   paint();frame = requestAnimationFrame(animate);return done;
 }

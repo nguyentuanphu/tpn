@@ -107,7 +107,8 @@ export function createShop(G, { say, save }) {
       return `<button class="${cls} ${have ? 'have' : ''} ${on ? 'on' : ''} ${!have && !(shop && buyable) ? 'locked' : ''} ${buyable && farm.coins < x.price ? 'poor' : ''}" data-pet="${x.id}" aria-pressed="${on}" aria-label="${T(x.en, x.vi)}"${!have && !(shop && buyable) ? ' disabled' : ''}>${pic(PET_ICON[x.id] || '🎩')}<small>${escName(T(x.en, x.vi))}</small>${have ? (on ? `<span class="ktick">${pic('✅')}</span>` : '') : buyable ? coins(x.price) : `<span class="klock">${pic('🔒')}</span>`}</button>`; }).join(''); };
   // a tap on a hat the companion has: put it on, or take it off; in the shop, the next hat is bought
   const petTap = (h, id, done) => { const s = petOf(h.profile); if (!s) return;
-    if (s.hats.includes(id)) { s.hat = s.hat === id ? null : id; save(); SFX.pop(1); done(); return; }
+    // (#738) one hat on one friend: putting it on the companion takes it off a pet that had it
+    if (s.hats.includes(id)) { if (G.kidplay.wearHat) G.kidplay.wearHat(h, 'buddy', s.hat === id ? null : id); else { s.hat = s.hat === id ? null : id; save(); } SFX.pop(1); done(); return; }
     const next = G.kidplay.nextHat(h); if (next && next.id === id) { G.kidplay.buy(h, id); done(); } };
 
   // ---------- the shop screen ----------

@@ -20,7 +20,7 @@ import type { Story, Task, Thing, Two } from '../content/storyhelp.js';
 
 // (js/games/frame.js: the game window's helpers this game uses)
 type Plan = () => Element | null | undefined;
-type Api = { stage: HTMLElement; little?: boolean; level: number; tier?: () => number; readonly closed: boolean; sfx: { tap(): void };
+type Api = { stage: HTMLElement; little?: boolean; level: number; smart?: number; talent?: boolean; tier?: () => number; readonly closed: boolean; sfx: { tap(): void };
   dots(n: number, done: number): void; show(en: string, vi: string): void; right(e?: Element | null): void; wrong(e: Element | null, en?: string, vi?: string): void;
   praise(): void; win(extra?: object): Promise<unknown>; onCleanup(f: () => void): void; hand?(target: Element | null | undefined): void; plan(f: Plan, o?: { maxActions?: number }): void };
 const lang = () => (settings.lang === 'vi' ? 1 : 0);
@@ -133,7 +133,8 @@ async function put(api: Api, task: Extract<Task, { kind: 'put' }>, wrap: HTMLEle
     };
     const spotAt = (x: number, y: number) => { for (const s of spots.values()) { const r = s.getBoundingClientRect(), pad = 18; if (x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad) return s; } return null; };
     things.forEach(th => {
-      const b = el('button', 'sh-thing', `${pic(th.pic)}${little ? '' : `<small>${esc(word(th.word))}</small>`}`); b.setAttribute('aria-label', word(th.word)); tray.appendChild(b);
+      // (levels) Talent: the things to put away show only their pictures (tap one to hear its word)
+      const b = el('button', 'sh-thing', `${pic(th.pic)}${little || api.talent ? '' : `<small>${esc(word(th.word))}</small>`}`); b.setAttribute('aria-label', word(th.word)); tray.appendChild(b);
       let drag: HTMLElement | null = null, sx = 0, sy = 0, moved = false;
       b.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; moved = false; try { b.setPointerCapture(e.pointerId); } catch (x) { } });
       b.addEventListener('pointermove', e => {
@@ -215,7 +216,9 @@ export async function play(api: Api): Promise<unknown> {
     let ok = false;
     if (task.kind === 'order') { await say(api, task.say); ok = await order(api, task, wrap); }
     else {
-      const { scene, spots } = sceneOf(story, used, !little); wrap.appendChild(scene);
+      // (levels, owner 1 Nov 2026 AEDT) Easy: every place has its word; Medium: the instruction also stays on screen; Hard and
+      // Talent: the places have no words, so the child reads the instruction and finds them in the picture
+      const plain = !little && (api.smart || 0) >= 2, { scene, spots } = sceneOf(story, plain ? new Set<string>() : used, !little && !plain); wrap.appendChild(scene);
       if (tier >= 2) api.show(task.say[0], task.say[1]); // (Medium and Hard: the instruction stays on screen to read)
       await say(api, task.say); if (p === 0 && task.kind === 'put') await say(api, HELP_LINES.drag); if (api.closed) return;
       ok = task.kind === 'put' ? await put(api, task, wrap, scene, spots, little) : await find(api, task, spots, little);

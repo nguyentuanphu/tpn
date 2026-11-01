@@ -43,8 +43,8 @@ const SITES = [
   ['storybridge', 'brisbane', '🌉', 'storybridge', ['Story Bridge (Queensland)', 'Cầu Story (bang Queensland)'], ['Story Bridge is a big steel bridge over the Brisbane River, opened in 1940. Brave people can climb right to the top, and at night it shines in different colours.', 'Cầu Story là cây cầu thép lớn bắc qua sông Brisbane, khánh thành năm 1940. Người gan dạ có thể leo lên tận đỉnh, và ban đêm cầu sáng đèn nhiều màu.']]
 ];
 Object.assign(REAL, {
-  marble: [['en:Marble Mountains (Vietnam)'], 16.0040, 108.2627], hoian: [['en:Hội An'], 15.8801, 108.3380], thehuc: [['en:The Huc Bridge', 'en:Ngọc Sơn Temple'], 21.0306, 105.8526],
-  cairang: [['en:Cái Răng floating market', 'en:Mekong Delta'], 10.0055, 105.7469], apostles: [['en:The Twelve Apostles (Victoria)'], -38.6655, 143.1044], storybridge: [['en:Story Bridge'], -27.4636, 153.0359]
+  marble: [['en:Marble Mountains (Vietnam)'], 16.0040, 108.2627], hoian: [['en:Hội An', 'en:Hoi An Ancient Town', 'en:Japanese Covered Bridge'], 15.8801, 108.3380], thehuc: [['en:The Huc Bridge', 'en:Ngọc Sơn Temple'], 21.0306, 105.8526],
+  cairang: [['en:Cái Răng floating market', 'en:Mekong Delta'], 10.0055, 105.7469], apostles: [['en:The Twelve Apostles (Victoria)', 'en:Port Campbell National Park', 'en:Great Ocean Road'], -38.6655, 143.1044], storybridge: [['en:Story Bridge'], -27.4636, 153.0359]
 });
 
 export function createRegionSites(G) {
@@ -88,6 +88,11 @@ export function createRegionSites(G) {
               const wx = x + Math.cos(rot) * lx, wz = z - Math.sin(rot) * lx, ex = c * hl + sn * 1, ez = sn * hl + c * 1;
               world.platforms.push({ x0: wx - ex, x1: wx + ex, z0: wz - ez, z1: wz + ez, y: y - .05 + ly + .1 }); // (the deck's top there)
             }
+          } else if (id === 'cairang') {
+            // (#726, 1 Nov 2026 AEDT: "stuck, can't get past here" on the way into Sài Gòn) only the four boats are solid, each
+            // as two small circles along its length; the child walks round them and between them (one 6 m circle closed the way)
+            const cs = Math.cos(rot), sn = Math.sin(rot);
+            for (const [bx, bz] of [[-4, -1.5], [0, 1.5], [4, -1], [-1, -3.2]]) for (const dx of [-1.3, 1.3]) { const lx = bx + dx, lz = bz; world.colliders.push({ x: x + lx * cs + lz * sn, z: z - lx * sn + lz * cs, r: .8 }); }
           } else world.colliders.push({ x, z, r: 6 }); }
     // the ℹ️ sign stands on the side facing the city, outside the model
     const [ix, iz] = bridge ? [x, z] : id === 'thehuc' ? [x - 7, z] : [x + Math.sin(rot) * 9, z + Math.cos(rot) * 9]; // (on the shore for the lake, by the bridge's end for a bridge)

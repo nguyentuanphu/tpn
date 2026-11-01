@@ -19,6 +19,7 @@ export async function ladybugUnifiedCheck(browser,mode='solo'){
    await P.page.setViewportSize({width:w,height:h});
    await P.page.evaluate(async lang=>{(await import(String('/js/state.js'))).settings.lang=lang;},lang);
    await button.click();await P.page.locator('.tpanel').waitFor();
+   assert.equal(await P.page.evaluate(()=>getComputedStyle(document.querySelector('.tester-floating.z-lb')).visibility),'hidden','(#375) the floating ladybird steps aside while the report panel is open');
    await P.page.locator('[data-test-tab=autoplay]').click();await P.page.locator('.apbox').waitFor();
    assert.equal(await P.page.locator('.tester-floating.z-lb').count(),1);
    assert.equal(await P.page.locator('.z-ap').count(),0);

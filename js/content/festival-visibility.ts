@@ -26,7 +26,8 @@ export function festivalVisibleIn(id:string,live:FestivalVisibility={},base:Fest
  return festivalVisible(live.festivals?.[id]??base.festivals?.[id],live.releases?.['fest_'+id]??base.releases?.['fest_'+id],now);
 }
 
-export type PublicFestivalSnapshot={schema:1;enabled:string[];festivals:Record<string,{date?:string;buildup?:number|string}>;at:string|null};
+// launch (owner, 1 Nov 2026 AEDT): Studio's launch date (release publicLaunch), for the website's Coming soon / Open now; null when not set
+export type PublicFestivalSnapshot={schema:1;enabled:string[];festivals:Record<string,{date?:string;buildup?:number|string}>;at:string|null;launch?:string|null};
 /** One projection for the game bootstrap and the public website endpoint; family fields never enter it. */
 export function projectPublicFestivals(ids:readonly string[],live:FestivalVisibility&{at?:unknown}={},base:FestivalVisibility={},now=new Date()):PublicFestivalSnapshot{
  const enabled:string[]=[],festivals:PublicFestivalSnapshot['festivals']={};
@@ -35,5 +36,6 @@ export function projectPublicFestivals(ids:readonly string[],live:FestivalVisibi
   enabled.push(id);const rule=live.festivals?.[id]??base.festivals?.[id];
   if(rule)festivals[id]={...(typeof rule.date==='string'?{date:rule.date}:{}),...((typeof rule.buildup==='number'&&Number.isFinite(rule.buildup)||typeof rule.buildup==='string')?{buildup:rule.buildup}:{})};
  }
- return{schema:1,enabled,festivals,at:typeof live.at==='string'?live.at:null};
+ const lr=live.releases?.publicLaunch??base.releases?.publicLaunch,launch=lr&&lr.on!==false&&typeof lr.start==='string'&&/^\d{4}-\d\d-\d\d$/.test(lr.start)?lr.start:null;
+ return{schema:1,enabled,festivals,at:typeof live.at==='string'?live.at:null,launch};
 }

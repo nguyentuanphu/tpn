@@ -31,10 +31,14 @@ test('published festival release dates use Sydney midnight on server and client'
 test('boot and public endpoint share the same allowed-only festival projection',()=>{
  const live={festivals:{tet:{date:'02-17',buildup:2},halloween:{on:false}},releases:{fest_midautumn:{on:false}},at:'reviewed-time',content:{quiz:['private family question'],faces:{child:'private photo'}}};
  const result=projectPublicFestivals(['tet','halloween','midautumn'],live,{},new Date('2026-10-26T00:00:00Z'));
- assert.deepEqual(result,{schema:1,enabled:['tet'],festivals:{tet:{date:'02-17',buildup:2}},at:'reviewed-time'});
+ assert.deepEqual(result,{schema:1,enabled:['tet'],festivals:{tet:{date:'02-17',buildup:2}},at:'reviewed-time',launch:null});
  assert.equal(JSON.stringify(result).includes('private'),false);
  const malformed=JSON.parse('{"festivals":{"tet":{"date":{"quiz":"private"},"buildup":{"profile":"private"}}},"at":{"name":"private"}}');
- assert.deepEqual(projectPublicFestivals(['tet'],malformed),{schema:1,enabled:['tet'],festivals:{tet:{}},at:null});
+ assert.deepEqual(projectPublicFestivals(['tet'],malformed),{schema:1,enabled:['tet'],festivals:{tet:{}},at:null,launch:null});
+ // (1 Nov 2026 AEDT) Studio's launch date is public; an explicit off or a malformed date gives none
+ assert.equal(projectPublicFestivals(['tet'],{releases:{publicLaunch:{on:true,start:'2027-01-15'}}}).launch,'2027-01-15');
+ assert.equal(projectPublicFestivals(['tet'],{releases:{publicLaunch:{on:false,start:'2027-01-15'}}}).launch,null);
+ assert.equal(projectPublicFestivals(['tet'],JSON.parse('{"releases":{"publicLaunch":{"start":{"name":"private"}}}}')).launch,null);
 });
 
 test('scheduled game festivals and public visibility agree across Sydney midnight',()=>{

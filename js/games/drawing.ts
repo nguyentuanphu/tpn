@@ -41,6 +41,12 @@ function style() {
 `));
 }
 
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
+// get Easy · Medium · Hard · Talent. Free drawing stays free; the games with a goal ask a little more each level. The values a
+// game uses are on its stage (data-lv) for the checks.
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
+
 // ---------- shared pieces ----------
 // a drawing pad the size of the stage (logical size w × h, sharp on high-density screens)
 function pad(api, aspect = .75, bg = '#fffdf6') {
@@ -96,7 +102,9 @@ const OUTLINES: { key: string; name: [string, string]; pts: Pt[]; fill: string }
 register({
   id: 'dotdot', icon: '🔢', name: () => T('Dot to Dot', 'Nối Điểm'),
   async run(api) {
-    style(); const rounds = 2, n = api.little ? 6 : [8, 10, 12, 15, 20][api.level - 1];
+    // the level sets the dots (Talent: 20) and Talent draws one more picture
+    style(); const rounds = api.talent ? 3 : 2, n = api.little ? 6 : [8, 10, 12, 15, 20][Math.max(0, Math.min(4, api.level - 1))];
+    mark(api, rounds, n);
     api.say('Tap the dots in order, one, two, three, and see what picture appears!', 'Chạm các chấm theo thứ tự một, hai, ba, xem hiện ra hình gì nhé!');
     for (const [r, shape] of shuffle(OUTLINES).slice(0, rounds).entries()) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -122,7 +130,9 @@ register({
 register({
   id: 'trace', icon: '✏️', name: () => T('Trace the Picture', 'Tô Theo Nét'),
   async run(api) {
-    style(); const rounds = api.little ? 2 : 3, tol = api.little ? 30 : 20;
+    // a narrower path to stay on and more of it to cover each level (Talent: one more picture)
+    style(); const rounds = lv(api, 2, 2, 3, 3, 4), tol = lv(api, 30, 26, 20, 15, 12), cover = lv(api, .85, .8, .85, .9, .93);
+    mark(api, rounds, tol, cover);
     api.say('Follow the dotted line with your finger, all the way round!', 'Di ngón tay theo đường chấm chấm, đi hết một vòng nhé!');
     for (const [r, shape] of shuffle(OUTLINES).slice(0, rounds).entries()) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -134,8 +144,8 @@ register({
       paint();
       let done: () => void = () => { }; const finished = new Promise<void>(res => done = res);
       drawable(c, w, p => { let more = false; S.forEach((s, i) => { if (!hit.has(i) && Math.hypot(s.x - p.x, s.y - p.y) < tol) { hit.add(i); more = true; } }); if (more) paint(); g.fillStyle = '#ffb400'; g.beginPath(); g.arc(p.x, p.y, 5, 0, 7); g.fill(); },
-        () => { if (hit.size >= S.length * .85) done(); });
-      api.plan(() => c.isConnected && hit.size < S.length * .85 ? stroke(c, w, [...S, S[0]], 2000) : null, { maxActions: rounds * 4 });
+        () => { if (hit.size >= S.length * cover) done(); });
+      api.plan(() => c.isConnected && hit.size < S.length * cover ? stroke(c, w, [...S, S[0]], 2000) : null, { maxActions: rounds * 4 });
       await finished; if (api.closed) return;
       g.fillStyle = shape.fill + 'aa'; g.beginPath(); S.forEach((p, i) => i ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y)); g.closePath(); g.fill();
       api.right(); api.say(`You traced ${shape.name[0]}!`, `Con tô được ${shape.name[1]} rồi!`); await wait(1600); if (api.closed) return;
@@ -153,19 +163,21 @@ const MIRRORS: { name: [string, string]; draw: (g, w: number, h: number) => void
 register({
   id: 'mirror', icon: '🦋', name: () => T('Mirror Painting', 'Vẽ Đối Xứng'),
   async run(api) {
-    style(); const rounds = 2;
+    // a finer brush and more to paint each level; on Talent the picture's guide lines are gone, only the middle line stays
+    style(); const rounds = lv(api, 2, 2, 2, 3, 3), brush = lv(api, 16, 13, 11, 8, 6), fill = lv(api, 1.5, 1.2, 1.5, 2.2, 3);
+    mark(api, rounds, brush, fill, api.talent ? 'noguide' : '');
     api.say('Paint on one side. The other side copies you, like a mirror!', 'Con vẽ một bên. Bên kia sẽ vẽ theo con, như soi gương!');
     for (const [r, m] of shuffle(MIRRORS).slice(0, rounds).entries()) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const { c, g, w, h } = pad(api, .8), pal = palette(api, COLOURS.slice(0, api.little ? 3 : 6));
-      const guide = () => { g.save(); g.setLineDash([6, 8]); g.strokeStyle = '#cbbfe0'; g.lineWidth = 3; g.beginPath(); g.moveTo(w / 2, 0); g.lineTo(w / 2, h); g.stroke(); g.setLineDash([]); g.strokeStyle = '#b9a6d8'; m.draw(g, w, h); g.restore(); };
+      const guide = () => { g.save(); g.setLineDash([6, 8]); g.strokeStyle = '#cbbfe0'; g.lineWidth = 3; g.beginPath(); g.moveTo(w / 2, 0); g.lineTo(w / 2, h); g.stroke(); g.setLineDash([]); g.strokeStyle = '#b9a6d8'; if (!api.talent) m.draw(g, w, h); g.restore(); };
       guide();
       const done = button(`${pic('✅')} ${T('Finished', 'Xong rồi')}`, 'dg-btn go'); done.disabled = true; pal.row.appendChild(done);
       let painted = 0, last: Pt | null = null;
       drawable(c, w, (p, first) => {
-        g.strokeStyle = pal.state.colour; g.lineWidth = api.little ? 16 : 11;
+        g.strokeStyle = pal.state.colour; g.lineWidth = brush;
         if (!first && last) for (const s of [1, -1]) { const f = (q: Pt) => s > 0 ? q : { x: w - q.x, y: q.y }; g.beginPath(); g.moveTo(f(last).x, f(last).y); g.lineTo(f(p).x, f(p).y); g.stroke(); painted += Math.hypot(p.x - last.x, p.y - last.y) / 2; }
-        last = p; if (painted > w * 1.5) done.disabled = false;
+        last = p; if (painted > w * fill) done.disabled = false;
       }, () => { last = null; });
       api.plan(() => { if (!c.isConnected) return null; if (!done.disabled) return done;
         const y0 = rand(h * .2, h * .6), pts = Array.from({ length: 14 }, (_, i) => ({ x: w * (.12 + .3 * Math.abs(Math.sin(i * .7))), y: y0 + i * h * .025 }));
@@ -205,7 +217,9 @@ const NUMBERED: { name: [string, string]; regions: Region[] }[] = [
 register({
   id: 'colournum', icon: '🎨', name: () => T('Colour by Number', 'Tô Màu Theo Số'),
   async run(api) {
-    style(); const rounds = api.little ? 1 : 2, k = api.little ? 3 : api.level <= 2 ? 4 : 6;
+    // more numbers and more pictures each level (Talent: all three pictures)
+    style(); const rounds = lv(api, 1, 1, 2, 2, 3), k = lv(api, 3, 4, 5, 6, 6);
+    mark(api, rounds, k);
     api.say('Each number has its own colour. Tap a colour, then tap every space with that number!', 'Mỗi số có một màu. Chạm vào một màu, rồi chạm vào những ô có số đó nhé!');
     for (const [r, picture] of shuffle(NUMBERED).slice(0, rounds).entries()) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -249,6 +263,9 @@ register({
   id: 'lanternart', icon: '🏮', name: () => T('Decorate a Lantern', 'Trang Trí Đèn Lồng'),
   async run(api) {
     style();
+    // free decorating, with a little more to finish each level: parts to paint and stickers to add before "Finished"
+    const needParts = lv(api, 2, 2, 3, 4, 4), needStickers = lv(api, 0, 0, 1, 2, 3);
+    mark(api, needParts, needStickers);
     api.say('Make your own Mid-Autumn lantern! Choose a shape.', 'Làm đèn Trung Thu của riêng con nào! Chọn một hình đèn nhé.');
     api.dots(2, 0); api.stage.innerHTML = '';
     const row = el('div', 'dg-row'), shapes = LANTERNS.map(L => { const b = button(`<svg viewBox="0 0 100 100" width="56" height="56" fill="#ffd9a0" stroke="#4a2a78" stroke-width="3">${L.parts.join('')}</svg>`); b._L = L; b.setAttribute('aria-label', T(L.name[0], L.name[1])); row.appendChild(b); return b; });
@@ -262,10 +279,11 @@ register({
     api.stage.appendChild(svg); const pal = palette(api, COLOURS);
     const srow = el('div', 'dg-row'), stick = STICKERS.map(s => { const b = button(pic(s)); b._s = s; b.setAttribute('aria-label', T('sticker', 'hình dán')); srow.appendChild(b); return b; });
     const done = button(`${pic('✅')} ${T('Finished', 'Xong rồi')}`, 'dg-btn go'); done.disabled = true; srow.appendChild(done); api.stage.appendChild(srow);
-    let stuck = 0; const ready = () => { done.disabled = parts.filter(p => p.done).length < 2; };
+    if (!api.little && api.smart) api.show(`Paint ${needParts} parts and add ${needStickers} ${needStickers === 1 ? 'sticker' : 'stickers'}.`, `Tô ${needParts} phần và dán ${needStickers} hình nhé.`);
+    let stuck = 0; const ready = () => { done.disabled = parts.filter(p => p.done).length < needParts || stuck < needStickers; };
     for (const p of parts) p.g.addEventListener('click', () => { if (api.closed) return; p.g.setAttribute('fill', pal.state.colour); if (!p.done) { p.done = true; api.sfx.pop(2); } ready(); });
-    for (const b of stick) b.onclick = () => { if (api.closed || stuck >= 6) return; const t = document.createElementNS(NS, 'text'); t.setAttribute('x', String(32 + (stuck % 3) * 18)); t.setAttribute('y', String(36 + Math.floor(stuck / 3) * 18)); t.setAttribute('font-size', '13'); t.setAttribute('text-anchor', 'middle'); t.textContent = b._s; svg.appendChild(t); stuck++; api.sfx.tap(); };
-    api.plan(() => { if (!svg.isConnected) return null; const p = parts.find(x => !x.done); if (p) { const c = COLOURS[parts.indexOf(p) % COLOURS.length]; return pal.state.colour === c ? p.g : pal.of(c); } return stuck < 2 ? stick[stuck] : done; }, { maxActions: 14 });
+    for (const b of stick) b.onclick = () => { if (api.closed || stuck >= 6) return; const t = document.createElementNS(NS, 'text'); t.setAttribute('x', String(32 + (stuck % 3) * 18)); t.setAttribute('y', String(36 + Math.floor(stuck / 3) * 18)); t.setAttribute('font-size', '13'); t.setAttribute('text-anchor', 'middle'); t.textContent = b._s; svg.appendChild(t); stuck++; api.sfx.tap(); ready(); };
+    api.plan(() => { if (!svg.isConnected) return null; const p = parts.find(x => !x.done); if (p) { const c = COLOURS[parts.indexOf(p) % COLOURS.length]; return pal.state.colour === c ? p.g : pal.of(c); } return stuck < Math.max(2, needStickers) ? stick[stuck] : done; }, { maxActions: 14 });
     const ok = await new Promise<boolean>(res => { done.onclick = () => res(true); api.onCleanup(() => res(false)); }); if (!ok || api.closed) return;
     api.right(done); const png = await svgPNG(svg); if (png) keep(api, png);
     api.say('Your lantern is in your Album!', 'Đèn lồng của con đã ở trong Album rồi!'); await wait(1400); if (api.closed) return;
@@ -283,6 +301,8 @@ register({
   id: 'card', icon: '💌', name: () => T('Make a Card', 'Làm Thiệp'),
   async run(api) {
     style();
+    // free making, with a little more on the card each level before "Finished"
+    const need = lv(api, 2, 2, 3, 4, 5); mark(api, need);
     api.say('Make a card for someone you love! Who is it for?', 'Làm một tấm thiệp tặng người con yêu nhé! Thiệp cho dịp gì?');
     api.dots(2, 0); api.stage.innerHTML = '';
     const row = el('div', 'dg-row'), kinds = CARDS.map(k => { const b = button(`${pic(k.stamps[0])} ${T(k.name[0], k.name[1])}`); b._k = k; row.appendChild(b); return b; });
@@ -302,9 +322,10 @@ register({
     drawable(c, w, (p, first) => {
       if (stamp && first) { g.font = `${Math.round(w * .13)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(stamp, p.x, p.y); g.textBaseline = 'alphabetic'; things++; api.sfx.pop(things % 8); }
       else if (!stamp) { g.strokeStyle = pal.state.colour; g.lineWidth = 8; if (!first && last) { g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke(); } }
-      last = p; done.disabled = things < 2;
-    }, pts => { last = null; if (!stamp && pts.length > 8) things++; done.disabled = things < 2; });
-    api.plan(() => { if (!c.isConnected) return null; if (things >= 3) return done; if (stamp !== K.stamps[things % 4]) return stamps[things % 4];
+      last = p; done.disabled = things < need;
+    }, pts => { last = null; if (!stamp && pts.length > 8) things++; done.disabled = things < need; });
+    if (!api.little && api.smart) api.show(`Add ${need} pictures or drawings.`, `Thêm ${need} hình dán hoặc nét vẽ nhé.`);
+    api.plan(() => { if (!c.isConnected) return null; if (things >= Math.max(3, need)) return done; if (stamp !== K.stamps[things % 4]) return stamps[things % 4];
       const p = { x: w * (.2 + .3 * things), y: h * (.45 + .15 * (things % 2)) }; return stroke(c, w, [p, p], 80); }, { maxActions: 12 });
     const ok = await new Promise<boolean>(res => { done.onclick = () => res(true); api.onCleanup(() => res(false)); }); if (!ok || api.closed) return;
     api.right(done); keep(api, c.toDataURL('image/jpeg', .85));
@@ -318,7 +339,9 @@ const SAND_IDEAS: [string, string, string][] = [['☀️', 'a sun', 'ông mặt 
 register({
   id: 'sand', icon: '🏖️', name: () => T('Sand Drawing', 'Vẽ Trên Cát'),
   async run(api) {
-    style(); const rounds = 3, beach = pick([['Vũng Tàu', 'Vũng Tàu'], ['Bondi Beach', 'bãi biển Bondi']]);
+    // free drawing; more drawings and a bigger drawing before the wave each level, with a finer stick (light changes)
+    style(); const rounds = lv(api, 3, 2, 3, 4, 5), amount = lv(api, .8, .6, .8, 1.2, 1.6), line = lv(api, 12, 10, 8, 6, 5), beach = pick([['Vũng Tàu', 'Vũng Tàu'], ['Bondi Beach', 'bãi biển Bondi']]);
+    mark(api, rounds, amount, line);
     api.say(`Draw in the sand at ${beach[0]}! When you finish, tap the wave to wash it away.`, `Vẽ trên cát ở ${beach[1]} nào! Vẽ xong, chạm vào con sóng để sóng xoá đi nhé.`);
     api.stage.innerHTML = '';
     const { c, g, w, h } = pad(api, .75, '#f3d9a4');
@@ -327,7 +350,7 @@ register({
     fresh();
     const row = el('div', 'dg-row'), wave = button(`${pic('🌊')} ${T('Wave!', 'Sóng ơi!')}`, 'dg-btn go'); wave.disabled = true; row.appendChild(wave); api.stage.appendChild(row);
     let drawn = 0, last: Pt | null = null;
-    drawable(c, w, (p, first) => { if (p.y < h * .2) return; g.strokeStyle = '#b98a4a'; g.lineWidth = api.little ? 12 : 8; if (!first && last) { g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke(); drawn += Math.hypot(p.x - last.x, p.y - last.y); } last = p; if (drawn > w * .8) wave.disabled = false; }, () => { last = null; });
+    drawable(c, w, (p, first) => { if (p.y < h * .2) return; g.strokeStyle = '#b98a4a'; g.lineWidth = line; if (!first && last) { g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke(); drawn += Math.hypot(p.x - last.x, p.y - last.y); } last = p; if (drawn > w * amount) wave.disabled = false; }, () => { last = null; });
     api.plan(() => { if (!c.isConnected) return null; if (!wave.disabled) return wave; const cx = rand(w * .3, w * .7), cy = rand(h * .45, h * .7), R = w * .14;
       return stroke(c, w, Array.from({ length: 26 }, (_, i) => ({ x: cx + Math.cos(i / 24 * Math.PI * 2) * R, y: cy + Math.sin(i / 24 * Math.PI * 2) * R })), 1000); }, { maxActions: rounds * 6 });
     for (let r = 0; r < rounds; r++) {
@@ -346,13 +369,15 @@ register({
 register({
   id: 'drawpath', icon: '🦆', name: () => T('Draw the Way', 'Vẽ Đường Đi'),
   async run(api) {
-    style(); const rounds = 3, nRocks = api.little ? 2 : 2 + api.level;
+    // the level sets the rocks; on Talent there is one more duckling and the gaps between the rocks are tighter
+    style(); const rounds = api.talent ? 4 : 3, nRocks = api.little ? 2 : 2 + api.level + (api.talent ? 1 : 0);
+    mark(api, rounds, nRocks, api.talent ? 'tight' : '');
     api.say('Draw a line from the duckling to the pond. Go around the rocks!', 'Vẽ một đường từ chú vịt con đến cái ao. Đi vòng qua những hòn đá nhé!');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const { c, g, w, h } = pad(api, .7, '#c8ecb0'), duck = { x: w * .08, y: rand(h * .25, h * .75) }, pond = { x: w * .9, y: rand(h * .25, h * .75) };
       // a safe way first, then rocks beside it (never on it), so every round can be done
-      const way: Pt[] = [duck, ...[.3, .5, .7].map(f => ({ x: w * f, y: rand(h * .2, h * .8) })), pond], R = Math.max(16, w * .05), safe = R + (api.little ? 30 : 22);
+      const way: Pt[] = [duck, ...[.3, .5, .7].map(f => ({ x: w * f, y: rand(h * .2, h * .8) })), pond], R = Math.max(16, w * .05), safe = R + (api.little ? 30 : api.talent ? 15 : 22);
       const dense: Pt[] = []; way.forEach((p, i) => { if (!i) return; const a = way[i - 1]; for (let k = 0; k < 12; k++) dense.push({ x: a.x + (p.x - a.x) * k / 12, y: a.y + (p.y - a.y) * k / 12 }); }); dense.push(pond);
       const rocks: Pt[] = []; for (let tries = 0; rocks.length < nRocks && tries < 400; tries++) { const q = { x: rand(w * .2, w * .8), y: rand(R, h - R) }; if (dense.every(d => Math.hypot(d.x - q.x, d.y - q.y) > safe + R) && rocks.every(o => Math.hypot(o.x - q.x, o.y - q.y) > R * 2.4)) rocks.push(q); }
       const font = (s: number) => `${s}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
@@ -387,7 +412,9 @@ function edges(P: Pt[]): Pt[] { const out: Pt[] = []; P.forEach((a, i) => { cons
 register({
   id: 'shapedraw', icon: '🔺', name: () => T('Draw a Shape', 'Vẽ Hình'),
   async run(api) {
-    style(); const rounds = api.little ? 3 : 4, kinds = api.little ? [SHAPES[0], SHAPES[2]] : SHAPES;
+    // more shapes each level; Easy keeps to the circle and the square
+    style(); const rounds = lv(api, 3, 3, 4, 5, 6), kinds = api.little || !api.smart ? [SHAPES[0], SHAPES[2]] : SHAPES;
+    mark(api, rounds, kinds.length);
     api.say('I will ask for a shape. Draw it with your finger, in one go!', 'Cô sẽ đố một hình. Con vẽ bằng ngón tay, một nét liền nhé!');
     let prev = '';
     for (let r = 0; r < rounds; r++) {
@@ -412,7 +439,9 @@ register({
 register({
   id: 'copygrid', icon: '🖼️', name: () => T('Copy the Picture', 'Vẽ Lại Tranh'),
   async run(api) {
-    style(); const rounds = 2, S = api.level <= 2 ? 4 : 5, cols = COLOURS.slice(0, api.level <= 1 ? 1 : api.level <= 3 ? 2 : 3);
+    // the level sets the grid and the colours; Talent adds a fourth colour and one more picture
+    style(); const rounds = api.talent ? 3 : 2, S = api.level <= 2 ? 4 : 5, cols = COLOURS.slice(0, api.talent ? 4 : api.level <= 1 ? 1 : api.level <= 3 ? 2 : 3);
+    mark(api, rounds, S, cols.length);
     api.say('Make your picture the same as the little one. Tap a colour, then tap the squares!', 'Vẽ lại cho giống bức tranh nhỏ nhé. Chạm một màu, rồi chạm vào các ô!');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';

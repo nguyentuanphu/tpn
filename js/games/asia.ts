@@ -7,6 +7,9 @@ import { settings } from '../state.js';
 import { sayIn } from '../voice.js';
 import { el, wait, pick, shuffle } from '../util.js';
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));   // a whole number from a to b
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
 import {playSnakes} from './snakes.js';
 import { LEARN } from '../words2.js';
 
@@ -14,14 +17,15 @@ import { LEARN } from '../words2.js';
 register({
   id: 'firstwords', icon: '🌏', origin: 'both', name: () => T('First Words: Chinese and Hindi', 'Từ đầu tiên: tiếng Trung và tiếng Hindi'),
   async run(api) {
+    // (levels) more pictures to choose from on Hard (4) and Talent (5); Talent: only the word in its own writing, listen for it
     const rounds = api.little ? 5 : 8;
     const langs = settings.learnLang && LEARN[settings.learnLang] ? [settings.learnLang] : ['zh', 'hi'];
     api.say('Friends from China and India are teaching us words. Listen, then tap the picture!', 'Các bạn Trung Quốc và Ấn Độ dạy mình từ mới. Nghe rồi chạm vào hình nhé!');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const L = LEARN[langs[r % langs.length]], w = pick(L.words.filter(x => !/️⃣/.test(x[0]) || !api.little));
-      const others = shuffle(L.words.filter(x => x !== w && x[0] !== w[0])).slice(0, api.little ? 1 : 2), opts = shuffle([w, ...others]);
-      api.stage.appendChild(el('div', 'wq', `<div class="wq-flag">${L.flag}</div><div class="wq-word fw-native">${w[3]}</div><div class="wq-ex">“${w[4]}”</div><button class="btn fw-hear">🔊 ${T('Hear it again', 'Nghe lại')}</button>`));
+      const others = shuffle(L.words.filter(x => x !== w && x[0] !== w[0])).slice(0, api.little ? 1 : lv(api, 2, 2, 3, 4)), opts = shuffle([w, ...others]);
+      api.stage.appendChild(el('div', 'wq', `<div class="wq-flag">${L.flag}</div><div class="wq-word fw-native">${w[3]}</div>${api.talent ? '' : `<div class="wq-ex">“${w[4]}”</div>`}<button class="btn fw-hear">🔊 ${T('Hear it again', 'Nghe lại')}</button>`));
       const hear = () => sayIn(langs[r % langs.length], w[3]);
       api.stage.querySelector('.fw-hear').onclick = hear;
       api.say(`In ${L.name.en}, how do you say this word? Listen!`, `Trong ${L.name.vi}, từ này là gì? Nghe nhé!`); await wait(1600); hear();
@@ -53,7 +57,8 @@ function pieceSVG(pts, fill, rot = 0, flip = false) {
 register({
   id: 'tangram', icon: '🧩', origin: 'cn', name: () => T('Tangram Shapes', 'Xếp hình Tangram'),
   async run(api) {
-    const rounds = api.little ? 4 : 6;
+    // (levels) more rounds and wrong pieces on Hard and Talent; Talent: the right piece is always turned, and no tip
+    const rounds = api.little ? 4 : lv(api, 6, 6, 7, 8), nWrong = api.little ? 1 : lv(api, 2, 2, 3, 4);
     api.say('In China, children make pictures from shapes. One shape is missing. Which one fits?', 'Ở Trung Quốc, các bạn nhỏ xếp hình từ những mảnh ghép. Thiếu một mảnh rồi. Mảnh nào vừa?');
     const order = shuffle(PUZZLES.slice());
     for (let r = 0; r < rounds; r++) {
@@ -62,12 +67,12 @@ register({
       const pic = pz.pieces.map(([p, c], i) => i === miss ? svgPoly(p, '#ffffff', 'stroke-dasharray="5 4" fill-opacity=".6"') : svgPoly(p, c)).join('');
       api.stage.appendChild(el('div', 'tg-board', `<svg viewBox="0 0 100 100" width="100%" height="100%">${pic}</svg><div class="tg-what">${T('Make ' + pz.en + '!', 'Xếp ' + pz.vi + '!')}</div>`));
       // choices: the right piece (maybe turned, for big kids), and other shapes that don't fit
-      const turn = api.little ? 0 : pick([0, 90, 180]);
-      const wrongs = shuffle(PUZZLES.flatMap(q => q.pieces.map(x => x[0])).filter(p => p.length !== mp.length || JSON.stringify(p) !== JSON.stringify(mp)).filter(p => p.length !== mp.length)).slice(0, api.little ? 1 : 2);
-      if (wrongs.length < (api.little ? 1 : 2)) wrongs.push(mp.map((v, i) => i % 2 ? v * .6 + 20 : v));
+      const turn = api.little ? 0 : api.talent ? pick([90, 180, 270]) : pick([0, 90, 180]);
+      const wrongs = shuffle(PUZZLES.flatMap(q => q.pieces.map(x => x[0])).filter(p => p.length !== mp.length || JSON.stringify(p) !== JSON.stringify(mp)).filter(p => p.length !== mp.length)).slice(0, nWrong);
+      if (wrongs.length < nWrong) wrongs.push(mp.map((v, i) => i % 2 ? v * .6 + 20 : v));
       const opts = shuffle([{ pts: mp, ok: true, rot: turn }, ...wrongs.map(p => ({ pts: p, ok: false, rot: pick([0, 90]) }))]);
       const row = el('div', 'choices tg-choices'); const bs = opts.map(o => { const b = el('button', 'choice tg-piece', pieceSVG(o.pts, mc, o.rot)); b._ok = o.ok; row.appendChild(b); return b; }); api.stage.appendChild(row);
-      if (turn) api.say('Tip: you can imagine turning the shape around!', 'Mẹo: con thử tưởng tượng xoay mảnh ghép xem!');
+      if (turn && !api.talent) api.say('Tip: you can imagine turning the shape around!', 'Mẹo: con thử tưởng tượng xoay mảnh ghép xem!');
       for (;;) { const b = await tapOne<HTMLButtonElement & { _ok?: boolean; _c?: string; _o?: number; _v?: number }>(bs); if (api.closed) return; if (b._ok) { api.right(b); break; } api.wrong(b, 'Look at the corners and the sides!', 'Nhìn kỹ các góc và các cạnh nhé!'); }
       api.stage.querySelector('.tg-board svg').innerHTML = pz.pieces.map(([p, c]) => svgPoly(p, c)).join('');
       api.say(`You made ${pz.en}!`, `Con xếp được ${pz.vi} rồi!`);
@@ -89,8 +94,9 @@ register({
     api.say('In India, families draw rangoli with coloured powder for Diwali. A rangoli is the same on both sides. Finish the other half!', 'Ở Ấn Độ, các gia đình vẽ tranh rangoli bằng bột màu vào dịp lễ Diwali. Tranh rangoli giống nhau ở hai bên. Con tô nốt nửa còn lại nhé!');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const S = api.little ? 4 : 6, half = S / 2, cols = RCOL.slice(0, api.little ? 3 : 4);
-      const pat = Array.from({ length: S }, () => Array.from({ length: half }, () => Math.random() < (api.little ? .45 : .6) ? pick(cols) : null));
+      // (levels) more colours from Medium (4, 5, 5, 6) and fuller patterns on Hard and Talent
+      const S = api.little ? 4 : 6, half = S / 2, cols = RCOL.slice(0, api.little ? 3 : lv(api, 4, 5, 5, 6));
+      const pat = Array.from({ length: S }, () => Array.from({ length: half }, () => Math.random() < (api.little ? .45 : lv(api, .6, .6, .75, .85)) ? pick(cols) : null));
       let brush = cols[0];
       const grid = el('div', 'rg-grid'); grid.style.gridTemplateColumns = `repeat(${S}, 1fr)`;
       const cells = [];

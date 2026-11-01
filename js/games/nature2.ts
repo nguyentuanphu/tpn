@@ -5,6 +5,13 @@ import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el, wait, rand } from '../util.js';
 
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
+// get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
+// something that swims or drifts to a new place every few moments (0: it stays still)
+const drift = (e: HTMLElement, ms: number, maxTop = 220) => { if (!ms) return 0; e.style.transition = `left ${ms * .6}ms, top ${ms * .6}ms`; return setInterval(() => { e.style.left = rand(20, 260) + 'px'; e.style.top = rand(20, maxTop) + 'px'; }, ms); };
+
 let styled = false;
 function style() {
   if (styled) return; styled = true;
@@ -26,7 +33,9 @@ register({
     style();
     api.say('Scoop the little fish into your net, then watch it swim safely away!',
       'Vớt chú cá nhỏ vào vợt rồi thả cá bơi đi an toàn nhé!');
-    const target = api.little ? 3 : 5;
+    // more fish each level; from Medium the fish swims about, faster each level
+    const target = lv(api, 3, 4, 5, 7, 8), swimMs = lv(api, 0, 0, 2200, 1500, 1000);
+    mark(api, target, swimMs);
     api.dots(target, 0);
     const wrap = el('div', 'n2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'n2-stage'); wrap.appendChild(stage);
@@ -41,7 +50,9 @@ register({
       stage.appendChild(fish);
 
       api.plan(() => fish.isConnected ? fish : null, { maxActions: 4 });
+      const swim = drift(fish, swimMs);
       const clicked = await untilRight(api, [fish], e => e === fish);
+      clearInterval(swim);
       if (!clicked || api.closed) return;
       api.sfx.pop(caught);
       caught++;
@@ -62,7 +73,9 @@ register({
     style();
     api.say('Find the big dark-green emu eggs hidden in the spinifex grass!',
       'Tìm những quả trứng đà điểu màu xanh sẫm ẩn trong bụi cỏ nhé!');
-    const target = api.little ? 3 : 5;
+    // more eggs each level, hidden among white hens' eggs that do not belong to the emu (more of them each level)
+    const target = lv(api, 3, 4, 5, 6, 7), others = lv(api, 0, 0, 1, 3, 5);
+    mark(api, target, others);
     api.dots(target, 0);
     const wrap = el('div', 'n2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'n2-stage'); stage.style.background = '#f7eed8'; wrap.appendChild(stage);
@@ -76,8 +89,12 @@ register({
       egg.setAttribute('aria-label', T('Emu egg', 'Trứng đà điểu'));
       stage.appendChild(egg);
 
+      const hens = Array.from({ length: others }, () => {
+        const h = el('button', 'n2-float', pic('🥚')); h.style.left = rand(20, 260) + 'px'; h.style.top = rand(20, 220) + 'px';
+        h.setAttribute('aria-label', T('Hen egg', 'Trứng gà')); stage.insertBefore(h, egg); return h;
+      });
       api.plan(() => egg.isConnected ? egg : null, { maxActions: 4 });
-      const clicked = await untilRight(api, [egg], e => e === egg);
+      const clicked = await untilRight(api, [egg, ...hens], e => e === egg);
       if (!clicked || api.closed) return;
       api.sfx.pop(collected);
       collected++;
@@ -98,13 +115,20 @@ register({
     style();
     api.say('Pick up the plastic and old nets so the sea turtles and corals stay safe!',
       'Thu gom rác và lưới để rùa biển cùng rạn san hô luôn an toàn nhé!');
-    const target = api.little ? 4 : 6;
+    // more litter each level; from Hard a sea turtle swims by (leave it be), and on Talent the litter drifts with the current
+    const target = lv(api, 4, 5, 6, 8, 10), friends = lv(api, 0, 0, 0, 1, 2), driftMs = api.talent ? 1600 : 0;
+    mark(api, target, friends, driftMs);
     api.dots(target, 0);
     const wrap = el('div', 'n2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'n2-stage'); stage.style.background = '#d9f2f7'; wrap.appendChild(stage);
 
     const coral = el('div', '', pic('🪸')); coral.style.cssText = 'position:absolute;bottom:10px;font-size:70px;'; stage.appendChild(coral);
 
+    const animals = Array.from({ length: friends }, (_, i) => {
+      const a = el('button', 'n2-float', pic(i ? '🐠' : '🐢')); a.style.left = rand(20, 260) + 'px'; a.style.top = rand(20, 180) + 'px';
+      a.setAttribute('aria-label', T(i ? 'Fish' : 'Sea turtle', i ? 'Con cá' : 'Rùa biển')); stage.appendChild(a); return a;
+    });
+    const swims = animals.map(a => drift(a, 1800, 180)); api.onCleanup(() => swims.forEach(clearInterval));
     let cleaned = 0;
     while (cleaned < target) {
       const junk = el('button', 'n2-float', pic(['🥤', '🕸️', '🛍️'][cleaned % 3])); // (audit: a plastic cup and bag, not a champagne bottle)
@@ -114,7 +138,9 @@ register({
       stage.appendChild(junk);
 
       api.plan(() => junk.isConnected ? junk : null, { maxActions: 4 });
-      const clicked = await untilRight(api, [junk], e => e === junk);
+      const floating = drift(junk, driftMs, 180);
+      const clicked = await untilRight(api, [junk, ...animals], e => e === junk);
+      clearInterval(floating);
       if (!clicked || api.closed) return;
       junk.remove();
       api.sfx.pop(cleaned);
@@ -122,6 +148,7 @@ register({
       api.dots(target, cleaned);
       await wait(300);
     }
+    swims.forEach(clearInterval);
     api.say('The Great Barrier Reef sparkles clean and clear!', 'Rạn san hô rực rỡ và trong xanh trở lại rồi!');
     await wait(1200);
     return api.win({ title: T('Clean Ocean Reef!', 'Rạn San Hô Trong Sạch!') });

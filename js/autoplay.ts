@@ -171,9 +171,18 @@ function updateFloatBar(): void {
     if (action === 'bug') button.disabled = !reportingState().enabled;
   }
 }
-// a moment that can be paused, skipped or stopped
-async function hold(sec) { const end = Date.now() + sec * 1000; while (Date.now() < end || run.paused) { if (run.stop) throw STOP; if (run.skip) { run.skip = false; throw SKIP; } await wait(100); } }
-async function until(test, sec) { const end = Date.now() + sec * 1000; while (Date.now() < end) { if (run.stop) throw STOP; if (run.skip) { run.skip = false; throw SKIP; } if (test()) return true; await wait(100); } return !!test(); }
+// (#687-#694, #727, #730-#733: "stuck at …; still stuck; slow: 0 frames a second", reports a minute apart) auto play's
+// clock stops while the page is hidden (another tab or window in front, a phone put away): the valley is not drawn then,
+// so the child cannot move and no game moves on, and that time is not a child stuck, a game nobody could play or a slow
+// screen. Every wait, stuck timer, game allowance and frame count below runs on this clock.
+let hiddenMs = 0, hiddenAt = typeof document !== 'undefined' && document.hidden ? Date.now() : 0;
+if (typeof document !== 'undefined') document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { if (!hiddenAt) hiddenAt = Date.now(); } else if (hiddenAt) { hiddenMs += Date.now() - hiddenAt; hiddenAt = 0; }
+});
+const apNow = () => (hiddenAt || Date.now()) - hiddenMs;
+// a moment that can be paused, skipped or stopped (and that waits while the page is hidden)
+async function hold(sec) { const end = apNow() + sec * 1000; while (apNow() < end || run.paused || document.hidden) { if (run.stop) throw STOP; if (run.skip) { run.skip = false; throw SKIP; } await wait(100); } }
+async function until(test, sec) { const end = apNow() + sec * 1000; while (apNow() < end) { if (run.stop) throw STOP; if (run.skip) { run.skip = false; throw SKIP; } if (test()) return true; await wait(100); } return !!test(); }
 // the last steps, sent with each problem (as the tester report's log: seconds before the report, kind, words)
 function step_(k, s) { trail.push([Date.now(), k, String(s || '').replace(/\s+/g, ' ').slice(0, 110)]); if (trail.length > AP_TRAIL) trail.shift(); }
 const trailLog = () => trail.map(([t, k, s]) => [Math.max(-600, Math.round((t - Date.now()) / 100) / 10), k, s]);
@@ -274,21 +283,21 @@ async function walk(path, x, z, near) {
   const h = hero(); let jumped = false;
   for (let k = 0; k < path.length; k++) {
     const p = path[k], last = k === path.length - 1, to = last ? Math.max(.1, Math.min(.8, near - Math.hypot(p.x - x, p.z - z) - .05)) : 1.1;
-    let mark = { x: h.pos.x, z: h.pos.z, t: Date.now() };
+    let mark = { x: h.pos.x, z: h.pos.z, t: apNow() };
     while (Math.hypot(h.pos.x - p.x, h.pos.z - p.z) > to) {
       if (Math.hypot(h.pos.x - x, h.pos.z - z) <= near) { h.goal = null; return true; }
-      if (topOpen()) { h.goal = null; await settle(40); await closeAll(); mark = { x: h.pos.x, z: h.pos.z, t: Date.now() }; }
+      if (topOpen()) { h.goal = null; await settle(40); await closeAll(); mark = { x: h.pos.x, z: h.pos.z, t: apNow() }; }
       // Tap-to-walk stops .7m before its goal. For a tiny approach, aim just beyond the waypoint
       // and stop on actual arrival; ordinary movement/collision still decides whether it can be reached.
       const d = Math.hypot(p.x - h.pos.x, p.z - h.pos.z), beyond = last && to < .75 && d > .001 ? .75 / d : 0;
       G.paused = false; h.goal = { x: p.x + (p.x - h.pos.x) * beyond, z: p.z + (p.z - h.pos.z) * beyond }; h.goalT = 0; h.autoRun = sp().run;
       await hold(.1);
-      if (Date.now() - mark.t > AP_STUCK.secs * 1000) {
+      if (apNow() - mark.t > AP_STUCK.secs * 1000) {
         if (Math.hypot(h.pos.x - mark.x, h.pos.z - mark.z) < AP_STUCK.moved) {
           if (jumped) { h.goal = null; h.autoRun = false; return false; }
           jumped = true; step_('jump', `${Math.round(h.pos.x)},${Math.round(h.pos.z)}`); if (h.onGround) { h.vy = 8.5; h.onGround = false; }
         }
-        mark = { x: h.pos.x, z: h.pos.z, t: Date.now() };
+        mark = { x: h.pos.x, z: h.pos.z, t: apNow() };
       }
     }
   }
@@ -337,8 +346,8 @@ async function walkTo(x, z, speed = 'watch') {
 const OPEN = '.reward, .storybook, .dialog, .gl, .theatre, .songs, .modal, .pad, .handpad';
 const topOpen = () => [...document.querySelectorAll<HTMLElement>(OPEN)].filter(e => !(root && root.contains(e)) && !e.classList.contains('out') && shown(e)).pop();
 async function settle(secs, note: ProblemNote = () => { }) {
-  const end = Date.now() + secs * 1000;
-  while (Date.now() < end) {
+  const end = apNow() + secs * 1000;
+  while (apNow() < end) {
     const w = topOpen();
     // A rope can finish before the chapter's deferred theatre has opened. Wait for that same activity,
     // rather than declaring success in the gap and leaving its film in front of the next quest.
@@ -407,18 +416,22 @@ async function playGame(note): Promise<PlayResult> {
   const gl = document.querySelector('.gl'); if (!gl) return {};
   // The family Fruit Bar has its own modal card above the shared frame. Observe
   // the controls the child actually sees, including its sticky action footer.
-  const stage = gl.getAttribute('data-game-id') === 'sparklefruitbar' ? document.querySelector('.parent-arcade .card') || gl.querySelector('.gl-stage') || gl : gl.querySelector('.gl-stage') || gl;
+  // (#728 #730-#733) the card opens a moment after the frame: wait for it, or the empty frame is watched, nothing seems
+  // to happen there and the game is left after the idle time as one auto play "could not work out"
+  const bar = gl.getAttribute('data-game-id') === 'sparklefruitbar';
+  if (bar) await until(() => document.querySelector('.parent-arcade .card'), 3);
+  const stage = bar ? document.querySelector('.parent-arcade .card') || gl.querySelector('.gl-stage') || gl : gl.querySelector('.gl-stage') || gl;
   const s = sp(), tried = new Set(), r: PlayResult = { won: false, rights: 0, wrongs: 0, taps: 0 };
-  let last = Date.now();
-  playWatch.on = k => { last = Date.now(); if (k === 'right') r.rights++; if (k === 'wrong') r.wrongs++; if (k === 'win') r.won = true; };
-  const mo = new MutationObserver(() => { last = Date.now(); }); mo.observe(stage, { childList: true, subtree: true, attributes: true, characterData: true });
-  const started = Date.now(); // A legal plan's bound includes normal thinking/finger time, not faster play.
+  let last = apNow();
+  playWatch.on = k => { last = apNow(); if (k === 'right') r.rights++; if (k === 'wrong') r.wrongs++; if (k === 'win') r.won = true; };
+  const mo = new MutationObserver(() => { last = apNow(); }); mo.observe(stage, { childList: true, subtree: true, attributes: true, characterData: true });
+  const started = apNow(); // A legal plan's bound includes normal thinking/finger time, not faster play.
   // (r90, #419 #428: Tiến Lên's northern rules ran out of time at x5) time spent waiting while it is not auto play's turn
   // (the friends play at the game's own speed, not auto play's) does not count against the allowance; at most 10 minutes
   let waited = 0;
     try {
-      while ((Date.now() < started + apGameSeconds(s, playWatch.maxActions, run.quest ? 3 : 1) * 1000 + Math.min(waited, 600e3) || gl.querySelector('.gl-win')) && gl.isConnected && !gl.classList.contains('out')) {
-      const it0 = Date.now();
+      while ((apNow() < started + apGameSeconds(s, playWatch.maxActions, run.quest ? 3 : 1) * 1000 + Math.min(waited, 600e3) || gl.querySelector('.gl-win')) && gl.isConnected && !gl.classList.contains('out')) {
+      const it0 = apNow();
       await hold(think()); if (!gl.isConnected) break;
       const win = gl.querySelector('.gl-win');
       if (win) { if (win.classList.contains('ask')) { const t = [win.querySelector('.gl-tapout'), win.querySelector('p'), win].find(shown); if (!t || !await tap(t, note)) await until(() => !gl.isConnected, 1); } continue; }
@@ -442,8 +455,8 @@ async function playGame(note): Promise<PlayResult> {
         pick = playWatch.plan();
         if (pick && !(pick instanceof Element)) { await press(pick); r.taps++; continue; }
         if (!pick || !shown(pick) || pick.disabled) {
-          if (Date.now() - last > s.idle * 1000) { r.cant = true; break; }
-          waited += Date.now() - it0;
+          if (apNow() - last > s.idle * 1000) { r.cant = true; break; }
+          waited += apNow() - it0;
           continue; // wait for the next legal turn; never tap an occupied board at random
         }
       } else {
@@ -471,7 +484,7 @@ async function playGame(note): Promise<PlayResult> {
         await hold(rnd(.5, 1.2));
         if (!gl.isConnected || !stage.isConnected) break;
       }
-      if (Date.now() - last > s.idle * 1000) { r.cant = true; break; }
+      if (apNow() - last > s.idle * 1000) { r.cant = true; break; }
     }
   } finally { playWatch.on = null; mo.disconnect(); }
   if (!r.won && gl.isConnected && !gl.classList.contains('out')) r.cant = true;
@@ -483,15 +496,15 @@ async function readTale(note) {
   const th = document.querySelector('.theatre'); if (!th) return;
   const page = () => [...th.querySelectorAll('.th-dots i')].findIndex(i => i.classList.contains('on'));
   const a = th.querySelector('.th-auto'); if (a && !a.classList.contains('on')) await tap(a, note);
-  let at = page(), since = Date.now(), nudged = false; const end = Date.now() + (sp().page ? 180 : 420) * 1000;
-  while (th.isConnected && !th.classList.contains('out') && Date.now() < end) {
+  let at = page(), since = apNow(), nudged = false; const end = apNow() + (sp().page ? 180 : 420) * 1000;
+  while (th.isConnected && !th.classList.contains('out') && apNow() < end) {
     if (sp().page) { await hold(sp().page); const n = th.querySelector('.th-next'); if (n && th.isConnected) await tap(n, note); }
     else await hold(1);
-    const p = page(); if (p !== at) { at = p; since = Date.now(); nudged = false; step_('page', String(p + 1)); }
+    const p = page(); if (p !== at) { at = p; since = apNow(); nudged = false; step_('page', String(p + 1)); }
     // (#361 #427 #620, quest:L_c1_tale) a page that does not turn by itself (its film or voice never says it is over) is
     // turned with Next, as a child would; only a story that will not move on with Next either is a problem
-    else if (!nudged && Date.now() - since > 25000) { const n = th.querySelector('.th-next'); if (n && th.isConnected) { nudged = true; step_('nudge', String(at + 1)); await tap(n, note); } }
-    else if (Date.now() - since > 45000) { note(T(`the story stopped on page ${at + 1}`, `truyện dừng ở trang ${at + 1}`)); break; }
+    else if (!nudged && apNow() - since > 25000) { const n = th.querySelector('.th-next'); if (n && th.isConnected) { nudged = true; step_('nudge', String(at + 1)); await tap(n, note); } }
+    else if (apNow() - since > 45000) { note(T(`the story stopped on page ${at + 1}`, `truyện dừng ở trang ${at + 1}`)); break; }
   }
 }
 
@@ -506,7 +519,9 @@ async function doGame(id, note) {
   const r = await playGame(note);
   if (r.cant) note(T('help: auto play could not work out how to play it', 'cần giúp: tự chơi chưa biết chơi trò này'));
   await until(() => !document.querySelector('.gl:not(.out)'), 1.5);
-  if (document.querySelector('.gl:not(.out)')) { await closer('.gl .gl-x')(note); if (!await until(() => !document.querySelector('.gl'), 2)) note(T('did not close', 'không đóng được')); }
+  // (#728 #732) a game in its own card above the frame (the Fruit Bar) is closed with that card's ✕, as a child would:
+  // the frame's Leave lies under the card
+  if (document.querySelector('.gl:not(.out)')) { await closer(document.querySelector('.parent-arcade .x') ? '.parent-arcade .x' : '.gl .gl-x')(note); if (!await until(() => !document.querySelector('.gl'), 2)) note(T('did not close', 'không đóng được')); }
   return `${r.won ? T('won', 'thắng') : T('played', 'đã chơi')}: ${r.rights} ✓, ${r.wrongs} ✗, ${r.taps} ${T('taps', 'lần chạm')}`;
 }
 async function doFestival(F, note) {
@@ -539,7 +554,7 @@ async function doTap(it, note) {
   await settle(sp().talk + 30, note);
   // (#361 #427, quest Treo đèn lồng ở đình làng) the rope and the film after it can outlast that on a slow device:
   // keep doing what the story shows for up to two more minutes before calling it unfinished
-  for (const end = Date.now() + 120e3; G.lanterns?.busy(h.profile) && Date.now() < end;) await settle(10, note);
+  for (const end = apNow() + 120e3; G.lanterns?.busy(h.profile) && apNow() < end;) await settle(10, note);
   if (G.lanterns?.busy(h.profile)) note(T('help: auto play could not finish this story activity', 'cần giúp: tự chơi chưa làm xong hoạt động trong truyện này'));
   const w = topOpen(); if (w) { await hold(sp().talk); offScreen(w, note); }
 }
@@ -588,12 +603,12 @@ async function questOnce(q, note) {
 async function one(s: AutoplayStep): Promise<AutoplayResult> {
   const problems = [], notes = [], note = (m, help = false) => (help ? notes : problems).push(m), errs = errSink = [], miss0 = new Set(voiceMisses().map(m => m[0] + '|' + m[1]));
   let frames = 0, on = true; const count = () => { if (!on) return; frames++; requestAnimationFrame(count); }; requestAnimationFrame(count);
-  const t0 = performance.now(); let skipped = false, said = '';
+  const t0 = apNow(); let skipped = false, said = '';
   let nm = s.key; try { nm = s.name(); } catch (e) { }
   step_('start', nm);
   try { said = (await s.fn(note)) || ''; } catch (e) { if (e === STOP) { on = false; errSink = null; throw e; } if (e === SKIP) skipped = true; else note(T('error: ', 'lỗi: ') + String(e && e.message || e).slice(0, 160)); }
   on = false; errSink = null;
-  const secs = (performance.now() - t0) / 1000, fps = secs > .5 ? Math.round(frames / secs) : null;
+  const secs = (apNow() - t0) / 1000, fps = secs > .5 ? Math.round(frames / secs) : null;
   for (const e of [...new Set(errs)].slice(0, 3)) note(T('error: ', 'lỗi: ') + e);
   for (const m of voiceMisses()) if (!miss0.has(m[0] + '|' + m[1])) note(T('no recording: ', 'chưa thu âm: ') + (m[0] + ': ' + m[1]).slice(0, 120));
   if ((!sp().rate || sp().rate === 1) && fps != null && fps < 20) note(T(`slow: ${fps} frames a second`, `chậm: ${fps} khung hình mỗi giây`));

@@ -9,6 +9,9 @@ import { sayAsync, hush, spoken } from '../voice.js';
 
 const FRUIT = ['🍎', '🍌', '🍓', '🍊', '🥭', '🍐', '🍇', '🥝'];
 const vi = () => settings.lang === 'vi';
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
 
 // ---------- What's the time? (a clock face with moving hands) ----------
 function clockSVG(h, m) {
@@ -29,9 +32,11 @@ register({
       const h = 1 + Math.floor(Math.random() * 12), m = pick(mins);
       const face = el('div', 'clockwrap', clockSVG(h, m)); api.stage.appendChild(face);
       api.say('What time does the clock say? The short hand shows the hour.', 'Đồng hồ chỉ mấy giờ? Kim ngắn chỉ giờ.');
-      const wrong = shuffle([[h % 12 + 1, m], [(h + 10) % 12 + 1, m], [h, mins.length > 1 ? pick(mins.filter(x => x !== m)) : (m + 30) % 60]]).slice(0, 2);
+      // (levels) Hard: four times to choose from, Talent five with only the clock numbers (no words)
+      const m2 = mins.length > 1 ? pick(mins.filter(x => x !== m)) : (m + 30) % 60;
+      const wrong = shuffle([[h % 12 + 1, m], [(h + 10) % 12 + 1, m], [h, m2], [h % 12 + 1, m2], [(h + 10) % 12 + 1, m2]]).slice(0, lv(api, 2, 2, 3, 4));
       const opts = shuffle([[h, m], ...wrong]);
-      const btns = choiceButtons(api, opts, ([a, b]) => `<b class="tnum">${digital(a, b)}</b><small>${timeText(a, b)}</small>`);
+      const btns = choiceButtons(api, opts, ([a, b]) => `<b class="tnum">${digital(a, b)}</b>${api.talent ? '' : `<small>${timeText(a, b)}</small>`}`);
       const b = await untilRight(api, btns, e => e._v[0] === h && e._v[1] === m); if (!b) return;
       api.say(`It's ${timeText(h, m)}!`, `${timeText(h, m)} rồi!`); await wait(1500);
     }
@@ -43,7 +48,7 @@ register({
 register({
   id: 'sums', learn: true, icon: '➕', name: () => T('Add It Up', 'Cộng Trừ Vui'),
   async run(api) {
-    const rounds = 5, max = [5, 5, 10, 15, 20][Math.min(4, api.level - 1)];
+    const rounds = 5, max = api.talent ? 30 : [5, 8, 10, 15, 20][Math.min(4, api.level - 1)];   // (levels) Talent: numbers up to 30, four answers
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const take = api.level >= 3 && r % 2 === 1, fr = pick(FRUIT);
@@ -56,7 +61,7 @@ register({
       api.stage.appendChild(row);
       if (take) api.say(`${a} take away ${b}. How many are left?`, `${numWord(a)} bớt ${numWord(b)}. Còn lại mấy?`);
       else api.say(`${a} and ${b} more. How many altogether?`, `${numWord(a)} thêm ${numWord(b)}. Tất cả là mấy?`);
-      const opts = shuffle([ans, ...shuffle([ans - 2, ans - 1, ans + 1, ans + 2].filter(v => v >= 0)).slice(0, 2)]);
+      const opts = shuffle([ans, ...shuffle([ans - 2, ans - 1, ans + 1, ans + 2].filter(v => v >= 0)).slice(0, lv(api, 2, 2, 2, 3))]);
       const btns = choiceButtons(api, opts, o => `<b class="num">${o}</b>`);
       const ok = await untilRight(api, btns, e => e._v === ans); if (!ok) return;
       api.say(take ? `${a} take away ${b} is ${ans}!` : `${a} plus ${b} is ${ans}!`, take ? `${numWord(a)} bớt ${numWord(b)} còn ${numWord(ans)}!` : `${numWord(a)} cộng ${numWord(b)} là ${numWord(ans)}!`); await wait(1500);
@@ -72,15 +77,16 @@ const OPP = [['🐘', 'big', 'to', '🐭', 'small', 'nhỏ'], ['🔥', 'hot', 'n
 register({
   id: 'opposites', learn: true, icon: '↔️', name: () => T('Opposites', 'Từ Trái Nghĩa'),
   async run(api) {
-    const rounds = 5, list = shuffle(OPP).slice(0, rounds);
+    // (levels) more rounds and more answers from Medium up; Talent: the answers show only their words, no pictures
+    const rounds = lv(api, 5, 6, 7, 8), list = shuffle(OPP).slice(0, rounds);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const o = list[r], flip = Math.random() < .5, [ia, ea, va, ib, eb, vb] = flip ? [o[3], o[4], o[5], o[0], o[1], o[2]] : o;
       api.stage.appendChild(el('div', 'oppcard', `<span class="big">${ia}</span><b>${T(ea, va)}</b>`));
       api.say(`What is the opposite of ${ea}?`, `Ngược với "${va}" là gì?`);
-      const others = shuffle(OPP.filter(x => x !== o)).slice(0, 2).map(x => Math.random() < .5 ? [x[0], x[1], x[2]] : [x[3], x[4], x[5]]);
+      const others = shuffle(OPP.filter(x => x !== o)).slice(0, lv(api, 2, 3, 3, 4)).map(x => Math.random() < .5 ? [x[0], x[1], x[2]] : [x[3], x[4], x[5]]);
       const opts = shuffle([[ib, eb, vb], ...others]);
-      const btns = choiceButtons(api, opts, ([i, e, v]) => `<span class="big">${i}</span><small>${T(e, v)}</small>`);
+      const btns = choiceButtons(api, opts, ([i, e, v]) => `${api.talent ? '' : `<span class="big">${i}</span>`}<small>${T(e, v)}</small>`);
       const ok = await untilRight(api, btns, e => e._v[0] === ib); if (!ok) return;
       api.say(`${ea} and ${eb}!`, `${va} và ${vb}!`); await wait(1400);
     }
@@ -116,7 +122,7 @@ register({
       let stopCall = () => {}; api.onCleanup(() => stopCall());
       const hear = () => { stopCall(); stopCall = animalCall(snd); }; play.onclick = hear;
       play.disabled=true;await speak('Listen! Which animal makes this sound?', 'Nghe nè! Con vật nào kêu như vậy?'); if (api.closed) return;play.disabled=false;hear();
-      const opts = shuffle([list[r], ...shuffle(VOICES.filter(v => v !== list[r])).slice(0, api.level <= 1 ? 1 : 2)]);
+      const opts = shuffle([list[r], ...shuffle(VOICES.filter(v => v !== list[r])).slice(0, lv(api, api.level <= 1 ? 1 : 2, 2, 3, 5))]);   // (levels) up to six animals on Talent
       const btns = choiceButtons(api, opts, ([, i, e, v]) => `<span class="big">${i}</span><small>${T(e, v)}</small>`);
       const ok = await untilRight(api, btns, e => e._v[0] === snd); if (!ok) return;
       stopCall();play.disabled=true;await speak(`Yes! The ${en}!`, `Đúng rồi! Là ${vn}!`); if (api.closed) return;play.disabled=false;hear(); await wait(Math.max(2, animalRecording(snd)?.duration || 0) * 1000 + 200); stopCall();
@@ -137,7 +143,7 @@ register({
       const w = pool[r], word = w[1], L = VI ? w[2] : word[0].toUpperCase();
       api.stage.appendChild(el('div', 'oppcard', `<span class="big">${w[0]}</span><b>${word}</b>`));
       api.say(`${word}! Which letter does ${word} start with?`, `${word}! Chữ "${word}" bắt đầu bằng chữ nào?`);
-      const opts = shuffle([L, ...shuffle(letters.filter(x => x !== L)).slice(0, api.level <= 1 ? 1 : 2)]);
+      const opts = shuffle([L, ...shuffle(letters.filter(x => x !== L)).slice(0, lv(api, api.level <= 1 ? 1 : 2, 2, 3, 5))]);   // (levels) up to six letters on Talent
       const btns = choiceButtons(api, opts, o => `<b class="num">${o}</b>`);
       const ok = await untilRight(api, btns, e => e._v === L); if (!ok) return;
       api.say(`${L} for ${word}!`, `${L} trong chữ ${word}!`); await wait(1400);

@@ -161,7 +161,12 @@ export function create(G, ctx) {
     molly: () => mollyAt,
     jack3: () => ({ x: jackAt.x, z: jackAt.z }),
     nam3: () => ({ x: namAt.x, z: namAt.z }),
-    clues3: p => p && !big(p) ? { x: lanternAt.x, z: lanternAt.z } : { x: front.x, z: front.z },
+    // (#735, as Hồ Gươm's #620 #647) a big kid's light shines on the nearest place still to look at, and after the clue is
+    // found on the lantern, where "Pick up the lantern" waits: it shone on the harbour front, where nothing could be tapped
+    clues3: p => { if (p && (!big(p) || clueFound(p))) return { x: lanternAt.x, z: lanternAt.z };
+      const h = G.heroes.find(x => x.profile === p), left = p ? clueObjs.filter(c => !looked(p).includes(c.k)) : [];
+      const c = h && left.length ? left.sort((a, b) => Math.hypot(a.x - h.pos.x, a.z - h.pos.z) - Math.hypot(b.x - h.pos.x, b.z - h.pos.z))[0] : left[0];
+      return c ? { x: c.x, z: c.z } : { x: front.x, z: front.z }; },
     opera: () => ({ x: front.x, z: front.z })
   };
   // the steps' own buttons: Chi's words, and Jack and Ruby's challenge (their line, then Play, How to play or Later)

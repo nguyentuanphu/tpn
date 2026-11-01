@@ -6,6 +6,9 @@ import { FESTCAL } from './festcal.js';
 // game: the money game it switches; icon: a festival's picture
 export type Release = { id: string, en: string, vi: string, group: string, def: boolean, icon?: string, game?: string };
 export const RELEASES: Release[] = [
+  // (owner, 1 Nov 2026 AEDT: "finish first, and a Studio switch to set the launch date later") the website only: before the
+  // date it says Coming soon with a countdown, from the date Open now with Play now; the game itself is not held back
+  { id: 'publicLaunch', en: 'Public launch date (the website says Coming soon until then, then Open now)', vi: 'Ngày ra mắt chính thức (trang web ghi Sắp ra mắt tới ngày đó, rồi ghi Đã mở)', group: 'tools', def: false },
   { id: 'managementTelemetry', en: 'Detailed Studio reporting: activity attempts and configuration acknowledgements (Analytics consent still applies)', vi: 'Báo cáo Studio chi tiết: lượt hoạt động và xác nhận cấu hình (vẫn tuân theo cài đặt Phân tích)', group: 'tools', def: false },
   { id: 'autoplay', en: 'Auto play check (for grown-ups testing: a small window that plays everything; every device, or only the ticked ones)', vi: 'Tự chơi để kiểm tra (cho người lớn thử game: một cửa sổ nhỏ tự chơi mọi thứ; mọi máy, hoặc chỉ các máy được chọn)', group: 'tools', def: false },
   // (r90, owner 24 Oct AEDT: "hold them off until I want to release; switched off it should show as coming soon") the

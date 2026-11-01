@@ -8,7 +8,10 @@ import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mjs
 export async function festivalSyncCheck(browser:Browser){
  const root=path.resolve(import.meta.dirname,'..'),site='http://localhost:8799',password='synthetic-festival-check-123',repo='family/festival-check';
  const env={STUDIO_PASSWORD:password,GITHUB_TOKEN:'fixture-only',GITHUB_REPO:repo,URL:site},before=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));
- const store=memoryBlobs(),players=memoryBlobs();await store.setJSON('live',{festivals:{halloween:{date:'10-30',deco:3}},releases:{traffic:{on:false}}});
+ const store=memoryBlobs(),players=memoryBlobs();// (1 Nov 2026 AEDT, #737) the festival is dated tomorrow in Sydney, so it is always inside its build-up: a fixed '10-30'
+ // made this check red from 31 Oct on (Halloween was over), on main too
+ const soon=new Intl.DateTimeFormat('en-CA',{timeZone:'Australia/Sydney',month:'2-digit',day:'2-digit'}).format(new Date(Date.now()+864e5)).replace('/','-');
+ await store.setJSON('live',{festivals:{halloween:{date:soon,deco:3}},releases:{traffic:{on:false}}});
  const unroute=routeGitHub(fakeGitHub(repo,{'content/custom.json':'{}','js/build.js':await fs.readFile(path.join(root,'js/build.js'),'utf8')}));
  const server=await fakeNetlify({port:8799,env,players,liveStore:store});
  const admin=await browser.newContext(),web=await browser.newContext({viewport:{width:390,height:844},hasTouch:true});
@@ -31,7 +34,7 @@ export async function festivalSyncCheck(browser:Browser){
   await game.page.evaluate(async()=>{(await import(String('/js/custom.js'))).setPeeks(['fest_halloween']);});assert.equal(await active(),false,'tester preview cannot override Studio off');
   await save(true);assert.ok((await state()).enabled.includes('halloween'));await refresh(page);await refresh(game.page);assert.equal(await active(),true,'Studio on: the game shows Halloween');
   await page.locator('[data-festival-filter=all]').click();assert.equal(await page.locator('#festival-halloween').isVisible(),true,'Studio on: the website lists Halloween under All');
-  const raw=await store.get('live',{type:'json'});assert.equal(raw.releases.fest_halloween.on,true,'stored release fest_halloween on');assert.equal(raw.festivals.halloween.on,true,'stored festival halloween on');assert.equal(raw.releases.traffic.on,false);assert.equal(raw.festivals.halloween.date,'10-30');assert.equal(raw.festivals.halloween.deco,3);
+  const raw=await store.get('live',{type:'json'});assert.equal(raw.releases.fest_halloween.on,true,'stored release fest_halloween on');assert.equal(raw.festivals.halloween.on,true,'stored festival halloween on');assert.equal(raw.releases.traffic.on,false);assert.equal(raw.festivals.halloween.date,soon);assert.equal(raw.festivals.halloween.deco,3);
   await game.page.evaluate(()=>{void(window.__sv as unknown as import('../js/main.js').SvMain).festivals.visit(0,'halloween');});await game.page.locator('[data-festival-owner=halloween]').waitFor();
   await save(false);await refresh(page);await refresh(game.page);await game.page.locator('[data-festival-owner=halloween]:not(.out)').waitFor({state:'detached'});assert.equal(await active(),false);
   // A stale guide link must not reveal an off festival.

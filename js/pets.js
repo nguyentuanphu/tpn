@@ -11,10 +11,26 @@ import { animalModel, PETS } from './farm.js';
 import { fmt, spoken } from './money.js';
 import { el, esc, dist2, wait } from './util.js';
 import { modal, toast } from './ui.js';
+// (PERF-001) the hats' drawings (js/kidplay.js) load when a pet first wears one, not with the game's start
+let buildHat = null;
 
 export const MAX_PETS = 2;
 // little pets were easy to lose in the grass: they are shown a bit bigger (the smallest the most)
 const PET_SCALE = { puppy: 1.3, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4, calf: 1.25 };
+// (issue #738) a pet wears a hat from the child's hats (bought with the coin goal, chosen in the Backpack's "Pets & Buddy"):
+// it sits on top of the head, at the front of the model, sized to the pet
+const _box = new THREE.Box3();
+export function putHat(obj, id) {
+  if (id && !buildHat) { import('./kidplay.js').then(m => { buildHat = m.buildHat; if (obj.userData.wantHat === id) putHat(obj, id); }); obj.userData.wantHat = id; return null; }
+  obj.userData.wantHat = id;
+  if (obj.userData.hat) { obj.remove(obj.userData.hat); obj.userData.hat = null; }
+  if (!id) return null;
+  const at = obj.position.clone(), rot = obj.rotation.y; obj.position.set(0, 0, 0); obj.rotation.y = 0; obj.updateMatrixWorld(true);
+  _box.setFromObject(obj); obj.position.copy(at); obj.rotation.y = rot;
+  const s = obj.scale.x || 1, top = _box.max.y / s, front = _box.max.z / s, size = Math.max(.4, _box.max.y - _box.min.y);
+  const hat = buildHat(id); hat.position.set(0, top - .04, front * .55); hat.scale.setScalar(size * 1.9 / s);
+  obj.add(hat); obj.userData.hat = hat; return hat;
+}
 const NAME_IDEAS = ['Lucky', 'Mochi', 'Bông', 'Milo', 'Xoài', 'Coco', 'Bơ', 'Pepper', 'Mít', 'Biscuit', 'Kiwi', 'Tofu'];
 export const petName = pt => pt.name || PETS[pt.kind].name();
 
@@ -50,7 +66,7 @@ export function createPets(G) {
     G.heroes.forEach(h => {
       if (!Array.isArray(h.profile.pets)) h.profile.pets = [{ kind: 'puppy', name: '' }];
       h.profile.pets.slice(0, MAX_PETS).forEach((pt, j) => {
-        const obj = animalModel(pt.kind); obj.scale.multiplyScalar(PET_SCALE[pt.kind] || 1.3); obj.position.set(h.pos.x - 1.5 + j * 3, h.pos.y, h.pos.z - 1.5); scene.add(obj);
+        const obj = animalModel(pt.kind); obj.scale.multiplyScalar(PET_SCALE[pt.kind] || 1.3); if (pt.hat) putHat(obj, pt.hat); obj.position.set(h.pos.x - 1.5 + j * 3, h.pos.y, h.pos.z - 1.5); scene.add(obj);
         const tg = tag(() => petName(pt)); scene.add(tg);
         const sn = sprite('👃', .9); sn.visible = false; scene.add(sn);
         const L = { h, pt, obj, tag: tg, sniff: sn, j, barkT: 3 + j * 2, hop: 0 }; live.push(L);
@@ -59,6 +75,7 @@ export function createPets(G) {
     });
   };
   P.forHero = h => live.filter(L => L.h === h);
+  P.nameOf = petName; P.max = MAX_PETS;
 
   // ---------- the pet yard on the farm ----------
   const yardC = G.farm && G.farm.spots && G.farm.spots.hutch ? { x: G.farm.spots.hutch.x + 5, z: G.farm.spots.hutch.z + 4 } : { x: HOME.x - 14, z: HOME.z - 10 };
@@ -166,7 +183,8 @@ export function createPets(G) {
       card.querySelectorAll('[data-ren]').forEach(b => b.onclick = () => { m.close(); G.paused = false; P.openName(h, mine[+b.dataset.ren], () => P.openAdopt(h, after)); });
       card.querySelectorAll('[data-bye]').forEach(b => b.onclick = () => {
         const pt = mine[+b.dataset.bye]; if (!confirm(T(`Send ${petName(pt)} to play in the pet yard on the farm? You can bring them back any time.`, `Gửi ${petName(pt)} về chơi ở sân thú cưng trong nông trại nhé? Con đón về lúc nào cũng được.`))) return;
-        mine.splice(+b.dataset.bye, 1); farm.petYard.push(pt); saveProfiles(); saveFarm(); P.sync(); P.syncYard(); P.refreshInteractables(); SFX.tap(); draw();
+        // (its hat stays with the child: #738)
+        mine.splice(+b.dataset.bye, 1); delete pt.hat; farm.petYard.push(pt); saveProfiles(); saveFarm(); P.sync(); P.syncYard(); P.refreshInteractables(); SFX.tap(); draw();
       });
       card.querySelectorAll('[data-take]').forEach(b => b.onclick = () => {
         if (mine.length >= MAX_PETS) { SFX.no(); say('You already have two pets with you. Tap 🏡 to swap one.', 'Con đã có hai thú cưng đi cùng rồi. Chạm 🏡 để đổi nhé.'); return; }

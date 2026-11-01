@@ -4,12 +4,17 @@ import {createHash} from 'node:crypto';
 import {collectLines} from './voice-lines.mts';
 import {collectMixedFragmentRecordings,MIXED_FRAGMENT_SOURCE} from './mixed-voice-inventory.mts';
 import {lineHash} from '../js/packhash.js';
+const HOCVUI=await import('../js/content/hocvui.js');
+// the syllables and words the Tiếng Việt games say on their own (tools/make-voice-pack.mts records them the same way)
+const publicPairs=()=>[...collectLines(),...HOCVUI.hocvuiLines().map((l:{lang:string;text:string})=>({[l.lang]:l.text,from:'js/content/hocvui.js'}))];
 export type PublicVoiceLine={id:string;lang:'en'|'vi';text:string;area:string;part:boolean;mixedFragment?:string;source:string[]};
 export type ReviewedVoiceDelta={schema:1;status:'reviewed-public';sourceHashes:Record<string,string>;lines:PublicVoiceLine[]};
 const hash=(bytes:string|Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
 // (30 Oct 2026 AEDT) My House and the Play menu speak fixed public lines too (the line checks below still refuse names and templates)
-export const publicGameSource=(file:string)=>/^js\/games\/[\w-]+\.ts$/.test(file)||file==='js/howto-data.ts'||file==='js/howto-data2.ts'||file==='js/myhouse.ts'||file==='js/ui.ts';
-export function validateReviewedVoiceDelta(value:unknown,readSource:(file:string)=>string|Uint8Array=path=>fs.readFileSync(path),pairs=collectLines(),readFragments=()=>collectMixedFragmentRecordings(text=>text)):ReviewedVoiceDelta{
+// (1 Nov 2026 AEDT) the villagers' fixed facts, the activity names and the Tiếng Việt games' syllables are public game text
+// too (no names, no family data)
+export const publicGameSource=(file:string)=>/^js\/games\/[\w-]+\.ts$/.test(file)||file==='js/howto-data.ts'||file==='js/howto-data2.ts'||file==='js/myhouse.ts'||file==='js/ui.ts'||file==='js/content/villagerlines.ts'||file==='js/content/activities.ts'||file==='js/content/hocvui.ts'||file==='js/school.ts'||file==='js/main.ts'; // (1 Nov: the school's greeting, Play together's "Play with whom?")
+export function validateReviewedVoiceDelta(value:unknown,readSource:(file:string)=>string|Uint8Array=path=>fs.readFileSync(path),pairs:Array<Record<string,string>>=publicPairs(),readFragments=()=>collectMixedFragmentRecordings(text=>text)):ReviewedVoiceDelta{
  const d=value as ReviewedVoiceDelta;
  if(!d||d.schema!==1||d.status!=='reviewed-public'||!d.sourceHashes||!Array.isArray(d.lines)||!d.lines.length||d.lines.length>250)throw Error('Invalid reviewed public speech batch');
  const paths=Object.keys(d.sourceHashes);if(!paths.length||paths.some(p=>!publicGameSource(p)))throw Error('Only fixed public game sources are allowed');

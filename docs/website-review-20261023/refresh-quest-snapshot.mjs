@@ -7,7 +7,8 @@ const require=createRequire(new URL('../../tests/package.json',import.meta.url))
 export const SOURCE_REF=execFileSync('git',['rev-parse',process.env.SV_WEBSITE_SOURCE||'781089d6'],{encoding:'utf8'}).trim();
 const read=file=>{for(const candidate of [file,file.replace(/\.js$/,'.ts')]){try{return execFileSync('git',['show',`${SOURCE_REF}:${candidate}`],{encoding:'utf8',stdio:['ignore','pipe','pipe']})}catch{}}throw Error('Website source missing: '+file)};
 const run=(text,deps={})=>{const exports={};vm.runInNewContext(ts.transpileModule(text,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText,{exports,require:id=>{if(!(id in deps))throw Error('Unexpected import '+id);return deps[id]},Intl,Date,console},{timeout:2000});return exports};
-const chapters=run(read('js/content/chapters.ts'));
+// (1 Nov 2026 AEDT) the companions moved to their own small file (start-up download): give it to the story's file
+const chapters=run(read('js/content/chapters.ts'),{'./companions.js':run(read('js/content/companions.ts'))});
 run(read('js/content/chapter2text.ts'),{'./chapters.js':chapters});
 run(read('js/content/chapter3text.js'),{'./chapters.js':chapters});
 const adventures=run(read('js/content/adventures.js'));
@@ -31,7 +32,7 @@ const hatLines=hatText.split('\n').slice(0,2).join('\n');
 const hats=run('const T=(en,vi)=>[en,vi]; export const HAT_ICON = '+hatLines);
 const bookText=read('js/story.js').split('export const CHAPTERS = ')[1].split('// Show pages')[0];
 const books=run('const T=(en,vi)=>[en,vi]; export const CHAPTERS = '+bookText).CHAPTERS;
-const skills=run(read('js/games/registry.ts')).SKILLS;
+const skills=run(read('js/games/registry.ts'),{'./hocvui-meta.js':{}}).SKILLS; // (1 Nov 2026 AEDT) the Học vui game details register themselves; only the skills are read here
 const yard=run(read('js/content/yard.js'));
 const rewardSnapshot={source:SOURCE_REF,stickers:stickers.STICKERS,themes:stickers.THEMES,countries:countryData.map(c=>({cc:c.cc,name:c.name(),place:c.place(),games:c.games,hat:c.hat,hatName:hats.HAT_NAME[c.hat](),hatIcon:hats.HAT_ICON[c.hat]})),storyBooks:books.map(c=>({id:c.id,after:c.after,reward:c.reward,title:c.title()})),skills,collectibles:boxes.COLLECTIBLES,weekPrizes:adventures.WEEK_PRIZES,yardSteps:yard.YARD_STEPS};
 fs.writeFileSync(new URL('./reward-snapshot.json',import.meta.url),JSON.stringify(rewardSnapshot,null,2)+'\n');

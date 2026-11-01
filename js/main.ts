@@ -19,6 +19,7 @@ import { el, esc, $, dist2, pick, wait, clamp } from './util.js';
 import { createWorld, levelUnderBuildings, widenFlatLand, paintMap, paintWater, paintMapRows, paintWaterRows, heightAt, regionAt, REGION_NAMES, MARKET, CHINA, INDIA, SHRINES, TOWERS, LEAFIES, VILLAGE, HOME, PLAYGROUND, REVEAL_R, WATER, PLATEAU, TOWN, AUSSIE, LAKE, ULURU, HALF, STUDIO_ON_MAP, PARKED } from './world.js';
 import { studioPosition } from './studio-position.js';
 import { landmarkAt, MAP_VERSION, onThisMap, rowSlot } from './content/map.js';
+import { build, seatRider, VEHICLES } from './vehicles.js';
 import { buildAvatar, nameAvatar, applyNpcFaces, buildOwl, buildGourd, avatarURL, OUTLINED, showStill } from './avatar.js';
 import { Hero } from './player.js';
 import { Hud, fogMapFor, EMOTES } from './hud.js';
@@ -38,6 +39,8 @@ import { openHowTo } from './howto.js';
 import { createFarm, jobProgress, ensureJobs } from './farm.js';
 import { createPlaces } from './places.js';
 import { createTown } from './town.js';
+import { SCHOOL } from './content/school-place.js';
+import type { createSchool } from './school.js';
 import { createRegions, LANDMARKS } from './regions.js';
 import { createGathering } from './gather.js';
 import { tickAnimals } from './animals.js';
@@ -209,7 +212,7 @@ export interface SvMain {
   placeBook?: ReturnType<typeof createPlaceBook>; places?: ReturnType<typeof createPlaces>; plots?: ReturnType<typeof createPlots>;
   reeds?: ReturnType<typeof createReeds>; report?: ReturnType<typeof createReport>; secrets?: ReturnType<typeof createSecrets>;
   seeThrough?: ReturnType<typeof createSeeThrough>; shop?: ReturnType<typeof import('./shop.js').createShop>; signposts?: ReturnType<typeof createSignposts>;
-  simple?: ReturnType<typeof createSimple>; town?: ReturnType<typeof createTown>; weather?: ReturnType<typeof createWeather>;
+  simple?: ReturnType<typeof createSimple>; town?: ReturnType<typeof createTown>; school?: ReturnType<typeof createSchool>; schoolReady?: Promise<unknown>; weather?: ReturnType<typeof createWeather>;
   yard?: ReturnType<typeof createYard>; chests?: ReturnType<typeof createTwinChests>; claims?: ReturnType<typeof createClaims>;
   coop?: ReturnType<typeof createCoop>; familyCards?: ReturnType<typeof createFamilyCards>; parents?: ReturnType<typeof import('./parents.js').createParents>;
   boxes?: ReturnType<typeof import('./boxes.js').createBoxes>; surprises?: ReturnType<typeof import('./surprises.js').createSurprises>; myHouse?: ReturnType<typeof createMyHouse> | null;
@@ -226,7 +229,7 @@ export interface SvMain {
   LANDMARKS?: typeof LANDMARKS; STICKERS?: typeof STICKERS; VIEWS?: typeof VIEWS; getViews?: (i: number) => typeof VIEWS; PLACES?: { id?: string, x: number, z: number, [k: string]: unknown }[];
   bootTimes?: Record<string, number>; mapPic?: typeof mapPic; waterPic?: typeof waterPic; parked?: unknown;
   bubbleIcons?: THREE.Sprite[]; wanderers?: (SvPerson & { tx: number, tz: number, wave: number })[]; partners?: Record<string, SvFriend>;
-  caroSize?: number; _padRemotes?: number; _familyMsgLive?: boolean; _owlAuto?: boolean; _previewed?: boolean; _reading?: boolean;
+  caroSize?: number; _again?: { game: string, from: string[], until: number, timer: ReturnType<typeof setTimeout> } | null; _padRemotes?: number; _familyMsgLive?: boolean; _owlAuto?: boolean; _previewed?: boolean; _reading?: boolean;
   resumedAway?: boolean; valleyGrew?: boolean; closeUp?: number | null;
   // what main.ts does for the screens and the other modules (made further down)
   GAMES_ICON?: (id: string) => string; keep?: (id: string, def?: boolean) => boolean; tried?: (h: SvHeroT | SvHeroT['profile'], id: string) => void;
@@ -251,7 +254,7 @@ export interface SvMain {
   // friends online
   together?: () => boolean; shareStatus?: () => void; listenFriends?: () => void; autoMeet?: () => void; onNet?: () => void; netTick?: (body: Element) => void;
   netQuality?: (id: string) => ReturnType<typeof Net.quality>; drawOnlinePanel?: (body: Element, redraw: () => void) => void;
-  inviteFriend?: (code: string) => Promise<unknown>; joinFriend?: (room: string, hostPub?: string) => Promise<void>; inviteGame?: (game: string, to?: string, level?: number, size?: number) => void;
+  inviteFriend?: (code: string) => Promise<unknown>; joinFriend?: (room: string, hostPub?: string) => Promise<void>; inviteGame?: (game: string, to?: string, level?: number, size?: number, wait?: number) => unknown;
   meetAndPlay?: (i: number, id: string, source?: string) => Promise<void>; findFriend?: (i: number) => [string, string] | null | void;
   say?: (en: string, vi: string) => void; adventure?: { hud(h: Hud): void, [k: string]: unknown }; _advLoad?: Promise<unknown>; followFriend?: (i: number, id: string) => void;
   friendWhere?: (h: SvHeroT, P: { pos: THREE.Vector3 }) => string; askFriendToCome?: (h: SvHeroT, id: string) => void;
@@ -528,7 +531,10 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   const players = G.heroes.map(x => x.profile); if (G.heroes.length > 1 && i === 1) players.reverse();
   // Level = how far this child has got in this game, shifted by the chosen difficulty.
   // the level the child chose inside this game (round M), else the grown-ups' difficulty for this child
-  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || p.difficulty || 'easy', level = Math.min(5, (p.levels[id] || 1) + { easy: 0, medium: 1, hard: 2 }[diff]);
+  // (owner, 1 Nov 2026 AEDT: "the levels often look the same") each level has its own band and wins move a child up inside it:
+  // Easy 1-2, Medium 2-3, Hard 4-5, Talent 5 with the game's own extra challenge. (Before, Easy reached the top after a few wins.)
+  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || p.difficulty || 'easy', band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
+  const level = Math.min(band[1], band[0] + Math.floor(((p.levels[id] || 1) - 1) / 2));
   const little = G.heroes.some(x => x.profile.age !== 'big'), strong = !little && diff !== 'easy';
   if (source === 'shrine') { SFX.secret(); say('A shrine! Let’s solve the puzzle.', 'Một ngôi đền! Cùng giải câu đố nào.'); await wait(600); }
   const completion = source === 'hub' || source === 'pad' || source === 'simple' ? 'choose' : 'return';
@@ -698,7 +704,7 @@ G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || (G.GAM
 G.openQuick = i => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return; G.paused = true; openQuick(G, i); };
 G.openGamesHub = i => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return; G.paused = true; openGamesHub(G, i, () => { G.paused = false; }); };
 // Games hub / map: fly straight to the friend who runs a game (or a place), then start it there
-const npcLike = it => /^(npc_|g_|v_|pc_|cards$|dacau$|musiccorner$|bear$|stall$)/.test(it.id || '');
+const npcLike = it => /^(npc_|g_|v_|pc_|cards$|dacau$|musiccorner$|bear$|stall$|school$)/.test(it.id || ''); // (school: Cô Tam at the school door)
 // the nearest open spot to (x, z): not inside a building, tree or stall, not in water. Travelling lands there.
 G.clearSpot = (x, z, pad = .9) => {
   // (reports #251/#256) inside the valley's walkable edge, as G.goodSpot: past it the child is held at the edge beside what stands there
@@ -856,7 +862,7 @@ G.hint = (h, k) => { if (k === 'tired' && !h._tiredHint) { h._tiredHint = true; 
 G.stats = (h, sp) => { h.profile.stats.steps = (h.profile.stats.steps || 0) + 1; };
 G.hurt = (h, n) => {
   // Falls never hurt little ones. Big kids on Hard lose a heart (food heals), and are carried to safety at zero.
-  if (h.profile.age !== 'big' || h.profile.difficulty !== 'hard') { SFX.bump && SFX.bump(); return; }
+  if (h.profile.age !== 'big' || (h.profile.difficulty !== 'hard' && h.profile.difficulty !== 'talent')) { SFX.bump && SFX.bump(); return; }
   h.hearts = Math.max(0, h.hearts - n); SFX.no(); hudFor(h).toast(T('Oof! Big fall!', 'Ui da! Ngã đau quá!'));
   if (h.hearts <= 0) G.rescue(h, true);
 };
@@ -935,7 +941,10 @@ G.PLACES = [
   { g: 'au', icon: '🍦', name: () => T('Aussie Corner', 'Góc Nước Úc'), x: AUSSIE.x - 4, z: AUSSIE.z },
   { g: 'au', icon: '🎭', name: () => T('Opera House', 'Nhà hát Opera'), x: landmarkAt('opera')[0] - 6, z: landmarkAt('opera')[1], under: 'sydney' },   // (the older Opera House stands here; listed under Sydney)
   { g: 'au', key: 'uluru', icon: '🪨', name: () => T('Uluru', 'Uluru'), x: ULURU.x, z: ULURU.z - 20 },
-  { g: 'home', icon: '🐻', name: () => T('Mr. Bear’s shop (farm)', 'Cửa hàng Bác Gấu (nông trại)'), x: HOME.x - 21, z: HOME.z + 6, under: 'farm' }
+  { g: 'home', icon: '🐻', name: () => T('Mr. Bear’s shop (farm)', 'Cửa hàng Bác Gấu (nông trại)'), x: HOME.x - 21, z: HOME.z + 6, under: 'farm' },
+  // (Học vui phase 4) the Fun Learning School on Two Homes Street: on the map under the street, and in "Where is…?"
+  // (from the map; moved to where it really stands once it is built: js/school.js, below)
+  { g: 'home', key: 'school', icon: '🏫', name: () => T('Fun Learning School', 'Trường Học Vui'), ...SCHOOL.place, under: 'town' }
 ];
 G.changePlayer = () => {
   save(); Net.close(); Net.stopListening(); playing = false; G.paused = true; $('#huds').hidden = true;
@@ -966,7 +975,9 @@ world.updaters.push((dt, t) => G.wanderers.forEach((w, k) => {
 }));
 G.openPad = (i, tab) => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return; G.paused = true; openPad(G, i, tab); };
 G.closePad = () => { G.paused = false; };
-G.closePadNow = () => { const m = document.querySelector<HTMLElement>('.modal.pad'); if (m) { m.remove(); G.paused = false; } };   // (Round V) close the Pad from outside it
+// (Round V) close the Pad from outside it; (#740, v1.06, tester: "after accepting a game invite I stay on the Friends screen")
+// with the Play together list and the level question opened from it, which stayed in front of the game
+G.closePadNow = () => { const ms = document.querySelectorAll<HTMLElement>('.modal.pad, .modal.playtogether, .modal.gamelevel'); ms.forEach(m => m.remove()); if (ms.length) G.paused = false; };
 
 // ---------- talking: quick phrases, speech bubbles, voice calls ----------
 function bubble(target, text) {
@@ -1050,7 +1061,7 @@ G.partners = {};
 Object.defineProperty(G, 'partner', { get: () => Object.values(G.partners)[0] || null }); // older code: the first friend
 Net.on('hello', r => {
   G.netGames?.rejoined(r.id);
-  const old = G.partners[r.id]; if (old) { scene.remove(old.av.root); scene.remove(old.tag); }
+  const old = G.partners[r.id]; if (old) { friendRide(old, {}); scene.remove(old.av.root); scene.remove(old.tag); }
   const av = buildAvatar(Object.assign({ style: 'shirt', color: '#3d7fd6', hat: 'none', back: 'none', hair: '#1d1412', hairStyle: 'short', skin: '#f6c7a5', glider: 0 }, r.look || {}), r.photo);
   scene.add(av.root); const tag = nameTag((r.name || T('Friend', 'Bạn')) + (r.look && r.look.star ? ' ★' : ''), '#9ff0ff'); // (a week's star tester: ★) scene.add(tag);
   av.root.userData.own = true; // (Round V) a friend online, never a villager
@@ -1070,6 +1081,8 @@ G.netGames = createNetGames({
     if(document.querySelector('.parent-arcade,.parent-arcade-invite')){G.netGames.answer(d,false);return;}
     if (d.game === 'fruitparade' && !fruitParadeModeOn('multi')) { G.netGames.answer(d, false); return; }
     if(d.game === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi') || d.game === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi')) {G.netGames.answer(d,false);return;}
+    // (#742/#743) this child just tapped Play again on a game with this friend: their invitation to it is the yes
+    const ag = G._again; if (ag && ag.game === d.game && ag.from.includes(d.from) && Date.now() < ag.until && !gameOpen() && G.heroes[0]) { clearTimeout(ag.timer); G._again = null; G.netGames.answer(d, true); return; }
     const h = G.heroes[0], tale = /^tale-/.test(d.game) && (G.TALES || []).find(x => 'tale-' + x.id === d.game), gname = tale ? T('the story “' + tale.title() + '”', 'truyện “' + tale.title() + '”') : (GAMES[d.game] && GAMES[d.game].name()) || (d.game==='familyquiz'?T('Family Quiz','Đố Vui Gia Đình'):d.game); SFX.chime();
     say('A friend wants to play a game with you!', 'Một bạn muốn chơi trò chơi với con!');
     const stars = '⭐'.repeat(d.level || 1);
@@ -1078,6 +1091,7 @@ G.netGames = createNetGames({
   },
   onStart: (s, ask) => {
     if (!s) { toast(T('Nobody could play just now. Try again later!', 'Lúc này chưa bạn nào chơi được. Lát nữa thử lại nhé!')); return; }
+    if (G._again) { clearTimeout(G._again.timer); G._again = null; }
     if (s.game === 'fruitparade' && !fruitParadeModeOn('multi')) { G.netGames.leave(); return; }
     if(s.game === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi') || s.game === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi')) {G.netGames.leave();return;}
     const names = s.seats.map(id => id === Net.me ? G.heroes[0].profile.name : remoteName(id));
@@ -1092,7 +1106,15 @@ G.netGames = createNetGames({
     // (Round V, owner 13 Oct) the Friends page closes when the game starts (it stayed in front of the game); "Play again"
     // after a game with friends asks the same friends again (it did nothing)
     G.closePadNow();
-    G.playGameOnline(s.game, s.level || 1, online).then(res => { end(); if (res && res.next === 'again') setTimeout(() => G.inviteGame(s.game, s.seats.find(id => id !== Net.me), s.level || 1, s.size), 400); }, end);
+    // (#742/#743, v1.06, tester: "Play again exits the game") the friend's game was still on its last screen, so their device
+    // said no at once. Now: a friend's Play again waits there until this child chooses (Play again says yes); a child who
+    // taps Play again first asks the friends and waits longer; if they also tapped it, the two invitations become one game
+    const others = s.seats.filter(id => id !== Net.me), again = () => G.inviteGame(s.game, others[0], s.level || 1, s.size, 45000);
+    G.playGameOnline(s.game, s.level || 1, online).then(res => {
+      end(); const want = !!res && res.next === 'again', held = G.netGames.takeRematch(s.game);
+      if (held) { G.netGames.answer(held, want && !gameOpen()); if (want) G._again = { game: s.game, from: others, until: Date.now() + 8000, timer: setTimeout(() => { if (!G.netGames.session && !gameOpen()) again(); }, 6000) }; return; }
+      if (want) G._again = { game: s.game, from: others, until: Date.now() + 8000, timer: setTimeout(again, 400) };
+    }, end);
   },
   onEnd: id => toast(T(`${remoteName(id)} left the game.`, `${remoteName(id)} đã rời trò chơi.`))
 });
@@ -1122,10 +1144,15 @@ G.openPlayTogether = () => {
     <h3>${pic('🏁')} ${T('Race side by side', 'Thi đua cùng nhau')} <small>${T('everyone plays the same game, stars for all', 'mọi người chơi cùng một trò, ai cũng có sao')}</small></h3><div class="pt-grid">${race.map(id => btn(id)).join('')}</div>
     ${tales.length ? `<h3>${pic('📖')} ${T('Read a story together', 'Đọc truyện cùng nhau')}</h3><div class="pt-grid">${tales.map(t => `<button class="pt-g" data-g="tale-${esc(t.id)}" aria-label="${esc(t.title())}">${pic('📖')}<b>${esc(t.title())}</b></button>`).join('')}</div>` : ''}`);
   m.querySelector('.x').onclick = () => m.close();
-  m.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { SFX.tap(); m.close(); G.inviteGame(b.dataset.g, ids[0]); });
+  // (owner, 1 Nov 2026 AEDT) a game for two (Caro) with three or more children in the room asks who to play with (it used
+  // to invite the first friend); every other game invites as before
+  m.querySelectorAll('[data-g]').forEach(b => b.onclick = async () => { SFX.tap(); m.close(); const g = b.dataset.g, two = ONLINE_GAMES[g] && ONLINE_GAMES[g].max === 2;
+    if (two && ids.length > 1) { const k = await dialog(T('Play with whom?', 'Chơi với bạn nào?'), [['Who do you want to play with?', 'Con muốn chơi với bạn nào?']], ids.map(id => [remoteName(id), remoteName(id)]));
+      if (typeof k === 'number' && k >= 0 && ids[k]) G.inviteGame(g, ids[k]); return; }
+    G.inviteGame(g, ids[0]); });
   return m;
 };
-G.inviteGame = (game, to, level, size) => {
+G.inviteGame = (game, to, level, size, wait) => {
   if(game === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','multi') || game === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','multi')) return;
   if (game === 'fruitparade' && !fruitParadeModeOn('multi')) { toast(T('Sparkle Fruit Parade is not available yet.', 'Diễu hành trái cây lấp lánh chưa mở.')); return; }
   const p = G.heroes[0].profile;
@@ -1138,7 +1165,7 @@ G.inviteGame = (game, to, level, size) => {
     m.querySelectorAll('[data-size]').forEach(b => b.onclick = () => { SFX.tap(); G.caroSize = +b.dataset.size; m.querySelectorAll('[data-size]').forEach(x => x.classList.toggle('primary', x === b)); });
     m.querySelectorAll('[data-lvl]').forEach(b => b.onclick = () => { SFX.tap(); m.close(); res(G.inviteGame(game, to, +b.dataset.lvl, game === 'caro' ? (G.caroSize || 6) : undefined)); });
   });
-  const gid = G.netGames.invite(game, Math.max(1, Math.min(5, level)), (onlineDef(game) || {}).all ? undefined : to, { size });
+  const gid = G.netGames.invite(game, Math.max(1, Math.min(5, level)), (onlineDef(game) || {}).all ? undefined : to, { size, wait });
   if (gid) toast(T('Invitation sent! Waiting for an answer…', 'Đã gửi lời mời! Đang chờ trả lời…')); return gid;
 };
 G.playGameOnline = async (id, level, online) => {
@@ -1160,7 +1187,7 @@ G.playGameOnline = async (id, level, online) => {
 
 Net.on('left', r => {
   G.netGames.left(r.id);
-  const P = G.partners[r.id]; if (P) { scene.remove(P.av.root); scene.remove(P.tag); delete G.partners[r.id]; }
+  const P = G.partners[r.id]; if (P) { friendRide(P, {}); scene.remove(P.av.root); scene.remove(P.tag); delete G.partners[r.id]; }
   if (!Net.connected || !Object.keys(G.partners).length) G.huds.forEach(hd => hd.setCall(false));
   toast(T(`${r.name || 'Your friend'} left.`, `${r.name || 'Bạn'} đã rời đi.`)); if (G.onNet) G.onNet();
 });
@@ -1185,12 +1212,14 @@ G.findFriend = i => {
   document.querySelector<HTMLElement>('.vc-pop')?.remove();
   const pop = el('div', 'vc-pop friendfind', `<p class="vc-heard">👫 ${T('Where are my friends?', 'Bạn của con ở đâu?')}</p>
     ${list.map(P => { const d = Math.round(dist2(h.pos.x, h.pos.z, P.pos.x, P.pos.z)); return `<div class="ff-row"><img src="${P.photoURL || ''}" alt="" ${P.photoURL ? '' : 'hidden'}><div class="ff-txt"><b>${esc(nm(P.name))}</b><small>${d} m · ${compass(h, P.pos.x, P.pos.z)}${G.friendWhere(h, P) ? ' · ' + esc(G.friendWhere(h, P)) : ''}</small></div>
-      <div class="ff-btns"><button class="btn primary" data-walk="${P.id}">👣 ${T('Walk', 'Đi bộ')}</button><button class="btn" data-fly="${P.id}">✨ ${T('Fly', 'Bay')}</button><button class="btn" data-call="${P.id}">📣 ${T('Ask to come', 'Gọi bạn đến')}</button></div></div>`; }).join('')}`);
+      <div class="ff-btns"><button class="btn primary" data-walk="${P.id}">👣 ${T('Walk', 'Đi bộ')}</button><button class="btn" data-fly="${P.id}">✨ ${T('Fly', 'Bay')}</button><button class="btn" data-call="${P.id}">📣 ${T('Ask to come', 'Gọi bạn đến')}</button><button class="btn${h.followId === P.id ? ' primary' : ''}" data-follow="${P.id}">🚶 ${h.followId === P.id ? T('Stop following', 'Thôi đi theo') : T('Follow', 'Đi theo')}</button></div></div>`; }).join('')}`);
   const x = el('button', 'vc-x', '✕'); pop.appendChild(x); x.onclick = () => pop.remove();
   document.body.appendChild(pop); SFX.tap(); G.walkAwayClose(pop, () => pop.remove());
   pop.querySelectorAll('[data-walk]').forEach(b => b.onclick = () => { pop.remove(); G.walkToFriend(h, b.dataset.walk); });
   pop.querySelectorAll('[data-fly]').forEach(b => b.onclick = () => { pop.remove(); G.flyToFriend(h, b.dataset.fly); });
   pop.querySelectorAll('[data-call]').forEach(b => b.onclick = () => { pop.remove(); G.askFriendToCome(h, b.dataset.call); });
+  // (#741, v1.06, tester: "the follow button should be where my friend is: tap them, then follow") Follow on each friend's own row
+  pop.querySelectorAll('[data-follow]').forEach(b => b.onclick = () => { SFX.tap(); pop.remove(); G.followFriend(i, b.dataset.follow); });
   return null;
 };
 // the signal bars change every few seconds: only their words are updated (round O, owner: the Friends screen was
@@ -1201,6 +1230,34 @@ addEventListener('offline', () => toast(T('No internet right now. Friends will c
 Net.on('micchange', () => G.huds.forEach(hd => hd.setCall(Net.connected, false, Net.muted || !Net.micLive)));
 Net.on('talking', on => G.huds.forEach(hd => hd.setCall(Net.connected, on, Net.muted || !Net.micLive)));
 const _np = new THREE.Vector3();
+// (#744, v1.06, tester: "my friend drives but I can't see them driving") a friend's ride on this screen: the same bicycle,
+// car or buffalo moves with them (before, it stayed parked and the friend sat on the ground), and stays where they get
+// off. A vehicle this child is riding, or one this device does not have, is drawn as a copy instead.
+type RideCar = { o: THREE.Object3D, wheels: THREE.Object3D[], wr: number, seat: number[], grips?: number[][], feet?: number[][] };
+type FriendRide = { key: string, slot?: { id: string, taken?: unknown, v?: RideCar }, own?: boolean, v?: RideCar,
+  animal?: { id: string, mesh: THREE.Object3D, shadow: THREE.Object3D, rider?: unknown, tx?: number, tz?: number, back?: boolean, home?: number[] } };
+function friendRide(P: SvFriend, s: { rv?: string, rm?: string }): FriendRide | null {
+  const key = s.rv || '', had = P.ride as FriendRide | undefined;
+  if (had && had.key === key) return had;
+  if (had) { // got off: the vehicle stays where it was left, an animal walks home (as for a child here: js/player.ts dismount)
+    if (had.own && had.v) scene.remove(had.v.o);
+    if (had.slot) had.slot.taken = null;
+    if (had.animal) { const b = had.animal; b.rider = null; b.tx = b.mesh.position.x; b.tz = b.mesh.position.z; if (b.home) { b.tx = b.home[0]; b.tz = b.home[1]; b.back = true; } }
+    const A = P.av as unknown as Record<string, THREE.Object3D>; A.torso.rotation.set(0, 0, 0); A.torso.position.set(0, 0, 0); A.head.position.set(0, 1.33, 0); A.head.rotation.set(0, 0, 0); A.armL.scale.y = A.armR.scale.y = 1;
+    P.ride = undefined;
+  }
+  if (!key) return null;
+  const ride: FriendRide = { key }, n = /^v(\d{1,4})$/.exec(key);
+  if (n) {
+    const tr = G.traffic as unknown as { slots: FriendRide['slot'][], make(sl: unknown): void } | undefined, sl = tr && tr.slots[+n[1]];
+    if (sl && sl.id === s.rm && !sl.taken) { if (!sl.v) tr.make(sl); sl.taken = P; ride.slot = sl; ride.v = sl.v; }
+    else if (s.rm && Object.hasOwn(VEHICLES, s.rm)) { ride.v = build(s.rm) as unknown as RideCar; ride.own = true; scene.add(ride.v.o); }
+  } else {
+    const b = ((G.world as unknown as { rideAnimals?: FriendRide['animal'][] }).rideAnimals || []).find(x => x.id === key && !x.rider);
+    if (b) { b.rider = P; ride.animal = b; }
+  }
+  P.ride = ride; return ride;
+}
 let netStatus = '';
 Net.on('status', s => {
   let msg = {
@@ -1399,9 +1456,8 @@ G.drawOnlinePanel = (body, redraw) => {
       ${netStatus ? `<p class="note center status">${esc(netStatus)}</p>` : ''}
       ${netLineHTML()}
       <div class="plist">${list.map(r => `<div class="prow roomp" data-pid="${esc(r.id)}"><img src="${avatarURL({ photo: r.photo, look: Object.assign({ hair: '#1d1412', skin: '#f6c7a5' }, r.look) })}" alt=""><div class="pw"><b>${esc(nm(r.name))}</b>${pqHTML(r.id)}</div>
-        <div class="rp-btns"><button class="btn" data-walkf="${esc(r.id)}">👣 ${T('Walk', 'Đi bộ')}</button><button class="btn" data-fly="${esc(r.id)}">✨ ${T('Fly', 'Bay')}</button><button class="btn" data-callf="${esc(r.id)}">📣 ${T('Ask to come', 'Gọi đến')}</button><button class="btn" data-tr="${esc(r.id)}">🔄 ${T('Trade', 'Đổi đồ')}</button><button class="btn" data-caro="${esc(r.id)}">⭕ ${T('Caro', 'Caro')}</button><button class="btn ${G.heroes[0] && G.heroes[0].followId === r.id ? 'primary' : ''}" data-follow="${esc(r.id)}">🚶 ${G.heroes[0] && G.heroes[0].followId === r.id ? T('Stop following', 'Thôi đi theo') : T('Follow', 'Đi theo')}</button>${Net.role === 'host' ? `<button class="btn" data-kick="${esc(r.id)}" aria-label="${T('Remove from the room', 'Mời ra khỏi phòng')}">🚪</button>` : ''}${r.friend && !settings.friends.some(f => f.code === r.friend && f.pub && f.pub === r.pub) ? `<button class="btn" data-addf="${esc(r.friend)}" data-n="${esc(r.name)}" data-pid="${esc(r.id)}" aria-label="${T('Add as a friend', 'Thêm làm bạn')}">＋👫</button>` : ''}</div></div>`).join('') || `<p class="note center">${T('Waiting for friends to join… Tell them the room code!', 'Đang chờ bạn vào… Đọc mã phòng cho bạn nhé!')}</p>`}</div>
+        <div class="rp-btns"><button class="btn" data-walkf="${esc(r.id)}">👣 ${T('Walk', 'Đi bộ')}</button><button class="btn" data-fly="${esc(r.id)}">✨ ${T('Fly', 'Bay')}</button><button class="btn" data-callf="${esc(r.id)}">📣 ${T('Ask to come', 'Gọi đến')}</button><button class="btn" data-tr="${esc(r.id)}">🔄 ${T('Trade', 'Đổi đồ')}</button><button class="btn ${G.heroes[0] && G.heroes[0].followId === r.id ? 'primary' : ''}" data-follow="${esc(r.id)}">🚶 ${G.heroes[0] && G.heroes[0].followId === r.id ? T('Stop following', 'Thôi đi theo') : T('Follow', 'Đi theo')}</button>${Net.role === 'host' ? `<button class="btn" data-kick="${esc(r.id)}" aria-label="${T('Remove from the room', 'Mời ra khỏi phòng')}">🚪</button>` : ''}${r.friend && !settings.friends.some(f => f.code === r.friend && f.pub && f.pub === r.pub) ? `<button class="btn" data-addf="${esc(r.friend)}" data-n="${esc(r.name)}" data-pid="${esc(r.id)}" aria-label="${T('Add as a friend', 'Thêm làm bạn')}">＋👫</button>` : ''}</div></div>`).join('') || `<p class="note center">${T('Waiting for friends to join… Tell them the room code!', 'Đang chờ bạn vào… Đọc mã phòng cho bạn nhé!')}</p>`}</div>
       ${list.length ? `<div class="actions center"><button class="btn primary big" data-together>🎲 ${T('Play together', 'Chơi cùng nhau')}</button></div>` : ''}
-      ${list.length ? `<div class="actions center"><button class="btn" data-rpsall>✌️ ${T('Oẳn tù tì with everyone', 'Oẳn tù tì cả phòng')}</button><button class="btn" data-allg="memory">🃏 ${T('Memory Match together', 'Lật hình cùng nhau')}</button><button class="btn" data-allg="tienlen">🎴 ${T('Tiến Lên together', 'Tiến Lên cùng nhau')}</button></div>` : ''}
       <p class="note center">${T('Talk to each other with your voices, or use the 💬 buttons. Up to 6 players in a room.', 'Nói chuyện bằng giọng nói, hoặc dùng nút 💬. Mỗi phòng tối đa 6 người.')}</p>
       <div class="actions center"><button class="btn big${Net.micLive ? '' : ' primary'}" id="oMute">${!Net.micLive ? '🎙️ ' + T('Microphone on', 'Bật micrô') : Net.muted ? '🔇 ' + T('Unmute', 'Bật mic') : '🎙️ ' + T('Mute', 'Tắt mic')}</button><button class="btn big danger" id="oEnd">📵 ${T('Leave the room', 'Rời phòng')}</button></div>
       ${micTestHTML()}${friendsBox()}</div>`;
@@ -1417,9 +1473,8 @@ G.drawOnlinePanel = (body, redraw) => {
     body.querySelectorAll<HTMLElement>('[data-tr]').forEach(b => b.onclick = () => { $('.modal.pad')?.remove(); G.paused = false; openTrade(G, G.heroes[0], b.dataset.tr); });
     // games with friends (round G): Caro with one friend, Oẳn tù tì with everyone in the room
     body.querySelectorAll<HTMLElement>('[data-follow]').forEach(b => b.onclick = () => { SFX.tap(); G.followFriend(0, b.dataset.follow); $('.modal.pad')?.remove(); G.paused = false; });
-    body.querySelectorAll<HTMLElement>('[data-caro]').forEach(b => b.onclick = () => { SFX.tap(); G.inviteGame('caro', b.dataset.caro); });
-    { const r = body.querySelector<HTMLElement>('[data-rpsall]'); if (r) r.onclick = () => { SFX.tap(); G.inviteGame('oantuti'); }; }
-    body.querySelectorAll<HTMLElement>('[data-allg]').forEach(b => b.onclick = () => { SFX.tap(); G.inviteGame(b.dataset.allg); });
+    // (#741, v1.06, tester) every game with friends is inside Play together: Caro, Oẳn tù tì, Memory Match and Tiến Lên
+    // no longer have their own buttons outside it
     { const t = body.querySelector<HTMLElement>('[data-together]'); if (t) t.onclick = () => { SFX.tap(); G.openPlayTogether(); }; }
     body.querySelectorAll<HTMLElement>('[data-addf]').forEach(b => b.onclick = () => { addFriend(b.dataset.addf, b.dataset.n, (Net.remotes[b.dataset.pid] || {}).pub); SFX.chime(); toast(T('Friend added!', 'Đã thêm bạn!')); redraw(); });
     bindFriends();
@@ -1687,7 +1742,12 @@ setInterval(() => {
   const h0 = G.heroes[0], idle = G.paused || gameOpen() || document.hidden, nowMs = performance.now();
   if (!playing || !h0 || !Net.connected || nowMs - sentAt < (idle ? 950 : 90)) return;
   sentAt = nowMs;
-  Net.send({ t: 's', x: +h0.pos.x.toFixed(2), y: +h0.pos.y.toFixed(2), z: +h0.pos.z.toFixed(2), yaw: +h0.yaw.toFixed(2), st: idle ? 'idle' : h0.state, sp: idle ? 0 : +h0.speed.toFixed(1) });
+  // (#744, v1.06) what I ride travels too, so friends see me on the bicycle, car or buffalo and see it move
+  const rd = h0.riding as (NonNullable<SvHeroT['riding']> & { id?: string, slot?: { id?: string } }) | null, slots = (G.traffic?.slots || []) as unknown[];
+  // (owner, 1 Nov 2026 AEDT) riding as a passenger (bus, tram, taxi, xích lô) travels too, with pa: friends see the vehicle
+  const pas = !rd ? (slots as Array<{ id?: string, passenger?: unknown }>).findIndex(sl => sl && sl.passenger === h0) : -1;
+  const ride = !rd ? (pas >= 0 ? { rv: 'v' + pas, rm: (slots[pas] as { id?: string }).id, pa: 1 } : {}) : rd.slot && slots.includes(rd.slot) ? { rv: 'v' + slots.indexOf(rd.slot), rm: rd.slot.id } : rd.id ? { rv: rd.id } : {};
+  Net.send({ t: 's', x: +h0.pos.x.toFixed(2), y: +h0.pos.y.toFixed(2), z: +h0.pos.z.toFixed(2), yaw: +h0.yaw.toFixed(2), st: idle && !rd ? 'idle' : h0.state, sp: idle ? 0 : +h0.speed.toFixed(1), ...ride });
 }, 100);
 // Sharp on phones that can manage it: with Graphics on Auto, the 3D picture is drawn at up to 2× the screen's
 // pixels and steps down a little whenever the game starts to stutter (phones started blurry at 1.25×).
@@ -1815,7 +1875,13 @@ function frame(now) {
   for (const P of Object.values(G.partners)) {
     const r = Net.remotes[P.id]; if (!r || !r.s) continue; const s = r.s;
     P.pos.lerp(_np.set(s.x, s.y, s.z), Math.min(1, dt * 10)); P.yaw = s.yaw;
+    const rv = friendRide(P, s);
     P.av.root.position.copy(P.pos); P.av.root.rotation.y = P.yaw; P.av.anim(s.st || 'idle', t, s.sp || 0); P.tag.position.set(P.pos.x, P.pos.y + 2.0, P.pos.z);
+    if (rv && rv.v && s.pa) { // a passenger: the vehicle is placed so its passenger seat is where the friend sits (P.pos)
+      const v = rv.v as RideCar & { passenger?: number[], seat: number[] }, seat = v.passenger || (/^(bus|tram)/.test(s.rm || '') ? [-.45, v.seat[1], 0] : [-(v.seat[0] || .45), v.seat[1], v.seat[2] - (s.rm === 'touristCart' ? .9 : 0)]), c = Math.cos(P.yaw), sn = Math.sin(P.yaw);
+      v.o.rotation.y = P.yaw; v.o.position.set(P.pos.x - (seat[0] * c + seat[2] * sn), P.pos.y - (seat[1] - .55), P.pos.z - (-seat[0] * sn + seat[2] * c)); }
+    else if (rv && rv.v) { const v = rv.v, A = P.av as unknown as Parameters<typeof seatRider>[0]; v.o.position.copy(P.pos); v.o.rotation.y = P.yaw; v.wheels.forEach(w => { w.rotation.x += (s.sp || 0) * dt / v.wr; }); A.rig.position.y = 0; seatRider(A, v, v.seat, v.grips, v.feet, A.root.scale.x, false); }
+    else if (rv && rv.animal) { const b = rv.animal; b.mesh.position.copy(P.pos); b.mesh.rotation.y = P.yaw; b.shadow.position.set(P.pos.x, P.pos.y + .05, P.pos.z); P.av.root.position.y += 1.6; P.tag.position.y += 1.6; }
   }
   // bubbles
   G.bubbles = G.bubbles.filter(b => { const p = b.target.pos; b.s.position.set(p.x, p.y + 2.45, p.z); if (now > b.until) { scene.remove(b.s); b.s.material.map.dispose(); b.s.material.dispose(); return false; } return true; });
@@ -1862,6 +1928,9 @@ bootMark('people'); G.farm = createFarm(G); world.updaters.push(G.farm.update); 
 G.places = createPlaces(G); world.updaters.push(G.places.update);
 world.heroesNear = (x, z, r) => G.heroes.some(h => dist2(h.pos.x, h.pos.z, x, z) < r);   // (Round V) a ridden animal goes home out of every child's sight
 G.town = createTown(G);
+// (Học vui phase 4) Trường Học Vui at the west end of Two Homes Street, Cô Tam at its door (js/school.js); loaded after the
+// title screen, so it is not in the start-up download (PERF-001); G.schoolReady says when it stands
+G.schoolReady = import('./school.js').then(m => { G.school = m.createSchool(G); if (G.school) Object.assign(G.PLACES.find(p => p.key === 'school'), G.school.place); return G.school; });
 G.GAMES_ICON = id => (GAMES[id] || {}).icon || "🎮";
 createRegions(G);
 G.dialog = (name, lines, choices) => dialog(name, lines, choices);

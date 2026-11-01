@@ -12,6 +12,9 @@ import { avatarURL } from '../avatar.js';
 const FARM = ['🥕', '🍓', '🍅', '🌽', '🌻', '🎃', '🥚', '🥛'];
 const FARM_NAMES = { '🥕': ['carrots', 'cà rốt'], '🍓': ['strawberries', 'dâu tây'], '🍅': ['tomatoes', 'cà chua'], '🌽': ['corn cobs', 'bắp ngô'], '🌻': ['sunflowers', 'hoa hướng dương'], '🎃': ['pumpkins', 'bí ngô'], '🥚': ['eggs', 'trứng'], '🥛': ['bottles of milk', 'chai sữa'] };
 const CUSTOMERS = ['🐷', '🐮', '🐔', '🐑', '🦊', '🐼', '🐨', '🐵'];
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
 
 // ---------- Order board: "Can I have 3 🥕?" ----------
 register({
@@ -22,8 +25,8 @@ register({
       api.dots(rounds, r); api.stage.innerHTML = '';
       const item = pick(FARM), n = 1 + Math.floor(Math.random() * max), who = pick(CUSTOMERS), [en, vi] = FARM_NAMES[item];
       // big kids sometimes get two different things in one order
-      const two = !api.little && api.level >= 4 && Math.random() < .5;
-      const item2 = two ? pick(FARM.filter(x => x !== item)) : null, n2 = two ? 1 + Math.floor(Math.random() * 4) : 0;
+      const two = !api.little && (api.talent || api.level >= 4 && Math.random() < .5);   // (levels) Talent: always two things, more of them
+      const item2 = two ? pick(FARM.filter(x => x !== item)) : null, n2 = two ? 1 + Math.floor(Math.random() * (api.talent ? 6 : 4)) : 0;
       api.stage.appendChild(el('div', 'customer', `<span class="who">${who}</span><span class="bubble">${n} × ${item}${two ? `<br>${n2} × ${item2}` : ''}</span>`));
       const tray = el('div', 'tray', `<div class="sum"></div><div class="coins"></div>`); api.stage.appendChild(tray);
       const pile = el('div', 'pile'); api.stage.appendChild(pile);
@@ -37,7 +40,7 @@ register({
       api.plan(() => { if (!pile.isConnected) return null; const over = Object.keys(got).find(k => got[k] > (want[k] || 0)); if (over) return ofKind(inTray, over);
         const need = Object.keys(want).find(k => (got[k] || 0) < want[k]); return need ? ofKind(pile, need) : null; }, { maxActions: rounds * (max + 6) * 2 });
       await new Promise<void>(res => {
-        Object.keys(want).concat(shuffle(FARM.filter(x => !want[x])).slice(0, api.level >= 3 ? 2 : 1)).forEach(k => {
+        Object.keys(want).concat(shuffle(FARM.filter(x => !want[x])).slice(0, lv(api, api.level >= 3 ? 2 : 1, 2, 2, 3))).forEach(k => {
           const b = el('button', 'choice', k); kindOf.set(b, k); pile.appendChild(b);
           b.onclick = () => {
             got[k] = (got[k] || 0) + 1; const total = got[k];
@@ -67,7 +70,7 @@ register({
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const byKind = api.level >= 3 || r === 1 && api.level >= 2;
-      const nb = api.level <= 1 ? 2 : 3, per = api.level <= 2 ? 2 : 3;
+      const nb = api.level <= 1 ? 2 : 3, per = api.talent ? 4 : api.level <= 2 ? 2 : 3;   // (levels) Talent: four things for each basket
       let groups;
       if (byKind) { const ks = shuffle(Object.keys(KINDS)).slice(0, nb); groups = ks.map(k => ({ key: k, label: KINDS[k][0], items: shuffle(KINDS[k]).slice(0, per), say: KIND_NAME[k] })); }
       else { const cs = shuffle(COLORS).slice(0, nb); groups = cs.map(c => ({ key: c.en, color: c.hex, label: '', items: Array(per).fill('●'), say: [c.en, c.vi] })); }
@@ -99,7 +102,7 @@ register({
 register({
   id: 'bunny', icon: '🐰', name: () => T('Feed the Bunny', 'Cho Thỏ Ăn'),
   async run(api) {
-    const rounds = 3, max = [3, 5, 8, 10, 15][api.level - 1];
+    const rounds = 3, max = api.talent ? 20 : [3, 5, 8, 10, 15][api.level - 1];   // (levels) Talent: up to 20 carrots
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const n = 1 + Math.floor(Math.random() * max);
@@ -131,7 +134,7 @@ register({
 register({
   id: 'jigsaw', icon: '🖼️', name: () => T('Photo Puzzle', 'Ghép Ảnh Của Bé'),
   async run(api) {
-    const n = [2, 2, 3, 3, 4][api.level - 1];
+    const n = api.talent ? 5 : [2, 2, 3, 3, 4][api.level - 1];   // (levels) Talent: 5 x 5 pieces
     const src = avatarURL(api.players[0]);
     api.say('Put your picture back together! Tap two pieces to swap them.', 'Ghép lại bức ảnh của con nào! Chạm hai mảnh để đổi chỗ.');
     const grid = el('div', 'jig'); grid.style.setProperty('--n', n); api.stage.appendChild(grid);
@@ -167,7 +170,7 @@ register({
     const rounds = 4;
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const [same, odd] = pick(ODD_SETS), k = api.level >= 3 ? 4 : 3;
+      const [same, odd] = pick(ODD_SETS), k = api.talent ? 5 : api.level >= 3 ? 4 : 3;   // (levels) Talent: five alike to look through
       const items = shuffle([...shuffle(same.concat(same)).slice(0, k), odd[0]]);
       api.say('Which one is different? Find the odd one out!', 'Cái nào khác loại? Tìm cái khác các bạn còn lại nhé!');
       const btns = choiceButtons(api, items, i => i as string);
@@ -183,7 +186,7 @@ const BARS = ['#e8434a', '#ff9a2e', '#ffd23f', '#5fd39a', '#3cc7e8', '#3d7fd6', 
 register({
   id: 'tune', icon: '🎵', name: () => T('Copy the Tune', 'Nhại Giai Điệu'),
   async run(api) {
-    const keys = api.level <= 2 ? 4 : api.level <= 4 ? 6 : 8, start = [2, 3, 3, 4, 5][api.level - 1], rounds = 3;
+    const keys = api.level <= 2 ? 4 : api.level <= 4 ? 6 : 8, start = [2, 3, 3, 4, 5][api.level - 1] + (api.talent ? 1 : 0), rounds = 3;   // (levels) Talent: one note longer
     const xy = el('div', 'xylo'); api.stage.appendChild(xy);
     const bars = Array.from({ length: keys }, (_, i) => { const b = el('button', 'bar'); b.style.background = BARS[i]; b.style.height = (100 - i * 6) + '%'; b._i = i; xy.appendChild(b); return b; });
     const play = async i => { bars[i].classList.add('on'); SFX.xylo(i); await wait(380); bars[i].classList.remove('on'); await wait(120); };
@@ -214,7 +217,7 @@ register({
     const rounds = 2;
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const n = Math.min(7, 2 + api.level + r);
+      const n = Math.min(api.talent ? 8 : 7, 2 + api.level + r + (api.talent ? 1 : 0));   // (levels) Talent: one block more
       api.say('Build a tower! Start with the biggest block, then the next biggest.', 'Xây tháp nào! Bắt đầu bằng khối to nhất, rồi đến khối to tiếp theo.');
       const tw = el('div', 'tower'); api.stage.appendChild(tw);
       const pool = el('div', 'size-line'); api.stage.appendChild(pool);
@@ -240,7 +243,7 @@ register({
 register({
   id: 'balloon', icon: '🎈', name: () => T('Balloon Flight', 'Khinh Khí Cầu'),
   async run(api) {
-    const goal = [5, 6, 8, 10, 12][api.level - 1];
+    const goal = api.talent ? 15 : [5, 6, 8, 10, 12][api.level - 1], speed = lv(api, .45, .45, .5, .6);   // (levels) Talent: more rings, flying faster
     api.say('Tap to float up! Fly through the rainbow rings. Bumping a cloud is fine, just bounce!', 'Chạm để bay lên! Bay qua các vòng cầu vồng. Chạm mây cũng không sao, nảy lên thôi!');
     const cv = el('canvas', 'sky'); api.stage.appendChild(cv); api.dots(goal, 0);
     const ctx = cv.getContext('2d');
@@ -264,7 +267,7 @@ register({
         const dt = Math.min(.05, (now - last) / 1000); last = now;
         if (cv.clientWidth * devicePixelRatio !== cv.width) { W(); H(); }
         const w = cv.width, h = cv.height, sc = h;
-        vy += .9 * dt; y += vy * dt; x += .45 * dt;
+        vy += .9 * dt; y += vy * dt; x += speed * dt;
         if (y < .06) { y = .06; vy = Math.abs(vy) * .5; SFX.bump(); } // bounce off the top clouds
         if (y > .92) { y = .92; vy = -.45; SFX.bump(); }                // and off the soft bottom clouds
         spawn();
@@ -296,7 +299,7 @@ register({
 register({
   id: 'bubbles', icon: '🫧', name: () => T('Bubble Machine', 'Máy Thổi Bong Bóng'),
   async run(api) {
-    const goal = [10, 12, 15, 18, 20][api.level - 1];
+    const goal = api.talent ? 25 : [10, 12, 15, 18, 20][api.level - 1], rise = lv(api, 6, 6, 5, 4);   // (levels) Hard and Talent: bubbles float away faster
     api.say('Pop the bubbles! Find the ones with a star for a surprise.', 'Chọc vỡ bong bóng nào! Tìm bong bóng có ngôi sao để nhận bất ngờ nhé.');
     const box = el('div', 'bubbles'); api.stage.appendChild(box);
     let popped = 0; api.dots(goal, 0);
@@ -305,7 +308,7 @@ register({
         if (api.closed) { clearInterval(timer); return res(); }
         if (box.children.length > 9) return;
         const b = el('button', 'bub', Math.random() < .2 ? '⭐' : ''); const s = 60 + Math.random() * 60;
-        b.style.width = b.style.height = s + 'px'; b.style.left = Math.random() * 85 + '%'; b.style.animationDuration = (6 + Math.random() * 4) + 's';
+        b.style.width = b.style.height = s + 'px'; b.style.left = Math.random() * 85 + '%'; b.style.animationDuration = (rise + Math.random() * 4) + 's';
         b.onclick = () => { if (b.classList.contains('popped')) return; popped++; /* (audit: a popping bubble counts once) */ SFX.pop(popped); api.dots(goal, Math.min(goal, popped)); if (b.textContent) { SFX.coin(); } b.classList.add('popped'); setTimeout(() => b.remove(), 200); if (popped >= goal) { clearInterval(timer); res(); } };
         b.addEventListener('animationend', () => b.remove());
         box.appendChild(b);

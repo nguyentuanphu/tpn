@@ -44,7 +44,8 @@ export { playWatch };
 // online: playing with friends on their own devices (js/netgames.js): { mine, names, move(n, mv), next(n, seat), all(n) }
 // levelPick (round M, owner: "a choice of difficulty inside each game"): { value: 'easy'|'medium'|'hard' } shows a
 // button in the game's top bar; choosing another level closes the game with { restart: level } and it starts again
-const LEVELS = [['easy', 'Easy', 'Dễ'], ['medium', 'Medium', 'Vừa'], ['hard', 'Hard', 'Khó']];
+// (owner, 1 Nov 2026 AEDT) Talent: the hardest level, for gifted children
+const LEVELS = [['easy', 'Easy', 'Dễ'], ['medium', 'Medium', 'Vừa'], ['hard', 'Hard', 'Khó'], ['talent', 'Talent', 'Tài năng']];
 // (r79 learning, owner 16 Oct AEDT, I1) the level a learning game moved to, kept for "Play again" of the same game only
 let carry = null;
 // One policy check for ordinary entry and direct/online frame callers. Menu hiding is separate.
@@ -123,6 +124,10 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
       stage, level, difficulty: levelPick?.value || 'easy', players, two: players.length > 1, partnerName, T, el, online,
       little,   // under-5 mode: everything gentle, nobody can lose
       strong,   // computer opponents play to win (big kids on medium or hard)
+      // (owner, 1 Nov 2026 AEDT) each level plays differently: smart is 0 Easy, 1 Medium, 2 Hard, 3 Talent (under-5s 0), for
+      // computer players and timers; talent is the hardest level (level 5 and a game's own extra challenge)
+      smart: little ? 0 : ({ easy: 0, medium: 1, hard: 2, talent: 3 })[levelPick?.value || 'easy'] ?? 0,
+      talent: !little && levelPick?.value === 'talent',
       say: (en, vi) => { setHelp(en, vi, true); say(en, vi); },
       // Show text without speaking it.
       show: (en, vi) => { setHelp(en, vi); },
@@ -193,9 +198,13 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     // (r79 learning, I1) run: right answers in a row since the last miss or step; pending: the step the next round takes
     const again = carry && carry.id === id ? carry : null; carry = null;
     let run = 0, roundMisses = 0, pending = 0, shift = again && def.learn ? again.shift : 0;
-    const baseTier = little ? 0 : level >= 3 ? 3 : level >= 2 ? 2 : 1;
+    // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the tier starts from the chosen level (Easy 1, Medium 2, Hard and
+    // Talent 3), not from the level number, which grows with wins: so Easy never plays like Hard
+    const pickTier = ({ easy: 1, medium: 2, hard: 3, talent: 3 })[levelPick?.value || ''];
+    const baseTier = little ? 0 : pickTier || (level >= 3 ? 3 : level >= 2 ? 2 : 1);
     function tierNow() { return little || !def.learn ? baseTier : Math.max(0, Math.min(3, baseTier + shift)); }
     layer.dataset.tier = tierNow();   // (for the checks: the level the game is at now)
+    layer.dataset.level = String(level); if (api.talent) layer.dataset.talent = '1';   // (for the checks: the level number and Talent)
     // (r79 learning, I2) the child's record for this game: profile.learn.miss[game] = { key: times missed }
     const kid = players && players[0];
     function missBook() { if (!def.learn || !kid || online) return null; const L = kid.learn = normalizeLearn(kid.learn); return (L.miss[id] = L.miss[id] || {}); }
@@ -286,7 +295,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     if (lv) lv.onclick = () => {
       SFX.tap(); if (layer.querySelector('.gl-lvlpick')) return;
       const pk = el('div', 'gl-lvlpick');
-      pk.innerHTML = `<div class="gl-lvlcard"><h3>${T('How hard?', 'Khó hay dễ?')}</h3>${LEVELS.map(([k, en, vi]) => `<button data-l="${k}" class="${k === levelPick.value ? 'on' : ''}">${esc(T(en, vi))}</button>`).join('')}</div>`;
+      pk.innerHTML = `<div class="gl-lvlcard"><h3>${T('How hard?', 'Khó hay dễ?')}</h3>${LEVELS.filter(([k]) => k !== 'talent' || !little).map(([k, en, vi]) => `<button data-l="${k}" class="${k === levelPick.value ? 'on' : ''}">${esc(T(en, vi))}</button>`).join('')}</div>`;
       layer.appendChild(pk); say('How hard?', 'Khó hay dễ?');
       pk.onclick = e => { if (e.target === pk) pk.remove(); };
       pk.querySelectorAll('[data-l]').forEach(b => b.onclick = () => { SFX.tap(); pk.remove(); if (b.dataset.l !== levelPick.value) finish(false, { restart: b.dataset.l }); });
