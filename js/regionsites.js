@@ -43,8 +43,8 @@ const SITES = [
   ['storybridge', 'brisbane', '🌉', 'storybridge', ['Story Bridge (Queensland)', 'Cầu Story (bang Queensland)'], ['Story Bridge is a big steel bridge over the Brisbane River, opened in 1940. Brave people can climb right to the top, and at night it shines in different colours.', 'Cầu Story là cây cầu thép lớn bắc qua sông Brisbane, khánh thành năm 1940. Người gan dạ có thể leo lên tận đỉnh, và ban đêm cầu sáng đèn nhiều màu.']]
 ];
 Object.assign(REAL, {
-  marble: [['en:Marble Mountains (Vietnam)'], 16.0040, 108.2627], hoian: [['en:Hội An'], 15.8801, 108.3380], thehuc: [['en:The Huc Bridge', 'en:Ngọc Sơn Temple'], 21.0306, 105.8526],
-  cairang: [['en:Cái Răng floating market', 'en:Mekong Delta'], 10.0055, 105.7469], apostles: [['en:The Twelve Apostles (Victoria)'], -38.6655, 143.1044], storybridge: [['en:Story Bridge'], -27.4636, 153.0359]
+  marble: [['en:Marble Mountains (Vietnam)'], 16.0040, 108.2627], hoian: [['en:Hội An', 'en:Hoi An Ancient Town', 'en:Japanese Covered Bridge'], 15.8801, 108.3380], thehuc: [['en:The Huc Bridge', 'en:Ngọc Sơn Temple'], 21.0306, 105.8526],
+  cairang: [['en:Cái Răng floating market', 'en:Mekong Delta'], 10.0055, 105.7469], apostles: [['en:The Twelve Apostles (Victoria)', 'en:Port Campbell National Park', 'en:Great Ocean Road'], -38.6655, 143.1044], storybridge: [['en:Story Bridge'], -27.4636, 153.0359]
 });
 
 export function createRegionSites(G) {
