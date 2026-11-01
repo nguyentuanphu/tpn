@@ -3,7 +3,7 @@
 // Type notes only (`import type`): nothing here reaches a phone.
 
 export type Age = 'little' | 'big';
-export type Difficulty = 'easy' | 'medium' | 'hard';
+export type Difficulty = 'easy' | 'medium' | 'hard' | 'talent';
 
 /** a child's profile (one per child on this device), as js/state.ts normalizeProfile makes every saved one */
 export interface Profile {

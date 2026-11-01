@@ -528,7 +528,10 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   const players = G.heroes.map(x => x.profile); if (G.heroes.length > 1 && i === 1) players.reverse();
   // Level = how far this child has got in this game, shifted by the chosen difficulty.
   // the level the child chose inside this game (round M), else the grown-ups' difficulty for this child
-  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || p.difficulty || 'easy', level = Math.min(5, (p.levels[id] || 1) + { easy: 0, medium: 1, hard: 2 }[diff]);
+  // (owner, 1 Nov 2026 AEDT: "the levels often look the same") each level has its own band and wins move a child up inside it:
+  // Easy 1-2, Medium 2-3, Hard 4-5, Talent 5 with the game's own extra challenge. (Before, Easy reached the top after a few wins.)
+  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || p.difficulty || 'easy', band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
+  const level = Math.min(band[1], band[0] + Math.floor(((p.levels[id] || 1) - 1) / 2));
   const little = G.heroes.some(x => x.profile.age !== 'big'), strong = !little && diff !== 'easy';
   if (source === 'shrine') { SFX.secret(); say('A shrine! Let’s solve the puzzle.', 'Một ngôi đền! Cùng giải câu đố nào.'); await wait(600); }
   const completion = source === 'hub' || source === 'pad' || source === 'simple' ? 'choose' : 'return';
@@ -856,7 +859,7 @@ G.hint = (h, k) => { if (k === 'tired' && !h._tiredHint) { h._tiredHint = true; 
 G.stats = (h, sp) => { h.profile.stats.steps = (h.profile.stats.steps || 0) + 1; };
 G.hurt = (h, n) => {
   // Falls never hurt little ones. Big kids on Hard lose a heart (food heals), and are carried to safety at zero.
-  if (h.profile.age !== 'big' || h.profile.difficulty !== 'hard') { SFX.bump && SFX.bump(); return; }
+  if (h.profile.age !== 'big' || (h.profile.difficulty !== 'hard' && h.profile.difficulty !== 'talent')) { SFX.bump && SFX.bump(); return; }
   h.hearts = Math.max(0, h.hearts - n); SFX.no(); hudFor(h).toast(T('Oof! Big fall!', 'Ui da! Ngã đau quá!'));
   if (h.hearts <= 0) G.rescue(h, true);
 };

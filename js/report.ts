@@ -41,7 +41,7 @@ export function openReport(p) {
   const dayName = t => t.toLocaleDateString(T('en-AU', 'vi-VN'), { weekday: 'short' });
   const m = modal('report', `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button>
     <h2>${pic('📊')} ${T('Play report', 'Báo cáo chơi')}: ${esc(nm(p.name))}</h2>
-    <p class="note">${T('Kept on this device only.', 'Chỉ lưu trên máy này.')} ${p.age === 'big' ? T('Big kid (5 to 8)', 'Bé lớn (5 đến 8 tuổi)') : T('Little (under 5)', 'Bé nhỏ (dưới 5 tuổi)')} · ${T({ easy: 'Easy', medium: 'Medium', hard: 'Hard' }[p.difficulty] || 'Easy', { easy: 'Dễ', medium: 'Vừa', hard: 'Khó' }[p.difficulty] || 'Dễ')}</p>
+    <p class="note">${T('Kept on this device only.', 'Chỉ lưu trên máy này.')} ${p.age === 'big' ? T('Big kid (5 to 8)', 'Bé lớn (5 đến 8 tuổi)') : T('Little (under 5)', 'Bé nhỏ (dưới 5 tuổi)')} · ${T({ easy: 'Easy', medium: 'Medium', hard: 'Hard', talent: 'Talent' }[p.difficulty] || 'Easy', { easy: 'Dễ', medium: 'Vừa', hard: 'Khó', talent: 'Tài năng' }[p.difficulty] || 'Dễ')}</p>
     <h3>${T('This week', 'Tuần này')}: ${weekMin} ${T('minutes', 'phút')}, ${weekGames} ${T('games', 'trò chơi')}</h3>
     <div class="rep-week">${week.map(x => `<div class="rep-day"><i style="height:${Math.round(x.min / most * 100)}%"></i><b>${x.min}</b><small>${esc(dayName(x.t))}</small></div>`).join('')}</div>
     <h3>${T('Favourite games', 'Trò chơi yêu thích')}</h3>

@@ -3691,6 +3691,12 @@ await check('gamelevel', async () => {
   await P.page.waitForFunction(() => { const l = document.querySelector('.gl:not(.out) .gl-lvl'); return l && /Hard/.test(l.textContent); }, null, { timeout: 10000 }).catch(() => { });
   r.after = await P.page.evaluate(() => ({ text: (document.querySelector('.gl:not(.out) .gl-lvl') || {}).textContent, saved: (__sv.heroes[0].profile.gameDiff || {}).counting, games: document.querySelectorAll('.gl:not(.out)').length }));
   await P.page.evaluate(() => document.querySelector('.gl:not(.out) .gl-x').click()); await P.page.waitForTimeout(500);
+  // (owner, 1 Nov 2026 AEDT: "the levels often look the same") a big kid who has won Counting many times: each level still
+  // starts its own tier and level (Easy never plays like Hard), and Talent is the hardest
+  r.bands = await P.page.evaluate(async () => { const w = t => new Promise(r => setTimeout(r, t)), p = __sv.heroes[0].profile, out = []; p.age = 'big'; p.levels.counting = 5;
+    for (const d of ['easy', 'medium', 'hard', 'talent']) { p.gameDiff = { ...(p.gameDiff || {}), counting: d }; const run = __sv.playGame(0, 'counting', 'hub'); let gl = null; for (let k = 0; k < 40 && !gl; k++) { await w(150); gl = document.querySelector('.gl:not(.out)'); }
+      out.push([d, gl ? gl.dataset.tier : '?', gl ? gl.dataset.level : '?'].concat(gl && gl.dataset.talent ? ['talent'] : []).join(':')); gl && gl.querySelector('.gl-x').click(); await w(500); document.querySelectorAll('.dialog,.reward,.modal').forEach(e => e.remove()); }
+    return out.join(','); });
   // Festivals: in the main settings
   // Festival calendar: only a calendar; no decorations choice in the game or in Grown-ups
   r.fest = await P.page.evaluate(async () => { const U = await import('/js/ui.js'), w = t => new Promise(r => setTimeout(r, t));
@@ -3699,7 +3705,7 @@ await check('gamelevel', async () => {
     U.openFestivals(__sv, 0); await w(300); before = !!document.querySelector('.modal select.fest-pick, .fest-hold, .fest-grown'), visit = document.querySelectorAll('.modal [data-fest]').length, rows = document.querySelectorAll('.modal .fcal-row').length;
     return { inGrown, before, visit, rows }; });
   const errs = P.errors; await P.ctx.close();
-  ok(/Easy/.test(r.first.text) && r.first.h >= 44 && r.first.inside && r.choices.join() === 'easy,medium,hard' && /Hard/.test(r.after.text || '') && r.after.saved === 'hard' && r.after.games === 1 && !r.fest.inGrown && !r.fest.before && r.fest.visit === 0 && r.fest.rows > 0 && !errs.length, JSON.stringify({ r, errs }));
+  ok(/Easy/.test(r.first.text) && r.first.h >= 44 && r.first.inside && r.choices.join() === 'easy,medium,hard,talent' && r.bands === 'easy:1:2,medium:2:3,hard:3:5,talent:3:5:talent' && /Hard/.test(r.after.text || '') && r.after.saved === 'hard' && r.after.games === 1 && !r.fest.inGrown && !r.fest.before && r.fest.visit === 0 && r.fest.rows > 0 && !errs.length, JSON.stringify({ r, errs }));
   return 'Easy · Medium · Hard in the game bar (44 px, on screen at 390 px); Hard starts it again at Hard and is remembered; the festival calendar is only a calendar (nothing to visit, no decorations choice)';
 });
 

@@ -98,7 +98,7 @@ function startManagementCounting(G) {
       detachManagement = attachActivityTelemetry(management, events, e => {
         const heroes = (managementGame && managementGame.heroes) || [], game = String(e.defId || '').replace(/^game:/, ''), p = heroes[0]?.profile;
         const diff = p?.gameDiff?.[game] || p?.difficulty;
-        return { difficulty: diff === 'hard' ? 'hard' : diff === 'medium' ? 'medium' : 'easy', mode: e.source === 'online' ? 'online' : Array.isArray(e.players) && e.players.length > 1 ? 'local_two' : 'solo' };
+        return { difficulty: diff === 'hard' || diff === 'talent' ? 'hard' : diff === 'medium' ? 'medium' : 'easy', mode: e.source === 'online' ? 'online' : Array.isArray(e.players) && e.players.length > 1 ? 'local_two' : 'solo' };
       });
       detachManagementEvidence = managementEvidence.subscribe(event => { management?.enqueue(event.eventName,event.data,event.attemptId,event.occurredAt); });
       const applied = managementApplication(); if (applied) management.receipt(applied);
