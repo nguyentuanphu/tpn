@@ -372,6 +372,11 @@ export function rowStreet(place) {
 // Two Homes Street's custom sugarcane cart joins the same row as its food kiosks.
 // Include the umbrella and stools in this footprint, not just the narrow counter.
 export const TOWN_JUICE_CART = { place: 'town', slot: 2.15, width: 3.6, depth: 3.6, sellerSide: 1.55, sellerBack: .7 } as const;
+// (Học vui phase 4, owner's plan 1 Nov 2026 AEDT, docs/learn-tab/PLAN.md) Trường Học Vui, the Fun Learning School: on the
+// Sydney (south) side of Two Homes Street's west end, beside the island road where the street begins, its front and yard
+// facing that road (north). off: the building's middle from the street's anchor; w, d: the building; yard: how deep the
+// yard in front of it is (it stops short of the road's verge). js/school.ts builds it.
+export const TOWN_SCHOOL = { place: 'town', off: [-30.6, 6.75], w: 9, d: 6.5, yard: 4.2 } as const;
 
 // slot i of a place's row for something `d` metres deep (across the street) and `span` slots long: where its middle
 // stands { x, z }, which way it faces (face: the yaw that looks at the street, as avatars and models use it), the step

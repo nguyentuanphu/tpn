@@ -28,6 +28,7 @@ The villagers' science facts (`SCIENCE_LINES` in `js/content/villagerlines.js`) 
 - Cô Tam is the teacher. She is the secondary-school teacher who already helps at the sugarcane cart.
 - There is one door for each corner, or the classroom shows all four corners.
 - Tapping Cô Tam opens the same Học Vui page as the Play tab.
+- Built (phase 4, `js/school.ts`, check `school`): the school stands at the west end of Two Homes Street, on the Sydney (south) side of the island road where the street begins (`TOWN_SCHOOL` in `js/content/map.ts`). Cô Tam is still needed at the sugarcane cart, so the school has its own copy of her at the door (same look, name and family photo face). Tapping her says the greeting, then "Yes, let's learn!" opens the Play hub on the Học Vui tab. The school is on the map under Two Homes Street and in "Where is…?".
 
 ## Build order
 
