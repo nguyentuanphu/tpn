@@ -581,3 +581,9 @@ independently; do not report it as passed until actual artifacts are inspected.
   its ratchet (v1.05's main is over too; +42 KB this round). Lê Minh: 224 Vietnamese lines recorded by the reviewed
   workflow; voiceroutes 0 missing. Open: #729/#734 (Memory Match frame rate, needs a real device), #726 (walk onto the
   Cái Răng floating market: a World decision), #375 (report screen size), #739 (iPhone freeze, no clue in the log).
+  After the owner asked about the open points: #729/#734 fixed (face-down card stars still, 5 to 44 frames a second at
+  Talent with CPU x4, check memoryfps), #726 fixed (only the four boats block, check cairangwalk), #375 fixed (ladybird
+  hidden while the report is open and left out of the picture), #739 not reproduced (room steps now write timing lines).
+  GitHub full suite at 604a44410: 295/295 (voicearea and oaqplay passed on their second try; reportfloating fixed first,
+  its second pass tapped instead of dragging). Merged as 7a1090104 on 2 Nov 2026, 10:24 am AEDT; live checked: sw.js
+  sv-2026-11-02-v1.06, js/build.js BUILD 'v1.06'. New tester reports #746-#781 came in during the round: next round.
