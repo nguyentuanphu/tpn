@@ -1139,7 +1139,12 @@ G.openPlayTogether = () => {
     <h3>${pic('🏁')} ${T('Race side by side', 'Thi đua cùng nhau')} <small>${T('everyone plays the same game, stars for all', 'mọi người chơi cùng một trò, ai cũng có sao')}</small></h3><div class="pt-grid">${race.map(id => btn(id)).join('')}</div>
     ${tales.length ? `<h3>${pic('📖')} ${T('Read a story together', 'Đọc truyện cùng nhau')}</h3><div class="pt-grid">${tales.map(t => `<button class="pt-g" data-g="tale-${esc(t.id)}" aria-label="${esc(t.title())}">${pic('📖')}<b>${esc(t.title())}</b></button>`).join('')}</div>` : ''}`);
   m.querySelector('.x').onclick = () => m.close();
-  m.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { SFX.tap(); m.close(); G.inviteGame(b.dataset.g, ids[0]); });
+  // (owner, 1 Nov 2026 AEDT) a game for two (Caro) with three or more children in the room asks who to play with (it used
+  // to invite the first friend); every other game invites as before
+  m.querySelectorAll('[data-g]').forEach(b => b.onclick = async () => { SFX.tap(); m.close(); const g = b.dataset.g, two = ONLINE_GAMES[g] && ONLINE_GAMES[g].max === 2;
+    if (two && ids.length > 1) { const k = await dialog(T('Play with whom?', 'Chơi với bạn nào?'), [['Who do you want to play with?', 'Con muốn chơi với bạn nào?']], ids.map(id => [remoteName(id), remoteName(id)]));
+      if (typeof k === 'number' && k >= 0 && ids[k]) G.inviteGame(g, ids[k]); return; }
+    G.inviteGame(g, ids[0]); });
   return m;
 };
 G.inviteGame = (game, to, level, size, wait) => {

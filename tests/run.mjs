@@ -1696,6 +1696,26 @@ await check('testerrewards', async () => {
   return 'on phone, tablet and computer: counted fixed list and quiet coins (more for a spoken note), the Silver Ladybird on the shirt (and in the look friends see), the tester hat, backpack and cape, five stickers, the week\'s star by the name, and the Tester\'s Corner';
 });
 
+await check('twoplayerpick', async () => {
+  // (owner, 1 Nov 2026 AEDT) Caro is for two: with two friends in the room, Play together asks who to play with and invites
+  // that friend (it used to invite the first one); with one friend it invites straight away
+  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const { Net } = await import('/js/net.js'), G = __sv, wait = ms => new Promise(r => setTimeout(r, ms)), sent = [], inv = G.inviteGame, saved = Net.remotes;
+    G.inviteGame = (g, to) => { sent.push([g, to]); }; Net.remotes = { aa: { name: 'Bin' }, bb: { name: 'Lan' } };
+    try {
+      G.openPlayTogether(); await wait(200); document.querySelector('.playtogether [data-g="caro"]').click(); await wait(400);
+      const d = document.querySelector('.dialog'), choices = d ? [...d.querySelectorAll('.dch')].map(x => x.textContent.trim()) : [];
+      const lan = d && [...d.querySelectorAll('.dch')].find(x => /Lan/.test(x.textContent)); lan?.click(); await wait(300);
+      Net.remotes = { aa: { name: 'Bin' } }; G.openPlayTogether(); await wait(200); document.querySelector('.playtogether [data-g="caro"]').click(); await wait(300);
+      return { choices, sent, dialogAfter: !!document.querySelector('.dialog') };
+    } finally { G.inviteGame = inv; Net.remotes = saved; }
+  });
+  ok(r.choices.length === 2 && JSON.stringify(r.sent) === JSON.stringify([['caro', 'bb'], ['caro', 'aa']]) && !r.dialogAfter, JSON.stringify(r));
+  await P.ctx.close();
+  return 'two friends: "Play with whom?" lists both and invites the one chosen; one friend: invited straight away';
+});
+
 await check('launchbanner', async () => {
   // (owner, 1 Nov 2026 AEDT) Studio's launch date on the website: Coming soon with the days left before it, Open now with
   // Play now from it, nothing while no date is set; in English and Vietnamese
