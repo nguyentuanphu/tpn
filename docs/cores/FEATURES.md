@@ -188,7 +188,8 @@ How it works (js/custom.js, check `rollout`):
 | 28 Nov 2026 | The companion grows and the coin goal for its hats; price pictures and sellers who remember you | `companionGrow`, `saveGoal`, `priceTags`, `sellersRemember` |
 | 5 Dec 2026 | "Where is...?" sparkles and village job boards; Ông Cú as guide | `wayfind`, `jobs`, `owlGuide` |
 | 12 Dec 2026 | Reading corner (if the trial is done); house guide; animals with homes | `readingTrial`, `houseGuide`, `animalHomes` |
-| 19 Dec 2026 | Christmas week (its own date); every villager talks and their day plan | `villagerTalk`, `dayPlan` |
+| 1 Nov 2026 (v1.06, owner moved it) | Every villager talks: a fact of their place, then an everyday science fact | `villagerTalk` |
+| 19 Dec 2026 | Christmas week (its own date); villagers' day plan | `dayPlan` |
 | 26 Dec 2026 | New Year's Eve (its own date) | none |
 | 2 Jan to 6 Mar 2027 | One money game a week: Piggy Bank, Coin or Note?, Need or Want?, Which Is Cheaper?, Lucky Money Count (30 Jan, before Tết on 6 Feb), Three Jars, Shopping List, Wait and Grow, Little Shopkeeper, Swap and Trade | `money_heodat`, `money_coinnote`, `money_needwant`, `money_cheaper`, `money_lixi`, `money_bahu`, `money_shoplist`, `money_waitgrow`, `money_shopkeep`, `money_barter` |
 

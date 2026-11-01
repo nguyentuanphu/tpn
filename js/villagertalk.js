@@ -7,11 +7,15 @@ import { dialog } from './popups.js';
 import { SFX } from './audio.js';
 import { CITIES } from './world.js';
 import { WORLD as MAP_WORLD } from './content/map.js';
-import { VILLAGER_LINES, VILLAGER_JOBS } from './content/villagerlines.js';
+import { VILLAGER_LINES, VILLAGER_JOBS, SCIENCE_LINES } from './content/villagerlines.js';
 import { sprite } from './gfx.js';
 
 // the region of a spot: Australia on the west bank, the home island in the middle, Vietnam east (as traffic.js does)
 const regionOf = (x, z) => { if (MAP_WORLD.keepLeft.some(([x0, x1, z0, z1]) => x > x0 && x < x1 && z > z0 && z < z1)) return 'au'; let best = 'vn', bd = 1e9; for (const c of CITIES) { const d = Math.hypot(c.x - x, c.z - z); if (d < bd) { bd = d; best = c.cc; } } return Math.abs(x) < 70 && Math.abs(z + 14) < 100 ? 'home' : best; };
+
+// (owner, 1 Nov 2026 AEDT) a fact of the place, then an everyday science fact, taking turns
+const mixedCache = new Map();
+const mixed = place => { if (!mixedCache.has(place)) { const out = [], n = Math.max(place.length, SCIENCE_LINES.length); for (let i = 0; i < n; i++) { if (i < place.length) out.push(place[i]); if (i < SCIENCE_LINES.length) out.push(SCIENCE_LINES[i]); } mixedCache.set(place, out); } return mixedCache.get(place); };
 
 export function createVillagerTalk(G) {
   const me = new Set(G.heroes.map(h => h.av && h.av.root)), added = [], seen = new Set();
@@ -31,7 +35,7 @@ export function createVillagerTalk(G) {
     seen.add(o);
     const p = o.position;
     if (G.interactables.some(i => !added.includes(i) && !i.walks && Number.isFinite(i.x) && Math.hypot(i.x - p.x, i.z - p.z) < 2.6)) continue;   // already has words of its own (a tap that moves, another villager's or a bus's, does not count: it goes away)
-    const reg = regionOf(p.x, p.z), lines = VILLAGER_LINES[reg] || VILLAGER_LINES.vn; let n = k++ % lines.length;
+    const reg = regionOf(p.x, p.z), lines = mixed(VILLAGER_LINES[reg] || VILLAGER_LINES.vn); let n = (k++ * 3) % lines.length;
     // (Round U) a job, with its picture over the villager's head
     const jobs = VILLAGER_JOBS[reg] || VILLAGER_JOBS.vn, job = jobs[(jobN[reg] = (jobN[reg] || 0) + 1) % jobs.length], tag = sprite(job[0], .55);
     tag.position.set(0, 2.45, 0); o.add(tag);

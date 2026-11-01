@@ -4788,12 +4788,13 @@ await check('rollout', async () => {
   await P.ctx.close();
   // the New! moment on its start day, and a tester's week-early peek (Studio's rules as the website gives them)
   const pre = `try { const d = n => { const t = new Date(Date.now() + n * 864e5); return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0'); };
-    localStorage.setItem('sv2_live', JSON.stringify({ releases: { jobs: { on: true, start: d(0), newDays: 7 }, wayfind: { on: true, start: d(3), newDays: 7 }, singers: { on: true, start: d(9), newDays: 7 } }, festivals: {} })); } catch (e) { }`;
+    localStorage.setItem('sv2_live', JSON.stringify({ releases: { jobs: { on: true, start: d(0), newDays: 7 }, wayfind: { on: true, start: d(3), newDays: 7 }, singers: { on: true, start: d(9), newDays: 7 } }, festivals: {} })); } catch (e) { }
+    window.__newCards = []; setInterval(() => { const c = [...document.querySelectorAll('.reward')].find(e => /New in the valley/.test(e.textContent)); if (c && !window.__newCards.includes(c.textContent)) window.__newCards.push(c.textContent); }, 100);`; // (1 Nov 2026 AEDT) the card shows for 2.6 s and can come before the check starts looking (another release new the same day brings it to the first moment): it is recorded from the page's start
   const Q = await open(b, { w: 1024, h: 700, pre });
   const n = await Q.page.evaluate(async () => {
     const G = __sv, C = await import('/js/custom.js'), wait = ms => new Promise(r => setTimeout(r, ms)); let card = '';
     // (31 Oct AEDT) every card on screen: on a festival day the festival's card can be the first one
-    for (let k = 0; k < 160 && !card; k++) { await wait(250); const c = [...document.querySelectorAll('.reward')].find(e => /New in the valley/.test(e.textContent));   // (up to 40 s: under a busy suite the card waits for other pop-ups)
+    for (let k = 0; k < 160 && !card; k++) { if (window.__newCards && window.__newCards.length) { card = window.__newCards.join(' | '); break; } await wait(250); const c = [...document.querySelectorAll('.reward')].find(e => /New in the valley/.test(e.textContent));   // (up to 40 s: under a busy suite the card waits for other pop-ups)
       if (c) card = c.textContent; }
     const before = { wayfind: C.releaseOn('wayfind'), singers: C.releaseOn('singers'), jobs: C.releaseOn('jobs'), isNew: C.releaseNew('jobs'), keepWay: G.keep('wayfind') };
     C.setPeeks([], 7); const tester = { wayfind: C.releaseOn('wayfind'), singers: C.releaseOn('singers') }; C.setPeeks([]);
