@@ -1,0 +1,2228 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/ui.ts": "686d5f3e8a2e83fce48dad7d18173422ba8c229276d85da09d197f5361984e66",
+    "js/games/animals2.ts": "e922a0bb36daefff928cedcdee8bd329417666a8ed126f426970b853057a1bd1",
+    "js/games/hocvui-meta.ts": "056e88046015db51bafa691c6dcab8280c468c756075531f98ed43ee57aa136e",
+    "js/games/me2.ts": "d8e7dacb6f96a0a0ab7fe15431be3758e05a491caf1cc1b7df46ad64bc10140f",
+    "js/games/music2.ts": "c7d55650af17fff70e9a11a5138b149da7ab7476091a3207869525dff2276528",
+    "js/games/places2.ts": "cef99a0d581ce8932e5ab747d07dcb87493e5412f8dbe89b7bce81eac714f2a0",
+    "js/games/science.ts": "f20a61725dc35ce2292a24094d675838f50fa70013755b9aa90a5d71d67315ef",
+    "js/games/tiengviet.ts": "30a328942185569eeeeb26a3e23be73cc8b907ae7eff1f08a171aef422f33149",
+    "js/content/villagerlines.ts": "2135ce616c90f7cd6fb898663f459114689f090edd4dcfb9653df1d30bb6e4ff",
+    "js/games/catalog.ts": "861e274f31cf31fee27678cbf6c57343b918d39b92cd6a820c04aa19ea7c1bf7",
+    "js/content/activities.ts": "1c2e390b238a0013701ae632d99f8a143b2b60d8bf17327dd2b23a7c989d5b29",
+    "js/content/hocvui.ts": "b715db3451e4e16a5e13e1cde78e046cab1caa4375f46fb97eb12b185d60daff"
+  },
+  "lines": [
+    {
+      "id": "dc8d4788012eb779",
+      "lang": "vi",
+      "text": "Mũ đẹp quá!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/ui.ts"
+      ]
+    },
+    {
+      "id": "bebe94b2524984c7",
+      "lang": "vi",
+      "text": "Bờ biển băng giá",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "60ad7c0c0-492c7a",
+      "lang": "vi",
+      "text": "Ngọn cây",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "fb86384f-7b9e31bb",
+      "lang": "vi",
+      "text": "Bờ sông",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "ab5cea8c-620d0a4",
+      "lang": "vi",
+      "text": "Hốc cây",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "af91c27f-3528c650",
+      "lang": "vi",
+      "text": "🐨 Koala con",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "c0abbac3-53313a60",
+      "lang": "vi",
+      "text": "🐻 Gấu con",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "ff12cbe7-65a9b77e",
+      "lang": "vi",
+      "text": "🐘 Voi con",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "7e7022a1617ec8a4",
+      "lang": "vi",
+      "text": "🦊 Cáo con",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "8e0550d3-45504de5",
+      "lang": "vi",
+      "text": "🐑 Cừu con",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "fdee1eeb-710a7bc4",
+      "lang": "vi",
+      "text": "🐣 Gà con",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "71170e4d14753bb4",
+      "lang": "vi",
+      "text": "🍯 Mật ong",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "5717f56e-3e2a47ce",
+      "lang": "vi",
+      "text": "🌰 Hạt dẻ",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "d810034e77244d73",
+      "lang": "vi",
+      "text": "6 con cá",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "aa733c73-63ab24c7",
+      "lang": "vi",
+      "text": "7 con cá",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "7a9cf0e000044ad3",
+      "lang": "vi",
+      "text": "8 con cá",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "241040a5-67818d1e",
+      "lang": "vi",
+      "text": "9 con cá",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "31d5b23f7a1f4c7e",
+      "lang": "vi",
+      "text": "10 con cá",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "eda092c804c2c94b",
+      "lang": "vi",
+      "text": "🐟 Con cá",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "bfe496b9-17c858a7",
+      "lang": "vi",
+      "text": "🐧 Chim cánh cụt",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "07392a31-7ce31b60",
+      "lang": "vi",
+      "text": "🐇 Con thỏ",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "a745afb7-4f8aee0e",
+      "lang": "vi",
+      "text": "🐸 Con ếch",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/animals2.ts"
+      ]
+    },
+    {
+      "id": "44b6447a-63a06b37",
+      "lang": "vi",
+      "text": "Đoán trước nhé: vật này nổi hay chìm?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "f0822622-63f76b0b",
+      "lang": "vi",
+      "text": "Kéo vật vào chậu nước, hoặc chạm để thả vào.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "154999dc7f5ceeff",
+      "lang": "vi",
+      "text": "Xem chuyện gì xảy ra, rồi nghe vì sao nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "67bd0f0b-34ac3a7d",
+      "lang": "vi",
+      "text": "Thử thật: thả quả cam vào chậu nước, lúc còn vỏ và lúc đã bóc vỏ!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "e27f8e4a3f92f0f9",
+      "lang": "vi",
+      "text": "Đoán trước nhé: nam châm có hút vật này không?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "cfa0d6081a23cb67",
+      "lang": "vi",
+      "text": "Kéo nam châm tới bàn, hoặc chạm vào nam châm.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "80c3437921821257",
+      "lang": "vi",
+      "text": "Xem vật nào bị hút, rồi nghe vì sao nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "e45651ae-43e6d7f8",
+      "lang": "vi",
+      "text": "Thử thật: cùng người lớn tìm xem nam châm tủ lạnh hút được những gì trong nhà.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "35a8947c-210c9e92",
+      "lang": "vi",
+      "text": "Nhìn các con dốc và đoán bóng nào sẽ lăn xa nhất.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "987727c0-2c583614",
+      "lang": "vi",
+      "text": "Chạm Thả bóng, các quả bóng sẽ lăn xuống.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "06162ea91d3db7fe",
+      "lang": "vi",
+      "text": "Xem mỗi quả dừng ở đâu, rồi nghe vì sao nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "5a1ac92c-d3f6e73",
+      "lang": "vi",
+      "text": "Thử thật: kê sách làm dốc và cho ô tô đồ chơi lăn xuống.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "2f408aae2d56c1bc",
+      "lang": "vi",
+      "text": "Đoán trước nhé: bạn nhỏ ngồi chỗ nào thì nâng được bạn lớn?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "75a535e4250fb6d4",
+      "lang": "vi",
+      "text": "Kéo bạn nhỏ tới một chỗ ngồi, hoặc chạm vào chỗ ngồi.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "fffffcc7-7c9d93c",
+      "lang": "vi",
+      "text": "Thử chỗ khác cho đến khi bạn lớn được nâng lên!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "77e3851853097b91",
+      "lang": "vi",
+      "text": "Thử thật: khi chơi bập bênh, ngồi gần hoặc xa điểm giữa xem khác nhau thế nào.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "bc56857026c58c19",
+      "lang": "vi",
+      "text": "Đoán trước nhé: bóng sẽ đổ về đâu, dài hay ngắn?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "ac3ca601-3a6f06fd",
+      "lang": "vi",
+      "text": "Kéo đèn tới vòng tròn, hoặc chạm vào vòng tròn.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "8e81f57d-623f6c8",
+      "lang": "vi",
+      "text": "Xem bóng di chuyển, rồi nghe vì sao nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "db0719313d50c466",
+      "lang": "vi",
+      "text": "Thử thật: rọi đèn pin vào đồ chơi trong phòng tối và di chuyển đèn.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "e275c51b765fc1bb",
+      "lang": "vi",
+      "text": "Đoán trước nhé: chai nào kêu cao nhất hay trầm nhất?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "2093e26e-720f4395",
+      "lang": "vi",
+      "text": "Gõ thìa vào từng chai để nghe tiếng của nó.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "2f24f3d0-307076e",
+      "lang": "vi",
+      "text": "Lắng nghe, rồi nghe vì sao nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "a23a7f2404bfb8c1",
+      "lang": "vi",
+      "text": "Thử thật: rót nước vào mấy chiếc cốc nhiều ít khác nhau rồi gõ nhẹ.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "e37b3021-6ed0306",
+      "lang": "vi",
+      "text": "Nghe tiếng được đọc.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "e01d0c62-2bbb4b94",
+      "lang": "vi",
+      "text": "Giọng đi lên, đi xuống, uốn lượn hay đi ngang?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "f225009c-196a5281",
+      "lang": "vi",
+      "text": "Chạm vào tiếng có dấu thanh đúng.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "32634d5b-1107489b",
+      "lang": "vi",
+      "text": "Nhìn tranh và nghe tên của nó.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "0ad4f4b6-7255493f",
+      "lang": "vi",
+      "text": "Chọn âm đầu, rồi vần, rồi dấu thanh.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "ab213b180dbd74ec",
+      "lang": "vi",
+      "text": "Nghe tiếng con vừa ghép!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/hocvui-meta.ts"
+      ]
+    },
+    {
+      "id": "fe44a3f0463ac2b1",
+      "lang": "vi",
+      "text": "Tắm",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/me2.ts"
+      ]
+    },
+    {
+      "id": "b2b1fab4-272d3aba",
+      "lang": "vi",
+      "text": "Nước ngọt có ga",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/me2.ts"
+      ]
+    },
+    {
+      "id": "abe173d24e826c0e",
+      "lang": "vi",
+      "text": "Quát bạn",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/me2.ts"
+      ]
+    },
+    {
+      "id": "e20a37f47ec79f20",
+      "lang": "vi",
+      "text": "Giật đồ chơi của bạn",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/me2.ts"
+      ]
+    },
+    {
+      "id": "8c1e96f5-700577c3",
+      "lang": "vi",
+      "text": "Vứt rác bừa bãi",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/me2.ts"
+      ]
+    },
+    {
+      "id": "2bc040172ecf14ea",
+      "lang": "vi",
+      "text": "Chen hàng",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/me2.ts"
+      ]
+    },
+    {
+      "id": "d453c6cb-26aaec0a",
+      "lang": "vi",
+      "text": "Xòe ra hai cái cánh",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/music2.ts"
+      ]
+    },
+    {
+      "id": "a7d638a5-2c7f562a",
+      "lang": "vi",
+      "text": "Ô tô đồ chơi",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/places2.ts"
+      ]
+    },
+    {
+      "id": "c084490c-35bfb4c4",
+      "lang": "vi",
+      "text": "Con đã thấy hình nào đầu tiên?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/places2.ts"
+      ]
+    },
+    {
+      "id": "7cf3911523c5ea33",
+      "lang": "vi",
+      "text": "Con đã thấy hình nào trong chuyến đi này?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/places2.ts"
+      ]
+    },
+    {
+      "id": "b16c20af7f041aab",
+      "lang": "vi",
+      "text": "Bóng chưa chạm ngôi sao. Thử vòng khác nhé!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "9b67283f1a7232d6",
+      "lang": "vi",
+      "text": "Giờ con biết rồi! Chạm vào điều đã thật sự xảy ra nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "19d4293c-7c7ccc55",
+      "lang": "vi",
+      "text": "Chiếc lá nhẹ và mỏng nên nước đỡ nó lên.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "675ffbcd-6a33bece",
+      "lang": "vi",
+      "text": "Hòn đá nặng so với kích thước của nó nên chìm xuống đáy.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "bfa79b3a-7d13bc96",
+      "lang": "vi",
+      "text": "Con vịt có không khí trong lông nên nổi trên mặt nước.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "d7f6107c26f1db34",
+      "lang": "vi",
+      "text": "Đồng xu nhỏ nhưng nặng so với kích thước của nó nên chìm.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "6ae0ae545a842621",
+      "lang": "vi",
+      "text": "Chiếc lông vũ rất nhẹ nên nổi trên mặt nước.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "e60ded6a-5cdc89d5",
+      "lang": "vi",
+      "text": "Chìa khóa bằng kim loại, nặng so với kích thước nên chìm.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "d9c9f36e-e05ebd4",
+      "lang": "vi",
+      "text": "Quả táo có nhiều không khí bên trong nên nổi.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "a5ad083a-14e97c6d",
+      "lang": "vi",
+      "text": "Gỗ nhẹ hơn nước, nên khúc gỗ to cũng nổi.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "31fc1778-1ca4c5b8",
+      "lang": "vi",
+      "text": "Chiếc thìa kim loại nặng so với kích thước nên chìm.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "298451f7-31039e25",
+      "lang": "vi",
+      "text": "Đá lạnh nhẹ hơn nước một chút nên nổi.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "3ffa97e4-2bbee34d",
+      "lang": "vi",
+      "text": "Quả trứng tươi nặng hơn phần nước nó chiếm chỗ nên chìm.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "fb3471f61991eaaf",
+      "lang": "vi",
+      "text": "Vỏ cam có rất nhiều túi khí nhỏ nên quả cam nổi.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "93f8f75a292ddd2a",
+      "lang": "vi",
+      "text": "Miếng bọt biển có nhiều lỗ chứa khí nên nổi.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "13706c82767f4c5d",
+      "lang": "vi",
+      "text": "Bút chì làm bằng gỗ nên nổi.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "11e7772d-29239016",
+      "lang": "vi",
+      "text": "Vật này nổi hay chìm? Con đoán xem!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "0719f549-4b98590e",
+      "lang": "vi",
+      "text": "Giờ thả các vật vào nước: kéo, hoặc chạm vào từng vật nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "6f60d9e4-e35f3da",
+      "lang": "vi",
+      "text": "Giờ thả vật vào nước: kéo, hoặc chạm vào nó nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "31ce6f8a-390d640",
+      "lang": "vi",
+      "text": "Kẹp giấy",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "93b8cccd4ed17147",
+      "lang": "vi",
+      "text": "Chiếc kẹp giấy làm bằng thép, và nam châm hút thép.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "be156a1e-32cf53d",
+      "lang": "vi",
+      "text": "Con ốc làm bằng sắt nên nam châm hút nó.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "50baaf45-6d53080c",
+      "lang": "vi",
+      "text": "Chiếc lá không phải kim loại nên nam châm không hút.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "9d38217067ea565c",
+      "lang": "vi",
+      "text": "Gấu bông làm bằng vải, không phải sắt, nên nằm yên.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "da9aa21a39077ee9",
+      "lang": "vi",
+      "text": "Quả táo không có sắt nên nam châm không hút được.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "39fbf7ef-580a3462",
+      "lang": "vi",
+      "text": "Ghim băng",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "44a27fa024e41c81",
+      "lang": "vi",
+      "text": "Chiếc ghim băng làm bằng thép nên nam châm hút nó.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "794ee5914eac807b",
+      "lang": "vi",
+      "text": "Cái kéo có lưỡi bằng thép nên nam châm hút.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "3c962fb8276f2f4b",
+      "lang": "vi",
+      "text": "Bút chì làm bằng gỗ nên nam châm không hút.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "e5550a2c61260801",
+      "lang": "vi",
+      "text": "Gỗ không phải kim loại nên nam châm không hút.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "9e94b106-5928a00f",
+      "lang": "vi",
+      "text": "Lon đồ hộp",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "b4728236656a20e0",
+      "lang": "vi",
+      "text": "Phần lớn lon đồ hộp làm bằng thép nên nam châm hút.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "c4f403c0-631619c4",
+      "lang": "vi",
+      "text": "Chuông đồng",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "2c4945755f0319c1",
+      "lang": "vi",
+      "text": "Cái chuông bằng kim loại, nhưng là đồng thau. Nam châm không hút mọi kim loại.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "cfc52c5e-33d9d534",
+      "lang": "vi",
+      "text": "Bình đất",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "24a5eb660686d4d6",
+      "lang": "vi",
+      "text": "Cái bình làm bằng đất nung nên nam châm không hút.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "bc0fbbdb79a02392",
+      "lang": "vi",
+      "text": "Nam châm có hút vật này không? Con đoán xem!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "e2655990-532ee52f",
+      "lang": "vi",
+      "text": "Không hút",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "90ca1b57-62bec0c6",
+      "lang": "vi",
+      "text": "Giờ đưa nam châm lại gần: kéo hoặc chạm vào nó nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "853878d4-2d24127d",
+      "lang": "vi",
+      "text": "Bóng đỏ",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "cd9a372d75609dac",
+      "lang": "vi",
+      "text": "Bóng xanh dương",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "a6ac1918-39fb63a4",
+      "lang": "vi",
+      "text": "Bóng xanh lá",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "ccd2237d4565cd2c",
+      "lang": "vi",
+      "text": "Bóng vàng",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "c21a02a057c79fd8",
+      "lang": "vi",
+      "text": "Cỏ cọ vào bóng làm bóng chậm lại, nên dù dốc cao bóng cũng không lăn xa.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "e7315187-1c028229",
+      "lang": "vi",
+      "text": "Con dốc cao và dốc nhất cho bóng nhiều tốc độ nhất, nên bóng lăn xa nhất.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "89de876a4cb32b6a",
+      "lang": "vi",
+      "text": "Con dốc thấp nhất cho bóng ít tốc độ nhất, nên bóng dừng sớm nhất.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "0d5b4572-3f60ebd7",
+      "lang": "vi",
+      "text": "Quả bóng nào sẽ lăn xa nhất? Con đoán xem!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "e2f62af4-d143c71",
+      "lang": "vi",
+      "text": "Quả bóng nào sẽ dừng sớm nhất, gần con dốc nhất?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "dc6a83a53fa3aea1",
+      "lang": "vi",
+      "text": "Chạm Thả bóng và xem các quả bóng lăn nhé!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "47b77c6e01296bb7",
+      "lang": "vi",
+      "text": "Gần điểm giữa",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "54384818-6a697001",
+      "lang": "vi",
+      "text": "Ở cuối",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "2871d95b0e51643d",
+      "lang": "vi",
+      "text": "Thỏ nên ngồi ở đâu để nâng được gấu? Con đoán xem!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "86067011-5193a549",
+      "lang": "vi",
+      "text": "Chỗ ngồi nào gần điểm giữa nhất mà vẫn nâng được gấu?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "4f79e0a407505d25",
+      "lang": "vi",
+      "text": "Ngồi càng xa điểm giữa, con đè xuống càng mạnh, nên bạn gấu to được nâng lên!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "83e3855367215ff3",
+      "lang": "vi",
+      "text": "Cân nặng nhân khoảng cách tới điểm giữa: bên nào lớn hơn thì đi xuống, nên gấu được nâng lên.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "17e24f9b-22d499fb",
+      "lang": "vi",
+      "text": "Giờ cho thỏ ngồi lên bập bênh: kéo thỏ tới, hoặc chạm vào một chỗ ngồi nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "1435e52c3addd991",
+      "lang": "vi",
+      "text": "Thăng bằng rồi! Không ai lên cả. Thử chỗ khác nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "bc7c6301103e77cf",
+      "lang": "vi",
+      "text": "Gấu vẫn ở dưới. Thử chỗ khác nhé!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "4223bde043283369",
+      "lang": "vi",
+      "text": "Ánh sáng đi theo đường thẳng, nên bóng đổ về phía xa đèn.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "8e63c5ca242d1a34",
+      "lang": "vi",
+      "text": "Đèn ở cao chiếu xuống dốc hơn, nên bóng ngắn lại.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "500465f224894626",
+      "lang": "vi",
+      "text": "Đèn ở thấp chiếu xiên từ bên cạnh, nên bóng dài ra.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "e887acd36ea1476f",
+      "lang": "vi",
+      "text": "Khi đèn lại gần gấu bông, ánh sáng chiếu xuống dốc hơn, nên bóng ngắn lại.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "b22cb733-77a25533",
+      "lang": "vi",
+      "text": "Khi đèn ra xa, ánh sáng chiếu xiên hơn, nên bóng dài ra.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "4b98d2eb-795af09c",
+      "lang": "vi",
+      "text": "Ánh sáng đi thẳng từ đèn, qua đỉnh đầu gấu bông, tới cuối cái bóng.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "d42bee08-83e5182",
+      "lang": "vi",
+      "text": "Đèn sẽ chuyển tới vòng tròn. Bóng sẽ đổ về phía nào?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "302d44e6099a3daf",
+      "lang": "vi",
+      "text": "Đèn nên đặt ở vòng nào để bóng chạm tới ngôi sao?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "6706cc6c6297d33c",
+      "lang": "vi",
+      "text": "Đèn sẽ chuyển tới vòng tròn. Bóng sẽ dài ra hay ngắn lại?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "3ff587101cbc73ad",
+      "lang": "vi",
+      "text": "Giờ đưa đèn tới vòng tròn: kéo đèn tới, hoặc chạm vào vòng tròn nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "5a5b58eb6e8535a5",
+      "lang": "vi",
+      "text": "Chai đỏ",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "71791d625b025507",
+      "lang": "vi",
+      "text": "Chai xanh dương",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "1b3814713309ae35",
+      "lang": "vi",
+      "text": "Chai xanh lá",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "ebcc7cfa-7ac67871",
+      "lang": "vi",
+      "text": "Chai vàng",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "f5f1bf8f406a2664",
+      "lang": "vi",
+      "text": "Chai tím",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "e1f589850d84a302",
+      "lang": "vi",
+      "text": "Ít nước thì chai rung nhanh hơn, nên tiếng kêu cao hơn.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "90af5e155f2609bb",
+      "lang": "vi",
+      "text": "Nhiều nước làm chai rung chậm hơn, nên tiếng kêu trầm hơn.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "a6c34641-3c20e31e",
+      "lang": "vi",
+      "text": "Cùng một mực nước thì rung giống nhau, nên hai tiếng giống nhau.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "bfe4f6a2-1cdd6b87",
+      "lang": "vi",
+      "text": "Gõ vào thì chai nào kêu cao nhất?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "0e9678c3-547b0190",
+      "lang": "vi",
+      "text": "Gõ vào thì chai nào kêu trầm nhất?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "027fe711-28bac1e",
+      "lang": "vi",
+      "text": "Nghe nốt nhạc này. Chai nào kêu giống như vậy?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "a415e65d-74b69316",
+      "lang": "vi",
+      "text": "Giờ gõ thìa vào từng chai và lắng nghe nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "fad28e7f6453ece3",
+      "lang": "vi",
+      "text": "Không dấu: giọng đi ngang, đều đều.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "cd072cb9-1aac12da",
+      "lang": "vi",
+      "text": "Dấu sắc: giọng đi lên.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "0d1983fc-5ca3c143",
+      "lang": "vi",
+      "text": "Dấu huyền: giọng đi xuống.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "221b2b6b-43902014",
+      "lang": "vi",
+      "text": "Dấu hỏi: giọng xuống rồi lên.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "f2a1930c0fcec7c7",
+      "lang": "vi",
+      "text": "Dấu ngã: giọng ngắt rồi vút lên.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "9524992122609f72",
+      "lang": "vi",
+      "text": "Dấu nặng: giọng nặng, ngắn và thấp.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "30703d97-fa70821",
+      "lang": "vi",
+      "text": "Nghe hai tiếng này. Con nghe thấy từ nào?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "b548dc14427fefde",
+      "lang": "vi",
+      "text": "Nghe tiếng này. Tiếng có dấu thanh gì?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "17d4c5f4422e3594",
+      "lang": "vi",
+      "text": "Đúng rồi! Mỗi tiếng trong từ có dấu thanh của riêng nó.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "64f01b43-1ae90f45",
+      "lang": "vi",
+      "text": "Tiếng này bắt đầu bằng âm gì?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "48684a12230d4abf",
+      "lang": "vi",
+      "text": "Vần tiếp theo là vần gì?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "7a08bd315884b5b0",
+      "lang": "vi",
+      "text": "Tiếng này cần dấu thanh gì?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "89bb4d6a05816430",
+      "lang": "vi",
+      "text": "Ghép tiếng cho bức tranh: âm đầu, vần và dấu thanh.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "246b72927de6ef5e",
+      "lang": "vi",
+      "text": "Nhìn tranh và lắng nghe nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "5fa52ff83b7cb3d7",
+      "lang": "vi",
+      "text": "Phở là bánh phở chan nước dùng nóng. Nhiều người ăn phở vào bữa sáng đó!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "f4722e51-51e20948",
+      "lang": "vi",
+      "text": "Trọng lực kéo mọi vật về phía mặt đất. Vì thế, khi con buông tay, quả bóng rơi xuống.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "8251d2bf-58f2c268",
+      "lang": "vi",
+      "text": "Lực đẩy hoặc lực kéo có thể làm vật chuyển động, dừng lại hoặc đổi hướng.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "5622f3cf-67b72e4a",
+      "lang": "vi",
+      "text": "Ma sát giúp giày bám vào mặt đất. Mặt đất trơn làm giày bám kém hơn.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "999e64ba-3d03271",
+      "lang": "vi",
+      "text": "Chiếc thuyền nổi chiếm chỗ của nước, và nước đẩy thuyền lên trên.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "bd27d6be7c941979",
+      "lang": "vi",
+      "text": "Bóng xuất hiện khi một vật chắn ánh sáng. Khi nguồn sáng di chuyển, bóng cũng di chuyển theo.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "0cdd0cec3bc8d6e4",
+      "lang": "vi",
+      "text": "Gương hắt ánh sáng trở lại. Nhờ vậy con nhìn thấy khuôn mặt mình trong gương.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "9180b3e4-4560e7f9",
+      "lang": "vi",
+      "text": "Âm thanh bắt đầu từ sự rung. Khi mặt trống rung, không khí rung theo, và tai mình nghe thấy.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "41564f657eefa79a",
+      "lang": "vi",
+      "text": "Nam châm hút một số kim loại, như sắt. Nam châm không hút mọi kim loại.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "84aab235-1c763e97",
+      "lang": "vi",
+      "text": "Dốc thoải là đường lên dài hơn, nhưng giúp đưa đồ lên cao nhẹ nhàng hơn.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "a231e1f65b77174a",
+      "lang": "vi",
+      "text": "Bánh xe giúp đồ vật lăn. Xe đẩy chở đồ nặng mà mình không phải bê.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "8c2e57d3-5957651e",
+      "lang": "vi",
+      "text": "Vũng nước khô dần vì nước biến thành hơi bay vào không khí.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "e0e8e83f-782247c",
+      "lang": "vi",
+      "text": "Mây được tạo từ những giọt nước rất nhỏ. Khi giọt nước nặng lên, chúng rơi xuống thành mưa.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "a34ef5a9-47146527",
+      "lang": "vi",
+      "text": "Phần lớn cây dùng ánh nắng, nước và không khí để tự làm ra thức ăn.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "012d48d03271ab2d",
+      "lang": "vi",
+      "text": "Rễ giữ cho cây đứng vững và hút nước từ đất.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "33f33b740-248ffe",
+      "lang": "vi",
+      "text": "Rửa tay bằng xà phòng và nước giúp rửa sạch mầm bệnh trên tay.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "e196ca2963396216",
+      "lang": "vi",
+      "text": "Khóa vòi nước khi đang đánh răng giúp tiết kiệm nước.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "35534170-54ac3313",
+      "lang": "vi",
+      "text": "Mỗi nơi có cách phân loại rác khác nhau. Con hỏi người lớn nên bỏ vào thùng nào nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "921091a36de6b641",
+      "lang": "vi",
+      "text": "Dừng lại ở mép đường và qua đường cùng người lớn. Luôn nhìn và lắng nghe nhé.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "cbaab52f-39c1b536",
+      "lang": "vi",
+      "text": "Bập bênh là một đòn bẩy. Ngồi xa điểm giữa hơn, con có thể nâng được bạn nặng hơn!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "e31179b645c25412",
+      "lang": "vi",
+      "text": "Vật nặng và vật nhẹ rơi nhanh như nhau, nếu không khí không cản chúng lại.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "045844b138453cdb",
+      "lang": "vi",
+      "text": "Ánh sáng đi theo đường thẳng. Vì thế con không nhìn được qua góc tường.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "0a66e42d-1fa511b7",
+      "lang": "vi",
+      "text": "Không khí nóng bay lên cao. Nhờ vậy khinh khí cầu bay lên trời.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "5bcf1e2431556a1a",
+      "lang": "vi",
+      "text": "Đá là nước bị đông lại. Làm ấm lên thì đá tan thành nước.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "ed932b973300731e",
+      "lang": "vi",
+      "text": "Cầu vồng xuất hiện khi nắng chiếu qua những giọt mưa. Ánh sáng tách ra thành nhiều màu.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/villagerlines.ts"
+      ]
+    },
+    {
+      "id": "d6ebae6b-4445927f",
+      "lang": "vi",
+      "text": "Nổi hay Chìm?",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/catalog.ts",
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "24e24fb47c377f13",
+      "lang": "vi",
+      "text": "Nam Châm Hút",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/catalog.ts",
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "b9beddc75eec2689",
+      "lang": "vi",
+      "text": "Dốc Lăn Bóng",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/catalog.ts",
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "b6158cab-2c1abf19",
+      "lang": "vi",
+      "text": "Bập Bênh Nâng Bạn",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/catalog.ts",
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "c581ded8465cec69",
+      "lang": "vi",
+      "text": "Đèn và Bóng",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/catalog.ts",
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "fc73d31d4add7671",
+      "lang": "vi",
+      "text": "Nhạc Chai Nước",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/catalog.ts",
+        "js/games/science.ts"
+      ]
+    },
+    {
+      "id": "403c635e1e152a60",
+      "lang": "vi",
+      "text": "Thám Tử Dấu Thanh",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/catalog.ts",
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "9d2629e6-64729a00",
+      "lang": "vi",
+      "text": "Bé Ghép Vần",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/games/catalog.ts",
+        "js/games/tiengviet.ts"
+      ]
+    },
+    {
+      "id": "e170ea2f37070d74",
+      "lang": "vi",
+      "text": "Tiếng Việt",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/activities.ts"
+      ]
+    },
+    {
+      "id": "57bdb78e5d878f00",
+      "lang": "vi",
+      "text": "Tiếng Anh",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/activities.ts"
+      ]
+    },
+    {
+      "id": "0212250e-6a68bcac",
+      "lang": "vi",
+      "text": "Toán",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/activities.ts"
+      ]
+    },
+    {
+      "id": "dac3d62b-64f6ff4b",
+      "lang": "vi",
+      "text": "Khoa học",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/content/activities.ts"
+      ]
+    },
+    {
+      "id": "07e7462b2b489574",
+      "lang": "vi",
+      "text": "la",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "c9fe81916ea2798a",
+      "lang": "vi",
+      "text": "lả",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "89e812d1-341f09b3",
+      "lang": "vi",
+      "text": "lã",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "c7fe7e6b-490043a8",
+      "lang": "vi",
+      "text": "lạ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "25e536ce-57760b2f",
+      "lang": "vi",
+      "text": "co",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "92e44f65265b1d97",
+      "lang": "vi",
+      "text": "cò",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "860090ee-5f8f28fd",
+      "lang": "vi",
+      "text": "cỏ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "8be4446012e5b1a9",
+      "lang": "vi",
+      "text": "cõ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "84008dc85815db20",
+      "lang": "vi",
+      "text": "cọ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "2fe9c3ba090adb62",
+      "lang": "vi",
+      "text": "me",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "a3e8e756-4f30c6c1",
+      "lang": "vi",
+      "text": "mé",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "a4e8e8e954fcc6f6",
+      "lang": "vi",
+      "text": "mè",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "d1ff39c03d7ec214",
+      "lang": "vi",
+      "text": "mẻ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "d7ff4332-7a2411f6",
+      "lang": "vi",
+      "text": "mẽ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "05e2c5d7-597e4554",
+      "lang": "vi",
+      "text": "bo",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "6605fef7-561128ae",
+      "lang": "vi",
+      "text": "bỏ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "8fe39f15-267c56a5",
+      "lang": "vi",
+      "text": "bõ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "6806021d61939491",
+      "lang": "vi",
+      "text": "bọ",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "1d845f8957bafd0a",
+      "lang": "vi",
+      "text": "cá vàng",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "dd15d55f210b4789",
+      "lang": "vi",
+      "text": "con gà",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "4f8ef36a3a326b51",
+      "lang": "vi",
+      "text": "mèo con",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "843c451a59412bb1",
+      "lang": "vi",
+      "text": "bà nội",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "792927781edeba6c",
+      "lang": "vi",
+      "text": "cây dừa",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "a80f2bb0-12aa1631",
+      "lang": "vi",
+      "text": "quả na",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "8d588184-127b1869",
+      "lang": "vi",
+      "text": "trời mưa",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "e4ef1a2372dbd46c",
+      "lang": "vi",
+      "text": "gấu",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    },
+    {
+      "id": "38ad76fa-2311ac32",
+      "lang": "vi",
+      "text": "trứng",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/content/hocvui.ts"
+      ]
+    }
+  ]
+}
