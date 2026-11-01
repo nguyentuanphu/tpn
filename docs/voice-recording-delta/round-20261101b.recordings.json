@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "status": "verified-delivery",
+  "batch": "docs/voice-recording-delta/round-20261101b.json",
+  "inventorySha256": "e634cb81365f53be402c1101d73c946f20cc9854864a0a1b6c3ca42621c621f8",
+  "encoding": {
+    "codec": "mp3",
+    "bitrate": 32000,
+    "sampleRate": 16000,
+    "channels": 1
+  },
+  "fullDecode": true,
+  "assets": [
+    {
+      "id": "64fefb5f-1cd8b2e7",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/64fefb5f-1cd8b2e7.mp3",
+      "bytes": 9936,
+      "sha256": "90b07f1f44452486b068aba343817e98f633cbbf2d3585d3984a36ab1b73d401",
+      "duration": 2.484
+    },
+    {
+      "id": "64fefb5f-1cd8b2e7",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/64fefb5f-1cd8b2e7.mp3",
+      "bytes": 9504,
+      "sha256": "eef9c6660906d3853e9ba679e7d7d2e4fa4f083370a8e8418cce4133f80c5238",
+      "duration": 2.376
+    },
+    {
+      "id": "64fefb5f-1cd8b2e7",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/64fefb5f-1cd8b2e7.mp3",
+      "bytes": 9585,
+      "sha256": "86a72a4037f55b42cb52ec58b6a7098043e9f63b6b6f0ce41f707361c2f0ef5d",
+      "duration": 2.34
+    },
+    {
+      "id": "bdc72e1f17cc549b",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/bdc72e1f17cc549b.mp3",
+      "bytes": 22176,
+      "sha256": "57fefa939f9e76e7bb33d1e29f72e0d17cb853cf66a32a5e93919a76d59a03df",
+      "duration": 5.544
+    },
+    {
+      "id": "bdc72e1f17cc549b",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/bdc72e1f17cc549b.mp3",
+      "bytes": 22032,
+      "sha256": "0c6c9000a246f48a3c48f80a2bf8c81a0379a8ca73dda6cacbfd4e6a2e022ec6",
+      "duration": 5.508
+    },
+    {
+      "id": "bdc72e1f17cc549b",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/bdc72e1f17cc549b.mp3",
+      "bytes": 19521,
+      "sha256": "5e38541f82901a159c76551c5dafeae2c0e6867cde04a560e01865954455fd2d",
+      "duration": 4.824
+    },
+    {
+      "id": "f13525dd32bc2252",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/f13525dd32bc2252.mp3",
+      "bytes": 7200,
+      "sha256": "bf559420b38c16b961de8a761007ab2d0e16ea032adb50c0bf66ad0da4651795",
+      "duration": 1.8
+    },
+    {
+      "id": "f13525dd32bc2252",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/f13525dd32bc2252.mp3",
+      "bytes": 7488,
+      "sha256": "a6e1ab83521cc9f172314339ace909d8478ec3536892466d03e01f5c115e12db",
+      "duration": 1.872
+    },
+    {
+      "id": "f13525dd32bc2252",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/f13525dd32bc2252.mp3",
+      "bytes": 5697,
+      "sha256": "726ad08cb270550acfbed6b11eb45b82e103dfa925d1357ba157aa105904c6b4",
+      "duration": 1.368
+    },
+    {
+      "id": "2eb1a90a2d432244",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "path": "voices/vi/f/2eb1a90a2d432244.mp3",
+      "bytes": 7344,
+      "sha256": "3d1d42cd8981c3756b2a13debc976b81e154e3a4eb53382916412c948f33569e",
+      "duration": 1.836
+    },
+    {
+      "id": "2eb1a90a2d432244",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "path": "voices/vi/m/2eb1a90a2d432244.mp3",
+      "bytes": 7776,
+      "sha256": "2dffc53eba80fb88fc21771b02bf6bcfba5ecca1e3359dcc6cb1a61d895633f5",
+      "duration": 1.944
+    },
+    {
+      "id": "2eb1a90a2d432244",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "path": "voices/fpt-leminh-v1/2eb1a90a2d432244.mp3",
+      "bytes": 6705,
+      "sha256": "c623e1e72ba2726cc8943cb38b1c380f61925ef4b534b4f001e653774f3657a5",
+      "duration": 1.62
+    }
+  ]
+}
