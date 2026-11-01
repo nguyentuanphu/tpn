@@ -3,16 +3,20 @@
 import { register, tapOne } from './frame.js';
 import { T } from '../i18n.js';
 import { shuffle, pick, el, wait } from '../util.js';
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
 
 // ---------- Tower of Hanoi (Tháp Hà Nội) ----------
 register({
   id: 'hanoi', icon: '🗼', name: () => T('Tower Stack', 'Tháp Hà Nội'),
   async run(api) {
-    const n = api.level <= 1 ? 2 : api.level === 2 ? 3 : 4;
+    const n = api.talent ? 5 : api.level <= 1 ? 2 : api.level === 2 ? 3 : 4;   // (levels) Talent: five discs
     const rods = [Array.from({ length: n }, (_, i) => n - i), [], []];
     const COLS = ['#e8434a', '#ffb52e', '#4cbf5c', '#3d7fd6', '#9a6bff'];
     const board = el('div', 'hanoi'); api.stage.appendChild(board);
-    const tools = el('div', 'tools', `<button class="pill hint">💡 ${T('Hint', 'Gợi ý')}</button><span class="moves"></span>`); api.stage.appendChild(tools);
+    // (levels) Talent: no hint button
+    const tools = el('div', 'tools', `${api.talent ? '' : `<button class="pill hint">💡 ${T('Hint', 'Gợi ý')}</button>`}<span class="moves"></span>`); api.stage.appendChild(tools);
     let held = null, moves = 0;
     const rodEls = [0, 1, 2].map(i => { const r = el('button', 'rod'); r._v = i; board.appendChild(r); return r; });
     function draw(hint?: number[] | null) {
@@ -38,7 +42,7 @@ register({
       return null;
     }
     api.plan(() => { const m = bestMove(); return m ? rodEls[held == null ? m[0] : m[1]] : null; });
-    tools.querySelector('.hint').onclick = () => { const m = bestMove(); if (m) { held = null; draw(m); api.say('Move a disc from the glowing pole to the other glowing pole.', 'Chuyển một đĩa từ cột sáng này sang cột sáng kia nhé.'); } };
+    if (!api.talent) tools.querySelector('.hint').onclick = () => { const m = bestMove(); if (m) { held = null; draw(m); api.say('Move a disc from the glowing pole to the other glowing pole.', 'Chuyển một đĩa từ cột sáng này sang cột sáng kia nhé.'); } };
     api.say(`Move all the discs to the flag. A big disc can never sit on a small one!`, `Chuyển hết đĩa sang cột có cờ. Đĩa to không được đặt lên đĩa nhỏ nhé!`);
     draw();
     for (;;) {
@@ -85,16 +89,16 @@ function bfs(N, rocks, s, t) {
 register({
   id: 'robot', icon: '🤖', name: () => T('Robot Planner', 'Lập Trình Rô-bốt'),
   async run(api) {
-    const rounds = 3, N = api.level <= 1 ? 4 : 5;
+    const rounds = 3, N = api.talent ? 6 : api.level <= 1 ? 4 : 5;   // (levels) Talent: a 6 x 6 field with more rocks and longer paths
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       let s, t, rocks, d;
       do {
         s = [Math.floor(Math.random() * N), Math.floor(Math.random() * N)]; t = [Math.floor(Math.random() * N), Math.floor(Math.random() * N)];
-        rocks = new Set(); const nr = api.level <= 1 ? 0 : Math.min(6, api.level + r);
+        rocks = new Set(); const nr = api.level <= 1 ? 0 : api.talent ? 8 + r : Math.min(6, api.level + r);
         while (rocks.size < nr) { const k = Math.floor(Math.random() * N) + ',' + Math.floor(Math.random() * N); if (k !== s.join() && k !== t.join()) rocks.add(k); }
         d = bfs(N, rocks, s, t);
-      } while (d < (api.level <= 1 ? 1 + r : 2 + r) || d > (api.level <= 1 ? 3 : 6));
+      } while (d < (api.level <= 1 ? 1 + r : api.talent ? 5 + r : 2 + r) || d > (api.level <= 1 ? 3 : api.talent ? 10 : 6));
       const grid = el('div', 'rgrid'); grid.style.setProperty('--n', N); api.stage.appendChild(grid);
       const cells = [];
       for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const c = el('div', 'rcell', rocks.has(x + ',' + y) ? '🪨' : (x === t[0] && y === t[1] ? '⭐' : '')); grid.appendChild(c); cells.push(c); }
@@ -157,16 +161,18 @@ function makeMaze(W, H) {
 register({
   id: 'maze', icon: '🌀', name: () => T('Mountain Maze', 'Mê Cung Trên Núi'),
   async run(api) {
-    const rounds = 2, maxActions = Array.from({length: rounds}, (_, r) => Math.min(8, 3 + api.level + r) ** 2 - 1).reduce((sum, n) => sum + n, 0);
+    // (levels) Talent: one size bigger (up to 9 x 9) and no trail behind you
+    const size = r => Math.min(api.talent ? 9 : 8, 3 + api.level + r + (api.talent ? 1 : 0));
+    const rounds = 2, maxActions = Array.from({length: rounds}, (_, r) => size(r) ** 2 - 1).reduce((sum, n) => sum + n, 0);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const N = Math.min(8, 3 + api.level + r), walls = makeMaze(N, N);
+      const N = size(r), walls = makeMaze(N, N);
       const grid = el('div', 'maze'); grid.style.setProperty('--n', N); api.stage.appendChild(grid);
       const cells = walls.map((w, i) => { const c = el('div', 'mcell'); ['n', 's', 'e', 'w'].forEach(k => w[k] && c.classList.add('w' + k)); grid.appendChild(c); return c; });
       const duck = api.theme === 'duck';
       cells[N * N - 1].textContent = duck ? '🦆' : '🍉';
       let p = [0, 0]; const me = el('div', 'mme', duck ? '🐥' : api.two ? '👫' : '🧒'); me.style.width = me.style.height = (100 / N) + '%'; grid.appendChild(me);
-      const place = () => { me.style.transform = `translate(${p[0] * 100}%, ${p[1] * 100}%)`; cells[p[1] * N + p[0]].classList.add('trail'); };
+      const place = () => { me.style.transform = `translate(${p[0] * 100}%, ${p[1] * 100}%)`; if (!api.talent) cells[p[1] * N + p[0]].classList.add('trail'); };
       place();
       if (duck) api.say('Help the duckling find its mummy!', 'Giúp vịt con tìm vịt mẹ nào!'); else api.say('Find the way to the watermelon!', 'Tìm đường đến quả dưa hấu nào!');
       const pad = el('div', 'rpad'); api.stage.appendChild(pad);
@@ -201,7 +207,7 @@ const ARROW = (dx, dy) => ({ '0,-1': '⬆️', '0,1': '⬇️', '-1,0': '⬅️'
 register({
   id: 'goat', icon: '🐐', name: () => T('Blindfold Goat', 'Bịt Mắt Bắt Dê'),
   async run(api) {
-    const rounds = 3, N = api.level <= 1 ? 3 : api.level === 2 ? 4 : 5;
+    const rounds = 3, N = api.talent ? 6 : api.level <= 1 ? 3 : api.level === 2 ? 4 : 5;   // (levels) Talent: 6 x 6 haystacks and no "very close" call
     api.say('A Vietnamese playground game! The goat is hiding in the hay. Each wrong haystack shows hoof prints pointing to the goat.', 'Trò chơi dân gian Bịt mắt bắt dê! Dê đang trốn trong đống rơm. Mỗi đống rơm sai sẽ có dấu chân chỉ về phía con dê.');
     await wait(400);
     for (let r = 0; r < rounds; r++) {
@@ -218,7 +224,7 @@ register({
         const near = Math.max(Math.abs(b._x - gx), Math.abs(b._y - gy)) === 1;
         b.innerHTML = `<span class="hoof">🐾</span><span class="dir">${ARROW(gx - b._x, gy - b._y)}</span>`; b.classList.add('miss');
         api.sfx.pop(tries);
-        if (near) api.say('Baa! Very close!', 'Be be! Gần lắm rồi!'); else if (tries === 1) api.say('Follow the arrow!', 'Đi theo mũi tên nhé!');
+        if (near && !api.talent) api.say('Baa! Very close!', 'Be be! Gần lắm rồi!'); else if (tries === 1) api.say('Follow the arrow!', 'Đi theo mũi tên nhé!');
       }
       await wait(1600);
     }

@@ -11,6 +11,9 @@ import { stream } from '../core/rng.js';
 const FRUIT = ['🍎', '🍌', '🍇', '🍓', '🍊', '🥝', '🍉', '🍐'];
 const ANIMALS = ['🐶', '🐱', '🐰', '🐸', '🐥', '🐷', '🐼', '🦊'];
 const others = <V>(pool: V[], not: V[], n: number): V[] => shuffle(pool.filter(x => !not.includes(x))).slice(0, n);
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
 
 // ---------- What comes next? ----------
 register({
@@ -20,15 +23,16 @@ register({
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const pool = shuffle(r % 2 ? ANIMALS : FRUIT);
-      const shapes = api.level <= 1 ? ['AB'] : api.level === 2 ? ['AB', 'AAB', 'ABC'] : ['AAB', 'ABB', 'ABC', 'AABB', 'ABCB'];
-      const pat = pick(shapes), map = { A: pool[0], B: pool[1], C: pool[2] };
+      // (levels) Talent adds four-part patterns; Hard and Talent give more answers to choose from
+      const shapes = api.level <= 1 ? ['AB'] : api.level === 2 ? ['AB', 'AAB', 'ABC'] : ['AAB', 'ABB', 'ABC', 'AABB', 'ABCB'].concat(api.talent ? ['ABCD', 'AABC', 'ABCDB'] : []);
+      const pat = pick(shapes), map = { A: pool[0], B: pool[1], C: pool[2], D: pool[3] };
       const seq: string[] = []; while (seq.length < Math.max(5, pat.length * 2 + 1)) seq.push(map[pat[seq.length % pat.length]]);
       const answer = seq.pop() as string;
       const row = el('div', 'seq');
       seq.forEach((s, i) => { const c = el('div', 'seq-item', s); c.style.animationDelay = i * .08 + 's'; row.appendChild(c); });
       const q = el('div', 'seq-item q', '?'); row.appendChild(q); api.stage.appendChild(row);
       api.say('What comes next?', 'Tiếp theo là gì nhỉ?');
-      const opts = shuffle([answer, ...others(Object.values(map).concat(pool.slice(3)), [answer], 2)]);
+      const opts = shuffle([answer, ...others([...new Set(Object.values(map).concat(pool.slice(3)))], [answer], lv(api, 2, 2, 3, 4))]);
       const btns = choiceButtons<string>(api, opts, o => o);
       const b = await untilRight(api, btns, e => e._v === answer); if (!b) return;
       q.textContent = answer; q.classList.add('right'); api.praise(); await wait(1200);
@@ -41,7 +45,8 @@ register({
 register({
   id: 'counting', icon: '🔢', name: () => T('Count With Me', 'Cùng Đếm Nào'),
   async run(api) {
-    const rounds = 4, max = [5, 5, 10, 15, 20][Math.min(4, api.level - 1)];
+    // (levels) Talent counts up to 30 and has four answers to choose from
+    const rounds = 4, max = api.talent ? 30 : [5, 8, 10, 15, 20][Math.min(4, api.level - 1)], wrongs = lv(api, 2, 2, 2, 3);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const n = 1 + Math.floor(Math.random() * max), thing = pick([...FRUIT, ...ANIMALS]);
@@ -52,7 +57,7 @@ register({
       // Tapping an item counts it out loud.
       let counted = 0;
       box.querySelectorAll('.count-item').forEach(s => s.onclick = () => { if (s.classList.contains('done')) return; s.classList.add('done'); counted++; sayIn(settings.lang, numWord(counted)); api.sfx.pop(counted); });
-      const opts = shuffle([n, ...shuffle([n - 2, n - 1, n + 1, n + 2].filter(v => v >= 1 && v <= max + 2)).slice(0, 2)]);
+      const opts = shuffle([n, ...shuffle([n - 2, n - 1, n + 1, n + 2].filter(v => v >= 1 && v <= max + 2)).slice(0, wrongs)]);
       const btns = choiceButtons(api, opts, o => `<b class="num">${o}</b>`);
       const b = await untilRight(api, btns, e => e._v === n); if (!b) return;
       api.say(`${n}! Great counting!`, `${numWord(n)}! Đếm giỏi quá!`); await wait(1500);
@@ -71,7 +76,7 @@ register({
     const pool = alpha.slice(0, span), lower = api.level >= 3;
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const L = pick(pool), n = api.level <= 1 ? 3 : 4;
+      const L = pick(pool), n = api.talent ? 6 : api.level <= 1 ? 3 : api.level >= 4 ? 5 : 4;   // (levels) more letters to choose from
       const opts = shuffle([L, ...others(pool, [L], n - 1)]);
       const card = el('div', 'letter-card', lower ? `<b>${L}</b>` : `<span class="ear">👂</span>`); api.stage.appendChild(card);
       const ask = () => lower ? api.say(`Find the small letter that matches ${L}`, `Tìm chữ thường giống chữ ${letterName(L)}`) : api.say(`Find the letter ${L}`, `Tìm chữ ${letterName(L)}`);
@@ -95,7 +100,8 @@ register({
     const rounds = 4, max = [5, 10, 10, 20, 20][Math.min(4, api.level - 1)];
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const len = 4, start = 1 + Math.floor(Math.random() * (max - len + 1)), back = api.level >= 4 && Math.random() < .4;
+      // (levels) Talent: a longer train up to 30 that often counts backwards
+      const len = api.talent ? 5 : 4, top = api.talent ? 30 : max, start = 1 + Math.floor(Math.random() * (top - len + 1)), back = api.level >= 4 && Math.random() < (api.talent ? .6 : .4);
       const seq = Array.from({ length: len }, (_, i) => back ? start + len - 1 - i : start + i);
       const hole = api.level <= 1 ? len - 1 : 1 + Math.floor(Math.random() * (len - 1));
       const train = el('div', 'train', '<span class="engine">🚂</span>');
@@ -134,7 +140,7 @@ register({
       const k = pick(keys), name = SHAPES[k];
       const shadow = el('div', 'shadow-box', svgShape(k, '#1d2a3a')); api.stage.appendChild(shadow);
       api.say(`Which shape makes this shadow?`, `Hình nào tạo ra cái bóng này?`);
-      const opts = shuffle([k, ...others(keys, [k], api.level <= 1 ? 2 : 3)]);
+      const opts = shuffle([k, ...others(keys, [k], api.talent ? 5 : api.level <= 1 ? 2 : api.level >= 4 ? 4 : 3)]);   // (levels) more shapes on Hard and Talent
       const btns = choiceButtons<string>(api, opts, o => svgShape(o, COLORS[keys.indexOf(o) % COLORS.length].hex));
       const b = await untilRight(api, btns, e => e._v === k); if (!b) return;
       shadow.innerHTML = svgShape(k, COLORS[keys.indexOf(k) % COLORS.length].hex);
@@ -155,7 +161,7 @@ register({
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       if (api.level <= 1 || r < 2 && api.level === 2) {
-        const target = pick(COLORS), opts = shuffle([target, ...others(COLORS, [target], 2)]);
+        const target = pick(COLORS), opts = shuffle([target, ...others(COLORS, [target], lv(api, 2, 3, 3, 3))]);
         api.stage.appendChild(el('div', 'big-emoji', '🎈'));
         api.say(`Tap the ${target.en} balloon!`, `Chạm vào bóng bay màu ${target.vi}!`);
         const btns = choiceButtons<{ hex: string; en: string; vi: string }>(api, opts, o => `<span class="balloon-shape" style="--bc:${o.hex}"></span>`, 'choice plain');
@@ -165,7 +171,7 @@ register({
         const [a, b2, res] = pick(MIX), A = C(a), B = C(b2), R = C(res);
         api.stage.appendChild(el('div', 'mix', `${blob(A)}<b>+</b>${blob(B)}<b>=</b><span class="paint q">?</span>`));
         api.say(`What colour do ${A.en} and ${B.en} make?`, `Màu ${A.vi} trộn với màu ${B.vi} ra màu gì?`);
-        const opts = shuffle([R, ...others(COLORS, [R, A, B], 2)]);
+        const opts = shuffle([R, ...others(COLORS, [R, A, B], lv(api, 2, 2, 3, 4))]);   // (levels) more paints on Hard and Talent
         const btns = choiceButtons(api, opts, o => blob(o), 'choice plain');
         const b = await untilRight(api, btns, e => e._v === R); if (!b) return;
         const q = api.stage.querySelector('.paint.q'); q.style.setProperty('--pc', R.hex); q.textContent = ''; q.classList.add('right');
@@ -184,8 +190,9 @@ register({
     const rounds = 3;
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const n = Math.min(5, 2 + api.level + (r > 0 ? 1 : 0) - 1 + 1), thing = pick(['🐘', '🐢', '🌻', '🏠', '🐟', '🍉', '🐻', '🚗']);
-      const bigFirst = api.level >= 3 && r === rounds - 1;
+      // (levels) Talent: up to 7 things to put in order, and two rounds biggest-first
+      const n = Math.min(api.talent ? 7 : 5, 2 + api.level + (r > 0 ? 1 : 0) + (api.talent ? 1 : 0)), thing = pick(['🐘', '🐢', '🌻', '🏠', '🐟', '🍉', '🐻', '🚗']);
+      const bigFirst = api.level >= 3 && (r === rounds - 1 || api.talent && r === 1);
       const sizes = Array.from({ length: n }, (_, i) => 34 + i * (90 / n));
       const order = bigFirst ? sizes.slice().reverse() : sizes;
       api.say(bigFirst ? 'Tap from the biggest to the smallest!' : 'Tap from the smallest to the biggest!', bigFirst ? 'Chạm từ lớn nhất đến bé nhất nhé!' : 'Chạm từ bé nhất đến lớn nhất nhé!');
@@ -207,12 +214,12 @@ register({
   id: 'memory', online: true, icon: '🃏', name: () => T('Memory Match', 'Lật Hình Ghi Nhớ'),
   async run(api) {
     if (api.online) return memoryOnline(api);
-    const pairs = [3, 4, 6, 6, 8][Math.min(4, api.level - 1)];
+    const pairs = api.talent ? 10 : [3, 4, 6, 6, 8][Math.min(4, api.level - 1)];   // (levels) Talent: ten pairs
     // the children's own photos are some of the cards
     const photos = profiles.slice(0, 4).map(p => `<img src="${avatarURL(p)}" alt="">`);
     const faces = shuffle([...shuffle(photos).slice(0, Math.min(photos.length, Math.ceil(pairs / 2))), ...shuffle([...ANIMALS, ...FRUIT])]).slice(0, pairs);
     const deck = shuffle([...faces, ...faces]);
-    const grid = el('div', 'mem-grid'); grid.style.setProperty('--cols', pairs <= 3 ? 3 : pairs <= 4 ? 4 : pairs <= 6 ? 4 : 4);
+    const grid = el('div', 'mem-grid'); grid.style.setProperty('--cols', pairs <= 3 ? 3 : pairs <= 8 ? 4 : 5);
     api.stage.appendChild(grid);
     const cards = deck.map(f => { const c = el('button', 'mem', `<span class="back">⭐</span><span class="front">${f}</span>`); c._v = f; grid.appendChild(c); return c; });
     let turn = 0, found = 0;

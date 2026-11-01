@@ -39,10 +39,16 @@ function style() {
 .s2-flap.bottom.up { transform: perspective(200px) rotateX(60deg); transform-origin: top; }
 .s2-flap.left.up { transform: perspective(200px) rotateY(60deg); transform-origin: right; }
 .s2-flap.right.up { transform: perspective(200px) rotateY(-60deg); transform-origin: left; }
+.s2-net.lid { grid-template: repeat(4, 64px) / repeat(3, 64px); }
+.s2-flap.lid.up { transform: perspective(200px) rotateX(60deg); transform-origin: top; }
 `));
 }
 
 const mix = <V,>(list: V[]): V[] => [...list].sort(() => Math.random() - .5);
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value. Talent hides the names under the answers.
+const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const cycle = <V,>(list: V[], n: number): V[] => Array.from({ length: n }, (_, i) => list[i % list.length]);
 const INK = 'stroke="#3b2a4f" stroke-width="4" stroke-linejoin="round"';
 // a flat shape drawn in a 64 by 64 box
 const SHAPES = {
@@ -89,7 +95,9 @@ async function rounds(api, intro: [string, string], list: Round[], done: [string
   api.say(done[0], done[1]); await wait(900);
   return api.win({ title: T(done[0], done[1]) });
 }
-const shapeChoice = (k: Flat) => ({ key: k, html: svg(SHAPES[k]('#ffd23f')) + `<span>${T(NAMES[k][0], NAMES[k][1])}</span>` });
+const shapeChoice = (k: Flat, bare = false) => ({ key: k, html: svg(SHAPES[k]('#ffd23f')) + (bare ? '' : `<span>${T(NAMES[k][0], NAMES[k][1])}</span>`) });
+// (levels) the right shape and wrong ones: two wrong on Easy and Medium, three on Hard and Talent
+const shapeChoices = (api, shape: Flat) => [shape, ...mix((Object.keys(SHAPES) as Flat[]).filter(k => k !== shape)).slice(0, lv(api, 2, 2, 3, 3))].map(k => shapeChoice(k, api.talent));
 
 register({
   id: 'solids', icon: '⚽', name: () => T('Ball, Box, Can', 'Khối Cầu, Hộp, Trụ'),
@@ -97,10 +105,11 @@ register({
     const things: [string, Solid, [string, string]][] = [['⚽', 'sphere', ['a ball', 'quả bóng']], ['🍊', 'sphere', ['an orange', 'quả cam']], ['📦', 'cube', ['a box', 'cái hộp']], ['🎲', 'cube', ['a dice', 'con xúc xắc']], ['🥫', 'cylinder', ['a can', 'cái lon']], ['🥁', 'cylinder', ['a drum', 'cái trống']]];
     const pickOne = (s: Solid) => mix(things.filter(t => t[1] === s))[0];
     return rounds(api, ['Match each thing to its solid shape!', 'Ghép đồ vật với khối của nó nhé!'],
-      mix(['sphere', 'cube', 'cylinder'] as Solid[]).map(s => {
+      // (levels) more things from Medium; Talent: the solids have no names under them
+      cycle(mix(['sphere', 'cube', 'cylinder'] as Solid[]), lv(api, 3, 4, 5, 6)).map(s => {
         const [icon, , name] = pickOne(s);
         return { show: pic(icon), ask: ['Which solid is ' + name[0] + '?', name[1][0].toUpperCase() + name[1].slice(1) + ' là khối gì?'], answer: s,
-          choices: (Object.keys(SOLIDS) as Solid[]).map(k => ({ key: k, html: SOLIDS[k] + `<span>${T(SOLID_NAMES[k][0], SOLID_NAMES[k][1])}</span>` })) };
+          choices: (Object.keys(SOLIDS) as Solid[]).map(k => ({ key: k, html: SOLIDS[k] + (api.talent ? '' : `<span>${T(SOLID_NAMES[k][0], SOLID_NAMES[k][1])}</span>`) })) };
       }), ['All the solids are sorted!', 'Bé phân loại khối thật chuẩn!']);
   }
 });
@@ -110,9 +119,9 @@ register({
   run: api => {
     const finds: [string, Flat, [string, string]][] = [['🏠', 'triangle', ['the roof', 'mái nhà']], ['🍕', 'triangle', ['the pizza slice', 'miếng bánh pizza']], ['🛞', 'circle', ['the wheel', 'bánh xe']], ['🕒', 'circle', ['the clock', 'đồng hồ']], ['🚪', 'rectangle', ['the door', 'cánh cửa']], ['🪟', 'square', ['the window', 'ô cửa sổ']]];
     return rounds(api, ['Find the shapes hiding around town!', 'Tìm các hình đang ẩn trong phố nhé!'],
-      mix(finds).slice(0, api.little ? 3 : 4).map(([icon, shape, name]) => ({
+      mix(finds).slice(0, api.little ? 3 : lv(api, 4, 5, 6, 6)).map(([icon, shape, name]) => ({
         show: pic(icon), ask: ['What shape is ' + name[0] + '?', name[1][0].toUpperCase() + name[1].slice(1) + ' có hình gì?'], answer: shape,
-        choices: [shape, ...mix((Object.keys(SHAPES) as Flat[]).filter(k => k !== shape)).slice(0, 2)].map(shapeChoice),
+        choices: shapeChoices(api, shape),
       })), ['You found every town shape!', 'Bé tìm thấy mọi hình trong phố!']);
   }
 });
@@ -122,16 +131,18 @@ register({
   async run(api) {
     style();
     api.say('Tap every empty square to finish the blue and gold floor!', 'Chạm vào từng ô trống để lát sàn xanh vàng nhé!');
-    api.dots(9, 0);
-    const wrap = el('div', 's2-board'), stage = el('div', 's2-stage'), grid = el('div', 's2-grid');
+    // (levels) a bigger floor: 3 x 3 on Easy, 4 x 3 Medium, 4 x 4 Hard, 4 x 5 Talent
+    const cols = lv(api, 3, 4, 4, 4), N = cols * lv(api, 3, 3, 4, 5);
+    api.dots(N, 0);
+    const wrap = el('div', 's2-board'), stage = el('div', 's2-stage'), grid = el('div', 's2-grid'); grid.style.gridTemplateColumns = `repeat(${cols}, 72px)`;
     api.stage.appendChild(wrap); wrap.appendChild(stage); stage.appendChild(grid);
-    const tiles = Array.from({ length: 9 }, (_, i) => { const b = el('button', 's2-tile', ''); b.dataset.colour = i % 2 ? 'gold' : 'blue'; grid.appendChild(b); return b; });
-    for (let done = 0; done < 9; done++) {
-      api.plan(() => tiles.find(t => !t.disabled) || null, { maxActions: 11 });
+    const tiles = Array.from({ length: N }, (_, i) => { const b = el('button', 's2-tile', ''); b.dataset.colour = (i % cols + Math.floor(i / cols)) % 2 ? 'gold' : 'blue'; grid.appendChild(b); return b; });
+    for (let done = 0; done < N; done++) {
+      api.plan(() => tiles.find(t => !t.disabled) || null, { maxActions: N + 2 });
       const clicked = await untilRight(api, tiles, e => !e.disabled);
       if (!clicked || api.closed) return;
       clicked.disabled = true; clicked.classList.add(clicked.dataset.colour);
-      api.dots(9, done + 1); api.sfx.pop(done % 4);
+      api.dots(N, done + 1); api.sfx.pop(done % 4);
     }
     await wait(700);
     return api.win({ title: T('Beautiful tiled floor!', 'Sàn hoa văn đẹp quá!') });
@@ -143,7 +154,7 @@ register({
   async run(api) {
     style();
     api.say('Turn the arrow until it points at the star!', 'Xoay mũi tên đến khi chỉ vào ngôi sao nhé!');
-    const rounds = 3;
+    const rounds = lv(api, 3, 4, 5, 6);   // (levels) more turns to make; on Hard the star is two or three turns away, on Talent always three
     api.dots(rounds, 0);
     const wrap = el('div', 's2-board'), stage = el('div', 's2-stage'), controls = el('div', 's2-controls');
     api.stage.appendChild(wrap); wrap.append(stage, controls);
@@ -156,7 +167,7 @@ register({
     const spots = [{ left: '81px', top: '0' }, { left: '162px', top: '81px' }, { left: '81px', top: '162px' }, { left: '0', top: '81px' }];
     let facing = Math.floor(Math.random() * 4);
     for (let r = 0; r < rounds; r++) {
-      const goal = (facing + 1 + Math.floor(Math.random() * 3)) % 4;
+      const goal = (facing + lv(api, 1 + Math.floor(Math.random() * 3), 1 + Math.floor(Math.random() * 3), 2 + Math.floor(Math.random() * 2), 3)) % 4;
       Object.assign(star.style, spots[goal]);
       arrow.style.transform = `rotate(${facing * 90}deg)`;
       api.plan(() => facing !== goal ? turn : null, { maxActions: 5 });
@@ -177,10 +188,10 @@ register({
 register({
   id: 'shapetrain', icon: '🚂', name: () => T('Shape Train', 'Tàu Hình Khối'),
   run: api => rounds(api, ['Load the matching shape into each train wagon!', 'Xếp đúng hình vào từng toa tàu!'],
-    mix(Object.keys(SHAPES) as Flat[]).slice(0, api.little ? 3 : 4).map(shape => ({
+    cycle(mix(Object.keys(SHAPES) as Flat[]), api.little ? 3 : lv(api, 4, 5, 6, 6)).map(shape => ({
       show: `<div class="s2-train"><span class="s2-engine">${pic('🚂')}</span><span class="s2-wagon">${svg(SHAPES[shape]('#fff').replace(INK, 'stroke="#3b2a4f" stroke-width="4" stroke-dasharray="6 4"'))}</span></div>`,
       ask: ['Which shape fits in the wagon?', 'Hình nào vừa với toa tàu?'], answer: shape,
-      choices: [shape, ...mix((Object.keys(SHAPES) as Flat[]).filter(k => k !== shape)).slice(0, 2)].map(shapeChoice),
+      choices: shapeChoices(api, shape),
     })), ['The shape train is ready!', 'Đoàn tàu hình khối đã đầy!'])
 });
 
@@ -191,7 +202,9 @@ register({
       ['M10 55H140', 'straight'], ['M20 10V100M75 10V100M130 10V100', 'straight'], ['M15 95L135 15', 'straight'], ['M15 90L45 20L75 90L105 20L135 90', 'straight'],
       ['M10 55Q45 10 75 55T140 55', 'curve'], ['M40 90A40 40 0 1 1 110 90', 'curve'], ['M75 100C10 80 10 20 75 10', 'curve'], ['M20 30Q75 110 130 30', 'curve'],
     ];
-    const chosen = mix([mix(marks.filter(m => m[1] === 'straight'))[0], mix(marks.filter(m => m[1] === 'curve'))[0], mix(marks)[0]]);
+    // (levels) 3 marks on Easy, 4 Medium, 6 Hard and all 8 on Talent
+    const first = [mix(marks.filter(m => m[1] === 'straight'))[0], mix(marks.filter(m => m[1] === 'curve'))[0]];
+    const chosen = mix([...first, ...mix(marks.filter(m => !first.includes(m))).slice(0, lv(api, 1, 2, 4, 6))]);
     const line = svg(`<path d="M8 32H56" stroke="#3b2a4f" stroke-width="6" stroke-linecap="round"/>`), curve = svg(`<path d="M6 40Q20 6 32 32T58 26" fill="none" stroke="#3b2a4f" stroke-width="6" stroke-linecap="round"/>`);
     return rounds(api, ['Is the mark a straight line or a curve?', 'Đây là nét thẳng hay nét cong?'],
       chosen.map(([d, kind]) => ({
@@ -207,24 +220,29 @@ register({
   async run(api) {
     style();
     api.say('Tap each side to fold it up and make a box!', 'Chạm từng cạnh để gấp lên thành chiếc hộp nhé!');
-    api.dots(4, 0);
-    const wrap = el('div', 's2-board'), stage = el('div', 's2-stage'), net = el('div', 's2-net');
-    api.stage.appendChild(wrap); wrap.appendChild(stage); stage.appendChild(net);
-    const place = { top: '1 / 2', left: '2 / 1', right: '2 / 3', bottom: '3 / 2' };
+    // (levels) Easy one box; Medium two; Hard two boxes with a lid; Talent three boxes with a lid
+    const boxes = lv(api, 1, 2, 2, 3), lid = (api.smart || 0) >= 2 && !api.little, sides = lid ? 5 : 4;
+    const wrap = el('div', 's2-board'), stage = el('div', 's2-stage');
+    api.stage.appendChild(wrap); wrap.appendChild(stage);
+    for (let n = 0; n < boxes; n++) {
+    api.dots(sides, 0); stage.innerHTML = '';
+    const net = el('div', 's2-net' + (lid ? ' lid' : '')); stage.appendChild(net);
+    const place = { top: '1 / 2', left: '2 / 1', right: '2 / 3', bottom: '3 / 2', ...(lid ? { lid: '4 / 2' } : {}) };
     net.appendChild(el('div', 's2-base'));
-    const flaps = (Object.keys(place) as (keyof typeof place)[]).map(side => {
+    const flaps = Object.keys(place).map(side => {
       const b = el('button', 's2-flap ' + side, ''); b.style.gridArea = place[side]; net.appendChild(b); return b;
     });
-    for (let k = 0; k < 4; k++) {
-      api.plan(() => flaps.find(f => !f.disabled) || null, { maxActions: 6 });
+    for (let k = 0; k < sides; k++) {
+      api.plan(() => flaps.find(f => !f.disabled) || null, { maxActions: sides + 2 });
       const clicked = await untilRight(api, flaps, e => !e.disabled);
       if (!clicked || api.closed) return;
       clicked.disabled = true; clicked.classList.add('up');
-      api.sfx.pop(k); api.dots(4, k + 1);
+      api.sfx.pop(k); api.dots(sides, k + 1);
       await wait(350);
     }
     stage.appendChild(el('div', 's2-picture', pic('📦')));
     await wait(900);
+    }
     return api.win({ title: T('The box is folded!', 'Chiếc hộp đã gấp xong!') });
   }
 });

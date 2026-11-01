@@ -7,7 +7,11 @@ import { el, wait } from '../util.js';
 
 // (owner, 29 Oct 2026 AEDT audit) the right answer always stood first, then second, then third: choices are mixed now
 const mix = <V,>(list: V[]): V[] => [...list].sort(() => Math.random() - .5);
-
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value
+const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+// (levels) Talent: answers show their word only, without the picture in front of it
+const bare = (api, s: string) => api.talent ? s.replace(/^\S+ /u, '') : s;
 let styled = false;
 function style() {
   if (styled) return; styled = true;
@@ -33,16 +37,25 @@ register({
   async run(api) {
     style();
     api.say('Which group does it belong to?', 'Nó thuộc nhóm nào?');
-    const rounds = 3;
+    // (levels) more things to sort from Medium (3, 4, 5, 6) and more groups to choose from on Hard (4) and Talent (5)
+    const rounds = lv(api, 3, 4, 5, 6), many = lv(api, 3, 3, 4, 5);
     api.dots(rounds, 0);
     const wrap = el('div', 'w2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'w2-stage'); wrap.appendChild(stage);
-
+    const G = { fruit: ['Fruits', 'Trái cây'], animal: ['Animals', 'Con vật'], vehicle: ['Vehicles', 'Xe cộ'], clothes: ['Clothes', 'Quần áo'], toys: ['Toys', 'Đồ chơi'], food: ['Food', 'Thức ăn'] };
+    const more = [{ item: '🍇', group: 'fruit' }, { item: '🚌', group: 'vehicle' }, { item: '🐘', group: 'animal' }];
     const questions = [
       { item: '🍌', correct: 0, choices: [['Fruits', 'Trái cây'], ['Animals', 'Con vật'], ['Vehicles', 'Xe cộ']] },
       { item: '🐕', correct: 1, choices: [['Clothes', 'Quần áo'], ['Animals', 'Con vật'], ['Fruits', 'Trái cây']] },
-      { item: '🚗', correct: 2, choices: [['Toys', 'Đồ chơi'], ['Food', 'Thức ăn'], ['Vehicles', 'Xe cộ']] }
-    ];
+      { item: '🚗', correct: 2, choices: [['Toys', 'Đồ chơi'], ['Food', 'Thức ăn'], ['Vehicles', 'Xe cộ']] },
+      ...more.map(m => ({ item: m.item, correct: 0, choices: [G[m.group]] }))
+    ].slice(0, rounds);
+    // fruit is food too, so Food is never offered for a fruit
+    for (const q of questions) {
+      const right = q.choices[q.correct], clash = right[0] === 'Fruits' ? ['Food'] : [];
+      const rest = mix(Object.values(G).filter(g => !clash.includes(g[0]) && !q.choices.some(c => c[0] === g[0])));
+      while (q.choices.length < many && rest.length) q.choices.push(rest.pop());
+    }
 
     let current = 0;
     while (current < rounds) {
@@ -94,9 +107,12 @@ register({
       { icon: '🍎', name: ['Fruit', 'Ra quả'] }
     ];
 
+    // (levels) Medium: a card that is not part of the story; Hard two; Talent two and the cards have no words
+    const strays = [{ icon: '🚗', name: ['Car', 'Chiếc xe'] }, { icon: '👟', name: ['Shoe', 'Đôi giày'] }].slice(0, lv(api, 0, 1, 2, 2));
     const controls = el('div', 'w2-controls'); wrap.appendChild(controls);
-    const btns = steps.map((s, idx) => {
-      const b = el('button', 'w2-btn', `${pic(s.icon)} <span>${T(s.name[0], s.name[1])}</span>`);
+    const btns = [...steps, ...strays].map((s, idx) => {
+      const b = el('button', 'w2-btn', `${pic(s.icon)} ${api.talent ? '' : `<span>${T(s.name[0], s.name[1])}</span>`}`);
+      if (api.talent) b.setAttribute('aria-label', T(s.name[0], s.name[1]));
       b.dataset.step = String(idx);
       return b;
     });
@@ -133,11 +149,16 @@ register({
     const wrap = el('div', 'w2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'w2-stage'); wrap.appendChild(stage);
 
+    // (levels) more animals to choose from: 3 on Easy, 4 Medium, 5 Hard, 6 Talent (Talent: words only); the extra ones are the
+    // other riddles' animals, so they never fit the clue
+    const many = lv(api, 3, 4, 5, 6);
     const riddles = [
       { text: ['I have long ears and love carrots.', 'Đôi tai dài, thích ăn cà rốt.'], answer: 0, options: [['🐰 Rabbit', '🐰 Chú thỏ'], ['🐸 Frog', '🐸 Chú cóc'], ['🐱 Cat', '🐱 Chú mèo']] },
       { text: ['I give fresh milk and say moo.', 'Cho sữa ngọt và kêu moo moo.'], answer: 1, options: [['🐶 Dog', '🐶 Cún con'], ['🐮 Cow', '🐮 Bò sữa'], ['🐔 Hen', '🐔 Gà mái']] },
       { text: ['I swim in the water and have colorful scales.', 'Bơi dưới nước, có vảy nhiều màu.'], answer: 2, options: [['🐻 Bear', '🐻 Gấu trúc'], ['🦆 Duck', '🦆 Vịt bầu'], ['🐟 Fish', '🐟 Cá vàng']] }
     ];
+    const first = riddles.map(r => r.options.slice());
+    riddles.forEach((r, i) => { const extra = mix(first.filter((_, j) => j !== i).flat()); while (r.options.length < many && extra.length) r.options.push(extra.pop()); });
 
     let current = 0;
     while (current < rounds) {
@@ -149,7 +170,7 @@ register({
 
       const controls = el('div', 'w2-controls'); stage.appendChild(controls);
       const btns = riddles[current].options.map((opt, idx) => {
-        const b = el('button', 'w2-btn', `<span>${T(opt[0], opt[1])}</span>`);
+        const b = el('button', 'w2-btn', `<span>${bare(api, T(opt[0], opt[1]))}</span>`);
         b.dataset.idx = String(idx);
         return b;
       });
@@ -183,11 +204,16 @@ register({
     const wrap = el('div', 'w2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'w2-stage'); wrap.appendChild(stage);
 
+    // (levels) more words to choose from: 3 on Easy, 4 Medium, 5 Hard and Talent (Talent: words only, no pictures); the extra
+    // ones are the things from the other rounds
+    const many = lv(api, 3, 4, 5, 5);
     const sets = [
       { action: 0, choices: [['🏃 Run', '🏃 Chạy'], ['🪑 Chair', '🪑 Cái ghế'], ['🌳 Tree', '🌳 Cái cây']] },
       { action: 1, choices: [['🍎 Apple', '🍎 Quả táo'], ['🏊 Swim', '🏊 Bơi'], ['🏠 House', '🏠 Ngôi nhà']] },
       { action: 2, choices: [['👟 Shoe', '👟 Đôi giày'], ['🚗 Car', '🚗 Chiếc xe'], ['💃 Dance', '💃 Múa']] }
     ];
+    const first = sets.map(o => o.choices.filter((_, k) => k !== o.action));
+    sets.forEach((st, i) => { const extra = mix(first.filter((_, j) => j !== i).flat()); while (st.choices.length < many && extra.length) st.choices.push(extra.pop()); });
 
     let current = 0;
     while (current < rounds) {
@@ -198,12 +224,11 @@ register({
 
       const controls = el('div', 'w2-controls'); stage.appendChild(controls);
       const btns = sets[current].choices.map((c, idx) => {
-        const b = el('button', 'w2-btn', `<span>${T(c[0], c[1])}</span>`);
+        const b = el('button', 'w2-btn', `<span>${bare(api, T(c[0], c[1]))}</span>`);
         b.dataset.idx = String(idx);
         return b;
       });
       mix(btns).forEach(b => controls.appendChild(b));
-
       const target = btns[sets[current].action];
       api.plan(() => target, { maxActions: 4 });
       const clicked = await untilRight(api, btns, e => e === target);
@@ -227,11 +252,10 @@ register({
     style();
     api.say('Where is the kitten: in the box, on the table, or under the bed?',
       'Mèo con ở đâu: trong hộp, trên bàn, hay dưới gầm giường?');
-    const rounds = 3;
+    const rounds = lv(api, 3, 4, 5, 5);   // (levels) more rounds from Medium; Talent: the in, on and under buttons change places each round
     api.dots(rounds, 0);
     const wrap = el('div', 'w2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'w2-stage'); wrap.appendChild(stage);
-
     // (owner, 29 Oct 2026 AEDT audit) the question said the answer ("The cat is IN the box"): now a picture shows where
     // the animal is, and the child says in, on or under
     const questions = mix([
@@ -253,7 +277,7 @@ register({
       stage.appendChild(scene);
 
       const controls = el('div', 'w2-controls'); stage.appendChild(controls);
-      const btns = (['in', 'on', 'under'] as const).map(w => {
+      const btns = (api.talent ? mix(['in', 'on', 'under'] as const) : (['in', 'on', 'under'] as const)).map(w => {
         const b = el('button', 'w2-btn', `<span>${T(words[w][0], words[w][1])}</span>`);
         b.dataset.where = w;
         controls.appendChild(b);

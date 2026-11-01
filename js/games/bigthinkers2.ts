@@ -27,7 +27,8 @@ register({ id: 'patternpicnic', icon: '🧺', learn: true, name: () => T('Patter
     const answer = rule[(model.length + shift) % rule.length];
     const row = el('div', 'seq', model.map(value => `<span class="seq-item">${pic(value)}</span>`).join('') + '<span class="seq-item q">?</span>');
     api.stage.appendChild(row); repeat(api, () => api.say(...INTRO.patternpicnic)); api.say(...INTRO.patternpicnic);
-    const options = shuffle([answer, ...SYMBOLS.filter(value => value !== answer).slice(0, level === 0 ? 1 : level === 3 ? 3 : 2)]);
+    // (levels) Talent: a fifth picture (the tree) joins the choices
+    const options = shuffle([answer, ...SYMBOLS.concat(api.talent ? ['🌳'] : []).filter(value => value !== answer).slice(0, level === 0 ? 1 : level === 3 ? (api.talent ? 4 : 3) : 2)]);
     const buttons = choiceButtons(api, options, value => pic(value)); buttons.forEach(b=>b.setAttribute('aria-label',T(...NAMES[(b._v as string)])));
     if (!await untilRight(api, buttons, b => b._v === answer)) return;
     row.lastElementChild.innerHTML = pic(answer); api.praise(); await wait(300);
@@ -39,7 +40,9 @@ const SHAPES = {
   triangle: {name: ['Triangle', 'Tam giác'], svg: '<path d="M50 12L88 85H12Z"/>'},
   square: {name: ['Square', 'Hình vuông'], svg: '<rect x="15" y="15" width="70" height="70" rx="5"/>'},
   circle: {name: ['Circle', 'Hình tròn'], svg: '<circle cx="50" cy="50" r="35"/>'},
-  rectangle: {name: ['Rectangle', 'Hình chữ nhật'], svg: '<rect x="10" y="27" width="80" height="46" rx="5"/>'}
+  rectangle: {name: ['Rectangle', 'Hình chữ nhật'], svg: '<rect x="10" y="27" width="80" height="46" rx="5"/>'},
+  // (levels) Talent only: an oval that fits no outline joins the shapes to choose from
+  oval: {name: ['Oval', 'Hình bầu dục'], svg: '<ellipse cx="50" cy="50" rx="42" ry="27"/>'}
 };
 const shape = (key, filled = true, rotation = 0) => `<svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><g transform="rotate(${rotation} 50 50)" fill="${filled ? '#ffd36a' : '#fff7e8'}" stroke="${filled ? '#6a4a8a' : '#b29cc5'}" stroke-width="5" ${filled ? '' : 'stroke-dasharray="7 5"'}>${SHAPES[key].svg}</g></svg>`;
 const PICTURES: [string, number, number, number, number, number?][][] = [
@@ -59,7 +62,7 @@ register({ id: 'shapebuilders', icon: '🧩', learn: true, name: () => T('Shape 
     board.appendChild(b); return b;
   });
   let guide = INTRO.shapebuilders; repeat(api, () => api.say(...guide)); api.say(...guide);
-  const buttons = choiceButtons(api, Object.keys(SHAPES).filter(key=>!api.little || key!=='rectangle'), key => shape(key), 'choice bt-piece');
+  const buttons = choiceButtons(api, Object.keys(SHAPES).filter(key=>(!api.little || key!=='rectangle') && (key!=='oval' || api.talent)), key => shape(key), 'choice bt-piece');
   buttons.forEach(b => { b.style.touchAction='none'; b.setAttribute('aria-label', T(...SHAPES[b._v].name)); b.onpointerdown = e => { dragging={button:b,x:e.clientX,y:e.clientY,started:false}; }; });
   const move = e => { if (!dragging) return; if (!dragging.started && Math.hypot(e.clientX-dragging.x,e.clientY-dragging.y)>8) { dragging.started=true; dragging.button.click(); } if(dragging.started)e.preventDefault(); };
   const up = e => { if (!dragging) return; const drag=dragging;dragging=null; if(drag.started && document.elementFromPoint(e.clientX,e.clientY)?.closest('.bt-slot')===active) { if(drag.button._v===active.dataset.shape) setTimeout(()=>active?.click(),0); else api.wrong(active); } };
@@ -85,14 +88,14 @@ register({ id: 'remembergarden', icon: '🌱', learn: true, name: () => T('Remem
   for(let round=0;round<3;round++) {
     // (r79 learning, I1) the row's length and the extra pictures follow the level between rounds
     const level=round?nextRound(api):tier(api),length=[2,3,4,6][level];
-    if(api.closed)return;api.stage.innerHTML='';api.dots(3,round);const order=Array.from({length},(_,i)=>pool[(i+round)%pool.length]);
+    if(api.closed)return;api.stage.innerHTML='';api.dots(3,round);const order=api.talent?shuffle(pool).slice(0,length):Array.from({length},(_,i)=>pool[(i+round)%pool.length]);   // (levels) Talent: the garden row comes in a mixed order, with three extra pictures
     const model=el('div','seq',order.map(v=>`<span class="seq-item">${pic(v)}</span>`).join(''));api.stage.appendChild(model);
     repeat(api,()=>api.say(...INTRO.remembergarden));api.say(...INTRO.remembergarden);
     if(level>0){const ready=el('button','btn',T('Ready to try', 'Sẵn sàng thử'));ready.style.minHeight='64px';api.stage.appendChild(ready);api.plan(()=>ready.isConnected?ready:null);
       await new Promise<void>(resolve=>{ready.onclick=resolve;api.onCleanup(resolve);});if(api.closed)return;ready.remove();model.querySelectorAll('.seq-item').forEach(b=>b.innerHTML='?');}
     const show=el('button','btn',pic('🔁')+T('Show again', 'Xem lại'));show.style.minHeight='64px';show.onclick=()=>{model.querySelectorAll('.seq-item').forEach((b,i)=>b.innerHTML=pic(order[i]));api.say(...INTRO.remembergarden);};api.stage.appendChild(show);
     const done=el('div','seq');api.stage.appendChild(done);const controls=el('div');api.stage.appendChild(controls);
-    for(let i=0;i<order.length;i++){if(api.closed)return;controls.innerHTML='';const old=api.stage;api.stage=controls;const options=shuffle([...new Set(order.slice(i)),...shuffle(EXTRA.filter(v=>!order.includes(v))).slice(0,level>=2?2:1)]);const buttons=choiceButtons(api,options,v=>pic(v));buttons.forEach(b=>b.setAttribute('aria-label',T(...NAMES[b._v as string])));api.stage=old;
+    for(let i=0;i<order.length;i++){if(api.closed)return;controls.innerHTML='';const old=api.stage;api.stage=controls;const options=shuffle([...new Set(order.slice(i)),...shuffle(EXTRA.filter(v=>!order.includes(v))).slice(0,api.talent?3:level>=2?2:1)]);const buttons=choiceButtons(api,options,v=>pic(v));buttons.forEach(b=>b.setAttribute('aria-label',T(...NAMES[b._v as string])));api.stage=old;
       const wrong=api.wrong;api.wrong=e=>{const line=order.includes(e._v)?['That one comes later. Which picture was before it?','Hình đó ở sau. Hình nào đứng trước nó?']:['That picture was not in the garden row. Tap Show again to look.','Hình đó không có trong hàng. Chạm Xem lại để nhìn nhé.'];wrong(e,...line);api.show(...line);};
       const got=await untilRight(api,buttons,b=>b._v===order[i]);api.wrong=wrong;if(!got)return;done.appendChild(el('span','seq-item',pic(order[i])));api.praise();}
   }

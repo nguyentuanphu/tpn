@@ -43,14 +43,19 @@ const cash = (code: string, v: number) => { const d = M.denom(code, v), a = pic(
 const unit = (code: string) => code === "VND" ? 10000 : 100;
 const small = (code: string) => code === "VND" ? 5000 : 50;
 const big = (code: string) => code === "VND" ? 20000 : 200;
-
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value. Every game here: bigger amounts or more rounds from
+// Medium, more answers to choose from (3 Easy, 4 Medium and Hard, 5 Talent) and its own Talent extra (marked "levels")
+const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
 // a question with three money answers, the right one among two near it
 async function moneyQuestion(api, show: string, ask: [string, string], right: number, by: number, code: string) {
   const box = el("div", "mn2-box", show);
   const row = el("div", "mn2-row");
   api.stage.querySelector(".mn2-wrap").replaceChildren(box, el("div", "mn2-box", T(ask[0], ask[1])), row);
   api.say(ask[0], ask[1]);
-  const btns = mix(M.nearAnswers(right, by)).map(v => { const b = el("button", "mn2-btn", money(v, code)); b.dataset.v = String(v); row.appendChild(b); return b; });
+  const answers = M.nearAnswers(right, by), many = lv(api, 3, 4, 4, 5);
+  for (const v of [right + 3 * by, right - 3 * by, right + 2 * by, right - 2 * by, right + by, right - by]) if (answers.length < many && v > 0 && !answers.includes(v)) answers.push(v);
+  const btns = mix(answers).map(v => { const b = el("button", "mn2-btn", money(v, code)); b.dataset.v = String(v); row.appendChild(b); return b; });
   const target = btns.find(b => b.dataset.v === String(right));
   api.plan(() => target, { maxActions: 5 });
   return untilRight(api, btns, b => b === target);
@@ -88,15 +93,16 @@ async function makeAmount(api, wrap: HTMLElement, code: string, goal: number, co
 register({
   id: "savegoal", icon: "🎯", name: () => T("Saving Goal", "Mục Tiêu Tiết Kiệm"),
   async run(api) {
-    const code = getCode(), rounds = 3;
+    // (levels) more and bigger goals from Medium; Talent: no big coin or note to help
+    const code = getCode(), rounds = lv(api, 3, 3, 4, 4), more = lv(api, 0, 1, 1, 2);
     const wrap = setup(api, ["Put coins in the money box until you have exactly enough!", "Bỏ tiền vào ống heo cho đến khi vừa đủ nhé!"], rounds);
     const toys: [string, [string, string]][] = mix([["⚽", ["a ball", "quả bóng"]], ["🧸", ["a teddy", "chú gấu bông"]], ["🪁", ["a kite", "con diều"]], ["📖", ["a book", "quyển sách"]]]);
     for (let r = 0; r < rounds; r++) {
-      const goal = unit(code) * (api.little ? 2 + r : 3 + r * 2) + (r === 2 && !api.little ? small(code) : 0);
-      const [icon, name] = toys[r];
+      const goal = unit(code) * (api.little ? 2 + r : 3 + r * 2 + more) + ((r === 2 || more > 1 && r % 2 === 1) && !api.little ? small(code) : 0);
+      const [icon, name] = toys[r % toys.length];
       // (one whole line, so Lê Minh can record it: the price is on the money box)
       api.say("Save up to buy it! The price is on the money box.", "Tiết kiệm để mua nhé! Giá ghi trên ống heo.");
-      const ok = await makeAmount(api, wrap, code, goal, [small(code), unit(code), big(code)],
+      const ok = await makeAmount(api, wrap, code, goal, api.talent ? [small(code), unit(code)] : [small(code), unit(code), big(code)],
         sum => `${pic(icon)} ${pic("🐷")} ${money(sum, code)} / ${money(goal, code)}`);
       if (!ok) return;
       api.sfx.ding(); api.dots(rounds, r + 1);
@@ -109,10 +115,11 @@ register({
 register({
   id: "pocketweek", icon: "📅", name: () => T("Pocket Money Week", "Tiền Tiêu Vặt Trong Tuần"),
   async run(api) {
-    const code = getCode(), each = unit(code), rounds = 4;
+    // (levels) Hard and Talent: five days; Talent: the money each day is not a whole dollar (or 10.000 đồng)
+    const code = getCode(), each = unit(code) + (api.talent ? small(code) : 0), rounds = lv(api, 4, 4, 5, 5);
     const wrap = setup(api, ["You get pocket money each day. Keep count of your money!", "Mỗi ngày con được tiền tiêu vặt. Đếm xem con có bao nhiêu nhé!"], rounds);
     await wait(1500);
-    const days: [string, string][] = [["Monday", "Thứ Hai"], ["Tuesday", "Thứ Ba"], ["Wednesday", "Thứ Tư"], ["Thursday", "Thứ Năm"]];
+    const days: [string, string][] = [["Monday", "Thứ Hai"], ["Tuesday", "Thứ Ba"], ["Wednesday", "Thứ Tư"], ["Thursday", "Thứ Năm"], ["Friday", "Thứ Sáu"]];
     // one day a treat is bought; the others add the day's money
     const spendDay = 2 + Math.floor(Math.random() * 2);
     let have = each;
@@ -136,20 +143,21 @@ register({
 register({
   id: "pricetags", icon: "🏷️", name: () => T("Price Tags", "Gắn Giá"),
   async run(api) {
-    const code = getCode(), rounds = 4;
+    // (levels) more rounds from Medium; Hard compares three price tags, Talent four
+    const code = getCode(), rounds = lv(api, 4, 5, 6, 6), tags = lv(api, 2, 2, 3, 4);
     const wrap = setup(api, ["Read the price tags. Which costs less, and which costs more?", "Đọc thẻ giá. Món nào rẻ hơn, món nào đắt hơn?"], rounds);
     await wait(1500);
     const things = ["🍎", "📖", "🚌", "🧸", "🎈", "🍌", "🪁", "🧃"];
     for (let r = 0; r < rounds; r++) {
       const less = r % 2 === 0;
-      const [a, b] = mix(things).slice(0, 2);
-      const [pa, pb] = api.little ? M.distinctPrices(2, unit(code), unit(code) * 9, unit(code)) : M.distinctPrices(2, M.step(code) * 2, code === "VND" ? 50000 : 1000, code === "VND" ? 1000 : 10);
+      const icons = mix(things).slice(0, tags);
+      const prices = api.little ? M.distinctPrices(2, unit(code), unit(code) * 9, unit(code)) : M.distinctPrices(tags, M.step(code) * 2, code === "VND" ? 50000 : 1000, code === "VND" ? 1000 : 10);
       const ask: [string, string] = less ? ["Which costs less?", "Món nào rẻ hơn?"] : ["Which costs more?", "Món nào đắt hơn?"];
       wrap.replaceChildren(el("div", "mn2-box", T(ask[0], ask[1])));
       api.say(ask[0], ask[1]);
       const row = el("div", "mn2-row"); wrap.appendChild(row);
-      const btns = [[a, pa], [b, pb]].map(([icon, p]) => { const btn = el("button", "mn2-coin", `<span class="mn2-art">${pic(String(icon))}</span>${pic("🏷️")} ${money(+p, code)}`); btn.dataset.p = String(p); row.appendChild(btn); return btn; });
-      const right = less ? (pa < pb ? btns[0] : btns[1]) : (pa > pb ? btns[0] : btns[1]);
+      const btns = icons.map((icon, i) => [icon, prices[i]]).map(([icon, p]) => { const btn = el("button", "mn2-coin", `<span class="mn2-art">${pic(String(icon))}</span>${pic("🏷️")} ${money(+p, code)}`); btn.dataset.p = String(p); row.appendChild(btn); return btn; });
+      const best = (less ? Math.min : Math.max)(...prices), right = btns[prices.indexOf(best)];
       api.plan(() => right, { maxActions: 4 });
       const ok = await untilRight(api, btns, x => x === right);
       if (!ok || api.closed) return;
@@ -163,11 +171,12 @@ register({
 register({
   id: "busfare", icon: "🚌", name: () => T("Pay for the Bus", "Trả Tiền Xe Buýt"),
   async run(api) {
-    const code = getCode(), rounds = 3;
+    // (levels) Hard: a fourth fare; Talent: harder fares and no big coin or note
+    const code = getCode(), rounds = lv(api, 3, 3, 4, 4);
     const wrap = setup(api, ["Pay the driver the exact fare with your coins!", "Trả bác tài đúng tiền vé bằng tiền của con nhé!"], rounds);
     for (let r = 0; r < rounds; r++) {
-      const fare = code === "VND" ? [7000, 12000, 15000][r] : [150, 220, 350][r];
-      const coins = code === "VND" ? [1000, 2000, 5000, 10000] : [10, 20, 50, 100, 200];
+      const fare = code === "VND" ? (api.talent ? [13000, 17000, 23000, 28000] : [7000, 12000, 15000, 23000])[r] : (api.talent ? [130, 270, 390, 480] : [150, 220, 350, 470])[r];
+      const coins = (code === "VND" ? [1000, 2000, 5000, 10000] : [10, 20, 50, 100, 200]).slice(0, api.talent ? -1 : undefined);
       api.say("Look at the fare and pay it!", "Xem giá vé rồi trả tiền nhé!");   // (the fare is on the screen; a whole line Lê Minh can record)
       const ok = await makeAmount(api, wrap, code, fare, api.little ? coins.slice(-3) : coins, sum => `${pic("🚌")} ${T("Fare", "Giá vé")} ${money(fare, code)} · ${T("Paid", "Đã trả")} ${money(sum, code)}`);
       if (!ok) return;
@@ -182,11 +191,12 @@ register({
 register({
   id: "lemonade", icon: "🍋", name: () => T("Lemonade Stand", "Quầy Nước Chanh"),
   async run(api) {
-    const code = getCode(), rounds = 3, price = unit(code);
+    // (levels) more cups from Hard; Talent: a cup costs a dollar and a half (or 15.000 đồng)
+    const code = getCode(), rounds = lv(api, 3, 4, 4, 5), price = unit(code) + (api.talent ? small(code) : 0);
     const wrap = setup(api, ["Sell lemonade! Work out how much each customer pays.", "Bán nước chanh! Tính xem mỗi khách trả bao nhiêu."], rounds);
     await wait(1500);
     for (let r = 0; r < rounds; r++) {
-      const cups = 1 + Math.floor(Math.random() * (api.little ? 3 : 5));
+      const cups = lv(api, 1, 1, 2, 2) + Math.floor(Math.random() * (api.little ? 3 : lv(api, 5, 5, 7, 7)));
       const show = `${pic("🍋")} ${money(price, code)} ${T("a cup", "một cốc")} · ${pic("🥤").repeat(cups)}`;
       const ok = await moneyQuestion(api, show, [`${cups} ${cups === 1 ? "cup" : "cups"}, please! How much altogether?`, `Cho tôi ${cups} cốc! Tất cả bao nhiêu tiền?`], price * cups, price, code);
       if (!ok || api.closed) return;
@@ -202,7 +212,8 @@ register({
   id: "party", icon: "🎈", name: () => T("Party on a Budget", "Tiệc Tiết Kiệm"),
   async run(api) {
     const code = getCode(), u = unit(code);
-    const need = api.little ? 2 : 3, budget = u * (api.little ? 6 : 10);
+    // (levels) Hard and Talent: four things to buy; Talent with less money
+    const need = api.little ? 2 : lv(api, 3, 3, 4, 4), budget = u * (api.little ? 6 : lv(api, 10, 10, 12, 11));
     const wrap = setup(api, [`You have ${said(budget, code)[0]}. Buy ${need} things for the party without going over!`, `Con có ${said(budget, code)[1]}. Mua ${need} món cho bữa tiệc mà không tiêu quá nhé!`], need);
     const shop: [string, [string, string], number][] = [["🎈", ["Balloons", "Bóng bay"], u * 2], ["🎂", ["Cake", "Bánh kem"], u * 5], ["🧃", ["Juice", "Nước trái cây"], u * 2], ["🎩", ["Party hats", "Mũ tiệc"], u * 3], ["🎁", ["Present", "Quà"], u * 4], ["🍪", ["Biscuits", "Bánh quy"], u]];
     let left = budget, bought = 0;
@@ -235,13 +246,14 @@ register({
 register({
   id: "recycle", icon: "♻️", name: () => T("Cans for Coins", "Đổi Lon Lấy Tiền"),
   async run(api) {
-    const code = getCode(), rounds = 3;
+    // (levels) more cans from Medium (up to 8, 10, 14, 19) and one more round on Talent
+    const code = getCode(), rounds = lv(api, 3, 3, 3, 4);
     // (in Australia every can and bottle returned gives back 10 cents)
     const per = code === "VND" ? 1000 : 10;
     const wrap = setup(api, code === "VND" ? ["Each can you return gives back 1.000 đồng. How much do you get?", "Mỗi vỏ lon trả lại được 1.000 đồng. Con được bao nhiêu tiền?"] : ["Each can you return gives back 10 cents. How much do you get?", "Mỗi vỏ lon trả lại được 10 xu. Con được bao nhiêu tiền?"], rounds);
     await wait(1800);
     for (let r = 0; r < rounds; r++) {
-      const cans = 2 + Math.floor(Math.random() * (api.little ? 3 : 7));
+      const cans = lv(api, 2, 2, 5, 10) + Math.floor(Math.random() * (api.little ? 3 : lv(api, 7, 9, 10, 10)));
       const ok = await moneyQuestion(api, `${pic("♻️")} ${pic("🥫").repeat(cans)}`, [`${cans} cans. How much money back?`, `${cans} vỏ lon. Được trả lại bao nhiêu tiền?`], cans * per, per, code);
       if (!ok || api.closed) return;
       api.sfx.coin(); api.dots(rounds, r + 1);
@@ -255,14 +267,15 @@ register({
 register({
   id: "tetmarket", icon: "🏮", name: () => T("Tết Shopping", "Đi Chợ Tết"),
   async run(api) {
-    const code = getCode(), rounds = 3;
+    // (levels) Hard and Talent: all four things; Talent pays with a bigger note, so the change is bigger
+    const code = getCode(), rounds = lv(api, 3, 3, 4, 4);
     const wrap = setup(api, ["Shop at the Tết market! Pay with one note and work out your change.", "Đi chợ Tết! Trả bằng một tờ tiền rồi tính tiền thối nhé."], rounds);
     await wait(1600);
     const items: [string, [string, string], number][] = code === "VND"
       ? [["🌸", ["a branch of peach blossom", "cành đào"], 30000], ["🧧", ["a pack of red envelopes", "xấp bao lì xì"], 5000], ["🍊", ["a bag of oranges", "túi cam"], 15000], ["🏮", ["a lantern", "đèn lồng"], 20000]]
       : [["🌸", ["a branch of peach blossom", "cành đào"], 300], ["🧧", ["a pack of red envelopes", "xấp bao lì xì"], 50], ["🍊", ["a bag of oranges", "túi cam"], 150], ["🏮", ["a lantern", "đèn lồng"], 400]];
     for (const [r, [icon, name, price]] of mix(items).slice(0, rounds).entries()) {
-      const paid = M.payWith(price, code, 1) ?? price;
+      const paid = M.payWith(price, code, api.talent ? 2 : 1) ?? price;
       const show = `${pic(icon)} ${money(price, code)} · ${T("You pay", "Con trả")} ${cash(code, paid)}`;
       const ok = await moneyQuestion(api, show, [`${name[0][0].toUpperCase() + name[0].slice(1)} costs ${said(price, code)[0]}. You pay ${said(paid, code)[0]}. How much change?`, `${name[1][0].toUpperCase() + name[1].slice(1)} giá ${said(price, code)[1]}. Con trả ${said(paid, code)[1]}. Được thối lại bao nhiêu?`], paid - price, M.step(code) * (code === "VND" ? 5 : 10), code);
       if (!ok || api.closed) return;
@@ -277,12 +290,13 @@ register({
 register({
   id: "bank", icon: "🏦", name: () => T("At the Bank", "Ở Ngân Hàng"),
   async run(api) {
-    const code = getCode(), u = unit(code), rounds = 4;
+    // (levels) more visits from Medium; Hard and Talent: amounts with half a dollar (or 5.000 đồng) in them
+    const code = getCode(), u = unit(code), rounds = lv(api, 4, 5, 6, 7);
     const wrap = setup(api, ["Put money in and take money out. Keep track of what is in the bank!", "Gửi tiền vào và rút tiền ra. Nhớ xem trong ngân hàng còn bao nhiêu nhé!"], rounds);
     await wait(1600);
-    let balance = u * (2 + Math.floor(Math.random() * 3));
+    let balance = u * (2 + Math.floor(Math.random() * 3) + lv(api, 0, 1, 2, 3));
     for (let r = 0; r < rounds; r++) {
-      const out = r % 2 === 1, amount = u * (1 + Math.floor(Math.random() * 2));
+      const out = r % 2 === 1, amount = u * (1 + Math.floor(Math.random() * lv(api, 2, 3, 3, 4))) + ((api.smart || 0) >= 2 && !api.little ? small(code) : 0);
       const before = balance;
       balance = out ? balance - amount : balance + amount;
       const ask: [string, string] = out
@@ -301,17 +315,18 @@ register({
 register({
   id: "sharefair", icon: "🤝", name: () => T("Share Fairly", "Chia Đều"),
   async run(api) {
-    const code = getCode(), coin = unit(code), rounds = 2;
+    // (levels) Medium: three rounds; Hard: three friends every round; Talent: four friends
+    const code = getCode(), coin = unit(code), rounds = lv(api, 2, 3, 3, 3);
     const wrap = setup(api, ["Share the coins so every friend gets the same. Give one each, round and round!", "Chia tiền để bạn nào cũng bằng nhau. Mỗi bạn một, lần lượt nhé!"], rounds);
     await wait(1600);
     for (let r = 0; r < rounds; r++) {
-      const friends = api.little || r === 0 ? 2 : 3, each = 2 + Math.floor(Math.random() * (api.little ? 2 : 3));
+      const friends = api.little ? 2 : api.talent ? 4 : (api.smart || 0) >= 2 ? 3 : r === 0 ? 2 : 3, each = 2 + Math.floor(Math.random() * (api.little ? 2 : 3));
       let pile = friends * each;
       const top = el("div", "mn2-box"), row = el("div", "mn2-friends");
       wrap.replaceChildren(top, row);
       const show = () => { top.innerHTML = `${T("Coins to share", "Tiền cần chia")}: ${cash(code, coin).repeat(pile) || "0"}`; };
       show();
-      const faces = ["🧒", "👧", "🐻"];
+      const faces = ["🧒", "👧", "🐻", "🐰"];
       const cards = Array.from({ length: friends }, (_, i) => { const c = el("button", "mn2-friend", `<span class="mn2-art">${pic(faces[i])}</span><span class="mn2-pile"></span>`); c.dataset.n = "0"; row.appendChild(c); return c; });
       api.plan(() => cards.slice().sort((a, b) => +a.dataset.n - +b.dataset.n)[0], { maxActions: pile + 3 });
       while (pile > 0) {
