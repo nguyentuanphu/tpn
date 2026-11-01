@@ -48,8 +48,13 @@ import { LEARN } from './words2.js';
 import { SONG_GROUPS, SONG_LIST, familySongs } from './content/songs.js';
 import { originFlags, ICONS } from './icons.js';
 import { pic } from './art.js';
+import { COMPANIONS } from './content/chapters.js';
 
 const PET_ICON = { puppy: '🐶', kitty: '🐱', bunny: '🐰', panda: '🐼', joey: '🦘', calf: '🐃' };
+// the companion's and pets' hats (js/kidplay.js HATS), drawn as in the shop's Companion tab
+const PAL_HAT_ICON = { party: '🎉', flower: '🌸', nonla: '👒', crown: '👑' };
+// (issue #738) the Backpack section that holds the pets and the companion together, and their hats
+export const PALS_NAME = () => T('Pets & Buddy', 'Thú cưng & Bạn đồng hành');
 export const STYLE_ICON = { dress: '👗', shirt: '👕', aodai: '🥻', tunic: '🧥', overalls: '👖', hoodie: '🧶' };
 export const STYLE_NAME = { dress: () => T('Dress', 'Váy'), shirt: () => T('Shirt & shorts', 'Áo và quần đùi'), aodai: () => 'Áo dài', tunic: () => T('Explorer', 'Nhà thám hiểm'), overalls: () => T('Overalls', 'Quần yếm'), hoodie: () => T('Hoodie', 'Áo nỉ') };
 // big text and calm mode change the whole page
@@ -653,9 +658,26 @@ export const openPad = Object.assign(function (game, i, tab) {
     const items = Object.entries<number>(p.inv).filter(([id, n]) => n > 0 && ITEMS[id] && !isGem(id)), gems = Object.entries<number>(p.inv).filter(([id, n]) => n > 0 && isGem(id)).sort((a, b) => WILD[b[0]].sell - WILD[a[0]].sell);
     const bought = Object.entries<number>(p.bought || {}).filter(([id, n]) => n > 0 && snackOf(id));
     const dishes = Object.entries<number>(p.dishes).filter(([, n]) => n > 0);
+    // (issue #738, tester on an iPhone 430x517, 31 Oct 2026 AEDT: "I can't see the pets in the Bag; put the pets and the
+    // companion in one place, where their accessories are bought and managed too") the pets were one button above the coins:
+    // no heading, so no chip in the sticky jump row and no fold, and on a short phone it scrolled away for good; the
+    // companion and its hats were only in the shop. Now one section, first in the Bag and first in the jump row: the
+    // companion, each pet, adopting, and the hats (put on whoever should wear it, or buy the next one)
+    const pals = (() => {
+      const kp = game.kidplay, comp = p.lanterns && p.lanterns.companion && COMPANIONS[p.lanterns.companion], pets = (p.pets || []).slice(0, game.pets?.max || 2), petNm = pt => game.pets?.nameOf ? game.pets.nameOf(pt) : (pt.name || '');
+      const ps = (p.lanterns && p.lanterns.pet) || {}, owned = (ps.hats || []), next = kp && (comp || pets.length) ? kp.nextHat(hero) : null;
+      const badge = id => id && PAL_HAT_ICON[id] ? `<i class="pal-hat">${pic(PAL_HAT_ICON[id])}</i>` : '';
+      const friends = (comp ? `<button class="slot pal" data-pal="buddy" title="${esc(T(comp.en, comp.vi))}"><span>${pic(comp.icon)}</span>${badge(ps.hat)}<small>${esc(comp.name)}</small></button>` : '')
+        + pets.map((pt, k) => `<button class="slot pal" data-pal="${k}" title="${esc(petNm(pt))}"><span>${pic(PET_ICON[pt.kind] || '🐾')}</span>${badge(pt.hat)}<small>${esc(petNm(pt))}</small></button>`).join('')
+        + `<button class="slot pal" data-adopt="1"><span>${pic('🐾')}</span><small>${pets.length >= (game.pets?.max || 2) ? T('Pet yard', 'Sân thú cưng') : T('Adopt a pet', 'Nhận nuôi')}</small></button>`;
+      const hats = kp && (comp || pets.length) ? kp.HATS.map(x => { const have = owned.includes(x.id), buyable = next && next.id === x.id, who = have && kp.wearerOf ? kp.wearerOf(hero, x.id) : null;
+        return `<button class="slot pal-hatslot ${who != null ? 'on' : ''} ${!have && !buyable ? 'locked' : ''}" data-phat="${x.id}" title="${esc(T(x.en, x.vi))}"><span>${pic(PAL_HAT_ICON[x.id] || '🎩')}</span>${have ? '' : buyable ? `<b class="pal-price">${fmt(x.price)}</b>` : `<i class="pal-lock">${pic('🔒')}</i>`}<small>${esc(T(x.en, x.vi))}</small></button>`; }).join('') : '';
+      return `<h3 class="bag-pals-h">${pic('🐾')} ${PALS_NAME()} <small>${T('tap one', 'chạm để xem')}</small></h3>
+      <div class="slots bag-pals">${friends}</div>${hats ? `<p class="note pal-hatnote">${T('Hats for your friends: tap one to put it on, or buy the next one.', 'Mũ cho các bạn: chạm để đội cho bạn nào, hoặc mua mũ tiếp theo.')}</p><div class="slots bag-pal-hats">${hats}</div>` : ''}`;
+    })();
     body.innerHTML = `
-      ${(p.pets || []).length ? `<button class="btn wide" id="bagPets">🐾 ${T('My pets', 'Thú cưng của con')}: ${(p.pets || []).map(pt => (PET_ICON[pt.kind] || '🐾') + ' ' + esc(pt.name || '')).join('  ')}</button>` : ''}
       <div class="bag-top"><button class="chip bagc" data-chip="money" title="${T('Coins', 'Đồng xu')}"><i>💰</i><b>${fmt(farm.coins)}</b><small>${T('Coins', 'Đồng xu')}</small></button><button class="chip bagc" data-chip="orbs" title="${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}"><i>🔮</i><b>${p.orbs}</b><small>${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}</small></button><button class="chip bagc" data-chip="leafy" title="${T('Leafies', 'Bạn Lá')}"><i>🍃</i><b>${Object.keys(p.leafies).length}/24</b><small>${T('Leafies', 'Bạn Lá')}</small></button></div>
+      ${pals}
       <h3>${T('Food', 'Món ăn')} <small>${T('tap to eat', 'chạm để ăn')}</small></h3>
       <div class="slots">${dishes.map(([id, n]) => { const r = dishInfo(id) || { icon: '🥘', name: () => T('Mystery stew', 'Món hầm bí ẩn') }; return `<button class="slot" data-eat="${id}" title="${esc(r.name() + ' · ' + T('tap to eat: hearts and energy back', 'chạm để ăn: thêm tim và sức'))}"><span>${r.icon}</span><b>${n}</b><small>${esc(r.name())}</small></button>`; }).join('') || `<p class="note">${T('Cook at a cooking pot to make food.', 'Nấu ăn ở nồi nấu để có món ăn.')}</p>`}</div>
       <h3>🛍️ ${T('From shops and stalls', 'Mua ở quán và sạp')} <small>${T('tap to eat', 'chạm để ăn')}</small></h3>
@@ -705,7 +727,36 @@ export const openPad = Object.assign(function (game, i, tab) {
       p.inv[id]--; if (p.inv[id] <= 0) delete p.inv[id]; farm.coins += w.sell; saveFarm(); game.save(); SFX.coin();
       say(`Sold! Now you have ${money(farm.coins)}.`, `Bán rồi! Giờ con có ${money(farm.coins)}.`); game.job && game.job('sell', 1, hero); draw();
     });
-    if (body.querySelector('#bagPets')) body.querySelector('#bagPets').onclick = () => { m.close(); game.closePad(i); setTimeout(() => game.pets.openAdopt(hero), 220); };
+    // (#738) Pets & Buddy: a friend says who it is and offers what it can do; a hat offers who can wear it, or Buy
+    const toPets = () => { close(); setTimeout(() => game.pets.openAdopt(hero), 220); };
+    body.querySelectorAll('[data-adopt]').forEach(b => b.onclick = () => { SFX.tap(); toPets(); });
+    body.querySelectorAll('[data-pal]').forEach(b => b.onclick = () => { SFX.tap();
+      const art = b.querySelector('svg, .art')?.outerHTML || '', name = b.querySelector('small')?.textContent || '';
+      if (b.dataset.pal === 'buddy') { const canFeed = !!game.kidplay;
+        helpCard(name, art, 'Your companion flies with you and lights the way. Feed it once a day and it grows. Choose a hat for it below.', 'Bạn đồng hành bay cùng con và soi đường. Cho bạn ăn mỗi ngày để bạn lớn lên. Chọn mũ cho bạn ở bên dưới.', canFeed ? T('Feed', 'Cho ăn') : '', ok => { if (ok) { game.kidplay.feed(hero); draw(); } }); return; }
+      helpCard(name, art, 'Your pet follows you, sniffs out hidden Leafies and saves you in deep water. Choose a hat for it below.', 'Thú cưng đi theo con, tìm bạn Lá Lá đang trốn và cứu con dưới nước sâu. Chọn mũ cho bạn ở bên dưới.', T('Name and care', 'Đặt tên và chăm sóc'), ok => { if (ok) toPets(); }); });
+    body.querySelectorAll('[data-phat]').forEach(b => b.onclick = () => {
+      const kp = game.kidplay, id = b.dataset.phat, x = kp && kp.HATS.find(y => y.id === id); if (!x) return; SFX.tap();
+      const ps = (p.lanterns && p.lanterns.pet) || {}, have = (ps.hats || []).includes(id), next = kp.nextHat(hero), name = T(x.en, x.vi), art = b.querySelector('svg, .art')?.outerHTML || '';
+      body.querySelector('.bag-help')?.remove();
+      let en, vi, btns = '';
+      if (have) {
+        const who = kp.wearerOf(hero, id), comp = p.lanterns && p.lanterns.companion && COMPANIONS[p.lanterns.companion];
+        const opts = [...(comp ? [['buddy', comp.name]] : []), ...(p.pets || []).slice(0, game.pets?.max || 2).map((pt, k) => [String(k), game.pets.nameOf(pt)])];
+        en = `${x.en}. Who should wear it?`; vi = `${x.vi}. Bạn nào đội mũ này?`;
+        btns = opts.map(([k, nm]) => `<button class="btn ${String(who) === k ? 'on' : 'primary'} bh-wear" data-to="${k}" aria-pressed="${String(who) === k}">${esc(nm)}</button>`).join('') + (who != null ? `<button class="btn bh-off">${T('Take off', 'Cởi ra')}</button>` : '');
+      } else if (next && next.id === id) {
+        const can = farm.coins >= x.price;
+        en = `${x.en} costs ${money(x.price)}. ${can ? 'Choose Buy when you are ready.' : 'Keep saving coins for it!'}`; vi = `${x.vi} giá ${money(x.price)}. ${can ? 'Chọn Mua khi con đã sẵn sàng.' : 'Để dành thêm tiền nhé!'}`;
+        if (can) btns = `<button class="btn primary bh-buy">${T('Buy', 'Mua')} · ${fmt(x.price)}</button>`;
+      } else { en = `${x.en}: buy the hats before it first.`; vi = `${x.vi}: mua những chiếc mũ trước nó trước nhé.`; }
+      const c = el('div', 'bag-help', `<div>${art}<b>${esc(name)}</b></div><p>${esc(T(en, vi))}</p><div class="actions">${btns}<button class="btn bh-close">${T('Not now', 'Để sau')}</button></div>`);
+      c.setAttribute('role', 'region'); c.setAttribute('aria-label', name); body.appendChild(c); say(en, vi);
+      c.querySelector('.bh-close').onclick = () => c.remove();
+      c.querySelectorAll('.bh-wear').forEach(w => w.onclick = () => { const k = w.dataset.to; if (kp.wearHat(hero, k === 'buddy' ? 'buddy' : +k, id)) { SFX.pop ? SFX.pop(1) : SFX.ok(); say('What a lovely hat!', 'Mũ đẹp quá!'); } draw(); });
+      c.querySelector('.bh-off')?.addEventListener('click', () => { const who = kp.wearerOf(hero, id); if (who != null) kp.wearHat(hero, who, null); SFX.tap(); draw(); });
+      c.querySelector('.bh-buy')?.addEventListener('click', () => { kp.buy(hero, id); draw(); });
+    });
     body.querySelectorAll('[data-hat]').forEach(b => b.onclick = () => { p.look.hat = b.dataset.hat; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
     body.querySelectorAll('[data-wear]').forEach(b => b.onclick = () => { const it = ITEM[b.dataset.wear]; if (it && wearItem(p, it.slot, it.id)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-unwear]').forEach(b => b.onclick = () => { if (wearItem(p, b.dataset.unwear, 'none')) { saveProfiles(); game.rebuildHero(i); SFX.tap(); draw(); } });
@@ -728,7 +779,7 @@ export const openPad = Object.assign(function (game, i, tab) {
     body.querySelectorAll('[data-gl]').forEach(b => b.onclick = () => { p.look.glider = +b.dataset.gl; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
     // Help is the first tap; every change requires an explicit action inside the same Bag.
     for (const b of body.querySelectorAll('.slot')) {
-      if (b.dataset.eat || b.dataset.snack || b.dataset.gift) continue;
+      if (b.dataset.eat || b.dataset.snack || b.dataset.gift || b.dataset.pal || b.dataset.adopt || b.dataset.phat) continue;
       const oldAction = b.onclick, name = b.querySelector('small')?.textContent || b.title || T('Item', 'Đồ dùng');
       const it = ITEM[b.dataset.wear], ingredient = b.dataset.ing, treasure = WILD[b.dataset.sellgem];
       let en = 'Keep this item in your Backpack and use its action when you need it.', vi = 'Giữ món này trong Ba lô và chọn hành động khi cần.';
