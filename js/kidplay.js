@@ -70,7 +70,21 @@ export function createKidPlay(G, { say, save }) {
     const x = nextHat(h); if (!x || (expectedHat && x.id !== expectedHat)) return;
     if (farm.coins < x.price) { say(...KID_LINES.saving); return; }
     G.addCoins && G.addCoins(-x.price); const s = pet(h.profile); s.hats.push(x.id); s.hat = x.id; G.tried && G.tried(h, 'saveGoal'); save();
+    // (issue #738) a child with pets but no companion yet: the new hat goes on the first pet
+    if (!hasPet(h) && (h.profile.pets || []).length) wearHat(h, 0, x.id);
     comps() && comps().trick(h, 'spin'); say(...KID_LINES.bought);
+  }
+  // (issue #738, tester 31 Oct 2026 AEDT: "pets and the companion in one place, with their accessories") the hats are the
+  // child's, and each one is worn by one friend at a time: the companion ('buddy') or a pet (its place in profile.pets).
+  // wearHat(h, who, id) puts hat id on who (taking it off whoever had it); wearHat(h, who, null) takes who's hat off.
+  const wearerOf = (h, id) => { if (pet(h.profile).hat === id && hasPet(h)) return 'buddy'; const k = (h.profile.pets || []).findIndex(pt => pt && pt.hat === id); return k >= 0 ? k : null; };
+  function wearHat(h, who, id) {
+    const s = pet(h.profile), pets = h.profile.pets || [];
+    if (id && !s.hats.includes(id)) return false;
+    if (who !== 'buddy' && !pets[who]) return false;
+    if (id) { if (s.hat === id) s.hat = null; pets.forEach(pt => { if (pt && pt.hat === id) delete pt.hat; }); }
+    if (who === 'buddy') s.hat = id || null; else if (id) pets[who].hat = id; else delete pets[who].hat;
+    save(); G.pets && G.pets.sync && (G.pets.sync(), G.pets.refreshInteractables && G.pets.refreshInteractables()); return true;
   }
   let goalOpening = false;
   async function explainGoal(h) {
@@ -150,5 +164,5 @@ export function createKidPlay(G, { say, save }) {
   });
   // the buttons follow the coins and the switches even while a window is open and the valley is paused
   setInterval(refresh, 500);
-  return { feed, buy, level, nextHat, giftSpot: () => spot, HATS, refresh };
+  return { feed, buy, level, nextHat, wearHat, wearerOf, giftSpot: () => spot, HATS, refresh };
 }

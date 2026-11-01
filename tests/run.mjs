@@ -2638,6 +2638,74 @@ await check('kidplay', async () => {
   if (bad.length) throw new Error(bad.join('; '));
   return `fed once a day, grew to size ${r.level} with a trick, bought the party hat (100 → 70 coins), opened today's gift (+15), Skip on story films; every switch turns its part off`;
 });
+await check('bagpals', async () => {
+  // (issue #738, tester on an iPhone 430x517 in Vietnamese, 31 Oct 2026 AEDT: "in the Bag I can't see the pets; put the pets
+  // and the companion in one place, where their accessories are bought and managed too, and give it one name") the pets
+  // were a lone button above the coins with no heading, so the sticky jump row had no way back to them on a short phone,
+  // and the companion's hats were only in the shop. Now "Pets & Buddy / Thú cưng & Bạn đồng hành" is the Bag's first
+  // section and the first chip of its jump row, on a phone (the tester's 430x517 and 390x844), a tablet and a computer:
+  // the companion, each pet and adopting in one row, every tile big enough to tap; their hats under it. A hat is bought
+  // only with an explicit Buy, then put on the companion or on a pet (the 3D hat moves with it) and taken off again
+  const rows = [];
+  for (const [dev, w, h, lang] of [['tester-phone', 430, 517, 'vi'], ['phone', 390, 844, 'en'], ['tablet', 820, 1180, 'vi'], ['computer', 1366, 800, 'en']]) {
+    const P = await open(b, { w, h, touch: w < 1000, lang }); await clear(P.page);
+    const r = await P.page.evaluate(async () => {
+      const G = __sv, hero = G.heroes[0], p = hero.profile, wt = t => new Promise(r => setTimeout(r, t)), S = await import('/js/state.js'), out = {};
+      p.age = 'little'; p.lanterns = { companion: 'firefly', done: { p_owl: true }, chapters: {} }; p.pets = [{ kind: 'puppy', name: 'Mochi' }, { kind: 'kitty', name: '' }];
+      G.pets.sync(); G.pets.refreshInteractables(); G.lanterns.companions.sync(); G.addCoins(100 - S.farm.coins); await wt(600);
+      G.openPad(0, 'bag'); await wt(900);
+      const body = document.querySelector('.modal.pad .pad-body'), br = body.getBoundingClientRect(), hs = [...body.querySelectorAll('h3')];
+      out.oldButton = !!body.querySelector('#bagPets');
+      out.firstHeading = hs[0] ? hs[0].textContent.replace(/\s+/g, ' ').trim() : '';
+      out.firstChip = body.querySelector('.jumpnav button')?.textContent.trim() || '';
+      const tiles = [...body.querySelectorAll('.bag-pals .slot')];
+      out.tiles = tiles.map(t => t.dataset.pal ?? (t.dataset.adopt ? 'adopt' : '?'));
+      out.small = [...tiles, ...body.querySelectorAll('.bag-pal-hats .slot')].map(t => t.getBoundingClientRect()).filter(q => q.width < 64 || q.height < 64).length;
+      // seen when the Bag opens, without scrolling: the first friend's tile starts inside the visible Bag
+      out.seenAtOpen = tiles[0] ? tiles[0].getBoundingClientRect().top < br.bottom - 24 : false;
+      // the jump chip brings the section back after scrolling to the bottom
+      body.scrollTop = body.scrollHeight; await wt(300); body.querySelector('.jumpnav button')?.click(); await wt(900);
+      const nav = body.querySelector('.jumpnav').getBoundingClientRect(), t0 = body.querySelector('.bag-pals .slot').getBoundingClientRect();
+      out.jumpBack = t0.top >= nav.bottom - 2 && t0.top < br.bottom - 24;
+      // buy the first hat: a tap explains, only Buy spends
+      const hatTile = id => body.querySelector(`.bag-pal-hats [data-phat="${id}"]`);
+      out.lockedBuy = (() => { hatTile('crown').click(); return !!body.querySelector('.bag-help .bh-buy'); })();
+      hatTile('party').click(); await wt(150); out.tapKeepsCoins = S.farm.coins === 100 && !(p.lanterns.pet && (p.lanterns.pet.hats || []).length);
+      body.querySelector('.bag-help .bh-buy')?.click(); await wt(700);
+      // (the companion is drawn while the valley runs: close the Bag to see its hat, then open it again)
+      const reopen = async () => { document.querySelector('.modal.pad .pad-head .x')?.click(); await wt(900); const seen = !!G.lanterns.companions.of(hero).hat; G.openPad(0, 'bag'); await wt(900); return seen; };
+      out.coinsAfter = S.farm.coins; out.hats = [...(p.lanterns.pet.hats || [])]; out.buddyHat = p.lanterns.pet.hat; out.buddy3d = await reopen();
+      // put it on Mochi: it leaves the companion; the 3D hat is on the puppy
+      const b2 = document.querySelector('.modal.pad .pad-body'); b2.querySelector('.bag-pal-hats [data-phat="party"]').click(); await wt(150);
+      out.wearers = [...b2.querySelectorAll('.bag-help .bh-wear')].map(x => x.dataset.to);
+      b2.querySelector('.bag-help .bh-wear[data-to="0"]')?.click(); await wt(700);
+      out.badge = !!document.querySelector('.modal.pad .bag-pals [data-pal="0"] .pal-hat');
+      out.petHat = p.pets[0].hat; out.buddyAfter = p.lanterns.pet.hat; out.pet3d = !!(G.pets.forHero(hero)[0]?.obj.userData.hat); out.buddy3dAfter = await reopen();
+      // and take it off
+      const b3 = document.querySelector('.modal.pad .pad-body'); b3.querySelector('.bag-pal-hats [data-phat="party"]').click(); await wt(150); b3.querySelector('.bag-help .bh-off')?.click(); await wt(500);
+      out.offPet = p.pets[0].hat == null && !G.pets.forHero(hero)[0]?.obj.userData.hat;
+      document.querySelector('.modal.pad .pad-body').scrollTop = 0; await wt(200);
+      return out;
+    });
+    await P.page.screenshot({ path: `out/bagpals-${dev}.png` });
+    const bad = [], heading = lang === 'vi' ? 'Thú cưng & Bạn đồng hành' : 'Pets & Buddy';
+    if (r.oldButton) bad.push('the old lone pets button is still there');
+    if (!r.firstHeading.includes(heading) || !r.firstChip.includes(heading)) bad.push(`"${heading}" is not the first section and jump chip: "${r.firstHeading}", "${r.firstChip}"`);
+    if (r.tiles.join(',') !== 'buddy,0,1,adopt') bad.push('the friends row is ' + r.tiles.join(','));
+    if (r.small) bad.push(r.small + ' tiles under 64 px for an under-5');
+    if (!r.seenAtOpen) bad.push('the pets are not in sight when the Bag opens');
+    if (!r.jumpBack) bad.push('the jump chip does not bring the pets back into view');
+    if (r.lockedBuy) bad.push('a locked hat can be bought before the ones before it');
+    if (!r.tapKeepsCoins || r.coinsAfter !== 70 || r.hats.join() !== 'party' || r.buddyHat !== 'party' || !r.buddy3d) bad.push('buying the hat ' + JSON.stringify(r));
+    if (r.wearers.join(',') !== 'buddy,0,1' || r.petHat !== 'party' || r.buddyAfter || !r.pet3d || r.buddy3dAfter || !r.badge) bad.push('putting the hat on a pet ' + JSON.stringify(r));
+    if (!r.offPet) bad.push('the hat did not come off the pet');
+    if (P.errors.length) bad.push(...P.errors.slice(0, 2));
+    await P.ctx.close();
+    if (bad.length) throw new Error(dev + ': ' + bad.join('; '));
+    rows.push(`${dev} ${w}x${h}`);
+  }
+  return `Pets & Buddy first in the Bag and its jump row (${rows.join(', ')}): companion, 2 pets and adopting, tiles 64 px+; a hat bought only with Buy (100 to 70), moved from the companion to a pet and off again, the 3D hat following; screenshots out/bagpals-*.png`;
+});
 await check('shop', async () => {
   // (round S, owner plan 8 Oct: Round R Part 2 item 6) the clothes shop stands by the market off the roads; the Bag button
   // takes the child there; the big card has picture tabs and coin prices (≥ 64 px for under-5s); buying takes game coins

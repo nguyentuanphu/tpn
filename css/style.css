@@ -3394,3 +3394,12 @@ body.touch:has(.simple-screen:not([hidden])) .caption { top: auto; bottom: calc(
 .kitem[data-pet], .wit[data-pet] { position: relative; }
 .kitem[data-pet] .klock, .wit[data-pet] .klock { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; }
 .kitem[data-pet] .klock .art, .wit[data-pet] .klock .art { width: 24px; height: 24px; }
+/* (issue #738, tester 31 Oct 2026 AEDT) Pets & Buddy in the Backpack: the companion and the pets in one row, the hat each
+   wears as a small badge on its tile; their hats in the row under it (the next one shows its price, later ones a lock) */
+.pad .slot > .pal-hat { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(60, 40, 90, .25); font-style: normal; }
+.pad .slot > .pal-hat svg, .pad .slot > .pal-hat .arti { width: 24px; height: 24px; }
+.pad .slot > .pal-lock { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; font-style: normal; }
+.pad .slot > .pal-lock svg, .pad .slot > .pal-lock .arti { width: 24px; height: 24px; }
+.pad .slot > b.pal-price { top: 4px; right: 4px; font-size: 12px; background: #fff7d6; border-radius: 8px; padding: 1px 5px; }
+.pad .slot.locked > span { opacity: .45; filter: grayscale(.6); }
+.pad .pal-hatnote { margin: 6px 0 4px; }
