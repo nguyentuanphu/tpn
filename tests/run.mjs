@@ -3842,6 +3842,97 @@ await check('levelsa', async () => {
   return `${harder.length} games show more at Talent than at Easy: ` + harder.map(id => `${id} ${seen[id].easy}→${seen[id].talent}`).join(', ');
 });
 
+await check('hocvui', async () => {
+  // (Học vui, owner's plan 1 Nov 2026 AEDT, docs/learn-tab/PLAN.md) the Fun learning tab in Play and its four corners
+  // (Tiếng Việt, English, Maths, Science), with the corners' own games and the existing games linked in (each still in
+  // its own tab; a link opens it); the same four areas on the Simple screen; and each of the eight new games played to
+  // a win through real taps on the screen, at Easy and at Talent for a big kid, where Talent shows more than Easy
+  const NEW = ['sci_float', 'sci_magnet', 'sci_ramp', 'sci_seesaw', 'sci_shadow', 'sci_sound', 'vi_tones', 'vi_build'];
+  const MORE = { sci_float: '.sx-thing', sci_magnet: '.sx-thing', sci_ramp: '.sx-lane', sci_seesaw: 'button.sx-seat', sci_shadow: '.sx-ring', sci_sound: '.sx-bottle', vi_tones: '.choices .choice', vi_build: '.choices .choice' };
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, settings: { voice: false } }); await clear(P.page);
+  const fails = [];
+  // the Play hub: the tab, its four corners, the new games as cards, existing games as links; Learning keeps its games
+  const hub = await P.page.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    __sv.heroes[0].profile.age = 'big'; __sv.openGamesHub(0); await wait(400);
+    const tabs = [...document.querySelectorAll('.hubtabs [data-tab]')].map(b => b.dataset.tab);
+    document.querySelector('.hubtabs [data-tab="hocvui"]')?.click(); await wait(300);
+    const heads = [...document.querySelectorAll('.hubbody .hubarea')].map(h => [...h.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('').trim());
+    const plays = [...document.querySelectorAll('.hubbody [data-play]')].map(b => b.dataset.play), links = [...document.querySelectorAll('.hubbody [data-link]')].map(b => b.dataset.link);
+    const small = [...document.querySelectorAll('.hubbody .hplay')].filter(b => { const r = b.getBoundingClientRect(); return r.width < 64 || r.height < 64; }).length;
+    const art = [...document.querySelectorAll('.hubtabs [data-tab="hocvui"] .art, .hubbody .hubarea .art')].length;
+    document.querySelector('.hubtabs [data-tab="learn"]')?.click(); await wait(300);
+    const learn = [...document.querySelectorAll('.hubbody [data-play]')].map(b => b.dataset.play);
+    return { tabs, heads, plays, links, small, art, learn };
+  });
+  if (!hub.tabs.includes('hocvui') || hub.tabs[0] !== 'learn') fails.push('tabs ' + hub.tabs.join(','));
+  if (JSON.stringify(hub.heads) !== JSON.stringify(['Vietnamese', 'English', 'Maths', 'Science'])) fails.push('corners ' + hub.heads.join(' | '));
+  if (!NEW.every(id => hub.plays.includes(id)) || hub.plays.some(id => !NEW.includes(id))) fails.push('corner games ' + hub.plays.join(','));
+  for (const id of ['words', 'phonics', 'opposites', 'firstwords', 'counting', 'sums', 'numline']) if (!hub.links.includes(id)) fails.push('no link to ' + id);
+  for (const id of ['counting', 'sums', 'phonics', 'opposites', 'numline']) if (!hub.learn.includes(id)) fails.push(id + ' left the Learning tab');
+  if (hub.small) fails.push(hub.small + ' hub cards under 64 px'); if (hub.art < 5) fails.push('tab and corner pictures not drawn: ' + hub.art);
+  // a link opens the game it points to, by a real tap
+  const link = await P.page.evaluate(() => { const b = document.querySelector('.hubtabs [data-tab="hocvui"]'); b.click(); return new Promise(r => setTimeout(() => { const l = document.querySelector('.hubbody [data-link="counting"]'); l.scrollIntoView({ block: 'center' }); const q = l.getBoundingClientRect(); r({ x: q.left + q.width / 2, y: q.top + q.height / 2 }); }, 300)); });
+  await P.page.touchscreen.tap(link.x, link.y);
+  if (!await P.page.waitForSelector('.gl[data-game-id="counting"]', { timeout: 10000 }).then(() => true, () => false)) fails.push('the Counting link did not open Counting');
+  await P.page.evaluate(() => { document.querySelector('.gl .gl-x')?.click(); document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; }); await P.page.waitForTimeout(500);
+  // the Simple screen: the same four areas, in order, after the others; the new games in them and the links too
+  const simple = await P.page.evaluate(() => { __sv.simple.show('games'); __sv.simple.openGroup('games', null); const v = __sv.simple.view, out = { cats: v.cats, stops: v.stops }; __sv.simple.hide(); return out; });
+  const corners = simple.cats.filter(c => c.startsWith('hv_'));
+  if (JSON.stringify(corners) !== JSON.stringify(['hv_vi', 'hv_en', 'hv_math', 'hv_sci']) || simple.cats.indexOf('hv_vi') < simple.cats.indexOf('money')) fails.push('Simple screen areas ' + simple.cats.join(','));
+  if (!NEW.every(id => simple.stops.includes(id))) fails.push('Simple screen without ' + NEW.filter(id => !simple.stops.includes(id)).join(','));
+  if (simple.stops.filter(id => id === 'counting').length !== 2) fails.push('Counting is not both in Numbers and in Maths on the Simple screen');
+  // each new game: Easy and Talent, a big kid, played to the win by tapping what the game asks for (its plan, or the
+  // right answer of the question on screen), like a child's finger; quicker with Reduce motion (the same steps)
+  await P.page.emulateMedia({ reducedMotion: 'reduce' });
+  const played = {};
+  for (const id of NEW) for (const d of ['easy', 'talent']) {
+    await P.page.evaluate(([id, d]) => { document.querySelectorAll('.gl, .modal').forEach(g => g.remove()); __sv.paused = false; const p = __sv.heroes[0].profile; p.age = 'big'; p.gameDiff = { ...(p.gameDiff || {}), [id]: d }; __sv.playGame(0, id, 'hub'); }, [id, d]);
+    if (!await P.page.waitForSelector(`.gl[data-game-id="${id}"]:not(.out)`, { timeout: 10000 }).then(() => true, () => false)) { fails.push(`${id} ${d}: did not open`); continue; }
+    let shown = 0, last = -1;
+    for (let k = 0; k < 40; k++) { await P.page.waitForTimeout(150); shown = await P.page.evaluate(sel => document.querySelectorAll(`.gl:not(.out) ${sel}`).length, MORE[id]); if (shown > 0 && shown === last) break; last = shown; }
+    const talent = await P.page.evaluate(() => !!document.querySelector('.gl:not(.out)')?.dataset.talent);
+    let taps = 0, won = false, stuck = 0;
+    for (let k = 0; k < 500 && !won; k++) {
+      const t = await P.page.evaluate(async () => {
+        const { playWatch } = await import('/js/games/frame.js'), gl = document.querySelector('.gl:not(.out)');
+        if (!gl) return { gone: true }; if (gl.querySelector('.gl-win')) return { won: true };
+        const ok = e => e && e.isConnected && !e.disabled && e.getBoundingClientRect().width > 0;
+        let e = null; const a = playWatch.ask;
+        if (a && a.els.some(ok)) e = a.els.find(x => ok(x) && a.check(x)); else if (playWatch.plan) e = playWatch.plan();
+        if (!ok(e)) return { wait: true };
+        e.scrollIntoView({ block: 'nearest' }); const r = e.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, at = document.elementFromPoint(x, y);
+        return { x, y, on: !!at && (at === e || e.contains(at)), what: (e.className || e.tagName) + ' under ' + (at ? (at.className && at.className.baseVal != null ? at.className.baseVal : at.className) || at.tagName : 'nothing') + ' at ' + Math.round(x) + ',' + Math.round(y) };
+      });
+      if (t.won) { won = true; break; } if (t.gone) break;
+      if (t.wait) { if (++stuck > 120) break; await P.page.waitForTimeout(150); continue; }
+      stuck = 0; if (!t.on) { fails.push(`${id} ${d}: something covers ${t.what}`); break; }
+      await P.page.touchscreen.tap(t.x, t.y); taps++; await P.page.waitForTimeout(120);
+    }
+    played[id + ':' + d] = { shown, talent, taps, won };
+    if (!won) fails.push(`${id} ${d}: not won (${taps} taps)`);
+    await P.page.evaluate(() => { document.querySelector('.gl:not(.out) .gl-x')?.click(); }); await P.page.waitForTimeout(400);
+  }
+  await P.page.emulateMedia({ reducedMotion: 'no-preference' });
+  for (const id of NEW) { const e = played[id + ':easy'], t = played[id + ':talent']; if (e && t && !(t.shown > e.shown && t.talent && !e.talent)) fails.push(`${id}: Talent shows ${t.shown}, Easy ${e.shown}`); }
+  // pictures for the owner and Release: the tab and one experiment on a phone, a tablet and a computer
+  fs.mkdirSync('out/hocvui', { recursive: true });
+  for (const [name, w, h, touch] of [['phone', 390, 844, true], ['tablet', 820, 1180, true], ['computer', 1366, 800, false]]) {
+    await P.page.setViewportSize({ width: w, height: h });
+    await P.page.evaluate(() => { document.querySelectorAll('.gl').forEach(g => g.remove()); document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; __sv.openGamesHub(0); });
+    await P.page.waitForTimeout(400); await P.page.evaluate(() => document.querySelector('.hubtabs [data-tab="hocvui"]')?.click()); await P.page.waitForTimeout(500);
+    await P.page.screenshot({ path: `out/hocvui/tab-${name}.png` });
+    await P.page.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; const p = __sv.heroes[0].profile; p.gameDiff = { ...(p.gameDiff || {}), sci_float: 'talent' }; __sv.playGame(0, 'sci_float', 'hub'); });
+    await P.page.waitForSelector('.gl:not(.out) .sx-thing', { timeout: 10000 }).catch(() => { }); await P.page.waitForTimeout(900);
+    await P.page.screenshot({ path: `out/hocvui/float-${name}.png` });
+    await P.page.evaluate(() => document.querySelector('.gl:not(.out) .gl-x')?.click()); await P.page.waitForTimeout(400);
+  }
+  const errs = P.errors.slice(); await P.ctx.close();
+  if (errs.length) fails.push(...errs.slice(0, 3));
+  ok(!fails.length, fails.slice(0, 12).join(' | ') + ' ' + JSON.stringify(played));
+  return `Fun learning tab with four corners (${hub.plays.length} own games, ${hub.links.length} links; the linked games stay in their own tab and open from the link); the same four areas on the Simple screen; ${NEW.length} new games won by real taps at Easy and Talent (${NEW.map(id => `${id} ${played[id + ':easy'].shown}→${played[id + ':talent'].shown}`).join(', ')}); pictures in tests/out/hocvui`;
+});
+
 await check('quiet', async () => {
   // round M (owner: sound kept playing after leaving the game, until it was killed): when the game goes to the
   // background (another app, the lock screen) the audio engine sleeps, music stops scheduling and videos pause; when

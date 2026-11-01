@@ -10,6 +10,7 @@ import { T } from '../i18n.js';
 import { CUSTOM, itemEnabled, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
 import { heldGame } from './secondset.js';
+import { CORNER_LINKS } from './hocvui.js';
 
 // the areas, in the order the path visits them; a child who can't read knows each one by its picture
 export const AREAS = [
@@ -25,7 +26,13 @@ export const AREAS = [
   { key: 'travel', icon: '🚋', name: () => T('Going places', 'Đi đây đi đó') },
   { key: 'thinking', icon: '🧠', name: () => T('Big thinkers', 'Suy nghĩ giỏi') },
   // (round S, owner plan 8 Oct) the money games, in the child's home currency
-  { key: 'money', icon: '💰', name: () => T('Money and shopping', 'Tiền và mua sắm') }
+  { key: 'money', icon: '💰', name: () => T('Money and shopping', 'Tiền và mua sắm') },
+  // (Học vui, owner's plan 1 Nov 2026 AEDT, docs/learn-tab/PLAN.md) the four corners of the Fun learning tab; their own
+  // games live here, and existing games are linked in from their own area (js/content/hocvui.ts CORNER_LINKS)
+  { key: 'hv_vi', icon: 'hv:vi', name: () => T('Vietnamese', 'Tiếng Việt') },
+  { key: 'hv_en', icon: 'hv:en', name: () => T('English', 'Tiếng Anh') },
+  { key: 'hv_math', icon: 'hv:math', name: () => T('Maths', 'Toán') },
+  { key: 'hv_sci', icon: 'hv:sci', name: () => T('Science', 'Khoa học') }
 ];
 
 // id: [area, youngest age (2 = everyone, 5 = big kids), how hard (1 easy · 2 a bit harder · 3 hardest)]
@@ -78,6 +85,9 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   banhchung: ['vietnam', 2, 1], denongsao: ['vietnam', 2, 1], mualan: ['vietnam', 2, 2], cayneu: ['vietnam', 2, 1], oantuti: ['vietnam', 3, 1], chuyen: ['vietnam', 5, 2], oanquan: ['vietnam', 5, 3], caro: ['vietnam', 5, 3], tienlen: ['vietnam', 5, 3], tienlenbac: ['vietnam', 5, 3],
   traffic: ['travel', 2, 1], ferries: ['travel', 3, 1], tram: ['travel', 3, 1], balloon: ['travel', 2, 1], bubbles: ['travel', 2, 1], market: ['travel', 3, 2], sortout: ['travel', 3, 2], order: ['travel', 5, 2],
   robot: ['thinking', 5, 3], maze: ['thinking', 5, 2], snakes: ['thinking', 5, 2], snap: ['thinking', 3, 2],
+  // (Học vui) the six science experiments and the two Tiếng Việt games (js/games/science.ts, js/games/tiengviet.ts)
+  sci_float: ['hv_sci', 2, 1], sci_magnet: ['hv_sci', 3, 1], sci_ramp: ['hv_sci', 3, 1], sci_seesaw: ['hv_sci', 3, 2], sci_shadow: ['hv_sci', 3, 2], sci_sound: ['hv_sci', 2, 1],
+  vi_tones: ['hv_vi', 3, 2], vi_build: ['hv_vi', 4, 2],
   heodat: ['money', 2, 1], coinnote: ['money', 2, 1], lixi: ['money', 2, 1], needwant: ['money', 3, 1], cheaper: ['money', 3, 1], bahu: ['money', 3, 2], shoplist: ['money', 3, 2], waitgrow: ['money', 3, 2], shopkeep: ['money', 4, 2], barter: ['money', 4, 2]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
@@ -94,6 +104,9 @@ export function gameInfo(id) {
 }
 // the games of one area for a child: under-5s only see the ones made for them
 export const gamesIn = (games, area, little) => Object.keys(games).map(gameInfo).filter(g => g.area === area && !g.hidden && (!little || g.ageMin < 5));
+// (Học vui) the existing games linked into a corner of the Fun learning tab: each keeps its own area (gamesIn above), so
+// it is listed once in the Play hub and shown here as a link; only games that exist and are switched on
+export const linksIn = (games, area, little) => (CORNER_LINKS[area] || []).filter(id => games[id]).map(gameInfo).filter(g => g.area !== area && !g.hidden && (!little || g.ageMin < 5));
 
 // stories by where they come from, places by where they are
 // (bug #30, owner) China and India always come last: after "Our own stories" and after Australia

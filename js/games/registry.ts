@@ -12,3 +12,4 @@ export const SKILLS = {
   shapebuilders: { key: 'skill:shapebuilders', en: 'Shape builder', vi: 'Ghép hình giỏi' },
   remembergarden: { key: 'skill:remembergarden', en: 'Memory keeper', vi: 'Nhớ giỏi' }
 };
+import './hocvui-meta.js';

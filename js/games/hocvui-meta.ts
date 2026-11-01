@@ -1,0 +1,21 @@
+// (Học vui, owner's plan 1 Nov 2026 AEDT, docs/learn-tab/PLAN.md) How to play for the six science experiments and the two
+// Tiếng Việt games, ready before a game opens (the guide film reads these steps aloud in both languages; recorded).
+import { HOWTO, type HowToGuide } from '../howto-registry.js';
+const S = (pic: string, en: string, vi: string) => ({ pic, en, vi });
+const GUIDES: Record<string, HowToGuide> = {
+  sci_float: { steps: [S('🤔 sci:floats sci:sinks', 'Guess first: will it float or sink?', 'Đoán trước nhé: vật này nổi hay chìm?'), S('👆 sci:float', 'Drag it into the tub, or tap it to drop it in.', 'Kéo vật vào chậu nước, hoặc chạm để thả vào.'), S('👀 💡', 'Watch what happens, then hear why.', 'Xem chuyện gì xảy ra, rồi nghe vì sao nhé.')],
+    real: S('🛁 🍊', 'For real: try an orange in the bath, with its peel and without it!', 'Thử thật: thả quả cam vào chậu nước, lúc còn vỏ và lúc đã bóc vỏ!') },
+  sci_magnet: { steps: [S('🤔 sci:pulls sci:nopull', 'Guess first: will the magnet pull it?', 'Đoán trước nhé: nam châm có hút vật này không?'), S('👆 🧲', 'Drag the magnet to the table, or tap the magnet.', 'Kéo nam châm tới bàn, hoặc chạm vào nam châm.'), S('👀 💡', 'See what sticks, then hear why.', 'Xem vật nào bị hút, rồi nghe vì sao nhé.')],
+    real: S('🧲 📎', 'For real: with a grown-up, find what a fridge magnet sticks to at home.', 'Thử thật: cùng người lớn tìm xem nam châm tủ lạnh hút được những gì trong nhà.') },
+  sci_ramp: { steps: [S('🤔 sci:ramp', 'Look at the ramps and guess which ball will roll the furthest.', 'Nhìn các con dốc và đoán bóng nào sẽ lăn xa nhất.'), S('👆 ▶️', 'Tap Let go, and the balls roll down.', 'Chạm Thả bóng, các quả bóng sẽ lăn xuống.'), S('👀 💡', 'See where each ball stops, then hear why.', 'Xem mỗi quả dừng ở đâu, rồi nghe vì sao nhé.')],
+    real: S('📚 🚗', 'For real: make a ramp with books and roll a toy car down it.', 'Thử thật: kê sách làm dốc và cho ô tô đồ chơi lăn xuống.') },
+  sci_seesaw: { steps: [S('🤔 sci:near sci:far', 'Guess first: where should the little friend sit to lift the big one?', 'Đoán trước nhé: bạn nhỏ ngồi chỗ nào thì nâng được bạn lớn?'), S('👆 🐰', 'Drag the little friend to a seat, or tap a seat.', 'Kéo bạn nhỏ tới một chỗ ngồi, hoặc chạm vào chỗ ngồi.'), S('👀 💡', 'Try other seats until the big friend goes up!', 'Thử chỗ khác cho đến khi bạn lớn được nâng lên!')],
+    real: S('sci:seesaw 👧', 'For real: on a seesaw, sit nearer or further from the middle and feel the difference.', 'Thử thật: khi chơi bập bênh, ngồi gần hoặc xa điểm giữa xem khác nhau thế nào.') },
+  sci_shadow: { steps: [S('🤔 sci:shadow', 'Guess first: where will the shadow go, and how long will it be?', 'Đoán trước nhé: bóng sẽ đổ về đâu, dài hay ngắn?'), S('👆 💡', 'Drag the lamp to the ring, or tap the ring.', 'Kéo đèn tới vòng tròn, hoặc chạm vào vòng tròn.'), S('👀 🧸', 'Watch the shadow move, then hear why.', 'Xem bóng di chuyển, rồi nghe vì sao nhé.')],
+    real: S('💡 🧸', 'For real: shine a torch on a toy in a dark room and move it around.', 'Thử thật: rọi đèn pin vào đồ chơi trong phòng tối và di chuyển đèn.') },
+  sci_sound: { steps: [S('🤔 sci:sound', 'Guess first: which bottle will sound highest or lowest?', 'Đoán trước nhé: chai nào kêu cao nhất hay trầm nhất?'), S('👆 🥄', 'Tap each bottle with the spoon to hear its note.', 'Gõ thìa vào từng chai để nghe tiếng của nó.'), S('👂 💡', 'Listen, then hear why.', 'Lắng nghe, rồi nghe vì sao nhé.')],
+    real: S('🫙 💧', 'For real: fill glasses with different amounts of water and tap them gently.', 'Thử thật: rót nước vào mấy chiếc cốc nhiều ít khác nhau rồi gõ nhẹ.') },
+  vi_tones: { steps: [S('👂 vi:tones', 'Listen to the word.', 'Nghe tiếng được đọc.'), S('🤔 tone:1 tone:2', 'Does the voice go up, down, dip or stay flat?', 'Giọng đi lên, đi xuống, uốn lượn hay đi ngang?'), S('👆 ✅', 'Tap the word with the right tone mark.', 'Chạm vào tiếng có dấu thanh đúng.')] },
+  vi_build: { steps: [S('👀 🐟', 'Look at the picture and listen to its name.', 'Nhìn tranh và nghe tên của nó.'), S('👆 vi:build', 'Choose the first sound, then the rhyme, then the tone mark.', 'Chọn âm đầu, rồi vần, rồi dấu thanh.'), S('👂 🎉', 'Hear the word you built!', 'Nghe tiếng con vừa ghép!')] }
+};
+for (const [id, guide] of Object.entries(GUIDES)) if (!HOWTO[id] || (HOWTO[id].steps || []).length <= 1) HOWTO[id] = guide;

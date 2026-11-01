@@ -26,7 +26,7 @@ import { pic } from './art.js';
 import { saveProfiles, reduceMotion } from './state.js';
 import { GAMES, gameOpen } from './games/frame.js';
 import { holdButton, openGrownups, openFestivals } from './ui.js';
-import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, gameInfo, withSitePlaces } from './content/activities.js';
+import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, linksIn, gameInfo, withSitePlaces } from './content/activities.js';
 import { featureOn, onLive } from './custom.js';
 import { isOpen, isHeld, progressOf, secondSetOf } from './content/unlocks.js';
 
@@ -132,7 +132,10 @@ export function createSimple(G) {
       .sort((x, y) => Number(x.area.key === 'asia') - Number(y.area.key === 'asia'));
     // (round N) the Music group starts with 🎵 Songs: lullabies, village tunes and festival songs to listen to
     const songs = { kind: 'songs', key: 'songs', icon: '🎵', name: T('Songs', 'Bài hát'), voice: ['Songs', 'Bài hát'], stars: 0, max: 0 };
-    return AREAS.map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', a.key)).map(g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level, plus: lt && g.ageMin >= 5 }))).concat(lockStop('game', a.key, gamesIn(GAMES, a.key, false).filter(g => !isOpen(p, g.id, 'game', a.key)).length, a.key)).concat(soonStop(a.key)) }));
+    // (Học vui, owner's plan 1 Nov 2026 AEDT) the four Fun learning corners also show the existing games linked into them
+    // (each still in its own area too, so nothing moves); a locked one is shown only in its own area, with its padlock
+    const stop = g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level, plus: lt && g.ageMin >= 5 });
+    return AREAS.map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', a.key)).map(stop)).concat(linksIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', g.area)).map(stop)).concat(lockStop('game', a.key, gamesIn(GAMES, a.key, false).filter(g => !isOpen(p, g.id, 'game', a.key)).length, a.key)).concat(soonStop(a.key)) }));
   }
   const tabOf = t => TABS.find(y => y.key === t);
   const groupsOf = t => areasOf(t).filter(a => a.items.length);
@@ -319,7 +322,7 @@ export function createSimple(G) {
     const q = f.querySelector('.sp-q');
     if (q) q.oninput = () => {
       const w = plain(q.value.trim()); if (!w) { f.querySelector('.sp-found').innerHTML = cards; bind(); return; }
-      found = groups.flatMap(({ t }) => groupsOf(t.key).flatMap(({ area, items }) => items.map(stop => ({ tab: t.key, area: area.key, stop })))).filter(x => plain(x.stop.voice[0] + ' ' + x.stop.voice[1]).includes(w)).slice(0, 24);
+      found = groups.flatMap(({ t }) => groupsOf(t.key).flatMap(({ area, items }) => items.map(stop => ({ tab: t.key, area: area.key, stop })))).filter(x => plain(x.stop.voice[0] + ' ' + x.stop.voice[1]).includes(w)).filter((x, k, all) => all.findIndex(y => idOf(y.stop) === idOf(x.stop)) === k).slice(0, 24); // (a game linked into a Fun learning corner is found once)
       f.querySelector('.sp-found').innerHTML = found.length ? `<div class="sp-cards">${found.map((x, k) => `<button class="sp-card" data-s="${k}">${pic(x.stop.icon)}<b>${esc(x.stop.name)}</b></button>`).join('')}</div>` : `<p class="sp-none">${pic('🤔')} ${T('Nothing with that name yet.', 'Chưa có tên nào như vậy.')}</p>`;
       bind();
     };
