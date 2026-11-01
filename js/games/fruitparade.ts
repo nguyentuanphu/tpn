@@ -11,7 +11,7 @@ import { PARADE_STYLE } from './fruitparade-style.js';
 import { paradeInput } from './fruitparade-input.js';
 
 type ParadeApi = {
-  stage: HTMLElement; players: { id?: string; name?: string }[]; online?: GameOnline | null; closed: boolean;
+  stage: HTMLElement; players: { id?: string; name?: string }[]; online?: GameOnline | null; closed: boolean; talent?: boolean;
   tier(): number; onCleanup(fn: () => void): void; dots(total: number, done: number): void;
   show(en: string, vi: string): void; say(en: string, vi: string): void; right(): void;
   sfx: { tap(): void }; win(extra: { title: string; titleVi: string }): Promise<unknown>;
@@ -41,7 +41,9 @@ async function run(api: ParadeApi) {
   function start(seats: number, withHelper: boolean) {
     helper = withHelper;api.say('Find the pictures. Stop in the middle.', 'Tìm tranh. Dừng ở giữa nhé.');
     const online = api.online;
-    session = new ParadeSession({ seed: online?.seed || `parade-${Date.now()}`, tier: api.tier(), seats,
+    // (owner, 1 Nov 2026 AEDT) Talent plays tier 4 on this device (the fastest lanes); with friends the shared tier stays 0 to 3
+    const tier = !online && api.talent ? 4 : api.tier(); api.stage.dataset.lv = String(tier);
+    session = new ParadeSession({ seed: online?.seed || `parade-${Date.now()}`, tier, seats,
       channel: online ? { mine: online.mine, seats, seed: online.seed || 'parade', send: (n, value) => online.move(n, value),
         listen: fn => online.onMove?.(fn), read: (n, seat) => online.next?.(n, seat) || Promise.resolve(undefined),
         connected: () => online.connected?.() ?? true, present: seat => online.present?.(seat) ?? true, leave: () => online.leave?.() } : undefined,

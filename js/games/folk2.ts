@@ -8,14 +8,16 @@ import { settings } from '../state.js';
 import { sayIn } from '../voice.js';
 import { tone } from '../audio.js';
 import { el, wait, pick, rand, clamp, shuffle, local } from '../util.js';
-import { count, rightAt, makeCanvas, EMOJI_FONT } from './folk.js';
+import { count, rightAt, makeCanvas, EMOJI_FONT, atLevel, mark } from './folk.js';
 import { AUSSIE_SLANG, VN_WORDS } from '../words.js';
 
 // ---------- Đập niêu: blindfolded, listen to your friends and smash the right pot ----------
 register({
   id: 'datnieu', icon: '🏺', origin: 'vn', name: () => T('Smash the Pot', 'Đập Niêu'),
   async run(api) {
-    const rounds = 3, N = api.little ? 4 : [5, 6, 7, 8, 9][api.level - 1];
+    // Talent: one more pot, and the friends only shout every other step (and always at the right pot)
+    const rounds = 3, N = api.little ? 4 : atLevel(api, [5, 6, 7, 8, 9]) + (api.talent ? 1 : 0);
+    mark(api, N, api.talent ? 'quiet' : '');
     api.say('You are blindfolded! Listen to your friends: left, right... When they shout HERE, smash the pot!', 'Con bị bịt mắt rồi! Nghe các bạn hô: sang trái, sang phải... Khi các bạn hô ĐÂY RỒI, đập niêu thôi!');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -26,7 +28,9 @@ register({
       api.stage.appendChild(w);
       const me = w.querySelector('.nieu-me'), shout = w.querySelector('.nieu-shout'), pots = [...w.querySelectorAll('.pot')];
       const place = () => { me.style.left = `calc(${(i + .5) / N * 100}% - 30px)`; };
+      let moves = 0;
       const hint = () => {
+        if (api.talent && i !== t && moves++ % 2) { shout.textContent = '…'; return; }
         const [en, vi] = i < t ? ['Right! Go right!', 'Sang phải! Sang phải!'] : i > t ? ['Left! Go left!', 'Sang trái! Sang trái!'] : ['HERE! Smash it!', 'ĐÂY RỒI! Đập đi!'];
         shout.textContent = T(en, vi); shout.classList.remove('pop'); void shout.offsetWidth; shout.classList.add('pop'); api.say(en, vi);
       };
@@ -55,7 +59,9 @@ register({
 register({
   id: 'kite', icon: '🪁', origin: 'vn', name: () => T('Kite Flying', 'Thả Diều'),
   async run(api) {
-    const need = api.little ? 5 : [6, 8, 10, 12, 14][api.level - 1];
+    // Talent: more stars, stronger gusts and more birds
+    const need = api.little ? 5 : atLevel(api, [6, 8, 10, 12, 14]) + (api.talent ? 3 : 0), gust = api.talent ? 1.3 : 1, maxBirds = api.talent ? 3 : 2;
+    mark(api, need, gust, maxBirds);
     api.say('Hold your finger down to pull the string and make the kite fly up. Move your finger to steer. Catch the stars!', 'Giữ ngón tay để kéo dây cho diều bay lên. Di ngón tay để lái diều. Bắt các ngôi sao nhé!');
     const { c, g, w, h } = makeCanvas(api, .72);
     let kx = w / 2, ky = h * .5, vx = 0, vy = 0, hold = false, fx = w / 2, got = 0, last = performance.now(), wind = 0, windT = 0, done;
@@ -70,11 +76,11 @@ register({
     const tick = now => {
       if (api.closed) return;
       const dt = Math.min(.04, (now - last) / 1000); last = now;
-      windT -= dt; if (windT < 0) { windT = rand(2, 4); wind = api.little ? rand(-15, 15) : rand(-40, 40) * (1 + api.level * .15); }
+      windT -= dt; if (windT < 0) { windT = rand(2, 4); wind = api.little ? rand(-15, 15) : rand(-40, 40) * (1 + api.level * .15) * gust; }
       vy += (hold ? -170 : 90) * dt; vy *= .96; vx += ((hold ? (fx - kx) * 1.6 : 0) + wind - vx) * dt * 2;
       kx = clamp(kx + vx * dt, 20, w - 20); ky = clamp(ky + vy * dt, 20, h * .78);
       if (ky >= h * .78) vy = 0;
-      if (!api.little && Math.random() < dt * .25 * api.level && birds.length < 2) birds.push({ x: -20, y: rand(30, h * .5), s: rand(50, 90) });
+      if (!api.little && Math.random() < dt * .25 * api.level && birds.length < maxBirds) birds.push({ x: -20, y: rand(30, h * .5), s: rand(50, 90) });
       // sky
       const sky = g.createLinearGradient(0, 0, 0, h); sky.addColorStop(0, '#7fc4f0'); sky.addColorStop(1, '#fff1d6'); g.fillStyle = sky; g.fillRect(0, 0, w, h);
       g.fillStyle = '#a7d67c'; g.fillRect(0, h * .86, w, h * .14);
@@ -118,7 +124,9 @@ register({
     const btn = el('button', 'pill big hopbtn', '⤴️ ' + T('Hop!', 'Nhảy!'));
     api.stage.append(w, btn);
     const run = [...w.querySelectorAll('.runner')], pos = [0, 0, 0], air = [0, 0, 0], place = [];
-    const aiRate = api.little ? [.9, .8] : [1.3, 1.5, 1.8, 2.1, 2.4].map(x => x + (api.strong ? .3 : 0))[api.level - 1];
+    // Talent: the friends hop faster still
+    const aiRate = api.little ? [.9, .8] : atLevel(api, [1.3, 1.5, 1.8, 2.1, 2.4].map(x => x + (api.strong ? .3 : 0) + (api.talent ? .35 : 0)));
+    api.stage.dataset.lv = String(aiRate);
     const hop = k => { if (air[k] > 0 || place.includes(k)) return false; air[k] = .45; pos[k] = Math.min(100, pos[k] + (k === 0 ? 4.5 : 4.2)); return true; };
     btn.onclick = () => { if (hop(0)) api.sfx.jump(); else { api.sfx.no(); btn.classList.remove('wrong'); void btn.offsetWidth; btn.classList.add('wrong'); } };
     let last = performance.now(), aiT = [0, 0], done;
@@ -148,14 +156,16 @@ register({
 register({
   id: 'cricket', icon: '🏏', origin: 'au', name: () => T('Backyard Cricket', 'Cricket Sân Sau'),
   async run(api) {
-    const need = api.little ? 6 : [8, 12, 16, 20, 24][api.level - 1], balls = api.little ? 99 : 12;
+    // Talent: more runs to score, a faster ball and a narrower moment to hit it
+    const need = api.little ? 6 : atLevel(api, [8, 12, 16, 20, 24]) + (api.talent ? 4 : 0), balls = api.little ? 99 : 12;
     api.say('Watch the ball come down the pitch. Tap Swing when it reaches your bat! Hit a four or a six!', 'Nhìn quả bóng lăn tới. Chạm Vung gậy khi bóng tới gậy! Đánh được bốn hoặc sáu điểm nhé!');
     const { c, g, w, h } = makeCanvas(api, .75);
     const btn = el('button', 'pill big swingbtn', '🏏 ' + T('Swing!', 'Vung gậy!')); api.stage.appendChild(btn);
     let runs = 0, ball = null, swingT = -1, msg = '', msgT = 0, bowled = 0, last = performance.now(), wait0 = 1, hitBall = null, done;
     const finished = new Promise<void>(r => done = r);
-    const speed = api.little ? .45 : [.55, .65, .75, .85, .95][api.level - 1];
-    const win0 = api.little ? .22 : [.17, .14, .12, .1, .09][api.level - 1];
+    const speed = api.little ? .45 : atLevel(api, [.55, .65, .75, .85, .95]) + (api.talent ? .1 : 0);
+    const win0 = api.little ? .22 : atLevel(api, [.17, .14, .12, .1, .09]) - (api.talent ? .015 : 0);
+    mark(api, need, speed, win0);
     btn.onclick = () => { if (swingT < 0) { swingT = 0; api.sfx.whoosh(); } };
     const tick = now => {
       if (api.closed) return;
@@ -203,7 +213,9 @@ register({
   id: 'parcel', icon: '🎁', origin: 'au', name: () => T('Pass the Parcel', 'Chuyền Quà'),
   async run(api) {
     const kids = [{ e: '🧒', n: api.players[0].name }, { e: '👧', n: 'Chloe' }, { e: '👦', n: 'Liam' }, { e: '👧', n: 'Mít' }, { e: '👦', n: 'Bờm' }];
-    const layers = api.little ? 3 : 4 + Math.min(2, api.level - 1);
+    // more layers each level; the music goes faster and the counting questions get bigger, with four answers on Talent
+    const layers = api.little ? 3 : 4 + Math.min(2, api.level - 1), beatMs = api.little ? 300 : atLevel(api, [260, 240, 220, 200, 180]) - (api.talent ? 20 : 0);
+    mark(api, layers, beatMs, api.talent ? 4 : 3);
     api.say('Pass the parcel while the music plays. When the music stops, whoever holds it rips off one layer!', 'Chuyền món quà khi nhạc vang lên. Khi nhạc dừng, ai cầm quà thì được bóc một lớp giấy!');
     const w = el('div', 'parcel', `${kids.map((k, i) => { const a = i / kids.length * Math.PI * 2 - Math.PI / 2; return `<span class="pk" style="left:calc(50% + ${(Math.cos(a) * 40).toFixed(1)}%);top:calc(50% + ${(Math.sin(a) * 40).toFixed(1)}%)"><b>${k.e}</b><small>${k.n}</small></span>`; }).join('')}<span class="pp">🎁</span><div class="pmsg"></div>`);
     api.stage.appendChild(w);
@@ -219,7 +231,7 @@ register({
       // the last layer always lands with the player (it's their game!)
       const stopAt = L === layers - 1 || (api.little && L % 2 === 0) ? 0 : Math.floor(rand(1, kids.length));
       const steps = kids.length * 2 + ((stopAt - at + kids.length * 3) % kids.length);
-      for (let s = 0; s < steps; s++) { if (api.closed) return; tone(tune[s % tune.length], .22, { type: 'triangle', vol: .24 }); if (s % 2 === 0) tone(tune[s % tune.length] / 2, .3, { type: 'sine', vol: .14 }); at = (at + 1) % kids.length; show(); await wait(api.little ? 300 : 240); }
+      for (let s = 0; s < steps; s++) { if (api.closed) return; tone(tune[s % tune.length], .22, { type: 'triangle', vol: .24 }); if (s % 2 === 0) tone(tune[s % tune.length] / 2, .3, { type: 'sine', vol: .14 }); at = (at + 1) % kids.length; show(); await wait(beatMs); }
       w.classList.remove('playing'); w.querySelectorAll('.pk')[at].classList.add('hold');
       msg.innerHTML = `<b class="pstop">⏸</b>${T('Music stops!', 'Nhạc dừng!')}`; api.sfx.whoosh(); await wait(900);
       if (at !== 0) {
@@ -235,7 +247,7 @@ register({
       // a little question hides in some layers
       if (!last && !api.little) {
         await wait(900); card.remove();
-        const n = 2 + Math.floor(Math.random() * (api.level + 3)), opts = shuffle([n, n + 1, Math.max(1, n - 1)]);
+        const n = 2 + Math.floor(Math.random() * (api.level + 3 + (api.talent ? 3 : 0))), opts = shuffle([...new Set([n, n + 1, Math.max(1, n - 1)].concat(api.talent ? [n + 2] : []))]);
         msg.innerHTML = `${T('How many?', 'Có bao nhiêu?')} <span class="pq">${pz.repeat(n)}</span>`;
         const row = el('div', 'choices'); const bs = opts.map(o => { const b = el('button', 'choice', String(o)); b._v = o; row.appendChild(b); return b; }); w.appendChild(row);
         for (;;) { const b = await tapOne<HTMLButtonElement & { _ok?: boolean; _c?: string; _o?: number; _v?: number }>(bs); if (api.closed) return; if (b._v === n) { api.right(b); break; } api.wrong(b); }
@@ -252,7 +264,9 @@ const CHANT = [['Chi chi chành chành', 'Chi chi chành chành'], ['Cái đanh 
 register({
   id: 'chichi', icon: '✋', origin: 'vn', name: () => T('Chi Chi Chành Chành', 'Chi Chi Chành Chành'),
   async run(api) {
-    const rounds = api.little ? 3 : 5, catchMs = api.little ? 1500 : [1000, 850, 700, 600, 520][api.level - 1];
+    // Talent: a quicker hand and more pretend pauses
+    const rounds = api.little ? 3 : 5, catchMs = api.little ? 1500 : atLevel(api, [1000, 850, 700, 600, 520]) - (api.talent ? 80 : 0), fake = api.talent ? .6 : .4;
+    mark(api, catchMs, fake);
     api.say('Put your finger in the hand and sing along. When you hear "ập", pull your finger out quickly!', 'Đặt ngón tay vào lòng bàn tay và hát theo. Khi nghe tiếng "ập", rút tay ra thật nhanh nhé!');
     let escaped = 0;
     for (let r = 0; r < rounds; r++) {
@@ -264,7 +278,7 @@ register({
       pull.onclick = () => { if (state === 'chant') { early = true; api.sfx.no(); line.textContent = T('Too early! Wait for "ập"!', 'Sớm quá! Chờ tiếng "ập" nhé!'); } else if (state === 'snap') { state = 'safe'; } };
       for (const [en, vi] of CHANT) { if (api.closed) return; line.textContent = vi; sayIn('vi', vi); tone(392, .12, { type: 'triangle', vol: .1 }); hand.classList.remove('bob'); void hand.offsetWidth; hand.classList.add('bob'); await wait(api.little ? 1300 : 1050); }
       // big kids sometimes get a fake "ù à ù..." pause to keep them sharp
-      line.textContent = 'Ù à ù...'; sayIn('vi', 'Ù à ù'); await wait(!api.little && Math.random() < .4 ? 1400 : 700);
+      line.textContent = 'Ù à ù...'; sayIn('vi', 'Ù à ù'); await wait(!api.little && Math.random() < fake ? 1400 : 700);
       if (api.closed) return;
       state = 'snap'; line.textContent = 'ẬP!'; sayIn('vi', 'Ập'); api.sfx.pop(6);
       await wait(catchMs); if (api.closed) return;
@@ -282,15 +296,17 @@ register({
 register({
   id: 'words', icon: '🗣️', origin: 'both', name: () => T('Two Homes Words', 'Từ Ngữ Hai Quê'),
   async run(api) {
-    const rounds = api.little ? 5 : 8;
+    // more words and more answers each level; on Talent the Aussie example sentence is hidden
+    const rounds = api.little ? 5 : [6, 8, 10, 12][Math.max(0, Math.min(3, api.smart || 0))], others = api.little ? 1 : api.smart >= 2 ? 3 : 2;
+    mark(api, rounds, others + 1, api.talent ? 'noexample' : '');
     api.say('Aussie slang and the words of north, centre and south Vietnam. Let us learn them!', 'Tiếng lóng của Úc và từ ngữ ba miền Việt Nam. Cùng học nào!');
     const REG = [['bac', 'Miền Bắc', 'the north', 2], ['trung', 'Miền Trung', 'the centre', 3], ['nam', 'Miền Nam', 'the south', 4]];
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const aussie = r % 2 === 0;
       if (aussie) {
-        const s = pick(AUSSIE_SLANG), others = shuffle(AUSSIE_SLANG.filter(x => x !== s)).slice(0, api.little ? 1 : 2), opts = shuffle([s, ...others]);
-        api.stage.appendChild(el('div', 'wq', `<div class="wq-flag">🇦🇺</div><div class="wq-word">"${s[0]}"</div><div class="wq-ex">${s[4]}</div>`));
+        const s = pick(AUSSIE_SLANG), wrongs = shuffle(AUSSIE_SLANG.filter(x => x !== s)).slice(0, others), opts = shuffle([s, ...wrongs]);
+        api.stage.appendChild(el('div', 'wq', `<div class="wq-flag">🇦🇺</div><div class="wq-word">"${s[0]}"</div>${api.talent ? '' : `<div class="wq-ex">${s[4]}</div>`}`));
         api.say(`What does ${s[0]} mean?`, `"${s[0]}" nghĩa là gì?`);
         const row = el('div', 'choices'); const bs = opts.map(o => { const b = el('button', 'choice wq-opt', `<b>${o[3]}</b>${T(o[1], o[2])}`); b._ok = o === s; row.appendChild(b); return b; }); api.stage.appendChild(row);
         for (;;) { const b = await tapOne<HTMLButtonElement & { _ok?: boolean; _c?: string; _o?: number; _v?: number }>(bs); if (api.closed) return; if (b._ok) { api.right(b); api.say(`Yes! ${s[0]} means ${s[1]}.`, `Đúng rồi! "${s[0]}" nghĩa là ${s[2]}.`); break; } api.wrong(b); }

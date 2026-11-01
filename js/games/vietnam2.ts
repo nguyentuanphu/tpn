@@ -39,6 +39,14 @@ function style() {
 `));
 }
 
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
+// get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
+// a button's label: on Talent only the words (find the right one without its picture)
+const label = (api, icon: string, name: string[]) => api.talent ? `<span>${T(name[0], name[1])}</span>` : `${pic(icon)} <span>${T(name[0], name[1])}</span>`;
+const mix = (btns: HTMLElement[], before: Node | null = null) => { const box = btns[0]?.parentElement; if (box) [...btns].sort(() => Math.random() - .5).forEach(b => box.insertBefore(b, before)); };
+
 function keep(api, png: string) {
   for (const p of api.players || []) {
     if (!p || !Array.isArray(p.album)) continue;
@@ -56,7 +64,17 @@ register({
     style();
     api.say('Lay dong leaves, sticky rice, mung beans, pork, and tie the string!',
       'Xếp lá dong, gạo nếp, đỗ xanh, thịt lợn rồi buộc lạt nhé!');
-    api.dots(5, 0);
+    // more cakes each level; from Hard the buttons change places after each step, and on Talent they show only words
+    const cakes = lv(api, 1, 1, 2, 2, 3), remix = !api.little && api.smart >= 2;
+    mark(api, cakes, remix ? 'mixed' : '', api.talent ? 'words' : '');
+    for (let c = 0; c < cakes; c++) { if (c) { api.stage.innerHTML = ''; api.show('Another one!', 'Thêm một cái nữa!'); } const r = await wrapCake(api, c, cakes, remix); if (!r || api.closed) return; }
+    api.say('A square, fragrant Bánh Chưng for Tết!', 'Bánh Chưng xanh vuông vắn cho ngày Tết!');
+    await wait(1200);
+    return api.win({ title: T('Bánh Chưng is wrapped!', 'Bánh Chưng đã gói xong!') });
+  }
+});
+async function wrapCake(api, c: number, cakes: number, remix: boolean) {
+    api.dots(5 * cakes, 5 * c);
     const wrap = el('div', 'v2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'v2-stage'); wrap.appendChild(stage);
     const cake = el('div', 'v2-cake'); stage.appendChild(cake);
@@ -76,7 +94,7 @@ register({
 
     const controls = el('div', 'v2-controls'); wrap.appendChild(controls);
     const buttons = layers.map((l, idx) => {
-      const b = el('button', 'v2-btn', `${pic(l.icon)} <span>${T(l.name[0], l.name[1])}</span>`);
+      const b = el('button', 'v2-btn', label(api, l.icon, l.name));
       b.dataset.step = String(idx);
       controls.appendChild(b);
       return b;
@@ -95,7 +113,7 @@ register({
       api.plan(() => buttons[step] || null, { maxActions: 6 });
       const target = buttons[step];
       const clicked = await untilRight(api, buttons, e => e === target);
-      if (!clicked || api.closed) return;
+      if (!clicked || api.closed) return false;
       if (step < 4) {
         cake.querySelectorAll('.v2-layer')[step].classList.add('on');
         api.sfx.pop(step);
@@ -104,7 +122,8 @@ register({
         api.sfx.ding();
       }
       step++;
-      api.dots(5, step);
+      api.dots(5 * cakes, 5 * c + step);
+      if (remix && step < 4) mix(buttons.slice(0, 4), tieBtn);
       if (step === 4) {
         buttons.slice(0, 4).forEach(b => b.style.display = 'none');
         tieBtn.style.display = 'inline-flex';
@@ -112,11 +131,9 @@ register({
       }
       await wait(300);
     }
-    api.say('A square, fragrant Bánh Chưng for Tết!', 'Bánh Chưng xanh vuông vắn cho ngày Tết!');
-    await wait(1200);
-    return api.win({ title: T('Bánh Chưng is wrapped!', 'Bánh Chưng đã gói xong!') });
-  }
-});
+    await wait(500);
+    return true;
+}
 
 // 2. Make a Star Lantern
 register({
@@ -126,7 +143,17 @@ register({
     style();
     api.say('Assemble the bamboo frame, paste the red paper, and light the candle!',
       'Gắn khung tre, dán giấy bóng kính đỏ rồi thắp nến lên nhé!');
-    api.dots(4, 0);
+    // more lanterns each level; from Hard the buttons change places after each step, and on Talent they show only words
+    const lanterns = lv(api, 1, 1, 2, 2, 3), remix = !api.little && api.smart >= 2;
+    mark(api, lanterns, remix ? 'mixed' : '', api.talent ? 'words' : '');
+    for (let n = 0; n < lanterns; n++) { if (n) { api.stage.innerHTML = ''; api.show('Another one!', 'Thêm một cái nữa!'); } const r = await makeLantern(api, n, lanterns, remix); if (!r || api.closed) return; }
+    api.say('The star lantern shines bright for the festival!', 'Đèn ông sao sáng rực rỡ đón hội trăng rằm!');
+    await wait(1200);
+    return api.win({ title: T('Bright Star Lantern!', 'Đèn Ông Sao Sáng Rực!') });
+  }
+});
+async function makeLantern(api, n: number, lanterns: number, remix: boolean) {
+    api.dots(4 * lanterns, 4 * n);
     const wrap = el('div', 'v2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'v2-stage'); wrap.appendChild(stage);
     const starBox = el('div', 'v2-star'); stage.appendChild(starBox);
@@ -150,7 +177,7 @@ register({
       { icon: '🕯️', name: ['Light candle', 'Thắp nến'], fn: () => { glow.classList.add('lit'); api.sfx.chime(); } }
     ];
     const btns = steps.map((s, idx) => {
-      const b = el('button', 'v2-btn', `${pic(s.icon)} <span>${T(s.name[0], s.name[1])}</span>`);
+      const b = el('button', 'v2-btn', label(api, s.icon, s.name));
       b.dataset.step = String(idx);
       return b;
     });
@@ -163,20 +190,19 @@ register({
     while (currentStep < 4) {
       api.plan(() => btns.find(allowed) || null, { maxActions: 5 });
       const clicked = await untilRight(api, btns, allowed);
-      if (!clicked || api.closed) return;
+      if (!clicked || api.closed) return false;
       clicked.setAttribute('disabled', '');
       steps[Number(clicked.dataset.step)].fn();
+      if (remix) mix(btns);
       if (currentStep === 0) api.say('Now the red paper and the gold trim!', 'Giờ dán giấy đỏ và viền vàng nào!');
       if (currentStep === 2) api.say('Last, light the candle!', 'Cuối cùng, thắp nến nhé!');
       currentStep++;
-      api.dots(4, currentStep);
+      api.dots(4 * lanterns, 4 * n + currentStep);
       await wait(350);
     }
-    api.say('The star lantern shines bright for the festival!', 'Đèn ông sao sáng rực rỡ đón hội trăng rằm!');
-    await wait(1200);
-    return api.win({ title: T('Bright Star Lantern!', 'Đèn Ông Sao Sáng Rực!') });
-  }
-});
+    await wait(500);
+    return true;
+}
 
 // 3. Lion Dance Drummer
 register({
@@ -186,7 +212,10 @@ register({
     style();
     api.say('Play the lion dance beat: tùng, tùng, cắc, tùng! Follow the bright word.',
       'Đánh nhịp múa lân: tùng, tùng, cắc, tùng! Theo chữ đang sáng nhé.');
-    const targetBeats = api.little ? 6 : 10;
+    // a longer beat each level; on Hard the bright word only shows the first time through, and on Talent the card is hidden
+    // after that, so play the beat from memory
+    const targetBeats = lv(api, 6, 8, 10, 14, 16), guide = api.little || api.smart < 2 ? 1e9 : 4;
+    mark(api, targetBeats, guide === 1e9 ? '' : 'memory', api.talent ? 'hidden' : '');
     api.dots(targetBeats, 0);
     const wrap = el('div', 'v2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'v2-stage'); wrap.appendChild(stage);
@@ -201,7 +230,7 @@ register({
     controls.append(tung, cac);
     const pattern = ['tung', 'tung', 'cac', 'tung'];
     let beats = 0;
-    const show = () => { card.innerHTML = pattern.map((p, i) => `<span class="${i === beats % 4 ? 'now' : ''}">${p === 'tung' ? 'Tùng' : 'Cắc'}</span>`).join(' '); };
+    const show = () => { card.style.visibility = api.talent && beats >= guide ? 'hidden' : ''; card.innerHTML = pattern.map((p, i) => `<span class="${i === beats % 4 && beats < guide ? 'now' : ''}">${p === 'tung' ? 'Tùng' : 'Cắc'}</span>`).join(' '); };
     show();
     while (beats < targetBeats) {
       const want = pattern[beats % 4] === 'tung' ? tung : cac;
@@ -230,6 +259,10 @@ register({
     api.say('Decorate the bamboo pole with a carp, wind chimes, and a red flag!',
       'Treo cá chép, chuông gió và cờ đỏ lên ngọn cây nêu nhé!');
     api.dots(4, 0);
+    // Easy: any order. From Medium the pole asks for one charm at a time (its picture shows on the pole); from Hard the buttons
+    // change places after each one, and on Talent they show only words
+    const asked = !api.little && api.smart >= 1, remix = !api.little && api.smart >= 2;
+    mark(api, asked ? 'asked' : 'any', remix ? 'mixed' : '', api.talent ? 'words' : '');
     const wrap = el('div', 'v2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'v2-stage'); wrap.appendChild(stage);
     const pole = el('div', 'v2-pole'); stage.appendChild(pole);
@@ -249,25 +282,31 @@ register({
 
     const controls = el('div', 'v2-controls'); wrap.appendChild(controls);
     const btns = items.map((it, idx) => {
-      const b = el('button', 'v2-btn', `${pic(it.icon)} <span>${T(it.name[0], it.name[1])}</span>`);
+      const b = el('button', 'v2-btn', label(api, it.icon, it.name));
       b.dataset.step = String(idx);
       controls.appendChild(b);
       return b;
     });
+    const order = [0, 1, 2, 3].sort(() => Math.random() - .5), wish = el('div', 'v2-deco on'); wish.style.cssText = 'position:absolute;right:12px;top:12px;opacity:.9;';
+    if (asked) { stage.appendChild(wish); if (remix) mix(btns); }
+    const fits = (e: HTMLElement) => !e.hasAttribute('disabled') && (!asked || Number(e.dataset.step) === order[currentStep]);
 
     // (owner, 29 Oct 2026 AEDT audit) any order: each charm has its own place on the pole (it wanted one order nobody was told)
     let currentStep = 0;
     while (currentStep < 4) {
-      api.plan(() => btns.find(b => !b.hasAttribute('disabled')) || null, { maxActions: 5 });
-      const clicked = await untilRight(api, btns, e => !e.hasAttribute('disabled'));
+      if (asked) wish.innerHTML = pic(items[order[currentStep]].icon);
+      api.plan(() => btns.find(fits) || null, { maxActions: 5 });
+      const clicked = await untilRight(api, btns, fits);
       if (!clicked || api.closed) return;
       clicked.setAttribute('disabled', '');
+      if (remix) mix(btns);
       decos[Number(clicked.dataset.step)].classList.add('on');
       api.sfx.ding();
       currentStep++;
       api.dots(4, currentStep);
       await wait(350);
     }
+    wish.remove();
     api.say('The Tết pole stands tall to welcome the new year!', 'Cây nêu ngày Tết đã dựng cao đón năm mới bình an!');
     await wait(1200);
     return api.win({ title: T('Tết Pole is Standing!', 'Cây Nêu Đã Dựng Xong!') });

@@ -15,10 +15,11 @@ export const SYMBOL_DEFS: readonly SymbolDef[] = [
 ];
 export const symbolDef = (id: SymbolId) => SYMBOL_DEFS.find(item => item.id === id)!;
 export type ParadeConfig = { tier: number; interval: number; quota: number; rounds: number; pool: readonly SymbolId[]; assist: boolean };
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") tier 4 is Talent on this device: the fastest lanes
 export function paradeConfig(tier: number): ParadeConfig {
-  const value = Number.isFinite(tier) ? Math.max(0, Math.min(3, Math.floor(tier))) : 0;
+  const value = Number.isFinite(tier) ? Math.max(0, Math.min(4, Math.floor(tier))) : 0;
   const common: SymbolId[] = ['apple', 'strawberry', 'banana'];
-  return { tier: value, interval: [1400, 1100, 850, 650][value], quota: value === 0 ? 1 : value === 1 ? 2 : 3,
+  return { tier: value, interval: [1400, 1100, 850, 650, 500][value], quota: value === 0 ? 1 : value === 1 ? 2 : 3,
     rounds: value < 2 ? 2 : 3, assist: value === 0,
     pool: value === 0 ? [...common, 'rainbow'] : value === 1 ? [...common, 'flower', 'ladybug', 'rainbow'] : SYMBOL_DEFS.map(item => item.id) };
 }
@@ -91,6 +92,6 @@ export function nextParadeRound(state: ParadeState): ParadeRound | null {
   const round = state.round.round + (retry ? 0 : 1);
   const streak = state.outcome.success ? state.round.streak + 1 : 0, base = state.round.baseTier;
   const shift = !state.outcome.success ? -1 : streak >= 2 ? 1 : 0;
-  const tier = base === 0 ? 0 : Math.max(1, base - 1, Math.min(3, base + 1, state.round.config.tier + shift));
+  const tier = base === 0 ? 0 : Math.max(1, base - 1, Math.min(base === 4 ? 4 : 3, base + 1, state.round.config.tier + shift));
   return round >= state.round.config.rounds ? null : makeParadeRound(state.round.seed, tier, state.round.seats, round, retry ? state.round.attempt + 1 : 0, { baseTier: base, streak });
 }

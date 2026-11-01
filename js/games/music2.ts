@@ -8,8 +8,15 @@ import { tone, noise } from '../audio.js';
 
 // (owner, 29 Oct 2026 AEDT audit) a drum beat, and a sound that is really loud or really soft
 const beat = () => { tone(110, .22, { to: 60, vol: .3 }); noise(.08, { freq: 300, vol: .12 }); };
-const loudSound = () => { tone(150, .9, { type: 'sawtooth', to: 110, vol: .4, filter: 'lowpass', ff: 900 }); noise(.5, { freq: 500, vol: .25 }); };
-const quietSound = () => { [0, .18].forEach(t => tone(1300, .08, { at: t, to: 1600, vol: .02 })); };
+// (owner, 1 Nov 2026 AEDT) a low roar or a high squeak, at the volume asked (from Hard either sound can be loud or quiet)
+const lowSound = (v: number) => { tone(150, .9, { type: 'sawtooth', to: 110, vol: v, filter: 'lowpass', ff: 900 }); noise(.5, { freq: 500, vol: v * .6 }); };
+const highSound = (v: number) => { [0, .18].forEach(t => tone(1300, .08, { at: t, to: 1600, vol: v })); };
+const loudSound = () => lowSound(.4);
+const quietSound = () => highSound(.02);
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
+// get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 
 let styled = false;
 function style() {
@@ -35,7 +42,10 @@ register({
     style();
     api.say('Pluck the lit strings of the Đàn Tranh to play the melody!',
       'Gảy những dây đàn tranh đang phát sáng để tạo giai điệu nhé!');
-    const targetNotes = api.little ? 4 : 6;
+    // more notes each level. Easy follows the lit string; Medium lights strings in any order; on Hard the string glows only
+    // for a moment; on Talent the zither plays a little tune of three strings first, then you play it back
+    const targetNotes = lv(api, 4, 6, 8, 10, 12), mode = lv(api, 'steps', 'steps', 'any', 'blink', 'tune');
+    mark(api, targetNotes, mode);
     api.dots(targetNotes, 0);
     const wrap = el('div', 'mu2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'mu2-stage'); wrap.appendChild(stage);
@@ -50,14 +60,24 @@ register({
       return { col, wire, idx };
     });
 
-    let played = 0;
+    let played = 0, tune: number[] = [];
+    const light = (idx: number) => stringEls.forEach(s => s.wire.classList.toggle('lit', s.idx === idx));
     while (played < targetNotes) {
-      const targetIdx = (played * 2) % 5;
-      stringEls.forEach(s => s.wire.classList.toggle('lit', s.idx === targetIdx));
+      if (mode === 'tune' && !tune.length) {
+        // the zither plays three strings; then the child plays them back in the same order
+        tune = Array.from({ length: 3 }, () => Math.floor(Math.random() * 5));
+        await wait(500);
+        for (const idx of tune) { if (api.closed) return; light(idx); api.sfx.pop(idx); await wait(550); light(-1); await wait(200); }
+      }
+      const targetIdx = mode === 'tune' ? tune[0] : mode === 'steps' ? (played * 2) % 5 : Math.floor(Math.random() * 5);
+      light(mode === 'tune' ? -1 : targetIdx);
+      const dim = mode === 'blink' ? setTimeout(() => light(-1), 700) : 0;
 
       api.plan(() => stringEls[targetIdx].col, { maxActions: 4 });
       const clicked = await untilRight(api, stringEls.map(s => s.col), e => e === stringEls[targetIdx].col);
+      clearTimeout(dim);
       if (!clicked || api.closed) return;
+      if (mode === 'tune') tune.shift();
       api.sfx.pop(targetIdx);
       played++;
       api.dots(targetNotes, played);
@@ -78,7 +98,10 @@ register({
     style();
     api.say('Play the washboard, bush bass, and lagerphone with the outback band!',
       'Hòa tấu bàn giặt, đàn thùng và gậy leng keng cùng ban nhạc nhé!');
-    const targetPlays = api.little ? 3 : 5;
+    // Easy: play any instrument. From Medium the band leader calls one (its picture shows) and you play that one; on Hard the
+    // picture shows for a moment only; on Talent the leader calls two in a row
+    const targetPlays = lv(api, 3, 5, 6, 8, 10), called = !api.little && api.smart >= 1, showMs = lv(api, 0, 0, 0, 1200, 1600), pair = !!api.talent;
+    mark(api, targetPlays, called ? 'called' : 'free', showMs, pair ? 'pairs' : '');
     api.dots(targetPlays, 0);
     const wrap = el('div', 'mu2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'mu2-stage'); wrap.appendChild(stage);
@@ -99,13 +122,20 @@ register({
     });
 
     // (owner, 29 Oct 2026 AEDT audit) the band plays whatever the child taps (it wanted one fixed order nobody was told)
-    let current = 0;
+    let current = 0, calls: number[] = [];
     while (current < targetPlays) {
-      api.plan(() => btns[current % 3], { maxActions: 4 });
-      const clicked = await untilRight(api, btns, () => true);
+      if (called && !calls.length) {
+        calls = Array.from({ length: pair ? 2 : 1 }, () => Math.floor(Math.random() * 3));
+        display.innerHTML = calls.map(i => pic(insts[i].icon)).join(' ');
+        if (showMs) { const now = display.innerHTML; setTimeout(() => { if (display.innerHTML === now) display.innerHTML = pic('🪕'); }, showMs); }
+      }
+      const want = called ? btns[calls[0]] : btns[current % 3];
+      api.plan(() => want, { maxActions: 4 });
+      const clicked = await untilRight(api, btns, e => !called || e === want);
       if (!clicked || api.closed) return;
       const idx = Number(clicked.dataset.idx);
-      display.innerHTML = pic(insts[idx].icon);
+      if (called) calls.shift();
+      if (!called || !calls.length) display.innerHTML = pic(insts[idx].icon);
       api.sfx.pop(idx * 2);
       current++;
       api.dots(targetPlays, current);
@@ -125,7 +155,9 @@ register({
     style();
     api.say('Listen to the leader drum, then echo the same beats back!',
       'Nghe trống cái đánh rồi đánh đáp lại đúng số tiếng nhé!');
-    const rounds = api.little ? 3 : 4;
+    // more rounds, longer beats and a quicker leader each level (Talent: up to eight beats)
+    const rounds = lv(api, 3, 4, 5, 6, 7), base = lv(api, 2, 2, 2, 3, 4), spread = lv(api, 3, 3, 4, 4, 5), gap = lv(api, 260, 260, 240, 200, 160);
+    mark(api, rounds, base, base + spread - 1, gap);
     api.dots(rounds, 0);
     const wrap = el('div', 'mu2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'mu2-stage'); wrap.appendChild(stage);
@@ -140,13 +172,13 @@ register({
     let round = 0;
     hitBtn.disabled = true;
     while (round < rounds) {
-      const targetBeats = (round % 3) + 2;
+      const targetBeats = (round % spread) + base;
       api.say('Listen!', 'Nghe nhé!');
       await wait(900);
       for (let i = 0; i < targetBeats; i++) {
         if (api.closed) return;
         beat(); drum.style.transform = 'scale(1.25)';
-        await wait(260); drum.style.transform = 'scale(1)'; await wait(260);
+        await wait(gap); drum.style.transform = 'scale(1)'; await wait(gap);
       }
       api.say('Your turn!', 'Đến lượt con!');
       hitBtn.disabled = false;
@@ -183,7 +215,10 @@ register({
     style();
     api.say('Is the sound loud like a lion, or quiet like a mouse?',
       'Âm thanh to như sư tử hay nhỏ nhẹ như chú chuột?');
-    const rounds = 3;
+    // more sounds each level; from Hard a roar can be soft and a squeak can be loud (listen to how loud, not which sound), and
+    // on Talent loud and quiet are closer together and the sound plays only once
+    const rounds = lv(api, 3, 4, 6, 8, 10), mixKinds = !api.little && api.smart >= 2, vols = api.talent ? [.24, .06] : [.4, .025];
+    mark(api, rounds, mixKinds ? 'mixed' : '', vols.join('/'), api.talent ? 'once' : '');
     api.dots(rounds, 0);
     const wrap = el('div', 'mu2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'mu2-stage'); wrap.appendChild(stage);
@@ -196,14 +231,15 @@ register({
 
     // (owner, 29 Oct 2026 AEDT audit) a mixed order every game, a really loud roar or a tiny squeak (both were
     // ordinary pops, always loud, quiet, loud), and the drum on stage plays it again
-    const answers = [loudBtn, quietBtn, Math.random() < .5 ? loudBtn : quietBtn].sort(() => Math.random() - .5);
+    const answers = [loudBtn, quietBtn].concat(Array.from({ length: rounds - 2 }, () => Math.random() < .5 ? loudBtn : quietBtn)).sort(() => Math.random() - .5);
     let current = 0;
     let play = () => {};
     iconEl.style.cursor = 'pointer';
-    iconEl.onclick = () => play();
+    iconEl.onclick = () => { if (!api.talent) play(); };
     while (current < rounds) {
       const target = answers[current];
-      play = target === loudBtn ? loudSound : quietSound;
+      const low = mixKinds ? Math.random() < .5 : target === loudBtn, v = target === loudBtn ? (low ? vols[0] : vols[0] * .6) : vols[1];
+      play = mixKinds ? () => (low ? lowSound : highSound)(v) : target === loudBtn ? loudSound : quietSound;
       await wait(400); play();
       api.plan(() => target, { maxActions: 4 });
       const clicked = await untilRight(api, [loudBtn, quietBtn], e => e === target);
@@ -227,6 +263,10 @@ register({
     style();
     api.say('Put the lyrics of "Kìa con bướm vàng" in order!',
       'Xếp các câu hát của bài "Kìa con bướm vàng" đúng thứ tự nhé!');
+    // lines from another song ("Một con vịt") join in each level and must be left out; from Hard the buttons change places after
+    // each line, and on Talent the lines already sung are not shown
+    const decoys = ['Một con vịt', 'Xòe ra hai cái cánh'].slice(0, lv(api, 0, 0, 1, 2, 2)), remix = !api.little && api.smart >= 2;
+    mark(api, 4 + decoys.length, remix ? 'mixed' : '', api.talent ? 'hidden' : '');
     api.dots(4, 0);
     const wrap = el('div', 'mu2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'mu2-stage'); wrap.appendChild(stage);
@@ -244,16 +284,19 @@ register({
       b.dataset.idx = String(idx);
       return b;
     });
-    [...btns].sort(() => Math.random() - .5).forEach(b => controls.appendChild(b));
+    const others = decoys.map(l => { const b = el('button', 'mu2-btn', `<span>${l}</span>`); b.dataset.other = '1'; return b; }), all = btns.concat(others);
+    const mixUp = () => [...all].sort(() => Math.random() - .5).forEach(b => controls.appendChild(b));
+    mixUp();
 
     let current = 0;
     while (current < 4) {
       const target = btns[current];
       api.plan(() => target, { maxActions: 5 });
-      const clicked = await untilRight(api, btns, e => e === target);
+      const clicked = await untilRight(api, all, e => e === target);
       if (!clicked || api.closed) return;
       target.disabled = true;
-      sung.appendChild(el('div', '', lines[current]));
+      if (!api.talent) sung.appendChild(el('div', '', lines[current]));
+      if (remix) mixUp();
       api.sfx.pop(current);
       current++;
       api.dots(4, current);

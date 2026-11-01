@@ -57,10 +57,17 @@ const TL = {
     api.stage.appendChild(t);
     const oppEl = t.querySelector('.tl-opp'), pileEl = t.querySelector('.tl-pile'), whoEl = t.querySelector('.tl-who'), msgEl = t.querySelector('.tl-msg'), handEl = t.querySelector('.tl-hand');
     const bPlay = t.querySelector('.play'), bPass = t.querySelector('.pass'), bHint = t.querySelector('.hint');
+    if (api.talent) (bHint as HTMLElement).style.display = 'none';
     const names = [T('You', 'Con'), T('Big Brother Ba', 'Anh Ba'), 'Con Vật'], faces = ['🙂', '🧑🏻', '👦🏻'];
     const cardHTML = (c, cls = '') => `<div class="tl-card ${c.s >= 2 ? 'red' : ''} ${cls}" data-v="${c.v}"><b>${RANKS[c.r]}</b><i>${SUITS[c.s]}</i></div>`;
     const sleep = ms => new Promise<void>(r => setTimeout(r, ms));
     const HANDS = little ? 2 : 3;
+    // (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") anh Ba and Con Vật play better each level: on Easy they
+    // often hold back and the hint lights your play at the first level; on Medium they play to win but now and then miss a beat;
+    // on Hard they never miss; on Talent they also think faster and there is no Hint button
+    const smart = little ? 0 : Math.max(0, Math.min(3, api.smart || 0)), thinkMs = little ? 1200 : [900, 900, 750, 550][smart];
+    const lazyP = little ? .45 : smart === 0 ? [.3, .2, .12, .06, 0][Math.max(0, Math.min(4, api.level - 1))] : [0, .12, 0, 0][smart];
+    api.stage.dataset.lv = [smart, lazyP, thinkMs, api.talent ? 'nohint' : 'hint'].join(',');
     let hands, table, lastBy, passed, turn, sel, finished, game = 0, firstHand = true, shown = null; // shown: cards dealt so far, while dealing
 
     const say = (en, vi) => { msgEl.textContent = T(en, vi); };
@@ -150,12 +157,12 @@ const TL = {
         drawOpp(); drawTable(); drawHand(); updateBtns();
         if (turn === 0) {
           if (!table) say('Your turn: start a new round with any play.', 'Tới lượt con: đánh gì cũng được.'); else say('Your turn: beat it, or pass.', 'Tới lượt con: chặn bài, hay bỏ lượt.');
-          if (little || api.level <= 1) hint();
+          if (little || (smart === 0 && api.level <= 1)) hint();
           await new Promise<void>(r => { resolveTurn = r; }); resolveTurn = null;
         } else {
-          await sleep(little ? 1200 : 900); if (api.closed) return;
-          const lazy = !strong && Math.random() < (little ? .45 : [.3, .2, .12, .06, 0][api.level - 1]);
-          const cs = table && lazy ? null : choose(hands[turn], table && table.k, { strong, others: Math.min(...[0, 1, 2].filter(j => j !== turn).map(j => hands[j].length || 99)) });
+          await sleep(thinkMs); if (api.closed) return;
+          const lazy = Math.random() < lazyP;
+          const cs = table && lazy ? null : choose(hands[turn], table && table.k, { strong: strong || smart >= 1, others: Math.min(...[0, 1, 2].filter(j => j !== turn).map(j => hands[j].length || 99)) });
           if (cs) play(turn, cs); else { if (!table) play(turn, [hands[turn][0]]); else { passed.add(turn); say(`${names[turn]} passes.`, `${names[turn]} bỏ lượt.`); } }
         }
         if (finished.length) break;

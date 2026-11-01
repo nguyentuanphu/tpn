@@ -9,7 +9,7 @@ import { ARCADE_STYLE, RING_CELLS, art, control, dom } from './arcade-board.js';
 import type { GameOnline } from './frame.js';
 // A static bilingual pair keeps the completion line visible to voice inventory tooling.
 const ORCHARD_COMPLETION=['Orchard mission complete!','Hoàn thành nhiệm vụ vườn quả!'] as const;
-interface OrchardApi {level?:number;stage:HTMLElement;online?:GameOnline;players:{id?:string;name?:string}[];tier():number;closed:boolean;onCleanup(f:()=>void):void;say(en:string,vi:string):void;dots(n:number,k:number):void;sfx:{tap():void};win(extra:{title:string;titleVi:string}):Promise<unknown>;plan?(f:()=>Element|null,opts:{maxActions:number}):void;}
+interface OrchardApi {level?:number;talent?:boolean;stage:HTMLElement;online?:GameOnline;players:{id?:string;name?:string}[];tier():number;closed:boolean;onCleanup(f:()=>void):void;say(en:string,vi:string):void;dots(n:number,k:number):void;sfx:{tap():void};win(extra:{title:string;titleVi:string}):Promise<unknown>;plan?(f:()=>Element|null,opts:{maxActions:number}):void;}
 async function run(api:OrchardApi){
  if(!testerArcadeAvailable('sparkleorchard',api.online?'multi':'single')){api.say('This game is for invited testers.', 'Trò này dành cho người thử được mời.');return;}
  const style=dom('style');style.textContent=ARCADE_STYLE;const root=dom('div','arcade orchard');api.stage.append(style,root);root.tabIndex=-1;api.stage.closest('.gl')?.classList.add('gl-arcade');
@@ -18,7 +18,8 @@ async function run(api:OrchardApi){
  const mine=()=>!!session&&controlsArcadeTurn(session.state.turn,session.mine,!!session.online,helper);
  const active=()=>!!session&&!session.state.complete&&!session.waiting&&mine();
  function stop(){if(!active())return;if(session!.submit(position))api.sfx.tap();}
- function start(seats:number,npc:boolean){helper=npc;session=new ArcadeSession(orchardStart(api.online?.seed||`orchard-${Date.now()}`,seats,orchardSessionTier(api.tier(),api.online?(api.level??1):undefined)),api.online,orchardStop,paint);api.say('Find the mission pictures. Stop the light!', 'Tìm tranh trong nhiệm vụ. Dừng đèn nhé!');paint();}
+ // (owner, 1 Nov 2026 AEDT) Talent plays tier 4 on this device: six pictures, the fastest light and no free picture after misses
+ function start(seats:number,npc:boolean){helper=npc;const tier=!api.online&&api.talent?4:orchardSessionTier(api.tier(),api.online?(api.level??1):undefined);api.stage.dataset.lv=String(tier);session=new ArcadeSession(orchardStart(api.online?.seed||`orchard-${Date.now()}`,seats,tier),api.online,orchardStop,paint);api.say('Find the mission pictures. Stop the light!', 'Tìm tranh trong nhiệm vụ. Dừng đèn nhé!');paint();}
  function paint(){
   if(dead||!session)return;const s=session.state;const keepFocus=root.contains(document.activeElement)||document.activeElement===document.body;root.replaceChildren();root.dataset.mode=session.online?'online':helper?'npc':s.seats>1?'local':'solo';root.dataset.moves=String(s.moves);
   root.append(dom('h2','',T('Our orchard mission','Nhiệm vụ vườn quả')));

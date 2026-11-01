@@ -3,7 +3,7 @@
 // Outback Road Trip, Cai Rang Floating Market, Airport Helper, Postcards Home.
 import { register, untilRight } from './frame.js';
 import { T } from '../i18n.js';
-import { pic } from '../art.js';
+import { pic, hasArt } from '../art.js';
 import { el, wait } from '../util.js';
 
 let styled = false;
@@ -21,7 +21,23 @@ function style() {
 `));
 }
 
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") each level asks a little more of the traveller. Medium and
+// up add a silly wrong answer to the questions that have one right answer; Hard ends the trip with "which one did you see?";
+// Talent asks which one came first. Under-5s play as before. The values are on the stage (data-lv) for the checks.
+const ODD: string[][] = [['Toy car', 'Ô tô đồ chơi'], ['Bicycle', 'Xe đạp'], ['Coin', 'Đồng xu'], ['Trash can', 'Thùng rác'], ['Umbrella', 'Cái ô'], ['Pillow', 'Cái gối']];
+const SEEN = ['🏛️', '🌸', '🛤️', '🌊', '🚉', '💡', '⛵', '🎟️', '🎶', '🚙', '🦘', '🪨', '🌌', '🍉', '🍍', '🍜', '🎫', '🧳', '🛫', '🏞️', '📮', '📬'];
 async function runPlaceRounds(api: any, icon: string, prompt: [string, string], qs: Array<{ show: string; desc: [string, string]; choices: string[][]; answer: number | 'any' }>, done: [string, string]) {
+  const smart = api.little ? 0 : Math.max(0, Math.min(3, api.smart || 0)), odd = [0, 1, 2, 2][smart], recall = smart >= 2;
+  api.stage.dataset.lv = [odd, recall ? (api.talent ? 'first' : 'seen') : ''].join(',');
+  // the questions as the child plays them: a silly extra answer or two where one answer is right
+  qs = qs.map(q => q.answer === 'any' || !odd ? q : { ...q, choices: q.choices.concat([...ODD].sort(() => Math.random() - .5).filter(o => !q.choices.some(c => c[0] === o[0])).slice(0, odd)) });
+  // Hard: "which one did you see on this trip?"; Talent: "which one did you see first?" (pictures to choose from)
+  if (recall) {
+    const trip = [...new Set(qs.map(q => q.show))], others = SEEN.filter(p => !trip.includes(p)).sort(() => Math.random() - .5);
+    const right = api.talent ? trip[0] : trip[Math.floor(Math.random() * trip.length)];
+    const pics = api.talent ? trip.slice(0, 3).concat(others.slice(0, 1)) : [right].concat(others.slice(0, 2));
+    qs = qs.concat([{ show: icon, desc: api.talent ? ['Which one did you see first?', 'Con đã thấy hình nào đầu tiên?'] : ['Which one did you see on this trip?', 'Con đã thấy hình nào trong chuyến đi này?'], choices: pics.map(p => [p, p]), answer: pics.indexOf(right) }]);
+  }
   style(); api.say(prompt[0], prompt[1]); api.dots(qs.length, 0);
   const wrap = el('div', 'pl2-board'), stage = el('div', 'pl2-stage'), controls = el('div', 'pl2-controls');
   api.stage.appendChild(wrap); wrap.append(stage, controls);
@@ -30,10 +46,12 @@ async function runPlaceRounds(api: any, icon: string, prompt: [string, string], 
   while (k < qs.length) {
     const q = qs[k];
     stage.innerHTML = `<div class="pl2-big">${pic(q.show)}</div><div class="pl2-desc">${T(q.desc[0], q.desc[1])}</div>`;
-    api.say(q.desc[0], q.desc[1]);
+    if (k === qs.length - 1 && recall) api.show(q.desc[0], q.desc[1]); else api.say(q.desc[0], q.desc[1]);
     controls.innerHTML = '';
     const btns = q.choices.map((c, i) => {
-      const b = el('button', 'pl2-btn', `<span>${T(c[0], c[1])}</span>`);
+      // (a picture answer shows our drawing)
+      const b = el('button', 'pl2-btn', c[0] === c[1] && hasArt(c[0]) ? pic(c[0]) : `<span>${T(c[0], c[1])}</span>`);
+      if (c[0] === c[1] && hasArt(c[0])) b.setAttribute('aria-label', T('picture', 'hình'));
       b.dataset.i = String(i);
       return b;
     });

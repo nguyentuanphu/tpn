@@ -22,6 +22,11 @@ export function makeCanvas(api, aspect = 1) {
   return { c, g, w, h };
 }
 export const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") the level number (Easy 1-2, Medium 2-3, Hard 4-5, Talent 5)
+// picks from each game's table, and Talent adds the game's own extra challenge on top. The values a game uses are on its stage
+// (data-lv) for the checks.
+export const atLevel = <V>(api, table: V[]): V => table[Math.max(0, Math.min(table.length - 1, (api.level || 1) - 1))];
+export const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 
 // ---------- What's the time, Mr Wolf? (Australia) ----------
 const clockSVG = hr => `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#fffdf6" stroke="#6b4a2a" stroke-width="5"/>${Array.from({ length: 12 }, (_, i) => { const a = (i + 1) / 12 * Math.PI * 2; return `<text x="${(50 + Math.sin(a) * 34).toFixed(1)}" y="${(54.5 - Math.cos(a) * 34).toFixed(1)}" font-size="13" text-anchor="middle" fill="#6b4a2a" font-weight="700" font-family="Fredoka,sans-serif">${i + 1}</text>`; }).join('')}
@@ -31,13 +36,15 @@ register({
   id: 'mrwolf', icon: '🐺', origin: 'au', name: () => T("What's the Time, Mr Wolf?", 'Mấy Giờ Rồi, Ông Sói?'),
   async run(api) {
     const N = 12, autoStop = api.little || api.level <= 1, readClock = !api.little && api.level >= 3;
+    // Talent: Mr Wolf calls dinner sooner and runs faster
+    mark(api, autoStop ? 'auto' : '', readClock ? 'clock' : '', api.little ? 0 : atLevel(api, [3800, 3000, 2400, 2000, 1700]) - (api.talent ? 400 : 0));
     const name = api.players[0].name;
     api.say("Ask Mr Wolf the time, then take that many steps. When he shouts Dinner time, run home!", 'Hỏi ông Sói mấy giờ rồi, rồi bước đúng bấy nhiêu bước. Khi ông Sói hét "Đến giờ ăn tối!" thì chạy về nhà thật nhanh!');
     const w = el('div', 'wolf', `<div class="wolf-lane"><span class="wolf-home">🏠</span><div class="wolf-steps">${'<i></i>'.repeat(N)}</div><span class="wolf-kid">🧒</span><span class="wolf-w">🐺</span></div>
       <div class="wolf-talk"><div class="wolf-clock"></div><b class="wolf-said"></b></div><div class="wolf-btns"></div>`);
     api.stage.appendChild(w);
     const kid = w.querySelector('.wolf-kid'), wolf = w.querySelector('.wolf-w'), said = w.querySelector('.wolf-said'), clock = w.querySelector('.wolf-clock'), btns = w.querySelector('.wolf-btns'), steps = [...w.querySelectorAll('.wolf-steps i')];
-    let pos = 0, caught = 0, dinnerAt = api.little ? 99 : Math.floor(rand(5, 10));
+    let pos = 0, caught = 0, dinnerAt = api.little ? 99 : Math.floor(api.talent ? rand(3, 8) : rand(5, 10));
     const place = () => { kid.style.left = `calc(${6 + pos / N * 78}% - 20px)`; steps.forEach((s, k) => s.classList.toggle('on', k < pos)); };
     let planned: HTMLElement | null = null;
     api.plan(() => planned?.isConnected ? planned : null, { maxActions: N * 4 + 12 });
@@ -51,7 +58,7 @@ register({
         // Dinner time! Mr Wolf turns around and chases. Little ones always get home in time.
         wolf.classList.add('turned'); said.textContent = T('DINNER TIME!', 'ĐẾN GIỜ ĂN TỐI!'); api.sfx.whoosh();
         api.say('Dinner time! Run home, quick!', 'Đến giờ ăn tối! Chạy về nhà mau!');
-        const allow = api.little ? 1e9 : [3800, 3000, 2400, 2000, 1700][api.level - 1] + caught * 1200;
+        const allow = api.little ? 1e9 : atLevel(api, [3800, 3000, 2400, 2000, 1700]) - (api.talent ? 400 : 0) + caught * 1200;
         const run = btn('🏃 ' + T('Run home!', 'Chạy về nhà!'), 'run');
         wolf.style.transition = `left ${allow / 1000}s linear`; wolf.style.left = kid.style.left;
         const ok = await Promise.race([tapOne([run]).then(() => true), wait(allow).then(() => false)]); if (api.closed) return;
@@ -100,8 +107,10 @@ register({
 register({
   id: 'chuyen', icon: '🥢', origin: 'both', name: () => T('Knucklebones (Chuyền)', 'Đánh Chuyền'),
   async run(api) {
-    const rounds = 3, need = api.little ? [1, 1, 2] : [[1, 2, 2], [1, 2, 3], [2, 3, 3], [2, 3, 4], [3, 4, 5]][api.level - 1];
-    let air = api.little ? 0 : [3600, 3000, 2500, 2200, 1900][api.level - 1] - (api.strong ? 200 : 0);
+    // Talent: six sticks and a quicker ball
+    const rounds = 3, need = api.little ? [1, 1, 2] : atLevel(api, [[1, 2, 2], [1, 2, 3], [2, 3, 3], [2, 3, 4], [3, 4, 5]]);
+    let air = api.little ? 0 : atLevel(api, [3600, 3000, 2500, 2200, 1900]) - (api.strong ? 200 : 0) - (api.talent ? 300 : 0);
+    mark(api, need.join('-'), air, api.talent ? 6 : 5);
     api.say('Tap the ball to throw it up. Pick up the sticks, then catch the ball before it lands!', 'Chạm quả bóng để tung lên. Nhặt que thật nhanh rồi bắt bóng trước khi bóng rơi nhé!');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -109,7 +118,7 @@ register({
       const mat = el('div', 'chuyen', `<div class="ch-sky"></div><button class="ch-ball" aria-label="ball"></button><div class="ch-sticks"></div><div class="ch-hand">✋ <b>0</b>/${k}</div>`);
       api.stage.appendChild(mat);
       const ball = mat.querySelector('.ch-ball'), box = mat.querySelector('.ch-sticks'), hand = mat.querySelector('.ch-hand b');
-      const sticks = Array.from({ length: api.little ? 3 : 5 }, (_, i) => { const s = el('button', 'ch-stick'); s.style.setProperty('--r', (rand(-40, 40)) + 'deg'); s.style.setProperty('--y', rand(-10, 10) + 'px'); box.appendChild(s); return s; });
+      const sticks = Array.from({ length: api.little ? 3 : api.talent ? 6 : 5 }, (_, i) => { const s = el('button', 'ch-stick'); s.style.setProperty('--r', (rand(-40, 40)) + 'deg'); s.style.setProperty('--y', rand(-10, 10) + 'px'); box.appendChild(s); return s; });
       api.show(`Pick up ${k} at a time`, `Nhặt ${k} que một lần`);
       api.say(k === 1 ? 'Pick up one stick each throw.' : `Pick up ${k} sticks this time!`, k === 1 ? 'Chuyền chuyền một! Mỗi lần nhặt một que.' : `Chuyền chuyền ${numWord(k)}! Lần này nhặt ${numWord(k)} que!`);
       let misses = 0, stop = null; api.onCleanup(() => stop && stop());
@@ -176,7 +185,9 @@ register({
     }
     // Part 2: the doctor chases the tail. Tap the doctor to block him!
     ans.innerHTML = ''; docSay.textContent = ''; lineSay.textContent = '';
-    const need = api.little ? 4 : [5, 6, 7, 8, 9][api.level - 1], ms = api.little ? 4200 : [3600, 3000, 2500, 2100, 1800][api.level - 1];
+    // Talent: the doctor comes more often and faster
+    const need = api.little ? 4 : atLevel(api, [5, 6, 7, 8, 9]) + (api.talent ? 2 : 0), ms = api.little ? 4200 : atLevel(api, [3600, 3000, 2500, 2100, 1800]) - (api.talent ? 350 : 0);
+    mark(api, need, ms);
     api.say('Here comes the doctor! Tap him to protect the tail of the dragon!', 'Thầy thuốc đuổi kìa! Chạm vào thầy thuốc để bảo vệ khúc đuôi nhé!');
     const doc = scene.querySelector('.dr-doc'); doc.classList.add('chase');
     let blocked = 0; api.dots(need, 0);
@@ -199,10 +210,12 @@ register({
 register({
   id: 'marbles', icon: '🔮', origin: 'both', name: () => T('Marbles', 'Bắn Bi'),
   async run(api) {
-    const need = api.little ? 3 : [3, 4, 5, 5, 6][api.level - 1], n = need + 2;
+    // Talent: more marbles to knock out, in a wider circle
+    const need = api.little ? 3 : atLevel(api, [3, 4, 5, 5, 6]) + (api.talent ? 1 : 0), n = need + 2;
+    mark(api, need, api.talent ? 'wide' : '');
     api.say('Pull back the big marble and let go to shoot. Knock the marbles out of the circle!', 'Kéo viên bi cái về phía sau rồi thả tay để bắn. Bắn cho bi văng ra khỏi vòng tròn nhé!');
     const { c, g, w, h } = makeCanvas(api, 1.05);
-    const R = w * .3, cx = w / 2, cy = h * .4, mr = w * .032, home = { x: w / 2, y: h * .86 };
+    const R = w * (api.talent ? .34 : .3), cx = w / 2, cy = h * .4, mr = w * .032, home = { x: w / 2, y: h * .86 };
     const COLS = ['#ff5f7e', '#3cc7e8', '#ffd23f', '#7ee35a', '#b598ff', '#ff9f43', '#5fd3c9', '#ff7eb8'];
     const balls: { x: number; y: number; vx: number; vy: number; r: number; col: string; shooter?: boolean; gone?: boolean; fade?: number }[] = [{ x: home.x, y: home.y, vx: 0, vy: 0, r: mr * 1.3, col: '#f4f4ff', shooter: true }];
     for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 + rand(-.2, .2), d = i === 0 ? 0 : R * rand(.15, .55); balls.push({ x: cx + Math.cos(a) * d, y: cy + Math.sin(a) * d, vx: 0, vy: 0, r: mr, col: COLS[i % COLS.length] }); }
@@ -290,8 +303,10 @@ function shade(hex) { const n = parseInt(hex.slice(1), 16), f = .55; return `rgb
 register({
   id: 'skipping', icon: '🪢', origin: 'both', name: () => T('Skipping Rope', 'Nhảy Dây'),
   async run(api) {
-    const need = api.little ? 5 : [6, 8, 10, 12, 15][api.level - 1];
-    let period = api.little ? 2.2 : [1.9, 1.7, 1.5, 1.35, 1.2][api.level - 1];
+    // Talent: more jumps with a faster rope
+    const need = api.little ? 5 : atLevel(api, [6, 8, 10, 12, 15]) + (api.talent ? 3 : 0);
+    let period = api.little ? 2.2 : atLevel(api, [1.9, 1.7, 1.5, 1.35, 1.2]) - (api.talent ? .12 : 0);
+    mark(api, need, period);
     api.say('Tap Jump when the rope comes down to your feet. Count your jumps!', 'Chạm nút Nhảy khi dây quay xuống chân. Cùng đếm số lần nhảy nhé!');
     const { c, g, w, h } = makeCanvas(api, .62);
     const btn = el('button', 'pill big jumpbtn', '⤴️ ' + T('Jump!', 'Nhảy!')); api.stage.appendChild(btn);
@@ -349,9 +364,11 @@ const SNAP_PICS = ['🐨', '🦘', '🦜', '🐊', '🪷', '🐃', '🏮', '🥭
 register({
   id: 'snap', icon: '🃏', origin: 'au', name: () => T('Snap!', 'Snap! (Bắt Cặp)'),
   async run(api) {
-    const need = api.little ? 3 : [3, 4, 4, 5, 6][api.level - 1], kinds = api.little ? 4 : Math.min(10, 4 + api.level);
-    const uncleMs = api.little ? 1e9 : [2400, 1900, 1500, 1200, 950][api.level - 1] - (api.strong ? 150 : 0);
-    const flipMs = api.little ? 1700 : [1600, 1450, 1300, 1150, 1000][api.level - 1];
+    // Talent: quicker uncles and quicker cards, with every picture in the pack
+    const need = api.little ? 3 : atLevel(api, [3, 4, 4, 5, 6]), kinds = api.little ? 4 : Math.min(10, 4 + api.level + (api.talent ? 1 : 0));
+    const uncleMs = api.little ? 1e9 : atLevel(api, [2400, 1900, 1500, 1200, 950]) - (api.strong ? 150 : 0) - (api.talent ? 150 : 0);
+    const flipMs = api.little ? 1700 : atLevel(api, [1600, 1450, 1300, 1150, 1000]) - (api.talent ? 150 : 0);
+    mark(api, need, kinds, uncleMs, flipMs);
     api.say('Watch the cards. When two cards in a row are the same, tap SNAP as fast as you can!', 'Nhìn các lá bài nhé. Khi hai lá liền nhau giống nhau, bấm SNAP thật nhanh!');
     const t = el('div', 'snap', `<div class="sn-uncles">👨🏻‍🦳 👴 👵</div><div class="sn-pile"><div class="sn-card prev"></div><div class="sn-card top"></div></div><div class="sn-score">🃏 <b>0</b>/${need}</div><button class="sn-btn">SNAP!</button>`);
     api.stage.appendChild(t);
@@ -388,12 +405,14 @@ register({
 register({
   id: 'dacau', icon: '🏸', origin: 'vn', name: () => T('Shuttlecock Kick', 'Đá Cầu'),
   async run(api) {
-    const need = api.little ? 6 : [8, 10, 12, 15, 18][api.level - 1], grav = api.little ? 260 : [380, 440, 500, 560, 620][api.level - 1];
+    // Talent: more kicks, a faster fall and a smaller spot to tap
+    const need = api.little ? 6 : atLevel(api, [8, 10, 12, 15, 18]) + (api.talent ? 4 : 0), grav = api.little ? 260 : atLevel(api, [380, 440, 500, 560, 620]) + (api.talent ? 60 : 0);
     api.say('Tap the shuttlecock to kick it up! Do not let it touch the ground. Count your kicks!', 'Chạm vào quả cầu để đá lên! Đừng để cầu rơi xuống đất. Đếm số lần đá nhé!');
     const { c, g, w, h } = makeCanvas(api, .75);
     let x = w / 2, y = h * .3, vx = 0, vy = 0, kicks = 0, last = performance.now(), msg = '', msgT = 0, foot = 0, done;
     const finished = new Promise<void>(r => done = r), ground = h * .9;
-    const hitR = api.little ? 70 : 52;
+    const hitR = api.little ? 70 : api.talent ? 44 : 52;
+    mark(api, need, grav, hitR);
     c.onpointerdown = e => {
       const q = local(c, e), r = q.r, px = q.x * w / r.width, py = q.y * h / r.height;
       if (!api.little && Math.hypot(px - x, py - y) > hitR) return;   // little ones can tap anywhere

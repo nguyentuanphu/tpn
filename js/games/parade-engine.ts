@@ -14,12 +14,15 @@ export function orchardSessionTier(localTier:number,sharedLevel?:number){
  const requested=sharedLevel===undefined?localTier:(Number.isFinite(sharedLevel)?sharedLevel:1)-1;
  return Math.max(0,Math.min(3,Math.floor(Number.isFinite(requested)?requested:0)));
 }
+// (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") the mission grows with the level: 3 pictures for under-5s,
+// 4 on Easy, 5 on Medium and Hard, and 6 on Talent (tier 4, this device only), where no free picture comes after misses
+export const ORCHARD_MISSION=[3,4,5,5,6];
 export function orchardStart(seed:string,seats:number,tier:number):OrchardState {
   if(!Number.isInteger(seats)||seats<1||seats>4)throw new Error('Orchard seats must be 1–4');
   const rand=randomStream(seed), board:OrchardSymbol[]=[];
   for(let i=0;i<16;i++)board.push(ORCHARD_SYMBOLS[Math.floor(rand()*ORCHARD_SYMBOLS.length)].id);
   // Every required picture really exists on the board, including repeated goals.
-  const mission=Array.from({length:tier===0?3:5},()=>board[Math.floor(rand()*board.length)]);
+  const mission=Array.from({length:ORCHARD_MISSION[Math.max(0,Math.min(4,Math.floor(tier)||0))]},()=>board[Math.floor(rand()*board.length)]);
   return {seed,seats,turn:0,tier,board,mission,found:mission.map(()=>false),moves:0,misses:0,last:null,complete:false,collection:[],combo:null};
 }
 export function orchardStop(s:OrchardState,value:number):OrchardState|null {
@@ -28,7 +31,7 @@ export function orchardStop(s:OrchardState,value:number):OrchardState|null {
   // A star helps common pictures only; rare adventure combinations must be real.
   if(i<0&&symbol==='star')i=s.mission.findIndex((id,n)=>!found[n]&&['apple','berry','banana','flower'].includes(id));
   if(i<0&&s.tier===0){for(const offset of [-1,1]){const near=s.board[(value+offset+s.board.length)%s.board.length];const j=s.mission.findIndex((id,n)=>!found[n]&&id===near);if(j>=0){symbol=near;i=j;break;}}}
-  if(i<0&&s.misses>=3){i=found.indexOf(false);symbol=s.mission[i];}
+  if(i<0&&s.misses>=3&&s.tier<4){i=found.indexOf(false);symbol=s.mission[i];}
   if(i>=0)found[i]=true;
   const collection=[...s.collection,symbol];let combo=s.combo;
   if(collection.filter(x=>x==='ladybird').length>=3)combo='ladybird';
