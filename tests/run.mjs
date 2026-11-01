@@ -1695,6 +1695,26 @@ await check('testerrewards', async () => {
   return 'on phone, tablet and computer: counted fixed list and quiet coins (more for a spoken note), the Silver Ladybird on the shirt (and in the look friends see), the tester hat, backpack and cape, five stickers, the week\'s star by the name, and the Tester\'s Corner';
 });
 
+await check('launchbanner', async () => {
+  // (owner, 1 Nov 2026 AEDT) Studio's launch date on the website: Coming soon with the days left before it, Open now with
+  // Play now from it, nothing while no date is set; in English and Vietnamese
+  const day = n => new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(Date.now() + n * 864e5));
+  const out = {};
+  for (const [name, launch] of [['none', null], ['soon', day(10)], ['open', day(-1)]]) {
+    const ctx = await b.newContext({ viewport: { width: 390, height: 844 } }), page = await ctx.newPage();
+    await ctx.route('**/api/festivals', r => r.fulfill({ json: { schema: 1, enabled: [], festivals: {}, at: null, launch } }));
+    await page.goto(URL + 'home/'); await page.waitForTimeout(1500);
+    out[name] = await page.evaluate(() => { const b = document.querySelector('.launch-banner'), a = b && b.querySelector('a'), r = a && a.getBoundingClientRect(); return b ? { text: b.textContent, play: !!a, tall: r ? r.height >= 44 : null, state: b.dataset.state } : null; });
+    if (name === 'soon') { await page.evaluate(() => { document.documentElement.lang = 'vi'; }); await page.waitForTimeout(200); out.soonVi = await page.evaluate(() => document.querySelector('.launch-banner')?.textContent || ''); }
+    await ctx.close();
+  }
+  ok(out.none === null, 'a banner with no launch date: ' + JSON.stringify(out.none));
+  ok(out.soon && out.soon.state === 'soon' && /Coming soon/.test(out.soon.text) && /10 days/.test(out.soon.text) && !out.soon.play, 'coming soon: ' + JSON.stringify(out.soon));
+  ok(/Sắp ra mắt/.test(out.soonVi) && /còn 10 ngày/.test(out.soonVi), 'Vietnamese: ' + out.soonVi);
+  ok(out.open && out.open.state === 'open' && out.open.play && out.open.tall, 'open now: ' + JSON.stringify(out.open));
+  return 'no date: no banner; 10 days before: Coming soon (EN/VI); from the day: Open now with a 44 px Play now';
+});
+
 await check('festivalsync', async () => (await import('./festival-sync.mts')).festivalSyncCheck(b));
 
 await check('festcal', async () => {

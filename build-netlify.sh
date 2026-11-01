@@ -13,7 +13,7 @@ mkdir -p "$OUT"
 cp -r index.html manifest.webmanifest sw.js netlify.toml css fonts icons js vendor videos content "$OUT"/
 # (r89) the family website at /home, made from the reviewed design by tools/build-website.mts (its TypeScript was made
 # into .js above); only the page, its pictures and its scripts, not the TypeScript
-mkdir -p "$OUT"/home && cp -r home/index.html home/assets home/site.js home/analytics.js home/festivals.js "$OUT"/home/
+mkdir -p "$OUT"/home && cp -r home/index.html home/assets home/site.js home/analytics.js home/festivals.js home/launch.js "$OUT"/home/
 rm -rf "$OUT"/content/old   # Sparkle Studio backups stay on the computer
 # the offline voice pack (made with tools/make-voice-pack.mts), when there is one
 [ -d voices ] && cp -r voices "$OUT"/

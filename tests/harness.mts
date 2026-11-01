@@ -39,7 +39,7 @@ export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'so
     // means after each batch's New week too: a started rule keeps its start and on, but its "New in the valley!" card
     // (js/main.ts newMoment) would otherwise pop up over the HUD at a random moment of every check during that week.
     // The New card and badges are checked with their own rules by "rollout" (schedule: true) and its neighbours.
-    for (const rule of Object.values(j.releases || {})) if (rule && typeof rule === 'object' && typeof rule.start === 'string' && rule.start <= today) delete rule.newDays;
+    for (const rule of Object.values(j.releases || {}) as Array<{ start?: unknown; newDays?: unknown }>) if (rule && typeof rule === 'object' && typeof rule.start === 'string' && rule.start <= today) delete rule.newDays;
     // (r90, owner 24 Oct AEDT) the second set of games and stories is held in Studio until the owner releases it; the
     // checks play as after that release (the hold itself is checked by "secondset").
     // Fruit Parade is likewise explicitly enabled for functional checks; dedicated gating cases override this route.
