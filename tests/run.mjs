@@ -2706,6 +2706,30 @@ await check('bagpals', async () => {
   }
   return `Pets & Buddy first in the Bag and its jump row (${rows.join(', ')}): companion, 2 pets and adopting, tiles 64 px+; a hat bought only with Buy (100 to 70), moved from the companion to a pet and off again, the 3D hat following; screenshots out/bagpals-*.png`;
 });
+await check('capturefreeze', async () => {
+  // (issue #745, a 3.0 s freeze on an Android tablet 1600x960 in "Con Gì Kêu Thế?", 31 Oct 2026 AEDT: the tester tool's
+  // automatic report of a line with no recording copied the screen while the child played; the copy of the page ran as
+  // one block of ~2 MB of styles and no frame was drawn until it ended, so the child's taps on the play button piled up)
+  // the copy of the screen now yields to the browser and carries only the styles it needs: while a report's picture is
+  // made over the open game, the frames keep coming (the longest gap stays well under the 2 s a tester calls a freeze)
+  const P = await open(b, { w: 1600, h: 960, touch: true, lang: 'vi' }); await clear(P.page);
+  await P.page.evaluate(() => { __sv.heroes[0].profile.age = 'little'; __sv.playGame(0, 'animalsounds', 'replay'); });
+  await P.page.waitForSelector('.gl .choice', { timeout: 30000 }); await P.page.waitForTimeout(2500);
+  const r = await P.page.evaluate(async () => {
+    let last = performance.now(), max = 0, run = true; const tick = t => { max = Math.max(max, t - last); last = t; if (run) requestAnimationFrame(tick); }; requestAnimationFrame(tick);
+    await new Promise(r => setTimeout(r, 300)); max = 0;
+    const M = await import('/js/screencapture.js'), t0 = performance.now(), shot = await M.captureScreen(__sv.renderer.domElement), took = performance.now() - t0;
+    await new Promise(r => setTimeout(r, 100)); run = false;
+    return { nodes: document.querySelectorAll('.gl *').length, took: Math.round(took), gap: Math.round(max), jpeg: /^data:image\/jpeg;base64,/.test(shot) && shot.length > 3000, frames: document.querySelectorAll('iframe').length };
+  });
+  const errs = P.errors; await P.ctx.close(); const bad = [];
+  if (!r.jpeg) bad.push('no picture was made');
+  if (r.gap > 600) bad.push(`the game stopped drawing for ${r.gap} ms while the report's picture was made (${r.took} ms in all, ${r.nodes} nodes in the game)`);
+  if (r.frames) bad.push('the empty frame used for default styles was left in the page');
+  if (errs.length) bad.push(...errs.slice(0, 2));
+  if (bad.length) throw new Error(bad.join('; '));
+  return `a report's picture over "Con Gì Kêu Thế?" at 1600x960: ${r.took} ms in all, the longest pause between frames ${r.gap} ms (was about 1.3 s here and 3.0 s on the tester's tablet)`;
+});
 await check('shop', async () => {
   // (round S, owner plan 8 Oct: Round R Part 2 item 6) the clothes shop stands by the market off the roads; the Bag button
   // takes the child there; the big card has picture tabs and coin prices (≥ 64 px for under-5s); buying takes game coins
