@@ -25,7 +25,9 @@ export const SCHOOL = { x: TOWN.x + TOWN_SCHOOL.off[0], z: TOWN.z + TOWN_SCHOOL.
   get front() { return this.z - this.d / 2; },
   get teacher() { return { x: this.x - 1.5, z: this.front - .9 }; },
   /** where the child stands to talk to her, on the yard */
-  get spot() { return { x: this.x - 1.5, z: this.front - 2.1 }; } };
+  get spot() { return { x: this.x - 1.5, z: this.front - 2.1 }; },
+  /** the school's point on the map and its floating name: the yard, east of the door (so the name is not over Cô Tam's) */
+  get place() { return { x: this.x + 2, z: this.front - 2.4 }; } };
 export const SCHOOL_GREETING = ['Welcome to the Fun Learning School! Shall we learn something fun today?', 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?'];
 
 // the building, front facing +z (turned to face the road when placed)
@@ -156,5 +158,5 @@ export function createSchool(G) {
     A.armR.rotation.x = -.6 + Math.sin(time * 1.6) * .35; A.rig.position.y = Math.sin(time * 2) * .02;
     flag.rotation.y = rot + Math.sin(time * 2.3) * .12;
   });
-  return { x, z, w, d, yard, front: SCHOOL.front, teacher: SCHOOL.teacher, spot: SCHOOL.spot, house, yardMesh: yardM, flag, pole, avatar: A, it, box };
+  return { x, z, w, d, yard, front: SCHOOL.front, teacher: SCHOOL.teacher, spot: SCHOOL.spot, place: SCHOOL.place, house, yardMesh: yardM, flag, pole, avatar: A, it, box };
 }

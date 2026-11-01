@@ -4012,7 +4012,8 @@ await check('school', async () => {
     out.teacher = !!A.root.parent && Math.hypot(A.root.position.x - t.x, A.root.position.z - t.z) < .05 && Math.abs(A.root.position.z - front) < 1.5 && A.look.style === 'aodai';
     out.cart = !!cart && G.scene.children.some(o => o.userData && o.userData.townSeller === 'nuocmia');
     // the map and Where is…?
-    const pl = G.PLACES.find(p => p.key === 'school'); out.place = !!pl && Math.hypot(pl.x - s.x, pl.z - s.z) < 1 && pl.name() === 'Fun Learning School';
+    const pl = G.PLACES.find(p => p.key === 'school'); out.place = !!pl && Math.hypot(pl.x - S.place.x, pl.z - S.place.z) < .01 && Math.hypot(pl.x - t.x, pl.z - t.z) < 6 && pl.name() === 'Fun Learning School';
+    out.flyTo = G.npcNear(pl.x, pl.z)?.id;   // (flying there from the map lands by Cô Tam)
     out.where = !!(G.wayfind && G.wayfind.targets().some(o => o.id === 'school'));
     out.tris = (() => { let k = 0; for (const o of [S.house, S.yardMesh, S.flag, S.pole]) { const g = o.geometry; k += (g.index ? g.index.count : g.attributes.position.count) / 3; } return k; })();
     out.n = n; return out;
@@ -4020,7 +4021,7 @@ await check('school', async () => {
   ok(!r.bad.length, 'where it stands: ' + r.bad.join('; '));
   ok(r.startOk && r.spotOk && r.reached, `a child can't walk to Cô Tam from the street (start ${r.startOk}, her spot ${r.spotOk}, reached ${r.reached})`);
   ok(r.teacher && r.cart, `Cô Tam at the school door ${r.teacher}, still at the juice cart ${r.cart}`);
-  ok(r.place && r.where, `on the map ${r.place}, in Where is ${r.where}`);
+  ok(r.place && r.where && r.flyTo === 'school', `on the map ${r.place}, in Where is ${r.where}, flying there lands by ${r.flyTo}`);
   ok(r.tris < 3000, `the school costs ${r.tris} triangles (want under 3000)`);
   // a real tap: walk up to her, tap the Act button, hear her greeting, tap "Yes, let's learn!"
   await P.page.evaluate(() => { const G = __sv, h = G.heroes[0], s = G.school.spot; h.place(s.x, s.z - .6); h.yaw = 0; G.paused = false; });

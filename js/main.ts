@@ -942,8 +942,8 @@ G.PLACES = [
   { g: 'au', key: 'uluru', icon: '🪨', name: () => T('Uluru', 'Uluru'), x: ULURU.x, z: ULURU.z - 20 },
   { g: 'home', icon: '🐻', name: () => T('Mr. Bear’s shop (farm)', 'Cửa hàng Bác Gấu (nông trại)'), x: HOME.x - 21, z: HOME.z + 6, under: 'farm' },
   // (Học vui phase 4) the Fun Learning School on Two Homes Street: on the map under the street, and in "Where is…?"
-  // (where it stands is settled when it is built: js/school.js, so the place reads it then)
-  { g: 'home', key: 'school', icon: '🏫', name: () => T('Fun Learning School', 'Trường Học Vui'), get x() { return SCHOOL.spot.x; }, get z() { return SCHOOL.spot.z; }, under: 'town' }
+  // (from the map; moved to where it really stands once it is built: js/school.js, below)
+  { g: 'home', key: 'school', icon: '🏫', name: () => T('Fun Learning School', 'Trường Học Vui'), ...SCHOOL.place, under: 'town' }
 ];
 G.changePlayer = () => {
   save(); Net.close(); Net.stopListening(); playing = false; G.paused = true; $('#huds').hidden = true;
@@ -1918,6 +1918,7 @@ G.places = createPlaces(G); world.updaters.push(G.places.update);
 world.heroesNear = (x, z, r) => G.heroes.some(h => dist2(h.pos.x, h.pos.z, x, z) < r);   // (Round V) a ridden animal goes home out of every child's sight
 G.town = createTown(G);
 G.school = createSchool(G); // (Học vui phase 4) Trường Học Vui at the west end of Two Homes Street, Cô Tam at its door (js/school.js)
+if (G.school) Object.assign(G.PLACES.find(p => p.key === 'school'), G.school.place);
 G.GAMES_ICON = id => (GAMES[id] || {}).icon || "🎮";
 createRegions(G);
 G.dialog = (name, lines, choices) => dialog(name, lines, choices);
