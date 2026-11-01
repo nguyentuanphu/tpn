@@ -491,6 +491,9 @@ canvas.sky { width: min(96vw, 900px); height: min(62vh, 520px); border-radius: 2
 @keyframes rise-b { to { transform: translateY(-760px) translateX(30px); } }
 .mem img { width: 86%; height: 86%; object-fit: cover; border-radius: 50%; }
 .mem .front { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; } .mem.flip .front { display: flex; }
+/* (#729 #734, 1 Nov 2026 AEDT) the star on every face-down card stood still on purpose: twenty cards at Talent ran 60 star
+   animations at once and a slow computer drew 5 frames a second; the turned-up picture still moves */
+.mem .back svg, .mem .back svg * { animation: none !important; }
 .wardrobe { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-height: 44vh; overflow-y: auto; background: var(--panel2); border-top: 1px solid var(--line); border-radius: 26px 26px 0 0; padding: 14px 14px calc(env(safe-area-inset-bottom) + 14px); display: flex; flex-direction: column; gap: 10px; animation: rise .3s; touch-action: pan-y; }
 .wardrobe .x { position: absolute; top: 10px; right: 12px; width: 60px; height: 60px; background: var(--green); font-size: 28px; }
 .wrow { display: flex; gap: 8px; overflow-x: auto; padding: 4px 70px 4px 2px; scrollbar-width: none; }

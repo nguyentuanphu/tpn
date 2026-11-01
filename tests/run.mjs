@@ -1732,6 +1732,22 @@ await check('twoplayerpick', async () => {
   return 'two friends: "Play with whom?" lists both and invites the one chosen; one friend: invited straight away';
 });
 
+await check('memoryfps', async () => {
+  // (#729 #734, 1 Nov 2026 AEDT) Memory Match at Talent (20 cards) on a slow computer (CPU 4x slower): the face-down stars
+  // stand still, so the game keeps drawing (it was 5 frames a second with 60 star animations)
+  const P = await open(b, { w: 929, h: 1129 }); await clear(P.page);
+  const cdp = await P.ctx.newCDPSession(P.page);
+  await P.page.evaluate(async () => { const G = __sv; G.heroes[0].profile.age = 'big'; G.heroes[0].profile.gameDiff = { memory: 'talent' }; G.playGame(0, 'memory', 'hub'); await new Promise(r => setTimeout(r, 2500)); });
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+  const r = await P.page.evaluate(async () => { const w = ms => new Promise(r => setTimeout(r, ms)), gaps = []; let last = performance.now(), run = true;
+    const f = () => { const t = performance.now(); gaps.push(t - last); last = t; if (run) requestAnimationFrame(f); }; requestAnimationFrame(f);
+    for (let k = 0; k < 5; k++) { const c = [...document.querySelectorAll('.gl .mem:not(.flip)')][k % 3]; if (c) c.click(); await w(500); } run = false; gaps.sort((a, b) => a - b);
+    return { cards: document.querySelectorAll('.gl .mem').length, fps: +(1000 / gaps[Math.floor(gaps.length / 2)]).toFixed(1), backAnims: document.getAnimations().filter(a => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.mem .back')).length }; });
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 }); await P.ctx.close();
+  ok(r.cards >= 20 && r.backAnims === 0 && r.fps >= 20, JSON.stringify(r));
+  return `Talent, ${r.cards} cards, CPU 4x slower: ${r.fps} frames a second, no moving stars on face-down cards`;
+});
+
 await check('launchbanner', async () => {
   // (owner, 1 Nov 2026 AEDT) Studio's launch date on the website: Coming soon with the days left before it, Open now with
   // Play now from it, nothing while no date is set; in English and Vietnamese
