@@ -4940,7 +4940,7 @@ await check('rollout', async () => {
       if (c) card = c.textContent; }
     const before = { wayfind: C.releaseOn('wayfind'), singers: C.releaseOn('singers'), jobs: C.releaseOn('jobs'), isNew: C.releaseNew('jobs'), keepWay: G.keep('wayfind') };
     C.setPeeks([], 7); const tester = { wayfind: C.releaseOn('wayfind'), singers: C.releaseOn('singers') }; C.setPeeks([]);
-    return { card: card.slice(0, 160), before, tester, seen: !!(G.heroes[0].profile.seenNew || {}).jobs };
+    return { card: card.slice(0, 600), before, tester, seen: !!(G.heroes[0].profile.seenNew || {}).jobs };
   });
   if (!/job board/i.test(n.card) || !n.seen) out.push('no New! card for the job boards on their start day: ' + JSON.stringify(n));
   if (n.before.wayfind || n.before.singers || !n.before.jobs || !n.before.isNew || n.before.keepWay) out.push('start dates: ' + JSON.stringify(n.before));
