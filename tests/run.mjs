@@ -5226,8 +5226,8 @@ await check('netgames', async () => {
       throw Error(stage+' invitation was not visible: '+JSON.stringify(peers)+'; '+error.message);
     }
   };
-  // Caro: A asks from the Friends tab, B says yes
-  await A.page.evaluate(async () => { __sv.openPad(0, 'friend'); await new Promise(r => setTimeout(r, 500)); document.querySelector('[data-caro]').click(); await new Promise(r => setTimeout(r, 400)); document.querySelector('.gamelevel [data-size="3"]').click(); document.querySelector('.gamelevel [data-lvl="1"]').click(); });
+  // Caro: A asks from the Friends tab's Play together (#741, v1.06: every game with friends is inside it), B says yes
+  await A.page.evaluate(async () => { __sv.openPad(0, 'friend'); await new Promise(r => setTimeout(r, 500)); document.querySelector('.pad [data-together]').click(); await new Promise(r => setTimeout(r, 300)); document.querySelector('.playtogether [data-g="caro"]').click(); await new Promise(r => setTimeout(r, 400)); document.querySelector('.gamelevel [data-size="3"]').click(); document.querySelector('.gamelevel [data-lvl="1"]').click(); });
   await waitInvitation('Caro'); const ask = await B.page.evaluate(() => document.querySelector('.dialog .dtext').textContent); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
   for (const P of [A, B]) { await P.page.waitForSelector('.gl .caro', { timeout: 20000 }); ok(await P.page.locator('.caro-c').count() === 9, 'Selected 3 × 3 board must reach both players'); }
   // (a placed piece is marked .put: its emoji is swapped for a drawing, so the text is empty)
@@ -5250,7 +5250,7 @@ await check('netgames', async () => {
     await clear(P.page);
   }
   // Oẳn tù tì with everyone: A rock, B scissors, three times
-  await A.page.evaluate(async () => { __sv.openPad(0, 'friend'); await new Promise(r => setTimeout(r, 500)); document.querySelector('[data-rpsall]').click(); await new Promise(r => setTimeout(r, 400)); document.querySelector('.gamelevel [data-lvl="1"]')?.click(); });
+  await A.page.evaluate(async () => { __sv.openPad(0, 'friend'); await new Promise(r => setTimeout(r, 500)); document.querySelector('.pad [data-together]').click(); await new Promise(r => setTimeout(r, 300)); document.querySelector('.playtogether [data-g="oantuti"]').click(); await new Promise(r => setTimeout(r, 400)); document.querySelector('.gamelevel [data-lvl="1"]')?.click(); });
   await waitInvitation('Oan tu ti'); await B.page.evaluate(() => document.querySelector('.dialog .dch').click());
   for (const P of [A, B]) await P.page.waitForSelector('.gl .rps-room', { timeout: 20000 });
   let hands = null;
@@ -5319,6 +5319,92 @@ await check('together', async () => {
   const errs = [...A.errors, ...B.errors].filter(e => !/maps\.google|google\.com/.test(e)); await A.ctx.close(); await B.ctx.close();
   ok(tale.a === tale.b && /prince/.test(tale.b) && /⭐3/.test(race) && !stray.length && follow < 6 && claim.gone && claim.by && real.direct && real.inGame && !errs.length, JSON.stringify({ tale, race, stray, follow, claim, real, errs }));
   return `story page turned on both ("${tale.b}…"); side by side: "${race}"; following ended ${follow} m behind; pickup ${pick} gone for B ("${claim.by} got it first"); the real place opens in the game straight away (Use the internet is on: owner, 10 Oct; the gate itself is checked by realphotos)`;
+});
+
+await check('togetheragain', async () => {
+  // v1.05 tester reports, two devices through the cloud relay: #741 every game with friends is inside Play together (none
+  // outside it on the Friends page) and Follow sits on the friend's own row of "Where are my friends?"; #740 saying yes
+  // to an invitation goes straight into the game (no Friends page left in front); #742/#743 Play again after a game
+  // with a friend starts another round together, whether one taps it first or both at once; #744 a friend riding a
+  // bicycle or a buffalo is seen on it, and the ride moves with them and stays where they get off
+  const up = await new Promise(r => { const ws = new WebSocket('ws://127.0.0.1:9001/', 'mqtt'); const t = setTimeout(() => r(false), 2000); ws.onopen = () => { clearTimeout(t); ws.close(); r(true); }; ws.onerror = () => { clearTimeout(t); r(false); }; });
+  if (!up) return 'skipped (no local MQTT broker on 127.0.0.1:9001)';
+  const pre = () => { window.SV_PEER = { host: '127.0.0.1', port: 9099, path: '/nope', secure: false }; window.SV_MQTT = ['ws://127.0.0.1:9001/']; };
+  const A = await open(b, { pre, w: 900, h: 700, lang: 'en', settings: { friendCode: 'AGNA22', friendsOn: true, autoMeet: false, friends: [{ code: 'AGNB33', name: 'Bin' }] } });
+  const B = await open(b, { pre, w: 430, h: 873, lang: 'vi', touch: true, settings: { friendCode: 'AGNB33', friendsOn: true, autoMeet: false, friends: [{ code: 'AGNA22', name: 'Na' }] } });
+  await pairKeys(A, B);
+  for (const P of [A, B]) { await clear(P.page); await P.page.evaluate(async () => { window.__Net = (await import('/js/net.js')).Net; window.__frame = await import('/js/games/frame.js'); }); }
+  await A.page.evaluate(async () => __Net.host(__sv.sendHello())); await A.page.evaluate(() => __sv.shareStatus());
+  await B.page.waitForFunction(() => { const s = __Net.friends.status.AGNA22; return s && s.online && s.room; }, null, { timeout: 60000 });
+  await B.page.evaluate(() => { __sv.openPad(0, 'friend'); }); await B.page.waitForSelector('[data-joinf]', { timeout: 60000 }); await B.page.evaluate(() => document.querySelector('[data-joinf]').click());
+  await B.page.waitForFunction(() => Object.keys(__sv.partners).length > 0, null, { timeout: 60000 });
+  await A.page.waitForFunction(() => Object.values(__sv.partners).some(P => P.pos.y > -40), null, { timeout: 60000 });
+  await B.page.waitForFunction(() => Object.values(__sv.partners).some(P => P.pos.y > -40), null, { timeout: 60000 });
+  const clean = async () => { for (const P of [A, B]) await P.page.evaluate(() => { document.querySelectorAll('.modal, .dialog, .gl, .theatre, .vc-pop').forEach(m => m.remove()); __sv.paused = false; __sv.netGames.leave(); }); await A.page.waitForTimeout(600); };
+  await clean();
+  const accept = async () => { await B.page.waitForSelector('.dialog .dch', { timeout: 20000 }); await B.page.evaluate(() => document.querySelector('.dialog .dch').click()); };
+  // #741: the Friends page has Play together and no game buttons of its own; Play together holds them all
+  const tab = await A.page.evaluate(async () => { __sv.openPad(0, 'friend'); await new Promise(r => setTimeout(r, 500)); const out = { outside: [...document.querySelectorAll('.pad [data-caro], .pad [data-rpsall], .pad [data-allg]')].length, together: !!document.querySelector('.pad [data-together]') };
+    document.querySelector('.pad [data-together]').click(); await new Promise(r => setTimeout(r, 300)); out.inside = [...document.querySelectorAll('.playtogether [data-g]')].map(b => b.dataset.g); return out; });
+  const need = ['caro', 'oantuti', 'memory', 'tienlen', 'tienlenbac'], missing = need.filter(id => !tab.inside.includes(id));
+  await clean();
+  const find = await B.page.evaluate(async () => { const r = __sv.findFriend(0); await new Promise(r => setTimeout(r, 200)); const rows = [...document.querySelectorAll('.friendfind .ff-row')]; const f = rows[0] && rows[0].querySelector('[data-follow]');
+    const out = { said: r, rows: rows.length, follow: f ? f.textContent.trim() : null, big: f ? f.getBoundingClientRect().height : 0 }; if (f) f.click(); await new Promise(r => setTimeout(r, 200)); out.following = __sv.heroes[0].followId === Object.keys(__sv.partners)[0]; __sv.heroes[0].followId = null; __sv.heroes[0].goal = null; return out; });
+  await clean();
+  // #740: B has the Friends page open on its Play together list, says yes to Tiến Lên miền Bắc: the game is in front,
+  // with no Friends page or Play together list left over it
+  await B.page.evaluate(() => __sv.openPad(0, 'friend')); await B.page.waitForSelector('.modal.pad [data-together]'); await B.page.evaluate(() => document.querySelector('.pad [data-together]').click()); await B.page.waitForSelector('.modal.playtogether');
+  await A.page.evaluate(() => __sv.inviteGame('tienlenbac', null, 1)); await accept();
+  await B.page.waitForSelector('.gl', { timeout: 20000 }); await B.page.waitForTimeout(1500);
+  const into = await B.page.evaluate(() => { const g = document.querySelector('.gl'), r = g.getBoundingClientRect(), top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return { pads: document.querySelectorAll('.modal.pad').length, modals: [...document.querySelectorAll('.modal:not(.out)')].map(m => m.className), front: !!top && !!top.closest('.gl') }; });
+  for (const P of [A, B]) { await P.page.evaluate(() => document.querySelector('.gl .gl-x')?.click()); await P.page.waitForFunction(() => !__frame.gameOpen(), null, { timeout: 10000 }).catch(() => { }); }
+  await clean();
+  // #742/#743: a 3 × 3 Caro the inviter wins, then Play again
+  const idB = await A.page.evaluate(() => Object.keys(__sv.partners)[0]);
+  const state = () => Promise.all([A, B].map(P => P.page.evaluate(() => ({ session: __sv.netGames.session && __sv.netGames.session.gid, open: __frame.gameOpen(), gl: document.querySelectorAll('.gl').length, dialogs: [...document.querySelectorAll('.dialog')].map(d => d.textContent.slice(0, 60)), toasts: [...document.querySelectorAll('.toast')].map(t => t.textContent.slice(0, 60)), again: __sv._again ? __sv._again.game : null }))));
+  const caro = async () => {
+    for (const P of [A, B]) { await P.page.waitForSelector('.gl .caro', { timeout: 25000 }).catch(async e => { throw Error('no Caro board: ' + JSON.stringify(await state())); }); await P.page.waitForFunction(() => document.querySelectorAll('.caro-c').length === 9 && !document.querySelector('.caro-c.put'), null, { timeout: 10000 }); }
+    const [first, second] = (await A.page.evaluate(() => __sv.netGames.session.mine)) === 0 ? [A, B] : [B, A];   // the one who invited moves first
+    const tap = async (P, i) => { await P.page.waitForFunction(i => { const c = document.querySelectorAll('.caro-c')[i]; return c && !c.classList.contains('put'); }, i); await P.page.evaluate(i => document.querySelectorAll('.caro-c')[i].click(), i); };
+    for (const [P, Q, i] of [[first, second, 0], [second, first, 3], [first, second, 1], [second, first, 4], [first, second, 2]]) { await tap(P, i); await Q.page.waitForFunction(i => document.querySelectorAll('.caro-c')[i].classList.contains('put'), i, { timeout: 20000 }); }
+    for (const P of [A, B]) { await P.page.waitForSelector('.gl-win .gl-nx.again', { timeout: 20000 }); await P.page.waitForTimeout(500); }
+    return Promise.all([A, B].map(P => P.page.evaluate(() => __sv.netGames.session && __sv.netGames.session.gid)));
+  };
+  const playAgain = P => P.page.evaluate(() => document.querySelector('.gl-win .gl-nx.again').click());
+  await A.page.evaluate(id => __sv.inviteGame('caro', id, 1, 3), idB); await accept();
+  const g1 = await caro();
+  // one taps Play again first (B), the other a few seconds later (A, its game still on the last screen when B asks)
+  await playAgain(B); await B.page.waitForTimeout(3000);
+  const waiting = await A.page.evaluate(() => ({ open: __frame.gameOpen(), dialogs: document.querySelectorAll('.dialog').length }));
+  await playAgain(A);
+  const g2 = await caro();
+  // both at once
+  await Promise.all([playAgain(A), playAgain(B)]);
+  const g3 = await caro().catch(e => 'no third game: ' + e.message.split('\n')[0]);
+  const after = await Promise.all([A, B].map(P => P.page.evaluate(() => ({ dialogs: document.querySelectorAll('.dialog').length, open: __frame.gameOpen() }))));
+  for (const P of [A, B]) { await P.page.evaluate(() => document.querySelector('.gl .gl-x')?.click()); await P.page.waitForFunction(() => !__frame.gameOpen(), null, { timeout: 10000 }).catch(() => { }); }
+  await clean();
+  // #744: A rides a bicycle, then the buffalo; B sees A on it, the same ride moving with A, and it stays where A gets off
+  const bike = await A.page.evaluate(async () => { const G = __sv, h = G.heroes[0], tr = G.traffic, idx = tr.slots.findIndex(s => s.rideable && s.x != null); const sl = tr.slots[idx], [x, z] = tr.where(sl);
+    h.place(x + 1.5, z); await new Promise(r => setTimeout(r, 400)); G.interactables.find(i => i.id === 'bike_' + idx || i.id === 'drive_' + idx).act(h, G); await new Promise(r => setTimeout(r, 300));
+    for (let k = 0; k < 10; k++) { h.pos.x += .8; await new Promise(r => setTimeout(r, 60)); } return { idx, id: sl.id, x, z, riding: !!h.riding }; });
+  const seen = await B.page.waitForFunction(({ idx, x, z }) => { const P = Object.values(__sv.partners)[0], sl = __sv.traffic.slots[idx]; if (!P || !P.ride || !P.ride.v || !sl.v) return false;
+    const o = sl.v.o.position, A = P.av.root.position; return P.ride.v === sl.v && sl.taken === P && Math.hypot(o.x - x, o.z - z) > 4 && Math.hypot(o.x - P.pos.x, o.z - P.pos.z) < .6 && Math.hypot(A.x - o.x, A.z - o.z) < 1.5 && A.y > o.y + .2 && { moved: +Math.hypot(o.x - x, o.z - z).toFixed(1), riderUp: +(A.y - o.y).toFixed(2) }; }, bike, { timeout: 20000 }).then(h => h.jsonValue()).catch(() => B.page.evaluate(idx => { const P = Object.values(__sv.partners)[0], sl = __sv.traffic.slots[idx], r = window.__Net.remotes[P.id];
+    return { missed: true, s: r && r.s, ride: P.ride ? { key: P.ride.key, slot: !!P.ride.slot, own: !!P.ride.own } : null, slot: sl && { id: sl.id, v: !!sl.v, taken: !!sl.taken }, pos: [P.pos.x, P.pos.z] }; }, bike.idx));
+  await A.page.evaluate(() => __sv.heroes[0].dismount());
+  const left = await B.page.waitForFunction(({ idx, x, z }) => { const P = Object.values(__sv.partners)[0], sl = __sv.traffic.slots[idx]; return !P.ride && !sl.taken && sl.v && Math.hypot(sl.v.o.position.x - x, sl.v.o.position.z - z) > 4; }, bike, { timeout: 20000 }).then(() => true).catch(() => false);
+  const cow = await A.page.evaluate(async () => { const G = __sv, h = G.heroes[0], b = G.world.rideAnimals[0]; h.place(b.mesh.position.x + 2, b.mesh.position.z); await new Promise(r => setTimeout(r, 400)); G.mount(h, b); return b.id; });
+  const animal = await B.page.waitForFunction(id => { const P = Object.values(__sv.partners)[0]; if (!P || !P.ride || !P.ride.animal || P.ride.animal.id !== id) return false; const m = P.ride.animal.mesh.position, up = P.av.root.position.y - P.pos.y;
+    return Math.hypot(m.x - P.pos.x, m.z - P.pos.z) < .6 && up > 1.4 && { up: +up.toFixed(2) }; }, cow, { timeout: 20000 }).then(h => h.jsonValue()).catch(() => null);
+  await A.page.evaluate(() => __sv.heroes[0].dismount());
+  const off = await B.page.waitForFunction(id => { const P = Object.values(__sv.partners)[0], b = __sv.world.rideAnimals.find(x => x.id === id); return !P.ride && !b.rider; }, cow, { timeout: 20000 }).then(() => true).catch(() => false);
+  const errs = [...A.errors, ...B.errors]; await A.ctx.close(); await B.ctx.close();
+  const games = [g1, g2, g3];
+  ok(!tab.outside && tab.together && !missing.length && find.rows === 1 && find.follow && find.big >= 44 && find.following
+    && !into.pads && !into.modals.length && into.front
+    && games.every(g => Array.isArray(g) && g[0] && g[0] === g[1]) && new Set(games.map(g => g[0])).size === 3 && waiting.open && !waiting.dialogs && after.every(a => !a.dialogs)
+    && bike.riding && seen && !seen.missed && left && animal && off && !errs.length, JSON.stringify({ tab, missing, find, into, games, waiting, after, bike, seen, left, cow, animal, off, errs }));
+  return `Friends page: no game buttons outside Play together (${tab.inside.length} inside, ${need.join(', ')} among them); "${find.follow}" on the friend's row (${Math.round(find.big)} px) follows; a yes to Tiến Lên miền Bắc leaves no Friends page in front; Play again tapped first by one, then by both at once: two more Caro rounds together; B sees A on the ${bike.id} (moved ${seen.moved} m, rider ${seen.riderUp} m up) and on the buffalo (${animal.up} m up), each left where A got off`;
 });
 
 await check('ownertogetherstart', async () => {
