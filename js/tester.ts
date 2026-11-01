@@ -333,7 +333,11 @@ function newsHTML() {
 const paintCount = () => { dispatchEvent(new Event('sv-report-queue')); const n = queue().length, fixed = fixedToSee().length, fresh = newsUnseen(); document.querySelectorAll('.z-lb').forEach(b => { b.querySelector<HTMLElement>('.lb-n').textContent = n ? String(n) : ''; b.querySelector<HTMLElement>('.lb-n').hidden = !n; const ok = b.querySelector<HTMLElement>('.lb-ok'); ok.hidden = !fixed; if (fixed) ok.textContent = String(fixed); const nw = b.querySelector<HTMLElement>('.lb-new'); if (nw) nw.hidden = !fresh; }); };
 // a fixed problem that can be tried again: its game (by id, or by the name in an auto play title), or its spot in the
 // valley. The game list loads only when Try again is tapped (it is not needed to start the game)
-const gameName = p => { const w = p && p.where || {}; if (w.game) return { id: String(w.game) }; const m = /^autoplay: ([^:]+):/.exec(p && p.title || ''); return m ? { name: m[1].trim() } : null; };
+// (#736 #674 #675) auto play's reports name the game as its step, "game:sparkleorchard" (that stays: it is part of the
+// problem's key); the game itself is "sparkleorchard": a replay of "game:…" opened nothing and was taken as a game that
+// did not open, and as the problem still being there
+const gameIdOf = (w): string => String(w && w.game || '').replace(/^game:/, '');
+const gameName = p => { const w = p && p.where || {}; if (w.game) return { id: gameIdOf(w) }; const m = /^autoplay: ([^:]+):/.exec(p && p.title || ''); return m ? { name: m[1].trim() } : null; };
 const spotOf = p => { const w = p && p.where || {}; let x = +w.x, z = +w.z; const m = /(-?\d+),\s*(-?\d+)/.exec(p && p.title || ''); if ((!x && !z || !Number.isFinite(x)) && m) { x = +m[1]; z = +m[2]; } return Number.isFinite(x) && Number.isFinite(z) && (x || z) ? { x, z } : null; };
 const tryable = p => !!(gameName(p) || spotOf(p));
 async function tryAgain(p) {
@@ -520,7 +524,7 @@ async function retest() {
   for (const p of status.retest) {
     const tag = 'rt:' + p.k + ':' + BUILD; if (done[tag]) continue;
     if (G.paused || document.querySelector('.gl, .modal, .theatre, .storybook')) return; // (only when the child is free)
-    const game = p.where && p.where.game, before = errors.length; let again = false;
+    const game = gameIdOf(p.where), before = errors.length; let again = false;
     if (game && G.playGame) { G.playGame(0, game, 'replay'); await new Promise(r => setTimeout(r, 8000)); again = !document.querySelector('.gl') || errors.length > before; document.querySelector<HTMLElement>('.gl .gl-x')?.click(); }
     else if (p.auto === 'error') { await new Promise(r => setTimeout(r, 8000)); again = errors.slice(before).some(e => p.title.includes(e.split(' @ ')[0].slice(0, 40))); }
     else continue; // (a problem that cannot be replayed by itself waits for the tester's Yes or Still wrong)
