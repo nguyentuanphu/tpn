@@ -3607,7 +3607,7 @@ await check('adventure', async () => {
     const { GAMES } = await import('/js/games/registry.js'), A = await import('/js/content/activities.js'), U = await import('/js/content/unlocks.js'), out = { notDrawn: [], tooBig: [] };
     const p = __sv.heroes[0].profile;
     __sv.simple.openGroup('games', null);
-    const openWant = Object.keys(GAMES).filter(id => A.gameInfo(id).ageMin < 5 && U.isOpen(p, id, 'game', A.gameInfo(id).area));
+    const openWant = Object.keys(GAMES).filter(id => !A.gameInfo(id).hidden && U.isOpen(p, id, 'game', A.gameInfo(id).area));
     const initialStops = __sv.simple.view.stops.filter(id => id !== 'songs');
     if (openWant.some(id => !initialStops.includes(id)) || initialStops.some(id => !openWant.includes(id))) out.notDrawn.push('unlocks ' + initialStops.length + '/' + openWant.length);
     p.unlockAll = true; __sv.simple.openGroup('games', null);
@@ -3615,8 +3615,10 @@ await check('adventure', async () => {
     const secCats = [...document.querySelectorAll('.sp-sec')].map(x => x.dataset.cat);
     document.querySelectorAll('.sp-sectitle .sp-hpic, .sp-stop .sp-pic').forEach(p => { if (!p.querySelector('.art')) out.notDrawn.push((p.closest('[aria-label]') || p.parentElement).getAttribute('aria-label') || p.parentElement.textContent); });
     if (JSON.stringify(secCats) !== JSON.stringify(cats)) out.notDrawn.push('sections ' + secCats.join(','));
-    out.tooBig.push(...stops.filter(id => id !== 'songs' && A.gameInfo(id).ageMin >= 5));
-    const want = Object.keys(GAMES).filter(id => A.gameInfo(id).ageMin < 5);
+    // (owner, 1 Nov 2026 AEDT: "Hiện đủ nhưng để tag cho 5+") under-5s see every switched-on game, as Play does; each game for 5 and up wears a 5+ tag
+    const plus = stops.filter(id => id !== 'songs' && A.gameInfo(id).ageMin >= 5).length, tags = document.querySelectorAll('.sp-stop .sp-age').length;
+    if (!plus || tags !== plus) out.tooBig.push('5+ tags ' + tags + '/' + plus);
+    const want = Object.keys(GAMES).filter(id => !A.gameInfo(id).hidden);
     const order = A.AREAS.map(a => a.key).filter(k => cats.includes(k));
     delete p.unlockAll; __sv.simple.openGroup('games', null);
     return { cats: cats.length, inOrder: JSON.stringify(order) === JSON.stringify(cats), heads, missed: want.filter(id => !stops.includes(id)), notDrawn: out.notDrawn, tooBig: out.tooBig, stops: stops.length };

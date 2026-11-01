@@ -2013,6 +2013,7 @@ body.calm .rv-img.on { animation: none; }
 .sp-pic { width: 104px; height: 104px; border-radius: 30px; background: #fff; display: grid; place-items: center; box-shadow: 0 6px 0 rgba(60, 100, 40, .35); position: relative; }
 .sp-pic .art, .sp-pic .emo { width: 72px; height: 72px; font-size: 62px; line-height: 1; }
 .sp-badge { position: absolute; right: -6px; top: -6px; font-style: normal; font-size: 24px; }
+.sp-age { position: absolute; left: -6px; top: -6px; font-style: normal; font-size: 13px; font-weight: 800; line-height: 1; padding: 3px 6px; border-radius: 10px; background: #7a4fd0; color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
 .sp-name { background: rgba(255, 255, 255, .92); border-radius: 999px; padding: 4px 12px; font-size: 17px; max-width: 150px; line-height: 1.2; text-align: center; }
 .sp-stop.next .sp-pic { box-shadow: 0 0 0 6px #ffd23f, 0 6px 0 rgba(60, 100, 40, .35); animation: spNext 1.6s ease-in-out infinite; }
 @keyframes spNext { 50% { transform: scale(1.07); } }
