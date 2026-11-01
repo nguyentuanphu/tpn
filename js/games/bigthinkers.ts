@@ -42,7 +42,7 @@ const RULES = [
   { id: 'yellow', right: ['Yes! They are all yellow.', 'Đúng rồi! Tất cả đều màu vàng.'], miss: ['Not that one. Look again: they are all yellow.', 'Chưa đúng. Nhìn lại nhé: tất cả đều màu vàng.'], yes: ['🍌', '🍋', '🌻', '🟨', '🟡'], near: ['🍎', '🍓', '🟥', '🔵', '🫐'], only: true, from: 3 }
 ];
 register({ id: 'rulefinder', icon: '🧩', learn: true, name: () => T('Find the Rule', 'Tìm Quy Luật'), async run(api) {
-  const start = tier(api), rounds = start === 0 ? 3 : 4;
+  const start = tier(api), rounds = start === 0 ? 3 : api.talent ? 5 : 4;   // (levels) Talent: five rules, more pictures and more look-alikes
   // Hard keeps one colour or "can fly" rule in every game, so it really is harder than Medium
   // (r79 learning, I2) the rule this child missed most comes first
   const hardOne = start === 3 ? pick(RULES.filter(r => r.from === 3), 1)[0] : null;
@@ -50,7 +50,7 @@ register({ id: 'rulefinder', icon: '🧩', learn: true, name: () => T('Find the 
   for (let round = 0; round < rounds; round++) {
     if (api.closed) return; api.dots(rounds, round); api.stage.innerHTML = '';
     // (r79 learning, I1) examples shown, choices offered and the rules that may appear follow the level now
-    const level = round ? nextRound(api) : tier(api), examples = [2, 2, 3, 3][level], choices = [2, 3, 3, 4][level];
+    const level = round ? nextRound(api) : tier(api), examples = [2, 2, 3, 3][level] + (api.talent ? 1 : 0), choices = [2, 3, 3, 4][level] + (api.talent ? 1 : 0);
     const fitsLevel = r => (r.from || 0) <= Math.max(1, level) && !used.has(r);
     const rule = (round === rounds - 1 && hardOne && !used.has(hardOne) && ![...used].some(r => r.from === 3) ? hardOne : order.find(fitsLevel)) || order.find(r => !used.has(r)) || order[0];
     used.add(rule);
@@ -86,14 +86,14 @@ const STORIES = [
   [['🌱', 'A little shoot.', 'Một mầm nhỏ.'], ['💧', 'Water it.', 'Tưới nước.'], ['🌷', 'A flower opens.', 'Hoa nở.'], ['🐝', 'A bee visits.', 'Ong đến thăm.']]
 ];
 register({ id: 'gardenorder', icon: '🌱', learn: true, name: () => T('Garden Steps', 'Các Bước Làm Vườn'), async run(api) {
-  const start = tier(api), rounds = start === 0 ? 1 : start === 3 ? 3 : 2;
+  const start = tier(api), rounds = start === 0 ? 1 : api.talent ? 4 : start === 3 ? 3 : 2;   // (levels) Talent: four stories with three stray pictures
   // (r79 learning, I2) the story this child missed most comes first (stories are known by their first step's words)
   const stories = api.favour ? api.favour(pick(STORIES, STORIES.length), s => s[0][1]).slice(0, rounds) : pick(STORIES, rounds);
   for (let round = 0; round < rounds; round++) {
     if (api.closed) return; api.stage.innerHTML = '';
     // under-5s order three steps; bigger children four. Pictures that do not belong join the choices from Medium.
     // (r79 learning, I1) the number of stray pictures follows the level now
-    const level = round ? nextRound(api) : tier(api), steps = level === 0 ? 3 : 4, extra = [1, 1, 2, 2][level];
+    const level = round ? nextRound(api) : tier(api), steps = level === 0 ? 3 : 4, extra = [1, 1, 2, 2][level] + (api.talent ? 1 : 0);
     let missedIt = false;
     const story = stories[round].slice(0, steps), mine = story.map(s => s[0]);
     // the extra pictures come from other stories and never look like a step of this one
@@ -148,7 +148,7 @@ function branches(size, route, nb, want) {
   return out;
 }
 register({ id: 'steppingpath', icon: '🗺️', learn: true, name: () => T('Flower Path', 'Đường Hoa'), async run(api) {
-  const level = tier(api), size = [3, 4, 4, 5][level], want = [0, 0, 2, 3][level];
+  const level = tier(api), size = api.talent ? 5 : [3, 4, 4, 5][level], want = api.talent ? 5 : [0, 0, 2, 3][level];   // (levels) Talent: the 5 x 5 field with more dead ends
   // some winding paths leave no room for a dead end: draw another until Medium and Hard have at least one
   let route, nb, decoys;
   for (let k = 0; k < 60; k++) { ({ route, nb } = makePath(size)); decoys = branches(size, route, nb, want); if (decoys.length >= Math.min(want, 2)) break; }

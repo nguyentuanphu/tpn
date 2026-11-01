@@ -72,7 +72,7 @@ const an = w => (/^[aeiou]/.test(w) ? 'an ' : 'a ') + w;
 // the word itself, without its Vietnamese classifier, for what the microphone heard
 const bareVi = w => w.replace(/^(quả|con|chùm|bông|cái|xe) /, w.startsWith('xe ') ? 'xe ' : '');
 register({ id: 'sayfind', icon: '🗣️', learn: true, name: () => T('Say It, Find It', 'Nói Rồi Tìm'), async run(api) {
-  const start = tier(api), rounds = start === 0 ? 4 : 5;
+  const start = tier(api), rounds = start === 0 ? 4 : api.talent ? 6 : 5;   // (levels) Talent: six rounds of eight pictures
   const order = favour(api, shuffle(WORDS), w => w[1]);
   let micOn = canListen(), round = 0;
   api.onCleanup(stopListening);
@@ -80,7 +80,7 @@ register({ id: 'sayfind', icon: '🗣️', learn: true, name: () => T('Say It, F
     if (api.closed) return; api.dots(rounds, round); api.stage.innerHTML = '';
     const level = round ? nextRound(api) : tier(api), target = order[round % order.length];
     // 2, 4 or 6 pictures; on Hard two of them are the same thing, big and little, and the ask has two words
-    const n = [2, 4, 6, 6][level], two = level === 3, size = two ? (Math.random() < .5 ? 'big' : 'little') : '';
+    const n = [2, 4, 6, 6][level] + (api.talent ? 2 : 0), two = level === 3, size = two ? (Math.random() < .5 ? 'big' : 'little') : '';
     const others = pick(WORDS.filter(w => w !== target), two ? n - 2 : n - 1).map(w => ({ w, size: '' }));
     const items: PictureItem[] = shuffle([{ w: target, size }, ...(two ? [{ w: target, size: size === 'big' ? 'little' : 'big' }] : []), ...others]);
     const sizeVi = s => s === 'big' ? 'to' : 'nhỏ';
@@ -135,9 +135,10 @@ register({ id: 'marketcount', icon: '🧺', learn: true, name: () => T('Market C
     const level = round ? nextRound(api) : tier(api), f = FRUIT[(round + Math.floor(Math.random() * FRUIT.length)) % FRUIT.length];
     // up to 3 for under-5s, up to 5 on Easy, up to 10 on Medium; Hard adds 2 more or takes 1 away from a full basket
     const mode = level < 3 ? 'count' : round % 2 ? 'take' : 'add';
-    const first = mode === 'add' ? rnd(2, 5) : mode === 'take' ? rnd(3, 6) : 0;
+    // (levels) Talent: bigger baskets to add to or take from, and more fruit on the stall
+    const first = mode === 'add' ? (api.talent ? rnd(5, 8) : rnd(2, 5)) : mode === 'take' ? (api.talent ? rnd(6, 10) : rnd(3, 6)) : 0;
     const target = mode === 'add' ? first + 2 : mode === 'take' ? first - 1 : [rnd(1, 3), rnd(2, 5), rnd(5, 10), 0][level];
-    const onStall = mode === 'count' ? target + Math.max(2, Math.min(3, 12 - target)) : mode === 'add' ? 3 : 0;
+    const onStall = mode === 'count' ? target + Math.max(2, Math.min(3, 12 - target)) : mode === 'add' ? (api.talent ? 5 : 3) : 0;
     const name = n => n === 1 ? f[1] : f[2];
     const ask = () => mode === 'add' ? [`There are ${first} ${name(first)}. Add 2 more.`, `Có ${NUMBER_WORDS.vi[first]} ${f[3]}. Bỏ thêm hai quả nữa.`]
       : mode === 'take' ? [`There are ${first} ${name(first)}. Take 1 away.`, `Có ${NUMBER_WORDS.vi[first]} ${f[3]}. Lấy ra một quả.`]
@@ -236,8 +237,9 @@ register({ id: 'feelings', icon: '😊', learn: true, name: () => T('How Do They
     // 2 faces for under-5s (the right one and a very different one), all 4 from Easy
     const opposite = { happy: 'sad', sad: 'happy', surprised: 'cross', cross: 'happy' }[story.face];
     const faces: string[] = level === 0 ? shuffle([story.face, opposite]) : shuffle(Object.keys(FACES));
+    // (levels) Talent: the faces have no words under them, and every "what could you do?" choice is offered
     const ask = () => [`${story.en} How does Lá feel?`, `${story.vi} Lá cảm thấy thế nào?`];
-    const buttons = choiceButtons<string>(api, faces, k => `${pic(FACES[k][0])}${level === 0 ? '' : `<small>${T(FACES[k][1], FACES[k][2])}</small>`}`, 'choice fs-face');
+    const buttons = choiceButtons<string>(api, faces, k => `${pic(FACES[k][0])}${level === 0 || api.talent ? '' : `<small>${T(FACES[k][1], FACES[k][2])}</small>`}`, 'choice fs-face');
     buttons.forEach(b => b.setAttribute('aria-label', T(FACES[b._v][1], FACES[b._v][2])));
     const again = repeat(api, ask);
     talk(api, ask());
@@ -249,7 +251,7 @@ register({ id: 'feelings', icon: '😊', learn: true, name: () => T('How Do They
     if (level >= 2 && !api.closed) {
       await wait(400); if (api.closed) return;
       api.stage.querySelector('.choices')?.remove(); again.remove();
-      const helps = shuffle([story.help, ...pick(NOT_HELP, level === 3 ? 2 : 1)]);
+      const helps = shuffle([story.help, ...pick(NOT_HELP, api.talent ? 3 : level === 3 ? 2 : 1)]);
       const ask2 = () => ['What could you do?', 'Con có thể làm gì?'];
       const hb = choiceButtons(api, helps, h => `${pic(h[0])}<small>${T(h[1], h[2])}</small>`, 'choice fs-help');
       hb.forEach(b => b.setAttribute('aria-label', T(b._v[1], b._v[2])));
@@ -285,7 +287,8 @@ register({ id: 'soundhunt', icon: '🔤', learn: true, name: () => T('First Soun
     if (api.closed) return; api.dots(rounds, round); api.stage.innerHTML = '';
     const level = round ? nextRound(api) : tier(api), end = level === 3, set = vi ? (end ? VI_TONE : VI_START) : (end ? EN_END : EN_START);
     // pictures and how many of them match: 1 of 2 (under-5), 2 of 4 (Easy and Hard), 2 or 3 of 6 (Medium)
-    const n = [2, 4, 6, 4][level], hits = [1, 2, level === 2 ? 2 + (Math.random() < .5 ? 1 : 0) : 2, 2][level];
+    // (levels) Talent: 3 of 6 on the hardest sounds
+    const n = [2, 4, 6, 4][level] + (api.talent && level === 3 ? 2 : 0), hits = api.talent && level === 3 ? 3 : [1, 2, level === 2 ? 2 + (Math.random() < .5 ? 1 : 0) : 2, 2][level];
     const keys = favour(api, shuffle(Object.keys(set)).filter(k => set[k].length > hits), k => k);
     const key = keys.find(k => !used.has(k)) || keys[0]; used.add(key);
     const [model, ...rest] = shuffle(set[key]), targets = rest.slice(0, hits);

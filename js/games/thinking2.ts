@@ -4,7 +4,10 @@ import { T } from '../i18n.js';
 import { el, wait } from '../util.js';
 import { pic } from '../art.js';
 
-type ChessPuzzle = { piece: string; pieceEn: string; pieceVi: string; from: number; target: number; blocked: number[]; screen?: boolean };
+type ChessPuzzle = { piece: string; pieceEn: string; pieceVi: string; from: number; target: number; blocked: number[]; screen?: boolean; decoy?: [string, number] };
+// (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
+// (Talent defaults to Hard); under-5s always get the Easy value
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
 type SeatPuzzle = { person: string; personEn: string; personVi: string; seat: number; clueEn: string; clueVi: string };
 type PipeCell = { kind: string; turns: number; want: number };
 
@@ -63,11 +66,15 @@ function makeBoard() {
 
 async function runMiniChess(api) {
   style();
-  const puzzles: ChessPuzzle[] = [
-    { piece: 'R', pieceEn: 'Rook', pieceVi: 'Xe', from: 0, target: 3, blocked: [5, 10] },
-    { piece: 'B', pieceEn: 'Bishop', pieceVi: 'Tượng', from: 12, target: 3, blocked: [1, 7] }, // (audit: 6 sat on its diagonal)
-    { piece: 'N', pieceEn: 'Knight', pieceVi: 'Mã', from: 1, target: 8, blocked: [4, 15] }
-  ];
+  const puzzles: ChessPuzzle[] = ([
+    { piece: 'R', pieceEn: 'Rook', pieceVi: 'Xe', from: 0, target: 3, blocked: [5, 10], decoy: ['N', 13] },
+    { piece: 'B', pieceEn: 'Bishop', pieceVi: 'Tượng', from: 12, target: 3, blocked: [1, 7], decoy: ['R', 8] }, // (audit: 6 sat on its diagonal)
+    { piece: 'N', pieceEn: 'Knight', pieceVi: 'Mã', from: 1, target: 8, blocked: [4, 15], decoy: ['B', 14] },
+    // (levels) more puzzles from Medium up; from Hard a second blue piece that cannot take stands on the board too
+    { piece: 'R', pieceEn: 'Rook', pieceVi: 'Xe', from: 15, target: 12, blocked: [7, 9], decoy: ['N', 2] },
+    { piece: 'N', pieceEn: 'Knight', pieceVi: 'Mã', from: 6, target: 15, blocked: [10, 11], decoy: ['R', 0] },
+    { piece: 'B', pieceEn: 'Bishop', pieceVi: 'Tượng', from: 0, target: 15, blocked: [3, 12], decoy: ['N', 4] }
+  ] as ChessPuzzle[]).slice(0, lv(api, 3, 4, 5, 6));
   const wrap = el('div', 'tk2-wrap');
   const title = el('h2', 'tk2-title', T('Little Chess', 'Cờ Vua Nhỏ'));
   const round = el('div', 'tk2-round');
@@ -93,6 +100,9 @@ async function runMiniChess(api) {
     cells[puzzle.target].classList.add('enemy', 'target');
     cells[puzzle.target].textContent = '●';
     cells[puzzle.target].setAttribute('aria-label', T('Red token', 'Quân đỏ'));
+    // (levels) Hard and Talent: a second blue piece that cannot take; Talent: no green ring round the target
+    if (puzzle.decoy && api.smart >= 2 && !api.little) { const [p, at] = puzzle.decoy; cells[at].classList.add('friend', 'decoy'); cells[at].textContent = p; cells[at].setAttribute('aria-label', T('Blue piece', 'Quân xanh')); }
+    if (api.talent) cells[puzzle.target].classList.remove('target');
     for (const blocked of puzzle.blocked) {
       cells[blocked].textContent = '×';
       cells[blocked].disabled = true;
@@ -120,11 +130,15 @@ async function runMiniChess(api) {
 
 async function runCoTuong(api) {
   style();
-  const puzzles: ChessPuzzle[] = [
-    { piece: '車', pieceEn: 'Chariot', pieceVi: 'Xe', from: 4, target: 7, blocked: [0, 12] },
-    { piece: '馬', pieceEn: 'Horse', pieceVi: 'Mã', from: 14, target: 5, blocked: [2, 11] },
-    { piece: '炮', pieceEn: 'Cannon', pieceVi: 'Pháo', from: 13, target: 1, blocked: [9, 6], screen: true } // (audit: a cannon takes only by jumping one piece)
-  ];
+  const puzzles: ChessPuzzle[] = ([
+    { piece: '車', pieceEn: 'Chariot', pieceVi: 'Xe', from: 4, target: 7, blocked: [0, 12], decoy: ['馬', 13] },
+    { piece: '馬', pieceEn: 'Horse', pieceVi: 'Mã', from: 14, target: 5, blocked: [2, 11], decoy: ['車', 3] },
+    { piece: '炮', pieceEn: 'Cannon', pieceVi: 'Pháo', from: 13, target: 1, blocked: [9, 6], screen: true, decoy: ['車', 15] }, // (audit: a cannon takes only by jumping one piece)
+    // (levels) more puzzles from Medium up; from Hard a second blue piece that cannot take stands on the board too
+    { piece: '車', pieceEn: 'Chariot', pieceVi: 'Xe', from: 12, target: 0, blocked: [13, 6], decoy: ['馬', 10] },
+    { piece: '馬', pieceEn: 'Horse', pieceVi: 'Mã', from: 0, target: 9, blocked: [3, 14], decoy: ['炮', 15] },
+    { piece: '炮', pieceEn: 'Cannon', pieceVi: 'Pháo', from: 3, target: 15, blocked: [11, 1], screen: true, decoy: ['馬', 5] }
+  ] as ChessPuzzle[]).slice(0, lv(api, 3, 4, 5, 6));
   const wrap = el('div', 'tk2-wrap');
   const title = el('h2', 'tk2-title', T('Chinese Chess Puzzles', 'Cờ Tướng Nhỏ'));
   const round = el('div', 'tk2-round');
@@ -150,6 +164,9 @@ async function runCoTuong(api) {
     cells[puzzle.target].classList.add('enemy', 'target');
     cells[puzzle.target].textContent = '將';
     cells[puzzle.target].setAttribute('aria-label', T('Red general', 'Tướng đỏ'));
+    // (levels) Hard and Talent: a second blue piece that cannot take; Talent: no green ring round the general
+    if (puzzle.decoy && api.smart >= 2 && !api.little) { const [p, at] = puzzle.decoy; cells[at].classList.add('friend', 'decoy'); cells[at].textContent = p; cells[at].setAttribute('aria-label', T('Blue piece', 'Quân xanh')); }
+    if (api.talent) cells[puzzle.target].classList.remove('target');
     for (const blocked of puzzle.blocked) {
       cells[blocked].textContent = '卒';
       cells[blocked].disabled = true;
@@ -180,8 +197,13 @@ async function runWhoSits(api) {
   const puzzles: SeatPuzzle[] = [
     { person: 'T', personEn: 'Teddy', personVi: 'Gấu bông', seat: 0, clueEn: 'Teddy sits by the window.', clueVi: 'Gấu bông ngồi cạnh cửa sổ.' },
     { person: 'R', personEn: 'Rabbit', personVi: 'Thỏ', seat: 1, clueEn: 'Rabbit sits at the little table.', clueVi: 'Thỏ ngồi ở bàn nhỏ.' },
-    { person: 'C', personEn: 'Cat', personVi: 'Mèo', seat: 2, clueEn: 'Cat sits by the plant.', clueVi: 'Mèo ngồi cạnh chậu cây.' }
-  ];
+    { person: 'C', personEn: 'Cat', personVi: 'Mèo', seat: 2, clueEn: 'Cat sits by the plant.', clueVi: 'Mèo ngồi cạnh chậu cây.' },
+    // (levels) Medium adds Puppy and the lamp; Hard and Talent add Duck and the door
+    { person: 'P', personEn: 'Puppy', personVi: 'Cún con', seat: 3, clueEn: 'Puppy sits by the lamp.', clueVi: 'Cún con ngồi cạnh cây đèn.' },
+    { person: 'D', personEn: 'Duck', personVi: 'Vịt', seat: 4, clueEn: 'Duck sits by the door.', clueVi: 'Vịt ngồi cạnh cửa ra vào.' }
+  ].slice(0, lv(api, 3, 4, 5, 5));
+  // (levels) friends come in a mixed order from Hard; Talent: the chairs show only their pictures, no words
+  if (api.smart >= 2 && !api.little) puzzles.sort(() => Math.random() - .5);
   const wrap = el('div', 'tk2-wrap');
   const title = el('h2', 'tk2-title', T('Who Sits Where?', 'Ai Ngồi Đâu?'));
   const round = el('div', 'tk2-round');
@@ -198,8 +220,10 @@ async function runWhoSits(api) {
   const people = [
     { key: 'T', icon: '🧸', en: 'Teddy', vi: 'Gấu bông' },
     { key: 'R', icon: '🐰', en: 'Rabbit', vi: 'Thỏ' },
-    { key: 'C', icon: '🐱', en: 'Cat', vi: 'Mèo' }
-  ];
+    { key: 'C', icon: '🐱', en: 'Cat', vi: 'Mèo' },
+    { key: 'P', icon: '🐶', en: 'Puppy', vi: 'Cún con' },
+    { key: 'D', icon: '🦆', en: 'Duck', vi: 'Vịt' }
+  ].slice(0, puzzles.length);
   const cardButtons = people.map(person => {
     const button: HTMLButtonElement = el('button', 'tk2-card', `${pic(person.icon)} ${T(person.en, person.vi)}`);
     button.type = 'button';
@@ -210,10 +234,13 @@ async function runWhoSits(api) {
   const seatHints = [
     { icon: '🪟', en: 'Window', vi: 'Cửa sổ' },
     { icon: '🪑', en: 'Table', vi: 'Bàn nhỏ' },
-    { icon: '🪴', en: 'Plant', vi: 'Chậu cây' }
-  ];
+    { icon: '🪴', en: 'Plant', vi: 'Chậu cây' },
+    { icon: '💡', en: 'Lamp', vi: 'Cây đèn' },
+    { icon: '🚪', en: 'Door', vi: 'Cửa ra vào' }
+  ].slice(0, puzzles.length);
   const seatButtons = seatHints.map((hint, index) => {
-    const button: HTMLButtonElement = el('button', 'tk2-seat', `<b>${pic(hint.icon)}</b><small>${T(hint.en, hint.vi)}</small>`);
+    const button: HTMLButtonElement = el('button', 'tk2-seat', `<b>${pic(hint.icon)}</b>${api.talent ? '' : `<small>${T(hint.en, hint.vi)}</small>`}`);
+    if (api.talent) button.setAttribute('aria-label', T(hint.en, hint.vi));
     button.type = 'button';
     button.dataset.seat = String(index);
     return button;
@@ -270,6 +297,11 @@ async function runPipes(api) {
   // up and down, an end at 0 points down. Water enters at 0 (end pointing right), runs along the top, down the right
   // side into 8 (end pointing up). Before, the start leaked downwards and the end pointed away from its pipe.
   const path = [0, 1, 2, 5, 8];
+  // (levels) Medium and Hard: three boards, Talent four; from Hard every pipe on the water path starts turned the wrong way
+  // (Talent: three turns away from where it fits)
+  const boards = lv(api, 2, 3, 3, 4);
+  while (rounds.length < boards) rounds.push(rounds[rounds.length % 2].map(cell => ({ ...cell })));
+  if (api.smart >= 2 && !api.little) rounds.forEach(cells => path.forEach(index => { const c = cells[index]; c.turns = (c.want + (api.talent ? 1 : 1 + Math.floor(Math.random() * 3))) % 4; }));
   const wrap = el('div', 'tk2-wrap');
   const title = el('h2', 'tk2-title', T('Water Pipes', 'Nối Ống Nước'));
   const round = el('div', 'tk2-round');

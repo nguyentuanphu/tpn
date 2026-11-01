@@ -3803,6 +3803,44 @@ await check('gamelevel', async () => {
   ok(/Easy/.test(r.first.text) && r.first.h >= 44 && r.first.inside && r.choices.join() === 'easy,medium,hard,talent' && r.bands === 'easy:1:2,medium:2:3,hard:3:5,talent:3:5:talent' && /Hard/.test(r.after.text || '') && r.after.saved === 'hard' && r.after.games === 1 && !r.fest.inGrown && !r.fest.before && r.fest.visit === 0 && r.fest.rows > 0 && !errs.length, JSON.stringify({ r, errs }));
   return 'Easy · Medium · Hard in the game bar (44 px, on screen at 390 px); Hard starts it again at Hard and is remembered; the festival calendar is only a calendar (nothing to visit, no decorations choice)';
 });
+await check('levelsa', async () => {
+  // (owner, 1 Nov 2026 AEDT: "the difficulty levels often don't change anything; add Talent, the hardest level") games of
+  // group A (thinking, strategy, farm, learning, words, numbers, shapes, money, Asia): a big kid opens each at Easy and at
+  // Talent, and Talent shows more on screen (more answers, pieces, squares, rounds or friends) than Easy
+  const SAMPLE = [['letters', '.choices .choice'], ['memory', '.mem'], ['minichess', '.tk2-square.friend'], ['whosits', '.tk2-seat'],
+    ['hanoi', '.disc'], ['robot', '.rcell'], ['goat', '.hay'], ['eggs', '.eggspot'], ['opposites', '.choices .choice'], ['days', '.choices .choice'],
+    ['oantuti', '.gl-dots i'], ['rulefinder', '.choices .choice'], ['steppingpath', '.think-path button'], ['sayfind', '.sf-pic'],
+    ['numline', '.n2-btn'], ['tiles', '.s2-tile'], ['foldbox', '.s2-flap'], ['whichgroup', '.w2-btn'], ['guesswhat', '.w2-btn'],
+    ['pricetags', '.mn2-coin'], ['sharefair', '.mn2-friend'], ['cheaper', '.mg-card'], ['tangram', '.tg-piece'], ['rangoli', '.rg-pal button']];
+  // (every game unlocked, as in the games check: this checks the levels, not earned access)
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  await P.page.evaluate(() => { __sv.heroes.forEach(h => { h.profile.age = 'big'; }); });
+  const seen = {};
+  for (const [id, sel] of SAMPLE) {
+    seen[id] = {};
+    for (const d of ['easy', 'talent']) {
+      // one game at one level per step, so a game that never opens is named instead of stopping the check
+      const step = P.page.evaluate(async ([id, sel, d]) => {
+        const w = t => new Promise(r => setTimeout(r, t)), p = __sv.heroes[0].profile;
+        p.gameDiff = { ...(p.gameDiff || {}), [id]: d }; __sv.playGame(0, id, 'hub');
+        // wait for the game's first screen, then for its count to settle
+        let gl = null, n = 0, last = -1;
+        for (let k = 0; k < 60; k++) { await w(150); gl = document.querySelector('.gl:not(.out)'); n = gl ? gl.querySelectorAll(sel).length : 0; if (n > 0 && n === last) break; last = n; }
+        const talent = !!(gl && gl.dataset.talent);
+        if (gl) gl.querySelector('.gl-x').click(); await w(500); document.querySelectorAll('.dialog,.reward,.modal').forEach(e => e.remove());
+        return { n, talent };
+      }, [id, sel, d]);
+      const got = await Promise.race([step, new Promise(r => setTimeout(() => r({ n: -1, talent: false }), 20000))]);
+      seen[id][d] = got.n; seen[id][d + 'Talent'] = got.talent;
+      if (got.n < 0) break;
+    }
+    if (seen[id].easy < 0 || seen[id].talent < 0) break;
+  }
+  const errs = P.errors; await P.ctx.close();
+  const harder = Object.entries(seen).filter(([, v]) => v.easy > 0 && v.talent > v.easy && v.talentTalent && !v.easyTalent).map(([id]) => id);
+  ok(harder.length === SAMPLE.length && !errs.length, JSON.stringify({ notHarder: Object.fromEntries(Object.entries(seen).filter(([id]) => !harder.includes(id))), errs }));
+  return `${harder.length} games show more at Talent than at Easy: ` + harder.map(id => `${id} ${seen[id].easy}→${seen[id].talent}`).join(', ');
+});
 
 await check('quiet', async () => {
   // round M (owner: sound kept playing after leaving the game, until it was killed): when the game goes to the
