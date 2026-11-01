@@ -180,7 +180,8 @@ export function createPets(G) {
       card.querySelectorAll('[data-ren]').forEach(b => b.onclick = () => { m.close(); G.paused = false; P.openName(h, mine[+b.dataset.ren], () => P.openAdopt(h, after)); });
       card.querySelectorAll('[data-bye]').forEach(b => b.onclick = () => {
         const pt = mine[+b.dataset.bye]; if (!confirm(T(`Send ${petName(pt)} to play in the pet yard on the farm? You can bring them back any time.`, `Gửi ${petName(pt)} về chơi ở sân thú cưng trong nông trại nhé? Con đón về lúc nào cũng được.`))) return;
-        mine.splice(+b.dataset.bye, 1); delete pt.hat; farm.petYard.push(pt); // (its hat stays with the child: #738) saveProfiles(); saveFarm(); P.sync(); P.syncYard(); P.refreshInteractables(); SFX.tap(); draw();
+        // (its hat stays with the child: #738)
+        mine.splice(+b.dataset.bye, 1); delete pt.hat; farm.petYard.push(pt); saveProfiles(); saveFarm(); P.sync(); P.syncYard(); P.refreshInteractables(); SFX.tap(); draw();
       });
       card.querySelectorAll('[data-take]').forEach(b => b.onclick = () => {
         if (mine.length >= MAX_PETS) { SFX.no(); say('You already have two pets with you. Tap 🏡 to swap one.', 'Con đã có hai thú cưng đi cùng rồi. Chạm 🏡 để đổi nhé.'); return; }

@@ -2619,13 +2619,18 @@ await check('kidplay', async () => {
     // the switches
     C.features = C.features || {};
     G.heroes.forEach(x => { delete x.profile.tried; });   // (batch rollout, owner 8 Oct rule: off keeps a feature for a child who used it; here the child never did, the check 'rollout' covers the keeping)
-    for (const id of ['companionGrow', 'saveGoal', 'dailySurprise', 'shortTalk', 'simpleStart', 'yardHands', 'storyActions']) C.features[id] = false;
+    // (owner, 1 Nov 2026 AEDT, docs/cores/release.md "Owner's decisions": the coin goal and companion growing open in v1.06)
+    // a feature whose release has started is switched by its release rule in Studio (CUSTOM.features is read only when
+    // no release rule exists, js/custom.ts featureOn), so the switch is turned off where Studio keeps it
+    const relWas = { ...(C.releases || {}) }; C.releases = C.releases || {};
+    for (const id of ['companionGrow', 'saveGoal', 'dailySurprise', 'shortTalk', 'simpleStart', 'yardHands', 'storyActions']) { C.features[id] = false; if (C.releases[id] && typeof C.releases[id] === 'object') C.releases[id] = { ...C.releases[id], on: false }; }
     h.profile.gift = null; await w(1200);
     out.offChips = chip('c-pet').hidden && chip('c-goal').hidden; out.offGift = !gift.visible(h); out.offLevel = G.kidplay.level(h);
     out.offSimple = (await import('/js/simple.js')).wantsSimple({ age: 'little' });
     openTheatre({ ...t, story: true, title: () => t.title[0], ctx: { name: 'Na', companion: 'firefly' } }, { name: 'Na' }); await w(1200);
     out.offSkip = !document.querySelector('.theatre .th-skip'); document.querySelector('.th-x')?.click(); await w(400);
     for (const id of Object.keys(C.features)) delete C.features[id];
+    C.releases = relWas;
     return out;
   });
   const errs = P.errors; await P.ctx.close(); const bad = [];

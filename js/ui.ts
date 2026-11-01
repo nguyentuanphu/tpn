@@ -670,7 +670,8 @@ export const openPad = Object.assign(function (game, i, tab) {
       const badge = id => id && PAL_HAT_ICON[id] ? `<i class="pal-hat">${pic(PAL_HAT_ICON[id])}</i>` : '';
       const friends = (comp ? `<button class="slot pal" data-pal="buddy" title="${esc(T(comp.en, comp.vi))}"><span>${pic(comp.icon)}</span>${badge(ps.hat)}<small>${esc(comp.name)}</small></button>` : '')
         + pets.map((pt, k) => `<button class="slot pal" data-pal="${k}" title="${esc(petNm(pt))}"><span>${pic(PET_ICON[pt.kind] || '🐾')}</span>${badge(pt.hat)}<small>${esc(petNm(pt))}</small></button>`).join('')
-        + `<button class="slot pal" data-adopt="1"><span>${pic('🐾')}</span><small>${pets.length >= (game.pets?.max || 2) ? T('Pet yard', 'Sân thú cưng') : T('Adopt a pet', 'Nhận nuôi')}</small></button>`;
+        + (() => { const yard = pets.length >= (game.pets?.max || 2), nm = yard ? T('Pet yard', 'Sân thú cưng') : T('Adopt a pet', 'Nhận nuôi'), tip = yard ? T('Pet yard: name and care for your pets', 'Sân thú cưng: đặt tên và chăm sóc thú cưng') : T('Adopt a pet: choose a friend to follow you', 'Nhận nuôi: chọn một bạn thú đi theo con');
+          return `<button class="slot pal" data-adopt="1" title="${esc(tip)}"><span>${pic('🐾')}</span><small>${nm}</small></button>`; })();
       const hats = kp && (comp || pets.length) ? kp.HATS.map(x => { const have = owned.includes(x.id), buyable = next && next.id === x.id, who = have && kp.wearerOf ? kp.wearerOf(hero, x.id) : null;
         return `<button class="slot pal-hatslot ${who != null ? 'on' : ''} ${!have && !buyable ? 'locked' : ''}" data-phat="${x.id}" title="${esc(T(x.en, x.vi))}"><span>${pic(PAL_HAT_ICON[x.id] || '🎩')}</span>${have ? '' : buyable ? `<b class="pal-price">${fmt(x.price)}</b>` : `<i class="pal-lock">${pic('🔒')}</i>`}<small>${esc(T(x.en, x.vi))}</small></button>`; }).join('') : '';
       return `<h3 class="bag-pals-h">${pic('🐾')} ${PALS_NAME()} <small>${T('tap one', 'chạm để xem')}</small></h3>
