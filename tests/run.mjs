@@ -4104,6 +4104,22 @@ await check('songs', async () => {
   return `Trung Thu → ${r.trungthu}; Lotus Village → ${r.village}; family recordings first; Songs page: lullaby words, night, sleep timer, valley music left alone; Simple screen Music group starts with Songs; reef and Hạ Long inside the lake; star counter clear of the top bar`;
 });
 
+await check('allphotos', async () => {
+  // (owner, 1 Nov 2026 AEDT: "every landmark and information spot with pictures: fill in every one missing") every landmark
+  // has its real place (photos and 360°) and photos listed; every symbol animal and every kind of house has photos too
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const R = await import('/js/regions.js'), W = await import('/js/realworld.js'), idx = await (await fetch('/photos/index.json')).json();
+    const has = src => !!(src && Array.isArray(idx[W.photoKey(src)]) && idx[W.photoKey(src)].length);
+    const sym = await (await fetch('/js/symbols.js')).text(), lists = [...sym.matchAll(/\[('(?:en|vi):[^']+'(?:,\s*'(?:en|vi):[^']+')*)\]/g)].map(m => [...m[1].matchAll(/'([^']+)'/g)].map(x => x[1]));
+    return { landmarks: R.LANDMARKS.length, noReal: R.LANDMARKS.filter(l => !W.REAL[l.id]).map(l => l.id), noPhotos: R.LANDMARKS.filter(l => W.REAL[l.id] && !has(W.REAL[l.id][0])).map(l => l.id),
+      symbols: lists.length, symbolsNone: lists.filter(s => !has(s)).map(s => s[0]), kindsNone: Object.entries(W.REAL_KINDS || {}).filter(([, s]) => !has(s)).map(([k]) => k) };
+  });
+  ok(!r.noReal.length && !r.noPhotos.length && r.symbols >= 10 && !r.symbolsNone.length && !r.kindsNone.length, JSON.stringify(r));
+  await P.ctx.close();
+  return `${r.landmarks} landmarks, ${r.symbols} symbol animals and every kind of house have real photos`;
+});
+
 await check('realphotos', async () => {
   // (owner, 17 Oct AEDT: "point photos to Wikimedia; if no internet, mention internet required"; replaces round R's
   // "served from our own site") the photos listed in photos/index.json are shown from Wikimedia or Flickr, or from

@@ -22,7 +22,9 @@ import { fileURLToPath } from 'url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; }, has = k => process.argv.includes(k);
 const MAX = Math.min(5, Math.max(3, +arg('--max', 4) || 4)), ONLY = arg('--only', '') ? new Set(arg('--only', '').split(',').map(s => s.trim())) : null;
-const FORCE = has('--force'), DRY = has('--dry'), KINDS = has('--kinds'), SIZE = 1280;
+// --link (1 Nov 2026 AEDT, the owner's rule since 17 Oct: photos are linked, not saved): list Wikimedia's own picture
+// address instead of saving a copy
+const FORCE = has('--force'), DRY = has('--dry'), KINDS = has('--kinds'), LINK = has('--link'), SIZE = 1280;
 const UA = { 'User-Agent': 'SparkleValleyPhotos/1.0 (family game; developer tool fetching freely licensed photos)', accept: 'application/json' };
 const BAD = /\.(svg|gif|tif|tiff|webm|ogv|ogg|oga|wav|mp3|pdf)$|logo|flag of|map|locator|coat of arms|seal of|icon|diagram|signature|plan of|chart/i;
 // free to reuse with a credit: public domain, CC0, CC BY and CC BY-SA (never NC or ND)
@@ -43,6 +45,8 @@ function places() {
   for (const [id, r] of Object.entries(real)) if (!ONLY || ONLY.has(id)) out.set(photoKey(r[0]), { id, sources: r[0] });
   if (KINDS && !ONLY) {
     for (const [kind, s] of Object.entries(literal<string[]>(src('js/realworld.js'), 'export const REAL_KINDS = {', '\n};'))) if (s && s.length && !out.has(photoKey(s))) out.set(photoKey(s), { id: kind, sources: s });
+    // (1 Nov 2026 AEDT) the symbol animals' photos (js/symbols.ts: each line's list of Wikipedia pages)
+    for (const m of src('js/symbols.ts').matchAll(/\[('(?:en|vi):[^']+'(?:,\s*'(?:en|vi):[^']+')*)\]/g)) { const s = [...m[1].matchAll(/'([^']+)'/g)].map(x => x[1]); if (!out.has(photoKey(s))) out.set(photoKey(s), { id: 'symbol', sources: s }); }
     const sym = src('js/symbols.js'), block = sym.slice(sym.indexOf('const SYMBOLS = ['), sym.indexOf('\n];', sym.indexOf('const SYMBOLS = [')));
     for (const m of block.matchAll(/\[((?:'(?:en|vi):[^']+'(?:,\s*)?)+)\]\]/g)) { const s = Function(`return [${m[1]}]`)(); if (!out.has(photoKey(s))) out.set(photoKey(s), { id: 'symbol', sources: s }); }
   }
@@ -51,11 +55,11 @@ function places() {
 
 // ---------- Wikimedia ----------
 async function getJSON(url) {
-  for (let a = 0; a < 4; a++) {
+  for (let a = 0; a < 6; a++) {
     const r = await fetch(url, { headers: UA }).catch(() => null);
     if (r && r.ok) return r.json();
     if (r && r.status !== 429 && r.status < 500) return null;
-    await wait(1500 * (a + 1));
+    await wait(5000 * (a + 1)); // (Wikimedia asks a busy tool to wait: 429)
   }
   return null;
 }
@@ -82,7 +86,7 @@ async function commonsSearch(q) {
 async function candidates(sources) {
   const out = [];
   for (const s of sources) { const [lang, title] = s.split(/:(.+)/); try { out.push(...await articlePhotos(lang, title)); } catch (e) { } await wait(300); }
-  if (out.filter(c => c.free).length < MAX) { try { out.push(...await commonsSearch(sources[0].split(/:(.+)/)[1])); } catch (e) { } }
+  for (const s of sources) { if (out.filter(c => c.free).length >= MAX) break; try { out.push(...await commonsSearch(s.split(/:(.+)/)[1])); } catch (e) { } await wait(300); }
   const words = sources[0].split(/:(.+)/)[1].toLowerCase().split(/\s+/).filter(w => w.length > 2);
   const score = c => (c.lead ? 100 : 0) + Math.min(30, c.width / 60) + (c.width > c.height ? 10 : 0) + words.filter(w => (c.file + ' ' + c.caption).toLowerCase().includes(w)).length * 8;
   const seen = new Set();
@@ -93,6 +97,7 @@ async function candidates(sources) {
 // ---------- saving ----------
 let sharp = null; try { sharp = (await import('sharp')).default; } catch (e) { } // optional: not a dependency of the game
 async function save(c, key, n) {
+  if (LINK) return { url: c.url, file: c.file, caption: c.caption, credit: [c.artist, c.licence, 'Wikimedia Commons'].filter(Boolean).join(' · ').slice(0, 200), licence: c.licence, page: c.page };
   const r = await fetch(c.url, { headers: { 'User-Agent': UA['User-Agent'] } }).catch(() => null);
   if (!r || !r.ok || !/^image\//.test(r.headers.get('content-type') || '')) return null;
   let buf = Buffer.from(await r.arrayBuffer()), ext = c.mime === 'image/png' ? 'png' : c.mime === 'image/webp' ? 'webp' : 'jpg';
