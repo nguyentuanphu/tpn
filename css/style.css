@@ -3410,3 +3410,7 @@ body.touch:has(.simple-screen:not([hidden])) .caption { top: auto; bottom: calc(
 .pad .slot > b.pal-price { top: 4px; right: 4px; font-size: 12px; background: #fff7d6; border-radius: 8px; padding: 1px 5px; }
 .pad .slot.locked > span { opacity: .45; filter: grayscale(.6); }
 .pad .pal-hatnote { margin: 6px 0 4px; }
+
+/* (#375, 1 Nov 2026 AEDT) while the report panel is open the floating ladybird steps aside: it covered the panel's words on a
+   small phone (430x517); it comes back when the panel closes */
+body:has(.modal.tpanel) .tester-floating { visibility: hidden; }

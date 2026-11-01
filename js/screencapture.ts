@@ -2,7 +2,8 @@
 // Foreign-object rendering is used where available; the canvas fallback retains visible controls/text on Safari.
 const image = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => { const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = src; });
 const dataURL = blob => new Promise(resolve => { const f = new FileReader(); f.onload = () => resolve(f.result); f.readAsDataURL(blob); });
-const visible = n => { const s = getComputedStyle(n), r = n.getBoundingClientRect(); return s.display !== 'none' && s.visibility !== 'hidden' && +s.opacity > 0 && r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight; };
+// (#375, 1 Nov 2026 AEDT) the tester's own floating ladybird is never in the picture of the screen (it showed twice)
+const visible = n => { if (n.matches?.('.tester-floating, [data-capture-skip]')) return false; const s = getComputedStyle(n), r = n.getBoundingClientRect(); return s.display !== 'none' && s.visibility !== 'hidden' && +s.opacity > 0 && r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight; };
 const privateField = n => n.matches?.('input[type="password"], input[type="file"], .fd-code, .fd-paircode, [data-private], [data-capture-private]') || n.closest?.('[data-capture-private]');
 export const captureFieldValue = n => privateField(n) ? '••••' : (n.value || n.placeholder || '');
 // Parse the resolved style once per node instead of reparsing it for every property.
