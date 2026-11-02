@@ -43,7 +43,6 @@ marketing/source/runvalley.log
 /js/animalhomes.js
 /js/animals.js
 /js/art.js
-/js/asia.js
 /js/art/howto-tales.js
 /js/art/kit.js
 /js/art/learning.js
@@ -53,6 +52,7 @@ marketing/source/runvalley.log
 /js/art/r90-audits.js
 /js/art/round30.js
 /js/art/things-money.js
+/js/asia.js
 /js/audio.js
 /js/autoplay.js
 /js/avatar.js
@@ -338,8 +338,6 @@ marketing/source/runvalley.log
 /js/twinchests.js
 /js/ui-settings.js
 /js/ui.js
-/js/util.js
-/js/validate.js
 /js/ui/common.js
 /js/ui/festivals-ui.js
 /js/ui/grownups.js
@@ -351,6 +349,8 @@ marketing/source/runvalley.log
 /js/ui/quick.js
 /js/ui/shops.js
 /js/ui/title.js
+/js/util.js
+/js/validate.js
 /js/vehicles.js
 /js/vendors.js
 /js/villagertalk.js
