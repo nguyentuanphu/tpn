@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import type {Browser,Page} from 'playwright';
-import {open,clear,noWelcome} from './harness.mjs';
+import {open,clear,noWelcome} from './harness.mts';
 
 const fruitIds=['fruitparade','sparkleorchard','sparklefruitbar'];
 const flags={tester:{on:true},newGames:{on:true},newStories:{on:true},unlockAll:{on:true},sparkleFruitParade_tester:{on:true},sparkleFruitParade_single:{on:false},sparkleFruitParade_multi:{on:false},sparkleorchard_tester:{on:true},sparkleorchard_single:{on:false},sparkleorchard_multi:{on:false},sparklefruitbar_tester:{on:true},sparklefruitbar_single:{on:false},sparklefruitbar_multi:{on:false}};

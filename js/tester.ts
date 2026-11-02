@@ -13,7 +13,7 @@ import { floatReportButton } from './tester-float.js';
 // PRIV-016: on a tester device that accepted, reports keep the players' names, ages and progress; nothing is sent
 // before "I accept", and "Stop being a tester" (Settings) stops everything at once.
 import { T, nm } from './i18n.js';
-import { settings, profiles, farm } from './state.js';
+import { settings, profiles, farm, heldByOtherTab } from './state.js';
 import { BUILD, SHOWN } from './build.js';
 import { el, esc } from './util.js';
 import { pic } from './art.js';
@@ -41,6 +41,8 @@ type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regi
   tester?: TesterApi;
   autoplay?: { running(): boolean; attach?(body: HTMLElement, close: () => void): void; detach?(): void; stop?(): void; start?(items: unknown, speed: string): void; open?(): void };
   testerRewards?: { apply(status: TesterStatus): void; unmount(): void; corner(): void };
+  // (v1.07 old-bugs) the graphics the game picked, named in each report
+  gpu?: { name?: string };
 };
 export type TesterApi = { level: string; openPanel: typeof openPanel; autoReport: typeof autoReport; refresh: typeof refresh; retest: typeof retest; nightly: typeof nightly; settings: typeof settingsRows; status(): TesterStatus | null; mountedAt(): number; unmount(): void };
 type ReportPanel = HTMLElement & { close(): void; selectTab?(tab: string): void };
@@ -79,8 +81,11 @@ let fpsNow = 0;
 // (owner, 31 Oct 2026 AEDT: the installed app stayed white for about 30 s) how this start went, in ms from the tap: when
 // the offline helper started (sw), when the start page arrived (page), when it could be read (dom); 0 when unknown
 const startNow = () => { const n = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined; if (!n) return null;
-  const ms = (v: number) => Math.max(0, Math.round(v)); return { sw: ms(n.workerStart), page: ms(n.responseStart), dom: ms(n.domInteractive) }; };
-const devNow = () => ({ os: osOf(), br: brOf(), sc: `${innerWidth}x${innerHeight}`, lang: settings.lang, fps: Math.round(fpsNow), mem: navigator.deviceMemory || 0, start: startNow() });
+  const ms = (v: number) => Math.max(0, Math.round(v)); // (v1.07 startup) play: when a child could first play (the Simple screen up or the valley session started), ms after
+  // the tap, as the others; null until then (js/main.ts canPlay, G.playTimes)
+  const play = window.__sv?.playTimes?.at; return { sw: ms(n.workerStart), page: ms(n.responseStart), dom: ms(n.domInteractive), play: typeof play === 'number' ? ms(play) : null }; };
+const devNow = () => ({ os: osOf(), br: brOf(), sc: `${innerWidth}x${innerHeight}`, lang: settings.lang, fps: Math.round(fpsNow), mem: navigator.deviceMemory || 0, start: startNow(), gpu: String((G && G.gpu && G.gpu.name) || '').slice(0, 40) });
+// (#341, v1.07) gpu: the graphics the valley is drawn with (js/gpu.ts); "software: ..." is a computer without a working chip
 
 // ---------- the picture of the screen ----------
 // (the 3D view keeps no picture between frames, so it is copied right after the next frame is drawn; the window on top
@@ -117,7 +122,11 @@ export const retryReports = () => flush();
 export async function sendAutoplayReport(rep) {
   if (!live) return { state: 'disabled', ids: [] };
   const ids = [];let failed=false;
-  for (const d of rep.done || []) if (d.problems?.length) { const id = await autoReport('autoplay', `${d.name || d.key}: ${d.problems.join('; ')}`.slice(0, 200), { area: 'autoplay', place: '', game: d.g === 'games' ? d.key : '', window: d.g || '', x: 0, z: 0 }); if (id) ids.push(id);else failed=true; }
+  // (#747-#778) a run stopped by another tab sends nothing; "Send / retry" of a run made on an older version (kept on the
+  // device across the update) says that version, not this one: its problems were seen there
+  if (rep.held) return { state: 'held', ids: [] };
+  const made = typeof rep.build === 'string' && rep.build ? rep.build : undefined;
+  for (const d of rep.done || []) if (d.problems?.length) { const id = await autoReport('autoplay', `${d.name || d.key}: ${d.problems.join('; ')}`.slice(0, 200), { area: 'autoplay', place: '', game: d.g === 'games' ? d.key : '', window: d.g || '', x: 0, z: 0 }, made ? { build: made } : {}); if (id) ids.push(id);else failed=true; }
   return { state: failed?'storage-failed':ids.length ? 'queued' : 'no-problems', ids };
 }
 type FlushSummary = { state: 'disabled' | 'offline' | 'empty' | 'sent' | 'retry' | 'storage' | 'limit' | 'notTester'; sent: number; queued: number; dropped?: number };
@@ -196,7 +205,9 @@ const body = (kind, extra) => {
 // the game reports by itself (the same thing at the same place once in 10 minutes, counted meanwhile)
 // (more: extra fields; more.log, the auto play check's last steps, goes before the tester's own log)
 export async function autoReport(kind: string, detail: string, where?: Where, more: Record<string, unknown> = {}) {
-  if (!live) return; const w = where || whereNow(), k = C.keyOf(kind, detail, w.game || w.window || w.area);
+  // (#746-#778) a tab another tab of the game took over has stopped under its notice: its 0 frames a second, covered
+  // buttons and games that did not open or close are that notice, not the game
+  if (!live || heldByOtherTab()) return; const w = where || whereNow(), k = C.keyOf(kind, detail, w.game || w.window || w.area);
   counts.set(k, (counts.get(k) || 0) + 1); const last = sent.get(k);
   if (last && Date.now() - last.at < C.LIMITS.sameAgain) return last.id;
   if (reporting.has(k)) return reporting.get(k);
@@ -204,6 +215,7 @@ export async function autoReport(kind: string, detail: string, where?: Where, mo
   const pending = (async () => {
     const b = body('auto', { auto: kind, detail: String(detail || '').slice(0, 200), where: w, shot: await autoShot(), count: n });
     if (Array.isArray(more.log)) b.log = more.log.concat(b.log).slice(-300);
+    if (typeof more.build === 'string' && /^(v\d+\.\d{2}|r\d+)/.test(more.build)) b.b = more.build;
     const id = enqueue(b); if (id) sent.set(k, { at: Date.now(), id }); else counts.set(k, n + (counts.get(k) || 0));
     return id;
   })();
@@ -253,6 +265,14 @@ function watch() {
   const longs = [], winAt = [];
   let po: PerformanceObserver | null = null;
   try { po = new PerformanceObserver(l => { for (const e of l.getEntries()) { longs.push([e.startTime, e.duration]); if (longs.length > 20) longs.shift(); } }); po.observe({ type: 'longtask' }); offs.push(() => po?.disconnect()); } catch (e) { }
+  // (#739, v1.07) Safari (every iPhone) has no long-task observer, so its freeze reports said "longest script 0 ms"
+  // whatever happened. A light timer, every 100 ms, notes how late it ran: late by about the freeze means the page was
+  // busy (the game's code, laying out a window); on time while no frame came means the page was free and the picture was
+  // not drawn (the graphics side). Every browser reports both now; a browser without the observer says "not measured".
+  const canLong = (() => { try { return (PerformanceObserver as any).supportedEntryTypes?.includes('longtask') === true; } catch { return false; } })();
+  const lates: [number, number][] = []; let tickAt = performance.now();
+  const lateT = setInterval(() => { const t = performance.now(), late = t - tickAt - 100; tickAt = t; if (late > 150) { lates.push([t, late]); if (lates.length > 20) lates.shift(); } }, 100);
+  offs.push(() => clearInterval(lateT));
   const windowEvents: [EventTarget, string][] = [[window, 'resize'], [window, 'blur'], [window, 'focus'], [document, 'visibilitychange']];
   for (const [t, k] of windowEvents) on(t, k, () => { winAt.push([performance.now(), k]); if (winAt.length > 20) winAt.shift(); });
   const why = (from, to) => {
@@ -260,7 +280,11 @@ function watch() {
       try { for (const e of po.takeRecords()) { longs.push([e.startTime, e.duration]); if (longs.length > 20) longs.shift(); } } catch { }
     }
     const ran = longs.filter(([a, d]) => a + d > from && a < to).reduce((m, [, d]) => Math.max(m, d), 0), seen = [...new Set(winAt.filter(([a]) => a > from - 500 && a < to).map(([, k]) => k))];
-    return `longest script ${Math.round(ran)} ms; window: ${seen.join(', ') || 'no change'}; focus ${document.hasFocus() ? 'yes' : 'no'}`; };
+    // a late timer tick at t was held up from t - late to t: it counts when that overlaps the frozen time
+    // (the frame may come before the late tick runs: the tick still waiting counts too)
+    const waiting = performance.now() - tickAt - 100, all = waiting > 150 ? [...lates, [performance.now(), waiting] as [number, number]] : lates;
+    const busy = all.filter(([a, l]) => a > from && a - l < to).reduce((m, [, l]) => Math.max(m, l), 0);
+    return `longest script ${canLong ? Math.round(ran) + ' ms' : 'not measured'}; page busy ${Math.round(busy)} ms${busy < (to - from) / 2 ? ' (free, not drawn)' : ''}; window: ${seen.join(', ') || 'no change'}; focus ${document.hasFocus() ? 'yes' : 'no'}`; };
   // (r90, #474 #487 #488: a "freeze" of 57 s with no script running while the share sheet or print window was up) a gap in
   // which the window lost the focus or went out of sight is the phone pausing the game, not the game stuck: not reported
   const away = (from: number, to: number) => winAt.some(([at, k]) => at > from - 500 && at < to && /blur|visibilitychange|pagehide|freeze/.test(k));

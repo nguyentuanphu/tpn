@@ -46,7 +46,7 @@ const modules=files.map(file=>{
 const byPath=new Map(modules.map(m=>[m.file,m]));
 const connections=modules.flatMap(m=>m.imports.map(i=>{
  const base=path.posix.normalize(path.posix.join(path.posix.dirname(m.file),i.specifier));
- const target=i.specifier.startsWith('.')?[base,base.replace(/\.js$/,'.ts'),base.replace(/\.cjs$/,'.cts'),base.replace(/\.mjs$/,'.mts')].find(f=>byPath.has(f)):null;
+ const target=i.specifier.startsWith('.')?[base,base.replace(/\.js$/,'.ts'),base.replace(/\.cjs$/,'.cts'),base.replace(/\.mts$/,'.mts')].find(f=>byPath.has(f)):null;
  return {from:m.key,to:target?'source:'+target:null,specifier:i.specifier,line:i.line,evidence:i.kind,runtimeEffect:'not_proven',external:!i.specifier.startsWith('.')};
 }));
 const catalogue=exportManagementCatalogue(root);

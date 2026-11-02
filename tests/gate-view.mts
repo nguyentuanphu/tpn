@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import type { Browser } from 'playwright';
-import { open, clear, noWelcome } from './harness.mjs';
+import { open, clear, noWelcome } from './harness.mts';
 
 // #369: the reported Hanoi position, with the camera looking through its real entrance gate.
 export async function gateViewCheck(browser: Browser): Promise<string> {

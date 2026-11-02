@@ -1,5 +1,5 @@
 // The map of the valley (round T, ARCHITECTURE §12 step 3): the one place that holds world coordinates.
-// Plain data with no imports, so Node can read it too (tests/unit/map.test.mjs). js/world.js builds its exported
+// Plain data with no imports, so Node can read it too (tests/unit/map.test.mts). js/world.js builds its exported
 // places (VILLAGE, TOWN, CITIES, RIVER, BRIDGE…) from it, and every builder places its things as an offset from its
 // place's anchor, so moving a place here moves everything in it.
 // x runs east, z runs south (north is −z); 1 unit = 1 m.
@@ -400,7 +400,7 @@ const BY_ID = new Map(PLACES.map(p => [p.id, p]));
 // a place's anchor [x, z] (a place inside a place: its parent's anchor plus its offset)
 export function anchorOf(id) { const p = BY_ID.get(id); if (!p) return null; if (p.at) return p.at; const a = anchorOf(p.place); return a && [a[0] + p.off[0], a[1] + p.off[1]]; }
 // where a landmark stands [x, z]
-export function landmarkAt(id) { const L = LANDMARK_AT[id]; if (!L) return null; const a = anchorOf(L.place); return a && [a[0] + L.off[0], a[1] + L.off[1]]; }
+export function landmarkAt(id): [number, number] | null { const L = LANDMARK_AT[id]; if (!L) return null; const a = anchorOf(L.place); return a && [a[0] + L.off[0], a[1] + L.off[1]]; }
 
 // The anchors of earlier layouts, frozen (only for moving old saves and old Studio edits onto a new map).
 export const LEGACY = Object.freeze({

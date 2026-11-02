@@ -5,7 +5,7 @@ import { el, wait, rand, shuffle } from '../util.js';
 
 // (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
 // get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
-const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => { const v = api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))]; api.lvNote?.([little, easy, medium, hard, talent], v); return v; };
 const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 
 let styled = false;
@@ -122,12 +122,16 @@ register({
         ducks++; at = (at + 1) % players;
         if (ducks >= 2) goose.disabled = false;
       }
-      const chosen = (at + players - 1) % players;
+      // (v1.07 rules audit) the goose is the next friend, the one you would have tapped (it was the last Duck), and the
+      // round ends when you run round and sit in the goose's place
+      const chosen = at;
       kids.forEach(k => k.classList.remove('hint'));
-      api.say('Goose! Run round the circle!', 'Ngỗng! Chạy vòng quanh nào!'); api.sfx.whoosh();
-      kids[chosen].style.transform = 'scale(1.3) translateY(-8px)';
-      await wait(1400);
-      kids[chosen].style.transform = '';
+      api.say('Goose! Run round the circle and sit in their place!', 'Ngỗng! Chạy vòng quanh rồi ngồi vào chỗ của bạn ấy!'); api.sfx.whoosh();
+      kids[chosen].style.transform = 'scale(1.3) translateY(-8px)'; kids[chosen].classList.add('hint'); kids[chosen].dataset.goose = '1';
+      api.plan(() => kids[chosen], { maxActions: 6 });
+      for (;;) { const sat = await tapOne(kids, api); if (!sat || api.closed) return; if (sat === kids[chosen]) break; api.sfx.no(); }
+      kids[chosen].style.transform = ''; kids[chosen].classList.remove('hint'); delete kids[chosen].dataset.goose;
+      at = (at + 1) % players;
       api.sfx.ding(); api.dots(rounds, r + 1);
       await wait(500);
     }
@@ -525,7 +529,7 @@ register({
       const clicked = await tapOne([friend], api);
       clearInterval(runner);
       if (!clicked || api.closed) return;
-      api.say('Tag, you are it!', 'Bắt được rồi!'); api.sfx.pop(tagged);
+      api.say('Tagged! Got you!', 'Bắt được rồi!'); api.sfx.pop(tagged);
       tagged++;
       api.dots(target, tagged);
       await wait(700);

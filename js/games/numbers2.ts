@@ -81,7 +81,7 @@ const numbers = (count: number, lo: number, hi: number) => mix(Array.from({ leng
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value. Every game here: more rounds from Medium, more answers
 // to choose from on Hard and Talent, and a bigger range or fewer helps on screen (marked "levels")
-const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
 const count = api => lv(api, 3, 4, 5, 6), wrongs = api => lv(api, 2, 2, 3, 3);
 
 register({
@@ -99,7 +99,8 @@ register({
 
 register({
   id: 'tenframe', icon: '🔟', name: () => T('Ten Frame', 'Khung Mười'),
-  run: api => rounds(api, numbers(count(api), 1, api.little ? 5 : 10).map(n => ({
+  run: api => { api.stage.dataset.lv = String((api.smart || 0) >= 2 && !api.little ? 1 : 0);   // (v1.07 levels) counters scattered (1) or in order (0)
+    return rounds(api, numbers(count(api), 1, api.little ? 5 : 10).map(n => ({
     ask: ['How many counters are in the ten frame?', 'Khung mười có mấy hạt?'], answer: String(n), others: near(n, 1, 10, wrongs(api)),
     draw: stage => {
       // (levels) Hard and Talent: the counters sit anywhere in the frame, not filled in order
@@ -107,7 +108,7 @@ register({
       for (let i = 0; i < 10; i++) f.appendChild(el('i', (at ? at.includes(i) : i < n) ? 'on' : ''));
       stage.appendChild(f);
     }
-  })), ['Count the counters in the ten frame!', 'Đếm các hạt trong khung mười nhé!'], ['The ten frame helps you see numbers!', 'Khung mười giúp bé nhìn số thật rõ!'])
+  })), ['Count the counters in the ten frame!', 'Đếm các hạt trong khung mười nhé!'], ['The ten frame helps you see numbers!', 'Khung mười giúp bé nhìn số thật rõ!']); }
 });
 
 // where the dots sit on a dice face, cells 0 to 8 of a 3 by 3 grid
@@ -115,7 +116,7 @@ const PIPS: Record<number, number[]> = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0,
 register({
   id: 'dice', icon: '🎲', name: () => T('Dice Count', 'Đếm Xúc Xắc'),
   // (levels) Hard and Talent: two dice to count together
-  run: api => { const two = (api.smart || 0) >= 2 && !api.little; return rounds(api, numbers(count(api), two ? 2 : 1, two ? 12 : 6).map(n => { const a = two ? Math.max(1, n - 6) + Math.floor(Math.random() * (Math.min(6, n - 1) - Math.max(1, n - 6) + 1)) : n, faces = two ? [a, n - a] : [n]; return {
+  run: api => { const two = (api.smart || 0) >= 2 && !api.little; api.stage.dataset.lv = two ? '2,12' : '1,6';   /* (v1.07 levels) dice, biggest total */ return rounds(api, numbers(count(api), two ? 2 : 1, two ? 12 : 6).map(n => { const a = two ? Math.max(1, n - 6) + Math.floor(Math.random() * (Math.min(6, n - 1) - Math.max(1, n - 6) + 1)) : n, faces = two ? [a, n - a] : [n]; return {
     ask: ['How many dots on the dice?', 'Mặt xúc xắc có mấy chấm?'], answer: String(n), others: near(n, 1, two ? 12 : 6, wrongs(api)),
     draw: stage => {
       const row = el('div', 'n2-share');

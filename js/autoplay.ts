@@ -15,7 +15,7 @@ import { CUSTOM, liveRule } from './custom.js';
 import { sydneyFestivalDate } from './content/festival-visibility.js';
 import { FESTCAL } from './content/festcal.js';
 import { voiceMisses } from './voice.js';
-import { settings } from './state.js';
+import { settings, heldByOtherTab } from './state.js';
 import { BUILD } from './build.js';
 import { pic } from './art.js';
 import { resizeDeliveryNotice } from './tester-detection.js';
@@ -58,6 +58,10 @@ export function mountAutoplay(game) {
   addEventListener('unhandledrejection', e => errSink && errSink.push(String((e.reason && e.reason.message) || e.reason || 'error')));
   // (#654-#682) a page error passed on to console.error carries the same browser delivery notice: not a game error either
   const ce = console.error; console.error = (...a) => { const m = a.map(String).join(' '); if (errSink && !/ResizeObserver loop (?:limit exceeded|completed with undelivered notifications)/.test(m)) errSink.push(m.slice(0, 200)); ce.apply(console, a); };
+  // (#747-#778, v1.04-v1.05) the game was opened in another tab while auto play ran: this tab stopped (js/launch.ts
+  // "open in another tab", the game paused under that notice) but auto play went on, found every game covered, closed
+  // and drawn at 0 frames a second, and sent each one as a problem. It now stops at once and sends nothing.
+  addEventListener('sv-held', () => { if (run) run.stop = true; });
   btnTimer = setInterval(buttons, 1000); buttons();
   G.autoplay = { unmount, running: () => !!run, trail: () => trail.slice(),
     profile: () => selectedProfile,
@@ -608,6 +612,7 @@ async function one(s: AutoplayStep): Promise<AutoplayResult> {
   step_('start', nm);
   try { said = (await s.fn(note)) || ''; } catch (e) { if (e === STOP) { on = false; errSink = null; throw e; } if (e === SKIP) skipped = true; else note(T('error: ', 'lỗi: ') + String(e && e.message || e).slice(0, 160)); }
   on = false; errSink = null;
+  if (heldByOtherTab()) throw STOP; // (#747-#778: what a stopped tab saw is not the game's problem)
   const secs = (apNow() - t0) / 1000, fps = secs > .5 ? Math.round(frames / secs) : null;
   for (const e of [...new Set(errs)].slice(0, 3)) note(T('error: ', 'lỗi: ') + e);
   for (const m of voiceMisses()) if (!miss0.has(m[0] + '|' + m[1])) note(T('no recording: ', 'chưa thu âm: ') + (m[0] + ': ' + m[1]).slice(0, 120));
@@ -617,6 +622,7 @@ async function one(s: AutoplayStep): Promise<AutoplayResult> {
 }
 // a problem to Studio's tester inbox, now, with a picture and the last steps (only on a tester device)
 function send(g, detail, at?) {
+  if (heldByOtherTab()) return; // (#747-#778)
   const h = hero(); import('./tester.js').then(m => m.autoReport && m.autoReport('autoplay', String(detail).slice(0, 200),
     { area: String((G.regionOf && G.regionOf[0]) || 'valley'), place: '', game: /^game:/.test((run && run.list[run.i] || {}).key || '') ? run.list[run.i].key.slice(5) : '', window: 'autoplay ' + g, x: at ? at.x : h ? Math.round(h.pos.x) : 0, z: at ? at.z : h ? Math.round(h.pos.z) : 0 },
     { log: trailLog() })).catch(() => { });
@@ -647,8 +653,11 @@ async function start(only?: string[]) {
   try { await closeAll(); } catch (e) { }
   if (finger) finger.hidden = true;
   settings.countPlayers = counted;
-  if (perRun) putCopyBack(RUNCOPY, G);
-  const finalReport = report(); const result = await sendAutoplayReport(finalReport);
+  // (#747-#778) a tab another tab took over writes nothing to the shared save and sends nothing: the newest tab owns
+  // them now (it puts the run's copy back itself when its auto play starts up); the last report says why it stopped
+  const held = heldByOtherTab();
+  if (perRun && !held) putCopyBack(RUNCOPY, G);
+  const finalReport = held ? { ...report(), held: true } : report(); const result = held ? { ids: [], state: 'held' } : await sendAutoplayReport(finalReport);
   put(REPORT, { ...finalReport, reportIds: result.ids, reportState: result.state });
   run = null; removeFloatBar(); ui.open = false; put(UI, ui); draw(); buttons();
   G.autoplay?.open(); // results return to the same ladybird tab on tester devices
@@ -784,12 +793,14 @@ function deliveryText(rep) {
 }
 function lastReport(rep) {
   const bad = rep.done.filter(r => !r.ok && !r.skipped), help = rep.done.filter(r => r.ok && r.notes && r.notes.length);
+  // (#747-#778) a run stopped by another tab has nothing to send; one from an older version is sent under its own version
+  const sendRow = rep.held ? `<p class="note">${T('Stopped: the game was opened in another tab or window.', 'Đã dừng: trò chơi được mở ở một thẻ hoặc cửa sổ khác.')}</p>` : `<div class="row"><button data-a="send">${T('Send / retry report', 'Gửi / gửi lại báo cáo')}</button></div>`;
   return `<h4>${T('Last check', 'Lần kiểm tra trước')}: ${new Date(rep.at).toLocaleString()}</h4>
     <div>${T(`${rep.done.length} checked: ${rep.done.length - bad.length} fine, ${bad.length} with problems`, `Đã kiểm ${rep.done.length}: ${rep.done.length - bad.length} ổn, ${bad.length} có lỗi`)}</div>
     <div class="res">${bad.slice(0, 40).map(r => `<div><span class="dot bad"></span>${esc(r.name)} <button data-again="${esc(r.key)}">${T('Again', 'Lại')}</button>${r.problems.map(p => `<small>${esc(p)}</small>`).join('')}</div>`).join('')}
     ${help.slice(0, 20).map(row).join('')}</div>
     <p class="note" role="status">${deliveryText(rep)}</p>
-    <div class="row"><button data-a="send">${T('Send / retry report', 'Gửi / gửi lại báo cáo')}</button></div><details><summary>${T('Export options', 'Tùy chọn xuất bản sao')}</summary><div class="row"><button data-a="save">${T('Export a copy', 'Xuất bản sao')}</button><button data-a="copy">${T('Copy', 'Chép')}</button><button data-a="clear">${T('Clear', 'Xóa')}</button></div></details>`;
+    ${sendRow}<details><summary>${T('Export options', 'Tùy chọn xuất bản sao')}</summary><div class="row"><button data-a="save">${T('Export a copy', 'Xuất bản sao')}</button><button data-a="copy">${T('Copy', 'Chép')}</button><button data-a="clear">${T('Clear', 'Xóa')}</button></div></details>`;
 }
 const text = rep => [`Sparkle Valley ${rep.build || ''} auto play check, ${rep.at}, speed ${rep.speed}`, `${rep.done.length} checked`, '']
   .concat(rep.done.map(r => `${r.skipped ? 'SKIPPED' : r.ok ? 'OK     ' : 'PROBLEM'}  [${r.g}] ${r.name}${r.said ? ` (${r.said})` : ''}${r.fps ? ` (${r.fps} fps, ${r.secs} s)` : ''}${r.problems.map(p => '\n           ' + p).join('')}${(r.notes || []).map(p => '\n           ' + p).join('')}`)).join('\n');

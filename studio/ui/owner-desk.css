@@ -47,3 +47,6 @@ nav#tabs button span{display:grid;place-items:center;width:30px;flex:none}nav#ta
 .today-device{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:44px;padding:8px 0;border:0;border-top:1px solid var(--line);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
 .today-device:first-of-type{border-top:0}
 .today-device small{color:var(--soft)}
+/* (v1.07, G03) stacked columns: first part in the accent, second in a softer mix of it; the legend uses the same */
+.desk-stack-0{fill:var(--desk-accent);background:var(--desk-accent)}.desk-stack-1{fill:color-mix(in srgb,var(--desk-accent) 40%,transparent);background:color-mix(in srgb,var(--desk-accent) 40%,transparent)}
+.desk-legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:8px 0 0}.desk-legend span{display:inline-flex;align-items:center;gap:8px}.desk-legend i{display:inline-block;width:14px;height:14px;border-radius:3px}

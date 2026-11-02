@@ -103,7 +103,7 @@ export async function hello(S, body, now = Date.now(), where: { city?: string, r
     r.builds=r.builds||{...(r.build?{[r.build]:true}:{})};r.builds[x.build]=true;
     Object.assign(r, { build: x.build, lang: d.lang, kids: d.kids, kind: d.kind, app: d.app });
     await S.setJSON(key, r);
-    if (x.d < today) await S.delete('sum/' + x.d); // a finished day that just got more play (from an outbox) is added up again
+    if (x.d < today) { await S.delete('sum/' + x.d); await S.delete('msum/' + x.d); } // a finished day that just got more play (from an outbox) is added up again (sum/: Analytics; msum/: Studio's management reads, v1.07)
   }
   if (d.hid) await S.set('seen/' + d.hid, today); // only once it is all written
   if (d.lines.length) await addLines(S, d.id, opts.ip || '', d.lines, today);
@@ -168,6 +168,7 @@ async function tidy(S, now) {
   try { if (await S.get('tidy/last') === today) return; await S.set('tidy/last', today); } catch (e) { return; }
   const gone = async (prefix, isOld) => { try { const blobs = (await listAll(S, prefix)).filter(isOld); await each(blobs, async b => { if (Date.now() < stop) await S.delete(b.key); }); } catch (e) { } };
   await gone('d/', b => b.key.slice(2, 12) < old);
+  await gone('msum/', b => b.key.slice(5, 15) < old); // (v1.07) Studio's kept day records go with the device records
   await gone('vq/', b => b.key.slice(3, 13) < yday); // (the daily line counts)
   try { const blobs = await listAll(S, 'seen/'); await each(blobs, async b => { if (Date.now() >= stop) return; const v = await S.get(b.key); if (!v || v < old) await S.delete(b.key); }); } catch (e) { }
 }
@@ -217,7 +218,9 @@ async function details(S, sums: DaySum[], now: number) {
   // from the device's saved copy (warm) and the others (first visits and updates), and its most common slowest step
   const med = a => { if (!a.length) return null; const v = a.slice().sort((x, y) => x - y); return Math.round(v[v.length >> 1] / 100) / 10; };
   const startupOf = st => { if (!st.length) return null; const w = st.filter(r => r[3]), c = st.filter(r => !r[3]), steps = {}; st.forEach(r => r[4] && add(steps, r[4]));
-    return { n: st.length, ready: med(w.map(r => r[1])), readyFirst: med(c.map(r => r[1])), picture: med(st.map(r => r[2]).filter(Boolean)), slowest: top(steps, 1).map(x => x[0])[0] || '' }; };
+    return { n: st.length, ready: med(w.map(r => r[1])), readyFirst: med(c.map(r => r[1])), picture: med(st.map(r => r[2]).filter(Boolean)), slowest: top(steps, 1).map(x => x[0])[0] || '',
+      // (v1.07 startup) when a child could first play, seconds after the page opened (only rows from v1.07 on have it)
+      ...(st.some(r => r[5]) ? { play: med(st.map(r => r[5]).filter(Boolean)) } : {}) }; };
   // (battery round, 12 Oct; names agreed with Studio on the board) a device's drawing and battery over the 30 days, `power`:
   // fps = frames a second while a child plays (idle, title and menu time left out), frameMs = ms of work a frame, draws =
   // draw calls a frame, ratio = sharpness (pixel ratio), mins = minutes measured, batteryPerHour = battery % used an hour
@@ -251,19 +254,28 @@ async function details(S, sums: DaySum[], now: number) {
   for (const d of devices) if (d.last && d.last < quiet && d.days) tips.push({ k: 'quiet', d: who(d), last: d.last });
   for (const d of devices) for (const K of d.kids) if (K.age === 'little' && K.mins > 30 && K.simpleMins < K.mins * .2) tips.push({ k: 'simple', name: K.name, d: who(d) });
   // (#36) start-up by kind of device: the median time to a built valley over each kind's devices (seconds)
-  const startup = {}; for (const k of ['phone', 'tablet', 'computer']) { const v = devices.filter(d => d.kind === k && d.startup).map(d => (d.startup.ready ?? d.startup.readyFirst) * 1000).filter(x => x > 0); if (v.length) startup[k] = { devices: v.length, ready: med(v) }; }
+  const startup = {}; for (const k of ['phone', 'tablet', 'computer']) { const v = devices.filter(d => d.kind === k && d.startup).map(d => (d.startup.ready ?? d.startup.readyFirst) * 1000).filter(x => x > 0); if (v.length) { const p = devices.filter(d => d.kind === k && d.startup && d.startup.play).map(d => d.startup.play * 1000); startup[k] = { devices: v.length, ready: med(v), ...(p.length ? { play: med(p) } : {}) }; } }
   // (battery round) by kind of device, `power`: the middle of each kind's devices
   const mid = a => { const v = a.filter(x => x != null).sort((x, y) => x - y); return v.length ? v[v.length >> 1] : null; };
   const power = {}; for (const k of ['phone', 'tablet', 'computer']) { const ds = devices.filter(d => d.kind === k && d.power); if (ds.length) power[k] = { devices: ds.length, fps: mid(ds.map(d => d.power.fps)), frameMs: mid(ds.map(d => d.power.frameMs)), draws: mid(ds.map(d => d.power.draws)), batteryPerHour: mid(ds.map(d => d.power.batteryPerHour)) }; }
   // (r80, owner 17 Oct AEDT) installations not seen for 30 days or more, by the version they last had
   const away = day(now - 30 * 864e5), away30 = {}; for (const d of devices) if (d.last && d.last < away) away30[d.build] = (away30[d.build] || 0) + 1;
-  const famMap: Record<string, string[]> = {};
-  for (const d of devices) if (d.family) (famMap[d.family] = famMap[d.family] || []).push(d.id);
-  const famEntries = Object.entries(famMap).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
-  const famLinked = famEntries.reduce((a, [, ids]) => a + ids.length, 0);
-  const families = { count: famEntries.length, linkedDevices: famLinked, devicesPerFamily: famEntries.length ? +(famLinked / famEntries.length).toFixed(1) : 0, list: famEntries.slice(0, 50).map(([fh, ids]) => ({ fh, devices: ids.length, ids })) };
+  const families = familyStats(devices, day(now - 30 * 864e5));
   const installations = { confirmed: devices.filter(d => !!d.installation).length, lastStandalone: devices.filter(d => d.app).length, unconfirmed: devices.filter(d => !d.installation).length };
   return { installations, away30, families, latestBuilds:count(d=>d.build),startup, power, onlineNow: devices.filter(d => d.online).length, hours, places: top(places, 15), devices:devices.slice(0,100), deviceListTotal:devices.length, deviceListLimit:100, os: count(d => d.os), browsers: count(d => d.br), locations: count(d => d.loc ? [d.loc.city, d.loc.region, d.loc.country].filter(Boolean).join(', ') : '?'), problems, tips: tips.slice(0, 20) };
+}
+// (save-copy-family-code.md Part 2; v1.07, owner 2 Nov 2026 2:07 pm AEDT "Build Part 2 as planned") families from the
+// one-way family hash each device sent (never the code): how many, devices per family, and cameBack = devices first
+// seen on or after `since` whose family already had a device first seen before it (a new or wiped device that joined
+// by code). A device restored from Save a copy keeps its device number, so it is not new. Read only: nothing is stored.
+export function familyStats(devices: { id: string, family?: string, first?: string }[], since: string) {
+  const famMap: Record<string, { id: string, first: string }[]> = {};
+  for (const d of devices) if (d.family) (famMap[d.family] = famMap[d.family] || []).push({ id: d.id, first: d.first || '' });
+  const famEntries = Object.entries(famMap).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+  const famLinked = famEntries.reduce((a, [, ds]) => a + ds.length, 0);
+  let cameBack = 0;
+  for (const [, ds] of famEntries) { const firsts = ds.map(d => d.first).filter(Boolean).sort(); for (const d of ds) if (d.first && d.first >= since && firsts[0] < d.first) cameBack++; }
+  return { count: famEntries.length, linkedDevices: famLinked, devicesPerFamily: famEntries.length ? +(famLinked / famEntries.length).toFixed(1) : 0, cameBack, list: famEntries.slice(0, 50).map(([fh, ds]) => ({ fh, devices: ds.length, ids: ds.map(d => d.id) })) };
 }
 // a name the family gives a device in Studio ("Na's iPad")
 export async function setLabel(S, id, label) { if (!ID.test(id || '')) return false; const l = String(label || '').replace(/[<>\u0000-\u001f]/g, '').trim().slice(0, 40); if (l) await S.set('label/' + id, l); else await S.delete('label/' + id); return true; }

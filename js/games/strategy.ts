@@ -5,7 +5,7 @@ import { T } from '../i18n.js';
 import { shuffle, pick, el, wait } from '../util.js';
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value
-const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
 
 // ---------- Tower of Hanoi (Tháp Hà Nội) ----------
 register({
@@ -13,6 +13,7 @@ register({
   async run(api) {
     const n = api.talent ? 5 : api.level <= 1 ? 2 : api.level === 2 ? 3 : 4;   // (levels) Talent: five discs
     const rods = [Array.from({ length: n }, (_, i) => n - i), [], []];
+    api.stage.dataset.lv = [n, api.talent ? 0 : 1].join(',');   // (v1.07 levels) discs, hint button (1/0)
     const COLS = ['#e8434a', '#ffb52e', '#4cbf5c', '#3d7fd6', '#9a6bff'];
     const board = el('div', 'hanoi'); api.stage.appendChild(board);
     // (levels) Talent: no hint button
@@ -90,6 +91,8 @@ register({
   id: 'robot', icon: '🤖', name: () => T('Robot Planner', 'Lập Trình Rô-bốt'),
   async run(api) {
     const rounds = 3, N = api.talent ? 6 : api.level <= 1 ? 4 : 5;   // (levels) Talent: a 6 x 6 field with more rocks and longer paths
+    // (v1.07 levels) field size, rocks in the first round, shortest path in the first round (least, most)
+    api.stage.dataset.lv = [N, api.level <= 1 ? 0 : api.talent ? 8 : Math.min(6, api.level), api.level <= 1 ? 1 : api.talent ? 5 : 2, api.level <= 1 ? 3 : api.talent ? 10 : 6].join(',');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       let s, t, rocks, d;
@@ -163,6 +166,7 @@ register({
   async run(api) {
     // (levels) Talent: one size bigger (up to 9 x 9) and no trail behind you
     const size = r => Math.min(api.talent ? 9 : 8, 3 + api.level + r + (api.talent ? 1 : 0));
+    api.stage.dataset.lv = [size(0), size(1), api.talent ? 0 : 1].join(',');   // (v1.07 levels) maze sizes, trail behind you (1/0)
     const rounds = 2, maxActions = Array.from({length: rounds}, (_, r) => size(r) ** 2 - 1).reduce((sum, n) => sum + n, 0);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -208,6 +212,7 @@ register({
   id: 'goat', icon: '🐐', name: () => T('Blindfold Goat', 'Bịt Mắt Bắt Dê'),
   async run(api) {
     const rounds = 3, N = api.talent ? 6 : api.level <= 1 ? 3 : api.level === 2 ? 4 : 5;   // (levels) Talent: 6 x 6 haystacks and no "very close" call
+    api.stage.dataset.lv = [N, api.talent ? 0 : 1].join(',');   // (v1.07 levels) haystack grid size, "very close" call (1/0)
     api.say('A Vietnamese playground game! The goat is hiding in the hay. Each wrong haystack shows hoof prints pointing to the goat.', 'Trò chơi dân gian Bịt mắt bắt dê! Dê đang trốn trong đống rơm. Mỗi đống rơm sai sẽ có dấu chân chỉ về phía con dê.');
     await wait(400);
     for (let r = 0; r < rounds; r++) {

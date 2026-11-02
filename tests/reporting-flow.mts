@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import type { Browser } from 'playwright';
-import { open, clear, noWelcome } from './harness.mjs';
+import { open, clear, noWelcome } from './harness.mts';
 export async function reportingFlowCheck(browser: Browser): Promise<string> {
  const dir='out/reporting-flow';fs.mkdirSync(dir,{recursive:true});
  const fixture=await browser.newPage({viewport:{width:430,height:873}});

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import type {Browser} from 'playwright';
-import {open,clear} from './harness.mjs';
+import {open,clear} from './harness.mts';
 export async function shallowRiversCheck(browser:Browser){
  const P=await open(browser,{w:900,h:640,settings:{voice:false,online:false}});
  try{await clear(P.page);

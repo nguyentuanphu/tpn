@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import { launch, open, clear, noWelcome } from './harness.mjs';
+import { launch, open, clear, noWelcome } from './harness.mts';
 
 async function reportFloatingBrowser(){
 const browser=await launch();

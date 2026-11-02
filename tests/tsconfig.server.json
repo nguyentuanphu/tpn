@@ -1,6 +1,6 @@
 {
   "extends": "../tsconfig.base.json",
-  "//": "TypeScript batches 1 and 2 (owner, 16-17 Oct AEDT; docs/cores/tasks/typescript-plan-20261016.md): the website's server pieces (netlify/), the Studio engine (studio/*.cts) and the tools (tools/), run by Node as they are (.mts, .cts). Node's own module rules, imports name the .mts or .cts. The light check: not strict yet. tests/run.mjs 'types'.",
+  "//": "TypeScript batches 1 and 2 (owner, 16-17 Oct AEDT; docs/cores/tasks/typescript-plan-20261016.md): the website's server pieces (netlify/), the Studio engine (studio/*.cts) and the tools (tools/), run by Node as they are (.mts, .cts). Node's own module rules, imports name the .mts or .cts. The light check: not strict yet. tests/run.mts 'types'.",
   "compilerOptions": {
     "module": "nodenext", "moduleResolution": "nodenext", "allowImportingTsExtensions": true, "noEmit": true,
     "strict": false, "noImplicitAny": false, "noImplicitThis": true, "checkJs": false, "types": ["node"], "typeRoots": ["./node_modules/@types"],

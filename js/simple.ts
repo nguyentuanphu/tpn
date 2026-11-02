@@ -288,7 +288,8 @@ export function createSimple(G) {
       // games and stories open straight over this screen (it stays behind them); a place flies there in the valley
       if (s.kind === 'game') { launched = Date.now(); opened = false; starsBefore = totalStars(); Promise.resolve(G.playGame(i, s.key, 'simple')).finally(() => { if (opened || gameOpen()) opened = true; settle(); }); }
       else if (s.kind === 'tale') { const t = (G.TALES || []).find(x => x.id === s.key); if (!t) { busy = false; return; } launched = Date.now(); opened = false; starsBefore = totalStars(); G.readTaleNow(h, t); }
-      else { const pl = G.PLACES[+s.key]; back = false; leave(); setTimeout(() => G.travelTo(h, pl.x, pl.z), 50); }
+      // (v1.07 startup) opened before the valley was built (js/main.ts simpleFirst): a place waits for it, with the progress bar
+      else { const pl = G.PLACES[+s.key]; back = false; Promise.resolve(G.untilValley?.()).then(() => { const h2 = hero(); leave(); setTimeout(() => G.travelTo(h2, pl.x, pl.z), 50); }); }
     }, wait);
   }
   // open one category's road (from its card, from Discover, or from the checks), from its start, and say its name
@@ -354,7 +355,7 @@ export function createSimple(G) {
       // child is back where they were (owner, 24 Oct AEDT: a new tab started the whole game again from the Home Screen app)
       const home = m.querySelector('.sp-home');
       home.onclick = () => { if (busy) return; SFX.tap(); import('./website.js').then(w => { w.openWebsite(home); }).catch(error => { window.svModuleGone?.(error); }); };
-      m.querySelector('.sp-valley').onclick = () => { if (busy) return; SFX.tap(); choose('valley'); leave(); say('Off you go! Explore the valley.', 'Đi nào! Khám phá thung lũng thôi.'); };
+      m.querySelector('.sp-valley').onclick = () => { if (busy) return; SFX.tap(); busy = true; Promise.resolve(G.untilValley?.()).then(() => { busy = false; choose('valley'); leave(); say('Off you go! Explore the valley.', 'Đi nào! Khám phá thung lũng thôi.'); }); };
       holdButton(m.querySelector('.sp-grown'), () => openGrownups(() => draw()));
       addEventListener('resize', draw);
       if (wideQ && wideQ.addEventListener) wideQ.addEventListener('change', draw);

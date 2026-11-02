@@ -1,5 +1,5 @@
 // (r89, owner 23 Oct AEDT: "Implement the real floating website") the family website at /home, made from the reviewed
-// design (docs/website-review-20261023/prototype.html, itself made by that folder's sync-website.mjs from the release's
+// design (docs/website-review-20261023/prototype.html, itself made by that folder's sync-website.mts from the release's
 // own game files). The review page's demo controls (the Website / Welcome / In game switcher, the drawn game stage and its
 // pretend Settings) are taken out; Play enters the real game, and inside the game (/home/?embed=1, js/website.ts) Close,
 // Back to game and Escape ask the game to close the floating view. Pictures move out of the page into home/assets/

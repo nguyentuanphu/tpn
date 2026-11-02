@@ -44,7 +44,10 @@ register({
       <div class="wolf-talk"><div class="wolf-clock"></div><b class="wolf-said"></b></div><div class="wolf-btns"></div>`);
     api.stage.appendChild(w);
     const kid = w.querySelector('.wolf-kid'), wolf = w.querySelector('.wolf-w'), said = w.querySelector('.wolf-said'), clock = w.querySelector('.wolf-clock'), btns = w.querySelector('.wolf-btns'), steps = [...w.querySelectorAll('.wolf-steps i')];
-    let pos = 0, caught = 0, dinnerAt = api.little ? 99 : Math.floor(api.talent ? rand(3, 8) : rand(5, 10));
+    // (v1.07 rules audit) under-5s get Dinner time too (it was 99, past the 12 steps, so it never came although the
+    // intro and the guide promise it); they always have time to run home (allow below)
+    const dinnerStep = () => Math.floor(api.talent ? rand(3, 8) : rand(5, 10));
+    let pos = 0, caught = 0, dinnerAt = dinnerStep();
     const place = () => { kid.style.left = `calc(${6 + pos / N * 78}% - 20px)`; steps.forEach((s, k) => s.classList.toggle('on', k < pos)); };
     let planned: HTMLElement | null = null;
     api.plan(() => planned?.isConnected ? planned : null, { maxActions: N * 4 + 12 });
@@ -67,7 +70,7 @@ register({
           return api.win({ title: T(`Safe at home, ${name}! You escaped Mr Wolf!`, `${name} về nhà an toàn rồi! Thoát được ông Sói!`) }); }
         caught++; wolf.classList.add('hug'); said.textContent = '🤗';
         api.say('Mr Wolf caught you... for a big hug! Let us play again.', 'Ông Sói bắt được con... để ôm một cái thật chặt! Mình chơi lại nhé.');
-        await wait(2200); wolf.classList.remove('hug'); pos = 0; place(); dinnerAt = Math.floor(rand(5, 10)); continue;
+        await wait(2200); wolf.classList.remove('hug'); pos = 0; place(); dinnerAt = dinnerStep(); continue;
       }
       const hr = Math.min(N - pos, 1 + Math.floor(Math.random() * (api.little ? 2 : api.level <= 1 ? 3 : 4)));
       clock.innerHTML = clockSVG(hr);
@@ -160,6 +163,10 @@ register({
 register({
   id: 'dragon', icon: '🐉', origin: 'vn', name: () => T('Dragon Snake to the Clouds', 'Rồng Rắn Lên Mây'),
   async run(api) {
+    // Talent: the doctor comes more often and faster
+    // (v1.07 levels) worked out and written before the chant starts, so the level is on the frame from the first moment
+    const need = api.little ? 4 : atLevel(api, [5, 6, 7, 8, 9]) + (api.talent ? 2 : 0), ms = api.little ? 4200 : atLevel(api, [3600, 3000, 2500, 2100, 1800]) - (api.talent ? 350 : 0);
+    mark(api, need, ms, api.little ? 1 : 2);
     // Part 1: learn the chant by answering the doctor
     const kids = ['🧒', '👧', '👦', '🧒', '👧', '👦'];
     const scene = el('div', 'dragon', `<div class="dr-doc">🧑‍⚕️<b></b></div><div class="dr-line">${kids.map((k, i) => `<span style="--i:${i}">${i === 0 ? '🐲' : k}</span>`).join('')}</div><div class="dr-say"></div><div class="dr-ans"></div>`);
@@ -185,9 +192,6 @@ register({
     }
     // Part 2: the doctor chases the tail. Tap the doctor to block him!
     ans.innerHTML = ''; docSay.textContent = ''; lineSay.textContent = '';
-    // Talent: the doctor comes more often and faster
-    const need = api.little ? 4 : atLevel(api, [5, 6, 7, 8, 9]) + (api.talent ? 2 : 0), ms = api.little ? 4200 : atLevel(api, [3600, 3000, 2500, 2100, 1800]) - (api.talent ? 350 : 0);
-    mark(api, need, ms);
     api.say('Here comes the doctor! Tap him to protect the tail of the dragon!', 'Thầy thuốc đuổi kìa! Chạm vào thầy thuốc để bảo vệ khúc đuôi nhé!');
     const doc = scene.querySelector('.dr-doc'); doc.classList.add('chase');
     let blocked = 0; api.dots(need, 0);

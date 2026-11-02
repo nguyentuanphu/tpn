@@ -6,7 +6,9 @@ import { WATERS, WORLD, RELIEF } from '../js/content/map.js';
 import { fbm } from '../js/util.js';
 import { clamp, lerp, smooth, dist2 } from '../js/core/geo.js';
 const old = fs.readFileSync(new URL('./fixtures/r86-height-prefix.txt', import.meta.url), 'utf8');
-const current = fs.readFileSync(new URL('../js/world.ts', import.meta.url), 'utf8');
+// (v1.07) js/world.ts is split into js/world/*.ts (pure moves): heightAt lives in js/world/ground.ts now
+const current = ['../js/world.ts', ...fs.readdirSync(new URL('../js/world/', import.meta.url)).filter(f => f.endsWith('.ts')).sort().map(f => '../js/world/' + f)]
+  .map(f => fs.readFileSync(new URL(f, import.meta.url), 'utf8')).join('\n');
 function probe(source: string): (x: number, z: number) => number {
   const start = source.indexOf('export function heightAt('), end = source.indexOf('// The Dawn Plateau', start);
   if (start < 0 || end < 0) throw Error('Terrain source not found');

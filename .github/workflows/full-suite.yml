@@ -1,5 +1,5 @@
 # The full suite on GitHub (owner, 13 Oct AEDT: "plan it on top of today's method"; brief docs/cores/tasks/github-suite.md).
-# On a pull request into main (and by hand): the checks are split over 8 of GitHub's machines (tests/suite.mjs --shard),
+# On a pull request into main (and by hand): the checks are split over 8 of GitHub's machines (tests/suite.mts --shard),
 # one at a time on each (no overload); a last job joins the results, writes one summary on the pull request, marks it
 # "Full suite", and keeps the refreshed code map (tests/check-map.json, tests/check-times.json) as an artifact for Release
 # to commit. The speed checks (perf, startup, battery) are not run here: GitHub's machines are shared, so the Release chat
@@ -81,7 +81,7 @@ jobs:
         env:
           MANAGEMENT_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/management_ci_test
           MANAGEMENT_TEST_RESULT_PATH: postgres-evidence.json
-        run: node tests/management/postgres-integration.mjs
+        run: node tests/management/postgres-integration.mts
       - name: Record SQL result for the full-suite summary
         if: always()
         env:
@@ -129,12 +129,12 @@ jobs:
       - name: Start local synthetic test services
         run: |
           npm ci --prefix tests/services --no-audit --no-fund
-          node tests/services/start.cjs > /tmp/sv-test-services.log 2>&1 &
-          node tests/services/wait.cjs
+          node tests/services/start.cts > /tmp/sv-test-services.log 2>&1 &
+          node tests/services/wait.cts
       - name: Run this machine's share
         env:
           SV_SEED: ${{ github.run_id }}
-        run: cd tests && SV_URL=http://localhost:8765/ node suite.mjs ${{ (inputs.all || github.head_ref == 'work/v1.02-fruit-parade') && '--all' || '' }} ${{ inputs.only && format('--only {0}', inputs.only) || '' }} --shard ${{ matrix.k }}/8 --no-solo --jobs 1
+        run: cd tests && SV_URL=http://localhost:8765/ node suite.mts ${{ (inputs.all || github.head_ref == 'work/v1.02-fruit-parade') && '--all' || '' }} ${{ inputs.only && format('--only {0}', inputs.only) || '' }} --shard ${{ matrix.k }}/8 --no-solo --jobs 1
       - name: Keep the results
         if: always()
         run: |
@@ -178,7 +178,7 @@ jobs:
           path: tests/shards
       - name: Join the results
         id: join
-        run: cd tests && node suite.mjs --collect shards ${{ inputs.only && format('--only {0}', inputs.only) || '' }}; s=$?; cat out/suite-summary.md >> "$GITHUB_STEP_SUMMARY"; exit $s
+        run: cd tests && node suite.mts --collect shards ${{ inputs.only && format('--only {0}', inputs.only) || '' }}; s=$?; cat out/suite-summary.md >> "$GITHUB_STEP_SUMMARY"; exit $s
       - uses: actions/upload-artifact@v4
         if: always()
         with:

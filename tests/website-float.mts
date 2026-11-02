@@ -9,7 +9,7 @@
 // 5. The goal row: on every layout it sits clear of the player card, the buttons under it, the companion row and the map,
 //    and on phones it sits higher than before (the space the Home button left), with Go and the goal text still shown.
 import type { Browser, Page, Frame } from 'playwright';
-import { open, clear } from './harness.mjs';
+import { open, clear } from './harness.mts';
 
 type Box = { x: number; y: number; w: number; h: number };
 

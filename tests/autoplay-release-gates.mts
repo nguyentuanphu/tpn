@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict';import type {Browser} from 'playwright';import {openAllGamesFixture,clear,noWelcome} from './harness.mjs';
+import assert from 'node:assert/strict';import type {Browser} from 'playwright';import {openAllGamesFixture,clear,noWelcome} from './harness.mts';
 export async function autoplayReleaseGatesCheck(browser:Browser){
  const P=await openAllGamesFixture(browser,{w:1000,h:820,settings:{voice:false,sound:false,autoPack:false,online:false,countPlayers:false},route:async ctx=>{await ctx.route('**/*',r=>{const q=r.request();if(!['GET','HEAD'].includes(q.method()))return r.fulfill({json:{ok:true,id:'synthetic-report'}});if(!/^https?:\/\/(localhost|127\.0\.0\.1)(:|\/)/.test(q.url()))return r.abort();return r.continue();});}});
  try{await clear(P.page);await noWelcome(P.page);

@@ -1,7 +1,7 @@
 // Inventory actual rendered positions. Reports suspicions; never relocates or alters family/Studio edits.
 import fs from'node:fs/promises';
 import path from'node:path';
-import {launch,open,clear,noWelcome}from'./harness.mjs';
+import {launch,open,clear,noWelcome}from'./harness.mts';
 const phase=process.argv.includes('--baseline')?'baseline':'after';
 const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'docs/world-placement-audit-20261027');await fs.mkdir(out,{recursive:true});
 const browser=await launch();

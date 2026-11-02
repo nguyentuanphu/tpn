@@ -50,11 +50,13 @@ export async function playSnakes(api:Api){
   board.insertAdjacentHTML('beforeend',routes(s.gentle));
   roster.replaceChildren();names.forEach((name,seat)=>{const e=dom('span',seat===s.turn?'on':'',`${seat+1} · ${name}: ${s.positions[seat]}/25`);e.style.setProperty('--seat',COLOURS[seat]);roster.append(e);});
   if(exact&&!told&&!s.complete&&s.positions[mine]>=19){told=true;api.show('Land exactly on 25 to finish!','Phải đi đúng ô 25 mới về đích!');}
-  status.textContent=s.complete?T('You reached the top!','Con về đích rồi!'):s.die?T(`Rolled ${s.die}. ${names[s.turn]}: tap Roll.`,`Gieo được ${s.die}. ${names[s.turn]}: bấm Gieo.`):T(`${names[s.turn]}: tap Roll.`,`${names[s.turn]}: bấm Gieo.`);
+  // (v1.07 rules audit) in the classic game the first piece home wins: name that player when it is not this child
+  const other=s.complete&&!s.gentle&&s.winner!==null&&s.winner!==mine,endEn=other?`${names[s.winner]} reached the top first!`:'You reached the top!',endVi=other?`${names[s.winner]} về đích trước!`:'Con về đích rồi!';
+  status.textContent=s.complete?T(endEn,endVi):s.die?T(`Rolled ${s.die}. ${names[s.turn]}: tap Roll.`,`Gieo được ${s.die}. ${names[s.turn]}: bấm Gieo.`):T(`${names[s.turn]}: tap Roll.`,`${names[s.turn]}: bấm Gieo.`);
   roll.disabled=rolling||s.complete||session.waiting||session.busy||!controlsArcadeTurn(s.turn,mine,session.online,helper.checked);
   // a new roll tumbles on the die before the counter moves on (js/games/reveal.ts)
   shownRolls=s.rolls;roll.innerHTML=(s.die?dieFace(s.die):pic('🎲'))+' '+T('Roll','Gieo')+(s.die?' · '+s.die:'');api.dots(seats,s.positions.filter(p=>p===25).length);
-  if(s.complete&&!won){won=true;api.right();void api.win({title:T('You reached the top!','Con về đích rồi!'),titleVi:'Con về đích rồi!'}).then(finish);return;}
+  if(s.complete&&!won){won=true;api.right();void api.win({title:T(endEn,endVi),titleVi:endVi}).then(finish);return;}
   if(!rolling&&!session.online&&helper.checked&&s.turn!==mine&&!s.complete){const index=session.core!.index;timer=setTimeout(()=>{if(!dead&&index===session.core?.index)session.submit(0);},650);}
  };
  api.stage.dataset.lv=[seats,exact?'exact':''].join(',');

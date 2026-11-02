@@ -38,7 +38,7 @@ Run from the repository root with a Node version supporting native type strippin
 
 ```sh
 MANAGEMENT_TEST_DATABASE_URL=postgresql://agent@127.0.0.1:55432/sparkle_management_test \
-  node tests/management/postgres-integration.mjs
+  node tests/management/postgres-integration.mts
 ```
 
 Change `agent` to the actual unprivileged database user when needed. This is a
@@ -52,7 +52,7 @@ cases and server version. An in-memory test is useful separately but does not
 replace these SQL concurrency/rollback checks.
 
 Coordinate with the repository suite: do not run broad suites or browser runs in
-parallel with `tests/suite.mjs`. The database service itself can remain running
+parallel with `tests/suite.mts`. The database service itself can remain running
 for later development. To stop only this synthetic cluster:
 
 ```sh

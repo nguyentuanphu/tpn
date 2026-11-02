@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';import fs from 'node:fs/promises';import type {Browser} from 'playwright';
-import {open,clear,noWelcome} from './harness.mjs';
+import {open,clear,noWelcome} from './harness.mts';
 export async function goatBrowserCheck(browser:Browser){
  const P=await open(browser,{w:390,h:844,touch:true,settings:{voice:false,sound:false,autoPack:false,online:false,countPlayers:false}});
  try{await clear(P.page);await noWelcome(P.page);await fs.mkdir('out/goat-circle',{recursive:true});

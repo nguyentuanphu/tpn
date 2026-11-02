@@ -256,13 +256,15 @@ export function sendLive(on, G) {
 }
 // (Analytics & Infra, 11 Oct, owner: #36 slow start) each start's timings, so the real phones' and tablets' start-up
 // shows in Studio's Analytics: [ms to the game's code, ms to a built valley, ms to its first picture, 1 when served from
-// the device's saved copy, the slowest building step's name]; at most 6 a day, nothing when Analytics is off
+// the device's saved copy, the slowest building step's name, (v1.07) ms from the page opening until a child could first
+// play (the Simple screen up or the valley session started; 0: nobody started within 2 minutes), ms the child waited
+// after pressing Go]; at most 6 a day, nothing when Analytics is off
 function recordStart(G, tries = 0) {
   const bt = G && G.bootTimes;
-  if (!bt || bt.shaders == null) { if (tries < 240) setTimeout(() => recordStart(G, tries + 1), 500); return; }
+  if (!bt || bt.shaders == null || (G.playTimes?.at == null && tries < 240)) { if (tries < 240) setTimeout(() => recordStart(G, tries + 1), 500); return; }
   const steps = Object.entries<number>(bt).filter(([k]) => k !== 'start').sort((a, b) => a[1] - b[1]);
   let slow = '', most = -1; steps.forEach(([k, v], i) => { const d = v - (i ? steps[i - 1][1] : 0); if (d > most) { most = d; slow = k; } });
-  const row = [bt.start, bt.start + (bt.ready || 0), bt.start + bt.shaders, warmStart ? 1 : 0, /^[a-z]{1,16}$/.test(slow) ? slow : ''].map(v => typeof v === 'number' ? Math.round(v) : v);
+  const row = [bt.start, bt.start + (bt.ready || 0), bt.start + bt.shaders, warmStart ? 1 : 0, /^[a-z]{1,16}$/.test(slow) ? slow : '', G.playTimes?.at ?? 0, G.playTimes?.waited ?? 0].map(v => typeof v === 'number' ? Math.round(v) : v);
   bump(d => { d.st = (d.st || []).concat([row]).slice(-6); });
 }
 // (#355, owner 17 Oct AEDT: "the game restarts itself or just goes straight to a white screen") a small note kept on the
@@ -274,15 +276,18 @@ const ALIVE = 'sv2_alive', RELOAD = 'sv2_reload';
 const whereNow = G => { const open = document.querySelector('.theatre') ? 'story' : (document.querySelector('.modal:not(.out)')?.className.split(' ').find(c => c !== 'modal') || '');
   return `${String((G && G.regionOf && G.regionOf[0]) || '?').slice(0, 24)}${open ? ' ' + open.slice(0, 24) : ''}`; };
 const heapMb = () => { const m = performance.memory; return m ? Math.round(m.usedJSHeapSize / 1048576) : '?'; };
-export const noteReload = (why, G) => { try { localStorage.setItem(RELOAD, JSON.stringify({ why, w: whereNow(G), mb: heapMb(), b: BUILD })); } catch (e) { } };
+// (#355, v1.07) an iPhone has no performance.memory, so its notes said "? MB". What every browser can say: how long this
+// page has been open (minutes) and how many 3D shapes and pictures the graphics hold (a slow climb points at a leak)
+const extra = G => { const m = G && G.renderer && G.renderer.info && G.renderer.info.memory; return { min: Math.round(performance.now() / 60000), g: m ? m.geometries + m.textures : null }; };
+export const noteReload = (why, G) => { try { localStorage.setItem(RELOAD, JSON.stringify({ why, w: whereNow(G), mb: heapMb(), ...extra(G), b: BUILD })); } catch (e) { } };
 function watchEnds(G) {
   const read = k => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); localStorage.removeItem(k); return v; } catch (e) { return null; } };
-  const said = (what, n) => noteProblem('error', `${what} in ${n.w || '?'}, ${n.mb ?? '?'} MB, ${n.b || '?'}`.replace(/[^\w .:/()'#,@-]/g, ' ').slice(0, 140));
+  const said = (what, n) => noteProblem('error', `${what} in ${n.w || '?'}, ${n.mb ?? '?'} MB${typeof n.min === 'number' ? `, ${n.min} min` : ''}${typeof n.g === 'number' ? `, ${n.g} 3D` : ''}, ${n.b || '?'}`.replace(/[^\w .:/()'#,@-]/g, ' ').slice(0, 140));
   const re = read(RELOAD), alive = read(ALIVE);
   if (re) said('reloaded: ' + String(re.why || '').slice(0, 30), re); else if (alive) said('ended by the browser while playing', alive);
   const clear = () => { try { localStorage.removeItem(ALIVE); } catch (e) { } };
   const mark = () => { if (document.visibilityState !== 'visible' || !(G && G.heroes && G.heroes.length)) return clear();
-    try { localStorage.setItem(ALIVE, JSON.stringify({ w: whereNow(G), mb: heapMb(), b: BUILD })); } catch (e) { } };
+    try { localStorage.setItem(ALIVE, JSON.stringify({ w: whereNow(G), mb: heapMb(), ...extra(G), b: BUILD })); } catch (e) { } };
   setInterval(mark, 5000); mark();
   addEventListener('pagehide', clear); document.addEventListener('visibilitychange', mark);
 }

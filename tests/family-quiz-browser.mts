@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import type{Browser,Page}from 'playwright';
 import type{Msg}from '../types/net.js';
-import{open,clear,noWelcome}from './harness.mjs';
+import{open,clear,noWelcome}from './harness.mts';
 const Q={q:['Which colour is our family kite?','Diều của nhà mình màu gì?'],pic:'❓',answers:[['Pink','Hồng'],['Blue','Xanh dương']],right:1};
 // Computed opacity can still read1 before CSS fadein attaches on the next frame.
 // Settle the actual finite modal animation, rather than sampling that initial value.

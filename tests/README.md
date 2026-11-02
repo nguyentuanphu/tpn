@@ -2,12 +2,14 @@
 
 1. In the repo folder: `npm ci` for the server dependencies, then `python3 -m http.server 8765`
 2. Here: `npm install` (Playwright; in the cloud sandbox Chromium is already in `/opt/pw-browsers`), then:
-   - **a change:** `node suite.mjs --changed` (only the checks for what changed since main; `--list` shows them and why)
-   - **a release, before "yes, deploy":** `node suite.mjs` (all checks, 3 at a time, speed checks alone; refreshes `check-map.json`
+   - **a change:** `node suite.mts --changed` (only the checks for what changed since main; `--list` shows them and why)
+   - **a release, before "yes, deploy":** `node suite.mts` (all checks, 3 at a time, speed checks alone; refreshes `check-map.json`
      and `check-times.json`: commit them). `--all`: `reading`, `films`, `voicearea` in full instead of a sample. `--jobs n`, `--base ref`.
-   - one check by hand: `node run.mjs <check …>` (owner, 13 Oct AEDT: these rules are in CLAUDE.md)
-   - only some checks: `node run.mjs games features`
-   - re-record the UI structure (only when the owner asked for a UI change): `node run.mjs --update-contract`
+   - one check by hand: `node run.mts <check …>` (owner, 13 Oct AEDT: these rules are in CLAUDE.md)
+   - only some checks: `node run.mts games features`
+   - re-record the UI structure (only when the owner asked for a UI change): `node run.mts --update-contract`
+   - where the checks are: `checks/` (one file per group, shared helpers in `checks/shared.mts`); a new check goes at the end of
+     `run.mts`, see `checks/README.md` (v1.07, 2 Nov 2026 AEDT)
 3. Screenshots go to `out/` (not committed).
 
 **Multiplayer check:** it needs a PeerJS server on this machine (the public one is not reachable from the test machine):
@@ -29,6 +31,6 @@ Pinned repair environment: `npm ci` in tests, then `npx playwright install chrom
 All online synthetic services can be started reproducibly from tests:
 ```
 npm ci --prefix services --no-audit --no-fund
-node services/start.cjs
+node services/start.cts
 ```
-In a second terminal run `node services/wait.cjs`, then the suite. These services bind only loopback ports9000/9001 and use synthetic player data. Keep them running for online checks. GitHub Full suite provisions these services for every shard; missing services must remain visible as skips, never substantive passes.
+In a second terminal run `node services/wait.cts`, then the suite. These services bind only loopback ports9000/9001 and use synthetic player data. Keep them running for online checks. GitHub Full suite provisions these services for every shard; missing services must remain visible as skips, never substantive passes.

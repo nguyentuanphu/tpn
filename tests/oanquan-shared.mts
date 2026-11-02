@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {oaqStart,oaqCommand,oaqChoose,oaqRange} from '../js/games/oanquan-core.js';
-import {sharedRoom,flushRoom} from './shared-board-room.mjs';
+import {sharedRoom,flushRoom} from './shared-board-room.mts';
 const total=(s:{seeds:number[];big:boolean[];score:number[]})=>s.seeds.reduce((a,b)=>a+b,0)+10*s.big.filter(Boolean).length+s.score[0]+s.score[1];
 test('shared Ô Ăn Quan preserves all70 seeds through sowing, borrowing and final repayment',()=>{
  for(const gentle of[true,false]){

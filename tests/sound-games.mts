@@ -1,5 +1,5 @@
 import type { Browser } from 'playwright';
-import { open, clear, noWelcome } from './harness.mjs';
+import { open, clear, noWelcome } from './harness.mts';
 declare global { interface Window { __r87AudioEdges?: WeakMap<AudioNode, AudioNode[]> } }
 export async function soundGamesCheck(browser: Browser): Promise<string> {
   let release: () => void;

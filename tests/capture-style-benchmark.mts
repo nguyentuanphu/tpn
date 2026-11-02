@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {stripTypeScriptTypes} from 'node:module';
-import {launch} from './harness.mjs';
+import {launch} from './harness.mts';
 
 const original=stripTypeScriptTypes(execFileSync('git',['show','3e07f2077:js/screencapture.ts'],{encoding:'utf8'}));
 const browser=await launch();

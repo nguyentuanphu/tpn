@@ -1,5 +1,5 @@
 {
-  "source": "73c52d449595932eb541770e7806e3c82df941f4",
+  "source": "380ed908b79b94ac32f83865af7d87758e5932d0",
   "files": [
     {
       "file": "content/custom.json",
@@ -19,7 +19,7 @@
     },
     {
       "file": "css/style.css",
-      "hash": "1499416d53ff8259e514f8f26ef627595d5b10cd"
+      "hash": "8a0fa4207a9041c5cc9f19731010d0f8bba2e254"
     },
     {
       "file": "fonts/Baloo2-latin-600.woff2",
@@ -215,31 +215,67 @@
     },
     {
       "file": "index.html",
-      "hash": "b3e6c8c0ab35f31d41399f96850dd78830615542"
+      "hash": "424767bd815d7fa7e964e2315c56b93df73e1b0e"
     },
     {
-      "file": "js/ads.js",
-      "hash": "d21f86597a3748f6dd4fbc5e4fb03fe98010e8be"
+      "file": "js/ads.ts",
+      "hash": "df1e52128a49bb32d6cdd030c00d2844dfbf47ee"
     },
     {
       "file": "js/adventure.ts",
       "hash": "defb289ba8579bdf2069f0c18c04489337dc7ec7"
     },
     {
-      "file": "js/animalhomes.js",
+      "file": "js/animalhomes.ts",
       "hash": "b98f2107814a7000d8f83c5f6cd36ae6334aa31b"
     },
     {
-      "file": "js/animals.js",
-      "hash": "e0e866e655e103f1f42d7dd64ab67964778ada1d"
+      "file": "js/animals.ts",
+      "hash": "aee2eac8ba79aa689bfecac5c95c1e972ac51b20"
     },
     {
       "file": "js/art.ts",
-      "hash": "be77c51e8fadf30e4e50827b05aab810dabee716"
+      "hash": "deafdb4acc57671081f3da212c63bed54b7645db"
     },
     {
-      "file": "js/asia.js",
-      "hash": "e15a4239c3d16b1923fa66b93dc0e6d159cbfff0"
+      "file": "js/art/howto-tales.ts",
+      "hash": "38a3d23156e1284d7c407d18533644c6d2ba0750"
+    },
+    {
+      "file": "js/art/kit.ts",
+      "hash": "d5b236f04a136d3b89564f0f0e0ca1e3d85a623c"
+    },
+    {
+      "file": "js/art/learning.ts",
+      "hash": "eb8a82c05638cbf6ea34491c855839638c6d740a"
+    },
+    {
+      "file": "js/art/lookup.ts",
+      "hash": "a8282b37592cb314b78d94d6ddcf60f0d361eaac"
+    },
+    {
+      "file": "js/art/pad-and-games.ts",
+      "hash": "06226728539136b24fe6773b9adcfdf9a743ee6f"
+    },
+    {
+      "file": "js/art/people-food.ts",
+      "hash": "64358a9c445a5bd98d63518605d8324a4f36f3fb"
+    },
+    {
+      "file": "js/art/r90-audits.ts",
+      "hash": "f86b543d99472cfa6bf997e74b99fa409cea5bbc"
+    },
+    {
+      "file": "js/art/round30.ts",
+      "hash": "dcdab45fac905e591554f609e467ff60f4e922bc"
+    },
+    {
+      "file": "js/art/things-money.ts",
+      "hash": "5629011816528d8adc9883717a34914cba56bc1a"
+    },
+    {
+      "file": "js/asia.ts",
+      "hash": "853ab8f1223f307ae35d866388481ce1bc8ec783"
     },
     {
       "file": "js/audio.ts",
@@ -247,22 +283,22 @@
     },
     {
       "file": "js/autoplay.ts",
-      "hash": "67938a1e08caad5cea74823fe25081e2564186a5"
+      "hash": "cad313e1da6848d65b9920205a9d4a5b56e63e30"
     },
     {
       "file": "js/avatar.ts",
       "hash": "1fee6103f40e411f90ab52a9f8f08717b1ac1a66"
     },
     {
-      "file": "js/boxes.js",
+      "file": "js/boxes.ts",
       "hash": "c2b58492cd1c345fa02058f94377b78708cd2981"
     },
     {
       "file": "js/build.ts",
-      "hash": "cee337542cfe7756303b785824f8649582fd2a53"
+      "hash": "d0b8f0d5aefe149387dde62474189a8df421e802"
     },
     {
-      "file": "js/cartoon.js",
+      "file": "js/cartoon.ts",
       "hash": "d6972010e0a1291e0256decbc39bae47c96ca87b"
     },
     {
@@ -271,30 +307,30 @@
     },
     {
       "file": "js/chat.ts",
-      "hash": "bda008665c0baab368c6bbcffff4c64f0a8eed84"
+      "hash": "1ce42e1f21c23fbe45e411d2214a3be3493d5768"
     },
     {
-      "file": "js/chatter.js",
-      "hash": "44597703b66e640477229360378b011bf0262712"
+      "file": "js/chatter.ts",
+      "hash": "2eac5f5a70e447b123f636d7117b1626f2c58d87"
     },
     {
-      "file": "js/chipinfo.js",
-      "hash": "46a3847d24ac447bdbebe4f23e7aaae9b29c6496"
+      "file": "js/chipinfo.ts",
+      "hash": "70312ff1a69ebb9c994c075978a7151c25f4163b"
     },
     {
-      "file": "js/cities.js",
-      "hash": "866c425b375a824899ea842baae28572cbd57243"
+      "file": "js/cities.ts",
+      "hash": "e6fb6a0e518f419bb155ab81d09a7d2371b68543"
     },
     {
       "file": "js/claims.ts",
       "hash": "c07e5b553044d2662f193b248e66dd89e2d6cc28"
     },
     {
-      "file": "js/commands.js",
+      "file": "js/commands.ts",
       "hash": "57ad4090a9782ccf22df2f9fe63c73a9bb5d05a5"
     },
     {
-      "file": "js/companion.js",
+      "file": "js/companion.ts",
       "hash": "25d8e139794064c3dffd719cf089ac40f88a6d73"
     },
     {
@@ -302,23 +338,23 @@
       "hash": "da27f2e9392b827637e31b61288e63813074aecc"
     },
     {
-      "file": "js/content/adventures.js",
-      "hash": "67f605a38c15e5b023a57fc60fb8b831195b261d"
+      "file": "js/content/adventures.ts",
+      "hash": "cf07adf2406e334c7a609b19220b882191058059"
     },
     {
       "file": "js/content/autoplay.ts",
       "hash": "b91ff0fea915ef84de1a665ac946190eb55ea04d"
     },
     {
-      "file": "js/content/boxes.js",
-      "hash": "f8b0116718375e7ee7c117d74cc9b504cab166ac"
+      "file": "js/content/boxes.ts",
+      "hash": "542f6881209d04c8c8af96c12c3212fc61557baa"
     },
     {
       "file": "js/content/build-types.ts",
       "hash": "5a864797cee15baec192a5b2fa011a25865ecc44"
     },
     {
-      "file": "js/content/chapter2films.js",
+      "file": "js/content/chapter2films.ts",
       "hash": "9fb4a07805802509c894ef116e7c1de4504a84e0"
     },
     {
@@ -326,7 +362,7 @@
       "hash": "61056654b2b2428af0ca54e92ffe9c20847b48ac"
     },
     {
-      "file": "js/content/chapter2props.js",
+      "file": "js/content/chapter2props.ts",
       "hash": "9eceff40b821fe46b9134bf1b1eeb40a3401a1ca"
     },
     {
@@ -334,20 +370,20 @@
       "hash": "6f4ef6dcbbf29490c5144f562925af4859df9d5a"
     },
     {
-      "file": "js/content/chapter3films.js",
+      "file": "js/content/chapter3films.ts",
       "hash": "c4c42aebc480cc06f24c8baeeaaa5b04be5b81e5"
     },
     {
-      "file": "js/content/chapter3props.js",
+      "file": "js/content/chapter3props.ts",
       "hash": "c4c12486b265d4477efc5c93c7a1b34fcbf62e97"
     },
     {
-      "file": "js/content/chapter3sydney.js",
-      "hash": "b6e4c6da5121a5a335003cbc5fb3bcfd6fc9d6f5"
+      "file": "js/content/chapter3sydney.ts",
+      "hash": "774e4ff8dc593f9b8df9524280112c80575c5dca"
     },
     {
-      "file": "js/content/chapter3text.js",
-      "hash": "e70f84a22a5dd8b24d7bc8a31db1b0100c542360"
+      "file": "js/content/chapter3text.ts",
+      "hash": "55e71fa019e1d2b31d5f1440b6095ff69b8b350b"
     },
     {
       "file": "js/content/chapters.ts",
@@ -358,7 +394,7 @@
       "hash": "c3978b87fb8d7bbd42d05936a2f6fbbad6d45980"
     },
     {
-      "file": "js/content/devname.js",
+      "file": "js/content/devname.ts",
       "hash": "aa818fed9d08da3457a595f7b2b4841f3010bc21"
     },
     {
@@ -370,59 +406,59 @@
       "hash": "9e4f35269c4d88c95e2fed4b105e23b14ae14af2"
     },
     {
-      "file": "js/content/familymissions.js",
+      "file": "js/content/familymissions.ts",
       "hash": "f5b36b1b9b08d241e23ae699812f6fda31466e21"
     },
     {
-      "file": "js/content/festcal.js",
+      "file": "js/content/festcal.ts",
       "hash": "d518b303dda67dd2f9cca938b89e067b00d9da5c"
     },
     {
-      "file": "js/content/festhunt.js",
-      "hash": "9a5ec4f7c8b78ece06369bedfbdfda74a5fb1b0a"
+      "file": "js/content/festhunt.ts",
+      "hash": "1d5adc9199fb03d1f6a1948081af73c48063716b"
     },
     {
       "file": "js/content/festival-visibility.ts",
       "hash": "589168d3381171c7ed5fbdb9c335d18bb9f58c45"
     },
     {
-      "file": "js/content/film-looks.js",
+      "file": "js/content/film-looks.ts",
       "hash": "09b3f1e834fe63e1f5d38958c525cfab0c0c393b"
     },
     {
-      "file": "js/content/films.js",
-      "hash": "c96c4e526256e59aa55a1651e69acd711bb9f090"
+      "file": "js/content/films.ts",
+      "hash": "0f5ab8bab4de3894d43a78064cfaa2656df6bd0f"
     },
     {
-      "file": "js/content/films/baluoiriu.js",
+      "file": "js/content/films/baluoiriu.ts",
       "hash": "5718935a70df509f3f75f441cfe02b7395440154"
     },
     {
-      "file": "js/content/films/birdcolours.js",
+      "file": "js/content/films/birdcolours.ts",
       "hash": "d3e04fc3de4aad3b6c444f6dc92be9a8339459a3"
     },
     {
-      "file": "js/content/films/bluejackal.js",
+      "file": "js/content/films/bluejackal.ts",
       "hash": "c126e9e46c9c3b826200c3991a0f366303d39e55"
     },
     {
-      "file": "js/content/films/cachep.js",
+      "file": "js/content/films/cachep.ts",
       "hash": "bafc71120fe9ce2c7a2545f3c289a406b12f18b7"
     },
     {
-      "file": "js/content/films/caytre.js",
+      "file": "js/content/films/caytre.ts",
       "hash": "65d34be1f2efc477f0a45a718c5a55470ccdb346"
     },
     {
-      "file": "js/content/films/change.js",
+      "file": "js/content/films/change.ts",
       "hash": "c0219a0276b28db4bb9405ea607fe51876ddfdcc"
     },
     {
-      "file": "js/content/films/chucuoi.js",
-      "hash": "38eb7c7c312145a3ccf0bf357ec5ab58bdae0f60"
+      "file": "js/content/films/chucuoi.ts",
+      "hash": "755f942e45ea701a3bbf5fe7229485c321c4a0f5"
     },
     {
-      "file": "js/content/films/cockien.js",
+      "file": "js/content/films/cockien.ts",
       "hash": "97c9278b965f942733f9366d0bf6adbbee5d8b43"
     },
     {
@@ -430,103 +466,103 @@
       "hash": "ebadb4957ae49cf55298048dc4cf59f54a222ab3"
     },
     {
-      "file": "js/content/films/dotkangaroo.js",
+      "file": "js/content/films/dotkangaroo.ts",
       "hash": "bf072079a45b9c21874d110eaac45308371b13a6"
     },
     {
-      "file": "js/content/films/elephantmice.js",
+      "file": "js/content/films/elephantmice.ts",
       "hash": "671802278fac17f4b349a35c184cad2e8f0daf96"
     },
     {
-      "file": "js/content/films/emu.js",
+      "file": "js/content/films/emu.ts",
       "hash": "66136635d25e7477d1524b9e9af8c5b3a2e399a4"
     },
     {
-      "file": "js/content/films/ganesha.js",
+      "file": "js/content/films/ganesha.ts",
       "hash": "a1ebff0a91aca7d3f7ecf0c65cd9f348e591a7f0"
     },
     {
-      "file": "js/content/films/greatrace.js",
+      "file": "js/content/films/greatrace.ts",
       "hash": "c2ed4b452603179dfac4cf66a1fbcaf7ce4fc5f8"
     },
     {
-      "file": "js/content/films/kit.js",
-      "hash": "5ce237517b9b01f7c47b1b507ff1166817b70b41"
+      "file": "js/content/films/kit.ts",
+      "hash": "f59c0bdf9023f4e54e886f8b34aa07c72a2bd110"
     },
     {
-      "file": "js/content/films/kongrong.js",
+      "file": "js/content/films/kongrong.ts",
       "hash": "358c7c2f6d853780cb6eb3f4672446ad2a251446"
     },
     {
-      "file": "js/content/films/lionrabbit.js",
+      "file": "js/content/films/lionrabbit.ts",
       "hash": "2ba68b83e129191e0a17b09a76b3c961a2d450ee"
     },
     {
-      "file": "js/content/films/magicpudding.js",
+      "file": "js/content/films/magicpudding.ts",
       "hash": "c9f65d7cc966145ccd468e8da6291202fdb3ec10"
     },
     {
-      "file": "js/content/films/maliang.js",
+      "file": "js/content/films/maliang.ts",
       "hash": "9ea8296cf4c172b98f15e49a9a2a77252de5d424"
     },
     {
-      "file": "js/content/films/monkey.js",
+      "file": "js/content/films/monkey.ts",
       "hash": "12462e41c88ecc1a0583547944d95cc9b6fa42c4"
     },
     {
-      "file": "js/content/films/nhacmeo.js",
+      "file": "js/content/films/nhacmeo.ts",
       "hash": "0546baed0e2493adf0d6b93b15371e9a601256d9"
     },
     {
-      "file": "js/content/films/nian.js",
+      "file": "js/content/films/nian.ts",
       "hash": "1260aae792696f7b1e493013af0e595a8e3fa17e"
     },
     {
-      "file": "js/content/films/ongtao.js",
+      "file": "js/content/films/ongtao.ts",
       "hash": "a3f7d416032b87105d4d3a75e4dcbe947afc8e23"
     },
     {
-      "file": "js/content/films/quabau.js",
+      "file": "js/content/films/quabau.ts",
       "hash": "a317e9caa74f7557cafe22e7b9bb986b66f916d2"
     },
     {
-      "file": "js/content/films/rainbowserpent.js",
+      "file": "js/content/films/rainbowserpent.ts",
       "hash": "0af2988888aabcdfac0bab9fb64e549450532167"
     },
     {
-      "file": "js/content/films/rongtien.js",
+      "file": "js/content/films/rongtien.ts",
       "hash": "97d4970c25e7e7239317049377f693190b3b1bfe"
     },
     {
-      "file": "js/content/films/sodua.js",
+      "file": "js/content/films/sodua.ts",
       "hash": "da710ac691839bdc7a4e4ddb2ca54f38a314c1da"
     },
     {
-      "file": "js/content/films/sontinh.js",
+      "file": "js/content/films/sontinh.ts",
       "hash": "95687fceecab6142350823aacdf4d7641314629a"
     },
     {
-      "file": "js/content/films/tamcam.js",
+      "file": "js/content/films/tamcam.ts",
       "hash": "fbd82e91d3e55173c03876bba95030eb30cc7f97"
     },
     {
-      "file": "js/content/films/thachsanh.js",
+      "file": "js/content/films/thachsanh.ts",
       "hash": "22d6f7c180ea96a4dee470e40ddb0b961b5bec6d"
     },
     {
-      "file": "js/content/films/thayboi.js",
+      "file": "js/content/films/thayboi.ts",
       "hash": "c63712e1ee5a7b4b5b105b5c6830d72079cde853"
     },
     {
-      "file": "js/content/films/tiddalik.js",
+      "file": "js/content/films/tiddalik.ts",
       "hash": "9dcb3d8476eee243e10036e1860dbeb426b0987a"
     },
     {
-      "file": "js/content/films/vusua.js",
-      "hash": "7ae3a7dc82f12fa3a32029545b1c474b85f3215c"
+      "file": "js/content/films/vusua.ts",
+      "hash": "17591a57c9277b31021d85b2b93c78d983ea2a0a"
     },
     {
-      "file": "js/content/films/weaver.js",
+      "file": "js/content/films/weaver.ts",
       "hash": "429c29afc53eccb6f2dd1dd5ed1215d0413eba9e"
     },
     {
@@ -542,7 +578,7 @@
       "hash": "cdd09086c3c11009c154443cb0dfec4b963863d0"
     },
     {
-      "file": "js/content/hoilang.js",
+      "file": "js/content/hoilang.ts",
       "hash": "9ddd374ca3707a30d2febb993aa01546ba43ad13"
     },
     {
@@ -550,31 +586,31 @@
       "hash": "2b5597d61a7a76ca82380b8871f771b496bd07dd"
     },
     {
-      "file": "js/content/jobs.js",
+      "file": "js/content/jobs.ts",
       "hash": "a96188637a50f559e1416d658f44819b585cc15b"
     },
     {
       "file": "js/content/map.ts",
-      "hash": "8f1f590430ae65c19c68a617cf2c0585a32fa256"
+      "hash": "06ec07c714d4c28b77aa563349f73cd836e49038"
     },
     {
-      "file": "js/content/owllessons.js",
+      "file": "js/content/owllessons.ts",
       "hash": "cd5ee46905e42e5c1d4baf02b4b775add3bdc916"
     },
     {
-      "file": "js/content/parents.js",
+      "file": "js/content/parents.ts",
       "hash": "080bbadab8f045788fb5cf3cbf44947cca38a4a5"
     },
     {
-      "file": "js/content/reading.js",
-      "hash": "f4e6d8fc42bdbfd6c5f08b51716951414554b84a"
+      "file": "js/content/reading.ts",
+      "hash": "c57e33c14da6af2b86ecf3b43f67e5d4d831fd6f"
     },
     {
       "file": "js/content/releases.ts",
       "hash": "7d992f0f731e1fbe2ac2b7def63c4b254a73be84"
     },
     {
-      "file": "js/content/rules.js",
+      "file": "js/content/rules.ts",
       "hash": "b8322e23a209f823988bcdcc3025081995b96bae"
     },
     {
@@ -590,27 +626,27 @@
       "hash": "2335669aeb2d17a69cfb2155acf20b8dd71235fa"
     },
     {
-      "file": "js/content/shop.js",
-      "hash": "d53921cca5a11da9ef110fcdb877dbabdda14ac1"
+      "file": "js/content/shop.ts",
+      "hash": "66ea147a1c7b3fb9c766e63121b008440c07a97f"
     },
     {
-      "file": "js/content/songs.js",
+      "file": "js/content/songs.ts",
       "hash": "44e544046ad6f48954200a3fc0cf3dd05b7ac897"
     },
     {
-      "file": "js/content/stickers.js",
-      "hash": "6f735e97db394c7a237d9f01aa3f249421bdcb51"
+      "file": "js/content/stickers.ts",
+      "hash": "73b0f1e6e7e425f373c3dcd53341f57eabdda114"
     },
     {
       "file": "js/content/storyhelp.ts",
       "hash": "614886e718b2352edbc758d96397110e1d9f635e"
     },
     {
-      "file": "js/content/surprises.js",
-      "hash": "ab3c36aab83f1c0055b8fe6a0fb20b50b20c3825"
+      "file": "js/content/surprises.ts",
+      "hash": "91c44ccedba1349c7704e1a48e669121cd8b0430"
     },
     {
-      "file": "js/content/talefilms.js",
+      "file": "js/content/talefilms.ts",
       "hash": "d52dda28571164c5a6fa2b90f68aed4d68cc70a0"
     },
     {
@@ -618,8 +654,8 @@
       "hash": "cb8d693e6d45abb7c6d1884169f98f0b3fd26669"
     },
     {
-      "file": "js/content/tester.js",
-      "hash": "763283309dafa5171fa98b5cb1086a515cb20054"
+      "file": "js/content/tester.ts",
+      "hash": "ed523c28a9c183da14e602bb382e7156c8381af3"
     },
     {
       "file": "js/content/unlocks.ts",
@@ -630,12 +666,12 @@
       "hash": "63882817b56ac97b7c17681e5485a78266a87ca8"
     },
     {
-      "file": "js/content/yard.js",
+      "file": "js/content/yard.ts",
       "hash": "2b3b1b506f0413d017688f0713c847af0800b841"
     },
     {
-      "file": "js/coop.js",
-      "hash": "7a0f1bbc42f90154c7b342f5be559acb7c87909f"
+      "file": "js/coop.ts",
+      "hash": "58e14db2ef86a86e9f88902e7ac0c9f5db0c55c0"
     },
     {
       "file": "js/core/events.ts",
@@ -658,7 +694,7 @@
       "hash": "f440c2c02b51f5a73e32147974025ae46bca87ef"
     },
     {
-      "file": "js/credits.js",
+      "file": "js/credits.ts",
       "hash": "523b5b032cac76a4c9b24a661036f76eee637367"
     },
     {
@@ -666,24 +702,24 @@
       "hash": "ae0e5d7e117c26ffad9c1edd89b1e7a78c97cac6"
     },
     {
-      "file": "js/data.js",
+      "file": "js/data.ts",
       "hash": "469dcf712bc2827f49305918e0d602437fe0b753"
     },
     {
-      "file": "js/dayplan.js",
+      "file": "js/dayplan.ts",
       "hash": "f0249ffb5a441b63c11faf0f045d4ce321c94d4c"
     },
     {
-      "file": "js/dinh.js",
+      "file": "js/dinh.ts",
       "hash": "6aa99071e3cf966bd181fc0b7fa4d278138437d2"
     },
     {
-      "file": "js/emojiswap.js",
-      "hash": "3d46032979c8a5049461fab08ebe8798af5a91d0"
+      "file": "js/emojiswap.ts",
+      "hash": "f0779905f798fe8c4edd466fa422bce2bd99d17c"
     },
     {
-      "file": "js/explain.js",
-      "hash": "14a1f82036725bd86858cbe5c613bd619cea5113"
+      "file": "js/explain.ts",
+      "hash": "123c125905265b9da727647e9074ae23073ae178"
     },
     {
       "file": "js/extras.ts",
@@ -702,7 +738,7 @@
       "hash": "a315cf8e1e8d85f75e86ebe8eda47311c210ce2b"
     },
     {
-      "file": "js/familycards.js",
+      "file": "js/familycards.ts",
       "hash": "4836a971f13df1d886a0d3bdf5aeccc6012a39a5"
     },
     {
@@ -714,19 +750,19 @@
       "hash": "72102940484540362dcbd420c8b208fa9f68484b"
     },
     {
-      "file": "js/feel.js",
-      "hash": "dc54c41495223235744caa20202a210c90d6e645"
+      "file": "js/feel.ts",
+      "hash": "81b81c660e9d80f7e16cc3e121f4d4b2d1712556"
     },
     {
-      "file": "js/ferry.js",
-      "hash": "1ae9b75947e4050e41023d7b4493c1f3897e0b65"
+      "file": "js/ferry.ts",
+      "hash": "1c559d90e3afc4d04004ba3a601268c1d0622c58"
     },
     {
       "file": "js/festdecor.ts",
       "hash": "838b07fc4cccc9799a29b48a5a134ebb86c419d4"
     },
     {
-      "file": "js/festhunt.js",
+      "file": "js/festhunt.ts",
       "hash": "9959a6050c08b9e3607accfcd522bd8fa18921b6"
     },
     {
@@ -742,11 +778,11 @@
       "hash": "bf7cbe14e552f7cda33f53b83b816ac1ac4421be"
     },
     {
-      "file": "js/folkshow.js",
-      "hash": "f189c9424875de5ae79fc49fa8e92e2832aab468"
+      "file": "js/folkshow.ts",
+      "hash": "61ccefd482fa458e5580afe540d1ddbfc08f93ab"
     },
     {
-      "file": "js/fun.js",
+      "file": "js/fun.ts",
       "hash": "dabc902da0f69c37d697b93f50a21a5167838713"
     },
     {
@@ -755,7 +791,7 @@
     },
     {
       "file": "js/games/animals2.ts",
-      "hash": "6299aa84988a00a402fa03b703d54f9d54245450"
+      "hash": "50e2747eb6ccb87e34193a226d61b579605168d5"
     },
     {
       "file": "js/games/arcade-board.ts",
@@ -767,7 +803,7 @@
     },
     {
       "file": "js/games/art-pad.ts",
-      "hash": "ea09b9acbce7d80c834b43052f24dbfbee2f2eee"
+      "hash": "d818a440697658bcb5589c02fc0301ac319b9569"
     },
     {
       "file": "js/games/art-pending.ts",
@@ -775,15 +811,15 @@
     },
     {
       "file": "js/games/asia.ts",
-      "hash": "10e0556ddd1c4bae775e8b4d04c0a2c93dd2465c"
+      "hash": "171e91cb1ea7fa6ca028ee74cf705c26644cc3c8"
     },
     {
       "file": "js/games/bigthinkers.ts",
-      "hash": "1cbd0f5d81dc37c3584421cb40daa71613b76b51"
+      "hash": "6e022f80b95deb445e8a5d1ca1bdfc73f3b77bad"
     },
     {
       "file": "js/games/bigthinkers2.ts",
-      "hash": "23d53d1626c6a580b019a5560fad8084c7c3d5b6"
+      "hash": "448b33ffff2d7d511a1402fd517849cd4256afaa"
     },
     {
       "file": "js/games/board-agreement.ts",
@@ -791,7 +827,7 @@
     },
     {
       "file": "js/games/cacuangua-core.ts",
-      "hash": "5ae70836e0ef86614cc1c48ddf31389ef8a48b4a"
+      "hash": "b63a458d3c570f82095684ee6760a4a866cc41ec"
     },
     {
       "file": "js/games/cacuangua.ts",
@@ -803,7 +839,7 @@
     },
     {
       "file": "js/games/cities.ts",
-      "hash": "1d5603c2ded359d5a1a8e1605a2b407b0c43ac36"
+      "hash": "cf97f951683f171d241b4d12b6ff58890899d61d"
     },
     {
       "file": "js/games/crafts.ts",
@@ -811,15 +847,15 @@
     },
     {
       "file": "js/games/drawing.ts",
-      "hash": "198606ea78e1ea372fdf2a9862c8dfccf90ddbf3"
+      "hash": "1aa09888912fa3005223438c967b613da6554c47"
     },
     {
       "file": "js/games/drawing2.ts",
-      "hash": "63c113ae68729559de86b1fc795f39a64692ee87"
+      "hash": "5af4411792b2c76b2e1a732fb70389da1bf9b93f"
     },
     {
       "file": "js/games/drawshape.ts",
-      "hash": "e222966e4559bdcd211818196521715b4df101e9"
+      "hash": "b764504f3690e30a97063eb9da15c5cb84d0b019"
     },
     {
       "file": "js/games/familyquiz-core.ts",
@@ -831,7 +867,7 @@
     },
     {
       "file": "js/games/farmgames.ts",
-      "hash": "397cad720bd69e1ceebf95859fee3662202a58e5"
+      "hash": "4e77eab177aca6914ad78f86976a2ff9990f71c7"
     },
     {
       "file": "js/games/folk-court-rules.ts",
@@ -843,15 +879,15 @@
     },
     {
       "file": "js/games/folk.ts",
-      "hash": "82343ff0cb469e96f019ca059077a6ae7fa87d47"
+      "hash": "cf92cf8a3d48a63ee1e3b6c3c701db28ba5900ba"
     },
     {
       "file": "js/games/folk2.ts",
-      "hash": "c92aeacd2df6e12f3f7b7dc786df7ec2cedab7f9"
+      "hash": "73a44f20ce39dd95cf7b1a2ec636f1ce92f21a92"
     },
     {
       "file": "js/games/frame.ts",
-      "hash": "0759bef392bf5c1dafd8103b3837f8818c6ef24e"
+      "hash": "0f6f703e4847e529f3668d582b5d3175031bd5a2"
     },
     {
       "file": "js/games/fruitbar-engine.ts",
@@ -879,7 +915,7 @@
     },
     {
       "file": "js/games/fruitparade.ts",
-      "hash": "3a6eec4eb3766ec114c953b5d31dea299b35b078"
+      "hash": "68abc91348ba3324fdd713c01b33ece6af52941b"
     },
     {
       "file": "js/games/goat-art.ts",
@@ -891,7 +927,7 @@
     },
     {
       "file": "js/games/goat.ts",
-      "hash": "4c44b1ab33edf5a781bb4fae18fd294b38de8645"
+      "hash": "d0fd3059587311049835064c01c1978ca37ba53f"
     },
     {
       "file": "js/games/hocvui-meta.ts",
@@ -907,31 +943,31 @@
     },
     {
       "file": "js/games/learning.ts",
-      "hash": "ecd08635b8e6c2ab37d6c9cb58a52b190bf9bc35"
+      "hash": "f05c43532dae96cbf9eaa118cb1454f0d290c392"
     },
     {
       "file": "js/games/market.ts",
-      "hash": "d754b0045198dfaf74785bd8de2a96dadda586a7"
+      "hash": "3ce90e65ad24e225525fb23f03657910e3ee94e9"
     },
     {
       "file": "js/games/me2.ts",
-      "hash": "75a7970104e48024b32ff8fa07d8aaab1f6e6a2d"
+      "hash": "a704a501aec9d27b0302055678918ef32012b68b"
     },
     {
       "file": "js/games/money.ts",
-      "hash": "6f4c8b309e3064bd70c635864f8c6e28f6dfc3fd"
+      "hash": "999146fbcc4fa5cd3ee20d228713c262f7d82d9f"
     },
     {
       "file": "js/games/money2.ts",
-      "hash": "5cab451d443392a1b0fb813f079f3e5b16aceebc"
+      "hash": "af0845914c9e090f482942bc19254f5951c95830"
     },
     {
       "file": "js/games/moneylogic.ts",
-      "hash": "50544c1169134d829b8972432c6f4e6bc432dc46"
+      "hash": "9201f6b9a665904fff50560a3122e622fcb761aa"
     },
     {
       "file": "js/games/more.ts",
-      "hash": "25b1eed8f45f9ad12da74556a961f1dade38db91"
+      "hash": "e1d705ffde9315071bcb4dbfa33657fa9acdc8fe"
     },
     {
       "file": "js/games/multiplayer-foundations.ts",
@@ -939,19 +975,19 @@
     },
     {
       "file": "js/games/music.ts",
-      "hash": "94a53b08f2b1d829ee58dd9ea01c900c04e18672"
+      "hash": "4d36b8d4b5eca8fa0bc198b81c22378dda19e84f"
     },
     {
       "file": "js/games/music2.ts",
-      "hash": "428ed87ac4174ab90ffa8a5b8efa89d79c821e75"
+      "hash": "b2c225f6ba412637142822faf363b09f33fe00b7"
     },
     {
       "file": "js/games/nature2.ts",
-      "hash": "b1950caa46cefff377278f5a893d88b9cc538c96"
+      "hash": "af45cb88a14a2879fd2528cd53b913e8fd7742aa"
     },
     {
       "file": "js/games/numbers2.ts",
-      "hash": "53e7cbaea601a7c5e9bf3767ce84eb12aae73ccf"
+      "hash": "0a292998c80ffc282aa6404821f76d4d1841c9a8"
     },
     {
       "file": "js/games/oanquan-core.ts",
@@ -963,7 +999,7 @@
     },
     {
       "file": "js/games/outside.ts",
-      "hash": "287059d94acdeb01621f274c1f18be0b11138554"
+      "hash": "501e9770e9524179c151dfc20f0a2bc1d0c54c35"
     },
     {
       "file": "js/games/parade-engine.ts",
@@ -975,7 +1011,7 @@
     },
     {
       "file": "js/games/places2.ts",
-      "hash": "f7a1b28da818df35889a668a52577fe7c4a7ba9c"
+      "hash": "a696900a9231249cacdb7538704877f60030d29f"
     },
     {
       "file": "js/games/playwatch.ts",
@@ -983,11 +1019,11 @@
     },
     {
       "file": "js/games/reading.ts",
-      "hash": "3931d98afb37686d54621273810ba7791b198b36"
+      "hash": "acec841a9ad38c579b72b17e80d99692ce7ad9bd"
     },
     {
       "file": "js/games/reading2.ts",
-      "hash": "b4a3b0bd40133c21f6f0830e36b24cd1a5e9d60b"
+      "hash": "8c7aff75bc7140539fda5c0ddb8b2e002fa314c4"
     },
     {
       "file": "js/games/readingmenu.ts",
@@ -1003,11 +1039,11 @@
     },
     {
       "file": "js/games/science.ts",
-      "hash": "0b85697c99d7aff64796f2f08572b902d7cf7784"
+      "hash": "42472cbc34925202be814e26f2f189c3e99c166a"
     },
     {
       "file": "js/games/shapes2.ts",
-      "hash": "77963a0f2f4fa3bb0b746c0d7149f6785f761f46"
+      "hash": "7ae84fd53005cc94b6017d59dc46e8820894213d"
     },
     {
       "file": "js/games/shared-board-session.ts",
@@ -1019,7 +1055,7 @@
     },
     {
       "file": "js/games/snakes.ts",
-      "hash": "cb33361fc09239446f558d7dd27df486a2a8bd68"
+      "hash": "9d805bcb04a8ac3b86cbe2b8aabbc850cc0079bc"
     },
     {
       "file": "js/games/sparklefruitbar.ts",
@@ -1027,31 +1063,35 @@
     },
     {
       "file": "js/games/sparkleorchard.ts",
-      "hash": "b5c193d5696282905eb7c5d36f868a8466b721fc"
+      "hash": "4126ae8d5c6b5bd2c414b7e1d291397a9e287ec5"
     },
     {
       "file": "js/games/storyhelp.ts",
-      "hash": "f4fb8ea341b410ee4e0f70aeaa07eb0dfef9f86d"
+      "hash": "9a821031496b264b2d63dd770096fab125d4caf2"
     },
     {
       "file": "js/games/strategy.ts",
-      "hash": "fb966c6802b68dc084388817b9382225b16c6489"
+      "hash": "44ce1614a5d5609760777e34841a630dda1ea52d"
+    },
+    {
+      "file": "js/games/sudoku-core.ts",
+      "hash": "094bd73179f2b901ac1454738592abd084d91d23"
     },
     {
       "file": "js/games/talkgames.ts",
-      "hash": "317d93924cb5af16ddced1c03c79806f8e8c8a23"
+      "hash": "c4a0b5dc2a253efcf4128b45fc91be6e44ceac98"
     },
     {
       "file": "js/games/thinking.ts",
-      "hash": "f9c862695524c6c8070ef5ad678feee3bffe043b"
+      "hash": "465c51ccb3ad871b02529c72d8cc9cd110316b53"
     },
     {
       "file": "js/games/thinking2.ts",
-      "hash": "a9ef511e5cca9e2f6aae1dbe5174af9e03233846"
+      "hash": "9dd699825f9a2ff968e62d092396a9fafbe73c11"
     },
     {
       "file": "js/games/tiengviet.ts",
-      "hash": "6c1705441f6b87398988ed6c63115cd88261bb92"
+      "hash": "385dc3359d4e6f9401bc0bc9679525467d42423b"
     },
     {
       "file": "js/games/tienlen.ts",
@@ -1063,11 +1103,11 @@
     },
     {
       "file": "js/games/trongnu-rules.ts",
-      "hash": "adccba593647217689d6a723fe3ae332d5ba6dc4"
+      "hash": "786c092174c20434513986da27e7e433ef99b18c"
     },
     {
       "file": "js/games/trongnu.ts",
-      "hash": "f5e36351d780ba5167b5594a4114d69653dfb9c8"
+      "hash": "5187075dc8679b1717f0b117bdd204e6af178305"
     },
     {
       "file": "js/games/tug-core.ts",
@@ -1083,63 +1123,67 @@
     },
     {
       "file": "js/games/vietnam.ts",
-      "hash": "e1ddead092071fbc271cbbcb9b6b666828561806"
+      "hash": "1352f6c68b280b3d6cb16154d892a9a299d95460"
     },
     {
       "file": "js/games/vietnam2.ts",
-      "hash": "cbdf5f4a5b17d0dc46722b84bbd93af3cf30a775"
+      "hash": "aa2471ec7aa93bc5658c51ba6bf9511f5b3bef23"
     },
     {
       "file": "js/games/words2.ts",
-      "hash": "2135708c0977f5e763b9ccd1963884f278730c4d"
+      "hash": "cbe1f1cac077aae0a9e2511e9cf1eb895e1fca9f"
     },
     {
-      "file": "js/gather.js",
+      "file": "js/gather.ts",
       "hash": "c106db74f05012795ee023559994a1cf073d61e9"
     },
     {
-      "file": "js/gfx.js",
-      "hash": "bd18bf8775b7d53aa9a780e0566578faf30cf32d"
+      "file": "js/gfx.ts",
+      "hash": "9a9fa3074eac07d095502d1dba361c24766f1899"
     },
     {
-      "file": "js/handpad.js",
-      "hash": "79e522ce62311634830e91d516b0a40ae9338518"
+      "file": "js/gpu.ts",
+      "hash": "088b3cb8db1b82e1e74cf2a1b28ed252c450965f"
+    },
+    {
+      "file": "js/handpad.ts",
+      "hash": "0dfb233933881932a547d37ee712acb7a6e4907c"
     },
     {
       "file": "js/hanoi-pack.ts",
       "hash": "6e625615b7fcde379006da539390cc262cf9ced9"
     },
     {
-      "file": "js/hawkers.js",
-      "hash": "9836466613fa220b3d99ca2c15b9f764470482c0"
+      "file": "js/hawkers.ts",
+      "hash": "64db566cbfa3685d3c868b0f8e89018ab395061f"
     },
     {
       "file": "js/heritage.ts",
       "hash": "3ea9eb64c14753cf2c20d818bd5fad38db8b9325"
     },
     {
-      "file": "js/hoilang.js",
-      "hash": "799291f0a3aa4ab22be225f093574f9ba8bfa578"
+      "file": "js/hoilang.ts",
+      "hash": "46f5e89398880925435c866d7c938db23f47df7f"
     },
     {
       "file": "js/home-decor-models.ts",
       "hash": "80194de32b1f4c529bf99bcc9a7fb60a28f9fd3b"
     },
     {
-      "file": "js/homes.js",
-      "hash": "0cbe2c9a88368c9886c0194e2c1ba894f037be12"
+      "file": "js/homes.ts",
+      "hash": "e1b905e40e82776729aad317e99cc1c3b64baa54"
     },
     {
-      "file": "js/houses.js",
-      "hash": "f76c9777775c870446f9be01f175565e843776f6"
+      "file": "js/houses.ts",
+      "hash": "ad78df99c4cf85f9380c9f80a1a8b9d18205ac46"
     },
     {
       "file": "js/howto-data.ts",
-      "hash": "84d9c56e97ad0f6d08013d0d2042c649bae2bd8a"
+      "hash": "c408f9f6737182ef959dfe0b3cf2226df99b1a64"
     },
     {
       "file": "js/howto-data2.ts",
-      "hash": "4e3605923cff29763c70ceafa3963c77c9452227"
+      "hash": "0f49717d4074f8296710c5f1a34ffdb9cad3e68c"
     },
     {
       "file": "js/howto-player.ts",
@@ -1159,22 +1203,22 @@
     },
     {
       "file": "js/i18n.ts",
-      "hash": "f5b05505aabaa1e66d187fd2177d3bfaa942f40f"
+      "hash": "ca7eff2699ece8f8df2c616e2e1ec2e9c93c6a25"
     },
     {
-      "file": "js/icons.js",
+      "file": "js/icons.ts",
       "hash": "a99e6057be5ba11e67c94d0a698a793fd509d792"
     },
     {
-      "file": "js/input.js",
-      "hash": "36f2b30b3a266aba7db318e4399a41ebf7c0b65b"
+      "file": "js/input.ts",
+      "hash": "e7788f6057362dbaf969dbf42ace0cb7698f2827"
     },
     {
       "file": "js/install.ts",
       "hash": "fa381a4f27660d0c71776f18a6fa1c8848c0db94"
     },
     {
-      "file": "js/jobs.js",
+      "file": "js/jobs.ts",
       "hash": "b1994e6c0f0900546093c8cb7fe91e6c7ffaa465"
     },
     {
@@ -1182,12 +1226,12 @@
       "hash": "daec464206fb26190078928d0538757bb8865d86"
     },
     {
-      "file": "js/kidplay.js",
-      "hash": "6d7cce3095d5488b9e48fee5007d2430bf5c4281"
+      "file": "js/kidplay.ts",
+      "hash": "c2d12e1687c7be87b1092a7e6e2dbd45a8ec6bb1"
     },
     {
-      "file": "js/kite.js",
-      "hash": "feb17b3e1f278b9036bbc0e0e1fef02898967e3e"
+      "file": "js/kite.ts",
+      "hash": "06f6d49e198b799c1f7095d08c81aeeb641776c7"
     },
     {
       "file": "js/lanterns.ts",
@@ -1202,20 +1246,52 @@
       "hash": "82c72a4e6d51d5a2a7579f6d23294f4f4b21da20"
     },
     {
-      "file": "js/listen.js",
-      "hash": "48430c4d370cf9da8c72ae424da9eb04fea51d97"
+      "file": "js/listen.ts",
+      "hash": "c32e3631c0b651f7bd1c7cc174cce06be5bf963c"
     },
     {
       "file": "js/lotus.ts",
       "hash": "af8bcf201ce57c8f39ace7cf0f2ef52ce1ec3762"
     },
     {
-      "file": "js/lunar.js",
-      "hash": "72bd7245ec3394c5cdf5de7b3cc6bc4713439c05"
+      "file": "js/lunar.ts",
+      "hash": "6ccda0b4c678354af7c00d2ae37e82e00239ae87"
     },
     {
       "file": "js/main.ts",
-      "hash": "ae5f1b8e9f613d963538e163ed45b3219d0a5c45"
+      "hash": "486f84c177a676bd608d58cb86ad600ed8d2b8a0"
+    },
+    {
+      "file": "js/main/friends.ts",
+      "hash": "458d221c61923b183817c581e25e64bbee877d55"
+    },
+    {
+      "file": "js/main/hero-events.ts",
+      "hash": "1ea60fca8bab397520adc0ce76ce5134b7cd5ce0"
+    },
+    {
+      "file": "js/main/interactables.ts",
+      "hash": "fb7ced60fbdbff42b18f28bf2909d84981bada72"
+    },
+    {
+      "file": "js/main/layout.ts",
+      "hash": "fca0f949e0bed871de2b9b83265df1e6f3d44289"
+    },
+    {
+      "file": "js/main/online-games.ts",
+      "hash": "79c4fb5e99b66bfdabb9e0ae7179a34a2979e0e1"
+    },
+    {
+      "file": "js/main/quests.ts",
+      "hash": "4eaf8c19b733d0847b050c36528a5dd7f6c3670b"
+    },
+    {
+      "file": "js/main/talking.ts",
+      "hash": "a48971c670551f9505b6e3217267c1319337cb44"
+    },
+    {
+      "file": "js/main/talks.ts",
+      "hash": "dc6bfbaf4e0fb07d561f17a76232951ea87ab36e"
     },
     {
       "file": "js/management-telemetry.ts",
@@ -1226,7 +1302,7 @@
       "hash": "b4dfa6d5b8381e7d5c7ceb64fbd047804642cf71"
     },
     {
-      "file": "js/money.js",
+      "file": "js/money.ts",
       "hash": "e42ad0fee21a7be425c0ad9a9ef69b4ea8d42000"
     },
     {
@@ -1234,12 +1310,12 @@
       "hash": "0d8f382d8d03296798ac7c070d1ebfcb0b23005a"
     },
     {
-      "file": "js/nametags.js",
+      "file": "js/nametags.ts",
       "hash": "222e6fab9dfde3163a966c14b71b0d66ba62bbe5"
     },
     {
       "file": "js/net.ts",
-      "hash": "e600c4d431413115bdb133f6aa48c702fff78692"
+      "hash": "2c508dba6a3efc83dfc63594622dd76cfcf186ec"
     },
     {
       "file": "js/netgames.ts",
@@ -1250,11 +1326,11 @@
       "hash": "53b64a7dac86ce6d74394841f630065df6597d08"
     },
     {
-      "file": "js/openspot.js",
+      "file": "js/openspot.ts",
       "hash": "7fdc72d4503f0b98141c70421b0f331f4d3af911"
     },
     {
-      "file": "js/owlguide.js",
+      "file": "js/owlguide.ts",
       "hash": "71ecd971533c166d27703439145c5ab6a3f0496a"
     },
     {
@@ -1274,24 +1350,24 @@
       "hash": "c0d97e8ea87cd1d9f30a0c42f37c5e7d897348e6"
     },
     {
-      "file": "js/passport.js",
+      "file": "js/passport.ts",
       "hash": "a6465623f4c996a732f52cd83f97084b43b11eaf"
     },
     {
-      "file": "js/pets.js",
-      "hash": "a81a8151486db6375d52c9500311072b5e1a3973"
+      "file": "js/pets.ts",
+      "hash": "0fb671402210426bcca84c484a853bbb5e0062a2"
     },
     {
-      "file": "js/photos.js",
+      "file": "js/photos.ts",
       "hash": "339d992590f1a0260f1fa5af0eef9e4b385c6e18"
     },
     {
-      "file": "js/placebook.js",
+      "file": "js/placebook.ts",
       "hash": "c8a8a1861f9a38ec7e702ff5d0ea7b8c06e1e37c"
     },
     {
-      "file": "js/places.js",
-      "hash": "3854c260ff2aacb15ed9eb718adc1a9ee8baa267"
+      "file": "js/places.ts",
+      "hash": "f884dc818ac4f098560c8c83cf9c2527196989df"
     },
     {
       "file": "js/player.ts",
@@ -1299,7 +1375,7 @@
     },
     {
       "file": "js/players.ts",
-      "hash": "e8b35655699ada33838213c4cda159c968a31144"
+      "hash": "97172b1db1a203b4de933b41b93286902ebc28f2"
     },
     {
       "file": "js/plots.ts",
@@ -1310,36 +1386,36 @@
       "hash": "ccde0644a7a8e663ff55d0db29e77bc9b33c9361"
     },
     {
-      "file": "js/powerlines.js",
+      "file": "js/powerlines.ts",
       "hash": "5de784c4a706ca5667efc5cea83b5707515397bf"
     },
     {
-      "file": "js/pricetags.js",
-      "hash": "ab9cda2a07a59a98a61acd73a3d37bc7db9165b8"
+      "file": "js/pricetags.ts",
+      "hash": "fa8fdc0fa5c820b5db26c18e0565a71b75fdfbed"
     },
     {
       "file": "js/printpage.ts",
       "hash": "9d1c9ec7013355498800a33ccb4f38baa57a6f02"
     },
     {
-      "file": "js/realworld.js",
-      "hash": "7692f106d8c390c2444e2d388c8392811d963dbb"
+      "file": "js/realworld.ts",
+      "hash": "e92daede3a836632945e4e7c56f9e437774611e1"
     },
     {
       "file": "js/recorder.ts",
       "hash": "b53f764fec33a606c4c72cea9f83df8214586018"
     },
     {
-      "file": "js/reeds.js",
-      "hash": "bb3e35e8020c89fefa8cb0b54e81874e75b10857"
+      "file": "js/reeds.ts",
+      "hash": "6f61db04e0b83a5699a9cb332d404aea2f2c1c47"
     },
     {
-      "file": "js/regions.js",
-      "hash": "de9800ca9520fa7f5bbbee32321ca2b1d87e1fed"
+      "file": "js/regions.ts",
+      "hash": "36f664eb16bbef41bdef2dd0f30542c6df1845d8"
     },
     {
-      "file": "js/regionsites.js",
-      "hash": "b68f35b0aa496c1f08a5e6275ce1e928c03635e9"
+      "file": "js/regionsites.ts",
+      "hash": "3f4dd9065a5455c07b99ecc5b519be86e968e9cf"
     },
     {
       "file": "js/relay.ts",
@@ -1363,7 +1439,7 @@
     },
     {
       "file": "js/roads.ts",
-      "hash": "7a7deb837afa2032c29f9d2228d3fdf3c33ebbb1"
+      "hash": "72554d0da64e0d56970e17e3a830bdd06b8cc145"
     },
     {
       "file": "js/roomcode.ts",
@@ -1375,15 +1451,15 @@
     },
     {
       "file": "js/screencapture.ts",
-      "hash": "0de474ccda764b5118325e215067e6c754a760f7"
+      "hash": "716fb23e6a338025c93036eeb2e55652b48b2351"
     },
     {
-      "file": "js/scrollhelp.js",
-      "hash": "d31aec29098c58398f9b97169485dc0a0d8dea55"
+      "file": "js/scrollhelp.ts",
+      "hash": "e291c71c2ff68a53a1033e10dd79e9b5f1568a41"
     },
     {
-      "file": "js/secrets.js",
-      "hash": "db311def00fad8418e61b2df57f8b3c6d5eb40d1"
+      "file": "js/secrets.ts",
+      "hash": "c9b29bd8b3c7d27e7a3c013516cc73b090b02de1"
     },
     {
       "file": "js/seethrough.ts",
@@ -1394,48 +1470,48 @@
       "hash": "51e8bd759cf9a7414f6dc5dbc2497c273726d872"
     },
     {
-      "file": "js/showcase.js",
-      "hash": "05ba6461dec09ab663125b66be7431558aefae73"
+      "file": "js/showcase.ts",
+      "hash": "e82c9be0f93bb25811e4d3d5564a8078c43cf48d"
     },
     {
-      "file": "js/signposts.js",
+      "file": "js/signposts.ts",
       "hash": "424de2260fb4c68ce5ea935ec076b64cbe33ec4a"
     },
     {
       "file": "js/simple.ts",
-      "hash": "5dd0fac87797bbe70129b0d4abbd776ca45750e7"
+      "hash": "ce64ec4f3ed18e33294f77522fad0aa8d8d82b19"
     },
     {
-      "file": "js/snacks.js",
-      "hash": "fd7f688c54c929db0facd37270e9b5fb3cd3324b"
+      "file": "js/snacks.ts",
+      "hash": "b09b9ecbe2f178be3ddadbc5cc7d440602f91306"
     },
     {
       "file": "js/solids.ts",
       "hash": "87417a99306f132d656abf359e090be1ae95da44"
     },
     {
-      "file": "js/songs.js",
+      "file": "js/songs.ts",
       "hash": "01fad7f8efa9f7114da17a8204b710325957736c"
     },
     {
-      "file": "js/soundsheet.js",
-      "hash": "cc7d79ccbc7361f78a8d6c046214740cf90afd70"
+      "file": "js/soundsheet.ts",
+      "hash": "fb06df9bda4c489ce298438555a8efb54d2216d3"
     },
     {
       "file": "js/state.ts",
       "hash": "cb7381dd8ac4909a99370b44cf6a2712d3dc7b64"
     },
     {
-      "file": "js/stickerfx.js",
-      "hash": "a7b089f5e32ae1ea8cb4c7155a4ed180f5d5d2f1"
+      "file": "js/stickerfx.ts",
+      "hash": "85d6e9436f137f721f9ff17841118965eafaa75d"
     },
     {
-      "file": "js/stickers.js",
-      "hash": "be8b907fef805f94e5cceccf6e252b73e532acee"
+      "file": "js/stickers.ts",
+      "hash": "f51b06b2cb6cc2f07d791100850081ff6b3a1ffa"
     },
     {
-      "file": "js/story.js",
-      "hash": "51c3d4eef4573d1029961c6d6eb09ef5c649807c"
+      "file": "js/story.ts",
+      "hash": "5db78b29dff35612520101adf254f6085559be1f"
     },
     {
       "file": "js/studio-position.ts",
@@ -1446,8 +1522,8 @@
       "hash": "32afdaa949751af503babd74fe3d746e824ad140"
     },
     {
-      "file": "js/surprises.js",
-      "hash": "9ee91030b468d623e22f9673e4f4456085ac3263"
+      "file": "js/surprises.ts",
+      "hash": "839f76a746c6c835ff977d9f72ebc526139ca3d0"
     },
     {
       "file": "js/symbols.ts",
@@ -1479,10 +1555,10 @@
     },
     {
       "file": "js/tester.ts",
-      "hash": "495fb5f0019657e7dfe3169b6b3a5cdd0d8fb5c3"
+      "hash": "bd0a88596a8b19c6b0582472bb54a5eab645f496"
     },
     {
-      "file": "js/testergate.js",
+      "file": "js/testergate.ts",
       "hash": "19f069913aeaed8513918a4f10f0836b7c7fa61e"
     },
     {
@@ -1506,8 +1582,8 @@
       "hash": "feca2a885fafc5d02486208dbb6b3b141ed169e1"
     },
     {
-      "file": "js/twinchests.js",
-      "hash": "9de4a0a0e2d27d924735993927e538601b05b306"
+      "file": "js/twinchests.ts",
+      "hash": "c73e680e23df4f8a26d2265354b01042c7cdd47d"
     },
     {
       "file": "js/ui-settings.ts",
@@ -1515,35 +1591,79 @@
     },
     {
       "file": "js/ui.ts",
-      "hash": "19908c756e77210aeb9c32897198a5f51a1270cb"
+      "hash": "a3aab4443459669ab9fc7452b243e712db56110e"
     },
     {
-      "file": "js/util.js",
-      "hash": "001c8c2d2f327d62e0e2a13aa4f138bfeca767ba"
+      "file": "js/ui/common.ts",
+      "hash": "7b39d5258e373b3d6b467a07019570b44023f907"
     },
     {
-      "file": "js/validate.js",
-      "hash": "810be51e0f6290750e3f8ba4ea00f3f1d110886f"
+      "file": "js/ui/festivals-ui.ts",
+      "hash": "71a9df7d94c2f92eac5fc0c76ae96ea75fde523f"
+    },
+    {
+      "file": "js/ui/grownups.ts",
+      "hash": "c833d1bd757d7162f792b4c9b1025237e307062a"
+    },
+    {
+      "file": "js/ui/hub.ts",
+      "hash": "52cafa52de5dbee0e05ecef33aa76996982ee1ce"
+    },
+    {
+      "file": "js/ui/pad-album.ts",
+      "hash": "244ad1a41ebb3aa3d09a65ba3a4a93f79f0b5c62"
+    },
+    {
+      "file": "js/ui/pad-map.ts",
+      "hash": "2594ef32db4aa899662ea7a753be7b82e4c23fec"
+    },
+    {
+      "file": "js/ui/pad.ts",
+      "hash": "af79a517c5f7dc5851b27fd2301a76ea33971229"
+    },
+    {
+      "file": "js/ui/profile.ts",
+      "hash": "53df99223a88148c05fe87e163ee15e9c06712a3"
+    },
+    {
+      "file": "js/ui/quick.ts",
+      "hash": "45b67056425fb762873be0b1e7f3178ed7192c04"
+    },
+    {
+      "file": "js/ui/shops.ts",
+      "hash": "abae5c40b9d2fb504bfe3d66a06c3cea47b81371"
+    },
+    {
+      "file": "js/ui/title.ts",
+      "hash": "5a5c0e86bd8796cbebd1bea6bbcba170b293f02b"
+    },
+    {
+      "file": "js/util.ts",
+      "hash": "1d818de30ef677832ba2eb1f6f14b934d4ad7d86"
+    },
+    {
+      "file": "js/validate.ts",
+      "hash": "2bea16c9c92cfbe2d4fc47654e68b8f185247bf1"
     },
     {
       "file": "js/vehicles.ts",
       "hash": "a9ffdab964a2f2c1eb9c3c091c0e6dcd5c4b131f"
     },
     {
-      "file": "js/vendors.js",
-      "hash": "62d488795a9be39e1548e3c4a8f3324d4d41fb87"
+      "file": "js/vendors.ts",
+      "hash": "e467d0ece8aa989f6ac7e0e05188987a8a456596"
     },
     {
-      "file": "js/villagertalk.js",
-      "hash": "ba303cef61bd5dd7a6ec06fd87f7fa0a6e34bd4f"
+      "file": "js/villagertalk.ts",
+      "hash": "e2fcc6b54a3d27424975781b350f133de0f0f1b9"
     },
     {
       "file": "js/viwords.ts",
       "hash": "fae1db9848bacd2fbcf46c353df73f265379e187"
     },
     {
-      "file": "js/vnfun.js",
-      "hash": "b7d9aaad9d5c08e7fa14624c50465237e92028ac"
+      "file": "js/vnfun.ts",
+      "hash": "8c1f8f075f4013e08111a97690a6841e018c3a86"
     },
     {
       "file": "js/voice-fragments.ts",
@@ -1566,28 +1686,48 @@
       "hash": "06e2b13a4068f137d97def984cb33eab1097a652"
     },
     {
-      "file": "js/wayfind.js",
-      "hash": "8a373cadd59d0a6efecef5b935da49c707d4072f"
+      "file": "js/wayfind.ts",
+      "hash": "1f7b0b8887f8b28defa4e7844be01e737e16719c"
     },
     {
-      "file": "js/weather.js",
-      "hash": "3ba7ba1088e3693a0d4c9faf7957c1fbfd1ce657"
+      "file": "js/weather.ts",
+      "hash": "dacc94d440cd9376087a8d2d4c5c1078f4b9e532"
     },
     {
       "file": "js/website.ts",
       "hash": "a60fba0594f019973168528e5da782d56d393223"
     },
     {
-      "file": "js/words.js",
-      "hash": "1a0d097d9df37c9a7ffe91782a3801a463bb5fb4"
+      "file": "js/words.ts",
+      "hash": "82de840bba34418bbde9b78a3145f9ea22e14977"
     },
     {
-      "file": "js/words2.js",
+      "file": "js/words2.ts",
       "hash": "4ee4947dd6baa6c5e0f82f81916683a4b8b29e2c"
     },
     {
       "file": "js/world.ts",
-      "hash": "6aac18454773f78e8161803f8763fe371ab75339"
+      "hash": "72856d60e38d72974e4cd2686714a3c6d2429a09"
+    },
+    {
+      "file": "js/world/ground.ts",
+      "hash": "e4c1c20c28b99c16946e22b80b97ab36d7cbc2bc"
+    },
+    {
+      "file": "js/world/paint.ts",
+      "hash": "12c7a9aee1b0be4e37daf6636fdebeee84c2b26c"
+    },
+    {
+      "file": "js/world/places.ts",
+      "hash": "4a57aede5833b0c41f654fbe923fc133dd92f939"
+    },
+    {
+      "file": "js/world/reshape.ts",
+      "hash": "1de1fd7f0728e6c53127063078730c2f99795faf"
+    },
+    {
+      "file": "js/world/sites.ts",
+      "hash": "02fefb05990099c61596a5f971f7d0a6b3f84af2"
     },
     {
       "file": "js/worldcache.ts",
@@ -1667,11 +1807,11 @@
     },
     {
       "file": "studio/version.json",
-      "hash": "55e313bf6df7c576a34173df88eaee31f210a815"
+      "hash": "bc6de4fbf48df7115d14d1510538fda2996297a1"
     },
     {
       "file": "sw.ts",
-      "hash": "ff91c7c7409aee7e748387207e7ed23b47c5a81e"
+      "hash": "3af532f1158f99c1ce084818095c16c641f8e1cb"
     },
     {
       "file": "vendor/RoomEnvironment.js",
@@ -1699,7 +1839,7 @@
     },
     {
       "file": "voices/areas.json",
-      "hash": "1d385c44593188ca618f70c3ba9dbce44fe2d322"
+      "hash": "14920ceda113ae6ce101269f080c534d442fc7ff"
     },
     {
       "file": "voices/en/f/00039191206c6c56.mp3",
@@ -11784,6 +11924,10 @@
     {
       "file": "voices/en/f/4c5ce0b5-52fc82f0.mp3",
       "hash": "5a2967b1bdc5efd1c1aa1357b55b5d8193749f38"
+    },
+    {
+      "file": "voices/en/f/4c687cef3e986b3c.mp3",
+      "hash": "062c738f574703ec5f571258693d76c2ea27b77e"
     },
     {
       "file": "voices/en/f/4c6a2e83-550b3359.mp3",
@@ -33974,6 +34118,10 @@
       "hash": "53ba5c85cc975b77ad0e021373e68414d37665ed"
     },
     {
+      "file": "voices/en/f/f9ddb88c-29c309d7.mp3",
+      "hash": "d3fe4928b249bc5fe302d304750d0b4ddcbaac2a"
+    },
+    {
       "file": "voices/en/f/f9e24317-50613289.mp3",
       "hash": "91b7eec4993c87fc1fc4b0686baab9d4985c1133"
     },
@@ -34024,6 +34172,10 @@
     {
       "file": "voices/en/f/fa3323af-613ec8e8.mp3",
       "hash": "af98063895d50fd5d8288990a0222e11f5275869"
+    },
+    {
+      "file": "voices/en/f/fa3c9adb-b06014f.mp3",
+      "hash": "6cceea0c5b5be9d8fe11f2620ceab0574188f299"
     },
     {
       "file": "voices/en/f/fa4097b561a2e27c.mp3",
@@ -44828,6 +44980,10 @@
     {
       "file": "voices/en/m/4c5ce0b5-52fc82f0.mp3",
       "hash": "792f806a73b0eafae395bc4a03c74e8d4a6a366a"
+    },
+    {
+      "file": "voices/en/m/4c687cef3e986b3c.mp3",
+      "hash": "14bb5f74ff60d057d5c2a0440f18165bfb0f40d8"
     },
     {
       "file": "voices/en/m/4c6a2e83-550b3359.mp3",
@@ -67018,6 +67174,10 @@
       "hash": "afa7203d0d90cdeb3d40cad65d2cd983fc851829"
     },
     {
+      "file": "voices/en/m/f9ddb88c-29c309d7.mp3",
+      "hash": "afc2d104dabf0b1504ceeef62e211bb0b33ab95e"
+    },
+    {
       "file": "voices/en/m/f9e24317-50613289.mp3",
       "hash": "a1cb3b750aa04dca23f33549c99da2f7310f2b03"
     },
@@ -67068,6 +67228,10 @@
     {
       "file": "voices/en/m/fa3323af-613ec8e8.mp3",
       "hash": "6a47e25af05ccfda009a6e9f315abe59bd87b336"
+    },
+    {
+      "file": "voices/en/m/fa3c9adb-b06014f.mp3",
+      "hash": "1e43841944aaf93df18c94f9bdb473a63d19c148"
     },
     {
       "file": "voices/en/m/fa4097b561a2e27c.mp3",
@@ -97635,23 +97799,23 @@
     },
     {
       "file": "voices/manifest-en.json",
-      "hash": "782fc702112608fdbc13fec9a62baf4410fb52cf"
+      "hash": "6034c6948ca43ac0bae40ace3c15504de049f619"
     },
     {
       "file": "voices/manifest-hi.json",
-      "hash": "98d244621764bcf532e03a782072d3e04f42d16a"
+      "hash": "2ae2db67699862ccadf64508ab9864a62581c4b2"
     },
     {
       "file": "voices/manifest-vi.json",
-      "hash": "9352bb58609361a36fefb49dca3489b287e07609"
+      "hash": "8b993b640ae58c29c6bb5e37812978eefcfd0968"
     },
     {
       "file": "voices/manifest-zh.json",
-      "hash": "56cc7c60443e542234ba640c24842643a7634fa5"
+      "hash": "af052a796de27e0d206a6dd6ea7833f0a0eb26ce"
     },
     {
       "file": "voices/manifest.json",
-      "hash": "be96ffb12d75ec0e6a98a77fafcac3cff740f606"
+      "hash": "227ff83c4aec85826c926fea18347f070085d680"
     },
     {
       "file": "voices/vi/f/000268cf-295f4e16.mp3",
@@ -100132,6 +100296,10 @@
     {
       "file": "voices/vi/f/1842dabb-2a2e790a.mp3",
       "hash": "5fd9f8b8aca7927a3862aeafa62c6a7c9c0dbce5"
+    },
+    {
+      "file": "voices/vi/f/184467f0-30b502d7.mp3",
+      "hash": "d0c5ed5adec6a8a433b157d5ea107cad55dfe861"
     },
     {
       "file": "voices/vi/f/184e5a232ae74cf6.mp3",
@@ -111150,6 +111318,10 @@
       "hash": "1f7e1c0376404ebc6c418cd8c1fc0a88b907cb98"
     },
     {
+      "file": "voices/vi/f/768f41525912f142.mp3",
+      "hash": "59046fab92036ecb7f869fbb6a93e0aae1d50879"
+    },
+    {
       "file": "voices/vi/f/76948c47-2758cb16.mp3",
       "hash": "a407f3958a6acaf50a3114fe595ddcb49f867758"
     },
@@ -112172,6 +112344,10 @@
     {
       "file": "voices/vi/f/7ef4e3aa-4277f0f2.mp3",
       "hash": "57bf6bfc05fd2752f6a3772b5c72cc20f3a2761a"
+    },
+    {
+      "file": "voices/vi/f/7efb2f7d-3eeb480e.mp3",
+      "hash": "61cb5f27157119aef0dc53d2a974c90954d03434"
     },
     {
       "file": "voices/vi/f/7f2b659e5b498415.mp3",
@@ -129878,6 +130054,10 @@
       "hash": "82e2288e763ef6d8a2eb92bc7a0e1490306dfdc7"
     },
     {
+      "file": "voices/vi/m/184467f0-30b502d7.mp3",
+      "hash": "dc33d233aa0831e4783f214d2cd7eaa841a1d391"
+    },
+    {
       "file": "voices/vi/m/184e5a232ae74cf6.mp3",
       "hash": "4dcae83a61ee5ea5fc6f58d22a4970c081994d9d"
     },
@@ -140894,6 +141074,10 @@
       "hash": "3b5b9d247522750d6f179d209aab02fdadbc9038"
     },
     {
+      "file": "voices/vi/m/768f41525912f142.mp3",
+      "hash": "d90fcae411239e515d5bc1ab33608d6cadcc4e14"
+    },
+    {
       "file": "voices/vi/m/76948c47-2758cb16.mp3",
       "hash": "9f0cbd899516f1972e1bdbc720179acb5a2b1f94"
     },
@@ -141916,6 +142100,10 @@
     {
       "file": "voices/vi/m/7ef4e3aa-4277f0f2.mp3",
       "hash": "2de718bcb2324ddc5e4264e5a5575659183362e9"
+    },
+    {
+      "file": "voices/vi/m/7efb2f7d-3eeb480e.mp3",
+      "hash": "e66cd68298ecc4c63ec58fbb9d6d3cf305560145"
     },
     {
       "file": "voices/vi/m/7f2b659e5b498415.mp3",

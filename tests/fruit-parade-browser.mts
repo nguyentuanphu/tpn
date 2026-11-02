@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
-import { launch, open, clear, noWelcome } from './harness.mjs';
+import { launch, open, clear, noWelcome } from './harness.mts';
 import type { createNetGames } from '../js/netgames.js';
 declare global { interface Window { __paradeTestNet: ReturnType<typeof createNetGames>; __paradeConnected: boolean; __paradeSend(data: {from: string; [key: string]: unknown}): Promise<void>; __paradeButtons: boolean[]; } }
 

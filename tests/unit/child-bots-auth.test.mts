@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs, testClock } from '../studio-check.mjs';
+import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs, testClock } from '../studio-check.mts';
 import * as admins from '../../netlify/lib/admins.mts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');

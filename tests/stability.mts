@@ -1,7 +1,7 @@
 // #355: repeated real close actions must release UI/game resources, rather than relying on a reload.
 import fs from 'node:fs';
 import type { Browser } from 'playwright';
-import { open, clear, noWelcome } from './harness.mjs';
+import { open, clear, noWelcome } from './harness.mts';
 export async function stabilityCheck(browser: Browser): Promise<string> {
   const P=await open(browser,{w:390,h:844,touch:true});
   let navigations=0;

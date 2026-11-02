@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import type { Browser, Page } from 'playwright';
-import { open, clear, noWelcome } from './harness.mjs';
+import { open, clear, noWelcome } from './harness.mts';
 
 // Complete the real game through its legal, visible answer buttons. Never call api.win.
 async function solve(page: Page) {

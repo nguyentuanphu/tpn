@@ -74,6 +74,8 @@ const bareVi = w => w.replace(/^(quả|con|chùm|bông|cái|xe) /, w.startsWith(
 register({ id: 'sayfind', icon: '🗣️', learn: true, name: () => T('Say It, Find It', 'Nói Rồi Tìm'), async run(api) {
   const start = tier(api), rounds = start === 0 ? 4 : api.talent ? 6 : 5;   // (levels) Talent: six rounds of eight pictures
   const order = favour(api, shuffle(WORDS), w => w[1]);
+  // (v1.07 levels) the starting values on the frame: rounds, pictures, two of the same thing (big and little)
+  api.stage.dataset.lv = [rounds, [2, 4, 6, 6][start] + (api.talent ? 2 : 0), start === 3 ? 1 : 0].join(',');
   let micOn = canListen(), round = 0;
   api.onCleanup(stopListening);
   for (; round < rounds; round++) {
@@ -130,6 +132,8 @@ const num = n => [cap(NUMBER_WORDS.en[n] ?? String(n)), cap(NUMBER_WORDS.vi[n] ?
 const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 register({ id: 'marketcount', icon: '🧺', learn: true, name: () => T('Market Counting', 'Đếm Ở Chợ'), async run(api) {
   const start = tier(api), rounds = start === 0 ? 3 : 4;
+  // (v1.07 levels) the starting values on the frame: rounds, what is asked, how much fruit (count up to, or the first basket)
+  api.stage.dataset.lv = [rounds, start < 3 ? 'count' : 'add-take', start < 3 ? ['1-3', '2-5', '5-10'][start] : api.talent ? '5-8/6-10' : '2-5/3-6'].join(',');
   for (let round = 0; round < rounds; round++) {
     if (api.closed) return; api.dots(rounds, round); api.stage.innerHTML = '';
     const level = round ? nextRound(api) : tier(api), f = FRUIT[(round + Math.floor(Math.random() * FRUIT.length)) % FRUIT.length];
@@ -230,6 +234,8 @@ const NOT_HELP = [['😴', 'Go to sleep', 'Đi ngủ'], ['🍌', 'Eat a banana',
 register({ id: 'feelings', icon: '😊', learn: true, name: () => T('How Do They Feel?', 'Bạn Thấy Thế Nào?'), async run(api) {
   const start = tier(api), rounds = start === 0 ? 3 : 4;
   const order = favour(api, shuffle(FEEL), s => s.id);
+  // (v1.07 levels) the starting values on the frame: rounds, faces, words under them, "what could you do?" choices (0: none)
+  api.stage.dataset.lv = [rounds, start === 0 ? 2 : 4, start === 0 || api.talent ? 0 : 1, start < 2 ? 0 : 1 + (api.talent ? 3 : start === 3 ? 2 : 1)].join(',');
   for (let round = 0; round < rounds; round++) {
     if (api.closed) return; api.dots(rounds, round); api.stage.innerHTML = '';
     const level = round ? nextRound(api) : tier(api), story = order[round % order.length], face = FACES[story.face];
@@ -283,6 +289,8 @@ register({ id: 'soundhunt', icon: '🔤', learn: true, name: () => T('First Soun
   // a line in the game's language only (the words are English or Vietnamese, never both)
   const line = text => vi ? [text, text] : [text, null];
   const used = new Set();
+  // (v1.07 levels) the starting values on the frame: rounds, pictures, pictures that match, sound asked (start, or end / tone)
+  api.stage.dataset.lv = [rounds, [2, 4, 6, 4][start] + (api.talent && start === 3 ? 2 : 0), api.talent && start === 3 ? 3 : [1, 2, '2-3', 2][start], start === 3 ? 'end' : 'start'].join(',');
   for (let round = 0; round < rounds; round++) {
     if (api.closed) return; api.dots(rounds, round); api.stage.innerHTML = '';
     const level = round ? nextRound(api) : tier(api), end = level === 3, set = vi ? (end ? VI_TONE : VI_START) : (end ? EN_END : EN_START);

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import type { Browser, Page } from 'playwright';
-import { open, clear, noWelcome } from './harness.mjs';
+import { open, clear, noWelcome } from './harness.mts';
 
 async function runUntil(page: Page, step: string, keys: string[]) {
   await page.evaluate(keys => {

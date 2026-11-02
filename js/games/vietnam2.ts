@@ -41,7 +41,7 @@ function style() {
 
 // (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
 // get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
-const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => { const v = api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))]; api.lvNote?.([little, easy, medium, hard, talent], v); return v; };
 const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 // a button's label: on Talent only the words (find the right one without its picture)
 const label = (api, icon: string, name: string[]) => api.talent ? `<span>${T(name[0], name[1])}</span>` : `${pic(icon)} <span>${T(name[0], name[1])}</span>`;
@@ -62,8 +62,8 @@ register({
   name: () => T('Wrap Bánh Chưng for Tết', 'Làm Bánh Chưng Ngày Tết'),
   async run(api) {
     style();
-    api.say('Lay dong leaves, sticky rice, mung beans, pork, and tie the string!',
-      'Xếp lá dong, gạo nếp, đỗ xanh, thịt lợn rồi buộc lạt nhé!');
+    api.say('Lay dong leaves, sticky rice, mung beans and pork, then mung beans and sticky rice again, and tie the string!',
+      'Xếp lá dong, gạo nếp, đỗ xanh, thịt lợn, rồi lại đỗ xanh, gạo nếp, rồi buộc lạt nhé!');
     // more cakes each level; from Hard the buttons change places after each step, and on Talent they show only words
     const cakes = lv(api, 1, 1, 2, 2, 3), remix = !api.little && api.smart >= 2;
     mark(api, cakes, remix ? 'mixed' : '', api.talent ? 'words' : '');
@@ -74,7 +74,10 @@ register({
   }
 });
 async function wrapCake(api, c: number, cakes: number, remix: boolean) {
-    api.dots(5 * cakes, 5 * c);
+    // (v1.07 rules audit) the real order: dong leaves, sticky rice, mung beans, pork in the middle, then mung beans and
+    // sticky rice again on top, then tie (it stopped at the pork, so the pork was on top). Seven steps for each cake.
+    const STEPS = 7;
+    api.dots(STEPS * cakes, STEPS * c);
     const wrap = el('div', 'v2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'v2-stage'); wrap.appendChild(stage);
     const cake = el('div', 'v2-cake'); stage.appendChild(cake);
@@ -82,11 +85,12 @@ async function wrapCake(api, c: number, cakes: number, remix: boolean) {
       { id: 'leaf', icon: '🍃', name: ['dong leaves', 'lá dong'] },
       { id: 'rice', icon: '🌾', name: ['sticky rice', 'gạo nếp'] },
       { id: 'bean', icon: '🫘', name: ['mung beans', 'đỗ xanh'] },
-      { id: 'pork', icon: '🥢', name: ['pork', 'thịt lợn'] }
+      { id: 'pork', icon: '🥩', name: ['pork', 'thịt lợn'] }
     ];
-    layers.forEach((l, idx) => {
-      const lay = el('div', 'v2-layer', pic(l.icon));
-      lay.dataset.layer = l.id;
+    const order = [0, 1, 2, 3, 2, 1]; // which ingredient each layer is
+    order.forEach((k, idx) => {
+      const lay = el('div', 'v2-layer', pic(layers[k].icon));
+      lay.dataset.layer = layers[k].id + (idx > 3 ? '-top' : '');
       cake.appendChild(lay);
     });
     const s1 = el('div', 'v2-string'); s1.style.cssText = 'top:0;bottom:0;left:45%;width:10%;'; cake.appendChild(s1);
@@ -104,27 +108,27 @@ async function wrapCake(api, c: number, cakes: number, remix: boolean) {
     tieBtn.style.display = 'none';
     controls.appendChild(tieBtn);
     buttons.push(tieBtn);
-    // (owner, 29 Oct 2026 AEDT audit) the buttons stood in the wrapping order already: they are mixed now, and the order
-    // is the real one the grown-ups use (leaves, rice, beans, pork, then tie)
+    // (owner, 29 Oct 2026 AEDT audit) the buttons stood in the wrapping order already: they are mixed now
     buttons.slice(0, 4).sort(() => Math.random() - .5).forEach(b => controls.insertBefore(b, tieBtn));
 
     let step = 0;
-    while (step < 5) {
-      api.plan(() => buttons[step] || null, { maxActions: 6 });
-      const target = buttons[step];
+    while (step < STEPS) {
+      const target = step < order.length ? buttons[order[step]] : tieBtn;
+      api.plan(() => target, { maxActions: 6 });
       const clicked = await untilRight(api, buttons, e => e === target);
       if (!clicked || api.closed) return false;
-      if (step < 4) {
+      if (step < order.length) {
         cake.querySelectorAll('.v2-layer')[step].classList.add('on');
-        api.sfx.pop(step);
+        api.sfx.pop(step % 4);
       } else {
         cake.classList.add('tied');
         api.sfx.ding();
       }
       step++;
-      api.dots(5 * cakes, 5 * c + step);
-      if (remix && step < 4) mix(buttons.slice(0, 4), tieBtn);
-      if (step === 4) {
+      api.dots(STEPS * cakes, STEPS * c + step);
+      if (step === 4) api.say('Now mung beans and sticky rice again, on top of the pork!', 'Giờ lại đỗ xanh rồi gạo nếp, phủ lên trên thịt!');
+      if (remix && step < order.length) mix(buttons.slice(0, 4), tieBtn);
+      if (step === order.length) {
         buttons.slice(0, 4).forEach(b => b.style.display = 'none');
         tieBtn.style.display = 'inline-flex';
         api.say('Tie the bamboo string nice and tight!', 'Buộc lạt giang thật chặt tay nào!');

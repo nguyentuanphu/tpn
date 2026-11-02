@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import type{Browser}from 'playwright';
-import{open,clear,noWelcome}from './harness.mjs';
+import{open,clear,noWelcome}from './harness.mts';
 declare global{interface Window{__tugTest?:{drive:()=>void;pulls:()=>number[];complete:()=>boolean;close:()=>void};}}
 export async function tugBrowserCheck(browser:Browser){
  const P=await open(browser,{w:390,h:844,touch:true,lang:'vi',settings:{voice:false,sound:false,music:false,autoPack:false,online:false,countPlayers:false}});await clear(P.page);await noWelcome(P.page);

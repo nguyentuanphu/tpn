@@ -13,18 +13,22 @@ const ANIMALS = ['🐶', '🐱', '🐰', '🐸', '🐥', '🐷', '🐼', '🦊']
 const others = <V>(pool: V[], not: V[], n: number): V[] => shuffle(pool.filter(x => !not.includes(x))).slice(0, n);
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value
-const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
+// (v1.07 levels) a game writes the numbers its level uses onto the stage as data-lv, so the check levelsall can compare levels
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 
 // ---------- What comes next? ----------
 register({
   id: 'pattern', icon: '🔁', name: () => T('What Comes Next?', 'Tiếp Theo Là Gì?'),
   async run(api) {
     const rounds = 4;
+    // (levels) Talent adds four-part patterns; Hard and Talent give more answers to choose from
+    const shapes = api.level <= 1 ? ['AB'] : api.level === 2 ? ['AB', 'AAB', 'ABC'] : ['AAB', 'ABB', 'ABC', 'AABB', 'ABCB'].concat(api.talent ? ['ABCD', 'AABC', 'ABCDB'] : []);
+    const wrong = lv(api, 2, 2, 3, 4);
+    mark(api, shapes.length, wrong + 1);   // (v1.07 levels) pattern kinds, answers to choose from
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const pool = shuffle(r % 2 ? ANIMALS : FRUIT);
-      // (levels) Talent adds four-part patterns; Hard and Talent give more answers to choose from
-      const shapes = api.level <= 1 ? ['AB'] : api.level === 2 ? ['AB', 'AAB', 'ABC'] : ['AAB', 'ABB', 'ABC', 'AABB', 'ABCB'].concat(api.talent ? ['ABCD', 'AABC', 'ABCDB'] : []);
       const pat = pick(shapes), map = { A: pool[0], B: pool[1], C: pool[2], D: pool[3] };
       const seq: string[] = []; while (seq.length < Math.max(5, pat.length * 2 + 1)) seq.push(map[pat[seq.length % pat.length]]);
       const answer = seq.pop() as string;
@@ -32,7 +36,7 @@ register({
       seq.forEach((s, i) => { const c = el('div', 'seq-item', s); c.style.animationDelay = i * .08 + 's'; row.appendChild(c); });
       const q = el('div', 'seq-item q', '?'); row.appendChild(q); api.stage.appendChild(row);
       api.say('What comes next?', 'Tiếp theo là gì nhỉ?');
-      const opts = shuffle([answer, ...others([...new Set(Object.values(map).concat(pool.slice(3)))], [answer], lv(api, 2, 2, 3, 4))]);
+      const opts = shuffle([answer, ...others([...new Set(Object.values(map).concat(pool.slice(3)))], [answer], wrong)]);
       const btns = choiceButtons<string>(api, opts, o => o);
       const b = await untilRight(api, btns, e => e._v === answer); if (!b) return;
       q.textContent = answer; q.classList.add('right'); api.praise(); await wait(1200);
@@ -47,6 +51,7 @@ register({
   async run(api) {
     // (levels) Talent counts up to 30 and has four answers to choose from
     const rounds = 4, max = api.talent ? 30 : [5, 8, 10, 15, 20][Math.min(4, api.level - 1)], wrongs = lv(api, 2, 2, 2, 3);
+    mark(api, max, wrongs + 1);   // (v1.07 levels) biggest number, answers to choose from
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const n = 1 + Math.floor(Math.random() * max), thing = pick([...FRUIT, ...ANIMALS]);
@@ -74,6 +79,7 @@ register({
     const rounds = 4, alpha = ALPHABET[settings.lang] || ALPHABET.en, words = LETTER_WORDS[settings.lang] || LETTER_WORDS.en;
     const span = Math.min(alpha.length, [8, 12, 18, 29, 29][Math.min(4, api.level - 1)]);
     const pool = alpha.slice(0, span), lower = api.level >= 3;
+    mark(api, span, api.talent ? 6 : api.level <= 1 ? 3 : api.level >= 4 ? 5 : 4, lower ? 'lower' : 'upper');   // (v1.07 levels) letters used, choices, small-letter match
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const L = pick(pool), n = api.talent ? 6 : api.level <= 1 ? 3 : api.level >= 4 ? 5 : 4;   // (levels) more letters to choose from
@@ -98,6 +104,8 @@ register({
   id: 'numbers', icon: '🚂', name: () => T('Number Train', 'Đoàn Tàu Số'),
   async run(api) {
     const rounds = 4, max = [5, 10, 10, 20, 20][Math.min(4, api.level - 1)];
+    // (v1.07 levels) top number, train length, % of trains counting backwards, missing car always last (1) or anywhere (0)
+    mark(api, api.talent ? 30 : max, api.talent ? 5 : 4, api.level >= 4 ? (api.talent ? 60 : 40) : 0, api.level <= 1 ? 1 : 0);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       // (levels) Talent: a longer train up to 30 that often counts backwards
@@ -135,6 +143,7 @@ register({
   id: 'shapes', icon: '🔷', name: () => T('Shadow Shapes', 'Bóng Hình Ai Đây'),
   async run(api) {
     const rounds = 4, keys = Object.keys(SHAPES).slice(0, [4, 6, 8, 8, 8][Math.min(4, api.level - 1)]);
+    mark(api, keys.length, 1 + (api.talent ? 5 : api.level <= 1 ? 2 : api.level >= 4 ? 4 : 3));   // (v1.07 levels) shapes used, choices
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const k = pick(keys), name = SHAPES[k];
@@ -158,6 +167,8 @@ register({
   id: 'colors', icon: '🎨', name: () => T('Rainbow Paints', 'Pha Màu Cầu Vồng'),
   async run(api) {
     const rounds = 4;
+    // (v1.07 levels) balloon rounds before mixing, balloon choices, paint choices when mixing
+    mark(api, api.level <= 1 ? 4 : api.level === 2 ? 2 : 0, 1 + lv(api, 2, 3, 3, 3), 1 + lv(api, 2, 2, 3, 4));
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       if (api.level <= 1 || r < 2 && api.level === 2) {
@@ -188,6 +199,9 @@ register({
   id: 'sorting', icon: '📏', name: () => T('Small to Big', 'Từ Bé Đến Lớn'),
   async run(api) {
     const rounds = 3;
+    // (v1.07 levels) things in the first round, the most things, rounds biggest-first
+    const most = (r: number) => Math.min(api.talent ? 7 : 5, 2 + api.level + (r > 0 ? 1 : 0) + (api.talent ? 1 : 0));
+    mark(api, most(0), most(1), api.level >= 3 ? (api.talent ? 2 : 1) : 0);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       // (levels) Talent: up to 7 things to put in order, and two rounds biggest-first
@@ -215,6 +229,7 @@ register({
   async run(api) {
     if (api.online) return memoryOnline(api);
     const pairs = api.talent ? 10 : [3, 4, 6, 6, 8][Math.min(4, api.level - 1)];   // (levels) Talent: ten pairs
+    mark(api, pairs);   // (v1.07 levels) pairs of cards
     // the children's own photos are some of the cards
     const photos = profiles.slice(0, 4).map(p => `<img src="${avatarURL(p)}" alt="">`);
     const faces = shuffle([...shuffle(photos).slice(0, Math.min(photos.length, Math.ceil(pairs / 2))), ...shuffle([...ANIMALS, ...FRUIT])]).slice(0, pairs);

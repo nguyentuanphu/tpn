@@ -17,6 +17,10 @@ const NAMES = {'🍎':['Apple','Táo'],'🌸':['Flower','Hoa'],'🐶':['Dog','Ch
 register({ id: 'patternpicnic', icon: '🧺', learn: true, name: () => T('Pattern Picnic', 'Dã Ngoại Quy Luật'), async run(api) {
   const patterns = [['🍎','🌸'], ['🍎','🍎','🌸'], ['🍎','🌸','🐶'], ['🍎','🌸','🌸','🐶']];
   const rounds = tier(api) === 0 ? 3 : 4;
+  { // (v1.07 levels) rounds, the first round's pattern, pictures to choose from in the first round
+    const t = tier(api), first = [0, 0, 1, 2][t];
+    api.stage.dataset.lv = [rounds, ['AB', 'AAB', 'ABC', 'ABBC'][first], 1 + (t === 0 ? 1 : t === 3 ? (api.talent ? 4 : 3) : 2)].join(',');
+  }
   for (let round = 0; round < rounds; round++) {
     if (api.closed) return; api.stage.innerHTML = ''; api.dots(rounds, round);
     // (points 46-48) each level has its own run of patterns; Medium and Hard no longer open with the under-5 pattern
@@ -53,6 +57,8 @@ const PICTURES: [string, number, number, number, number, number?][][] = [
 ];
 register({ id: 'shapebuilders', icon: '🧩', learn: true, name: () => T('Shape Builders', 'Ghép Tranh Hình Khối'), async run(api) {
   const pieces = PICTURES[tier(api)], board = el('div', 'bt-picture');
+  // (v1.07 levels) pieces in the picture, shapes to choose from
+  api.stage.dataset.lv = [pieces.length, Object.keys(SHAPES).filter(key=>(!api.little || key!=='rectangle') && (key!=='oval' || api.talent)).length].join(',');
   const pictureHeight = Math.max(200, ...pieces.map(([,x,y,w,h]) => y+h+12));
   board.style.cssText = `position:relative;width:280px;max-width:100%;height:${pictureHeight}px;flex-shrink:0;margin:0 auto`; api.stage.appendChild(board);
   let active = null, selected = null, dragging = null;
@@ -85,6 +91,7 @@ register({ id: 'shapebuilders', icon: '🧩', learn: true, name: () => T('Shape 
 const EXTRA=['🐝','🦋','🍄','🍎','🌸','🐶'];
 register({ id: 'remembergarden', icon: '🌱', learn: true, name: () => T('Remember the Garden', 'Nhớ Khu Vườn'), async run(api) {
   const pool=['🌱','💧','🌸','🍎','🌳','🐶'];
+  {const t=tier(api);api.stage.dataset.lv=[[2,3,4,6][t],api.talent?3:t>=2?2:1,t>0?1:0,api.talent?1:0].join(',');}   // (v1.07 levels) row length, extra pictures, row hidden before answering (1/0), mixed order (1/0)
   for(let round=0;round<3;round++) {
     // (r79 learning, I1) the row's length and the extra pictures follow the level between rounds
     const level=round?nextRound(api):tier(api),length=[2,3,4,6][level];

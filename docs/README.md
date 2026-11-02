@@ -2,6 +2,8 @@
 
 **Current plan (1 Nov 2026 AEDT):** [the finishing plan before many players: start-up under 3 s, every game's levels, splitting the big files](plan-hoan-thien/KE-HOACH.md) (Vietnamese, for the owner) and [the Learn space plan](learn-tab/PLAN.md).
 
+**Launch around Tết 2027 (v1.07 helper "launch", 2 Nov 2026 AEDT):** [plan, channel texts, flyer, video scripts and the launch-day checklist](launch-2027/README.md). Materials only: nothing posted or sent.
+
 **Current Studio integration:** [one-branch combined handbook](studio-combined-handoff-20261029/README.md) and [next-chat prompt](studio-combined-handoff-20261029/NEXT-CHAT.md). Both workstreams, original plans and unresolved work are together on `handoff/studio-combined-20261029`. Earlier handbooks remain historical references.
 
 [Latest Studio control recovery and field guide](studio-control-recovery-20261029/README.md): conflict/unknown-result recovery, real delivery navigation, current evidence and pending work.
@@ -28,6 +30,7 @@ Nothing was deleted when the docs were tidied (owner, 24 Oct 2026 AEDT): old rou
 | Rules for every chat: deploys, questions to the owner, checks, cores, times | [../CLAUDE.md](../CLAUDE.md) |
 | What the game is, every requirement and how it is built | [../HANDOFF.md](../HANDOFF.md) |
 | How it must look, sound and behave (design rules, UX-001 to UX-010) | [SO-TAY-THIET-KE.md](SO-TAY-THIET-KE.md) |
+| What Easy, Medium, Hard and Talent change in every game (v1.07; proposed rules LV-001 to LV-004) | [levels/README.md](levels/README.md) |
 | The architecture contract (the `rules` check reads it) | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Hosting, servers, keys and how to test them | [INFRASTRUCTURE.md](INFRASTRUCTURE.md) |
 

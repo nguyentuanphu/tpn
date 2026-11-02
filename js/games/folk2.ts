@@ -229,7 +229,9 @@ register({
       // it stop; a big dancing note while it plays, a big stop sign and the child holding the gift lit up when it stops
       api.dots(layers, L); msg.innerHTML = '<b class="pnote">🎵</b>'; w.classList.add('playing'); w.querySelectorAll('.pk').forEach(k => k.classList.remove('hold'));
       // the last layer always lands with the player (it's their game!)
-      const stopAt = L === layers - 1 || (api.little && L % 2 === 0) ? 0 : Math.floor(rand(1, kids.length));
+      // (v1.07 rules audit) the music stops on the player for some middle layers too (older children only ever got the last
+      // one, so the counting question below never came)
+      const stopAt = L === layers - 1 || L % 2 === (api.little ? 0 : 1) ? 0 : Math.floor(rand(1, kids.length));
       const steps = kids.length * 2 + ((stopAt - at + kids.length * 3) % kids.length);
       for (let s = 0; s < steps; s++) { if (api.closed) return; tone(tune[s % tune.length], .22, { type: 'triangle', vol: .24 }); if (s % 2 === 0) tone(tune[s % tune.length] / 2, .3, { type: 'sine', vol: .14 }); at = (at + 1) % kids.length; show(); await wait(beatMs); }
       w.classList.remove('playing'); w.querySelectorAll('.pk')[at].classList.add('hold');

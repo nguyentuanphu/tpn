@@ -17,6 +17,8 @@ const step = api => api.little ? Math.min(1, api.level - 1) : Math.min(4, Math.m
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") Easy, Medium and Hard already change the sums (step above);
 // Talent (the top step) adds one more round, and Shopping List and Which Is Cheaper? more things
 const plus = api => api.talent ? 1 : 0;
+// (v1.07 levels) each game writes the numbers its level uses onto the stage (data-lv) for the levels check
+const mark = (api, ...v) => { api.stage.dataset.lv = v.join(','); };
 const fmt = (v, code) => fmtMinor(v, code);
 const sp = (v, code) => [spokenMinor(v, 'en', code), spokenMinor(v, 'vi', code)];
 // "3 coins" (AUD) or "3 notes" (VND: notes only)
@@ -105,6 +107,7 @@ register({
   id: 'heodat', icon: '🐷', origin: 'vn', name: () => T('Piggy Bank', 'Heo Đất'),
   async run(api) {
     style(); const code = home(), L = step(api), [vals, lo, hi, by] = PIGGY[code][L], rounds = 3 + plus(api), counting = L <= 1;
+    mark(api, vals.length, lo, hi, rounds);
     let saved = 0;
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -132,8 +135,8 @@ const SORT = { AUD: [[5, 20, 100, 200, 500, 1000, 2000], [5, 10, 20, 50, 100, 20
 register({
   id: 'coinnote', icon: '🪙', name: () => home() === 'VND' ? T('Small or Big Note?', 'Tiền Lẻ hay Tiền Chẵn?') : T('Coin or Note?', 'Xu hay Tiền Giấy?'),
   async run(api) {
-    style(); const code = home(), L = step(api), rounds = [4, 4, 6, 8, 8][L] + 2 * plus(api), vnd = code === 'VND';
-    const pool = SORT[code][L >= 2 ? 1 : 0], list = []; while (list.length < rounds) list.push(...shuffle(pool)); list.length = rounds;
+    style(); const code = home(), L = step(api), rounds = [4, api.little ? 4 : 5, 6, 8, 8][L] + 2 * plus(api), vnd = code === 'VND';   // (v1.07 levels) Medium: 5 notes and coins to sort, not 4 like Easy (under-5s still 4)
+    const pool = SORT[code][L >= 2 ? 1 : 0], list = []; mark(api, rounds, pool.length); while (list.length < rounds) list.push(...shuffle(pool)); list.length = rounds;
     // the two boxes: coins and notes (AUD); small change and big notes (VND)
     const BINS = vnd ? [['small', 1000, 'Small change', 'Tiền lẻ'], ['big', 100000, 'Big note', 'Tiền chẵn']] : [['coin', 100, 'Coin', 'Đồng xu'], ['note', 1000, 'Note', 'Tiền giấy']];
     const kindOf = v => vnd ? (v < 10000 ? 'small' : 'big') : M.denom(code, v).kind;
@@ -159,7 +162,7 @@ const WANTS = [['🧸', 'a teddy', 'gấu bông'], ['🎮', 'a video game', 'tr�
 register({
   id: 'needwant', icon: '🤔', name: () => T('Need or Want?', 'Cần hay Muốn?'),
   async run(api) {
-    style(); const L = step(api), rounds = [4, 5, 6, 6, 8][L] + 2 * plus(api);
+    style(); const L = step(api), rounds = [4, 5, 6, 6, 8][L] + 2 * plus(api); mark(api, rounds);
     const list = shuffle([...shuffle(NEEDS).slice(0, Math.ceil(rounds / 2)).map(x => [...x, 'need']), ...shuffle(WANTS).slice(0, Math.floor(rounds / 2)).map(x => [...x, 'want'])]);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -184,6 +187,7 @@ register({
   id: 'bahu', icon: '🫙', name: () => T('Three Jars', 'Ba Hũ'),
   async run(api) {
     style(); const code = home(), L = step(api), rounds = 3 + plus(api), u = unitOf(code), [n, partsList] = JAR_PLAN[L];
+    mark(api, n, partsList.length, rounds);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const parts = pick(partsList), want = M.splitJars(n * u, parts, u), got = [0, 0, 0], same = parts.every(p => p === parts[0]);
@@ -227,6 +231,7 @@ register({
   id: 'lixi', icon: '🧧', origin: 'vn', name: () => T('Lucky Money Count', 'Đếm Lì Xì'),
   async run(api) {
     style(); const code = home(), L = step(api), rounds = 3 + plus(api), [lo, hi, vals, most = 1] = LIXI[code][L], countOnly = L === 0;
+    mark(api, lo, hi, vals.length, most, rounds);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const n = lo + Math.floor(Math.random() * (hi - lo + 1)), inside = Array.from({ length: n }, () => Array.from({ length: 1 + Math.floor(Math.random() * most) }, () => pick(vals)));
@@ -269,6 +274,7 @@ register({
   id: 'shopkeep', icon: '🏪', name: () => T('Little Shopkeeper', 'Bé Bán Hàng'),
   async run(api) {
     style(); const code = home(), L = step(api), rounds = 3 + plus(api), [lo, hi, by, vals, bigger] = TILL[code][L];
+    mark(api, lo, hi, vals.length, bigger, rounds);
     // little ones always get a $5 (or 5.000đ) note and count the change in one or two kinds; up to Medium the change
     // is said out loud, on Hard the child works it out
     const plain = L <= 2;
@@ -298,6 +304,7 @@ register({
   id: 'shoplist', icon: '📝', name: () => T('Shopping List', 'Danh Sách Đi Chợ'),
   async run(api) {
     style(); const code = home(), L = step(api), rounds = 2, [need0, shelf0, mode, lo, hi, by] = LIST_PLAN[code][L], need = need0 + plus(api), shelfN = shelf0 + plus(api);
+    mark(api, need, shelfN, mode, hi);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const kinds = shuffle(SHOP).slice(0, Math.max(shelfN, need)), list = kinds.slice(0, need);
@@ -352,6 +359,7 @@ register({
   id: 'cheaper', icon: '🏷️', name: () => T('Which Is Cheaper?', 'Món Nào Rẻ Hơn?'),
   async run(api) {
     style(); const code = home(), L = step(api), rounds = api.little ? 4 : 5, [lo, hi, by, n0, coins] = CHEAP[code][L], n = n0 + plus(api);
+    mark(api, n, lo, hi, coins ? 1 : 0, rounds);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       // little ones compare piles of $1 coins (or 1.000đ notes) by counting; bigger ones read the price tags
@@ -377,6 +385,7 @@ register({
   id: 'waitgrow', icon: '🌱', name: () => T('Wait and Grow', 'Chờ Cây Lớn'),
   async run(api) {
     style(); const code = home(), L = step(api), rounds = 2 + plus(api), u = unitOf(code);
+    mark(api, ...GROW[L][0], L >= 2 ? 1 : 0, rounds);   // coins planted, % a day, days, guess first, rounds
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const [n, rate, days] = pick(GROW[L]), k = M.perDay(n, rate), steps = M.growth(n, rate, days), last = steps[days];
@@ -430,6 +439,7 @@ register({
   id: 'barter', icon: '🤝', name: () => T('Swap and Trade', 'Đổi Hàng'),
   async run(api) {
     style(); const L = step(api), rounds = 3 + plus(api), worthOf = Object.fromEntries(GOODS.map(g => [g[0], g[3]]));
+    mark(api, L <= 1 ? 1 : 0, L <= 1 ? (L === 1 ? 2 : 1) : (L === 4 ? 2 : 1), L <= 1 ? 0 : L === 3 ? 3 : 2, rounds);   // picture swap, things given or offered, smallest worth, rounds
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const [tp, tn, tv] = TRADERS[r % TRADERS.length];

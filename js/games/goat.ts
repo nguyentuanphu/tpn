@@ -17,6 +17,8 @@ export async function runGoat(api:GoatApi){
  // (owner, 1 Nov 2026 AEDT: "the levels often look the same") Easy as before; Medium shows the friends fainter; Hard keeps
  // them faint even after the call and plays four rounds; Talent hides them (only the caller's ring) and the cue has no arrow
  const smart=api.little?0:Math.max(0,Math.min(3,api.smart||0)),fade=[.4,.25,.12,0][smart],keepFaint=smart>=2,rounds=smart>=2?4:3;let nextSeeker=0;
+ // (v1.07 levels) friends' faintness in % seen, friends stay faint after the call (1/0), rounds, arrow in the cue (1/0)
+ api.stage.dataset.lv=[Math.round(fade*100),keepFaint?1:0,rounds,api.talent?0:1].join(',');
  api.say('Play Blindfold Tag! Guide the blindfolded friend. Listen, follow the call, then catch a friend nearby.', 'Cùng chơi Bịt mắt bắt bạn! Dẫn bạn bịt mắt đi nào. Nghe tiếng gọi, đi theo, rồi bắt bạn ở gần nhé.');
  // Loading never blocks the controls; visual and spoken cues also work when sound is off/unavailable.
  const calls=loadAnimalCalls();let closed=false;

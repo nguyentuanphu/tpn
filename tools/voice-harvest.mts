@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const { launch, open, clear } = await import(path.join(ROOT, 'tests/harness.mjs'));
+const { launch, open, clear } = await import(path.join(ROOT, 'tests/harness.mts'));
 const arg = <D = undefined,>(k: string, d?: D): string | D => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const PASSES = +arg('--passes', 3), WORLD = !process.argv.includes('--no-world');
 const OUT = path.join(ROOT, 'tools/voice-extra.json');

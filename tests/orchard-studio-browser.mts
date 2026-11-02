@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import { launch } from './harness.mjs';
-import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mjs';
+import { launch } from './harness.mts';
+import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mts';
 const root=path.resolve(import.meta.dirname,'..'),folder=path.join(root,'docs/v1.02-orchard-arcade/studio');await fs.mkdir(folder,{recursive:true});
 const repo='family/arcade-audit',password='synthetic-arcade-studio-123',site='http://localhost:8798';
 const gh=fakeGitHub(repo,{'content/custom.json':'{}','js/build.js':await fs.readFile(path.join(root,'js/build.js'))}),unroute=routeGitHub(gh),players=memoryBlobs();

@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type {Browser} from 'playwright';
-import {open,start,clear,noWelcome} from './harness.mjs';
-import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mjs';
+import {open,start,clear,noWelcome} from './harness.mts';
+import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mts';
 import {hello} from '../netlify/lib/players.mts';
 
 export async function installFlowCheck(browser:Browser){

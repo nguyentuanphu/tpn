@@ -45,7 +45,7 @@ jobs:
       - name: Build typed sources and verify pure engines/protocol
         run: |
           node tools/build.mts
-          node --test tests/unit/arcade-engines.test.mjs
+          node --test tests/unit/arcade-engines.test.mts
           tests/node_modules/.bin/tsc --noEmit --strict --module es2022 --moduleResolution bundler --target es2022 --skipLibCheck js/games/parade-engine.ts js/games/arcade-session.ts js/games/fruitbar-engine.ts
       - name: Start game server
         run: python3 -m http.server 8765 > /tmp/tester-arcades-server.log 2>&1 &

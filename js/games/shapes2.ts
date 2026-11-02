@@ -47,7 +47,7 @@ function style() {
 const mix = <V,>(list: V[]): V[] => [...list].sort(() => Math.random() - .5);
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value. Talent hides the names under the answers.
-const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
 const cycle = <V,>(list: V[], n: number): V[] => Array.from({ length: n }, (_, i) => list[i % list.length]);
 const INK = 'stroke="#3b2a4f" stroke-width="4" stroke-linejoin="round"';
 // a flat shape drawn in a 64 by 64 box
@@ -97,6 +97,8 @@ async function rounds(api, intro: [string, string], list: Round[], done: [string
 }
 const shapeChoice = (k: Flat, bare = false) => ({ key: k, html: svg(SHAPES[k]('#ffd23f')) + (bare ? '' : `<span>${T(NAMES[k][0], NAMES[k][1])}</span>`) });
 // (levels) the right shape and wrong ones: two wrong on Easy and Medium, three on Hard and Talent
+// (v1.07 levels) shape names under the answers (1) or not (0, Talent), written on the stage for the levels check
+const markNames = api => { api.stage.dataset.lv = api.talent ? '0' : '1'; };
 const shapeChoices = (api, shape: Flat) => [shape, ...mix((Object.keys(SHAPES) as Flat[]).filter(k => k !== shape)).slice(0, lv(api, 2, 2, 3, 3))].map(k => shapeChoice(k, api.talent));
 
 register({
@@ -117,6 +119,7 @@ register({
 register({
   id: 'townshapes', icon: '🏘️', name: () => T('Shape Hunt in Town', 'Tìm Hình Trong Phố'),
   run: api => {
+    markNames(api);
     const finds: [string, Flat, [string, string]][] = [['🏠', 'triangle', ['the roof', 'mái nhà']], ['🍕', 'triangle', ['the pizza slice', 'miếng bánh pizza']], ['🛞', 'circle', ['the wheel', 'bánh xe']], ['🕒', 'circle', ['the clock', 'đồng hồ']], ['🚪', 'rectangle', ['the door', 'cánh cửa']], ['🪟', 'square', ['the window', 'ô cửa sổ']]];
     return rounds(api, ['Find the shapes hiding around town!', 'Tìm các hình đang ẩn trong phố nhé!'],
       mix(finds).slice(0, api.little ? 3 : lv(api, 4, 5, 6, 6)).map(([icon, shape, name]) => ({
@@ -187,12 +190,12 @@ register({
 
 register({
   id: 'shapetrain', icon: '🚂', name: () => T('Shape Train', 'Tàu Hình Khối'),
-  run: api => rounds(api, ['Load the matching shape into each train wagon!', 'Xếp đúng hình vào từng toa tàu!'],
+  run: api => (markNames(api), rounds(api, ['Load the matching shape into each train wagon!', 'Xếp đúng hình vào từng toa tàu!'],
     cycle(mix(Object.keys(SHAPES) as Flat[]), api.little ? 3 : lv(api, 4, 5, 6, 6)).map(shape => ({
       show: `<div class="s2-train"><span class="s2-engine">${pic('🚂')}</span><span class="s2-wagon">${svg(SHAPES[shape]('#fff').replace(INK, 'stroke="#3b2a4f" stroke-width="4" stroke-dasharray="6 4"'))}</span></div>`,
       ask: ['Which shape fits in the wagon?', 'Hình nào vừa với toa tàu?'], answer: shape,
       choices: shapeChoices(api, shape),
-    })), ['The shape train is ready!', 'Đoàn tàu hình khối đã đầy!'])
+    })), ['The shape train is ready!', 'Đoàn tàu hình khối đã đầy!']))
 });
 
 register({
@@ -222,6 +225,7 @@ register({
     api.say('Tap each side to fold it up and make a box!', 'Chạm từng cạnh để gấp lên thành chiếc hộp nhé!');
     // (levels) Easy one box; Medium two; Hard two boxes with a lid; Talent three boxes with a lid
     const boxes = lv(api, 1, 2, 2, 3), lid = (api.smart || 0) >= 2 && !api.little, sides = lid ? 5 : 4;
+    api.stage.dataset.lv = [boxes, sides].join(',');   // (v1.07 levels) boxes to fold, sides on each
     const wrap = el('div', 's2-board'), stage = el('div', 's2-stage');
     api.stage.appendChild(wrap); wrap.appendChild(stage);
     for (let n = 0; n < boxes; n++) {

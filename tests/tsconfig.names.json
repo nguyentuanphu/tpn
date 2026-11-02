@@ -1,6 +1,6 @@
 {
   "extends": "../tsconfig.base.json",
-  "//": "Every game file checked for one thing only: a name used but never defined or imported (error TS2304), the mistake a move between files makes. tests/run.mjs 'names'.",
+  "//": "Every game file checked for one thing only: a name used but never defined or imported (error TS2304), the mistake a move between files makes. tests/run.mts 'names'.",
   "compilerOptions": { "allowJs": true, "checkJs": true, "noEmit": true, "strict": false, "noImplicitAny": false, "target": "es2022", "module": "es2022", "moduleResolution": "bundler", "lib": ["es2022", "dom", "dom.iterable"], "types": [], "skipLibCheck": true },
   "include": ["../js/**/*.js", "../js/**/*.ts", "../types/**/*.d.ts"]
 }

@@ -111,7 +111,7 @@ export function needs(api, post) {
     if (/^management\/drafts(?:\/[a-f0-9-]{36}(?:\/(?:review|publish))?)?$/.test(operation)) return 'management.configure';
     if (post && ['management/config', 'management/config/project'].includes(operation)) return 'management.configure';
     if (post && operation === 'management/operations/run') return 'operations.run';
-    if (!post && (/^management\/(overview|devices|activities|attention|config)$/.test(operation) || /^management\/(activities|releases|changes)\/[a-zA-Z0-9_.:-]{1,100}$/.test(operation))) return 'management.read';
+    if (!post && (/^management\/(overview|summary|devices|activities|attention|config)$/.test(operation) || /^management\/(activities|releases|changes)\/[a-zA-Z0-9_.:-]{1,100}$/.test(operation))) return 'management.read';
     return '__unknown_management__';
   }
   if (['whoami', 'info', 'ping', 'admins/me'].includes(api)) return null;

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {snakesStart,snakesCommand,LADDERS,SNAKES} from '../js/games/snakes-core.js';
 import {SharedBoardSession} from '../js/games/shared-board-session.js';
-import {sharedRoom,flushRoom} from './shared-board-room.mjs';
+import {sharedRoom,flushRoom} from './shared-board-room.mts';
 test('Snakes uses advancing seeded rolls and immutable legal destinations for all four seats',()=>{
  for(const gentle of[true,false])for(let seed=0;seed<25;seed++){
   let s=snakesStart(gentle,4,String(seed)),steps=0;const rolls=new Set<number>();

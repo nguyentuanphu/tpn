@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict';import type {Browser} from 'playwright';import {open,clear,noWelcome} from './harness.mjs';
+import assert from 'node:assert/strict';import type {Browser} from 'playwright';import {open,clear,noWelcome} from './harness.mts';
 export async function legacyPlayPlansCheck(browser:Browser){
  const P=await open(browser,{w:900,h:800,settings:{voice:false,sound:false,autoPack:false,online:false,countPlayers:false}});
  try{await clear(P.page);await noWelcome(P.page);const results=[];

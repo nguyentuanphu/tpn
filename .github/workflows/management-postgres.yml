@@ -40,4 +40,4 @@ jobs:
       - name: Exercise real SQL transactions with synthetic records
         env:
           MANAGEMENT_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/management_ci_test
-        run: node tests/management/postgres-integration.mjs
+        run: node tests/management/postgres-integration.mts

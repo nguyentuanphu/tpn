@@ -64,7 +64,7 @@ jobs:
 
       - name: Run the quick checks
         id: run
-        run: cd tests && SV_URL=http://localhost:8765/ node run.mjs $CHECKS 2>&1 | tee ../checks.log; exit "${PIPESTATUS[0]}"
+        run: cd tests && SV_URL=http://localhost:8765/ node run.mts $CHECKS 2>&1 | tee ../checks.log; exit "${PIPESTATUS[0]}"
 
       - name: Mark the pull request
         if: always()

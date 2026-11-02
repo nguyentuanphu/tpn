@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type {Browser,Page} from 'playwright';
-import {open,clear,noWelcome} from './harness.mjs';
-import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mjs';
+import {open,clear,noWelcome} from './harness.mts';
+import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mts';
 
 export async function festivalSyncCheck(browser:Browser){
  const root=path.resolve(import.meta.dirname,'..'),site='http://localhost:8799',password='synthetic-festival-check-123',repo='family/festival-check';

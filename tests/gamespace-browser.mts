@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';import fs from 'node:fs/promises';import type {Browser} from 'playwright';
-import {open,clear,noWelcome} from './harness.mjs';
+import {open,clear,noWelcome} from './harness.mts';
 // (owner, 30 Oct 2026 AEDT: "put in the tool to ensure the game space is large enough; the space issue is across all
 // games") every game on a phone, big kid and under-5: the top (Leave, name, film, guide, level, stars) stays a small
 // band, the playing area keeps most of the screen, and the guide is at most two lines (its box keeps up to half a
