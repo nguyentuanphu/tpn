@@ -1,6 +1,7 @@
 # v1.07 launch: status
 
-**ready for Release** (2 Nov 2026 2:35 PM AEDT), once the GitHub full suite started on this branch is green (see Checks).
+**ready for Release (full suite: Release's combined run)** (2 Nov 2026 3:10 PM AEDT; owner's decision 3:05 PM AEDT
+via Release: one combined full suite, no per-branch runs).
 Docs and marketing scripts only: no game code changed.
 
 Branch: `work/v107-launch`. Brief: `launch-brief.md`. Paused 11:12 AM to 2:05 PM AEDT for Release's "slow down".
@@ -49,8 +50,8 @@ Everything under `docs/launch-2027/`, English and Vietnamese. Materials only: no
 ## Checks (2 Nov 2026 AEDT)
 
 - `node suite.mjs --changed` chose the **full suite** ("marketing/source/capture.mts changed and no check names it"),
-  so it was started on GitHub (`full-suite.yml`, workflow_dispatch on `work/v107-launch`, 2:34 PM AEDT). Result: Release
-  to read on the pull request / Actions.
+  so it was started on GitHub (`full-suite.yml`, workflow_dispatch, 2:34 PM AEDT). Release cancelled the per-branch runs
+  (owner, 3:05 PM AEDT): the full suite is Release's combined run. Draft pull request #791.
 - Local quick checks, commit `ac483423`: emoji pass, preload pass, noemoji pass, arch pass, names pass, rules pass,
   bilingual pass, types pass, unit pass (first run failed only because the root `npm ci` had not been run: package
   `pg` missing; passed after `npm ci`, 480 tests).
