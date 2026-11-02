@@ -86,11 +86,15 @@ Plan (after the roads helper's v1.07 change is merged, because it changes this f
 2. `createWorld()` is 60 KB alone. Split it like the Pad's Album tab: each "----------" part (sky, terrain, trees, village, bridges, shrines and towers, Leafies, animals, walking surface) becomes `buildSky(scene, quality, ...)` and so on in `world/build-*.ts`, receiving the same local names it uses now, so its text stays the same. This goes with "build each region" in focus 1 of the owner's plan.
 3. Watch: `perf` and `startup` (the world is built at start), `solid`, `roads`, `flat`, `roadshape`, `mapcoords`.
 
+### Step 4 (in progress)
+
+- Screenshots (2 Nov 2026 AEDT, `split-code-shots/`): title, Who's playing, Play, Grown-ups and the Pad album on phone (390 x 844), tablet (820 x 1180) and computer (1440 x 900). All tidy, no page errors.
+- Draft pull request: #788.
+- Full suite on GitHub: run 41382179883 (started by hand on ca22c5dc), queued at 2:16 pm AEDT. Result to follow.
+
 ## Exact next step
 
-1. Start `.github/workflows/full-suite.yml` on `work/v107-split-code` (workflow_dispatch) and wait for it.
-2. Take screenshots of Play, the profile and Grown-ups on phone, tablet and computer and look at them.
-3. Open the draft pull request "v1.07 split-code: ...", then mark this file "ready for Release".
+When the full suite finishes: if it is green, write the result here and mark this file "ready for Release"; if a check is red, fix the code (never the check) and run it again.
 
 Local test notes: `cd tests && npm install` brings a Playwright whose browser is missing; run checks with `CHROMIUM=/opt/pw-browsers/chromium`. Root `npm ci` is needed for the `unit` check (`pg`). `tools/build.mts` rewrites `content/management-catalogue.json`; it is restored before each commit.
 
