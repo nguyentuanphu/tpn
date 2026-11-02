@@ -1,5 +1,7 @@
 # v1.07 typescript: status
 
+**Ready for Release, but the GitHub full suite still has to pass** (2 Nov 2026 AEDT). Last code commit 145221eb.
+
 Branch `work/v107-typescript`, from main v1.06 (204ce75d). Brief: [typescript-brief.md](typescript-brief.md).
 Started 2 Nov 2026 11:00 AEDT.
 
@@ -56,8 +58,27 @@ Resumed 2 Nov 2026 2:00 pm AEDT (Release: "resume").
 - Batch 2 done (23 files `js/a*` to `js/g*`): d0a4f9af rename only; 412183d1 type notes, 0 light errors, contracts
   and names clean. Built `.js` equals v1.06's except brackets in `feel` and `gfx`. One type-only change outside the
   batch: `js/chat.ts` ChatTarget splits `'npc' | 'game'` into two members so a command's place target narrows.
-- GitHub full suite on 412183d1 (batches 1 and 2): run 41381462510, started 2:08 pm AEDT.
-- Next: batch 3 (`js/h*` to `js/p*`, 18 files), then batch 4, then the second full suite.
+- Batch 3 done (18 files `js/h*` to `js/p*`): d12afa03 rename only; df806270 type notes, 0 light errors. The
+  `Pad` fields use `declare`, so no class field is added. One type-only change outside the batch:
+  `types/globals.d.ts` (speech recognition: `maxAlternatives`, indexable results).
+- Batch 4 done (20 files `js/s*` to `js/w*`): 20b0efc5 rename only; 145221eb type notes, 0 light errors.
+  - Type-only change outside the batch: `js/i18n.ts` `both()` returns a pair.
+  - `js/showcase.ts` named `lighthouse: 16` twice in one list. TypeScript does not allow this, so the first copy,
+    which JavaScript ignores, was removed. Same result.
+- Every built `.js` of batches 2 to 4 equals v1.06's apart from whitespace, brackets and type-only lines.
+- GitHub full suite: the run on 412183d1 (41381462510) was still queued after the next batches landed, so it was
+  cancelled. One run on the final code covers all four batches; it was started 2 Nov 2026 2:15 pm AEDT on 145221eb.
+  Result: (pending).
+- Strict plan (brief item 5): [typescript-strict-plan.md](typescript-strict-plan.md) and
+  [typescript-strict-ratchet.json](typescript-strict-ratchet.json). 71 of 245 checked game files are already
+  strict-clean. Strict is not turned on.
+
+**Files left as `.js`, by core (2 Nov 2026 AEDT):**
+- World: 14 (`animalhomes cities ferry hawkers homes houses places powerlines realworld reeds regions regionsites
+  signposts vendors`), left on purpose: the brief's list, plus `vendors` from CLAUDE.md rule 4.
+- Every other core: 0 in `js/*.js` and `js/content/*.js`.
+- Not counted (outside this brief): tests, tool prototypes, the Studio translation source, marketing scripts and
+  `vendor/`.
 
 Helper: `docs/cores/tasks/v107/typescript-optfix.mjs` marks trailing parameters that callers leave out as optional.
 

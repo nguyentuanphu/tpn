@@ -7,7 +7,7 @@ of [the TypeScript plan](../typescript-plan-20261016.md).
 
 The probe ran `tests/tsconfig.json` once with `strict` and `noImplicitAny` on, without saving that setting.
 - Game files listed in `tests/tsconfig.json` (`js/`, `studio/ui/`, `home/`): 245.
-- **Already strict-clean: 71.** The 11 in `tests/tsconfig-contracts.json` are checked strictly today; the other 60 are
+- **Already strict-clean: 71.** The 8 game files in `tests/tsconfig-contracts.json` are checked strictly today; the other 63 are
   clean but not yet held to it.
 - The rest: 51 files have 1 to 10 errors, 76 have 11 to 50, 38 have 51 to 200, and 9 have more than 200
   (`studio/ui/app.ts` 1219, `js/main.ts` 777, `js/world.ts` 487, `js/ui.ts` 454, `js/autoplay.ts` 356,
@@ -30,7 +30,7 @@ The probe ran `tests/tsconfig.json` once with `strict` and `noImplicitAny` on, w
 
 ## Order
 
-1. Move the 60 clean files into `tests/tsconfig-contracts.json` and add the ratchet check. This is a small change
+1. Move the 63 clean files into `tests/tsconfig-contracts.json` and add the ratchet check. This is a small change
    with no code edits, one round.
 2. The 51 files with 1 to 10 errors, a core at a time (mostly parameter types: notes only).
 3. Shared types first for the big ones: the shared game object (`SvMain` in `js/main.ts`), the hero and the
