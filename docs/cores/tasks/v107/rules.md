@@ -42,6 +42,11 @@ Helper: rules. Branch: `work/v107-rules`. Started 2 Nov 2026, 11:00 am AEDT.
 - Pictures: Bánh Chưng (after the pork, the "beans and rice again" step), Duck Duck Goose (goose chosen, sit in their place) and Pass the Parcel on phone 390x844, tablet 820x1180 and computer 1280x800, in `docs/rules-audit/shots/`. All looked: tidy, nothing cut off, no page errors.
 - No draft pull request opened: a pull request into `main` starts a second full suite, and Release asked to save usage. Release collects the branch.
 
+## Lê Minh recordings (Release's `voiceroutes` red, 2 Nov 2026)
+
+- Three new Vietnamese lines had Azure but no Lê Minh (FPT) recording. Reviewed inventory `docs/voice-recording-delta/round-20261102-rules.json` (validated by `tools/reviewed-voice-delta.mts`), commit `a77e68cc`; `public-voice-delta.yml` run 41390520987 recorded them, commit `0632687c` (4:38 pm AEDT).
+- `node tools/voice-routing-audit.mts --check`: missing 0.
+
 ## Exact next step (after "resume")
 
 1. Run `npm ci` in the repo root (for `pg`), then re-run `cd tests && node suite.mjs --only unit,types` (game server: `python3 -m http.server 8765`).
