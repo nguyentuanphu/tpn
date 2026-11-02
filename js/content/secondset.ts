@@ -9,7 +9,9 @@ export const SECOND_SET_GAMES: Record<string, string[]> = {
   animals: ['crabwalk', 'whohome', 'mumbaby', 'feedzoo', 'buffalo', 'reefcount', 'tracks', 'catchfish', 'emueggs', 'reefclean'],
   music: ['dantranh', 'bushband', 'drumecho', 'loudquiet', 'songsteps'],
   art: ['stamps', 'weave', 'mosaic', 'nonla', 'aodai', 'kitepaint', 'shades', 'shadowpic', 'spotdiff', 'hiddenpic', 'finishpic', 'scene', 'paperfold', 'lacquer', 'scratch', 'bubblepaint', 'fingerpaint', 'weatherpaint', 'thocam', 'pixelpic', 'fireworks', 'masks', 'makeface', 'gallery', 'leafrub'],
-  numbers: ['numline', 'tenframe', 'dice', 'evenodd', 'measure', 'beforeafter', 'halves'],
+  // (v1.08 maths, owner 3 Nov 2026 AEDT: "switch on the 7 held-back maths games") numline, tenframe, dice, evenodd, measure,
+  // beforeafter and halves are no longer held: they are ordinary Con số games now
+  numbers: [],
   shapes: ['solids', 'townshapes', 'tiles', 'turnit', 'shapetrain', 'linescurves', 'foldbox'],
   words: ['whichgroup', 'storyorder', 'guesswhat', 'actions', 'position'],
   reading: ['rd_blend', 'rd_hats', 'rd_endings', 'rd_compound', 'rd_labels', 'rd_signs', 'rd_questions', 'rd_many', 'rd_caps', 'rd_poem', 'rd_missing', 'rd_book'],

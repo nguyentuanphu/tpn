@@ -1,6 +1,7 @@
 // Numbers additions (owner, 23 Oct 2026 AEDT): concrete counting, parity, sequence and sharing play.
 // (owner, 29 Oct 2026 AEDT audit) rebuilt: the right answer was always the first button, the Vietnamese voice read the
 // English line, Hop the Number Line and Before and After showed the answer on screen, and the dots were text symbols.
+// (v1.08 maths) the questions with a number are said through a template, so the recorded pack has their parts.
 // Now each round draws what is counted (a number line with a frog, a ten frame, a dice face, pairs of apples, a
 // caterpillar and blocks, shared pizza), says the question in both languages, and mixes up the answers.
 import { register, untilRight } from './frame.js';
@@ -41,7 +42,8 @@ function style() {
 `));
 }
 
-type Round = { draw: (stage: HTMLElement) => void; ask: [string, string]; answer: string; others: string[] };
+// (v1.08 maths) speak: a question with a number in it, said through api.say with a template so its parts are recorded
+type Round = { draw: (stage: HTMLElement) => void; ask?: [string, string]; speak?: () => void; answer: string; others: string[] };
 const mix = <V,>(list: V[]): V[] => [...list].sort(() => Math.random() - .5);
 const pick = (from: number, to: number) => from + Math.floor(Math.random() * (to - from + 1));
 // numbers near the answer that are not the answer, inside lo..hi
@@ -64,7 +66,7 @@ async function rounds(api, list: Round[], intro: [string, string], end: [string,
     const q = list[k];
     stage.innerHTML = ''; controls.innerHTML = '';
     q.draw(stage);
-    api.say(q.ask[0], q.ask[1]);
+    if (q.speak) q.speak(); else api.say(q.ask[0], q.ask[1]);
     const btns = mix([q.answer, ...q.others]).map(v => { const b = el('button', 'n2-btn', v); b.dataset.v = v; controls.appendChild(b); return b; });
     const target = btns.find(b => b.dataset.v === q.answer);
     api.plan(() => target, { maxActions: 5 });
@@ -87,7 +89,7 @@ const count = api => lv(api, 3, 4, 5, 6), wrongs = api => lv(api, 2, 2, 3, 3);
 register({
   id: 'numline', icon: '🔢', name: () => T('Hop the Number Line', 'Nhảy Trên Tia Số'),
   run: api => rounds(api, numbers(count(api), 0, api.little ? 5 : lv(api, 8, 8, 9, 9)).map(n => ({
-    ask: ['The frog is on ' + n + '. One hop forward: where does it land?', 'Ếch đang ở số ' + n + '. Nhảy thêm một bước: ếch tới số mấy?'],
+    speak: () => api.say(`The frog is on ${n}. One hop forward: where does it land?`, `Ếch đang ở số ${n}. Nhảy thêm một bước: ếch tới số mấy?`),
     answer: String(n + 1), others: near(n + 1, 0, 10, wrongs(api)),
     draw: stage => {
       const line = el('div', 'n2-line');
@@ -134,7 +136,7 @@ register({
     // (levels) more rounds and bigger numbers from Medium; Talent: the apples stand in one row, not in pairs
     const top = lv(api, 4, 5, 7, 9), ns = mix([pick(1, top) * 2, pick(1, top) * 2 + 1, ...Array.from({ length: count(api) - 2 }, () => pick(0, 1) ? pick(1, top) * 2 : pick(1, top) * 2 + 1)]);
     return rounds(api, ns.map(n => ({
-      ask: ['Here are ' + n + ' apples. Does every apple have a partner?', 'Có ' + n + ' quả táo. Quả nào cũng có đôi không?'],
+      speak: () => api.say(`Here are ${n} apples. Does every apple have a partner?`, `Có ${n} quả táo. Quả nào cũng có đôi không?`),
       answer: n % 2 ? odd : even, others: [n % 2 ? even : odd],
       draw: stage => {
         const p = el('div', 'n2-pairs');
@@ -166,7 +168,7 @@ register({
   run: api => rounds(api, numbers(count(api) + 1, 2, api.little ? 9 : lv(api, 19, 29, 49, 99)).map((n, i) => {
     const after = i % 2 === 1;
     return {
-      ask: after ? ['What number comes just after ' + n + '?', 'Số nào đứng ngay sau số ' + n + '?'] : ['What number comes just before ' + n + '?', 'Số nào đứng ngay trước số ' + n + '?'],
+      speak: after ? () => api.say(`What number comes just after ${n}?`, `Số nào đứng ngay sau số ${n}?`) : () => api.say(`What number comes just before ${n}?`, `Số nào đứng ngay trước số ${n}?`),
       answer: String(after ? n + 1 : n - 1), others: [String(after ? n - 1 : n + 1), String(after ? n + 2 : n - 2), ...(wrongs(api) > 2 ? [String(after ? n + 11 : n - 11)] : [])].filter(v => +v >= 0),
       draw: stage => { stage.appendChild(el('div', 'n2-big', after ? `${n} <b>?</b>` : `<b>?</b> ${n}`)); }
     };
@@ -177,7 +179,7 @@ register({
   id: 'halves', icon: '🍕', name: () => T('Share in Half', 'Chia Đôi'),
   // (levels) up to 10 slices on Easy, 12 Medium, 16 Hard, 20 Talent
   run: api => rounds(api, mix([2, 4, 6, 8, 10, 12, 14, 16, 18, 20].filter(n => n <= lv(api, 10, 12, 16, 20))).slice(0, count(api)).map(n => ({
-    ask: ['Share ' + n + ' slices fairly between two friends. How many each?', 'Chia đều ' + n + ' miếng bánh cho hai bạn. Mỗi bạn mấy miếng?'],
+    speak: () => api.say(`Share ${n} slices fairly between two friends. How many each?`, `Chia đều ${n} miếng bánh cho hai bạn. Mỗi bạn mấy miếng?`),
     answer: String(n / 2), others: near(n / 2, 1, 10, wrongs(api)),
     draw: stage => {
       const s = el('div', 'n2-share');

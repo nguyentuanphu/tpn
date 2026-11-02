@@ -17,7 +17,10 @@ export const CORNER_LINKS: Record<Corner, string[]> = {
   hv_en: ['phonics', 'firstwords', 'opposites', 'rd_listentouch', 'rd_storychoice', 'rd_trace', 'rd_sounds', 'rd_build', 'rd_rhyme', 'rd_sight', 'rd_tones', 'rd_syllable', 'rd_match', 'rd_sentence', 'rd_readalong',
     'rd_blend', 'rd_hats', 'rd_endings', 'rd_compound', 'rd_labels', 'rd_signs', 'rd_questions', 'rd_many', 'rd_caps', 'rd_poem', 'rd_missing', 'rd_book', 'rd_storyhelp'],
   // counting, adding and taking away, the number line and the numbers games; comparing and time from the plan
-  hv_math: ['counting', 'sums', 'numline', 'tenframe', 'dice', 'evenodd', 'measure', 'beforeafter', 'halves', 'moreless', 'clock'],
+  hv_math: ['counting', 'sums', 'numline', 'tenframe', 'dice', 'evenodd', 'measure', 'beforeafter', 'halves', 'moreless', 'clock',
+    // (v1.08 maths) the 21 new maths games (they live in Con số, js/games/maths3.ts and maths4.ts)
+    ...['mx_bonds', 'mx_takeaway', 'mx_skip', 'mx_patterns', 'mx_shapehunt', 'mx_symmetry', 'mx_heavy', 'mx_full', 'mx_pizza', 'mx_graph', 'mx_calendar',
+    'mx_quarter', 'mx_sudoku', 'mx_bigger', 'mx_doubles', 'mx_tens', 'mx_missing', 'mx_solids3d', 'mx_leftright', 'mx_sprint', 'mx_grouping']],
   hv_sci: []
 };
 /** is this game shown in this corner as a link (not its own area)? */

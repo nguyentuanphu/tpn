@@ -264,7 +264,9 @@ await check('levelsa', async () => {
     ['hanoi', '.disc'], ['robot', '.rcell'], ['goat', '.hay'], ['eggs', '.eggspot'], ['opposites', '.choices .choice'], ['days', '.choices .choice'],
     ['oantuti', '.gl-dots i'], ['rulefinder', '.choices .choice'], ['steppingpath', '.think-path button'], ['sayfind', '.sf-pic'],
     ['numline', '.n2-btn'], ['tiles', '.s2-tile'], ['foldbox', '.s2-flap'], ['whichgroup', '.w2-btn'], ['guesswhat', '.w2-btn'],
-    ['pricetags', '.mn2-coin'], ['sharefair', '.mn2-friend'], ['cheaper', '.mg-card'], ['tangram', '.tg-piece'], ['rangoli', '.rg-pal button']];
+    ['pricetags', '.mn2-coin'], ['sharefair', '.mn2-friend'], ['cheaper', '.mg-card'], ['tangram', '.tg-piece'], ['rangoli', '.rg-pal button'],
+    // (v1.08 maths) two of the new maths games: more answers to choose from at Talent
+    ['mx_sprint', '.mx-btn'], ['mx_patterns', '.mx-btn']];
   // (every game unlocked, as in the games check: this checks the levels, not earned access)
   const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true }); await clear(P.page);
   await P.page.evaluate(() => { __sv.heroes.forEach(h => { h.profile.age = 'big'; }); });

@@ -681,7 +681,7 @@ await check('secondset', async () => {
     // (30 Oct 2026 AEDT) the Coming soon tile names its group now (data-soon="learn"), so it is found by its tile
     out.offSoon = !!body.querySelector('.hsoon [data-soon]'); out.offNoNew = !plays(body).some(id => newIds.includes(id)); out.offNoFold = !body.querySelector('[data-fold]');
     out.offSimple = !A.gamesIn(F.GAMES, 'numbers', false).some(g => newIds.includes(g.id)); out.offTales = !__sv.TALES.some(t => Object.values(U.SECOND_SET_TALES).flat().includes(t.id));
-    out.offShut = !U.isOpen({ unlockAll: true }, 'numline', 'game', 'numbers');
+    out.offShut = !U.isOpen({ unlockAll: true }, 'solids', 'game', 'shapes');   // (v1.08 maths: the numbers set is switched on, so a shapes game is the sample)
     body = await hub('tales'); out.offTaleSoon = !!body.querySelector('[data-soon="tale"]');
     C.releases.newGames = { on: true }; C.releases.newStories = { on: true }; p.unlockAll = false; p.admin = false;
     body = await hub('learn');

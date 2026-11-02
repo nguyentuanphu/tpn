@@ -88,7 +88,12 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   // (Học vui) the six science experiments and the two Tiếng Việt games (js/games/science.ts, js/games/tiengviet.ts)
   sci_float: ['hv_sci', 2, 1], sci_magnet: ['hv_sci', 3, 1], sci_ramp: ['hv_sci', 3, 1], sci_seesaw: ['hv_sci', 3, 2], sci_shadow: ['hv_sci', 3, 2], sci_sound: ['hv_sci', 2, 1],
   vi_tones: ['hv_vi', 3, 2], vi_build: ['hv_vi', 4, 2],
-  heodat: ['money', 2, 1], coinnote: ['money', 2, 1], lixi: ['money', 2, 1], needwant: ['money', 3, 1], cheaper: ['money', 3, 1], bahu: ['money', 3, 2], shoplist: ['money', 3, 2], waitgrow: ['money', 3, 2], shopkeep: ['money', 4, 2], barter: ['money', 4, 2]
+  heodat: ['money', 2, 1], coinnote: ['money', 2, 1], lixi: ['money', 2, 1], needwant: ['money', 3, 1], cheaper: ['money', 3, 1], bahu: ['money', 3, 2], shoplist: ['money', 3, 2], waitgrow: ['money', 3, 2], shopkeep: ['money', 4, 2], barter: ['money', 4, 2],
+  // (v1.08 maths) the 21 new maths games, in Con số (linked into Học vui > Toán: js/content/hocvui.ts)
+  mx_bonds: ['numbers', 4, 2], mx_takeaway: ['numbers', 3, 1], mx_skip: ['numbers', 5, 2], mx_patterns: ['numbers', 3, 1], mx_shapehunt: ['numbers', 3, 1], mx_symmetry: ['numbers', 4, 2],
+  mx_heavy: ['numbers', 3, 1], mx_full: ['numbers', 3, 1], mx_pizza: ['numbers', 4, 2], mx_graph: ['numbers', 4, 2], mx_calendar: ['numbers', 5, 2], mx_quarter: ['numbers', 5, 2],
+  mx_sudoku: ['numbers', 5, 3], mx_bigger: ['numbers', 3, 1], mx_doubles: ['numbers', 4, 2], mx_tens: ['numbers', 5, 2], mx_missing: ['numbers', 3, 1], mx_solids3d: ['numbers', 4, 2],
+  mx_leftright: ['numbers', 3, 1], mx_sprint: ['numbers', 5, 3], mx_grouping: ['numbers', 5, 2],
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };
