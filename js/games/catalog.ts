@@ -221,6 +221,19 @@ export const GAME_CATALOG = [
   // the two Tiếng Việt games: hear a tone and pick its mark; build a syllable (js/games/tiengviet.ts)
   { id: 'vi_tones', learn: true, icon: 'vi:tones', name: () => T('Tone Detective', 'Thám Tử Dấu Thanh') },
   { id: 'vi_build', learn: true, icon: 'vi:build', name: () => T('Build a Syllable', 'Bé Ghép Vần') },
+  // (v1.08 science) twelve more science experiments: guess, try, hear why, then a fact (js/games/science2.ts)
+  { id: 'sci_plant', learn: true, icon: 'sci:plant', name: () => T('Grow a Plant', 'Trồng Cây') },
+  { id: 'sci_water', learn: true, icon: 'sci:water', name: () => T('Water Cycle', 'Vòng Tuần Hoàn Của Nước') },
+  { id: 'sci_daynight', learn: true, icon: 'sci:daynight', name: () => T('Day and Night', 'Ngày và Đêm') },
+  { id: 'sci_seasons', learn: true, icon: 'sci:seasons', name: () => T('Four Seasons', 'Bốn Mùa') },
+  { id: 'sci_homes', learn: true, icon: 'sci:homes', name: () => T('Animal Homes', 'Nhà Của Con Vật') },
+  { id: 'sci_body', learn: true, icon: 'sci:body', name: () => T('My Body', 'Cơ Thể Em') },
+  { id: 'sci_colours', learn: true, icon: 'sci:colours', name: () => T('Mixing Colours', 'Pha Màu') },
+  { id: 'sci_ice', learn: true, icon: 'sci:ice', name: () => T('Ice Melts', 'Đá Tan') },
+  { id: 'sci_rainbow', learn: true, icon: 'sci:rainbow', name: () => T('Rainbow Light', 'Cầu Vồng Ánh Sáng') },
+  { id: 'sci_bulb', learn: true, icon: 'sci:bulb', name: () => T('Light the Bulb', 'Thắp Sáng Bóng Đèn') },
+  { id: 'sci_gears', learn: true, icon: 'sci:gears', name: () => T('Gears Turn', 'Bánh Răng Quay') },
+  { id: 'sci_recycle', learn: true, icon: 'sci:recycle', name: () => T('Recycle Sort', 'Phân Loại Rác') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -263,5 +276,7 @@ export const GAME_LOADERS = {
   'crafts.ts': { ids: ["lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"], load: () => import('./crafts.js') },
   'science.ts': { ids: ['sci_float', 'sci_magnet', 'sci_ramp', 'sci_seesaw', 'sci_shadow', 'sci_sound'], load: () => import('./science.js') },
   'tiengviet.ts': { ids: ['vi_tones', 'vi_build'], load: () => import('./tiengviet.js') },
+  // (v1.08 science)
+  'science2.ts': { ids: ['sci_plant', 'sci_water', 'sci_daynight', 'sci_seasons', 'sci_homes', 'sci_body', 'sci_colours', 'sci_ice', 'sci_rainbow', 'sci_bulb', 'sci_gears', 'sci_recycle'], load: () => import('./science2.js') },
 
 };

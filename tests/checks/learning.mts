@@ -10,6 +10,9 @@ await check('hocvui', async () => {
   // a win through real taps on the screen, at Easy and at Talent for a big kid, where Talent shows more than Easy
   const NEW = ['sci_float', 'sci_magnet', 'sci_ramp', 'sci_seesaw', 'sci_shadow', 'sci_sound', 'vi_tones', 'vi_build'];
   const MORE = { sci_float: '.sx-thing', sci_magnet: '.sx-thing', sci_ramp: '.sx-lane', sci_seesaw: 'button.sx-seat', sci_shadow: '.sx-ring', sci_sound: '.sx-bottle', vi_tones: '.choices .choice', vi_build: '.choices .choice' };
+  // (v1.08 science) the twelve new science experiments (js/games/science2.ts), each also played to a win at Easy and Talent
+  const SCI2 = ['sci_plant', 'sci_water', 'sci_daynight', 'sci_seasons', 'sci_homes', 'sci_body', 'sci_colours', 'sci_ice', 'sci_rainbow', 'sci_bulb', 'sci_gears', 'sci_recycle'];
+  NEW.push(...SCI2); for (const id of SCI2) MORE[id] = '.sx-thing';
   const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, settings: { voice: false } }); await clear(P.page);
   const fails = [];
   // the Play hub: the tab, its four corners, the new games as cards, existing games as links; Learning keeps its games

@@ -13,3 +13,5 @@ export const SKILLS = {
   remembergarden: { key: 'skill:remembergarden', en: 'Memory keeper', vi: 'Nhớ giỏi' }
 };
 import './hocvui-meta.js';
+// (v1.08 science) How to play for the twelve new science experiments
+import './science2-meta.js';

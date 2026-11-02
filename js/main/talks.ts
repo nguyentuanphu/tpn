@@ -15,6 +15,7 @@ import { openHowTo } from '../howto.js';
 import { solidCircleHit } from '../solids.js';
 import { openGamesHub, openQuick } from '../ui.js';
 import type { SvMain } from '../main.js';
+import { SCIENCE_PLACES } from '../content/science-places.js';   // (v1.08 science)
 
 export function installTalks(G: SvMain, D: { playGame: (i: number, id: string, source: string, shrine?: any) => Promise<any>, twoHalves: () => boolean, save: () => void, checkQuests: (h: any) => Promise<void>, hudFor: (h: { i: number }) => import('../hud.js').Hud, goAndDo: (h: any, it: any) => any, currentQuest: (p: any) => any, addMoney: (p: any, xu: number) => void, NPCS: any[] }) {
   const { playGame, twoHalves, save, checkQuests, hudFor, goAndDo, currentQuest, addMoney, NPCS } = D;
@@ -114,7 +115,7 @@ dialogHooks.chat = name => {
 // ---------- the Games hub: every game, by place, playable straight away ----------
 const GAME_SPOT = { music: 'musiccorner', firstwords: 'g_firstwords', tangram: 'g_tangram', snakes: 'g_snakes', rangoli: 'g_rangoli', datnieu: 'g_datnieu', kite: 'g_kite', chichi: 'g_chichi', sackrace: 'g_sackrace', cricket: 'g_cricket', parcel: 'g_parcel', words: 'g_words', snap: 'cards', tienlen: 'tienlen', tienlenbac: 'tienlen', dacau: 'dacau', mrwolf: 'npc_jack', chuyen: 'npc_mit', dragon: 'npc_bom', marbles: 'npc_ruby', skipping: 'npc_lan', oanquan: 'npc_teo', hopscotch: 'npc_ti', caro: 'npc_bong', tug: 'npc_su', market: 'npc_mai', jigsaw: 'easel', bunny: 'hutch', balloon: 'balloon', bubbles: 'bubbles',
   tower: 'blocks', order: 'order', sortout: 'bear', duckmaze: 'duckmaze', memory: 'chest', tune: 'xylo', shapes: 'theatre', oddone: 'frog' };
-G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || (G.GAME_SPOT || {})[id] || (SHRINES.find(s => s.game === id) || {}).id));
+G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || (G.GAME_SPOT || {})[id] || SCIENCE_PLACES[id] || (SHRINES.find(s => s.game === id) || {}).id));
 G.openQuick = i => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return; G.paused = true; openQuick(G, i); };
 G.openGamesHub = i => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return; G.paused = true; openGamesHub(G, i, () => { G.paused = false; }); };
 // Games hub / map: fly straight to the friend who runs a game (or a place), then start it there

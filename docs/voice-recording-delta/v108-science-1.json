@@ -1,0 +1,2410 @@
+{
+ "schema": 1,
+ "status": "reviewed-public",
+ "sourceHashes": {
+  "js/games/science2-meta.ts": "cc1da7f86ff34d9335e89448c1889ee8a3b6d47e90011e814457aa73b8012636",
+  "js/games/science2.ts": "f21632a67ff975c9e0d1f556512e80aaa8345d2347f6a47b351de9d7a44016e7"
+ },
+ "lines": [
+  {
+   "id": "96a028fb7172ec8b",
+   "lang": "vi",
+   "text": "Cuối trò, nghe một điều thú vị về khoa học nhé!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "1599b497-3e821c37",
+   "lang": "vi",
+   "text": "Đoán trước nhé: hạt giống sẽ lớn tốt, lớn yếu ớt, hay không mọc?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "224b634f0c10e5b5",
+   "lang": "vi",
+   "text": "Chạm vào tờ lịch để một tuần trôi qua.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "34e2a9a6-762d5fba",
+   "lang": "vi",
+   "text": "Xem các chậu cây, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "f29dc7b4-1749c818",
+   "lang": "vi",
+   "text": "Thử thật: đặt hạt đậu lên bông ẩm cạnh cửa sổ và xem nó nảy mầm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "00700dc00424c69a",
+   "lang": "vi",
+   "text": "Đoán trước nhé: tiếp theo nước sẽ làm gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "1311a9d40ed77666",
+   "lang": "vi",
+   "text": "Chạm vào và xem nước bay lên, mưa xuống hay chảy đi.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "5e826de1-5cad5709",
+   "lang": "vi",
+   "text": "Theo chân giọt nước đi một vòng, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "c9d88cc8-227ed680",
+   "lang": "vi",
+   "text": "Thử thật: cùng người lớn bọc màng bọc lên bát nước để dưới nắng, rồi tìm những giọt nước.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "18c28a755d728f65",
+   "lang": "vi",
+   "text": "Đoán trước nhé: ở ngôi nhà là ngày hay đêm?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "b2c35319-5d6701d9",
+   "lang": "vi",
+   "text": "Chạm vào Mặt Trời để nắng chiếu lên Trái Đất.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "fa35691e-57a90b4a",
+   "lang": "vi",
+   "text": "Xem phía có nắng và phía tối, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "4aee7d22-5607d3a0",
+   "lang": "vi",
+   "text": "Thử thật: trong phòng tối, rọi đèn pin vào quả bóng và xoay thật chậm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "59ef31a860124abc",
+   "lang": "vi",
+   "text": "Nhìn các gợi ý và đoán xem là mùa nào.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "256dd68b4b56b48a",
+   "lang": "vi",
+   "text": "Chạm vào tờ lịch để lật sang mùa khác.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "ffd71de25caad3de",
+   "lang": "vi",
+   "text": "Xem cái cây thay đổi, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "8b82de6232b57617",
+   "lang": "vi",
+   "text": "Thử thật: chụp ảnh cùng một cái cây vào mỗi mùa rồi so sánh.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "0d985adc-7e1e171d",
+   "lang": "vi",
+   "text": "Đoán trước nhé: con vật này sống ở đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "a10418a2-30142fab",
+   "lang": "vi",
+   "text": "Chạm hoặc kéo con vật để đưa nó về nhà.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "e59b32f5-65cc57b3",
+   "lang": "vi",
+   "text": "Xem nó chui vào nhà, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "c8f2dc56-2d8234c9",
+   "lang": "vi",
+   "text": "Thử thật: khi đi dạo, tìm tổ chim, hang và mạng nhện, nhưng đừng chạm vào nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "4db08b3f1efdc6cd",
+   "lang": "vi",
+   "text": "Đoán trước nhé: cơ thể con sẽ làm gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "fff45823625cace1",
+   "lang": "vi",
+   "text": "Chạm vào hình để thử.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "c775b253-64d42f82",
+   "lang": "vi",
+   "text": "Xem điều xảy ra bên trong, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "389d1b20-12ab0167",
+   "lang": "vi",
+   "text": "Thử thật: đặt tay lên ngực, nhảy mười cái, rồi cảm nhận nhịp tim.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "b7032d8819dc45a0",
+   "lang": "vi",
+   "text": "Đoán trước nhé: các màu trộn lại sẽ ra màu gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "80ccbfd300b4822a",
+   "lang": "vi",
+   "text": "Chạm vào các lọ màu để trộn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "51976aab62a4641e",
+   "lang": "vi",
+   "text": "Xem màu mới, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "55c5ccf0-376c2f1a",
+   "lang": "vi",
+   "text": "Thử thật: trộn hai màu sơn trên đĩa giấy bằng ngón tay.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "43e49d76-24e8d518",
+   "lang": "vi",
+   "text": "Đoán trước nhé: nó sẽ ở thể rắn, thể lỏng hay thể khí?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "2e09d89c-784a9b3d",
+   "lang": "vi",
+   "text": "Chạm vào để làm nó nóng lên hoặc lạnh đi.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "2c2207de028cd3d7",
+   "lang": "vi",
+   "text": "Xem nó thay đổi, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "09b30ac654f6dcf5",
+   "lang": "vi",
+   "text": "Thử thật: cho hai viên đá thi tan, một viên dưới nắng, một viên trong bóng râm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "2d31e71468c02a2b",
+   "lang": "vi",
+   "text": "Đoán trước nhé: mình có thấy cầu vồng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "0b7df53210954c9c",
+   "lang": "vi",
+   "text": "Chạm vào để ánh sáng chiếu tới.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "a559d9ef-b0bcf7d",
+   "lang": "vi",
+   "text": "Tìm các màu sắc, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "967c659b-3e98adfd",
+   "lang": "vi",
+   "text": "Thử thật: quay lưng về phía mặt trời rồi phun sương nhẹ từ vòi nước.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "0b27f6e8-3ea13090",
+   "lang": "vi",
+   "text": "Đoán trước nhé: bóng đèn có sáng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "d3dc154e-528b3fd8",
+   "lang": "vi",
+   "text": "Kéo vật vào chỗ hở, hoặc chạm vào nó.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "57e9ffaa2fc48778",
+   "lang": "vi",
+   "text": "Xem bóng đèn có sáng không, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "aaa0fe935ef74e49",
+   "lang": "vi",
+   "text": "Thử thật: chỉ khi có người lớn, thử với pin nhỏ, bóng đèn pin và dải giấy bạc.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "840d39ab0138a2a1",
+   "lang": "vi",
+   "text": "Đoán trước nhé: bánh răng có ngôi sao sẽ quay chiều nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "935c1014-3e2e7e7e",
+   "lang": "vi",
+   "text": "Chạm vào các bánh răng để quay.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "f1a61450-177ad543",
+   "lang": "vi",
+   "text": "Xem chúng quay, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "5fd1b70e42c16fb0",
+   "lang": "vi",
+   "text": "Thử thật: quay chậm bàn đạp xe đạp và xem xích với bánh sau.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "bfd632d1-63b0d1a6",
+   "lang": "vi",
+   "text": "Đoán trước nhé: vật này bỏ vào thùng nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "c8cc6c02240efb84",
+   "lang": "vi",
+   "text": "Kéo vật tới thùng, hoặc chạm vào nó.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "53a428b9-3c092414",
+   "lang": "vi",
+   "text": "Xem nó đi đâu, rồi nghe vì sao nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "eace89bf3f6e9e9e",
+   "lang": "vi",
+   "text": "Thử thật: giúp phân loại rác ở nhà vào đúng thùng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2-meta.ts"
+   ]
+  },
+  {
+   "id": "6ca1d95a-7bae0730",
+   "lang": "vi",
+   "text": "Điều gì sẽ xảy ra? Con đoán xem!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1dc2cd03147acae1",
+   "lang": "vi",
+   "text": "Giờ chạm vào nó và xem chuyện gì xảy ra nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "0e2a7f353a3e6d01",
+   "lang": "vi",
+   "text": "Giờ chạm vào từng cái và xem chuyện gì xảy ra nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "01c8ca1a3c59382f",
+   "lang": "vi",
+   "text": "Cho thời gian trôi",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3146572d-16d88930",
+   "lang": "vi",
+   "text": "Giờ chạm vào tờ lịch để một tuần trôi qua nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2a245d1c2f664cf7",
+   "lang": "vi",
+   "text": "Lớn tốt",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3c4cddad49a68e43",
+   "lang": "vi",
+   "text": "Lớn yếu ớt",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b89c37d1-245bdf04",
+   "lang": "vi",
+   "text": "Không mọc",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a5e9fcf1-5d944dd9",
+   "lang": "vi",
+   "text": "Hạt có nước và nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f3f1bd55-40919929",
+   "lang": "vi",
+   "text": "Hạt giống này được tưới nước và có nắng. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8a291051-4eec8fe4",
+   "lang": "vi",
+   "text": "Nước đánh thức hạt giống, còn ánh nắng giúp cây non tự làm thức ăn. Cây lớn lên!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f37aa621-72c69446",
+   "lang": "vi",
+   "text": "Hạt không có nước",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f521b930-42be96db",
+   "lang": "vi",
+   "text": "Hạt giống này có nắng nhưng không được tưới nước. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d3abafe5-8fdfd0e",
+   "lang": "vi",
+   "text": "Không có nước, hạt giống cứ ngủ yên. Hạt cần nước mới bắt đầu nảy mầm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "94525dc16d4d23c2",
+   "lang": "vi",
+   "text": "Hạt dưới mưa và nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1d492e2c7f4d5bdf",
+   "lang": "vi",
+   "text": "Mưa rơi trên hạt giống này, rồi nắng lên. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8c10edfe-5ef1603a",
+   "lang": "vi",
+   "text": "Mưa cho hạt nước, nắng cho cây ánh sáng, nên cây lớn lên.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "95cc9554363442d3",
+   "lang": "vi",
+   "text": "Hạt trên hòn đá khô",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1c9ac2d86107bebb",
+   "lang": "vi",
+   "text": "Hạt giống nằm trên hòn đá khô, không có nước. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "78c74fbd-6d5b1768",
+   "lang": "vi",
+   "text": "Trên đá khô không có nước cho hạt, nên hạt không mọc được.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a1f4d564-6be9dc3b",
+   "lang": "vi",
+   "text": "Hạt trong tủ tối",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "bf3f40de2507d1fd",
+   "lang": "vi",
+   "text": "Hạt giống được tưới nước nhưng để trong tủ tối. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b3c4336a-d4d394b",
+   "lang": "vi",
+   "text": "Hạt nảy mầm, nhưng không có ánh sáng thì cây không làm được thức ăn. Cây mọc gầy và nhợt nhạt.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e001b8ae167001d6",
+   "lang": "vi",
+   "text": "Hạt bị ngập nước",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "38a47a8266e2e1a0",
+   "lang": "vi",
+   "text": "Chậu này ngày nào cũng bị đổ đầy nước tới miệng. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "abd00ceb-7815090f",
+   "lang": "vi",
+   "text": "Nhiều nước quá! Rễ cũng cần không khí, nên hạt bị ngập không mọc được.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f18a72787a483af8",
+   "lang": "vi",
+   "text": "Hạt cạnh cửa sổ có nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9234d827-35b31505",
+   "lang": "vi",
+   "text": "Hạt giống được tưới nước và đặt cạnh cửa sổ có nắng. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "52549494-58ab8e7a",
+   "lang": "vi",
+   "text": "Cây lớn tốt, và còn nghiêng về phía cửa sổ để đón ánh sáng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e70b01ac-481d1ef7",
+   "lang": "vi",
+   "text": "Hạt trong bóng râm",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "df093318-60c9cf93",
+   "lang": "vi",
+   "text": "Hạt giống được tưới nước, nhưng bức tường to che nắng cả ngày. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7433438252be95ca",
+   "lang": "vi",
+   "text": "Có rất ít ánh sáng, cây mọc dài và gầy để tìm nắng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c2787cbc-434b63a9",
+   "lang": "vi",
+   "text": "Hạt trong tủ đá",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e527f18a-4d36aef5",
+   "lang": "vi",
+   "text": "Hạt giống được tưới nước nhưng để trong tủ đá. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5ce3546f14e9b197",
+   "lang": "vi",
+   "text": "Lạnh quá! Hạt giống chờ ngày ấm áp mới bắt đầu nảy mầm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "84b403fc-708d3a3f",
+   "lang": "vi",
+   "text": "Hạt dưới bóng đèn",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3ba2f221-6d65bb86",
+   "lang": "vi",
+   "text": "Hạt giống được tưới nước và có đèn sáng, nhưng không có nắng. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6e27fdd8494728b1",
+   "lang": "vi",
+   "text": "Đèn sáng cho ánh sáng giống mặt trời, nên cây vẫn lớn tốt.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "727ae4d8-46a34a6e",
+   "lang": "vi",
+   "text": "Xương rồng dưới nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "22a7f36e-15dfbc29",
+   "lang": "vi",
+   "text": "Cây xương rồng có nhiều nắng mà chỉ được ít nước. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "49335ee23d0cdd4c",
+   "lang": "vi",
+   "text": "Xương rồng giữ nước trong thân mập của nó, nên ít nước cũng đủ để lớn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "53eca3cb-44d3c7cf",
+   "lang": "vi",
+   "text": "Hạt ở nơi nóng và khô",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "35bdc9163191899e",
+   "lang": "vi",
+   "text": "Hạt giống để cạnh bếp lửa nóng và không ai tưới nước. Điều gì sẽ xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1c309f77-7b43760f",
+   "lang": "vi",
+   "text": "Nóng mà không có nước làm hạt khô héo, nên hạt không mọc được.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "faf9547a-7e1918ae",
+   "lang": "vi",
+   "text": "Cây tự làm ra thức ăn từ ánh nắng, nước và không khí. Con vật thì không làm được như vậy!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "99bdbdac-3fe7479e",
+   "lang": "vi",
+   "text": "Bay lên",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fcae9a1440401d69",
+   "lang": "vi",
+   "text": "Thành mây",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "38e21126-56182368",
+   "lang": "vi",
+   "text": "Rơi thành mưa",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a7cf7730-35945101",
+   "lang": "vi",
+   "text": "Chảy ra biển",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "cf74bc4b-2e8665da",
+   "lang": "vi",
+   "text": "Rơi thành tuyết",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "528a1ade47e0b74f",
+   "lang": "vi",
+   "text": "Biển ấm",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f449db9a7d7931cd",
+   "lang": "vi",
+   "text": "Mặt trời sưởi ấm biển. Nước sẽ làm gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "77643d05662057ed",
+   "lang": "vi",
+   "text": "Nước ấm biến thành hơi nước, một chất khí ta không nhìn thấy, rồi bay lên trời.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b0b7313e1107a159",
+   "lang": "vi",
+   "text": "Hơi nước",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d1d51a49-1056b7e2",
+   "lang": "vi",
+   "text": "Hơi nước bay lên cao, nơi không khí lạnh. Nó tạo thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c24dc2f646480086",
+   "lang": "vi",
+   "text": "Trên cao, không khí lạnh biến hơi nước thành những giọt nhỏ xíu, nhiều giọt gộp lại thành mây.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fd9e4aa442cbb2c0",
+   "lang": "vi",
+   "text": "Đám mây nặng nước",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "acfcadcb-2b8bd7ea",
+   "lang": "vi",
+   "text": "Đám mây to dần, đen lại và nặng nước. Chuyện gì xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d0474f85-1477ea17",
+   "lang": "vi",
+   "text": "Khi những giọt nước nặng quá, chúng rơi xuống thành mưa.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "bc44d06942b4a254",
+   "lang": "vi",
+   "text": "Mưa trên đồi",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d423ac6732a95009",
+   "lang": "vi",
+   "text": "Mưa rơi trên đồi. Nước chảy đi đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "bd85d32e-4abc89d2",
+   "lang": "vi",
+   "text": "Nước mưa chảy xuống đồi thành suối, thành sông, rồi lại về biển.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "efd0e46a39d68d2e",
+   "lang": "vi",
+   "text": "Vũng nước dưới nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b13bc9d6-7fc50bae",
+   "lang": "vi",
+   "text": "Sau cơn mưa, nắng chiếu lên vũng nước. Vũng nước đi đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "835b2c88790fb57c",
+   "lang": "vi",
+   "text": "Nắng biến vũng nước thành hơi nước bay lên không khí, nên vũng nước khô dần.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9970e7d6-321b250d",
+   "lang": "vi",
+   "text": "Quần áo ướt",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fae5336a47e4a480",
+   "lang": "vi",
+   "text": "Quần áo ướt phơi trong nắng gió. Nước đi đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1d2a769a70cc180a",
+   "lang": "vi",
+   "text": "Nước biến thành hơi bay đi, nên quần áo khô.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5e3060ab-52579e6",
+   "lang": "vi",
+   "text": "Mây trên núi",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "acbd7a921a4e76b9",
+   "lang": "vi",
+   "text": "Đám mây nặng nước bay qua ngọn núi rất lạnh. Cái gì rơi xuống?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2c35bf56-698de1ce",
+   "lang": "vi",
+   "text": "Khi trời rất lạnh, giọt nước đóng băng và rơi xuống thành tuyết.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d1ceea58140b7c4d",
+   "lang": "vi",
+   "text": "Dòng sông dài",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c96b1cba68fefbb1",
+   "lang": "vi",
+   "text": "Dòng sông chảy mãi, xuống tận cuối đất liền. Nó chảy đi đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "183c068604ac76a3",
+   "lang": "vi",
+   "text": "Sông đưa nước trở về biển, và chuyến đi lại bắt đầu.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "15b03412098b5244",
+   "lang": "vi",
+   "text": "Núi tuyết mùa xuân",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b1ef19bf12685c23",
+   "lang": "vi",
+   "text": "Nắng xuân chiếu lên núi tuyết. Tuyết đi đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d3e45cfa-5ef4120f",
+   "lang": "vi",
+   "text": "Tuyết tan thành nước rồi chảy xuống sông.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "07647e9c77c4e4f0",
+   "lang": "vi",
+   "text": "Cây trong ngày nóng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "00c89d72660a2358",
+   "lang": "vi",
+   "text": "Ngày nắng nóng, cây to hút nước từ đất. Một phần nước đi đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "4abce35a1ee45416",
+   "lang": "vi",
+   "text": "Lá cây thoát hơi nước, hơi nước bay lên và góp phần tạo thành mây.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "4724a62f38cba1fb",
+   "lang": "vi",
+   "text": "Ấm nước sôi",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5d7781a3417e0d64",
+   "lang": "vi",
+   "text": "Nước sôi trong ấm. Hơi nước làm gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "746a2225-17fa4cd2",
+   "lang": "vi",
+   "text": "Hơi nước nóng bay lên, giống như hơi nước từ biển ấm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6d366fef-34e10d25",
+   "lang": "vi",
+   "text": "Đám mây xám to",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "aa9d55e1624ef95f",
+   "lang": "vi",
+   "text": "Hai đám mây nhập thành một đám mây xám to trên thung lũng ấm. Chuyện gì xảy ra?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "759e5c8f-50c963f7",
+   "lang": "vi",
+   "text": "Mây càng to càng chứa nhiều nước, và trong không khí ấm nước rơi xuống thành mưa, không phải tuyết.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9276b24c-3a3cc4f5",
+   "lang": "vi",
+   "text": "Nước con uống hôm nay có thể đã từng là mưa, là mây, hay cả nước biển từ rất, rất lâu rồi!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6f993f39-18c75489",
+   "lang": "vi",
+   "text": "Ngôi nhà trên Trái Đất",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3dfacf10-7428b0f2",
+   "lang": "vi",
+   "text": "Ngôi nhà ở phía có nắng của Trái Đất, nên ở đó đang là ban ngày.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "4def96675cafcbd7",
+   "lang": "vi",
+   "text": "Ngôi nhà ở phía tối của Trái Đất, quay lưng với Mặt Trời, nên ở đó đang là ban đêm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e1d7cd4c-47ea8fa2",
+   "lang": "vi",
+   "text": "Nhìn ngôi nhà này. Ở đó là ngày hay đêm?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "74a36a84-3cc2bb96",
+   "lang": "vi",
+   "text": "Mặt Trời",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9cd7d131-7e8ff494",
+   "lang": "vi",
+   "text": "Giờ chạm vào Mặt Trời để nắng chiếu lên Trái Đất nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5712bcb5-561cb595",
+   "lang": "vi",
+   "text": "Ngôi nhà này quay về phía Mặt Trời. Ở đó là ngày hay đêm?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1f0b78d0-6ad7aeb7",
+   "lang": "vi",
+   "text": "Phía Trái Đất quay về Mặt Trời được chiếu sáng, nên đang là ban ngày.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f6049db1-323b86ec",
+   "lang": "vi",
+   "text": "Ngôi nhà này quay lưng lại với Mặt Trời. Ở đó là ngày hay đêm?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a51394e363bdcbee",
+   "lang": "vi",
+   "text": "Phía quay lưng với Mặt Trời nằm trong bóng của Trái Đất, nên đang là ban đêm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2120accb5437d80f",
+   "lang": "vi",
+   "text": "Trái Đất quay theo chiều mũi tên. Ngôi nhà này vừa quay về phía Mặt Trời. Bây giờ là lúc nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a1937455246a9f52",
+   "lang": "vi",
+   "text": "Khi Trái Đất quay, ngôi nhà vừa đi vào vùng nắng: Mặt Trời đang mọc. Chào buổi sáng!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b2bcb0ef4ffc0fe6",
+   "lang": "vi",
+   "text": "Trái Đất quay theo chiều mũi tên. Ngôi nhà này vừa quay khỏi Mặt Trời. Bây giờ là lúc nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6cacfd60-2154ad7",
+   "lang": "vi",
+   "text": "Ngôi nhà đang đi vào bóng tối: Mặt Trời đang lặn. Chào buổi tối!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "35ea8a1f-500db0d5",
+   "lang": "vi",
+   "text": "Ngôi nhà ở rất xa",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fb67a6b0-1822e2d4",
+   "lang": "vi",
+   "text": "Phía Trái Đất quay về Mặt Trời đang là giờ ăn trưa. Còn ngôi nhà này, ở phía bên kia thì sao?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "53051ec75e6c21c2",
+   "lang": "vi",
+   "text": "Khi một phía Trái Đất đang giữa trưa, thì phía bên kia đang giữa đêm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "15cd9686-43634e1b",
+   "lang": "vi",
+   "text": "Trái Đất tự quay một vòng mỗi ngày, nên nơi nào cũng đến lượt được nắng chiếu.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "90dfdbf9723ca856",
+   "lang": "vi",
+   "text": "Một cái cây",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e7d1a861-56ea3ced",
+   "lang": "vi",
+   "text": "Lật lịch",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "124ffd8b-680f5940",
+   "lang": "vi",
+   "text": "Giờ chạm vào tờ lịch và xem cái cây thay đổi nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "eb9d1f310-c294bd",
+   "lang": "vi",
+   "text": "Hoa nở và chim non ra đời. Đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5902eb34-b5e9ead",
+   "lang": "vi",
+   "text": "Mùa xuân trời ấm dần, hoa nở và lá non mọc ra.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "421275ba23be7d65",
+   "lang": "vi",
+   "text": "Nắng nóng và ngày dài. Chúng ta đi bơi. Đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d85c7683048e8f20",
+   "lang": "vi",
+   "text": "Mùa hè là mùa nóng nhất, ngày dài và nhiều nắng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3ebf64c3-ac14585",
+   "lang": "vi",
+   "text": "Lá cây chuyển màu cam và rụng xuống. Đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "329824bf2a1f396c",
+   "lang": "vi",
+   "text": "Mùa thu trời mát dần và nhiều cây rụng lá.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6440abc5-21cdcc0",
+   "lang": "vi",
+   "text": "Trời lạnh, tuyết phủ trắng mặt đất. Đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fed63bf7-60ae32c",
+   "lang": "vi",
+   "text": "Mùa đông là mùa lạnh nhất. Ở những nơi lạnh, tuyết có thể rơi.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "65fa14c4-582ffafa",
+   "lang": "vi",
+   "text": "Gấu ngủ trong hang cho tới khi trời ấm trở lại. Đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "84f8d9bd6cc758c0",
+   "lang": "vi",
+   "text": "Một số con vật ngủ suốt mùa đông, khi khó tìm thức ăn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "45cdb3e613777144",
+   "lang": "vi",
+   "text": "Dưa hấu chín và chúng mình ăn kem cho mát. Đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2f6ecac12c0c8c5c",
+   "lang": "vi",
+   "text": "Nhiều loại quả chín dưới nắng hè.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "ebf424c0-5a4b5b1",
+   "lang": "vi",
+   "text": "Gió mát thổi và bà con thu hoạch mùa màng. Đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "473d65e4-7bdaf774",
+   "lang": "vi",
+   "text": "Mùa thu là mùa thu hoạch, nhiều cây trái đã sẵn sàng để hái.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "cdb545b2-740ab8bd",
+   "lang": "vi",
+   "text": "Hoa tulip nhú lên và lá non xanh mở ra. Đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6cc4ab7274e66f62",
+   "lang": "vi",
+   "text": "Mùa xuân là mùa của sự sống mới: hoa mới, lá mới và các con vật non.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3478a2cf-1673061",
+   "lang": "vi",
+   "text": "Ở Hà Nội, hoa đào nở đón Tết khi mùa đông sắp hết. Mùa nào bắt đầu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b37bd47d-6e45f7dd",
+   "lang": "vi",
+   "text": "Tết đến khi mùa đông ở miền Bắc sắp hết, nên Tết còn gọi là lễ hội mùa xuân.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "027ee6e077407cae",
+   "lang": "vi",
+   "text": "Ở Sydney, trẻ em đi biển vào ngày Giáng Sinh tháng Mười Hai. Ở đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5fec7ce82f577925",
+   "lang": "vi",
+   "text": "Úc ở nửa phía nam Trái Đất, nên tháng Mười Hai ở đó là mùa hè.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "86df19d6-66351490",
+   "lang": "vi",
+   "text": "Vào tháng Bảy, trẻ em ở Sydney mặc áo ấm và quàng khăn. Ở đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d59913c331b79911",
+   "lang": "vi",
+   "text": "Khi nửa phía bắc Trái Đất là mùa hè, thì ở Úc là mùa đông.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "24b933a5-1b14cc2a",
+   "lang": "vi",
+   "text": "Trẻ em rước đèn dưới trăng rằm dịp Tết Trung Thu. Đó là mùa nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "69e904b767060360",
+   "lang": "vi",
+   "text": "Tết Trung Thu là lễ hội giữa mùa thu.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "29a3bc9639be4218",
+   "lang": "vi",
+   "text": "Có các mùa vì Trái Đất nghiêng khi đi vòng quanh Mặt Trời.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "eeeca9122ac31b3a",
+   "lang": "vi",
+   "text": "Túi của mẹ",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "512eac8b522398dd",
+   "lang": "vi",
+   "text": "Chim đẻ trứng ở đâu? Con đoán xem!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fa5f2e0a1f52c025",
+   "lang": "vi",
+   "text": "Chim đan tổ bằng cành cây và cỏ, ở trên cao để trứng được an toàn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "bfa7cf37-3edc294d",
+   "lang": "vi",
+   "text": "Ong sống ở đâu? Con đoán xem!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b28618a9-32d2ff27",
+   "lang": "vi",
+   "text": "Ong sống cùng nhau trong tổ, nơi chúng làm ra mật.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e12f7271-c49c9b8",
+   "lang": "vi",
+   "text": "Cá sống ở đâu? Con đoán xem!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f392815b72f793bb",
+   "lang": "vi",
+   "text": "Cá thở trong nước, nên sống ở ao, sông và biển.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3ddb6e866faf14cc",
+   "lang": "vi",
+   "text": "Thỏ rừng sống ở đâu? Con đoán xem!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f3058abb5a44aa3f",
+   "lang": "vi",
+   "text": "Thỏ rừng đào hang dưới đất để trốn cáo.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "66df038555332a34",
+   "lang": "vi",
+   "text": "Gấu ngủ đông ở đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "17fb489b3c747095",
+   "lang": "vi",
+   "text": "Gấu tìm hang để ngủ, an toàn và tránh được tuyết.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "15f97fc3-4cb56152",
+   "lang": "vi",
+   "text": "Ếch đẻ trứng ở đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "aebe03a0590748c4",
+   "lang": "vi",
+   "text": "Ếch đẻ trứng trong nước ao, rồi nòng nọc nở ra.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "0677eac4-1994ace0",
+   "lang": "vi",
+   "text": "Ban ngày cú nghỉ ở đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b796ef354fb21d39",
+   "lang": "vi",
+   "text": "Cú đi săn ban đêm, ban ngày nghỉ trong hốc của cây cổ thụ.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "391d8fe9-1309df62",
+   "lang": "vi",
+   "text": "Sóc cất hạt dẻ ở đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c51e9340-4be786df",
+   "lang": "vi",
+   "text": "Sóc thường giấu thức ăn và ngủ trong hốc cây.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fd9fe330-584f78c5",
+   "lang": "vi",
+   "text": "Cáo con lớn lên ở đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3fe6121e7f123e13",
+   "lang": "vi",
+   "text": "Cáo đào hang dưới đất, nơi cáo con được an toàn và ấm áp.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8cbe2f49468113e3",
+   "lang": "vi",
+   "text": "Ốc sên trốn vào đâu khi sợ?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "687193ef-7dbcfac7",
+   "lang": "vi",
+   "text": "Ốc sên mang nhà trên lưng: nó rụt người vào trong vỏ.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "390aa322-1c5896ba",
+   "lang": "vi",
+   "text": "Kangaroo con",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "ded4459302f5a2a5",
+   "lang": "vi",
+   "text": "Kangaroo con sống ở đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c45a2fa43fe84257",
+   "lang": "vi",
+   "text": "Kangaroo con lớn lên trong chiếc túi ấm trên bụng mẹ.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "31d1871e-5e328e72",
+   "lang": "vi",
+   "text": "Ốc mượn hồn",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "ca7cd5c81586b96e",
+   "lang": "vi",
+   "text": "Con ốc mượn hồn sống ở đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6f243e91-63a4b4b1",
+   "lang": "vi",
+   "text": "Ốc mượn hồn ở nhờ vỏ ốc rỗng, và đổi sang vỏ to hơn khi lớn lên.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "cec9339c-2f263205",
+   "lang": "vi",
+   "text": "Dơi treo ngược mình cả ngày ở đâu?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "65d65786-1b9f7a7b",
+   "lang": "vi",
+   "text": "Nhiều loài dơi ngủ trong hang tối ban ngày và bay ra ngoài vào ban đêm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fa60aa7b-276bc5ff",
+   "lang": "vi",
+   "text": "Con vật chọn nhà giúp chúng an toàn, ấm áp và gần thức ăn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1a0b98623db97c28",
+   "lang": "vi",
+   "text": "Giờ chạm vào hình để thử nhé!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f9fc235a78cb066d",
+   "lang": "vi",
+   "text": "Giờ chạm vào từng hình để thử nhé!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "39e171f9-62f156d2",
+   "lang": "vi",
+   "text": "Nhảy mười cái nào! Tim con sẽ đập nhanh hơn hay chậm hơn?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7c7993df5b7489ac",
+   "lang": "vi",
+   "text": "Khi nhảy, cơ bắp cần thêm không khí và thức ăn, nên tim bơm nhanh hơn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a900a0a208fba1e2",
+   "lang": "vi",
+   "text": "Hít vào",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "11344d775676f40d",
+   "lang": "vi",
+   "text": "Hít một hơi thật sâu. Phổi của con to ra hay nhỏ lại?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "148c674a27f1b6e7",
+   "lang": "vi",
+   "text": "Không khí làm phổi phồng lên như hai quả bóng, nên phổi to ra.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e7994020-6d548d30",
+   "lang": "vi",
+   "text": "Bộ phận nào giúp con suy nghĩ và ghi nhớ?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "24f181a1456e2266",
+   "lang": "vi",
+   "text": "Bộ não trong đầu con lo mọi việc suy nghĩ và ghi nhớ.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "99a67de63b00f748",
+   "lang": "vi",
+   "text": "Bộ phận nào giúp con nghe âm thanh, như tiếng chuông?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f7cdfac5-4825b5a4",
+   "lang": "vi",
+   "text": "Tai đón âm thanh và gửi tới não.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "428bc93e-30f0e78d",
+   "lang": "vi",
+   "text": "Bộ phận nào giúp con ngửi bông hoa?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "69687afc-5ba84a2",
+   "lang": "vi",
+   "text": "Mũi có những phần cảm nhận nhỏ xíu bắt được mùi trong không khí.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a73b4512-66d1e7d4",
+   "lang": "vi",
+   "text": "Khi con ngủ say, tim con đập nhanh hơn hay chậm hơn?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fbd0dd87-1bbe7c45",
+   "lang": "vi",
+   "text": "Khi ngủ, cơ thể nghỉ ngơi và cần ít hơn, nên tim đập chậm lại.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "50e503c2-332c930a",
+   "lang": "vi",
+   "text": "Thở ra",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "810051b9619443ab",
+   "lang": "vi",
+   "text": "Giờ thở hết hơi ra. Phổi của con to ra hay nhỏ lại?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9410b617-4d32d788",
+   "lang": "vi",
+   "text": "Khi không khí đi ra, phổi xẹp lại, nhỏ đi.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c8bd74fd07e945a1",
+   "lang": "vi",
+   "text": "Con ăn một quả táo. Nó đi đâu để được nghiền nhỏ?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "01177373-69a0017c",
+   "lang": "vi",
+   "text": "Thức ăn đi xuống một ống vào dạ dày, dạ dày co bóp và nghiền nhỏ nó.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "0f4328df0b876767",
+   "lang": "vi",
+   "text": "Cái gì bơm máu đi khắp cơ thể con?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "31ea7b78-735ec62e",
+   "lang": "vi",
+   "text": "Tim là một cơ rất khỏe, bơm máu suốt ngày đêm.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "160ba44e-70c6f209",
+   "lang": "vi",
+   "text": "Đứng thẳng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a91b47147ae52bf2",
+   "lang": "vi",
+   "text": "Cái gì giữ cho cơ thể con đứng thẳng?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f70db6f3-2ac4d988",
+   "lang": "vi",
+   "text": "Xương tạo thành bộ khung chắc chắn, gọi là bộ xương, giữ cho con đứng thẳng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d8491d8230ac92b1",
+   "lang": "vi",
+   "text": "Mắt trong bóng tối",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "45769d8c2dbcffbd",
+   "lang": "vi",
+   "text": "Trong phòng tối, chấm đen trong mắt con to ra hay nhỏ lại?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b839a2472510dcdc",
+   "lang": "vi",
+   "text": "Trong bóng tối, chấm đen là đồng tử mở to để đón thêm ánh sáng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  }
+ ]
+}

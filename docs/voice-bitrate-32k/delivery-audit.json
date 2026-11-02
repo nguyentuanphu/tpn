@@ -5,10 +5,10 @@
     "sampleRate": 16000,
     "channels": 1
   },
-  "units": 7452,
-  "masterBytes": 482480076,
-  "deliveryBytes": 98072853,
-  "signature": "c8fd3535900918fde73e176422f13935672ac4f2ada3e075126bcdab931eddc9",
+  "units": 7883,
+  "masterBytes": 513213019,
+  "deliveryBytes": 104310132,
+  "signature": "bddf863e77b24beb18da9cb5f47c6f209ac8f94c62295221677f8e828c9de38d",
   "fullDecode": "passed for every newly encoded clip; resumed clips verified against their completed encoding receipts",
   "originalPackageBackup": "temp/hanoi-originals-VFBnNA",
   "files": {
@@ -60416,6 +60416,3885 @@
       "deliveryBytes": 13761,
       "deliveryDuration": 3.384,
       "inventory": "docs/voice-recording-delta/round-20261102-release.json"
+    },
+    "96a028fb7172ec8b": {
+      "masterSha256": "37ddefa28a26dbe1ee0dc515e02f6f48c0e7309725baac2c9650a16a4f230d6c",
+      "masterBytes": 78934,
+      "masterDuration": 3.918367,
+      "deliverySha256": "7976ebdf8e6bdd4e6a9bbe92a66359fc6a991c57be4e0a024cf2202ae41bf093",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "1599b497-3e821c37": {
+      "masterSha256": "2dc8d0be3de3e73c9748da95b14d16f8426987f89c1881e7bc2f3fd909305df2",
+      "masterBytes": 109759,
+      "masterDuration": 5.459592,
+      "deliverySha256": "fe17eee633e5a5d8cd82351d123ede7556a41c8f47ce68a88f424ab517661a94",
+      "deliveryBytes": 22113,
+      "deliveryDuration": 5.472,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "224b634f0c10e5b5": {
+      "masterSha256": "465708c171a092c43d405337fd72b43edb609a060a35d9dd6ee7d3ad732cffc1",
+      "masterBytes": 55424,
+      "masterDuration": 2.742857,
+      "deliverySha256": "9f4a962cbd3c1dab46175a1d91dcbce1c573aa62b80fba31b1383fee51778853",
+      "deliveryBytes": 11313,
+      "deliveryDuration": 2.772,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "34e2a9a6-762d5fba": {
+      "masterSha256": "955facce022480fbd4af00f1d4e38c8dff88e225787d57a58a3956dae36c9944",
+      "masterBytes": 72665,
+      "masterDuration": 3.604898,
+      "deliverySha256": "0ec557b54c38deecd9088f153ac1f5ed572454ccad0c3b0fca88e089bffe2e4e",
+      "deliveryBytes": 14769,
+      "deliveryDuration": 3.636,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f29dc7b4-1749c818": {
+      "masterSha256": "1e741ac15dd155c3123bc77c56d7ac32474165bfb6dd945a1bbf398dcb51191a",
+      "masterBytes": 96175,
+      "masterDuration": 4.780408,
+      "deliverySha256": "3c609e039239682d7314398d64ca4815baf14fd079f385defc65c5e1178a6b73",
+      "deliveryBytes": 19521,
+      "deliveryDuration": 4.824,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "00700dc00424c69a": {
+      "masterSha256": "5c19e2212c51aab934a637b519f6615c518c4b86ca0482ebbfe6c4dcc3753130",
+      "masterBytes": 62216,
+      "masterDuration": 3.082449,
+      "deliverySha256": "0b9ba54726cfd8d9b8002909e735c1b1f282d879c99731a48573ff0e774c095a",
+      "deliveryBytes": 12609,
+      "deliveryDuration": 3.096,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "1311a9d40ed77666": {
+      "masterSha256": "fcfa52abbd2f7eeb96880d6ef722e91243aae99d7f757a2c4a568b56055f8fd8",
+      "masterBytes": 81024,
+      "masterDuration": 4.022857,
+      "deliverySha256": "5832abe9ed9a4141774fb1dbdfec20dace5691ba6c05686d93cac7c8cd1e76b3",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "5e826de1-5cad5709": {
+      "masterSha256": "022f066ed7d5065d797150514df964f79dbd8332632d1c589970f3a6a3a74527",
+      "masterBytes": 79979,
+      "masterDuration": 3.970612,
+      "deliverySha256": "1f36aa9b3f1fb9ab859a572dfa39ca818543cc7af9c27091ad19c15512065f6d",
+      "deliveryBytes": 16209,
+      "deliveryDuration": 3.996,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c9d88cc8-227ed680": {
+      "masterSha256": "a0b100c7830c3397c08d33f66107ff1a265c2260e736f929fe0ed6c457775db7",
+      "masterBytes": 121775,
+      "masterDuration": 6.060408,
+      "deliverySha256": "0a5816e54abf170ffaa90848fb3ce13d3346d61f76f298d9119eb0a6ac6abc02",
+      "deliveryBytes": 24561,
+      "deliveryDuration": 6.084,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "18c28a755d728f65": {
+      "masterSha256": "716be4f77d70ee107d57cdf70607a382376548fde61c3f269e9b458abae6528c",
+      "masterBytes": 68485,
+      "masterDuration": 3.395918,
+      "deliverySha256": "872b4d6aa3609bb8d9378625469648e5afc2deb1a10cd03df3016f875bd9e12f",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b2c35319-5d6701d9": {
+      "masterSha256": "82ae71241c2cb83c85dafbe98d738424a8c85541bbe5b864d96d397652c6a6cf",
+      "masterBytes": 60649,
+      "masterDuration": 3.004082,
+      "deliverySha256": "194a793a04d24890bee9cb74ec4203aba7a554bc0fbeed0fd35e40981b501ccc",
+      "deliveryBytes": 12321,
+      "deliveryDuration": 3.024,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fa35691e-57a90b4a": {
+      "masterSha256": "93befe8f96840e0176a7f74229e28ff84b0e2afa19aec47af1503cd9e66f1ae3",
+      "masterBytes": 91473,
+      "masterDuration": 4.545306,
+      "deliverySha256": "4894b6ebd38f4d4fad852e1eb6f1e259cf45248e4355cd57d0bedf8a04e0af13",
+      "deliveryBytes": 18513,
+      "deliveryDuration": 4.572,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "4aee7d22-5607d3a0": {
+      "masterSha256": "3512047f306531146ff5fd465092a8e10f0a50747768ce361417e304d18416dd",
+      "masterBytes": 96698,
+      "masterDuration": 4.806531,
+      "deliverySha256": "68fa89c5ff1dfdda0ab8c0c5bd0618a2755cc9b922c61619b505ad9fa2ae25de",
+      "deliveryBytes": 19521,
+      "deliveryDuration": 4.824,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "59ef31a860124abc": {
+      "masterSha256": "d10895f18128f31630e9464d14a13d2f44b7cefada60ba4746eb6944b9289b4b",
+      "masterBytes": 62216,
+      "masterDuration": 3.082449,
+      "deliverySha256": "c8b4a6f626211b6b1e0a9d189d236e1a745d32ccfee24d4fe424f0de413df9eb",
+      "deliveryBytes": 12753,
+      "deliveryDuration": 3.132,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "256dd68b4b56b48a": {
+      "masterSha256": "a81ccb04a3369e0f840643dd9a4437ba3cc215d2e339828d3e0507a7f41e82b5",
+      "masterBytes": 47587,
+      "masterDuration": 2.35102,
+      "deliverySha256": "5eabdf099328fd05ae309c56c4ce0362c3adecba18725af6cb6bd34dfbaefc8b",
+      "deliveryBytes": 9729,
+      "deliveryDuration": 2.376,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "ffd71de25caad3de": {
+      "masterSha256": "8d52d6c041931224b06b25c3f77acc528015f18d29b4ed82fa7e3638705e705c",
+      "masterBytes": 65873,
+      "masterDuration": 3.265306,
+      "deliverySha256": "8e701b8191a8b72e33a6af1036c383fbf5f88e28ea21fd3bd17132bc29757690",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "8b82de6232b57617": {
+      "masterSha256": "25690118cd5cd7fb9ea19fd3ccd442d0b71d9be1f33e02e694210fb1be7fa83f",
+      "masterBytes": 78412,
+      "masterDuration": 3.892245,
+      "deliverySha256": "fe3f780398718b241d44a8867a8772acd1a0196dfbcf8e9511172f9ad382c0fb",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "0d985adc-7e1e171d": {
+      "masterSha256": "504c9f45e0d1566ea727f1efe043d4e18d23eb97c6cb2866c64309b8daaf0a3c",
+      "masterBytes": 69008,
+      "masterDuration": 3.422041,
+      "deliverySha256": "d24d5c3c905049a15d09f965edb56b4597a635d888fe211525a7704fea3627ce",
+      "deliveryBytes": 14049,
+      "deliveryDuration": 3.456,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a10418a2-30142fab": {
+      "masterSha256": "0b99a747872ee4876f51b7d3dce03db2306c6318502a7fa581a2d644c4230e52",
+      "masterBytes": 66918,
+      "masterDuration": 3.317551,
+      "deliverySha256": "acc3df107fd04194b3fa834e23b4a715f030fb5e3c79e44eba835bca77dc0e56",
+      "deliveryBytes": 13617,
+      "deliveryDuration": 3.348,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "e59b32f5-65cc57b3": {
+      "masterSha256": "af877e574988d3e5e294c61b16cfcbdc357d230792b96ab2851033859a0e12c3",
+      "masterBytes": 68485,
+      "masterDuration": 3.395918,
+      "deliverySha256": "c7b80d352f1d569f19904e33445fe8d94099b1c7c15654d84220b4cb315e01e0",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c8f2dc56-2d8234c9": {
+      "masterSha256": "c0f0c34924394250be2ebf5a1e774bb016088ba2e0cb71fe30134e303bee573f",
+      "masterBytes": 123865,
+      "masterDuration": 6.164898,
+      "deliverySha256": "60d64fcb0740d34b4d527b080a19c3bface543688cf6fd87746b7a0b7af08144",
+      "deliveryBytes": 24993,
+      "deliveryDuration": 6.192,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "4db08b3f1efdc6cd": {
+      "masterSha256": "e2adfffac1defd1726dcad091749f27c601c303c1a62fad453d61ea6f3bf0eb1",
+      "masterBytes": 61171,
+      "masterDuration": 3.030204,
+      "deliverySha256": "1728d721d1108197e2c759dc68a787807432b37af235adbdb98259335eb7ac63",
+      "deliveryBytes": 12465,
+      "deliveryDuration": 3.06,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fff45823625cace1": {
+      "masterSha256": "dbe6f626125df84b3bdd36e3f07b3c689a0ede7d1ee43a4c162429b537df44c1",
+      "masterBytes": 34004,
+      "masterDuration": 1.671837,
+      "deliverySha256": "1df8c36c3ff8056259c6c0d92c62fe2fd059fd1b93301b3ae575e777db1a7aaf",
+      "deliveryBytes": 6993,
+      "deliveryDuration": 1.692,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c775b253-64d42f82": {
+      "masterSha256": "745e88bc3b917fb3603ef9fea42ea0b791592fc1f2dfd3d46261ebd436be2327",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "4bba7b50e625d0f4f5e95a4320400d60381edf67c4f336461b5cb76c05978d91",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "389d1b20-12ab0167": {
+      "masterSha256": "5f9dc003c92e362f24d2dfca3040d5f14d1149e9e7d14bd019981767f04a9d83",
+      "masterBytes": 104012,
+      "masterDuration": 5.172245,
+      "deliverySha256": "4a0da6dccf2ca6e55a47783bcd6ff868e22d02c0a29474cce00ffe7739c17e7f",
+      "deliveryBytes": 21105,
+      "deliveryDuration": 5.22,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b7032d8819dc45a0": {
+      "masterSha256": "8dc57fa9121a82dbc7759abace89148214418ceaab8f3d54d7c4185d1479808d",
+      "masterBytes": 74232,
+      "masterDuration": 3.683265,
+      "deliverySha256": "1b9118c4c2aea13ca299ea7f8d47e403051fa64fc717fe8caa7fa36ac51411fe",
+      "deliveryBytes": 15057,
+      "deliveryDuration": 3.708,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "80ccbfd300b4822a": {
+      "masterSha256": "92bf3a35beaaba2bf440bfac65aac69b8792afb78cd5f196568aa79c0e2c679d",
+      "masterBytes": 48632,
+      "masterDuration": 2.403265,
+      "deliverySha256": "376dbdde63b6e592bb7b627b6be737544ab5efe2d03755cbd49266255d084c4e",
+      "deliveryBytes": 9873,
+      "deliveryDuration": 2.412,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "51976aab62a4641e": {
+      "masterSha256": "a80bc78225cc7dcf1cab98adfd38966343c79a4a707b874ace6b897d142109f5",
+      "masterBytes": 67963,
+      "masterDuration": 3.369796,
+      "deliverySha256": "f0fe35d8088728145b2ee3762de5e4cf5215f94f87b9f01942427c9fc16a5669",
+      "deliveryBytes": 13761,
+      "deliveryDuration": 3.384,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "55c5ccf0-376c2f1a": {
+      "masterSha256": "0b367342b109def44bb1dc67f4902c32b9c97056bb5f251f7bc5368cab38906d",
+      "masterBytes": 78412,
+      "masterDuration": 3.892245,
+      "deliverySha256": "3b582da4156ef373adefbfc2c1ceeeff7e75522cefb711b1ebc02a25975e667c",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "43e49d76-24e8d518": {
+      "masterSha256": "bd75010addec79f623e0c7c334bde000d057c9a3db17a735f967ba019d191623",
+      "masterBytes": 87816,
+      "masterDuration": 4.362449,
+      "deliverySha256": "e494d9a61024e37c0095fbdf10b30c4235a254c096fb25140b5330f72f4ee95d",
+      "deliveryBytes": 17793,
+      "deliveryDuration": 4.392,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "2e09d89c-784a9b3d": {
+      "masterSha256": "b79fe15801ac0543e80aef81379964e200e41757929be55b8c68a7e43a1de48d",
+      "masterBytes": 57514,
+      "masterDuration": 2.847347,
+      "deliverySha256": "fcab021e388631753503db20624a7d1404830ddd95375138e501fe7c020593b9",
+      "deliveryBytes": 11745,
+      "deliveryDuration": 2.88,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "2c2207de028cd3d7": {
+      "masterSha256": "514c33e3af73b8fb68ecdf90751be0ba5f79573889a121dcfd1124b4d531ee7a",
+      "masterBytes": 62738,
+      "masterDuration": 3.108571,
+      "deliverySha256": "a6479eb887a913172541b10944821622ddd883a67011e87b3a35654c05e1c0c0",
+      "deliveryBytes": 12753,
+      "deliveryDuration": 3.132,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "09b30ac654f6dcf5": {
+      "masterSha256": "038a59ff1d9ce62a15340be9f20f55a9459dbda97618dc3284f876415ef7ae9d",
+      "masterBytes": 111326,
+      "masterDuration": 5.537959,
+      "deliverySha256": "c1d65d4e524c3a9eee318429feac1352fa2072397f1957d9c3a35efb9daab2c7",
+      "deliveryBytes": 22401,
+      "deliveryDuration": 5.544,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "2d31e71468c02a2b": {
+      "masterSha256": "43326f49b2d9b03224aa5b26f3200cf398ad67e26b291033121504cc88f6594b",
+      "masterBytes": 63783,
+      "masterDuration": 3.160816,
+      "deliverySha256": "641892b10745ec39c44b419ab1b0556183ff58df288ec4a07d43678a25db647e",
+      "deliveryBytes": 12897,
+      "deliveryDuration": 3.168,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "0b7df53210954c9c": {
+      "masterSha256": "50428dc7fee253aca4c9fefc9667cb8e90df08b07e3891389822b5dcb3bb708f",
+      "masterBytes": 50200,
+      "masterDuration": 2.481633,
+      "deliverySha256": "58ab871a9227515ca349d8b153c06ce67f46db1954035140920db6b0167b6561",
+      "deliveryBytes": 10305,
+      "deliveryDuration": 2.52,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a559d9ef-b0bcf7d": {
+      "masterSha256": "b491044bd480a4216b34c8d56770c66a29b6b96a7b1c52a6c2d284667ad9c25d",
+      "masterBytes": 62738,
+      "masterDuration": 3.108571,
+      "deliverySha256": "05a75998a624646b955425c2aa4dd290d9b4076afcaf363fc6bc1568abb69580",
+      "deliveryBytes": 12753,
+      "deliveryDuration": 3.132,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "967c659b-3e98adfd": {
+      "masterSha256": "a4b17b0a8aa4bede06ebf5740acd060adfe020daceaf14c9b264ad220f5503ee",
+      "masterBytes": 83636,
+      "masterDuration": 4.153469,
+      "deliverySha256": "b113d99d60a378b072dac39744010996544cd6f3fd42b2f545f23f1b50da0db9",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "0b27f6e8-3ea13090": {
+      "masterSha256": "c946a7d3977554f5b22510f27f85c7b6f47eaf6fb4cb3b41c0c9f9513cd2973c",
+      "masterBytes": 61171,
+      "masterDuration": 3.030204,
+      "deliverySha256": "5733fca8d0f2c295df6fac7c200083a12dd89f655c1f27f7ffd689c3cbe47138",
+      "deliveryBytes": 12465,
+      "deliveryDuration": 3.06,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d3dc154e-528b3fd8": {
+      "masterSha256": "7ab30f76055c0b59126f238470af705e3cb4c087705dbbc3484fdbe69ff0dd02",
+      "masterBytes": 61171,
+      "masterDuration": 3.030204,
+      "deliverySha256": "19df326bdf07f944539a8c946632c1d83bacfd363510e62c0723ad196677ce4c",
+      "deliveryBytes": 12465,
+      "deliveryDuration": 3.06,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "57e9ffaa2fc48778": {
+      "masterSha256": "56437b5613a7a7fa0d644cbbc1cf6281bc46d9ce61cb79ae4432eb50c1887718",
+      "masterBytes": 82592,
+      "masterDuration": 4.101224,
+      "deliverySha256": "f3cbb8564282d8af35344a4b3a8cff4660863896485d54439a122399f3205763",
+      "deliveryBytes": 16641,
+      "deliveryDuration": 4.104,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "aaa0fe935ef74e49": {
+      "masterSha256": "cb60b8449130fa2fce64d411217357e2b77b4593723cd16c7585045a0bfa2c46",
+      "masterBytes": 110804,
+      "masterDuration": 5.511837,
+      "deliverySha256": "757d649d9ddd1c5142336b2e53c35d483b3e61f36c1e765500625b87a36b2bda",
+      "deliveryBytes": 22401,
+      "deliveryDuration": 5.544,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "840d39ab0138a2a1": {
+      "masterSha256": "2e47a1887e17418e15158897fd095a2d207b55209261c0b1e5cea0c2aad61d47",
+      "masterBytes": 77889,
+      "masterDuration": 3.866122,
+      "deliverySha256": "76d7350b4f4d01fabe5774cbc0cc8f579c01f2131362ccba64dc8bac41e309ae",
+      "deliveryBytes": 15777,
+      "deliveryDuration": 3.888,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "935c1014-3e2e7e7e": {
+      "masterSha256": "dc5347c9f235ca16ec0b60c43c53487da644e8051b7cff842237cca6ec2594c4",
+      "masterBytes": 43408,
+      "masterDuration": 2.142041,
+      "deliverySha256": "152f8f89ecd8643ccdd84e9c0d8277c75d2eab4b0f89cdb090063db778454d09",
+      "deliveryBytes": 8865,
+      "deliveryDuration": 2.16,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f1a61450-177ad543": {
+      "masterSha256": "d7a093b5769d8d6c2907fdb5732a62312a6afb9ff65bbefe2a9dbb40a619ffbd",
+      "masterBytes": 72665,
+      "masterDuration": 3.604898,
+      "deliverySha256": "93bc76b49b4a6bdf99c534ac75a6455b880cabfe44012c4a04380ef4b626bf01",
+      "deliveryBytes": 14769,
+      "deliveryDuration": 3.636,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "5fd1b70e42c16fb0": {
+      "masterSha256": "8b6ba464a20daf2e1accd5883b4943aafe80ea4ff374fcd0984a468c5758a26b",
+      "masterBytes": 71620,
+      "masterDuration": 3.552653,
+      "deliverySha256": "8954794e33918d2f7568f5e60f75374adbf7797b3946f4350c0e35cf8bd010f2",
+      "deliveryBytes": 14481,
+      "deliveryDuration": 3.564,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "bfd632d1-63b0d1a6": {
+      "masterSha256": "f17c3628afc1d661d43176365d9bdfa9d46fcc4694afe27aac83097a65981868",
+      "masterBytes": 65873,
+      "masterDuration": 3.265306,
+      "deliverySha256": "35c9a2a55c4ec2acee6bacbf5835ad9c777ba21484b939abe5e6b046d4391a18",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c8cc6c02240efb84": {
+      "masterSha256": "d918c26df58058a06388e28faf0ec022700cda6e406e8c8d459ea8b13eb90412",
+      "masterBytes": 62738,
+      "masterDuration": 3.108571,
+      "deliverySha256": "ceeae6a3d21c882f895166d4181bcd75baa19a3f151fa91e8515e5052bc6cbb7",
+      "deliveryBytes": 12753,
+      "deliveryDuration": 3.132,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "53a428b9-3c092414": {
+      "masterSha256": "6c6d87f7308b3e058aed8873c823ff26a75a587cc8ab4a4e130d4b0e0b3cfe94",
+      "masterBytes": 63261,
+      "masterDuration": 3.134694,
+      "deliverySha256": "810550822bdda3fcf5161f0bbf1cb26ac4088a79d715f1e346e5b72bd07bdbd6",
+      "deliveryBytes": 12897,
+      "deliveryDuration": 3.168,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "eace89bf3f6e9e9e": {
+      "masterSha256": "6d40c0a2d64c2a701c255bd2fc1344c2966e1e0e3a4e1bd5a87218c3cccdd010",
+      "masterBytes": 73710,
+      "masterDuration": 3.657143,
+      "deliverySha256": "dfc54e832bf8cfab2655ec690984aff5a1e62c48f954f5148ee3391477f4c030",
+      "deliveryBytes": 14913,
+      "deliveryDuration": 3.672,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "6ca1d95a-7bae0730": {
+      "masterSha256": "da087d8f6e582fae0e6a16d3781bf9b9e26ec2cb9a9ba17d6a8965bef01c02bb",
+      "masterBytes": 87294,
+      "masterDuration": 4.336327,
+      "deliverySha256": "20483c8bae05167e7f2e6b9e96c96a503c8ed3d9172df7d35c06d13b43f68591",
+      "deliveryBytes": 17649,
+      "deliveryDuration": 4.356,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "1dc2cd03147acae1": {
+      "masterSha256": "47768cefd148ad46602872586216b6cd670a2168c45caab0cc79b4f02600d11d",
+      "masterBytes": 66918,
+      "masterDuration": 3.317551,
+      "deliverySha256": "75456b418f491a15f7d4ac56dd3cda9f564133d3a0386f64135700c7edc1e235",
+      "deliveryBytes": 13617,
+      "deliveryDuration": 3.348,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "0e2a7f353a3e6d01": {
+      "masterSha256": "a335733104d044e10354790e761d618e486020503154442beb7de799e033cf0b",
+      "masterBytes": 73187,
+      "masterDuration": 3.63102,
+      "deliverySha256": "17fbbe05764961084fff5e2502d3dc6a4d93cc1791c62bccbbec728e472a079f",
+      "deliveryBytes": 14913,
+      "deliveryDuration": 3.672,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "01c8ca1a3c59382f": {
+      "masterSha256": "406bb219d16e2706995261dfc255d0d97e322b63ba0b96ce39687718ae96e2b5",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "43f6eb4cdce1b9cc6c00700b8833893487fc0635cae2041b05d74e2c07b7a61e",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "3146572d-16d88930": {
+      "masterSha256": "39d7d5b345e250ebed818fdb2fd0d3614a0ceeee741fffe89f5ee3e48d2f7454",
+      "masterBytes": 69530,
+      "masterDuration": 3.448163,
+      "deliverySha256": "ae21ce2d4f4f958e67edef49f691e1a774ca19c4f3b0a39bca0cee870cf10044",
+      "deliveryBytes": 14193,
+      "deliveryDuration": 3.492,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "2a245d1c2f664cf7": {
+      "masterSha256": "70c22802080ce1681e8b8800aa9e83bc38e9ee70d02a21f589d6b97abacf8dda",
+      "masterBytes": 23555,
+      "masterDuration": 1.149388,
+      "deliverySha256": "473a6aedd96d949e066562728226087fd2de7b2e45b1aed422611248d4a15317",
+      "deliveryBytes": 4977,
+      "deliveryDuration": 1.188,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "3c4cddad49a68e43": {
+      "masterSha256": "e1ac2a5aa17323faaa9170dc2864dd4fef25d911191acf4759b4db6b8312a761",
+      "masterBytes": 28257,
+      "masterDuration": 1.38449,
+      "deliverySha256": "37bed76863d31a70e3de24fc4bb4eed77418c1118242ba342fef88a609071e9a",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b89c37d1-245bdf04": {
+      "masterSha256": "75aeb195c0815905f0186c545f56897871fbe0e3a494a12c8799ff0c4a6eeb17",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "6dc01f6307ddf3c91e9880ab3bc5c7dd2548220d14c869c745a17b5e096e22d7",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a5e9fcf1-5d944dd9": {
+      "masterSha256": "e43394326d03b55c347c8f7b2ab4a6c9fa515ede039c79db45928f55c412ae1a",
+      "masterBytes": 34526,
+      "masterDuration": 1.697959,
+      "deliverySha256": "210e5bc18c64a6cc02ae0f17b83c0f2ad5699a89c17418026f869f6588bae352",
+      "deliveryBytes": 7137,
+      "deliveryDuration": 1.728,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f3f1bd55-40919929": {
+      "masterSha256": "90e0a0b95fbeed80f2fa08d2e4b944f1fca563ef50e3cb19356b4346fa7fe22d",
+      "masterBytes": 92518,
+      "masterDuration": 4.597551,
+      "deliverySha256": "586c3978de66745e8b9dbb5023929e80cc10807ea20971fa6b0bf32f059d5515",
+      "deliveryBytes": 18657,
+      "deliveryDuration": 4.608,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "8a291051-4eec8fe4": {
+      "masterSha256": "fea82aee5713d398ec5ee414ea3ab608f7ee9767de43d4f04f2ad0667cd2c23e",
+      "masterBytes": 128045,
+      "masterDuration": 6.373878,
+      "deliverySha256": "5487eb553a46dbe4fac2b8fd8c670b11168caf9ebcad6350efd6b9fcf04fc8c1",
+      "deliveryBytes": 25713,
+      "deliveryDuration": 6.372,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f37aa621-72c69446": {
+      "masterSha256": "3cb0b8bd50a91f5c23e2c4387e9e198bd0e7406f70de4d67e6c40767786d75ed",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "39162572ddae4f3b04fed728a9cda1d7ebbe324f7446885083a1cc9e80fff8ed",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f521b930-42be96db": {
+      "masterSha256": "d11aaffccf4c6c6328c21c84e06b68ff693fd2ccb5ce43418ccdcc8cc75d9da7",
+      "masterBytes": 92518,
+      "masterDuration": 4.597551,
+      "deliverySha256": "cacb92778f2a3d9e515caee650b6d325a7f144fc0c79955d0feeabb1a326e94d",
+      "deliveryBytes": 18801,
+      "deliveryDuration": 4.644,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d3abafe5-8fdfd0e": {
+      "masterSha256": "f42d53e343a6c4d8619f8d26b5cd7bb46d6e4224860f2eaf61d9a1c08dd68265",
+      "masterBytes": 112371,
+      "masterDuration": 5.590204,
+      "deliverySha256": "a893dc63a971f733f6ecd087263aa2a4842de7f49622048b6fcc30b31102d33d",
+      "deliveryBytes": 22689,
+      "deliveryDuration": 5.616,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "94525dc16d4d23c2": {
+      "masterSha256": "405dc4d838da7f5251046b5da0cf7be778647923977fe13b96c3d3688cfd5d37",
+      "masterBytes": 36616,
+      "masterDuration": 1.802449,
+      "deliverySha256": "3a4a19d4068f4e84c654ea895767cf1dc5d0833fe4ea7e0d7696071fdf5fb0f1",
+      "deliveryBytes": 7569,
+      "deliveryDuration": 1.836,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "1d492e2c7f4d5bdf": {
+      "masterSha256": "9f876e96c35f83105d739b7ebc57b12f1eb1f1847330ec4c90a7cb06d98d93ab",
+      "masterBytes": 100877,
+      "masterDuration": 5.01551,
+      "deliverySha256": "8194e87f5eebd07adf1a551fbce7325f42eeee5835e52d490084a698f4e0ebcb",
+      "deliveryBytes": 20385,
+      "deliveryDuration": 5.04,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "8c10edfe-5ef1603a": {
+      "masterSha256": "7f1709a42fc0e8c6099d24b98e0ae3e4ae1164980c2eebb0eb0f98ce43dddbe6",
+      "masterBytes": 90951,
+      "masterDuration": 4.519184,
+      "deliverySha256": "cdf2a03bdb581d46764a05b1164fd2903876dc577ed396fdc73a0f0825b966dd",
+      "deliveryBytes": 18369,
+      "deliveryDuration": 4.536,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "95cc9554363442d3": {
+      "masterSha256": "24a1a2dccc17d9d0da8ac046880f52dfd48f6c25025065293ac48a3aa621ff2f",
+      "masterBytes": 47065,
+      "masterDuration": 2.324898,
+      "deliverySha256": "c044b5263a70b59143091e66f3732bd602c7825eec8725965a1f81cb71adba82",
+      "deliveryBytes": 9585,
+      "deliveryDuration": 2.34,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "1c9ac2d86107bebb": {
+      "masterSha256": "3464f3c8cc0453e462de22d1ea7cb82ece2907f77367e955302503052abc91b5",
+      "masterBytes": 104534,
+      "masterDuration": 5.198367,
+      "deliverySha256": "a2ed7a4bdcfa0c60b6dbbb21ca859c1e1ccbece6021b0e6f28bc16e8909d90b6",
+      "deliveryBytes": 21105,
+      "deliveryDuration": 5.22,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "78c74fbd-6d5b1768": {
+      "masterSha256": "e92dc0b435ed3d30153f8fce07d0d626b0d783ef02011daed08c418ae27e3906",
+      "masterBytes": 78412,
+      "masterDuration": 3.892245,
+      "deliverySha256": "88ab22f21ea7e5063a92929e3d1a39803388dfa15b97e3e23d2417a0f3ed7764",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a1f4d564-6be9dc3b": {
+      "masterSha256": "4893e7e861720a94c3b90688872670652c30b92b22f4dbbf80cab93d5a7fc745",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "6f7f3c9123af0ae0b8e91a432c8c077fa61678814b897bdcc2d8966c3ca82772",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "bf3f40de2507d1fd": {
+      "masterSha256": "e0bc7e2ffd895eca76fab9c3924c2d42f0ac2c661aa28facfe1817d52d8bfcc9",
+      "masterBytes": 110804,
+      "masterDuration": 5.511837,
+      "deliverySha256": "9e261823e4d753f7119a67b0e303243d3bb6359bfabedfedfc59c49302527b47",
+      "deliveryBytes": 22401,
+      "deliveryDuration": 5.544,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b3c4336a-d4d394b": {
+      "masterSha256": "84e5214c2f90169e3f5933d3fd40111997f6ef897ce828d9947ea6635162ca1e",
+      "masterBytes": 123865,
+      "masterDuration": 6.164898,
+      "deliverySha256": "d8dbd5f4fae416fe7d60bab3571f70e560e55f7d5138df001337fc3a950f5c24",
+      "deliveryBytes": 24993,
+      "deliveryDuration": 6.192,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "e001b8ae167001d6": {
+      "masterSha256": "b191c8a87a7d471b331d68c9875339e898d68e42dad11f86e0957b71274f7281",
+      "masterBytes": 39228,
+      "masterDuration": 1.933061,
+      "deliverySha256": "d57dea22873e3e5d550b05362efb4b2ee8d8918ff86118d45d797cbeb6e2e34f",
+      "deliveryBytes": 8001,
+      "deliveryDuration": 1.944,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "38a47a8266e2e1a0": {
+      "masterSha256": "cec0c15d6df5db0ec1056107fe5415a511970528311665cc6b80972338b6677b",
+      "masterBytes": 106624,
+      "masterDuration": 5.302857,
+      "deliverySha256": "1cb8d69da8968f91c7e84c0ca7acbd78753395f8deed6dfb9402a56a8c832888",
+      "deliveryBytes": 21537,
+      "deliveryDuration": 5.328,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "abd00ceb-7815090f": {
+      "masterSha256": "8633b2381d2d9371a00b764a16153a89b76d1937763549d961e766bb37066032",
+      "masterBytes": 114983,
+      "masterDuration": 5.720816,
+      "deliverySha256": "545627ff80db5bc871322fca0e59ff05c22c4b6e66c950a883984546e79e4ae7",
+      "deliveryBytes": 23265,
+      "deliveryDuration": 5.76,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f18a72787a483af8": {
+      "masterSha256": "2f5594760ad766cdaed53b85ec004b360df7f477a5046aec06db795815a5a29d",
+      "masterBytes": 38706,
+      "masterDuration": 1.906939,
+      "deliverySha256": "b0f2a4ab35a9d844f0a50a3ae123eb3f6fc8d80fd877b469b44b46905a9b311e",
+      "deliveryBytes": 8001,
+      "deliveryDuration": 1.944,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "9234d827-35b31505": {
+      "masterSha256": "c2e63b928f5921faba504e8e64b944906d24db4e6fb76328cc089e149c9816d1",
+      "masterBytes": 109236,
+      "masterDuration": 5.433469,
+      "deliverySha256": "a36afe51a5ac7583b71f4195f573577364c49438a7c63577ceece81c39d55bb4",
+      "deliveryBytes": 21969,
+      "deliveryDuration": 5.436,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "52549494-58ab8e7a": {
+      "masterSha256": "b20fd4e04ff30eff2431553620dd8bb2033fc6ccf6d4246879fbaf64fc73cab0",
+      "masterBytes": 84159,
+      "masterDuration": 4.179592,
+      "deliverySha256": "7a06a2e8ac154f7383c97b51939c337f1b9247963302c8ce69c8c4e459cdc029",
+      "deliveryBytes": 17073,
+      "deliveryDuration": 4.212,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "e70b01ac-481d1ef7": {
+      "masterSha256": "d3668d803713bcfb80b2bf50e7c4c0e733ba6ded632a92dd5f440a1d4c55930b",
+      "masterBytes": 31914,
+      "masterDuration": 1.567347,
+      "deliverySha256": "fab73f87c1929c3fd799dd7a5c3dd88505afd447f92cca3c9575f9cbe83bf94f",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "df093318-60c9cf93": {
+      "masterSha256": "1156225df5ec036dccbea8bab83e96cf5a2576d1d8305c72cda1cae59848672a",
+      "masterBytes": 123343,
+      "masterDuration": 6.138776,
+      "deliverySha256": "a36d22b1b3628609bb8b974aff7f5376c47cf00147c6347ca6bdee0a1a1ecce7",
+      "deliveryBytes": 24849,
+      "deliveryDuration": 6.156,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "7433438252be95ca": {
+      "masterSha256": "9e1659f40c34b50839a71f549a4b05e4a0b571afae570d2c8cc5845da7327e26",
+      "masterBytes": 88338,
+      "masterDuration": 4.388571,
+      "deliverySha256": "3cdf06c8b7e4a91d9ab01eebefdd05dc5d4bbe573925a0f5dfd98a31c6c5cb3b",
+      "deliveryBytes": 17937,
+      "deliveryDuration": 4.428,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c2787cbc-434b63a9": {
+      "masterSha256": "c92d772546181a7aa3c0bbeba73b93537a8ee583caa3456ce2285f55a06a4a1c",
+      "masterBytes": 31914,
+      "masterDuration": 1.567347,
+      "deliverySha256": "da1b6c9ff2521568116a27ecbd17abb281b15405102a012f391deaca8b6527a3",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "e527f18a-4d36aef5": {
+      "masterSha256": "1aaa9c458a2acab51cad1bd8a066432dc9897e6e3e5d3a16f0cbb9c9208a756c",
+      "masterBytes": 105579,
+      "masterDuration": 5.250612,
+      "deliverySha256": "ebe8d0681037332f641a390b01aebf56932821ad6f6f50498a2cbf62d0b5ab95",
+      "deliveryBytes": 21249,
+      "deliveryDuration": 5.256,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "5ce3546f14e9b197": {
+      "masterSha256": "69231bb15fb7b412b324baa1b214807cb3ca33b2da088932c9c17888d5d951e1",
+      "masterBytes": 103489,
+      "masterDuration": 5.146122,
+      "deliverySha256": "c77313b47368a56dede942f24ffa5f16662c88c211bed94fd165fb5ba076ba2a",
+      "deliveryBytes": 20961,
+      "deliveryDuration": 5.184,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "84b403fc-708d3a3f": {
+      "masterSha256": "d58e7454e8aa5d7fbb0c4b3f716f4e35406a51ce0a7308eae86397b4ec9a2a90",
+      "masterBytes": 29824,
+      "masterDuration": 1.462857,
+      "deliverySha256": "a4af3181231029843f8535eb7688781118f8740aaa2bec21815063ea2020de78",
+      "deliveryBytes": 6273,
+      "deliveryDuration": 1.512,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "3ba2f221-6d65bb86": {
+      "masterSha256": "b5636bc3c831a908a777bc4866b8f99ff5d70a2baea7c9d26eaac6159d853437",
+      "masterBytes": 121253,
+      "masterDuration": 6.034286,
+      "deliverySha256": "20075319675f63e7f53ea78019c79f36ece7882ce505f8df8d28ef5ccd9021fe",
+      "deliveryBytes": 24417,
+      "deliveryDuration": 6.048,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "6e27fdd8494728b1": {
+      "masterSha256": "86be580558e9dcbfe5e88b2a6a5a1d27abf9fe7bf59c8844607fc2262e724172",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "3925d8ce504bfeb3ba7bf07219df4f104e3aca134322d3747b8048e975656291",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "727ae4d8-46a34a6e": {
+      "masterSha256": "afe2a5fc23e88e98f3f500ecd5be8bd51c485d6cef313e3ae8976f2609a59b22",
+      "masterBytes": 48110,
+      "masterDuration": 2.377143,
+      "deliverySha256": "8603a11c72510c9bdec4b16b6115692698af0f2bc416e840024e8c81df18aa5b",
+      "deliveryBytes": 9873,
+      "deliveryDuration": 2.412,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "22a7f36e-15dfbc29": {
+      "masterSha256": "60a778df404e8d628ecdb22c05808b8672613d5bbd9baac22fa17c3bccf02a14",
+      "masterBytes": 104012,
+      "masterDuration": 5.172245,
+      "deliverySha256": "777611b807d82e2cac355a14c709a18e4f008903278046e604e95dd7ceea0078",
+      "deliveryBytes": 20961,
+      "deliveryDuration": 5.184,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "49335ee23d0cdd4c": {
+      "masterSha256": "cf4dba90df74649e160f4781deb422f2b02cb0a568b74b3e1cc21ad60f0ab781",
+      "masterBytes": 95653,
+      "masterDuration": 4.754286,
+      "deliverySha256": "5873f83a0d97af8b4ef65210fe6a5099b3cfbf893f54b6fff00a2920f85fd72a",
+      "deliveryBytes": 19377,
+      "deliveryDuration": 4.788,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "53eca3cb-44d3c7cf": {
+      "masterSha256": "a4875a637442d0214b21f901fcb58049d48bb513c5b54bc6b7006077d1c0c277",
+      "masterBytes": 48110,
+      "masterDuration": 2.377143,
+      "deliverySha256": "4f012bee8cfcda35a1fb80bbcfe73df9a825aecdfa80013a8e1e22c87907a7a1",
+      "deliveryBytes": 9873,
+      "deliveryDuration": 2.412,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "35bdc9163191899e": {
+      "masterSha256": "69fbaa241c0d41230ec89cfd1ed0cf9fa094e332e8c6242d10034b5437d14285",
+      "masterBytes": 110804,
+      "masterDuration": 5.511837,
+      "deliverySha256": "2393ccd1dcbc1e2bcbcc454482d7dcd1f7522163840792f5fe0385df729a0c77",
+      "deliveryBytes": 22401,
+      "deliveryDuration": 5.544,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "1c309f77-7b43760f": {
+      "masterSha256": "14d37b1e8f126d34be8870197080cd696fed24c0df05b6de96b6ca498644133a",
+      "masterBytes": 90951,
+      "masterDuration": 4.519184,
+      "deliverySha256": "07f446199d1d627dc66c9525ab220c8cb523341df4e8009f58d42a5dfadc6e1c",
+      "deliveryBytes": 18513,
+      "deliveryDuration": 4.572,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "faf9547a-7e1918ae": {
+      "masterSha256": "51cdeb1328829a5c27fb54ff2efe948793b04d9f497e6efc418596b0be211460",
+      "masterBytes": 130657,
+      "masterDuration": 6.50449,
+      "deliverySha256": "eb40b7b9256379e64dda44cbfbbc57d33b77a6c4b3f157d34aa2531ff7d842ac",
+      "deliveryBytes": 26433,
+      "deliveryDuration": 6.552,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "99bdbdac-3fe7479e": {
+      "masterSha256": "407b9d6078689d55c632b93b87af2a05d6105b56c114c739915ea2b55aaa047b",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "ff7dc0c557bc5da89ecc11aa84dc919b518ca5704d3507474a49310469e43e90",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fcae9a1440401d69": {
+      "masterSha256": "f2962858a830f89ba66baa2b48df24bc1b7c88295c1a31459f2a0b11ca2fd680",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "159c5fee84fdfe4caaaf60987647e5d11621de35d8596a99f28bc7c2ab48acd3",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "38e21126-56182368": {
+      "masterSha256": "9b0f5ff29dccdabb1afe07c252b71ae69a49624b2394398f3d747a05df8eec51",
+      "masterBytes": 36616,
+      "masterDuration": 1.802449,
+      "deliverySha256": "d5e10d7f8853f3fe24c621d7a71f89ebad9d6f4832ae25e1bef6d28f4a5038d5",
+      "deliveryBytes": 7425,
+      "deliveryDuration": 1.8,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a7cf7730-35945101": {
+      "masterSha256": "3a673c08691b559d02e81682899f5682553d83b5eb0eb18640b617ef7f818073",
+      "masterBytes": 28257,
+      "masterDuration": 1.38449,
+      "deliverySha256": "3d414f7c73b8e179afcbe5eb292704629107b638ae24e690582601849d2d02f7",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "cf74bc4b-2e8665da": {
+      "masterSha256": "5d76a9773ba3156d038cb76a58ca9edf369847dcd3a6d8067c690e642743a752",
+      "masterBytes": 26167,
+      "masterDuration": 1.28,
+      "deliverySha256": "9b80463dc02dd641f56096e238dceccf98634d7d638b81cbde11a7721d11ee51",
+      "deliveryBytes": 5553,
+      "deliveryDuration": 1.332,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "528a1ade47e0b74f": {
+      "masterSha256": "7475583c956a81be074ed19467f65d89be6e8e09e6a8a1faaa54afdd563b7152",
+      "masterBytes": 29824,
+      "masterDuration": 1.462857,
+      "deliverySha256": "eea99899d86ba49ff2e7130726d61dbf85b6f9d634648abdc75ce440ea94d61f",
+      "deliveryBytes": 6273,
+      "deliveryDuration": 1.512,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f449db9a7d7931cd": {
+      "masterSha256": "fd62169876c1ee0b2393997ce077e07b5981396d410340fd95d01c89819e906d",
+      "masterBytes": 63783,
+      "masterDuration": 3.160816,
+      "deliverySha256": "f354bd2ee82cd60cdb601a2cfe1c3e86d42b2b0649c04c75b7933aa3ed9e08c6",
+      "deliveryBytes": 13041,
+      "deliveryDuration": 3.204,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "77643d05662057ed": {
+      "masterSha256": "b1b622bc67b6d80c5b2e0859d34e80cd48d5c744e72bdec7894693f84ccbaee8",
+      "masterBytes": 107147,
+      "masterDuration": 5.32898,
+      "deliverySha256": "e975c2e3fc8baecea8603a057f5b6387b9b8f2411dad610ce03a74ef33bef25f",
+      "deliveryBytes": 21537,
+      "deliveryDuration": 5.328,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b0b7313e1107a159": {
+      "masterSha256": "bb7b25cbd09ddb8ce9a01cc89f05d8d1783934697f5eefc429cdbfe568d37445",
+      "masterBytes": 30869,
+      "masterDuration": 1.515102,
+      "deliverySha256": "54a5ef2b1b52171ba1609a6193dc1f90519d0e00fe3a34dd41956bb20581efbf",
+      "deliveryBytes": 6417,
+      "deliveryDuration": 1.548,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d1d51a49-1056b7e2": {
+      "masterSha256": "a57ccbae188ac2aef5f1040c0dbc8b54b3253e2bce575669e2cb9e11e1c826c5",
+      "masterBytes": 89906,
+      "masterDuration": 4.466939,
+      "deliverySha256": "82f5669d88d3d95ea5c88b1708304fb408889b752d8f3fd21c97231cbd100d79",
+      "deliveryBytes": 18225,
+      "deliveryDuration": 4.5,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c24dc2f646480086": {
+      "masterSha256": "0a07fb64d8bd243526e4017460b1bf71325dc65feb30ede1a738b7cd75b16ce4",
+      "masterBytes": 121775,
+      "masterDuration": 6.060408,
+      "deliverySha256": "d4d0a725f051b14679778992fe3e8c4795167d6271540b6e01abbbd741662006",
+      "deliveryBytes": 24561,
+      "deliveryDuration": 6.084,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fd9e4aa442cbb2c0": {
+      "masterSha256": "3a3f8b25ad1278d4ca0b4855c80461b4d8b6f46ef144d3c1c7d2c60ac469f6fe",
+      "masterBytes": 30869,
+      "masterDuration": 1.515102,
+      "deliverySha256": "93523552ab56cb584a3c6b16bafa59f28433981d1299b9dad85971bdf77bcc80",
+      "deliveryBytes": 6417,
+      "deliveryDuration": 1.548,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "acfcadcb-2b8bd7ea": {
+      "masterSha256": "0a9775feb8365d627828c1a1541853a157aa31476dc1355f3646a4f732d8189d",
+      "masterBytes": 94608,
+      "masterDuration": 4.702041,
+      "deliverySha256": "01cfd53080841310c057836c76f48844724851aa1f429ff7c2da95a31f4c3998",
+      "deliveryBytes": 19089,
+      "deliveryDuration": 4.716,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d0474f85-1477ea17": {
+      "masterSha256": "6eb19def0ca1aff94c2825330c07eb55dc8e33249aa3b42b9912cfabf93accce",
+      "masterBytes": 71098,
+      "masterDuration": 3.526531,
+      "deliverySha256": "911b83c0e61940053c3d0ca1062702a32c1e515471390d2e0d0689df8c56d7bc",
+      "deliveryBytes": 14481,
+      "deliveryDuration": 3.564,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "bc44d06942b4a254": {
+      "masterSha256": "52223a8ede95b6711eefc4a4d6c14f65a3838e602e8a596ad43a050abedf07ee",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "9cbd19a2665f74b547cb45b78095a47e3bcaeff8a28f0ed3a3017e30f9e7c00b",
+      "deliveryBytes": 5985,
+      "deliveryDuration": 1.44,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d423ac6732a95009": {
+      "masterSha256": "808bd35fef5e0bd5a1901d0e2115a0a6a40e7e2c977f400db40dc4c268fb1f49",
+      "masterBytes": 63783,
+      "masterDuration": 3.160816,
+      "deliverySha256": "c6d04072b3fd6cf3eeaab96ca416cbc5a10b0cfd9fe570c85fcc8f3a116c4327",
+      "deliveryBytes": 12897,
+      "deliveryDuration": 3.168,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "bd85d32e-4abc89d2": {
+      "masterSha256": "2de7b0c83607cb47eb9374320edec443423d377ae036bd965dd2b21b65ca1736",
+      "masterBytes": 99310,
+      "masterDuration": 4.937143,
+      "deliverySha256": "1392ee261c9b73802398dba302641fbe3f8fe91d7f468e6187ab8e588ec999d1",
+      "deliveryBytes": 20097,
+      "deliveryDuration": 4.968,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "efd0e46a39d68d2e": {
+      "masterSha256": "3016fc0bdd6485e2d2f4f6d11fb2fcce37e5c76ad7d80578c2f7c50f16b29d24",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "2b3ad1691220ceb117104db01bcbef65b56b1832d083ff2a4666b4b65a04d88b",
+      "deliveryBytes": 7857,
+      "deliveryDuration": 1.908,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b13bc9d6-7fc50bae": {
+      "masterSha256": "2e00b831cc80c38bafa16ef781a3a2a61730a4d39f0a05017f21a46ff0ca87dd",
+      "masterBytes": 96175,
+      "masterDuration": 4.780408,
+      "deliverySha256": "8e367eb89d31c9752d601ceed0f01ba1066c28ef9292e7492ed6354da2417336",
+      "deliveryBytes": 19377,
+      "deliveryDuration": 4.788,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "835b2c88790fb57c": {
+      "masterSha256": "da8e7eaecebecf4a9ca2367985909b3dd22ba3d35cbe27ab729f690230f81edb",
+      "masterBytes": 94608,
+      "masterDuration": 4.702041,
+      "deliverySha256": "2a1c083149e58b3c599427fe45646afb4a6477782cbe9a8f9a24128dcfebfc76",
+      "deliveryBytes": 19089,
+      "deliveryDuration": 4.716,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "9970e7d6-321b250d": {
+      "masterSha256": "af67f4dbd837d8dac76b9b660ed9bd225eb9664ab02c0a2d5b133191ed033549",
+      "masterBytes": 24600,
+      "masterDuration": 1.201633,
+      "deliverySha256": "0295750726272292c78f7537449928e52db9086c228c73d96e84fa27ff4340f7",
+      "deliveryBytes": 5121,
+      "deliveryDuration": 1.224,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fae5336a47e4a480": {
+      "masterSha256": "8230511a7036a95dc9093f1e94759e5fb659e6f24497b7a2d9f24004f4500b9c",
+      "masterBytes": 65873,
+      "masterDuration": 3.265306,
+      "deliverySha256": "e4c54d31312ac2e627c7d011dfe9607603629f2144dd45d2f944328a3f540d43",
+      "deliveryBytes": 13329,
+      "deliveryDuration": 3.276,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "1d2a769a70cc180a": {
+      "masterSha256": "c11912f80e191ddcff358f5241ce0143c6ea39e3860438708455392c44935913",
+      "masterBytes": 68485,
+      "masterDuration": 3.395918,
+      "deliverySha256": "306f678bd711dcd0cf8128e7f8c74b3ff38643621e8958e8e4f3efb3c4070791",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "5e3060ab-52579e6": {
+      "masterSha256": "65f68aaaf2d11a7f722777184b28f1c2dfdbda203567d00c1f8f7ce445800151",
+      "masterBytes": 50200,
+      "masterDuration": 2.481633,
+      "deliverySha256": "3a5caf4db62e8210334645cc8793d56c6f9706459e4e9e105119619a966e720e",
+      "deliveryBytes": 10305,
+      "deliveryDuration": 2.52,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "acbd7a921a4e76b9": {
+      "masterSha256": "64f2d657467553b7e3a1872e8ff6e84dd423ca10d85d74ca047315dbd7a938b4",
+      "masterBytes": 90951,
+      "masterDuration": 4.519184,
+      "deliverySha256": "588f91598c636cb1d5fdaac4e296042ca164af04415463662dccf6063e799cbe",
+      "deliveryBytes": 18369,
+      "deliveryDuration": 4.536,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "2c35bf56-698de1ce": {
+      "masterSha256": "4d19b47be18da8edf406971f34b66bc57c556a7563349a9a05229285a4c9990a",
+      "masterBytes": 93041,
+      "masterDuration": 4.623673,
+      "deliverySha256": "320c599ca1c7bc50b14c99d4421941eb930d3175a4d493155924ee81492644d1",
+      "deliveryBytes": 18801,
+      "deliveryDuration": 4.644,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d1ceea58140b7c4d": {
+      "masterSha256": "75c2c2b5564aef3ddf0f5cdf912d93756a2b2744d91bb9606ccbb6e7aa23ed0a",
+      "masterBytes": 48110,
+      "masterDuration": 2.377143,
+      "deliverySha256": "445207838c56d35c005ec26947a556274de1bc87b8aeddf388f7cf8a2859d977",
+      "deliveryBytes": 9873,
+      "deliveryDuration": 2.412,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c96b1cba68fefbb1": {
+      "masterSha256": "713f7509e02af7c065af4ec6817003b2d6c1bf116a594cc7711da3eb58c63ca1",
+      "masterBytes": 104012,
+      "masterDuration": 5.172245,
+      "deliverySha256": "0f457c172a793e88f1189dcb2b9f5adc8c212d8687f78c9478fcd7d4bbdc8b02",
+      "deliveryBytes": 21105,
+      "deliveryDuration": 5.22,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "183c068604ac76a3": {
+      "masterSha256": "5d59d60d0b8ef75a1609053210af576d64fe6b5a53154db8351c07bd3ece9ec8",
+      "masterBytes": 78412,
+      "masterDuration": 3.892245,
+      "deliverySha256": "6fbc280e9b9db2269645325edf61cda26aeb4ed35823726acf9e96614b9c59ef",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "15b03412098b5244": {
+      "masterSha256": "5137ee97da52ed62b2541f4422c8e1ce5f92a11623db0931f9f6b67b8c0ce7cf",
+      "masterBytes": 33481,
+      "masterDuration": 1.645714,
+      "deliverySha256": "5b0f00a010b97280ab68fbaef16ac4e4bc13830af5d4d5abe0ee690e34c52787",
+      "deliveryBytes": 6849,
+      "deliveryDuration": 1.656,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b1ef19bf12685c23": {
+      "masterSha256": "616fa487bd192687dfed83c5b3e8cf35efc44632fa26504d22019109b967ce81",
+      "masterBytes": 63261,
+      "masterDuration": 3.134694,
+      "deliverySha256": "7b99b0c0c4a453dfe7d0234b95ba52b2de5547ce75c33f92ac3ba37300e7624c",
+      "deliveryBytes": 12753,
+      "deliveryDuration": 3.132,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d3e45cfa-5ef4120f": {
+      "masterSha256": "beec46ba6284a341d0d35a1e26cefc43382bc0af2430e7c85d0e658e4242c9d9",
+      "masterBytes": 50722,
+      "masterDuration": 2.507755,
+      "deliverySha256": "54122703f2c5b0a064901dc58df4052e41bfd91a2a19eee12103e4c4bb95a793",
+      "deliveryBytes": 10305,
+      "deliveryDuration": 2.52,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "07647e9c77c4e4f0": {
+      "masterSha256": "d00dda18c40f721570be92a3d887740d0e652482ed499f6734a316d2d732af08",
+      "masterBytes": 37138,
+      "masterDuration": 1.828571,
+      "deliverySha256": "e27df072dfcf6d78d4be1b3aa81aa05717a0fec32e8de96675427070aa6c272f",
+      "deliveryBytes": 7569,
+      "deliveryDuration": 1.836,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "00c89d72660a2358": {
+      "masterSha256": "be5a79b4b16401b048f74ad89cdf042fdb40803c58093cf4caa74370f53756dc",
+      "masterBytes": 102967,
+      "masterDuration": 5.12,
+      "deliverySha256": "15de23571fd38550960d7dcb9142c24195661a562c6c1a54ea3c9067563ad78c",
+      "deliveryBytes": 20817,
+      "deliveryDuration": 5.148,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "4abce35a1ee45416": {
+      "masterSha256": "4f9030216eef4e207984383bae368ee73d6c5edccd8a38a412445a19cbcab0bb",
+      "masterBytes": 99310,
+      "masterDuration": 4.937143,
+      "deliverySha256": "8a6750d197c220e595eb98f3b322daf738bf805fe2ef6df2550a9bb6f7e1843a",
+      "deliveryBytes": 20097,
+      "deliveryDuration": 4.968,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "4724a62f38cba1fb": {
+      "masterSha256": "cdf733975568a76c3ea6ad70183c182c2eccae224a981f0bf7602e5863c8924a",
+      "masterBytes": 31392,
+      "masterDuration": 1.541224,
+      "deliverySha256": "9d54339736f8a88c58c32408909d153d8830d9116eea3c95c3ed40ead54d8d70",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "5d7781a3417e0d64": {
+      "masterSha256": "52f8eb3c5f125663e3ef3ba4119387d88b9f003ee3a0bcda420928e9781cf187",
+      "masterBytes": 68485,
+      "masterDuration": 3.395918,
+      "deliverySha256": "0342fd05c1b00d3a2ce313a43ed06c88b85dc559f89b0fffebcb9b78ae10bd8c",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "746a2225-17fa4cd2": {
+      "masterSha256": "e949507dc389fa867586188dc1fd6509a6c92ee57fbcdd5122e701bb934a5ea8",
+      "masterBytes": 79979,
+      "masterDuration": 3.970612,
+      "deliverySha256": "a6672e2bdb3bc3787a3613b0be77ef71a23200ebf7dccbb5948f2494b46c5f89",
+      "deliveryBytes": 16209,
+      "deliveryDuration": 3.996,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "6d366fef-34e10d25": {
+      "masterSha256": "5dbbf44b31cb76c094ae424ced4f9ee1966bb7996fc91b3464a29ffed8ac39fb",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "fce738c9d4f1626ce7cc5502ca4116555656bb223b022c79777ee1dc2acbd0d0",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "aa9d55e1624ef95f": {
+      "masterSha256": "899d41075b488e3577853a105ccf7de92539c6b212e920a16fb1b085fc8afcab",
+      "masterBytes": 117073,
+      "masterDuration": 5.825306,
+      "deliverySha256": "3ee3a1b65e6091e90a589880ed1025eefca1bc83c86e1422442acfe7d45e6281",
+      "deliveryBytes": 23553,
+      "deliveryDuration": 5.832,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "759e5c8f-50c963f7": {
+      "masterSha256": "06adae846b8e713358d145c3f21d8e4eab0a2f1416dc4aa52de5566ac2933a19",
+      "masterBytes": 110281,
+      "masterDuration": 5.485714,
+      "deliverySha256": "6ffb374abc0ee52120bfe3deeaa3bd67858497294952162032b3be49f2443603",
+      "deliveryBytes": 22257,
+      "deliveryDuration": 5.508,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "9276b24c-3a3cc4f5": {
+      "masterSha256": "deb23de12e86913afbb1e086a1a3e5f927020390871fabb8dc1033044f9ef663",
+      "masterBytes": 131179,
+      "masterDuration": 6.530612,
+      "deliverySha256": "a9fffb1e4fa858f974f9a250f804ae589fe40323c663dd99dd2357db81076a7e",
+      "deliveryBytes": 26433,
+      "deliveryDuration": 6.552,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "6f993f39-18c75489": {
+      "masterSha256": "ede2a99249264ac63cf2939e05f7b8e3479268fbecafae1a888f68d60a316a3b",
+      "masterBytes": 35571,
+      "masterDuration": 1.750204,
+      "deliverySha256": "76955233f54b62ae1292f6e6aa959d4caa1b9d9d81eadb2406e17dade79584da",
+      "deliveryBytes": 7281,
+      "deliveryDuration": 1.764,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "3dfacf10-7428b0f2": {
+      "masterSha256": "4721e0c339e0a12303781e29d194e63e21610fee4f279c9654b444f422394ca3",
+      "masterBytes": 87294,
+      "masterDuration": 4.336327,
+      "deliverySha256": "32cd354185aa9378f6e78439962282d7837e02da32551b3ee562e55f7751a70d",
+      "deliveryBytes": 17649,
+      "deliveryDuration": 4.356,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "4def96675cafcbd7": {
+      "masterSha256": "35a94dd07d239782492f8680f982e63a04e6696b572742600e89662524a5cb1c",
+      "masterBytes": 115506,
+      "masterDuration": 5.746939,
+      "deliverySha256": "e9bab355a23d5d7332bb2363af8a6cd2881fc65832eb716f2e47398e3fc12d5b",
+      "deliveryBytes": 23265,
+      "deliveryDuration": 5.76,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "e1d7cd4c-47ea8fa2": {
+      "masterSha256": "2b51ce35686a3e4158f15abe251fe6c4c301febf2468e3012a9783a5dd8b98b0",
+      "masterBytes": 79457,
+      "masterDuration": 3.94449,
+      "deliverySha256": "5bb8a762beec5bcf793212c77aaba44ed3d4945b37c68c574907cb8e2731e561",
+      "deliveryBytes": 16065,
+      "deliveryDuration": 3.96,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "74a36a84-3cc2bb96": {
+      "masterSha256": "ed7348610e13e5023ab7640b2b3fdaf5e76a4e3f56a351245bec8c9fcf077b62",
+      "masterBytes": 30347,
+      "masterDuration": 1.48898,
+      "deliverySha256": "0793b0092157d789fdd817a687c6376a4c16a120892b304e90761cb2e4427494",
+      "deliveryBytes": 6273,
+      "deliveryDuration": 1.512,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "9cd7d131-7e8ff494": {
+      "masterSha256": "a0e42536f285f850fc5867bf20c581a9784241bbf232241c885e81b6cf1c91f1",
+      "masterBytes": 64828,
+      "masterDuration": 3.213061,
+      "deliverySha256": "03282281a01ca65679f59e3beda3e1b7cd4be77e0cb8b2d3af7caadec5c5ccac",
+      "deliveryBytes": 13185,
+      "deliveryDuration": 3.24,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "5712bcb5-561cb595": {
+      "masterSha256": "3965cd013df88f201ad7929428a9afc282d39301212558bed51cab462c807865",
+      "masterBytes": 89383,
+      "masterDuration": 4.440816,
+      "deliverySha256": "58ce751807ff497413d3d0c3e22f22737680226d226252485375471293fb5a85",
+      "deliveryBytes": 18081,
+      "deliveryDuration": 4.464,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "1f0b78d0-6ad7aeb7": {
+      "masterSha256": "b1641aee8e01ba43ed1ea678d7ba69653892285684dd351fbb464bac129b4457",
+      "masterBytes": 86771,
+      "masterDuration": 4.310204,
+      "deliverySha256": "c4a65b3f84f3b023011033311cf7530a8b1c556ffcc379398e57e75c1ec5a950",
+      "deliveryBytes": 17505,
+      "deliveryDuration": 4.32,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f6049db1-323b86ec": {
+      "masterSha256": "28bb1aeeeb9fe7d0d09129a54296bb5e1cf16b3d149e12e8a67fab7370f01994",
+      "masterBytes": 84681,
+      "masterDuration": 4.205714,
+      "deliverySha256": "2e8ceca0a28df7bb038ac9ea4f83aed9dc6ab9b618106316e37ba123c6a3e667",
+      "deliveryBytes": 17217,
+      "deliveryDuration": 4.248,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a51394e363bdcbee": {
+      "masterSha256": "7608fba370475df2b90c9b05b5bebfb684807452b9512de95253e09495dc4b83",
+      "masterBytes": 93041,
+      "masterDuration": 4.623673,
+      "deliverySha256": "12bff8f81f02aadb5f33f127e14108f17bd9b101224c247c1c8182732cdb9d9d",
+      "deliveryBytes": 18801,
+      "deliveryDuration": 4.644,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "2120accb5437d80f": {
+      "masterSha256": "ae5ce206e3733e2dad3d6afe0fe3642a25beec2de832637ccfe811d6aa30432e",
+      "masterBytes": 135359,
+      "masterDuration": 6.739592,
+      "deliverySha256": "335c24ec0eb12054cec183f8aff00895501915b999b7d03912a5d8842018fa43",
+      "deliveryBytes": 27297,
+      "deliveryDuration": 6.768,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a1937455246a9f52": {
+      "masterSha256": "a7a6a5cfaaea8a80cbe8ce2b0d10da030ba3eb167f7a39af2c3770db5662e0dc",
+      "masterBytes": 135881,
+      "masterDuration": 6.765714,
+      "deliverySha256": "aa533335b55d9b0f73d18a9f63c780fc28a352f6570ec5dad02dee6e5c7d5ec5",
+      "deliveryBytes": 27441,
+      "deliveryDuration": 6.804,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b2bcb0ef4ffc0fe6": {
+      "masterSha256": "2fbfa975d08cfa28da6dc8e24602fea8b18ab1c7b9caaa2dd28db886006c17f6",
+      "masterBytes": 134836,
+      "masterDuration": 6.713469,
+      "deliverySha256": "4d6c0fcd757f66d5766371990c8b51c48494f498efd5adc335c14359847674a4",
+      "deliveryBytes": 27153,
+      "deliveryDuration": 6.732,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "6cacfd60-2154ad7": {
+      "masterSha256": "f2d44ac61cef664b5d0f596ef6889464661e0d3f78eea3ea4e0ecb0a700ca033",
+      "masterBytes": 113416,
+      "masterDuration": 5.642449,
+      "deliverySha256": "4b91fd5b849f2bacf7c046d72aaa666219f364970ca857dac0fb0439b9c79322",
+      "deliveryBytes": 22833,
+      "deliveryDuration": 5.652,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "35ea8a1f-500db0d5": {
+      "masterSha256": "4913e65efdd885ab3eb6c47c0a02ed025c16cd235dba33155c617d90b20d531e",
+      "masterBytes": 38183,
+      "masterDuration": 1.880816,
+      "deliverySha256": "1d03a1ac3c07913ae6c905fdea1e34a7e61fe77d9df21af33cd778cae5f393bb",
+      "deliveryBytes": 7857,
+      "deliveryDuration": 1.908,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fb67a6b0-1822e2d4": {
+      "masterSha256": "b093cccf5502eebcae56b3b125e58c27c49c90d72ef3b431dce05bcb07ff6777",
+      "masterBytes": 120730,
+      "masterDuration": 6.008163,
+      "deliverySha256": "4629c21f986cee9264b34ef50f03720b7a3a1dd268eb377ec38604a3c17a4060",
+      "deliveryBytes": 24417,
+      "deliveryDuration": 6.048,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "53051ec75e6c21c2": {
+      "masterSha256": "6cdb356ec14f7484c549199159dce581f4c320cba0cde36cb00772b440bf2238",
+      "masterBytes": 88861,
+      "masterDuration": 4.414694,
+      "deliverySha256": "30abbea537e7d6c870feb9d0a7dab2cbaae205eecc8aa4811f77ad214ca1457b",
+      "deliveryBytes": 18081,
+      "deliveryDuration": 4.464,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "15cd9686-43634e1b": {
+      "masterSha256": "bd65f9ffc342f03357a29509f4adcaf468745ac9da1238840f881f63411ef983",
+      "masterBytes": 95130,
+      "masterDuration": 4.728163,
+      "deliverySha256": "258a9e44b4c74ce10df0d2e65f48d731a584956ce69ab8c92cf7db7303d87170",
+      "deliveryBytes": 19233,
+      "deliveryDuration": 4.752,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "90dfdbf9723ca856": {
+      "masterSha256": "58f3aabe8e87bbcd19f1bbad78265e7bf025dc37f4807cff1fc381f99f5d74a8",
+      "masterBytes": 34526,
+      "masterDuration": 1.697959,
+      "deliverySha256": "714b13bd5e912ea25a831b897d056d206b2b5899e8ec70f3f2ba7baec98bd9ec",
+      "deliveryBytes": 7137,
+      "deliveryDuration": 1.728,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "e7d1a861-56ea3ced": {
+      "masterSha256": "fdd1e6663264fa63d4dee7437cf8ffd864d4acd33f6e763581c6f97e3d0cde92",
+      "masterBytes": 24077,
+      "masterDuration": 1.17551,
+      "deliverySha256": "b52cdd9022b453befb100235c56cd8749b793315c8a1bc001faaa62d927e3d7d",
+      "deliveryBytes": 4977,
+      "deliveryDuration": 1.188,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "124ffd8b-680f5940": {
+      "masterSha256": "dd7e509f2a935603a803bd674d6463389f6a2e39a178d5a01bf920bec14c10e4",
+      "masterBytes": 67963,
+      "masterDuration": 3.369796,
+      "deliverySha256": "b2352a55e00f13bb4863f469184007e6e839df2460b0efcd4360fa810b4d4c2d",
+      "deliveryBytes": 13761,
+      "deliveryDuration": 3.384,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "eb9d1f310-c294bd": {
+      "masterSha256": "a89b6e901c4c8f6b5eaa82312fd545ae313a881e70615dea892905ab45dbf2c1",
+      "masterBytes": 84159,
+      "masterDuration": 4.179592,
+      "deliverySha256": "d4ab65dc8f0874bb52e46557e550e50c443af99d308b1118c3d82b88d7531bf7",
+      "deliveryBytes": 17073,
+      "deliveryDuration": 4.212,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "5902eb34-b5e9ead": {
+      "masterSha256": "a36627d5740c78ecfa042ee1da6d3a27ee2368302cddf8ac9a0259a523b5f44d",
+      "masterBytes": 77889,
+      "masterDuration": 3.866122,
+      "deliverySha256": "ef5ada0b2c7fc4692f29313931162bffa379352aca96692cd588a98a0e470bda",
+      "deliveryBytes": 15777,
+      "deliveryDuration": 3.888,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "421275ba23be7d65": {
+      "masterSha256": "0c3c6061a27735bd2587f2e7d601c98b4cbc6ffdc177a1958faa249b6b6770b3",
+      "masterBytes": 105579,
+      "masterDuration": 5.250612,
+      "deliverySha256": "0c9fd029d0f859e7c5fccd4e0f73b7edbd8651e1a520ec5fe6f066e5942cb424",
+      "deliveryBytes": 21393,
+      "deliveryDuration": 5.292,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d85c7683048e8f20": {
+      "masterSha256": "54519df909ec65537cc2c3ed06fa9d1a5ea6a456d9cb3a35989d070a8a8d32da",
+      "masterBytes": 77889,
+      "masterDuration": 3.866122,
+      "deliverySha256": "a5b9130af4ab7d4d6a424bf5e3c8f95078a662b5b47e9a64077f32ac1bdeb191",
+      "deliveryBytes": 15777,
+      "deliveryDuration": 3.888,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "3ebf64c3-ac14585": {
+      "masterSha256": "43f35bded7b779fd8e1f8f78f8cdc21c2beddb6a260ff868a978953ede508c46",
+      "masterBytes": 83114,
+      "masterDuration": 4.127347,
+      "deliverySha256": "abbca0d4fe24466a4fc14ec087b4fa70f57c9301d3130ae52aaa3c3a4051aab1",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "329824bf2a1f396c": {
+      "masterSha256": "4e32dccfbbc624c0a8456ea0f3c292444f75262d9db1ac7c445d3b8954166488",
+      "masterBytes": 58036,
+      "masterDuration": 2.873469,
+      "deliverySha256": "bf96447f4443a4402cfcbb9332b64d6dbde2f80758e9cbbd972538f6dc51e5db",
+      "deliveryBytes": 11745,
+      "deliveryDuration": 2.88,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "6440abc5-21cdcc0": {
+      "masterSha256": "51f65737957979bdbf71fe3dfa4075c0006d9da03140672591af56f87a228dae",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "12702cf6b923344993d02c30e63bd74c431d567d7c498ff678bb516161602732",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fed63bf7-60ae32c": {
+      "masterSha256": "d66fd933d8bf0953ae1e383bdfceea8e25d213de9c270ff5de4706a314f3b26a",
+      "masterBytes": 96175,
+      "masterDuration": 4.780408,
+      "deliverySha256": "e46ba9d2d27ab41c335bf1a38e2d08de95bdb0f78a0d58565907df99dc911a72",
+      "deliveryBytes": 19377,
+      "deliveryDuration": 4.788,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "65fa14c4-582ffafa": {
+      "masterSha256": "f06fff10ffa56fcb045422732c36ba1fd669c78c493c658fbed836f5160b7b4d",
+      "masterBytes": 90951,
+      "masterDuration": 4.519184,
+      "deliverySha256": "c03c3510d54f8735822160876f90fb7e669df3420bfe7bc9864121602a172c10",
+      "deliveryBytes": 18513,
+      "deliveryDuration": 4.572,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "84f8d9bd6cc758c0": {
+      "masterSha256": "305c7c82e8518aca516a6e3e767039b036be33dc792ffaedea6a9f74c0d1f7d6",
+      "masterBytes": 78934,
+      "masterDuration": 3.918367,
+      "deliverySha256": "eedc6f5b04d0ba1a5bd19b30c3352b16a8503af2ab3db38248446f7ec46f8055",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "45cdb3e613777144": {
+      "masterSha256": "074a5c781685bdf47675cc3b775d326003cd967a731a61a3cb09af14704f54a6",
+      "masterBytes": 87294,
+      "masterDuration": 4.336327,
+      "deliverySha256": "76b9991b37bc7c6f314d2f4878067b888b684c57944d040df56d5d0eabc08954",
+      "deliveryBytes": 17649,
+      "deliveryDuration": 4.356,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "2f6ecac12c0c8c5c": {
+      "masterSha256": "c46ea06f44cf0287ef867506bcc4f19b8225b075b407cf3d39eed0ffc3fc8b19",
+      "masterBytes": 46543,
+      "masterDuration": 2.298776,
+      "deliverySha256": "4871cf0e6080bb010ad3b30d88e0133013f2647bf591666634b407a3e851a81b",
+      "deliveryBytes": 9585,
+      "deliveryDuration": 2.34,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "ebf424c0-5a4b5b1": {
+      "masterSha256": "8f5b3db013d14bd62fcef6760b44128ac3d70c70f7e7aeb617776031e7bc2b74",
+      "masterBytes": 100877,
+      "masterDuration": 5.01551,
+      "deliverySha256": "ec695716f6cea8fd70dbdbb49c87f353e4cb4560cb571bf08308c17c95c09afb",
+      "deliveryBytes": 20385,
+      "deliveryDuration": 5.04,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "473d65e4-7bdaf774": {
+      "masterSha256": "dcd6c28ba1aa001a413027ab767470fe9c5d60e01ba8a5635314eda598056a16",
+      "masterBytes": 82069,
+      "masterDuration": 4.075102,
+      "deliverySha256": "7b80a638442f9e228912b290e047a46b9732582127e0e7570da513143ca523d5",
+      "deliveryBytes": 16641,
+      "deliveryDuration": 4.104,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "cdb545b2-740ab8bd": {
+      "masterSha256": "eeeaff58024e7f07b36a3e11ccc13deac1dc3ef6826fe28b2c2ab231fe6cd02a",
+      "masterBytes": 95130,
+      "masterDuration": 4.728163,
+      "deliverySha256": "ac437580bf385e5f2816ae2daa9e31f6e34097e7c25c97617bdb2ce58d623dbd",
+      "deliveryBytes": 19233,
+      "deliveryDuration": 4.752,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "6cc4ab7274e66f62": {
+      "masterSha256": "91a4828053e26fe461ef31eaf94435122b4986182f1a8afccd06b306b9e082ec",
+      "masterBytes": 127000,
+      "masterDuration": 6.321633,
+      "deliverySha256": "3db363d470253eee420d0da53664c54e1dc96bb207dbd928c2fc0cd77e153c78",
+      "deliveryBytes": 25569,
+      "deliveryDuration": 6.336,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "3478a2cf-1673061": {
+      "masterSha256": "89b2279a5ae6af4026721804f6384c85aa7659c8203e302ad25c3d58559312f0",
+      "masterBytes": 105057,
+      "masterDuration": 5.22449,
+      "deliverySha256": "20fa7fe6aed3f3d3d314feb8cabaa5973d0b983ebd28dbf80cb6436ee885e30e",
+      "deliveryBytes": 21249,
+      "deliveryDuration": 5.256,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b37bd47d-6e45f7dd": {
+      "masterSha256": "b938db6d57b79f354e4378fefe30440f77fa08c49447698078d7a054df08ce3a",
+      "masterBytes": 101922,
+      "masterDuration": 5.067755,
+      "deliverySha256": "998b6444a4bf07fca9d84bcb6287e341858fc70a32b0312fff42a4557f5668f9",
+      "deliveryBytes": 20673,
+      "deliveryDuration": 5.112,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "027ee6e077407cae": {
+      "masterSha256": "7f7d41f190611144b8f37379192e28ddc3a4da27183ba82651759e29fdad283b",
+      "masterBytes": 130134,
+      "masterDuration": 6.478367,
+      "deliverySha256": "bcbdb2582c493efd3c2051343bb0cad2e96e50196e3371fa860ecc854cd82238",
+      "deliveryBytes": 26145,
+      "deliveryDuration": 6.48,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "5fec7ce82f577925": {
+      "masterSha256": "4591a6f29e2d3261dca8b1bd9d18dcbd14a1b6a6320989dc562017b23c05a29f",
+      "masterBytes": 85726,
+      "masterDuration": 4.257959,
+      "deliverySha256": "5bf0f1a9768b52ec672f4381c9300bade54018a830633cfd31343085e8f15f34",
+      "deliveryBytes": 17361,
+      "deliveryDuration": 4.284,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "86df19d6-66351490": {
+      "masterSha256": "243e9d547d3fc333c280e391eea0f84590a588583998a6410c15f65d9166c51d",
+      "masterBytes": 125955,
+      "masterDuration": 6.269388,
+      "deliverySha256": "0a58e937dc7ed63a7871f41d2b1e0b8d2020137f58dfe3b0af3c25d5ce4cdd14",
+      "deliveryBytes": 25425,
+      "deliveryDuration": 6.3,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d59913c331b79911": {
+      "masterSha256": "0cba9ae7a96fadc6d33a25a5da30507caa6e3a1b0d9e05c6bfaf636ba60e0e1f",
+      "masterBytes": 81547,
+      "masterDuration": 4.04898,
+      "deliverySha256": "9ca84fa4049468ca51d236be58b6ecc6505832903f21352b212d9d9b9b0f6c80",
+      "deliveryBytes": 16497,
+      "deliveryDuration": 4.068,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "24b933a5-1b14cc2a": {
+      "masterSha256": "9051ecaa66230bc12e7eb6ced49ec2f2261dab371d3326e4ea3c8c02a7acba9c",
+      "masterBytes": 99832,
+      "masterDuration": 4.963265,
+      "deliverySha256": "fda27a84530ba09bae3a3ded8da13c54e891e94f098a259c879c993fc93fe052",
+      "deliveryBytes": 20241,
+      "deliveryDuration": 5.004,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "69e904b767060360": {
+      "masterSha256": "132a4a29137934f0c04012c4e27345d1630364f997313ecd087d3ded00031302",
+      "masterBytes": 56469,
+      "masterDuration": 2.795102,
+      "deliverySha256": "1171c2346361a0495bb83b6123be51b3f1c2001b1029de4a22a525c560eb02f7",
+      "deliveryBytes": 11457,
+      "deliveryDuration": 2.808,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "29a3bc9639be4218": {
+      "masterSha256": "bf88ac6844dbec41b4671139cc149d45f92dbdb8a39e440e1ab65ce3a10ff152",
+      "masterBytes": 69008,
+      "masterDuration": 3.422041,
+      "deliverySha256": "ecd91f94663b5a41369aef2c1a628e98914a1e334ae895585dc9da3b3d89be9b",
+      "deliveryBytes": 14049,
+      "deliveryDuration": 3.456,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "eeeca9122ac31b3a": {
+      "masterSha256": "3ce49e0d672815b18a588e61e1931e0dcc594a7a0c7f39e50d843a969cbed2fb",
+      "masterBytes": 25645,
+      "masterDuration": 1.253878,
+      "deliverySha256": "3498107626c5f3cfddc01219383eb2be7bf93f9126a1798e8635ece86b30e85e",
+      "deliveryBytes": 5409,
+      "deliveryDuration": 1.296,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "512eac8b522398dd": {
+      "masterSha256": "2adf73f5e95c91dba125266ed54a5df95bdc23d1dcb5d651c237621ffd15d5b2",
+      "masterBytes": 76322,
+      "masterDuration": 3.787755,
+      "deliverySha256": "7db1453f7142e9507ea4418e5b74ef2666320b72eeefc527550f05ba989fd67e",
+      "deliveryBytes": 15489,
+      "deliveryDuration": 3.816,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fa5f2e0a1f52c025": {
+      "masterSha256": "1935d74723332d56ceddeb147c8c5c199fd5142d337dd2b5ccbb99c94d9e43e0",
+      "masterBytes": 90951,
+      "masterDuration": 4.519184,
+      "deliverySha256": "14c9a63df9812c117d0490c483ff90101c1389f0db7014ac39e06313ae89157a",
+      "deliveryBytes": 18369,
+      "deliveryDuration": 4.536,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "bfa7cf37-3edc294d": {
+      "masterSha256": "6899756b9c3dffebffb5cca971bf5cc069f3365fba801bdbfc8448ca7e997d3c",
+      "masterBytes": 63783,
+      "masterDuration": 3.160816,
+      "deliverySha256": "363b99546cc6479c1b2679691736a8ae30358b9d224bf91eff5d63498d928eef",
+      "deliveryBytes": 13041,
+      "deliveryDuration": 3.204,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b28618a9-32d2ff27": {
+      "masterSha256": "6ea141450118ff1b62519409967ba2026c2d106d5922cbcdc7e9119a7c718583",
+      "masterBytes": 67963,
+      "masterDuration": 3.369796,
+      "deliverySha256": "480d3a32066431f6d9816a2c64b8b4853510b26019d4ade4b0b48ddfc43b6363",
+      "deliveryBytes": 13761,
+      "deliveryDuration": 3.384,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "e12f7271-c49c9b8": {
+      "masterSha256": "458a01784bd82d8d2c2fe0bd9262df1a1bd722419ed02fd82103c9983f9bdec4",
+      "masterBytes": 58036,
+      "masterDuration": 2.873469,
+      "deliverySha256": "5de32871de01e082931b18fe8b3001701c96f29205e7f18deac984b42681dfcd",
+      "deliveryBytes": 11745,
+      "deliveryDuration": 2.88,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f392815b72f793bb": {
+      "masterSha256": "df6ac98d11cf1e0d02ebe03cc04c75e3fe1b4f6933480df5fc21465f93e6a681",
+      "masterBytes": 91996,
+      "masterDuration": 4.571429,
+      "deliverySha256": "fb534100ca11671f5c9456b8c46b1d677f59643ec1df27658137644ab0b01b40",
+      "deliveryBytes": 18657,
+      "deliveryDuration": 4.608,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "3ddb6e866faf14cc": {
+      "masterSha256": "10cfaa04bdc9e5b7fa3dbee1d806a78ad554f7b2369834426e8842ffe4476b5d",
+      "masterBytes": 83114,
+      "masterDuration": 4.127347,
+      "deliverySha256": "40396d0cbc3996efc20334ad7a9d2330a9977a5513ea6e0385f56a21dee732b4",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f3058abb5a44aa3f": {
+      "masterSha256": "eb2cc63009f134401ace61d6741c23f54a7d4d0f8b632629330594bbeb2a23ac",
+      "masterBytes": 53334,
+      "masterDuration": 2.638367,
+      "deliverySha256": "8f55d03bdafa5a2839d5393b5adf5004f89357796ff48fd8b3564dc51ebeeb7a",
+      "deliveryBytes": 10881,
+      "deliveryDuration": 2.664,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "66df038555332a34": {
+      "masterSha256": "2a3c2e75ff6c2e597ba417d88d0ccef333067d9e2ca45cbd92f647c43d8a86d8",
+      "masterBytes": 38183,
+      "masterDuration": 1.880816,
+      "deliverySha256": "e67bba292ad826cb07c4a01c812e4913b6cf1a1bd6e838c3b46e84e629cafd49",
+      "deliveryBytes": 7857,
+      "deliveryDuration": 1.908,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "17fb489b3c747095": {
+      "masterSha256": "4bf1a5a971979b08e8c277b12eefda912b37ef0e8f978b2b61573d154fca75b5",
+      "masterBytes": 73187,
+      "masterDuration": 3.63102,
+      "deliverySha256": "61dc9bff15f58408852d1f6e30546378722f178ce54e1c6e9bd5d33d678f42b5",
+      "deliveryBytes": 14913,
+      "deliveryDuration": 3.672,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "15f97fc3-4cb56152": {
+      "masterSha256": "f7eef7ba79798bebd067b1233d81a881fff7fc0c9cee5e64c27a5ea9f47acd7e",
+      "masterBytes": 34526,
+      "masterDuration": 1.697959,
+      "deliverySha256": "24459fd65663ff8604048b9918c00152533d5bb49734709a3f4c768716a48a9e",
+      "deliveryBytes": 7137,
+      "deliveryDuration": 1.728,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "aebe03a0590748c4": {
+      "masterSha256": "74c24cb7f1dab07330a96cc96036861eb2a2bbf980dc0b3d61cad15a301b7139",
+      "masterBytes": 74232,
+      "masterDuration": 3.683265,
+      "deliverySha256": "e0be4516430c01699be3fc871a35f34a90c6c46b38c3bf8e771c57fc527eb32b",
+      "deliveryBytes": 15057,
+      "deliveryDuration": 3.708,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "0677eac4-1994ace0": {
+      "masterSha256": "73d355d31c3b676a8a1959290c95f907c786c49ef4eff8e645aa961d838c121f",
+      "masterBytes": 40796,
+      "masterDuration": 2.011429,
+      "deliverySha256": "6b57e1632c72a0469f8d337c0b0ecd4608e4758e036376113110dae13bd65b04",
+      "deliveryBytes": 8289,
+      "deliveryDuration": 2.016,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b796ef354fb21d39": {
+      "masterSha256": "3c6dc206734eb2985782e89fc914e75e57b11f04a807e044a4167e94d815907a",
+      "masterBytes": 84159,
+      "masterDuration": 4.179592,
+      "deliverySha256": "e6070584501649ecfccdbf2e68cc8d2eeadbcaada59891ec54f7ad9d2f2355fb",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "391d8fe9-1309df62": {
+      "masterSha256": "0128e5c0e0d334ab064a57fd5ecc3c898a9100aa77c57dc368e908bb92cd47e1",
+      "masterBytes": 39751,
+      "masterDuration": 1.959184,
+      "deliverySha256": "c5b4516e6995ec311e016f32d65cf229089ddf0475d4178a6982ce2bdad7db61",
+      "deliveryBytes": 8145,
+      "deliveryDuration": 1.98,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c51e9340-4be786df": {
+      "masterSha256": "f51753b6c2160d920e4c94ea91c796f8983ca2145b74e141ed887db7567d21a7",
+      "masterBytes": 62738,
+      "masterDuration": 3.108571,
+      "deliverySha256": "49b19ef8ee45a71876fa1595f717b3025ad4e7486192e92f08ff7c3b91e17f0c",
+      "deliveryBytes": 12753,
+      "deliveryDuration": 3.132,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fd9fe330-584f78c5": {
+      "masterSha256": "29fafc3c0acf933e7bddc6b69dc01651664e88850d993d60a6f1ec061c4f0ce1",
+      "masterBytes": 39751,
+      "masterDuration": 1.959184,
+      "deliverySha256": "f79189baab9f91953fd225d1ccf0e38fd45960e9891356900c2d1d20ed188f94",
+      "deliveryBytes": 8145,
+      "deliveryDuration": 1.98,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "3fe6121e7f123e13": {
+      "masterSha256": "16ae02b264494c24bf7042229a9fd76fc1f4e37f7af280fd1874484b7c1484e2",
+      "masterBytes": 85726,
+      "masterDuration": 4.257959,
+      "deliverySha256": "43e2098a81885e18f1aefb4603daaa42d531d4b14e23369717ef050cb94b24c3",
+      "deliveryBytes": 17361,
+      "deliveryDuration": 4.284,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "8cbe2f49468113e3": {
+      "masterSha256": "3e0fb395c9623dc5e1058b535128db2a574b6a887620f51ea35fd43dd6896f84",
+      "masterBytes": 51245,
+      "masterDuration": 2.533878,
+      "deliverySha256": "a01480d7a67f54dd9bc59f4e08ef3791057498535d1ee5b8c6e6f9b43c0fa123",
+      "deliveryBytes": 10449,
+      "deliveryDuration": 2.556,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "687193ef-7dbcfac7": {
+      "masterSha256": "9dbf478de7813352051827729ba92b54ce38a9080abf5c8e4608c75cedcfc096",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "2a440d5b2452f7413f108165b965053b6d87d332b5a0f62575d70a13788ebd33",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "390aa322-1c5896ba": {
+      "masterSha256": "237c52720d75b33f9ffd90c69453532af3858086d1af055165f66e1b67e58327",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "9c15b246eb2988108fa3a97eb165baaa70b56d1d4d17d06892ce64c1acc74b94",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "ded4459302f5a2a5": {
+      "masterSha256": "202751ffee0053db0b22982a3eb2605adc99a2b865ffa37d82772b01ae053efc",
+      "masterBytes": 47065,
+      "masterDuration": 2.324898,
+      "deliverySha256": "6b3063a4ff383517170ae18de901dea9fabc113feb81f421d9b9684460515dae",
+      "deliveryBytes": 9585,
+      "deliveryDuration": 2.34,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c45a2fa43fe84257": {
+      "masterSha256": "6876ea1ebb837fe18a74b8ceed97423f154fd53d97248af5f8530b19fdde0366",
+      "masterBytes": 62216,
+      "masterDuration": 3.082449,
+      "deliverySha256": "02591a2d8a1e976e17dc4060b7179ba3b88b48adfb8a307d745d9a5a1d32dfb9",
+      "deliveryBytes": 12609,
+      "deliveryDuration": 3.096,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "31d1871e-5e328e72": {
+      "masterSha256": "290876e04430b3650f084e6cf63e5637649938fcbb8ff77abfed74ab0453b798",
+      "masterBytes": 31914,
+      "masterDuration": 1.567347,
+      "deliverySha256": "a911c4af483bc21e75e222b8b9b3b4c5e1d53568df8ee4b9ad9888813accfe48",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "ca7cd5c81586b96e": {
+      "masterSha256": "2b662a45dcdfb72dd884ef70b860e430d7b0203936dca5cfc8557f314fbdfbf5",
+      "masterBytes": 47587,
+      "masterDuration": 2.35102,
+      "deliverySha256": "c1d8d308b8f8e95ad18d897cdaafdf4f7b797f63caa24cb9d250f80f05678575",
+      "deliveryBytes": 9729,
+      "deliveryDuration": 2.376,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "6f243e91-63a4b4b1": {
+      "masterSha256": "fd6c3c9647e8bc3d5a00a821328979ad9938282ecbf195948f958c04ca848969",
+      "masterBytes": 102445,
+      "masterDuration": 5.093878,
+      "deliverySha256": "2bb2e69f881f809968c40d14937bd921059e0d182a808bfc33295a3f3e5bb3ab",
+      "deliveryBytes": 20673,
+      "deliveryDuration": 5.112,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "cec9339c-2f263205": {
+      "masterSha256": "4f72a69695812a3734179da7d9b4091517004a8f245e1bd70dc823f2e97f4cb5",
+      "masterBytes": 53857,
+      "masterDuration": 2.66449,
+      "deliverySha256": "bc195e5f5a090965cc587295f79bf8f94f298952d80fe619628b6f5661d3880b",
+      "deliveryBytes": 11025,
+      "deliveryDuration": 2.7,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "65d65786-1b9f7a7b": {
+      "masterSha256": "776f463926d63fabb4501704b608bab6809fd36cbbca9c357c255dfc037038ea",
+      "masterBytes": 86771,
+      "masterDuration": 4.310204,
+      "deliverySha256": "33438691fdcab554f7cbf8c692183cf8f77cef76c1a84280fa04da9776e749cf",
+      "deliveryBytes": 17505,
+      "deliveryDuration": 4.32,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fa60aa7b-276bc5ff": {
+      "masterSha256": "9cb9ca9ca1c2432366989aa84a913fb2714aaa864253ff7c39013044787d98e3",
+      "masterBytes": 83114,
+      "masterDuration": 4.127347,
+      "deliverySha256": "a1e3ae2019d40e50e2bea52583afd7f4d271730c8bb1256c57842fd0d29ffed8",
+      "deliveryBytes": 16785,
+      "deliveryDuration": 4.14,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "1a0b98623db97c28": {
+      "masterSha256": "b85b874e856e75d84ae0e8ef725c22cca9086a85bdeeeb1129ee8f21c5287b3c",
+      "masterBytes": 50722,
+      "masterDuration": 2.507755,
+      "deliverySha256": "86cd15437e51ae472f76b5f6d4ecb3c2d15b4456e52b6c2d27a7f6a26d45c58e",
+      "deliveryBytes": 10305,
+      "deliveryDuration": 2.52,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f9fc235a78cb066d": {
+      "masterSha256": "9bde8b30d9338ca827d4bd378c5d9b79d03b6575c6173c8c3fa9dd0e079b8f59",
+      "masterBytes": 44975,
+      "masterDuration": 2.220408,
+      "deliverySha256": "f4924add09a8f1b21a90f7e0f678c14f86bf386be36392d5de6a4531127852d0",
+      "deliveryBytes": 9297,
+      "deliveryDuration": 2.268,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "39e171f9-62f156d2": {
+      "masterSha256": "d2e1484adf06e8c6ff177cb66901a863ef232e7e87fb974b2474bf04dcf909fb",
+      "masterBytes": 90951,
+      "masterDuration": 4.519184,
+      "deliverySha256": "f407f6d1b279e64a3929cad72d9383df9e06911c40839b0a00bcb817f90d7d2a",
+      "deliveryBytes": 18369,
+      "deliveryDuration": 4.536,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "7c7993df5b7489ac": {
+      "masterSha256": "1b26c2aa13dfc6b104c2c367b79fb09bcf8c29bf3108de7cb53349a2503a4422",
+      "masterBytes": 97743,
+      "masterDuration": 4.858776,
+      "deliverySha256": "52866dec376e75e36ac73e83148cd2663f0a9bbb7c6823d97540f19a9d6efb78",
+      "deliveryBytes": 19809,
+      "deliveryDuration": 4.896,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a900a0a208fba1e2": {
+      "masterSha256": "91cdf5c7706702603fe32bb06854c4d517ff7211d12b094851365a9ac0bc3464",
+      "masterBytes": 24077,
+      "masterDuration": 1.17551,
+      "deliverySha256": "82be701c16aeff67bffbc54b605ab29ac602a600dd0f021fb18746974ecd1471",
+      "deliveryBytes": 4977,
+      "deliveryDuration": 1.188,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "11344d775676f40d": {
+      "masterSha256": "cb80f85e42ade97d3ef5aaedfc7ec3235daa11663a9d45f7156044f827dfb7ac",
+      "masterBytes": 78934,
+      "masterDuration": 3.918367,
+      "deliverySha256": "c54341d8d10c61d8584791036445c0767d2d44fb0e228c642abf4ff23eee35f1",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "148c674a27f1b6e7": {
+      "masterSha256": "4c1f0dd014df94eb72e54e247275642bf8f00a30668dcac8b3af28133698bdb7",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "76853fc8c1881630239beae03d83fa96d8fd5786a15d06f3f122dd4d54e7e2ee",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "e7994020-6d548d30": {
+      "masterSha256": "3517baa90301fd7388a31294aa93b5c3f870f5f56e4c9e254dc96eb6a343d8e8",
+      "masterBytes": 63783,
+      "masterDuration": 3.160816,
+      "deliverySha256": "8a1948bc007e6683379ec5ef0d3c677adbbb17ba9154e63d2fdf8699b6d303b0",
+      "deliveryBytes": 12897,
+      "deliveryDuration": 3.168,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "24f181a1456e2266": {
+      "masterSha256": "a5620d633c9b02d3d53aa525a72486a7d1ad683deadfe462c6dcc38f7697b749",
+      "masterBytes": 76322,
+      "masterDuration": 3.787755,
+      "deliverySha256": "4f625b18769604c177fce03b8c8aa79e0a1afa1ba1ef724ffa2489e3cc05ef68",
+      "deliveryBytes": 15489,
+      "deliveryDuration": 3.816,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "99a67de63b00f748": {
+      "masterSha256": "397f1eb35b697e6b6d6fb6da3caea4b7732d4893d237a3c6ecbdbcb875152f1b",
+      "masterBytes": 74232,
+      "masterDuration": 3.683265,
+      "deliverySha256": "b60509a89bf77ab91e90e06d4e86b22001101510088e22f6c818e6ff7ebd5ade",
+      "deliveryBytes": 15057,
+      "deliveryDuration": 3.708,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f7cdfac5-4825b5a4": {
+      "masterSha256": "aa5925a6636b721ed380cc8bc6f6881380185f853ceb75d845cb7ba4f61099d5",
+      "masterBytes": 50200,
+      "masterDuration": 2.481633,
+      "deliverySha256": "013d0380d53b7250118d13a85723e9b9e7392cbf4c4f994fc5afb1a66166ce85",
+      "deliveryBytes": 10161,
+      "deliveryDuration": 2.484,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "428bc93e-30f0e78d": {
+      "masterSha256": "6215721dde0d06a6d2f539ca8ff7ed7767c6261a24bb0894b52877a61662cf71",
+      "masterBytes": 46543,
+      "masterDuration": 2.298776,
+      "deliverySha256": "7c8f7dba69a83a75121f01fe9850c3b7ff34ba0293258f71a7b2056761b71d88",
+      "deliveryBytes": 9585,
+      "deliveryDuration": 2.34,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "69687afc-5ba84a2": {
+      "masterSha256": "cddd88b263453c98b6d6e191ac1cfdc55259f80c2c1904c18eb55c015443bffd",
+      "masterBytes": 70575,
+      "masterDuration": 3.500408,
+      "deliverySha256": "33ad6e0307a0e446aa171a9e20ab02ae7563c4a60ca5ab80c4a0d5f8ae21bf8e",
+      "deliveryBytes": 14337,
+      "deliveryDuration": 3.528,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a73b4512-66d1e7d4": {
+      "masterSha256": "256abcbab5e1f322c82ff4f9ccd662f5e466ff01163a15b232c63d127f7aca44",
+      "masterBytes": 75800,
+      "masterDuration": 3.761633,
+      "deliverySha256": "1451bbd3514ae5406378129fa4b7bcc5ee7118ae5b73e351850a60d058eabad5",
+      "deliveryBytes": 15489,
+      "deliveryDuration": 3.816,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "fbd0dd87-1bbe7c45": {
+      "masterSha256": "8891fe92262dcf5e0c596ac67274a66ef3fb93b20dd4136e92ffe0eb5cd43bcc",
+      "masterBytes": 94085,
+      "masterDuration": 4.675918,
+      "deliverySha256": "7b0a41f41b756d37738274a90a71264121bae713efd418ee8ea37a27b1056df0",
+      "deliveryBytes": 18945,
+      "deliveryDuration": 4.68,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "50e503c2-332c930a": {
+      "masterSha256": "4ecc152f1a286eddad5e15135ec950e98b0f21d12972db70fe287e8699f561f2",
+      "masterBytes": 24600,
+      "masterDuration": 1.201633,
+      "deliverySha256": "df65ba1f8be6188bd5f8b19d9b05997aa37782eb75522161055b697662b5004b",
+      "deliveryBytes": 5121,
+      "deliveryDuration": 1.224,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "810051b9619443ab": {
+      "masterSha256": "68a232eb0785f444f680b25340ffe90f6835d45bb16e16d399ef0690fd5b8c2f",
+      "masterBytes": 87816,
+      "masterDuration": 4.362449,
+      "deliverySha256": "1a2d25fb97b4cb2e3dbbc2e6842da0f24deaa162a292e9043ad9e7a53bb8f55e",
+      "deliveryBytes": 17793,
+      "deliveryDuration": 4.392,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "9410b617-4d32d788": {
+      "masterSha256": "aa5296fb870b363305617c446698769b503d7bf3429bb0369dc0e571e766cb22",
+      "masterBytes": 81024,
+      "masterDuration": 4.022857,
+      "deliverySha256": "136e24b2bb04049991b2d699d588fb204735f37ee93fec01854e538df4c799c7",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "c8bd74fd07e945a1": {
+      "masterSha256": "2825eb919f38c8cdd772d25bc5e466959f64a1a4e10a50dafb806d6c5db142be",
+      "masterBytes": 77367,
+      "masterDuration": 3.84,
+      "deliverySha256": "8649bed0c4878ba6e18947c3cf414c8b2eabddf30047a9bfadaa71bf37362ad2",
+      "deliveryBytes": 15633,
+      "deliveryDuration": 3.852,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "01177373-69a0017c": {
+      "masterSha256": "4e4e9929893cddc9c2070eb2e66b0554c4531b2c9805df497628f17fe071c64e",
+      "masterBytes": 98787,
+      "masterDuration": 4.91102,
+      "deliverySha256": "bba71b49d4068bcbf675f62c6a8ae50861b9d16ec364b6799982932ba05244c1",
+      "deliveryBytes": 19953,
+      "deliveryDuration": 4.932,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "0f4328df0b876767": {
+      "masterSha256": "5a37fb0b5d223e65652100f6d9ea9ee9e9848fa8e345d6b8a9c13ce68fb93330",
+      "masterBytes": 53857,
+      "masterDuration": 2.66449,
+      "deliverySha256": "0eee023e983f3a6403ddde96ec0fe6aefa6d681a884bc6d0e688ca981c9c8304",
+      "deliveryBytes": 11025,
+      "deliveryDuration": 2.7,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "31ea7b78-735ec62e": {
+      "masterSha256": "a01a57ce2b97e43b63c7f00e95e5326be5f83286c25b19d899e36dc4e35c9c32",
+      "masterBytes": 70575,
+      "masterDuration": 3.500408,
+      "deliverySha256": "e63c8b10c235b942701940c52413e62e2dbdd5076678d2c4eb7d092833c924a4",
+      "deliveryBytes": 14337,
+      "deliveryDuration": 3.528,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "160ba44e-70c6f209": {
+      "masterSha256": "10e52f3427f614390c1122d8e0c76d09679d793fd81e1f77a8079064f2522816",
+      "masterBytes": 22510,
+      "masterDuration": 1.097143,
+      "deliverySha256": "de96e00099f961dcab257aac478eeb6ec32c613867f4200e4435b20f57799a9e",
+      "deliveryBytes": 4833,
+      "deliveryDuration": 1.152,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "a91b47147ae52bf2": {
+      "masterSha256": "6603767e5c3178411a25eef119c16d2ac3b317c4a0f69d97878c2ac1055631f8",
+      "masterBytes": 46543,
+      "masterDuration": 2.298776,
+      "deliverySha256": "5c417d916a7a435f4a92e91ae2b8fe3b9cf896e8d5f3cfa5c8696e901dc7f9ec",
+      "deliveryBytes": 9585,
+      "deliveryDuration": 2.34,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "f70db6f3-2ac4d988": {
+      "masterSha256": "fcd879a8d7cfacc13e6d404f43494f62549b0081e61767d66bb42c40f44890a1",
+      "masterBytes": 106102,
+      "masterDuration": 5.276735,
+      "deliverySha256": "5f97266564818e1fb6e9ae1e7ce0316cdf528467e6c408660680e7dda2118f73",
+      "deliveryBytes": 21393,
+      "deliveryDuration": 5.292,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "d8491d8230ac92b1": {
+      "masterSha256": "1d63f4e4bc6122ae84edf1013feb3db4ab5386d11f478030de04dd710d48c62c",
+      "masterBytes": 30869,
+      "masterDuration": 1.515102,
+      "deliverySha256": "0910eb7686adf69ddac45c55c7057b3539468adb7f96f9df58eb4ba88a76701a",
+      "deliveryBytes": 6417,
+      "deliveryDuration": 1.548,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "45769d8c2dbcffbd": {
+      "masterSha256": "fdf194be6c1d3c224901a37860f97b5dec3f4fe1d8f5164d831fdfc63fd89824",
+      "masterBytes": 77367,
+      "masterDuration": 3.84,
+      "deliverySha256": "889abcb6aa1133b2c653fab50f5f1c802037f0a381de477a5b1d6c8d50b9b5ed",
+      "deliveryBytes": 15633,
+      "deliveryDuration": 3.852,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "b839a2472510dcdc": {
+      "masterSha256": "9c53f906b27778875d5d99290a01de0ec229982d69e18af053f933226d85f97d",
+      "masterBytes": 93041,
+      "masterDuration": 4.623673,
+      "deliverySha256": "a79da7b713d3be809f962b13c7f8755eeea3f9176375b1f1e36b06b5325c9f97",
+      "deliveryBytes": 18801,
+      "deliveryDuration": 4.644,
+      "inventory": "docs/voice-recording-delta/v108-science-1.json"
+    },
+    "0c4555a8-7d155c9a": {
+      "masterSha256": "1e669e61379c5fa9e7dfaa323a8c8f1b749ad441f72c33b98004820cef06e84d",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "b18acc5c542392ab413986076570e2bd637466632c62f1f922e60d06e271e8e4",
+      "deliveryBytes": 5985,
+      "deliveryDuration": 1.44,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "8e71aa18-6e067756": {
+      "masterSha256": "bef262e8821fbb120ceb969d9fe1a1e0b4f6efb2c33d0736011db0585947f28c",
+      "masterBytes": 81024,
+      "masterDuration": 4.022857,
+      "deliverySha256": "1299c699bbb6126733e949fe4dd3a4c9b244deaee2895eb2e6eb34b2f6ad669a",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "9a92a7ad0fe880b1": {
+      "masterSha256": "d96af2fc55aea22d34e678b3325ca8350424b503927dc47b7ee939e88b67a55d",
+      "masterBytes": 86771,
+      "masterDuration": 4.310204,
+      "deliverySha256": "15ed285d6c03549903989beeff6151baf0275b5a23a35b37d458539752d6c609",
+      "deliveryBytes": 17649,
+      "deliveryDuration": 4.356,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "dd5d355f5d58a623": {
+      "masterSha256": "a92355559d47c675a940243cbcea819bb7c2eb16e45a1400d002d08adcf2aedd",
+      "masterBytes": 33481,
+      "masterDuration": 1.645714,
+      "deliverySha256": "1f9097fbb2c3b269bff9e5d02dfa15d3da9c1086bc65b24dfb0ad5c8f4327986",
+      "deliveryBytes": 6849,
+      "deliveryDuration": 1.656,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "ebe5ac65-27aaa0c8": {
+      "masterSha256": "0b4534f82f3ade1bfb070a9777dc8077ab49dd2ecd03909f0d648424e1c73952",
+      "masterBytes": 70053,
+      "masterDuration": 3.474286,
+      "deliverySha256": "872379ffe96ae8193a5018527624d1c117352758d114cd73916eaac48f84aa98",
+      "deliveryBytes": 14193,
+      "deliveryDuration": 3.492,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "93d023b9-6d5c4038": {
+      "masterSha256": "0178fbed51883ab52c75b8e1d45b854f97f595c68ff6a84fd16d318dc9801f1d",
+      "masterBytes": 93041,
+      "masterDuration": 4.623673,
+      "deliverySha256": "d089c8f9f5fccee1c4873874b6901d32ed8afb6577e7a8363c115dee0c0275d9",
+      "deliveryBytes": 18801,
+      "deliveryDuration": 4.644,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "aaeac151047c9398": {
+      "masterSha256": "0c08f4b0cadddaf04a7031a2921102a5763503ca765df2f1cd1d9b16014da881",
+      "masterBytes": 87816,
+      "masterDuration": 4.362449,
+      "deliverySha256": "ce671d949fe3bb4abbd21903147eccd59d0e3d9c793599baade33d360766669c",
+      "deliveryBytes": 17793,
+      "deliveryDuration": 4.392,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "d0be2fd809f24c20": {
+      "masterSha256": "5f7fc108a71af7497161f47a598fa188ed3ad24af9ee141b6fbcd29b4e05e1a7",
+      "masterBytes": 41841,
+      "masterDuration": 2.063673,
+      "deliverySha256": "f8d44df2bf1cfbf28689e8efb5630e543ff2ba87c95c4632e5158b8bb1d54cca",
+      "deliveryBytes": 8577,
+      "deliveryDuration": 2.088,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "02890f38-6ac3f9c4": {
+      "masterSha256": "111e2467b111166dc7815b7254cc36f7ea7c268b3401c6ade12b063e12695271",
+      "masterBytes": 31914,
+      "masterDuration": 1.567347,
+      "deliverySha256": "805dc819aa98d5e2655d375703e63102bc7475a2e7da429e5559bcf4dbf89d5f",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "424068ed-34bbb8ea": {
+      "masterSha256": "300c4198334b26993c6819438b1a644121ac6b71afb7758bc1c2b8992ce8202b",
+      "masterBytes": 83636,
+      "masterDuration": 4.153469,
+      "deliverySha256": "d700d4c21a792a407c7058fe4f34da4c8b50ca5d996bde2f94a1452442d8679f",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "c6732280-2bf081fc": {
+      "masterSha256": "9d16d001e067cce42fdf62310944543dee10e543c7c8f0d7eb13be90945a27d9",
+      "masterBytes": 78934,
+      "masterDuration": 3.918367,
+      "deliverySha256": "7ff3acc6efb3914fbc886836c3160272056792c0c42a4196893e8e31bcfc5012",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "db1d2c1a-4bc1cc01": {
+      "masterSha256": "cb8b9f7e66a42a53dbf0cab7d1cd098f407e29cf65bac6226468934289389767",
+      "masterBytes": 66918,
+      "masterDuration": 3.317551,
+      "deliverySha256": "93f317a9b813d20e6eea388000b9d134a37bcf1027e516039af3fbb7ea8faa62",
+      "deliveryBytes": 13617,
+      "deliveryDuration": 3.348,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "910c802b-6246e072": {
+      "masterSha256": "d375f27f9cb17dbd7232c5e70af68ff6f40f494b7b43028c460d1716d85ac02f",
+      "masterBytes": 40796,
+      "masterDuration": 2.011429,
+      "deliverySha256": "2cbbb77e9d3e3e987eb1e352ad603b1e777831a1f723141c415cde5cebc57212",
+      "deliveryBytes": 8433,
+      "deliveryDuration": 2.052,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "156edd507df11311": {
+      "masterSha256": "64916ca0ff754e69de0080185d8d47468c234398b68c933aa9630db1897f07e3",
+      "masterBytes": 81547,
+      "masterDuration": 4.04898,
+      "deliverySha256": "d08d58695f106079d56512400469899a00e362deced243b31be361a84494ccae",
+      "deliveryBytes": 16497,
+      "deliveryDuration": 4.068,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "bcf97a4e04456a9c": {
+      "masterSha256": "4c174ded1af8ea0760b0b8ecf3e98870f16e465533a2faf3702c7d664be10cb9",
+      "masterBytes": 39751,
+      "masterDuration": 1.959184,
+      "deliverySha256": "487951d948a86baae0d1aa971b1782584a380ed9c84ce463b9eacddd2f5310c4",
+      "deliveryBytes": 8145,
+      "deliveryDuration": 1.98,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "d7372e6d6079c73b": {
+      "masterSha256": "7519fe92cf91f591151cf49a487153a48d976029d9177bc5d4548ec609b5a983",
+      "masterBytes": 70575,
+      "masterDuration": 3.500408,
+      "deliverySha256": "385f12b611b9c8730aa1bc67a47d6f57a2ad0753b0af455d30c6f1e58abaf0aa",
+      "deliveryBytes": 14337,
+      "deliveryDuration": 3.528,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "6407a273-73843ef9": {
+      "masterSha256": "541fd60854bfc0d4876cba66820a5f95c18e6dc7a041fd5c99270c24a64c8406",
+      "masterBytes": 42363,
+      "masterDuration": 2.089796,
+      "deliverySha256": "5ec08a8d6a5678a617e097f899a7ad5e28c696ed92612acf4892dc2e946d2358",
+      "deliveryBytes": 8721,
+      "deliveryDuration": 2.124,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "528d732a-1c449ad0": {
+      "masterSha256": "325832dae914f1190d185d3489b3ed1f18f098e8b9d900eb1f56fdc500e042ac",
+      "masterBytes": 79457,
+      "masterDuration": 3.94449,
+      "deliverySha256": "344db5859ebb861d13a3b52e7597aabb05657c5588c24b2f5ce6b364bc963c93",
+      "deliveryBytes": 16065,
+      "deliveryDuration": 3.96,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "47132ffa-648f40fa": {
+      "masterSha256": "266600cdb2429a115dbad9e861f14d588af0b0462cde92db652f014c9d5ceeb5",
+      "masterBytes": 36094,
+      "masterDuration": 1.776327,
+      "deliverySha256": "580fc1846b877faafc88f52a542fe1033e26f88a9ea35b30b342d3d51bcd8d8b",
+      "deliveryBytes": 7425,
+      "deliveryDuration": 1.8,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "3d421921-1a2e47d8": {
+      "masterSha256": "726d5db33ba22fd6f6de25e7d405cacdddbdb7ffdc84eb559347e72cd8981ac3",
+      "masterBytes": 82592,
+      "masterDuration": 4.101224,
+      "deliverySha256": "bed192f4bae681c26b970df5e8f0ff57b3db6f0687ab7738ae9727a619e6b646",
+      "deliveryBytes": 16641,
+      "deliveryDuration": 4.104,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "8c3217914c590c78": {
+      "masterSha256": "2b47912f695b74c4fa2efcf8e96d41e68c9ba6fee516ed4152e33ba286f6c432",
+      "masterBytes": 40273,
+      "masterDuration": 1.985306,
+      "deliverySha256": "eab44cfb4b0a77452a08e9b0e601f70b41c4b1d659afcaf2dc2da6907d7326e3",
+      "deliveryBytes": 8289,
+      "deliveryDuration": 2.016,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "22c537c307adafbc": {
+      "masterSha256": "e18b093df6addffcc327c9423a3770ec583126aeb0773d5e36b1932643c3942f",
+      "masterBytes": 87816,
+      "masterDuration": 4.362449,
+      "deliverySha256": "0304eed86db2c675b0e5a9f5948adb10887cd93c3d1c8bfbc4134c47b81b70f4",
+      "deliveryBytes": 17793,
+      "deliveryDuration": 4.392,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "4674b00a189936bd": {
+      "masterSha256": "c68410908d9f5ae486fe285f41596e47b031995cc5976d95451c591b82873db2",
+      "masterBytes": 41841,
+      "masterDuration": 2.063673,
+      "deliverySha256": "e29db96556aa296b4f3b8c26ee604c3e545bafa12972ce6f01dfd962ca10e70d",
+      "deliveryBytes": 8577,
+      "deliveryDuration": 2.088,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "8e718566-35966efe": {
+      "masterSha256": "b75b5cc097d2315cf95c9906fcae9947e38635d8db90aa935572bf33040f0e9d",
+      "masterBytes": 89383,
+      "masterDuration": 4.440816,
+      "deliverySha256": "73d420f2c8a0a5e02ddd2a818b89c293b48a1ea167597c6b770ad77cefe3c8c5",
+      "deliveryBytes": 18081,
+      "deliveryDuration": 4.464,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "72fcf9e675b3bfa6": {
+      "masterSha256": "da86145ee1aad97d9ffcff2f4c0e87b8fdc64007ee5b6d37218b690e125d1e65",
+      "masterBytes": 52812,
+      "masterDuration": 2.612245,
+      "deliverySha256": "a9dac858e1770a4e2131265e927bca6617d33924dfc466c9166eae7f84cb8b43",
+      "deliveryBytes": 10881,
+      "deliveryDuration": 2.664,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "1dd4b4d8-56919c87": {
+      "masterSha256": "780485d48a452ca77fa789c9ec1805b20d0a9defcf3a61be8141552eb7a3020e",
+      "masterBytes": 81024,
+      "masterDuration": 4.022857,
+      "deliverySha256": "eb849ffcd707df9a01a94e2343463101225d5c03bda0c32bd3fc632338edf387",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "d73e773a-74224275": {
+      "masterSha256": "106b9ea3220790f2b1be4e8e8c4304a3687f28e371ca7925f0c5687039f66ef1",
+      "masterBytes": 43930,
+      "masterDuration": 2.168163,
+      "deliverySha256": "dd5e637ecd957bdb46b89367f66fb6947611fddffe33bccdf9285b7d72eee868",
+      "deliveryBytes": 9009,
+      "deliveryDuration": 2.196,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "961924cf-6c7743c6": {
+      "masterSha256": "de4817a59fab825939994ccc6283732afaed6c0e350c5af9682e70db0db46386",
+      "masterBytes": 116028,
+      "masterDuration": 5.773061,
+      "deliverySha256": "77fe41a24c1ffb1a615e50f9542e5a59da567e09503666ffa6232a48b591aa7a",
+      "deliveryBytes": 23409,
+      "deliveryDuration": 5.796,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "2b5022fa40b7e335": {
+      "masterSha256": "bfb230089ddfcbc4a642a97e3668ebad3740f74d11077dd7c391afc70a06b71a",
+      "masterBytes": 66396,
+      "masterDuration": 3.291429,
+      "deliverySha256": "c9126c89e4773df8dfba8e142930aab698709474a71eab955db2ed1a0b132bcd",
+      "deliveryBytes": 13473,
+      "deliveryDuration": 3.312,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "2e5b1045-69f8c87a": {
+      "masterSha256": "d557f2faee39ebde93cd361d2a8e1e81f63f92c6e23e1ed60664890830e754a6",
+      "masterBytes": 83636,
+      "masterDuration": 4.153469,
+      "deliverySha256": "519da2281a46952963283af938c62637fee64ee2a75e5b1668c4705ce628fb31",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "2825c969-3c705d70": {
+      "masterSha256": "f66dbb4eff6ed53fbcff77c10f6abb840b312a969a4cdf81f10f9abbb3dde79c",
+      "masterBytes": 54902,
+      "masterDuration": 2.716735,
+      "deliverySha256": "2283e2bb9c13d0424619dfe20817102a48eed2d102515e5a3f2d35ec813b2287",
+      "deliveryBytes": 11169,
+      "deliveryDuration": 2.736,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "0c999652-6285c56a": {
+      "masterSha256": "dcf503003a7c566843a405039b25bdd9f0edb797c6dfe1c014e2173e883cb819",
+      "masterBytes": 113938,
+      "masterDuration": 5.668571,
+      "deliverySha256": "5b35d57377f53ef05639e274d167e1c5016261c0236b07117c3d6523a9345f63",
+      "deliveryBytes": 22977,
+      "deliveryDuration": 5.688,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "59d31ce81e0f552e": {
+      "masterSha256": "c89cdf967019273466846f4dc3ce54fd000bcd7da87a2ff961781dd7c2dd69e4",
+      "masterBytes": 30347,
+      "masterDuration": 1.48898,
+      "deliverySha256": "d433d7370621ee6c71f7d865b7928edf0e7998fb3157ca70b07f20bd8ce8aeb3",
+      "deliveryBytes": 6273,
+      "deliveryDuration": 1.512,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "7b3550540c38771f": {
+      "masterSha256": "2895ce9be87d621abf9baac7388b0cbc89ec12b994703581969245f77044f08d",
+      "masterBytes": 86249,
+      "masterDuration": 4.284082,
+      "deliverySha256": "783e8a89aefeb1ae630b5c3ae903df7163c76f5336c0cd877316ff7c036f1870",
+      "deliveryBytes": 17505,
+      "deliveryDuration": 4.32,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "6436ab6a22e7e724": {
+      "masterSha256": "e72de0dad96e6abc7b3d977e2b582bc9387bc7a6d1969ab11e4fd87eee77532b",
+      "masterBytes": 77889,
+      "masterDuration": 3.866122,
+      "deliverySha256": "6ef7df0c9b0ab9c1d39a2d8ac076629198f12c71b4a3da475e0d919fd68bb8d2",
+      "deliveryBytes": 15777,
+      "deliveryDuration": 3.888,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "413ab9f136ecfd76": {
+      "masterSha256": "ff3818797d57f7d86d6793abc2e9cc920e45c82f693112fa030d51553d72445b",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "891428ff96edb394b8d92c5661747c758d8eed9434d25544acdf851453985bf2",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "fca0e3cd68432726": {
+      "masterSha256": "ec267d43a5df2d4ef978e3afa315faeae5a90c9e7659cf4d8fb663e7b334b17d",
+      "masterBytes": 76322,
+      "masterDuration": 3.787755,
+      "deliverySha256": "5cb0414fac7b726205839a1dbffd7d780cb3007b93bbda370b6b041070065259",
+      "deliveryBytes": 15489,
+      "deliveryDuration": 3.816,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "36c68a4d-3672ebbd": {
+      "masterSha256": "91328cd2f149d792d0ec0934d568bc1273c7fe9705728e04621b10f71e1e25f1",
+      "masterBytes": 104012,
+      "masterDuration": 5.172245,
+      "deliverySha256": "f5d2ea221d35a8030708d3a59e4cf5c15442a3d7c81784734c5aadbde9000adf",
+      "deliveryBytes": 21105,
+      "deliveryDuration": 5.22,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "430663ab-48c18081": {
+      "masterSha256": "96122a3e3495c1be582f0fa358afa59dc36c2d7ee9238c5e5ac1faf409c270d9",
+      "masterBytes": 36094,
+      "masterDuration": 1.776327,
+      "deliverySha256": "e0219e71c1acd64c10f88e199b3fd8fa1adaaef434389bb77a1dc683ba0760e6",
+      "deliveryBytes": 7425,
+      "deliveryDuration": 1.8,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "9646d08e-7156c2eb": {
+      "masterSha256": "01a608e4d791c4630dbaf004a050b077ceb91133a22d0a0fe74c85d76bce942d",
+      "masterBytes": 83636,
+      "masterDuration": 4.153469,
+      "deliverySha256": "6678dfd169222c691cc49444417a84e6eb386b613be29894447bf55d24ea1b8a",
+      "deliveryBytes": 16929,
+      "deliveryDuration": 4.176,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "bb60f9c274b4e081": {
+      "masterSha256": "20a7769cf121f544b2a02bbe1a00777c157c78c0cd66500d3fc26a4de28c2cc7",
+      "masterBytes": 74755,
+      "masterDuration": 3.709388,
+      "deliverySha256": "764667f9d67ede64d06304fc3391917923611f53eb2c08208879dcdead9c4ac0",
+      "deliveryBytes": 15057,
+      "deliveryDuration": 3.708,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "4fca73a6-2077b25b": {
+      "masterSha256": "780a1ced6634389ee1af6be1220ce22e15834f875fdb93d5825cd6624b77c44a",
+      "masterBytes": 36616,
+      "masterDuration": 1.802449,
+      "deliverySha256": "ba58e0f7c6bf556d3dfe7c8628edbdea4189b05b448942860fb01b40ceb77112",
+      "deliveryBytes": 7569,
+      "deliveryDuration": 1.836,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "a403f8a4-6818e44d": {
+      "masterSha256": "0ff9c70e8cdfb81ef0ad5d93584d17e63b2097393d28ce1757de8b395f1beae2",
+      "masterBytes": 78934,
+      "masterDuration": 3.918367,
+      "deliverySha256": "5835c59ffa3478a4d0fed33d397a3259a45e299e1f7ecfdcf4df3a10d728355f",
+      "deliveryBytes": 16065,
+      "deliveryDuration": 3.96,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "9676ab02-3f2d446": {
+      "masterSha256": "705307e333dcf4ce76f90c36eb09a1b84c12169bf48396e6b455545761eeaee9",
+      "masterBytes": 88861,
+      "masterDuration": 4.414694,
+      "deliverySha256": "be821a6d827197abe7a9bbaca0de7f61812bfe1ca4c443ccc739e79ec7c88209",
+      "deliveryBytes": 17937,
+      "deliveryDuration": 4.428,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "d9a4c5364a348fd5": {
+      "masterSha256": "54e0c61ae3c1f66327b98c52694475205265b69ffbad3504316589d7e5b58dec",
+      "masterBytes": 41318,
+      "masterDuration": 2.037551,
+      "deliverySha256": "91cadca0659169d8e1fcb4d10b86c97eadbb013576ed3311ffc0af40d6ac6d85",
+      "deliveryBytes": 8577,
+      "deliveryDuration": 2.088,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "388abb9614c52d3e": {
+      "masterSha256": "b8fe502931027d857282f79aa40064bbac5d2904acc617d1303ac75120fd9461",
+      "masterBytes": 74232,
+      "masterDuration": 3.683265,
+      "deliverySha256": "685716f65549d7803310358df59e7a0b6a0312783c8b239e2d8bff0260a57fd1",
+      "deliveryBytes": 15057,
+      "deliveryDuration": 3.708,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "c387ea6a19a40d13": {
+      "masterSha256": "331502ce488aeeeab177c60d714c9fa1b4f1825c1de8cc47faf680ac6fdfee5c",
+      "masterBytes": 79457,
+      "masterDuration": 3.94449,
+      "deliverySha256": "5e39be4ea2845d0e0049c2cef9968b4cc39f6f4f71c68ac0507c008ae1f54e34",
+      "deliveryBytes": 16065,
+      "deliveryDuration": 3.96,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "506ed59b5d426d94": {
+      "masterSha256": "af953c98ae5b91348f8a8eab9d990280e6aca2e78e203461180939d40bbc4b0e",
+      "masterBytes": 36616,
+      "masterDuration": 1.802449,
+      "deliverySha256": "58a3942829271d790582bd69fbb7c8248b3848cc02660324e995a3a2ba671723",
+      "deliveryBytes": 7569,
+      "deliveryDuration": 1.836,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "5adfabd8120c2f38": {
+      "masterSha256": "7a70861453b22e2bd2e3309014dff82a641c57ea6aef5ea13cf5354d2269dde9",
+      "masterBytes": 89906,
+      "masterDuration": 4.466939,
+      "deliverySha256": "83b4f1a1ae43d47dd364179c1c1a5b1d71234e73b0aa95d2728aba43c8f7e4ee",
+      "deliveryBytes": 18225,
+      "deliveryDuration": 4.5,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "0be14de8-62651bb6": {
+      "masterSha256": "3594e579a83216d9e2aa52ffbe0defa87bd9d049a5c14903776102eb29a18544",
+      "masterBytes": 97220,
+      "masterDuration": 4.832653,
+      "deliverySha256": "acca0fad82473a9f83bae5b8a5f72ca2f31a1e7f47aa0988542445522c7f1790",
+      "deliveryBytes": 19665,
+      "deliveryDuration": 4.86,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "ba7745a1-6576fab5": {
+      "masterSha256": "d5dcee9b930f43fff19a5d8c232766d731372e09e66f9e841313469722d21282",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "80b5258a5411ba7d712f3efa3257cefe4ecf798a4c7ce65330f473f4eb601590",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "e646065d4c11d379": {
+      "masterSha256": "5feaea8c0c8a0193fb6120435895745fbe70ce9cfd0467ea0ab3d3e080df164e",
+      "masterBytes": 72143,
+      "masterDuration": 3.578776,
+      "deliverySha256": "b5d86dee132b70760ca60fa19e08ca57261935515fa73032c67f7ef3d75aa1c9",
+      "deliveryBytes": 14625,
+      "deliveryDuration": 3.6,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "8b2818727a286cc1": {
+      "masterSha256": "11a13f699e2c2a002dca68da910c810129244980daa71d04dee7dd270dca6dde",
+      "masterBytes": 74755,
+      "masterDuration": 3.709388,
+      "deliverySha256": "aea551ad76c199b22299c6a0e213b009765855d11283a1f1ac795f8fbd9ee635",
+      "deliveryBytes": 15201,
+      "deliveryDuration": 3.744,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "bfe5776c16c70451": {
+      "masterSha256": "f0e9961a48127a7c13df56acad712225c0c019f1c5d71cbe30fb0c1c85afeeb2",
+      "masterBytes": 43930,
+      "masterDuration": 2.168163,
+      "deliverySha256": "73019101479bd45c18b58fd86d0d7437e0930343a1394b5d18fe0c22342cdcf8",
+      "deliveryBytes": 9009,
+      "deliveryDuration": 2.196,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "1c13d4181c161d78": {
+      "masterSha256": "9b60aee2b01238c5e32dfce4dc7703671a12460b8f1b6950a5b74ee07a33bf8b",
+      "masterBytes": 89383,
+      "masterDuration": 4.440816,
+      "deliverySha256": "931a0cefcfe2378f60b4fe93660c22990a5d1b43a734a61aa73ab2f28512e50f",
+      "deliveryBytes": 18081,
+      "deliveryDuration": 4.464,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "7cd9c2373e9b09a0": {
+      "masterSha256": "aa84833270203f20710488031423928be882a9b433801eb38efeeab463ff33c9",
+      "masterBytes": 70053,
+      "masterDuration": 3.474286,
+      "deliverySha256": "a0798b83ad2abad98eba9bdf98d450bc3d86e5e3d6f20621443220c1507e43cc",
+      "deliveryBytes": 14193,
+      "deliveryDuration": 3.492,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "c4b353b2-3ce7d539": {
+      "masterSha256": "61fef90c85a8282d2a25a446796a341116db7a8a3778d09cc3232283a5e4c061",
+      "masterBytes": 40273,
+      "masterDuration": 1.985306,
+      "deliverySha256": "488d6613f4cc3cf0d3ab9ea4dd8b6ffa20e2fe2b6079da1b4687055e1e4cb955",
+      "deliveryBytes": 8289,
+      "deliveryDuration": 2.016,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "b6519404247e514e": {
+      "masterSha256": "b0ad30c68ad12b9de776e04c12b36949eca65f16d37b3d5da412d829011efa33",
+      "masterBytes": 79979,
+      "masterDuration": 3.970612,
+      "deliverySha256": "ec72b91a735fcd7bbc5f3a03708856c1fa594b294d78b35f93a8d7ef4a9170f4",
+      "deliveryBytes": 16209,
+      "deliveryDuration": 3.996,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "3dea6fab-5ddae28": {
+      "masterSha256": "0bf96700f410f71583ee608b12e9931bba8aaa12de50870a527e527b99b73130",
+      "masterBytes": 93041,
+      "masterDuration": 4.623673,
+      "deliverySha256": "a09a4f8a7d833269713b58910212c1967df504832f1509da99f0ccd82334ab80",
+      "deliveryBytes": 18801,
+      "deliveryDuration": 4.644,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "23c3dd7233603ee3": {
+      "masterSha256": "ff9da70c0e5563de658a72ae1d9d38098ae62bc0518bbe66cb3afd5eeb14e62d",
+      "masterBytes": 34004,
+      "masterDuration": 1.671837,
+      "deliverySha256": "880f46379e03553ce5e0e700a7a5944dd0fc5822fb484395acecdd20ac8891fb",
+      "deliveryBytes": 6993,
+      "deliveryDuration": 1.692,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "61673cc1-43aeb0bb": {
+      "masterSha256": "a3bddbe55c4cf185ad687f0668d538c49511d628a3817bccdb3c2e69b353b66e",
+      "masterBytes": 84159,
+      "masterDuration": 4.179592,
+      "deliverySha256": "d4a5ce4e98d00d5c839e632b215086a4aa07235ce45f0b1d181d417c8301e74f",
+      "deliveryBytes": 17073,
+      "deliveryDuration": 4.212,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "e887e24d-437dbdb4": {
+      "masterSha256": "c87215dbacd16c22c90b0798ef064f2d7c52c2f8a1aebfcca6ac8739273dc2c6",
+      "masterBytes": 82069,
+      "masterDuration": 4.075102,
+      "deliverySha256": "368fa634418c4f3b6a9808d1b64a00dded5e37700bfffb71feb1b6a828292d9a",
+      "deliveryBytes": 16641,
+      "deliveryDuration": 4.104,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "bbe649dc22d64ca1": {
+      "masterSha256": "73e415a518d8293d5c90302f36abef7d0de1f0014e76d85aca53327e08b12370",
+      "masterBytes": 44975,
+      "masterDuration": 2.220408,
+      "deliverySha256": "5cb40a71b1fc892500a54c5f9f10e98d36afc071960e23501cdffbcbb5bcbcec",
+      "deliveryBytes": 9153,
+      "deliveryDuration": 2.232,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "b200392f-6c802fcb": {
+      "masterSha256": "f8f06c856633e9b037d32726e6a1fa2d07bb4160843c809667bce65d0b07c539",
+      "masterBytes": 99832,
+      "masterDuration": 4.963265,
+      "deliverySha256": "e3709d7900e0f52db41862b0e5707ea54f04a2b4bc4cd86a43fbb8ef0b537ca8",
+      "deliveryBytes": 20241,
+      "deliveryDuration": 5.004,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "a4cc3b08-46e8c96b": {
+      "masterSha256": "60217c619fac77d80786109d3a503f23f546a1d76886044019740da2aed4baaa",
+      "masterBytes": 64828,
+      "masterDuration": 3.213061,
+      "deliverySha256": "19103ed56303f6f9077689aa766b5a480e8257049ed57af5bd53c3bd391397c2",
+      "deliveryBytes": 13185,
+      "deliveryDuration": 3.24,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "81d91e0f0af186a6": {
+      "masterSha256": "249a3ce1669e959fea39887ea4fc73558dde6c05bf30b9cba9cc70f8cd02783c",
+      "masterBytes": 142673,
+      "masterDuration": 7.105306,
+      "deliverySha256": "212da51ff813ea94ac5881fd324520fbec9428aa5289dd2a7d2ef1ff965464bb",
+      "deliveryBytes": 28737,
+      "deliveryDuration": 7.128,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "f33d7cce-1e3441b5": {
+      "masterSha256": "97f1eb502ef2abb1519a9513b07589fe0039644ae87cb4db5d0fb2ac9c103332",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "fa115988527a65f55db5f685f8bb8ed9e087906c5ba37043fa5e5ddaa9b57bcf",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "60dce4c7-22295abd": {
+      "masterSha256": "9beb75f5f657911ccaeab83031e60653adb6c311754b89aa82cfbbd425ed927c",
+      "masterBytes": 47587,
+      "masterDuration": 2.35102,
+      "deliverySha256": "4e594a39c6145e59106c106aba0100fd85f0dc058cfdbc61aee28b662bc9ca1f",
+      "deliveryBytes": 9729,
+      "deliveryDuration": 2.376,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "7dd056d6277f524f": {
+      "masterSha256": "ebca4447ee76b21f4034c2e7a1bb154f15d7406df0cd868b5ad54aaada1a7d63",
+      "masterBytes": 66396,
+      "masterDuration": 3.291429,
+      "deliverySha256": "67580fb13ee7a7a4f04b6ae031d204e2d9df4c834e817d1e4b39f6bb1e8baebe",
+      "deliveryBytes": 13473,
+      "deliveryDuration": 3.312,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "63f8c4f80699e828": {
+      "masterSha256": "ae170eb24ed305ac9eabc002c285df2ee4c6db908356f5108cf24f614ac10dad",
+      "masterBytes": 30347,
+      "masterDuration": 1.48898,
+      "deliverySha256": "510dbb95e674da4dafdfaef067f4b37d1c82166f46abf1c091ef43c611f3ec43",
+      "deliveryBytes": 6273,
+      "deliveryDuration": 1.512,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "a5b778d42c6f1b3e": {
+      "masterSha256": "c5d60ba2ed3aa8d0f03cc2b53287d6df5d9090cd5660c2b028895633a06dbe16",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "877646d5f61101a5b46a3ece45a2a4da82e52b767eb67971857ce0c6c98ff866",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "1376df8a-56fe5125": {
+      "masterSha256": "fd41ed7f7ca292e6539842a8eda8a6de9fdf2ff55b2497d3c4ac3a473e3140de",
+      "masterBytes": 78934,
+      "masterDuration": 3.918367,
+      "deliverySha256": "0b692aa605143d74a0c8be0b0e592dc62bc9ad2e86b0444fcd01a046f2fe5b11",
+      "deliveryBytes": 16065,
+      "deliveryDuration": 3.96,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "67ba1bbc-48be419a": {
+      "masterSha256": "1e7cf87bcb30f42ce841c8c3676c5541061d942dad03609bc72df51384f00b79",
+      "masterBytes": 34526,
+      "masterDuration": 1.697959,
+      "deliverySha256": "dc109434534a5b139f296a19e2ba00a450da43d3a9d6f5e01dd596d202221550",
+      "deliveryBytes": 7137,
+      "deliveryDuration": 1.728,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "8c5dbe37-1435406": {
+      "masterSha256": "ca93cf5578be6e33e9417996ffe6adde99a7508e5dd16f296ae5ef550ad3315f",
+      "masterBytes": 96698,
+      "masterDuration": 4.806531,
+      "deliverySha256": "9794eede1ab33da7ce2f362ed83295e6c5afb11ee6082efa6ad71cddf8b81a6b",
+      "deliveryBytes": 19521,
+      "deliveryDuration": 4.824,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "00ddb544-144ad6cf": {
+      "masterSha256": "eaafef23b8728a4bfa22fa211f936442733fb9739966b6aea5a684eaebb6ba4c",
+      "masterBytes": 102445,
+      "masterDuration": 5.093878,
+      "deliverySha256": "0e082dd50930915cda311a646687b4c75ec9a8c5c2bddac2d0a67499e7eff3e2",
+      "deliveryBytes": 20673,
+      "deliveryDuration": 5.112,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "1f0e67eb-75515411": {
+      "masterSha256": "cbfb10e1ddd16a6570b695847c2d1abc6ffa79bea1ece22868cb4d311aa3f38d",
+      "masterBytes": 28257,
+      "masterDuration": 1.38449,
+      "deliverySha256": "acc31ef1c3554dfb08b71d286dc069204e28cd41546cdac7c439ad0eb3a6b1e3",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "db721749-48afd05a": {
+      "masterSha256": "bc3c530dad624c7a4012bbc534e10d256e1e2eb918a25845daf90ee353e3a766",
+      "masterBytes": 84681,
+      "masterDuration": 4.205714,
+      "deliverySha256": "a7e72ded4dc6ee909f76088a0db0603bda9298046b277a118a85f97609947234",
+      "deliveryBytes": 17217,
+      "deliveryDuration": 4.248,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "911edfeb1cfb3fe6": {
+      "masterSha256": "54e6e103de8e3cb99b00111cfe5f0237f899bda2e00bdd3c1f2a486a7a23ff73",
+      "masterBytes": 97743,
+      "masterDuration": 4.858776,
+      "deliverySha256": "e28dc9f2838738fa2e8cdd7a141a060f00c98e1fd3cb9efc5a6d0094b4b21267",
+      "deliveryBytes": 19665,
+      "deliveryDuration": 4.86,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "5f60b69a-3ff947db": {
+      "masterSha256": "57f9f9b36116f49659cd796e3a2cfb12b88286ccc38092adf2e7373f167cd2ab",
+      "masterBytes": 37661,
+      "masterDuration": 1.854694,
+      "deliverySha256": "13be47b7225ccac241d55170222b20f421e730c6590d038866754a56aa81112a",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "e331e727-2716b067": {
+      "masterSha256": "c27f35db554246b090ac8a8a25f83f2beeec954d9095532d3b93b11c5e9363eb",
+      "masterBytes": 87816,
+      "masterDuration": 4.362449,
+      "deliverySha256": "cd48cf8ff44ff3892c981991bf2d57b83803226c2b15229867ac4d797edd129d",
+      "deliveryBytes": 17793,
+      "deliveryDuration": 4.392,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "ebfe70cc0725bb43": {
+      "masterSha256": "c6df627138d68a5f5728652b905e7c0e608a0f69eb29d31b6b220c32715c3d4f",
+      "masterBytes": 86249,
+      "masterDuration": 4.284082,
+      "deliverySha256": "43cab3411654de7c15c9fe91abe315f6fd5b404d854da65e9cf1589c34d39d8e",
+      "deliveryBytes": 17505,
+      "deliveryDuration": 4.32,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "21cb094e-62547e98": {
+      "masterSha256": "fb7fdf86f9a3a890a32b3c9b32e13cd4b62ce42137a070e1d7b3a84d4d0bc042",
+      "masterBytes": 39228,
+      "masterDuration": 1.933061,
+      "deliverySha256": "730c8829b3ab90932d295e34d97a64a3b59e9c0e678d62c1bf7714b2e1ee9230",
+      "deliveryBytes": 8001,
+      "deliveryDuration": 1.944,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "e7bfba68330c2077": {
+      "masterSha256": "a01e60b0f1ca60f0148867b533b420b1746b50487ac3b0ac6288570e12d8d3bd",
+      "masterBytes": 115506,
+      "masterDuration": 5.746939,
+      "deliverySha256": "e708aa77f18c97a52476890617c998279a0eeac427195c50301e4f80b8aeeb6e",
+      "deliveryBytes": 23265,
+      "deliveryDuration": 5.76,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "8be7cb2a543fef37": {
+      "masterSha256": "25f4edf2f48ed23b357550812619e44cdb106b084bd4c0f13fa8e1553903e7f6",
+      "masterBytes": 102445,
+      "masterDuration": 5.093878,
+      "deliverySha256": "a283860081c59938056b2b1a7f6c97f2931f6075db11ef131aff8c671e1dba42",
+      "deliveryBytes": 20673,
+      "deliveryDuration": 5.112,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "84d6e1c56daf4fda": {
+      "masterSha256": "ea7993494facb4749b19aa1068e02a69e04ec09d568d9ea6853311c84db8ca0d",
+      "masterBytes": 31392,
+      "masterDuration": 1.541224,
+      "deliverySha256": "74b8ca612879a18085d410d1daa6a789868bdea3bfae61f00c6e450994b616af",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "e9b3d1eb-544910e2": {
+      "masterSha256": "f44b5cdfa2df47338fc77b338cca2961e841e18aadfd95817a76b05985c559a5",
+      "masterBytes": 97220,
+      "masterDuration": 4.832653,
+      "deliverySha256": "bc938ab28e10f6555ab9b2062b045ead9025a0f088a81a4035bec36cb7552109",
+      "deliveryBytes": 19665,
+      "deliveryDuration": 4.86,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "7e69290733b65e7f": {
+      "masterSha256": "19185e5803b0712040f9e809fe21a45a5d900f0923f9300b582d1771d6cf429a",
+      "masterBytes": 42363,
+      "masterDuration": 2.089796,
+      "deliverySha256": "7f5cd002f2459b4d0c6196c9c51a5ff5d98ffc878de7836777bcf870e9ce05c5",
+      "deliveryBytes": 8721,
+      "deliveryDuration": 2.124,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "3d70e218-6ae4d118": {
+      "masterSha256": "c106956e59d75ec4eabe2f3b85858e3917202247e7c81768f148106551522c63",
+      "masterBytes": 83114,
+      "masterDuration": 4.127347,
+      "deliverySha256": "9623270ce9995f7ab27914aa399d78ba71055b1078a767bbb9d11057364ebc80",
+      "deliveryBytes": 16785,
+      "deliveryDuration": 4.14,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "9edab9be-31aac7e1": {
+      "masterSha256": "987c87e5e213de4f2da894865589b590f9b1b5ef3b4264142c5a96e1f1273972",
+      "masterBytes": 99310,
+      "masterDuration": 4.937143,
+      "deliverySha256": "bb818f641d6d10e84cb4b5257dc2380adc1a469e31274b654a2523668fc5d0ae",
+      "deliveryBytes": 20097,
+      "deliveryDuration": 4.968,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "06faaf80-4612efd0": {
+      "masterSha256": "311b13b49de02007be4a3666a5a94a48eb1da2954fb7bd3972d0b6cc3636506c",
+      "masterBytes": 35049,
+      "masterDuration": 1.724082,
+      "deliverySha256": "1fb145c64bdb297dee97a8afcdccfb31438a905ab99388bfef45303b7494f27f",
+      "deliveryBytes": 7281,
+      "deliveryDuration": 1.764,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "6ccdef4c-7305d407": {
+      "masterSha256": "c07f32b882c2e63c5537322437727cadcc4a0545a1a2b500d0724e080467999a",
+      "masterBytes": 125432,
+      "masterDuration": 6.243265,
+      "deliverySha256": "2fabd26cc5bfb8fd4ef1f29db8c3b094d701b4e9ffaf9e8fdc1a1b60d8f9ee20",
+      "deliveryBytes": 25281,
+      "deliveryDuration": 6.264,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "bb1ffdc30d2cf58c": {
+      "masterSha256": "0e728c886d0fb216a9f2ab2540eaf6d488c2da3a1e5e99344327ad568b65188c",
+      "masterBytes": 99832,
+      "masterDuration": 4.963265,
+      "deliverySha256": "04b5604d76b8a8f95c2403ad27189f57b03cf0faf15f941e2b270624e603d6c6",
+      "deliveryBytes": 20241,
+      "deliveryDuration": 5.004,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "5bf8db8f-73e2ce82": {
+      "masterSha256": "261dd9dd4b54748eed74e434d912f9a5a904d6649d64ce18913b5bd8c89f477b",
+      "masterBytes": 33481,
+      "masterDuration": 1.645714,
+      "deliverySha256": "924fdbb1e98ce33f031826853df914bffa7737a171bbe6652222a435c37c0a36",
+      "deliveryBytes": 6849,
+      "deliveryDuration": 1.656,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "537c184d-1fe4c40": {
+      "masterSha256": "c71803daccd93cd1fedca706f9c07f9f23785b9f732bcdd6716f324d93b1b3b8",
+      "masterBytes": 79457,
+      "masterDuration": 3.94449,
+      "deliverySha256": "6b7d6ac39bef078b9fa0eac50b774cff45033cd1ba5ac7dde8bddd0254e9167d",
+      "deliveryBytes": 16065,
+      "deliveryDuration": 3.96,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "4ee2b948-357399dc": {
+      "masterSha256": "4d1d5f1bca7629c774ad67538f8bda59b379391d91234b9070915686d276e5b8",
+      "masterBytes": 35049,
+      "masterDuration": 1.724082,
+      "deliverySha256": "1a51749af447bb9147eaf4d70fa5e74b8dadded20c7cbd5407f62605e7f09ee2",
+      "deliveryBytes": 7137,
+      "deliveryDuration": 1.728,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "c8e19e1c-367477ba": {
+      "masterSha256": "2510253a39dde2405dc36945d18839644699bf349d47aaec50a5c93d5bcc212c",
+      "masterBytes": 97743,
+      "masterDuration": 4.858776,
+      "deliverySha256": "95be6ef441ff2edcb788b1d27a83145ca721747ebb7353b28c6bd853348584b3",
+      "deliveryBytes": 19665,
+      "deliveryDuration": 4.86,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "24afe700-5a91258c": {
+      "masterSha256": "0c4004bf17c6c1928e39b188d704a2970f4df1a5502b258058728872feae3269",
+      "masterBytes": 41841,
+      "masterDuration": 2.063673,
+      "deliverySha256": "72c2fb44cd9ac4025a62f25956deb65aa8af1ffdeaee01059ccbf1e046972784",
+      "deliveryBytes": 8577,
+      "deliveryDuration": 2.088,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "25e2aaad44d64a6a": {
+      "masterSha256": "56249cf77f5afaed910709d2ea4880e5656125a73f324a8f425d27d1d25f94a7",
+      "masterBytes": 123865,
+      "masterDuration": 6.164898,
+      "deliverySha256": "21cd8611957b69d6921a1070a492233a069df88f016b3e4a06428303a777cd21",
+      "deliveryBytes": 24993,
+      "deliveryDuration": 6.192,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "c9f5283f-d0d6e69": {
+      "masterSha256": "e414cd7c32fadcde6b2071495e3e93ad02b415aeb25538a22849bb3903f3acff",
+      "masterBytes": 37138,
+      "masterDuration": 1.828571,
+      "deliverySha256": "587770ae1668f24ad0616ace717f418e796599d0002d2ffad015ff652d41d1c0",
+      "deliveryBytes": 7713,
+      "deliveryDuration": 1.872,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "fa1a0eb13ac679bc": {
+      "masterSha256": "8bed62eda04b12493bf34f6a9699bc56f956ef97d3b207c7c37f4837b47a6033",
+      "masterBytes": 127522,
+      "masterDuration": 6.347755,
+      "deliverySha256": "ea9019f83216145cc157bfdfcdcbba41cbfaa572e11ae6d37bb0286710284161",
+      "deliveryBytes": 25713,
+      "deliveryDuration": 6.372,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "f7b927735b98dea4": {
+      "masterSha256": "2e2effda15f5d656ead46deb15e0bbedcc8f664a9a9fb294b172515277683b11",
+      "masterBytes": 74232,
+      "masterDuration": 3.683265,
+      "deliverySha256": "bb5a01bab8949b97a5ca9d697ceff313c7ceb6632622dd10c920761482d46dfd",
+      "deliveryBytes": 15057,
+      "deliveryDuration": 3.708,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "2ab357cb09524616": {
+      "masterSha256": "37a205cd0b92a3fb0643cceed747d0804cf3fa61d07c48a8ebb561e5c76426ef",
+      "masterBytes": 209547,
+      "masterDuration": 10.44898,
+      "deliverySha256": "1c92e11f26dc7da7a6221774b0a4a21b5add736849ad638e11ac7283260f6baa",
+      "deliveryBytes": 42129,
+      "deliveryDuration": 10.476,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "5a14c9846e78c9ec": {
+      "masterSha256": "c759dd500e2713fd35d25610eefdc4bb310b9f32873dce9fc8ff9dc61985caa9",
+      "masterBytes": 81547,
+      "masterDuration": 4.04898,
+      "deliverySha256": "a8ee7a0200ff3a3be66eb180b500c8fd4aeb1cdceb68fc21724576c94f5095c1",
+      "deliveryBytes": 16497,
+      "deliveryDuration": 4.068,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "8728965c-6302d7e1": {
+      "masterSha256": "53bbe3c5c2c4001c7d046559d9ccf457de499c1b4518e5161706f77728f7f161",
+      "masterBytes": 98787,
+      "masterDuration": 4.91102,
+      "deliverySha256": "cbafa1783adc2391f8f85e893b43b67549523acda388421e1b9cb33388d1e59f",
+      "deliveryBytes": 19953,
+      "deliveryDuration": 4.932,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "357c7bfd02eda318": {
+      "masterSha256": "0459c3862ac128b0d075ed95b018119fdff22299008765df95611577ecea6f55",
+      "masterBytes": 97220,
+      "masterDuration": 4.832653,
+      "deliverySha256": "7e64b708c0e85d755172ebc293d71fd3793f6b491f94b5eec844438841a153c9",
+      "deliveryBytes": 19665,
+      "deliveryDuration": 4.86,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "f1d9b53d17756dfe": {
+      "masterSha256": "3a1597c464ae6974ba304f62f2ba74329e877085cc79e8427c568127ae2915c5",
+      "masterBytes": 32959,
+      "masterDuration": 1.619592,
+      "deliverySha256": "1b701c054b6a217603f54b77f82e7d2bc07ef60ce5a6a522724cff9e9bc339f1",
+      "deliveryBytes": 6849,
+      "deliveryDuration": 1.656,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "215192a9-2ff31e43": {
+      "masterSha256": "2ec431c145cb9f3c63c5b617aa7c32f18c867b5e4efa016929e140b71bb720a0",
+      "masterBytes": 21465,
+      "masterDuration": 1.044898,
+      "deliverySha256": "2775777e3c4c39006c762f75cf7a81d0459fe9d32851c7dff54082354a642922",
+      "deliveryBytes": 4545,
+      "deliveryDuration": 1.08,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "3ac7dddf0baf94a6": {
+      "masterSha256": "52f4e44c5e66f5e2775ff7010e0d3331a5e040d81b0777a2d06418919d65d798",
+      "masterBytes": 40273,
+      "masterDuration": 1.985306,
+      "deliverySha256": "6a18b39608a2d30d9ce00a7a40b9c0b52eda724af398c553a808bae34a39d097",
+      "deliveryBytes": 8289,
+      "deliveryDuration": 2.016,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "e8c6c5c8-1167c74b": {
+      "masterSha256": "58356489a317fbc584bc08dc521c100f4ab85a925a55a715b8de49534dec9fd4",
+      "masterBytes": 108714,
+      "masterDuration": 5.407347,
+      "deliverySha256": "8376bf310dfe816efba7cdcedd113021ffa40bf6e0c3f2d5303bce0f53861fc9",
+      "deliveryBytes": 21969,
+      "deliveryDuration": 5.436,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "fcf4eb0a35fa1e08": {
+      "masterSha256": "848143e498808e0eab86b382dbf8795d0a867043cb7ef47c7295f41235a2620e",
+      "masterBytes": 107669,
+      "masterDuration": 5.355102,
+      "deliverySha256": "3319d0fbe703629d865715583dae458bd7ddaf4f6fd1f22694e35686092cf2bb",
+      "deliveryBytes": 21681,
+      "deliveryDuration": 5.364,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "57bee85140fab5c6": {
+      "masterSha256": "d6473ba88afc309843e685e17f88d6e7b4eae304f365c36ef849166b497819f2",
+      "masterBytes": 31914,
+      "masterDuration": 1.567347,
+      "deliverySha256": "d99f8528781fc8f929dc905f0377fdbbee1234e84df4a8c298cccf894806e2fb",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "80953d1b2cff6182": {
+      "masterSha256": "99dbb6fe73b9225e463337261cfbaae49c287df83f622f7d552d0931371eef55",
+      "masterBytes": 69008,
+      "masterDuration": 3.422041,
+      "deliverySha256": "9ab546b30d32ca63848988354cad5dc41a0aa48160ca4efac3bc50d7f1a587b6",
+      "deliveryBytes": 14049,
+      "deliveryDuration": 3.456,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "cd80d24a-7670efdf": {
+      "masterSha256": "1a1d829b22d8bd33bcae8c21540e633969c44b18ea3e9a69da908e9283d8480b",
+      "masterBytes": 68485,
+      "masterDuration": 3.395918,
+      "deliverySha256": "9a36313684f5487bdf8cbe79c01fb025bda90b97ce251688d1d98dfa3ff42dea",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "162ae9a6-42466487": {
+      "masterSha256": "308fdc13a4cb8c616e4f4a6d7a4756875b06cb6b3d97f4121611e6b0f14c4bc2",
+      "masterBytes": 86771,
+      "masterDuration": 4.310204,
+      "deliverySha256": "0969c43832bf387f83443ebe90342b207a476da901e0735d09164e24361bc317",
+      "deliveryBytes": 17649,
+      "deliveryDuration": 4.356,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "80e3fa6e2fe63384": {
+      "masterSha256": "5750fb60ebb006edb1e96d414490d3a3a645cd702d16d4aa94b70cd96d0237fc",
+      "masterBytes": 78934,
+      "masterDuration": 3.918367,
+      "deliverySha256": "c685825af34e1edcd298debab3a57d313346987146e83af9f33beb09abae6cd0",
+      "deliveryBytes": 16065,
+      "deliveryDuration": 3.96,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "faefa3c6-622419ae": {
+      "masterSha256": "8ae5fb7c7d5886ff6fed41dc484ac9e606949b3f3f902f3fd35d0eb8627d8f75",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "b8044b78f7c87459367f9b557138afa9c795b62ae9d41c77787bea7a0ac0f95c",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "04c75b12-78b958ab": {
+      "masterSha256": "def678627b38f7791560aaf03992884318308c17f32dfe37611c209005ff572a",
+      "masterBytes": 98265,
+      "masterDuration": 4.884898,
+      "deliverySha256": "66a1cb74cb4e56c540decffb28e0e4971381086f41f69c76384ab43651e7d2ad",
+      "deliveryBytes": 19809,
+      "deliveryDuration": 4.896,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "fe7e4af22cdcfc2d": {
+      "masterSha256": "eb479041833ee959a6b027066389775f7a8ec31197eac84080b744a94d9eb7a3",
+      "masterBytes": 27734,
+      "masterDuration": 1.358367,
+      "deliverySha256": "249e0641a34967c85d4a46baba83d3a0e7601c12e067389db0dd4273cdcca149",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "8da216232e4a9833": {
+      "masterSha256": "7862729a87f1e7e63d7d6df677bc3cefedc17d5a9d5864717cf2a9bf50280d31",
+      "masterBytes": 68485,
+      "masterDuration": 3.395918,
+      "deliverySha256": "b9fdd476de7897fcb45cc5cf2b3d25a858da66abd70f7895b7112fccc2ac59b8",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "cabc35ec74dc4438": {
+      "masterSha256": "afb4884eba53b28d743ac7aa84e58eaa3d59ce95b2a8927a202849827f4b6846",
+      "masterBytes": 23032,
+      "masterDuration": 1.123265,
+      "deliverySha256": "8a216388ea737b4c3503a6e1eae11057ab823d2105af955d89fbd272e536faef",
+      "deliveryBytes": 4833,
+      "deliveryDuration": 1.152,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "846f88a8-47e40641": {
+      "masterSha256": "9ccc0b41ed65880f1e1538b3d678f08eab6b120983f61b89e7b4e77727985992",
+      "masterBytes": 84159,
+      "masterDuration": 4.179592,
+      "deliverySha256": "95a437e6da6bd6a6c74af1f9d48d9d34a794cb4be624b0d9cdde97c962017fff",
+      "deliveryBytes": 17073,
+      "deliveryDuration": 4.212,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "7e4d0d4a-300c114a": {
+      "masterSha256": "2de97da5e64f67bbf1e6fe5430ffebc9dc94f7d1fb701ced99d2d13f2b6425ec",
+      "masterBytes": 35571,
+      "masterDuration": 1.750204,
+      "deliverySha256": "b4f5f137a7c8219aa66cd95c9a44c53bc63804be62f800b711543a23fd038ae5",
+      "deliveryBytes": 7281,
+      "deliveryDuration": 1.764,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "4c6e71353450a992": {
+      "masterSha256": "97693e7239061061a9e0a71aec3cc4771e98aca7aeeb15d2af5a02f2d37a1352",
+      "masterBytes": 81024,
+      "masterDuration": 4.022857,
+      "deliverySha256": "071a470a4e3acb2167cd83c3e02d0f6986875973eddf99eb7dce6b0040da1c37",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "82ba8bff-592fcb80": {
+      "masterSha256": "03092ed2994d4f9eb7fd66fdd2ff1b7a7fca4da61ce01f70d00e138a39d22204",
+      "masterBytes": 21987,
+      "masterDuration": 1.07102,
+      "deliverySha256": "9e79401fba2e93d9ad4eb299bad56db4f6df9ef5a5071b11eb51ea16b0bb0ed2",
+      "deliveryBytes": 4689,
+      "deliveryDuration": 1.116,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "760223d1261f8f8d": {
+      "masterSha256": "166f9c354b3b60776cc77d42bb994debe2ab2ca670fb0b8cfc4c9342b7244be1",
+      "masterBytes": 100877,
+      "masterDuration": 5.01551,
+      "deliverySha256": "ac233e31dfe66e27f02028dda14a310737411e18c0b41507062f8b26d9065fbd",
+      "deliveryBytes": 20385,
+      "deliveryDuration": 5.04,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "be748059-c5d8cfc": {
+      "masterSha256": "e3885d2bf4f40d07e9771aadd8fc10473ede6be4a08983ca7074e9bc415844fc",
+      "masterBytes": 74232,
+      "masterDuration": 3.683265,
+      "deliverySha256": "7105d3d999449d87f53e0744958bac1e9c3b2b35a78e4cc33bd549069cabc9ee",
+      "deliveryBytes": 15057,
+      "deliveryDuration": 3.708,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "891e11d32dd5f599": {
+      "masterSha256": "4d69ac0974492c8cbd86a362c5ac512d950569b6b521bf89eed032146013eb52",
+      "masterBytes": 168273,
+      "masterDuration": 8.385306,
+      "deliverySha256": "7a05821230268418b8712b6a74da160e38529144ced6ed4edeb935c3b7e9b8cf",
+      "deliveryBytes": 33921,
+      "deliveryDuration": 8.424,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "3ff48b307c3f98c6": {
+      "masterSha256": "2efa84290108c418babd35745d756016e4b6ce76237ea7e19e300521f53afb4a",
+      "masterBytes": 107669,
+      "masterDuration": 5.355102,
+      "deliverySha256": "9da063aa56369b9790c847e839413fac96b67e30a8981a5177fc267fa71dbdbb",
+      "deliveryBytes": 21681,
+      "deliveryDuration": 5.364,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "cb82bb0c-630dffeb": {
+      "masterSha256": "9379bbd12b4696f4ab66a78eff021393d4bde3121a8f11786239f154ec642979",
+      "masterBytes": 34526,
+      "masterDuration": 1.697959,
+      "deliverySha256": "55c09a27ad548606aada27c6cbe3cce771b3010cf7d857bec5d480640788d99e",
+      "deliveryBytes": 7137,
+      "deliveryDuration": 1.728,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "dced055c-583de2e7": {
+      "masterSha256": "68470b0ebd9a27b544a76443ab7d35f159ed70f2599692a2c07d4e57b0727331",
+      "masterBytes": 63261,
+      "masterDuration": 3.134694,
+      "deliverySha256": "b660c636ad5984700a9fd87ce34919ac211d13d848e47984cca7264f632b84cc",
+      "deliveryBytes": 12897,
+      "deliveryDuration": 3.168,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "d91dde2451c1d6d7": {
+      "masterSha256": "7a417479ab3ae1c62d8382e7716161e834a288e4163198dad72b75d1b752868a",
+      "masterBytes": 67963,
+      "masterDuration": 3.369796,
+      "deliverySha256": "d7bb53647e2905976074603f383a6865d6d9f6cfc069c7e8a38fd3303cb3f9d1",
+      "deliveryBytes": 13905,
+      "deliveryDuration": 3.42,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "82472156-3d83d40": {
+      "masterSha256": "7b9d579262dd145c3c045a73eae7d5c2df4c3be7fcd22d14be6f79443edc12d0",
+      "masterBytes": 28779,
+      "masterDuration": 1.410612,
+      "deliverySha256": "eb0ad576971e6e8507a352c6313788084855e1055b16f69908192328d3b39939",
+      "deliveryBytes": 5985,
+      "deliveryDuration": 1.44,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "1c8b627e5e7b38da": {
+      "masterSha256": "5e41a32722ccca12ed7157cc762b91fadc6d381e179a6ffffd0aea5375457600",
+      "masterBytes": 28257,
+      "masterDuration": 1.38449,
+      "deliverySha256": "c703588b7a00a012b1960d54ffa6b290a9e97165d50d151b28a6107b15efbc07",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "69720179-2634efcf": {
+      "masterSha256": "7fa77932a51be79e864e9632bc1382e537f9e2ae6d5ae73973653966936eb8b2",
+      "masterBytes": 108714,
+      "masterDuration": 5.407347,
+      "deliverySha256": "0d882d4d604ebf03f748824c0e8819515d9270e94e51fa096f9aec447376c280",
+      "deliveryBytes": 21969,
+      "deliveryDuration": 5.436,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "f4c27fe3-29e04eb9": {
+      "masterSha256": "144c8152c7ef8d894caa1b06c8aa70bec6eea75348dd496b198c06948d749674",
+      "masterBytes": 120208,
+      "masterDuration": 5.982041,
+      "deliverySha256": "1ff069c38f4323dbe9c8ba683a28b4482d6a988729e8fea470647ff0c60e9e79",
+      "deliveryBytes": 24273,
+      "deliveryDuration": 6.012,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "57480ff6-2dd0ffd": {
+      "masterSha256": "d97d6c0d3e09f649cd9ced23ba0aa838db6e02dd11068226f9ae8ec552d2db45",
+      "masterBytes": 87294,
+      "masterDuration": 4.336327,
+      "deliverySha256": "a39c148d9360b62b8cf40d56fd01bfdc74287deb86f7bc0f326693df2d342c47",
+      "deliveryBytes": 17649,
+      "deliveryDuration": 4.356,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "4a9e8678-107416e": {
+      "masterSha256": "a69b8465542d57c7ef437bd6e98a0d8f88386db67a8e0fe5b6e6c937145e1528",
+      "masterBytes": 169318,
+      "masterDuration": 8.437551,
+      "deliverySha256": "cbcd69e37d15915d85e74caf7d33cd1745b98b20665c8bc633f943e93551b833",
+      "deliveryBytes": 34065,
+      "deliveryDuration": 8.46,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "73a87cc4-15f1eb3e": {
+      "masterSha256": "f4f092f0928a75d4f9825c991cb62ef06dbf7666c1498ca7558b63cf75de8d52",
+      "masterBytes": 97743,
+      "masterDuration": 4.858776,
+      "deliverySha256": "79cedadbeaba1dcecb1a5a01c021a7f80b4dc5e3ec2a18211536be79ec46bfdf",
+      "deliveryBytes": 19809,
+      "deliveryDuration": 4.896,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "47a78abb6d343812": {
+      "masterSha256": "351e910a41931fa46a8fd422838d1a92616902d5c85d469d2325b1123a46b8ea",
+      "masterBytes": 89383,
+      "masterDuration": 4.440816,
+      "deliverySha256": "86c9827a351a60c4b8399e15e931894258a0fd66b0d7ad58d3f46703e19b4305",
+      "deliveryBytes": 18081,
+      "deliveryDuration": 4.464,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "898d02c7005661e3": {
+      "masterSha256": "29d3fa2a7ce509500e1ac7900caac909138ceb668a7912e993e20f6e0bebb71c",
+      "masterBytes": 90951,
+      "masterDuration": 4.519184,
+      "deliverySha256": "5f1898bbfd68f7b9c2854dd4eb574dce41c61fe6ae6d8966e6cd2e8d217d605e",
+      "deliveryBytes": 18369,
+      "deliveryDuration": 4.536,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "af38dd14-5f4d6168": {
+      "masterSha256": "7f07d26af8a888bf05dc699e423d49bf08b945f489cc4e43e3799d5e5ea7618c",
+      "masterBytes": 102445,
+      "masterDuration": 5.093878,
+      "deliverySha256": "1537ed6e364848c552329245a5e58ef050a046fb5c47fa240aa15a7dd475593b",
+      "deliveryBytes": 20673,
+      "deliveryDuration": 5.112,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "048aafeb-b07b69a": {
+      "masterSha256": "52353006950521075070897ef46ce107b939fbb3f188aa66e7d5173b2a94aea4",
+      "masterBytes": 112894,
+      "masterDuration": 5.616327,
+      "deliverySha256": "d044d56b831520a3377289f1866214829f4fd90f5fce60a03d50310da6872289",
+      "deliveryBytes": 22833,
+      "deliveryDuration": 5.652,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "7892fff0-b372722": {
+      "masterSha256": "1c91777c01307180704dcd3278ac3630a745370a1c983a48cc45cd0382d45b4b",
+      "masterBytes": 118118,
+      "masterDuration": 5.877551,
+      "deliverySha256": "118cef58e52c4fa64e7b48a2a87f3835f9aa7241daf5170ef77e6052a7066bac",
+      "deliveryBytes": 23841,
+      "deliveryDuration": 5.904,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "1442653d47ee46ab": {
+      "masterSha256": "c2a531429c9e3cfed5e10b86d409c8a9cb1f118f66151febf77f55a4ba0034d5",
+      "masterBytes": 78934,
+      "masterDuration": 3.918367,
+      "deliverySha256": "400489cfd96b54b707a1c9bfa4be031610657d9fff96d2efe2c13d8dd53be9a2",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "5ad6df05621b07fd": {
+      "masterSha256": "f0f638f0b2a4b37684dca4ba68a36d7ed6be777fdbefadf68564eb657842fcf7",
+      "masterBytes": 87294,
+      "masterDuration": 4.336327,
+      "deliverySha256": "d0340667c2cee09d5970b524a2fb295ff8ea72f734f4adf232d57cca6b200881",
+      "deliveryBytes": 17649,
+      "deliveryDuration": 4.356,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "3f4ecb03-6f8d13d3": {
+      "masterSha256": "9bfbbf8297dcbe466e3bc35f6956e6b6ba2376e9cc60ebd8bd9155a498c15db0",
+      "masterBytes": 90951,
+      "masterDuration": 4.519184,
+      "deliverySha256": "26529004c551345de21982f2da842f52fd6101ab54edcd464ca489059a511d5b",
+      "deliveryBytes": 18369,
+      "deliveryDuration": 4.536,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "c25b96f6-29458aa0": {
+      "masterSha256": "9a3a7650d12dd921b56b8239ebacc6d632c8162f0b525f3b43f9ae5e514e749c",
+      "masterBytes": 124387,
+      "masterDuration": 6.19102,
+      "deliverySha256": "4b4d316b4aef70ed4dc8951c905e263f43fed225756b2d1343360ea6cb95a82b",
+      "deliveryBytes": 25137,
+      "deliveryDuration": 6.228,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "dbfb75767dbc5eab": {
+      "masterSha256": "dc74b783bff91ade209001e650d5352db6c65bbddd9f824adc10ba2fa2d27808",
+      "masterBytes": 78412,
+      "masterDuration": 3.892245,
+      "deliverySha256": "9005ca60f52aaef8debfc1b7f7125e20b5dce431a2b7ae25ef2fa9d03a16024d",
+      "deliveryBytes": 15921,
+      "deliveryDuration": 3.924,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "332eec655ff25084": {
+      "masterSha256": "89223cbb039537b8977e75280aa91646eabee375dc7eb9c230c401ed0ea670db",
+      "masterBytes": 80502,
+      "masterDuration": 3.996735,
+      "deliverySha256": "eafc4792202fa7a0311cd72714bb125b88837e02a917495eb39cbaaac00df8bb",
+      "deliveryBytes": 16353,
+      "deliveryDuration": 4.032,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "14fea7db37905ed2": {
+      "masterSha256": "9c30e7d21ddb99ce24790f6aae510e3220de3f68bd8a10e2f8c8bff1e0852f0d",
+      "masterBytes": 92518,
+      "masterDuration": 4.597551,
+      "deliverySha256": "94e268789484befdc8c09bc574b76957a2db9f862c33c5b94b68f8a318398620",
+      "deliveryBytes": 18657,
+      "deliveryDuration": 4.608,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "56ffe99e38d22ec3": {
+      "masterSha256": "3960ed6123f0ef2676816df58064c4ccb99cd71423c9317196a9440bf36cc786",
+      "masterBytes": 25645,
+      "masterDuration": 1.253878,
+      "deliverySha256": "56c954f55e0daf264da2c64c6cb073f231089783ccb5d87864bb7fa63c871ca4",
+      "deliveryBytes": 5265,
+      "deliveryDuration": 1.26,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "f7fc8d7b58837297": {
+      "masterSha256": "b6dbd971c466118cefa622688fa51be5dbd398d6707dff9c4bed386bb12daf4c",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "3d9a2124a6ee079870b8f9839ce21878cc355031a24dc614131d3ab67c6121ba",
+      "deliveryBytes": 5985,
+      "deliveryDuration": 1.44,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "414b8c2d0e680a76": {
+      "masterSha256": "dbcb22fadf7cc4e8ace6d1c578cc0eb98fb0cb884991e60615ab7308fc1b2092",
+      "masterBytes": 29302,
+      "masterDuration": 1.436735,
+      "deliverySha256": "05cd3754e4c3504bd451cb5ddaf923296172193ad8ac9b11cb87cd3bf2defa7c",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "285f953b-55474539": {
+      "masterSha256": "9a3076a384a47611a44928fafcc88b4d80cba7ee574f0abdfe6a0dfdb04ab4d6",
+      "masterBytes": 39751,
+      "masterDuration": 1.959184,
+      "deliverySha256": "df0526679f1d2fe289a8ff5798ef7482c4afc94994eaf33de9d70d48b278ae41",
+      "deliveryBytes": 8145,
+      "deliveryDuration": 1.98,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "123a05b2723aadf7": {
+      "masterSha256": "382246436f9bafcd7305496b94923e29b2939dc0ef267c33e6416b76d474a464",
+      "masterBytes": 31914,
+      "masterDuration": 1.567347,
+      "deliverySha256": "e8dacfe9ab8da268721d39df7dc43a6ba696282403fabfef3be12b6019d77b10",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "da6c6a14-138cff61": {
+      "masterSha256": "7f8600e0edd3b44952f588357970058dd4bcf2e38414ca2f26af284c6c84bf8f",
+      "masterBytes": 60126,
+      "masterDuration": 2.977959,
+      "deliverySha256": "bba72d3f59b478a5b54304f67db3a8416739bdb9a4d063f6b0d1861a9aa7e7fd",
+      "deliveryBytes": 12321,
+      "deliveryDuration": 3.024,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "c54fba78-41afe2e5": {
+      "masterSha256": "2f3d21798ac2bcfce8b39bc7d481df76932837bc354488c936819dd471f32830",
+      "masterBytes": 36094,
+      "masterDuration": 1.776327,
+      "deliverySha256": "1999585ca88f74343a4db27031f3249d738f0153ef841b19f738d2caf353072c",
+      "deliveryBytes": 7425,
+      "deliveryDuration": 1.8,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "5ba9ceba37a578fa": {
+      "masterSha256": "e4a61580eb093d117bd311a3a7ce67b7f052e5403c15708736a2ad6d84ff1dbc",
+      "masterBytes": 96698,
+      "masterDuration": 4.806531,
+      "deliverySha256": "f6123d789f49b15774717712f11fdaf9809ca1e37898af0c1250a9143af6b7bf",
+      "deliveryBytes": 19521,
+      "deliveryDuration": 4.824,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "02663ae37a1e00ad": {
+      "masterSha256": "974c40ecbb1173e40207b6ba72ec17b31bc31a8efbe79e166221a9db9565f9a3",
+      "masterBytes": 36616,
+      "masterDuration": 1.802449,
+      "deliverySha256": "861e6011808f8361419fddbd62d4166784886147deb0dd04ac4774db595c3fae",
+      "deliveryBytes": 7425,
+      "deliveryDuration": 1.8,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "2f76ebab133becf1": {
+      "masterSha256": "3993b91a9a77620394a153890b5004ea551f0f2c6faddf46b929dd4b942fc94a",
+      "masterBytes": 60126,
+      "masterDuration": 2.977959,
+      "deliverySha256": "aa8c4691641e1f172ded786f10a336bf664b075d6c734d66906d74d04668d93c",
+      "deliveryBytes": 12321,
+      "deliveryDuration": 3.024,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "2ac90c5710e6b2b0": {
+      "masterSha256": "7bb05f94e87c4450ce942d89d78a4b4f762e3950015088d1c0a4601e80bcd5c3",
+      "masterBytes": 38183,
+      "masterDuration": 1.880816,
+      "deliverySha256": "85e030759346422f71c1135b62bdb7759fd988c773fb03ae4cc55f1c6d2210f2",
+      "deliveryBytes": 7857,
+      "deliveryDuration": 1.908,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "cb3368896d30c869": {
+      "masterSha256": "2c19abfea9f301753f092e3e621e571a6e471d58ea737b792e81001ea6ecf61b",
+      "masterBytes": 62216,
+      "masterDuration": 3.082449,
+      "deliverySha256": "4d91e526880971880bc300318b4c9227620e884233669f788f3ded240e44ba72",
+      "deliveryBytes": 12609,
+      "deliveryDuration": 3.096,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "16dd0dc60993db0e": {
+      "masterSha256": "5fdbeed45da875381cab4370daed8995ff6517a57dcfe1d42a240275bd6d14ce",
+      "masterBytes": 28257,
+      "masterDuration": 1.38449,
+      "deliverySha256": "be56cfa68c42fc86823e24ad3fd9151e9e00a69a769d6b0018290be902cc5757",
+      "deliveryBytes": 5841,
+      "deliveryDuration": 1.404,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "37e02830-58a06cce": {
+      "masterSha256": "1c1af32d06a7df810cec51fd9de1d9c3e14f1e116a056ae40354cc32fed9b5c8",
+      "masterBytes": 60649,
+      "masterDuration": 3.004082,
+      "deliverySha256": "dc90790b7a5102a5f81962f0cb440317123ea1ccc28721c9b2c444893b91b6c9",
+      "deliveryBytes": 12321,
+      "deliveryDuration": 3.024,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "554e46ba4d775f77": {
+      "masterSha256": "b0c2467dc61f35e2bc7163dbce9c5752bbe53440e51ed63e641a896e4a6218eb",
+      "masterBytes": 71620,
+      "masterDuration": 3.552653,
+      "deliverySha256": "33fe4c0eb97c902ac3c4bc8c0ddc7a92bd869d967c10751c2689a9aebfb87e92",
+      "deliveryBytes": 14481,
+      "deliveryDuration": 3.564,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "a419c167-10f774c1": {
+      "masterSha256": "f6f36d9a51aeda7ea3e3e2ed32baa56ac3fa68d4243cd362303f6398af47ac84",
+      "masterBytes": 79457,
+      "masterDuration": 3.94449,
+      "deliverySha256": "41cb053ae31cef78f6ac7171026c22740311c949fdac205eab5d417ce54290b3",
+      "deliveryBytes": 16065,
+      "deliveryDuration": 3.96,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "0b6cce61213fa0cb": {
+      "masterSha256": "d797cdcecfa5b95ffaa3f92e5d57f4b123813e75f68be431336234be5e7f123a",
+      "masterBytes": 34004,
+      "masterDuration": 1.671837,
+      "deliverySha256": "8b34f1d65827f056d16489db7d5f49336ff6edaa8d901ce5ba46afa6b0f5e376",
+      "deliveryBytes": 6993,
+      "deliveryDuration": 1.692,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "b0c29b18-7d5ee275": {
+      "masterSha256": "42cafa35c864d11632054723a5648ecba783e017669b5b260224c5df090178bc",
+      "masterBytes": 73710,
+      "masterDuration": 3.657143,
+      "deliverySha256": "28c95841e3290122c170682f3818c970e8b3dc1a6cc48400a77d7b4e65021a60",
+      "deliveryBytes": 14913,
+      "deliveryDuration": 3.672,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "78772600-4bfe858a": {
+      "masterSha256": "aa7107c58a521cc6b060f83c4ed192ca194246d222f661c18eeef64ace0af2f6",
+      "masterBytes": 33481,
+      "masterDuration": 1.645714,
+      "deliverySha256": "b748d885126fc3a84710a20d41230209dcf72d158bb1b72139e69fbdbc475406",
+      "deliveryBytes": 6849,
+      "deliveryDuration": 1.656,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "fab3b759-5196f329": {
+      "masterSha256": "a023e1e2b8a3e0f0d5ee2ecbf255cf1f97f0585e627fd72b085a99e799c27fbf",
+      "masterBytes": 60649,
+      "masterDuration": 3.004082,
+      "deliverySha256": "a69e1b8c47ca06712e6aa4853c2d9f1744ff8091a59d45acee3721a39fcf3543",
+      "deliveryBytes": 12321,
+      "deliveryDuration": 3.024,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "5e2cde44-3d22a5b0": {
+      "masterSha256": "ac0edec3ec5b87512299a7a4b74e27d217f42465fa4b30a1e0128c6b2982e124",
+      "masterBytes": 28779,
+      "masterDuration": 1.410612,
+      "deliverySha256": "dcd4e641ec7a56ecace7b470f878db5bc0d0c10d4808402c84ff60ba3f6a56d4",
+      "deliveryBytes": 5985,
+      "deliveryDuration": 1.44,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "a1a6676b-71ad5054": {
+      "masterSha256": "de0b000d1b28ebb6acedd75317741997eeb7c1409d5e3a711414245b2fb8c576",
+      "masterBytes": 98787,
+      "masterDuration": 4.91102,
+      "deliverySha256": "6d99f7f4acc6985d7311530133e2135aaf02375741e0b0fc89ee6f3db2be046d",
+      "deliveryBytes": 19953,
+      "deliveryDuration": 4.932,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "1f5146653ec097e7": {
+      "masterSha256": "29c03abac3210f749ec146e8d890f129058bad9d1a6f577c1ccbf4489b8d0f15",
+      "masterBytes": 32959,
+      "masterDuration": 1.619592,
+      "deliverySha256": "676e24c05488645b849e235754a3414976d6d6a595c87680c7f0bf69ec2429ba",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "c474a9b1-697db0d7": {
+      "masterSha256": "38cdd25745a758ba0d1f3e0c0a853323a4ba1848d7132629e1299eb7ffaacfef",
+      "masterBytes": 95653,
+      "masterDuration": 4.754286,
+      "deliverySha256": "54a17373a81ad44a5ce5f996b451ea7adf4d44665c38618960d5f3b00675eb62",
+      "deliveryBytes": 19377,
+      "deliveryDuration": 4.788,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "9aa9dd05059a6b46": {
+      "masterSha256": "bec58cbd540679cec1a2a075603be344bc92727630b0c3380f0707ddd3addc93",
+      "masterBytes": 37138,
+      "masterDuration": 1.828571,
+      "deliverySha256": "2130de9f748c7e87e96755cbfaa73dbad05c5c3bd8b78ba75cefc7ce781125b2",
+      "deliveryBytes": 7569,
+      "deliveryDuration": 1.836,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "654e7b1b2a42f50a": {
+      "masterSha256": "e6412c5ddeaca529185915f5bf9434be0ad7a0254d332b58cfddc6fa00566e3c",
+      "masterBytes": 107669,
+      "masterDuration": 5.355102,
+      "deliverySha256": "617728be75fd94e19c3eaa2a54caf1f80934471b7702d4da4f7dd913c4d22403",
+      "deliveryBytes": 21825,
+      "deliveryDuration": 5.4,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "3be3293b445bd01e": {
+      "masterSha256": "a32acc7195a81a44380af0a2bd7a04e8c565fecfb26010ce3131fe15a8cbe105",
+      "masterBytes": 29824,
+      "masterDuration": 1.462857,
+      "deliverySha256": "fb834f46fab93342d0e5f7f2fc2d72960e3aae932cb91df4e595b6fc9a6f6d90",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "71900114-fc672f6": {
+      "masterSha256": "4a18bf24e4cc4387d1b91ee7b2f3271a04e954464d941bf9602e69d5db72e5ef",
+      "masterBytes": 125432,
+      "masterDuration": 6.243265,
+      "deliverySha256": "863fb21e8eb389d6831ad2c54e9be4ca4c640f2d5aaf2a0e9da8ccbbb0128d76",
+      "deliveryBytes": 25281,
+      "deliveryDuration": 6.264,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "d0f1045d6584e744": {
+      "masterSha256": "f61cca0ab4ea770f32017776d2b82c5e0b0579959d6c23894b4ff4bdad75d5ce",
+      "masterBytes": 82592,
+      "masterDuration": 4.101224,
+      "deliverySha256": "fc2cf5d7e41010f58c5cce3739919c7ba6dd7a1be2cc0e0dee095f67e22f83ef",
+      "deliveryBytes": 16641,
+      "deliveryDuration": 4.104,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "1edf73b46e290ac9": {
+      "masterSha256": "9154508be3e144c7ffbfc95932fe0c06ef24e483099132c55a06ce464c13f648",
+      "masterBytes": 24600,
+      "masterDuration": 1.201633,
+      "deliverySha256": "648601d172a833b1bf26f541bde3be15e198cac828618c8960d8357e84198c12",
+      "deliveryBytes": 5121,
+      "deliveryDuration": 1.224,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "e949f53544c66f29": {
+      "masterSha256": "b93a8760a1c5c8477ff7a412b20197a4604a74163b5715cd8db75ccbee6f5a97",
+      "masterBytes": 36094,
+      "masterDuration": 1.776327,
+      "deliverySha256": "c4110b5e8044ee29576895faa5880e1e55af7ed94bc7d87450c29fc0fb6cf12b",
+      "deliveryBytes": 7425,
+      "deliveryDuration": 1.8,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "45a414d362b438ec": {
+      "masterSha256": "a92717c0f9dc127bca1f462fa54222740157d4314566fb368ad294049641a0f5",
+      "masterBytes": 35571,
+      "masterDuration": 1.750204,
+      "deliverySha256": "e9f767a4fd810b585baaef6f269c02798d9c02c75f18f643dc6b906d8e8f6500",
+      "deliveryBytes": 7425,
+      "deliveryDuration": 1.8,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "547f8b54-181e988f": {
+      "masterSha256": "1e91244b7777e4be6d5d1b35c394878775044ec71be1b6299a9d44356bde35de",
+      "masterBytes": 27212,
+      "masterDuration": 1.332245,
+      "deliverySha256": "625411c64807166f6bcd7d18066174d497ac2c6f0aa54e90da2383018697192e",
+      "deliveryBytes": 5697,
+      "deliveryDuration": 1.368,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "d64e27c4-2d56578": {
+      "masterSha256": "56113b5c22239814536327075705015a865e6bbccad87ca5bf786c07d68e6db3",
+      "masterBytes": 31392,
+      "masterDuration": 1.541224,
+      "deliverySha256": "5aa3941439e79d5a8b38ceb3a44833f56b986b550f2fa199ba72470693f4c538",
+      "deliveryBytes": 6561,
+      "deliveryDuration": 1.584,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "7368525d-44e0f0f": {
+      "masterSha256": "c6da9f2fe5f60743f6604ebbbe5f02a86dabeef8e3441e6bd3256f92be3d914d",
+      "masterBytes": 30347,
+      "masterDuration": 1.48898,
+      "deliverySha256": "d56874ea46960ef33c0c0b54df98bc2902d5ad68e0843b94834eb9ff00f3bc19",
+      "deliveryBytes": 6273,
+      "deliveryDuration": 1.512,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "cdc2c157-1b53cfc7": {
+      "masterSha256": "b80a9b4840213c840889db927c5269617f1e8ee853daa9afe356cfd0ee166676",
+      "masterBytes": 29824,
+      "masterDuration": 1.462857,
+      "deliverySha256": "f8b702d42acefbb9c55f3066c16d78cf23f9675a995513b0febe8171422cd7d7",
+      "deliveryBytes": 6129,
+      "deliveryDuration": 1.476,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "63f5cfc8-332ea24a": {
+      "masterSha256": "7ee0bac30e5507c2e21e0fd76d527da5f89ff8df70e456ad94defe6afbb3db50",
+      "masterBytes": 31392,
+      "masterDuration": 1.541224,
+      "deliverySha256": "121b3168f114a25a70bd296e3f879db2eeddbdf841765fde787963c70cfb89b4",
+      "deliveryBytes": 6417,
+      "deliveryDuration": 1.548,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "524df5d5-fbe4e8e": {
+      "masterSha256": "c44615986c4df4905d4c62fa6d97a27ec46b58bee4a564d2317502dce9faea49",
+      "masterBytes": 38706,
+      "masterDuration": 1.906939,
+      "deliverySha256": "2d23be8aed4c3eabd40ebe60a6e486a8b9dfbe96c92f8919766c8cc0e6247c5a",
+      "deliveryBytes": 7857,
+      "deliveryDuration": 1.908,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "be8d3944-117f65eb": {
+      "masterSha256": "505aeb38a5ab21ec7039ea9f15716e9c755373516701c49ea98a3a5cbe2f9285",
+      "masterBytes": 32436,
+      "masterDuration": 1.593469,
+      "deliverySha256": "aabcf614a56c10a03cb73473cc36b26c9cce2b5594db9437bfd7139e93582730",
+      "deliveryBytes": 6705,
+      "deliveryDuration": 1.62,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "7cc88bab-685682f1": {
+      "masterSha256": "e82c28997b0b9dd8ad7b4b7c6909702bd40ac26b7f89d722dd3124b9e6f1b520",
+      "masterBytes": 32959,
+      "masterDuration": 1.619592,
+      "deliverySha256": "8a21981b6a603e1b4703f8bf95634bd343103009553f23d7b4dda5e2b663a5cf",
+      "deliveryBytes": 6849,
+      "deliveryDuration": 1.656,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
+    },
+    "924d7415-11f2aeee": {
+      "masterSha256": "4fea00938f1111e5654d6408109433b7abdab84999122d98833562e933c06844",
+      "masterBytes": 34526,
+      "masterDuration": 1.697959,
+      "deliverySha256": "a0caefa1518ca89438f0c53f467c537db5c6a9aafbd546d72b085d1b4161f749",
+      "deliveryBytes": 7137,
+      "deliveryDuration": 1.728,
+      "inventory": "docs/voice-recording-delta/v108-science-2.json"
     }
   }
 }

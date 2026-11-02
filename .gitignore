@@ -52,6 +52,7 @@ marketing/source/runvalley.log
 /js/art/people-food.js
 /js/art/r90-audits.js
 /js/art/round30.js
+/js/art/science2.js
 /js/art/things-money.js
 /js/asia.js
 /js/audio.js
@@ -140,6 +141,7 @@ marketing/source/runvalley.log
 /js/content/rules.js
 /js/content/savecopy.js
 /js/content/school-place.js
+/js/content/science-places.js
 /js/content/secondset.js
 /js/content/shop.js
 /js/content/songs.js
@@ -245,6 +247,8 @@ marketing/source/runvalley.log
 /js/games/registry.js
 /js/games/reveal.js
 /js/games/science.js
+/js/games/science2-meta.js
+/js/games/science2.js
 /js/games/shapes2.js
 /js/games/shared-board-session.js
 /js/games/snakes-core.js

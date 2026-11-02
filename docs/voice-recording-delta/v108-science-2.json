@@ -1,0 +1,1932 @@
+{
+ "schema": 1,
+ "status": "reviewed-public",
+ "sourceHashes": {
+  "js/games/catalog.ts": "68c101c3f8951c92aa9346ed25952590b57cb1d7774cd0a885a25046c846b53b",
+  "js/games/science2.ts": "f21632a67ff975c9e0d1f556512e80aaa8345d2347f6a47b351de9d7a44016e7"
+ },
+ "lines": [
+  {
+   "id": "0c4555a8-7d155c9a",
+   "lang": "vi",
+   "text": "Mắt dưới nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8e71aa18-6e067756",
+   "lang": "vi",
+   "text": "Dưới nắng chói, chấm đen trong mắt con to ra hay nhỏ lại?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9a92a7ad0fe880b1",
+   "lang": "vi",
+   "text": "Khi sáng chói, đồng tử thu nhỏ lại để chắn bớt ánh sáng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "dd5d355f5d58a623",
+   "lang": "vi",
+   "text": "Sau khi chạy đua",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "ebe5ac65-27aaa0c8",
+   "lang": "vi",
+   "text": "Sau khi chạy đua, con thở nhanh hơn hay chậm hơn?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "93d023b9-6d5c4038",
+   "lang": "vi",
+   "text": "Chạy cần nhiều không khí, nên con thở nhanh hơn để hít vào nhiều hơn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "aaeac151047c9398",
+   "lang": "vi",
+   "text": "Tim con đập khoảng một trăm nghìn lần mỗi ngày, kể cả khi con đang ngủ!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d0be2fd809f24c20",
+   "lang": "vi",
+   "text": "Xanh da trời",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "02890f38-6ac3f9c4",
+   "lang": "vi",
+   "text": "Xanh nõn chuối",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "424068ed-34bbb8ea",
+   "lang": "vi",
+   "text": "Ba màu này trộn lại thành màu gì? Con đoán xem!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c6732280-2bf081fc",
+   "lang": "vi",
+   "text": "Hai màu này trộn lại thành màu gì? Con đoán xem!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "db1d2c1a-4bc1cc01",
+   "lang": "vi",
+   "text": "Đỏ trộn với vàng thành màu cam, như hoàng hôn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "910c802b-6246e072",
+   "lang": "vi",
+   "text": "Màu đỏ và màu vàng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "156edd507df11311",
+   "lang": "vi",
+   "text": "Vàng trộn với xanh dương thành xanh lá, như màu lá cây.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "bcf97a4e04456a9c",
+   "lang": "vi",
+   "text": "Màu vàng và xanh dương",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d7372e6d6079c73b",
+   "lang": "vi",
+   "text": "Đỏ trộn với xanh dương thành màu tím, như quả nho.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6407a273-73843ef9",
+   "lang": "vi",
+   "text": "Màu đỏ và xanh dương",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "528d732a-1c449ad0",
+   "lang": "vi",
+   "text": "Màu trắng làm màu nhạt đi: đỏ và trắng thành màu hồng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "47132ffa-648f40fa",
+   "lang": "vi",
+   "text": "Màu đỏ và màu trắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3d421921-1a2e47d8",
+   "lang": "vi",
+   "text": "Xanh dương và trắng thành xanh da trời, như bầu trời.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8c3217914c590c78",
+   "lang": "vi",
+   "text": "Màu xanh dương và trắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "22c537c307adafbc",
+   "lang": "vi",
+   "text": "Đen và trắng trộn lại thành màu xám, như đám mây mưa.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "4674b00a189936bd",
+   "lang": "vi",
+   "text": "Màu đen và màu trắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8e718566-35966efe",
+   "lang": "vi",
+   "text": "Trộn cả ba màu cơ bản lại sẽ ra màu nâu, như màu bùn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "72fcf9e675b3bfa6",
+   "lang": "vi",
+   "text": "Màu đỏ, vàng và xanh dương",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1dd4b4d8-56919c87",
+   "lang": "vi",
+   "text": "Đỏ và xanh lá là hai màu đối nhau: trộn lại sẽ thành màu nâu.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d73e773a-74224275",
+   "lang": "vi",
+   "text": "Màu đỏ và xanh lá",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "961924cf-6c7743c6",
+   "lang": "vi",
+   "text": "Vàng và xanh dương thành xanh lá, thêm trắng cho nhạt đi: xanh nõn chuối!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2b5022fa40b7e335",
+   "lang": "vi",
+   "text": "Màu vàng, xanh dương và trắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2e5b1045-69f8c87a",
+   "lang": "vi",
+   "text": "Đỏ và xanh dương thành tím, thêm trắng cho dịu lại: tím nhạt!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2825c969-3c705d70",
+   "lang": "vi",
+   "text": "Màu đỏ, xanh dương và trắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "0c999652-6285c56a",
+   "lang": "vi",
+   "text": "Đỏ, vàng và xanh dương là ba màu cơ bản: trộn chúng lại sẽ ra rất nhiều màu khác.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "59d31ce81e0f552e",
+   "lang": "vi",
+   "text": "Đá lạnh dưới nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7b3550540c38771f",
+   "lang": "vi",
+   "text": "Đặt viên đá lạnh dưới nắng. Nó sẽ biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6436ab6a22e7e724",
+   "lang": "vi",
+   "text": "Nắng làm đá ấm lên và tan thành nước, một chất lỏng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "413ab9f136ecfd76",
+   "lang": "vi",
+   "text": "Nước trong tủ đá",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fca0e3cd68432726",
+   "lang": "vi",
+   "text": "Cho nước vào tủ đá. Nó sẽ biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "36c68a4d-3672ebbd",
+   "lang": "vi",
+   "text": "Trong tủ đá, nước lạnh tới mức đông thành đá cứng, một chất rắn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "430663ab-48c18081",
+   "lang": "vi",
+   "text": "Kem dưới nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9646d08e-7156c2eb",
+   "lang": "vi",
+   "text": "Để que kem dưới nắng nóng. Nó sẽ biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "bb60f9c274b4e081",
+   "lang": "vi",
+   "text": "Kem tan chảy thành chất lỏng. Ăn nhanh lên nào!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "4fca73a6-2077b25b",
+   "lang": "vi",
+   "text": "Nước đun sôi",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a403f8a4-6818e44d",
+   "lang": "vi",
+   "text": "Đun sôi nước trong ấm. Một phần nước biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9676ab02-3f2d446",
+   "lang": "vi",
+   "text": "Nước sôi biến thành hơi nước, một chất khí, bay lên không trung.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d9a4c5364a348fd5",
+   "lang": "vi",
+   "text": "Người tuyết dưới nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "388abb9614c52d3e",
+   "lang": "vi",
+   "text": "Nắng chiếu lên người tuyết. Người tuyết sẽ biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c387ea6a19a40d13",
+   "lang": "vi",
+   "text": "Tuyết là nước đông lại, nên dưới nắng ấm người tuyết tan thành nước.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "506ed59b5d426d94",
+   "lang": "vi",
+   "text": "Sô-cô-la dưới nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5adfabd8120c2f38",
+   "lang": "vi",
+   "text": "Để sô-cô-la trong xe ô tô nóng. Nó sẽ biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "0be14de8-62651bb6",
+   "lang": "vi",
+   "text": "Hơi nóng làm sô-cô-la chảy thành chất lỏng sệt. Cho vào tủ lạnh nó lại cứng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "ba7745a1-6576fab5",
+   "lang": "vi",
+   "text": "Cây nến đang cháy",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e646065d4c11d379",
+   "lang": "vi",
+   "text": "Cây nến đang cháy. Sáp gần ngọn lửa thì sao?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8b2818727a286cc1",
+   "lang": "vi",
+   "text": "Hơi nóng của ngọn lửa làm sáp cứng chảy thành một vũng chất lỏng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "bfe5776c16c70451",
+   "lang": "vi",
+   "text": "Nước ép trong tủ đá",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1c13d4181c161d78",
+   "lang": "vi",
+   "text": "Rót nước ép vào khuôn rồi cho vào tủ đá. Nó sẽ biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7cd9c2373e9b09a0",
+   "lang": "vi",
+   "text": "Nước ép đông cứng lại: giờ thành que kem đá để mút!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c4b353b2-3ce7d539",
+   "lang": "vi",
+   "text": "Vũng nước ngày nóng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b6519404247e514e",
+   "lang": "vi",
+   "text": "Vũng nước nằm dưới nắng nóng cả ngày. Nước biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3dea6fab-5ddae28",
+   "lang": "vi",
+   "text": "Nước dần biến thành hơi nước, một chất khí, và vũng nước biến mất.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "23c3dd7233603ee3",
+   "lang": "vi",
+   "text": "Quả trứng trong chảo",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "61673cc1-43aeb0bb",
+   "lang": "vi",
+   "text": "Đập quả trứng vào chảo nóng. Lòng trứng lỏng biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e887e24d-437dbdb4",
+   "lang": "vi",
+   "text": "Nấu chín làm trứng đặc lại, và không bao giờ lỏng trở lại được.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "bbe649dc22d64ca1",
+   "lang": "vi",
+   "text": "Hơi nước trên cửa kính lạnh",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b200392f-6c802fcb",
+   "lang": "vi",
+   "text": "Hơi nước từ bồn tắm nóng chạm vào cửa kính lạnh. Nó biến thành gì?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a4cc3b08-46e8c96b",
+   "lang": "vi",
+   "text": "Kính lạnh biến hơi nước trở lại thành những giọt nước nhỏ.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "81d91e0f0af186a6",
+   "lang": "vi",
+   "text": "Nước có thể ở thể rắn, thể lỏng hoặc thể khí: đá, nước và hơi nước đều là nước cả!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f33d7cce-1e3441b5",
+   "lang": "vi",
+   "text": "Chiếu ánh sáng vào. Mình có thấy cầu vồng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "60dce4c7-22295abd",
+   "lang": "vi",
+   "text": "Giờ chạm vào để ánh sáng chiếu nhé!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7dd056d6277f524f",
+   "lang": "vi",
+   "text": "Giờ chạm vào từng cái để ánh sáng chiếu nhé!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "63f8c4f80699e828",
+   "lang": "vi",
+   "text": "Không có",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a5b778d42c6f1b3e",
+   "lang": "vi",
+   "text": "Lăng kính dưới nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1376df8a-56fe5125",
+   "lang": "vi",
+   "text": "Lăng kính thủy tinh bẻ cong ánh nắng và tách nó ra thành đủ màu.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "67ba1bbc-48be419a",
+   "lang": "vi",
+   "text": "Mưa khi có nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8c5dbe37-1435406",
+   "lang": "vi",
+   "text": "Nắng chiếu sau lưng con trong khi mưa rơi phía trước. Mình có thấy cầu vồng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "00ddb544-144ad6cf",
+   "lang": "vi",
+   "text": "Ánh nắng chiếu qua hạt mưa, mỗi hạt tách ánh sáng thành nhiều màu: cầu vồng!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1f0e67eb-75515411",
+   "lang": "vi",
+   "text": "Mưa ban đêm",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "db721749-48afd05a",
+   "lang": "vi",
+   "text": "Trời mưa vào ban đêm tối. Mình có thấy cầu vồng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "911edfeb1cfb3fe6",
+   "lang": "vi",
+   "text": "Ban đêm không có ánh nắng để tách thành màu, nên không có cầu vồng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5f60b69a-3ff947db",
+   "lang": "vi",
+   "text": "Ngày âm u",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e331e727-2716b067",
+   "lang": "vi",
+   "text": "Mây xám che mặt trời và không có mưa. Mình có thấy cầu vồng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "ebfe70cc0725bb43",
+   "lang": "vi",
+   "text": "Không có nắng cũng không có hạt mưa, nên hôm nay không có cầu vồng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "21cb094e-62547e98",
+   "lang": "vi",
+   "text": "Vòi tưới vườn",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e7bfba68330c2077",
+   "lang": "vi",
+   "text": "Phun vòi nước vào ngày nắng, mặt trời sau lưng con. Mình có thấy cầu vồng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8be7cb2a543fef37",
+   "lang": "vi",
+   "text": "Những giọt nước nhỏ từ vòi tách ánh nắng ra, giống hệt hạt mưa.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "84d6e1c56daf4fda",
+   "lang": "vi",
+   "text": "Bong bóng xà phòng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e9b3d1eb-544910e2",
+   "lang": "vi",
+   "text": "Ánh sáng phản chiếu trong lớp xà phòng mỏng tạo ra những vệt màu cầu vồng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7e69290733b65e7f",
+   "lang": "vi",
+   "text": "Đèn pin chiếu tường",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3d70e218-6ae4d118",
+   "lang": "vi",
+   "text": "Chiếu đèn pin lên bức tường trơn. Mình có thấy cầu vồng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9edab9be-31aac7e1",
+   "lang": "vi",
+   "text": "Ánh đèn pin chiếu lên tường chỉ có một màu: không có gì tách nó ra cả.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "06faaf80-4612efd0",
+   "lang": "vi",
+   "text": "Chỉ có nắng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "6ccdef4c-7305d407",
+   "lang": "vi",
+   "text": "Ngày nắng nóng, không có giọt nước cũng không có thủy tinh. Mình có thấy cầu vồng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "bb1ffdc30d2cf58c",
+   "lang": "vi",
+   "text": "Chỉ có nắng thì chưa đủ: cần giọt nước hoặc thủy tinh để tách ánh sáng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5bf8db8f-73e2ce82",
+   "lang": "vi",
+   "text": "Đĩa sáng bóng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "537c184d-1fe4c40",
+   "lang": "vi",
+   "text": "Những đường rãnh nhỏ trên đĩa sáng bóng tách ánh sáng ra thành nhiều màu.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "4ee2b948-357399dc",
+   "lang": "vi",
+   "text": "Cốc nước cạnh cửa sổ",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c8e19e1c-367477ba",
+   "lang": "vi",
+   "text": "Cốc nước đặt ở cửa sổ có nắng có thể bẻ ánh sáng thành cầu vồng nhỏ trên sàn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "24afe700-5a91258c",
+   "lang": "vi",
+   "text": "Lăng kính và đèn pin",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "25e2aaad44d64a6a",
+   "lang": "vi",
+   "text": "Ánh sáng trắng, như đèn pin, chứa đủ mọi màu. Lăng kính tách chúng ra.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c9f5283f-d0d6e69",
+   "lang": "vi",
+   "text": "Nhìn về phía mặt trời",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fa1a0eb13ac679bc",
+   "lang": "vi",
+   "text": "Con nhìn về phía mặt trời, còn mưa rơi ở xa sau lưng con. Mình có thấy cầu vồng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f7b927735b98dea4",
+   "lang": "vi",
+   "text": "Chỉ thấy cầu vồng khi mặt trời ở sau lưng và mưa ở phía trước.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2ab357cb09524616",
+   "lang": "vi",
+   "text": "Ánh nắng trông màu trắng, nhưng thật ra có bảy màu: đỏ, cam, vàng, lục, lam, chàm, tím.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5a14c9846e78c9ec",
+   "lang": "vi",
+   "text": "Đặt vật này vào chỗ hở. Bóng đèn có sáng không?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8728965c-6302d7e1",
+   "lang": "vi",
+   "text": "Giờ đặt nó vào chỗ hở: kéo, hoặc chạm vào nó nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "357c7bfd02eda318",
+   "lang": "vi",
+   "text": "Giờ thử từng vật ở chỗ hở: kéo, hoặc chạm vào từng vật nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f1d9b53d17756dfe",
+   "lang": "vi",
+   "text": "Đèn sáng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "215192a9-2ff31e43",
+   "lang": "vi",
+   "text": "Đèn tắt",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3ac7dddf0baf94a6",
+   "lang": "vi",
+   "text": "Thìa kim loại",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e8c6c5c8-1167c74b",
+   "lang": "vi",
+   "text": "Thìa kim loại cho dòng điện chạy qua, mạch điện được nối kín nên bóng đèn sáng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fcf4eb0a35fa1e08",
+   "lang": "vi",
+   "text": "Chìa khóa bằng kim loại, mà kim loại cho dòng điện đi qua. Bóng đèn sáng!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "57bee85140fab5c6",
+   "lang": "vi",
+   "text": "Que gỗ",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "80953d1b2cff6182",
+   "lang": "vi",
+   "text": "Gỗ chặn dòng điện, nên bóng đèn vẫn tắt.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "cd80d24a-7670efdf",
+   "lang": "vi",
+   "text": "Vải mềm không dẫn điện, nên bóng đèn vẫn tắt.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "162ae9a6-42466487",
+   "lang": "vi",
+   "text": "Đồng xu làm bằng kim loại, dòng điện chạy qua nên bóng đèn sáng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "80e3fa6e2fe63384",
+   "lang": "vi",
+   "text": "Kẹp giấy là một đoạn dây thép mảnh, nên nó nối kín mạch điện.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "faefa3c6-622419ae",
+   "lang": "vi",
+   "text": "Giấy không cho dòng điện đi qua, nên bóng đèn vẫn tắt.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "04c75b12-78b958ab",
+   "lang": "vi",
+   "text": "Cao su chặn dòng điện. Vì vậy nhiều dụng cụ có tay cầm bằng cao su.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fe7e4af22cdcfc2d",
+   "lang": "vi",
+   "text": "Lá khô",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "8da216232e4a9833",
+   "lang": "vi",
+   "text": "Lá khô không dẫn điện, nên bóng đèn vẫn tắt.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "cabc35ec74dc4438",
+   "lang": "vi",
+   "text": "Giấy bạc",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "846f88a8-47e40641",
+   "lang": "vi",
+   "text": "Giấy bạc là một tấm kim loại mỏng, nên dòng điện chạy qua được.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7e4d0d4a-300c114a",
+   "lang": "vi",
+   "text": "Lọ thủy tinh",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "4c6e71353450a992",
+   "lang": "vi",
+   "text": "Thủy tinh cứng và sáng bóng, nhưng không cho dòng điện đi qua.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "82ba8bff-592fcb80",
+   "lang": "vi",
+   "text": "Chai nhựa",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "760223d1261f8f8d",
+   "lang": "vi",
+   "text": "Nhựa chặn dòng điện. Dây điện được bọc nhựa để giữ an toàn cho chúng ta.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "be748059-c5d8cfc",
+   "lang": "vi",
+   "text": "Lưỡi kéo bằng kim loại dẫn điện, nên bóng đèn sáng.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "891e11d32dd5f599",
+   "lang": "vi",
+   "text": "Kim loại cho dòng điện chạy qua, nên dây điện có lõi kim loại bọc nhựa bên ngoài. Đừng bao giờ nghịch ổ cắm điện ở nhà nhé!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3ff48b307c3f98c6",
+   "lang": "vi",
+   "text": "Bánh răng đầu tiên quay theo chiều mũi tên. Bánh răng có ngôi sao sẽ quay chiều nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "cb82bb0c-630dffeb",
+   "lang": "vi",
+   "text": "Một hàng bánh răng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "dced055c-583de2e7",
+   "lang": "vi",
+   "text": "Giờ chạm vào các bánh răng để quay chúng nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d91dde2451c1d6d7",
+   "lang": "vi",
+   "text": "Giờ chạm vào từng hàng bánh răng để quay nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "82472156-3d83d40",
+   "lang": "vi",
+   "text": "Bánh răng to",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1c8b627e5e7b38da",
+   "lang": "vi",
+   "text": "Bánh răng nhỏ",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "69720179-2634efcf",
+   "lang": "vi",
+   "text": "Hai bánh răng khớp nhau thì quay ngược chiều nhau, nên bánh thứ hai quay chiều kia.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f4c27fe3-29e04eb9",
+   "lang": "vi",
+   "text": "Mỗi bánh răng đổi chiều quay: bánh giữa quay chiều kia, bánh cuối quay cùng chiều bánh đầu.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "57480ff6-2dd0ffd",
+   "lang": "vi",
+   "text": "Dù to hay nhỏ, hai bánh răng khớp nhau luôn quay ngược chiều nhau.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "4a9e8678-107416e",
+   "lang": "vi",
+   "text": "Đếm nhé: chiều này, chiều kia, chiều này, chiều kia. Bánh thứ tư quay chiều kia.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "73a87cc4-15f1eb3e",
+   "lang": "vi",
+   "text": "Bánh thứ nhất và bánh thứ ba quay cùng chiều, dù to hay nhỏ.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "47a78abb6d343812",
+   "lang": "vi",
+   "text": "Bánh nhỏ có ít răng hơn, nên phải quay nhiều vòng hơn để theo kịp.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "898d02c7005661e3",
+   "lang": "vi",
+   "text": "Bánh răng to quay bánh răng nhỏ. Bánh nào quay nhanh hơn?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "af38dd14-5f4d6168",
+   "lang": "vi",
+   "text": "Các bánh lẻ, thứ nhất, thứ ba và thứ năm, đều quay cùng một chiều.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "048aafeb-b07b69a",
+   "lang": "vi",
+   "text": "Dây curoa không đổi chiều quay: hai bánh quay cùng chiều, giống như xích xe đạp.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7892fff0-b372722",
+   "lang": "vi",
+   "text": "Hai bánh xe này nối với nhau bằng dây curoa. Bánh có ngôi sao sẽ quay chiều nào?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1442653d47ee46ab",
+   "lang": "vi",
+   "text": "Bánh to có nhiều răng hơn, nên quay chậm nhưng khỏe.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5ad6df05621b07fd",
+   "lang": "vi",
+   "text": "Bánh răng nhỏ quay bánh răng to. Bánh nào quay chậm hơn?",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3f4ecb03-6f8d13d3",
+   "lang": "vi",
+   "text": "Bốn bánh răng thẳng hàng: bánh cuối quay ngược chiều bánh đầu.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c25b96f6-29458aa0",
+   "lang": "vi",
+   "text": "Bánh răng có trong đồng hồ, xe đạp và ô tô. Chúng truyền chuyển động quay từ bánh này sang bánh khác.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "dbfb75767dbc5eab",
+   "lang": "vi",
+   "text": "Vật này bỏ vào thùng nào? Con đoán xem!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "332eec655ff25084",
+   "lang": "vi",
+   "text": "Giờ bỏ vào đúng thùng: kéo, hoặc chạm vào nó nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "14fea7db37905ed2",
+   "lang": "vi",
+   "text": "Giờ bỏ từng vật vào thùng của nó: kéo, hoặc chạm vào nhé.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "56ffe99e38d22ec3",
+   "lang": "vi",
+   "text": "Thùng giấy",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "f7fc8d7b58837297",
+   "lang": "vi",
+   "text": "Rác thức ăn",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "414b8c2d0e680a76",
+   "lang": "vi",
+   "text": "Rác còn lại",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "285f953b-55474539",
+   "lang": "vi",
+   "text": "Điểm thu gom riêng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "123a05b2723aadf7",
+   "lang": "vi",
+   "text": "Giấy cũ",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "da6c6a14-138cff61",
+   "lang": "vi",
+   "text": "Giấy bỏ vào thùng giấy để làm thành giấy mới.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c54fba78-41afe2e5",
+   "lang": "vi",
+   "text": "Hộp các-tông",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5ba9ceba37a578fa",
+   "lang": "vi",
+   "text": "Gấp dẹt chiếc hộp: bìa các-tông là giấy, sẽ thành hộp mới.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "02663ae37a1e00ad",
+   "lang": "vi",
+   "text": "Lon rỗng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2f76ebab133becf1",
+   "lang": "vi",
+   "text": "Lon được nấu chảy ra để làm thành lon mới.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "2ac90c5710e6b2b0",
+   "lang": "vi",
+   "text": "Vỏ chuối",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "cb3368896d30c869",
+   "lang": "vi",
+   "text": "Vỏ chuối hoai mục thành phân bón cho khu vườn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "16dd0dc60993db0e",
+   "lang": "vi",
+   "text": "Lõi táo",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "37e02830-58a06cce",
+   "lang": "vi",
+   "text": "Thức ăn thừa biến thành đất màu mỡ cho cây mới.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "554e46ba4d775f77",
+   "lang": "vi",
+   "text": "Chai nhựa sạch được băm nhỏ để làm thành đồ mới.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a419c167-10f774c1",
+   "lang": "vi",
+   "text": "Thủy tinh có thể nấu chảy để làm lọ mới hết lần này tới lần khác.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "0b6cce61213fa0cb",
+   "lang": "vi",
+   "text": "Vỏ trứng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "b0c29b18-7d5ee275",
+   "lang": "vi",
+   "text": "Vỏ trứng bỏ cùng rác thức ăn và làm phân bón tốt hơn.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "78772600-4bfe858a",
+   "lang": "vi",
+   "text": "Lá cây trong vườn",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "fab3b759-5196f329",
+   "lang": "vi",
+   "text": "Lá cây và cỏ cắt hoai mục thành phân bón tốt.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "5e2cde44-3d22a5b0",
+   "lang": "vi",
+   "text": "Hộp nước ép",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "a1a6676b-71ad5054",
+   "lang": "vi",
+   "text": "Hộp nước ép tái chế được: nó được tách ra thành bìa, nhựa và giấy bạc.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1f5146653ec097e7",
+   "lang": "vi",
+   "text": "Pin cũ",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "c474a9b1-697db0d7",
+   "lang": "vi",
+   "text": "Pin không bao giờ bỏ vào thùng rác: mang tới điểm thu gom riêng để tránh gây cháy.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "9aa9dd05059a6b46",
+   "lang": "vi",
+   "text": "Gói bim bim",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "654e7b1b2a42f50a",
+   "lang": "vi",
+   "text": "Gói bim bim là nhựa và giấy bạc dính liền nhau, nên bỏ vào rác còn lại.",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "3be3293b445bd01e",
+   "lang": "vi",
+   "text": "Gấu bông bị rách",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "71900114-fc672f6",
+   "lang": "vi",
+   "text": "Gấu bông rách quá không cho ai được thì bỏ vào rác còn lại. Nếu còn tốt, hãy tặng bạn nhé!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d0f1045d6584e744",
+   "lang": "vi",
+   "text": "Tái chế một chiếc lon tiết kiệm đủ điện để xem ti vi ba tiếng đồng hồ!",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "1edf73b46e290ac9",
+   "lang": "vi",
+   "text": "Trồng Cây",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "e949f53544c66f29",
+   "lang": "vi",
+   "text": "Vòng Tuần Hoàn Của Nước",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "45a414d362b438ec",
+   "lang": "vi",
+   "text": "Ngày và Đêm",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "547f8b54-181e988f",
+   "lang": "vi",
+   "text": "Bốn Mùa",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "d64e27c4-2d56578",
+   "lang": "vi",
+   "text": "Nhà Của Con Vật",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7368525d-44e0f0f",
+   "lang": "vi",
+   "text": "Cơ Thể Em",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "cdc2c157-1b53cfc7",
+   "lang": "vi",
+   "text": "Pha Màu",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "63f5cfc8-332ea24a",
+   "lang": "vi",
+   "text": "Đá Tan",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "524df5d5-fbe4e8e",
+   "lang": "vi",
+   "text": "Cầu Vồng Ánh Sáng",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "be8d3944-117f65eb",
+   "lang": "vi",
+   "text": "Thắp Sáng Bóng Đèn",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "7cc88bab-685682f1",
+   "lang": "vi",
+   "text": "Bánh Răng Quay",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  },
+  {
+   "id": "924d7415-11f2aeee",
+   "lang": "vi",
+   "text": "Phân Loại Rác",
+   "area": "core",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/science2.ts"
+   ]
+  }
+ ]
+}
