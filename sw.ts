@@ -17,7 +17,7 @@ const FILES = [
   'vendor/three.module.js', 'vendor/peerjs.min.js', 'vendor/RoomEnvironment.js', 'css/fonts.css',
   'fonts/Fredoka-latin-500.woff2', 'fonts/Fredoka-latin-ext-500.woff2', 'fonts/Baloo2-latin-600.woff2', 'fonts/Baloo2-latin-ext-600.woff2', 'fonts/Baloo2-vietnamese-600.woff2',
   'js/main.js', 'js/rideview.js', 'js/render-recovery.js', 'js/launch.js', 'js/screencapture.js', 'js/familydevices.js', 'js/family-backup.js', 'js/util.js', 'js/state.js', 'js/i18n.js', 'js/money.js', 'js/audio.js', 'js/voice.js', 'js/hanoi-pack.js', 'js/content/hanoi-pack-info.js', 'js/gfx.js',
-  'js/world.js', 'js/avatar.js', 'js/player.js', 'js/input.js', 'js/net.js', 'js/mictest.js', 'js/hud.js', 'js/explain.js', 'js/ui.js', 'js/ui-settings.js', 'js/data.js',
+  'js/world.js', 'js/world/places.js', 'js/world/ground.js', 'js/world/sites.js', 'js/world/paint.js', 'js/world/reshape.js', 'js/avatar.js', 'js/player.js', 'js/input.js', 'js/net.js', 'js/mictest.js', 'js/hud.js', 'js/explain.js', 'js/ui.js', 'js/ui-settings.js', 'js/data.js',
   // (v1.07 split-code) the parts of js/ui.js
   'js/ui/common.js', 'js/ui/grownups.js', 'js/ui/title.js', 'js/ui/profile.js', 'js/ui/quick.js', 'js/ui/festivals-ui.js',
   'js/ui/pad.js', 'js/ui/pad-map.js', 'js/ui/pad-album.js', 'js/ui/shops.js', 'js/ui/hub.js',

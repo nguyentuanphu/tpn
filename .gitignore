@@ -367,6 +367,11 @@ marketing/source/runvalley.log
 /js/words.js
 /js/words2.js
 /js/world.js
+/js/world/ground.js
+/js/world/paint.js
+/js/world/places.js
+/js/world/reshape.js
+/js/world/sites.js
 /js/worldcache.js
 /js/worldedit.js
 /js/worldmemo.js
