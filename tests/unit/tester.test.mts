@@ -22,6 +22,13 @@ test('the game decides who is a tester and at which level', () => {
   assert.equal(testerLevel(true, {}, X), 'ladybird', 'no list: every device');
   assert.deepEqual(peeksOf({ peeks: ['readingTrial', '<b>'] }), ['readingTrial']);
   assert.equal(keyOf('error', 'a', 'b'), 'error|a|b');
+  // (v1.08 bugs, #780 #781) the same freeze or slow patch in the same game is one problem on the device, as on the server
+  assert.equal(keyOf('freeze', '3.1 s', 'oddone'), keyOf('freeze', '3.6 s', 'oddone'), 'a freeze of another length is the same problem');
+  assert.equal(keyOf('slow', '13 frames a second', 'oddone'), keyOf('slow', '16 frames a second', 'oddone'));
+  assert.notEqual(keyOf('freeze', '3.1 s', 'oddone'), keyOf('freeze', '3.1 s', 'mirror'), 'another game is another problem');
+  const server = (auto, detail, game) => T.problemKey({ kind: 'auto', auto, detail, where: { area: 'meadow', game, window: '' } });
+  for (const [a, b] of [['3.1 s', '3.6 s'], ['x @ ui.js:12', 'x @ ui.js:13'], ['13 frames a second', '9 frames a second']])
+    assert.equal(keyOf('freeze', a, 'g') === keyOf('freeze', b, 'g'), server('freeze', a, 'g') === server('freeze', b, 'g'), `device and server group "${a}" and "${b}" alike`);
   assert.equal(badgeFor(0), null); assert.equal(badgeFor(1).id, 'lb1'); assert.equal(badgeFor(24).id, 'lb2'); assert.equal(badgeFor(50).id, 'lb4');
   assert.equal(nextBadge(10).id, 'lb3');
 });
