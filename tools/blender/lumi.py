@@ -2,7 +2,8 @@
 # Two builds from one script (v1.08, part A):
 #   chibi  the concept's chibi Lumi (about 2 heads tall), refined;
 #   tall   Lumi in Finn and Flora's proportions (about 5 heads tall, the same head and eye size as finn.py).
-# Run: blender -b -P tools/blender/lumi.py -- <out dir> [chibi|tall] [render] [faces] [quick]
+# The owner chose the chibi (3 Nov 2026 AEDT) and asked to try Finn and Flora in the same proportions: add `finn` or `flora`.
+# Run: blender -b -P tools/blender/lumi.py -- <out dir> [lumi|finn|flora] [chibi|tall] [render] [faces] [quick]
 #   render: front, side, back, three-quarter;  faces: happy, curious, surprised;  quick: few samples, small pictures.
 import sys, os, math, random
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -12,18 +13,23 @@ from mathutils.bvhtree import BVHTree
 from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube, lathe, subsurf, obj_from
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
-FLAGS = ('chibi', 'tall', 'render', 'faces', 'quick')
+FLAGS = ('chibi', 'tall', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora')
 OUT = next((a for a in argv if a not in FLAGS), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
+WHO = 'finn' if 'finn' in argv else 'flora' if 'flora' in argv else 'lumi'
 os.makedirs(OUT, exist_ok=True); random.seed(7)
 scene = reset()
 lin = lambda a, b, n: [a + (b - a) * i / (n - 1) for i in range(n)]
 
 # ---------- the concept's palette: sage, cream, peach, honey; felt everywhere but the skin, eyes and metal ----------
-SKIN = mat('skin', '#f7d2b8', .55, .1, sss=.12)
+# each friend's own colours: skin, hair (main, dark, light), iris (dark, light), brows and lashes (from the owner's concepts)
+PAL = {'lumi': ('#f7d2b8', '#a9c58f', '#8fae79', '#bcd5a1', '#1f4d43', '#3f8a6f', '#7f9f62', '#45302a'),
+       'finn': ('#f3c6a5', '#2a355f', '#1f284b', '#3b4a80', '#3a2414', '#7a4f2e', '#2b3560', '#2a1e18'),
+       'flora': ('#f8d4bc', '#f2a493', '#e38f7f', '#f8bdac', '#5a3416', '#b8783c', '#c98472', '#5a3328')}[WHO]
+SKIN = mat('skin', PAL[0], .55, .1, sss=.12)
 NOSE = mat('nose', '#f3c2a8', .55, .1, sss=.12)
-HAIR = felt('hair', '#a9c58f'); HAIRD = felt('hairDark', '#8fae79'); HAIRL = felt('hairLight', '#bcd5a1')
+HAIR = felt('hair', PAL[1]); HAIRD = felt('hairDark', PAL[2]); HAIRL = felt('hairLight', PAL[3])
 SHIRT = felt('shirt', '#f4ead6', fibre=.08)
 OVER = felt('overalls', '#8b9f6b'); OVERL = felt('overallsLight', '#9db27c'); POCKET = felt('pocket', '#a9c286')
 SOCK = felt('socks', '#f3e6cb', fibre=.12)
@@ -36,13 +42,19 @@ LEAFG = felt('leafGreen', '#7fae5e')
 BRASS = mat('brass', '#b98a46', .35, metal=.85); BRASSD = mat('brassDark', '#8a6232', .4, metal=.8)
 GLASS = glass('glass')
 EYEW = mat('eyeWhite', '#fdfbf6', .3)
-IRISD = mat('irisDark', '#1f4d43', .25); IRIS = mat('iris', '#3f8a6f', .25)
+IRISD = mat('irisDark', PAL[4], .25); IRIS = mat('iris', PAL[5], .25)
 PUPIL = mat('pupil', '#0f201b', .2)
 SHINE = mat('shine', '#ffffff', .2, emit=4)
-LASH = mat('lash', '#45302a', .6)
-BROW = mat('brow', '#7f9f62', .9, .3)
+LASH = mat('lash', PAL[7], .6)
+BROW = mat('brow', PAL[6], .9, .3)
 MOUTH = mat('mouth', '#6f2b2b', .5); TONGUE = mat('tongue', '#ee9188', .5)
 BLUSH = softpaint('blush', '#f4a08f', .75)
+# Finn's and Flora's clothes
+PANTS = felt('pants', '#e8dcc0'); COAT = felt('coat', '#2f6f74'); COATIN = felt('coatLining', '#e7d9b8')
+BOOTF = felt('bootsBrown', '#7a4a2a', .6, .08)
+DRESS = felt('dress', '#b39ad1'); DRESSL = felt('dressLight', '#c9b5e0'); TIGHTS = felt('tights', '#9aa97f')
+PETAL = felt('petal', '#fbeee6'); WOOD = felt('wood', '#7a5434', .7, .05)
+FLOWERG = mat('flowerGlow', '#f59ab8', .4, emit=.35); GLOWB = mat('glowBlue', '#bfe6ff', .3, emit=6)
 
 # ---------- proportions ----------
 if TALL:  # Finn and Flora: head about a fifth of the height, a narrower jaw, smaller eyes
@@ -52,7 +64,7 @@ if TALL:  # Finn and Flora: head about a fifth of the height, a narrower jaw, sm
              wH=.13, wC=.124, dep=.82, sh=(.135, 0, .9), el=(.19, -.005, .72), wr=(.21, -.02, .56), rU=.036, rA=.03, boot=(.064, .095), lant=.19, S=.8, puff=1.22)
 else:     # the concept: a big round head, low big eyes, full cheeks
     HC, R = Vector((0, 0, .72)), .25
-    P = dict(eye=.27, eyeX=.37, eyeZ=-.14, jaw=.0, cheek=.08, puff=1.0)
+    P = dict(eye=.21, eyeX=.34, eyeZ=-.13, jaw=.0, cheek=.08, puff=1.0)  # eyes smaller for a balanced face (owner, 3 Nov)
     B = dict(legX=.066, rLeg=.04, zAnk=.05, zBoot=.1, zSock=.165, zCuff=.225, zCr=.27, zW=.36, zC=.45, zS=.475, zN=.5,
              wH=.14, wC=.13, dep=.85, sh=(.12, 0, .455), el=(.162, -.005, .37), wr=(.188, -.015, .29), rU=.037, rA=.032, boot=(.066, .095), lant=.22, S=1.0, puff=1.6)
 H = lambda x, y, z: HC + Vector((x, y, z)) * R
@@ -208,7 +220,89 @@ def hair():
     for a in (-.6, .7):
         o = leaf('starLeaf', LEAFG, .2 * R, .1 * R, .2, .2, 10, .03 * R, .2)
         place(o, c + n * .05 * R, Vector((math.cos(a), 0, math.sin(a) - .3)), n)
-group('hair', hair)
+# ---------- Finn and Flora's hair (the owner asked to try them as chibis too, 3 Nov 2026 AEDT) ----------
+def cap(m):
+    bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=32, radius=1)
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if (v.co.y < -.35 and v.co.z < .45 and abs(v.co.x) < .8) or v.co.z < -.72 or (v.co.y < .1 and v.co.z < -.3)], context='VERTS')
+    bmesh.ops.transform(bm, matrix=Matrix.Translation(H(0, .02, .03)) @ Matrix.Diagonal((1.07 * R, 1.05 * R, 1.0 * R, 1)), verts=bm.verts)
+    subsurf(obj_from(bm, 'hairCap', m), 1)
+
+def hdir(az, el):
+    n = Vector((math.cos(el) * math.sin(az), -math.cos(el) * math.cos(az), math.sin(el)))
+    down = Vector((0, 0, -1)); t = (down - down.project(n)).normalized() if abs(n.z) < .97 else Vector((math.sin(az), -math.cos(az), 0))
+    return n, t
+
+def clump(az, el, L, W, out=.35, curl=.5, m=None, puff=1.04):
+    """a tapered clump of hair from the scalp, falling and flicking outwards (head units)"""
+    n, t = hdir(az, el); base = HC + Vector((n.x * 1.04, n.y, n.z * .98)) * R * puff
+    side = n.cross(t).normalized() * random.uniform(-.4, .4)
+    pts, radii, p, d = [], [], base.copy(), (t + n * out + side).normalized()
+    for i in range(7):
+        f = i / 6; pts.append(p.copy()); radii.append(((W * (1 - f) ** 1.2 * (1 - .35 * f) + W * .25 * (1 - f ** 4)) * R, (W * .7 * (1 - f) ** 1.2 + W * .18 * (1 - f ** 4)) * R))
+        p = p + d * L * R / 6; d = (d + n * curl * f * .5 + side * .15).normalized()
+    return tube('hairClump', m or HAIR, pts, radii, 10)
+
+def lock(az, el, L, W, out=.25, wave=.12, m=None, puff=1.05):
+    """a long, soft wavy lock falling to the shoulders"""
+    n, t = hdir(az, el); base = HC + Vector((n.x * 1.04, n.y, n.z * .98)) * R * puff
+    side = n.cross(t).normalized(); down = Vector((0, 0, -1))
+    pts, radii, p, d, N = [], [], base.copy(), (t + n * out).normalized(), 12
+    for i in range(N + 1):
+        f = i / N
+        pts.append(p + side * math.sin(f * math.pi * 2.4 + az * 3) * wave * R * f)
+        radii.append(((W * (1 - .6 * f ** 1.5) + .03) * R, (W * .8 * (1 - .6 * f ** 1.5) + .03) * R))
+        p = p + d * L * R / N; d = (d + down * (.35 + .5 * f)).normalized()
+    return tube('hairLock', m or HAIR, pts, radii, 12)
+
+def front_open(az, el):
+    fr, ax = math.cos(az), abs(math.sin(az)) * math.cos(el)
+    return (fr > 0 and el < 1.0 and ax < .8) or (fr > .35 and el < -.2)
+
+def hair_finn():
+    cap(HAIRD)
+    for ring, (el, cnt, ln, wd) in enumerate([(1.35, 8, .6, .34), (1.0, 13, .72, .34), (.65, 16, .76, .33), (.3, 16, .7, .31), (-.05, 14, .58, .28), (-.4, 10, .46, .25)]):
+        for k in range(cnt):
+            az = 2 * math.pi * (k + .5 * ring) / cnt + random.uniform(-.1, .1)
+            if front_open(az, el): continue
+            clump(az, el + random.uniform(-.06, .06), ln * random.uniform(.85, 1.15), wd, .2 + .2 * (el < .5), .5, HAIR if random.random() < .7 else HAIRL, 1.04 + .06 * (el < .5))
+    for k, az in enumerate([-.8, -.55, -.3, -.05, .2, .45, .72]):  # a messy fringe swept to Finn's left
+        clump(az, 1.02, .78 - .1 * (k % 2), .32, .08, .25, HAIRL if k % 2 else HAIR)
+    for k in range(4): clump(random.uniform(-2, 2), 1.45, .4, .2, .8, 1.2, HAIRL)  # a few strands sticking up
+
+def hair_flora():
+    cap(HAIRD)
+    for ring, (el, cnt) in enumerate([(1.35, 7), (1.0, 12)]):  # soft waves on top
+        for k in range(cnt):
+            az = 2 * math.pi * (k + .5 * ring) / cnt + random.uniform(-.1, .1)
+            if front_open(az, el): continue
+            clump(az, el, .8, .3, .2, .35, (HAIR, HAIRL)[k % 2], 1.05)
+    for ring, (el, cnt, ln) in enumerate([(.7, 12, 1.55), (.35, 13, 1.6), (0, 12, 1.4), (-.35, 9, 1.1)]):  # long wavy locks to the shoulders
+        for k in range(cnt):
+            az = 2 * math.pi * (k + .5 * ring) / cnt + random.uniform(-.08, .08)
+            if front_open(az, el) or math.cos(az) > .15: continue   # the locks fall behind the shoulders; the braids are in front
+            lock(az, el, ln * random.uniform(.9, 1.08), .34, .12 + .04 * ring, .24, (HAIR, HAIRD, HAIRL)[(k + ring) % 3], 1.06 + .04 * ring)
+    for k, az in enumerate([-.75, -.5, -.25, 0, .25, .5, .78]):  # side-swept bangs
+        clump(az + .12, 1.02, .78 - .1 * (k % 2), .28, .1, .25, HAIRL if k % 2 else HAIR, 1.05)
+    # two braids over the shoulders with lilac ties
+    for s in (-1, 1):
+        path = [H(s * .9, -.15, -.25), H(s * .98, -.32, -.8), H(s * .95, -.42, -1.35), H(s * .9, -.45, -1.75)]
+        segs = 9
+        for i in range(segs):
+            f = i / (segs - 1); seg = int(f * 2.999); u = f * 3 - seg
+            p = path[seg].lerp(path[seg + 1], u) + Vector((s * (.06 if i % 2 else -.06) * R, 0, 0))
+            sphere('braid', (HAIR, HAIRL)[i % 2], p, (.19 * R * (1 - .3 * f), .16 * R * (1 - .3 * f), .2 * R), 16, 8, (0, s * (.4 if i % 2 else -.4), 0))
+        sphere('braidTie', DRESSL, path[-1] + Vector((0, 0, -.05 * R)), (.12 * R, .12 * R, .07 * R), 16, 8)
+        tube('braidTuft', HAIR, [path[-1] + Vector((0, 0, -.08 * R)), path[-1] + Vector((s * .05 * R, -.02 * R, -.35 * R))], [(.13 * R, .1 * R), (.02 * R, .02 * R)], 10)
+    # a cream flower clip with two leaves, high on Flora's right
+    c = H(-.62, -.58, .7); n = (c - HC).normalized(); q = n.to_track_quat('Z', 'Y').to_matrix()
+    for i in range(5):
+        a = i * 2 * math.pi / 5; p = c + q @ Vector((math.cos(a) * .13 * R, math.sin(a) * .13 * R, .06 * R))
+        sphere('petal', PETAL, p, (.13 * R, .08 * R, .04 * R), 16, 8, (q @ Matrix.Rotation(a, 3, 'Z')).to_euler())
+    sphere('flowerHeart', STAR, c + n * .1 * R, (.06 * R, .06 * R, .04 * R), 12, 6)
+    for a in (2.4, 3.6):
+        o = leaf('flowerLeaf', LEAFG, .22 * R, .1 * R, .2, .2, 10, .03 * R, .2); place(o, c + n * .03 * R, q @ Vector((math.cos(a), math.sin(a), 0)), n)
+
+group('hair', {'lumi': hair, 'finn': lambda: hair_finn(), 'flora': lambda: hair_flora()}[WHO])
 
 # ---------- body ----------
 def fronty(r): return -r * B['dep'] - .006 * S
@@ -312,7 +406,135 @@ def lantern(top, h):
         o = leaf('lanternLeaf', LEAFG, .2 * h, .09 * h, .2, .2, 10, .012 * h, .2); place(o, Q(s * .12, 0, -.31), Vector((s, -.2, -.25)), Vector((0, -.5, 1)))
     d = bpy.data.lights.new('lanternLight', 'POINT'); d.energy = .7 * (h / .17) ** 2; d.color = hexc('#ffd77a')[:3]; d.shadow_soft_size = .1 * h
     lo = bpy.data.objects.new('lanternLight', d); scene.collection.objects.link(lo); lo.location = Q(0, -.25, -.6)
-group('body', body)
+# ---------- Finn and Flora's bodies: the same chibi body, their own clothes and props ----------
+def legs(m):
+    for s in (-1, 1): tube('leg', m, [(s * B['legX'], 0, B['zCr']), (s * B['legX'], 0, B['zAnk'])], B['rLeg'], 18)
+
+def boots(m, mc, zb, straps=(), eyelets=False):
+    bw, bl = B['boot']
+    for s in (-1, 1):
+        X = s * B['legX']
+        lathe('boot', m, [(0, 0), (bw * .98, 0), (bw * 1.04, .025 * S), (bw, zb * .5), (bw * .95, zb), (bw * .85, zb + .004)], 28, loc=(X, -.005, 0), scale=(1, 1.1))
+        toe = sphere('bootToe', m, (X, -bl * .45, .042 * S), (bw * .98, bl * .62, .045 * S), 28, 14)
+        for v in toe.data.vertices: v.co.z = max(v.co.z, .012 * S)
+        subsurf(toe, 1)
+        front, back = -bl * 1.07 - .006, bw * 1.12
+        lathe('sole', SOLE, [(0, 0), (bw * 1.1, 0), (bw * 1.12, .015 * S), (bw * .9, .018 * S)], 28, loc=(X, (front + back) / 2, 0), scale=(1, (back - front) / 2 / (bw * 1.12)))
+        lathe('bootCuff', mc, [(bw * .9, zb - .01 * S), (bw * 1.04, zb - .004 * S), (bw * 1.07, zb + .012 * S), (bw * .98, zb + .02 * S), (bw * .8, zb + .022 * S)], 28, loc=(X, -.005, 0), scale=(1, 1.1))
+        for z in straps:
+            lathe('bootStrap', BAGD, [(bw * 1.01, z), (bw * 1.03, z + .006 * S), (bw * 1.01, z + .014 * S)], 28, loc=(X, -.005, 0), scale=(1, 1.12))
+            sphere('bootBuckle', BRASS, (X + s * bw * .95, -.03 * S, z + .007 * S), (.008 * S, .006 * S, .01 * S), 12, 6)
+        if eyelets:
+            for z in lin(zb * .35, zb * .9, 4): tube('lace', SHIRT, [(X - .018 * S, -bw * 1.1, z), (X + .018 * S, -bw * 1.1, z + .012 * S)], .004 * S, 6)
+
+def arm_pair(sleeves, hand_mat=None):
+    """sleeves(s, sh, el, wr) dresses one arm; returns each hand's centre"""
+    hands = {}
+    for s in (-1, 1):
+        sh, el, wr = [Vector((s * p[0], p[1], p[2])) for p in (B['sh'], B['el'], B['wr'])]
+        if s > 0: wr = wr + Vector((.012 * S, -.03 * S, .0))
+        tube('arm', SKIN, [sh, el, wr], [B['rU'] * .95, B['rA'] * 1.05, B['rA']], 16)
+        sleeves(s, sh, el, wr)
+        rA = B['rA']; hand = wr + (wr - el).normalized() * rA * 1.1
+        sphere('hand', SKIN, hand, (rA * 1.15, rA * .95, rA * 1.3), 20, 10)
+        sphere('thumb', SKIN, hand + Vector((-s * rA * .55, -rA * .75, rA * .25)), (rA * .42, rA * .42, rA * .5), 12, 6)
+        hands[s] = hand
+    return hands
+
+def torso(m):
+    b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']
+    lathe('shirt', m, [(wH * .95, b['zW'] - .04 * S), (wC, b['zW']), (wC * 1.03, (b['zW'] + b['zC']) / 2), (wC, b['zC']), (wC * .82, b['zS'] + .008 * S), (wC * .42, b['zN']), (wC * .32, b['zN'] + .01 * S)], 32, scale=(1, dep))
+    for s in (-1, 1):
+        sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))
+    tube('neck', SKIN, [(0, 0, b['zS']), (0, 0, b['zN'] + .03 * S)], .04 * S, 16)
+
+def satchel(a, m, md, deco, across=True):
+    b = B; wH, rb = b['wH'], b['wC'] * 1.06 + .004; zb = (b['zCr'] + b['zW']) / 2 - .01 * S
+    M = Matrix.Translation((math.sin(a) * (wH + .03 * S), -math.cos(a) * (wH + .03 * S) * b['dep'], zb)) @ Matrix.Rotation(a, 4, 'Z')
+    L = lambda x, y, z: M @ Vector((x * S, y * S, z * S))
+    o = sphere('bag', m, (0, 0, 0), (.065 * S, .028 * S, .052 * S), 28, 14); o.matrix_world = M; subsurf(o, 1)
+    sphere('bagFlap', md, L(0, -.018, .018), (.066 * S, .011 * S, .036 * S), 24, 12, (0, 0, a))
+    deco(L(0, -.031, .02), a)
+    if across:
+        pts = [L(.06, 0, .035), Vector((-.07 * S * math.copysign(1, -a), fronty(rb * 1.02) - .006, b['zW'] + .03 * S)), Vector((.03 * S, fronty(rb) - .012, b['zC'] - .01 * S)),
+               Vector((.085 * S, -.03 * S, b['zS'] + .016 * S)), Vector((.08 * S, .05 * S, b['zS'] + .004 * S)), Vector((-.02 * S, rb * b['dep'] + .016, b['zC'] - .02 * S)),
+               Vector((-wH * .9, wH * .5, zb + .05 * S)), L(-.06, 0, .035)]
+        tube('bagStrap', m, pts, .01 * S, 10, False)
+
+def glow_light(p, energy, col):
+    d = bpy.data.lights.new('propLight', 'POINT'); d.energy = energy; d.color = hexc(col)[:3]; d.shadow_soft_size = .02
+    lo = bpy.data.objects.new('propLight', d); scene.collection.objects.link(lo); lo.location = p
+
+def body_finn():
+    b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']
+    legs(PANTS)
+    boots(BOOTF, BAG, b['zSock'] + .02 * S, straps=(.055 * S, .105 * S))
+    for s in (-1, 1):  # baggy cream trousers tucked into the boots
+        tube('trouser', PANTS, [(s * b['legX'] * .85, 0, b['zCr'] + .02 * S), (s * b['legX'] * 1.05, -.004, (b['zCr'] + b['zSock']) / 2), (s * b['legX'], 0, b['zSock'] + .03 * S)], [wH * .58, wH * .64, wH * .5], 24)
+    lathe('seat', PANTS, [(wH * .55, b['zCr'] - .035 * S), (wH * .95, b['zCr'] - .005 * S), (wH * 1.02, (b['zCr'] + b['zW']) / 2), (wC * 1.03, b['zW'] + .01 * S)], 32, scale=(1, dep))
+    torso(SHIRT)
+    lathe('belt', BAG, [(wC * 1.06, b['zW'] - .012 * S), (wC * 1.08, b['zW'] + .012 * S)], 32, scale=(1, dep))
+    sphere('buckle', BRASS, (0, fronty(wC * 1.08) - .004, b['zW']), (.022 * S, .006 * S, .016 * S), 16, 8)
+    # the teal coat, open at the front, gold at the hem, a gold star on the back
+    coat = [(wH * 1.32, b['zCr'] - .06 * S), (wH * 1.18, b['zCr'] + .02 * S), (wC * 1.12, b['zW'] + .02 * S), (wC * 1.12, b['zC']), (wC * .9, b['zS'] + .012 * S), (wC * .55, b['zN'])]
+    lathe('coat', COAT, coat, 40, scale=(1, dep), arc=(.6, 2 * math.pi - .6))
+    lathe('coatHem', BRASS, [(wH * 1.34, b['zCr'] - .065 * S), (wH * 1.33, b['zCr'] - .05 * S)], 40, scale=(1.005, dep * 1.005), arc=(.6, 2 * math.pi - .6))
+    pstar('coatStar', BRASS, (0, wC * 1.12 * dep + .01, (b['zCr'] + b['zW']) / 2), .03 * S, .008 * S, (-math.pi / 2, 0, 0))
+    tube('coatCollar', COAT, [(-.07 * S, fronty(wC * .55), b['zN'] - .02 * S), (-.06 * S, -.01, b['zN'] + .005), (0, .045 * S, b['zN'] + .01 * S), (.06 * S, -.01, b['zN'] + .005), (.07 * S, fronty(wC * .55), b['zN'] - .02 * S)], .018 * S, 12, False)
+    def sleeves(s, sh, el, wr):
+        rU = B['rU']; d = (el - sh).normalized()
+        tube('coatSleeve', COAT, [sh - d * .015 * S, sh.lerp(el, .5), el], [rU * 1.45, rU * 1.5, rU * 1.42], 20)
+        tube('coatCuff', COATIN, [el - d * .01 * S, el + d * .016 * S], rU * 1.52, 20)
+        tube('shirtSleeve', SHIRT, [el, el.lerp(wr, .4)], [rU * 1.2, rU * 1.1], 16)
+        tube('glove', BAGD, [wr - (wr - el).normalized() * .018 * S, wr + (wr - el).normalized() * .006 * S], B['rA'] * 1.2, 14)
+    hands = arm_pair(sleeves)
+    satchel(-1.0, BAG, BAGD, lambda p, a: sphere('bagBuckle', BRASS, p, (.012 * S, .006 * S, .014 * S), 12, 6, (0, 0, a)))
+    tube('spyglass', BRASS, [(wH * .95, -.06 * S, b['zW'] - .01 * S), (wH * 1.05, -.07 * S, b['zCr'] - .02 * S)], [.016 * S, .02 * S], 14)
+    # the glowing compass star floating over Finn's left hand
+    c = hands[1] + Vector((.03 * S, -.05 * S, .07 * S))
+    pstar('compass', GLOWB, c, .035 * S, .014 * S, (math.pi / 2, 0, 0))
+    ring = [c + Vector((math.cos(t) * .05 * S, 0, math.sin(t) * .05 * S)) for t in lin(0, 2 * math.pi, 25)]
+    tube('compassRing', BRASS, ring, .004 * S, 8, False)
+    glow_light(c + Vector((0, -.04 * S, 0)), .5, '#bfe6ff')
+
+def body_flora():
+    b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']
+    legs(TIGHTS)
+    boots(BOOTF, BAG, b['zSock'], eyelets=True)
+    torso(SHIRT)
+    # the lilac dress: a bodice, a flared skirt with a petal hem and a cream frill, a brown corset belt with braces
+    lathe('bodice', DRESS, [(wC * 1.05, b['zW'] - .01 * S), (wC * 1.08, (b['zW'] + b['zC']) / 2), (wC * 1.04, b['zC'] - .005 * S)], 32, scale=(1, dep))
+    skirt = [(wC * 1.07, b['zW'] + .01 * S), (wH * 1.12, b['zW'] - .03 * S), (wH * 1.4, b['zCr']), (wH * 1.65, b['zCuff'] + .02 * S), (wH * 1.66, b['zCuff'] + .008 * S)]
+    lathe('skirt', DRESS, skirt, 40, scale=(1, dep * 1.05))
+    lathe('frill', SHIRT, [(wH * 1.45, b['zCuff'] + .025 * S), (wH * 1.6, b['zCuff'] - .005 * S), (wH * 1.55, b['zCuff'] - .015 * S)], 40, scale=(1, dep * 1.05))
+    for k in range(11):
+        a = 2 * math.pi * k / 11; n = Vector((math.sin(a), -math.cos(a) * dep, -.35)).normalized()
+        p = Vector((math.sin(a) * wH * 1.5, -math.cos(a) * wH * 1.5 * dep * 1.05, b['zCr'] - .01 * S))
+        o = leaf('petalHem', DRESSL if k % 2 else DRESS, .085 * S, .05 * S, .15, -.1, 1, .006 * S, .3); place(o, p, Vector((math.sin(a) * .35, -math.cos(a) * .35, -1)), n)
+    lathe('corset', BAG, [(wC * 1.07, b['zW'] - .02 * S), (wC * 1.1, b['zW'] + .005 * S), (wC * 1.08, b['zW'] + .03 * S)], 32, scale=(1, dep))
+    sphere('buckle', BRASS, (0, fronty(wC * 1.1) - .004, b['zW'] + .005 * S), (.018 * S, .006 * S, .014 * S), 16, 8)
+    for s in (-1, 1):
+        tube('brace', BAG, [(s * .045 * S, fronty(wC * 1.08), b['zW'] + .03 * S), (s * .06 * S, fronty(wC * 1.0), b['zC']), (s * .07 * S, -.02 * S, b['zS'] + .012 * S), (s * .06 * S, .05 * S, b['zS'])], .008 * S, 8, False)
+    def sleeves(s, sh, el, wr):
+        rU, rA = B['rU'], B['rA']; d = (el - sh).normalized(); e = (wr - el).normalized()
+        tube('sleevePuff', SHIRT, [sh - d * .015 * S, sh.lerp(el, .45), el], [rU * 1.5, rU * 1.7, rU * 1.3], 20)
+        tube('sleeve', SHIRT, [el, el.lerp(wr, .8)], [rA * 1.35, rA * 1.3], 16)
+        tube('sleeveFrill', SHIRT, [wr - e * .02 * S, wr - e * .008 * S, wr + e * .004 * S], [rA * 1.3, rA * 1.6, rA * 1.3], 18)
+    hands = arm_pair(sleeves)
+    satchel(-1.0, BAG, BAGD, lambda p, a: [sphere('bagPetal', PETAL, p + Vector((math.cos(t) * .012 * S, -.002, math.sin(t) * .012 * S)), (.01 * S, .004 * S, .007 * S), 10, 5) for t in lin(0, 2 * math.pi * .8, 5)], across=False)
+    # the flower staff in Flora's left hand: a wooden stick with a vine and a glowing pink flower
+    h = hands[1]; bot, top = h + Vector((-.01 * S, .0, -.24 * S)), h + Vector((.07 * S, -.03 * S, .3 * S))
+    tube('staff', WOOD, [bot, h, top], [.009 * S, .01 * S, .009 * S], 10)
+    for k, f in enumerate(lin(.2, .85, 5)):
+        p = bot.lerp(top, f); o = leaf('vineLeaf', LEAFG, .035 * S, .018 * S, .1, .1, 1, .004 * S, .2)
+        place(o, p, Vector(((-1) ** k, -.3, .4)), Vector((0, -1, .2)))
+    for i in range(6):
+        a = i * math.pi / 3
+        sphere('staffPetal', FLOWERG, top + Vector((math.cos(a) * .028 * S, -.012 * S, math.sin(a) * .028 * S)), (.026 * S, .01 * S, .016 * S), 16, 8, (0, -a, 0))
+    sphere('staffHeart', GLOW, top + Vector((0, -.02 * S, 0)), (.012 * S, .008 * S, .012 * S), 12, 6)
+    glow_light(top + Vector((0, -.05 * S, 0)), .15, '#ffc7d6')
+
+group('body', {'lumi': body, 'finn': lambda: body_finn(), 'flora': lambda: body_flora()}[WHO])
 
 # ---------- studio: cream backdrop, soft warm light, a soft glow on the lantern ----------
 BG = '#f3ead7'
@@ -343,10 +565,10 @@ def shoot(name, az, height, dist, look, res):
     scene.render.resolution_x, scene.render.resolution_y = int(res[0] * q), int(res[1] * q)
     cam.location = (math.sin(az) * dist, -math.cos(az) * dist, height)
     cam.rotation_euler = (Vector((0, 0, look)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
-    scene.render.filepath = os.path.join(OUT, f'lumi-{STYLE}-{name}.png'); bpy.ops.render.render(write_still=True)
+    scene.render.filepath = os.path.join(OUT, f'{WHO}-{STYLE}-{name}.png'); bpy.ops.render.render(write_still=True)
 
 show_face('smile')
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, f'lumi-{STYLE}.blend'))
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, f'{WHO}-{STYLE}.blend'))
 top = HC.z + R * 1.3; mid = top * .5; dist = top * .5 / math.tan(math.radians(12)) * 1.15
 if RENDER:
     for name, az in (('front', 0), ('side', math.pi / 2), ('back', math.pi), ('three-quarter', .6)):

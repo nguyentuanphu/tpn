@@ -14,6 +14,21 @@ Branch: `work/v108-lumi-refine` (from `origin/release/v1.08`). Brief: `lumi-brie
 6. Renders to `docs/characters-v108/lumi/`: front, side, back, three-quarter and the three faces for each version, and one sheet beside the concept.
 7. Checks: nothing in the game changes, so `cd tests && node suite.mts --changed` (expected: quick checks only).
 
+## Owner's decisions
+
+- 3 Nov 2026 AEDT (chat): "I prefer the shorter chibi version but make the face more balance as the eyes are too big, you can try finn flora theo tỷ lệ này". The chibi is the chosen Lumi; the eyes were made smaller (eye size .27 to .21 of the head, a little closer together). Finn and Flora were tried as chibis with the same body and face kit (`lumi.py -- <dir> finn chibi`, `flora chibi`). The tall version stays in the script and the docs, but it is not the chosen look.
+
 ## Progress
 
 - 3 Nov 2026 AEDT: Blender 4.2.3 installed; plan written.
+- 3 Nov 2026 AEDT: chibi and tall Lumi built and rendered (commit 1, scripts and notes).
+- 3 Nov 2026 AEDT: the owner chose the chibi; eyes smaller; chibi Finn (navy messy hair, teal coat, cream trousers, strapped boots, satchel, spyglass, glowing compass star) and chibi Flora (pink wavy hair, two braids, flower clip, lilac dress with a petal hem, cream puff sleeves, sage tights, laced boots, flower staff) added to the same script.
+
+## Checks
+
+- Nothing in the game changed (only `tools/blender/` and docs).
+- `cd tests && node suite.mts --changed --base origin/release/v1.08`: the build rewrites `content/management-catalogue.json` (already stale on `release/v1.08`, not from this branch), so `--changed` asks for the full suite. Per Release's rule (3 Nov), the full suite is left for Release; the 9 quick checks it would have picked were run with `--only`:
+  - pass: arch, names, rules, bilingual, types, noemoji, preload, unit (497 unit tests, after `npm ci` at the root for `pg`).
+  - fail, not this branch: emoji, an emoji in `docs/plans/v108-owner-batch-20261103.md` (Release's plan file). Left for Release.
+- `finn.py` still builds with the extended `svkit.py`.
+- The renders were looked at (front, three-quarter, side, back, three faces). These are pictures, not game screens, so the phone, tablet and computer check does not apply.
