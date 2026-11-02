@@ -1,6 +1,6 @@
 # v1.07 roads: status
 
-**Resumed (2 Nov AEDT). Full suite running on GitHub; then the owner's pop-up on the new look. Not ready for Release yet.**
+**ready for Release** (2 Nov 2026 AEDT). Draft PR #787. The owner approved the new look. Full suite started on GitHub (`full-suite.yml`, workflow_dispatch on `work/v107-roads`): Release, please read its result before merging. A red check there is to be fixed, not waved through.
 
 Branch: `work/v107-roads`. Issue #34. Started 2 Nov 2026, 10:57 am AEDT.
 
@@ -75,3 +75,14 @@ after.
 3. Ask the owner with a pop-up whether the new look is right; write the report in Vietnamese.
 
 Note: `node tools/build.mts` rewrites `content/management-catalogue.json`; restore it with git checkout before committing.
+
+## Owner's decisions
+
+- 2 Nov 2026 AEDT, pop-up: "Đường mới ... đã đúng ý chưa?" Answer: "Đúng rồi". The new road look stays as in
+  `docs/roads-concept-d/after-*.jpg`.
+
+## Not done / notes for Release
+
+- PERF-001 startMB fails on main v1.06 too (2.704 MB, limit 2.55). This is not from roads; the startup helper or
+  Release should handle it.
+- No new spoken lines. No world positions or road courses changed. Bark-chip paths in forests (Concept D) are not done.
