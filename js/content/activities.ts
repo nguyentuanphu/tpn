@@ -88,7 +88,10 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   // (Học vui) the six science experiments and the two Tiếng Việt games (js/games/science.ts, js/games/tiengviet.ts)
   sci_float: ['hv_sci', 2, 1], sci_magnet: ['hv_sci', 3, 1], sci_ramp: ['hv_sci', 3, 1], sci_seesaw: ['hv_sci', 3, 2], sci_shadow: ['hv_sci', 3, 2], sci_sound: ['hv_sci', 2, 1],
   vi_tones: ['hv_vi', 3, 2], vi_build: ['hv_vi', 4, 2],
-  heodat: ['money', 2, 1], coinnote: ['money', 2, 1], lixi: ['money', 2, 1], needwant: ['money', 3, 1], cheaper: ['money', 3, 1], bahu: ['money', 3, 2], shoplist: ['money', 3, 2], waitgrow: ['money', 3, 2], shopkeep: ['money', 4, 2], barter: ['money', 4, 2]
+  heodat: ['money', 2, 1], coinnote: ['money', 2, 1], lixi: ['money', 2, 1], needwant: ['money', 3, 1], cheaper: ['money', 3, 1], bahu: ['money', 3, 2], shoplist: ['money', 3, 2], waitgrow: ['money', 3, 2], shopkeep: ['money', 4, 2], barter: ['money', 4, 2],
+  // (v1.08 science) the twelve new science experiments (js/games/science2.ts)
+  sci_plant: ['hv_sci', 2, 1], sci_water: ['hv_sci', 3, 1], sci_daynight: ['hv_sci', 3, 1], sci_seasons: ['hv_sci', 3, 1], sci_homes: ['hv_sci', 2, 1], sci_body: ['hv_sci', 2, 1],
+  sci_colours: ['hv_sci', 2, 1], sci_ice: ['hv_sci', 3, 1], sci_rainbow: ['hv_sci', 3, 2], sci_bulb: ['hv_sci', 4, 2], sci_gears: ['hv_sci', 4, 2], sci_recycle: ['hv_sci', 3, 1]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };

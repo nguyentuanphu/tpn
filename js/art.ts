@@ -12,4 +12,6 @@ import './art/round30.js';
 import './art/things-money.js';
 import './art/r90-audits.js';
 import './art/learning.js';
+// (v1.08 science) the twelve new science experiments
+import './art/science2.js';
 export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';
