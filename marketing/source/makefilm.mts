@@ -1,4 +1,4 @@
-// Puts a recorded film together: node makefilm.mjs <little|valley> <en|vi> <land|vert> <framesdir> <out.mp4>
+// Puts a recorded film together: node makefilm.mts <little|valley> <en|vi> <land|vert> <framesdir> <out.mp4>
 // frames (25 fps) + a caption at the start of each scene + the voice line + the jingle underneath + an end card
 // (sparklevalley.au) + a thumbnail (<out>-thumb.jpg, also the mp4's cover picture).
 import fs from 'fs';

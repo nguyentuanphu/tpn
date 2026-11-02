@@ -1,8 +1,8 @@
-// Records the little ones' film (the Simple screen): node rec-little.mjs <en|vi> <land|vert> <framesdir>
-// Writes frames and <framesdir>/marks.json (when each scene starts). The end card is added by makefilm.mjs.
+// Records the little ones' film (the Simple screen): node rec-little.mts <en|vi> <land|vert> <framesdir>
+// Writes frames and <framesdir>/marks.json (when each scene starts). The end card is added by makefilm.mts.
 // Owner, 11 Oct (second cut): quicker, with more in it: 17 games at about 7 s each, two stories, a flight to a place.
 import fs from 'fs';
-import { film } from './filmrec.mjs';
+import { film } from './filmrec.mts';
 globalThis.window = globalThis.window || {}; await import('./films2.js'); const SCENES = window.FILMS2.little;
 const [lang = 'en', shape = 'land', dir] = process.argv.slice(2);
 const L = shape === 'land' ? { w: 1280, h: 720, dpr: 1.5, pixelRatio: .9 } : { w: 540, h: 960, dpr: 2, pixelRatio: 1.2 };

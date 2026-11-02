@@ -1,4 +1,4 @@
-// node render10.mjs <ad> <lang>  -> frames10/<ad>-<lang>/f00001.jpg …, prints scene start times (JSON) for the voice-over mix
+// node render10.mts <ad> <lang>  -> frames10/<ad>-<lang>/f00001.jpg …, prints scene start times (JSON) for the voice-over mix
 import { chromium } from 'playwright';
 import fs from 'fs';
 const DIR = new URL('.', import.meta.url).pathname;

@@ -1,5 +1,5 @@
 // Ten ads for r82 (owner, 17 Oct 2026 AEDT): stills at 1080x1920 from the live game (r81) and Sparkle Studio, both languages.
-// node capture10.mjs <lang> [names...]   (game served on :8765; writes stills10/<name>-<lang>.jpg). Not a check.
+// node capture10.mts <lang> [names...]   (game served on :8765; writes stills10/<name>-<lang>.jpg). Not a check.
 import fs from 'fs';
 import path from 'path';
 import { launch, open, clear } from '../../tests/harness.mjs';

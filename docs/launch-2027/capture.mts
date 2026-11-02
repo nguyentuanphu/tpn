@@ -1,6 +1,6 @@
 // Launch 2027 (v1.07 helper "launch", 2 Nov 2026 AEDT): the still pictures for the three short launch videos and the
 // flyer, taken from the game itself (our own art only), in English and Vietnamese, as a phone screen (720 x 1280).
-// Not a check. Based on marketing/source/capture10.mjs.
+// Not a check. Based on marketing/source/capture10.mts.
 //   node tools/build.mts && python3 -m http.server 8765 &
 //   CHROMIUM=/opt/pw-browsers/chromium node docs/launch-2027/capture.mts <en|vi> [names...]
 // writes docs/launch-2027/shots/<name>-<lang>.jpg
