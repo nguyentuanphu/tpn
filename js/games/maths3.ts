@@ -15,7 +15,7 @@ const numText = (x: number, y: number, t: string | number, size = 30, f = OUT) =
 
 // ---------- Number Bonds: a whole and one part; find the other part ----------
 register({
-  id: 'mx_bonds', icon: 'mx:bonds', name: () => T('Number Bonds', 'Tách Gộp Số'),
+  id: 'mx_bonds', learn: true, icon: 'mx:bonds', name: () => T('Number Bonds', 'Tách Gộp Số'),
   run: api => {
     // (levels) the biggest whole, and whether dots help: Easy 5 with dots, Medium 10 with dots, Hard 10, Talent 20
     const L = lv(api, { max: 5, dots: true }, { max: 10, dots: true }, { max: 10, dots: false }, { max: 20, dots: false });
@@ -40,7 +40,7 @@ register({
 
 // ---------- Take Away: some go away; how many are left? ----------
 register({
-  id: 'mx_takeaway', icon: 'mx:takeaway', name: () => T('Take Away', 'Bớt Đi Còn Mấy'),
+  id: 'mx_takeaway', learn: true, icon: 'mx:takeaway', name: () => T('Take Away', 'Bớt Đi Còn Mấy'),
   run: api => {
     // (levels) Easy up to 5, Medium 10, Hard 15 with the number sentence, Talent 20 with only the number sentence
     const L = lv(api, { max: 5, pics: true, sum: false }, { max: 10, pics: true, sum: false }, { max: 15, pics: true, sum: true }, { max: 20, pics: false, sum: true });
@@ -62,7 +62,7 @@ register({
 
 // ---------- Skip Counting: count in twos, fives, tens; find the missing stone ----------
 register({
-  id: 'mx_skip', icon: 'mx:skip', name: () => T('Skip Counting', 'Đếm Cách Quãng'),
+  id: 'mx_skip', learn: true, icon: 'mx:skip', name: () => T('Skip Counting', 'Đếm Cách Quãng'),
   run: api => {
     // (levels) the steps: Easy 2s from 0, Medium 2s and 5s, Hard 5s and 10s, Talent 3s, 4s and 10s from anywhere
     const L = lv(api, { steps: [2], from0: true, len: 5 }, { steps: [2, 5], from0: true, len: 5 }, { steps: [5, 10], from0: false, len: 6 }, { steps: [3, 4, 10], from0: false, len: 6 });
@@ -87,7 +87,7 @@ register({
 // ---------- Patterns: what comes next? ----------
 const UNITS: [string, string][] = [['circle', '#e8433a'], ['square', '#3b6fe0'], ['triangle', '#43c463'], ['star', '#ffd23f'], ['heart', '#ff7eb8'], ['diamond', '#9a6bff']];
 register({
-  id: 'mx_patterns', icon: 'mx:patterns', name: () => T('Patterns', 'Quy Luật'),
+  id: 'mx_patterns', learn: true, icon: 'mx:patterns', name: () => T('Patterns', 'Quy Luật'),
   run: api => {
     // (levels) the kinds of pattern: Easy AB, Medium AAB and ABB, Hard ABC and AABB, Talent ABCD, ABAC and AABC
     const L = lv(api, ['AB'], ['AB', 'AAB', 'ABB'], ['ABC', 'AABB', 'AAB'], ['ABCD', 'ABAC', 'AABC']);
@@ -113,7 +113,7 @@ const HUNT: Record<string, [string, string]> = {
   oval: ['Find every oval!', 'Tìm tất cả hình bầu dục!'], diamond: ['Find every diamond!', 'Tìm tất cả hình thoi!'], pentagon: ['Find every pentagon!', 'Tìm tất cả hình ngũ giác!'], hexagon: ['Find every hexagon!', 'Tìm tất cả hình lục giác!']
 };
 register({
-  id: 'mx_shapehunt', icon: 'mx:shapehunt', name: () => T('Shapes Hunt', 'Săn Hình'),
+  id: 'mx_shapehunt', learn: true, icon: 'mx:shapehunt', name: () => T('Shapes Hunt', 'Săn Hình'),
   run: api => {
     // (levels) the shapes in the hunt and how many hide: Easy 3 kinds in 6, Medium 4 in 8, Hard 7 in 10, Talent 10 in 12
     const L = lv(api, { kinds: ['circle', 'square', 'triangle'], cells: 6 }, { kinds: ['circle', 'square', 'triangle', 'rectangle'], cells: 8 },
@@ -138,7 +138,7 @@ register({
 
 // ---------- Symmetry: choose the half that mirrors the picture ----------
 register({
-  id: 'mx_symmetry', icon: 'mx:symmetry', name: () => T('Symmetry', 'Đối Xứng'),
+  id: 'mx_symmetry', learn: true, icon: 'mx:symmetry', name: () => T('Symmetry', 'Đối Xứng'),
   run: api => {
     // (levels) the size of each half: Easy 2 by 2, Medium 3 rows by 2, Hard 3 by 3 in two colours, Talent 4 rows by 3 in two colours
     const L = lv(api, { rows: 2, cols: 2, cols2: 1 }, { rows: 3, cols: 2, cols2: 1 }, { rows: 3, cols: 3, cols2: 2 }, { rows: 4, cols: 3, cols2: 2 });
@@ -170,17 +170,21 @@ const WEIGH: Record<string, [string, string]> = {
 };
 // a balance with a left and a right thing (HTML in each pan); down: the side that goes down
 const balance = (a: string, b: string, down: 'l' | 'r', small = false) => {
-  const tilt = down === 'l' ? -12 : 12, w = small ? 150 : 260, h = small ? 120 : 170;
-  const box = el('div', ''); box.style.cssText = `position:relative;width:${w}px;height:${h}px`;
+  // the beam turns about its middle; each pan hangs straight down from its end, the heavy side lower
+  const w = small ? 150 : 260, sc = w / 260, h = 170 * sc, drop = Math.sin(12 * Math.PI / 180) * 100, yl = 40 + (down === 'l' ? drop : -drop), yr = 40 + (down === 'l' ? -drop : drop);
+  const box = el('div', ''); box.style.cssText = `position:relative;width:${w}px;height:${h}px;flex:none`;
+  const panSVG = (x: number, y: number) => `<path d="M${x} ${y}l-24 50h48z" fill="#ffd23f" stroke="${OUT}" stroke-width="3" stroke-linejoin="round"/>`;
   box.innerHTML = svgBox(260, 170, `<path d="M130 40v110M100 160h60" stroke="${OUT}" stroke-width="6" stroke-linecap="round"/><path d="M130 150l-22 14h44z" fill="#b07a4a" stroke="${OUT}" stroke-width="3"/>` +
-    `<g transform="rotate(${-tilt} 130 40)"><path d="M30 40h200" stroke="${OUT}" stroke-width="6" stroke-linecap="round"/><path d="M30 40l-24 50h48zM230 40l-24 50h48z" fill="#ffd23f" stroke="${OUT}" stroke-width="3" stroke-linejoin="round"/></g><circle cx="130" cy="40" r="7" fill="#e8433a" stroke="${OUT}" stroke-width="3"/>`, '');
+    `<path d="M30 ${yl}L230 ${yr}" stroke="${OUT}" stroke-width="6" stroke-linecap="round"/>${panSVG(30, yl)}${panSVG(230, yr)}<circle cx="130" cy="40" r="7" fill="#e8433a" stroke="${OUT}" stroke-width="3"/>`, '');
   (box.firstElementChild as HTMLElement).style.cssText = 'width:100%;height:100%';
-  const dy = Math.sin(tilt * Math.PI / 180) * 100 * (w / 260);
-  const pan = (html: string, side: 'l' | 'r') => { const p = el('div', ''); p.innerHTML = html; p.className = 'mx-pan' + (small ? ' small' : ''); p.style.cssText = `position:absolute;top:${(side === 'l' ? 8 + dy : 8 - dy) * (h / 170)}px;${side === 'l' ? 'left' : 'right'}:${small ? 0 : 6}px;width:${small ? 58 : 72}px;display:flex;justify-content:center`; box.appendChild(p); return p.firstElementChild as HTMLElement; };
+  const item = small ? 26 : 44, pw = small ? 44 : 64;
+  const pan = (html: string, side: 'l' | 'r') => { const p = el('div', ''); p.innerHTML = html; p.className = 'mx-pan' + (small ? ' small' : '');
+    const x = (side === 'l' ? 30 : 230) * sc, y = ((side === 'l' ? yl : yr) + 50) * sc - item - (small ? 2 : 12);
+    p.style.cssText = `position:absolute;top:${y}px;left:${x - pw / 2}px;width:${pw}px;display:flex;justify-content:center`; box.appendChild(p); return p.firstElementChild as HTMLElement; };
   return { box, l: pan(a, 'l'), r: pan(b, 'r') };
 };
 register({
-  id: 'mx_heavy', icon: 'mx:heavy', name: () => T('Heavier or Lighter', 'Nặng Hay Nhẹ'),
+  id: 'mx_heavy', learn: true, icon: 'mx:heavy', name: () => T('Heavier or Lighter', 'Nặng Hay Nhẹ'),
   run: api => {
     // (levels) Easy: one balance, which is heavier; Medium: heavier or lighter; Hard: two balances and three things, which is
     // the heaviest; Talent: the same with three boxes that look alike, so only the balances tell
@@ -213,7 +217,7 @@ const FILL: Record<string, [string, string]> = {
 };
 const glass = (v: number) => `<svg class="mx-art" viewBox="0 0 60 92" width="54" height="84" aria-hidden="true"><defs><clipPath id="mx-glass"><path d="M8 16h44l-5 70H13z"/></clipPath></defs><path d="M8 16h44l-5 70H13z" fill="#e8f6ff"/>${v > 0 ? `<rect x="0" y="${86 - 64 * v}" width="60" height="${64 * v + 2}" fill="#5fb6ff" clip-path="url(#mx-glass)"/>` : ''}<path d="M8 16h44l-5 70H13z" fill="none" stroke="${OUT}" stroke-width="3" stroke-linejoin="round"/></svg>`;
 register({
-  id: 'mx_full', icon: 'mx:full', name: () => T('Full or Empty', 'Đầy Hay Rỗng'),
+  id: 'mx_full', learn: true, icon: 'mx:full', name: () => T('Full or Empty', 'Đầy Hay Rỗng'),
   run: api => {
     // (levels) Easy: a full and an empty glass; Medium: three, with a half; Hard: four, the most or the least; Talent: five, any question
     const L = lv(api, { n: 2, asks: ['full', 'empty'] }, { n: 3, asks: ['full', 'empty', 'half'] }, { n: 4, asks: ['most', 'least', 'half'] }, { n: 5, asks: ['most', 'least', 'half', 'full', 'empty'] });
@@ -251,7 +255,7 @@ const pizza = (n: number, k: number, equal = true, size = 54) => {
   return `<svg class="mx-art" viewBox="0 0 60 60" width="${size}" height="${size}" aria-hidden="true">${s}</svg>`;
 };
 register({
-  id: 'mx_pizza', icon: 'mx:pizza', name: () => T('Pizza Fractions', 'Phân Số Bánh Pizza'),
+  id: 'mx_pizza', learn: true, icon: 'mx:pizza', name: () => T('Pizza Fractions', 'Phân Số Bánh Pizza'),
   run: api => {
     // (levels) Easy: which is cut into equal halves; Medium: a half, a third or a quarter left; Hard: also two thirds and three
     // quarters; Talent: what fraction is left, written as a fraction
@@ -273,7 +277,7 @@ register({
 // ---------- Picture Graph ----------
 const GRAPH_FRUIT: [string, [string, string]][] = [['🍎', ['How many apples are there?', 'Có bao nhiêu quả táo?']], ['🍌', ['How many bananas are there?', 'Có bao nhiêu quả chuối?']], ['🍓', ['How many strawberries are there?', 'Có bao nhiêu quả dâu?']], ['🍇', ['How many bunches of grapes are there?', 'Có bao nhiêu chùm nho?']]];
 register({
-  id: 'mx_graph', icon: 'mx:graph', name: () => T('Picture Graph', 'Biểu Đồ Tranh'),
+  id: 'mx_graph', learn: true, icon: 'mx:graph', name: () => T('Picture Graph', 'Biểu Đồ Tranh'),
   run: api => {
     // (levels) Easy: two columns, which has the most; Medium: three, most or fewest; Hard: four, how many of one fruit;
     // Talent: four, how many more in the tallest column than in the shortest
@@ -306,7 +310,7 @@ const CAL: Record<string, [string, string]> = {
   nextmonth: ['The star is this month. Which month comes next?', 'Ngôi sao là tháng này. Tháng tiếp theo là tháng mấy?'], lastmonth: ['The star is this month. Which month came before?', 'Ngôi sao là tháng này. Tháng trước là tháng mấy?']
 };
 register({
-  id: 'mx_calendar', icon: 'mx:calendar', name: () => T('Calendar', 'Lịch'),
+  id: 'mx_calendar', learn: true, icon: 'mx:calendar', name: () => T('Calendar', 'Lịch'),
   run: api => {
     // (levels) Easy: the week, tomorrow; Medium: tomorrow or yesterday; Hard: a month page, one week later; Talent: two weeks
     // later, or the months of the year

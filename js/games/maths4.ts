@@ -21,7 +21,7 @@ const clockSVG = (h: number, m: number) => {
   return svgBox(200, 200, s);
 };
 register({
-  id: 'mx_quarter', icon: 'mx:quarter', name: () => T('Quarter Past', 'Mấy Giờ Rồi'),
+  id: 'mx_quarter', learn: true, icon: 'mx:quarter', name: () => T('Quarter Past', 'Mấy Giờ Rồi'),
   run: api => {
     // (levels) the minutes the clock can show: Easy o'clock, Medium and half past, Hard and quarter past or to, Talent every 5 minutes
     const L = lv(api, [0], [0, 30], [0, 15, 30, 45], range(0, 11).map(i => i * 5));
@@ -55,7 +55,7 @@ function puzzle(n: number, blanks: number) {
   return null;
 }
 register({
-  id: 'mx_sudoku', icon: 'mx:sudoku', name: () => T('Number Puzzle', 'Ô Số Vui'),
+  id: 'mx_sudoku', learn: true, icon: 'mx:sudoku', name: () => T('Number Puzzle', 'Ô Số Vui'),
   run: api => {
     // (levels) Easy: 3 by 3 with 3 empty squares; Medium: 4 by 4 with 4; Hard: 4 by 4 with 6; Talent: 4 by 4 with 9
     const L = lv(api, { n: 3, blanks: 3 }, { n: 4, blanks: 4 }, { n: 4, blanks: 6 }, { n: 4, blanks: 9 });
@@ -84,7 +84,7 @@ const RACE: Record<string, [string, string]> = {
 };
 const car = (n: number, colour: string) => `<svg class="mx-art" viewBox="0 0 110 56" width="110" height="56" aria-hidden="true"><path d="M20 14h48l16 14h18v16H6V28z" fill="${colour}" stroke="${OUT}" stroke-width="3" stroke-linejoin="round"/><path d="M30 18h18v10H24zM54 18h12l10 10H54z" fill="#dff4ff" stroke="${OUT}" stroke-width="2"/><circle cx="26" cy="46" r="8" fill="#5b5268" stroke="${OUT}" stroke-width="3"/><circle cx="84" cy="46" r="8" fill="#5b5268" stroke="${OUT}" stroke-width="3"/><rect x="${n > 99 ? 38 : 44}" y="30" width="${n > 99 ? 34 : 22}" height="14" rx="4" fill="#fff" stroke="${OUT}" stroke-width="1.6"/>${numText(55, 37.5, n, n > 99 ? 12 : 13)}</svg>`;
 register({
-  id: 'mx_bigger', icon: 'mx:bigger', name: () => T('Bigger Number Race', 'Đua Số Lớn'),
+  id: 'mx_bigger', learn: true, icon: 'mx:bigger', name: () => T('Bigger Number Race', 'Đua Số Lớn'),
   run: api => {
     // (levels) Easy: two cars up to 10; Medium: three up to 20; Hard: three up to 100, bigger or smaller; Talent: four up to 999
     const L = lv(api, { cars: 2, max: 10, asks: ['bigger'] }, { cars: 3, max: 20, asks: ['biggest'] }, { cars: 3, max: 100, asks: ['biggest', 'smallest'] }, { cars: 4, max: 999, asks: ['biggest', 'smallest'] });
@@ -111,14 +111,14 @@ const ladybird = (left: number, right: number | null) => svgBox(220, 170, `<path
   `<path d="M112 30c68 0 88 60 78 90-10 30-50 42-78 42z" fill="${right === null ? '#fff6e4' : '#e8433a'}" stroke="${OUT}" stroke-width="4" ${right === null ? 'stroke-dasharray="8 6"' : ''}/>${right === null ? numText(150, 96, '?', 40, '#e8433a') : spotsAt(150, 92, right)}` +
   `<circle cx="110" cy="24" r="18" fill="${OUT}"/><circle cx="103" cy="20" r="3.4" fill="#fff"/><circle cx="117" cy="20" r="3.4" fill="#fff"/>`);
 register({
-  id: 'mx_doubles', icon: 'mx:doubles', name: () => T('Doubles', 'Gấp Đôi'),
+  id: 'mx_doubles', learn: true, icon: 'mx:doubles', name: () => T('Doubles', 'Gấp Đôi'),
   run: api => {
     // (levels) Easy: doubles to 3 with both wings shown; Medium: to 5, one wing; Hard: to 10, the number only; Talent: halves of
     // doubles to 20
     const L = lv(api, { max: 3, mode: 'both' }, { max: 5, mode: 'one' }, { max: 10, mode: 'sum' }, { max: 10, mode: 'half' });
     api.stage.dataset.lv = `${L.max},${L.mode}`;
     const list: Round[] = mix(range(1, L.max)).concat(mix(range(1, L.max))).slice(0, rounds(api)).map(n => {
-      if (L.mode === 'half') return { ask: () => api.say(`Half of ${n * 2} is how many?`, `Một nửa của ${n * 2} là bao nhiêu?`), answer: String(n), others: near(n, 0, 12, wrongs(api)), key: 'h' + n, draw: stage => { stage.appendChild(el('div', 'mx-big', `${n * 2} : 2 = <b>?</b>`)); } };
+      if (L.mode === 'half') return { ask: () => api.say(`Half of ${n * 2} is how many?`, `Một nửa của ${n * 2} là bao nhiêu?`), answer: String(n), others: near(n, 0, 12, wrongs(api)), key: 'h' + n, draw: stage => { stage.appendChild(el('div', 'mx-big', `${n * 2} ÷ 2 = <b>?</b>`)); } };
       return { ask: () => api.say(`Double ${n} is how many?`, `Gấp đôi ${n} là bao nhiêu?`), answer: String(n * 2), others: near(n * 2, 0, 22, wrongs(api)), key: 'd' + n,
         draw: stage => { if (L.mode === 'sum') stage.appendChild(el('div', 'mx-big', `${n} + ${n} = <b>?</b>`)); else stage.insertAdjacentHTML('beforeend', ladybird(Math.min(n, 6), L.mode === 'both' ? Math.min(n, 6) : null)); } };
     });
@@ -134,7 +134,7 @@ const sticks = (tens: number, ones: number) => {
   return svgBox(Math.max(x + 6, 120), 90, s);
 };
 register({
-  id: 'mx_tens', icon: 'mx:tens', name: () => T('Tens and Ones', 'Chục và Đơn Vị'),
+  id: 'mx_tens', learn: true, icon: 'mx:tens', name: () => T('Tens and Ones', 'Chục và Đơn Vị'),
   run: api => {
     // (levels) Easy: one ten and some ones; Medium: up to 5 tens; Hard: up to 9 tens; Talent: also how many tens a number has
     const L = lv(api, { tens: 1, askTens: false }, { tens: 5, askTens: false }, { tens: 9, askTens: false }, { tens: 9, askTens: true });
@@ -151,7 +151,7 @@ register({
 
 // ---------- Missing Number ----------
 register({
-  id: 'mx_missing', icon: 'mx:missing', name: () => T('Missing Number', 'Tìm Số Còn Thiếu'),
+  id: 'mx_missing', learn: true, icon: 'mx:missing', name: () => T('Missing Number', 'Tìm Số Còn Thiếu'),
   run: api => {
     // (levels) Easy: counting on to 10; Medium: to 20; Hard: counting back to 30; Talent: a number sentence, a + ? = b
     const L = lv(api, { max: 10, back: false, sum: false }, { max: 20, back: false, sum: false }, { max: 30, back: true, sum: false }, { max: 20, back: true, sum: true });
@@ -184,7 +184,7 @@ const solidSVG = (k: string, size = 54) => {
 // real things and the solid each is like (all our own drawings)
 const LIKE: [string, string][] = [['⚽', 'sphere'], ['🍊', 'sphere'], ['🎲', 'cube'], ['🧊', 'cube'], ['🥫', 'cylinder'], ['🥁', 'cylinder'], ['🕯️', 'cylinder'], ['🍦', 'cone'], ['📦', 'cuboid'], ['🧱', 'cuboid']];
 register({
-  id: 'mx_solids3d', icon: 'mx:solids3d', name: () => T('Shapes in 3D', 'Hình Khối 3D'),
+  id: 'mx_solids3d', learn: true, icon: 'mx:solids3d', name: () => T('Shapes in 3D', 'Hình Khối 3D'),
   run: api => {
     // (levels) Easy: a thing and three solids to match; Medium: four solids; Hard: the solid's name; Talent: how many flat faces
     const L = lv(api, { mode: 'like', kinds: ['sphere', 'cube', 'cylinder', 'cone'] }, { mode: 'like', kinds: ['sphere', 'cube', 'cylinder', 'cone', 'cuboid'] }, { mode: 'name', kinds: Object.keys(SOLIDS) }, { mode: 'faces', kinds: Object.keys(SOLIDS) });
@@ -210,7 +210,7 @@ const SIDE: Record<string, [string, string]> = {
 };
 const ANIMALS = ['🐶', '🐱', '🐰', '🐸', '🐻', '🐼', '🦊', '🐷', '🐵', '🦁', '🐮', '🐔'];
 register({
-  id: 'mx_leftright', icon: 'mx:leftright', name: () => T('Left and Right', 'Trái và Phải'),
+  id: 'mx_leftright', learn: true, icon: 'mx:leftright', name: () => T('Left and Right', 'Trái và Phải'),
   run: api => {
     // (levels) Easy: two animals, left or right; Medium: four, next to the star; Hard: five, second from a side; Talent: six, two
     // places from the star
@@ -234,7 +234,7 @@ register({
 
 // ---------- Mental Maths Sprint ----------
 register({
-  id: 'mx_sprint', icon: 'mx:sprint', name: () => T('Mental Maths Sprint', 'Tính Nhẩm Nhanh'),
+  id: 'mx_sprint', learn: true, icon: 'mx:sprint', name: () => T('Mental Maths Sprint', 'Tính Nhẩm Nhanh'),
   run: api => {
     // (levels) Easy: adding to 5; Medium: adding and taking away to 10; Hard: to 20; Talent: tens and ones to 100
     const L = lv(api, { max: 5, minus: false, big: false }, { max: 10, minus: true, big: false }, { max: 20, minus: true, big: false }, { max: 100, minus: true, big: true });
@@ -256,7 +256,7 @@ register({
 
 // ---------- Count by Grouping ----------
 register({
-  id: 'mx_grouping', icon: 'mx:grouping', name: () => T('Count by Grouping', 'Đếm Theo Nhóm'),
+  id: 'mx_grouping', learn: true, icon: 'mx:grouping', name: () => T('Count by Grouping', 'Đếm Theo Nhóm'),
   run: api => {
     // (levels) the size of each group: Easy 2s, Medium 5s, Hard 10s, Talent 3s and 4s
     const L = lv(api, { sizes: [2], max: 5 }, { sizes: [5], max: 4 }, { sizes: [10], max: 6 }, { sizes: [3, 4], max: 5 });

@@ -31,7 +31,7 @@ function style() {
 .mx-note { font: 700 15px var(--font, sans-serif); color: #6b5a7d; text-align: center; }
 .mx-svg { width: min(300px, 80vw); height: auto; }
 .mx-pan .art { width: 44px; height: 44px; }
-.mx-pan.small .art { width: 34px; height: 34px; }
+.mx-pan.small .art, .mx-pan.small .mx-art { width: 26px; height: 26px; }
 `));
 }
 
