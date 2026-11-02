@@ -20,3 +20,25 @@ Helper: rules. Branch: `work/v107-rules`. Started 2 Nov 2026, 11:00 am AEDT.
 ## Progress
 
 - 11:00 am AEDT: briefs read, game list made, audit started.
+- About 12:30 pm AEDT: audit done for every rules game (table: `docs/rules-audit/README.md`). Eleven wrong rules, guides or lines fixed in each game's own file. New check `tests/unit/rules-audit.test.mjs` (fails without the fixes, passes with them). Commit `09c5b6bf`, then a type fix in `js/games/sudoku-core.ts` (`Set<number>`).
+- New spoken lines recorded with Azure (`node tools/make-voice-pack.mts --engine azure`): 12 files (3 English and 3 Vietnamese lines, woman and man voices), committed under `voices/`.
+- Paused at about 12:40 pm AEDT on Release's "slow down" message (usage). Waiting for "resume" after 2 pm AEDT.
+
+## Checks so far
+
+- `node --test unit/rules-audit.test.mjs`: pass (2/2).
+- Quick checks (`suite.mjs --only unit,rules,types,arch,emoji,noemoji,preload,names,bilingual`): 7/9 pass.
+  - `types` failed on `sudoku-core.ts` (Set type). Fixed in the paused commit; not re-run yet.
+  - `unit` failed only on `live-content.test.mjs` / management tests: "Cannot find package 'pg'". This is the session's setup (root `npm ci` not run), not this change. Not re-run yet.
+- `suite.mjs --changed` picks the **full suite** (`.gitignore` changed: the build added `js/games/sudoku-core.js` to it). By the round rules it runs on GitHub, not locally.
+
+## Exact next step (after "resume")
+
+1. Run `npm ci` in the repo root (for `pg`), then re-run `cd tests && node suite.mjs --only unit,types` (game server: `python3 -m http.server 8765`).
+2. Start `.github/workflows/full-suite.yml` with workflow_dispatch on `work/v107-rules`; fix anything red.
+3. Look at phone, tablet and computer pictures of Bánh Chưng, Duck Duck Goose and Pass the Parcel.
+4. Open the draft pull request "v1.07 rules: audit and rule fixes", then write "ready for Release" at the top of this file.
+
+## For the levels helper
+
+Only rule code changed in shared game files: `folk.ts` (Mr Wolf dinner step), `folk2.ts` (Parcel stop layer), `outside.ts` (Duck Duck Goose goose and sitting; Tag line), `vietnam2.ts` (Bánh Chưng steps), `more.ts` (Sudoku holes now from `sudoku-core.ts`), `snakes.ts`, `thinking2.ts`, `vietnam.ts`, `cacuangua-core.ts`. No level numbers changed. Left for levels: Snap under-5 uncles still snap after about 4 s; Đá Cầu drop does not reset the count.

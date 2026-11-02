@@ -24,7 +24,7 @@ export function sudokuSolutions(sol: number[][], empty: Set<number>, limit = 2) 
 export function sudokuHoles(sol: number[][], holes: number) {
   const n = sol.length;
   for (let tries = 0; ; tries++) {
-    const empty = new Set(shuffle(Array.from({ length: n * n }, (_, i) => i)).slice(0, holes));
+    const empty = new Set<number>(shuffle(Array.from({ length: n * n }, (_, i) => i)).slice(0, holes));
     if (sudokuSolutions(sol, empty) === 1 || tries > 400) return empty;
   }
 }
