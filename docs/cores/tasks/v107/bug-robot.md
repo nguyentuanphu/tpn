@@ -1,5 +1,8 @@
 # v1.07 bug-robot: status
 
+**ready for Release** (2 Nov 2026 AEDT). The workflow fixes are done; the robot itself stays off until the Claude
+key is fixed (owner: "Leave it for now", see Owner's decisions).
+
 Branch: `work/v107-bug-robot` (from main v1.06). Started 2 Nov 2026, 10:56 am AEDT.
 
 ## Plan
@@ -36,7 +39,29 @@ Branch: `work/v107-bug-robot` (from main v1.06). Started 2 Nov 2026, 10:56 am AE
 - A hand start for one issue (Run workflow, issue number) is a deliberate retry: it takes a `robot-stuck` bug again
   without taking the label off first. The timer and new or labelled issues still skip `robot-stuck` bugs.
 - When a retried bug ends fixed or with a plan, `robot-stuck` is taken off.
+- Runs that will do nothing (a comment that is not a trusted "go", an issue without `bug`) get their own
+  concurrency group, so they no longer cancel the real waiting run; a hand start from a branch other than main has
+  its own group too (main's robot skips the robot-stuck bug it retries).
+- New last try: an Anthropic API key (repository secret `ANTHROPIC_API_KEY`), the way Claude's message offers. It is
+  used only after the OAuth accounts fail and only if the secret is set; nothing is set now.
 - No new permissions, no change to who pushes or where.
+
+## Owner's decisions
+- 2 Nov 2026 AEDT, asked with a pop-up: how to fix the Claude key (new personal token, turn access back on in the
+  organization, an API key, or leave it). Owner: **"Leave it for now"**. The robot stays off; bugs are fixed by
+  Release and the helpers. To turn it back on later: put a working key in `CLAUDE_CODE_OAUTH_TOKEN` (a
+  `claude setup-token` from an account whose organization allows Claude Code) or add `ANTHROPIC_API_KEY`, then
+  start Bug robot by hand with issue 747.
+
+## Issues that could be retried (no labels changed in bulk)
+Once the key works, these are worth a hand start (Run workflow, issue number), one at a time:
+- #747 (now labelled `small`, the test issue: auto play should ignore the "open in another tab" stop screen) and
+  #748 (Shopping List, same cause).
+- If tester-bugs leaves them: #754, #755, #756 (games that did not open), #772, #775, #778 (did not close).
+All others are `big` and would only get a plan. #770 to #781 had no `robot-stuck` before today; the run started
+on main by the #747 label change (41364881613) went through them with the old workflow and will have marked them
+stuck too. #34 and #36 are `on-hold`. Note: tester-issues files every report as `big`, so the timer only writes
+plans; a bug reaches "fix" only when the Front Desk labels it `small` or the owner comments "go".
 
 ## The test run
 - Issue: #747 (Swap and Trade: "a button covered by something"). The cover was the game's own "Sparkle Valley is open
@@ -44,7 +69,14 @@ Branch: `work/v107-bug-robot` (from main v1.06). Started 2 Nov 2026, 10:56 am AE
   that screen is up. It is one file (`js/autoplay.ts`, play core), so it fits the small-bug rule; label changed from
   `big` to `small` on this one issue only. tester-bugs: the robot's branch for #747 is `bugfix/play-747`, compare
   before fixing it again.
-- Result: (pending, see below)
+- Run 1 (41364888667, 11:01 am AEDT) was cancelled while waiting: comment runs (Netlify's comments on pull requests
+  too) took the robot's single waiting place. Fixed (see below).
+- Run 2 (41366146887, 11:15 am AEDT): the pick step took #747 again as `play, fix` (the retry works). Claude stopped
+  after 0.35 s, and the new step printed the real reason for the first time:
+  **"Your organization has disabled Claude subscription access for Claude Code · Use an Anthropic API key instead,
+  or ask your admin to enable access"**. The issue comment on #747 now says this sentence.
+- So the root cause is the account behind `CLAUDE_CODE_OAUTH_TOKEN`, not the workflow. The AI review uses the same
+  key and has the same problem. No fix reached a `bugfix/*` branch; there is no robot branch for Release yet.
 
 ## Old remote branches already fully in main (2 Nov 2026 AEDT; none deleted)
 Test: `git merge-tree --write-tree origin/main <branch>` gives exactly main's tree, so merging the branch would add
@@ -66,4 +98,10 @@ work/after-v104-20261031, work/v107-*.
 - The error-message filter tried on a made-up execution file: prints the message and hides a key-like string: pass.
 
 ## Progress
-- 2 Nov 2026, 11:30 am AEDT: cause found, workflow fixed, test run next.
+- 2 Nov 2026, 11:30 am AEDT: first findings, workflow fixed, test run next.
+- 2 Nov 2026, 11:45 am AEDT: real cause found (Claude account setting), queue fix, API key fallback, owner asked.
+
+## Not done
+- A real fix through the robot (blocked by the key; owner chose to leave it for now).
+- ai-review.yml has the same key problem; it was not changed (not in this brief).
+- `cd tests && node suite.mjs --changed`: not run; only a workflow file and docs changed, no game code.

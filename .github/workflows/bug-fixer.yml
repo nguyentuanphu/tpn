@@ -10,7 +10,7 @@
 #     credentials; only the last job pushes, and only to refs/heads/bugfix/*. Release merges, after "yes, deploy".
 #
 # Needs the secret CLAUDE_CODE_OAUTH_TOKEN or CLAUDE_CODE_OAUTH_TOKEN_GIVEAWAY (`claude setup-token`); CLAUDE_CODE_OAUTH_TOKEN_BACKUP (another account) is
-# tried when the first one fails. Times in its notes are Sydney time (AEDT or AEST, owner 10 Oct).
+# tried when the first one fails, then ANTHROPIC_API_KEY (an Anthropic API key, v1.07) if it is set. Times in its notes are Sydney time (AEDT or AEST, owner 10 Oct).
 name: Bug robot
 on:
   issues:
@@ -134,8 +134,9 @@ jobs:
       N: ${{ matrix.bug.n }}
       CORE: ${{ matrix.bug.core }}
       MODE: ${{ matrix.bug.mode }}
-      HAS_KEY: ${{ (secrets.CLAUDE_CODE_OAUTH_TOKEN || secrets.CLAUDE_CODE_OAUTH_TOKEN_GIVEAWAY) != '' }}
+      HAS_KEY: ${{ (secrets.CLAUDE_CODE_OAUTH_TOKEN || secrets.CLAUDE_CODE_OAUTH_TOKEN_GIVEAWAY || secrets.ANTHROPIC_API_KEY) != '' }}
       HAS_BACKUP: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN_BACKUP != '' }}
+      HAS_API_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -228,6 +229,20 @@ jobs:
           prompt: 'Read .bugfix/task.md and do exactly what it says. An earlier try may have started: check git status and git log first.'
           claude_args: '--max-turns 120 --allowedTools Bash,Read,Write,Edit,Glob,Grep --disallowedTools "Bash(git push:*)"'
 
+      - name: Claude works on the bug (API key)
+        # v1.07: from 17 Oct the account behind the OAuth key answered "Your organization has disabled Claude
+        # subscription access for Claude Code". An Anthropic API key (repository secret ANTHROPIC_API_KEY, paid per use)
+        # is the way the message offers; it is tried only when the accounts above did not finish.
+        id: apikey
+        if: steps.primary.outcome == 'failure' && (steps.backup.outcome == 'failure' || steps.backup.outcome == 'skipped') && env.HAS_API_KEY == 'true'
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
+          prompt: 'Read .bugfix/task.md and do exactly what it says. An earlier try may have started: check git status and git log first.'
+          claude_args: '--max-turns 120 --allowedTools Bash,Read,Write,Edit,Glob,Grep --disallowedTools "Bash(git push:*)"'
+
       - name: Say why Claude stopped (if it did not finish)
         # v1.07 (bug-robot helper, 2 Nov 2026 AEDT): from 17 Oct every run stopped after 0.2 s with "is_error: true" and
         # no cost, and the action hides Claude's output, so nobody could see why. This step prints only the closing
@@ -237,9 +252,10 @@ jobs:
         env:
           PRIMARY_FILE: ${{ steps.primary.outputs.execution_file }}
           BACKUP_FILE: ${{ steps.backup.outputs.execution_file }}
+          APIKEY_FILE: ${{ steps.apikey.outputs.execution_file }}
         run: |
           : > .bugfix/why.txt
-          for pair in "main account:$PRIMARY_FILE" "backup account:$BACKUP_FILE"; do
+          for pair in "main account:$PRIMARY_FILE" "backup account:$BACKUP_FILE" "API key:$APIKEY_FILE"; do
             who=${pair%%:*}; f=${pair#*:}
             [ -n "$f" ] && [ -s "$f" ] || continue
             msg=$(jq -r '
