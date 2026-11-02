@@ -16,4 +16,5 @@ import './art/learning.js';
 import './art/companion-hats.js';
 // (v1.08 science) the twelve new science experiments
 import './art/science2.js';
+import './art/english.js'; // (v1.08 english)
 export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';

@@ -14,6 +14,7 @@ import { isOpen, isHeld } from '../content/unlocks.js';
 import { GAME_INFO } from '../content/activities.js';
 import { GAMES, register, SKILLS } from './registry.js';
 import { playWatch, tell, setPlan } from './playwatch.js';
+import { englishFor, enterEnglish, keepEnglish } from '../englishmode.js'; // (v1.08 english)
 export { GAMES, register }; // (the list itself is in registry.js)
 // Each kind of game has its own song.
 const GAME_MUSIC = {
@@ -59,6 +60,9 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
   const def = GAMES[id]; if (!def || !canStartGame(id,players)) return Promise.resolve({ won: false });
   const nextName = nextId && GAMES[nextId] ? GAMES[nextId].name() : '';
   if (current) current.close(false);
+  // (v1.08 english) English mode: a game chosen in Học vui › Tiếng Anh, or an English game of its own, plays in English
+  // (words, voice, instructions) with a Vietnamese hint under the instruction (js/englishmode.ts)
+  const english = englishFor(id, def) ? enterEnglish() : null;
   return new Promise<GameResult>(resolve => {
     const layer = el('div', 'gl gl-' + style + (little ? ' little' : ''));
     layer.dataset.gameId = id;
@@ -70,6 +74,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     if (def.learn && little) layer.classList.add('pic-only');
     // (r79 learning, UX-001) learning games keep one height for the question line, so a longer explanation never moves the board
     if (def.learn) layer.classList.add('learn');
+    if (english) { layer.classList.add('english'); layer.dataset.english = '1'; }
     layer.innerHTML = `
       <div class="gl-head">
         <button class="gl-x" aria-label="${T('Leave', 'Rời đi')}">✕</button>
@@ -92,6 +97,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
       const before = help.offsetHeight, text = T(en, vi);
       help.textContent = capital ? text.charAt(0).toUpperCase() + text.slice(1) : text;
       help.classList.remove('open');
+      if (english) english.hint(layer, vi == null ? '' : String(vi));
       // Retain the largest guidance height so selecting a piece cannot move its drop target.
       help.style.setProperty('--gl-guide-height', Math.max(before, help.offsetHeight) + 'px');
     };
@@ -287,6 +293,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     function finish(won: boolean, extra: Partial<GameResult> = {}) {
       if (closed) return; closed = true; current = null;
       cleanups.forEach(f => { try { f(); } catch (e) { } });
+      if (english) { english.leave(); keepEnglish(id); }
       layer.classList.add('out'); setTimeout(() => layer.remove(), 300);
       Music.play(prevMusic || 'field');
       resolve(Object.assign({ won }, extra));

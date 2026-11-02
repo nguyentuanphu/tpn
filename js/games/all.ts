@@ -1,4 +1,5 @@
 import './learning-meta.js';
+import './english-meta.js'; // (v1.08 english) the English games' guides
 // Keep menu metadata synchronous; fetch each implementation group only when a game opens.
 import { register, GAMES } from './registry.js';
 import { GAME_CATALOG, GAME_LOADERS } from './catalog.js';

@@ -14,6 +14,7 @@ import { originFlags } from '../icons.js';
 import { pic } from '../art.js';
 import { modal, dialog } from '../popups.js';
 import { festCalendarHTML } from './festivals-ui.js';
+import { markEnglish, englishBadge } from '../englishmode.js'; // (v1.08 english)
 // (the Học vui corners, as in js/content/hocvui.ts; written here so the content loads only with its games: PERF-001)
 const CORNERS = ['hv_vi', 'hv_en', 'hv_math', 'hv_sci'] as const;
 const FOLK_SHOW = ['music', 'firstwords', 'tangram', 'snakes', 'rangoli', 'words', 'mrwolf', 'cricket', 'parcel', 'sackrace', 'chuyen', 'dragon', 'datnieu', 'kite', 'chichi', 'marbles', 'skipping', 'dacau', 'snap', 'tienlen', 'oantuti', 'nemlon', 'oanquan', 'hopscotch', 'tug', 'caro', 'goat'];
@@ -71,7 +72,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
   // (Học vui) a link to a game that lives in another tab: it plays the same game, and a small badge shows its home tab
   const linkCard = (id, k, key) => {
     const g = GAMES[id], lv = p.levels[id] || 1, home = homeTabOf(id);
-    return `<div class="hcard hlink" style="--hc:${HUB_COLORS[(k + key.length) % HUB_COLORS.length]}"><button class="hplay" data-link="${id}"><span class="hi">${pic(g.icon)}</span><b>${esc(g.name())}</b><small>${'⭐'.repeat(lv)}${'☆'.repeat(5 - lv)}</small></button><button class="hhow" data-how="${id}" aria-label="${T('How to play', 'Cách chơi')}">📺</button>${home ? `<span class="hfrom" title="${esc(T('Also in', 'Cũng có ở') + ' ' + home.short())}">${pic(home.icon)}</span>` : ''}</div>`;
+    return `<div class="hcard hlink" style="--hc:${HUB_COLORS[(k + key.length) % HUB_COLORS.length]}"><button class="hplay" data-link="${id}"${key.endsWith('hv_en') ? ' data-english="1"' : ''}><span class="hi">${pic(g.icon)}</span><b>${esc(g.name())}</b><small>${'⭐'.repeat(lv)}${'☆'.repeat(5 - lv)}</small></button><button class="hhow" data-how="${id}" aria-label="${T('How to play', 'Cách chơi')}">📺</button>${home ? `<span class="hfrom" title="${esc(T('Also in', 'Cũng có ở') + ' ' + home.short())}">${pic(home.icon)}</span>` : ''}</div>`;
   };
   const card2 = sec => {
     const area = sec.area || sec.key, ids = sec.games.filter(id => GAMES[id]);
@@ -93,7 +94,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
       const fam = familySongs().length, groups = SONG_GROUPS.filter(g => g.key === 'family' ? fam : SONG_LIST.some(s => s.group === g.key && Music.has(s.key)));
       return `<h3>🎵 ${T('Songs: tap to listen', 'Bài hát: chạm để nghe')}</h3><div class="festrow songrow">${groups.map(g => `<button class="festbtn" data-songs="${g.key}"><span>${pic(g.icon)}</span><b>${esc(g.name())}</b></button>`).join('')}</div>`;
     }
-    const sec = SECS.find(x => x.key === key) || SECS[0]; return `<h3>${/^[a-z]+:/.test(sec.icon) ? pic(sec.icon) : sec.icon} ${esc(sec.title())}</h3>${sec.groups.map(g => `${sec.groups.length > 1 ? `<h4 class="hubarea">${pic(g.area.icon)} ${esc(g.area.name())}</h4>` : ''}${card2({ key: sec.key + g.area.key, area: g.area.key, games: g.games, links: g.links })}`).join('')}`;
+    const sec = SECS.find(x => x.key === key) || SECS[0]; return `<h3>${/^[a-z]+:/.test(sec.icon) ? pic(sec.icon) : sec.icon} ${esc(sec.title())}</h3>${sec.groups.map(g => `${sec.groups.length > 1 ? `<h4 class="hubarea">${pic(g.area.icon)} ${esc(g.area.name())}${g.area.key === 'hv_en' ? englishBadge() : ''}</h4>` : ''}${card2({ key: sec.key + g.area.key, area: g.area.key, games: g.games, links: g.links })}`).join('')}`;
   };
   card.innerHTML = `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>🎮 ${T('Play', 'Vui chơi')}</h2>
     <div class="hubtabs" role="tablist">${tabs.map(t => `<button role="tab" data-tab="${t.key}"><span>${pic(t.icon)}</span><small>${esc(t.short())}</small></button>`).join('')}</div>
@@ -111,10 +112,10 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     root.querySelectorAll('[data-songs]').forEach(b => b.onclick = () => { SFX.tap(); close(); game.openSongs(b.dataset.songs); });
     root.querySelectorAll('[data-fold]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.fold; if (openGamesHub.unfolded.has(k)) openGamesHub.unfolded.delete(k); else { openGamesHub.unfolded.add(k); say('Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'); } openGamesHub.scroll = root.scrollTop; draw(); });
     root.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.soon; openGamesHub.soon = openGamesHub.soon === k ? '' : k; if (openGamesHub.soon) say('Win each game here 3 times to open the new games!', 'Thắng mỗi trò ở đây 3 lần để mở trò mới nhé!'); openGamesHub.scroll = root.scrollTop; draw(); if (openGamesHub.soon) root.querySelector('.hsoonbubble')?.scrollIntoView({ block: 'nearest', behavior: reduceMotion() ? 'auto' : 'smooth' }); });
-    root.querySelectorAll('[data-play]').forEach(b => b.onclick = () => { const id = b.dataset.play; close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); });
-    root.querySelectorAll('[data-link]').forEach(b => b.onclick = () => { const id = b.dataset.link; close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); });
+    root.querySelectorAll('[data-play]').forEach(b => b.onclick = () => { const id = b.dataset.play; markEnglish(null); close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); });
+    root.querySelectorAll('[data-link]').forEach(b => b.onclick = () => { const id = b.dataset.link; markEnglish(b.dataset.english ? id : null); close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); });
     root.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { close(); game.goToGame(i, b.dataset.go); });
-    root.querySelectorAll('[data-how]').forEach(b => b.onclick = () => { const id = b.dataset.how; openHowTo(id, { onPlay: () => { close(); game.playGame(i, id, 'hub'); } }); });
+    root.querySelectorAll('[data-how]').forEach(b => b.onclick = () => { const id = b.dataset.how, en = !!b.closest('.hcard')?.querySelector('[data-english]'); openHowTo(id, { onPlay: () => { markEnglish(en ? id : null); close(); game.playGame(i, id, 'hub'); } }); });
   };
   draw();
   say('Which game shall we play?', 'Mình chơi trò gì nào?');

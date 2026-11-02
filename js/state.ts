@@ -127,7 +127,10 @@ const dropOldFestival = () => { if (!('festival' in settings)) return 0; delete 
 if (dropOldVoice() | dropOldFestival()) store.set(KEY_SETTINGS, settings);
 // fewer moving effects: Calm mode, or the device's own "Reduce motion" setting (round I accessibility rule A11Y-001)
 export const reduceMotion = () => !!settings.calm || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
-export const saveSettings = () => store.set(KEY_SETTINGS, settings);
+// (v1.08 english) while an English-mode game is open (js/englishmode.ts) the game language is English; the child's own
+// language and bilingual choice are held here, and the settings are always saved with them
+export const langHold: { lang?: 'en' | 'vi'; bilingual?: boolean } = {};
+export const saveSettings = () => store.set(KEY_SETTINGS, langHold.lang ? { ...settings, lang: langHold.lang, bilingual: langHold.bilingual } : settings);
 // (owner, 31 Oct 2026 AEDT: "voices online, download only to play offline") whether this device keeps the whole voice
 // pack by itself: a grown-up chose it ("Keep all voices on this device"), or the device had saved voices before (it keeps
 // them up to date as before). Otherwise each line plays over the internet and is kept once heard.
