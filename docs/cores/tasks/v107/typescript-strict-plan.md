@@ -39,7 +39,6 @@ The probe ran `tests/tsconfig.json` once with `strict` and `noImplicitAny` on, w
 
 ## Not done this round
 
-- The 14 World map files are still `.js`: `animalhomes cities ferry hawkers homes houses places powerlines realworld
-  reeds regions regionsites signposts vendors`.
+- The 14 World map files were converted after this measurement (batch 5); they are not in the ratchet list yet.
 - Tests, tools prototypes, Studio translation source and marketing scripts (row 7 of
   `docs/plans/bugs-typescript-20261019.md`).

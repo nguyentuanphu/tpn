@@ -1,6 +1,6 @@
 # v1.07 typescript: status
 
-**Ready for Release, but the GitHub full suite still has to pass** (2 Nov 2026 AEDT). Last code commit 145221eb.
+**Ready for Release, but the GitHub full suite still has to pass** (2 Nov 2026 AEDT). Last code commit 033b3df7.
 
 Branch `work/v107-typescript`, from main v1.06 (204ce75d). Brief: [typescript-brief.md](typescript-brief.md).
 Started 2 Nov 2026 11:00 AEDT.
@@ -66,19 +66,22 @@ Resumed 2 Nov 2026 2:00 pm AEDT (Release: "resume").
   - `js/showcase.ts` named `lighthouse: 16` twice in one list. TypeScript does not allow this, so the first copy,
     which JavaScript ignores, was removed. Same result.
 - Every built `.js` of batches 2 to 4 equals v1.06's apart from whitespace, brackets and type-only lines.
-- GitHub full suite: the run on 412183d1 (41381462510) was still queued after the next batches landed, so it was
-  cancelled. One run on the final code covers all four batches; it was started 2 Nov 2026 2:15 pm AEDT on 145221eb.
-  Result: (pending).
+- Batch 5 done (the 14 World map files, after the owner's decision below): 266d8c80 rename only; 033b3df7 type
+  notes, 0 light errors.
+  - Type-only notes outside the batch: `js/world.ts` (`SvCity.layout`) and `js/content/map.ts` (`landmarkAt()`).
+  - No position changes: each built `.js` equals v1.06's apart from whitespace, comments and brackets.
+- GitHub full suite:
+  - The runs on 412183d1 (41381462510) and 145221eb (41382067411) were still queued when later batches landed, so
+    both were cancelled.
+  - One run on the final code covers all five batches. It was started 2 Nov 2026 about 2:50 pm AEDT on 033b3df7.
+    Result: (pending).
 - Strict plan (brief item 5): [typescript-strict-plan.md](typescript-strict-plan.md) and
   [typescript-strict-ratchet.json](typescript-strict-ratchet.json). 71 of 245 checked game files are already
   strict-clean. Strict is not turned on.
 
-**Files left as `.js`, by core (2 Nov 2026 AEDT):**
-- World: 14 (`animalhomes cities ferry hawkers homes houses places powerlines realworld reeds regions regionsites
-  signposts vendors`), left on purpose: the brief's list, plus `vendors` from CLAUDE.md rule 4.
-- Every other core: 0 in `js/*.js` and `js/content/*.js`.
-- Not counted (outside this brief): tests, tool prototypes, the Studio translation source, marketing scripts and
-  `vendor/`.
+**Files left as `.js`, by core (2 Nov 2026 AEDT):** none. Every file in `js/*.js` and `js/content/*.js` now has its
+`.ts`. Outside this brief, and not counted: tests, tool prototypes, the Studio translation source, marketing
+scripts and `vendor/`.
 
 Helper: `docs/cores/tasks/v107/typescript-optfix.mjs` marks trailing parameters that callers leave out as optional.
 
@@ -90,6 +93,14 @@ Batch 1, 2 Nov 2026 11:05 AEDT, `node suite.mjs --only unit,rules,types,arch,emo
 - rules: fail, then fixed in b3cc0b47 (`node tools/rules-from-doc.mts --check` passes); not yet re-run in the suite.
 - unit: fail, not from this branch: `Cannot find package 'pg'` (the repo root's `npm install` was not run in this
   container; the management tests need it). To re-run after `npm ci` in the root.
+
+## Owner's decisions
+
+- 2 Nov 2026 AEDT, pop-up answer "Convert now, lift rule":
+  - CLAUDE.md helper rule 4 (the Round T freeze on the map files) is outdated: Round T shipped by r62.
+  - The 14 World map files are converted in this round (batch 5): type notes only, no position changes.
+  - Release removes rule 4 from CLAUDE.md, and the matching freeze line from `docs/cores/BOARD.md`, when it merges.
+    I sent Release that message; I did not edit those files.
 
 ## Open questions
 
