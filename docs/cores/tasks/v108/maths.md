@@ -33,6 +33,29 @@ Branch `work/v108-maths` from `origin/release/v1.08`. Brief: `maths-brief.md`. P
   (CORNER_LINKS.hv_math), `js/content/secondset.ts` (numbers list), `js/art.ts` (one import), `js/games/registry.ts`
   (one import of the guides), `js/school.ts` (map pins), tests `play.mts` (secondset sample), `games.mts` (levelsa sample).
 
-## Progress
+## Progress (3 Nov 2026 AEDT)
 
-(filled in as work goes)
+- Done: the 21 games (`js/games/maths-kit.ts`, `maths3.ts`, `maths4.ts`), their drawings (`js/art/maths3.ts`), guides
+  (`js/games/maths3-meta.ts`), registration in the shared lists, map pins at the school, the 7 numbers games switched on.
+- Fixes to the 7 held games: their rules, levels and guides were right. Their four questions with a number (Hop the
+  Number Line, Pairs or Odd, Before and After, Share in Half) were built by string joining, so the voice pack had no
+  recording or template for them; they are now spoken through `api.say` templates and their parts are recorded.
+- Probe (not committed): every new game opened and won by tapping the right thing at under-5, Easy and Talent on a phone
+  (390 x 844), no page errors; targets 64 px. Screenshots of phone, tablet (820 x 1180) and computer (1366 x 800) looked
+  at: the balance first tipped the wrong way and some drawings shrank; both fixed.
+- Voices: recorded with Azure en-AU and vi-VN (`node tools/make-voice-pack.mts --engine azure`), then `--areas`.
+
+## Checks (local, 3 Nov 2026 AEDT)
+
+- pass: games (258 games), guides (258), secondset, hocvui, levelsa (now with mx_sprint and mx_patterns), hubmap,
+  types, names, bilingual, rules, unit, levels-all run on the 28 maths games.
+- fail, not this branch: emoji, because `docs/plans/v108-owner-batch-20261103.md` (Release's plan) has an emoji.
+- `node suite.mts --changed` picks the full suite (shared files and test code changed): run on GitHub,
+  `.github/workflows/full-suite.yml` on this branch.
+
+## For Release
+
+- Shared files changed (marked `// (v1.08 maths)`): `js/content/activities.ts`, `js/games/catalog.ts`,
+  `js/content/hocvui.ts`, `js/content/secondset.ts`, `js/art.ts`, `js/games/registry.ts`, `js/school.ts`,
+  `js/games/numbers2.ts`, `tests/checks/play.mts` (secondset sample now `solids`), `tests/checks/games.mts` (levelsa).
+- New spoken lines are recorded (no line has a name in it).
