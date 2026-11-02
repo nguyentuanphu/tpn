@@ -8,6 +8,8 @@
    - one check by hand: `node run.mjs <check …>` (owner, 13 Oct AEDT: these rules are in CLAUDE.md)
    - only some checks: `node run.mjs games features`
    - re-record the UI structure (only when the owner asked for a UI change): `node run.mjs --update-contract`
+   - where the checks are: `checks/` (one file per group, shared helpers in `checks/shared.mjs`); a new check goes at the end of
+     `run.mjs`, see `checks/README.md` (v1.07, 2 Nov 2026 AEDT)
 3. Screenshots go to `out/` (not committed).
 
 **Multiplayer check:** it needs a PeerJS server on this machine (the public one is not reachable from the test machine):

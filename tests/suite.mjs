@@ -38,8 +38,12 @@ const QUICK = ['unit', 'rules', 'types', 'arch', 'emoji', 'noemoji', 'preload', 
 // not git's quoted "photos/vi-b\341\272\241ch-dinh/", which no rule below could place
 const git = (...a) => execFileSync('git', ['-c', 'core.quotePath=false', ...a], { cwd: REPO, encoding: 'utf8', maxBuffer: 1 << 28 });
 const tryGit = (...a) => { try { return git(...a); } catch (e) { return null; } };
-const RUN = fs.readFileSync(path.join(HERE, 'run.mjs'), 'utf8'), RUNLINES = RUN.split('\n');
-const ALL = [...RUN.matchAll(/^await check\('([a-z0-9-]+)'/gm)].map(m => m[1]);
+// (v1.07 split-tests, 2 Nov 2026 AEDT) the checks live in group files under tests/checks/ (in the order of
+// tests/checks/index.mjs), and the newest ones at the end of tests/run.mjs; together they run in this order
+const { GROUPS } = await import('./checks/index.mjs');
+const CHECK_FILES = [...GROUPS.map(g => `tests/checks/${g}.mjs`), 'tests/run.mjs'];
+const LINES = Object.fromEntries(CHECK_FILES.map(f => [f, fs.readFileSync(path.join(REPO, f), 'utf8').split('\n')]));
+const ALL = CHECK_FILES.flatMap(f => LINES[f].map(l => /^await check\('([a-z0-9-]+)'/.exec(l)).filter(Boolean).map(m => m[1]));
 const TIMES_F = path.join(HERE, 'check-times.json'), MAP_F = path.join(HERE, 'check-map.json');
 const readJSON = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const times = readJSON(TIMES_F, {});
@@ -47,10 +51,10 @@ const GAME_URL = process.env.SV_URL || 'http://localhost:8765/';
 // (owner, 16 Oct AEDT: TypeScript, batch 0) the game's .ts files made into .js once, before any run (tools/build.mts)
 if (!flag('--list') && !flag('--collect')) { execFileSync(process.execPath, [path.join(HERE, '../tools/build.mts')], { stdio: 'inherit' }); process.env.SV_BUILT = '1'; }
 
-// where each check's code sits in run.mjs (line numbers, from 1)
-// (from its "await check(" line to its closing "});"; lines between checks are shared helpers)
-const blocks = (() => { const out = []; RUNLINES.forEach((l, i) => { const m = /^await check\('([a-z0-9-]+)'/.exec(l); if (m) { let j = i; while (j < RUNLINES.length - 1 && !/^\}\);/.test(RUNLINES[j])) j++; out.push({ name: m[1], from: i + 1, to: j + 1 }); } }); return out; })();
-const bodyOf = n => { const b = blocks.find(x => x.name === n); return b ? RUNLINES.slice(b.from - 1, b.to).join('\n') : ''; };
+// where each check's code sits in its file (line numbers, from 1)
+// (from its "await check(" line to its closing "});"; lines between checks are shared: imports, comments)
+const blocks = CHECK_FILES.flatMap(file => { const L = LINES[file], out = []; L.forEach((l, i) => { const m = /^await check\('([a-z0-9-]+)'/.exec(l); if (m) { let j = i; while (j < L.length - 1 && !/^\}\);/.test(L[j])) j++; out.push({ file, name: m[1], from: i + 1, to: j + 1 }); } }); return out; });
+const bodyOf = n => { const b = blocks.find(x => x.name === n); return b ? LINES[b.file].slice(b.from - 1, b.to).join('\n') : ''; };
 
 const base = (() => { const b = opt('--base', tryGit('rev-parse', '--verify', '-q', 'origin/main') ? 'origin/main' : 'main'); return (tryGit('merge-base', 'HEAD', b) || b).trim(); })();
 const changedFiles = () => {
@@ -71,11 +75,14 @@ function select() {
   let game = false;
   for (const f of files) {
     if (/^(docs\/|\.github\/|README|HANDOFF|CLAUDE|LICENSE)|\.md$/.test(f)) continue;
-    if (f === 'tests/run.mjs') {
+    // a check file (a group under tests/checks/ or run.mjs): only the checks whose lines changed; anything else in it
+    // (its imports, the shared module tests/checks/shared.mjs, the group list) is shared by many checks
+    if (CHECK_FILES.includes(f)) {
+      const mine = blocks.filter(b => b.file === f);
       for (const h of hunks(base, f)) {
         const [c, d] = h.new, lo = c, hi = d ? c + d - 1 : c;
-        const inside = blocks.filter(b => b.to >= lo && b.from <= hi), held = l => blocks.some(b => b.from <= l && l <= b.to);
-        if (!inside.length || !held(lo) || !held(hi)) return full(`tests/run.mjs changed outside a check, near line ${lo} (shared helpers)`);
+        const inside = mine.filter(b => b.to >= lo && b.from <= hi), held = l => mine.some(b => b.from <= l && l <= b.to);
+        if (!inside.length || !held(lo) || !held(hi)) return full(`${f} changed outside a check, near line ${lo} (shared helpers)`);
         add(inside.map(b => b.name), 'its check changed');
       }
       continue;
