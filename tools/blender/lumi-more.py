@@ -358,7 +358,7 @@ def wear():
     if WEAR.get('hat'):
         hk, _, hc = WEAR['hat'].partition('/'); group('hat', lambda: hat(hk, ('#' + hc) if hc else None))
         if hk != 'crown':   # no hair poking out of the hat: hair on the crown of the head goes, the hat covers it
-            for o in [o for o in bpy.data.collections['hair'].objects if o.type == 'MESH' and o.name.split('.')[0] in ('hairLeaf', 'hairClump', 'hairLobe', 'hairCurl', 'sprout', 'sproutStem', 'hairStar', 'starLeaf', 'sproutLeaf')]:
+            for o in [o for o in bpy.data.collections['hair'].objects if o.type == 'MESH' and o.name.split('.')[0] in ('hairLeaf', 'hairClump', 'hairLobe', 'hairCurl', 'hairLock', 'hairPuff', 'sprout', 'sproutStem', 'hairStar', 'starLeaf', 'sproutLeaf')]:
                 c = o.matrix_world @ (sum((Vector(b) for b in o.bound_box), Vector()) / 8)
                 if c.z > HC.z + .45 * R: bpy.data.objects.remove(o)
     if 'scarf' in WEAR: group('scarf', lambda: scarf(('#' + WEAR['scarf']) if len(WEAR['scarf']) == 6 else None))

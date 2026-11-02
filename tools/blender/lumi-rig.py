@@ -78,7 +78,9 @@ pb = rig.pose.bones
 for b in pb: b.rotation_mode = 'XYZ'
 def key(f, pose, lift=0.0):
     for n, (x, y, z) in pose.items(): pb[n].rotation_euler = (x, y, z); pb[n].keyframe_insert('rotation_euler', frame=f)
-    pb['root'].location = (0, lift, 0); pb['root'].keyframe_insert('location', frame=f)   # the root bone points up: its local y is world z
+    if isinstance(lift, tuple): pb['root'].location = lift   # (sideways, up, forward) in the root bone's own axes
+    else: pb['root'].location = (0, lift, 0)
+    pb['root'].keyframe_insert('location', frame=f)   # the root bone points up: its local y is world z
 def rest(): return {n: (0, 0, 0) for n in J}
 def action(name, frames, make, loop=True):
     rig.animation_data_create(); act = bpy.data.actions.new(name); rig.animation_data.action = act
@@ -89,13 +91,14 @@ def action(name, frames, make, loop=True):
         if loop: fc.modifiers.new('CYCLES')
     act.use_fake_user = True; return act
 def walk(t):
-    a = 2 * math.pi * t; p = rest()
-    p['legL'] = (-.48 * math.sin(a), 0, 0); p['legR'] = (.48 * math.sin(a), 0, 0)
-    p['kneeL'] = (.12 + .75 * max(0, math.cos(a)) ** 1.3, 0, 0); p['kneeR'] = (.12 + .75 * max(0, -math.cos(a)) ** 1.3, 0, 0)
-    p['armL'] = (.38 * math.sin(a), 0, -.08); p['armR'] = (-.38 * math.sin(a), 0, .08)
-    p['elbowL'] = (-.3 - .2 * max(0, -math.sin(a)), 0, 0); p['elbowR'] = (-.3 - .2 * max(0, math.sin(a)), 0, 0)
-    p['torso'] = (-.05, .06 * math.sin(a), .03 * math.cos(2 * a)); p['head'] = (.03 * math.cos(2 * a), -.05 * math.sin(a), 0)
-    return p, .018 * math.cos(2 * a) - .012
+    a = 2 * math.pi * t; p = rest(); sa, ca = math.sin(a), math.cos(a)
+    p['root'] = (0, .09 * sa, .035 * math.cos(2 * a + .5))   # the hips turn with each step and sway a little
+    p['legL'] = (-.45 * sa + .05, 0, 0); p['legR'] = (.45 * sa + .05, 0, 0)
+    p['kneeL'] = (.1 + .8 * max(0, ca) ** 1.4 + .08 * max(0, -sa), 0, 0); p['kneeR'] = (.1 + .8 * max(0, -ca) ** 1.4 + .08 * max(0, sa), 0, 0)
+    p['armL'] = (.34 * math.sin(a - .25), 0, -.1); p['armR'] = (-.34 * math.sin(a - .25), 0, .1)
+    p['elbowL'] = (-.28 - .22 * max(0, -math.sin(a - .4)), 0, 0); p['elbowR'] = (-.28 - .22 * max(0, math.sin(a - .4)), 0, 0)
+    p['torso'] = (-.04, -.13 * sa, -.03 * math.cos(2 * a + .5)); p['head'] = (.025 * math.cos(2 * a + .8), .04 * sa, .02 * math.cos(2 * a + .5))
+    return p, .016 * math.cos(2 * a + .3) - .012
 def idle(t):
     a = 2 * math.pi * t; p = rest()
     p['torso'] = (.02 * math.sin(a), 0, .02 * math.sin(a * .5 * 2)); p['head'] = (.04 * math.sin(a + 1), .06 * math.sin(a), .04 * math.sin(a * 2))
@@ -114,7 +117,22 @@ def cheer(t):
     return p, .14 * up - .035 * (1 - up)
 CANE = [o for o in bpy.data.objects if o.name.startswith('cane')]
 for o in CANE: o.vertex_groups.clear(); o.vertex_groups.new(name='elbowR').add(list(range(len(o.data.vertices))), 1.0, 'REPLACE')
-ACTIONS = {'walk': action('walk', 24, walk), 'idle': action('idle', 48, idle), 'wave': action('wave', 24, wave), 'cheer': action('cheer', 24, cheer)}
+def sit(t):   # sitting on a seat: thighs forward, shins down, hands on the lap
+    a = 2 * math.pi * t; p = rest()
+    p['legL'] = (-1.5, 0, -.06); p['legR'] = (-1.5, 0, .06); p['kneeL'] = (1.5, 0, 0); p['kneeR'] = (1.5, 0, 0)
+    p['armL'] = (-.45, 0, -.12); p['armR'] = (-.45, 0, .12); p['elbowL'] = (-.75, 0, 0); p['elbowR'] = (-.75, 0, 0)
+    p['torso'] = (.02 * math.sin(a), 0, 0); p['head'] = (.03 * math.sin(a + 1), .1 * math.sin(a), 0)
+    return p, 0.0
+def ride(t):  # riding a bicycle or a scooter: astride, hands forward on the handlebars, leaning in
+    a = 2 * math.pi * t; p = rest(); pedal = B.get('pedal', 0.0)
+    p['legL'] = (-1.15 - pedal * .35 * math.sin(a), 0, -.18); p['legR'] = (-1.15 + pedal * .35 * math.sin(a), 0, .18)
+    p['kneeL'] = (1.25 + pedal * .35 * math.sin(a), 0, 0); p['kneeR'] = (1.25 - pedal * .35 * math.sin(a), 0, 0)
+    p['armL'] = (-1.05, 0, -.12); p['armR'] = (-1.05, 0, .12); p['elbowL'] = (-.35, 0, 0); p['elbowR'] = (-.35, 0, 0)
+    p['torso'] = (-.22, 0, 0); p['head'] = (.2, .06 * math.sin(a), 0)
+    return p, 0.0
+def passenger(t):  # sitting behind the rider, hands at the rider's waist
+    p, lift = ride(t); p['armL'] = (-.8, 0, .15); p['armR'] = (-.8, 0, -.15); p['elbowL'] = (-.5, 0, 0); p['elbowR'] = (-.5, 0, 0); p['torso'] = (-.1, 0, 0); return p, lift
+ACTIONS = {'walk': action('walk', 24, walk), 'idle': action('idle', 48, idle), 'wave': action('wave', 24, wave), 'cheer': action('cheer', 24, cheer), 'sit': action('sit', 48, sit), 'ride': action('ride', 24, ride), 'passenger': action('passenger', 48, passenger)}
 for n, act in ACTIONS.items():
     tr = rig.animation_data.nla_tracks.new(); tr.name = n; tr.strips.new(n, 1, act); tr.mute = True
 rig.animation_data.action = ACTIONS['idle']

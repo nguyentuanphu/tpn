@@ -14,7 +14,7 @@ from mathutils.bvhtree import BVHTree
 from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube, lathe, subsurf, obj_from
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
-FLAGS = ('chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
+FLAGS = ('portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
 OUT = next((a for a in argv if a not in FLAGS and '=' not in a), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
@@ -113,6 +113,13 @@ if V and V['size'] != 'kid':
     STYLE = V['size']
     grow(*{'adult': (1.27, 1.12, .25), 'elder': (1.13, 1.1, .245)}[V['size']])
     P.update(eye=.15, eyeZ=-.08, jaw=.17, cheek=.02, mouth=.62, head=(.97, .95, 1.06))
+# face options for the owner to choose (3 Nov): face=oval (a small oval face, a slim chin) or face=concept (like the Finn and Flora concepts)
+FACEOPT = next((x.split('=', 1)[1] for x in argv if x.startswith('face=')), 'oval' if GAME else '')   # A, the small oval, approved by the owner (3 Nov)
+if GAME and FACEOPT:
+    chin = HC.z - R * P['head'][2]; R *= .97 if FACEOPT == 'oval' else .9   # the owner (3 Nov): the .85 head looked too small for the body
+    if FACEOPT == 'oval': P.update(head=(.9, .9, 1.1), jaw=.32, cheek=.0, eye=.165, eyeX=.3, eyeZ=-.1, mouth=.62, noseZ=-.33, mouthZ=-.53, blushX=.47, blushZ=-.4)
+    else: P.update(head=(.88, .9, 1.13), jaw=.36, cheek=.0, eye=.19, eyeX=.31, eyeZ=-.07, mouth=.6, noseZ=-.33, mouthZ=-.55, blushX=.47, blushZ=-.4, almond=True)
+    HC = Vector((0, 0, chin + R * P['head'][2]))
 if GAME:  # boys and girls, men and women have different figures (owner, 3 Nov: "dáng"); grown-ups differ more than children
     a_ = 1.0 if (V and V['size'] != 'kid') else .5; bw_ = {'au-dad': 1.08, 'au-grandpa': 1.05}.get(ROLE, 1.0) if V else 1.0
     fx = (1 - .06 * a_) if G == 'f' else (1 + .05 * a_)
@@ -178,16 +185,18 @@ def face(expr):
             else: arc = [(ex + math.cos(a) * E * .95, ez - .02 - math.sin(a) * E * .3) for a in lin(.06 * math.pi, .94 * math.pi, 13)]
             fline(expr + 'Eye', LASH, arc, [.012] + [.024] * 11 + [.012], .02)
         else:
-            sx, sy = {'surprised': (1.03, 1.08), 'sad': (1, .9)}.get(expr, (1, 1))
-            w, h = E * sx, E * 1.12 * sy
-            lx, lz = {'curious': (-.4, .35), 'sad': (0, -.35)}.get(expr, (0, 0))
+            sx, sy = {'surprised': (1.03, 1.08), 'sad': (1, .9), 'excited': (1.05, 1.1)}.get(expr, (1, 1))
+            w, h = E * sx, E * 1.12 * sy * (.82 if P.get('almond') else 1)   # almond eyes for the concept face
+            lx, lz = {'curious': (-.4, .35), 'sad': (0, -.35), 'shy': (-.45, -.5)}.get(expr, (0, 0))
             ir = .88 if expr == 'surprised' else 1.0
             decal('eyeWhite', EYEW, ex, ez, w, h, .05)
             ix, iz = ex + lx * w * .25, ez + lz * h * .22 - .04 * h
             decal('iris', IRISD, ix, iz, w * ir * .9, h * ir * .9, .02, .03)
             decal('irisLight', IRIS, ix, iz - h * ir * .25, w * ir * .62, h * ir * .45, .01, .045)
             decal('pupil', PUPIL, ix, iz + .03 * h, w * ir * .4, h * ir * .44, .008, .052)
-            decal('shine', SHINE, ix + w * .28, iz + h * .34, w * .24, w * .24, .006, .06)   # bigger, softer sparkles (cuter, owner 3 Nov)
+            if expr == 'excited':  # star-shaped sparkles in the eyes
+                p_, n_ = onf(ix + w * .05, iz + h * .1, .065); pstar('shine', SHINE, p_, w * .42 * R, .01 * R, n_.to_track_quat('Z', 'Y').to_euler(), lv=1)
+            else: decal('shine', SHINE, ix + w * .28, iz + h * .34, w * .24, w * .24, .006, .06)   # bigger, softer sparkles (cuter, owner 3 Nov)
             decal('shine2', SHINE, ix - w * .3, iz - h * .3, w * .1, w * .1, .005, .058)
             decal('shine3', SHINE, ix + w * .42, iz - h * .05, w * .05, w * .05, .004, .058)
             # a soft brown upper lid, a little heavier at the outer corner, and two small lashes (sad: the lid droops at the outer corner)
@@ -200,29 +209,32 @@ def face(expr):
                 p1 = (p0[0] + s * L * (.9 - .3 * k), p0[1] + L * (.6 + .4 * k)); p2 = (p1[0] + s * L * .35, p1[1] + L * .05)
                 fline('lash', LASH, [p0, p1, p2], [.012, .007, .003], .05)
         # soft short brows: raised for surprise, one up for curiosity, tilted up in the middle for sadness
-        up = {'surprised': .12, 'happy': .05, 'curious': .1 if s < 0 else .02, 'sad': .05}.get(expr, .03)
-        bz = ez + E * 1.12 + .07 + up; tilt = .05 if expr == 'sad' else 0
+        up = {'surprised': .12, 'happy': .05, 'curious': .1 if s < 0 else .02, 'sad': .05, 'excited': .1, 'shy': .06}.get(expr, .03)
+        bz = ez + E * 1.12 + .07 + up; tilt = {'sad': .05, 'shy': .03}.get(expr, 0)
         if G == 'f': fline('brow', BROW, [(ex - s * .1, bz - .015 + tilt), (ex - s * .02, bz + .025), (ex + s * .09, bz + .005 - tilt)], [.012, .019, .009], .02)   # thin and arched
         else: fline('brow', BROW, [(ex - s * .11, bz + tilt), (ex - s * .01, bz + .018), (ex + s * .1, bz + .008 - tilt)], [.022, .03, .02], .02)   # a little thicker and straighter
-        decal('blush', BLUSH if G == 'f' else BLUSHM, s * P.get('blushX', .57), P.get('blushZ', -.33), .17 * M, .1 * M, .012, .004)
+        bl = 1.35 if expr in ('shy', 'excited') else 1.0   # rosier cheeks when shy or excited
+        decal('blush', BLUSH if G == 'f' or bl > 1 else BLUSHM, s * P.get('blushX', .57), P.get('blushZ', -.33), .17 * M * bl, .1 * M * bl, .012, .004)
     mz = P.get('mouthZ', -.47)
     decal('nose', NOSE, 0, P.get('noseZ', -.3), .035, .025, .025)
     flat_top = lambda c: setattr(c, 'y', c.y * .15) if c.y > 0 else None
-    if expr in ('smile', 'happy'):
-        mw, mh = (.17 * M, .15 * M) if expr == 'smile' else (.2 * M, .17 * M)
+    if expr in ('smile', 'happy', 'excited'):
+        mw, mh = (.17 * M, .15 * M) if expr == 'smile' else (.2 * M, .17 * M) if expr == 'happy' else (.22 * M, .2 * M)
         decal('mouth', MOUTH, 0, mz, mw, mh, .07, .0, shape=flat_top)
         decal('tongue', TONGUE, 0, mz - mh * .6, mw * .55, mh * .32, .02, .06)
     elif expr == 'blink':
         fline('mouth', MOUTH, [(-.07 * M, mz + .005), (0, mz - .02 * M), (.07 * M, mz + .005)], [.011, .015, .011], .01)
     elif expr == 'curious':
         fline('mouth', MOUTH, [(-.05 * M, mz - .02), (-.005, mz - .035), (.04 * M, mz - .025)], [.012, .016, .011], .01)
+    elif expr == 'shy':  # a small closed smile, a little to one side
+        fline('mouth', MOUTH, [(-.06 * M, mz - .005), (-.01, mz - .03 * M), (.05 * M, mz - .01)], [.01, .014, .01], .01)
     elif expr == 'sad':
         fline('mouth', MOUTH, [(-.07 * M, mz - .04), (0, mz - .015), (.07 * M, mz - .04)], [.011, .015, .011], .01)
     else:  # surprised: a small round "oh"
         decal('mouth', MOUTH, 0, mz - .03, .07 * M, .095 * M, .07)
         decal('tongue', TONGUE, 0, mz - .03 - .055 * M, .04 * M, .03 * M, .03, .035)
 
-FACES_ALL = ('smile', 'blink', 'happy', 'curious', 'surprised', 'sad')
+FACES_ALL = ('smile', 'blink', 'happy', 'curious', 'surprised', 'sad', 'shy', 'excited')
 FACE_SETS = {e: group('face-' + e, lambda e=e: face(e)) for e in FACES_ALL}
 
 # ---------- leaf hair: puffy felt leaves in overlapping rows, a fringe over the forehead ----------
@@ -368,6 +380,7 @@ def hair_flora():
         o = leaf('flowerLeaf', LEAFG, .22 * R, .1 * R, .2, .2, 10, .03 * R, .2); place(o, c + n * .03 * R, q @ Vector((math.cos(a), math.sin(a), 0)), n)
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-more.py')).read())  # Sol, villagers, the wardrobe
+if GAME: exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-hair.py')).read())   # hair in big sculpted locks (owner, 3 Nov)
 group('hair', {'lumi': hair, 'finn': lambda: hair_finn(), 'flora': lambda: hair_flora(), 'sol': lambda: hair_sol(), 'villager': lambda: hair_villager()}[WHO])
 
 # ---------- body ----------
@@ -602,7 +615,10 @@ def body_flora():
 
 group('body', {'lumi': body, 'finn': lambda: body_finn(), 'flora': lambda: body_flora(), 'sol': lambda: body_sol(), 'villager': lambda: body_villager()}[WHO])
 wear()
-if 'hard' not in argv: soften()
+if 'hard' not in argv:
+    if GAME and 'tubes' not in argv:   # the one-piece sculpted body (owner's choice, 3 Nov)
+        exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-sculpt.py')).read()); sculpt(); ease_loose()
+    soften()
 
 RIG = 'anim' in argv or 'glb' in argv
 if RIG:
@@ -672,3 +688,6 @@ if 'glb' in argv:
 
 if 'lineup' in argv:  # the same camera for everyone, so heights compare side by side
     show_face('smile'); shoot('lineup', .3, 1.2, 6.4, 1.0, (420, 760))
+
+if 'portrait' in argv:   # head and shoulders, three-quarter, to judge hair and faces
+    show_face('smile'); shoot('portrait', .45, HC.z - .3 * R, R * 11, HC.z - .5 * R, (520, 600))
