@@ -21,6 +21,7 @@ let styled = false;
 export async function runArtPad(api: any, options: {
   id: string; sayText: [string, string]; winTitle: [string, string];
   drawGuide: (g: CanvasRenderingContext2D, w: number, h: number) => void | Promise<void>;
+  need?: number; brush?: number;
 }) {
   if (!styled) {
     styled = true;
@@ -51,6 +52,10 @@ export async function runArtPad(api: any, options: {
   g.fillStyle = '#fffdf6'; g.fillRect(0, 0, w, h);
   body.appendChild(canvas); root.appendChild(body); api.stage.appendChild(root);
   let closed = false, painting = false, marks = 0, x = w / 2, y = h / 2, colour = 0;
+  // (v1.07 levels) marks needed and brush width, on the stage for the checks: a free pad keeps 12 marks; a pad with a task
+  // (finishpic, shadowpic) asks more marks with a finer brush at each level
+  const need = options.need ?? 12, brush = options.brush ?? (api.little ? 16 : 10);
+  api.stage.dataset.lv = [need, brush].join(',');
   api.onCleanup(() => { closed = true; painting = false; });
   await options.drawGuide(g, w, h);
   if (closed || api.closed) return;
@@ -83,14 +88,14 @@ export async function runArtPad(api: any, options: {
   const done = el('button', '', `${pic('✅')} ${T('Keep in Album', 'Lưu vào Album')}`);
   done.disabled = true;
   const actions = el('div', 'artpad-row artpad-actions'); actions.appendChild(done);
-  const hint = el('p', '', T('Paint with your finger or mouse. Keyboard: arrows move, Space paints. Make 12 marks, then keep your picture. Your album keeps the latest 12 pictures.', 'Vẽ bằng ngón tay hoặc chuột. Bàn phím: mũi tên di chuyển, phím cách tô. Tô 12 nét rồi lưu tranh. Album giữ 12 bức tranh mới nhất.'));
+  const hint = el('p', '', T(`Paint with your finger or mouse. Keyboard: arrows move, Space paints. Make ${need} marks, then keep your picture. Your album keeps the latest 12 pictures.`, `Vẽ bằng ngón tay hoặc chuột. Bàn phím: mũi tên di chuyển, phím cách tô. Tô ${need} nét rồi lưu tranh. Album giữ 12 bức tranh mới nhất.`));
   body.append(row, hint); root.appendChild(actions); api.say(...options.sayText); api.dots(3, 0);
   function mark(nx: number, ny: number, join = false) {
     if (closed || api.closed) return;
     nx = Math.max(0, Math.min(w, nx)); ny = Math.max(0, Math.min(h, ny));
     const id = options.id;
     g.strokeStyle = g.fillStyle = id === 'lacquer' ? '#ffb703' : COLOURS[colour][0];
-    g.lineWidth = api.little ? 16 : 10;
+    g.lineWidth = brush;
     if (id === 'scratch' || id === 'leafrub') {
       g.save(); g.beginPath(); g.arc(nx, ny, 18, 0, Math.PI * 2); g.clip();
       g.drawImage(reveal, 0, 0, w, h); g.restore();
@@ -107,7 +112,7 @@ export async function runArtPad(api: any, options: {
     } else {
       g.beginPath(); g.moveTo(join ? x : nx, join ? y : ny); g.lineTo(nx + .1, ny + .1); g.stroke();
     }
-    x = nx; y = ny; marks++; done.disabled = marks < 12; api.dots(3, Math.min(2, Math.floor(marks / 6)));
+    x = nx; y = ny; marks++; done.disabled = marks < need; api.dots(3, Math.min(2, Math.floor(marks * 2 / need)));
   }
   const point = (e: PointerEvent) => { const r = canvas.getBoundingClientRect(); return [(e.clientX - r.left) * w / r.width, (e.clientY - r.top) * h / r.height]; };
   canvas.onpointerdown = e => { e.preventDefault(); painting = true; if (e.isTrusted) canvas.setPointerCapture(e.pointerId); const p = point(e); mark(p[0], p[1]); };
@@ -125,7 +130,7 @@ export async function runArtPad(api: any, options: {
     const rect = canvas.getBoundingClientRect();
     const path = Array.from({length:14}, (_, i) => ({x:rect.left + rect.width * (.15 + i * .045), y:rect.top + rect.height * (.4 + .1 * (i % 2))}));
     return {el:canvas, x:path[0].x, y:path[0].y, ms:700, path};
-  }, {maxActions:3});
+  }, {maxActions:Math.ceil(need / 6) + 1});
   const saved = await Promise.race([new Promise<boolean>(resolve => { done.onclick = () => { if (!done.disabled) resolve(true); }; }), stopped]);
   if (!saved || closed || api.closed) return;
   done.disabled = true;

@@ -9,7 +9,7 @@ import { el, wait, pick, shuffle } from '../util.js';
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));   // a whole number from a to b
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value
-const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
 import {playSnakes} from './snakes.js';
 import { LEARN } from '../words2.js';
 
@@ -20,6 +20,8 @@ register({
     // (levels) more pictures to choose from on Hard (4) and Talent (5); Talent: only the word in its own writing, listen for it
     const rounds = api.little ? 5 : 8;
     const langs = settings.learnLang && LEARN[settings.learnLang] ? [settings.learnLang] : ['zh', 'hi'];
+    // (v1.07 levels) rounds, pictures to choose from, example sentence shown (1/0)
+    api.stage.dataset.lv = [rounds, 1 + (api.little ? 1 : lv(api, 2, 2, 3, 4)), api.talent ? 0 : 1].join(',');
     api.say('Friends from China and India are teaching us words. Listen, then tap the picture!', 'Các bạn Trung Quốc và Ấn Độ dạy mình từ mới. Nghe rồi chạm vào hình nhé!');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -59,6 +61,8 @@ register({
   async run(api) {
     // (levels) more rounds and wrong pieces on Hard and Talent; Talent: the right piece is always turned, and no tip
     const rounds = api.little ? 4 : lv(api, 6, 6, 7, 8), nWrong = api.little ? 1 : lv(api, 2, 2, 3, 4);
+    // (v1.07 levels) rounds, pieces to choose from, right piece turned (0 never, 1 sometimes, 2 always), turning tip (1/0)
+    api.stage.dataset.lv = [rounds, nWrong + 1, api.little ? 0 : api.talent ? 2 : 1, api.talent ? 0 : 1].join(',');
     api.say('In China, children make pictures from shapes. One shape is missing. Which one fits?', 'Ở Trung Quốc, các bạn nhỏ xếp hình từ những mảnh ghép. Thiếu một mảnh rồi. Mảnh nào vừa?');
     const order = shuffle(PUZZLES.slice());
     for (let r = 0; r < rounds; r++) {
@@ -91,6 +95,8 @@ register({
   id: 'rangoli', icon: '🌸', origin: 'in', name: () => T('Rangoli Patterns', 'Tranh Rangoli'),
   async run(api) {
     const rounds = api.little ? 3 : 5;
+    // (v1.07 levels) rounds, grid size, colours, % of squares painted
+    api.stage.dataset.lv = [rounds, api.little ? 4 : 6, api.little ? 3 : lv(api, 4, 5, 5, 6), api.little ? 45 : Math.round(100 * lv(api, .6, .6, .75, .85))].join(',');
     api.say('In India, families draw rangoli with coloured powder for Diwali. A rangoli is the same on both sides. Finish the other half!', 'Ở Ấn Độ, các gia đình vẽ tranh rangoli bằng bột màu vào dịp lễ Diwali. Tranh rangoli giống nhau ở hai bên. Con tô nốt nửa còn lại nhé!');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';

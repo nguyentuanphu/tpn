@@ -46,14 +46,18 @@ const big = (code: string) => code === "VND" ? 20000 : 200;
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value. Every game here: bigger amounts or more rounds from
 // Medium, more answers to choose from (3 Easy, 4 Medium and Hard, 5 Talent) and its own Talent extra (marked "levels")
-const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
+// (v1.07 levels) the numbers a game's level uses, written on the stage (data-lv) before the first tap for the levels check
+const mark = (api, ...v) => { api.stage.dataset.lv = v.join(','); };
+// how many money answers a question shows (moneyQuestion): 3 Easy, 4 Medium and Hard, 5 Talent
+const answersFor = api => lv(api, 3, 4, 4, 5);
 // a question with three money answers, the right one among two near it
 async function moneyQuestion(api, show: string, ask: [string, string], right: number, by: number, code: string) {
   const box = el("div", "mn2-box", show);
   const row = el("div", "mn2-row");
   api.stage.querySelector(".mn2-wrap").replaceChildren(box, el("div", "mn2-box", T(ask[0], ask[1])), row);
   api.say(ask[0], ask[1]);
-  const answers = M.nearAnswers(right, by), many = lv(api, 3, 4, 4, 5);
+  const answers = M.nearAnswers(right, by), many = answersFor(api);
   for (const v of [right + 3 * by, right - 3 * by, right + 2 * by, right - 2 * by, right + by, right - by]) if (answers.length < many && v > 0 && !answers.includes(v)) answers.push(v);
   const btns = mix(answers).map(v => { const b = el("button", "mn2-btn", money(v, code)); b.dataset.v = String(v); row.appendChild(b); return b; });
   const target = btns.find(b => b.dataset.v === String(right));
@@ -95,6 +99,7 @@ register({
   async run(api) {
     // (levels) more and bigger goals from Medium; Talent: no big coin or note to help
     const code = getCode(), rounds = lv(api, 3, 3, 4, 4), more = lv(api, 0, 1, 1, 2);
+    mark(api, rounds, more, api.talent ? 2 : 3);   // rounds, extra dollars per goal, kinds of coin
     const wrap = setup(api, ["Put coins in the money box until you have exactly enough!", "Bỏ tiền vào ống heo cho đến khi vừa đủ nhé!"], rounds);
     const toys: [string, [string, string]][] = mix([["⚽", ["a ball", "quả bóng"]], ["🧸", ["a teddy", "chú gấu bông"]], ["🪁", ["a kite", "con diều"]], ["📖", ["a book", "quyển sách"]]]);
     for (let r = 0; r < rounds; r++) {
@@ -117,6 +122,7 @@ register({
   async run(api) {
     // (levels) Hard and Talent: five days; Talent: the money each day is not a whole dollar (or 10.000 đồng)
     const code = getCode(), each = unit(code) + (api.talent ? small(code) : 0), rounds = lv(api, 4, 4, 5, 5);
+    mark(api, rounds, each, answersFor(api));   // (v1.07 levels) days, money a day, answers to choose from
     const wrap = setup(api, ["You get pocket money each day. Keep count of your money!", "Mỗi ngày con được tiền tiêu vặt. Đếm xem con có bao nhiêu nhé!"], rounds);
     await wait(1500);
     const days: [string, string][] = [["Monday", "Thứ Hai"], ["Tuesday", "Thứ Ba"], ["Wednesday", "Thứ Tư"], ["Thursday", "Thứ Năm"], ["Friday", "Thứ Sáu"]];
@@ -145,6 +151,7 @@ register({
   async run(api) {
     // (levels) more rounds from Medium; Hard compares three price tags, Talent four
     const code = getCode(), rounds = lv(api, 4, 5, 6, 6), tags = lv(api, 2, 2, 3, 4);
+    mark(api, rounds, api.little ? 2 : tags);
     const wrap = setup(api, ["Read the price tags. Which costs less, and which costs more?", "Đọc thẻ giá. Món nào rẻ hơn, món nào đắt hơn?"], rounds);
     await wait(1500);
     const things = ["🍎", "📖", "🚌", "🧸", "🎈", "🍌", "🪁", "🧃"];
@@ -172,11 +179,14 @@ register({
   id: "busfare", icon: "🚌", name: () => T("Pay for the Bus", "Trả Tiền Xe Buýt"),
   async run(api) {
     // (levels) Hard: a fourth fare; Talent: harder fares and no big coin or note
-    const code = getCode(), rounds = lv(api, 3, 3, 4, 4);
+    // (v1.07 levels) Medium now pays four fares (Easy three); Hard pays without the big coin or note (Talent already did)
+    const code = getCode(), rounds = lv(api, 3, 4, 4, 4), noBig = lv(api, false, false, true, true);
+    const all = code === "VND" ? [1000, 2000, 5000, 10000] : [10, 20, 50, 100, 200];
+    mark(api, rounds, all.length - (noBig ? 1 : 0), code === "VND" ? (api.talent ? 13000 : 7000) : (api.talent ? 130 : 150));   // fares, kinds of coin, first fare
     const wrap = setup(api, ["Pay the driver the exact fare with your coins!", "Trả bác tài đúng tiền vé bằng tiền của con nhé!"], rounds);
     for (let r = 0; r < rounds; r++) {
       const fare = code === "VND" ? (api.talent ? [13000, 17000, 23000, 28000] : [7000, 12000, 15000, 23000])[r] : (api.talent ? [130, 270, 390, 480] : [150, 220, 350, 470])[r];
-      const coins = (code === "VND" ? [1000, 2000, 5000, 10000] : [10, 20, 50, 100, 200]).slice(0, api.talent ? -1 : undefined);
+      const coins = all.slice(0, noBig ? -1 : undefined);
       api.say("Look at the fare and pay it!", "Xem giá vé rồi trả tiền nhé!");   // (the fare is on the screen; a whole line Lê Minh can record)
       const ok = await makeAmount(api, wrap, code, fare, api.little ? coins.slice(-3) : coins, sum => `${pic("🚌")} ${T("Fare", "Giá vé")} ${money(fare, code)} · ${T("Paid", "Đã trả")} ${money(sum, code)}`);
       if (!ok) return;
@@ -193,6 +203,7 @@ register({
   async run(api) {
     // (levels) more cups from Hard; Talent: a cup costs a dollar and a half (or 15.000 đồng)
     const code = getCode(), rounds = lv(api, 3, 4, 4, 5), price = unit(code) + (api.talent ? small(code) : 0);
+    mark(api, rounds, price, lv(api, 1, 1, 2, 2), api.little ? 3 : lv(api, 5, 5, 7, 7), answersFor(api));   // (v1.07 levels) customers, cup price, fewest cups, spread of cups, answers
     const wrap = setup(api, ["Sell lemonade! Work out how much each customer pays.", "Bán nước chanh! Tính xem mỗi khách trả bao nhiêu."], rounds);
     await wait(1500);
     for (let r = 0; r < rounds; r++) {
@@ -213,7 +224,9 @@ register({
   async run(api) {
     const code = getCode(), u = unit(code);
     // (levels) Hard and Talent: four things to buy; Talent with less money
-    const need = api.little ? 2 : lv(api, 3, 3, 4, 4), budget = u * (api.little ? 6 : lv(api, 10, 10, 12, 11));
+    // (v1.07 levels) Medium: the same three things with $9 (90.000 đồng) instead of $10, so it is not the same as Easy
+    const need = api.little ? 2 : lv(api, 3, 3, 4, 4), budget = u * (api.little ? 6 : lv(api, 10, 9, 12, 11));
+    mark(api, need, budget);
     const wrap = setup(api, [`You have ${said(budget, code)[0]}. Buy ${need} things for the party without going over!`, `Con có ${said(budget, code)[1]}. Mua ${need} món cho bữa tiệc mà không tiêu quá nhé!`], need);
     const shop: [string, [string, string], number][] = [["🎈", ["Balloons", "Bóng bay"], u * 2], ["🎂", ["Cake", "Bánh kem"], u * 5], ["🧃", ["Juice", "Nước trái cây"], u * 2], ["🎩", ["Party hats", "Mũ tiệc"], u * 3], ["🎁", ["Present", "Quà"], u * 4], ["🍪", ["Biscuits", "Bánh quy"], u]];
     let left = budget, bought = 0;
@@ -248,6 +261,7 @@ register({
   async run(api) {
     // (levels) more cans from Medium (up to 8, 10, 14, 19) and one more round on Talent
     const code = getCode(), rounds = lv(api, 3, 3, 3, 4);
+    mark(api, rounds, lv(api, 2, 2, 5, 10), api.little ? 3 : lv(api, 7, 9, 10, 10), answersFor(api));   // (v1.07 levels) rounds, fewest cans, spread of cans, answers
     // (in Australia every can and bottle returned gives back 10 cents)
     const per = code === "VND" ? 1000 : 10;
     const wrap = setup(api, code === "VND" ? ["Each can you return gives back 1.000 đồng. How much do you get?", "Mỗi vỏ lon trả lại được 1.000 đồng. Con được bao nhiêu tiền?"] : ["Each can you return gives back 10 cents. How much do you get?", "Mỗi vỏ lon trả lại được 10 xu. Con được bao nhiêu tiền?"], rounds);
@@ -269,6 +283,7 @@ register({
   async run(api) {
     // (levels) Hard and Talent: all four things; Talent pays with a bigger note, so the change is bigger
     const code = getCode(), rounds = lv(api, 3, 3, 4, 4);
+    mark(api, rounds, api.talent ? 2 : 1, answersFor(api));   // (v1.07 levels) things bought, note size paid with, answers
     const wrap = setup(api, ["Shop at the Tết market! Pay with one note and work out your change.", "Đi chợ Tết! Trả bằng một tờ tiền rồi tính tiền thối nhé."], rounds);
     await wait(1600);
     const items: [string, [string, string], number][] = code === "VND"
@@ -292,6 +307,7 @@ register({
   async run(api) {
     // (levels) more visits from Medium; Hard and Talent: amounts with half a dollar (or 5.000 đồng) in them
     const code = getCode(), u = unit(code), rounds = lv(api, 4, 5, 6, 7);
+    mark(api, rounds, lv(api, 2, 3, 3, 4), (api.smart || 0) >= 2 && !api.little ? 1 : 0, answersFor(api));   // (v1.07 levels) visits, biggest amount in dollars, half dollars, answers
     const wrap = setup(api, ["Put money in and take money out. Keep track of what is in the bank!", "Gửi tiền vào và rút tiền ra. Nhớ xem trong ngân hàng còn bao nhiêu nhé!"], rounds);
     await wait(1600);
     let balance = u * (2 + Math.floor(Math.random() * 3) + lv(api, 0, 1, 2, 3));
@@ -317,6 +333,7 @@ register({
   async run(api) {
     // (levels) Medium: three rounds; Hard: three friends every round; Talent: four friends
     const code = getCode(), coin = unit(code), rounds = lv(api, 2, 3, 3, 3);
+    mark(api, rounds, api.little ? 2 : api.talent ? 4 : (api.smart || 0) >= 2 ? 3 : 2);   // (v1.07 levels) rounds, friends in the first round
     const wrap = setup(api, ["Share the coins so every friend gets the same. Give one each, round and round!", "Chia tiền để bạn nào cũng bằng nhau. Mỗi bạn một, lần lượt nhé!"], rounds);
     await wait(1600);
     for (let r = 0; r < rounds; r++) {

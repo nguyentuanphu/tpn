@@ -192,6 +192,9 @@ async function order(api: Api, task: Extract<Task, { kind: 'order' }>, wrap: HTM
 export async function play(api: Api): Promise<unknown> {
   style(); api.onCleanup(hush);if(settings.sound)void loadAnimalCalls();
   const little = !!api.little, tier = little ? 0 : (typeof api.tier === 'function' ? api.tier() : Math.max(1, api.level | 0));
+  // (v1.07 levels) the real settings, before the first tap: words on places (used, all or none), instruction kept on screen,
+  // words on the things to put away, the older (bigger) tasks
+  api.stage.dataset.lv = [little ? 'used' : (api.smart || 0) >= 2 ? 'none' : 'all', tier >= 2 ? 1 : 0, little || api.talent ? 0 : 1, little ? 0 : 1].join(',');
   // choose a story (its cover: a picture and its name)
   api.stage.innerHTML = '';
   await say(api, HELP_LINES.choose); if (api.closed) return;

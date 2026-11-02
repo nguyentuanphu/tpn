@@ -14,13 +14,17 @@ const FARM_NAMES = { '🥕': ['carrots', 'cà rốt'], '🍓': ['strawberries', 
 const CUSTOMERS = ['🐷', '🐮', '🐔', '🐑', '🦊', '🐼', '🐨', '🐵'];
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value
-const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
+// (v1.07 levels) the numbers a game uses for its level, on its stage (data-lv) for the checks
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 
 // ---------- Order board: "Can I have 3 🥕?" ----------
 register({
   id: 'order', icon: '📋', name: () => T('Order Board', 'Bảng Đặt Hàng'),
   async run(api) {
     const rounds = 3, max = [3, 5, 7, 10, 12][api.level - 1];
+    // (v1.07 levels) biggest order, two-item orders (0 never, 1 sometimes, 2 always)
+    mark(api, max, api.little ? 0 : api.talent ? 2 : api.level >= 4 ? 1 : 0);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const item = pick(FARM), n = 1 + Math.floor(Math.random() * max), who = pick(CUSTOMERS), [en, vi] = FARM_NAMES[item];
@@ -67,6 +71,8 @@ register({
   id: 'sortout', icon: '🧺', name: () => T('Sort It Out', 'Phân Loại Nào'),
   async run(api) {
     const rounds = 2;
+    // (v1.07 levels) baskets, things per basket, sort by kind (0 colours only, 1 second round, 2 every round)
+    mark(api, api.level <= 1 ? 2 : 3, api.talent ? 4 : api.level <= 2 ? 2 : 3, api.level >= 3 ? 2 : api.level >= 2 ? 1 : 0);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const byKind = api.level >= 3 || r === 1 && api.level >= 2;
@@ -103,6 +109,7 @@ register({
   id: 'bunny', icon: '🐰', name: () => T('Feed the Bunny', 'Cho Thỏ Ăn'),
   async run(api) {
     const rounds = 3, max = api.talent ? 20 : [3, 5, 8, 10, 15][api.level - 1];   // (levels) Talent: up to 20 carrots
+    mark(api, max, rounds);   // (v1.07 levels) most carrots, rounds
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const n = 1 + Math.floor(Math.random() * max);
@@ -134,7 +141,9 @@ register({
 register({
   id: 'jigsaw', icon: '🖼️', name: () => T('Photo Puzzle', 'Ghép Ảnh Của Bé'),
   async run(api) {
-    const n = api.talent ? 5 : [2, 2, 3, 3, 4][api.level - 1];   // (levels) Talent: 5 x 5 pieces
+    // (levels) Talent: 5 x 5 pieces. (v1.07 levels) Medium was the same 2 x 2 as Easy: now Medium 3 x 3, Hard 4 x 4
+    const n = api.talent ? 5 : Math.max([2, 2, 3, 3, 4][api.level - 1], lv(api, 2, 3, 4, 5));
+    mark(api, n);
     const src = avatarURL(api.players[0]);
     api.say('Put your picture back together! Tap two pieces to swap them.', 'Ghép lại bức ảnh của con nào! Chạm hai mảnh để đổi chỗ.');
     const grid = el('div', 'jig'); grid.style.setProperty('--n', n); api.stage.appendChild(grid);
@@ -170,7 +179,10 @@ register({
     const rounds = 4;
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const [same, odd] = pick(ODD_SETS), k = api.talent ? 5 : api.level >= 3 ? 4 : 3;   // (levels) Talent: five alike to look through
+      // (levels) Talent: more alike to look through. (v1.07 levels) Medium was the same as Easy: now 3 alike on Easy, 4 on
+      // Medium, 5 on Hard, 6 on Talent (each set has 3 pictures, doubled, so up to 6)
+      const [same, odd] = pick(ODD_SETS), k = api.talent ? 6 : Math.max(api.level >= 3 ? 4 : 3, lv(api, 3, 4, 5, 6));
+      mark(api, k + 1, rounds);
       const items = shuffle([...shuffle(same.concat(same)).slice(0, k), odd[0]]);
       api.say('Which one is different? Find the odd one out!', 'Cái nào khác loại? Tìm cái khác các bạn còn lại nhé!');
       const btns = choiceButtons(api, items, i => i as string);
@@ -187,6 +199,7 @@ register({
   id: 'tune', icon: '🎵', name: () => T('Copy the Tune', 'Nhại Giai Điệu'),
   async run(api) {
     const keys = api.level <= 2 ? 4 : api.level <= 4 ? 6 : 8, start = [2, 3, 3, 4, 5][api.level - 1] + (api.talent ? 1 : 0), rounds = 3;   // (levels) Talent: one note longer
+    mark(api, keys, start, rounds);   // (v1.07 levels) bars, notes in the first tune, rounds
     const xy = el('div', 'xylo'); api.stage.appendChild(xy);
     const bars = Array.from({ length: keys }, (_, i) => { const b = el('button', 'bar'); b.style.background = BARS[i]; b.style.height = (100 - i * 6) + '%'; b._i = i; xy.appendChild(b); return b; });
     const play = async i => { bars[i].classList.add('on'); SFX.xylo(i); await wait(380); bars[i].classList.remove('on'); await wait(120); };
@@ -214,10 +227,11 @@ register({
 register({
   id: 'tower', icon: '🧱', name: () => T('Build a Tower', 'Xây Tháp Cao'),
   async run(api) {
-    const rounds = 2;
+    const rounds = 2, blocks = r => Math.min(api.talent ? 8 : 7, 2 + api.level + r + (api.talent ? 1 : 0));
+    mark(api, blocks(0), blocks(1));   // (v1.07 levels) blocks in the first and second tower
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const n = Math.min(api.talent ? 8 : 7, 2 + api.level + r + (api.talent ? 1 : 0));   // (levels) Talent: one block more
+      const n = blocks(r);   // (levels) Talent: one block more
       api.say('Build a tower! Start with the biggest block, then the next biggest.', 'Xây tháp nào! Bắt đầu bằng khối to nhất, rồi đến khối to tiếp theo.');
       const tw = el('div', 'tower'); api.stage.appendChild(tw);
       const pool = el('div', 'size-line'); api.stage.appendChild(pool);
@@ -244,6 +258,7 @@ register({
   id: 'balloon', icon: '🎈', name: () => T('Balloon Flight', 'Khinh Khí Cầu'),
   async run(api) {
     const goal = api.talent ? 15 : [5, 6, 8, 10, 12][api.level - 1], speed = lv(api, .45, .45, .5, .6);   // (levels) Talent: more rings, flying faster
+    mark(api, goal, speed);   // (v1.07 levels) rings to fly through, speed
     api.say('Tap to float up! Fly through the rainbow rings. Bumping a cloud is fine, just bounce!', 'Chạm để bay lên! Bay qua các vòng cầu vồng. Chạm mây cũng không sao, nảy lên thôi!');
     const cv = el('canvas', 'sky'); api.stage.appendChild(cv); api.dots(goal, 0);
     const ctx = cv.getContext('2d');
@@ -300,6 +315,7 @@ register({
   id: 'bubbles', icon: '🫧', name: () => T('Bubble Machine', 'Máy Thổi Bong Bóng'),
   async run(api) {
     const goal = api.talent ? 25 : [10, 12, 15, 18, 20][api.level - 1], rise = lv(api, 6, 6, 5, 4);   // (levels) Hard and Talent: bubbles float away faster
+    mark(api, goal, rise);   // (v1.07 levels) bubbles to pop, seconds a bubble floats
     api.say('Pop the bubbles! Find the ones with a star for a surprise.', 'Chọc vỡ bong bóng nào! Tìm bong bóng có ngôi sao để nhận bất ngờ nhé.');
     const box = el('div', 'bubbles'); api.stage.appendChild(box);
     let popped = 0; api.dots(goal, 0);

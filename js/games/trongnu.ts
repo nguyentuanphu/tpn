@@ -1,6 +1,6 @@
 import { T } from '../i18n.js';
 import { reduceMotion } from '../state.js';
-import { FLOWER_STACKS, trongNuReady, TRONGNU_CYCLE } from './trongnu-rules.js';
+import { FLOWER_STACKS, trongNuReady, TRONGNU_CYCLE, WINDOW } from './trongnu-rules.js';
 import { paradeInput } from './fruitparade-input.js';
 
 type JumpApi = { stage: HTMLElement; closed: boolean; talent?: boolean; tier(): number; onCleanup(fn: () => void): void; say(en: string, vi: string): void; show(en: string, vi: string): void; right(element?: HTMLElement): void; dots(n: number, done: number): void; sfx: { tap(): void }; plan(fn: () => Element | null, options: { maxActions: number }): void; win(extra: { title: string; titleVi: string }): Promise<unknown> };
@@ -29,7 +29,9 @@ export async function playTrongNu(api: JumpApi) {
   const calm = reduceMotion();root.dataset.calm = String(calm);
   // (owner, 1 Nov 2026 AEDT) a narrower moment and a quicker stack each level; Talent is tier 4
   const tier = () => api.talent ? 4 : api.tier(), cycle = TRONGNU_CYCLE[Math.max(0, Math.min(4, tier()))];
-  api.stage.dataset.lv = [tier(), cycle].join(',');
+  // (v1.07 levels) the jump moment (start-end of each beat) is written too, not only the tier and the beat length
+  const win = tier() <= 0 || calm ? 'any' : (WINDOW[Math.min(4, tier())] || WINDOW[3]).join('-');
+  api.stage.dataset.lv = [tier(), cycle, win].join(',');
   let level = 0, elapsed = 0, previous = 0, frame = 0, busy = false, dead = false, timer: ReturnType<typeof setTimeout> | undefined;
   let finish: () => void = () => {};const done = new Promise<void>(resolve => { finish = resolve; });
   function paint() {

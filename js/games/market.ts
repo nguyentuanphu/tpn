@@ -17,6 +17,7 @@ register({
     const code = curCode(), cur = CUR[code];
     const [denoms, lo, hi, unit] = PLAN[code][Math.min(4, api.level - 1)];
     const rounds = 3;
+    api.stage.dataset.lv = [denoms.length, lo, hi, unit, rounds].join(',');   // (v1.07 levels) money offered, price range and step, rounds
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const [ic, en, vi] = pick(ITEMS);

@@ -7,7 +7,7 @@ import { el, wait, pick, shuffle } from '../util.js';
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 // (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
 // get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
-const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => { const v = api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))]; api.lvNote?.([little, easy, medium, hard, talent], v); return v; };
 const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 // Talent: a picture to remember fades away after a moment (it comes back for a moment after a wrong try)
 const fadeAway = (api, e: Element | null, ms = 1800) => { if (!api.talent || !(e instanceof HTMLElement)) return; e.style.transition = 'opacity .4s'; setTimeout(() => { e.style.opacity = '0'; }, ms); };

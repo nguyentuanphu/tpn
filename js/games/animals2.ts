@@ -7,7 +7,7 @@ import { el, wait } from '../util.js';
 
 // (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
 // get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
-const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => { const v = api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))]; api.lvNote?.([little, easy, medium, hard, talent], v); return v; };
 const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 
 let styled = false;
@@ -35,7 +35,9 @@ type Q = { show: string; choices: string[][]; answer: number; more: string[][] }
 // Under-5s play the easy ones with two answers, as before.
 function pickQs(api, easy: Q[], hard: Q[]): Q[] {
   const mixed = <V>(a: V[]) => [...a].sort(() => Math.random() - .5);
-  const qs = api.little ? easy : lv(api, easy, easy, easy.concat(hard.slice(0, 1)), mixed(hard.concat(easy.slice(0, 2))), mixed(hard.concat(easy)));
+  // (v1.07 levels) the level picks a question set by name, so the level note on the frame stays short
+  const set = lv(api, 'easy', 'easy', 'easy+1hard', 'hard+2easy', 'all');
+  const qs = set === 'easy' ? easy : set === 'easy+1hard' ? easy.concat(hard.slice(0, 1)) : set === 'hard+2easy' ? mixed(hard.concat(easy.slice(0, 2))) : mixed(hard.concat(easy));
   const extra = lv(api, 0, 0, 1, 1, 2);
   mark(api, qs.length, 2 + extra);
   return qs.map(q => ({ ...q, choices: q.choices.concat(q.more.slice(0, extra)) }));

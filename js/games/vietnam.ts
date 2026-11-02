@@ -62,7 +62,7 @@ register({
     // (owner, 1 Nov 2026 AEDT) Tèo thinks harder each level: Easy often plays any move, Medium mostly the best capture, Hard
     // always the best capture, and Talent also looks at the child's best answer and plays the move that leaves the least
     const smart = api.little ? 0 : Math.max(0, Math.min(3, api.smart || 0)), careless = [.55, .2, 0, 0][smart];
-    markLv(api, careless, smart === 3 ? 'lookahead' : '');
+    markLv(api, api.little ? 'gentlest' : careless, smart === 3 ? 'lookahead' : '');   // (v1.07 levels) under-5s: Tèo plays the gentlest move
     const bestReply = s => { let best = 0; for (let i = 1; i <= 5; i++) if (s.seeds[i]) for (const d of [1, -1]) best = Math.max(best, simulate(s, i, d).s.score[0] - s.score[0]); return best; };
     const pickAI = () => {
       const opts = [];
@@ -266,6 +266,10 @@ register({
       const b0 = el('button', 'pill big pull p0', '💪 ' + T('Pull!', 'Kéo!')); btns.appendChild(b0);
       let b1 = null; if (api.two) { b1 = el('button', 'pill big pull p1', T('Pull!', 'Kéo!') + ' 💪'); btns.appendChild(b1); }
       api.say(attempt === 0 ? 'Dô ta! Tap the pull button as fast as you can!' : 'Again! Dô ta!', attempt === 0 ? 'Dô ta! Bấm nút Kéo thật nhanh nào!' : 'Lại nào! Dô ta!');
+      // Talent: the village kids pull harder still
+      // (v1.07 levels) worked out and written before the count-in, so the level is on the frame from the first moment
+      const aiRate = api.little ? 1.4 : ([1.9, 2.3, 2.8, 3.2, 3.6][Math.max(0, Math.min(4, api.level - 1))] + (api.strong ? .4 : 0) + (api.talent ? .5 : 0) + attempt * -.25);
+      if (!api.two) markLv(api, +aiRate.toFixed(2));
       await wait(1200);
       let x = 0, done = -1, last = performance.now();
       const mark = field.querySelector('.mark'), rope = field.querySelector('.rope');
@@ -273,9 +277,6 @@ register({
       b0.onclick = () => pull(-1); if (b1) b1.onclick = () => pull(1);
       // (r90, #423 #445) auto play pulls as fast as a child taps (the plan is asked again after each tap)
       api.plan(() => field.isConnected && done < 0 ? b0 : null, { maxActions: 400 });
-      // Talent: the village kids pull harder still
-      const aiRate = api.little ? 1.4 : ([1.9, 2.3, 2.8, 3.2, 3.6][Math.max(0, Math.min(4, api.level - 1))] + (api.strong ? .4 : 0) + (api.talent ? .5 : 0) + attempt * -.25);
-      if (!api.two) markLv(api, aiRate);
       await new Promise<void>(res => {
         const tick = now => {
           if (api.closed) return res();
