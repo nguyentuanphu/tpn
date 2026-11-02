@@ -34,8 +34,9 @@ drawings (`hv:tab`, the game controller, the tree and the padlock are already dr
   default button is now Học vui. The check's assertions are unchanged.
 
 ## Checks (3 Nov 2026 AEDT, local, each with `node suite.mts --only ...`)
-`--changed` picks the full suite (test code changed), so the full suite is started on GitHub
-(`full-suite.yml`, workflow_dispatch on `work/v108-simple`).
+`--changed` picks the full suite (test code changed). Following Release's round rule (owner, 3 Nov 2026 AEDT: Release
+runs all the full suites at once), only the checks covering this change were run, with `--only`; **the full suite is left
+for Release.** (A full-suite run started on this branch at 8:15 am AEDT, before the rule reached this chat, was cancelled.)
 - types pass, noemoji pass, bilingual pass, rules pass, contract pass, boot pass
 - simple pass, adventure pass (237 games, 17 sections), simplefirst pass, simplereturnfruit pass
 - hocvui pass, mapnames pass, songs pass, phone pass (desktop, phone, tablet)
