@@ -13,7 +13,7 @@ const hash=(bytes:string|Uint8Array)=>createHash('sha256').update(bytes).digest(
 // (30 Oct 2026 AEDT) My House and the Play menu speak fixed public lines too (the line checks below still refuse names and templates)
 // (1 Nov 2026 AEDT) the villagers' fixed facts, the activity names and the Tiếng Việt games' syllables are public game text
 // too (no names, no family data)
-export const publicGameSource=(file:string)=>/^js\/games\/[\w-]+\.ts$/.test(file)||file==='js/howto-data.ts'||file==='js/howto-data2.ts'||file==='js/myhouse.ts'||file==='js/ui.ts'||file==='js/content/villagerlines.ts'||file==='js/content/activities.ts'||file==='js/content/hocvui.ts'||file==='js/school.ts'||file==='js/main.ts'; // (1 Nov: the school's greeting, Play together's "Play with whom?")
+export const publicGameSource=(file:string)=>/^js\/games\/[\w-]+\.ts$/.test(file)||file==='js/howto-data.ts'||file==='js/howto-data2.ts'||file==='js/myhouse.ts'||file==='js/ui.ts'||file==='js/content/villagerlines.ts'||file==='js/content/activities.ts'||file==='js/content/hocvui.ts'||file==='js/school.ts'||file==='js/main.ts'||/^js\/main\/[\w-]+\.ts$/.test(file); // (1 Nov: the school's greeting, Play together's "Play with whom?")
 export function validateReviewedVoiceDelta(value:unknown,readSource:(file:string)=>string|Uint8Array=path=>fs.readFileSync(path),pairs:Array<Record<string,string>>=publicPairs(),readFragments=()=>collectMixedFragmentRecordings(text=>text)):ReviewedVoiceDelta{
  const d=value as ReviewedVoiceDelta;
  if(!d||d.schema!==1||d.status!=='reviewed-public'||!d.sourceHashes||!Array.isArray(d.lines)||!d.lines.length||d.lines.length>250)throw Error('Invalid reviewed public speech batch');
