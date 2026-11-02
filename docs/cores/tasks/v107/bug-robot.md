@@ -46,6 +46,21 @@ Branch: `work/v107-bug-robot` (from main v1.06). Started 2 Nov 2026, 10:56 am AE
   before fixing it again.
 - Result: (pending, see below)
 
+## Old remote branches already fully in main (2 Nov 2026 AEDT; none deleted)
+Test: `git merge-tree --write-tree origin/main <branch>` gives exactly main's tree, so merging the branch would add
+nothing (works for squash-merged rounds). These 12 can go if the owner agrees (Release asks):
+- core/play-reading (last commit 12 Oct), core/rollout (13 Oct), studio-draft (13 Oct)
+- claude/studio-live-takeover-r81-yavl1q (17 Oct), work/studio-live-20261017 (17 Oct)
+- fix/tester-issues-no-mentions (22 Oct)
+- handoff/studio-combined-20261029, handover/release-local-20261029, review/studio-finance-20261027,
+  work/studio-content-website-20261029, work/voice-bitrate-32k (all 29 Oct)
+- work/studio-home-20261030 (30 Oct)
+
+The other 62 branches would still change something if merged. For most old ones (core/front-desk, core/battery,
+core/studio, voices/run, release/r84 and the October work/* branches) that is because main changed the same files
+again later, not because work is missing; they need a person to look before deleting. Current: code-map,
+work/after-v104-20261031, work/v107-*.
+
 ## Checks
 - Workflow YAML parses (python yaml): pass.
 - The error-message filter tried on a made-up execution file: prints the message and hides a key-like string: pass.
