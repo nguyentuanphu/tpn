@@ -8303,6 +8303,9 @@ await check('rigidmodels', async () => (await import('./rigid-models.mts')).rigi
 await check('terrainmath', async () => (await import('./terrain-math.mts')).terrainMathCheck());
 await check('renderaudit', async () => (await import('./render-audit.mts')).renderAudit(b));
 await check('r87ui', async () => (await import('./r87-ui.mts')).r87UiCheck(b));
+// (v1.07 family-code) make a family code on a phone, join it on a tablet, restore a wiped computer from the tablet's
+// Save a copy and leave again, with made-up families only (tests/family-code-journey.mts)
+await check('familycodejourney', async () => (await import('./family-code-journey.mts')).familyCodeJourneyCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);
