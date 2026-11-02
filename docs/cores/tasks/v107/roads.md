@@ -1,6 +1,6 @@
 # v1.07 roads: status
 
-**ready for Release** (2 Nov 2026 AEDT). Draft PR #787. The owner approved the new look. Full suite started on GitHub (`full-suite.yml`, workflow_dispatch on `work/v107-roads`): Release, please read its result before merging. A red check there is to be fixed, not waved through.
+**ready for Release** (2 Nov 2026 AEDT): the roads (owner approved) and the `js/world.ts` split (owner's decision via Release). Draft PR #787. Full suite started on GitHub after the split: Release, please read its result and commit its `check-map` artifact (`tests/check-map.json`, `tests/check-times.json`).
 
 Branch: `work/v107-roads`. Issue #34. Started 2 Nov 2026, 10:57 am AEDT.
 
@@ -86,3 +86,50 @@ Note: `node tools/build.mts` rewrites `content/management-catalogue.json`; resto
 - PERF-001 startMB fails on main v1.06 too (2.704 MB, limit 2.55). This is not from roads; the startup helper or
   Release should handle it.
 - No new spoken lines. No world positions or road courses changed. Bark-chip paths in forests (Concept D) are not done.
+
+## Second task: split `js/world.ts` (owner's decision via Release, 2 Nov 2026 AEDT)
+
+Note: the split-code plan says "after the roads helper's change, because it changes this file", but the roads change is
+in `js/roads.ts`; `js/world.ts` was not touched by roads. The split was done anyway, as the owner decided.
+
+Pure move, one commit per new file (each commit starts the game; checked by loading the title on each):
+
+| commit | file | holds |
+|---|---|---|
+| bdc6609a | `js/world/places.ts` (12 KB) | map data and places, levels, footprints, rivers, ponds, bridges |
+| f2d0aa10 | `js/world/ground.ts` (24 KB) | roads data, road/river/water distances, `heightAt`, `surfaceAt`, `oldHeightAt` |
+| 9bb8169d | `js/world/sites.ts` (12 KB) | regions, shrines, towers, Leafies, garden plots, building lots |
+| a7944baa | `js/world/paint.ts` (7 KB) | painting the map and water pictures |
+| 7e9bf354 | `js/world/reshape.ts` (9 KB) | levelling under buildings, widening level land, road beds |
+
+`js/world.ts` (61 KB) keeps `createWorld()` and re-exports every name it exported before (same list), so no import
+elsewhere changed. Differences from the plan: the regions/sites part is its own file (not inside `places.ts`), because
+it uses `heightAt` and `places.ts` would then import `ground.ts` while `ground.ts` imports `places.ts` (a circle, which
+`arch` forbids); `reshape.ts` likewise. Four module variables that other parts assigned (`PADS`, `WIDE`, `RB_ON`,
+`HERITAGE_GROUNDS_ON`) are set through one `setGround()` in `ground.ts` (an imported name cannot be assigned); this is
+the only change besides added `export` words. A line count against the old file shows nothing else lost or changed.
+`createWorld()` itself (60 KB, plan step 2) is not split: left for v1.08.
+
+`sw.ts` offline list and `index.html` preload list updated. `tests/check-map.json` comes from the GitHub full suite's
+artifact (coverage offsets cannot be written by hand).
+
+Checks after the split (local, one at a time, 2 Nov 2026 AEDT):
+
+| check | result |
+|---|---|
+| arch | pass (0 circles) |
+| names | pass |
+| types | pass |
+| preload | pass |
+| mapcoords | pass |
+| roads | pass |
+| roadshape | pass |
+| flat | pass |
+| solid | FAIL, same on main v1.06: `hunt_diwali_0` (the Diwali hunt, on only around this date) has no open ground near it |
+| startup | pass (twice: 25.2 s and 23.0 s on machines x1.48 and x1.63 slower than the reference; 21.7 s at x1.43 before) |
+| perf | PERF-001 startMB 2.729 (2.707 before, 2.704 main): fails as on main. The packed bundle is byte-for-byte the same size before and after the split (main graph 2.258 MB both), so the difference is timing noise in what loads before the title; draw calls 375 (same) |
+| `--changed` | full suite (test code changed earlier on this branch): started on GitHub |
+
+Screenshots after the split: `docs/world-split/split-*.jpg` (7 spots x phone, tablet, computer). Compared with the
+roads "after" pictures taken before the split: 0 to 6 % of pixels differ, all random flowers, the puppy and pop-ups;
+places and roads are where they were.
