@@ -33,7 +33,7 @@ Files:
 - New: `js/content/tiengviet2.ts` (the words, lines and the voice list), `js/games/tiengviet2.ts` (the ten games), `js/games/tiengviet2-meta.ts` (guides), `js/art/tiengviet2.ts` (icons).
 - Shared, one marked block each `// (v1.08 vietnamese)`: `js/content/activities.ts` GAME_INFO, `js/games/catalog.ts` (catalogue and loader), `js/games/registry.ts` (imports the guides), `js/art.ts` (imports the icons), `js/school.ts` (the pin), `tools/make-voice-pack.mts` (records the Vietnamese words), `tests/checks/learning.mts` (the `hocvui` check plays the new games to a win at Easy and Talent).
 
-Checks: `cd tests && node suite.mts --changed` (if it picks the full suite: push and start `full-suite.yml` on the branch), plus `hocvui`, `guides`, `voicecover`, `noemoji`, `bilingual`, `games`, phone, tablet and computer screenshots.
+Checks: `cd tests && node suite.mts --changed` (if it picks the full suite, the full suite is left for Release: round rule, 3 Nov 2026 AEDT), plus `hocvui`, `guides`, `voicecover`, `noemoji`, `bilingual`, `games`, phone, tablet and computer screenshots.
 
 ## Progress
 
