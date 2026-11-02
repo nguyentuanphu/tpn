@@ -3,10 +3,10 @@
 // for everything"). Each line: the English (a pattern, numbers and names caught) and the Vietnamese. The `studio` check
 // reads every message the servers can send and fails if one has no line here.
 const ENV = 'Netlify (Site configuration → Environment variables)';
-// the permissions' Vietnamese names by their English ones (filled from the server's list, studio/ui/app.js)
-export const PERM_VI = {};
-const LIVE_PART_VI = { Message: 'Lời nhắn', Missions: 'Nhiệm vụ', Quiz: 'Đố vui', 'Our stories': 'Truyện của nhà mình', Villagers: 'Nhân vật', 'Memory Villages': 'Làng Kỷ Niệm', 'Story characters': 'Nhân vật trong truyện', Ads: 'Quảng cáo', 'Family album': 'Album gia đình' };
-export const VI_MESSAGES = [
+// the permissions' Vietnamese names by their English ones (filled from the server's list, studio/ui/app.ts)
+export const PERM_VI: Record<string, string> = {};
+const LIVE_PART_VI: Record<string, string> = { Message: 'Lời nhắn', Missions: 'Nhiệm vụ', Quiz: 'Đố vui', 'Our stories': 'Truyện của nhà mình', Villagers: 'Nhân vật', 'Memory Villages': 'Làng Kỷ Niệm', 'Story characters': 'Nhân vật trong truyện', Ads: 'Quảng cáo', 'Family album': 'Album gia đình' };
+export const VI_MESSAGES: [RegExp, (m: RegExpExecArray) => string][] = [
   [/^Revisioned configuration is active\. Use Analytics → Configuration changes to save safely\.$/, () => 'Cấu hình theo phiên bản đã hoạt động. Vào Phân tích → Thay đổi cấu hình để lưu an toàn.'],
   [/^Management edits require the signed-in online Studio\.$/, () => 'Cần đăng nhập Studio trực tuyến để sửa thông tin quản lý.'],
   [/^Connect the website and a scoped Studio key in Settings\.$/, () => 'Kết nối trang web và khóa Studio có quyền phù hợp trong Cài đặt.'],
@@ -112,4 +112,4 @@ export const VI_MESSAGES = [
   [/^(not found|unknown|which engine\?|bad (name|path|line|place|deploy|pull request))$/, (m) => `Có lỗi (${m[1]}).`]
 ];
 // the Vietnamese for a message, or the message itself
-export const viMessage = msg => { const s = String(msg ?? ''); for (const [re, f] of VI_MESSAGES) { const m = re.exec(s); if (m) return f(m); } return s; };
+export const viMessage = (msg: unknown): string => { const s = String(msg ?? ''); for (const [re, f] of VI_MESSAGES) { const m = re.exec(s); if (m) return f(m); } return s; };

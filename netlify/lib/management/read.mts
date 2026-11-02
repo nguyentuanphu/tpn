@@ -7,6 +7,7 @@ import { legacyMetrics, metric, performance, sumValues } from './metrics.mts';
 export type ManagementStore = {
   get(key: string, options?: {type: 'json'}): Promise<unknown>;
   list(options: {prefix: string, cursor?: string}): Promise<{blobs: {key: string}[], cursor?: string}>;
+  setJSON?(key: string, value: unknown): Promise<unknown>;
 };
 type StoreSource = ManagementStore | (()=>Promise<ManagementStore> | ManagementStore);
 export type CatalogueEntry = { id: string; kind: string; name: {en: string,vi: string}; area?: string; sourceCommit?: string; guide?: unknown; coverage?: unknown; [k:string]: unknown };
@@ -16,6 +17,10 @@ type Dependencies = {
   // (owner, 30 Oct 2026 AEDT: "Studio loads too slow, especially after selecting the date") the live Studio names its
   // store here so finished days are kept between requests; without a name (the tests) every read is fresh
   cacheKey?: string;
+  // (v1.07, studio-home-20261030) keep each finished day (three or more days ago) added up once, as one record
+  // `msum/<date>` in the same private store, so a later read takes one record per day instead of every device's record.
+  // A late report for that day removes it (netlify/lib/players.mts hello); the daily tidy removes old ones.
+  keepDays?: boolean;
 };
 type ReadOptions = {includeProfileContext?: boolean};
 type Daily = {id: string; date: string; value: Record<string,any>};
@@ -61,6 +66,9 @@ const dailySeries=(q:ManagementQuery,records:Daily[])=>dateRange(q).map(date=>{
   const daily=records.filter(d=>d.date===date),known=daily.length>0;
   return {date,reportingBuckets:daily.length,activeDevices:known?new Set(daily.filter(d=>active(d.value)).map(d=>d.id)).size:null,
     mins:known?daily.reduce((n,d)=>n+count(d.value.mins),0):null,
+    // (v1.07, G03) of the day's active devices, the ones on their first day ever and the ones seen before
+    newDevices:known?new Set(daily.filter(d=>active(d.value)&&d.value.isNew===true).map(d=>d.id)).size:null,
+    returningDevices:known?new Set(daily.filter(d=>active(d.value)&&d.value.isNew!==true).map(d=>d.id)).size:null,
     errors:known?daily.reduce((n,d)=>n+sumValues(d.value.errs),0):null};
 });
 const statuses:Record<string,string>={new:'observed',fixing:'fixing',fixed:'fixed_in_code',confirmed:'verified',back:'reopened',notbug:'dismissed',dup:'duplicate'};
@@ -76,17 +84,23 @@ export function createManagementReadService(deps:Dependencies) {
     if(!v)throw new ManagementReadError('source_unavailable','The requested reporting source is not configured.',503);
     return resolve(v);
   }
+  // the days are read side by side (they were read one after another: 30 rounds for a 30-day period)
+  async function dayRecords(s:ManagementStore,q:ManagementQuery):Promise<Daily[]> {
+    const base=deps.cacheKey?deps.cacheKey+':'+q.traffic:null, recent=day(clock()-2*864e5);
+    const days=await mapPool(dateRange(q),date=>cached(base&&date<recent?base+':d:'+date:null,DAY_MS,async()=>{
+      const keep=deps.keepDays===true&&date<recent&&typeof s.setJSON==='function';
+      if(keep){const saved=await readJson(s,'msum/'+date);if(saved.v===1&&saved.date===date&&Array.isArray(saved.rows))return (saved.rows as unknown[]).map(object).filter(r=>typeof r.id==='string'&&DEVICE.test(r.id)&&r.date===date).map(r=>({id:r.id as string,date,value:object(r.value)}));}
+      const kk=await keys(s,`d/${date}/`), values=await mapPool(kk,k=>readJson(s,k)), rows:Daily[]=[];
+      kk.forEach((k,i)=>{const id=k.slice(`d/${date}/`.length);if(DEVICE.test(id)&&Object.keys(values[i]).length)rows.push({id,date,value:values[i]});});
+      if(keep)try{await s.setJSON!('msum/'+date,{v:1,date,at:clock(),rows});}catch{/* a read still answers when keeping fails */}
+      return rows;
+    }),8);
+    return days.flat();
+  }
   async function snapshot(q:ManagementQuery,options:ReadOptions={}) {
     if(q.child&&!options.includeProfileContext)throw new ManagementReadError('permission_required','Child search requires restricted device-detail permission.',403);
     const s=await source(q), quality:string[]=[];
-    const base=deps.cacheKey?deps.cacheKey+':'+q.traffic:null, recent=day(clock()-2*864e5);
-    // the days are read side by side (they were read one after another: 30 rounds for a 30-day period)
-    const days=await mapPool(dateRange(q),date=>cached(base&&date<recent?base+':d:'+date:null,DAY_MS,async()=>{
-      const kk=await keys(s,`d/${date}/`), values=await mapPool(kk,k=>readJson(s,k)), rows:Daily[]=[];
-      kk.forEach((k,i)=>{const id=k.slice(`d/${date}/`.length);if(DEVICE.test(id)&&Object.keys(values[i]).length)rows.push({id,date,value:values[i]});});
-      return rows;
-    }),8);
-    const daily:Daily[]=days.flat();
+    const daily:Daily[]=await dayRecords(s,q);
     const [ik,lk,pk]=await Promise.all([keys(s,'info/'),keys(s,'label/'),keys(s,'live/')]);
     const infos=new Map<string,Record<string,any>>(),labels=new Map<string,string>(),lives=new Map<string,Record<string,any>>();
     await Promise.all([
@@ -165,6 +179,29 @@ export function createManagementReadService(deps:Dependencies) {
       versions:{newest,onNewest:newest?builds.get(newest)||0:0,older:[...builds].filter(([b])=>b!==newest).reduce((n,[,c])=>n+c,0)}
     };
   }
+  // (v1.07, owner 30 Oct 2026 AEDT: "first page loads too long") the first page's numbers in one quick read: only the day
+  // records (one kept record per finished day) and the list of device ids, never each device's details. Counts only.
+  async function summary(raw:URLSearchParams|Record<string,unknown>={}){
+    const now=clock(),today=day(now),weekFrom=day(now-6*864e5),monthFrom=day(now-29*864e5);
+    const given=raw instanceof URLSearchParams?Object.fromEntries(raw.entries()):object(raw);
+    const q=query({traffic:given.traffic||'ordinary',from:monthFrom,to:today}),s=await source(q);
+    const [daily,ever]=await Promise.all([dayRecords(s,q),keys(s,'dev/').then(k=>k.length)]);
+    const week=daily.filter(d=>d.date>=weekFrom),known=daily.length>0,weekKnown=week.length>0,todays=daily.filter(d=>d.date===today);
+    const ids=(list:Daily[])=>new Set(list.map(d=>d.id)).size,activeIds=(list:Daily[])=>new Set(list.filter(d=>active(d.value)).map(d=>d.id)).size;
+    const minutes=(list:Daily[])=>list.reduce((n,d)=>n+count(d.value.mins),0),fresh=(list:Daily[])=>new Set(list.filter(d=>d.value.isNew===true).map(d=>d.id)).size;
+    const latest=new Map<string,Daily>();for(const d of daily){const had=latest.get(d.id);if(!had||had.date<=d.date)latest.set(d.id,d);}
+    const builds=new Map<string,number>();for(const d of latest.values()){if(!active(d.value))continue;const b=d.value.build;if(isBuild(b))builds.set(b,(builds.get(b)||0)+1);}
+    const ranked=[...builds].sort((a,b)=>buildRank(b[0])-buildRank(a[0])),newest=ranked[0]?.[0]||null;
+    return {schemaVersion:1,generatedAt:new Date(now).toISOString(),period:{today,weekFrom,monthFrom,basis:'legacy-device-day'},scope:{traffic:q.traffic},
+      reportingDays:new Set(daily.map(d=>d.date)).size,
+      today:{devicesToday:known?ids(todays):null,devicesWeek:weekKnown?activeIds(week):null,devicesMonth:known?activeIds(daily):null,
+        newWeek:weekKnown?fresh(week):null,newMonth:known?fresh(daily):null,devicesEver:Math.max(ever,ids(daily)),// (a device that reported without its first-seen mark still counts)
+        
+        minsToday:known?minutes(todays):null,minsWeek:weekKnown?minutes(week):null,minsMonth:known?minutes(daily):null,
+        errorsWeek:weekKnown?week.reduce((n,d)=>n+sumValues(d.value.errs),0):null,
+        versions:{newest,onNewest:newest?builds.get(newest)||0:0,older:ranked.slice(1).reduce((n,[,c])=>n+c,0),list:ranked.slice(0,12).map(([build,devices])=>({build,devices}))}},
+      quality:['reporting-devices-only','legacy-local-day','late-data-may-revise','daily-distinct-not-unique-children']};
+  }
   async function parentMetrics(q:ManagementQuery){
     const ids=[['M13','Website page views','events'],['M14','Website Play clicks','clicks'],['M15','Website active reading time','seconds']];
     if(!deps.parentAnalyticsStore||q.build!=='all'||q.deviceClass!=='all'||q.traffic!=='ordinary'||q.search||q.child)return ids.map(([id,label,unit])=>metric(id,label,null,unit,0,'Website event aggregates cannot be joined to this device/build scope.'));
@@ -222,5 +259,5 @@ export function createManagementReadService(deps:Dependencies) {
     return {...envelope(q,[...s.quality,'profile-participations-not-attempts',...(inconsistent?['inconsistent-participation-outcomes']:[])]),activity:entry,usage:a.kind==='story'?{starts:null,profileStarts:null,completed:null,abandoned:null,participationCompletionRatio:null,status:'unavailable',reason:'legacy-story-counts-have-no-story-id'}:{starts,profileStarts,completed,abandoned,participationCompletionRatio:profileStarts&&!inconsistent?completed/profileStarts:null,status:'existing-derived'},issues:issues.map(({sortAt,...v})=>v),coverage:a.coverage||null,guide:a.guide||null};
   }
   async function release(build:string,raw:URLSearchParams|Record<string,unknown>={}){if(!isBuild(build))throw new ManagementReadError('invalid_build','Invalid release build.');const q=query({...Object.fromEntries(raw instanceof URLSearchParams?raw.entries():Object.entries(raw)),build}),s=await snapshot(q),builds:Record<string,number>={};for(const d of s.devices)for(const b of d.usageBuilds)if(isBuild(b))builds[b]=(builds[b]||0)+1;return {...envelope(q,s.quality),release:{build,devices:s.devices.length,reportingBuilds:Object.entries(builds).sort((a,b)=>buildRank(b[0])-buildRank(a[0])).map(([build,devices])=>({build,devices})),checksStatus:'unavailable',deploymentStatus:'unavailable'},comparisonEligibility:['originating-build-only','mixed-build-days-excluded','matching-device-class-required','capped-startup-samples','deployment-evidence-required']};}
-  return {overview,devices,device,children,attention,activity,release};
+  return {overview,summary,devices,device,children,attention,activity,release};
 }

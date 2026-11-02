@@ -103,7 +103,7 @@ export async function hello(S, body, now = Date.now(), where: { city?: string, r
     r.builds=r.builds||{...(r.build?{[r.build]:true}:{})};r.builds[x.build]=true;
     Object.assign(r, { build: x.build, lang: d.lang, kids: d.kids, kind: d.kind, app: d.app });
     await S.setJSON(key, r);
-    if (x.d < today) await S.delete('sum/' + x.d); // a finished day that just got more play (from an outbox) is added up again
+    if (x.d < today) { await S.delete('sum/' + x.d); await S.delete('msum/' + x.d); } // a finished day that just got more play (from an outbox) is added up again (sum/: Analytics; msum/: Studio's management reads, v1.07)
   }
   if (d.hid) await S.set('seen/' + d.hid, today); // only once it is all written
   if (d.lines.length) await addLines(S, d.id, opts.ip || '', d.lines, today);
@@ -168,6 +168,7 @@ async function tidy(S, now) {
   try { if (await S.get('tidy/last') === today) return; await S.set('tidy/last', today); } catch (e) { return; }
   const gone = async (prefix, isOld) => { try { const blobs = (await listAll(S, prefix)).filter(isOld); await each(blobs, async b => { if (Date.now() < stop) await S.delete(b.key); }); } catch (e) { } };
   await gone('d/', b => b.key.slice(2, 12) < old);
+  await gone('msum/', b => b.key.slice(5, 15) < old); // (v1.07) Studio's kept day records go with the device records
   await gone('vq/', b => b.key.slice(3, 13) < yday); // (the daily line counts)
   try { const blobs = await listAll(S, 'seen/'); await each(blobs, async b => { if (Date.now() >= stop) return; const v = await S.get(b.key); if (!v || v < old) await S.delete(b.key); }); } catch (e) { }
 }

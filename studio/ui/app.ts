@@ -32,7 +32,10 @@ const say = m => LANG === 'vi' ? viMessage(m) : String(m ?? '');
 const READS = new Map<string, { at: number, value: Promise<any> }>(), READ_MS = 30e3;
 const api = (p: string, body?: unknown) => {
   if (body !== undefined) { READS.clear(); return apiNow(p, body); }
-  if (!/^management\/(overview|devices|children|attention|activities)(\?|$)/.test(p)) return apiNow(p); // (the older Analytics report keeps its own day sums on the server and is always read fresh)
+  // (v1.07) the older Analytics report keeps its own day sums on the server and is read fresh, but pages that open together
+  // (Sparkle Lab, Analytics, the device names) share the one read that is on its way instead of each asking again
+  if (p === 'players') { const hit = READS.get(p); if (hit && hit.at < 0) return hit.value; const value = apiNow(p); READS.set(p, { at: -1, value }); value.finally(() => { if (READS.get(p)?.value === value) READS.delete(p); }).catch(() => { }); return value; }
+  if (!/^management\/(overview|summary|devices|children|attention|activities)(\?|$)/.test(p)) return apiNow(p);
   const hit = READS.get(p); if (hit && Date.now() - hit.at < READ_MS) return hit.value;
   const value = apiNow(p); READS.set(p, { at: Date.now(), value }); value.catch(() => READS.delete(p)); return value;
 };
