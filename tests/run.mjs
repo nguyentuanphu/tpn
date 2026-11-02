@@ -29,6 +29,8 @@ await check('autoplayheld', async () => (await import('./autoplay-held.mts')).au
 await check('softgraphics', async () => (await import('./old-bugs.mts')).softGraphicsCheck(b));
 await check('freezewhy', async () => (await import('./old-bugs.mts')).freezeWhyCheck(b));
 await check('longplaymem', async () => (await import('./old-bugs.mts')).longPlayMemoryCheck(b));
+// (v1.07 startup, owner's plan focus 1) the Simple screen and its games open before the valley is built (tests/simple-first.mts)
+await check('simplefirst', async () => (await import('./simple-first.mts')).simpleFirstCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

@@ -266,6 +266,14 @@ marketing/source/runvalley.log
 /js/lotus.js
 /js/lunar.js
 /js/main.js
+/js/main/friends.js
+/js/main/hero-events.js
+/js/main/interactables.js
+/js/main/layout.js
+/js/main/online-games.js
+/js/main/quests.js
+/js/main/talking.js
+/js/main/talks.js
 /js/management-telemetry.js
 /js/mictest.js
 /js/money.js

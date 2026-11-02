@@ -256,13 +256,15 @@ export function sendLive(on, G) {
 }
 // (Analytics & Infra, 11 Oct, owner: #36 slow start) each start's timings, so the real phones' and tablets' start-up
 // shows in Studio's Analytics: [ms to the game's code, ms to a built valley, ms to its first picture, 1 when served from
-// the device's saved copy, the slowest building step's name]; at most 6 a day, nothing when Analytics is off
+// the device's saved copy, the slowest building step's name, (v1.07) ms from the page opening until a child could first
+// play (the Simple screen up or the valley session started; 0: nobody started within 2 minutes), ms the child waited
+// after pressing Go]; at most 6 a day, nothing when Analytics is off
 function recordStart(G, tries = 0) {
   const bt = G && G.bootTimes;
-  if (!bt || bt.shaders == null) { if (tries < 240) setTimeout(() => recordStart(G, tries + 1), 500); return; }
+  if (!bt || bt.shaders == null || (G.playTimes?.at == null && tries < 240)) { if (tries < 240) setTimeout(() => recordStart(G, tries + 1), 500); return; }
   const steps = Object.entries<number>(bt).filter(([k]) => k !== 'start').sort((a, b) => a[1] - b[1]);
   let slow = '', most = -1; steps.forEach(([k, v], i) => { const d = v - (i ? steps[i - 1][1] : 0); if (d > most) { most = d; slow = k; } });
-  const row = [bt.start, bt.start + (bt.ready || 0), bt.start + bt.shaders, warmStart ? 1 : 0, /^[a-z]{1,16}$/.test(slow) ? slow : ''].map(v => typeof v === 'number' ? Math.round(v) : v);
+  const row = [bt.start, bt.start + (bt.ready || 0), bt.start + bt.shaders, warmStart ? 1 : 0, /^[a-z]{1,16}$/.test(slow) ? slow : '', G.playTimes?.at ?? 0, G.playTimes?.waited ?? 0].map(v => typeof v === 'number' ? Math.round(v) : v);
   bump(d => { d.st = (d.st || []).concat([row]).slice(-6); });
 }
 // (#355, owner 17 Oct AEDT: "the game restarts itself or just goes straight to a white screen") a small note kept on the

@@ -218,7 +218,9 @@ async function details(S, sums: DaySum[], now: number) {
   // from the device's saved copy (warm) and the others (first visits and updates), and its most common slowest step
   const med = a => { if (!a.length) return null; const v = a.slice().sort((x, y) => x - y); return Math.round(v[v.length >> 1] / 100) / 10; };
   const startupOf = st => { if (!st.length) return null; const w = st.filter(r => r[3]), c = st.filter(r => !r[3]), steps = {}; st.forEach(r => r[4] && add(steps, r[4]));
-    return { n: st.length, ready: med(w.map(r => r[1])), readyFirst: med(c.map(r => r[1])), picture: med(st.map(r => r[2]).filter(Boolean)), slowest: top(steps, 1).map(x => x[0])[0] || '' }; };
+    return { n: st.length, ready: med(w.map(r => r[1])), readyFirst: med(c.map(r => r[1])), picture: med(st.map(r => r[2]).filter(Boolean)), slowest: top(steps, 1).map(x => x[0])[0] || '',
+      // (v1.07 startup) when a child could first play, seconds after the page opened (only rows from v1.07 on have it)
+      ...(st.some(r => r[5]) ? { play: med(st.map(r => r[5]).filter(Boolean)) } : {}) }; };
   // (battery round, 12 Oct; names agreed with Studio on the board) a device's drawing and battery over the 30 days, `power`:
   // fps = frames a second while a child plays (idle, title and menu time left out), frameMs = ms of work a frame, draws =
   // draw calls a frame, ratio = sharpness (pixel ratio), mins = minutes measured, batteryPerHour = battery % used an hour
@@ -252,7 +254,7 @@ async function details(S, sums: DaySum[], now: number) {
   for (const d of devices) if (d.last && d.last < quiet && d.days) tips.push({ k: 'quiet', d: who(d), last: d.last });
   for (const d of devices) for (const K of d.kids) if (K.age === 'little' && K.mins > 30 && K.simpleMins < K.mins * .2) tips.push({ k: 'simple', name: K.name, d: who(d) });
   // (#36) start-up by kind of device: the median time to a built valley over each kind's devices (seconds)
-  const startup = {}; for (const k of ['phone', 'tablet', 'computer']) { const v = devices.filter(d => d.kind === k && d.startup).map(d => (d.startup.ready ?? d.startup.readyFirst) * 1000).filter(x => x > 0); if (v.length) startup[k] = { devices: v.length, ready: med(v) }; }
+  const startup = {}; for (const k of ['phone', 'tablet', 'computer']) { const v = devices.filter(d => d.kind === k && d.startup).map(d => (d.startup.ready ?? d.startup.readyFirst) * 1000).filter(x => x > 0); if (v.length) { const p = devices.filter(d => d.kind === k && d.startup && d.startup.play).map(d => d.startup.play * 1000); startup[k] = { devices: v.length, ready: med(v), ...(p.length ? { play: med(p) } : {}) }; } }
   // (battery round) by kind of device, `power`: the middle of each kind's devices
   const mid = a => { const v = a.filter(x => x != null).sort((x, y) => x - y); return v.length ? v[v.length >> 1] : null; };
   const power = {}; for (const k of ['phone', 'tablet', 'computer']) { const ds = devices.filter(d => d.kind === k && d.power); if (ds.length) power[k] = { devices: ds.length, fps: mid(ds.map(d => d.power.fps)), frameMs: mid(ds.map(d => d.power.frameMs)), draws: mid(ds.map(d => d.power.draws)), batteryPerHour: mid(ds.map(d => d.power.batteryPerHour)) }; }
