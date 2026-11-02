@@ -1,4 +1,4 @@
-**ready for Release** (all parts done; the GitHub full suite was started on this branch, see Checks).
+**ready for Release** (all parts done; the full suite is left for Release, see Checks).
 
 # v1.08 helper: companion (plan parts B and E)
 
@@ -39,7 +39,7 @@ Voice: the new lines (all-hats line) recorded with Azure if the key is set; othe
 - preload: pass after `node tools/preload.mts`.
 - emoji: fail, not from this branch: an emoji in `docs/plans/v108-owner-batch-20261103.md` (Release's plan file).
 - unit: 2 fail, not from this branch: `Cannot find package 'pg'` in this container (Studio server tests 53 and 61).
-- `suite.mts --changed` picked the full suite (.gitignore changed), so it was not run locally: `full-suite.yml` was started on `work/v108-companion` by workflow_dispatch.
+- `suite.mts --changed` picked the full suite (.gitignore changed). Under the round's rule (Release, 3 Nov 2026 AEDT: Release runs one full suite for every branch) only the checks above that cover this change were run, one at a time. **The full suite is left for Release.** A full-suite run started on this branch before the rule arrived (run 41526668687) was cancelled.
 
 Screenshots looked at: out/bagpals-tester-phone.png, out/bagpals-computer.png, out/companiongoal-phone.png, out/companiongoal-tablet.png.
 
