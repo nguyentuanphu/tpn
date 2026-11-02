@@ -17,7 +17,7 @@ const FILES = [
   'vendor/three.module.js', 'vendor/peerjs.min.js', 'vendor/RoomEnvironment.js', 'css/fonts.css',
   'fonts/Fredoka-latin-500.woff2', 'fonts/Fredoka-latin-ext-500.woff2', 'fonts/Baloo2-latin-600.woff2', 'fonts/Baloo2-latin-ext-600.woff2', 'fonts/Baloo2-vietnamese-600.woff2',
   // (v1.07 split) the parts of js/main.js
-  'js/main/online-games.js',
+  'js/main/online-games.js', 'js/main/friends.js',
   'js/main.js', 'js/rideview.js', 'js/render-recovery.js', 'js/launch.js', 'js/screencapture.js', 'js/familydevices.js', 'js/family-backup.js', 'js/util.js', 'js/state.js', 'js/i18n.js', 'js/money.js', 'js/audio.js', 'js/voice.js', 'js/hanoi-pack.js', 'js/content/hanoi-pack-info.js', 'js/gfx.js',
   'js/world.js', 'js/avatar.js', 'js/player.js', 'js/input.js', 'js/net.js', 'js/mictest.js', 'js/hud.js', 'js/explain.js', 'js/ui.js', 'js/ui-settings.js', 'js/data.js',
   'js/farm.js', 'js/places.js', 'js/story.js', 'js/recorder.js', 'js/secrets.js', 'js/credits.js', 'js/howto.js', 'js/howto-player.js', 'js/howto-registry.js', 'js/howto-data.js', 'js/howto-data2.js', 'js/chat.js', 'js/chat-player.js',
