@@ -56,18 +56,14 @@ export const LIMITS = {
 };
 
 // tester levels (Studio): auto reports only, or auto reports and the ladybird
-/**
- * @typedef {'auto' | 'ladybird'} TesterLevel
- * @typedef {{ on?: unknown, devices?: unknown, levels?: Record<string, unknown> | null, peeks?: unknown }} TesterRelease  (Studio's saved rule; old saves may lack fields or hold wrong kinds)
- */
-/** @param {unknown} v @returns {v is TesterLevel} */
-const isLevel = v => v === 'auto' || v === 'ladybird';
-/** @type {TesterLevel[]} */
-export const LEVELS = ['auto', 'ladybird'];
+export type TesterLevel = 'auto' | 'ladybird';
+/** Studio's saved rule; old saves may lack fields or hold wrong kinds */
+export type TesterRelease = { on?: unknown, devices?: unknown, levels?: Record<string, unknown> | null, peeks?: unknown };
+const isLevel = (v: unknown): v is TesterLevel => v === 'auto' || v === 'ladybird';
+export const LEVELS: TesterLevel[] = ['auto', 'ladybird'];
 // the release rule for `tester` → this device's level, or '' when it is not a tester
 //   rule: { on, devices: [ids], levels: { id: 'auto' | 'ladybird' }, peeks: [release ids] }
-/** @param {unknown} on @param {TesterRelease | null | undefined} rule @param {string} me @returns {TesterLevel | ''} */
-export function testerLevel(on, rule, me) {
+export function testerLevel(on: unknown, rule: TesterRelease | null | undefined, me: string): TesterLevel | '' {
   if (!on || !me) return '';
   const list = rule && Array.isArray(rule.devices) ? rule.devices.filter(d => typeof d === 'string') : [];
   if (list.length && !list.includes(me)) return '';
@@ -75,12 +71,10 @@ export function testerLevel(on, rule, me) {
   return isLevel(lv) ? lv : 'ladybird';
 }
 // the releases a tester sees early ("Tester preview")
-/** @param {TesterRelease | null | undefined} rule @returns {string[]} */
-export const peeksOf = rule => rule && Array.isArray(rule.peeks) ? rule.peeks.filter(x => typeof x === 'string' && /^[\w-]{1,40}$/.test(x)).slice(0, 20) : [];
+export const peeksOf = (rule: TesterRelease | null | undefined): string[] => rule && Array.isArray(rule.peeks) ? rule.peeks.filter(x => typeof x === 'string' && /^[\w-]{1,40}$/.test(x)).slice(0, 20) : [];
 
 // a problem's key on this device: the same kind, detail and place is one problem (the server groups by it too)
-/** @param {string} kind @param {unknown} [detail] @param {unknown} [where] @returns {string} */
-export const keyOf = (kind, detail, where) => [kind, String(detail || '').slice(0, 80), String(where || '').slice(0, 40)].join('|').replace(/[^\w .:/()'#,@|-]/g, '').slice(0, 160);
+export const keyOf = (kind: string, detail?: unknown, where?: unknown): string => [kind, String(detail || '').slice(0, 80), String(where || '').slice(0, 40)].join('|').replace(/[^\w .:/()'#,@|-]/g, '').slice(0, 160);
 
 // ---------- rewards ----------
 // Bug Hunter badges by reports that helped (a problem fixed, or confirmed real): worn on the shirt, shown online
@@ -90,10 +84,8 @@ export const BADGES = [
   { id: 'lb3', at: 25, color: '#ffcf3a', en: 'Gold Ladybird', vi: 'Bọ rùa Vàng' },
   { id: 'lb4', at: 50, color: 'rainbow', en: 'Rainbow Ladybird', vi: 'Bọ rùa Cầu vồng' }
 ];
-/** @param {number} helped */
-export const badgeFor = helped => [...BADGES].reverse().find(b => helped >= b.at) || null;
-/** @param {number} helped */
-export const nextBadge = helped => BADGES.find(b => helped < b.at) || null;
+export const badgeFor = (helped: number) => [...BADGES].reverse().find(b => helped >= b.at) || null;
+export const nextBadge = (helped: number) => BADGES.find(b => helped < b.at) || null;
 // coins: for each report that helped, a little more when it had a spoken note
 export const COINS = { helped: 15, spoken: 10, thanks: 20 };
 // tester gear (js/content/shop.js: tester-only, never sold): which badge gives which

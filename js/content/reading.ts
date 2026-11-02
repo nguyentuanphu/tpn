@@ -113,7 +113,9 @@ const VI_BOOKS = [
     q: 'Các bạn nhỏ cầm gì?', answers: [['🏮', 'đèn lồng'], ['☂️', 'ô'], ['🎈', 'bóng bay']] }
 ];
 
-export const READ = {
+type ReadSet = { letters: string[][], build: (string | string[])[][][], rhyme: string[][], sight: string[][], vowels?: string[][], vowelPics?: string[][][],
+  tones?: string[][], tonePics?: string[][][], syl: (string | string[])[][], sent: string[][][], books: typeof EN_BOOKS };
+export const READ: Record<'en' | 'vi', ReadSet> = {
   en: { letters: EN_LETTERS, build: EN_BUILD, rhyme: EN_RHYME, sight: EN_SIGHT, vowels: EN_VOWELS, vowelPics: EN_VOWEL_PICS, syl: EN_SYL, sent: EN_SENT, books: EN_BOOKS },
   vi: { letters: VI_LETTERS, build: VI_BUILD, rhyme: VI_RHYME, sight: VI_SIGHT, tones: VI_TONES, tonePics: VI_TONE_PICS, syl: VI_SYL, sent: VI_SENT, books: VI_BOOKS }
 };

@@ -22,8 +22,9 @@ export const SLOTS = [
 ];
 
 // shape: how js/avatar.js draws it (and how the shop draws its picture); color, trim: its colours
-const I = (id, slot, shape, color, tier, f, en, vi, trim) => ({ id, slot, shape, color, tier, for: f, en, vi, trim });
-export const CLOTHES = [
+const I = (id, slot, shape, color, tier, f, en, vi, trim?) => ({ id, slot, shape, color, tier, for: f, en, vi, trim });
+export type Cloth = ReturnType<typeof I> & { tester?: boolean };
+export const CLOTHES: Cloth[] = [
   // hats and nón (the first six were free in the old wardrobe: a child who wears one keeps it)
   I('cap', 'hat', 'cap', '#e8434a', 'small', 'b', 'Red cap', 'Mũ lưỡi trai đỏ'),
   I('bow', 'hat', 'bow', '#ff5fa2', 'small', 'g', 'Hair bow', 'Nơ cài tóc'),

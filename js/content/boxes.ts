@@ -97,7 +97,7 @@ export const BOARDS = [
 ];
 export function scores(p) {
   const q = Object.keys(p.quests || {}).filter(k => !/^(seen_|played_)/.test(k)).length + n(p.lanterns && p.lanterns.done) + n(p.yard && p.yard.done);
-  const stars = Object.values(p.wins || {}).reduce((a, w) => a + winStars(w), 0) + n(p.tales) + ((p.boxes && p.boxes.stars) | 0);
+  const stars = Object.values<number>(p.wins || {}).reduce((a, w) => a + winStars(w), 0) + n(p.tales) + ((p.boxes && p.boxes.stars) | 0);
   return {
     stars: stars + q,
     collect: n(p.collect) + (Array.isArray(p.stickers) ? p.stickers.length : 0) + n(p.postcards) + n(p.leafies) + n(p.found),

@@ -29,7 +29,7 @@ function afloat(S, model, x, z, yaw = 0) {
   return g;
 }
 // put an actor somewhere in a moving thing (a boat, a horse); 'yaw' is relative to it
-function board(a, parent, pos, yaw = 0, scale) { parent.add(a.o); a.o.position.set(...pos); a.o.rotation.set(0, yaw, 0); if (scale) a.o.scale.setScalar(scale); }
+function board(a, parent, pos, yaw = 0, scale?) { parent.add(a.o); a.o.position.set(...pos); a.o.rotation.set(0, yaw, 0); if (scale) a.o.scale.setScalar(scale); }
 // get off: back into the world (keeps where it is on screen), then hop to a spot
 function hopOff(S, a, t, to, yaw) {
   S.drop(a.o, t); S.move(a.o, t + .01, .6, [to[0], 0, to[1]], undefined, .5);
@@ -62,7 +62,9 @@ function days(S, t, n, day = 1.8) {
 }
 const tint = (clump, k, from = '#5fae4a', to = '#e8c43a') => { const [st, lf] = clump.userData.mats; st.color.set(from).lerp(new THREE.Color(to), k); lf.color.set('#3a8a36').lerp(new THREE.Color('#d8a82a'), k); };
 
-export const FILMS = {
+export type FilmPage = (S: any) => void;
+export type Film = { pages: FilmPage[], [k: string]: unknown };
+export const FILMS: Record<string, Film> = {
   // ---------------- Sự tích dưa hấu (The First Watermelon) ----------------
   duahau: { pages: [
     // 1. The family is taken to a lonely sandy island and left there.
@@ -458,7 +460,7 @@ function quanYard(S, { drawn = true, stones = 5 } = {}) {
   const teo = S.person(TEO, 0, 1.25, PI, .72), bong = S.person(BONG, .3, -1.3, 0, .72);
   return { b, pebbles, quan, teo, bong };
 }
-export const GUIDES = {
+export const GUIDES: Record<string, Film> = {
   oanquan: { pages: [
     // the title: two friends at their board under the banyan
     S => { const { teo, bong } = quanYard(S); S.shot([3.2, 2.4, 4.6], [0, .4, 0]); S.cam(.3, 3, [2, 1.6, 3.2], [0, .3, 0]); S.do(teo, .6, 'wave', 2); S.do(bong, 1, 'wave', 2); S.mood(teo, 0, 'happy'); S.mood(bong, 0, 'happy'); S.at(3.4, () => { }); },
@@ -554,7 +556,7 @@ export const GUIDES = {
       S.shot([1.2, 1.6, 4.2], [.6, 1.2, -.4]);
       S.do(lan, .2, 'point', 4.6); S.talk(lan, 1, 3.6);
       [0, 1, 2].forEach(i => {
-        const a = Pp.melon(.11); a.children[0].material = new THREE.MeshToonMaterial({ color: '#e8332a' }); a.children[0].material.userData.film = true;
+        const a = Pp.melon(.11); (a.children[0] as THREE.Mesh).material = new THREE.MeshToonMaterial({ color: '#e8332a' }); (a.children[0] as THREE.Mesh<THREE.BufferGeometry, THREE.Material>).material.userData.film = true;
         S.add(a, .2 + i * .35, 2.4, -1.2); S.move(a, .8 + i * 1.2, .7, [.95 + (i - 1) * .12, .32, .6 + (i % 2) * .08], k => k * k, 0);
         const tag = Pp.countTag(i + 1); tag.visible = false; S.add(tag, .95 + (i - 1) * .12, .95, .6); S.show(tag, 1.5 + i * 1.2);
       });
@@ -578,7 +580,7 @@ export const GUIDES = {
   ] }
 };
 // the counting guide's orchard: an apple tree, a basket, Lan
-function countYard(S, noBasket) {
+function countYard(S, noBasket?) {
   S.sky('#7cc8f0', '#eaf8ff'); L.ground(S, '#9ad470'); L.house(S, -6, -9, .3);
   const tree = new THREE.Group(); tree.add(new THREE.Mesh(G3.Cyl(.18, .26, 2, 8), new THREE.MeshToonMaterial({ color: '#7a5236' }))); tree.children[0].position.y = 1;
   const crown = new THREE.Mesh(G3.S(1.3, 12, 9), new THREE.MeshToonMaterial({ color: '#4f9e42' })); crown.position.y = 2.6; tree.add(crown);
@@ -1407,7 +1409,7 @@ FILMS.hoguom = { pages: [
       S.say(t + .8, 'The king gave the sword back.', 'Vua trao trả thanh gươm.');
       S.say(t + 4, 'The turtle dived down with it, deep into the lake.', 'Rùa ngậm gươm lặn sâu xuống đáy hồ.');
       S.tw(t + .8, 1.2, k => { sword.rotation.set(0, 0, H * k); });
-      S.at(t + 2, () => { turtle.userData.head.add(sword); sword.position.set(...turtle.userData.mouth); sword.rotation.set(0, 0, H); });
+      S.at(t + 2, () => { turtle.userData.head.add(sword); sword.position.set(...(turtle.userData.mouth as [number, number, number])); sword.rotation.set(0, 0, H); });
       S.tw(t + 2.2, .8, k => { turtle.userData.head.rotation.x = -Math.sin(k * PI) * .3; });
       S.move(turtle, t + 3.2, 2, [1.6, -3, -4.6], k => k * k); S.show(ring, t + 4.4); S.show(ring, t + 6.2, false);
       S.mood(king, t + 3.4, 'happy'); S.do(king, t + 4.2, 'wave', 1.8);

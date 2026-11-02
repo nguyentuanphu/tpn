@@ -97,7 +97,7 @@ export function create(G, ctx) {
   const chiAt = near(city.x, city.z, 3, 12, 1, 3);
   const jackAt = near(city.x + 6, city.z + 6, 3, 14, 1.4, 3);
   const host = G.interactables.find(i => i.id === 'g_ferries'), mollyAt = host ? { x: host.x, z: host.z } : { x: city.x, z: city.z };
-  const people = [['chi', 'Chi', chiAt], ['jack', 'Jack', jackAt], ['ruby', 'Ruby', near(jackAt.x + 1.4, jackAt.z, 0, 5, .8, 1.2)], ['nam', 'Bà Năm', namAt]].map(([id, name, q]) => {
+  const people = [['chi', 'Chi', chiAt], ['jack', 'Jack', jackAt], ['ruby', 'Ruby', near(jackAt.x + 1.4, jackAt.z, 0, 5, .8, 1.2)], ['nam', 'Bà Năm', namAt]].map(([id, name, q]: [string, string, { x: number, z: number }]) => {
     const A_ = nameAvatar(buildAvatar(lookOf(id), null), name), x = q.x, z = q.z;
     A_.root.position.set(x, heightAt(x, z), z); A_.root.rotation.y = id === 'nam' ? Math.atan2(ox - x, oz - z) + Math.PI : Math.atan2(city.x - x, city.z - z) || 0;
     if (id !== 'nam') A_.root.scale.setScalar(.82); A_.root.visible = false; A_.root.userData.noSolid = true; scene.add(A_.root);
@@ -143,7 +143,7 @@ export function create(G, ctx) {
       const btn = (o, k) => big(p) ? `<button class="hp-big" data-hp="w${k}" style="width:auto;height:64px;border-radius:32px;padding:0 22px;font:700 19px/1 Fredoka,'Baloo 2',sans-serif;color:#3a2e4a">${T(o.en, o.vi)}</button>` : `<button class="hp-big" data-hp="w${k}">${pic(o.pic)}</button>`;
       const d = pad(`<p><b style="font-size:1.5em">${w.au}</b>${big(p) ? `<br>${T('What does it mean?', 'Nghĩa là gì?')}` : ''}</p><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px">${opts.map(btn).join('')}</div>`);
       if (big(p)) say(`What does ${w.au} mean?`, `${w.au} nghĩa là gì?`); else say(`${w.au} means ${w.en}! ${STORY_LINES.c3word[0]}`, `${w.au} nghĩa là ${w.vi}! ${STORY_LINES.c3word[1]}`);
-      try { await until(new Promise(res => opts.forEach((o, k) => { const b = d.querySelector(`[data-hp=w${k}]`); b.onclick = () => { if (o === w) { say(...STORY_LINES.c3right); setTimeout(res, 500); } else { say(...STORY_LINES.c3again); b.style.visibility = 'hidden'; } }; })), d); }
+      try { await until(new Promise(res => opts.forEach((o, k) => { const b = d.querySelector<HTMLElement>(`[data-hp=w${k}]`); b.onclick = () => { if (o === w) { say(...STORY_LINES.c3right); setTimeout(res, 500); } else { say(...STORY_LINES.c3again); b.style.visibility = 'hidden'; } }; })), d); }
       finally { d.remove(); }
     }
     say(...STORY_LINES.c3wordsDone);

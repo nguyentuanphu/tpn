@@ -381,7 +381,7 @@ export const fits = (a, { age = 'little', visited = {} } = {}) => { const u = un
  * A festival day gives its festival's adventure (once that day); otherwise one not given in the last 7 days, from the
  * places the child has unlocked; when every one was given lately, the one given longest ago.
  */
-export function pickAdventure(ctx = {}) {
+export function pickAdventure(ctx: { day?: number, history?: { id: string, day: number }[], festival?: string | null, child?: string, age?: string, visited?: Record<string, unknown> } = {}) {
   const day = ctx.day | 0, history = Array.isArray(ctx.history) ? ctx.history : [];
   const can = ADVENTURES.filter(a => fits(a, ctx));
   if (ctx.festival) { const f = can.find(a => a.festival === ctx.festival); if (f) return f.id; }

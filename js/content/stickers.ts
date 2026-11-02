@@ -169,8 +169,8 @@ const TREASURE = [
 // ---------- Places (Vietnam 45, Australia and the world 36): every place and every postcard ----------
 const VISIT = (en, vi) => [`Visit ${en}`, `Đến ${vi}`];
 const SIGN = (en, vi) => [`Read the sign: ${en}`, `Đọc bảng: ${vi}`];
-const place = (theme, id, icon, en, vi, starter) => S(theme, 'place_' + id, icon, en, vi, VISIT(en, vi), [{ enter: id }], 'chime', starter ? { starter: true } : {});
-const card = (theme, id, icon, en, vi, starter) => S(theme, 'pc_' + id, icon, en, vi, SIGN(en, vi), [{ postcard: id }], 'ding', starter ? { starter: true } : {});
+const place = (theme, id, icon, en, vi, starter?) => S(theme, 'place_' + id, icon, en, vi, VISIT(en, vi), [{ enter: id }], 'chime', starter ? { starter: true } : {});
+const card = (theme, id, icon, en, vi, starter?) => S(theme, 'pc_' + id, icon, en, vi, SIGN(en, vi), [{ postcard: id }], 'ding', starter ? { starter: true } : {});
 const VIETNAM = [
   place('vietnam', 'plateau', '🌄', 'Dawn Plateau', 'Cao Nguyên Bình Minh', true), place('vietnam', 'village', '🪷', 'Lotus Village', 'Làng Sen'),
   place('vietnam', 'home', '🌻', 'Sunny Farm', 'Nông Trại Nắng Mai'), place('vietnam', 'town', '🏠', 'Two Homes Street', 'Phố Hai Quê'),
@@ -243,7 +243,7 @@ const FESTIVALS = [
 
 // ---------- Friends and family (18): people to talk to and the best-friends chest ----------
 const TALK = (en, vi) => [`Talk to ${en}`, `Nói chuyện với ${vi}`];
-const friend = (id, icon, en, vi, act, starter) => S('friends', id, icon, en, vi, TALK(en, vi), [{ act }], 'hee', starter ? { starter: true } : {});
+const friend = (id, icon, en, vi, act, starter?) => S('friends', id, icon, en, vi, TALK(en, vi), [{ act }], 'hee', starter ? { starter: true } : {});
 const FRIENDS = [
   friend('owl', '🦉', 'Grandpa Owl', 'Ông Cú', 'npc_owl', true), friend('gourd', '🎃', 'Grandpa Gourd', 'Ông Bầu', 'npc_gourd'),
   friend('mai', '👩', 'Auntie Mai', 'Cô Mai', 'npc_mai'), friend('ba', '👨', 'Uncle Ba', 'Bác Ba', 'npc_ba'),

@@ -4,10 +4,11 @@
 // stays small (PERF-001); importing it adds the words to the chapter's steps, STORY_LINES and STORY_TALES. Nothing here
 // has a child's name in what is spoken ({name} is shown only).
 import { CHAPTERS, STORY_LINES, STORY_TALES } from './chapters.js';
+import type { StoryChapter, StoryStep, StoryTalk, StoryPair, StoryTale } from '../../types/story.js';
 
 // each step's words: tale [art, who, en, vi] (told when it starts; taleLittle for an under-5), the goal shown while doing
 // it (act_*, actL_* for an under-5), Jack and Ruby's challenge lines, the talks, and the lights' last line
-export const STEP_WORDS = {
+export const STEP_WORDS: Record<string, Partial<Omit<StoryStep, 'talk'>> & { talk?: Partial<StoryTalk> }> = {
   c3_fly: { light: ['You found a lantern light!', 'Con tìm được một đốm đèn lồng!'], lightsAll: ['All the lights! They are showing us the way to Sydney.', 'Đủ hết đốm sáng rồi! Các đốm sáng đang chỉ đường cho mình đến Sydney.'],
     act_en: 'Follow the 3 lantern lights to Sydney', act_vi: 'Đi theo 3 đốm đèn lồng đến Sydney',
     tale: ['🦉🏮', 'Ông Cú', 'Hoo hoo! The wind carried one lantern all the way across the sea to Sydney, in Australia. A girl called Chi saw it fly past the harbour. Follow the little lights!', 'Hu hu! Gió mang một chiếc đèn lồng bay qua biển tận Sydney, nước Úc. Một bạn gái tên Chi đã thấy nó bay qua bến cảng. Con đi theo những đốm sáng nhỏ nhé!'] },
@@ -41,7 +42,7 @@ export const WORDS = [
   { au: 'Brekkie', en: 'breakfast', vi: 'bữa sáng', pic: '🍳' },
   { au: 'Roo', en: 'kangaroo', vi: 'chuột túi', pic: '🦘' }
 ];
-export const LINES = {
+export const LINES: Record<string, StoryPair> = {
   c3word: ['Tap the right one!', 'Chạm vào đúng hình nhé!'],
   c3right: ['Yes! You got it!', 'Đúng rồi! Giỏi quá!'],
   c3again: ['Nearly! Try another one.', 'Gần đúng rồi! Thử cái khác nhé.'],
@@ -52,12 +53,12 @@ export const LINES = {
   c3fireworks: ['Look! Fireworks over the harbour!', 'Nhìn kìa! Pháo hoa trên bến cảng!'],
   c3secret: ['A koala in the gum tree! It only wakes up for very kind helpers. Here is a sticker for your book.', 'Một bạn koala trên cây bạch đàn! Koala chỉ thức dậy chào những bạn tốt bụng thôi. Tặng con một hình dán nhé.']
 };
-export const TALE = { id: 'lantern_ch3', flag: '🏮', title: ['The Lantern of Sydney', 'Đèn Lồng Sydney'], pages: [
+export const TALE: StoryTale = { id: 'lantern_ch3', flag: '🏮', title: ['The Lantern of Sydney', 'Đèn Lồng Sydney'], pages: [
   ['🎭🏮', 'Up went the lantern at the Opera House. The mist lifted, and the white sails glowed pink, blue and gold over the harbour.', 'Chiếc đèn lồng được treo lên Nhà hát Opera. Sương tan, những cánh buồm trắng sáng rực hồng, xanh và vàng trên bến cảng.'],
   ['🎆🌉', 'Then the sky went boom! Fireworks burst over the Harbour Bridge, and everyone cheered together: Vietnam and Australia, two homes, one big family.', 'Rồi bầu trời bùm bùm! Pháo hoa nở rộ trên Cầu Cảng, và mọi người cùng reo hò: Việt Nam và nước Úc, hai quê nhà, một đại gia đình.']] };
 
 // the chapter's steps (in order after the chapter before, before the one after if that came first)
-export const CHAPTER = { id: 'ch3', en: 'Sydney', vi: 'Sydney', landmark: 'opera', keepsake: 'lantern_ch3', reward: 40, trick: 'higher', steps: [
+export const CHAPTER: StoryChapter = { id: 'ch3', en: 'Sydney', vi: 'Sydney', landmark: 'opera', keepsake: 'lantern_ch3', reward: 40, trick: 'higher', steps: [
     { id: 'c3_fly', icon: '🏮', en: 'Fly to Sydney with your friend', vi: 'Cùng bạn đồng hành bay đến Sydney', at: 'sydney', visit: 'sydney', lights: 3 },
     { id: 'c3_chi', icon: '👧', en: 'Meet Chi in Sydney', vi: 'Gặp Chi ở Sydney', at: 'chi3', big: true, talk: { who: 'Chi', label: ['Say hello', 'Chào bạn'] } },
     { id: 'c3_words', icon: '💬', en: 'Learn Aussie words with Chi', vi: 'Học từ tiếng Úc cùng Chi', at: 'chi3', words: true },

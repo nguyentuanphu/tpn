@@ -50,7 +50,8 @@ export const FIRST_AFTER = 150;  // seconds of free play before the first one
 export const GAP = 300;          // seconds of free play between two
 
 /** which surprises can come now. ctx: { night, afterRain, nearPond, mapPieces, mapToday (a piece found today), chest (opened), done: { id: true } this session } */
-export function eligible(ctx = {}) {
+export type SurpriseCtx = { night?: boolean, afterRain?: boolean, nearPond?: boolean, mapPieces?: number, mapToday?: boolean, chest?: boolean, done?: Record<string, boolean>, play?: number, rnd?: number };
+export function eligible(ctx: SurpriseCtx = {}) {
   const pieces = ctx.mapPieces || 0, done = ctx.done || {};
   return SURPRISES.filter(s => !done[s.id] && (
     s.when === 'night' ? !!ctx.night : s.when === 'rain' ? !!ctx.afterRain : s.when === 'map' ? pieces < 3 && !ctx.mapToday
@@ -61,7 +62,7 @@ export function eligible(ctx = {}) {
  * ctx as eligible(), plus play (seconds of free play this session) and rnd (0..1, for tests).
  * Timely ones (the rainbow after rain, stars at night, the chest) come first; the others by weight.
  */
-export function pickSurprise(state, ctx = {}) {
+export function pickSurprise(state, ctx: SurpriseCtx = {}) {
   if (state.pending || state.shown >= SESSION_MAX) return null;
   const play = ctx.play || 0;
   if (play < FIRST_AFTER || play - (state.lastAt ?? -1e9) < GAP) return null;
