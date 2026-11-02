@@ -97,6 +97,7 @@ round); the full suite green before a report; times in AEST; no keys or personal
 All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed` after every merge (it always includes `types unit arch rules`).
 
 ## Owner's decisions
+- 2 November 2026 AEDT (pop-up, after seeing the v1.08 character pictures): they still look rough and dry ("vẫn thô và khô"). Of three ways (three style samples in code, a real Blender model, the owner's reference pictures) the owner chose **"Tôi gửi ảnh tham khảo"**: the owner sends pictures of characters they like, and Release builds in that spirit with our own art (rule 7: never copied).
 - 2 November 2026 AEDT (pop-up, after the v1.07 deploy): characters "đẹp, có hồn và uyển chuyển hơn", scope **"Làm hết, cả dáng người"** (knees, elbows and hands too, not only movement and faces). Release built it on `work/v108-characters` for v1.08: `docs/characters-v108/README.md`.
 - 2 November 2026 AEDT (chat, after the v1.07 deploy): "Lần sau không cần file netlify đâu, vì nó sẽ tự kéo từ github rồi". Round reports no longer include the Netlify zip (`build-netlify.sh` is not run for a report); CLAUDE.md updated. The owner also asked to start on characters that look nicer, with more life and smoother movement.
 - 2 November 2026 AEDT (pop-up, about 9:35 pm): **"yes, deploy"** for v1.07 after the GitHub full suite went 302/302 on 40b4938ac, the speed checks passed on the Release machine and the phone, tablet and computer screenshots were checked. PR #792 squash-merged into main (4ee7d95f6).
