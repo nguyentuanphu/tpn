@@ -12,7 +12,9 @@ const from = id => (dx, dz) => { const [x, z] = anchorOf(id); return { x: x + dx
 const seller = (place, i, d, back, side = 0) => { const s = rowSlot(place, i, d); return { x: s.x - s.fx * back + s.ax * side, z: s.z - s.fz * back + s.az * side, face: s.face, row: { place, i, d } }; };
 const stallAt = i => seller('market', i, 1.6, 1.4);
 export const L = (style, color, hair, hairStyle, hat = 'none', skin = '#e8b48c') => ({ style, color, hair, hairStyle, hat, skin, back: 'none', glider: 0 });
-export const VENDORS = [
+/** a seller: food is [picture, English, Vietnamese, price]; row is the stall's slot in its market row */
+export type Vendor = { id: string, name: string, region: string, look?: any, food: [string, string, string, number], greet: [string, string], role?: string, [k: string]: any };
+export const VENDORS: Vendor[] = [
   { id: 'bahai', name: 'Bà Hai', region: 'bac', look: L('aodai', '#7a4a8a', '#d8d8d8', 'buns'), ...stallAt(0), stall: ['#c0392b', '#f6e7c8'], sign: ['HANOI PHỞ', 'PHỞ HÀ NỘI'], goods: ['🍜', '🌿'], food: ['🍜', 'a bowl of phở (noodle soup)', 'bát phở', 6],
     greet: ["Come here, little one! A hot bowl of phở? Up north we call a bowl a 'bát'.", 'Cháu ơi, vào đây ăn bát phở nóng không? Ngon lắm đấy, ăn đi cháu!'], role: 'a kind grandma from Hà Nội in the north of Vietnam who sells phở and speaks with a northern accent (bát, thế, đấy, ạ)' },
   { id: 'cothu', name: 'Cô Thu', region: 'bac', look: L('aodai', '#e8d27a', '#1d1412', 'long', 'nonla'), ...seller('market', 1, 2.4, 0), pole: true, food: ['🟢', 'green rice flakes (cốm)', 'cốm làng Vòng', 4],

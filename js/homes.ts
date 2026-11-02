@@ -13,7 +13,7 @@ import { ITEMS } from './data.js';
 import { el, wait } from './util.js';
 import { openPhotos, homeSources } from './realworld.js';
 
-const B = (w, h, d) => new THREE.BoxGeometry(w, h, d), C = (r1, r2, h, s = 12) => new THREE.CylinderGeometry(r1, r2, h, s), S = (r, w = 12, h = 10) => new THREE.SphereGeometry(r, w, h);
+const B = (w, h, d) => new THREE.BoxGeometry(w, h, d), C: (r1: number, r2: number, h: number, s?: number, ...more: unknown[]) => THREE.CylinderGeometry = (r1, r2, h, s = 12) => new THREE.CylinderGeometry(r1, r2, h, s), S = (r, w = 12, h = 10) => new THREE.SphereGeometry(r, w, h);
 const look = (style, color, hair, hairStyle, hat = 'none', skin = '#e8b48c') => ({ style, color, hair, hairStyle, hat, skin, back: 'none', glider: 0 });
 const GREY = '#cfcfcf', BLACK = '#1d1412';
 
@@ -98,7 +98,7 @@ export function createHomes(G, { KNOCK, GIFTS, give, sfx, say }) {
     const temp = y > RY - 20; // inside a room: everything is freed when the room is torn down
     const A = nameAvatar(buildAvatar(lk, null), name, !temp); A.root.position.set(x, y, z); A.root.rotation.y = face; if (kid) A.root.scale.setScalar(.78);
     const tg = tagSprite(name, kid ? 2.05 : 2.45, temp); tg.position.x = x; tg.position.z = z; tg.position.y += y; scene.add(A.root); scene.add(tg);
-    return { A, tg, name };
+    return { A, tg, name } as { A: any, tg: THREE.Sprite, name: any, hop?: boolean };
   };
   const live = []; // people standing outside: they breathe and look round when a child is near
   world.updaters.push((dt, t) => { for (const [k, p] of live.entries()) { const r = p.A.root.position; if (!G.heroes.some(h => Math.abs(h.pos.x - r.x) < 50 && Math.abs(h.pos.z - r.z) < 50)) continue; p.A.anim(p.hop ? 'dance' : 'idle', t + k, 0); } });
@@ -137,7 +137,7 @@ export function createHomes(G, { KNOCK, GIFTS, give, sfx, say }) {
     const src = homeSources(home.H ? home.H.name[0] : '', home.kind);
     const k = await G.dialog(home.name(), [[`${kind[0]}. ${extra[0]}`, `${kind[1]}. ${extra[1]}`], [`Where: ${home.where()} (map square ${Math.round(hs.x)}, ${Math.round(hs.z)}).`, `Ở đâu: ${home.where()} (ô bản đồ ${Math.round(hs.x)}, ${Math.round(hs.z)}).`]],
       src ? [['📷 See real photos', '📷 Xem ảnh thật'], ['👋 OK', '👋 Được rồi']] : undefined);
-    if (src && k === 0) await new Promise(r => openPhotos(home.name(), src, { icon: '🏠', onClose: r }));
+    if (src && k === 0) await new Promise<void>(r => openPhotos(home.name(), src, { icon: '🏠', onClose: r }));
   }
 
   // ---------- inside ----------

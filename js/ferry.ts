@@ -29,7 +29,7 @@ function ferryBoat(flag = true) {
   for (let i = 0; i < 6; i++) p.push(P(C(.04, .04, .6, 6), '#ffffff', [-.2 + i * .65, 1.45, 1.45]), P(C(.04, .04, .6, 6), '#ffffff', [-.2 + i * .65, 1.45, -1.45]));
   p.push(P(new THREE.TorusGeometry(.32, .1, 8, 16), '#ff5a5a', [1, 1.6, 1.52]));
   const m = new THREE.Mesh(merge(p), toonVC()); m.castShadow = true; outline(m, .03, '#2b3a4f');
-  const g = new THREE.Group(); g.add(m);
+  const g: THREE.Group & { deck?: number, seats?: number[][], roof?: THREE.Object3D } = new THREE.Group(); g.add(m);
   const sign = new THREE.Mesh(new THREE.PlaneGeometry(2.6, .65), new THREE.MeshBasicMaterial({ map: signTex(() => T('⛴️ FREE FERRY', '⛴️ PHÀ MIỄN PHÍ')), transparent: true }));
   sign.position.set(-1.8, 2.75, 1.24); g.add(sign); const s2 = sign.clone(); s2.position.z = -1.24; s2.rotation.y = Math.PI; g.add(s2);
   if (flag) { const f = sprite('🚩', .9); f.position.set(-1.8, 5, 0); g.add(f); } // (round T2: the harbour ferry has none, so it passes under the Harbour Bridge)
@@ -46,7 +46,7 @@ function bambooRaft() {
   // the thatched roof is its own see-through-able piece: while a child rides, it fades so the camera can see them
   const roofMat = toonVC(); roofMat.transparent = true;
   const roof = new THREE.Mesh(merge([P(new THREE.ConeGeometry(2.6, 1, 4), '#d9b86a', [0, 2.5, 0], [0, Math.PI / 4, 0], [1.1, 1, .8])]), roofMat); // (round T2: 0.4 m lower, so it passes under every deck) roof.castShadow = true;
-  const g = new THREE.Group(); g.add(m, roof); g.roof = roof;
+  const g: THREE.Group & { deck?: number, seats?: number[][], roof?: THREE.Object3D } = new THREE.Group(); g.add(m, roof); g.roof = roof;
   const lan = sprite('🏮', .7); lan.position.set(0, 2.2, 0); g.add(lan);
   g.deck = .5; g.seats = [[-.6, .5], [.6, -.5], [-.6, -.6], [.6, .6]];
   return g;
@@ -76,7 +76,7 @@ export function createFerries(G) {
     scene.add(model);
       // Start at the first stop's path index, not path[0], so F.at and F.seg are consistent
       const startIdx = stops[0].i;
-      const F = { model, path, loop, stops, speed, seg: startIdx, k: 0, dir: 1, wait: 4, at: startIdx, riders: new Set(), waiting: new Set() };
+      const F: Record<string, any> = { model, path, loop, stops, speed, seg: startIdx, k: 0, dir: 1, wait: 4, at: startIdx, riders: new Set(), waiting: new Set() };
       model.position.set(path[startIdx].x, WATER, path[startIdx].z);
       ferries.push(F); return F;
     }
@@ -86,7 +86,7 @@ export function createFerries(G) {
   const R = LAKE.r;
   // (round T: where the piers stand comes from the map; their names stay here)
   const DOCK_NAMES = { north: () => T('North Beach', 'Bãi Bắc'), village: () => T('Lotus Village', 'Làng Sen'), danang: () => T('Đà Nẵng', 'Đà Nẵng'), island: () => T('Home Island', 'Đảo Nhà') };
-  const DOCKS = BOATS.find(b => b.id === 'lakeferry').docks.map(d => ({ a: d.a, name: DOCK_NAMES[d.id] || (() => '') }));
+  const DOCKS = BOATS.find(b => b.id === 'lakeferry').docks.map((d): { a: number, name: any, pier?: any } => ({ a: d.a, name: DOCK_NAMES[d.id] || (() => '') }));
   const [reefX, reefZ] = landmarkAt('reef'), REEF_A = Math.atan2(reefZ - LAKE.z, reefX - LAKE.x) * 180 / Math.PI; // keep clear of the coral reef
   const lakePath = [], lakeStops = [];
   for (let a = 100; a < 460; a += 6) {

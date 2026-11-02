@@ -47,7 +47,7 @@ export const REAL_KINDS = {
 };
 
 // which photos fit a home: its speciality (from its name) first, else its kind of house
-const SPECIAL = [[/phở/i, 'pho'], [/hàng mã/i, 'hangma'], [/đông hồ/i, 'dongho'], [/quan họ/i, 'quanhohouse'], [/mì quảng/i, 'miquang'], [/cơm tấm/i, 'comtam'], [/áo dài/i, 'aodai'],
+const SPECIAL: [RegExp, string][] = [[/phở/i, 'pho'], [/hàng mã/i, 'hangma'], [/đông hồ/i, 'dongho'], [/quan họ/i, 'quanhohouse'], [/mì quảng/i, 'miquang'], [/cơm tấm/i, 'comtam'], [/áo dài/i, 'aodai'],
   [/surf/i, 'surf'], [/terrace/i, 'terrace'], [/laneway|café/i, 'laneway'], [/footy/i, 'footy'], [/queenslander/i, 'queenslander'], [/lamington/i, 'lamington'], [/chè/i, 'che']];
 export function homeSources(name, kind) { const sp = SPECIAL.find(([re]) => re.test(name || '')); return REAL_KINDS[sp ? sp[1] : kind] || null; }
 const cache = {};
@@ -71,7 +71,7 @@ async function photosFor(sources) {
 try { if (window.caches) caches.open('sv-photos').then(c => c.keys().then(ks => ks.forEach(r => { if (new URL(r.url).pathname.startsWith('/photos-list/')) c.delete(r); }))).catch(() => { }); } catch (e) { }
 
 // the photo viewer: big, slowly panning photos; swipe or ◀ ▶; the 360° button when there is a real place to stand in
-export function openPhotos(name, sources, { icon = '📷', id = null, onClose } = {}) {
+export function openPhotos(name, sources, { icon = '📷', id = null, onClose }: { icon?: string, id?: string | null, onClose?: () => void } = {}) {
   const real = id && REAL[id];
   const m = el('div', 'realview', `<div class="rv-stage"><div class="rv-load">${pic(icon)}<p>${T('Finding real photos…', 'Đang tìm ảnh thật…')}</p></div></div>
     <div class="rv-top"><b>${esc(name)}</b><button class="rv-x" aria-label="${T('Close', 'Đóng')}">✕</button></div>
@@ -79,7 +79,7 @@ export function openPhotos(name, sources, { icon = '📷', id = null, onClose } 
     <div class="rv-bot"><div class="rv-dots"></div><div class="rv-cap"></div>${real ? `<button class="rv-360">🚶 ${T('Step inside (360°)', 'Bước vào xem 360°')}</button>` : ''}</div>`);
   document.body.appendChild(m); SFX.tap();
   const stage = m.querySelector('.rv-stage'), dots = m.querySelector('.rv-dots'), cap = m.querySelector('.rv-cap');
-  let list = [], k = 0, auto = 0, closed = false;
+  let list = [], k = 0, auto: ReturnType<typeof setInterval> | number = 0, closed = false;
   const close = () => { if (closed) return; closed = true; clearInterval(auto); m.classList.add('out'); setTimeout(() => m.remove(), 250); onClose && onClose(); };
   m.querySelector('.rv-x').onclick = () => { SFX.tap(); close(); };
   if (real) m.querySelector('.rv-360').onclick = () => { SFX.tap(); openStreetView(id); };

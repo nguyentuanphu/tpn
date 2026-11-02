@@ -16,7 +16,7 @@ const MODELS = {
     for (let i = 0; i < 9; i++) p.push(P(new THREE.ConeGeometry(.5, 1.6, 6), '#3f7d4a', [-5 + i * 1.3, 4 + Math.sin(i) * 1.2, -2 + Math.cos(i * 2) * 2]));
     return p; },
   hoian: () => { const p = [P(B(12, .15, 7), '#d9c9a8', [0, .07, 0])];
-    [[-4, '#f2c230'], [0, '#f6d35a'], [4, '#e9b830']].forEach(([x, wall]) => { p.push(P(B(3.6, 2.6, 4), wall, [x, 1.4, -1.2]), P(B(4.2, .2, 4.8), '#8a4a2a', [x, 2.85, -1.2], [.25, 0, 0]), P(B(1, 1.8, .1), '#5a3a2a', [x, 1.0, .82]), P(B(.8, .7, .1), '#3a6a5a', [x + 1.1, 1.8, .82])); });
+    [[-4, '#f2c230'], [0, '#f6d35a'], [4, '#e9b830']].forEach(([x, wall]: [number, string]) => { p.push(P(B(3.6, 2.6, 4), wall, [x, 1.4, -1.2]), P(B(4.2, .2, 4.8), '#8a4a2a', [x, 2.85, -1.2], [.25, 0, 0]), P(B(1, 1.8, .1), '#5a3a2a', [x, 1.0, .82]), P(B(.8, .7, .1), '#3a6a5a', [x + 1.1, 1.8, .82])); });
     const cols = ['#e8433a', '#ffd23f', '#ff9f43', '#e8433a', '#b03ab0', '#3cc7e8'];
     for (let i = 0; i < 12; i++) p.push(P(S(.28, 10, 8), cols[i % 6], [-5.5 + i, 3.2 - Math.sin(i / 11 * Math.PI) * .5, 1.4], [0, 0, 0], [1, 1.25, 1]));
     p.push(P(C(.02, .02, 12, 4), '#3a2a1a', [0, 3.5, 1.4], [0, 0, Math.PI / 2]));
@@ -34,7 +34,7 @@ const MODELS = {
     return p; }
 };
 // [id, city, icon, model, size (for the camera), name, fact, which way out of the city to look first]
-const SITES = [
+const SITES: [string, string, string, string, [string, string], [string, string]][] = [
   ['marble', 'danang', '⛰️', 'marble', ['Marble Mountains (Ngũ Hành Sơn)', 'Ngũ Hành Sơn'], ['Near Đà Nẵng, five marble and limestone hills are named after the five elements: metal, wood, water, fire and earth. Inside are caves with pagodas, and stone carvers have worked here for hundreds of years.', 'Gần Đà Nẵng có năm ngọn núi đá vôi và cẩm thạch mang tên Kim, Mộc, Thủy, Hỏa, Thổ. Trong núi có hang động và chùa chiền, còn làng đá Non Nước đã chạm khắc đá hàng trăm năm.']],
   ['hoian', 'danang', '🏮', 'hoian', ['Hội An Ancient Town', 'Phố cổ Hội An'], ['Hội An is an old trading port in central Vietnam with yellow houses and thousands of silk lanterns. On full-moon nights the lights go out and the streets glow only with lanterns. UNESCO protects it.', 'Hội An là thương cảng cổ ở miền Trung với những ngôi nhà vàng và hàng nghìn chiếc đèn lồng lụa. Đêm rằm phố tắt đèn điện, chỉ còn ánh đèn lồng lung linh. UNESCO công nhận là di sản thế giới.']],
   ['thehuc', 'hanoi', '🌉', 'thehuc', ['Thê Húc Bridge, Hoàn Kiếm Lake', 'Cầu Thê Húc, Hồ Gươm'], ['The red wooden Thê Húc bridge crosses Hoàn Kiếm Lake to Ngọc Sơn Temple. Its name means “where the morning sunlight rests”.', 'Cầu Thê Húc bằng gỗ sơn đỏ bắc qua Hồ Gươm vào đền Ngọc Sơn. Tên cầu có nghĩa là “nơi đậu ánh sáng ban mai”.']],

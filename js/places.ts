@@ -10,7 +10,7 @@ import { dist2 } from './util.js';
 export function createPlaces(G) {
   const { scene, world } = G, V = VILLAGE;
   const add = (obj, x, z, rot = 0, dy = 0) => { obj.position.set(x, heightAt(x, z) + dy, z); obj.rotation.y = rot; scene.add(obj); return obj; };
-  const PL = {};
+  const PL: Record<string, any> = {};
 
   // dance stage with coloured lights
   const st = PL.stage = { x: V.x - 6, z: V.z + 31, r: 4.2 };

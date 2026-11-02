@@ -105,7 +105,7 @@ const CITY_DATA = {
 
 // ---------- kiosks: local food, and a saying to learn ----------
 // [id, place, name, look, food [icon, en, vi, price], saying [words, meaning en, meaning vi, language], greet [en, vi]]
-const KIOSKS = [
+const KIOSKS: [string, string, string, any, [string, string, string, number], string[], [string, string], ...any[]][] = [
   ['k_bunca', 'hanoi', 'Bà Lan', look('aodai', '#5a8ab0', '#d8d8d8', 'buns'), ['🍲', 'a bowl of bún chả (grilled pork with noodles)', 'bát bún chả', 6], ['Ăn quả nhớ kẻ trồng cây', 'When you eat the fruit, remember who planted the tree: always say thank you!', 'Khi ăn quả, nhớ người trồng cây: luôn biết ơn nhé!', 'vi'], ['Bún chả, the smell of Hà Nội! Sit down, little one.', 'Bún chả đây, thơm phức mùi Hà Nội! Ngồi xuống đây cháu.']],
   ['k_kemtt', 'hanoi', 'Chú Hùng', look('shirt', '#ffffff', '#1d1412', 'short'), ['🍦', 'a Tràng Tiền ice cream (Hà Nội\'s famous ice cream)', 'que kem Tràng Tiền', 3], ['Chậm mà chắc', 'Slow but sure: taking your time is fine!', 'Chậm mà chắc: từ từ mà làm cho tốt nhé!', 'vi'], ['Kem Tràng Tiền, famous since my grandpa was little!', 'Kem Tràng Tiền đây, nổi tiếng từ hồi ông chú còn bé cơ!']],
   ['k_phuthe', 'bacninh', 'Cô Mận', look('aodai', '#c0392b', '#1d1412', 'long', 'nonla'), ['🟩', 'a bánh phu thê (sweet wedding cake)', 'bánh phu thê', 4], ['Người ơi người ở đừng về', 'Dear friend, please stay, don’t go home yet! A famous Quan họ song.', 'Câu hát Quan họ nổi tiếng: mời bạn ở lại chơi, đừng về vội!', 'vi'], ['Bánh phu thê from Đình Bảng, wrapped in green leaves. Try one!', 'Bánh phu thê Đình Bảng gói lá xanh đây cháu ơi. Ăn thử một chiếc!']],
@@ -156,7 +156,7 @@ function kioskSign(text) {
 export function createCities(G) {
   const { scene, world } = G;
   const people = [];
-  const place = (parts, x, z, rot, y) => { const m = new THREE.Mesh(merge(parts), toonVC()); m.position.set(x, y ?? heightAt(x, z) - .05, z); m.rotation.y = rot; m.castShadow = m.receiveShadow = true; scene.add(m); outline(m, .025, '#4a3a3f'); return m; };
+  const place = (parts, x, z, rot, y?) => { const m = new THREE.Mesh(merge(parts), toonVC()); m.position.set(x, y ?? heightAt(x, z) - .05, z); m.rotation.y = rot; m.castShadow = m.receiveShadow = true; scene.add(m); outline(m, .025, '#4a3a3f'); return m; };
   const info = (x, y, z) => { const s = sprite('ℹ️', 1.5); s.position.set(x, y, z); scene.add(s); world.updaters.push((dt, t) => { s.position.y = y + Math.sin(t * 2 + x) * .25; }); };
   const person = (lk, x, z, face, name, tagH = 2.4) => { // tagH: lift a name tag so two people side by side don't overlap
     const A = nameAvatar(buildAvatar(lk, null), name); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); people.push(A);
@@ -211,7 +211,7 @@ export function createCities(G) {
         const wm = new THREE.Mesh(merge(wp), toonVC()); wm.position.set(0, 8.6, 0); m.add(wm); spinners.push(wm);
       }
       if (model === 'quanho') { // two Quan họ singers on the boat, in áo tứ thân and a big flat hat
-        [[-.9, look('aodai', '#7a4a8a', '#1d1412', 'buns', 'nonla'), 'Liền chị Thu'], [.9, look('tunic', '#3b2618', '#1d1412', 'short'), 'Liền anh Nam']].forEach(([dx, lk, nmn]) => { const A = buildAvatar(lk, null); A.root.position.set(dx, .95, 0); A.root.scale.setScalar(.9); m.add(A.root); people.push(A); registerName(nmn); });
+        [[-.9, look('aodai', '#7a4a8a', '#1d1412', 'buns', 'nonla'), 'Liền chị Thu'], [.9, look('tunic', '#3b2618', '#1d1412', 'short'), 'Liền anh Nam']].forEach(([dx, lk, nmn]: [number, any, string]) => { const A = buildAvatar(lk, null); A.root.position.set(dx, .95, 0); A.root.scale.setScalar(.9); m.add(A.root); people.push(A); registerName(nmn); });
         let sing = 0; world.updaters.push((dt, t) => { sing -= dt; const h0 = G.heroes[0]; if (sing <= 0 && h0 && dist2(h0.pos.x, h0.pos.z, x, z) < 9) { sing = 26; G.fx && G.fx(x, c.h + 3.4, z, '🎶'); say('Người ơi người ở đừng về… A song asking a friend to stay a little longer.', 'Người ơi người ở đừng về… người ơi người ở đừng về…'); } });
         G.interactables.push({ id: 'npc_quanho', x: x + fx * 4.6, z: z + fz * 4.6, r: 3, icon: '🎶', bubble: '🎶', label: () => T('Sing along with the Quan họ singers', 'Hát cùng liền anh liền chị Quan họ'), act: h => G.playGame(h.i, 'tune', 'place') });
       }

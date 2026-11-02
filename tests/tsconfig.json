@@ -326,6 +326,20 @@
     "../js/wayfind.ts",
     "../js/weather.ts",
     "../js/words.ts",
-    "../js/words2.ts"
+    "../js/words2.ts",
+    "../js/animalhomes.ts",
+    "../js/cities.ts",
+    "../js/ferry.ts",
+    "../js/hawkers.ts",
+    "../js/homes.ts",
+    "../js/houses.ts",
+    "../js/places.ts",
+    "../js/powerlines.ts",
+    "../js/realworld.ts",
+    "../js/reeds.ts",
+    "../js/regions.ts",
+    "../js/regionsites.ts",
+    "../js/signposts.ts",
+    "../js/vendors.ts"
   ]
 }

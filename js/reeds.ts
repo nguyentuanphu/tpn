@@ -39,7 +39,7 @@ export function createReeds(G) {
   const lilyGeo = merge([P(new THREE.CylinderGeometry(.42, .42, .03, 10), '#4f9a52', [0, 0, 0]), P(new THREE.CylinderGeometry(.3, .3, .03, 9), '#5fae5c', [.45, 0, .2]),
     P(new THREE.SphereGeometry(.13, 8, 6), '#b07ad8', [.05, .12, 0]), P(new THREE.SphereGeometry(.1, 8, 6), '#c99ae8', [.15, .16, .06])]);
   const out = [];
-  for (const [geo, list, name] of [[reedGeo, reeds, 'reeds'], [lilyGeo, lilies, 'hyacinth']]) {
+  for (const [geo, list, name] of [[reedGeo, reeds, 'reeds'], [lilyGeo, lilies, 'hyacinth']] as [THREE.BufferGeometry, number[][], string][]) {
     if (!list.length) continue;
     const mesh = new THREE.InstancedMesh(geo, toonVC(), list.length), m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
     list.forEach(([x, y, z, rot, s], i) => { q.setFromAxisAngle(up, rot); m.compose(new THREE.Vector3(x, name === 'reeds' ? y - .05 : y, z), q, new THREE.Vector3(s, s, s)); mesh.setMatrixAt(i, m); });

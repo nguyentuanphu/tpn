@@ -14,7 +14,7 @@ import { buyFood, greetLine } from './snacks.js';
 
 const look = (color, hair, hairStyle, hat = 'nonla') => ({ style: 'aodai', color, hat, back: 'none', hair, hairStyle, skin: '#e8b48c', glider: 0 });
 // [id, name, look, goods (two baskets), food [icon, en, vi, price], call [en, vi], greet [en, vi], where]
-const HAWKERS = [
+const HAWKERS: [string, string, any, string[], [string, string, string, number], [string, string], [string, string], string, ...any[]][] = [
   ['h_traicay', 'Cô Ba', look('#f2c230', '#1d1412', 'long'), ['🥭', '🍌'], ['🍉', 'a slice of watermelon', 'miếng dưa hấu', 2],
     ['Fruit! Mangoes, bananas, sweet watermelon!', 'Trái cây đây! Xoài, chuối, dưa hấu ngọt lịm nè!'], ['Fresh fruit from the Bà Rịa orchards. Have a slice, it is so sweet!', 'Trái cây tươi từ vườn Bà Rịa nè con. Ăn miếng dưa hấu đi, ngọt lắm!'], 'town'],
   ['h_tauhu', 'Bà Tư', look('#e8e4dc', '#d8d8d8', 'buns'), ['🍮', '🫚'], ['🍮', 'a bowl of tàu hủ (sweet tofu pudding with ginger syrup)', 'chén tàu hủ nước đường', 2],
@@ -48,7 +48,7 @@ export function createHawkers(G) {
     const route = routeFor(where); if (!route) continue;
     const A = nameAvatar(buildAvatar(lk, null), name); A.root.add(poleModel(goods)); scene.add(A.root); registerName(name);
     const tag = sprite('📣', .8); scene.add(tag);
-    const H = { id, name, A, tag, route, k: 0, t: Math.random(), x: route[0][0], z: route[0][1], yaw: 0, callT: 4 + Math.random() * 8, call, food };
+    const H: { [k: string]: any } = { id, name, A, tag, route, k: 0, t: Math.random(), x: route[0][0], z: route[0][1], yaw: 0, callT: 4 + Math.random() * 8, call, food };
     list.push(H); world.walks.push({ id: 'hk_' + id, place: where, pts: route });
     const v = { id, name, region: where === 'hanoi' ? 'bac' : 'nam', food, greet, saying: null, hawker: true, x: H.x, z: H.z };
     VENDORS.push(v); // in the food passport

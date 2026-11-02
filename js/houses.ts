@@ -153,7 +153,7 @@ function finish(p) {
   return g;
 }
 // A shop sign: text is [English, Tiếng Việt] and follows the language.
-function signMesh(text, w, h, pos, bg) {
+function signMesh(text, w, h, pos: [number, number, number], bg) {
   const c = document.createElement('canvas'); c.width = 512; c.height = Math.round(512 * h / w); const x = c.getContext('2d');
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
   const draw = () => { const s = Array.isArray(text) ? text[settings.lang === 'vi' ? 1 : 0] : text; x.fillStyle = bg; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#fff'; x.font = `bold ${c.height * .58}px Fredoka, "Baloo 2", sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(s, c.width / 2, c.height * .55, c.width * .94); t.needsUpdate = true; };

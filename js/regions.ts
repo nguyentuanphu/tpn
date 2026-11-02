@@ -67,7 +67,9 @@ export { VENDORS };
 // ---------- landmarks you can collect as postcards ----------
 // (round T: where each one stands comes from the map, js/content/map.js LANDMARK_AT)
 const at = id => { const [x, z] = landmarkAt(id); return { x, z }; };
-export const LANDMARKS = [
+/** a landmark: x, z where its sign stands; mx, mz where its model stands when that differs */
+export type Landmark = { id: string, icon: string, x: number, z: number, name: () => string, fact: string[], cc?: string, mx?: number, mz?: number, [k: string]: any };
+export const LANDMARKS: Landmark[] = [
   { id: 'opera', icon: '🎭', ...at('opera'), name: () => T('Sydney Opera House', 'Nhà hát Opera Sydney'), fact: ['The Sydney Opera House has roofs shaped like big white sails. Inside, people sing, dance and play music.', 'Nhà hát Opera Sydney có mái hình những cánh buồm trắng khổng lồ. Bên trong, người ta hát, múa và chơi nhạc.'] },
   { id: 'harbour', icon: '🌉', ...at('harbour'), name: () => T('Harbour Bridge', 'Cầu Cảng Sydney'), fact: ['The Sydney Harbour Bridge is nicknamed "the Coathanger" because of its shape. Brave people climb right to the top!', 'Cầu Cảng Sydney có biệt danh là "cái móc áo" vì hình dáng của nó. Có người còn leo lên tận đỉnh cầu!'] },
   { id: 'uluru', icon: '🪨', ...at('uluru'), name: () => T('Uluru', 'Uluru'), fact: ['Uluru is a giant red rock in the middle of Australia. It is a very special place for Aboriginal people, its traditional owners, and it glows orange at sunset.', 'Uluru là một khối đá đỏ khổng lồ ở giữa nước Úc. Đây là nơi rất thiêng liêng của người Thổ dân, chủ nhân truyền thống của vùng đất, và đá rực cam lúc hoàng hôn.'] },
@@ -365,7 +367,7 @@ export async function postcard(G, h, lm) {
     const top = LOOKOUT[lm.id];
     const k = await dialog(lm.name(), [lm.fact], [['📷 See real photos', '📷 Xem ảnh thật'], ['🚶 Step inside (360°)', '🚶 Bước vào xem 360°'], ...(top ? [['🛗 Go up to the top', '🛗 Lên tới đỉnh']] : []), ['👋 Bye', '👋 Tạm biệt']]);
     if (top && k === 2) { const x = lm.mx ?? lm.x, z = lm.mz ?? lm.z; say(top[1][0], top[1][1]); await G.lookout(h, x, heightAt(x, z) + top[0], z, T(top[2][0], top[2][1])); }
-    if (k === 0) await new Promise(r => openPhotos(lm.name(), REAL[lm.id][0], { icon: lm.icon, id: lm.id, onClose: r }));
+    if (k === 0) await new Promise<void>(r => openPhotos(lm.name(), REAL[lm.id][0], { icon: lm.icon, id: lm.id, onClose: r }));
     if (k === 1) openStreetView(lm.id);
   } else await dialog(lm.name(), [lm.fact]);
   if (first) { G.addCoins(10); const st = G.giveSticker(p); await reward('📮', T('New postcard: ', 'Bưu thiếp mới: ') + lm.name(), T(`+${G.fmt(10)}${st ? ' and a sticker ' + st : ''}`, `+${G.fmt(10)}${st ? ' và hình dán ' + st : ''}`)); }

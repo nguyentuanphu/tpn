@@ -55,7 +55,7 @@ export const AUSSIE = box('aussie'); // Aussie Corner: milk bar, fish and chips,
 // Cities around the valley: each a paved square with a welcome gate, landmarks, a game host and food kiosks (js/cities.js)
 // gates: where the roads come in (the first is the main gate); the main street runs straight through
 /** a city: its square (the corners are added just below), gates and look */
-export type SvCity = { id: string, cc: string, x: number, z: number, w: number, d: number, h: number, icon: string, name: unknown, gates: number[][], layout?: { toward: number }, x0?: number, x1?: number, z0?: number, z1?: number };
+export type SvCity = { id: string, cc: string, x: number, z: number, w: number, d: number, h: number, icon: string, name: unknown, gates: number[][], layout?: { toward: number, len?: number, L?: (u: number, v: number) => number[] }, x0?: number, x1?: number, z0?: number, z1?: number };
 export const CITIES = MAP.PLACES.filter(p => p.kind === 'city').map((p): SvCity => { const [x, z] = p.at;
   return { id: p.id, cc: p.cc, x, z, w: p.w, d: p.d, h: p.h, icon: p.icon, name: p.name, gates: p.gates.map(([dx, dz]) => [x + dx, z + dz]) }; });
 CITIES.forEach(c => Object.assign(c, { x0: c.x - c.w, x1: c.x + c.w, z0: c.z - c.d, z1: c.z + c.d }));
