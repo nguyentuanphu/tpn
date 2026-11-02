@@ -1,5 +1,5 @@
 // Mystery boxes, collectibles and family rankings for 5 to 8 year olds at Medium or Hard (round S, owner plan 8 Oct:
-// Round R Part 2 item 10). Pure data and rules, no DOM (tests/unit/boxes.test.mjs); the screens are in js/boxes.js.
+// Round R Part 2 item 10). Pure data and rules, no DOM (tests/unit/boxes.test.mts); the screens are in js/boxes.js.
 //   boxes         one free box a day (AEST) and one more earned by finishing a quest (at most one a day); boxes are
 //                 never sold, and a thing already in the book turns into stars
 //   collectibles  fairies, dragons, stickers and decorations, kept in profile.collect = { id: how many times found }

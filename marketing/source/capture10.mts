@@ -2,7 +2,7 @@
 // node capture10.mts <lang> [names...]   (game served on :8765; writes stills10/<name>-<lang>.jpg). Not a check.
 import fs from 'fs';
 import path from 'path';
-import { launch, open, clear } from '../../tests/harness.mjs';
+import { launch, open, clear } from '../../tests/harness.mts';
 const DIR = new URL('.', import.meta.url).pathname, out = DIR + 'stills10';
 const [lang = 'en', ...only] = process.argv.slice(2), want = n => !only.length || only.includes(n);
 fs.mkdirSync(out, { recursive: true });
@@ -76,7 +76,7 @@ try {
   if (want('two-players')) { const P = await game({ mode: 'split' }); await P.page.waitForTimeout(4000); await tidy(P.page); await quiet(P.page); await shot(P.page, 'two-players'); await P.ctx.close(); }
   // Sparkle Studio on a phone: the Missions and Message pages (each saved live at once since r81)
   if (want('studio-missions') || want('studio-message')) {
-    const { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } = await import('../../tests/studio-check.mjs');
+    const { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } = await import('../../tests/studio-check.mts');
     const repo = 'family/ads', password = 'ads-fixture-password-123', site = 'http://localhost:8799';
     const content = { message: LIVE.content.message, missions: LIVE.content.missions };
     const gh = fakeGitHub(repo, { 'content/custom.json': JSON.stringify(content), 'js/build.js': fs.readFileSync(path.join(DIR, '../../js/build.js')) }), unroute = routeGitHub(gh);

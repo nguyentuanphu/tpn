@@ -6,7 +6,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import type { Browser, Page } from 'playwright';
-import { open } from './harness.mjs';
+import { open } from './harness.mts';
 
 const FAMILY_BUTTONS = '#gFamCodeMake, #gFamCodeJoin, #gFamCodeIn, #gFamCodeCopy, #gFamCodeLeave';
 

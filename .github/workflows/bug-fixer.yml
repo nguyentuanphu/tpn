@@ -198,7 +198,7 @@ jobs:
           turns out bigger than the small-bug rule allows (and the owner has not said "go" on the issue), change nothing
           and write a plan instead (STATUS: plan). Otherwise make the fix, then run the core's checks from
           docs/cores/$CORE.md: the game is served at http://localhost:8765/, so run
-          \`cd tests && node run.mjs <checks>\` (online checks that need the PeerJS and MQTT servers may be skipped: say so).
+          \`cd tests && node run.mts <checks>\` (online checks that need the PeerJS and MQTT servers may be skipped: say so).
           Never weaken, skip or delete a check to make it pass. When the checks pass, commit with git commit (a clear
           message in plain English, starting "Bug #$N ($CORE): "). Do not push: the workflow does that.
 

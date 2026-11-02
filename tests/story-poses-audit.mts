@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import {launch,open} from './harness.mjs';
+import {launch,open} from './harness.mts';
 const b=await launch();const output=process.env.STORY_POSE_PHASE||'before';
 try {
  const P=await open(b,{play:false,w:1000,h:760,settings:{voice:false,sound:false,online:false}});

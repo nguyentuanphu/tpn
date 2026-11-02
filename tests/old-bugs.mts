@@ -1,6 +1,6 @@
 // v1.07 old-bugs (#341, #739): checks for the fixes made for the oldest open bugs.
 import type { Browser, BrowserContext } from 'playwright';
-import { open, clear } from './harness.mjs';
+import { open, clear } from './harness.mts';
 
 const testerPre = (extra = '') => `try { localStorage.setItem('sv2_playerid', 'tester000001'); localStorage.setItem('sv2_live', JSON.stringify({ releases: { tester: { on: true, devices: ['tester000001'] } }, festivals: {} })); localStorage.setItem('sv2_tester', JSON.stringify({ at: 1, b: 'r1' })); ${extra} } catch (e) { }`;
 const testerSite = async (ctx: BrowserContext) => { const got: any[] = [];

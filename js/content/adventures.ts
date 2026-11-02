@@ -1,5 +1,5 @@
 // The daily adventure (owner plan, 16 Oct 2026 AEDT, chat C; docs/plans-20261016/CHAT-C-DAILY-ADVENTURE-PROMPT.md).
-// Pure data and choosing only (no page, no 3D): js/adventure.js plays it in the valley, tests/unit/adventures.test.mjs
+// Pure data and choosing only (no page, no 3D): js/adventure.js plays it in the valley, tests/unit/adventures.test.mts
 // checks it. Rules (docs/ui-redesign-20261016/README.md): ADV-1 one at a time, ADV-2 always 3 steps of at most 6 words
 // with a picture or a number, ADV-3 a character says it in at most 2 sentences (recorded, never a child's name),
 // ADV-4 the reward shown first, ADV-5 stamps only fill up and no timers for under-5s, ADV-6 one green "Let's go!".

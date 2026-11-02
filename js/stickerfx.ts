@@ -100,7 +100,7 @@ export function createStickerFx(G, { BOOK_LINES, FIRST_THREE }) {
     if (!b.got[FIRST_THREE[0]]) give(FIRST_THREE[0], h); // Grandpa Owl gives his own sticker as a welcome
   }
   // a hen comes to say hello near the start if the child has not met one after 3 minutes of play
-  const fm = { played: 0 }; // (seconds of play; tests/run.mjs moves it on)
+  const fm = { played: 0 }; // (seconds of play; tests/run.mts moves it on)
   setInterval(() => {
     if (G.paused) return; fm.played += 5;
     if (fm.played < 180 || fm.played > 300) return;

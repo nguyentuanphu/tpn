@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import type {Browser} from 'playwright';
-import {open,clear,noWelcome} from './harness.mjs';
+import {open,clear,noWelcome} from './harness.mts';
 export async function familyUIArtCheck(browser:Browser){
  const P=await open(browser,{w:390,h:844,touch:true,settings:{voice:false,online:false,autoPack:false}}),shots=process.env.SV_SHOTS || '../docs/world-placement-audit-20261027/ui';
  const capture=async(name:string)=>{if(!shots)return;await P.page.evaluate(async()=>{await new Promise<void>(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r())));await Promise.allSettled([...document.querySelectorAll('.modal')].flatMap(m=>m.getAnimations().map(a=>a.finished)));});await P.page.screenshot({path:shots+'/'+name+'.png'});};

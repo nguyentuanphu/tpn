@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import type { Browser } from 'playwright';
-import { open, clear, noWelcome } from './harness.mjs';
+import { open, clear, noWelcome } from './harness.mts';
 import { studioPosition } from '../js/studio-position.js';
 import { anchorOf, PLOTS } from '../js/content/map.js';
 export async function rememberedHomesCheck(browser: Browser): Promise<string> {

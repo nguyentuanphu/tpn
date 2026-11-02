@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { launch, open, clear } from './harness.mjs';
+import { launch, open, clear } from './harness.mts';
 
 const count = Number(process.env.COUNT), duration = Number(process.env.DURATION);
 const profile = process.env.PROFILE;

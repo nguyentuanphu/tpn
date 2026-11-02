@@ -5,7 +5,7 @@
 // are made inside the page, a third of a second apart, as a child's finger would: the checks' own remote control is
 // answered only now and then while the valley is built, so it would tap long after the child did.
 import type { Browser } from 'playwright';
-import { URL, seedPlayers } from './harness.mjs';
+import { URL, seedPlayers } from './harness.mts';
 type Seen = Record<string, number | boolean | string | null>;
 export async function simpleFirstCheck(browser: Browser): Promise<string> {
   let cdp = null;

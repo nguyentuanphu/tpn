@@ -4,7 +4,7 @@
 // big enough (44 px, 64 px for under-5s) and no page error. Screenshots in docs/owner-repair-20261014/evidence/r89-drawing.
 import fs from 'node:fs';
 import type { Browser } from 'playwright';
-import { open, clear } from './harness.mjs';
+import { open, clear } from './harness.mts';
 
 export const IDS = ['dotdot', 'trace', 'mirror', 'colournum', 'lanternart', 'card', 'sand', 'drawpath', 'shapedraw', 'copygrid'];
 type Row = { key: string; ok: boolean; said?: string; problems?: string[] };

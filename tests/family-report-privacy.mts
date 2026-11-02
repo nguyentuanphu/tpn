@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import type {Browser} from 'playwright';
-import {open, clear, noWelcome} from './harness.mjs';
+import {open, clear, noWelcome} from './harness.mts';
 const PRIVATE_QUESTION = 'Where is our private family picnic?';
 const PRIVATE_ANSWER = 'Beside our secret purple tree';
 const PRIVATE_VI = 'Chỗ riêng của gia đình mình ở đâu?';

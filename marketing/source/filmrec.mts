@@ -3,7 +3,7 @@
 // game is ready; each film frame moves it on by exactly 1/30 s and saves a picture, so the film is smooth whatever the
 // speed of the test machine.
 import fs from 'fs';
-import { launch, open, clear } from '../../tests/harness.mjs';
+import { launch, open, clear } from '../../tests/harness.mts';
 
 export const VT = () => {
   const R = { now: performance.now.bind(performance), dnow: Date.now, raf: window.requestAnimationFrame.bind(window), caf: window.cancelAnimationFrame.bind(window), st: window.setTimeout.bind(window), ct: window.clearTimeout.bind(window), si: window.setInterval.bind(window), ci: window.clearInterval.bind(window) };

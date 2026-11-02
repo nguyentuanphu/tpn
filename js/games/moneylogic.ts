@@ -1,6 +1,6 @@
 // The money games' sums (round S, owner plan 8 Oct, item 7): which coins and notes there are, adding them up, giving
 // change, the cheaper of two prices, splitting into the three jars, money that grows while it waits and fair trades.
-// Pure functions with no screen and no saved state, so tests/unit/money.test.mjs can check every one of them.
+// Pure functions with no screen and no saved state, so tests/unit/money.test.mts can check every one of them.
 // Amounts are whole numbers in the smallest unit: cents for AUD, đồng for VND. Game coins only, never real money.
 
 // the real coins and notes (owner: AUD 5c to $100; VND notes only, 1.000 to 500.000, since coins are no longer used)

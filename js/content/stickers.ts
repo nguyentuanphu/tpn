@@ -1,5 +1,5 @@
 // The sticker book's list (owner plan, 16 Oct 2026 AEDT, chat B; docs/plans-20261016/CHAT-B-STICKER-BOOK-PROMPT.md).
-// Pure data, no page and no game state: js/stickers.js uses it and tests/unit/stickers.test.mjs checks it.
+// Pure data, no page and no game state: js/stickers.js uses it and tests/unit/stickers.test.mts checks it.
 // Rules (STK-1 to STK-6, docs/ui-redesign-20261016/README.md): pages of exactly 9 (3 x 3), one theme each. A theme may
 // have several pages (owner, 16 Oct: "nothing lost": 55 postcards and 22 places need more than one page of 9).
 //

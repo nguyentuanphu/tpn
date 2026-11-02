@@ -1,7 +1,7 @@
 // Ads (owner, 11 Oct): stills at 1080x1920 for the ad videos. Not a check; not committed.
 // node ads-capture2.mjs <lang> <outdir> [cine|screens|all]
 import fs from 'fs';
-import { launch, open, clear } from '../../tests/harness.mjs';
+import { launch, open, clear } from '../../tests/harness.mts';
 const [lang = 'en', out = '/tmp/ads', what = 'all'] = process.argv.slice(2);
 fs.mkdirSync(out, { recursive: true });
 const b = await launch();

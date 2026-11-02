@@ -5,7 +5,7 @@
 //   CHROMIUM=/opt/pw-browsers/chromium node docs/launch-2027/capture.mts <en|vi> [names...]
 // writes docs/launch-2027/shots/<name>-<lang>.jpg
 import fs from 'fs';
-import { launch, open, clear } from '../../tests/harness.mjs';
+import { launch, open, clear } from '../../tests/harness.mts';
 
 const OUT = new URL('./shots/', import.meta.url).pathname;
 const [lang = 'en', ...only] = process.argv.slice(2);

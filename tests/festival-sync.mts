@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type {Browser,Page} from 'playwright';
-import {open,clear,noWelcome} from './harness.mjs';
+import {open,clear,noWelcome} from './harness.mts';
 import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mjs';
 
 export async function festivalSyncCheck(browser:Browser){

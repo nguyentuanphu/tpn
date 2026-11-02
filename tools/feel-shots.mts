@@ -3,7 +3,7 @@
 // Usage (game served on :8765, from tools/): node feel-shots.mts → docs/plans-20261016/evidence/feel-<device>-<what>.png
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { launch, open } from '../tests/harness.mjs';
+import { launch, open } from '../tests/harness.mts';
 const out = fileURLToPath(new URL('../docs/plans-20261016/evidence/', import.meta.url));
 const SIZES: Record<string, [number, number, boolean]> = { phone: [390, 844, true], tablet: [820, 1180, true], computer: [1280, 800, false] };
 const b = await launch();

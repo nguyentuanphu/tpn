@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import { open, clear } from './harness.mjs';
+import { open, clear } from './harness.mts';
 import type { Browser } from 'playwright';
 
 export async function bridgeUnderpassCheck(browser: Browser) {

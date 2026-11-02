@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { launch, open, clear } from '../tests/harness.mjs';
+import { launch, open, clear } from '../tests/harness.mts';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const out = path.join(root, 'docs/owner-repair-20261014/evidence', process.argv[2] || 'r79-shots');
 const want = (process.argv[3] || 'bag,album,wardrobe,hud,camera').split(',');

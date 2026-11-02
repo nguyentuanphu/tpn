@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import {launch,open,clear,noWelcome} from './harness.mjs';
+import {launch,open,clear,noWelcome} from './harness.mts';
 const browser=await launch();
 try{
  const P=await open(browser,{w:1024,h:768,settings:{online:false,countPlayers:false},route:async ctx=>{

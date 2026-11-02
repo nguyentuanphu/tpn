@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';import fs from 'node:fs/promises';
-import {open} from './harness.mjs';import type {Browser} from 'playwright';
+import {open} from './harness.mts';import type {Browser} from 'playwright';
 export async function storyPoseCheck(browser:Browser){
  const P=await open(browser,{play:false,w:1000,h:760,settings:{voice:false,sound:false,online:false}});
  try{

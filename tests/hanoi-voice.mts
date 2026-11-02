@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import type {Browser} from 'playwright';
-import {open,clear} from './harness.mjs';
+import {open,clear} from './harness.mts';
 import {lineHash} from '../js/packhash.js';
 declare global{interface Window{__hanoiProgress?:Array<{provider:string;state:string}>;}}
 export async function hanoiVoiceCheck(browser:Browser){

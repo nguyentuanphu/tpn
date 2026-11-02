@@ -1,6 +1,6 @@
 // Takes fresh 1080×1920 stills of the game for the ads: node capture.mts [only,names]  (game served on :8765)
 // Uses the test harness to open the game at phone size (360×640 at 3× = 1080×1920) with full graphics.
-import { launch, open, clear } from '../../tests/harness.mjs';
+import { launch, open, clear } from '../../tests/harness.mts';
 import fs from 'fs';
 const DIR = new URL('./stills/', import.meta.url).pathname, only = (process.argv[2] || '').split(',').filter(Boolean);
 const want = n => !only.length || only.includes(n);

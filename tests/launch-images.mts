@@ -33,7 +33,7 @@ fs.mkdirSync(out, { recursive: true });
 const browser = await chromium.launch();
 try {
   // 1. the valley behind the Welcome screen, portrait and landscape (no words, no name tags)
-  const { open } = await import('./harness.mjs');
+  const { open } = await import('./harness.mts');
   for (const [name, w, h] of [['portrait', 390, 844], ['landscape', 844, 390]] as const) {
     const P = await open(browser, { w, h, dpr: 1, play: false, fast: false, settings: { quality: 'high' } });
     await P.page.waitForFunction(() => !!window.__sv?.bootTimes, undefined, { timeout: 120000 }); await P.page.waitForTimeout(2500);

@@ -9,7 +9,7 @@
 // Nothing older is moved or changed (UX-009): places, postcards, treasures, dishes, festivals, secrets, surprises and
 // the older reward stickers (profile.stickers) stay where they were, and sync() puts what they already hold into the
 // book. The first sync of an older save adds no "New!" badges; later ones do (something earned the old way).
-// The logic here runs in Node too (tests/unit/stickers.test.mjs); the valley's sounds, words and effects are loaded
+// The logic here runs in Node too (tests/unit/stickers.test.mts); the valley's sounds, words and effects are loaded
 // only in the browser (attach()).
 import { STICKERS, BY_ID, THEMES, PAGES, SHINY_CHANCE, FIRST_THREE, BOOK_LINES } from './content/stickers.js';
 

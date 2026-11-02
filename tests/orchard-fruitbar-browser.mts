@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
-import { launch, open, clear, noWelcome } from './harness.mjs';
+import { launch, open, clear, noWelcome } from './harness.mts';
 import type { Page } from 'playwright';
 
 const out=new URL('../docs/v1.02-orchard-arcade/shots/',import.meta.url);

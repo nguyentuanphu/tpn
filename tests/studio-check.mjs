@@ -12,7 +12,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { spawn } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { start, seedPlayers } from './harness.mjs';
+import { start, seedPlayers } from './harness.mts';
 import { PERMS } from '../netlify/lib/admins.mts';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -136,7 +136,7 @@ export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs
   return server;
 }
 
-// ---------- the whole check (called from run.mjs) ----------
+// ---------- the whole check (called from run.mts) ----------
 export async function studioCheck(browser, open) {
   const ok = (c, m) => { if (!c) throw new Error(m); };
   const repo = 'family/sparkle', PW = 'a-long-test-password-123', NPORT = 8791, SPORT = 8792, site = `http://localhost:${NPORT}`;

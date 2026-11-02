@@ -1,10 +1,10 @@
 # Fast checks on every pull request and every push to a branch (Analytics & Infra, 10 Oct, task infra-speed).
-# The same checks a contributor runs locally (cd tests && node run.mjs <checks>), no game server needed:
+# The same checks a contributor runs locally (cd tests && node run.mts <checks>), no game server needed:
 #   unit     Node unit tests (tests/unit)
 #   rules    js/content/rules.ts matches docs/ARCHITECTURE.md §9 (tools/rules-from-doc.mts --check)
 #   preload  index.html lists every start-up script (tools/preload.mts --check)
 #   emoji    every emoji has a drawing in js/art.js, none in the docs (tools/emoji-audit.mts)
-#   arch     no files import each other in a circle (tests/arch.mjs)
+#   arch     no files import each other in a circle (tests/arch.mts)
 #   types    type checking; names: no undefined names in js/
 # Then the Netlify zip is built and packed (build-netlify.sh, tools/bundle.mts), so a packing problem shows here first.
 # Nothing is deployed: Netlify makes its own deploy previews of pull requests. The full browser suite stays local
@@ -43,6 +43,6 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Fast checks
         working-directory: tests
-        run: node run.mjs unit rules preload emoji arch types names
+        run: node run.mts unit rules preload emoji arch types names
       - name: Build and pack the Netlify zip
         run: ./build-netlify.sh && test -d netlify-site/bundle && grep -q 'src="bundle/main-' netlify-site/index.html

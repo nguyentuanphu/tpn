@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { launch, open } from '../tests/harness.mjs';
+import { launch, open } from '../tests/harness.mts';
 const out = fileURLToPath(new URL(`../docs/owner-repair-20261014/evidence/${process.argv[2] || 'welcome-steady'}/`, import.meta.url));
 fs.mkdirSync(out, { recursive: true });
 const SIZES: Record<string, [number, number, boolean]> = { phone: [390, 844, true], tablet: [820, 1180, true], computer: [1280, 800, false] };

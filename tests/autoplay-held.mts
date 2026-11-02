@@ -9,7 +9,7 @@
 // Opposites in the first: auto play stops within a few seconds, records and sends nothing, the stopped tab draws no more
 // frames of the valley, its last report says why and has no Send button; and a stored run from an older version is sent
 // under that version.
-import { open, clear, URL } from './harness.mjs';
+import { open, clear, URL } from './harness.mts';
 
 type Browser = Parameters<typeof open>[0];
 type QueueRow = { b?: string; auto?: string; detail?: string };

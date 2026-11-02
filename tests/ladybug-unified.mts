@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import {open,clear,noWelcome} from './harness.mjs';
+import {open,clear,noWelcome} from './harness.mts';
 export async function ladybugUnifiedCheck(browser,mode='solo'){
  const P=await open(browser,{w:390,h:844,touch:true,mode,settings:{voice:false,online:false,autoPack:false},route:async ctx=>{await ctx.route('**/api/**',r=>r.fulfill({json:{open:[],mine:[]}}));}});
  try {

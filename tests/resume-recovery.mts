@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import type {Browser} from 'playwright';
-import {open,clear,noWelcome,URL} from './harness.mjs';
+import {open,clear,noWelcome,URL} from './harness.mts';
 
 export async function resumeRecoveryCheck(browser:Browser,packedURL:string){
  const P=await open(browser,{w:820,h:1180,touch:true,settings:{voice:false,sound:false,online:false,autoPack:false},pre:()=>{

@@ -2,7 +2,7 @@
 import { chromium } from 'playwright';
 export const URL = process.env.SV_URL || 'http://localhost:8765/';
 export async function launch() {
-  // SV_CHROME_ARGS: extra browser switches, e.g. to try fewer drawing threads when tests/suite.mjs runs several at once
+  // SV_CHROME_ARGS: extra browser switches, e.g. to try fewer drawing threads when tests/suite.mts runs several at once
   return chromium.launch({ executablePath: process.env.CHROMIUM || undefined, args: [...(process.env.SV_CHROME_ARGS || '').split(' ').filter(Boolean), '--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--js-flags=--expose-gc'] });
 }
 // (round P: a new device starts with nobody; the checks play as two children made beforehand)
@@ -93,10 +93,10 @@ export async function noWelcome(page) {
   await page.evaluate(() => import(String('/js/stickers.js')).then(S => { for (const h of window.__sv.heroes) S.book(h.profile).welcomed = Date.now(); }));
 }
 
-// ---- which game code a check ran (SV_COVER=1; tests/suite.mjs builds tests/check-map.json from it) ----
+// ---- which game code a check ran (SV_COVER=1; tests/suite.mts builds tests/check-map.json from it) ----
 // Every function of the game's own files (js/…) that ran at least once, as [start, end] character offsets ("did it run"
 // only: counting every call made checks 3 to 4 times slower). A window is
-// read just before it closes, whoever closes it (the check itself or run.mjs after the check).
+// read just before it closes, whoever closes it (the check itself or run.mts after the check).
 let covered = {}, seen = {};
 async function watchCoverage(ctx, page) {
   // function level only (detailed: false): the per-block kind made checks about 70 % slower

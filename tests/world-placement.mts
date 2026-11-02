@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import type {Browser} from 'playwright';
-import {open,clear,noWelcome} from './harness.mjs';
+import {open,clear,noWelcome} from './harness.mts';
 export async function worldPlacementCheck(browser:Browser){
  const baseline=JSON.parse(await fs.readFile(new URL('../docs/world-placement-audit-20261027/baseline.json',import.meta.url),'utf8'));
  const P=await open(browser,{w:900,h:700,settings:{voice:false,online:false}});

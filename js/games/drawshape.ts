@@ -1,5 +1,5 @@
 // Draw a Shape's recogniser (js/games/drawing.ts): how many corners a child's closed stroke has. Kept on its own, with
-// no screen code, so the unit test checks it on wobbly strokes (tests/unit/drawshape.test.mjs).
+// no screen code, so the unit test checks it on wobbly strokes (tests/unit/drawshape.test.mts).
 type Pt = { x: number; y: number };
 // how many corners a closed stroke has (0 for a round one), or -1 when it is not closed or too small
 export function cornersOf(pts: Pt[]): number {

@@ -1,5 +1,5 @@
 import type { Browser } from 'playwright';
-import { open, clear, noWelcome } from './harness.mjs';
+import { open, clear, noWelcome } from './harness.mts';
 export async function musicAudioCheck(browser: Browser): Promise<string> {
   const P=await open(browser,{w:390,h:844,touch:true,settings:{sound:true,music:false,voice:false,tapSounds:false}});
   try {

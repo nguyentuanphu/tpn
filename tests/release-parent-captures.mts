@@ -5,7 +5,7 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {SHOWN} from '../js/build.js';
 import {createHash} from 'node:crypto';
-import {launch,open,clear,noWelcome} from './harness.mjs';
+import {launch,open,clear,noWelcome} from './harness.mts';
 import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mjs';
 const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'docs/world-placement-audit-20261027/parent-studio-shots'),assets=path.join(root,'docs/website-review-20261023/assets/parent-controls');
 await fs.mkdir(out,{recursive:true});const browser=await launch(),files:unknown[]=[];

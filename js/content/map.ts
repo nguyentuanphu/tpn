@@ -1,5 +1,5 @@
 // The map of the valley (round T, ARCHITECTURE §12 step 3): the one place that holds world coordinates.
-// Plain data with no imports, so Node can read it too (tests/unit/map.test.mjs). js/world.js builds its exported
+// Plain data with no imports, so Node can read it too (tests/unit/map.test.mts). js/world.js builds its exported
 // places (VILLAGE, TOWN, CITIES, RIVER, BRIDGE…) from it, and every builder places its things as an offset from its
 // place's anchor, so moving a place here moves everything in it.
 // x runs east, z runs south (north is −z); 1 unit = 1 m.

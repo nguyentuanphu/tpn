@@ -1,4 +1,4 @@
-// Picture Sudoku's pure rules (js/games/more.ts): the grid and its empty squares, without a browser (tests/unit/rules-audit.test.mjs)
+// Picture Sudoku's pure rules (js/games/more.ts): the grid and its empty squares, without a browser (tests/unit/rules-audit.test.mts)
 import { shuffle } from '../util.js';
 export function latin(n) { // a random latin square: each picture once per row and column
   const base = Array.from({ length: n }, (_, r) => Array.from({ length: n }, (_, c) => (r + c) % n));

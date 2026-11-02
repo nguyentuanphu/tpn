@@ -32,7 +32,7 @@ jobs:
       - name: Build TypeScript and verify pure engine and protocol
         run: |
           node tools/build.mts
-          node --test tests/unit/fruitparade.test.mjs
+          node --test tests/unit/fruitparade.test.mts
           tests/node_modules/.bin/tsc --noEmit --strict --module es2022 --moduleResolution bundler --target es2022 --skipLibCheck js/games/fruitparade-engine.ts js/games/fruitparade-session.ts js/games/fruitparade-input.ts js/games/trongnu-rules.ts
       - name: Start the local game server
         run: python3 -m http.server 8765 > /tmp/parade-server.log 2>&1 &

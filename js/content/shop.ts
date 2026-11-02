@@ -1,5 +1,5 @@
 // The clothes shop and wardrobe (round S, owner plan 8 Oct: Round R Part 2 item 6). Pure data and rules, no DOM, so the
-// unit tests can read it (tests/unit/shop.test.mjs) and js/avatar.js can draw what a child wears.
+// unit tests can read it (tests/unit/shop.test.mts) and js/avatar.js can draw what a child wears.
 //   slots     hat, neck, top, bottom, feet, back (look.hat … look.back hold an item id, or 'none')
 //   for       'g' (girls), 'b' (boys): about twice the old choice for each (owner: "about 2x for boys and girls"); (r79, owner
 //             16 Oct: "a boy wears boys' clothes") nothing is shared any more: each thing that was for both is now the boys'

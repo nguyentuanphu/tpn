@@ -94,7 +94,7 @@ for (const [lang, L] of Object.entries(LEARN)) for (const w of L.words) jobs.pus
 // (round R item 12) lines with changing words, recorded as parts: the fixed pieces, the words the code names for a gap,
 // and the numbers 0–100 (the game puts them together: js/voice.js playParts). The templates go into the manifest.
 const TPL = { en: [], vi: [] };
-// the test players' names (tests/harness.mjs) are a child's name: never recorded, even if a harvested line had one
+// the test players' names (tests/harness.mts) are a child's name: never recorded, even if a harvested line had one
 const CHILD = /\b(Na|Bin|Kiwi)\b/;
 const tplRe = pieces => new RegExp('^\\s*' + pieces.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s*')).join('(.+?)') + '\\s*$', 'u');
 const tplParts = [];

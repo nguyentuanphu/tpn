@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import type {Browser} from 'playwright';
-import {open,clear} from './harness.mjs';
+import {open,clear} from './harness.mts';
 export async function roomStartupCheck(browser:Browser){
  const P=await open(browser,{settings:{online:false,countPlayers:false}});await clear(P.page);
  try{

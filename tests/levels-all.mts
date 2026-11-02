@@ -4,7 +4,7 @@
 // as data-lvnote on the layer (js/games/frame.ts lvNote). The check fails a game when that is empty, when Easy and Talent
 // are the same, when fewer than three of the four levels differ, when Talent is not marked only at Talent, or when an
 // under-5 gets Talent, a tier above 0 or the Talent settings. Under-5s also never see Talent in the level picker.
-import { clear, openAllGamesFixture } from './harness.mjs';
+import { clear, openAllGamesFixture } from './harness.mts';
 
 const ok = (cond, msg) => { if (!cond) throw new Error(msg); };
 // games where the levels do not apply, with the reason (LV-004: a free pad with no goal and nothing to get right)

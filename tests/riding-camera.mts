@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import type { Browser } from 'playwright';
-import { open, clear, noWelcome } from './harness.mjs';
+import { open, clear, noWelcome } from './harness.mts';
 export async function ridingCameraCheck(browser: Browser): Promise<string> {
   const P=await open(browser,{w:900,h:640});
   const oldBuffalo=fs.readFileSync('fixtures/r87-buffalo-original.txt','utf8');
