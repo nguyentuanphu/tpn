@@ -48,3 +48,7 @@ Checks (local, 3 Nov 2026 AEDT, `node run.mts <name>` one at a time):
 - Screenshots looked at: all ten games on a phone (390 x 844, Vietnamese, Talent), a tablet (820 x 1180, English, Hard) and a computer (1366 x 800, English, Talent), and the Học vui tab; every button 44 px or more and on screen, no page errors.
 
 Open questions: none.
+
+## Owner's decisions
+
+- 3 Nov 2026 AEDT: the helper does not watch pull request #802; Release collects it and makes any fixes itself.
