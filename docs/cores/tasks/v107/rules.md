@@ -32,6 +32,13 @@ Helper: rules. Branch: `work/v107-rules`. Started 2 Nov 2026, 11:00 am AEDT.
   - `unit` failed only because `pg` was not installed (session setup). After root `npm ci`, re-run: **pass** (482 unit tests).
 - `suite.mjs --changed` picks the **full suite** (`.gitignore` changed: the build added `js/games/sudoku-core.js` to it). By the round rules it runs on GitHub, not locally.
 
+## After resume (2 Nov 2026 AEDT)
+
+- Root `npm ci`, then `types` pass and `unit` pass (482).
+- GitHub full suite started by hand at 2:06 pm AEDT: [run 41381278970](https://github.com/nguyentuanphu/tpn/actions/runs/41381278970) on `4a0d4ea6`; result pending.
+- Pictures: Bánh Chưng (after the pork, the "beans and rice again" step), Duck Duck Goose (goose chosen, sit in their place) and Pass the Parcel on phone 390x844, tablet 820x1180 and computer 1280x800, in `docs/rules-audit/shots/`. All looked: tidy, nothing cut off, no page errors.
+- No draft pull request opened: a pull request into `main` starts a second full suite, and Release asked to save usage. Release collects the branch.
+
 ## Exact next step (after "resume")
 
 1. Run `npm ci` in the repo root (for `pg`), then re-run `cd tests && node suite.mjs --only unit,types` (game server: `python3 -m http.server 8765`).
