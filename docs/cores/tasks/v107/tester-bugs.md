@@ -35,6 +35,34 @@ Branch `work/v107-tester-bugs` (from main v1.06). Helper chat, started 2 Nov 202
   the version it was made on (it said v1.05 for problems seen on v1.04).
 - `js/main.ts` (shared file, 4 lines in `frame()`): a tab another tab took over stops drawing the valley.
 
+## Replay on v1.06 (2 Nov 2026 AEDT)
+
+- With the game opened in a second tab during auto play (Tower Stack, Shopping List, Opposites at x5, 929x1129, the new
+  check run on the v1.06 code): auto play went on for 30 s and more, and recorded "a button covered by something: rod
+  (Sparkle Valley is open in another tab or)", "tall", "night", ... the same text as #747 and #748. Reproduced.
+- With the fix: auto play stops 0.1 s after the other tab opens, nothing recorded or sent, 0 frames drawn in 2.5 s.
+- The plain replay of all 18 named games on v1.06 (no second tab) was stopped part way when Release asked to save usage
+  (2 Nov AEDT); its results were not kept. It was not repeated: the reports' own text names the cause.
+
+## Issues
+
+| Issue | What | Status |
+|---|---|---|
+| #747, #748 | Swap and Trade, Shopping List: button covered by "open in another tab" | fixed, check `autoplayheld` |
+| #749-#753, #757-#759, #762-#766, #768, #769, #771-#778 | games "could not work out how to play it", "did not close", "0 frames a second", "still stuck" (v1.04 run, re-sent on v1.05) | fixed (same cause: the run went on in the stopped tab), check `autoplayheld` |
+| #754, #755, #756 | Throw the Còn, Cat and Mouse, Wrap Bánh Chưng: did not open | fixed (same run, under the notice), check `autoplayheld` |
+| #760, #761, #767, #770 | stuck at 57, -149 and 69, 151 (meadow) | fixed (the child was paused under the notice), check `autoplayheld`; the spots were not walked again separately |
+| #746 | 16 frames a second in Brisbane, same PC, v1.05 | fixed as far as reproducible: the stopped tab no longer draws the valley (two games were drawn at once), check `autoplayheld` (0 frames drawn); needs a replay on that PC |
+| #780 | freeze 3.2 s / 3.5 s, Mirror Painting and Colour by Number, Android tablet, v1.05 | not reproduced on v1.06: both freezes came 5 s after a "no recording" report whose picture ran as one block, the cause of #745, fixed in v1.06 (`capturefreeze`) |
+| #781 | 13 frames a second, Odd One Out, Android tablet, v1.05 | needs owner: the tablet itself reported 13 fps; the test browser draws in software and cannot measure it; replay on the tablet with v1.07 |
+
+Release closes the issues after the deploy; this chat does not close them.
+
 ## Progress
 
-(filled in below as the work goes)
+- `a9906606` fixes and the new check; `c41d9675` the check counts only reports made after the stop.
+- Checks (2 Nov 2026 AEDT): `autoplayheld` fails on v1.06 code (reproduces the reports), passes with the fix (65 s).
+- `node suite.mjs --changed --list`: full suite (a new test file). Started on GitHub, run 41366549196, 11:19 am AEDT.
+- Shared files touched: `js/main.ts` (4 lines in `frame()`), `tests/run.mjs` (one check at the end).
+- New spoken lines: none. New on-screen line (EN and VI): "Stopped: the game was opened in another tab or window." in the
+  tester-only auto play window.
