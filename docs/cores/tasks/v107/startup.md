@@ -99,6 +99,51 @@ Screenshots looked at: `tests/out/boot-390.png`, `boot-1024.png`, `boot-1280.png
 
 New spoken lines: none.
 
+## Part 2: splitting `js/main.ts` (Release's task, owner's decision 2 Nov 2026 AEDT)
+
+Plan: `docs/cores/tasks/v107/split-code.md` on `work/v107-split-code` (main.ts section). Pure moves, one commit per new
+file, separate from the start-up commits. Each section moves unchanged into `js/main/<name>.ts` inside one function
+`install...(G, deps)`, which `js/main.ts` calls exactly where the section stood (so the order of everything that runs at
+load is unchanged) with the names of its own the section uses; the function hands back the names the rest of
+main.ts uses. The few changes inside the moved code are main.ts's own `let`s read or set through a small function
+(`isPlaying()`, `setPlaying()`, `theOwl()`), and a name made later in main.ts is handed over as a small arrow (`h =>
+hudFor(h)`) so nothing is used before it exists (`types` reports that as TS2448). The new files never import main.ts at
+run time (`import type` only), so `arch` stays at 0 circles.
+
+| Commit | New file | What | Size |
+|---|---|---|---|
+| cfde1f83 | `js/main/online-games.ts` | games with friends online, a friend's ride, the room's state | 31.7 KB |
+| 1127f7d5 | `js/main/friends.ts` | friend codes, invites, the online panel | 28.3 KB |
+| e3fec4fe | `js/main/talks.ts` | NPC talks, Two Homes Street, chatting, the Games hub | 14.2 KB |
+| bed4edf2 | `js/main/quests.ts` | objective helpers and quests | 11.1 KB |
+| 5e9cc773 | `js/main/interactables.ts` | interactables, bubbles, area signs, guides | 12.5 KB |
+| bde8235a | `js/main/hero-events.ts` | hero events, the wanderers at home | 13.7 KB |
+| b21e72a7 | `js/main/talking.ts` | quick phrases, speech bubbles, voice calls, hello | 8.1 KB |
+| 14ea57c8 | `js/main/layout.ts` | window size, two halves, camera views, taps, goAndDo | 13.8 KB |
+
+`js/main.ts`: 215 KB at v1.06 (about 220 KB with this round's start-up code), now 101 KB: imports and types,
+renderer and world, people of the valley, rewards and `playGame`, starting a session, the loop and the boot. Not moved
+this round (left for v1.08): people of the valley (it sets `owl` and `gourd`, read all over main.ts), rewards (`save`,
+`hudFor`, `playGame` are handed to nearly every part, before and after it) and the loop (it sets `framesSeen`,
+`last` and other `let`s that the boot reads); each needs the shared-state step of the plan first.
+
+Every split commit also updates the offline list (`sw.ts`), the preload list (`node tools/preload.mts`), `.gitignore`
+(the made `.js`), and the voice-line tools (`tools/voice-lines.mts`, `tools/reviewed-voice-delta.mts`: `js/main/*`
+counts as `js/main.js`, as `js/ui/*` does on the split-code branch; Release may need to join the two edits of the same
+line when merging). `tests/check-map.json`: each `js/main/*.js` gets `js/main.js`'s checks, as the ui split did.
+
+Checks after each split, one at a time: `names`, `types`, `arch`, `boot`, and the browser checks of that part
+(`friendstab`, `netgames` skipped without the local broker; `talk`, `talkonce`, `playhub`; `questbar`,
+`ownerquesttargets`, `storyquestflow`; `signs`, `guides`; `firstplayer`, `multiplayer` skipped without the local PeerJS
+server, `simplefirst`; `phone`, `iphone`): all pass. `perf` after all eight: pass, startMB 2.386 MB (2.384 before the
+split: the install wrappers add about 2 KB), worldMs 7.6 s. `--changed` picks the full suite (shared files): it runs on
+GitHub with pull request #785.
+
+Loading later: none of the eight moved parts loads after the first tap yet. They are made in the synchronous part of the
+start (before the build steps), and some are needed by the Simple screen before the valley (online-games makes
+`G.simple`; friends feeds the Friends page). Friends (28 KB) and online-games' invitations could load during the build
+in v1.08, once the Simple screen's Friends page waits for them.
+
 ## Open questions
 
 - `perf` startMB measuring point (see the finding above): for Release and the owner, not changed here.
