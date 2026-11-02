@@ -7,11 +7,11 @@
     "channels": 1
   },
   "counts": {
-    "azure:en-AU-NatashaNeural": 7901,
-    "azure:en-AU-WilliamNeural": 7901,
-    "azure:vi-VN-HoaiMyNeural": 7007,
-    "azure:vi-VN-NamMinhNeural": 7007,
-    "fpt:leminh": 7263,
+    "azure:en-AU-NatashaNeural": 7896,
+    "azure:en-AU-WilliamNeural": 7896,
+    "azure:vi-VN-HoaiMyNeural": 7005,
+    "azure:vi-VN-NamMinhNeural": 7005,
+    "fpt:leminh": 7261,
     "azure:zh-CN-YunxiNeural": 22,
     "azure:hi-IN-MadhurNeural": 22
   },
@@ -9434,20 +9434,20 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "844cec0d-46f53bd4",
+      "id": "fa3c9adb-b06014f",
       "language": "en",
       "provider": "azure",
       "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/844cec0d-46f53bd4.mp3",
+      "delivery": "voices/en/f/fa3c9adb-b06014f.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "844cec0d-46f53bd4",
+      "id": "fa3c9adb-b06014f",
       "language": "en",
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/844cec0d-46f53bd4.mp3",
+      "delivery": "voices/en/m/fa3c9adb-b06014f.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -9574,24 +9574,6 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/d08e9cf93ac443cf.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "f905995724c3512d",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/f905995724c3512d.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "f905995724c3512d",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/f905995724c3512d.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -11036,24 +11018,6 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "4bdb98d579fd178d",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/4bdb98d579fd178d.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "4bdb98d579fd178d",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/4bdb98d579fd178d.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
       "id": "42353b3e568d99b7",
       "language": "en",
       "provider": "azure",
@@ -11912,24 +11876,6 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/aee856fd-2e081ad6.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "1a1e89b40f4f6ebb",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/1a1e89b40f4f6ebb.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "1a1e89b40f4f6ebb",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/1a1e89b40f4f6ebb.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -16002,20 +15948,20 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "008935ba0f3880de",
+      "id": "4c687cef3e986b3c",
       "language": "en",
       "provider": "azure",
       "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/008935ba0f3880de.mp3",
+      "delivery": "voices/en/f/4c687cef3e986b3c.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "008935ba0f3880de",
+      "id": "4c687cef3e986b3c",
       "language": "en",
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/008935ba0f3880de.mp3",
+      "delivery": "voices/en/m/4c687cef3e986b3c.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -19512,24 +19458,6 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "210b3a59-65be39ae",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/210b3a59-65be39ae.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "210b3a59-65be39ae",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/210b3a59-65be39ae.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
       "id": "0c482f5a5bc4b88d",
       "language": "en",
       "provider": "azure",
@@ -19562,24 +19490,6 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/cb7b6a72-5e62527c.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "7e5ed030-17319662",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/7e5ed030-17319662.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "7e5ed030-17319662",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/7e5ed030-17319662.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -19850,24 +19760,6 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/0c80386f102921b7.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "e8eed364-6774c2ce",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/e8eed364-6774c2ce.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "e8eed364-6774c2ce",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/e8eed364-6774c2ce.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -43208,20 +43100,20 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "62f07821-3897f3e5",
+      "id": "f9ddb88c-29c309d7",
       "language": "en",
       "provider": "azure",
       "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/62f07821-3897f3e5.mp3",
+      "delivery": "voices/en/f/f9ddb88c-29c309d7.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
-      "id": "62f07821-3897f3e5",
+      "id": "f9ddb88c-29c309d7",
       "language": "en",
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/62f07821-3897f3e5.mp3",
+      "delivery": "voices/en/m/f9ddb88c-29c309d7.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -43618,24 +43510,6 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/91aa9bda-329d0293.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "ff067607-4dbc38bd",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/ff067607-4dbc38bd.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "ff067607-4dbc38bd",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/ff067607-4dbc38bd.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -50768,24 +50642,6 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/3c76b613-5fb81c8c.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "9bf2e0ee-5e5c8f17",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/9bf2e0ee-5e5c8f17.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "9bf2e0ee-5e5c8f17",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/9bf2e0ee-5e5c8f17.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -76112,24 +75968,6 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/1609f52d-b81ca07.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "1676661d0d545e62",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-NatashaNeural",
-      "delivery": "voices/en/f/1676661d0d545e62.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
-    },
-    {
-      "id": "1676661d0d545e62",
-      "language": "en",
-      "provider": "azure",
-      "voice": "en-AU-WilliamNeural",
-      "delivery": "voices/en/m/1676661d0d545e62.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -102386,6 +102224,24 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
+      "id": "4bdb98d579fd178d",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-NatashaNeural",
+      "delivery": "voices/en/f/4bdb98d579fd178d.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "4bdb98d579fd178d",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-WilliamNeural",
+      "delivery": "voices/en/m/4bdb98d579fd178d.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
       "id": "64852a4f-433d208e",
       "language": "en",
       "provider": "azure",
@@ -119180,6 +119036,24 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
+      "id": "1a1e89b40f4f6ebb",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-NatashaNeural",
+      "delivery": "voices/en/f/1a1e89b40f4f6ebb.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "1a1e89b40f4f6ebb",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-WilliamNeural",
+      "delivery": "voices/en/m/1a1e89b40f4f6ebb.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
       "id": "9dfb9f41-7aa48eac",
       "language": "en",
       "provider": "azure",
@@ -128342,6 +128216,24 @@
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
     {
+      "id": "f905995724c3512d",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-NatashaNeural",
+      "delivery": "voices/en/f/f905995724c3512d.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "f905995724c3512d",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-WilliamNeural",
+      "delivery": "voices/en/m/f905995724c3512d.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
       "id": "24723b0b1a680857",
       "language": "en",
       "provider": "azure",
@@ -128500,6 +128392,24 @@
       "provider": "azure",
       "voice": "en-AU-WilliamNeural",
       "delivery": "voices/en/m/af88d13c3b63bef5.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "844cec0d-46f53bd4",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-NatashaNeural",
+      "delivery": "voices/en/f/844cec0d-46f53bd4.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
+    },
+    {
+      "id": "844cec0d-46f53bd4",
+      "language": "en",
+      "provider": "azure",
+      "voice": "en-AU-WilliamNeural",
+      "delivery": "voices/en/m/844cec0d-46f53bd4.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json"
     },
@@ -165102,48 +165012,48 @@
       "deliveryBytes": 18080
     },
     {
-      "id": "37b34430439a1163",
+      "id": "768f41525912f142",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-HoaiMyNeural",
-      "text": "Đây là trò chơi sân trường của nước Úc. Các bạn nhỏ đã chơi trò này hơn một trăm năm rồi!",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/f/37b34430439a1163.mp3",
+      "text": "Trò chơi sân trường này từ nước Anh sang Úc từ lâu. Các bạn nhỏ ở Úc đã chơi trò này hơn một trăm năm rồi!",
+      "source": "docs/voice-recording-delta/round-20261102-rules.json",
+      "delivery": "voices/vi/f/768f41525912f142.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "340fb87175460c4f6f76fb12282b617a9dce208247e1bc40a06fb37d99c1553b",
-      "deliverySha256": "9194cd5a86c548355a5ddd5a409b722ba26fa08b2e5febfb265529bab0c2f276",
-      "masterBytes": 106624,
-      "deliveryBytes": 21536
+      "masterSha256": "c05ef2a46d4a2e4b0c6b42ebb39eff8866b9a3ccd77a71b42a430d1da193773c",
+      "deliverySha256": "2da37160f28883a34f02e7b547f31eed83fb3c3bfc16f4217a0a10c9d6756118",
+      "masterBytes": 136926,
+      "deliveryBytes": 27585
     },
     {
-      "id": "37b34430439a1163",
+      "id": "768f41525912f142",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-NamMinhNeural",
-      "text": "Đây là trò chơi sân trường của nước Úc. Các bạn nhỏ đã chơi trò này hơn một trăm năm rồi!",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/m/37b34430439a1163.mp3",
+      "text": "Trò chơi sân trường này từ nước Anh sang Úc từ lâu. Các bạn nhỏ ở Úc đã chơi trò này hơn một trăm năm rồi!",
+      "source": "docs/voice-recording-delta/round-20261102-rules.json",
+      "delivery": "voices/vi/m/768f41525912f142.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "340fb87175460c4f6f76fb12282b617a9dce208247e1bc40a06fb37d99c1553b",
-      "deliverySha256": "9194cd5a86c548355a5ddd5a409b722ba26fa08b2e5febfb265529bab0c2f276",
-      "masterBytes": 106624,
-      "deliveryBytes": 21536
+      "masterSha256": "c05ef2a46d4a2e4b0c6b42ebb39eff8866b9a3ccd77a71b42a430d1da193773c",
+      "deliverySha256": "2da37160f28883a34f02e7b547f31eed83fb3c3bfc16f4217a0a10c9d6756118",
+      "masterBytes": 136926,
+      "deliveryBytes": 27585
     },
     {
-      "id": "37b34430439a1163",
+      "id": "768f41525912f142",
       "language": "vi",
       "provider": "fpt",
       "voice": "leminh",
-      "text": "Đây là trò chơi sân trường của nước Úc. Các bạn nhỏ đã chơi trò này hơn một trăm năm rồi!",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/fpt-leminh-v1/37b34430439a1163.mp3",
+      "text": "Trò chơi sân trường này từ nước Anh sang Úc từ lâu. Các bạn nhỏ ở Úc đã chơi trò này hơn một trăm năm rồi!",
+      "source": "docs/voice-recording-delta/round-20261102-rules.json",
+      "delivery": "voices/fpt-leminh-v1/768f41525912f142.mp3",
       "masterKind": "verified FPT recording receipt",
-      "masterSha256": "340fb87175460c4f6f76fb12282b617a9dce208247e1bc40a06fb37d99c1553b",
-      "deliverySha256": "9194cd5a86c548355a5ddd5a409b722ba26fa08b2e5febfb265529bab0c2f276",
-      "masterBytes": 106624,
-      "deliveryBytes": 21536
+      "masterSha256": "c05ef2a46d4a2e4b0c6b42ebb39eff8866b9a3ccd77a71b42a430d1da193773c",
+      "deliverySha256": "2da37160f28883a34f02e7b547f31eed83fb3c3bfc16f4217a0a10c9d6756118",
+      "masterBytes": 136926,
+      "deliveryBytes": 27585
     },
     {
       "id": "bef557ab4f48b4a1",
@@ -165452,50 +165362,6 @@
       "deliverySha256": "9960256fba84aa5603c92126305506f22087555849d6ddbe9ddda03f894ddd0a",
       "masterBytes": 78412,
       "deliveryBytes": 15920
-    },
-    {
-      "id": "1aa015032ae456fd",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "text": "Rồi chạm quả bóng để bắt trước khi bóng rơi. Nhặt một que, rồi hai, rồi ba!",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/f/1aa015032ae456fd.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "7fc1759cd6bcfbeade30cbcdad4a83642f4ac355355bd80769a9104cf67414ea",
-      "deliverySha256": "01886a3ea78b513f4f5d18448369d702a17d1403ce33371e7e3e83145a13b228",
-      "masterBytes": 133269,
-      "deliveryBytes": 26864
-    },
-    {
-      "id": "1aa015032ae456fd",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "text": "Rồi chạm quả bóng để bắt trước khi bóng rơi. Nhặt một que, rồi hai, rồi ba!",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/m/1aa015032ae456fd.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "7fc1759cd6bcfbeade30cbcdad4a83642f4ac355355bd80769a9104cf67414ea",
-      "deliverySha256": "01886a3ea78b513f4f5d18448369d702a17d1403ce33371e7e3e83145a13b228",
-      "masterBytes": 133269,
-      "deliveryBytes": 26864
-    },
-    {
-      "id": "1aa015032ae456fd",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "text": "Rồi chạm quả bóng để bắt trước khi bóng rơi. Nhặt một que, rồi hai, rồi ba!",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/fpt-leminh-v1/1aa015032ae456fd.mp3",
-      "masterKind": "verified FPT recording receipt",
-      "masterSha256": "7fc1759cd6bcfbeade30cbcdad4a83642f4ac355355bd80769a9104cf67414ea",
-      "deliverySha256": "01886a3ea78b513f4f5d18448369d702a17d1403ce33371e7e3e83145a13b228",
-      "masterBytes": 133269,
-      "deliveryBytes": 26864
     },
     {
       "id": "b9cc97ab4b83ff22",
@@ -169018,50 +168884,6 @@
       "deliveryBytes": 11024
     },
     {
-      "id": "1b50e603358b45a0",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "text": "Chặn một lá bằng lá lớn hơn cùng chất: cơ chặn cơ.",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/f/1b50e603358b45a0.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "ac87ad7fbf4b82244d15f6bea9096dcd95fd343edc64a34c55e7cbd2285c832e",
-      "deliverySha256": "8f591a164a13b2b73f373cd27c89bde3fc83aa7afb04eb824e151082a4ba47cf",
-      "masterBytes": 81547,
-      "deliveryBytes": 16496
-    },
-    {
-      "id": "1b50e603358b45a0",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "text": "Chặn một lá bằng lá lớn hơn cùng chất: cơ chặn cơ.",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/m/1b50e603358b45a0.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "ac87ad7fbf4b82244d15f6bea9096dcd95fd343edc64a34c55e7cbd2285c832e",
-      "deliverySha256": "8f591a164a13b2b73f373cd27c89bde3fc83aa7afb04eb824e151082a4ba47cf",
-      "masterBytes": 81547,
-      "deliveryBytes": 16496
-    },
-    {
-      "id": "1b50e603358b45a0",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "text": "Chặn một lá bằng lá lớn hơn cùng chất: cơ chặn cơ.",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/fpt-leminh-v1/1b50e603358b45a0.mp3",
-      "masterKind": "verified FPT recording receipt",
-      "masterSha256": "ac87ad7fbf4b82244d15f6bea9096dcd95fd343edc64a34c55e7cbd2285c832e",
-      "deliverySha256": "8f591a164a13b2b73f373cd27c89bde3fc83aa7afb04eb824e151082a4ba47cf",
-      "masterBytes": 81547,
-      "deliveryBytes": 16496
-    },
-    {
       "id": "2addd8231a06b426",
       "language": "vi",
       "provider": "azure",
@@ -171128,50 +170950,6 @@
       "deliverySha256": "8a8a4ab8b1de9137b3400be5e725e504cd90562fb5acd95401878d229b9d3d26",
       "masterBytes": 85726,
       "deliveryBytes": 17360
-    },
-    {
-      "id": "22b7c27909d2b4a9",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "text": "Chuyển cả tháp sang cột khác.",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/f/22b7c27909d2b4a9.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "657843f2da0cd680dd57cb29b13404a38b3ee3c6d9f8737530e4e3589832d13d",
-      "deliverySha256": "a7c94a17aff478d3facafd348cb96ee868b58325f01b2ddcb3b3dfd0255e5a4b",
-      "masterBytes": 40273,
-      "deliveryBytes": 8288
-    },
-    {
-      "id": "22b7c27909d2b4a9",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "text": "Chuyển cả tháp sang cột khác.",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/m/22b7c27909d2b4a9.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "657843f2da0cd680dd57cb29b13404a38b3ee3c6d9f8737530e4e3589832d13d",
-      "deliverySha256": "a7c94a17aff478d3facafd348cb96ee868b58325f01b2ddcb3b3dfd0255e5a4b",
-      "masterBytes": 40273,
-      "deliveryBytes": 8288
-    },
-    {
-      "id": "22b7c27909d2b4a9",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "text": "Chuyển cả tháp sang cột khác.",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/fpt-leminh-v1/22b7c27909d2b4a9.mp3",
-      "masterKind": "verified FPT recording receipt",
-      "masterSha256": "657843f2da0cd680dd57cb29b13404a38b3ee3c6d9f8737530e4e3589832d13d",
-      "deliverySha256": "a7c94a17aff478d3facafd348cb96ee868b58325f01b2ddcb3b3dfd0255e5a4b",
-      "masterBytes": 40273,
-      "deliveryBytes": 8288
     },
     {
       "id": "1c2cc841-17cb8fa0",
@@ -181118,48 +180896,48 @@
       "deliveryBytes": 14337
     },
     {
-      "id": "cad0f558734f6bd4",
+      "id": "7efb2f7d-3eeb480e",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-HoaiMyNeural",
-      "text": "Khi thích, chạm Ngỗng! Rồi chạy vòng quanh trước khi bị bắt.",
-      "source": "docs/voice-recording-delta/audit-v103-1.json",
-      "delivery": "voices/vi/f/cad0f558734f6bd4.mp3",
+      "text": "Khi thích, chạm Ngỗng: bạn tiếp theo là ngỗng! Chạy vòng quanh rồi chạm vào chỗ của bạn ấy để ngồi trước khi bị bắt.",
+      "source": "docs/voice-recording-delta/round-20261102-rules.json",
+      "delivery": "voices/vi/f/7efb2f7d-3eeb480e.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "a4a503f674392155fd8dd3e1740c9859a1f53cb332b62eb09db70affdd2b987d",
-      "deliverySha256": "8dea75e10848d3c7f030bbe341396b457651b6a6d3e64b3162a541c2f9332141",
-      "masterBytes": 87294,
-      "deliveryBytes": 17649
+      "masterSha256": "f84d59ff395b93d2364260c5262b3b1769b4df6e43397f901c2958efa1d86264",
+      "deliverySha256": "f1713bc6e87c92c4eb1fefb54c9fe21c1140f8a22d89990a4d8064e3ebb7a039",
+      "masterBytes": 157824,
+      "deliveryBytes": 31761
     },
     {
-      "id": "cad0f558734f6bd4",
+      "id": "7efb2f7d-3eeb480e",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-NamMinhNeural",
-      "text": "Khi thích, chạm Ngỗng! Rồi chạy vòng quanh trước khi bị bắt.",
-      "source": "docs/voice-recording-delta/audit-v103-1.json",
-      "delivery": "voices/vi/m/cad0f558734f6bd4.mp3",
+      "text": "Khi thích, chạm Ngỗng: bạn tiếp theo là ngỗng! Chạy vòng quanh rồi chạm vào chỗ của bạn ấy để ngồi trước khi bị bắt.",
+      "source": "docs/voice-recording-delta/round-20261102-rules.json",
+      "delivery": "voices/vi/m/7efb2f7d-3eeb480e.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "a4a503f674392155fd8dd3e1740c9859a1f53cb332b62eb09db70affdd2b987d",
-      "deliverySha256": "8dea75e10848d3c7f030bbe341396b457651b6a6d3e64b3162a541c2f9332141",
-      "masterBytes": 87294,
-      "deliveryBytes": 17649
+      "masterSha256": "f84d59ff395b93d2364260c5262b3b1769b4df6e43397f901c2958efa1d86264",
+      "deliverySha256": "f1713bc6e87c92c4eb1fefb54c9fe21c1140f8a22d89990a4d8064e3ebb7a039",
+      "masterBytes": 157824,
+      "deliveryBytes": 31761
     },
     {
-      "id": "cad0f558734f6bd4",
+      "id": "7efb2f7d-3eeb480e",
       "language": "vi",
       "provider": "fpt",
       "voice": "leminh",
-      "text": "Khi thích, chạm Ngỗng! Rồi chạy vòng quanh trước khi bị bắt.",
-      "source": "docs/voice-recording-delta/audit-v103-1.json",
-      "delivery": "voices/fpt-leminh-v1/cad0f558734f6bd4.mp3",
+      "text": "Khi thích, chạm Ngỗng: bạn tiếp theo là ngỗng! Chạy vòng quanh rồi chạm vào chỗ của bạn ấy để ngồi trước khi bị bắt.",
+      "source": "docs/voice-recording-delta/round-20261102-rules.json",
+      "delivery": "voices/fpt-leminh-v1/7efb2f7d-3eeb480e.mp3",
       "masterKind": "verified FPT recording receipt",
-      "masterSha256": "a4a503f674392155fd8dd3e1740c9859a1f53cb332b62eb09db70affdd2b987d",
-      "deliverySha256": "8dea75e10848d3c7f030bbe341396b457651b6a6d3e64b3162a541c2f9332141",
-      "masterBytes": 87294,
-      "deliveryBytes": 17649
+      "masterSha256": "f84d59ff395b93d2364260c5262b3b1769b4df6e43397f901c2958efa1d86264",
+      "deliverySha256": "f1713bc6e87c92c4eb1fefb54c9fe21c1140f8a22d89990a4d8064e3ebb7a039",
+      "masterBytes": 157824,
+      "deliveryBytes": 31761
     },
     {
       "id": "46ec0b35-5315f7da",
@@ -189742,50 +189520,6 @@
       "deliveryBytes": 11169
     },
     {
-      "id": "ff88dd4f7d074cf0",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "text": "Đánh đáo: các bạn ném đồng đáo cho rơi trúng vạch.",
-      "source": "docs/voice-recording-delta/audit-v103-2.json",
-      "delivery": "voices/vi/f/ff88dd4f7d074cf0.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "b865f1ad0e13207b7dc149099cd8fc732e0e4b6913ffd0a501a39126abe5ecf1",
-      "deliverySha256": "c5dd9df516b24a7ce651669b64c6877c23eac6c1b05046f1c4321cfdbf64529c",
-      "masterBytes": 65873,
-      "deliveryBytes": 13329
-    },
-    {
-      "id": "ff88dd4f7d074cf0",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "text": "Đánh đáo: các bạn ném đồng đáo cho rơi trúng vạch.",
-      "source": "docs/voice-recording-delta/audit-v103-2.json",
-      "delivery": "voices/vi/m/ff88dd4f7d074cf0.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "b865f1ad0e13207b7dc149099cd8fc732e0e4b6913ffd0a501a39126abe5ecf1",
-      "deliverySha256": "c5dd9df516b24a7ce651669b64c6877c23eac6c1b05046f1c4321cfdbf64529c",
-      "masterBytes": 65873,
-      "deliveryBytes": 13329
-    },
-    {
-      "id": "ff88dd4f7d074cf0",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "text": "Đánh đáo: các bạn ném đồng đáo cho rơi trúng vạch.",
-      "source": "docs/voice-recording-delta/audit-v103-2.json",
-      "delivery": "voices/fpt-leminh-v1/ff88dd4f7d074cf0.mp3",
-      "masterKind": "verified FPT recording receipt",
-      "masterSha256": "b865f1ad0e13207b7dc149099cd8fc732e0e4b6913ffd0a501a39126abe5ecf1",
-      "deliverySha256": "c5dd9df516b24a7ce651669b64c6877c23eac6c1b05046f1c4321cfdbf64529c",
-      "masterBytes": 65873,
-      "deliveryBytes": 13329
-    },
-    {
       "id": "4d91939c-419301ee",
       "language": "vi",
       "provider": "azure",
@@ -189872,50 +189606,6 @@
       "deliverySha256": "64154b6240ad0d4516c448ee41424395143899c4425642948ff3be3cf313095c",
       "masterBytes": 42885,
       "deliveryBytes": 8865
-    },
-    {
-      "id": "7d277cca587f7a4e",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "text": "Chạm Ném. Trúng mục tiêu ba lần!",
-      "source": "docs/voice-recording-delta/audit-v103-2.json",
-      "delivery": "voices/vi/f/7d277cca587f7a4e.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "f0f0b184e51cd9091c80f2e0606079a6e4c4a60c3470d7c412d626de9d418858",
-      "deliverySha256": "0de66781f41ab92d11b7bbddec8bdd86dd28908f61fe4914f427a273050578fd",
-      "masterBytes": 85204,
-      "deliveryBytes": 17217
-    },
-    {
-      "id": "7d277cca587f7a4e",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "text": "Chạm Ném. Trúng mục tiêu ba lần!",
-      "source": "docs/voice-recording-delta/audit-v103-2.json",
-      "delivery": "voices/vi/m/7d277cca587f7a4e.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "f0f0b184e51cd9091c80f2e0606079a6e4c4a60c3470d7c412d626de9d418858",
-      "deliverySha256": "0de66781f41ab92d11b7bbddec8bdd86dd28908f61fe4914f427a273050578fd",
-      "masterBytes": 85204,
-      "deliveryBytes": 17217
-    },
-    {
-      "id": "7d277cca587f7a4e",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "text": "Chạm Ném. Trúng mục tiêu ba lần!",
-      "source": "docs/voice-recording-delta/audit-v103-2.json",
-      "delivery": "voices/fpt-leminh-v1/7d277cca587f7a4e.mp3",
-      "masterKind": "verified FPT recording receipt",
-      "masterSha256": "f0f0b184e51cd9091c80f2e0606079a6e4c4a60c3470d7c412d626de9d418858",
-      "deliverySha256": "0de66781f41ab92d11b7bbddec8bdd86dd28908f61fe4914f427a273050578fd",
-      "masterBytes": 85204,
-      "deliveryBytes": 17217
     },
     {
       "id": "4363a403-5da035ac",
@@ -247822,48 +247512,48 @@
       "deliveryBytes": 5121
     },
     {
-      "id": "83805f895c6366c5",
+      "id": "184467f0-30b502d7",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-HoaiMyNeural",
-      "text": "Ngỗng! Chạy vòng quanh nào!",
-      "source": "docs/voice-recording-delta/audit-v103-2.json",
-      "delivery": "voices/vi/f/83805f895c6366c5.mp3",
+      "text": "Ngỗng! Chạy vòng quanh rồi ngồi vào chỗ của bạn ấy!",
+      "source": "docs/voice-recording-delta/round-20261102-rules.json",
+      "delivery": "voices/vi/f/184467f0-30b502d7.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "507bb090a4cd05d65bb9d5fafc5017235c909831d15cbd2ead35061783cb60e6",
-      "deliverySha256": "4e8889c3e5922a01bf29952026d945ca803210b555b0c820fe06cd50e217f43e",
-      "masterBytes": 66396,
-      "deliveryBytes": 13473
+      "masterSha256": "05c33d3b81691977bcaf70f7e643e3917e5f775939b55c0ff21edff35ab80cdf",
+      "deliverySha256": "2b7e106185197ddee644fd7064f25af979456d6a323d5bb672ce05f41f054915",
+      "masterBytes": 99310,
+      "deliveryBytes": 20097
     },
     {
-      "id": "83805f895c6366c5",
+      "id": "184467f0-30b502d7",
       "language": "vi",
       "provider": "azure",
       "voice": "vi-VN-NamMinhNeural",
-      "text": "Ngỗng! Chạy vòng quanh nào!",
-      "source": "docs/voice-recording-delta/audit-v103-2.json",
-      "delivery": "voices/vi/m/83805f895c6366c5.mp3",
+      "text": "Ngỗng! Chạy vòng quanh rồi ngồi vào chỗ của bạn ấy!",
+      "source": "docs/voice-recording-delta/round-20261102-rules.json",
+      "delivery": "voices/vi/m/184467f0-30b502d7.mp3",
       "masterKind": "native32kbps Azure output",
       "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "507bb090a4cd05d65bb9d5fafc5017235c909831d15cbd2ead35061783cb60e6",
-      "deliverySha256": "4e8889c3e5922a01bf29952026d945ca803210b555b0c820fe06cd50e217f43e",
-      "masterBytes": 66396,
-      "deliveryBytes": 13473
+      "masterSha256": "05c33d3b81691977bcaf70f7e643e3917e5f775939b55c0ff21edff35ab80cdf",
+      "deliverySha256": "2b7e106185197ddee644fd7064f25af979456d6a323d5bb672ce05f41f054915",
+      "masterBytes": 99310,
+      "deliveryBytes": 20097
     },
     {
-      "id": "83805f895c6366c5",
+      "id": "184467f0-30b502d7",
       "language": "vi",
       "provider": "fpt",
       "voice": "leminh",
-      "text": "Ngỗng! Chạy vòng quanh nào!",
-      "source": "docs/voice-recording-delta/audit-v103-2.json",
-      "delivery": "voices/fpt-leminh-v1/83805f895c6366c5.mp3",
+      "text": "Ngỗng! Chạy vòng quanh rồi ngồi vào chỗ của bạn ấy!",
+      "source": "docs/voice-recording-delta/round-20261102-rules.json",
+      "delivery": "voices/fpt-leminh-v1/184467f0-30b502d7.mp3",
       "masterKind": "verified FPT recording receipt",
-      "masterSha256": "507bb090a4cd05d65bb9d5fafc5017235c909831d15cbd2ead35061783cb60e6",
-      "deliverySha256": "4e8889c3e5922a01bf29952026d945ca803210b555b0c820fe06cd50e217f43e",
-      "masterBytes": 66396,
-      "deliveryBytes": 13473
+      "masterSha256": "05c33d3b81691977bcaf70f7e643e3917e5f775939b55c0ff21edff35ab80cdf",
+      "deliverySha256": "2b7e106185197ddee644fd7064f25af979456d6a323d5bb672ce05f41f054915",
+      "masterBytes": 99310,
+      "deliveryBytes": 20097
     },
     {
       "id": "fd313cea4c881163",
@@ -266168,50 +265858,6 @@
       "deliverySha256": "b94ff566eb8393bfbe97a8d67498d969302f437d7e89a768f13f7e2018c50dc1",
       "masterBytes": 58036,
       "deliveryBytes": 11744
-    },
-    {
-      "id": "3f4c8395-6ab6030c",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-HoaiMyNeural",
-      "text": "Xếp lá dong, gạo nếp, đỗ xanh, thịt lợn rồi buộc lạt nhé!",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/f/3f4c8395-6ab6030c.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "2b0102b052dfe827a9fc0b87f936b3d8987287fdec2d6abdabec8aeb514edc93",
-      "deliverySha256": "4829f1783060dd64093bedb21fc089ef37635921392e91ed72fc37da21d3e411",
-      "masterBytes": 118118,
-      "deliveryBytes": 23840
-    },
-    {
-      "id": "3f4c8395-6ab6030c",
-      "language": "vi",
-      "provider": "azure",
-      "voice": "vi-VN-NamMinhNeural",
-      "text": "Xếp lá dong, gạo nếp, đỗ xanh, thịt lợn rồi buộc lạt nhé!",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/vi/m/3f4c8395-6ab6030c.mp3",
-      "masterKind": "native32kbps Azure output",
-      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
-      "masterSha256": "2b0102b052dfe827a9fc0b87f936b3d8987287fdec2d6abdabec8aeb514edc93",
-      "deliverySha256": "4829f1783060dd64093bedb21fc089ef37635921392e91ed72fc37da21d3e411",
-      "masterBytes": 118118,
-      "deliveryBytes": 23840
-    },
-    {
-      "id": "3f4c8395-6ab6030c",
-      "language": "vi",
-      "provider": "fpt",
-      "voice": "leminh",
-      "text": "Xếp lá dong, gạo nếp, đỗ xanh, thịt lợn rồi buộc lạt nhé!",
-      "source": "docs/fpt-leminh-full-20261025/inventory.json",
-      "delivery": "voices/fpt-leminh-v1/3f4c8395-6ab6030c.mp3",
-      "masterKind": "verified FPT recording receipt",
-      "masterSha256": "2b0102b052dfe827a9fc0b87f936b3d8987287fdec2d6abdabec8aeb514edc93",
-      "deliverySha256": "4829f1783060dd64093bedb21fc089ef37635921392e91ed72fc37da21d3e411",
-      "masterBytes": 118118,
-      "deliveryBytes": 23840
     },
     {
       "id": "952b05c366739a35",
@@ -364274,6 +363920,50 @@
       "deliveryBytes": 12464
     },
     {
+      "id": "1b50e603358b45a0",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "text": "Chặn một lá bằng lá lớn hơn cùng chất: cơ chặn cơ.",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/f/1b50e603358b45a0.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "ac87ad7fbf4b82244d15f6bea9096dcd95fd343edc64a34c55e7cbd2285c832e",
+      "deliverySha256": "8f591a164a13b2b73f373cd27c89bde3fc83aa7afb04eb824e151082a4ba47cf",
+      "masterBytes": 81547,
+      "deliveryBytes": 16496
+    },
+    {
+      "id": "1b50e603358b45a0",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "text": "Chặn một lá bằng lá lớn hơn cùng chất: cơ chặn cơ.",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/m/1b50e603358b45a0.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "ac87ad7fbf4b82244d15f6bea9096dcd95fd343edc64a34c55e7cbd2285c832e",
+      "deliverySha256": "8f591a164a13b2b73f373cd27c89bde3fc83aa7afb04eb824e151082a4ba47cf",
+      "masterBytes": 81547,
+      "deliveryBytes": 16496
+    },
+    {
+      "id": "1b50e603358b45a0",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "text": "Chặn một lá bằng lá lớn hơn cùng chất: cơ chặn cơ.",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/fpt-leminh-v1/1b50e603358b45a0.mp3",
+      "masterKind": "verified FPT recording receipt",
+      "masterSha256": "ac87ad7fbf4b82244d15f6bea9096dcd95fd343edc64a34c55e7cbd2285c832e",
+      "deliverySha256": "8f591a164a13b2b73f373cd27c89bde3fc83aa7afb04eb824e151082a4ba47cf",
+      "masterBytes": 81547,
+      "deliveryBytes": 16496
+    },
+    {
       "id": "c0cb8a032445cda9",
       "language": "vi",
       "provider": "azure",
@@ -371916,6 +371606,50 @@
       "deliverySha256": "95d3a417bfa1b96b42025f5773328d4827182da4fb28c3e83dfdf7e74922fc31",
       "masterBytes": 54902,
       "deliveryBytes": 11168
+    },
+    {
+      "id": "22b7c27909d2b4a9",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "text": "Chuyển cả tháp sang cột khác.",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/f/22b7c27909d2b4a9.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "657843f2da0cd680dd57cb29b13404a38b3ee3c6d9f8737530e4e3589832d13d",
+      "deliverySha256": "a7c94a17aff478d3facafd348cb96ee868b58325f01b2ddcb3b3dfd0255e5a4b",
+      "masterBytes": 40273,
+      "deliveryBytes": 8288
+    },
+    {
+      "id": "22b7c27909d2b4a9",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "text": "Chuyển cả tháp sang cột khác.",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/m/22b7c27909d2b4a9.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "657843f2da0cd680dd57cb29b13404a38b3ee3c6d9f8737530e4e3589832d13d",
+      "deliverySha256": "a7c94a17aff478d3facafd348cb96ee868b58325f01b2ddcb3b3dfd0255e5a4b",
+      "masterBytes": 40273,
+      "deliveryBytes": 8288
+    },
+    {
+      "id": "22b7c27909d2b4a9",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "text": "Chuyển cả tháp sang cột khác.",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/fpt-leminh-v1/22b7c27909d2b4a9.mp3",
+      "masterKind": "verified FPT recording receipt",
+      "masterSha256": "657843f2da0cd680dd57cb29b13404a38b3ee3c6d9f8737530e4e3589832d13d",
+      "deliverySha256": "a7c94a17aff478d3facafd348cb96ee868b58325f01b2ddcb3b3dfd0255e5a4b",
+      "masterBytes": 40273,
+      "deliveryBytes": 8288
     },
     {
       "id": "28e8e27f5384e044",
@@ -382256,6 +381990,50 @@
       "deliverySha256": "82e27a039784ebffaebdfe339cc530c460b7ac79564a6f12c71d7282c338983b",
       "masterBytes": 59081,
       "deliveryBytes": 12032
+    },
+    {
+      "id": "37b34430439a1163",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "text": "Đây là trò chơi sân trường của nước Úc. Các bạn nhỏ đã chơi trò này hơn một trăm năm rồi!",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/f/37b34430439a1163.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "340fb87175460c4f6f76fb12282b617a9dce208247e1bc40a06fb37d99c1553b",
+      "deliverySha256": "9194cd5a86c548355a5ddd5a409b722ba26fa08b2e5febfb265529bab0c2f276",
+      "masterBytes": 106624,
+      "deliveryBytes": 21536
+    },
+    {
+      "id": "37b34430439a1163",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "text": "Đây là trò chơi sân trường của nước Úc. Các bạn nhỏ đã chơi trò này hơn một trăm năm rồi!",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/m/37b34430439a1163.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "340fb87175460c4f6f76fb12282b617a9dce208247e1bc40a06fb37d99c1553b",
+      "deliverySha256": "9194cd5a86c548355a5ddd5a409b722ba26fa08b2e5febfb265529bab0c2f276",
+      "masterBytes": 106624,
+      "deliveryBytes": 21536
+    },
+    {
+      "id": "37b34430439a1163",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "text": "Đây là trò chơi sân trường của nước Úc. Các bạn nhỏ đã chơi trò này hơn một trăm năm rồi!",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/fpt-leminh-v1/37b34430439a1163.mp3",
+      "masterKind": "verified FPT recording receipt",
+      "masterSha256": "340fb87175460c4f6f76fb12282b617a9dce208247e1bc40a06fb37d99c1553b",
+      "deliverySha256": "9194cd5a86c548355a5ddd5a409b722ba26fa08b2e5febfb265529bab0c2f276",
+      "masterBytes": 106624,
+      "deliveryBytes": 21536
     },
     {
       "id": "c17e7f19-27c3f053",
@@ -424602,6 +424380,50 @@
       "deliverySha256": "ed47cf7b70c82c2c35da8eed1680f2c57448b832da57217b0d22c83ad321ca10",
       "masterBytes": 78412,
       "deliveryBytes": 15920
+    },
+    {
+      "id": "1aa015032ae456fd",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-HoaiMyNeural",
+      "text": "Rồi chạm quả bóng để bắt trước khi bóng rơi. Nhặt một que, rồi hai, rồi ba!",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/f/1aa015032ae456fd.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "7fc1759cd6bcfbeade30cbcdad4a83642f4ac355355bd80769a9104cf67414ea",
+      "deliverySha256": "01886a3ea78b513f4f5d18448369d702a17d1403ce33371e7e3e83145a13b228",
+      "masterBytes": 133269,
+      "deliveryBytes": 26864
+    },
+    {
+      "id": "1aa015032ae456fd",
+      "language": "vi",
+      "provider": "azure",
+      "voice": "vi-VN-NamMinhNeural",
+      "text": "Rồi chạm quả bóng để bắt trước khi bóng rơi. Nhặt một que, rồi hai, rồi ba!",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/vi/m/1aa015032ae456fd.mp3",
+      "masterKind": "native32kbps Azure output",
+      "textInventory": "tools/voice-lines.mts and approved tools/voice-extra.json",
+      "masterSha256": "7fc1759cd6bcfbeade30cbcdad4a83642f4ac355355bd80769a9104cf67414ea",
+      "deliverySha256": "01886a3ea78b513f4f5d18448369d702a17d1403ce33371e7e3e83145a13b228",
+      "masterBytes": 133269,
+      "deliveryBytes": 26864
+    },
+    {
+      "id": "1aa015032ae456fd",
+      "language": "vi",
+      "provider": "fpt",
+      "voice": "leminh",
+      "text": "Rồi chạm quả bóng để bắt trước khi bóng rơi. Nhặt một que, rồi hai, rồi ba!",
+      "source": "docs/fpt-leminh-full-20261025/inventory.json",
+      "delivery": "voices/fpt-leminh-v1/1aa015032ae456fd.mp3",
+      "masterKind": "verified FPT recording receipt",
+      "masterSha256": "7fc1759cd6bcfbeade30cbcdad4a83642f4ac355355bd80769a9104cf67414ea",
+      "deliverySha256": "01886a3ea78b513f4f5d18448369d702a17d1403ce33371e7e3e83145a13b228",
+      "masterBytes": 133269,
+      "deliveryBytes": 26864
     },
     {
       "id": "fbd4b13e-13a9d271",
