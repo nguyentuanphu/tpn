@@ -5,6 +5,7 @@
 # The owner chose the chibi (3 Nov 2026 AEDT) and asked to try Finn and Flora in the same proportions: add `finn` or `flora`.
 # Run: blender -b -P tools/blender/lumi.py -- <out dir> [lumi|finn|flora] [chibi|tall] [render] [faces] [quick]
 #   render: front, side, back, three-quarter;  faces: happy, curious, surprised;  quick: few samples, small pictures.
+import sys; sys.dont_write_bytecode = True  # keep the tracked __pycache__ unchanged
 import sys, os, math, random
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy, bmesh
