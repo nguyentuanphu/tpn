@@ -19,10 +19,10 @@ for n, (h, t) in J.items():
 for n, p in PARENT.items(): ad.edit_bones[n].parent = ad.edit_bones[p]
 bpy.ops.object.mode_set(mode='OBJECT')
 
-HAND_PROPS = ('lantern', 'staff', 'vineLeaf', 'staffPetal', 'staffHeart', 'compass')
-TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace')
+HAND_PROPS = ('lantern', 'staff', 'vineLeaf', 'staffPetal', 'staffHeart', 'compass', 'sunCrystal', 'sunRay', 'basket')
+TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace', 'tunic', 'cape', 'clasp', 'sun', 'apron', 'scarf', 'aoBaBa', 'longSkirt')
 ARM = ('arm', 'sleeve', 'sleeveRoll', 'hand', 'thumb', 'coatSleeve', 'coatCuff', 'shirtSleeve', 'glove', 'sleevePuff', 'sleeveFrill')
-LEG = ('leg', 'sock', 'sockRib', 'boot', 'bootToe', 'sole', 'bootCuff', 'bootLeaf', 'bootStrap', 'bootBuckle', 'lace')
+LEG = ('leg', 'sock', 'sockRib', 'boot', 'bootToe', 'sole', 'bootCuff', 'bootLeaf', 'bootStrap', 'bootBuckle', 'lace', 'shoe', 'sandal', 'toes', 'rainboot', 'sneaker')
 HIP = ('shortsLeg', 'shortsCuff', 'trouser', 'seat')
 def seg_d(p, a, b):
     ab = b - a; t = max(0, min(1, (p - a).dot(ab) / ab.length_squared)); return (p - (a + ab * t)).length
@@ -54,7 +54,7 @@ def bind(o, rigid=None):
         if t == 'SOLIDIFY': m.thickness = th
     o.parent = rig
 for col in bpy.data.collections:
-    rigid = 'head' if col.name == 'hair' or col.name.startswith('face-') else None
+    rigid = 'head' if col.name in ('hair', 'hat') or col.name.startswith('face-') else None
     for o in col.objects:
         if o.type == 'MESH': bind(o, rigid)
 for o in list(scene.collection.objects):
@@ -101,6 +101,8 @@ def cheer(t):
     p['kneeL'] = (.5 * (1 - up), 0, 0); p['kneeR'] = (.5 * (1 - up), 0, 0); p['legL'] = (-.25 * (1 - up), 0, 0); p['legR'] = (-.25 * (1 - up), 0, 0)
     p['head'] = (.12 * up, 0, 0)
     return p, .14 * up - .035 * (1 - up)
+CANE = [o for o in bpy.data.objects if o.name.startswith('cane')]
+for o in CANE: o.vertex_groups.clear(); o.vertex_groups.new(name='elbowR').add(list(range(len(o.data.vertices))), 1.0, 'REPLACE')
 ACTIONS = {'walk': action('walk', 24, walk), 'idle': action('idle', 48, idle), 'wave': action('wave', 24, wave), 'cheer': action('cheer', 24, cheer)}
 for n, act in ACTIONS.items():
     tr = rig.animation_data.nla_tracks.new(); tr.name = n; tr.strips.new(n, 1, act); tr.mute = True

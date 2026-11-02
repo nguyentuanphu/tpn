@@ -40,3 +40,22 @@ The owner, 3 Nov: "I prefer the shorter chibi version but make the face more bal
 - `<who>-game.glb` (about 3 to 4 MB each): one skinned mesh for the body, one for the hair and one per face set, the four moves as animations, plain colours. A game shows one face set at a time. About 35k triangles for the body, 20k for the hair, 15k for a face: still heavy next to the game's own people, so a lighter version is one of the next steps.
 - Pictures: `try5-<who>-front/three-quarter/side/back.png`, `try5-<who>-face-<mood>.png`, films `try5-<who>-walk/wave/cheer.gif`, and `try5-sheet.png`.
 - Still to do: load the `.glb` in the game (Release or a later round), a lighter version for phones, hand poses for the moods.
+
+## Try 6: Sol, the wardrobe and the villagers (v1.08, 3 Nov 2026 AEDT)
+
+The owner, 3 Nov: "Làm thêm 1 bạn nam để đủ 2 cặp nam nữ, nhớ thiết kế thêm các phụ kiện liên quan như quần áo mũ nón giày dép etc các kiểu, và cho tôi biết dân làng sẽ nhìn như thế nào?"
+
+- **Sol**, the fourth friend, from the owner's own concept (`concept-sol.png`): copper curls, amber eyes, a cream tunic with a felt sun, a honey cape with a brass clasp and a sun on the back, dark baggy trousers, strapped boots, a satchel, and a glowing sun crystal in a ring of rays over the left hand. Two pairs: Finn and Flora, Sol and Lumi. Run: `lumi.py -- <dir> sol game ...`.
+- **The wardrobe** (`tools/blender/lumi-more.py`), for any friend or villager: `wear=hat:<straw|nonla|cap|beanie|crown>+shoes:<sandals|sneakers|rainboots>+scarf:<colour>`.
+  - Hats: a straw sun hat with a ribbon, the nón lá (conical leaf hat) with a chin strap, a soft cap with a peak and a felt star, a knitted beanie with a pompom, a flower crown.
+  - Shoes: sandals (toes showing), sneakers (white sole, a red stripe, laces), glossy yellow rain boots. They replace the friend's boots.
+  - A knitted scarf in any colour.
+  - Hats move with the head, shoes with the legs, so they all work with the skeleton and the moves.
+- **Villagers** (`lumi.py -- <dir> villager role=<name> game ...`): the same kit and the same faces as the friends, in everyday Vietnamese village clothes, at the heights the game's rule WORLD-011 asks for (children 1.6, grown-ups 2.0, grandparents 1.8). The game today builds every person at about 1.6; using these heights is a game change for Release.
+  - `farmer`: nón lá, a brown áo bà ba, dark trousers, sandals, a basket of greens.
+  - `vendor`: hair in a bun, a pink áo bà ba, a white apron, sandals.
+  - `grandma`: grey bun, round glasses, a purple áo bà ba, sandals.
+  - `grandpa`: grey hair round the sides, a white moustache, a straw hat, a cream áo bà ba, a cane.
+  - `kidboy`: a red cap, a blue T-shirt, shorts, sneakers. `kidgirl`: a bob with a flower clip, a yellow T-shirt, a pink skirt, sneakers.
+  - Grown-ups have smaller eyes and a longer face than the children, so the friends still stand out as the cutest.
+- `lineup` renders everyone with the same camera, so heights compare side by side: `try6-lineup.png` (villagers and friends) and `try6-wardrobe.png` (friends in different hats and shoes).

@@ -14,11 +14,26 @@ from mathutils.bvhtree import BVHTree
 from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube, lathe, subsurf, obj_from
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
-FLAGS = ('chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'anim', 'glb')
-OUT = next((a for a in argv if a not in FLAGS), '/tmp/lumi')
+FLAGS = ('chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup')
+OUT = next((a for a in argv if a not in FLAGS and '=' not in a), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
-WHO = 'finn' if 'finn' in argv else 'flora' if 'flora' in argv else 'lumi'
+WHO = next((w for w in ('finn', 'flora', 'sol', 'villager') if w in argv), 'lumi')
+# villagers (owner, 3 Nov: "dân làng sẽ nhìn như thế nào?"): role=<name>; the wardrobe: wear=hat:straw+shoes:sandals+scarf:red
+ROLE = next((a.split('=', 1)[1] for a in argv if a.startswith('role=')), 'farmer')
+WEAR = dict((w.split(':') + [''])[:2] for w in next((a[5:] for a in argv if a.startswith('wear=')), '').split('+') if w)
+# size: kid (the game's 1.6), adult (2.0) or elder (1.8), as rule WORLD-011 asks; hair: short, bun, bob, tuft; kind: pants, shorts or skirt
+VILL = {
+    'farmer':  dict(size='adult', pal=('#e9b48f', '#2b2420', '#1f1a17', '#3d332d', '#3a2414', '#6a4528', '#2b2420', '#2a1e18'), hair='short', top='#7a5a3c', bottom='#3f4a5a', kind='pants', hat='nonla', shoes='sandals', extra=('basket',)),
+    'vendor':  dict(size='adult', pal=('#f1c6a3', '#2a211d', '#1d1714', '#3c302a', '#3a2414', '#6a4528', '#2a211d', '#2a1e18'), hair='bun', top='#c95f6e', bottom='#2f2b33', kind='pants', hat='', shoes='sandals', extra=('apron',)),
+    'grandma': dict(size='elder', pal=('#ecc2a2', '#d9d6d0', '#bdb9b1', '#ecebe6', '#3a2414', '#6a4528', '#a7a39b', '#4a3a30'), hair='bun', top='#7b5c93', bottom='#3a3340', kind='pants', hat='', shoes='sandals', extra=('glasses',)),
+    'grandpa': dict(size='elder', pal=('#e3b28d', '#dedbd4', '#c3bfb7', '#efede8', '#3a2414', '#6a4528', '#b8b4ac', '#4a3a30'), hair='tuft', top='#e9e1cf', bottom='#5b4a3a', kind='pants', hat='straw', shoes='sandals', extra=('moustache', 'cane')),
+    'kidboy':  dict(size='kid', pal=('#f0c09b', '#3a2a22', '#2a1e18', '#4d392e', '#3a2414', '#7a4f2e', '#3a2a22', '#2a1e18'), hair='short', top='#4f86c6', bottom='#c9b48a', kind='shorts', hat='cap', shoes='sneakers', extra=()),
+    'kidgirl': dict(size='kid', pal=('#f6cfb0', '#2e231e', '#211915', '#43342c', '#3a2414', '#7a4f2e', '#2e231e', '#2a1e18'), hair='bob', top='#f2c14e', bottom='#e98a8a', kind='skirt', hat='', shoes='sneakers', extra=('flowerclip',)),
+}
+V = VILL.get(ROLE) if WHO == 'villager' else None
+if V and V['hat'] and 'hat' not in WEAR: WEAR['hat'] = V['hat']
+TAG = (f'villager-{ROLE}' if V else WHO) + ''.join(f'-{k}{v}' for k, v in WEAR.items() if not V)
 os.makedirs(OUT, exist_ok=True); random.seed(7)
 scene = reset()
 lin = lambda a, b, n: [a + (b - a) * i / (n - 1) for i in range(n)]
@@ -27,7 +42,8 @@ lin = lambda a, b, n: [a + (b - a) * i / (n - 1) for i in range(n)]
 # each friend's own colours: skin, hair (main, dark, light), iris (dark, light), brows and lashes (from the owner's concepts)
 PAL = {'lumi': ('#f7d2b8', '#a9c58f', '#8fae79', '#bcd5a1', '#1f4d43', '#3f8a6f', '#7f9f62', '#45302a'),
        'finn': ('#f3c6a5', '#2a355f', '#1f284b', '#3b4a80', '#3a2414', '#7a4f2e', '#2b3560', '#2a1e18'),
-       'flora': ('#f8d4bc', '#f2a493', '#e38f7f', '#f8bdac', '#5a3416', '#b8783c', '#c98472', '#5a3328')}[WHO]
+       'flora': ('#f8d4bc', '#f2a493', '#e38f7f', '#f8bdac', '#5a3416', '#b8783c', '#c98472', '#5a3328'),
+       'sol': ('#f5c7a3', '#c8693a', '#a5522b', '#e08a55', '#6a3a12', '#c98a32', '#a5522b', '#4a2a1a')}.get(WHO) or V['pal']
 SKIN = mat('skin', PAL[0], .55, .1, sss=.12)
 NOSE = mat('nose', '#f3c2a8', .55, .1, sss=.12)
 HAIR = felt('hair', PAL[1]); HAIRD = felt('hairDark', PAL[2]); HAIRL = felt('hairLight', PAL[3])
@@ -58,7 +74,7 @@ PETAL = felt('petal', '#fbeee6'); WOOD = felt('wood', '#7a5434', .7, .05)
 FLOWERG = mat('flowerGlow', '#f59ab8', .4, emit=.35); GLOWB = mat('glowBlue', '#bfe6ff', .3, emit=6)
 
 # ---------- proportions ----------
-GAME = 'game' in argv
+GAME = 'game' in argv or WHO == 'villager'
 if GAME:  # the game's people (js/avatar.ts): 1.6 tall, head centre 1.33, hips .6, knees .33, shoulders (.2, .99); a less round face, smaller eyes
     STYLE = 'game'
     # a smaller head and a cuter face (owner, 3 Nov: "dễ thương hơn và mặt nhỏ hơn một xíu"): eyes a little lower and wider apart, a soft jaw, rosy cheeks
@@ -76,6 +92,17 @@ else:     # the concept: a big round head, low big eyes, full cheeks
     P = dict(eye=.21, eyeX=.34, eyeZ=-.13, jaw=.0, cheek=.08, puff=1.0)  # eyes smaller for a balanced face (owner, 3 Nov)
     B = dict(legX=.066, rLeg=.04, zAnk=.05, zBoot=.1, zSock=.165, zCuff=.225, zCr=.27, zW=.36, zC=.45, zS=.475, zN=.5,
              wH=.14, wC=.13, dep=.85, sh=(.12, 0, .455), el=(.162, -.005, .37), wr=(.188, -.015, .29), rU=.037, rA=.032, boot=(.066, .095), lant=.22, S=1.0, puff=1.6)
+def grow(k, w, r):
+    """grown-ups: longer body and limbs, a head a little bigger than a child's but smaller for the height"""
+    global HC, R
+    for n in ('zAnk', 'zBoot', 'zSock', 'zCuff', 'zCr', 'zW', 'zC', 'zS', 'zN'): B[n] *= k
+    for n in ('legX', 'rLeg', 'wH', 'wC', 'rU', 'rA', 'S'): B[n] *= w
+    for n in ('sh', 'el', 'wr'): x, y, z = B[n]; B[n] = (x * w, y, z * k)
+    B['boot'] = (B['boot'][0] * w, B['boot'][1] * w); R = r; HC = Vector((0, 0, B['zN'] + R * .93))
+if V and V['size'] != 'kid':
+    STYLE = V['size']
+    grow(*{'adult': (1.27, 1.12, .25), 'elder': (1.13, 1.1, .245)}[V['size']])
+    P.update(eye=.15, eyeZ=-.08, jaw=.17, cheek=.02, mouth=.62, head=(.97, .95, 1.06))
 H = lambda x, y, z: HC + Vector((x, y, z)) * R
 S = B['S']
 
@@ -320,7 +347,8 @@ def hair_flora():
     for a in (2.4, 3.6):
         o = leaf('flowerLeaf', LEAFG, .22 * R, .1 * R, .2, .2, 10, .03 * R, .2); place(o, c + n * .03 * R, q @ Vector((math.cos(a), math.sin(a), 0)), n)
 
-group('hair', {'lumi': hair, 'finn': lambda: hair_finn(), 'flora': lambda: hair_flora()}[WHO])
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-more.py')).read())  # Sol, villagers, the wardrobe
+group('hair', {'lumi': hair, 'finn': lambda: hair_finn(), 'flora': lambda: hair_flora(), 'sol': lambda: hair_sol(), 'villager': lambda: hair_villager()}[WHO])
 
 # ---------- body ----------
 def fronty(r): return -r * B['dep'] - .006 * S
@@ -552,7 +580,8 @@ def body_flora():
     sphere('staffHeart', GLOW, top + Vector((0, -.02 * S, 0)), (.012 * S, .008 * S, .012 * S), 12, 6)
     glow_light(top + Vector((0, -.05 * S, 0)), .15, '#ffc7d6')
 
-group('body', {'lumi': body, 'finn': lambda: body_finn(), 'flora': lambda: body_flora()}[WHO])
+group('body', {'lumi': body, 'finn': lambda: body_finn(), 'flora': lambda: body_flora(), 'sol': lambda: body_sol(), 'villager': lambda: body_villager()}[WHO])
+wear()
 
 RIG = 'anim' in argv or 'glb' in argv
 if RIG:
@@ -587,10 +616,10 @@ def shoot(name, az, height, dist, look, res):
     scene.render.resolution_x, scene.render.resolution_y = int(res[0] * q), int(res[1] * q)
     cam.location = (math.sin(az) * dist, -math.cos(az) * dist, height)
     cam.rotation_euler = (Vector((0, 0, look)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
-    scene.render.filepath = os.path.join(OUT, f'{WHO}-{STYLE}-{name}.png'); bpy.ops.render.render(write_still=True)
+    scene.render.filepath = os.path.join(OUT, f'{TAG}-{STYLE}-{name}.png'); bpy.ops.render.render(write_still=True)
 
 show_face('smile')
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, f'{WHO}-{STYLE}.blend'))
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, f'{TAG}-{STYLE}.blend'))
 top = HC.z + R * 1.3; mid = top * .5; dist = top * .5 / math.tan(math.radians(12)) * 1.15
 if RENDER:
     for name, az in (('front', 0), ('side', math.pi / 2), ('back', math.pi), ('three-quarter', .6)):
@@ -608,8 +637,8 @@ def play(name, frames, faces=None, az=.45, res=(420, 560)):
     cam.rotation_euler = (Vector((0, 0, mid)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
     for f in range(1, frames + 1):
         scene.frame_set(f); show_face(faces(f) if faces else 'smile')
-        scene.render.filepath = os.path.join(OUT, f'{WHO}-{STYLE}-{name}-{f:04d}.png'); bpy.ops.render.render(write_still=True)
-    os.system(f"convert -delay 4 -loop 0 {OUT}/{WHO}-{STYLE}-{name}-0*.png {OUT}/{WHO}-{STYLE}-{name}.gif")
+        scene.render.filepath = os.path.join(OUT, f'{TAG}-{STYLE}-{name}-{f:04d}.png'); bpy.ops.render.render(write_still=True)
+    os.system(f"convert -delay 4 -loop 0 {OUT}/{TAG}-{STYLE}-{name}-0*.png {OUT}/{TAG}-{STYLE}-{name}.gif")
 if 'anim' in argv:
     play('walk', 24, lambda f: 'blink' if f in (17, 18) else 'smile')
     play('wave', 24, lambda f: 'happy')
@@ -617,5 +646,8 @@ if 'anim' in argv:
 if 'glb' in argv:
     for col in FACE_SETS.values(): col.hide_viewport = False; col.hide_render = False
     lighten()
-    bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f'{WHO}-{STYLE}.glb'), export_format='GLB', export_apply=True, export_animations=True,
+    bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f'{TAG}-{STYLE}.glb'), export_format='GLB', export_apply=True, export_animations=True,
                               export_animation_mode='ACTIONS', export_lights=False, export_cameras=False, use_selection=False)
+
+if 'lineup' in argv:  # the same camera for everyone, so heights compare side by side
+    show_face('smile'); shoot('lineup', .3, 1.2, 6.4, 1.0, (420, 760))
