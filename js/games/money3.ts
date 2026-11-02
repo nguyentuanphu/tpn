@@ -277,7 +277,7 @@ register({
 // ---------- Market Day: at the sạp, pay with the one note that is just enough ----------
 const MARKET: Thing[] = [["🥭", ["mangoes", "xoài"]], ["🍚", ["rice", "gạo"]], ["🐟", ["a fish", "con cá"]], ["🌸", ["flowers", "hoa"]], ["🍊", ["oranges", "cam"]], ["🥥", ["a coconut", "quả dừa"]], ["🍍", ["a pineapple", "quả dứa"]], ["🥕", ["carrots", "cà rốt"]]];
 register({
-  id: "marketday", icon: "mn3:marketday", name: () => T("Market Day", "Phiên Chợ"),
+  id: "marketday", icon: "mn3:marketday", origin: "vn", name: () => T("Market Day", "Phiên Chợ"),
   async run(api) {
     // (levels) Easy: only one note is enough; Medium on: the smallest note that is enough; more notes each level;
     // Talent: then say how much change comes back
@@ -473,7 +473,7 @@ register({
         right = b => b.dataset.c === it.code;
       } else {
         const same = M.DENOMS[it.code].map(d => d.v).filter(v => v !== it.v), other = M.CODES.find(c => c !== it.code);
-        const opts = [{ code: it.code, v: it.v }, ...mix(same).slice(0, names - 2).map(v => ({ code: it.code, v })), { code: other, v: pickOne(M.DENOMS[other]).v }];
+        const opts = [{ code: it.code, v: it.v }, ...mix(same).slice(0, names - 2).map(v => ({ code: it.code, v })), { code: other, v: (pickOne(M.DENOMS[other] as { v: number }[])).v }];
         btns = mix(opts).map(o => { const b = el("button", "mn3-btn", `<b>${label(o.code, o.v)}</b>`); b.dataset.k = o.code + o.v; row.appendChild(b); return b; });
         right = b => b.dataset.k === it.code + it.v;
       }

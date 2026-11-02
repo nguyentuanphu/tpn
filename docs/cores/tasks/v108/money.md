@@ -1,5 +1,7 @@
 # v1.08 helper: money (status)
 
+**ready for Release** (3 Nov 2026, 9:45 am AEDT). Full suite left for Release (Release, 3 Nov AEDT: helpers never start it).
+
 Branch `work/v108-money` (from `origin/release/v1.08`). Brief: `money-brief.md`. Shared rules: `README.md`.
 
 ## Plan (3 Nov 2026 AEDT)
@@ -47,10 +49,23 @@ Not in the plan: no per-game Studio money switch (`MONEY_GAMES`) for the new gam
 ## Progress
 
 - 3 Nov 2026 AEDT: games, sums, drawings, guides, places and links written; unit test added.
+- 3 Nov 2026 AEDT: new spoken lines recorded with Azure (382 files, en-AU and vi-VN, both voices); no line has a child's name.
+- 3 Nov 2026 AEDT: fixes from the checks: a type note in Two Homes Money; Market Day's definition carries `origin: 'vn'` like its menu entry.
 
-## Checks
+## Checks (3 Nov 2026 AEDT, local, one at a time)
 
-(filled in below as they run)
+`suite.mts --changed` picked the full suite (the build adds `/js/art/money3.js` to `.gitignore`, which no check names).
+Under Release's rule of 3 Nov the full suite is left for Release; these checks covering the change ran with `--only`:
+
+- pass: validate, noemoji, arch, names, bilingual, rules, boot, contract, phone (desktop, phone, tablet), hubmap, simple,
+  playhub, games (248 games), levelsa, hocvui (52 links), secondset, voicecover (every line recorded), guides (248 games),
+  levelsall (225 games differ at Easy, Medium, Hard and Talent), types, unit (505 tests, with root packages installed).
+- fail, not this branch: emoji, for a 🎯 in `docs/plans/v108-owner-batch-20261103.md` (Release's plan file, same on
+  `origin/release/v1.08`).
+- Auto play (a scratch run, not a check): each of the 11 games won at under-5, Easy, Medium, Hard and Talent, in
+  English (AUD) and Vietnamese (VND): 110 of 110, no page errors.
+
+Commits: 42f914a0 (games), 83123406 (voices), then the check fixes (see the branch log).
 
 ## Open questions
 
