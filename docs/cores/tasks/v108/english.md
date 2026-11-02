@@ -1,3 +1,5 @@
+**ready for Release** (3 Nov 2026, 11:20 am AEDT; last code commit `a5521c17`, voices `b4ae3f24c`)
+
 # v1.08 helper: english (plan part C)
 
 Branch: `work/v108-english` (from `origin/release/v1.08`). Brief: `english-brief.md`. Started 3 Nov 2026, 7:54 am AEDT.
@@ -41,7 +43,8 @@ Left for later: the Simple screen marks English mode only for `en_` games (the S
 - 3 Nov 2026, 9:40 am AEDT: English mode, the eight games, drawings, guides, levels rows, map pin, voice-pack hook and
   checks done; commit `a964fdea`, pushed to `work/v108-english`.
 - Voice: `englishLines()` gives 1,188 lines (616 English, 572 Vietnamese hints); recorded with Azure (`--engine azure`,
-  en-AU and vi-VN, woman and man), committed with the voices.
+  en-AU and vi-VN, woman and man): 2,594 new files (they include a few lines from earlier work that were not recorded
+  yet), commit `b4ae3f24c`. `--count` now says 0 files still to make.
 
 ## Checks (3 Nov 2026 AEDT)
 
@@ -49,7 +52,12 @@ Left for later: the Simple screen marks English mode only for `en_` games (the S
 |---|---|
 | `englishmode` (new) | pass (51 s; phone, tablet and computer pictures looked at) |
 | `hocvui` (16 corner games won by real taps at Easy and Talent) | pass (258 s) |
-| quick checks (emoji, preload, noemoji, arch, unit, names, bilingual, rules, types) | see below |
+| preload, noemoji, arch, names, bilingual, rules, types | pass (`preload` after `node tools/preload.mts`; `types` found a language type, fixed) |
+| unit | pass, 497 tests (it caught the English games' definitions missing their names, fixed; needs `pg` installed locally) |
+| boot, phone, contract, spill, language, a11y, simple, playhub, hubmap | pass |
+| games, gamelevel, levelsa, levelsb, guides, films | pass |
+| voicecover, voicepack, contentvoice | pass (after recording) |
+| emoji | fail, not this branch: the emoji (target chip emoji) is in Release's `docs/plans/v108-owner-batch-20261103.md` |
 | `suite.mts --changed` | picks the full suite (test code and `.gitignore` changed); per Release (3 Nov AEDT) the full suite is left for Release, the covering checks run one at a time with `--only` |
 
 ## Notes for Release
