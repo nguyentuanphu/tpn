@@ -44,7 +44,7 @@ try {
   if (want('title')) {
     const P = await open(b, { w: W, h: H, dpr: DPR, lang, touch: true, fast: false, play: false, settings: { quality: 'high', alwaysDay: true } });
     // the last loading step finishes only after Tap to start: the progress line is taken off this still
-    await P.page.waitForTimeout(8000); await P.page.evaluate(() => document.querySelector('.launch-progress')?.remove());
+    await P.page.waitForTimeout(8000); await P.page.addStyleTag({ content: '.launch-progress { display: none !important; }' });
     await P.page.waitForTimeout(500); await shot(P.page, 'title'); await P.ctx.close();
   }
   // places (map of r56 on: Lotus Village [204, -42], Hà Nội [153, -135], Sydney [-132, -4] on its harbour, Hội An [170, 90])
