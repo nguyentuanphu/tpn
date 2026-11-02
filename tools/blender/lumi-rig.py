@@ -20,7 +20,7 @@ for n, p in PARENT.items(): ad.edit_bones[n].parent = ad.edit_bones[p]
 bpy.ops.object.mode_set(mode='OBJECT')
 
 HAND_PROPS = ('lantern', 'staff', 'vineLeaf', 'staffPetal', 'staffHeart', 'compass', 'sunCrystal', 'sunRay', 'basket')
-TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace', 'tunic', 'cape', 'clasp', 'sun', 'apron', 'scarf', 'aoBaBa', 'longSkirt', 'aoDai', 'dressTop', 'dressSkirt', 'dressBelt', 'tee', 'pocket', 'necklace', 'bowtie', 'redScarf', 'backpack')
+TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace', 'tunic', 'cape', 'clasp', 'sun', 'apron', 'scarf', 'aoBaBa', 'longSkirt', 'aoDai', 'dressTop', 'dressSkirt', 'dressBelt', 'tee', 'pocket', 'dressStrap', 'necklace', 'bowtie', 'redScarf', 'backpack')
 ARM = ('arm', 'sleeve', 'sleeveRoll', 'hand', 'thumb', 'coatSleeve', 'coatCuff', 'shirtSleeve', 'glove', 'sleevePuff', 'sleeveFrill', 'watch', 'bracelet')
 LEG = ('leg', 'sock', 'sockRib', 'boot', 'bootToe', 'sole', 'bootCuff', 'bootLeaf', 'bootStrap', 'bootBuckle', 'lace', 'shoe', 'sandal', 'toes', 'rainboot', 'sneaker', 'thong', 'longSock')
 HIP = ('shortsLeg', 'shortsCuff', 'trouser', 'seat')
@@ -28,6 +28,7 @@ def seg_d(p, a, b):
     ab = b - a; t = max(0, min(1, (p - a).dot(ab) / ab.length_squared)); return (p - (a + ab * t)).length
 def bind(o, rigid=None):
     base = o.name.split('.')[0]
+    if base.startswith('soft_'): base = 'soft'
     for key in sorted(HAND_PROPS + TORSO_ONLY + ARM + LEG + HIP, key=len, reverse=True):
         if base.startswith(key): base = key; break
     mw = o.matrix_world.copy(); groups = {}
@@ -40,6 +41,16 @@ def bind(o, rigid=None):
         elif base.startswith(HAND_PROPS): w = {'elbowL': 1.0}
         elif base in TORSO_ONLY: w = {'torso': 1.0}
         elif base == 'neck': w = {'torso': .5, 'head': .5} if p.z > B['zN'] else {'torso': 1.0}
+        elif base == 'soft':  # a melted garment or the skin: choose the bones by where the point is
+            sh = J['arm' + side][0]; d_arm = min(seg_d(p, *J['arm' + side]), seg_d(p, *J['elbow' + side]))
+            if d_arm < B['rU'] * 2.1 and abs(p.x) > B['wC'] * .75 and p.z < sh.z + B['rU'] * 1.6:
+                cand = ['arm' + side, 'elbow' + side] + (['torso'] if (p - sh).length < B['rU'] * 2.4 else [])
+            elif p.z < B['zCr'] + .02 * S: cand = ['leg' + side, 'knee' + side] + (['torso'] if p.z > B['zCr'] - .07 * S else [])
+            elif p.z > B['zN'] - .015: cand = ['torso', 'head']
+            else: w = {'torso': 1.0}; cand = None
+            if cand:
+                ws = {n: 1 / (seg_d(p, *J[n]) + .004) ** 6 for n in cand}
+                top = sorted(ws.items(), key=lambda kv: -kv[1])[:2]; tot = sum(x for _, x in top); w = {n: x / tot for n, x in top}
         else:
             cand = ['arm' + side, 'elbow' + side] if base in ARM else ['leg' + side, 'knee' + side] if base in LEG else ['torso', 'leg' + side, 'knee' + side] if base in HIP else ['torso', 'leg' + side, 'knee' + side, 'arm' + side, 'elbow' + side]
             ws = {n: 1 / (seg_d(p, *J[n]) + .004) ** 6 for n in cand}

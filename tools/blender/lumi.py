@@ -14,7 +14,7 @@ from mathutils.bvhtree import BVHTree
 from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube, lathe, subsurf, obj_from
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
-FLAGS = ('chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup')
+FLAGS = ('chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
 OUT = next((a for a in argv if a not in FLAGS and '=' not in a), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
@@ -113,6 +113,13 @@ if V and V['size'] != 'kid':
     STYLE = V['size']
     grow(*{'adult': (1.27, 1.12, .25), 'elder': (1.13, 1.1, .245)}[V['size']])
     P.update(eye=.15, eyeZ=-.08, jaw=.17, cheek=.02, mouth=.62, head=(.97, .95, 1.06))
+if GAME:  # boys and girls, men and women have different figures (owner, 3 Nov: "dáng"); grown-ups differ more than children
+    a_ = 1.0 if (V and V['size'] != 'kid') else .5; bw_ = {'au-dad': 1.08, 'au-grandpa': 1.05}.get(ROLE, 1.0) if V else 1.0
+    fx = (1 - .06 * a_) if G == 'f' else (1 + .05 * a_)
+    B['wC'] *= (1 - .07 * a_ if G == 'f' else 1 + .05 * a_) * bw_; B['wH'] *= (1 + .04 * a_ if G == 'f' else 1.0) * bw_
+    sx_, sy_, sz_ = B['sh']; B['sh'] = (sx_ * fx * bw_, sy_, sz_)
+    for n_, d_ in (('el', .022), ('wr', .04)):   # the arms hang a little away from the body
+        x_, y_, z_ = B[n_]; B[n_] = (x_ * fx * bw_ + d_ * B['S'], y_, z_)
 H = lambda x, y, z: HC + Vector((x, y, z)) * R
 S = B['S']
 
@@ -396,7 +403,7 @@ def body():
     # the cream shirt
     lathe('shirt', SHIRT, [(wH * .95, b['zW'] - .04 * S), (wC, b['zW']), (wC * 1.03, (b['zW'] + b['zC']) / 2), (wC, b['zC']), (wC * .82, b['zS'] + .008 * S), (wC * .42, b['zN']), (wC * .32, b['zN'] + .01 * S)], 32, scale=(1, dep))
     for s in (-1, 1):
-        sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))
+        if m is not SKIN: sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))
     tube('neck', SKIN, [(0, 0, b['zS']), (0, 0, b['zN'] + .03 * S)], .04 * S, 16)
     # the overalls: bib and back panel, straps crossing at the back, brass buttons, a felt star and leaf pockets
     rb = wC * 1.06 + .004
@@ -504,7 +511,7 @@ def torso(m):
     b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']
     lathe('shirt', m, [(wH * .95, b['zW'] - .04 * S), (wC, b['zW']), (wC * 1.03, (b['zW'] + b['zC']) / 2), (wC, b['zC']), (wC * .82, b['zS'] + .008 * S), (wC * .42, b['zN']), (wC * .32, b['zN'] + .01 * S)], 32, scale=(1, dep))
     for s in (-1, 1):
-        sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))
+        if m is not SKIN: sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))
     tube('neck', SKIN, [(0, 0, b['zS']), (0, 0, b['zN'] + .03 * S)], .04 * S, 16)
 
 def satchel(a, m, md, deco, across=True):
@@ -595,6 +602,7 @@ def body_flora():
 
 group('body', {'lumi': body, 'finn': lambda: body_finn(), 'flora': lambda: body_flora(), 'sol': lambda: body_sol(), 'villager': lambda: body_villager()}[WHO])
 wear()
+if 'hard' not in argv: soften()
 
 RIG = 'anim' in argv or 'glb' in argv
 if RIG:
