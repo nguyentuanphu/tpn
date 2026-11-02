@@ -151,10 +151,7 @@ let bootDone = null, booted = false; const bootReady = new Promise<void>(r => { 
 // (v1.07 startup) while a game or story opened from the Simple screen before the valley was built is up (simpleFirst),
 // the building waits between its steps, so the game runs smoothly; it goes on when the child is back on the Simple screen
 let earlySimple = false;
-// (v1.07 startup) each breath lets the browser draw a frame (the progress bar, a tap's answer): a timeout alone often gave
-// it none between the steps; at most 50 ms, as a hidden page gets no frames
-const frameBreath = () => new Promise(r => { const t = setTimeout(r, 50); requestAnimationFrame(() => { clearTimeout(t); setTimeout(r, 0); }); });
-const breathe = async () => { await frameBreath(); while (earlySimple && (gameOpen() || document.querySelector('.theatre, .storybook'))) await new Promise(r => setTimeout(r, 300)); };
+const breathe = async () => { await new Promise(r => setTimeout(r, 0)); while (earlySimple && (gameOpen() || document.querySelector('.theatre, .storybook'))) await new Promise(r => setTimeout(r, 300)); };
 // (v1.07 startup, owner's plan focus 1: "the Simple screen does not need the 3D world, so it must open at once") a child
 // alone who starts on the Simple screen and has seen Ông Cú's prologue gets it at once, before the valley is built: games
 // and stories open over it as always. The session in the valley starts behind it once the valley is built and no game

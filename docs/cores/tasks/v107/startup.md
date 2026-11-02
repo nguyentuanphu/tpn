@@ -54,8 +54,9 @@ does with its own frame clock); that would be a change to the check and needs th
     `signposts`, `secrets` (fetched after the traffic step); `tales` (with `cartoon`) loads when a story's theatre
     opens. Each is made at its old place in the build order. A module that cannot load stops the start where it is
     made, as before (Try again).
-  - Welcome is painted before the valley starts building (one frame, at most 100 ms); every build breath lets the
-    browser draw a frame (at most 50 ms), so the progress bar moves and taps are answered between steps.
+  - Welcome is painted before the valley starts building (one frame, at most 100 ms). Five more breaths between the
+    long parts of the "things" step, so a tap on the Simple screen is answered sooner. (A frame on every breath was
+    tried and dropped: it drew the title scene each time and made worldMs 9.0 s.)
   - `simpleFirst`: a child alone who starts on the Simple screen and has seen the prologue gets the Simple screen at Go
     when the valley is not built yet (once the ground is made). Games and stories open over it. The valley's session
     starts behind it when the valley is built and no game or story is open. While a game or story opened this way is up,
@@ -80,7 +81,23 @@ words a child sees are the existing "Getting the valley ready…" spinner (EN/VI
 
 ## Checks
 
-(filled in below as they run)
+Commit after this section (2 Nov 2026 AEDT), this container, game server `python3 -m http.server 8765`:
+
+| Check | Result |
+|---|---|
+| `perf` (alone) | pass: startMB 2.382 MB (was 2.725, max 2.55), worldMs 7.7 s (was 7.6 s) |
+| `startup` (alone) | pass: first start 1071 KB, Welcome 2.3 s, valley ready 46.8 s; second start ready 32.9 s, longest freeze 4.0 s (machine x3.00 of the reference; before x2.91: 1038 KB, 2.1 s, 41.7 s, 29.9 s, 4.4 s) |
+| `battery` (alone) | pass |
+| `simplefirst` (new) | pass: tablet speed, Welcome 2.5 s, Go 14.7 s, the Simple screen 0.8 s after Go, a game open 0.5 s after its tap, the valley built at 43 s |
+| `simple`, `simplereturnfruit`, `boot`, `contract`, `arch`, `iphone`, `tester`, `types`, `offline` | pass |
+| `phone`, `names` | pass alone (phone timed out with 3 checks at a time; names failed on a missing type import, fixed) |
+| `testerreport` | pass on its second run alone (first run alone: a freeze 3.1 s earlier in the run was reported first, so the made freeze was not) |
+| `preload` | pass after `node tools/preload.mts` (index.html's list) |
+| Full suite | `--changed` picks the full suite (test code and shared files changed): started on GitHub, `.github/workflows/full-suite.yml` on this branch |
+
+Screenshots looked at: `tests/out/boot-390.png`, `boot-1024.png`, `boot-1280.png` (phone, tablet, computer): the same as before.
+
+New spoken lines: none.
 
 ## Open questions
 
