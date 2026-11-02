@@ -73,5 +73,5 @@ export async function levelsAllCheck(b, only: string[] | null = null) {
   }
   if (picker.includes('talent') || !picker.includes('easy')) bad.push('under-5 level picker: ' + picker.join(','));
   ok(!bad.length && !errs.length, `${bad.length} problems: ${bad.join(' ; ')} ${errs.slice(0, 5).join(' | ')}`);
-  return `${ids.length} games play differently at Easy, Medium, Hard and Talent (each writes its level numbers; Easy is never Talent; at least three levels differ); under-5s play gently with no Talent; ${Object.keys(LEVEL_EXEMPT).length} free pads exempt`;
+  return `${ids.length} games play differently at Easy, Medium, Hard and Talent (each writes its level numbers; Easy is never Talent; at least three levels differ); under-5s play gently with no Talent; ${Object.keys(LEVEL_EXEMPT).length} games exempt with a reason (free pads, family quiz, Fruit Bar)`;
 }
