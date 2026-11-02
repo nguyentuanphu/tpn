@@ -14,7 +14,8 @@
 //   · Ông Cú sits by the path, points at the next one to try and cheers when a new star is won; he never pops up
 //   · big kids (5+) also see a ✨ on games that are new since they last looked, and choose
 //     with two taps (the first one shows it, the second one plays), so a slip of the finger never starts a game
-//   Bottom bar: 🎮 Games · 📖 Stories · 🗺️ Places · 🔎 Discover · 🌳 Valley (the 3D world). Grown-ups: press and hold.
+//   Bottom bar (v1.08): Fun learning · Play · 📖 Stories · 🗺️ Places · 🔎 Discover. Top row: name, Back, 🌳 Valley (the 3D
+//   world), Sound, Home, Grown-ups (press and hold).
 // Which screen a child starts on is kept per child (profile.screen: 'simple' | 'valley'); until a child has chosen,
 // under-5s start on the Simple screen and big kids in the valley. Two players on one device always use the valley.
 // When a game or story started here ends, the Simple screen comes back by itself.
@@ -37,8 +38,16 @@ export const wantsSimple = p => (p.screen ? p.screen === 'simple' : p.age !== 'b
 // stars on the path: played once, twice, four times
 export const starsOf = (p, id) => { const w = (p.wins || {})[id] || 0; return w >= 4 ? 3 : w >= 2 ? 2 : w >= 1 ? 1 : 0; };
 const firstPic = s => (String(s).match(/\p{Extended_Pictographic}(?:️|‍\p{Extended_Pictographic}️?)*/u) || ['📖'])[0];
+// (v1.08 simple, owner 3 Nov 2026 AEDT: "Học vui" and "Vui chơi") the games are in two big buttons by kind, built from
+// the areas so a game added to an area lands in the right one: Fun learning holds the Learning areas of Play (numbers,
+// shapes, words, reading, me, money) and every Học vui corner (hv_*); Play holds every other area (folk games, animals
+// and music, drawing, places, thinking). 'games' is both together: not in the bar, kept for Discover's memory and the checks
+const LEARN_AREAS = ['numbers', 'shapes', 'words', 'reading', 'me', 'money'];
+export const learnArea = (key: string) => LEARN_AREAS.includes(key) || key.startsWith('hv_');
+const GAME_TABS = { learn: (k: string) => learnArea(k), fun: (k: string) => !learnArea(k), games: () => true };
 export const TABS = [
-  { key: 'games', icon: '🎮', label: () => T('Games', 'Trò chơi'), say: ['Tap a picture to play!', 'Chạm vào một hình để chơi nhé!'] },
+  { key: 'learn', icon: 'hv:tab', label: () => T('Fun learning', 'Học vui'), say: ['Tap a picture to play!', 'Chạm vào một hình để chơi nhé!'] },
+  { key: 'fun', icon: '🎮', label: () => T('Play', 'Vui chơi'), say: ['Tap a picture to play!', 'Chạm vào một hình để chơi nhé!'] },
   { key: 'tales', icon: '📖', label: () => T('Stories', 'Truyện'), say: ['Tap a picture to hear a story!', 'Chạm vào một hình để nghe kể chuyện nhé!'] },
   { key: 'places', icon: '🗺️', label: () => T('Places', 'Nơi chốn'), say: ['Where shall we fly to?', 'Mình bay đến đâu nào?'] }
 ];
@@ -62,7 +71,7 @@ const SCENE = `<svg class="sp-land" viewBox="0 0 400 800" preserveAspectRatio="x
 </svg><span class="sp-fly">${pic('🦋')}</span><i class="sp-twinkle"></i>`;
 
 export function createSimple(G) {
-  let m = null, tab = 'games', cat = null, back = false, busy = false, sel = null, finding = false, lay = null; // cat: the open category (null: the cards); lay: where draw() put the stops
+  let m = null, tab = 'learn', cat = null, back = false, busy = false, sel = null, finding = false, lay = null; // cat: the open category (null: the cards); lay: where draw() put the stops
   let launched = 0, opened = false, starsBefore = 0; // a game or story started from here (when), and whether it is open yet
   const lastStars = {};
   let catalogueDirty = false, fruitState = '';
@@ -82,6 +91,10 @@ export function createSimple(G) {
       voice: game ? ['Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'] : ['Finish each story in this shelf 3 times to unlock more.', '\u0110\u1ecdc xong m\u1ed7i truy\u1ec7n trong k\u1ec7 n\u00e0y 3 l\u1ea7n \u0111\u1ec3 m\u1edf th\u00eam nh\u00e9.'],
       stars: 0, max: 0, prog: done, type, area }];
   }
+  // (v1.08 simple, owner 3 Nov 2026 AEDT: "every Play game shows") a locked game is a stop of its own: its picture under a
+  // padlock, its name and what to do; a tap says what to do and opens the guide of its area
+  const lockedGame = (id: string, area: string) => ({ kind: 'lock', key: id, icon: GAMES[id].icon, locked: true, name: GAMES[id].name(), hint: T('Win 3 times to open', 'Thắng 3 lần để mở'),
+    voice: ['Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'], stars: 0, max: 0, prog: progressOf(hero().profile, 'game', area).done, type: 'game', area });
   // (owner, 1 Nov 2026 AEDT: "the coming soon game pad doesn't show on the Simple screen") an area with new games still
   // held back in Studio ends with a Coming soon stop, as in Play; tapping it (or a lock stop) opens the guide below
   function soonStop(area) {
@@ -135,9 +148,10 @@ export function createSimple(G) {
     // (Học vui, owner's plan 1 Nov 2026 AEDT) the four Fun learning corners also show the existing games linked into them
     // (each still in its own area too, so nothing moves); a locked one is shown only in its own area, with its padlock
     const stop = g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level, plus: lt && g.ageMin >= 5 });
-    return AREAS.map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', a.key)).map(stop)).concat(linksIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', g.area)).map(stop)).concat(lockStop('game', a.key, gamesIn(GAMES, a.key, false).filter(g => !isOpen(p, g.id, 'game', a.key)).length, a.key)).concat(soonStop(a.key)) }));
+    const want = GAME_TABS[t] || GAME_TABS.games;
+    return AREAS.filter(a => want(a.key)).map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', a.key)).map(stop)).concat(linksIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', g.area)).map(stop)).concat(gamesIn(GAMES, a.key, false).filter(g => !isOpen(p, g.id, 'game', a.key)).map(g => lockedGame(g.id, a.key))).concat(soonStop(a.key)) }));
   }
-  const tabOf = t => TABS.find(y => y.key === t);
+  const tabOf = t => TABS.find(y => y.key === t) || TABS[0]; // ('games', both game buttons together, says what they say)
   const groupsOf = t => areasOf(t).filter(a => a.items.length);
   // the road of one category: its heading stop (its picture and name) and its stops; `cat` on every stop says which
   // category it is in. With no category open (c null) the road is empty: the tab shows its category cards instead
@@ -216,9 +230,9 @@ export function createSimple(G) {
       // Khám phá tab") every section of the tab on one page: its title, then its own little road of pictures; Ông Cú by the next one
       lay = null; path.style.height = ''; path.style.width = '';
       list = []; const groups = groupsOf(tab);
-      const stopHTML = (s, k) => `<button class="sp-stop${sel === idOf(s) ? ' sel' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
-        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
-        <b class="sp-name">${esc(s.name)}</b>${!lt && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`;
+      const stopHTML = (s, k) => `<button class="sp-stop${sel === idOf(s) ? ' sel' : ''}${s.locked ? ' locked' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
+        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
+        <b class="sp-name">${esc(s.name)}${s.hint ? `<small class="sp-hint">${esc(s.hint)}</small>` : ''}</b>${!lt && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`;
       path.innerHTML = groups.map(({ area, items }) => { const start = list.length; items.forEach(x => list.push({ ...x, cat: area.key, isNew: !!seen && x.kind !== 'lock' && !seen.has(idOf(x)) }));
         const got = items.reduce((a, x) => a + (x.stars || 0), 0), all = items.reduce((a, x) => a + (x.max || 0), 0);
         return `<section class="sp-sec" data-cat="${esc(area.key)}"><h3 class="sp-sectitle" role="heading" aria-level="2"><span class="sp-hpic">${pic(area.icon)}</span><b>${esc(area.name())}</b>${all ? `<span class="sp-count">${pic('⭐')} ${got}/${all}</span>` : ''}</h3>
@@ -250,9 +264,9 @@ export function createSimple(G) {
     let L = place(230);
     path.style.setProperty('--lw', L.lw + 'px');
     path.innerHTML = `<svg class="sp-road" aria-hidden="true"><path/><path class="dash"/></svg>` +
-      list.map((s, k) => s.kind === 'head' ? `<div class="sp-stop grp" role="heading" aria-level="2" data-k="${k}" aria-label="${esc(s.name)}"><span class="sp-hpic">${pic(s.icon)}</span><b class="sp-name">${esc(s.name)}</b></div>` : `<button class="sp-stop${k === next ? ' next' : ''}${sel === idOf(s) ? ' sel' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
-        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
-        <b class="sp-name">${esc(s.name)}</b>${!lt && s.kind !== 'head' && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`).join('') +
+      list.map((s, k) => s.kind === 'head' ? `<div class="sp-stop grp" role="heading" aria-level="2" data-k="${k}" aria-label="${esc(s.name)}"><span class="sp-hpic">${pic(s.icon)}</span><b class="sp-name">${esc(s.name)}</b></div>` : `<button class="sp-stop${k === next ? ' next' : ''}${sel === idOf(s) ? ' sel' : ''}${s.locked ? ' locked' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
+        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
+        <b class="sp-name">${esc(s.name)}${s.hint ? `<small class="sp-hint">${esc(s.hint)}</small>` : ''}</b>${!lt && s.kind !== 'head' && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`).join('') +
       `<button class="sp-owl" aria-label="${T('Ông Cú', 'Ông Cú')}">${pic('🦉')}</button>`;
     // measure the tallest stop (its name may take two or three lines), then place them all
     const btns = [...path.querySelectorAll('.sp-stop')], tall = Math.max(150, ...btns.filter(b => !b.classList.contains('grp')).map(b => b.offsetHeight));
@@ -336,13 +350,13 @@ export function createSimple(G) {
       const p = hero().profile;
       m.innerHTML = `<div class="sp-scene">${SCENE}</div><div class="sp-top"><span class="sp-me">${p.photo ? `<img src="${p.photo}" alt="">` : pic('🙂')}<b>${esc(p.name)}</b></span>
         <button class="sp-back" hidden aria-label="${T('Back', 'Quay lại')}">${pic('⬅️')}<small>${T('Back', 'Quay lại')}</small></button>
-        <div class="sp-tools"><button class="sp-sound" aria-label="${T('Sound on or off', 'Bật tắt âm thanh')}">${pic('🎵')}<small>${T('Sound', 'Âm thanh')}</small></button>
+        <div class="sp-tools"><button class="sp-valley" aria-label="${T('Valley', 'Thung lũng')}">${pic('🌳')}<small>${T('Valley', 'Thung lũng')}</small></button>
+        <button class="sp-sound" aria-label="${T('Sound on or off', 'Bật tắt âm thanh')}">${pic('🎵')}<small>${T('Sound', 'Âm thanh')}</small></button>
         <button class="sp-home" aria-label="${T('Home', 'Trang chủ')}">${pic('🏠')}<small>${T('Home', 'Trang chủ')}</small></button>
         <button class="grown sp-grown"><span class="ring"></span>${pic('⚙️')}<small>${T('Grown-ups: press and hold', 'Người lớn: nhấn giữ')}</small></button></div></div>
         <div class="sp-scroll"><div class="sp-path"></div></div>
         <nav class="sp-tabs">${TABS.map(x => `<button data-tab="${x.key}"><span>${pic(x.icon)}</span><small>${esc(x.label())}</small></button>`).join('')}
-          <button class="sp-discover"><span>${pic('🔎')}</span><small>${T('Discover', 'Khám phá')}</small></button>
-          <button class="sp-valley"><span>${pic('🌳')}</span><small>${T('Valley', 'Thung lũng')}</small></button></nav>
+          <button class="sp-discover"><span>${pic('🔎')}</span><small>${T('Discover', 'Khám phá')}</small></button></nav>
         <div class="sp-find" hidden></div>`;
       document.body.appendChild(m);
       m.querySelector('.sp-back').onclick = () => { if (busy) return; SFX.tap(); backToCards(); const x = tabOf(tab); say(x.say[0], x.say[1]); };
@@ -368,7 +382,7 @@ export function createSimple(G) {
     // a new star since the path was last open: Ông Cú cheers
     const who = hero().profile.name, now = totalStars(), owl = m.querySelector('.sp-owl');
     if (lastStars[who] != null && now > lastStars[who] && owl) { owl.classList.add('cheer'); say('Well done! You won a new star!', 'Giỏi lắm! Con được thêm một ngôi sao!'); }
-    else { const x = TABS.find(y => y.key === tab); say(x.say[0], x.say[1]); }
+    else { const x = tabOf(tab); say(x.say[0], x.say[1]); }
     lastStars[who] = now;
   }
   function hide() { if (m) { const sc = m.querySelector('.sp-scroll'); if (!m.hidden) kept = { top: sc.scrollTop, left: sc.scrollLeft }; m.hidden = true; } document.body.classList.remove('simple-on'); G.paused = false; }
