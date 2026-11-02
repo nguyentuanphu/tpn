@@ -14,14 +14,14 @@ Files: `js/main.ts` (shared, small change), `js/tester.ts`, `js/players.ts`, a n
 
 ## Progress
 
-**Paused (Release asked: usage limit), 2 Nov 2026 AEDT. Waiting for "resume" after 2 pm AEDT. Not ready for Release yet.**
+**Resumed after Release's "resume" (2 Nov 2026 AEDT). Step 1 done; step 2 (long play) next. Not ready for Release yet.**
 
 Done, commit e83fa395 (pushed to `work/v107-old-bugs`):
 - #341: `js/gpu.ts` tells software drawing apart (test browser: "software: Vulkan 1.3.0 (SwiftShader Device ..."); Graphics Auto then draws the light picture (no shadows, no smoothing) and may go down to 0.5x pixels. `adaptResolution` in `js/main.ts` used to leave out frames over 250 ms, so a computer at 3 frames a second never got a lighter picture; they now count as 250 ms (gaps over 2 s are still a pause). Measured in the test browser at the tester's 1870x940: shadows on ('mid') 0.7 frames a second, light ('low') 2.5, about 3.5x faster. Tester reports now carry `dev.gpu` (`netlify/lib/tester.mts` keeps it, `tools/tester-issues.mts` shows "graphics ...").
 - #739: Safari has no long-task observer, so every iPhone freeze said "longest script 0 ms". `js/tester.ts` now runs a 100 ms timer: "page busy N ms" (script or layout held the page) or "(free, not drawn)" (the graphics side stopped); without the observer it says "longest script not measured".
 - #355: the "ended by the browser" and "reloaded" notes (`js/players.ts`) add minutes open and the 3D shapes and pictures held, which an iPhone can report (it has no MB figure). Old notes read the same as before (the `gameends` check still matches).
 - Shared files touched (small): `js/main.ts` (GPU pick, resolution floor, slow-frame counting), `tests/run.mjs` (two lines at the end).
-- New checks in `tests/old-bugs.mts`: `softgraphics`, `freezewhy`. **Not run yet.**
+- New checks in `tests/old-bugs.mts`: `softgraphics`, `freezewhy`. Fixed in the check while running it: the test browser draws at about 2 frames a second and freezes by itself, so `freezewhy` puts a window on top (the valley stops drawing, as in the game); the second freeze lasts 3.6 s because the same freeze in the same place again is one report; a report's own freeze is the last such line of its 30 seconds.
 
 Long-play memory (#355), phone size 390x844, autoplay x5, all groups, stopped at 7.6 of 30 minutes for the pause:
 - JS heap after garbage collection 49.2 MB -> 55.6 MB; DOM nodes 3883 -> 4111; listeners 214 -> 229.
@@ -39,7 +39,8 @@ Probe: open a 390x844 touch page with autoplay allowed (as `tests/child-bots.mts
 
 | Check | Result |
 |---|---|
-| softgraphics | not run yet (paused) |
-| freezewhy | not run yet (paused) |
-| testerreport, gameends (touched code) | not run yet (paused) |
+| softgraphics | pass (50 s): SwiftShader told apart, light picture on a 16-core computer, slow frames lower the pixels to 0.5x |
+| freezewhy | pass (48 s): busy page "page busy 2582 ms"; held frames "page busy 0 ms (free, not drawn)"; report names the graphics |
+| testerreport | pass (82 s) |
+| gameends | pass (88 s); the new minutes and 3D fields are not asserted by it (old-format notes still read the same) |
 | full suite on GitHub | not started (paused) |

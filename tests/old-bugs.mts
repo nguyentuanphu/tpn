@@ -42,21 +42,27 @@ export async function freezeWhyCheck(b: Browser): Promise<string> {
   try {
     await P.page.waitForFunction(() => (window as any).__sv.tester && document.querySelector('.tester-floating.z-lb'), null, { timeout: 15000 }); await clear(P.page);
     await P.page.waitForFunction(() => { const t = (window as any).__sv?.tester; return t?.mountedAt && performance.now() - t.mountedAt() > 15200; }, null, { timeout: 30000 });
+    // the test browser draws the valley in software at about 2 frames a second, which freezes by itself now and then:
+    // a window on top stops the valley's drawing (as in the game), so only the freezes made here happen
+    await P.page.evaluate(() => { (window as any).__sv.paused = true; const m = document.createElement('div'); m.className = 'modal freeze-check'; document.body.append(m); });
+    await pause(3000);
     const freezes = () => got.filter(x => x && x.auto === 'freeze');
-    const lineOf = (r: any) => (r.log || []).map((l: any[]) => l[2]).find((s: string) => /longest script/.test(s)) || '';
+    // (a report carries the last 30 seconds: its own freeze is the last such line)
+    const lineOf = (r: any) => (r.log || []).map((l: any[]) => l[2]).filter((s: string) => /longest script/.test(s)).pop() || '';
     // 1. the page is busy for 2.6 s (the game's own code)
     const n0 = freezes().length;
     await P.page.evaluate(() => new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => { const t = performance.now(); while (performance.now() - t < 2600) { } r(); }))));
     const busy = await waitFor(got, x => x && x.auto === 'freeze' && freezes().indexOf(x) >= n0, 8000, pause);
-    // 2. the page is free but no frame comes for 2.6 s (the graphics side stopped drawing)
+    // 2. the page is free but no frame comes for 3.6 s (the graphics side stopped drawing; a different length, because
+    //    the same freeze in the same place again within a while is one report)
     await pause(3500); const n1 = freezes().length;
-    await P.page.evaluate(() => new Promise<void>(r => { const raf = window.requestAnimationFrame.bind(window); window.requestAnimationFrame = cb => raf(() => setTimeout(() => raf(cb), 2600)) as any; setTimeout(() => { window.requestAnimationFrame = raf; r(); }, 1000); }));
-    const free = await waitFor(got, x => x && x.auto === 'freeze' && freezes().indexOf(x) >= n1, 9000, pause);
+    await P.page.evaluate(() => new Promise<void>(r => { const raf = window.requestAnimationFrame.bind(window); window.requestAnimationFrame = cb => raf(() => setTimeout(() => raf(cb), 3600)) as any; setTimeout(() => { window.requestAnimationFrame = raf; r(); }, 1000); }));
+    const free = await waitFor(got, x => x && x.auto === 'freeze' && freezes().indexOf(x) >= n1 && parseFloat(x.detail) >= 3.4, 9000, pause);
     const bad: string[] = [];
     const busyLine = busy ? lineOf(busy) : '', freeLine = free ? lineOf(free) : '';
     const busyMs = +(/page busy (\d+) ms/.exec(busyLine)?.[1] ?? -1), freeMs = +(/page busy (\d+) ms/.exec(freeLine)?.[1] ?? -1);
     if (!busy || !/longest script not measured/.test(busyLine) || busyMs < 2000 || /not drawn/.test(busyLine)) bad.push('a busy page: ' + (busyLine || 'no freeze report'));
-    if (!free || freeMs < 0 || freeMs > 1000 || !/\(free, not drawn\)/.test(freeLine)) bad.push('a page free but not drawn: ' + (freeLine || 'no freeze report'));
+    if (!free || freeMs < 0 || freeMs > 1000 || !/\(free, not drawn\)/.test(freeLine)) bad.push('a page free but not drawn: ' + (freeLine || 'no freeze report') + '; every freeze: ' + JSON.stringify(freezes().map(x => [x.detail, lineOf(x)])));
     const gpu = (busy || free)?.dev?.gpu || '';
     if (!/^software: /.test(gpu)) bad.push('the report does not name the graphics: ' + JSON.stringify((busy || free)?.dev));
     if (P.errors.length) bad.push(P.errors.join(' | '));
