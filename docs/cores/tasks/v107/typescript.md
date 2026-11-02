@@ -43,10 +43,35 @@ it (each one listed below). No `@ts-ignore`, no `@ts-nocheck`.
 
 ## Progress
 
-(filled in as batches land)
+**Paused 2 Nov 2026 11:11 AEDT** at Release's request (usage); waiting for Release's "resume" after 2 pm AEDT.
+
+- Batch 1 done (27 `js/content/*.js` to `.ts`):
+  - b65c2740 rename only; 898790d8 type notes (0 light errors; `js/content/tester.ts` also 0 strict errors in
+    `tests/tsconfig-contracts.json`); b3cc0b47 `tools/rules-from-doc.mts` now reads and writes `js/content/rules.ts`
+    (the `rules` check failed after the rename; fixed), with `docs/ARCHITECTURE.md` and `checks.yml` comments.
+  - Proof of no behaviour change: every built `.js` equals 204ce75d's `.js` with whitespace removed, except removed
+    JSDoc comments in `tester` and brackets around `(helped)`, `(rule)`, `(v)` and two values in `films`.
+- Still 74 game `.js` files without a `.ts` twin: 60 of them are batches 2 to 4 (Play, Kid UI, Online, Voice & Audio
+  and shared files), 14 are the World core's map files left for later.
+
+**Exact next step on resume:**
+1. Check paths in `tools/voice-lines.mts` FILE_AREA, `tools/make-voice-pack.mts`, `tools/emoji-audit.mts` (walks
+   `js/` for `.js`: reads the built `.js`, so it still works after `node tools/build.mts`) and `tools/r79-shots.mts`;
+   they name `.js` files and read the built ones, so they likely need no change: confirm.
+2. Batch 2 (`js/a*` to `js/g*`, 23 files): rename-only commit, then `node <scratchpad>/optfix.mjs . tests/tsconfig.json`
+   (marks trailing parameters optional; the script is described in the Plan) after adding the files to
+   `tests/tsconfig.json`, fix the rest by hand, compare built `.js` with 204ce75d, commit.
+3. Push, then start `full-suite.yml` on `work/v107-typescript` (batches 1 and 2 together).
 
 ## Checks
 
+Batch 1, 2 Nov 2026 11:05 AEDT, `node suite.mjs --only unit,rules,types,arch,emoji,noemoji,preload,names,bilingual,boot,contract`
+(`--changed` picks the full suite, which runs on GitHub after batch 2):
+- pass: types, names, arch, bilingual, emoji, noemoji, preload, boot, contract.
+- rules: fail, then fixed in b3cc0b47 (`node tools/rules-from-doc.mts --check` passes); not yet re-run in the suite.
+- unit: fail, not from this branch: `Cannot find package 'pg'` (the repo root's `npm install` was not run in this
+  container; the management tests need it). To re-run after `npm ci` in the root.
+
 ## Open questions
 
-None yet.
+None.
