@@ -20,9 +20,9 @@ for n, p in PARENT.items(): ad.edit_bones[n].parent = ad.edit_bones[p]
 bpy.ops.object.mode_set(mode='OBJECT')
 
 HAND_PROPS = ('lantern', 'staff', 'vineLeaf', 'staffPetal', 'staffHeart', 'compass', 'sunCrystal', 'sunRay', 'basket')
-TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace', 'tunic', 'cape', 'clasp', 'sun', 'apron', 'scarf', 'aoBaBa', 'longSkirt')
-ARM = ('arm', 'sleeve', 'sleeveRoll', 'hand', 'thumb', 'coatSleeve', 'coatCuff', 'shirtSleeve', 'glove', 'sleevePuff', 'sleeveFrill')
-LEG = ('leg', 'sock', 'sockRib', 'boot', 'bootToe', 'sole', 'bootCuff', 'bootLeaf', 'bootStrap', 'bootBuckle', 'lace', 'shoe', 'sandal', 'toes', 'rainboot', 'sneaker')
+TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace', 'tunic', 'cape', 'clasp', 'sun', 'apron', 'scarf', 'aoBaBa', 'longSkirt', 'aoDai', 'dressTop', 'dressSkirt', 'dressBelt', 'tee', 'pocket', 'necklace', 'bowtie', 'redScarf', 'backpack')
+ARM = ('arm', 'sleeve', 'sleeveRoll', 'hand', 'thumb', 'coatSleeve', 'coatCuff', 'shirtSleeve', 'glove', 'sleevePuff', 'sleeveFrill', 'watch', 'bracelet')
+LEG = ('leg', 'sock', 'sockRib', 'boot', 'bootToe', 'sole', 'bootCuff', 'bootLeaf', 'bootStrap', 'bootBuckle', 'lace', 'shoe', 'sandal', 'toes', 'rainboot', 'sneaker', 'thong', 'longSock')
 HIP = ('shortsLeg', 'shortsCuff', 'trouser', 'seat')
 def seg_d(p, a, b):
     ab = b - a; t = max(0, min(1, (p - a).dot(ab) / ab.length_squared)); return (p - (a + ab * t)).length
@@ -54,7 +54,7 @@ def bind(o, rigid=None):
         if t == 'SOLIDIFY': m.thickness = th
     o.parent = rig
 for col in bpy.data.collections:
-    rigid = 'head' if col.name in ('hair', 'hat') or col.name.startswith('face-') else None
+    rigid = 'head' if col.name.split('.')[0] in ('hair', 'hat') or col.name.startswith('face-') else None
     for o in col.objects:
         if o.type == 'MESH': bind(o, rigid)
 for o in list(scene.collection.objects):

@@ -20,19 +20,29 @@ TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK
 STYLE = 'tall' if TALL else 'chibi'
 WHO = next((w for w in ('finn', 'flora', 'sol', 'villager') if w in argv), 'lumi')
 # villagers (owner, 3 Nov: "dân làng sẽ nhìn như thế nào?"): role=<name>; the wardrobe: wear=hat:straw+shoes:sandals+scarf:red
-ROLE = next((a.split('=', 1)[1] for a in argv if a.startswith('role=')), 'farmer')
+ROLE = next((a.split('=', 1)[1] for a in argv if a.startswith('role=')), 'vn-farmer')
 WEAR = dict((w.split(':') + [''])[:2] for w in next((a[5:] for a in argv if a.startswith('wear=')), '').split('+') if w)
-# size: kid (the game's 1.6), adult (2.0) or elder (1.8), as rule WORLD-011 asks; hair: short, bun, bob, tuft; kind: pants, shorts or skirt
+# the villagers: Vietnamese and Australian neighbours in everyday clothes (owner, 3 Nov: "giống người Việt Nam và người Úc hơn").
+# size: kid (the game's 1.6), adult (2.0) or elder (1.8), rule WORLD-011 (the owner agreed to these heights, 3 Nov); g: m or f
 VILL = {
-    'farmer':  dict(size='adult', pal=('#e9b48f', '#2b2420', '#1f1a17', '#3d332d', '#3a2414', '#6a4528', '#2b2420', '#2a1e18'), hair='short', top='#7a5a3c', bottom='#3f4a5a', kind='pants', hat='nonla', shoes='sandals', extra=('basket',)),
-    'vendor':  dict(size='adult', pal=('#f1c6a3', '#2a211d', '#1d1714', '#3c302a', '#3a2414', '#6a4528', '#2a211d', '#2a1e18'), hair='bun', top='#c95f6e', bottom='#2f2b33', kind='pants', hat='', shoes='sandals', extra=('apron',)),
-    'grandma': dict(size='elder', pal=('#ecc2a2', '#d9d6d0', '#bdb9b1', '#ecebe6', '#3a2414', '#6a4528', '#a7a39b', '#4a3a30'), hair='bun', top='#7b5c93', bottom='#3a3340', kind='pants', hat='', shoes='sandals', extra=('glasses',)),
-    'grandpa': dict(size='elder', pal=('#e3b28d', '#dedbd4', '#c3bfb7', '#efede8', '#3a2414', '#6a4528', '#b8b4ac', '#4a3a30'), hair='tuft', top='#e9e1cf', bottom='#5b4a3a', kind='pants', hat='straw', shoes='sandals', extra=('moustache', 'cane')),
-    'kidboy':  dict(size='kid', pal=('#f0c09b', '#3a2a22', '#2a1e18', '#4d392e', '#3a2414', '#7a4f2e', '#3a2a22', '#2a1e18'), hair='short', top='#4f86c6', bottom='#c9b48a', kind='shorts', hat='cap', shoes='sneakers', extra=()),
-    'kidgirl': dict(size='kid', pal=('#f6cfb0', '#2e231e', '#211915', '#43342c', '#3a2414', '#7a4f2e', '#2e231e', '#2a1e18'), hair='bob', top='#f2c14e', bottom='#e98a8a', kind='skirt', hat='', shoes='sneakers', extra=('flowerclip',)),
+    'vn-aodai': {'g': 'f', 'size': 'adult', 'pal': ('#f0c6a4', '#1c1715', '#120f0d', '#2c2420', '#2a1a0e', '#5a3a22', '#120f0d', '#1f1712'), 'hair': 'long', 'top': ('aodai', '#9cc3e6'), 'bottom': '#f6f3ee', 'kind': 'wide', 'hat': 'nonla', 'shoes': 'sandals/c99a6a', 'extra': ('earrings',)},
+    'vn-dad': {'g': 'm', 'size': 'adult', 'pal': ('#e7b48f', '#1f1a18', '#151210', '#2e2622', '#2a1a0e', '#5a3a22', '#151210', '#1f1712'), 'hair': 'short', 'top': ('polo', '#8fb8d9'), 'bottom': '#3d4350', 'kind': 'pants', 'hat': 'helmet', 'shoes': 'sandals', 'extra': ('watch',)},
+    'vn-farmer': {'g': 'm', 'size': 'adult', 'pal': ('#d9a17a', '#2b2420', '#1f1a17', '#3d332d', '#2a1a0e', '#5a3a22', '#1f1a17', '#1f1712'), 'hair': 'short', 'top': ('aobaba', '#7a5a3c'), 'bottom': '#3f4a5a', 'kind': 'pants', 'hat': 'nonla', 'shoes': 'sandals', 'extra': ('basket',)},
+    'vn-vendor': {'g': 'f', 'size': 'adult', 'pal': ('#f1c6a3', '#2a211d', '#1d1714', '#3c302a', '#2a1a0e', '#5a3a22', '#1d1714', '#1f1712'), 'hair': 'bun', 'top': ('aobaba', '#c95f6e'), 'bottom': '#2f2b33', 'kind': 'pants', 'hat': '', 'shoes': 'sandals', 'extra': ('apron', 'earrings')},
+    'vn-grandma': {'g': 'f', 'size': 'elder', 'pal': ('#ecc2a2', '#d9d6d0', '#bdb9b1', '#ecebe6', '#2a1a0e', '#5a3a22', '#a7a39b', '#1f1712'), 'hair': 'bun', 'top': ('aobaba', '#7b5c93'), 'bottom': '#2a2630', 'kind': 'pants', 'hat': '', 'shoes': 'sandals', 'extra': ('glasses',)},
+    'vn-grandpa': {'g': 'm', 'size': 'elder', 'pal': ('#e3b28d', '#dedbd4', '#c3bfb7', '#efede8', '#2a1a0e', '#5a3a22', '#b8b4ac', '#1f1712'), 'hair': 'tuft', 'top': ('aobaba', '#e9e1cf'), 'bottom': '#5b4a3a', 'kind': 'pants', 'hat': 'straw', 'shoes': 'sandals', 'extra': ('moustache', 'cane')},
+    'vn-schoolboy': {'g': 'm', 'size': 'kid', 'pal': ('#f0c09b', '#1f1a18', '#151210', '#2e2622', '#2a1a0e', '#5a3a22', '#151210', '#1f1712'), 'hair': 'short', 'top': ('shirt', '#f7f7f4'), 'bottom': '#2c3a5a', 'kind': 'shorts', 'hat': '', 'shoes': 'sneakers', 'extra': ('redscarf', 'backpack')},
+    'vn-schoolgirl': {'g': 'f', 'size': 'kid', 'pal': ('#f6cfb0', '#1c1715', '#120f0d', '#2c2420', '#2a1a0e', '#5a3a22', '#120f0d', '#1f1712'), 'hair': 'pigtails', 'top': ('shirt', '#f7f7f4'), 'bottom': '#2c3a5a', 'kind': 'skirt', 'hat': '', 'shoes': 'sandals/e9edf2', 'extra': ('redscarf', 'bow')},
+    'au-dad': {'g': 'm', 'size': 'adult', 'pal': ('#c98e66', '#5a3d2a', '#46301f', '#6f4c35', '#2a1a0e', '#5a3a22', '#46301f', '#1f1712'), 'hair': 'short', 'top': ('shirt', '#6f9bc4'), 'bottom': '#c8b48a', 'kind': 'shorts', 'hat': 'akubra', 'shoes': 'boots', 'extra': ('sunglasses', 'stubble')},
+    'au-mum': {'g': 'f', 'size': 'adult', 'pal': ('#f6d3bd', '#e3c27a', '#c9a35c', '#f0d79a', '#2e5b8a', '#6f9cc9', '#b8955a', '#5a4632'), 'hair': 'ponytail', 'top': ('dress', '#f2c14e'), 'bottom': '#e98a5a', 'kind': 'skirt', 'hat': 'straw', 'shoes': 'sandals', 'extra': ('earrings', 'necklace')},
+    'au-grandma': {'g': 'f', 'size': 'elder', 'pal': ('#f4d2bf', '#eeeae4', '#d6d1c9', '#faf8f4', '#2e5b8a', '#6f9cc9', '#bdb6aa', '#6a5a50'), 'hair': 'curly', 'top': ('cardigan', '#b9a3d6'), 'bottom': '#5b6475', 'kind': 'skirt', 'hat': '', 'shoes': 'sneakers/8a6a52', 'extra': ('glasses', 'pearls')},
+    'au-grandpa': {'g': 'm', 'size': 'elder', 'pal': ('#f1c9b1', '#dedbd4', '#c3bfb7', '#efede8', '#2e5b8a', '#6f9cc9', '#c3bfb7', '#6a5a50'), 'hair': 'tuft', 'top': ('polo', '#6fae8a'), 'bottom': '#c8b48a', 'kind': 'shorts', 'hat': 'bucket/e7dcc2', 'shoes': 'sneakers/6b4a33', 'extra': ('longsocks', 'watch')},
+    'au-boy': {'g': 'm', 'size': 'kid', 'pal': ('#f7d6c2', '#c45a2c', '#a5481f', '#d9733f', '#3d6b3a', '#7aa86a', '#a5481f', '#5a3a28'), 'hair': 'short', 'top': ('tee', '#2aa3b8'), 'bottom': '#f28c38', 'kind': 'shorts', 'hat': 'bucket', 'shoes': 'thongs', 'extra': ('freckles',)},
+    'au-girl': {'g': 'f', 'size': 'kid', 'pal': ('#9a6544', '#1c1715', '#120f0d', '#2c2420', '#24140a', '#4a2c18', '#1c1715', '#1f1712'), 'hair': 'pigtails', 'top': ('dress', '#9cc7e8'), 'bottom': '#2c3a5a', 'kind': 'skirt', 'hat': 'straw/2c3a5a', 'shoes': 'sneakers/2a2a2a', 'extra': ('backpack', 'bracelet')},
 }
 V = VILL.get(ROLE) if WHO == 'villager' else None
-if V and V['hat'] and 'hat' not in WEAR: WEAR['hat'] = V['hat']
+G = V['g'] if V else {'finn': 'm', 'sol': 'm'}.get(WHO, 'f')   # boys: Finn, Sol; girls: Flora, Lumi (owner asked, 3 Nov)
+if V and V['hat'] and 'hat' not in WEAR: WEAR['hat'] = V['hat'].replace('/', '/')
 TAG = (f'villager-{ROLE}' if V else WHO) + ''.join(f'-{k}{v}' for k, v in WEAR.items() if not V)
 os.makedirs(OUT, exist_ok=True); random.seed(7)
 scene = reset()
@@ -65,7 +75,7 @@ SHINE = mat('shine', '#ffffff', .2, emit=4)
 LASH = mat('lash', PAL[7], .6)
 BROW = mat('brow', PAL[6], .9, .3)
 MOUTH = mat('mouth', '#6f2b2b', .5); TONGUE = mat('tongue', '#ee9188', .5)
-BLUSH = softpaint('blush', '#f4a08f', .75)
+BLUSH = softpaint('blush', '#f59a93', .85); BLUSHM = softpaint('blushBoy', '#f2a48f', .55)
 # Finn's and Flora's clothes
 PANTS = felt('pants', '#e8dcc0'); COAT = felt('coat', '#2f6f74'); COATIN = felt('coatLining', '#e7d9b8')
 BOOTF = felt('bootsBrown', '#7a4a2a', .6, .08)
@@ -170,21 +180,24 @@ def face(expr):
             decal('iris', IRISD, ix, iz, w * ir * .9, h * ir * .9, .02, .03)
             decal('irisLight', IRIS, ix, iz - h * ir * .25, w * ir * .62, h * ir * .45, .01, .045)
             decal('pupil', PUPIL, ix, iz + .03 * h, w * ir * .4, h * ir * .44, .008, .052)
-            decal('shine', SHINE, ix + w * .3, iz + h * .36, w * .19, w * .19, .006, .06)
-            decal('shine2', SHINE, ix - w * .32, iz - h * .32, w * .085, w * .085, .005, .058)
+            decal('shine', SHINE, ix + w * .28, iz + h * .34, w * .24, w * .24, .006, .06)   # bigger, softer sparkles (cuter, owner 3 Nov)
+            decal('shine2', SHINE, ix - w * .3, iz - h * .3, w * .1, w * .1, .005, .058)
+            decal('shine3', SHINE, ix + w * .42, iz - h * .05, w * .05, w * .05, .004, .058)
             # a soft brown upper lid, a little heavier at the outer corner, and two small lashes (sad: the lid droops at the outer corner)
             a0, a1 = (.06, .94)
             lid = [(ex + math.cos(a) * w * 1.03, ez + math.sin(a) * h * 1.02 - (.25 * h * max(0, math.cos(a) * s) if expr == 'sad' else 0)) for a in lin(a0 * math.pi, a1 * math.pi, 15)]
             fline('lid', LASH, lid, [.016 + .014 * max(0, math.cos(a) * s) for a in lin(a0 * math.pi, a1 * math.pi, 15)], .05)
-            for k in range(2):
-                a = (.16 + .14 * k) * math.pi if s > 0 else (.84 - .14 * k) * math.pi
-                p0 = (ex + math.cos(a) * w, ez + math.sin(a) * h); p1 = (p0[0] + s * .07 * E / .27, p0[1] + (.07 + .02 * k) * E / .27)
-                fline('lash', LASH, [p0, p1], [.011, .004], .05)
+            for k in range(3 if G == 'f' else 0):  # girls: three soft curled lashes at the outer corner; boys: the lid line only
+                a = (.1 + .12 * k) * math.pi if s > 0 else (.9 - .12 * k) * math.pi
+                p0 = (ex + math.cos(a) * w * 1.02, ez + math.sin(a) * h); L = (.085 - .012 * k) * E / .27
+                p1 = (p0[0] + s * L * (.9 - .3 * k), p0[1] + L * (.6 + .4 * k)); p2 = (p1[0] + s * L * .35, p1[1] + L * .05)
+                fline('lash', LASH, [p0, p1, p2], [.012, .007, .003], .05)
         # soft short brows: raised for surprise, one up for curiosity, tilted up in the middle for sadness
         up = {'surprised': .12, 'happy': .05, 'curious': .1 if s < 0 else .02, 'sad': .05}.get(expr, .03)
         bz = ez + E * 1.12 + .07 + up; tilt = .05 if expr == 'sad' else 0
-        fline('brow', BROW, [(ex - s * .1, bz - .015 + tilt), (ex - s * .02, bz + .02), (ex + s * .09, bz + .005 - tilt)], [.016, .024, .013], .02)
-        decal('blush', BLUSH, s * P.get('blushX', .57), P.get('blushZ', -.33), .17 * M, .1 * M, .012, .004)
+        if G == 'f': fline('brow', BROW, [(ex - s * .1, bz - .015 + tilt), (ex - s * .02, bz + .025), (ex + s * .09, bz + .005 - tilt)], [.012, .019, .009], .02)   # thin and arched
+        else: fline('brow', BROW, [(ex - s * .11, bz + tilt), (ex - s * .01, bz + .018), (ex + s * .1, bz + .008 - tilt)], [.022, .03, .02], .02)   # a little thicker and straighter
+        decal('blush', BLUSH if G == 'f' else BLUSHM, s * P.get('blushX', .57), P.get('blushZ', -.33), .17 * M, .1 * M, .012, .004)
     mz = P.get('mouthZ', -.47)
     decal('nose', NOSE, 0, P.get('noseZ', -.3), .035, .025, .025)
     flat_top = lambda c: setattr(c, 'y', c.y * .15) if c.y > 0 else None
