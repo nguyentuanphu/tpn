@@ -274,15 +274,18 @@ const ALIVE = 'sv2_alive', RELOAD = 'sv2_reload';
 const whereNow = G => { const open = document.querySelector('.theatre') ? 'story' : (document.querySelector('.modal:not(.out)')?.className.split(' ').find(c => c !== 'modal') || '');
   return `${String((G && G.regionOf && G.regionOf[0]) || '?').slice(0, 24)}${open ? ' ' + open.slice(0, 24) : ''}`; };
 const heapMb = () => { const m = performance.memory; return m ? Math.round(m.usedJSHeapSize / 1048576) : '?'; };
-export const noteReload = (why, G) => { try { localStorage.setItem(RELOAD, JSON.stringify({ why, w: whereNow(G), mb: heapMb(), b: BUILD })); } catch (e) { } };
+// (#355, v1.07) an iPhone has no performance.memory, so its notes said "? MB". What every browser can say: how long this
+// page has been open (minutes) and how many 3D shapes and pictures the graphics hold (a slow climb points at a leak)
+const extra = G => { const m = G && G.renderer && G.renderer.info && G.renderer.info.memory; return { min: Math.round(performance.now() / 60000), g: m ? m.geometries + m.textures : null }; };
+export const noteReload = (why, G) => { try { localStorage.setItem(RELOAD, JSON.stringify({ why, w: whereNow(G), mb: heapMb(), ...extra(G), b: BUILD })); } catch (e) { } };
 function watchEnds(G) {
   const read = k => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); localStorage.removeItem(k); return v; } catch (e) { return null; } };
-  const said = (what, n) => noteProblem('error', `${what} in ${n.w || '?'}, ${n.mb ?? '?'} MB, ${n.b || '?'}`.replace(/[^\w .:/()'#,@-]/g, ' ').slice(0, 140));
+  const said = (what, n) => noteProblem('error', `${what} in ${n.w || '?'}, ${n.mb ?? '?'} MB${typeof n.min === 'number' ? `, ${n.min} min` : ''}${typeof n.g === 'number' ? `, ${n.g} 3D` : ''}, ${n.b || '?'}`.replace(/[^\w .:/()'#,@-]/g, ' ').slice(0, 140));
   const re = read(RELOAD), alive = read(ALIVE);
   if (re) said('reloaded: ' + String(re.why || '').slice(0, 30), re); else if (alive) said('ended by the browser while playing', alive);
   const clear = () => { try { localStorage.removeItem(ALIVE); } catch (e) { } };
   const mark = () => { if (document.visibilityState !== 'visible' || !(G && G.heroes && G.heroes.length)) return clear();
-    try { localStorage.setItem(ALIVE, JSON.stringify({ w: whereNow(G), mb: heapMb(), b: BUILD })); } catch (e) { } };
+    try { localStorage.setItem(ALIVE, JSON.stringify({ w: whereNow(G), mb: heapMb(), ...extra(G), b: BUILD })); } catch (e) { } };
   setInterval(mark, 5000); mark();
   addEventListener('pagehide', clear); document.addEventListener('visibilitychange', mark);
 }

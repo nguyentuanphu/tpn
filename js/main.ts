@@ -6,6 +6,7 @@ import { THREE, sprite, P, merge, toonVC } from './gfx.js';
 import { createSeeThrough } from './seethrough.js';
 import { withRideView } from './rideview.js';
 import { mountRenderRecovery } from './render-recovery.js';
+import { gpuInfo } from './gpu.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
 import { settings, saveSettings, saveProfiles, farm, profiles, claimTab } from './state.js';
 import { T, nm, onLang, registerName } from './i18n.js';
@@ -118,7 +119,9 @@ claimTab();
 // ---------- renderer & world ----------
 // (battery round, owner 12 Oct AEDT) Graphics: Fast, Auto, Pretty (60 frames a second) and Pretty+ ('max': the same
 // picture as Pretty, drawn as fast as the screen goes)
-const quality = settings.quality === 'auto' ? ((navigator.hardwareConcurrency || 4) <= 4 || Math.min(screen.width, screen.height) < 500 ? 'low' : 'mid') : settings.quality === 'max' ? 'high' : settings.quality;
+// (#341, v1.07) a computer drawing without a working graphics chip (js/gpu.ts) gets the lighter picture on Auto too
+const GPU = gpuInfo();
+const quality = settings.quality === 'auto' ? (GPU.soft || (navigator.hardwareConcurrency || 4) <= 4 || Math.min(screen.width, screen.height) < 500 ? 'low' : 'mid') : settings.quality === 'max' ? 'high' : settings.quality;
 // (battery round) the device's everyday graphics chip, not its strongest one: a MacBook's big chip and a phone's top
 // speed drain the battery for a picture the children cannot tell apart
 const PR_AUTO = 1.5; // (battery round) on Auto the picture is never drawn sharper than 1.5x the screen's pixels
@@ -203,7 +206,7 @@ export interface SvMain {
   heroes: SvHeroT[]; huds: Hud[]; mode: string; partner: unknown; zoom: number; fogMaps: Record<string, HTMLCanvasElement>;
   regionOf: (string | null)[]; interactables: SvItem[]; gatherState: Record<string, unknown>; bubbles: { s: THREE.Sprite, target: { pos: THREE.Vector3 }, until?: number }[];
   paused?: boolean; lastPlayer?: number; firstFrames?: typeof firstFrames; whenPlaying?: Promise<void>; renderer?: typeof renderer; npcs?: typeof NPCS;
-  halfBusy?: (i?: number) => boolean; quality?: typeof quality; battery?: { frameMs: number, titleMs: number, idleMs: number, idleFps: number, [k: string]: unknown };
+  halfBusy?: (i?: number) => boolean; quality?: typeof quality; gpu?: { name: string, soft: boolean }; battery?: { frameMs: number, titleMs: number, idleMs: number, idleFps: number, [k: string]: unknown };
   // places, people and things of the valley (each made by its own module)
   farm?: ReturnType<typeof createFarm>; ferries?: ReturnType<typeof createFerries>; festivals?: ReturnType<typeof createFestivals>;
   folkShow?: ReturnType<typeof createFolkShow>; hoilang?: ReturnType<typeof import('./hoilang.js').createHoiLang>; kidplay?: ReturnType<typeof createKidPlay>;
@@ -510,7 +513,7 @@ function giveSticker(p) { const left = STICKERS.filter(s => !p.stickers.includes
 const hudFor = h => G.huds[h.i];
 G.give = give;
 G.toast = (h, m) => hudFor(h).toast(m);
-G.quality = quality; // (feel and sound) js/fun.js leaves out the running dust on 'low'
+G.quality = quality; G.gpu = GPU; // (feel and sound) js/fun.js leaves out the running dust on 'low'
 G.fx = (x, y, z, ch) => { const s = sprite(ch, 1.4); s.material = s.material.clone(); s.position.set(x, y, z); scene.add(s); const t0 = performance.now(); const f = () => { const k = (performance.now() - t0) / 900; s.position.y = y + k * 2; s.material.opacity = 1 - k; if (k < 1) requestAnimationFrame(f); else { scene.remove(s); s.material.dispose(); } }; f(); };
 G.mount = (h, b) => { h.mount(b); h.profile.quests.buffalo = true; save(); say('Moo! Hold on tight!', 'Ụm bò! Bám chắc nhé!'); hudFor(h).toast(T('Press Jump to get off', 'Bấm Nhảy để xuống')); };
 
@@ -1751,10 +1754,13 @@ setInterval(() => {
 }, 100);
 // Sharp on phones that can manage it: with Graphics on Auto, the 3D picture is drawn at up to 2× the screen's
 // pixels and steps down a little whenever the game starts to stutter (phones started blurry at 1.25×).
-const adapt = { pr: renderer.getPixelRatio(), max: Math.min(window.devicePixelRatio || 1, PR_AUTO), min: 1, sum: 0, n: 0, t0: performance.now() };
+// (#341) without a graphics chip every pixel is drawn by the main processor: it may go down to half the screen's pixels
+const adapt = { pr: renderer.getPixelRatio(), max: Math.min(window.devicePixelRatio || 1, PR_AUTO), min: GPU.soft ? .5 : 1, sum: 0, n: 0, t0: performance.now() };
 function adaptResolution(rawMs) {
-  if (settings.quality !== 'auto' || document.hidden || rawMs > 250) return;
-  adapt.sum += rawMs; adapt.n++;
+  // (#341) a frame over 250 ms counts as 250 ms: very slow frames (3 a second) were left out, so the picture never got
+  // lighter on the computers that needed it most; a gap over 2 s is the game coming back from a pause, not slowness
+  if (settings.quality !== 'auto' || document.hidden || rawMs > 2000) return;
+  adapt.sum += Math.min(rawMs, 250); adapt.n++;
   if (performance.now() - adapt.t0 < 2500) return;
   const ms = adapt.sum / adapt.n; adapt.sum = adapt.n = 0; adapt.t0 = performance.now();
   const next = ms < 19 ? Math.min(adapt.max, adapt.pr + .25) : ms > 30 ? Math.max(adapt.min, adapt.pr - .25) : adapt.pr;
