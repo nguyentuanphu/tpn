@@ -3,7 +3,7 @@
 **ready for Release** (2 Nov 2026 AEDT). The workflow fixes are done; the robot itself stays off until the Claude
 key is fixed (owner: "Leave it for now", see Owner's decisions).
 
-Branch: `work/v107-bug-robot` (from main v1.06). Started 2 Nov 2026, 10:56 am AEDT.
+Branch: `work/v107-bug-robot` (from main v1.06), draft pull request #784. Started 2 Nov 2026, 10:56 am AEDT.
 
 ## Plan
 1. Read the recent runs of `.github/workflows/bug-fixer.yml` and their job logs; find why every bug ends `robot-stuck`.
