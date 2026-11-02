@@ -195,7 +195,8 @@ export function createManagementReadService(deps:Dependencies) {
     return {schemaVersion:1,generatedAt:new Date(now).toISOString(),period:{today,weekFrom,monthFrom,basis:'legacy-device-day'},scope:{traffic:q.traffic},
       reportingDays:new Set(daily.map(d=>d.date)).size,
       today:{devicesToday:known?ids(todays):null,devicesWeek:weekKnown?activeIds(week):null,devicesMonth:known?activeIds(daily):null,
-        newWeek:weekKnown?fresh(week):null,newMonth:known?fresh(daily):null,devicesEver:ever,
+        newWeek:weekKnown?fresh(week):null,newMonth:known?fresh(daily):null,devicesEver:Math.max(ever,ids(daily)),// (a device that reported without its first-seen mark still counts)
+        
         minsToday:known?minutes(todays):null,minsWeek:weekKnown?minutes(week):null,minsMonth:known?minutes(daily):null,
         errorsWeek:weekKnown?week.reduce((n,d)=>n+sumValues(d.value.errs),0):null,
         versions:{newest,onNewest:newest?builds.get(newest)||0:0,older:ranked.slice(1).reduce((n,[,c])=>n+c,0),list:ranked.slice(0,12).map(([build,devices])=>({build,devices}))}},
