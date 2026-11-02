@@ -1,6 +1,8 @@
 # v1.08 helper: notifications (push notifications for grown-ups)
 
-Status: in progress (started 3 Nov 2026, 8:05 am AEDT). Branch `work/v108-notifications` from `origin/release/v1.08`.
+**ready for Release** (3 Nov 2026 AEDT). Draft PR #801 into `release/v1.08`.
+
+Status: built and checked (started 3 Nov 2026, 8:05 am AEDT). Branch `work/v108-notifications` from `origin/release/v1.08`.
 
 ## Plan
 
@@ -55,11 +57,38 @@ Left for later / other cores:
 
 ## Progress
 
-(filled in as work goes on)
+All six parts of the plan are built:
+- `js/content/notify.ts` (shared rules), `js/notify.ts` (Grown-ups part, the device's own lines, taps), `js/art/notify.ts`
+  (bell and Home Screen phone drawings), `sw.ts` (`push`, `notificationclick`, new files in FILES).
+- `netlify/lib/webpush.mts`, `netlify/lib/push.mts`, `netlify/functions/push.mts` (`/api/push`),
+  `netlify/functions/push-send.mts` (every 30 minutes), `tools/make-vapid-keys.mts` (for the owner).
+- Studio: Releases group `notify` (12 switches `push_<kind>`, `js/content/releases.ts`), the panel with counts and the
+  "new this week" text (`studio/ui/app.ts`, route `/studio/api/push` in `netlify/functions/studio.mts`, permission in
+  `netlify/lib/admins.mts`: reading = pages, saving = releases).
+- Shared files changed (small, marked `(v1.08 notifications)`): `sw.ts`, `js/ui-settings.ts`, `js/main.ts` (one line that
+  loads js/notify.js only when notifications are on or a tap opened the game), `js/content/releases.ts`, `js/art.ts`,
+  `css/style.css` (a block at the end), `index.html` (preload line), `.gitignore` (built .js), `studio/ui/app.ts`,
+  `netlify/functions/studio.mts`, `netlify/lib/admins.mts`, `tests/run.mts`.
 
-## Checks
+Kind 11 (invites): the website and the service worker are ready (`POST /api/push { invite: <id> }`), but nothing in the
+friends screen sends it yet: the Online core needs to pass the friend's push id with its invite. For Release / Online.
 
-(filled in before reporting)
+No new spoken lines (notifications are text only, read by the device). No version change.
+
+Commits: 19b3e2b8, 0b04ca51, 2ee95ec6 (merge of release/v1.08), then the preload commit.
+
+## Checks (3 Nov 2026 AEDT, this container)
+
+- `pushnotify` (new): pass (485 s). Screenshots `tests/out/pushnotify-{phone,tablet,computer}-{en,vi}.png`, looked at.
+- `unit`: pass (507 tests, including the 10 new ones in `tests/unit/push-notify.test.mts`; RFC 8291 test vector matches).
+- `types`, `names`, `bilingual`, `rules`, `arch`, `noemoji`, `preload`: pass.
+- `boot`, `offline` (offline still works: saved 5.4 s, offline 3.7 s, no-answer 4.9 s), `swupdate`, `contract`, `phone`: pass.
+- `emoji`: **fail, not this branch's**: the emoji is in Release's `docs/plans/v108-owner-batch-20261103.md`. Left for Release.
+- `suite.mts --changed` picks the full suite (`.gitignore` changed), so it was started on GitHub
+  (`full-suite.yml`, workflow_dispatch on `work/v108-notifications`). Result: see the PR.
+
+Note: the local `--only` run was going on while release/v1.08 was merged in (a conflict in `css/style.css`, both blocks
+kept); `unit`, `preload` and `emoji` were run again after.
 
 ## Owner's decisions
 
