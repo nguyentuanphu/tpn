@@ -20,9 +20,9 @@ Helper: rules. Branch: `work/v107-rules`. Started 2 Nov 2026, 11:00 am AEDT.
 ## Progress
 
 - 11:00 am AEDT: briefs read, game list made, audit started.
-- About 12:30 pm AEDT: audit done for every rules game (table: `docs/rules-audit/README.md`). Eleven wrong rules, guides or lines fixed in each game's own file. New check `tests/unit/rules-audit.test.mjs` (fails without the fixes, passes with them). Commit `09c5b6bf`, then a type fix in `js/games/sudoku-core.ts` (`Set<number>`).
+- About 11:05 am AEDT: audit done for every rules game (table: `docs/rules-audit/README.md`). Eleven wrong rules, guides or lines fixed in each game's own file. New check `tests/unit/rules-audit.test.mjs` (fails without the fixes, passes with them). Commit `09c5b6bf`, then a type fix in `js/games/sudoku-core.ts` (`Set<number>`).
 - New spoken lines recorded with Azure (`node tools/make-voice-pack.mts --engine azure`): 12 files (3 English and 3 Vietnamese lines, woman and man voices), committed under `voices/`.
-- Paused at about 12:40 pm AEDT on Release's "slow down" message (usage). Waiting for "resume" after 2 pm AEDT.
+- Paused at about 11:15 am AEDT on Release's "slow down" message (usage). Waiting for "resume" after 2 pm AEDT.
 
 ## Checks so far
 
