@@ -1,7 +1,7 @@
-// Makes js/content/rules.js (the rule registry, architecture §9.7) from the hard-rule tables in docs/ARCHITECTURE.md §9,
+// Makes js/content/rules.ts (the rule registry, architecture §9.7) from the hard-rule tables in docs/ARCHITECTURE.md §9,
 // so the document and the code can never disagree about a rule's id, words or severity.
-//   node tools/rules-from-doc.mts            write js/content/rules.js
-//   node tools/rules-from-doc.mts --check    exit 1 if js/content/rules.js is not what the document says (tests: "rules")
+//   node tools/rules-from-doc.mts            write js/content/rules.ts
+//   node tools/rules-from-doc.mts --check    exit 1 if js/content/rules.ts is not what the document says (tests: "rules")
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -31,7 +31,7 @@ export const ruleOf = id => RULES[id] || null;
 `;
 if (process.argv[1] && process.argv[1].endsWith('rules-from-doc.mts')) {
   const norm = (s: string) => s.replace(/\r\n/g, '\n');
-  const want = render(rulesFromDoc(fs.readFileSync(path.join(ROOT, 'docs/ARCHITECTURE.md'), 'utf8'))), file = path.join(ROOT, 'js/content/rules.js');
-  if (process.argv.includes('--check')) { const same = fs.existsSync(file) && norm(fs.readFileSync(file, 'utf8')) === norm(want); console.log(same ? 'js/content/rules.js matches docs/ARCHITECTURE.md §9' : 'js/content/rules.js differs from docs/ARCHITECTURE.md §9: run node tools/rules-from-doc.mts'); process.exitCode = same ? 0 : 1; }
-  else { fs.writeFileSync(file, want); console.log('wrote js/content/rules.js:', Object.keys(rulesFromDoc(fs.readFileSync(path.join(ROOT, 'docs/ARCHITECTURE.md'), 'utf8'))).length, 'rules'); }
+  const want = render(rulesFromDoc(fs.readFileSync(path.join(ROOT, 'docs/ARCHITECTURE.md'), 'utf8'))), file = path.join(ROOT, 'js/content/rules.ts');
+  if (process.argv.includes('--check')) { const same = fs.existsSync(file) && norm(fs.readFileSync(file, 'utf8')) === norm(want); console.log(same ? 'js/content/rules.ts matches docs/ARCHITECTURE.md §9' : 'js/content/rules.ts differs from docs/ARCHITECTURE.md §9: run node tools/rules-from-doc.mts'); process.exitCode = same ? 0 : 1; }
+  else { fs.writeFileSync(file, want); console.log('wrote js/content/rules.ts:', Object.keys(rulesFromDoc(fs.readFileSync(path.join(ROOT, 'docs/ARCHITECTURE.md'), 'utf8'))).length, 'rules'); }
 }

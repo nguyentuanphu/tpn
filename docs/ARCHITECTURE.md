@@ -768,7 +768,7 @@ The design-handbook aliases (G1–G11, R1–R12) map onto these ids and stay val
 | SAVE-003 | A save referencing unknown ids loads with those parts dropped, never crashes | MAJOR | unit [IMPR] |
 
 ### 9.7 Rule registry [IMPR]
-- `js/content/rules.js` (L1) exports `RULES = { 'ROAD-005': { text, severity, check, alias: 'R5' }, … }` — **built round F**, made from this section's tables by `tools/rules-from-doc.mts` (so the two never disagree; check `rules`). `js/validate.js` gives each problem its rule's severity.
+- `js/content/rules.ts` (L1) exports `RULES = { 'ROAD-005': { text, severity, check, alias: 'R5' }, … }` — **built round F**, made from this section's tables by `tools/rules-from-doc.mts` (so the two never disagree; check `rules`). `js/validate.js` gives each problem its rule's severity.
 - Checks and validators report by rule id.
 - The handbook and HANDOFF cite ids.
 - A test fails if a rule has no validation entry, or if a check names an unknown id.
