@@ -96,6 +96,8 @@ work/after-v104-20261031, work/v107-*.
 ## Checks
 - Workflow YAML parses (python yaml): pass.
 - The error-message filter tried on a made-up execution file: prints the message and hides a key-like string: pass.
+- Real run 41366146887 on GitHub: pick step (retry of a robot-stuck bug), new "Say why Claude stopped" step: pass
+  (it printed the organization message). The Claude part could not be tested past its first answer (no working key).
 
 ## Progress
 - 2 Nov 2026, 11:30 am AEDT: first findings, workflow fixed, test run next.
@@ -104,4 +106,9 @@ work/after-v104-20261031, work/v107-*.
 ## Not done
 - A real fix through the robot (blocked by the key; owner chose to leave it for now).
 - ai-review.yml has the same key problem; it was not changed (not in this brief).
-- `cd tests && node suite.mjs --changed`: not run; only a workflow file and docs changed, no game code.
+- `cd tests && node suite.mjs --changed`: `--list` names 9 quick checks, but the run itself first rebuilds
+  `content/management-catalogue.json` (on main it is stale, built from v1.03), then counts that file as changed and
+  switches to the full suite, which stopped at 0/297 here. This happens on main too, not because of this branch.
+  The full suite on GitHub was **not started**: this branch changes only `.github/workflows/bug-fixer.yml` and this
+  file, no game code, and Release asked for economy on 2 Nov. Release decides. (For Release: the stale catalogue on
+  main makes every helper's `--changed` fall into the full suite; committing a fresh one would stop that.)
