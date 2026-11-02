@@ -1,5 +1,10 @@
 # v1.07 startup: status
 
+**ready for Release (full suite: Release's combined run)** (2 Nov 2026, 3:45 pm AEDT). Branch `work/v107-startup`,
+pull request #785 (draft). Known red checks on GitHub that are not this branch's (comment on #785): tester-arcades
+`report-float` (also red on #783 and v1.06's branch) and the website drift check (reports files this branch does not
+change). This branch's own red check, `unit` (start rows' shape), is fixed in f00b8c5d; `unit` passes locally (481).
+
 Helper: startup. Branch: `work/v107-startup` (from main v1.06 plus the briefs). Brief: [startup-brief.md](startup-brief.md).
 
 ## Plan (written first, 2 Nov 2026 AEDT; the owner's go was given to Release)
