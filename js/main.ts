@@ -868,10 +868,9 @@ world.familyBuilt = addFamilyBuildings(G); // houses and buildings the family ad
 buildPowerLines(G); // power poles (when switched on in Studio) wired to each other by themselves
 bootMark('pretraffic'); (await soon.traffic).createTraffic(G); bootMark('traffic'); await breathe(); // motorbikes, cars, buses, trams, xích lô and bicycles (js/traffic.js; Studio switches)
 // (v1.07 startup, PERF-001) the parts made from here on, loaded side by side while the first ones are made
-const later = { heritage: import('./heritage.js'), symbols: import('./symbols.js'), regionSites: import('./regionsites.js'), vnFun: import('./vnfun.js'),
-  myHouse: import('./myhouse.js'), lotus: import('./lotus.js'), pets: import('./pets.js'), ferry: import('./ferry.js'), passport: import('./passport.js'),
-  festivals: import('./festivals.js'), weather: import('./weather.js'), fun: import('./fun.js'), learn: import('./learn.js'), showcase: import('./showcase.js'),
-  trade: import('./trade.js'), folkShow: import('./folkshow.js'), signposts: import('./signposts.js'), secrets: import('./secrets.js') };
+const laterAll = import('./main/later.js');
+const later = Object.fromEntries((['heritage', 'symbols', 'regionSites', 'vnFun', 'myHouse', 'lotus', 'pets', 'ferry', 'passport', 'festivals', 'weather', 'fun',
+  'learn', 'showcase', 'trade', 'folkShow', 'signposts', 'secrets'] as const).map(k => [k, laterAll.then(m => m[k])])) as { [K in keyof typeof import('./main/later.js')]: Promise<typeof import('./main/later.js')[K]> };
 for (const p of Object.values(later)) p.catch(() => { });
 (await later.heritage).createHeritage(G, { give, sfx: SFX, say, toast: (h, m) => hudFor(h).toast(m) });
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
