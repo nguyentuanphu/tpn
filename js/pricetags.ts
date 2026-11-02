@@ -11,7 +11,7 @@ export function createPriceTags(G) {
   for (const s of world.stalls || []) {
     const v = s.tap && s.tap.startsWith('v_') && VENDORS.find(x => x.id === s.tap.slice(2));
     if (!v || !v.food || !Number.isFinite(v.food[3])) continue;
-    const price = v.food[3], c = document.createElement('canvas'); c.width = 320; c.height = 160; const g = c.getContext('2d');
+    const price = v.food[3] as number, c = document.createElement('canvas'); c.width = 320; c.height = 160; const g = c.getContext('2d');
     const draw = () => {
       g.clearRect(0, 0, 320, 160); g.fillStyle = '#fff8e6'; g.strokeStyle = '#8a5a3b'; g.lineWidth = 8;
       g.beginPath(); g.roundRect ? g.roundRect(6, 6, 308, 148, 22) : g.rect(6, 6, 308, 148); g.fill(); g.stroke();

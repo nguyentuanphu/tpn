@@ -13,10 +13,10 @@ export const canListen = () => !!SR && !iosHomeScreen;
 
 let active = null, cancelActive = null;
 // Listen once. Resolves with what was heard ('' if nothing). onPartial shows words as they come in.
-export function listen({ onPartial, lang } = {}) {
+export function listen({ onPartial, lang }: { onPartial?: (text: string) => void, lang?: string } = {}) {
   if (!SR) return Promise.resolve('');
   stopListening();
-  return new Promise(res => {
+  return new Promise<string>(res => {
     const r = new SR(); active = r;
     r.lang = (lang || settings.lang) === 'vi' ? 'vi-VN' : 'en-AU';
     r.interimResults = true; r.maxAlternatives = 1; r.continuous = false;

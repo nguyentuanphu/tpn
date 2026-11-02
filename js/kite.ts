@@ -37,7 +37,7 @@ export function kiteWhistle(strength = 1) {
 export function createKites(G) {
   const { scene, world } = G;
   let live = []; // { h, kite, line, pos, t }
-  const K = {};
+  const K: Record<string, any> = {};
   K.sync = () => {
     live.forEach(L => { scene.remove(L.kite); scene.remove(L.line); }); live = [];
     G.heroes.forEach(h => {

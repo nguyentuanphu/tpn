@@ -155,7 +155,7 @@ export function createHoiLang(G, { say, save, reward }) {
     if (nowMs - lastLook >= 1000) {
       lastLook = nowMs; E = clock();
       // a player changed (Who's playing?): the carried prizes follow the new children
-      if (carried.some(c => !G.heroes.includes(c.h)) || G.heroes.length !== (sync.n ?? G.heroes.length)) sync(); sync.n = G.heroes.length;
+      if (carried.some(c => !G.heroes.includes(c.h)) || G.heroes.length !== ((sync as typeof sync & { n?: number }).n ?? G.heroes.length)) sync(); (sync as typeof sync & { n?: number }).n = G.heroes.length;
       for (const h of G.heroes) {
         const F = fests.reduce((b, f) => !b || dist2(f.x, f.z, h.pos.x, h.pos.z) < dist2(b.x, b.z, h.pos.x, h.pos.z) ? f : b, null), d = F ? dist2(F.x, F.z, h.pos.x, h.pos.z) : 1e9;
         if (d > 70) continue;

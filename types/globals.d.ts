@@ -4,8 +4,8 @@
 export {};
 declare global {
   /** the parts of the browser's speech recognition the microphone test uses (js/mictest.ts) */
-  interface SvSpeechRecognition { lang: string; interimResults: boolean; continuous: boolean; start(): void; stop(): void; abort(): void;
-    onresult: ((e: { results: Iterable<ArrayLike<{ transcript: string }>> }) => void) | null; onerror: ((e: { error?: string }) => void) | null; onend: (() => void) | null }
+  interface SvSpeechRecognition { lang: string; interimResults: boolean; continuous: boolean; maxAlternatives?: number; start(): void; stop(): void; abort(): void;
+    onresult: ((e: { results: Iterable<ArrayLike<{ transcript: string }>> & ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null; onerror: ((e: { error?: string }) => void) | null; onend: (() => void) | null }
   /** the game object the checks and the tools drive in a test browser (js/main.js); only the parts they use so far
    *  (the whole shared game object gets its own type later in the TypeScript plan) */
   type SvHero = { profile: import('../js/state.js').Profile };

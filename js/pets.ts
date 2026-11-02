@@ -40,7 +40,7 @@ function tag(textFn) {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
   const draw = () => { const s = textFn(); x.clearRect(0, 0, 256, 64); x.font = 'bold 32px Fredoka, "Baloo 2", sans-serif'; const w = Math.min(250, x.measureText(s).width + 30); x.fillStyle = 'rgba(255,255,255,.92)'; x.beginPath(); x.roundRect((256 - w) / 2, 8, w, 46, 23); x.fill(); x.strokeStyle = '#ff9fc8'; x.lineWidth = 4; x.stroke(); x.fillStyle = '#5a2a4a'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(s, 128, 32, 236); t.needsUpdate = true; };
   draw(); onLang(draw);
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false })); s.scale.set(2.2, .55, 1); s.redraw = draw; return s;
+  const s: THREE.Sprite & { redraw?: () => void } = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false })); s.scale.set(2.2, .55, 1); s.redraw = draw; return s;
 }
 
 export function createPets(G) {
@@ -59,7 +59,7 @@ export function createPets(G) {
   saveProfiles(); saveFarm();
 
   let live = []; // { h, pt, obj, tag, sniff, j }
-  const P = {};
+  const P: Record<string, any> = {};
   P.sync = () => {
     live.forEach(L => { scene.remove(L.obj); scene.remove(L.tag); scene.remove(L.sniff); });
     live = [];
@@ -209,7 +209,7 @@ export function createPets(G) {
     if (h.carry) return true;
     const L = live.find(L => L.h === h); if (!L) return false;
     const hud = G.huds[h.i], name = petName(L.pt), pet = PETS[L.pt.kind];
-    const R = { stage: 'call', t: 0, x: h.pos.x, z: h.pos.z, kicks: 0 };
+    const R: { stage: string, t: number, x: number, z: number, kicks: number, push?: number } = { stage: 'call', t: 0, x: h.pos.x, z: h.pos.z, kicks: 0 };
     // which way is dry land? the last safe spot on the shore
     const shore = { x: h.lastSafe.x, z: h.lastSafe.z };
     SFX.splash(); say(`Oh no, you are too tired to swim! Call ${name} to help you!`, `Ôi, con mệt quá không bơi nổi! Gọi ${name} đến giúp nào!`);

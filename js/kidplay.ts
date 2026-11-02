@@ -21,7 +21,7 @@ export const HATS = [
   { id: 'crown', price: 80, en: 'Golden crown', vi: 'Vương miện vàng' }
 ];
 // what is said ([en, vi]; recorded)
-export const KID_LINES = {
+export const KID_LINES: Record<string, [string, string]> = {
   fed: ['Yum, thank you! I feel stronger already.', 'Ngon quá, cảm ơn bạn! Mình thấy khỏe hơn rồi.'],
   grew: ['Look, I grew bigger! Feed me again tomorrow.', 'Nhìn nè, mình lớn hơn rồi! Mai cho mình ăn nữa nhé.'],
   trick: ['Watch my loop-the-loop!', 'Xem mình bay vòng tròn nè!'],

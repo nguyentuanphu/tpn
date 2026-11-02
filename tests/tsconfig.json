@@ -288,6 +288,24 @@
     "../js/folkshow.ts",
     "../js/fun.ts",
     "../js/gather.ts",
-    "../js/gfx.ts"
+    "../js/gfx.ts",
+    "../js/handpad.ts",
+    "../js/hoilang.ts",
+    "../js/icons.ts",
+    "../js/input.ts",
+    "../js/jobs.ts",
+    "../js/kidplay.ts",
+    "../js/kite.ts",
+    "../js/listen.ts",
+    "../js/lunar.ts",
+    "../js/money.ts",
+    "../js/nametags.ts",
+    "../js/openspot.ts",
+    "../js/owlguide.ts",
+    "../js/passport.ts",
+    "../js/pets.ts",
+    "../js/photos.ts",
+    "../js/placebook.ts",
+    "../js/pricetags.ts"
   ]
 }

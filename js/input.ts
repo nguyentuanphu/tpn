@@ -1,6 +1,9 @@
 // Controls for up to two players: a floating joystick and camera-drag area per screen half,
 // on-screen buttons, keyboard, and game controllers.
 export class Pad {
+  declare mx: number; declare mz: number; declare cdx: number; declare cdy: number; declare run: boolean; declare jumpHeld: boolean;
+  declare _jump: boolean; declare _act: boolean; declare _menu: boolean; declare _btnJump?: boolean; declare _btnRun?: boolean;
+  declare _gp?: Record<string, boolean>; declare goal?: number[] | null;
   constructor() { this.mx = 0; this.mz = 0; this.cdx = 0; this.cdy = 0; this.run = false; this.jumpHeld = false; this._jump = false; this._act = false; this._menu = false; }
   jump() { const v = this._jump; this._jump = false; return v; }
   act() { const v = this._act; this._act = false; return v; }
@@ -22,7 +25,7 @@ export function initInput(canvas, rects, isBlocked, onTap) {
     const kind = left && e.pointerType !== 'mouse' ? 'stick' : 'cam';
     if (kind === 'stick' && [...touches.values()].some(t => t.p === p && t.kind === 'stick')) return;
     touches.set(e.pointerId, { p, kind, s, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY, t0: performance.now(), moved: 0 });
-    if (kind === 'stick') { const s = stickEls[p]; s.style.left = e.clientX + 'px'; s.style.top = e.clientY + 'px'; s.firstChild.style.transform = ''; }
+    if (kind === 'stick') { const s = stickEls[p]; s.style.left = e.clientX + 'px'; s.style.top = e.clientY + 'px'; (s.firstChild as HTMLElement).style.transform = ''; }
     try { canvas.setPointerCapture(e.pointerId); } catch (err) { }
   });
   canvas.addEventListener('pointermove', e => {
@@ -32,7 +35,7 @@ export function initInput(canvas, rects, isBlocked, onTap) {
       let dx = e.clientX - t.x0, dy = e.clientY - t.y0; const d = Math.hypot(dx, dy), R = 55;
       if (d > R) { dx = dx / d * R; dy = dy / d * R; }
       if (t.moved + d > 14) { stickEls[t.p].hidden = false; pad.mx = t.s * dx / R; pad.mz = -t.s * dy / R; pad.goal = null; }
-      stickEls[t.p].firstChild.style.transform = `translate(${dx}px,${dy}px)`;
+      (stickEls[t.p].firstChild as HTMLElement).style.transform = `translate(${dx}px,${dy}px)`;
     } else { pad.cdx += t.s * (e.clientX - t.x); pad.cdy += t.s * (e.clientY - t.y); }
     t.moved += Math.abs(e.clientX - t.x) + Math.abs(e.clientY - t.y);
     t.x = e.clientX; t.y = e.clientY;
