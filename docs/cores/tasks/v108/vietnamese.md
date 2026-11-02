@@ -1,5 +1,7 @@
 # v1.08 helper: vietnamese (status)
 
+**ready for Release** (3 Nov 2026 AEDT). The full suite is left for Release (round rule, 3 Nov 2026 AEDT).
+
 Branch `work/v108-vietnamese`, made from `origin/release/v1.08` (a10eae26) on 3 Nov 2026 AEDT. Brief: `vietnamese-brief.md`.
 
 ## Plan
@@ -35,4 +37,14 @@ Checks: `cd tests && node suite.mts --changed` (if it picks the full suite: push
 
 ## Progress
 
-(filled in as the work goes)
+Done, 3 Nov 2026 AEDT:
+- The ten games, their icons, guides, map pin (the school) and level values, as planned. Commits 511fd7bc (games), f9073509 (types; the Opposite Pairs card shows its picture), then the voice commit (568 recordings with Azure: en-AU and vi-VN, both voices; no line has a child's name).
+- Shared files changed, each with one marked block `(v1.08 vietnamese)`: `js/content/activities.ts`, `js/games/catalog.ts`, `js/games/registry.ts`, `js/art.ts`, `js/school.ts`, `tools/make-voice-pack.mts`, `tests/checks/learning.mts`; `.gitignore` gained the built `js/art/tiengviet2.js` (written by the build). `voices/` holds the new recordings and manifests.
+
+Checks (local, 3 Nov 2026 AEDT, `node run.mts <name>` one at a time):
+- pass: `hocvui` (all ten won by real taps at Easy and Talent; Talent shows more: tonemean 2 to 4, rhyme 2 to 5, letters 2 to 5, opposite 4 to 10 cards, cadao 2 to 5, tucngu 2 to 5, readalong 3 to 6 words, sentence 3 to 7 cards, dictation 3 to 7 letters, riddle 2 to 5), `games` (247 games open), `guides` (247), `levelsb`, `phone`, `voicecover`, `voicepack`, `bilingual`, `names`, `types`, `validate`.
+- fail, not from this branch: `emoji` finds the target emoji in `docs/plans/v108-owner-batch-20261103.md` (Release's plan file, already on `release/v1.08`).
+- `suite.mts --changed` picks the full suite (`.gitignore` changed): left for Release, per the round rule.
+- Screenshots looked at: all ten games on a phone (390 x 844, Vietnamese, Talent), a tablet (820 x 1180, English, Hard) and a computer (1366 x 800, English, Talent), and the Học vui tab; every button 44 px or more and on screen, no page errors.
+
+Open questions: none.
