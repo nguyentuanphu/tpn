@@ -43,6 +43,7 @@ marketing/source/runvalley.log
 /js/animalhomes.js
 /js/animals.js
 /js/art.js
+/js/art/english.js
 /js/art/howto-tales.js
 /js/art/kit.js
 /js/art/learning.js
@@ -83,6 +84,7 @@ marketing/source/runvalley.log
 /js/content/chapters.js
 /js/content/companions.js
 /js/content/devname.js
+/js/content/english.js
 /js/content/family-quiz.js
 /js/content/familycode.js
 /js/content/familymissions.js
@@ -163,6 +165,7 @@ marketing/source/runvalley.log
 /js/dayplan.js
 /js/dinh.js
 /js/emojiswap.js
+/js/englishmode.js
 /js/explain.js
 /js/extras.js
 /js/family-backup.js
@@ -198,6 +201,8 @@ marketing/source/runvalley.log
 /js/games/drawing.js
 /js/games/drawing2.js
 /js/games/drawshape.js
+/js/games/english-meta.js
+/js/games/english.js
 /js/games/familyquiz-core.js
 /js/games/familyquiz.js
 /js/games/farmgames.js

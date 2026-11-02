@@ -13,8 +13,9 @@ export type Corner = typeof CORNERS[number];
 export const CORNER_LINKS: Record<Corner, string[]> = {
   // Vietnamese words of the three regions, and the Vietnamese alphabet with ă â đ ê ô ơ ư when played in Tiếng Việt
   hv_vi: ['words', 'letters'],
-  // the owner's list: phonics, first words, opposites and the reading corner's games (when Studio's reading switch is on)
-  hv_en: ['phonics', 'firstwords', 'opposites', 'rd_listentouch', 'rd_storychoice', 'rd_trace', 'rd_sounds', 'rd_build', 'rd_rhyme', 'rd_sight', 'rd_tones', 'rd_syllable', 'rd_match', 'rd_sentence', 'rd_readalong',
+  // the owner's list: phonics, opposites and the reading corner's games (when Studio's reading switch is on); opened from
+  // here they play in English mode (js/englishmode.ts). (v1.08 english) First Words (Chinese and Hindi) moved to Going places
+  hv_en: ['phonics', 'opposites', 'rd_listentouch', 'rd_storychoice', 'rd_trace', 'rd_sounds', 'rd_build', 'rd_rhyme', 'rd_sight', 'rd_tones', 'rd_syllable', 'rd_match', 'rd_sentence', 'rd_readalong',
     'rd_blend', 'rd_hats', 'rd_endings', 'rd_compound', 'rd_labels', 'rd_signs', 'rd_questions', 'rd_many', 'rd_caps', 'rd_poem', 'rd_missing', 'rd_book', 'rd_storyhelp'],
   // counting, adding and taking away, the number line and the numbers games; comparing and time from the plan
   hv_math: ['counting', 'sums', 'numline', 'tenframe', 'dice', 'evenodd', 'measure', 'beforeafter', 'halves', 'moreless', 'clock'],

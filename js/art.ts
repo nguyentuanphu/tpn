@@ -12,4 +12,5 @@ import './art/round30.js';
 import './art/things-money.js';
 import './art/r90-audits.js';
 import './art/learning.js';
+import './art/english.js'; // (v1.08 english)
 export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';

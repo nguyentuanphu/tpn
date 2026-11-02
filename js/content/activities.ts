@@ -78,7 +78,9 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   leafrub: ['art', 2, 1],
   counting: ['numbers', 2, 1], numbers: ['numbers', 3, 1], moreless: ['numbers', 3, 2], dragonfire: ['numbers', 3, 1], sums: ['numbers', 5, 3], clock: ['numbers', 5, 3], days: ['numbers', 5, 2],
   shapes: ['shapes', 2, 1], pattern: ['shapes', 3, 2], sorting: ['shapes', 2, 1], tower: ['shapes', 2, 1], memory: ['shapes', 3, 2], sudoku: ['shapes', 5, 3], hanoi: ['shapes', 5, 3],
-  letters: ['words', 4, 2], phonics: ['words', 4, 2], opposites: ['words', 4, 2], words: ['words', 5, 2], firstwords: ['words', 5, 3],
+  letters: ['words', 4, 2], phonics: ['words', 4, 2], opposites: ['words', 4, 2], words: ['words', 5, 2],
+  // (v1.08 english) First Words is Chinese and Hindi, not English: it left the English corner for Going places, beside China Town and India Village
+  firstwords: ['travel', 5, 3],
   feelings: ['me', 2, 1], bodyparts: ['me', 2, 1], familyquiz: ['me', 3, 2], fruitparade: ['play', 2, 1], sparkleorchard: ['play', 2, 1], sparklefruitbar: ['play', 2, 1],
   kite: ['play', 2, 1], hopscotch: ['play', 3, 1], tug: ['play', 2, 1], skipping: ['play', 3, 2], sackrace: ['play', 3, 1], nemlon: ['play', 3, 1], marbles: ['play', 4, 2], cricket: ['play', 5, 2], mrwolf: ['play', 3, 2], dacau: ['play', 4, 2],
   dragon: ['vietnam', 3, 1], cacuangua: ['vietnam', 5, 2], meochuot: ['vietnam', 3, 1], cuopco: ['vietnam', 3, 1], keocua: ['vietnam', 3, 1], danhdao: ['vietnam', 4, 2], nemcon: ['vietnam', 3, 1], trongnu: ['vietnam', 3, 1], duathuyen: ['vietnam', 3, 1], datnieu: ['vietnam', 2, 1],
@@ -88,6 +90,8 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   // (Học vui) the six science experiments and the two Tiếng Việt games (js/games/science.ts, js/games/tiengviet.ts)
   sci_float: ['hv_sci', 2, 1], sci_magnet: ['hv_sci', 3, 1], sci_ramp: ['hv_sci', 3, 1], sci_seesaw: ['hv_sci', 3, 2], sci_shadow: ['hv_sci', 3, 2], sci_sound: ['hv_sci', 2, 1],
   vi_tones: ['hv_vi', 3, 2], vi_build: ['hv_vi', 4, 2],
+  // (v1.08 english) the English corner's own games (js/games/english.ts)
+  en_words: ['hv_en', 2, 1], en_listen: ['hv_en', 3, 1], en_say: ['hv_en', 3, 2], en_abc: ['hv_en', 2, 1], en_count: ['hv_en', 2, 1], en_sentence: ['hv_en', 4, 2], en_greet: ['hv_en', 3, 1], en_colshape: ['hv_en', 2, 1],
   heodat: ['money', 2, 1], coinnote: ['money', 2, 1], lixi: ['money', 2, 1], needwant: ['money', 3, 1], cheaper: ['money', 3, 1], bahu: ['money', 3, 2], shoplist: ['money', 3, 2], waitgrow: ['money', 3, 2], shopkeep: ['money', 4, 2], barter: ['money', 4, 2]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)

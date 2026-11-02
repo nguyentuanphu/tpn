@@ -221,6 +221,15 @@ export const GAME_CATALOG = [
   // the two Tiếng Việt games: hear a tone and pick its mark; build a syllable (js/games/tiengviet.ts)
   { id: 'vi_tones', learn: true, icon: 'vi:tones', name: () => T('Tone Detective', 'Thám Tử Dấu Thanh') },
   { id: 'vi_build', learn: true, icon: 'vi:build', name: () => T('Build a Syllable', 'Bé Ghép Vần') },
+  // (v1.08 english) the English corner's own games: real English lessons, always played in English mode (js/games/english.ts)
+  { id: 'en_words', learn: true, english: true, icon: 'en:words', name: () => T('Picture Words', 'Từ Vựng Qua Tranh') },
+  { id: 'en_listen', learn: true, english: true, icon: 'en:listen', name: () => T('Listen and Choose', 'Nghe và Chọn') },
+  { id: 'en_say', learn: true, english: true, icon: 'en:say', name: () => T('Say and Match', 'Nói và Ghép') },
+  { id: 'en_abc', learn: true, english: true, icon: 'en:abc', name: () => T('ABC Song', 'Bài Hát ABC') },
+  { id: 'en_count', learn: true, english: true, icon: 'en:count', name: () => T('Counting Song', 'Bài Hát Đếm Số') },
+  { id: 'en_sentence', learn: true, english: true, icon: 'en:sentence', name: () => T('First Sentences', 'Những Câu Đầu Tiên') },
+  { id: 'en_greet', learn: true, english: true, icon: 'en:greet', name: () => T('Greetings', 'Lời Chào Hỏi') },
+  { id: 'en_colshape', learn: true, english: true, icon: 'en:colshape', name: () => T('Colours and Shapes', 'Màu Sắc và Hình Khối') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -263,5 +272,7 @@ export const GAME_LOADERS = {
   'crafts.ts': { ids: ["lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"], load: () => import('./crafts.js') },
   'science.ts': { ids: ['sci_float', 'sci_magnet', 'sci_ramp', 'sci_seesaw', 'sci_shadow', 'sci_sound'], load: () => import('./science.js') },
   'tiengviet.ts': { ids: ['vi_tones', 'vi_build'], load: () => import('./tiengviet.js') },
+  // (v1.08 english)
+  'english.ts': { ids: ['en_words', 'en_listen', 'en_say', 'en_abc', 'en_count', 'en_sentence', 'en_greet', 'en_colshape'], load: () => import('./english.js') },
 
 };
