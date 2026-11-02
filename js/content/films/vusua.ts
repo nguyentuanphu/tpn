@@ -67,7 +67,7 @@ export default { pages: [
     village(S, { house: [-4, -8] });
     const tree = milkTree(); S.add(tree, 1.4, -1);
     const boy = S.person(BOY, 1.6, 1.4, PI), fr = milkFruit(); S.grab(boy, 0, fr, [0, -.5, .15]);
-    const milk = Pp.drops(10, .06); milk.children.forEach(d => { d.material = new THREE.MeshBasicMaterial({ color: '#ffffff' }); d.material.userData.film = true; }); S.add(milk, 1.6, 1.4, 1.8);
+    const milk = Pp.drops(10, .06); milk.children.forEach((d: any) => { d.material = new THREE.MeshBasicMaterial({ color: '#ffffff' }); d.material.userData.film = true; }); S.add(milk, 1.6, 1.4, 1.8);
     S.shot([3, 1.8, 5], [1.4, 1.3, 1]);
     S.do(boy, .3, 'eat', 2.4); S.show(milk, 1.4); S.show(milk, 3.4, false); S.mood(boy, 1.6, 'happy');
     S.cam(.3, 3, [2.6, 1.6, 3.6], [1.5, 1.5, 1.4]);

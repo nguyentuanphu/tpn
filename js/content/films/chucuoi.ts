@@ -50,7 +50,7 @@ export default { pages: [
     village(S, { house: [-4, -6] });
     const tree = magicTree(1.1); S.add(tree, 2, -1);
     const wife = S.person(WIFE, -2, 2, .8), bucket = mesh([P(new THREE.CylinderGeometry(.2, .16, .3, 10), '#8a6a4a', [0, 0, 0])]); S.grab(wife, 0, bucket, [0, -.55, .15]);
-    const drops = Pp.drops(14, .1); drops.children.forEach(d => { d.material = new THREE.MeshBasicMaterial({ color: '#7a5a32' }); d.material.userData.film = true; }); S.add(drops, 1.3, 1, .4);
+    const drops = Pp.drops(14, .1); drops.children.forEach((d: any) => { d.material = new THREE.MeshBasicMaterial({ color: '#7a5a32' }); d.material.userData.film = true; }); S.add(drops, 1.3, 1, .4);
     S.shot([0, 2.6, 8.4], [1, 1.4, 0]);
     S.walk(wife, .3, [1.1, .6]); S.cam(.3, 3, [3, 1.8, 5.6], [1.4, 1, 0]);
     S.do(wife, 3.4, 'water', 3.2); S.show(drops, 3.6); S.show(drops, 6.4, false); S.mood(wife, 3.4, 'smile');

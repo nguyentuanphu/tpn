@@ -32,7 +32,7 @@ export function afloat(S, model, x, z, yaw = 0) {
   return g;
 }
 // put an actor into a moving thing (a boat, an animal); 'yaw' is relative to it
-export function board(a, parent, pos, yaw = 0, scale) { parent.add(a.o); a.o.position.set(...pos); a.o.rotation.set(0, yaw, 0); if (scale) a.o.scale.setScalar(scale); }
+export function board(a, parent, pos, yaw = 0, scale?: number) { parent.add(a.o); a.o.position.set(...(pos as [number, number, number])); a.o.rotation.set(0, yaw, 0); if (scale) a.o.scale.setScalar(scale); }
 // turn a thing to face a point, then move it there (an animal walking, a bird flying)
 export function go(S, o, t, dur, to, e = lin, arc = 0) {
   S.at(t, () => { const dx = to[0] - o.position.x, dz = to[2] - o.position.z; if (Math.abs(dx) + Math.abs(dz) > .01) o.rotation.y = Math.atan2(dx, dz); });
@@ -52,7 +52,7 @@ export const shine = (S, geo, color, x, y, z, op = .95) => { const m = new THREE
 // ---------- the valley's animals ----------
 export function animal(S, kind, x, z, yaw = 0, scale = 1) {
   const g = filmAnimal(kind); g.scale.setScalar(scale);
-  g.traverse(o => { if (o.material && !o.material.userData.film) o.material.userData.shared = true; });
+  g.traverse((o: any) => { if (o.material && !o.material.userData.film) o.material.userData.shared = true; });
   g.userData.tick = animate(g); S.add(g, x, 0, z, yaw);
   return g;
 }
@@ -62,8 +62,8 @@ const animate = g => (dt, time) => { tickAnimal(g, dt, time); const r = g.userDa
 // ---------- animals the valley does not have (rigged like js/animals.js, so tickAnimal moves them) ----------
 function rigged(build, o = {}) {
   const g = new THREE.Group(), root = new THREE.Group(); g.add(root);
-  const r = Object.assign({ root, legs: [], ears: [], gait: 'walk', wag: 0, sway: 0, seed: Math.random() * 10, ph: 0, sp: 0, px: null, pz: null }, o);
-  const piv = (parent, pos, parts) => { const p = new THREE.Group(); p.position.set(...pos); if (parts && parts.length) p.add(mesh(parts)); parent.add(p); return p; };
+  const r: any = Object.assign({ root, legs: [], ears: [], gait: 'walk', wag: 0, sway: 0, seed: Math.random() * 10, ph: 0, sp: 0, px: null, pz: null }, o);
+  const piv = (parent, pos, parts) => { const p = new THREE.Group(); p.position.set(...(pos as [number, number, number])); if (parts && parts.length) p.add(mesh(parts)); parent.add(p); return p; };
   build(root, r, piv);
   // tickAnimal resets its breathing scale every frame. Retain the authored animal size
   // separately, otherwise a tiny mouse becomes adult-sized and a lion shrinks.
