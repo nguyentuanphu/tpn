@@ -15,6 +15,7 @@
 // can lose (the right one wiggles after a wait), then more choices and harder English up to Talent.
 import { register, untilRight } from './frame.js';
 import { pic } from '../art.js';
+import { T } from '../i18n.js';
 import { el, esc, shuffle, pick, wait } from '../util.js';
 import { sayIn, sayAsync, captionOnly } from '../voice.js';
 import { SFX, tone } from '../audio.js';
@@ -107,7 +108,7 @@ const showMeaning = (api, en: string, vi: string) => api.show(en, vi);
 const tell = (api, line: Pair) => api.show(...line);
 
 // ---------- Picture Words ----------
-register({ id: 'en_words', learn: true, english: true, icon: 'en:words', async run(api) {
+register({ id: 'en_words', learn: true, english: true, icon: 'en:words', name: () => T('Picture Words', 'Từ Vựng Qua Tranh'), async run(api) {
   const lv = lvOf(api), rounds = [4, 5, 6, 6, 7][lv], nOpts = [2, 3, 4, 5, 6][lv];
   const keys = [['animals'], ['animals', 'food', 'family'], ['animals', 'food', 'family', 'colours', 'body'], TOPICS.map(t => t.key), TOPICS.map(t => t.key)][lv];
   // Talent: the word is only written (read it, then hear it); below that it is heard, and from Easy written too
@@ -132,7 +133,7 @@ register({ id: 'en_words', learn: true, english: true, icon: 'en:words', async r
 } });
 
 // ---------- Listen and Choose ----------
-register({ id: 'en_listen', learn: true, english: true, icon: 'en:listen', async run(api) {
+register({ id: 'en_listen', learn: true, english: true, icon: 'en:listen', name: () => T('Listen and Choose', 'Nghe và Chọn'), async run(api) {
   const lv = lvOf(api), rounds = [4, 5, 5, 6, 6][lv], nOpts = [2, 3, 4, 4, 6][lv];
   // what changes between the cards: the thing (under-5s), how many (Easy), both (Medium), how many and big or small (Hard), all three (Talent)
   const maxN = [1, 3, 5, SIZED_MAX, SIZED_MAX][lv];
@@ -170,7 +171,7 @@ register({ id: 'en_listen', learn: true, english: true, icon: 'en:listen', async
 } });
 
 // ---------- Say and Match ----------
-register({ id: 'en_say', learn: true, english: true, icon: 'en:say', async run(api) {
+register({ id: 'en_say', learn: true, english: true, icon: 'en:say', name: () => T('Say and Match', 'Nói và Ghép'), async run(api) {
   const lv = lvOf(api), rounds = [4, 4, 5, 5, 6][lv], nOpts = [2, 3, 3, 4, 4][lv];
   // under-5s and Easy hear the word and pick its picture; Medium picks the written word for the picture; Hard reads it
   // before hearing it; Talent reads words that look alike (cat, car, cake, cow)
@@ -213,7 +214,7 @@ register({ id: 'en_say', learn: true, english: true, icon: 'en:say', async run(a
 const LINE_AT = (() => { const out: number[][] = []; let k = 0; for (const n of [7, 9, 3, 3, 4]) { out.push(Array.from({ length: n }, (_, i) => k + i)); k += n; } return out; })();
 const midiHz = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
 const ABC_WIN: Pair = ['Now you know your ABC!', 'Con thuộc bảng chữ cái rồi!'];
-register({ id: 'en_abc', learn: true, english: true, icon: 'en:abc', async run(api) {
+register({ id: 'en_abc', learn: true, english: true, icon: 'en:abc', name: () => T('ABC Song', 'Bài Hát ABC'), async run(api) {
   const lv = lvOf(api), rounds = [3, 4, 5, 5, 6][lv], nOpts = [2, 3, 3, 4, 5][lv], gaps = lv >= 3 ? 2 : 1;
   const lines = [[0], [0, 1], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4]][lv], lower = lv === 4;
   const board = setup(api, [rounds, nOpts, lines.length, gaps, lower ? 1 : 0], rounds * 8);
@@ -254,7 +255,7 @@ register({ id: 'en_abc', learn: true, english: true, icon: 'en:abc', async run(a
 } });
 
 // ---------- Counting Song ----------
-register({ id: 'en_count', learn: true, english: true, icon: 'en:count', async run(api) {
+register({ id: 'en_count', learn: true, english: true, icon: 'en:count', name: () => T('Counting Song', 'Bài Hát Đếm Số'), async run(api) {
   const lv = lvOf(api), rounds = [3, 4, 5, 5, 5][lv], nOpts = [2, 3, 3, 4, 5][lv];
   // under-5s count 1 to 3, Easy to 5, Medium to 10 (tapping each one), Hard 11 to 20 (a ten and some more), Talent in tens
   const [lo, hi] = [[1, 3], [1, 5], [4, 10], [11, 20], [2, 10]][lv], tens = lv === 4, tapCount = lv <= 2;
@@ -300,7 +301,7 @@ register({ id: 'en_count', learn: true, english: true, icon: 'en:count', async r
 } });
 
 // ---------- First Sentences ----------
-register({ id: 'en_sentence', learn: true, english: true, icon: 'en:sentence', async run(api) {
+register({ id: 'en_sentence', learn: true, english: true, icon: 'en:sentence', name: () => T('First Sentences', 'Những Câu Đầu Tiên'), async run(api) {
   const lv = lvOf(api), rounds = [4, 4, 5, 5, 5][lv], nOpts = [2, 3, 4, 4, 6][lv];
   // under-5s hear "I see a cat." and tap the cat; Easy and Medium find the missing word; Hard puts four words in order;
   // Talent puts five in order (with a describing word) and leaves one word out
@@ -348,7 +349,7 @@ register({ id: 'en_sentence', learn: true, english: true, icon: 'en:sentence', a
 } });
 
 // ---------- Greetings ----------
-register({ id: 'en_greet', learn: true, english: true, icon: 'en:greet', async run(api) {
+register({ id: 'en_greet', learn: true, english: true, icon: 'en:greet', name: () => T('Greetings', 'Lời Chào Hỏi'), async run(api) {
   const lv = lvOf(api), rounds = [4, 5, 5, 6, 6][lv], nOpts = [2, 3, 3, 4, 4][lv], top = [0, 1, 2, 3, 3][lv];
   // under-5s and Easy hear the choices read out; from Medium the child reads them; Talent asks the harder ones first
   const readOut = lv <= 1;
@@ -376,7 +377,7 @@ register({ id: 'en_greet', learn: true, english: true, icon: 'en:greet', async r
 } });
 
 // ---------- Colours and Shapes ----------
-register({ id: 'en_colshape', learn: true, english: true, icon: 'en:colshape', async run(api) {
+register({ id: 'en_colshape', learn: true, english: true, icon: 'en:colshape', name: () => T('Colours and Shapes', 'Màu Sắc và Hình Khối'), async run(api) {
   const lv = lvOf(api), rounds = [4, 5, 5, 6, 6][lv], nOpts = [2, 3, 4, 4, 6][lv];
   // under-5s and Easy hear a colour; Medium a shape; Hard a colour and a shape; Talent big or small too
   const ask = ['colour', 'colour', 'shape', 'both', 'size'][lv];
