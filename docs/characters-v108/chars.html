@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8"><style>html,body{margin:0;background:#bfe3f5}</style>
+<script type="module">
+import { THREE } from '/js/gfx.js';
+import { buildAvatar } from '/js/avatar.js';
+const W = 1200, H = 520, r = new THREE.WebGLRenderer({ antialias: true }); r.setSize(W, H); r.setPixelRatio(1); document.body.appendChild(r.domElement);
+r.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#bfe3f5');
+scene.add(new THREE.HemisphereLight('#ffffff', '#88aa66', 1.6)); const sun = new THREE.DirectionalLight('#ffffff', 1.6); sun.position.set(3, 6, 5); scene.add(sun);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(40, 10), new THREE.MeshLambertMaterial({ color: '#8fcf6a' })); ground.rotation.x = -Math.PI / 2; scene.add(ground);
+const cam = new THREE.PerspectiveCamera(30, W / H, .1, 100); cam.position.set(0, 1.6, 9.5); cam.lookAt(0, .85, 0);
+const looks = [
+  { skin: '#f6d2b5', hair: '#2a1a12', hairStyle: 'ponytail', style: 'dress', color: '#ff7eb8', shoe: '#e8434a' },
+  { skin: '#e8b98f', hair: '#1d1412', hairStyle: 'spiky', style: 'shirt', color: '#3b6fe0' },
+  { skin: '#f3c9a5', hair: '#3a2416', hairStyle: 'long', style: 'aodai', color: '#ffffff', hat: 'nonla' },
+  { skin: '#c98d62', hair: '#140c08', hairStyle: 'buns', style: 'overalls', color: '#5fbf4a' },
+  { skin: '#f6d2b5', hair: '#6a3a1a', hairStyle: 'short', style: 'hoodie', color: '#ff9f1a' },
+  { skin: '#e8b98f', hair: '#2a1a12', hairStyle: 'ponytail', style: 'tunic', color: '#a66bff' },
+];
+const states = (window.STATES || 'idle,walk,run,air,cheer,wave').split(',');
+const people = looks.map((l, i) => { const A = buildAvatar(l); A.root.position.set((i - 2.5) * 1.55, 0, 0); A.root.rotation.y = i % 2 ? .5 : -.5; scene.add(A.root); return A; });
+window.pose = (t, turn) => {
+  for (let k = 0; k <= Math.round(t * 60); k++) people.forEach((A, i) => { const st = states[i] === 'run' ? 'walk' : states[i]; A.anim(st, k / 60, states[i] === 'run' ? 10 : states[i] === 'walk' ? 4 : 0); });
+  if (turn != null) people.forEach(A => A.root.rotation.y = turn);
+  r.render(scene, cam); return true;
+};
+window.cam = cam; window.rr = () => r.render(scene, cam);
+window.ready = true;
+</script>

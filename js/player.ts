@@ -3,7 +3,7 @@
 import { seatRider } from './vehicles.js';
 import { vehicleEye } from './rideview.js';
 import { THREE } from './gfx.js';
-import { buildAvatar } from './avatar.js';
+import { buildAvatar, setLookTarget } from './avatar.js';
 import { WATER, RIDE_SWIM, heightAt, surfaceAt } from './world.js';
 import { clamp, lerp, angleLerp } from './util.js';
 import { SFX } from './audio.js';
@@ -231,6 +231,7 @@ export class Hero {
     this._rideNew = false;
     A.root.position.set(p.x, p.y + rideY, p.z); A.root.rotation.y = this.yaw;
     A.anim(this.state, t, this.speed);
+    if (!this.i) setLookTarget(p, A); // (v1.08) villagers close by turn their heads to the first child
     A.root.children[1].visible = this.state !== 'swim'; // blob shadow
     // camera: follow behind, gently swinging round when the child is just walking forward
     const easy = game.settings.camMode !== 'free';

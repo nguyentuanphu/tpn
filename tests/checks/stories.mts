@@ -325,8 +325,11 @@ await check('story', async () => {
   const calm = () => pg.evaluate(() => { document.querySelectorAll('.storybook,.dialog,.reward').forEach(e => e.remove()); __sv.paused = false; });
   const act = id => pg.evaluate(id => { const it = __sv.interactables.find(i => i.id === id); it.act(__sv.heroes[0], __sv); }, id);
   seen.push(await q());
-  await pg.evaluate(() => { if (!document.querySelector('.theatre')) __sv.lanterns.owl(__sv.heroes[0]); }); await w(2500);
-  const film = await pg.evaluate(() => !!document.querySelector('.theatre'));
+  // (v1.08) wait for the theatre up to 10 s (the game's own wait for a film) instead of looking once after 2.5 s: on
+  // v1.07 itself it takes 1.8 to 3.1 s on the Release machine, so the single look passed or failed by the machine's speed
+  await pg.evaluate(() => { if (!document.querySelector('.theatre')) __sv.lanterns.owl(__sv.heroes[0]); });
+  let film = false; for (let i = 0; i < 40 && !film; i++) { await w(250); film = await pg.evaluate(() => !!document.querySelector('.theatre')); }
+  await w(1000);
   await pg.evaluate(() => document.querySelector('.th-x')?.click()); await w(800);
   await pg.evaluate(() => { const c = document.querySelectorAll('.dialog .dchoices button'); c[1] && c[1].click(); }); await w(800);
   await calm(); await w(2500); await calm(); seen.push(await q());

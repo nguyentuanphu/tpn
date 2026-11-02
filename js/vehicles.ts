@@ -451,6 +451,8 @@ function aim(limb, target, len) {
 // attach = false: the person stays where they are in the scene (a child riding) and is only moved onto the seat
 export function seatRider(A, v, at, grips, feet, scale = .9, attach = true) {
   const o = v.o; A.root.scale.setScalar(scale);
+  // (v1.08) the hands and feet are aimed with straight arms and legs: unbend the elbows and knees first
+  for (const j of [A.kneeL, A.kneeR, A.elbowL, A.elbowR]) if (j) j.rotation.set(0, 0, 0);
   if (attach) { A.root.position.set(at[0], at[1] - .6 * scale, at[2]); A.root.rotation.set(0, 0, 0); if (A.root.parent !== o) o.add(A.root); }
   else { o.updateMatrixWorld(true); A.root.position.copy(o.localToWorld(new THREE.Vector3(at[0], at[1] - .6 * scale, at[2]))); A.root.rotation.set(0, o.rotation.y, 0); A.root.updateMatrixWorld(true); }
   const W = p => o.localToWorld(new THREE.Vector3(...p));

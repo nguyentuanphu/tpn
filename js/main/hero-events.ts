@@ -11,7 +11,7 @@ import { el, $, dist2, wait } from '../util.js';
 import { heightAt, MARKET, CHINA, INDIA, VILLAGE, HOME, REVEAL_R, PLATEAU, TOWN, AUSSIE, ULURU, SHRINES, TOWERS } from '../world.js';
 import { SCHOOL } from '../content/school-place.js';
 import { landmarkAt } from '../content/map.js';
-import { buildAvatar } from '../avatar.js';
+import { buildAvatar, cloneAvatarRoot } from '../avatar.js';
 import { fogMapFor } from '../hud.js';
 import { Net } from '../net.js';
 import { showWho, reward, openPad } from '../ui.js';
@@ -72,7 +72,7 @@ G.mapPic = mapPic; G.waterPic = waterPic; // (the checks read where each picture
 G.avatarPreview = i => {
   const h = G.heroes[i]; if (!h) return '';
   const preview = new THREE.Scene(); preview.background = new THREE.Color('#f1eaff'); preview.environment = scene.environment;
-  const avatar = h.av.root.clone(true); avatar.position.set(0, 0, 0); avatar.rotation.set(0, .12, 0); preview.add(avatar);
+  const avatar = cloneAvatarRoot(h.av.root); avatar.position.set(0, 0, 0); avatar.rotation.set(0, .12, 0); preview.add(avatar);
   preview.add(new THREE.HemisphereLight(0xffffff, 0xd9c79a, 1.8)); const sun = new THREE.DirectionalLight(0xffffff, 2); sun.position.set(3, 5, 4); preview.add(sun);
   // Hidden gliders/idle copies must not enlarge the bounds and shrink the outfit.
   avatar.updateMatrixWorld(true); const bounds=new THREE.Box3();
