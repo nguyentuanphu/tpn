@@ -1,5 +1,7 @@
 # v1.07 tester-bugs: status
 
+**ready for Release** (2 Nov 2026, 2:40 pm AEDT): branch `work/v107-tester-bugs`, draft PR #783, full suite green on GitHub.
+
 Branch `work/v107-tester-bugs` (from main v1.06). Helper chat, started 2 Nov 2026 AEDT.
 
 ## Plan
@@ -63,6 +65,9 @@ Release closes the issues after the deploy; this chat does not close them.
 - `a9906606` fixes and the new check; `c41d9675` the check counts only reports made after the stop.
 - Checks (2 Nov 2026 AEDT): `autoplayheld` fails on v1.06 code (reproduces the reports), passes with the fix (65 s).
 - `node suite.mjs --changed --list`: full suite (a new test file). Started on GitHub, run 41366549196, 11:19 am AEDT.
+- Full suite on GitHub, run 41366549196 on `c41d9675` (code unchanged since; later commits are this file only): **green**,
+  finished 2:20 pm AEDT (8 shares and Management PostgreSQL passed; the joining job exits with the suite's result). No
+  summary comment reached the PR; the check-map artifact is kept on the run for Release.
 - Shared files touched: `js/main.ts` (4 lines in `frame()`), `tests/run.mjs` (one check at the end).
 - New spoken lines: none. New on-screen line (EN and VI): "Stopped: the game was opened in another tab or window." in the
   tester-only auto play window.
