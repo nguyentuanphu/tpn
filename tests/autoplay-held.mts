@@ -31,13 +31,15 @@ export async function autoplayHeldCheck(b: Browser) {
     const B = await P.ctx.newPage(); await B.goto(URL); await B.waitForSelector('.screen.title', { timeout: 90000 });
     const t0 = Date.now();
     await P.page.waitForSelector('.tab-held', { timeout: 15000 });
+    // (what the slow test browser reported before the second tab opened is not this check's business: from here on, nothing)
+    await P.page.evaluate(() => localStorage.removeItem('sv2_tester_out'));
     await P.page.waitForFunction(() => !__sv.autoplay.running(), null, { timeout: 30000 }).catch(() => bad.push('auto play went on in the stopped tab for 30 s'));
     const stopIn = (Date.now() - t0) / 1000;
     const r = await P.page.evaluate(async () => {
       const frames = () => __sv.renderer.info.render.frame, f0 = frames(); await new Promise(res => setTimeout(res, 2500));
       const rep = JSON.parse(localStorage.getItem('sv2_autoplay_report') || 'null');
-      const out = JSON.parse(localStorage.getItem('sv2_tester_out') || '[]');
-      return { drawn: frames() - f0, rep: rep && { held: rep.held, rows: rep.done.map(d => ({ key: d.key, problems: d.problems })), state: rep.reportState }, sent: out.map(x => `${x.auto}: ${x.detail}`) };
+      const out = JSON.parse(localStorage.getItem('sv2_tester_out') || '[]'); // (the stopped tab writes nothing; the new tab's own reports would show here too, so only the auto play ones count)
+      return { drawn: frames() - f0, rep: rep && { held: rep.held, rows: rep.done.map(d => ({ key: d.key, problems: d.problems })), state: rep.reportState }, sent: out.filter(x => x.auto === 'autoplay' || /another tab/.test(x.detail || '')).map(x => `${x.auto}: ${x.detail}`) };
     });
     if (r.drawn > 2) bad.push(`the stopped tab drew the valley ${r.drawn} times in 2.5 s`);
     if (!r.rep || !r.rep.held || r.rep.state !== 'held') bad.push(`the last report does not say it was stopped by another tab: ${JSON.stringify(r.rep)}`);
@@ -53,12 +55,13 @@ export async function autoplayHeldCheck(b: Browser) {
       route: async ctx => { await ctx.route('**/api/live**', rt => rt.fulfill({ contentType: 'application/json', body: live })); await ctx.route('**/api/tester**', rt => rt.fulfill({ status: 503, body: '' })); } });
     try {
       await Q.page.waitForFunction(() => window.__sv && __sv.tester, null, { timeout: 30000 }); await clear(Q.page);
+      // (only the auto play reports: the test browser's own software drawing can be slow here)
       const old = await Q.page.evaluate(async () => {
         localStorage.removeItem('sv2_tester_out');
         const T = await import('/js/tester.js');
         const res = await T.sendAutoplayReport({ build: 'v1.04', done: [{ g: 'games', key: 'game:hanoi', name: 'Tower Stack', ok: false, problems: ['did not close'], notes: [] }] });
         const held = await T.sendAutoplayReport({ build: 'v1.04', held: true, done: [{ g: 'games', key: 'game:robot', name: 'Robot Planner', ok: false, problems: ['still stuck'], notes: [] }] });
-        return { res: res.state, held: held.state, rows: (JSON.parse(localStorage.getItem('sv2_tester_out') || '[]') as QueueRow[]).map(x => ({ b: x.b, detail: x.detail })) };
+        return { res: res.state, held: held.state, rows: (JSON.parse(localStorage.getItem('sv2_tester_out') || '[]') as QueueRow[]).filter(x => x.auto === 'autoplay').map(x => ({ b: x.b, detail: x.detail })) };
       });
       if (old.rows.length !== 1 || old.rows[0].b !== 'v1.04' || !/Tower Stack/.test(old.rows[0].detail || '')) bad.push(`a stored v1.04 run was not sent as v1.04: ${JSON.stringify(old)}`);
       if (old.held !== 'held') bad.push(`a stored run stopped by another tab was sent: ${JSON.stringify(old)}`);
