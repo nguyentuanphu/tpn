@@ -18,27 +18,32 @@ await check('bagpals', async () => {
       const G = __sv, hero = G.heroes[0], p = hero.profile, wt = t => new Promise(r => setTimeout(r, t)), S = await import('/js/state.js'), out = {};
       p.age = 'little'; p.lanterns = { companion: 'firefly', done: { p_owl: true }, chapters: {} }; p.pets = [{ kind: 'puppy', name: 'Mochi' }, { kind: 'kitty', name: '' }];
       G.pets.sync(); G.pets.refreshInteractables(); G.lanterns.companions.sync(); G.addCoins(100 - S.farm.coins); await wt(600);
+      // (v1.08 companion, owner's plan E, 3 Nov 2026 AEDT) the section left the Bag for its own tab, Companions / Bạn đồng
+      // hành, straight after the Backpack (and before the Shop): the Bag keeps food, things, clothes, kites and gliders
       G.openPad(0, 'bag'); await wt(900);
+      out.tabs = [...document.querySelectorAll('.modal.pad .pad-tabs button')].map(x => x.dataset.t);
+      out.bagHasPals = !!document.querySelector('.modal.pad .pad-body .bag-pals, .modal.pad .pad-body [data-phat]');
+      const tabB = document.querySelector('.modal.pad .pad-tabs [data-t="pals"]'), tq = tabB ? tabB.getBoundingClientRect() : null;
+      out.tabSize = tq ? Math.round(Math.min(tq.width, tq.height)) : 0; out.tabName = tabB ? tabB.textContent.replace(/\s+/g, ' ').trim() : '';
+      tabB?.click(); await wt(900);
       const body = document.querySelector('.modal.pad .pad-body'), br = body.getBoundingClientRect(), hs = [...body.querySelectorAll('h3')];
       out.oldButton = !!body.querySelector('#bagPets');
       out.firstHeading = hs[0] ? hs[0].textContent.replace(/\s+/g, ' ').trim() : '';
-      out.firstChip = body.querySelector('.jumpnav button')?.textContent.trim() || '';
+      out.headings = hs.length;
       const tiles = [...body.querySelectorAll('.bag-pals .slot')];
-      out.tiles = tiles.map(t => t.dataset.pal ?? (t.dataset.adopt ? 'adopt' : '?'));
+      out.tiles = tiles.map(t => t.dataset.pal ?? (t.dataset.adopt ? 'adopt' : t.dataset.palfeed ? 'feed' : '?'));
+      out.goal = body.querySelector('.pal-goal')?.textContent.replace(/\s+/g, ' ').trim() || '';
+      out.goalSmall = (() => { const q = body.querySelector('.pal-goal')?.getBoundingClientRect(); return !q || q.height < 64; })();
       out.small = [...tiles, ...body.querySelectorAll('.bag-pal-hats .slot')].map(t => t.getBoundingClientRect()).filter(q => q.width < 64 || q.height < 64).length;
       // seen when the Bag opens, without scrolling: the first friend's tile starts inside the visible Bag
       out.seenAtOpen = tiles[0] ? tiles[0].getBoundingClientRect().top < br.bottom - 24 : false;
-      // the jump chip brings the section back after scrolling to the bottom
-      body.scrollTop = body.scrollHeight; await wt(300); body.querySelector('.jumpnav button')?.click(); await wt(900);
-      const nav = body.querySelector('.jumpnav').getBoundingClientRect(), t0 = body.querySelector('.bag-pals .slot').getBoundingClientRect();
-      out.jumpBack = t0.top >= nav.bottom - 2 && t0.top < br.bottom - 24;
       // buy the first hat: a tap explains, only Buy spends
       const hatTile = id => body.querySelector(`.bag-pal-hats [data-phat="${id}"]`);
       out.lockedBuy = (() => { hatTile('crown').click(); return !!body.querySelector('.bag-help .bh-buy'); })();
       hatTile('party').click(); await wt(150); out.tapKeepsCoins = S.farm.coins === 100 && !(p.lanterns.pet && (p.lanterns.pet.hats || []).length);
       body.querySelector('.bag-help .bh-buy')?.click(); await wt(700);
       // (the companion is drawn while the valley runs: close the Bag to see its hat, then open it again)
-      const reopen = async () => { document.querySelector('.modal.pad .pad-head .x')?.click(); await wt(900); const seen = !!G.lanterns.companions.of(hero).hat; G.openPad(0, 'bag'); await wt(900); return seen; };
+      const reopen = async () => { document.querySelector('.modal.pad .pad-head .x')?.click(); await wt(900); const seen = !!G.lanterns.companions.of(hero).hat; G.openPad(0, 'pals'); await wt(900); return seen; };
       out.coinsAfter = S.farm.coins; out.hats = [...(p.lanterns.pet.hats || [])]; out.buddyHat = p.lanterns.pet.hat; out.buddy3d = await reopen();
       // put it on Mochi: it leaves the companion; the 3D hat is on the puppy
       const b2 = document.querySelector('.modal.pad .pad-body'); b2.querySelector('.bag-pal-hats [data-phat="party"]').click(); await wt(150);
@@ -53,13 +58,16 @@ await check('bagpals', async () => {
       return out;
     });
     await P.page.screenshot({ path: `out/bagpals-${dev}.png` });
-    const bad = [], heading = lang === 'vi' ? 'Thú cưng & Bạn đồng hành' : 'Pets & Buddy';
+    const bad = [], heading = lang === 'vi' ? 'Bạn đồng hành' : 'Your companion', tabName = lang === 'vi' ? 'Bạn đồng hành' : 'Companions';
     if (r.oldButton) bad.push('the old lone pets button is still there');
-    if (!r.firstHeading.includes(heading) || !r.firstChip.includes(heading)) bad.push(`"${heading}" is not the first section and jump chip: "${r.firstHeading}", "${r.firstChip}"`);
-    if (r.tiles.join(',') !== 'buddy,0,1,adopt') bad.push('the friends row is ' + r.tiles.join(','));
+    if (r.bagHasPals) bad.push('the Bag still holds the pets and hats');
+    if (r.tabs.indexOf('pals') !== r.tabs.indexOf('bag') + 1 || (r.tabs.includes('shop') && r.tabs.indexOf('shop') !== r.tabs.indexOf('pals') + 1)) bad.push('the tabs are ' + r.tabs.join(','));
+    if (!r.tabName.includes(tabName) || r.tabSize < 44) bad.push(`the Companions tab: "${r.tabName}", ${r.tabSize} px`);
+    if (!r.firstHeading.includes(heading) || r.headings !== 3) bad.push(`"${heading}" is not the first of 3 sections: "${r.firstHeading}", ${r.headings}`);
+    if (r.tiles.join(',') !== 'buddy,feed,0,1,adopt') bad.push('the friends rows are ' + r.tiles.join(','));
+    if (!/(Party hat|Mũ sinh nhật)/.test(r.goal) || r.goalSmall) bad.push('the coin goal card: ' + r.goal);
     if (r.small) bad.push(r.small + ' tiles under 64 px for an under-5');
-    if (!r.seenAtOpen) bad.push('the pets are not in sight when the Bag opens');
-    if (!r.jumpBack) bad.push('the jump chip does not bring the pets back into view');
+    if (!r.seenAtOpen) bad.push('the pets are not in sight when the tab opens');
     if (r.lockedBuy) bad.push('a locked hat can be bought before the ones before it');
     if (!r.tapKeepsCoins || r.coinsAfter !== 70 || r.hats.join() !== 'party' || r.buddyHat !== 'party' || !r.buddy3d) bad.push('buying the hat ' + JSON.stringify(r));
     if (r.wearers.join(',') !== 'buddy,0,1' || r.petHat !== 'party' || r.buddyAfter || !r.pet3d || r.buddy3dAfter || !r.badge) bad.push('putting the hat on a pet ' + JSON.stringify(r));
@@ -69,7 +77,7 @@ await check('bagpals', async () => {
     if (bad.length) throw new Error(dev + ': ' + bad.join('; '));
     rows.push(`${dev} ${w}x${h}`);
   }
-  return `Pets & Buddy first in the Bag and its jump row (${rows.join(', ')}): companion, 2 pets and adopting, tiles 64 px+; a hat bought only with Buy (100 to 70), moved from the companion to a pet and off again, the 3D hat following; screenshots out/bagpals-*.png`;
+  return `The Companions tab after the Backpack (${rows.join(', ')}): companion, Feed and the coin goal, 2 pets and adopting, tiles 64 px+, none left in the Bag; a hat bought only with Buy (100 to 70), moved from the companion to a pet and off again, the 3D hat following; screenshots out/bagpals-*.png`;
 });
 
 await check('shop', async () => {
@@ -89,9 +97,10 @@ await check('shop', async () => {
     // shop right there, no travel; the stall in the valley stays
     p.age = 'big'; G.addCoins(500 - S.farm.coins); const pos0 = { x: h.pos.x, z: h.pos.z }; G.huds[0].root.querySelector('.dk.bag').click(); await w(500);
     // (Round V, owner 13 Oct: "the shop button should be within the bag right next to the bag icon") a Shop tab straight
-    // after Backpack in the Pad; no Shop button in the dock
+    // after Backpack in the Pad; no Shop button in the dock. (v1.08 companion, owner's plan E) the Companions tab now sits
+    // between them: Backpack, Companions, Shop
     const tabsK = [...document.querySelectorAll('.modal.pad .pad-tabs button')].map(b => b.dataset.t), sb = document.querySelector('.modal.pad .pad-tabs [data-t="shop"]');
-    out.bagOpens = !!document.querySelector('.modal.pad') && !document.querySelector('.modal.shopk') && tabsK.indexOf('shop') === tabsK.indexOf('bag') + 1 && !G.huds[0].root.querySelector('.dk.shop');
+    out.bagOpens = !!document.querySelector('.modal.pad') && !document.querySelector('.modal.shopk') && tabsK.indexOf('pals') === tabsK.indexOf('bag') + 1 && tabsK.indexOf('shop') === tabsK.indexOf('pals') + 1 && !G.huds[0].root.querySelector('.dk.shop');
     out.bagShopBtn = sb ? (() => { const q = sb.getBoundingClientRect(); return q.width >= 44 && q.height >= 44; })() : false;
     sb && sb.click(); await w(700);
     out.there = Math.hypot(h.pos.x - pos0.x, h.pos.z - pos0.z) < 1 && !!document.querySelector('.modal.pad'); const card = document.querySelector('.pad .shop-content');

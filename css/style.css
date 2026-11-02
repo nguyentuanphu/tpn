@@ -3410,6 +3410,16 @@ body.touch:has(.simple-screen:not([hidden])) .caption { top: auto; bottom: calc(
 .pad .slot > b.pal-price { top: 4px; right: 4px; font-size: 12px; background: #fff7d6; border-radius: 8px; padding: 1px 5px; }
 .pad .slot.locked > span { opacity: .45; filter: grayscale(.6); }
 .pad .pal-hatnote { margin: 6px 0 4px; }
+/* (v1.08 companion, owner's plan E) the Companions tab's coin goal: the next hat, the coins saved and a bar; "All hats!" when
+   every hat is bought. One wide button, 64 px tall for the youngest */
+.pad .pal-goal { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 64px; margin: 8px 0 4px; padding: 6px 12px; border: 2px solid #ffd23f; border-radius: 16px; background: #fffbea; font: inherit; color: var(--text); text-align: left; cursor: pointer; }
+.pad .pal-goal > span .art, .pad .pal-goal > span .emo { width: 48px; height: 48px; }
+.pad .pal-goal > b { flex: 1; display: flex; flex-direction: column; gap: 3px; font-size: 15px; }
+.pad .pal-goal > b small { font-weight: 600; opacity: .8; }
+.pad .pal-goal .pal-bar { display: block; height: 10px; border-radius: 6px; background: #f1e6c0; overflow: hidden; }
+.pad .pal-goal .pal-bar > i { display: block; height: 100%; background: #ffb020; border-radius: 6px; }
+.pad .pal-goal.ready { background: #fff4c8; box-shadow: 0 0 0 2px #ffd23f; }
+.pad .pal-goal.allhats { border-color: #b9e3b0; background: #f0fbec; }
 
 /* (#375, 1 Nov 2026 AEDT) while the report panel is open the floating ladybird steps aside: it covered the panel's words on a
    small phone (430x517); it comes back when the panel closes */

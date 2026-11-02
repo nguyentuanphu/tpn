@@ -14,9 +14,13 @@ export const familyTrialOn = () => featureOn('familyDevices', false) || !!window
 
 export const PET_ICON = { puppy: '🐶', kitty: '🐱', bunny: '🐰', panda: '🐼', joey: '🦘', calf: '🐃' };
 // the companion's and pets' hats (js/kidplay.js HATS), drawn as in the shop's Companion tab
-export const PAL_HAT_ICON = { party: '🎉', flower: '🌸', nonla: '👒', crown: '👑' };
+export const PAL_HAT_ICON = { party: '🎉', flower: '🌸', nonla: '👒', crown: '👑',
+  // (v1.08 companion) the four hats after the crown: our drawings, js/art/companion-hats.ts
+  beanie: 'palhat:beanie', captain: 'palhat:captain', wizard: 'palhat:wizard', lotus: 'palhat:lotus' };
 // (issue #738) the Backpack section that holds the pets and the companion together, and their hats
 export const PALS_NAME = () => T('Pets & Buddy', 'Thú cưng & Bạn đồng hành');
+// (v1.08 companion, owner's plan E) the pad's tab that holds the companion, the pets and their hats
+export const PALS_TAB = () => T('Companions', 'Bạn đồng hành');
 export const STYLE_ICON = { dress: '👗', shirt: '👕', aodai: '🥻', tunic: '🧥', overalls: '👖', hoodie: '🧶' };
 export const STYLE_NAME = { dress: () => T('Dress', 'Váy'), shirt: () => T('Shirt & shorts', 'Áo và quần đùi'), aodai: () => 'Áo dài', tunic: () => T('Explorer', 'Nhà thám hiểm'), overalls: () => T('Overalls', 'Quần yếm'), hoodie: () => T('Hoodie', 'Áo nỉ') };
 // big text and calm mode change the whole page
