@@ -84,8 +84,9 @@ Commits: 19b3e2b8, 0b04ca51, 2ee95ec6 (merge of release/v1.08), then the preload
 - `types`, `names`, `bilingual`, `rules`, `arch`, `noemoji`, `preload`: pass.
 - `boot`, `offline` (offline still works: saved 5.4 s, offline 3.7 s, no-answer 4.9 s), `swupdate`, `contract`, `phone`: pass.
 - `emoji`: **fail, not this branch's**: the emoji is in Release's `docs/plans/v108-owner-batch-20261103.md`. Left for Release.
-- `suite.mts --changed` picks the full suite (`.gitignore` changed), so it was started on GitHub
-  (`full-suite.yml`, workflow_dispatch on `work/v108-notifications`). Result: see the PR.
+- `suite.mts --changed` picks the full suite (`.gitignore` changed). Under Release's rule of 3 Nov 2026 AEDT (helpers never
+  start the full suite) the run started at 8:55 am AEDT was cancelled, and the checks covering this change were run with
+  `--only`, one at a time (above). **The full suite is left for Release.**
 
 Note: the local `--only` run was going on while release/v1.08 was merged in (a conflict in `css/style.css`, both blocks
 kept); `unit`, `preload` and `emoji` were run again after.
