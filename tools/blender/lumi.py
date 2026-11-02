@@ -60,8 +60,9 @@ FLOWERG = mat('flowerGlow', '#f59ab8', .4, emit=.35); GLOWB = mat('glowBlue', '#
 GAME = 'game' in argv
 if GAME:  # the game's people (js/avatar.ts): 1.6 tall, head centre 1.33, hips .6, knees .33, shoulders (.2, .99); a less round face, smaller eyes
     STYLE = 'game'
-    HC, R = Vector((0, 0, 1.33)), .27
-    P = dict(eye=.165, eyeX=.29, eyeZ=-.08, jaw=.17, cheek=.025, puff=1.0, mouth=.78, head=(.97, .95, 1.06), noseZ=-.3, mouthZ=-.5, blushX=.5, blushZ=-.34)
+    # a smaller head and a cuter face (owner, 3 Nov: "dễ thương hơn và mặt nhỏ hơn một xíu"): eyes a little lower and wider apart, a soft jaw, rosy cheeks
+    HC, R = Vector((0, 0, 1.3)), .235
+    P = dict(eye=.185, eyeX=.31, eyeZ=-.13, jaw=.12, cheek=.05, puff=1.0, mouth=.72, head=(.99, .95, 1.03), noseZ=-.33, mouthZ=-.5, blushX=.52, blushZ=-.36)
     B = dict(legX=.08, rLeg=.052, zAnk=.06, zBoot=.13, zSock=.22, zCuff=.47, zCr=.6, zW=.74, zC=.9, zS=.975, zN=1.06,
              wH=.16, wC=.155, dep=.8, sh=(.2, 0, .97), el=(.225, -.005, .77), wr=(.235, -.02, .58), rU=.046, rA=.04, boot=(.075, .11), lant=.27, S=1.2, puff=1.45)
 elif TALL:  # Finn and Flora: head about a fifth of the height, a narrower jaw, smaller eyes

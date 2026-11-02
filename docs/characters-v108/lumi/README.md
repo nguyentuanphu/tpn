@@ -31,8 +31,8 @@ Owner, 2 Nov 2026 AEDT: sent `owner-concept.png` (Lumi, star gardener: leaf hair
 
 The owner, 3 Nov: "I prefer the shorter chibi version but make the face more balance as the eyes are too big, you can try finn flora theo tỷ lệ này", then "Make sure them all can express emotions, đi uyển chuyển và movement tất cả mọi thứ phải như thật và bằng với kích thước người của những nhân vật khác trong game. Ráng làm cho chỉn chu thêm hơn nữa là mặt bớt tròn và mắt bớt to cho ba con". Pop-up answer: "Blender + file first": models, moves and a `.glb` now; loading them in the game is for Release or a later round.
 
-- Size: the game's people (`js/avatar.ts`): about 1.6 tall, head centre 1.33, hips 0.6, knees about 0.33, shoulders (0.2, 0.97), so about 3 heads tall (style `game`).
-- Faces: less round (a longer head and a narrower jaw), smaller eyes (0.165 of the head, the chibi had 0.27), a smaller mouth.
+- Size: the game's people (`js/avatar.ts`): about 1.6 tall, hips 0.6, knees about 0.33, shoulders (0.2, 0.97) (style `game`). The head is a little smaller than the game's (radius 0.235, centre 1.3), so about 3.3 heads tall (owner, 3 Nov: "mặt nhỏ hơn một xíu").
+- Faces: less round than the chibi, cuter: eyes a little lower and wider apart (0.185 of the smaller head; the chibi had 0.27 of a bigger head), a soft jaw, rosy cheeks, a smaller mouth.
 - Lumi, Finn and Flora share one body and face kit; each has their own hair, clothes and prop (Lumi the star lantern, Finn the glowing compass star and spyglass, Flora the flower staff).
 - Six expressions, each its own face set: smile, blink, happy, curious, surprised, sad (the game's own moods are smile, blink, happy and "o").
 - Skeleton with the game's joint names: `root > torso > head, armL > elbowL, armR > elbowR; root > legL > kneeL, legR > kneeR` (L is the friend's own left). Skin weights are made by the script (`tools/blender/lumi-rig.py`): the head, hair and faces move with `head`, the clothes on the body with `torso`, sleeves and boots with their own arm and leg, the hand props with `elbowL`.
