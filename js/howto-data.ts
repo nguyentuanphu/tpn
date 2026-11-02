@@ -58,7 +58,7 @@ const DEFAULTS: Record<string, HowToGuide> = {
   },
   // ---- folk games ----
   mrwolf: {
-    origin: S('🇦🇺 🐺', 'This is a schoolyard game from Australia. Children have played it for more than a hundred years!', 'Đây là trò chơi sân trường của nước Úc. Các bạn nhỏ đã chơi trò này hơn một trăm năm rồi!'),
+    origin: S('🇦🇺 🐺', 'This schoolyard game came to Australia from Britain long ago. Children here have played it for more than a hundred years!', 'Trò chơi sân trường này từ nước Anh sang Úc từ lâu. Các bạn nhỏ ở Úc đã chơi trò này hơn một trăm năm rồi!'),
     steps: [S('🗣️ 🐺', 'Ask: What is the time, Mr Wolf?', 'Hỏi: Mấy giờ rồi, ông Sói ơi?'),
       S('🕒 👣👣👣', 'If Mr Wolf says three o clock, take three steps. Count them out loud!', 'Nếu ông Sói nói ba giờ, con bước ba bước. Đếm to lên nhé!'),
       S('🍽️ 🐺 🏃 🏠', 'When he shouts Dinner time, run home as fast as you can!', 'Khi ông Sói hét Đến giờ ăn tối, chạy về nhà thật nhanh!')],
@@ -68,7 +68,7 @@ const DEFAULTS: Record<string, HowToGuide> = {
     origin: S('🇻🇳 🇦🇺 🥢', 'In Vietnam girls play Đánh chuyền with a little ball and ten chopsticks. In Australia children play Knucklebones with five little bones or jacks.', 'Ở Việt Nam các bạn gái chơi đánh chuyền với một quả bóng nhỏ và mười que. Ở Úc các bạn chơi Knucklebones với năm khúc xương nhỏ.'),
     steps: [S('👆 🟠 ⬆️', 'Tap the ball to throw it up high.', 'Chạm quả bóng để tung lên cao.'),
       S('🥢 ✋', 'Quick! Pick up the sticks while the ball is in the air.', 'Nhanh lên! Nhặt que khi bóng còn trên không.'),
-      S('🟠 🤲', 'Then tap the ball to catch it before it lands. Pick one, then two, then three!', 'Rồi chạm quả bóng để bắt trước khi bóng rơi. Nhặt một que, rồi hai, rồi ba!')],
+      S('🟠 🤲', 'Then tap the ball to catch it before it lands. Pick one stick at a time, then more each round!', 'Rồi chạm quả bóng để bắt trước khi bóng rơi. Nhặt từng que một, rồi mỗi lượt nhặt nhiều hơn!')],
     real: S('🎵 🥢 🟠', 'In Vietnam you sing while you play: Chuyền chuyền một, một đôi. Chuyền chuyền hai, hai đôi!', 'Ở Việt Nam vừa chơi vừa hát: Chuyền chuyền một, một đôi. Chuyền chuyền hai, hai đôi!')
   },
   dragon: {
@@ -156,7 +156,7 @@ const DEFAULTS: Record<string, HowToGuide> = {
   tienlenbac: {
     origin: S('🇻🇳 🎴', 'Tiến Lên miền Bắc is how families in the north of Vietnam play it: you must follow the same suit!', 'Tiến Lên miền Bắc là cách các gia đình miền Bắc chơi: phải đánh cùng chất!'),
     steps: [S('3️⃣ ➡️ 2️⃣', '3 is the smallest card and 2 is the biggest.', '3 nhỏ nhất, 2 lớn nhất.'),
-      S('♥ ♥', 'Beat one card with a higher card of the same suit: a heart with a heart.', 'Chặn một lá bằng lá lớn hơn cùng chất: cơ chặn cơ.'),
+      S('♥ ♥', 'Beat one card with a higher card of the same suit: a heart with a heart. A 2 beats any other card, and four of a kind can cut a 2.', 'Chặn một lá bằng lá lớn hơn cùng chất: cơ chặn cơ. Heo (lá 2) chặn được mọi lá khác, và tứ quý chặt được heo.'),
       S('🎴 🎴', 'A pair is beaten by a higher pair of the same colours. A run must be all one suit.', 'Đôi phải chặn bằng đôi lớn hơn cùng màu. Sảnh phải đồng chất.'),
       S('🏆', 'Play all your cards first to win! Stuck? Tap 💡 Hint.', 'Ai đánh hết bài trước là thắng! Bí quá thì bấm 💡 Gợi ý.')],
     real: S('🧒🎴🧑', 'For real: deal 13 cards each to 4 players and follow the suit!', 'Chơi thật: chia mỗi người 13 lá, 4 người chơi, và nhớ đánh cùng chất!')
@@ -170,6 +170,7 @@ const DEFAULTS: Record<string, HowToGuide> = {
     origin: S('🇻🇳 🪨', 'Ô ăn quan is one of the oldest games in Vietnam. Children draw the board on the ground and play with little stones.', 'Ô ăn quan là một trong những trò chơi lâu đời nhất của Việt Nam. Các bạn vẽ bàn trên đất và chơi bằng sỏi.'),
     steps: [S('👆 ⬜', 'Pick one of your highlighted squares.', 'Chọn một ô đang sáng của con.'),
       S('⬅️ ➡️', 'Choose a direction, then drop one seed in each square.', 'Chọn hướng, rồi rải mỗi ô một hạt.'),
+      S('🪨 🔁', 'If the next square has seeds, pick them all up and keep dropping. If it is a mandarin square, your turn ends.', 'Nếu ô kế tiếp có hạt, bốc hết lên rải tiếp. Nếu là ô quan thì hết lượt.'),
       S('⬜ ⬜ 🪨', 'If you land next to an empty square, you capture the seeds after it!', 'Gặp ô trống thì được ăn các hạt ở ô sau đó!')],
     real: S('✏️ 🪨🪨', 'For real: draw ten squares and two half moons in the dirt, and use pebbles as seeds.', 'Chơi thật: kẻ mười ô vuông và hai ô quan hình bán nguyệt, dùng sỏi làm quân.')
   },
@@ -214,7 +215,7 @@ const DEFAULTS: Record<string, HowToGuide> = {
   colors: { steps: [S('🔴 ➕ 🟡', 'Mix two paints.', 'Pha hai màu.'), S('🟠 ✨', 'Find the colour they make!', 'Tìm màu pha ra được!')] },
   sorting: { steps: [S('🐭 🐶 🐘', 'Put things from small to big.', 'Xếp từ bé đến lớn.'), S('👆 🐭', 'Tap the smallest first.', 'Chạm vào cái bé nhất trước.')] },
   memory: { steps: [S('🃏🃏', 'Flip two cards.', 'Lật hai thẻ.'), S('🐱 🐱', 'Find the matching pairs. Remember where they are!', 'Tìm hai hình giống nhau. Nhớ vị trí nhé!')] },
-  hanoi: { steps: [S('🗼 ⬆️', 'Move the whole tower to another pole.', 'Chuyển cả tháp sang cột khác.'), S('🟥 🚫 🟨', 'Never put a big disc on a small one. Need help? Tap the light bulb.', 'Không đặt đĩa to lên đĩa nhỏ. Cần giúp? Chạm bóng đèn.')] },
+  hanoi: { steps: [S('🗼 ⬆️', 'Move the whole tower to the pole with the flag.', 'Chuyển cả tháp sang cột có lá cờ.'), S('🟥 🚫 🟨', 'Never put a big disc on a small one. Need help? Tap the light bulb.', 'Không đặt đĩa to lên đĩa nhỏ. Cần giúp? Chạm bóng đèn.')] },
   robot: { steps: [S('🤖 ⬆️➡️', 'Plan the robot path with arrows.', 'Lập kế hoạch đường đi cho rô-bốt bằng mũi tên.'), S('▶️ ⭐', 'Press go and watch it reach the star.', 'Bấm chạy và xem rô-bốt đến ngôi sao.')] },
   maze: { steps: [S('🌀 👆', 'Tap the path squares one by one.', 'Chạm từng ô đường đi.'), S('🍉', 'Find the way to the watermelon!', 'Tìm đường đến quả dưa hấu!')] },
   market: { steps: [S('🛒 💰', 'A customer wants to buy something.', 'Có khách muốn mua hàng.'), S('🪙 ➕ 🪙', 'Tap coins to pay exactly the price.', 'Chạm tiền để trả đúng giá.')] },

@@ -31,7 +31,9 @@ function destination(s:GameState,horse:Horse,value:number):number|null{
  if(horse.pos===length-1){if(value>target)return null;const dest=length+value-1;
   if(p.horses.some(h=>h!==horse&&h.pos>=length&&h.pos<=dest))return null;return dest;
  }
- if(horse.pos>=length){const lane=horse.pos-length+1;if(value!==lane+1||value>target)return null;return horse.pos+1;}
+ if(horse.pos>=length){const lane=horse.pos-length+1;if(value!==lane+1||value>target)return null;
+  // (v1.07 rules audit) a horse cannot climb onto a home slot its own horse already holds
+  if(p.horses.some(h=>h!==horse&&h.pos===horse.pos+1))return null;return horse.pos+1;}
  const end=horse.pos+value;if(end>=length)return null;return end;
 }
 export function legalMoves(s:GameState):Array<{player:number;horse:number;dieIndex:number;steps:number}>{
