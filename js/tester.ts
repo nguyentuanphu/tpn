@@ -80,7 +80,8 @@ let fpsNow = 0;
 // the offline helper started (sw), when the start page arrived (page), when it could be read (dom); 0 when unknown
 const startNow = () => { const n = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined; if (!n) return null;
   const ms = (v: number) => Math.max(0, Math.round(v)); return { sw: ms(n.workerStart), page: ms(n.responseStart), dom: ms(n.domInteractive) }; };
-const devNow = () => ({ os: osOf(), br: brOf(), sc: `${innerWidth}x${innerHeight}`, lang: settings.lang, fps: Math.round(fpsNow), mem: navigator.deviceMemory || 0, start: startNow() });
+const devNow = () => ({ os: osOf(), br: brOf(), sc: `${innerWidth}x${innerHeight}`, lang: settings.lang, fps: Math.round(fpsNow), mem: navigator.deviceMemory || 0, start: startNow(), gpu: String((G && G.gpu && G.gpu.name) || '').slice(0, 40) });
+// (#341, v1.07) gpu: the graphics the valley is drawn with (js/gpu.ts); "software: ..." is a computer without a working chip
 
 // ---------- the picture of the screen ----------
 // (the 3D view keeps no picture between frames, so it is copied right after the next frame is drawn; the window on top
@@ -253,6 +254,14 @@ function watch() {
   const longs = [], winAt = [];
   let po: PerformanceObserver | null = null;
   try { po = new PerformanceObserver(l => { for (const e of l.getEntries()) { longs.push([e.startTime, e.duration]); if (longs.length > 20) longs.shift(); } }); po.observe({ type: 'longtask' }); offs.push(() => po?.disconnect()); } catch (e) { }
+  // (#739, v1.07) Safari (every iPhone) has no long-task observer, so its freeze reports said "longest script 0 ms"
+  // whatever happened. A light timer, every 100 ms, notes how late it ran: late by about the freeze means the page was
+  // busy (the game's code, laying out a window); on time while no frame came means the page was free and the picture was
+  // not drawn (the graphics side). Every browser reports both now; a browser without the observer says "not measured".
+  const canLong = (() => { try { return (PerformanceObserver as any).supportedEntryTypes?.includes('longtask') === true; } catch { return false; } })();
+  const lates: [number, number][] = []; let tickAt = performance.now();
+  const lateT = setInterval(() => { const t = performance.now(), late = t - tickAt - 100; tickAt = t; if (late > 150) { lates.push([t, late]); if (lates.length > 20) lates.shift(); } }, 100);
+  offs.push(() => clearInterval(lateT));
   const windowEvents: [EventTarget, string][] = [[window, 'resize'], [window, 'blur'], [window, 'focus'], [document, 'visibilitychange']];
   for (const [t, k] of windowEvents) on(t, k, () => { winAt.push([performance.now(), k]); if (winAt.length > 20) winAt.shift(); });
   const why = (from, to) => {
@@ -260,7 +269,11 @@ function watch() {
       try { for (const e of po.takeRecords()) { longs.push([e.startTime, e.duration]); if (longs.length > 20) longs.shift(); } } catch { }
     }
     const ran = longs.filter(([a, d]) => a + d > from && a < to).reduce((m, [, d]) => Math.max(m, d), 0), seen = [...new Set(winAt.filter(([a]) => a > from - 500 && a < to).map(([, k]) => k))];
-    return `longest script ${Math.round(ran)} ms; window: ${seen.join(', ') || 'no change'}; focus ${document.hasFocus() ? 'yes' : 'no'}`; };
+    // a late timer tick at t was held up from t - late to t: it counts when that overlaps the frozen time
+    // (the frame may come before the late tick runs: the tick still waiting counts too)
+    const waiting = performance.now() - tickAt - 100, all = waiting > 150 ? [...lates, [performance.now(), waiting] as [number, number]] : lates;
+    const busy = all.filter(([a, l]) => a > from && a - l < to).reduce((m, [, l]) => Math.max(m, l), 0);
+    return `longest script ${canLong ? Math.round(ran) + ' ms' : 'not measured'}; page busy ${Math.round(busy)} ms${busy < (to - from) / 2 ? ' (free, not drawn)' : ''}; window: ${seen.join(', ') || 'no change'}; focus ${document.hasFocus() ? 'yes' : 'no'}`; };
   // (r90, #474 #487 #488: a "freeze" of 57 s with no script running while the share sheet or print window was up) a gap in
   // which the window lost the focus or went out of sight is the phone pausing the game, not the game stuck: not reported
   const away = (from: number, to: number) => winAt.some(([at, k]) => at > from - 500 && at < to && /blur|visibilitychange|pagehide|freeze/.test(k));
