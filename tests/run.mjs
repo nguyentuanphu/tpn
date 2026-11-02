@@ -8303,6 +8303,8 @@ await check('rigidmodels', async () => (await import('./rigid-models.mts')).rigi
 await check('terrainmath', async () => (await import('./terrain-math.mts')).terrainMathCheck());
 await check('renderaudit', async () => (await import('./render-audit.mts')).renderAudit(b));
 await check('r87ui', async () => (await import('./r87-ui.mts')).r87UiCheck(b));
+// (v1.07, #746-#778) auto play stops, sends nothing and the valley stops drawing when another tab of the game takes over
+await check('autoplayheld', async () => (await import('./autoplay-held.mts')).autoplayHeldCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);
