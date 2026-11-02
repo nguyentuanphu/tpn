@@ -43,11 +43,13 @@ async function scene(page: any, name: string, hero: number[], yaw: number, cam: 
 try {
   if (want('title')) {
     const P = await open(b, { w: W, h: H, dpr: DPR, lang, touch: true, fast: false, play: false, settings: { quality: 'high', alwaysDay: true } });
-    await P.page.waitForTimeout(4000); await shot(P.page, 'title'); await P.ctx.close();
+    // the last loading step finishes only after Tap to start: the progress line is taken off this still
+    await P.page.waitForTimeout(8000); await P.page.evaluate(() => document.querySelector('.launch-progress')?.remove());
+    await P.page.waitForTimeout(500); await shot(P.page, 'title'); await P.ctx.close();
   }
   // places (map of r56 on: Lotus Village [204, -42], Hà Nội [153, -135], Sydney [-132, -4] on its harbour, Hội An [170, 90])
   const CINE: [string, number[], number, number[], number[]][] = [
-    ['valley-village', [204, -30], Math.PI, [213, -16, 8], [203, -46, 3]], ['valley-hanoi', [130, -122], Math.PI, [138, -110, 8], [125, -133, 2]],
+    ['valley-village', [204, -30], Math.PI, [196, -14, 12], [204, -46, 2]], ['valley-hanoi', [130, -122], Math.PI, [138, -110, 8], [125, -133, 2]],
     ['valley-sydney', [-90, 32], Math.PI, [-84, 42, 9], [-98, 18, 4]], ['valley-hoian', [170, 92], Math.PI, [178, 102, 7], [170, 72, 2]]];
   const cine = CINE.filter(([n]) => want(n));
   if (cine.length) {
