@@ -3,7 +3,8 @@ import {artSection} from './art-content.mts';
 import fs from 'node:fs';
 import {simplifyNavigation} from './navigation.mts';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+import os from 'node:os';
 import {execFileSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 const ts=createRequire(new URL('../../tests/package.json',import.meta.url))('typescript');
@@ -21,8 +22,11 @@ const here=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(here,'
 const data=(file,mime)=>`data:${mime};base64,${(file.startsWith('fonts/')?execFileSync('git',['show',snapshot.source+':'+file],{cwd:root}):fs.readFileSync(path.join(root,file))).toString('base64')}`;
 const snapshot=JSON.parse(fs.readFileSync(path.join(here,'quest-snapshot.json')));
 const readGame=file=>{for(const candidate of [...new Set([file,file.replace(/\.js$/,'.ts'),file.replace(/\.ts$/,'.js')])]){try{return execFileSync('git',['show',snapshot.source+':'+candidate],{cwd:root,encoding:'utf8',stdio:['ignore','pipe','pipe']})}catch{}}throw Error('Missing shared game source: '+file)};
-const source=ts.transpileModule(readGame('js/art.js'),{compilerOptions:{module:ts.ModuleKind.ES2020,target:ts.ScriptTarget.ES2020}}).outputText;
-const {artSVG}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+// (v1.07) js/art.ts imports its drawing groups from js/art/, so the snapshot's art files are written to a folder and loaded from there
+const artDir=fs.mkdtempSync(path.join(os.tmpdir(),'sv-art-')),js=t=>ts.transpileModule(t,{compilerOptions:{module:ts.ModuleKind.ES2020,target:ts.ScriptTarget.ES2020}}).outputText;
+fs.mkdirSync(path.join(artDir,'art'));fs.writeFileSync(path.join(artDir,'art.js'),js(readGame('js/art.js')));
+for(const f of execFileSync('git',['ls-tree','--name-only',snapshot.source,'js/art/'],{cwd:root,encoding:'utf8'}).split('\n').filter(f=>f.endsWith('.ts')))fs.writeFileSync(path.join(artDir,'art',path.basename(f,'.ts')+'.js'),js(readGame(f)));
+const {artSVG}=await import(pathToFileURL(path.join(artDir,'art.js')).href);
 let html=simplifyNavigation(fs.readFileSync(path.join(here,'prototype.template.html'),'utf8'));
 const home=`<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 24L24 9l19 15" fill="#ff8a5a" stroke="#3b2a4f" stroke-width="2.6" stroke-linejoin="round"/><path d="M10 23h28v20H10z" fill="#fff3d0" stroke="#3b2a4f" stroke-width="2.6"/><path d="M21 43V31h8v12" fill="#b07a4a" stroke="#3b2a4f" stroke-width="2.6"/><rect x="14" y="27" width="5" height="5" rx="1" fill="#8ed7f3" stroke="#3b2a4f" stroke-width="1.5"/><path d="M37 2l2.1 4.4 4.9.7-3.5 3.4.8 4.8-4.3-2.2-4.3 2.2.8-4.8L30 7.1l4.9-.7z" fill="#ffd23f" stroke="#3b2a4f" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
 const keys={GOAT:'🐐',CARDS:'🎴',CROWN:'👑',OWL:'🦉',BOOK:'📖',NUMBERS:'🔢',MUSIC:'🎵',BRAIN:'🧩',PIG:'🐷',HEART:'💛',GEAR:'⚙️',CLOCK:'🕒',KITE:'🪁',HORSE:'🐴',BIRD:'🐦',MELON:'🍉',APPLE:'🍎',TREE:'🌳',FLAG:'🚩',CAT:'🐱',SAW:'🪚',COIN:'🪙',TARGET:'🎯',FLOWER:'🌸',ROW:'🚣'};
