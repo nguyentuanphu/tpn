@@ -3509,7 +3509,8 @@ await check('roadtone', async () => {
   const mark = await P.page.evaluate(async () => {
     const M = await import('/js/content/map.js'), { THREE } = await import('/js/gfx.js'), mid = id => { const R = M.ROADS.find(r => r.id === id), [a, c] = R.pts; return [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2]; };
     const at = ([x, z], px, py, width = 1, height = 1) => { let got = null; __sv.scene.traverse(o => { if (got || !o.userData.road || !o.material || !o.material.map) return; o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox;
-      if (x > bb.min.x && x < bb.max.x && z > bb.min.z && z < bb.max.z) { const im = o.material.map.image, g = im.getContext('2d'); const data = g.getImageData(px, py, width, height).data, sum = [0,0,0]; for(let i=0;i<data.length;i+=4)for(let k=0;k<3;k++)sum[k]+=data[i+k]; got=sum.map(v=>v/(width*height)); } }); return got; };
+      // (v1.07 roads) positions are given on the old 64 x 256 picture and scaled to the picture's real size
+      if (x > bb.min.x && x < bb.max.x && z > bb.min.z && z < bb.max.z) { const im = o.material.map.image, g = im.getContext('2d'), sx = im.width / 64, sy = im.height / 256; const data = g.getImageData(px * sx, py * sy, width * sx, height * sy).data, sum = [0,0,0]; for(let i=0;i<data.length;i+=4)for(let k=0;k<3;k++)sum[k]+=data[i+k]; got=sum.map(v=>v/(data.length/4)); } }); return got; };
     return { vnDash: at(mid('vn_north'), 31, 60), auKerb: at(mid('link_au'), 1, 60), auMid: at(mid('link_au'), 10, 0, 14, 256), vnMid: at(mid('vn_north'), 10, 0, 14, 256), vnKerb: at(mid('vn_north'), 0, 60) };
   });
   const errs = P.errors; await P.ctx.close();
