@@ -400,7 +400,7 @@ const BY_ID = new Map(PLACES.map(p => [p.id, p]));
 // a place's anchor [x, z] (a place inside a place: its parent's anchor plus its offset)
 export function anchorOf(id) { const p = BY_ID.get(id); if (!p) return null; if (p.at) return p.at; const a = anchorOf(p.place); return a && [a[0] + p.off[0], a[1] + p.off[1]]; }
 // where a landmark stands [x, z]
-export function landmarkAt(id) { const L = LANDMARK_AT[id]; if (!L) return null; const a = anchorOf(L.place); return a && [a[0] + L.off[0], a[1] + L.off[1]]; }
+export function landmarkAt(id): [number, number] | null { const L = LANDMARK_AT[id]; if (!L) return null; const a = anchorOf(L.place); return a && [a[0] + L.off[0], a[1] + L.off[1]]; }
 
 // The anchors of earlier layouts, frozen (only for moving old saves and old Studio edits onto a new map).
 export const LEGACY = Object.freeze({

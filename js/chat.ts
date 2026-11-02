@@ -24,7 +24,7 @@ export const PERSONAS: Record<string, Persona> = {
 export const personaByName = name => Object.entries(PERSONAS).find(([, p]) => name && name.startsWith(p.name));
 
 // Find a place, villager or game the child is asking about.
-type ChatTarget = { kind: 'place'; x: number; z: number; name: string; icon: string } | { kind: 'npc' | 'game'; id: string; name: string; icon: string };
+type ChatTarget = { kind: 'place'; x: number; z: number; name: string; icon: string } | { kind: 'npc'; id: string; name: string; icon: string } | { kind: 'game'; id: string; name: string; icon: string };
 export function findTarget(G, text): ChatTarget | null {
   const t = ' ' + plain(text) + ' ';
   const hit = name => { const n = plain(name); if (n.length > 2 && t.includes(' ' + n + ' ')) return 2; const words = n.split(' ').filter(w => w.length > 3); return words.length && words.filter(w => t.includes(' ' + w + ' ')).length >= Math.min(2, words.length) ? 1 : 0; };

@@ -1,7 +1,7 @@
 # Fast checks on every pull request and every push to a branch (Analytics & Infra, 10 Oct, task infra-speed).
 # The same checks a contributor runs locally (cd tests && node run.mjs <checks>), no game server needed:
 #   unit     Node unit tests (tests/unit)
-#   rules    js/content/rules.js matches docs/ARCHITECTURE.md §9 (tools/rules-from-doc.mts --check)
+#   rules    js/content/rules.ts matches docs/ARCHITECTURE.md §9 (tools/rules-from-doc.mts --check)
 #   preload  index.html lists every start-up script (tools/preload.mts --check)
 #   emoji    every emoji has a drawing in js/art.js, none in the docs (tools/emoji-audit.mts)
 #   arch     no files import each other in a circle (tests/arch.mjs)
