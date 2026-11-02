@@ -1,5 +1,7 @@
 # v1.07 rules: status
 
+**ready for Release (full suite: Release's combined run)** · 2 Nov 2026, 3:10 pm AEDT · branch `work/v107-rules`. Assumed choices: none. New spoken lines: recorded (12 files).
+
 Helper: rules. Branch: `work/v107-rules`. Started 2 Nov 2026, 11:00 am AEDT.
 
 ## Plan
@@ -35,7 +37,8 @@ Helper: rules. Branch: `work/v107-rules`. Started 2 Nov 2026, 11:00 am AEDT.
 ## After resume (2 Nov 2026 AEDT)
 
 - Root `npm ci`, then `types` pass and `unit` pass (482).
-- GitHub full suite started by hand at 2:06 pm AEDT: [run 41381278970](https://github.com/nguyentuanphu/tpn/actions/runs/41381278970) on `4a0d4ea6`; result pending.
+- GitHub full suite started by hand at 2:06 pm AEDT ([run 41381278970](https://github.com/nguyentuanphu/tpn/actions/runs/41381278970)) was cancelled by Release at 3:05 pm AEDT (owner's decision: one combined full suite for the round). Before that, Management PostgreSQL passed; the browser shares had not run.
+- Local checks on this branch: unit (482) pass, types pass, rules, arch, emoji, noemoji, preload, names, bilingual pass; `rules-audit` unit check pass.
 - Pictures: Bánh Chưng (after the pork, the "beans and rice again" step), Duck Duck Goose (goose chosen, sit in their place) and Pass the Parcel on phone 390x844, tablet 820x1180 and computer 1280x800, in `docs/rules-audit/shots/`. All looked: tidy, nothing cut off, no page errors.
 - No draft pull request opened: a pull request into `main` starts a second full suite, and Release asked to save usage. Release collects the branch.
 
