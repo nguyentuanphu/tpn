@@ -94,7 +94,8 @@ card).
 ## Progress
 
 - Commit: see the list at the end (filled in when pushed).
-- Shared files touched: `js/content/tester.ts` (`keyOf`, one line), `tests/unit/tester.test.mts` (new lines in the first test).
+- Shared files touched: `js/content/tester.ts` (`keyOf`, one line), `tests/unit/tester.test.mts` (new lines in the first test),
+  `tests/checks/tester.mts` and `tests/old-bugs.mts` (see the checks below).
 - New spoken lines: none. Nothing a child sees changed.
 
 ## Checks
@@ -102,4 +103,12 @@ card).
 | Check | Result |
 |---|---|
 | `unit` tester test alone | pass 18/18 with the fix; 17 pass, 1 fail on the old `keyOf` |
-| `suite.mts --changed --list --base origin/release/v1.08` | picks the full suite (a TypeScript file every check loads): run on GitHub |
+| `suite.mts --changed --list --base origin/release/v1.08` | picks the full suite (a TypeScript file every check loads) |
+| `testerreport`, `freezewhy` (first run) | fail: both caused a second freeze in the same place and expected a second report, the behaviour this fix stops (in `testerreport` the software-drawn test browser had already frozen by itself in the valley, so the deliberate freeze was counted, not sent). Changed, not weakened: each deliberate freeze now happens under a window of its own (a new place), so it is still a new report and every line of it is still checked; `testerreport` removes its window before the ladybird part |
+| `testerreport`, `freezewhy` (after) | pass (111 s, 52 s), one at a time |
+| `capturefreeze` | pass (86 s) |
+| `preload`, `arch`, `bilingual`, `rules`, `noemoji` | pass |
+| `names`, `types` | skipped here (tests packages not installed) |
+| `emoji` | fail, not this branch: an emoji in Release's `docs/plans/v108-owner-batch-20261103.md` |
+| `unit` (whole) | fail, not this branch: two management tests need the `pg` package, not installed here; the tester tests pass |
+| full suite | left for Release (Release's rule of 3 Nov AEDT: Release runs every branch's full suite at once). A run started on this branch by mistake (41527662277) was cancelled before it finished |

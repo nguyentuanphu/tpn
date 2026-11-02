@@ -55,7 +55,9 @@ export async function freezeWhyCheck(b: Browser): Promise<string> {
     const busy = await waitFor(got, x => x && x.auto === 'freeze' && freezes().indexOf(x) >= n0, 8000, pause);
     // 2. the page is free but no frame comes for 3.6 s (the graphics side stopped drawing; a different length, because
     //    the same freeze in the same place again within a while is one report)
-    await pause(3500); const n1 = freezes().length;
+    // (v1.08 bugs, #780 #781) the device now counts a freeze of another length in the same place as the same problem, as
+    //    the server does, so the second freeze happens under another window: a new place, a new report
+    await pause(3500); await P.page.evaluate(() => { document.querySelector('.freeze-check')!.className = 'modal freeze-check-free'; }); const n1 = freezes().length;
     await P.page.evaluate(() => new Promise<void>(r => { const raf = window.requestAnimationFrame.bind(window); window.requestAnimationFrame = cb => raf(() => setTimeout(() => raf(cb), 3600)) as any; setTimeout(() => { window.requestAnimationFrame = raf; r(); }, 1000); }));
     const free = await waitFor(got, x => x && x.auto === 'freeze' && freezes().indexOf(x) >= n1 && parseFloat(x.detail) >= 3.4, 9000, pause);
     const bad: string[] = [];
