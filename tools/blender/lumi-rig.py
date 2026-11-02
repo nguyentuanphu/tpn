@@ -127,8 +127,8 @@ def ride(t):  # riding a bicycle or a scooter: astride, hands forward on the han
     a = 2 * math.pi * t; p = rest(); pedal = B.get('pedal', 0.0)
     p['legL'] = (-1.15 - pedal * .35 * math.sin(a), 0, -.18); p['legR'] = (-1.15 + pedal * .35 * math.sin(a), 0, .18)
     p['kneeL'] = (1.25 + pedal * .35 * math.sin(a), 0, 0); p['kneeR'] = (1.25 - pedal * .35 * math.sin(a), 0, 0)
-    p['armL'] = (-1.05, 0, -.12); p['armR'] = (-1.05, 0, .12); p['elbowL'] = (-.35, 0, 0); p['elbowR'] = (-.35, 0, 0)
-    p['torso'] = (-.22, 0, 0); p['head'] = (.2, .06 * math.sin(a), 0)
+    p['armL'] = (-.85, 0, -.05); p['armR'] = (-.85, 0, .05); p['elbowL'] = (-.45, 0, 0); p['elbowR'] = (-.45, 0, 0)
+    p['torso'] = (-.28, 0, 0); p['head'] = (.2, .06 * math.sin(a), 0)
     return p, 0.0
 def passenger(t):  # sitting behind the rider, hands at the rider's waist
     p, lift = ride(t); p['armL'] = (-.8, 0, .15); p['armR'] = (-.8, 0, -.15); p['elbowL'] = (-.5, 0, 0); p['elbowR'] = (-.5, 0, 0); p['torso'] = (-.1, 0, 0); return p, lift

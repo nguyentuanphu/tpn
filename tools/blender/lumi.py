@@ -14,7 +14,7 @@ from mathutils.bvhtree import BVHTree
 from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube, lathe, subsurf, obj_from
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
-FLAGS = ('portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
+FLAGS = ('rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
 OUT = next((a for a in argv if a not in FLAGS and '=' not in a), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
@@ -416,7 +416,7 @@ def body():
     # the cream shirt
     lathe('shirt', SHIRT, [(wH * .95, b['zW'] - .04 * S), (wC, b['zW']), (wC * 1.03, (b['zW'] + b['zC']) / 2), (wC, b['zC']), (wC * .82, b['zS'] + .008 * S), (wC * .42, b['zN']), (wC * .32, b['zN'] + .01 * S)], 32, scale=(1, dep))
     for s in (-1, 1):
-        if m is not SKIN: sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))
+        sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))
     tube('neck', SKIN, [(0, 0, b['zS']), (0, 0, b['zN'] + .03 * S)], .04 * S, 16)
     # the overalls: bib and back panel, straps crossing at the back, brass buttons, a felt star and leaf pockets
     rb = wC * 1.06 + .004
@@ -620,7 +620,7 @@ if 'hard' not in argv:
         exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-sculpt.py')).read()); sculpt(); ease_loose()
     soften()
 
-RIG = 'anim' in argv or 'glb' in argv
+RIG = 'anim' in argv or 'glb' in argv or 'rig' in argv
 if RIG:
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-rig.py')).read())
 
