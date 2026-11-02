@@ -1,6 +1,6 @@
 # v1.07 tester-bugs: status
 
-**ready for Release** (2 Nov 2026, 2:40 pm AEDT): branch `work/v107-tester-bugs`, draft PR #783, full suite green on GitHub.
+**ready for Release (full suite: Release's combined run)** (2 Nov 2026, 3:10 pm AEDT): branch `work/v107-tester-bugs`, draft PR #783. This branch's own full suite (run 41366549196) had already finished green at 2:20 pm AEDT, before the owner's 3:05 pm decision.
 
 Branch `work/v107-tester-bugs` (from main v1.06). Helper chat, started 2 Nov 2026 AEDT.
 
