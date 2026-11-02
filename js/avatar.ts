@@ -82,13 +82,21 @@ export function drawFeatures(x, S, look, mood = 'smile') {
 }
 // Painted faces (no photo) are shared by every villager with the same hair and skin, at 256 px: phones
 // (iPhones above all) have a small budget for pictures, and when it runs out new ones come out black.
+// (v1.08) The four moods (smile, blink, happy, surprised) are painted side by side on one picture, 2 by 2 at 192 px each;
+// each person gets their own copy of it (same picture, sent to the graphics once) showing their mood's quarter, so a
+// blink moves the view and makes no new picture (check longplaymem).
 const paintedFaces = {};
-// (v1.08) the other moods are painted the first time someone near the camera needs them
+const MOODS = ['smile', 'blink', 'happy', 'o'];
+export function setFaceMood(tex: THREE.Texture, mood: string) { const i = Math.max(0, MOODS.indexOf(mood)); tex.offset.set((i % 2) * .5, i < 2 ? .5 : 0); }
 export function faceTexture(look, photo?, mood = 'smile') {
   if (!photo) {
-    const k = look.hair + look.skin + (mood === 'smile' ? '' : mood);
-    if (!paintedFaces[k]) { const S = 256, c = document.createElement('canvas'); c.width = c.height = S; drawFeatures(c.getContext('2d'), S, look, mood); paintedFaces[k] = new THREE.CanvasTexture(c); paintedFaces[k].colorSpace = THREE.SRGBColorSpace; }
-    return paintedFaces[k];
+    const k = look.hair + look.skin;
+    if (!paintedFaces[k]) {
+      const S = 192, c = document.createElement('canvas'); c.width = c.height = S * 2; const x = c.getContext('2d');
+      MOODS.forEach((m, i) => { x.save(); x.translate((i % 2) * S, (i < 2 ? 0 : 1) * S); x.beginPath(); x.rect(0, 0, S, S); x.clip(); drawFeatures(x, S, look, m); x.restore(); });
+      paintedFaces[k] = new THREE.CanvasTexture(c); paintedFaces[k].colorSpace = THREE.SRGBColorSpace;
+    }
+    const t = paintedFaces[k].clone(); t.repeat.set(.5, .5); setFaceMood(t, mood); return t;
   }
   const S = 512, c = document.createElement('canvas'); c.width = c.height = S; const x = c.getContext('2d');
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
@@ -406,7 +414,7 @@ export function animate(A, state, t, speed = 0) {
   if (A.painted && A.faceMat) {
     if (t > L.blink + .13) L.blink = t + 1.8 + Math.random() * 3.5 - (Math.random() < .15 ? 1.55 + Math.random() * .2 : 0);
     const want = !fresh && t >= L.blink && t < L.blink + .13 ? 'blink' : mood;
-    if (want !== L.mood) { L.mood = want; A.faceMat.map = faceTexture(A.look, null, want); }
+    if (want !== L.mood && A.faceMat.map) { L.mood = want; setFaceMood(A.faceMat.map, want); }
   }
 }
 
@@ -548,8 +556,21 @@ export function stillOf(A) {
 const compactMats = {};
 const compactMat = side => compactMats[side] || (compactMats[side] = Object.assign(toonSmooth({ side }), { userData: { shared: true } }));
 // (v1.08) A bending limb stays one shape: the thigh and the shin (the upper arm and the forearm, the head and its
-// hanging hair) are baked together and the knee bends it, as a skinned shape with two bones (the hip group and the
-// knee group). So the new knees, elbows and swinging hair cost no extra draws (PERF-003).
+// hanging hair) are baked together and the knee bends it in the shader (bendMat). So the new knees, elbows and
+// swinging hair cost no extra draws (PERF-003) and no extra pictures.
+// a limb's material: the corners on the knee's side are turned by the knee (uBend), in the shader, so a bending
+// limb is one shape, one draw and no extra picture (a skinned shape's bones would be a picture each: check longplaymem)
+function bendMat(side: number, u: { value: THREE.Matrix4 }) {
+  const m = toonSmooth({ side });
+  m.onBeforeCompile = sh => {
+    sh.uniforms.uBend = u;
+    sh.vertexShader = 'attribute float bendW;\nuniform mat4 uBend;\n' + sh.vertexShader
+      .replace('#include <beginnormal_vertex>', '#include <beginnormal_vertex>\nif (bendW > .5) objectNormal = mat3(uBend) * objectNormal;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nif (bendW > .5) transformed = (uBend * vec4(transformed, 1.)).xyz;');
+  };
+  m.customProgramCacheKey = () => 'svbend' + side;
+  return m;
+}
 const JOINED = [['legL', 'kneeL'], ['legR', 'kneeR'], ['armL', 'elbowL'], ['armR', 'elbowR'], ['head', 'tail']];
 function compact(A) {
   const nodes = [A.rig, A.torso, A.head, A.legL, A.legR, A.armL, A.armR, A.glider, ...(A.wings || [])];
@@ -581,33 +602,26 @@ function compact(A) {
       const g = bake(parts, inv, true);
       let one: THREE.Mesh;
       if (kl.length) {
-        const n0 = list.reduce((s, m) => s + m.geometry.attributes.position.count, 0), nv = g.attributes.position.count;
-        const si = new Uint16Array(nv * 4), sw = new Float32Array(nv * 4);
-        for (let i = 0; i < nv; i++) { si[i * 4] = i < n0 ? 0 : 1; sw[i * 4] = 1; }
-        g.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4)); g.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
-        const sk = new THREE.SkinnedMesh(g, compactMat(+side)); N.add(sk); A.root.updateMatrixWorld(true);
-        sk.bind(new THREE.Skeleton([N, kid]), sk.matrixWorld);
-        // fixed bounds with room for the bend: three.js would otherwise work them out from the bones later, wherever the
-        // person has walked to since, and the far-off culling (js/main.ts) would see a giant
-        g.computeBoundingSphere(); g.computeBoundingBox(); sk.boundingSphere = g.boundingSphere.clone(); sk.boundingSphere.radius *= 1.6; sk.boundingBox = g.boundingBox.clone().expandByScalar(.25);
-        one = sk;
+        // each corner remembers whether it belongs to the knee's side (1) or the hip's (0)
+        const n0 = list.reduce((s, m) => s + m.geometry.attributes.position.count, 0), nv = g.attributes.position.count, w = new Float32Array(nv);
+        for (let i = n0; i < nv; i++) w[i] = 1;
+        g.setAttribute('bendW', new THREE.BufferAttribute(w, 1));
+        kid.updateMatrix(); const rest = kid.matrix.clone().invert(), u = { value: new THREE.Matrix4() };
+        one = new THREE.Mesh(g, bendMat(+side, u)); N.add(one);
+        // just before it is drawn: how far the knee has turned since it was built
+        one.onBeforeRender = () => { kid.updateMatrix(); u.value.multiplyMatrices(kid.matrix, rest); };
+        one.userData.bend = u;
       } else { one = new THREE.Mesh(g, compactMat(+side)); N.add(one); }
       one.castShadow = true;
       // (r67) an arm keeps an empty marker where each of its parts was (the hand at y -0.42), so a rider's grip can still be found
-      if (N === A.armL || N === A.armR) [[N, list], [kid, kl]].forEach(([G, l]) => l.forEach(m => { const k = new THREE.Object3D(); k.position.copy(m.position); k.quaternion.copy(m.quaternion); k.userData.part = true; G.add(k); }));
+      if (N === A.armL || N === A.armR) [[N, list, null], [N, kl, kid]].forEach(([G, l, from]) => l.forEach(m => { const k = new THREE.Object3D(); k.position.copy(m.position); if (from) k.position.add(from.position); k.quaternion.copy(m.quaternion); k.userData.part = true; G.add(k); }));
       list.forEach(m => N.remove(m)); kl.forEach(m => kid.remove(m));
       if (ranges.length) A.skinParts.push({ g, ranges });
     }
   }
 }
-// (v1.08) a copy of a person (the Bag's picture of the child): its bending limbs follow the copy's own knees and elbows
-export function cloneAvatarRoot(root: THREE.Object3D) {
-  const c = root.clone(true), a: THREE.Object3D[] = [], b: THREE.Object3D[] = [];
-  root.traverse(o => { a.push(o); }); c.traverse(o => { b.push(o); });
-  const map = new Map(a.map((o, i) => [o, b[i]]));
-  b.forEach((o, i) => { const s = a[i]; if (o instanceof THREE.SkinnedMesh && s instanceof THREE.SkinnedMesh) o.bind(new THREE.Skeleton(s.skeleton.bones.map(x => (map.get(x) || x) as THREE.Bone), s.skeleton.boneInverses), s.bindMatrix); });
-  return c;
-}
+// (v1.08) a copy of a person (the Bag's picture of the child): the copy's limbs bend as the person's do
+export function cloneAvatarRoot(root: THREE.Object3D) { return root.clone(true); }
 function recolorSkin(A) {
   const c = A.skinMat.color;
   for (const { g, ranges } of A.skinParts || []) { const C = g.attributes.color; for (const [a, n] of ranges) for (let i = a; i < a + n; i++) C.setXYZ(i, c.r, c.g, c.b); C.needsUpdate = true; }

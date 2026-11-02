@@ -95,7 +95,13 @@ export function outline(obj, width = .011, color = '#6a4a3a') {
   }
   const add = [];
   obj.traverse(o => { if (o.isMesh && !o.userData.outline && !o.material.transparent && o.geometry.attributes.normal) add.push(o); });
-  // (v1.08) a bending limb's outline bends with it: the same bones
-  return add.map(o => { const h = o.isSkinnedMesh ? new THREE.SkinnedMesh(o.geometry, m) : new THREE.Mesh(o.geometry, m); if (h instanceof THREE.SkinnedMesh) { h.bind(o.skeleton, o.bindMatrix); h.boundingSphere = o.boundingSphere; h.boundingBox = o.boundingBox; }
+  // (v1.08) a bending limb's outline bends with it (js/avatar.ts bendMat): its own material, the same knee
+  return add.map(o => { const u = o.userData.bend; let h: THREE.Mesh;
+    if (u) {
+      const bm = new THREE.MeshBasicMaterial({ color, side: THREE.BackSide });
+      bm.onBeforeCompile = sh => { sh.uniforms.uBend = u; sh.vertexShader = 'attribute float bendW;\nuniform mat4 uBend;\n' + sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normalize(normal) * ${width.toFixed(4)};\nif (bendW > .5) transformed = (uBend * vec4(transformed, 1.)).xyz;`); };
+      bm.customProgramCacheKey = () => 'outlineBend' + key;
+      h = new THREE.Mesh(o.geometry, bm); h.onBeforeRender = o.onBeforeRender;
+    } else h = new THREE.Mesh(o.geometry, m);
     h.userData.outline = true; h.raycast = () => { }; o.add(h); return h; });
 }
