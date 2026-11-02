@@ -3422,3 +3422,16 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .pushsec .pushdays button { min-height: 44px; min-width: 44px; }
 .pushsec .push-ios { background: #fff6e0; border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
 .pushsec .push-ios .art { width: 28px; height: 28px; vertical-align: middle; }
+
+/* (v1.08 simple, owner 3 Nov 2026 AEDT) Valley joins the round buttons in the top row (64 px, its name for screen
+   readers); a locked game is its own stop: its picture greyed under a padlock, and what to do under its name */
+.sp-tools .sp-valley { position:relative; display:grid; place-items:center; padding:0; border:0; border-radius:50%; background:#fff; box-shadow:0 4px 0 rgba(60,100,40,.3); }
+.sp-tools .sp-valley .art, .sp-tools .sp-valley .emo { width:34px; height:34px; font-size:28px; }
+.sp-tools .sp-valley small { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+@media (max-width: 380px) { .sp-tools { gap:4px; } .sp-top { gap:6px; padding-left:10px; padding-right:10px; } }
+.sp-stop.locked .sp-pic > .art, .sp-stop.locked .sp-pic > .emo { filter: grayscale(.85) opacity(.6); }
+.sp-lockpad { position:absolute; right:-8px; top:-8px; width:38px; height:38px; display:grid; place-items:center; background:#fff; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,.25); font-style:normal; }
+.sp-lockpad .art, .sp-lockpad .emo { width:28px; height:28px; font-size:24px; }
+.sp-hint { display:block; margin-top:2px; font-size:12px; font-weight:700; line-height:1.15; color:#7a4fd0; }
+/* a phone on its side has one row of road: the padlock shows it, and a tap says what to do */
+.simple-screen.wide .sp-hint { display:none; }
