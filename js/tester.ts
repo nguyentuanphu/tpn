@@ -41,6 +41,8 @@ type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regi
   tester?: TesterApi;
   autoplay?: { running(): boolean; attach?(body: HTMLElement, close: () => void): void; detach?(): void; stop?(): void; start?(items: unknown, speed: string): void; open?(): void };
   testerRewards?: { apply(status: TesterStatus): void; unmount(): void; corner(): void };
+  // (v1.07 old-bugs) the graphics the game picked, named in each report
+  gpu?: { name?: string };
 };
 export type TesterApi = { level: string; openPanel: typeof openPanel; autoReport: typeof autoReport; refresh: typeof refresh; retest: typeof retest; nightly: typeof nightly; settings: typeof settingsRows; status(): TesterStatus | null; mountedAt(): number; unmount(): void };
 type ReportPanel = HTMLElement & { close(): void; selectTab?(tab: string): void };
