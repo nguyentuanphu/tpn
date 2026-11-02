@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sparkle Valley flyer</title>
+<!-- One-page flyer for the Tết 2027 launch (v1.07 helper "launch", 2 Nov 2026 AEDT). Print on A4 from a browser
+     (margins: none or default, background graphics on). Pictures are real game screens from ../shots/ (our own art).
+     [DATA]: the line "Không cần tài khoản..." waits for the owner's decision on children's data (../PLAN.md). -->
+<style>
+  @font-face { font-family: Baloo; src: url(../../../fonts/Baloo2-vietnamese-600.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9; }
+  @font-face { font-family: Baloo; src: url(../../../fonts/Baloo2-latin-ext-600.woff2) format('woff2'); unicode-range: U+0100-024F, U+1E00-1EFF; }
+  @font-face { font-family: Baloo; src: url(../../../fonts/Baloo2-latin-600.woff2) format('woff2'); }
+  :root { --ink: #3b2a4f; --pink: #ff5fa2; --purple: #7a4fe0; --green: #45bb66; --sun: #ffd23f; --paper: #fffaf0; }
+  @page { size: A4; margin: 10mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Baloo, system-ui, sans-serif; }
+  .page { max-width: 190mm; margin: 0 auto; padding: 8mm 4mm; }
+  h1 { margin: 0; text-align: center; font-size: 44px; line-height: 1.05; color: var(--pink); }
+  h1 span { display: block; color: var(--purple); font-size: 30px; }
+  .tag { text-align: center; font-size: 19px; margin: 8px 0 14px; }
+  .shots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0 0 14px; }
+  .shots img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 14px; border: 3px solid #fff; box-shadow: 0 2px 6px #0002; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .box { background: #fff; border-radius: 16px; padding: 12px 14px; border: 2px solid #f0e3c8; }
+  .box h2 { margin: 0 0 6px; font-size: 19px; color: var(--purple); }
+  .box ul { margin: 0; padding-left: 18px; font-size: 14.5px; line-height: 1.4; }
+  .promise { margin: 14px 0; padding: 10px; text-align: center; background: var(--sun); border-radius: 999px; font-size: 17px; }
+  .url { text-align: center; font-size: 34px; color: var(--green); margin: 6px 0 2px; }
+  .how { text-align: center; font-size: 14.5px; }
+  @media (max-width: 600px) { .shots { grid-template-columns: repeat(2, 1fr); } .cols { grid-template-columns: 1fr; } h1 { font-size: 36px; } .url { font-size: 28px; } }
+  @media print { .page { padding: 0; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Thung Lũng Lấp Lánh<span>Sparkle Valley</span></h1>
+  <p class="tag">Trò chơi song ngữ cho bé 2 đến 8 tuổi · A bilingual game for children aged 2 to 8</p>
+  <div class="shots">
+    <img src="../shots/game-letters-vi.jpg" alt="Tìm chữ cái">
+    <img src="../shots/tale-vi.jpg" alt="Truyện Thánh Gióng">
+    <img src="../shots/game-oanquan-vi.jpg" alt="Ô ăn quan">
+    <img src="../shots/valley-hanoi-vi.jpg" alt="Hà Nội trong thung lũng">
+  </div>
+  <div class="cols">
+    <div class="box" lang="vi">
+      <h2>Bé học mà chơi</h2>
+      <ul>
+        <li>Tiếng Việt và tiếng Anh, chữ nào cũng đọc thành tiếng</li>
+        <li>Tập tô chữ, đọc chữ, đếm số, tiêu tiền đô và tiền đồng</li>
+        <li>Truyện cổ tích kể thành tiếng: Thánh Gióng và nhiều truyện khác</li>
+        <li>Ô ăn quan, thả diều, Tết và Trung Thu đúng mùa</li>
+        <li>Hà Nội, Hội An và Sydney trong một thung lũng</li>
+        <li>Bé dưới 5 tuổi có màn hình "Hình to", không bao giờ thua</li>
+      </ul>
+    </div>
+    <div class="box" lang="en">
+      <h2>Learning through play</h2>
+      <ul>
+        <li>Vietnamese and English, every word read aloud</li>
+        <li>Tracing letters, first words, counting, dollars and đồng</li>
+        <li>Fairy tales read aloud: Thánh Gióng and more</li>
+        <li>Ô ăn quan, kite flying, Tết and Trung Thu in season</li>
+        <li>Hà Nội, Hội An and Sydney in one valley</li>
+        <li>A "Big pictures" screen for under-fives, who never lose</li>
+      </ul>
+    </div>
+  </div>
+  <p class="promise">Miễn phí · Không quảng cáo · Không cần tài khoản · Chơi được khi không có mạng<br>Free · No ads · No accounts · Plays offline</p>
+  <p class="url">sparklevalley.au</p>
+  <p class="how">Mở trên điện thoại hoặc máy tính bảng, bấm "Thêm vào màn hình chính".<br>Open it on a phone or tablet and tap "Add to Home Screen".</p>
+</div>
+</body>
+</html>

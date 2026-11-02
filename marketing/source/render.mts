@@ -1,4 +1,4 @@
-// node render.mjs <video> [preview t1,t2,...]   -> frames/<video>/f00001.jpg ... or preview-<video>-<t>.jpg
+// node render.mts <video> [preview t1,t2,...]   -> frames/<video>/f00001.jpg ... or preview-<video>-<t>.jpg
 import { chromium } from 'playwright-core';
 import fs from 'fs';
 const DIR = new URL('.', import.meta.url).pathname;

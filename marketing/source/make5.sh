@@ -3,7 +3,7 @@
 cd "$(dirname "$0")"; mkdir -p out5
 ADS=${@:-parents little heritage together explore}
 for a in $ADS; do for l in ${LANGS:-en vi}; do
-  info=$(node render5.mjs $a $l 2>log5-$a-$l.txt | tail -1)
+  info=$(node render5.mts $a $l 2>log5-$a-$l.txt | tail -1)
   total=$(echo "$info" | python3 -c "import json,sys;print(json.load(sys.stdin)['total'])")
   python3 music.py music5-$a-$l.wav $total 4$((RANDOM%9)) >> log5-$a-$l.txt
   # the voice lines, each starting 0.35 s into its scene, over the music at a quarter of its volume

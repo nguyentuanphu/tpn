@@ -1,5 +1,5 @@
 // Voice-over for the five ads (owner, 11 Oct): every scene's line in English and Vietnamese with Azure neural voices.
-// node voice5.mjs   (needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION; writes voice5/<id>-<lang>.mp3 and voice5/durations.json)
+// node voice5.mts   (needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION; writes voice5/<id>-<lang>.mp3 and voice5/durations.json)
 import fs from 'fs';
 import { execFileSync } from 'child_process';
 const DIR = new URL('./voice5/', import.meta.url).pathname; fs.mkdirSync(DIR, { recursive: true });

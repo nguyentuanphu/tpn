@@ -1,9 +1,9 @@
-// Voice-over for the ten ads (r82) (owner, 11 Oct): every scene's line in English and Vietnamese with Azure neural voices.
-// node voice10.mjs   (needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION; writes voice10/<id>-<lang>.mp3 and voice10/durations.json)
+// Voice-over for the two films (owner, 11 Oct): every scene's line in English and Vietnamese with Azure neural voices.
+// node voice5.mts   (needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION; writes voicef/<id>-<lang>.mp3 and voicef/durations.json)
 import fs from 'fs';
 import { execFileSync } from 'child_process';
-const DIR = new URL('./voice10/', import.meta.url).pathname; fs.mkdirSync(DIR, { recursive: true });
-globalThis.window = {}; await import('./ads10.js'); const ADS = window.ADS10;
+const DIR = new URL('./voicef/', import.meta.url).pathname; fs.mkdirSync(DIR, { recursive: true });
+globalThis.window = {}; await import('./films2.js'); const ADS = window.FILMS2;
 const KEY = process.env.AZURE_SPEECH_KEY, REGION = process.env.AZURE_SPEECH_REGION;
 if (!KEY || !REGION) throw new Error('AZURE_SPEECH_KEY / AZURE_SPEECH_REGION not set');
 const VOICE = { en: ['en-AU', 'en-AU-NatashaNeural'], vi: ['vi-VN', 'vi-VN-HoaiMyNeural'] };

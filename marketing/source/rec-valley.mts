@@ -1,7 +1,7 @@
-// Records the big kids' film (the 3D valley): node rec-valley.mjs <en|vi> <land|vert> <framesdir>
+// Records the big kids' film (the 3D valley): node rec-valley.mts <en|vi> <land|vert> <framesdir>
 // Writes frames and <framesdir>/marks.json. The end card is added by makefilm.sh.
 import fs from 'fs';
-import { film, cine, walkTo, placeAt } from './filmrec.mjs';
+import { film, cine, walkTo, placeAt } from './filmrec.mts';
 globalThis.window = globalThis.window || {}; await import('./films2.js'); const SC = Object.fromEntries(window.FILMS2.valley.map(s => [s.id, s]));
 const [lang = 'en', shape = 'land', dir] = process.argv.slice(2);
 const L = shape === 'land' ? { w: 1280, h: 720, dpr: 1.5, pixelRatio: .9 } : { w: 540, h: 960, dpr: 2, pixelRatio: 1.2 };

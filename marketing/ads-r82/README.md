@@ -60,12 +60,12 @@ and Facebook.
 ## Making them again
 
 The source is in `marketing/source/`: the scripts and words in `ads10.js`, the screenshots in `stills10/`
-(`capture10.mjs`), the voices in `voice10/` (`voice10.mjs`, needs `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION`).
+(`capture10.mts`), the voices in `voice10/` (`voice10.mts`, needs `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION`).
 
 ```bash
 cd marketing/source
-node capture10.mjs en && node capture10.mjs vi   # game served on :8765
-node voice10.mjs                                 # only lines not recorded yet
+node capture10.mts en && node capture10.mts vi   # game served on :8765
+node voice10.mts                                 # only lines not recorded yet
 python3 -m http.server 8770 &                    # serves the stage
 ./make10.sh                                      # or ./make10.sh family; writes out10/
 ```

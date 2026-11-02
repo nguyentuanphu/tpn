@@ -2,6 +2,8 @@
 
 **Current plan (1 Nov 2026 AEDT):** [the finishing plan before many players: start-up under 3 s, every game's levels, splitting the big files](plan-hoan-thien/KE-HOACH.md) (Vietnamese, for the owner) and [the Learn space plan](learn-tab/PLAN.md).
 
+**Launch around Tết 2027 (v1.07 helper "launch", 2 Nov 2026 AEDT):** [plan, channel texts, flyer, video scripts and the launch-day checklist](launch-2027/README.md). Materials only: nothing posted or sent.
+
 **Current Studio integration:** [one-branch combined handbook](studio-combined-handoff-20261029/README.md) and [next-chat prompt](studio-combined-handoff-20261029/NEXT-CHAT.md). Both workstreams, original plans and unresolved work are together on `handoff/studio-combined-20261029`. Earlier handbooks remain historical references.
 
 [Latest Studio control recovery and field guide](studio-control-recovery-20261029/README.md): conflict/unknown-result recovery, real delivery navigation, current evidence and pending work.

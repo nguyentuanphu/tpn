@@ -1,4 +1,4 @@
-// Takes fresh 1080×1920 stills of the game for the ads: node capture.mjs [only,names]  (game served on :8765)
+// Takes fresh 1080×1920 stills of the game for the ads: node capture.mts [only,names]  (game served on :8765)
 // Uses the test harness to open the game at phone size (360×640 at 3× = 1080×1920) with full graphics.
 import { launch, open, clear } from '../../tests/harness.mjs';
 import fs from 'fs';
