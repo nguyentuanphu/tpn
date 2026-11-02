@@ -38,4 +38,32 @@ Left for later: the Simple screen marks English mode only for `en_` games (the S
 
 ## Progress
 
-(filled in as the work goes)
+- 3 Nov 2026, 9:40 am AEDT: English mode, the eight games, drawings, guides, levels rows, map pin, voice-pack hook and
+  checks done; commit `a964fdea`, pushed to `work/v108-english`.
+- Voice: `englishLines()` gives 1,188 lines (616 English, 572 Vietnamese hints); recorded with Azure (`--engine azure`,
+  en-AU and vi-VN, woman and man), committed with the voices.
+
+## Checks (3 Nov 2026 AEDT)
+
+| Check | Result |
+|---|---|
+| `englishmode` (new) | pass (51 s; phone, tablet and computer pictures looked at) |
+| `hocvui` (16 corner games won by real taps at Easy and Talent) | pass (258 s) |
+| quick checks (emoji, preload, noemoji, arch, unit, names, bilingual, rules, types) | see below |
+| `suite.mts --changed` | picks the full suite (test code and `.gitignore` changed); per Release (3 Nov AEDT) the full suite is left for Release, the covering checks run one at a time with `--only` |
+
+## Notes for Release
+
+- Shared files changed (small blocks marked `(v1.08 english)`): `js/content/activities.ts`, `js/content/hocvui.ts`,
+  `js/games/catalog.ts`, `js/games/all.ts`, `js/art.ts`, `js/games/frame.ts`, `js/ui/hub.ts`, `js/state.ts`,
+  `js/main/talks.ts`, `sw.ts` (FILES only), `tools/make-voice-pack.mts`, `tests/checks/learning.mts` (the `hocvui` NEW
+  list gets the eight `en_` games; other helpers add theirs the same way), `docs/levels/README.md`.
+- `hocvui` no longer expects First Words as a corner link (owner's plan C1 moves it out of English); it now fails if it
+  is still linked.
+- Simple screen: the `en_` games are English mode everywhere; a linked game (Opposites, First Sounds) opened from the
+  Simple screen's English area still follows the child's language. One line in `js/simple.ts` (`markEnglish(id)` when the
+  stop comes from `hv_en`) would add it; left to the Simple helper / Release to avoid a clash.
+
+## Open questions
+
+None.
