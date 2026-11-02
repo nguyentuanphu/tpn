@@ -47,6 +47,7 @@ marketing/source/runvalley.log
 /js/art/kit.js
 /js/art/learning.js
 /js/art/lookup.js
+/js/art/money3.js
 /js/art/pad-and-games.js
 /js/art/people-food.js
 /js/art/r90-audits.js
@@ -224,7 +225,10 @@ marketing/source/runvalley.log
 /js/games/me2.js
 /js/games/money.js
 /js/games/money2.js
+/js/games/money3-meta.js
+/js/games/money3.js
 /js/games/moneylogic.js
+/js/games/moneylogic3.js
 /js/games/more.js
 /js/games/multiplayer-foundations.js
 /js/games/music.js

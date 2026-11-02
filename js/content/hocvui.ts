@@ -68,3 +68,6 @@ export function hocvuiLines(): { lang: string; text: string }[] {
   for (const w of BUILD_WORDS) add(w[0]);
   return out;
 }
+
+// (v1.08 money) the eleven new money games are linked into Toán too (they stay in the money area)
+CORNER_LINKS.hv_math.push('shoppay', 'givechange', 'toysave', 'needsfirst', 'pricesort', 'marketday', 'coinsort', 'makeamount', 'budgetpicnic', 'chores', 'twomoney');

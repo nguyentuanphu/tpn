@@ -13,3 +13,5 @@ import './art/things-money.js';
 import './art/r90-audits.js';
 import './art/learning.js';
 export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';
+// (v1.08 money) the eleven new money games' pictures and the market stall (js/art/money3.ts)
+import './art/money3.js';

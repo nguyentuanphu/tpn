@@ -16,10 +16,13 @@ export type UnlockProfile = {
 
 
 const SECOND_GAME_IDS = new Set(Object.values(SECOND_SET_GAMES).flat());
+// (v1.08 money) games added after the second set open at once, and are not among the first games an area's second set
+// waits for (otherwise the money area's second set, already open for many children, would close again)
+const OPEN_AT_ONCE = new Set(['shoppay', 'givechange', 'toysave', 'needsfirst', 'pricesort', 'marketday', 'coinsort', 'makeamount', 'budgetpicnic', 'chores', 'twomoney']);
 
 export const FIRST_SET_GAMES: Record<string, string[]> = {};
 for (const [id, info] of Object.entries(GAME_INFO)) {
-  if (SECOND_GAME_IDS.has(id)) continue;
+  if (SECOND_GAME_IDS.has(id) || OPEN_AT_ONCE.has(id)) continue;
   const area = info[0];
   (FIRST_SET_GAMES[area] ||= []).push(id);
 }
