@@ -1,6 +1,6 @@
 # v1.07 studio helper: status
 
-**ready for Release** (2 Nov AEDT, after "resume"): draft pull request #786; the GitHub full suite runs on it, result to be read by Release.
+**ready for Release (full suite: Release's combined run)** (2 Nov AEDT): draft pull request #786. Release cancelled the per-branch full suite (owner, 3:05 pm AEDT); the combined run covers this branch.
 
 Branch `work/v107-studio` (from main v1.06 plus the briefs). Started 2 Nov 2026, about 11:00 am AEDT.
 
@@ -74,7 +74,7 @@ invalidation and the tidy).
 - Screenshots looked at: Today (computer 1440), People with G03 (tablet 820), Work with G16 (phone 390). Found and
   fixed: "ever" could be lower than the devices seen in 30 days when a device had no first-seen mark (`dev/`); it
   now takes the larger.
-- `suite.mjs --changed`: picks the full suite (`.gitignore` changed with `vi.ts`); it runs on GitHub with pull request #786.
+- `suite.mjs --changed`: picks the full suite (`.gitignore` changed with `vi.ts`); per Release (owner, 3:05 pm AEDT) it runs in Release's single combined full suite, not per branch.
 
 ## Commits
 
