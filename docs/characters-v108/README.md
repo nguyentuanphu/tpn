@@ -22,3 +22,15 @@ What changed (`js/avatar.ts`, with small changes in `js/gfx.ts`, `js/vehicles.ts
 Pictures: `before-*.png` is v1.07, `after-*.png` is this branch. `a` and `b` are two moments of the same six children (standing, walking, running, jumping, cheering, waving), `face` is a close-up, and `after-cheer-wave.png` shows the happy faces. Each picture was made with `chars.html`.
 
 Checks on the Release machine: `perf` passes (it failed at first with 434 draws when the knees were separate shapes, so they were joined into one bending shape), `battery` passes, and `startup` firstKB is 1056 (limit 1071). Its timings are over on this machine, as they are for v1.06 and v1.07. The full suite runs on GitHub.
+
+## The five friends from the concept pictures (owner: "Dựng tất cả cùng lúc rồi anh sẽ chọn hướng đi")
+
+Inputs, one picture per friend: `concept-finn.png`, `concept-flora.png`, `concept-sol.png`, `concept-luna.png` (from `owner-concept-adventurers.png`) and `concept-lumi.png` (Lumi's front view).
+
+It needs `MESHY_API_KEY` in the environment settings, and it works in a new session.
+
+1. `python3 tools/blender/make-3d.py <dir>` makes all five models at once with Meshy's image-to-3D, and saves `<name>.glb`.
+2. `blender -b -P tools/blender/render-sheet.py -- <dir>` renders each model from the front, three-quarter, side and back.
+3. `python3 tools/blender/sheet.py <dir>` makes `sheet.png`: each friend's concept beside their model, for the owner to choose from.
+
+After the owner chooses: clean each model in Blender, add a skeleton for the game's moves, make a light version for phones, then load it in the game.
