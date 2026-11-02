@@ -74,20 +74,19 @@ question at 2:07 pm AEDT: "Build Part 2 as planned" (built, see section 3).
 | Check | Result | When |
 |---|---|---|
 | unit `tests/unit/familycode.test.mjs` (8 tests) | pass | 2 Nov 2026 AEDT |
-| `familycodejourney` (alone) | pass (105 s) | 2 Nov 2026 AEDT |
-| unit (all), grownupsui, saves, familyquizprivate, boot, phone | not run: stopped on Release's slow-down | |
+| unit `tests/unit/family-stats.test.mjs` (2 tests, made-up devices) | pass | 2 Nov 2026, 2:15 pm AEDT |
+| unit (all, 484) | 483 pass; 1 fail: `game-catalog.test.mjs` cannot load the `typescript` package in this container (environment, not this change; GitHub has it) | 2 Nov 2026 pm AEDT |
+| `familycodejourney` | pass (110 s) | 2 Nov 2026 pm AEDT |
+| `grownupsui`, `saves`, `familyquizprivate`, `boot`, `phone` | pass | 2 Nov 2026 pm AEDT |
+| `studio` (after the Studio change) | pass (360 s) | 2 Nov 2026 pm AEDT |
 | `suite.mjs --changed --list` | picks the full suite (new test file) | |
-| full suite on GitHub (`full-suite.yml`) | not started yet | |
-| online checks (`tests/services/start.cjs`) | not run (no server change yet) | |
+| full suite on GitHub (`full-suite.yml`, workflow_dispatch on cc419922) | queued (the first run on 159d7939 was cancelled before it started, to cover the newer commit) | |
+| online checks (`tests/services/start.cjs`) | not run: the change is a read-only count in the report, covered by the unit test and `studio` | |
 
-## 5. Exact next step (after Release's "resume")
+## 5. Exact next step
 
-1. `cd tests && node run.mjs unit grownupsui saves familyquizprivate familycodejourney boot phone` (game served on
-   :8765 after `node tools/build.mts`; restore `content/management-catalogue.json` if the build rewrites it).
-2. Start `.github/workflows/full-suite.yml` on this branch (workflow_dispatch) and record the result here.
-3. Ask the owner the pop-up "Build Part 2 as planned (Recommended)" / "Change the plan" / "Not now" (section 2). Never
-   assumed. Build only after "Build Part 2 as planned".
-4. Open a draft PR "v1.07 family-code: ..." and write "ready for Release" at the top when the checks are green.
+1. Read the GitHub full-suite result for `work/v107-family-code` and record it here; fix anything red.
+2. Open the draft PR "v1.07 family-code: ..." and write "ready for Release" at the top when green.
 
 ## Owner's decisions
 
