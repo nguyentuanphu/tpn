@@ -2,8 +2,8 @@
 
 Branch: `work/v107-family-code` (from main v1.06). Brief: [family-code-brief.md](family-code-brief.md).
 
-**Paused 2 Nov 2026, 11:14 am AEDT** on Release's "slow down" message (usage). Waiting for Release's "resume" after
-2 pm AEDT. Not ready for Release yet.
+Paused 11:14 am AEDT on Release's "slow down"; resumed 2 Nov 2026 about 2 pm AEDT. The owner answered the Part 2
+question at 2:07 pm AEDT: "Build Part 2 as planned" (built, see section 3).
 
 ## 1. What is already built (checked 2 Nov 2026 AEDT)
 
@@ -26,7 +26,8 @@ Branch: `work/v107-family-code` (from main v1.06). Brief: [family-code-brief.md]
   1. The browser check of the whole journey (make on one device, join on a second, wipe one and rejoin from Save a
      copy) did not exist: only a one-page make/leave/join inside `grownupsui`. **Done now** (below).
   2. The QR was checked only for its corner squares, never read back. **Done now** (below).
-  3. Studio does not count "a wiped device coming back". Needs a server change (read only): **waits for the owner.**
+  3. Studio does not count "a wiped device coming back". Needs a server change (read only). **Built after the owner's
+     "Build Part 2 as planned" (2 Nov 2026, 2:07 pm AEDT).**
   4. Phone, tablet and computer screenshots in both languages for this round. **Done now** (below).
   5. The server keeps `fh` in `info/<id>` with no time limit (the device record has none). A limit would delete
      stored data: **owner's decision**, never assumed.
@@ -62,6 +63,10 @@ Branch: `work/v107-family-code` (from main v1.06). Brief: [family-code-brief.md]
   computer loads it after one question and has the same family, progress and device number; leaving keeps every
   child's progress; a wrong code is refused with a message; touch targets 44 px or more; 11 screenshots in
   `tests/out/family-code/` (looked at: phone EN, tablet VI, computer VI, all tidy).
+- Part 2 rest (owner's go, 2:07 pm AEDT): `netlify/lib/players.mts` new exported `familyStats(devices, since)` (the
+  old family counts moved into it unchanged, plus `cameBack`); `studio/ui/app.ts` Players tile adds "N came back by
+  family code · N máy quay lại bằng mã gia đình" when there are any; `tests/unit/family-stats.test.mjs` with made-up
+  devices. Nothing new is stored; no data deleted.
 - Shared file touched: `tests/run.mjs` (three lines at the end: the new check).
 
 ## 4. Checks
@@ -86,4 +91,5 @@ Branch: `work/v107-family-code` (from main v1.06). Brief: [family-code-brief.md]
 
 ## Owner's decisions
 
-- None yet in this session.
+- 2 Nov 2026, 2:07 pm AEDT (pop-up): "Build Part 2 as planned" (section 2): the "came back by family code" count in
+  Studio Players, read only, nothing new stored, the hash kept as today (no time limit decided).

@@ -257,13 +257,22 @@ async function details(S, sums: DaySum[], now: number) {
   const power = {}; for (const k of ['phone', 'tablet', 'computer']) { const ds = devices.filter(d => d.kind === k && d.power); if (ds.length) power[k] = { devices: ds.length, fps: mid(ds.map(d => d.power.fps)), frameMs: mid(ds.map(d => d.power.frameMs)), draws: mid(ds.map(d => d.power.draws)), batteryPerHour: mid(ds.map(d => d.power.batteryPerHour)) }; }
   // (r80, owner 17 Oct AEDT) installations not seen for 30 days or more, by the version they last had
   const away = day(now - 30 * 864e5), away30 = {}; for (const d of devices) if (d.last && d.last < away) away30[d.build] = (away30[d.build] || 0) + 1;
-  const famMap: Record<string, string[]> = {};
-  for (const d of devices) if (d.family) (famMap[d.family] = famMap[d.family] || []).push(d.id);
-  const famEntries = Object.entries(famMap).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
-  const famLinked = famEntries.reduce((a, [, ids]) => a + ids.length, 0);
-  const families = { count: famEntries.length, linkedDevices: famLinked, devicesPerFamily: famEntries.length ? +(famLinked / famEntries.length).toFixed(1) : 0, list: famEntries.slice(0, 50).map(([fh, ids]) => ({ fh, devices: ids.length, ids })) };
+  const families = familyStats(devices, day(now - 30 * 864e5));
   const installations = { confirmed: devices.filter(d => !!d.installation).length, lastStandalone: devices.filter(d => d.app).length, unconfirmed: devices.filter(d => !d.installation).length };
   return { installations, away30, families, latestBuilds:count(d=>d.build),startup, power, onlineNow: devices.filter(d => d.online).length, hours, places: top(places, 15), devices:devices.slice(0,100), deviceListTotal:devices.length, deviceListLimit:100, os: count(d => d.os), browsers: count(d => d.br), locations: count(d => d.loc ? [d.loc.city, d.loc.region, d.loc.country].filter(Boolean).join(', ') : '?'), problems, tips: tips.slice(0, 20) };
+}
+// (save-copy-family-code.md Part 2; v1.07, owner 2 Nov 2026 2:07 pm AEDT "Build Part 2 as planned") families from the
+// one-way family hash each device sent (never the code): how many, devices per family, and cameBack = devices first
+// seen on or after `since` whose family already had a device first seen before it (a new or wiped device that joined
+// by code). A device restored from Save a copy keeps its device number, so it is not new. Read only: nothing is stored.
+export function familyStats(devices: { id: string, family?: string, first?: string }[], since: string) {
+  const famMap: Record<string, { id: string, first: string }[]> = {};
+  for (const d of devices) if (d.family) (famMap[d.family] = famMap[d.family] || []).push({ id: d.id, first: d.first || '' });
+  const famEntries = Object.entries(famMap).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+  const famLinked = famEntries.reduce((a, [, ds]) => a + ds.length, 0);
+  let cameBack = 0;
+  for (const [, ds] of famEntries) { const firsts = ds.map(d => d.first).filter(Boolean).sort(); for (const d of ds) if (d.first && d.first >= since && firsts[0] < d.first) cameBack++; }
+  return { count: famEntries.length, linkedDevices: famLinked, devicesPerFamily: famEntries.length ? +(famLinked / famEntries.length).toFixed(1) : 0, cameBack, list: famEntries.slice(0, 50).map(([fh, ds]) => ({ fh, devices: ds.length, ids: ds.map(d => d.id) })) };
 }
 // a name the family gives a device in Studio ("Na's iPad")
 export async function setLabel(S, id, label) { if (!ID.test(id || '')) return false; const l = String(label || '').replace(/[<>\u0000-\u001f]/g, '').trim().slice(0, 40); if (l) await S.set('label/' + id, l); else await S.delete('label/' + id); return true; }
