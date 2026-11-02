@@ -13,10 +13,10 @@
 
 **HARD RULE: nothing reaches `main` (and so Netlify) until the owner has checked the round and clearly said "yes, deploy".**
 - Commit locally as you go.
-- When a round is done, show what changed and how it was tested, and give the Netlify zip. No local bundle (owner, 11 Oct: the offline files are on GitHub and Google Drive; the Netlify zip is still wanted).
+- When a round is done, show what changed and how it was tested, and give the Netlify zip. No local bundle (owner, 11 Oct: the offline files are on GitHub; the Netlify zip is still wanted).
 - History: 4 Oct standing "push without asking" ended 5 Oct ("ask me every time"); 5 Oct "ask GitHub and Netlify separately" replaced 10 Oct by the rule below.
 - **Artifacts always go into the repo (owner, 10 Oct: "Always allow adding artifact to repo").** Whenever a design, plan or drawing page is made or updated as a claude.ai artifact, put a copy in the repo (the page and its pictures, under `docs/<name>/`) and link it from the docs that use it, so every chat can read it. This is allowed without asking, and the push of such a docs-only commit to the working branch needs no separate "yes, push". Merging into `main` still needs "yes, deploy", and anything that changes the game still needs "yes, push".
-- The Google Drive mirror and the voice relay (TURN) are set up (owner, 10 Oct AEST): no more reminders.
+- The voice relay (TURN) is set up (owner, 10 Oct AEST): no more reminders. The Google Drive mirror is removed (owner, 2 Nov 2026 AEDT: "I don't want it anymore"): the offline files are on GitHub.
 
 **Release is the master release of all work (owner, 10 Oct):**
 - Helper chats (every core that is not Release) push to their own branch (`core/<name>` or the branch their session was given) whenever their checks pass, without asking the owner. Never to `main`.
