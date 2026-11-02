@@ -8,6 +8,7 @@
 // Anything with no drawing yet is noted in window.__svNoArt so the "noemoji" check can find it.
 import { hasArt, pic, artSVG } from './art.js';
 import { FLAGS } from './icons.js';
+declare global { interface Window { __svNoArt?: Set<string> } interface Document { __svEmoji?: boolean } }
 
 const EMO = /\p{Extended_Pictographic}(?:️|[\u{1F3FB}-\u{1F3FF}])*(?:‍\p{Extended_Pictographic}(?:️|[\u{1F3FB}-\u{1F3FF}])*)*|[\u{1F1E6}-\u{1F1FF}]{2}|[0-9#*]️?⃣/gu;
 // symbols that should read as plain marks (their drawing, when there is one, still wins)
@@ -108,7 +109,7 @@ export function patchCanvas() {
   const P = CanvasRenderingContext2D.prototype; RAW_FILL = P.fillText;
   P.fillText = function (text, x, y, maxW) {
     const s = String(text); if (!EMO.test(s)) return RAW_FILL.call(this, s, x, y, maxW); EMO.lastIndex = 0;
-    const size = parseFloat((/(\d+(?:\.\d+)?)px/.exec(this.font) || [0, 16])[1]), runs = []; let at = 0;
+    const size = parseFloat((/(\d+(?:\.\d+)?)px/.exec(this.font) || [0, 16])[1] as string), runs = []; let at = 0;
     for (const m of s.matchAll(EMO)) { const e = m[0], k = kind(e); if (k === 'none') { noArt.add(e); continue; } if (k === 'text') continue;
       if (m.index > at) runs.push(['t', s.slice(at, m.index)]); runs.push(['e', e]); at = m.index + e.length; }
     if (at < s.length) runs.push(['t', s.slice(at)]);

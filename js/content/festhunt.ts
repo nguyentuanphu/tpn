@@ -2,7 +2,7 @@
 // among the decorations of its first place; finding all five gives a keepsake for the child's house and a festival
 // badge in the Passport (js/festhunt.js). Each festival: what is hidden (its shape and its name, English and
 // Vietnamese) and the line Ông Cú says when a child first comes to the festival's place (recorded; never a name).
-export const HUNT = {
+export const HUNT: Record<string, { shape: string, en: string, vi: string, say: [string, string], [k: string]: unknown }> = {
   tet: { shape: 'envelope', en: 'red envelopes', vi: 'bao lì xì', say: ['Five red envelopes are hidden among the Tết decorations. Can you find them?', 'Có năm bao lì xì giấu giữa đồ trang trí Tết. Con tìm được không?'] },
   ramthang1: { shape: 'lantern', en: 'little lanterns', vi: 'chiếc đèn lồng nhỏ', say: ['Five little lanterns are hidden for the First Full Moon. Can you find them?', 'Có năm chiếc đèn lồng nhỏ giấu cho Rằm tháng Giêng. Con tìm được không?'] },
   giotohung: { shape: 'flower', en: 'yellow flowers', vi: 'bông hoa vàng', say: ['Five yellow flowers are hidden for Hùng Kings’ Day. Can you find them gently?', 'Có năm bông hoa vàng giấu cho ngày Giỗ Tổ. Con nhẹ nhàng tìm nhé?'] },
@@ -28,7 +28,7 @@ export const HUNT = {
   naidoc: { shape: 'boomerang', en: 'little boomerangs', vi: 'chiếc boomerang nhỏ', say: ['Five little boomerangs are hidden for NAIDOC Week. Can you find them?', 'Có năm chiếc boomerang nhỏ giấu cho Tuần lễ NAIDOC. Con tìm được không?'] },
   diwali: { shape: 'diya', en: 'little lamps', vi: 'ngọn đèn dầu nhỏ', say: ['Five little lamps are hidden for Diwali. Can you find them?', 'Có năm ngọn đèn dầu nhỏ giấu cho lễ Diwali. Con tìm được không?'] }
 };
-export const HUNT_LINES = {
+export const HUNT_LINES: Record<string, [string, string]> = {
   found: ['You found one! Keep looking.', 'Con tìm được một cái rồi! Tìm tiếp nhé.'],
   again: ['You found this one already. Look for another!', 'Cái này con tìm rồi. Tìm cái khác nhé!'],
   done: ['You found all five! Here is a keepsake for your house and a festival badge for your Passport.', 'Con tìm đủ năm rồi! Đây là quà lưu niệm cho nhà con và một huy hiệu lễ hội trong Hộ chiếu.']

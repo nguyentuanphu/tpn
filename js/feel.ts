@@ -88,7 +88,7 @@ export function celebrate({ little = false } = {}) {
 const BTN = 'button, .btn, [role="button"], a.chip';
 addEventListener('pointerdown', e => {
   lastX = e.clientX; lastY = e.clientY;
-  const b = e.target && e.target.closest && e.target.closest(BTN);
+  const b = e.target && (e.target as Element).closest && (e.target as Element).closest<HTMLButtonElement>(BTN);
   if (!b || b.disabled || b.closest('[data-nofeel]')) return;
   press(b);
   const up = () => { release(b); removeEventListener('pointerup', up, true); removeEventListener('pointercancel', up, true); };
@@ -97,6 +97,6 @@ addEventListener('pointerdown', e => {
 // a key that clicks a button (Enter, Space) feels the same
 addEventListener('keydown', e => {
   if (e.repeat || (e.key !== 'Enter' && e.key !== ' ')) return;
-  const b = document.activeElement && document.activeElement.closest && document.activeElement.closest(BTN);
+  const b = document.activeElement && document.activeElement.closest && document.activeElement.closest<HTMLButtonElement>(BTN);
   if (b && !b.disabled) { press(b); setTimeout(() => release(b), 120); }
 }, { capture: true });

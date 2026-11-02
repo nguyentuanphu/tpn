@@ -29,8 +29,8 @@ export function questFor(code, n = 0) {
 export function createCoop(G, { Net, toast }) {
   let code = null, n = 0, done = {}, t = 0, quest = [];
   const reset = c => { code = c; n = 0; done = {}; quest = c ? questFor(c, 0) : []; };
-  const friendsNear = h => Object.values(G.partners).filter(P => P.pos && P.pos.y > -40 && Math.hypot(P.pos.x - h.pos.x, P.pos.z - h.pos.z) <= TOGETHER_M);
-  const api = {
+  const friendsNear = h => Object.values<{ pos?: { x: number, y: number, z: number } }>(G.partners).filter(P => P.pos && P.pos.y > -40 && Math.hypot(P.pos.x - h.pos.x, P.pos.z - h.pos.z) <= TOGETHER_M);
+  const api: Record<string, any> & { announced?: boolean } = {
     get active() { return !!code && quest.length > 0; }, get quest() { return quest.slice(); }, get done() { return { ...done }; }, get count() { return n; },
     // the Pad's Adventures page: the quest and its places (nothing when not in a room with a friend)
     html() {

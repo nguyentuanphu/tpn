@@ -19,7 +19,7 @@ export const voiceOn = kind => featureOn(`explain_${kind}_voice`, true);
  * @param {[string, string]} note the short note [en, vi] (two lines at most)
  * @param {[string, string]} [voice] the short spoken line [en, vi] (the note's words when not given)
  */
-export function explain(hud, kind, note, voice = note) {
+export function explain(hud, kind: string, note: [string, string], voice: [string, string] = note) {
   const shown = noteOn(kind) && !!hud?.toast, spoken = voiceOn(kind);
   if (shown) hud.toast(T(...note), { explain: true });
   if (spoken) sayAsync(...voice).catch?.(() => { });

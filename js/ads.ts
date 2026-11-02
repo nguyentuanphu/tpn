@@ -42,7 +42,7 @@ const openAd = ad => { if (!ad.link) return; grownupGate(() => { try { window.op
 const DAY = 'sv2_adday';
 export function gameEndAd() {
   if (!ADS) return null;
-  let d = {}; try { d = JSON.parse(localStorage.getItem(DAY) || '{}'); } catch (e) { }
+  let d: { day?: string, n?: number } = {}; try { d = JSON.parse(localStorage.getItem(DAY) || '{}'); } catch (e) { }
   const today = new Date().toDateString(); if (d.day !== today) d = { day: today, n: 0 };
   if (d.n >= ADS.perDay) return null;
   const ad = pick('gameend'); if (!ad) return null;

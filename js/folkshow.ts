@@ -57,7 +57,7 @@ export const SINGERS = [
 function boardSprite() {
   const c = document.createElement('canvas'); c.width = 512; c.height = 200; const x = c.getContext('2d');
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false })); s.scale.set(4.2, 1.64, 1); s.renderOrder = 4;
+  const s: THREE.Sprite & { draw?: (...a: any[]) => void, text?: string[] } = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false })); s.scale.set(4.2, 1.64, 1); s.renderOrder = 4;
   let last = '';
   s.draw = (title, l1, l2, on) => {
     const key = title + l1 + l2 + on; if (key === last) return; last = key; s.text = [title, l1, l2];
@@ -73,7 +73,7 @@ function boardSprite() {
 function textTag(scene) {
   const c = document.createElement('canvas'); c.width = 320; c.height = 64; const x = c.getContext('2d');
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false })); s.scale.set(2.9, .58, 1); scene.add(s);
+  const s: THREE.Sprite & { set?: (text: string) => void } = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false })); s.scale.set(2.9, .58, 1); scene.add(s);
   s.set = text => { x.clearRect(0, 0, 320, 64); x.font = 'bold 32px Fredoka, "Baloo 2", sans-serif'; const w = Math.min(316, x.measureText(text).width + 30);
     x.fillStyle = 'rgba(120,30,90,.8)'; x.beginPath(); x.roundRect((320 - w) / 2, 6, w, 50, 25); x.fill(); x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 160, 32, 300); tex.needsUpdate = true; };
   return s;
@@ -81,7 +81,7 @@ function textTag(scene) {
 function lyricBubble(scene) {
   const c = document.createElement('canvas'); c.width = 512; c.height = 128; const x = c.getContext('2d');
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false })); s.scale.set(3.6, .9, 1); s.visible = false; s.renderOrder = 5; scene.add(s);
+  const s: THREE.Sprite & { set?: (text: string) => void } = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false })); s.scale.set(3.6, .9, 1); s.visible = false; s.renderOrder = 5; scene.add(s);
   s.set = text => { x.clearRect(0, 0, 512, 128); let f = 40; x.font = `bold ${f}px Fredoka, "Baloo 2", sans-serif`; while (x.measureText('♪ ' + text + ' ♪').width > 460 && f > 18) { f -= 2; x.font = `bold ${f}px Fredoka, "Baloo 2", sans-serif`; }
     const w = Math.min(500, x.measureText('♪ ' + text + ' ♪').width + 40); x.fillStyle = '#fff0fa'; x.strokeStyle = '#b0307a'; x.lineWidth = 5; x.beginPath(); x.roundRect((512 - w) / 2, 6, w, 88, 36); x.fill(); x.stroke();
     x.beginPath(); x.moveTo(238, 92); x.lineTo(256, 122); x.lineTo(274, 92); x.fill(); x.fillStyle = '#7a1a5a'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('♪ ' + text + ' ♪', 256, 52); tex.needsUpdate = true; };
@@ -224,7 +224,7 @@ export function createFolkShow(G, { looks = [] } = {}) {
       t += ns.length * beat + beat * .5;
     }
     const start = performance.now(); Sg.bub.visible = true;
-    await new Promise(done => {
+    await new Promise<void>(done => {
       const step = () => { const el = (performance.now() - start) / 1000; let w = null; for (const [at, words] of timeline) if (el >= at) w = words;
         if (el > t + .4) { Sg.bub.visible = false; done(); return; }
         if (w !== Sg.bub._w) { Sg.bub._w = w; Sg.bub.set(w); }

@@ -12,7 +12,7 @@ const bands = (() => {
 const PBR_ONLY = ['roughness', 'metalness', 'envMapIntensity', 'clearcoat'];
 const clean = extra => { const o = Object.assign({}, extra || {}); PBR_ONLY.forEach(k => delete o[k]); return o; };
 const matCache = {};
-export function toon(color, extra) {
+export function toon(color, extra?) {
   const key = extra ? null : color;
   if (key && matCache[key]) return matCache[key];
   const m = new THREE.MeshToonMaterial(Object.assign({ color: new THREE.Color(color), gradientMap: bands }, clean(extra)));
@@ -20,8 +20,8 @@ export function toon(color, extra) {
   return m;
 }
 // vertex-coloured models are faceted like cut paper (trees, rocks, houses)
-export const toonVC = extra => new THREE.MeshToonMaterial(Object.assign({ vertexColors: true, gradientMap: bands, flatShading: true }, clean(extra)));
-export const toonSmooth = extra => new THREE.MeshToonMaterial(Object.assign({ vertexColors: true, gradientMap: bands }, clean(extra)));
+export const toonVC = (extra?) => new THREE.MeshToonMaterial(Object.assign({ vertexColors: true, gradientMap: bands, flatShading: true }, clean(extra)));
+export const toonSmooth = (extra?) => new THREE.MeshToonMaterial(Object.assign({ vertexColors: true, gradientMap: bands }, clean(extra)));
 export const glow = (color, opacity = 1) => new THREE.MeshBasicMaterial({ color: new THREE.Color(color), transparent: opacity < 1, opacity, depthWrite: opacity >= 1 });
 
 // Merge several (geometry, colour, matrix) parts into one vertex-coloured geometry.
@@ -32,7 +32,7 @@ export function P(geo, color, pos = [0, 0, 0], rot = [0, 0, 0], scl = [1, 1, 1])
   // A hip roof is a 4-sided cone turned 45° (so its base is a square) and then stretched to the building. Stretching
   // has to come after the turn, or the base becomes a slanted diamond and the roof sits crooked on a long building.
   if (geo.type === 'ConeGeometry' && geo.parameters.radialSegments === 4 && !rot[0] && !rot[2] && sc[0] !== sc[2]) {
-    _r.makeRotationY(rot[1]); _s.makeScale(...sc); _m.makeTranslation(...pos).multiply(_s).multiply(_r);
+    _r.makeRotationY(rot[1]); _s.makeScale(...(sc as [number, number, number])); _m.makeTranslation(...(pos as [number, number, number])).multiply(_s).multiply(_r);
   } else _m.compose(new THREE.Vector3(...pos), new THREE.Quaternion().setFromEuler(new THREE.Euler(...rot)), new THREE.Vector3(...sc));
   const g = (geo.index ? geo.toNonIndexed() : geo.clone()).applyMatrix4(_m);
   return { g, color };

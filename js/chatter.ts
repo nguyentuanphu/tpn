@@ -21,7 +21,7 @@ export const LINES = {
 function bubbleSprite() {
   const c = document.createElement('canvas'); c.width = 512; c.height = 128; const x = c.getContext('2d');
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false })); s.scale.set(3, .75, 1); s.visible = false; s.renderOrder = 5;
+  const s: THREE.Sprite & { setText?: (text: string) => void } = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false })); s.scale.set(3, .75, 1); s.visible = false; s.renderOrder = 5;
   s.setText = text => {
     x.clearRect(0, 0, 512, 128); let f = 40; x.font = `bold ${f}px Fredoka, "Baloo 2", sans-serif`;
     while (x.measureText(text).width > 450 && f > 18) { f -= 2; x.font = `bold ${f}px Fredoka, "Baloo 2", sans-serif`; }

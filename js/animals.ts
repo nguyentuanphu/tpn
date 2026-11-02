@@ -17,7 +17,7 @@ const s0 = x => Math.sign(x);
 
 const mat = toonVC({ roughness: .85 });
 function mesh(parts) { const m = new THREE.Mesh(merge(parts), mat); m.castShadow = true; return m; }
-function pivot(parent, pos, parts) { const g = new THREE.Group(); g.position.set(...pos); if (parts && parts.length) g.add(mesh(parts)); parent.add(g); return g; }
+function pivot(parent, pos: [number, number, number], parts?) { const g = new THREE.Group(); g.position.set(...pos); if (parts && parts.length) g.add(mesh(parts)); parent.add(g); return g; }
 // two eyes with a light catch, so the face looks alive
 const eyes = (x, y, z, r = .03, col = '#1a1a1a') => [-1, 1].flatMap(s => [P(S(r, 10, 8), col, [s * x, y, z]), P(S(r * .35, 6, 5), '#ffffff', [s * x + r * .3, y + r * .35, z + r * .75])]);
 
@@ -219,7 +219,7 @@ Object.assign(BUILD, {
 });
 const SHADOW = { buffalo: 1.5, bull: 1.35, koala: .6, platypus: .6, penguin: .45, emu: .9, turtle: 1, elephant: 2, crane: .8, peacock: .8, puppy: .7, kitty: .6, bunny: .55, panda: .75, joey: .6, calf: .9, cow: 1.35, sheep: 1, pig: .95, unicorn: 1.35, chicken: .5, bear: 1.3 };
 
-const LIVE = new Set();
+const LIVE = new Set<THREE.Object3D>();
 export function animalModel(kind) { const k = BUILD[kind] ? kind : 'puppy'; return make(k, BUILD[k], SHADOW[k] || .8); }
 
 // walking legs, hopping, wagging tails, ears that bounce, heads that look around and a little breathing

@@ -10,7 +10,7 @@ import { buildAvatar } from './avatar.js';
 import { houseVillage, rbox } from './houses.js';
 import { LEARN } from './words2.js';
 
-const B = (w, h, d) => new THREE.BoxGeometry(w, h, d), C = (r1, r2, h, s = 12) => new THREE.CylinderGeometry(r1, r2, h, s);
+const B = (w, h, d) => new THREE.BoxGeometry(w, h, d), C: (r1: number, r2: number, h: number, s?: number, ...more: unknown[]) => THREE.CylinderGeometry = (r1, r2, h, s = 12) => new THREE.CylinderGeometry(r1, r2, h, s);
 const L = (style, color, hair, hairStyle, hat = 'none', skin = '#f6c7a5') => ({ style, color, hat, back: 'none', hair, hairStyle, skin, glider: 0 });
 
 export function createAsia(G) {
@@ -99,7 +99,7 @@ export function createAsia(G) {
       p.push(P(C(.3, .25, .5), '#c97a4a', [2.4, .25, d / 2 + .6]), P(new THREE.IcosahedronGeometry(.4, 0), '#4f9a4a', [2.4, .8, d / 2 + .6]));
       return p;
     };
-    [['#ff9fb8', '#ffffff', -13, -4, Math.PI / 2], ['#ffc46b', '#ffffff', 13, -4, -Math.PI / 2], ['#7fd6d0', '#ffffff', -12, 11, Math.PI / 2 + .25], ['#c6a8f0', '#ffffff', 12, 11, -Math.PI / 2 - .25]].forEach(([w, t, dx, dz, r]) => { mesh(india(w, t), cx + dx, cz + dz, r); world.colliders.push({ x: cx + dx, z: cz + dz, r: 3.9 }); world.houses.push({ x: cx + dx, z: cz + dz, rot: r, d: 7.8, kind: 'india' }); });
+    [['#ff9fb8', '#ffffff', -13, -4, Math.PI / 2], ['#ffc46b', '#ffffff', 13, -4, -Math.PI / 2], ['#7fd6d0', '#ffffff', -12, 11, Math.PI / 2 + .25], ['#c6a8f0', '#ffffff', 12, 11, -Math.PI / 2 - .25]].forEach(([w, t, dx, dz, r]: [string, string, number, number, number]) => { mesh(india(w, t), cx + dx, cz + dz, r); world.colliders.push({ x: cx + dx, z: cz + dz, r: 3.9 }); world.houses.push({ x: cx + dx, z: cz + dz, rot: r, d: 7.8, kind: 'india' }); });
     // a little Taj Mahal with its reflecting pool
     {
       const p = [], x = cx, z = cz - 17;

@@ -6,14 +6,14 @@ import { say } from './voice.js';
 import { pic } from './art.js';
 import { SFX } from './audio.js';
 
-export const CHIP_INFO = {
+export const CHIP_INFO: Record<string, { icon: string, name: [string, string], about: [string, string] }> = {
   money: { icon: '🪙', name: ['Coins', 'Đồng xu'], about: ['Coins: you get them for helping people and playing games. Spend them on food, clothes and things for your house.', 'Đồng xu: con được thưởng khi giúp mọi người và chơi trò chơi. Dùng để mua đồ ăn, quần áo và đồ cho nhà mình.'] },
   orbs: { icon: '🔮', name: ['Sparkle Orbs', 'Ngọc Lấp Lánh'], about: ['Sparkle Orbs: solve a shrine to get one. Bring four to the Lotus Statue for an extra heart.', 'Ngọc Lấp Lánh: giải một ngôi miếu là có một viên. Mang bốn viên đến Tượng Hoa Sen để được thêm một trái tim.'] },
   leafy: { icon: '🍃', name: ['Leafies', 'Bạn Lá'], about: ['Leafies: little leaf friends hiding all over the valley. Can you find all 24?', 'Bạn Lá: những bạn lá nhỏ trốn khắp thung lũng. Con tìm đủ 24 bạn được không?'] }
 };
 export const chipTitle = k => T(...CHIP_INFO[k].name);
 
-let card = null, timer = 0;
+let card = null, timer: ReturnType<typeof setTimeout> | number = 0;
 export function showChip(kind, anchor) {
   const c = CHIP_INFO[kind]; if (!c) return;
   SFX.tap(); clearTimeout(timer);
