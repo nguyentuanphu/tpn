@@ -31,6 +31,8 @@ import { ipOf, ipKey, locked, failed, cleared, tidy } from '../lib/guard.mts';
 import { readLive, saveLive, readContent as readLiveContent, saveContent as saveLiveContent, LiveError } from '../lib/live.mts';
 import * as tester from '../lib/tester.mts';
 import { cleanBotConfig } from '../lib/child-bots.mts';
+import * as pushLib from '../lib/push.mts'; // (v1.08 notifications)
+import { vapidFromEnv } from '../lib/webpush.mts';
 // (TypeScript sees nothing of a CommonJS file's module.exports: the engine is checked once here and then has its own type)
 const isEngine = (m: unknown): m is StudioEngine => typeof m === 'object' && m !== null && 'createStudio' in m && 'githubStore' in m;
 if (!isEngine(core)) throw new Error('studio/core.cts: the Studio engine did not load');
@@ -58,6 +60,7 @@ const LIVE_PART = { message: 'Message', missions: 'Missions', quiz: 'Quiz', tale
 const blobs = store('players'), adminBlobs = store('studio-admins'), liveBlobs = store('live'), heldBlobs = store('studio-pending');
 const familyBlobs = store('family-photos'), guardBlobs = store('guard'), logBlobs = store('studio-log'), testerBlobs = store('testers');
 const parentAnalyticsBlobs = store('parent-analytics');
+const pushBlobs = store('push'); // (v1.08 notifications)
 // (round R privacy) what signs a cookie: the owner's with the password, the sign-out generation and part of the two-step
 // secret; an admin's with the password and the generation (plus their own hash and secret, admins.mts)
 const ownerKey = (pw, gen, t, off) => `${pw}\u0000${gen}\u0000${t && t.secret ? String(t.secret).slice(0, 8) : ''}${off ? '\u0000p' : ''}`;
@@ -81,7 +84,7 @@ export const heldOn = S => ({
 export const familyOn = F => ({ where: 'site', put: (n, b) => family.put(F, n, b), get: n => family.get(F, n), remove: n => family.remove(F, n), code: () => family.code(F), newCode: () => family.newCode(F) });
 const isJpeg = b => b && b.length > 3 && b[0] === 0xff && b[1] === 0xd8;
 
-export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, heldStore = heldBlobs, liveStore = liveBlobs, familyStore = familyBlobs, guardStore = guardBlobs, logStore = logBlobs, testerStore = testerBlobs, parentAnalyticsStore = parentAnalyticsBlobs, managementDatabase: managementDb = undefined, managementOperations: injectedOperations = undefined, now = () => Date.now() } = {}) => {
+export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, heldStore = heldBlobs, liveStore = liveBlobs, familyStore = familyBlobs, guardStore = guardBlobs, logStore = logBlobs, testerStore = testerBlobs, pushStore = pushBlobs, parentAnalyticsStore = parentAnalyticsBlobs, managementDatabase: managementDb = undefined, managementOperations: injectedOperations = undefined, now = () => Date.now() } = {}) => {
   let operationsControl;
   const operations = () => injectedOperations || (operationsControl ||= createOperationsControl({ database: managementDb || managementDatabase(), now,
     config: () => ({ githubToken: env('GITHUB_TOKEN'), githubRepo: env('GITHUB_REPO') || 'nguyentuanphu/tpn', githubBranch: env('GITHUB_BRANCH') || 'main',
@@ -259,6 +262,9 @@ export const makeStudio = ({ playersStore = blobs, adminStore = adminBlobs, held
   if (p === '/studio/api/inbox') return json(await inbox(await playersStore()));
   // (owner, 12 Oct) tester reports (netlify/lib/tester.mts): the problems, the testers and the day's summary; one problem
   // with its reports; a report's screenshot; setting a problem's status (fixed in rNN, not a bug, the same as another)
+  // (v1.08 notifications) grown-ups' notifications: how many devices have each kind on, sent and opened per week; the
+  // "new this week" text for the Saturday message (netlify/lib/push.mts). Each kind's switch is on the Releases page.
+  if (p === '/studio/api/push') { const S = await pushStore(); if (post) return json(await pushLib.saveConfig(S, await body(), now())); return json({ ...(await pushLib.stats(S, now())), on: !!vapidFromEnv(env) }); }
   if (p === '/studio/api/testers') return json(await tester.overview(await testerStore(), now()));
   if (p.startsWith('/studio/api/testers/problem/')) { const r = await tester.problem(await testerStore(), p.split('/').pop()); return r ? json(r) : json({ error: 'No such problem.' }, 404); }
   if (p.startsWith('/studio/api/testers/shot/')) return json({ shot: (await tester.shotOf(await testerStore(), p.split('/').pop())) || '' });

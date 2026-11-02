@@ -34,6 +34,7 @@ const FILES = [
   'js/games/readingmenu.js', 'js/games/reading.js', 'js/content/reading.js', 'js/games/storyhelp.js', 'js/content/storyhelp.js', // (Play reading trial)
   'sounds/animals/cow.mp3', 'sounds/animals/sheep.mp3', 'sounds/animals/pig.mp3', 'sounds/animals/dog.mp3', 'sounds/animals/cat.mp3', // (owner, 17 Oct AEDT: real animal voices)
   'sounds/animals/duck.mp3', 'sounds/animals/hen.mp3', 'sounds/animals/horse.mp3', 'sounds/animals/frog.mp3', 'sounds/animals/owl.mp3',
+  'js/notify.js', 'js/content/notify.js', 'js/art/notify.js', // (v1.08 notifications)
   'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'
 ];
 // (Analytics & Infra, 10 Oct, owner: "can't even play offline when there is no internet") the newest copy when the
@@ -190,4 +191,43 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
     return;
   }
   e.respondWith(saved(req).then(hit => hit || fetch(req)));
+});
+// (v1.08 notifications, owner plan docs/plans/push-notifications.md) push notifications for grown-ups. The website sends
+// only which kinds are due and the texts that are the same for every family; the lines about the children (summary,
+// balance, game of the week, achievements) are this device's own, kept by the game in the cache "sv-notify" (js/notify.ts).
+// The joining below is js/content/notify.ts compose() (a service worker cannot import modules); the check pushnotify
+// compares the two. A tap opens the game on the right screen (?open=), or tells the game that is already open.
+type PushPayload = { v: 1, kinds: string[], title: string, lead?: string, parts: Record<string, string>, open: string, tag: string, lang: 'en' | 'vi' };
+const PUSH_FALLBACK: Record<string, [string, string]> = {
+  gotw: ['A game picked for this week is waiting in the valley.', 'Một trò chơi được chọn cho tuần này đang chờ trong thung lũng.'],
+  weekly: ['Open Grown-ups to see this week’s play report.', 'Mở mục Phụ huynh để xem báo cáo chơi tuần này.'],
+  balance: ['Try a mix of games this week: maths, words, stories and music.', 'Tuần này thử nhiều loại trò: toán, chữ, truyện và âm nhạc.'],
+  invite: ['A friend’s family would like to play together. Open the game to say yes or no.', 'Gia đình một người bạn muốn cùng chơi. Mở trò chơi để đồng ý hoặc từ chối.'],
+  tester: ['A problem you reported is fixed in the newest version. Please try it again.', 'Một lỗi bạn báo đã được sửa trong bản mới nhất. Bạn thử lại nhé.'],
+};
+const PUSH_OPENS = ['new', 'gotw', 'weekly', 'balance', 'achieve', 'word', 'bedtime', 'life', 'festival', 'event', 'invite', 'tester'];
+function pushCompose(p: PushPayload, local: Record<string, { en: string, vi: string } | string> | null) {
+  const lang = p.lang === 'vi' ? 'vi' : 'en', lines: string[] = [];
+  if (p.lead) lines.push(p.lead);
+  for (const k of p.kinds) { if ((k === 'festival' || k === 'event') && p.lead) continue; const own = local && local[k] as { en: string, vi: string }; const t = (own && own[lang]) || p.parts[k] || (PUSH_FALLBACK[k] && PUSH_FALLBACK[k][lang === 'vi' ? 1 : 0]); if (t) lines.push(t); }
+  return { title: p.title, body: lines.join('\n').slice(0, 600), open: p.open, tag: p.tag };
+}
+const pushLocal = () => caches.open('sv-notify').then(c => c.match(new URL('__sv-notify.json', worker.registration.scope).href)).then(r => r ? r.json() : null).catch(() => null);
+worker.addEventListener('push', (e: PushEvent) => {
+  let p: PushPayload | null = null; try { p = e.data ? e.data.json() : null; } catch { p = null; }
+  if (!p || p.v !== 1 || !Array.isArray(p.kinds)) return;
+  e.waitUntil(pushLocal().then(local => {
+    const m = pushCompose(p, local), game = p.kinds.includes('gotw') && local && typeof local.gotwId === 'string' ? local.gotwId : '';
+    return worker.registration.showNotification(m.title, { body: m.body, tag: m.tag, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', lang: p.lang, data: { open: m.open, game, kinds: p.kinds } });
+  }));
+});
+worker.addEventListener('notificationclick', (e: NotificationEvent) => {
+  e.notification.close();
+  const d = e.notification.data || {}, open = PUSH_OPENS.includes(d.open) ? d.open : 'home', game = /^[\w-]{1,40}$/.test(d.game || '') ? d.game : '';
+  const u = new URL('./', worker.registration.scope); u.searchParams.set('open', open); if (open === 'gotw' && game) u.searchParams.set('game', game);
+  e.waitUntil(worker.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    const c = list.find(x => new URL(x.url).pathname === new URL(worker.registration.scope).pathname) as WindowClient | undefined;
+    if (c) { c.postMessage({ type: 'SV_NOTIFY_OPEN', open, game }); return c.focus().then(() => undefined); }
+    return worker.clients.openWindow(u.href).then(() => undefined);
+  }));
 });

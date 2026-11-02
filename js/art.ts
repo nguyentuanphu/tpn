@@ -18,3 +18,4 @@ import './art/companion-hats.js';
 import './art/science2.js';
 import './art/english.js'; // (v1.08 english)
 export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';
+import './art/notify.js'; // (v1.08 notifications) the bell and the Home Screen phone

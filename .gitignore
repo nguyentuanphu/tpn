@@ -49,6 +49,7 @@ marketing/source/runvalley.log
 /js/art/kit.js
 /js/art/learning.js
 /js/art/lookup.js
+/js/art/notify.js
 /js/art/pad-and-games.js
 /js/art/people-food.js
 /js/art/r90-audits.js
@@ -136,6 +137,7 @@ marketing/source/runvalley.log
 /js/content/install-state.js
 /js/content/jobs.js
 /js/content/map.js
+/js/content/notify.js
 /js/content/owllessons.js
 /js/content/parents.js
 /js/content/reading.js
@@ -326,6 +328,7 @@ marketing/source/runvalley.log
 /js/net.js
 /js/netgames.js
 /js/netmsg.js
+/js/notify.js
 /js/openspot.js
 /js/owlguide.js
 /js/packbar.js

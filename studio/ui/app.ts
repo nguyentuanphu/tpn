@@ -790,7 +790,28 @@ const bindMore = P => P.querySelectorAll('[data-more]').forEach(b => b.onclick =
 // button that opens its dates; a search and filters at the top; Save sits at the bottom of the screen and counts the
 // changes. The auto play and tester settings open under their own cards (each added once, even if the page is drawn
 // twice), and the testers' sneak peeks are picked by group (All / None, a search, a count).
-const REL_ICON = { story: '🏮', kids: '🧸', rewards: '🎁', world: '🏞️', festivals: '🎉', tools: '🧰', trial: '📚' };
+const REL_ICON = { story: '🏮', kids: '🧸', rewards: '🎁', world: '🏞️', festivals: '🎉', tools: '🧰', trial: '📚', notify: '🔔' };
+// (v1.08 notifications) grown-ups' notifications, under their group on Releases: whether the website can send (its keys),
+// how many devices have each kind on, sent and opened in the last 8 weeks, and the "new this week" text for Saturday
+async function pushPanel(P) {
+  const box = P.querySelector('details.relg[data-g="notify"]'); if (!box || box.querySelector('.pushpanel')) return;
+  const d = await api('push').catch(() => null); if (!d || !box.isConnected) return;
+  const { KINDS } = await import(GAME + 'js/content/notify.js'), n = d.config && d.config.news || {};
+  const sum = (k, w) => (d.weeks || []).reduce((a, x) => a + ((x[w] || {})[k] || 0), 0);
+  const el = document.createElement('div'); el.className = 'pushpanel card';
+  el.innerHTML = `<p class="note">${d.on ? T(`Sending is on. ${d.devices} devices have notifications on.`, `Đang gửi được. ${d.devices} máy đã bật thông báo.`) : T('Sending is off: the website has no VAPID keys yet (VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT in Netlify).', 'Chưa gửi được: trang web chưa có khóa VAPID (VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT trong Netlify).')}</p>
+    <table class="rel"><thead><tr><th></th><th>${T('Devices on', 'Máy bật')}</th><th>${T('Sent, 8 weeks', 'Đã gửi, 8 tuần')}</th><th>${T('Opened', 'Đã mở')}</th></tr></thead><tbody>${KINDS.map(k => { const s = sum(k.id, 'sent'), o = sum(k.id, 'opened'); return `<tr><td>${esc(T(k.en, k.vi))}</td><td>${(d.kindsOn || {})[k.id] || 0}</td><td>${s}</td><td>${o}${s ? ` (${Math.round(o / s * 100)}%)` : ''}</td></tr>`; }).join('')}</tbody></table>
+    <h3>${T('New this week (Saturday message)', 'Mới trong tuần (tin thứ Bảy)')}</h3>
+    <label>English <input type="text" maxlength="200" id="pushNewEn" value="${esc(n.en || '')}"></label><label>Tiếng Việt <input type="text" maxlength="200" id="pushNewVi" value="${esc(n.vi || '')}"></label>
+    <label>${T('From', 'Từ')} <input type="date" id="pushNewFrom" value="${esc(n.from || '')}"></label><label>${T('to', 'đến')} <input type="date" id="pushNewTo" value="${esc(n.to || '')}"></label>
+    <button type="button" class="btn small" id="pushNewSave">💾 ${T('Save the text', 'Lưu lời nhắn')}</button>`;
+  box.querySelector('.relgrid').after(el);
+  el.querySelector('#pushNewSave').addEventListener('click', async () => {
+    const v = id => (el.querySelector('#' + id) as HTMLInputElement).value;
+    try { await api('push', { news: { en: v('pushNewEn'), vi: v('pushNewVi'), from: v('pushNewFrom'), to: v('pushNewTo') } }); toast(T('Saved: the next Saturday message has it.', 'Đã lưu: tin thứ Bảy tới sẽ có lời nhắn này.')); }
+    catch (e) { toast(String(e && e.message || e), 'bad'); }
+  });
+}
 PAGES.releases = P => drawReleases(P, false);
 PAGES.lab = P => drawReleases(P, true);
 async function drawReleases(P, lab) {
@@ -832,6 +853,7 @@ async function drawReleases(P, lab) {
     ${lab && CAN('site') ? `<section class="card bot-config"><h3>🤖 ${T('Nightly Cloud Bot Testing', 'Kiểm thử bot đám mây ban đêm')}</h3><p class="note">${T('Set a nightly schedule and bot profile. Save to persist these settings.', 'Thiết lập lịch ban đêm và hồ sơ bot. Bấm Lưu để lưu cài đặt.')}</p><div class="bot-fields"><label class="chk"><input id="bot-enabled" type="checkbox"> ${T('Enable scheduled testing', 'Bật kiểm thử theo lịch')}</label><label>${T('Schedule', 'Lịch')}<select id="bot-schedule"><option value="day-night">${T('Day & night', 'Ngày và đêm')}</option><option value="custom">${T('Custom UTC time', 'Giờ UTC tùy chỉnh')}</option></select><input id="bot-time" type="time" value="02:00" aria-label="UTC time"></label><label>${T('Bot count', 'Số bot')} <input id="bot-count" type="number" min="1" max="10" value="5"></label><label>${T('Minutes per bot', 'Số phút mỗi bot')} <input id="bot-duration" type="number" min="1" max="30" value="5"></label><label>${T('Behavior profile', 'Hồ sơ hành vi')}<select id="bot-profile"><option value="chaos-toddler">${T('Chaotic Toddler Mashing', 'Bé nghịch ngợm')}</option><option value="gentle-explorer">${T('Gentle Explorer', 'Nhà thám hiểm nhẹ nhàng')}</option><option value="max-competence">${T('Max Competence', 'Thành thạo tối đa')}</option></select></label></div><div class="bar"><button type="button" class="btn" id="bot-run">▶️ ${T('Run Headless Bot Test Now', 'Chạy kiểm thử bot ngay')}</button><span class="note" id="bot-result"></span></div></section>` : ''}
     <div class="bar relsave"><span class="note" id="relch"></span><button class="btn" id="save">💾 ${T('Save', 'Lưu')}</button></div>`;
   P.querySelector('.sub').after(document.createRange().createContextualFragment(liveNote()));
+  if (!lab) pushPanel(P).catch(() => { }); // (v1.08 notifications)
   if (lab) { P.querySelector('.sub').textContent = T('Report problems and run automatic checks. Choose tester devices, checking speed and how their progress is restored.', 'Báo lỗi và chạy tự kiểm tra. Chọn máy thử, tốc độ kiểm tra và cách khôi phục tiến trình.'); if (canSee('testers')) { const link = document.createElement('button'); link.className = 'btn ghost'; link.textContent = T('Open tester reports', 'Mở báo cáo người thử'); link.onclick = () => go('testers'); P.querySelector('.sub').after(link); } }
   // counts, the group numbers and what has changed since the page opened
   const start = JSON.stringify([...P.querySelectorAll('.relc')].map(c => [c.querySelector('[data-r="on"]').checked, ...['start', 'days', 'newDays'].map(k => c.querySelector(`[data-r="${k}"]`).value)]));
