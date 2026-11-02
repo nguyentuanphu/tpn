@@ -75,7 +75,7 @@ export async function pushNotifyCheck(b) {
         const small = [...sec.querySelectorAll('button, select, label.tog')].map(e => ({ t: (e.textContent || '').trim().slice(0, 30), h: Math.round(box(e).height), w: Math.round(box(e).width) })).filter(x => x.h && (x.h < 44 || x.w < 44));
         return { text: sec.textContent, kinds: sec.querySelectorAll('[data-pk]').length, small, over: document.documentElement.scrollWidth > innerWidth + 1 || [...sec.querySelectorAll('*')].some(e => box(e).right > innerWidth + 1), pic: !!sec.querySelector('summary .art'), disabled: (document.querySelector('#gPushOn') as HTMLButtonElement).disabled, state: (document.querySelector('#gPushState') as HTMLElement).innerText };
       });
-      const want = lang === 'vi' ? /Thông báo cho phụ huynh[\s\S]*Giờ yên lặng[\s\S]*Tóm tắt tuần/ : /Notifications for grown-ups[\s\S]*Quiet hours[\s\S]*Weekly summary/;
+      const want = lang === 'vi' ? /Thông báo cho phụ huynh[\s\S]*Tóm tắt tuần[\s\S]*Giờ yên lặng/ : /Notifications for grown-ups[\s\S]*Weekly summary[\s\S]*Quiet hours/;
       if (!want.test(r.text)) out.push(`${name} ${lang}: the words are not all there: ${r.text.slice(0, 160)}`);
       if (r.kinds !== 11) out.push(`${name} ${lang}: ${r.kinds} switches (11 kinds; the testers' one only on tester devices)`);
       if (r.small.length) out.push(`${name} ${lang}: smaller than 44 px: ${JSON.stringify(r.small.slice(0, 3))}`);
