@@ -95,5 +95,7 @@ export function outline(obj, width = .011, color = '#6a4a3a') {
   }
   const add = [];
   obj.traverse(o => { if (o.isMesh && !o.userData.outline && !o.material.transparent && o.geometry.attributes.normal) add.push(o); });
-  return add.map(o => { const h = new THREE.Mesh(o.geometry, m); h.userData.outline = true; h.raycast = () => { }; o.add(h); return h; });
+  // (v1.08) a bending limb's outline bends with it: the same bones
+  return add.map(o => { const h = o.isSkinnedMesh ? new THREE.SkinnedMesh(o.geometry, m) : new THREE.Mesh(o.geometry, m); if (h instanceof THREE.SkinnedMesh) { h.bind(o.skeleton, o.bindMatrix); h.boundingSphere = o.boundingSphere; h.boundingBox = o.boundingBox; }
+    h.userData.outline = true; h.raycast = () => { }; o.add(h); return h; });
 }
