@@ -1,6 +1,6 @@
 # v1.07 studio helper: status
 
-**PAUSED (Release asked to slow down, 2 Nov AEDT). Not ready for Release yet.** Waiting for "resume" after 2 pm AEDT.
+**ready for Release** (2 Nov AEDT, after "resume"): draft pull request #786; the GitHub full suite runs on it, result to be read by Release.
 
 Branch `work/v107-studio` (from main v1.06 plus the briefs). Started 2 Nov 2026, about 11:00 am AEDT.
 
@@ -70,12 +70,17 @@ invalidation and the tidy).
 - `studio`: pass (99 server messages, each in Vietnamese too).
 - `types` (tsc, `tests/tsconfig.json` and `tests/tsconfig.server.json`): pass.
 - `ownerdesk`: failed once. G03 read the table cells with `innerText`, which is empty inside the closed `<details>`.
-  Fixed by reading `textContent` (same assertion). **Not re-run yet** (paused).
+  Fixed by reading `textContent` (same assertion). Re-run after "resume": pass.
+- Screenshots looked at: Today (computer 1440), People with G03 (tablet 820), Work with G16 (phone 390). Found and
+  fixed: "ever" could be lower than the devices seen in 30 days when a device had no first-seen mark (`dev/`); it
+  now takes the larger.
+- `suite.mjs --changed`: picks the full suite (`.gitignore` changed with `vi.ts`); it runs on GitHub with pull request #786.
 
-## Exact next step after "resume"
+## Commits
 
-1. `cd tests && node suite.mjs --jobs 1 --only ownerdesk` (game server: `python3 -m http.server 8765` in the repo root).
-2. Look at the computer (1280) and tablet (820) screenshots of Today, People (G03) and Work (G16) in
-   `docs/studio-owner-desk-20261027/screenshots/`, plus the phone.
-3. `cd tests && node suite.mjs --changed`; if it picks the full suite, dispatch `full-suite.yml` on `work/v107-studio`.
-4. Open a draft pull request "v1.07 studio: fast Today page, G03 and G16, vi.ts", write "ready for Release" at the top.
+- `89d88b5e` code and tests; `f37996a8` ever count, screenshots. Draft pull request #786.
+
+## Left for later
+
+- The rest of the connected design (G04 heatmap on device, richer People lifecycle, contextual editors) needs data or
+  contracts that do not exist yet; not started.
