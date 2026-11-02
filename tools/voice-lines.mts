@@ -7,7 +7,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const files = [...fs.readdirSync(path.join(ROOT, 'js')).map(f => 'js/' + f), ...fs.readdirSync(path.join(ROOT, 'js/games')).map(f => 'js/games/' + f), ...fs.readdirSync(path.join(ROOT, 'js/content')).map(f => 'js/content/' + f), ...fs.readdirSync(path.join(ROOT, 'js/content/films')).map(f => 'js/content/films/' + f)].filter(f => f.endsWith('.js'));
+const files = [...fs.readdirSync(path.join(ROOT, 'js')).map(f => 'js/' + f), ...fs.readdirSync(path.join(ROOT, 'js/games')).map(f => 'js/games/' + f), ...fs.readdirSync(path.join(ROOT, 'js/content')).map(f => 'js/content/' + f), ...fs.readdirSync(path.join(ROOT, 'js/content/films')).map(f => 'js/content/films/' + f),
+  // (v1.07 split) js/main/ holds the parts of js/main.js
+  ...fs.readdirSync(path.join(ROOT, 'js/main')).map(f => 'js/main/' + f)].filter(f => f.endsWith('.js'));
+// (v1.07 split) the parts of js/main.js (js/main/*.js) count as js/main.js, so their lines keep their place in the core
+const mainPart = (f: string) => /^js\/main\/[\w-]+\.js$/.test(f) ? 'js/main.js' : f;
 const VI = /[ăâđêôơưáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]/i;
 // a quoted string without ${…}
 const Q = String.raw`(?:'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|\x60(?:[^\x60\\$]|\\.|\$(?!\{))*\x60)`;
@@ -159,10 +163,10 @@ const FILE_AREA = {
 const AREA_OF = new Map(Object.entries(FILE_AREA).flatMap(([a, fs]) => fs.map(f => [f, a])));
 // how early a core line comes (the order of FILE_AREA.core: the start first): when the core is over its size, the
 // last ones go to their own area instead (tools/make-voice-pack.mts CORE_MB); 40 = a line said in many games
-export const corePri = fromFiles => Math.min(40, ...fromFiles.map(f => { const i = FILE_AREA.core.indexOf(f); return i < 0 ? 40 : i; }));
+export const corePri = fromFiles => Math.min(40, ...fromFiles.map(f => { const i = FILE_AREA.core.indexOf(mainPart(f)); return i < 0 ? 40 : i; }));
 // where a core line goes if the core is full: the area of its other files, else the games or the world
 export const nonCoreArea = fromFiles => { const a = [...new Set(fromFiles.map(areaOfFile))].filter(x => x !== 'core').sort((x, y) => +(x === 'world') - +(y === 'world'))[0]; return a || (fromFiles.some(f => f.startsWith('js/games/')) ? 'games' : 'world'); };
-export const areaOfFile = f => AREA_OF.get(f) || (f.startsWith('js/games/') || f.startsWith('js/content/films/') ? 'games' : 'world'); // (the tale films go with the other films)
+export const areaOfFile = f => AREA_OF.get(mainPart(f)) || (f.startsWith('js/games/') || f.startsWith('js/content/films/') ? 'games' : 'world'); // (the tale films go with the other films)
 // the area of a line: the core wins (wherever else it is used), then where it was heard (the area most often, or a
 // game), then its file
 const RANK = a => a === 'core' ? 0 : a === 'world' ? 3 : GROUPS.includes(a) ? 2 : 1;

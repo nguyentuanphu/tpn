@@ -8303,6 +8303,8 @@ await check('rigidmodels', async () => (await import('./rigid-models.mts')).rigi
 await check('terrainmath', async () => (await import('./terrain-math.mts')).terrainMathCheck());
 await check('renderaudit', async () => (await import('./render-audit.mts')).renderAudit(b));
 await check('r87ui', async () => (await import('./r87-ui.mts')).r87UiCheck(b));
+// (v1.07 startup, owner's plan focus 1) the Simple screen and its games open before the valley is built (tests/simple-first.mts)
+await check('simplefirst', async () => (await import('./simple-first.mts')).simpleFirstCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);
