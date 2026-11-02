@@ -47,7 +47,10 @@ export async function ownerDeskBrowserCheck(browser){
    assert.ok(await page.locator('[data-today="devices"] .today-device').count()>=1,'Home lists devices by name');
    assert.ok(!(await page.locator('.desk-body').innerText()).includes('Demo Linh'),'Home contains no child names');
    const save=async key=>{assert.deepEqual(await page.evaluate(()=>[...(window.__svNoArt||[])]),[],'game drawings cover every visible icon');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,key+' overflow');await page.evaluate(()=>scrollTo(0,0));const file=`${lang}-${width}-${key}.png`;await page.screenshot({path:path.join(output,file),fullPage:true});const viewportFile=file.replace('.png','-viewport.png');await page.screenshot({path:path.join(output,viewportFile)});captures.push({lang,width,height,key,file,viewportFile});};
-   assert.equal(await page.locator('.desk-public-links a').last().getAttribute('href'),'/home/');assert.ok((await page.evaluate(()=>getComputedStyle(document.body).fontFamily)).includes(lang==='vi'?'Baloo 2':'Fredoka'));await save('today');await area(page,'people');assert.match(await page.locator('.desk-person-list').innerText(),/Demo Linh/);await save('people');
+   assert.equal(await page.locator('.desk-public-links a').last().getAttribute('href'),'/home/');assert.ok((await page.evaluate(()=>getComputedStyle(document.body).fontFamily)).includes(lang==='vi'?'Baloo 2':'Fredoka'));await save('today');await area(page,'people');assert.match(await page.locator('.desk-person-list').innerText(),/Demo Linh/);
+   // (v1.07, G03) new and returning devices per device day: both synthetic tablets were seen before (no isNew), so 0 and 2 today
+   assert.deepEqual(await page.locator('[data-chart="G03"] tbody tr').last().locator('td').allTextContents(),[today,'0','2'],'G03 counts today\'s devices from the real records');
+   assert.equal(await page.locator('[data-chart="G03"] rect.desk-stack-1').count(),1,'one column for the one reported day; the other days are gaps');await save('people');
    await page.locator('.desk-period select').selectOption('7');await page.locator('.desk-period button').click();await page.waitForFunction(()=>new URLSearchParams(location.hash.split('?')[1]).get('days')==='7'&&!!document.querySelector('.desk-person-list'));
    await page.locator(`[data-desk-route="managementdevice:${device}"]`).click();await page.waitForSelector('[data-chart="G04"]');
    assert.match(await page.locator('.mg-content').innerText(),/Synthetic linked problem/);assert.ok(!(await page.locator('.mg-content').innerText()).includes('Other installation problem'));
@@ -72,7 +75,7 @@ export async function ownerDeskBrowserCheck(browser){
    const declared=page.locator('.desk-catalogue [data-desk-route="managementactivity:game:paperfold"]');assert.equal(await declared.isVisible(),true);
    assert.match(await declared.innerText(),lang==='vi'?/Chỉ mới khai báo/:/Declared only/);assert.ok(await page.locator('.desk-catalogue [data-catalogue-state=declared-only]:visible').count()>0);assert.equal(await page.locator('.desk-catalogue [data-catalogue-state=catalogued]:visible').count(),0);await declared.click();
    await page.waitForSelector('.mg-declared-only');await page.waitForSelector('[data-item-workspace]');assert.equal(await page.locator('[data-item-editor]').count(),0,'pending integration cannot be switched on');assert.match(await page.locator('.mg-declared-only').innerText(),lang==='vi'?/chưa được tích hợp/:/not integrated/);await save('declared');await page.locator('#crumb .back').click();await page.waitForSelector('[data-desk-discovery]');assert.equal(await page.locator('[data-desk-discovery]').inputValue(),'declared-only','Back restores the integration filter');assert.equal(await page.locator('[data-desk-search]').inputValue(),'paperfold','Back restores the content search');
-   await area(page,'work');await save('work');await area(page,'money');await page.waitForSelector('[data-chart="G21"]');assert.match(await page.locator('[data-chart=G21]').textContent(),/AUD 12\.00/,'money graph uses exact reporting currency rather than raw minor units');await save('money');
+   await area(page,'work');await page.waitForSelector('[data-chart="G16"]');assert.deepEqual(await page.locator('[data-chart="G16"] tbody tr').first().locator('td').allTextContents(),['v1.02','2'],'G16 counts each reporting device once by its latest version');await save('work');await area(page,'money');await page.waitForSelector('[data-chart="G21"]');assert.match(await page.locator('[data-chart=G21]').textContent(),/AUD 12\.00/,'money graph uses exact reporting currency rather than raw minor units');await save('money');
    await page.goto(site+'/studio/#setup/settings');await page.waitForSelector('[data-functions-editor]');
    assert.equal(await page.locator('[data-functions-editor] textarea').count(),1,'function editor uses plain-language controls');
    const beforePolicy=await (await ctx.request.get(site+'/api/live')).json();
@@ -111,13 +114,23 @@ export async function ownerDeskBrowserCheck(browser){
   assert.equal((await ctx.request.get(site+'/studio/api/management/devices/'+device)).status(),403);assert.equal((await ctx.request.get(site+'/studio/api/management/finance')).status(),403);await ctx.close();
   // Losing a source must not turn unknown numbers into a healthy zero.
   const missing=await browser.newContext();await missing.addInitScript(()=>localStorage.setItem('studioLang','en'));await missing.request.post(site+'/studio/api/login',{data:{password}});
-  const failedPage=await missing.newPage();await failedPage.route('**/studio/api/management/overview?*',r=>r.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'synthetic_source_unavailable'})}));
-  await failedPage.goto(site+'/studio');await failedPage.waitForSelector('[data-today="tiles"] .desk-source-warning');
-  assert.match(await failedPage.locator('[data-today="tiles"]').innerText(),/Could not load/);assert.doesNotMatch(await failedPage.locator('[data-today="tiles"]').innerText(),/\b0\b/);
-  await failedPage.unroute('**/studio/api/management/overview?*');
+  // (v1.07) the four numbers come from the quick read (management/summary); the chart, places and games from overview
+  const failedPage=await missing.newPage(),unavailable={status:503,contentType:'application/json',body:JSON.stringify({error:'synthetic_source_unavailable'})};
+  await failedPage.route('**/studio/api/management/summary*',r=>r.fulfill(unavailable));await failedPage.route('**/studio/api/management/overview?*',r=>r.fulfill(unavailable));
+  await failedPage.goto(site+'/studio');await failedPage.waitForSelector('[data-today="tiles"] .desk-source-warning');await failedPage.waitForSelector('[data-today="minutes"] .desk-source-warning');
+  for(const k of ['tiles','minutes','places','games']){const text=await failedPage.locator(`[data-today="${k}"]`).innerText();assert.match(text,/Could not load/,k);assert.doesNotMatch(text,/\b0\b/,k);}
+  await failedPage.unroute('**/studio/api/management/summary*');await failedPage.unroute('**/studio/api/management/overview?*');
+  await failedPage.route('**/studio/api/management/summary*',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schemaVersion:1,reportingDays:0,today:{devicesToday:null,devicesWeek:null,devicesMonth:null,newWeek:null,newMonth:null,devicesEver:2,minsToday:null,minsWeek:null,minsMonth:null,errorsWeek:null,versions:{newest:null,onNewest:0,older:0,list:[]}}})}));
   await failedPage.route('**/studio/api/management/overview?*',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({metrics:[{id:'M01',value:0},{id:'M04',value:0}],totals:{errors:0},dailySeries:[{date:today,reportingBuckets:0,activeDevices:null}],attention:{open:null}})}));
   await failedPage.reload();await failedPage.waitForSelector('[data-today="tiles"] .today-tile');
-  for(const index of [0,1,2])assert.match(await failedPage.locator('.today-tile b').nth(index).innerText(),/^–$/,'A missing count is unknown, not observed zero');
+  for(const index of [0,1,2,3])assert.match(await failedPage.locator('.today-tile b').nth(index).innerText(),/^–$/,'A missing count is unknown, not observed zero');
+  assert.doesNotMatch(await failedPage.locator('[data-today="health"]').innerText(),/No game errors/,'unknown errors are not reported as none');
+  await failedPage.unroute('**/studio/api/management/summary*');await failedPage.unroute('**/studio/api/management/overview?*');
+  // (v1.07, owner 30 Oct AEDT: "first page loads too long") the numbers show while the slow read is still on its way
+  let release;const held=new Promise(r=>release=r);await failedPage.route('**/studio/api/management/overview?*',async r=>{await held;await r.continue();});
+  await failedPage.locator('#reload').click();await failedPage.waitForFunction(()=>/^\d+$/.test(document.querySelector('[data-today="tiles"] .today-tile b')?.textContent||''),null,{timeout:10000});
+  assert.match(await failedPage.locator('[data-today="minutes"]').innerText(),/Loading/,'the quick numbers did not wait for the slow read');release();
+  await failedPage.waitForSelector('[data-today="minutes"] [data-chart="T01"]');await failedPage.unroute('**/studio/api/management/overview?*');
   await missing.close();
   const itemControlEvidence=await itemControlRuntimeCheck(browser,projectedOff);
   assert.deepEqual(errors,[]);
