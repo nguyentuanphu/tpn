@@ -9,7 +9,7 @@ import { el } from './util.js';
 
 // roughly how big each landmark is (metres), so the camera knows how far back to stand
 const SIZE = {
-  opera: 22, harbour: 30, uluru: 58, banana: 12, bondi: 10, lighthouse: 16, turtle: 10, onepillar: 10, chuacau: 12, benthanh: 14,
+  opera: 22, harbour: 30, uluru: 58, banana: 12, bondi: 10, turtle: 10, onepillar: 10, chuacau: 12, benthanh: 14,
   halong: 24, hue: 20, myson: 16, phongnha: 18, trangan: 16, reef: 14, sisters: 16, exhibition: 20, kakadu: 18,
   marble: 16, hoian: 16, thehuc: 18, cairang: 18, apostles: 20, storybridge: 24, sydneytower: 24, wheel: 18, lighthouse: 16, bnclock: 14, flinders: 16, cathedral: 16, postoffice: 16, dragonbridge: 26, goldenbridge: 20,
   forbidden: 20, heaven: 16, terracotta: 14, potala: 18, qutub: 22, redfort: 20, konark: 14, hampi: 16, mahabodhi: 20
@@ -60,7 +60,7 @@ export function createShowcase(G) {
   };
 
   // the fly-around: a short swing past the landmark (about 2.5 s, or a tap), then its card opens
-  G.showcase = (h, lm) => new Promise(res => {
+  G.showcase = (h, lm) => new Promise<void>(res => {
     if (!h || G.show) return res();
     const c = landmarkCentre(lm), a0 = clearestAngle(c, Math.atan2(h.pos.x - c.x, h.pos.z - c.z));
     const wasPaused = G.paused; G.paused = true;
@@ -74,7 +74,7 @@ export function createShowcase(G) {
   });
   // the view from the top of a tall landmark (Sydney Tower, the Wheel of Brisbane…): the camera rides up and
   // turns slowly all the way round, looking out over the city and the land around it
-  G.lookout = (h, x, y, z, title) => new Promise(res => {
+  G.lookout = (h, x, y, z, title) => new Promise<void>(res => {
     if (!h || G.show) return res();
     const wasPaused = G.paused; G.paused = true;
     const skip = el('button', 'sc-skip', '⏭️ ' + T('Back down', 'Xuống thôi'));

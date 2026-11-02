@@ -12,7 +12,7 @@ import { dist2 } from './util.js';
 
 export function createWeather(G) {
   const { scene, world } = G;
-  const S = { state: 'clear', t: 150 + Math.random() * 150, rainbowT: 0, told: {} };
+  const S: { state: string, t: number, rainbowT: number, told: Record<string, boolean> } = { state: 'clear', t: 150 + Math.random() * 150, rainbowT: 0, told: {} };
   // ---------- rain: falling streaks around each player ----------
   const N = 700, rains = [0, 1].map(() => {
     const pos = new Float32Array(N * 6);
@@ -98,7 +98,7 @@ export function createWeather(G) {
     if (rainbow.visible) {
       const h = G.heroes[0]; _f.set(-Math.sin(h.camYaw), 0, -Math.cos(h.camYaw));
       rainbow.position.set(h.pos.x + _f.x * 210, heightAt(h.pos.x, h.pos.z) - 12, h.pos.z + _f.z * 210); rainbow.rotation.y = h.camYaw;
-      rainbow.children.forEach(m => m.material.opacity = ra * .55);
+      rainbow.children.forEach((m: THREE.Mesh<THREE.BufferGeometry, THREE.Material>) => m.material.opacity = ra * .55);
     }
     // drifting blossoms or leaves near the first player
     if (petals.length) {

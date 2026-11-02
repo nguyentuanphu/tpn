@@ -306,6 +306,26 @@
     "../js/pets.ts",
     "../js/photos.ts",
     "../js/placebook.ts",
-    "../js/pricetags.ts"
+    "../js/pricetags.ts",
+    "../js/scrollhelp.ts",
+    "../js/secrets.ts",
+    "../js/showcase.ts",
+    "../js/snacks.ts",
+    "../js/songs.ts",
+    "../js/soundsheet.ts",
+    "../js/stickerfx.ts",
+    "../js/stickers.ts",
+    "../js/story.ts",
+    "../js/surprises.ts",
+    "../js/testergate.ts",
+    "../js/twinchests.ts",
+    "../js/util.ts",
+    "../js/validate.ts",
+    "../js/villagertalk.ts",
+    "../js/vnfun.ts",
+    "../js/wayfind.ts",
+    "../js/weather.ts",
+    "../js/words.ts",
+    "../js/words2.ts"
   ]
 }

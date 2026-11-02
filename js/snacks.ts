@@ -56,5 +56,5 @@ export async function eatSnack(G, h, id, quiet = false) {
   p.tasted = p.tasted || {}; const first = !p.tasted[id]; p.tasted[id] = true; G.save();
   const sub = first ? T('A new taste for your food passport! Full of energy.', 'Món mới trong hộ chiếu ẩm thực! Tràn đầy năng lượng.') : T('Full of energy!', 'Tràn đầy năng lượng!');
   if (quiet) { SFX.ok(); say(`Yum yum! ${v.food[1]}!`, `Măm măm! ${v.food[2]}!`); G.toast && G.toast(h, `${v.food[0]} ${sub}`); return; }
-  await reward(v.food[0], T(`Yum, ${v.food[1]}!`, `Ngon quá, ${v.food[2]}!`), sub);
+  await reward(v.food[0] as string, T(`Yum, ${v.food[1]}!`, `Ngon quá, ${v.food[2]}!`), sub);
 }

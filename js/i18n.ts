@@ -87,4 +87,4 @@ export const COLORS = [
 ];
 export const colorName = c => T(c.en, c.vi);
 // a label made with T(), in both languages (to speak a name: say(...both(g.name)))
-export const both = f => { const l = settings.lang; try { settings.lang = 'en'; const en = f(); settings.lang = 'vi'; return [en, f()]; } finally { settings.lang = l; } };
+export const both = (f: () => string): [string, string] => { const l = settings.lang; try { settings.lang = 'en'; const en = f(); settings.lang = 'vi'; return [en, f()]; } finally { settings.lang = l; } };

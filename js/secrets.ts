@@ -33,7 +33,7 @@ export const SECRETS = [
 
 export function createSecrets(G) {
   const { scene, world } = G;
-  const S = { apples: [] };
+  const S: Record<string, any> = { apples: [] };
   G.tapTargets = G.tapTargets || [];
 
   async function unlock(h, id) {
@@ -121,7 +121,7 @@ export function createSecrets(G) {
   // fireflies at night (tap them)
   world.fireflies.forEach(f => { f.s.scale.setScalar(.45); f.s.userData.it = { x: f.ox, z: f.oz, r: 30, act: h => {
     if (!world.isNight() || f.caught > performance.now() / 1000) return;
-    f.caught = performance.now() / 1000 + 60; SFX.sparkle ? SFX.sparkle() : SFX.chime();
+    f.caught = performance.now() / 1000 + 60; (SFX as Record<string, any>).sparkle ? (SFX as Record<string, any>).sparkle() : SFX.chime();
     h.profile.fireflies = (h.profile.fireflies || 0) + 1; G.save(); if (h.profile.fireflies >= 5) unlock(h, 'fireflies'); else say(`${h.profile.fireflies}!`, `${h.profile.fireflies}!`);
   } }; G.tapTargets.push(f.s); });
 

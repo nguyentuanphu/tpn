@@ -65,7 +65,7 @@ export function createSurprises(G, { say, reward }) {
 
   // ---------- one surprise in the valley ----------
   function place(id, h) {
-    const S = byId(id), g = new THREE.Group(), C = { id, S, g, h, x: 0, z: 0, hop: 0, parts: [] };
+    const S = byId(id), g = new THREE.Group(), C: { id: string, S: ReturnType<typeof byId>, g: THREE.Group, h: any, x: number, z: number, hop: number, parts: any[], [k: string]: any } = { id, S, g, h, x: 0, z: 0, hop: 0, parts: [] };
     let at = S.where === 'pond' ? [POND.x + 1.8, POND.z + 1.2] : spotNear(h, id === 'stars' ? 3 : id === 'glade' ? 4 : 6);
     if (!at) return null;
     [C.x, C.z] = at;

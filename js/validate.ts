@@ -80,7 +80,7 @@ function stallRules(G, add) {
     const [fx, fz] = fwd(s); if (fx * -S.nx + fz * -S.nz < .9) add('STALL-002', `${where(s)} does not face its street`);
   }
   // STALL-002: clear ground between neighbours; STALL-003: no gap in a row wide enough to leave a stall alone
-  const byPlace = {}; for (const s of stalls) if (s.kind !== 'shop') (byPlace[s.place] ||= []).push(s);
+  const byPlace: Record<string, any[]> = {}; for (const s of stalls) if (s.kind !== 'shop') (byPlace[s.place] ||= []).push(s);
   for (const [place, L] of Object.entries(byPlace)) {
     for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) { const d = Math.min(...rim(L[i]).map(([x, z]) => toRect(L[j], x, z)), ...rim(L[j]).map(([x, z]) => toRect(L[i], x, z))); if (d < STALL.gap - .01) add('STALL-002', `"${L[i].id}" and "${L[j].id}" (${place}) are ${f1(d)} m apart (${STALL.gap} m or more)`); }
     const S = rowStreet(place); if (!S || L.length < 2) continue;

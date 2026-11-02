@@ -20,7 +20,7 @@ export function noise2(x, z) {
 export function fbm(x, z, oct = 4) { let s = 0, a = 1, f = 1, n = 0; for (let i = 0; i < oct; i++) { s += noise2(x * f, z * f) * a; n += a; a *= 0.5; f *= 2.03; } return s / n; }
 
 export const $ = s => document.querySelector(s);
-export function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+export function el(tag, cls?, html?) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 export function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 export const wait = ms => new Promise(r => setTimeout(r, ms));
 // Two players face to face (owner, round R): a window opened by the player at the far end sits in a .facewrap

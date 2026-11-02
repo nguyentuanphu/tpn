@@ -66,7 +66,7 @@ export const isShiny = (id, who) => { const p = profileOf(who); return !!(p && (
  * Returns { id, first, shiny } or null (no child, or no such sticker).
  * @param {string} id  @param {any} [who] a hero or a profile (default: the child playing now)  @param {{ rnd?: () => number, quiet?: boolean, from?: any }} [o]
  */
-export function give(id, who, o = {}) {
+export function give(id, who, o: { rnd?: () => number, quiet?: boolean, from?: string } = {}) {
   const p = profileOf(who), s = BY_ID[id]; if (!p || !s) return null;
   sync(p);
   const b = book(p), had = b.got[id];
@@ -120,7 +120,7 @@ export function attach(game) {
   import('./stickerfx.js').then(m => { fx = m.createStickerFx(G, { BOOK_LINES, FIRST_THREE }); }).catch(e => console.warn('sticker effects', e));
 }
 /** a tap on an animal in the valley (js/fun.js): its kind from js/animals.js, or 'duck', 'chicken', 'butterfly', 'bird' */
-export function meet(kind, hero, from) {
+export function meet(kind, hero, from?) {
   for (const s of STICKERS) if (s.earn.some(w => w.meet === kind)) give(s.id, hero, { from });
 }
 /** something a child did at an interactable (InteractionStarted): talking to someone, a ferry, a hutch */

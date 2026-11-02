@@ -18,7 +18,7 @@ export function roadGraph(places = []) {
   const lines = ROADS.map(R => ({ R, pts: R.pts.map(p => p.slice()), ins: [] }));
   for (const A of lines) for (const e of [A.pts[0], A.pts[A.pts.length - 1]]) for (const B of lines) {
     if (B === A) continue; let best = null;
-    for (let i = 0; i < B.pts.length - 1; i++) { const q = proj(...B.pts[i], ...B.pts[i + 1], e[0], e[1]); if (q.d < 2 && (!best || q.d < best.q.d)) best = { i, q }; }
+    for (let i = 0; i < B.pts.length - 1; i++) { const q = proj(...(B.pts[i] as [number, number]), ...(B.pts[i + 1] as [number, number]), e[0], e[1]); if (q.d < 2 && (!best || q.d < best.q.d)) best = { i, q }; }
     if (best) B.ins.push({ i: best.i, t: best.q.t, p: [best.q.x, best.q.z] });
   }
   const nodes = [], edges = [], key = new Map();
@@ -46,7 +46,7 @@ export function roadGraph(places = []) {
 // the nearest spot on the network to (x, z): the node pair it lies between and the point itself
 function attach(g, x, z) {
   let best = null;
-  g.edges.forEach((es, a) => es.forEach(([b]) => { if (b < a) return; const q = proj(...g.nodes[a], ...g.nodes[b], x, z); if (!best || q.d < best.q.d) best = { a, b, q }; }));
+  g.edges.forEach((es, a) => es.forEach(([b]) => { if (b < a) return; const q = proj(...(g.nodes[a] as [number, number]), ...(g.nodes[b] as [number, number]), x, z); if (!best || q.d < best.q.d) best = { a, b, q }; }));
   return best;
 }
 // the way from (x0, z0) to (x1, z1) along the roads, as points every STEP metres
@@ -80,7 +80,7 @@ export function createWayfind(G) {
     for (const p of P) if (p.key && p.key !== 'farm' && Number.isFinite(p.x)) out.push({ id: p.key, icon: p.icon, name: p.name, x: p.x, z: p.z });
     return out;
   };
-  const stop = quiet => { trail = null; pool.forEach(s => { s.visible = false; }); if (!quiet) G.toast && G.toast(G.heroes[0], T('Sparkles off', 'Tắt lấp lánh')); };
+  const stop = (quiet?) => { trail = null; pool.forEach(s => { s.visible = false; }); if (!quiet) G.toast && G.toast(G.heroes[0], T('Sparkles off', 'Tắt lấp lánh')); };
   function start(h, t) {
     g = g || roadGraph(G.PLACES || []);
     const r = route(g, h.pos.x, h.pos.z, t.x, t.z); if (!r) return false;

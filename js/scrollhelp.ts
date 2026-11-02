@@ -14,7 +14,7 @@ export function installScrollHelp(doc = document) {
   let drag = null, moved = false;
   doc.addEventListener('pointerdown', e => {
     if (e.pointerType !== 'mouse' || e.button !== 0) return;
-    const row = e.target.closest && e.target.closest(ROWS); if (!row || !canX(row)) return;
+    const row = (e.target as Element).closest && (e.target as Element).closest(ROWS); if (!row || !canX(row)) return;
     drag = { row, x: e.clientX, left: row.scrollLeft }; moved = false;
   });
   doc.addEventListener('pointermove', e => {
@@ -27,7 +27,7 @@ export function installScrollHelp(doc = document) {
   // a drag is not a tap
   doc.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
   doc.addEventListener('wheel', e => {
-    const row = e.target.closest && e.target.closest(ROWS); if (!row || !canX(row) || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    const row = (e.target as Element).closest && (e.target as Element).closest(ROWS); if (!row || !canX(row) || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
     const before = row.scrollLeft; row.scrollLeft += e.deltaY; if (row.scrollLeft !== before) e.preventDefault();
   }, { passive: false });
 
@@ -35,7 +35,7 @@ export function installScrollHelp(doc = document) {
   let t = null;
   doc.addEventListener('touchstart', e => {
     if (e.touches.length !== 1) { t = null; return; }
-    const tg = e.target.closest ? e.target : null; if (!tg) return;
+    const tg = (e.target as Element).closest ? e.target as Element : null; if (!tg) return;
     t = { x: e.touches[0].clientX, y: e.touches[0].clientY, row: tg.closest(ROWS), page: tg.closest(PAGES), axis: null };
   }, { passive: true });
   doc.addEventListener('touchmove', e => {

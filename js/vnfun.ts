@@ -65,7 +65,7 @@ export function createVnFun(G, { sfx, say, dialog, toast }) {
   }
 
   // ---------- buffalo pushing matches and bull races ----------
-  const FESTS = [
+  const FESTS: { id: string, where: string[], kind: string, animal: string, scale: number, colours: string[], icon: string, name: [string, string], intro: [string, string][], [k: string]: any }[] = [
     { id: 'choitrau', where: ['bacninh', 'hanoi'], kind: 'push', animal: 'calf', scale: 2.3, colours: ['#e8433a', '#3a78c8'], icon: '🐃',
       name: ['Buffalo pushing festival (hội chọi trâu)', 'Hội chọi trâu'],
       intro: [['In the north, villages hold a buffalo festival. The two strongest buffaloes lock horns and push, like a tug of war with heads! The one that walks away first loses.', 'Ở miền Bắc, làng nào cũng mong tới hội chọi trâu. Hai chú trâu khỏe nhất húc sừng vào nhau mà đẩy, như kéo co bằng đầu vậy! Chú nào bỏ chạy trước là thua.'],
@@ -119,7 +119,7 @@ export function createVnFun(G, { sfx, say, dialog, toast }) {
     // the camera turns to the ring for the match
     if (G.showcase && !G.show) { const p = G.showcase(h, { id: 'fest', icon: F.icon, mx: F.x, mz: F.z, x: F.x, z: F.z, name: () => T(F.name[0], F.name[1]) }); if (G.show) G.show.len = Math.max(3, F.len - F.t); await p; }
   }
-  function start(F, h) {
+  function start(F, h?) {
     if (F.state !== 'idle') return;
     F.state = 'on'; F.t = 0; F.len = F.kind === 'race' ? 9 : 13; F.loser = Math.random() < .5 ? 0 : 1;
     if (F.kind === 'race' && F.pick != null) F.loser = (h && h.profile.age !== 'big') ? 1 - F.pick : (Math.random() < .6 ? 1 - F.pick : F.pick);

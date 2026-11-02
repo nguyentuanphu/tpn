@@ -27,7 +27,7 @@ export function createVillagerTalk(G) {
   // (Round V, owner 13 Oct: "Chào hỏi" followed the child and blocked every other tap) the children's own characters, their
   // other children and friends online are never villagers, also after a character is rebuilt with new clothes; and a
   // villager who has left the valley takes their tap and job picture with them
-  const own = o => o.userData.own || me.has(o) || G.heroes.some(h => h.av && h.av.root === o) || Object.values(G.partners || {}).some(p => p.av && p.av.root === o);
+  const own = o => o.userData.own || me.has(o) || G.heroes.some(h => h.av && h.av.root === o) || Object.values<{ av?: { root?: unknown } }>(G.partners || {}).some(p => p.av && p.av.root === o);
   const scan = () => { const people = [];
   for (let i = list.length - 1; i >= 0; i--) { const e = list[i]; if (e.o.parent !== G.scene || own(e.o)) { e.o.remove(e.tag); if (!own(e.o)) seen.delete(e.o); const j = G.interactables.indexOf(e.it); if (j >= 0) G.interactables.splice(j, 1); const a = added.indexOf(e.it); if (a >= 0) added.splice(a, 1); list.splice(i, 1); } }
   G.scene.traverse(o => { if (o.userData.avatar && !own(o) && o.parent === G.scene && !seen.has(o)) people.push(o); });

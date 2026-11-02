@@ -7,10 +7,10 @@ import { SFX } from './audio.js';
 
 const SWITCHES = [['music', '🎵', ['Music', 'Nhạc']], ['sound', '🔔', ['Sounds', 'Âm thanh']], ['voice', '🗣️', ['Voice', 'Giọng nói']]];
 export function openSoundSheet(G, anchor) {
-  const existing = document.querySelector('.audio-tray'); if (existing) { existing.close(); return; }
+  const existing = document.querySelector<HTMLElement & { close?(): void }>('.audio-tray'); if (existing) { existing.close(); return; }
   document.querySelectorAll('.zoomer.open').forEach(x => { x.classList.remove('open'); x.querySelector('.z-tray')?.setAttribute('aria-expanded', 'false'); });
   const quest = anchor?.closest('.hud')?.querySelector('.quest');
-  const m = document.createElement('div'); m.className = 'audio-tray soundsheet'; m.setAttribute('role', 'group'); m.setAttribute('aria-label', T('Audio', 'Âm thanh'));
+  const m: HTMLDivElement & { close?: () => void } = document.createElement('div'); m.className = 'audio-tray soundsheet'; m.setAttribute('role', 'group'); m.setAttribute('aria-label', T('Audio', 'Âm thanh'));
   m.innerHTML = SWITCHES.map(([k, icon, name]) => `<button class="ss-sw" data-k="${k}" aria-label="${T(...name)}"><span>${pic(icon)}</span><b>${T(...name)}</b><i></i></button>`).join('');
   dispatchEvent(new Event('sv-hide-caption')); document.body.appendChild(m);
   // (r79 A5, owner 16 Oct, twice: "they dont align and look center with the top icons") the three open in one row directly
@@ -23,7 +23,7 @@ export function openSoundSheet(G, anchor) {
   const place = () => {
     const v=visualViewport, y=v?.offsetTop||0, x=v?.offsetLeft||0, h=v?.height||innerHeight, w=v?.width||innerWidth, row=rowBtns();
     const centers = row.map(b => (b.left + b.right) / 2), step = centers.length > 1 ? centers[1] - centers[0] : 56, sw = Math.max(44, Math.min(64, step));
-    m.querySelectorAll('.ss-sw').forEach(b => { b.style.width = b.style.minWidth = sw + 'px'; });
+    m.querySelectorAll<HTMLElement>('.ss-sw').forEach(b => { b.style.width = b.style.minWidth = sw + 'px'; });
     m.style.gap = Math.max(0, step - sw) + 'px'; m.style.right='auto'; m.style.width='max-content'; m.style.maxHeight=Math.max(44,h-24)+'px'; m.style.maxWidth='none';
     const rowTop = row.length ? Math.min(...row.map(b => b.top)) : 0, rowBottom = row.length ? Math.max(...row.map(b => b.bottom)) : 0;
     const below = !row.length || rowBottom + 8 + m.offsetHeight <= y + h - 12;
@@ -40,8 +40,8 @@ export function openSoundSheet(G, anchor) {
   place();
   const sizeWatch = typeof ResizeObserver === 'function' ? new ResizeObserver(() => { if (m.isConnected) place(); }) : null; sizeWatch?.observe(m); if (quest) sizeWatch?.observe(quest);
   document.fonts?.ready.then(() => { if (m.isConnected) place(); });
-  const paint = () => { m.querySelectorAll('.ss-sw').forEach(b => { const on = !!settings[b.dataset.k]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); b.querySelector('i').textContent = on ? T('On', 'Bật') : T('Off', 'Tắt'); b.title=b.getAttribute('aria-label')+' · '+b.querySelector('i').textContent; }); place(); };
-  m.querySelectorAll('.ss-sw').forEach(b => b.onclick = () => { G.setAudio(b.dataset.k, !settings[b.dataset.k]); if (settings.sound) SFX.tap(); paint(); });
+  const paint = () => { m.querySelectorAll<HTMLElement>('.ss-sw').forEach(b => { const on = !!settings[b.dataset.k]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); b.querySelector('i').textContent = on ? T('On', 'Bật') : T('Off', 'Tắt'); b.title=b.getAttribute('aria-label')+' · '+b.querySelector('i').textContent; }); place(); };
+  m.querySelectorAll<HTMLElement>('.ss-sw').forEach(b => b.onclick = () => { G.setAudio(b.dataset.k, !settings[b.dataset.k]); if (settings.sound) SFX.tap(); paint(); });
   const outside = e => { if (!m.contains(e.target) && e.target !== anchor && !anchor?.contains(e.target)) close(); };
   const key = e => { if (e.key === 'Escape') { close(); anchor?.focus({ preventScroll: true }); } };
   const close = () => { clearTimeout(bindTimer); sizeWatch?.disconnect(); m.remove(); removeEventListener('pointerdown', outside, true); removeEventListener('keydown', key); removeEventListener('resize',place); visualViewport?.removeEventListener('resize',place);visualViewport?.removeEventListener('scroll',place); anchor?.setAttribute('aria-expanded', 'false'); };

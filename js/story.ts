@@ -49,7 +49,7 @@ export const CHAPTERS = [
 
 // Show pages as a picture book. Tap to turn the page; the voice reads each one.
 export function showStory(story, name) {
-  return new Promise(res => {
+  return new Promise<void>(res => {
     const b = el('div', 'storybook', `<div class="sb-title"></div><div class="sb-art"></div><p class="sb-text"></p><div class="sb-foot"><span class="sb-dots"></span><button class="sb-skip">${T('Skip', 'Bỏ qua')} ⏭</button></div>`);
     document.body.appendChild(b); SFX.chime();
     let i = 0;

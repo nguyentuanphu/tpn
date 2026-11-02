@@ -47,7 +47,7 @@ export function createStickerFx(G, { BOOK_LINES, FIRST_THREE }) {
   };
   const badges = () => G.heroes.forEach(badge);
   let quietUntil = 0, lastSay = 0;
-  function earned(p, s, r, from) {
+  function earned(p, s, r, from?) {
     const h = heroBy(p);
     if (h) badge(h);
     if (performance.now() < quietUntil) return; // (a big sync, e.g. many earned at once: one toast, not twenty)
