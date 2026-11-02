@@ -51,11 +51,35 @@ The owner, 3 Nov: "Làm thêm 1 bạn nam để đủ 2 cặp nam nữ, nhớ th
   - Shoes: sandals (toes showing), sneakers (white sole, a red stripe, laces), glossy yellow rain boots. They replace the friend's boots.
   - A knitted scarf in any colour.
   - Hats move with the head, shoes with the legs, so they all work with the skeleton and the moves.
-- **Villagers** (`lumi.py -- <dir> villager role=<name> game ...`): the same kit and the same faces as the friends, in everyday Vietnamese village clothes, at the heights the game's rule WORLD-011 asks for (children 1.6, grown-ups 2.0, grandparents 1.8). The game today builds every person at about 1.6; using these heights is a game change for Release.
-  - `farmer`: nón lá, a brown áo bà ba, dark trousers, sandals, a basket of greens.
-  - `vendor`: hair in a bun, a pink áo bà ba, a white apron, sandals.
-  - `grandma`: grey bun, round glasses, a purple áo bà ba, sandals.
-  - `grandpa`: grey hair round the sides, a white moustache, a straw hat, a cream áo bà ba, a cane.
-  - `kidboy`: a red cap, a blue T-shirt, shorts, sneakers. `kidgirl`: a bob with a flower clip, a yellow T-shirt, a pink skirt, sneakers.
-  - Grown-ups have smaller eyes and a longer face than the children, so the friends still stand out as the cutest.
+- **Villagers**: see try 7 below (the first villagers of try 6 were replaced).
 - `lineup` renders everyone with the same camera, so heights compare side by side: `try6-lineup.png` (villagers and friends) and `try6-wardrobe.png` (friends in different hats and shoes).
+
+## Try 7: boys and girls, Vietnamese and Australian villagers, more accessories (v1.08, 3 Nov 2026 AEDT)
+
+The owner, 3 Nov: "I am ok with new heights, thiết kế thêm nhiều phụ kiện và gender specific cho những nhân vật này, cho tôi biết mấy nhân vật này ai là nam là nữ. Tôi muốn villagers thiết kế giống người Việt nam và người Úc hơn, và các kiểu đồ mặc hàng ngày của họ, mấy nhân vật này bạn nên refine để đẹp và cuter và nhìn thích hơn nữa".
+
+- **Who is a boy, who is a girl**: boys Finn and Sol, girls Flora and Lumi (pairs: Finn and Flora, Sol and Lumi).
+- **Boys and girls look different**: girls have three soft curled lashes at the outer corner of each eye, thin arched brows and pinker cheeks; boys have the lid line only, a little thicker and straighter brows and lighter cheeks. Everyone got bigger, softer eye sparkles (three highlights), to look cuter.
+- **Heights**: the owner agreed to the rule's heights (children 1.6, grown-ups 2.0, grandparents 1.8). Building people at those heights in the game is still a game change for Release.
+- **More wardrobe** (`wear=...`, joined with `+`; a colour after `/` or `:`):
+  - Hats: straw sun hat, nón lá, cap, beanie, flower crown, akubra (Australian bush hat), bucket hat, motorbike half-helmet.
+  - Shoes: boots (the friends' own), sandals, sneakers, rain boots, thongs (flip-flops), leather work boots.
+  - For girls: hair bow, headband, star earrings, bead necklace, pearls, bead bracelet, flower clip.
+  - For boys: bow tie, watch.
+  - For anyone: backpack, sunglasses, glasses, knitted scarf, the red Young Pioneers' scarf, knee-high socks, freckles, moustache, stubble.
+- **Villagers** (`lumi.py -- <dir> villager role=<name> lineup`), the same kit and faces as the friends, grown-ups with smaller eyes and longer faces:
+  - Vietnamese:
+    - `vn-aodai`: a young woman in a pale blue áo dài over white wide trousers, long straight hair, nón lá, sandals, earrings.
+    - `vn-dad`: a dad in a light blue polo shirt and dark trousers, a red motorbike half-helmet, sandals, a watch.
+    - `vn-farmer`: nón lá, a brown áo bà ba, sandals, a basket of greens.
+    - `vn-vendor`: hair in a bun, a pink áo bà ba, a white apron, sandals, earrings.
+    - `vn-grandma`: a grey bun, glasses, a purple áo bà ba. `vn-grandpa`: grey hair round the sides, a moustache, a straw hat, a cream áo bà ba, a cane.
+    - `vn-schoolboy` and `vn-schoolgirl`: white school shirts, navy shorts or skirt, the red scarf; a backpack, or pigtails with a bow.
+  - Australian (a mix of backgrounds, as in Australia):
+    - `au-dad`: an akubra, a light blue work shirt, khaki shorts, work boots, sunglasses.
+    - `au-mum`: a blonde ponytail, a yellow sundress, a straw sun hat, sandals, earrings and a necklace.
+    - `au-grandma`: short white curls, a lilac cardigan, a grey skirt, glasses and pearls.
+    - `au-grandpa`: a bucket hat, a green polo shirt, khaki shorts, knee-high socks, brown shoes, a watch.
+    - `au-boy`: red hair and freckles, a bucket hat, a rash vest, board shorts, thongs.
+    - `au-girl`: curly black pigtails, the light blue school dress, a navy broad-brimmed school hat, black school shoes, a backpack, a bracelet.
+- Pictures: `try7-villagers-vn.png`, `try7-villagers-au.png`, `try7-friends.png`, `try7-wardrobe.png`, each friend's `try7-<who>-*.png` and `-walk/wave/cheer.gif`, and `<who>-game.glb`.

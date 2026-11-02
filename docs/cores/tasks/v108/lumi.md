@@ -18,6 +18,12 @@ Branch: `work/v108-lumi-refine` (from `origin/release/v1.08`). Brief: `lumi-brie
 
 - 3 Nov 2026 AEDT (chat): "I prefer the shorter chibi version but make the face more balance as the eyes are too big, you can try finn flora theo tỷ lệ này". The chibi is the chosen Lumi; the eyes were made smaller (eye size .27 to .21 of the head, a little closer together). Finn and Flora were tried as chibis with the same body and face kit (`lumi.py -- <dir> finn chibi`, `flora chibi`). The tall version stays in the script and the docs, but it is not the chosen look.
 
+- 3 Nov 2026 AEDT (chat): "Make sure them all can express emotions, đi uyển chuyển và movement ... bằng với kích thước người của những nhân vật khác trong game", "mặt bớt tròn và mắt bớt to cho ba con". Built at the game's people size, with a skeleton using the game's joint names, six moods and walk, idle, wave, cheer.
+- 3 Nov 2026 AEDT (pop-up): "Blender + file first (Recommended)": models, moves and a `.glb` now; loading them in the game is for Release or a later round.
+- 3 Nov 2026 AEDT (chat): "Làm cho dễ thương hơn và mặt nhỏ hơn một xíu": a smaller head (radius .235) and a cuter face.
+- 3 Nov 2026 AEDT (chat): "Làm thêm 1 bạn nam để đủ 2 cặp nam nữ ... phụ kiện ... dân làng sẽ nhìn như thế nào?": Sol added (boys Finn and Sol, girls Flora and Lumi), a wardrobe, villagers.
+- 3 Nov 2026 AEDT (chat): "I am ok with new heights" (children 1.6, grown-ups 2.0, grandparents 1.8, rule WORLD-011); more accessories, boy and girl differences, villagers that look Vietnamese and Australian in everyday clothes, cuter friends. The heights in the game are a game change for Release.
+
 ## Progress
 
 - 3 Nov 2026 AEDT: Blender 4.2.3 installed; plan written.
