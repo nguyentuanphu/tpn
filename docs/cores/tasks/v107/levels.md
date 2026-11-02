@@ -54,6 +54,10 @@ Checks (2 Nov 2026, about 2:40 pm AEDT, commit d67bbe81):
   Found, not caused by this branch (the first Cyclo question did not change): on the computer screen the Cyclo Ride
   answer buttons sit below the bottom edge (1366 x 768). For Release / Kid UI.
 
+Merged by Release into release/v1.07 (PR #792), 2 Nov 3:15 pm AEDT. Release changed `padLv` in drawing2.ts from a generic
+arrow to `function padLv<V>(...)` (the unit catalogue test read the arrow as markup); the same change is on this branch.
+No generic arrows in game files.
+
 Owner's decisions:
 - familyquiz is exempt from levelsall (the family writes the questions): assumed, owner can change.
 - Talent stays hidden for under-5s (owner, 1 Nov 2026 AEDT).

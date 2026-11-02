@@ -4,7 +4,7 @@ import { runArtPad, paintArt } from './art-pad.js';
 
 // 1. stamps
 // (v1.07 levels) picks one value for the level (under-5, Easy, Medium, Hard, Talent) and notes it on the frame
-const padLv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => { const v = api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))]; api.lvNote?.([little, easy, medium, hard, talent], v); return v; };
+function padLv<V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V { const v = api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))]; api.lvNote?.([little, easy, medium, hard, talent], v); return v; }
 register({
   id: 'stamps', icon: '🥔',
   name: () => T('Potato Stamps', 'In Hình'),
