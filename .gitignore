@@ -419,6 +419,10 @@ marketing/source/runvalley.log
 /js/worldedit.js
 /js/worldmemo.js
 /js/yard.js
+/marketing/source/ads10.js
+/marketing/source/ads5.js
+/marketing/source/films2.js
+/marketing/source/videos.js
 /studio/ui/app.js
 /studio/ui/brand.js
 /studio/ui/control-feedback.js
@@ -430,6 +434,8 @@ marketing/source/runvalley.log
 /studio/ui/owner-desk.js
 /studio/ui/vi.js
 /sw.js
+/tools/art-proto/proto.js
+/tools/art-proto/vehicles.js
 # --- end of tools/build.mts ---
 # --- made by tools/build.mts from .ts files (never committed; do not edit by hand) ---
 /js/adventure.js
