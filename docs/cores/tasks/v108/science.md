@@ -1,6 +1,8 @@
 # v1.08 helper: science (status)
 
-**Status: in progress** (branch `work/v108-science`, from `origin/release/v1.08`). Times AEDT.
+**ready for Release**
+
+**Status: done** (branch `work/v108-science`, from `origin/release/v1.08`). Times AEDT.
 
 ## Plan (3 Nov 2026, 08:00 AEDT; the owner's go for the round covers it)
 
@@ -42,6 +44,15 @@ Shared files, small changes (each marked `(v1.08 science)`):
 - Screenshots looked at: all 12 on a phone (390 x 844) at the guess, try and fact steps; Gears, Day and Night and
   Grow a Plant on a tablet (820 x 1180) and a computer (1280 x 800). No page errors.
 - `tools/emoji-audit.mts`: 0 undrawn emoji.
+- Voices: 1736 Azure files (434 lines x 2 voices x 2 languages) with `tools/make-voice-pack.mts --engine azure`;
+  431 Lê Minh (FPT) Vietnamese clips from the reviewed batches `docs/voice-recording-delta/v108-science-1.json` and
+  `-2.json` with `tools/record-public-voice-delta.mts`. No line has a child's name.
+- `suite.mts --changed` picked the full suite (`.gitignore` changed). By the round rule (Release, 3 Nov AEDT) the
+  full suite is **left for Release**; the checks covering this change were run alone with `--only`, 3 Nov AEDT:
+  hocvui pass, guides pass, voicecover pass, voiceroutes pass (it failed until the FPT clips were recorded),
+  contentpair pass, contentvoice pass, contentart pass, boot pass, games pass (249 games), phone pass, contract pass,
+  hubmap pass, padmap pass, simple pass, playhub pass. Online checks: not run (nothing online changed).
+- Commits: 2bd2aba9 (games), c48983c1 (Azure voices), eae542e6 (FPT voices), and this status file.
 
 ## Owner's decisions
 
