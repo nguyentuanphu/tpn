@@ -13,7 +13,7 @@ import fs from 'fs';
 import os from 'os';
 import { launch, open, clear, noWelcome, start, URL, seedPlayers, takeCoverage, openAllGamesFixture } from '../harness.mts';
 import { groundAudit } from '../world-audit.mts';
-import { studioCheck } from '../studio-check.mjs';
+import { studioCheck } from '../studio-check.mts';
 import { studioRepairCheck } from '../studio-repair-check.mts';
 import { managementBrowserCheck } from '../management-browser.mts';
 import { ownerDeskBrowserCheck } from '../owner-desk-browser.mts';

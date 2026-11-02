@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {launch} from '../../../tests/harness.mts';
-import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from '../../../tests/studio-check.mjs';
+import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from '../../../tests/studio-check.mts';
 import {MemoryManagementTestDatabase} from '../../../netlify/lib/management/storage/memory-test.mts';
 import {createFinanceService} from '../../../netlify/lib/management/finance.mts';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../..');

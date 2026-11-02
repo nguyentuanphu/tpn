@@ -30,7 +30,7 @@ export function fakeGitHub(repo, files) {
   const putTree = map => { const t = id(); trees.set(t, map); return t; };
   const putCommit = (tree, parents, message) => { const c = id(); commits.set(c, { tree, parents, message }); return c; };
   const ancestors = c => { const out = new Set(), todo = [c]; while (todo.length) { const x = todo.shift(); if (!x || out.has(x)) continue; out.add(x); todo.push(...commits.get(x).parents); } return out; }; // nearest first
-  const first = new Map(); for (const [p, b] of Object.entries(files)) { const buf = Buffer.from(b); const s = gitSha(buf); blobs.set(s, buf); first.set(p, s); }
+  const first = new Map(); for (const [p, b] of Object.entries(files)) { const buf = Buffer.from(b as string); const s = gitSha(buf); blobs.set(s, buf); first.set(p, s); }
   refs.set('main', putCommit(putTree(first), [], 'start'));
   const R = `/repos/${repo}`;
   async function handle(method, url, body) {
@@ -81,7 +81,7 @@ export function fakeGitHub(repo, files) {
 // every fetch to api.github.com goes to the pretend GitHub (in this process)
 export function routeGitHub(gh) {
   const real = globalThis.fetch;
-  globalThis.fetch = async (url, opt = {}) => {
+  globalThis.fetch = async (url, opt: { method?: string, body?: string } = {}) => {
     const u = String(url);
     if (!u.startsWith('https://api.github.com')) return real(url, opt);
     const r = await gh.handle(opt.method || 'GET', u, opt.body ? JSON.parse(opt.body) : null);
@@ -93,7 +93,7 @@ export function routeGitHub(gh) {
 // Netlify Blobs, in memory
 export function memoryBlobs() {
   const m = new Map();
-  return { get: async (k, o) => m.has(k) ? (o && o.type === 'json' ? JSON.parse(m.get(k)) : m.get(k)) : null, set: async (k, v) => { m.set(k, String(v)); }, setJSON: async (k, v) => { m.set(k, JSON.stringify(v)); },
+  return { get: async (k, o?: { type?: string }) => m.has(k) ? (o && o.type === 'json' ? JSON.parse(m.get(k)) : m.get(k)) : null, set: async (k, v) => { m.set(k, String(v)); }, setJSON: async (k, v) => { m.set(k, JSON.stringify(v)); },
     delete: async k => { m.delete(k); }, list: async ({ prefix = '' } = {}) => ({ blobs: [...m.keys()].filter(k => k.startsWith(prefix)).map(key => ({ key })) }), _m: m };
 }
 
@@ -121,7 +121,7 @@ export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs
     const fn = p.startsWith('/api/management/') ? managementEndpoint : p === '/api/hello' ? hello : p === '/api/live' ? live : p === '/api/festivals' ? festivalStatus : p === '/api/tester' ? tester : p.startsWith('/api/family/') ? family : (p.startsWith('/studio/api/') || p.startsWith('/studio/content/')) ? studio : null;
     if (fn) {
       const ch = []; for await (const c of req) ch.push(c);
-      const r = await fn(new Request(url, { method: req.method, headers: req.headers, body: req.method === 'POST' ? Buffer.concat(ch) : undefined }), { geo: JSON.parse(req.headers['x-test-geo'] || '{}') }); // (Netlify gives the town from the connection; tests say it in a header)
+      const r = await fn(new Request(url, { method: req.method, headers: req.headers as Record<string, string>, body: req.method === 'POST' ? Buffer.concat(ch) : undefined }), { geo: JSON.parse(String(req.headers['x-test-geo'] || '{}')) }); // (Netlify gives the town from the connection; tests say it in a header)
       const h = {}; r.headers.forEach((v, k) => { h[k] = v; }); const sc = r.headers.getSetCookie ? r.headers.getSetCookie() : []; if (sc.length) h['set-cookie'] = sc; /* (like Netlify: two cookies stay two) */ const out = Buffer.from(await r.arrayBuffer());
       // (r65) like Netlify: a function's answer is at most 6 MB, and a picture is sent as base64 (a third bigger), so about 4.5 MB
       if ((/^(image|audio|video)\/|octet/.test(h['content-type'] || '') ? out.length * 4 / 3 : out.length) > 6e6) { res.writeHead(502, { 'Content-Type': 'text/plain' }); res.end('Function response is too large'); return; }
@@ -132,7 +132,7 @@ export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs
     if (!f.startsWith(ROOT) || !fs.existsSync(f) || !fs.statSync(f).isFile()) { res.writeHead(404); res.end('not found'); return; }
     res.writeHead(200, { 'Content-Type': MIME[path.extname(f)] || 'application/octet-stream' }); res.end(fs.readFileSync(f));
   });
-  await new Promise(r => server.listen(port, '127.0.0.1', r));
+  await new Promise<void>(r => server.listen(port, '127.0.0.1', () => r()));
   return server;
 }
 
@@ -157,7 +157,7 @@ export async function studioCheck(browser, open) {
   const exeBranch = new Map(), fakeExe = path.join(tmp, 'exe', 'SparkleStudio.exe'); fs.mkdirSync(path.dirname(fakeExe), { recursive: true }); fs.writeFileSync(fakeExe, 'OLD EXE');
   const GPORT = 8793, ghNet = http.createServer((req, res) => { let d = ''; req.on('data', c => d += c); req.on('end', async () => {
     { const m = /^\/repos\/[^/]+\/[^/]+\/contents\/([^?]+)\?ref=studio-exe$/.exec(req.url); if (m) { const f = exeBranch.get(decodeURIComponent(m[1])); res.writeHead(f ? 200 : 404, { 'Content-Type': 'application/octet-stream' }); return res.end(f || '{"message":"Not Found"}'); } } const r = await gh.handle(req.method, 'https://api.github.com' + req.url, d ? JSON.parse(d) : null); res.writeHead(r.status, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(r.j)); }); });
-  await new Promise(r => ghNet.listen(GPORT, '127.0.0.1', r));
+  await new Promise<void>(r => ghNet.listen(GPORT, '127.0.0.1', () => r()));
   const exe = spawn(process.execPath, [path.join(ROOT, 'studio/studio.cts')], { env: { ...process.env, APPDATA: appdata, STUDIO_PORT: String(SPORT), STUDIO_NO_OPEN: '1', STUDIO_GITHUB_API: `http://127.0.0.1:${GPORT}`, STUDIO_UPDATE_EXE: fakeExe, STUDIO_UPDATE_NO_RESTART: '1' }, stdio: 'ignore' });
   const notes = [];
   try {
@@ -173,7 +173,7 @@ export async function studioCheck(browser, open) {
             seen.add(t); if (viMessage(t) === t) miss.push(t); } }
       ok(seen.size > 60 && !miss.length, `server messages with no Vietnamese (${miss.length} of ${seen.size}): ` + miss.join(' | '));
       notes.push(`${seen.size} server messages, each shown in Vietnamese too`); }
-    const call = async (p, { body, cookie, headers = {} } = {}) => { const r = await fetch(site + p, { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json', ...(cookie ? { cookie } : {}), ...headers }, body: body ? JSON.stringify(body) : undefined }); return { status: r.status, j: await r.json().catch(() => null), cookie: (r.headers.get('set-cookie') || '').split(';')[0] }; };
+    const call = async (p, { body, cookie, headers = {} }: { body?: unknown, cookie?: string, headers?: Record<string, string> } = {}) => { const r = await fetch(site + p, { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json', ...(cookie ? { cookie } : {}), ...headers }, body: body ? JSON.stringify(body) : undefined }); return { status: r.status, j: await r.json().catch(() => null), cookie: (r.headers.get('set-cookie') || '').split(';')[0] }; };
     // 1. the password, then the two-step code (round R privacy): the first time sets it up, then a fresh code each time
     const signIn = async (name, password) => { testClock.t += 31e3; const who = name || 'owner'; let r = await call('/studio/api/login', { body: { name, password } });
       if (r.j && r.j.step === 'setup') { secrets[who] = r.j.secret; ok(/^otpauth:\/\/totp\//.test(r.j.otpauth), 'no otpauth link to set up two-step'); }
@@ -351,8 +351,8 @@ export async function studioCheck(browser, open) {
       const ymd = t => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
       const today = ymd(Date.now()), yday = ymd(Date.now() - 864e5);
       await ctx.setOffline(true);
-      const off = await pg.evaluate(async ([today, yday]) => { const P = await import('/js/players.js'); P.countPlay('game', 'caro'); P.countPlay('tale');
-        const { BUILD } = await import('/js/build.js');
+      const off = await pg.evaluate(async ([today, yday]) => { const P = await import(String('/js/players.js')); P.countPlay('game', 'caro'); P.countPlay('tale');
+        const { BUILD } = await import(String('/js/build.js'));
         const key = navigator.webdriver ? 'sv2_bot_telemetry' : 'sv2_hello_out';
         const o = JSON.parse(localStorage.getItem(key)); o.days[today+'|'+BUILD].m = 12;
         // Deliberately retain an old date-only bucket to prove migration does not invent its originating build.
@@ -362,21 +362,21 @@ export async function studioCheck(browser, open) {
       ok(off.out.pending.days.find(d=>d.d===today)?.build===off.build && off.out.pending.days.find(d=>d.d===yday)?.build==='?', 'offline: current build must be retained and a legacy build must stay unknown');
       const before = players._m.size;
       await ctx.setOffline(false);
-      const on = await pg.evaluate(async () => { const P = await import('/js/players.js'), key = navigator.webdriver ? 'sv2_bot_telemetry' : 'sv2_hello_out'; const sent = await P.flush(false); return { sent, out: JSON.parse(localStorage.getItem(key)), me: localStorage.getItem('sv2_playerid') }; });
+      const on = await pg.evaluate(async () => { const P = await import(String('/js/players.js')), key = navigator.webdriver ? 'sv2_bot_telemetry' : 'sv2_hello_out'; const sent = await P.flush(false); return { sent, out: JSON.parse(localStorage.getItem(key)), me: localStorage.getItem('sv2_playerid') }; });
       const rec = d => JSON.parse(players._m.get(`d/${d}/${on.me}`) || 'null');
       ok(players._m.size > before && on.sent && !on.out.pending && on.me===off.me && rec(yday) && rec(yday).mins === 20 && rec(yday).games.oanquan === 1 && rec(today).mins === 12 && rec(today).games.caro === 1 && rec(today).tales === 1, 'back online: the waiting play was not counted on its own days/installation: ' + JSON.stringify({ on, y: rec(yday), t: rec(today) }));
       // the website gets it but the answer is lost: the device keeps the batch and sends the same one again
       await pg.route('**/api/hello', async route => { await route.fetch(); await route.fulfill({ status: 500, body: '' }); });
-      const lost = await pg.evaluate(async today => { const P = await import('/js/players.js'), {BUILD}=await import('/js/build.js'), key = navigator.webdriver ? 'sv2_bot_telemetry' : 'sv2_hello_out'; const o = JSON.parse(localStorage.getItem(key)); o.days[today+'|'+BUILD] = { build:BUILD,m: 5, g: {}, t: 0, o: 0 }; localStorage.setItem(key, JSON.stringify(o)); return { sent: await P.flush(false), out: JSON.parse(localStorage.getItem(key)) }; }, today);
+      const lost = await pg.evaluate(async today => { const P = await import(String('/js/players.js')), {BUILD}=await import(String('/js/build.js')), key = navigator.webdriver ? 'sv2_bot_telemetry' : 'sv2_hello_out'; const o = JSON.parse(localStorage.getItem(key)); o.days[today+'|'+BUILD] = { build:BUILD,m: 5, g: {}, t: 0, o: 0 }; localStorage.setItem(key, JSON.stringify(o)); return { sent: await P.flush(false), out: JSON.parse(localStorage.getItem(key)) }; }, today);
       ok(!lost.sent && lost.out.pending && rec(today).mins === 17, 'lost answer: ' + JSON.stringify({ lost, t: rec(today) }));
       await pg.unroute('**/api/hello');
-      const again = await pg.evaluate(async () => { const P = await import('/js/players.js'), key = navigator.webdriver ? 'sv2_bot_telemetry' : 'sv2_hello_out'; const pending=JSON.parse(localStorage.getItem(key)).pending;return { batch:pending.h,sent: await P.flush(false), out: JSON.parse(localStorage.getItem(key)) }; });
+      const again = await pg.evaluate(async () => { const P = await import(String('/js/players.js')), key = navigator.webdriver ? 'sv2_bot_telemetry' : 'sv2_hello_out'; const pending=JSON.parse(localStorage.getItem(key)).pending;return { batch:pending.h,sent: await P.flush(false), out: JSON.parse(localStorage.getItem(key)) }; });
       ok(again.sent && again.batch===lost.out.pending.h && !again.out.pending && rec(today).mins === 17, 'the same batch was changed or counted twice: ' + JSON.stringify({ again, t: rec(today) }));
       await ctx.close();
       notes.push('offline play waits in an outbox and is counted on its own days; a re-sent batch counts once');
     }
     // 5. the exe: same engine, its own folder; the players report through the website; the same version
-    const ex = async (p, body) => { const r = await fetch(`http://localhost:${SPORT}/studio/api/` + p, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {}); return { status: r.status, j: await r.json().catch(() => null) }; };
+    const ex = async (p, body?: unknown) => { const r = await fetch(`http://localhost:${SPORT}/studio/api/` + p, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {}); return { status: r.status, j: await r.json().catch(() => null) }; };
     // (round R privacy) the exe reaches the website with a Studio key made online, never the password
     { const key = (await call('/studio/api/keys/make', { cookie: C, headers: X, body: { label: 'Test PC' } })).j.key; ok((await ex('settings', { studioKey: key })).status === 200, 'the exe did not take the Studio key'); }
     const ei = await ex('info'); ok(ei.j && ei.j.ok && !ei.j.online && ei.j.studio === info.j.studio, 'exe info: ' + JSON.stringify(ei.j));
@@ -438,8 +438,8 @@ export async function studioCheck(browser, open) {
     // a photo whose file had gone was still listed. Here: real places' keys, a plain JPEG, one in a Vietnamese-named folder,
     // a PNG, one saved but not published (online it waits in studio-pending), a 5 MB one and one whose file is gone.
     { const bp = await (await browser.newContext()).newPage(); await bp.goto(site + '/studio/ui/index.html');
-      const made = await bp.evaluate(async () => { const R = await import('/studio/game/js/realworld.js'), keys = new Set();
-        for (const r of Object.values(R.REAL)) keys.add(R.photoKey(r[0])); for (const src of Object.values(R.REAL_KINDS || {})) if (src && src.length) keys.add(R.photoKey(src));
+      const made = await bp.evaluate(async () => { const R = await import(String('/studio/game/js/realworld.js')), keys = new Set();
+        for (const r of Object.values(R.REAL)) keys.add(R.photoKey(r[0])); for (const src of Object.values(R.REAL_KINDS || {})) if (src && (src as unknown[]).length) keys.add(R.photoKey(src));
         const c = document.createElement('canvas'); c.width = 240; c.height = 160; const g = c.getContext('2d'); g.fillStyle = '#4a9'; g.fillRect(0, 0, 240, 160); g.fillStyle = '#fd4'; g.fillRect(40, 40, 80, 60);
         return { keys: [...keys], jpg: c.toDataURL('image/jpeg', .8).split(',')[1], png: c.toDataURL('image/png').split(',')[1] }; });
       await bp.context().close();
@@ -457,9 +457,9 @@ export async function studioCheck(browser, open) {
       for (const [rel, b] of Object.entries({ ...files, [`photos/${kD}/1.jpg`]: JPEG, 'photos/index.json': JSON.stringify(all) })) { fs.mkdirSync(path.dirname(path.join(game, rel)), { recursive: true }); fs.writeFileSync(path.join(game, rel), b); }
       await new Promise(r => setTimeout(r, 15500));
       const proof = async (pg, where) => { await pg.evaluate(() => { location.hash = 'family'; }); await pg.waitForTimeout(300); await pg.evaluate(() => { location.hash = 'photos'; }); await pg.waitForSelector('.thumb img', { timeout: 20000 });
-        await pg.waitForFunction(() => [...document.querySelectorAll('.thumb img')].every(i => i.complete), null, { timeout: 20000 }); await pg.waitForTimeout(300);
-        return pg.evaluate(() => ({ thumbs: [...document.querySelectorAll('.thumb')].map(t => { const i = t.querySelector('img'); return { src: decodeURIComponent(i.getAttribute('src')), open: i.naturalWidth > 0, flagged: t.classList.contains('bad') && getComputedStyle(t.querySelector('.thumbbad')).display !== 'none' }; }),
-          warn: !document.querySelector('#pbad').hidden ? document.querySelector('#pbad').textContent : '' })); };
+        await pg.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('.thumb img')].every(i => i.complete), null, { timeout: 20000 }); await pg.waitForTimeout(300);
+        return pg.evaluate(() => ({ thumbs: [...document.querySelectorAll<HTMLInputElement>('.thumb')].map(t => { const i = t.querySelector<HTMLImageElement>('img'); return { src: decodeURIComponent(i.getAttribute('src')), open: i.naturalWidth > 0, flagged: t.classList.contains('bad') && getComputedStyle(t.querySelector<HTMLInputElement>('.thumbbad')).display !== 'none' }; }),
+          warn: !document.querySelector<HTMLInputElement>('#pbad').hidden ? document.querySelector<HTMLInputElement>('#pbad').textContent : '' })); };
       const ctx = await browser.newContext({ viewport: { width: 1180, height: 800 } }), po = await ctx.newPage();
       await po.goto(site + '/studio'); await po.waitForSelector('#pw', { timeout: 15000 }); await po.fill('#pw', PW); await po.click('#si button'); await po.waitForSelector('#tabs button', { timeout: 15000 });
       const on = await proof(po, 'online'), pe0 = await ctx.newPage(); await pe0.goto(`http://localhost:${SPORT}/`); await pe0.waitForSelector('#tabs button', { timeout: 15000 }); const exe0 = await proof(pe0, 'exe');
@@ -498,7 +498,7 @@ export async function studioCheck(browser, open) {
       fs.writeFileSync(path.join(d, 'index.html'), ''); fs.mkdirSync(path.join(d, 'js')); fs.writeFileSync(path.join(d, 'js/main.js'), '');
       const real = globalThis.fetch, asked = [], J = o => new Response(JSON.stringify(o), { status: 200, headers: { 'content-type': 'application/json' } });
       const urls = ['https://live.staticflickr.com/1/gone_b.jpg', 'https://live.staticflickr.com/1/a_b.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/B.jpg/1280px-B.jpg'];
-      globalThis.fetch = async (u, o = {}) => { u = String(u); if (u.includes('openverse')) return J({ results: urls.map((url, i) => ({ url, width: 1600, height: 900, title: 'Linked place ' + i, creator: 'me', license: 'by', license_version: '4.0', source: 'flickr' })) });
+      globalThis.fetch = async (u, o: { method?: string } = {}) => { u = String(u); if (u.includes('openverse')) return J({ results: urls.map((url, i) => ({ url, width: 1600, height: 900, title: 'Linked place ' + i, creator: 'me', license: 'by', license_version: '4.0', source: 'flickr' })) });
         if (/staticflickr|(upload|thumb)\.wikimedia/.test(u)) { asked.push((o.method || 'GET') + ' ' + u); return new Response(null, { status: u.includes('gone') ? 404 : 200, headers: { 'content-type': 'image/jpeg' } }); }
         if (u.startsWith('http://localhost') || u.startsWith('http://127.0.0.1')) return real(u); return new Response('{}', { status: 404 }); };
       try { const st = createStudio({ store: folderStore(d), conf: {} }), r = await st.handle('photos/get1', 'POST', Buffer.from(JSON.stringify({ item: { key: 'linked-place', sources: ['en:Linked place'], name: 'Linked place' }, max: 2 })));
@@ -516,7 +516,7 @@ export async function studioCheck(browser, open) {
     const pages = ['home', 'message', 'players', 'testers', 'publish', 'check', 'settings', 'photos', 'releases', 'lab', 'festivals', 'familycode', 'missions', 'villagers', 'path', 'play', 'quiz', 'stories', 'looks', 'plots'], bad = [];
     // (Studio review, owner 10 Oct) every button and box 44 px or more on a phone and a tablet: these pages
     const TAPS = ['home', 'message', 'missions', 'album', 'quiz', 'stories', 'villagers', 'plots', 'looks', 'familycode', 'releases', 'lab', 'festivals', 'path', 'music', 'map', 'photos', 'play', 'voices', 'ads', 'publish', 'site', 'check', 'settings', 'testers'];
-    const SMALL = () => [...document.querySelectorAll('header button:not([hidden]), #crumb button, #page button, #page a.btn, #page select, #page textarea, #page input:not([type=checkbox]):not([type=radio]):not([type=hidden]), #page label:has(> input[type=checkbox]), #page label:has(> input[type=radio])')]
+    const SMALL = () => [...document.querySelectorAll<HTMLInputElement>('header button:not([hidden]), #crumb button, #page button, #page a.btn, #page select, #page textarea, #page input:not([type=checkbox]):not([type=radio]):not([type=hidden]), #page label:has(> input[type=checkbox]), #page label:has(> input[type=radio])')]
       .filter(e => { const r = e.getBoundingClientRect(); return r.width && r.height && (r.height < 43.5 || (e.tagName === 'BUTTON' && r.width < 43.5)); })
       .map(e => `${e.id || e.className || e.tagName} “${(e.innerText || e.value || '').trim().slice(0, 16)}” ${Math.round(e.getBoundingClientRect().width)}×${Math.round(e.getBoundingClientRect().height)}`);
     for (const [w, h, touch] of [[1180, 800, false], [820, 1180, true], [390, 800, true]]) {
@@ -524,7 +524,7 @@ export async function studioCheck(browser, open) {
       const pg = await ctx.newPage(); pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => { if (m.type() === 'error' && !/favicon|401|403/.test(m.text())) errs.push(m.text() + ' ' + (m.location().url || '')); });
       await pg.goto(site + '/studio'); await pg.waitForSelector('#pw', { timeout: 15000 }); await pg.fill('#pw', PW); await pg.click('#si button'); await pg.waitForSelector('#tabs button', { timeout: 15000 });
       // round K: five sections (a column on a computer, a bar at the bottom of a phone), each opening as cards
-      const navOk = await pg.evaluate(touch => { const bs = [...document.querySelectorAll('#tabs button')], r = bs.map(b => b.getBoundingClientRect()); return bs.length === 5 && (touch ? r.every(x => x.bottom >= innerHeight - 2 - 40 && x.height >= 56) : r.every(x => x.left < 220)); }, touch);
+      const navOk = await pg.evaluate(touch => { const bs = [...document.querySelectorAll<HTMLInputElement>('#tabs button')], r = bs.map(b => b.getBoundingClientRect()); return bs.length === 5 && (touch ? r.every(x => x.bottom >= innerHeight - 2 - 40 && x.height >= 56) : r.every(x => x.left < 220)); }, touch);
       if (!navOk) bad.push(`online ${w}px: the five sections are not where they should be`);
       const familyTools=new Set();
       for(const area of ['people','game']){
@@ -534,13 +534,13 @@ export async function studioCheck(browser, open) {
       // (round S: Family missions joined the Family section: eight cards)
       // (r60: Memory Villages joined the Family section: nine cards)
       if(!['message','missions','children','album','quiz','stories','villagers','plots','familycode'].every(key=>familyTools.has(key)))bad.push(`online ${w}px: a retained family tool is missing from People / Game & website`);
-      for (const k of pages) { await pg.evaluate(k2 => { location.hash = k2; }, k); await pg.waitForTimeout(k === 'photos' ? 2500 : 900); const t = await pg.evaluate(() => document.querySelector('#page').innerText); if (await pg.evaluate(() => !!document.querySelector('#page .card.badtxt')) || !t.trim()) bad.push(`online ${w}px ${k}: ${t.slice(0, 80)}`);
+      for (const k of pages) { await pg.evaluate(k2 => { location.hash = k2; }, k); await pg.waitForTimeout(k === 'photos' ? 2500 : 900); const t = await pg.evaluate(() => document.querySelector<HTMLInputElement>('#page').innerText); if (await pg.evaluate(() => !!document.querySelector<HTMLInputElement>('#page .card.badtxt')) || !t.trim()) bad.push(`online ${w}px ${k}: ${t.slice(0, 80)}`);
         if (await pg.evaluate(() => document.scrollingElement.scrollWidth > innerWidth + 1)) bad.push(`online ${w}px ${k}: page scrolls sideways`);
         const emo = await pg.evaluate(SHOWN_EMOJI); if (emo.length) bad.push(`online ${w}px ${k}: phone emoji shown: ${emo.join(' ')}`); }
       // (owner, 14 Oct AEDT) Setup → Admins: each person's permissions, ticked one by one (da.mi has chosen ones)
       { await pg.evaluate(() => { location.hash = 'admins'; }); await pg.waitForSelector('tr.permrow details', { timeout: 15000 }).catch(() => { });
-        await pg.evaluate(() => { const r = [...document.querySelectorAll('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); if (r) { r.querySelector('details').open = true; r.scrollIntoView(); } }); await pg.waitForTimeout(500);
-        const pm = await pg.evaluate(() => { const r = [...document.querySelectorAll('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); return r ? { n: r.querySelectorAll('[data-perm]').length, keys: [...r.querySelectorAll('[data-perm]')].map(x => x.dataset.perm).sort(), on: [...r.querySelectorAll('[data-perm]:checked')].map(x => x.dataset.perm), small: [...r.querySelectorAll('.perm')].filter(x => x.getBoundingClientRect().height < 44).length } : null; });
+        await pg.evaluate(() => { const r = [...document.querySelectorAll<HTMLInputElement>('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); if (r) { r.querySelector<HTMLDetailsElement>('details').open = true; r.scrollIntoView(); } }); await pg.waitForTimeout(500);
+        const pm = await pg.evaluate(() => { const r = [...document.querySelectorAll<HTMLInputElement>('tr.permrow')].find(x => x.dataset.pn === 'da.mi'); return r ? { n: r.querySelectorAll<HTMLInputElement>('[data-perm]').length, keys: [...r.querySelectorAll<HTMLInputElement>('[data-perm]')].map(x => x.dataset.perm).sort(), on: [...r.querySelectorAll<HTMLInputElement>('[data-perm]:checked')].map(x => x.dataset.perm), small: [...r.querySelectorAll<HTMLInputElement>('.perm')].filter(x => x.getBoundingClientRect().height < 44).length } : null; });
         if (!pm || pm.n !== Object.keys(PERMS).length || JSON.stringify(pm.keys) !== JSON.stringify(Object.keys(PERMS).sort()) || pm.on.join() !== 'pages,releases' || pm.small) bad.push(`online ${w}px admins: the permission ticks are not right: ${JSON.stringify(pm)}`);
         if (await pg.evaluate(() => document.scrollingElement.scrollWidth > innerWidth + 1)) bad.push(`online ${w}px admins: page scrolls sideways`);
         const emo = await pg.evaluate(SHOWN_EMOJI); if (emo.length) bad.push(`online ${w}px admins: phone emoji shown: ${emo.join(' ')}`);
@@ -548,7 +548,7 @@ export async function studioCheck(browser, open) {
       { await openLegacyAnalytics(pg); await pg.waitForSelector('.tiles .tile', { timeout: 15000 });
         // (r65, owner: "cleaner but still the details") five tiles, a row per child and per kind of device, the rest folded and closed at first
         const look = await pg.evaluate(readAnalyticsLayout);
-        const t = await pg.evaluate(() => (document.querySelectorAll('details.more').forEach(d => { d.open = true; }), document.querySelector('#page').innerText));
+        const t = await pg.evaluate(() => (document.querySelectorAll<HTMLDetailsElement>('details.more').forEach(d => { d.open = true; }), document.querySelector<HTMLInputElement>('#page').innerText));
         ok(/3/.test(t), 'online players page');
         if (!(look.tiles === 5 && look.visibleTiles === 5 && look.more >= 5 && !look.open && look.kinds >= 2 && /(not reported yet|chưa có số liệu)/.test(look.top) && !/(usually ready in|thường sẵn sàng sau)/.test(look.top))) bad.push(`online ${w}px: the Analytics page is not five tiles, rows and folded detail: ` + JSON.stringify({ ...look, top: look.top.slice(0, 200) }));
         // (r60, #36) start-up times: by kind of device and for each device, with the slowest step in words
@@ -557,7 +557,7 @@ export async function studioCheck(browser, open) {
         if (!touch) { await pg.route('**/studio/api/players', async rt => { const res = await rt.fetch(), j = await res.json(); j.power = { phone: { devices: 1, fps: 30, frameMs: 14, batteryPerHour: 31 }, computer: { devices: 1, fps: 60, frameMs: 9, batteryPerHour: 8.5 } };
             (j.devices || []).forEach((d, i) => { d.power = i ? { fps: 60, frameMs: 9, draws: 240, ratio: 1.5, mins: 40, batteryPerHour: null } : { fps: 30, frameMs: 14, draws: 310, ratio: 1, mins: 25, batteryPerHour: 31, charging: false }; }); await rt.fulfill({ response: res, json: j }); });
           await pg.evaluate(() => { location.hash = 'home'; }); await pg.waitForTimeout(300); await openLegacyAnalytics(pg); await pg.waitForSelector('.tiles .tile', { timeout: 15000 });
-          const pw = await pg.evaluate(() => (document.querySelectorAll('details.more').forEach(d => { d.open = true; }), { t: document.querySelector('#page').innerText, act: !!document.querySelector('.tile.tone-act'), red: [...document.querySelectorAll('table.kinds td.tone-act')].map(x => x.textContent) }));
+          const pw = await pg.evaluate(() => (document.querySelectorAll<HTMLDetailsElement>('details.more').forEach(d => { d.open = true; }), { t: document.querySelector<HTMLInputElement>('#page').innerText, act: !!document.querySelector<HTMLInputElement>('.tile.tone-act'), red: [...document.querySelectorAll<HTMLInputElement>('table.kinds td.tone-act')].map(x => x.textContent) }));
           await pg.unroute('**/studio/api/players');
           if (!(/31 % (an hour|mỗi giờ)/.test(pw.t) && /8[.,]5 % (an hour|mỗi giờ)/.test(pw.t) && /310 (draws|lần vẽ)/.test(pw.t) && /(battery not given by this browser|trình duyệt này không cho biết pin)/.test(pw.t) && pw.act && pw.red.some(x => /31/.test(x)))) bad.push('the battery and frame numbers are not shown: ' + JSON.stringify({ act: pw.act, red: pw.red, t: pw.t.slice(0, 300) })); }
         await pg.screenshot({ path: `out/studio-analytics-${w}.png`, fullPage: true }); }
@@ -572,7 +572,7 @@ export async function studioCheck(browser, open) {
         if (!await pg.locator('details.relg[data-g="story"] .relc[data-id="storyFilms"] [data-r="on"]').count()) bad.push('the story films switch is not on the Releases page');
         if (releasePlayerRequests) bad.push('Releases waits on Analytics device data');
         pg.off('request', countPlayers);
-        await pg.evaluate(() => { document.querySelector('[data-id="traffic"] [data-r="on"]').checked = false; const t = document.querySelector('[data-id="fest_halloween"]'); t.querySelector('[data-in="3"]').click(); t.querySelector('[data-r="newDays"]').value = '5'; document.querySelector('#save').click(); });
+        await pg.evaluate(() => { document.querySelector<HTMLInputElement>('[data-id="traffic"] [data-r="on"]').checked = false; const t = document.querySelector<HTMLInputElement>('[data-id="fest_halloween"]'); t.querySelector<HTMLInputElement>('[data-in="3"]').click(); t.querySelector<HTMLInputElement>('[data-r="newDays"]').value = '5'; document.querySelector<HTMLInputElement>('#save').click(); });
         await pg.waitForTimeout(1200);
         const lv = await pg.evaluate(() => fetch('/api/live', { cache: 'no-store' }).then(r => r.json()));
         if (!(lv.releases && lv.releases.traffic && lv.releases.traffic.on === false && lv.releases.fest_halloween && lv.releases.fest_halloween.newDays === 5 && /^\d{4}-/.test(lv.releases.fest_halloween.start))) bad.push('releases did not reach /api/live: ' + JSON.stringify(lv));
@@ -581,16 +581,16 @@ export async function studioCheck(browser, open) {
         await pg.evaluate(() => { location.hash = 'game/lab'; }); await pg.waitForSelector('#devs [data-tdev]', { timeout: 15000 }).catch(() => { });
         // (r85, owner 18 Oct AEDT) one card per device: name (bold) and children, a grey line, then Tester and Auto play chips
         // that open that feature's settings for this device only
-        const dc = await pg.evaluate(async () => { const c = document.querySelector('#devs .devcard'); if (!c) return null; const chips = [...c.querySelectorAll('.dchips [data-open]')].map(b => b.dataset.open);
-          const closed = [...c.querySelectorAll('.dpanel')].every(x => x.hidden); c.querySelector('[data-open="tester"]').click(); await new Promise(r => setTimeout(r, 50));
-          const tp = c.querySelector('[data-panel="tester"]'), ap = c.querySelector('[data-panel="autoplay"]'), tOpen = !tp.hidden && ap.hidden && !!tp.querySelector('[data-tdev]') && !!tp.querySelector('[data-policy]') && !!tp.querySelector('[data-speed]') && !!tp.querySelector('[data-tlv]');
-          c.querySelector('[data-open="autoplay"]').click(); await new Promise(r => setTimeout(r, 50)); const aOpen = tp.hidden && !ap.hidden && !!ap.querySelector('[data-dev]');
-          const box = ap.querySelector('[data-dev]'), was = box.checked; box.checked = !was; box.dispatchEvent(new Event('change', { bubbles: true })); const chip = c.querySelector('[data-open="autoplay"]').classList.contains('on') === !was; box.checked = was; box.dispatchEvent(new Event('change', { bubbles: true }));
-          const grey = getComputedStyle(c.querySelector('.dc2')), name = getComputedStyle(c.querySelector('.dc1 .dname'));
-          return { chips, closed, tOpen, aOpen, chip, line2: c.querySelector('.dc2').textContent, small: parseFloat(grey.fontSize) < parseFloat(name.fontSize), bold: +name.fontWeight >= 600, oldLists: !!document.querySelector('#apdl, .tdrow'), robots: !!document.querySelector('#devs [data-robots]') }; });
+        const dc = await pg.evaluate(async () => { const c = document.querySelector<HTMLInputElement>('#devs .devcard'); if (!c) return null; const chips = [...c.querySelectorAll<HTMLInputElement>('.dchips [data-open]')].map(b => b.dataset.open);
+          const closed = [...c.querySelectorAll<HTMLInputElement>('.dpanel')].every(x => x.hidden); c.querySelector<HTMLInputElement>('[data-open="tester"]').click(); await new Promise(r => setTimeout(r, 50));
+          const tp = c.querySelector<HTMLInputElement>('[data-panel="tester"]'), ap = c.querySelector<HTMLInputElement>('[data-panel="autoplay"]'), tOpen = !tp.hidden && ap.hidden && !!tp.querySelector<HTMLInputElement>('[data-tdev]') && !!tp.querySelector<HTMLInputElement>('[data-policy]') && !!tp.querySelector<HTMLInputElement>('[data-speed]') && !!tp.querySelector<HTMLInputElement>('[data-tlv]');
+          c.querySelector<HTMLInputElement>('[data-open="autoplay"]').click(); await new Promise(r => setTimeout(r, 50)); const aOpen = tp.hidden && !ap.hidden && !!ap.querySelector<HTMLInputElement>('[data-dev]');
+          const box = ap.querySelector<HTMLInputElement>('[data-dev]'), was = box.checked; box.checked = !was; box.dispatchEvent(new Event('change', { bubbles: true })); const chip = c.querySelector<HTMLInputElement>('[data-open="autoplay"]').classList.contains('on') === !was; box.checked = was; box.dispatchEvent(new Event('change', { bubbles: true }));
+          const grey = getComputedStyle(c.querySelector<HTMLInputElement>('.dc2')), name = getComputedStyle(c.querySelector<HTMLInputElement>('.dc1 .dname'));
+          return { chips, closed, tOpen, aOpen, chip, line2: c.querySelector<HTMLInputElement>('.dc2').textContent, small: parseFloat(grey.fontSize) < parseFloat(name.fontSize), bold: +name.fontWeight >= 600, oldLists: !!document.querySelector<HTMLInputElement>('#apdl, .tdrow'), robots: !!document.querySelector<HTMLInputElement>('#devs [data-robots]') }; });
         if (!(dc && dc.chips.join() === 'tester,autoplay' && dc.closed && dc.tOpen && dc.aOpen && dc.chip && dc.small && dc.bold && dc.line2.trim() && !dc.oldLists && dc.robots)) bad.push('Sparkle Lab device cards: ' + JSON.stringify(dc));
         else notes.push('Sparkle Lab: one card per device, Tester and Auto play chips open their own settings');
-        const tid = await pg.evaluate(() => { const c = document.querySelector('#devs [data-tdev]'); if (!c) return ''; c.checked = true; document.querySelector(`[data-tlv="${c.dataset.tdev}"]`).value = 'auto'; document.querySelector('#tdev [data-peek]').checked = true; document.querySelector('[data-id="tester"] [data-r="on"]').checked = true; document.querySelector('#tdev [data-trevert="autoplay"]').checked = true; document.querySelector('#save').click(); return c.dataset.tdev; });
+        const tid = await pg.evaluate(() => { const c = document.querySelector<HTMLInputElement>('#devs [data-tdev]'); if (!c) return ''; c.checked = true; document.querySelector<HTMLInputElement>(`[data-tlv="${c.dataset.tdev}"]`).value = 'auto'; document.querySelector<HTMLInputElement>('#tdev [data-peek]').checked = true; document.querySelector<HTMLInputElement>('[data-id="tester"] [data-r="on"]').checked = true; document.querySelector<HTMLInputElement>('#tdev [data-trevert="autoplay"]').checked = true; document.querySelector<HTMLInputElement>('#save').click(); return c.dataset.tdev; });
         await pg.waitForTimeout(1200);
         const lt = await pg.evaluate(() => fetch('/api/live', { cache: 'no-store' }).then(r => r.json()));
         const tr = lt.releases && lt.releases.tester;
@@ -602,14 +602,14 @@ export async function studioCheck(browser, open) {
           const other = await pg.evaluate(b => fetch('/api/tester', { method: 'POST', body: JSON.stringify({ ...b, id: 'zzzzzzzzzzzz' }) }).then(r => r.status), rep);
           if (sent !== 200 || other !== 403) bad.push('/api/tester: ' + JSON.stringify({ sent, other }));
           await pg.evaluate(() => { location.hash = 'players/testers'; }); await pg.waitForSelector('#tpb tr[data-open]', { timeout: 15000 }).catch(() => { });
-          await pg.evaluate(() => document.querySelector('#tpb tr[data-open]') && document.querySelector('#tpb tr[data-open]').click()); await pg.waitForSelector('#tfix', { timeout: 10000 }).catch(() => { });
-          const det = await pg.evaluate(() => ({ note: /The bridge floats/.test((document.querySelector('.tdet') || {}).innerText || ''), shot: !!document.querySelector('.tdet [data-shot]'), steps: !!document.querySelector('.tdet .tlog') }));
-          await pg.evaluate(() => { const i = document.querySelector('#tfin'); if (i) { i.value = 'v1.01'; document.querySelector('#tfix').click(); } }); await pg.waitForTimeout(1200);
+          await pg.evaluate(() => document.querySelector<HTMLInputElement>('#tpb tr[data-open]') && document.querySelector<HTMLInputElement>('#tpb tr[data-open]').click()); await pg.waitForSelector('#tfix', { timeout: 10000 }).catch(() => { });
+          const det = await pg.evaluate(() => ({ note: /The bridge floats/.test((document.querySelector<HTMLInputElement>('.tdet') || {}).innerText || ''), shot: !!document.querySelector<HTMLInputElement>('.tdet [data-shot]'), steps: !!document.querySelector<HTMLInputElement>('.tdet .tlog') }));
+          await pg.evaluate(() => { const i = document.querySelector<HTMLInputElement>('#tfin'); if (i) { i.value = 'v1.01'; document.querySelector<HTMLInputElement>('#tfix').click(); } }); await pg.waitForTimeout(1200);
           const st = await pg.evaluate(id => fetch('/api/tester?id=' + id + '&b=v1.01').then(r => r.json()), tid);
           if (!det.note || !det.shot || !det.steps || !(st.mine && st.mine[0] && st.mine[0].status === 'fixed' && st.mine[0].fixedIn === 'v1.01' && st.helped === 1)) bad.push('the Tester reports page: ' + JSON.stringify({ det, st }));
         }
         await pg.evaluate(() => { location.hash = 'game/festivals'; }); await pg.waitForSelector('tr[data-id="tet"]', { timeout: 15000 });
-        await pg.evaluate(() => { document.querySelector('tr[data-id="anzac"] [data-f="on"]').value = 'false'; document.querySelector('tr[data-id="halloween"] [data-f="buildup"]').value = '14'; document.querySelector('#save').click(); });
+        await pg.evaluate(() => { document.querySelector<HTMLInputElement>('tr[data-id="anzac"] [data-f="on"]').value = 'false'; document.querySelector<HTMLInputElement>('tr[data-id="halloween"] [data-f="buildup"]').value = '14'; document.querySelector<HTMLInputElement>('#save').click(); });
         await pg.waitForTimeout(1200);
         const lf = await pg.evaluate(() => fetch('/api/live', { cache: 'no-store' }).then(r => r.json()));
         if (!(lf.festivals && lf.festivals.anzac && lf.festivals.anzac.on === false && lf.festivals.halloween.buildup === 14 && lf.releases.traffic)) bad.push('festival changes did not reach /api/live: ' + JSON.stringify(lf));
@@ -618,46 +618,46 @@ export async function studioCheck(browser, open) {
         await pg.evaluate(() => { location.hash = 'family/message'; }); await pg.waitForSelector('#en');
         // (r81, owner 17 Oct AEDT) the Message is live at once: Save puts it on /api/live, nothing waits for Publish, and the
         // page says so; the Publish feedback below is checked with a change that still waits (the music list)
-        const waiting0 = (await call('/studio/api/pending', { cookie: C })).j.files.length, badge = await pg.evaluate(() => (document.querySelector('.livebadge') || {}).textContent || '');
+        const waiting0 = (await call('/studio/api/pending', { cookie: C })).j.files.length, badge = await pg.evaluate(() => (document.querySelector<HTMLInputElement>('.livebadge') || {}).textContent || '');
         await pg.fill('#en', 'Hello from the review'); await pg.click('#save'); await pg.waitForTimeout(900);
-        const said = await pg.evaluate(() => ({ state: (document.querySelector('.savestate') || {}).textContent, toast: document.querySelector('#toast').className, words: document.querySelector('#toast').textContent }));
+        const said = await pg.evaluate(() => ({ state: (document.querySelector<HTMLInputElement>('.savestate') || {}).textContent, toast: document.querySelector<HTMLInputElement>('#toast').className, words: document.querySelector<HTMLInputElement>('#toast').textContent }));
         const lm = await pg.evaluate(() => fetch('/api/live', { cache: 'no-store' }).then(r => r.json())), waiting1 = (await call('/studio/api/pending', { cookie: C })).j.files.length;
         if (!(lm.content && lm.content.message && lm.content.message.en === 'Hello from the review' && waiting1 === waiting0 && /Saved|Đã lưu/.test(said.state) && /good/.test(said.toast) && /(no Publish|không cần Phát hành)/.test(said.words) && /(Live: devices get it|Có hiệu lực ngay)/.test(badge))) bad.push('online: the Message did not go live at once: ' + JSON.stringify({ said, badge, live: lm.content, waiting0, waiting1 }));
         { const cur = (await call('/studio/api/content', { cookie: C })).j; await call('/studio/api/content', { cookie: C, headers: X, body: { ...cur, music: [...(cur.music || []), { id: 'review', file: 'content/music/review.mp3', en: 'Review tune', vi: 'Bài thử', tags: ['kids'] }] } }); }
         await pg.click('#reload'); await pg.waitForTimeout(900);
-        const shown = await pg.evaluate(() => ({ pub: !document.querySelector('#pub').hidden, state: 'Saved', toast: 'good' }));
+        const shown = await pg.evaluate(() => ({ pub: !document.querySelector<HTMLInputElement>('#pub').hidden, state: 'Saved', toast: 'good' }));
         await pg.click('#pub'); await pg.waitForSelector('#gpub'); await pg.click('#gpub'); await pg.waitForSelector('#gres.result', { timeout: 15000 }); await pg.waitForTimeout(500);
-        const after = await pg.evaluate(() => ({ pub: !document.querySelector('#pub').hidden, res: document.querySelector('#gres').className + ' ' + document.querySelector('#gres').innerText }));
+        const after = await pg.evaluate(() => ({ pub: !document.querySelector<HTMLInputElement>('#pub').hidden, res: document.querySelector<HTMLInputElement>('#gres').className + ' ' + document.querySelector<HTMLInputElement>('#gres').innerText }));
         if (!(shown.pub && /Saved|Đã lưu/.test(shown.state) && /good/.test(shown.toast) && !after.pub && /good/.test(after.res) && /(next time|lần tới)/.test(after.res))) bad.push('online: save and Publish feedback: ' + JSON.stringify({ shown, after }));
       }
       await pg.screenshot({ path: `out/studio-online-${w}.png` });
       const pe = await ctx.newPage(); pe.on('pageerror', e => errs.push('exe: ' + e.message));
       await pe.goto(`http://localhost:${SPORT}/`); // (sends you on to /studio/) await pe.waitForSelector('#tabs button', { timeout: 15000 });
-      for (const k of pages) { await pe.evaluate(k2 => { location.hash = k2; }, k); await pe.waitForTimeout(900); const t = await pe.evaluate(() => document.querySelector('#page').innerText); if (await pe.evaluate(() => !!document.querySelector('#page .card.badtxt')) || !t.trim()) bad.push(`exe ${w}px ${k}: ${t.slice(0, 80)}`); }
+      for (const k of pages) { await pe.evaluate(k2 => { location.hash = k2; }, k); await pe.waitForTimeout(900); const t = await pe.evaluate(() => document.querySelector<HTMLInputElement>('#page').innerText); if (await pe.evaluate(() => !!document.querySelector<HTMLInputElement>('#page .card.badtxt')) || !t.trim()) bad.push(`exe ${w}px ${k}: ${t.slice(0, 80)}`); }
       { await pe.evaluate(() => { location.hash = 'home'; }); await pe.waitForTimeout(700); const emo = await pe.evaluate(SHOWN_EMOJI); if (emo.length) bad.push(`exe ${w}px: phone emoji shown: ${emo.join(' ')}`); }
       // (Studio review) touch targets on a phone and a tablet, and Villagers as cards that fit a phone
       if (touch) { for (const k of TAPS) { await pe.evaluate(k2 => { location.hash = k2; }, k); await pe.waitForTimeout(['voices', 'map', 'path', 'photos'].includes(k) ? 2500 : 900); const sm = await pe.evaluate(SMALL); if (sm.length) bad.push(`exe ${w}px ${k}: ${sm.length} smaller than 44 px: ${sm.slice(0, 4).join(', ')}`); }
         await pe.evaluate(() => { location.hash = 'family/villagers'; }); await pe.waitForSelector('table.vill tbody tr');
-        const vw = await pe.evaluate(() => Math.min(...[...document.querySelectorAll('table.vill tbody tr:not([hidden]) input')].slice(0, 40).map(i => i.getBoundingClientRect().width)));
-        if (vw < (w < 500 ? 280 : 500)) bad.push(`exe ${w}px villagers: a name box is only ${Math.round(vw)} px wide`); }
+        const vw = await pe.evaluate(() => Math.min(...[...document.querySelectorAll<HTMLInputElement>('table.vill tbody tr:not([hidden]) input')].slice(0, 40).map(i => i.getBoundingClientRect().width)));
+        if (Number(vw) < (Number(w) < 500 ? 280 : 500)) bad.push(`exe ${w}px villagers: a name box is only ${Math.round(vw)} px wide`); }
       if (!touch) {
         // (Studio review) changes not saved: leaving asks; No keeps you there with your words, Yes leaves and puts the content back
         await pe.evaluate(() => { location.hash = 'family/message'; }); await pe.waitForSelector('#en'); const before = await pe.inputValue('#en');
-        await pe.fill('#en', 'Words not saved'); const st = await pe.evaluate(() => (document.querySelector('.savestate') || {}).textContent);
+        await pe.fill('#en', 'Words not saved'); const st = await pe.evaluate(() => (document.querySelector<HTMLInputElement>('.savestate') || {}).textContent);
         let asked = 0; pe.once('dialog', d => { asked++; d.dismiss(); }); await pe.click('#tabs [data-k="home"]'); await pe.waitForTimeout(500);
-        const stayed = await pe.evaluate(() => document.querySelector('#en') && document.querySelector('#en').value);
+        const stayed = await pe.evaluate(() => document.querySelector<HTMLInputElement>('#en') && document.querySelector<HTMLInputElement>('#en').value);
         pe.once('dialog', d => { asked++; d.dismiss(); }); await pe.evaluate(() => { location.hash = 'players'; }); await pe.waitForTimeout(500);
-        const stayed2 = await pe.evaluate(() => !!document.querySelector('#en') && /message/.test(location.hash));
+        const stayed2 = await pe.evaluate(() => !!document.querySelector<HTMLInputElement>('#en') && /message/.test(location.hash));
         pe.once('dialog', d => { asked++; d.accept(); }); await pe.click('#tabs [data-k="home"]'); await pe.waitForTimeout(800);
-        const left = await pe.evaluate(() => !document.querySelector('#en'));
+        const left = await pe.evaluate(() => !document.querySelector<HTMLInputElement>('#en'));
         await pe.evaluate(() => { location.hash = 'family/message'; }); await pe.waitForSelector('#en'); const back = await pe.inputValue('#en');
-        await pe.fill('#en', before); await pe.click('#save'); await pe.waitForTimeout(800); const saved = await pe.evaluate(() => (document.querySelector('.savestate') || {}).textContent);
+        await pe.fill('#en', before); await pe.click('#save'); await pe.waitForTimeout(800); const saved = await pe.evaluate(() => (document.querySelector<HTMLInputElement>('.savestate') || {}).textContent);
         let askedAfter = 0; const cnt = d => { askedAfter++; d.dismiss(); }; pe.on('dialog', cnt); await pe.click('#tabs [data-k="home"]'); await pe.waitForTimeout(500); pe.off('dialog', cnt);
         if (!(asked === 3 && /Not saved|Chưa lưu/.test(st) && stayed === 'Words not saved' && stayed2 && left && back === before && /Saved|Đã lưu/.test(saved) && !askedAfter)) bad.push('changes not saved: ' + JSON.stringify({ asked, st, stayed, stayed2, left, back, before, saved, askedAfter }));
         // (r81, owner 17 Oct AEDT) with the website and a Studio key set, the exe's Message save goes live too, and stays in
         // its folder so Publish still sends it
         { await pe.evaluate(() => { location.hash = 'family/message'; }); await pe.waitForSelector('#en'); await pe.fill('#en', 'Live from the exe'); await pe.click('#save'); await pe.waitForTimeout(900);
-          const lv = await (await fetch(site + '/api/live')).json(), folder = (await ex('content')).j.message, words = await pe.evaluate(() => document.querySelector('#toast').textContent);
+          const lv = await (await fetch(site + '/api/live')).json(), folder = (await ex('content')).j.message, words = await pe.evaluate(() => document.querySelector<HTMLInputElement>('#toast').textContent);
           if (!(lv.content && lv.content.message && lv.content.message.en === 'Live from the exe' && folder && folder.en === 'Live from the exe' && /(no Publish|không cần Phát hành)/.test(words))) bad.push('exe: the Message did not go live: ' + JSON.stringify({ live: lv.content && lv.content.message, folder, words })); }
         // (round T) villagers and buildings made on the old map are kept aside: the Map page lists them, "Place again" puts one next to the
         // same place on the new map (named, with its offset, and the content stamped with the map), "Forget" drops one, the old circles can be forgotten
@@ -665,11 +665,11 @@ export async function studioCheck(browser, open) {
           await ex('content', { ...keep, npcs: [{ name: 'Cô Ba', gender: 'f', x: 115, z: 30, look: {}, lines: [['Hello!', 'Xin chào!']] }], world: { build: [{ type: 'tube', x: 35, z: 55, rot: 0, name: ['', ''], owner: { name: '', line: ['', ''] } }], edits: [{ op: 'remove', x: 0, z: 0, r: 3 }], land: [] } });
           await pe.evaluate(() => { location.hash = 'players'; }); await pe.waitForTimeout(300); await pe.click('#reload'); await pe.waitForTimeout(800);
           await pe.evaluate(() => { location.hash = 'game/map'; }); await pe.waitForSelector('.parked [data-place]', { timeout: 20000 });
-          const listed = await pe.evaluate(() => ({ n: document.querySelectorAll('.parked [data-place]').length, txt: document.querySelector('.parked').innerText }));
+          const listed = await pe.evaluate(() => ({ n: document.querySelectorAll<HTMLInputElement>('.parked [data-place]').length, txt: document.querySelector<HTMLInputElement>('.parked').innerText }));
           await pe.click('.parked [data-place="0"]'); await pe.waitForTimeout(300);
           pe.once('dialog', d => d.accept()); await pe.click('.parked [data-forget="0"]'); await pe.waitForTimeout(300);
           await pe.click('.parked [data-forgetc]'); await pe.waitForTimeout(300);
-          const gone = await pe.evaluate(() => !document.querySelector('.parked'));
+          const gone = await pe.evaluate(() => !document.querySelector<HTMLInputElement>('.parked'));
           await pe.click('#save'); await pe.waitForTimeout(900);
           const got = (await ex('content')).j, c = (got.npcs || [])[0] || {};
           const near = Math.hypot(c.x - (vx + 5), c.z - vz) < 0.2 || Math.hypot(c.x - vx, c.z - vz) < 0.2;
@@ -684,23 +684,23 @@ export async function studioCheck(browser, open) {
           await ex('content', { ...keep, ads: { enabled: true, perDay: 3, items: [{ by: '', en: 'Story time', vi: '', link: 'https://shop.example/?utm_source=game', where: ['boards'], active: true }] } });
           await pe.evaluate(() => { location.hash = 'players'; }); await pe.waitForTimeout(300); await pe.click('#reload'); await pe.waitForTimeout(800);
           await pe.evaluate(() => { location.hash = 'ads'; }); await pe.waitForSelector('.adrow .adcheck', { timeout: 15000 });
-          const c1 = await pe.evaluate(() => document.querySelector('.adrow .adcheck').innerText);
+          const c1 = await pe.evaluate(() => document.querySelector<HTMLInputElement>('.adrow .adcheck').innerText);
           await pe.click('[data-alang="vi"]'); await pe.fill('.adrow .ad-vi', 'Giờ kể chuyện'); await pe.fill('.adrow .ad-by', 'Little Lotus Books'); await pe.fill('.adrow .ad-link', 'https://bit.ly/abc');
-          const v1 = await pe.evaluate(() => ({ card: document.querySelector('.adrow .adcard').innerText, board: !!document.querySelector('.adrow svg.adboard'), size: document.querySelector('.adrow .adprev').className, check: document.querySelector('.adrow .adcheck').innerText }));
+          const v1 = await pe.evaluate(() => ({ card: document.querySelector<HTMLInputElement>('.adrow .adcard').innerText, board: !!document.querySelector<HTMLInputElement>('.adrow svg.adboard'), size: document.querySelector<HTMLInputElement>('.adrow .adprev').className, check: document.querySelector<HTMLInputElement>('.adrow .adcheck').innerText }));
           await pe.click('#adSave'); await pe.waitForTimeout(700); const notSaved = !((await ex('content')).j.ads.items[0].vi);
           await pe.click('[data-size="computer"]'); await pe.waitForSelector('.adprev.computer');
-          await pe.evaluate(() => { const r = document.querySelector('.adrow'); r.querySelector('.ad-link').value = 'https://littlelotus.example/story-time'; r.querySelector('.ad-link').dispatchEvent(new Event('input', { bubbles: true })); });
-          const c2 = await pe.evaluate(() => document.querySelector('.adrow .adcheck').innerText);
+          await pe.evaluate(() => { const r = document.querySelector<HTMLInputElement>('.adrow'); r.querySelector<HTMLInputElement>('.ad-link').value = 'https://littlelotus.example/story-time'; r.querySelector<HTMLInputElement>('.ad-link').dispatchEvent(new Event('input', { bubbles: true })); });
+          const c2 = await pe.evaluate(() => document.querySelector<HTMLInputElement>('.adrow .adcheck').innerText);
           // (the picture is chosen with the browser's own file chooser: here it is put in the content as an upload would)
           await ex('content', { ...keep, ads: { enabled: true, perDay: 3, items: [{ by: 'Little Lotus Books', en: 'Story time', vi: 'Giờ kể chuyện', link: 'https://littlelotus.example/story-time', where: ['boards'], active: true, image: pic }] } });
           await pe.evaluate(() => { location.hash = 'players'; }); await pe.waitForTimeout(300); await pe.click('#reload'); await pe.waitForTimeout(800);
           await pe.evaluate(() => { location.hash = 'ads'; }); await pe.waitForSelector('.adrow .adcheck', { timeout: 15000 });
           await pe.fill('.adrow .ad-en', 'Story time on Saturday'); await pe.click('#adSave'); await pe.waitForTimeout(900);
-          const saved = (await ex('content')).j.ads, c3 = await pe.evaluate(() => document.querySelector('.adrow .adcheck').innerText);
-          await pe.evaluate(() => { document.querySelector('details.adguide').open = true; }); await pe.waitForFunction(() => [...document.querySelectorAll('.adshots img')].every(i => i.complete), null, { timeout: 15000 });
-          const shots = await pe.evaluate(() => [...document.querySelectorAll('.adshots img')].map(i => i.naturalWidth));
+          const saved = (await ex('content')).j.ads, c3 = await pe.evaluate(() => document.querySelector<HTMLInputElement>('.adrow .adcheck').innerText);
+          await pe.evaluate(() => { document.querySelector<HTMLDetailsElement>('details.adguide').open = true; }); await pe.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('.adshots img')].every(i => i.complete), null, { timeout: 15000 });
+          const shots = await pe.evaluate(() => [...document.querySelectorAll<HTMLImageElement>('.adshots img')].map(i => i.naturalWidth));
           const onShots = await Promise.all(['board-computer', 'card-computer', 'board-phone', 'card-phone'].map(f => fetch(`${site}/studio/ui/ads-guide/${f}.jpg`).then(r => r.ok && /image/.test(r.headers.get('content-type') || ''))));
-          await pe.evaluate(() => { document.querySelector('details.adguide').open = false; });
+          await pe.evaluate(() => { document.querySelector<HTMLDetailsElement>('details.adguide').open = false; });
           for (const [vw, vh] of [[1180, 800], [820, 1180], [390, 800]]) { await pe.setViewportSize({ width: vw, height: vh }); await pe.waitForTimeout(300); await pe.screenshot({ path: `out/studio-ads-${vw}.png`, fullPage: true }); }
           await pe.setViewportSize({ width: w, height: h });
           await ex('content', keep); pe.off('dialog', yes);
@@ -719,40 +719,40 @@ export async function studioCheck(browser, open) {
         { const M = await import(pathToFileURL(path.join(ROOT, 'js/content/map.js')).href), id = M.PLOTS[0].id;
           await pe.evaluate(() => { location.hash = 'family/plots'; }); await pe.waitForSelector(`[data-plot="${id}"]`, { timeout: 20000 });
           await pe.click(`[data-plot="${id}"]`); await pe.waitForSelector('.plotform'); await pe.fill('.plotform [data-f="n0"]', 'Grandma’s house'); await pe.fill('.plotform [data-f="o"]', 'Bà Nội'); await pe.click('.plotform [data-x="ok"]');
-          const tileTxt = await pe.evaluate(i => document.querySelector(`[data-plot="${i}"]`).innerText, id); await pe.click('#save'); await pe.waitForTimeout(900);
+          const tileTxt = await pe.evaluate(i => document.querySelector<HTMLInputElement>(`[data-plot="${i}"]`).innerText, id); await pe.click('#save'); await pe.waitForTimeout(900);
           const a = ((await ex('content')).j.plots || {})[id] || {};
           await pe.click(`[data-plot="${id}"]`); await pe.waitForSelector('.plotform [data-x="off"]'); await pe.click('.plotform [data-x="off"]'); await pe.click('#save'); await pe.waitForTimeout(900); const b = (await ex('content')).j.plots;
-          await pe.click('#spare'); await pe.waitForFunction(() => document.querySelector('[data-plot^="sp_"]') || /No spare plots|không có mảnh trống|⚠️/.test((document.querySelector('#page') || {}).innerText || ''), null, { timeout: 70000 });
-          const spare = await pe.evaluate(() => ({ n: document.querySelectorAll('[data-plot^="sp_"]').length, err: /⚠️/.test(document.querySelector('#spareres') ? document.querySelector('#spareres').textContent : '') }));
+          await pe.click('#spare'); await pe.waitForFunction(() => document.querySelector<HTMLInputElement>('[data-plot^="sp_"]') || /No spare plots|không có mảnh trống|⚠️/.test((document.querySelector<HTMLInputElement>('#page') || {}).innerText || ''), null, { timeout: 70000 });
+          const spare = await pe.evaluate(() => ({ n: document.querySelectorAll<HTMLInputElement>('[data-plot^="sp_"]').length, err: /⚠️/.test(document.querySelector<HTMLInputElement>('#spareres') ? document.querySelector<HTMLInputElement>('#spareres').textContent : '') }));
           if (!(a.owner && a.owner.name === 'Bà Nội' && a.name[0] === 'Grandma’s house' && a.type && /Grandma/.test(tileTxt) && !b && !spare.err)) bad.push('memory villages: ' + JSON.stringify({ a, b, tileTxt, spare }));
           notes.push(`Memory Villages: ${M.PLOTS.length} plots, ${spare.n} spare ones by the cities`); }
         // (Studio review) in Vietnamese the game's own names follow: the Simple screen shows "Cho Thỏ Ăn", in English "Feed the Bunny"
-        const names = async l => { await pe.evaluate(l2 => document.querySelector(`.lang [data-l="${l2}"]`).click(), l); await pe.evaluate(() => { location.hash = 'game/path'; }); await pe.waitForSelector('tr[data-id]', { timeout: 15000 }).catch(() => { }); await pe.waitForTimeout(300); return pe.evaluate(() => location.hash + ' ' + document.querySelector('#page').innerText.slice(0, 3000)); };
+        const names = async l => { await pe.evaluate(l2 => document.querySelector<HTMLInputElement>(`.lang [data-l="${l2}"]`).click(), l); await pe.evaluate(() => { location.hash = 'game/path'; }); await pe.waitForSelector('tr[data-id]', { timeout: 15000 }).catch(() => { }); await pe.waitForTimeout(300); return pe.evaluate(() => location.hash + ' ' + document.querySelector<HTMLInputElement>('#page').innerText.slice(0, 3000)); };
         const vi = await names('vi'), en = await names('en'); await names('vi');
         if (!(/Cho Thỏ Ăn/.test(vi) && !/Feed the Bunny/.test(vi) && /Feed the Bunny/.test(en))) bad.push('the Simple screen page does not follow Studio\'s language: ' + vi.slice(0, 200) + ' / ' + en.slice(0, 200));
         // (r81) the reading games are listed too (the game registers them only while the readingTrial switch is on), in the Reading corner
-        await names('en'); const rd = await pe.evaluate(() => [...document.querySelectorAll('tr[data-id^="rd_"]')].map(r => ({ id: r.dataset.id, area: r.querySelector('[data-f="area"]').value, txt: r.textContent, head: r.closest('.card').querySelector('h3').textContent })));
-        await names('vi'); const rdVi = await pe.evaluate(() => (document.querySelector('tr[data-id="rd_trace"]') || {}).textContent || '');
+        await names('en'); const rd = await pe.evaluate(() => [...document.querySelectorAll<HTMLInputElement>('tr[data-id^="rd_"]')].map(r => ({ id: r.dataset.id, area: r.querySelector<HTMLInputElement>('[data-f="area"]').value, txt: r.textContent, head: r.closest('.card').querySelector<HTMLInputElement>('h3').textContent })));
+        await names('vi'); const rdVi = await pe.evaluate(() => (document.querySelector<HTMLInputElement>('tr[data-id="rd_trace"]') || {}).textContent || '');
         if (!(rd.length >= 10 && rd.every(r => r.area === 'reading') && /Lantern Letters/.test((rd.find(r => r.id === 'rd_trace') || {}).txt || '') && /reading trial/.test(rd[0].head) && /Đèn Lồng Chữ Cái/.test(rdVi))) bad.push('the Simple screen page does not list the reading games: ' + JSON.stringify({ rd: rd.slice(0, 3), n: rd.length, rdVi }));
         else notes.push(`Simple screen: ${rd.length} reading games listed`);
         // (r85, owner 18 Oct AEDT) no group dropdown on the rows: a game opens its own panel; moving it says "Moved to …" with
         // Undo, and what is on the screen stays where it is (the page does not jump)
         await names('en'); await pe.waitForTimeout(300);
-        const mv = await pe.evaluate(async () => { const pause = ms => new Promise(r => setTimeout(r, ms)), cards = [...document.querySelectorAll('.card[data-area]')];
-          const shownSelects = [...document.querySelectorAll('tr[data-id] select')].filter(x => x.offsetParent).length;
-          const src = cards.slice(1).find(c => c.querySelectorAll('tr[data-id]').length >= 2), dst = cards[0], r = src && src.querySelector('tr[data-id]'); if (!r) return { none: true };
+        const mv = await pe.evaluate(async () => { const pause = ms => new Promise(r => setTimeout(r, ms)), cards = [...document.querySelectorAll<HTMLInputElement>('.card[data-area]')];
+          const shownSelects = [...document.querySelectorAll<HTMLInputElement>('tr[data-id] select')].filter(x => x.offsetParent).length;
+          const src = cards.slice(1).find(c => c.querySelectorAll<HTMLInputElement>('tr[data-id]').length >= 2), dst = cards[0], r = src && src.querySelector<HTMLInputElement>('tr[data-id]'); if (!r) return { none: true };
           r.scrollIntoView({ block: 'center' }); await pause(50);
-          r.querySelector('.gopen').click(); await pause(50); const panel = r.querySelector('.gpanel'), opened = !panel.hidden && !!panel.querySelector('[data-f="area"]') && !!panel.querySelector('[data-f="little"]') && !!panel.querySelector('[data-f="hide"]');
-          const next = r.nextElementSibling, y0 = next.getBoundingClientRect().top, n0 = dst.querySelectorAll('tr[data-id]').length;
-          const sel = panel.querySelector('[data-f="area"]'); sel.value = dst.dataset.area; sel.dispatchEvent(new Event('change', { bubbles: true })); await pause(50);
-          const moved = r.closest('.card') === dst && dst.querySelectorAll('tr[data-id]').length === n0 + 1 && /\(\d+\)/.test(dst.querySelector('.gcount').textContent), jump = Math.abs(next.getBoundingClientRect().top - y0);
-          const t = document.querySelector('#toast'), said = t.textContent, undo = t.querySelector('.undo');
+          r.querySelector<HTMLInputElement>('.gopen').click(); await pause(50); const panel = r.querySelector<HTMLInputElement>('.gpanel'), opened = !panel.hidden && !!panel.querySelector<HTMLInputElement>('[data-f="area"]') && !!panel.querySelector<HTMLInputElement>('[data-f="little"]') && !!panel.querySelector<HTMLInputElement>('[data-f="hide"]');
+          const next = r.nextElementSibling, y0 = next.getBoundingClientRect().top, n0 = dst.querySelectorAll<HTMLInputElement>('tr[data-id]').length;
+          const sel = panel.querySelector<HTMLInputElement>('[data-f="area"]'); sel.value = dst.dataset.area; sel.dispatchEvent(new Event('change', { bubbles: true })); await pause(50);
+          const moved = r.closest('.card') === dst && dst.querySelectorAll<HTMLInputElement>('tr[data-id]').length === n0 + 1 && /\(\d+\)/.test(dst.querySelector<HTMLInputElement>('.gcount').textContent), jump = Math.abs(next.getBoundingClientRect().top - y0);
+          const t = document.querySelector<HTMLInputElement>('#toast'), said = t.textContent, undo = t.querySelector<HTMLInputElement>('.undo');
           if (undo) undo.click(); await pause(50);
           return { shownSelects, opened, moved, jump, said, back: r.closest('.card') === src, undo: !!undo };
         });
         if (!(mv.shownSelects === 0 && mv.opened && mv.moved && mv.jump < 2 && /Moved to /.test(mv.said) && mv.undo && mv.back)) bad.push('the Simple screen game panel (Group, Moved to, Undo, no jump): ' + JSON.stringify(mv));
         else notes.push('Simple screen: Group in each game\'s panel; Moved to … with Undo, no jump');
-        await names('vi'); const mvVi = await pe.evaluate(async () => { const r = document.querySelector('.card[data-area] tr[data-id]'); r.querySelector('.gopen').click(); return r.querySelector('.gpanel').innerText; });
+        await names('vi'); const mvVi = await pe.evaluate(async () => { const r = document.querySelector<HTMLInputElement>('.card[data-area] tr[data-id]'); r.querySelector<HTMLInputElement>('.gopen').click(); return r.querySelector<HTMLInputElement>('.gpanel').innerText; });
         if (!/Nhóm/.test(mvVi) || !/Dưới 5 tuổi/.test(mvVi) || !/Ẩn/.test(mvVi)) bad.push('the game panel in Vietnamese: ' + mvVi.slice(0, 120));
       }
       await pe.screenshot({ path: `out/studio-exe-${w}.png` });
