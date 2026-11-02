@@ -60,7 +60,7 @@ Under Release's rule of 3 Nov the full suite is left for Release; these checks c
 - pass: validate, noemoji, arch, names, bilingual, rules, boot, contract, phone (desktop, phone, tablet), hubmap, simple,
   playhub, games (248 games), levelsa, hocvui (52 links), secondset, voicecover (every line recorded), guides (248 games),
   levelsall (225 games differ at Easy, Medium, Hard and Talent), types, unit (505 tests, with root packages installed).
-- fail, not this branch: emoji, for a 🎯 in `docs/plans/v108-owner-batch-20261103.md` (Release's plan file, same on
+- fail, not this branch: emoji, for a target-mark emoji in `docs/plans/v108-owner-batch-20261103.md` (Release's plan file, same on
   `origin/release/v1.08`).
 - Auto play (a scratch run, not a check): each of the 11 games won at under-5, Easy, Medium, Hard and Talent, in
   English (AUD) and Vietnamese (VND): 110 of 110, no page errors.
