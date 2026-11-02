@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/games/outside.ts": "d6fd07a80a37da109c4ff1460c8cf10e44c3707624bce5f96cda179d29dce6b0",
+    "js/howto-data.ts": "ada8c3857a187820b6f6e9449539b3d9cbfe21558d84785565e6fff7994f0d81",
+    "js/howto-data2.ts": "cbdf26113a0e8acbd87828843a3133d73cfe03e6da246b4294868d7f54a1617e"
+  },
+  "lines": [
+    {
+      "id": "768f41525912f142",
+      "lang": "vi",
+      "text": "Trò chơi sân trường này từ nước Anh sang Úc từ lâu. Các bạn nhỏ ở Úc đã chơi trò này hơn một trăm năm rồi!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "7efb2f7d-3eeb480e",
+      "lang": "vi",
+      "text": "Khi thích, chạm Ngỗng: bạn tiếp theo là ngỗng! Chạy vòng quanh rồi chạm vào chỗ của bạn ấy để ngồi trước khi bị bắt.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "184467f0-30b502d7",
+      "lang": "vi",
+      "text": "Ngỗng! Chạy vòng quanh rồi ngồi vào chỗ của bạn ấy!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/outside.ts"
+      ]
+    }
+  ]
+}
