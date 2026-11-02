@@ -28,8 +28,8 @@ Helper: rules. Branch: `work/v107-rules`. Started 2 Nov 2026, 11:00 am AEDT.
 
 - `node --test unit/rules-audit.test.mjs`: pass (2/2).
 - Quick checks (`suite.mjs --only unit,rules,types,arch,emoji,noemoji,preload,names,bilingual`): 7/9 pass.
-  - `types` failed on `sudoku-core.ts` (Set type). Fixed in the paused commit; not re-run yet.
-  - `unit` failed only on `live-content.test.mjs` / management tests: "Cannot find package 'pg'". This is the session's setup (root `npm ci` not run), not this change. Not re-run yet.
+  - `types` failed on `sudoku-core.ts` (Set type). Fixed; re-run after resume: **pass** (216 files).
+  - `unit` failed only because `pg` was not installed (session setup). After root `npm ci`, re-run: **pass** (482 unit tests).
 - `suite.mjs --changed` picks the **full suite** (`.gitignore` changed: the build added `js/games/sudoku-core.js` to it). By the round rules it runs on GitHub, not locally.
 
 ## Exact next step (after "resume")
