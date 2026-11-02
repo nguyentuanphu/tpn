@@ -98,6 +98,10 @@ When the full suite finishes: if it is green, write the result here and mark thi
 
 Local test notes: `cd tests && npm install` brings a Playwright whose browser is missing; run checks with `CHROMIUM=/opt/pw-browsers/chromium`. Root `npm ci` is needed for the `unit` check (`pg`). `tools/build.mts` rewrites `content/management-catalogue.json`; it is restored before each commit.
 
+## Owner's decisions
+
+- 2 Nov 2026 AEDT (through Release): the session that changed each file splits it. The roads helper splits `js/world.ts` and the startup helper splits `js/main.ts`, both following the plan above. split-code does not split those two files.
+
 ## Open questions
 
 None.
