@@ -243,6 +243,28 @@ export const GAME_CATALOG = [
   { id: 'en_sentence', learn: true, english: true, icon: 'en:sentence', name: () => T('First Sentences', 'Những Câu Đầu Tiên') },
   { id: 'en_greet', learn: true, english: true, icon: 'en:greet', name: () => T('Greetings', 'Lời Chào Hỏi') },
   { id: 'en_colshape', learn: true, english: true, icon: 'en:colshape', name: () => T('Colours and Shapes', 'Màu Sắc và Hình Khối') },
+  // (v1.08 maths) the 21 new maths games, in Con số and linked into Học vui > Toán (js/games/maths3.ts and maths4.ts)
+  { id: 'mx_bonds', learn: true, icon: 'mx:bonds', name: () => T('Number Bonds', 'Tách Gộp Số') },
+  { id: 'mx_takeaway', learn: true, icon: 'mx:takeaway', name: () => T('Take Away', 'Bớt Đi Còn Mấy') },
+  { id: 'mx_skip', learn: true, icon: 'mx:skip', name: () => T('Skip Counting', 'Đếm Cách Quãng') },
+  { id: 'mx_patterns', learn: true, icon: 'mx:patterns', name: () => T('Patterns', 'Quy Luật') },
+  { id: 'mx_shapehunt', learn: true, icon: 'mx:shapehunt', name: () => T('Shapes Hunt', 'Săn Hình') },
+  { id: 'mx_symmetry', learn: true, icon: 'mx:symmetry', name: () => T('Symmetry', 'Đối Xứng') },
+  { id: 'mx_heavy', learn: true, icon: 'mx:heavy', name: () => T('Heavier or Lighter', 'Nặng Hay Nhẹ') },
+  { id: 'mx_full', learn: true, icon: 'mx:full', name: () => T('Full or Empty', 'Đầy Hay Rỗng') },
+  { id: 'mx_pizza', learn: true, icon: 'mx:pizza', name: () => T('Pizza Fractions', 'Phân Số Bánh Pizza') },
+  { id: 'mx_graph', learn: true, icon: 'mx:graph', name: () => T('Picture Graph', 'Biểu Đồ Tranh') },
+  { id: 'mx_calendar', learn: true, icon: 'mx:calendar', name: () => T('Calendar', 'Lịch') },
+  { id: 'mx_quarter', learn: true, icon: 'mx:quarter', name: () => T('Quarter Past', 'Mấy Giờ Rồi') },
+  { id: 'mx_sudoku', learn: true, icon: 'mx:sudoku', name: () => T('Number Puzzle', 'Ô Số Vui') },
+  { id: 'mx_bigger', learn: true, icon: 'mx:bigger', name: () => T('Bigger Number Race', 'Đua Số Lớn') },
+  { id: 'mx_doubles', learn: true, icon: 'mx:doubles', name: () => T('Doubles', 'Gấp Đôi') },
+  { id: 'mx_tens', learn: true, icon: 'mx:tens', name: () => T('Tens and Ones', 'Chục và Đơn Vị') },
+  { id: 'mx_missing', learn: true, icon: 'mx:missing', name: () => T('Missing Number', 'Tìm Số Còn Thiếu') },
+  { id: 'mx_solids3d', learn: true, icon: 'mx:solids3d', name: () => T('Shapes in 3D', 'Hình Khối 3D') },
+  { id: 'mx_leftright', learn: true, icon: 'mx:leftright', name: () => T('Left and Right', 'Trái và Phải') },
+  { id: 'mx_sprint', learn: true, icon: 'mx:sprint', name: () => T('Mental Maths Sprint', 'Tính Nhẩm Nhanh') },
+  { id: 'mx_grouping', learn: true, icon: 'mx:grouping', name: () => T('Count by Grouping', 'Đếm Theo Nhóm') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -289,5 +311,8 @@ export const GAME_LOADERS = {
   'science2.ts': { ids: ['sci_plant', 'sci_water', 'sci_daynight', 'sci_seasons', 'sci_homes', 'sci_body', 'sci_colours', 'sci_ice', 'sci_rainbow', 'sci_bulb', 'sci_gears', 'sci_recycle'], load: () => import('./science2.js') },
   // (v1.08 english)
   'english.ts': { ids: ['en_words', 'en_listen', 'en_say', 'en_abc', 'en_count', 'en_sentence', 'en_greet', 'en_colshape'], load: () => import('./english.js') },
+  // (v1.08 maths) the 21 new maths games
+  'maths3.ts': { ids: ['mx_bonds', 'mx_takeaway', 'mx_skip', 'mx_patterns', 'mx_shapehunt', 'mx_symmetry', 'mx_heavy', 'mx_full', 'mx_pizza', 'mx_graph', 'mx_calendar'], load: () => import('./maths3.js') },
+  'maths4.ts': { ids: ['mx_quarter', 'mx_sudoku', 'mx_bigger', 'mx_doubles', 'mx_tens', 'mx_missing', 'mx_solids3d', 'mx_leftright', 'mx_sprint', 'mx_grouping'], load: () => import('./maths4.js') },
 
 };

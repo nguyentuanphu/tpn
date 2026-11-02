@@ -96,6 +96,11 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   sci_colours: ['hv_sci', 2, 1], sci_ice: ['hv_sci', 3, 1], sci_rainbow: ['hv_sci', 3, 2], sci_bulb: ['hv_sci', 4, 2], sci_gears: ['hv_sci', 4, 2], sci_recycle: ['hv_sci', 3, 1],
   // (v1.08 english) the English corner's own games (js/games/english.ts)
   en_words: ['hv_en', 2, 1], en_listen: ['hv_en', 3, 1], en_say: ['hv_en', 3, 2], en_abc: ['hv_en', 2, 1], en_count: ['hv_en', 2, 1], en_sentence: ['hv_en', 4, 2], en_greet: ['hv_en', 3, 1], en_colshape: ['hv_en', 2, 1],
+  // (v1.08 maths) the 21 new maths games, in Con số (linked into Học vui > Toán: js/content/hocvui.ts)
+  mx_bonds: ['numbers', 4, 2], mx_takeaway: ['numbers', 3, 1], mx_skip: ['numbers', 5, 2], mx_patterns: ['numbers', 3, 1], mx_shapehunt: ['numbers', 3, 1], mx_symmetry: ['numbers', 4, 2],
+  mx_heavy: ['numbers', 3, 1], mx_full: ['numbers', 3, 1], mx_pizza: ['numbers', 4, 2], mx_graph: ['numbers', 4, 2], mx_calendar: ['numbers', 5, 2], mx_quarter: ['numbers', 5, 2],
+  mx_sudoku: ['numbers', 5, 3], mx_bigger: ['numbers', 3, 1], mx_doubles: ['numbers', 4, 2], mx_tens: ['numbers', 5, 2], mx_missing: ['numbers', 3, 1], mx_solids3d: ['numbers', 4, 2],
+  mx_leftright: ['numbers', 3, 1], mx_sprint: ['numbers', 5, 3], mx_grouping: ['numbers', 5, 2],
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };

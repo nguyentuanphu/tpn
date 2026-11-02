@@ -22,6 +22,9 @@ import { TOWN_SCHOOL } from './content/map.js';
 
 /** the school's place: the building's middle (x, z), its size, the yard in front (north, -z) and where Cô Tam stands */
 import { SCHOOL } from './content/school-place.js';
+// (v1.08 maths) the 21 new maths games and the 7 numbers games switched on in v1.08 are found at the school
+const MATHS_AT_SCHOOL = ['numline', 'tenframe', 'dice', 'evenodd', 'measure', 'beforeafter', 'halves', 'mx_bonds', 'mx_takeaway', 'mx_skip', 'mx_patterns', 'mx_shapehunt', 'mx_symmetry', 'mx_heavy', 'mx_full', 'mx_pizza', 'mx_graph',
+  'mx_calendar', 'mx_quarter', 'mx_sudoku', 'mx_bigger', 'mx_doubles', 'mx_tens', 'mx_missing', 'mx_solids3d', 'mx_leftright', 'mx_sprint', 'mx_grouping'];
 export { SCHOOL };
 export const SCHOOL_GREETING = ['Welcome to the Fun Learning School! Shall we learn something fun today?', 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?'];
 
@@ -147,6 +150,10 @@ export function createSchool(G) {
   const s = SCHOOL.spot;
   const it = { id: 'school', x: s.x, z: s.z, r: 3, icon: '👩‍🏫', label: () => T('Fun learning with ' + nm('Cô Tam'), 'Học vui cùng Cô Tam'), act: h => talk(h) };
   G.interactables.push(it);
+  // (v1.08 maths) the maths games' place in the valley for the map pin: Cô Tam's school (no place on the map moves); a game
+  // that already has a place keeps it
+  G.GAME_SPOT = G.GAME_SPOT || {};
+  for (const id of MATHS_AT_SCHOOL) if (!G.GAME_SPOT[id]) G.GAME_SPOT[id] = 'school';
   // life: she gestures as she talks to the class, the flag flutters (only while a child is near)
   world.updaters.push((dt, time) => {
     if (!G.heroes.some(h => dist2(h.pos.x, h.pos.z, x, z) < 45)) return;

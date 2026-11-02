@@ -15,3 +15,6 @@ export const SKILLS = {
 import './hocvui-meta.js';
 // (v1.08 science) How to play for the twelve new science experiments
 import './science2-meta.js';
+
+// (v1.08 maths) How to play for the 21 new maths games
+import './maths3-meta.js';
