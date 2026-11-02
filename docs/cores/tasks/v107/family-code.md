@@ -1,5 +1,7 @@
 # v1.07 family-code: status
 
+**ready for Release (full suite: Release's combined run)** (2 Nov 2026, 3:10 pm AEDT)
+
 Branch: `work/v107-family-code` (from main v1.06). Brief: [family-code-brief.md](family-code-brief.md).
 
 Paused 11:14 am AEDT on Release's "slow down"; resumed 2 Nov 2026 about 2 pm AEDT. The owner answered the Part 2
@@ -80,13 +82,13 @@ question at 2:07 pm AEDT: "Build Part 2 as planned" (built, see section 3).
 | `grownupsui`, `saves`, `familyquizprivate`, `boot`, `phone` | pass | 2 Nov 2026 pm AEDT |
 | `studio` (after the Studio change) | pass (360 s) | 2 Nov 2026 pm AEDT |
 | `suite.mjs --changed --list` | picks the full suite (new test file) | |
-| full suite on GitHub (`full-suite.yml`, workflow_dispatch on cc419922) | queued (the first run on 159d7939 was cancelled before it started, to cover the newer commit) | |
+| full suite | Release's combined run (owner's decision 3:05 pm AEDT: one combined full suite; the per-branch runs were cancelled before they started) | |
 | online checks (`tests/services/start.cjs`) | not run: the change is a read-only count in the report, covered by the unit test and `studio` | |
 
 ## 5. Exact next step
 
-1. Read the GitHub full-suite result for `work/v107-family-code` and record it here; fix anything red.
-2. Open the draft PR "v1.07 family-code: ..." and write "ready for Release" at the top when green.
+None: ready for Release. Draft PR #789. If Release's combined full suite shows a red check pointing at this branch,
+fix it here.
 
 ## Owner's decisions
 
