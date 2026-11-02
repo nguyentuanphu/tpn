@@ -74,6 +74,9 @@ body.calm .sx-item.sx-bob, body.calm .sx-bottle.sx-ring2 { animation: none; }
 const NEXT: Pair = ['Next', 'Tiếp'];
 const FIX: Pair = ['Now you know! Tap what really happened.', 'Giờ con biết rồi! Chạm vào điều đã thật sự xảy ra nhé.'];
 const lvOf = (api): number => api.little ? 0 : 1 + Math.max(0, Math.min(3, api.smart | 0));
+// (v1.07 levels) lvOf is only an index, so each experiment writes its real values (things, rounds, choices) on the stage
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
+const band = (lv: number) => lv <= 1 ? '1-1' : lv === 2 ? '1-2' : '2-3';   // how hard the things are (pickSet)
 const choiceHTML = (c: Choice) => `${c.html || pic(c.pic)}<small>${esc(T(...c.label))}</small>`;
 function buttonsFor(api, row: HTMLElement, trial: Trial) {
   return trial.choices.map(c => { const b = Object.assign(el('button', 'choice sx-opt', choiceHTML(c)), { _v: c.key }); b.setAttribute('aria-label', T(...c.label)); row.appendChild(b); return b; });
@@ -201,6 +204,7 @@ const FLOAT: Thing[] = [
 const SURFACE = 58, FLOOR = 84; // the water's top and the tub's floor (% of the scene's height)
 register({ id: 'sci_float', learn: true, icon: 'sci:float', name: () => T('Float or Sink?', 'Nổi hay Chìm?'), async run(api) {
   const lv = lvOf(api), [n, per] = PLAN[lv], used = new Set<Thing>(), rounds: Round[] = [];
+  mark(api, n, per, band(lv));   // rounds, things guessed before trying, how hard the things are
   for (let r = 0; r < n; r++) {
     const set = pickSet(FLOAT, lv, per, used); let btns: HTMLElement[] = [];
     const xs = per === 1 ? [50] : [22, 50, 78];
@@ -249,6 +253,7 @@ const MAGNET: Thing[] = [
 ];
 register({ id: 'sci_magnet', learn: true, icon: 'sci:magnet', name: () => T('Magnet Pull', 'Nam Châm Hút'), async run(api) {
   const lv = lvOf(api), [n, per] = PLAN[lv], used = new Set<Thing>(), rounds: Round[] = [];
+  mark(api, n, per, band(lv));   // rounds, things guessed before trying, how hard the things are
   for (let r = 0; r < n; r++) {
     const set = pickSet(MAGNET, lv, per, used); let btns: HTMLElement[] = [], mag: HTMLElement = null;
     const xs = per === 1 ? [66] : [42, 62, 82];
@@ -289,6 +294,7 @@ const BALLS: { c: string; name: Pair }[] = [{ c: '#e8433a', name: ['Red ball', '
 const miniRamp = (h: number, c: string, grass = false) => `<svg class="sx-mini" viewBox="0 0 60 40" aria-hidden="true"><path d="M4 ${36 - h * .5}L34 36H4z" fill="#ffb347" stroke="#3b2a4f" stroke-width="2.4" stroke-linejoin="round"/><path d="M34 36h24" stroke="${grass ? '#43c463' : '#3b2a4f'}" stroke-width="${grass ? 5 : 2.4}"/><circle cx="9" cy="${36 - h * .5 - 6}" r="5" fill="${c}" stroke="#3b2a4f" stroke-width="2"/></svg>`;
 register({ id: 'sci_ramp', learn: true, icon: 'sci:ramp', name: () => T('Rolling Ramps', 'Dốc Lăn Bóng'), async run(api) {
   const lv = lvOf(api), n = [3, 3, 3, 4, 3][lv], lanes = [2, 2, 3, 3, 4][lv], rounds: Round[] = [];
+  mark(api, n, lanes, lv === 4 ? 'grass' : 'smooth');   // rounds, ramps, a grassy ramp
   const RUN = 300, BASE = 70, G = 420;
   for (let r = 0; r < n; r++) {
     // heights (viewBox units) far apart for little ones and Easy, close together from Hard; Talent adds a grass floor
@@ -354,6 +360,7 @@ function leverOf(lv: number, r: number): Lever {
 }
 register({ id: 'sci_seesaw', learn: true, icon: 'sci:seesaw', name: () => T('Seesaw Lift', 'Bập Bênh Nâng Bạn'), async run(api) {
   const lv = lvOf(api), n = [3, 3, 3, 4, 3][lv], rounds: Round[] = [];
+  mark(api, n, leverOf(lv, 0).seats.length, lv >= 3 ? 'weights' : 'plain', lv >= 3 ? 'closest' : 'which');   // rounds, seats, numbers shown, question
   for (let r = 0; r < n; r++) {
     const L = leverOf(lv, r), lifts = (d: number) => L.w * d > L.W * L.dB, best = L.seats.find(lifts), numbers = lv >= 3;
     const posOf = (d: number, side: number) => 50 + side * (d / L.n) * 44; // % along the plank (the middle is 50)
@@ -431,8 +438,9 @@ const SHADOW_WHY: Record<string, Pair> = {
   star: ['Light goes in a straight line from the lamp, past the top of the teddy, to the end of the shadow.', 'Ánh sáng đi thẳng từ đèn, qua đỉnh đầu gấu bông, tới cuối cái bóng.']
 };
 register({ id: 'sci_shadow', learn: true, icon: 'sci:shadow', name: () => T('Lamp and Shadow', 'Đèn và Bóng'), async run(api) {
-  const lv = lvOf(api), rounds: Round[] = [];
-  for (const R of shadowRounds(lv)) {
+  const lv = lvOf(api), rounds: Round[] = [], plan = shadowRounds(lv);
+  mark(api, plan.length, [...new Set(plan.map(R => R.kind === 'low' ? 'high' : R.kind === 'away' ? 'near' : R.kind))].join('/'), Math.max(...plan.map(R => R.rings.length)), lv >= 3 ? 'ray' : 'noray');   // rounds, kinds, rings, light ray drawn
+  for (const R of plan) {
     let lamp: HTMLElement = null, shade: SVGPathElement = null, ray: SVGPathElement = null, rings: HTMLElement[] = [];
     const put = (lx: number, ly: number) => {
       const tip = Math.max(-60, Math.min(460, tipOf(lx, ly))), w = 16;
@@ -489,6 +497,7 @@ const pitch = (fill: number) => 1100 - 640 * fill;
 const ring = (fill: number) => { const f = pitch(fill); tone(f, .9, { type: 'sine', vol: .2 }); tone(f * 2.76, .35, { type: 'sine', vol: .05 }); };
 register({ id: 'sci_sound', learn: true, icon: 'sci:sound', name: () => T('Bottle Music', 'Nhạc Chai Nước'), async run(api) {
   const lv = lvOf(api), n = [3, 3, 4, 4, 3][lv], count = [2, 2, 3, 4, 5][lv], rounds: Round[] = [];
+  mark(api, n, count, lv === 4 ? 'match' : 'high-low');   // rounds, bottles, question
   for (let r = 0; r < n; r++) {
     const fills = lv <= 1 ? shuffle([.18, .86]) : lv === 2 ? shuffle([.15, .5, .85]) : lv === 3 ? shuffle([.2, .4, .6, .8]) : shuffle([.15, .32, .5, .68, .85]);
     const mode = lv === 4 ? 'match' : lv === 0 || r % 2 === 0 ? 'high' : 'low';

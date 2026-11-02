@@ -30,6 +30,7 @@ Nothing was deleted when the docs were tidied (owner, 24 Oct 2026 AEDT): old rou
 | Rules for every chat: deploys, questions to the owner, checks, cores, times | [../CLAUDE.md](../CLAUDE.md) |
 | What the game is, every requirement and how it is built | [../HANDOFF.md](../HANDOFF.md) |
 | How it must look, sound and behave (design rules, UX-001 to UX-010) | [SO-TAY-THIET-KE.md](SO-TAY-THIET-KE.md) |
+| What Easy, Medium, Hard and Talent change in every game (v1.07; proposed rules LV-001 to LV-004) | [levels/README.md](levels/README.md) |
 | The architecture contract (the `rules` check reads it) | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Hosting, servers, keys and how to test them | [INFRASTRUCTURE.md](INFRASTRUCTURE.md) |
 

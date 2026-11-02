@@ -9,7 +9,7 @@ import { el, wait } from '../util.js';
 const mix = <V,>(list: V[]): V[] => [...list].sort(() => Math.random() - .5);
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value
-const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
 // (levels) Talent: answers show their word only, without the picture in front of it
 const bare = (api, s: string) => api.talent ? s.replace(/^\S+ /u, '') : s;
 let styled = false;
@@ -109,6 +109,7 @@ register({
 
     // (levels) Medium: a card that is not part of the story; Hard two; Talent two and the cards have no words
     const strays = [{ icon: '🚗', name: ['Car', 'Chiếc xe'] }, { icon: '👟', name: ['Shoe', 'Đôi giày'] }].slice(0, lv(api, 0, 1, 2, 2));
+    api.stage.dataset.lv = [strays.length, api.talent ? 0 : 1].join(',');   // (v1.07 levels) cards not in the story, words on cards
     const controls = el('div', 'w2-controls'); wrap.appendChild(controls);
     const btns = [...steps, ...strays].map((s, idx) => {
       const b = el('button', 'w2-btn', `${pic(s.icon)} ${api.talent ? '' : `<span>${T(s.name[0], s.name[1])}</span>`}`);
@@ -152,6 +153,7 @@ register({
     // (levels) more animals to choose from: 3 on Easy, 4 Medium, 5 Hard, 6 Talent (Talent: words only); the extra ones are the
     // other riddles' animals, so they never fit the clue
     const many = lv(api, 3, 4, 5, 6);
+    api.stage.dataset.lv = [rounds, many, api.talent ? 0 : 1].join(',');   // (v1.07 levels) rounds, animals, pictures on them
     const riddles = [
       { text: ['I have long ears and love carrots.', 'Đôi tai dài, thích ăn cà rốt.'], answer: 0, options: [['🐰 Rabbit', '🐰 Chú thỏ'], ['🐸 Frog', '🐸 Chú cóc'], ['🐱 Cat', '🐱 Chú mèo']] },
       { text: ['I give fresh milk and say moo.', 'Cho sữa ngọt và kêu moo moo.'], answer: 1, options: [['🐶 Dog', '🐶 Cún con'], ['🐮 Cow', '🐮 Bò sữa'], ['🐔 Hen', '🐔 Gà mái']] },
@@ -207,6 +209,7 @@ register({
     // (levels) more words to choose from: 3 on Easy, 4 Medium, 5 Hard and Talent (Talent: words only, no pictures); the extra
     // ones are the things from the other rounds
     const many = lv(api, 3, 4, 5, 5);
+    api.stage.dataset.lv = [rounds, many, api.talent ? 0 : 1].join(',');   // (v1.07 levels) rounds, words, pictures on them
     const sets = [
       { action: 0, choices: [['🏃 Run', '🏃 Chạy'], ['🪑 Chair', '🪑 Cái ghế'], ['🌳 Tree', '🌳 Cái cây']] },
       { action: 1, choices: [['🍎 Apple', '🍎 Quả táo'], ['🏊 Swim', '🏊 Bơi'], ['🏠 House', '🏠 Ngôi nhà']] },
@@ -254,6 +257,7 @@ register({
       'Mèo con ở đâu: trong hộp, trên bàn, hay dưới gầm giường?');
     const rounds = lv(api, 3, 4, 5, 5);   // (levels) more rounds from Medium; Talent: the in, on and under buttons change places each round
     api.dots(rounds, 0);
+    api.stage.dataset.lv = [rounds, api.talent ? 'mixed' : 'fixed'].join(',');   // (v1.07 levels) rounds, button order
     const wrap = el('div', 'w2-board'); api.stage.appendChild(wrap);
     const stage = el('div', 'w2-stage'); wrap.appendChild(stage);
     // (owner, 29 Oct 2026 AEDT audit) the question said the answer ("The cat is IN the box"): now a picture shows where

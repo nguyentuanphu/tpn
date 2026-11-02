@@ -32,6 +32,8 @@ register({
     api.onCleanup(() => { playback++; playingTune = false; });
     const refreshPlayback = () => { const b = api.stage.querySelector('.mc-row button:nth-child(2)'); if (b) b.disabled = !tune.length || playingTune; };
     api.dots(0, 0);
+    // (v1.07 levels) a free music pad with nothing to get right: one setting at every level (8 pads, record up to 40 notes)
+    api.stage.dataset.lv = '8,40,free';
     const draw = () => {
       const I = INSTRUMENTS[inst];
       api.stage.innerHTML = '';

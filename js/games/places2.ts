@@ -27,17 +27,22 @@ function style() {
 const ODD: string[][] = [['Toy car', 'Ô tô đồ chơi'], ['Bicycle', 'Xe đạp'], ['Coin', 'Đồng xu'], ['Trash can', 'Thùng rác'], ['Umbrella', 'Cái ô'], ['Pillow', 'Cái gối']];
 const SEEN = ['🏛️', '🌸', '🛤️', '🌊', '🚉', '💡', '⛵', '🎟️', '🎶', '🚙', '🦘', '🪨', '🌌', '🍉', '🍍', '🍜', '🎫', '🧳', '🛫', '🏞️', '📮', '📬'];
 async function runPlaceRounds(api: any, icon: string, prompt: [string, string], qs: Array<{ show: string; desc: [string, string]; choices: string[][]; answer: number | 'any' }>, done: [string, string]) {
-  const smart = api.little ? 0 : Math.max(0, Math.min(3, api.smart || 0)), odd = [0, 1, 2, 2][smart], recall = smart >= 2;
-  api.stage.dataset.lv = [odd, recall ? (api.talent ? 'first' : 'seen') : ''].join(',');
+  // (v1.07 levels) a trip of free choices only (Cyclo Ride) has no wrong answer to add, so its "which one did you see?" starts
+  // at Medium instead of Hard, with one more picture to choose from on Hard; Talent always has four pictures (a short trip had only three)
+  const free = qs.every(q => q.answer === 'any');
+  const smart = api.little ? 0 : Math.max(0, Math.min(3, api.smart || 0)), odd = [0, 1, 2, 2][smart], recall = smart >= 2 || (free && smart >= 1);
   // the questions as the child plays them: a silly extra answer or two where one answer is right
   qs = qs.map(q => q.answer === 'any' || !odd ? q : { ...q, choices: q.choices.concat([...ODD].sort(() => Math.random() - .5).filter(o => !q.choices.some(c => c[0] === o[0])).slice(0, odd)) });
   // Hard: "which one did you see on this trip?"; Talent: "which one did you see first?" (pictures to choose from)
   if (recall) {
     const trip = [...new Set(qs.map(q => q.show))], others = SEEN.filter(p => !trip.includes(p)).sort(() => Math.random() - .5);
     const right = api.talent ? trip[0] : trip[Math.floor(Math.random() * trip.length)];
-    const pics = api.talent ? trip.slice(0, 3).concat(others.slice(0, 1)) : [right].concat(others.slice(0, 2));
+    const pics = api.talent ? trip.slice(0, 3).concat(others.slice(0, Math.max(1, 4 - Math.min(3, trip.length)))) : [right].concat(others.slice(0, free && smart >= 2 ? 3 : 2));
     qs = qs.concat([{ show: icon, desc: api.talent ? ['Which one did you see first?', 'Con đã thấy hình nào đầu tiên?'] : ['Which one did you see on this trip?', 'Con đã thấy hình nào trong chuyến đi này?'], choices: pics.map(p => [p, p]), answer: pics.indexOf(right) }]);
   }
+  // (v1.07 levels) the level numbers on the stage: silly extra answers really added, the last question (seen / first), and
+  // the number of questions and the pictures to choose from in that last question
+  api.stage.dataset.lv = [free ? 0 : odd, recall ? (api.talent ? 'first' : 'seen') : '', qs.length, recall ? qs[qs.length - 1].choices.length : 0].join(',');
   style(); api.say(prompt[0], prompt[1]); api.dots(qs.length, 0);
   const wrap = el('div', 'pl2-board'), stage = el('div', 'pl2-stage'), controls = el('div', 'pl2-controls');
   api.stage.appendChild(wrap); wrap.append(stage, controls);

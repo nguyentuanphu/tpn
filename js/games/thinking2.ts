@@ -7,7 +7,7 @@ import { pic } from '../art.js';
 type ChessPuzzle = { piece: string; pieceEn: string; pieceVi: string; from: number; target: number; blocked: number[]; screen?: boolean; decoy?: [string, number] };
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value
-const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
 type SeatPuzzle = { person: string; personEn: string; personVi: string; seat: number; clueEn: string; clueVi: string };
 type PipeCell = { kind: string; turns: number; want: number };
 
@@ -83,6 +83,8 @@ async function runMiniChess(api) {
   const { board, cells } = makeBoard();
   wrap.append(title, round, prompt, board, status);
   api.stage.appendChild(wrap);
+  // (v1.07 levels) puzzles, second blue piece that cannot take (1/0), green ring round the target (1/0)
+  api.stage.dataset.lv = [puzzles.length, api.smart >= 2 && !api.little ? 1 : 0, api.talent ? 0 : 1].join(',');
   api.say('Choose the blue piece, then capture the red piece.', 'Chọn quân xanh, rồi bắt quân đỏ nhé.');
 
   let target: HTMLButtonElement | null = null;
@@ -147,6 +149,8 @@ async function runCoTuong(api) {
   const { board, cells } = makeBoard();
   wrap.append(title, round, prompt, board, status);
   api.stage.appendChild(wrap);
+  // (v1.07 levels) puzzles, second blue piece that cannot take (1/0), green ring round the general (1/0)
+  api.stage.dataset.lv = [puzzles.length, api.smart >= 2 && !api.little ? 1 : 0, api.talent ? 0 : 1].join(',');
   api.say('Find the Chinese chess piece, then take the red general.', 'Tìm quân cờ tướng, rồi bắt tướng đỏ nhé.');
 
   let target: HTMLButtonElement | null = null;
@@ -213,6 +217,8 @@ async function runWhoSits(api) {
   const seats = el('div', 'tk2-seats');
   wrap.append(title, round, prompt, cards, seats, status);
   api.stage.appendChild(wrap);
+  // (v1.07 levels) friends to seat, mixed order (1/0), words on the chairs (1/0)
+  api.stage.dataset.lv = [puzzles.length, api.smart >= 2 && !api.little ? 1 : 0, api.talent ? 0 : 1].join(',');
   api.say('Read the picture clue. Pick a friend, then choose their chair.', 'Nhìn gợi ý bằng hình. Chọn bạn, rồi chọn ghế của bạn ấy nhé.');
 
   // (owner, 29 Oct 2026 AEDT audit) pictures, not the letters T, R and C; and the chairs stand in a new order each game
@@ -310,6 +316,8 @@ async function runPipes(api) {
   const grid = el('div', 'tk2-pipes');
   wrap.append(title, round, prompt, grid, status);
   api.stage.appendChild(wrap);
+  // (v1.07 levels) boards, path pipes start turned wrong (0 no, 1 random, 3 three turns away)
+  api.stage.dataset.lv = [rounds.length, api.smart >= 2 && !api.little ? (api.talent ? 3 : 1) : 0].join(',');
   api.say('Turn the pipes until water can reach the end.', 'Xoay các ống nước để nước chảy đến cuối đường nhé.');
 
   let target: HTMLButtonElement | null = null;

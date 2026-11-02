@@ -8306,6 +8306,8 @@ await check('r87ui', async () => (await import('./r87-ui.mts')).r87UiCheck(b));
 // (v1.07 family-code) make a family code on a phone, join it on a tablet, restore a wiped computer from the tablet's
 // Save a copy and leave again, with made-up families only (tests/family-code-journey.mts)
 await check('familycodejourney', async () => (await import('./family-code-journey.mts')).familyCodeJourneyCheck(b));
+// (v1.07 levels) every game at Easy, Medium, Hard and Talent, and as an under-5: the levels differ (tests/levels-all.mts)
+await check('levelsall', async () => (await import('./levels-all.mts')).levelsAllCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

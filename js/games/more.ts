@@ -13,13 +13,17 @@ import { shuffle, pick, el, wait, esc } from '../util.js';
 const THINGS = ['🍎', '⭐', '🐟', '🌸', '🎈', '🐞', '🍓', '🚗'];
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value
-const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
+// (v1.07 levels) the numbers a game uses for its level, on its stage (data-lv) for the checks
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 
 // ---------- More or Less? ----------
 register({
   id: 'moreless', icon: '⚖️', name: () => T('More or Less?', 'Nhiều Hơn hay Ít Hơn?'),
   async run(api) {
     const rounds = 5, max = [5, 6, 8, 10, 12][api.level - 1];
+    // (v1.07 levels) most things on a side, "less" questions too (1) or only "more" (0), biggest gap between the sides (0: any)
+    mark(api, api.talent ? 16 : max, api.level <= 1 ? 0 : 1, api.talent ? 2 : 0);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       let a = 1 + Math.floor(Math.random() * max), b = 1 + Math.floor(Math.random() * max); if (a === b) b = a === max ? a - 1 : a + 1;
@@ -43,9 +47,12 @@ register({
   async run(api) {
     const rounds = 5;
     api.say('Seven days make a week. Which day comes next?', 'Bảy ngày là một tuần. Ngày nào đến tiếp theo?');
+    // (v1.07 levels) day cards, yesterday questions (1) or only tomorrow (0), today lit on the strip (1) or not (0)
+    mark(api, 1 + lv(api, 2, 2, 3, 4), !api.little && (api.level >= 3 || api.smart >= 1) ? 1 : 0, api.talent ? 0 : 1);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const k = Math.floor(Math.random() * 7), nxt = (k + 1) % 7, before = api.level >= 3 && r % 2;
+      // (v1.07 levels) Medium was the same as Easy: "what was yesterday?" now comes from Medium (was Hard)
+      const k = Math.floor(Math.random() * 7), nxt = (k + 1) % 7, before = !api.little && (api.level >= 3 || api.smart >= 1) && r % 2;
       // (levels) more days to choose from on Hard and Talent; Talent: today is not lit up on the strip
       const want = before ? (k + 6) % 7 : nxt;
       const strip = el('div', 'daystrip', DAYS.map((d, i) => `<span class="${i === k && !api.talent ? 'on' : ''}">${T(d[0], d[1])}</span>`).join(''));
@@ -69,6 +76,8 @@ register({
   id: 'bodyparts', icon: '🧒', name: () => T('My Body', 'Cơ Thể Của Em'),
   async run(api) {
     const rounds = 5, pool = shuffle(BODY).slice(0, rounds);
+    // (v1.07 levels) picture cards, "what do we use to...?" questions (0 never, 1 every other, 2 always)
+    mark(api, 1 + (api.little ? 2 : lv(api, 3, 3, 4, 5)), api.talent ? 2 : api.level >= 2 ? 1 : 0);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const [, en, vi] = pool[r], useIt = api.talent || api.level >= 2 && r % 2;   // (levels) Talent: always "what do we use to…"; more to choose from
@@ -91,6 +100,8 @@ register({
     // (levels) more wins to reach from Hard; the friend lets you win every 3rd round on Easy, every 4th on Medium, never on
     // Hard; on Talent it watches which hand you show most and plays the hand that beats it half the time
     const need = api.little ? 2 : lv(api, 3, 3, 4, 5), gift = lv(api, 3, 4, 0, 0), shown = [0, 0, 0]; let wins = 0, round = 0;
+    // (v1.07 levels) wins to reach, the friend loses on purpose every so many rounds (0 never, 1 always), friend reads your hands
+    mark(api, need, api.little ? 1 : gift, api.talent ? 1 : 0);
     api.say('Oẳn tù tì, ra cái gì, ra cái này! Rock beats scissors, scissors beat paper, paper beats rock.', 'Oẳn tù tì, ra cái gì, ra cái này! Búa thắng kéo, kéo thắng bao, bao thắng búa.');
     while (wins < need && !api.closed) {
       api.dots(need, wins); api.stage.innerHTML = '';
@@ -151,7 +162,9 @@ async function rpsOnline(api) {
 register({
   id: 'eggs', icon: '🥚', name: () => T('Egg Hunt', 'Nhặt Trứng'),
   async run(api) {
-    const rounds = 3;
+    const rounds = 3, base = (api.little ? 2 : 3) + (api.talent ? 2 : 0);
+    // (v1.07 levels) hay spots, fewest and most eggs in the first field
+    mark(api, api.talent ? 16 : 12, base, base + api.level);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       // (levels) Talent: a bigger field of hay (16 spots) with more eggs hidden in it
@@ -182,6 +195,7 @@ register({
   id: 'sudoku', icon: '🧩', name: () => T('Picture Sudoku', 'Sudoku Hình'),
   async run(api) {
     const rounds = 2, n = api.little || api.level <= 1 ? 3 : 4, holes = n === 3 ? 3 : api.talent ? 10 : [4, 5, 6, 7, 8][api.level - 1];   // (levels) Talent: ten empty squares
+    mark(api, n, holes);   // (v1.07 levels) board size, empty squares
     api.say('Each picture once in every row and every column. Tap an empty square, then the picture that fits.', 'Mỗi hình chỉ một lần trong mỗi hàng và mỗi cột. Chạm ô trống, rồi chọn hình hợp.');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
@@ -211,6 +225,8 @@ register({
   async run(api) {
     const rounds = 3, throws = api.little ? 99 : api.talent ? 3 : [6, 5, 5, 4, 4][api.level - 1];   // (levels) Talent: 3 throws, a faster arrow, a smaller target
     api.say('Stack the cans, then throw your sandal! Tap THROW when the arrow points at the cans.', 'Chồng lon lên, rồi ném dép! Bấm NÉM khi mũi tên chỉ đúng chồng lon nhé.');
+    // (v1.07 levels) throws per stack (99: as many as needed), arrow speed, target width
+    mark(api, throws, api.little ? .35 : +(.45 + api.level * .12 + (api.talent ? .2 : 0)).toFixed(2), api.little ? .2 : api.talent ? .065 : [.16, .13, .11, .09, .08][api.level - 1]);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const n = [3, 6, 6][r], yard = el('div', 'nl-yard'), stack = el('div', 'nl-stack'), aim = el('div', 'nl-aim', '⬆️'), sandal = el('div', 'nl-sandal', '🩴');

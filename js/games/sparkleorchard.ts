@@ -4,7 +4,7 @@ import { T } from '../i18n.js';
 import { reduceMotion } from '../state.js';
 import { testerArcadeAvailable } from '../content/tester-arcades.js';
 import { ArcadeSession, controlsArcadeTurn } from './arcade-session.js';
-import { orchardStart, orchardStop, orchardSymbol, orchardSessionTier } from './parade-engine.js';
+import { orchardStart, orchardStop, orchardSymbol, orchardSessionTier, ORCHARD_MISSION } from './parade-engine.js';
 import { ARCADE_STYLE, RING_CELLS, art, control, dom } from './arcade-board.js';
 import type { GameOnline } from './frame.js';
 // A static bilingual pair keeps the completion line visible to voice inventory tooling.
@@ -18,8 +18,12 @@ async function run(api:OrchardApi){
  const mine=()=>!!session&&controlsArcadeTurn(session.state.turn,session.mine,!!session.online,helper);
  const active=()=>!!session&&!session.state.complete&&!session.waiting&&mine();
  function stop(){if(!active())return;if(session!.submit(position))api.sfx.tap();}
+ // (v1.07 levels) the level numbers on the stage: tier, mission pictures, light step in ms, free picture after 3 misses or not;
+ // written as soon as the game opens (the solo tier) and again when play starts (online uses the shared tier)
+ const lvOf=(tier:number)=>[tier,ORCHARD_MISSION[tier],tier===0?1300:Math.max(500,1100-tier*150),tier<4?'help':'nohelp'].join(',');
+ if(!api.online)api.stage.dataset.lv=lvOf(api.talent?4:orchardSessionTier(api.tier()));
  // (owner, 1 Nov 2026 AEDT) Talent plays tier 4 on this device: six pictures, the fastest light and no free picture after misses
- function start(seats:number,npc:boolean){helper=npc;const tier=!api.online&&api.talent?4:orchardSessionTier(api.tier(),api.online?(api.level??1):undefined);api.stage.dataset.lv=String(tier);session=new ArcadeSession(orchardStart(api.online?.seed||`orchard-${Date.now()}`,seats,tier),api.online,orchardStop,paint);api.say('Find the mission pictures. Stop the light!', 'Tìm tranh trong nhiệm vụ. Dừng đèn nhé!');paint();}
+ function start(seats:number,npc:boolean){helper=npc;const tier=!api.online&&api.talent?4:orchardSessionTier(api.tier(),api.online?(api.level??1):undefined);api.stage.dataset.lv=lvOf(tier);session=new ArcadeSession(orchardStart(api.online?.seed||`orchard-${Date.now()}`,seats,tier),api.online,orchardStop,paint);api.say('Find the mission pictures. Stop the light!', 'Tìm tranh trong nhiệm vụ. Dừng đèn nhé!');paint();}
  function paint(){
   if(dead||!session)return;const s=session.state;const keepFocus=root.contains(document.activeElement)||document.activeElement===document.body;root.replaceChildren();root.dataset.mode=session.online?'online':helper?'npc':s.seats>1?'local':'solo';root.dataset.moves=String(s.moves);
   root.append(dom('h2','',T('Our orchard mission','Nhiệm vụ vườn quả')));

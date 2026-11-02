@@ -26,6 +26,7 @@ function style() {
 .rd2-big { font-size: 64px; line-height: 1.1; text-align: center; }
 .rd2-desc { font: 800 22px/1.35 var(--font, sans-serif); color: #402c57; max-width: 360px; }
 .rd2-word { font: 900 34px var(--font, sans-serif); color: #3b6fe0; letter-spacing: 4px; }
+.rd2-btn.hint { border-color: #f5b301; box-shadow: 0 0 18px #f5b301; }
 `));
 }
 
@@ -36,6 +37,12 @@ type Pair = [string, string];
 type Choice = { label: Pair; pic?: string };
 type Round = { show?: string; word?: string; desc: Pair; choices: Choice[]; answer: number | 'any' };
 const one = (s: string): Pair => [s, s];
+// (v1.07 levels) each level changes how many rounds there are, how many wrong words stand beside the right one, and
+// after how many misses the right button glows (0: never). Under-5s play like Easy (and the frame's own hint helps them).
+type Lv = { rounds: number; others: number; hintAfter: number };
+const lvOf = (api: any): Lv => { const k = api.little ? 0 : 1 + Math.max(0, Math.min(3, api.smart | 0)); return { rounds: [3, 3, 3, 4, 5][k], others: [1, 1, 2, 2, 3][k], hintAfter: [1, 1, 2, 0, 0][k] }; };
+// keep the right choice and as many wrong ones as the level allows (the right one is then first; buttons are mixed later)
+const trim = (q: Round, others: number): Round => q.answer === 'any' ? q : { ...q, choices: [q.choices[q.answer], ...q.choices.filter((_, i) => i !== q.answer).slice(0, others)], answer: 0 };
 
 function keep(api: any, png: string) {
   for (const p of api.players || []) {
@@ -46,7 +53,10 @@ function keep(api: any, png: string) {
   saveProfiles();
 }
 
-async function runReadingRounds(api: any, prompt: Pair, qs: Round[], done: Pair) {
+async function runReadingRounds(api: any, prompt: Pair, list: Round[], done: Pair) {
+  const L = lvOf(api), qs = list.map(q => trim(q, L.others)), free = qs.every(q => q.answer === 'any');
+  // (v1.07 levels) the real values this game uses: rounds, buttons per round, misses before the glow (free: no right answer)
+  api.stage.dataset.lv = [qs.length, Math.max(...qs.map(q => q.choices.length)), free ? 'free' : L.hintAfter].join(',');
   style(); api.say(prompt[0], prompt[1]); api.dots(qs.length, 0);
   const wrap = el('div', 'rd2-board'), stage = el('div', 'rd2-stage'), controls = el('div', 'rd2-controls');
   api.stage.appendChild(wrap); wrap.append(stage, controls);
@@ -64,6 +74,9 @@ async function runReadingRounds(api: any, prompt: Pair, qs: Round[], done: Pair)
     mix(btns).forEach(b => controls.appendChild(b));
     const target = q.answer === 'any' ? btns[0] : btns[q.answer];
     api.plan(() => target, { maxActions: 6 });
+    // (v1.07 levels) Easy and Medium: after enough wrong taps the right button glows; Hard and Talent never help
+    let missed = 0;
+    if (L.hintAfter && q.answer !== 'any') btns.forEach(b => { if (b !== target) b.addEventListener('click', () => { if (++missed >= L.hintAfter) target.classList.add('hint'); }); });
     const clicked = await untilRight(api, btns, (e: HTMLElement) => q.answer === 'any' || e === target);
     if (!clicked || api.closed) return null;
     api.sfx.ding();
@@ -75,9 +88,9 @@ async function runReadingRounds(api: any, prompt: Pair, qs: Round[], done: Pair)
   return api.win({ title: T(done[0], done[1]) });
 }
 // pick n rounds from a bank, each with its right answer and two others from the bank
-function fromBank<V extends { word: string; pic: string }>(bank: V[], n: number, make: (v: V, choices: Choice[]) => Round) {
-  return mix(bank).slice(0, n).map(v => {
-    const others = mix(bank.filter(o => o !== v)).slice(0, 2);
+function fromBank<V extends { word: string; pic: string }>(bank: V[], L: Lv, make: (v: V, choices: Choice[]) => Round) {
+  return mix(bank).slice(0, L.rounds).map(v => {
+    const others = mix(bank.filter(o => o !== v)).slice(0, L.others);
     return make(v, [v, ...others].map(o => ({ label: one(o.word), pic: o.pic })));
   });
 }
@@ -91,7 +104,7 @@ register({
       ? [{ word: 'cá', pic: '🐟', parts: 'c - á' }, { word: 'gà', pic: '🐔', parts: 'g - à' }, { word: 'bò', pic: '🐮', parts: 'b - ò' }, { word: 'mèo', pic: '🐱', parts: 'm - è - o' }, { word: 'hoa', pic: '🌸', parts: 'h - o - a' }]
       : [{ word: 'cat', pic: '🐱', parts: 'c - a - t' }, { word: 'sun', pic: '☀️', parts: 's - u - n' }, { word: 'pig', pic: '🐷', parts: 'p - i - g' }, { word: 'dog', pic: '🐶', parts: 'd - o - g' }, { word: 'hat', pic: '🎩', parts: 'h - a - t' }];
     return runReadingRounds(api, ['Listen to the sounds and blend them into a word!', 'Nghe các âm rồi ghép thành một từ nhé!'],
-      fromBank(bank, 3, (v, choices) => ({ word: v.parts, desc: ['Blend the sounds. Which picture is it?', 'Ghép các âm lại. Đó là hình nào?'], choices, answer: 0 })),
+      fromBank(bank, lvOf(api), (v, choices) => ({ word: v.parts, desc: ['Blend the sounds. Which picture is it?', 'Ghép các âm lại. Đó là hình nào?'], choices, answer: 0 })),
       ['Sounds blended into words!', 'Con ghép âm thành từ thật giỏi!']);
   }
 });
@@ -117,10 +130,10 @@ register({
     const pairs = isVi()
       ? [[{ word: 'cá', pic: '🐟' }, { word: 'lá', pic: '🍃' }], [{ word: 'mèo', pic: '🐱' }, { word: 'kẹo', pic: '🍬' }], [{ word: 'hoa', pic: '🌸' }, { word: 'loa', pic: '📢' }], [{ word: 'trăng', pic: '🌙' }, { word: 'răng', pic: '🦷' }], [{ word: 'cây', pic: '🌳' }, { word: 'mây', pic: '☁️' }]]
       : [[{ word: 'cat', pic: '🐱' }, { word: 'hat', pic: '🎩' }], [{ word: 'moon', pic: '🌙' }, { word: 'spoon', pic: '🥄' }], [{ word: 'star', pic: '⭐' }, { word: 'car', pic: '🚗' }], [{ word: 'goat', pic: '🐐' }, { word: 'boat', pic: '⛵' }], [{ word: 'frog', pic: '🐸' }, { word: 'dog', pic: '🐶' }], [{ word: 'bee', pic: '🐝' }, { word: 'tree', pic: '🌳' }]];
-    const picked = mix(pairs).slice(0, 3);
+    const L = lvOf(api), picked = mix(pairs).slice(0, L.rounds);
     return runReadingRounds(api, ['Find the word that ends with the same sound!', 'Tìm từ có cùng vần nhé!'],
       picked.map(([a, b]) => {
-        const others = mix(pairs.filter(p => p[0] !== a)).slice(0, 2).map(p => p[0]);
+        const others = mix(pairs.filter(p => p[0] !== a)).slice(0, L.others).map(p => p[0]);
         return { show: a.pic, word: a.word, desc: [`Which word rhymes with "${a.word}"?`, `Từ nào cùng vần với "${a.word}"?`] as Pair, choices: [b, ...others].map(o => ({ label: one(o.word), pic: o.pic })), answer: 0 };
       }),
       ['Wonderful rhyming friends!', 'Các từ cùng vần thật ăn ý!']);
@@ -137,7 +150,7 @@ register({
       : [{ word: 'sunflower', pic: '🌻' }, { word: 'rainbow', pic: '🌈' }, { word: 'jellyfish', pic: '🪼' }, { word: 'cupcake', pic: '🧁' }, { word: 'football', pic: '⚽' }, { word: 'snowman', pic: '⛄' }];
     const split = (w: string) => isVi() ? w.replace(' ', ' + ') : ({ sunflower: 'sun + flower', rainbow: 'rain + bow', jellyfish: 'jelly + fish', cupcake: 'cup + cake', football: 'foot + ball', snowman: 'snow + man' })[w];
     return runReadingRounds(api, ['Join two small words to make a new one!', 'Ghép hai từ nhỏ thành một từ mới nào!'],
-      fromBank(bank, 3, (v, choices) => ({ word: split(v.word), desc: ['Put the two words together. What do they make?', 'Ghép hai từ lại. Thành từ gì?'], choices, answer: 0 })),
+      fromBank(bank, lvOf(api), (v, choices) => ({ word: split(v.word), desc: ['Put the two words together. What do they make?', 'Ghép hai từ lại. Thành từ gì?'], choices, answer: 0 })),
       ['Two words joined together!', 'Ghép từ thật chuẩn xác!']);
   }
 });
@@ -149,8 +162,8 @@ register({
   run: api => {
     const bank: [string, Pair][] = [['🍎', ['apple', 'quả táo']], ['🍌', ['banana', 'quả chuối']], ['🍊', ['orange', 'quả cam']], ['🏠', ['house', 'ngôi nhà']], ['🌳', ['tree', 'cái cây']], ['⛵', ['boat', 'chiếc thuyền']], ['🚂', ['train', 'tàu hỏa']], ['🚗', ['car', 'ô tô']], ['✈️', ['plane', 'máy bay']]];
     return runReadingRounds(api, ['Read the words and find the right name for the picture!', 'Đọc chữ và tìm đúng tên cho bức tranh nhé!'],
-      mix(bank).slice(0, 3).map(([p, name]) => ({ show: p, desc: ['Which word is this picture?', 'Bức tranh này là chữ nào?'] as Pair,
-        choices: [name, ...mix(bank.filter(b => b[1] !== name)).slice(0, 2).map(b => b[1])].map(label => ({ label })), answer: 0 })),
+      mix(bank).slice(0, lvOf(api).rounds).map(([p, name]) => ({ show: p, desc: ['Which word is this picture?', 'Bức tranh này là chữ nào?'] as Pair,
+        choices: [name, ...mix(bank.filter(b => b[1] !== name)).slice(0, lvOf(api).others).map(b => b[1])].map(label => ({ label })), answer: 0 })),
       ['Every picture has its label!', 'Tranh nào cũng có tên thật đẹp!']);
   }
 });
@@ -162,8 +175,8 @@ register({
   run: api => {
     const bank: [string, Pair][] = [['🛑', ['STOP', 'DỪNG LẠI']], ['🚸', ['SCHOOL CROSSING', 'TRẺ EM QUA ĐƯỜNG']], ['🚏', ['BUS STOP', 'TRẠM XE BUÝT']], ['🏫', ['SCHOOL', 'TRƯỜNG HỌC']], ['📚', ['LIBRARY', 'THƯ VIỆN']]];
     return runReadingRounds(api, ['Read the town signs so we stay safe!', 'Đọc biển báo trên phố để luôn an toàn nhé!'],
-      mix(bank).slice(0, 3).map(([p, words]) => ({ show: p, desc: ['What does this sign say?', 'Biển này ghi chữ gì?'] as Pair,
-        choices: [words, ...mix(bank.filter(b => b[1] !== words)).slice(0, 2).map(b => b[1])].map(label => ({ label })), answer: 0 })),
+      mix(bank).slice(0, lvOf(api).rounds).map(([p, words]) => ({ show: p, desc: ['What does this sign say?', 'Biển này ghi chữ gì?'] as Pair,
+        choices: [words, ...mix(bank.filter(b => b[1] !== words)).slice(0, lvOf(api).others).map(b => b[1])].map(label => ({ label })), answer: 0 })),
       ['You read the town signs so well!', 'Con đọc biển báo trên phố rất giỏi!']);
   }
 });
@@ -178,7 +191,7 @@ register({
       { desc: ['WHERE do we go to slide and swing?', 'Ở ĐÂU có xích đu và cầu trượt?'], choices: [{ label: ['the park', 'công viên'], pic: '🏞️' }, { label: ['a pillow', 'cái gối'], pic: '🛏️' }, { label: ['a doctor', 'bác sĩ'], pic: '🩺' }], answer: 0 },
       { desc: ['WHAT falls from rain clouds?', 'CÁI GÌ rơi xuống từ đám mây mưa?'], choices: [{ label: ['raindrops', 'hạt mưa'], pic: '💧' }, { label: ['stones', 'hòn đá'], pic: '🪨' }, { label: ['bread', 'bánh mì'], pic: '🍞' }], answer: 0 },
       { desc: ['WHERE do fish live?', 'Cá sống Ở ĐÂU?'], choices: [{ label: ['in the water', 'dưới nước'], pic: '💧' }, { label: ['a teacher', 'cô giáo'], pic: '🏫' }, { label: ['a spoon', 'cái thìa'], pic: '🥄' }], answer: 0 },
-    ]).slice(0, 3),
+    ]).slice(0, lvOf(api).rounds),
     ['You know Who, What and Where!', 'Con hiểu rõ Ai, Cái gì, Ở đâu rồi!'])
 });
 
@@ -190,7 +203,7 @@ register({
     const things: [string, string, string, string][] = [['🐱', 'cat', 'cats', 'con mèo'], ['🌸', 'flower', 'flowers', 'bông hoa'], ['⭐', 'star', 'stars', 'ngôi sao'], ['🐶', 'dog', 'dogs', 'con chó'], ['🍎', 'apple', 'apples', 'quả táo']];
     const words = ['', 'one', 'two', 'three', 'four'], so = ['', 'một', 'hai', 'ba', 'bốn'];
     return runReadingRounds(api, ['Read the words that match the picture: one, or many?', 'Đọc chữ hợp với bức tranh: một, hay nhiều?'],
-      mix(things).slice(0, 3).map(([p, a, many, vi], i) => {
+      mix(things).slice(0, lvOf(api).rounds).map(([p, a, many, vi], i) => {
         const n = i === 1 ? 1 : 2 + Math.floor(Math.random() * 3), m = n === 1 ? 2 + Math.floor(Math.random() * 3) : 1;
         const label = (k: number): Pair => [`${words[k]} ${k === 1 ? a : many}`, `${so[k]} ${vi}`];
         return { word: pic(p).repeat(n), desc: ['Which words match the picture?', 'Chữ nào hợp với bức tranh?'] as Pair, choices: [{ label: label(n) }, { label: label(m) }], answer: 0 };
@@ -207,7 +220,7 @@ register({
     // letters that look alike in small form, so the choice needs looking
     const sets = [['B', 'b', 'd', 'p'], ['M', 'm', 'n', 'w'], ['A', 'a', 'o', 'e'], ['G', 'g', 'q', 'y'], ['H', 'h', 'n', 'k'], ['D', 'd', 'b', 'q'], ['E', 'e', 'c', 'a']];
     return runReadingRounds(api, ['Match the big letter with its small letter!', 'Tìm chữ thường đi cùng chữ hoa nhé!'],
-      mix(sets).slice(0, 4).map(([big, ...small]) => ({ word: big, desc: [`Big ${big}. Which is small ${big.toLowerCase()}?`, `Chữ hoa ${big}. Chữ thường nào đi cùng?`] as Pair, choices: small.map(s => ({ label: one(s) })), answer: 0 })),
+      mix(sets).slice(0, lvOf(api).rounds + 1).map(([big, ...small]) => ({ word: big, desc: [`Big ${big}. Which is small ${big.toLowerCase()}?`, `Chữ hoa ${big}. Chữ thường nào đi cùng?`] as Pair, choices: small.map(s => ({ label: one(s) })), answer: 0 })),
       ['Capital and small letters matched!', 'Chữ hoa chữ thường ghép đôi thật khớp!']);
   }
 });
@@ -234,7 +247,7 @@ register({
       ? [['🐱', 'm _ o', 'è', ['a', 'u']], ['🌸', 'h _ a', 'o', ['e', 'i']], ['✏️', 'b _ t', 'ú', ['ô', 'a']], ['⭐', 's _ o', 'a', ['u', 'ê']], ['🐮', 'b _', 'ò', ['à', 'ú']]]
       : [['🐱', 'c _ t', 'a', ['o', 'u']], ['☀️', 's _ n', 'u', ['a', 'i']], ['🐶', 'd _ g', 'o', ['e', 'a']], ['🐷', 'p _ g', 'i', ['o', 'u']], ['🎩', 'h _ t', 'a', ['i', 'e']]];
     return runReadingRounds(api, ['Look at the picture and fill in the missing letter!', 'Nhìn tranh và điền chữ cái còn thiếu nhé!'],
-      mix(bank).slice(0, 3).map(([p, gap, right, others]) => ({ show: p, word: gap, desc: ['Which letter is missing?', 'Thiếu chữ cái nào?'] as Pair, choices: [right, ...others].map(l => ({ label: one(l) })), answer: 0 })),
+      mix(bank).slice(0, lvOf(api).rounds).map(([p, gap, right, others]) => ({ show: p, word: gap, desc: ['Which letter is missing?', 'Thiếu chữ cái nào?'] as Pair, choices: [right, ...others].map(l => ({ label: one(l) })), answer: 0 })),
       ['You found every missing letter!', 'Con tìm đủ mọi chữ cái còn thiếu!']);
   }
 });

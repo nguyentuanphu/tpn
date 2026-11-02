@@ -62,6 +62,8 @@ register({ id: 'vi_tones', learn: true, icon: 'vi:tones', name: () => T('Tone De
   // Hard and Talent all six (Talent also hears words of two syllables)
   const MARKS = [[0, 1, 2], [0, 1, 2], [0, 1, 2, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5]][lv];
   const families = lv <= 1 ? TONE_FAMILIES.slice(1) : TONE_FAMILIES, words = shuffle(TONE_WORDS);
+  // (v1.07 levels) the real values: rounds, marks to choose from (under-5s two of them), words of two syllables
+  api.stage.dataset.lv = [rounds, lv === 0 ? 2 : MARKS.length, lv === 4 ? 1 : 0].join(',');
   const board = el('div', 'tv-board'); api.stage.appendChild(board);
   api.plan(() => null, { maxActions: rounds * 4 });
   for (let r = 0; r < rounds; r++) {
@@ -109,6 +111,8 @@ register({ id: 'vi_build', learn: true, icon: 'vi:build', name: () => T('Build a
   const steps = lv === 0 ? ['onset'] : lv === 1 ? ['onset', 'rhyme'] : ['onset', 'rhyme', 'tone'];
   const [lo, hi] = [[1, 1], [1, 1], [1, 2], [2, 3], [3, 3]][lv];
   const list = shuffle(BUILD_WORDS.filter(w => w[6] >= lo && w[6] <= hi));
+  // (v1.07 levels) the real values: rounds, choices per step, steps to build, word difficulty, word heard first
+  api.stage.dataset.lv = [rounds, nOpts, steps.length, lo + '-' + hi, lv < 4 ? 1 : 0].join(',');
   if (lv === 4) list.sort((a, b) => Number(b[2] === 'k') - Number(a[2] === 'k')); // Talent: the c / k spelling rule comes up
   const board = el('div', 'tv-board'); api.stage.appendChild(board);
   api.plan(() => null, { maxActions: rounds * 8 });
