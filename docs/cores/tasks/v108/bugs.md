@@ -1,3 +1,5 @@
+**ready for Release** (3 Nov 2026, 8:45 am AEDT): branch `work/v108-bugs`, draft PR #800 into `release/v1.08`; full suite left for Release.
+
 # v1.08 helper: bugs (status)
 
 Branch `work/v108-bugs` (from `origin/release/v1.08` at `57f3ef9e`). Started 3 Nov 2026 AEDT. Brief: `bugs-brief.md`.
@@ -93,7 +95,7 @@ card).
 
 ## Progress
 
-- Commit: see the list at the end (filled in when pushed).
+- Commits: `618e4186` (the fix, its unit check, this file), `1441871e` (the two tester checks, check results).
 - Shared files touched: `js/content/tester.ts` (`keyOf`, one line), `tests/unit/tester.test.mts` (new lines in the first test),
   `tests/checks/tester.mts` and `tests/old-bugs.mts` (see the checks below).
 - New spoken lines: none. Nothing a child sees changed.
