@@ -133,6 +133,7 @@ export async function managementHttp(req: Request, me, { reads, service, operati
         }
         return managementJson(result);
       }
+      if (path === 'summary') return managementJson(await reads.summary(q));
       if (path === 'devices') return managementJson(await reads.devices(q, context));
       if (path === 'children') return managementJson(await reads.children(q, context));
       if (path.startsWith('devices/')) {
