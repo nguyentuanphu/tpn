@@ -58,7 +58,7 @@ export function clean(input: unknown, now: number = Date.now()): Hello|null {
     .map(x => ({ d: txt(x.d), build: origin(x), mins: int(x.m, 24 * 60), games: words(x.g, 500), tales: int(x.t, 200), online: int(x.o, 24 * 60), // online: minutes with friends online
       hours: Object.fromEntries(Object.entries(obj(x.h)).filter(([k]) => /^([01]?\d|2[0-3])$/.test(k)).map(([k, v]) => [+k, int(v, 60)])), kids: kids(x.c),
       errs: counts(x.e, 999), stuck: counts(x.s, 999), quits: words(x.q, 500), fps: Array.isArray(x.f) ? [int(x.f[0], 1e6), int(x.f[1], 24 * 60), int(x.f[2], 24 * 60)] : [0, 0, 0],
-      starts: (Array.isArray(x.st) ? x.st : []).filter(a => Array.isArray(a)).slice(0, 6).map(a => [int(a[0], 6e5), int(a[1], 6e5), int(a[2], 6e5), a[3] ? 1 : 0, /^[a-z]{1,16}$/.test(txt(a[4])) ? txt(a[4]) : '', int(a[5], 6e5), int(a[6], 6e5)]),
+      starts: (Array.isArray(x.st) ? x.st : []).filter(a => Array.isArray(a)).slice(0, 6).map(a => [int(a[0], 6e5), int(a[1], 6e5), int(a[2], 6e5), a[3] ? 1 : 0, /^[a-z]{1,16}$/.test(txt(a[4])) ? txt(a[4]) : '', ...(a.length > 5 ? [int(a[5], 6e5), int(a[6], 6e5)] : [])] as Start),
       bat: bat(x.b) } as HelloDay));
   const started = b.started, l = txt(b.l), d = txt(b.d), os = txt(b.os), br = txt(b.br);
   return { id: txt(b.id), hid: /^[a-z0-9]{8,24}$/.test(txt(b.h)) ? txt(b.h) : '', build: WORD.test(txt(b.b)) ? txt(b.b) : '?', sid: /^[a-z0-9]{16}$/.test(txt(b.sid)) ? txt(b.sid) : '',

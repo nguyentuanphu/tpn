@@ -18,6 +18,8 @@ test('start timings are checked: numbers capped, odd rows and step names dropped
   assert.deepEqual(st[2], [6e5, 0, 0, 1, 'world']);          // capped at 10 minutes, nothing negative, any truthy = 1
   // an older device that sends no starts is fine
   assert.deepEqual(clean(body('abcdefghij13', 'phone', undefined), NOW).days[0].starts, []);
+  // (v1.07 startup) a newer row also says when a child could first play and how long they waited after Go, capped the same way
+  assert.deepEqual(clean(body('abcdefghij14', 'phone', [[900, 9000, 9500, 1, 'world', 3200, 9e9]]), NOW).days[0].starts[0], [900, 9000, 9500, 1, 'world', 3200, 6e5]);
 });
 
 test('the report shows each device\'s usual start-up and the median by kind of device', async () => {
@@ -31,4 +33,13 @@ test('the report shows each device\'s usual start-up and the median by kind of d
   assert.equal(dev('computer0003').startup.ready, 5);
   assert.deepEqual(r.startup.tablet, { devices: 2, ready: 22 });
   assert.deepEqual(r.startup.computer, { devices: 1, ready: 5 });
+});
+
+test('(v1.07 startup) the report shows when a child could first play, per device and by kind of device', async () => {
+  const S = mem();
+  await hello(S, body('phone000001a', 'phone', [[900, 9000, 9500, 1, 'world', 3000, 0], [900, 9000, 9500, 1, 'world', 5000, 1200], [900, 9000, 9500, 1, 'world', 4000, 0]]), NOW);
+  await hello(S, body('phone000002b', 'phone', [[900, 11000, 11500, 1, 'roads']]), NOW);
+  const r = await report(S, NOW), dev = id => r.devices.find(d => d.id === id);
+  assert.equal(dev('phone000001a').startup.play, 4); assert.equal(dev('phone000002b').startup.play, undefined);
+  assert.deepEqual(r.startup.phone, { devices: 2, ready: 11, play: 4 });
 });
