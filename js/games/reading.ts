@@ -16,11 +16,15 @@ import { shuffle, pick, el, wait, esc } from '../util.js';
 const stageZoom = (e: Element) => parseFloat(e.closest<HTMLElement>('.gl-stage')?.style.zoom || '') || 1;
 import { READ, nameOf, soundOf, wordsOf, bare, picWords, VI_MARKS } from '../content/reading.js';
 
+// (v1.07 levels) a value for Easy, Medium, Hard and Talent, noted on the frame (data-lvnote); under-5s get Easy's
+const lv = <V,>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
 const lang = () => settings.lang === 'vi' ? 'vi' : 'en';
 // 0: an under-5's version; 1 Easy, 2 Medium, 3 Hard (api.level: the child's level in this game moved by Easy·Medium·Hard)
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") never below the chosen level (Medium 2, Hard and Talent 3); Talent adds
 // each game's own extra (marked "levels" below)
 const tier = api => api.little ? 0 : Math.min(3, Math.max(1, api.level | 0, (api.smart | 0) + 1));
+// (v1.07 levels) each game writes the real numbers its level uses on the stage (data-lv) before the first tap
+const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 const calm = () => document.body.classList.contains('calm') || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 // one game's helpers: say what to do (shown, said, waited for), read a word or sound in the language being read
 function ctx(api) {
@@ -114,6 +118,8 @@ function style() {
 async function trace(api, c) {
   const L = lang(), t = tier(api), letters = READ[L].letters, pool = letters.slice(0, [6, 8, 14, letters.length][t]);
   const rounds = t === 0 ? 3 : 4, list = shuffle(pool).slice(0, rounds);
+  // letters to learn, rounds, share of dots to trace, brush width (share of the lantern)
+  mark(api, pool.length, rounds, api.talent ? .92 : [.55, .75, .8, .85][t], api.talent ? .075 : [.16, .11, .1, .09][t]);
   for (let r = 0; r < rounds; r++) {
     api.dots(rounds, r); api.stage.innerHTML = '';
     const [ch, word, wp] = list[r], big = t === 3 && r % 2 === 1, glyph = big ? ch.toUpperCase() : ch;
@@ -172,6 +178,7 @@ async function trace(api, c) {
 async function sounds(api, c) {
   const L = lang(), t = tier(api), letters = READ[L].letters, pool = letters.slice(0, [6, 6, 12, letters.length][t]);
   const rounds = t === 0 ? 3 : 4, n = api.talent ? 6 : [2, 3, 4, 5][t], list = shuffle(pool).slice(0, rounds);   // (levels) Talent: six fish
+  mark(api, pool.length, rounds, n);   // letters, rounds, fish
   for (let r = 0; r < rounds; r++) {
     api.dots(rounds, r); api.stage.innerHTML = '';
     const target = list[r], opts = shuffle([target, ...shuffle(pool.filter(x => x !== target)).slice(0, n - 1)]);
@@ -206,6 +213,7 @@ function dragTap(tile, slotsEl, onPlace) {
 async function build(api, c) {
   const L = lang(), t = tier(api), lists = READ[L].build, pool = lists[[0, 0, 1, 2][t]], extra = [0, 0, 1, 2][t] + (api.talent ? 1 : 0);   // (levels) Talent: one more spare tile
   const rounds = t === 0 ? 3 : 4, list = shuffle(pool).slice(0, rounds);
+  mark(api, [0, 0, 1, 2][t], rounds, extra, t === 0 ? 'inorder' : 'mixed');   // word list, rounds, spare tiles, tile order
   const allTiles = [...new Set(lists.flat().flatMap(w => w[2]))], starts = [...new Set(lists.flat().map(w => w[2][0]))], ends = [...new Set(lists.flat().map(w => w[2][w[2].length - 1]))];
   for (let r = 0; r < rounds; r++) {
     api.dots(rounds, r); api.stage.innerHTML = '';
@@ -249,6 +257,8 @@ async function build(api, c) {
 async function rhyme(api, c) {
   const L = lang(), t = tier(api), all = READ[L].rhyme, rounds = t === 0 ? 4 : api.talent ? 7 : 5;   // (levels) Talent: seven rounds
   const word = (fam, k) => k ? [fam[3], fam[4]] : [fam[1], fam[2]];
+  // rounds, buttons (2: yes or no), written words shown, pictures on the buttons
+  mark(api, rounds, t <= 1 ? 2 : t === 2 ? 3 : 4, t > 0 ? 1 : 0, t === 3 ? 0 : 1);
   const card = ([w, p], showWord) => `<span class="rd-pic">${pic(p)}</span>${showWord ? `<small>${esc(w)}</small>` : ''}`;
   for (let r = 0; r < rounds; r++) {
     api.dots(rounds, r); api.stage.innerHTML = '';
@@ -285,6 +295,7 @@ const BCOL = ['#ff5f7a', '#5fb6ff', '#5fd36a', '#ffb52e', '#9a6bff', '#ff7eb8'];
 async function sight(api, c) {
   const L = lang(), t = tier(api), lists = READ[L].sight, pool = lists[Math.max(0, t - 1)], n = api.talent ? 6 : [2, 3, 4, 5][t], rounds = 5,   // (levels) Talent: six balloons
     list = shuffle(pool).slice(0, rounds);
+  mark(api, Math.max(0, t - 1), rounds, n, t === 3 ? 2 : 0);   // word list, rounds, balloons, look-alike balloons
   for (let r = 0; r < rounds; r++) {
     api.dots(rounds, r); api.stage.innerHTML = '';
     const w = list[r], same = pool.filter(x => x !== w && x[0].toLowerCase() === w[0].toLowerCase()), opts = shuffle([w, ...shuffle([...shuffle(same).slice(0, t === 3 ? 2 : 0), ...shuffle(pool.filter(x => x !== w))]).filter((x, i, a) => a.indexOf(x) === i).slice(0, n - 1)]);
@@ -310,6 +321,8 @@ const withMark = (base, mark) => { if (!mark) return base; const i = base.search
 async function tones(api, c) {
   const L = lang(), t = tier(api), R = READ[L], rounds = t === 0 ? 4 : api.talent ? 7 : 5;   // (levels) Talent: seven rounds
   let told = false;
+  // rounds, buttons to choose from (under-5s: the pictures of one set), what is asked
+  mark(api, rounds, t === 0 ? 'pics' : L === 'vi' ? [3, 4, 6][t - 1] : [2, 3, 4][t - 1], t === 0 ? 'picture' : L === 'vi' && t === 3 ? 'mark' : 'word');
   for (let r = 0; r < rounds; r++) {
     api.dots(rounds, r); api.stage.innerHTML = '';
     if (t === 0) {
@@ -350,6 +363,7 @@ async function tones(api, c) {
 async function syllable(api, c) {
   const L = lang(), t = tier(api), all = READ[L].syl, max = [2, 2, 3, 4][t], pool = all.filter(x => x[2].length <= max), rounds = api.talent ? 6 : 4;   // (levels) Talent: six words, written word hidden
   const list = shuffle(pool).slice(0, rounds);
+  mark(api, max, rounds, t > 0 && !api.talent ? 1 : 0, t === 0 ? 'any' : 'exact');   // most beats, rounds, word shown, count checked
   for (let r = 0; r < rounds; r++) {
     api.dots(rounds, r); api.stage.innerHTML = '';
     const [wp, word, parts] = list[r];
@@ -386,6 +400,7 @@ async function syllable(api, c) {
 // ---------- 8. Word and Picture: read a word and tap its picture (Hard: the other way round) (5 to 8) ----------
 async function match(api, c) {
   const L = lang(), t = tier(api), all = picWords(L), rounds = 5, n = api.talent ? 6 : [2, 3, 4, 4][t], list = shuffle(all).slice(0, rounds);   // (levels) Talent: six to choose from
+  mark(api, rounds, n, t === 3 ? 'word' : 'picture', t === 3 ? 2 : 0, t === 0 ? 'said' : 'ear');   // rounds, choices, what is tapped, look-alikes, word said
   for (let r = 0; r < rounds; r++) {
     api.dots(rounds, r); api.stage.innerHTML = '';
     const target = list[r], others = shuffle(all.filter(x => x !== target && x[1] !== target[1])), near = others.filter(x => x[0][0] === target[0][0] || x[0].length === target[0].length);
@@ -417,6 +432,7 @@ async function lightRead(api, c, btns, text) {
 }
 async function sentence(api, c) {
   const L = lang(), t = tier(api), pool = READ[L].sent[Math.max(0, t - 1)], rounds = api.talent ? 4 : 3, list = shuffle(pool).slice(0, rounds);
+  mark(api, Math.max(0, t - 1), rounds, t === 0 ? 'inorder' : 'mixed', t === 0 ? 'said' : 'silent');   // sentence list, rounds, carriage order, sentence said first
   for (let r = 0; r < rounds; r++) {
     api.dots(rounds, r); api.stage.innerHTML = '';
     const [sp, text] = list[r], words = wordsOf(text);
@@ -453,6 +469,10 @@ type Book = { icon: string; title: string; pages: [string, string][]; q: string;
 // ---------- 10. Read With Me: a little book read aloud, each word lighting up; then one question ----------
 async function readalong(api, c) {
   const L = lang(), t = tier(api), books = READ[L].books as Book[];
+  // (v1.07 levels) the last question: Easy two answers, Medium three, Hard and Talent written words only (no pictures),
+  // Talent also reads the question itself (the ear says it again); under-5s keep three pictures, said aloud
+  const nAns = api.little ? 3 : lv(api, 2, 3, 3, 3), pics = api.little ? 1 : lv(api, 1, 1, 0, 0), sayQ = api.little ? 1 : lv(api, 1, 1, 1, 0);
+  mark(api, nAns, pics, sayQ);   // answers, pictures on them, question read aloud
   api.stage.innerHTML = '';
   // choose a book (its cover: a picture and its name, which is read when tapped)
   await c.say('Let’s read together! Choose a book.', 'Cùng đọc nhé! Chọn một quyển truyện.'); if (api.closed) return;
@@ -479,8 +499,8 @@ async function readalong(api, c) {
   // the question, answered with a picture
   api.dots(steps, B.pages.length); api.stage.innerHTML = '';
   const q = el('div', 'rd-card', `<b class="rd-word">${esc(B.q)}</b>`); q.appendChild(ear(api, () => c.read(B.q))); api.stage.appendChild(q);
-  await c.read(B.q); if (api.closed) return;
-  const btns = choiceButtons(api, shuffle(B.answers), ([p, w]) => `<span class="rd-pic">${pic(p)}</span>${t > 0 ? `<small>${esc(w)}</small>` : ''}`, 'choice rd-opt');
+  if (sayQ) await c.read(B.q); if (api.closed) return;
+  const btns = choiceButtons(api, shuffle(B.answers.slice(0, nAns)), ([p, w]) => pics ? `<span class="rd-pic">${pic(p)}</span>${t > 0 ? `<small>${esc(w)}</small>` : ''}` : `<span class="rd-word">${esc(w)}</span>`, 'choice rd-opt' + (pics ? '' : ' txt'));
   if (!await untilRight(api, btns, e => e._v === B.answers[0])) return;
   await c.read(B.answers[0][1]);
   api.dots(steps, steps); return api.win();
@@ -489,6 +509,7 @@ async function readalong(api, c) {
 // Guided listening: each round introduces a spoken word, then the child finds its picture.
 async function listenTouch(api, c) {
   const pool = picWords(lang()), rounds = api.talent ? 6 : 4;   // (levels) Talent: six rounds of five pictures
+  mark(api, rounds, api.little ? 2 : api.talent ? 5 : Math.min(4, tier(api) + 1), api.little ? 0 : 1);   // rounds, pictures, word written
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return; api.dots(rounds, r); api.stage.innerHTML = '';
     const options = shuffle(pool).slice(0, api.little ? 2 : api.talent ? 5 : Math.min(4, tier(api) + 1)), target = options[0];
@@ -507,10 +528,15 @@ const STORY_CHOICES = [
 ];
 async function storyChoice(api, c) {
   const stories = shuffle(STORY_CHOICES);
+  // (v1.07 levels) Easy two pictures, Medium three, Hard three and the story told once (no ear), Talent also a fourth
+  // picture (the answer to another story, so it has to be listened for); under-5s keep two pictures and the ear
+  const n = api.little ? 2 : lv(api, 2, 3, 3, 4), again = api.little ? 1 : lv(api, 1, 1, 0, 0);
+  mark(api, stories.length, n, again);   // rounds, pictures, ear to hear again
   for (let r = 0; r < stories.length; r++) { if (api.closed) return; api.dots(stories.length, r); api.stage.innerHTML = ''; const [en,vi,right,options] = stories[r];
-    // (levels) Talent: the story is told once (no ear to hear it again)
-    const listen = ear(api, () => c.say(en, vi)); if (!api.talent) api.stage.appendChild(listen); await c.say(en, vi); if (api.closed) return;
-    const buttons = choiceButtons(api, shuffle(options.slice(0, api.little ? 2 : 3)), p => pic(p), 'choice rd-option'); await untilRight(api, buttons, b => b._v === right); if (api.closed) return; api.praise();
+    // (levels) Hard and Talent: the story is told once (no ear to hear it again)
+    const listen = ear(api, () => c.say(en, vi)); if (again) api.stage.appendChild(listen); await c.say(en, vi); if (api.closed) return;
+    const decoys = shuffle(STORY_CHOICES.map(x => x[2] as string).filter(x => !options.includes(x)));
+    const buttons = choiceButtons(api, shuffle([...options.slice(0, Math.min(3, n)), ...decoys].slice(0, n)), p => pic(p), 'choice rd-option'); await untilRight(api, buttons, b => b._v === right); if (api.closed) return; api.praise();
   } return api.win();
 }
 const RUN = { rd_listentouch: listenTouch, rd_storychoice: storyChoice, rd_trace: trace, rd_sounds: sounds, rd_build: build, rd_rhyme: rhyme, rd_sight: sight, rd_tones: tones, rd_syllable: syllable, rd_match: match, rd_sentence: sentence, rd_readalong: readalong };

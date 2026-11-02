@@ -46,6 +46,8 @@ register({ id: 'rulefinder', icon: '🧩', learn: true, name: () => T('Find the 
   // Hard keeps one colour or "can fly" rule in every game, so it really is harder than Medium
   // (r79 learning, I2) the rule this child missed most comes first
   const hardOne = start === 3 ? pick(RULES.filter(r => r.from === 3), 1)[0] : null;
+  // (v1.07 levels) rounds, examples shown and choices in the first round, a colour or flying rule kept in (1/0)
+  api.stage.dataset.lv = [rounds, [2, 2, 3, 3][start] + (api.talent ? 1 : 0), [2, 3, 3, 4][start] + (api.talent ? 1 : 0), hardOne ? 1 : 0].join(',');
   const order = api.favour ? api.favour(shuffle(RULES), r => r.id) : shuffle(RULES), used = new Set<(typeof RULES)[number]>();
   for (let round = 0; round < rounds; round++) {
     if (api.closed) return; api.dots(rounds, round); api.stage.innerHTML = '';
@@ -88,6 +90,8 @@ const STORIES = [
 register({ id: 'gardenorder', icon: '🌱', learn: true, name: () => T('Garden Steps', 'Các Bước Làm Vườn'), async run(api) {
   const start = tier(api), rounds = start === 0 ? 1 : api.talent ? 4 : start === 3 ? 3 : 2;   // (levels) Talent: four stories with three stray pictures
   // (r79 learning, I2) the story this child missed most comes first (stories are known by their first step's words)
+  // (v1.07 levels) stories, steps per story, stray pictures in the first story
+  api.stage.dataset.lv = [rounds, start === 0 ? 3 : 4, [1, 1, 2, 2][start] + (api.talent ? 1 : 0)].join(',');
   const stories = api.favour ? api.favour(pick(STORIES, STORIES.length), s => s[0][1]).slice(0, rounds) : pick(STORIES, rounds);
   for (let round = 0; round < rounds; round++) {
     if (api.closed) return; api.stage.innerHTML = '';
@@ -150,6 +154,7 @@ function branches(size, route, nb, want) {
 register({ id: 'steppingpath', icon: '🗺️', learn: true, name: () => T('Flower Path', 'Đường Hoa'), async run(api) {
   const level = tier(api), size = api.talent ? 5 : [3, 4, 4, 5][level], want = api.talent ? 5 : [0, 0, 2, 3][level];   // (levels) Talent: the 5 x 5 field with more dead ends
   // some winding paths leave no room for a dead end: draw another until Medium and Hard have at least one
+  api.stage.dataset.lv = [size, want].join(',');   // (v1.07 levels) field size, dead-end flower branches wanted
   let route, nb, decoys;
   for (let k = 0; k < 60; k++) { ({ route, nb } = makePath(size)); decoys = branches(size, route, nb, want); if (decoys.length >= Math.min(want, 2)) break; }
   const grid = el('div', 'think-path'); grid.style.cssText = `display:grid;grid-template-columns:repeat(${size},minmax(64px,1fr));gap:8px;max-width:${size > 4 ? 400 : 460}px;margin:auto`;

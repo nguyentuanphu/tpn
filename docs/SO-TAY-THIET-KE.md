@@ -377,3 +377,13 @@ Enforcement status: specification approved; automated coverage and physical-devi
 ## Website, parent reports and game consistency (owner, 23 October 2026 AEDT)
 
 [Binding website/game rules](website-review-20261023/WEBSITE-RULES.md) and [exact Release handoff](website-review-20261023/RELEASE-HANDOFF.md): four main destinations, full EN/VI details, shared game art/fonts/tokens and one release source with regeneration/review gate. Explain existing parent controls and child reports without exposing saves or inventing educational scores. Keep Website on Welcome; move the in-play HUD Home entry into Settings and lift the quest bar only where measured geometry permits. The design branch has no runtime changes; Release must integrate, test and obtain release approval.
+
+
+## Game levels: every game has all four (PROPOSED, v1.07 levels helper, 2 November 2026 AEDT; for the owner to confirm)
+
+Status: proposed, not yet confirmed by the owner. Until the owner confirms it, treat it as the target for new work.
+
+- **LV-001 PROPOSED - Four levels.** A new game joins Play only when Easy, Medium, Hard and Talent each play differently, in something the child can see or feel: more choices, a bigger board, faster speed, less time, fewer helper hints, a smarter computer player, more rounds. Easy and Talent never play the same; at least three of the four levels differ.
+- **LV-002 PROPOSED - Gentle under-5s.** Under-5s always play the gentlest settings (the Easy values), cannot lose, and never see Talent (owner, 1 Nov 2026 AEDT).
+- **LV-003 PROPOSED - Written down and checked.** The game writes the numbers it uses for its level on its stage as `data-lv` (for example `api.stage.dataset.lv = [choices, size, speedMs].join(',')`), using `api.smart` (0 Easy, 1 Medium, 2 Hard, 3 Talent; 0 for under-5s), `api.talent` and `api.tier()` from `js/games/frame.ts`. Its row in [the level tables](levels/README.md) says what each level changes. The check `levelsall` opens every game at all four levels and fails a game whose levels are the same.
+- **LV-004 PROPOSED - Exceptions are named.** Free-play pads with no goal (drawing, music pads) may keep one setting; they are listed with the reason in `levelsall` and in the level tables.

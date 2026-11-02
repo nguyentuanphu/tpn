@@ -5,7 +5,7 @@ import { pic } from '../art.js';
 import { reduceMotion } from '../state.js';
 import { events } from '../core/events.js';
 import { ParadeSession } from './fruitparade-session.js';
-import { laneSymbol, randomStream, symbolDef } from './fruitparade-engine.js';
+import { laneSymbol, randomStream, symbolDef, paradeConfig } from './fruitparade-engine.js';
 import type { ParadeRound } from './fruitparade-engine.js';
 import { PARADE_STYLE } from './fruitparade-style.js';
 import { paradeInput } from './fruitparade-input.js';
@@ -38,11 +38,16 @@ async function run(api: ParadeApi) {
   const tick = (r: ParadeRound, seat: number, lane: number) => Math.min(1800, Math.round((clocks.get(keyOf(seat, lane)) || 0) / r.config.interval));
   const button = (text: string, action: string, cls = '') => { const b = node('button', cls, text);b.type = 'button';b.dataset.paradeAction = action;return b; };
   const schedulePaint = () => { if (queued || dead) return;queued = true;queueMicrotask(() => { queued = false;if (!dead) paint(); }); };
+  // (v1.07 levels) the level numbers on the stage: tier, lane step in ms, pictures to find per player, rounds, kinds of
+  // picture on the lanes, helper on or off;
+  // written as soon as the game opens (the solo tier) and again when play starts (online uses the shared tier)
+  const lvOf = (tier: number) => { const c = paradeConfig(tier); return [c.tier, c.interval, c.quota, c.rounds, c.pool.length, c.assist ? 'assist' : ''].join(','); };
+  if (!api.online) api.stage.dataset.lv = lvOf(api.talent ? 4 : api.tier());
   function start(seats: number, withHelper: boolean) {
     helper = withHelper;api.say('Find the pictures. Stop in the middle.', 'Tìm tranh. Dừng ở giữa nhé.');
     const online = api.online;
     // (owner, 1 Nov 2026 AEDT) Talent plays tier 4 on this device (the fastest lanes); with friends the shared tier stays 0 to 3
-    const tier = !online && api.talent ? 4 : api.tier(); api.stage.dataset.lv = String(tier);
+    const tier = !online && api.talent ? 4 : api.tier(); api.stage.dataset.lv = lvOf(tier);
     session = new ParadeSession({ seed: online?.seed || `parade-${Date.now()}`, tier, seats,
       channel: online ? { mine: online.mine, seats, seed: online.seed || 'parade', send: (n, value) => online.move(n, value),
         listen: fn => online.onMove?.(fn), read: (n, seat) => online.next?.(n, seat) || Promise.resolve(undefined),

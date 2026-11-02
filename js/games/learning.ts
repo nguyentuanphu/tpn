@@ -11,7 +11,7 @@ const FRUIT = ['🍎', '🍌', '🍓', '🍊', '🥭', '🍐', '🍇', '🥝'];
 const vi = () => settings.lang === 'vi';
 // (owner, 1 Nov 2026 AEDT: "the levels often look the same") the value for the chosen level: Easy, Medium, Hard, Talent
 // (Talent defaults to Hard); under-5s always get the Easy value
-const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => api.little ? e : [e, m, h, t][api.smart || 0] ?? e;
+const lv = <V>(api, e: V, m: V, h: V, t: V = h): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
 
 // ---------- What's the time? (a clock face with moving hands) ----------
 function clockSVG(h, m) {
@@ -27,6 +27,7 @@ register({
   id: 'clock', learn: true, icon: '🕒', name: () => T("What's the Time?", 'Mấy Giờ Rồi?'),
   async run(api) {
     const rounds = 4, mins = api.level <= 1 ? [0] : api.level === 2 ? [0, 30] : [0, 15, 30, 45];
+    api.stage.dataset.lv = [rounds, mins.join('/'), api.talent ? 0 : 1].join(',');   // (v1.07 levels) rounds, minutes asked, words under the times
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const h = 1 + Math.floor(Math.random() * 12), m = pick(mins);
@@ -49,6 +50,7 @@ register({
   id: 'sums', learn: true, icon: '➕', name: () => T('Add It Up', 'Cộng Trừ Vui'),
   async run(api) {
     const rounds = 5, max = api.talent ? 30 : [5, 8, 10, 15, 20][Math.min(4, api.level - 1)];   // (levels) Talent: numbers up to 30, four answers
+    api.stage.dataset.lv = [rounds, max, api.level >= 3 ? 1 : 0].join(',');   // (v1.07 levels) rounds, biggest number, take-away rounds
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const take = api.level >= 3 && r % 2 === 1, fr = pick(FRUIT);
@@ -79,6 +81,7 @@ register({
   async run(api) {
     // (levels) more rounds and more answers from Medium up; Talent: the answers show only their words, no pictures
     const rounds = lv(api, 5, 6, 7, 8), list = shuffle(OPP).slice(0, rounds);
+    api.stage.dataset.lv = [rounds, api.talent ? 0 : 1].join(',');   // (v1.07 levels) rounds, pictures on the answers
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       const o = list[r], flip = Math.random() < .5, [ia, ea, va, ib, eb, vb] = flip ? [o[3], o[4], o[5], o[0], o[1], o[2]] : o;
@@ -101,6 +104,9 @@ register({
   id: 'animalsounds', learn: true, icon: '👂', name: () => T('Who Says That?', 'Con Gì Kêu Thế?'),
   async run(api) {
     const rounds = 5, list = shuffle(VOICES).slice(0, rounds);
+    // (v1.07 levels) the other animals beside the right one, picked before the sounds load so the level is on the frame at once
+    const extra = lv(api, api.level <= 1 ? 1 : 2, 2, 3, 5);   // (levels) up to six animals on Talent
+    api.stage.dataset.lv = [rounds, extra + 1].join(',');   // rounds, animals to choose from
     api.onCleanup(hush);
     const speak = (en: string, vi: string) => {
       api.show(en, vi);const text=T(en,vi);spoken.forEach(f=>{try{f(text);}catch{}});return sayAsync(en,vi);
@@ -122,7 +128,7 @@ register({
       let stopCall = () => {}; api.onCleanup(() => stopCall());
       const hear = () => { stopCall(); stopCall = animalCall(snd); }; play.onclick = hear;
       play.disabled=true;await speak('Listen! Which animal makes this sound?', 'Nghe nè! Con vật nào kêu như vậy?'); if (api.closed) return;play.disabled=false;hear();
-      const opts = shuffle([list[r], ...shuffle(VOICES.filter(v => v !== list[r])).slice(0, lv(api, api.level <= 1 ? 1 : 2, 2, 3, 5))]);   // (levels) up to six animals on Talent
+      const opts = shuffle([list[r], ...shuffle(VOICES.filter(v => v !== list[r])).slice(0, extra)]);
       const btns = choiceButtons(api, opts, ([, i, e, v]) => `<span class="big">${i}</span><small>${T(e, v)}</small>`);
       const ok = await untilRight(api, btns, e => e._v[0] === snd); if (!ok) return;
       stopCall();play.disabled=true;await speak(`Yes! The ${en}!`, `Đúng rồi! Là ${vn}!`); if (api.closed) return;play.disabled=false;hear(); await wait(Math.max(2, animalRecording(snd)?.duration || 0) * 1000 + 200); stopCall();

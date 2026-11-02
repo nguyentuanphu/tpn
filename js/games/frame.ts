@@ -120,6 +120,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitSoon); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
     let closed = false, winning = false;
     const prevMusic = Music.key; Music.play(GAME_MUSIC[id] || 'think');
+    const lvNotes = new Map<string, string>();
     const api = {
       stage, level, difficulty: levelPick?.value || 'easy', players, two: players.length > 1, partnerName, T, el, online,
       little,   // under-5 mode: everything gentle, nobody can lose
@@ -128,7 +129,10 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
       // computer players and timers; talent is the hardest level (level 5 and a game's own extra challenge)
       smart: little ? 0 : ({ easy: 0, medium: 1, hard: 2, talent: 3 })[levelPick?.value || 'easy'] ?? 0,
       talent: !little && levelPick?.value === 'talent',
-      say: (en, vi) => { setHelp(en, vi, true); say(en, vi); },
+      // (v1.07 levels) a game notes each level setting it picks (the four choices and the one used), so the check levelsall
+      // can compare the levels: the used values are on the layer as data-lvnote; games also write their own data-lv
+      lvNote: (choices: unknown, used: unknown) => { const k = JSON.stringify(choices) ?? String(choices); if (!lvNotes.has(k)) { lvNotes.set(k, JSON.stringify(used) ?? String(used)); layer.dataset.lvnote = [...lvNotes.values()].join(';'); } },
+      say:(en, vi) => { setHelp(en, vi, true); say(en, vi); },
       // Show text without speaking it.
       show: (en, vi) => { setHelp(en, vi); },
       sfx: SFX, wait,

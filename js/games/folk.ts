@@ -160,6 +160,10 @@ register({
 register({
   id: 'dragon', icon: '🐉', origin: 'vn', name: () => T('Dragon Snake to the Clouds', 'Rồng Rắn Lên Mây'),
   async run(api) {
+    // Talent: the doctor comes more often and faster
+    // (v1.07 levels) worked out and written before the chant starts, so the level is on the frame from the first moment
+    const need = api.little ? 4 : atLevel(api, [5, 6, 7, 8, 9]) + (api.talent ? 2 : 0), ms = api.little ? 4200 : atLevel(api, [3600, 3000, 2500, 2100, 1800]) - (api.talent ? 350 : 0);
+    mark(api, need, ms, api.little ? 1 : 2);
     // Part 1: learn the chant by answering the doctor
     const kids = ['🧒', '👧', '👦', '🧒', '👧', '👦'];
     const scene = el('div', 'dragon', `<div class="dr-doc">🧑‍⚕️<b></b></div><div class="dr-line">${kids.map((k, i) => `<span style="--i:${i}">${i === 0 ? '🐲' : k}</span>`).join('')}</div><div class="dr-say"></div><div class="dr-ans"></div>`);
@@ -185,9 +189,6 @@ register({
     }
     // Part 2: the doctor chases the tail. Tap the doctor to block him!
     ans.innerHTML = ''; docSay.textContent = ''; lineSay.textContent = '';
-    // Talent: the doctor comes more often and faster
-    const need = api.little ? 4 : atLevel(api, [5, 6, 7, 8, 9]) + (api.talent ? 2 : 0), ms = api.little ? 4200 : atLevel(api, [3600, 3000, 2500, 2100, 1800]) - (api.talent ? 350 : 0);
-    mark(api, need, ms);
     api.say('Here comes the doctor! Tap him to protect the tail of the dragon!', 'Thầy thuốc đuổi kìa! Chạm vào thầy thuốc để bảo vệ khúc đuôi nhé!');
     const doc = scene.querySelector('.dr-doc'); doc.classList.add('chase');
     let blocked = 0; api.dots(need, 0);

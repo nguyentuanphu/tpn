@@ -3,6 +3,8 @@ import { T } from '../i18n.js';
 import { runArtPad, paintArt } from './art-pad.js';
 
 // 1. stamps
+// (v1.07 levels) picks one value for the level (under-5, Easy, Medium, Hard, Talent) and notes it on the frame
+const padLv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => { const v = api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))]; api.lvNote?.([little, easy, medium, hard, talent], v); return v; };
 register({
   id: 'stamps', icon: '🥔',
   name: () => T('Potato Stamps', 'In Hình'),
@@ -163,6 +165,8 @@ register({
   run(api) {
     return runArtPad(api, {
       id: 'shadowpic',
+      // (v1.07 levels) a picture with a task: more marks and a finer brush at each level (under-5s and Easy as before)
+      need: padLv(api, 12, 12, 18, 24, 30), brush: padLv(api, 16, 10, 8, 6, 5),
       sayText: ['Trace around shadows to capture secret animal shapes!', 'Vẽ nét quanh chiếc bóng để giữ lại hình các bạn thú nhé!'],
       winTitle: ['Shadow Art Saved!', 'Tranh Bóng Thú Đã Ở Trong Album!'],
       async drawGuide(g, w, h) {
@@ -188,6 +192,8 @@ register({
   run(api) {
     return runArtPad(api, {
       id: 'finishpic',
+      // (v1.07 levels) a picture with a task: more marks and a finer brush at each level (under-5s and Easy as before)
+      need: padLv(api, 12, 12, 18, 24, 30), brush: padLv(api, 16, 10, 8, 6, 5),
       sayText: ['Draw the missing side to complete the happy picture!', 'Vẽ nốt nửa còn thiếu để hoàn thiện bức tranh vui nhé!'],
       winTitle: ['Completed Picture Saved!', 'Bức Tranh Hoàn Chỉnh Đã Ở Trong Album!'],
       async drawGuide(g, w, h) {

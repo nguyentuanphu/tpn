@@ -8303,6 +8303,8 @@ await check('rigidmodels', async () => (await import('./rigid-models.mts')).rigi
 await check('terrainmath', async () => (await import('./terrain-math.mts')).terrainMathCheck());
 await check('renderaudit', async () => (await import('./render-audit.mts')).renderAudit(b));
 await check('r87ui', async () => (await import('./r87-ui.mts')).r87UiCheck(b));
+// (v1.07 levels) every game at Easy, Medium, Hard and Talent, and as an under-5: the levels differ (tests/levels-all.mts)
+await check('levelsall', async () => (await import('./levels-all.mts')).levelsAllCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

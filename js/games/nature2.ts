@@ -7,7 +7,7 @@ import { el, wait, rand } from '../util.js';
 
 // (owner, 1 Nov 2026 AEDT: "the levels often don't change anything") one value per level: under-5s keep the first, big kids
 // get Easy · Medium · Hard · Talent. The values a game uses are on its stage (data-lv) for the checks.
-const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))];
+const lv = <V>(api, little: V, easy: V, medium: V, hard: V, talent: V): V => { const v = api.little ? little : [easy, medium, hard, talent][Math.max(0, Math.min(3, api.smart || 0))]; api.lvNote?.([little, easy, medium, hard, talent], v); return v; };
 const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 // something that swims or drifts to a new place every few moments (0: it stays still)
 const drift = (e: HTMLElement, ms: number, maxTop = 220) => { if (!ms) return 0; e.style.transition = `left ${ms * .6}ms, top ${ms * .6}ms`; return setInterval(() => { e.style.left = rand(20, 260) + 'px'; e.style.top = rand(20, maxTop) + 'px'; }, ms); };
