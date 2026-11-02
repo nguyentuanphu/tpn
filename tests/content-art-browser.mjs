@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import {URL} from './harness.mjs';
 const folder='../docs/studio-content-website-20261029';
 export async function contentArtCheck(browser,options={}){
- const provenance=contentEvidence(browser,['js/games/art-pad.ts', 'js/games/drawing2.ts', 'js/games/crafts.ts', 'js/games/catalog.ts', 'js/content/activities.ts','js/art.ts','css/style.css','js/games/frame.ts','js/state.ts','js/howto-data.ts','js/emojiswap.js']);
+ const provenance=contentEvidence(browser,['js/games/art-pad.ts', 'js/games/drawing2.ts', 'js/games/crafts.ts', 'js/games/catalog.ts', 'js/content/activities.ts','js/art.ts','js/art/howto-tales.ts','js/art/kit.ts','js/art/learning.ts','js/art/lookup.ts','js/art/pad-and-games.ts','js/art/people-food.ts','js/art/r90-audits.ts','js/art/round30.ts','js/art/things-money.ts','css/style.css','js/games/frame.ts','js/state.ts','js/howto-data.ts','js/emojiswap.js']);
  const active=JSON.parse(fs.readFileSync(folder+'/art-audit.json')).filter(r=>r.discovery==='catalogued'&&(!options.ids||options.ids.includes(r.id))),results=[];
  assert.ok(active.length>0,'the intended art checks must execute');
  for(const [lang,w,h,little,level,paired=false] of (options.configurations||[['en',390,844,true,1],['vi',820,1180,true,2],['en',1440,900,false,3],['vi',390,844,false,5],['en',844,390,true,1]])){
