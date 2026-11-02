@@ -161,7 +161,10 @@ export function normalizeProfile(p: Record<string, any>): Profile {
     hearts: 3, staminaMax: 1, orbs: 0, leafies: {}, shrines: {}, towers: {}, discovered: {},
     inv: { apple: 3, rice: 2 }, owned: { hats: ['none'], gliders: [0] },
     stickers: [], levels: {}, wins: {}, quests: {}, tales: {}, taleReads: {}, glider: false, album: [],
-    pos: null, dishes: {}, stats: { games: 0, steps: 0 }
+    pos: null, dishes: {}, stats: { games: 0, steps: 0 },
+    // (v1.07) the passport's stamps start empty here, so the passport (made a little later since v1.07) never has to add
+    // the field to a child's profile by itself
+    stamps: {}
   };
   const o = Object.assign({} as Profile, d, p); // (filled in by the defaults and the save just below)
   if (!o.age) o.age = 'little';
