@@ -25,7 +25,7 @@ Shared files touched: `tests/run.mjs` (one new check at the end) only. Talent st
 
 ## Progress
 
-**PAUSED (2 Nov 2026, about 12:15 pm AEDT) on Release's "slow down" message; waiting for "resume" after 2 pm AEDT.**
+Resumed 2 Nov 2026 about 2:05 pm AEDT on Release's "resume".
 
 Done (committed on `work/v107-levels`, not yet tested in the browser beyond a few games):
 - `js/games/frame.ts`: new `api.lvNote(choices, used)`; the values a game picks are on the layer as `data-lvnote`.
@@ -42,15 +42,29 @@ Done (committed on `work/v107-levels`, not yet tested in the browser beyond a fe
 - Draft level tables from the agents: `docs/levels/draft/g1..g7-*.md` (not yet merged into `docs/levels/`).
 - A trial on 8 games (pattern, counting, caro, jigsaw, finishpic, cyclo, coinnote, danhdao) passed.
 
+Checks (2 Nov 2026, about 2:40 pm AEDT, commit d67bbe81):
+- `levelsall` on every game, one page: PASS, 214 games, 25 exempt with reasons, 792 s locally.
+- `node suite.mjs --changed` picks the full suite (tests/levels-all.mts is shared test code), so it runs on GitHub:
+  full-suite.yml run 41382885760 started by workflow_dispatch on work/v107-levels (result below when done).
+- Local quick checks: arch, bilingual, rules, noemoji, preload PASS; `types` skipped and `unit` failed only because
+  this machine lacks the `pg` and `typescript` packages (not related to this branch; GitHub installs them).
+- Screenshots looked at, phone 390 x 844, tablet 820 x 1180, computer 1366 x 768: jigsaw 5 x 5, oddone 7 pictures,
+  rd_rhyme 4 choices (Talent), finishpic 30 marks (Talent), cyclo (Hard). All tidy on phone and tablet.
+  Found, not caused by this branch (the first Cyclo question did not change): on the computer screen the Cyclo Ride
+  answer buttons sit below the bottom edge (1366 x 768). For Release / Kid UI.
+
+Owner's decisions:
+- familyquiz is exempt from levelsall (the family writes the questions): assumed, owner can change.
+- Talent stays hidden for under-5s (owner, 1 Nov 2026 AEDT).
+
 Open points:
-- `familyquiz`: the family writes the questions; no level values. Decide: exempt, or gentle at Easy/Medium and classic
-  at Hard/Talent (only two levels; touches familyquiz-core.ts). Recommended: exempt.
-- Timing: one page took about 6.5 s per game (about 25 min for all games). Three pages side by side were SLOWER on this
-  machine (93 s for 9 games); go back to one page if the next run confirms it.
+- Games that pick values from `api.level` (folk, money, market, some thinking games): a child who climbs inside the
+  Easy band (level 2) plays like a fresh Medium child. The check opens fresh children, so it cannot see this. Later work.
+- Rules LV-001 to LV-004 in the design handbook are proposed; the owner confirms.
 - An earlier probe saw the page close (crash) around the games after `danhdao`; the check now replaces a crashed page
   and names the game.
 
-## Exact next step (on "resume")
+## Next steps (done 1 to 3)
 
 1. `node tools/build.mts`, then `git checkout content/management-catalogue.json` (the build rewrites it), start
    `python3 -m http.server 8765`, and run `levelsall` on all games once (one page; runner in the scratchpad or
