@@ -5,14 +5,13 @@ Owner, 2 Nov 2026 AEDT: sent `owner-concept.png` (Lumi, star gardener: leaf hair
 - The model is made by script, so every change can be repeated: `tools/blender/lumi.py` (shared helpers in `tools/blender/svkit.py`). Blender 4.2 LTS runs headless:
   - `blender -b -P tools/blender/lumi.py -- <out dir> chibi render faces` for the chibi Lumi of the concept;
   - `blender -b -P tools/blender/lumi.py -- <out dir> tall render faces` for Lumi in Finn and Flora's proportions (about 5 heads tall);
-  - add `quick` for small, fast test pictures; `python3 tools/blender/lumi-sheet.py <out dir> sheet.png` puts them on one page beside the concept.
+  - `blender -b -P tools/blender/lumi.py -- <out dir> <lumi|finn|flora> game render faces anim glb` for the friends at the game's size, with the skeleton, the moves and a `.glb` for the game (the current look, owner, 3 Nov);
+  - add `quick` for small, fast test pictures; `python3 tools/blender/lumi-sheet.py <out dir> sheet.png [lumi finn flora] --style game` puts them on one page beside the concepts.
 - The pictures are Cycles renders, not the game.
 
 ## Try 4 (v1.08, part A, 3 Nov 2026 AEDT)
 
-- `try4-sheet.png`: the concept, then both versions from four sides and with three faces.
-- `try4-chibi-*.png`: front, three-quarter, side, back, face-happy, face-curious, face-surprised.
-- `try4-tall-*.png`: the same for the tall Lumi.
+- `try4-chibi-*.png`: the chibi Lumi the owner preferred (front, three-quarter, side, back, face-happy, face-curious, face-surprised), before the eyes were made smaller. The tall version stays in the script (`tall`); it was not chosen.
 - Changed since try 3:
   - A fringe of leaves over the forehead, the tips just above the brows, so the forehead looks small.
   - Fuller cheeks and a soft round chin (the head is shaped; the face parts sit on the real skin, found by casting rays).
@@ -27,3 +26,17 @@ Owner, 2 Nov 2026 AEDT: sent `owner-concept.png` (Lumi, star gardener: leaf hair
 - Still to do (not in this round):
   - Hand poses for the faces (finger on the chin for curious, hands on the cheeks for surprised) and a walking pose.
   - A skeleton for the game's animation, a lighter version for phones, a glTF export and loading it in the game (parked by the owner, 3 Nov).
+
+## Try 5: the game's size, a skeleton and moves (v1.08, 3 Nov 2026 AEDT)
+
+The owner, 3 Nov: "I prefer the shorter chibi version but make the face more balance as the eyes are too big, you can try finn flora theo tỷ lệ này", then "Make sure them all can express emotions, đi uyển chuyển và movement tất cả mọi thứ phải như thật và bằng với kích thước người của những nhân vật khác trong game. Ráng làm cho chỉn chu thêm hơn nữa là mặt bớt tròn và mắt bớt to cho ba con". Pop-up answer: "Blender + file first": models, moves and a `.glb` now; loading them in the game is for Release or a later round.
+
+- Size: the game's people (`js/avatar.ts`): about 1.6 tall, head centre 1.33, hips 0.6, knees about 0.33, shoulders (0.2, 0.97), so about 3 heads tall (style `game`).
+- Faces: less round (a longer head and a narrower jaw), smaller eyes (0.165 of the head, the chibi had 0.27), a smaller mouth.
+- Lumi, Finn and Flora share one body and face kit; each has their own hair, clothes and prop (Lumi the star lantern, Finn the glowing compass star and spyglass, Flora the flower staff).
+- Six expressions, each its own face set: smile, blink, happy, curious, surprised, sad (the game's own moods are smile, blink, happy and "o").
+- Skeleton with the game's joint names: `root > torso > head, armL > elbowL, armR > elbowR; root > legL > kneeL, legR > kneeR` (L is the friend's own left). Skin weights are made by the script (`tools/blender/lumi-rig.py`): the head, hair and faces move with `head`, the clothes on the body with `torso`, sleeves and boots with their own arm and leg, the hand props with `elbowL`.
+- Moves, smooth and looping, like the game's own poses: `walk` (legs swing from the hip, the knee bends as the leg comes forward, arms swing against the legs, a small bob and twist), `idle` (breathing, the head looks around), `wave`, `cheer` (a jump with both arms up).
+- `<who>-game.glb` (about 3 to 4 MB each): one skinned mesh for the body, one for the hair and one per face set, the four moves as animations, plain colours. A game shows one face set at a time. About 35k triangles for the body, 20k for the hair, 15k for a face: still heavy next to the game's own people, so a lighter version is one of the next steps.
+- Pictures: `try5-<who>-front/three-quarter/side/back.png`, `try5-<who>-face-<mood>.png`, films `try5-<who>-walk/wave/cheer.gif`, and `try5-sheet.png`.
+- Still to do: load the `.glb` in the game (Release or a later round), a lighter version for phones, hand poses for the moods.

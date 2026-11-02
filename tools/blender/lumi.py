@@ -13,7 +13,7 @@ from mathutils.bvhtree import BVHTree
 from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube, lathe, subsurf, obj_from
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
-FLAGS = ('chibi', 'tall', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora')
+FLAGS = ('chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'anim', 'glb')
 OUT = next((a for a in argv if a not in FLAGS), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
@@ -57,7 +57,14 @@ PETAL = felt('petal', '#fbeee6'); WOOD = felt('wood', '#7a5434', .7, .05)
 FLOWERG = mat('flowerGlow', '#f59ab8', .4, emit=.35); GLOWB = mat('glowBlue', '#bfe6ff', .3, emit=6)
 
 # ---------- proportions ----------
-if TALL:  # Finn and Flora: head about a fifth of the height, a narrower jaw, smaller eyes
+GAME = 'game' in argv
+if GAME:  # the game's people (js/avatar.ts): 1.6 tall, head centre 1.33, hips .6, knees .33, shoulders (.2, .99); a less round face, smaller eyes
+    STYLE = 'game'
+    HC, R = Vector((0, 0, 1.33)), .27
+    P = dict(eye=.165, eyeX=.29, eyeZ=-.08, jaw=.17, cheek=.025, puff=1.0, mouth=.78, head=(.97, .95, 1.06), noseZ=-.3, mouthZ=-.5, blushX=.5, blushZ=-.34)
+    B = dict(legX=.08, rLeg=.052, zAnk=.06, zBoot=.13, zSock=.22, zCuff=.47, zCr=.6, zW=.74, zC=.9, zS=.975, zN=1.06,
+             wH=.16, wC=.155, dep=.8, sh=(.2, 0, .97), el=(.225, -.005, .77), wr=(.235, -.02, .58), rU=.046, rA=.04, boot=(.075, .11), lant=.27, S=1.2, puff=1.45)
+elif TALL:  # Finn and Flora: head about a fifth of the height, a narrower jaw, smaller eyes
     HC, R = Vector((0, 0, 1.12)), .128
     P = dict(eye=.2, eyeX=.33, eyeZ=-.1, jaw=.2, cheek=.03, puff=1.08)
     B = dict(legX=.06, rLeg=.037, zAnk=.05, zBoot=.14, zSock=.235, zCuff=.44, zCr=.57, zW=.69, zC=.84, zS=.915, zN=.99,
@@ -82,7 +89,7 @@ def group(name, build):
 # ---------- head: a smaller forehead (eyes a little higher, the fringe low), fuller cheeks, a soft round chin ----------
 bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=64, v_segments=48, radius=1)
 for v in bm.verts:
-    x, y, z = v.co.x * 1.03, v.co.y * .96, v.co.z * .94
+    hx, hy, hz = P.get('head', (1.03, .96, .94)); x, y, z = v.co.x * hx, v.co.y * hy, v.co.z * hz
     if z < .1:
         k = min(1, (.1 - z) / 1.04)
         x *= 1 + P['cheek'] * math.sin(math.pi * min(1, k * 1.5)) - P['jaw'] * k ** 1.5
@@ -116,16 +123,18 @@ def fline(name, m, pts, radii, out):
 
 # ---------- faces ----------
 def face(expr):
-    E, ez = P['eye'], P['eyeZ']
+    """one face set: smile, blink, happy, curious, surprised, sad (the game's own moods are smile, blink, happy and "o")"""
+    E, ez, M = P['eye'], P['eyeZ'], P.get('mouth', 1.0)
     for s in (-1, 1):
         ex = s * P['eyeX']
-        if expr == 'happy':  # closed, smiling eyes
-            arc = [(ex + math.cos(a) * E * .9, ez - .05 + math.sin(a) * E * .62) for a in lin(.08 * math.pi, .92 * math.pi, 13)]
-            fline('happyEye', LASH, arc, [.012] + [.026] * 11 + [.012], .02)
+        if expr in ('happy', 'blink'):  # closed eyes: smiling arcs, or soft lids for a blink
+            if expr == 'happy': arc = [(ex + math.cos(a) * E * .9, ez - .05 + math.sin(a) * E * .62) for a in lin(.08 * math.pi, .92 * math.pi, 13)]
+            else: arc = [(ex + math.cos(a) * E * .95, ez - .02 - math.sin(a) * E * .3) for a in lin(.06 * math.pi, .94 * math.pi, 13)]
+            fline(expr + 'Eye', LASH, arc, [.012] + [.024] * 11 + [.012], .02)
         else:
-            sx, sy = (1.03, 1.08) if expr == 'surprised' else (1, 1)
+            sx, sy = {'surprised': (1.03, 1.08), 'sad': (1, .9)}.get(expr, (1, 1))
             w, h = E * sx, E * 1.12 * sy
-            lx, lz = (-.4, .35) if expr == 'curious' else (0, 0)
+            lx, lz = {'curious': (-.4, .35), 'sad': (0, -.35)}.get(expr, (0, 0))
             ir = .88 if expr == 'surprised' else 1.0
             decal('eyeWhite', EYEW, ex, ez, w, h, .05)
             ix, iz = ex + lx * w * .25, ez + lz * h * .22 - .04 * h
@@ -134,31 +143,38 @@ def face(expr):
             decal('pupil', PUPIL, ix, iz + .03 * h, w * ir * .4, h * ir * .44, .008, .052)
             decal('shine', SHINE, ix + w * .3, iz + h * .36, w * .19, w * .19, .006, .06)
             decal('shine2', SHINE, ix - w * .32, iz - h * .32, w * .085, w * .085, .005, .058)
-            # a soft brown upper lid, a little heavier at the outer corner, and two small lashes
-            lid = [(ex + math.cos(a) * w * 1.03, ez + math.sin(a) * h * 1.02) for a in lin(.06 * math.pi, .94 * math.pi, 15)]
-            fline('lid', LASH, lid, [.016 + .014 * max(0, math.cos(a) * s) for a in lin(.06 * math.pi, .94 * math.pi, 15)], .05)
+            # a soft brown upper lid, a little heavier at the outer corner, and two small lashes (sad: the lid droops at the outer corner)
+            a0, a1 = (.06, .94)
+            lid = [(ex + math.cos(a) * w * 1.03, ez + math.sin(a) * h * 1.02 - (.25 * h * max(0, math.cos(a) * s) if expr == 'sad' else 0)) for a in lin(a0 * math.pi, a1 * math.pi, 15)]
+            fline('lid', LASH, lid, [.016 + .014 * max(0, math.cos(a) * s) for a in lin(a0 * math.pi, a1 * math.pi, 15)], .05)
             for k in range(2):
-                a0 = (.16 + .14 * k) * math.pi if s > 0 else (.84 - .14 * k) * math.pi
-                p0 = (ex + math.cos(a0) * w, ez + math.sin(a0) * h); p1 = (p0[0] + s * .07, p0[1] + .07 + .02 * k)
+                a = (.16 + .14 * k) * math.pi if s > 0 else (.84 - .14 * k) * math.pi
+                p0 = (ex + math.cos(a) * w, ez + math.sin(a) * h); p1 = (p0[0] + s * .07 * E / .27, p0[1] + (.07 + .02 * k) * E / .27)
                 fline('lash', LASH, [p0, p1], [.011, .004], .05)
-        # soft short brows, raised for surprise, one up for curiosity
-        up = {'surprised': .12, 'happy': .05, 'curious': .1 if s < 0 else .02}.get(expr, .03)
-        bz = ez + E * 1.12 + .07 + up
-        fline('brow', BROW, [(ex - s * .1, bz - .015), (ex - s * .02, bz + .02), (ex + s * .09, bz + .005)], [.016, .024, .013], .02)
-        decal('blush', BLUSH, s * .57, -.33, .17, .1, .012, .004)
-    decal('nose', NOSE, 0, -.3, .035, .025, .025)
+        # soft short brows: raised for surprise, one up for curiosity, tilted up in the middle for sadness
+        up = {'surprised': .12, 'happy': .05, 'curious': .1 if s < 0 else .02, 'sad': .05}.get(expr, .03)
+        bz = ez + E * 1.12 + .07 + up; tilt = .05 if expr == 'sad' else 0
+        fline('brow', BROW, [(ex - s * .1, bz - .015 + tilt), (ex - s * .02, bz + .02), (ex + s * .09, bz + .005 - tilt)], [.016, .024, .013], .02)
+        decal('blush', BLUSH, s * P.get('blushX', .57), P.get('blushZ', -.33), .17 * M, .1 * M, .012, .004)
+    mz = P.get('mouthZ', -.47)
+    decal('nose', NOSE, 0, P.get('noseZ', -.3), .035, .025, .025)
     flat_top = lambda c: setattr(c, 'y', c.y * .15) if c.y > 0 else None
     if expr in ('smile', 'happy'):
-        mw, mh = (.17, .15) if expr == 'smile' else (.2, .17)
-        decal('mouth', MOUTH, 0, -.47, mw, mh, .07, .0, shape=flat_top)
-        decal('tongue', TONGUE, 0, -.47 - mh * .6, mw * .55, mh * .32, .02, .06)
+        mw, mh = (.17 * M, .15 * M) if expr == 'smile' else (.2 * M, .17 * M)
+        decal('mouth', MOUTH, 0, mz, mw, mh, .07, .0, shape=flat_top)
+        decal('tongue', TONGUE, 0, mz - mh * .6, mw * .55, mh * .32, .02, .06)
+    elif expr == 'blink':
+        fline('mouth', MOUTH, [(-.07 * M, mz + .005), (0, mz - .02 * M), (.07 * M, mz + .005)], [.011, .015, .011], .01)
     elif expr == 'curious':
-        fline('mouth', MOUTH, [(-.05, -.49), (-.005, -.505), (.04, -.495)], [.012, .016, .011], .01)
+        fline('mouth', MOUTH, [(-.05 * M, mz - .02), (-.005, mz - .035), (.04 * M, mz - .025)], [.012, .016, .011], .01)
+    elif expr == 'sad':
+        fline('mouth', MOUTH, [(-.07 * M, mz - .04), (0, mz - .015), (.07 * M, mz - .04)], [.011, .015, .011], .01)
     else:  # surprised: a small round "oh"
-        decal('mouth', MOUTH, 0, -.5, .07, .095, .07)
-        decal('tongue', TONGUE, 0, -.55, .04, .03, .03, .035)
+        decal('mouth', MOUTH, 0, mz - .03, .07 * M, .095 * M, .07)
+        decal('tongue', TONGUE, 0, mz - .03 - .055 * M, .04 * M, .03 * M, .03, .035)
 
-FACE_SETS = {e: group('face-' + e, lambda e=e: face(e)) for e in ('smile', 'happy', 'curious', 'surprised')}
+FACES_ALL = ('smile', 'blink', 'happy', 'curious', 'surprised', 'sad')
+FACE_SETS = {e: group('face-' + e, lambda e=e: face(e)) for e in FACES_ALL}
 
 # ---------- leaf hair: puffy felt leaves in overlapping rows, a fringe over the forehead ----------
 def leaf(name, m, L, W, curl=.25, flick=.3, hug=1.0, th=.04, bulge=.25, N=10):
@@ -536,6 +552,10 @@ def body_flora():
 
 group('body', {'lumi': body, 'finn': lambda: body_finn(), 'flora': lambda: body_flora()}[WHO])
 
+RIG = 'anim' in argv or 'glb' in argv
+if RIG:
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-rig.py')).read())
+
 # ---------- studio: cream backdrop, soft warm light, a soft glow on the lantern ----------
 BG = '#f3ead7'
 world = bpy.data.worlds.new('w'); scene.world = world; world.use_nodes = True
@@ -574,6 +594,26 @@ if RENDER:
     for name, az in (('front', 0), ('side', math.pi / 2), ('back', math.pi), ('three-quarter', .6)):
         shoot(name, az, mid + top * .12, dist, mid, (600, 780))
 if FACES:
-    for e in ('happy', 'curious', 'surprised'):
+    for e in FACES_ALL[1:]:
         show_face(e); shoot('face-' + e, .22, HC.z + .1 * R, R * 8.2, HC.z - .02 * R, (640, 640))
     show_face('smile')
+
+def play(name, frames, faces=None, az=.45, res=(420, 560)):
+    """a short film of one move: frames to <out>/<who>-<style>-<name>-####.png, then a GIF beside them"""
+    rig.animation_data.action = ACTIONS[name]; scene.frame_start, scene.frame_end = 1, frames
+    q = .5 if QUICK else 1; scene.render.resolution_x, scene.render.resolution_y = int(res[0] * q), int(res[1] * q); scene.cycles.samples = 12 if QUICK else 32
+    cam.location = (math.sin(az) * dist, -math.cos(az) * dist, mid + top * .12)
+    cam.rotation_euler = (Vector((0, 0, mid)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
+    for f in range(1, frames + 1):
+        scene.frame_set(f); show_face(faces(f) if faces else 'smile')
+        scene.render.filepath = os.path.join(OUT, f'{WHO}-{STYLE}-{name}-{f:04d}.png'); bpy.ops.render.render(write_still=True)
+    os.system(f"convert -delay 4 -loop 0 {OUT}/{WHO}-{STYLE}-{name}-0*.png {OUT}/{WHO}-{STYLE}-{name}.gif")
+if 'anim' in argv:
+    play('walk', 24, lambda f: 'blink' if f in (17, 18) else 'smile')
+    play('wave', 24, lambda f: 'happy')
+    play('cheer', 24, lambda f: 'happy')
+if 'glb' in argv:
+    for col in FACE_SETS.values(): col.hide_viewport = False; col.hide_render = False
+    lighten()
+    bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f'{WHO}-{STYLE}.glb'), export_format='GLB', export_apply=True, export_animations=True,
+                              export_animation_mode='ACTIONS', export_lights=False, export_cameras=False, use_selection=False)
