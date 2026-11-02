@@ -63,6 +63,10 @@ await check('testerreport', async () => {
   if (!await wait(x => x && x.auto === 'noopen' && /no-such-game/.test(x.detail), 9000)) out.push('a game that did not open was not reported');
   await P.page.waitForFunction(() => window.__sv?.tester?.mountedAt && window.__sv.tester.mountedAt() > 0 && performance.now() - window.__sv.tester.mountedAt() > 15200, null, { timeout: 30000 });
   const earlierFreezes = got.filter(x => x && x.auto === 'freeze');
+  // (v1.08 bugs, #780 #781) the test browser draws in software and may already have frozen by itself in the valley; the
+  // device counts another freeze in the same place as the same problem (as the server does), so this one happens under a
+  // window of its own: a new place, a new report
+  await P.page.evaluate(() => { const m = document.createElement('div'); m.className = 'modal tester-freeze-check'; document.body.append(m); });
   await P.page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => { const t = performance.now(); while (performance.now() - t < 2600) { } r(); }))));
   { const fz = await wait(x => x && x.auto === 'freeze' && !earlierFreezes.includes(x), 6000); if (!fz) {
       const state = await P.page.evaluate(() => ({ visibility: document.visibilityState, focus: document.hasFocus(), mountedAt: window.__sv?.tester?.mountedAt?.(), now: performance.now(), queued: JSON.parse(localStorage.getItem('sv2_tester_out') || '[]').map(r => ({ auto: r.auto, detail: r.detail, hasShot: !!r.shot })) }));
@@ -73,6 +77,7 @@ await check('testerreport', async () => {
       const why = scripts.find(m => +m[1] >= 1000) || scripts[scripts.length - 1] || null;
       if (!why || +why[1] < 1000) out.push('the freeze report does not say a long script caused it: ' + (why ? why[0] : 'no note') + '; earlier freeze reports: ' + earlierFreezes.length); }
     fs.writeFileSync('out/tester-freeze-observation.json', JSON.stringify({ earlier: earlierFreezes, all: got.filter(x => x && x.auto === 'freeze') }, null, 2)); }
+  await P.page.evaluate(() => document.querySelector('.tester-freeze-check')?.remove());
   // the ladybird: tap
   await clear(P.page); const n0 = got.length;
   await P.page.evaluate(installReportInputProbe);
