@@ -40,6 +40,7 @@ marketing/source/runvalley.log
 /home/site.js
 /js/ads.js
 /js/adventure.js
+/js/animalhomes.js
 /js/animals.js
 /js/art.js
 /js/asia.js
@@ -53,6 +54,7 @@ marketing/source/runvalley.log
 /js/chat.js
 /js/chatter.js
 /js/chipinfo.js
+/js/cities.js
 /js/claims.js
 /js/commands.js
 /js/companion.js
@@ -128,6 +130,7 @@ marketing/source/runvalley.log
 /js/familydevices.js
 /js/farm.js
 /js/feel.js
+/js/ferry.js
 /js/festdecor.js
 /js/festhunt.js
 /js/festival-live.js
@@ -225,9 +228,12 @@ marketing/source/runvalley.log
 /js/gfx.js
 /js/handpad.js
 /js/hanoi-pack.js
+/js/hawkers.js
 /js/heritage.js
 /js/hoilang.js
 /js/home-decor-models.js
+/js/homes.js
+/js/houses.js
 /js/howto-data.js
 /js/howto-data2.js
 /js/howto-player.js
@@ -266,13 +272,19 @@ marketing/source/runvalley.log
 /js/pets.js
 /js/photos.js
 /js/placebook.js
+/js/places.js
 /js/player.js
 /js/players.js
 /js/plots.js
 /js/popups.js
+/js/powerlines.js
 /js/pricetags.js
 /js/printpage.js
+/js/realworld.js
 /js/recorder.js
+/js/reeds.js
+/js/regions.js
+/js/regionsites.js
 /js/relay.js
 /js/render-recovery.js
 /js/report-outbox.js
@@ -287,6 +299,7 @@ marketing/source/runvalley.log
 /js/seethrough.js
 /js/shop.js
 /js/showcase.js
+/js/signposts.js
 /js/simple.js
 /js/snacks.js
 /js/solids.js
@@ -319,6 +332,7 @@ marketing/source/runvalley.log
 /js/util.js
 /js/validate.js
 /js/vehicles.js
+/js/vendors.js
 /js/villagertalk.js
 /js/viwords.js
 /js/vnfun.js
