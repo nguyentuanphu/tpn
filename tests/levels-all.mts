@@ -12,6 +12,7 @@ const PAD = 'free painting pad (js/games/art-pad.ts): any 12 marks, nothing to g
 export const LEVEL_EXEMPT: Record<string, string> = {
   ...Object.fromEntries(['stamps', 'weave', 'mosaic', 'nonla', 'aodai', 'kitepaint', 'shades', 'scene', 'lacquer', 'scratch', 'bubblepaint',
     'fingerpaint', 'weatherpaint', 'thocam', 'pixelpic', 'fireworks', 'masks', 'makeface', 'gallery', 'leafrub'].map(id => [id, PAD])),
+  familyquiz: 'the family writes the questions and answers; it shows only after a grown-up adds them',
   rd_book: 'make your own book: no right answer',
   music: 'free music pad: play any notes, no goal',
   sparklefruitbar: 'a game of chance with fixed odds and 20 rounds that its rules promise (and online players share)'
@@ -22,8 +23,7 @@ export async function levelsAllCheck(b, only: string[] | null = null) {
   const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, settings: { voice: false } }); await clear(P.page);
   const ids: string[] = (only || await P.page.evaluate(async () => Object.keys((await import('/js/games/frame.js')).GAMES))).filter(id => !LEVEL_EXEMPT[id]);
   const seen: Record<string, Record<string, { sig: string; tier: string; talent: boolean } | null>> = {};
-  // three pages side by side, each taking the next game from the list (one page for a game at a time); a page that
-  // crashes is replaced, and its game is named as not opening instead of stopping the check
+  // one page (three side by side were slower); a page that crashes is replaced, and its game is named as not opening instead of stopping the check
   const queue = ids.slice(), pages = [P], errs: string[] = [];
   const work = async (W) => {
     for (let id = queue.shift(); id; id = queue.shift()) {
@@ -47,8 +47,7 @@ export async function levelsAllCheck(b, only: string[] | null = null) {
       }
     }
   };
-  const more = await Promise.all([1, 2].map(async () => { const W = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, settings: { voice: false } }); await clear(W.page); pages.push(W); return W; }));
-  await Promise.all([P, ...more].map(work));
+  await work(P);
   // the level picker of an under-5: no Talent
   const picker = await P.page.evaluate(async () => {
     const w = t => new Promise(r => setTimeout(r, t)), p = __sv.heroes[0].profile; p.age = 'little'; p.gameDiff = { ...(p.gameDiff || {}), counting: 'easy' };
