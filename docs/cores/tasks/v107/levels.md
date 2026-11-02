@@ -1,5 +1,7 @@
 # v1.07 levels: status
 
+**ready for Release (full suite: Release's combined run)** - 2 Nov 2026, 3:10 pm AEDT. Draft PR #790.
+
 Branch: `work/v107-levels`. Helper "levels" (brief: `levels-brief.md`). Times in AEDT.
 
 ## Plan (written 2 Nov 2026, 11:10 am AEDT; owner's go already given)
@@ -27,7 +29,7 @@ Shared files touched: `tests/run.mjs` (one new check at the end) only. Talent st
 
 Resumed 2 Nov 2026 about 2:05 pm AEDT on Release's "resume".
 
-Done (committed on `work/v107-levels`, not yet tested in the browser beyond a few games):
+Done (committed on `work/v107-levels`):
 - `js/games/frame.ts`: new `api.lvNote(choices, used)`; the values a game picks are on the layer as `data-lvnote`.
 - Every file's `lv(...)` helper now calls `api.lvNote` (19 files), so values picked through it are recorded.
 - Seven sub-agents read every game file and: recorded real level values in `data-lv` where `lv(...)` did not cover
@@ -39,13 +41,12 @@ Done (committed on `work/v107-levels`, not yet tested in the browser beyond a fe
 - `tests/levels-all.mts` + one line in `tests/run.mjs`: the check `levelsall`. Exempt (LV-004): 20 free art pads, `music`,
   `rd_book`, `sparklefruitbar` (game of chance with promised fixed odds).
 - Proposed rules LV-001 to LV-004 added at the end of `docs/SO-TAY-THIET-KE.md`.
-- Draft level tables from the agents: `docs/levels/draft/g1..g7-*.md` (not yet merged into `docs/levels/`).
-- A trial on 8 games (pattern, counting, caro, jigsaw, finishpic, cyclo, coinnote, danhdao) passed.
+- Level tables: `docs/levels/README.md` (linked from docs/README.md). familyquiz also exempt (see Owner's decisions).
 
 Checks (2 Nov 2026, about 2:40 pm AEDT, commit d67bbe81):
 - `levelsall` on every game, one page: PASS, 214 games, 25 exempt with reasons, 792 s locally.
 - `node suite.mjs --changed` picks the full suite (tests/levels-all.mts is shared test code), so it runs on GitHub:
-  full-suite.yml run 41382885760 started by workflow_dispatch on work/v107-levels (result below when done).
+  full-suite.yml run 41382885760 was cancelled by Release (owner, 3:05 pm AEDT: one combined full suite for the round).
 - Local quick checks: arch, bilingual, rules, noemoji, preload PASS; `types` skipped and `unit` failed only because
   this machine lacks the `pg` and `typescript` packages (not related to this branch; GitHub installs them).
 - Screenshots looked at, phone 390 x 844, tablet 820 x 1180, computer 1366 x 768: jigsaw 5 x 5, oddone 7 pictures,
@@ -64,7 +65,7 @@ Open points:
 - An earlier probe saw the page close (crash) around the games after `danhdao`; the check now replaces a crashed page
   and names the game.
 
-## Next steps (done 1 to 3)
+## Steps (all done; step 4's full suite is Release's combined run)
 
 1. `node tools/build.mts`, then `git checkout content/management-catalogue.json` (the build rewrites it), start
    `python3 -m http.server 8765`, and run `levelsall` on all games once (one page; runner in the scratchpad or
