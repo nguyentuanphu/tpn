@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "status": "reviewed-public",
+  "sourceHashes": {
+    "js/games/vietnam2.ts": "f872b1a570105c83bf07daa96fe5e94b37a4a43fb58ccab67e1887fe70466d4e",
+    "js/howto-data.ts": "ada8c3857a187820b6f6e9449539b3d9cbfe21558d84785565e6fff7994f0d81",
+    "js/howto-data2.ts": "cbdf26113a0e8acbd87828843a3133d73cfe03e6da246b4294868d7f54a1617e"
+  },
+  "lines": [
+    {
+      "id": "603d4acb-63929030",
+      "lang": "vi",
+      "text": "Rồi chạm quả bóng để bắt trước khi bóng rơi. Nhặt từng que một, rồi mỗi lượt nhặt nhiều hơn!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "3d97e414-26878850",
+      "lang": "vi",
+      "text": "Chặn một lá bằng lá lớn hơn cùng chất: cơ chặn cơ. Heo (lá 2) chặn được mọi lá khác, và tứ quý chặt được heo.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "16422df75d95178a",
+      "lang": "vi",
+      "text": "Nếu ô kế tiếp có hạt, bốc hết lên rải tiếp. Nếu là ô quan thì hết lượt.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "e13b591d-2dab291e",
+      "lang": "vi",
+      "text": "Chuyển cả tháp sang cột có lá cờ.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data.ts"
+      ]
+    },
+    {
+      "id": "a33cacc6-419b6365",
+      "lang": "vi",
+      "text": "Chơi thật: số ghế luôn ít hơn số người một cái. Ai không có ghế thì ra ngoài, người cuối cùng còn ghế là thắng.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "3eaffd11150b3634",
+      "lang": "vi",
+      "text": "Phủ lên thịt: lại đỗ xanh, rồi gạo nếp.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "ce698f241d95b14d",
+      "lang": "vi",
+      "text": "Đánh đáo: các bạn đứng ở vạch, ném đồng đáo cho trúng các đồng xu.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "9bce0ece-23abdf97",
+      "lang": "vi",
+      "text": "Chạm Ném. Ném trúng hết các mục tiêu!",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "d5b9dd8d-cc8e450",
+      "lang": "vi",
+      "text": "Đường ngắn nhẹ nhàng (cho bé nhỏ và mức Dễ) có hai ngựa mỗi bên: đổ số nào cũng xuất chuồng, và không ai bị đá về.",
+      "area": "world",
+      "part": false,
+      "source": [
+        "js/howto-data2.ts"
+      ]
+    },
+    {
+      "id": "bcdeaef261872264",
+      "lang": "vi",
+      "text": "Xếp lá dong, gạo nếp, đỗ xanh, thịt lợn, rồi lại đỗ xanh, gạo nếp, rồi buộc lạt nhé!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/vietnam2.ts"
+      ]
+    },
+    {
+      "id": "79dfe4ed-7cd590fb",
+      "lang": "vi",
+      "text": "Giờ lại đỗ xanh rồi gạo nếp, phủ lên trên thịt!",
+      "area": "games",
+      "part": false,
+      "source": [
+        "js/games/vietnam2.ts"
+      ]
+    }
+  ]
+}
