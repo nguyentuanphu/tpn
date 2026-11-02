@@ -1,3 +1,5 @@
+ready for Release
+
 # v1.08 helper: maths (status)
 
 Branch `work/v108-maths` from `origin/release/v1.08`. Brief: `maths-brief.md`. Plan part D, maths.
@@ -43,15 +45,18 @@ Branch `work/v108-maths` from `origin/release/v1.08`. Brief: `maths-brief.md`. P
 - Probe (not committed): every new game opened and won by tapping the right thing at under-5, Easy and Talent on a phone
   (390 x 844), no page errors; targets 64 px. Screenshots of phone, tablet (820 x 1180) and computer (1366 x 800) looked
   at: the balance first tipped the wrong way and some drawings shrank; both fixed.
-- Voices: recorded with Azure en-AU and vi-VN (`node tools/make-voice-pack.mts --engine azure`), then `--areas`.
+- Voices: recorded with Azure en-AU and vi-VN (`node tools/make-voice-pack.mts --engine azure`), 868 new files; the
+  manifest and areas were rewritten by that run.
 
 ## Checks (local, 3 Nov 2026 AEDT)
 
 - pass: games (258 games), guides (258), secondset, hocvui, levelsa (now with mx_sprint and mx_patterns), hubmap,
   types, names, bilingual, rules, unit, levels-all run on the 28 maths games.
 - fail, not this branch: emoji, because `docs/plans/v108-owner-batch-20261103.md` (Release's plan) has an emoji.
-- `node suite.mts --changed` picks the full suite (shared files and test code changed): run on GitHub,
-  `.github/workflows/full-suite.yml` on this branch.
+- pass: voicecover (12721 lines, 2660 parts, 281 templates, nothing missing) after the Azure recording (868 new files).
+- `node suite.mts --changed` picks the full suite (shared files and test code changed). Per Release's rule of 3 Nov
+  2026 AEDT, the full suite was not started: the checks above were run one at a time with `run.mts`, and the full suite
+  is left for Release.
 
 ## For Release
 
