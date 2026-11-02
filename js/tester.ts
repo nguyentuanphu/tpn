@@ -79,7 +79,9 @@ let fpsNow = 0;
 // (owner, 31 Oct 2026 AEDT: the installed app stayed white for about 30 s) how this start went, in ms from the tap: when
 // the offline helper started (sw), when the start page arrived (page), when it could be read (dom); 0 when unknown
 const startNow = () => { const n = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined; if (!n) return null;
-  const ms = (v: number) => Math.max(0, Math.round(v)); return { sw: ms(n.workerStart), page: ms(n.responseStart), dom: ms(n.domInteractive) }; };
+  const ms = (v: number) => Math.max(0, Math.round(v)); // (v1.07 startup) play: when a child could first play (the Simple screen up or the valley session started), ms after
+  // the tap, as the others; null until then (js/main.ts canPlay, G.playTimes)
+  const play = window.__sv?.playTimes?.at; return { sw: ms(n.workerStart), page: ms(n.responseStart), dom: ms(n.domInteractive), play: typeof play === 'number' ? ms(play) : null }; };
 const devNow = () => ({ os: osOf(), br: brOf(), sc: `${innerWidth}x${innerHeight}`, lang: settings.lang, fps: Math.round(fpsNow), mem: navigator.deviceMemory || 0, start: startNow() });
 
 // ---------- the picture of the screen ----------
