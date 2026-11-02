@@ -32,6 +32,10 @@ await check('longplaymem', async () => (await import('./old-bugs.mts')).longPlay
 // (v1.07 startup, owner's plan focus 1) the Simple screen and its games open before the valley is built (tests/simple-first.mts)
 await check('simplefirst', async () => (await import('./simple-first.mts')).simpleFirstCheck(b));
 
+// (v1.08 notifications) push notifications for grown-ups with a fake push service: Grown-ups on phone, tablet and computer,
+// turning on, the switches, quiet hours, bundling, the service worker's text, a tap opens the right place (tests/push-notify-browser.mts)
+await check('pushnotify', async () => (await import('./push-notify-browser.mts')).pushNotifyCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

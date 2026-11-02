@@ -3414,3 +3414,11 @@ body.touch:has(.simple-screen:not([hidden])) .caption { top: auto; bottom: calc(
 /* (#375, 1 Nov 2026 AEDT) while the report panel is open the floating ladybird steps aside: it covered the panel's words on a
    small phone (430x517); it comes back when the panel closes */
 body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
+/* (v1.08 notifications) Grown-ups → Notifications: every switch and its hint is a 44 px row; the quiet-hours pickers too */
+.pushsec .tog { min-height: 44px; }
+.pushsec .tog small { display: block; font-weight: 600; opacity: .75; font-size: 13px; }
+.pushsec .push-quiet { display: flex; flex-wrap: wrap; gap: 12px; }
+.pushsec .push-quiet select { min-height: 44px; min-width: 88px; font-size: 16px; }
+.pushsec .pushdays button { min-height: 44px; min-width: 44px; }
+.pushsec .push-ios { background: #fff6e0; border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
+.pushsec .push-ios .art { width: 28px; height: 28px; vertical-align: middle; }

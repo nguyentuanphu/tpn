@@ -122,6 +122,7 @@ export function needs(api, post) {
   if (api === 'testers' || /^testers\/(problem|shot)\/[a-f0-9]{16}$/.test(api)) return post ? 'owner' : 'testers';
   if (api === 'testers/set') return 'testerset';
   if (api === 'live') return post ? 'releases' : 'pages';
+  if (api === 'push') return post ? 'releases' : 'pages'; // (v1.08 notifications) the counts, and the "new this week" text
   if (api === 'live/content') return post ? 'edit' : 'pages'; // (r81) the content pages, live at once
   if (api === 'family/code/new') return 'familycode';
   if (/^(family\/|familyphoto\/|albumphoto$)/.test(api)) return 'family';

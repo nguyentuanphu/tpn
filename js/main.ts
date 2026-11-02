@@ -901,6 +901,8 @@ await breathe(); // (v1.07: a breath for the Simple screen's taps)
   apGate(); onLive(apGate); }
 // (owner, 12 Oct) tester devices report problems by themselves and with the ladybird (js/testergate.js, js/tester.js)
 import('./testergate.js').then(m => m.testerGate(G));
+// (v1.08 notifications) grown-ups' push notifications: this week's lines on the device, and a tap that opened the game (js/notify.js)
+if (((settings as unknown as { push?: { on?: boolean } }).push || {}).on || /[?&]open=/.test(location.search)) import('./notify.js').then(m => m.startNotify(G)).catch(() => { });
 G.weather = (await later.weather).createWeather(G);
 (await later.fun).createFun(G);
 (await later.learn).createLearning(G);

@@ -13,3 +13,4 @@ import './art/things-money.js';
 import './art/r90-audits.js';
 import './art/learning.js';
 export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';
+import './art/notify.js'; // (v1.08 notifications) the bell and the Home Screen phone
