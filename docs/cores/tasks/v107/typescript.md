@@ -58,8 +58,8 @@ it (each one listed below). No `@ts-ignore`, no `@ts-nocheck`.
 1. Check paths in `tools/voice-lines.mts` FILE_AREA, `tools/make-voice-pack.mts`, `tools/emoji-audit.mts` (walks
    `js/` for `.js`: reads the built `.js`, so it still works after `node tools/build.mts`) and `tools/r79-shots.mts`;
    they name `.js` files and read the built ones, so they likely need no change: confirm.
-2. Batch 2 (`js/a*` to `js/g*`, 23 files): rename-only commit, then `node <scratchpad>/optfix.mjs . tests/tsconfig.json`
-   (marks trailing parameters optional; the script is described in the Plan) after adding the files to
+2. Batch 2 (`js/a*` to `js/g*`, 23 files): rename-only commit, then `node docs/cores/tasks/v107/typescript-optfix.mjs . tests/tsconfig.json`
+   (marks trailing parameters optional) after adding the files to
    `tests/tsconfig.json`, fix the rest by hand, compare built `.js` with 204ce75d, commit.
 3. Push, then start `full-suite.yml` on `work/v107-typescript` (batches 1 and 2 together).
 
