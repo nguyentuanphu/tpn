@@ -16,40 +16,83 @@ export const ROAD_GRADE = { asphalt: .08, dirt: .12, footpath: .15 };
 // earth with flat stepping stones
 // (round T4a) `style`: 'vn' a yellow centre dash (Vietnam), 'au' white dashes with concrete kerbs (Australia), 'brick' and
 // 'paving' for town streets; anything else the white lines of before. Dirt roads are Bà Rịa's red earth (đất đỏ).
+// (v1.07 roads, #34 Concept D) every picture is 128 x 512 (it was 64 x 256: blocky speckle and blurred lines close up),
+// drawn from a fixed seed so the roads look the same at every start; the layout across is in fractions of the width,
+// so a mark at 1/64 of the old picture sits at 2/128 now. Dirt roads and footpaths have ragged see-through edges
+// (used with alphaTest, so they cost no blending).
+export const ROAD_TEX = { w: 128, h: 512 };
 export function roadTexture(kind, tint = null, style = null) {
-  const c = document.createElement('canvas'); c.width = 64; c.height = 256; const g = c.getContext('2d');
+  const W = ROAD_TEX.w, H = ROAD_TEX.h, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  let seed = 7 + (kind.length * 131 + String(style).length * 17 + String(tint).length) % 997;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const blob = (x, y, rx, ry, col) => { g.fillStyle = col; for (const dy of [-H, 0, H]) { g.beginPath(); g.ellipse(x, y + dy, rx, ry, 0, 0, 7); g.fill(); } }; // (drawn three times so it tiles along)
+  const mottle = (n, light, dark, rmin, rmax, x0 = 0, x1 = W) => { for (let i = 0; i < n; i++) { const r = rmin + rnd() * (rmax - rmin); blob(x0 + rnd() * (x1 - x0), rnd() * H, r, r * (.6 + rnd() * .8), rnd() < .5 ? light : dark); } };
+  const grit = (n, light, dark, x0 = 0, x1 = W) => { for (let i = 0; i < n; i++) { g.fillStyle = rnd() < .5 ? light : dark; g.fillRect(x0 + rnd() * (x1 - x0), rnd() * H, 1 + rnd() * 1.5, 1 + rnd() * 1.5); } };
+  const done = () => { const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; return t; };
   if (style === 'brick' || style === 'paving') {
-    const brick = style === 'brick'; g.fillStyle = brick ? '#9c5a40' : '#9a958c'; g.fillRect(0, 0, 64, 256);
-    for (let y = 0; y < 256; y += 8) for (let x = -16; x < 64; x += 16) { const ox = (y / 8) % 2 ? 8 : 0, v = Math.random() * 18 - 9;
-      g.fillStyle = brick ? `rgb(${190 + v},${104 + v},${74 + v})` : `rgb(${196 + v},${190 + v},${178 + v})`; g.fillRect(x + ox + 1, y + 1, 14, 6); }
-    g.fillStyle = brick ? '#e2d6c0' : '#d8d2c6'; g.fillRect(0, 0, 3, 256); g.fillRect(61, 0, 3, 256); // the kerb stones along both edges
-    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; return t;
+    // Concept D "village street": red brick (Vietnam) or pale paving stones (Australia), kerb stones along both edges
+    const brick = style === 'brick', K = 6; g.fillStyle = brick ? '#8e3f2e' : '#9a958c'; g.fillRect(0, 0, W, H);
+    for (let y = 0; y < H; y += 16) for (let x = -32; x < W; x += 32) { const ox = (y / 16) % 2 ? 16 : 0, v = rnd() * 22 - 11;
+      g.fillStyle = brick ? `rgb(${181 + v},${85 + v * .6},${63 + v * .5})` : `rgb(${200 + v},${194 + v},${182 + v})`; g.fillRect(x + ox + 1.5, y + 1.5, 29, 13);
+      g.fillStyle = brick ? 'rgba(255,220,190,.16)' : 'rgba(255,255,255,.18)'; g.fillRect(x + ox + 1.5, y + 1.5, 29, 3); }
+    grit(900, 'rgba(255,240,220,.08)', 'rgba(40,20,10,.08)');
+    g.fillStyle = brick ? '#e2d6c0' : '#d8d2c6'; g.fillRect(0, 0, K, H); g.fillRect(W - K, 0, K, H);
+    g.fillStyle = 'rgba(0,0,0,.18)'; for (let y = 0; y < H; y += 32) { g.fillRect(0, y, K, 1.5); g.fillRect(W - K, y + 16, K, 1.5); }
+    g.fillRect(K, 0, 1.5, H); g.fillRect(W - K - 1.5, 0, 1.5, H);
+    return done();
   }
-  if (kind === 'footpath') {
-    g.fillStyle = '#d8b98a'; g.fillRect(0, 0, 64, 256);
-    for (let i = 0; i < 500; i++) { g.fillStyle = Math.random() < .5 ? 'rgba(255,245,220,.14)' : 'rgba(110,80,50,.1)'; g.fillRect(Math.random() * 64, Math.random() * 256, 2, 2); }
-    for (let y = 8; y < 256; y += 32) { const x = 14 + (y / 32 % 2) * 10; g.fillStyle = '#bfb4a2'; g.beginPath(); g.ellipse(x + 12, y + 10, 13, 9, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(255,255,255,.18)'; g.beginPath(); g.ellipse(x + 10, y + 8, 8, 4, 0, 0, 7); g.fill(); }
-  } else if (kind !== 'dirt') { // 'asphalt', or 'plain' asphalt without lines (for junctions)
-    // Concept D: darker Australian asphalt and grey Vietnamese asphalt. Keep the region's
-    // red/orange tint (ROAD-014), gently enough that it does not turn the asphalt pink or tan.
-    const base = style === 'au' ? '#45484c' : style === 'vn' ? '#5f6266' : '#6f747a';
-    g.fillStyle = tint ? '#' + new THREE.Color(base).lerp(new THREE.Color(tint), style === 'au' ? .06 : style === 'vn' ? .10 : .32).getHexString() : base; g.fillRect(0, 0, 64, 256);
-    for (let i = 0; i < 500; i++) { g.fillStyle = Math.random() < .5 ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.08)'; g.fillRect(Math.random() * 64, Math.random() * 256, 2, 2); }
-    if (kind === 'asphalt' && style === 'au') { // concrete kerbs, a white edge line inside them, white centre dashes
-      g.fillStyle = '#d4cfc4'; g.fillRect(0, 0, 4, 256); g.fillRect(60, 0, 4, 256); g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(4, 0, 1, 256); g.fillRect(59, 0, 1, 256);
-      g.fillStyle = '#f2eee2'; g.fillRect(6, 0, 2, 256); g.fillRect(56, 0, 2, 256); g.fillRect(30, 20, 4, 90); g.fillRect(30, 148, 4, 90);
-    } else if (kind === 'asphalt') {
-      if (style === 'vn') { g.fillStyle = '#cfcac0'; g.fillRect(0, 0, 2, 256); g.fillRect(62, 0, 2, 256); }
-      g.fillStyle = '#e9e4d4'; g.fillRect(2, 0, 3, 256); g.fillRect(59, 0, 3, 256);
-      g.fillStyle = style === 'vn' ? '#f2c230' : '#f6f1e4'; g.fillRect(30, 20, 4, 90); g.fillRect(30, 148, 4, 90); }
-  } else {
-    g.fillStyle = style === 'outback' ? '#d9792e' : '#c0764a'; g.fillRect(0, 0, 64, 256); // (round T4a, Concept D) Bà Rịa's warm red earth; (#34) near Uluru the orange outback
-    for (let i = 0; i < 700; i++) { g.fillStyle = Math.random() < .5 ? 'rgba(255,225,190,.12)' : 'rgba(90,40,20,.12)'; g.fillRect(Math.random() * 64, Math.random() * 256, 2 + Math.random() * 2, 2); }
-    g.fillStyle = 'rgba(110,55,30,.28)'; g.fillRect(14, 0, 7, 256); g.fillRect(43, 0, 7, 256); // the two darker wheel tracks
-    g.fillStyle = '#b9b0a0'; for (let y = 6; y < 256; y += 22) { g.fillRect(0, y, 3, 5); g.fillRect(61, y + 11, 3, 5); } // edging stones
-    g.fillStyle = 'rgba(110,160,80,.5)'; g.fillRect(29, 0, 6, 256); // a little grass down the middle
+  if (kind === 'footpath' || kind === 'dirt') {
+    // Concept D "dirt path": warm red earth like Bà Rịa's đất đỏ (near Uluru the orange outback), ragged soft edges, grey
+    // edging pebbles; a dirt road has two darker wheel tracks with tufts of grass down the middle, a footpath a paler
+    // trodden middle
+    const path = kind === 'footpath', outback = style === 'outback';
+    const base = outback ? '#d27434' : path ? '#c27a50' : '#b9653e', deep = outback ? 'rgba(150,62,20,' : 'rgba(130,60,35,', pale = outback ? 'rgba(255,190,130,' : 'rgba(255,214,176,';
+    // the edge wanders in and out (whole waves along the picture, so it tiles)
+    const edge = (y, k) => 5 + 2.6 * Math.sin((y / H) * Math.PI * 2 * (3 + k) + k * 2.1) + 1.6 * Math.sin((y / H) * Math.PI * 2 * (11 + k) + k) + 1.2 * Math.sin((y / H) * Math.PI * 2 * 23 + k * 4);
+    g.fillStyle = base; g.beginPath(); g.moveTo(edge(0, 0), 0);
+    for (let y = 0; y <= H; y += 4) g.lineTo(edge(y, 0), y);
+    for (let y = H; y >= 0; y -= 4) g.lineTo(W - edge(y, 1), y);
+    g.closePath(); g.fill();
+    g.save(); g.clip();
+    mottle(70, pale + '.10)', deep + '.10)', 8, 26);
+    if (path) { g.fillStyle = pale + '.16)'; g.fillRect(W * .3, 0, W * .4, H); g.fillStyle = pale + '.10)'; g.fillRect(W * .2, 0, W * .6, H); }
+    else for (const cx of [W * .27, W * .73]) for (const [w, a] of [[22, .10], [16, .14], [10, .16]]) { // the wheel tracks, a little wavy
+      g.fillStyle = deep + a + ')'; for (let y = 0; y < H; y += 4) g.fillRect(cx - w / 2 + 2 * Math.sin(y / H * Math.PI * 4), y, w, 4); }
+    grit(2200, pale + '.20)', deep + '.20)');
+    for (let i = 0; i < 70; i++) { const x = 10 + rnd() * (W - 20), y = rnd() * H, r = 1 + rnd() * 1.6; blob(x, y, r, r * .8, rnd() < .5 ? '#a39a8e' : '#8c8378'); } // little stones
+    if (!path) for (let y = 4; y < H; y += 40) { const n = 4 + Math.floor(rnd() * 4), cy = y + rnd() * 10; // grass tufts down the middle
+      for (let k = 0; k < n; k++) { const x = W / 2 + (rnd() - .5) * 10, yy = cy + rnd() * 18; g.fillStyle = rnd() < .5 ? '#7fae5a' : '#6a9a48'; g.beginPath(); g.ellipse(x, yy, 2.2, 4.5, (rnd() - .5) * .8, 0, 7); g.fill(); } }
+    g.restore();
+    for (let y = 10; y < H; y += 46) for (const side of [0, 1]) { // edging pebbles along both edges
+      const yy = (y + side * 23 + rnd() * 8) % H, x = side ? W - edge(yy, 1) - 3 : edge(yy, 0) + 3, r = 3 + rnd() * 1.8;
+      blob(x, yy, r + .8, r * .8 + .8, 'rgba(70,60,50,.35)'); blob(x, yy, r, r * .8, '#aaa398'); blob(x - r * .3, yy - r * .3, r * .5, r * .35, 'rgba(255,255,255,.35)'); }
+    return done();
   }
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; return t;
+  // asphalt. Concept D: grey Vietnamese asphalt, darker Australian asphalt; other roads keep the region's tint (ROAD-014)
+  // gently enough that it does not turn the asphalt pink or tan
+  const base = style === 'au' ? '#45484c' : style === 'vn' ? '#5f6266' : '#6f747a';
+  g.fillStyle = tint ? '#' + new THREE.Color(base).lerp(new THREE.Color(tint), style === 'au' ? .06 : style === 'vn' ? .10 : .32).getHexString() : base; g.fillRect(0, 0, W, H);
+  mottle(90, 'rgba(255,255,255,.035)', 'rgba(0,0,0,.05)', 6, 22);
+  for (const cx of [.3, .7]) { g.fillStyle = 'rgba(0,0,0,.05)'; g.fillRect(W * cx - 12, 0, 24, H); g.fillStyle = 'rgba(0,0,0,.04)'; g.fillRect(W * cx - 7, 0, 14, H); } // tyre wear in each lane
+  grit(2600, 'rgba(255,255,255,.10)', 'rgba(0,0,0,.12)');
+  { const y = rnd() * H * .7, x = W * (.15 + rnd() * .35); g.fillStyle = 'rgba(0,0,0,.07)'; g.fillRect(x, y, W * .22, 46); g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(x, y, W * .22, 1); g.fillRect(x, y + 45, W * .22, 1); } // one old patch
+  if (kind !== 'asphalt') return done(); // ('plain' asphalt without lines)
+  const line = (x, w, col, from = 0, len = H) => { g.fillStyle = col; g.fillRect(x, from, w, len); g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(x, from, w * .4, len); };
+  const dashes = (col, on, off) => { for (let y = 20; y < H + 20; y += on + off) { const a = y % H, b = Math.min(on, H - a); line(W / 2 - 3, 6, col, a, b); if (b < on) line(W / 2 - 3, 6, col, 0, on - b); } };
+  if (style === 'au') { // Concept D: concrete footpath strips with a gutter at both edges, white centre dashes, no edge lines
+    g.fillStyle = '#d8d4cc'; g.fillRect(0, 0, 8, H); g.fillRect(W - 8, 0, 8, H);
+    g.fillStyle = 'rgba(0,0,0,.14)'; for (let y = 0; y < H; y += 48) { g.fillRect(0, y, 8, 1.5); g.fillRect(W - 8, y + 24, 8, 1.5); } // the joints between slabs
+    g.fillStyle = '#9a9a95'; g.fillRect(8, 0, 4, H); g.fillRect(W - 12, 0, 4, H);
+    g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(12, 0, 1, H); g.fillRect(W - 13, 0, 1, H);
+    dashes('#f4f1e8', 160, 96);
+  } else { // Vietnam (and the other roads): a stone kerb, white edge lines, centre dashes (yellow in Vietnam)
+    const vn = style === 'vn'; g.fillStyle = vn ? '#cfcac0' : '#c4c1b8'; g.fillRect(0, 0, 6, H); g.fillRect(W - 6, 0, 6, H);
+    g.fillStyle = 'rgba(0,0,0,.2)'; for (let y = 0; y < H; y += 28) { g.fillRect(0, y, 6, 1.5); g.fillRect(W - 6, y + 14, 6, 1.5); } // the joints between kerb stones
+    g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(6, 0, 1.5, H); g.fillRect(W - 7.5, 0, 1.5, H);
+    line(10, 4, '#ece8dc'); line(W - 14, 4, '#ece8dc');
+    dashes(vn ? '#f2c230' : '#f4f1e8', 156, 100);
+  }
+  return done();
 }
 
 // A side road that ends on another road stops at that road's edge (instead of painting its lines over it).
@@ -196,8 +239,35 @@ function buildRoads(G, mats) {
   const toned = {}, matFor = R => { const t = R.kind === 'asphalt' && ROAD_TONES[R.tone]; if (!t) return mats[R.kind]; return toned[t] || (toned[t] = new THREE.MeshToonMaterial({ map: roadTexture('asphalt', t, R.tone === 'vn' || R.tone === 'au' ? R.tone : null), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })); };
   // (#34, Concept D) a dirt road out round Uluru is the orange-red of the outback, like the ground there (js/world.ts)
   let outbackMat = null; const outback = pts => { const [x, z] = pts[Math.floor(pts.length / 2)] || [0, 0]; return x < -174 && z > -90; };
-  const matOf = A => A.R.kind === 'dirt' && outback(A.pts) ? outbackMat || (outbackMat = new THREE.MeshToonMaterial({ map: roadTexture('dirt', null, 'outback'), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })) : matFor(A.R);
+  const matOf = A => A.R.kind === 'dirt' && outback(A.pts) ? outbackMat || (outbackMat = new THREE.MeshToonMaterial({ map: roadTexture('dirt', null, 'outback'), alphaTest: .5, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })) : matFor(A.R);
   for (const A of all) { const m = new THREE.Mesh(ribbonGeo(A.R, A.pts, A.ys), matOf(A)); m.receiveShadow = true; m.userData.road = true; scene.add(m); }
+  // (v1.07 roads, #34 Concept D "zebra crossings") where an asphalt side road meets an asphalt road, white stripes across
+  // the side road just before the junction; every crossing in one mesh (one draw call), laid on the road's own heights
+  const pos = [], idx = []; let crossings = 0;
+  all.forEach((A, ai) => {
+    const n = A.pts.length; if (A.R.kind !== 'asphalt' || A.R.loop || n < 6) return;
+    [0, 1].forEach(end => {
+      if (!A.jEnd || !A.jEnd[end] || (A.R.gates || [])[end]) return;
+      const at = k => end ? n - 1 - k : k, [x, z] = A.pts[at(0)];
+      if (!all.some((C, ci) => ci !== ai && C.R.kind === 'asphalt' && segDist(x, z, C.pts) < C.R.w / 2 + 1.2)) return;
+      let run = 0, k0 = -1, k1 = -1;
+      for (let k = 1; k < n; k++) { const i = at(k), j = at(k - 1); run += Math.hypot(A.pts[i][0] - A.pts[j][0], A.pts[i][1] - A.pts[j][1]); if (A.deck[i] || A.apron[i]) return; if (k0 < 0 && run >= .7) k0 = i; if (run >= 3.3) { k1 = i; break; } }
+      if (k0 < 0 || k1 < 0) return;
+      const [ax, az] = A.pts[k0], [bx, bz] = A.pts[k1], L = Math.hypot(bx - ax, bz - az) || 1, ux = -(bz - az) / L, uz = (bx - ax) / L, hw = A.R.w / 2 - .45;
+      for (let o = -hw; o < hw - .3; o += .8) {
+        const v = pos.length / 3;
+        for (const [px, pz, py] of [[ax, az, A.ys[k0]], [bx, bz, A.ys[k1]]]) for (const s of [o, o + .4]) pos.push(px + ux * s, py + .05, pz + uz * s);
+        idx.push(v, v + 2, v + 1, v + 1, v + 2, v + 3);
+      }
+      crossings++;
+    });
+  });
+  if (pos.length) {
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('normal', new THREE.Float32BufferAttribute(pos.map((_, i) => i % 3 === 1 ? 1 : 0), 3)); geo.setIndex(idx);
+    const m = new THREE.Mesh(geo, new THREE.MeshToonMaterial({ color: '#f4f1e8', side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }));
+    m.receiveShadow = true; m.userData.noCam = true; m.userData.noSolid = true; m.userData.crossings = crossings; scene.add(m);
+  }
+  world.crossings = crossings;
 }
 
 // HARD RULE: road edges are soft, with flowers growing alongside. A soft verge fades from the road into the grass on
@@ -216,7 +286,8 @@ export function plantRoadside(G) {
   lines.forEach((L, k) => {
     const R = ROADS[k], hw = R.w / 2, n = L.pts.length; if (n < 2) return;
     // the soft verge: from the road's edge out 1.1 m, gravel-coloured at the road and fading into the grass
-    const pos = [], col = [], idx = [], vc = new THREE.Color(R.kind === 'asphalt' ? '#ddd2ad' : R.kind === 'dirt' ? '#dcb47a' : '#e2c99c'); let v = 0;
+    // (v1.07 roads, #34 Concept D: "paths fade into bare sand") dry grass beside asphalt, red earth beside dirt roads and paths
+    const pos = [], col = [], idx = [], vc = new THREE.Color(R.kind === 'asphalt' ? '#c3c896' : R.kind === 'dirt' ? '#c48d62' : '#c99872'); let v = 0;
     const VERGE = R.kind === 'footpath' ? [[hw - .05, 1], [hw + .25, .7], [hw + .5, 0]] : [[hw - .08, 1], [hw + .6, .75], [hw + 1.5, 0]]; // (R12: a footpath's blend is 0.5 m)
     for (let i = 0; i < n; i++) {
       const [px, pz] = L.pts[Math.max(0, i - 1)], [nx, nz] = L.pts[Math.min(n - 1, i + 1)], D = Math.hypot(nx - px, nz - pz) || 1, ux = -(nz - pz) / D, uz = (nx - px) / D, [x, z] = L.pts[i];
@@ -449,8 +520,8 @@ export function localGate(scene, world, x, z, rot, text, style, span = 7.5) {
 
 export function createRoads(G) {
   const { scene, world } = G;
-  const mats = { asphalt: new THREE.MeshToonMaterial({ map: roadTexture('asphalt'), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }), dirt: new THREE.MeshToonMaterial({ map: roadTexture('dirt'), polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
-    footpath: new THREE.MeshToonMaterial({ map: roadTexture('footpath'), polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }) };
+  const mats = { asphalt: new THREE.MeshToonMaterial({ map: roadTexture('asphalt'), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }), dirt: new THREE.MeshToonMaterial({ map: roadTexture('dirt'), alphaTest: .5, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
+    footpath: new THREE.MeshToonMaterial({ map: roadTexture('footpath'), alphaTest: .5, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }) };
   // the Dragon Bridge's deck first, so the road is laid on it rather than down in the river
   { const B = DRAGON; world.platforms.push({ ...bridgeBox(B, B.a0, B.a1, -B.w / 2, B.w / 2), y: B.h + .1, bridge: B.id, apron: bridgeBox(B, B.a0 - 1.2, B.a1 + 1.2, -B.w / 2, B.w / 2) }); }   // (Round U: an apron like every bridge, js/world.js)
   buildRoads(G, mats);
