@@ -1,6 +1,6 @@
 # v1.07 roads: status
 
-**Paused (2 Nov AEDT, Release's "slow down"): waiting for "resume" after 2 pm AEDT. Not ready for Release yet.**
+**Resumed (2 Nov AEDT). Full suite running on GitHub; then the owner's pop-up on the new look. Not ready for Release yet.**
 
 Branch: `work/v107-roads`. Issue #34. Started 2 Nov 2026, 10:57 am AEDT.
 
@@ -46,7 +46,25 @@ after.
   scaled by picture size (same spots and thresholds; the picture is now twice as large each way). After pictures taken
   (`docs/roads-concept-d/after-*.jpg`) but NOT looked at yet. No checks run yet.
 
-## Exact next step
+- 2 Nov AEDT (after resume): after pictures looked at (computer and phone): red-earth dirt with ragged edges, wheel
+  tracks, grass tufts and pebbles; crisp kerbs and lines on asphalt; zebra crossings at junctions. Kept as is.
+
+## Checks (2 Nov 2026 AEDT, local, one at a time)
+
+| check | result |
+|---|---|
+| roads | pass (26 side-road junctions 60-120 degrees) |
+| roadtone | pass (6 road materials, yellow dash VN, kerbs AU) |
+| roadshape | pass |
+| ground | pass |
+| padmap | pass |
+| mapcoords | pass |
+| battery | pass |
+| startup | pass (valley ready 21.7 s on the tablet profile) |
+| perf | FAIL, but main fails the same: PERF-001 startMB 2.707 here, 2.704 on main v1.06 (limit 2.55 x 1.03 + 0.05). This branch adds 3 KB and 2 draw calls (377 vs 375 in the village). Not caused by roads; for Release / startup helper. |
+| `suite.mjs --changed` | picks the full suite (test code `tests/run.mjs` changed): started on GitHub, `full-suite.yml` on this branch |
+
+## Exact next step (old, done up to step 2)
 
 1. Look at `docs/roads-concept-d/after-*.jpg` next to `before-*.jpg` (computer first, then phone and tablet); tune
    colours, pebble size, crossings if they look wrong. Rebuild with `node tools/build.mts`, retake with
