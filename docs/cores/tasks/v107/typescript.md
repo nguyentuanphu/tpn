@@ -1,6 +1,6 @@
 # v1.07 typescript: status
 
-**Ready for Release, but the GitHub full suite still has to pass** (2 Nov 2026 AEDT). Last code commit 033b3df7.
+**ready for Release (full suite: Release's combined run)** (2 Nov 2026 3:30 pm AEDT). Last code commit 033b3df7.
 
 Branch `work/v107-typescript`, from main v1.06 (204ce75d). Brief: [typescript-brief.md](typescript-brief.md).
 Started 2 Nov 2026 11:00 AEDT.
@@ -73,8 +73,8 @@ Resumed 2 Nov 2026 2:00 pm AEDT (Release: "resume").
 - GitHub full suite:
   - The runs on 412183d1 (41381462510) and 145221eb (41382067411) were still queued when later batches landed, so
     both were cancelled.
-  - One run on the final code covers all five batches. It was started 2 Nov 2026 about 2:25 pm AEDT on 033b3df7.
-    Result: (pending).
+  - The run on 033b3df7 (41382967059) was cancelled by Release (owner's decision, 3:05 pm AEDT: one combined full
+    suite for every branch, because GitHub runs only about 2 at once). The full suite comes from Release's combined run.
 - Strict plan (brief item 5): [typescript-strict-plan.md](typescript-strict-plan.md) and
   [typescript-strict-ratchet.json](typescript-strict-ratchet.json). 71 of 245 checked game files are already
   strict-clean. Strict is not turned on.
@@ -87,12 +87,17 @@ Helper: `docs/cores/tasks/v107/typescript-optfix.mjs` marks trailing parameters 
 
 ## Checks
 
-Batch 1, 2 Nov 2026 11:05 AEDT, `node suite.mjs --only unit,rules,types,arch,emoji,noemoji,preload,names,bilingual,boot,contract`
-(`--changed` picks the full suite, which runs on GitHub after batch 2):
-- pass: types, names, arch, bilingual, emoji, noemoji, preload, boot, contract.
-- rules: fail, then fixed in b3cc0b47 (`node tools/rules-from-doc.mts --check` passes); not yet re-run in the suite.
-- unit: fail, not from this branch: `Cannot find package 'pg'` (the repo root's `npm install` was not run in this
-  container; the management tests need it). To re-run after `npm ci` in the root.
+Final code (033b3df7, all five batches), 2 Nov 2026 about 3:25 pm AEDT, one local run:
+`node suite.mjs --only unit,rules,types,arch,emoji,noemoji,preload,names,bilingual,boot,contract,phone`.
+`--changed` picks the full suite (shared files), which is Release's combined run.
+- pass, 12 of 12: unit (480 tests), rules, types (317 files), arch, emoji, noemoji, preload, names, bilingual, boot,
+  contract, phone (10 screens on desktop, phone and tablet).
+- Screenshots looked at: `tests/out/boot-390.png` (phone), `boot-1024.png` (tablet), `boot-1280.png` (computer).
+  Same layout as before; nothing a child sees changed.
+- The `unit` check needed `npm ci` in the repo root (the package `pg`); after that it passed.
+- Not run here: the full suite (Release's combined run).
+
+Earlier, batch 1 only (11:05 am AEDT): `rules` failed after the rename, fixed in b3cc0b47.
 
 ## Owner's decisions
 
