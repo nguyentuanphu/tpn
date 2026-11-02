@@ -8311,6 +8311,10 @@ await check('familycodejourney', async () => (await import('./family-code-journe
 await check('levelsall', async () => (await import('./levels-all.mts')).levelsAllCheck(b));
 // (v1.07, #746-#778) auto play stops, sends nothing and the valley stops drawing when another tab of the game takes over
 await check('autoplayheld', async () => (await import('./autoplay-held.mts')).autoplayHeldCheck(b));
+// (v1.07 old-bugs) #341 software graphics on Auto; #739 freeze reports on a browser without a long-task observer
+await check('softgraphics', async () => (await import('./old-bugs.mts')).softGraphicsCheck(b));
+await check('freezewhy', async () => (await import('./old-bugs.mts')).freezeWhyCheck(b));
+await check('longplaymem', async () => (await import('./old-bugs.mts')).longPlayMemoryCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);
