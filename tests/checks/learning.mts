@@ -16,6 +16,10 @@ await check('hocvui', async () => {
   // (v1.08 english) the English corner's eight games
   const EN = ['en_words', 'en_listen', 'en_say', 'en_abc', 'en_count', 'en_sentence', 'en_greet', 'en_colshape'];
   NEW.push(...EN); for (const id of EN) MORE[id] = '.choices .choice';
+  // (v1.08 vietnamese) the ten new Tiếng Việt games, and what Talent shows more of
+  const VI2 = { vi_tonemean: '.choices .choice', vi_rhyme: '.choices .choice', vi_letters: '.choices .choice', vi_opposite: '.vt-pair', vi_cadao: '.choices .choice',
+    vi_tucngu: '.choices .choice', vi_readalong: '.vt-word', vi_sentence: '.vt-text', vi_dictation: '.vt-letter', vi_riddle: '.choices .choice' };
+  NEW.push(...Object.keys(VI2)); Object.assign(MORE, VI2);
   const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, settings: { voice: false } }); await clear(P.page);
   const fails = [];
   // the Play hub: the tab, its four corners, the new games as cards, existing games as links; Learning keeps its games

@@ -265,6 +265,17 @@ export const GAME_CATALOG = [
   { id: 'mx_leftright', learn: true, icon: 'mx:leftright', name: () => T('Left and Right', 'Trái và Phải') },
   { id: 'mx_sprint', learn: true, icon: 'mx:sprint', name: () => T('Mental Maths Sprint', 'Tính Nhẩm Nhanh') },
   { id: 'mx_grouping', learn: true, icon: 'mx:grouping', name: () => T('Count by Grouping', 'Đếm Theo Nhóm') },
+  // (v1.08 vietnamese) ten more Tiếng Việt games (js/games/tiengviet2.ts)
+  { id: 'vi_tonemean', learn: true, icon: 'vi:tonemean', name: () => T('One Word, Many Tones', 'Dấu Thanh Đổi Nghĩa') },
+  { id: 'vi_rhyme', learn: true, icon: 'vi:rhyme', name: () => T('Rhyme Pairs', 'Tìm Vần Giống Nhau') },
+  { id: 'vi_letters', learn: true, icon: 'vi:letters', name: () => T('Vietnamese Letters', 'Chữ Cái Việt') },
+  { id: 'vi_opposite', learn: true, icon: 'vi:opposite', name: () => T('Opposite Pairs', 'Nối Từ Trái Nghĩa') },
+  { id: 'vi_cadao', learn: true, icon: 'vi:cadao', name: () => T('Folk Rhymes', 'Ca Dao Đồng Dao') },
+  { id: 'vi_tucngu', learn: true, icon: 'vi:tucngu', name: () => T('Picture Sayings', 'Tục Ngữ Có Hình') },
+  { id: 'vi_readalong', learn: true, icon: 'vi:readalong', name: () => T('Read Along', 'Bé Đọc To') },
+  { id: 'vi_sentence', learn: true, icon: 'vi:sentence', name: () => T('Make a Sentence', 'Bé Đặt Câu') },
+  { id: 'vi_dictation', learn: true, icon: 'vi:dictation', name: () => T('Listen and Spell', 'Nghe Và Viết') },
+  { id: 'vi_riddle', learn: true, icon: 'vi:riddle', name: () => T('Folk Riddles', 'Câu Đố Dân Gian') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -314,5 +325,7 @@ export const GAME_LOADERS = {
   // (v1.08 maths) the 21 new maths games
   'maths3.ts': { ids: ['mx_bonds', 'mx_takeaway', 'mx_skip', 'mx_patterns', 'mx_shapehunt', 'mx_symmetry', 'mx_heavy', 'mx_full', 'mx_pizza', 'mx_graph', 'mx_calendar'], load: () => import('./maths3.js') },
   'maths4.ts': { ids: ['mx_quarter', 'mx_sudoku', 'mx_bigger', 'mx_doubles', 'mx_tens', 'mx_missing', 'mx_solids3d', 'mx_leftright', 'mx_sprint', 'mx_grouping'], load: () => import('./maths4.js') },
+  // (v1.08 vietnamese)
+  'tiengviet2.ts': { ids: ['vi_tonemean', 'vi_rhyme', 'vi_letters', 'vi_opposite', 'vi_cadao', 'vi_tucngu', 'vi_readalong', 'vi_sentence', 'vi_dictation', 'vi_riddle'], load: () => import('./tiengviet2.js') },
 
 };

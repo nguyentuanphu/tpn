@@ -17,6 +17,7 @@ import './art/companion-hats.js';
 // (v1.08 science) the twelve new science experiments
 import './art/science2.js';
 import './art/english.js'; // (v1.08 english)
+import './art/tiengviet2.js'; // (v1.08 vietnamese)
 export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';
 import './art/notify.js'; // (v1.08 notifications) the bell and the Home Screen phone
 // (v1.08 maths) the 21 new maths games' pictures

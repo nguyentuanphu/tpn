@@ -101,6 +101,9 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   mx_heavy: ['numbers', 3, 1], mx_full: ['numbers', 3, 1], mx_pizza: ['numbers', 4, 2], mx_graph: ['numbers', 4, 2], mx_calendar: ['numbers', 5, 2], mx_quarter: ['numbers', 5, 2],
   mx_sudoku: ['numbers', 5, 3], mx_bigger: ['numbers', 3, 1], mx_doubles: ['numbers', 4, 2], mx_tens: ['numbers', 5, 2], mx_missing: ['numbers', 3, 1], mx_solids3d: ['numbers', 4, 2],
   mx_leftright: ['numbers', 3, 1], mx_sprint: ['numbers', 5, 3], mx_grouping: ['numbers', 5, 2],
+  // (v1.08 vietnamese) ten more Tiếng Việt games (js/games/tiengviet2.ts)
+  vi_tonemean: ['hv_vi', 3, 1], vi_rhyme: ['hv_vi', 4, 2], vi_letters: ['hv_vi', 4, 2], vi_opposite: ['hv_vi', 3, 1], vi_cadao: ['hv_vi', 4, 2],
+  vi_tucngu: ['hv_vi', 5, 2], vi_readalong: ['hv_vi', 4, 2], vi_sentence: ['hv_vi', 5, 2], vi_dictation: ['hv_vi', 5, 3], vi_riddle: ['hv_vi', 3, 1]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };

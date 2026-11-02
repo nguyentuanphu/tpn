@@ -25,6 +25,7 @@ import { SCHOOL } from './content/school-place.js';
 // (v1.08 maths) the 21 new maths games and the 7 numbers games switched on in v1.08 are found at the school
 const MATHS_AT_SCHOOL = ['numline', 'tenframe', 'dice', 'evenodd', 'measure', 'beforeafter', 'halves', 'mx_bonds', 'mx_takeaway', 'mx_skip', 'mx_patterns', 'mx_shapehunt', 'mx_symmetry', 'mx_heavy', 'mx_full', 'mx_pizza', 'mx_graph',
   'mx_calendar', 'mx_quarter', 'mx_sudoku', 'mx_bigger', 'mx_doubles', 'mx_tens', 'mx_missing', 'mx_solids3d', 'mx_leftright', 'mx_sprint', 'mx_grouping'];
+import { VI2_IDS } from './content/tiengviet2.js'; // (v1.08 vietnamese) the map pin of the new Tiếng Việt games
 export { SCHOOL };
 export const SCHOOL_GREETING = ['Welcome to the Fun Learning School! Shall we learn something fun today?', 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?'];
 
@@ -154,6 +155,8 @@ export function createSchool(G) {
   // that already has a place keeps it
   G.GAME_SPOT = G.GAME_SPOT || {};
   for (const id of MATHS_AT_SCHOOL) if (!G.GAME_SPOT[id]) G.GAME_SPOT[id] = 'school';
+  // (v1.08 vietnamese) the map pin of the Tiếng Việt games goes to the school, where Cô Tam opens the Học vui tab
+  G.GAME_SPOT = G.GAME_SPOT || {}; for (const id of VI2_IDS) if (!G.GAME_SPOT[id]) G.GAME_SPOT[id] = 'school';
   // life: she gestures as she talks to the class, the flag flutters (only while a child is near)
   world.updaters.push((dt, time) => {
     if (!G.heroes.some(h => dist2(h.pos.x, h.pos.z, x, z) < 45)) return;

@@ -18,3 +18,4 @@ import './science2-meta.js';
 
 // (v1.08 maths) How to play for the 21 new maths games
 import './maths3-meta.js';
+import './tiengviet2-meta.js'; // (v1.08 vietnamese)
