@@ -73,7 +73,7 @@ Resumed 2 Nov 2026 2:00 pm AEDT (Release: "resume").
 - GitHub full suite:
   - The runs on 412183d1 (41381462510) and 145221eb (41382067411) were still queued when later batches landed, so
     both were cancelled.
-  - One run on the final code covers all five batches. It was started 2 Nov 2026 about 2:50 pm AEDT on 033b3df7.
+  - One run on the final code covers all five batches. It was started 2 Nov 2026 about 2:25 pm AEDT on 033b3df7.
     Result: (pending).
 - Strict plan (brief item 5): [typescript-strict-plan.md](typescript-strict-plan.md) and
   [typescript-strict-ratchet.json](typescript-strict-ratchet.json). 71 of 245 checked game files are already
