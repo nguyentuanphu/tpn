@@ -1,6 +1,6 @@
 # v1.07 roads: status
 
-**ready for Release** (2 Nov 2026 AEDT): the roads (owner approved) and the `js/world.ts` split (owner's decision via Release). Draft PR #787. Full suite started on GitHub after the split: Release, please read its result and commit its `check-map` artifact (`tests/check-map.json`, `tests/check-times.json`).
+**ready for Release (full suite: Release's combined run)** (2 Nov 2026 AEDT): the roads (owner approved) and the `js/world.ts` split (owner's decision via Release). Draft PR #787. The per-branch full-suite runs were cancelled by Release (owner, 3:05 pm AEDT); Release's combined run decides, and its `check-map` artifact gives `tests/check-map.json` for the new `js/world/` files.
 
 Branch: `work/v107-roads`. Issue #34. Started 2 Nov 2026, 10:57 am AEDT.
 
