@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 if (!process.env.PLAYWRIGHT_BROWSERS_PATH && fs.existsSync('/workspace/.cache/ms-playwright'))
   process.env.PLAYWRIGHT_BROWSERS_PATH = '/workspace/.cache/ms-playwright';
-const { chromium } = await import('../../../tests/node_modules/playwright/index.mts');
+const { chromium } = await import('../../../tests/node_modules/playwright/index.mjs');
 const evidence = path.join(root, 'evidence', 'current-guide'); fs.mkdirSync(evidence, { recursive: true });
 const errors = [], network = [], cases = [];
 const browser = await chromium.launch();

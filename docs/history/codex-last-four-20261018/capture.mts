@@ -1,4 +1,4 @@
-import { chromium } from '../../../tests/node_modules/playwright/index.mts';
+import { chromium } from '../../../tests/node_modules/playwright/index.mjs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 const root=fileURLToPath(new URL('.', import.meta.url));

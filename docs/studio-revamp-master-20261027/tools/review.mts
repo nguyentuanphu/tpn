@@ -1,4 +1,4 @@
-import { chromium } from '../../../tests/node_modules/playwright/index.mts';
+import { chromium } from '../../../tests/node_modules/playwright/index.mjs';
 import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';
 const root=path.resolve('docs/studio-revamp-master-20261027');
 const browser=await chromium.launch({headless:true});const errors=[],checks=[];
