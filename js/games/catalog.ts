@@ -221,6 +221,17 @@ export const GAME_CATALOG = [
   // the two Tiếng Việt games: hear a tone and pick its mark; build a syllable (js/games/tiengviet.ts)
   { id: 'vi_tones', learn: true, icon: 'vi:tones', name: () => T('Tone Detective', 'Thám Tử Dấu Thanh') },
   { id: 'vi_build', learn: true, icon: 'vi:build', name: () => T('Build a Syllable', 'Bé Ghép Vần') },
+  // (v1.08 vietnamese) ten more Tiếng Việt games (js/games/tiengviet2.ts)
+  { id: 'vi_tonemean', learn: true, icon: 'vi:tonemean', name: () => T('One Word, Many Tones', 'Dấu Thanh Đổi Nghĩa') },
+  { id: 'vi_rhyme', learn: true, icon: 'vi:rhyme', name: () => T('Rhyme Pairs', 'Tìm Vần Giống Nhau') },
+  { id: 'vi_letters', learn: true, icon: 'vi:letters', name: () => T('Vietnamese Letters', 'Chữ Cái Việt') },
+  { id: 'vi_opposite', learn: true, icon: 'vi:opposite', name: () => T('Opposite Pairs', 'Nối Từ Trái Nghĩa') },
+  { id: 'vi_cadao', learn: true, icon: 'vi:cadao', name: () => T('Folk Rhymes', 'Ca Dao Đồng Dao') },
+  { id: 'vi_tucngu', learn: true, icon: 'vi:tucngu', name: () => T('Picture Sayings', 'Tục Ngữ Có Hình') },
+  { id: 'vi_readalong', learn: true, icon: 'vi:readalong', name: () => T('Read Along', 'Bé Đọc To') },
+  { id: 'vi_sentence', learn: true, icon: 'vi:sentence', name: () => T('Make a Sentence', 'Bé Đặt Câu') },
+  { id: 'vi_dictation', learn: true, icon: 'vi:dictation', name: () => T('Listen and Spell', 'Nghe Và Viết') },
+  { id: 'vi_riddle', learn: true, icon: 'vi:riddle', name: () => T('Folk Riddles', 'Câu Đố Dân Gian') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -263,5 +274,7 @@ export const GAME_LOADERS = {
   'crafts.ts': { ids: ["lacquer", "scratch", "bubblepaint", "fingerpaint", "weatherpaint", "thocam", "pixelpic", "fireworks", "masks", "makeface", "gallery", "leafrub"], load: () => import('./crafts.js') },
   'science.ts': { ids: ['sci_float', 'sci_magnet', 'sci_ramp', 'sci_seesaw', 'sci_shadow', 'sci_sound'], load: () => import('./science.js') },
   'tiengviet.ts': { ids: ['vi_tones', 'vi_build'], load: () => import('./tiengviet.js') },
+  // (v1.08 vietnamese)
+  'tiengviet2.ts': { ids: ['vi_tonemean', 'vi_rhyme', 'vi_letters', 'vi_opposite', 'vi_cadao', 'vi_tucngu', 'vi_readalong', 'vi_sentence', 'vi_dictation', 'vi_riddle'], load: () => import('./tiengviet2.js') },
 
 };

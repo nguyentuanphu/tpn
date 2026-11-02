@@ -22,6 +22,7 @@ import { TOWN_SCHOOL } from './content/map.js';
 
 /** the school's place: the building's middle (x, z), its size, the yard in front (north, -z) and where Cô Tam stands */
 import { SCHOOL } from './content/school-place.js';
+import { VI2_IDS } from './content/tiengviet2.js'; // (v1.08 vietnamese) the map pin of the new Tiếng Việt games
 export { SCHOOL };
 export const SCHOOL_GREETING = ['Welcome to the Fun Learning School! Shall we learn something fun today?', 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?'];
 
@@ -147,6 +148,8 @@ export function createSchool(G) {
   const s = SCHOOL.spot;
   const it = { id: 'school', x: s.x, z: s.z, r: 3, icon: '👩‍🏫', label: () => T('Fun learning with ' + nm('Cô Tam'), 'Học vui cùng Cô Tam'), act: h => talk(h) };
   G.interactables.push(it);
+  // (v1.08 vietnamese) the map pin of the Tiếng Việt games goes to the school, where Cô Tam opens the Học vui tab
+  G.GAME_SPOT = G.GAME_SPOT || {}; for (const id of VI2_IDS) if (!G.GAME_SPOT[id]) G.GAME_SPOT[id] = 'school';
   // life: she gestures as she talks to the class, the flag flutters (only while a child is near)
   world.updaters.push((dt, time) => {
     if (!G.heroes.some(h => dist2(h.pos.x, h.pos.z, x, z) < 45)) return;

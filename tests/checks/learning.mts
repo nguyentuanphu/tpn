@@ -10,6 +10,10 @@ await check('hocvui', async () => {
   // a win through real taps on the screen, at Easy and at Talent for a big kid, where Talent shows more than Easy
   const NEW = ['sci_float', 'sci_magnet', 'sci_ramp', 'sci_seesaw', 'sci_shadow', 'sci_sound', 'vi_tones', 'vi_build'];
   const MORE = { sci_float: '.sx-thing', sci_magnet: '.sx-thing', sci_ramp: '.sx-lane', sci_seesaw: 'button.sx-seat', sci_shadow: '.sx-ring', sci_sound: '.sx-bottle', vi_tones: '.choices .choice', vi_build: '.choices .choice' };
+  // (v1.08 vietnamese) the ten new Tiếng Việt games, and what Talent shows more of
+  const VI2 = { vi_tonemean: '.choices .choice', vi_rhyme: '.choices .choice', vi_letters: '.choices .choice', vi_opposite: '.vt-pair', vi_cadao: '.choices .choice',
+    vi_tucngu: '.choices .choice', vi_readalong: '.vt-word', vi_sentence: '.vt-text', vi_dictation: '.vt-letter', vi_riddle: '.choices .choice' };
+  NEW.push(...Object.keys(VI2)); Object.assign(MORE, VI2);
   const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, settings: { voice: false } }); await clear(P.page);
   const fails = [];
   // the Play hub: the tab, its four corners, the new games as cards, existing games as links; Learning keeps its games

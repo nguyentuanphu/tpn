@@ -52,6 +52,7 @@ marketing/source/runvalley.log
 /js/art/r90-audits.js
 /js/art/round30.js
 /js/art/things-money.js
+/js/art/tiengviet2.js
 /js/asia.js
 /js/audio.js
 /js/autoplay.js
@@ -148,6 +149,7 @@ marketing/source/runvalley.log
 /js/content/talefilms.js
 /js/content/tester-arcades.js
 /js/content/tester.js
+/js/content/tiengviet2.js
 /js/content/unlocks.js
 /js/content/villagerlines.js
 /js/content/yard.js
@@ -257,6 +259,8 @@ marketing/source/runvalley.log
 /js/games/thinking.js
 /js/games/thinking2.js
 /js/games/tiengviet.js
+/js/games/tiengviet2-meta.js
+/js/games/tiengviet2.js
 /js/games/tienlen.js
 /js/games/tienlenrules.js
 /js/games/trongnu-rules.js

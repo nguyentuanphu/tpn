@@ -125,6 +125,9 @@ for (const l of READING.readingLines()) jobs.push({ lang: l.lang, text: l.text, 
 // (js/content/hocvui.js): ma, má, mà…, cá vàng, and the picture words of Build a Syllable, always in Vietnamese
 const HOCVUI = await import('../js/content/hocvui.js');
 for (const l of HOCVUI.hocvuiLines()) jobs.push({ lang: l.lang, text: l.text, area: 'games', pri: 40, alt: 'games' });
+// (v1.08 vietnamese) the words, verses, sayings, sentences and riddles the ten new Tiếng Việt games say in Vietnamese
+const TV2 = await import('../js/content/tiengviet2.js');
+for (const l of TV2.tiengviet2Lines()) jobs.push({ lang: l.lang, text: l.text, area: 'games', pri: 40, alt: 'games' });
 const readingSsml = (j, v) => { const L = /^\/(\w+)\/$/.exec(j.lang === 'en' ? j.text : ''), ipa = L && READING.SOUND_IPA[L[1]]; return ipa ? `<speak version='1.0' xml:lang='en-AU'><voice name='${v}'><phoneme alphabet='ipa' ph='${ipa}'>${L[1]}</phoneme></voice></speak>` : null; };
 // one job per recording; a line used in several areas downloads with the first it is needed in (the core first)
 const RANK = a => a === 'core' ? 0 : a === 'world' ? 3 : GROUPS.includes(a) ? 2 : 1;
