@@ -4,7 +4,8 @@
 # each arm with its own shoulder), joined at the shoulders only, then smoothed. Fitted clothes (shirt, sleeves, trousers, shorts) are the
 # body surface lifted a little, so they hug the body; loose clothes (áo bà ba, áo dài panels, skirts, coat, cape) stay on top.
 
-MB_K = 1 / .575   # a metaball's surface sits at .575 of its radius (stiffness 2, threshold .6)
+MB_K = 1 / .575
+BW = {'felt': .92, 'toy': .88}.get(LOOK, .86)   # body width for each look   # a metaball's surface sits at .575 of its radius (stiffness 2, threshold .6)
 
 def _mb(name):
     mb = bpy.data.metaballs.new(name); mb.resolution = mb.render_resolution = .006 * S; mb.threshold = .6
@@ -34,8 +35,8 @@ def arm_param(p, s):
 def skin_body():
     b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']; g = G == 'f'
     o, mb = _mb('mbBody')
-    _ball(mb, (0, 0, (b['zW'] + b['zC']) / 2 + .025 * S), 1, (wC * .86, wC * dep * .82, (b['zS'] - b['zW']) * .55))           # chest (slim, owner 3 Nov)
-    _ball(mb, (0, 0, (b['zCr'] + b['zW']) / 2 + .0 * S), 1, (wH * .84, wH * dep * .8, (b['zW'] - b['zCr']) * .7))          # belly and hips (no big tummy)
+    _ball(mb, (0, 0, (b['zW'] + b['zC']) / 2 + .025 * S), 1, (wC * BW, wC * dep * .82 * BW / .86, (b['zS'] - b['zW']) * .55))           # chest (slim, owner 3 Nov)
+    _ball(mb, (0, 0, (b['zCr'] + b['zW']) / 2 + .0 * S), 1, (wH * BW * .98, wH * dep * .8 * BW / .86, (b['zW'] - b['zCr']) * .7))          # belly and hips (no big tummy)
     _cap(mb, (0, 0, b['zS'] - .03 * S), (0, 0, b['zN'] + .05 * S), .042 * S)                                                   # neck
     for s in (-1, 1):
         X = s * b['legX']; knee = (b['zCr'] + b['zAnk']) / 2 + .02 * S

@@ -24,7 +24,9 @@ def on_head(az, el, lift=1.04):
 def lock_at(m, az, el, L, W, toward=None, away=None, gravity=.6, spin=.15, lift=None, out=None, **kw):
     """a lock rooted on the head at (az, el), flowing towards a point, away from a point, or simply down"""
     # volume (owner, 3 Nov: "the hair looks too flat"): locks stand off the head, more on the crown, and lean outwards
-    lift = lift or (1.07 + .1 * max(0, math.sin(el))); out = .1 * max(0, math.sin(el)) + .02 if out is None else out
+    TOY = LOOK == 'toy'   # the soft-toy look: big locks lying close to the head, tips tucked in
+    lift = lift or ((1.04 + .04 * max(0, math.sin(el))) if TOY else (1.07 + .1 * max(0, math.sin(el)))); out = (0.0 if TOY else .1 * max(0, math.sin(el)) + .02) if out is None else out
+    if TOY: kw['flick'] = min(kw.get('flick', .2), .06); kw['wave'] = kw.get('wave', 0) * .5; spin = min(spin, .06)
     base, n = on_head(az, el, lift)
     down = Vector((0, 0, -1)); g = (down - down.project(n))
     if toward is not None: d = (toward - base); d = d - d.project(n)
@@ -32,7 +34,7 @@ def lock_at(m, az, el, L, W, toward=None, away=None, gravity=.6, spin=.15, lift=
     else: d = g.copy()
     if d.length < 1e-4: d = g
     d = (d.normalized() * (1 - gravity) + (g.normalized() if g.length > 1e-4 else d.normalized()) * gravity + n * out).normalized()
-    kw.setdefault('flick', .2); o = slock(m, L * R * 1.1, W * R * 1.15, hug=kw.pop('hug', 1.05) * R * lift * 1.15, **kw)
+    kw.setdefault('flick', .2); o = slock(m, L * R * (1.0 if TOY else 1.1), W * R * (1.35 if TOY else 1.15), hug=kw.pop('hug', 1.05) * R * lift * 1.15, **kw)
     place(o, base, d, n, random.uniform(-spin, spin)); return o
 
 def hair_base(m, hairline=.3, sides=-.4, back=-.66):

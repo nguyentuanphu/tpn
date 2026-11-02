@@ -14,7 +14,7 @@ from mathutils.bvhtree import BVHTree
 from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube, lathe, subsurf, obj_from
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
-FLAGS = ('rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
+FLAGS = ('look=felt', 'look=now', 'look=toy', 'rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
 OUT = next((a for a in argv if a not in FLAGS and '=' not in a), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
@@ -114,11 +114,23 @@ if V and V['size'] != 'kid':
     grow(*{'adult': (1.27, 1.12, .25), 'elder': (1.13, 1.1, .245)}[V['size']])
     P.update(eye=.15, eyeZ=-.08, jaw=.17, cheek=.02, mouth=.62, head=(.97, .95, 1.06))
 # face options for the owner to choose (3 Nov): face=oval (a small oval face, a slim chin) or face=concept (like the Finn and Flora concepts)
-FACEOPT = next((x.split('=', 1)[1] for x in argv if x.startswith('face=')), 'oval' if GAME else '')   # A, the small oval, approved by the owner (3 Nov)
+# three whole looks for the owner to compare (3 Nov): look=felt (like the first chibi Lumi), look=now, look=toy (a soft toy, in between)
+LOOK = next((x.split('=', 1)[1] for x in argv if x.startswith('look=')), 'now')
+FACEOPT = next((x.split('=', 1)[1] for x in argv if x.startswith('face=')), 'oval' if GAME and LOOK == 'now' else '')   # A, the small oval, approved by the owner (3 Nov)
 if GAME and FACEOPT:
     chin = HC.z - R * P['head'][2]; R *= .97 if FACEOPT == 'oval' else .9   # the owner (3 Nov): the .85 head looked too small for the body
     if FACEOPT == 'oval': P.update(head=(.9, .9, 1.1), jaw=.32, cheek=.0, eye=.165, eyeX=.3, eyeZ=-.1, mouth=.62, noseZ=-.33, mouthZ=-.53, blushX=.47, blushZ=-.4)
     else: P.update(head=(.88, .9, 1.13), jaw=.36, cheek=.0, eye=.19, eyeX=.31, eyeZ=-.07, mouth=.6, noseZ=-.33, mouthZ=-.55, blushX=.47, blushZ=-.4, almond=True)
+    HC = Vector((0, 0, chin + R * P['head'][2]))
+if GAME and LOOK in ('felt', 'toy'):
+    chin = HC.z - R * P['head'][2]
+    if LOOK == 'felt':   # the first chibi Lumi's face: round, full cheeks, big soft eyes, a bigger head
+        R = .29 if not (V and V['size'] != 'kid') else .26
+        P.update(head=(1.02, .96, .97), jaw=.04, cheek=.08, eye=.2, eyeX=.33, eyeZ=-.13, mouth=.72, noseZ=-.33, mouthZ=-.5, blushX=.55, blushZ=-.36)
+    else:                # a soft toy: a medium head, a soft round face
+        R = .255 if not (V and V['size'] != 'kid') else .24
+        P.update(head=(.98, .94, 1.02), jaw=.12, cheek=.05, eye=.18, eyeX=.31, eyeZ=-.12, mouth=.68, noseZ=-.33, mouthZ=-.5, blushX=.52, blushZ=-.37)
+    if V and V['size'] != 'kid': P.update(eye=P['eye'] * .85, mouth=P['mouth'] * .9)
     HC = Vector((0, 0, chin + R * P['head'][2]))
 if GAME:  # boys and girls, men and women have different figures (owner, 3 Nov: "dáng"); grown-ups differ more than children
     a_ = 1.0 if (V and V['size'] != 'kid') else .5; bw_ = {'au-dad': 1.08, 'au-grandpa': 1.05}.get(ROLE, 1.0) if V else 1.0
@@ -380,7 +392,7 @@ def hair_flora():
         o = leaf('flowerLeaf', LEAFG, .22 * R, .1 * R, .2, .2, 10, .03 * R, .2); place(o, c + n * .03 * R, q @ Vector((math.cos(a), math.sin(a), 0)), n)
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-more.py')).read())  # Sol, villagers, the wardrobe
-if GAME: exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-hair.py')).read())   # hair in big sculpted locks (owner, 3 Nov)
+if GAME and not (LOOK == 'felt' and WHO != 'villager'): exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-hair.py')).read())   # hair in big sculpted locks (owner, 3 Nov)
 group('hair', {'lumi': hair, 'finn': lambda: hair_finn(), 'flora': lambda: hair_flora(), 'sol': lambda: hair_sol(), 'villager': lambda: hair_villager()}[WHO])
 
 # ---------- body ----------
