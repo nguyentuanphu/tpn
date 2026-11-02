@@ -31,6 +31,8 @@ await check('freezewhy', async () => (await import('./old-bugs.mts')).freezeWhyC
 await check('longplaymem', async () => (await import('./old-bugs.mts')).longPlayMemoryCheck(b));
 // (v1.07 startup, owner's plan focus 1) the Simple screen and its games open before the valley is built (tests/simple-first.mts)
 await check('simplefirst', async () => (await import('./simple-first.mts')).simpleFirstCheck(b));
+// (v1.08 companion, owner's plan B) the coin goal chip with no hat, some hats and all hats: "All hats!" (tests/companion-goal.mts)
+await check('companiongoal', async () => (await import('./companion-goal.mts')).companionGoalCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

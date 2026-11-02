@@ -345,10 +345,11 @@ function testerNews(): NewsItem[] {
 const NEWS_SEEN = 'sv2_tester_news';
 // (owner, 1 Nov 2026 AEDT: "take it to that feature to test it straight away") a new feature with a place in the valley:
 // Go there walks the child to the nearest thing it shows (an id prefix of the valley's taps); the Bag's features open the Bag
-const NEWS_GO: Record<string, RegExp | 'bag'> = { jobs: /^job_/, villagerTalk: /^villager_/, singers: /^sing\d/, rideAny: /^drive_/, busFares: /^busstop_/, rideBikes: /^bike_/, xichloRides: /^xichlo_/, dailySurprise: /^gift_today$/, companionGrow: 'bag', saveGoal: 'bag', collectibles: 'bag', mysteryBox: 'bag' };
+const NEWS_GO: Record<string, RegExp | 'bag' | 'pals'> = { jobs: /^job_/, villagerTalk: /^villager_/, singers: /^sing\d/, rideAny: /^drive_/, busFares: /^busstop_/, rideBikes: /^bike_/, xichloRides: /^xichlo_/, dailySurprise: /^gift_today$/, companionGrow: 'pals', saveGoal: 'pals', collectibles: 'bag', mysteryBox: 'bag' };
 async function goToNews(id: string) {
   const how = NEWS_GO[id], h = G.heroes && G.heroes[0]; if (!how || !h) return;
-  if (how === 'bag') { (G as unknown as { openPad?: (i: number, tab: string) => void }).openPad?.(0, 'bag'); return; }
+  // (v1.08 companion) the companion's features open the Companions tab
+  if (how === 'bag' || how === 'pals') { (G as unknown as { openPad?: (i: number, tab: string) => void }).openPad?.(0, how); return; }
   const list = ((G as unknown as { interactables?: Array<{ id: string; x: number; z: number; visible?: (h: unknown) => boolean }> }).interactables || []).filter(i => how.test(i.id) && Number.isFinite(i.x) && (!i.visible || i.visible(h)));
   if (!list.length) return;
   const near = list.reduce((a, b) => Math.hypot(a.x - h.pos.x, a.z - h.pos.z) <= Math.hypot(b.x - h.pos.x, b.z - h.pos.z) ? a : b);

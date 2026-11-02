@@ -99,7 +99,7 @@ export function createShop(G, { say, save }) {
   // (owner, 30 Oct 2026 AEDT: "where do I manage accessories for companions?") a tab in the shop and the mirror, shown once
   // a child has a companion: the hats bought with the coin goal are put on or taken off with a tap, and in the shop the
   // next hat can be bought (the same rule as the coin goal: the hats come in order; js/kidplay.js)
-  const PET_ICON = { party: '🎉', flower: '🌸', nonla: '👒', crown: '👑' };
+  const PET_ICON = { party: '🎉', flower: '🌸', nonla: '👒', crown: '👑', beanie: 'palhat:beanie', captain: 'palhat:captain', wizard: 'palhat:wizard', lotus: 'palhat:lotus' }; // (v1.08 companion: the four new hats)
   const petOf = p => { if (!G.kidplay || !(p.lanterns && p.lanterns.companion)) return null; const s = p.lanterns.pet = p.lanterns.pet || {}; s.hats = s.hats || []; return s; };
   const petTab = (p, on, attr) => petOf(p) ? `<button class="ktab ${on ? 'on' : ''}" ${attr} aria-label="${T('My companion’s hats', 'Mũ của bạn đồng hành')}">${pic('🐾')}</button>` : '';
   const petGrid = (h, shop) => { const s = petOf(h.profile), next = G.kidplay.nextHat(h);

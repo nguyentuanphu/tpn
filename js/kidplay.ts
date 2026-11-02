@@ -18,7 +18,13 @@ export const HATS = [
   { id: 'party', price: 30, en: 'Party hat', vi: 'Mũ sinh nhật' },
   { id: 'flower', price: 45, en: 'Flower crown', vi: 'Vòng hoa' },
   { id: 'nonla', price: 60, en: 'Little nón lá', vi: 'Nón lá nhỏ' },
-  { id: 'crown', price: 80, en: 'Golden crown', vi: 'Vương miện vàng' }
+  { id: 'crown', price: 80, en: 'Golden crown', vi: 'Vương miện vàng' },
+  // (v1.08 companion, owner's plan B, 3 Nov 2026 AEDT) four more hats after the crown, so a child who has every hat still
+  // has a goal; each one is its own drawing (js/art/companion-hats.ts) and its own 3D hat (buildHat below)
+  { id: 'beanie', price: 100, en: 'Woolly beanie', vi: 'Mũ len' },
+  { id: 'captain', price: 120, en: 'Captain’s hat', vi: 'Mũ thuyền trưởng' },
+  { id: 'wizard', price: 150, en: 'Wizard hat', vi: 'Mũ phù thủy' },
+  { id: 'lotus', price: 180, en: 'Lotus crown', vi: 'Vương miện hoa sen' }
 ];
 // what is said ([en, vi]; recorded)
 export const KID_LINES: Record<string, [string, string]> = {
@@ -30,6 +36,7 @@ export const KID_LINES: Record<string, [string, string]> = {
   saving: ['Keep collecting coins for my new hat!', 'Cứ gom thêm tiền để mua mũ mới cho mình nhé!'],
   goal: ['Save coins for a hat for your companion. Choose Buy when you are ready.', 'Để dành tiền mua mũ cho bạn đồng hành. Chọn Mua khi con đã sẵn sàng.'],
   gift: ['A surprise gift! Come back tomorrow for another one.', 'Một món quà bất ngờ! Mai quay lại có quà khác nữa nhé.'],
+  allHats: ['All hats! Your companion has every hat. Choose one to wear in the Companions tab.', 'Đủ mũ rồi! Bạn đồng hành có tất cả các mũ. Chọn mũ để đội trong mục Bạn đồng hành nhé.'],
   giftHint: ['There is a surprise gift in the valley today. Can you find it?', 'Hôm nay có một món quà bất ngờ trong thung lũng. Con tìm được không?']
 };
 const day = () => Math.floor((Date.now() + 10 * 3600e3) / 864e5); // (a day in AEST)
@@ -40,6 +47,10 @@ export function buildHat(id) {
   const parts = id === 'party' ? [P(new THREE.ConeGeometry(.07, .17, 12), '#ff5a7a', [0, .08, 0]), P(new THREE.SphereGeometry(.03, 8, 6), '#ffd23f', [0, .18, 0]), P(new THREE.TorusGeometry(.065, .012, 6, 14), '#ffffff', [0, .02, 0], [Math.PI / 2, 0, 0])]
     : id === 'flower' ? [P(new THREE.TorusGeometry(.08, .018, 6, 16), '#5fa860', [0, 0, 0], [Math.PI / 2, 0, 0]), ...[0, 1, 2, 3, 4, 5].map(k => P(new THREE.SphereGeometry(.03, 8, 6), ['#ff7eb8', '#ffd23f', '#ffffff'][k % 3], [Math.cos(k * 1.05) * .08, .015, Math.sin(k * 1.05) * .08]))]
     : id === 'nonla' ? [P(new THREE.ConeGeometry(.16, .08, 18), '#e8d49a', [0, .03, 0]), P(new THREE.TorusGeometry(.09, .006, 4, 16), '#c8a85a', [0, .005, 0], [Math.PI / 2, 0, 0])]
+    : id === 'beanie' ? [P(new THREE.SphereGeometry(.085, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), '#5fb6ff', [0, 0, 0]), P(new THREE.TorusGeometry(.083, .02, 6, 16), '#ffffff', [0, .005, 0], [Math.PI / 2, 0, 0]), P(new THREE.SphereGeometry(.035, 8, 6), '#ff5a7a', [0, .095, 0])]
+    : id === 'captain' ? [P(new THREE.CylinderGeometry(.085, .075, .07, 16), '#ffffff', [0, .035, 0]), P(new THREE.CylinderGeometry(.077, .077, .025, 16), '#24366b', [0, .012, 0]), P(new THREE.BoxGeometry(.11, .012, .06), '#1d2233', [0, .002, .085]), P(new THREE.SphereGeometry(.018, 8, 6), '#ffd23f', [0, .04, .078])]
+    : id === 'wizard' ? [P(new THREE.ConeGeometry(.075, .22, 14), '#7b5cd6', [0, .11, 0]), P(new THREE.CylinderGeometry(.13, .13, .012, 18), '#7b5cd6', [0, .004, 0]), ...[0, 1, 2].map(k => P(new THREE.SphereGeometry(.016, 6, 5), '#ffd23f', [Math.cos(k * 2.1) * .05, .05 + k * .04, Math.sin(k * 2.1) * .05]))]
+    : id === 'lotus' ? [P(new THREE.TorusGeometry(.075, .014, 6, 16), '#5fa860', [0, 0, 0], [Math.PI / 2, 0, 0]), ...[0, 1, 2, 3, 4, 5, 6].map(k => P(new THREE.ConeGeometry(.026, .08, 6), k % 2 ? '#ffb3d1' : '#ff7eb8', [Math.cos(k * .9) * .072, .04, Math.sin(k * .9) * .072], [Math.sin(k * .9) * .35, 0, -Math.cos(k * .9) * .35])), P(new THREE.SphereGeometry(.024, 8, 6), '#ffd23f', [0, .03, .075])]
     : [P(new THREE.CylinderGeometry(.08, .08, .05, 14, 1, true), '#f2c230', [0, .02, 0]), ...[0, 1, 2, 3, 4].map(k => P(new THREE.ConeGeometry(.018, .06, 6), '#f2c230', [Math.cos(k * 1.26) * .075, .07, Math.sin(k * 1.26) * .075])), P(new THREE.SphereGeometry(.018, 8, 6), '#ff5a7a', [0, .04, .08])];
   const m = new THREE.Mesh(merge(parts), toonVC()); g.add(m);
   return g;
@@ -89,7 +100,10 @@ export function createKidPlay(G, { say, save }) {
   let goalOpening = false;
   async function explainGoal(h) {
     if (goalOpening) return;
-    const x = nextHat(h); if (!x || !G.dialog) return;
+    const x = nextHat(h);
+    // (v1.08 companion) every hat bought: say so, and open the Companions tab where the hats are put on
+    if (!x) { say(...KID_LINES.allHats); G.openPad && G.openPad(h.i, 'pals'); return; }
+    if (!G.dialog) return;
     goalOpening = true;
     try {
       const can = farm.coins >= x.price;
@@ -117,7 +131,9 @@ export function createKidPlay(G, { say, save }) {
     for (const h of G.heroes) {
       const c = chipsFor(h); if (!c) continue;
       const s = hasPet(h) ? pet(h.profile) : null, x = s && nextHat(h);
-      const showFeed = grow() && !!s, fedToday = s && s.fed === day(), showGoal = goal() && !!x, can = x && farm.coins >= x.price;
+      // (v1.08 companion, owner's plan B: "Henry N" saw no chip once every hat was bought) the chip shows for every child with
+      // a companion: the next hat, or "All hats!" when there is none left
+      const showFeed = grow() && !!s, fedToday = s && s.fed === day(), showGoal = goal() && !!s, can = x && farm.coins >= x.price;
       const key = [showFeed, fedToday, level(h), showGoal, x && x.id, can, farm.coins, G.huds[h.i] && G.huds[h.i].root.className].join('|'); if (key === c.key) continue; c.key = key;
       // (owner, 30 Oct 2026 AEDT: "small chip should show") a phone's top row has no room beside the mini-map, so there the
       // goal is a small chip (picture and count) under the clock, shown while saving too; it pulses when the hat can be bought
@@ -127,7 +143,8 @@ export function createKidPlay(G, { say, save }) {
       c.feed.hidden = !showFeed; c.goal.hidden = !showGoal;
       if (showFeed) { c.feed.innerHTML = fedToday ? (level(h) >= 3 ? pic('✨') + `<small>${T('Trick', 'Biểu diễn')}</small>` : pic('😊') + `<small>${T('Full', 'No rồi')}</small>`) : pic('🍓') + `<small>${T('Feed', 'Cho ăn')}</small>`;
         c.feed.setAttribute('aria-label', fedToday ? T('Do a trick', 'Biểu diễn') : T('Feed your friend', 'Cho bạn ăn')); c.feed.classList.toggle('ready', !fedToday); }
-      if (showGoal) { c.goal.innerHTML = pic('🎯') + `<small>${narrow ? '' : T(x.en, x.vi) + ' '}${Math.min(farm.coins, x.price)}/${x.price}</small>`; c.goal.classList.toggle('ready', !!can); c.goal.setAttribute('aria-label', T('About your companion hat goal', 'Về mục tiêu mũ cho bạn đồng hành')); }
+      if (showGoal && x) { c.goal.innerHTML = pic('🎯') + `<small>${narrow ? '' : T(x.en, x.vi) + ' '}${Math.min(farm.coins, x.price)}/${x.price}</small>`; c.goal.classList.toggle('ready', !!can); c.goal.classList.remove('allhats'); c.goal.setAttribute('aria-label', T('About your companion hat goal', 'Về mục tiêu mũ cho bạn đồng hành')); }
+      else if (showGoal) { c.goal.innerHTML = pic('palhat:all') + `<small>${T('All hats!', 'Đủ mũ rồi!')}</small>`; c.goal.classList.remove('ready'); c.goal.classList.add('allhats'); c.goal.setAttribute('aria-label', T('All hats! Your companion has every hat', 'Đủ mũ rồi! Bạn đồng hành có tất cả các mũ')); }
     }
   }
 
@@ -164,5 +181,5 @@ export function createKidPlay(G, { say, save }) {
   });
   // the buttons follow the coins and the switches even while a window is open and the valley is paused
   setInterval(refresh, 500);
-  return { feed, buy, level, nextHat, wearHat, wearerOf, giftSpot: () => spot, HATS, refresh };
+  return { feed, buy, level, nextHat, wearHat, wearerOf, fedToday: h => hasPet(h) && pet(h.profile).fed === day(), giftSpot: () => spot, HATS, refresh };
 }
