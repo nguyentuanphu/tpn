@@ -13,7 +13,7 @@ import { floatReportButton } from './tester-float.js';
 // PRIV-016: on a tester device that accepted, reports keep the players' names, ages and progress; nothing is sent
 // before "I accept", and "Stop being a tester" (Settings) stops everything at once.
 import { T, nm } from './i18n.js';
-import { settings, profiles, farm } from './state.js';
+import { settings, profiles, farm, heldByOtherTab } from './state.js';
 import { BUILD, SHOWN } from './build.js';
 import { el, esc } from './util.js';
 import { pic } from './art.js';
@@ -117,7 +117,11 @@ export const retryReports = () => flush();
 export async function sendAutoplayReport(rep) {
   if (!live) return { state: 'disabled', ids: [] };
   const ids = [];let failed=false;
-  for (const d of rep.done || []) if (d.problems?.length) { const id = await autoReport('autoplay', `${d.name || d.key}: ${d.problems.join('; ')}`.slice(0, 200), { area: 'autoplay', place: '', game: d.g === 'games' ? d.key : '', window: d.g || '', x: 0, z: 0 }); if (id) ids.push(id);else failed=true; }
+  // (#747-#778) a run stopped by another tab sends nothing; "Send / retry" of a run made on an older version (kept on the
+  // device across the update) says that version, not this one: its problems were seen there
+  if (rep.held) return { state: 'held', ids: [] };
+  const made = typeof rep.build === 'string' && rep.build ? rep.build : undefined;
+  for (const d of rep.done || []) if (d.problems?.length) { const id = await autoReport('autoplay', `${d.name || d.key}: ${d.problems.join('; ')}`.slice(0, 200), { area: 'autoplay', place: '', game: d.g === 'games' ? d.key : '', window: d.g || '', x: 0, z: 0 }, made ? { build: made } : {}); if (id) ids.push(id);else failed=true; }
   return { state: failed?'storage-failed':ids.length ? 'queued' : 'no-problems', ids };
 }
 type FlushSummary = { state: 'disabled' | 'offline' | 'empty' | 'sent' | 'retry' | 'storage' | 'limit' | 'notTester'; sent: number; queued: number; dropped?: number };
@@ -196,7 +200,9 @@ const body = (kind, extra) => {
 // the game reports by itself (the same thing at the same place once in 10 minutes, counted meanwhile)
 // (more: extra fields; more.log, the auto play check's last steps, goes before the tester's own log)
 export async function autoReport(kind: string, detail: string, where?: Where, more: Record<string, unknown> = {}) {
-  if (!live) return; const w = where || whereNow(), k = C.keyOf(kind, detail, w.game || w.window || w.area);
+  // (#746-#778) a tab another tab of the game took over has stopped under its notice: its 0 frames a second, covered
+  // buttons and games that did not open or close are that notice, not the game
+  if (!live || heldByOtherTab()) return; const w = where || whereNow(), k = C.keyOf(kind, detail, w.game || w.window || w.area);
   counts.set(k, (counts.get(k) || 0) + 1); const last = sent.get(k);
   if (last && Date.now() - last.at < C.LIMITS.sameAgain) return last.id;
   if (reporting.has(k)) return reporting.get(k);
@@ -204,6 +210,7 @@ export async function autoReport(kind: string, detail: string, where?: Where, mo
   const pending = (async () => {
     const b = body('auto', { auto: kind, detail: String(detail || '').slice(0, 200), where: w, shot: await autoShot(), count: n });
     if (Array.isArray(more.log)) b.log = more.log.concat(b.log).slice(-300);
+    if (typeof more.build === 'string' && /^(v\d+\.\d{2}|r\d+)/.test(more.build)) b.b = more.build;
     const id = enqueue(b); if (id) sent.set(k, { at: Date.now(), id }); else counts.set(k, n + (counts.get(k) || 0));
     return id;
   })();

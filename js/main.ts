@@ -7,7 +7,7 @@ import { createSeeThrough } from './seethrough.js';
 import { withRideView } from './rideview.js';
 import { mountRenderRecovery } from './render-recovery.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
-import { settings, saveSettings, saveProfiles, farm, profiles, claimTab } from './state.js';
+import { settings, saveSettings, saveProfiles, farm, profiles, claimTab, heldByOtherTab } from './state.js';
 import { T, nm, onLang, registerName } from './i18n.js';
 import { say, hush, loadClips, setVoiceGenders } from './voice.js';
 import { SFX, Music, ac } from './audio.js';
@@ -1804,6 +1804,9 @@ function frame(now) {
   const work0 = performance.now();
   // the 3D world rests while a full-screen game, the storybook or a page that covers it is open (saves battery)
   // (two players: the world rests only when both halves have a window open)
+  // (#746, v1.07) and in a tab another tab of the game took over: it went on drawing the valley under its notice, so the
+  // computer drew two games at once and both slowed (16 frames a second)
+  if (heldByOtherTab()) { BAT.lastDrawn = 0; return; }
   if (twoHalves() && playing ? G.halfBusy(0) && G.halfBusy(1) : gameOpen() || document.querySelector<HTMLElement>('.storybook, .theatre.film') || (G.paused && document.querySelector<HTMLElement>('.modal')) || (playing && worldHidden())) { BAT.lastDrawn = 0; return; }
   world.update(dt, t);
   if (playing) G.farCull(now); // (round T: small things far from every camera are not drawn)

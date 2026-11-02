@@ -8308,6 +8308,8 @@ await check('r87ui', async () => (await import('./r87-ui.mts')).r87UiCheck(b));
 await check('familycodejourney', async () => (await import('./family-code-journey.mts')).familyCodeJourneyCheck(b));
 // (v1.07 levels) every game at Easy, Medium, Hard and Talent, and as an under-5: the levels differ (tests/levels-all.mts)
 await check('levelsall', async () => (await import('./levels-all.mts')).levelsAllCheck(b));
+// (v1.07, #746-#778) auto play stops, sends nothing and the valley stops drawing when another tab of the game takes over
+await check('autoplayheld', async () => (await import('./autoplay-held.mts')).autoplayHeldCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);
