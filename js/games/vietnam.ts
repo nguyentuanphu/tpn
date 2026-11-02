@@ -289,7 +289,7 @@ register({
         requestAnimationFrame(tick);
       });
       if (api.closed) return;
-      if (done === 0 || api.two) return api.win({ title: T(`${names[done]} win!`, `${names[done]} thắng rồi!`), titleVi: `${names[done]} thắng rồi!` });
+      if (done === 0 || api.two) return api.win({ title: T(done === 1 && !api.two ? `${names[done]} win!` : `${names[done]} wins!`, `${names[done]} thắng rồi!`), titleVi: `${names[done]} thắng rồi!` });
       api.say('So close! Let’s go again!', 'Suýt nữa thôi! Chơi lại nào!'); await wait(1600);
     }
     return api.win({ title: T('What a strong team!', 'Đội mình khỏe quá!'), titleVi: 'Đội mình khỏe quá!' });

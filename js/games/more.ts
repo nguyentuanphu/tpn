@@ -7,6 +7,7 @@
 import { rpsWinners } from '../netgames.js';
 import { register, untilRight, choiceButtons, tapOne } from './frame.js';
 import { shake } from './reveal.js';
+import { latin, sudokuHoles } from './sudoku-core.js';
 import { T, numWord } from '../i18n.js';
 import { shuffle, pick, el, wait, esc } from '../util.js';
 
@@ -173,11 +174,6 @@ register({
 
 // ---------- Picture Sudoku (4 × 4, or 3 × 3 for the youngest) ----------
 const PICS = ['🍎', '🐟', '⭐', '🌸'];
-function latin(n) { // a random latin square: each picture once per row and column
-  const base = Array.from({ length: n }, (_, r) => Array.from({ length: n }, (_, c) => (r + c) % n));
-  const rows = shuffle(base), perm = shuffle(Array.from({ length: n }, (_, i) => i)), cols = shuffle(Array.from({ length: n }, (_, i) => i));
-  return rows.map(row => cols.map(c => perm[row[c]]));
-}
 register({
   id: 'sudoku', icon: '🧩', name: () => T('Picture Sudoku', 'Sudoku Hình'),
   async run(api) {
@@ -185,7 +181,7 @@ register({
     api.say('Each picture once in every row and every column. Tap an empty square, then the picture that fits.', 'Mỗi hình chỉ một lần trong mỗi hàng và mỗi cột. Chạm ô trống, rồi chọn hình hợp.');
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const sol = latin(n), empty = new Set(shuffle(Array.from({ length: n * n }, (_, i) => i)).slice(0, holes));
+      const sol = latin(n), empty = sudokuHoles(sol, holes);
       const grid = el('div', 'sdk'); grid.style.setProperty('--n', n);
       const cells = Array.from({ length: n * n }, (_, i) => { const c = el('button', 'sdk-c' + (empty.has(i) ? ' hole' : ''), empty.has(i) ? '' : PICS[sol[Math.floor(i / n)][i % n]]); grid.appendChild(c); return c; });
       api.stage.appendChild(grid);

@@ -162,7 +162,7 @@ async function runCoTuong(api) {
     cells[puzzle.from].textContent = puzzle.piece;
     cells[puzzle.from].setAttribute('aria-label', T(`${puzzle.pieceEn}, blue`, `Quân ${puzzle.pieceVi} màu xanh`));
     cells[puzzle.target].classList.add('enemy', 'target');
-    cells[puzzle.target].textContent = '將';
+    cells[puzzle.target].textContent = '帥'; // (v1.07 rules audit) the red general is 帥; 將 is the black one
     cells[puzzle.target].setAttribute('aria-label', T('Red general', 'Tướng đỏ'));
     // (levels) Hard and Talent: a second blue piece that cannot take; Talent: no green ring round the general
     if (puzzle.decoy && api.smart >= 2 && !api.little) { const [p, at] = puzzle.decoy; cells[at].classList.add('friend', 'decoy'); cells[at].textContent = p; cells[at].setAttribute('aria-label', T('Blue piece', 'Quân xanh')); }

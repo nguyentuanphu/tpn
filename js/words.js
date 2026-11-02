@@ -21,7 +21,7 @@ export const AUSSIE_SLANG = [
   ['No worries', "It's okay / you're welcome", 'Không sao đâu', '😊', 'Thanks! No worries!'],
   ['Heaps', 'Lots', 'Rất nhiều', '📚', 'I love you heaps!'],
   ['Servo', 'Petrol station', 'Trạm xăng', '⛽', 'We stopped at the servo.'],
-  ['Footy', 'Football', 'Bóng đá', '🏉', "Let's watch the footy."],
+  ['Footy', 'Aussie Rules football', 'Bóng bầu dục kiểu Úc', '🏉', "Let's watch the footy."],
   ['Sunnies', 'Sunglasses', 'Kính râm', '🕶️', 'Put your sunnies on!'],
   ['Togs', 'Swimsuit', 'Đồ bơi', '🩱', 'Pack your togs for the pool.'],
   ['Avo', 'Avocado', 'Quả bơ', '🥑', 'Smashed avo on toast for brekkie!'],
