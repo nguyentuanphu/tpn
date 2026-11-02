@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { launch } from './harness.mts';
-import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mjs';
+import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, 'evidence', 'studio');

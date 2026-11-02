@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Browser } from 'playwright';
 import { open, clear, noWelcome } from './harness.mts';
-import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mjs';
+import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mts';
 
 export async function r87UiCheck(browser: Browser): Promise<string> {
   const out = process.env.SV_R87_SHOTS || 'out/r87-ui', bad: string[] = [];

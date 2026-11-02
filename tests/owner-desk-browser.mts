@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {itemControlRuntimeCheck} from './item-control-runtime.mts';
-import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mjs';
+import {fakeGitHub,routeGitHub,fakeNetlify,memoryBlobs} from './studio-check.mts';
 import {MemoryManagementTestDatabase} from '../netlify/lib/management/storage/memory-test.mts';
 import {createFinanceService} from '../netlify/lib/management/finance.mts';
 

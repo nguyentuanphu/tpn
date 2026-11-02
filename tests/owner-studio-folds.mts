@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { launch } from './harness.mts';
-import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mjs';
+import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mts';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repo = 'family/folds', password = 'folds-fixture-password-123', site = 'http://localhost:8795';
 const gh = fakeGitHub(repo, { 'content/custom.json': '{}', 'js/build.js': fs.readFileSync(path.join(root, 'js/build.js')) }), unroute = routeGitHub(gh);

@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url)), src = process.env.SV_SRC || path.resolve(here, '..'), out = process.env.SV_SHOT; fs.mkdirSync(out, { recursive: true });
-const { launch } = await import(path.join(src, 'tests/harness.mts')), { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } = await import(path.join(src, 'tests/studio-check.mjs'));
+const { launch } = await import(path.join(src, 'tests/harness.mts')), { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } = await import(path.join(src, 'tests/studio-check.mts'));
 const repo = 'family/shots', password = 'shots-fixture-password-123', site = 'http://localhost:8798';
 const content = { message: { en: 'Dinner is at six tonight', vi: 'Tối nay sáu giờ ăn cơm nhé' }, defaults: { restMins: 30 }, features: { traffic: true } };
 const gh = fakeGitHub(repo, { 'content/custom.json': JSON.stringify(content), 'js/build.js': fs.readFileSync(path.join(src, 'js/build.js')) }), unroute = routeGitHub(gh);

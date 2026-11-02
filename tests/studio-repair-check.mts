@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
-import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mjs';
+import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mts';
 
 // Exercise real Studio saves during a failed device lookup and late Analytics response.
 export async function studioRepairCheck(browser) {

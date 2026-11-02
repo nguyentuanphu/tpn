@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createOperationsControl } from '../netlify/lib/management/operations-control.mts';
 import { MemoryManagementTestDatabase } from '../netlify/lib/management/storage/memory-test.mts';
-import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mjs';
+import { fakeGitHub, routeGitHub, fakeNetlify, memoryBlobs } from './studio-check.mts';
 
 export async function managementBrowserCheck(browser) {
   // The redesign replaces the old cross-area management menu with the five primary areas.
