@@ -82,7 +82,9 @@ jobs:
             [ -n "$ONLY" ] && [ "$n" != "$ONLY" ] && continue
             labels=$(jq -r --argjson n "$n" '.[] | select(.number==$n) | [.labels[].name] | join(" ")' issues.json)
             has() { [[ " $labels " == *" $1 "* ]]; }
-            if has fixed-on-branch || has robot-stuck || has on-hold; then echo "#$n: skipped ($labels)"; continue; fi
+            # A hand start for one issue (Run workflow, issue number) is a deliberate retry: it may take a robot-stuck
+            # bug again without anyone taking the label off first (v1.07). The timer and new issues still skip them.
+            if has fixed-on-branch || has on-hold || { has robot-stuck && [ -z "$ONLY" ]; }; then echo "#$n: skipped ($labels)"; continue; fi
             core=''
             for c in $CORES; do has "$c" && { core=$c; break; }; done
             [ -z "$core" ] && { echo "#$n: no core label, left for the Front Desk"; continue; }
@@ -206,6 +208,7 @@ jobs:
           claude_args: '--max-turns 120 --allowedTools Bash,Read,Write,Edit,Glob,Grep --disallowedTools "Bash(git push:*)"'
 
       - name: Claude works on the bug (backup account)
+        id: backup
         if: steps.primary.outcome == 'failure' && env.HAS_BACKUP == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
@@ -215,13 +218,40 @@ jobs:
           prompt: 'Read .bugfix/task.md and do exactly what it says. An earlier try may have started: check git status and git log first.'
           claude_args: '--max-turns 120 --allowedTools Bash,Read,Write,Edit,Glob,Grep --disallowedTools "Bash(git push:*)"'
 
+      - name: Say why Claude stopped (if it did not finish)
+        # v1.07 (bug-robot helper, 2 Nov 2026 AEDT): from 17 Oct every run stopped after 0.2 s with "is_error: true" and
+        # no cost, and the action hides Claude's output, so nobody could see why. This step prints only the closing
+        # message of each try (for example "Invalid API key" or "usage limit reached"), never the conversation; it
+        # blanks anything that looks like a key, and the issue comment then says the real reason.
+        if: always() && steps.primary.outcome != 'skipped'
+        env:
+          PRIMARY_FILE: ${{ steps.primary.outputs.execution_file }}
+          BACKUP_FILE: ${{ steps.backup.outputs.execution_file }}
+        run: |
+          : > .bugfix/why.txt
+          for pair in "main account:$PRIMARY_FILE" "backup account:$BACKUP_FILE"; do
+            who=${pair%%:*}; f=${pair#*:}
+            [ -n "$f" ] && [ -s "$f" ] || continue
+            msg=$(jq -r '
+              ([ .[]? | select(.type == "assistant") | .message.content[]? | select(.type == "text") | .text ] | last // "") as $said |
+              [ .[]? | select(.type == "result") ] | last // {} |
+              if (.is_error // false) or ((.subtype // "") | startswith("error")) then
+                ((.result // $said) + " " +((.errors // []) | map(tostring) | join(" ")) + " (" + (.subtype // "") + ", "
+                  + ((.num_turns // 0) | tostring) + " turns, " + ((.duration_ms // 0) / 1000 | tostring) + " s)")
+              else empty end' "$f" 2>/dev/null \
+              | tr '\n' ' ' | sed -E 's/(sk-ant-|sk-)[A-Za-z0-9_-]+/[key hidden]/g; s/[A-Za-z0-9_-]{40,}/[hidden]/g' | cut -c1-500)
+            [ -n "$msg" ] && echo "$who: $msg" >> .bugfix/why.txt
+          done
+          if [ -s .bugfix/why.txt ]; then echo "Claude stopped early:"; cat .bugfix/why.txt; else echo "Claude finished normally."; fi
+
       - name: Pack up the result
         if: always()
         run: |
           mkdir -p out
+          why=''; [ -s .bugfix/why.txt ] && why=$'\n\nWhat Claude said when it stopped:\n'"$(cat .bugfix/why.txt)"
           if [ -s .bugfix/result.md ]; then cp .bugfix/result.md out/result.md
           elif [ "$HAS_KEY" != true ]; then printf 'STATUS: stuck\nGitHub has no Claude key: add the repository secret CLAUDE_CODE_OAUTH_TOKEN (Settings, Secrets and variables, Actions, Repository secrets).\n' > out/result.md
-          else printf 'STATUS: stuck\nThe robot stopped without writing a result (it may have run out of usage or time). See the run log.\n' > out/result.md; fi
+          else printf 'STATUS: stuck\nThe robot stopped without writing a result (it may have run out of usage or time). See the run log.%s\n' "$why" > out/result.md; fi
           git status --short | grep -v '^?? .bugfix/' > out/uncommitted.txt || true
           git format-patch "$BASE_SHA..HEAD" -o out/patches >/dev/null || true
           echo "$BASE_SHA" > out/base.txt
@@ -308,11 +338,11 @@ jobs:
             fi
             note="Fixed on the branch \`$b\` ($now). $where
           It is **not live**: Release merges it and asks you \"yes, deploy\" before Netlify gets it."
-            gh issue edit "$N" --add-label fixed-on-branch --remove-label needs-go >/dev/null
+            gh issue edit "$N" --add-label fixed-on-branch --remove-label needs-go --remove-label robot-stuck >/dev/null
           elif [ "$status" = plan ]; then
             note="A plan is ready ($now). Nothing was changed. To let the robot do it, reply on this issue with **go**
           (or tell the Front Desk \"go for #$N\"). The robot starts as soon as you comment."
-            gh issue edit "$N" --add-label needs-go --remove-label small >/dev/null
+            gh issue edit "$N" --add-label needs-go --remove-label small --remove-label robot-stuck >/dev/null
             gh issue edit "$N" --add-label big >/dev/null
           else
             note="The robot could not finish ($now). The Front Desk will look at it; remove the \`robot-stuck\` label to let the robot try again. Run log: $RUN_URL"
