@@ -8306,6 +8306,7 @@ await check('r87ui', async () => (await import('./r87-ui.mts')).r87UiCheck(b));
 // (v1.07 old-bugs) #341 software graphics on Auto; #739 freeze reports on a browser without a long-task observer
 await check('softgraphics', async () => (await import('./old-bugs.mts')).softGraphicsCheck(b));
 await check('freezewhy', async () => (await import('./old-bugs.mts')).freezeWhyCheck(b));
+await check('longplaymem', async () => (await import('./old-bugs.mts')).longPlayMemoryCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

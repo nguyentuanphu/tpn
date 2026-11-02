@@ -1,3 +1,5 @@
+**ready for Release (full suite: Release's combined run)** (2 Nov 2026 AEDT)
+
 # v1.07 old-bugs: status
 
 Helper: old-bugs. Branch: `work/v107-old-bugs`. Started 2 Nov 2026, 10:58 AEDT.
@@ -14,7 +16,7 @@ Files: `js/main.ts` (shared, small change), `js/tester.ts`, `js/players.ts`, a n
 
 ## Progress
 
-**Resumed after Release's "resume" (2 Nov 2026 AEDT). Step 1 done; step 2 (long play) next. Not ready for Release yet.**
+**Done (2 Nov 2026 AEDT). Full suite: Release's combined run (owner's decision, 3:05 pm AEDT: no per-branch full suites).**
 
 Done, commit e83fa395 (pushed to `work/v107-old-bugs`):
 - #341: `js/gpu.ts` tells software drawing apart (test browser: "software: Vulkan 1.3.0 (SwiftShader Device ..."); Graphics Auto then draws the light picture (no shadows, no smoothing) and may go down to 0.5x pixels. `adaptResolution` in `js/main.ts` used to leave out frames over 250 ms, so a computer at 3 frames a second never got a lighter picture; they now count as 250 ms (gaps over 2 s are still a pause). Measured in the test browser at the tester's 1870x940: shadows on ('mid') 0.7 frames a second, light ('low') 2.5, about 3.5x faster. Tester reports now carry `dev.gpu` (`netlify/lib/tester.mts` keeps it, `tools/tester-issues.mts` shows "graphics ...").
@@ -23,17 +25,17 @@ Done, commit e83fa395 (pushed to `work/v107-old-bugs`):
 - Shared files touched (small): `js/main.ts` (GPU pick, resolution floor, slow-frame counting), `tests/run.mjs` (two lines at the end).
 - New checks in `tests/old-bugs.mts`: `softgraphics`, `freezewhy`. Fixed in the check while running it: the test browser draws at about 2 frames a second and freezes by itself, so `freezewhy` puts a window on top (the valley stops drawing, as in the game); the second freeze lasts 3.6 s because the same freeze in the same place again is one report; a report's own freeze is the last such line of its 30 seconds.
 
-Long-play memory (#355), phone size 390x844, autoplay x5, all groups, stopped at 7.6 of 30 minutes for the pause:
-- JS heap after garbage collection 49.2 MB -> 55.6 MB; DOM nodes 3883 -> 4111; listeners 214 -> 229.
-- 3D geometries 546 -> 1169, textures 201 -> 298, while walking plateau -> village -> Hà Nội (new places loading in). Not yet known whether they are let go after leaving a place: that needs the full 30 minutes.
+Long-play memory (#355), phone size 390x844, autoplay x5, every group, 30.5 minutes (test browser, not a real iPhone):
+- No reload, no error. JS heap after garbage collection 49 MB -> about 60 MB, level from minute 13 (61.5, 59.3, 58.5, 59.9, 60.2).
+- DOM nodes 3883 -> 5012 and listeners 214 -> 296: mostly a story theatre and name tags open at the moment of the sample (the end-of-run difference was a theatre, +62 elements); not a steady leak, but worth watching.
+- 3D shapes held by the graphics 546 -> 1771 and pictures 201 -> 358. Not a leak: every shape held is still in the valley (8-minute run: the scene uses 4136 shapes, the graphics hold 1198, all of them in use). three.js sends each part to the graphics the first time it is seen and keeps it, so the total grows with the places visited, up to the valley's own (about 4000 shapes, 600 pictures). On an iPhone this is the likely memory pressure behind #355; the real cure is the merge and draw-call work (S2 and S3: fewer, merged shapes), or letting go of far places' shapes, which is bigger work for World. Not done here.
+- New check `longplaymem` keeps it so: after 6 places and 3 games, every shape and picture the graphics hold must still be in use.
 
-## Exact next step (after "resume")
+## Left for later
 
-1. `python3 -m http.server 8765` in the repo root, `node tools/build.mts`, then `cd tests && CHROMIUM=/opt/pw-browsers/chromium node run.mjs softgraphics freezewhy testerreport gameends` (one run at a time); fix until green.
-2. Run the 30-minute long-play probe again (script kept below) and see whether geometries and textures level off or keep climbing after places are left; if they keep climbing, find what is not disposed and add a long-play check.
-3. `node suite.mjs --changed` picks the full suite (test code changed): start `.github/workflows/full-suite.yml` on this branch on GitHub, open a draft PR "v1.07 old-bugs: ...", write the results here and "ready for Release" at the top.
-
-Probe: open a 390x844 touch page with autoplay allowed (as `tests/child-bots.mts`), start autoplay x5 with every group ticked, and every 30 s record the heap after GC (CDP `Performance.getMetrics`), `Memory.getDOMCounters`, `renderer.info.memory` and the region.
+- #355: lower the memory itself (S2/S3 merge work, or releasing far places), for World or a later round. The notes from v1.07 (minutes, 3D count) will show on the next real report whether long sessions are the pattern.
+- #341 and #739: wait for the next real reports, which now name the graphics and say "page busy" or "free, not drawn".
+- Not checked on a real iPhone or a real computer without a graphics chip.
 
 ## Checks
 
@@ -43,4 +45,5 @@ Probe: open a 390x844 touch page with autoplay allowed (as `tests/child-bots.mts
 | freezewhy | pass (48 s): busy page "page busy 2582 ms"; held frames "page busy 0 ms (free, not drawn)"; report names the graphics |
 | testerreport | pass (82 s) |
 | gameends | pass (88 s); the new minutes and 3D fields are not asserted by it (old-format notes still read the same) |
-| full suite on GitHub | not started (paused) |
+| longplaymem (new) | pass (54 s): 938 shapes held, 937 in use; 286 pictures held, 284 in use |
+| `suite.mjs --changed` | picks the full suite (test code changed): left to Release's combined run, as the owner decided |

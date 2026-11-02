@@ -70,3 +70,35 @@ export async function freezeWhyCheck(b: Browser): Promise<string> {
     return `without a long-task observer (Safari): "${busyLine}" and "${freeLine}"; device graphics "${gpu}"`;
   } finally { await P.ctx.close(); }
 }
+
+/** (#355) walking from place to place and playing games: every 3D shape and picture the graphics hold is still in the
+ * valley (a shape is sent to the graphics the first time it is seen and kept, so the total can grow only up to the
+ * valley's own; one left behind after its object was taken away would be a leak that grows with play time) */
+export async function longPlayMemoryCheck(b: Browser): Promise<string> {
+  const P = await open(b, { w: 390, h: 844, touch: true });
+  try {
+    await clear(P.page);
+    const count = () => P.page.evaluate(() => { const G = (window as any).__sv, geos = new Set(), texs = new Set();
+      G.scene.traverse((o: any) => { if (o.geometry) geos.add(o.geometry); for (const m of (Array.isArray(o.material) ? o.material : o.material ? [o.material] : [])) for (const v of Object.values(m)) if (v && (v as any).isTexture) texs.add(v); });
+      // (three.js: a shape sent to the graphics gets a 'dispose' listener; a picture sent gets __webglInit)
+      const sent = [...geos].filter((g: any) => g._listeners?.dispose?.length).length, texSent = [...texs].filter(t => G.renderer.properties.get(t).__webglInit).length;
+      return { inScene: geos.size, sent, held: G.renderer.info.memory.geometries, texInScene: texs.size, texSent, texHeld: G.renderer.info.memory.textures }; });
+    const before = await count();
+    const places: number[][] = await P.page.evaluate(async () => (await import('/js/world.js')).CITIES.slice(0, 6).map((c: any) => [c.x, c.z]));
+    for (const [x, z] of places) { await P.page.evaluate(([x, z]) => (window as any).__sv.heroes[0].place(x, z + 6), [x, z]); await P.page.waitForTimeout(3500); }
+    for (const id of ['memory', 'caro', 'counting']) {
+      await P.page.evaluate(id => { void (window as any).__sv.playGame(0, id, 'replay'); }, id); await P.page.locator('.gl').waitFor();
+      await P.page.waitForTimeout(1500); await P.page.locator('.gl-x').click(); await P.page.waitForSelector('.gl', { state: 'detached' });
+    }
+    await P.page.waitForTimeout(1500);
+    const after = await count();
+    // (a few shapes may be drawn once without a place in the valley: the sky's light setup, a game's preview)
+    const bad: string[] = [];
+    if (after.held > after.sent + 12) bad.push(`the graphics hold ${after.held} shapes, ${after.held - after.sent} of them no longer in the valley`);
+    if (after.texHeld > after.texSent + 12) bad.push(`the graphics hold ${after.texHeld} pictures, ${after.texHeld - after.texSent} of them no longer in the valley`);
+    if (!(after.held > before.held)) bad.push('walking to new places drew nothing new: ' + JSON.stringify({ before, after }));
+    if (P.errors.length) bad.push(P.errors.join(' | '));
+    if (bad.length) throw Error(bad.join(' | ') + ' ' + JSON.stringify({ before, after }));
+    return `${places.length} places and 3 games: the graphics hold ${after.held} shapes (${after.sent} of the valley's ${after.inScene} in use) and ${after.texHeld} pictures (${after.texSent} of ${after.texInScene} in use), from ${before.held} and ${before.texHeld}`;
+  } finally { await P.ctx.close(); }
+}
