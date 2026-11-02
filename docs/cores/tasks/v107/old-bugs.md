@@ -14,4 +14,32 @@ Files: `js/main.ts` (shared, small change), `js/tester.ts`, `js/players.ts`, a n
 
 ## Progress
 
-(below)
+**Paused (Release asked: usage limit), 2 Nov 2026 AEDT. Waiting for "resume" after 2 pm AEDT. Not ready for Release yet.**
+
+Done, commit e83fa395 (pushed to `work/v107-old-bugs`):
+- #341: `js/gpu.ts` tells software drawing apart (test browser: "software: Vulkan 1.3.0 (SwiftShader Device ..."); Graphics Auto then draws the light picture (no shadows, no smoothing) and may go down to 0.5x pixels. `adaptResolution` in `js/main.ts` used to leave out frames over 250 ms, so a computer at 3 frames a second never got a lighter picture; they now count as 250 ms (gaps over 2 s are still a pause). Measured in the test browser at the tester's 1870x940: shadows on ('mid') 0.7 frames a second, light ('low') 2.5, about 3.5x faster. Tester reports now carry `dev.gpu` (`netlify/lib/tester.mts` keeps it, `tools/tester-issues.mts` shows "graphics ...").
+- #739: Safari has no long-task observer, so every iPhone freeze said "longest script 0 ms". `js/tester.ts` now runs a 100 ms timer: "page busy N ms" (script or layout held the page) or "(free, not drawn)" (the graphics side stopped); without the observer it says "longest script not measured".
+- #355: the "ended by the browser" and "reloaded" notes (`js/players.ts`) add minutes open and the 3D shapes and pictures held, which an iPhone can report (it has no MB figure). Old notes read the same as before (the `gameends` check still matches).
+- Shared files touched (small): `js/main.ts` (GPU pick, resolution floor, slow-frame counting), `tests/run.mjs` (two lines at the end).
+- New checks in `tests/old-bugs.mts`: `softgraphics`, `freezewhy`. **Not run yet.**
+
+Long-play memory (#355), phone size 390x844, autoplay x5, all groups, stopped at 7.6 of 30 minutes for the pause:
+- JS heap after garbage collection 49.2 MB -> 55.6 MB; DOM nodes 3883 -> 4111; listeners 214 -> 229.
+- 3D geometries 546 -> 1169, textures 201 -> 298, while walking plateau -> village -> Hà Nội (new places loading in). Not yet known whether they are let go after leaving a place: that needs the full 30 minutes.
+
+## Exact next step (after "resume")
+
+1. `python3 -m http.server 8765` in the repo root, `node tools/build.mts`, then `cd tests && CHROMIUM=/opt/pw-browsers/chromium node run.mjs softgraphics freezewhy testerreport gameends` (one run at a time); fix until green.
+2. Run the 30-minute long-play probe again (script kept below) and see whether geometries and textures level off or keep climbing after places are left; if they keep climbing, find what is not disposed and add a long-play check.
+3. `node suite.mjs --changed` picks the full suite (test code changed): start `.github/workflows/full-suite.yml` on this branch on GitHub, open a draft PR "v1.07 old-bugs: ...", write the results here and "ready for Release" at the top.
+
+Probe: open a 390x844 touch page with autoplay allowed (as `tests/child-bots.mts`), start autoplay x5 with every group ticked, and every 30 s record the heap after GC (CDP `Performance.getMetrics`), `Memory.getDOMCounters`, `renderer.info.memory` and the region.
+
+## Checks
+
+| Check | Result |
+|---|---|
+| softgraphics | not run yet (paused) |
+| freezewhy | not run yet (paused) |
+| testerreport, gameends (touched code) | not run yet (paused) |
+| full suite on GitHub | not started (paused) |
