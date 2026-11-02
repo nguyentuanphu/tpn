@@ -456,15 +456,36 @@ await check('adventure', async () => {
     delete p.unlockAll; __sv.simple.openGroup('games', null);
     return { cats: cats.length, inOrder: JSON.stringify(order) === JSON.stringify(cats), heads, missed: want.filter(id => !stops.includes(id)), notDrawn: out.notDrawn, tooBig: out.tooBig, stops: stops.length };
   });
+  // (v1.08 simple, owner 3 Nov 2026 AEDT) the games are in two big buttons, Học vui (learning) and Vui chơi (play): every
+  // switched-on game is on one of them, as a stop or (still locked) as a stop of its own with a padlock and what to do;
+  // the learning areas are all under Học vui and none under Vui chơi; Valley is in the top row, not the bottom bar
+  r.reach = await P.page.evaluate(async () => {
+    const { GAMES } = await import('/js/games/registry.js'), A = await import('/js/content/activities.js'), out = { missing: [], twoTabs: [], noPad: [], folded: 0, learnWrong: [], bar: '', top: false };
+    const want = Object.keys(GAMES).filter(id => !A.gameInfo(id).hidden), seen = {};
+    for (const t of ['learn', 'fun']) {
+      __sv.simple.show(t); __sv.simple.openGroup(t, null); const v = __sv.simple.view;
+      for (const id of new Set(v.stops.concat(v.locks))) (seen[id] = seen[id] || []).push(t);
+      for (const c of v.cats) if ((t === 'learn') !== (['numbers', 'shapes', 'words', 'reading', 'me', 'money'].includes(c) || c.startsWith('hv_'))) out.learnWrong.push(t + ':' + c);
+      document.querySelectorAll('.sp-stop.locked').forEach(b => { if (!b.querySelector('.sp-lockpad .art') || !b.querySelector('.sp-hint')?.textContent.trim()) out.noPad.push(b.getAttribute('aria-label')); });
+      out.folded += [...document.querySelectorAll('.sp-stop')].filter(e => /more to unlock|trò để mở/.test(e.textContent)).length;
+    }
+    out.missing = want.filter(id => !seen[id]);
+    out.twoTabs = want.filter(id => seen[id] && seen[id].length > 1 && !A.linksIn(GAMES, 'hv_vi', false).concat(A.linksIn(GAMES, 'hv_en', false), A.linksIn(GAMES, 'hv_math', false), A.linksIn(GAMES, 'hv_sci', false)).some(g => g.id === id));
+    out.bar = [...document.querySelectorAll('.sp-tabs button')].map(b => b.dataset.tab || (b.classList.contains('sp-discover') ? 'discover' : '?')).join(',');
+    out.top = !!document.querySelector('.sp-top .sp-tools .sp-valley') && !document.querySelector('.sp-tabs .sp-valley');
+    out.games = want.length;
+    __sv.simple.show('games'); __sv.simple.openGroup('games', null);
+    return out;
+  });
   // places: China and India (asia) always come last
   // (owner, 1 Nov 2026 AEDT) a lock stop says what to do: its guide lists each game to win 3 times with the stars so far
-  r.guide = await P.page.evaluate(async () => { const s = [...document.querySelectorAll('.sp-stop')].find(e => /more to unlock|trò để mở/.test(e.textContent)); if (!s) return 'no lock stop'; s.click(); await new Promise(r => setTimeout(r, 200)); const g = document.querySelector('.sp-guide'), rows = g ? g.querySelectorAll('.sp-grow').length : 0, x = g && g.querySelector('.sp-gx'), xr = x && x.getBoundingClientRect(); x && x.click(); return rows && xr.width >= 64 && !document.querySelector('.sp-guide') ? 'ok' : 'guide rows ' + rows; });
+  r.guide = await P.page.evaluate(async () => { const s = document.querySelector('.sp-stop.locked') || [...document.querySelectorAll('.sp-stop')].find(e => /more to unlock|trò để mở/.test(e.textContent)); /* (v1.08: each locked game is its own stop) */ if (!s) return 'no lock stop'; s.click(); await new Promise(r => setTimeout(r, 200)); const g = document.querySelector('.sp-guide'), rows = g ? g.querySelectorAll('.sp-grow').length : 0, x = g && g.querySelector('.sp-gx'), xr = x && x.getBoundingClientRect(); x && x.click(); return rows && xr.width >= 64 && !document.querySelector('.sp-guide') ? 'ok' : 'guide rows ' + rows; });
   r.placesLast = await P.page.evaluate(() => { __sv.simple.show('places'); const c = __sv.simple.view.cats; return c[c.length - 1]; });
   await P.page.evaluate(() => __sv.simple.show('games'));
   // Discover: a big picture for every area; tapping Music goes there
   await P.page.click('.sp-discover'); await P.page.waitForSelector('.sp-find:not([hidden]) .sp-card');
   r.find = await P.page.evaluate(() => ({ cards: document.querySelectorAll('.sp-card').length, search: !!document.querySelector('.sp-q') }));
-  await P.page.click('.sp-card[data-t="games"][data-a="music"]'); await P.page.waitForTimeout(200); r.music = await P.page.evaluate(() => { const h = document.querySelector('.sp-sec[data-cat="music"] .sp-sectitle'), r = h && h.getBoundingClientRect(); return r && r.top >= 0 && r.top < innerHeight / 2 ? 'music' : 'lost'; });
+  await P.page.click('.sp-card[data-t="fun"][data-a="music"]'); await P.page.waitForTimeout(200); r.music = await P.page.evaluate(() => { const h = document.querySelector('.sp-sec[data-cat="music"] .sp-sectitle'), r = h && h.getBoundingClientRect(); return r && r.top >= 0 && r.top < innerHeight / 2 ? 'music' : 'lost'; });
   // a double tap starts the game once
   await P.page.evaluate(() => { window.__starts = 0; const pg = __sv.playGame; __sv.playGame = (...a) => { window.__starts++; return pg(...a); }; const s = [...document.querySelectorAll('.sp-stop:not(.grp)')].find(x => !/^(Songs|Bài hát)$/.test(x.getAttribute('aria-label'))); s.click(); s.click(); setTimeout(() => s.click(), 120); }); // (a game, not the Music group's 🎵 Songs)
   await P.page.waitForSelector('.gl', { timeout: 10000 }); await P.page.waitForTimeout(400);
@@ -499,6 +520,7 @@ await check('adventure', async () => {
   errs.push(...B.errors); await B.ctx.close();
   ok(!r.list.missing.length && !r.list.extra.length && !r.list.badArea.length, 'activity list: ' + JSON.stringify(r.list));
   ok(r.guide === 'ok', 'lock guide: ' + r.guide);
+  ok(!r.reach.missing.length && !r.reach.twoTabs.length && !r.reach.noPad.length && !r.reach.folded && !r.reach.learnWrong.length && r.reach.bar === 'learn,fun,tales,places,discover' && r.reach.top, 'Học vui / Vui chơi: ' + JSON.stringify(r.reach));
   ok(r.walk.cats >= 5 && r.walk.heads === r.walk.cats && r.walk.inOrder && r.placesLast === 'asia' && !r.walk.missed.length && !r.walk.notDrawn.length && !r.walk.tooBig.length, 'under-5 path: ' + JSON.stringify(r.walk));
   ok(r.find.cards >= 18 && !r.find.search && r.music === 'music', 'discover: ' + JSON.stringify(r.find) + ' ' + r.music);
   ok(r.starts === 1, 'a double tap started the game ' + r.starts + ' times');
