@@ -102,7 +102,7 @@ register({ id: 'vi_tonemean', learn: true, icon: 'vi:tonemean', name: () => T('O
     await talk(api, lv === 4 ? ['Read the word. Which picture is it?', 'Đọc tiếng này. Đó là tranh nào?'] : ['Listen. Which picture is it?', 'Nghe nhé. Đó là tranh nào?']);
     if (api.closed) return;
     if (lv < 4) hear(target.w);
-    if (!await untilRight(api, btns, b => b._v === target)) return;
+    if (!await untilRight(api, btns, (b: Btn) => b._v === target)) return;
     btns.forEach(b => { const w = b._v as Word; if (!b.querySelector('b')) b.insertAdjacentHTML('beforeend', `<b>${esc(w.w)}</b>`); });
     card.querySelector('.vt-big').textContent = target.w;
     await heard(target.w); if (api.closed) return;
@@ -129,7 +129,7 @@ register({ id: 'vi_rhyme', learn: true, icon: 'vi:rhyme', name: () => T('Rhyme P
     const row = choicesRow(B), btns = opts.map(w => opt(row, w, wordHtml(w, { word: lv >= 1, mean: lv >= 1 }), w.w));
     await talk(api, ['Which word has the same rhyme as this one?', 'Tiếng nào có vần giống tiếng này?']);
     if (api.closed) return; hear(t.w);
-    if (!await untilRight(api, btns, b => b._v === a)) return;
+    if (!await untilRight(api, btns, (b: Btn) => b._v === a)) return;
     await talk(api, ['Yes! They share the same rhyme.', 'Đúng rồi! Hai tiếng có vần giống nhau.']); if (api.closed) return;
     card.querySelector('.vt-mean').innerHTML = `${esc(t.w)} · ${esc(a.w)} · <b>${esc(T('rhyme', 'vần'))} ${esc(S.r)}</b>`;
     await heard(t.w); if (api.closed) return; await heard(a.w);
@@ -158,7 +158,7 @@ register({ id: 'vi_letters', learn: true, icon: 'vi:letters', name: () => T('Vie
     const row = choicesRow(B), btns = opts.map(x => opt(row, x, `<b>${esc(x)}</b>`, x, 'vt-opt vt-letter'));
     await talk(api, ['Listen to the word. Which letter is missing?', 'Nghe tiếng này. Còn thiếu chữ cái nào?']);
     if (api.closed) return; hear(w.w);
-    if (!await untilRight(api, btns, b => b._v === L)) return;
+    if (!await untilRight(api, btns, (b: Btn) => b._v === L)) return;
     card.querySelector('.vt-gap').textContent = L;
     await heard(LETTER_SAY(L)); if (api.closed) return; await heard(w.w);
   }
@@ -175,17 +175,17 @@ register({ id: 'vi_opposite', learn: true, icon: 'vi:opposite', name: () => T('O
   for (let r = 0; r < boards; r++) {
     if (api.closed) return; begin(api, B, boards, r);
     const pairs = pool.slice((r * nPairs) % pool.length).concat(pool).slice(0, nPairs);
-    const card = el('div', 'vt-card', `<span class="vt-mean"></span>`); B.appendChild(card);
+    const card = el('div', 'vt-card', `<span class="vt-pic">${pic('vi:opposite')}</span><span class="vt-mean"></span>`); B.appendChild(card);
     const row = choicesRow(B), cards = shuffle(pairs.flatMap(([a, b]) => [{ w: a, mate: b }, { w: b, mate: a }]))
       .map(c => opt(row, c, wordHtml(c.w, { pic: lv < 4, word: lv >= 1, mean: lv >= 1 }), c.w.w, 'vt-opt vt-pair'));
     if (r === 0) { await talk(api, ['Find the opposites. Tap a word, then the word that means the opposite.', 'Tìm từ trái nghĩa. Chạm một từ, rồi chạm từ có nghĩa ngược lại.']); if (api.closed) return; }
     let left = cards.slice();
     while (left.length) {
       api.show('Tap a word.', 'Chạm vào một từ.');
-      const first = await untilRight(api, left, () => true); if (!first) return;
+      const first: Btn | null = await untilRight(api, left, () => true); if (!first) return;
       const c = first._v as { w: Word; mate: Word }; first.classList.add('sel'); hear(c.w.w);
       api.show('Now its opposite.', 'Giờ chạm từ ngược nghĩa với nó.');
-      const second = await untilRight(api, left.filter(b => b !== first), b => (b._v as { w: Word }).w === c.mate); if (!second) return;
+      const second: Btn | null = await untilRight(api, left.filter(b => b !== first), (b: Btn) => (b._v as { w: Word }).w === c.mate); if (!second) return;
       for (const b of [first, second]) { b.classList.remove('sel'); b.classList.add('done'); b.disabled = true; }
       left = left.filter(b => b !== first && b !== second);
       card.querySelector('.vt-mean').textContent = T(`${c.w.w} ↔ ${c.mate.w} (${c.w.en} ↔ ${c.mate.en})`, `${c.w.w} ↔ ${c.mate.w}`);
@@ -215,7 +215,7 @@ async function missingWord(api, list: Verse[], ask: Pair) {
     const row = choicesRow(B), btns = opts.map(x => opt(row, x, `${pic(x.p)}${lv >= 1 ? `<b>${esc(x.gap)}</b>` : ''}`, x.gap));
     await talk(api, ask); if (api.closed) return;
     if (lv < 4) hear(gapped(v));
-    if (!await untilRight(api, btns, b => b._v === v)) return;
+    if (!await untilRight(api, btns, (b: Btn) => b._v === v)) return;
     card.querySelector('.vt-gap').textContent = v.gap;
     await heard(spoken(v.t)); if (api.closed) return;
     card.querySelector('.vt-mean').textContent = T(...v.m);
@@ -248,7 +248,7 @@ register({ id: 'vi_readalong', learn: true, icon: 'vi:readalong', name: () => T(
     await heard(s.t); if (api.closed) return;
     for (let i = 0; i < words.length; i++) {
       if (lv <= 1) btns[i].classList.add('hint'); else hear(sayWord(words[i]));
-      if (!await untilRight(api, btns.filter(b => !b.classList.contains('read')), b => b._v === i)) return;
+      if (!await untilRight(api, btns.filter(b => !b.classList.contains('read')), (b: Btn) => b._v === i)) return;
       btns[i].classList.remove('hint'); btns[i].classList.add('read');
       if (lv <= 1) hear(sayWord(words[i]));
       await wait(lv <= 1 ? 450 : 250); if (api.closed) return;
@@ -280,7 +280,7 @@ register({ id: 'vi_sentence', learn: true, icon: 'vi:sentence', name: () => T('M
     for (let i = 0; i < words.length; i++) {
       slots.forEach((d, k) => d.classList.toggle('now', k === i));
       // (a word that comes twice in a sentence: either card is right)
-      const got = await untilRight(api, tiles.filter(b => !b.disabled), b => (b._v as { w: string }).w === sayWord(words[i])); if (!got) return;
+      const got: Btn | null = await untilRight(api, tiles.filter(b => !b.disabled), (b: Btn) => (b._v as { w: string }).w === sayWord(words[i])); if (!got) return;
       got.disabled = true; got.style.visibility = 'hidden'; slots[i].textContent = words[i]; slots[i].classList.remove('now'); slots[i].classList.add('on');
       hear(sayWord(words[i])); await wait(350); if (api.closed) return;
     }
@@ -314,7 +314,7 @@ register({ id: 'vi_dictation', learn: true, icon: 'vi:dictation', name: () => T(
     hear(w.w);
     for (let i = 0; i < ls.length; i++) {
       slots.forEach((d, k) => d.classList.toggle('now', k === i));
-      const got = await untilRight(api, tiles.filter(b => !b.disabled), b => b._v === ls[i]); if (!got) return;
+      const got: Btn | null = await untilRight(api, tiles.filter(b => !b.disabled), (b: Btn) => b._v === ls[i]); if (!got) return;
       got.disabled = true; got.style.visibility = 'hidden'; slots[i].textContent = ls[i]; slots[i].classList.remove('now'); slots[i].classList.add('on');
       await wait(200); if (api.closed) return;
     }
@@ -339,7 +339,7 @@ register({ id: 'vi_riddle', learn: true, icon: 'vi:riddle', name: () => T('Folk 
     const row = choicesRow(B), btns = opts.map(x => opt(row, x, `${pic(x.p)}${lv >= 1 ? `<b>${esc(x.a)}</b><small>${esc(T(x.en, ''))}</small>` : ''}`, x.a));
     if (r === 0) { await talk(api, ['Listen to the riddle. What is it?', 'Nghe câu đố nhé. Đó là gì?']); if (api.closed) return; }
     hear(q.q[1]);
-    if (!await untilRight(api, btns, b => b._v === q)) return;
+    if (!await untilRight(api, btns, (b: Btn) => b._v === q)) return;
     await heard(q.a); if (api.closed) return; await wait(300);
   }
   api.dots(rounds, rounds); return api.win();
