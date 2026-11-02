@@ -51,15 +51,15 @@ State: in progress (2 Nov 2026 AEDT).
 | Check | Result | Where |
 | --- | --- | --- |
 | unit, rules, types, arch, emoji, noemoji, preload, names, bilingual, validate, mapcoords, viwords, terrainmath | pass (13/13) | local, 2 Nov AEDT, commit 5537d2b0 (unit needed `npm ci` in the repo root first) |
-| browser sample from every group | running | local |
+| browser sample, 20 checks from 15 groups and run.mjs (boot, contentpair, tester, ownerupdatenotice, studio, festcal, meet, cloud, resumerecovery, tales, ownerstoryinitial, hubmap, voicefirstchoice, gamelevel, r87ui, reportstorage, ownertheatreapproach, autoplayhidden, ridecowswim, prices) | pass (20/20), online services up | local, 2 Nov AEDT, commit 5537d2b0 |
 | `suite.mjs --changed` | full suite (tests/run.mjs changed outside a check: expected) | local |
-| GitHub full suite | to start | GitHub |
+| GitHub full suite | running: run 41366040053 on PR #782 (started 11:14 am AEDT) | GitHub |
 
 ## Later
 
-- `.mts` for the group files: simple in itself (Node runs `.mts` here), but `suite.mjs`, `index.mjs` and the docs name
-  `.mjs`, and the `types` check would then try to type the checks. Left for a later round, after Release has merged the
-  other helpers' new checks.
+- `.mts` for the group files: simple in itself (Node runs `.mts` here; `suite.mjs`, `index.mjs` and the README would
+  name the new ending). Left for a later round so that Release first moves the other helpers' new checks into groups
+  with one rename less to follow.
 
 ## Open questions
 
