@@ -941,7 +941,7 @@ await check('ownertransportpov', async () => {
       h.place(i.x+2,i.z); window.__povBoard=i.act(h,G);
     }, {age,kind});
     if(kind!=='xichlo'){await P.page.locator('.dialog .dchoices button').first().click();await P.page.locator('.stoppick [data-next]').click();}
-    await P.page.evaluate(async()=>{await window.__povBoard; const G=__sv,h=G.heroes[0]; const sl=G.traffic.slots.find(s=>s.passenger===h); if(!sl)throw Error('Boarding failed'); sl.mover.wait=100; const before=h.view||'follow'; for(let k=0;k<90;k++)h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},k/60,G); if((h.view||'follow')!==before)throw Error('A passenger ride changed the camera view (owner, 30 Oct AEDT: someone else drives, the usual camera stays): '+h.view);});
+    await P.page.evaluate(async()=>{await window.__povBoard; const G=__sv,h=G.heroes[0]; const sl=G.traffic.slots.find(s=>s.passenger===h); if(!sl)throw Error('Boarding failed'); sl.mover.wait=100; G.paused=true; /* (v1.07) the check drives the frames itself: the game's own clock waits, so a slow page does not count 2 s of waiting as the bus reaching its next stop */ const before=h.view||'follow'; for(let k=0;k<90;k++)h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>false},k/60,G); if((h.view||'follow')!==before)throw Error('A passenger ride changed the camera view (owner, 30 Oct AEDT: someone else drives, the usual camera stays): '+h.view);});
     // Synthetic targets prove the actual rendered sightline, not just camera coordinates.
     const r=await P.page.evaluate(async({age,kind})=>{
       const G=__sv,h=G.heroes[0],sl=G.traffic.slots.find(s=>s.passenger===h),{THREE}=await import('/js/gfx.js');
@@ -962,7 +962,7 @@ await check('ownertransportpov', async () => {
         return {age,kind,seen,pov:h._pov,restored,insideWindow};
       }finally{h.scene.remove(target);target.geometry.dispose();target.material.dispose();}
     },{age,kind}); rows.push(r);
-    await P.page.evaluate(()=>{const G=__sv,h=G.heroes[0];h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>true},0,G);});
+    await P.page.evaluate(()=>{const G=__sv,h=G.heroes[0];G.paused=false;h.update(1/60,{cdx:0,cdy:0,mx:0,mz:0,jump:()=>true},0,G);});
   }
   await P.ctx.close(); ok(rows.every(r=>r.pov&&r.seen>200&&r.restored&&r.insideWindow),JSON.stringify(rows));
   return JSON.stringify(rows);
