@@ -9,7 +9,7 @@
 // A NEW CHECK: add it as its own `await check('name', async () => { ... });` block at the end of this file, just above
 // "await b.close()", and add any shared name it uses to the import line below. Release moves it into the right group
 // file when it merges (tests/checks/README.md says how). Every check name is unique across all the files.
-import { b, check, results } from './checks/shared.mts';
+import { b, check, results, sampled, SEED } from './checks/shared.mts';
 import { GROUPS } from './checks/index.mts';
 // one group after another, in this order (each file's checks in their own order)
 for (const g of GROUPS) await import(`./checks/${g}.mts`);
@@ -37,6 +37,11 @@ await check('companiongoal', async () => (await import('./companion-goal.mts')).
 // (v1.08 notifications) push notifications for grown-ups with a fake push service: Grown-ups on phone, tablet and computer,
 // turning on, the switches, quiet hours, bundling, the service worker's text, a tap opens the right place (tests/push-notify-browser.mts)
 await check('pushnotify', async () => (await import('./push-notify-browser.mts')).pushNotifyCheck(b));
+
+// (v1.08 variety, owner 3 Nov 2026 AEDT: "the rounds are all the same") every game with choices, 4 rounds in a row at each
+// level: no round repeats another and the right answer moves (tests/round-variety.mts); a sample of two levels per game
+// each run, all four when the games change
+await check('roundvariety', async () => (await import('./round-variety.mts')).roundVarietyCheck(b, { sample: sampled('roundvariety') ? SEED : null }));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

@@ -5,7 +5,7 @@ import { register } from './frame.js';
 import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el } from '../util.js';
-import { play, lv, rounds, wrongs, mix, pick, range, near, othersFrom, svgBox, OUT, type Round } from './maths-kit.js';
+import { play, lv, rounds, wrongs, mix, pick, range, near, othersFrom, svgBox, OUT, distinct, type Round } from './maths-kit.js';
 
 const numText = (x: number, y: number, t: string | number, size = 30, f = OUT) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="${size}" font-weight="900" fill="${f}" font-family="Fredoka,sans-serif">${t}</text>`;
 const pad2 = (m: number) => (m < 10 ? '0' : '') + m;
@@ -26,7 +26,7 @@ register({
     // (levels) the minutes the clock can show: Easy o'clock, Medium and half past, Hard and quarter past or to, Talent every 5 minutes
     const L = lv(api, [0], [0, 30], [0, 15, 30, 45], range(0, 11).map(i => i * 5));
     api.stage.dataset.lv = L.join(',');
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const h = pick(1, 12), m = L[pick(0, L.length - 1)], fmt = (hh: number, mm: number) => `${((hh + 11) % 12) + 1}:${pad2(mm)}`, ans = fmt(h, m);
       // wrong answers: the hour and minute hands mixed up, one hour off, a quarter off
       const swap = m % 5 === 0 && m ? fmt(m / 5 || 12, (h % 12) * 5) : '';
@@ -90,7 +90,7 @@ register({
     const L = lv(api, { cars: 2, max: 10, asks: ['bigger'] }, { cars: 3, max: 20, asks: ['biggest'] }, { cars: 3, max: 100, asks: ['biggest', 'smallest'] }, { cars: 4, max: 999, asks: ['biggest', 'smallest'] });
     api.stage.dataset.lv = `${L.cars},${L.max}`;
     const CARS = ['#e8433a', '#3b6fe0', '#43c463', '#ff9f43'];
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const ask = L.asks[pick(0, L.asks.length - 1)], nums: number[] = [];
       // (Talent) numbers that share digits, so the places matter: 352, 325, 532
       while (nums.length < L.cars) { const v = L.max > 100 && nums.length && Math.random() < .5 ? +mix(String(nums[0]).padStart(3, '1').split('')).join('') : pick(1, L.max); if (!nums.includes(v) && v <= L.max && v > 0) nums.push(v); }
@@ -139,7 +139,7 @@ register({
     // (levels) Easy: one ten and some ones; Medium: up to 5 tens; Hard: up to 9 tens; Talent: also how many tens a number has
     const L = lv(api, { tens: 1, askTens: false }, { tens: 5, askTens: false }, { tens: 9, askTens: false }, { tens: 9, askTens: true });
     api.stage.dataset.lv = `${L.tens},${L.askTens ? 1 : 0}`;
-    const list: Round[] = Array.from({ length: rounds(api) }, (_, i) => {
+    const list: Round[] = distinct(rounds(api), i => {
       const t = pick(1, L.tens), o = pick(0, 9), n = t * 10 + o, swap = o ? String(o * 10 + t) : '';
       if (L.askTens && i % 2) return { ask: () => api.say(`How many tens are in ${n}?`, `Số ${n} có mấy chục?`), answer: String(t), others: [...new Set([String(o), ...near(t, 1, 9, 3)])].filter(v => v !== String(t)).slice(0, wrongs(api)), key: 'tens', draw: stage => { stage.appendChild(el('div', 'mx-big', String(n))); } };
       const others = mix([...new Set([swap, ...near(n, 10, 99, 3), String(n + 10), String(n - 10)].filter(v => v && v !== String(n) && +v >= 1 && +v <= 99))]).slice(0, wrongs(api));
@@ -156,7 +156,7 @@ register({
     // (levels) Easy: counting on to 10; Medium: to 20; Hard: counting back to 30; Talent: a number sentence, a + ? = b
     const L = lv(api, { max: 10, back: false, sum: false }, { max: 20, back: false, sum: false }, { max: 30, back: true, sum: false }, { max: 20, back: true, sum: true });
     api.stage.dataset.lv = `${L.max},${L.back ? 1 : 0},${L.sum ? 1 : 0}`;
-    const list: Round[] = Array.from({ length: rounds(api) }, (_, i) => {
+    const list: Round[] = distinct(rounds(api), i => {
       if (L.sum && i % 2) { const b = pick(6, L.max), a = pick(1, b - 1), x = b - a; return { ask: () => api.say(`${a} and what makes ${b}?`, `${a} cộng mấy bằng ${b}?`), answer: String(x), others: near(x, 0, L.max, wrongs(api)), key: 'sum', draw: stage => { stage.appendChild(el('div', 'mx-big', `${a} + <b>?</b> = ${b}`)); } }; }
       const back = L.back && Math.random() < .5, len = 5, start = back ? pick(len, L.max) : pick(0, L.max - len + 1), seq = range(0, len - 1).map(k => back ? start - k : start + k), gap = pick(1, len - 2), x = seq[gap];
       return { ask: back ? ['Count back. Which number is missing?', 'Đếm lùi. Số nào còn thiếu?'] : ['Count on. Which number is missing?', 'Đếm tiếp. Số nào còn thiếu?'], answer: String(x), others: near(x, 0, L.max + 1, wrongs(api)), key: back ? 'back' : 'on', draw: stage => {
@@ -189,7 +189,7 @@ register({
     // (levels) Easy: a thing and three solids to match; Medium: four solids; Hard: the solid's name; Talent: how many flat faces
     const L = lv(api, { mode: 'like', kinds: ['sphere', 'cube', 'cylinder', 'cone'] }, { mode: 'like', kinds: ['sphere', 'cube', 'cylinder', 'cone', 'cuboid'] }, { mode: 'name', kinds: Object.keys(SOLIDS) }, { mode: 'faces', kinds: Object.keys(SOLIDS) });
     api.stage.dataset.lv = `${L.mode},${L.kinds.length}`;
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       if (L.mode === 'like') { const things = LIKE.filter(t => L.kinds.includes(t[1])), [thing, k] = things[pick(0, things.length - 1)];
         return { ask: ['Which solid shape is this thing like?', 'Đồ vật này giống khối hình nào?'], key: k, answer: k, others: othersFrom(k, L.kinds, wrongs(api)), label: v => solidSVG(v), draw: stage => { stage.insertAdjacentHTML('beforeend', pic(thing, 'mx-thing')); (stage.querySelector('.mx-thing') as HTMLElement)?.setAttribute('style', 'width:110px;height:110px'); } }; }
       const k = L.kinds[pick(0, L.kinds.length - 1)];
@@ -216,7 +216,7 @@ register({
     // places from the star
     const L = lv(api, { n: 2, asks: ['left', 'right'] }, { n: 4, asks: ['leftof', 'rightof'] }, { n: 5, asks: ['second_l', 'second_r', 'leftof', 'rightof'] }, { n: 6, asks: ['two_l', 'two_r', 'second_l', 'second_r'] });
     api.stage.dataset.lv = `${L.n},${L.asks.length}`;
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const ask = L.asks[pick(0, L.asks.length - 1)], d = ask === 'two_l' || ask === 'two_r' ? 2 : 1;
       const star = /_l$|leftof/.test(ask) ? pick(d, L.n - 1) : pick(0, L.n - 1 - d);
       const want = ({ left: 0, right: L.n - 1, second_l: 1, second_r: L.n - 2, leftof: star - 1, rightof: star + 1, two_l: star - 2, two_r: star + 2 })[ask];
@@ -262,7 +262,7 @@ register({
     const L = lv(api, { sizes: [2], max: 5 }, { sizes: [5], max: 4 }, { sizes: [10], max: 6 }, { sizes: [3, 4], max: 5 });
     api.stage.dataset.lv = `${L.sizes.join('+')},${L.max}`;
     const THINGS = ['🍎', '🍓', '🐞', '🌸', '⭐', '🍬'];
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const s = L.sizes[pick(0, L.sizes.length - 1)], g = pick(2, L.max), x = g * s, thing = THINGS[pick(0, THINGS.length - 1)];
       return { ask: () => api.say(`${g} groups of ${s}. How many altogether?`, `${g} nhóm, mỗi nhóm ${s}. Tất cả có bao nhiêu?`), answer: String(x), others: mix([...near(x, 1, 100, 3, s), String(x + 1), String(x - 1)]).filter(v => v !== String(x)).slice(0, wrongs(api)), key: 'g' + s,
         draw: stage => {

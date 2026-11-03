@@ -19,7 +19,8 @@ export type PlayAsk = { els: Element[]; check?: (element: Element) => boolean };
 // holding and steering (Kite Flying); with a path, the finger stays down and moves along it (drawing games)
 export type PlayPress = { el: Element; x: number; y: number; ms: number; path?: { x: number; y: number }[] };
 export type PlayPlan = () => Element | PlayPress | null | undefined;
-export type PlayWatch = { on: PlayListener | null; ask: PlayAsk | null; plan: PlayPlan | null; maxActions: number };
+// (v1.08 variety) offer: the buttons a game waits on with tapOne (any of them goes on: a guess), for the roundvariety check
+export type PlayWatch = { on: PlayListener | null; ask: PlayAsk | null; plan: PlayPlan | null; maxActions: number; offer?: Element[] | null };
 export const playWatch: PlayWatch = { on: null, ask: null, plan: null, maxActions: 0 };
 
 /** tell the auto play check what happened (a broken listener never breaks the game) @param {string} kind @param {Element | null} [element] */

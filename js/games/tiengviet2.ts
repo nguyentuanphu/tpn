@@ -16,6 +16,7 @@ import { register, untilRight } from './frame.js';
 import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el, esc, shuffle, pick, wait } from '../util.js';
+import { fresh, mover } from './variety.js';
 import { sayIn, sayAsync, captionOnly } from '../voice.js';
 import { settings } from '../state.js';
 import {
@@ -89,12 +90,15 @@ register({ id: 'vi_tonemean', learn: true, icon: 'vi:tonemean', name: () => T('O
   // Talent: the word is written, not said (read the tone mark), and a picture from another family joins in
   api.stage.dataset.lv = [rounds, nOpt, lv === 4 ? 1 : 0].join(',');
   const B = board(api); api.plan(() => null, { maxActions: rounds * 4 });
+  // (v1.08 variety) a word not asked before in this game, and the right picture moves every round
+  const next = fresh(() => { const set = pick(TONE_SETS.filter(s => s.words.length >= Math.min(3, nOpt))); return { set, target: pick(set.words) }; }, x => x.target.w), place = mover();
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return; begin(api, B, rounds, r);
-    const set = pick(TONE_SETS.filter(s => s.words.length >= Math.min(3, nOpt))), target = pick(set.words);
+    const { set, target } = next();
     let opts = nOpt === 2 ? [target, pick(set.words.filter(w => w !== target))] : set.words.slice(0, 3);
     if (nOpt === 4) opts = [...opts, pick(TONE_SETS.filter(s => s !== set)).words[0]];
-    opts = shuffle(opts);
+    if (nOpt >= 3 && !opts.includes(target)) opts[0] = target;
+    opts = place(opts, w => w === target);
     const card = el('div', 'vt-card', `<span class="vt-big">${lv === 4 ? esc(target.w) : esc(set.base) + '<i>?</i>'}</span>`);
     if (lv < 4) card.appendChild(ear(api, () => target.w));
     B.appendChild(card);
@@ -119,11 +123,11 @@ register({ id: 'vi_rhyme', learn: true, icon: 'vi:rhyme', name: () => T('Rhyme P
   // the rhyme is coloured up to Medium; Hard and Talent show it plain; under-5s choose from pictures only
   api.stage.dataset.lv = [rounds, nOpt, lv <= 2 ? 1 : 0].join(',');
   const B = board(api); api.plan(() => null, { maxActions: rounds * 5 });
-  const sets = shuffle(RHYME_SETS);
+  const sets = shuffle(RHYME_SETS), place = mover();
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return; begin(api, B, rounds, r);
     const S = sets[r % sets.length], [t, a] = shuffle(S.words);
-    const opts = shuffle([a, ...shuffle(RHYME_SETS.filter(x => x !== S)).slice(0, nOpt - 1).map(x => pick(x.words))]);
+    const opts = place([a, ...shuffle(RHYME_SETS.filter(x => x !== S)).slice(0, nOpt - 1).map(x => pick(x.words))], w => w === a);
     const card = el('div', 'vt-card', `<span class="vt-pic">${pic(t.p)}</span><span class="vt-big">${lv <= 2 ? withRhyme(t.w, S.r) : esc(t.w)}</span><span class="vt-mean">${esc(T(t.en, ''))}</span>`);
     card.insertBefore(ear(api, () => t.w), card.querySelector('.vt-mean')); B.appendChild(card);
     const row = choicesRow(B), btns = opts.map(w => opt(row, w, wordHtml(w, { word: lv >= 1, mean: lv >= 1 }), w.w));
@@ -145,13 +149,13 @@ register({ id: 'vi_letters', learn: true, icon: 'vi:letters', name: () => T('Vie
   // letters; Talent has no picture, only the word heard
   api.stage.dataset.lv = [rounds, nOpt, lv === 4 ? 0 : 1].join(',');
   const B = board(api); api.plan(() => null, { maxActions: rounds * 5 });
-  const words = shuffle(LETTER_WORDS);
+  const words = shuffle(LETTER_WORDS), place = mover();
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return; begin(api, B, rounds, r);
     const w = words[r % words.length], ch = [...w.w], L = ch[w.at], fam = LETTER_FAMILY[L];
     let opts = nOpt === 2 ? [L, fam[0]] : fam.slice(0, nOpt);
     for (const x of shuffle([...SPECIAL, 'a', 'e', 'o', 'u', 'd'])) if (opts.length < nOpt && !opts.includes(x)) opts.push(x);
-    opts = shuffle(opts);
+    opts = place(opts, x => x === L);
     const shown = () => ch.map((c, i) => i === w.at ? `<span class="vt-gap">?</span>` : esc(c)).join('');
     const card = el('div', 'vt-card', `${lv < 4 ? `<span class="vt-pic">${pic(w.p)}</span>` : ''}<span class="vt-big">${shown()}</span><span class="vt-mean">${esc(T(w.en, ''))}</span>`);
     card.insertBefore(ear(api, () => w.w), card.querySelector('.vt-mean')); B.appendChild(card);
@@ -202,12 +206,12 @@ async function missingWord(api, list: Verse[], ask: Pair) {
   // under-5s and Easy: the easy verses, read aloud first; Medium on: all of them; Talent: read it yourself (not said first)
   const pool = shuffle(lv <= 1 ? list.filter(v => v.kid) : list);
   api.stage.dataset.lv = [rounds, nOpt, lv <= 1 ? 1 : 0, lv === 4 ? 0 : 1].join(',');
-  const B = board(api); api.plan(() => null, { maxActions: rounds * 5 });
+  const B = board(api), place = mover(); api.plan(() => null, { maxActions: rounds * 5 });
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return; begin(api, B, rounds, r);
     const v = pool[r % pool.length];
     const others = shuffle(list.filter(x => x.gap !== v.gap && !v.t.toLowerCase().includes(x.gap))).slice(0, nOpt - 1);
-    const opts = shuffle([v, ...others]);
+    const opts = place([v, ...others], x => x === v);
     const re = new RegExp('(^|[\\s,])' + v.gap + '(?=$|[\\s,])', 'u');
     const lines = v.t.replace(re, '$1\u0000').split(' / ').map(l => esc(l).replace('\u0000', '<span class="vt-gap">?</span>')).join('<br>');
     const card = el('div', 'vt-card', `<span class="vt-verse">${lines}</span><span class="vt-mean"></span>`);
@@ -329,10 +333,10 @@ register({ id: 'vi_riddle', learn: true, icon: 'vi:riddle', name: () => T('Folk 
   // the easy riddles up to Easy, all of them from Medium; the answers' names show from Easy (their meaning in English)
   const pool = shuffle(lv <= 1 ? RIDDLES.filter(q => q.kid) : RIDDLES);
   api.stage.dataset.lv = [rounds, nOpt, lv <= 1 ? 1 : 0].join(',');
-  const B = board(api); api.plan(() => null, { maxActions: rounds * 5 });
+  const B = board(api), place = mover(); api.plan(() => null, { maxActions: rounds * 5 });
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return; begin(api, B, rounds, r);
-    const q = pool[r % pool.length], opts = shuffle([q, ...shuffle(RIDDLES.filter(x => x !== q)).slice(0, nOpt - 1)]);
+    const q = pool[r % pool.length], opts = place([q, ...shuffle(RIDDLES.filter(x => x !== q)).slice(0, nOpt - 1)], x => x === q);
     // in English the riddle is shown in Vietnamese with its English words under it; it is always said in Vietnamese
     const card = el('div', 'vt-card', `<span class="vt-riddle">${esc(q.q[1])}</span><span class="vt-mean">${esc(T(q.q[0], ''))}</span>`);
     card.insertBefore(ear(api, () => q.q[1]), card.querySelector('.vt-mean')); B.appendChild(card);

@@ -17,6 +17,7 @@ import { register, untilRight } from './frame.js';
 import { pic } from '../art.js';
 import { T } from '../i18n.js';
 import { el, esc, shuffle, pick, wait } from '../util.js';
+import { deck, fresh, mover } from './variety.js';
 import { sayIn, sayAsync, captionOnly } from '../voice.js';
 import { SFX, tone } from '../audio.js';
 import {
@@ -114,15 +115,17 @@ register({ id: 'en_words', learn: true, english: true, icon: 'en:words', name: (
   // Talent: the word is only written (read it, then hear it); below that it is heard, and from Easy written too
   const board = setup(api, [rounds, nOpts, keys.length, lv === 4 ? 0 : 1], rounds * 8);
   await talk(api, ['Listen to the English word. Tap its picture!', 'Nghe từ tiếng Anh. Chạm vào bức tranh đúng nhé!']); if (api.closed) return;
+  // (v1.08 variety) each topic deals its words once before any comes back; the right picture moves every round
+  const decks = new Map<string, () => Word>(), place = mover();
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return;
     api.dots(rounds, r); board.innerHTML = '';
-    const t = topic(keys[r % keys.length]), w = pick(t.words);
+    const t = topic(keys[r % keys.length]); if (!decks.has(t.key)) decks.set(t.key, deck(t.words)); const w = decks.get(t.key)();
     const others = shuffle(t.words.filter(x => x[0] !== w[0] && x[2] !== w[2])).slice(0, nOpts - 1);
     const card = el('div', 'en-card', lv === 0 ? '' : `<span class="en-word">${esc(w[0])}</span>`);
     if (lv < 4) card.prepend(ear(api, () => w[0]));
     board.appendChild(card);
-    const btns = choices(board, shuffle([w, ...others]).map(x => ({ v: x[0], html: pic(x[2]), cls: 'en-opt', label: x[0] })));
+    const btns = choices(board, place([w, ...others], x => x === w).map(x => ({ v: x[0], html: pic(x[2]), cls: 'en-opt', label: x[0] })));
     tell(api, lv === 4 ? ['Read the word. Which picture is it?', 'Đọc từ này. Đó là tranh nào?'] : ['Which picture is it? Tap it!', 'Tranh nào đúng? Chạm vào nhé!']);
     if (lv < 4) hear(w[0]);
     if (!await untilRight(api, btns, b => b._v === w[0])) return;
@@ -141,10 +144,13 @@ register({ id: 'en_listen', learn: true, english: true, icon: 'en:listen', name:
   await talk(api, ['Listen carefully. Tap the card that shows it!', 'Lắng nghe thật kỹ. Chạm vào thẻ đúng nhé!']); if (api.closed) return;
   type Card = { t: typeof THINGS[number]; n: number; s: '' | 'big' | 'small' };
   const key = (c: Card) => `${c.t[0]}|${c.n}|${c.s}`;
+  // (v1.08 variety) a card not asked before in this game, things dealt from a deck; the right card moves every round
+  const thing = deck(THINGS), place = mover();
+  const nextBase = fresh((): Card => ({ t: thing(), n: 1 + Math.floor(Math.random() * maxN), s: lv >= 3 ? pick(['big', 'small'] as const) : '' }), key);
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return;
     api.dots(rounds, r); board.innerHTML = '';
-    const sized = lv >= 3, base: Card = { t: pick(THINGS), n: 1 + Math.floor(Math.random() * maxN), s: sized ? pick(['big', 'small'] as const) : '' };
+    const sized = lv >= 3, base: Card = nextBase();
     const pool = new Map<string, Card>([[key(base), base]]);
     for (let k = 0; pool.size < nOpts && k < 200; k++) {
       const c: Card = { ...base };
@@ -156,7 +162,7 @@ register({ id: 'en_listen', learn: true, english: true, icon: 'en:listen', name:
     }
     const phrase = thingPhrase(base.t, base.n, base.s);
     const card = el('div', 'en-card'); card.appendChild(ear(api, () => phrase)); board.appendChild(card);
-    const btns = choices(board, shuffle([...pool.values()]).map(c => ({
+    const btns = choices(board, place([...pool.values()], c => key(c) === key(base)).map(c => ({
       v: key(c), cls: 'en-group', label: thingPhrase(c.t, c.n, c.s),
       html: Array.from({ length: c.n }, () => `<span class="${c.s ? 'en-' + c.s : ''}">${pic(c.t[2])}</span>`).join('')
     })));
@@ -179,13 +185,13 @@ register({ id: 'en_say', learn: true, english: true, icon: 'en:say', name: () =>
   const board = setup(api, [rounds, nOpts, pickWords ? 1 : 0, readFirst ? 1 : 0, lv === 4 ? 1 : 0], rounds * 6);
   const all: Word[] = TOPICS.filter(t => t.key !== 'colours' && t.key !== 'numbers').flatMap(t => t.words);
   await talk(api, ['Listen, say the word out loud, then match it!', 'Nghe, đọc to từ đó, rồi ghép cho đúng nhé!']); if (api.closed) return;
-  const groups = shuffle(LOOKALIKE);
+  const groups = shuffle(LOOKALIKE), word = deck(all), place = mover();
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return;
     api.dots(rounds, r); board.innerHTML = '';
     let w: Word, opts: Word[];
-    if (lv === 4) { const gr = groups[r % groups.length]; w = pick(gr); opts = shuffle(gr); }
-    else { w = pick(all); opts = shuffle([w, ...shuffle(all.filter(x => x[0] !== w[0] && x[2] !== w[2])).slice(0, nOpts - 1)]); }
+    if (lv === 4) { const gr = groups[r % groups.length]; w = pick(gr); opts = place(gr, x => x === w); }
+    else { w = word(); opts = place([w, ...shuffle(all.filter(x => x[0] !== w[0] && x[2] !== w[2])).slice(0, nOpts - 1)], x => x === w); }
     const card = el('div', 'en-card', pickWords ? `<span class="en-pic">${pic(w[2])}</span>` : `<span class="en-word">${esc(lv === 0 ? '' : w[0])}</span>`);
     board.appendChild(card);
     const sayStep = async () => {
@@ -216,16 +222,20 @@ const midiHz = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
 const ABC_WIN: Pair = ['Now you know your ABC!', 'Con thuộc bảng chữ cái rồi!'];
 register({ id: 'en_abc', learn: true, english: true, icon: 'en:abc', name: () => T('ABC Song', 'Bài Hát ABC'), async run(api) {
   const lv = lvOf(api), rounds = [3, 4, 5, 5, 6][lv], nOpts = [2, 3, 3, 4, 5][lv], gaps = lv >= 3 ? 2 : 1;
-  const lines = [[0], [0, 1], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4]][lv], lower = lv === 4;
+  const lines = [[0, 1, 2], [0, 1], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4]][lv], lower = lv === 4;
   const board = setup(api, [rounds, nOpts, lines.length, gaps, lower ? 1 : 0], rounds * 8);
   await talk(api, ['Let us sing the ABC song! Watch the letters light up.', 'Mình cùng hát bài ABC nhé! Nhìn các chữ cái sáng lên.']); if (api.closed) return;
   const show = (L: string) => lower ? L.toLowerCase() : L;
+  // (v1.08 variety) a line and its missing letters not asked before in this game; the right letter moves every round
+  const place = mover(), asked = new Set<string>();
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return;
     api.dots(rounds, r); board.innerHTML = '';
     const li = lines[r % lines.length], idx = LINE_AT[li];
     // the missing letters: under-5s the last one (what comes next?), then anywhere in the line
-    const miss = lv === 0 ? [idx[idx.length - 1]] : shuffle(idx.slice()).slice(0, Math.min(gaps, idx.length - 1)).sort((a, b) => a - b);
+    let miss = lv === 0 ? [idx[idx.length - 1]] : shuffle(idx.slice()).slice(0, Math.min(gaps, idx.length - 1)).sort((a, b) => a - b);
+    for (let t = 0; lv > 0 && t < 40 && asked.has(miss.join(',')); t++) miss = shuffle(idx.slice()).slice(0, Math.min(gaps, idx.length - 1)).sort((a, b) => a - b);
+    asked.add(miss.join(','));
     const row = el('div', 'en-letters'); board.appendChild(row);
     const tiles = idx.map(k => { const t = el('div', 'en-letter', esc(show(ABC[k]))); row.appendChild(t); return t; });
     // sing the line: each letter lights up on its note, the voice sings the words
@@ -240,7 +250,7 @@ register({ id: 'en_abc', learn: true, english: true, icon: 'en:abc', name: () =>
     for (const k of miss) {
       if (api.closed) return;
       const want = ABC[k], near = ABC.filter(x => x !== want).sort((a, b) => Math.abs(ABC.indexOf(a) - k) - Math.abs(ABC.indexOf(b) - k));
-      const opts = shuffle([want, ...shuffle(near.slice(0, 6)).slice(0, nOpts - 1)]);
+      const opts = place([want, ...shuffle(near.slice(0, 6)).slice(0, nOpts - 1)], x => x === want);
       const t = tiles[idx.indexOf(k)]; t.classList.add('lit');
       const btns = choices(board, opts.map(o => ({ v: o, html: `<b>${esc(show(o))}</b>`, cls: 'en-abc', label: o })));
       tell(api, lv === 0 ? ['What letter comes next?', 'Chữ cái nào tiếp theo?'] : ['Which letter is missing?', 'Còn thiếu chữ cái nào?']);
@@ -263,12 +273,12 @@ register({ id: 'en_count', learn: true, english: true, icon: 'en:count', name: (
   await talk(api, lv <= 2 ? ['One, two, three, four, five, I can count, I can count!', 'Một, hai, ba, bốn, năm, con biết đếm, con biết đếm!'] : ['Six, seven, eight, nine, ten, let us count them all again!', 'Sáu, bảy, tám, chín, mười, mình cùng đếm lại nào!']);
   if (api.closed) return;
   const word = (n: number) => tens ? TENS[n] : NUM_WORDS[n];
-  const used = new Set<number>();
+  const used = new Set<number>(), thing = deck(THINGS), place = mover();
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return;
     api.dots(rounds, r); board.innerHTML = '';
     let n = lo + Math.floor(Math.random() * (hi - lo + 1)); for (let k = 0; used.has(n) && k < 6; k++) n = lo + Math.floor(Math.random() * (hi - lo + 1)); used.add(n);
-    const t = pick(THINGS), p = t[2];
+    const t = thing(), p = t[2];
     if (tapCount) {
       const box = el('div', 'en-count'); board.appendChild(box);
       // (v1.08 fixes, check gamespace: two flowers filled 40% of a tablet's playing area) one to three things are drawn
@@ -293,7 +303,7 @@ register({ id: 'en_count', learn: true, english: true, icon: 'en:count', name: (
       tell(api, ['Ten, and some more. How many?', 'Mười, và thêm mấy cái nữa. Tất cả là bao nhiêu?']);
     }
     const near = [n - 2, n - 1, n + 1, n + 2, n + 3].filter(x => x >= 1 && x <= (tens ? 10 : 20) && x !== n);
-    const opts = shuffle([n, ...shuffle(near).slice(0, nOpts - 1)]);
+    const opts = place([n, ...shuffle(near).slice(0, nOpts - 1)], x => x === n);
     const btns = choices(board, opts.map(o => ({ v: o, cls: 'en-text', label: word(o), html: `${lv <= 1 ? `<small>${tens ? o * 10 : o}</small> ` : ''}<b>${esc(word(o))}</b>` })));
     tell(api, ['How many? Tap the number word.', 'Có bao nhiêu? Chạm vào chữ số đúng.']);
     if (!await untilRight(api, btns, b => b._v === n)) return;
@@ -390,10 +400,13 @@ register({ id: 'en_colshape', learn: true, english: true, icon: 'en:colshape', n
   if (api.closed) return;
   type It = { c: number; s: number; big: boolean };
   const k = (x: It) => `${x.c}|${x.s}|${x.big}`;
+  // (v1.08 variety) what is asked (the colour, the shape, both, or with the size) is new each round; the right one moves
+  const asked = (x: It) => ask === 'colour' ? `${x.c}` : ask === 'shape' ? `${x.s}` : ask === 'both' ? `${x.c}|${x.s}` : k(x);
+  const nextWant = fresh((): It => ({ c: Math.floor(Math.random() * cols.length), s: Math.floor(Math.random() * shapes.length), big: Math.random() < .5 }), asked), place = mover();
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return;
     api.dots(rounds, r); board.innerHTML = '';
-    const want: It = { c: Math.floor(Math.random() * cols.length), s: Math.floor(Math.random() * shapes.length), big: Math.random() < .5 };
+    const want: It = nextWant();
     const set = new Map<string, It>([[k(want), want]]);
     for (let n = 0; set.size < nOpts && n < 300; n++) {
       const x: It = { ...want };
@@ -407,7 +420,7 @@ register({ id: 'en_colshape', learn: true, english: true, icon: 'en:colshape', n
     const [cEn, cVi] = cols[want.c], [sEn, sVi] = shapes[want.s];
     const phrase = ask === 'colour' ? cEn : ask === 'shape' ? sEn : ask === 'both' ? `${cEn} ${sEn}` : `the ${want.big ? 'big' : 'small'} ${cEn} ${sEn}`;
     const card = el('div', 'en-card'); card.appendChild(ear(api, () => phrase)); board.appendChild(card);
-    const btns = choices(board, shuffle([...set.values()]).map(x => ({ v: k(x), cls: 'en-opt', label: `${cols[x.c][0]} ${shapes[x.s][0]}`, html: `<span class="${x.big ? '' : 'en-smallshape'}" style="${x.big ? '' : 'width:52%;display:flex;justify-content:center'}">${pic(`en:sh:${shapes[x.s][0]}:${cols[x.c][0]}`)}</span>` })));
+    const btns = choices(board, place([...set.values()], x => k(x) === k(want)).map(x => ({ v: k(x), cls: 'en-opt', label: `${cols[x.c][0]} ${shapes[x.s][0]}`, html: `<span class="${x.big ? '' : 'en-smallshape'}" style="${x.big ? '' : 'width:52%;display:flex;justify-content:center'}">${pic(`en:sh:${shapes[x.s][0]}:${cols[x.c][0]}`)}</span>` })));
     tell(api, ['Listen. Which one is it?', 'Nghe nhé. Hình nào đúng?']);
     hear(phrase);
     if (!await untilRight(api, btns, b => b._v === k(want))) return;
