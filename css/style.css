@@ -3472,3 +3472,10 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 /* Under-5s on a phone: their buttons are 64 px, so the row keeps the game's picture and leaves out its written name
    (the voice says it; under-5s play by pictures). */
 @media (max-width: 480px) { .gl.little .gl-head .gl-title > span:last-child { display: none; } }
+/* (v1.08 layout, gamespace) English mode: the Vietnamese hint shares the guide row, one line under the English line, with
+   its speaker beside both, so the English games' top band is no bigger than the others' (tap a line for the rest). */
+.gl-guide:has(> .gl-vihint) { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; align-items: center; }
+.gl-guide > .gl-vihint { display: contents; }
+.gl-guide:has(> .gl-vihint) > .gl-help { grid-column: 1; grid-row: 1; -webkit-line-clamp: 1; min-height: 1.25em; }
+.gl-guide > .gl-vihint .gl-vitext { grid-column: 1; grid-row: 2; -webkit-line-clamp: 1; line-height: 1.25; }
+.gl-guide > .gl-vihint .gl-vihear { grid-column: 2; grid-row: 1 / span 2; }

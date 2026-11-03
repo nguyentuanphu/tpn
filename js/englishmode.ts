@@ -59,7 +59,8 @@ export function enterEnglish(): { leave: () => void; hint: (layer: HTMLElement, 
   const hint = (layer: HTMLElement, vi: string) => {
     if (!row) {
       row = el('div', 'gl-vihint', `<button class="gl-vihear" aria-label="Nghe tiếng Việt">${pic('🔊')}</button><span class="gl-vitext" lang="vi"></span>`);
-      const guide = layer.querySelector('.gl-guide'); if (guide) guide.after(row); else layer.appendChild(row);
+      // (v1.08 layout) inside the guide row, under the English line, so the top band stays small (gamespace)
+      const guide = layer.querySelector('.gl-guide'); if (guide) guide.appendChild(row); else layer.appendChild(row);
       row.querySelector<HTMLButtonElement>('.gl-vihear').onclick = e => { e.stopPropagation(); if (said) sayIn('vi', said); };
     }
     said = vi ? swapNames(vi, 'vi') : '';
