@@ -18,7 +18,7 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 import crypto from 'crypto';
-import { open, start, clear } from './harness.mts';
+import { open, start, clear, launch } from './harness.mts';
 
 const TY: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.mts': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.mp3': 'audio/mpeg', '.wasm': 'application/wasm' };
 const memStore = () => { const m = new Map<string, string>(); return { m,
@@ -27,7 +27,9 @@ const memStore = () => { const m = new Map<string, string>(); return { m,
   list: async ({ prefix }: { prefix: string }) => ({ blobs: [...m.keys()].filter(k => k.startsWith(prefix)).map(key => ({ key })) }) }; };
 const at = (iso: string) => Date.parse(iso);
 
-export async function pushNotifyCheck(b) {
+export async function pushNotifyCheck(_shared) {
+  // (v1.08 fixes 2) a browser of its own that can show notifications (harness.mts launch full)
+  const b = await launch({ full: true });
   const { makePush } = await import('../netlify/functions/push.mts');
   const push = await import('../netlify/lib/push.mts');
   const { decrypt, vapidFromEnv } = await import('../netlify/lib/webpush.mts');
@@ -169,5 +171,5 @@ export async function pushNotifyCheck(b) {
     await P.ctx.close();
     if (out.length) throw new Error(out.join(' | '));
     return `Grown-ups → Notifications on phone, tablet and computer in English and Vietnamese (11 switches, 44 px, nothing off screen; off with no keys); turning on and every change reach the website with nothing about a child; one Saturday and one Sunday message, none in quiet hours, decrypted and shown by the service worker with the device's own lines (= compose()), in Vietnamese too; ?open= opens the game of the week, the festival calendar and the play report; taps counted. Screenshots: ${shots.join(', ')}`;
-  } finally { srv.close(); }
+  } finally { srv.close(); await b.close(); }
 }
