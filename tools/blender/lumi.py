@@ -115,7 +115,7 @@ if V and V['size'] != 'kid':
     P.update(eye=.15, eyeZ=-.08, jaw=.17, cheek=.02, mouth=.62, head=(.97, .95, 1.06))
 # face options for the owner to choose (3 Nov): face=oval (a small oval face, a slim chin) or face=concept (like the Finn and Flora concepts)
 # three whole looks for the owner to compare (3 Nov): look=felt (like the first chibi Lumi), look=now, look=toy (a soft toy, in between)
-LOOK = next((x.split('=', 1)[1] for x in argv if x.startswith('look=')), 'now')
+LOOK = next((x.split('=', 1)[1] for x in argv if x.startswith('look=')), 'felt' if GAME else 'now')   # look 1 chosen by the owner (3 Nov)
 FACEOPT = next((x.split('=', 1)[1] for x in argv if x.startswith('face=')), 'oval' if GAME and LOOK == 'now' else '')   # A, the small oval, approved by the owner (3 Nov)
 if GAME and FACEOPT:
     chin = HC.z - R * P['head'][2]; R *= .97 if FACEOPT == 'oval' else .9   # the owner (3 Nov): the .85 head looked too small for the body
@@ -124,9 +124,9 @@ if GAME and FACEOPT:
     HC = Vector((0, 0, chin + R * P['head'][2]))
 if GAME and LOOK in ('felt', 'toy'):
     chin = HC.z - R * P['head'][2]
-    if LOOK == 'felt':   # the first chibi Lumi's face: round, full cheeks, big soft eyes, a bigger head
-        R = .29 if not (V and V['size'] != 'kid') else .26
-        P.update(head=(1.02, .96, .97), jaw=.04, cheek=.08, eye=.2, eyeX=.33, eyeZ=-.13, mouth=.72, noseZ=-.33, mouthZ=-.5, blushX=.55, blushZ=-.36)
+    if LOOK == 'felt':   # the owner's choice (3 Nov): look 1 (felt hair, like the first Lumi) "with medium head and soft face"
+        R = .255 if not (V and V['size'] != 'kid') else .24
+        P.update(head=(.99, .95, 1.0), jaw=.1, cheek=.06, eye=.185, eyeX=.32, eyeZ=-.125, mouth=.7, noseZ=-.33, mouthZ=-.5, blushX=.53, blushZ=-.37)
     else:                # a soft toy: a medium head, a soft round face
         R = .255 if not (V and V['size'] != 'kid') else .24
         P.update(head=(.98, .94, 1.02), jaw=.12, cheek=.05, eye=.18, eyeX=.31, eyeZ=-.12, mouth=.68, noseZ=-.33, mouthZ=-.5, blushX=.52, blushZ=-.37)

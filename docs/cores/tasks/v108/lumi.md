@@ -23,6 +23,7 @@ Branch: `work/v108-lumi-refine` (from `origin/release/v1.08`). Brief: `lumi-brie
 - 3 Nov 2026 AEDT (chat): "Làm cho dễ thương hơn và mặt nhỏ hơn một xíu": a smaller head (radius .235) and a cuter face.
 - 3 Nov 2026 AEDT (chat): "Làm thêm 1 bạn nam để đủ 2 cặp nam nữ ... phụ kiện ... dân làng sẽ nhìn như thế nào?": Sol added (boys Finn and Sol, girls Flora and Lumi), a wardrobe, villagers.
 - 3 Nov 2026 AEDT (chat): "I am ok with new heights" (children 1.6, grown-ups 2.0, grandparents 1.8, rule WORLD-011); more accessories, boy and girl differences, villagers that look Vietnamese and Australian in everyday clothes, cuter friends. The heights in the game are a game change for Release.
+- 3 Nov 2026 AEDT (chat and pop-ups): the shoulders looked stiff, "như 2 cái cây"; pop-ups chose a one-piece sculpted body, big soft sculpted locks for hair, and face A (a small oval). The owner then said the hair, face and body still looked wrong, and from three whole looks side by side chose: "số 1 vẫn đẹp nhất nhưng với medium head and soft face" (look 1, felt hair like the first Lumi, with a medium head and a soft face). This is now the default (`look=felt`); `look=now` and `look=toy` stay in the script.
 
 ## Progress
 
