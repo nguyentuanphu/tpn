@@ -5,7 +5,7 @@
 # body surface lifted a little, so they hug the body; loose clothes (áo bà ba, áo dài panels, skirts, coat, cape) stay on top.
 
 MB_K = 1 / .575
-CH_Z = lambda: (B['zW'] + B['zC']) / 2 + .035 * S; CH_SZ = lambda: (B['zS'] - B['zW']) * .6           # the chest
+CH_Z = lambda: (B['zW'] + B['zC']) / 2 + .04 * S; CH_SZ = lambda: (B['zS'] - B['zW']) * .64           # the chest
 HP_Z = lambda: (B['zCr'] + B['zW']) / 2 + .03 * S;  HP_SZ = lambda: (B['zW'] - B['zCr']) * .55         # the belly and hips, ending above the crotch
 BW = {'felt': .92, 'toy': .88}.get(LOOK, .86)   # body width for each look   # a metaball's surface sits at .575 of its radius (stiffness 2, threshold .6)
 
@@ -39,14 +39,22 @@ def skin_body():
     o, mb = _mb('mbBody')
     _ball(mb, (0, 0, CH_Z()), 1, (wC * BW, wC * dep * .82 * BW / .86, CH_SZ()))           # chest (slim, owner 3 Nov)
     _ball(mb, (0, 0, HP_Z()), 1, (wH * BW * .98, wH * dep * .8 * BW / .86, HP_SZ()))          # belly and hips (no big tummy)
-    _cap(mb, (0, 0, b['zS'] - .03 * S), (0, 0, b['zN'] + .05 * S), .042 * S)                                                   # neck
+    _cap(mb, (0, 0, b['zS'] - .05 * S), (0, 0, b['zN'] + .04 * S), .05 * S)                                                    # neck: short and full (owner, 3 Nov)
+    # the torso in proportion (owner, 3 Nov: "bụng, cổ và mông phải bố cục và proportionate hợp lý hơn"):
+    _ball(mb, (0, 0, b['zS'] - .06 * S), 1, (wC * BW * 1.02, wC * dep * .7, .07 * S))                                         # upper chest under the collarbones
+    kid = not (V and V['size'] != 'kid'); bel = (.85 if kid else .55) * (.8 if g else 1.0)
+    _ball(mb, (0, -wH * dep * .2 * bel, HP_Z() + .015 * S), 1, (wH * BW * .78, wH * dep * .62 * (1 + .25 * bel), HP_SZ() * .85))   # a soft belly (rounder for children)
+    for s_ in (-1, 1):   # the bottom: two rounded buttocks at the back, a little fuller for girls and women
+        bk = 1.1 if g else 1.0
+        _ball(mb, (s_ * wH * .4, wH * dep * .34, b['zCr'] + .055 * S), 1, (wH * .46 * bk, wH * dep * .5 * bk, (b['zW'] - b['zCr']) * .42))
+        if g: _ball(mb, (s_ * wH * .55, 0, b['zCr'] + .07 * S), 1, (wH * .45, wH * dep * .55, (b['zW'] - b['zCr']) * .4))   # wider hips
     for s in (-1, 1):
         X = s * b['legX']; knee = (b['zCr'] + b['zAnk']) / 2 + .02 * S
         _cap(mb, (X, 0, b['zCr'] + .01 * S), (X, -.004, knee), b['rLeg'] * (1.2 if g else 1.13))                     # thigh
         _cap(mb, (X, -.004, knee), (X, 0, b['zAnk'] + .01 * S), b['rLeg'] * .98)                                                # shin
         _ball(mb, (X, -.004, knee + .01 * S), b['rLeg'] * 1.02)                                                                 # knee
         _ball(mb, (X, -.03 * S, b['zAnk'] - .015 * S), 1, (b['rLeg'] * .9, b['rLeg'] * 1.8, b['rLeg'] * .7))                 # foot (in the shoe)
-        _cap(mb, (s * .04 * S, 0, b['zS'] - .03 * S), (s * b['sh'][0] * .9, 0, b['sh'][2] - .005 * S), b['rU'] * .82)   # the collarbone line: the shoulder runs out sideways
+        _cap(mb, (s * .04 * S, 0, b['zS'] - .025 * S), (s * b['sh'][0] * .9, 0, b['sh'][2] - .005 * S), b['rU'] * .82)   # the collarbone line: the shoulder runs out sideways
     parts = [o]
     for s in (-1, 1):
         ao, amb = _mb('mbArm' + ('L' if s > 0 else 'R'))
