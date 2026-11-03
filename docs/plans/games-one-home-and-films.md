@@ -96,13 +96,9 @@ Owner, 3 Nov 2026 AEDT:
    - a new `talecostume` check: no modern outfit or friend inside a folk tale page.
 
 ## Order
-- **v1.09**, with the new friends:
-  - A1–A4: one home per game, the twins, the reading games moved;
-  - B1: modern stories with the friends;
-  - the costume kit started.
-- **v1.10:**
-  - A5: the new games;
-  - B2–B4: the folk-tale costumes, the smoother films and the page illustrations.
+- **All in v1.09**, with the new friends (owner, 3 Nov 2026 AEDT: v1.09 and v1.10 are one round, v1.09):
+  - A1–A5: one home per game, the twins, the reading games moved, the new games;
+  - B1–B4: modern stories with the friends, the costume kit and folk-tale costumes, the smoother films, the page illustrations and the five Blender films.
 
 ## Owner's answers (3 Nov 2026 AEDT, pop-ups)
 1. Học and Học vui become **one tab, one home per game**.
@@ -129,4 +125,4 @@ Owner, 3 Nov 2026 AEDT:
    - downloaded only when that film is opened, and kept for offline after that; not in the first download or the Wi-Fi pack;
    - English and Vietnamese voices;
    - the in-game film stays as the fallback when there is no network;
-   - made with the costume kit and the new villagers, in v1.10.
+   - made with the costume kit and the new villagers, in v1.09.

@@ -120,17 +120,16 @@ Today's tops and bottoms only fit the old body, and the new friends each have th
 - Screenshots on phone, tablet and computer before each report.
 
 ### 9. Order and rounds
-- **v1.09:**
+- **All in v1.09** (owner, 3 Nov 2026 AEDT: v1.09 and v1.10 are one round, v1.09):
   - the light models of the four friends and the loader;
   - Welcome, migration, the pad change row;
   - hats, neck, back, shoes and glasses fitted;
   - the outfits shop;
-  - old tops and bottoms turned into new outfits.
-- **v1.10:**
+  - old tops and bottoms turned into new outfits;
   - the villagers in the new style (the 11 named ones first, then crowds and Studio);
   - films, tale theatre and vehicles;
   - items in the hand from the friends' quests.
-- Each round goes through the full suite on GitHub and the owner's "yes, deploy".
+- The round goes through the full suite on GitHub and the owner's "yes, deploy".
 
 ## Owner's answers (3 Nov 2026 AEDT, pop-ups)
 1. Existing players: boys to Finn, girls to Clara, with the one-time card to change.
