@@ -4,7 +4,9 @@ import {AZURE_VOICES,AZURE_OUTPUT_FORMAT} from './voice-providers.mts';
 // voices/. The game plays these instead of the device voice, with no internet needed, and keeps the whole
 // pack on the device after the first visit (so nothing has to be downloaded again).
 //
-// The cast (one voice per language and slot):
+// (owner, 3 Nov 2026 AEDT, v1.08) only the women's voices (f) of English and Vietnamese are recorded now; the men's
+// voices are put aside in voices-aside/ (its README says how to bring them back; SV_ASIDE_VOICES=1 records them again).
+// The full cast, with the men's voices switched back on:
 //   English     – a woman (f) and a man (m)      every English line is made twice
 //   Tiếng Việt  – a woman (f) and a man (m)      every Vietnamese line is made twice
 //   中文 Chinese – a man (m)                      the Chinese learning words and sayings

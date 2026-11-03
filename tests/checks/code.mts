@@ -56,7 +56,9 @@ await check('viwords', async () => {
     return { said, rec: pack && pack.lines[h], old: pack && pack.lines[H.packHash('en', line)], url: V.packUrl('en', line, 'f'), h };
   }, line);
   ok(JSON.stringify(r.said) === JSON.stringify([['en-AU', 'Buy some'], ['vi-VN', 'bánh khọt'], ['en-AU', 'from'], ['vi-VN', 'Vũng Tàu'], ['en-AU', ', please!']]), 'phone voice: ' + JSON.stringify(r.said));
-  ok(r.rec === 'fm' || r.rec === 'mf', `the pack has no two-voice recording of Cô Tam's line (${r.rec})`);
+  // (owner's decision, 3 Nov 2026 AEDT, v1.08 voices-aside: female voices only; not a weakened check) the male voice is put
+  // aside, so the line's recording is the female one
+  ok(r.rec === 'f', `the pack has no female recording of Cô Tam's line, or still names a male one (${r.rec})`);
   ok(!r.old && r.url.endsWith(r.h + '.mp3'), 'the old all-English recording is still used');
   const mp3 = fs.statSync(`../voices/en/f/${r.h}.mp3`).size;
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();

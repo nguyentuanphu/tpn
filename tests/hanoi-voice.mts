@@ -4,7 +4,48 @@ import type {Browser} from 'playwright';
 import {open,clear} from './harness.mts';
 import {lineHash} from '../js/packhash.js';
 declare global{interface Window{__hanoiProgress?:Array<{provider:string;state:string}>;}}
+// (owner's decision, 3 Nov 2026 AEDT, v1.08 voices-aside: female voices only; not a weakened check) Lê Minh and the male
+// voices are put aside (voices-aside/README.md) behind ASIDE_VOICES_ON in js/state.ts. While it is off this check proves
+// they are really gone from play: a device that had chosen them moves to the female voices with its other settings
+// kept, Grown-ups shows no male or Lê Minh choice on a phone, tablet and computer, nothing put aside is fetched, and the
+// files are kept in voices-aside/, not published from voices/. With the switch on, the original Lê Minh check runs.
+const ASIDE_ON=/export const ASIDE_VOICES_ON = true\b/.test(await fs.readFile(new URL('../js/state.ts',import.meta.url),'utf8'));
+async function asideVoiceCheck(browser:Browser){
+ const exists=(f:string)=>fs.stat(f).then(()=>true,()=>false);
+ assert.equal(await exists('../voices/fpt-leminh-v1'),false,'the Lê Minh pack is still in voices/ (it is put aside)');
+ for(const L of['en','vi'])assert.equal(await exists('../voices/'+L+'/m'),false,'voices/'+L+'/m is still published (it is put aside)');
+ for(const f of['voices/fpt-leminh-v1/manifest.json','voices/en/m','voices/vi/m','temp/fpt-public-delta','README.md'])assert.ok(await exists('../voices-aside/'+f),'voices-aside/'+f+' is missing: the voices are put aside, not deleted');
+ for(const L of['en','vi']){const m=JSON.parse(await fs.readFile('../voices/manifest-'+L+'.json','utf8'));assert.deepEqual(m.cast[L],['f'],L+' cast');assert.ok(Object.values<string>(m.lines).every(v=>!v.includes('m')),L+' manifest still names a male recording');}
+ const asked:string[]=[];
+ const P=await open(browser,{w:390,h:844,touch:true,lang:'vi',settings:{autoPack:false,voice:true,voiceMale:true,packCell:true,voiceViVariant:'leminh',voiceStyle:'cute'},route:async ctx=>{
+  await ctx.route(/\/voices\/(fpt-leminh-v1\/|(en|vi)\/m\/)/,async rt=>{asked.push(new URL(rt.request().url()).pathname);await rt.fulfill({status:404,body:''});});
+ }});
+ try{
+  await clear(P.page);
+  const moved=await P.page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('sv2_settings')||'{}');return{male:s.voiceMale,vi:s.voiceViVariant,packCell:s.packCell,style:s.voiceStyle};});
+  assert.deepEqual(moved,{male:false,vi:'standard',packCell:true,style:'cute'},'a device that had chosen the male voices or Lê Minh moves to the female voices and keeps its other settings');
+  const said=await P.page.evaluate(async()=>{const V=await import(String('/js/voice.js'));window.__sv.paused=true;V.setSpeaker('Ông Ba');await V.sayAsync('Two!','Hai!');const preview=await V.previewHanoiVoice();await V.chooseVietnamesePack('leminh');return{provider:V.voiceDiag.recording,preview,vi:(await import(String('/js/state.js'))).settings.voiceViVariant};});
+  assert.equal(said.preview,false,'the Lê Minh preview must not play');assert.equal(said.vi,'standard','Lê Minh cannot be chosen while it is put aside');
+  assert.notEqual(said.provider,'FPT Neo · FPT.AI-VITs · leminh','a line played with Lê Minh');
+  await fs.mkdir('out/hanoi-settings',{recursive:true});
+  for(const[device,w,h]of[['phone',390,844],['tablet',820,1180],['computer',1280,800]]as const)for(const lang of['en','vi']){
+   await P.page.setViewportSize({width:w,height:h});
+   await P.page.evaluate(async lang=>{(await import(String('/js/state.js'))).settings.lang=lang;await(await import(String('/js/ui.js'))).openGrownups();},lang);
+   await P.page.locator('.grownups #gDone').waitFor();await P.page.evaluate(()=>document.querySelectorAll<HTMLDetailsElement>('.grownups details').forEach(d=>d.open=true));
+   const shown=await P.page.evaluate(()=>['#gVietnamesePack','#gHanoiPreview','#gHanoiDownload','#gVoiceMale','[data-pv="m"]'].filter(q=>document.querySelector('.grownups '+q)));
+   assert.deepEqual(shown,[],device+' '+lang+': Grown-ups still shows a voice that was put aside');
+   const female=P.page.locator('.grownups [data-pv="f"]');if(await female.count()){await female.scrollIntoViewIfNeeded();assert.ok(((await female.boundingBox())?.height||0)>=44,'the voice preview button is at least 44 px');}
+   assert.equal(await P.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'voice settings must fit the viewport');
+   await P.page.screenshot({path:`out/hanoi-settings/${device}-${lang}.png`});await P.page.locator('#gDone').click();await P.page.locator('.grownups').waitFor({state:'detached'});
+  }
+  assert.deepEqual(asked,[],'a recording that was put aside was asked for');
+  assert.deepEqual(P.errors,[]);
+  return 'Lê Minh and the male voices put aside (owner, 3 Nov 2026 AEDT): files kept in voices-aside/, not in voices/; lists name only the female English and Vietnamese voices; a device that had chosen them moved to female with its other settings kept; no male or Lê Minh choice in Grown-ups on phone, tablet and computer (en, vi); nothing put aside fetched';
+ }catch(error){await fs.mkdir('out',{recursive:true});await P.page.screenshot({path:'out/fail-hanoivoice.png'}).catch(()=>{});throw error;
+ }finally{await P.ctx.unrouteAll({behavior:'ignoreErrors'});await P.ctx.close();}
+}
 export async function hanoiVoiceCheck(browser:Browser){
+ if(!ASIDE_ON)return asideVoiceCheck(browser);
  const root='../voices/fpt-leminh-v1/',manifest=JSON.parse(await fs.readFile(root+'manifest.json','utf8'));
  const welcome=lineHash('vi','Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.'),two=lineHash('vi','Hai!');
  const ids=[...new Set([welcome,two,...Object.keys(manifest.lines).slice(0,16)])];

@@ -1,7 +1,7 @@
 import { createVoiceIndex, voiceLanguages } from './voice-index.js';
 // Talking voice in English and Vietnamese using the device's own natural voices.
 // Premium/enhanced/neural voices are picked first; grown-ups can choose a voice in settings.
-import { settings, saveSettings, profiles, autoPackOn } from './state.js';
+import { settings, saveSettings, profiles, autoPackOn, ASIDE_VOICES_ON } from './state.js';
 import { ac, unlockers } from './audio.js';
 import { swapNames, T } from './i18n.js';
 import { packHash, lineHash, partText } from './packhash.js';
@@ -448,7 +448,8 @@ let hereArea = null;
 events.on('PlayerEnteredVillage', e => { const a = String(e && e.villageId || '').split(':')[1]; if (a) hereArea = a; });
 let hanoiService: ReturnType<typeof import('./hanoi-pack.js').createHanoiPack> | null = null;
 let hanoiLoading: Promise<NonNullable<typeof hanoiService>> | null = null;
-const hanoiSelected=()=>settings.voiceViVariant==='leminh';
+// (v1.08 voices-aside) Lê Minh is put aside: never selected while ASIDE_VOICES_ON (js/state.ts) is off
+const hanoiSelected=()=>ASIDE_VOICES_ON&&settings.voiceViVariant==='leminh';
 // (owner, 31 Oct 2026 AEDT: "voices online; when playing offline without voices, tell the user what to download and how")
 // a recorded line heard over the internet is kept (in a bundle, js/voicestore.ts) so it plays again without it; with no
 // internet and the line not kept, a grown-up is told once a visit what to download and where
@@ -482,10 +483,11 @@ function autoSavePack() {
 addEventListener('online',resumeHanoi);
 events.on('SettingsChanged',resumeHanoi);
 try{navigator.connection?.addEventListener('change',resumeHanoi);}catch{}
-export async function chooseVietnamesePack(choice:string){settings.voiceViVariant=choice==='leminh'?'leminh':'standard';saveSettings();resumeHanoi();}
+export async function chooseVietnamesePack(choice:string){settings.voiceViVariant=ASIDE_VOICES_ON&&choice==='leminh'?'leminh':'standard';saveSettings();resumeHanoi();}
 export async function hanoiPackInfo(){const m=await(await hanoiPack()).load();return m?{bytes:m.bytes,lines:Object.keys(m.lines).length}:null;}
-export async function downloadHanoiPack(){settings.voiceViVariant='leminh';settings.packCell=true;saveSettings();return(await hanoiPack()).download();}
+export async function downloadHanoiPack(){if(!ASIDE_VOICES_ON)return 0;settings.voiceViVariant='leminh';settings.packCell=true;saveSettings();return(await hanoiPack()).download();}
 export async function previewHanoiVoice(){
+  if(!ASIDE_VOICES_ON)return false;
   ++previewRequest;previewSlot=null;hush();const my=seq,ticket={};activeSpeech.add(ticket);told();
   try{await waitPack(['vi']);return await playPack('vi','Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.',my,true);}
   finally{activeSpeech.delete(ticket);told();}
@@ -503,12 +505,13 @@ const packSlot = (lang, text) => {
   if (previewSlot && has.includes(previewSlot)) return previewSlot;
   const k = speakerKind();
   // Female recordings cover every character until a grown-up deliberately downloads male recordings.
-  if (k && k.gender === 'm' && settings.voiceMale === true && has.includes('m')) return 'm';
+  // (v1.08 voices-aside) the male English and Vietnamese recordings are put aside: only with ASIDE_VOICES_ON
+  if (ASIDE_VOICES_ON && k && k.gender === 'm' && settings.voiceMale === true && has.includes('m')) return 'm';
   return has.includes('f') ? 'f' : has[0];
 };
 export async function previewPackVoice(slot) {
   const request = ++previewRequest;
-  previewSlot = slot === 'm' ? 'm' : 'f';
+  previewSlot = ASIDE_VOICES_ON && slot === 'm' ? 'm' : 'f';
   // say() is fire-and-forget; clearing the slot after it selected the female default
   // before the asynchronous manifest lookup could choose the requested recording.
   try { await sayAsync('Hello! Welcome to Sparkle Valley.', 'Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.'); }

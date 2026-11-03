@@ -1,7 +1,7 @@
 import { voicePackSignature } from './voice-index.js';
 // The voice pack downloading to the device (split from js/voice.js in round R item 12, so it is fetched only when the
 // download starts, not before the title screen: PERF-001). js/voice.js starts it once the pack's list has arrived.
-import { settings, saveSettings, profiles, autoPackOn } from './state.js';
+import { settings, saveSettings, profiles, autoPackOn, ASIDE_VOICES_ON } from './state.js';
 import { events } from './core/events.js';
 import { T } from './i18n.js';
 import { featureOn } from './custom.js';
@@ -41,7 +41,8 @@ export function startPack(pack, emit, here) {
 export const packLangs = () => { const L = [settings.lang === 'vi' ? 'vi' : 'en']; if (settings.bilingual) L.push(L[0] === 'vi' ? 'en' : 'vi'); return L; };
 
 // whether male voice recordings are enabled (off by default)
-export const packMale = () => settings.voiceMale === true;
+// (v1.08 voices-aside) never while the male voices are put aside (ASIDE_VOICES_ON in js/state.ts)
+export const packMale = () => ASIDE_VOICES_ON && settings.voiceMale === true;
 // 'wifi', 'mobile' or 'off'. iPhones, iPads and most computers can't tell: a computer counts as Wi-Fi (or a cable), a
 // phone or tablet as mobile data, so a grown-up is asked once (owner, 10 Oct)
 export function packNet() {

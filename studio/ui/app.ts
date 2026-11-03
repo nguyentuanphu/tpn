@@ -1066,7 +1066,10 @@ const VI = /[ăâđêôơưáàảãạấầẩẫậắằẳẵặéèẻẽ�
 const Q = String.raw`(?:'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|\x60(?:[^\x60\\$]|\\.|\$(?!\{))*\x60)`;
 const unq = s => s.slice(1, -1).replace(/\\(['"\x60\\])/g, '$1').replace(/\\n/g, ' ');
 const PATTERNS = [String.raw`\b(?:say|sayAsync|api\.say|\.say)\(\s*(${Q})\s*,\s*(${Q})`, String.raw`\[\s*(${Q})\s*,\s*(${Q})\s*\]`, String.raw`\[\s*${Q}\s*,\s*(${Q})\s*,\s*(${Q})\s*\]`, String.raw`\bS\(\s*${Q}\s*,\s*(${Q})\s*,\s*(${Q})\s*\)`, String.raw`\b(?:fact|story|hint|about)\s*:\s*\[\s*(${Q})\s*,\s*(${Q})`];
-const CAST = { en: ['f', 'm'], vi: ['f', 'm'], zh: ['m'], hi: ['m'] };
+// (owner, 3 Nov 2026 AEDT, v1.08 voices-aside) the male English and Vietnamese voices are put aside (voices-aside/README.md):
+// Studio lists and records only the female ones. ASIDE_VOICES_ON = true brings the male voices back.
+const ASIDE_VOICES_ON = false;
+const CAST = ASIDE_VOICES_ON ? { en: ['f', 'm'], vi: ['f', 'm'], zh: ['m'], hi: ['m'] } : { en: ['f'], vi: ['f'], zh: ['m'], hi: ['m'] };
 // (owner, 10 Oct: "Voices is slow to open") the game's files are read once while Studio is open; ↻ reads them again
 let SRC = null;
 async function allJobs() {

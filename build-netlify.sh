@@ -17,6 +17,8 @@ mkdir -p "$OUT"/home && cp -r home/index.html home/assets home/site.js home/anal
 rm -rf "$OUT"/content/old   # Sparkle Studio backups stay on the computer
 # the offline voice pack (made with tools/make-voice-pack.mts), when there is one
 [ -d voices ] && cp -r voices "$OUT"/
+# (owner, 3 Nov 2026 AEDT, v1.08 voices-aside) voices-aside/ (male voices and Lê Minh, put aside) is never published
+rm -rf "$OUT"/voices-aside
 [ -d photos ] && cp -r photos "$OUT"/   # real photos saved by Sparkle Studio
 [ -d sounds ] && cp -r sounds "$OUT"/   # recorded sounds: the animals' real voices (owner, 17 Oct AEDT)
 # pack the start-up scripts (tools/bundle.mts: smaller start-up download; js/ stays for Sparkle Studio's pages).
