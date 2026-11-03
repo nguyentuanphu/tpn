@@ -60,7 +60,7 @@ export async function gameFitCheck(browser:Browser){
      return {out,scroll:Math.round(scroll),head:onHead(stars)&&onHead(lvl),stacked,zoom:st.style.zoom||'1',small:[...new Set(small)].slice(0,6)};},TEXT_MIN);
     rows.push({id,size:size.name,...r});
     const why=[r.out.length?`below the fold: ${r.out.slice(0,3).join(' ')}`:'',r.scroll?`scrolls ${r.scroll}px`:'',r.head?'':'level/stars not on the title row',r.stacked?'answers stacked in a column':'',r.small.length?`text under ${TEXT_MIN}px: ${r.small.join(' ')}`:''].filter(Boolean);
-    if(why.length){bad.push(`${id} (${size.name} ${size.w}x${size.h}) ${why.join('; ')}`);await P.page.screenshot({path:`out/gamefit/${id}-${size.name}.png`});}
+    if(why.length){bad.push(`${id} (${size.name} ${size.w}x${size.h}) ${why.join('; ')}`);if(process.env.SV_FIT_LOG)console.log('gamefit:',bad[bad.length-1]);await P.page.screenshot({path:`out/gamefit/${id}-${size.name}.png`});}
     await P.page.evaluate(()=>(document.querySelector('.gl-x') as HTMLElement).click());await P.page.locator('.gl').first().waitFor({state:'detached',timeout:15000}).catch(()=>{});
    }
    assert.deepEqual(P.errors,[]);

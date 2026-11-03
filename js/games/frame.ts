@@ -129,8 +129,26 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       next = Math.round(next * 100) / 100;
       if (Math.abs(next - z) > .04 || (next < z && h * z > (box.height - padY) + 1)) { stage.style.zoom = next === 1 ? '' : String(next); fitSoon(true); }
     };
+    // (v1.08 layout, owner 3 Nov 2026 AEDT, CLAUDE.md "One screen, big clear text") the words a child reads in a game are
+    // at least TEXT_MIN px as drawn (their size times the stage's zoom): a smaller label is raised, and goes back to the
+    // game's own size when the stage grows. Drawings (svg) and the round dots keep their size.
+    const TEXT_MIN = 16;
+    const floorText = () => {
+      if (closed) return 0; let changed = 0;
+      const z = parseFloat(stage.style.zoom) || 1, done = new Set<HTMLElement>(), walk = document.createTreeWalker(stage, NodeFilter.SHOW_TEXT);
+      for (let t = walk.nextNode(); t; t = walk.nextNode()) {
+        const p = t.parentElement;
+        if (!p || done.has(p) || !/[\p{L}\p{N}]/u.test(t.textContent || '') || p.closest('svg')) continue;
+        done.add(p);
+        const own = p.dataset.tfOwn, base = own != null ? parseFloat(p.dataset.tfBase) : parseFloat(getComputedStyle(p).fontSize);
+        if (!base) continue;
+        if (base * z < TEXT_MIN - .5) { if (own == null) { p.dataset.tfOwn = p.style.fontSize; p.dataset.tfBase = String(base); } const px = (Math.ceil(TEXT_MIN / z * 10) / 10) + 'px'; if (p.style.fontSize !== px) { p.style.fontSize = px; changed++; } }
+        else if (own != null) { p.style.fontSize = own; delete p.dataset.tfOwn; delete p.dataset.tfBase; changed++; }
+      }
+      return changed;
+    };
     let fitTimer: ReturnType<typeof setTimeout> | undefined;
-    const fitSoon = (shrinkOnly = false) => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fit(shrinkOnly), 120); };
+    const fitSoon = (shrinkOnly = false) => { clearTimeout(fitTimer); fitTimer = setTimeout(() => { floorText(); fit(shrinkOnly); if (floorText()) fitSoon(true); }, 120); };
     // (31 Oct 2026 AEDT, horsestability on GitHub: the board shrank mid-game) the stage fits itself while the game sets up;
     // once the child has tapped it, only a new screen size, or a new round that would not fit, changes the zoom, so a cheer
     // or a piece added during play never moves the board under a finger (floating pieces are not measured at all)
@@ -138,7 +156,7 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     stage.addEventListener('pointerdown', startPlay, { capture: true, once: true });
     const fitWatch = new MutationObserver(() => fitSoon(playing)); fitWatch.observe(stage, { childList: true, subtree: true });
     const fitResize = () => fitSoon(false);
-    addEventListener('resize', fitResize); setTimeout(fit, 400);
+    addEventListener('resize', fitResize); setTimeout(() => { floorText(); fit(); if (floorText()) fitSoon(true); }, 400);
     cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitResize); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
     let closed = false, winning = false;
     const prevMusic = Music.key; Music.play(GAME_MUSIC[id] || 'think');
