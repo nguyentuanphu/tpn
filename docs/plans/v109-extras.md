@@ -75,3 +75,18 @@ Each region brings its food, games, festivals and new friends.
 - **The feature schedule in `content/custom.json`:** its last batch is 26 Dec 2026.
 - **The 111 games and 54 stories held back:** they stay as they are (opened by playing or by Studio's switch), as the owner chose.
 - **The lantern story:** it currently ends at Chapter 3. With v1.09 it goes on to Tết 2027.
+
+## TypeScript everywhere (owner, 3 Nov 2026 AEDT: "Make sure everything is built in ts")
+
+**Checked on integrate/v108:**
+- Every source file of the game, Studio, the website server, the service worker and the tools is TypeScript (795 files).
+- The `types` check now reaches every game file. `js/games/fruitparade-core.ts` and `js/games/art-pending.ts` were added to `tests/tsconfig.json` (commit 4ac41d7fb).
+
+**In v1.09 (owner, pop-up):**
+- Type checking for the test code: `tests/`, 205 files, today TypeScript but not type-checked.
+- Type checking for the marketing video code: `marketing/source`, 17 files.
+- The website's navigation script moves out of the string templates in `docs/website-review-20261023/navigation.mts` into `home/site.ts`, so it is type-checked like the rest. It is the 10 KB inline script in `home/index.html`.
+
+**Stays plain JavaScript, on purpose:**
+- the 1 KB browser guard in `index.html`, which must run on old iPads to tell the family the device is too old;
+- `studio/ui/lame.min.js`, a third-party MP3 encoder kept as its own file.
