@@ -206,6 +206,32 @@ Owner, 3 Nov 2026 AEDT:
   - English and Vietnamese;
   - our own drawings;
   - a check.
+## Calendar with start and end dates: owner's answers (3 Nov 2026 AEDT, pop-ups)
+
+**Today:**
+- The pad's festival calendar (`js/ui/festivals-ui.ts`) shows "Today" (08:00 present, 15:00 game, show time) and "Coming up" (days to the decorations, the hunt and the festival day).
+- Parents get a push the morning before Vietnamese festivals and the Saturday before Australian events.
+- No end dates, no festival quests in the calendar, and new games and stories are not in it.
+
+**Plan, as chosen:**
+- **Everything lives only in the pad's calendar tab**, renamed "Lịch: Lễ hội và Có gì mới / Calendar: festivals and what's new". There is nothing extra on the play screen or the Simple screen.
+- **Each festival shows a timeline**, each step with its start, its end and "còn X ngày / X days left":
+  - decorations;
+  - the hunt;
+  - the festival day;
+  - the festival game (opens, put away until next year);
+  - the festival adventures.
+
+  Tapping a step flies the child there.
+- **Below the festivals:**
+  - "This week's new things" (from the release calendar);
+  - "Opens next week";
+  - "Ending soon".
+- **Ending soon is shown in the game only:**
+  - in the calendar tab;
+  - in the Grown-ups "What's new" card.
+
+  There is no push for endings. The existing start-of-festival pushes stay.
 ## Questions for the owner (asked by pop-up)
 1. Rollout pace.
 2. The install gift.
