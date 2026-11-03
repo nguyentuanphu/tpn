@@ -33,7 +33,7 @@ export async function gameFitCheck(browser:Browser){
     // wait for the game to set up its first round and for the stage to settle its size (it fits again when a round
     // adds its answers)
     await P.page.waitForTimeout(1100);
-    for(let k=0,last='';k<12;k++){const z=await P.page.evaluate(()=>{const st=document.querySelector('.gl-stage') as HTMLElement|null;return st?st.style.zoom+'|'+st.scrollHeight+'|'+st.childElementCount:'';});if(z===last)break;last=z;await P.page.waitForTimeout(400);}
+    for(let k=0,last='';k<12;k++){const z=await P.page.evaluate(()=>{const st=document.querySelector('.gl-stage') as HTMLElement|null;return st?st.style.zoom+'|'+st.scrollHeight+'|'+st.innerHTML.length:'';});if(z===last)break;last=z;await P.page.waitForTimeout(400);}
     const r=await P.page.evaluate((TEXT_MIN)=>{
      const gl=document.querySelector('.gl') as HTMLElement,st=gl.querySelector('.gl-stage') as HTMLElement,W=innerWidth,H=innerHeight;
      const seen=(e:Element)=>{const s=getComputedStyle(e);if(s.visibility==='hidden'||s.display==='none'||+s.opacity===0)return false;const b=e.getBoundingClientRect();return b.width>2&&b.height>2;};
