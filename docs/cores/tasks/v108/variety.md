@@ -1,6 +1,6 @@
 # v1.08 helper: variety (status)
 
-**ready for Release** (3 Nov 2026, 11:30 pm AEDT). Full suite left for Release (owner, 3 Nov 2026 AEDT).
+**ready for Release** (3 Nov 2026, 10:27 pm AEDT). Full suite left for Release (owner, 3 Nov 2026 AEDT).
 
 Branch: `work/v108-variety` (from `origin/fix/v108-startup-art`). Brief: [variety-brief.md](variety-brief.md). Shared rules: [README.md](README.md).
 
