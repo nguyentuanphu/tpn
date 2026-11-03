@@ -18,9 +18,14 @@
    stage. The new check fails a landscape game whose two to four answers are stacked in a column.
 4. **New check `gamefit`** (`tests/gamefit-browser.mts`, in `tests/checks/games.mts`): every game in the catalogue
    and the reading corner, at phone 390x844 (big kid and under-5), tablet landscape 1280x800 and 1340x800, tablet
-   portrait 800x1280 and computer 1440x900. It fails when any button or choice is outside the window, the stage or the
-   game layer scrolls, the level or stars are not on the title row, or (landscape) answers are stacked.
-5. **The "ê" after each line break**: looked for, see below.
+   portrait 800x1280 and computer 1440x900 (297 games, three screen sizes at a time, about 33 minutes here). It fails
+   when any button or choice is outside the window, the stage or the game layer scrolls, the level or stars are not on
+   the title row, (landscape) answers are stacked, or (Release's ask, CLAUDE.md "One screen, big clear text") any game
+   text is under 16 px as drawn.
+6. **Text at least 16 px** (Release's ask, 3 Nov AEDT): the frame raises any game text under 16 px as drawn (its size
+   times the stage's zoom) and gives it back its own size when the stage grows; on a phone the guide line, the level
+   button, the stars and the English mode's Vietnamese hint are 16 px.
+5. **The "ê" after each line break**: looked for, not found yet (see below).
 
 ## Shared files changed
 - `js/games/frame.ts`: the top bar's markup (status moved into `.gl-head`) and `fit()`.
