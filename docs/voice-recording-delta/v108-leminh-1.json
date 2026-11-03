@@ -619,16 +619,6 @@
    ]
   },
   {
-   "id": "1206908b6eff2391",
-   "lang": "vi",
-   "text": "⚽",
-   "area": "world",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
    "id": "12384505-4f430f2a",
    "lang": "vi",
    "text": "Chuồn chuồn bay thấp thì mưa",
@@ -1281,16 +1271,6 @@
    "part": false,
    "source": [
     "js/games/maths3.ts"
-   ]
-  },
-  {
-   "id": "2473f892-1b292ac5",
-   "lang": "vi",
-   "text": "🧸",
-   "area": "world",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
    ]
   },
   {
@@ -2271,16 +2251,6 @@
    ]
   },
   {
-   "id": "3a736f9d2980bf47",
-   "lang": "vi",
-   "text": "🐄",
-   "area": "world",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
    "id": "3a8fef74028a3862",
    "lang": "vi",
    "text": "Tớ nhìn thấy con vịt.",
@@ -2428,6 +2398,38 @@
    "part": false,
    "source": [
     "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "3f5a23b20a0e244f",
+   "lang": "vi",
+   "text": "Trái và Phải",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/maths4.ts"
+   ]
+  },
+  {
+   "id": "3f9bb393-cd744d4",
+   "lang": "vi",
+   "text": "Thử thật: vẽ màu lên một nửa tờ giấy, gấp lại rồi mở ra.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "3fbb9ab60c69319e",
+   "lang": "vi",
+   "text": "Nói và Ghép",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/english.ts"
    ]
   }
  ]

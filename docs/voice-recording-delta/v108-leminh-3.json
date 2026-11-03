@@ -17,167 +17,6 @@
  },
  "lines": [
   {
-   "id": "76599796-4d090bd9",
-   "lang": "vi",
-   "text": "hình tam giác màu cam, nhỏ",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
-   "id": "76e24690-6b44395b",
-   "lang": "vi",
-   "text": "ba cá to",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
-   "id": "76f13eec-78a13683",
-   "lang": "vi",
-   "text": "một trăm",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
-   "id": "776b2e7a166ababe",
-   "lang": "vi",
-   "text": "Đọc từ này. Đó là tranh nào?",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/games/english.ts"
-   ]
-  },
-  {
-   "id": "778521c3-6ae3ea73",
-   "lang": "vi",
-   "text": "Một, hai, ba, bốn, năm, con biết đếm, con biết đếm!",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/games/english.ts"
-   ]
-  },
-  {
-   "id": "77c16a936c062f79",
-   "lang": "vi",
-   "text": "Phiên Chợ",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/games/catalog.ts",
-    "js/games/money3.ts"
-   ]
-  },
-  {
-   "id": "77d9e4ee-19743467",
-   "lang": "vi",
-   "text": "Bà còng đi chợ trời mưa, Cái tôm cái tép đi đưa bà còng",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/tiengviet2.ts"
-   ]
-  },
-  {
-   "id": "782f01c168b2b7ae",
-   "lang": "vi",
-   "text": "hình bầu dục màu đỏ, to",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
-   "id": "787b8fb86a74b480",
-   "lang": "vi",
-   "text": "Có thứ mình cần, có thứ mình chỉ muốn thôi.",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/games/money3-meta.ts"
-   ]
-  },
-  {
-   "id": "789f2780-2c29e711",
-   "lang": "vi",
-   "text": "hình vuông màu cam, to",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
-   "id": "78c2e0dd-382404ef",
-   "lang": "vi",
-   "text": "ba ngôi sao nhỏ",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
-   "id": "790f7d2f-6ad2ceef",
-   "lang": "vi",
-   "text": "Tìm tất cả hình bầu dục!",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/games/maths3.ts"
-   ]
-  },
-  {
-   "id": "792ff637-3a30509f",
-   "lang": "vi",
-   "text": "một cá to",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
-   "id": "79baac4e6268cd20",
-   "lang": "vi",
-   "text": "Tớ thích con chó vui vẻ.",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
-   "id": "79efc76a-453bc83a",
-   "lang": "vi",
-   "text": "sen",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/content/tiengviet2.ts"
-   ]
-  },
-  {
-   "id": "7a1c6a98399336e7",
-   "lang": "vi",
-   "text": "Suy nghĩ xem: đó là gì nhỉ?",
-   "area": "games",
-   "part": false,
-   "source": [
-    "js/games/tiengviet2-meta.ts"
-   ]
-  },
-  {
    "id": "7a57fbf17b57837f",
    "lang": "vi",
    "text": "đằng",
@@ -578,16 +417,6 @@
    ]
   },
   {
-   "id": "82748c8c0-52ec7a",
-   "lang": "vi",
-   "text": "🥚",
-   "area": "world",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
    "id": "828797ef5e79cf29",
    "lang": "vi",
    "text": "Cốc nào có ít nước nhất?",
@@ -870,16 +699,6 @@
    ]
   },
   {
-   "id": "8808dd4d27c3a107",
-   "lang": "vi",
-   "text": "✋",
-   "area": "world",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
    "id": "88f0656a-6b36436",
    "lang": "vi",
    "text": "Gần mực thì đen, gần đèn thì rạng",
@@ -904,16 +723,6 @@
    "lang": "vi",
    "text": "ngôi sao màu hồng",
    "area": "games",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
-   "id": "897497913a0e5700",
-   "lang": "vi",
-   "text": "🥕",
-   "area": "world",
    "part": false,
    "source": [
     "js/content/english.ts"
@@ -1561,16 +1370,6 @@
    ]
   },
   {
-   "id": "9774020447ecba89",
-   "lang": "vi",
-   "text": "👧",
-   "area": "world",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
-   ]
-  },
-  {
    "id": "978ded95-57b265fb",
    "lang": "vi",
    "text": "quả trứng",
@@ -1608,16 +1407,6 @@
    "part": false,
    "source": [
     "js/games/tiengviet2.ts"
-   ]
-  },
-  {
-   "id": "98740397-13e46c78",
-   "lang": "vi",
-   "text": "👦",
-   "area": "world",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
    ]
   },
   {
@@ -1990,16 +1779,6 @@
    "part": false,
    "source": [
     "js/games/english.ts"
-   ]
-  },
-  {
-   "id": "a07b439805772559",
-   "lang": "vi",
-   "text": "🍰",
-   "area": "world",
-   "part": false,
-   "source": [
-    "js/content/english.ts"
    ]
   },
   {
@@ -2425,6 +2204,226 @@
    "source": [
     "js/games/catalog.ts",
     "js/games/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "a8b77d2e43246808",
+   "lang": "vi",
+   "text": "trái tim màu trắng",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "a8d3a3af2c2cba7e",
+   "lang": "vi",
+   "text": "hai chuối to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "a8e2a9176eeca61c",
+   "lang": "vi",
+   "text": "Uống … nhớ nguồn",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "a8e2d0f8070720ec",
+   "lang": "vi",
+   "text": "Cùng đọc cả câu nào!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/tiengviet2-meta.ts"
+   ]
+  },
+  {
+   "id": "a8ed8cb87789a828",
+   "lang": "vi",
+   "text": "Tớ có quả bóng.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "a8f3aa635540b2d3",
+   "lang": "vi",
+   "text": "Tớ thích quả táo to.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "a90d28af-1f6aa487",
+   "lang": "vi",
+   "text": "chín mươi",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "a92509d94894a9c8",
+   "lang": "vi",
+   "text": "đũa",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "a99d7e9a5b300352",
+   "lang": "vi",
+   "text": "Đếm lùi. Số nào còn thiếu?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths4.ts"
+   ]
+  },
+  {
+   "id": "a9b301f743a343d0",
+   "lang": "vi",
+   "text": "hình bầu dục màu xanh lá, nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "a9b5685a010dca37",
+   "lang": "vi",
+   "text": "Tiếp theo trong dãy là hình gì?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "aa21a5af-2e773ba9",
+   "lang": "vi",
+   "text": "Tớ nhìn thấy",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "aa6d8371-3e0d9d7",
+   "lang": "vi",
+   "text": "Thử thật: giơ năm ngón tay rồi giấu bớt. Còn mấy ngón đang giơ?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "aa846add-30b26285",
+   "lang": "vi",
+   "text": "Nghe câu ca dao còn thiếu một từ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/tiengviet2-meta.ts"
+   ]
+  },
+  {
+   "id": "aafa55d5-18516eee",
+   "lang": "vi",
+   "text": "hình vuông màu cam",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ab108bcf2d65ce71",
+   "lang": "vi",
+   "text": "Hát bài ABC khi các chữ cái sáng lên.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english-meta.ts"
+   ]
+  },
+  {
+   "id": "ab12ed812c71462d",
+   "lang": "vi",
+   "text": "mười bảy",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ab1682b5-776d0d4b",
+   "lang": "vi",
+   "text": "Bống khéo sảy, khéo sàng gạo để mẹ nấu cơm.",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "ab207bb432d70dfa",
+   "lang": "vi",
+   "text": "Trên trời có đám mây xanh",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "ab214e3753f8f2a6",
+   "lang": "vi",
+   "text": "Chuồn chuồn bay thấp thì …",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "ab64047906150531",
+   "lang": "vi",
+   "text": "Tớ có",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "aba97efd699e1505",
+   "lang": "vi",
+   "text": "trái tim màu cam",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
    ]
   }
  ]
