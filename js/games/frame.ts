@@ -129,7 +129,10 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       const need = little ? 64 : 44, sizes = [...stage.querySelectorAll('button, [role=button], .choice')].map(e => e.getBoundingClientRect()).filter(r => r.width > 2 && r.height > 2).map(r => Math.min(r.width, r.height) / z);
       const least = sizes.length ? Math.min(...sizes) : 0, floor = least ? Math.max(FIT_MIN, Math.min(1, need / least)) : FIT_MIN;
       let next = room >= 1 ? Math.min(grow, Math.max(1, room * .9)) : Math.max(floor, room * .98);
-      if (shrinkOnly && next >= z) return;
+      // (v1.08 fixes 2, checks horseplay, folkplay) a button drawn after the last fit (Roll the die, Pull) may now be under a
+      // finger at this zoom: go back up to the floor then, even on a shrink-only pass
+      if (shrinkOnly && next >= z && z >= floor - .005) return;
+      if (z < floor) next = Math.max(next, floor);
       next = Math.round(next * 100) / 100;
       if (Math.abs(next - z) > .04 || (next < z && h * z > (box.height - padY) + 1)) { stage.style.zoom = next === 1 ? '' : String(next); fitSoon(true); }
     };

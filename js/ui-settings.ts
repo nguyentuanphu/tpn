@@ -144,7 +144,8 @@ function bindPackStatus(card, redraw) {
     }
     await previewPackVoice(b.dataset.pv);
   });
-  const updateHanoiInfo=()=>{card.querySelector('#gHanoiStatus').textContent=T('Lê Minh downloads continue while you play. Mobile data can be switched off below.','Lê Minh tiếp tục tải khi bạn chơi. Bạn có thể tắt dữ liệu di động bên dưới.');};
+  // (v1.08 fixes 2) the Lê Minh card is set aside (voices-aside): a device that chose Lê Minh before has no status line to write
+  const updateHanoiInfo=()=>{const st=card.querySelector('#gHanoiStatus');if(!st)return;st.textContent=T('Lê Minh downloads continue while you play. Mobile data can be switched off below.','Lê Minh tiếp tục tải khi bạn chơi. Bạn có thể tắt dữ liệu di động bên dưới.');};
   const hp=card.querySelector('#gVietnamesePack');if(hp)hp.onchange=()=>{void chooseVietnamesePack(hp.value);if(hp.value==='leminh')updateHanoiInfo();};
   if(settings.voiceViVariant==='leminh')updateHanoiInfo();
   const preview=card.querySelector('#gHanoiPreview');if(preview)preview.onclick=async()=>{const ok=await previewHanoiVoice();if(card.isConnected&&!ok)card.querySelector('#gHanoiStatus').textContent=T('Lê Minh is not available here yet. Connect and try again.','Chưa phát được giọng Lê Minh. Kết nối mạng rồi thử lại.');};
@@ -388,7 +389,9 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
     card.querySelector('#gNames').onclick = () => openRenamer(() => { const y = m.scrollTop; draw(); m.scrollTop = y; });
     bindExtras(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast);
     if (NOTIFY) NOTIFY.bindNotify(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); // (v1.08 notifications)
-    else void import('./notify.js').then(mod => { NOTIFY = mod; if (card.isConnected) { const y = m.scrollTop; draw(); m.scrollTop = y; } }).catch(() => { });
+    // (v1.08 fixes 2, check familycodejourney) once it has loaded, only the notifications part takes its place: drawing the
+    // whole card again replaced whatever a grown-up was tapping or typing in at that moment
+    else void import('./notify.js').then(mod => { NOTIFY = mod; const wait = card.isConnected && card.querySelector('.pushsec-wait'); if (!wait) return; wait.insertAdjacentHTML('afterend', mod.notifyHTML(gOpen.has('notify'))); wait.remove(); card.querySelectorAll<HTMLDetailsElement>('details.gsec[data-sec="notify"]').forEach(d => d.ontoggle = () => { if (d.open) gOpen.add(d.dataset.sec); else gOpen.delete(d.dataset.sec); }); mod.bindNotify(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); }).catch(() => { });
     if (window.__sv && window.__sv.parents) window.__sv.parents.bindGrownups(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); // (round S)
     card.querySelector('#gFarm').onclick = () => { if (confirm(T('Start the farm over? Players and stickers are kept.', 'Làm lại nông trại? Người chơi và hình dán được giữ lại.'))) { resetFarm(); window.__sv && window.__sv.farm && (window.__sv.farm.syncAnimals(), window.__sv.farm.syncPets()); toast(T('A fresh new farm!', 'Nông trại mới tinh!')); } };
     const syncFamTelemetry = () => { import('./players.js').then(M => M.noteFamilyCode && M.noteFamilyCode()).catch(() => {}); };
