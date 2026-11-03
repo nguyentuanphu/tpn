@@ -147,6 +147,45 @@ Owner, 3 Nov 2026 AEDT:
 6. **Reading aloud everywhere:** every text a child sees can be tapped to hear it, for children who can't read yet.
 7. **A printable sheet per week:** the week's words and numbers as a PDF for parents (our own art).
 
+## Owner's answers (3 Nov 2026 AEDT, pop-ups)
+1. **Rollout:** "Game, story cũ thì giữ nguyên, chỉ cái mới thôi". Games and stories already open stay open as they are. Only new content goes into the release calendar. The owner asked how festivals and festival games work (below).
+2. **Install gift:** the Home hat, 100 coins and a sticker, once per device.
+3. **Other ideas, chosen:**
+   - the learning report by subject, with difficulty by subject;
+   - Lumi as the guide and the voice of news;
+   - play together with Mum and Dad, and a gentle play time.
+
+   Not chosen this time: tap to hear every text, and the weekly printable sheet.
+4. **Round:** all of this is in v1.09.
+
+## Festivals today (checked in the code)
+- **The calendar:** 24 festivals in `js/content/festcal.ts`, on their real lunar or solar dates every year.
+  - Studio can switch each one off, move it, and set the decoration days before it.
+  - Each festival has decorations, a festival hunt (5 items), festival adventures (24), an evening show (fireworks, lanterns or a parade), a present and a sticker.
+- **The festival game** opens at 15:00 at the festival table. **It is an everyday game, reused, and playable all year anyway:**
+
+  | Festival | Game |
+  |---|---|
+  | Tết | Dragon |
+  | Rằm tháng Giêng | Kite |
+  | Trung Thu | Kite |
+  | Giỗ Tổ | Puppets |
+  | Quốc Khánh | Puppets |
+  | Vu Lan, Mother's Day, Father's Day | Family Quiz |
+  | Children's Day, New Year | Balloon |
+  | Reconciliation, NAIDOC | Koala |
+  | Đoan Ngọ | Tug |
+  | Ông Táo | Market |
+  | Teachers' Day | Words |
+  | Easter | Eggs |
+  | Halloween | Memory |
+  | Christmas | Parcel |
+  | Australia Day | Cricket |
+  | Clean Up | Sorting |
+  | Harmony | First Words |
+  | Holi | Colours |
+  | Anzac | Tune |
+  | Diwali | Rangoli |
 ## Questions for the owner (asked by pop-up)
 1. Rollout pace.
 2. The install gift.
