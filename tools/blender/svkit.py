@@ -111,3 +111,59 @@ def shoot(scene, cam, out, name, az, height, dist, look, res=(560, 760)):
     cam.location = (math.sin(az) * dist, -math.cos(az) * dist, height)
     cam.rotation_euler = (Vector((0, 0, look)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
     scene.render.filepath = os.path.join(out, name + '.png'); bpy.ops.render.render(write_still=True)
+
+# ---------- felt, glass and soft paint (Lumi, v1.08) ----------
+def felt(name, col, rough=.85, fibre=.12, mottle=.06, scale=900):
+    """felt or wool: a soft sheen, fine fibres in the bump and a gentle mottle in the colour (world position, so every size matches)"""
+    if name in MATS: return MATS[name]
+    m = mat(name, col, rough, sheen=1.0)
+    nt = m.node_tree; b = nt.nodes['Principled BSDF']
+    b.inputs['Sheen Roughness'].default_value = .4; b.inputs['Sheen Tint'].default_value = hexc('#fffaf0')
+    geo = nt.nodes.new('ShaderNodeNewGeometry')
+    nz = nt.nodes.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = scale; nz.inputs['Detail'].default_value = 8; nz.inputs['Roughness'].default_value = .7
+    nt.links.new(geo.outputs['Position'], nz.inputs['Vector'])
+    bp = nt.nodes.new('ShaderNodeBump'); bp.inputs['Strength'].default_value = fibre; bp.inputs['Distance'].default_value = .0015
+    nt.links.new(nz.outputs['Fac'], bp.inputs['Height']); nt.links.new(bp.outputs['Normal'], b.inputs['Normal'])
+    mo = nt.nodes.new('ShaderNodeTexNoise'); mo.inputs['Scale'].default_value = 14; mo.inputs['Detail'].default_value = 1
+    nt.links.new(geo.outputs['Position'], mo.inputs['Vector'])
+    k = nt.nodes.new('ShaderNodeMath'); k.operation = 'MULTIPLY'; k.inputs[1].default_value = mottle * 2
+    nt.links.new(mo.outputs['Fac'], k.inputs[0])
+    mix = nt.nodes.new('ShaderNodeMixRGB'); mix.inputs['Color1'].default_value = hexc(col)
+    mix.inputs['Color2'].default_value = [c * .8 for c in hexc(col)[:3]] + [1]
+    nt.links.new(k.outputs[0], mix.inputs['Fac']); nt.links.new(mix.outputs['Color'], b.inputs['Base Color'])
+    return m
+
+def softpaint(name, col, alpha=.8):
+    """a painted spot (blush) that fades out at its edge"""
+    if name in MATS: return MATS[name]
+    m = mat(name, col, .8); nt = m.node_tree; b = nt.nodes['Principled BSDF']
+    tc = nt.nodes.new('ShaderNodeTexCoord')
+    sub = nt.nodes.new('ShaderNodeVectorMath'); sub.operation = 'SUBTRACT'; sub.inputs[1].default_value = (.5, .5, .5)
+    mul = nt.nodes.new('ShaderNodeVectorMath'); mul.operation = 'MULTIPLY'; mul.inputs[1].default_value = (1, 0, 1)
+    ln = nt.nodes.new('ShaderNodeVectorMath'); ln.operation = 'LENGTH'
+    mr = nt.nodes.new('ShaderNodeMapRange'); mr.inputs['From Min'].default_value = 0; mr.inputs['From Max'].default_value = .5
+    mr.inputs['To Min'].default_value = alpha; mr.inputs['To Max'].default_value = 0
+    nt.links.new(tc.outputs['Generated'], sub.inputs[0]); nt.links.new(sub.outputs[0], mul.inputs[0])
+    nt.links.new(mul.outputs[0], ln.inputs[0]); nt.links.new(ln.outputs['Value'], mr.inputs['Value'])
+    nt.links.new(mr.outputs['Result'], b.inputs['Alpha'])
+    return m
+
+def glass(name, col='#fff8e6'):
+    if name in MATS: return MATS[name]
+    m = mat(name, col, .04); b = m.node_tree.nodes['Principled BSDF']
+    b.inputs['Transmission Weight'].default_value = 1.0; b.inputs['IOR'].default_value = 1.45
+    return m
+
+def pstar(name, m, c, r, depth, rot, inner=.52, lv=2):
+    """a puffy, rounded star (felt or glowing), its face along +Z before the turn"""
+    bm = bmesh.new(); top, bot = [], []
+    for i in range(10):
+        a = math.pi / 2 + i * math.pi / 5; rr = r if i % 2 == 0 else r * inner
+        top.append(bm.verts.new((math.cos(a) * rr, math.sin(a) * rr, depth / 2)))
+        bot.append(bm.verts.new((math.cos(a) * rr, math.sin(a) * rr, -depth / 2)))
+    ct = bm.verts.new((0, 0, depth * 1.1)); cb = bm.verts.new((0, 0, -depth * .8))
+    for i in range(10):
+        j = (i + 1) % 10
+        bm.faces.new((top[i], top[j], ct)); bm.faces.new((bot[j], bot[i], cb)); bm.faces.new((top[j], top[i], bot[i], bot[j]))
+    bmesh.ops.transform(bm, matrix=Matrix.LocRotScale(Vector(c), Euler(rot), Vector((1, 1, 1))), verts=bm.verts)
+    o = obj_from(bm, name, m); subsurf(o, lv); return o

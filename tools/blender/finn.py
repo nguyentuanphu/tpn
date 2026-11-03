@@ -1,5 +1,6 @@
 # Finn, the sky explorer (owner's concept sheet "New character concepts", 2 Nov 2026 AEDT), built by script.
 # Run: blender -b -P tools/blender/finn.py -- <out dir> [render]
+import sys; sys.dont_write_bytecode = True  # keep the tracked __pycache__ unchanged
 import sys, os, math, random
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy, bmesh
