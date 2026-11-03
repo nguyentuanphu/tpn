@@ -82,7 +82,8 @@ let LEX: RegExp | null = null;
 const lexicon = () => LEX || (LEX = (() => {
   const words = [...new Set([...slang(), ...EN_IN_VI_EXTRA])].filter(w => w.split(/\s+/).length > 1 || !viShaped(w)).sort((a, b) => b.length - a.length);
   const pat = words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/['’]/g, "['’]").replace(/,?\s+/g, ',?\\s+')).join('|');
-  return new RegExp(`(?<![\\p{L}\\d'’])(?:${pat})(?![\\p{L}\\d'’])`, 'giu');
+  // (no lookbehind: older iPhones cannot run it) the letter before is taken as group 1 and left out again below
+  return new RegExp(`(^|[^\\p{L}\\d'’])(${pat})(?![\\p{L}\\d'’])`, 'giu');
 })());
 const QUOTED = /(["“])([^"“”\n]+?)(["”])/g;
 // quoted words of other languages the kiosks teach (Chinese pinyin with its tone marks, Hindi) are not English
@@ -97,7 +98,7 @@ export function enRuns(text): Array<['vi' | 'en', string]> {
   QUOTED.lastIndex = 0; let m;
   while ((m = QUOTED.exec(text))) if (englishQuote(m[2])) mark(m.index + 1, m.index + 1 + m[2].length);
   const lex = lexicon(); lex.lastIndex = 0;
-  while ((m = lex.exec(text))) mark(m.index, m.index + m[0].length);
+  while ((m = lex.exec(text))) mark(m.index + m[1].length, m.index + m[0].length);
   if (!en.includes(true)) return [['vi', text]];
   // punctuation and spaces at the edges of an English piece go with the Vietnamese voice, except "!" and "?" that end it
   for (let i = 0; i < text.length; i++) if (en[i] && (i === 0 || !en[i - 1])) { let j = i; while (j < text.length && en[j]) j++;
