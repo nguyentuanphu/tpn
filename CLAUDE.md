@@ -27,6 +27,8 @@
 
 **Phone, tablet and computer (owner, 8 Oct):** every change is checked on a phone, a tablet and a computer so it looks tidy on all three (rule UI-006, check `phone`); look at screenshots of all three before reporting a round.
 
+**One screen, big clear text (owner, 3 Nov 2026 AEDT):** every game, and every screen a child uses, fits on one screen with no scrolling up or down: the question, the play area, every answer and every button can be seen at once on a phone, a tablet (upright and sideways) and a computer. On a wide screen, answers sit side by side, not in a column under the picture. The level and the stars sit on the same row as the title and the guide (TV) button. Text is big, clear and easy to read and see. A check covers it, and a change that breaks it is not ready.
+
 **Questions to the owner (owner, 10 Oct): always ask with pop-up questions** (the question tool with clickable choices), never as questions in plain text. This covers every question: the plan's "go", choices between options, unclear answers, and "yes, deploy". Give each question 2 to 4 short choices, the recommended one first and marked "(Recommended)"; the owner can always type their own answer instead. Applies to every chat (Release and every core).
 
 **No answer within 15 minutes: carry on (owner, 17 Oct AEDT).** A chat never sits idle waiting for the owner.
