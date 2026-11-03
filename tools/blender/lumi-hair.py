@@ -116,7 +116,7 @@ def style(name, A=None, Bm=None, side=1):
             az = random.uniform(-math.pi, math.pi); el = random.uniform(-.15, 1.57)
             if front_open(az, el) and el < .95: continue
             p, n = on_head(az, el, random.uniform(1.08, 1.2)); sphere('hairCurl', C(k), p, (.2 * R, .2 * R, .17 * R), 12, 6)
-    elif name == 'waves':   # wavy hair to the shoulders, middle parting (Flora)
+    elif name == 'waves':   # wavy hair to the shoulders, middle parting (Clara)
         hair_base(A, .3, -.3, -.6); part = HC + Vector((0, -.35 * R, R * 1.05))
         ring(1.2, 10, lambda az, el, k: None if math.cos(az) > .8 else lock_at(C(k), az, el, .95, .58, away=part, gravity=.55, flick=.05, wave=.12), False)
         ring(.7, 14, lambda az, el, k: lock_at(C(k), az, el, 1.7, .55, gravity=1, flick=.12, wave=.18, out=.0), True, .5)
@@ -130,9 +130,9 @@ def hair_finn():
     style('messy', HAIR, HAIRL)
     for k, az in enumerate((-.6, -.3, 0.0, .3)): lock_at((HAIR, HAIRL)[k % 2], az, 1.05, .75, .48, toward=HC + Vector((1.3 * R, -1.0 * R, .2 * R)), gravity=.25, flick=.3)   # a fringe swept to the side
 
-def hair_flora():
+def hair_clara():
     style('waves', HAIR, HAIRL)
-    _flora_braids_and_flower()
+    _clara_braids_and_flower()
 
 def hair_sol():
     style('curls', HAIR, HAIRL)
@@ -143,7 +143,7 @@ def hair_villager():
     HS = mat('hairShell', PAL[1], .5, .45); HL = mat('hairShellL', PAL[3], .5, .45)
     style(VSTYLE.get(VHAIR.get(ROLE, 'sidepart'), 'sidepart'), HS, HL)
 
-def _flora_braids_and_flower():
+def _clara_braids_and_flower():
     # two braids over the shoulders with lilac ties
     for s in (-1, 1):
         path = [H(s * .9, -.15, -.25), H(s * .98, -.32, -.8), H(s * .95, -.42, -1.35), H(s * .9, -.45, -1.75)]
@@ -154,7 +154,7 @@ def _flora_braids_and_flower():
             sphere('braid', (HAIR, HAIRL)[i % 2], p, (.19 * R * (1 - .3 * f), .16 * R * (1 - .3 * f), .2 * R), 16, 8, (0, s * (.4 if i % 2 else -.4), 0))
         sphere('braidTie', DRESSL, path[-1] + Vector((0, 0, -.05 * R)), (.12 * R, .12 * R, .07 * R), 16, 8)
         tube('braidTuft', HAIR, [path[-1] + Vector((0, 0, -.08 * R)), path[-1] + Vector((s * .05 * R, -.02 * R, -.35 * R))], [(.13 * R, .1 * R), (.02 * R, .02 * R)], 10)
-    # a cream flower clip with two leaves, high on Flora's right
+    # a cream flower clip with two leaves, high on Clara's right
     c = H(-.62, -.58, .7); n = (c - HC).normalized(); q = n.to_track_quat('Z', 'Y').to_matrix()
     for i in range(5):
         a = i * 2 * math.pi / 5; p = c + q @ Vector((math.cos(a) * .13 * R, math.sin(a) * .13 * R, .06 * R))

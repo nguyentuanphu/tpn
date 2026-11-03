@@ -11,7 +11,7 @@ def jpg(src, name, width=900):
     return 'img/' + name + '.jpg'
 
 FRIENDS = [('lumi', 'Lumi', 'girl · bạn gái', 'The star gardener: leaf hair, sage overalls, a glowing star lantern.'),
-           ('flora', 'Flora', 'girl · bạn gái', 'Pink waves and braids, a lilac dress with a petal hem, a flower staff.'),
+           ('clara', 'Clara', 'girl · bạn gái', 'Pink waves and braids, a lilac dress with a petal hem, a flower staff.'),
            ('finn', 'Finn', 'boy · bạn trai', 'Navy hair, a teal explorer coat, a satchel and a glowing compass star.'),
            ('sol', 'Sol', 'boy · bạn trai', 'Copper curls, a honey cape with a sun on the back, a sun crystal.')]
 VIEWS = [('front', 'Front'), ('three-quarter', 'Three-quarter'), ('side', 'Side'), ('back', 'Back')]
@@ -25,7 +25,7 @@ VILL = [('vn-aodai', 'Woman in áo dài', 'Áo dài, nón lá, sandals'), ('vn-d
         ('au-grandma', 'Grandma', 'Cardigan, pearls, curls'), ('au-grandpa', 'Grandpa', 'Bucket hat, long socks'),
         ('au-boy', 'Boy', 'Bucket hat, rash vest, thongs'), ('au-girl', 'Schoolgirl', 'School dress and hat, afro puffs')]
 WEAR = [('lumi-hatstraw-shoesrainboots-headband', 'Lumi', 'Straw hat, rain boots, headband'), ('lumi-hatnonla-shoessandals-scarf6f9fd8', 'Lumi', 'Nón lá, sandals, scarf'),
-        ('flora-hatcrown-shoessandals-earrings-necklace', 'Flora', 'Flower crown, sandals, earrings, necklace'), ('flora-bow-bracelet-shoesthongs', 'Flora', 'Bow, bracelet, thongs'),
+        ('clara-hatcrown-shoessandals-earrings-necklace', 'Clara', 'Flower crown, sandals, earrings, necklace'), ('clara-bow-bracelet-shoesthongs', 'Clara', 'Bow, bracelet, thongs'),
         ('finn-hatbeanie-shoessneakers-scarfd8644a', 'Finn', 'Beanie, sneakers, scarf'), ('finn-hatbucket-bowtie-watch', 'Finn', 'Bucket hat, bow tie, watch'),
         ('sol-hatcap-shoessneakers-backpack', 'Sol', 'Cap, sneakers, backpack'), ('sol-hatakubra-sunglasses-shoesboots', 'Sol', 'Akubra, sunglasses, boots')]
 VEH = [('motorbike', 'Motorbike · xe máy', 'A Vietnamese dad rides, his daughter behind.'), ('bicycle', 'Bicycle · xe đạp', 'An Australian boy on his bike, hands on the grips.'),
@@ -53,7 +53,7 @@ for key, name, g, about in FRIENDS:
   <h4>Moods · cảm xúc</h4>
   <div class="moods">{''.join(moods)}</div>
 </article>''')
-parts.append(f'<section id="friends"><h2>The four friends</h2><p class="lede">Two pairs: Finn and Flora, Sol and Lumi. Smile is the everyday face, shown in the views.</p>{"".join(fr)}</section>')
+parts.append(f'<section id="friends"><h2>The four friends</h2><p class="lede">Two pairs: Finn and Clara, Sol and Lumi. Smile is the everyday face, shown in the views.</p>{"".join(fr)}</section>')
 
 def grid(items, sid, title, lede):
     return f'<section id="{sid}"><h2>{title}</h2><p class="lede">{lede}</p><div class="cards">{"".join(items)}</div></section>'

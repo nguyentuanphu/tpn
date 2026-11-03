@@ -1,13 +1,13 @@
 # One page for the owner: the concepts, then each chibi friend from four sides and with three faces.
-#   python3 tools/blender/lumi-sheet.py <dir with <who>-chibi-*.png> <out.png> [lumi finn flora] [--style chibi|tall]
+#   python3 tools/blender/lumi-sheet.py <dir with <who>-chibi-*.png> <out.png> [lumi finn clara] [--style chibi|tall]
 import os, sys
 from PIL import Image, ImageDraw
 args = [a for a in sys.argv[1:]]
 style = 'chibi'
 if '--style' in args: i = args.index('--style'); style = args[i + 1]; del args[i:i + 2]
-d, out, who = args[0], args[1], args[2:] or ['lumi', 'finn', 'flora']
+d, out, who = args[0], args[1], args[2:] or ['lumi', 'finn', 'clara']
 root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-concept = {'lumi': 'lumi/owner-concept.png', 'finn': 'concept-finn.png', 'flora': 'concept-flora.png'}
+concept = {'lumi': 'lumi/owner-concept.png', 'finn': 'concept-finn.png', 'clara': 'concept-flora.png'}
 W, Hh = 300, 390; views = ['front', 'three-quarter', 'side', 'back']; faces = ['face-happy', 'face-curious', 'face-surprised']
 row = Hh + W + 70
 sheet = Image.new('RGB', (W * 5, row * len(who)), '#f3ead7'); dr = ImageDraw.Draw(sheet)

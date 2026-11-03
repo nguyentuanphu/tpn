@@ -229,8 +229,8 @@ def shoes(kind, col=None):
 
 HAT_COL = {'straw': '#e3c37c', 'nonla': '#eadbb0', 'cap': '#e2574c', 'beanie': '#6f9fd8', 'crown': '#7fae5e', 'akubra': '#8a6142', 'bucket': '#f2c14e', 'helmet': '#d64b4b'}
 def hat(kind, col=None):
-    k = R * {'lumi': 1.2, 'flora': 1.12, 'sol': 1.08, 'finn': 1.2}.get(WHO, 1.14)   # bigger hair needs a bigger hat
-    top = HC + Vector((0, .02 * R, (.55 + {'lumi': .32, 'flora': .12, 'sol': .1, 'finn': .32}.get(WHO, 0)) * R)); M = felt('hat' + kind + (col or ''), col or HAT_COL[kind], .85, .1)
+    k = R * {'lumi': 1.2, 'clara': 1.12, 'sol': 1.08, 'finn': 1.2}.get(WHO, 1.14)   # bigger hair needs a bigger hat
+    top = HC + Vector((0, .02 * R, (.55 + {'lumi': .32, 'clara': .12, 'sol': .1, 'finn': .32}.get(WHO, 0)) * R)); M = felt('hat' + kind + (col or ''), col or HAT_COL[kind], .85, .1)
     BAND = felt('hatRibbon', '#c75b4a')
     if kind == 'straw':  # a sun hat with a ribbon (also the broad-brimmed school hat, in navy)
         lathe('hatCrown', M, [(.0, .62 * k), (.42 * k, .6 * k), (.66 * k, .4 * k), (.74 * k, .05 * k)], 32, loc=top)
@@ -288,7 +288,7 @@ def scarf(col):
 HEAD_ACC = ('bow', 'headband', 'earrings', 'sunglasses', 'glasses', 'freckles', 'moustache', 'flowerclip', 'stubble')
 def acc(name, col=None):
     b = B; C = lambda d: felt('acc' + name + (col or d), col or d)
-    puff = {'lumi': .32, 'flora': .12, 'sol': .1, 'finn': .2}.get(WHO, 0)
+    puff = {'lumi': .32, 'clara': .12, 'sol': .1, 'finn': .2}.get(WHO, 0)
     if name == 'bow':  # a big felt bow high on the left of the hair
         c = HC + Vector((.62, -.48, .62)).normalized() * R * (1.22 + puff); M = C('#ef6f8e')
         for s in (-1, 1): sphere('bow', M, c + Vector((s * .25 * R, -.02 * R, .03 * R)), (.26 * R, .11 * R, .19 * R), 16, 8, (0, s * .35, 0))

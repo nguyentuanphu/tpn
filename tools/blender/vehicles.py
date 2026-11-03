@@ -201,7 +201,7 @@ def bus():
         drv = load('driver', (-.7, -2.75, hip), 0, 'ride', 1, 'smile'); hands, feet = hands_feet(drv); hm = (hands[0] + hands[1]) / 2
         ring = [hm + Vector((math.cos(t) * .2, math.sin(t) * .2 * .5, math.sin(t) * .2 * .87)) for t in [2 * math.pi * k / 32 for k in range(33)]]
         tube('steeringWheel', DARK, ring, .022, 10, False); tube('steeringColumn', DARK, [hm, hm + Vector((0, -.35, -.5))], .03, 8)
-    who = [('lumi-game', 1, 0, 'happy'), ('finn-game', 1, 1, 'smile'), ('flora-game', -1, 1, 'excited'), ('sol-game', -1, 0, 'happy'),
+    who = [('lumi-game', 1, 0, 'happy'), ('finn-game', 1, 1, 'smile'), ('clara-game', -1, 1, 'excited'), ('sol-game', -1, 0, 'happy'),
            ('villager-vn-grandma-elder', 1, 3, 'smile'), ('villager-au-mum-adult', -1, 3, 'curious'), ('villager-vn-aodai-adult', 1, 4, 'smile')]
     for name, side, row, face in who:   # passengers turn a little towards the window to look out
         print('LOAD', name, flush=True)

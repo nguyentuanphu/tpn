@@ -1,9 +1,9 @@
 # Lumi, the star gardener (owner's concept sheet, 2 Nov 2026 AEDT), built by script in Blender. Our own model; nothing downloaded.
 # Two builds from one script (v1.08, part A):
 #   chibi  the concept's chibi Lumi (about 2 heads tall), refined;
-#   tall   Lumi in Finn and Flora's proportions (about 5 heads tall, the same head and eye size as finn.py).
-# The owner chose the chibi (3 Nov 2026 AEDT) and asked to try Finn and Flora in the same proportions: add `finn` or `flora`.
-# Run: blender -b -P tools/blender/lumi.py -- <out dir> [lumi|finn|flora] [chibi|tall] [render] [faces] [quick]
+#   tall   Lumi in Finn and Clara's proportions (about 5 heads tall, the same head and eye size as finn.py).
+# The owner chose the chibi (3 Nov 2026 AEDT) and asked to try Finn and Clara in the same proportions: add `finn` or `clara`.
+# Run: blender -b -P tools/blender/lumi.py -- <out dir> [lumi|finn|clara] [chibi|tall] [render] [faces] [quick]
 #   render: front, side, back, three-quarter;  faces: happy, curious, surprised;  quick: few samples, small pictures.
 import sys; sys.dont_write_bytecode = True  # keep the tracked __pycache__ unchanged
 import sys, os, math, random
@@ -14,11 +14,12 @@ from mathutils.bvhtree import BVHTree
 from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube, lathe, subsurf, obj_from
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
-FLAGS = ('look=felt', 'look=now', 'look=toy', 'rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
+argv = ['clara' if x == 'flora' else x for x in argv]   # Flora was renamed Clara (owner, 3 Nov 2026 AEDT); the old name still works
+FLAGS = ('look=felt', 'look=now', 'look=toy', 'rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'clara', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
 OUT = next((a for a in argv if a not in FLAGS and '=' not in a), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
-WHO = next((w for w in ('finn', 'flora', 'sol', 'villager') if w in argv), 'lumi')
+WHO = next((w for w in ('finn', 'clara', 'sol', 'villager') if w in argv), 'lumi')
 # villagers (owner, 3 Nov: "dân làng sẽ nhìn như thế nào?"): role=<name>; the wardrobe: wear=hat:straw+shoes:sandals+scarf:red
 ROLE = next((a.split('=', 1)[1] for a in argv if a.startswith('role=')), 'vn-farmer')
 WEAR = dict((w.split(':') + [''])[:2] for w in next((a[5:] for a in argv if a.startswith('wear=')), '').split('+') if w)
@@ -41,7 +42,7 @@ VILL = {
     'au-girl': {'g': 'f', 'size': 'kid', 'pal': ('#9a6544', '#1c1715', '#120f0d', '#2c2420', '#24140a', '#4a2c18', '#1c1715', '#1f1712'), 'hair': 'pigtails', 'top': ('dress', '#9cc7e8'), 'bottom': '#2c3a5a', 'kind': 'skirt', 'hat': 'straw/2c3a5a', 'shoes': 'sneakers/2a2a2a', 'extra': ('backpack', 'bracelet')},
 }
 V = VILL.get(ROLE) if WHO == 'villager' else None
-G = V['g'] if V else {'finn': 'm', 'sol': 'm'}.get(WHO, 'f')   # boys: Finn, Sol; girls: Flora, Lumi (owner asked, 3 Nov)
+G = V['g'] if V else {'finn': 'm', 'sol': 'm'}.get(WHO, 'f')   # boys: Finn, Sol; girls: Clara, Lumi (owner asked, 3 Nov)
 if V and V['hat'] and 'hat' not in WEAR: WEAR['hat'] = V['hat'].replace('/', '/')
 TAG = (f'villager-{ROLE}' if V else WHO) + ''.join(f'-{k}{v}' for k, v in WEAR.items() if not V)
 os.makedirs(OUT, exist_ok=True); random.seed(7)
@@ -52,7 +53,7 @@ lin = lambda a, b, n: [a + (b - a) * i / (n - 1) for i in range(n)]
 # each friend's own colours: skin, hair (main, dark, light), iris (dark, light), brows and lashes (from the owner's concepts)
 PAL = {'lumi': ('#f7d2b8', '#a9c58f', '#8fae79', '#bcd5a1', '#1f4d43', '#3f8a6f', '#7f9f62', '#45302a'),
        'finn': ('#f3c6a5', '#2a355f', '#1f284b', '#3b4a80', '#3a2414', '#7a4f2e', '#2b3560', '#2a1e18'),
-       'flora': ('#f8d4bc', '#f2a493', '#e38f7f', '#f8bdac', '#5a3416', '#b8783c', '#c98472', '#5a3328'),
+       'clara': ('#f8d4bc', '#f2a493', '#e38f7f', '#f8bdac', '#5a3416', '#b8783c', '#c98472', '#5a3328'),
        'sol': ('#f5c7a3', '#c8693a', '#a5522b', '#e08a55', '#6a3a12', '#c98a32', '#a5522b', '#4a2a1a')}.get(WHO) or V['pal']
 SKIN = mat('skin', PAL[0], .55, .1, sss=.12)
 NOSE = mat('nose', '#f3c2a8', .55, .1, sss=.12)
@@ -76,7 +77,7 @@ LASH = mat('lash', PAL[7], .6)
 BROW = mat('brow', PAL[6], .9, .3)
 MOUTH = mat('mouth', '#6f2b2b', .5); TONGUE = mat('tongue', '#ee9188', .5)
 BLUSH = softpaint('blush', '#f59a93', .85); BLUSHM = softpaint('blushBoy', '#f2a48f', .55)
-# Finn's and Flora's clothes
+# Finn's and Clara's clothes
 PANTS = felt('pants', '#e8dcc0'); COAT = felt('coat', '#2f6f74'); COATIN = felt('coatLining', '#e7d9b8')
 BOOTF = felt('bootsBrown', '#7a4a2a', .6, .08)
 DRESS = felt('dress', '#b39ad1'); DRESSL = felt('dressLight', '#c9b5e0'); TIGHTS = felt('tights', '#9aa97f')
@@ -92,7 +93,7 @@ if GAME:  # the game's people (js/avatar.ts): 1.6 tall, head centre 1.33, hips .
     P = dict(eye=.185, eyeX=.31, eyeZ=-.13, jaw=.12, cheek=.05, puff=1.0, mouth=.72, head=(.99, .95, 1.03), noseZ=-.33, mouthZ=-.5, blushX=.52, blushZ=-.36)
     B = dict(legX=.08, rLeg=.052, zAnk=.06, zBoot=.13, zSock=.22, zCuff=.47, zCr=.6, zW=.74, zC=.9, zS=.975, zN=1.06,
              wH=.16, wC=.155, dep=.8, sh=(.2, 0, .97), el=(.225, -.005, .77), wr=(.235, -.02, .58), rU=.046, rA=.04, boot=(.075, .11), lant=.27, S=1.2, puff=1.45)
-elif TALL:  # Finn and Flora: head about a fifth of the height, a narrower jaw, smaller eyes
+elif TALL:  # Finn and Clara: head about a fifth of the height, a narrower jaw, smaller eyes
     HC, R = Vector((0, 0, 1.12)), .128
     P = dict(eye=.2, eyeX=.33, eyeZ=-.1, jaw=.2, cheek=.03, puff=1.08)
     B = dict(legX=.06, rLeg=.037, zAnk=.05, zBoot=.14, zSock=.235, zCuff=.44, zCr=.57, zW=.69, zC=.84, zS=.915, zN=.99,
@@ -113,7 +114,7 @@ if V and V['size'] != 'kid':
     STYLE = V['size']
     grow(*{'adult': (1.27, 1.12, .25), 'elder': (1.13, 1.1, .245)}[V['size']])
     P.update(eye=.15, eyeZ=-.08, jaw=.17, cheek=.02, mouth=.62, head=(.97, .95, 1.06))
-# face options for the owner to choose (3 Nov): face=oval (a small oval face, a slim chin) or face=concept (like the Finn and Flora concepts)
+# face options for the owner to choose (3 Nov): face=oval (a small oval face, a slim chin) or face=concept (like the Finn and Clara concepts)
 # three whole looks for the owner to compare (3 Nov): look=felt (like the first chibi Lumi), look=now, look=toy (a soft toy, in between)
 LOOK = next((x.split('=', 1)[1] for x in argv if x.startswith('look=')), 'felt' if GAME else 'now')   # look 1 chosen by the owner (3 Nov)
 FACEOPT = next((x.split('=', 1)[1] for x in argv if x.startswith('face=')), 'oval' if GAME and LOOK == 'now' else '')   # A, the small oval, approved by the owner (3 Nov)
@@ -310,7 +311,7 @@ def hair():
     for a in (-.6, .7):
         o = leaf('starLeaf', LEAFG, .2 * R, .1 * R, .2, .2, 10, .03 * R, .2)
         place(o, c + n * .05 * R, Vector((math.cos(a), 0, math.sin(a) - .3)), n)
-# ---------- Finn and Flora's hair (the owner asked to try them as chibis too, 3 Nov 2026 AEDT) ----------
+# ---------- Finn and Clara's hair (the owner asked to try them as chibis too, 3 Nov 2026 AEDT) ----------
 def cap(m):
     bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=32, radius=1)
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if (v.co.y < -.35 and v.co.z < .45 and abs(v.co.x) < .8) or v.co.z < -.72 or (v.co.y < .1 and v.co.z < -.3)], context='VERTS')
@@ -359,7 +360,7 @@ def hair_finn():
         clump(az, 1.02, .78 - .1 * (k % 2), .32, .08, .25, HAIRL if k % 2 else HAIR)
     for k in range(4): clump(random.uniform(-2, 2), 1.45, .4, .2, .8, 1.2, HAIRL)  # a few strands sticking up
 
-def hair_flora():
+def hair_clara():
     cap(HAIRD)
     for ring, (el, cnt) in enumerate([(1.35, 7), (1.0, 12)]):  # soft waves on top
         for k in range(cnt):
@@ -383,7 +384,7 @@ def hair_flora():
             sphere('braid', (HAIR, HAIRL)[i % 2], p, (.19 * R * (1 - .3 * f), .16 * R * (1 - .3 * f), .2 * R), 16, 8, (0, s * (.4 if i % 2 else -.4), 0))
         sphere('braidTie', DRESSL, path[-1] + Vector((0, 0, -.05 * R)), (.12 * R, .12 * R, .07 * R), 16, 8)
         tube('braidTuft', HAIR, [path[-1] + Vector((0, 0, -.08 * R)), path[-1] + Vector((s * .05 * R, -.02 * R, -.35 * R))], [(.13 * R, .1 * R), (.02 * R, .02 * R)], 10)
-    # a cream flower clip with two leaves, high on Flora's right
+    # a cream flower clip with two leaves, high on Clara's right
     c = H(-.62, -.58, .7); n = (c - HC).normalized(); q = n.to_track_quat('Z', 'Y').to_matrix()
     for i in range(5):
         a = i * 2 * math.pi / 5; p = c + q @ Vector((math.cos(a) * .13 * R, math.sin(a) * .13 * R, .06 * R))
@@ -394,7 +395,7 @@ def hair_flora():
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-more.py')).read())  # Sol, villagers, the wardrobe
 if GAME and not (LOOK == 'felt' and WHO != 'villager'): exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-hair.py')).read())   # hair in big sculpted locks (owner, 3 Nov)
-group('hair', {'lumi': hair, 'finn': lambda: hair_finn(), 'flora': lambda: hair_flora(), 'sol': lambda: hair_sol(), 'villager': lambda: hair_villager()}[WHO])
+group('hair', {'lumi': hair, 'finn': lambda: hair_finn(), 'clara': lambda: hair_clara(), 'sol': lambda: hair_sol(), 'villager': lambda: hair_villager()}[WHO])
 
 # ---------- body ----------
 def fronty(r): return -r * B['dep'] - .006 * S
@@ -498,7 +499,7 @@ def lantern(top, h):
         o = leaf('lanternLeaf', LEAFG, .2 * h, .09 * h, .2, .2, 10, .012 * h, .2); place(o, Q(s * .12, 0, -.31), Vector((s, -.2, -.25)), Vector((0, -.5, 1)))
     d = bpy.data.lights.new('lanternLight', 'POINT'); d.energy = .7 * (h / .17) ** 2; d.color = hexc('#ffd77a')[:3]; d.shadow_soft_size = .1 * h
     lo = bpy.data.objects.new('lanternLight', d); scene.collection.objects.link(lo); lo.location = Q(0, -.25, -.6)
-# ---------- Finn and Flora's bodies: the same chibi body, their own clothes and props ----------
+# ---------- Finn and Clara's bodies: the same chibi body, their own clothes and props ----------
 def legs(m):
     for s in (-1, 1): tube('leg', m, [(s * B['legX'], 0, B['zCr']), (s * B['legX'], 0, B['zAnk'])], B['rLeg'], 18)
 
@@ -589,7 +590,7 @@ def body_finn():
     tube('compassRing', BRASS, ring, .004 * S, 8, False)
     glow_light(c + Vector((0, -.04 * S, 0)), .5, '#bfe6ff')
 
-def body_flora():
+def body_clara():
     b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']
     legs(TIGHTS)
     boots(BOOTF, BAG, b['zSock'], eyelets=True)
@@ -614,7 +615,7 @@ def body_flora():
         tube('sleeveFrill', SHIRT, [wr - e * .02 * S, wr - e * .008 * S, wr + e * .004 * S], [rA * 1.3, rA * 1.6, rA * 1.3], 18)
     hands = arm_pair(sleeves)
     satchel(-1.0, BAG, BAGD, lambda p, a: [sphere('bagPetal', PETAL, p + Vector((math.cos(t) * .012 * S, -.002, math.sin(t) * .012 * S)), (.01 * S, .004 * S, .007 * S), 10, 5) for t in lin(0, 2 * math.pi * .8, 5)], across=False)
-    # the flower staff in Flora's left hand: a wooden stick with a vine and a glowing pink flower
+    # the flower staff in Clara's left hand: a wooden stick with a vine and a glowing pink flower
     h = hands[1]; bot, top = h + Vector((-.01 * S, .0, -.24 * S)), h + Vector((.07 * S, -.03 * S, .3 * S))
     tube('staff', WOOD, [bot, h, top], [.009 * S, .01 * S, .009 * S], 10)
     for k, f in enumerate(lin(.2, .85, 5)):
@@ -626,7 +627,7 @@ def body_flora():
     sphere('staffHeart', GLOW, top + Vector((0, -.02 * S, 0)), (.012 * S, .008 * S, .012 * S), 12, 6)
     glow_light(top + Vector((0, -.05 * S, 0)), .15, '#ffc7d6')
 
-group('body', {'lumi': body, 'finn': lambda: body_finn(), 'flora': lambda: body_flora(), 'sol': lambda: body_sol(), 'villager': lambda: body_villager()}[WHO])
+group('body', {'lumi': body, 'finn': lambda: body_finn(), 'clara': lambda: body_clara(), 'sol': lambda: body_sol(), 'villager': lambda: body_villager()}[WHO])
 wear()
 if 'hard' not in argv:
     if GAME and 'tubes' not in argv:   # the one-piece sculpted body (owner's choice, 3 Nov)
