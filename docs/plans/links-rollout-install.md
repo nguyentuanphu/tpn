@@ -186,6 +186,26 @@ Owner, 3 Nov 2026 AEDT:
   | Holi | Colours |
   | Anzac | Tune |
   | Diwali | Rangoli |
+## Festival games: owner's answers (3 Nov 2026 AEDT, pop-ups)
+- **Each of the 24 festivals gets its own new festival game.** Examples:
+  - Tết: wrap bánh chưng;
+  - Trung Thu: make a star lantern and walk in the lantern parade;
+  - Đoan Ngọ: dragon-boat race;
+  - Christmas: decorate the tree;
+  - Diwali: light the diyas;
+  - Anzac: bake Anzac biscuits.
+
+  The everyday games used today go back to being only everyday games.
+- **The festival game is played only in the festival season, and it comes back the next year.**
+  - It opens with the decorations (Studio's days before the festival) and stays a few days after the festival.
+  - Then it is put away until the next year. Testers see it 7 days early, as with other releases.
+  - Outside the season, the festival calendar shows it as "Comes back at Tết" (Sẽ quay lại vào Tết).
+- **All 24 in v1.09**, each with:
+  - levels up to Talent;
+  - a guide film;
+  - English and Vietnamese;
+  - our own drawings;
+  - a check.
 ## Questions for the owner (asked by pop-up)
 1. Rollout pace.
 2. The install gift.
