@@ -62,7 +62,7 @@ await check('viwords', async () => {
   ok(!r.old && r.url.endsWith(r.h + '.mp3'), 'the old all-English recording is still used');
   const mp3 = fs.statSync(`../voices/en/f/${r.h}.mp3`).size;
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
-  return `${cases.length} lines cut right; the phone says the Vietnamese words with its Vietnamese voice; recorded lines use both voices (Cô Tam ${(mp3 / 1024).toFixed(0)} KB)`;
+  return `${cases.length} lines cut right; the phone says the Vietnamese words with its Vietnamese voice; recorded lines use the female voice (Cô Tam ${(mp3 / 1024).toFixed(0)} KB)`;
 });
 
 // No phone emoji anywhere (owner, round R): every emoji on screen is the game's own drawing (js/emojiswap.js), on the
