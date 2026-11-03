@@ -58,13 +58,17 @@ def wheel(c, r, w, axis='x', tyre='#2b2b2e', rim='#d9d6cf'):
     for k in range(8):
         a = k * math.pi / 4; tube('spoke', M, [Vector(c), Vector(c) + q @ Vector((math.cos(a) * r * .9, math.sin(a) * r * .9, 0))], .006, 6)
 
-def studio(bg='#f3ead7', target=(0, 0, .8), k=1.0):
+def studio(bg='#f3ead7', target=(0, 0, .8), k=1.0, face_light=None):
     scene = bpy.context.scene
     world = bpy.data.worlds.new('w'); scene.world = world; world.use_nodes = True
     world.node_tree.nodes['Background'].inputs[0].default_value = hexc('#fff6e6'); world.node_tree.nodes['Background'].inputs[1].default_value = .45
     for loc, e, col, size in (((-3, -4.5, 4.5), 420, '#fff4e4', 5), ((4, -3, 2.5), 150, '#ffe9d2', 3.5), ((0, 4.5, 4), 260, '#fff8e8', 4)):
         d = bpy.data.lights.new('L', 'AREA'); d.energy = e * k * k; d.color = hexc(col)[:3]; d.size = size * k
         o = bpy.data.objects.new('L', d); scene.collection.objects.link(o); o.location = Vector(loc) * k
+        o.rotation_euler = (Vector(target) - o.location).to_track_quat('-Z', 'Y').to_euler()
+    if face_light:   # a soft light from the camera's side, so faces are lit
+        d = bpy.data.lights.new('F', 'AREA'); d.energy = 160 * k * k; d.size = 2.5 * k; d.color = hexc('#fff4e4')[:3]
+        o = bpy.data.objects.new('F', d); scene.collection.objects.link(o); o.location = face_light
         o.rotation_euler = (Vector(target) - o.location).to_track_quat('-Z', 'Y').to_euler()
     me = bpy.data.meshes.new('g'); bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=30); bm.to_mesh(me)
     g = bpy.data.objects.new('ground', me); scene.collection.objects.link(g); g.data.materials.append(mat('groundM', bg, .9)); g.is_shadow_catcher = True
@@ -87,40 +91,60 @@ def motorbike():
     reset(); RED = felt('bikeRed', '#c9473f', .45, .03); CREAM = felt('bikeCream', '#efe6d2', .5, .03); DARK = felt('bikeDark', '#3a3a3f', .6, .03)
     SEAT = felt('bikeSeat', '#4a3a32', .7, .05); CHROME = mat('chrome', '#d9d6cf', .25, metal=.8); LAMP = mat('lamp', '#fff3c4', .2, emit=2)
     # the scooter faces -y: front wheel at y -.65, back wheel at y +.55
+    # the riders first, then the scooter is fitted to them: grips in the hands, the floorboard under the feet
+    dad = load('villager-vn-dad-adult', (0, .1, .87), 0, 'ride', 1)
+    load('villager-vn-schoolgirl-game', (0, .62, .87), 0, 'passenger', 1, 'happy')
+    hands, feet = hands_feet(dad); fz = min(f.z for f in feet) - .05
     wheel((0, -.68, .24), .24, .07, 'x'); wheel((0, .58, .24), .24, .07, 'x')
-    box('floor', DARK, (0, -.05, .3), (.34, .7, .06), .03)
+    box('floor', DARK, (0, -.05, fz), (.34, .7, .06), .03)
     box('shield', RED, (0, -.5, .62), (.4, .14, .62), .07)
     box('frontMud', RED, (0, -.68, .42), (.22, .3, .12), .06)
     box('rearBody', RED, (0, .42, .58), (.42, .72, .38), .14)
     box('seat', SEAT, (0, .36, .82), (.36, .9, .1), .05)
     box('stripe', CREAM, (0, .42, .5), (.43, .7, .05), .025)
-    tube('steer', CHROME, [(0, -.56, .9), (0, -.6, 1.12)], .03, 10)
-    tube('handlebar', CHROME, [(-.36, -.55, 1.12), (0, -.6, 1.15), (.36, -.55, 1.12)], .022, 10)
-    for s in (-1, 1): tube('grip', DARK, [(s * .36, -.55, 1.12), (s * .44, -.53, 1.11)], .03, 10); tube('mirror', CHROME, [(s * .3, -.56, 1.13), (s * .36, -.58, 1.32)], .01, 6); sphere('mirrorGlass', CHROME, (s * .37, -.58, 1.34), (.06, .015, .04), 12, 6)
-    sphere('headlight', LAMP, (0, -.62, 1.02), (.09, .05, .07), 16, 8)
+    hm = (hands[0] + hands[1]) / 2
+    tube('steer', CHROME, [(0, -.56, .9), (0, hm.y - .06, hm.z - .02)], .03, 10)
+    tube('handlebar', CHROME, [hands[1] + Vector((.03, .01, 0)), Vector((0, hm.y - .06, hm.z + .01)), hands[0] + Vector((-.03, .01, 0))], .022, 10)
+    for k, s in enumerate((1, -1)):
+        h = hands[k]; tube('grip', DARK, [h + Vector((-s * .05, 0, 0)), h + Vector((s * .05, 0, 0))], .03, 10)
+        tube('mirror', CHROME, [h + Vector((-s * .06, -.02, .01)), h + Vector((-s * .02, -.05, .2))], .01, 6); sphere('mirrorGlass', CHROME, h + Vector((-s * .015, -.05, .22)), (.06, .015, .04), 12, 6)
+    sphere('headlight', LAMP, (0, -.62, hm.z - .1), (.09, .05, .07), 16, 8)
     sphere('taillight', mat('tail', '#ff5a4a', .3, emit=1.5), (0, .8, .7), (.08, .03, .04), 12, 6)
     box('plate', CREAM, (0, .82, .5), (.2, .02, .1), .01)
-    load('villager-vn-dad-adult', (0, .1, .87), 0, 'ride', 6)
-    load('villager-vn-schoolgirl-game', (0, .62, .87), 0, 'passenger', 6, 'happy')
-    cam = studio(target=(0, 0, .9))
-    shoot(cam, 'vehicle-motorbike', (-4.4, -4.0, 2.2), (0, .1, 1.15))
+    cam = studio(target=(0, 0, .9), face_light=(-1.6, -3.5, 1.8))
+    shoot(cam, 'vehicle-motorbike', (-2.7, -4.6, 1.9), (0, .1, 1.15))
 
-# ---------- 2. a bicycle: an Australian boy in his bucket hat and thongs ----------
+def hands_feet(rig):
+    """where the rider's hands and feet are once posed (left first)"""
+    bpy.context.view_layer.update(); mw = rig.matrix_world; pb = rig.pose.bones
+    hands = [mw @ pb[n].tail for n in ('elbowL', 'elbowR')]
+    feet = [mw @ pb[n].tail + Vector((0, -.04, -.04)) for n in ('kneeL', 'kneeR')]
+    return hands, feet
+
+# ---------- 2. a bicycle: an Australian boy in his bucket hat and thongs, hands on the grips, feet on the pedals ----------
 def bicycle():
     reset(); FR = felt('frame', '#2f8fd1', .4, .03); DARK = felt('bikeDark', '#3a3a3f', .6, .03); CHROME = mat('chrome', '#d9d6cf', .25, metal=.8)
+    boy = load('villager-au-boy-game', (0, .14, .9), 0, 'ride', 7, 'excited')
+    hands, feet = hands_feet(boy)
+    crank = Vector((0, (feet[0].y + feet[1].y) / 2, (feet[0].z + feet[1].z) / 2))
     wheel((0, -.55, .3), .3, .03, 'x'); wheel((0, .55, .3), .3, .03, 'x')
-    crank = Vector((0, .02, .3))
-    for a, b in (((0, .55, .3), crank), (crank, (0, .12, .78)), ((0, .55, .3), (0, .12, .78)), ((0, .12, .78), (0, -.42, .82)), (crank, (0, -.42, .82)), ((0, -.42, .82), (0, -.55, .3))):
+    head = Vector((0, -.42, .82)); seat = Vector((0, .12, .78))
+    for a, b in (((0, .55, .3), crank), (crank, seat), ((0, .55, .3), seat), (seat, head), (crank, head), (head, (0, -.55, .3))):
         tube('frameTube', FR, [a, b], .025, 10)
-    tube('seatPost', CHROME, [(0, .12, .78), (0, .14, .86)], .015, 8); box('saddle', DARK, (0, .14, .88), (.1, .22, .04), .02)
-    tube('stem', CHROME, [(0, -.42, .82), (0, -.38, 1.26)], .018, 8); tube('handlebar', CHROME, [(-.24, -.26, 1.3), (0, -.38, 1.26), (.24, -.26, 1.3)], .015, 8)
-    for s in (-1, 1): tube('grip', DARK, [(s * .24, -.26, 1.3), (s * .3, -.24, 1.3)], .022, 8)
-    sphere('bell', CHROME, (.16, -.33, 1.31), (.025, .025, .02), 10, 5)
-    load('villager-au-boy-game', (0, .14, .9), 0, 'ride', 6, 'excited')
-    cam = studio(target=(0, 0, .7))
-    shoot(cam, 'vehicle-bicycle', (-3.4, -3.1, 1.6), (0, .0, .95))
+    for f, s in zip(feet, (1, -1)):   # crank arms and pedals under the feet
+        arm_end = Vector((s * .07, f.y, f.z - .02)); tube('crankArm', CHROME, [crank + Vector((s * .05, 0, 0)), arm_end], .012, 8)
+        box('pedal', DARK, arm_end + Vector((s * .03, 0, 0)), (.08, .1, .02), .01)
+    sphere('chainring', CHROME, crank, (.02, .09, .09), 20, 10)
+    tube('seatPost', CHROME, [seat, seat + Vector((0, .02, .08))], .015, 8); box('saddle', DARK, seat + Vector((0, .02, .1)), (.1, .22, .04), .02)
+    hm = (hands[0] + hands[1]) / 2
+    tube('stem', CHROME, [head, Vector((0, hm.y - .05, hm.z - .03))], .018, 8)
+    tube('handlebar', CHROME, [hands[1] + Vector((.03, .02, 0)), Vector((0, hm.y - .05, hm.z - .02)), hands[0] + Vector((-.03, .02, 0))], .015, 8)
+    for k, s in enumerate((1, -1)): tube('grip', DARK, [hands[k] + Vector((-s * .045, 0, 0)), hands[k] + Vector((s * .045, 0, 0))], .022, 8)
+    sphere('bell', CHROME, Vector((.1, hm.y - .05, hm.z)), (.025, .025, .02), 10, 5)
+    cam = studio(target=(0, 0, .7), face_light=(-1.2, -3, 1.6))
+    shoot(cam, 'vehicle-bicycle', (-2.3, -3.9, 1.55), (0, .0, .95))
 
-# ---------- 3. the city bus: the four friends and neighbours riding, seen through the windows ----------
+# ---------- 3. the city bus: a driver at the wheel, the four friends and neighbours riding, faces to the windows ----------
 def bus():
     global CROWD; CROWD = True
     reset(); BODY = felt('busBody', '#f2c14e', .45, .03); TRIM = felt('busTrim', '#2f8fd1', .45, .03); DARK = felt('busDark', '#3a3a3f', .6, .03)
@@ -129,7 +153,7 @@ def bus():
     for x in (-1, 1):
         for y in (-2.6, 2.4): wheel((x * (W / 2 - .05), y, .45), .45, .12, 'x')
     box('busFloor', DARK, (0, 0, floor - .05), (W, L, .1), .04)
-    box('busLower', BODY, (W / 2 - .05, 0, .95), (.1, L, .8), .04); box('busLowerL', BODY, (-W / 2 + .05, 0, .95), (.1, L, .8), .04)   # the near side lower wall
+    box('busLower', BODY, (W / 2 - .05, 0, .95), (.1, L, .8), .04); box('busLowerL', BODY, (-W / 2 + .05, 0, .95), (.1, L, .8), .04)
     box('busRoof', BODY, (0, 0, 3.05), (W, L, .2), .1)
     box('busBack', BODY, (0, L / 2, 1.8), (W, .12, 2.5), .05); box('busFront', BODY, (0, -L / 2, 1.05), (W, .12, 1.0), .05)
     box('windscreen', GL, (0, -L / 2, 2.25), (W - .2, .05, 1.35), .03)
@@ -143,12 +167,18 @@ def bus():
         for k in range(5):   # rows of seats facing forward
             y = -1.7 + k * .95; box('seat', SEATM, (side * .7, y, floor + .45), (.8, .45, .1), .04); box('seatBack', SEATM, (side * .7, y + .22, floor + .8), (.8, .08, .65), .04)
     hip = floor + .5
+    # the driver at the front, the steering wheel in his hands
+    box('driverSeat', DARK, (-.7, -2.7, floor + .45), (.6, .45, .1), .04); box('driverBack', DARK, (-.7, -2.48, floor + .8), (.6, .08, .65), .04)
+    if os.path.exists(os.path.join(SRC, 'driver.blend')):
+        drv = load('driver', (-.7, -2.75, hip), 0, 'ride', 1, 'smile'); hands, feet = hands_feet(drv); hm = (hands[0] + hands[1]) / 2
+        ring = [hm + Vector((math.cos(t) * .2, math.sin(t) * .2 * .5, math.sin(t) * .2 * .87)) for t in [2 * math.pi * k / 32 for k in range(33)]]
+        tube('steeringWheel', DARK, ring, .022, 10, False); tube('steeringColumn', DARK, [hm, hm + Vector((0, -.35, -.5))], .03, 8)
     who = [('lumi-game', 1, 0, 'happy'), ('finn-game', 1, 1, 'smile'), ('flora-game', -1, 1, 'excited'), ('sol-game', -1, 0, 'happy'),
            ('villager-vn-grandma-elder', 1, 3, 'smile'), ('villager-au-mum-adult', -1, 3, 'curious'), ('villager-vn-aodai-adult', 1, 4, 'smile')]
-    for name, side, row, face in who:
+    for name, side, row, face in who:   # passengers turn a little towards the window to look out
         print('LOAD', name, flush=True)
-        if os.path.exists(os.path.join(SRC, name + '.blend')): load(name, (side * .7, -1.7 + row * .95 - .05, hip), 0, 'sit', 10 + row * 7, face)
-    print('LOADED', flush=True); cam = studio(target=(0, 0, 1.6), k=1.6)
-    shoot(cam, 'vehicle-bus', (-10.5, -7.5, 3.6), (0, -.2, 1.5), (1400, 800))
+        if os.path.exists(os.path.join(SRC, name + '.blend')): load(name, (side * .7, -1.7 + row * .95 - .05, hip), -.55, 'sit', 10 + row * 7, face)
+    print('LOADED', flush=True); cam = studio(target=(0, 0, 1.6), k=1.6, face_light=(-4.5, -7, 2.6))
+    shoot(cam, 'vehicle-bus', (-8.8, -10.2, 3.3), (0, -.6, 1.5), (1400, 800))
 
 for fn in [f for f in (motorbike, bicycle, bus) if not [a for a in argv if a in ('motorbike', 'bicycle', 'bus')] or f.__name__ in argv]: fn()

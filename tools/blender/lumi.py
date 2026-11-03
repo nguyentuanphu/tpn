@@ -33,7 +33,7 @@ VILL = {
     'vn-grandpa': {'g': 'm', 'size': 'elder', 'pal': ('#e3b28d', '#dedbd4', '#c3bfb7', '#efede8', '#2a1a0e', '#5a3a22', '#b8b4ac', '#1f1712'), 'hair': 'tuft', 'top': ('aobaba', '#e9e1cf'), 'bottom': '#5b4a3a', 'kind': 'pants', 'hat': 'straw', 'shoes': 'sandals', 'extra': ('moustache', 'cane')},
     'vn-schoolboy': {'g': 'm', 'size': 'kid', 'pal': ('#f0c09b', '#1f1a18', '#151210', '#2e2622', '#2a1a0e', '#5a3a22', '#151210', '#1f1712'), 'hair': 'short', 'top': ('shirt', '#f7f7f4'), 'bottom': '#2c3a5a', 'kind': 'shorts', 'hat': '', 'shoes': 'sneakers', 'extra': ('redscarf', 'backpack')},
     'vn-schoolgirl': {'g': 'f', 'size': 'kid', 'pal': ('#f6cfb0', '#1c1715', '#120f0d', '#2c2420', '#2a1a0e', '#5a3a22', '#120f0d', '#1f1712'), 'hair': 'pigtails', 'top': ('shirt', '#f7f7f4'), 'bottom': '#2c3a5a', 'kind': 'skirt', 'hat': '', 'shoes': 'sandals/e9edf2', 'extra': ('redscarf', 'bow')},
-    'au-dad': {'g': 'm', 'size': 'adult', 'pal': ('#c98e66', '#5a3d2a', '#46301f', '#6f4c35', '#2a1a0e', '#5a3a22', '#46301f', '#1f1712'), 'hair': 'short', 'top': ('shirt', '#6f9bc4'), 'bottom': '#c8b48a', 'kind': 'shorts', 'hat': 'akubra', 'shoes': 'boots', 'extra': ('sunglasses', 'stubble')},
+    'au-dad': {'g': 'm', 'size': 'adult', 'pal': ('#c98e66', '#5a3d2a', '#46301f', '#6f4c35', '#2a1a0e', '#5a3a22', '#46301f', '#1f1712'), 'hair': 'short', 'top': ('shirt', '#6f9bc4'), 'bottom': '#c8b48a', 'kind': 'shorts', 'hat': 'akubra', 'shoes': 'boots', 'extra': ('sunglasses',)},
     'au-mum': {'g': 'f', 'size': 'adult', 'pal': ('#f6d3bd', '#e3c27a', '#c9a35c', '#f0d79a', '#2e5b8a', '#6f9cc9', '#b8955a', '#5a4632'), 'hair': 'ponytail', 'top': ('dress', '#f2c14e'), 'bottom': '#e98a5a', 'kind': 'skirt', 'hat': 'straw', 'shoes': 'sandals', 'extra': ('earrings', 'necklace')},
     'au-grandma': {'g': 'f', 'size': 'elder', 'pal': ('#f4d2bf', '#eeeae4', '#d6d1c9', '#faf8f4', '#2e5b8a', '#6f9cc9', '#bdb6aa', '#6a5a50'), 'hair': 'curly', 'top': ('cardigan', '#b9a3d6'), 'bottom': '#5b6475', 'kind': 'skirt', 'hat': '', 'shoes': 'sneakers/8a6a52', 'extra': ('glasses', 'pearls')},
     'au-grandpa': {'g': 'm', 'size': 'elder', 'pal': ('#f1c9b1', '#dedbd4', '#c3bfb7', '#efede8', '#2e5b8a', '#6f9cc9', '#c3bfb7', '#6a5a50'), 'hair': 'tuft', 'top': ('polo', '#6fae8a'), 'bottom': '#c8b48a', 'kind': 'shorts', 'hat': 'bucket/e7dcc2', 'shoes': 'sneakers/6b4a33', 'extra': ('longsocks', 'watch')},
@@ -136,7 +136,8 @@ if GAME:  # boys and girls, men and women have different figures (owner, 3 Nov: 
     a_ = 1.0 if (V and V['size'] != 'kid') else .5; bw_ = {'au-dad': 1.08, 'au-grandpa': 1.05}.get(ROLE, 1.0) if V else 1.0
     fx = (1 - .06 * a_) if G == 'f' else (1 + .05 * a_)
     B['wC'] *= (1 - .07 * a_ if G == 'f' else 1 + .05 * a_) * bw_; B['wH'] *= (1 + .04 * a_ if G == 'f' else 1.0) * bw_
-    sx_, sy_, sz_ = B['sh']; B['sh'] = (sx_ * fx * bw_, sy_, sz_)
+    sx_, sy_, sz_ = B['sh']; B['sh'] = (sx_ * fx * bw_, sy_, sz_ - .035 * B['S'])   # owner (3 Nov): the shoulder goes out sideways, then down (no hump)
+    B['legX'] *= 1.12   # a clear gap between the legs, up to the crotch (owner, 3 Nov)
     for n_, d_ in (('el', .022), ('wr', .04)):   # the arms hang a little away from the body
         x_, y_, z_ = B[n_]; B[n_] = (x_ * fx * bw_ + d_ * B['S'], y_, z_)
 H = lambda x, y, z: HC + Vector((x, y, z)) * R
@@ -629,7 +630,7 @@ group('body', {'lumi': body, 'finn': lambda: body_finn(), 'flora': lambda: body_
 wear()
 if 'hard' not in argv:
     if GAME and 'tubes' not in argv:   # the one-piece sculpted body (owner's choice, 3 Nov)
-        exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-sculpt.py')).read()); sculpt(); ease_loose()
+        exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-sculpt.py')).read()); sculpt(); fit_loose(); ease_loose()
     soften()
 
 RIG = 'anim' in argv or 'glb' in argv or 'rig' in argv

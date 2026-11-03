@@ -5,6 +5,8 @@
 # body surface lifted a little, so they hug the body; loose clothes (áo bà ba, áo dài panels, skirts, coat, cape) stay on top.
 
 MB_K = 1 / .575
+CH_Z = lambda: (B['zW'] + B['zC']) / 2 + .035 * S; CH_SZ = lambda: (B['zS'] - B['zW']) * .6           # the chest
+HP_Z = lambda: (B['zCr'] + B['zW']) / 2 + .03 * S;  HP_SZ = lambda: (B['zW'] - B['zCr']) * .55         # the belly and hips, ending above the crotch
 BW = {'felt': .92, 'toy': .88}.get(LOOK, .86)   # body width for each look   # a metaball's surface sits at .575 of its radius (stiffness 2, threshold .6)
 
 def _mb(name):
@@ -35,21 +37,21 @@ def arm_param(p, s):
 def skin_body():
     b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']; g = G == 'f'
     o, mb = _mb('mbBody')
-    _ball(mb, (0, 0, (b['zW'] + b['zC']) / 2 + .025 * S), 1, (wC * BW, wC * dep * .82 * BW / .86, (b['zS'] - b['zW']) * .55))           # chest (slim, owner 3 Nov)
-    _ball(mb, (0, 0, (b['zCr'] + b['zW']) / 2 + .0 * S), 1, (wH * BW * .98, wH * dep * .8 * BW / .86, (b['zW'] - b['zCr']) * .7))          # belly and hips (no big tummy)
+    _ball(mb, (0, 0, CH_Z()), 1, (wC * BW, wC * dep * .82 * BW / .86, CH_SZ()))           # chest (slim, owner 3 Nov)
+    _ball(mb, (0, 0, HP_Z()), 1, (wH * BW * .98, wH * dep * .8 * BW / .86, HP_SZ()))          # belly and hips (no big tummy)
     _cap(mb, (0, 0, b['zS'] - .03 * S), (0, 0, b['zN'] + .05 * S), .042 * S)                                                   # neck
     for s in (-1, 1):
         X = s * b['legX']; knee = (b['zCr'] + b['zAnk']) / 2 + .02 * S
-        _cap(mb, (X * .95, 0, b['zCr'] + .02 * S), (X, -.004, knee), b['rLeg'] * (1.32 if g else 1.25))                     # thigh
+        _cap(mb, (X, 0, b['zCr'] + .01 * S), (X, -.004, knee), b['rLeg'] * (1.2 if g else 1.13))                     # thigh
         _cap(mb, (X, -.004, knee), (X, 0, b['zAnk'] + .01 * S), b['rLeg'] * .98)                                                # shin
         _ball(mb, (X, -.004, knee + .01 * S), b['rLeg'] * 1.02)                                                                 # knee
         _ball(mb, (X, -.03 * S, b['zAnk'] - .015 * S), 1, (b['rLeg'] * .9, b['rLeg'] * 1.8, b['rLeg'] * .7))                 # foot (in the shoe)
-        _ball(mb, (s * b['sh'][0] * .82, 0, b['sh'][2] - .01 * S), b['rU'] * 1.1)                                              # the top of the shoulder
+        _cap(mb, (s * .04 * S, 0, b['zS'] - .03 * S), (s * b['sh'][0] * .9, 0, b['sh'][2] - .005 * S), b['rU'] * .82)   # the collarbone line: the shoulder runs out sideways
     parts = [o]
     for s in (-1, 1):
         ao, amb = _mb('mbArm' + ('L' if s > 0 else 'R'))
         sh, el, wr = arm_points(s); rU, rA = b['rU'], b['rA']
-        _ball(amb, sh + Vector((-s * .012 * S, 0, -.004 * S)), rU * 1.18)       # the shoulder (deltoid), overlapping the body's shoulder
+        _ball(amb, sh + Vector((-s * .006 * S, 0, -.012 * S)), rU * 1.04)       # the shoulder (deltoid), overlapping the body's shoulder
         _cap(amb, sh, el, rU * .95); _ball(amb, el, rA * 1.05); _cap(amb, el, wr, rA)
         hand = wr + (wr - el).normalized() * rA * 1.1
         _ball(amb, hand, 1, (rA * 1.1, rA * .9, rA * 1.3)); _ball(amb, hand + Vector((-s * rA * .6, -rA * .7, rA * .25)), rA * .42)
@@ -128,8 +130,38 @@ LOOSE = ('bodice', 'corset', 'belt', 'buckle', 'aoBaBa', 'aoDai', 'coat', 'coatH
 def ease_loose(f=1.07):
     """the loose clothes were sized for the old body: open them a little so the fitted layer never shows through"""
     for o in bpy.data.objects:
-        if o.type == 'MESH' and o.name.split('.')[0] in LOOSE:
+        if o.type == 'MESH' and o.name.split('.')[0] in LOOSE and o.name.split('.')[0] not in FIT and o.name.split('.')[0] not in ('petalHem', 'apron', 'pocketLeaf'):
             mw = o.matrix_world; inv = mw.inverted()
             for v in o.data.vertices:
                 p = mw @ v.co
                 if B['zCr'] - .12 * S < p.z < B['zN'] + .02 * S and abs(p.x) < B['wC'] * 1.8: v.co = inv @ Vector((p.x * f, p.y * f, p.z))
+
+def body_r(z):
+    """the body's radius at height z (chest and hips), as the metaballs build it"""
+    r = 0.0
+    for c, a, sz in ((CH_Z(), B['wC'] * BW, CH_SZ()), (HP_Z(), B['wH'] * BW * .98, HP_SZ())):
+        t = (z - c) / sz
+        if abs(t) < 1: r = max(r, a * math.sqrt(1 - t * t))
+    return r * 1.06   # the melted surface is a little fuller than the parts
+
+# garments that follow the body (owner, 3 Nov: a skirt must not be wider than the belly and hips): (margin, flare below the hips)
+FIT = {'skirt': (.014, .3), 'dressSkirt': (.014, .3), 'longSkirt': (.014, .22), 'frill': (.02, .3), 'dressTop': (.012, 0), 'bodice': (.012, 0),
+       'aoBaBa': (.022, .12), 'corset': (.016, 0), 'belt': (.016, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.014, .12)}
+def fit_loose():
+    rh = B['wH'] * BW * .98 * 1.06; dep = B['dep']; top_hip = HP_Z()
+    def target(z, m, fl):
+        r = body_r(z)
+        if z < top_hip: r = max(r, rh)
+        return r + m * S + fl * max(0, B['zCr'] + .03 * S - z)
+    for o in [o for o in bpy.data.objects if o.type == 'MESH']:
+        base = o.name.split('.')[0]
+        if base in FIT:   # ring by ring: every point at a height goes to the body's radius there, plus a margin and the flare
+            m, fl = FIT[base]; mw = o.matrix_world; inv = mw.inverted()
+            for v in o.data.vertices:
+                p = mw @ v.co; r = math.hypot(p.x, p.y / dep)
+                if r > 1e-4: k = target(p.z, m, fl) / r; v.co = inv @ Vector((p.x * k, p.y * k, p.z))
+        elif base in ('petalHem', 'apron', 'pocketLeaf'):   # pieces on a skirt move with it
+            mw = o.matrix_world; c = mw @ (sum((Vector(b) for b in o.bound_box), Vector()) / 8); r = math.hypot(c.x, c.y / dep)
+            if r > 1e-4 and c.z < B['zW']:
+                k = (target(c.z, .03, .3) / r) if base == 'petalHem' else (target(c.z, .03, .2) / r)
+                o.matrix_world = Matrix.Translation(Vector((c.x * (k - 1), c.y * (k - 1), 0))) @ mw

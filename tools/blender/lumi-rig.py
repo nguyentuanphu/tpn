@@ -124,7 +124,7 @@ def sit(t):   # sitting on a seat: thighs forward, shins down, hands on the lap
     p['torso'] = (.02 * math.sin(a), 0, 0); p['head'] = (.03 * math.sin(a + 1), .1 * math.sin(a), 0)
     return p, 0.0
 def ride(t):  # riding a bicycle or a scooter: astride, hands forward on the handlebars, leaning in
-    a = 2 * math.pi * t; p = rest(); pedal = B.get('pedal', 0.0)
+    a = 2 * math.pi * t; p = rest(); pedal = 1.0   # pedalling (frame 7: one foot forward and up, one back and down)
     p['legL'] = (-1.15 - pedal * .35 * math.sin(a), 0, -.18); p['legR'] = (-1.15 + pedal * .35 * math.sin(a), 0, .18)
     p['kneeL'] = (1.25 + pedal * .35 * math.sin(a), 0, 0); p['kneeR'] = (1.25 - pedal * .35 * math.sin(a), 0, 0)
     p['armL'] = (-.85, 0, -.05); p['armR'] = (-.85, 0, .05); p['elbowL'] = (-.45, 0, 0); p['elbowR'] = (-.45, 0, 0)
