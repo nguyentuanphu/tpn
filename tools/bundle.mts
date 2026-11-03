@@ -75,7 +75,9 @@ fs.writeFileSync(idx, html);
 const swf = path.join(dir, 'sw.js'); let sw = fs.readFileSync(swf, 'utf8');
 const m = sw.match(/const FILES = \[([\s\S]*?)\];/); if (!m) throw new Error('sw.js: no FILES list');
 const inputs = new Set(Object.keys(res.metafile.inputs).map(rel));
-const keep = [...m[1].matchAll(/'([^']+)'/g)].map(x => x[1]).filter(f => !inputs.has(f));
+// (v1.08) comments are left out first: an apostrophe in a comment ("the round's new games") once split the list into
+// broken names, the offline copy could not be filled and every start downloaded the whole game again (check startup)
+const keep = [...m[1].replace(/\/\/[^\n]*/g, '').matchAll(/'([^']+)'/g)].map(x => x[1]).filter(f => !inputs.has(f));
 sw = sw.replace(m[0], `const FILES = ${JSON.stringify([...keep, ...files]).replace(/"/g, "'").replace(/','/g, "', '")};`);
 fs.writeFileSync(swf, sw);
 // (11 Oct, #36) the stylesheet minified into bundle/ under a hashed name (the plain css/style.css stays for Sparkle
