@@ -104,7 +104,21 @@ Owner, 3 Nov 2026 AEDT:
   - A5: the new games;
   - B2–B4: the folk-tale costumes, the smoother films and the page illustrations.
 
-## Questions for the owner (asked by pop-up)
-1. Học and Học vui become one tab with one home per game (recommended), or the two tabs stay apart with no links.
-2. The four friends in the old tales: only as storytellers at the start and end, in their own clothes (recommended); dressed up in period costume as characters; or not at all.
-3. Films: refined in the game (recommended), Blender videos, or both.
+## Owner's answers (3 Nov 2026 AEDT, pop-ups)
+1. Học and Học vui become **one tab, one home per game**.
+2. The four friends in the old tales: **only as storytellers at the start and end**, in their own clothes; inside the tale only the tale's people, in clothes of their time.
+3. Films: **refined in the game, plus five films made in Blender as videos**.
+
+   Release's proposal for the five (the owner can change them):
+   - Bánh Chưng Bánh Giầy (Tết);
+   - Chú Cuội (Trung Thu);
+   - Tấm Cám;
+   - Thánh Gióng;
+   - The Rainbow Serpent (Australia).
+
+   How the videos are delivered:
+   - each about 1–2 minutes, 720p, about 5–10 MB;
+   - downloaded only when that film is opened, and kept for offline after that; not in the first download or the Wi-Fi pack;
+   - English and Vietnamese voices;
+   - the in-game film stays as the fallback when there is no network;
+   - made with the costume kit and the new villagers, in v1.10.
