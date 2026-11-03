@@ -25,7 +25,9 @@ import { SCHOOL } from './content/school-place.js';
 // (v1.08 maths) the 21 new maths games and the 7 numbers games switched on in v1.08 are found at the school
 const MATHS_AT_SCHOOL = ['numline', 'tenframe', 'dice', 'evenodd', 'measure', 'beforeafter', 'halves', 'mx_bonds', 'mx_takeaway', 'mx_skip', 'mx_patterns', 'mx_shapehunt', 'mx_symmetry', 'mx_heavy', 'mx_full', 'mx_pizza', 'mx_graph',
   'mx_calendar', 'mx_quarter', 'mx_sudoku', 'mx_bigger', 'mx_doubles', 'mx_tens', 'mx_missing', 'mx_solids3d', 'mx_leftright', 'mx_sprint', 'mx_grouping'];
-import { VI2_IDS } from './content/tiengviet2.js'; // (v1.08 vietnamese) the map pin of the new Tiếng Việt games
+// (v1.08 vietnamese) the map pin of the new Tiếng Việt games (the ids only: js/content/tiengviet2.ts holds all their words,
+// about 17 KB, and is not part of the start, PERF-001; keep this list in step with VI2_IDS there)
+const VI2_IDS = ['vi_tonemean', 'vi_rhyme', 'vi_letters', 'vi_opposite', 'vi_cadao', 'vi_tucngu', 'vi_readalong', 'vi_sentence', 'vi_dictation', 'vi_riddle'];
 export { SCHOOL };
 export const SCHOOL_GREETING = ['Welcome to the Fun Learning School! Shall we learn something fun today?', 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?'];
 

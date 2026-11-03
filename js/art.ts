@@ -16,8 +16,8 @@ import './art/learning.js';
 import './art/companion-hats.js';
 export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';
 import './art/notify.js'; // (v1.08 notifications) the bell and the Home Screen phone
-// (v1.08, PERF-001: the start-up download was 1091 KB against its 1071) the pictures of the v1.08 games (science,
-// English, Tiếng Việt, maths and money: about 50 KB) are not part of the start: they load just after it (js/main.ts),
+// (v1.08, PERF-001: the start-up download was 1091 KB against its 1071) the pictures and How to play guides of the v1.08
+// games (science, English, Tiếng Việt, maths and money: about 80 KB) are not part of the start: they load just after it (js/main.ts),
 // and the games list and the Simple screen wait for them (js/ui/hub.ts, js/simple.ts)
 let morePics: Promise<unknown> | null = null, morePicsIn = false;
 export const moreArt = () => morePics || (morePics = import('./art/games108.js').then(() => { morePicsIn = true; }));

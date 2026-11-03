@@ -1,5 +1,7 @@
 import {HANOI_PACK_INFO} from './content/hanoi-pack-info.js';
-import { notifyHTML, bindNotify } from './notify.js'; // (v1.08 notifications)
+// (v1.08 notifications) the parents' notification settings (js/notify.ts and its texts, about 42 KB) load the first time
+// Grown-ups opens, not with the start (PERF-001); until then the section is an empty space that fills itself in
+let NOTIFY: typeof import('./notify.js') | null = null;
 import { hasClip, saveClip, deleteClip, playClip, estimatePitch, pitchFromHz } from './voice.js';
 import { startRecording, releaseMic, micProblem } from './recorder.js';
 import { ac } from './audio.js';
@@ -299,7 +301,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       </div></details>
       ${window.__sv && window.__sv.parents ? window.__sv.parents.grownupsHTML(gOpen.has('family'), familyQuestionsHTML()) : `<details class="gsec family" data-sec="family" ${gOpen.has('family') ? 'open' : ''}><summary><span class="gi">${pic('💛')}</span><b>${T('Family', 'Gia đình')}</b></summary><div class="gbody">${familyQuestionsHTML()}</div></details>` /* Family questions also work before the world/mission service has finished starting. */}
 
-      ${notifyHTML(gOpen.has('notify')) /* (v1.08 notifications) */}
+      ${NOTIFY ? NOTIFY.notifyHTML(gOpen.has('notify')) : '<div class="pushsec-wait"></div>' /* (v1.08 notifications) */}
       <details class="gsec" data-sec="note" ${gOpen.has('note') ? 'open' : ''}><summary><span class="gi">📜</span><b>${T('Note for grown-ups', 'Lưu ý cho người lớn')}</b></summary><div class="gbody">
       <ul class="gnote"><li>${T('Sparkle Valley is a free family game made for fun and learning. It is provided as it is, without any promise or warranty.', 'Thung Lũng Lấp Lánh là trò chơi gia đình miễn phí, làm ra để vui chơi và học hỏi. Trò chơi được cung cấp như hiện có, không kèm bất kỳ cam kết hay bảo đảm nào.')}</li><li>${T('A grown-up is responsible for the child’s play: when and how long they play, online play and chat, and the device itself.', 'Người lớn chịu trách nhiệm về việc chơi của trẻ: chơi lúc nào, chơi bao lâu, chơi trực tuyến, trò chuyện, và cả thiết bị.')}</li><li>${T('Games the valley suggests playing for real (tug of war, jump rope, hopscotch, đá cầu, kites, cooking…) need a grown-up watching, a safe place and the right equipment.', 'Các trò chơi được gợi ý chơi ngoài đời (kéo co, nhảy dây, nhảy lò cò, đá cầu, thả diều, nấu ăn…) cần có người lớn trông, chỗ chơi an toàn và dụng cụ phù hợp.')}</li><li>${T('Take a break every 20 to 30 minutes, and stop if a child feels unwell (tired eyes, dizziness, motion sickness).', 'Nghỉ giải lao sau mỗi 20 đến 30 phút, và dừng chơi nếu trẻ thấy khó chịu (mỏi mắt, chóng mặt, say xe).')}</li><li>${T('Places, festivals, food and history are told simply for children and may not be complete or exact.', 'Địa danh, lễ hội, món ăn và lịch sử được kể đơn giản cho trẻ, có thể chưa đầy đủ hoặc chưa chính xác hoàn toàn.')}</li><li>${T('Online friends, chat and real photos come from other people and services; the makers are not responsible for their content.', 'Bạn bè trực tuyến, trò chuyện và ảnh thật đến từ người khác và các dịch vụ khác; người làm game không chịu trách nhiệm về nội dung đó.')}</li><li>${T('As far as the law allows, the makers are not responsible for any loss, injury or damage from using the game.', 'Trong phạm vi pháp luật cho phép, người làm game không chịu trách nhiệm về bất kỳ mất mát, thương tích hay thiệt hại nào do việc sử dụng trò chơi.')}</li></ul>
       </div></details>
@@ -383,7 +385,8 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
     { const b = installButton('btn wide installrow'); if (b) card.querySelector('.g-install').appendChild(b); }
     card.querySelector('#gNames').onclick = () => openRenamer(() => { const y = m.scrollTop; draw(); m.scrollTop = y; });
     bindExtras(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast);
-    bindNotify(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); // (v1.08 notifications)
+    if (NOTIFY) NOTIFY.bindNotify(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); // (v1.08 notifications)
+    else void import('./notify.js').then(mod => { NOTIFY = mod; if (card.isConnected) { const y = m.scrollTop; draw(); m.scrollTop = y; } }).catch(() => { });
     if (window.__sv && window.__sv.parents) window.__sv.parents.bindGrownups(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); // (round S)
     card.querySelector('#gFarm').onclick = () => { if (confirm(T('Start the farm over? Players and stickers are kept.', 'Làm lại nông trại? Người chơi và hình dán được giữ lại.'))) { resetFarm(); window.__sv && window.__sv.farm && (window.__sv.farm.syncAnimals(), window.__sv.farm.syncPets()); toast(T('A fresh new farm!', 'Nông trại mới tinh!')); } };
     const syncFamTelemetry = () => { import('./players.js').then(M => M.noteFamilyCode && M.noteFamilyCode()).catch(() => {}); };

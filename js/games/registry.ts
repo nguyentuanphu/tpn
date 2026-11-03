@@ -13,11 +13,4 @@ export const SKILLS = {
   remembergarden: { key: 'skill:remembergarden', en: 'Memory keeper', vi: 'Nhớ giỏi' }
 };
 import './hocvui-meta.js';
-// (v1.08 science) How to play for the twelve new science experiments
-import './science2-meta.js';
 
-// (v1.08 maths) How to play for the 21 new maths games
-import './maths3-meta.js';
-import './tiengviet2-meta.js'; // (v1.08 vietnamese)
-// (v1.08 money) How to play for the eleven new money games
-import './money3-meta.js';

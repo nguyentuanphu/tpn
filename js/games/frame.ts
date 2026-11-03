@@ -6,7 +6,7 @@ import { say } from '../voice.js';
 import { SFX, Music } from '../audio.js';
 import { el, wait, esc } from '../util.js';
 import { openHowTo } from '../howto.js';
-import { pic } from '../art.js';
+import { pic, moreArt, moreArtReady } from '../art.js';
 import { featureOn, itemEnabled, keptOn, MONEY_GAMES } from '../custom.js';
 import { saveProfiles, normalizeLearn } from '../state.js';
 
@@ -56,7 +56,9 @@ export function canStartGame(id:string,players:Profile[]=[]):boolean {
   if(id.startsWith('rd_')&&!keptOn('readingTrial'))return false;
   return !players.length||players.some(p=>isOpen(p,id,'game',GAME_INFO[id]?.[0]||''));
 }
-export function openGame(id: string, { players, level = 1, style = 'shrine', partnerName = null, little = true, strong = false, nextId = null, completion = 'choose', online = null, levelPick = null }: GameOptions): Promise<GameResult> {
+// (v1.08) a game opens once the v1.08 games' pictures and guides are in (they load just after the start: js/art.ts)
+export function openGame(id: string, opts: GameOptions): Promise<GameResult> { return moreArtReady() ? openGameNow(id, opts) : moreArt().then(() => openGameNow(id, opts), () => openGameNow(id, opts)); }
+function openGameNow(id: string, { players, level = 1, style = 'shrine', partnerName = null, little = true, strong = false, nextId = null, completion = 'choose', online = null, levelPick = null }: GameOptions): Promise<GameResult> {
   const def = GAMES[id]; if (!def || !canStartGame(id,players)) return Promise.resolve({ won: false });
   const nextName = nextId && GAMES[nextId] ? GAMES[nextId].name() : '';
   if (current) current.close(false);
