@@ -117,7 +117,15 @@ Owner, 3 Nov 2026 AEDT:
    - The Rainbow Serpent (Australia).
 
    How the videos are delivered:
-   - each about 1–2 minutes, 720p, about 5–10 MB;
+   - each about 1 minute, the same length as today's film of that story.
+
+     Today's films are measured from the page scripts in `js/content/films/`. Over 33 films:
+     - the animation runs 31–52 s, 42 s on average;
+     - with the narration and the child's taps, a film takes about 1 minute.
+
+     Each video keeps the same 4–6 pages and the same narration;
+   - 720p, about 4–6 MB each;
+   - the child's help moments stay: the video pauses at those points, shows the tap ring, and goes on after the tap;
    - downloaded only when that film is opened, and kept for offline after that; not in the first download or the Wi-Fi pack;
    - English and Vietnamese voices;
    - the in-game film stays as the fallback when there is no network;
