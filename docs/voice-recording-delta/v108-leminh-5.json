@@ -1,0 +1,1696 @@
+{
+ "schema": 1,
+ "status": "reviewed-public",
+ "sourceHashes": {
+  "js/content/english.ts": "d6022265bdb92a1be4d9520a630d403c071ef75fba2686a6362b6e69df8d67fd",
+  "js/content/tiengviet2.ts": "1bf93f965c522b16a4672995c75f7fcf67eb070de9f860c34fdaf7bf669dea26",
+  "js/games/catalog.ts": "21f06676a2a90a439c25096974a72c8b144ba7a6c9e75e90515e1b4520211bea",
+  "js/games/english-meta.ts": "5448b5efc699d94dbf496170b84eebf03593a558d15d058b5bb23f9752d70b3a",
+  "js/games/english.ts": "563da0759585b94ca5410960dddcaa060285ed334cc23901a5d9a1756dc6368b",
+  "js/games/maths3-meta.ts": "55bcc1bac05fdd48986c7e15135077d6bc537762438bb114f953eecb1dfb7698",
+  "js/games/maths3.ts": "4ee10198e8cb1e262a347e03197e9f66cd6cf19653951e0bdd1832b1bd623a51",
+  "js/games/maths4.ts": "bc8887d1d7457763fbfaa4f1b56398bd97ee25927338013386691c74c57d8a40",
+  "js/games/money3-meta.ts": "6f0e0358a26c07e4a3c7238b3099a3202a344252322c02a3555404c82c369d64",
+  "js/games/money3.ts": "bb8a4ed1d1962d97cb75cc7b6da63016c6c32910e0666ca65954d5d310f7dfbf",
+  "js/games/tiengviet2-meta.ts": "0b9731172976879798a6c08ea35eabd93fd32ebfdcaab71d5e821fde66d8ef3b",
+  "js/games/tiengviet2.ts": "37312bd717b802488dd794c773392ce304724ddca6a991d042c42d1b0ae4f630"
+ },
+ "lines": [
+  {
+   "id": "dbb5cc95-35c1d2a5",
+   "lang": "vi",
+   "text": "Tớ có quả chuối vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "dc8cb350-5c206720",
+   "lang": "vi",
+   "text": "Tớ nhìn thấy con mèo nhỏ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "dc9ddf05-6f822eb2",
+   "lang": "vi",
+   "text": "Chạm vào con vật bên phải.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths4.ts"
+   ]
+  },
+  {
+   "id": "dccb22aa-4d920231",
+   "lang": "vi",
+   "text": "hình chữ nhật màu xanh dương",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "dce0cf31-994cb96",
+   "lang": "vi",
+   "text": "Trời mưa to.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "dd62790d60941a67",
+   "lang": "vi",
+   "text": "hình thoi màu xanh lá, nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "dea0692c-742b20d3",
+   "lang": "vi",
+   "text": "Nghe màu và hình rồi chạm vào cho đúng nhé!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english.ts"
+   ]
+  },
+  {
+   "id": "deffa7190f81ed46",
+   "lang": "vi",
+   "text": "Lá lành đùm lá rách",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "df009806619efc60",
+   "lang": "vi",
+   "text": "trái tim màu vàng, to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "df0690682955ef23",
+   "lang": "vi",
+   "text": "Mỗi bó buộc dây có mười que.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "dfc5dc8304c5082c",
+   "lang": "vi",
+   "text": "Bé phân biệt trái phải thật giỏi!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths4.ts"
+   ]
+  },
+  {
+   "id": "dfefd44020271395",
+   "lang": "vi",
+   "text": "một mèo",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e03b5c22-1e2485de",
+   "lang": "vi",
+   "text": "Tớ nhìn thấy gấu bông vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e04ece476ff460e3",
+   "lang": "vi",
+   "text": "Chạm vào hình đó!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english-meta.ts"
+   ]
+  },
+  {
+   "id": "e069cacb01ad6419",
+   "lang": "vi",
+   "text": "chữ ơ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "e0b479b6-480901a0",
+   "lang": "vi",
+   "text": "Lòng tốt bên trong quý hơn vẻ đẹp bên ngoài.",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "e0b82242-1c977843",
+   "lang": "vi",
+   "text": "Mất một viên đá số. Là số nào nhỉ?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths4.ts"
+   ]
+  },
+  {
+   "id": "e0b8cc58-2f4dc382",
+   "lang": "vi",
+   "text": "Chạm vào từng cái và đếm bằng tiếng Anh nhé!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english.ts"
+   ]
+  },
+  {
+   "id": "e0c6cb064755b645",
+   "lang": "vi",
+   "text": "Con cá bơi dưới nước.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "e124602c36d2b112",
+   "lang": "vi",
+   "text": "Có vài quả bay mất. Đếm xem còn lại mấy nhé!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "e17fadad5f119fc2",
+   "lang": "vi",
+   "text": "hình bầu dục màu vàng",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e1998834-a49ffcc",
+   "lang": "vi",
+   "text": "Bánh nào còn lại ba phần tư?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "e19e731b67dcd176",
+   "lang": "vi",
+   "text": "năm vịt",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e23bb791-1a971617",
+   "lang": "vi",
+   "text": "Chạm vào tranh của tiếng con nghe thấy.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/tiengviet2-meta.ts"
+   ]
+  },
+  {
+   "id": "e2947220-10ca32cf",
+   "lang": "vi",
+   "text": "trái tim màu hồng",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e294ceee57db2884",
+   "lang": "vi",
+   "text": "Chạm vào bánh hoặc phân số phù hợp.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "e2e4cb58277b4314",
+   "lang": "vi",
+   "text": "một vịt to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e2f1786e-36e155aa",
+   "lang": "vi",
+   "text": "ba chuối nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e3007fdf38c55aaf",
+   "lang": "vi",
+   "text": "Tớ nhìn thấy con vịt to.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e318210c-179c58b1",
+   "lang": "vi",
+   "text": "Bà còng đi chợ trời …, Cái tôm cái tép đi đưa bà còng",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "e34699e66dd57b35",
+   "lang": "vi",
+   "text": "Ngôi sao là tháng này. Tháng trước là tháng mấy?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "e37b45cf-79887879",
+   "lang": "vi",
+   "text": "trái tim màu xanh dương",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e399723502aaff2e",
+   "lang": "vi",
+   "text": "một chuối nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e3b9071b02b2ddf8",
+   "lang": "vi",
+   "text": "Tớ có con vịt vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e3ec78af6fcbede4",
+   "lang": "vi",
+   "text": "Ở Việt Nam, nhiều gia đình mua đồ tươi ở chợ, từ các cô bác bán hàng ở sạp.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3-meta.ts"
+   ]
+  },
+  {
+   "id": "e449201760f8b85c",
+   "lang": "vi",
+   "text": "Từ Vựng Qua Tranh",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/english.ts"
+   ]
+  },
+  {
+   "id": "e45e3e6c-597ef626",
+   "lang": "vi",
+   "text": "Chạm vào các chữ cái theo thứ tự.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/tiengviet2-meta.ts"
+   ]
+  },
+  {
+   "id": "e4da79e9-5db7e0e6",
+   "lang": "vi",
+   "text": "Tớ nhìn thấy con vịt nhỏ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e4f776d36e4e86d9",
+   "lang": "vi",
+   "text": "hình bầu dục màu đỏ, nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e54c2e58705ce89f",
+   "lang": "vi",
+   "text": "Thử thật: đi tìm hình tròn và hình vuông quanh nhà.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "e57296a74cee0a21",
+   "lang": "vi",
+   "text": "Một con … đau, cả tàu bỏ cỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "e5d92beb-719a8c53",
+   "lang": "vi",
+   "text": "Tớ thích quả trứng nhỏ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e67396f8-2132059d",
+   "lang": "vi",
+   "text": "🦶",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e6987992-f00072e",
+   "lang": "vi",
+   "text": "ngôi sao màu đỏ, to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e7107d377fec793a",
+   "lang": "vi",
+   "text": "Tớ có con vịt nhỏ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e722b25506eaa764",
+   "lang": "vi",
+   "text": "tám mươi",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e7287044-458c1b47",
+   "lang": "vi",
+   "text": "Bữa tối xong rồi. Con nói gì?",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e7344991434de76b",
+   "lang": "vi",
+   "text": "một chó nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e75f24b3-431142f5",
+   "lang": "vi",
+   "text": "một quả bóng",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e78ce72e-5f49871",
+   "lang": "vi",
+   "text": "trái tim màu vàng, nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e7a1c435-4d20b8af",
+   "lang": "vi",
+   "text": "hình thoi màu đỏ, nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e7b9b94d-3cb40269",
+   "lang": "vi",
+   "text": "Lên kế hoạch dã ngoại! Chọn một món ở mỗi nhóm, tiêu không quá số tiền con có nhé.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3.ts"
+   ]
+  },
+  {
+   "id": "e81f067a-3627200a",
+   "lang": "vi",
+   "text": "Tớ có con mèo nhỏ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e8971575-7582ebd8",
+   "lang": "vi",
+   "text": "Xếp các từ theo thứ tự để thành một câu nhé!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english.ts"
+   ]
+  },
+  {
+   "id": "e89aac9d1ffb258e",
+   "lang": "vi",
+   "text": "Chục và đơn vị: bé hiểu rồi!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths4.ts"
+   ]
+  },
+  {
+   "id": "e9340277-55a433db",
+   "lang": "vi",
+   "text": "hình tam giác màu cam",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e9459050-7228ed67",
+   "lang": "vi",
+   "text": "Tớ thích quả táo.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e97c0715-19728c67",
+   "lang": "vi",
+   "text": "hình tam giác màu xanh dương",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "e983136004b0705f",
+   "lang": "vi",
+   "text": "Quả gì vỏ xanh xanh, ruột đỏ hạt đen, ăn mát cả ngày hè?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "e9c269f0-24630208",
+   "lang": "vi",
+   "text": "Chạm vào nửa phù hợp.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "ea22ad7e31066e9b",
+   "lang": "vi",
+   "text": "chào",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "ea4d923025b66b35",
+   "lang": "vi",
+   "text": "con chó",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "eab77200-68479ed4",
+   "lang": "vi",
+   "text": "#43c463",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "eab8d60c-4f856ccb",
+   "lang": "vi",
+   "text": "ba ếch to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "eb352e494869f957",
+   "lang": "vi",
+   "text": "hình tam giác màu đỏ, to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ebd8135e-31aca004",
+   "lang": "vi",
+   "text": "trái tim màu xanh dương, nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ec3061213e733a3c",
+   "lang": "vi",
+   "text": "hình vuông màu nâu",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ec331c2b-77ee8518",
+   "lang": "vi",
+   "text": "Bé đọc cân thật giỏi!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "ec53eb3a-73d70b8f",
+   "lang": "vi",
+   "text": "hình thoi màu xanh lá",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ecac27815f000d5a",
+   "lang": "vi",
+   "text": "Mua hết những thứ cần trước.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3-meta.ts"
+   ]
+  },
+  {
+   "id": "ecb70ffb-6dc7cd31",
+   "lang": "vi",
+   "text": "Còn thiếu chữ cái nào?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english.ts"
+   ]
+  },
+  {
+   "id": "ecdde5973f51b2e4",
+   "lang": "vi",
+   "text": "năm bông hoa",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ece86f9e6c7fc717",
+   "lang": "vi",
+   "text": "Đến giờ đi ngủ rồi. Con nói gì?",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "eced0cc2-1c0e3381",
+   "lang": "vi",
+   "text": "bàn tay",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ecf7692f-4fa9346f",
+   "lang": "vi",
+   "text": "Tranh nào đúng? Chạm vào nhé!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english.ts"
+   ]
+  },
+  {
+   "id": "ed09229c4bbdb07b",
+   "lang": "vi",
+   "text": "con bò",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ed2edb46-299ee50e",
+   "lang": "vi",
+   "text": "Tớ nhìn thấy con cá vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ed3675162e0cd9b1",
+   "lang": "vi",
+   "text": "Săn Hình",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "ed712e45-704ba746",
+   "lang": "vi",
+   "text": "chim",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "ed98cb9d-41c4154a",
+   "lang": "vi",
+   "text": "Không số nào trốn được bé!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths4.ts"
+   ]
+  },
+  {
+   "id": "edabf3863a1f3e8f",
+   "lang": "vi",
+   "text": "hình bầu dục màu cam, to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "edb84ae6-2fcdac05",
+   "lang": "vi",
+   "text": "hình vuông màu xanh dương, nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ee1700f6-76807d70",
+   "lang": "vi",
+   "text": "Một vài quả bị lấy đi và mờ dần.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "ee27084b-46f8cea0",
+   "lang": "vi",
+   "text": "Hoa sen nở trong ao.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "eebeeae0-7155b964",
+   "lang": "vi",
+   "text": "Con gì kêu meo meo, hay rình bắt chuột?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "eefe27081f831528",
+   "lang": "vi",
+   "text": "Tớ nhìn thấy con mèo to.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ef0a0768-464e6dfa",
+   "lang": "vi",
+   "text": "trái tim màu cam, to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ef0bb4f7708d4ef6",
+   "lang": "vi",
+   "text": "Tạm biệt!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ef591f40115670f5",
+   "lang": "vi",
+   "text": "Mỗi hàng và mỗi cột có đủ các số, mỗi số một lần.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "ef69e268-1742cad9",
+   "lang": "vi",
+   "text": "chữ ư",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "ef71627c-5dc8ba1b",
+   "lang": "vi",
+   "text": "bốn vịt",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f0351d19-b366ab2",
+   "lang": "vi",
+   "text": "Tớ thích quả táo vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f04a368c1835d45a",
+   "lang": "vi",
+   "text": "Đếm theo chục: mười, hai mươi, ba mươi!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english.ts"
+   ]
+  },
+  {
+   "id": "f09b596b4d56a93a",
+   "lang": "vi",
+   "text": "Tớ thích con vịt nhỏ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f09da5ea18728426",
+   "lang": "vi",
+   "text": "Chạm vào những thứ cần trước nhé.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3.ts"
+   ]
+  },
+  {
+   "id": "f0ca68587f932f24",
+   "lang": "vi",
+   "text": "Mèo trèo lên cây cau, hỏi chuột đi đâu mà vắng nhà.",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "f10393f2-2c7ea037",
+   "lang": "vi",
+   "text": "Công ơn của cha to như núi, tình thương của mẹ nhiều như nước suối chảy mãi.",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "f11ff47b3ab951c2",
+   "lang": "vi",
+   "text": "một táo to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f137c54027aa1e79",
+   "lang": "vi",
+   "text": "hình tam giác màu vàng, to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f1b6fa6617110657",
+   "lang": "vi",
+   "text": "ba quả bóng",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f1f2ad82-5b07d2d",
+   "lang": "vi",
+   "text": "Đổi dấu thanh là thành tiếng khác, nghĩa khác!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/tiengviet2-meta.ts",
+    "js/games/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "f27a781b-4853ce8b",
+   "lang": "vi",
+   "text": "Nhìn đồ vật hoặc khối hình.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "f2ac37755e901ff4",
+   "lang": "vi",
+   "text": "Chạm món rẻ nhất trước, rồi đến món tiếp theo.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3.ts"
+   ]
+  },
+  {
+   "id": "f2e07761-5602d580",
+   "lang": "vi",
+   "text": "Cái gì tròn tròn, ban ngày thì lặn, ban đêm sáng trên trời?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "f30cb5333977fc9a",
+   "lang": "vi",
+   "text": "đàn mộc cầm",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f3393d56-3c3abf46",
+   "lang": "vi",
+   "text": "Tớ thích quả trứng.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f3528f3a-438461a3",
+   "lang": "vi",
+   "text": "Tớ thích ô tô to.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f3580e3f-6245f6f2",
+   "lang": "vi",
+   "text": "trái tim màu vàng",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f35f1038-2c6ab340",
+   "lang": "vi",
+   "text": "ba trứng nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f39e0f87-3b33be3f",
+   "lang": "vi",
+   "text": "Chạm vào con vật được gọi.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "f39ed7d81f5f393d",
+   "lang": "vi",
+   "text": "trái tim màu cam, nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f40d0b04-450e2ce1",
+   "lang": "vi",
+   "text": "hai vịt nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f455e25446b52779",
+   "lang": "vi",
+   "text": "Gấp đôi là một số cộng với chính nó.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "f460e3f062c6177f",
+   "lang": "vi",
+   "text": "Nước Úc và Việt Nam đều có tiền riêng.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3-meta.ts"
+   ]
+  },
+  {
+   "id": "f46e8593-40f25811",
+   "lang": "vi",
+   "text": "Tớ nhìn thấy con chim nhỏ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f470cfec6f2f9689",
+   "lang": "vi",
+   "text": "Tớ có con chim.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f471769c-19be4d7b",
+   "lang": "vi",
+   "text": "Nghe tiếng này, rồi chạm vào các chữ cái theo thứ tự.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "f47fc5fc593ce47a",
+   "lang": "vi",
+   "text": "ngôi sao màu xanh lá, to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f4e17dcd0b58f0b2",
+   "lang": "vi",
+   "text": "Nghe một từ tiếng Anh.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english-meta.ts"
+   ]
+  },
+  {
+   "id": "f50770a9-23a5661",
+   "lang": "vi",
+   "text": "hình vuông màu xanh lá, nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f539ddc141a735ef",
+   "lang": "vi",
+   "text": "Mẹ nấu cơm.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "f58776ec0261a254",
+   "lang": "vi",
+   "text": "Một nửa bức tranh nằm cạnh đường kẻ đỏ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "f5c41fe2-7b9794ce",
+   "lang": "vi",
+   "text": "Chạm một từ, rồi chạm từ có nghĩa ngược lại.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/tiengviet2-meta.ts"
+   ]
+  },
+  {
+   "id": "f5eb3df6-64a577ee",
+   "lang": "vi",
+   "text": "Nghe cả câu và ý nghĩa của nó.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/tiengviet2-meta.ts"
+   ]
+  },
+  {
+   "id": "f5f1c621-65bac287",
+   "lang": "vi",
+   "text": "Tớ nhìn thấy quả trứng vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f603dd1717c7953a",
+   "lang": "vi",
+   "text": "Làm hai bên giống nhau, như cánh bướm nhé!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "f7101e80-692ab7f3",
+   "lang": "vi",
+   "text": "Xe nào mang số bé hơn?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths4.ts"
+   ]
+  },
+  {
+   "id": "f717f06c-1c6a3e86",
+   "lang": "vi",
+   "text": "Tớ thích ô tô vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f71ec8b6-245743f9",
+   "lang": "vi",
+   "text": "Nghe nhé. Thẻ nào đúng?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english.ts"
+   ]
+  },
+  {
+   "id": "f73421cd3646f1dc",
+   "lang": "vi",
+   "text": "Rồi chọn một món thích vừa với tiền còn lại.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3-meta.ts"
+   ]
+  },
+  {
+   "id": "f74cb326-35b62e8f",
+   "lang": "vi",
+   "text": "trái tim màu đỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f78dda1023482165",
+   "lang": "vi",
+   "text": "Số lớn được ghép từ hai phần.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "f7d9c22049e403ff",
+   "lang": "vi",
+   "text": "Nghe cả câu được đọc.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/tiengviet2-meta.ts"
+   ]
+  },
+  {
+   "id": "f7f785a8-5f8f869",
+   "lang": "vi",
+   "text": "hai bông hoa to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f8745289-5d5e99e6",
+   "lang": "vi",
+   "text": "Tìm tất cả hình thoi!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "f8ae6c52-1daa2de2",
+   "lang": "vi",
+   "text": "Chọn một món ở mỗi nhóm.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3-meta.ts"
+   ]
+  },
+  {
+   "id": "f8c2ce33-3ca1fd6",
+   "lang": "vi",
+   "text": "một trứng nhỏ",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f8c34add7c948266",
+   "lang": "vi",
+   "text": "Biểu Đồ Tranh",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "f9933c83-67183b8d",
+   "lang": "vi",
+   "text": "Chạm tiền để trả cho đúng. Nhiều quá sẽ bị trả lại!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3-meta.ts"
+   ]
+  },
+  {
+   "id": "f9b287ad-425fc2c8",
+   "lang": "vi",
+   "text": "Có bao nhiêu? Chạm vào chữ số đúng.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/english.ts"
+   ]
+  },
+  {
+   "id": "f9b352cf-56c6f851",
+   "lang": "vi",
+   "text": "Tiền này của nước Úc hay của Việt Nam?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3.ts"
+   ]
+  },
+  {
+   "id": "f9b5b8225c0deb7c",
+   "lang": "vi",
+   "text": "một táo",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "f9f7bb61-65b9e70",
+   "lang": "vi",
+   "text": "Tất cả hết bao nhiêu tiền?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/money3.ts"
+   ]
+  },
+  {
+   "id": "fa2933ef-3def3e62",
+   "lang": "vi",
+   "text": "đọc",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "fa415ef60e7f808b",
+   "lang": "vi",
+   "text": "Để Dành Mua Đồ Chơi",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/money3.ts"
+   ]
+  },
+  {
+   "id": "fa45e60f14d6ff4c",
+   "lang": "vi",
+   "text": "Dung dăng dung dẻ, Dắt … đi chơi, Đến cửa nhà trời",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "fa8fe9ed-2b8c602f",
+   "lang": "vi",
+   "text": "Tớ thích",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "fb7a3cba-20f932fc",
+   "lang": "vi",
+   "text": "Công cha như … Thái Sơn, Nghĩa mẹ như nước trong nguồn chảy ra",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "fbc91b95-107af419",
+   "lang": "vi",
+   "text": "Bé đếm cách quãng thật giỏi!",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "fbd9ba80-440c647",
+   "lang": "vi",
+   "text": "Tớ thích con mèo vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "fbee8b11-1bff0eaa",
+   "lang": "vi",
+   "text": "Chạm vào phần còn thiếu.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "fc056dc0336f0dbf",
+   "lang": "vi",
+   "text": "Tớ có gấu bông vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "fc3cf1e9-1cbfca2b",
+   "lang": "vi",
+   "text": "Tìm hôm nay: ngôi sao hoặc vòng tròn.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "fd1289b8-be0fe1c",
+   "lang": "vi",
+   "text": "hình bầu dục màu vàng, to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "fd3bf853-75eddc59",
+   "lang": "vi",
+   "text": "Khỏe như voi",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "fd4f718b-550328b5",
+   "lang": "vi",
+   "text": "Bạn con nói cảm ơn. Con nói gì?",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "fd555231-74970fe6",
+   "lang": "vi",
+   "text": "Phân Loại Tiền",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/catalog.ts",
+    "js/games/money3.ts"
+   ]
+  },
+  {
+   "id": "fd91cd5c6750883f",
+   "lang": "vi",
+   "text": "Ăn quả nhớ kẻ trồng …",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "fdf956ea58e5110e",
+   "lang": "vi",
+   "text": "Tớ thích gấu bông to.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "fe03716e63a15373",
+   "lang": "vi",
+   "text": "Trên bầu trời có một đám mây màu xanh.",
+   "area": "world",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "fe10f1093435b259",
+   "lang": "vi",
+   "text": "Tốt … hơn tốt nước sơn",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "fe4c552f1f860d36",
+   "lang": "vi",
+   "text": "Bánh nào còn lại một phần tư?",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3.ts"
+   ]
+  },
+  {
+   "id": "fe754447-438c7e69",
+   "lang": "vi",
+   "text": "Con … cục tác lá chanh, Con lợn ủn ỉn mua hành cho tôi",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/tiengviet2.ts"
+   ]
+  },
+  {
+   "id": "fed6c667-41697b39",
+   "lang": "vi",
+   "text": "Chạm số quả còn lại.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/games/maths3-meta.ts"
+   ]
+  },
+  {
+   "id": "ffc97a566cf2da27",
+   "lang": "vi",
+   "text": "hình tròn màu cam, to",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "ffd4aac44eaec834",
+   "lang": "vi",
+   "text": "Tớ có con cá vui vẻ.",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  },
+  {
+   "id": "fff3fe3d-686668f6",
+   "lang": "vi",
+   "text": "ngôi sao màu trắng",
+   "area": "games",
+   "part": false,
+   "source": [
+    "js/content/english.ts"
+   ]
+  }
+ ]
+}

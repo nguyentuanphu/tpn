@@ -6,14 +6,18 @@ import {collectMixedFragmentRecordings,MIXED_FRAGMENT_SOURCE} from './mixed-voic
 import {lineHash} from '../js/packhash.js';
 const HOCVUI=await import('../js/content/hocvui.js');
 // the syllables and words the Tiếng Việt games say on their own (tools/make-voice-pack.mts records them the same way)
-const publicPairs=()=>[...collectLines(),...HOCVUI.hocvuiLines().map((l:{lang:string;text:string})=>({[l.lang]:l.text,from:'js/content/hocvui.js'}))];
+// (v1.08 fixes, owner 3 Nov 2026 AEDT: "thu âm lê minh luôn") the English corner's Vietnamese hints and the new Tiếng Việt
+// games' words, verses and riddles are fixed public game text like the Học vui syllables (make-voice-pack records them too)
+const ENGLISH=await import('../js/content/english.js'),TV2=await import('../js/content/tiengviet2.js');
+const contentPairs=(lines:Array<{lang:string;text:string}>,from:string)=>lines.map(l=>({[l.lang]:l.text,from}));
+const publicPairs=()=>[...collectLines(),...contentPairs(HOCVUI.hocvuiLines(),'js/content/hocvui.js'),...contentPairs(ENGLISH.englishLines(),'js/content/english.js'),...contentPairs(TV2.tiengviet2Lines(),'js/content/tiengviet2.js')];
 export type PublicVoiceLine={id:string;lang:'en'|'vi';text:string;area:string;part:boolean;mixedFragment?:string;source:string[]};
 export type ReviewedVoiceDelta={schema:1;status:'reviewed-public';sourceHashes:Record<string,string>;lines:PublicVoiceLine[]};
 const hash=(bytes:string|Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
 // (30 Oct 2026 AEDT) My House and the Play menu speak fixed public lines too (the line checks below still refuse names and templates)
 // (1 Nov 2026 AEDT) the villagers' fixed facts, the activity names and the Tiếng Việt games' syllables are public game text
 // too (no names, no family data)
-export const publicGameSource=(file:string)=>/^js\/games\/[\w-]+\.ts$/.test(file)||file==='js/howto-data.ts'||file==='js/howto-data2.ts'||file==='js/myhouse.ts'||file==='js/ui.ts'||/^js\/ui\/[\w-]+\.ts$/.test(file)||file==='js/content/villagerlines.ts'||file==='js/content/activities.ts'||file==='js/content/hocvui.ts'||file==='js/school.ts'||file==='js/main.ts'||/^js\/main\/[\w-]+\.ts$/.test(file); // (1 Nov: the school's greeting, Play together's "Play with whom?")
+export const publicGameSource=(file:string)=>/^js\/games\/[\w-]+\.ts$/.test(file)||file==='js/howto-data.ts'||file==='js/howto-data2.ts'||file==='js/myhouse.ts'||file==='js/ui.ts'||/^js\/ui\/[\w-]+\.ts$/.test(file)||file==='js/content/villagerlines.ts'||file==='js/content/activities.ts'||file==='js/content/hocvui.ts'||file==='js/content/english.ts'||file==='js/content/tiengviet2.ts'||file==='js/school.ts'||file==='js/main.ts'||/^js\/main\/[\w-]+\.ts$/.test(file); // (1 Nov: the school's greeting, Play together's "Play with whom?")
 export function validateReviewedVoiceDelta(value:unknown,readSource:(file:string)=>string|Uint8Array=path=>fs.readFileSync(path),pairs:Array<Record<string,string>>=publicPairs(),readFragments=()=>collectMixedFragmentRecordings(text=>text)):ReviewedVoiceDelta{
  const d=value as ReviewedVoiceDelta;
  if(!d||d.schema!==1||d.status!=='reviewed-public'||!d.sourceHashes||!Array.isArray(d.lines)||!d.lines.length||d.lines.length>250)throw Error('Invalid reviewed public speech batch');
