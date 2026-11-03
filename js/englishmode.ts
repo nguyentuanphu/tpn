@@ -35,6 +35,7 @@ function style() {
 .gl-vihint .gl-vihear svg.art { width: 30px; height: 30px; }
 .gl-vihint .gl-vitext { flex: 1; min-width: 0; font: 600 14px/1.25 var(--font, sans-serif); color: #6a4a7a; font-style: italic; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .gl-vihint .gl-vitext:empty::before { content: ''; }
+.gl-stage + .gl-vihint { padding-bottom: max(4px, env(safe-area-inset-bottom)); }
 .gl.little .gl-vihint .gl-vihear { width: 64px; height: 64px; }
 .gl.pic-only .gl-vihint .gl-vitext { visibility: hidden; }
 .gl-enbadge { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; padding: 2px 10px; border-radius: 999px; background: #3b6fe0; color: #fff; font: 800 12px/1.6 var(--font, sans-serif); vertical-align: middle; white-space: nowrap; }
@@ -59,7 +60,9 @@ export function enterEnglish(): { leave: () => void; hint: (layer: HTMLElement, 
   const hint = (layer: HTMLElement, vi: string) => {
     if (!row) {
       row = el('div', 'gl-vihint', `<button class="gl-vihear" aria-label="Nghe tiếng Việt">${pic('🔊')}</button><span class="gl-vitext" lang="vi"></span>`);
-      const guide = layer.querySelector('.gl-guide'); if (guide) guide.after(row); else layer.appendChild(row);
+      // (v1.08 fixes, check gamespace) under the playing area, not under the guide: the top band stays as small as every
+      // other game's (owner, 30 Oct 2026 AEDT: "the upper part takes too much space")
+      const stage = layer.querySelector('.gl-stage'); if (stage) stage.after(row); else layer.appendChild(row);
       row.querySelector<HTMLButtonElement>('.gl-vihear').onclick = e => { e.stopPropagation(); if (said) sayIn('vi', said); };
     }
     said = vi ? swapNames(vi, 'vi') : '';
