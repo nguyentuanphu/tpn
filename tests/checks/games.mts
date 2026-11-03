@@ -36,6 +36,9 @@ await check('goatcircle', async () => (await import('../goat-browser.mts')).goat
 
 await check('gamespace', async () => (await import('../gamespace-browser.mts')).gameSpaceCheck(b));
 
+// (v1.08 layout, owner 3 Nov 2026 AEDT) every game fits one screen: phone, tablet both ways and computer
+await check('gamefit', async () => (await import('../gamefit-browser.mts')).gameFitCheck(b));
+
 await check('simplereturnfruit', async () => (await import('../simple-return-fruit.mts')).simpleReturnFruitCheck(b));
 
 await check('ladybugsplit', async () => (await import('../ladybug-unified.mts')).ladybugUnifiedCheck(b,'split'));

@@ -82,14 +82,16 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
         <button class="gl-x" aria-label="${T('Leave', 'Rời đi')}">✕</button>
         <div class="gl-title"><span class="gl-icon">${pic(def.icon)}</span><span>${esc(def.name())}</span></div>
         <div class="gl-dots"></div>
-        <button class="gl-how" aria-label="${T('How to play', 'Cách chơi')}">📺</button>
-      </div>
-      <!-- (owner, 30 Oct 2026 AEDT: "the upper part takes too much space") the level and stars share the guide's line;
-           the guide shows two short lines (tap for the rest, the voice says it all) so the game gets the room -->
-      <div class="gl-guide"><div class="gl-help"></div><div class="gl-status">
+        <!-- (v1.08 layout, owner 3 Nov 2026 AEDT) the level and the stars sit on the title row, beside the guide film -->
+        <div class="gl-status">
           ${levelPick ? `<button class="gl-lvl" aria-label="${T('How hard', 'Độ khó')}">${esc(T(...(LEVELS.find(l => l[0] === levelPick.value) || LEVELS[0]).slice(1)))} ▾</button>` : ''}
           <div class="starbox">⭐ <b>0</b></div>
-        </div></div>
+        </div>
+        <button class="gl-how" aria-label="${T('How to play', 'Cách chơi')}">📺</button>
+      </div>
+      <!-- (owner, 30 Oct 2026 AEDT: "the upper part takes too much space") the guide shows two short lines (tap for the
+           rest, the voice says it all) so the game gets the room -->
+      <div class="gl-guide"><div class="gl-help"></div></div>
       <div class="gl-stage"></div>
       <div class="mascot">🦉</div><div class="mascot-say"></div>`;
     dispatchEvent(new Event('sv-hide-caption')); document.body.appendChild(layer);
@@ -106,26 +108,82 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     const cleanups = [];
     // (owner, 30 Oct 2026 AEDT: "grow to fill" on tablets and computers) a game drawn small in the middle of a big screen
     // grows to fill it: the stage zooms so its pieces take the room (at most 2.4x). Drawing games (a canvas) keep their
-    // size so a finger lands where it draws; phones keep today's layout.
-    const fit = () => {
-      if (closed || Math.min(innerWidth, innerHeight) < 600 || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
+    // size so a finger lands where it draws.
+    // (v1.08 layout, owner 3 Nov 2026 AEDT: "the answers sit below the bottom of the screen") it also shrinks a game that
+    // is taller or wider than the playing area, on every screen, so the question, the play picture and every answer fit
+    // one screen with no scrolling (at most down to FIT_MIN, and never making a button smaller than a finger)
+    const FIT_MIN = .62;
+    const fit = (shrinkOnly = false) => {
+      if (closed || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
       const z = parseFloat(stage.style.zoom) || 1, box = stage.getBoundingClientRect(), kids = [...stage.children].filter(e => e.tagName !== 'STYLE' && e.getBoundingClientRect().height > 0 && !/^(absolute|fixed)$/.test(getComputedStyle(e).position));
-      if (!kids.length) return;
+      if (!kids.length || !box.width || !box.height) return;
       const rs = kids.map(e => e.getBoundingClientRect()), w = (Math.max(...rs.map(r => r.right)) - Math.min(...rs.map(r => r.left))) / z, h = (Math.max(...rs.map(r => r.bottom)) - Math.min(...rs.map(r => r.top))) / z;
       if (!w || !h) return;
-      const next = Math.max(1, Math.min(2.4, Math.min(box.width / w, box.height / h) * .9));
-      if (Math.abs(next - z) > .06) stage.style.zoom = String(Math.round(next * 100) / 100);
+      // the room inside the stage's padding, at zoom 1
+      const cs = getComputedStyle(stage), padX = (parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)) * z, padY = (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) * z;
+      const room = Math.min((box.width - padX) / w, (box.height - padY) / h);
+      // tablets and computers grow to fill (at most 2.4x); (v1.08 layout, owner: "text big and clear") a phone grows a
+      // small game too, at most 1.4x
+      const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : 1.4;
+      // a shrink keeps every button a finger size: 44 px, 64 px for under-5s (it stops there, at FIT_MIN at most)
+      const need = little ? 64 : 44, sizes = [...stage.querySelectorAll('button, [role=button], .choice')].map(e => e.getBoundingClientRect()).filter(r => r.width > 2 && r.height > 2).map(r => Math.min(r.width, r.height) / z);
+      const least = sizes.length ? Math.min(...sizes) : 0, floor = least ? Math.max(FIT_MIN, Math.min(1, need / least)) : FIT_MIN;
+      let next = room >= 1 ? Math.min(grow, Math.max(1, room * .9)) : Math.max(floor, room * .98);
+      if (shrinkOnly && next >= z) return;
+      next = Math.round(next * 100) / 100;
+      if (Math.abs(next - z) > .04 || (next < z && h * z > (box.height - padY) + 1)) { stage.style.zoom = next === 1 ? '' : String(next); fitSoon(true); }
+    };
+    // (v1.08 layout, owner 3 Nov 2026 AEDT, CLAUDE.md "One screen, big clear text") the words a child reads in a game are
+    // at least TEXT_MIN px as drawn (their size times the stage's zoom): a smaller label is raised, and goes back to the
+    // game's own size when the stage grows. Drawings (svg) and the round dots keep their size.
+    const TEXT_MIN = 16;
+    const floorText = () => {
+      if (closed) return 0; let changed = 0;
+      const z = parseFloat(stage.style.zoom) || 1, done = new Set<HTMLElement>(), walk = document.createTreeWalker(stage, NodeFilter.SHOW_TEXT);
+      for (let t = walk.nextNode(); t; t = walk.nextNode()) {
+        const p = t.parentElement;
+        if (!p || done.has(p) || !/[\p{L}\p{N}]/u.test(t.textContent || '') || p.closest('svg, style, script')) continue;
+        done.add(p);
+        const own = p.dataset.tfOwn, base = own != null ? parseFloat(p.dataset.tfBase) : parseFloat(getComputedStyle(p).fontSize);
+        if (!base) continue;
+        if (base * z < TEXT_MIN - .5) { if (own == null) { p.dataset.tfOwn = p.style.fontSize; p.dataset.tfBase = String(base); } const px = (Math.ceil(TEXT_MIN / z * 10) / 10) + 'px'; if (p.style.fontSize !== px) { p.style.fontSize = px; changed++; } }
+        else if (own != null) { p.style.fontSize = own; delete p.dataset.tfOwn; delete p.dataset.tfBase; changed++; }
+      }
+      return changed;
     };
     let fitTimer: ReturnType<typeof setTimeout> | undefined;
-    const fitSoon = () => { clearTimeout(fitTimer); fitTimer = setTimeout(fit, 120); };
+    // (a game that changes something every moment must not keep putting the fit off: the first call sets the time, later
+    // calls before it only widen it from shrink-only to a full fit)
+    let fitShrinkOnly = true;
+    const fitSoon = (shrinkOnly = false) => {
+      fitShrinkOnly = fitShrinkOnly && shrinkOnly; if (fitTimer) return;
+      fitTimer = setTimeout(() => { const only = fitShrinkOnly; fitTimer = undefined; fitShrinkOnly = true; floorText(); fit(only); if (floorText()) fitSoon(true); }, 120);
+    };
     // (31 Oct 2026 AEDT, horsestability on GitHub: the board shrank mid-game) the stage fits itself while the game sets up;
-    // once the child has tapped it, only a new screen size changes the zoom, so a cheer or a piece added during play never
-    // moves the board under a finger (floating pieces are not measured at all)
-    let playing = false; const startPlay = () => { playing = true; };
+    // once the child has tapped it, only a new screen size, or a new round that would not fit, changes the zoom, so a cheer
+    // or a piece added during play never moves the board under a finger (floating pieces are not measured at all)
+    // (v1.08 layout) at the first tap the game stays where it is: the stage stops centring it and keeps its place from the
+    // top instead, so answers or moves that appear later grow the game downwards and never move the board up
+    let playing = false; const startPlay = () => {
+      playing = true;
+      const z = parseFloat(stage.style.zoom) || 1, box = stage.getBoundingClientRect(), cs = getComputedStyle(stage);
+      const first = [...stage.children].find(e => e.tagName !== 'STYLE' && e.getBoundingClientRect().height > 0 && !/^(absolute|fixed)$/.test(getComputedStyle(e).position));
+      if (!first || cs.flexDirection !== 'column') return;
+      const pad = parseFloat(cs.paddingTop), gap = (first.getBoundingClientRect().top - box.top) / z - pad - (parseFloat(getComputedStyle(first).marginTop) || 0);
+      if (gap > 1) { stage.style.justifyContent = 'flex-start'; stage.style.paddingTop = (pad + gap) + 'px'; }
+    };
     stage.addEventListener('pointerdown', startPlay, { capture: true, once: true });
-    const fitWatch = new MutationObserver(() => { if (!playing) fitSoon(); }); fitWatch.observe(stage, { childList: true });
-    addEventListener('resize', fitSoon); setTimeout(fit, 400);
-    cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitSoon); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
+    // once playing, only a new round (the stage's own pieces replaced) may shrink it; a change inside the game (a move
+    // button, a cheer) only raises small text, so the board never moves under a finger (horsestability)
+    // (small text is raised at once, before the new pieces are drawn, so nothing grows a moment after it appears)
+    const fitWatch = new MutationObserver(list => {
+      floorText();
+      if (!playing || list.some(m => m.target === stage)) fitSoon(playing);
+    });
+    fitWatch.observe(stage, { childList: true, subtree: true });
+    const fitResize = () => fitSoon(false);
+    addEventListener('resize', fitResize); setTimeout(() => { floorText(); fit(); if (floorText()) fitSoon(true); }, 400);
+    cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitResize); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
     let closed = false, winning = false;
     const prevMusic = Music.key; Music.play(GAME_MUSIC[id] || 'think');
     const lvNotes = new Map<string, string>();

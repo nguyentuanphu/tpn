@@ -3445,3 +3445,44 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .sp-hint { display:block; margin-top:2px; font-size:12px; font-weight:700; line-height:1.15; color:#7a4fd0; }
 /* a phone on its side has one row of road: the padlock shows it, and a tap says what to do */
 .simple-screen.wide .sp-hint { display:none; }
+
+/* (v1.08 layout, owner 3 Nov 2026 AEDT, Android tablet held sideways) the level button and the stars sit on the title row,
+   beside the round dots and the guide film, so the playing area gets the row they had; the guide line is the question
+   alone. On a phone the round dots go just under the row so the name keeps its room. */
+.gl-head { gap: 8px; }
+.gl-head .gl-status { flex: none; gap: 6px; }
+.gl .gl-head .gl-status .starbox { position: static; margin: 0; font-size: 18px; padding: 4px 12px; white-space: nowrap; }
+.gl-head .gl-how { margin-left: 0; }
+.gl-head .gl-title { flex: 1 1 auto; }
+@media (max-width: 600px) {
+  .gl-head { padding-bottom: 12px; }
+  .gl-head .gl-dots { position: absolute; left: 50%; bottom: 2px; transform: translateX(-50%); }
+  .gl-head .gl-dots i { width: 8px; height: 8px; }
+  .gl-head .gl-title { gap: 6px; font-size: 17px; line-height: 1.15; }
+  .gl-head .gl-icon { width: 40px; height: 40px; border-radius: 13px; font-size: 24px; flex: none; }
+  .gl .gl-head .gl-status .starbox { font-size: 16px; padding: 4px 8px; }
+  .gl-head .gl-lvl { padding: 0 8px; font-size: 16px; }
+  .gl-guide .gl-help { font-size: 16px; }
+}
+@media (max-width: 380px) { .gl-head .gl-icon { display: none; } }
+/* (owner, 3 Nov 2026 AEDT: "text big, clear, easy to read") the English mode's Vietnamese hint is at least 16 px too */
+.gl .gl-vihint .gl-vitext { font-size: 16px; }
+/* The guide line spans the screen now; on a short landscape screen it keeps to one line (tap for the rest). */
+@media (orientation: landscape) and (max-height: 560px) { .gl-guide .gl-help { -webkit-line-clamp: 1; min-height: 1.25em; } }
+/* Under-5s on a phone: their buttons are 64 px, so the row keeps the game's picture and leaves out its written name
+   (the voice says it; under-5s play by pictures). */
+@media (max-width: 480px) { .gl.little .gl-head .gl-title > span:last-child { display: none; } }
+/* (v1.08 layout, gamespace) English mode: the Vietnamese hint shares the guide row, one line under the English line, with
+   its speaker beside both, so the English games' top band is no bigger than the others' (tap a line for the rest). */
+.gl-guide:has(> .gl-vihint) { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; row-gap: 2px; align-items: center; }
+.gl-guide > .gl-vihint { display: contents; }
+.gl-guide:has(> .gl-vihint) > .gl-help { grid-column: 1; grid-row: 1; -webkit-line-clamp: 1; min-height: 1.25em; max-height: 1.25em; overflow: hidden; }
+.gl-guide:has(> .gl-vihint) > .gl-help.open { max-height: 30vh; overflow: auto; }
+.gl-guide > .gl-vihint .gl-vitext { grid-column: 1; grid-row: 2; -webkit-line-clamp: 1; line-height: 1.25; }
+.gl-guide > .gl-vihint .gl-vihear { grid-column: 2; grid-row: 1 / span 2; }
+/* (v1.08 layout, gamefit) Cờ Cá Ngựa on a phone or a tablet upright: its two grown-up folds (how it works, players and
+   rules) share one row while both are closed, so an under-5's 64 px board, die and moves fit one screen. */
+@media (max-width: 999px) {
+  .horse-race:not(:has(> details[open])) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .horse-race:not(:has(> details[open])) > :not(details) { grid-column: 1 / -1; }
+}
