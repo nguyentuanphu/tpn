@@ -12,7 +12,15 @@ const LEVELS = ['easy', 'medium', 'hard', 'talent'];
 /** rounds looked at in a row, per game and level */
 export const ROUNDS = 4;
 // games that ask the same thing on purpose, with the reason; every other game must vary its rounds
-export const VARIETY_EXEMPT: Record<string, string> = {};
+export const VARIETY_EXEMPT: Record<string, string> = {
+  crabwalk: 'left or right, step after step: with only two ways two steps can look the same; it never goes the same way three times in a row (js/games/animals2.ts)',
+  loudquiet: 'the question is a sound (loud or quiet), not a picture; the screen is the same on purpose and the answer never stays the same three times in a row (js/games/music2.ts)'
+};
+
+// games where the right answer's place follows a rule on purpose (only the place check is left out for them)
+export const PLACE_EXEMPT: Record<string, string> = {
+  vi_readalong: 'tap the words of the sentence in reading order: the next word is always the first one left (js/games/tiengviet2.ts)'
+};
 
 type Seen = { q: string; pos: number; n: number }[];
 /** play one game at one level in the page: up to `rounds` questions, the right answer each time */
@@ -21,7 +29,10 @@ async function probe(page, id: string, level: string, rounds: number): Promise<S
     // the game's own pauses (talk, cheers, the next round) run 8 times faster: only what is shown matters here
     if (!window.__rvSt) { const st = window.setTimeout.bind(window); window.__rvSt = st; window.setTimeout = ((f, t, ...a) => st(f, Math.min(+t || 0, 4000) / 8, ...a)) as typeof setTimeout; }
     const w = t => new Promise(r => window.__rvSt(r, t)), p = __sv.heroes[0].profile;
-    const { playWatch } = await import('/js/games/frame.js');
+    const { playWatch, GAMES } = await import('/js/games/frame.js');
+    // a choice where any answer goes on (tapOne) is a round only in a learning game (a guess before an experiment); in a
+    // board, a pad or a drag game each tap is a move, not a round
+    const guesses = !!GAMES[id]?.learn;
     p.age = 'big'; p.gameDiff = { ...(p.gameDiff || {}), [id]: level };
     __sv.playGame(0, id, 'hub');
     let gl = null; for (let k = 0; k < 40 && !gl; k++) { await w(100); gl = document.querySelector('.gl:not(.out)'); }
@@ -40,10 +51,10 @@ async function probe(page, id: string, level: string, rounds: number): Promise<S
       const pickLv = gl.querySelector('.gl-lvlpick'); if (pickLv) { (pickLv.querySelector('[data-l].on') || pickLv.querySelector('[data-l]'))?.click(); continue; }
       if (gl.querySelector('.gl-win')) break;
       // a question with a right answer (untilRight), or else a choice where any answer goes on (tapOne: a guess)
-      const ask = playWatch.ask || (playWatch.offer ? { els: playWatch.offer, check: null } : null);
+      const ask = playWatch.ask || (guesses && playWatch.offer ? { els: playWatch.offer, check: null } : null);
       if (!ask || ask.els === lastEls || !ask.els.some(shown)) continue;
       await w(120); // let the round finish drawing
-      if ((playWatch.ask || { els: playWatch.offer }).els !== ask.els) continue;
+      if ((playWatch.ask || { els: guesses ? playWatch.offer : null }).els !== ask.els) continue;
       lastEls = ask.els; lastAt = Date.now();
       // in the order the child sees them (top to bottom, left to right), not the order the game made them
       const at = e => { const r = e.getBoundingClientRect(); return [Math.round(r.top / 8), r.left]; };
@@ -54,7 +65,10 @@ async function probe(page, id: string, level: string, rounds: number): Promise<S
       const answers = els.map(e => clean(e.outerHTML)).sort();
       const pic = clean(stage?.innerHTML || '').replace(/\d+(\.\d+)?(?=\s*(px|%))/g, '');
       const q = help + ' || ' + answers.join(' ¦ ') + ' || right=' + clean(right.outerHTML) + ' || ' + (pic.length > 4000 ? pic.length + ':' + pic.slice(0, 4000) : pic);
-      out.push({ q, pos: ask.check ? els.indexOf(right) : -1, n: ask.check ? els.length : 0 });
+      // things placed about a scene (a fish, a swimmer) have no first or last place: only rows of answers are counted
+      // (and a free choice, where every answer is right, has no right place at all)
+      const row = ask.check && !els.some(e => getComputedStyle(e).position === 'absolute') && !els.every(e => ask.check(e));
+      out.push({ q, pos: row ? els.indexOf(right) : -1, n: row ? els.length : 0 });
       right.click();
       await w(150);
     }
@@ -101,7 +115,7 @@ export async function roundVarietyScan(b, only: string[] | null = null, rounds =
         const why = repeats(r);
         if (why) (bad[id] ||= {})[lv] = why;
       }
-      const pos = stuck(log[id]); if (pos) (bad[id] ||= {}).all = pos;
+      const pos = PLACE_EXEMPT[id] ? '' : stuck(log[id]); if (pos) (bad[id] ||= {}).all = pos;
       if (process.env.RV_LOG) console.log(`${id}: ${bad[id] ? JSON.stringify(bad[id]) : 'ok'} (${levelsOf(id).map(lv => log[id][lv]?.length ?? 'x').join('/')})`);
       if (levelsOf(id).every(lv => !log[id][lv] || log[id][lv].length < 2)) none.push(id);
     }

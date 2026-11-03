@@ -3,6 +3,7 @@
 // the Floor took one fixed order, Turn It Round won after three taps whatever the arrow showed, and Fold the Box wanted
 // the sides in one order nobody was told. Now the shapes are drawn, answers are mixed, tiles and sides go in any order,
 // and the arrow has to point at the star.
+import { deck, mover } from './variety.js';
 import { register, untilRight } from './frame.js';
 import { T } from '../i18n.js';
 import { pic } from '../art.js';
@@ -77,13 +78,14 @@ async function rounds(api, intro: [string, string], list: Round[], done: [string
   const wrap = el('div', 's2-board'), stage = el('div', 's2-stage'), controls = el('div', 's2-controls');
   api.stage.appendChild(wrap); wrap.append(stage, controls);
   await wait(1000);
+  const place = mover();   // (v1.08 variety) the right answer moves from round to round
   for (let k = 0; k < list.length; k++) {
     const q = list[k];
     stage.innerHTML = '';
     stage.append(el('div', 's2-picture', q.show));
     api.say(q.ask[0], q.ask[1]);
     controls.innerHTML = '';
-    const btns = mix(q.choices).map(c => { const b = el('button', 's2-btn', c.html); b.dataset.key = c.key; controls.appendChild(b); return b; });
+    const btns = place(q.choices, c => c.key === q.answer).map(c => { const b = el('button', 's2-btn', c.html); b.dataset.key = c.key; controls.appendChild(b); return b; });
     const target = btns.find(b => b.dataset.key === q.answer);
     api.plan(() => target, { maxActions: 5 });
     const clicked = await untilRight(api, btns, e => e === target);
@@ -105,7 +107,8 @@ register({
   id: 'solids', icon: '⚽', name: () => T('Ball, Box, Can', 'Khối Cầu, Hộp, Trụ'),
   run: api => {
     const things: [string, Solid, [string, string]][] = [['⚽', 'sphere', ['a ball', 'quả bóng']], ['🍊', 'sphere', ['an orange', 'quả cam']], ['📦', 'cube', ['a box', 'cái hộp']], ['🎲', 'cube', ['a dice', 'con xúc xắc']], ['🥫', 'cylinder', ['a can', 'cái lon']], ['🥁', 'cylinder', ['a drum', 'cái trống']]];
-    const pickOne = (s: Solid) => mix(things.filter(t => t[1] === s))[0];
+    // (v1.08 variety) each solid deals its things in turn, so a thing comes back only after the others
+    const decks = Object.fromEntries((['sphere', 'cube', 'cylinder'] as Solid[]).map(k => [k, deck(things.filter(t => t[1] === k))])), pickOne = (s: Solid) => decks[s]();
     return rounds(api, ['Match each thing to its solid shape!', 'Ghép đồ vật với khối của nó nhé!'],
       // (levels) more things from Medium; Talent: the solids have no names under them
       cycle(mix(['sphere', 'cube', 'cylinder'] as Solid[]), lv(api, 3, 4, 5, 6)).map(s => {

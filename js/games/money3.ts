@@ -158,9 +158,16 @@ register({
     mark(api, rounds, paidOpts.join("/"));
     const wrap = setup(api, ["You are the shopkeeper. Count up from the price to the money you were given!", "Con là người bán hàng. Đếm thêm từ giá tiền đến số tiền khách đưa nhé!"], rounds);
     await wait(1400);
+    const thingOf = deck(SHOP), asked = new Set<string>();   // (v1.08 variety) a new thing and a sum not asked before, each round
     for (let r = 0; r < rounds; r++) {
-      const paid = pickOne(paidOpts), stepV = V ? 1000 : 10, most = Math.min(paid - stepV, api.little ? (V ? 5000 : 50) : paid);
-      const change = stepV * (1 + Math.floor(Math.random() * Math.floor(most / stepV))), price = paid - change, thing = pickOne(SHOP);
+      let paid = 0, change = 0;
+      const stepV = V ? 1000 : 10;
+      for (let t = 0; t < 30 && (!paid || asked.has(`${paid}-${change}`)); t++) {
+        paid = pickOne(paidOpts); const most = Math.min(paid - stepV, api.little ? (V ? 5000 : 50) : paid);
+        change = stepV * (1 + Math.floor(Math.random() * Math.floor(most / stepV)));
+      }
+      asked.add(`${paid}-${change}`);
+      const price = paid - change, thing = thingOf();
       api.say("Count up from the price to the money you were given.", "Đếm thêm từ giá tiền đến số tiền khách đưa.");
       const ok = await makeAmount(api, wrap, code, change, coins.filter(c => c <= change),
         sum => `${art(thing[0])} ${pic("🏷️")} ${money(price, code)} · ${cash(code, paid)} · <span class="mn3-step">${money(price + sum, code)} → ${money(paid, code)}</span>`);
