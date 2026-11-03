@@ -17,8 +17,10 @@ globalThis.localStorage = {
   removeItem: () => {}
 };
 
-const { settings } = await import('../../js/state.js');
+const { settings, ASIDE_VOICES_ON } = await import('../../js/state.js');
 const { packMale } = await import('../../js/voicepack.js');
+// (owner's decision, 3 Nov 2026 AEDT, v1.08 voices-aside: female voices only; not a weakened check) while the male voices
+// are put aside (ASIDE_VOICES_ON off, voices-aside/README.md) no setting can switch the male recordings on
 
 test('female voice default policy and opt-in settings', () => {
   // Test 1: By default, voiceMale is undefined/false
@@ -27,7 +29,8 @@ test('female voice default policy and opt-in settings', () => {
 
   // Test 2: Explicitly enabling male voices
   settings.voiceMale = true;
-  assert.equal(packMale(), true, 'Male voices must be enabled when voiceMale is true');
+  if (ASIDE_VOICES_ON) assert.equal(packMale(), true, 'Male voices must be enabled when voiceMale is true');
+  else assert.equal(packMale(), false, 'Male voices are put aside: voiceMale true must not download them');
 
   // Test 3: Disabling male voices
   settings.voiceMale = false;

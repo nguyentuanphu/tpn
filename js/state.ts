@@ -124,7 +124,16 @@ const OLD_VOICE = ['tts', 'ttsKey', 'elevenVoice', 'googleVoiceEn', 'googleVoice
 const dropOldVoice = () => { let n = 0; for (const k of OLD_VOICE) if (k in settings) { delete settings[k]; n++; } return n; };
 // (bug #32, owner 11 Oct) festival decorations are set in Sparkle Studio only: an old saved choice on this device is ignored
 const dropOldFestival = () => { if (!('festival' in settings)) return 0; delete settings.festival; return 1; };
-if (dropOldVoice() | dropOldFestival()) store.set(KEY_SETTINGS, settings);
+// (owner, 3 Nov 2026 AEDT, v1.08 voices-aside: "the game is getting heavy, above all the voices") only the female voices
+// are offered and played; the male English and Vietnamese voices and the Lê Minh pack are put aside (voices-aside/README.md).
+// Their code stays behind this switch, off: true brings them back (with their files moved back into voices/).
+export const ASIDE_VOICES_ON = false;
+// a device that had chosen the male voices or Lê Minh moves to the female voices; nothing else in its settings changes
+const dropAsideVoice = () => { if (ASIDE_VOICES_ON) return 0; let n = 0; if (settings.voiceMale === true) { settings.voiceMale = false; n++; } if (settings.voiceViVariant === 'leminh') { settings.voiceViVariant = 'standard'; n++; } return n; };
+// (owner, 3 Nov 2026 AEDT, v1.08) the outside "Also learn" Chinese/Hindi buttons are gone, so a choice saved by them
+// (extra Chinese or Hindi words in every game) is cleared; Chinese and Hindi stay inside their own places and games
+const dropLearnLang = () => { if (!settings.learnLang) return 0; settings.learnLang = ''; return 1; };
+if (dropOldVoice() | dropOldFestival() | dropAsideVoice() | dropLearnLang()) store.set(KEY_SETTINGS, settings);
 // fewer moving effects: Calm mode, or the device's own "Reduce motion" setting (round I accessibility rule A11Y-001)
 export const reduceMotion = () => !!settings.calm || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 // (v1.08 english) while an English-mode game is open (js/englishmode.ts) the game language is English; the child's own
@@ -269,7 +278,7 @@ export async function importBackup(file) {
   const data = JSON.parse(await file.text());
   if (!data || data.app !== 'sparkle-valley' || !Array.isArray(data.profiles)) throw new Error('bad file');
   profiles.splice(0, profiles.length, ...data.profiles.map(normalizeProfile));
-  Object.assign(settings, data.settings || {}); dropOldVoice(); dropOldFestival(); // (round R privacy, 9 Oct) an old backup brings no voice key back
+  Object.assign(settings, data.settings || {}); dropOldVoice(); dropOldFestival(); dropAsideVoice(); // (round R privacy, 9 Oct) an old backup brings no voice key back
   if (data.farm) Object.assign(farm, newFarm(), data.farm);
   const expected=JSON.parse(JSON.stringify({profiles,settings,farm}));reasonCode='storage';
   saveSettings(); saveProfiles(true);

@@ -6,7 +6,7 @@ import { el, $ } from '../util.js';
 import { openCredits } from '../credits.js';
 import { installButton } from '../install.js';
 import { SHOWN } from '../build.js';
-import { hideCaption, flagBtns, learnBtns, bindLearn, bindLang, WEBSITE_ICON, openSite } from './common.js';
+import { hideCaption, flagBtns, bindLang, WEBSITE_ICON, openSite } from './common.js';
 // ---------- Title ----------
 export function showTitle(onStart) {
   // a storybook cover: the valley behind, the name on a cream card with little friends floating round it,
@@ -34,7 +34,9 @@ export function showTitle(onStart) {
     s.querySelector('.about').setAttribute('aria-label', T('About', 'Giới thiệu'));
     s.querySelector('.sitebtn-l').textContent = T('Website', 'Trang web'); s.querySelector('.sitebtn').setAttribute('aria-label', T('Sparkle Valley website for families', 'Trang web Thung Lũng Lấp Lánh cho gia đình'));
     s.querySelector('.title-foot').innerHTML = flagBtns();
-    s.querySelector('.title-learn').innerHTML = learnBtns(); bindLearn(s, redraw);
+    // (owner, 3 Nov 2026 AEDT, v1.08) Chinese and Hindi are not languages for the whole game, only extra learning: their
+    // "Also learn" buttons are not on the outside screens; they stay inside China Town, India Village and First Words
+    s.querySelector('.title-learn').innerHTML = '';
     // (owner, 31 Oct 2026 AEDT) the voices play over the internet unless a grown-up kept them all on the device; the
     // Welcome says so, and how to keep them for playing offline
     const vn = s.querySelector('.tt-voice') as HTMLElement; vn.hidden = autoPackOn() && !!settings.packSaved;

@@ -213,7 +213,10 @@ const mimeOf = f => MIME[path.extname(f).toLowerCase()] || 'application/octet-st
 const xml = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const strip = h => String(h || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/\s+/g, ' ').trim();
 const gitSha = b => crypto.createHash('sha1').update('blob ' + b.length + '\0').update(b).digest('hex');
-const CAST = { en: ['f', 'm'], vi: ['f', 'm'], zh: ['m'], hi: ['m'] };
+// (owner, 3 Nov 2026 AEDT, v1.08 voices-aside) the male English and Vietnamese voices are put aside (voices-aside/README.md):
+// Studio lists and records only the female ones. ASIDE_VOICES_ON = true brings the male voices back.
+const ASIDE_VOICES_ON = false;
+const CAST = ASIDE_VOICES_ON ? { en: ['f', 'm'], vi: ['f', 'm'], zh: ['m'], hi: ['m'] } : { en: ['f'], vi: ['f'], zh: ['m'], hi: ['m'] };
 const AZ_VOICES = { en: { f: 'en-AU-NatashaNeural', m: 'en-AU-WilliamNeural' }, vi: { f: 'vi-VN-HoaiMyNeural', m: 'vi-VN-NamMinhNeural' }, zh: { m: 'zh-CN-YunxiNeural' }, hi: { m: 'hi-IN-MadhurNeural' } };
 const LOCALE = { en: 'en-AU', vi: 'vi-VN', zh: 'zh-CN', hi: 'hi-IN' };
 // ---------- family photos are family-only (owner, 9 Oct, round R privacy) ----------

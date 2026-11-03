@@ -9,7 +9,7 @@ import {recordFpt,FptVoiceTestError} from './fpt-voice-test.mts';
 import {identity,VOICE,reusable} from './fpt-recorder.mts';
 import {assertHanoiReceipt} from './hanoi-pack-policy.mts';
 import {encodeVoiceDelivery} from './voice-delivery.mts';
-import {VOICE_DELIVERY} from './voice-providers.mts';
+import {VOICE_DELIVERY,ASIDE_VOICES_ON} from './voice-providers.mts';
 const hash=(bytes:string|Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
 const folder='temp/fpt-public-delta',out='voices/fpt-leminh-v1';
 type Receipt={identity:string;sha256:string;bytes:number;duration:number};
@@ -23,6 +23,8 @@ export async function missingFptLines(lines:PublicVoiceLine[],manifest:{lines:Re
  return missing;
 }
 export async function main(){
+ // (owner, 3 Nov 2026 AEDT, v1.08 voices-aside) Lê Minh is put aside: nothing is recorded unless SV_ASIDE_VOICES=1
+ if(!ASIDE_VOICES_ON){console.log(JSON.stringify({provider:VOICE,skipped:'Lê Minh is put aside (voices-aside/README.md); set SV_ASIDE_VOICES=1 to record it'}));return;}
  const file=process.argv[2]||'';const inventory=readReviewedVoiceDelta(file);
  const manifest=JSON.parse(await fs.readFile(out+'/manifest.json','utf8'));
  if(JSON.stringify(manifest.encoding)!==JSON.stringify(VOICE_DELIVERY)||manifest.voice!==VOICE.voice||manifest.model!==VOICE.model)throw Error('Installed pack identity/encoding mismatch');

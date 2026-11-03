@@ -33,6 +33,10 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/work/') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/voices/')
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    # (owner, 3 Nov 2026 AEDT, v1.08 voices-aside) the male voices and Lê Minh are put aside (voices-aside/README.md):
+    # only the female voices are recorded and no FPT call is made, unless the repository variable SV_ASIDE_VOICES is 1
+    env:
+      SV_ASIDE_VOICES: ${{ vars.SV_ASIDE_VOICES || '0' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,13 +59,14 @@ jobs:
         run: |
           node tools/make-voice-pack.mts --engine azure --reviewed-inventory "$INVENTORY" --count
           node tools/record-public-voice-delta.mts "$INVENTORY" --dry-run
-      - name: Record missing Azure female and male speech
+      - name: Record missing Azure speech (female only unless SV_ASIDE_VOICES is 1)
         env:
           INVENTORY: ${{ inputs.inventory }}
           AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
           AZURE_SPEECH_REGION: australiaeast
         run: node tools/make-voice-pack.mts --engine azure --reviewed-inventory "$INVENTORY"
       - name: Record missing FPT Le Minh speech and publish compact verified copies
+        if: vars.SV_ASIDE_VOICES == '1'
         env:
           INVENTORY: ${{ inputs.inventory }}
           FPT_API_KEY: ${{ secrets.FPT_API_KEY }}

@@ -134,10 +134,13 @@ await check('hanoivoice', async () => (await import('../hanoi-voice.mts')).hanoi
 
 await check('voicebackground', async () => {
   // Owner, v1.01: male previews select the actual male file while female remains default.
+  // (owner's decision, 3 Nov 2026 AEDT, v1.08 voices-aside: female voices only; not a weakened check) the male voices are
+  // put aside (voices-aside/README.md): a male preview plays the female recording, the male choice is not shown in
+  // Grown-ups, and a device that had chosen the male voices moves to the female ones.
   // The explicit offline job keeps downloading after Save & close and Settings redraws.
   const {lineHash}=await import('../../js/packhash.js'), requests=[];
   const preview={en:lineHash('en','Hello! Welcome to Sparkle Valley.'),vi:lineHash('vi','Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.')};
-  const P=await open(b,{w:390,h:844,touch:true,lang:'vi',settings:{autoPack:false,voice:false,voiceMale:false,packCell:true},route:async ctx=>{
+  const P=await open(b,{w:390,h:844,touch:true,lang:'vi',settings:{autoPack:false,voice:false,voiceMale:true,voiceViVariant:'leminh',packCell:true},route:async ctx=>{
     await ctx.route('**/voices/manifest-*.json',async rt=>{const r=await rt.fetch(),j=await r.json(),keys=[...new Set([preview[j.language],...Object.keys(j.lines).slice(0,30)])].filter(k=>j.lines[k]);await rt.fulfill({json:{...j,lines:Object.fromEntries(keys.map(k=>[k,j.lines[k]])),langOf:Object.fromEntries(keys.map(k=>[k,j.language])),made:'background-test',signature:'background-'+j.language}})});
     await ctx.route('**/voices/**/*.mp3',async rt=>{requests.push(rt.request().url());await new Promise(r=>setTimeout(r,350));await rt.fulfill({response:await rt.fetch()})});
   }});
@@ -147,11 +150,14 @@ await check('voicebackground', async () => {
     const female=requests.some(u=>u.includes('/vi/f/'+preview.vi+'.mp3'));
     const cut=requests.length;
     await P.page.evaluate(async()=>{await (await import('/js/voice.js')).previewPackVoice('m')});
-    ok(female&&requests.slice(cut).some(u=>u.includes('/vi/m/'+preview.vi+'.mp3')),'female/male preview did not request distinct recordings: '+JSON.stringify(requests.slice(-6)));
-    ok(await P.page.evaluate(async()=>(await import('/js/state.js')).settings.voiceMale===false),'preview silently enabled male downloads');
+    ok(female&&!requests.some(u=>/\/(en|vi)\/m\/|fpt-leminh/.test(u)),'a recording that was put aside was asked for: '+JSON.stringify(requests.slice(-6)));
+    ok(requests.slice(cut).every(u=>!u.includes('/vi/m/')),'the male preview did not play the female recording: '+JSON.stringify(requests.slice(cut)));
+    const moved=await P.page.evaluate(async()=>{const S=(await import('/js/state.js')).settings;return{male:S.voiceMale,vi:S.voiceViVariant,packCell:S.packCell}});
+    ok(moved.male===false&&moved.vi==='standard'&&moved.packCell===true,'a device that had chosen the male voices or Lê Minh did not move to the female voices, or lost another setting: '+JSON.stringify(moved));
     await P.page.evaluate(async()=>(await import('/js/ui.js')).openGrownups());await P.page.waitForSelector('.grownups #gDone');
     await P.page.evaluate(()=>document.querySelectorAll('.grownups details').forEach(d=>d.open=true));
-    await P.page.locator('#gVoiceMale').check();
+    const hidden=await P.page.evaluate(()=>({male:!!document.querySelector('#gVoiceMale'),maleBtn:!!document.querySelector('.grownups [data-pv="m"]'),leminh:!!document.querySelector('#gVietnamesePack, #gHanoiDownload')}));
+    ok(!hidden.male&&!hidden.maleBtn&&!hidden.leminh,'Grown-ups still shows a voice that was put aside: '+JSON.stringify(hidden));
     await P.page.waitForSelector('.grownups #xPackSave');
     await P.page.evaluate(()=>document.querySelectorAll('.grownups details').forEach(d=>d.open=true));
     await P.page.locator('#xPackSave').click();
@@ -165,10 +171,11 @@ await check('voicebackground', async () => {
       await P.page.waitForTimeout(250);
     }
     const result=await P.page.evaluate(async()=>({open:!!document.querySelector('.grownups'),male:(await import('/js/state.js')).settings.voiceMale,auto:(await import('/js/state.js')).settings.autoPack,progress:document.querySelector('.packbar')?.textContent,files:(await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()).size}));
-    ok(!result.open&&result.male&&result.auto&&result.progress&&result.files>before+6,'settings close stopped background download/progress: '+JSON.stringify({before,result}));
+    ok(!result.open&&result.male===false&&result.auto&&result.progress&&result.files>before+6,'settings close stopped background download/progress: '+JSON.stringify({before,result}));
     await P.page.waitForFunction(()=>/✓/.test(document.querySelector('.packbar')?.textContent||''),null,{timeout:60000});
     ok(!P.errors.length,P.errors.join(' | '));
-    return 'real female and male MP3 previews with male opt-in still off; opt-in and explicit offline download continue with shared progress after Save & close';
+    ok(!requests.some(u=>/\/(en|vi)\/m\/|fpt-leminh/.test(u)),'the offline download asked for a recording that was put aside');
+    return 'female voices only (owner, 3 Nov 2026 AEDT): both previews play the female MP3, no male or Lê Minh choice in Grown-ups, a device that had chosen them moved to female with its other settings kept; the explicit offline download continues with shared progress after Save & close';
   }finally{await P.ctx.unrouteAll({behavior:'ignoreErrors'});await P.ctx.close()}
 });
 
