@@ -58,7 +58,7 @@ function style() {
 .en-choices .choice.en-abc b { font: 900 clamp(30px, 8vw, 44px) var(--font, sans-serif); color: #3b2a4f; }
 .en-choices .choice.en-abc { width: clamp(64px, 17vw, 96px); height: clamp(64px, 17vw, 96px); }
 .en-count { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: min(560px, 92vw); }
-.en-count .en-thing { width: 64px; height: 64px; border-radius: 16px; border: 2px solid transparent; background: #fff8e6; padding: 4px; position: relative; }
+.en-count .en-thing { width: var(--en-thing, 64px); height: var(--en-thing, 64px); border-radius: 16px; border: 2px solid transparent; background: #fff8e6; padding: 4px; position: relative; }
 .en-count .en-thing svg.art { width: 100%; height: 100%; }
 .en-count .en-thing.counted { border-color: #43c463; background: #eaffea; }
 .en-count .en-thing i { position: absolute; right: -4px; top: -6px; font: 900 15px var(--font, sans-serif); font-style: normal; background: #43c463; color: #fff; border-radius: 10px; padding: 0 6px; }
@@ -271,6 +271,9 @@ register({ id: 'en_count', learn: true, english: true, icon: 'en:count', name: (
     const t = pick(THINGS), p = t[2];
     if (tapCount) {
       const box = el('div', 'en-count'); board.appendChild(box);
+      // (v1.08 fixes, check gamespace: two flowers filled 40% of a tablet's playing area) one to three things are drawn
+      // bigger, so a few fill the board like the other games' pieces
+      if (n <= 3) box.style.setProperty('--en-thing', [0, 200, 120, 96][n] + 'px');
       const things = Array.from({ length: n }, () => { const b = Object.assign(el('button', 'en-thing', pic(p)), { _v: 0 }) as Btn; b.setAttribute('aria-label', t[0]); box.appendChild(b); return b; });
       tell(api, ['Tap each one and count in English!', 'Chạm vào từng cái và đếm bằng tiếng Anh nhé!']);
       for (let k = 1; k <= n; k++) {

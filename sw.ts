@@ -35,6 +35,11 @@ const FILES = [
   'sounds/animals/cow.mp3', 'sounds/animals/sheep.mp3', 'sounds/animals/pig.mp3', 'sounds/animals/dog.mp3', 'sounds/animals/cat.mp3', // (owner, 17 Oct AEDT: real animal voices)
   'sounds/animals/duck.mp3', 'sounds/animals/hen.mp3', 'sounds/animals/horse.mp3', 'sounds/animals/frog.mp3', 'sounds/animals/owl.mp3',
   'js/notify.js', 'js/content/notify.js', 'js/art/notify.js', // (v1.08 notifications)
+  // (v1.08 fixes) the round's new games, their pictures (js/art/games108.js, loaded after the start) and guides
+  'js/art/companion-hats.js', 'js/art/games108.js', 'js/content/science-places.js', 'js/content/tiengviet2.js',
+  'js/games/maths-kit.js', 'js/games/maths3.js', 'js/games/maths3-meta.js', 'js/games/maths4.js',
+  'js/games/money3.js', 'js/games/money3-meta.js', 'js/games/moneylogic3.js',
+  'js/games/science2.js', 'js/games/science2-meta.js', 'js/games/tiengviet2.js', 'js/games/tiengviet2-meta.js',
   'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'
 ];
 // (Analytics & Infra, 10 Oct, owner: "can't even play offline when there is no internet") the newest copy when the

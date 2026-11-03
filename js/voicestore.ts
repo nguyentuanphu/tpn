@@ -53,8 +53,10 @@ export function createVoiceStore(name: string, { open = n => caches.open(n), bas
   const compact = async () => { const ix = await load(), size = new Map<number, number>(); for (const f of Object.values(ix.files)) size.set(f[0], (size.get(f[0]) || 0) + f[2]);
     const small = [...size].filter(([, b]) => b < SMALL).map(([n]) => n); if (small.length < 8) return;
     const c = await open(name);
-    for (const n of small) { const r = await c.match(abs(bundle(n))); if (!r) continue; const blob = await r.blob();
-      for (const [k, f] of Object.entries(ix.files)) if (f[0] === n) { pending.push({ key: k, data: await blob.slice(f[1], f[1] + f[2]).arrayBuffer(), legacy: null }); pendingBytes += f[2]; }
+    // (v1.08 fixes, check voicearea) the small bundle is read once, whole, and cut here: reading slices of a cached
+    // Blob one after another never finished on Chromium 153, which held the store's queue and stopped the pack download
+    for (const n of small) { const r = await c.match(abs(bundle(n))); if (!r) continue; const all = await r.arrayBuffer();
+      for (const [k, f] of Object.entries(ix.files)) if (f[0] === n) { pending.push({ key: k, data: all.slice(f[1], f[1] + f[2]), legacy: null }); pendingBytes += f[2]; }
       if (pendingBytes >= LIMIT) await flushNow(); }
     await flushNow(); await tidy(); };
   const store = {

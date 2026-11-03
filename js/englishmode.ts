@@ -30,13 +30,14 @@ let styled = false;
 function style() {
   if (styled) return; styled = true;
   document.head.appendChild(el('style', '', `
-.gl-vihint { display: flex; align-items: center; gap: 8px; padding: 0 12px; flex-shrink: 0; position: relative; z-index: 1; min-height: 44px; }
-.gl-vihint .gl-vihear { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 2px solid #3b2a4f; background: #ffe9a8; padding: 4px; display: flex; align-items: center; justify-content: center; }
-.gl-vihint .gl-vihear svg.art { width: 30px; height: 30px; }
-.gl-vihint .gl-vitext { flex: 1; min-width: 0; font: 600 14px/1.25 var(--font, sans-serif); color: #6a4a7a; font-style: italic; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.gl-vihint .gl-vitext:empty::before { content: ''; }
-.gl.little .gl-vihint .gl-vihear { width: 64px; height: 64px; }
-.gl.pic-only .gl-vihint .gl-vitext { visibility: hidden; }
+.gl-vihear { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 2px solid #3b2a4f; background: #ffe9a8; padding: 4px; display: flex; align-items: center; justify-content: center; }
+.gl-vihear svg.art { width: 30px; height: 30px; }
+.gl.little .gl-vihear { width: 64px; height: 64px; }
+.gl.little .gl-vihear svg.art { width: 44px; height: 44px; }
+.gl-vihint { flex-shrink: 0; position: relative; z-index: 1; padding: 4px 12px max(4px, env(safe-area-inset-bottom)); }
+.gl-vihint .gl-vitext { font: 600 14px/1.25 var(--font, sans-serif); color: #6a4a7a; font-style: italic; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-align: center; }
+.gl.little .gl-vihint .gl-vitext { -webkit-line-clamp: 1; }
+.gl-vihint:has(.gl-vitext:empty), .gl.pic-only .gl-vihint { display: none; }
 .gl-enbadge { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; padding: 2px 10px; border-radius: 999px; background: #3b6fe0; color: #fff; font: 800 12px/1.6 var(--font, sans-serif); vertical-align: middle; white-space: nowrap; }
 .gl-enbadge svg.art { width: 18px; height: 18px; }
 .gl-head .gl-enbadge { margin: 0 4px; flex: none; }
@@ -58,9 +59,14 @@ export function enterEnglish(): { leave: () => void; hint: (layer: HTMLElement, 
   let row: HTMLElement | null = null, said = '';
   const hint = (layer: HTMLElement, vi: string) => {
     if (!row) {
-      row = el('div', 'gl-vihint', `<button class="gl-vihear" aria-label="Nghe tiếng Việt">${pic('🔊')}</button><span class="gl-vitext" lang="vi"></span>`);
-      const guide = layer.querySelector('.gl-guide'); if (guide) guide.after(row); else layer.appendChild(row);
-      row.querySelector<HTMLButtonElement>('.gl-vihear').onclick = e => { e.stopPropagation(); if (said) sayIn('vi', said); };
+      // (v1.08 fixes, check gamespace: the top band of the English games was 158 px, owner 30 Oct 2026 AEDT: "the upper
+      // part takes too much space") the hear button sits beside the level and the stars, and the Vietnamese line is a thin
+      // line under the playing area, so the top band is the same as every other game's
+      row = el('div', 'gl-vihint', `<div class="gl-vitext" lang="vi"></div>`);
+      const stage = layer.querySelector('.gl-stage'); if (stage) stage.after(row); else layer.appendChild(row);
+      const hear = el('button', 'gl-vihear', pic('🔊')) as HTMLButtonElement; hear.setAttribute('aria-label', 'Nghe tiếng Việt');
+      const status = layer.querySelector('.gl-status'); if (status) status.prepend(hear); else row.prepend(hear);
+      hear.onclick = e => { e.stopPropagation(); if (said) sayIn('vi', said); };
     }
     said = vi ? swapNames(vi, 'vi') : '';
     row.querySelector('.gl-vitext').textContent = said;
