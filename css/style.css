@@ -3480,3 +3480,9 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .gl-guide:has(> .gl-vihint) > .gl-help.open { max-height: 30vh; overflow: auto; }
 .gl-guide > .gl-vihint .gl-vitext { grid-column: 1; grid-row: 2; -webkit-line-clamp: 1; line-height: 1.25; }
 .gl-guide > .gl-vihint .gl-vihear { grid-column: 2; grid-row: 1 / span 2; }
+/* (v1.08 layout, gamefit) Cờ Cá Ngựa on a phone or a tablet upright: its two grown-up folds (how it works, players and
+   rules) share one row while both are closed, so an under-5's 64 px board, die and moves fit one screen. */
+@media (max-width: 999px) {
+  .horse-race:not(:has(> details[open])) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .horse-race:not(:has(> details[open])) > :not(details) { grid-column: 1 / -1; }
+}
