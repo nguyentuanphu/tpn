@@ -108,9 +108,9 @@ export const testerSite = async (ctx, status) => { const got = []; await ctx.rou
   return rt.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(status()) }); }); return got; };
 export const ACCEPTED = `localStorage.setItem('sv2_tester', JSON.stringify({ at: 1, b: 'r1' }));`;
 // Owner-approved interface contracts: end-to-end screen, privacy and composed-capture regressions.
-export async function ownerSmoke(file, args = []) {
+export async function ownerSmoke(file, args = [], timeout = 600000) {
   const { execFileSync } = await import('node:child_process');
-  try { return execFileSync(process.execPath, [file, ...args], { encoding:'utf8', timeout:600000, maxBuffer:1048576 }).trim().replace(/\s+/g,' '); }
+  try { return execFileSync(process.execPath, [file, ...args], { encoding:'utf8', timeout, maxBuffer:1048576 }).trim().replace(/\s+/g,' '); }
   catch (error) {
     // Preserve assertion/timeout diagnostics from the synthetic owner fixtures; the wrapper's
     // generic 'Command failed' otherwise hides the reason in shard and isolated retries.
