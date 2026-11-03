@@ -35,3 +35,23 @@ Lê Minh (owner in this chat: "Hãy thu âm lê minh luôn đi"; after Release's
 - studio: failed once ("the exe did not save into its folder"), passed on its second try; the message now says why
 - the stopped shard's 20 checks: 18 pass (ownerautoplay2x, chapter2, chapter3, ownerautoplaytransport, ownerautoplaynormal, ownerautoplayplans, ownertalesync, festivalsync, autoplaycover, reportfloating, reportingflow, hanoivoice, ownerroadvoice, ownerexplainswitches, ownerfestplacement, ownerquesttargets, filmmusic, ownerstudiofailures); voicecover passed after the recording; voiceroutes red (Lê Minh, above)
 - `--changed` picks the full suite (.gitignore changed): left for Release, as the round's rules say
+
+## Round 2 (branch fix/v108-suite2 from origin/integrate/v108, 4 Nov 2026 AEDT)
+
+| # | Check | Cause | Fix |
+| --- | --- | --- | --- |
+| 1 | familyuiart | `js/ui-settings.ts` updateHanoiInfo wrote to the Lê Minh status line that voices-aside removed (a device that had chosen Lê Minh); the check still waited for the Lê Minh buttons that hanoivoice now requires to be gone | the status line is written only when it is there; the check asserts the set-aside buttons are gone and the female preview is 44 px |
+| 2 | familyquizprivate | the same error stopped Grown-ups half drawn | fixed by 1 |
+| 3 | familycodejourney | when `js/notify.js` finished loading, Grown-ups drew the whole card again, replacing what a grown-up was tapping or typing | only the notifications part takes the place of its placeholder |
+| 4, 5, 6 | horseplay, folkplay, ownerlearningprogression | the one-screen fit (`js/games/frame.ts`) kept buttons at 44 px for big kids and ignored a game's own 64 px minimum; a button drawn after a fit was never grown back | the fit's floor keeps each button's own minimum width and height, and a shrink-only pass goes back up to the floor |
+| 7 | voicecover | the pizza and fair-share lines were recorded but in no area | areas rebuilt (`--areas-only`); nothing to record |
+| 8 | ownerroadvoice | the check decoded the male cast, now in voices-aside/ | female cast only |
+| 9 | pushnotify | GitHub uses Playwright's headless shell, which cannot show a service worker's notifications (reproduced here with the headless shell; full Chromium passes) | the check runs in full Chromium (harness `launch({ full: true })`, channel chromium) |
+| 10 | solid | a Diwali hunt lamp stood on a decoration spot inside a stall | once the solids are known a hunt lamp without open ground moves to the nearest open ground (`js/festhunt.ts`) |
+| 11 | ownerautoplay2x | at 2x a tap takes about 1.5 s by design and a random maze needs 40 to 78 taps: 519 to 652 s against 600 (mazes unchanged in v1.08) | 15 minutes for the run, 8 minutes per language at 2x (12 at 1x) |
+| 12 | emoji | a picture in this file | removed |
+| - | tugplay (second try) | Pull can be disabled between the check's count and its click | the click waits 1.5 s, then the next turn |
+
+Checks here (one at a time): familyuiart, familyquizprivate, familycodejourney, hanoivoice, horseplay, folkplay, ownerlearningprogression, gamespace, voicecover, ownerroadvoice, pushnotify (full Chromium), solid, ownerautoplay2x (580 s), tugplay, types, emoji, unit, boot, phone, preload: pass. pushnotify with the headless shell: red before the fix, as on GitHub; the fixed check could not run with Playwright 1.56's own Chromium here (not installed), so GitHub decides.
+
+Not fixed here: voicearea's Wi-Fi part is red on this machine only (Chromium 153): Cache Storage operations (`caches.open` in state.ts writeMirror, `cache.match` in voicestore compact) never finish after the core is saved. Green on GitHub. Worth a separate look: a newer Chrome could hold the save copy the same way.
