@@ -10,7 +10,7 @@ Owner, 3 Nov 2026 AEDT: the new characters are nearly finished and will replace 
 The designs:
 - the lumi helper's gallery, `docs/characters-v108/gallery/` (artifact https://claude.ai/artifact/GXNNki8CLp3WZVcfniNUc6);
 - the owner's choices, recorded in `docs/cores/tasks/v108/lumi.md`:
-  - four friends: boys **Finn** and **Sol**, girls **Flora** and **Lumi**;
+  - four friends: boys **Finn** and **Sol**, girls **Clara** and **Lumi**;
   - look 1 (felt hair, medium head, soft face);
   - seven moods each;
   - heights: children 1.6, grown-ups 2.0, grandparents 1.8 (WORLD-011);
@@ -40,13 +40,13 @@ The designs:
 1. **Name**, then **"Bạn là bạn trai hay bạn gái? / Are you a boy or a girl?"**: two big cards.
 2. **Choose your friend.** The two friends of that gender stand side by side, turning slowly, with a name card and one spoken line each:
    - Boys: Finn, "Sky Explorer · Nhà thám hiểm bầu trời", and Sol, "Sun Keeper · Người giữ mặt trời".
-   - Girls: Flora, "Bloom Keeper · Người giữ hoa", and Lumi, "Leaf Sprite · Tiên lá".
+   - Girls: Clara, "Bloom Keeper · Người giữ hoa", and Lumi, "Leaf Sprite · Tiên lá".
 
    The child taps one. The character waves and smiles (the "happy" mood) and says hello in English or Vietnamese.
 3. **Skin tone** (5 tones, owner's answer 2). It is one row under the model, and the model changes colour straight away.
 4. **Age, start screen and difficulty** stay as they are, on the same page.
 5. **The photo** stays for the round picture (picker, HUD, friends list). It is no longer pasted onto the 3D face, because the new faces are drawn with moods and a photo would break them.
-6. The child's name stays the child's name. Finn or Flora is the look, not a new name: "Henry (Finn)" in Grown-ups.
+6. The child's name stays the child's name. Finn or Clara is the look, not a new name: "Henry (Finn)" in Grown-ups.
 
 ### 2. A child who already has a character (Who's playing)
 - The cards in the picker show a picture of the chosen friend in the child's skin tone (a ready-made picture per friend and tone), or the photo if there is one.
@@ -58,7 +58,7 @@ The designs:
 ### 3. Which new character existing players get
 - Gender comes from `look.set`:
   - boys go to **Finn**;
-  - girls go to **Flora**.
+  - girls go to **Clara**.
   - If `set` is missing, it is guessed the same way the shop guesses it today.
 - Their skin tone carries over to the new skin row.
 - **Nothing is lost:**
@@ -83,7 +83,7 @@ Today's tops and bottoms only fit the old body, and the new friends each have th
 | **Back** (wings, cape, backpack, shell) | Kept: one back point. | |
 | **Feet** | Kept as shoes swapped on the model: sneakers, sandals, boots, rain boots, thongs (drawn in the gallery). | |
 | **New: glasses / face** | Sunglasses, round glasses, a star mask. | Drawn in the gallery (Sol). |
-| **New: in the hand** | Finn's compass, Flora's flower staff, Sol's sun crystal, Lumi's star lantern. The child earns each one from their friend's quests; it is not sold. | Gives each friend something to do. |
+| **New: in the hand** | Finn's compass, Clara's flower staff, Sol's sun crystal, Lumi's star lantern. The child earns each one from their friend's quests; it is not sold. | Gives each friend something to do. |
 
 - **Hats, neck items, backs, shoes and glasses fit all four friends.** The boys/girls split stays only for outfits. Anything else of the other set can be bought or given as a gift, as today.
 - **Tops and bottoms already bought** (they cannot be worn on the new body): each one becomes a new outfit of the same colour for the child's friend, free (owner's answer 3), with a note: "Áo cũ đã thành bộ đồ mới / Old clothes became new outfits".
@@ -133,7 +133,7 @@ Today's tops and bottoms only fit the old body, and the new friends each have th
 - Each round goes through the full suite on GitHub and the owner's "yes, deploy".
 
 ## Owner's answers (3 Nov 2026 AEDT, pop-ups)
-1. Existing players: boys to Finn, girls to Flora, with the one-time card to change.
+1. Existing players: boys to Finn, girls to Clara, with the one-time card to change.
 2. Skin tone: yes, 5 tones (the old tone carries over).
 3. Tops and bottoms already bought: **turned into new outfits**. Each old item becomes a new outfit of the same colour for the child's friend, free, instead of coins back.
 4. Villagers and crowds: A, the builder in code reshaped to the new style (light).
