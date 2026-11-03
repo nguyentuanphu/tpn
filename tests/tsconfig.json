@@ -67,6 +67,8 @@
     "../js/content/films/vusua.ts",
     "../js/content/films/weaver.ts",
     "../js/games/parade-engine.ts",
+    "../js/games/fruitparade-core.ts",
+    "../js/games/art-pending.ts",
     "../js/games/arcade-session.ts",
     "../js/games/arcade-board.ts",
     "../js/games/sparkleorchard.ts",
