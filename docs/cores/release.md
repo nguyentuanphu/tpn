@@ -97,6 +97,9 @@ round); the full suite green before a report; times in AEST; no keys or personal
 All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed` after every merge (it always includes `types unit arch rules`).
 
 ## Owner's decisions
+- 3 November 2026 AEDT (chat and pop-ups): the game is too heavy. The male English and Vietnamese voices and the Lê Minh pack (and its working files) are hidden and put aside, not deleted ("Thư mục riêng trong main": `voices-aside/`, not published). Only female voices are offered and shown, as the default. This is done in v1.08 ("Trong v1.08 luôn"). The saving is about 467 MB of the published site. v1.08 helper voices-aside.
+- 3 November 2026 AEDT (chat): in Vietnamese, the Australian slang ("Good day") is read by the Vietnamese voice ("gút dờ ay"). English words inside Vietnamese lines must be spoken in English. v1.08 helper aussie-voice.
+- 3 November 2026 AEDT (chat): a standing rule, now in CLAUDE.md ("One screen, big clear text"): every game and every child screen fits on one screen with no scrolling, on a phone, a tablet and a computer. Answers sit side by side on wide screens. The level and stars sit on the title's row. Text is big, clear and easy to read.
 - 3 November 2026 AEDT (chat, after playing on an Android tablet held sideways; photos in `docs/plans/owner-20261103b/`):
   - Answers below the screen should not happen: everything fits on one screen.
   - Level and stars go on the guide's row.
