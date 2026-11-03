@@ -272,9 +272,11 @@ await check('reportburst', async () => {
     const T = await import('/js/tester.js'), G = { heroes: [], regionOf: [], huds: [], paused: true };
     T.mountTester(G, 'auto');
     const from = performance.now();
-    const reports = Array.from({ length: 12 }, (_, i) => T.autoReport('offscreen', `burst ${i}`, { area: 'test', window: 'fixture', game: '', x: 0, z: 0 }));
+    const reports = Array.from({ length: 12 }, (_, i) => T.autoReport('offscreen', `burst ${'ABCDEFGHIJKL'[i]}`, { area: 'test', window: 'fixture', game: '', x: 0, z: 0 }));
+    // (v1.08 fixes) the details differ by a letter: since #780 #781 (js/content/tester.ts keyOf) numbers alone, like
+    // "freeze 3.1 s" and "freeze 3.6 s", are the same problem, so "burst 0".."burst 11" became one report
     // A duplicate arriving before the picture is ready also shares the original report.
-    reports.push(T.autoReport('offscreen', 'burst 0', { area: 'test', window: 'fixture', game: '', x: 0, z: 0 }));
+    reports.push(T.autoReport('offscreen', 'burst A', { area: 'test', window: 'fixture', game: '', x: 0, z: 0 }));
     const ids = await Promise.all(reports), rows = JSON.parse(localStorage.getItem('sv2_tester_out') || '[]');
     const firstEncodes = encodes;
     await T.autoReport('offscreen', 'later', { area: 'test', window: 'fixture', game: '', x: 0, z: 0 });

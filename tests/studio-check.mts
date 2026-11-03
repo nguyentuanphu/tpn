@@ -380,7 +380,7 @@ export async function studioCheck(browser, open) {
     // (round R privacy) the exe reaches the website with a Studio key made online, never the password
     { const key = (await call('/studio/api/keys/make', { cookie: C, headers: X, body: { label: 'Test PC' } })).j.key; ok((await ex('settings', { studioKey: key })).status === 200, 'the exe did not take the Studio key'); }
     const ei = await ex('info'); ok(ei.j && ei.j.ok && !ei.j.online && ei.j.studio === info.j.studio, 'exe info: ' + JSON.stringify(ei.j));
-    ok((await ex('content', { message: { en: 'From the exe', vi: 'Từ máy' } })).status === 200 && /exe/.test(fs.readFileSync(path.join(game, 'content/custom.json'), 'utf8')), 'the exe did not save into its folder');
+    { const saved = await ex('content', { message: { en: 'From the exe', vi: 'Từ máy' } }); ok(saved.status === 200 && /exe/.test(fs.readFileSync(path.join(game, 'content/custom.json'), 'utf8')), 'the exe did not save into its folder: ' + JSON.stringify(saved).slice(0, 300)); }
     ok(fs.readdirSync(path.join(game, 'content/old')).length === 1, 'the exe kept no backup of the old content');
     { const web = (await call('/studio/api/players', { cookie: C })).j, exeR = (await ex('players')).j; ok(exeR && exeR.today && exeR.today.devices === web.today.devices && web.today.devices >= 3, 'the exe could not show the players: ' + JSON.stringify({ exe: exeR && exeR.today, web: web.today })); }
     ok((await ex('voices/inbox')).j.length === 2, 'the exe could not see the inbox');
