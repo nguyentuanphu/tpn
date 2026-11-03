@@ -42,6 +42,7 @@ def load(name, loc, rot_z=0.0, pose='sit', frame=10, face='smile'):
     act = next((t.strips[0].action for t in rig.animation_data.nla_tracks if t.name == pose), None)
     rig.animation_data.action = act; bpy.context.scene.frame_set(frame)
     bpy.context.view_layer.update()
+    rig.animation_data.action = None   # freeze the pose, so the render does not undo the twist and the head turn
     hip = (rig.matrix_world @ rig.pose.bones['legL'].head)
     rig.rotation_euler = (0, 0, rot_z); rig.location = Vector(loc) - Vector((0, 0, hip.z)) + Vector((0, 0, 0))
     if grip: palms_down(rig)
@@ -55,7 +56,7 @@ def palms_down(rig):
         def down(a):
             pb.rotation_euler = (base.x, base.y + a, base.z); bpy.context.view_layer.update()
             n = (rig.matrix_world @ pb.matrix @ pb.bone.matrix_local.inverted()).to_3x3() @ Vector((-s, 0, 0)); return -n.normalized().z
-        best = max([a / 20 for a in range(-40, 41)], key=down); down(best)
+        best = max([a / 20 for a in range(-40, 41)], key=down); r = down(best); print('TWIST', rig.name, side, best, round(r, 3), flush=True)
 
 def box(name, m, c, size, bevel=.06, seg=3):
     """a soft rounded box"""

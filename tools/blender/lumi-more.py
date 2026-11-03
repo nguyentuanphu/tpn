@@ -361,6 +361,7 @@ def wear():
             for o in [o for o in bpy.data.collections['hair'].objects if o.type == 'MESH' and o.name.split('.')[0] in ('hairLeaf', 'hairClump', 'hairLobe', 'hairCurl', 'hairLock', 'hairPuff', 'sprout', 'sproutStem', 'hairStar', 'starLeaf', 'sproutLeaf')]:
                 c = o.matrix_world @ (sum((Vector(b) for b in o.bound_box), Vector()) / 8)
                 if c.z > HC.z + .45 * R: bpy.data.objects.remove(o)
+    if WEAR.get('hat'): settle_hat()
     if 'scarf' in WEAR: group('scarf', lambda: scarf(('#' + WEAR['scarf']) if len(WEAR['scarf']) == 6 else None))
     names = [n for n in WEAR if n not in ('shoes', 'hat', 'scarf')] + [n for n in (V['extra'] if V else ()) if n not in ('basket', 'cane', 'apron')]
     for n in names:
@@ -405,3 +406,29 @@ def soften(voxel=None):
             bpy.ops.object.modifier_apply(modifier='melt'); bpy.ops.object.modifier_apply(modifier='soft')
         for p in o.data.polygons: p.use_smooth = True
         subsurf(o, 1)
+
+def settle_hat(gap=None):
+    """rest the hat on the hair (owner, 3 Nov: "nón không đội sát đầu"): move it down or up until it just touches the hair and head below it"""
+    from mathutils.bvhtree import BVHTree
+    gap = .01 * R if gap is None else gap
+    dg = bpy.context.evaluated_depsgraph_get(); vs, fs = [], []
+    under = [o for o in bpy.data.collections['hair'].objects if o.type == 'MESH'] + [o for o in bpy.data.objects if o.type == 'MESH' and o.name.split('.')[0] in ('head', 'ear')]
+    for o in under:
+        me = o.evaluated_get(dg).to_mesh(); off = len(vs); mw = o.matrix_world
+        vs += [mw @ v.co for v in me.vertices]; fs += [[off + i for i in p.vertices] for p in me.polygons]; o.evaluated_get(dg).to_mesh_clear()
+    if not fs: return
+    bvh = BVHTree.FromPolygons(vs, fs); hats = [o for o in bpy.data.collections['hat'].objects if o.type == 'MESH' and not o.name.startswith(('hatBand', 'nonLaStrap', 'helmetStrap', 'helmetPeak', 'capPeak', 'capStar', 'capButton', 'pompom'))]
+    top = HC.z + R * 4; need = None
+    for o in hats:
+        me = o.evaluated_get(dg).to_mesh(); mw = o.matrix_world
+        flat = o.name.split('.')[0] in ('helmet', 'capDome', 'beanie'); zmin = min((mw @ v.co).z for v in me.vertices)
+        for v in list(me.vertices)[::3]:
+            p = mw @ v.co
+            if flat and p.z < zmin + .01 * R: continue   # the flat underside of a dome is not what rests on the head
+            if (Vector((p.x, p.y)) - Vector((HC.x, HC.y))).length > R * 1.25: continue   # the brim beyond the head: free
+            hit = bvh.ray_cast(Vector((p.x, p.y, top)), Vector((0, 0, -1)))[0]
+            if hit is not None:
+                d = hit.z + gap - p.z; need = d if need is None else max(need, d)
+        o.evaluated_get(dg).to_mesh_clear()
+    if need is None: return
+    for o in bpy.data.collections['hat'].objects: o.location.z += need
