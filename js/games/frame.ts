@@ -126,8 +126,10 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       // small game too, at most 1.4x
       const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : 1.4;
       // a shrink keeps every button a finger size: 44 px, 64 px for under-5s (it stops there, at FIT_MIN at most)
-      const need = little ? 64 : 44, sizes = [...stage.querySelectorAll('button, [role=button], .choice')].map(e => e.getBoundingClientRect()).filter(r => r.width > 2 && r.height > 2).map(r => Math.min(r.width, r.height) / z);
-      const least = sizes.length ? Math.min(...sizes) : 0, floor = least ? Math.max(FIT_MIN, Math.min(1, need / least)) : FIT_MIN;
+      // (v1.08 fixes 2, checks horseplay, folkplay, ownerlearningprogression) each button keeps its own minimum too: a game
+      // that asks 64 px for everyone (Cờ Cá Ngựa, the folk games) was shrunk to 44 px for a big kid
+      const need = little ? 64 : 44, wants = [...(stage.querySelectorAll('button, [role=button], .choice') as NodeListOf<HTMLElement>)].map(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e), w = r.width / z, h = r.height / z; return w > 2 && h > 2 ? Math.max(need / Math.min(w, h), (parseFloat(cs.minWidth) || 0) / w, (parseFloat(cs.minHeight) || 0) / h) : 0; }).filter(Boolean);
+      const floor = wants.length ? Math.max(FIT_MIN, Math.min(1, Math.max(...wants))) : FIT_MIN;
       let next = room >= 1 ? Math.min(grow, Math.max(1, room * .9)) : Math.max(floor, room * .98);
       // (v1.08 fixes 2, checks horseplay, folkplay) a button drawn after the last fit (Roll the die, Pull) may now be under a
       // finger at this zoom: go back up to the floor then, even on a shrink-only pass
