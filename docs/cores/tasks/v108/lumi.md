@@ -1,3 +1,5 @@
+**ready for Release** (3 Nov 2026, 17:20 AEDT): Blender renders only, nothing in the game changes. Gallery: `docs/characters-v108/gallery/index.html` (artifact https://claude.ai/artifact/GXNNki8CLp3WZVcfniNUc6).
+
 # v1.08 helper: lumi (status)
 
 Branch: `work/v108-lumi-refine` (from `origin/release/v1.08`). Brief: `lumi-brief.md`. Plan part A: Blender renders only, nothing in the game changes.
@@ -24,6 +26,8 @@ Branch: `work/v108-lumi-refine` (from `origin/release/v1.08`). Brief: `lumi-brie
 - 3 Nov 2026 AEDT (chat): "Làm thêm 1 bạn nam để đủ 2 cặp nam nữ ... phụ kiện ... dân làng sẽ nhìn như thế nào?": Sol added (boys Finn and Sol, girls Flora and Lumi), a wardrobe, villagers.
 - 3 Nov 2026 AEDT (chat): "I am ok with new heights" (children 1.6, grown-ups 2.0, grandparents 1.8, rule WORLD-011); more accessories, boy and girl differences, villagers that look Vietnamese and Australian in everyday clothes, cuter friends. The heights in the game are a game change for Release.
 - 3 Nov 2026 AEDT (chat and pop-ups): the shoulders looked stiff, "như 2 cái cây"; pop-ups chose a one-piece sculpted body, big soft sculpted locks for hair, and face A (a small oval). The owner then said the hair, face and body still looked wrong, and from three whole looks side by side chose: "số 1 vẫn đẹp nhất nhưng với medium head and soft face" (look 1, felt hair like the first Lumi, with a medium head and a soft face). This is now the default (`look=felt`); `look=now` and `look=toy` stay in the script.
+- 3 Nov 2026 AEDT (chat): fixes to the shoulders (out sideways, then down), a clear crotch, skirts fitted to the hips, the belly, neck and bottom in proportion, real hands, hats resting on the hair, faces visible on the vehicles, palms down on the handlebars.
+- 3 Nov 2026 AEDT (chat): "just keep walking with the detailed final batch ... tell Release it's my decision" (Release told), then "Không cần làm phim nữa, cho tôi full render của mỗi nhân vật rồi cho vào artifacts": no walk/wave/cheer films; full renders of every character in an artifact page.
 
 ## Progress
 
@@ -39,3 +43,11 @@ Branch: `work/v108-lumi-refine` (from `origin/release/v1.08`). Brief: `lumi-brie
   - fail, not this branch: emoji, an emoji in `docs/plans/v108-owner-batch-20261103.md` (Release's plan file). Left for Release.
 - `finn.py` still builds with the extended `svkit.py`.
 - The renders were looked at (front, three-quarter, side, back, three faces). These are pictures, not game screens, so the phone, tablet and computer check does not apply.
+
+## Final (3 Nov 2026, 17:20 AEDT)
+
+- Gallery page (artifact and repo copy `docs/characters-v108/gallery/`, 83 pictures): the four friends (4 sides, 7 moods each; smile in the views), 8 Vietnamese and 6 Australian neighbours (full and close-up), 8 wardrobe outfits, motorbike, bicycle and city bus. Built by `tools/blender/gallery.py`.
+- Scripts: `tools/blender/lumi.py`, `lumi-more.py`, `lumi-hair.py`, `lumi-sculpt.py`, `lumi-rig.py`, `vehicles.py`, `svkit.py` (helpers added; `finn.py` still builds).
+- Not in the repo: the four `.glb` game files (about 42 MB each, too big for git). The script makes them again: `blender -b -P tools/blender/lumi.py -- <dir> <who> game glb`. They need a lighter version for phones before the game can use them.
+- No films (the owner stopped them).
+- Checks: nothing in the game changed. Quick checks run earlier on this branch (see Checks); the full suite is left for Release, as Release asked.
