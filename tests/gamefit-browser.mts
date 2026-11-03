@@ -21,7 +21,8 @@ export async function gameFitCheck(browser:Browser){
  const sizes=SIZES.filter(s=>!pick.length||pick.includes(s.name));
  await fs.mkdir('out/gamefit',{recursive:true});
  const bad:string[]=[],rows:unknown[]=[];let count=0;
- for(const size of sizes){
+ // (one size per window, three windows at a time, so every game at every size fits in the check's time)
+ const oneSize=async(size:typeof SIZES[number])=>{
   const P=await open(browser,{w:size.w,h:size.h,touch:size.touch,lang:'vi',settings:{voice:false,sound:false,autoPack:false,online:false,countPlayers:false}});
   try{await clear(P.page);await noWelcome(P.page);
    // the catalogue, and the reading corner's games (Studio's readingTrial: on with no setting, registered by js/games/readingmenu.ts)
@@ -32,7 +33,7 @@ export async function gameFitCheck(browser:Browser){
     if(!await P.page.locator('.gl .gl-stage').waitFor({timeout:10000}).then(()=>true,()=>false)){bad.push(`${id} (${size.name}) did not open`);continue;}
     // wait for the game to set up its first round and for the stage to settle its size (it fits again when a round
     // adds its answers)
-    await P.page.waitForTimeout(1100);
+    await P.page.waitForTimeout(800);
     for(let k=0,last='';k<12;k++){const z=await P.page.evaluate(()=>{const st=document.querySelector('.gl-stage') as HTMLElement|null;return st?st.style.zoom+'|'+st.scrollHeight+'|'+st.innerHTML.length:'';});if(z===last)break;last=z;await P.page.waitForTimeout(400);}
     const r=await P.page.evaluate((TEXT_MIN)=>{
      const gl=document.querySelector('.gl') as HTMLElement,st=gl.querySelector('.gl-stage') as HTMLElement,W=innerWidth,H=innerHeight;
@@ -63,9 +64,10 @@ export async function gameFitCheck(browser:Browser){
     if(why.length){bad.push(`${id} (${size.name} ${size.w}x${size.h}) ${why.join('; ')}`);if(process.env.SV_FIT_LOG)console.log('gamefit:',bad[bad.length-1]);await P.page.screenshot({path:`out/gamefit/${id}-${size.name}.png`});}
     await P.page.evaluate(()=>(document.querySelector('.gl-x') as HTMLElement).click());await P.page.locator('.gl').first().waitFor({state:'detached',timeout:15000}).catch(()=>{});
    }
-   assert.deepEqual(P.errors,[]);
+   if(P.errors.length)bad.push(`${size.name}: page errors ${P.errors.join(' | ')}`);
   }finally{await P.ctx.close();}
- }
+ };
+ const queue=[...sizes];await Promise.all([0,1,2].map(async()=>{while(queue.length)await oneSize(queue.shift()!);}));
  await fs.writeFile('out/gamefit/rows.json',JSON.stringify(rows,null,1));
  assert.deepEqual(bad,[],'games that do not fit one screen');
  return `${count} games at ${sizes.map(s=>`${s.name} ${s.w}x${s.h}`).join(', ')}: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape, game text at least ${TEXT_MIN}px`;
