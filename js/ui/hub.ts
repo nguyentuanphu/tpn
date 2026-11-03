@@ -11,7 +11,7 @@ import { GAMES } from '../games/frame.js';
 import { openHowTo } from '../howto.js';
 import { SONG_GROUPS, SONG_LIST, familySongs } from '../content/songs.js';
 import { originFlags } from '../icons.js';
-import { pic } from '../art.js';
+import { pic, moreArt, moreArtReady } from '../art.js';
 import { modal, dialog } from '../popups.js';
 import { festCalendarHTML } from './festivals-ui.js';
 import { markEnglish, englishBadge } from '../englishmode.js'; // (v1.08 english)
@@ -51,6 +51,7 @@ export function nextGameAfter(id) {
 const HUB_COLORS = ['#ff7eb8', '#ffb52e', '#5fd39a', '#3cc7e8', '#9a6bff', '#ff8a5a'];
 const openGamesHubProperties: { last?: string; scroll?: number; unfolded: Set<string>; soon?: string } = { unfolded: new Set() };
 export const openGamesHub = Object.assign(function (game, i, onClose) {
+  if (!moreArtReady()) { void moreArt().then(() => openGamesHub(game, i, onClose), () => openGamesHub(game, i, onClose)); return; } // (v1.08) the new games' pictures first
   const p = game.heroes[i].profile;
   const m = modal('hub', ''), card = m.querySelector('.card');
   const close = () => { m.close(); onClose && onClose(); };

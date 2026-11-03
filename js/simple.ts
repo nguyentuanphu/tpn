@@ -23,7 +23,7 @@ import { T, both } from './i18n.js';
 import { el, esc } from './util.js';
 import { SFX } from './audio.js';
 import { say } from './voice.js';
-import { pic } from './art.js';
+import { pic, moreArt, moreArtReady } from './art.js';
 import { saveProfiles, reduceMotion } from './state.js';
 import { GAMES, gameOpen } from './games/frame.js';
 import { holdButton, openGrownups, openFestivals } from './ui.js';
@@ -344,6 +344,7 @@ export function createSimple(G) {
   }
   function show(t = '') {
     if (!solo() || !hero()) return;
+    if (!moreArtReady()) void moreArt().then(() => { if (m) show(); }); // (v1.08) drawn again once the new games' pictures are in
     if (t && t !== tab) { tab = t; cat = null; kept = { top: 0, left: 0 }; }
     if (!m) {
       m = el('div', 'simple-screen');

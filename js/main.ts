@@ -1092,6 +1092,7 @@ import('./state.js').then(S => { if (S.restoredFromCopy) setTimeout(() => toast(
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (playing) keepSpot(); save(); hush(); } });
 addEventListener('pagehide', () => { if (playing) keepSpot(); saveProfiles(true); });
 bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
+setTimeout(() => { void import('./art.js').then(a => a.moreArt()); }, 1500); // (v1.08) the new games' pictures, after the start
 // (owner, 30 Oct 2026 AEDT: "load where the child is first, then the rest while in game") what only decorates the valley
 // and nobody bumps into (reeds, flowers along the roads, the floating place names) is made just after the child can
 // start, a step at a time between frames, on the ground's final shape

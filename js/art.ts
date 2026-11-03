@@ -14,13 +14,11 @@ import './art/r90-audits.js';
 import './art/learning.js';
 // (v1.08 companion) the companion hats after the crown and the "All hats!" picture
 import './art/companion-hats.js';
-// (v1.08 science) the twelve new science experiments
-import './art/science2.js';
-import './art/english.js'; // (v1.08 english)
-import './art/tiengviet2.js'; // (v1.08 vietnamese)
 export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';
 import './art/notify.js'; // (v1.08 notifications) the bell and the Home Screen phone
-// (v1.08 maths) the 21 new maths games' pictures
-import './art/maths3.js';
-// (v1.08 money) the eleven new money games' pictures and the market stall (js/art/money3.ts)
-import './art/money3.js';
+// (v1.08, PERF-001: the start-up download was 1091 KB against its 1071) the pictures of the v1.08 games (science,
+// English, Tiếng Việt, maths and money: about 50 KB) are not part of the start: they load just after it (js/main.ts),
+// and the games list and the Simple screen wait for them (js/ui/hub.ts, js/simple.ts)
+let morePics: Promise<unknown> | null = null, morePicsIn = false;
+export const moreArt = () => morePics || (morePics = import('./art/games108.js').then(() => { morePicsIn = true; }));
+export const moreArtReady = () => morePicsIn;
