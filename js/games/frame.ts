@@ -108,7 +108,7 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     const cleanups = [];
     // (owner, 30 Oct 2026 AEDT: "grow to fill" on tablets and computers) a game drawn small in the middle of a big screen
     // grows to fill it: the stage zooms so its pieces take the room (at most 2.4x). Drawing games (a canvas) keep their
-    // size so a finger lands where it draws; phones keep today's layout.
+    // size so a finger lands where it draws.
     // (v1.08 layout, owner 3 Nov 2026 AEDT: "the answers sit below the bottom of the screen") it also shrinks a game that
     // is taller or wider than the playing area, on every screen, so the question, the play picture and every answer fit
     // one screen with no scrolling (at most down to FIT_MIN, and never making a button smaller than a finger)
@@ -122,8 +122,9 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       // the room inside the stage's padding, at zoom 1
       const cs = getComputedStyle(stage), padX = (parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)) * z, padY = (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) * z;
       const room = Math.min((box.width - padX) / w, (box.height - padY) / h);
-      // phones keep today's size unless the game does not fit; tablets and computers grow to fill (at most 2.4x)
-      const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : 1;
+      // tablets and computers grow to fill (at most 2.4x); (v1.08 layout, owner: "text big and clear") a phone grows a
+      // small game too, at most 1.4x
+      const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : 1.4;
       // a shrink keeps every button a finger size: 44 px, 64 px for under-5s (it stops there, at FIT_MIN at most)
       const need = little ? 64 : 44, sizes = [...stage.querySelectorAll('button, [role=button], .choice')].map(e => e.getBoundingClientRect()).filter(r => r.width > 2 && r.height > 2).map(r => Math.min(r.width, r.height) / z);
       const least = sizes.length ? Math.min(...sizes) : 0, floor = least ? Math.max(FIT_MIN, Math.min(1, need / least)) : FIT_MIN;
@@ -174,15 +175,15 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     stage.addEventListener('pointerdown', startPlay, { capture: true, once: true });
     // once playing, only a new round (the stage's own pieces replaced) may shrink it; a change inside the game (a move
     // button, a cheer) only raises small text, so the board never moves under a finger (horsestability)
-    let floorTimer: ReturnType<typeof setTimeout> | undefined;
+    // (small text is raised at once, before the new pieces are drawn, so nothing grows a moment after it appears)
     const fitWatch = new MutationObserver(list => {
+      floorText();
       if (!playing || list.some(m => m.target === stage)) fitSoon(playing);
-      else if (!floorTimer) floorTimer = setTimeout(() => { floorTimer = undefined; floorText(); }, 120);
     });
     fitWatch.observe(stage, { childList: true, subtree: true });
     const fitResize = () => fitSoon(false);
     addEventListener('resize', fitResize); setTimeout(() => { floorText(); fit(); if (floorText()) fitSoon(true); }, 400);
-    cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitResize); clearTimeout(fitTimer); clearTimeout(floorTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
+    cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitResize); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
     let closed = false, winning = false;
     const prevMusic = Music.key; Music.play(GAME_MUSIC[id] || 'think');
     const lvNotes = new Map<string, string>();
