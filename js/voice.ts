@@ -6,7 +6,7 @@ import { ac, unlockers } from './audio.js';
 import { swapNames, T } from './i18n.js';
 import { packHash, lineHash, partText } from './packhash.js';
 import { events, managementEvidence } from './core/events.js';
-import { viRuns, mixed } from './viwords.js';
+import { viRuns, mixed, enRuns, enMixed } from './viwords.js';
 import { mixedVoiceFragments } from './voice-fragments.js';
 import { CUSTOM } from './custom.js';
 
@@ -116,6 +116,10 @@ function deviceSpeak(text, lang, my, localVoice:SpeechSynthesisVoice|null=null) 
   // English line are said by the phone's Vietnamese voice when it has one
   chunks = chunks.map(c => [lang, c]);
   if (!localVoice && lang === 'en' && mixed(text) && voicesFor('vi').length) chunks = chunks.flatMap(([, c]) => viRuns(c)).filter(([, c]) => /[\p{L}\d]/u.test(c));
+  // (v1.08 aussie-voice, owner 3 Nov 2026 AEDT: "G'day" read by the Vietnamese voice came out as "gút dờ ay") the other way
+  // round: the English words of a Vietnamese line (js/viwords.ts enRuns) are said by the phone's English voice. The whole
+  // line is cut, not each sentence, so a quoted "No worries, mate!" stays in one piece.
+  else if (!localVoice && lang === 'vi' && enMixed(text) && voicesFor('en').length) chunks = enRuns(text).flatMap(([l, c]) => l === 'vi' ? (c.match(/[^.!?。…]+[.!?。…]*\s*/g) || [c]).map(p => [l, p]) : [[l, c]]).filter(([, c]) => /[\p{L}\d]/u.test(c));
   return new Promise<void>(res => {
     let left = chunks.length, ended = false, failed = false;
     const end = (outcome='success') => { if (!ended) { ended = true; observed({outcome:my!==seq?'cancelled':outcome}); res(); } };

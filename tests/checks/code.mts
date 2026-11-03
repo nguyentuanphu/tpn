@@ -63,6 +63,58 @@ await check('viwords', async () => {
   return `${cases.length} lines cut right; the phone says the Vietnamese words with its Vietnamese voice; recorded lines use both voices (Cô Tam ${(mp3 / 1024).toFixed(0)} KB)`;
 });
 
+await check('enwords', async () => {
+  // (v1.08 aussie-voice, owner 3 Nov 2026 AEDT: "G'day" read by the Vietnamese voice came out as "gút dờ ay") the English
+  // slang inside Vietnamese lines is cut out and said by the English (en-AU) voice: by the recorded pack and the phone voice
+  const { enRuns, enMixed, mixedSsml } = await import('../../js/viwords.js'), { AUSSIE_SLANG } = await import('../../js/words.js');
+  const { lineHash, packHash } = await import('../../js/packhash.js'), { collectLines } = await import('../../tools/voice-lines.mts');
+  const show = t => enRuns(t).map(([l, x]) => l === 'en' ? '[' + x + ']' : x).join('');
+  const cases = [['"G\'day" nghĩa là gì?', '"[G\'day]" nghĩa là gì?'],
+    ["Ở Úc người ta nói G'day thay cho xin chào, và arvo nghĩa là buổi chiều!", "Ở Úc người ta nói [G'day] thay cho xin chào, và [arvo] nghĩa là buổi chiều!"],
+    ['"No worries, mate!" nghĩa là không sao đâu bạn ơi.', '"[No worries, mate!]" nghĩa là không sao đâu bạn ơi.'],
+    ['"Brekkie" là bữa sáng. Ai ăn bánh mì Vegemite không?', '"[Brekkie]" là bữa sáng. Ai ăn bánh mì [Vegemite] không?'],
+    ['"Kindy" nghĩa là trường mẫu giáo. Ví dụ: My little sister goes to kindy.', '"[Kindy]" nghĩa là trường mẫu giáo. Ví dụ: [My little sister goes to kindy.]'],
+    // Vietnamese that looks like English stays Vietnamese: "ta", a quoted word without marks, Chinese and Hindi words
+    ['Chúng ta đi chơi nhé. Ta ơi!', 'Chúng ta đi chơi nhé. Ta ơi!'], ['Gọi là "Ba" nhé, khi nghe tiếng "ập".', 'Gọi là "Ba" nhé, khi nghe tiếng "ập".'],
+    ['Tiếng Trung "xin chào" là "nǐ hǎo". Tiếng Hindi "cảm ơn" là "dhanyavaad".', 'Tiếng Trung "xin chào" là "nǐ hǎo". Tiếng Hindi "cảm ơn" là "dhanyavaad".'],
+    ['Xin chào! Con có khỏe không?', 'Xin chào! Con có khỏe không?']];
+  for (const [t, want] of cases) ok(show(t) === want, `cut: ${show(t)} (wanted ${want})`);
+  // every slang word the game teaches, in the Two Homes Words question and answer (js/games/folk2.ts)
+  for (const s of AUSSIE_SLANG) for (const t of [`"${s[0]}" nghĩa là gì?`, `Đúng rồi! "${s[0]}" nghĩa là ${s[2]}.`]) ok(enRuns(t).some(([l, x]) => l === 'en' && x === s[0]), `slang not in English: ${show(t)}`);
+  // the recording: the English pieces in the English voice of the same woman or man
+  const ssml = mixedSsml(enRuns('"G\'day" nghĩa là gì?'), 'en-AU-NatashaNeural', 'vi-VN-HoaiMyNeural', '', 'vi');
+  ok(/xml:lang="vi-VN"/.test(ssml) && /<voice name="en-AU-NatashaNeural">[^]*G&apos;day/.test(ssml) && /<voice name="vi-VN-HoaiMyNeural">[^]*nghĩa là gì/.test(ssml), 'SSML: ' + ssml);
+  // every Vietnamese line the game speaks with English words has its two-voice recording (woman and man)
+  const man = JSON.parse(fs.readFileSync('../voices/manifest.json', 'utf8'));
+  let extra = []; try { extra = JSON.parse(fs.readFileSync('../tools/voice-extra.json', 'utf8')); } catch (e) { }
+  // (js/i18n.js expects a browser, as in tools/make-voice-pack.mts)
+  const g = globalThis as any; if (!g.document) Object.assign(g, { document: { documentElement: {} }, localStorage: { getItem: () => null, setItem: () => { } } });
+  const { swapNames } = await import('../../js/i18n.js');
+  const lines = [...new Set([...collectLines().map(l => swapNames(l.vi, 'vi')), ...extra.filter(l => l && l.lang === 'vi').map(l => String(l.text))])].filter(enMixed);
+  const missing = lines.filter(t => !/^(fm|mf)$/.test(String(man.lines[lineHash('vi', t)] || '')) || !fs.existsSync(`../voices/vi/f/${lineHash('vi', t)}.mp3`));
+  ok(lines.length >= 150 && lines.every(t => lineHash('vi', t) !== packHash('vi', t)), `only ${lines.length} Vietnamese lines with English words`);
+  ok(!missing.length, `${missing.length} not recorded with the English voice: ${missing.slice(0, 5).join(' | ')}`);
+  // the phone's own voices: the English pieces by its English voice, the rest by its Vietnamese voice
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const line = '"No worries, mate!" nghĩa là không sao đâu bạn ơi.';
+  const r = await P.page.evaluate(async line => {
+    const said = [], fake = [{ name: 'Karen', lang: 'en-AU', localService: true }, { name: 'Linh', lang: 'vi-VN', localService: true }];
+    window.SpeechSynthesisUtterance = class { constructor(t) { this.text = t; } };
+    speechSynthesis.getVoices = () => fake; speechSynthesis.speak = u => { said.push([u.lang, u.text]); setTimeout(() => u.onend && u.onend(), 5); };
+    speechSynthesis.dispatchEvent(new Event('voiceschanged'));
+    const V = await import('/js/voice.js'), H = await import('/js/packhash.js');
+    await V.sayDevice('vi', line);
+    const said2 = said.splice(0); await V.sayDevice('vi', "Ở Úc người ta nói G'day thay cho xin chào!");
+    const pack = V.voicePack(), h = H.lineHash('vi', line);
+    return { said: said2, said3: said, rec: pack && pack.lines[h], url: V.packUrl('vi', line, 'f'), h };
+  }, line);
+  ok(JSON.stringify(r.said) === JSON.stringify([['en-AU', 'No worries, mate!'], ['vi-VN', '" nghĩa là không sao đâu bạn ơi.']]), 'phone voice: ' + JSON.stringify(r.said));
+  ok(JSON.stringify(r.said3) === JSON.stringify([['vi-VN', 'Ở Úc người ta nói'], ['en-AU', "G'day"], ['vi-VN', 'thay cho xin chào!']]), 'phone voice: ' + JSON.stringify(r.said3));
+  ok((r.rec === 'fm' || r.rec === 'mf') && r.url.endsWith(r.h + '.mp3'), `the game does not play the two-voice recording (${r.rec}, ${r.url})`);
+  ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
+  return `${cases.length} lines and ${AUSSIE_SLANG.length} slang words cut right; ${lines.length} Vietnamese lines with English words recorded with the English voice for those words; the phone says them with its English voice`;
+});
+
 // No phone emoji anywhere (owner, round R): every emoji on screen is the game's own drawing (js/emojiswap.js), on the
 // page (menus, Grown-ups, games, speech boxes) and on canvases (signs, name tags, the mini-map)
 await check('noemoji', async () => {

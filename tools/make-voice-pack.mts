@@ -41,7 +41,7 @@ Object.assign(globalThis, { document: { documentElement: {} }, localStorage: { g
 const { swapNames } = await import('../js/i18n.js');
 const { LEARN } = await import('../js/words2.js');
 const { packHash, lineHash } = await import('../js/packhash.js');
-const { viRuns, mixed, mixedSsml } = await import('../js/viwords.js');
+const { viRuns, mixed, mixedSsml, enRuns, enMixed } = await import('../js/viwords.js');
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = <D = undefined,>(k: string, d?: D): string | D => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d; };
@@ -168,7 +168,8 @@ const reviewed=reviewedFile?readReviewedVoiceDelta(reviewedFile):null;
 if(reviewed&&flag('force'))throw Error('A reviewed delta cannot force replacement of existing recordings');
 const reviewedIds=reviewed?new Set(reviewed.lines.map(l=>l.lang+':'+l.id)):null;
 for(const line of reviewed?.lines||[])if(!list.some(([id,j])=>id===line.id&&j.lang===line.lang&&j.text===line.text))throw Error('Reviewed line missing from Azure inventory: '+line.id);
-const missing = files.filter(([s, h, j]) => (!reviewedIds||reviewedIds.has(j.lang+':'+h))&&!fs.existsSync(path.join(PACK_DIR, j.lang, s, h + '.mp3')));
+// (v1.08 aussie-voice) --vi-en: only the Vietnamese lines with English words (js/viwords.ts enRuns), recorded with both voices
+const missing = files.filter(([s, h, j]) => (!reviewedIds||reviewedIds.has(j.lang+':'+h))&&(!flag('vi-en')||j.lang==='vi'&&enMixed(j.text))&&!fs.existsSync(path.join(PACK_DIR, j.lang, s, h + '.mp3')));
 const need = missing.reduce((a, [, , j]) => a + j.text.length, 0);
 console.log('The voice pack, by language:');
 for (const L of Object.keys(CAST)) {
@@ -318,8 +319,9 @@ async function azure() {
   const one = async ([slot, h, j]) => {
     const wait = next - Date.now(); next = Math.max(next, Date.now()) + gap; if (wait > 0) await new Promise(r => setTimeout(r, wait));
     const v = voices[j.lang][slot].id;
-    // (round R) Vietnamese names and dishes inside an English line are said by the Vietnamese voice of the same man or woman
-    const ssml = readingSsml(j, v) || (j.lang === 'en' && mixed(j.text) ? mixedSsml(viRuns(j.text), v, voices.vi[slot].id) : `<speak version='1.0' xml:lang='${LOCALE[j.lang]}'><voice name='${v}'>${sounds(xml(j.text), j.lang)}</voice></speak>`); // (Play reading trial: readingSsml)
+    // (round R) Vietnamese names and dishes inside an English line are said by the Vietnamese voice of the same man or woman;
+    // (v1.08 aussie-voice) and the English slang inside a Vietnamese line by the English (en-AU) voice of the same man or woman
+    const ssml = readingSsml(j, v) || (j.lang === 'en' && mixed(j.text) ? mixedSsml(viRuns(j.text), v, voices.vi[slot].id) : j.lang === 'vi' && enMixed(j.text) ? mixedSsml(enRuns(j.text), voices.en[slot].id, v, '', 'vi') : `<speak version='1.0' xml:lang='${LOCALE[j.lang]}'><voice name='${v}'>${sounds(xml(j.text), j.lang)}</voice></speak>`); // (Play reading trial: readingSsml)
     for (let attempt = 0; ; attempt++) {
       let r;
       // a dropped connection (socket closed, timeout) is tried again, like a busy server, instead of stopping the run
@@ -339,8 +341,9 @@ async function azure() {
   await Promise.all(Array.from({ length: Math.max(1, +arg('parallel', 3)) }, async () => { while (work.length) {const next=work.shift();if(next)await one([next[0],next[1],next[2]]);} }));
   // the old all-English recordings of those lines are not needed once both of their new ones are made
   let gone = 0;
-  for (const [h, j] of list) if (j.lang === 'en' && h !== packHash('en', j.text) && CAST.en.every(sl => fs.existsSync(path.join(PACK_DIR, 'en', sl, h + '.mp3'))))
-    for (const sl of CAST.en) { const f = path.join(PACK_DIR, 'en', sl, packHash('en', j.text) + '.mp3'); if (fs.existsSync(f)) { fs.unlinkSync(f); gone++; } }
+  // (v1.08 aussie-voice) and the old all-Vietnamese recordings of Vietnamese lines with English words
+  for (const [h, j] of list) if ((j.lang === 'en' || j.lang === 'vi') && h !== packHash(j.lang, j.text) && CAST[j.lang].every(sl => fs.existsSync(path.join(PACK_DIR, j.lang, sl, h + '.mp3'))))
+    for (const sl of CAST[j.lang]) { const f = path.join(PACK_DIR, j.lang, sl, packHash(j.lang, j.text) + '.mp3'); if (fs.existsSync(f)) { fs.unlinkSync(f); gone++; } }
   save(); writeAreas(man);
   console.log(`Finished: ${done} new files (${used} characters)${gone ? `, ${gone} old all-English files of mixed lines removed` : ''}. The pack is in voices/ — include that folder when you publish the game (./build-netlify.sh does).`);
 }

@@ -339,10 +339,12 @@ function createStudio({ store, conf, online = false, local = {}, family = null }
     // (round R) an English line with Vietnamese words: those words in the Vietnamese voice of the same man or woman, with the
     // pauses at each switch set by hand (the same as js/viwords.js mixedSsml, which the page has already cut the line with)
     const vv = (conf.voices && conf.voices.vi && conf.voices.vi[slot]) || AZ_VOICES.vi[slot];
+    // (v1.08 aussie-voice) and a Vietnamese line with English slang (js/viwords.js enRuns): those words in the English voice
+    const ev = (conf.voices && conf.voices.en && conf.voices.en[slot]) || AZ_VOICES.en[slot];
     const ok = Array.isArray(runs) && runs.length > 1 && runs.every(r => Array.isArray(r) && (r[0] === 'en' || r[0] === 'vi') && typeof r[1] === 'string') && runs.map(r => r[1]).join('') === text;
-    const ssml = lang === 'en' && ok ? `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts' xml:lang='en-AU'>` + runs.filter((r, i) => /[\p{L}\d]/u.test(r[1]) || i === runs.length - 1).map(([l, s], i, a) => {
+    const ssml = (lang === 'en' || lang === 'vi') && ok ? `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts' xml:lang='${LOCALE[lang]}'>` + runs.filter((r, i) => /[\p{L}\d]/u.test(r[1]) || i === runs.length - 1).map(([l, s], i, a) => {
       const end = s.trimEnd(), tail = i === a.length - 1 ? '' : /[.!?…]["”')]?$/.test(end) ? '350ms' : /[,;:]$/.test(end) ? '180ms' : '40ms';
-      return `<voice name='${l === 'vi' ? vv : v}'>${i ? `<mstts:silence type='Leading-exact' value='0ms'/>` : ''}${tail ? `<mstts:silence type='Tailing-exact' value='${tail}'/>` : ''}${xml(s)}</voice>`; }).join('') + '</speak>'
+      return `<voice name='${l === lang ? v : l === 'vi' ? vv : ev}'>${i ? `<mstts:silence type='Leading-exact' value='0ms'/>` : ''}${tail ? `<mstts:silence type='Tailing-exact' value='${tail}'/>` : ''}${xml(s)}</voice>`; }).join('') + '</speak>'
       : `<speak version='1.0' xml:lang='${LOCALE[lang]}'><voice name='${v}'>${xml(text)}</voice></speak>`;
     for (let a = 0; ; a++) {
       const r = await fetch(`https://${conf.azureRegion}.tts.speech.microsoft.com/cognitiveservices/v1`, { method: 'POST', headers: { 'Ocp-Apim-Subscription-Key': conf.azureKey, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-32kbitrate-mono-mp3', 'User-Agent': 'sparkle-studio' }, body: ssml });

@@ -51,11 +51,61 @@ export const mixed = text => viRuns(text).some(([l]) => l === 'vi');
 // pauses at the switches are set by hand: none before a piece, a breath after a comma, a full stop's pause after a sentence.
 // runs: viRuns(text), or the same list sent by Sparkle Studio's page; prosody: e.g. 'rate="-3%" pitch="+0%"'.
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]));
-export function mixedSsml(runs, enVoice, viVoice, prosody = '') {
+// (v1.08 aussie-voice) base 'vi': a Vietnamese line with English words (enRuns), the same switches the other way round
+export function mixedSsml(runs, enVoice, viVoice, prosody = '', base = 'en') {
   runs = runs.filter((r, i) => /[\p{L}\d]/u.test(r[1]) || i === runs.length - 1);
   const body = runs.map(([l, s], i) => {
     const end = s.trimEnd(), tail = i === runs.length - 1 ? '' : /[.!?…]["”')]?$/.test(end) ? '350ms' : /[,;:]$/.test(end) ? '180ms' : '40ms';
     return `<voice name="${l === 'vi' ? viVoice : enVoice}">${i ? '<mstts:silence type="Leading-exact" value="0ms"/>' : ''}${tail ? `<mstts:silence type="Tailing-exact" value="${tail}"/>` : ''}${prosody ? `<prosody ${prosody}>${esc(s)}</prosody>` : esc(s)}</voice>`;
   }).join('');
-  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="en-AU">${body}</speak>`;
+  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="${base === 'vi' ? 'vi-VN' : 'en-AU'}">${body}</speak>`;
 }
+
+// ---------- (v1.08 aussie-voice) English words inside a Vietnamese line ----------
+// The owner, 3 Nov 2026 AEDT: the Aussie slang taught in Vietnamese ("G'day", "arvo", "brekkie") was read by the
+// Vietnamese voice, so "G'day" came out as "gút dờ ay". enRuns() is the opposite of viRuns(): it cuts a Vietnamese line
+// into pieces, [['vi', '"'], ['en', "G'day"], ['vi', '" nghĩa là gì?']], so the English words are said by the English
+// (en-AU) voice and the rest stays Vietnamese. Used by the game (device voices), the pack maker and Sparkle Studio.
+//   · a quoted piece ("…" or “…”) with no Vietnamese letters and a word that cannot be a Vietnamese syllable is English
+//     (that is how the text marks English exactly: an example sentence is written in quotes);
+//   · the Aussie slang the game teaches (js/words.ts AUSSIE_SLANG) and a few English words the lines use are English
+//     anywhere in the line, unless the word could also be Vietnamese ("Ta", "Roo"): those only count inside quotes.
+import { AUSSIE_SLANG } from './words.js';
+// one Vietnamese syllable written without marks: an initial consonant, one to three vowels, a final consonant
+const VI_SYLLABLE = /^(?:ngh|ng|nh|ch|gh|gi|kh|ph|qu|th|tr|[bcdđghklmnprstvx])?[aeiouy]{1,3}(?:ch|ng|nh|[cmnpt])?$/i;
+const viShaped = (w: string) => { const c = w.replace(/[^\p{L}\d]/gu, ''); return !c || /^\d+$/.test(c) || MARK.test(c) || VI_SYLLABLE.test(c); };
+// English said inside Vietnamese lines that is not slang: a greeting, the names of Aussie games, counting
+export const EN_IN_VI_EXTRA = ['Hello', 'Snap', 'Noughts and Crosses', 'One, two, three', 'No worries', 'Good on ya', 'Vegemite', 'Tim Tam'];
+// the slang words, and their example sentences, which the villagers say after "Ví dụ:" (js/regions.ts, js/chat-player.ts)
+const slang = () => AUSSIE_SLANG.flatMap(s => [String(s[0]).replace(/[!?.]+$/, ''), String(s[4])]);
+let LEX: RegExp | null = null;
+const lexicon = () => LEX || (LEX = (() => {
+  const words = [...new Set([...slang(), ...EN_IN_VI_EXTRA])].filter(w => w.split(/\s+/).length > 1 || !viShaped(w)).sort((a, b) => b.length - a.length);
+  const pat = words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/['’]/g, "['’]").replace(/,?\s+/g, ',?\\s+')).join('|');
+  return new RegExp(`(?<![\\p{L}\\d'’])(?:${pat})(?![\\p{L}\\d'’])`, 'giu');
+})());
+const QUOTED = /(["“])([^"“”\n]+?)(["”])/g;
+// quoted words of other languages the kiosks teach (Chinese pinyin with its tone marks, Hindi) are not English
+const NOT_EN = /[ǎǐǒǔǖǘǚǜāēīōū]|\b(dhanyavaad|namaste)\b/i;
+// a quoted slang word that could also be Vietnamese ("Ta", "Roo") is English too
+const quotedSlang = (s: string) => slang().some(w => w.toLowerCase() === s.trim().replace(/[!?.]+$/, '').toLowerCase());
+const englishQuote = (s: string) => quotedSlang(s) || !MARK.test(s) && !NOT_EN.test(s) && s.split(/[\s,.!?;:…()\-–—]+/).some(w => /^\p{L}[\p{L}'’]+$/u.test(w) && !viShaped(w));
+/** A Vietnamese line cut into Vietnamese and English pieces (one ['vi', text] when it has no English). */
+export function enRuns(text): Array<['vi' | 'en', string]> {
+  text = String(text);
+  const en = new Array(text.length).fill(false), mark = (a: number, b: number) => { for (let i = a; i < b; i++) en[i] = true; };
+  QUOTED.lastIndex = 0; let m;
+  while ((m = QUOTED.exec(text))) if (englishQuote(m[2])) mark(m.index + 1, m.index + 1 + m[2].length);
+  const lex = lexicon(); lex.lastIndex = 0;
+  while ((m = lex.exec(text))) mark(m.index, m.index + m[0].length);
+  if (!en.includes(true)) return [['vi', text]];
+  // punctuation and spaces at the edges of an English piece go with the Vietnamese voice, except "!" and "?" that end it
+  for (let i = 0; i < text.length; i++) if (en[i] && (i === 0 || !en[i - 1])) { let j = i; while (j < text.length && en[j]) j++;
+    let a = i; while (a < j && /[\s"“”,;:(]/.test(text[a])) en[a++] = false;
+    let z = j; while (z > a && /[\s"“”,;:)]/.test(text[z - 1])) en[--z] = false; i = j; }
+  const out: Array<['vi' | 'en', string]> = [];
+  for (let i = 0; i < text.length; i++) { const l = en[i] ? 'en' : 'vi', last = out[out.length - 1]; if (last && last[0] === l) last[1] += text[i]; else out.push([l, text[i]]); }
+  return out.filter(([, s]) => s);
+}
+/** true when a Vietnamese line has English words for the English voice */
+export const enMixed = text => enRuns(text).some(([l]) => l === 'en');
