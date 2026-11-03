@@ -6,7 +6,7 @@ import { register } from './frame.js';
 import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el } from '../util.js';
-import { play, lv, rounds, wrongs, mix, pick, range, near, othersFrom, svgBox, shapeSVG, shapeName, COLOURS, OUT, type Round } from './maths-kit.js';
+import { play, lv, rounds, wrongs, mix, pick, range, near, othersFrom, svgBox, shapeSVG, shapeName, COLOURS, OUT, distinct, type Round } from './maths-kit.js';
 
 const FRUIT = ['🍎', '🍌', '🍊', '🍓', '🍇', '🍐'];
 // dots laid out in rows of five inside a circle at cx, cy
@@ -20,7 +20,7 @@ register({
     // (levels) the biggest whole, and whether dots help: Easy 5 with dots, Medium 10 with dots, Hard 10, Talent 20
     const L = lv(api, { max: 5, dots: true }, { max: 10, dots: true }, { max: 10, dots: false }, { max: 20, dots: false });
     api.stage.dataset.lv = `${L.max},${L.dots ? 1 : 0}`;
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const w = pick(Math.min(3, L.max), L.max), a = pick(1, w - 1), b = w - a;
       return {
         ask: () => api.say(`${w} is made of ${a} and how many more?`, `${w} gồm ${a} và mấy?`),
@@ -45,7 +45,7 @@ register({
     // (levels) Easy up to 5, Medium 10, Hard 15 with the number sentence, Talent 20 with only the number sentence
     const L = lv(api, { max: 5, pics: true, sum: false }, { max: 10, pics: true, sum: false }, { max: 15, pics: true, sum: true }, { max: 20, pics: false, sum: true });
     api.stage.dataset.lv = `${L.max},${L.pics ? 1 : 0}`;
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const n = pick(Math.min(3, L.max), L.max), k = pick(1, n - 1), f = FRUIT[pick(0, FRUIT.length - 1)];
       return {
         ask: () => api.say(`There are ${n}. ${k} go away. How many are left?`, `Có ${n}. Bớt đi ${k}. Còn lại mấy?`),
@@ -67,7 +67,7 @@ register({
     // (levels) the steps: Easy 2s from 0, Medium 2s and 5s, Hard 5s and 10s, Talent 3s, 4s and 10s from anywhere
     const L = lv(api, { steps: [2], from0: true, len: 5 }, { steps: [2, 5], from0: true, len: 5 }, { steps: [5, 10], from0: false, len: 6 }, { steps: [3, 4, 10], from0: false, len: 6 });
     api.stage.dataset.lv = L.steps.join(',');
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const step = L.steps[pick(0, L.steps.length - 1)], start = L.from0 ? 0 : step * pick(1, 4) + (step === 10 ? pick(0, 9) : 0);
       const seq = range(0, L.len - 1).map(i => start + i * step), gap = api.little ? L.len - 1 : pick(1, L.len - 1), x = seq[gap];
       return {
@@ -93,7 +93,7 @@ register({
     const L = lv(api, ['AB'], ['AB', 'AAB', 'ABB'], ['ABC', 'AABB', 'AAB'], ['ABCD', 'ABAC', 'AABC']);
     api.stage.dataset.lv = L.join(',');
     const unit = (i: number, size = 40) => shapeSVG(UNITS[i][0], UNITS[i][1], size);
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const pat = L[pick(0, L.length - 1)], use = mix(range(0, UNITS.length - 1)).slice(0, 4), seq = range(0, pat.length * 2 + pick(0, pat.length - 1)).map(i => use[pat.charCodeAt(i % pat.length) - 65]);
       const next = seq.pop(), choices = [...new Set([next, ...use.slice(0, 3), ...mix(range(0, UNITS.length - 1))])];
       return {
@@ -119,7 +119,7 @@ register({
     const L = lv(api, { kinds: ['circle', 'square', 'triangle'], cells: 6 }, { kinds: ['circle', 'square', 'triangle', 'rectangle'], cells: 8 },
       { kinds: ['circle', 'square', 'triangle', 'rectangle', 'star', 'heart', 'oval'], cells: 10 }, { kinds: Object.keys(HUNT), cells: 12 });
     api.stage.dataset.lv = `${L.kinds.length},${L.cells}`;
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const kind = L.kinds[pick(0, L.kinds.length - 1)], n = pick(2, 3), rest = L.kinds.filter(k => k !== kind);
       const cells = mix([...Array(n).fill(kind), ...Array.from({ length: L.cells - n }, () => rest[pick(0, rest.length - 1)])]);
       return {
@@ -146,7 +146,7 @@ register({
     const C = ['', '#3b6fe0', '#ff7eb8'], S = 26;
     const half = (code: string, cols: number, rows: number, line: 'l' | 'r' | '') => { let s = ''; for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const v = +code[r * cols + c]; s += `<rect x="${c * S + 2}" y="${r * S + 2}" width="${S}" height="${S}" fill="${v ? C[v] : '#fff'}" stroke="${OUT}" stroke-width="2"/>`; } return `<svg class="mx-art" viewBox="0 0 ${cols * S + 4} ${rows * S + 4}" width="${cols * S * .9 + 4}" height="${rows * S * .9 + 4}" aria-hidden="true">${s}${line ? `<path d="M${line === 'l' ? 2 : cols * S + 2} 0v${rows * S + 4}" stroke="#e8433a" stroke-width="3" stroke-dasharray="4 3"/>` : ''}</svg>`; };
     const mirror = (code: string) => { let s = ''; for (let r = 0; r < L.rows; r++) s += [...code.slice(r * L.cols, (r + 1) * L.cols)].reverse().join(''); return s; };
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       let left = '', right = '';
       for (let t = 0; t < 40 && (!left || mirror(left) === left || !/[1-2]/.test(left) || /^[1-2]+$/.test(left)); t++) left = range(1, L.rows * L.cols).map(() => String(Math.random() < .5 ? 0 : pick(1, L.cols2))).join('');
       right = mirror(left);
@@ -192,7 +192,7 @@ register({
     api.stage.dataset.lv = `${L.two ? 3 : 2},${L.boxes ? 1 : 0},${L.asks.length}`;
     const BOX = ['#e8433a', '#3b6fe0', '#43c463', '#ffd23f'];
     const boxSVG = (c: string) => `<svg class="mx-art" viewBox="0 0 48 48" width="44" height="44" aria-hidden="true"><path d="M8 18l16-8 16 8v20l-16 8-16-8z" fill="${c}" stroke="${OUT}" stroke-width="2.6" stroke-linejoin="round"/><path d="M8 18l16 8 16-8M24 26v20" stroke="${OUT}" stroke-width="2.2" fill="none"/></svg>`;
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const ask = L.asks[pick(0, L.asks.length - 1)];
       if (!L.two) {
         let [a, b] = mix(THINGS).slice(0, 2); while (a[1] === b[1]) b = THINGS[pick(0, THINGS.length - 1)];
@@ -222,7 +222,7 @@ register({
     // (levels) Easy: a full and an empty glass; Medium: three, with a half; Hard: four, the most or the least; Talent: five, any question
     const L = lv(api, { n: 2, asks: ['full', 'empty'] }, { n: 3, asks: ['full', 'empty', 'half'] }, { n: 4, asks: ['most', 'least', 'half'] }, { n: 5, asks: ['most', 'least', 'half', 'full', 'empty'] });
     api.stage.dataset.lv = `${L.n},${L.asks.length}`;
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const ask = L.asks[pick(0, L.asks.length - 1)];
       // every glass a different level; the right one is the full, empty or half one, or the most or least water
       const target = ({ full: 1, empty: 0, half: .5 })[ask];
@@ -262,7 +262,7 @@ register({
     const L = lv(api, { mode: 'halves', fr: ['1/2'] }, { mode: 'find', fr: ['1/2', '1/3', '1/4'] }, { mode: 'find', fr: ['1/2', '1/3', '1/4', '2/3', '3/4'] }, { mode: 'name', fr: ['1/2', '1/3', '1/4', '2/3', '3/4', '3/8', '5/6', '2/4'] });
     api.stage.dataset.lv = `${L.mode},${L.fr.length}`;
     const pz = (f: string, size?: number) => { const [k, n] = f.split('/').map(Number); return pizza(n, k, true, size); };
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       if (L.mode === 'halves') return { ask: ['Which pizza is cut into two equal halves?', 'Bánh nào được cắt thành hai nửa bằng nhau?'], key: 'halves', answer: 'eq', others: ['un', 'whole'].slice(0, wrongs(api)),
         label: v => v === 'eq' ? pizza(2, 2) : v === 'un' ? pizza(2, 2, false) : pizza(1, 1), draw: stage => { stage.appendChild(el('div', 'mx-note', pic('🍕') + ' ' + T('Two friends share fairly.', 'Hai bạn chia đều nhau.'))); } };
       const f = L.fr[pick(0, L.fr.length - 1)];
@@ -283,7 +283,7 @@ register({
     // Talent: four, how many more in the tallest column than in the shortest
     const L = lv(api, { cols: 2, asks: ['most'], max: 5 }, { cols: 3, asks: ['most', 'fewest'], max: 6 }, { cols: 4, asks: ['count', 'most'], max: 7 }, { cols: 4, asks: ['diff', 'count'], max: 8 });
     api.stage.dataset.lv = `${L.cols},${L.max},${L.asks.join('+')}`;
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const fruit = GRAPH_FRUIT.slice(0, L.cols), counts = mix(range(1, L.max)).slice(0, L.cols), ask = L.asks[pick(0, L.asks.length - 1)];
       const hi = counts.indexOf(Math.max(...counts)), lo = counts.indexOf(Math.min(...counts)), which = pick(0, L.cols - 1);
       const graph = (stage: HTMLElement, tap: boolean) => {
@@ -317,7 +317,7 @@ register({
     const L = lv(api, { asks: ['tomorrow'] }, { asks: ['tomorrow', 'yesterday'] }, { asks: ['week', 'tomorrow', 'yesterday'] }, { asks: ['twoweeks', 'week', 'nextmonth', 'lastmonth'] });
     api.stage.dataset.lv = L.asks.join('+');
     const cellCss = 'min-width:44px;min-height:52px;border:2px solid #3b2a4f;border-radius:10px;background:#fff;font:800 15px var(--font,sans-serif);color:#3b2a4f;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 2px';
-    const list: Round[] = Array.from({ length: rounds(api) }, () => {
+    const list: Round[] = distinct(rounds(api), () => {
       const ask = L.asks[pick(0, L.asks.length - 1)];
       if (ask === 'tomorrow' || ask === 'yesterday') {
         const today = pick(1, 5), want = ask === 'tomorrow' ? today + 1 : today - 1;

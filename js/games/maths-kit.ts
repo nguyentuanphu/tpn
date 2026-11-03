@@ -61,6 +61,24 @@ export const lv = <V,>(api, e: V, m: V, h: V, t: V): V => { const v = api.little
 /** how many rounds, and how many wrong answers sit beside the right one */
 export const rounds = api => lv(api, 4, 5, 6, 7), wrongs = api => lv(api, 2, 2, 3, 3);
 
+// (v1.08 variety, owner 3 Nov 2026 AEDT: "the rounds are all the same") what a round shows: its answer, its wrong answers
+// and its picture, drawn once off screen (ids and inline styles taken out), so two rounds that look the same are seen
+const lookOf = (q: Round) => {
+  const box = el('div'); let pic = '';
+  try { q.draw(box); pic = box.innerHTML.replace(/\s(id|style)="[^"]*"/g, ''); } catch { pic = String(Math.random()); }
+  return `${q.answer ?? ''}|${[...(q.others || [])].sort().join(',')}|${Array.isArray(q.ask) ? q.ask.join('/') : ''}|${pic}`;
+};
+/** n rounds from make(i), none looking like another in the same game (make is asked again, up to 40 times, for a fresh one) */
+export function distinct(n: number, make: (i: number) => Round): Round[] {
+  const out: Round[] = [], seen = new Set<string>();
+  for (let i = 0; i < n; i++) {
+    let q = make(i), k = lookOf(q);
+    for (let t = 0; t < 40 && seen.has(k); t++) { q = make(i); k = lookOf(q); }
+    seen.add(k); out.push(q);
+  }
+  return out;
+}
+
 /** play a list of rounds: intro and end are [en, vi] said as they are */
 export async function play(api, list: Round[], intro: [string, string], end: [string, string]) {
   style();
@@ -70,6 +88,7 @@ export async function play(api, list: Round[], intro: [string, string], end: [st
   const stage = el('div', 'mx-stage'); wrap.appendChild(stage);
   const controls = el('div', 'mx-controls'); wrap.appendChild(controls);
   await wait(1100);
+  let lastAt = -1;
   for (let k = 0; k < list.length; k++) {
     if (api.closed) return;
     const q = list[k];
@@ -88,7 +107,11 @@ export async function play(api, list: Round[], intro: [string, string], end: [st
       }
       api.plan(() => null);
     } else {
-      const btns = mix([q.answer, ...q.others]).map(v => { const b = el('button', 'mx-btn' + (q.label ? ' pic' : ''), q.label ? q.label(v) : v); b.dataset.v = v; controls.appendChild(b); return b; });
+      // (v1.08 variety) the right answer moves: never in the same place as in the round before
+      let order = mix([q.answer, ...q.others]);
+      for (let t = 0; t < 8 && order.length > 1 && order.indexOf(q.answer) === lastAt; t++) order = mix(order);
+      lastAt = order.indexOf(q.answer);
+      const btns = order.map(v => { const b = el('button', 'mx-btn' + (q.label ? ' pic' : ''), q.label ? q.label(v) : v); b.dataset.v = v; controls.appendChild(b); return b; });
       const target = btns.find(b => b.dataset.v === q.answer);
       api.plan(() => target, { maxActions: 5 });
       let missed = false;

@@ -22,12 +22,14 @@ const JOBS = Math.max(1, Number(opt('--jobs', 3)) || 3), CHANGED = flag('--chang
 const SOLO = ['perf', 'startup', 'battery'];
 // (13 Oct trial: 3 at once overloaded the machine when these ran side by side) the heavy checks share one lane, one after
 // another; the everyday checks share the other lanes
-const HEAVY = ['ownerdesk', 'ownerstudioperms', 'ownerstudiofolds', 'ownerround', 'ownerfamily', 'ownercapture', 'films', 'testerrewards', 'reading', 'facetoface', 'phone', 'chapter2', 'chapter3', 'studio', 'voicearea', 'solid', 'nametags', 'migrate', 'testerreport', 'camera', 'spill', 'games'];
+const HEAVY = ['ownerdesk', 'ownerstudioperms', 'ownerstudiofolds', 'ownerround', 'ownerfamily', 'ownercapture', 'films', 'testerrewards', 'reading', 'facetoface', 'phone', 'chapter2', 'chapter3', 'studio', 'voicearea', 'solid', 'nametags', 'migrate', 'testerreport', 'camera', 'spill', 'games', 'roundvariety'];
 // the slowest checks and the files that are theirs: in full when one of these changed, a sample otherwise
 const SLOW_OWN = {
   reading: [/^js\/games\/reading/, /^js\/content\/reading/],
   films: [/^js\/film\.js$/, /^js\/content\/[a-z0-9]*films?\.js$/, /^js\/tales\.js$/, /^js\/howto\.js$/, /^js\/talesdata\.js$/],
   voicearea: [/^js\/voice[a-z]*\.js$/, /^voices\//, /^tools\/make-voice-pack/],
+  // (v1.08 variety) the round makers of the games
+  roundvariety: [/^js\/games\//, /^tests\/round-variety/],
 };
 // a change to the look (css) is checked by the checks that measure what is on screen
 const LAYOUT = ['phone', 'contract', 'hscroll', 'chips', 'a11y', 'iphone', 'simple', 'adventure', 'facetoface', 'two-players', 'questbar', 'bagitems', 'friendstab', 'shop', 'mictest'];
