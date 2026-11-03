@@ -83,3 +83,17 @@ The owner, 3 Nov: "I am ok with new heights, thiết kế thêm nhiều phụ ki
     - `au-boy`: red hair and freckles, a bucket hat, a rash vest, board shorts, thongs.
     - `au-girl`: curly black pigtails, the light blue school dress, a navy broad-brimmed school hat, black school shoes, a backpack, a bracelet.
 - Pictures: `try7-villagers-vn.png`, `try7-villagers-au.png`, `try7-friends.png`, `try7-wardrobe.png`, each friend's `try7-<who>-*.png` and `-walk/wave/cheer.gif`, and `<who>-game.glb`.
+
+## Try 8: the chosen look (v1.08, 3 Nov 2026 AEDT)
+
+The owner, 3 Nov: the shoulders looked stiff ("như 2 cái cây gắn vào"), the hair flat and wrong, the face and body odd. Pop-ups: a one-piece sculpted body; hair in big soft locks; face A (small oval). After three whole looks side by side (`try8-looks-choice.png`) the owner chose: "số 1 vẫn đẹp nhất nhưng với medium head and soft face", then "OK, render finals".
+
+- **The chosen look** (`look=felt`, the default for the game size): felt hair like the first Lumi (Lumi's leaves, Finn's navy locks, Flora's waves and braids, Sol's curls), a medium head (radius 0.255 for children, 0.24 for grown-ups), a soft round face, and the one-piece body.
+- **One-piece body** (`tools/blender/lumi-sculpt.py`): the skin is made of metaballs that melt into each other, so the arms grow out of rounded shoulders the way the legs grow out of the hips, with thigh, knee and calf shapes; then it is smoothed. Fitted clothes (shirt, sleeves, trousers, shorts, tights) are the body surface lifted a little, so they hug the body; loose clothes (áo bà ba, áo dài panels, skirts, coat, cape, bib) sit on top. A slim chest and tummy so the head and body look in proportion.
+- **Hair for villagers** (`tools/blender/lumi-hair.py`): sculpted locks over a hairline base, flowing from a parting, with gravity, or to a bun, a ponytail or pigtails: Vietnamese neat side parts, long straight hair, low buns, straight bangs with pigtails; Australian tousled short hair, a ponytail, curls, afro puffs. Hair under a hat is trimmed so nothing pokes through; a bun sits low at the nape.
+- **Figures**: girls and women a little narrower at the shoulders and fuller at the hips, boys and men a little broader; the arms hang a little away from the body.
+- **Moods**: eight face sets: smile, blink, happy, curious, surprised, sad, shy (looking down, rosy cheeks) and excited (star sparkles in the eyes).
+- **Moves**: `walk` with hips that turn and sway and shoulders that turn against them, `idle`, `wave`, `cheer`, and new `sit`, `ride` and `passenger` poses.
+- **Vehicles** (`tools/blender/vehicles.py`): a Vietnamese motorbike (a dad in his helmet riding, his daughter behind), a bicycle (the Australian boy), and a city bus with the four friends and neighbours sitting at the open windows.
+- Pictures: `try8-<who>-front/three-quarter/side/back.png`, `try8-<who>-face-<mood>.png`, films `try8-<who>-walk/wave/cheer.gif`, `try8-friends.png`, `try8-villagers.png`, `try8-wardrobe.png`, `try8-vehicle-motorbike/bicycle/bus.png`; game files `<who>-game.glb`.
+- Still to do (later rounds, Release): load the `.glb` in the game and build people at the rule's heights there; a lighter version for phones; hand poses for the moods; more vehicles (cyclo, tram, train).
