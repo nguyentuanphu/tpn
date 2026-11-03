@@ -94,6 +94,27 @@ def make_hand(s):
     tb = palm + front * rA * .8 + d * rA * .05; tt = tb + d * rA * .65 + front * rA * .35 + n * rA * .3
     tube('handS', SKIN, [tb, tb.lerp(tt, .5) + front * rA * .08, tt], [rA * .3, rA * .25, rA * .2], 12); sphere('handS', SKIN, tt, (rA * .2,) * 3, 10, 5)
 
+def make_grip(s):
+    """a closed hand for holding a handlebar (owner, 3 Nov): the four fingers curl round a bar that runs along `front`, the thumb wraps over"""
+    sh, el, wr = arm_points(s); rA = B['rA']
+    d = (wr - el).normalized(); n = Vector((-s, 0, 0)); n = (n - n.project(d)).normalized(); front = d.cross(n).normalized()
+    if front.y > 0: front = -front
+    palm = wr + d * rA * 1.0
+    o = sphere('handG', SKIN, palm, (1, 1, 1), 24, 12)
+    M = Matrix((front * rA * 1.05, d * rA * 1.0, n * rA * .55)).transposed()
+    for v in o.data.vertices: v.co = palm + M @ (v.co - palm)
+    rb = rA * .42; axis_c = palm + d * rA * .85 + n * (rA * .25 + rb)   # the bar's centre, inside the curl
+    for k, t in enumerate((-.66, -.22, .22, .64)):
+        k0 = palm + d * rA * .8 + front * t * rA * .8 + n * rA * .1
+        pts = [k0]
+        for a in (.6, 1.3, 2.0, 2.7, 3.3):   # round the bar: forward, over and back under
+            c = axis_c + front * t * rA * .8
+            pts.append(c + (d * math.cos(a - .3) - n * math.sin(a - .3) * -1) * 0 + (-n * math.cos(a) + d * math.sin(a)) * (rb + rA * .2))
+        tube('handG', SKIN, pts, [rA * .23] * 3 + [rA * .21, rA * .19, rA * .17], 12); sphere('handG', SKIN, pts[-1], (rA * .17,) * 3, 10, 5)
+    tb = palm + front * rA * .85 + n * rA * .35
+    tt = axis_c + front * rA * .55 + d * (rb + rA * .2)
+    tube('handG', SKIN, [tb, tb.lerp(tt, .5) + n * rA * .2, tt], [rA * .3, rA * .25, rA * .2], 12); sphere('handG', SKIN, tt, (rA * .2,) * 3, 10, 5)
+
 def layer(sk, keep, m, off, name):
     """a fitted garment: the body surface where keep(point) is true, lifted by off and given a little thickness"""
     bm = bmesh.new(); bm.from_mesh(sk.data); bm.normal_update()
@@ -134,6 +155,12 @@ def sculpt():
         for o in set(bpy.data.objects) - before:
             for c in list(o.users_collection): c.objects.unlink(o)
             col.objects.link(o)
+    gcol = bpy.data.collections.new('hands-grip'); scene.collection.children.link(gcol); gcol.hide_render = True   # shown only when riding
+    for s_ in (-1, 1):
+        before = set(bpy.data.objects); make_grip(s_)
+        for o in set(bpy.data.objects) - before:
+            for c in list(o.users_collection): c.objects.unlink(o)
+            gcol.objects.link(o)
     for c in list(sk.users_collection): c.objects.unlink(sk)
     col.objects.link(sk); subsurf(sk, 1)
     def arm_of(p):

@@ -34,12 +34,28 @@ def load(name, loc, rot_z=0.0, pose='sit', frame=10, face='smile'):
                 if m.type == 'SUBSURF': m.levels = 0; m.render_levels = 0 if CROWD else min(m.render_levels, 1)
     for c in [c for c in dst.collections if c and c.name.startswith('face-') and not c.name.startswith('face-' + face)]:   # faces not shown: drop them
         for o in list(c.all_objects): bpy.data.objects.remove(o)
+    grip = pose == 'ride'   # riders hold the handlebars with closed hands, palms down
+    for c in dst.collections:
+        if c and c.name.startswith('hands-grip'): c.hide_render = not grip
+        for o in (c.all_objects if c else []):
+            if grip and o.name.startswith('handS'): o.hide_render = True
     act = next((t.strips[0].action for t in rig.animation_data.nla_tracks if t.name == pose), None)
     rig.animation_data.action = act; bpy.context.scene.frame_set(frame)
     bpy.context.view_layer.update()
     hip = (rig.matrix_world @ rig.pose.bones['legL'].head)
     rig.rotation_euler = (0, 0, rot_z); rig.location = Vector(loc) - Vector((0, 0, hip.z)) + Vector((0, 0, 0))
+    if grip: palms_down(rig)
     RIGS.append(rig); return rig
+
+def palms_down(rig):
+    """twist each forearm so the palm faces down onto the handlebar"""
+    bpy.context.view_layer.update()
+    for side, s in (('L', 1), ('R', -1)):
+        pb = rig.pose.bones['elbow' + side]; pb.rotation_mode = 'YXZ'; base = pb.rotation_euler.copy()   # Y first: a twist about the forearm itself
+        def down(a):
+            pb.rotation_euler = (base.x, base.y + a, base.z); bpy.context.view_layer.update()
+            n = (rig.matrix_world @ pb.matrix @ pb.bone.matrix_local.inverted()).to_3x3() @ Vector((-s, 0, 0)); return -n.normalized().z
+        best = max([a / 20 for a in range(-40, 41)], key=down); down(best)
 
 def box(name, m, c, size, bevel=.06, seg=3):
     """a soft rounded box"""
@@ -128,7 +144,7 @@ def motorbike():
 def hands_feet(rig):
     """where the rider's hands and feet are once posed (left first)"""
     bpy.context.view_layer.update(); mw = rig.matrix_world; pb = rig.pose.bones
-    hands = [mw @ pb[n].tail for n in ('elbowL', 'elbowR')]
+    hands = [mw @ pb[n].tail + Vector((0, -.015, -.03)) for n in ('elbowL', 'elbowR')]
     feet = [mw @ pb[n].tail + Vector((0, -.04, -.04)) for n in ('kneeL', 'kneeR')]
     return hands, feet
 

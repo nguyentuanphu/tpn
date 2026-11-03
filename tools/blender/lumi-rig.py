@@ -21,7 +21,7 @@ bpy.ops.object.mode_set(mode='OBJECT')
 
 HAND_PROPS = ('lantern', 'staff', 'vineLeaf', 'staffPetal', 'staffHeart', 'compass', 'sunCrystal', 'sunRay', 'basket')
 TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace', 'tunic', 'cape', 'clasp', 'sun', 'apron', 'scarf', 'aoBaBa', 'longSkirt', 'aoDai', 'dressTop', 'dressSkirt', 'dressBelt', 'tee', 'pocket', 'dressStrap', 'necklace', 'bowtie', 'redScarf', 'backpack')
-ARM = ('arm', 'sleeve', 'sleeveRoll', 'hand', 'thumb', 'coatSleeve', 'coatCuff', 'shirtSleeve', 'glove', 'sleevePuff', 'sleeveFrill', 'watch', 'bracelet', 'handS')
+ARM = ('arm', 'sleeve', 'sleeveRoll', 'hand', 'thumb', 'coatSleeve', 'coatCuff', 'shirtSleeve', 'glove', 'sleevePuff', 'sleeveFrill', 'watch', 'bracelet', 'handS', 'handG')
 LEG = ('leg', 'sock', 'sockRib', 'boot', 'bootToe', 'sole', 'bootCuff', 'bootLeaf', 'bootStrap', 'bootBuckle', 'lace', 'shoe', 'sandal', 'toes', 'rainboot', 'sneaker', 'thong', 'longSock')
 HIP = ('shortsLeg', 'shortsCuff', 'trouser', 'seat')
 def seg_d(p, a, b):
