@@ -49,6 +49,7 @@ for (const f of files) {
       if (/^[a-z]{2}:/.test(en) || /^[a-z]{2}:/.test(vi)) continue; // wiki page keys, not speech
       if (!VI.test(vi) && en === vi) continue;             // not a translation pair
       if (/^[\p{Emoji}\s✓✕+−=]+$/u.test(en)) continue;     // pictures only
+      if (/^[\p{Emoji}\s✓✕+−=]+$/u.test(vi)) continue;     // (v1.08) a picture in the second place: [word, word, picture] (js/content/english.ts) is not a spoken pair
       if (en.split(/\s+/).length < 2 && !/[!?.]$/.test(en)) continue; // single-word labels are not speech
       for (const [e, v] of f === 'js/content/chapters.js' && /\{name\}/.test(en + vi) ? [[unnamed(en), unnamed(vi)]] : [[en, vi]]) {
         const key = e + '\u0000' + v;
