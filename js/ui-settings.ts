@@ -36,7 +36,7 @@ import { clipCountFor, setSpeaker, sayDevice } from './voice.js';
 
 import { pic } from './art.js';
 import { modal } from './popups.js';
-import { applyComfort, foldHeadings, jumpNav, familyTrialOn, toast, openEditor, flagBtns, learnBtns, bindLearn, bindLang } from './ui.js';
+import { applyComfort, foldHeadings, jumpNav, familyTrialOn, toast, openEditor, flagBtns, bindLang } from './ui.js';
 function openRenamer(after) {
   const m = modal('renamer', ''), card = m.querySelector('.card');
   const list = NPC_NAMES.slice().sort((a, b) => defaultName(a.id).localeCompare(defaultName(b.id)));
@@ -178,7 +178,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       <div class="toggles gcaprow">
         <label class="tog"><input type="checkbox" id="gCap" ${settings.captions === false ? '' : 'checked'}> ${T('Captions: show everything that is said as text', 'Phụ đề: hiện chữ cho mọi câu được nói')}</label>
       </div>
-      <h3>${T('Language', 'Ngôn ngữ')}</h3>${flagBtns()}${learnBtns()}
+      <h3>${T('Language', 'Ngôn ngữ')}</h3>${flagBtns()}${'' /* (owner, 3 Nov 2026 AEDT, v1.08) no Chinese/Hindi "Also learn" buttons beside the two game languages */}
       <label class="tog"><input type="checkbox" id="gBil" ${settings.bilingual ? 'checked' : ''}> ${T('Bilingual voice: also say everything in the other language', 'Giọng song ngữ: nói thêm bằng ngôn ngữ còn lại')}</label>
             <details class="gsec" data-sec="players" ${gOpen.has('players') ? 'open' : ''}><summary><span class="gi">👧</span><b>${T('Children', 'Các con')}</b></summary><div class="gbody">
 
@@ -309,7 +309,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       </div></details>
 
       </div></div><button class="btn primary wide" id="gDone">${pic('💾')} ${T('Save & close', 'Lưu và đóng')}</button>`;
-    bindLang(card, () => { draw(); after && after(); }); bindLearn(card, () => draw());
+    bindLang(card, () => { draw(); after && after(); });
     card.querySelectorAll('details.gsec').forEach(d => d.ontoggle = () => { if (d.open) gOpen.add(d.dataset.sec); else gOpen.delete(d.dataset.sec); });
     bindPackStatus(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; });
     card.querySelector('.x').onclick = card.querySelector('#gDone').onclick = () => { m.close(); after && after(); };

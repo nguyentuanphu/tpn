@@ -130,7 +130,10 @@ const dropOldFestival = () => { if (!('festival' in settings)) return 0; delete 
 export const ASIDE_VOICES_ON = false;
 // a device that had chosen the male voices or Lê Minh moves to the female voices; nothing else in its settings changes
 const dropAsideVoice = () => { if (ASIDE_VOICES_ON) return 0; let n = 0; if (settings.voiceMale === true) { settings.voiceMale = false; n++; } if (settings.voiceViVariant === 'leminh') { settings.voiceViVariant = 'standard'; n++; } return n; };
-if (dropOldVoice() | dropOldFestival() | dropAsideVoice()) store.set(KEY_SETTINGS, settings);
+// (owner, 3 Nov 2026 AEDT, v1.08) the outside "Also learn" Chinese/Hindi buttons are gone, so a choice saved by them
+// (extra Chinese or Hindi words in every game) is cleared; Chinese and Hindi stay inside their own places and games
+const dropLearnLang = () => { if (!settings.learnLang) return 0; settings.learnLang = ''; return 1; };
+if (dropOldVoice() | dropOldFestival() | dropAsideVoice() | dropLearnLang()) store.set(KEY_SETTINGS, settings);
 // fewer moving effects: Calm mode, or the device's own "Reduce motion" setting (round I accessibility rule A11Y-001)
 export const reduceMotion = () => !!settings.calm || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 // (v1.08 english) while an English-mode game is open (js/englishmode.ts) the game language is English; the child's own

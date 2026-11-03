@@ -34,13 +34,15 @@ async function asideVoiceCheck(browser:Browser){
    await P.page.locator('.grownups #gDone').waitFor();await P.page.evaluate(()=>document.querySelectorAll<HTMLDetailsElement>('.grownups details').forEach(d=>d.open=true));
    const shown=await P.page.evaluate(()=>['#gVietnamesePack','#gHanoiPreview','#gHanoiDownload','#gVoiceMale','[data-pv="m"]'].filter(q=>document.querySelector('.grownups '+q)));
    assert.deepEqual(shown,[],device+' '+lang+': Grown-ups still shows a voice that was put aside');
+   // (owner, 3 Nov 2026 AEDT, v1.08) no Chinese/Hindi "Also learn" buttons beside English and Tiếng Việt in Grown-ups
+   assert.equal(await P.page.$('.grownups [data-learn], .grownups .learnrow'),null,device+' '+lang+': Grown-ups still shows the Chinese/Hindi "Also learn" buttons');
    const female=P.page.locator('.grownups [data-pv="f"]');if(await female.count()){await female.scrollIntoViewIfNeeded();assert.ok(((await female.boundingBox())?.height||0)>=44,'the voice preview button is at least 44 px');}
    assert.equal(await P.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'voice settings must fit the viewport');
    await P.page.screenshot({path:`out/hanoi-settings/${device}-${lang}.png`});await P.page.locator('#gDone').click();await P.page.locator('.grownups').waitFor({state:'detached'});
   }
   assert.deepEqual(asked,[],'a recording that was put aside was asked for');
   assert.deepEqual(P.errors,[]);
-  return 'Lê Minh and the male voices put aside (owner, 3 Nov 2026 AEDT): files kept in voices-aside/, not in voices/; lists name only the female English and Vietnamese voices; a device that had chosen them moved to female with its other settings kept; no male or Lê Minh choice in Grown-ups on phone, tablet and computer (en, vi); nothing put aside fetched';
+  return 'Lê Minh and the male voices put aside (owner, 3 Nov 2026 AEDT): files kept in voices-aside/, not in voices/; lists name only the female English and Vietnamese voices; a device that had chosen them moved to female with its other settings kept; no male or Lê Minh choice and no Chinese/Hindi "Also learn" buttons in Grown-ups on phone, tablet and computer (en, vi); nothing put aside fetched';
  }catch(error){await fs.mkdir('out',{recursive:true});await P.page.screenshot({path:'out/fail-hanoivoice.png'}).catch(()=>{});throw error;
  }finally{await P.ctx.unrouteAll({behavior:'ignoreErrors'});await P.ctx.close();}
 }

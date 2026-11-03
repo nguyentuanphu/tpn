@@ -591,10 +591,10 @@ await check('welcomesteady', async () => {
   // content changes"; the r79 sweep found the Welcome screen's Start button growing and shrinking on every device) the
   // Welcome screen holds still on a phone, a tablet and a computer, in English and in Vietnamese: the Start button, the
   // cover, the logo and the language panel keep their boxes (within 2 px) for 2.5 s after it opens, after each language
-  // tap and the Chinese switch, and the Start button keeps one size in both languages
+  // tap, and the Start button keeps one size in both languages
   const PARTS = [['start', '.screen.title .press'], ['cover', '.screen.title .tt-cover'], ['logo', '.screen.title .logo'], ['languages', '.screen.title .tt-panel']];
-  const TAPS = [['Tieng Viet', '.screen.title .seg.lang button[data-l="vi"]'], ['English', '.screen.title .seg.lang button[data-l="en"]'],
-    ['learn Chinese on', '.screen.title .learnrow [data-learn="zh"]'], ['learn Chinese off', '.screen.title .learnrow [data-learn="zh"]']];
+  const TAPS = [['Tieng Viet', '.screen.title .seg.lang button[data-l="vi"]'], ['English', '.screen.title .seg.lang button[data-l="en"]']];
+  // (owner, 3 Nov 2026 AEDT, v1.08) the Chinese/Hindi "Also learn" buttons left the Welcome screen: no Chinese switch to tap
   const moved = [], notes = [];
   for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['tablet', 820, 1180, true], ['computer', 1280, 800, false]]) for (const lang of ['en', 'vi']) {
     const P = await open(b, { w, h, touch, lang, play: false, settings: { calm: false } });
@@ -608,6 +608,7 @@ await check('welcomesteady', async () => {
       return first;
     };
     const open0 = await watch('opening', 2500);
+    ok(!(await P.page.$('.screen.title .learnrow, .screen.title [data-learn]')), `${dev} ${lang}: the Welcome screen still shows the Chinese/Hindi "Also learn" buttons`);
     ok(PARTS.every(([k]) => open0[k]), `${dev} ${lang}: a part of the Welcome screen is missing ${JSON.stringify(open0)}`);
     const sizes = {};
     for (const [label, sel] of TAPS) {
@@ -622,7 +623,7 @@ await check('welcomesteady', async () => {
     await P.ctx.close();
   }
   ok(!moved.length, 'the Welcome screen moved: ' + moved.slice(0, 8).join('; '));
-  return `Welcome screen still within 2 px (Start button, cover, logo, language panel) opening, after both language taps and the Chinese switch, one Start size in both languages: ${notes.join(', ')}`;
+  return `Welcome screen still within 2 px (Start button, cover, logo, language panel) opening, after both language taps, no Chinese/Hindi buttons, one Start size in both languages: ${notes.join(', ')}`;
 });
 
 await check('swupdate', async () => {

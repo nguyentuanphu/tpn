@@ -71,6 +71,13 @@ voicearea, voicecover, voiceroutes and unit now expect only the female English a
 
 None new.
 
+## Added by Release (owner, 3 Nov 2026 AEDT)
+
+- Chinese and Hindi keep their male voices (`voices/zh/m`, `voices/hi/m` stay published).
+- The Chinese/Hindi "Also learn" buttons left the outside screens: the Welcome screen (`js/ui/title.ts`) and the Language section of Grown-ups (`js/ui-settings.ts`). Chinese and Hindi stay inside China Town, India Village and First Words. A saved `learnLang` (set only by those buttons) is cleared on load (`js/state.ts`), so no device is stuck hearing extra Chinese or Hindi words in every game. Checks: `welcomesteady` (`tests/checks/startup.mts`) and the steady sweep (`tests/owner-steady-sweep.mts`) no longer tap the Chinese switch and now check the buttons are gone from the Welcome screen; `hanoivoice` checks Grown-ups has none.
+- The 1,092 Lê Minh recordings made by the fixes helper (branch `voices/v108-leminh`, commit 198e2e9fd) are brought into `voices-aside/voices/fpt-leminh-v1` (manifest now 8,975 lines, every file present) and their working files into `voices-aside/temp/fpt-public-delta`: kept in the repository, not published, in no game manifest or offline list. `js/content/hanoi-pack-info.ts` updated to that pack's size (shown only with the switch on).
+- Not in this branch: the 35 picture-only strings `tools/voice-lines.mts` reads from `js/content/english.ts` (Release handles it at merge).
+
 ## Owner's decisions
 
 - 3 Nov 2026 AEDT: put the male English and Vietnamese voices, Lê Minh and its working files aside in `voices-aside/` on main ("Thư mục riêng trong main"); female voices only, as the default.
