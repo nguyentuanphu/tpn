@@ -148,7 +148,13 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       return changed;
     };
     let fitTimer: ReturnType<typeof setTimeout> | undefined;
-    const fitSoon = (shrinkOnly = false) => { clearTimeout(fitTimer); fitTimer = setTimeout(() => { floorText(); fit(shrinkOnly); if (floorText()) fitSoon(true); }, 120); };
+    // (a game that changes something every moment must not keep putting the fit off: the first call sets the time, later
+    // calls before it only widen it from shrink-only to a full fit)
+    let fitShrinkOnly = true;
+    const fitSoon = (shrinkOnly = false) => {
+      fitShrinkOnly = fitShrinkOnly && shrinkOnly; if (fitTimer) return;
+      fitTimer = setTimeout(() => { const only = fitShrinkOnly; fitTimer = undefined; fitShrinkOnly = true; floorText(); fit(only); if (floorText()) fitSoon(true); }, 120);
+    };
     // (31 Oct 2026 AEDT, horsestability on GitHub: the board shrank mid-game) the stage fits itself while the game sets up;
     // once the child has tapped it, only a new screen size, or a new round that would not fit, changes the zoom, so a cheer
     // or a piece added during play never moves the board under a finger (floating pieces are not measured at all)

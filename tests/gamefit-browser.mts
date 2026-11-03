@@ -31,10 +31,10 @@ export async function gameFitCheck(browser:Browser){
    for(const id of ids){
     await P.page.evaluate(([id,age])=>{const G=window.__sv as any;G.heroes[0].profile.age=age;G.heroes[0].profile.unlockAll=true;void G.playGame(0,id,'replay');},[id,size.age||'big']);
     if(!await P.page.locator('.gl .gl-stage').waitFor({timeout:10000}).then(()=>true,()=>false)){bad.push(`${id} (${size.name}) did not open`);continue;}
-    // wait for the game to set up its first round and for the stage to settle its size (it fits again when a round
-    // adds its answers)
-    await P.page.waitForTimeout(800);
-    for(let k=0,last='';k<12;k++){const z=await P.page.evaluate(()=>{const st=document.querySelector('.gl-stage') as HTMLElement|null;return st?st.style.zoom+'|'+st.scrollHeight+'|'+st.innerHTML.length:'';});if(z===last)break;last=z;await P.page.waitForTimeout(400);}
+    // wait for the game to set up its first round (something to tap is on the stage) and for the stage to settle: two
+    // readings in a row the same (the frame fits again, and raises small text, when a round adds its answers)
+    await P.page.waitForTimeout(500);
+    for(let k=0,last='',same=0;k<20&&same<2;k++){await P.page.waitForTimeout(250);const z=await P.page.evaluate(()=>{const st=document.querySelector('.gl-stage') as HTMLElement|null;if(!st)return '';const ready=!!st.querySelector('button, [role=button], .choice, canvas');return (ready?'':'wait'+Math.random())+st.style.zoom+'|'+st.scrollHeight+'|'+st.innerHTML.length;});same=z===last?same+1:0;last=z;}
     const r=await P.page.evaluate((TEXT_MIN)=>{
      const gl=document.querySelector('.gl') as HTMLElement,st=gl.querySelector('.gl-stage') as HTMLElement,W=innerWidth,H=innerHeight;
      const seen=(e:Element)=>{const s=getComputedStyle(e);if(s.visibility==='hidden'||s.display==='none'||+s.opacity===0)return false;const b=e.getBoundingClientRect();return b.width>2&&b.height>2;};
