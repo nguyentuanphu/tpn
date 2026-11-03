@@ -54,17 +54,21 @@ Not chosen this time:
 - Chapter 3, Sydney;
 - the yard side story.
 
-**In v1.09**, from `docs/cores/STORY.md`, each one released by date in the release calendar:
+**In v1.09**, each one released by date in the release calendar. The order was changed by the owner (3 Nov 2026 AEDT, pop-ups). Christmas and New Year had no chapter, so they now share one, and Season 2 is not China Town and India:
 
-| Chapter | Region and landmark | Release |
+| Chapter | What happens | Release |
 |---|---|---|
-| Chapter 4 | Huế and Đà Nẵng: the dragon bridge breathing fire, lantern boats on the river | December |
-| Chapter 5 | Melbourne and Uluru: the tram ride, a desert night of stars, Uluru at sunset, the Australia Day picnic | January |
-| Finale | Sài Gòn and the whole valley: every landmark lit, the flower street, lì xì, fireworks | Tết, about 6 Feb 2027 |
+| Chapter 4: the end-of-year festive season, Christmas to New Year's Eve, in both countries | **Australia:** a summer Christmas in Sydney (Santa on a surfboard, carols by candlelight), then the harbour fireworks at 9 pm and midnight. **Vietnam:** the cathedrals in Sài Gòn and Hà Nội, Hàng Mã street's lights and the nativity scene, then the countdown at Hồ Gươm. Each friend makes a New Year wish. | Early December, with the Christmas decorations (4 Dec) |
+| Chapter 5: Huế, Đà Nẵng, Melbourne and Uluru | The dragon bridge breathing fire, lantern boats on the river; the tram ride, a desert night of stars, Uluru at sunset, the Australia Day picnic | January |
+| Finale: Tết | Sài Gòn and the whole valley: every landmark lit, the flower street, lì xì, fireworks | Tết, about 6 Feb 2027 |
 
 The chapters use the new friends and villagers. Each has an under-5 path, a festival film and a keepsake, like chapters 1–3.
 
-**Season 2, after Tết** (China Town, India Village, Memory Village, new friends): a later round.
+**Season 2, after Tết, is not China Town and India Village.** It explores more of Vietnam and Australia (a later round):
+- Vietnam: the Mekong floating markets, Hạ Long Bay, the Sapa rice terraces, the Central Highlands gongs;
+- Australia: the Great Barrier Reef, Tasmania, Perth and Rottnest.
+
+Each region brings its food, games, festivals and new friends.
 
 ## How far today's content reaches
 - **Festivals:** every year, by their own dates. They never run out.
