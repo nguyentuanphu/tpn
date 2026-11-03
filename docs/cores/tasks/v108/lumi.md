@@ -1,4 +1,4 @@
-**ready for Release** (3 Nov 2026, 17:20 AEDT): Blender renders only, nothing in the game changes. Gallery: `docs/characters-v108/gallery/index.html` (artifact https://claude.ai/artifact/GXNNki8CLp3WZVcfniNUc6).
+**ready for Release** (3 Nov 2026, 17:20 AEDT): Blender renders only, nothing in the game changes. Gallery: `docs/artifacts/sparkle-valley-characters/index.html` (artifact https://claude.ai/artifact/GXNNki8CLp3WZVcfniNUc6).
 
 # v1.08 helper: lumi (status)
 
@@ -46,7 +46,7 @@ Branch: `work/v108-lumi-refine` (from `origin/release/v1.08`). Brief: `lumi-brie
 
 ## Final (3 Nov 2026, 17:20 AEDT)
 
-- Gallery page (artifact and repo copy `docs/characters-v108/gallery/`, 83 pictures): the four friends (4 sides, 7 moods each; smile in the views), 8 Vietnamese and 6 Australian neighbours (full and close-up), 8 wardrobe outfits, motorbike, bicycle and city bus. Built by `tools/blender/gallery.py`.
+- Gallery page (artifact and repo copy `docs/artifacts/sparkle-valley-characters/`, 83 pictures): the four friends (4 sides, 7 moods each; smile in the views), 8 Vietnamese and 6 Australian neighbours (full and close-up), 8 wardrobe outfits, motorbike, bicycle and city bus. Built by `tools/blender/gallery.py`.
 - Scripts: `tools/blender/lumi.py`, `lumi-more.py`, `lumi-hair.py`, `lumi-sculpt.py`, `lumi-rig.py`, `vehicles.py`, `svkit.py` (helpers added; `finn.py` still builds).
 - Not in the repo: the four `.glb` game files (about 42 MB each, too big for git). The script makes them again: `blender -b -P tools/blender/lumi.py -- <dir> <who> game glb`. They need a lighter version for phones before the game can use them.
 - No films (the owner stopped them).

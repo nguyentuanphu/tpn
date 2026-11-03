@@ -1,6 +1,6 @@
 # Builds the character gallery page (owner, 3 Nov 2026 AEDT: "cho tôi full render của mỗi nhân vật rồi cho vào artifacts").
 #   python3 tools/blender/gallery.py <FIN dir with friends/ vill/ wear/ veh/> <out dir>
-# Writes <out>/index.html and <out>/img/*.jpg (the page and its pictures, also kept in the repo under docs/characters-v108/gallery/).
+# Writes <out>/index.html and <out>/img/*.jpg (the page and its pictures, also kept in the repo under docs/artifacts/sparkle-valley-characters/).
 import os, sys, glob, html, subprocess
 SRC, OUT = sys.argv[1], sys.argv[2]
 IMG = os.path.join(OUT, 'img'); os.makedirs(IMG, exist_ok=True)
