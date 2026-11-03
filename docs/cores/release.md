@@ -97,6 +97,14 @@ round); the full suite green before a report; times in AEST; no keys or personal
 All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed` after every merge (it always includes `types unit arch rules`).
 
 ## Owner's decisions
+- 3 November 2026 AEDT (chat, after playing on an Android tablet held sideways; photos in `docs/plans/owner-20261103b/`):
+  - Answers below the screen should not happen: everything fits on one screen.
+  - Level and stars go on the guide's row.
+  - Answers go side by side on wide screens.
+  - Rounds are too much the same.
+  - Some game adds "ê" after each line break.
+  
+  Release added two v1.08 helpers, layout and variety. Assumed, owner can change: it goes into v1.08, which is not yet deployed.
 - 3 November 2026 AEDT (chat): "all the full suites you collect all and run at once". In v1.08 the helpers never start the full suite. Release merges every branch into `release/v1.08` and runs one full suite for all of them.
 - 3 November 2026 AEDT (chat): push notifications and the open bugs go into v1.08 too ("Bạn làm notification và bugs trong round này luôn"). Two more helpers: notifications (`docs/plans/push-notifications.md`; VAPID keys stay with the owner) and bugs.
 - 3 November 2026 AEDT (chat): "Meshy và Tripo để riêng, tôi sẽ tự nhớ, vì thay đổi bây giờ là thay đổi toàn game, quá lớn". The image-to-3D characters (Finn, Flora, Sol, Luna, Lumi from Meshy or Tripo) are parked: Release does not remind the owner and does not plan them into a round. The tools stay in `tools/blender/` and `docs/characters-v108/` for when the owner brings it back. The v1.08 lumi helper still makes Blender renders only (nothing in the game).
