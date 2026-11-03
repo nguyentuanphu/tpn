@@ -14,6 +14,7 @@ const SIZES:{name:string,w:number,h:number,touch:boolean,age?:string}[]=[
  {name:'computer',w:1440,h:900,touch:false},
 ];
 // the tester arcades open only on a tester's device, in their own screen
+const TEXT_MIN=16;
 const SKIP=new Set(['sparklefruitbar','sparkleorchard']);
 export async function gameFitCheck(browser:Browser){
  const pick=(process.env.SV_FIT_SIZES||'').split(',').filter(Boolean),games=(process.env.SV_FIT_GAMES||'').split(',').filter(Boolean);
@@ -33,7 +34,7 @@ export async function gameFitCheck(browser:Browser){
     // adds its answers)
     await P.page.waitForTimeout(1100);
     for(let k=0,last='';k<12;k++){const z=await P.page.evaluate(()=>{const st=document.querySelector('.gl-stage') as HTMLElement|null;return st?st.style.zoom+'|'+st.scrollHeight+'|'+st.childElementCount:'';});if(z===last)break;last=z;await P.page.waitForTimeout(400);}
-    const r=await P.page.evaluate(()=>{
+    const r=await P.page.evaluate((TEXT_MIN)=>{
      const gl=document.querySelector('.gl') as HTMLElement,st=gl.querySelector('.gl-stage') as HTMLElement,W=innerWidth,H=innerHeight;
      const seen=(e:Element)=>{const s=getComputedStyle(e);if(s.visibility==='hidden'||s.display==='none'||+s.opacity===0)return false;const b=e.getBoundingClientRect();return b.width>2&&b.height>2;};
      // every control a child taps: the frame's buttons and the game's buttons and choices (a covering card such as the
@@ -50,9 +51,15 @@ export async function gameFitCheck(browser:Browser){
      // the answers: a row of two to four choices stands side by side on a landscape screen
      let stacked=false;
      if(W>H)for(const row of gl.querySelectorAll('.gl-stage .choices, .gl-stage .sci-choices, .gl-stage .rd-choices')){const kids=[...row.children].filter(seen).map(k=>k.getBoundingClientRect());if(kids.length>=2&&kids.length<=4&&new Set(kids.map(k=>Math.round(k.top/8))).size===kids.length)stacked=true;}
-     return {out,scroll:Math.round(scroll),head:onHead(stars)&&onHead(lvl),stacked,zoom:st.style.zoom||'1'};});
+     // (owner, 3 Nov 2026 AEDT, CLAUDE.md "One screen, big clear text") the text a child reads is at least TEXT_MIN px as
+     // drawn (its font size times the stage's zoom), on every screen
+     const zoomOf=(e:Element)=>{let z=1;for(let n:Element|null=e;n&&n!==gl;n=n.parentElement){const v=parseFloat((n as HTMLElement).style?.zoom||'');if(v)z*=v;}return z;};
+     const small:string[]=[];const tw=document.createTreeWalker(gl,NodeFilter.SHOW_TEXT);let t:Node|null;
+     while((t=tw.nextNode())){const p=t.parentElement;if(!p||!(t.textContent||'').trim()||!/[\p{L}\p{N}]/u.test(t.textContent||'')||p.closest('.gl-win, .gl-lvlpick, .mascot-say, svg, .gl-dots')||!seen(p))continue;
+      if(p.closest('details:not([open])')&&!p.closest('summary'))continue;const px=parseFloat(getComputedStyle(p).fontSize)*zoomOf(p);if(px<TEXT_MIN-.5)small.push(`${(t.textContent||'').trim().slice(0,14)}=${Math.round(px)}`);}
+     return {out,scroll:Math.round(scroll),head:onHead(stars)&&onHead(lvl),stacked,zoom:st.style.zoom||'1',small:[...new Set(small)].slice(0,6)};},TEXT_MIN);
     rows.push({id,size:size.name,...r});
-    const why=[r.out.length?`below the fold: ${r.out.slice(0,3).join(' ')}`:'',r.scroll?`scrolls ${r.scroll}px`:'',r.head?'':'level/stars not on the title row',r.stacked?'answers stacked in a column':''].filter(Boolean);
+    const why=[r.out.length?`below the fold: ${r.out.slice(0,3).join(' ')}`:'',r.scroll?`scrolls ${r.scroll}px`:'',r.head?'':'level/stars not on the title row',r.stacked?'answers stacked in a column':'',r.small.length?`text under ${TEXT_MIN}px: ${r.small.join(' ')}`:''].filter(Boolean);
     if(why.length){bad.push(`${id} (${size.name} ${size.w}x${size.h}) ${why.join('; ')}`);await P.page.screenshot({path:`out/gamefit/${id}-${size.name}.png`});}
     await P.page.evaluate(()=>(document.querySelector('.gl-x') as HTMLElement).click());await P.page.locator('.gl').first().waitFor({state:'detached',timeout:15000}).catch(()=>{});
    }
@@ -61,5 +68,5 @@ export async function gameFitCheck(browser:Browser){
  }
  await fs.writeFile('out/gamefit/rows.json',JSON.stringify(rows,null,1));
  assert.deepEqual(bad,[],'games that do not fit one screen');
- return `${count} games at ${sizes.map(s=>`${s.name} ${s.w}x${s.h}`).join(', ')}: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape`;
+ return `${count} games at ${sizes.map(s=>`${s.name} ${s.w}x${s.h}`).join(', ')}: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape, game text at least ${TEXT_MIN}px`;
 }

@@ -3460,10 +3460,13 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
   .gl-head .gl-dots i { width: 8px; height: 8px; }
   .gl-head .gl-title { gap: 6px; font-size: 17px; line-height: 1.15; }
   .gl-head .gl-icon { width: 40px; height: 40px; border-radius: 13px; font-size: 24px; flex: none; }
-  .gl .gl-head .gl-status .starbox { font-size: 15px; padding: 4px 8px; }
-  .gl-head .gl-lvl { padding: 0 8px; font-size: 14px; }
+  .gl .gl-head .gl-status .starbox { font-size: 16px; padding: 4px 8px; }
+  .gl-head .gl-lvl { padding: 0 8px; font-size: 16px; }
+  .gl-guide .gl-help { font-size: 16px; }
 }
 @media (max-width: 380px) { .gl-head .gl-icon { display: none; } }
+/* (owner, 3 Nov 2026 AEDT: "text big, clear, easy to read") the English mode's Vietnamese hint is at least 16 px too */
+.gl .gl-vihint .gl-vitext { font-size: 16px; }
 /* The guide line spans the screen now; on a short landscape screen it keeps to one line (tap for the rest). */
 @media (orientation: landscape) and (max-height: 560px) { .gl-guide .gl-help { -webkit-line-clamp: 1; min-height: 1.25em; } }
 /* Under-5s on a phone: their buttons are 64 px, so the row keeps the game's picture and leaves out its written name
