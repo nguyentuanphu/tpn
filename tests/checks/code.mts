@@ -111,7 +111,8 @@ await check('enwords', async () => {
   }, line);
   ok(JSON.stringify(r.said) === JSON.stringify([['en-AU', 'No worries, mate!'], ['vi-VN', '" nghĩa là không sao đâu bạn ơi.']]), 'phone voice: ' + JSON.stringify(r.said));
   ok(JSON.stringify(r.said3) === JSON.stringify([['vi-VN', 'Ở Úc người ta nói'], ['en-AU', "G'day"], ['vi-VN', 'thay cho xin chào!']]), 'phone voice: ' + JSON.stringify(r.said3));
-  ok(String(r.rec || '').includes('f') && r.url.endsWith(r.h + '.mp3'), `the game does not play the two-voice recording (${r.rec}, ${r.url})`);
+  // (the page in English loads only the English half of the pack list: the Vietnamese half is read from the file here)
+  ok(r.h === lineHash('vi', line) && String(man.lines[r.h] || '').includes('f') && r.url.endsWith(r.h + '.mp3'), `the game does not play the two-voice recording (${r.h}, ${r.url})`);
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
   return `${cases.length} lines and ${AUSSIE_SLANG.length} slang words cut right; ${lines.length} Vietnamese lines with English words recorded with the English voice for those words; the phone says them with its English voice`;
 });
