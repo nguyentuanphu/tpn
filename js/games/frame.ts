@@ -330,7 +330,9 @@ export function burstConfetti(parent) {
 export function tapOne<E extends EventTarget>(els: E[], api?: Cleanup): Promise<E | null> {
   return new Promise(resolve => {
     const handlers = new Map<E, EventListener>();
-    const done = (element: E | null) => { for (const [target, handler] of handlers) target.removeEventListener('click', handler); resolve(element); };
+    const list = els.filter(e => e instanceof Element) as unknown as Element[];
+    const done = (element: E | null) => { for (const [target, handler] of handlers) target.removeEventListener('click', handler); if (playWatch.offer === list) playWatch.offer = null; resolve(element); };
+    playWatch.offer = list;   // (v1.08 variety) what is offered, for the roundvariety check
     if (typeof api?.onCleanup === 'function') api.onCleanup(() => done(null));
     for (const element of els) {
       if (handlers.has(element)) continue;

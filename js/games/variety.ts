@@ -23,13 +23,16 @@ export function fresh<V>(make: () => V, key: (v: V) => string, tries = 40): () =
   };
 }
 
-/** a shuffle for the answers of each round: the right one never lands where it was the round before */
+/** a shuffle for the answers of each round: the right one never lands where it was the round before (with only two
+ * answers: never three times in a row in one place, so the child cannot just tap the other one each time) */
 export function mover() {
-  let lastAt = -1;
+  let lastAt = -1, before = -2;
   return <V>(opts: readonly V[], isRight: (v: V) => boolean): V[] => {
+    const avoid = opts.length <= 2 ? (lastAt === before ? lastAt : -1) : lastAt;
     let order = shuffle(opts.slice());
-    for (let t = 0; t < 8 && order.length > 1 && order.findIndex(isRight) === lastAt; t++) order = shuffle(opts.slice());
-    if (order.length > 1 && order.findIndex(isRight) === lastAt) { const i = order.findIndex(isRight), j = (i + 1) % order.length; [order[i], order[j]] = [order[j], order[i]]; }
-    lastAt = order.findIndex(isRight); return order;
+    if (order.findIndex(isRight) < 0) return order;   // no right one among them: a plain shuffle
+    for (let t = 0; t < 8 && order.length > 1 && order.findIndex(isRight) === avoid; t++) order = shuffle(opts.slice());
+    if (order.length > 1 && order.findIndex(isRight) === avoid) { const i = order.findIndex(isRight), j = (i + 1) % order.length; [order[i], order[j]] = [order[j], order[i]]; }
+    before = lastAt; lastAt = order.findIndex(isRight); return order;
   };
 }

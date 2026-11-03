@@ -162,7 +162,7 @@ register({ id: 'en_listen', learn: true, english: true, icon: 'en:listen', name:
     }
     const phrase = thingPhrase(base.t, base.n, base.s);
     const card = el('div', 'en-card'); card.appendChild(ear(api, () => phrase)); board.appendChild(card);
-    const btns = choices(board, place([...pool.values()], c => c === base).map(c => ({
+    const btns = choices(board, place([...pool.values()], c => key(c) === key(base)).map(c => ({
       v: key(c), cls: 'en-group', label: thingPhrase(c.t, c.n, c.s),
       html: Array.from({ length: c.n }, () => `<span class="${c.s ? 'en-' + c.s : ''}">${pic(c.t[2])}</span>`).join('')
     })));
@@ -417,7 +417,7 @@ register({ id: 'en_colshape', learn: true, english: true, icon: 'en:colshape', n
     const [cEn, cVi] = cols[want.c], [sEn, sVi] = shapes[want.s];
     const phrase = ask === 'colour' ? cEn : ask === 'shape' ? sEn : ask === 'both' ? `${cEn} ${sEn}` : `the ${want.big ? 'big' : 'small'} ${cEn} ${sEn}`;
     const card = el('div', 'en-card'); card.appendChild(ear(api, () => phrase)); board.appendChild(card);
-    const btns = choices(board, place([...set.values()], x => x === want).map(x => ({ v: k(x), cls: 'en-opt', label: `${cols[x.c][0]} ${shapes[x.s][0]}`, html: `<span class="${x.big ? '' : 'en-smallshape'}" style="${x.big ? '' : 'width:52%;display:flex;justify-content:center'}">${pic(`en:sh:${shapes[x.s][0]}:${cols[x.c][0]}`)}</span>` })));
+    const btns = choices(board, place([...set.values()], x => k(x) === k(want)).map(x => ({ v: k(x), cls: 'en-opt', label: `${cols[x.c][0]} ${shapes[x.s][0]}`, html: `<span class="${x.big ? '' : 'en-smallshape'}" style="${x.big ? '' : 'width:52%;display:flex;justify-content:center'}">${pic(`en:sh:${shapes[x.s][0]}:${cols[x.c][0]}`)}</span>` })));
     tell(api, ['Listen. Which one is it?', 'Nghe nhé. Hình nào đúng?']);
     hear(phrase);
     if (!await untilRight(api, btns, b => b._v === k(want))) return;

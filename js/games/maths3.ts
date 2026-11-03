@@ -244,7 +244,7 @@ const PART: Record<string, [string, string]> = {
 };
 // a pizza cut into n slices, k of them still there (the rest eaten: a dashed outline); equal: false cuts one slice bigger
 const pizza = (n: number, k: number, equal = true, size = 54) => {
-  let s = ''; const cuts = equal ? range(0, n).map(i => i / n) : [0, .32, 1];
+  let s = ''; const cuts = equal ? range(0, n).map(i => i / n) : ({ 3: [0, .2, .55, 1], 4: [0, .15, .4, .7, 1] }[n] || [0, .32, 1]);
   for (let i = 0; i < cuts.length - 1; i++) {
     const a0 = cuts[i] * 2 * Math.PI - Math.PI / 2, a1 = cuts[i + 1] * 2 * Math.PI - Math.PI / 2, big = cuts[i + 1] - cuts[i] > .5 ? 1 : 0, on = i < k;
     const p = (a: number) => `${(30 + Math.cos(a) * 26).toFixed(1)} ${(30 + Math.sin(a) * 26).toFixed(1)}`;
@@ -263,8 +263,15 @@ register({
     api.stage.dataset.lv = `${L.mode},${L.fr.length}`;
     const pz = (f: string, size?: number) => { const [k, n] = f.split('/').map(Number); return pizza(n, k, true, size); };
     const list: Round[] = distinct(rounds(api), () => {
-      if (L.mode === 'halves') return { ask: ['Which pizza is cut into two equal halves?', 'Bánh nào được cắt thành hai nửa bằng nhau?'], key: 'halves', answer: 'eq', others: ['un', 'whole'].slice(0, wrongs(api)),
-        label: v => v === 'eq' ? pizza(2, 2) : v === 'un' ? pizza(2, 2, false) : pizza(1, 1), draw: stage => { stage.appendChild(el('div', 'mx-note', pic('🍕') + ' ' + T('Two friends share fairly.', 'Hai bạn chia đều nhau.'))); } };
+      // (v1.08 variety) Easy: two, three or four friends share, so the pizza is cut into that many equal parts; the wrong
+      // ones are cut unfairly, not cut, or cut for another number of friends
+      if (L.mode === 'halves') {
+        const n = pick(2, 4), other = n === 2 ? 4 : 2;
+        const EQ: Record<number, [string, string]> = { 2: ['Which pizza is cut into two equal halves?', 'Bánh nào được cắt thành hai nửa bằng nhau?'], 3: ['Which pizza is cut into three equal parts?', 'Bánh nào được cắt thành ba phần bằng nhau?'], 4: ['Which pizza is cut into four equal parts?', 'Bánh nào được cắt thành bốn phần bằng nhau?'] };
+        const NOTE: Record<number, [string, string]> = { 2: ['Two friends share fairly.', 'Hai bạn chia đều nhau.'], 3: ['Three friends share fairly.', 'Ba bạn chia đều nhau.'], 4: ['Four friends share fairly.', 'Bốn bạn chia đều nhau.'] };
+        return { ask: EQ[n], key: 'halves', answer: 'eq', others: mix(['un', 'whole', 'other']).slice(0, wrongs(api)),
+          label: v => v === 'eq' ? pizza(n, n) : v === 'un' ? pizza(n, n, false) : v === 'other' ? pizza(other, other) : pizza(1, 1), draw: stage => { stage.appendChild(el('div', 'mx-note', pic('🍕') + ' ' + T(...NOTE[n]))); } };
+      }
       const f = L.fr[pick(0, L.fr.length - 1)];
       if (L.mode === 'find') return { ask: PART[f], key: f, answer: f, others: othersFrom(f, L.fr.length > 3 ? L.fr : [...L.fr, '3/4'], wrongs(api)), label: v => pz(v), draw: stage => { stage.appendChild(el('div', 'mx-big', f.replace('/', '<small>/</small>'))); } };
       const [k, n] = f.split('/').map(Number), wrong = mix([`${n - k}/${n}`, `${k}/${n + 1}`, `${n}/${k}`, `${k + 1}/${n}`].filter(v => v !== f && !v.startsWith('0') && !/\/0$/.test(v)));

@@ -7,6 +7,7 @@ import { register, untilRight, tapOne } from "./frame.js";
 import { T } from "../i18n.js";
 import { pic } from "../art.js";
 import { el, wait } from "../util.js";
+import { deck, mover } from "./variety.js";
 import { curCode, fmtMinor } from "../money.js";
 import * as M from "./moneylogic.js";
 import * as L from "./moneylogic3.js";
@@ -183,8 +184,9 @@ register({
     mark(api, rounds, weeks.join("/"), head ? 1 : 0, each, many);
     const wrap = setup(api, ["Save your pocket money in the piggy bank. How many weeks until you can buy the toy?", "Bỏ tiền tiêu vặt vào heo đất. Bao nhiêu tuần thì con mua được đồ chơi?"], rounds);
     await wait(1500);
+    const toyOf = deck(TOYS), weeksOf = deck(weeks), place = mover();   // (v1.08 variety) a new toy and a new number of weeks each round
     for (let r = 0; r < rounds; r++) {
-      const toy = TOYS[(r + Math.floor(Math.random() * TOYS.length)) % TOYS.length], w = pickOne(weeks), start = head ? each * (1 + Math.floor(Math.random() * 2)) : 0;
+      const toy = toyOf(), w = weeksOf(), start = head ? each * (1 + Math.floor(Math.random() * 2)) : 0;
       // the price is a little under a whole number of weeks sometimes (Hard and Talent), so the last week tops it up
       const price = start + each * w - (head && Math.random() < .5 ? half(code) : 0), right = L.weeksToSave(price, each, start);
       const top = `${art(toy[0], "mn3-big")} ${pic("🏷️")} ${money(price, code)} · ${pic("🐷")} ${money(start, code)} · +${money(each, code)} / ${T("week", "tuần")}`;
@@ -193,7 +195,7 @@ register({
       (bar.firstChild as HTMLElement).style.width = Math.round(100 * start / price) + "%";
       api.say("How many weeks until you can buy it?", "Bao nhiêu tuần thì mua được?");
       const opts = [right]; for (const k of [1, -1, 2, -2, 3]) if (opts.length < many && right + k > 0) opts.push(right + k);
-      const btns = mix(opts).map(n => { const b = el("button", "mn3-btn", `<b>${n}</b><small>${T("weeks", "tuần")}</small>`); b.dataset.n = String(n); row.appendChild(b); return b; });
+      const btns = place(opts, n => n === right).map(n => { const b = el("button", "mn3-btn", `<b>${n}</b><small>${T("weeks", "tuần")}</small>`); b.dataset.n = String(n); row.appendChild(b); return b; });
       api.plan(() => btns.find(b => +b.dataset.n === right), { maxActions: 5 });
       const ok = await untilRight(api, btns, b => +b.dataset.n === right);
       if (!ok || api.closed) return;
@@ -464,8 +466,9 @@ register({
     await wait(1300);
     const label = (code: string, v: number) => code === "VND" ? M.denom(code, v).label + "đ" : M.denom(code, v).label;
     const every = M.CODES.flatMap(code => M.DENOMS[code].map(d => ({ code, v: d.v })));
+    const money1 = deck(every), place = mover();   // (v1.08 variety) every coin and note once before any comes back; the right one moves
     for (let r = 0; r < rounds; r++) {
-      const it = pickOne(every), row = el("div", "mn3-row");
+      const it = money1(), row = el("div", "mn3-row");
       wrap.replaceChildren(el("div", "mn3-box", `<span class="mn3-big">${cash(it.code, it.v)}</span>`), row);
       let btns: HTMLElement[], right: (b: HTMLElement) => boolean;
       if (!names) {
@@ -474,7 +477,7 @@ register({
       } else {
         const same = M.DENOMS[it.code].map(d => d.v).filter(v => v !== it.v), other = M.CODES.find(c => c !== it.code);
         const opts = [{ code: it.code, v: it.v }, ...mix(same).slice(0, names - 2).map(v => ({ code: it.code, v })), { code: other, v: (pickOne(M.DENOMS[other] as { v: number }[])).v }];
-        btns = mix(opts).map(o => { const b = el("button", "mn3-btn", `<b>${label(o.code, o.v)}</b>`); b.dataset.k = o.code + o.v; row.appendChild(b); return b; });
+        btns = place(opts, o => o.code === it.code && o.v === it.v).map(o => { const b = el("button", "mn3-btn", `<b>${label(o.code, o.v)}</b>`); b.dataset.k = o.code + o.v; row.appendChild(b); return b; });
         right = b => b.dataset.k === it.code + it.v;
       }
       if (r === 0 || names) api.say(names ? "Which one is it?" : "Australia or Vietnam?", names ? "Đây là tờ nào?" : "Nước Úc hay Việt Nam?");

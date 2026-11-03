@@ -266,8 +266,11 @@ register({
     const per = code === "VND" ? 1000 : 10;
     const wrap = setup(api, code === "VND" ? ["Each can you return gives back 1.000 đồng. How much do you get?", "Mỗi vỏ lon trả lại được 1.000 đồng. Con được bao nhiêu tiền?"] : ["Each can you return gives back 10 cents. How much do you get?", "Mỗi vỏ lon trả lại được 10 xu. Con được bao nhiêu tiền?"], rounds);
     await wait(1800);
+    const used = new Set<number>();   // (v1.08 variety) a number of cans not asked before in this game
     for (let r = 0; r < rounds; r++) {
-      const cans = lv(api, 2, 2, 5, 10) + Math.floor(Math.random() * (api.little ? 3 : lv(api, 7, 9, 10, 10)));
+      let cans = 0;
+      for (let t = 0; t < 30 && (!cans || used.has(cans)); t++) cans = lv(api, 2, 2, 5, 10) + Math.floor(Math.random() * (api.little ? 3 : lv(api, 7, 9, 10, 10)));
+      used.add(cans);
       const ok = await moneyQuestion(api, `${pic("♻️")} ${pic("🥫").repeat(cans)}`, [`${cans} cans. How much money back?`, `${cans} vỏ lon. Được trả lại bao nhiêu tiền?`], cans * per, per, code);
       if (!ok || api.closed) return;
       api.sfx.coin(); api.dots(rounds, r + 1);
@@ -311,8 +314,13 @@ register({
     const wrap = setup(api, ["Put money in and take money out. Keep track of what is in the bank!", "Gửi tiền vào và rút tiền ra. Nhớ xem trong ngân hàng còn bao nhiêu nhé!"], rounds);
     await wait(1600);
     let balance = u * (2 + Math.floor(Math.random() * 3) + lv(api, 0, 1, 2, 3));
+    const asked = new Set<string>();   // (v1.08 variety) a visit not asked before in this game
     for (let r = 0; r < rounds; r++) {
-      const out = r % 2 === 1, amount = u * (1 + Math.floor(Math.random() * lv(api, 2, 3, 3, 4))) + ((api.smart || 0) >= 2 && !api.little ? small(code) : 0);
+      const out = r % 2 === 1, amountOf = () => u * (1 + Math.floor(Math.random() * lv(api, 2, 3, 3, 4))) + ((api.smart || 0) >= 2 && !api.little ? small(code) : 0);
+      let amount = amountOf();
+      for (let t = 0; t < 20 && (asked.has(`${balance}${out}${amount}`) || out && amount >= balance); t++) amount = amountOf();
+      if (out && amount > balance) amount = balance;
+      asked.add(`${balance}${out}${amount}`);
       const before = balance;
       balance = out ? balance - amount : balance + amount;
       const ask: [string, string] = out

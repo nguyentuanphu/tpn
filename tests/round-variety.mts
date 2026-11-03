@@ -28,27 +28,33 @@ async function probe(page, id: string, level: string, rounds: number): Promise<S
     if (!gl) return null;
     const shown = e => e && e.isConnected && (e.offsetWidth || e.getBBox?.()?.width);
     // what the child sees, without what only moves things about (ids, inline styles, the hint wiggle, the found mark)
-    const clean = h => String(h).replace(/\s(id|style|data-v|aria-[a-z]+|tabindex)="[^"]*"/g, '').replace(/url\(#[^)]*\)/g, 'url()').replace(/\b(hint|found|on|picked|right|wrong|shake|pop|in|out|anim[a-z-]*)\b/g, '').replace(/\s+/g, ' ');
-    const out = []; let lastEls = null;
+    // (a thing placed by left/top keeps where it is, and a turned thing its turn: in a tap-the-thing game that is what changes)
+    const where = st => { const x = /left:\s*(-?\d+)/.exec(st), y = /top:\s*(-?\d+)/.exec(st); const turn = /rotate\((-?\d+)/.exec(st); return (x && y ? ` at="${x[1]},${y[1]}"` : '') + (turn ? ` turn="${turn[1]}"` : ''); };
+    const clean = h => String(h).replace(/\sstyle="([^"]*)"/g, (_, st) => where(st)).replace(/\s(id|data-v|aria-[a-z]+|tabindex)="[^"]*"/g, '').replace(/url\(#[^)]*\)/g, 'url()').replace(/\b(hint|found|on|picked|right|wrong|shake|pop|in|out|anim[a-z-]*)\b/g, '').replace(/\s+/g, ' ');
+    const out = []; let lastEls = null, lastAt = Date.now();
     const t0 = Date.now();
-    while (out.length < rounds && Date.now() - t0 < 25000 && gl.isConnected) {
+    // a game with no choices to tap (a board, a pad, a drag game) is left after 5 s without a question
+    while (out.length < rounds && Date.now() - t0 < 25000 && Date.now() - lastAt < 5000 && gl.isConnected) {
       await w(120);
       document.querySelectorAll('.howto').forEach(h => h.remove());
       const pickLv = gl.querySelector('.gl-lvlpick'); if (pickLv) { (pickLv.querySelector('[data-l].on') || pickLv.querySelector('[data-l]'))?.click(); continue; }
       if (gl.querySelector('.gl-win')) break;
-      const ask = playWatch.ask;
+      // a question with a right answer (untilRight), or else a choice where any answer goes on (tapOne: a guess)
+      const ask = playWatch.ask || (playWatch.offer ? { els: playWatch.offer, check: null } : null);
       if (!ask || ask.els === lastEls || !ask.els.some(shown)) continue;
       await w(120); // let the round finish drawing
-      if (playWatch.ask !== ask) continue;
-      lastEls = ask.els;
-      const els = ask.els.filter(shown), right = els.find(e => ask.check?.(e));
+      if ((playWatch.ask || { els: playWatch.offer }).els !== ask.els) continue;
+      lastEls = ask.els; lastAt = Date.now();
+      // in the order the child sees them (top to bottom, left to right), not the order the game made them
+      const at = e => { const r = e.getBoundingClientRect(); return [Math.round(r.top / 8), r.left]; };
+      const els = ask.els.filter(shown).sort((a, b) => { const [ay, ax] = at(a), [by, bx] = at(b); return ay - by || ax - bx; }), right = ask.check ? els.find(e => ask.check(e)) : els[0];
       if (!right) break;
       const stage = gl.querySelector('.gl-stage'), help = gl.querySelector('.gl-help')?.textContent || '';
       // the answers as a set (sorted), the picture without the answers' order, and the question line
       const answers = els.map(e => clean(e.outerHTML)).sort();
       const pic = clean(stage?.innerHTML || '').replace(/\d+(\.\d+)?(?=\s*(px|%))/g, '');
       const q = help + ' || ' + answers.join(' ¦ ') + ' || right=' + clean(right.outerHTML) + ' || ' + (pic.length > 4000 ? pic.length + ':' + pic.slice(0, 4000) : pic);
-      out.push({ q, pos: els.indexOf(right), n: els.length });
+      out.push({ q, pos: ask.check ? els.indexOf(right) : -1, n: ask.check ? els.length : 0 });
       right.click();
       await w(150);
     }

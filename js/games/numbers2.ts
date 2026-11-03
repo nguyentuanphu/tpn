@@ -8,6 +8,7 @@ import { register, untilRight } from './frame.js';
 import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el, wait } from '../util.js';
+import { mover } from './variety.js';
 
 let styled = false;
 function style() {
@@ -45,7 +46,6 @@ function style() {
 // (v1.08 maths) speak: a question with a number in it, said through api.say with a template so its parts are recorded
 type Round = { draw: (stage: HTMLElement) => void; ask?: [string, string]; speak?: () => void; answer: string; others: string[] };
 const mix = <V,>(list: V[]): V[] => [...list].sort(() => Math.random() - .5);
-const pick = (from: number, to: number) => from + Math.floor(Math.random() * (to - from + 1));
 // numbers near the answer that are not the answer, inside lo..hi
 // ((levels) when more are wanted than fit beside the answer, numbers three or four away join in)
 const near = (n: number, lo: number, hi: number, k = 2) => {
@@ -62,12 +62,13 @@ async function rounds(api, list: Round[], intro: [string, string], end: [string,
   const stage = el('div', 'n2-stage'); wrap.appendChild(stage);
   const controls = el('div', 'n2-controls'); wrap.appendChild(controls);
   await wait(1200);
+  const place = mover();   // (v1.08 variety) the right answer moves from round to round
   for (let k = 0; k < list.length; k++) {
     const q = list[k];
     stage.innerHTML = ''; controls.innerHTML = '';
     q.draw(stage);
     if (q.speak) q.speak(); else api.say(q.ask[0], q.ask[1]);
-    const btns = mix([q.answer, ...q.others]).map(v => { const b = el('button', 'n2-btn', v); b.dataset.v = v; controls.appendChild(b); return b; });
+    const btns = place([q.answer, ...q.others], v => v === q.answer).map(v => { const b = el('button', 'n2-btn', v); b.dataset.v = v; controls.appendChild(b); return b; });
     const target = btns.find(b => b.dataset.v === q.answer);
     api.plan(() => target, { maxActions: 5 });
     const clicked = await untilRight(api, btns, e => e === target);
@@ -134,14 +135,17 @@ register({
   run: api => {
     const even = T('Even: all in pairs', 'Chẵn: đủ đôi'), odd = T('Odd: one left over', 'Lẻ: thừa một');
     // (levels) more rounds and bigger numbers from Medium; Talent: the apples stand in one row, not in pairs
-    const top = lv(api, 4, 5, 7, 9), ns = mix([pick(1, top) * 2, pick(1, top) * 2 + 1, ...Array.from({ length: count(api) - 2 }, () => pick(0, 1) ? pick(1, top) * 2 : pick(1, top) * 2 + 1)]);
-    return rounds(api, ns.map(n => ({
+    // (v1.08 variety) every number once (at least one even and one odd), a different fruit each round
+    const top = lv(api, 4, 5, 7, 9), all = mix(Array.from({ length: top * 2 }, (_, i) => i + 2)), firstEven = all.find(n => n % 2 === 0), firstOdd = all.find(n => n % 2 === 1);
+    const ns = mix([firstEven, firstOdd, ...all.filter(n => n !== firstEven && n !== firstOdd).slice(0, count(api) - 2)]), fruits = mix(['🍎', '🍐', '🍊', '🍓']);
+    return rounds(api, ns.map((n, k) => ({
       speak: () => api.say(`Here are ${n} apples. Does every apple have a partner?`, `Có ${n} quả táo. Quả nào cũng có đôi không?`),
       answer: n % 2 ? odd : even, others: [n % 2 ? even : odd],
       draw: stage => {
         const p = el('div', 'n2-pairs');
-        if (api.talent) p.appendChild(el('div', 'n2-slices', pic('🍎').repeat(n)));
-        else for (let i = 0; i < n; i += 2) p.appendChild(el('div', 'n2-pair', pic('🍎') + (i + 1 < n ? pic('🍎') : '')));
+        const f = fruits[k % fruits.length];
+        if (api.talent) p.appendChild(el('div', 'n2-slices', pic(f).repeat(n)));
+        else for (let i = 0; i < n; i += 2) p.appendChild(el('div', 'n2-pair', pic(f) + (i + 1 < n ? pic(f) : '')));
         stage.appendChild(p);
       }
     })), ['Put the apples in pairs: even or odd?', 'Xếp táo thành từng đôi: chẵn hay lẻ?'], ['Even and odd are clear!', 'Bé phân biệt chẵn lẻ thật chuẩn!']);

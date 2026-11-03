@@ -97,6 +97,8 @@ register({
     controls.append(leftBtn, rightBtn);
 
     const steps = api.little ? [leftBtn, rightBtn, leftBtn] : Array.from({ length: total }, (_, i) => i < 3 ? [leftBtn, rightBtn, leftBtn][i] : Math.random() < .5 ? leftBtn : rightBtn);
+    // (v1.08 variety) never the same way three times in a row
+    for (let i = 2; i < steps.length; i++) if (steps[i] === steps[i - 1] && steps[i] === steps[i - 2]) steps[i] = steps[i] === leftBtn ? rightBtn : leftBtn;
     let step = 0;
     while (step < total) {
       const target = steps[step];

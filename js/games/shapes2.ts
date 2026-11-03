@@ -169,8 +169,12 @@ register({
     // 0 up, 1 right, 2 down, 3 left; the star sits on that side of the box
     const spots = [{ left: '81px', top: '0' }, { left: '162px', top: '81px' }, { left: '81px', top: '162px' }, { left: '0', top: '81px' }];
     let facing = Math.floor(Math.random() * 4);
+    const turns = new Set<string>();   // (v1.08 variety) a start and a goal not played before in this game, when there is one
     for (let r = 0; r < rounds; r++) {
-      const goal = (facing + lv(api, 1 + Math.floor(Math.random() * 3), 1 + Math.floor(Math.random() * 3), 2 + Math.floor(Math.random() * 2), 3)) % 4;
+      const away = () => lv(api, 1 + Math.floor(Math.random() * 3), 1 + Math.floor(Math.random() * 3), 2 + Math.floor(Math.random() * 2), 3);
+      let goal = (facing + away()) % 4;
+      for (let t = 0; t < 12 && turns.has(`${facing},${goal}`); t++) goal = (facing + away()) % 4;
+      turns.add(`${facing},${goal}`);
       Object.assign(star.style, spots[goal]);
       arrow.style.transform = `rotate(${facing * 90}deg)`;
       api.plan(() => facing !== goal ? turn : null, { maxActions: 5 });
