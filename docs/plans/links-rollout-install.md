@@ -232,6 +232,19 @@ Owner, 3 Nov 2026 AEDT:
   - in the Grown-ups "What's new" card.
 
   There is no push for endings. The existing start-of-festival pushes stay.
+## The website: what's new and coming up (owner, 3 Nov 2026 AEDT, pop-up)
+The website keeps its four main destinations (WEBSITE-RULES rule 1). Inside Discover there are two new parts:
+- **A strip just under the hero picture** with three short items: "Happening now", "New this week" and "Coming up" (for example "Chapter 4 opens 4 Dec").
+- **A Calendar part in Discover** (it extends the festival overview). Each entry has its start and end date and a picture (our own art). It shows:
+  - festivals;
+  - new lantern chapters, with a picture;
+  - new games and stories;
+  - festival games, with the dates they come back.
+
+How it is built:
+- Both parts read the same release calendar and festival dates as the game and the pad's calendar tab, so the website and the game always agree. This is the website contract's "same source" rule.
+- English and Vietnamese, and the one-screen phone layout.
+- It also says what parents get: the push messages that can be turned on in Grown-ups, and the "What's new" card.
 ## Questions for the owner (asked by pop-up)
 1. Rollout pace.
 2. The install gift.
