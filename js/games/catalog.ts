@@ -276,6 +276,18 @@ export const GAME_CATALOG = [
   { id: 'vi_sentence', learn: true, icon: 'vi:sentence', name: () => T('Make a Sentence', 'Bé Đặt Câu') },
   { id: 'vi_dictation', learn: true, icon: 'vi:dictation', name: () => T('Listen and Spell', 'Nghe Và Viết') },
   { id: 'vi_riddle', learn: true, icon: 'vi:riddle', name: () => T('Folk Riddles', 'Câu Đố Dân Gian') },
+  // (v1.08 money) eleven more money games, in the child's home currency (js/games/money3.ts)
+  { id: 'shoppay', icon: 'mn3:shoppay', name: () => T('Shop and Pay', 'Mua Hàng Trả Tiền') },
+  { id: 'givechange', icon: 'mn3:givechange', name: () => T('Give Change: Count Up', 'Đếm Thêm Trả Tiền Thừa') },
+  { id: 'toysave', icon: 'mn3:toysave', name: () => T('Save for a Toy', 'Để Dành Mua Đồ Chơi') },
+  { id: 'needsfirst', icon: 'mn3:needsfirst', name: () => T('Needs before Wants', 'Cần Trước, Muốn Sau') },
+  { id: 'pricesort', icon: 'mn3:pricesort', name: () => T('Price Tag Line-up', 'Xếp Thẻ Giá') },
+  { id: 'marketday', icon: 'mn3:marketday', origin: 'vn', name: () => T('Market Day', 'Phiên Chợ') },
+  { id: 'coinsort', icon: 'mn3:coinsort', name: () => T('Coin Sort', 'Phân Loại Tiền') },
+  { id: 'makeamount', icon: 'mn3:makeamount', name: () => T('Make the Amount', 'Ghép Đủ Số Tiền') },
+  { id: 'budgetpicnic', icon: 'mn3:budgetpicnic', name: () => T('Budget a Picnic', 'Đi Dã Ngoại Tiết Kiệm') },
+  { id: 'chores', icon: 'mn3:chores', name: () => T('Earn by Chores', 'Làm Việc Nhà Kiếm Tiền') },
+  { id: 'twomoney', icon: 'mn3:twomoney', name: () => T('Two Homes Money', 'Tiền Hai Nhà') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -327,5 +339,7 @@ export const GAME_LOADERS = {
   'maths4.ts': { ids: ['mx_quarter', 'mx_sudoku', 'mx_bigger', 'mx_doubles', 'mx_tens', 'mx_missing', 'mx_solids3d', 'mx_leftright', 'mx_sprint', 'mx_grouping'], load: () => import('./maths4.js') },
   // (v1.08 vietnamese)
   'tiengviet2.ts': { ids: ['vi_tonemean', 'vi_rhyme', 'vi_letters', 'vi_opposite', 'vi_cadao', 'vi_tucngu', 'vi_readalong', 'vi_sentence', 'vi_dictation', 'vi_riddle'], load: () => import('./tiengviet2.js') },
+  // (v1.08 money)
+  'money3.ts': { ids: ['shoppay', 'givechange', 'toysave', 'needsfirst', 'pricesort', 'marketday', 'coinsort', 'makeamount', 'budgetpicnic', 'chores', 'twomoney'], load: () => import('./money3.js') },
 
 };

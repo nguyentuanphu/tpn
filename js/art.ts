@@ -22,3 +22,5 @@ export { hasArt, labelArt, pic, artSVG, ART_COUNT } from './art/lookup.js';
 import './art/notify.js'; // (v1.08 notifications) the bell and the Home Screen phone
 // (v1.08 maths) the 21 new maths games' pictures
 import './art/maths3.js';
+// (v1.08 money) the eleven new money games' pictures and the market stall (js/art/money3.ts)
+import './art/money3.js';

@@ -117,7 +117,10 @@ const GAME_SPOT = { music: 'musiccorner', firstwords: 'g_firstwords', tangram: '
   tower: 'blocks', order: 'order', sortout: 'bear', duckmaze: 'duckmaze', memory: 'chest', tune: 'xylo', shapes: 'theatre', oddone: 'frog' };
 // (v1.08 english) the English corner's own games are found at the Fun Learning School, with Cô Tam (js/school.ts)
 const LEARN_SPOT = id => /^en_/.test(id) ? 'school' : '';
-G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || (G.GAME_SPOT || {})[id] || SCIENCE_PLACES[id] || (SHRINES.find(s => s.game === id) || {}).id || LEARN_SPOT(id)));
+// (v1.08 money) the new money games' places: Cô Mai's market for buying and selling, the family's stall for sorting and
+// making amounts, and home for saving and chores
+const MONEY3_SPOT = { shoppay: 'npc_mai', givechange: 'npc_mai', needsfirst: 'npc_mai', pricesort: 'npc_mai', marketday: 'npc_mai', budgetpicnic: 'npc_mai', twomoney: 'npc_mai', coinsort: 'stall', makeamount: 'stall', toysave: 'myhouse_door', chores: 'myhouse_door' };
+G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || MONEY3_SPOT[id] || (G.GAME_SPOT || {})[id] || SCIENCE_PLACES[id] || (SHRINES.find(s => s.game === id) || {}).id || LEARN_SPOT(id)));
 G.openQuick = i => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return; G.paused = true; openQuick(G, i); };
 G.openGamesHub = i => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return; G.paused = true; openGamesHub(G, i, () => { G.paused = false; }); };
 // Games hub / map: fly straight to the friend who runs a game (or a place), then start it there

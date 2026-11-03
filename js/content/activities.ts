@@ -103,7 +103,10 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   mx_leftright: ['numbers', 3, 1], mx_sprint: ['numbers', 5, 3], mx_grouping: ['numbers', 5, 2],
   // (v1.08 vietnamese) ten more Tiếng Việt games (js/games/tiengviet2.ts)
   vi_tonemean: ['hv_vi', 3, 1], vi_rhyme: ['hv_vi', 4, 2], vi_letters: ['hv_vi', 4, 2], vi_opposite: ['hv_vi', 3, 1], vi_cadao: ['hv_vi', 4, 2],
-  vi_tucngu: ['hv_vi', 5, 2], vi_readalong: ['hv_vi', 4, 2], vi_sentence: ['hv_vi', 5, 2], vi_dictation: ['hv_vi', 5, 3], vi_riddle: ['hv_vi', 3, 1]
+  vi_tucngu: ['hv_vi', 5, 2], vi_readalong: ['hv_vi', 4, 2], vi_sentence: ['hv_vi', 5, 2], vi_dictation: ['hv_vi', 5, 3], vi_riddle: ['hv_vi', 3, 1],
+  // (v1.08 money) eleven more money games for ages 4 to 9 (js/games/money3.ts): open at once, not a second set (js/content/unlocks.ts)
+  shoppay: ['money', 3, 1], givechange: ['money', 4, 2], toysave: ['money', 4, 2], needsfirst: ['money', 3, 1], pricesort: ['money', 3, 1], marketday: ['money', 4, 2],
+  coinsort: ['money', 3, 1], makeamount: ['money', 3, 2], budgetpicnic: ['money', 4, 2], chores: ['money', 4, 2], twomoney: ['money', 3, 1]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };
