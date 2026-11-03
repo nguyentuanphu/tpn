@@ -1,6 +1,6 @@
 # v1.08 helper: variety (status)
 
-(in progress: checks running, 3 Nov 2026 AEDT)
+**ready for Release** (3 Nov 2026, 11:30 pm AEDT). Full suite left for Release (owner, 3 Nov 2026 AEDT).
 
 Branch: `work/v108-variety` (from `origin/fix/v108-startup-art`). Brief: [variety-brief.md](variety-brief.md). Shared rules: [README.md](README.md).
 
@@ -71,9 +71,32 @@ now never asks the same sum twice.
 - Voice: 44 missing lines recorded with Azure (the new pizza questions and lines other branches had added), `voices/`.
   No line with a child's name.
 
-## Checks
+## Checks (3 Nov 2026 AEDT, on `work/v108-variety`)
 
-(running)
+`node suite.mts --changed` picks the full suite (the new file goes into `.gitignore`), so the checks that cover the change
+ran one at a time with `--only` (base `origin/fix/v108-startup-art`). The full suite is left for Release.
+
+| Check | Result |
+|---|---|
+| emoji, noemoji, arch, names, bilingual, rules, types | pass |
+| unit | pass (515), after `npm ci` in the repo root (the first run had no `pg` package here) |
+| preload | pass, after `node tools/preload.mts`: the list in `index.html` was already out of date on `fix/v108-startup-art` (the same tool there gives the same change: `js/art/english.js` and `js/games/english-meta.js` out, `js/content/science-places.js` in) |
+| boot, contract, phone | pass |
+| games (299), gamelevel, levelsa, levelsb, levelsall (276), gameends, gameflow, soundgames | pass |
+| hocvui, englishmode, school, ownerlearningprogression, ownerthinkinglevels, ownerlearninglayout, r79learning | pass |
+| voicepack, voicecover | pass |
+| roundvariety (new, every level, 33 min) | pass: 156 games with choices, 4 rounds in a row at each level |
+| online checks | not run (nothing online changed) |
+
+Screenshots looked at (phone 390 x 844, tablet 820 x 1180, computer 1280 x 800): Pizza Fractions at Easy, Number Train at
+Easy, Listen and Choose at Hard. Tidy on all three, layout unchanged.
+
+## For Release
+
+- `.gitignore` and `index.html` (preload list) changed; both are made by the tools.
+- `voices/manifest-*.json` and `voices/areas.json` changed with the 44 new recordings: if another branch recorded too,
+  keep both sets of lines (or run `node tools/make-voice-pack.mts --engine azure` again after merging).
+- `roundvariety` takes about 33 minutes in full here (3 pages side by side); in a sample run two levels per game.
 
 ## Commits
 
