@@ -43,7 +43,7 @@ The designs:
    - Girls: Flora, "Bloom Keeper · Người giữ hoa", and Lumi, "Leaf Sprite · Tiên lá".
 
    The child taps one. The character waves and smiles (the "happy" mood) and says hello in English or Vietnamese.
-3. **Skin tone** (5 tones; if the owner agrees, question 2). It is one row under the model, and the model changes colour straight away.
+3. **Skin tone** (5 tones, owner's answer 2). It is one row under the model, and the model changes colour straight away.
 4. **Age, start screen and difficulty** stay as they are, on the same page.
 5. **The photo** stays for the round picture (picker, HUD, friends list). It is no longer pasted onto the 3D face, because the new faces are drawn with moods and a photo would break them.
 6. The child's name stays the child's name. Finn or Flora is the look, not a new name: "Henry (Finn)" in Grown-ups.
@@ -86,12 +86,12 @@ Today's tops and bottoms only fit the old body, and the new friends each have th
 | **New: in the hand** | Finn's compass, Flora's flower staff, Sol's sun crystal, Lumi's star lantern. The child earns each one from their friend's quests; it is not sold. | Gives each friend something to do. |
 
 - **Hats, neck items, backs, shoes and glasses fit all four friends.** The boys/girls split stays only for outfits. Anything else of the other set can be bought or given as a gift, as today.
-- **Tops and bottoms already bought** (they cannot be worn on the new body): see question 3. The recommendation is to give back their coins, with a note: "Áo cũ đã đổi thành xu / Old clothes turned into coins".
+- **Tops and bottoms already bought** (they cannot be worn on the new body): each one becomes a new outfit of the same colour for the child's friend, free (owner's answer 3), with a note: "Áo cũ đã thành bộ đồ mới / Old clothes became new outfits".
 - Shop pictures: each item gets a new 2D picture drawn from the new model (our own drawing).
 
 ### 6. The villagers
 - **The 11 named villagers** each get a design in the new style: Vietnamese villagers in everyday Vietnamese clothes, the Australians (Jack, Ruby) in everyday Australian clothes, at the new heights. The gallery already has 14 neighbours to start from.
-- **Crowds** (cities, traffic, school, festivals, the 60 Studio villagers) cannot all be 3D model files: there are too many, and the phone would slow down. Two ways (question 4):
+- **Crowds** (cities, traffic, school, festivals, the 60 Studio villagers) cannot all be 3D model files: there are too many, and the phone would slow down. Two ways; the owner chose A:
   - **A (recommended):** the builder in `js/avatar.ts` is reshaped to the new style: new proportions and heights, the new face (smaller eyes, soft cheeks), felt-look hair and the seven moods. The villagers then look like they live with the four friends, but stay light, and their far still copies and the speed checks keep working.
   - **B:** every villager is a model file. This looks closest to the gallery, but it is heavy: many megabytes more and slower phones.
 - **Studio:** the villager and story-character pages get the new look choices: kind (VN or AU), age (child, grown-up, grandparent), clothes and hair. Old Studio villagers are moved to the closest new look.
@@ -125,15 +125,15 @@ Today's tops and bottoms only fit the old body, and the new friends each have th
   - Welcome, migration, the pad change row;
   - hats, neck, back, shoes and glasses fitted;
   - the outfits shop;
-  - the refund of old tops and bottoms.
+  - old tops and bottoms turned into new outfits.
 - **v1.10:**
   - the villagers in the new style (the 11 named ones first, then crowds and Studio);
   - films, tale theatre and vehicles;
   - items in the hand from the friends' quests.
 - Each round goes through the full suite on GitHub and the owner's "yes, deploy".
 
-## Questions for the owner (asked by pop-up)
-1. Which friend existing players move to (recommended: boys Finn, girls Flora, with the one-time card to change).
-2. Skin tone on the new friends (recommended: keep 5 tones).
-3. Tops and bottoms already bought (recommended: coins back).
-4. Villagers (recommended: A, the builder reshaped to the new style, light).
+## Owner's answers (3 Nov 2026 AEDT, pop-ups)
+1. Existing players: boys to Finn, girls to Flora, with the one-time card to change.
+2. Skin tone: yes, 5 tones (the old tone carries over).
+3. Tops and bottoms already bought: **turned into new outfits**. Each old item becomes a new outfit of the same colour for the child's friend, free, instead of coins back.
+4. Villagers and crowds: A, the builder in code reshaped to the new style (light).
