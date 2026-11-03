@@ -84,14 +84,15 @@ await check('enwords', async () => {
   // the recording: the English pieces in the English voice of the same woman or man
   const ssml = mixedSsml(enRuns('"G\'day" nghĩa là gì?'), 'en-AU-NatashaNeural', 'vi-VN-HoaiMyNeural', '', 'vi');
   ok(/xml:lang="vi-VN"/.test(ssml) && /<voice name="en-AU-NatashaNeural">[^]*G&apos;day/.test(ssml) && /<voice name="vi-VN-HoaiMyNeural">[^]*nghĩa là gì/.test(ssml), 'SSML: ' + ssml);
-  // every Vietnamese line the game speaks with English words has its two-voice recording (woman and man)
+  // every Vietnamese line the game speaks with English words has its two-voice recording in the woman's voices (owner via
+  // Release, 3 Nov 2026 AEDT: only female voices from now on)
   const man = JSON.parse(fs.readFileSync('../voices/manifest.json', 'utf8'));
   let extra = []; try { extra = JSON.parse(fs.readFileSync('../tools/voice-extra.json', 'utf8')); } catch (e) { }
   // (js/i18n.js expects a browser, as in tools/make-voice-pack.mts)
   const g = globalThis as any; if (!g.document) Object.assign(g, { document: { documentElement: {} }, localStorage: { getItem: () => null, setItem: () => { } } });
   const { swapNames } = await import('../../js/i18n.js');
   const lines = [...new Set([...collectLines().map(l => swapNames(l.vi, 'vi')), ...extra.filter(l => l && l.lang === 'vi').map(l => String(l.text))])].filter(enMixed);
-  const missing = lines.filter(t => !/^(fm|mf)$/.test(String(man.lines[lineHash('vi', t)] || '')) || !fs.existsSync(`../voices/vi/f/${lineHash('vi', t)}.mp3`));
+  const missing = lines.filter(t => !String(man.lines[lineHash('vi', t)] || '').includes('f') || !fs.existsSync(`../voices/vi/f/${lineHash('vi', t)}.mp3`));
   ok(lines.length >= 150 && lines.every(t => lineHash('vi', t) !== packHash('vi', t)), `only ${lines.length} Vietnamese lines with English words`);
   ok(!missing.length, `${missing.length} not recorded with the English voice: ${missing.slice(0, 5).join(' | ')}`);
   // the phone's own voices: the English pieces by its English voice, the rest by its Vietnamese voice
@@ -110,7 +111,7 @@ await check('enwords', async () => {
   }, line);
   ok(JSON.stringify(r.said) === JSON.stringify([['en-AU', 'No worries, mate!'], ['vi-VN', '" nghĩa là không sao đâu bạn ơi.']]), 'phone voice: ' + JSON.stringify(r.said));
   ok(JSON.stringify(r.said3) === JSON.stringify([['vi-VN', 'Ở Úc người ta nói'], ['en-AU', "G'day"], ['vi-VN', 'thay cho xin chào!']]), 'phone voice: ' + JSON.stringify(r.said3));
-  ok((r.rec === 'fm' || r.rec === 'mf') && r.url.endsWith(r.h + '.mp3'), `the game does not play the two-voice recording (${r.rec}, ${r.url})`);
+  ok(String(r.rec || '').includes('f') && r.url.endsWith(r.h + '.mp3'), `the game does not play the two-voice recording (${r.rec}, ${r.url})`);
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
   return `${cases.length} lines and ${AUSSIE_SLANG.length} slang words cut right; ${lines.length} Vietnamese lines with English words recorded with the English voice for those words; the phone says them with its English voice`;
 });

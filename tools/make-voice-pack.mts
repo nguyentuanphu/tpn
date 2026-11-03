@@ -168,8 +168,9 @@ const reviewed=reviewedFile?readReviewedVoiceDelta(reviewedFile):null;
 if(reviewed&&flag('force'))throw Error('A reviewed delta cannot force replacement of existing recordings');
 const reviewedIds=reviewed?new Set(reviewed.lines.map(l=>l.lang+':'+l.id)):null;
 for(const line of reviewed?.lines||[])if(!list.some(([id,j])=>id===line.id&&j.lang===line.lang&&j.text===line.text))throw Error('Reviewed line missing from Azure inventory: '+line.id);
-// (v1.08 aussie-voice) --vi-en: only the Vietnamese lines with English words (js/viwords.ts enRuns), recorded with both voices
-const missing = files.filter(([s, h, j]) => (!reviewedIds||reviewedIds.has(j.lang+':'+h))&&(!flag('vi-en')||j.lang==='vi'&&enMixed(j.text))&&!fs.existsSync(path.join(PACK_DIR, j.lang, s, h + '.mp3')));
+// (v1.08 aussie-voice) --vi-en: only the Vietnamese lines with English words (js/viwords.ts enRuns), in the woman's voices
+// (owner via Release, 3 Nov 2026 AEDT: only female voices from now on: Vietnamese HoaiMy with English Natasha)
+const missing = files.filter(([s, h, j]) => (!reviewedIds||reviewedIds.has(j.lang+':'+h))&&(!flag('vi-en')||j.lang==='vi'&&enMixed(j.text)&&s==='f')&&!fs.existsSync(path.join(PACK_DIR, j.lang, s, h + '.mp3')));
 const need = missing.reduce((a, [, , j]) => a + j.text.length, 0);
 console.log('The voice pack, by language:');
 for (const L of Object.keys(CAST)) {
