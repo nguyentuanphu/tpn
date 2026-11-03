@@ -3445,3 +3445,27 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .sp-hint { display:block; margin-top:2px; font-size:12px; font-weight:700; line-height:1.15; color:#7a4fd0; }
 /* a phone on its side has one row of road: the padlock shows it, and a tap says what to do */
 .simple-screen.wide .sp-hint { display:none; }
+
+/* (v1.08 layout, owner 3 Nov 2026 AEDT, Android tablet held sideways) the level button and the stars sit on the title row,
+   beside the round dots and the guide film, so the playing area gets the row they had; the guide line is the question
+   alone. On a phone the round dots go just under the row so the name keeps its room. */
+.gl-head { gap: 8px; }
+.gl-head .gl-status { flex: none; gap: 6px; }
+.gl .gl-head .gl-status .starbox { position: static; margin: 0; font-size: 18px; padding: 4px 12px; white-space: nowrap; }
+.gl-head .gl-how { margin-left: 0; }
+.gl-head .gl-title { flex: 1 1 auto; }
+@media (max-width: 600px) {
+  .gl-head { padding-bottom: 12px; }
+  .gl-head .gl-dots { position: absolute; left: 50%; bottom: 2px; transform: translateX(-50%); }
+  .gl-head .gl-dots i { width: 8px; height: 8px; }
+  .gl-head .gl-title { gap: 6px; font-size: 17px; line-height: 1.15; }
+  .gl-head .gl-icon { width: 40px; height: 40px; border-radius: 13px; font-size: 24px; flex: none; }
+  .gl .gl-head .gl-status .starbox { font-size: 15px; padding: 4px 8px; }
+  .gl-head .gl-lvl { padding: 0 8px; font-size: 14px; }
+}
+@media (max-width: 380px) { .gl-head .gl-icon { display: none; } }
+/* The guide line spans the screen now; on a short landscape screen it keeps to one line (tap for the rest). */
+@media (orientation: landscape) and (max-height: 560px) { .gl-guide .gl-help { -webkit-line-clamp: 1; min-height: 1.25em; } }
+/* Under-5s on a phone: their buttons are 64 px, so the row keeps the game's picture and leaves out its written name
+   (the voice says it; under-5s play by pictures). */
+@media (max-width: 480px) { .gl.little .gl-head .gl-title > span:last-child { display: none; } }
