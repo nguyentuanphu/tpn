@@ -1079,8 +1079,8 @@ async function allJobs() {
   (c.tales || []).forEach(t => { add(t.en, t.vi); t.pages.forEach(p => add(p[1], p[2])); });
   (c.quiz || []).forEach(q => { add(q.q[0], q.q[1]); q.answers.forEach(a => add(a[0] + '!', a[1] + '!')); });
   if (c.message) add(c.message.en, c.message.vi);
-  const { swapNames } = await import(GAME + 'js/i18n.js'), { LEARN } = await import(GAME + 'js/words2.js'), { lineHash: packHash } = await import(GAME + 'js/packhash.js'), { viRuns, mixed } = await import(GAME + 'js/viwords.js');
-  const jobs = new Map(); const put = (lang, text) => { if (text) jobs.set(packHash(lang, text), { lang, text, ...(lang === 'en' && mixed(text) ? { runs: viRuns(text) } : {}) }); };
+  const { swapNames } = await import(GAME + 'js/i18n.js'), { LEARN } = await import(GAME + 'js/words2.js'), { lineHash: packHash } = await import(GAME + 'js/packhash.js'), { viRuns, mixed, enRuns, enMixed } = await import(GAME + 'js/viwords.js');
+  const jobs = new Map(); const put = (lang, text) => { if (text) jobs.set(packHash(lang, text), { lang, text, ...(lang === 'en' && mixed(text) ? { runs: viRuns(text) } : lang === 'vi' && enMixed(text) ? { runs: enRuns(text) } : {}) }); }; // (v1.08 aussie-voice: English slang in a Vietnamese line)
   for (const [en, vi] of seen.values()) { put('en', swapNames(en, 'en')); put('vi', swapNames(vi, 'vi')); }
   for (const [lang, L] of Object.entries<{ words: string[][] }>(LEARN)) for (const w of L.words) put(lang, w[3]);
   const cities = SRC.cities, re = /\['([^'\\]+)', '(?:[^'\\]|\\.)*', '(?:[^'\\]|\\.)*', '(zh|hi)'\]/g; let m; while ((m = re.exec(cities))) put(m[2], m[1]);
