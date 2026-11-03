@@ -30,7 +30,10 @@ export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'so
   // plays as after every batch has started: a rule whose start is still to come is left out, and the feature is on by its
   // own default and switched by CUSTOM.features as before the schedule; the second set of games and stories is switched
   // on. The rollout check, which checks the schedule itself, passes schedule: true and gets the file as shipped
-  if (!schedule) await ctx.route('**/content/custom.json', async r => {
+  // (v1.08 fixes) a check that closes its page while this file is still on its way made route.fetch throw outside any
+  // check ("Request context disposed"), which stopped the whole run and every check after it in that shard
+  if (!schedule) await ctx.route('**/content/custom.json', async r => { try { await customRoute(r); } catch (e) { if (!/disposed|closed|Target page, context or browser/i.test(String(e))) throw e; } });
+  async function customRoute(r) {
     const res = await r.fetch(); let j; try { j = await res.json(); } catch (e) { return r.fulfill({ response: res }); }
     const today = new Date().toISOString().slice(0, 10);
     for (const [id, rule] of Object.entries(j.releases || {})) if (rule && typeof rule === 'object' && 'start' in rule && typeof rule.start === 'string' && rule.start > today) delete j.releases[id];
@@ -45,7 +48,7 @@ export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'so
     // Fruit Parade is likewise explicitly enabled for functional checks; dedicated gating cases override this route.
     j.releases = { ...(j.releases || {}), newGames: { on: true }, newStories: { on: true }, sparkleFruitParade_single: { on: true }, sparkleFruitParade_multi: { on: true } };
     await r.fulfill({ response: res, json: j });
-  });
+  }
   if (route) await route(ctx); // (marketing films) change what the page loads
   await page.goto(url);
   await page.waitForSelector('.screen.title', { timeout: 90000 });
