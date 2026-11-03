@@ -60,9 +60,8 @@ def skin_body():
         ao, amb = _mb('mbArm' + ('L' if s > 0 else 'R'))
         sh, el, wr = arm_points(s); rU, rA = b['rU'], b['rA']
         _ball(amb, sh + Vector((-s * .006 * S, 0, -.012 * S)), rU * 1.04)       # the shoulder (deltoid), overlapping the body's shoulder
-        _cap(amb, sh, el, rU * .95); _ball(amb, el, rA * 1.05); _cap(amb, el, wr, rA)
-        hand = wr + (wr - el).normalized() * rA * 1.1
-        _ball(amb, hand, 1, (rA * 1.1, rA * .9, rA * 1.3)); _ball(amb, hand + Vector((-s * rA * .6, -rA * .7, rA * .25)), rA * .42)
+        _cap(amb, sh, el, rU * .95); _ball(amb, el, rA * 1.05); mid = el.lerp(wr, .45); _cap(amb, el, mid, rA); _cap(amb, mid, wr, rA * .78)   # the forearm tapers to the wrist
+        _ball(amb, wr, rA * .74)   # a slimmer wrist; the hand itself is made apart (below) so the fingers stay clear
         parts.append(ao)
     dg = bpy.context.evaluated_depsgraph_get(); made = []
     for p in parts:
@@ -76,6 +75,24 @@ def skin_body():
         bpy.ops.object.modifier_apply(modifier='melt'); bpy.ops.object.modifier_apply(modifier='soft')
     for f in sk.data.polygons: f.use_smooth = True
     return sk
+
+def make_hand(s):
+    """a real hand (owner, 3 Nov: "I couldn't see the hands but just arms"): a palm turned to the body, four fingers a little curled, a thumb in front"""
+    sh, el, wr = arm_points(s); rA = B['rA']
+    d = (wr - el).normalized(); n = Vector((-s, 0, 0)); n = (n - n.project(d)).normalized()   # down the hand, and towards the body
+    front = d.cross(n).normalized()
+    if front.y > 0: front = -front                                                            # towards the front (-y)
+    palm = wr + d * rA * 1.15
+    o = sphere('handS', SKIN, palm, (1, 1, 1), 24, 12)
+    M = Matrix((front * rA * 1.1, d * rA * 1.25, n * rA * .55)).transposed()
+    for v in o.data.vertices: v.co = palm + M @ (v.co - palm)
+    for k, t in enumerate((-.68, -.22, .24, .7)):   # fingers: index at the front
+        base = palm + d * rA * .85 + front * t * rA * .82; L = rA * (.95, 1.05, 1.0, .8)[k]
+        tip = base + d * L + n * rA * .32
+        tube('handS', SKIN, [base, base + d * L * .55 + n * rA * .08, tip], [rA * .23, rA * .21, rA * .18], 12)
+        sphere('handS', SKIN, tip, (rA * .18,) * 3, 10, 5)
+    tb = palm + front * rA * .8 + d * rA * .05; tt = tb + d * rA * .65 + front * rA * .35 + n * rA * .3
+    tube('handS', SKIN, [tb, tb.lerp(tt, .5) + front * rA * .08, tt], [rA * .3, rA * .25, rA * .2], 12); sphere('handS', SKIN, tt, (rA * .2,) * 3, 10, 5)
 
 def layer(sk, keep, m, off, name):
     """a fitted garment: the body surface where keep(point) is true, lifted by off and given a little thickness"""
@@ -112,6 +129,11 @@ def sculpt():
     for o in objs:
         if base(o) in REPLACED_SKIN + REPLACED_TOP + REPLACED_SLEEVE + REPLACED_PANTS: bpy.data.objects.remove(o)
     sk = skin_body(); col = bpy.data.collections['body']
+    for s_ in (-1, 1):   # the hands, each part moved into the body collection
+        before = set(bpy.data.objects); make_hand(s_)
+        for o in set(bpy.data.objects) - before:
+            for c in list(o.users_collection): c.objects.unlink(o)
+            col.objects.link(o)
     for c in list(sk.users_collection): c.objects.unlink(sk)
     col.objects.link(sk); subsurf(sk, 1)
     def arm_of(p):

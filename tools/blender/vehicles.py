@@ -14,12 +14,13 @@ CROWD = False
 SRC, OUT = argv[0], argv[1]; QUICK = 'quick' in argv
 os.makedirs(OUT, exist_ok=True)
 
+RIGS = []
 def load(name, loc, rot_z=0.0, pose='sit', frame=10, face='smile'):
     """bring one character in, pose it, and stand its hips at loc (x, y, hip height) facing -y turned by rot_z"""
     path = os.path.join(SRC, name + '.blend')
     with bpy.data.libraries.load(path) as (src, dst):
         dst.collections = [c for c in src.collections]
-        dst.objects = [n for n in src.objects if n == 'rig' or n.startswith(('lanternLight', 'propLight'))]
+        dst.objects = [n for n in src.objects if n == 'rig' or n.split('.')[0] in ('head', 'ear') or n.startswith(('lanternLight', 'propLight'))]   # the head's skin is outside the collections
     rig = next(o for o in dst.objects if o and o.type == 'ARMATURE')
     for c in dst.collections:
         if c is None: continue
@@ -38,7 +39,7 @@ def load(name, loc, rot_z=0.0, pose='sit', frame=10, face='smile'):
     bpy.context.view_layer.update()
     hip = (rig.matrix_world @ rig.pose.bones['legL'].head)
     rig.rotation_euler = (0, 0, rot_z); rig.location = Vector(loc) - Vector((0, 0, hip.z)) + Vector((0, 0, 0))
-    return rig
+    RIGS.append(rig); return rig
 
 def box(name, m, c, size, bevel=.06, seg=3):
     """a soft rounded box"""
@@ -80,15 +81,25 @@ def studio(bg='#f3ead7', target=(0, 0, .8), k=1.0, face_light=None):
     nt.links.new(rl.outputs['Image'], ao.inputs[2]); nt.links.new(ao.outputs['Image'], cp.inputs['Image'])
     return cam
 
-def shoot(cam, name, loc, target, res=(1200, 800)):
-    scene = bpy.context.scene; q = .5 if QUICK else 1
+def shoot(cam, name, loc, target, res=(1200, 800), lens=50):
+    scene = bpy.context.scene; q = .5 if QUICK else 1; cam.data.lens = lens
+    cam.location = loc
+    bpy.context.view_layer.update()
+    for rig in RIGS:   # everyone turns the head (side to side only) to look at us, so faces show (owner, 3 Nov)
+        pb = rig.pose.bones['head']; base = pb.rotation_euler.copy(); want = (Vector(loc) - rig.matrix_world @ pb.head); want.z = 0; want.normalize()
+        def fwd(a):
+            pb.rotation_euler = (base.x, base.y + a, base.z); bpy.context.view_layer.update()
+            f = (rig.matrix_world @ pb.matrix @ pb.bone.matrix_local.inverted()).to_3x3() @ Vector((0, -1, 0)); f.z = 0; return f.normalized()
+        best = max([a / 20 for a in range(-20, 21)], key=lambda a: fwd(a).dot(want))   # up to a whole radian either way
+        fwd(best * .8)
+    bpy.context.view_layer.update()
     scene.render.resolution_x, scene.render.resolution_y = int(res[0] * q), int(res[1] * q)
     cam.location = loc; cam.rotation_euler = (Vector(target) - Vector(loc)).to_track_quat('-Z', 'Y').to_euler()
     scene.render.filepath = os.path.join(OUT, name + '.png'); bpy.ops.render.render(write_still=True)
 
 # ---------- 1. a Vietnamese motorbike: dad riding with his helmet on, his daughter behind ----------
 def motorbike():
-    reset(); RED = felt('bikeRed', '#c9473f', .45, .03); CREAM = felt('bikeCream', '#efe6d2', .5, .03); DARK = felt('bikeDark', '#3a3a3f', .6, .03)
+    RIGS.clear(); reset(); RED = felt('bikeRed', '#c9473f', .45, .03); CREAM = felt('bikeCream', '#efe6d2', .5, .03); DARK = felt('bikeDark', '#3a3a3f', .6, .03)
     SEAT = felt('bikeSeat', '#4a3a32', .7, .05); CHROME = mat('chrome', '#d9d6cf', .25, metal=.8); LAMP = mat('lamp', '#fff3c4', .2, emit=2)
     # the scooter faces -y: front wheel at y -.65, back wheel at y +.55
     # the riders first, then the scooter is fitted to them: grips in the hands, the floorboard under the feet
@@ -112,7 +123,7 @@ def motorbike():
     sphere('taillight', mat('tail', '#ff5a4a', .3, emit=1.5), (0, .8, .7), (.08, .03, .04), 12, 6)
     box('plate', CREAM, (0, .82, .5), (.2, .02, .1), .01)
     cam = studio(target=(0, 0, .9), face_light=(-1.6, -3.5, 1.8))
-    shoot(cam, 'vehicle-motorbike', (-2.7, -4.6, 1.9), (0, .1, 1.15))
+    shoot(cam, 'vehicle-motorbike', (-1.9, -3.6, 1.75), (0, .1, 1.15), lens=45)
 
 def hands_feet(rig):
     """where the rider's hands and feet are once posed (left first)"""
@@ -123,7 +134,7 @@ def hands_feet(rig):
 
 # ---------- 2. a bicycle: an Australian boy in his bucket hat and thongs, hands on the grips, feet on the pedals ----------
 def bicycle():
-    reset(); FR = felt('frame', '#2f8fd1', .4, .03); DARK = felt('bikeDark', '#3a3a3f', .6, .03); CHROME = mat('chrome', '#d9d6cf', .25, metal=.8)
+    RIGS.clear(); reset(); FR = felt('frame', '#2f8fd1', .4, .03); DARK = felt('bikeDark', '#3a3a3f', .6, .03); CHROME = mat('chrome', '#d9d6cf', .25, metal=.8)
     boy = load('villager-au-boy-game', (0, .14, .9), 0, 'ride', 7, 'excited')
     hands, feet = hands_feet(boy)
     crank = Vector((0, (feet[0].y + feet[1].y) / 2, (feet[0].z + feet[1].z) / 2))
@@ -142,12 +153,12 @@ def bicycle():
     for k, s in enumerate((1, -1)): tube('grip', DARK, [hands[k] + Vector((-s * .045, 0, 0)), hands[k] + Vector((s * .045, 0, 0))], .022, 8)
     sphere('bell', CHROME, Vector((.1, hm.y - .05, hm.z)), (.025, .025, .02), 10, 5)
     cam = studio(target=(0, 0, .7), face_light=(-1.2, -3, 1.6))
-    shoot(cam, 'vehicle-bicycle', (-2.3, -3.9, 1.55), (0, .0, .95))
+    shoot(cam, 'vehicle-bicycle', (-1.7, -3.2, 1.55), (0, -.05, 1.0), lens=45)
 
 # ---------- 3. the city bus: a driver at the wheel, the four friends and neighbours riding, faces to the windows ----------
 def bus():
     global CROWD; CROWD = True
-    reset(); BODY = felt('busBody', '#f2c14e', .45, .03); TRIM = felt('busTrim', '#2f8fd1', .45, .03); DARK = felt('busDark', '#3a3a3f', .6, .03)
+    RIGS.clear(); reset(); BODY = felt('busBody', '#f2c14e', .45, .03); TRIM = felt('busTrim', '#2f8fd1', .45, .03); DARK = felt('busDark', '#3a3a3f', .6, .03)
     SEATM = felt('busSeat', '#c9473f', .7, .05); GL = mat('busGlass', '#cfe8f2', .05); GL.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = .85
     L, W, floor = 7.0, 2.5, .55
     for x in (-1, 1):
@@ -179,6 +190,6 @@ def bus():
         print('LOAD', name, flush=True)
         if os.path.exists(os.path.join(SRC, name + '.blend')): load(name, (side * .7, -1.7 + row * .95 - .05, hip), -.55, 'sit', 10 + row * 7, face)
     print('LOADED', flush=True); cam = studio(target=(0, 0, 1.6), k=1.6, face_light=(-4.5, -7, 2.6))
-    shoot(cam, 'vehicle-bus', (-8.8, -10.2, 3.3), (0, -.6, 1.5), (1400, 800))
+    shoot(cam, 'vehicle-bus', (-5.6, -7.6, 2.6), (0, -.9, 1.6), (1400, 800), lens=40)
 
 for fn in [f for f in (motorbike, bicycle, bus) if not [a for a in argv if a in ('motorbike', 'bicycle', 'bus')] or f.__name__ in argv]: fn()
