@@ -79,6 +79,16 @@ export function createHunt(G, spark) {
       }
     }
     refresh();
+    // (v1.08 fixes 2, check solid: "hunt_diwali_0" had no open ground near it) a decoration spot can sit inside a stall or
+    // a wall; once the valley's solids are known such a lamp moves to the nearest open ground, so a child can reach it
+    const mine = items.slice();
+    void Promise.resolve(G.solidsReady).then(() => { const Wd = G.world; if (!Wd || !Wd.collide) return;
+      const open = (x, z) => { const p = { x, z, y: Wd.groundAt(x, z) }, q = { ...p }; Wd.collide(q, .45); return Math.hypot(q.x - p.x, q.z - p.z) < .05; };
+      const near = (x, z, R) => { for (let r = 0; r < R; r += .4) for (let s = 0; s < 16; s++) { const an = s / 16 * Math.PI * 2; if (open(x + Math.cos(an) * r, z + Math.sin(an) * r)) return true; } return false; };
+      for (const it of mine) { if (!items.includes(it) || near(it.x, it.z, it.r - .4)) continue;
+        let to = null; for (let r = .8; r <= 8 && !to; r += .4) for (let s = 0; s < 24 && !to; s++) { const an = s / 24 * Math.PI * 2, x = it.x + Math.cos(an) * r, z = it.z + Math.sin(an) * r; if (open(x, z)) to = { x, z }; }
+        if (!to) continue; it.x = to.x; it.z = to.z; it.obj.position.set(to.x, heightAt(to.x, to.z), to.z); }
+    }).catch(() => { });
   };
   // the sparkles bob; Ông Cú tells about the hunt once a day when a child first comes to the festival's place
   W.updaters.push(dt => {

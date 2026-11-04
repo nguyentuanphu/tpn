@@ -9,10 +9,12 @@ export async function familyUIArtCheck(browser:Browser){
  for(const [device,w,h]of[['phone',390,844],['tablet',820,1180],['computer',1280,850]]as const){await P.page.setViewportSize({width:w,height:h});
   for(const lang of['en','vi']){
    await P.page.evaluate(async lang=>{document.querySelectorAll('.modal').forEach(e=>e.remove());const S=await import(String('/js/state.js'));S.settings.lang=lang;S.settings.voiceViVariant='leminh';const C=await import(String('/js/custom.js'));C.CUSTOM.features={...C.CUSTOM.features,familyDevices:true};void(await import(String('/js/ui-settings.js'))).openGrownups();},lang);
-   await P.page.locator('#gHanoiPreview').waitFor({state:'attached'});await P.page.evaluate(()=>{document.querySelectorAll<HTMLDetailsElement>('.grownups details').forEach(d=>d.open=true);document.querySelector('#gVietnamesePack')?.scrollIntoView({block:'start'});});
-   const r=await P.page.evaluate(()=>{const a=document.querySelector('#gHanoiPreview')!.getBoundingClientRect(),b=document.querySelector('#gHanoiDownload')!.getBoundingClientRect(),select=document.querySelector('#gVietnamesePack')!;
-    return{sameRow:Math.abs(a.top-b.top)<2,touch:a.height>=44&&b.height>=44,overflow:a.left<0||b.right>innerWidth,quizFamily:!!document.querySelector('#gFamilyQuiz')?.closest('[data-sec=family]'),font:getComputedStyle(select).fontFamily,border:getComputedStyle(select).borderRadius};});
-   assert.ok(r.sameRow&&r.touch&&!r.overflow,device+' '+lang+' voice actions '+JSON.stringify(r));assert.ok(r.quizFamily,'questions stay with family quests');assert.notEqual(r.border,'0px');assert.match(r.font,/Fredoka|Baloo/);
+   // (v1.08 fixes 2, owner 3 Nov 2026 AEDT: male voices and Lê Minh are put aside, check hanoivoice) the voice settings
+   // keep the female preview (44 px, on screen) and no Lê Minh buttons; a device that had chosen Lê Minh opens them cleanly
+   await P.page.locator('.grownups #gDone').waitFor();await P.page.evaluate(()=>{document.querySelectorAll<HTMLDetailsElement>('.grownups details').forEach(d=>d.open=true);document.querySelector('.grownups [data-pv="f"], .grownups select')?.scrollIntoView({block:'start'});});
+   const r=await P.page.evaluate(()=>{const f=document.querySelector('.grownups [data-pv="f"]'),a=f?.getBoundingClientRect(),select=document.querySelector('.grownups select')!;
+    return{aside:['#gVietnamesePack','#gHanoiPreview','#gHanoiDownload'].filter(q=>document.querySelector('.grownups '+q)),touch:!a||a.height>=44,overflow:!!a&&(a.left<0||a.right>innerWidth),quizFamily:!!document.querySelector('#gFamilyQuiz')?.closest('[data-sec=family]'),font:getComputedStyle(select).fontFamily,border:getComputedStyle(select).borderRadius};});
+   assert.ok(!r.aside.length&&r.touch&&!r.overflow,device+' '+lang+' voice actions '+JSON.stringify(r));assert.ok(r.quizFamily,'questions stay with family quests');assert.notEqual(r.border,'0px');assert.match(r.font,/Fredoka|Baloo/);
    await capture(device+'-'+lang+'-voices');
    await P.page.locator('.fd-label').waitFor({state:'attached'});await P.page.waitForFunction(()=>!document.querySelector('.fd-status')?.textContent?.trim());await P.page.locator('.fd-label').scrollIntoViewIfNeeded();
    const field=await P.page.locator('.fd-label').evaluate(e=>({height:e.getBoundingClientRect().height,radius:getComputedStyle(e).borderRadius,font:getComputedStyle(e).fontFamily}));assert.ok(field.height>=44);assert.notEqual(field.radius,'0px');assert.match(field.font,/Fredoka|Baloo/);
@@ -26,6 +28,6 @@ export async function familyUIArtCheck(browser:Browser){
    const shopSelect=await P.page.locator('.shop-recipient').evaluate(e=>({height:e.getBoundingClientRect().height,radius:getComputedStyle(e).borderRadius,font:getComputedStyle(e).fontFamily}));assert.ok(shopSelect.height>=64,'child shop recipient is 64px');assert.notEqual(shopSelect.radius,'0px');assert.match(shopSelect.font,/Fredoka|Baloo/);await capture(device+'-'+lang+'-clothes');await P.page.locator('.shopk .x').click();
   }
  }
- assert.deepEqual(P.errors,[]);return'English/Vietnamese phone, tablet and computer: voice actions share a row, 44px targets, styled selector, questions under family quests, My Home map destination';
+ assert.deepEqual(P.errors,[]);return'English/Vietnamese phone, tablet and computer: no set-aside voice buttons, 44px voice preview, styled selector, questions under family quests, My Home map destination';
  }finally{await P.ctx.close();}
 }

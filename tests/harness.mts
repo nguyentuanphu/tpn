@@ -1,9 +1,11 @@
 // Shared helpers for the browser checks: open the game, start a session, collect errors.
 import { chromium } from 'playwright';
 export const URL = process.env.SV_URL || 'http://localhost:8765/';
-export async function launch() {
+// (v1.08 fixes 2) full: Chromium's own new headless mode instead of Playwright's lighter headless shell, which cannot
+// show a service worker's notifications (check pushnotify was red on GitHub only); both come with "playwright install chromium"
+export async function launch({ full = false } = {}) {
   // SV_CHROME_ARGS: extra browser switches, e.g. to try fewer drawing threads when tests/suite.mts runs several at once
-  return chromium.launch({ executablePath: process.env.CHROMIUM || undefined, args: [...(process.env.SV_CHROME_ARGS || '').split(' ').filter(Boolean), '--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--js-flags=--expose-gc'] });
+  return chromium.launch({ executablePath: process.env.CHROMIUM || undefined, channel: full && !process.env.CHROMIUM ? 'chromium' : undefined, args: [...(process.env.SV_CHROME_ARGS || '').split(' ').filter(Boolean), '--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--js-flags=--expose-gc'] });
 }
 // (round P: a new device starts with nobody; the checks play as two children made beforehand)
 export const seedPlayers = () => { try { if (!localStorage.getItem('sv2_profiles')) localStorage.setItem('sv2_profiles', JSON.stringify([
