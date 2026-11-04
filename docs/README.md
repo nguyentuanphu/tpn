@@ -1,5 +1,7 @@
 # Docs: start here
 
+**The Sparkle Valley Handbook (owner, 4 Nov 2026 AEDT):** [everything in the game and its rules, in one bilingual page with search](handbook/index.html) ([how it is made](handbook/README.md)). Made by `node tools/handbook.mts` from the game's code and these docs, again before every "yes, deploy".
+
 **Current plan (1 Nov 2026 AEDT):** [the finishing plan before many players: start-up under 3 s, every game's levels, splitting the big files](plan-hoan-thien/KE-HOACH.md) (Vietnamese, for the owner) and [the Learn space plan](learn-tab/PLAN.md).
 
 **Launch around Tết 2027 (v1.07 helper "launch", 2 Nov 2026 AEDT):** [plan, channel texts, flyer, video scripts and the launch-day checklist](launch-2027/README.md). Materials only: nothing posted or sent.
