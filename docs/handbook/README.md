@@ -4,8 +4,9 @@ Owner's ask, 4 Nov 2026 AEDT (brief: `docs/cores/tasks/handbook-brief.md`): one 
 included, in Vietnamese and English (Vietnamese first, with a switch), with a table of contents and a search box, and a
 "Then and now" part that shows how the game grew.
 
-- The page: [index.html](index.html), with its pictures in `img/`. It is also published as a claude.ai artifact; Release
-  republishes it to the same link before every "yes, deploy".
+- The page: [index.html](index.html), with its pictures in `img/`. It is also published as a claude.ai artifact
+  (https://claude.ai/artifact/PFBV9XHeEBAUqTP7HDJW33, private to the owner until shared); Release
+  republishes it to the same link before every "yes, deploy" (from another chat: pass that link as the artifact `url`).
 - Made by `node tools/handbook.mts` from the game's own data (games, how-to guides, levels, festivals, stories and films,
   the lantern chapters, quests, the shop, stickers, companions, villagers, Studio switches, notifications, voices, the map)
   and from the docs (`CLAUDE.md`, `docs/SO-TAY-THIET-KE.md`, the owner's decisions in `docs/cores/*.md`, `docs/plans/`,
@@ -32,4 +33,7 @@ Before every yes-deploy: `node tools/handbook.mts`, commit `docs/handbook/`, rep
 ## Progress notes
 
 - 4 Nov 2026 AEDT, helper "handbook", branch `work/handbook` from `origin/integrate/v108`: generator, shots tool, page,
-  release step and docs link. Checks: see the commit message and the board line.
+  release step and docs link. Checks (`suite.mts --changed --base origin/integrate/v108`, commit 822a419ca): types, names,
+  noemoji, arch, rules, bilingual, preload pass; unit passes (516) once the root `npm install` adds `pg`; emoji fails only
+  on `docs/cores/tasks/v108/fixes.md`, already on integrate/v108 and not touched here. Page looked at on phone, tablet and
+  computer (no sideways scroll). Artifact published 4 Nov 2026 AEDT.

@@ -505,4 +505,4 @@ Owner asked to upload and record B's remaining work. [Pending work](../studio-co
 
 ## v1.08 helper: handbook (4 Nov 2026 AEDT)
 
-- **Now: ready for Release** · branch `work/handbook` (from `origin/integrate/v108`) · docs and tools only, no game change · the Sparkle Valley Handbook: `tools/handbook.mts` writes `docs/handbook/index.html` (13 parts and Then and now, EN/VI switch, search), `tools/handbook-shots.mts` takes the "now" pictures · release step 6a added to `docs/cores/release.md` · artifact link and checks in `docs/handbook/README.md` · waiting for: Release to collect into v1.08.
+- **Now: ready for Release** · branch `work/handbook` (from `origin/integrate/v108`) · docs and tools only, no game change · the Sparkle Valley Handbook: `tools/handbook.mts` writes `docs/handbook/index.html` (13 parts and Then and now, EN/VI switch, search), `tools/handbook-shots.mts` takes the "now" pictures · release step 6a added to `docs/cores/release.md` · artifact https://claude.ai/artifact/PFBV9XHeEBAUqTP7HDJW33; checks in `docs/handbook/README.md` · waiting for: Release to collect into v1.08.
