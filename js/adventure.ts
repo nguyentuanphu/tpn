@@ -362,7 +362,7 @@ export function createAdventure(G) {
     const g = GIVERS[a.giver] || GIVERS.owl, st = STICKERS[a.reward.sticker];
     const m = modal('advwin', `<div class="adv-head"><h2>${esc(tt(ADV_LINES.title))}</h2><button class="x" aria-label="${T('Close', 'Đóng')}">✕</button></div>
       <div class="adv-giver"><span class="adv-face" aria-label="${esc(T(g.en, g.vi))}">${pic(g.icon)}</span><button class="adv-bubble" aria-label="${esc(tt(ADV_LINES.hear))}"><small>${esc(T(g.en, g.vi))}</small>${esc(tt(a.say))}</button></div>
-      <section class="adv-steps">${stepsHTML(h)}</section>
+      <section class="adv-steps">${stepsHTML(h)}</section>${G.learnQuest ? G.learnQuest.adventureRowHTML(h.profile) : ''}
       <section class="adv-chestrow"><span class="adv-chesticon">${pic('🧰')}</span><span class="adv-cx"><b>${esc(tt(ADV_LINES.chest))}</b><small>${esc(tt(ADV_LINES.chestSub))}</small></span><span class="adv-rew">${pic(st ? st.icon : '⭐')}${pic('🪙')}<b>${a.reward.coins}</b></span></section>
       <section class="adv-week" aria-label="${esc(tt(ADV_LINES.stamps))}">${weekHTML(h)}</section>
       <button class="adv-go" data-main>${esc(r.done ? T('All done today!', 'Hôm nay xong rồi!') : tt(ADV_LINES.go))}</button>`);
@@ -371,6 +371,8 @@ export function createAdventure(G) {
     const close = () => { G.paused = was; m.close(); };
     m.querySelector('.x').onclick = close;
     m.querySelector('.adv-bubble').onclick = () => sayL(a.say);
+    // (v1.08b games) today's learning step: the game of the next step of one learning journey (js/learnquest.ts)
+    m.querySelectorAll<HTMLElement>('[data-lqplay]').forEach(b => b.onclick = () => { close(); G.meetAndPlay ? G.meetAndPlay(h.i, b.dataset.lqplay, 'learnquest') : G.playGame(h.i, b.dataset.lqplay, 'learnquest'); });
     const stepGo = m.querySelector('.adv-step-go'); if (stepGo instanceof HTMLElement) stepGo.onclick = () => { close(); if (!r.done) goToStep(i); };
     m.querySelector('.adv-go').onclick = () => { close(); if (r.done) return; sync(h); if (showWay(h, true)) sayL(stepText(step(h), h.profile.age)); };
     return m;

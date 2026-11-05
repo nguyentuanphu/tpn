@@ -39,6 +39,7 @@ function holds(p, w) {
   if (w.surprise) return !!obj(obj(p.surprises).found)[w.surprise];
   if (w.tower) return !!obj(p.towers)[w.tower];
   if (w.stamp) return !!obj(p.stamps)[w.stamp];
+  if (w.learn) { const [k, n] = String(w.learn).split(':'); return (+obj(p.learnPath)[k] || 0) >= +n; } // (v1.08b games) a learning journey step won
   return false; // meet and act happen only now (give() from the event)
 }
 

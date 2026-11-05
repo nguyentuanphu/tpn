@@ -73,3 +73,6 @@ export const GROUPS = { vn: ['Vietnam', 'Việt Nam'], west: ['Around the world'
 // the timetable of a festival day (owner: 08:00 greeting and treat, 15:00 festival game, 18:30 show; 17:30 for under-5s)
 export const DAY_PLAN = [{ at: '08:00', what: 'greet' }, { at: '15:00', what: 'game' }, { at: '18:30', little: '17:30', what: 'show' }];
 export const BUILDUP = { party: 21, quiet: 3 };
+// (v1.08b games, owner's plan: one new game per festival; the everyday games go back to being everyday only) each
+// festival's table and 15:00 game is its own festival game (js/content/festgames108b.ts)
+for (const F of FESTCAL) (F as { game: string }).game = 'fg_' + F.id;

@@ -10,3 +10,6 @@ import '../games/english-meta.js';
 import '../games/tiengviet2-meta.js';
 import '../games/maths3-meta.js';
 import '../games/money3-meta.js';
+// (v1.08b games) the new corner games' pictures and How to play
+import './games108b.js';
+import '../games/games108b-meta.js';

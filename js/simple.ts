@@ -27,7 +27,8 @@ import { pic, moreArt, moreArtReady } from './art.js';
 import { saveProfiles, reduceMotion } from './state.js';
 import { GAMES, gameOpen } from './games/frame.js';
 import { holdButton, openGrownups, openFestivals } from './ui.js';
-import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, linksIn, gameInfo, withSitePlaces } from './content/activities.js';
+import { markEnglish } from './englishmode.js'; // (v1.08b games) a game from the English corner plays in English
+import { AREAS, TALE_AREAS, PLACE_AREAS, gamesIn, gameInfo, withSitePlaces, LEARN_CORNERS } from './content/activities.js';
 import { featureOn, onLive } from './custom.js';
 import { isOpen, isHeld, progressOf, secondSetOf } from './content/unlocks.js';
 
@@ -42,8 +43,8 @@ const firstPic = s => (String(s).match(/\p{Extended_Pictographic}(?:️|‍\p{Ex
 // the areas so a game added to an area lands in the right one: Fun learning holds the Learning areas of Play (numbers,
 // shapes, words, reading, me, money) and every Học vui corner (hv_*); Play holds every other area (folk games, animals
 // and music, drawing, places, thinking). 'games' is both together: not in the bar, kept for Discover's memory and the checks
-const LEARN_AREAS = ['numbers', 'shapes', 'words', 'reading', 'me', 'money'];
-export const learnArea = (key: string) => LEARN_AREAS.includes(key) || key.startsWith('hv_');
+// (v1.08b games) the corners are the Play hub's Học vui corners, in the same order (js/content/activities.ts LEARN_CORNERS)
+export const learnArea = (key: string) => LEARN_CORNERS.includes(key) || key.startsWith('hv_');
 const GAME_TABS = { learn: (k: string) => learnArea(k), fun: (k: string) => !learnArea(k), games: () => true };
 export const TABS = [
   { key: 'learn', icon: 'hv:tab', label: () => T('Fun learning', 'Học vui'), say: ['Tap a picture to play!', 'Chạm vào một hình để chơi nhé!'] },
@@ -145,11 +146,11 @@ export function createSimple(G) {
       .sort((x, y) => Number(x.area.key === 'asia') - Number(y.area.key === 'asia'));
     // (round N) the Music group starts with 🎵 Songs: lullabies, village tunes and festival songs to listen to
     const songs = { kind: 'songs', key: 'songs', icon: '🎵', name: T('Songs', 'Bài hát'), voice: ['Songs', 'Bài hát'], stars: 0, max: 0 };
-    // (Học vui, owner's plan 1 Nov 2026 AEDT) the four Fun learning corners also show the existing games linked into them
-    // (each still in its own area too, so nothing moves); a locked one is shown only in its own area, with its padlock
-    const stop = g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level, plus: lt && g.ageMin >= 5 });
+    // (v1.08b games) every game in one corner only: no link stops
+    const stop = g => ({ quest: !!(G.learnQuest && G.learnQuest.isTodayStep(p, g.id)), kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level, plus: lt && g.ageMin >= 5 });
     const want = GAME_TABS[t] || GAME_TABS.games;
-    return AREAS.filter(a => want(a.key)).map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', a.key)).map(stop)).concat(linksIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', g.area)).map(stop)).concat(gamesIn(GAMES, a.key, false).filter(g => !isOpen(p, g.id, 'game', a.key)).map(g => lockedGame(g.id, a.key))).concat(soonStop(a.key)) }));
+    const order = a => t === 'learn' && LEARN_CORNERS.includes(a.key) ? LEARN_CORNERS.indexOf(a.key) : 99;
+    return AREAS.filter(a => want(a.key)).sort((x, y) => order(x) - order(y)).map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', a.key)).map(stop)).concat(gamesIn(GAMES, a.key, false).filter(g => !isOpen(p, g.id, 'game', a.key)).map(g => lockedGame(g.id, a.key))).concat(soonStop(a.key)) }));
   }
   const tabOf = t => TABS.find(y => y.key === t) || TABS[0]; // ('games', both game buttons together, says what they say)
   const groupsOf = t => areasOf(t).filter(a => a.items.length);
@@ -231,7 +232,7 @@ export function createSimple(G) {
       lay = null; path.style.height = ''; path.style.width = '';
       list = []; const groups = groupsOf(tab);
       const stopHTML = (s, k) => `<button class="sp-stop${sel === idOf(s) ? ' sel' : ''}${s.locked ? ' locked' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
-        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
+        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.quest ? `<i class="sp-quest" aria-label="${esc(T('Today’s learning step', 'Bước học hôm nay'))}">${pic('lp:mark')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
         <b class="sp-name">${esc(s.name)}${s.hint ? `<small class="sp-hint">${esc(s.hint)}</small>` : ''}</b>${!lt && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`;
       path.innerHTML = groups.map(({ area, items }) => { const start = list.length; items.forEach(x => list.push({ ...x, cat: area.key, isNew: !!seen && x.kind !== 'lock' && !seen.has(idOf(x)) }));
         const got = items.reduce((a, x) => a + (x.stars || 0), 0), all = items.reduce((a, x) => a + (x.max || 0), 0);
@@ -265,7 +266,7 @@ export function createSimple(G) {
     path.style.setProperty('--lw', L.lw + 'px');
     path.innerHTML = `<svg class="sp-road" aria-hidden="true"><path/><path class="dash"/></svg>` +
       list.map((s, k) => s.kind === 'head' ? `<div class="sp-stop grp" role="heading" aria-level="2" data-k="${k}" aria-label="${esc(s.name)}"><span class="sp-hpic">${pic(s.icon)}</span><b class="sp-name">${esc(s.name)}</b></div>` : `<button class="sp-stop${k === next ? ' next' : ''}${sel === idOf(s) ? ' sel' : ''}${s.locked ? ' locked' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
-        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
+        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.quest ? `<i class="sp-quest" aria-label="${esc(T('Today’s learning step', 'Bước học hôm nay'))}">${pic('lp:mark')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
         <b class="sp-name">${esc(s.name)}${s.hint ? `<small class="sp-hint">${esc(s.hint)}</small>` : ''}</b>${!lt && s.kind !== 'head' && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`).join('') +
       `<button class="sp-owl" aria-label="${T('Ông Cú', 'Ông Cú')}">${pic('🦉')}</button>`;
     // measure the tallest stop (its name may take two or three lines), then place them all
@@ -300,7 +301,7 @@ export function createSimple(G) {
     const wait = reduceMotion() ? 200 : 450, i = 0, h = hero();
     setTimeout(() => {
       // games and stories open straight over this screen (it stays behind them); a place flies there in the valley
-      if (s.kind === 'game') { launched = Date.now(); opened = false; starsBefore = totalStars(); Promise.resolve(G.playGame(i, s.key, 'simple')).finally(() => { if (opened || gameOpen()) opened = true; settle(); }); }
+      if (s.kind === 'game') { markEnglish(s.cat === 'hv_en' ? s.key : null); launched = Date.now(); opened = false; starsBefore = totalStars(); Promise.resolve(G.playGame(i, s.key, 'simple')).finally(() => { if (opened || gameOpen()) opened = true; settle(); }); }
       else if (s.kind === 'tale') { const t = (G.TALES || []).find(x => x.id === s.key); if (!t) { busy = false; return; } launched = Date.now(); opened = false; starsBefore = totalStars(); G.readTaleNow(h, t); }
       // (v1.07 startup) opened before the valley was built (js/main.ts simpleFirst): a place waits for it, with the progress bar
       else { const pl = G.PLACES[+s.key]; back = false; Promise.resolve(G.untilValley?.()).then(() => { const h2 = hero(); leave(); setTimeout(() => G.travelTo(h2, pl.x, pl.z), 50); }); }
