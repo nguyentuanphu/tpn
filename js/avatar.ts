@@ -1,5 +1,5 @@
 // Chibi characters whose face is the child's own photo.
-import { THREE, toon, glow, blobShadow, outline, P, merge, toonSmooth } from './gfx.js';
+import { THREE, toon, glow, blobShadow, outline, P, merge, toonSmooth, personLook } from './gfx.js';
 import { GLIDERS, settings, profiles, FRIEND_MIGRATE } from './state.js';
 import { customFace, familyOwnFace, onFamilyPhotos } from './custom.js';
 import { wearing, BOY_OF } from './content/shop.js';
@@ -12,7 +12,7 @@ export const FRIEND_DATA = FRIEND_MIGRATE; // (the loaded file is FRIEND_DATA.li
 let friendsP: Promise<typeof import('./content/friends.js')> = null;
 export const friendsReady = () => friendsP || (friendsP = import('./content/friends.js').then(F => {
   FRIEND_DATA.lib = F; friendLook = F.friendLook; FRIEND_MIGRATE.fn = F.migrateFriend; profiles.forEach(p => F.migrateFriend(p)); return F; }));
-export const FRIEND_MODELS: { ready?: (id: string) => boolean, load?: (id: string) => Promise<boolean>, attach?: (A, id: string, skin: string, wear?: { item?: boolean, shoes?: boolean }) => any, faceParts?: (it) => THREE.BufferGeometry[] } = {};
+export const FRIEND_MODELS: { ready?: (id: string) => boolean, load?: (id: string) => Promise<boolean>, attach?: (A, id: string, skin: string, wear?: { item?: boolean, shoes?: boolean }, hd?: boolean) => any, faceParts?: (it) => THREE.BufferGeometry[] } = {};
 export const loadFriendModels = (id: string): Promise<boolean> => FRIEND_MODELS.load ? FRIEND_MODELS.load(id)
   : import('./friend-model.js').then(m => { Object.assign(FRIEND_MODELS, { ready: m.friendModelReady, load: m.loadFriendModel, attach: m.attachFriendModel, faceParts: m.faceParts }); return m.loadFriendModel(id as any); }).catch(() => false);
 const WEAR = <T extends THREE.Object3D>(o: T) => { o.userData.wear = true; return o; }; // (v1.08b) a hat, necklace or back: kept on a friend's model
@@ -248,12 +248,12 @@ const TOP_STYLE = { tee: 'shirt', hoodie: 'hoodie', aodai: 'aodai', tunic: 'tuni
 export type SvAvatar = { root: THREE.Group, rig: THREE.Group, skinMat: THREE.Material & { color: THREE.Color }, look: Record<string, string | number | boolean | undefined>,
   torso?: THREE.Group, head?: THREE.Group, legL?: THREE.Group, legR?: THREE.Group, armL?: THREE.Group, armR?: THREE.Group, glider?: THREE.Object3D,
   wings?: THREE.Group[], cape?: THREE.Mesh, faceMat?: THREE.MeshStandardMaterial, faceLegacy?: string, outlines?: unknown, skinParts?: { g: THREE.BufferGeometry, ranges: number[][] }[],
-  still?: THREE.Group, stillLine?: THREE.Mesh, _still?: boolean, _ol?: boolean, anim?: (state: string, t: number, speed?: number) => void,
+  still?: THREE.Group, stillLine?: THREE.Mesh, modelHD?: import('./friend-model.js').FriendModel, _hd?: boolean, _still?: boolean, _ol?: boolean, anim?: (state: string, t: number, speed?: number) => void,
   // (v1.08) the knees, elbows and swinging hair, and what the animation remembers between frames
   kneeL?: THREE.Group, kneeR?: THREE.Group, elbowL?: THREE.Group, elbowR?: THREE.Group, tail?: THREE.Group, painted?: boolean, life?: AvatarLife,
   model?: import('./friend-model.js').FriendModel, height?: number, late?: boolean, lateFace?: unknown, latePhoto?: unknown, lateThen?: (() => void)[] };
 type AvatarLife = { t: number, st: string, chg: number, land: number, ph: number, blink: number, mood: string, seed: number, feel?: string, feelUntil?: number, glance?: number };
-export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvatar }) {
+export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvatar, hd?: boolean }) {
   const friendId = look && look.friend, useModel = !!friendId && !(opts && opts.code) && !!FRIEND_MODELS.ready && FRIEND_MODELS.ready(friendId);
   if (friendId && !useModel && !(opts && opts.code)) loadFriendModels(friendId); // (v1.08b: the next build uses the model)
   look = friendLook(look); // (v1.08b friends) a child is drawn as their friend (Finn, Sol, Clara or Lumi); villagers stay as they are
@@ -386,10 +386,14 @@ export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvat
     drop.forEach(o => o.parent.remove(o));
   }
   compact(A); // (battery round) each moving part one shape, before the outlines are made (one outline each, too)
+  rig.traverse(o => { if (o instanceof THREE.Mesh && !(o.material as THREE.Material).userData.shared) personLook(o.material); }); // (v1.08e faces, part 2) soft ramp, rim light
   A.outlines = outline(rig, .011, '#6a4a3a'); OUTLINED.push(A);
   A.anim = (state, t, speed) => animate(A, state, t, speed);
   // (v1.08d polish) the friend's item in the hand once their quest is done (look.fitems), and the shop's shoes on the model
-  if (useModel) { A.model = FRIEND_MODELS.attach(A, friendId, look.skin, { item: typeof look.fitems === 'string' && look.fitems.split(' ').includes(friendId), shoes: !!ft }); A.root.userData.friendModel = friendId; }
+  if (useModel) { A.model = FRIEND_MODELS.attach(A, friendId, look.skin, { item: typeof look.fitems === 'string' && look.fitems.split(' ').includes(friendId), shoes: !!ft }); A.root.userData.friendModel = friendId;
+    // (v1.08e faces, part 2) the child's own friend also gets the high-detail model once it is loaded: drawn up close
+    // (showHD, from js/player.ts), the light one far away
+    if (opts && opts.hd && A.model && FRIEND_MODELS.ready(friendId + '-hd')) { A.modelHD = FRIEND_MODELS.attach(A, friendId, look.skin, { item: A.model.item, shoes: !A.model.boots }, true); if (A.modelHD) showHD(A, true); } }
   return A;
 }
 
@@ -498,6 +502,8 @@ export function animate(A, state, t, speed = 0) {
     if (want !== L.mood && A.faceMat.map) { L.mood = want; setFaceMood(A.faceMat.map, want); }
   }
 }
+/** (v1.08e faces, part 2) the high-detail model up close, the light one far away (a child's own friend only) */
+export function showHD(A, near: boolean) { if (!A || !A.modelHD || A._hd === near) return; A._hd = near; A.modelHD.obj.visible = near; A.model.obj.visible = !near; }
 /** (v1.08e faces) a feeling on a person's face for a moment: 'o' (surprised at a find), 'sad' (a game lost), 'shy' (greeted),
  *  'happy', 'excited', 'curious'; the blinks go on over it */
 export function feel(A, mood: string, secs = 2) { const L = A && A.life; if (!L) return; L.feel = mood; L.feelUntil = L.t + secs; }

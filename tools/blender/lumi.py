@@ -15,7 +15,7 @@ from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube,
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 argv = ['clara' if x == 'flora' else x for x in argv]   # Flora was renamed Clara (owner, 3 Nov 2026 AEDT); the old name still works
-FLAGS = ('look=felt', 'look=now', 'look=toy', 'rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'clara', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard')
+FLAGS = ('look=felt', 'look=now', 'look=toy', 'rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'clara', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard', 'hd')
 OUT = next((a for a in argv if a not in FLAGS and '=' not in a), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
@@ -706,9 +706,15 @@ if 'anim' in argv:
     play('cheer', 24, lambda f: 'happy')
 if 'glb' in argv:
     for col in FACE_SETS.values(): col.hide_viewport = False; col.hide_render = False
-    lighten()
-    bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f'{TAG}-{STYLE}.glb'), export_format='GLB', export_apply=True, export_animations=True,
-                              export_animation_mode='ACTIONS', export_lights=False, export_cameras=False, use_selection=False)
+    if 'hd' in argv:   # (v1.08e faces, part 2) the high-detail model: thinned, one baked 1024 px picture (tools/blender/game-hd.py)
+        exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'game-hd.py')).read()); hd()
+        bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f'{TAG}-{STYLE}-hd.glb'), export_format='GLB', export_apply=False, export_animations=True,
+                                  export_animation_mode='ACTIONS', export_lights=False, export_cameras=False, use_selection=False, export_skins=True,
+                                  export_morph=False, export_image_format='JPEG', export_vertex_color='ACTIVE')
+    else:
+        lighten()
+        bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f'{TAG}-{STYLE}.glb'), export_format='GLB', export_apply=True, export_animations=True,
+                                  export_animation_mode='ACTIONS', export_lights=False, export_cameras=False, use_selection=False)
 
 if 'lineup' in argv:  # the same camera for everyone, so heights compare side by side
     show_face('smile'); shoot('lineup', .3, 1.2, 6.4, 1.0, (420, 760))

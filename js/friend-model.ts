@@ -5,17 +5,20 @@
 // The model does not play its own moves: each frame its joints copy the turns of the code person's joints (same names:
 // torso, head, armL, elbowL, legL, kneeL ...), so walking, jumping, riding (seatRider) and the films' poses work as before,
 // and the hats, necklaces and backs the code person wears sit on the model.
-import { THREE, P } from './gfx.js';
+import { THREE, P, personLook, outlineSkinned } from './gfx.js';
 import type { FriendId } from './content/friends.js';
 
 type Loaded = { scene: THREE.Object3D, clone: (o: THREE.Object3D) => THREE.Object3D };
-const ready: Partial<Record<FriendId, Loaded>> = {}, loading: Partial<Record<FriendId, Promise<boolean>>> = {}, failed = new Set<string>();
+const ready: Record<string, Loaded> = {}, loading: Record<string, Promise<boolean>> = {}, failed = new Set<string>();
 let bands: THREE.Texture = null;
 export const friendModelReady = (id: string) => !!ready[id];
 export const friendModelFailed = (id: string) => failed.has(id);
 export const FRIEND_MODEL_URL = (id: string) => `models/${id}.glb`;
+// (v1.08e faces, part 2) the high-detail model of a friend is loaded by the key "<id>-hd" (models/<id>-hd.glb): only the
+// child's own friend, after the start (js/player.ts); the light model stays for far away, other children and the fallback
+export const HD = (id: string) => id + '-hd';
 /** load a friend's model (once); resolves true when it is ready, false when it could not load */
-export function loadFriendModel(id: FriendId): Promise<boolean> {
+export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolean> {
   if (!id) return Promise.resolve(false);
   if (ready[id]) return Promise.resolve(true);
   if (failed.has(id)) return Promise.resolve(false);
@@ -29,9 +32,10 @@ export function loadFriendModel(id: FriendId): Promise<boolean> {
       const mats = new Map();
       g.scene.traverse((o: any) => { if (!o.isMesh) return; o.frustumCulled = false; o.castShadow = true;
         const m = o.material, name = m.name || '';
+        // (v1.08e faces, part 2) a high-detail model's parts carry their painted picture (m.map) instead of corner colours
         if (!mats.has(m)) mats.set(m, name.startsWith('skin') ? new THREE.MeshToonMaterial({ name, color: '#f6c7a5', gradientMap: bands })
-          : new THREE.MeshToonMaterial({ name, vertexColors: true, gradientMap: bands }));
-        o.material = mats.get(m); });
+          : m.map ? new THREE.MeshToonMaterial({ name, map: m.map, gradientMap: bands }) : new THREE.MeshToonMaterial({ name, vertexColors: true, gradientMap: bands }));
+        o.material = personLook(mats.get(m)); }); // (v1.08e faces, part 2) the people's soft ramp and rim light
       ready[id] = { scene: g.scene, clone };
       return true;
     } catch (e) { failed.add(id); console.warn('friend model', id, e && e.message); return false; }
@@ -49,8 +53,8 @@ export type FriendModel = { obj: THREE.Object3D, follow: (mood?: string, riding?
 // (js/friendquest.ts), and its own boots unless the child wears shoes from the shop (then the code person's shoes stay on)
 export type FriendModelWear = { item?: boolean, shoes?: boolean };
 /** a copy of the friend's model inside the code person's rig, following its joints. A: the code person (js/avatar.ts) */
-export function attachFriendModel(A, id: string, skinHex: string, wear: FriendModelWear = {}): FriendModel {
-  const L = ready[id]; if (!L) return null;
+export function attachFriendModel(A, id: string, skinHex: string, wear: FriendModelWear = {}, hd = false): FriendModel {
+  const L = ready[hd ? HD(id) : id]; if (!L) return null;
   const obj = L.clone(L.scene); obj.name = 'friend-model';
   const bones: Record<string, THREE.Bone> = {}, faces: Record<string, THREE.Object3D[]> = {}, grips: THREE.Object3D[] = [], skinMats = [];
   obj.traverse((o: any) => {
@@ -58,13 +62,19 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
     if (o.isMesh) {
       const n = o.material.name || '';
       if (n.startsWith('face-')) (faces[n] = faces[n] || []).push(o);
-      if (n.startsWith('skin')) { o.material = o.material.clone(); skinMats.push(o.material); }
+      if (n.startsWith('skin')) { o.material = o.material.clone(); o.material.userData.person = false; personLook(o.material); skinMats.push(o.material); }
       if (n === 'skin-grip') grips.push(o);
       if (n === 'cloth-item') o.visible = !!wear.item; // (v1.08d polish) the item in the hand: only once earned
       if (n === 'cloth-shoes') o.visible = !wear.shoes; // (v1.08d polish) the model's boots, unless shop shoes are worn
     }
   });
   A.rig.add(obj); A.rig.updateMatrixWorld(true);
+  // (v1.08e faces, part 2) the same thin ink outline as the code people, bent by the model's bones (not on the faces);
+  // each follows its part's visibility (the item in the hand, the riding hands) and hides far away with the others
+  const lines: [THREE.Object3D, THREE.Object3D][] = [];
+  obj.traverse((o: any) => { if (o.isSkinnedMesh && !o.userData.outline && !/^face-/.test(o.material.name || '')) lines.push([o, null]); });
+  lines.forEach(l => { l[1] = outlineSkinned(l[0], .009); });
+  if (Array.isArray(A.outlines)) A.outlines.push(...lines.map(l => l[1]));
   // the rest turn of each joint, the code person's and the model's (both in the rig's space)
   const rigQ = new THREE.Quaternion(), q = new THREE.Quaternion(), rest = {};
   const inRig = (o, out) => { o.getWorldQuaternion(out); return out.premultiply(rigQ.clone().invert()); };
@@ -84,6 +94,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
     let f = MOOD[mood] || 'face-smile'; if (!faces[f]) f = NEAR[f] || 'face-smile';
     if (f !== face) { face = f; for (const [k, list] of Object.entries(faces)) list.forEach(o => { o.visible = k === f; }); }
     grips.forEach(o => { o.visible = riding; });
+    for (const [o, h] of lines) if (h.visible !== o.visible && A._ol !== false) h.visible = o.visible;
   };
   const skin = (hex: string) => skinMats.forEach(m => m.color.set(hex));
   skin(skinHex); follow();
