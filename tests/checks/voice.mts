@@ -644,7 +644,7 @@ await check('voiceopus', async () => {
   // 1. a new device on a browser that plays Opus
   let P = await open(b, { pre: fresh }); const a = await look(P, h), e1 = P.errors; await P.ctx.close();
   // 2. a device that kept MP3 recordings before the Opus copies came
-  P = await open(b, { pre: fresh }); await P.page.evaluate(async () => { const c = await caches.open('sv-voices'); await c.put(new URL('/voices/en/f/old.mp3', location.href).href, new Response(new Uint8Array([0xff, 0xfb]))); localStorage.removeItem('sv2_voiceFmt'); });
+  P = await open(b, { pre: fresh }); await P.page.evaluate(async () => { const c = await caches.open('sv-voices'); await c.put(new globalThis.URL('/voices/en/f/old.mp3', location.href).href, new Response(new Uint8Array([0xff, 0xfb]))); localStorage.removeItem('sv2_voiceFmt'); });
   await P.page.reload(); await P.page.waitForSelector('.screen.title, .valley, canvas', { timeout: 90000 }).catch(() => { }); const k = await look(P, h), e2 = P.errors; await P.ctx.close();
   // 3. a browser that cannot play Opus
   P = await open(b, { pre: () => { if (!sessionStorage.getItem('fmt-reset')) { localStorage.removeItem('sv2_voiceFmt'); sessionStorage.setItem('fmt-reset', '1'); } const was = HTMLMediaElement.prototype.canPlayType; HTMLMediaElement.prototype.canPlayType = function (t) { return /opus/.test(t) ? '' : was.call(this, t); }; } });

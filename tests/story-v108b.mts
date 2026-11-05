@@ -37,7 +37,7 @@ export async function releaseCalendarCheck(b) {
     C.CUSTOM.releaseCalendar = { moves: { 'game:crabwalk': R.addDays(today, 30), 'game:whohome': today, 'game:mumbaby': next, 'game:feedzoo': next } };
     const p = { wins: {}, taleReads: {} };
     const out = { crabHeld: U.isHeld('crabwalk', 'game'), whoHeld: U.isHeld('whohome', 'game'), whoOpen: U.isOpen(p, 'whohome', 'game', 'animals'), teaser: S.calNextWeek('game', ['mumbaby', 'feedzoo', 'crabwalk']) } as any;
-    __sv.openGamesHub ? __sv.openGamesHub(0) : (await import('/js/ui.js')).openGamesHub(__sv, 0);
+    __sv.openGamesHub ? __sv.openGamesHub(0) : (await import('/js/ui.js')).openGamesHub(__sv, 0, null);
     await new Promise(r => setTimeout(r, 400));
     const tab = document.querySelector<HTMLElement>('.hubtabs [data-tab="animals"]'); if (tab) { tab.click(); await new Promise(r => setTimeout(r, 300)); }
     out.tile = document.querySelector('.hsoon .hsoonnext')?.textContent || '';

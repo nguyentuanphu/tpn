@@ -236,7 +236,7 @@ await check('hubmap', async () => {
     document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false;
     const simple = {}; for (const t of ['learn', 'fun']) { __sv.simple.show(t); __sv.simple.openGroup(t, null); const v = __sv.simple.view; for (const id of v.stops.concat(v.locks)) simple[id] = (simple[id] || 0) + 1; }
     __sv.simple.hide();
-    return { games: Object.keys(seen).length, dup: Object.entries(seen).filter(([, n]) => n > 1).map(([k]) => k), links, simpleDup: Object.entries(simple).filter(([, n]) => n > 1).map(([k]) => k), simple: Object.keys(simple).length, cities, hanoi, danang };
+    return { games: Object.keys(seen).length, dup: Object.entries(seen).filter(([, n]) => (n as number) > 1).map(([k]) => k), links, simpleDup: Object.entries(simple).filter(([, n]) => (n as number) > 1).map(([k]) => k), simple: Object.keys(simple).length, cities, hanoi, danang };
   });
   ok(!r.dup.length, 'games in two tabs: ' + r.dup.join(', ')); ok(r.games >= 60, 'games in the hub: ' + r.games);
   ok(!r.links, 'link tiles in the Play hub: ' + r.links);
@@ -320,14 +320,14 @@ await check('festivalgames', async () => {
       for (let k = 0; k < 400 && !won; k++) {
         await new Promise(r => setTimeout(r, 120));
         const gl = document.querySelector('.gl:not(.out)'); if (!gl) continue; if (gl.querySelector('.gl-win')) { won = true; break; }
-        const e = playWatch.plan && playWatch.plan(); if (e && e.isConnected && !e.disabled) e.click();
+        const e = (playWatch.plan && playWatch.plan()) as HTMLButtonElement; if (e && e.isConnected && !e.disabled) e.click();
       }
       (won ? out.won : out.notWon).push(id);
       document.querySelector('.gl:not(.out) .gl-x')?.click(); await new Promise(r => setTimeout(r, 300));
     }
     return out;
   });
-  const bad = Object.entries(r).filter(([k, v]) => Array.isArray(v) && k !== 'won' && v.length).map(([k, v]) => k + ': ' + v.join(','));
+  const bad = Object.entries(r).filter(([k, v]) => Array.isArray(v) && k !== 'won' && v.length).map(([k, v]) => k + ': ' + (v as unknown[]).join(','));
   ok(r.fests >= 24 && !bad.length, bad.join(' | '));
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
   return `${r.fests} festivals, each with its own game at its table; open with the decorations until 3 days after, testers 7 days early, put away with the day it comes back; ${r.won.join(', ')} played to a win`;
