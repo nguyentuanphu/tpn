@@ -177,7 +177,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
   let tapped: Element | null = null;
   card.addEventListener('pointerdown', e => { tapped = e.target instanceof Element ? e.target : null; }, true);
   const anchorNow = (body: HTMLElement) => {
-    const top = body.getBoundingClientRect().top, list = [...card.querySelectorAll(ANCH)];
+    const top = body.getBoundingClientRect().top, list = [...card.querySelectorAll(ANCH)] as Element[];
     let i = tapped && tapped.isConnected ? list.indexOf(tapped.closest(ANCH)) : -1;
     if (i >= 0 && !list[i].getClientRects().length) i = -1;
     if (i < 0) i = list.findIndex(x => x.getClientRects().length && x.getBoundingClientRect().top >= top);
@@ -188,16 +188,16 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
   // a control is known again by its kind, its classes and the start of its words (late parts can add others before it)
   const keyOf = (x: Element) => x.tagName + '|' + x.className.replace(/\bon\b/g, '') + '|' + (x.tagName === 'DIV' ? '' : (x.textContent || '').trim().slice(0, 40));
   const putBack = (a: { key: string, n: number, off: number }) => {
-    const body = card.querySelector<HTMLElement>('.grownups-body'), x = body && [...card.querySelectorAll(ANCH)].filter(y => keyOf(y) === a.key)[a.n];
+    const body = (card.querySelector('.grownups-body') as HTMLElement | null), x = body && ([...card.querySelectorAll(ANCH)] as Element[]).filter(y => keyOf(y) === a.key)[a.n];
     if (!x || !x.getClientRects().length) return null;
     body.scrollTop += x.getBoundingClientRect().top - body.getBoundingClientRect().top - a.off; return body.scrollTop;
   };
   const draw = () => {
     const vEn = voicesFor('en'), vVi = voicesFor('vi');
-    const oldBody = card.querySelector<HTMLElement>('.grownups-body'), keepY = oldBody ? oldBody.scrollTop : 0;
+    const oldBody = (card.querySelector('.grownups-body') as HTMLElement | null), keepY = oldBody ? oldBody.scrollTop : 0;
     const a = oldBody && keepY ? anchorNow(oldBody) : null;
     draw0(vEn, vVi); tapped = null;
-    const newBody = card.querySelector<HTMLElement>('.grownups-body'); if (!newBody || !keepY) return;
+    const newBody = (card.querySelector('.grownups-body') as HTMLElement | null); if (!newBody || !keepY) return;
     newBody.scrollTop = keepY;
     if (!a) return;
     let set = putBack(a);
