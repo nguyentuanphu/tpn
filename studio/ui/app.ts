@@ -953,7 +953,9 @@ async function drawReleases(P, lab) {
   const gicon = g => (PURPOSE.find(p => p[0] === g) || [])[1] || REL_ICON[g] || '📦';
   // the release calendar (story helper, js/content/releasecal.ts): its items by week, the owner's moves in the live
   // content section releaseCalendar ({ moves: { key: Monday } }); without the module the timeline shows saved dates only
-  const calMod = lab ? null : await import(GAME + 'js/content/releasecal.js').catch(() => null); if (stale()) return;
+  // (asked for only when the game has it: the story helper adds releaseCalendar to LIVE_SECTIONS together with the module)
+  const hasCal = !lab && await import(GAME + 'js/custom.js').then(m => (m.LIVE_SECTIONS || []).includes('releaseCalendar'), () => false);
+  const calMod = hasCal ? await import(GAME + 'js/content/releasecal.js').catch(() => null) : null; if (stale()) return;
   if (calMod) await CONTENT_P.catch(() => { }); if (stale()) return;
   const calMoves0: Record<string, string> = { ...(((CONTENT as any).releaseCalendar || {}).moves || {}) }, calMoves = { ...calMoves0 };
   const calList = () => { try { return calMod && typeof calMod.calendar === 'function' ? calMod.calendar(calMoves) : (calMod?.CAL_DEFAULT || []); } catch (e) { return []; } };
