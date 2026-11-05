@@ -1,6 +1,18 @@
 # v1.08e creatures: status
 
-**ready for Release** (6 Nov 2026, 03:28 AEDT, second pass after the owner's review). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+**ready for Release** (6 Nov 2026, 03:36 AEDT, third pass: friendly eyes; before that 6 Nov 2026, 03:28 AEDT, second pass after the owner's review). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+
+## Third pass: friendly eyes (owner, 6 Nov 2026 AEDT: "All the animals eyes look still very scary")
+
+- The eyes were round balls bulging out of the face, some with whites round them (goggly), the kitty's with slits, under
+  dark brows close above: a stare. Now they are big, soft, glossy eyes that sit flat on the face like a picture book's:
+  warm dark brown, a little taller than wide, a big sparkle and a small one on the same side of both eyes, a soft glow at
+  the bottom. No whites (a thin light rim only on a dark face: panda, penguin, sheep, companions); the kitty has green
+  eyes with round pupils; the companions' eyes are smaller for their heads.
+- Brows are short, soft (a little darker than the fur) and well above the eyes.
+- Happy and asleep show only the closed-eye curve ("^ ^" and a gentle curve), not a squashed eye under it.
+- Surprised eyes grow a little (18 %), not a lot.
+- worldcreatures passes ({"6 Nov 2026, 03:36 AEDT"}). Pictures updated: moods-1 to moods-3, sheet-1, sheet-2, *-face.png.
 
 ## Second pass (owner, 6 Nov 2026 AEDT)
 
