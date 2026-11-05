@@ -36,8 +36,8 @@ const say = m => LANG === 'vi' ? viMessage(m) : String(m ?? '');
 const READS = new Map<string, { at: number, value: Promise<any> }>(), READ_MS = 180e3, READ_KEY = 'studioReads';
 const KEEPABLE = /^(info|live|live\/content|management\/(overview|summary|devices|children|attention|activities))(\?|$)/;
 const readStore = (): Record<string, { at: number, j: any }> => { try { return JSON.parse(sessionStorage.getItem(READ_KEY) || '{}'); } catch (e) { return {}; } };
-let READ_GEN = 0;
-const forgetReads = () => { READ_GEN++; READS.clear(); try { sessionStorage.removeItem(READ_KEY); } catch (e) { } KEEP.clear(); };
+let READ_GEN = 0, LAST_WRITE = 0;
+const forgetReads = () => { READ_GEN++; LAST_WRITE = Date.now(); READS.clear(); try { sessionStorage.removeItem(READ_KEY); } catch (e) { } KEEP.clear(); };
 try { if ((performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type === 'reload') sessionStorage.removeItem(READ_KEY); } catch (e) { }
 const api = (p: string, body?: unknown) => {
   if (body !== undefined) { forgetReads(); return apiNow(p, body); }
@@ -222,7 +222,10 @@ try { history.scrollRestoration = 'manual'; } catch (e) { }
 function keepShown() {
   const P = $('#page'), was = SHOWN; SHOWN = { hash: '', page: '', at: 0 };
   if (DISCARDED) { DISCARDED = false; return; }
-  if (!was.hash || !P || !P.firstChild || P.querySelector(':scope > .loading')) return;
+  // (a page where something was saved or run while it was open is drawn again next time, not kept in that state)
+  if (!was.hash || !P || !P.firstChild || P.querySelector(':scope > .loading') || LAST_WRITE >= was.at) return;
+  // (the owner's desk pages keep their own state with the page they drew: they are drawn again, from the kept reads)
+  if (P.querySelector('.desk-root')) return;
   KEEP.set(was.hash, { nodes: [...P.childNodes], at: was.at, scroll: window.scrollY, lang: LANG, page: was.page });
   while (KEEP.size > 12) KEEP.delete(KEEP.keys().next().value);
 }
