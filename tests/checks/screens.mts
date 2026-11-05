@@ -287,7 +287,7 @@ await check('festivalgames', async () => {
     const S = await import('/js/content/festseason.js'), A = await import('/js/content/activities.js'), C = (await import('/js/custom.js')).CUSTOM, H = await import('/js/howto-registry.js'), ART = await import('/js/art.js');
     await ART.moreArt();
     const out = { fests: FC.FESTCAL.length, noGame: [], notTable: [], noHow: [], noPic: [], season: [], tester: [], back: [], hiddenWrong: [], won: [], notWon: [] };
-    const DAY = 864e5, day0 = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const DAY = 864e5, testerWas = localStorage.getItem('sv2_tester'); localStorage.removeItem('sv2_tester');   // (the fixture makes this device a tester: the seasons are checked as a family's first)
     for (const F of FC.FESTCAL) {
       const id = 'fg_' + F.id;
       if (!GAMES[id] || FG.FEST_GAME_OF[F.id] !== id) out.noGame.push(F.id);
@@ -304,6 +304,7 @@ await check('festivalgames', async () => {
       if (!back || +back <= +away) out.back.push(F.id);
       if (A.gameInfo(id).hidden !== !S.inSeason(id)) out.hiddenWrong.push(id);
     }
+    if (testerWas) localStorage.setItem('sv2_tester', testerWas);
     // three festival games played to a win (a grown-up's moved date puts each in season today)
     C.festivals = C.festivals || {};
     const today = new Date(), iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');

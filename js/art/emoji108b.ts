@@ -24,3 +24,5 @@ for (const [k, c] of PATHS) {
   for (let n = 1; n <= 9; n++) def(`lp:${k}:${n}`, `<path d="M16 4l-4 14M32 4l4 14" stroke="${c}" stroke-width="5" stroke-linecap="round"/>${circ(24, 27, 16, c)}${circ(24, 27, 11.5, '#fff8e0')}` + `<g opacity=".9">${star(24, 27, 10, c)}</g>` + num(n));
   def(`lp:badge:${k}`, `<path d="M14 30l-6 14 7-3 4 6 5-14M34 30l6 14-7-3-4 6-5-14" fill="${c}" ${W}/>` + [0, 1, 2, 3, 4, 5, 6, 7].map(i => { const a = i * Math.PI / 4; return circ(24 + Math.cos(a) * 13, 20 + Math.sin(a) * 13, 5, c); }).join('') + circ(24, 20, 13, '#ffd23f') + g('a-twinkle', star(24, 20, 8, '#fff'), '24px 20px'));
 }
+// Santa for the Christmas game: a round face, a white beard and a red hat with a bobble
+add('🎅', `<path d="M10 20q4-16 22-12l8 10H10z" fill="#e8433a" ${W}/>${circ(42, 20, 4, '#fff')}<rect x="8" y="18" width="30" height="6" rx="3" fill="#fff" ${W}/>${circ(23, 30, 9, '#ffd6b8')}${eyes(20, 26, 29, 1.3)}<path d="M12 32q11 20 22 0q-4 6-11 6t-11-6z" fill="#fff" ${W}/>`);
