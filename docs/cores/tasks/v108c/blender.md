@@ -1,5 +1,7 @@
 # v1.08c blender: status (blender helper, started 5 Nov 2026 7:30 pm AEDT)
 
+**Ready for Release** (6 Nov 2026 AEDT). Parts 1, 2 and 4 are done; for Part 3 the player, the scripts and the stills are done and the animated films wait for a machine with a graphics card (owner's choice, below). `suite.mts --changed` picks the full suite (`.gitignore` changed): for Release.
+
 Branch `work/v108c-blender` from `origin/work/v108b-story`. Brief: `blender-brief.md`. The owner's go is given (5 Nov 2026 AEDT). Only Release merges and runs the full suite.
 
 A scheduled task wakes this chat at 0:40, 5:40, 10:40, 15:40 and 20:40 AEDT (the owner: usage resets every 5 hours, from 12:40 am); it carries on from the last pushed part.
@@ -18,8 +20,11 @@ A scheduled task wakes this chat at 0:40, 5:40, 10:40, 15:40 and 20:40 AEDT (the
 - The films: this container has no GPU, so Blender's real-time renderer (Eevee) runs out of memory, and Cycles takes about 80-100 s a picture; a fully animated minute (about 1,400 frames a film) would take about 35 hours a film. The owner chose (pop-up below): the scripts and pictures now, the animated films later on a machine with a graphics card. So this round makes the pictures (two moments a page of the five films, and the friends at the start and the end) and the animation scripts; the game's player (`js/blenderfilm.ts`) is ready and plays nothing until a film is listed in `js/content/blenderfilms.ts`.
 
 ## Checks
-- 5-6 Nov 2026 AEDT, run one at a time with `suite.mts --only` (Release runs the full suite): types pass, talecostume pass (38 tale films, 17 costumes), blenderfilms pass (the five films with a test video: play, stop for help with the tap ring, go on after the tap, kept and played offline, the game's film with no internet and nothing kept, none in the first download), storypics pass (a drawn page with no actors over it, kept for offline, the painted stage with no picture).
-- noemoji: not finished here (it plays every game; stopped by the time limit while Blender used the machine); to run again when the renders are done.
+- 6 Nov 2026 AEDT, on the branch's last code (the theatre picture fix after `a5fd4d38f`), each run alone with `suite.mts --jobs 1 --only` (this helper does not run the full suite):
+  - pass: types, talecostume (38 tale films, 17 costumes, the same as the Blender kit), blenderfilms (the five films with a test video), storypics (run again after the picture fix), tales (92 tales, 529 pages), films (SAMPLE), story, noemoji, perf (start 2.4 MB in 5.1 s), phone (run after the picture fix).
+  - startup: **fail here, the same as the base**: firstKB 1075 > 1040, and `origin/work/v108b-story` measured on the same machine gives the same 1075; this branch adds nothing to the first download (the films, the pictures and their code load only when a tale opens; `tales.js` is the one start file it touches). For Release to look at with the other branches.
+  - `--changed`: picks the full suite (`.gitignore` changed): not run here, for Release.
+- Screenshots looked at (Tấm Cám's drawn first page, the theatre): phone 390 x 844, tablet 820 x 1180 and 1180 x 820, computer 1440 x 900, in `docs/characters-v108/films/theatre-*.jpg`; no scrolling, every person on the page in view. On an upright screen the picture is shown 1.5 times the stage's width (only the outer sixth of each side is cut), the same picture blurred around it; on a wide screen the whole picture shows.
 
 ## Render queue (this container, 6 Nov 2026 AEDT)
 - Done: the 17 costume renders (the 4 corrected ones, `vn-prince`, and `vn-king` again with its new crown wings); the game film scenes of the 20 Vietnamese tales and Rainbow Serpent exported (`scene-export.mts`); 162 Blender pictures (Cycles, 1280 x 720, 16 samples, about 40 s each): two moments a page of the five films and the friends at the start and the end (stills in `docs/characters-v108/films/`), and one picture a page of the 20 Vietnamese tales.
