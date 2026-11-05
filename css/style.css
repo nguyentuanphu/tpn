@@ -3508,7 +3508,14 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
   .gl > .gl-stage { grid-column: 2; grid-row: 1 / span 2; padding: 6px; gap: 8px; }
 }
 .gl.gl-wide .gl-stage { flex-direction: row; flex-wrap: wrap; align-content: center; justify-content: center; }
-.gl.gl-wide .gl-stage > .gl-wide-one { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; align-content: center; }
+.gl.gl-wide .gl-stage > .gl-wide-one { flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center; align-content: center; }
+.gl.gl-wide .gl-stage > .gl-wide-one > * { flex: 0 1 auto; min-width: 0; }
+/* the shared board games (Rắn và thang and the like): the board on the left, the players, the words and the buttons beside it */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .snakes-shared { grid-template-columns: auto minmax(0, 1fr); align-items: center; width: 100%; }
+  .gl .snakes-shared > .snakes-board { grid-column: 1; grid-row: 1 / span 6; width: min(300px, 80dvh); grid-template-rows: repeat(5, minmax(0, 1fr)); }
+  .gl .snakes-shared > :not(.snakes-board):not(style) { grid-column: 2; }
+}
 .pt-guide { margin: 0 0 8px; padding-left: 20px; line-height: 1.5; font-size: 16px; }
 .pt-list { display: grid; gap: 8px; }
 .pt-row { display: flex; align-items: center; gap: 10px; background: #fff8ee; border-radius: 14px; padding: 8px 10px; font-size: 16px; }
@@ -3527,3 +3534,11 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
   .gl .folk-court > .folk-field { grid-column: 1; grid-row: 1 / span 3; height: min(330px, 84dvh); }
   .gl .folk-court > :not(.folk-field):not(style) { grid-column: 2; }
 }
+/* (v1.08b fivescreens, UI rule: touch targets 44 px, 64 px for under-5s) every button a child taps in a game is at least a
+   finger's size, as drawn before the frame's zoom (which never shrinks one below it: js/games/frame.ts); the pick-up
+   sticks keep their thin sticks */
+.gl .gl-stage :is(button, [role=button]):not(.ch-stick) { min-width: 44px; min-height: 44px; }
+.gl.little .gl-stage :is(button, [role=button]):not(.ch-stick) { min-width: 64px; min-height: 64px; }
+/* the science boards on a landscape screen: the answers stand side by side, also an under-5's bigger ones */
+@media (orientation: landscape) and (min-height: 521px) { .gl .sx-board > .sx-controls { width: auto !important; min-width: min(380px, 92vw); max-width: 92vw; } }
+.lr-row small, .pt-row small { font-size: 16px; }

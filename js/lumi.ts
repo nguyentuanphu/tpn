@@ -27,7 +27,7 @@ const state = (p: Kid): LumiState => (p.lumi = p.lumi && typeof p.lumi === 'obje
 /** a new child meets Lumi: her welcome, once */
 export function lumiWelcome(p: Kid): boolean {
   const s = state(p); if (s.met) return false;
-  s.met = Date.now(); saveProfiles();
+  s.met = Date.now(); s.news = weekKey(aestDate()); saveProfiles();   // (the welcome is this week's hello: the news comes next week)
   lumiSay(LUMI_WELCOME[0]); setTimeout(() => { if (document.querySelector('.lumi-card')) lumiSay(LUMI_WELCOME[1]); }, 4200);
   return true;
 }

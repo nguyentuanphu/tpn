@@ -42,7 +42,7 @@ export async function learningReportCheck(browser:Browser){
     const sel=m.querySelector('select[data-subj="math"]') as HTMLSelectElement;sel.value='hard';sel.dispatchEvent(new Event('change'));
     const pic=R.learningPicture(p);
     const card=m.querySelector('.card')||m;const W=innerWidth;
-    const small=[...m.querySelectorAll('.lr-row *')].filter(e=>e.childNodes.length&&[...e.childNodes].some(n=>n.nodeType===3&&(n.textContent||'').trim())&&parseFloat(getComputedStyle(e).fontSize)<15.5).length;
+    const small=[...m.querySelectorAll('.lr-row *')].filter(e=>!e.closest('svg')&&e.childNodes.length&&[...e.childNodes].some(n=>n.nodeType===3&&(n.textContent||'').trim())&&parseFloat(getComputedStyle(e).fontSize)<15.5).map(e=>e.tagName+'.'+e.className+'='+getComputedStyle(e).fontSize).slice(0,4);
     const tapSmall=[...m.querySelectorAll('.lr-row select, [data-lrshare]')].filter(e=>{const b=e.getBoundingClientRect();return b.height<43.5;}).length;
     const wide=m.scrollWidth>W+1||(card as HTMLElement).getBoundingClientRect().right>W+1;
     return {rows,next:m.querySelector('.lr-next')?.textContent?.trim()||'',saved:p.subjectDiff?.math,pic:[pic.width,pic.height],share:!!m.querySelector('[data-lrshare]'),small,tapSmall,wide};});
@@ -51,7 +51,7 @@ export async function learningReportCheck(browser:Browser){
    if(!/Toán.*3 lượt.*thắng/.test(r.rows[2]||''))out.push(`${s.name}: maths row "${r.rows[2]}"`);
    if(!/Tiền.*2 lượt/.test(r.rows[4]||''))out.push(`${s.name}: money row "${r.rows[4]}"`);
    if(!r.next)out.push(`${s.name}: no game for next week`);if(r.saved!=='hard')out.push(`${s.name}: level by subject not saved`);
-   if(!r.share||r.pic[0]!==1080)out.push(`${s.name}: no picture to share`);if(r.small)out.push(`${s.name}: ${r.small} texts under 16 px`);
+   if(!r.share||r.pic[0]!==1080)out.push(`${s.name}: no picture to share`);if(r.small.length)out.push(`${s.name}: texts under 16 px: ${r.small.join(' ')}`);
    if(r.tapSmall)out.push(`${s.name}: ${r.tapSmall} controls under 44 px`);if(r.wide)out.push(`${s.name}: wider than the screen`);
    if(P.errors.length)out.push(`${s.name}: ${P.errors.join(' | ')}`);last=r;
   }finally{await P.ctx.close();}

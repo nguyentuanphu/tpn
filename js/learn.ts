@@ -208,9 +208,10 @@ export function createLearning(G) {
   const playing = () => !document.hidden && G.heroes.length && (!G.paused || gameOpen() || document.body.classList.contains('simple-on'));
   setInterval(() => {
     const now = performance.now(), add = Math.min(10, (now - last) / 1000) / 60; last = now;
-    if (!playing()) return;
+    if (!G.heroes.length) return;
     if (settings.playDay !== today()) { settings.playDay = today(); settings.playMins = 0; shown = false; soonSaid = false; }
-    settings.playMins = (settings.playMins || 0) + add; saveSettings();
+    // (the minutes count while playing; the time is looked at on every tick, so the goodbye also comes on a menu)
+    if (playing()) { settings.playMins = (settings.playMins || 0) + add; saveSettings(); }
     const phase = playTimePhase(settings.playMins, +settings.restMins || 0);
     if (phase === 'soon' && !soonSaid && !busy()) { soonSaid = true; lumiSay(LUMI_SOON); }
     if (phase === 'play') { soonSaid = false; shown = false; }

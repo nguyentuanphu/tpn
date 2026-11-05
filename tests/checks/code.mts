@@ -223,6 +223,6 @@ await check('types', async () => {
   const now = {}; for (const m of tout.matchAll(/^([^\s(]+)\(\d+,\d+\): error TS/gm)) now[m[1]] = (now[m[1]] || 0) + 1;
   const base = JSON.parse(fs.readFileSync('types-baseline.json', 'utf8')).files, worse = Object.entries(now).filter(([f, k]) => k > (base[f] || 0));
   ok(!worse.length, 'new type findings in the test code: ' + worse.map(([f, k]) => `${f} ${k} (was ${base[f] || 0})`).join(', ') + ' | ' + tout.split('\n').filter(l => worse.some(([f]) => l.startsWith(f + '('))).slice(0, 6).join(' | '));
-  const left = Object.values(now).reduce((a, k) => a + Number(k), 0);
+  let left = 0; for (const k of Object.values(now)) left += Number(k);
   return `${n} explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; ${ts} TypeScript files of the server, Studio and tools; no errors; the test code and marketing/source checked too: ${left} known findings left (types-baseline.json, none new)`;
 });

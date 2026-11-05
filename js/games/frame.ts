@@ -116,7 +116,10 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     const wide = { tried: 0, before: 0 };
     const setWide = (kids: Element[], on: boolean) => {
       layer.classList.toggle('gl-wide', on); stage.querySelectorAll('.gl-wide-one').forEach(e => e.classList.remove('gl-wide-one'));
-      if (on && kids.length === 1 && getComputedStyle(kids[0]).display.includes('flex')) kids[0].classList.add('gl-wide-one');
+      // (one board of two parts, a picture and its answers, turns into a row; a board of many parts, a card table or a
+      // game board, keeps its own layout)
+      const parts = (e: Element) => [...e.children].filter(c => c.tagName !== 'STYLE' && c.getBoundingClientRect().height > 0 && !/^(absolute|fixed)$/.test(getComputedStyle(c).position)).length;
+      if (on && kids.length === 1 && getComputedStyle(kids[0]).display.includes('flex') && parts(kids[0]) === 2) kids[0].classList.add('gl-wide-one');
     };
     const fit = (shrinkOnly = false) => {
       if (closed || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
