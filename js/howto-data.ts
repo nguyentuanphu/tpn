@@ -251,3 +251,21 @@ for (const id of ["stamps", "weave", "mosaic", "nonla", "aodai", "kitepaint", "s
   S('✏️', 'Paint with your finger or mouse. With a keyboard, use arrows and Space.', 'Vẽ bằng ngón tay hoặc chuột. Với bàn phím, dùng mũi tên và phím cách.'),
   S('✅', 'Make twelve marks, then choose Keep in Album. Leaving early does not save a picture.', 'Tô mười hai nét rồi chọn Lưu vào Album. Thoát sớm không lưu tranh.')
 ] };
+
+// (v1.08b platform, rules audit docs/rules-audit/README.md) the games made simpler on purpose now say how, as the last
+// step of their guide: one plain line, in English and Vietnamese, with a picture the guide already uses
+const SIMPLER_SAID: Record<string, ReturnType<typeof S>> = {
+  tienlen: S('🧒🎴🧑', 'In our game: three players, any card can start, and there is no instant win.', 'Trong trò này: ba người chơi, đánh lá nào trước cũng được, và không có tới trắng.'),
+  caro: S('👆 ⬜', 'In our game, a line still wins when both ends are blocked.', 'Trong trò này, hàng bị chặn hai đầu vẫn được tính thắng.'),
+  tangram: S('👀 ⬜', 'In our game you pick the missing shape. A real tangram has exactly seven pieces.', 'Trong trò này con chọn mảnh còn thiếu. Tangram thật có đúng bảy mảnh.'),
+  hopscotch: S('🪨 ⬜', 'In our game the stone lands on any square. For real it goes to square 1, then 2, then 3.', 'Trong trò này viên đá rơi vào ô bất kỳ. Chơi thật thì ném lần lượt ô 1, rồi 2, rồi 3.'),
+  dacau: S('1️⃣ 2️⃣ 3️⃣', 'In our game the count keeps going after a drop. For real it starts again.', 'Trong trò này rơi cầu vẫn đếm tiếp. Chơi thật thì đếm lại từ đầu.'),
+  trongnu: S('👀 🌸', 'In our game a touch does not swap places. For real the jumper and the holders swap.', 'Trong trò này chạm tay không phải đổi vai. Chơi thật thì người nhảy và người ngồi đổi chỗ.'),
+  goat: S('🌾🌾🌾 🐐', 'In our game you look for the goat in the haystacks. The real game is played blindfolded.', 'Trong trò này con tìm dê trong đống rơm. Trò thật thì bịt mắt đi bắt.'),
+  nemlon: S('🥫💥', 'In our game you only throw. For real someone stacks the cans again while everyone runs.', 'Trong trò này con chỉ ném. Chơi thật thì có người dựng lại lon trong khi mọi người chạy.'),
+  snap: S('🃏 👀', 'In our game the cards turn over by themselves.', 'Trong trò này bài tự lật.'),
+  cricket: S('4️⃣ 6️⃣', 'In our game nobody is out: every good hit scores.', 'Trong trò này không ai bị loại: cú đánh hay nào cũng được điểm.'),
+  simon: S('👂 🗣️', 'In our game nobody is out: keep playing and try again.', 'Trong trò này không ai bị loại: cứ chơi tiếp và thử lại.'),
+  tag: S('👆 🧒', 'In our game you are always the chaser. For real the one who is tagged chases next.', 'Trong trò này con luôn là người đuổi. Chơi thật thì ai bị chạm sẽ đi đuổi.')
+};
+for (const [id, card] of Object.entries(SIMPLER_SAID)) { const g = HOWTO[id]; if (g && !g.steps.some(s => s.en === card.en)) g.steps.push(card); }
