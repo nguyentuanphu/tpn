@@ -13,3 +13,14 @@ def('g8:can', `<path d="M10 18h22v20a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4z" fill="#43c
 add('😟', face(24, 24, 18, '#ffd23f', `<path d="M17 34q7-5 14 0" ${W} ${N}/><path d="M14 14l6 2M34 14l-6 2" ${W}/>`));
 add('🤐', face(24, 24, 18, '#ffd23f', `<path d="M14 32h20" ${W}/><path d="M17 29v6M21 29v6M25 29v6M29 29v6" stroke="${O}" stroke-width="1.8"/>`));
 
+
+// ---------- (v1.08b games) the learning journeys: the sticker book tab, a medal for each step, a badge per subject ----------
+const PATHS: [string, string][] = [['vi', '#e8433a'], ['en', '#3b6fe0'], ['math', '#ff9f43'], ['shape', '#9a6bff'], ['money', '#43c463'], ['sci', '#3cc7e8'], ['read', '#ff7eb8'], ['me', '#ffd23f']];
+const num = (n: number) => `<text x="24" y="31" text-anchor="middle" font-size="17" font-weight="900" fill="#fff" stroke="${O}" stroke-width="1.2" font-family="Fredoka,sans-serif">${n}</text>`;
+const star = (cx: number, cy: number, r: number, f: string) => { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, k = i % 2 ? r * .45 : r; d += (i ? 'L' : 'M') + (cx + Math.cos(a) * k).toFixed(1) + ' ' + (cy + Math.sin(a) * k).toFixed(1); } return `<path d="${d}z" fill="${f}" ${W}/>`; };
+def('lp:tab', `<path d="M6 40q10-26 18-10t18-20" stroke="#b07a4a" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="round" ${N}/>${circ(6, 40, 4, '#43c463')}` + g('a-twinkle', star(40, 10, 8, '#ffd23f'), '40px 10px'));
+def('lp:mark', g('a-pulse', `${circ(24, 24, 18, '#3b6fe0')}${star(24, 24, 11, '#ffd23f')}`, '24px 24px'));
+for (const [k, c] of PATHS) {
+  for (let n = 1; n <= 9; n++) def(`lp:${k}:${n}`, `<path d="M16 4l-4 14M32 4l4 14" stroke="${c}" stroke-width="5" stroke-linecap="round"/>${circ(24, 27, 16, c)}${circ(24, 27, 11.5, '#fff8e0')}` + `<g opacity=".9">${star(24, 27, 10, c)}</g>` + num(n));
+  def(`lp:badge:${k}`, `<path d="M14 30l-6 14 7-3 4 6 5-14M34 30l6 14-7-3-4 6-5-14" fill="${c}" ${W}/>` + [0, 1, 2, 3, 4, 5, 6, 7].map(i => { const a = i * Math.PI / 4; return circ(24 + Math.cos(a) * 13, 20 + Math.sin(a) * 13, 5, c); }).join('') + circ(24, 20, 13, '#ffd23f') + g('a-twinkle', star(24, 20, 8, '#fff'), '24px 20px'));
+}

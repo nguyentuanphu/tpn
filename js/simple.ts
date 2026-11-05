@@ -147,7 +147,7 @@ export function createSimple(G) {
     // (round N) the Music group starts with 🎵 Songs: lullabies, village tunes and festival songs to listen to
     const songs = { kind: 'songs', key: 'songs', icon: '🎵', name: T('Songs', 'Bài hát'), voice: ['Songs', 'Bài hát'], stars: 0, max: 0 };
     // (v1.08b games) every game in one corner only: no link stops
-    const stop = g => ({ kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level, plus: lt && g.ageMin >= 5 });
+    const stop = g => ({ quest: !!(G.learnQuest && G.learnQuest.isTodayStep(p, g.id)), kind: 'game', key: g.id, icon: GAMES[g.id].icon, name: GAMES[g.id].name(), voice: both(GAMES[g.id].name), stars: starsOf(p, g.id), max: 3, level: g.level, plus: lt && g.ageMin >= 5 });
     const want = GAME_TABS[t] || GAME_TABS.games;
     const order = a => t === 'learn' && LEARN_CORNERS.includes(a.key) ? LEARN_CORNERS.indexOf(a.key) : 99;
     return AREAS.filter(a => want(a.key)).sort((x, y) => order(x) - order(y)).map(a => ({ area: a, items: (a.key === 'music' && G.openSongs ? [songs] : []).concat(gamesIn(GAMES, a.key, false).filter(g => isOpen(p, g.id, 'game', a.key)).map(stop)).concat(gamesIn(GAMES, a.key, false).filter(g => !isOpen(p, g.id, 'game', a.key)).map(g => lockedGame(g.id, a.key))).concat(soonStop(a.key)) }));
@@ -232,7 +232,7 @@ export function createSimple(G) {
       lay = null; path.style.height = ''; path.style.width = '';
       list = []; const groups = groupsOf(tab);
       const stopHTML = (s, k) => `<button class="sp-stop${sel === idOf(s) ? ' sel' : ''}${s.locked ? ' locked' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
-        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
+        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.quest ? `<i class="sp-quest" aria-label="${esc(T('Today’s learning step', 'Bước học hôm nay'))}">${pic('lp:mark')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
         <b class="sp-name">${esc(s.name)}${s.hint ? `<small class="sp-hint">${esc(s.hint)}</small>` : ''}</b>${!lt && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`;
       path.innerHTML = groups.map(({ area, items }) => { const start = list.length; items.forEach(x => list.push({ ...x, cat: area.key, isNew: !!seen && x.kind !== 'lock' && !seen.has(idOf(x)) }));
         const got = items.reduce((a, x) => a + (x.stars || 0), 0), all = items.reduce((a, x) => a + (x.max || 0), 0);
@@ -266,7 +266,7 @@ export function createSimple(G) {
     path.style.setProperty('--lw', L.lw + 'px');
     path.innerHTML = `<svg class="sp-road" aria-hidden="true"><path/><path class="dash"/></svg>` +
       list.map((s, k) => s.kind === 'head' ? `<div class="sp-stop grp" role="heading" aria-level="2" data-k="${k}" aria-label="${esc(s.name)}"><span class="sp-hpic">${pic(s.icon)}</span><b class="sp-name">${esc(s.name)}</b></div>` : `<button class="sp-stop${k === next ? ' next' : ''}${sel === idOf(s) ? ' sel' : ''}${s.locked ? ' locked' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
-        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
+        <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.quest ? `<i class="sp-quest" aria-label="${esc(T('Today’s learning step', 'Bước học hôm nay'))}">${pic('lp:mark')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
         <b class="sp-name">${esc(s.name)}${s.hint ? `<small class="sp-hint">${esc(s.hint)}</small>` : ''}</b>${!lt && s.kind !== 'head' && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`).join('') +
       `<button class="sp-owl" aria-label="${T('Ông Cú', 'Ông Cú')}">${pic('🦉')}</button>`;
     // measure the tallest stop (its name may take two or three lines), then place them all

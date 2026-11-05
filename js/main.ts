@@ -265,7 +265,7 @@ export interface SvMain {
   tester?: { [k: string]: unknown }; tapReact?: (h: SvHeroT, ray: THREE.Raycaster) => boolean; chatGroup?: (...a: unknown[]) => unknown;
   showcaseCam?: (i: number, h: SvHeroT, dt: number) => boolean; TALES?: { id: string, title(): string, [k: string]: unknown }[];
   readTaleNow?: (h: SvHeroT, tale: { id: string }, sync?: unknown) => Promise<unknown>;
-  GAME_SPOT?: Record<string, string>; hostNews?: (h: any) => void; // (v1.08b games)
+  GAME_SPOT?: Record<string, string>; hostNews?: (h: any) => void; learnQuest?: any; // (v1.08b games)
    lookUpT?: number; tapTargets?: THREE.Object3D[]; travelling?: boolean;
   // values main.ts shares
   LANDMARKS?: typeof LANDMARKS; STICKERS?: typeof STICKERS; VIEWS?: typeof VIEWS; getViews?: (i: number) => typeof VIEWS; PLACES?: { id?: string, x: number, z: number, [k: string]: unknown }[];
@@ -528,6 +528,7 @@ async function foundLeafy(h, lf) {
 
 // ---------- NPC talks ----------
 const { GAME_SPOT, baTalk, maiTalk, kidTalk, owlTalk } = installTalks(G, { playGame, twoHalves, save, checkQuests: h => checkQuests(h), hudFor, goAndDo: (h, it) => goAndDo(h, it), currentQuest: p => currentQuest(p), addMoney, NPCS }); // (the quests are made just below: js/main/quests.ts)
+void import('./learnquest.js').then(m => m.installLearnQuest(G)).catch(e => console.warn('learning quests', e)); // (v1.08b games) the learning journeys
 
 // ---------- objective helpers ----------
 const { statueTalk, questTarget, currentQuest, gourdTalk, checkQuests } = installQuests(G, { world, save, V, NPCS, theOwl: () => owl, addMoney, isPlaying: () => playing, hudFor, goAndDo: (h, it) => goAndDo(h, it), giveSticker });

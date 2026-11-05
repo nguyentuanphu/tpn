@@ -1,6 +1,6 @@
 // The Play hub (split from js/ui.ts, v1.07): the games by tab.
 import { isOpen, isHeld, progressOf, secondSetOf } from '../content/unlocks.js';
-import { AREAS, gamesIn, LEARN_CORNERS } from '../content/activities.js';
+import { AREAS, gamesIn, gameInfo, LEARN_CORNERS } from '../content/activities.js';
 import { T } from '../i18n.js';
 import { reduceMotion } from '../state.js';
 import { say } from '../voice.js';
@@ -57,7 +57,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
   // (one tap shows them), and the new games held back in Studio (New games off) into one "Coming soon" tile
   const gameCard = (id, k, key, open) => {
       const g = GAMES[id], lv = p.levels[id] || 1;
-      return `<div class="hcard ${open ? "" : "locked"}" style="--hc:${HUB_COLORS[(k + key.length) % HUB_COLORS.length]}"><button class="hplay" data-play="${id}"${key.endsWith('hv_en') ? ' data-english="1"' : ''} ${open ? "" : "disabled"}><span class="hi">${pic(open ? g.icon : '\u{1F512}')}</span><b>${esc(g.name())}</b><small>${'⭐'.repeat(lv)}${'☆'.repeat(5 - lv)}</small></button><button class="hgo" data-go="${id}" aria-label="${T('Go there', 'Đi đến đó')}">📍</button><button class="hhow" data-how="${id}" aria-label="${T('How to play', 'Cách chơi')}">📺</button>${g.origin ? `<span class="hflag">${originFlags(g.origin)}</span>` : ''}</div>`;
+      return `<div class="hcard ${open ? "" : "locked"}" style="--hc:${HUB_COLORS[(k + key.length) % HUB_COLORS.length]}"><button class="hplay" data-play="${id}"${key.endsWith('hv_en') ? ' data-english="1"' : ''} ${open ? "" : "disabled"}><span class="hi">${pic(open ? g.icon : '\u{1F512}')}</span><b>${esc(g.name())}</b><small>${'⭐'.repeat(lv)}${'☆'.repeat(5 - lv)}</small></button><button class="hgo" data-go="${id}" aria-label="${T('Go there', 'Đi đến đó')}">📍</button><button class="hhow" data-how="${id}" aria-label="${T('How to play', 'Cách chơi')}">📺</button>${g.origin ? `<span class="hflag">${originFlags(g.origin)}</span>` : ''}${open && game.learnQuest && game.learnQuest.isTodayStep(p, id) ? `<span class="hquest" title="${esc(T('Today’s learning step', 'Bước học hôm nay'))}">${pic('lp:mark')}</span>` : ''}</div>`;
   };
   // (owner, 1 Nov 2026 AEDT: "it should tell what's needed to access these additional games, currently it only expands
   // to show the new games") the unfolded padlock first says what to do: each game above won 3 times, with the stars so far
@@ -82,7 +82,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
       const fam = familySongs().length, groups = SONG_GROUPS.filter(g => g.key === 'family' ? fam : SONG_LIST.some(s => s.group === g.key && Music.has(s.key)));
       return `<h3>🎵 ${T('Songs: tap to listen', 'Bài hát: chạm để nghe')}</h3><div class="festrow songrow">${groups.map(g => `<button class="festbtn" data-songs="${g.key}"><span>${pic(g.icon)}</span><b>${esc(g.name())}</b></button>`).join('')}</div>`;
     }
-    const sec = SECS.find(x => x.key === key) || SECS[0]; return `<h3>${/^[a-z]+:/.test(sec.icon) ? pic(sec.icon) : sec.icon} ${esc(sec.title())}</h3>${sec.groups.map(g => `${sec.groups.length > 1 ? `<h4 class="hubarea">${pic(g.area.icon)} ${esc(g.area.name())}${g.area.key === 'hv_en' ? englishBadge() : ''}</h4>` : ''}${card2({ key: sec.key + g.area.key, area: g.area.key, games: g.games })}`).join('')}`;
+    const sec = SECS.find(x => x.key === key) || SECS[0]; return `<h3>${/^[a-z]+:/.test(sec.icon) ? pic(sec.icon) : sec.icon} ${esc(sec.title())}</h3>${key === 'hocvui' && game.learnQuest ? game.learnQuest.journeysHTML(p) : ''}${sec.groups.map(g => `${sec.groups.length > 1 ? `<h4 class="hubarea">${pic(g.area.icon)} ${esc(g.area.name())}${g.area.key === 'hv_en' ? englishBadge() : ''}</h4>` : ''}${card2({ key: sec.key + g.area.key, area: g.area.key, games: g.games })}`).join('')}`;
   };
   card.innerHTML = `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>🎮 ${T('Play', 'Vui chơi')}</h2>
     <div class="hubtabs" role="tablist">${tabs.map(t => `<button role="tab" data-tab="${t.key}"><span>${pic(t.icon)}</span><small>${esc(t.short())}</small></button>`).join('')}</div>
@@ -102,6 +102,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     root.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.soon; openGamesHub.soon = openGamesHub.soon === k ? '' : k; if (openGamesHub.soon) say('Win each game here 3 times to open the new games!', 'Thắng mỗi trò ở đây 3 lần để mở trò mới nhé!'); openGamesHub.scroll = root.scrollTop; draw(); if (openGamesHub.soon) root.querySelector('.hsoonbubble')?.scrollIntoView({ block: 'nearest', behavior: reduceMotion() ? 'auto' : 'smooth' }); });
     // (v1.08b games) a game in the English corner plays in English (First Sounds as well as the English games)
     root.querySelectorAll('[data-play]').forEach(b => b.onclick = () => { const id = b.dataset.play; markEnglish(b.dataset.english ? id : null); close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); });
+    root.querySelectorAll('[data-lqplay]').forEach(b => b.onclick = () => { const id = b.dataset.lqplay; markEnglish(gameInfo(id).area === 'hv_en' ? id : null); close(); openGamesHub.scroll = root.scrollTop; game.meetAndPlay(i, id, 'hub'); }); // (v1.08b games) a learning journey's next step
     root.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { close(); game.goToGame(i, b.dataset.go); });
     root.querySelectorAll('[data-how]').forEach(b => b.onclick = () => { const id = b.dataset.how, en = !!b.closest('.hcard')?.querySelector('[data-english]'); openHowTo(id, { onPlay: () => { markEnglish(en ? id : null); close(); game.playGame(i, id, 'hub'); } }); });
   };

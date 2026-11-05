@@ -1,6 +1,6 @@
 # v1.08b games helper: status
 
-**Ready for Release: items 1, 2, 3, 4, 5 and their checks. Item 6 (learning quests) is not started (see "Left for later").**
+**Ready for Release: items 1 to 7 (item 6 as the owner chose: 9 steps and a badge).**
 
 Branch `work/v108b-games` from `origin/integrate/v108`. Times in AEDT.
 
@@ -96,6 +96,19 @@ Their names and pictures were already different, so nothing was renamed (no new 
 - **Request to the story helper (calendar tab):** outside the season the calendar should show "Sẽ quay lại vào …" /
   "Back on …" for the festival's game: call `backOn('fg_' + festivalId)` from `js/content/festseason.ts` (a Date or null).
 
+### 6. Learning quests (owner, 5 Nov 2026 AEDT: "làm luôn mục 6: 9 bước và một huy hiệu")
+- `js/content/learnpaths.ts`: 8 journeys (Tiếng Việt, Tiếng Anh, Toán, Hình khối, Tiền, Khoa học, Chữ và đọc, Em và gia
+  đình), 9 steps each and a badge at the end.
+- `js/learnquest.ts`: the steps are the subject's games made for the child's age, easiest first (first set before the
+  second); a step won gives its sticker, the 9th the badge (`profile.learnPath`, `profile.learnBadges`). One learning
+  step a day (a different unfinished journey each day): a row in the daily adventure's window (`js/adventure.ts`, one
+  line and one binding), a quest mark on its card in the Play hub, a quest star on its Simple screen stop. The journeys
+  show at the top of the Học vui tab, each with its 9 dots and badge; a tap plays the next step.
+- Sticker book (`js/content/stickers.ts`, `js/stickers.ts`, small blocks): a new theme "Learning" with one page of 9 per
+  subject (step 1 is the page's welcome sticker, STK-3) and a new way to earn, `learn`. The sticker unit test lists
+  the new theme and the new way (the test pins the list of themes; changed on purpose).
+- Drawings (part of the start, `js/art/emoji108b.ts`): the tab, the quest mark, a medal per step, a badge per subject.
+
 ## Checks (5 Nov 2026 AEDT)
 - `hubmap` extended: no link tiles in the Play hub; each game once across Học vui and Vui chơi on the Simple screen: pass.
 - `gameplace` (new, `tests/checks/screens.mts`): every switched-on game has a place that stands in the valley; every area
@@ -105,10 +118,11 @@ Their names and pictures were already different, so nothing was renamed (no new 
 
 ## Left for later
 - The new games are picture quizzes on one engine; richer hands-on versions (wrapping the cake, a maze builder) could follow.
-- Item 6: learning quests (a learning step in the daily adventure, 10-step subject paths, quest marks). Not started: the
-  sticker book has pages of exactly 9 (STK rules), so a 10-step path with a sticker per step needs Release or the owner
-  to choose how the stickers fit (for example 9 steps and a badge, or a page of its own).
+
 - The host news for a newly opened story (games only so far).
 - Recording the 11 host lines (they are in `js/content/gameplace.ts`; the voice pack tool collects them as pairs).
 
 ## Progress notes
+
+## Owner's decisions
+- 5 Nov 2026 AEDT: learning journeys have 9 steps and a badge (fits the sticker book's pages of 9).
