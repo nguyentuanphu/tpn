@@ -27,12 +27,25 @@ Each branch starts from `origin/integrate/v108`.
 
 The first account runs at most 5 at once: quality is still running, so this round adds 4.
 
-| Helper | Brief | Branch |
-|---|---|---|
-| creatures | `creatures-brief.md`: animals, pets, companions, farm animals | `work/v108e-creatures` |
-| nature | `nature-brief.md`: trees, flowers, plants, farm crops, My House furniture | `work/v108e-nature` |
-| vehicles | `vehicles-brief.md`: every vehicle the child sees or rides | `work/v108e-vehicles` |
-| places | `places-brief.md`: landmarks, buildings, stalls, food and festival props | `work/v108e-places` |
+| Helper | Account | Brief | Branch |
+|---|---|---|---|
+| creatures | first | `creatures-brief.md`: animals, pets, companions, farm animals | `work/v108e-creatures` |
+| vehicles | first | `vehicles-brief.md`: every vehicle the child sees or rides | `work/v108e-vehicles` |
+| nature | second | `nature-brief.md`: trees, flowers, plants, farm crops, My House furniture | `work/v108e-nature` |
+| water | first | `water-brief.md`: every river, lake and pond shallow (0.4-0.8 m) and friendly | `work/v108e-water` |
+| faces | first | `faces-brief.md`: living faces (soft eyes with lids, blinking, looking, smiling); Part 2: high-detail friends, rim light, outline, close-ups | `work/v108e-faces` |
+| villagers | second | `villagers-brief.md`: the 11 named villagers as real models, crowds refined | `work/v108e-villagers` |
+| places | second | `places-brief.md`: landmarks, buildings, stalls, food and festival props | `work/v108e-places` |
+
+**Split (owner, 6 Nov 2026 AEDT, corrected):**
+- **The second account** runs Blender (A), nature and places.
+- **The first account** runs, at most 5:
+  - quality;
+  - creatures: animals round 2;
+  - vehicles: round 2 and the Season 2 piers;
+  - water: shallow water;
+  - faces: faces, then high-detail friends (Part 2), then the 11 villagers (`villagers-brief.md`).
+- Each first-account helper finishes and pushes a part, and messages Release, before starting the next part on the same branch.
 
 ## The shared kit (written by Release; use it, do not copy it)
 
@@ -68,16 +81,27 @@ Everything in `docs/cores/tasks/v108b/README.md` applies.
   - `longplaymem`: memory must not grow.
   - `startup`: first download 1025 KB or less.
   - Many copies of one model are one InstancedMesh. Far things stay the code shape or a still copy.
+- **Offline list:**
+  - Every new `js/` file and every `models/world/*.glb` goes into the `FILES` list in `sw.ts`.
+  - On 6 Nov, 66 files from earlier helpers were missing, which broke the `offline` and `swupdate` checks.
+  - Never write an apostrophe inside that list, comments included: `tools/bundle.mts` reads the quoted names.
 - **Our own art only:**
   - Every model is made by our scripts; no downloaded models.
   - Things a child sees keep English and Vietnamese names.
   - Do not move places on the map; models sit where the code shapes stand.
+- **A new design, not a rebuild (Release, 6 Nov, after the first vehicles round):**
+  - Each model is a new picture-book design: soft, rounded, detailed, in the style of the four friends and the gallery (`docs/characters-v108/gallery/`, `tools/blender/vehicles.py`).
+  - Rebuilding the code shape with softer shading is not enough. The before and after screenshots must show a clear change.
+  - Keep the code shape's footprint and height, so the colliders, seat points and checks stay true.
 - **Check every swap:**
   - The model stands on the ground.
   - It faces the way the code shape faced.
   - Its size matches the code shape, so colliders and hit areas stay true (no floating, no sinking).
 - **Screenshots:** phone, tablet and computer, before and after, in `docs/world-models-v108e/<helper>/` (the owner's rule: designs go in the repo).
-- **Done:** write "ready for Release" at the top of your status file, then message Release (session_01SchVRv9GNVGszhptzXpYMs) with:
+- **Done:** write "ready for Release" at the top of your status file.
+  - **First account:** message Release (session_01SchVRv9GNVGszhptzXpYMs).
+  - **Second account:** chats there cannot message Release, so write the report in your last reply for the owner to pass on.
+  - The report gives:
   - what changed;
   - the checks, with pass or fail;
   - your branch and last commit;

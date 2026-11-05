@@ -94,9 +94,20 @@ await check('offlinelevels', async () => (await import('./offline-levels.mts')).
 // removed after the festival on Light and kept on Full (tests/festival-pack.mts)
 await check('festivalpack', async () => (await import('./festival-pack.mts')).festivalPackCheck(b));
 
+// (v1.08e vehicles) every vehicle and boat as a Blender model, swapped in near the child: in place, wheels turning, riders
+// seated on the model's points, the code shape kept when blocked (tests/world-vehicles.mts)
+await check('worldvehicles', async () => (await import('./world-vehicles.mts')).worldVehiclesCheck(b));
 // (v1.08e creatures) the animals, pets and companions made in Blender: they load, stand at the code shape's size on the
 // ground, play their clips, swap in near the child, and the code shapes stay when the models are blocked
 await check('worldcreatures', async () => (await import('./world-creatures.mts')).worldCreaturesCheck(b));
+
+// (v1.08e faces) the friends' and villagers' soft eyes with lids: they blink (half, closed, half), the lids close fully,
+// happy, surprised and sad show, and the eyes turn to a child to one side (tests/faces.mts)
+await check('faces', async () => (await import('./faces.mts')).facesCheck(b));
+
+// (v1.08e water, owner 6 Nov 2026 AEDT) every river, lake, pond and the sea knee to waist deep: a child walks into each and
+// out again, wading, never swimming or sinking, the camera above the water (tests/wading.mts)
+await check('wading', async () => (await import('./wading.mts')).wadingCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

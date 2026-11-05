@@ -485,7 +485,24 @@ export function seatRider(A, v, at, grips, feet, scale = .9, attach = true) {
 }
 
 // build one: build('honda67', { real: true }) for an older child's valley
-export function build(id, { real = false, args = [] } = {}) { REAL = real; try { return VEHICLES[id](...args); } finally { REAL = false; } }
+// (v1.08e) everything that does not move is gathered in one group, "codeBody": the code shape that the Blender model
+// replaces (wear below); the wheels and the moving groups (a tipper's bed, a digger's turn) stay where they are
+export function build(id, { real = false, args = [] } = {}) {
+  REAL = real; let v; try { v = VEHICLES[id](...args); } finally { REAL = false; }
+  const own = new Set([...(v.wheels || []), ...Object.values(v.o.userData || {})]), body = new THREE.Group(); body.name = 'codeBody';
+  for (const c of [...v.o.children]) if (!own.has(c)) body.add(c);
+  v.o.add(body); v.id = id; v.look = real ? 'real' : args.length ? 'own' : 'toy'; return v;
+}
+
+// ---------- (v1.08e vehicles) the Blender models ----------
+// wear(v): the vehicle's Blender model when a child first comes near (js/vehicle-models.ts, loaded after the start, so
+// the first download does not grow). Only the toy look; the code shape stays until the model arrives, or for good.
+let fitter = null;
+export function wear(v, done?: (v) => void) {
+  if (!v || v.look !== 'toy' || v.worn) return; v.worn = true;
+  fitter = fitter || import('./vehicle-models.js');
+  fitter.then(F => F.wearModel(v, done)).catch(() => { });
+}
 // every vehicle by id, for Sparkle Studio and the valley's traffic
 export const VEHICLES = { honda67, cub, dream, scooter, xichlo, baGac, postie, trailBike, quadBike, roadster, miniBike, roadBike, bmx, kidsBike, packBike,
   sedan, taxi, ute, suv, bus: () => bus(true), busAU: () => bus(false), tram: () => tram('w'), tramModern: () => tram('e'), touristCart, tamTruck, coach, dumpTruck, excavator };

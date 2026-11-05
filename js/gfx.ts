@@ -82,6 +82,35 @@ export const blobShadow = (() => {
   return () => new THREE.Mesh(geo, mat);
 })();
 
+// (v1.08e faces, part 2: owner 6 Nov 2026 AEDT "better refinement") the people's look: a smoother ramp of five soft bands
+// (more depth than the valley's four) and a soft warm rim light on the edges turned away from the camera, so a person
+// stands out from the grass and the walls. One shader for every person (no new picture, no extra draw).
+const personBands = (() => {
+  const d = new Uint8Array([128, 166, 200, 228, 246, 255]);
+  const t = new THREE.DataTexture(d, d.length, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; t.needsUpdate = true; return t;
+})();
+export const RIM = { color: new THREE.Color('#fff1d6'), strength: .24 };
+const rimUniforms = { uRimCol: { value: RIM.color }, uRim: { value: RIM.strength } };
+export function personLook(m) {
+  if (!m || !m.isMeshToonMaterial || m.userData.person) return m;
+  m.userData.person = true; m.gradientMap = personBands;
+  m.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, rimUniforms);
+    sh.fragmentShader = 'uniform vec3 uRimCol;\nuniform float uRim;\n' + sh.fragmentShader.replace('#include <opaque_fragment>',
+      'float rimK = 1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0);\noutgoingLight += uRimCol * uRim * smoothstep(.55, 1.0, rimK);\n#include <opaque_fragment>');
+  };
+  m.customProgramCacheKey = () => 'person'; m.needsUpdate = true; return m;
+}
+/** an outline for a skinned model (the friends' Blender models): the same inverted hull, bent by the same bones */
+export function outlineSkinned(o, width = .011, color = '#6a4a3a') {
+  const key = 'skin' + width + color; let m = outlineMats[key];
+  if (!m) { m = outlineMats[key] = new THREE.MeshBasicMaterial({ color, side: THREE.BackSide }); m.userData.shared = true;
+    m.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normalize(normal) * ${width.toFixed(4)};`); };
+    m.customProgramCacheKey = () => 'outlineSkin' + key; }
+  const h = new THREE.SkinnedMesh(o.geometry, m); h.bind(o.skeleton, o.bindMatrix); h.frustumCulled = false; h.userData.outline = true; h.raycast = () => { };
+  h.position.copy(o.position); h.quaternion.copy(o.quaternion); h.scale.copy(o.scale); o.parent.add(h); return h;
+}
+
 // Soft ink outline (inverted hull) for the picture-book look. Returns the outline meshes so far-away
 // characters can hide theirs. Transparent meshes (faces, glass wings, shadows) are skipped.
 const outlineMats = {};

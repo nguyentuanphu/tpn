@@ -87,13 +87,13 @@ export function roadDist(x, z) {
 
 // distance from (x, z) to the middle line of the nearest river (round T: every river; looked up in a 16 m grid of the
 // river pieces within RV_R of each cell, so it stays quick: anything farther than RV_R m from every river gives RV_R)
-export const RV_R = 32, RV_GRID = new Map(), RV_NEAR = { id: null };
+export const RV_R = 32, RV_GRID = new Map(), RV_NEAR = { id: null, k: 1 };
 // (round T2) a river of width w counts distances in its own widths: d / w, so a narrow river's banks are closer
 for (const r of RIVERS) for (let i = 0; i < r.pts.length - 1; i++) { const [ax, az] = r.pts[i], [bx, bz] = r.pts[i + 1], S = { ax, az, bx, bz, id: r.id, k: 1 / r.w }, R = RV_R * Math.max(1, r.w);
   for (let gi = Math.floor((Math.min(ax, bx) - R) / 16); gi <= Math.floor((Math.max(ax, bx) + R) / 16); gi++) for (let gj = Math.floor((Math.min(az, bz) - R) / 16); gj <= Math.floor((Math.max(az, bz) + R) / 16); gj++) { const k = gi * 4096 + gj + 2048; if (!RV_GRID.has(k)) RV_GRID.set(k, []); RV_GRID.get(k).push(S); } }
 export function riverDist(x, z) {
   const list = RV_GRID.get(Math.floor(x / 16) * 4096 + Math.floor(z / 16) + 2048); let best = RV_R; RV_NEAR.id = null; if (!list) return best;
-  for (const S of list) { const dx = S.bx - S.ax, dz = S.bz - S.az, t = clamp(((x - S.ax) * dx + (z - S.az) * dz) / (dx * dx + dz * dz), 0, 1), d = Math.hypot(x - S.ax - dx * t, z - S.az - dz * t) * S.k; if (d < best) { best = d; RV_NEAR.id = S.id; } }
+  for (const S of list) { const dx = S.bx - S.ax, dz = S.bz - S.az, t = clamp(((x - S.ax) * dx + (z - S.az) * dz) / (dx * dx + dz * dz), 0, 1), d = Math.hypot(x - S.ax - dx * t, z - S.az - dz * t) * S.k; if (d < best) { best = d; RV_NEAR.id = S.id; RV_NEAR.k = S.k; } }
   return best;
 }
 // (round T) the water at (x, z), if any: the river's id within `pad` m of its middle line, 'lake' inside the lake's deep
@@ -112,6 +112,7 @@ let WIDE = 0, PADS = null, RB_ON = false, RB_COV = false, HERITAGE_GROUNDS_ON = 
 const RB_GRID = new Map(), RB_T = [], RB_D = new Float64Array(256), RB_Y = new Float64Array(256), RB_W = new Float64Array(256), RB_E = new Uint8Array(256), RB_P = new Uint8Array(256); // (past a road's very end there is no road)
 // the road beds: [{ ax, az, bx, bz, ya, yb, hw }], registered by js/roads.js before it switches them on
 export function setRoadBeds(segs) { RB_GRID.clear(); for (const S of segs) { const r = S.hw + 10; for (let i = Math.floor((Math.min(S.ax, S.bx) - r) / 8); i <= Math.floor((Math.max(S.ax, S.bx) + r) / 8); i++) for (let j = Math.floor((Math.min(S.az, S.bz) - r) / 8); j <= Math.floor((Math.max(S.az, S.bz) + r) / 8); j++) { const k = fpKey(i, j); if (!RB_GRID.has(k)) RB_GRID.set(k, []); RB_GRID.get(k).push(S); } } }
+const WADE = MAP.WORLD.wade;
 export function heightAt(x, z) {
   let h = 5 + fbm(x * .011, z * .011, 4) * 11 + fbm(x * .05 + 3, z * .05, 2) * 1.2;
   const mtn = smooth(MTN.z0, MTN.z1, z);
@@ -162,7 +163,8 @@ export function heightAt(x, z) {
     h = lerp(h, F.h, 1 - smooth(15, 21, d));
   }
   // the lake stays a lake: level land round the market and farm used to spill into it (a sandy tongue the ferry drove over)
-  if (dl < LAKE.r) h = lerp(h, Math.min(h, -7), 1 - smooth(LAKE.r * .62, LAKE.r * .82, dl));
+  // (v1.08e water: pulled down to -2.5, was -7, so the rim slopes gently into the shallow lake instead of dropping)
+  if (dl < LAKE.r) h = lerp(h, Math.min(h, -2.5), 1 - smooth(LAKE.r * .62, LAKE.r * .82, dl));
   // shrines and the rocks with a Leafy under them stand on a small dry pad (one shrine stood in a pond)
   if (PADS) for (const S of PADS) { if (Math.abs(x - S.x) >= 7 || Math.abs(z - S.z) >= 7) continue; const d = dist2(x, z, S.x, S.z); if (d < 7) h = lerp(h, Math.max(h, WATER + 1.4), 1 - smooth(3.6, 7, d)); }
   // the southern coast: a sandy beach, then the sea (its edge waves gently)
@@ -172,7 +174,7 @@ export function heightAt(x, z) {
     const e = Math.hypot(ex, ez); let top = I.h + fbm(x * .06, z * .06, 2) * .5; if (I.peak) top += I.peak[2] * (1 - smooth(0, I.peak[3], dist2(x, z, I.peak[0], I.peak[1])));
     h = lerp(h, top, 1 - smooth(.8, 1.25, e)); }
   const dr = riverDist(x, z);
-  // A shallow, even riverbed: keep the swimming channel below the 0.9 m threshold and the boat hulls clear.
+  // A shallow, even riverbed (v1.08e water: its shape; the water over it is made knee to waist deep at the end, `wade`).
   // Water level, bridge decks and banks stay at their authored elevations.
   h = lerp(h, WATER - MAP.WORLD.riverDepth, 1 - smooth(3.5, 11, dr));
   // (round T2) ponds: a round hollow with a gentle shore (after the places' flat ground, so a pond by a city stays wet)
@@ -218,6 +220,9 @@ export function heightAt(x, z) {
     const ox = Math.max(F.x0 - x, 0, x - F.x1), oz = Math.max(F.z0 - z, 0, z - F.z1); if (ox > F.pad || oz > F.pad) continue;
     const d = Math.hypot(ox, oz); if (d < F.pad) h = lerp(h, F.h, 1 - smooth(0, F.pad, d));
   } }
+  // (v1.08e water, owner 6 Nov 2026 AEDT: knee to waist deep, 0.4-0.8 m) under the water, the hollow's depth d becomes
+  // max * tanh(d / soft): every shore stays where it was, nothing is deeper than 0.8 m, and every bank is gentler
+  if (h < WATER) h = WATER - WADE.max * Math.tanh((WATER - h) / WADE.soft);
   return h;
 }
 

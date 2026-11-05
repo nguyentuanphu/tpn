@@ -9,6 +9,7 @@ import { CITIES } from './world.js';
 import { WORLD as MAP_WORLD } from './content/map.js';
 import { VILLAGER_LINES, VILLAGER_JOBS, SCIENCE_LINES } from './content/villagerlines.js';
 import { sprite } from './gfx.js';
+import { feelRoot, feel } from './avatar.js';
 
 // the region of a spot: Australia on the west bank, the home island in the middle, Vietnam east (as traffic.js does)
 const regionOf = (x, z) => { if (MAP_WORLD.keepLeft.some(([x0, x1, z0, z1]) => x > x0 && x < x1 && z > z0 && z < z1)) return 'au'; let best = 'vn', bd = 1e9; for (const c of CITIES) { const d = Math.hypot(c.x - x, c.z - z); if (d < bd) { bd = d; best = c.cc; } } return Math.abs(x) < 70 && Math.abs(z + 14) < 100 ? 'home' : best; };
@@ -41,7 +42,7 @@ export function createVillagerTalk(G) {
     tag.position.set(0, 2.45, 0); o.add(tag);
     const it = { id: 'villager_' + added.length, get x() { return o.position.x; }, get z() { return o.position.z; }, r: 2.4, icon: '💬', bubble: '💬', walks: true,
       label: () => T('Say hello', 'Chào hỏi'), visible: () => on(),
-      act: async h => { SFX.tap(); if (G.tried) G.tried(h, 'villagerTalk'); const line = lines[n]; n = (n + 1) % lines.length; await dialog(T(job[1], job[2]), [line]); } };
+      act: async h => { SFX.tap(); if (G.tried) G.tried(h, 'villagerTalk'); /* (v1.08e faces) greeted: a shy smile back, the camera a little closer */ feelRoot(o, 'shy', 1.6); if (h && h.av) feel(h.av, 'happy', 1.2); if (h) h.momentT = 2.5; const line = lines[n]; n = (n + 1) % lines.length; await dialog(T(job[1], job[2]), [line]); } };
     G.interactables.push(it); added.push(it); list.push({ o, it, reg, job, tag, home: { x: p.x, z: p.z } });
   }
   const v = on(); for (const e of list) e.tag.visible = v;
