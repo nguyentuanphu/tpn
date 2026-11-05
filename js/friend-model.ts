@@ -34,6 +34,9 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
         const m = o.material, name = m.name || '';
         // (v1.08e faces, part 2) a high-detail model's parts carry their painted picture (m.map) instead of corner colours
         if (!mats.has(m)) mats.set(m, name.startsWith('skin') ? new THREE.MeshToonMaterial({ name, color: '#f6c7a5', gradientMap: bands })
+          // (v1.08e villagers) "lit-": the gallery's studio light is baked into the picture, so it is drawn mostly by its own light
+          // (emissive), with a little of the valley's light on top, so day and night still show
+          : name.startsWith('lit-') && m.map ? new THREE.MeshToonMaterial({ name, map: m.map, emissiveMap: m.map, emissive: '#ffffff', emissiveIntensity: .62, color: '#7a7a7a', gradientMap: bands })
           : m.map ? new THREE.MeshToonMaterial({ name, map: m.map, gradientMap: bands }) : new THREE.MeshToonMaterial({ name, vertexColors: true, gradientMap: bands }));
         if (/^cloth-hat/.test(name)) mats.get(m).side = THREE.DoubleSide; // (v1.08e villagers) a hat is a thin shell: both sides drawn
         o.material = personLook(mats.get(m)); }); // (v1.08e faces, part 2) the people's soft ramp and rim light

@@ -15,8 +15,12 @@ HD_BUDGET = {'body': 9000, 'hair': 9500, 'hands': 700, 'item': 900, 'shoes': 900
 HD_FACE = 700
 ATLAS = 1024
 UV_SHARE = {'hair': .3}
-if WHO == 'villager':   # (v1.08e villagers) the named villagers: about 8,000 triangles shown, one 512 px picture
-    HD_BUDGET = {'body': 4000, 'hair': 5000, 'hands': 400, 'item': 400, 'shoes': 450, 'hat': 700}; HD_FACE = 380; ATLAS = 512   # (the hair at 2,600 collapsed into a block)   # the hair's strip of the picture (a share of its width)
+# (v1.08e villagers, owner 6 Nov 2026 AEDT, pop-up "Bake gallery light") the villagers: the gallery's soft studio light
+# (the felt sheen, the soft shadows in the folds, the warm bounce) is baked into their picture with everything else
+# (COMBINED), skin included, and the game draws it almost unlit ("lit-<part>" materials, js/friend-model.ts), so in the
+# valley they look like the gallery renders
+LIT = WHO == 'villager'
+if LIT: HD_BUDGET = {'body': 7000, 'hair': 5500, 'hands': 500, 'item': 500, 'shoes': 600, 'hat': 900}; HD_FACE = 380; ATLAS = 1024
 
 def _tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
@@ -46,7 +50,7 @@ def hd():
     dg = bpy.context.evaluated_depsgraph_get(); groups = {}
     for o in [o for o in scene.objects if o.type == 'MESH' and o.parent == rig]:
         for m in o.modifiers:
-            if m.type == 'SUBSURF': m.levels = min(m.levels, 2)
+            if m.type == 'SUBSURF': m.levels = 0 if (LIT and o.users_collection[0].name == 'hair') else min(m.levels, 2)   # (villagers: smooth locks as built, not smoothed and thinned into spikes)
             if m.type == 'ARMATURE': m.show_viewport = False
         dg.update(); names = [g.name for g in o.vertex_groups]
         me = bpy.data.meshes.new_from_object(o.evaluated_get(dg), preserve_all_data_layers=True, depsgraph=dg)
@@ -98,14 +102,21 @@ def hd():
             for m in o.data.materials:
                 if not m or not m.use_nodes: continue
                 nt = m.node_tree; t = nt.nodes.get('hd-bake') or nt.nodes.new('ShaderNodeTexImage'); t.name = 'hd-bake'; t.image = img; nt.nodes.active = t
-    for img, kind in ((col_img, 'DIFFUSE'), (ao_img, 'AO')):
+    # (villagers: the light is baked into everything but the hair, whose thousands of small locks come out speckled;
+    # the hair gets its clean colour and the soft shadow, and the game shades it)
+    for img, kind in (((col_img, 'COMBINED'), (col_img, 'DIFFUSE'), (ao_img, 'AO')) if LIT else ((col_img, 'DIFFUSE'), (ao_img, 'AO'))):
         target(img)
         for k in cloth:
+            if LIT and (kind == 'COMBINED') == (k == 'hair'): continue
             _select([high[k], low[k]], low[k])
-            if kind == 'DIFFUSE': bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
+            if kind == 'COMBINED': scene.cycles.samples = 48; bpy.ops.object.bake(type='COMBINED', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
+            elif kind == 'DIFFUSE': bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
             else: bpy.ops.object.bake(type='AO', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
     c = np.array(col_img.pixels[:]).reshape(-1, 4); a = np.array(ao_img.pixels[:]).reshape(-1, 4)
-    c[:, :3] *= (.32 + .68 * a[:, :1]); c[:, 3] = 1   # the folds, seams and buttons a little deeper
+    if not LIT: c[:, :3] *= (.32 + .68 * a[:, :1])   # the folds, seams and buttons a little deeper
+    else:   # only the hair's strip takes the soft shadow (the rest has its light baked in)
+        u = (np.arange(c.shape[0]) % ATLAS) / ATLAS; hs = u > 1 - UV_SHARE['hair']; c[hs, :3] *= (.45 + .55 * a[hs, :1])
+    c[:, 3] = 1
     paint = bpy.data.images.new(WHO + '-hd', ATLAS, ATLAS); paint.pixels[:] = c.reshape(-1).tolist()
     paint.file_format = 'JPEG'; paint.pack()
     for k, h in high.items(): bpy.data.objects.remove(h)
@@ -122,10 +133,11 @@ def hd():
             one = bpy.data.materials.new(k); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
             ca = nt.nodes.new('ShaderNodeVertexColor'); ca.layer_name = 'Col'; nt.links.new(ca.outputs['Color'], b.inputs['Base Color'])
         else:
-            one = bpy.data.materials.new('cloth-' + k); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
+            one = bpy.data.materials.new(('lit-' if LIT and k != 'hair' else 'cloth-') + k); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
             t = nt.nodes.new('ShaderNodeTexImage'); t.image = paint; nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
         b.inputs['Roughness'].default_value = .8
         if skin and k == 'hands': skin = skin.copy(); skin.name = 'skin-grip'
+        if LIT and not k.startswith('face-'): skin = None   # (the skin is baked into the picture too)
         keep = [one] + ([skin] if skin else [])
         idx = [keep.index(skin) if (skin and mats[p.material_index] == skin) else 0 for p in me.polygons]
         me.materials.clear()

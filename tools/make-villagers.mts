@@ -20,11 +20,15 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sv-villagers-'));
 fs.mkdirSync(path.join(ROOT, 'models'), { recursive: true });
 for (const w of who) {
   const run = (cmd: string, args: string[]) => execFileSync(cmd, args, { cwd: ROOT, stdio: ['ignore', 'pipe', 'inherit'] }).toString();
-  run(BLENDER, ['-b', '-P', 'tools/blender/lumi.py', '--', tmp, 'villager', `role=${w}`, 'game', 'glb']);
-  const out = path.join(ROOT, 'models', `villager-${w}.glb`), light = path.join(tmp, `villager-${w}-light.glb`);
-  const src = fs.readdirSync(tmp).find(f => f.startsWith(`villager-${w}-`) && f.endsWith('.glb') && !f.endsWith('-light.glb')); // (named by the size: kid, adult, elder)
-  const log = run(BLENDER, ['-b', '-P', 'tools/blender/game-light.py', '--', path.join(tmp, src), light]);
-  run('npx', ['-y', 'gltfpack@0.20.0', '-i', light, '-o', out, '-cc', '-kn', '-km']);
-  console.log(`${w}: ${(log.match(/light: total triangles (\d+)/) || [])[1]} triangles, ${Math.round(fs.statSync(out).size / 1024)} KB → models/villager-${w}.glb`);
+  // (owner, 6 Nov 2026 AEDT, pop-up "Bake gallery light") the gallery's soft studio light baked into a 1024 px picture
+  // (tools/blender/game-hd.py, LIT); FLAT=1 makes the plain corner-colour version instead (tools/blender/game-light.py)
+  const out = path.join(ROOT, 'models', `villager-${w}.glb`), flat = process.env.FLAT === '1';
+  const log = run(BLENDER, ['-b', '-P', 'tools/blender/lumi.py', '--', tmp, 'villager', `role=${w}`, 'game', 'glb', ...(flat ? [] : ['hd'])]);
+  const src = fs.readdirSync(tmp).find(f => f.startsWith(`villager-${w}-`) && f.endsWith(flat ? '.glb' : '-hd.glb') && !f.endsWith('-light.glb')); // (named by the size: kid, adult, elder)
+  let packIn = path.join(tmp, src), tris = (log.match(/hd: total triangles shown (\d+)/) || [])[1];
+  if (flat) { const light = path.join(tmp, `villager-${w}-light.glb`); tris = (run(BLENDER, ['-b', '-P', 'tools/blender/game-light.py', '--', packIn, light]).match(/light: total triangles (\d+)/) || [])[1]; packIn = light; }
+  run('npx', ['-y', 'gltfpack@0.20.0', '-i', packIn, '-o', out, '-cc', '-kn', '-km']);
+  console.log(`${w}: ${tris} triangles, ${Math.round(fs.statSync(out).size / 1024)} KB → models/villager-${w}.glb`);
+  fs.readdirSync(tmp).forEach(f => fs.rmSync(path.join(tmp, f), { force: true }));
 }
 fs.rmSync(tmp, { recursive: true, force: true });
