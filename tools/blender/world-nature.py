@@ -168,7 +168,7 @@ def tree_palm():
 @model
 def bush():
     m = Model('bush', 17)
-    for i, (x, y, z, r) in enumerate([(0, .62, 0, 1.0), (.85, .5, .3, .74), (-.7, .46, -.3, .68), (.1, .5, -.8, .62), (-.2, 1.0, .3, .56)]):
+    for i, (x, y, z, r) in enumerate([(0, .72, 0, 1.0), (.85, .6, .3, .74), (-.7, .56, -.3, .68), (.1, .6, -.8, .62), (-.2, 1.1, .3, .56)]):
         m.ball(r, ['#24654f', '#30785c', '#2a6d55', '#358062'][i % 4], (x, y, z), (0, 0, 0), (1.15, .8, 1), sub=1, jitter=.2 * r)
     return m
 @model
@@ -188,7 +188,7 @@ def flower_roadside():
     m = Model('flower-roadside', 19)
     m.cyl(.012, .017, .36, '#4f9a3c', (0, .18, 0), seg=4)
     m.cyl(.045, .045, .03, '#ffd23f', (0, .375, 0), seg=6)
-    m.leaf(.14, .07, '#5fb04a', (0, .08, 0), 0, droop=.7, bend=.3); m.leaf(.12, .06, '#5fb04a', (0, .12, 0), 3, droop=.7, bend=.3)
+    m.leaf(.09, .05, '#5fb04a', (0, .08, 0), 0, droop=.7, bend=.3); m.leaf(.08, .045, '#5fb04a', (0, .12, 0), 3, droop=.7, bend=.3)
     return m
 @model
 def bush_bougainvillea():
