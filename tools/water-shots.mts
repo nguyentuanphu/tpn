@@ -3,8 +3,8 @@
 import fs from 'node:fs/promises';
 import {launch,open,clear,noWelcome} from '../tests/harness.mts';
 const tag=process.argv[2]||'before',dir=`docs/world-models-v108e/water/${tag}`;await fs.mkdir(dir,{recursive:true});
-const SPOTS0=[['river',72,-14,Math.PI/2],['lake',106,-74,-Math.PI/2],['halong',221,204,Math.PI],['reef',-58,194,0]];const SPOTS=process.argv[3]?SPOTS0.filter(s=>process.argv[3].split(',').includes(s[0])):SPOTS0;
-const SIZES=[['phone',390,844,true],['tablet',820,1180,true],['computer',1440,900,false]];
+const SPOTS0:[string,number,number,number][]=[['river',72,-14,Math.PI/2],['lake',106,-74,-Math.PI/2],['halong',221,204,Math.PI],['reef',-58,194,0]];const SPOTS=process.argv[3]?SPOTS0.filter(s=>process.argv[3].split(',').includes(s[0])):SPOTS0;
+const SIZES:[string,number,number,boolean][]=[['phone',390,844,true],['tablet',820,1180,true],['computer',1440,900,false]];
 const b=await launch();
 for(const [name,w,h,touch] of SIZES){
  const P=await open(b,{w,h,touch,lang:'en',settings:{voice:false,sound:false,autoPack:false,online:false,countPlayers:false}});
