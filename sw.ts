@@ -166,7 +166,7 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
     else e.respondWith(caches.open('sv-website').then(c => fetch(req).then(r => { if (r.ok) e.waitUntil(c.put(req, r.clone())); return r; }).catch(() => c.match(req, { ignoreSearch: true }).then(hit => hit || Response.error()))));
     return;
   }
-  if (url.pathname.includes('/voices/') && url.pathname.endsWith('.mp3')) {
+  if (url.pathname.includes('/voices/') && /\.(mp3|opus)$/.test(url.pathname)) { // (v1.08b platform: Opus copies too)
     // (31 Oct 2026 AEDT) from its bundle, else a recording kept the old way, else the internet (the game keeps it, in a bundle)
     e.respondWith(fromStore('sv-voices', url).then(hit => hit || caches.open('sv-voices').then(c => c.match(req)).then(hit2 => hit2 || fetch(req))));
     return;

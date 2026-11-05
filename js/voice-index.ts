@@ -11,6 +11,8 @@ export function createVoiceIndex(fetcher, changed, cachedLegacy = async () => nu
       pack.signatures[lang] = j.signature || `${j.version}:${j.made}:${Object.keys(j.lines).length}`;
       if (j.areas) pack.areas = j.areas;
     }
+    // (v1.08b platform) Opus copies: only when every loaded language has them (tools/make-voice-opus.mts)
+    (pack as any).formats = loaded.size && [...loaded.values()].every(j => Array.isArray(j.formats) && j.formats.includes('opus')) ? ['mp3', 'opus'] : ['mp3'];
     changed(pack);
   };
   const accept = (lang, j) => {
@@ -42,6 +44,16 @@ export function legacyLanguage(man, lang) {
   for (const [L, hashes] of Object.entries(man.other || {})) for (const h of String(hashes).split(' ')) if (h) other.set(h, L);
   const lines = Object.fromEntries(Object.entries(man.lines).filter(([h]) => (man.langOf?.[h] || other.get(h) || 'en') === lang));
   return { ...man, language: lang, lines, other: lang === 'en' ? {} : { [lang]: Object.keys(lines).join(' ') }, tpl: { [lang]: man.tpl?.[lang] || [] } };
+}
+// (v1.08b platform, brief part 1) Opus (about half the size) when the pack has Opus copies and this browser plays it;
+// MP3 otherwise. Chosen once on a device and kept (sv2_voiceFmt); a device that already keeps MP3 recordings stays on
+// MP3 (js/voice.ts settleVoiceFormat), so nothing is downloaded twice.
+const opusPlays = () => { try { return typeof Audio !== 'undefined' && !!new Audio().canPlayType('audio/ogg; codecs="opus"'); } catch (e) { return false; } };
+export function voiceFormatFor(pack) {
+  const has = !!(pack && Array.isArray(pack.formats) && pack.formats.includes('opus'));
+  let f = null; try { f = localStorage.getItem('sv2_voiceFmt'); } catch (e) { }
+  if (!f && has) { f = opusPlays() ? 'opus' : 'mp3'; try { localStorage.setItem('sv2_voiceFmt', f); } catch (e) { } }
+  return f === 'opus' && has ? 'opus' : 'mp3';
 }
 // Ignore unselected EN/VI indexes, but include an explicitly requested learning language in offline completion.
 export function voicePackSignature(pack, languages) {

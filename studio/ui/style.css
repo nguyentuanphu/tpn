@@ -360,3 +360,36 @@ table.gtable { width: 100%; } table.gtable td { padding: 2px 0; }
 .tile .tx { margin-top: auto; }
 .analytics-overview > .tiles { margin-bottom: 16px; }
 .analytics-overview summary { overflow-wrap: anywhere; }
+/* (v1.08b platform) Releases by purpose: a plain line under each name, bigger state chips, the timeline, the change list
+   before saving; Sparkle Lab in three parts */
+.relc-name b { display: block; font-size: 1rem; }
+.relc-what { font-size: .9rem; color: #5d4d78; margin-top: 2px; line-height: 1.35; }
+.rs { font-size: .875rem; padding: 3px 10px; }
+.relc-more { min-height: 44px; min-width: 44px; }
+.relview { width: 100%; margin-bottom: 8px; }
+.relview .chip { min-height: 44px; font-size: 1rem; padding: 8px 14px; }
+.tlhide { display: none !important; }
+.reltl[hidden] { display: none; }
+.tlweek { border-left: 4px solid #c9b3f5; padding: 4px 0 8px 12px; margin: 10px 0; }
+.tlweek h4 { margin: 0 0 6px; }
+.tlweek ul, .labrep { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.tlitem { min-height: 44px; width: 100%; text-align: left; border: 2px solid #eee6fa; background: #fcfaff; border-radius: 12px; padding: 8px 12px; font: inherit; cursor: pointer; }
+.tlitem.opens { border-color: #b9e6c3; } .tlitem.ends { border-color: #c9dbff; } .tlitem.planned { border-style: dashed; }
+#relchanges { flex: 1; min-width: 0; } #relchanges[hidden] { display: none; }
+#relchanges summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+#relchanges ul { margin: 4px 0 8px; padding-left: 20px; max-height: 30vh; overflow: auto; }
+.labpart { margin: 14px 0; }
+.labwhy { color: #5d4d78; margin: 4px 0 10px; font-size: .95rem; }
+.labrep li { padding: 8px 10px; border-radius: 12px; background: #fcfaff; border: 1px solid #eee6fa; }
+details.labmore > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; color: #6a3fd0; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .relc-what, :root:not([data-theme="light"]) .labwhy { color: var(--soft); }
+  :root:not([data-theme="light"]) .tlitem, :root:not([data-theme="light"]) .labrep li { background: #1f1a2b; border-color: var(--line); color: var(--ink); }
+}
+:root[data-theme="dark"] .relc-what, :root[data-theme="dark"] .labwhy { color: var(--soft); }
+:root[data-theme="dark"] .tlitem, :root[data-theme="dark"] .labrep li { background: #1f1a2b; border-color: var(--line); color: var(--ink); }
+.relc-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; padding-left: 72px; flex-wrap: wrap; }
+.relc-foot .relc-st { margin-top: 0; }
+@media (max-width: 520px) { .relc-foot { padding-left: 0; } }
+.tlcal { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } .tlcal .tlitem { flex: 1; min-width: 180px; display: flex; align-items: center; }
+.tlmove { display: flex; gap: 6px; align-items: center; font-size: .95rem; } .tlmove select { min-height: 44px; font-size: 1rem; }
