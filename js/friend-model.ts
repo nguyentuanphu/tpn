@@ -38,7 +38,11 @@ export function loadFriendModel(id: FriendId): Promise<boolean> {
   })());
 }
 // the code person's mood → the model's face
-const MOOD = { smile: 'face-smile', blink: 'face-blink', happy: 'face-happy', o: 'face-surprised', curious: 'face-curious', excited: 'face-excited', sad: 'face-sad', shy: 'face-shy' };
+// (v1.08e faces) and the soft-lid faces' new ones: 'half' (the lids half down, either side of a blink), 'lookL' and 'lookR'
+// (the eyes to one side); a model made before them shows its nearest face instead (NEAR)
+const MOOD = { smile: 'face-smile', blink: 'face-blink', happy: 'face-happy', o: 'face-surprised', curious: 'face-curious', excited: 'face-excited', sad: 'face-sad', shy: 'face-shy',
+  half: 'face-half', lookL: 'face-lookL', lookR: 'face-lookR', sleep: 'face-blink' };
+const NEAR = { 'face-half': 'face-blink', 'face-lookL': 'face-smile', 'face-lookR': 'face-smile' };
 const JOINTS = ['torso', 'head', 'armL', 'elbowL', 'armR', 'elbowR', 'legL', 'kneeL', 'legR', 'kneeR'];
 export type FriendModel = { obj: THREE.Object3D, follow: (mood?: string, riding?: boolean) => void, skin: (hex: string) => void, item: boolean, boots: boolean };
 // (v1.08d polish) what a model shows besides the body: the item in the hand once the friend's quest is done
@@ -77,7 +81,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
       b.quaternion.copy(parentQ.invert().multiply(q));
       b.updateMatrixWorld(true);
     }
-    const f = MOOD[mood] || 'face-smile';
+    let f = MOOD[mood] || 'face-smile'; if (!faces[f]) f = NEAR[f] || 'face-smile';
     if (f !== face) { face = f; for (const [k, list] of Object.entries(faces)) list.forEach(o => { o.visible = k === f; }); }
     grips.forEach(o => { o.visible = riding; });
   };
