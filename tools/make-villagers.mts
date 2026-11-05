@@ -16,6 +16,7 @@ export const NAMED = ['mai', 'ba', 'teo', 'ti', 'bong', 'su', 'jack', 'mit', 'bo
 // (v1.08e crowds) the 14 gallery neighbours, worn by crowd people near a child (js/crowd-models.ts): node tools/make-villagers.mts crowd
 export const CROWD = ['vn-aodai', 'vn-dad', 'vn-farmer', 'vn-vendor', 'vn-grandma', 'vn-grandpa', 'vn-schoolboy', 'vn-schoolgirl', 'au-dad', 'au-mum', 'au-grandma', 'au-grandpa', 'au-boy', 'au-girl'];
 const args = process.argv.slice(2), who = args[0] === 'crowd' ? CROWD : args.length ? args : NAMED;
+if (args[0] === 'crowd') process.env.VILLAGER_ATLAS ||= '1024'; // (the crowd neighbours: a 1024 px picture, many of them at once)
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sv-villagers-'));
 fs.mkdirSync(path.join(ROOT, 'models'), { recursive: true });
 for (const w of who) {

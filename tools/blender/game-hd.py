@@ -17,12 +17,12 @@ ATLAS = 1024
 UV_SHARE = {'hair': .3}
 # (v1.08e villagers, owner 6 Nov 2026 AEDT, pop-up "Bake gallery light") the villagers: the gallery's soft studio light
 # (the felt sheen, the soft shadows in the folds, the warm bounce) is baked into their picture with everything else
-# (COMBINED), skin included, and the game draws it almost unlit ("lit-<part>" materials, js/friend-model.ts), so in the
+# (COMBINED), all but the skin, and the game draws it almost unlit ("lit-<part>" materials, js/friend-model.ts), so in the
 # valley they look like the gallery renders
 LIT = WHO == 'villager'
 # (owner, 6 Nov, pop-up "Smoother, heavier": at 8,000 triangles they were lumpy) about 25,000 triangles, smooth normals,
-# a 2048 px picture baked at 128 samples
-if LIT: HD_BUDGET = {'body': 16000, 'hair': 6500, 'hands': 900, 'item': 700, 'shoes': 1000, 'hat': 1400}; HD_FACE = 450; ATLAS = 2048
+# a 2048 px picture baked at 64 samples (the 14 crowd neighbours: 1024 px, VILLAGER_ATLAS)
+if LIT: HD_BUDGET = {'body': 16000, 'hair': 6500, 'hands': 900, 'item': 700, 'shoes': 1000, 'hat': 1400}; HD_FACE = 450; ATLAS = int(os.environ.get('VILLAGER_ATLAS', '2048'))
 
 def _tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
@@ -112,7 +112,7 @@ def hd():
         for k in cloth:
             if LIT and (kind == 'COMBINED') == (k in ('hair', 'hands')): continue   # (the hands came out dark too)
             _select([high[k], low[k]], low[k])
-            if kind == 'COMBINED': scene.cycles.samples = 128; bpy.ops.object.bake(type='COMBINED', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
+            if kind == 'COMBINED': scene.cycles.samples = 64 if ATLAS >= 2048 else 40; bpy.ops.object.bake(type='COMBINED', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
             elif kind == 'DIFFUSE': bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
             else: bpy.ops.object.bake(type='AO', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
     c = np.array(col_img.pixels[:]).reshape(-1, 4); a = np.array(ao_img.pixels[:]).reshape(-1, 4)
@@ -140,7 +140,7 @@ def hd():
             t = nt.nodes.new('ShaderNodeTexImage'); t.image = paint; nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
         b.inputs['Roughness'].default_value = .8
         if skin and k == 'hands': skin = skin.copy(); skin.name = 'skin-grip'
-        if LIT and not k.startswith('face-'): skin = None   # (the skin is baked into the picture too)
+        # (the skin keeps its own plain colour, the villager's skin tone in the game: baked, the fingers came out dark)
         keep = [one] + ([skin] if skin else [])
         idx = [keep.index(skin) if (skin and mats[p.material_index] == skin) else 0 for p in me.polygons]
         me.materials.clear()
