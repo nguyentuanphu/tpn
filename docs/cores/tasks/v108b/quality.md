@@ -1,5 +1,7 @@
 # v1.08b quality helper: status
 
+**ready for Release** (5 Nov 2026, 9:40 pm AEDT): branch `work/v108b-quality`. Items 3-5 (parents) moved to v108c but are built and pass here; the roads and the home/site.ts move moved to v108c and were not started. Left: the per-game sideways-phone fixes listed below.
+
 Branch `work/v108b-quality` from `origin/integrate/v108`. Started 5 Nov 2026, 1:27 pm AEDT.
 
 ## Plan (owner's go given 3-4 Nov; brief `quality-brief.md`)
@@ -108,9 +110,20 @@ Release, run the voice pack once after merging (it is cheap: everything else is 
   touch targets under 64 px for under-5s in hanoi, robot, oanquan, market, tower, chuyen, dragon, firstwords, rangoli,
   copygrid, mx_calendar (these are the same on every screen, not only landscape).
 - The other sizes and the films part: see "Checks" for what ran.
-- The website navigation script into `home/site.ts`.
-- Roads and dirt roads to Concept D (#34): not started.
+- The website navigation script into `home/site.ts`, and the roads to Concept D (#34): moved to the v108c roads helper (Release, 5 Nov), not started here.
 
-## Checks
+## Checks (5 Nov 2026 AEDT, this machine; never the full suite)
 
-(filled in below as they run)
+`--changed` asks for the full suite (shared files changed), so the checks that cover the change ran with `--only`:
+- pass: unit (alone; `/api/push` flaky beside other checks, as before), rules, types, arch, emoji, noemoji, preload, names,
+  bilingual, boot, contract, simple, grownupsui, parents, phone, subjectlevel, learningreport, lumiguide, playtogether,
+  playtime, spawnview, flyaudit (659 landings), camera, wayfind, ride, realrides, ridecowswim, ridingcamera, vehicles,
+  walkaway, ownertransportpov, guide, talk, dailyadventure (alone; failed once beside others).
+- fail, not this branch's: `boats` ("harbour ferry: 7 m under a deck too low for it": the ferry path and the bridges,
+  untouched here); `gamespace` (coinnote on a tablet fills 0.56 of its area, the same with the new button rule off).
+- fivescreens / fivescreenswide: run per size and on the games that failed; still red on the games listed under "Left
+  for later" (the check is right: those games do not fit a sideways phone yet). Computer 1440x900: no failures.
+- fivescreensfilms: written, not yet run in full here (sample in the full suite).
+- gamefit: did not finish on this machine (over 45 minutes for 6 sizes); for the GitHub full suite.
+- Screenshots looked at: phone landscape games (words, science, snakes, banhchung, folk), the learning report and Play
+  with Mum and Dad on phone and tablet, spawn view on phone, tablet and computer (tests/out/spawnview/).
