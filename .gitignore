@@ -46,6 +46,7 @@ marketing/source/runvalley.log
 /js/art/companion-hats.js
 /js/art/english.js
 /js/art/games108.js
+/js/art/games108b.js
 /js/art/howto-tales.js
 /js/art/kit.js
 /js/art/learning.js
@@ -136,6 +137,7 @@ marketing/source/runvalley.log
 /js/content/films/weaver.js
 /js/content/fruit-parade.js
 /js/content/gameplace.js
+/js/content/games108b.js
 /js/content/hanoi-pack-info.js
 /js/content/hocvui.js
 /js/content/hoilang.js
@@ -229,6 +231,8 @@ marketing/source/runvalley.log
 /js/games/fruitparade-session.js
 /js/games/fruitparade-style.js
 /js/games/fruitparade.js
+/js/games/games108b-meta.js
+/js/games/games108b.js
 /js/games/goat-art.js
 /js/games/goat-core.js
 /js/games/goat.js

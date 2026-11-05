@@ -288,6 +288,34 @@ export const GAME_CATALOG = [
   { id: 'budgetpicnic', icon: 'mn3:budgetpicnic', name: () => T('Budget a Picnic', 'Đi Dã Ngoại Tiết Kiệm') },
   { id: 'chores', icon: 'mn3:chores', name: () => T('Earn by Chores', 'Làm Việc Nhà Kiếm Tiền') },
   { id: 'twomoney', icon: 'mn3:twomoney', name: () => T('Two Homes Money', 'Tiền Hai Nhà') },
+  // (v1.08b games) the new games of the thin corners: picture quizzes from js/content/games108b.ts (js/games/games108b.ts)
+  { id: 'en_animalsay', learn: true, english: true, icon: 'g8:animalsay', name: () => T('Who Says That?', 'Con Gì Kêu Thế?') },
+  { id: 'en_opposite', learn: true, english: true, icon: 'g8:enopp', name: () => T('Opposites in English', 'Từ Trái Nghĩa Tiếng Anh') },
+  { id: 'en_feel', learn: true, english: true, icon: 'g8:enfeel', name: () => T('How Do You Feel?', 'Con Thấy Thế Nào?') },
+  { id: 'en_weather', learn: true, english: true, icon: 'g8:enweather', name: () => T('Clothes and Weather', 'Quần Áo và Thời Tiết') },
+  { id: 'en_routine', learn: true, english: true, icon: 'g8:enroutine', name: () => T('My Daily Routine', 'Một Ngày Của Bé') },
+  { id: 'en_where', learn: true, english: true, icon: 'g8:enwhere', name: () => T('In, On, Under', 'Trong, Trên, Dưới') },
+  { id: 'en_verbs', learn: true, english: true, icon: 'g8:enverbs', name: () => T('Action Words', 'Từ Chỉ Hành Động') },
+  { id: 'en_shop', learn: true, english: true, icon: 'g8:enshop', name: () => T('At the Shop', 'Đi Mua Hàng') },
+  { id: 'en_teens', learn: true, english: true, icon: 'g8:enteens', name: () => T('Numbers 11 to 20', 'Số Từ 11 Đến 20') },
+  { id: 'en_body', learn: true, english: true, icon: 'g8:enbody', name: () => T('Body Song', 'Bài Hát Cơ Thể') },
+  { id: 'en_wh', learn: true, english: true, icon: 'g8:enwh', name: () => T('Who, What, Where?', 'Ai, Cái Gì, Ở Đâu?') },
+  { id: 'en_mydaystory', learn: true, english: true, icon: 'g8:enstory', name: () => T('My Day Story', 'Truyện Một Ngày') },
+  { id: 'me_tree', learn: true, icon: 'g8:tree', name: () => T('Family Tree', 'Cây Gia Đình') },
+  { id: 'me_wash', learn: true, icon: 'g8:wash', name: () => T('Brush and Wash', 'Đánh Răng Rửa Tay') },
+  { id: 'me_safe', learn: true, icon: 'g8:safe', name: () => T('Safe or Not Safe?', 'An Toàn Hay Nguy Hiểm?') },
+  { id: 'me_help', learn: true, icon: 'g8:help', name: () => T('Helping at Home', 'Giúp Việc Nhà') },
+  { id: 'me_calm', learn: true, icon: 'g8:calm', name: () => T('Calm Down Corner', 'Góc Bình Tĩnh') },
+  { id: 'me_table', learn: true, icon: 'g8:table', name: () => T('At the Table', 'Bữa Cơm Gia Đình') },
+  { id: 'th_balance', learn: true, icon: 'g8:balance', name: () => T('Balance Puzzle', 'Đố Cân Thăng Bằng') },
+  { id: 'th_clues', learn: true, icon: 'g8:clues', name: () => T('Clue Detective', 'Thám Tử Tìm Manh Mối') },
+  { id: 'th_robot', learn: true, icon: 'g8:robot', name: () => T('Code the Robot', 'Lập Trình Rô-bốt') },
+  { id: 'th_changed', learn: true, icon: 'g8:changed', name: () => T('What Changed?', 'Cái Gì Đã Thay Đổi?') },
+  { id: 'th_count', learn: true, icon: 'g8:howmany', name: () => T('Hidden Counting', 'Đếm Đồ Vật Trốn') },
+  { id: 'th_belong', learn: true, icon: 'g8:belong', name: () => T('What Goes Together?', 'Cái Gì Đi Cùng Nhau?') },
+  { id: 'vi_poem', learn: true, icon: 'g8:poem', name: () => T('Little Poems', 'Đọc Thơ Ngắn') },
+  { id: 'vi_tulay', learn: true, icon: 'g8:tulay', name: () => T('Echo Words', 'Từ Láy') },
+  { id: 'vi_sx', learn: true, icon: 'g8:sx', name: () => T('S or X?', 'Chính Tả S hay X?') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -340,6 +368,8 @@ export const GAME_LOADERS = {
   // (v1.08 vietnamese)
   'tiengviet2.ts': { ids: ['vi_tonemean', 'vi_rhyme', 'vi_letters', 'vi_opposite', 'vi_cadao', 'vi_tucngu', 'vi_readalong', 'vi_sentence', 'vi_dictation', 'vi_riddle'], load: () => import('./tiengviet2.js') },
   // (v1.08 money)
+  // (v1.08b games)
+  'games108b.ts': { ids: ['en_animalsay', 'en_opposite', 'en_feel', 'en_weather', 'en_routine', 'en_where', 'en_verbs', 'en_shop', 'en_teens', 'en_body', 'en_wh', 'en_mydaystory', 'me_tree', 'me_wash', 'me_safe', 'me_help', 'me_calm', 'me_table', 'th_balance', 'th_clues', 'th_robot', 'th_changed', 'th_count', 'th_belong', 'vi_poem', 'vi_tulay', 'vi_sx'], load: () => import('./games108b.js') },
   'money3.ts': { ids: ['shoppay', 'givechange', 'toysave', 'needsfirst', 'pricesort', 'marketday', 'coinsort', 'makeamount', 'budgetpicnic', 'chores', 'twomoney'], load: () => import('./money3.js') },
 
 };

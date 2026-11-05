@@ -20,6 +20,9 @@ await check('hocvui', async () => {
   const VI2 = { vi_tonemean: '.choices .choice', vi_rhyme: '.choices .choice', vi_letters: '.choices .choice', vi_opposite: '.vt-pair', vi_cadao: '.choices .choice',
     vi_tucngu: '.choices .choice', vi_readalong: '.vt-word', vi_sentence: '.vt-text', vi_dictation: '.vt-letter', vi_riddle: '.choices .choice' };
   NEW.push(...Object.keys(VI2)); Object.assign(MORE, VI2);
+  // (v1.08b games) the 27 new corner games (js/content/games108b.ts): Talent shows more answers than Easy
+  const G8 = await (async () => { const P0 = await openAllGamesFixture(b, { w: 390, h: 844 }); const ids = await P0.page.evaluate(async () => (await import('/js/content/games108b.js')).QUIZ_GAMES.map(g => g.id)); await P0.ctx.close(); return ids; })();
+  NEW.push(...G8); for (const id of G8) MORE[id] = '.mx-btn';
   const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, settings: { voice: false } }); await clear(P.page);
   const fails = [];
   // the Play hub: the tab, its four corners, the new games as cards, existing games as links; Learning keeps its games
