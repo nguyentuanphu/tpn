@@ -10,7 +10,7 @@
 // built the spot is checked with the valley's own placement rule (G.goodSpot: dry land, no house, wall, tree or
 // collider) and kept off every road and its verge (edgeDist, roadDist: HANDOFF G5/R4); if the valley changed and the
 // spot is taken, the nearest free spot a few metres along the road is used instead.
-import { THREE, toonVC, P, merge, outline } from './gfx.js';
+import { THREE, toonVC, P, merge, outline, worldTag } from './gfx.js';
 import { gable, win, Box, Cyl } from './town.js';
 import { T, nm, onLang, registerName } from './i18n.js';
 import { heightAt, edgeDist, roadDist, TOWN, WATER } from './world.js';
@@ -118,7 +118,7 @@ export function createSchool(G) {
   const { x, z, w, d, yard } = SCHOOL, y0 = heightAt(x, z), rot = Math.PI;   // (front to -z: the road)
   const mat = toonVC();
   const house = new THREE.Mesh(schoolHouse(w, d), mat); house.position.set(x, y0, z); house.rotation.y = rot; house.castShadow = house.receiveShadow = true; scene.add(house);
-  outline(house, .03, '#4a3a3f'); house.userData.school = true;
+  outline(house, .03, '#4a3a3f'); house.userData.school = true; worldTag(house, 'hs-school', { outline: [.03, '#4a3a3f'] });   // (v1.08e places)
   const box = { x0: x - w / 2 - .25, x1: x + w / 2 + .25, z0: z - d / 2 - .25, z1: z + d / 2 + .25 }; world.boxes.push(box);
   // the yard (local +z is world -z, local +x is world -x: the hopscotch on the west side, away from Cô Tam)
   const yardM = new THREE.Mesh(schoolYard(w, yard, [3.6, 0]), mat); yardM.position.set(x, y0, SCHOOL.front - .02); yardM.rotation.y = rot; yardM.receiveShadow = true; scene.add(yardM);

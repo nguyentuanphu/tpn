@@ -1,7 +1,7 @@
 // Sunny Farm (Harvest Moon style): a 3×3 field that grows in real time, barn animals that need hay,
 // pets that follow you, Mr. Bear's market and three daily jobs. The farm and coins are shared by everyone.
 import { WILD } from './gather.js';
-import { THREE, toon, toonVC, P, merge, sprite, blobShadow } from './gfx.js';
+import { THREE, toon, toonVC, P, merge, sprite, blobShadow, worldTag } from './gfx.js';
 import { farm, saveFarm, saveProfiles } from './state.js';
 import { T } from './i18n.js';
 import { say, captionOnly } from './voice.js';
@@ -174,7 +174,7 @@ export function createFarm(G) {
   const stallM = new THREE.Mesh(merge([P(new THREE.BoxGeometry(3.6, 1, 1.6), '#a9764a', [0, .5, .8]), P(new THREE.CylinderGeometry(.08, .08, 3, 5), '#7a5236', [-1.6, 1.5, 0]), P(new THREE.CylinderGeometry(.08, .08, 3, 5), '#7a5236', [1.6, 1.5, 0]),
     P(new THREE.BoxGeometry(3.8, .15, 2.2), '#ff6a5a', [0, 3, .5], [.2, 0, 0]), ...[-1.1, -.4, .3, 1].map((x, i) => P(new THREE.CylinderGeometry(.3, .25, .3, 10), ['#c98b4a', '#b07a4a', '#c98b4a', '#b07a4a'][i], [x, 1.15, .8])),
     ...[-1.1, -.4, .3, 1].map((x, i) => P(new THREE.SphereGeometry(.18, 8, 6), ['#ff8a2a', '#e8333a', '#ffd23f', '#5fd39a'][i], [x, 1.35, .8]))]), toonVC());
-  stallM.castShadow = true; add(stallM, mkt.x, mkt.z, Math.PI); solid(mkt.x, mkt.z - .8, 1.9);
+  stallM.castShadow = true; add(stallM, mkt.x, mkt.z, Math.PI); worldTag(stallM, 'st-farm');   // (v1.08e places) solid(mkt.x, mkt.z - .8, 1.9);
   const bear = bearNPC(); add(bear, mkt.x, mkt.z + .9, Math.PI); solid(mkt.x, mkt.z + .9, .8);
   F.bear = bear;
   const orderB = at(-24, 4);

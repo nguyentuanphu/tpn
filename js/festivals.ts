@@ -91,6 +91,15 @@ const centre = o => o.x != null ? { x: o.x, z: o.z } : { x: (o.x0 + o.x1) / 2, z
 
 // ---------- decorations: the valley's own 3D things ----------
 const mat = toonVC(), nightMat = new THREE.MeshBasicMaterial({ vertexColors: true });
+// (v1.08e places) Blender props (models/world/pr-*.glb, tools/blender/world-places.py) in place of some code pieces: their
+// corners join the same patch merge, so the draws stay the same; until they arrive (or with no network) the code pieces stay
+const PROPS: Record<string, THREE.BufferGeometry> = {}, PROP_NAMES = ['pr-peach', 'pr-mai', 'pr-banhchung', 'pr-mamnguqua', 'pr-xmastree', 'pr-eggs', 'pr-starlantern', 'pr-lantern'];
+const _pm = new THREE.Matrix4(), _pq = new THREE.Quaternion(), _py = new THREE.Vector3(0, 1, 0);
+const prop = (name: string, x: number, y: number, z: number, rot = 0, s = 1) => { const g = PROPS[name]; if (!g) return null;
+  _pm.compose(new THREE.Vector3(x, y, z), _pq.setFromAxisAngle(_py, rot), new THREE.Vector3(s, s, s)); return { g: g.clone().applyMatrix4(_pm), color: null }; };
+export const festivalPropsReady = () => Object.keys(PROPS);
+async function loadProps() { const K = await import('./modelkit.js');
+  await Promise.all(PROP_NAMES.map(async n => { const r = await K.worldModelParts(n); if (r && r[0]) PROPS[n] = r[0].geometry.index ? r[0].geometry.toNonIndexed() : r[0].geometry; })); }
 const Sph = (r, w = 8, h = 6) => new THREE.SphereGeometry(r, w, h), Cyl = (a, b, h, s = 8) => new THREE.CylinderGeometry(a, b, h, s), Box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
 // a string of little flags (or lanterns, or friendly bats) hanging between two posts, with a gentle sag
 function bunting(a, b, cols, kind = 'flag', wall = false, supports = null) {
@@ -143,12 +152,16 @@ function own(theme, i, x, y, z, rot) {
   const balloons = cols => cols.forEach((c, k) => { const a = k * 2.1, bx = x + Math.cos(a) * .25, bz = z + Math.sin(a) * .25, h = 1.9 + (k % 3) * .25; parts.push(P(Cyl(.008, .008, h, 3), '#ffffff', [bx, y + h / 2, bz]), P(Sph(.22, 10, 8), c, [bx, y + h + .2, bz], [0, 0, 0], [1, 1.2, 1])); });
   switch (theme) {
     case 'tet':
-      if (i % 3 === 0) { parts.push(P(Cyl(.06, .1, 1.4, 6), '#6a4a3a', [x, y + .7, z]), P(Cyl(.34, .26, .4, 10), '#c62828', [x, y + .2, z])); for (let k = 0; k < 10; k++) { const a = k * 2.4, r = .25 + (k % 3) * .18; parts.push(P(Sph(.12, 6, 5), k % 4 ? '#ffb3c8' : '#ffffff', [x + Math.cos(a) * r, y + 1.35 + (k % 4) * .12, z + Math.sin(a) * r])); } }   // hoa đào in a red pot
+      if (i % 3 === 0 && PROPS['pr-peach']) parts.push(prop('pr-peach', x, y, z, rot));   // hoa đào (Blender)
+      else if (i % 3 === 1 && PROPS['pr-mai']) parts.push(prop('pr-mai', x, y, z, rot));   // hoa mai (Blender)
+      else if (i % 3 === 0) { parts.push(P(Cyl(.06, .1, 1.4, 6), '#6a4a3a', [x, y + .7, z]), P(Cyl(.34, .26, .4, 10), '#c62828', [x, y + .2, z])); for (let k = 0; k < 10; k++) { const a = k * 2.4, r = .25 + (k % 3) * .18; parts.push(P(Sph(.12, 6, 5), k % 4 ? '#ffb3c8' : '#ffffff', [x + Math.cos(a) * r, y + 1.35 + (k % 4) * .12, z + Math.sin(a) * r])); } }   // hoa đào in a red pot
       else if (i % 3 === 1) pot('#ffd23f', ['#ffe066', '#ffd23f', '#ffe066', '#ffcf3a']);   // hoa mai
       else { parts.push(P(Box(.6, .9, .05), '#c62828', [x, y + 1.2, z], [0, rot, 0]), P(Cyl(.03, .03, 1.8, 4), '#6a4a3a', [x, y + .9, z])); glows.push(P(Box(.36, .5, .06), '#ffd23f', [x, y + 1.2, z], [0, rot, 0])); }   // a red câu đối banner
       break;
     case 'lanterns':
-      if (i % 2) { parts.push(P(Cyl(.03, .03, 1.7, 4), '#6a4a3a', [x, y + .85, z])); glows.push(P(new THREE.OctahedronGeometry(.36, 0), i % 4 === 1 ? '#ff4a3a' : '#ffd23f', [x, y + 1.9, z], [0, rot, Math.PI / 4], [1, 1, .25])); }   // a star lantern (đèn ông sao) on a stick
+      if (i % 2 && PROPS['pr-starlantern']) { parts.push(P(Cyl(.03, .03, 1.7, 4), '#6a4a3a', [x, y + .85, z])); glows.push(prop('pr-starlantern', x, y + 1.9, z, rot)); }   // the star lantern (Blender)
+      else if (!(i % 2) && PROPS['pr-lantern']) { parts.push(P(Cyl(.03, .03, 1.2, 4), '#6a4a3a', [x, y + .6, z])); glows.push(prop('pr-lantern', x, y + 1.4, z, rot)); }   // a round lantern (Blender)
+      else if (i % 2) { parts.push(P(Cyl(.03, .03, 1.7, 4), '#6a4a3a', [x, y + .85, z])); glows.push(P(new THREE.OctahedronGeometry(.36, 0), i % 4 === 1 ? '#ff4a3a' : '#ffd23f', [x, y + 1.9, z], [0, rot, Math.PI / 4], [1, 1, .25])); }   // a star lantern (đèn ông sao) on a stick
       else { parts.push(P(Cyl(.03, .03, 1.2, 4), '#6a4a3a', [x, y + .6, z])); glows.push(P(Sph(.3, 10, 8), '#ff7a3a', [x, y + 1.4, z], [0, 0, 0], [1, 1.2, 1]), P(Cyl(.12, .12, .06, 8), '#ffd23f', [x, y + 1.78, z])); }
       break;
     case 'pumpkins': {
@@ -190,10 +203,10 @@ function own(theme, i, x, y, z, rot) {
         ['#ff7a2a', '#ffd23f', '#ffffff', '#ff4f9a'].forEach((c, j) => parts.push(P(Sph(.06, 6, 5), c, at(.5 + (j - 1.5) * .07, .28)))); }
       break; }
     case 'xmas':
-      if (i % 3 === 0) { for (let k = 0; k < 3; k++) parts.push(P(new THREE.ConeGeometry(.9 - k * .25, .9, 10), '#2f7a3a', [x, y + .8 + k * .55, z])); parts.push(P(Cyl(.1, .12, .4, 6), '#6a4a3a', [x, y + .2, z])); glows.push(P(new THREE.OctahedronGeometry(.18, 0), '#ffd23f', [x, y + 2.35, z])); for (let k = 0; k < 9; k++) { const a = k * 2.3, r = .65 - (k % 3) * .2; glows.push(P(Sph(.07, 6, 5), ['#ff4a3a', '#ffd23f', '#3cc7e8'][k % 3], [x + Math.cos(a) * r, y + .8 + (k % 3) * .55, z + Math.sin(a) * r])); } }
+      if (i % 3 === 0) { if (PROPS['pr-xmastree']) parts.push(prop('pr-xmastree', x, y, z, rot)); else { for (let k = 0; k < 3; k++) parts.push(P(new THREE.ConeGeometry(.9 - k * .25, .9, 10), '#2f7a3a', [x, y + .8 + k * .55, z])); parts.push(P(Cyl(.1, .12, .4, 6), '#6a4a3a', [x, y + .2, z])); } glows.push(P(new THREE.OctahedronGeometry(.18, 0), '#ffd23f', [x, y + 2.35, z])); for (let k = 0; k < 9; k++) { const a = k * 2.3, r = .65 - (k % 3) * .2; glows.push(P(Sph(.07, 6, 5), ['#ff4a3a', '#ffd23f', '#3cc7e8'][k % 3], [x + Math.cos(a) * r, y + .8 + (k % 3) * .55, z + Math.sin(a) * r])); } }
       else ['#e8433a', '#3a78c8', '#ffd23f'].forEach((c, k) => parts.push(P(Box(.36 - k * .06, .3 - k * .04, .36 - k * .06), c, [x + (k - 1) * .4, y + .15 - k * .02, z]), P(Box(.38 - k * .06, .05, .06), '#ffffff', [x + (k - 1) * .4, y + .32 - k * .04, z])));
       break;
-    case 'eggs': ['#ff9ab8', '#7fd6d0', '#ffd23f', '#c6a8f0'].forEach((c, k) => { if ((i + k) % 2) parts.push(P(Sph(.2, 10, 8), c, [x + (k - 1.5) * .35, y + .25, z], [0, 0, 0], [1, 1.35, 1]), P(new THREE.TorusGeometry(.2, .02, 4, 14), '#ffffff', [x + (k - 1.5) * .35, y + .25, z], [Math.PI / 2, 0, 0])); }); break;
+    case 'eggs': if (PROPS['pr-eggs']) { parts.push(prop('pr-eggs', x, y, z, rot)); break; } ['#ff9ab8', '#7fd6d0', '#ffd23f', '#c6a8f0'].forEach((c, k) => { if ((i + k) % 2) parts.push(P(Sph(.2, 10, 8), c, [x + (k - 1.5) * .35, y + .25, z], [0, 0, 0], [1, 1.35, 1]), P(new THREE.TorusGeometry(.2, .02, 4, 14), '#ffffff', [x + (k - 1.5) * .35, y + .25, z], [Math.PI / 2, 0, 0])); }); break;
     case 'hearts': if (i % 2) pot('#ff6b8a', ['#ff4f6a', '#ff9ab8', '#ffffff']); else { parts.push(P(Cyl(.03, .03, 1.6, 4), '#6a4a3a', [x, y + .8, z])); for (const s of [-1, 1]) parts.push(P(Sph(.2, 10, 8), '#ff4f6a', [x + s * .14, y + 1.75, z])); parts.push(P(new THREE.ConeGeometry(.3, .4, 4), '#ff4f6a', [x, y + 1.5, z], [Math.PI, Math.PI / 4, 0])); } break;
     case 'diyas': for (let k = 0; k < 4; k++) { const dx = (k - 1.5) * .45; parts.push(P(Cyl(.14, .08, .1, 10), '#b8643a', [x + dx, y + .05, z])); glows.push(P(new THREE.ConeGeometry(.05, .16, 6), '#ffb43a', [x + dx, y + .18, z])); } parts.push(P(new THREE.TorusGeometry(.5, .07, 5, 16), '#ff9a2e', [x, y + .03, z + .6], [Math.PI / 2, 0, 0])); break;   // clay lamps and a marigold ring
     case 'colours': ['#ff4f9a', '#ffd23f', '#3cc7e8', '#5fd36a', '#ff9f43', '#9a6af0'].forEach((c, k) => { const a = k / 6 * Math.PI * 2; parts.push(P(new THREE.ConeGeometry(.22, .22, 10), c, [x + Math.cos(a) * .5, y + .11, z + Math.sin(a) * .5])); }); break;   // little hills of colour powder
@@ -228,7 +241,8 @@ export function createFestivals(G) {
   const free = (x, z, r = 1) => heightAt(x, z) > WATER + .3 && !W.colliders.some(c => c.r > 0 && c.top == null && Math.hypot(c.x - x, c.z - z) < c.r + r) && !W.boxes.some(b => x > b.x0 - r && x < b.x1 + r && z > b.z0 - r && z < b.z1 + r);
   // (owner, 10 Oct) the street spots: js/festdecor.js, loaded once a child plays (PERF-001), then the decorations are built
   let D = null, loadingD = null, waitD = false;
-  const loadD = () => loadingD || (loadingD = import('./festdecor.js').then(m => { D = { ...m.createDecor(free), tell: m.tell, decoOf: m.decoOf, FRAC: m.FRAC }; build(); }).catch(e => { loadingD = null; console.warn('festdecor', e); window.svModuleGone?.(e); }));
+  const loadD = () => loadingD || (loadingD = import('./festdecor.js').then(m => { D = { ...m.createDecor(free), tell: m.tell, decoOf: m.decoOf, FRAC: m.FRAC }; build();
+    loadProps().then(() => { if (Object.keys(PROPS).length && active.length) build(); }).catch(e => console.warn('festival props', e && e.message)); }).catch(e => { loadingD = null; console.warn('festdecor', e); window.svModuleGone?.(e); }));
   const streetSpots = (key, o) => D ? D.streetSpots(key, o) : [];
   const unhook = list => { list.forEach(it => { const k = G.interactables.indexOf(it); if (k >= 0) G.interactables.splice(k, 1); }); list.length = 0; };
   // (owner, 13 Oct: 5x the decorations) the decorations are drawn in 12 m patches: the ones nearest the children first,
@@ -291,6 +305,8 @@ export function createFestivals(G) {
         if (A.on && w === 0) {
           let x = c.x - 3, z = c.z + 3; for (let k = 0; k < 40 && !(free(x, z, 1.4) && D.claim({ x, z })); k++) { x = c.x + Math.cos(k) * (4 + k * .5); z = c.z + Math.sin(k) * (4 + k * .5); }
           const y = heightAt(x, z), parts = []; parts.push(P(Box(1.8, .08, .9), '#c9a05a', [x, y + .8, z]), ...[[-.8, -.35], [.8, -.35], [-.8, .35], [.8, .35]].map(([dx, dz]) => P(Cyl(.04, .04, .8, 5), '#8a6a4a', [x + dx, y + .4, z + dz])), P(Box(1.9, .5, .02), '#ffffff', [x, y + .55, z + .45]));
+          if (F.theme === 'tet') { // (v1.08e places) bánh chưng and the mâm ngũ quả on the Tết table
+            parts.push(prop('pr-banhchung', x - .55, y + .84, z) || P(Box(.26, .12, .26), '#3f8a3a', [x - .55, y + .9, z]), prop('pr-mamnguqua', x - .05, y + .84, z - .1) || P(Cyl(.28, .24, .05, 12), '#c62828', [x - .05, y + .87, z - .1])); }
           const tq = piece(F.theme, 1, x + .5, y + .84, z, 0); items.push({ x, z, kind: 'table', parts: parts.concat(tq.parts), glows: tq.glows });
           const it = { id: 'festival_' + F.id, x, z, r: 3.2, icon: F.icon, label: () => T(F.en, F.vi), act: h => visit(h, F) }; tables.push(it); G.interactables.push(it);
         }

@@ -3,7 +3,7 @@
 // (v1.07, owner 2 Nov 2026 AEDT) the parts of the world live in js/world/; this file builds it (createWorld) and
 // re-exports every name it always exported, so no import elsewhere changes.
 import { pushOutOfSolids } from './solids.js';
-import { THREE, sprite, toonSmooth, merge, P, toonVC, toon, glow, blobShadow } from './gfx.js';
+import { THREE, sprite, toonSmooth, merge, P, toonVC, toon, glow, blobShadow, worldTag, geoKey } from './gfx.js';
 import { seeded, lerp, smooth, clamp, fbm, dist2 } from './util.js';
 import { T } from './i18n.js';
 import { houseVillage } from './houses.js';
@@ -346,7 +346,7 @@ export function createWorld(scene, quality) {
       ...[-1.5, 1.5].flatMap(px => [P(new THREE.CylinderGeometry(.08, .08, 3, 5), '#7a5236', [px, 1.5, -.7])]),
       P(new THREE.ConeGeometry(2.6, 1.1, 8), col, [0, 3.2, 0]),
       ...([[-1, '#e8433a'], [-.4, '#ffd23f'], [.3, '#ff9a2e'], [.9, '#4cbf5c']] satisfies [number, string][]).map(([px, cc]) => P(new THREE.SphereGeometry(.24, 8, 6), cc, [px, 1.15, .1]))
-    ]), toonVC()); m.position.set(x, y, z); m.rotation.y = rot; scene.add(m);
+    ]), toonVC()); m.position.set(x, y, z); m.rotation.y = rot; scene.add(m); worldTag(m, 'st-' + geoKey(m.geometry));   // (v1.08e places)
     W.colliders.push({ x, z, r: 1.9 });
   };
   stall(V.x + 2, V.z - 10, 0, '#e8434a'); stall(V.x - 4, V.z - 11, .2, '#3d7fd6'); stall(V.x + 8, V.z - 9, -.3, '#ffb52e');
@@ -463,7 +463,8 @@ export function createWorld(scene, quality) {
     };
     if (STYLES[B.style]) parts.length = 0, parts.push(...STYLES[B.style]());
     else if (B.style !== 'harbour') parts.length = 0, parts.push(...plain());
-    const br = new THREE.Mesh(merge(parts), toonVC()); br.castShadow = true; br.receiveShadow = true; br.position.set(...(B.axis === 'z' ? [B.c, y, (B.a0 + B.a1) / 2] : [(B.a0 + B.a1) / 2, y, B.c]) satisfies [number, number, number]); if (B.axis === 'z') br.rotation.y = -Math.PI / 2; scene.add(br);
+    // (v1.08e places) worldTag: the Blender bridge takes over near the child
+    const br = worldTag(new THREE.Mesh(merge(parts), toonVC()), 'br-' + B.id); br.castShadow = true; br.receiveShadow = true; br.position.set(...(B.axis === 'z' ? [B.c, y, (B.a0 + B.a1) / 2] : [(B.a0 + B.a1) / 2, y, B.c]) satisfies [number, number, number]); if (B.axis === 'z') br.rotation.y = -Math.PI / 2; scene.add(br);
     // railings keep little explorers on the bridge
     W.boxes.push({ ...bridgeBox(B, B.a0, B.a1, hw - .1, hw + .3), bottom: y }, { ...bridgeBox(B, B.a0, B.a1, -hw - .3, -hw + .1), bottom: y });
     // (Round U, owner: no step where a road meets a bridge) the deck is walked on over the bridge itself; for 1.2 m past each

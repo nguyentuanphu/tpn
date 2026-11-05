@@ -2,7 +2,7 @@
 // each with an ℹ️ sign, a short true fact and a postcard to collect. Also: friends playing traditional
 // games you can watch (and learn about), crops and fruit trees from each culture, and front doors
 // to knock on.
-import { THREE, toon, toonVC, P, merge, outline, sprite } from './gfx.js';
+import { THREE, toon, toonVC, P, merge, outline, sprite, worldTag } from './gfx.js';
 import { T, nm, registerName } from './i18n.js';
 import { landmarkAt, inHeritageGrounds } from './content/map.js';
 import { heightAt, oldHeightAt, roadDist, VILLAGE, MARKET, AUSSIE, CHINA, INDIA, LAKE, WATER, APOSTLES, FESTGROUNDS, LEAFIES, SHRINES, HALF } from './world.js';
@@ -119,7 +119,7 @@ export function createHeritage(G, { give, sfx, say, toast }) {
     if (water) { // in the lake's shallows, with the sign on the beach
       const a = Math.atan2(nz - LAKE.z, nx - LAKE.x); x = LAKE.x + Math.cos(a) * (LAKE.r * (id === 'halong' ? .3 : .55)); z = LAKE.z + Math.sin(a) * (LAKE.r * (id === 'halong' ? .3 : .55));
       (world.waterSites = world.waterSites || []).push({ id, x, z, r: id === 'halong' ? 11 : 5.4 }); // (checked: every part stays in the lake)
-      const m = new THREE.Mesh(merge(MODELS[model]()), toonVC()); m.position.set(x, WATER - (id === 'halong' ? 2.2 : .12), z); m.rotation.y = a; scene.add(m); outline(m, .03, '#4a3a3f'); mx = x; mz = z;
+      const m = new THREE.Mesh(merge(MODELS[model]()), toonVC()); m.position.set(x, WATER - (id === 'halong' ? 2.2 : .12), z); m.rotation.y = a; scene.add(m); outline(m, .03, '#4a3a3f'); worldTag(m, 'lm-' + model, { outline: [.03, '#4a3a3f'] }); mx = x; mz = z;
       x = LAKE.x + Math.cos(a) * (LAKE.r + 3); z = LAKE.z + Math.sin(a) * (LAKE.r + 3); [x, z] = spot(x, z, 1.5);
     } else {
       // (and its sign, which stands in front facing the place it belongs to, is on open ground too)
@@ -129,7 +129,7 @@ export function createHeritage(G, { give, sfx, say, toast }) {
       if (!position) { console.warn(`No clear heritage ground for ${id}`); continue; }
       [x, z] = position; mx = x; mz = z;
       const rot = face(x, z, cen[cc][0], cen[cc][1]);
-      place(MODELS[model](), x, z, rot); world.colliders.push({ x, z, r: id === 'kakadu' ? 5 : model === 'cave' ? 9.5 : 7 });
+      worldTag(place(MODELS[model](), x, z, rot), 'lm-' + model, { outline: [.03, '#4a3a3f'], carry: true }); world.colliders.push({ x, z, r: id === 'kakadu' ? 5 : model === 'cave' ? 9.5 : 7 });
       if (id === 'kakadu') { // painted animals on the rock face
         const c = document.createElement('canvas'); c.width = 512; c.height = 256; const g = c.getContext('2d');
         g.fillStyle = '#b0643a'; g.fillRect(0, 0, 512, 256); g.fillStyle = '#f4efe6'; g.strokeStyle = '#f4efe6'; g.lineWidth = 6;

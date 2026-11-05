@@ -111,6 +111,8 @@ await check('wading', async () => (await import('./wading.mts')).wadingCheck(b))
 // (v1.08e nature) the trees, flowers, reeds, crops, farm props and My House decorations from Blender near the child: every
 // model loads, sizes and ground match the code shapes, draws within perf's limits, crops' stages, blocked models (tests/world-nature.mts)
 await check('worldnature', async () => (await import('./world-nature.mts')).worldNatureCheck(b));
+// (v1.08e places) the landmarks, bridges and buildings remade in Blender stand where their code shapes stood (tests/world-places.mts)
+await check('worldplaces', async () => (await import('./world-places.mts')).worldPlacesCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

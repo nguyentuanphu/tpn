@@ -9,7 +9,7 @@
 // Its 3D area (the landmark, the friend, the seller's stall, the game stands, a sign and the bus stop's post) is built
 // only when a child comes within 140 m or the story needs it (ensureRegion): the regions load when visited.
 // Everything stands on open ground: off the roads and the water, clear of other solids (the chapter kit's rule).
-import { THREE, P, merge, toonVC, sprite, outline } from './gfx.js';
+import { THREE, P, merge, toonVC, sprite, outline, worldTag } from './gfx.js';
 import { T } from './i18n.js';
 import { say } from './voice.js';
 import { SFX } from './audio.js';
@@ -133,7 +133,7 @@ export function ensureRegion(G, id: string) {
   // the landmark, toward the water side of the area
   // (Hạ Long's rocks stand out in the sea when there is sea near: then the sign is on the shore in front of them)
   const M = MODELS[r.id] && MODELS[r.id](), wet = r.id === 'halong' ? seaSpot(r) : null, lm = wet ? shoreSpot(G, r, wet) : openSpot(G, cx, cz + 4, 5.8, 8);
-  if (M) { const mesh = new THREE.Mesh(merge(M.parts), toonVC()); mesh.castShadow = true; if (wet) { mesh.position.set(wet.x, WATER - .3, wet.z); scene.add(mesh); parts.push(mesh); } else add(mesh, lm.x, lm.z); outline(mesh, .03, '#4a3a3f');
+  if (M) { const mesh = new THREE.Mesh(merge(M.parts), toonVC()); mesh.castShadow = true; if (wet) { mesh.position.set(wet.x, WATER - .3, wet.z); scene.add(mesh); parts.push(mesh); } else add(mesh, lm.x, lm.z); outline(mesh, .03, '#4a3a3f'); worldTag(mesh, 'lm-s2-' + r.id, { outline: [.03, '#4a3a3f'] });
     if (!wet) for (const [dx, dz, rr] of M.solid) world.colliders.push({ x: lm.x + dx, z: lm.z + dz, r: rr }); }
   spots.landmark = lm;
   G.interactables.push({ id: 's2_lm_' + r.id, x: lm.x, z: lm.z - (wet ? 0 : 3.2), r: 3, icon: r.landmark.icon, bubble: 'ℹ️', label: () => T(r.landmark.name[0], r.landmark.name[1]),

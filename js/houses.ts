@@ -1,7 +1,7 @@
 // Storybook houses: rounded edges, a soft ink outline and real details (tiles, shutters, balconies,
 // plants). Used on Two Homes Street and in Lotus Village. Each builder returns { obj, w, d }: the
 // model (front facing +z) and its footprint for collisions.
-import { THREE, toonVC, P, merge, outline } from './gfx.js';
+import { THREE, toonVC, P, merge, outline, worldTag, geoKey } from './gfx.js';
 import { settings } from './state.js';
 import { onLang } from './i18n.js';
 
@@ -150,6 +150,7 @@ export function houseVillage({ w = 9, d = 5.5, wall = '#efe0bf', tile = '#b9553a
 const MAT = toonVC();
 function finish(p) {
   const g = new THREE.Group(), m = new THREE.Mesh(merge(p), MAT); m.castShadow = m.receiveShadow = true; g.add(m); outline(m, .03, '#4a3a3f');
+  worldTag(m, 'hs-' + geoKey(m.geometry), { outline: [.03, '#4a3a3f'] });   // (v1.08e places: the Blender house near the child, one model per shape)
   return g;
 }
 // A shop sign: text is [English, Tiếng Việt] and follows the language.
