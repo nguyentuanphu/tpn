@@ -1,10 +1,10 @@
 # Pack the story pages drawn in Blender for the game (round v1.08c, blender helper): each page's picture (storypage.py,
-# 1280 x 720 PNG) becomes videos/storypages/<id>-<v>-p<k>.webp at 960 x 540, its quality chosen so it weighs about
-# 60-100 KB, and js/content/storypics.ts lists the tales that have all their pages.
+# 1280 x 720 PNG) becomes videos/storypages/<id>-<v>-p<k>.webp at 1280 x 720, at the best quality that stays under
+# 100 KB (most weigh 60-100 KB; a plain night sky packs smaller), and js/content/storypics.ts lists the tales that have all their pages.
 #   python3 tools/blender/storypics-pack.py <pictures dir> [v1]
 # A tale's page picture is <id>-p<k>.png, or <id>-p<k>-1.png (the second moment of a Blender film's page).
 import sys, os, io, re
-from PIL import Image
+from PIL import Image, ImageEnhance
 SRC = sys.argv[1]; V = sys.argv[2] if len(sys.argv) > 2 else 'v1'
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, 'videos/storypages'); os.makedirs(OUT, exist_ok=True)
@@ -19,8 +19,11 @@ for t in TALES:
     if not pics: continue
     sizes = []
     for k, p in enumerate(pics):
-        im = Image.open(p).convert('RGB').resize((960, 540), Image.LANCZOS)
-        lo, hi, best = 30, 92, None
+        im = Image.open(p).convert('RGB').resize((1280, 720), Image.LANCZOS)
+        # Blender's mist and soft light leave the picture pale: lift the darks back to black, a little more contrast and colour
+        im = im.point(lambda v: max(0, min(255, round((v - 28) * 255 / 227))))
+        im = ImageEnhance.Color(ImageEnhance.Contrast(im).enhance(1.1)).enhance(1.2)
+        lo, hi, best = 30, 95, None
         while lo <= hi:   # the best quality that stays under 100 KB
             q = (lo + hi) // 2; b = io.BytesIO(); im.save(b, 'WEBP', quality=q, method=6)
             if b.tell() <= 100_000: best, lo = b.getvalue(), q + 1
