@@ -1,3 +1,5 @@
+**ready for Release** (6 Nov 2026, 10:40 am AEDT) · branch `work/v108f-settings`
+
 # v1.08f settings: status
 
 Branch `work/v108f-settings` (from `origin/integrate/v108`). Helper: settings. Started 6 Nov 2026, 8:41 am AEDT.
@@ -36,4 +38,14 @@ Branch `work/v108f-settings` (from `origin/integrate/v108`). Helper: settings. S
 
 ## Checks
 
-New check `grownupsrow` (`tests/grownups-row.mts`, registered in `tests/run.mts`). Results below.
+New checks `grownupsrow` (`tests/grownups-row.mts`) and `testertryagain` (`tests/tester-tryagain.mts`), both in `tests/run.mts`.
+
+Run one at a time on 6 Nov 2026 AEDT (`node suite.mts --jobs 1 --only ...`):
+- pass: types, bilingual, boot, a11y, owneractivityshell, onlineoff, grownupsrow, testertryagain, tester, testerreport,
+  testerretest, testerrewards, report, reportingflow.
+- fail, **already failing on integrate/v108** (re-run on an untouched copy, same errors): `unit` (menu catalogue
+  "G is not defined"; map WORLD-009 references), `phone` (a click time-out), `studio` (Simple screen page lists no
+  reading games). Not from this branch.
+- `suite.mts --changed` asks for the full suite (integrate/v108 is far from main): left to Release.
+- Screenshots looked at: Grown-ups on phone (EN, VI), tablet and computer (`tests/out/grownupsrow/`).
+- No new spoken lines.
