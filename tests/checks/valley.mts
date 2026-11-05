@@ -1123,6 +1123,11 @@ await check('areastream', async () => {
     // the parts near home are built within a few seconds, while the child stands there; far ones wait
     await P.page.waitForFunction(([x, z]) => __sv.areas.list().filter(a => Math.hypot(a.x - x, a.z - z) < 140).every(a => a.built), [home.x, home.z], { timeout: 60000 });
     const first = await P.page.evaluate(() => __sv.areas.list());
+    // villagers far from the child wait as stand-ins (js/avatar.ts lateAvatar); those round a landing spot are built on landing
+    const late0 = await P.page.evaluate(() => __sv.areas.late());
+    const landed = await P.page.evaluate(async () => { const A = await import('/js/avatar.js'), s = A.lateSpots()[0]; if (!s) return null; const n0 = __sv.areas.late(); await __sv.travel(__sv.heroes[0], s[0], s[1]);
+      return { n0, n1: __sv.areas.late(), stillThere: A.lateSpots().some(q => Math.hypot(q[0] - s[0], q[1] - s[1]) < 5) }; });
+    ok(late0 > 0 && landed && landed.n1 < landed.n0 && !landed.stillThere, 'stand-in villagers: ' + JSON.stringify({ late0, landed }));
     const near = first.filter(a => Math.hypot(a.x - home.x, a.z - home.z) < 140), far = first.filter(a => Math.hypot(a.x - home.x, a.z - home.z) > 160);
     ok(first.length >= 10 && near.length && near.every(a => a.built), 'the parts near home were not built: ' + JSON.stringify(first));
     ok(far.length && far.some(a => !a.built), 'no far part waited for the child: ' + JSON.stringify(first));
@@ -1151,12 +1156,14 @@ await check('areastream', async () => {
       rounds.push({ ...(await mem()), sleepy: sleepy.length, stillAsleepAtHome: awake });
     }
     const left = await P.page.evaluate(() => __sv.areas.left());
+    const lateAll = await P.page.evaluate(async () => { await __sv.areas.all(); return { late: __sv.areas.late(), broken: (await import('/js/avatar.js')).OUTLINED.filter(A => !A.rig || !A.anim).length }; });
+    ok(lateAll.late === 0 && lateAll.broken === 0, 'stand-ins left after building all: ' + JSON.stringify(lateAll));
     ok(!bad.length, 'parts not built, asleep where the child landed, or with something out of reach: ' + JSON.stringify(bad));
     ok(left === 0, left + ' parts were never built');
     ok(rounds.every(r => !r.stillAsleepAtHome.length) && rounds.some(r => r.sleepy > 0), 'parts did not sleep far away or did not wake at home: ' + JSON.stringify(rounds));
     // (the first two rounds also fill the game's own caches as places are seen; from the second round on it is level)
     ok(rounds[2].geo <= rounds[1].geo * 1.03 + 20 && rounds[2].tex <= rounds[1].tex * 1.03 + 5, 'the graphics memory kept growing: ' + JSON.stringify(rounds));
     ok(!P.errors.length, P.errors.join(' | '));
-    return `${first.length} parts after the start: ${near.length} near home built at once, ${far.filter(a => !a.built).length} far ones built when the child flew there; every part reachable; far parts sleep (${rounds[0].sleepy} on the last flight out) and wake at home; graphics ${rounds.map(r => r.geo + '/' + r.tex).join(', ')} shapes/pictures over 3 rounds`;
+    return `${late0} villagers waited as stand-ins (built on landing near them); ${first.length} parts after the start: ${near.length} near home built at once, ${far.filter(a => !a.built).length} far ones built when the child flew there; every part reachable; far parts sleep (${rounds[0].sleepy} on the last flight out) and wake at home; graphics ${rounds.map(r => r.geo + '/' + r.tex).join(', ')} shapes/pictures over 3 rounds`;
   } finally { await P.ctx.close(); }
 });

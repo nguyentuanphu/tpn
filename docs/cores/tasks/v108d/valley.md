@@ -148,3 +148,21 @@ against the 1025 KB limit. `origin/integrate/v108` (91c01e198) merged in here.
   `warmLumi`: the first greeting came about 1 s late on the slow test page).
 - **types fails, not from this branch:** new findings in `tests/checks/play.mts`, `tests/checks/screens.mts`,
   `tests/checks/voice.mts`, `tests/story-v108b.mts`, files this branch does not change (they came with the merge).
+
+## Round 3, step 1: villagers built when a child comes near (5 Nov 2026 AEDT)
+Release's go (5 Nov): part 2 one safe step per push, first villagers behind a stand-in.
+- `js/avatar.ts`: `lateAvatar(look)` makes a stand-in: an empty group where the villager stands (`userData.avatar`),
+  with their look, their height and an animation that does nothing. `buildAvatar(look, photo, { into })` builds the
+  real person into that same object and group, so whatever holds the villager (their place, the day plan, villager
+  talk, name tags, chat groups, photo faces: `setFace` waits for the build) keeps it. `wakeLateAvatars(points, r, max)`,
+  `buildAllLate()`, `lateLeft()`, `lateSpots()`.
+- Made as stand-ins (102 of the 182 people at the start): the city people (`js/cities.ts`), the families outside
+  their homes (`js/homes.ts`; people in a room are built at once, as before), the heritage play groups
+  (`js/heritage.ts`), the sellers and hosts of the regions (`js/regions.ts`). Their makers use only the group and
+  `anim` (one guards `armR`) before the build.
+- `js/main.ts`: four times a second the stand-ins within 60 m of a child are built, three at most each time (the
+  sellers' and families' own animation starts at 50 to 70 m); round a flight's landing spot all of them at once, while
+  the fade is up. `G.areas.all()` (the checks' start) builds them all; `G.areas.late()` counts them.
+- Check `areastream`: stand-ins wait at the start, a landing builds those round it, `all()` leaves none and every person
+  has their body and animation.
+- No place moved: a stand-in stands where the villager stands.
