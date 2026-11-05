@@ -27,3 +27,18 @@ Screenshot: `docs/plans/owner-20261105/spawn-owl-blocks.jpg`.
    - Bus stops and shelters: check their colliders and the open ground around them.
    - New check `flyaudit`: every fly target is landed on in the running game and checked for open ground, a walkable way out and a clear camera view. Keep it fast enough to stay in the full suite; split it if needed.
    - Coordinate with the games helper, which adds places for every game: run your audit over their places too once their branch is ready.
+3. **Every public-transport drop-off is on open ground** (owner, 5 Nov 2026 AEDT: "Including all public transport including electric car, xích lô's drop off to make sure it is in open area").
+   - **What to audit:** every place a ride ends:
+     - buses and bus stops;
+     - the electric cart / electric car;
+     - xích lô;
+     - trams and trains;
+     - ferries and boats;
+     - taxis and motorbike rides;
+     - any vehicle that sets the child down at a stop or a destination.
+   - **What each drop-off needs:**
+     - the child steps off onto open ground, not inside or behind a shelter, sign, fence, wall, kerb or building;
+     - the child can walk away freely;
+     - the camera sees the child with nothing covering them.
+   - **How to fix:** in the shared drop-off and landing code, choosing the nearest open ground beside the stop and facing the way the child will go. Not stop by stop.
+   - **Check:** `flyaudit` covers every stop and every ride end too, alongside the fly targets.
