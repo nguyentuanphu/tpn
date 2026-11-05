@@ -13,3 +13,21 @@ Do:
 8. **Website:** a strip under the hero (Happening now, New this week, Coming up) and a Calendar part inside Discover (festivals, new chapters with a picture, new games and stories, festival games and when they come back), from the same calendar data; the four destinations stay (`docs/website-review-20261023/WEBSITE-RULES.md`).
 9. **Install gift:** the first time the game runs installed (display-mode standalone), every child on the device gets once: the "Mũ Ngôi Nhà / Home hat" (own drawing), 100 coins, a sticker, told in EN and VI; the install chip text in Grown-ups mentions it; nothing pushes children to install.
 10. **Checks:** `talecostume`, `films`, `stories`, `chapter4`, `chapter5`, `finale`, `releasecalendar`, `calendartab`, `website`, `installgift`.
+
+## Added by the owner, 5 Nov 2026 AEDT: the calendar is too wordy
+
+Screenshot: `docs/plans/owner-20261105/calendar-too-long.png`. Owner: "The festivals descriptions look too long which may confuse the eyes, you are an experienced UX, fix this."
+
+Today every festival is a tall card with five boxes. Each box has a heading, a date range and "in X days" ("Festival game, then put away until next year / 10 Dec – 3 Jan / in 35 days"). Three of these cards sit side by side, and the empty "This week / Opens next week / Ending soon" sections stay on screen.
+
+**Redesign:**
+- **One compact row per festival:** its picture, its name, its date, and one short status chip in plain words.
+  - Examples: "Trang trí từ 10/12" (decorations from 10 Dec), "Đang diễn ra · còn 3 ngày" (on now, 3 days left), "Trò chơi lễ hội đến 3/1" (festival game until 3 Jan).
+  - The chip shows only the one thing that matters now: the next step that starts, or the one now running.
+- **A thin timeline bar under the name**, with small dots for decorations, hunt, day and game, and a marker for today. No text per step.
+- **Tap a row to open the details:** each step with its own picture, start, end and days left, in short words such as "Săn đồ: 24/12 – 31/12". One row open at a time.
+- **Order:** the festival happening now first, then the next ones by date. Show the next 4; "Xem thêm / See more" opens the rest.
+- **The three lists:** "This week / Opens next week / Ending soon" show only when they have something, as one short line each with pictures. Never as three "Nothing ..." lines.
+- **Wording:** "Festival game, then put away until next year" becomes "Trò chơi lễ hội / Festival game". The return date is shown only in the open details ("Quay lại năm sau / Back next year").
+- **Text:** at least 16 px. One screen on phone (portrait and landscape), tablet and computer. No sideways scroll. Bilingual.
+- **Checks:** `calendartab` and `fivescreens`. Look at the phone, tablet and computer screenshots before reporting.

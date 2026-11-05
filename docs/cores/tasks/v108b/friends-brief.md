@@ -13,3 +13,6 @@ Do, in this order:
 8. **Checks:** new `newfriends`, `friendmigrate`, `friendswap`, `wearfit`; existing `perf`, `battery`, `longplaymem`, `startup`, `phone`, `vehicles`, `stories`, `films`, `shop`, `simple` must pass.
 
 Work with the games helper on the pad (they add nothing to the Bag) and with the story helper on films (they change costumes of tale people, you change the people builder). Coordinate through your status files.
+
+## Owner, 5 Nov 2026 AEDT: no friend name after a child's name
+"dont mention (Finn) at all, if name has been created then dont add the character names". A child who has a name is shown by that name only, everywhere (Grown-ups, Who's playing, HUD, reports, friends list, voices). Drop the planned "Henry (Finn)" item; a child's friend may be shown as a small picture where it helps, never as words after the name.
