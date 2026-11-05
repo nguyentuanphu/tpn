@@ -59,6 +59,19 @@ const FILES = [
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
   'icons/friends/clara-f.webp', 'icons/friends/clara-q.webp', 'icons/friends/clara-s.webp', 'icons/friends/clara-face.webp',
   'icons/friends/lumi-f.webp', 'icons/friends/lumi-q.webp', 'icons/friends/lumi-s.webp', 'icons/friends/lumi-face.webp',
+  // (v1.08e places) the landmarks, bridges, buildings and props made in Blender (tools/make-places.mts writes this list)
+  'models/world/br-haique.glb', 'models/world/br-island_w.glb', 'models/world/br-ring_n.glb', 'models/world/br-ring_s.glb', 'models/world/br-north.glb', 'models/world/br-longbien.glb',
+  'models/world/br-ring_e.glb', 'models/world/br-hoian_rd.glb', 'models/world/br-chuacau.glb', 'models/world/br-harbour.glb', 'models/world/br-story.glb', 'models/world/br-princes.glb',
+  'models/world/pl-marketgate.glb', 'models/world/lm-turtle.glb', 'models/world/lm-onepillar.glb', 'models/world/lm-benthanh.glb', 'models/world/lm-banana.glb', 'models/world/lm-opera.glb',
+  'models/world/lm-bondi.glb', 'models/world/lm-lighthouse.glb', 'models/world/lm-uluru.glb', 'models/world/lm-vanmieu.glb', 'models/world/lm-puppetstage.glb', 'models/world/lm-bnclock.glb',
+  'models/world/lm-chuadau.glb', 'models/world/lm-butthap.glb', 'models/world/lm-dendo.glb', 'models/world/lm-quanho.glb', 'models/world/lm-goldenbridge.glb', 'models/world/lm-cathedral.glb',
+  'models/world/lm-postoffice.glb', 'models/world/lm-wheelbase.glb', 'models/world/lm-lonepine.glb', 'models/world/lm-sydneytower.glb', 'models/world/lm-lunapark.glb', 'models/world/lm-flinders.glb',
+  'models/world/lm-wtram.glb', 'models/world/lm-halong.glb', 'models/world/lm-hue.glb', 'models/world/lm-myson.glb', 'models/world/lm-cave.glb', 'models/world/lm-trangan.glb',
+  'models/world/lm-reef.glb', 'models/world/lm-sisters.glb', 'models/world/lm-exhibition.glb', 'models/world/lm-kakadu.glb', 'models/world/lm-forbidden.glb', 'models/world/lm-heaven.glb',
+  'models/world/lm-terracotta.glb', 'models/world/lm-potala.glb', 'models/world/lm-qutub.glb', 'models/world/lm-redfort.glb', 'models/world/lm-konark.glb', 'models/world/lm-hampi.glb',
+  'models/world/lm-mahabodhi.glb', 'models/world/lm-marble.glb', 'models/world/lm-hoian.glb', 'models/world/lm-thehuc.glb', 'models/world/lm-cairang.glb', 'models/world/lm-apostles.glb',
+  'models/world/lm-s2-mekong.glb', 'models/world/lm-s2-halong.glb', 'models/world/lm-s2-sapa.glb', 'models/world/lm-s2-taynguyen.glb',
+  // (v1.08e places) end of the places models
   'js/modelkit.js', // (v1.08e) the shared loader of the Blender models of the world (models/world/*.glb load near the child)
   'js/offlinelevels.js', // (v1.08c voices) the offline levels in Grown-ups, loaded when Grown-ups opens
   'icons/icon-32.png', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'

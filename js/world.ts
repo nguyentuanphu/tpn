@@ -3,7 +3,7 @@
 // (v1.07, owner 2 Nov 2026 AEDT) the parts of the world live in js/world/; this file builds it (createWorld) and
 // re-exports every name it always exported, so no import elsewhere changes.
 import { pushOutOfSolids } from './solids.js';
-import { THREE, sprite, toonSmooth, merge, P, toonVC, toon, glow, blobShadow } from './gfx.js';
+import { THREE, sprite, toonSmooth, merge, P, toonVC, toon, glow, blobShadow, worldTag } from './gfx.js';
 import { seeded, lerp, smooth, clamp, fbm, dist2 } from './util.js';
 import { T } from './i18n.js';
 import { houseVillage } from './houses.js';
@@ -459,7 +459,8 @@ export function createWorld(scene, quality) {
     };
     if (STYLES[B.style]) parts.length = 0, parts.push(...STYLES[B.style]());
     else if (B.style !== 'harbour') parts.length = 0, parts.push(...plain());
-    const br = new THREE.Mesh(merge(parts), toonVC()); br.castShadow = true; br.receiveShadow = true; br.position.set(...(B.axis === 'z' ? [B.c, y, (B.a0 + B.a1) / 2] : [(B.a0 + B.a1) / 2, y, B.c]) satisfies [number, number, number]); if (B.axis === 'z') br.rotation.y = -Math.PI / 2; scene.add(br);
+    // (v1.08e places) worldTag: the Blender bridge takes over near the child
+    const br = worldTag(new THREE.Mesh(merge(parts), toonVC()), 'br-' + B.id); br.castShadow = true; br.receiveShadow = true; br.position.set(...(B.axis === 'z' ? [B.c, y, (B.a0 + B.a1) / 2] : [(B.a0 + B.a1) / 2, y, B.c]) satisfies [number, number, number]); if (B.axis === 'z') br.rotation.y = -Math.PI / 2; scene.add(br);
     // railings keep little explorers on the bridge
     W.boxes.push({ ...bridgeBox(B, B.a0, B.a1, hw - .1, hw + .3), bottom: y }, { ...bridgeBox(B, B.a0, B.a1, -hw - .3, -hw + .1), bottom: y });
     // (Round U, owner: no step where a road meets a bridge) the deck is walked on over the bridge itself; for 1.2 m past each

@@ -37,6 +37,12 @@ export function P(geo, color, pos = [0, 0, 0], rot = [0, 0, 0], scl = [1, 1, 1])
   const g = (geo.index ? geo.toNonIndexed() : geo.clone()).applyMatrix4(_m);
   return { g, color };
 }
+// (v1.08e places) a code shape that a Blender model (models/world/<name>.glb) takes over when a child comes near:
+// js/modelkit.ts picks this list up after the start (nothing is loaded here). opts: as modelFor, plus outline [width,
+// colour] for the model (the same edge as the code shape) and carry (the code shape's own children, such as a clock face
+// or a turning wheel, move onto the model so they stay seen).
+export const WORLD_TAGS: [any, string, any][] = [];
+export const worldTag = <T>(obj: T, name: string, opts: any = {}): T => { WORLD_TAGS.push([obj, name, opts]); return obj; };
 export function merge(parts) {
   let n = 0; parts.forEach(p => n += p.g.attributes.position.count);
   const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3);

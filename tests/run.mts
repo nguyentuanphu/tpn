@@ -94,6 +94,9 @@ await check('offlinelevels', async () => (await import('./offline-levels.mts')).
 // removed after the festival on Light and kept on Full (tests/festival-pack.mts)
 await check('festivalpack', async () => (await import('./festival-pack.mts')).festivalPackCheck(b));
 
+// (v1.08e places) the landmarks, bridges and buildings remade in Blender stand where their code shapes stood (tests/world-places.mts)
+await check('worldplaces', async () => (await import('./world-places.mts')).worldPlacesCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

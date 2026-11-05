@@ -3,7 +3,7 @@
 // new style), the food stand, three game stands (a post with the game's picture), and its own scenery. Built after the
 // valley's solid map, so every model is marked noSolid and the ones a child could bump into get a round collider.
 // Before the region's day only the "coming soon" sign stands (the friend, food and stands appear on the day).
-import { THREE, P, merge, toonVC, sprite, outline } from './gfx.js';
+import { THREE, P, merge, toonVC, sprite, outline, worldTag } from './gfx.js';
 import { T } from './i18n.js';
 import { heightAt, WATER } from './world.js';
 import { buildAvatar, nameAvatar } from './avatar.js';
@@ -74,7 +74,7 @@ const SCENERY: Record<string, (G, R: S2Region, ctx: Ctx, put: Put, block: Block)
     shallow.position.set(L.x, WATER + .03, L.z); shallow.userData.noSolid = true; G.scene.add(shallow);
     for (let i = 0; i < 16; i++) { const a = i * 2.39996, d = 4 + (i % 5) * 2.2, x = L.x + Math.cos(a) * d, z = L.z + Math.sin(a) * d * .8; put(coralParts(i), x, z, a, WATER - .7, undefined, false); }
     // the pontoon: a floating deck with a shade roof
-    put([P(B(7, .4, 4), '#e8e4dc', [0, .2, 0]), ...[[-3, -1.6], [3, -1.6], [-3, 1.6], [3, 1.6]].map(([x, z]) => P(C(.08, .08, 2.4, 6), '#d8dde0', [x, 1.4, z])), P(B(7.4, .15, 4.4), '#2f9a8a', [0, 2.65, 0]), P(B(7.2, .5, .2), '#ffd23f', [0, .5, 2.1])], L.x, L.z, 0, WATER + .1);
+    worldTag(put([P(B(7, .4, 4), '#e8e4dc', [0, .2, 0]), ...[[-3, -1.6], [3, -1.6], [-3, 1.6], [3, 1.6]].map(([x, z]) => P(C(.08, .08, 2.4, 6), '#d8dde0', [x, 1.4, z])), P(B(7.4, .15, 4.4), '#2f9a8a', [0, 2.65, 0]), P(B(7.2, .5, .2), '#ffd23f', [0, .5, 2.1])], L.x, L.z, 0, WATER + .1), 'lm-s2au-gbr', { outline: [.02, '#4a3a3f'] }); // (v1.08e places)
     const sg = sprite(R.landmark.icon, 1.6); sg.position.set(L.x, WATER + 4.2, L.z); G.scene.add(sg);
     // turtle nests: a sandy mound with eggs, and baby turtles heading for the sea
     for (const [dx, dz] of [[-14, 3], [14, 4]] as [number, number][]) { const s = ctx.at([dx, dz]);
@@ -88,8 +88,8 @@ const SCENERY: Record<string, (G, R: S2Region, ctx: Ctx, put: Put, block: Block)
   // of tall gums and pines round the island, and its animals (a wombat, a devil, an echidna) in the grass
   tas: (G, R, ctx, put, block) => {
     const L = ctx.at(R.landmark.at), top = heightAt(L.x, L.z);
-    put([[-1.6, 0, 3.4], [.4, -.6, 4.6], [2, .4, 3.2], [-.4, 1.4, 2.6]].map(([x, z, h], i) => P(new THREE.ConeGeometry(1.4, h, 5), i % 2 ? '#6a6a72' : '#7a7a84', [x, h / 2 - .4, z], [0, i, 0])).concat(
-      [[-1.6, 0, 3.4], [.4, -.6, 4.6], [2, .4, 3.2]].map(([x, z, h]) => P(new THREE.ConeGeometry(.6, h * .3, 5), '#ffffff', [x, h * .85 - .4, z]))), L.x, L.z, 0, top - .2);
+    worldTag(put([[-1.6, 0, 3.4], [.4, -.6, 4.6], [2, .4, 3.2], [-.4, 1.4, 2.6]].map(([x, z, h], i) => P(new THREE.ConeGeometry(1.4, h, 5), i % 2 ? '#6a6a72' : '#7a7a84', [x, h / 2 - .4, z], [0, i, 0])).concat(
+      [[-1.6, 0, 3.4], [.4, -.6, 4.6], [2, .4, 3.2]].map(([x, z, h]) => P(new THREE.ConeGeometry(.6, h * .3, 5), '#ffffff', [x, h * .85 - .4, z]))), L.x, L.z, 0, top - .2), 'lm-s2au-tas', { outline: [.02, '#4a3a3f'] }); // (v1.08e places)
     block(L.x, L.z, 3.2);
     const sg = sprite(R.landmark.icon, 1.4); sg.position.set(L.x, top + 6, L.z); G.scene.add(sg);
     { const s = ctx.at([-4, 7]); put([P(B(3, 2, 2.4), '#8a5a32', [0, 1, 0]), P(new THREE.ConeGeometry(2.3, 1.2, 4), '#5a3a22', [0, 2.6, 0], [0, Math.PI / 4, 0]), P(B(1.2, 1.4, .1), '#3a2a1a', [0, .7, 1.22])], s.x, s.z, Math.PI); block(s.x, s.z, 1.6); }
@@ -105,7 +105,7 @@ const SCENERY: Record<string, (G, R: S2Region, ctx: Ctx, put: Put, block: Block)
   // swans on the Swan River's pond, a beach umbrella and the lifesavers' flags on Perth's beach, a little city skyline
   perth: (G, R, ctx, put, block) => {
     const L = ctx.at(R.landmark.at), lh = heightAt(L.x, L.z);
-    put([P(C(.9, 1.3, 7, 12), '#ffffff', [0, 3.5, 0]), P(C(1, 1, .6, 12), '#e8433a', [0, 5, 0]), P(C(.75, .75, 1.2, 12), '#ffd23f', [0, 7.6, 0]), P(new THREE.ConeGeometry(1, .9, 12), '#e8433a', [0, 8.6, 0]), P(B(2.4, 1.6, 2), '#f2e6c8', [1.8, .8, 0])], L.x, L.z, 0, lh - .1);
+    worldTag(put([P(C(.9, 1.3, 7, 12), '#ffffff', [0, 3.5, 0]), P(C(1, 1, .6, 12), '#e8433a', [0, 5, 0]), P(C(.75, .75, 1.2, 12), '#ffd23f', [0, 7.6, 0]), P(new THREE.ConeGeometry(1, .9, 12), '#e8433a', [0, 8.6, 0]), P(B(2.4, 1.6, 2), '#f2e6c8', [1.8, .8, 0])], L.x, L.z, 0, lh - .1), 'lm-s2au-perth', { outline: [.02, '#4a3a3f'] }); // (v1.08e places)
     block(L.x, L.z, 1.4);
     const sg = sprite(R.landmark.icon, 1.4); sg.position.set(L.x, lh + 10.5, L.z); G.scene.add(sg);
     for (const [p, dx, dz, s] of [['au:quokka', 4, -3, .9], ['au:quokka', -5, 2, .8], ['au:quokka', 3, 4, .8], ['au:bike', -3, -4, .9]] as [string, number, number, number][]) {
