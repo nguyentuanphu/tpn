@@ -1,4 +1,4 @@
-# v1.08f settings: Grown-ups tidy-up and no TURN relay
+# v1.08f settings: Grown-ups tidy-up, relay wording hidden
 
 Read first: `README.md` (this folder) and the two screenshots in `pics/`, `js/ui-settings.ts`, `js/ui/grownups.ts`, `js/state.ts`, `js/relay.ts`, `js/net.ts`, `CLAUDE.md`.
 
@@ -15,11 +15,10 @@ Read first: `README.md` (this folder) and the two screenshots in `pics/`, `js/ui
 
    On a phone held upright the three choices sit in one row: smaller padding, text that shrinks or wraps inside each button. They stay 44 px or more tall, and readable in English and Vietnamese.
 4. **The jump:** tapping the choice that is already on (for example "Same as the language" under Money) jumps the Grown-ups panel to the top. Find the cause, probably a re-render that resets the scroll. Keep the scroll where it is for every choice in Grown-ups, whether or not it is already on.
-5. **Remove the TURN server connection:** the owner asked.
-   - Take the TURN relay out of the peer connection set-up (`iceServers`, `js/relay.ts` / `js/net.ts` and any Netlify function that hands out TURN credentials). Keep STUN.
-   - Any settings or Studio text about the relay goes.
-   - Online play then connects directly. Where a direct connection cannot be made (some strict networks), it fails as it would without a relay. Say so plainly in your report, so the owner knows.
-   - The relay is set up outside the repo (owner, 10 Oct). Do not touch accounts or keys; only stop using it.
+5. **The TURN relay stays; its wording and link are hidden** (owner, 6 Nov 2026 AEDT, corrected: "the turn function stays but the wording and the link there to hide").
+   - Keep the relay working exactly as it is: `iceServers` and the credentials.
+   - Hide only what a grown-up or child sees about it: the text about the voice relay or TURN server connection, and its link or button in Grown-ups or Settings.
+   - Hidden behind a switch that is off, not deleted.
 
 ## Checks
 
