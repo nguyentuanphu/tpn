@@ -14,6 +14,7 @@ import numpy as np
 HD_BUDGET = {'body': 9000, 'hair': 9500, 'hands': 700, 'item': 900, 'shoes': 900}
 HD_FACE = 700
 ATLAS = 1024
+UV_SHARE = {'hair': .3}   # the hair's strip of the picture (a share of its width)
 
 def _tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
@@ -69,11 +70,19 @@ def hd():
     for o in objs:
         while o.data.uv_layers: o.data.uv_layers.remove(o.data.uv_layers[0])
         o.data.uv_layers.new(name='UVMap')
-    _select(objs, objs[0])
-    bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
-    bpy.ops.uv.smart_project(angle_limit=math.radians(60), island_margin=.004)
-    bpy.ops.uv.pack_islands(margin=.004)
-    bpy.ops.object.mode_set(mode='OBJECT')
+    # two areas of the picture: the hair's thousand small locks (an even colour) on a narrow strip, the clothes, seams
+    # and buttons on the rest; each area is unwrapped and packed on its own, then moved into place
+    def unwrap(group, x0, x1):
+        if not group: return
+        _select(group, group[0])
+        bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
+        bpy.ops.uv.smart_project(angle_limit=math.radians(60), island_margin=.004)
+        bpy.ops.object.mode_set(mode='OBJECT')
+        for o in group:
+            for d in o.data.uv_layers[0].data: d.uv = (x0 + d.uv[0] * (x1 - x0), d.uv[1])
+    hair = [low[k] for k in cloth if k == 'hair']
+    unwrap([o for o in objs if o not in hair], 0, 1 - UV_SHARE['hair'])
+    unwrap(hair, 1 - UV_SHARE['hair'] + .004, 1)
     # bake: the colour (no light) and the soft shadow in the folds, from the full parts onto the thinned ones
     col_img = bpy.data.images.new('hd-colour', ATLAS, ATLAS); ao_img = bpy.data.images.new('hd-ao', ATLAS, ATLAS)
     col_img.generated_color = (0, 0, 0, 1); ao_img.generated_color = (1, 1, 1, 1)
@@ -92,7 +101,7 @@ def hd():
             if kind == 'DIFFUSE': bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
             else: bpy.ops.object.bake(type='AO', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
     c = np.array(col_img.pixels[:]).reshape(-1, 4); a = np.array(ao_img.pixels[:]).reshape(-1, 4)
-    c[:, :3] *= (.5 + .5 * a[:, :1]) ** 1.0; c[:, 3] = 1
+    c[:, :3] *= (.32 + .68 * a[:, :1]); c[:, 3] = 1   # the folds, seams and buttons a little deeper
     paint = bpy.data.images.new(WHO + '-hd', ATLAS, ATLAS); paint.pixels[:] = c.reshape(-1).tolist()
     paint.file_format = 'JPEG'; paint.pack()
     for k, h in high.items(): bpy.data.objects.remove(h)

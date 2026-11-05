@@ -138,6 +138,9 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
   }
   if (url.origin !== location.origin) return;
   // Hashed chunks are immutable. An open previous-version game may still need its own lazy chunks.
+  // (v1.08e faces, part 2) a friend's high-detail model (models/<id>-hd.glb, about 0.5 MB) is not in the list above, so a
+  // device never downloads all four: the one the child's own friend uses is kept the first time it loads, for offline play
+  if (/\/models\/[a-z]+-hd\.glb$/.test(url.pathname)) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   if (url.pathname.includes('/bundle/')) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   // the voice pack: kept in its own cache (it survives game updates) and stored as lines are played
   if(url.pathname.startsWith('/voices/fpt-leminh-v1/')){

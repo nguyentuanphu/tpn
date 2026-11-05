@@ -4,7 +4,9 @@
 //   2. the lids close fully on the blink: no eye white is left in the closed face, while the open face shows some;
 //   3. the face changes for happy, surprised and sad (feel(), the game's moments: a win, a find, a lost game);
 //   4. the eyes turn toward a child standing to one side (a person's own left or right), and straight ahead again;
-//   5. the villager's open eye has a lid: its white starts well under the eye's top.
+//   5. the villager's open eye has a lid: its white starts well under the eye's top;
+//   6. (part 2) only the child's own friend's high-detail model is downloaded; it is drawn near, the light one far away
+//      and when the high-detail one is blocked.
 import { open, clear } from './harness.mts';
 
 const ok = (c: unknown, msg: string) => { if (!c) throw new Error(msg); };
@@ -67,8 +69,28 @@ export async function facesCheck(b) {
     }
     return { bad, out };
   });
+  // (part 2) the high-detail model: only the child's own friend's is downloaded, after the start; it is drawn up close and
+  // the light one far away; blocked, the light model stays and nothing breaks
+  const hd = await P.page.evaluate(async () => {
+    const G = (window as any).__sv, h = G.heroes[0], f = h.profile.look.friend;
+    for (let k = 0; k < 80 && !h.av.modelHD; k++) await new Promise(r => setTimeout(r, 250));
+    const near = h.av.modelHD ? { hd: h.av.modelHD.obj.visible, light: h.av.model.obj.visible } : null;
+    
+    const A = await import(String('/js/avatar.js')); A.showHD(h.av, false); const far = h.av.modelHD ? { hd: h.av.modelHD.obj.visible, light: h.av.model.obj.visible } : null; A.showHD(h.av, true);
+    const asked = performance.getEntriesByType('resource').map(e => e.name).filter(n => /-hd\.glb$/.test(n)).map(n => n.split('/').pop());
+    return { f, has: !!h.av.modelHD, near, far, asked };
+  });
+  if (!hd.has) r.bad.push('no high-detail model for the child\'s friend');
+  if (hd.asked.length !== 1 || hd.asked[0] !== hd.f + '-hd.glb') r.bad.push('high-detail models asked: ' + hd.asked.join());
+  if (hd.near && !(hd.near.hd && !hd.near.light)) r.bad.push('up close: ' + JSON.stringify(hd.near));
+  if (hd.far && !(!hd.far.hd && hd.far.light)) r.bad.push('far away: ' + JSON.stringify(hd.far));
+  const Q = await open(b, { w: 900, h: 700, route: async ctx => { await ctx.route('**/models/*-hd.glb', q => q.abort()); } }); await clear(Q.page);
+  const blocked = await Q.page.evaluate(async () => { const h = (window as any).__sv.heroes[0]; for (let k = 0; k < 40 && !h.av.model; k++) await new Promise(r => setTimeout(r, 250)); await new Promise(r => setTimeout(r, 1500)); return { model: !!h.av.model, hd: !!h.av.modelHD }; });
+  if (!blocked.model || blocked.hd) r.bad.push('blocked: ' + JSON.stringify(blocked));
+  const qErrs = Q.errors.filter(e => !/glb|friend model|Failed to fetch|aborted/i.test(e)); await Q.ctx.close();
+  P.errors.push(...qErrs);
   const errs = P.errors; await P.ctx.close();
   ok(!r.bad.length && !errs.length, JSON.stringify({ bad: r.bad, errs, out: r.out }).slice(0, 2500));
   const o = r.out as Record<string, { blinkAt: number }>;
-  return `${Object.entries(o).map(([k, v]) => `${k} blinks at ${v.blinkAt} s`).join(', ')}; half, closed, half; lids close fully; happy, surprised and sad faces; the eyes turn to a child on either side`;
+  return `${Object.entries(o).map(([k, v]) => `${k} blinks at ${v.blinkAt} s`).join(', ')}; half, closed, half; lids close fully; happy, surprised and sad faces; the eyes turn to a child on either side; the high-detail ${hd.f} only, near (light far away, light when blocked)`;
 }
