@@ -70,6 +70,11 @@ def kit_master(kit):
     path = next((os.path.join(KITDIR, f) for f in sorted(os.listdir(KITDIR)) if f.startswith(pre) and f.endswith('.blend')), None) if os.path.isdir(KITDIR) else None
     if not path: return None
     with bpy.data.libraries.load(path, link=False) as (src, dst): dst.collections = [c for c in src.collections if not c.startswith('face-') or c == 'face-smile']
+    # a character in a page is small in the picture: its smoothing steps are kept low, so a page with many people fits in memory
+    for c in dst.collections:
+        for o in (c.all_objects if c else []):
+            for md in o.modifiers:
+                if md.type == 'SUBSURF': md.levels = 0; md.render_levels = min(md.render_levels, int(opt.get('smooth', 0)))
     master = bpy.data.collections.new(name)
     for c in dst.collections:
         if c is None or c.name.startswith('hands-grip'): continue

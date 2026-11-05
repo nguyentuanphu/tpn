@@ -38,7 +38,7 @@ const HEAD: Record<string, (L: Look) => Part[]> = {
   // mũ xung thiên: the king's gold cap of the old tales, a high crown at the back, two gold wings standing up behind it,
   // a sun with a pearl in front and dragons along the band (owner, 6 Nov 2026 AEDT: as in the Vietnamese fairy-tale films)
   xungthien: () => [P(Cyl(.5, .53, .32, 24), C.gold, [0, .32, 0]), P(Tor(.52, .03), '#f2d16b', [0, .18, 0], [H, 0, 0]), P(Sph(.36, 16, 10), C.gold, [0, .56, -.16], [0, 0, 0], [1, 1.2, .8]),
-    P(Box(.05, .46, .2), '#f2d16b', [.3, .86, -.28], [0, 0, -.3]), P(Box(.05, .46, .2), '#f2d16b', [-.3, .86, -.28], [0, 0, .3]),
+    P(Cyl(.17, .17, .02, 18), '#f2d16b', [.28, .9, -.36], [-.35, 0, H + .12], [1, 1, 1.5]), P(Cyl(.17, .17, .02, 18), '#f2d16b', [-.28, .9, -.36], [-.35, 0, H - .12], [1, 1, 1.5]),
     P(Cyl(.13, .13, .02, 18), '#f2d16b', [0, .32, .52], [H, 0, 0]), P(Sph(.05, 8, 6), '#f6f1ea', [0, .32, .54]),
     P(Tor(.2, .025, PI * .8), '#f2d16b', [.3, .25, .42], [0, -.6, 0]), P(Tor(.2, .025, PI * .8), '#f2d16b', [-.3, .25, .42], [0, .6, PI])],
   // kim quan: a prince's small gold crown over the topknot, a gold pin through it and a red jewel

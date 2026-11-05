@@ -170,8 +170,8 @@ def kit_hat(kind, col=None):
         tube('hatBand', GOLDL, ring_(.2, 1.12, 1.1), .06 * R, 8, False)
         c = lathe('hatBand', GOLD, [(.0, .6 * R), (.7 * R, .62 * R), (.75 * R, 1.1 * R), (.55 * R, 1.42 * R), (0, 1.5 * R)], 32, loc=HC + Vector((0, .35 * R, 0)))   # the high back crown
         for s in (-1, 1):   # the two wings standing up behind
-            w = sphere('hatBand', GOLDL, H(s * .62, .62, 1.55), (.18 * R, .05 * R, .55 * R), 16, 8, (.15, s * .35, 0))
-            tube('hatBand', GOLD, [H(s * .62, .6, 1.05), H(s * .66, .62, 2.05)], .03 * R, 6)
+            # (owner, 6 Nov 2026 AEDT: they looked like rabbit ears) flat, tall wing plates with a gold rim, leaning out a little
+            w = sphere('hatBand', GOLDL, H(s * .55, .8, 1.35), (.03 * R, .34 * R, .52 * R), 24, 12, (-.35, 0, s * .12))   # a blade seen from the front, a wing from the side
         sphere('hatBand', GOLDL, H(0, -1.1, .5), (.32 * R, .06 * R, .3 * R), 20, 10)   # the sun plate in front
         sphere('hatBand', PEARL, H(0, -1.16, .52), (.1 * R,) * 3, 12, 6)
         for k in range(8): a = k * math.pi / 4; sphere('hatBand', RED, H(math.cos(a) * .22, -1.15, .52 + math.sin(a) * .22), (.04 * R,) * 3, 8, 4)
