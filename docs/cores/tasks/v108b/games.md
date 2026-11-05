@@ -126,7 +126,6 @@ Their names and pictures were already different, so nothing was renamed (no new 
 
 - On a phone the 8 journey rows fill the first screen of the Học vui tab (the games are just below); Release may want them folded.
 
-## Progress notes
 
 ## Owner's decisions
 - 5 Nov 2026 AEDT: learning journeys have 9 steps and a badge (fits the sticker book's pages of 9).
@@ -138,4 +137,6 @@ Their names and pictures were already different, so nothing was renamed (no new 
     secondset, playhub, emoji, noemoji, festivalgames, learningquests, games (326 games), phone, boot, contract.
   - fail, not this branch: unit (2 tests need the `pg` package, not installed in this container); roundvariety
     (`lemonade`, a money game: hard round 4 = round 2; every new game passed).
-  - guides, levelsa, gamespace, gamefit: see the next note.
+  - pass: gamespace (323 games), levelsa, guides (350 games with How to play).
+  - fail, not this branch: gamefit (older games danhdao, nemcon, keocua, duathuyen, whosits scroll or have a button below
+    the fold; every new game fits one screen).
