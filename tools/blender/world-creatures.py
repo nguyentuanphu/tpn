@@ -274,26 +274,30 @@ def add_face(kind, piv, size, companion):
         c, side = e['c'], (1 if e['c'].x > 0 else -1)
         d = (c - centre); d = Vector((d.x, d.y * .3, d.z)).normalized() if d.length > 1e-4 else Vector((0, 0, 1))
         sideways = Vector((0, 1, 0)).cross(d).normalized()
-        R = e['r'] * (1.28 if e['white'] else 1.22); pr = []
-        if e['white']:
-            pr.append(sph(R, '#fbfaf6', (0, 0, 0))); ri = R * .6; ic = d * R * .55
-        else: ri = R; ic = Vector((0, 0, 0))
-        pr.append(sph(ri, e['iris'], ic))
-        if e['slit']: pr.append(sph(ri, '#120d0a', ic + d * ri * .45, (.28, .95, .45)))
-        elif not e['white'] and lum(e['iris']) > .08: pr.append(sph(ri * .55, '#120d0a', ic + d * ri * .5))
-        pr.append(sph(ri * .34, '#ffffff', ic + d * ri * .78 + Vector((0, ri * .36, 0)) - sideways * ri * .28 * side))
-        pr.append(sph(ri * .15, '#ffffff', ic + d * ri * .86 + Vector((0, -ri * .32, 0)) + sideways * ri * .3 * side))
+        # (owner, 6 Nov 2026 AEDT: "the eyes look still very scary") big, soft, glossy eyes that sit flat on the face like
+        # a picture book's, not balls: a warm dark brown, a little taller than wide, a big sparkle and a small one (the same
+        # side on both eyes), a soft glow at the bottom; no whites round them (a thin light rim only where the face is dark),
+        # round pupils (no slits)
+        ay = math.atan2(d.x, d.z); flat = .4; R = e['r'] * (1.12 if companion else 1.4); pr = []
+        def disc(r, col, at, sy=1.1, depth=flat): return sph(r, col, at, (1, sy, depth), (0, ay, 0))
+        iris = '#2b1b12' if (e['white'] or lum(e['iris']) < .08) else e['iris']
+        if e['white']: pr.append(disc(R * 1.14, '#fff8ee', d * R * .18, 1.1, flat * .9))
+        pr.append(disc(R, iris, d * R * .3))
+        if lum(iris) > .08: pr.append(disc(R * .66, '#1c120c', d * R * .48, 1.12))   # (a round pupil, in front of the colour)
+        pr.append(disc(R * .5, '#6e4a36' if lum(iris) < .08 else shade(iris, 1.25), d * R * .38 + Vector((0, -R * .46, 0)), .5))
+        pr.append(disc(R * .4, '#ffffff', d * R * .52 + Vector((0, R * .38, 0)) - sideways * R * .3, 1.0, .6))
+        pr.append(disc(R * .18, '#ffffff', d * R * .52 + Vector((0, -R * .3, 0)) + sideways * R * .34, 1.0, .6))
         face['eyes'].append(pivot('eye%d' % i, c, pr))
         # the closed-eye arc: "^" for joy, turned over for sleep (shown by the clips, tiny otherwise)
-        Rt = R * .78; ay = math.atan2(d.x, d.z)
-        arc = {'type': 'TorusGeometry', 'p': {'radius': Rt, 'tube': R * .17, 'arc': 2.3}, 'color': '#22170f',
-               'pos': list(d * R * .9 + Vector((0, -Rt * .55, 0))), 'rot': [0, ay, math.pi / 2 - 1.15], 'scl': [1, 1, 1]}
+        Rt = R * .7
+        arc = {'type': 'TorusGeometry', 'p': {'radius': Rt, 'tube': R * .14, 'arc': 2.3}, 'color': '#2b1b12',
+               'pos': list(d * R * .45 + Vector((0, -Rt * .55, 0))), 'rot': [0, ay, math.pi / 2 - 1.15], 'scl': [1, 1, 1]}
         face.setdefault('lids', []).append(pivot('lid%d' % i, c, [arc]))
         if kind not in NO_BROW:   # a soft brow above the eye, on the head
-            at = c + Vector((0, R * 1.85, 0)); h, n = hit(at + d * .4, -d)
+            at = c + Vector((0, e['r'] * 2.7, 0)); h, n = hit(at + d * .4, -d)   # (soft, short and well above the eye: no frown)
             if h is not None:
-                bc = h + n * R * .1; tilt = -side * .12
-                brow = {'type': 'CapsuleGeometry', 'p': {'radius': R * .2, 'length': R * 1.1}, 'color': shade(skin, .45) if lum(skin) > .1 else '#4a4a4a',
+                bc = h + n * R * .05; tilt = side * .1
+                brow = {'type': 'CapsuleGeometry', 'p': {'radius': R * .12, 'length': R * .75}, 'color': shade(skin, .72) if lum(skin) > .1 else '#5a5a5a',
                         'pos': [0, 0, 0], 'rot': [0, math.atan2(d.x, d.z), math.pi / 2 + tilt], 'scl': [1, 1, 1]}
                 face['brows'].append(pivot('brow%d' % i, bc, [brow]))
         if kind not in NO_CHEEK:   # rosy cheeks
@@ -346,7 +350,7 @@ def face(P, F, eye=1.0, big=1.0, brow_y=0.0, brow_tilt=0.0, smile=1.0, frown=Fal
     """the face's bones: eye = how open (1 open, .35 a happy squint, .06 shut), big = how big (surprise), brows up and
     tilted (sad: the inner ends up), the mouth's smile (wider) or frown (turned over), the jaw open (0 shut, 1 wide)"""
     closed = joy or shut
-    for b in F.get('eyes', []): P[b] = ((0, look, 0), Z3, (big, .04 if closed else max(.06, big * eye), big))
+    for b in F.get('eyes', []): P[b] = ((0, look, 0), Z3, ((.01, .01, .01) if closed else (big, max(.06, big * eye), big)))
     for b in F.get('lids', []): P[b] = ((0, 0, math.pi if shut else 0), Z3, (1, 1, 1) if closed else (.02, .02, .02))
     for i, b in enumerate(F.get('brows', [])):
         side = -1 if i == 0 else 1
@@ -456,7 +460,7 @@ def animal_moves(kind, A, arm, bones, F, size):
         for e in ears: P[e] = ((.25 * k, 0, 0), Z3, O3)
         tail_pose(P, t, TAU / L, .2, 1, -.4 * k)
         for b, l in legs: P[b] = ((.3 * jump if l['arm'] else 0, 0, 0), Z3, O3)
-        face(P, F, eye=1, big=1 + .35 * k, brow_y=br * 1.8 * k, smile=.45 + .55 * (1 - k), jaw=.7 * k)
+        face(P, F, eye=1, big=1 + .18 * k, brow_y=br * 1.8 * k, smile=.45 + .55 * (1 - k), jaw=.7 * k)
         return P
     def sleep(t):   # curled down, eyes shut, breathing slowly
         L = 4.0; w = TAU / L; P = rest(bones); b = math.sin(w * t)
@@ -487,7 +491,7 @@ def companion_moves(kind, A, arm, bones, F, size):
     def follow(t): L = 2.4; w = TAU / L; P = rest(bones); P['body'] = ((.25 * bm, 0, 0), Z3, O3); wings(P, t, w, flap * 1.4, .75); face(P, F, eye=blink(t, (1.1,)), smile=1.2, jaw=.2); return P
     def cheer(t): L = 1.6; w = TAU / L; P = rest(bones); P['body'] = ((-w * t, 0, 0), (0, math.sin(w * t / 2) * .15, 0), O3); wings(P, t, w, flap * 1.5, .8); face(P, F, joy=True, smile=1.4, jaw=.9, brow_y=br); return P   # a loop-the-loop
     def sad(t): L = 4.0; w = TAU / L; P = rest(bones); P['body'] = ((.25 * bm, 0, 0), (0, -.03 * bm, 0), O3); wings(P, t, w, flap * .6, .3); face(P, F, eye=.6 * blink(t, (2.2,), .4), brow_tilt=.38, frown=True, smile=.85); return P
-    def surprised(t): L = 1.2; w = TAU / L; P = rest(bones); k = min(1, t / .12) * (1 - max(0, (t - .9) / .3)); P['body'] = ((-.2 * k * bm, 0, 0), (0, .08 * k * bm, 0), O3); wings(P, t, w, flap * 1.5, .9); face(P, F, big=1 + .35 * k, brow_y=br * 1.8 * k, smile=.45, jaw=.7 * k); return P
+    def surprised(t): L = 1.2; w = TAU / L; P = rest(bones); k = min(1, t / .12) * (1 - max(0, (t - .9) / .3)); P['body'] = ((-.2 * k * bm, 0, 0), (0, .08 * k * bm, 0), O3); wings(P, t, w, flap * 1.5, .9); face(P, F, big=1 + .18 * k, brow_y=br * 1.8 * k, smile=.45, jaw=.7 * k); return P
     def sleep(t): L = 4.0; w = TAU / L; P = rest(bones); P['body'] = ((.2 * bm + math.sin(w * t) * .03, 0, 0), (0, math.sin(w * t) * .02 * bm, 0), O3); wings(P, t, w, flap * .3, .15); face(P, F, shut=True, smile=.8); return P
     return [('idle', 6.0, idle), ('fly', 3.0, fly), ('flap', 2.4, happy), ('follow', 2.4, follow), ('cheer', 1.6, cheer),
             ('sad', 4.0, sad), ('surprised', 1.2, surprised), ('sleep', 4.0, sleep)]
