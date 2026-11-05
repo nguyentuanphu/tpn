@@ -235,8 +235,9 @@ def shoes(kind, col=None):
 
 HAT_COL = {'straw': '#e3c37c', 'nonla': '#eadbb0', 'cap': '#e2574c', 'beanie': '#6f9fd8', 'crown': '#7fae5e', 'akubra': '#8a6142', 'bucket': '#f2c14e', 'helmet': '#d64b4b'}
 def hat(kind, col=None):
-    k = R * {'lumi': 1.2, 'clara': 1.12, 'sol': 1.08, 'finn': 1.2}.get(WHO, 1.14)   # bigger hair needs a bigger hat
-    top = HC + Vector((0, .02 * R, (.55 + {'lumi': .32, 'clara': .12, 'sol': .1, 'finn': .32}.get(WHO, 0)) * R)); M = felt('hat' + kind + (col or ''), col or HAT_COL[kind], .85, .1)
+    k = R * {'lumi': 1.2, 'clara': 1.12, 'sol': 1.08, 'finn': 1.2}.get(WHO, 1.24)   # bigger hair needs a bigger hat
+    # (v1.08e villagers, owner: "the hats don't fit the head") a villager's hat sits down over the hair, not perched on top
+    top = HC + Vector((0, .02 * R, (.55 + {'lumi': .32, 'clara': .12, 'sol': .1, 'finn': .32}.get(WHO, -.12)) * R)); M = felt('hat' + kind + (col or ''), col or HAT_COL[kind], .85, .1)
     BAND = felt('hatRibbon', '#c75b4a')
     if kind == 'straw':  # a sun hat with a ribbon (also the broad-brimmed school hat, in navy)
         lathe('hatCrown', M, [(.0, .62 * k), (.42 * k, .6 * k), (.66 * k, .4 * k), (.74 * k, .05 * k)], 32, loc=top)

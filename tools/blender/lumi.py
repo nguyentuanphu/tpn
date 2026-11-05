@@ -150,6 +150,8 @@ if GAME and LOOK in ('felt', 'toy'):
         R = .255 if not (V and V['size'] != 'kid') else .24
         P.update(head=(.98, .94, 1.02), jaw=.12, cheek=.05, eye=.18, eyeX=.31, eyeZ=-.12, mouth=.68, noseZ=-.33, mouthZ=-.5, blushX=.52, blushZ=-.37)
     if V and V['size'] != 'kid': P.update(eye=P['eye'] * .85, mouth=P['mouth'] * .9)
+    if V:   # (v1.08e villagers, owner 6 Nov 2026 AEDT: "the heads are too round and don't look like the model") the gallery's
+        R *= .9; P.update(head=(.94, .92, 1.05), jaw=.18, cheek=.03)   # neighbours: a smaller, more oval head with a softer chin
     HC = Vector((0, 0, chin + R * P['head'][2]))
 if GAME:  # boys and girls, men and women have different figures (owner, 3 Nov: "dáng"); grown-ups differ more than children
     a_ = 1.0 if (V and V['size'] != 'kid') else .5; bw_ = {'au-dad': 1.08, 'au-grandpa': 1.05}.get(ROLE, 1.0) if V else 1.0
