@@ -26,6 +26,7 @@ import { familyCode, setFamilyCode, familyPhotoCount } from './custom.js';
 import { avatarURL, applyNpcFaces, namedVillagers } from './avatar.js';
 
 import { openReport } from './report.js';
+import { learnHTML, bindLearn } from './learnreport.js';   // (v1.08c parents)
 
 import { extrasHTML, bindExtras, privacyHTML, netListHTML } from './extras.js';
 
@@ -191,6 +192,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       <div class="vrow"><input type="text" id="gFam" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="20" placeholder="ABCD-EFGH-JKMN" value="${familyCode() ? '••••' + esc(familyCode().slice(-4)) : ''}"><button class="btn" id="gFamSave">${T('Save', 'Lưu')}</button></div>
       <p class="note" id="gFamRes">${(() => { const c = familyPhotoCount(); return familyCode() ? T(`${c.have} of ${c.of} family photos on this device.`, `${c.have}/${c.of} ảnh gia đình trên máy này.`) : T('No earlier photo code saved on this device.', 'Máy này chưa lưu mã ảnh trước đây.'); })()}</p></details>
       </div></details>
+      ${learnHTML(gOpen.has('learn')) /* (v1.08c parents) the learning report and levels by subject (js/learnreport.ts) */}
       <details class="gsec" data-sec="sound" ${gOpen.has('sound') ? 'open' : ''}><summary><span class="gi">🔊</span><b>${T('Sound and voices', 'Âm thanh và giọng nói')}</b></summary><div class="gbody">
       <div class="toggles">
         <label class="tog"><input type="checkbox" id="gVoice" ${settings.voice ? 'checked' : ''}> ${T('Talking voice', 'Giọng nói')}</label>
@@ -374,6 +376,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       sayDevice(b.dataset.try, b.dataset.try === 'vi' ? 'Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.' : 'Hello! Welcome to Sparkle Valley.');
     });
     card.querySelectorAll('[data-rep]').forEach(b => b.onclick = () => { SFX.tap(); openReport(profiles.find(p => p.id === b.dataset.rep)); });
+    bindLearn(card);   // (v1.08c parents)
     card.querySelectorAll('[data-ed]').forEach(b => b.onclick = () => openEditor(profiles.find(p => p.id === b.dataset.ed), () => { draw(); after && after(); }));
     // (round R privacy) the family code: kept on this device only (never in a backup); empty removes it and the photos
     // (owner, 16 Oct AEDT) family devices and photo sharing is a trial: shown when Studio switches it on, and on tester

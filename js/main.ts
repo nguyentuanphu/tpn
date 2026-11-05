@@ -111,6 +111,7 @@ import { installInteractables } from './main/interactables.js';
 import { installHeroEvents } from './main/hero-events.js';
 import { installTalking } from './main/talking.js';
 import { installLayout } from './main/layout.js';
+import { levelFor } from './content/subjects.js';   // (v1.08c parents) the level that follows the child per subject
 // (owner point 10) this page is the game: it claims the tab, so an older game tab stops saving (js/state.js)
 claimTab();
 
@@ -455,7 +456,9 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   // the level the child chose inside this game (round M), else the grown-ups' difficulty for this child
   // (owner, 1 Nov 2026 AEDT: "the levels often look the same") each level has its own band and wins move a child up inside it:
   // Easy 1-2, Medium 2-3, Hard 4-5, Talent 5 with the game's own extra challenge. (Before, Easy reached the top after a few wins.)
-  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || p.difficulty || 'easy', band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
+  // (v1.08c parents) with no pick of the child's own, the level of the game's subject: the grown-up's choice for that
+  // subject, else the child's level moved by how the subject is going (js/content/subjects.ts)
+  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || levelFor(p, id), band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
   const level = Math.min(band[1], band[0] + Math.floor(((p.levels[id] || 1) - 1) / 2));
   const little = G.heroes.some(x => x.profile.age !== 'big'), strong = !little && diff !== 'easy';
   if (source === 'shrine') { SFX.secret(); say('A shrine! Let’s solve the puzzle.', 'Một ngôi đền! Cùng giải câu đố nào.'); await wait(600); }

@@ -3486,3 +3486,17 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
   .horse-race:not(:has(> details[open])) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .horse-race:not(:has(> details[open])) > :not(details) { grid-column: 1 / -1; }
 }
+
+/* (v1.08c parents) the learning report and levels by subject (js/learnreport.ts) */
+.learnrep .card { max-width: 640px; }
+.lr-subj { display: grid; gap: 6px; }
+.lr-row, .lr-sug { display: flex; align-items: center; gap: 10px; background: #fff7ec; border-radius: 12px; padding: 8px 10px; min-height: 56px; }
+.lr-row > div, .lr-sug > div { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.lr-row small, .lr-sug small { font-size: 16px; color: #6a5a7a; }
+.lr-ic { width: 40px; height: 40px; flex: none; display: inline-flex; } .lr-ic .art, .lr-ic .emo { width: 40px; height: 40px; font-size: 32px; }
+.lr-lv { font-size: 16px; font-weight: 700; color: #7b4bd6; text-align: right; }
+.lr-well { padding-left: 22px; } .lr-well li { margin: 4px 0; font-size: 16px; }
+.lr-kids { display: flex; flex-wrap: wrap; gap: 8px; } .lr-kids .btn { min-height: 44px; }
+.lr-lvkid { padding: 8px 10px; margin: 8px 0; border-radius: 12px; background: rgba(138, 92, 246, .08); }
+.lr-lvrow { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 16px; } .lr-lvrow > span:nth-child(2) { flex: 1; min-width: 0; }
+.lr-lvrow select { min-height: 44px; font-size: 16px; max-width: 60%; }

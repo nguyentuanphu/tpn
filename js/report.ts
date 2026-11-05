@@ -13,6 +13,7 @@ import { modal } from './popups.js';
 import { pic } from './art.js';
 import { esc } from './util.js';
 import { homeScreenApp, pdfOf, jpegOf, sharePDF } from './printpage.js';
+import { countDay, noteResult } from './content/subjects.js';
 
 export const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const days = p => { const s = p.stats = p.stats || {}; s.days = s.days && typeof s.days === 'object' ? s.days : {}; return s.days; };
@@ -22,14 +23,18 @@ export const addMinute = p => { today(p).min++; };
 
 export function createReport(G, { save }) {
   const profileOf = playerId => { const n = (parse(playerId) || {}).name; return (G.heroes.find(h => h.profile.id === n) || {}).profile; };
-  const played = (players, defId) => {
+  // (v1.08c parents) result: { won, stars } for a finished game, { won: false } for one left before the end, null for one
+  // restarted at another level; each game of a school subject also counts for the learning report and the level that
+  // follows the child per subject (js/content/subjects.ts)
+  const played = (players, defId, result = null) => {
     const game = (parse(defId) || {}).name;
-    for (const id of players || []) { const p = profileOf(id); if (!p) continue; today(p).games++; const pl = p.stats.played = p.stats.played || {}; if (game) pl[game] = (pl[game] || 0) + 1; }
+    for (const id of players || []) { const p = profileOf(id); if (!p) continue; const d = today(p); d.games++; const pl = p.stats.played = p.stats.played || {}; if (game) pl[game] = (pl[game] || 0) + 1;
+      if (game && result && players.length === 1) { countDay(d, game, !!result.won, result.stars || 0); noteResult(p, game, result.won ? Math.max(1, result.stars || 1) : 0); } }
     save();
   };
   events.on('ActivityStarted', e => { G._actPlayers = G._actPlayers || {}; G._actPlayers[e.activityId] = e.players; });
-  events.on('ActivityCompleted', e => played(e.players, e.defId));
-  events.on('ActivityAbandoned', e => { const pl = (G._actPlayers || {})[e.activityId]; if (pl) played(pl, e.activityId.replace(/^act:([^/]+)\/.*$/, 'game:$1')); });
+  events.on('ActivityCompleted', e => played(e.players, e.defId, { won: true, stars: (e.result && e.result.stars) || 0 }));
+  events.on('ActivityAbandoned', e => { const pl = (G._actPlayers || {})[e.activityId]; if (pl) played(pl, e.activityId.replace(/^act:([^/]+)\/.*$/, 'game:$1'), e.reason === 'level' ? null : { won: false }); });
 }
 
 // the report window
