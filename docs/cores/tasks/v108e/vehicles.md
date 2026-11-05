@@ -1,6 +1,6 @@
 # v1.08e vehicles: status
 
-**ready for Release** (6 Nov 2026, 03:20 AEDT; `origin/integrate/v108` merged in). Branch `work/v108e-vehicles` (from `origin/integrate/v108`). Brief: `vehicles-brief.md`.
+**In progress: remake** (6 Nov 2026 AEDT). The owner saw the first models: "They need to have better refinement, need to have souls and more real, atm looks like ugly toys". Not ready for Release until the remake is pushed. Branch `work/v108e-vehicles` (from `origin/integrate/v108`). Brief: `vehicles-brief.md`.
 
 ## Every vehicle (ridden or seen)
 
@@ -51,6 +51,12 @@ Sizes: 7-48 KB each, 3,200-4,800 triangles (the boats and the excavator less).
   and all 30 models in its FILES list for offline (no apostrophes).
 - No change to the kit (`js/modelkit.ts`). `js/ferry.ts`: `ferryBoat` and `bambooRaft` are now exported (for the
   blueprints).
+
+## Owner's decisions
+
+- 6 Nov 2026 AEDT (pop-ups): the remake is **stylised real**: real shapes and proportions, smooth curved panels, shiny
+  paint, chrome, rubber tyres, see-through glass, lights and small details, like an animated film, still fitting the
+  valley. **All at once**: every vehicle and boat remade, then shown together.
 
 ## Assumed (owner can change)
 
