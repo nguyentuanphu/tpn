@@ -53,11 +53,11 @@ export function bambooRaft() {
 }
 
 // (v1.08e vehicles) the Blender boats (models/world/boat-ferry.glb, boat-raft.glb from tools/blender/world-vehicles.py):
-// the hull is swapped when a child first comes near (js/modelkit.ts); the signs, the flag, the lantern and the raft's
+// the hull is swapped when a child first comes near (js/modelkit.ts), dressed like the vehicles (js/vehicle-models.ts); the signs, the flag, the lantern and the raft's
 // fading roof stay the code's own. Until the model has arrived, or when it cannot load, the code hull stays.
 function wearBoat(g, name) {
   const hull = g.children[0]; if (!hull) return;
-  import('./modelkit.js').then(K => K.modelFor(hull, name, {}, m => { if (!m) return; m.obj.traverse(o => { o.userData.noCam = true; }); outline(m.obj, .03, name === 'boat-raft' ? '#4a3a2a' : '#2b3a4f'); })).catch(() => { });
+  import('./modelkit.js').then(K => K.modelFor(hull, name, {}, m => { if (!m) return; m.obj.traverse(o => { o.userData.noCam = true; }); import('./vehicle-models.js').then(V => V.dress(m.obj)); })).catch(() => { });
 }
 export function createFerries(G) {
   const { scene, world } = G;
