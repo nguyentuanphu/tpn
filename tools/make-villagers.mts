@@ -18,7 +18,8 @@ for (const w of who) {
   const run = (cmd: string, args: string[]) => execFileSync(cmd, args, { cwd: ROOT, stdio: ['ignore', 'pipe', 'inherit'] }).toString();
   const log = run(BLENDER, ['-b', '-P', 'tools/blender/lumi.py', '--', tmp, 'villager', `role=${w}`, 'game', 'glb', 'hd']);
   const out = path.join(ROOT, 'models', `villager-${w}.glb`);
-  run('npx', ['-y', 'gltfpack@0.20.0', '-i', path.join(tmp, `villager-${w}-game-hd.glb`), '-o', out, '-cc', '-kn', '-km']);
+  const src = fs.readdirSync(tmp).find(f => f.startsWith(`villager-${w}-`) && f.endsWith('-hd.glb')); // (named by the size: kid, adult, elder)
+  run('npx', ['-y', 'gltfpack@0.20.0', '-i', path.join(tmp, src), '-o', out, '-cc', '-kn', '-km']);
   console.log(`${w}: ${(log.match(/hd: total triangles shown (\d+)/) || [])[1]} triangles, ${Math.round(fs.statSync(out).size / 1024)} KB → models/villager-${w}.glb`);
 }
 fs.rmSync(tmp, { recursive: true, force: true });

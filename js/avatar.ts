@@ -505,6 +505,21 @@ export function animate(A, state, t, speed = 0) {
     if (want !== L.mood && A.faceMat.map) { L.mood = want; setFaceMood(A.faceMat.map, want); }
   }
 }
+/** (v1.08e villagers) a named villager's own Blender model (models/villager-<id>.glb, made by tools/make-villagers.mts)
+ *  in place of the code person: the model follows the code person's joints and moods (js/friend-model.ts), stands at the
+ *  code person's height, and the code person's parts are hidden (kept, so a photo face or a rebuild can bring them back).
+ *  The far still copy is made first, from the code person, so far away nothing changes. False when it cannot be worn. */
+export function wearVillagerModel(A: SvAvatar, key: string): boolean {
+  if (!A || A.model || !A.painted || !FRIEND_MODELS.ready || !FRIEND_MODELS.ready(key)) return false;
+  stillOf(A); A.rig.updateMatrixWorld(true);
+  const box = new THREE.Box3(), codeParts: THREE.Object3D[] = [];
+  A.rig.traverse(o => { if (o instanceof THREE.Mesh && o.visible && !o.userData.outline) { box.expandByObject(o); codeParts.push(o); } });
+  const codeH = box.max.y - box.min.y, m = FRIEND_MODELS.attach(A, key, String(A.look.skin || '#f6c7a5'), {}); if (!m) return false;
+  codeParts.forEach(o => { o.visible = false; o.children.forEach(c => { if (c.userData.outline) c.visible = false; }); });
+  m.obj.updateMatrixWorld(true); const mb = new THREE.Box3().setFromObject(m.obj, true), mh = mb.max.y - mb.min.y;
+  if (mh > .1 && codeH > .1) { const k = codeH / mh; m.obj.scale.multiplyScalar(k); m.obj.position.y += (box.min.y - mb.min.y * k) / A.rig.scale.y; }
+  A.model = m; A.root.userData.villagerModel = key; return true;
+}
 /** (v1.08e faces, part 2) the high-detail model up close, the light one far away (a child's own friend only) */
 export function showHD(A, near: boolean) { if (!A || !A.modelHD || A._hd === near) return; A._hd = near; A.modelHD.obj.visible = near; A.model.obj.visible = !near; }
 /** (v1.08e faces) a feeling on a person's face for a moment: 'o' (surprised at a find), 'sad' (a game lost), 'shy' (greeted),
