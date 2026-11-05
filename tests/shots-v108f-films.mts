@@ -2,7 +2,7 @@
 // and a computer (out/v108f-films-*.png). Not a check: the pictures a round report looks at.
 import { chromium } from 'playwright';
 import { open, clear } from './harness.mts';
-const b = await chromium.launch();
+const b = await chromium.launch({ executablePath: process.env.CHROMIUM || undefined });
 const SIZES: [string, number, number, boolean][] = [['phone', 390, 844, true], ['tablet', 820, 1180, true], ['tablet-wide', 1180, 820, true], ['computer', 1440, 900, false]];
 for (const [name, w, h, touch] of SIZES) {
   const P = await open(b, { w, h, touch }); await clear(P.page);

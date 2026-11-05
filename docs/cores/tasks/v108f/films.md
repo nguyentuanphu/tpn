@@ -1,6 +1,6 @@
 # v1.08f films: status (films helper, started 6 Nov 2026 AEDT)
 
-**Working.** Branch `work/v108f-films` from `origin/integrate/v108`. Brief: `films-brief.md`. The owner's go is given (6 Nov 2026 AEDT). Only Release merges and runs the full suite.
+**ready for Release** (6 Nov 2026 AEDT). Branch `work/v108f-films` from `origin/integrate/v108`. Brief: `films-brief.md`. The owner's go is given (6 Nov 2026 AEDT). Only Release merges and runs the full suite.
 
 ## Where the films come from
 - `work/v108c-films-gpu` (the owner's PC renders) was not on GitHub when this started, so this branch builds on the Blender branch's player: `origin/work/v108c-blender` is merged in (commit `280c07d02`, conflicts in `.gitignore`, `js/film.ts` (the Blender branch's lips and blink kept) and `tests/check-times.json` (integrate's kept)). No video files are copied.
@@ -26,7 +26,13 @@
 ## Checks
 - `blenderfilms` extended (`tests/story-v108c.mts`): the five; a sixth (`sontinh`) plays the in-game film for everyone, for a tester with the switch off, and for a non-tester with the switch on; its video for a tester with the switch on and for everyone with its own switch on; Download all: 5 films, about 15 MB, 64 px button, progress, Stop part way, Go on, done, all five play offline after, Light frees them, asks first on mobile data.
 - `tests/unit/studioswitches.test.mts`: `blenderFilm_*` expanded from the film list; new test for the switches' defaults.
-- Results: see below.
+- Results (6 Nov 2026 AEDT, run one at a time):
+  - pass: `blenderfilms` (extended), `types`, `tales`, `story`, `offline`, `swupdate`, `bilingual`, `startup` (first start 1043 KB), `films` (SAMPLE);
+  - `tests/unit/studioswitches.test.mts`: 6 of 7 pass, the new test passes; **red on the base too**: "no switch is read in a way this check cannot see" names `js/s2vn.ts:31 isPeek(r.key` (on `integrate/v108`, not this branch's file);
+  - **`phone`: red on the base too.** It fails the same way on a clean `origin/integrate/v108` (a click that waits for a page change, 30 s timeout), checked here with the same check against the base game; not from this branch (the card is not shown in that check: no film is listed yet).
+- Screenshots (looked at): `pics/films-card-phone.png`, `films-card-tablet.png`, `films-card-tablet-wide.png`, `films-card-computer.png` (made by `tests/shots-v108f-films.mts` with the five as test films): one row on a tablet and a computer, two rows on a phone, the 64 px button, the shelves below.
+- New spoken line (not recorded, no key here): "All the films are ready to watch with no internet!" / "Tất cả phim đã sẵn sàng để xem không cần mạng!".
+- Also fixed on the way: the new small file `js/content/films-for-all.js` is in `sw.ts` FILES (it starts with the game; no apostrophes).
 
 ## Owner's decisions
 - (6 Nov 2026 AEDT, in the brief) five for everyone, the rest for testers with a Studio switch; one download for all in the story section.
