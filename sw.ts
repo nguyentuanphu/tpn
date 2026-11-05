@@ -54,7 +54,7 @@ const FILES = [
   'js/content/friends.js', 'js/ui/friends-row.js', 'js/ui/friends-ui.js', 'js/friend-model.js', 'js/friend-view.js',
   'vendor/GLTFLoader.js', 'vendor/BufferGeometryUtils.js', 'vendor/SkeletonUtils.js', 'vendor/meshopt_decoder.module.js',
   'models/finn.glb', 'models/sol.glb', 'models/clara.glb', 'models/lumi.glb',
-  // (written out one by one: tools/bundle.mts reads the list's quoted names)
+  // (written out one by one: tools/bundle.mts reads the quoted names of the list)
   'icons/friends/finn-f.webp', 'icons/friends/finn-q.webp', 'icons/friends/finn-s.webp', 'icons/friends/finn-face.webp',
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
   'icons/friends/clara-f.webp', 'icons/friends/clara-q.webp', 'icons/friends/clara-s.webp', 'icons/friends/clara-face.webp',
