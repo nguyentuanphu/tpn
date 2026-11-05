@@ -20,7 +20,7 @@ function style() {
 .s2-scene.reef { background: linear-gradient(#7fd8f0, #2f8fc8); }
 .s2-scene.beach { background: linear-gradient(90deg, #f6dfa0 0%, #f2d48a 80%, #5fc0e8 100%); }
 .s2-scene.bush { background: linear-gradient(#a8d88a, #5f9a4a); }
-.s2-scene.night { background: linear-gradient(#24305e, #3a4a3a); }
+.s2-scene.night { background: linear-gradient(#3a4a86, #4f6a4f); }
 .s2-scene.river { background: linear-gradient(90deg, #8fcf6a, #4fa8d8 18%, #4fa8d8 82%, #8fcf6a); }
 .s2-scene > * { display: flex; align-items: center; justify-content: center; min-height: 54px; }
 .s2-scene .art { width: 44px; height: 44px; }
