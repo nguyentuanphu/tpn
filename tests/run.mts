@@ -43,6 +43,11 @@ await check('pushnotify', async () => (await import('./push-notify-browser.mts')
 // each run, all four when the games change
 await check('roundvariety', async () => (await import('./round-variety.mts')).roundVarietyCheck(b, { sample: sampled('roundvariety') ? SEED : null }));
 
+// (v1.08b story) the release calendar and the pad's calendar tab (tests/story-v108b.mts)
+await check('releasecalendar', async () => (await import('./story-v108b.mts')).releaseCalendarCheck(b));
+await check('calendartab', async () => (await import('./story-v108b.mts')).calendarTabCheck(b));
+await check('installgift', async () => (await import('./story-v108b.mts')).installGiftCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

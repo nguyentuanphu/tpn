@@ -4,7 +4,7 @@
 // tile instead, the Simple screen leaves them out. On: they unlock as js/content/unlocks.ts says (each original in the
 // area or shelf finished 3 times). A tester device sees them early through its preview list (releaseOn).
 import { releaseOn, CUSTOM, earlyDays } from '../custom.js';
-import { calOpen } from './releasecal.js';
+import { calOpen, openDate, weekOf, addDays } from './releasecal.js';
 
 export const SECOND_SET_GAMES: Record<string, string[]> = {
   animals: ['crabwalk', 'whohome', 'mumbaby', 'feedzoo', 'buffalo', 'reefcount', 'tracks', 'catchfish', 'emueggs', 'reefclean'],
@@ -119,3 +119,8 @@ export const calMoves = () => { const c = (CUSTOM as any).releaseCalendar; retur
 export const calDue = (type: 'game' | 'story', id: string): boolean => calOpen(type + ':' + id, calMoves(), new Date(), earlyDays());
 export const heldGame = (id: string): boolean => isSecondGame(id) && gamesHeld() && !calDue('game', id);
 export const heldTale = (id: string): boolean => isSecondTale(id) && storiesHeld() && !calDue('story', id);
+/** (v1.08b story) how many of these held ids open next week (the Coming soon tile's teaser, "Tuần sau: 3 trò mới") */
+export const calNextWeek = (type: 'game' | 'story', ids: string[], now: Date = new Date()): number => {
+  const from = addDays(weekOf(now), 7), to = addDays(from, 7), m = calMoves();
+  return ids.filter(id => { const d = openDate(type + ':' + id, m); return d >= from && d < to; }).length;
+};

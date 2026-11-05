@@ -9,6 +9,7 @@
 // itself (sw.ts). The rules (kinds, quiet hours, bundling, texts) are js/content/notify.ts.
 import crypto from 'node:crypto';
 import { cleanPrefs, plan, payloadOf, studioSwitch, KIND_IDS, addDays, localOf, isQuiet, TEXTS, type KindId, type Prefs, type Text } from '../../js/content/notify.ts';
+import { calendar, whatsNew, countLine } from '../../js/content/releasecal.ts';
 import { sendPush, goodEndpoint, type Subscription, type Vapid } from './webpush.mts';
 
 export type Rec = { endpoint: string, keys: { p256dh: string, auth: string }, prefs: Prefs, sent: Record<string, number>, at: number, seen: number };
@@ -91,12 +92,20 @@ async function testerFixed(T: Store | null, rec: Rec): Promise<string[]> {
   for (const k of ((t && t.mine) || []).slice(-100)) { if (rec.sent['tfix:' + k]) continue; const p = await T.get('p/' + k, { type: 'json' }).catch(() => null); if (p && p.status === 'fixed') out.push(k); }
   return out;
 }
+/** (v1.08b story) Saturday's "Tuần này có gì mới" written from the release calendar (js/content/releasecal.ts, with
+ *  the owner's moves from the live content) when Studio set no text of its own for this week; null when nothing opened */
+export function calendarNews(live: any, today: string): (Text & { from: string, to: string }) | null {
+  const moves = live && live.content && live.content.releaseCalendar && live.content.releaseCalendar.moves;
+  const W = whatsNew(calendar(moves), new Date(today + 'T12:00:00')); if (!W.thisWeek.length) return null;
+  const [en, vi] = countLine(W.thisWeek), first = W.thisWeek[0];
+  return { en: `New in Sparkle Valley this week: ${en}, like ${first.en}.`.slice(0, 200), vi: `Tuần này có gì mới ở Thung Lũng Lấp Lánh: ${vi}, như ${first.vi}.`.slice(0, 200), from: today, to: today };
+}
 /** the scheduled run (every 30 minutes): each family's due messages, sent once; devices that left are removed */
 export async function run(S: Store, { vapid, live = null, testers = null, now = Date.now(), fetchFn = fetch }: { vapid: Vapid | null, live?: any, testers?: Store | null, now?: number, fetchFn?: typeof fetch }) {
   const res = { devices: 0, sent: 0, gone: 0, failed: 0, off: !vapid };
   if (!vapid) return res;
   const cfg = await readConfig(S), off = studioOffOf(live, now), today = localOf(now, 'Australia/Sydney').date;
-  const news = cfg.news && cfg.news.from <= today && today <= cfg.news.to ? cfg.news : null;
+  const news = cfg.news && cfg.news.from <= today && today <= cfg.news.to ? cfg.news : calendarNews(live, today);
   for (const rec of await allRecs(S)) {
     res.devices++;
     const fixed = await testerFixed(testers, rec);

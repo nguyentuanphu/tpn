@@ -428,6 +428,11 @@ export function createFestivals(G) {
     hunt: () => H,
     roadSpots: m => D ? D.roadSpots(Math.round(60 / m), () => false).length : 0,
     active: () => active,
+    // (v1.08b story, owner 3 Nov 2026 AEDT: "tap a step to fly there") the calendar tab's timeline: a festival whose
+    // decorations are up takes the child to its table (on the day) or the middle of its first place; false otherwise
+    goTo: (i, id) => { const h = G.heroes[i], F = byId(id), A = active.find(a => a.F.id === id); if (!h || !F || !A || !enabled(F)) return false;
+      const t = tables.find(q => q.id === 'festival_' + id), o = t || (F.where || []).map(k => PLACES()[k]).filter(Boolean).map(centre)[0]; if (!o) return false;
+      G.travel(h, o.x - 1.5, o.z + 2); return true; },
     current: () => { const a = active.find(x => x.on); return a ? a.F.id : null; },
     // (owner, 10 Oct; 11 Oct, #32: nothing sends a child to a festival) a child taps a festival on the calendar: it is told
     // about (on today, decorations going up, or days to go), nothing starts and nobody travels. Only a grown-up's Preview

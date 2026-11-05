@@ -1,4 +1,5 @@
 import {HANOI_PACK_INFO} from './content/hanoi-pack-info.js';
+import { grownupsNewsHTML } from './ui/festivals-ui.js';
 // (v1.08 notifications) the parents' notification settings (js/notify.ts and its texts, about 42 KB) load the first time
 // Grown-ups opens, not with the start (PERF-001); until then the section is an empty space that fills itself in
 let NOTIFY: typeof import('./notify.js') | null = null;
@@ -174,6 +175,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       <div class="grownups-panel"><button class="x" aria-label="${T('Close', 'Đóng')}">✕</button>
       <h2>${T('Grown-ups', 'Phụ huynh')} <small class="buildtag">${T('Version', 'Phiên bản')} ${SHOWN}</small></h2>
       <div class="grownups-body"><div class="g-install"></div>
+      ${grownupsNewsHTML()}
       ${privacyHTML()}
       ${familyTrialOn() ? familyDevicesHTML() : ''}
       <div class="toggles gcaprow">
