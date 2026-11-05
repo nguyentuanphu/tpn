@@ -40,7 +40,7 @@ dropping (its shore moves about half a metre inward there).
 | Check | Result |
 | --- | --- |
 | shallowrivers | pass |
-| boats | FAIL, the base's failures only: 5 Season 2 piers join no road (vehicles helper), and the Southern Coast Boat's route crosses near-dry ground by -115,152 (8 m where the hull reaches the bed; on the base it was "13 m too shallow" there) |
+| boats | FAIL only on the 5 Season 2 piers that join no road (vehicles helper). The Southern Coast Boat's route by -115,152 is fixed (a boat channel, below) |
 | bridgeunderpass | pass |
 | wading (new) | pass: 22 waters, at most 0.8 m deep, camera at least 3.9 m over the water; steep banks climbed at the Hội An canal's quay, the Yarra and Hồ Gươm |
 | flyaudit, spawnview, worldplacement, regions, s2vnregions, s2au | pass |
@@ -54,7 +54,8 @@ Looked at: river, lake, Hạ Long and Reef pictures on phone, tablet and compute
 
 ## For Release and other helpers
 
-- **Vehicles helper:** the Southern Coast Boat's route by -115,152 (near Melbourne) crosses ground under 0.2 m of water; the route or the river there needs a little more water. Boat models: the hull's bottom must stay within 0.4 m of the top (the `boats` check now says so).
+- **Boat channel (Release, 6 Nov, 4:30 am AEDT):** the Southern Coast Boat leaves the Melbourne river pier along the Murray's north bank, so 1.5 m to its side was dry bank. `MAP.BOAT_CHANNELS` (`js/content/map.ts`) cuts a channel along that 16 m of the route (0.6 m deep, 1.8 m each side, easing out over 1.4 m) in `js/world/ground.ts`; the route, the piers and the rest of the shore stay where they are (the bank there moves about 1 m north). Rechecked: `boats` (only the pier-road failures left), `shallowrivers`, `wading`, `s2au`, `types` pass.
+- **Vehicles helper:** boat models: the hull's bottom must stay within 0.4 m of the top (the `boats` check now says so).
 - `tests/run.mts`: `wading` is added just before `await b.close()`, after `worldvehicles`; a merge with other helpers that also add checks there keeps both lines.
 - No new spoken lines.
 
