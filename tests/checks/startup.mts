@@ -387,7 +387,7 @@ await check('battery', async () => {
   const play = await rate(P.page);
   // far people standing still: one shape (the still copy); near people and the child keep every moving part
   const people = await P.page.evaluate(async () => { const { OUTLINED } = await import('/js/avatar.js'), h = __sv.heroes[0], v = { far: 0, farStill: 0, near: 0, nearStill: 0, mine: !!h.av._still };
-    for (const A of OUTLINED) { if (!A.root.parent || A === h.av || A.model) continue; // (v1.08b friends) a child drawn with a friend model has no still copy by design (js/avatar.ts showStill): only a few children are ever on screen, the villagers are still checked const p = A.root.getWorldPosition(A.root.position.clone()), d = Math.hypot(p.x - h.pos.x, p.z - h.pos.z);
+    for (const A of OUTLINED) { if (!A.root.parent || A === h.av || A.model) continue; /* (v1.08b friends) a child drawn with a friend model has no still copy by design (js/avatar.ts showStill): only a few children are ever on screen; villagers are still checked */ const p = A.root.getWorldPosition(A.root.position.clone()), d = Math.hypot(p.x - h.pos.x, p.z - h.pos.z);
       if (d > 24 && A._calm >= 2) { v.far++; if (A._still && A.still && A.still.visible && !A.rig.visible) v.farStill++; } else if (d < 16) { v.near++; if (A._still) v.nearStill++; } }
     return v; });
   // nothing moves for 15 s: the valley is drawn a few times a second; a touch brings it back at once (up to 90 s: the test
