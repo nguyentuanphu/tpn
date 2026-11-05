@@ -75,7 +75,13 @@ export async function openTheatre(tale, { name = '', onDone = undefined, startPa
     // or the internet can bring it; otherwise the game's own film plays, as before
     const videoFilm = async () => {
       if (!BLENDER_FILMS.includes(tale.id) || !featureOn('blenderFilms', true)) return false;
-      try { const B = await import('./blenderfilm.js'); const v = await B.videoFor(tale.id); if (!v || !alive || gaveUp) return false; film = B.createVideoFilm(stage, tale.id, v.src); }
+      try {
+        const B = await import('./blenderfilm.js'); const v = await B.videoFor(tale.id); if (!v || !alive || gaveUp) return false;
+        const vf = B.createVideoFilm(stage, tale.id, v.src); if (!vf) return false;
+        // a video this device cannot show (a broken file, no codec for it) is let go: the game's own film plays instead
+        if (!(await vf.playable(8000)) || !alive || gaveUp) { vf.close(); return false; }
+        film = vf;
+      }
       catch (e) { return false; }
       if (!film) return false; m.classList.add('film', 'video'); film.onSay = onSay; return true;
     };

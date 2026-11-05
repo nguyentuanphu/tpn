@@ -41,16 +41,16 @@ export async function videoFor(id: string): Promise<{ src: string, kept: boolean
 // an older version of the same film is let go once the new one is kept
 async function forgetOld(c: Cache, id: string) { const now = new URL(blenderFilmUrl(id)!, location.href).href; for (const k of await c.keys()) if (k.url.includes(`/videos/films/${id}-`) && k.url !== now) await c.delete(k); }
 
-type FilmApi = { page: (k: number) => Promise<void>, narrated: () => void, close: () => void, onSay?: (en: string, vi: string, kind: string) => Promise<unknown> | unknown, now?: any, video?: HTMLVideoElement };
+type FilmApi = { page: (k: number) => Promise<void>, narrated: () => void, close: () => void, onSay?: (en: string, vi: string, kind: string) => Promise<unknown> | unknown, now?: any, video?: HTMLVideoElement, playable?: (ms?: number) => Promise<boolean> };
 
 /** a film that plays the Blender video, page by page */
 export function createVideoFilm(stage: HTMLElement, id: string, src: string): FilmApi | null {
   const F = BLENDER_FILMS[id]; if (!F) return null;
   const v = document.createElement('video'); v.className = 'th-film th-video'; v.src = src; v.muted = true; v.playsInline = true; v.preload = 'auto';
   v.setAttribute('playsinline', ''); v.setAttribute('muted', ''); v.disablePictureInPicture = true;
-  stage.appendChild(v);
-  const help = el('div', 'film-help'); help.hidden = true; stage.appendChild(help);
-  const ring = el('div', 'film-ring'); ring.hidden = true; stage.appendChild(ring);
+  // the video goes on the stage with its first page, once the theatre knows this device can show it (playable())
+  const help = el('div', 'film-help'); help.hidden = true;
+  const ring = el('div', 'film-ring'); ring.hidden = true;
   const calm = reduceMotion();
   let alive = true, cur: any = null;
   const rate = () => (window as any).__svFilmRate || 1;
@@ -59,6 +59,7 @@ export function createVideoFilm(stage: HTMLElement, id: string, src: string): Fi
     get now() { return cur; },
     page(k: number) {
       if (cur) cur.stop();
+      if (!v.isConnected && alive) stage.append(v, help, ring);
       const P = F.pages[Math.min(k, F.pages.length - 1)];
       return new Promise<void>(done => {
         let narrated = false, hold: any = null, ended = false, helped = !P.help, timer: any = 0;
@@ -85,13 +86,28 @@ export function createVideoFilm(stage: HTMLElement, id: string, src: string): Fi
         cur = { stop: end, release, get hold() { return hold; }, narrate() { narrated = true; if (waiting) { waiting = false; ask(); } }, P, get ended() { return ended; } };
         v.addEventListener('timeupdate', tick);
         const go = () => { v.currentTime = P.s; v.playbackRate = Math.min(16, rate()); v.play().catch(() => { }); };
+        // a video that will not play (a broken file, a phone that refuses) never stops the story, even when it failed
+        // before this page began
+        if (v.error) { end(); return; }
         if (v.readyState >= 1) go(); else v.addEventListener('loadedmetadata', go, { once: true });
-        // a video that will not play (a broken file, a phone that refuses) never stops the story
         v.addEventListener('error', end, { once: true });
         if (calm) v.style.transition = 'none';
       });
     },
     narrated() { if (cur) cur.narrate(); },
+    // whether this device can show the video: true once its first picture's size is known, false when the file cannot be
+    // read or decoded (a broken download, a browser without the video's codec) or nothing came within ms; the theatre then
+    // plays the game's own film instead of a black stage that never moves on
+    playable(ms = 8000) {
+      if (v.error) return Promise.resolve(false);
+      if (v.readyState >= 1) return Promise.resolve(true);
+      return new Promise<boolean>(r => {
+        const t = setTimeout(() => fin(false), ms);
+        function fin(ok: boolean) { clearTimeout(t); v.removeEventListener('loadedmetadata', yes); v.removeEventListener('error', no); r(ok); }
+        function yes() { fin(true); } function no() { fin(false); }
+        v.addEventListener('loadedmetadata', yes); v.addEventListener('error', no);
+      });
+    },
     close() { alive = false; if (cur) cur.stop(); v.pause(); v.removeAttribute('src'); v.load(); if (src.startsWith('blob:')) URL.revokeObjectURL(src); v.remove(); help.remove(); ring.remove(); }
   };
   // a tap answers the help moment

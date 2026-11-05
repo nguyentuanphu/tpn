@@ -3,6 +3,8 @@
 // The films themselves are rendered later on a machine with a graphics card (owner, 5 Nov 2026 AEDT), so these checks play
 // a small test video (tests/fixtures/blenderfilm-test.mp4) and a test picture in their place: the game's side is checked now,
 // and the same checks run on the real films once they are listed in js/content/blenderfilms.ts.
+// The test video is VP9 in an MP4 file (320x180, 4 s): the test browser (Playwright's Chromium) has no H.264 decoder, so an
+// H.264 test video could never play there (the game then rightly falls back to its own film) and the check could not pass.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { open, clear } from './harness.mts';
