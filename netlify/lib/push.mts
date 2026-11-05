@@ -9,7 +9,9 @@
 // itself (sw.ts). The rules (kinds, quiet hours, bundling, texts) are js/content/notify.ts.
 import crypto from 'node:crypto';
 import { cleanPrefs, plan, payloadOf, studioSwitch, KIND_IDS, addDays, localOf, isQuiet, TEXTS, type KindId, type Prefs, type Text } from '../../js/content/notify.ts';
-import { calendar, whatsNew, countLine } from '../../js/content/releasecal.ts';
+import { calendar, whatsNew, countLine, useCalNames } from '../../js/content/releasecal.ts';
+import { CAL_NAMES } from '../../js/content/releasecal-names.ts';
+useCalNames(CAL_NAMES);
 import { sendPush, goodEndpoint, type Subscription, type Vapid } from './webpush.mts';
 
 export type Rec = { endpoint: string, keys: { p256dh: string, auth: string }, prefs: Prefs, sent: Record<string, number>, at: number, seen: number };

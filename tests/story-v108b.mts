@@ -9,7 +9,7 @@ const SCREENS = [['phone', 390, 844, true], ['phone sideways', 844, 390, true], 
 // 7 days early), a held game whose day has come is open for a child who never played, and the Coming soon tile tells
 // what opens next week
 export async function releaseCalendarCheck(b) {
-  const R = await import('../js/content/releasecal.ts'), S = await import('../js/content/secondset.ts');
+  const R = await import('../js/content/releasecal.ts'), S = await import('../js/content/secondset.ts'); await R.loadCalNames();
   const held = [...Object.values(S.SECOND_SET_GAMES).flat().map(id => 'game:' + id), ...Object.values(S.SECOND_SET_TALES).flat().map(id => 'story:' + id)];
   const keys = new Set(R.CAL_DEFAULT.map(i => i.key));
   const missing = held.filter(k => !keys.has(k)); assert.deepEqual(missing, [], 'held-back items with no week');
@@ -101,8 +101,10 @@ export async function installGiftCheck(b) {
   const r = await P.page.evaluate(async () => {
     const w = (t: number) => new Promise(r => setTimeout(r, t)), G = __sv, h = G.heroes[0], p = h.profile;
     for (let k = 0; k < 40 && !G.installGift; k++) await w(100);
+    // (a gift given while the game opened: let its card go first, then give it again from nothing)
+    for (let k = 0; k < 40 && document.querySelector('.reward'); k++) await w(100); await w(300);
+    const F = await import('/js/state.js').catch(() => null); G.installGift.stop(); const coins0 = (F && F.farm ? F.farm.coins : null), st0 = (p.stickers || []).length;
     const first = !!p.installGift; delete p.installGift; p.owned.hats = (p.owned.hats || []).filter(x => x !== 'homehat'); // (it may have come while the game opened)
-    const F = await import('/js/state.js').catch(() => null), coins0 = (F && F.farm ? F.farm.coins : null), st0 = (p.stickers || []).length;
     let reward = ''; G.paused = false; G.installGift.poll(); await w(400); reward = document.querySelector('.reward')?.textContent || '';
     if (!p.installGift) { await w(5000); G.paused = false; G.installGift.poll(); await w(400); reward = document.querySelector('.reward')?.textContent || ''; }
     const got = { first, flag: !!p.installGift, hat: (p.owned.hats || []).includes('homehat'), coins: F && F.farm ? F.farm.coins - coins0 : null, stickers: (p.stickers || []).length - st0, reward };

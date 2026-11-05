@@ -43,7 +43,7 @@ export const LINES = {
 export const TALE: StoryTale = { id: 'lantern_ch5', flag: '🏮', title: ['From Huế to Uluru', 'Từ Huế đến Uluru'], pages: [
   ['🏯🌊', 'In Huế, little boats with lanterns float on the Perfume River at night, past the walls of the old Citadel.', 'Ở Huế, ban đêm những chiếc thuyền nhỏ treo đèn trôi trên sông Hương, qua tường thành Kinh thành cổ.'],
   ['🐉🌉', 'In Đà Nẵng, the dragon bridge breathes fire and water on weekend nights, and everyone cheers.', 'Ở Đà Nẵng, cầu Rồng phun lửa và phun nước vào tối cuối tuần, và mọi người reo hò.'],
-  ['🚋🌆', 'In Melbourne, the old trams ding-ding through the streets, full of happy people going to the summer festivals.', 'Ở Melbourne, những chiếc tàu điện cũ leng keng qua phố, chở đầy người vui vẻ đi lễ hội mùa hè.'],
+  ['🚋🌇', 'In Melbourne, the old trams ding-ding through the streets, full of happy people going to the summer festivals.', 'Ở Melbourne, những chiếc tàu điện cũ leng keng qua phố, chở đầy người vui vẻ đi lễ hội mùa hè.'],
   ['🪨🌅🏮', 'At Uluru the sun went down, the great rock glowed orange and red, and the lantern shone beside it. Only one lantern left to bring home!', 'Ở Uluru mặt trời lặn, tảng đá lớn rực cam và đỏ, và chiếc đèn lồng sáng bên cạnh. Chỉ còn một chiếc đèn nữa thôi là về nhà đủ cả!']
 ] };
 export const KIT: KitDef = {

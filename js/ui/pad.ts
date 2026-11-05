@@ -21,7 +21,7 @@ import { pic } from '../art.js';
 import { COMPANIONS } from '../content/companions.js';
 import { modal } from '../popups.js';
 import { PET_ICON, PAL_HAT_ICON, PALS_NAME, PALS_TAB, toast, foldHeadings, jumpNav } from './common.js';
-import { festCalendarHTML, wireCalendar, CAL_TITLE } from './festivals-ui.js';
+import { festCalendarHTML, wireCalendar, CAL_TITLE, whenCalNames } from './festivals-ui.js';
 import { valleyPicture } from './pad-map.js';
 import { albumTab } from './pad-album.js';
 // ---------- the Sparkle Pad ----------
@@ -405,6 +405,7 @@ export const openPad = Object.assign(function (game, i, tab) {
   function drawCal(body) {
     body.innerHTML = `<div class="fcal"><h3 class="fcal-title">${CAL_TITLE()}</h3>${festCalendarHTML(game)}</div>`;
     wireCalendar(body, game, i, close); // (v1.08b story) tap a step to fly there
+    whenCalNames(() => { if (body.isConnected && body.querySelector('.fcal')) drawCal(body); });
   }
   function drawCam(body) {
     const howTo = savesByShare() ? T('Then tap “Save to my photos” and choose “Save Image”.', 'Rồi chạm “Lưu vào ảnh của máy” và chọn “Lưu hình ảnh”.') : T('Then tap “Save to my photos”.', 'Rồi chạm “Lưu vào ảnh của máy”.');

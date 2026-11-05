@@ -6,7 +6,10 @@ import { featureOn, festivalRule } from '../custom.js';
 import { BUILDUP } from '../content/festcal.js';
 import { pic } from '../art.js';
 import { modal } from '../popups.js';
-import { calendar, whatsNew, daysUntil, countLine, type CalItem } from '../content/releasecal.js';
+import { calendar, whatsNew, daysUntil, countLine, loadCalNames, calNamesReady, type CalItem } from '../content/releasecal.js';
+// (the calendar's names load a little after start, not with it; a calendar drawn before then draws itself again)
+if (typeof window !== 'undefined') setTimeout(() => { loadCalNames().catch(() => { }); }, 4000);
+export const whenCalNames = (redraw: () => void): void => { if (!calNamesReady()) loadCalNames().then(redraw).catch(() => { }); };
 import { calMoves } from '../content/secondset.js';
 import { isHeld } from '../content/unlocks.js';
 // ---------- Lịch lễ hội, the festival calendar (round R, owner) ----------
@@ -44,7 +47,7 @@ export function festCalendarHTML(game) {
     const step = ([k, label, when, from, end]) => `<button class="fcal-step${from <= 0 ? ' on' : ''}" data-fly="${esc(n.F.id)}" data-step="${k}"><b>${esc(label)}</b><small>${esc(when)}</small><em>${esc(left(from, end))}</em></button>`;
     return `<div class="fcal-row ${gr}${ready ? ' ready' : ''}"><span class="fi">${pic(n.F.icon)}</span><b>${esc(T(n.F.en, n.F.vi))}${n.isNew ? ` <i class="newtag">${T('New', 'Mới')}</i>` : ''}</b><small>${dayLabel(n.start)}</small><div class="fcal-tl">${steps.map(step).join('')}</div></div>`; };
   return `${today.length ? `<h3>${T('Today', 'Hôm nay')}</h3>${today.map(card).join('')}` : ''}
-    <h3>${T('Festivals coming up', 'Lễ hội sắp tới')}</h3><div class="fcal-list">${list.slice(0, 6).map(row).join('')}</div>
+    <h3>${T('Festivals coming up', 'Lễ hội sắp tới')}</h3><div class="fcal-list">${list.slice(0, 12).map(row).join('')}</div>
     ${whatsNewHTML()}`;
 }
 
@@ -77,10 +80,13 @@ export const CAL_TITLE = (): string => T("Calendar: festivals and what's new", '
 
 // the festival calendar: only a calendar (which festival is when); decorations are set in Sparkle Studio by admins
 export function openFestivals(game, i) {
-  const m = modal('festpick', `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>📅 ${CAL_TITLE()}</h2>${festCalendarHTML(game)}`);
+  const html = () => `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>📅 ${CAL_TITLE()}</h2>${festCalendarHTML(game)}`;
+  const m = modal('festpick', html());
   const done = () => { m.close(); game.paused = false; };
-  m.querySelector('.x').onclick = done;
-  wireCalendar(m, game, i || 0, done);
+  const wire = () => { (m.querySelector('.x') as HTMLElement).onclick = done; wireCalendar(m, game, i || 0, done); };
+  wire();
+  // (the names arrive a moment later the first time: draw it again with them)
+  whenCalNames(() => { const card = m.querySelector('.card'); if (card && m.isConnected) { card.innerHTML = html(); wire(); } });
   say("Calendar: festivals and what's new", 'Lịch: Lễ hội và Có gì mới');
 }
 

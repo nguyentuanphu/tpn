@@ -3,14 +3,14 @@
 // Studio's Releases timeline (platform helper), the website's "What's new" strip and Discover calendar, and Saturday's
 // "Tuần này có gì mới" push, so all of them always agree (WEBSITE-RULES "same source").
 //
-// - Every held-back game and story has a week (Release's first fill, js/content/releasecal-items.ts, made by
-//   tools/make-releasecal.mts). The owner moves an item to another week in Studio: the live content section
+// - Every held-back game and story has a week (Release's first fill, js/content/releasecal-items.ts and its names in
+//   releasecal-names.ts, made by tools/make-releasecal.mts). The owner moves an item to another week in Studio: the live content section
 //   `releaseCalendar` = { moves: { "<kind>:<id>": "YYYY-MM-DD" } } (the Monday of its new week, or any day).
 // - An item opens for every child on its day (a tester device 7 days early, as releaseOn does). Games and stories that
 //   were already open stay open: only the held-back ones are in the calendar (owner, 3 Nov 2026 AEDT).
 // - Unlocking by playing stays: with Studio's New games / New stories on, an area's next items can still open early.
 // Pure data and date sums: no DOM and no game state, so Studio and the website import it too.
-import { CAL_ROWS, CAL_NAMES } from './releasecal-items.js';
+import { CAL_WEEKS } from './releasecal-items.js';
 
 export type CalKind = 'game' | 'story' | 'chapter' | 'feature' | 'festgame';
 export type CalItem = {
@@ -42,17 +42,25 @@ export const CAL_FIXED: CalItem[] = [
   { key: 'chapter:finale', kind: 'chapter', id: 'finale', en: 'Lantern story finale: every lantern home for Tết', vi: 'Truyện đèn lồng phần cuối: mọi đèn lồng về nhà đón Tết', icon: '🧧', date: '2027-02-06' },
 ];
 
-const DEFAULTS: CalItem[] = CAL_ROWS.map(([kind, id, date]) => {
-  const key = kind + ':' + id, n = CAL_NAMES[key] || [id, id, kind === 'game' ? '🎮' : '📖'];
-  return { key, kind, id, en: n[0], vi: n[1], icon: n[2], date };
-});
+// the names come with releasecal-names.ts, loaded when a calendar is shown (the start-up download stays small); until
+// then an item reads as its id. Studio, the website and the server call loadCalNames() (or useCalNames) first.
+let NAMES: Record<string, [string, string, string]> | null = null;
+export const calNamesReady = (): boolean => !!NAMES;
+export const useCalNames = (n: Record<string, [string, string, string]>): void => { NAMES = n; };
+export const loadCalNames = (): Promise<void> => NAMES ? Promise.resolve() : import('./releasecal-names.js').then(m => { NAMES = m.CAL_NAMES; });
+const nameOf = (key: string, i: number, fallback: string) => (NAMES && NAMES[key] ? NAMES[key][i] : fallback);
+function item(kind: 'game' | 'story', id: string, date: string): CalItem {
+  const key = kind + ':' + id;
+  return { key, kind, id, date, get en() { return nameOf(key, 0, id); }, get vi() { return nameOf(key, 1, id); }, get icon() { return nameOf(key, 2, kind === 'game' ? '🎮' : '📖'); } } as CalItem;
+}
+const DEFAULTS: CalItem[] = Object.entries(CAL_WEEKS).flatMap(([date, v]) => { const [g, st] = v.split('|'); return [...g.split(' ').filter(Boolean).map(id => item('game', id, date)), ...(st || '').split(' ').filter(Boolean).map(id => item('story', id, date))]; });
 /** Release's first fill, before any move */
 export const CAL_DEFAULT: CalItem[] = [...DEFAULTS, ...CAL_FIXED];
 
 /** the calendar with the owner's moves applied (bad dates are ignored), sorted by day */
 export function calendar(moves?: CalMoves | null): CalItem[] {
   const m = moves && typeof moves === 'object' ? moves : {};
-  return CAL_DEFAULT.map(it => { const d = m[it.key]; return typeof d === 'string' && ISO.test(d) && d !== it.date ? { ...it, date: d, moved: true } : it; })
+  return CAL_DEFAULT.map(it => { const d = m[it.key]; return typeof d === 'string' && ISO.test(d) && d !== it.date ? (it.kind === 'game' || it.kind === 'story' ? Object.assign(item(it.kind, it.id, d), { moved: true }) : { ...it, date: d, moved: true }) : it; })
     .sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.key < b.key ? -1 : 1);
 }
 const BYKEY = new Map(CAL_DEFAULT.map(it => [it.key, it]));

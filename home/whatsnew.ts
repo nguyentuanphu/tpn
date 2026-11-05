@@ -6,7 +6,7 @@
 // - a Calendar part inside Discover (after its "start here" cards; it extends the festival overview): festivals, new lantern chapters, new games and stories,
 //   and festival games with the days they come back.
 // The four destinations stay as they are (rule 1). English and Vietnamese follow the page's language button.
-import { calendar, whatsNew, countLine, daysUntil, addDays, weekOf, isoDay, type CalItem, type CalMoves } from '../js/content/releasecal.js';
+import { calendar, whatsNew, countLine, daysUntil, addDays, weekOf, isoDay, loadCalNames, type CalItem, type CalMoves } from '../js/content/releasecal.js';
 
 type Fest = { id: string, en: string, vi: string, face: string, date: string, build: number, quiet: boolean };
 const lang = () => document.documentElement.lang === 'vi' ? 'vi' : 'en';
@@ -81,5 +81,6 @@ export async function setupWhatsNew(now = new Date()) {
   document.addEventListener('sv-festivals-change', draw);
   document.querySelector('#language-button')?.addEventListener('click', () => setTimeout(() => document.querySelectorAll<HTMLElement>('[data-wn-en]').forEach(e => { e.textContent = (lang() === 'vi' ? e.dataset.wnVi : e.dataset.wnEn) || ''; }), 0));
   import('../js/art.js').then(m => { PIC = m.pic; draw(); }).catch(() => { });
+  loadCalNames().then(draw).catch(() => { });
   try { const r = await fetch('/api/live', { cache: 'no-store' }); if (r.ok) { const j = await r.json(); moves = j && j.content && j.content.releaseCalendar && j.content.releaseCalendar.moves || null; draw(); } } catch { }
 }

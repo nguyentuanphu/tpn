@@ -24,8 +24,10 @@ const WEEKS = 32, rows: string[] = [], share = (n: number, w: number) => Math.fl
 let gi = 0, si = 0;
 for (let w = 0; w < WEEKS; w++) {
   const mon = day(new Date(+first + w * 7 * 864e5));
-  for (let k = share(G.length, w); k > 0; k--) rows.push(`  ['game', '${G[gi++]}', '${mon}'],`);
-  for (let k = share(S.length, w); k > 0; k--) rows.push(`  ['story', '${S[si++]}', '${mon}'],`);
+  const g: string[] = [], st: string[] = [];
+  for (let k = share(G.length, w); k > 0; k--) g.push(G[gi++]);
+  for (let k = share(S.length, w); k > 0; k--) st.push(S[si++]);
+  rows.push(`  '${mon}': '${g.join(' ')}|${st.join(' ')}',`);
 }
 const w = WEEKS;
 names['game:rongran'] ||= ['Dragon Snake', 'Rồng Rắn Lên Mây', '🐉']; // its catalogue line has no name of its own
@@ -33,11 +35,15 @@ const miss = [...G.map(g => 'game:' + g), ...S.map(s => 'story:' + s)].filter(k 
 const nm = Object.entries(names).filter(([k]) => G.includes(k.slice(5)) && k.startsWith('game:') || S.includes(k.slice(6)) && k.startsWith('story:'))
   .map(([k, v]) => `  ${JSON.stringify(k)}: ${JSON.stringify(v)},`);
 writeFileSync(new URL('../js/content/releasecal-items.ts', import.meta.url), `// Made by tools/make-releasecal.mts (v1.08b story): do not edit by hand, run it again.
-// The default week of each held-back game and story: [kind, id, Monday of its week (YYYY-MM-DD, Sydney)].
-export const CAL_ROWS: ['game' | 'story', string, string][] = [
+// The default week of each held-back game and story: Monday of its week (YYYY-MM-DD, Sydney) -> "games|stories" (ids
+// separated by spaces). Kept small: it is read at start-up; the names are in releasecal-names.ts, loaded when shown.
+export const CAL_WEEKS: Record<string, string> = {
 ${rows.join('\n')}
-];
-// English name, Vietnamese name, picture (drawn by js/art.ts)
+};
+`);
+writeFileSync(new URL('../js/content/releasecal-names.ts', import.meta.url), `// Made by tools/make-releasecal.mts (v1.08b story): do not edit by hand, run it again.
+// The release calendar's names: English name, Vietnamese name, picture (drawn by js/art.ts). Loaded only when the
+// calendar is shown (js/content/releasecal.ts loadCalNames), so the start-up download stays small.
 export const CAL_NAMES: Record<string, [string, string, string]> = {
 ${nm.join('\n')}
 };

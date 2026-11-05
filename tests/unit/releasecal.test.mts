@@ -1,7 +1,8 @@
 // (v1.08b story) the release calendar (js/content/releasecal.ts) and Saturday's push written from it (netlify/lib/push.mts)
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CAL_DEFAULT, calendar, whatsNew, countLine, weekOf, openDate } from '../../js/content/releasecal.js';
+import { CAL_DEFAULT, calendar, whatsNew, countLine, weekOf, openDate, loadCalNames } from '../../js/content/releasecal.js';
+await loadCalNames();
 import { calendarNews } from '../../netlify/lib/push.mts';
 
 test('weeks start on Monday and every game and story opens on one', () => {
