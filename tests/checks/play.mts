@@ -992,6 +992,8 @@ await check('friendmigrate', async () => {
     { id: 'kb', name: 'Boy', photo: null, age: 'little', difficulty: 'easy', look: { style: 'shirt', color: '#3b6fe0', set: 'boy', skin: '#e0aa80' }, created: 2 },
     { id: 'kn', name: 'NoSet', photo: null, age: 'little', difficulty: 'easy', look: { style: 'dress', color: '#ff5fa2', skin: '#ffe3d1' }, created: 3 }])); } });
   const r = await P.page.evaluate(async () => {
+    // (the friends' data loads as Who's playing opens, and moves every old save then)
+    await (await import('/js/avatar.js')).friendsReady();
     const S = await import('/js/state.js'), F = await import('/js/content/friends.js'), C = await import('/js/content/shop.js');
     const g = S.profiles.find(p => p.id === 'kg'), bo = S.profiles.find(p => p.id === 'kb'), n = S.profiles.find(p => p.id === 'kn');
     const top = C.CLOTHES.find(it => it.slot === 'top' && it.for === 'g'), q = S.normalizeProfile({ id: 'kt', name: 'T', look: { set: 'girl', top: top.id }, owned: { clothes: [top.id] } });
@@ -1116,9 +1118,8 @@ await check('friendoutfits', async () => {
     return { ids, f, afterOne, bought, back, faces };
   });
   const errs = P.errors; await P.ctx.close();
-  const good = r.ids.length === 4 && r.afterOne.coins === 500 && r.afterOne.worn !== F_AODAI(r) && r.bought.coins === 380 && r.bought.worn === `${r.f}-aodai` && r.bought.owned && r.bought.drawn === 'aodai' && r.back === `${r.f}-everyday` && r.faces.length >= 3 && !errs.length;
+  const good = r.ids.length === 4 && r.afterOne.coins === 500 && r.afterOne.worn !== `${r.f}-aodai` && r.bought.coins === 380 && r.bought.worn === `${r.f}-aodai` && r.bought.owned && r.bought.drawn === 'aodai' && r.back === `${r.f}-everyday` && r.faces.length >= 3 && !errs.length;
   ok(good, JSON.stringify({ r, errs }));
   return `${r.f}: ${r.ids.length} outfits; the áo dài bought on the second tap (120 coins) and drawn; back to everyday free; ${r.faces.length} glasses and masks in the shop`;
 });
-const F_AODAI = r => `${r.f}-aodai`;
 // ---- (v1.08b friends) end ----

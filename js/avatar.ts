@@ -1,14 +1,20 @@
 // Chibi characters whose face is the child's own photo.
 import { THREE, toon, glow, blobShadow, outline, P, merge, toonSmooth } from './gfx.js';
-import { GLIDERS, settings } from './state.js';
+import { GLIDERS, settings, profiles, FRIEND_MIGRATE } from './state.js';
 import { customFace, familyOwnFace, onFamilyPhotos } from './custom.js';
 import { wearing, BOY_OF } from './content/shop.js';
-import { friendLook } from './content/friends.js'; // (v1.08b friends)
 // (v1.08b friends) the friends' 3D models (js/friend-model.ts) are not in the first download: that file loads when a child
 // with a friend is first built, and fills these in; until then the code person in the friend's colours is drawn
-export const FRIEND_MODELS: { ready?: (id: string) => boolean, load?: (id: string) => Promise<boolean>, attach?: (A, id: string, skin: string) => any } = {};
+// (v1.08b friends) the friends' data (js/content/friends.ts) loads as Who's playing opens, not in the first download:
+// it moves every old save once, and from then on a child is drawn as their friend
+let friendLook = (l: any) => l;
+export const FRIEND_DATA = FRIEND_MIGRATE; // (the loaded file is FRIEND_DATA.lib)
+let friendsP: Promise<typeof import('./content/friends.js')> = null;
+export const friendsReady = () => friendsP || (friendsP = import('./content/friends.js').then(F => {
+  FRIEND_DATA.lib = F; friendLook = F.friendLook; FRIEND_MIGRATE.fn = F.migrateFriend; profiles.forEach(p => F.migrateFriend(p)); return F; }));
+export const FRIEND_MODELS: { ready?: (id: string) => boolean, load?: (id: string) => Promise<boolean>, attach?: (A, id: string, skin: string) => any, faceParts?: (it) => THREE.BufferGeometry[] } = {};
 export const loadFriendModels = (id: string): Promise<boolean> => FRIEND_MODELS.load ? FRIEND_MODELS.load(id)
-  : import('./friend-model.js').then(m => { Object.assign(FRIEND_MODELS, { ready: m.friendModelReady, load: m.loadFriendModel, attach: m.attachFriendModel }); return m.loadFriendModel(id as any); }).catch(() => false);
+  : import('./friend-model.js').then(m => { Object.assign(FRIEND_MODELS, { ready: m.friendModelReady, load: m.loadFriendModel, attach: m.attachFriendModel, faceParts: m.faceParts }); return m.loadFriendModel(id as any); }).catch(() => false);
 const WEAR = <T extends THREE.Object3D>(o: T) => { o.userData.wear = true; return o; }; // (v1.08b) a hat, necklace or back: kept on a friend's model
 
 const gParts = {
@@ -193,18 +199,6 @@ function backParts(it) {
   return [P(new THREE.BoxGeometry(.26, .3, .13), c, [0, .82, -.2]), P(new THREE.BoxGeometry(.27, .1, .14), t, [0, .94, -.2]), P(new THREE.BoxGeometry(.16, .1, .04), t, [0, .74, -.275]),
     ...[-1, 1].map(s => P(new THREE.BoxGeometry(.03, .3, .03), c, [s * .09, .88, .02], [-.15, 0, 0]))];
 }
-// (v1.08b friends) glasses and a mask (head coordinates: the eyes sit at x ±.12, y -.09, the face's front at z .49)
-function faceParts(it) {
-  const c = it.color, y = -.08, z = .5;
-  if (it.shape === 'mask') { const st = new THREE.Shape(); for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? .09 : .2; const px = Math.cos(a) * r, py = Math.sin(a) * r + .1; i ? st.lineTo(px, py) : st.moveTo(px, py); }
-    return [P(new THREE.CapsuleGeometry(.07, .2, 4, 10), c, [0, y, z - .02], [0, 0, Math.PI / 2], [1, .9, .45]), P(new THREE.ShapeGeometry(st), c, [0, y + .06, z + .015])]; }
-  const ring = it.shape === 'roundglasses' ? new THREE.TorusGeometry(.085, .016, 6, 20) : new THREE.TorusGeometry(.08, .022, 4, 4);
-  const out = [-1, 1].flatMap(s => [P(ring, c, [s * .12, y, z], [0, 0, it.shape === 'roundglasses' ? 0 : Math.PI / 4], it.shape === 'roundglasses' ? [1, 1, 1] : [1.25, .9, 1]),
-    P(new THREE.BoxGeometry(.14, .02, .02), c, [s * .27, y + .02, z - .1], [0, s * .9, 0])]);
-  if (it.shape === 'glasses') [-1, 1].forEach(s => out.push(P(new THREE.CircleGeometry(.075, 4), c, [s * .12, y, z - .002], [0, 0, Math.PI / 4], [1.25, .9, 1])));
-  out.push(P(new THREE.BoxGeometry(.07, .018, .018), c, [0, y + .01, z + .005]));
-  return out;
-}
 // the shop's new hats (head coordinates: the head is built at radius .5)
 const HAT_PARTS = {
   beanie: it => [P(new THREE.SphereGeometry(.56, 20, 12, 0, Math.PI * 2, 0, Math.PI * .5), it.color, [0, .06, -.02]), P(new THREE.TorusGeometry(.53, .06, 8, 24), it.trim, [0, .1, -.02], [Math.PI / 2 - .1, 0, 0]), P(new THREE.SphereGeometry(.12, 10, 8), it.trim, [0, .66, -.04])],
@@ -348,7 +342,8 @@ export function buildAvatar(look, photo?, opts?: { code?: boolean }) {
   if (look.hat === 'bow') { const bm = toon(col === '#ffffff' ? '#ff5fa2' : col, { roughness: .5 }); [-1, 1].forEach(s => { const l = new THREE.Mesh(new THREE.ConeGeometry(.16, .3, 12), bm); l.rotation.z = s * Math.PI / 2; l.position.set(s * .16, .55, -.05); hat.add(l); }); const k = new THREE.Mesh(new THREE.SphereGeometry(.07, 10, 8), bm); k.position.set(0, .55, -.05); hat.add(k); }
   const nh = W.hat && HAT_PARTS[W.hat.shape]; if (nh) hat.add(new THREE.Mesh(merge(nh(W.hat)), toonSmooth())); // (round S) the shop's new hats
   // (v1.08b friends) glasses and the star mask, on the face in front of the eyes (head coordinates: the eyes at x ±.12, y -.09)
-  if (W.face) head.add(WEAR(new THREE.Mesh(merge(faceParts(W.face)), toonSmooth())));
+  if (W.face && FRIEND_MODELS.faceParts) head.add(WEAR(new THREE.Mesh(merge(FRIEND_MODELS.faceParts(W.face)), toonSmooth()))); // (drawn by js/friend-model.ts, loaded with the friends)
+  else if (W.face) loadFriendModels('');
   // glider (hidden until gliding)
   const glider = new THREE.Group(); glider.visible = false; glider.position.y = 2.05;
   const gm = new THREE.Mesh(G.glider, toon(GLIDERS[look.glider || 0], { side: THREE.DoubleSide, roughness: .8 })); gm.rotation.x = -Math.PI / 2 + .25; glider.add(gm);

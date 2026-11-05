@@ -18,7 +18,6 @@ import { esc as escName } from './util.js';
 import { SFX } from './audio.js';
 import { SLOTS, CLOTHES, ITEM, forSlot, priceOf, owns, adoptWorn, buy, wear, setOf, forSet } from './content/shop.js';
 import { HAT_ICON, HAT_NAME } from './data.js';
-import { suitsOf, suitInfo, friendOf, friendLook } from './content/friends.js'; // (v1.08b friends: the outfits tab)
 
 // what is said ([en, vi]; to be recorded: docs/cores/play.md)
 export const SHOP_LINES = {
@@ -147,18 +146,7 @@ export function createShop(G, { say, save }) {
       // (v1.08b friends) the outfits of the child's friend: everyday (free), áo dài, festival and rain day; tap once to see
       // the price, again to buy; an outfit the child has is put on with one tap
       const st = card.querySelector('[data-stab]') as HTMLElement; if (st) st.onclick = () => { tab = 'suit'; pick = null; SFX.tap(); say('Outfits for your friend. Tap one to see it, tap again to buy it.', 'Bộ đồ cho bạn của con. Chạm một lần để xem, chạm lần nữa để mua.'); draw(); };
-      if (tab === 'suit') { if (!p.look.friend) { tab = 'hat'; draw(); return; }
-        const f = friendOf(p.look), owned = new Set(p.owned && p.owned.suits || []), list2 = suitsOf(f), SHAPE = { shirt: 'tee', tunic: 'tunic', dress: 'dress', overalls: 'overalls', aodai: 'aodai', hoodie: 'hoodie' };
-        const have = x => x.price === 0 || owned.has(x.id), g = card.querySelector('.kgrid');
-        if (g) g.innerHTML = list2.map(x => { const L = friendLook({ ...p.look, suit: x.id }), on = p.look.suit === x.id, sel = suitPick === x.id;
-          return `<button class="kitem ${have(x) ? 'have' : ''} ${on ? 'on' : ''} ${sel ? 'pick' : ''} ${!have(x) && farm.coins < x.price ? 'poor' : ''}" data-suit="${x.id}" aria-pressed="${on}" aria-label="${T(x.en, x.vi)}">${itemSVG({ shape: SHAPE[L.style] || 'tee', color: L.color, trim: '#ffffff' })}<small>${T(x.en, x.vi)}</small>${have(x) ? '' : coins(x.price)}</button>`; }).join('');
-        card.querySelectorAll('.shop-collections, .kmore, .kask').forEach(e => e.remove());
-        card.querySelectorAll<HTMLElement>('[data-suit]').forEach(b => b.onclick = () => { const x = list2.find(y => y.id === b.dataset.suit);
-          if (have(x)) { p.look.suit = x.id; suitPick = null; saveProfiles(); G.rebuildHero(i); SFX.pop(1); say(...SHOP_LINES.wear); draw(); return; }
-          if (suitPick !== x.id) { suitPick = x.id; SFX.tap(); say(x.en, x.vi); draw(); return; }
-          if (farm.coins < x.price) { SFX.no && SFX.no(); say(...SHOP_LINES.saving); return; }
-          G.addCoins(-x.price); p.owned.suits = [...(p.owned.suits || []), x.id]; p.look.suit = x.id; suitPick = null; saveProfiles(true); save(); G.rebuildHero(i); SFX.coin && SFX.coin(); say(...SHOP_LINES.bought); G.job && G.job('buy', 1, h); draw(); });
-        return; }
+      if (tab === 'suit') { import('./ui/friends-row.js').then(R => R.suitTab(card, { G, h, p, i, draw, coins, itemSVG, SHOP_LINES, save, pick: () => suitPick, setPick: v => { suitPick = v; }, back: () => { tab = 'hat'; draw(); } })); return; }
       const pt = card.querySelector('[data-ptab]'); if (pt) pt.onclick = () => { tab = 'pet'; pick = null; SFX.tap(); say('Save coins for a hat for your companion. Choose Buy when you are ready.', 'Để dành tiền mua mũ cho bạn đồng hành. Chọn Mua khi con đã sẵn sàng.'); draw(); };
       if (tab === 'pet') { if (!petOf(p)) { tab = 'hat'; draw(); return; } const g = card.querySelector('.kgrid'); if (g) g.innerHTML = petGrid(h, true); card.querySelectorAll('.shop-collections, .kmore').forEach(e => e.remove());
         card.querySelectorAll('[data-pet]').forEach(b => b.onclick = () => petTap(h, b.dataset.pet, draw)); return; }

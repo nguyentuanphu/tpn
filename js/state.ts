@@ -5,7 +5,9 @@ import type { Profile, Farm, Settings } from '../types/save.js';
 import { BUILD } from './build.js';
 import { managementEvidence } from './core/events.js';
 import { sortClothes } from './content/shop.js';
-import { migrateFriend } from './content/friends.js'; // (v1.08b friends)
+// (v1.08b friends) the move of an old save to the new friends (js/content/friends.ts migrateFriend), filled in when that
+// file loads (js/avatar.ts friendsReady, as Who's playing opens): not in the first download (check startup)
+export const FRIEND_MIGRATE: { fn?: (p: Profile) => unknown, lib?: typeof import('./content/friends.js') } = {};
 const KEY_SETTINGS = 'sv2_settings', KEY_PROFILES = 'sv2_profiles';
 
 const store = {
@@ -191,7 +193,7 @@ export function normalizeProfile(p: Record<string, any>): Profile {
   // (r79, owner 16 Oct: "boy wears boys clothes") clothes of the other set come off and are wrapped as gift boxes; things
   // that were for both sets become the child's own set's version (js/content/shop.js)
   sortClothes(o);
-  migrateFriend(o); // (v1.08b friends) an old save moves to Finn (boys) or Clara (girls); the old look fields stay
+  if (FRIEND_MIGRATE.fn) FRIEND_MIGRATE.fn(o); // (v1.08b friends) an old save moves to Finn (boys) or Clara (girls); the old look fields stay
   if (!Array.isArray(o.stickers)) o.stickers = [];
   if (!Array.isArray(o.album)) o.album = [];
     // (r90, owner 23 Oct) migration: treat existing profile.tales[id] === true as 1 read

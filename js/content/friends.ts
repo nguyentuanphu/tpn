@@ -8,19 +8,20 @@
 import { setOf, ITEM } from './shop.js';
 
 export type FriendId = 'finn' | 'sol' | 'clara' | 'lumi';
-export type Friend = { id: FriendId, set: 'boy' | 'girl', en: string, vi: string, titleEn: string, titleVi: string,
+export type Friend = { id: FriendId, set: 'boy' | 'girl', en: string, vi: string,
   hair: string, hairStyle: string, style: string, color: string, legs: string, shoe: string };
-const F = (id: FriendId, set: 'boy' | 'girl', titleEn, titleVi, hair, hairStyle, style, color, legs, shoe): Friend =>
-  ({ id, set, en: id[0].toUpperCase() + id.slice(1), vi: id[0].toUpperCase() + id.slice(1), titleEn, titleVi, hair, hairStyle, style, color, legs, shoe });
+const F = (id: FriendId, set: 'boy' | 'girl', hair, hairStyle, style, color, legs, shoe): Friend =>
+  ({ id, set, en: id[0].toUpperCase() + id.slice(1), vi: id[0].toUpperCase() + id.slice(1), hair, hairStyle, style, color, legs, shoe });
+// (their titles, Sky Explorer and the others, are in js/ui/friends-row.ts: not needed in the first download)
 // colours read from the gallery renders (docs/artifacts/sparkle-valley-characters/img/<id>-front.jpg)
 export const FRIENDS: Record<FriendId, Friend> = {
-  finn: F('finn', 'boy', 'Sky Explorer', 'Nhà thám hiểm bầu trời',
+  finn: F('finn', 'boy',
     '#3d4b7e', 'spiky', 'tunic', '#2f8f86', '#f3e6c8', '#8a5a3a'),
-  sol: F('sol', 'boy', 'Sun Keeper', 'Người giữ mặt trời',
+  sol: F('sol', 'boy',
     '#e0762a', 'spiky', 'shirt', '#f6c13a', '#6b4226', '#9a6a3a'),
-  clara: F('clara', 'girl', 'Bloom Keeper', 'Người giữ hoa',
+  clara: F('clara', 'girl',
     '#f08a7a', 'long', 'dress', '#b89ae0', '#9ab07a', '#8a5a3a'),
-  lumi: F('lumi', 'girl', 'Leaf Sprite', 'Tiên lá',
+  lumi: F('lumi', 'girl',
     '#7aa65a', 'short', 'overalls', '#9ab86a', '#9ab86a', '#c0603a')
 };
 export const FRIEND_IDS = Object.keys(FRIENDS) as FriendId[];

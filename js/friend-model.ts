@@ -5,7 +5,7 @@
 // The model does not play its own moves: each frame its joints copy the turns of the code person's joints (same names:
 // torso, head, armL, elbowL, legL, kneeL ...), so walking, jumping, riding (seatRider) and the films' poses work as before,
 // and the hats, necklaces and backs the code person wears sit on the model.
-import { THREE } from './gfx.js';
+import { THREE, P } from './gfx.js';
 import type { FriendId } from './content/friends.js';
 
 type Loaded = { scene: THREE.Object3D, clone: (o: THREE.Object3D) => THREE.Object3D };
@@ -16,6 +16,7 @@ export const friendModelFailed = (id: string) => failed.has(id);
 export const FRIEND_MODEL_URL = (id: string) => `models/${id}.glb`;
 /** load a friend's model (once); resolves true when it is ready, false when it could not load */
 export function loadFriendModel(id: FriendId): Promise<boolean> {
+  if (!id) return Promise.resolve(false);
   if (ready[id]) return Promise.resolve(true);
   if (failed.has(id)) return Promise.resolve(false);
   return loading[id] || (loading[id] = (async () => {
@@ -82,4 +83,17 @@ export function attachFriendModel(A, id: string, skinHex: string): FriendModel {
   const own = obj.updateMatrixWorld.bind(obj);
   obj.updateMatrixWorld = (force?: boolean) => { if (A.rig.visible) follow(A.life && A.life.mood || 'smile'); own(force); };
   return { obj, follow, skin };
+}
+
+// (v1.08b friends) glasses and a mask (head coordinates: the eyes sit at x ±.12, y -.09, the face's front at z .49)
+export function faceParts(it) {
+  const c = it.color, y = -.08, z = .5;
+  if (it.shape === 'mask') { const st = new THREE.Shape(); for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? .09 : .2; const px = Math.cos(a) * r, py = Math.sin(a) * r + .1; i ? st.lineTo(px, py) : st.moveTo(px, py); }
+    return [P(new THREE.CapsuleGeometry(.07, .2, 4, 10), c, [0, y, z - .02], [0, 0, Math.PI / 2], [1, .9, .45]), P(new THREE.ShapeGeometry(st), c, [0, y + .06, z + .015])]; }
+  const ring = it.shape === 'roundglasses' ? new THREE.TorusGeometry(.085, .016, 6, 20) : new THREE.TorusGeometry(.08, .022, 4, 4);
+  const out = [-1, 1].flatMap(s => [P(ring, c, [s * .12, y, z], [0, 0, it.shape === 'roundglasses' ? 0 : Math.PI / 4], it.shape === 'roundglasses' ? [1, 1, 1] : [1.25, .9, 1]),
+    P(new THREE.BoxGeometry(.14, .02, .02), c, [s * .27, y + .02, z - .1], [0, s * .9, 0])]);
+  if (it.shape === 'glasses') [-1, 1].forEach(s => out.push(P(new THREE.CircleGeometry(.075, 4), c, [s * .12, y, z - .002], [0, 0, Math.PI / 4], [1.25, .9, 1])));
+  out.push(P(new THREE.BoxGeometry(.07, .018, .018), c, [0, y + .01, z + .005]));
+  return out;
 }

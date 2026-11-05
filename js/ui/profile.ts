@@ -6,7 +6,7 @@ import { SFX } from '../audio.js';
 import { el, esc, $, clamp } from '../util.js';
 import { featureOn } from '../custom.js';
 import { DEFAULT_OUTFITS, outfitOf } from '../content/shop.js';
-import { avatarURL } from '../avatar.js';
+import { avatarURL, friendsReady } from '../avatar.js';
 import { holdButton } from '../popups.js';
 import { HAT_ICON } from '../data.js';
 import { ICONS } from '../icons.js';
@@ -16,7 +16,6 @@ import { STYLE_ICON, STYLE_NAME, toast } from './common.js';
 import { openGrownups } from './grownups.js';
 // (v1.08b friends) the Welcome steps, the card and the friend row load when needed (check startup: not in the first download)
 const friendsUI = () => import('./friends-ui.js');
-import { friendsOf, defaultFriend, FRIENDS, suitId } from '../content/friends.js';
 // ---------- Who's playing ----------
 // two players on one device: the way they sit now (Grown-ups 'auto' = face to face on touch screens; js/main.js rects)
 export const twoViewNow = () => settings.twoView === 'face' || settings.twoView === 'side' ? settings.twoView : document.body.classList.contains('touch') ? 'face' : 'side';
@@ -76,11 +75,13 @@ export function showWho(onGo) {
       draw();
     });
     s.querySelector('.pick.add').onclick = () => profiles.length >= MAX_KIDS ? toast(T(`Up to ${MAX_KIDS} players. Remove one in Grown-ups first.`, `Tối đa ${MAX_KIDS} người chơi. Hãy xóa bớt trong mục Phụ huynh.`)) : openEditor(null, draw);
-    s.querySelector('.go').onclick = () => { if (chosen.length !== need) return; SFX.chime(); s.remove(); const list = chosen.map(id => profiles.find(p => p.id === id)); if (list.some(p => p && p.friendCard === 'due')) friendsUI().then(U => U.newFriendsCards(list, () => onGo(mode, list))); else onGo(mode, list); }; // (v1.08b friends) the one-time card first
+    s.querySelector('.go').onclick = () => { if (chosen.length !== need) return; SFX.chime(); s.remove(); const list = chosen.map(id => profiles.find(p => p.id === id)); friendsReady().catch(() => null).then(() => { if (list.some(p => p && p.friendCard === 'due')) friendsUI().then(U => U.newFriendsCards(list, () => onGo(mode, list))); else onGo(mode, list); }); }; // (v1.08b friends) the one-time card first
     holdButton(s.querySelector('.grown'), () => openGrownups(draw));
   };
   draw();
   document.fonts?.ready.then(() => { if (s.isConnected && profiles.length) draw(); }).catch(() => { });
+  // (v1.08b friends) the friends' data: every old save moves once, then the cards show each child's friend
+  friendsReady().then(() => { if (s.isConnected && profiles.length) draw(); }).catch(() => { });
 }
 // ---------- Player editor with photo cropping ----------
 export function openEditor(profile, after, pre?) {
@@ -88,7 +89,7 @@ export function openEditor(profile, after, pre?) {
   // (v1.08b friends) a new player first chooses a name, boy or girl, a friend and a skin tone (js/ui/friends-ui.ts)
   if (isNew && !pre) { friendsUI().then(U => U.welcomeFriend({}, r => r ? openEditor(null, after, r) : after && after(null))); return; }
   const p = profile || addProfile();
-  if (pre) Object.assign(p.look, { set: pre.set, style: pre.set === 'girl' ? 'dress' : 'shirt', friend: pre.friend, suit: suitId(pre.friend, 'everyday'), skin: pre.skin }), p.name = pre.name.trim().slice(0, 16), p.friendCard = 'seen';
+  if (pre) Object.assign(p.look, { set: pre.set, style: pre.set === 'girl' ? 'dress' : 'shirt', friend: pre.friend, suit: pre.friend + '-everyday', skin: pre.skin }), p.name = pre.name.trim().slice(0, 16), p.friendCard = 'seen';
   const look = Object.assign({}, p.look);
   let photo = p.photo, img = null, zoom = 1, ox = 0, oy = 0;
   const m = modal('editor', `
@@ -160,7 +161,7 @@ export function openEditor(profile, after, pre?) {
   chips('#cHair', HAIR, 'hair', v => `<span class="sw" style="background:${v}"></span>`);
   chips('#cSkin', SKIN, 'skin', v => `<span class="sw" style="background:${v}"></span>`);
   if (featureOn('shop', true)) shopOutfits(m, look, isNew); // (round S) hats, necklaces and the rest come from the shop
-  friendField(m, look); // (v1.08b friends)
+  import('./friends-row.js').then(R => R.friendField(m, look)); // (v1.08b friends: the editor's friend row, loaded when needed)
   const finish = save => {
     if (save) {
       p.name = (m.querySelector('#nm').value.trim() || T('Explorer', 'Nhà thám hiểm')).slice(0, 16);
@@ -193,20 +194,3 @@ function shopOutfits(m, look, isNew) {
   { const lab = box.closest('.field').querySelector('span'); if (lab) lab.textContent = T('I am a…', 'Con là…'); }   // (Round V, owner 13 Oct) girl or boy, chosen when the character is made: the shop sells that set
 }
 // ---- (round S) end ----
-// (v1.08b friends) the friend row under "I am a…": the two friends of the child's set; changing set (only here, in
-// Grown-ups › Children › Edit or when the character is made) moves to that set's default friend. Hair and clothes come
-// from the friend, so the old hair rows are hidden (the old fields stay in the save).
-function friendField(m, look) {
-  const out = m.querySelector('#cOut').closest('.field'), f = el('div', 'field fr-field');
-  f.innerHTML = `<span>${T('My friend', 'Bạn của con')}</span><div class="fr-cards small" id="cFriend"></div>`; out.after(f);
-  let R: typeof import('./friends-row.js') = null;
-  const draw = () => {
-    if (!R) return void import('./friends-row.js').then(m => { R = m; draw(); });
-    const set = look.set === 'girl' ? 'girl' : 'boy';
-    if (!FRIENDS[look.friend] || FRIENDS[look.friend].set !== set) { look.friend = defaultFriend(set); look.suit = suitId(look.friend, 'everyday'); }
-    const box = f.querySelector('#cFriend'); box.innerHTML = friendsOf(set).map(id => R.friendCard(id, look.friend === id)).join('');
-    box.querySelectorAll('[data-friend]').forEach((b: HTMLElement) => b.onclick = () => { R.setFriend({ look }, b.dataset.friend as any); SFX.pop(1); R.sayHello(look.friend); draw(); });
-  };
-  m.querySelector('#cOut').addEventListener('sv-set', draw); draw();
-  m.querySelector('#cHs').closest('.field').hidden = true;
-}
