@@ -143,7 +143,8 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       }
       // tablets and computers grow to fill (at most 2.4x); (v1.08 layout, owner: "text big and clear") a phone grows a
       // small game too, at most 1.4x
-      const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : 1.4;
+      // (v1.08b fivescreens) a sideways phone grows a game less: the next round's words may be longer
+      const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : innerWidth > innerHeight && innerHeight <= 520 ? 1.15 : 1.4;
       // a shrink keeps every button a finger size: 44 px, 64 px for under-5s (it stops there, at FIT_MIN at most)
       // (v1.08 fixes 2, checks horseplay, folkplay, ownerlearningprogression) each button keeps its own minimum too: a game
       // that asks 64 px for everyone (Cờ Cá Ngựa, the folk games) was shrunk to 44 px for a big kid

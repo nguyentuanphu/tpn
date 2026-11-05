@@ -3653,3 +3653,6 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .gl .tk2-wrap .tk2-seats { width: min(100%, 430px); }
 @media (orientation: portrait) and (max-width: 500px) { .gl .folk-court > .folk-field { height: clamp(200px, 33dvh, 320px); } }
 @media (orientation: landscape) and (max-height: 520px) { .gl .folk-court { gap: 3px 12px; padding: 2px 6px; } .gl .folk-court > p { margin: 0; } .gl .folk-court .folk-readout { min-height: 0; } }
+/* (v1.08b fivescreens) Từ Ngữ Hai Quê on a sideways phone: the word card a little more compact, so a long example sentence
+   still leaves room for an under-5's 64 px answers */
+@media (orientation: landscape) and (max-height: 520px) { .gl .wq { padding: 8px 16px; gap: 2px; } .gl .wq-flag { font-size: 26px; } .gl .wq-flag .art { width: 40px; height: 40px; } }
