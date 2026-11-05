@@ -28,7 +28,7 @@ import './art/s2vn.js';
 
 const NEAR = 140;
 /** is the region open today (its calendar day, a tester's early days, or Studio's peek)? */
-export const regionOpen = (r: S2Region, now = new Date()) => calOpen('feature:' + r.key, calMoves(), now, earlyDays()) || isPeek(r.key);
+export const regionOpen = (r: S2Region, now = new Date()) => calOpen('feature:' + r.key, calMoves(), now, earlyDays()) || isPeek(`s2_${r.id}`); // (its key is s2_<id>: a Studio card each, js/content/releases.ts)
 
 type Built = { r: S2Region; stop: { x: number; z: number } | null; parts: THREE.Object3D[]; spots: Record<string, { x: number; z: number }> };
 const opened = new Map<string, { stop: { x: number; z: number } | null }>(), built = new Map<string, Built>();

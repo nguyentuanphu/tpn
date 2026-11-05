@@ -70,6 +70,7 @@ const EXPAND = {
   'money_*': MONEY_GAMES.map(g => 'money_' + g),
   'story_*': CHAPTERS.map(c => 'story_' + c.id),
   'fest_*': FESTCAL.map(F => 'fest_' + F.id),
+  's2_*': [...src('js/content/s2vn.js').matchAll(/\bkey: '(s2_\w+)'/g)].map(m => m[1]),   // (v1.08 Season 2 Vietnam regions, js/s2vn.ts regionOpen)
   'sparkleFruitParade_*': ['sparkleFruitParade_single', 'sparkleFruitParade_multi', 'sparkleFruitParade_tester']
 };
 
