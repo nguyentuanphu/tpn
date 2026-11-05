@@ -993,9 +993,9 @@ async function drawReleases(P, lab) {
       if (!it || !on || !st) return; const name = plainOf(it).name; if (st >= today) add(st, row(id, '🟢', T(`Opens ${fmtDay(st)}: ${name}`, `Mở ${fmtDay(st)}: ${name}`), 'opens'));
       if (days) { const end = isoDay(new Date(new Date(st + 'T12:00:00').getTime() + days * 864e5)); if (end >= today) add(end, row(id, '🔚', T(`Ends ${fmtDay(end)}: ${name}`, `Kết thúc ${fmtDay(end)}: ${name}`), 'ends')); } });
     const mondays = Array.from({ length: 20 }, (_, i) => mondayOf(plusDays(i * 7)));
-    for (const e of calList()) { if (!e || !e.week || !e.key) continue; const c = P.querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(e.id || '')}"]`), st = c?.querySelector<HTMLInputElement>('[data-r="start"]').value; if (st) continue;
+    for (const e0 of calList()) { const day = e0 && (e0.week || e0.date); if (!day || !e0.key) continue; const e = { ...e0, week: mondayOf(day) }; const c = P.querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(e.id || '')}"]`), st = c?.querySelector<HTMLInputElement>('[data-r="start"]').value; if (st) continue;
       const name = T(e.en || e.id, e.vi || e.en || e.id), weeksTo = [...new Set([...mondays, e.week])].sort();
-      add(e.week, `<li class="tlcal"><span class="tlitem planned">📌 ${esc(name)}</span><label class="tlmove">${T('Week', 'Tuần')} <select data-calkey="${esc(e.key)}" aria-label="${esc(T('Move to another week', 'Chuyển sang tuần khác'))}">${weeksTo.map(w => `<option value="${w}" ${w === e.week ? 'selected' : ''}>${fmtDay(w)}</option>`).join('')}</select></label></li>`); }
+      add(day, `<li class="tlcal"><span class="tlitem planned">📌 ${esc(name)}</span><label class="tlmove">${T('Week', 'Tuần')} <select data-calkey="${esc(e.key)}" aria-label="${esc(T('Move to another week', 'Chuyển sang tuần khác'))}">${weeksTo.map(w => `<option value="${w}" ${w === e.week ? 'selected' : ''}>${fmtDay(w)}</option>`).join('')}</select></label></li>`); }
     const list = [...weeks.keys()].sort();
     box.innerHTML = list.length ? list.map(w => `<div class="tlweek"><h4>${T('Week of', 'Tuần từ')} ${fmtDay(w)}</h4><ul>${weeks.get(w).join('')}</ul></div>`).join('')
       : `<p class="note">${T('Nothing is scheduled yet. Open a switch’s 📅 Schedule to give it a start day.', 'Chưa có gì theo lịch. Mở 📅 Lịch của một công tắc để chọn ngày bắt đầu.')}</p>`;

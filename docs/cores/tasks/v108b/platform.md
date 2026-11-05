@@ -17,7 +17,7 @@ Order: the owner's newest ask first (part 6, Studio), then the rest of the brief
 The Releases timeline reads the story helper's module `js/content/releasecal.ts` (agreed 5 Nov 2026 AEDT, their message):
 
 ```ts
-export type CalItem = { key: string; kind: 'game'|'story'|'chapter'|'feature'; id: string; en: string; vi: string; week: string /* Monday YYYY-MM-DD */; end?: string; icon?: string };
+export type CalItem = { key: string; kind: 'game'|'story'|'chapter'|'feature'; id: string; en: string; vi: string; date: string /* the day it opens, YYYY-MM-DD Sydney; the Monday for games and stories */; end?: string; icon?: string };
 export const CAL_DEFAULT: CalItem[];
 export function calendar(over?: Record<string, string>): CalItem[]; // merges the owner's moves
 ```
