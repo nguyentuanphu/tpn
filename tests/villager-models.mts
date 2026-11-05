@@ -4,7 +4,8 @@
 //      6 %), standing on the ground where the code person stood (within 5 cm), facing the same way;
 //   2. it blinks (the model's closed face shows within 7 s) and its eyes turn toward a child standing to one side;
 //   3. the name tag and the talk stay;
-//   4. blocked (no network), the code person stays and nothing breaks.
+//   4. blocked (no network), the code person stays and nothing breaks;
+//   5. (crowds) a crowd person next to a child wears one of the gallery neighbours' models.
 import { open, clear } from './harness.mts';
 
 const ok = (c: unknown, msg: string) => { if (!c) throw new Error(msg); };
@@ -50,6 +51,16 @@ export async function villagerModelsCheck(b) {
       if (!n.tag || !n.tag.visible || !G.interactables.some((i: any) => i.id === 'npc_' + id)) bad.push(`${id}: name tag or talk gone`);
       out[id] = { h: +mh.toFixed(2), code: +ch.toFixed(2), blink: seen.has('blink'), look };
     }
+    // (crowds) a crowd person next to a child wears a gallery neighbour's model, at the code person's height
+    const AV = A, skipN = new Set(G.npcs.map((n: any) => n.obj)), mine = new Set(G.heroes.map((x: any) => x.av.root));
+    const crowd = G.scene.children.find((o: any) => o.userData.avatar && !skipN.has(o) && !mine.has(o) && !o.userData.own && AV.avatarOf(o) && !AV.avatarOf(o).late && AV.avatarOf(o).painted);
+    if (!crowd) bad.push('no crowd person found');
+    else {
+      h.place(crowd.position.x + 2, crowd.position.z + 2); const CA: any = AV.avatarOf(crowd);
+      for (let k = 0; k < 60 && !CA.model; k++) await w(200);
+      if (!CA.model || !/^villager-(vn|au)-/.test(crowd.userData.villagerModel || '')) bad.push('crowd: no neighbour model (' + (crowd.userData.villagerModel || 'none') + ')');
+      out.crowd = crowd.userData.villagerModel;
+    }
     return { bad, out };
   }, IDS);
   // blocked: the code people stay
@@ -64,5 +75,5 @@ export async function villagerModelsCheck(b) {
   const errs = [...P.errors, ...Q.errors.filter(e => !/glb|friend model|Failed to fetch|aborted/i.test(e))]; await P.ctx.close(); await Q.ctx.close();
   if (blocked.vm !== 'code' || blocked.model || blocked.parts < 3) r.bad.push('blocked: ' + JSON.stringify(blocked));
   ok(!r.bad.length && !errs.length, JSON.stringify({ bad: r.bad, errs: errs.slice(0, 5), out: r.out }).slice(0, 2500));
-  return `${Object.keys(r.out).length} villagers wear their models at the code person's height (${Object.entries(r.out as Record<string, { h: number }>).map(([k, v]) => `${k} ${v.h} m`).join(', ')}), blink and look at the child; blocked, the code people stay`;
+  return `the crowd wears ${(r.out as any).crowd}; ${Object.keys(r.out).length - 1} villagers wear their models at the code person's height (${Object.entries(r.out as Record<string, { h: number }>).filter(([k]) => k !== 'crowd').map(([k, v]) => `${k} ${v.h} m`).join(', ')}), blink and look at the child; blocked, the code people stay`;
 }
