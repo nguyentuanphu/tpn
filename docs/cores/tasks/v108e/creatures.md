@@ -1,0 +1,73 @@
+# v1.08e creatures: status
+
+**ready for Release** (6 Nov 2026, 02:54 AEDT). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+
+## What changed
+
+- **Models:** `models/world/creature-<kind>.glb` for 22 animals and 2 companions (24 files, 17-35 KB each, 1,400-4,300
+  triangles, about 3,300 on average; meshopt; vertex colours, one material, one skinned mesh = one draw).
+  - Made by `tools/blender/world-creatures.py` (`node tools/make-creatures.mts [kind ...]`, Blender 4.2.3, gltfpack 0.20).
+  - The shapes come from the game's own code (`tools/blender/creatures-dump.mts` writes `tools/blender/creatures-spec.json`),
+    so place, size and facing match the code shapes. Big parts of each moving piece are melted into one soft felt shape
+    (voxel remesh, smoothed, thinned) with their colours carried over; eyes, noses and small bits stay crisp.
+  - Skeleton: one bone per moving piece (body, head, ears, tail, legs; wings for companions).
+  - Clips: `idle`, `walk` (companions `fly`), the happy move (`wag`, `hop` or `flap`, in `tools/blender/creatures-built.json`),
+    `follow`, `cheer`; every creature has all five (pets and companions use `follow` and `cheer`).
+- **Game:**
+  - `js/creatures.ts` (new, after the start): asks for an animal's model the first time a child comes near (tickAnimals,
+    60 m), at most 3 a moment; plays walk/follow/idle by speed, the happy move now and then when still, cheer on a pet's
+    happy jump. The companion's model loads as soon as the child has one.
+  - `js/animals.ts`: two small hooks (`useCreatureModels`, `animalCheer`); the code shape (`rig.root`) is hidden, not
+    removed, and stays as the fallback.
+  - `js/companion.ts`: the code shape's body and wings in a `look` group (the fallback); the glow, lantern, hat and tricks
+    stay the game's own. Hook `useCompanionModels`.
+  - `js/pets.ts`: a pet's happy jump plays its cheer (`animalCheer`).
+  - `js/main.ts`: one marked line, `afterStart(() => import('./creatures.js'), ...)`. `sw.ts`: `js/creatures.js` in the offline list.
+  - Shop, Bag and game pictures keep our drawings in `js/art.ts`; only the 3D world changed.
+- **Check:** `worldcreatures` (`tests/world-creatures.mts`, end of `tests/run.mts`).
+- **Screenshots:** `docs/world-models-v108e/creatures/` (phone, tablet, computer, before and after; code-vs-model sheets).
+
+## Checks (one at a time, 6 Nov 2026, 02:54 AEDT)
+
+| Check | Result |
+|---|---|
+| worldcreatures | pass (24 models load, size within 12 %, feet on the ground, clips move, bunny swapped near the child, dragon companion model, code shapes stay when blocked) |
+| types, names | pass |
+| boot | pass |
+| startup | pass: first start 1032 KB, the same as integrate/v108 without this branch (1032 KB measured the same way); the 1025 KB target was already passed by the base |
+| perf | pass on the second try (village 276 draws, home 155); the first try stopped on "__sv is not defined" while the check's page reloaded, not in creature code |
+| battery | pass |
+| longplaymem | pass |
+| areastream | pass |
+| companiongoal | pass |
+| pets, companion | no checks with these names; companiongoal covers the companion screen |
+
+## Assumed (owner or Release can change)
+
+- Model names have a `creature-` prefix (`creature-puppy`), so they never clash with the other helpers' models.
+- Animals in story films keep the code shapes this round (`filmAnimal`).
+- Flocks (the little hens, ducks, birds, fish pictures in `world.critters`) stay as they are (brief point 4).
+- Animals swap in through the animals' own near-the-child tick (`tickAnimals`, 60 m) rather than `modelFor`'s queue: an
+  animal that is removed (a pet rebuilt) then never waits in the queue for good. The kit itself is unchanged.
+- Files are 17-35 KB, under the "about 50-200 KB" guide: smaller is lighter on phones, and the look holds at game distance.
+- Happy moves: wag for animals with a wagging tail and the cattle, flap for the birds, hop for the rest.
+
+## Every creature the code draws
+
+| Creature | id (model) | Drawn by | Where it shows (copies) |
+|---|---|---|---|
+| puppy, kitty, bunny, panda, joey, calf | `creature-<kind>` | `js/animals.ts` `animalModel` | the child's pets (`js/pets.ts`, up to 2 per child, at home and the yard), farm animals (`js/farm.ts`), Lotus Village (`js/lotus.ts`, the village dog) |
+| cow, sheep, pig, chicken, unicorn | `creature-<kind>` | `js/animals.ts` | farm animals (`js/farm.ts`, one per animal bought), hutch bunny, Lotus hens (`js/lotus.ts`, with `js/animalhomes.ts` coop) |
+| bear, koala, platypus, penguin, emu, turtle, elephant, crane, bull, buffalo, peacock | `creature-<kind>` | `js/animals.ts` | regional symbols (`js/symbols.ts`, one each), Lotus Village (`js/lotus.ts`, the buffalo cart), Vietnam fun (`js/vnfun.ts`) |
+| firefly (Lấp Lánh), baby dragon (Rồng con) | `creature-firefly`, `creature-dragon` | `js/companion.ts` | the child's companion, one per child |
+| little hens, ducks, birds, fish (pictures) | stay as they are | `world.critters` sprites (`js/world.ts`, `js/animalhomes.ts`) | flocks: stay sprites (brief point 4) |
+| animals in story films | stay code shapes | `js/content/films/kit.ts` `filmAnimal` | films keep the code shapes this round |
+
+## Progress notes
+
+- 6 Nov 2026, 02:54 AEDT: all parts done, checks above, ready for Release.
+- 6 Nov 2026, 02:05 AEDT: `tools/blender/creatures-dump.mts` reads every creature's parts from the game's own code into `tools/blender/creatures-spec.json` (22 animals, 2 companions), so the Blender models match place, size and facing.
+
+## Owner's decisions
+
+- 6 Nov 2026 AEDT (pop-ups, via Release): the go for v1.08e; models load near the child; code shapes stay as the fallback.
