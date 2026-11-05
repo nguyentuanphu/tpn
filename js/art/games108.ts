@@ -13,3 +13,6 @@ import '../games/money3-meta.js';
 // (v1.08b games) the new corner games' pictures and How to play
 import './games108b.js';
 import '../games/games108b-meta.js';
+// (v1.08d s2au) the Season 2 Australia games' pictures and How to play
+import './s2au.js';
+import '../games/s2au-meta.js';

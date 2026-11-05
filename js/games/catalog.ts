@@ -316,6 +316,10 @@ export const GAME_CATALOG = [
   { id: 'vi_poem', learn: true, icon: 'g8:poem', name: () => T('Little Poems', 'Đọc Thơ Ngắn') },
   { id: 'vi_tulay', learn: true, icon: 'g8:tulay', name: () => T('Echo Words', 'Từ Láy') },
   { id: 'vi_sx', learn: true, icon: 'g8:sx', name: () => T('S or X?', 'Chính Tả S hay X?') },
+  // (v1.08d s2au) Season 2, Australia: three games per region, each open on its region's day (js/content/s2au-games.ts)
+  { id: 's2a_snorkel', learn: true, icon: 's2:snorkel', origin: 'au', name: () => T('Snorkel Spotter', 'Lặn Ngắm Tìm Bạn') },
+  { id: 's2a_turtle', learn: true, icon: 's2:turtle', origin: 'au', name: () => T('Turtle to the Sea', 'Rùa Con Về Biển') },
+  { id: 's2a_reefquiz', learn: true, icon: 's2:reefquiz', origin: 'au', name: () => T('Reef Friends', 'Bạn Bè Rạn San Hô') },
   // (v1.08b games) one game per festival, open only in its season (js/content/festgames108b.ts, festseason.ts)
   { id: 'fg_tet', icon: 'fg:tet', name: () => T('Wrap the Bánh Chưng', 'Gói Bánh Chưng') },
   { id: 'fg_ramthang1', icon: 'fg:ramthang1', name: () => T('First Full Moon Lanterns', 'Thả Đèn Rằm Tháng Giêng') },
@@ -395,6 +399,8 @@ export const GAME_LOADERS = {
   // (v1.08 money)
   // (v1.08b games)
   'games108b.ts': { ids: ['fg_tet', 'fg_ramthang1', 'fg_giotohung', 'fg_doanngo', 'fg_vulan', 'fg_midautumn', 'fg_ongtao', 'fg_thieunhi', 'fg_quockhanh', 'fg_nhagiao', 'fg_easter', 'fg_mothersday', 'fg_fathersday', 'fg_halloween', 'fg_christmas', 'fg_newyear', 'fg_ausday', 'fg_cleanup', 'fg_harmony', 'fg_holi', 'fg_anzac', 'fg_reconciliation', 'fg_naidoc', 'fg_diwali', 'en_animalsay', 'en_opposite', 'en_feel', 'en_weather', 'en_routine', 'en_where', 'en_verbs', 'en_shop', 'en_teens', 'en_body', 'en_wh', 'en_mydaystory', 'me_tree', 'me_wash', 'me_safe', 'me_help', 'me_calm', 'me_table', 'th_balance', 'th_clues', 'th_robot', 'th_changed', 'th_count', 'th_belong', 'vi_poem', 'vi_tulay', 'vi_sx'], load: () => import('./games108b.js') },
+  // (v1.08d s2au)
+  's2au.ts': { ids: ['s2a_snorkel', 's2a_turtle', 's2a_reefquiz'], load: () => import('./s2au.js') },
   'money3.ts': { ids: ['shoppay', 'givechange', 'toysave', 'needsfirst', 'pricesort', 'marketday', 'coinsort', 'makeamount', 'budgetpicnic', 'chores', 'twomoney'], load: () => import('./money3.js') },
 
 };

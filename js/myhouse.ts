@@ -44,7 +44,9 @@ export const DECOR: Record<string, Decoration> = {
   // (v1.08b story) chapters 4, 5 and the finale
   lantern_ch4: { icon: '⭐', price: 0, en: 'The Christmas star lantern (story)', vi: 'Đèn ngôi sao Giáng sinh (truyện)', keepsake: true },
   lantern_ch5: { icon: '🪨', price: 0, en: 'The Uluru sunset lantern (story)', vi: 'Đèn hoàng hôn Uluru (truyện)', keepsake: true },
-  lantern_finale: { icon: '🧧', price: 0, en: 'The Tết lantern of the whole valley (story)', vi: 'Đèn lồng Tết của cả thung lũng (truyện)', keepsake: true }
+  lantern_finale: { icon: '🧧', price: 0, en: 'The Tết lantern of the whole valley (story)', vi: 'Đèn lồng Tết của cả thung lũng (truyện)', keepsake: true },
+  // (v1.08d s2au) Season 2, Australia: chapters 10 to 12
+  lantern_ch10: { icon: 's2:reef', price: 0, en: 'The Great Barrier Reef lantern (story)', vi: 'Đèn lồng rạn san hô Great Barrier (truyện)', keepsake: true }
 };
 // (owner, 13 Oct) each festival's keepsake, won by finding all five things of its festival hunt (js/festhunt.js)
 for (const F of FESTCAL) DECOR['fh_' + F.id] = { icon: F.icon, price: 0, en: F.en + ' (festival hunt)', vi: F.vi + ' (truy tìm lễ hội)', keepsake: true };

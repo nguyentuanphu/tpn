@@ -9,7 +9,7 @@ import { fruitParadeAvailable } from './fruit-parade.js';
 import { T } from '../i18n.js';
 import { CUSTOM, itemEnabled, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
-import { heldGame } from './secondset.js';
+import { heldGame, calDue } from './secondset.js';
 import { inSeason } from './festseason.js'; // (v1.08b games) festival games only in their season
 
 // the areas, in the order the path visits them; a child who can't read knows each one by its picture
@@ -118,7 +118,9 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   en_verbs: ['hv_en', 3, 1], en_shop: ['hv_en', 4, 2], en_teens: ['hv_en', 4, 2], en_body: ['hv_en', 2, 1], en_wh: ['hv_en', 5, 2], en_mydaystory: ['hv_en', 4, 2],
   me_tree: ['me', 3, 2], me_wash: ['me', 2, 1], me_safe: ['me', 3, 1], me_help: ['me', 3, 1], me_calm: ['me', 3, 1], me_table: ['me', 3, 1],
   th_balance: ['thinking', 4, 2], th_clues: ['thinking', 4, 2], th_robot: ['thinking', 5, 3], th_changed: ['thinking', 4, 2], th_count: ['thinking', 4, 2], th_belong: ['thinking', 3, 1],
-  vi_poem: ['hv_vi', 4, 2], vi_tulay: ['hv_vi', 5, 2], vi_sx: ['hv_vi', 5, 3]
+  vi_poem: ['hv_vi', 4, 2], vi_tulay: ['hv_vi', 5, 2], vi_sx: ['hv_vi', 5, 3],
+  // (v1.08d s2au) Season 2, Australia (js/content/s2au-games.ts): in Going places, found at their region's stands
+  s2a_snorkel: ['travel', 3, 1], s2a_turtle: ['travel', 3, 1], s2a_reefquiz: ['travel', 4, 2]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };
@@ -130,7 +132,7 @@ export function gameInfo(id) {
   const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id);
   const orchardHeld = id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','single');
   const fruitHeld = id === 'fruitparade' && !fruitParadeAvailable('single');
-  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: !itemEnabled('game', id) || !inSeason(id) || (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld };
+  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: !itemEnabled('game', id) || !inSeason(id) || (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld || (id.startsWith('s2a_') && !calDue('game', id)) }; // (v1.08d s2au) a Season 2 game waits for its region's day
 }
 // the games of one area for a child: under-5s only see the ones made for them
 export const gamesIn = (games, area, little) => Object.keys(games).map(gameInfo).filter(g => g.area === area && !g.hidden && (!little || g.ageMin < 5));
