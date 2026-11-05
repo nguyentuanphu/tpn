@@ -150,6 +150,17 @@ def tears(e, kit):
         me = bpy.data.meshes.new('tear'); bm.to_mesh(me); bm.free(); o = bpy.data.objects.new('tear', me); me.materials.append(TEAR)
         o.location = (c.x + sx * .36 * r, lo.y + .1 * r, c.z - .28 * r); o.scale = (.06 * r, .05 * r, .09 * r); o.parent = e; scene.collection.objects.link(o)
 FPS = max(1, D.get('fps', 12))
+# (frames) a soft blink every 2 to 6 s for each actor, at their own moments, when the game's film gave none (its blink needs
+# the v1.08e soft faces, js/film.ts SOFT); not with the eyes already closed
+import random
+def blink_frames(i, a):
+    moods = a.get('mood') if isinstance(a.get('mood'), list) else []
+    if any(m in ('blink', 'half') for m in moods): return set()
+    rnd = random.Random(7919 * (i + 1)); s = set(); t = rnd.uniform(.6, 3.0); n = len(a['m'])
+    while t * FPS < n: f = int(t * FPS); s.update((f, f + 1)); t += rnd.uniform(2, 6)
+    return s
+BLINKS = [blink_frames(i, a) for i, a in enumerate(D['actors'])] if FRAMES else []
+OPEN_EYES = ('smile', 'surprised', 'sad', 'curious', 'excited', 'shy', 'lookL', 'lookR')
 # (frames) the moves are read from the character's actions and set on its bones by hand each frame (no frame_set), so the
 # whole page renders as one animation and Eevee keeps the scene loaded between frames (about 0.3 s a frame instead of 20)
 ACT_KEYS = {}
@@ -219,7 +230,10 @@ def place_actor(i, k):
     cp = COPIES[len([x for x in ACTORS[:i] if x is not None])] if FRAMES and i < len(ACTORS) and ACTORS[i] is not None else None
     if cp:   # (frames) the face and the move of this frame
         _, faces, rig = cp; want = face_of(D['actors'][i], k)
-        if want not in faces: want = 'smile' if 'smile' in faces else want
+        # the kit has no half-closed or sideways-eyes faces (lumi.py): a half blink shows closed, so a blink caught at 12 frames a
+        # second is seen; the eyes' turn to the speaker is the head's turn (look_pass)
+        if want not in faces: want = 'blink' if want == 'half' and 'blink' in faces else 'smile' if 'smile' in faces else want
+        if want in OPEN_EYES and k in BLINKS[i] and 'blink' in faces: want = 'blink'
         for n, c in faces.items(): c.hide_render = (n != want)
         POSED[i] = False
         if rig:
