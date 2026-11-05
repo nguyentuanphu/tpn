@@ -1,3 +1,5 @@
+**ready for Release** (parts 1 to 4) (6 Nov 2026 AEDT)
+
 # v1.08d helper: polish (status)
 
 Branch `work/v108d-polish` (from `origin/integrate/v108`). Brief: `polish-brief.md`. Times in AEDT.
@@ -53,7 +55,10 @@ each), `tests/checks/play.mts` (the new check at the end, one marked block), `.g
   third; another friend's item stays hidden; shop shoes replace the boots; 7 parts drawn with the item).
 - `types`, `friendmodel` (94, 94, 95, 116 KB; 7,901 / 7,884 / 7,886 / 13,744 triangles shown in 6 parts), `wearfit`,
   `friendoutfits`, `preload`, `emoji`, `noemoji`, `arch`, `names`, `bilingual`: pass.
-- `studio`, `perf`: see the progress notes.
+- `perf` (alone, after the merge of `integrate/v108`): pass (village 306 draws, home 179).
+- `studio`: red on this branch (the Simple screen's reading list) and red on the untouched base `integrate/v108` too
+  ("the exe did not save into its folder"), so not from this work; the villager form's new Kind choice is not what
+  either step checks.
 
 ## Part 2: the games' leftovers
 
@@ -80,7 +85,37 @@ each), `tests/checks/play.mts` (the new check at the end, one marked block), `.g
   no scrolling, buttons 44 px or more, text 16 px or more on phone both ways, tablet both ways and computer; pictures in
   `tests/out/handson/`).
 
+## Part 3: small leftovers
+- The 136 old mixed-line voice files are removed (the pack maker's Azure run did it while recording the new lines).
+- The two empty Vietnamese files `voices/vi/f/2473f892-1b292ac5.mp3` and `e67396f8-2132059d.mp3` are removed: they are
+  the Vietnamese parts of mixed lines, which the pack maker no longer lists (those parts are in the reviewed FPT pack,
+  `tools/make-voice-pack.mts`: "Do not duplicate Vietnamese fragments in both Azure casts"), so nothing in the game asks
+  for them and there is nothing to record. The only other empty file, `05b7dbba-7ca64a0e.mp3`, is the line "♟️" (a
+  picture with no words to say).
+- Checks: `voicecover`, `voicepack`, `voicearea` (SAMPLE), `voiceopus`: pass.
+
+## Part 4: added by Release on 5 Nov
+- **Học vui on a phone** (`js/learnquest.ts`): the 8 journey rows fold into one row, "Hành trình học / Learning
+  journeys" with the steps done (for example 0/72); a tap opens the list. Folded at first on a phone, open on a tablet and
+  a computer; the child's open or close is remembered per kind of screen. `learningquests` checks it folded on the phone,
+  open on the others, and the rows 44 px or more once open (the check measured hidden rows before; changed on purpose).
+- **Calendar** (`js/ui/festivals-ui.ts`): the festival game's step says "Back at <day> / Sẽ quay lại vào <day>" from
+  `backOn('fg_' + id)` when the game is out of season (it said "Back next year" every time).
+- **Lemonade** (`js/games/money2.ts`): each customer asks for a different number of cups.
+- Checks: `hocvui`, `learningquests`, `calendartab`, `festivalgames`, `guides`, `types`, `bilingual`: pass.
+  `roundvariety`: the check stops before any game while the harness starts three windows at once (the "New friends are
+  here!" card's button does not settle in 30 s here); played one game at a time with `round-variety.mts`, lemonade,
+  fg_tet and mazebuild all vary their rounds at every level (0 repeats).
+
+## Base issues seen (not from this branch, for Release)
+- `types`: `integrate/v108` itself is over the test-code baseline (play 172, screens 217, voice 38, story-v108b 1 against
+  160, 212, 37, 0); this branch adds none.
+- `gamefit` (dragonfire on a sideways tablet) and `fivescreens` (cacuangua, chuyen, shapebuilders and others): none of
+  them is a game this branch changed.
+- `studio` on the base, as above.
+
 ## Owner's decisions
 - 5 Nov 2026 AEDT (owner, via Release): "everything that you say left for later round"; the go is given.
 
 ## Progress notes
+- 6 Nov 2026 AEDT: branch `work/v108d-polish`, merged with `origin/integrate/v108`; checks as listed above, each run alone.
