@@ -32,6 +32,7 @@ The first account runs at most 5 at once: quality is still running, so this roun
 | creatures | first | `creatures-brief.md`: animals, pets, companions, farm animals | `work/v108e-creatures` |
 | vehicles | first | `vehicles-brief.md`: every vehicle the child sees or rides | `work/v108e-vehicles` |
 | nature | second | `nature-brief.md`: trees, flowers, plants, farm crops, My House furniture | `work/v108e-nature` |
+| water | first | `water-brief.md`: every river, lake and pond shallow (0.4-0.8 m) and friendly | `work/v108e-water` |
 | places | second | `places-brief.md`: landmarks, buildings, stalls, food and festival props | `work/v108e-places` |
 
 **Split (owner, 6 Nov 2026 AEDT, pop-up):** places and nature run on the second account, to spare the first account's weekly limit.
