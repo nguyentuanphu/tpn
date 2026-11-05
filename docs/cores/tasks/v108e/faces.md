@@ -1,6 +1,8 @@
 # v1.08e faces: status
 
-Working (6 Nov 2026 AEDT). Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
+**Part 1 (faces): ready for Release** (6 Nov 2026, 04:45 AEDT). Part 2 (high-detail friends, rim light, outline,
+close-ups): working; its look and close-ups are already in the branch (see Part 2 below). Then the villagers brief.
+Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
 
 ## 1. Why the faces looked stiff (looked first, 6 Nov 2026, 03:10 AEDT)
 
@@ -51,9 +53,24 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
 - Moods every model needs (mesh collection and material `face-<mood>`): smile, blink, happy, curious, surprised, sad,
   shy, excited, half, lookL, lookR. `lookL` is the person's own left (the viewer's right).
 
-## Checks
+- 2D pictures: `icons/friends/<id>-f, -q, -s, -face.webp` rendered again in Blender with the new eyes
+  (`node tools/make-friend-pictures.mts`, Cycles, quick).
+- Close-ups before and after: `docs/world-models-v108e/faces/` (`before-*`, `after-*`, phone, tablet, computer:
+  smile, half, blink; happy, surprised, sad), made by `node tests/faces-shots.mts <folder> <tag>` (MOODS=, DEV=, HD=1).
 
-(to come)
+## Checks (6 Nov 2026, 04:40 AEDT, one at a time, in this container)
+
+| Check | Result |
+|---|---|
+| `faces` (new, end of `tests/run.mts`, `tests/faces.mts`) | pass: each friend and a villager blinks within 7 s (half, closed, half), the lids close fully, happy, surprised and sad show, the eyes turn to a child on either side, the villager's lid covers the eye's top |
+| `friendmodel` | pass (107, 108, 109, 130 KB; 8,040 / 8,024 / 8,026 / 13,880 triangles in 6 parts, +5 outlines); now expects 11 faces, and counts the Part 2 outlines on their own (at most 6) |
+| `frienditems` | pass (7 parts drawn with the item; outlines counted apart, as in `friendmodel`) |
+| `newfriends`, `wearfit`, `friendoutfits`, `boot`, `types` | pass |
+| `perf` | pass (home 165 draws, village 282 draws) |
+| `battery` | pass (168/168 far people still) |
+| `longplaymem` | pass |
+| `startup` | pass (first start 1038 KB, within the check's 1025 KB + 3 %) |
+| `films` | not run here (Release's suite; the film faces now use `drawFeatures`) |
 
 ## Owner's decisions
 
