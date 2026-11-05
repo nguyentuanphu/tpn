@@ -4,7 +4,7 @@
 // tile instead, the Simple screen leaves them out. On: they unlock as js/content/unlocks.ts says (each original in the
 // area or shelf finished 3 times). A tester device sees them early through its preview list (releaseOn).
 import { releaseOn, CUSTOM, earlyDays } from '../custom.js';
-import { calOpen, openDate, weekOf, addDays } from './releasecal.js';
+import { calOpen, openDate, weekOf, addDays } from './releasecal-core.js';
 
 export const SECOND_SET_GAMES: Record<string, string[]> = {
   animals: ['crabwalk', 'whohome', 'mumbaby', 'feedzoo', 'buffalo', 'reefcount', 'tracks', 'catchfish', 'emueggs', 'reefclean'],

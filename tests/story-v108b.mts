@@ -59,6 +59,8 @@ export async function calendarTabCheck(b) {
     const P = await open(b, { w, h, touch }); await clear(P.page);
     const r = await P.page.evaluate(async () => {
       __sv.openPad(0, 'cal'); await new Promise(r => setTimeout(r, 600));
+      // (the new things fill in once their code and names have loaded)
+      for (let k = 0; k < 40 && !document.querySelector('.fcal-whatsnew h3'); k++) await new Promise(r => setTimeout(r, 100));
       const pad = document.querySelector('.pad') || document; const q = (s: string) => [...pad.querySelectorAll<HTMLElement>(s)];
       const steps = q('.fcal-step'), heads = q('.fcal h3').map(e => e.textContent || '');
       const small = [...q('.fcal-step b, .fcal-step small, .fcal-step em, .fcal-new b, .fcal-new small')].filter(e => parseFloat(getComputedStyle(e).fontSize) < 16).length;
@@ -121,9 +123,8 @@ export async function installGiftCheck(b) {
   // in a browser tab: no gift; the Grown-ups chip mentions the gift
   const Q = await open(b, { w: 1180, h: 820 }); await clear(Q.page);
   const t = await Q.page.evaluate(async () => {
-    const w = (t: number) => new Promise(r => setTimeout(r, t)); for (let k = 0; k < 40 && !__sv.installGift; k++) await w(100);
-    __sv.installGift.poll(); await w(5200); __sv.installGift.poll(); await w(300);
-    const given = !!__sv.heroes[0].profile.installGift;
+    const w = (t: number) => new Promise(r => setTimeout(r, t)); await w(6500);
+    const given = !!__sv.heroes[0].profile.installGift || !!__sv.installGift; // (in a browser tab its code is not even loaded)
     const U = await import('/js/ui.js'); await U.openGrownups(); await w(400);
     const chip = document.querySelector('.installrow')?.textContent || '';
     document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false;

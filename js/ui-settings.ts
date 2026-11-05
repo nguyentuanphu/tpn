@@ -1,5 +1,5 @@
 import {HANOI_PACK_INFO} from './content/hanoi-pack-info.js';
-import { grownupsNewsHTML } from './ui/festivals-ui.js';
+import { grownupsNewsHTML, fillGrownupsNews } from './ui/festivals-ui.js';
 // (v1.08 notifications) the parents' notification settings (js/notify.ts and its texts, about 42 KB) load the first time
 // Grown-ups opens, not with the start (PERF-001); until then the section is an empty space that fills itself in
 let NOTIFY: typeof import('./notify.js') | null = null;
@@ -388,6 +388,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
     card.querySelector('#gAdd').onclick = () => profiles.length >= MAX_KIDS ? toast(T(`Up to ${MAX_KIDS} players.`, `Tối đa ${MAX_KIDS} người chơi.`)) : openEditor(null, () => { draw(); after && after(); });
     card.querySelector('#gRec').onclick = () => openRecorder(draw);
     { const b = installButton('btn wide installrow'); if (b) card.querySelector('.g-install').appendChild(b); }
+    fillGrownupsNews(card); // (v1.08b story) the What's new card
     card.querySelector('#gNames').onclick = () => openRenamer(() => { const y = m.scrollTop; draw(); m.scrollTop = y; });
     bindExtras(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast);
     if (NOTIFY) NOTIFY.bindNotify(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); // (v1.08 notifications)

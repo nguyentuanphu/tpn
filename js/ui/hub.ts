@@ -14,7 +14,7 @@ import { SONG_GROUPS, SONG_LIST, familySongs } from '../content/songs.js';
 import { originFlags } from '../icons.js';
 import { pic, moreArt, moreArtReady } from '../art.js';
 import { modal, dialog } from '../popups.js';
-import { festCalendarHTML, CAL_TITLE, wireCalendar, whenCalNames } from './festivals-ui.js';
+import { festCalendarHTML, CAL_TITLE, wireCalendar } from './festivals-ui.js';
 import { markEnglish, englishBadge } from '../englishmode.js'; // (v1.08 english)
 // (the Học vui corners, as in js/content/hocvui.ts; written here so the content loads only with its games: PERF-001)
 const CORNERS = ['hv_vi', 'hv_en', 'hv_math', 'hv_sci'] as const;
@@ -112,7 +112,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
   card.querySelector('.x').onclick = close;
   const bind = root => {
     root.querySelectorAll('[data-tale]').forEach(b => b.onclick = () => { close(); game.readTale(i, b.dataset.tale); });
-    if (root.querySelector('[data-fly], [data-cal]')) { wireCalendar(root, game, i, close); whenCalNames(() => { if (cur === 'fest' && root.isConnected) draw(); }); } // (v1.08b story) the calendar tab
+    if (root.querySelector('[data-fly], [data-cal]')) { wireCalendar(root, game, i, close); } // (v1.08b story) the calendar tab
     if (game.bindTaleShelf) game.bindTaleShelf(root, () => { openGamesHub.scroll = root.scrollTop; draw(); });
     root.querySelectorAll('[data-songs]').forEach(b => b.onclick = () => { SFX.tap(); close(); game.openSongs(b.dataset.songs); });
     root.querySelectorAll('[data-fold]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.fold; if (openGamesHub.unfolded.has(k)) openGamesHub.unfolded.delete(k); else { openGamesHub.unfolded.add(k); say('Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'); } openGamesHub.scroll = root.scrollTop; draw(); });

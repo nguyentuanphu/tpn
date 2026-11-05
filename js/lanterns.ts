@@ -15,7 +15,7 @@ import { THREE, glow } from './gfx.js';
 import { T } from './i18n.js';
 import { VILLAGE, heightAt, roadDist, WATER } from './world.js';
 import { featureOn, keptOn, markTried, earlyDays, isPeek } from './custom.js';
-import { inCalendar, calOpen } from './content/releasecal.js';
+import { inCalendar, calOpen } from './content/releasecal-core.js';
 import { calMoves } from './content/secondset.js';
 import { RELEASES } from './content/releases.js';
 import { events } from './core/events.js';

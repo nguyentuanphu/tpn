@@ -6,12 +6,10 @@ import { featureOn, festivalRule } from '../custom.js';
 import { BUILDUP } from '../content/festcal.js';
 import { pic } from '../art.js';
 import { modal } from '../popups.js';
-import { calendar, whatsNew, daysUntil, countLine, loadCalNames, calNamesReady, type CalItem } from '../content/releasecal.js';
-// (the calendar's names load a little after start, not with it; a calendar drawn before then draws itself again)
-if (typeof window !== 'undefined') setTimeout(() => { loadCalNames().catch(() => { }); }, 4000);
-export const whenCalNames = (redraw: () => void): void => { if (!calNamesReady()) loadCalNames().then(redraw).catch(() => { }); };
-import { calMoves } from '../content/secondset.js';
 import { isHeld } from '../content/unlocks.js';
+// (v1.08b story) the calendar's "what's new" parts and their names load when a calendar is first shown, not with the start
+// (PERF-001): js/ui/calendar-news.ts fills the place kept for them
+const news = () => import('./calendar-news.js');
 // ---------- Lịch lễ hội, the festival calendar (round R, owner) ----------
 // Today's festival with its timetable (08:00 present, 15:00 festival game, 18:30 show; 17:30 for under-5s), the ones
 // getting ready (decorations go up 3 weeks before), and the next ones with how many days to go. It is only a calendar: nothing
@@ -48,28 +46,17 @@ export function festCalendarHTML(game) {
     return `<div class="fcal-row ${gr}${ready ? ' ready' : ''}"><span class="fi">${pic(n.F.icon)}</span><b>${esc(T(n.F.en, n.F.vi))}${n.isNew ? ` <i class="newtag">${T('New', 'Mới')}</i>` : ''}</b><small>${dayLabel(n.start)}</small><div class="fcal-tl">${steps.map(step).join('')}</div></div>`; };
   return `${today.length ? `<h3>${T('Today', 'Hôm nay')}</h3>${today.map(card).join('')}` : ''}
     <h3>${T('Festivals coming up', 'Lễ hội sắp tới')}</h3><div class="fcal-list">${list.slice(0, 12).map(row).join('')}</div>
-    ${whatsNewHTML()}`;
+    <div class="fcal-whatsnew"></div>`;
 }
 
-// (v1.08b story) "This week's new things", "Opens next week" and "Ending soon", from the release calendar
-// (js/content/releasecal.ts), the same list Studio, the website and Saturday's push read
-const calItem = (it: CalItem, when: string) => `<button class="fcal-new" data-cal="${esc(it.key)}"><span class="fi">${pic(it.icon)}</span><b>${esc(T(it.en, it.vi))}</b><small>${esc(when)}</small></button>`;
-export function whatsNewHTML(now = new Date()) {
-  const W = whatsNew(calendar(calMoves()), now);
-  const opened = (it: CalItem) => T('Open now', 'Đã mở');
-  const opens = (it: CalItem) => { const k = daysUntil(it.date, now); return k <= 0 ? T('Open now', 'Đã mở') : k === 1 ? T('Opens tomorrow', 'Mở ngày mai') : T(`Opens in ${k} days`, `Mở sau ${k} ngày`); };
-  const ends = (it: CalItem) => { const k = daysUntil(it.end || it.date, now); return k <= 0 ? T('Last day', 'Ngày cuối') : T(`${k} days left`, `Còn ${k} ngày`); };
-  const part = (h: string, list: CalItem[], f: (it: CalItem) => string, none: string) => `<h3>${h}</h3>${list.length ? `<div class="fcal-news">${list.slice(0, 8).map(it => calItem(it, f(it))).join('')}</div>` : `<p class="note">${none}</p>`}`;
-  return part(T("This week's new things", 'Có gì mới tuần này'), W.thisWeek, opened, T('Nothing new yet this week.', 'Tuần này chưa có gì mới.'))
-    + part(T('Opens next week', 'Tuần sau mở'), W.nextWeek.length ? W.nextWeek : W.upcoming.slice(0, 4), opens, T('Nothing planned yet.', 'Chưa có gì.'))
-    + part(T('Ending soon', 'Sắp kết thúc'), W.endingSoon, ends, T('Nothing ends this week.', 'Tuần này không có gì kết thúc.'));
-}
 /** the taps on the calendar: a festival step that is on takes the child there; a new game goes to its place */
 export function wireCalendar(root: HTMLElement, game, i: number, close: () => void) {
   root.querySelectorAll<HTMLElement>('[data-fly]').forEach(b => b.onclick = () => {
     if (b.classList.contains('on') && game.festivals && game.festivals.goTo && (close(), game.festivals.goTo(i, b.dataset.fly))) return;
     const F = game.festivals && game.festivals.visit; if (F) { close(); game.festivals.visit(i, b.dataset.fly); }
   });
+  const box = root.querySelector<HTMLElement>('.fcal-whatsnew');
+  if (box && !box.dataset.filled) { box.dataset.filled = '1'; news().then(N => N.fillNews(box, () => wireCalendar(root, game, i, close))).catch(() => { }); }
   root.querySelectorAll<HTMLElement>('[data-cal]').forEach(b => b.onclick = () => {
     const [kind, id] = String(b.dataset.cal).split(':');
     if (kind === 'game' && game.goToGame && !isHeld(id, 'game')) { close(); game.goToGame(i, id); return; }
@@ -85,16 +72,9 @@ export function openFestivals(game, i) {
   const done = () => { m.close(); game.paused = false; };
   const wire = () => { (m.querySelector('.x') as HTMLElement).onclick = done; wireCalendar(m, game, i || 0, done); };
   wire();
-  // (the names arrive a moment later the first time: draw it again with them)
-  whenCalNames(() => { const card = m.querySelector('.card'); if (card && m.isConnected) { card.innerHTML = html(); wire(); } });
   say("Calendar: festivals and what's new", 'Lịch: Lễ hội và Có gì mới');
 }
 
-// (v1.08b story, owner 3 Nov 2026 AEDT) the "What's new" card at the top of Grown-ups: new this week, opening next week
-// and ending soon (ending soon is told here and in the calendar tab only, never by a push)
-export function grownupsNewsHTML(now = new Date()) {
-  const W = whatsNew(calendar(calMoves()), now), next = W.nextWeek.length ? W.nextWeek : W.upcoming.slice(0, 3);
-  const line = (label: string, list: CalItem[]) => list.length ? `<p><b>${label}</b> ${esc(T(...countLine(list)))}: ${list.slice(0, 3).map(it => esc(T(it.en, it.vi))).join(', ')}${list.length > 3 ? '…' : ''}</p>` : '';
-  const body = line(T('This week:', 'Tuần này:'), W.thisWeek) + line(T(next === W.nextWeek ? 'Next week:' : 'Coming up:', next === W.nextWeek ? 'Tuần sau:' : 'Sắp tới:'), next) + line(T('Ending soon:', 'Sắp kết thúc:'), W.endingSoon);
-  return body ? `<div class="g-news"><h3>${pic('📅')} ${T("What's new", 'Có gì mới')}</h3>${body}</div>` : '';
-}
+// (v1.08b story) the Grown-ups "What's new" card: a place kept for it, filled by js/ui/calendar-news.ts
+export const grownupsNewsHTML = (): string => '<div class="g-news" hidden></div>';
+export const fillGrownupsNews = (root: ParentNode): void => { const el = root.querySelector<HTMLElement>('.g-news'); if (el) news().then(N => N.fillGrownups(el)).catch(() => { }); };

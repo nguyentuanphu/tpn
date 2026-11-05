@@ -22,24 +22,15 @@ export type CalItem = {
   end?: string;         // the last day, when it is put away again (festival games)
   moved?: boolean;      // the owner moved it in Studio
 };
-export type CalMoves = Record<string, string>;
-
-const DAY = 864e5;
-const ISO = /^\d{4}-\d{2}-\d{2}$/;
-export const dayOf = (s: string): Date => new Date(s + 'T00:00:00');
-export const isoDay = (d: Date): string => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-/** the Monday of the week a day is in (weeks start on Monday, like the Saturday push's week) */
-export const weekOf = (d: Date | string): string => { const x = typeof d === 'string' ? dayOf(d) : new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return isoDay(x); };
-export const addDays = (s: string, n: number): string => { const d = dayOf(s); d.setDate(d.getDate() + n); return isoDay(d); };
-/** whole days from `now` to the day `s` starts (0 today, negative once it has passed) */
-export const daysUntil = (s: string, now: Date = new Date()): number => Math.round((+dayOf(s) - +dayOf(isoDay(now))) / DAY);
+import { ISO, dayOf, isoDay, weekOf, addDays, daysUntil, CAL_DAYS, inCalendar, openDate, calOpen, type CalMoves } from './releasecal-core.js';
+export { dayOf, isoDay, weekOf, addDays, daysUntil, inCalendar, openDate, calOpen, type CalMoves };
 
 // The new things of this round with a fixed day (not moved week by week). Other helpers add theirs in their own block.
 export const CAL_FIXED: CalItem[] = [
   // (v1.08b story) the lantern story's next chapters (owner, 3-4 Nov 2026 AEDT: docs/plans/v109-extras.md)
-  { key: 'chapter:ch4', kind: 'chapter', id: 'ch4', en: 'Lantern story chapter 4: Christmas and New Year', vi: 'Truyện đèn lồng chương 4: Giáng sinh và Năm mới', icon: '🎄', date: '2026-12-04' },
-  { key: 'chapter:ch5', kind: 'chapter', id: 'ch5', en: 'Lantern story chapter 5: Huế, Đà Nẵng, Melbourne and Uluru', vi: 'Truyện đèn lồng chương 5: Huế, Đà Nẵng, Melbourne và Uluru', icon: '🏯', date: '2027-01-08' },
-  { key: 'chapter:finale', kind: 'chapter', id: 'finale', en: 'Lantern story finale: every lantern home for Tết', vi: 'Truyện đèn lồng phần cuối: mọi đèn lồng về nhà đón Tết', icon: '🧧', date: '2027-02-06' },
+  { key: 'chapter:ch4', kind: 'chapter', id: 'ch4', en: 'Lantern story chapter 4: Christmas and New Year', vi: 'Truyện đèn lồng chương 4: Giáng sinh và Năm mới', icon: '🎄', date: CAL_DAYS['chapter:ch4'] },
+  { key: 'chapter:ch5', kind: 'chapter', id: 'ch5', en: 'Lantern story chapter 5: Huế, Đà Nẵng, Melbourne and Uluru', vi: 'Truyện đèn lồng chương 5: Huế, Đà Nẵng, Melbourne và Uluru', icon: '🏯', date: CAL_DAYS['chapter:ch5'] },
+  { key: 'chapter:finale', kind: 'chapter', id: 'finale', en: 'Lantern story finale: every lantern home for Tết', vi: 'Truyện đèn lồng phần cuối: mọi đèn lồng về nhà đón Tết', icon: '🧧', date: CAL_DAYS['chapter:finale'] },
 ];
 
 // the names come with releasecal-names.ts, loaded when a calendar is shown (the start-up download stays small); until
@@ -62,17 +53,6 @@ export function calendar(moves?: CalMoves | null): CalItem[] {
   const m = moves && typeof moves === 'object' ? moves : {};
   return CAL_DEFAULT.map(it => { const d = m[it.key]; return typeof d === 'string' && ISO.test(d) && d !== it.date ? (it.kind === 'game' || it.kind === 'story' ? Object.assign(item(it.kind, it.id, d), { moved: true }) : { ...it, date: d, moved: true }) : it; })
     .sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.key < b.key ? -1 : 1);
-}
-const BYKEY = new Map(CAL_DEFAULT.map(it => [it.key, it]));
-export const inCalendar = (key: string): boolean => BYKEY.has(key);
-/** the day an item opens (with the owner's move), or '' when it is not in the calendar */
-export function openDate(key: string, moves?: CalMoves | null): string {
-  const it = BYKEY.get(key); if (!it) return '';
-  const d = moves && moves[key]; return typeof d === 'string' && ISO.test(d) ? d : it.date;
-}
-/** has the item's day come? (`early`: a tester device sees it that many days before) */
-export function calOpen(key: string, moves?: CalMoves | null, now: Date = new Date(), early = 0): boolean {
-  const d = openDate(key, moves); return !!d && daysUntil(d, now) <= Math.max(0, early);
 }
 /** the items whose day is in the week starting on `monday` */
 export const itemsInWeek = (list: CalItem[], monday: string): CalItem[] => { const end = addDays(monday, 7); return list.filter(it => it.date >= monday && it.date < end); };

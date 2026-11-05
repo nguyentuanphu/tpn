@@ -151,6 +151,7 @@ marketing/source/runvalley.log
 /js/content/owllessons.js
 /js/content/parents.js
 /js/content/reading.js
+/js/content/releasecal-core.js
 /js/content/releasecal-items.js
 /js/content/releasecal-names.js
 /js/content/releasecal.js
@@ -420,6 +421,7 @@ marketing/source/runvalley.log
 /js/twinchests.js
 /js/ui-settings.js
 /js/ui.js
+/js/ui/calendar-news.js
 /js/ui/common.js
 /js/ui/festivals-ui.js
 /js/ui/grownups.js
