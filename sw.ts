@@ -55,12 +55,7 @@ const FILES = [
   'vendor/GLTFLoader.js', 'vendor/BufferGeometryUtils.js', 'vendor/SkeletonUtils.js', 'vendor/meshopt_decoder.module.js',
   'models/finn.glb', 'models/sol.glb', 'models/clara.glb', 'models/lumi.glb',
   'models/finn-hd.glb', 'models/sol-hd.glb', 'models/clara-hd.glb', 'models/lumi-hd.glb', // (v1.08e faces part 2) high-detail friends
-  'models/villager-mai.glb', 'models/villager-ba.glb', 'models/villager-teo.glb', 'models/villager-ti.glb', 'models/villager-bong.glb', 'models/villager-su.glb', // (v1.08e villagers)
-  'models/villager-jack.glb', 'models/villager-mit.glb', 'models/villager-bom.glb', 'models/villager-ruby.glb', 'models/villager-lan.glb',
   'js/crowd-models.js', // (v1.08e crowds) the gallery neighbours worn by crowd people near a child
-  'models/villager-vn-aodai.glb', 'models/villager-vn-dad.glb', 'models/villager-vn-farmer.glb', 'models/villager-vn-vendor.glb', 'models/villager-vn-grandma.glb',
-  'models/villager-vn-grandpa.glb', 'models/villager-vn-schoolboy.glb', 'models/villager-vn-schoolgirl.glb', 'models/villager-au-dad.glb', 'models/villager-au-mum.glb',
-  'models/villager-au-grandma.glb', 'models/villager-au-grandpa.glb', 'models/villager-au-boy.glb', 'models/villager-au-girl.glb',
   // (written out one by one: tools/bundle.mts reads the quoted names of the list)
   'icons/friends/finn-f.webp', 'icons/friends/finn-q.webp', 'icons/friends/finn-s.webp', 'icons/friends/finn-face.webp',
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
@@ -147,7 +142,9 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
   // Hashed chunks are immutable. An open previous-version game may still need its own lazy chunks.
   // (v1.08e faces, part 2) a friend's high-detail model (models/<id>-hd.glb, about 0.5 MB): from the saved copy, or kept the
   // first time it loads (also when the offline list above has not finished saving it)
-  if (/\/models\/[a-z]+-hd\.glb$/.test(url.pathname)) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
+  // (v1.08e villagers) the villagers' models (about 400 KB each, 25 of them: 10 MB) are not in the list either: each is
+  // kept the first time a child meets that villager, so the ones a child has met are there offline
+  if (/\/models\/([a-z]+-hd|villager-[a-z-]+)\.glb$/.test(url.pathname)) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   if (url.pathname.includes('/bundle/')) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   // the voice pack: kept in its own cache (it survives game updates) and stored as lines are played
   if(url.pathname.startsWith('/voices/fpt-leminh-v1/')){
