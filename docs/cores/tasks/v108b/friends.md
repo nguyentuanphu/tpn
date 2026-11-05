@@ -1,4 +1,4 @@
-**ready for Release** (part 1 of the brief; see "Left for later") (5 Nov 2026 AEDT)
+**ready for Release** (part 1 of the brief; see "Left for later") (5 Nov 2026, 19:10 AEDT, last code commit `49132a679`)
 
 # v1.08b helper: friends (status)
 
@@ -48,13 +48,29 @@ builder now draws a child from `friendLook()`; tale costumes are yours, the tale
 ## Progress
 
 - 5 Nov 2026 AEDT: plan; Blender 4.2.9 installed in `/opt/blender-dl`; data, fallback builder, Welcome, old saves, card,
-  Backpack rows, offline list, checks. Commit `b7b3621d9`.
+  Backpack rows, offline list, checks. Commits `b7b3621d9` to `49132a679`.
 
 ## Checks (5 Nov 2026 AEDT)
 
 - New: `newfriends` pass (phone portrait and landscape, tablet, computer: every step fits one screen, 44 px buttons,
   16 px text), `friendmigrate` pass, `friendswap` pass, `wearfit` pass (22 hats, 8 neck, 12 backs, 8 shoes on all four).
-- Existing: see the report below (filled in when the run finishes).
+- Existing, run with `--only` (the `--changed` choice against `main` is the full suite, because `integrate/v108` is far
+  ahead of `main`): pass `emoji`, `noemoji`, `preload`, `unit`, `names`, `bilingual`, `rules`, `arch`, `types`, `boot`,
+  `contract`, `firstplayer`, `shop`, `r79clothes`, `bagpals`, `phone`, `simple`, `vehicles`, `films` (SAMPLE), and alone
+  `perf` (village 375 draws, home 456), `battery`, `longplaymem`, `startup`.
+- `startup` is at its limit: first start 1071 KB, limit 1040 x 1.03 = 1071 (`integrate/v108` itself is 1069 KB). The
+  friend modules load only when needed; anything more in the first download needs the owner to raise the limit or
+  something else to shrink.
+- Fixed on the way: the offline list's friend pictures must be written out one by one (tools/bundle.mts reads quoted
+  names; a generated list broke the packed offline copy).
+- Not run: `stories` (no check of that name), `phone`/`simple`/`vehicles`/`films`/`perf`/`battery`/`longplaymem` were run
+  before the last commit (it only made the friend modules load later), the full suite (Release's).
+
+## New spoken lines (recorded with Azure, HoaiMy and Natasha)
+
+The four hellos ("Hi, I'm Finn! Let's explore the sky!" and the others, EN and VI), "Hello! What is your name?",
+"Choose your friend!", "New friends are here!": 14 files. The voice tool also removed 136 old mixed-line files from the
+pack; they are kept on this branch (only the new files and the manifests changed), for Release to decide.
 
 ## Left for later (not done in this session)
 
