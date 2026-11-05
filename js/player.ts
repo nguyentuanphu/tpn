@@ -287,7 +287,7 @@ export class Hero {
     // while moving, riding, gliding or climbing
     const moment = (this.cheerT > 0 || this.emoteT > 0 || this.momentT > 0) && this.speed < .6 && !this.riding && !this.gliding && !this.towerClimb && !close;
     const mk = this._mom = (this._mom || 0) + ((moment ? 1 : 0) - (this._mom || 0)) * Math.min(1, dt * 6);
-    if (moment && this.manualCamT <= 0) this.camYaw = angleLerp(this.camYaw, this.yaw + .6, Math.min(1, dt * 2.5)); // a three-quarter view of the face, not the back
+    if (moment && this.manualCamT <= 0) this.camYaw = angleLerp(this.camYaw, this.yaw + .6, Math.min(1, dt * 4)); // a three-quarter view of the face, not the back
     showHD(this.av, this.camPos.distanceTo(p) < 15); // (v1.08e faces, part 2) the high-detail friend up close
     const dist = (1 - .55 * mk) * (close ? 2.8 : this.indoors ? 5.5 * (this.zoom || 1) : (easy ? 11.5 * (1 + (this._lmF || 0) * .55) : this.camDist) * vk * (this.gliding ? 1.25 : this.riding ? 1.15 : 1) * (this.zoom || 1) * (game.zoom || 1));
     const target = new THREE.Vector3(p.x, p.y + (close ? (this.view === 'face' && game.closeUp !== this.i ? 1.05 : .2) : this.view === 'street' ? 1.6 : 1.15) + rideY + .2 * mk, p.z);
