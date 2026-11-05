@@ -10,3 +10,20 @@ Do:
 5. **Play together:** a "Chơi cùng bố mẹ / Play with Mum and Dad" list of games two people can play on one device, with a short guide for the grown-up. **Gentle play time:** a parent-set play time with a soft goodbye from Lumi ("Hẹn mai chơi tiếp nhé!"), never a hard cut mid-game.
 6. **Roads and dirt roads redrawn to the Concept D drawings** (#34; `docs/concept-d/`, `docs/roads-concept-d/`): `js/roads.ts`, with `roads` and `solid` checks (moved here from the platform helper, 5 Nov).
 7. **Checks:** `roads`, `solid`, `fivescreens`, `types`, `arch`, `learningreport`, `subjectlevel`, `lumiguide`, `playtogether`, `playtime`, plus `phone`, `gamespace`, `gamefit`.
+
+## Added by the owner, 5 Nov 2026 AEDT: spawn camera and stuck flights
+
+Screenshot: `docs/plans/owner-20261105/spawn-owl-blocks.jpg`.
+
+1. **The owl blocks the view at spawn** (owner: "when the user spawn in, the owl blocks it, better to move the camera angle to look at the owl instead").
+   - When a child first appears (start of play, after loading a save, after Welcome), the camera stands behind the child and looks towards Grandpa Owl. The child and the owl are both in view, with the owl in front, not between the camera and the child.
+   - The same rule applies when the goal is "Talk to Grandpa Owl" and the child is placed beside him.
+   - New check `spawnview`: at spawn the child and the owl are both on screen, and no large object covers the child, on phone, tablet and computer.
+2. **Flying to a destination gets stuck behind bus stations** (owner: "when you fly to another destinations often it gets stuck behind a bus station, better to audit and check all").
+   - Audit every fly-to target: map pins and "Go there", every game place and host, quests, the Simple screen's Places, the calendar's tap-to-fly, chapters and landmarks.
+   - For each target, the landing spot must be open ground (not inside or behind a bus stop, shelter, sign, fence, wall or building).
+   - The child must be able to walk away from the landing spot, and the camera must see the child with nothing covering them.
+   - Fix the landing spots and the shared landing code (the nearest open ground facing the target), not one by one.
+   - Bus stops and shelters: check their colliders and the open ground around them.
+   - New check `flyaudit`: every fly target is landed on in the running game and checked for open ground, a walkable way out and a clear camera view. Keep it fast enough to stay in the full suite; split it if needed.
+   - Coordinate with the games helper, which adds places for every game: run your audit over their places too once their branch is ready.
