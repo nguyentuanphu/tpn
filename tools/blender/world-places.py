@@ -1043,11 +1043,11 @@ def hand_quanho(m, sp):
     pts = [(-2.4, .9, 0), (-1.6, .55, 0), (0, .5, 0), (1.6, .55, 0), (2.4, .9, 0)]
     tube(m, pts, [.35, .75, .8, .75, .35], ['#8a5a3b', '#8a5a3b', '#8a5a3b', '#8a5a3b'], seg=10, scale=(1, 1.15))
     B(m, 4.6, .12, 1.5, '#c0392b', (0, .88, 0)); B(m, 4.7, .06, 1.62, '#ffd23f', (0, .95, 0))
-    tube(m, [(2.4, .9, 0), (2.8, 1.3, 0), (2.9, 1.7, 0)], [.28, .24, .2], '#2f8a4a', seg=8)   # the dragon's neck and head
-    m.part('SphereGeometry', '#2f8a4a', (3.0, 1.8, 0), (0, 0, 0), (1.4, .9, .8), radius=.3)
-    for sz in (-1, 1): m.part('SphereGeometry', '#ffd23f', (3.15, 1.92, sz * .14), radius=.07)
-    m.part('ConeGeometry', '#ffd23f', (2.85, 2.1, 0), (0, 0, -.5), radius=.08, height=.35, radialSegments=5)
-    tube(m, [(-2.4, .9, 0), (-2.8, 1.3, 0), (-2.7, 1.8, 0), (-2.4, 1.9, 0)], [.22, .18, .14, .08], '#2f8a4a', seg=8)   # the tail
+    tube(m, [(2.4, .9, 0), (2.75, 1.15, 0), (2.9, 1.4, 0)], [.26, .22, .18], '#2f8a4a', seg=8)   # the dragon's neck and head
+    m.part('SphereGeometry', '#2f8a4a', (3.0, 1.5, 0), (0, 0, 0), (1.4, .8, .8), radius=.26)
+    for sz in (-1, 1): m.part('SphereGeometry', '#ffd23f', (3.13, 1.6, sz * .13), radius=.06)
+    m.part('ConeGeometry', '#ffd23f', (2.88, 1.75, 0), (0, 0, -.5), radius=.07, height=.28, radialSegments=5)
+    tube(m, [(-2.4, .9, 0), (-2.75, 1.2, 0), (-2.7, 1.55, 0), (-2.45, 1.65, 0)], [.2, .16, .12, .07], '#2f8a4a', seg=8)   # the tail
 
 
 def rock(m, pos, size, color, seed=0, squash=(1, 1, 1)):
@@ -1094,7 +1094,8 @@ def crag(m, x, z, base_r, h, colors, seed=0, seg=7, lean=(0, 0), y0=0., taper=.7
     rnd = random.Random(seed); n = 7; pts, rad, cols = [], [], []
     for i in range(n + 1):
         t = i / n
-        pts.append((x + lean[0] * t * h + (rnd.random() - .5) * base_r * .25, y0 + t * h, z + lean[1] * t * h + (rnd.random() - .5) * base_r * .25))
+        j = 0 if i < 2 else 1   # (the first two rings straight above each other: the foot stands level)
+        pts.append((x + lean[0] * t * h + j * (rnd.random() - .5) * base_r * .25, y0 + t * h, z + lean[1] * t * h + j * (rnd.random() - .5) * base_r * .25))
         rad.append(base_r * (1 - taper * t ** 1.3) * (.85 + rnd.random() * .3) + .05)
         cols.append(colors[i % len(colors)])
     tube(m, pts, rad, cols[:-1], seg=seg)
@@ -1104,7 +1105,7 @@ def hand_marble(m, sp):
     # a little red pagoda on a ledge, a dark cave mouth at the foot, stone steps climbing up
     pale = ['#d6d3c8', '#c4c1b6', '#cfccc1', '#b8b5aa']
     for k, (x, z, r, h) in enumerate(((-3, 0, 3.0, 7.0), (2, -1, 2.5, 5.6), (0, 3, 2.0, 4.6), (4.5, 2.5, 1.6, 3.6))):
-        crag(m, x, z, r, h, pale, seed=k * 5, seg=8)
+        crag(m, x, z, r, h + 1.75, pale, seed=k * 5, seg=8, y0=-1.75)
         for j in range(6):   # trees on the ledges
             t = .15 + j * .12; a = j * 2.1 + k
             rr = r * (1 - .78 * t ** 1.3) + .25
@@ -1138,7 +1139,7 @@ def hand_cairang(m, sp):
     m.part('CylinderGeometry', '#4fa8d8', (0, .06, 0), (0, 0, 0), (1, 1, .7), radiusTop=8, radiusBottom=8, height=.08, radialSegments=32)
     fruit = ['#ffd23f', '#5fd36a', '#e8433a', '#ff9f43']
     for k, (x, z, r) in enumerate(((-4, -1.5, .2), (0, 1.5, -.15), (4, -1, .1), (-1, -3.2, .3))):
-        R = Matrix.Translation((x, 0, z)) @ Matrix.Rotation(r, 4, 'Y')
+        R = Matrix.Translation((x, .36, z)) @ Matrix.Rotation(r, 4, 'Y')
         def at(px, py, pz): return tuple(R @ Vector((px, py, pz)))
         tube(m, [at(-2.2, .7, 0), at(-1.4, .35, 0), at(0, .3, 0), at(1.4, .35, 0), at(2.2, .7, 0)], [.15, .6, .65, .6, .15], '#7a4a2a', seg=8, scale=(1, 1.1))
         B(m, 3.6, .08, 1.1, '#9a6a43', at(0, .65, 0), (0, r, 0))
@@ -1200,9 +1201,9 @@ def hand_potala(m, sp):
     # the Potala Palace (Lhasa): the great White Palace rising in stepped, inward-sloping walls with rows of small windows,
     # the Red Palace in the middle on top, gold roofs, on its rocky hill
     white, red, gold, dark = '#f4f1ea', '#a8352a', '#e8b83a', '#3a2a22'
-    rock(m, (0, -.2, 0), 1, '#8a7a62', seed=3, squash=(9.2, 1.2, 4.2))
+    B(m, 18.2, .5, 8.0, '#8a7a62', (0, .25, 0))   # the rocky plinth
     for k, (w, d, h, y) in enumerate(((18, 8, 3, 0), (15, 6.6, 2.6, 3), (11, 5.4, 2.4, 5.6))):
-        m.part('CylinderGeometry', white, (0, y + h / 2, 0), (0, math.pi / 4, 0), (w / 1.414, 1, d / 1.414), radiusTop=.94, radiusBottom=1, height=h, radialSegments=4)
+        m.part('CylinderGeometry', white, (0, y + h / 2 + .4, 0), (0, 0, 0), (w / 1.414, 1, d / 1.414), radiusTop=.94, radiusBottom=1, height=h, radialSegments=4, thetaStart=math.pi / 4)   # (a square with straight sides, sloping in)
         for j in range(int(w / 1.1)):   # rows of windows
             x = -w / 2 + .8 + j * 1.1
             if abs(x) < w / 2 - .5: B(m, .35, .5, .05, dark, (x, y + h * .55, d / 2 * .97 + .01))
@@ -1277,7 +1278,7 @@ def karst(m, x, z, r, h, seed, y0=0.):
 def hand_halong(m, sp):
     # Ha Long Bay: steep limestone islands with green caps rising from the sea, a junk boat with red sails between them
     for k, (x, z, h) in enumerate(((-6, 0, 7), (0, -5, 10), (6, 2, 8), (-2, 7, 6), (9, -6, 5))):
-        karst(m, x, z, 1.8 + h * .12, h + 1.3, k * 3, y0=-1.3)
+        karst(m, x, z, 1.8 + h * .12, h, k * 3, y0=-1.2)
     B(m, 2.6, .5, .9, '#7a4a2a', (2.5, 2.0, 5.0)); m.part('ConeGeometry', '#7a4a2a', (4.0, 2.05, 5.0), (0, 0, -math.pi / 2), radius=.45, height=.6, radialSegments=4)
     for k, x in enumerate((1.8, 3.0)):
         C(m, .04, .04, 2.6, '#5a3a24', (x, 3.4, 5.0), seg=4)
@@ -1288,6 +1289,8 @@ def hand_myson(m, sp):
     # My Son sanctuary: Cham temple towers (kalan) of old red brick, each a square body with false doors and pilasters,
     # rising in shrinking tiers to a rounded top, moss in the joints
     brick, brick2, moss = '#b45a3a', '#9a4a30', '#6f8a5a'
+    B(m, 15, .25, 7.2, '#9a8a6a', (0, .12, 1.0))   # the sanctuary's ground
+    for (x, z, w, d) in ((-7.2, 1, .5, 6.6), (7.2, 1, .5, 6.6), (0, 4.4, 14, .5), (-3, -2.4, 6, .5)): B(m, w, .6 + (abs(x + z) % 2) * .3, d, '#9a4a30', (x, .5, z))   # ruined walls
     for k, (x, z, h) in enumerate(((0, 0, 7.2), (-5, 2, 5.0), (5, 1.5, 5.5))):
         w = h * .36
         B(m, w + .6, .5, w + .6, brick2, (x, .1, z))
@@ -1307,7 +1310,7 @@ def hand_myson(m, sp):
 def hand_trangan(m, sp):
     # Trang An (Ninh Binh): karst peaks over a green river, a cave arch at water level, a rowing boat with a woman in a
     # conical hat rowing with her feet
-    m.part('CylinderGeometry', '#4f9a8a', (0, -.1, 0), (0, 0, 0), (1, 1, 1.1), radiusTop=7.2, radiusBottom=7.2, height=.1, radialSegments=32)
+    m.part('CylinderGeometry', '#4f9a8a', (0, -.1, 0), (0, 0, 0), (1, 1, .85), radiusTop=7.0, radiusBottom=7.0, height=.1, radialSegments=32)
     for k, (x, z, h) in enumerate(((-5, -2, 7), (4, -3, 9), (0, -6, 6))): karst(m, x, z, 2.0, h + 1.5, k * 4 + 1, y0=-1.5)
     m.part('TorusGeometry', '#8a8a84', (-.5, -.2, -3.0), (0, 0, 0), (1.4, 1.2, 1), radius=1.3, tube=.7, arc=math.pi)
     tube(m, [(1.5, .1, 2.5), (2.5, .05, 2.5), (3.5, .1, 2.5)], [.15, .35, .15], '#7a5a3a', seg=8, scale=(1, .6))
@@ -1316,7 +1319,7 @@ def hand_trangan(m, sp):
 def hand_cave(m, sp):
     # Phong Nha cave: a forested limestone hill with a great dark cave mouth where the river flows out, stalactites hanging
     # in the opening, a boat at the entrance
-    rock(m, (0, 0, 0), 1, '#8f8a80', seed=5, squash=(9.0, 5.9, 7.0))
+    rock(m, (0, 0, 0), 1, '#8f8a80', seed=5, squash=(8.0, 5.1, 6.2))
     for k in range(14): a = k * 1.9; m.part('IcosahedronGeometry', '#4f8a4a' if k % 2 else '#3f7d4a', (math.cos(a) * 6.5, 3.5 + (k % 3) * .7, math.sin(a) * 4.5), radius=1.0, detail=0)
     m.part('SphereGeometry', '#1e1c22', (0, 1.0, 6.2), (0, 0, 0), (1.5, 1.2, .7), radius=2.4, widthSegments=14, heightSegments=8)
     for k in range(7): m.part('ConeGeometry', '#b8b2a4', (-2.4 + k * .8, 3.3, 6.9), (math.pi, 0, 0), radius=.14, height=.6 + (k % 3) * .3, radialSegments=5)

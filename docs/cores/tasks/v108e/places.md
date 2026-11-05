@@ -1,5 +1,7 @@
 # v1.08e places: status
 
+**ready for Release** (6 Nov 2026 AEDT). Branch `work/v108e-places`. The last commit is in the report.
+
 Branch `work/v108e-places` (from `origin/integrate/v108`). Brief: `places-brief.md`.
 
 ## Now (6 Nov 2026 AEDT)
@@ -16,7 +18,7 @@ Branch `work/v108e-places` (from `origin/integrate/v108`). Brief: `places-brief.
     - Melbourne and Brisbane: Flinders Street, the W-class tram, the Exhibition Building, the Brisbane Wheel stand, Lone Pine.
     - Around Australia:
       - the Big Banana, Bondi, Uluru, Kakadu, the reef, the Twelve Apostles, the Three Sisters;
-      - Season 2's Rottnest, Cradle Mountain and reef: tagged, not made yet.
+      - Season 2's Rottnest, Cradle Mountain and reef: tagged, not made yet (the dump did not build them). Their code shapes stay; a later round can add them.
     - The Vung Tau lighthouse.
     - The heritage sites: Ha Long, My Son, Phong Nha, Trang An, the Forbidden City, the Temple of Heaven, the Potala, the Terracotta Army, the Qutub Minar, the Red Fort, Konark, Hampi, Mahabodhi.
     - Season 2 Vietnam: Hon Trong Mai, the Mekong canal and monkey bridge, Sa Pa's terraces, the nha rong.
@@ -34,6 +36,8 @@ Branch `work/v108e-places` (from `origin/integrate/v108`). Brief: `places-brief.
     - a lighter detail level kicks in automatically when a model gets too heavy.
   - **Every model** has soft shading (ambient occlusion) baked into its corner colours.
   - All 110 models together: 3.6 MB.
+- **Bridges:** Long Bien and Chua Cau are drawn by hand; the other bridges get the automatic detail.
+- **Before and after:** pictures of 17 famous landmarks on phone, tablet and computer are in `docs/world-models-v108e/places/` (`tests/places-shots.mts`).
 - **Fix:** the solid map and the open-spot finder keep counting a code shape after its model swaps in; the model is `noSolid`.
 
 ## How it works
@@ -94,7 +98,8 @@ Branch `work/v108e-places` (from `origin/integrate/v108`). Brief: `places-brief.
 ## Checks
 
 - **Results (6 Nov AEDT):**
-  - Pass: `worldplaces` (102 models and the 8 festival props), `types`, `boot`, `perf` (village 293 draws), `startup`, `battery`, `worldplacement`, `stalls`, `regions`, `festivals`, `ownerfestplacement`, `spawnview`, `flyaudit`.
+  - Pass (last run after the final models): `worldplaces` (102 models and the 8 festival props), `perf` (village 294 draws, 600k triangles), `festivals`, `flyaudit`.
+  - Pass earlier the same day: `types`, `boot`, `perf` (village 293 draws), `startup`, `battery`, `worldplacement`, `stalls`, `regions`, `festivals`, `ownerfestplacement`, `spawnview`, `flyaudit`.
   - `startup` passes, but the first download is 1033 KB against the brief's 1025 KB (the tag helpers in `js/gfx.ts`).
   - `solid` fails on `sing4`, the same on `origin/integrate/v108` (not caused by this work).
 - `worldplaces` (new, `tests/world-places.mts`, at the end of `tests/run.mts`): It checks that:
