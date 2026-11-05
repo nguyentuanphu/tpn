@@ -131,7 +131,18 @@ function denseLine(R) {
 // the deck height at (x, z), over the deck or its apron; DECK_CORE says whether it was over the deck itself
 let DECK_CORE = false;
 const deckAt = (world, x, z) => { for (const p of world.platforms) { const b = p.apron || p; if (!p.tower && x > b.x0 && x < b.x1 && z > b.z0 && z < b.z1) { DECK_CORE = x > p.x0 && x < p.x1 && z > p.z0 && z < p.z1; return p.y; } } return null; };
+// (v1.08d valley, PERF-001) a road's profile is worked out up to four times on a first start (again round each joint
+// with its anchors); the ground under it does not change in between, so the ground's answers (and the deck and level
+// tests) are kept per road and only copied the later times: the same numbers, a fraction of the work
+const BASES = new WeakMap<object, { base: number[], deck: boolean[], apron: boolean[], lvl: (number | null)[] }>();
 function profile(R, world, pts, anchors = null) {
+  const kept = BASES.get(pts);
+  const { base: base0, deck, apron, lvl } = kept || profileBase(R, world, pts);
+  if (!kept) BASES.set(pts, { base: base0, deck, apron, lvl });
+  const base = base0.slice();
+  return profileFrom(R, pts, anchors, base, deck, apron, lvl);
+}
+function profileBase(R, world, pts) {
   const hw = R.w / 2, deck = [], apron = [], base = pts.map(([x, z], i) => {
     const [px, pz] = pts[Math.max(0, i - 1)], [nx, nz] = pts[Math.min(pts.length - 1, i + 1)], L = Math.hypot(nx - px, nz - pz) || 1, ux = -(nz - pz) / L, uz = (nx - px) / L;
     // a real bridge deck: the deck is well above the ground under it (near the ends the bank is the ground)
@@ -147,6 +158,9 @@ function profile(R, world, pts, anchors = null) {
   // HARD RULE: inside a village or city the road runs at the place's own level (places are flat); on a bridge, on its deck
   const lvl = pts.map(([x, z], i) => { if (deck[i]) return null; const L = levelAt(x, z); return L != null && riverDist(x, z) > 13 && !bridgeAt(x, z, 9, 12, 18) ? L : null; });
   lvl.forEach((L, i) => { if (L != null) base[i] = L; });
+  return { base, deck, apron, lvl };
+}
+function profileFrom(R, pts, anchors, base, deck, apron, lvl) {
   if (anchors) anchors.forEach((y, i) => { base[i] = y; });
   const n = pts.length, deepIn = lvl.map((L, i) => { if (L == null) return false; for (let k = -6; k <= 6; k++) { const j = i + k; if (j >= 0 && j < n && lvl[j] == null) return false; } return true; }); // (the outer 6 m eases in)
   const gates = R.gates || [], gateEnd = i => (gates[0] && i < 2) || (gates[1] && i > n - 3);
@@ -642,13 +656,18 @@ export function createRoads(G) {
 
 // Henry's road-safety request: explain the existing crossings without changing their roads or artwork.
 // Signs stand beside the footpath approaches; the walking strip, doors and existing interactions stay clear.
-export function createCrossings(G) {
-  const { scene, world } = G, list = [], missing = [];
+// (v1.08d valley) ids: the streets to build now (js/areas.ts builds each street's crossing as its own part)
+export function createCrossings(G, ids: string[] = ['town', 'aussie']) {
+  const { scene, world } = G, C = G.crossings || (G.crossings = { list: [], missing: [] }), list = C.list, missing = C.missing;
   const postGeometry = merge([P(new THREE.CylinderGeometry(.07, .07, 2.7, 8), '#6a4a3a', [0, 1.35, 0]), P(new THREE.CylinderGeometry(.18, .23, .12, 8), '#a8a296', [0, .06, 0])]), postMaterial = toonVC();
   const stopBoard = gateSign(['STOP', 'DỪNG'], 1.7, .9, '#d9483a', '#fff8e0'), watchBoard = gateSign(['LOOK · LISTEN', 'NHÌN · NGHE'], 2.4, .65, '#ffd23f', '#4a3a3f');
   // A clear footprint is insufficient: tall warning posts must also clear shop awnings/roofs.
   scene.updateMatrixWorld(true);
-  const overheadMeshes=[];scene.traverse(o=>{if(o.isMesh)overheadMeshes.push(o);});
+  // (v1.08d valley) only the meshes that reach within 30 m of a street asked for: the rays are 2.75 m long and start
+  // within 12 m of the crossing, so nothing farther can be hit (the same answers, a fraction of the work)
+  const wanted = ([['town', TOWN], ['aussie', AUSSIE]] as const).filter(([id]) => ids.includes(id)).map(([, p]) => p), sph = new THREE.Sphere();
+  const overheadMeshes=[];scene.traverse(o=>{if(!o.isMesh||o===world.terrain)return; /* (the ground itself: a ray straight up from just above it never meets it again, and testing its every triangle was most of the time) */const g=(o as THREE.Mesh).geometry;if(!g)return;if(!g.boundingSphere)g.computeBoundingSphere();sph.copy(g.boundingSphere).applyMatrix4(o.matrixWorld);
+    if(wanted.some(p=>Math.hypot(sph.center.x-(p.x-4),sph.center.z-p.roadZ)<30+sph.radius))overheadMeshes.push(o);});
   const headRay=new THREE.Raycaster(new THREE.Vector3(),new THREE.Vector3(0,1,0),.05,2.75);
   const headroom=(x,z)=>{headRay.ray.origin.set(x,heightAt(x,z)+.1,z);return !headRay.intersectObjects(overheadMeshes,false).some(hit=>{for(let o=hit.object;o;o=o.parent)if(!o.visible)return false;const m=(hit.object as THREE.Mesh).material;const mats=Array.isArray(m)?m:[m];return mats.some((mm): mm is THREE.Material => !!mm && mm.visible!==false && (mm.opacity??1)>.95);});};
   // Bubble width3.2 plus board width2.4 requires2.8m between their centres.
@@ -657,7 +676,7 @@ export function createCrossings(G) {
     && !((G.homes && G.homes.list) || []).some(h => h.door && Math.hypot(h.door.x - x, h.door.z - z) < 2.2)
     && G.interactables.every(it => !Number.isFinite(it.x) || Math.hypot(it.x - x, it.z - z) > (it.bubble ? 2.9 : 1.8))
     && [-1.25,0,1.25].every(dx=>headroom(x+dx,z));
-  for (const [id, place] of [['town', TOWN], ['aussie', AUSSIE]] as const) {
+  for (const [id, place] of ([['town', TOWN], ['aussie', AUSSIE]] as const).filter(([id]) => ids.includes(id))) {
     const crossing = { id, x: place.x - 4, z: place.roadZ, halfRoad: 3.5, signs: [] };
     for (const side of [-1, 1]) {
       let at = null;
@@ -678,5 +697,5 @@ export function createCrossings(G) {
     }
     list.push(crossing);
   }
-  return (G.crossings = { list, missing });
+  return C;
 }
