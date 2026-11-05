@@ -13,3 +13,6 @@ import '../games/money3-meta.js';
 // (v1.08b games) the new corner games' pictures and How to play
 import './games108b.js';
 import '../games/games108b-meta.js';
+// (v1.08d polish) the hands-on games' pictures and How to play (after the quiz guides, so the Tết guide is the hands-on one)
+import './handson.js';
+import '../games/handson-meta.js';

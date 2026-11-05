@@ -313,6 +313,8 @@ export const GAME_CATALOG = [
   { id: 'th_changed', learn: true, icon: 'g8:changed', name: () => T('What Changed?', 'Cái Gì Đã Thay Đổi?') },
   { id: 'th_count', learn: true, icon: 'g8:howmany', name: () => T('Hidden Counting', 'Đếm Đồ Vật Trốn') },
   { id: 'th_belong', learn: true, icon: 'g8:belong', name: () => T('What Goes Together?', 'Cái Gì Đi Cùng Nhau?') },
+  // (v1.08d polish) a hands-on game: lay stepping stones round the rocks (js/games/handson.ts)
+  { id: 'mazebuild', learn: true, icon: 'ho:maze', name: () => T('Maze Builder', 'Xây Mê Cung') },
   { id: 'vi_poem', learn: true, icon: 'g8:poem', name: () => T('Little Poems', 'Đọc Thơ Ngắn') },
   { id: 'vi_tulay', learn: true, icon: 'g8:tulay', name: () => T('Echo Words', 'Từ Láy') },
   { id: 'vi_sx', learn: true, icon: 'g8:sx', name: () => T('S or X?', 'Chính Tả S hay X?') },
@@ -394,7 +396,9 @@ export const GAME_LOADERS = {
   'tiengviet2.ts': { ids: ['vi_tonemean', 'vi_rhyme', 'vi_letters', 'vi_opposite', 'vi_cadao', 'vi_tucngu', 'vi_readalong', 'vi_sentence', 'vi_dictation', 'vi_riddle'], load: () => import('./tiengviet2.js') },
   // (v1.08 money)
   // (v1.08b games)
-  'games108b.ts': { ids: ['fg_tet', 'fg_ramthang1', 'fg_giotohung', 'fg_doanngo', 'fg_vulan', 'fg_midautumn', 'fg_ongtao', 'fg_thieunhi', 'fg_quockhanh', 'fg_nhagiao', 'fg_easter', 'fg_mothersday', 'fg_fathersday', 'fg_halloween', 'fg_christmas', 'fg_newyear', 'fg_ausday', 'fg_cleanup', 'fg_harmony', 'fg_holi', 'fg_anzac', 'fg_reconciliation', 'fg_naidoc', 'fg_diwali', 'en_animalsay', 'en_opposite', 'en_feel', 'en_weather', 'en_routine', 'en_where', 'en_verbs', 'en_shop', 'en_teens', 'en_body', 'en_wh', 'en_mydaystory', 'me_tree', 'me_wash', 'me_safe', 'me_help', 'me_calm', 'me_table', 'th_balance', 'th_clues', 'th_robot', 'th_changed', 'th_count', 'th_belong', 'vi_poem', 'vi_tulay', 'vi_sx'], load: () => import('./games108b.js') },
+  'games108b.ts': { ids: ['fg_ramthang1', 'fg_giotohung', 'fg_doanngo', 'fg_vulan', 'fg_midautumn', 'fg_ongtao', 'fg_thieunhi', 'fg_quockhanh', 'fg_nhagiao', 'fg_easter', 'fg_mothersday', 'fg_fathersday', 'fg_halloween', 'fg_christmas', 'fg_newyear', 'fg_ausday', 'fg_cleanup', 'fg_harmony', 'fg_holi', 'fg_anzac', 'fg_reconciliation', 'fg_naidoc', 'fg_diwali', 'en_animalsay', 'en_opposite', 'en_feel', 'en_weather', 'en_routine', 'en_where', 'en_verbs', 'en_shop', 'en_teens', 'en_body', 'en_wh', 'en_mydaystory', 'me_tree', 'me_wash', 'me_safe', 'me_help', 'me_calm', 'me_table', 'th_balance', 'th_clues', 'th_robot', 'th_changed', 'th_count', 'th_belong', 'vi_poem', 'vi_tulay', 'vi_sx'], load: () => import('./games108b.js') },
+  // (v1.08d polish) the hands-on Tết bánh chưng (was the picture quiz) and the Maze Builder
+  'handson.ts': { ids: ['fg_tet', 'mazebuild'], load: () => import('./handson.js') },
   'money3.ts': { ids: ['shoppay', 'givechange', 'toysave', 'needsfirst', 'pricesort', 'marketday', 'coinsort', 'makeamount', 'budgetpicnic', 'chores', 'twomoney'], load: () => import('./money3.js') },
 
 };

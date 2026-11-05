@@ -1173,4 +1173,64 @@ await check('frienditems', async () => {
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
   return `${r.f}: three steps at places in the valley, followed on the goal bar; the item shows only after the third; shop shoes replace the boots; ${r.draws} parts drawn with the item`;
 });
+await check('handson', async () => {
+  // the hands-on games: the Tết bánh chưng (leaves, filling in the real order, folding, the string) and the Maze Builder
+  // (stepping stones round the rocks). Each level plays differently and is won by tapping what the game asks for, like
+  // a child's finger; everything fits one screen with no scrolling on a phone (both ways), a tablet (both) and a computer
+  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  await P.page.emulateMedia({ reducedMotion: 'reduce' });
+  const IDS = ['fg_tet', 'mazebuild'], bad = [], played = {};
+  await P.page.evaluate(async () => { const C = (await import('/js/custom.js')).CUSTOM, d = new Date(); C.festivals = C.festivals || {};
+    C.festivals.tet = { ...(C.festivals.tet || {}), date: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') }; await (await import('/js/art.js')).moreArt(); });
+  const openGame = (id, d) => P.page.evaluate(([id, d]) => { document.querySelectorAll('.gl, .modal').forEach(g => g.remove()); __sv.paused = false; const p = __sv.heroes[0].profile; p.age = 'big'; p.gameDiff = { ...(p.gameDiff || {}), [id]: d }; __sv.playGame(0, id, 'hub'); }, [id, d]);
+  for (const id of IDS) for (const d of ['easy', 'medium', 'hard', 'talent']) {
+    await openGame(id, d);
+    if (!await P.page.waitForSelector(`.gl[data-game-id="${id}"]:not(.out)`, { timeout: 10000 }).then(() => true, () => false)) { bad.push(`${id} ${d}: did not open`); continue; }
+    let taps = 0, won = false, stuck = 0, lv = '';
+    for (let k = 0; k < 600 && !won; k++) {
+      const t = await P.page.evaluate(async () => {
+        const { playWatch } = await import('/js/games/frame.js'), gl = document.querySelector('.gl:not(.out)');
+        if (!gl) return { gone: true }; if (gl.querySelector('.gl-win')) return { won: true };
+        const ok = e => e && e.isConnected && !e.disabled && e.getBoundingClientRect().width > 0;
+        let e = null; const a = playWatch.ask;
+        if (a && a.els.some(ok)) e = a.els.find(x => ok(x) && a.check(x)); else if (playWatch.plan) e = playWatch.plan();
+        if (!ok(e)) return { wait: true };
+        const r = e.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, at = document.elementFromPoint(x, y);
+        return { x, y, lv: (gl.querySelector('.gl-stage') as HTMLElement)?.dataset.lv || '', on: !!at && (at === e || e.contains(at)), what: String(e.className) + ' at ' + Math.round(x) + ',' + Math.round(y) + ' under ' + (at ? String(at.className) : 'nothing') };
+      });
+      if (t.won) { won = true; break; } if (t.gone) break;
+      if (t.wait) { if (++stuck > 150) break; await P.page.waitForTimeout(120); continue; }
+      stuck = 0; lv = t.lv || lv; if (!t.on) { bad.push(`${id} ${d}: something covers ${t.what}`); break; }
+      await P.page.touchscreen.tap(t.x, t.y); taps++; await P.page.waitForTimeout(90);
+    }
+    played[id + ':' + d] = { taps, won, lv };
+    if (!won) bad.push(`${id} ${d}: not won (${taps} taps)`);
+    await P.page.evaluate(() => { (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click(); }); await P.page.waitForTimeout(500);
+  }
+  for (const id of IDS) { const l = ['easy', 'medium', 'hard', 'talent'].map(d => played[id + ':' + d]?.lv); if (new Set(l).size < 3) bad.push(`${id}: the levels play alike ${l}`); }
+  // one screen, no scrolling, every button on screen and 44 px or more, text 16 px or more; pictures for the report
+  fs.mkdirSync('out/handson', { recursive: true });
+  for (const [name, w, h] of [['phone', 390, 844], ['phone-wide', 844, 390], ['tablet', 820, 1180], ['tablet-wide', 1180, 820], ['computer', 1366, 800]] as [string, number, number][]) {
+    await P.page.setViewportSize({ width: w, height: h });
+    for (const id of IDS) {
+      await openGame(id, 'talent'); await P.page.waitForSelector(`.gl[data-game-id="${id}"]:not(.out)`, { timeout: 10000 }).catch(() => {});
+      for (let k = 0; k < 30; k++) { await P.page.waitForTimeout(150); if (await P.page.evaluate(() => document.querySelectorAll('.gl:not(.out) .ho-leaf, .gl:not(.out) .ho-cell').length > 0)) break; }
+      await P.page.waitForTimeout(300);
+      const f = await P.page.evaluate(() => {
+        const st = document.querySelector('.gl:not(.out) .gl-stage') as HTMLElement, out = [];
+        if (!st) return ['no stage'];
+        if (st.scrollHeight > st.clientHeight + 2 || document.scrollingElement.scrollHeight > innerHeight + 2) out.push(`scrolls ${st.scrollHeight}/${st.clientHeight}`);
+        st.querySelectorAll('button').forEach((e: HTMLElement) => { const r = e.getBoundingClientRect(); if (r.width < 43 || r.height < 43) out.push(`small ${e.className} ${Math.round(r.width)}x${Math.round(r.height)}`); if (r.bottom > innerHeight + 1 || r.right > innerWidth + 1 || r.top < 0 || r.left < 0) out.push(`off screen ${e.className}`); });
+        st.querySelectorAll('.ho-say, .ho-bowl span, .ho-left').forEach((e: HTMLElement) => { if (e.textContent.trim() && parseFloat(getComputedStyle(e).fontSize) < 16) out.push(`text ${e.className}`); });
+        return out;
+      });
+      if (f.length) bad.push(`${id} ${name}: ${[...new Set(f)].slice(0, 4).join('; ')}`);
+      await P.page.screenshot({ path: `out/handson/${id}-${name}.png` });
+      await P.page.evaluate(() => { (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click(); }); await P.page.waitForTimeout(500);
+    }
+  }
+  const errs = P.errors; await P.ctx.close();
+  ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, played }).slice(0, 2000));
+  return `${IDS.map(id => `${id}: ${['easy', 'medium', 'hard', 'talent'].map(d => played[id + ':' + d].lv).join(' / ')}`).join('; ')}; won at every level; one screen on phone, tablet and computer (out/handson)`;
+});
 // ---- (v1.08d polish) end ----

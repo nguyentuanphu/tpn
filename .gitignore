@@ -50,6 +50,7 @@ marketing/source/runvalley.log
 /js/art/frienditems.js
 /js/art/games108.js
 /js/art/games108b.js
+/js/art/handson.js
 /js/art/howto-tales.js
 /js/art/kit.js
 /js/art/learning.js
@@ -256,6 +257,8 @@ marketing/source/runvalley.log
 /js/games/goat-art.js
 /js/games/goat-core.js
 /js/games/goat.js
+/js/games/handson-meta.js
+/js/games/handson.js
 /js/games/hocvui-meta.js
 /js/games/horse-session.js
 /js/games/learning-meta.js

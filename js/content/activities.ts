@@ -118,7 +118,9 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   en_verbs: ['hv_en', 3, 1], en_shop: ['hv_en', 4, 2], en_teens: ['hv_en', 4, 2], en_body: ['hv_en', 2, 1], en_wh: ['hv_en', 5, 2], en_mydaystory: ['hv_en', 4, 2],
   me_tree: ['me', 3, 2], me_wash: ['me', 2, 1], me_safe: ['me', 3, 1], me_help: ['me', 3, 1], me_calm: ['me', 3, 1], me_table: ['me', 3, 1],
   th_balance: ['thinking', 4, 2], th_clues: ['thinking', 4, 2], th_robot: ['thinking', 5, 3], th_changed: ['thinking', 4, 2], th_count: ['thinking', 4, 2], th_belong: ['thinking', 3, 1],
-  vi_poem: ['hv_vi', 4, 2], vi_tulay: ['hv_vi', 5, 2], vi_sx: ['hv_vi', 5, 3]
+  vi_poem: ['hv_vi', 4, 2], vi_tulay: ['hv_vi', 5, 2], vi_sx: ['hv_vi', 5, 3],
+  // (v1.08d polish)
+  mazebuild: ['thinking', 4, 2]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };

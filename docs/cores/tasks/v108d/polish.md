@@ -55,6 +55,31 @@ each), `tests/checks/play.mts` (the new check at the end, one marked block), `.g
   `friendoutfits`, `preload`, `emoji`, `noemoji`, `arch`, `names`, `bilingual`: pass.
 - `studio`, `perf`: see the progress notes.
 
+## Part 2: the games' leftovers
+
+### What changed
+- New `js/games/handson.ts` (two hands-on games), `js/games/handson-meta.ts` (How to play, read by the guide film),
+  `js/art/handson.ts` (the Maze Builder's picture).
+- **Wrap the Bánh Chưng** (`fg_tet`, the Tết festival game; same id, so stars and saves stay): was a picture quiz, now
+  hands-on: tap the four dong leaves into the square mould, fill it in the real order (sticky rice, mung beans, pork,
+  mung beans, sticky rice), fold the leaves over, tie the bamboo string across and down. Easy one cake; Medium adds a
+  bowl that does not belong (carrot); Hard two cakes and the bowls move; Talent two wrong bowls, words only, and the
+  opposite side must be folded next. Still open only in its season (`festseason.ts`).
+- **Maze Builder** (`mazebuild`, thinking corner, age 4, second set): lay stepping stones from the duckling to the mother
+  duck, round the rocks; each stone right beside the last; a tap on the last stone takes it back. Easy 4x4 with 3 rocks,
+  Medium 5x5 with 6, Hard three 5x5 mazes with 8, Talent 6x6 with 11 and only as many stones as the shortest way needs.
+  On a short screen (a phone on its side) the maze is made smaller to fit, never scrolled. Its place in the valley is the
+  thinking corner's (Ông Cú, `js/content/gameplace.ts`).
+- Shared files: `js/games/catalog.ts` (one entry, one loader; `fg_tet` moved from the quiz loader), `js/games/games108b.ts`
+  (skips `fg_tet`), `js/content/activities.ts` (one line), `js/art/games108.ts` (two imports), `tests/checks/play.mts`
+  (new check `handson`).
+- New spoken lines recorded with Azure (HoaiMy, Natasha): 29 files.
+
+### Checks
+- New `handson`: pass (both games won by tapping at Easy, Medium, Hard and Talent; the four levels differ; one screen with
+  no scrolling, buttons 44 px or more, text 16 px or more on phone both ways, tablet both ways and computer; pictures in
+  `tests/out/handson/`).
+
 ## Owner's decisions
 - 5 Nov 2026 AEDT (owner, via Release): "everything that you say left for later round"; the go is given.
 
