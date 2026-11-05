@@ -205,6 +205,13 @@ export const ROADS: MapRoad[] = [
   { id: 'hoian_walk', kind: 'footpath', pts: [[153, 96], [170, 96], [170, 56]] },                   // (round T2) into Hội An and north over Chùa Cầu to the canal's far bank
   // (round T2) footpaths down to the piers: the raft's stops by the bridges and the harbour ferry on the island
   { id: 'quay_north', kind: 'footpath', pts: [[22, -172], [22, -152], [12, -152]] },
+  // (v1.08e vehicles, Release round 2) the Southern Coast Boat's piers: Melbourne's up the bank to the road; the Reef's,
+  // Perth's and the islands' (no road there) into their own place
+  { id: 'quay_melbourne', kind: 'footpath', pts: [[-122, 145], [-118, 136], [-118, 125], [-122, 122], [-128, 122.5], [-132, 117]] },
+  { id: 'quay_gbr', kind: 'footpath', pts: [[-58, 184], [-58, 179]] },
+  { id: 'quay_perth', kind: 'footpath', pts: [[-204, 186], [-204, 180]] },
+  { id: 'quay_tasmania', kind: 'footpath', pts: [[-120, 211], [-124, 215], [-127, 218]] },
+  { id: 'quay_rottnest', kind: 'footpath', pts: [[-210, 216], [-212, 219]] },
   { id: 'quay_ring_n', kind: 'footpath', pts: [[24, -130], [24, -114], [16, -114]] },
   { id: 'quay_haique', kind: 'footpath', pts: [[50, -28], [50, -6], [60, -6]] },
   { id: 'quay_ring_s', kind: 'footpath', pts: [[32, 104], [32, 124], [22, 124]] },

@@ -3,7 +3,8 @@
 //      30 cm on any side: a bus's mirrors on their arms and a roof unit stand out; bikes and cars are within 5 cm),
 //      standing on the ground where the code shape stood (within 2 cm), facing the same way;
 //   2. each model wheel sits on its code wheel's hub and turns when the code turns the wheel;
-//   3. a rider sits on the model's seat point with both hands on its handles (bicycle, motorbike, xích lô);
+//   3. a rider sits on the model's seat point with both hands on its handles (bicycle, motorbike, xích lô); a friend
+//      (their Blender model) in a car sits with the hair under the roof and the legs inside the car;
 //   4. in the valley, the traffic near a child and the ferries' hulls are swapped once the models are woken;
 //   5. blocked models (no network): the code shape stays, nothing breaks.
 import { open, clear } from './harness.mts';
@@ -52,12 +53,25 @@ export async function worldVehiclesCheck(b) {
       }
       riders.push(id);
     }
+    // (Release round 2) a friend (their Blender model) in a car, a taxi and the tourist cart: the hair stays under the roof
+    const AV = await import(String('/js/avatar.js')); await Promise.all(['lumi', 'finn', 'clara', 'sol'].map(id => AV.loadFriendModels(id)));
+    const roofs: string[] = [];
+    for (const [id, who] of [['sedan', 'lumi'], ['taxi', 'clara'], ['touristCart', 'sol'], ['suv', 'finn'], ['ute', 'lumi'], ['tamTruck', 'clara']]) {
+      const v = vs.find(x => x.id === id), av = A.buildAvatar({ friend: who }); if (!av.model) { bad.push(`${who}: no friend model`); continue; }
+      V.seatRider(av, v, v.seat, v.grips, v.feet); av.model.follow && av.model.follow(undefined, true); v.o.updateMatrixWorld(true);
+      const b = new THREE.Box3(); av.model.obj.traverse((n: any) => { if (n.isSkinnedMesh) { n.computeBoundingBox(); b.union(n.boundingBox.clone().applyMatrix4(n.matrixWorld)); } });
+      const top = v.o.worldToLocal(new THREE.Vector3(0, b.max.y, 0).add(new THREE.Vector3(v.o.position.x, 0, v.o.position.z))).y;
+      const roof = v.cabin ? v.cabin.top : 2.1, low = v.o.worldToLocal(new THREE.Vector3(v.o.position.x, b.min.y, v.o.position.z)).y;
+      if (top > roof + .03) bad.push(`${who} in the ${id}: hair ${(top - roof).toFixed(2)} m through the roof`); else roofs.push(`${id} ${(roof - top).toFixed(2)} m`);
+      if (id !== 'touristCart' && low < .3) bad.push(`${who} in the ${id}: legs ${(.3 - low).toFixed(2)} m out under the car`);
+      v.o.remove(av.root);
+    }
     // the valley: traffic near a child and the ferries
     const G = (window as any).__sv, T = G.traffic, h = G.heroes[0], m = T.slots.find((s: any) => s.mover); const [mx, mz] = T.where(m); h.place(mx + 10, mz + 10);
     T.slots.forEach((sl: any) => { if (!sl.v) T.make(sl); }); await new Promise(r => setTimeout(r, 50)); await K.wakeAllWorldModels();
     const traffic = T.slots.filter((s: any) => s.v && s.v.model).length, ferries = G.ferries.ferries.filter((F: any) => F.model.children[0] && !F.model.children[0].visible).length;
     if (!traffic) bad.push('no traffic vehicle took its model'); if (ferries < G.ferries.ferries.length) bad.push(`${ferries}/${G.ferries.ferries.length} boats took their model`);
-    return { bad, n: vs.length, wheels, turned, riders, traffic, ferries };
+    return { bad, n: vs.length, wheels, turned, riders, traffic, ferries, roofs };
   });
   ok(!r.bad.length, r.bad.slice(0, 12).join('; '));
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
@@ -71,5 +85,5 @@ export async function worldVehiclesCheck(b) {
   const errs = Q.errors.filter((e: string) => !/world model|Failed to load resource|ERR_FAILED/.test(e)); await Q.ctx.close();
   ok(!q.model && q.shown && q.failed, 'blocked: the code shape did not stay ' + JSON.stringify(q));
   ok(!errs.length, errs.join(' | '));
-  return `${r.n} vehicle models in place (size, ground, facing); ${r.turned}/${r.wheels} wheels on their hubs and turning; riders seated with hands on the handles: ${r.riders.join(', ')}; ${r.traffic} traffic vehicles and ${r.ferries} boats swapped; blocked: the code shapes stay`;
+  return `${r.n} vehicle models in place (size, ground, facing); ${r.turned}/${r.wheels} wheels on their hubs and turning; riders seated with hands on the handles: ${r.riders.join(', ')}; friends under the roof and their legs inside (head room: ${r.roofs.join(', ')}); ${r.traffic} traffic vehicles and ${r.ferries} boats swapped; blocked: the code shapes stay`;
 }
