@@ -81,7 +81,7 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
         const o = still[oi++], g = (o.userData.codeGeo || o.geometry) as THREE.BufferGeometry, pos = g.attributes.position, ix = g.index, count = ix ? ix.count : pos.count;
         const reps = o instanceof THREE.InstancedMesh ? o.count : 1;
         for (let r = 0; r < reps; r++) {
-          if (o instanceof THREE.InstancedMesh) { if (o.userData.codeMatrices) mi.fromArray(o.userData.codeMatrices, r * 16); else o.getMatrixAt(r, mi); m4.multiplyMatrices(o.matrixWorld, mi); } // (v1.08e nature: a copy drawn close up keeps its first place here) else m4.copy(o.matrixWorld);
+          if (o instanceof THREE.InstancedMesh) { if (o.userData.codeMatrices) mi.fromArray(o.userData.codeMatrices, r * 16); else o.getMatrixAt(r, mi); m4.multiplyMatrices(o.matrixWorld, mi); } else m4.copy(o.matrixWorld); // (v1.08e nature: a copy drawn close up keeps its first place here) (Release, v1.08e: the comment had swallowed the else, so a plain mesh was stamped with the last instance's matrix)
           for (let t = 0; t < count; t += 3) {
             const i0 = ix ? ix.getX(t) : t, i1 = ix ? ix.getX(t + 1) : t + 1, i2 = ix ? ix.getX(t + 2) : t + 2;
             a.fromBufferAttribute(pos, i0).applyMatrix4(m4); b.fromBufferAttribute(pos, i1).applyMatrix4(m4); c.fromBufferAttribute(pos, i2).applyMatrix4(m4);
