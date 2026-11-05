@@ -24,7 +24,7 @@ The owner runs three more helpers on a second Pro account. They split the rest o
 - **Commits** end with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` and `Claude-Session: <your session link>`.
 - **Status file:** `docs/cores/tasks/v108c/<name>.md`, with your plan, progress per part, checks (pass/fail/skipped) and commit ids. Write "ready for Release" at the top when every part is done.
 
-**The three helpers** (start A and B; start C when one of them finishes):
+**The three helpers** (start A and B; C is cancelled):
 - **A. blender:** brief `blender-brief.md`, branch `work/v108c-blender`, from `origin/work/v108b-story`.
 - **B. voices:** brief `voices-brief.md`, branch `work/v108c-voices`, from `origin/work/v108b-platform` (Opus is already done there).
-- **C. parents:** brief `parents-brief.md`, branch `work/v108c-parents`, from `origin/integrate/v108`.
+- **C. parents: cancelled, do not start.** The quality helper had already built all of it (on `work/v108b-quality`, 00b86fd26) before the split.

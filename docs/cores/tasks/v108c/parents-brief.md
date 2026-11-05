@@ -1,3 +1,5 @@
+**Cancelled (5 Nov 2026 AEDT): already built by the quality helper on `work/v108b-quality` (commit 00b86fd26). Do not start.**
+
 # Helper brief C: parents (learning report, difficulty by subject, Lumi as guide, play together, gentle play time)
 
 **Branch:** `work/v108c-parents` from `origin/integrate/v108`.
