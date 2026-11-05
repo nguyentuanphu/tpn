@@ -56,9 +56,9 @@ export const FEAST = [
   { id: 'sizzle', icon: '🌭', name: () => T('Sausage sizzle', 'Xúc xích nướng kẹp bánh mì'), heal: 2, bonus: .2 },
   { id: 'xmascookie', icon: '🍪', name: () => T('Christmas cookie', 'Bánh quy Giáng sinh'), heal: 1, bonus: .3 },
   // (v1.08d s2au) Season 2, Australia: each region's local food, given by its friend (js/s2au-region.ts)
-  { id: 'prawns', icon: 's2:prawns', name: () => T('Grilled prawns (Queensland)', 'Tôm nướng (bang Queensland)'), heal: 2, bonus: .3 },
-  { id: 'crumble', icon: 's2:crumble', name: () => T('Tasmanian apple crumble', 'Bánh táo nướng Tasmania'), heal: 2, bonus: .4 },
-  { id: 'fishchips', icon: 's2:fishchips', name: () => T('Fish and chips on the beach', 'Cá chiên khoai tây bên bờ biển'), heal: 2, bonus: .3 }
+  { id: 'prawns', icon: 'au:prawns', name: () => T('Grilled prawns (Queensland)', 'Tôm nướng (bang Queensland)'), heal: 2, bonus: .3 },
+  { id: 'crumble', icon: 'au:crumble', name: () => T('Tasmanian apple crumble', 'Bánh táo nướng Tasmania'), heal: 2, bonus: .4 },
+  { id: 'fishchips', icon: 'au:fishchips', name: () => T('Fish and chips on the beach', 'Cá chiên khoai tây bên bờ biển'), heal: 2, bonus: .3 }
 ];
 export const dishInfo = id => RECIPES.find(r => r.id === id) || FEAST.find(r => r.id === id);
 export const MYSTERY = { id: 'mystery', icon: '🥘', name: () => T('Mystery stew', 'Món hầm bí ẩn'), heal: 1, bonus: 0 };

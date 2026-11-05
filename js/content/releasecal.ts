@@ -36,12 +36,12 @@ export const CAL_FIXED: CalItem[] = [
 // chapters 10 to 12
 { const R = (key: string, kind: CalKind, en: string, vi: string, icon: string): CalItem => ({ key, kind, id: key.split(':')[1], en, vi, icon, date: CAL_DAYS[key] });
   CAL_FIXED.push(
-    R('feature:s2au_gbr', 'feature', 'New place: the Great Barrier Reef, with 3 games', 'Nơi mới: Rạn san hô Great Barrier, có 3 trò chơi', 's2:reef'),
-    R('feature:s2au_tas', 'feature', 'New place: Tasmania, with 3 games', 'Nơi mới: Đảo Tasmania, có 3 trò chơi', 's2:cradle'),
-    R('feature:s2au_perth', 'feature', 'New place: Perth and Rottnest Island, with 3 games', 'Nơi mới: Perth và đảo Rottnest, có 3 trò chơi', 's2:quokka'),
-    R('chapter:ch10', 'chapter', 'Lantern story chapter 10: the Great Barrier Reef', 'Truyện đèn lồng chương 10: Rạn san hô Great Barrier', 's2:reef'),
-    R('chapter:ch11', 'chapter', 'Lantern story chapter 11: Tasmania', 'Truyện đèn lồng chương 11: Đảo Tasmania', 's2:cradle'),
-    R('chapter:ch12', 'chapter', 'Lantern story chapter 12: Perth and Rottnest Island', 'Truyện đèn lồng chương 12: Perth và đảo Rottnest', 's2:quokka')); }
+    R('feature:s2au_gbr', 'feature', 'New place: the Great Barrier Reef, with 3 games', 'Nơi mới: Rạn san hô Great Barrier, có 3 trò chơi', 'au:reef'),
+    R('feature:s2au_tas', 'feature', 'New place: Tasmania, with 3 games', 'Nơi mới: Đảo Tasmania, có 3 trò chơi', 'au:cradle'),
+    R('feature:s2au_perth', 'feature', 'New place: Perth and Rottnest Island, with 3 games', 'Nơi mới: Perth và đảo Rottnest, có 3 trò chơi', 'au:quokka'),
+    R('chapter:ch10', 'chapter', 'Lantern story chapter 10: the Great Barrier Reef', 'Truyện đèn lồng chương 10: Rạn san hô Great Barrier', 'au:reef'),
+    R('chapter:ch11', 'chapter', 'Lantern story chapter 11: Tasmania', 'Truyện đèn lồng chương 11: Đảo Tasmania', 'au:cradle'),
+    R('chapter:ch12', 'chapter', 'Lantern story chapter 12: Perth and Rottnest Island', 'Truyện đèn lồng chương 12: Perth và đảo Rottnest', 'au:quokka')); }
 
 // the names come with releasecal-names.ts, loaded when a calendar is shown (the start-up download stays small); until
 // then an item reads as its id. Studio, the website and the server call loadCalNames() (or useCalNames) first.

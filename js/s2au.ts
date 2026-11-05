@@ -42,7 +42,7 @@ export function createS2au(G) {
           if (!met) { S['met_' + F.id] = true; giveFood(h, R, R.food.give); }
           if (k === 0) { const g = R.stands[Math.floor(Math.random() * R.stands.length)][0]; say(...F.host); G.playGame(h.i, g, 'place'); } }); } });
     const fd = at(R, R.food.at);
-    G.interactables.push({ id: 's2food_' + R.id, x: fd.x, z: fd.z, r: 2.4, icon: R.food.id === 'prawns' ? 's2:prawns' : R.food.id === 'crumble' ? 's2:crumble' : 's2:fishchips', label: () => T(R.food.label[0], R.food.label[1]),
+    G.interactables.push({ id: 's2food_' + R.id, x: fd.x, z: fd.z, r: 2.4, icon: R.food.id === 'prawns' ? 'au:prawns' : R.food.id === 'crumble' ? 'au:crumble' : 'au:fishchips', label: () => T(R.food.label[0], R.food.label[1]),
       act: h => { const S = s2(h.profile); SFX.tap(); if (S['food_' + R.id] === dayKey()) { say(...R.food.again); return; } S['food_' + R.id] = dayKey(); giveFood(h, R, R.food.give); } });
     const L = R.landmark, ls = at(R, L.sign), lm = { id: L.id, icon: R.pin, cc: 'au', x: ls.x, z: ls.z, mx: a[0] + L.at[0], mz: a[1] + L.at[1], name: () => T(L.name[0], L.name[1]), fact: L.fact };
     if (!LANDMARKS.some(l => l.id === L.id)) LANDMARKS.push(lm);
@@ -54,7 +54,7 @@ export function createS2au(G) {
   const soon = new Map<string, unknown>();
   function addSoon(R: S2Region) {
     if (soon.has(R.id)) return; const s = at(R, [0, 0]), day = openDate(R.key, calMoves());
-    const it = { id: 's2soon_' + R.id, x: s.x, z: s.z, r: 3, icon: '🚧', label: () => T(R.soon[0], R.soon[1]) + ' · ' + day,
+    const it = { id: 's2soon_' + R.id, x: s.x, z: s.z, r: 3, icon: R.pin, label: () => T(R.soon[0], R.soon[1]) + ' · ' + day,
       visible: () => !regionOpen(R), act: h => { SFX.tap(); G.toast?.(h, T(R.soon[0], R.soon[1]) + ' · ' + day); } };
     G.interactables.push(it); soon.set(R.id, it);
   }

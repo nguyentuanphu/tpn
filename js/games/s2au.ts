@@ -109,7 +109,7 @@ function path(api, G: S2Game): Round[] {
           for (let c = 0; c < cols; c++) {
             const id = c + ',' + r;
             if (M.on.has(id) || dead.has(id)) { const t = tap(P.cell, M.on.has(id) ? 'way' : 'dead', 's2-cell'); things.push(t); box.appendChild(t); }
-            else box.appendChild(el('span', 's2-deco', pic(G.deco && G.deco.length ? G.deco[(c + r) % G.deco.length] : 's2:rock')) as HTMLElement);
+            else box.appendChild(el('span', 's2-deco', pic(G.deco && G.deco.length ? G.deco[(c + r) % G.deco.length] : 'au:rock')) as HTMLElement);
           }
           box.appendChild(el('span', 's2-end', r === M.r1 ? pic(P.to) : '') as HTMLElement);
         }

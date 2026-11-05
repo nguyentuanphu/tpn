@@ -34,7 +34,7 @@ export function buildRegion(G, R: S2Region, ctx: Ctx) {
   { const s = ctx.at(R.food.at), rot = face(s.x, s.z);
     put([P(B(2.2, .12, 1.1), '#c89a6a', [0, .95, 0]), ...[[-1, -.45], [1, -.45], [-1, .45], [1, .45]].map(([x, z]) => P(C(.06, .06, .95, 6), '#8a5a32', [x, .47, z])),
       P(C(1.6, .05, .6, 14), '#e8433a', [0, 2.3, 0]), P(C(.05, .05, 2.3, 6), '#e8e4dc', [0, 1.15, 0])], s.x, s.z, rot, undefined, onDay);
-    const food = sprite(R.food.id === 'prawns' ? 's2:prawns' : R.food.id === 'crumble' ? 's2:crumble' : 's2:fishchips', .8); food.position.set(s.x, heightAt(s.x, s.z) + 1.4, s.z); onDay.add(food);
+    const food = sprite(R.food.id === 'prawns' ? 'au:prawns' : R.food.id === 'crumble' ? 'au:crumble' : 'au:fishchips', .8); food.position.set(s.x, heightAt(s.x, s.z) + 1.4, s.z); onDay.add(food);
     block(s.x, s.z, 1.1); }
 
   // ---------- the game stands: a post and a board with the game's picture ----------
@@ -54,7 +54,7 @@ export function buildRegion(G, R: S2Region, ctx: Ctx) {
   });
   return { group, friend: { x: f.x, z: f.z }, paint, name: () => T(R.name[0], R.name[1]) };
 }
-const GAME_ICON: Record<string, string> = { s2a_snorkel: 's2:snorkel', s2a_turtle: 's2:turtle', s2a_reefquiz: 's2:reefquiz', s2a_wombat: 's2:wombat', s2a_devil: 's2:devil', s2a_cradle: 's2:hike', s2a_quokka: 's2:camera', s2a_swan: 's2:swan', s2a_beach: 's2:beach' };
+const GAME_ICON: Record<string, string> = { s2a_snorkel: 'au:snorkel', s2a_turtle: 'au:turtle', s2a_reefquiz: 'au:reefquiz', s2a_wombat: 'au:wombat', s2a_devil: 'au:devil', s2a_cradle: 'au:hike', s2a_quokka: 'au:camera', s2a_swan: 'au:swan', s2a_beach: 'au:beach' };
 
 // ---------- each region's scenery ----------
 type Put = (parts, x: number, z: number, rot?: number, y?: number, to?: THREE.Object3D, line?: boolean) => THREE.Mesh;
@@ -79,7 +79,7 @@ const SCENERY: Record<string, (G, R: S2Region, ctx: Ctx, put: Put, block: Block)
     // turtle nests: a sandy mound with eggs, and baby turtles heading for the sea
     for (const [dx, dz] of [[-14, 3], [14, 4]] as [number, number][]) { const s = ctx.at([dx, dz]);
       put([P(S(1.2, 12, 8), '#f2d48a', [0, 0, 0], [0, 0, 0], [1, .35, 1]), ...[0, 1, 2, 3].map(i => P(S(.16, 8, 6), '#fffdf2', [Math.cos(i * 1.6) * .35, .35, Math.sin(i * 1.6) * .35]))], s.x, s.z, 0, undefined, undefined, false);
-      const t = sprite('s2:babyturtle', .7); t.position.set(s.x + 1.4, heightAt(s.x, s.z) + .4, s.z + 1.6); G.scene.add(t); }
+      const t = sprite('au:babyturtle', .7); t.position.set(s.x + 1.4, heightAt(s.x, s.z) + .4, s.z + 1.6); G.scene.add(t); }
     // the lifesavers' flags and an umbrella
     for (const dx of [-4, 4]) { const s = ctx.at([dx, 9]); put([P(C(.05, .05, 2.6, 6), '#e8e4dc', [0, 1.3, 0]), P(B(.9, .3, .05), '#e8433a', [.45, 2.35, 0]), P(B(.9, .3, .05), '#ffd23f', [.45, 2.05, 0])], s.x, s.z, 0); block(s.x, s.z, .2); }
     { const s = ctx.at([-12, -2]); put([P(C(.05, .05, 2.4, 6), '#e8e4dc', [0, 1.2, 0]), P(new THREE.ConeGeometry(1.6, .7, 10), '#ff7eb8', [0, 2.5, 0]), P(B(1.6, .1, .7), '#3b6fe0', [1.4, .08, .6])], s.x, s.z, .5); block(s.x, s.z, .2); }
@@ -99,7 +99,7 @@ const SCENERY: Record<string, (G, R: S2Region, ctx: Ctx, put: Put, block: Block)
       const pine = i % 3 === 0, parts = pine ? [P(C(.15, .2, 1.2, 6), '#6a4a32', [0, .6, 0]), P(new THREE.ConeGeometry(1.1, 2.6, 8), '#2f6a3a', [0, 2.2, 0]), P(new THREE.ConeGeometry(.8, 1.8, 8), '#3a7a44', [0, 3.3, 0])]
         : [P(C(.14, .2, 2.6, 6), '#d8d0c0', [0, 1.3, 0]), P(S(1.2, 10, 8), '#6a9a5a', [0, 3, 0], [0, 0, 0], [1, .8, 1]), P(S(.8, 10, 8), '#7aa860', [.6, 3.5, .2])];
       put(parts, x, z, i, h, undefined, false); block(x, z, .3); }
-    for (const [p, dx, dz] of [['s2:wombat', 16, 3], ['s2:devil', -10, -3], ['s2:echidna', 18, -3]] as [string, number, number][]) { const s = ctx.at([dx, dz]); const t = sprite(p, .9); t.position.set(s.x, heightAt(s.x, s.z) + .5, s.z); G.scene.add(t); }
+    for (const [p, dx, dz] of [['au:wombat', 16, 3], ['au:devil', -10, -3], ['au:echidna', 18, -3]] as [string, number, number][]) { const s = ctx.at([dx, dz]); const t = sprite(p, .9); t.position.set(s.x, heightAt(s.x, s.z) + .5, s.z); G.scene.add(t); }
   },
   // Perth and Rottnest Island: the white lighthouse on Rottnest (the landmark), quokkas and bikes on the island, black
   // swans on the Swan River's pond, a beach umbrella and the lifesavers' flags on Perth's beach, a little city skyline
@@ -108,11 +108,11 @@ const SCENERY: Record<string, (G, R: S2Region, ctx: Ctx, put: Put, block: Block)
     put([P(C(.9, 1.3, 7, 12), '#ffffff', [0, 3.5, 0]), P(C(1, 1, .6, 12), '#e8433a', [0, 5, 0]), P(C(.75, .75, 1.2, 12), '#ffd23f', [0, 7.6, 0]), P(new THREE.ConeGeometry(1, .9, 12), '#e8433a', [0, 8.6, 0]), P(B(2.4, 1.6, 2), '#f2e6c8', [1.8, .8, 0])], L.x, L.z, 0, lh - .1);
     block(L.x, L.z, 1.4);
     const sg = sprite(R.landmark.icon, 1.4); sg.position.set(L.x, lh + 10.5, L.z); G.scene.add(sg);
-    for (const [p, dx, dz, s] of [['s2:quokka', 4, -3, .9], ['s2:quokka', -5, 2, .8], ['s2:quokka', 3, 4, .8], ['s2:bike', -3, -4, .9]] as [string, number, number, number][]) {
+    for (const [p, dx, dz, s] of [['au:quokka', 4, -3, .9], ['au:quokka', -5, 2, .8], ['au:quokka', 3, 4, .8], ['au:bike', -3, -4, .9]] as [string, number, number, number][]) {
       const x = L.x + dx, z = L.z + dz; if (heightAt(x, z) < WATER + .3) continue; const t = sprite(p, s); t.position.set(x, heightAt(x, z) + .45, z); G.scene.add(t); }
     // black swans on the Swan River (its pond, js/content/map.ts WATERS 'swan')
     const sw = anchorOf('perth')!, pond = [-222, 168];
-    for (let i = 0; i < 4; i++) { const a = i * 1.7, t = sprite('s2:swan', .9); t.position.set(pond[0] + Math.cos(a) * 2.6, WATER + .45, pond[1] + Math.sin(a) * 2.6); G.scene.add(t); }
+    for (let i = 0; i < 4; i++) { const a = i * 1.7, t = sprite('au:swan', .9); t.position.set(pond[0] + Math.cos(a) * 2.6, WATER + .45, pond[1] + Math.sin(a) * 2.6); G.scene.add(t); }
     { const s = ctx.at([12, -2]); put([P(C(.05, .05, 2.4, 6), '#e8e4dc', [0, 1.2, 0]), P(new THREE.ConeGeometry(1.6, .7, 10), '#3b6fe0', [0, 2.5, 0]), P(B(1.6, .1, .7), '#ffd23f', [1.4, .08, .6])], s.x, s.z, .5); block(s.x, s.z, .2); }
     for (const dx of [-4, 4]) { const s = ctx.at([dx, 8]); if (heightAt(s.x, s.z) < WATER + .3) continue; put([P(C(.05, .05, 2.6, 6), '#e8e4dc', [0, 1.3, 0]), P(B(.9, .3, .05), '#e8433a', [.45, 2.35, 0]), P(B(.9, .3, .05), '#ffd23f', [.45, 2.05, 0])], s.x, s.z, 0); block(s.x, s.z, .2); }
     // Perth's city towers, far behind the beach (on the hill north of the Murray)
