@@ -953,8 +953,7 @@ for (const c of (Array.isArray(CUSTOM.npcs) ? CUSTOM.npcs : []).slice(0, 60)) {
 G.folkShow = (await later.folkShow).createFolkShow(G, { looks: [kidLook('shirt', '#ff7eb8', '#1d1412', 'buns', 'none'), kidLook('overalls', '#3cc7e8', '#3b2618', 'short', 'cap'), kidLook('dress', '#ffb52e', '#1d1412', 'ponytail', 'flower')] });
 // (round S, owner plan 8 Oct) Hội làng three times a day, surprises, and the grown-ups' features: each in its own file,
 // loaded while the valley is built (js/hoilang.js after the games boards it uses; Studio switches in the 'kids' group)
-{ const [{ createHoiLang }, { createSurprises }, { createParents }] = await Promise.all([import('./hoilang.js'), import('./surprises.js'), import('./parents.js')]);
-  G.hoilang = createHoiLang(G, { say, save, reward }); G.surprises = createSurprises(G, { say, reward }); G.parents = createParents(G, { say, save, reward }); }
+{ const { createHoiLang } = await import('./hoilang.js'); G.hoilang = createHoiLang(G, { say, save, reward }); }
 // (Play reading trial, owner 11 Oct AEDT) the ten reading games load only while Studio's readingTrial switch is on (now, or when it is switched on);
 // on unless Studio switches it off (owner, 12 Oct AEDT)
 // (batch rollout: also for a child who already played a reading game, checked again when a session starts)
@@ -1093,6 +1092,11 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) { if 
 addEventListener('pagehide', () => { if (playing) keepSpot(); saveProfiles(true); });
 bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
 setTimeout(() => { void import('./art.js').then(a => a.moreArt()); }, 1500); // (v1.08) the new games' pictures, after the start
+// (v1.08b platform, brief part 4: a lighter first download) the surprises and the grown-ups' features (family missions,
+// the family message, the week note) have no place on the map: they are made 2 s after the child can start, not while
+// the valley is built (everything that uses them asks whether they are there yet)
+setTimeout(() => { void Promise.all([import('./surprises.js'), import('./parents.js')]).then(([{ createSurprises }, { createParents }]) => {
+  G.surprises = createSurprises(G, { say, reward }); G.parents = createParents(G, { say, save, reward }); }).catch(e => console.warn('later parts', e)); }, 2000);
 // (owner, 30 Oct 2026 AEDT: "load where the child is first, then the rest while in game") what only decorates the valley
 // and nobody bumps into (reeds, flowers along the roads, the floating place names) is made just after the child can
 // start, a step at a time between frames, on the ground's final shape
