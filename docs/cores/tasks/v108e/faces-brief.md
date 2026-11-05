@@ -56,3 +56,41 @@ Read first: `README.md` (this folder), `docs/cores/tasks/v108b/README.md`, `CLAU
 ## Status file
 
 `docs/cores/tasks/v108e/faces.md`
+
+## Part 2: high-detail friends and close-ups (owner, 6 Nov 2026 AEDT, pop-ups)
+
+The owner said: "The characters and villagers need higher definition or some refinement: in the game they don't look much different from the current characters, but with hair."
+
+**Pop-up answers:**
+- High-detail friend and villager models.
+- Closer in key moments.
+
+1. **A high-detail version of each friend:** `models/<id>-hd.glb`, made with the Blender scripts in `tools/blender/`.
+   - About 20-25k triangles.
+   - One painted 1024 px texture: fabric patterns, felt and knit detail, seams, buttons, hair strands. Use KTX2/basis, or WebP if the loader cannot do KTX2.
+   - A baked normal or AO map for the felt and fabric.
+   - The new faces from Part 1.
+   - About 0.6-0.9 MB each. Never in the first download (`startup`).
+2. **When it is used:**
+   - **The HD model:** only the child's own chosen friend, loaded after the start; other friends are not downloaded until a child switches. It is drawn when the camera is within about 15 m.
+   - **Today's light model:** far away, for other children on the device, online friends, and as the fallback.
+   - Add both to the offline list (`sw.ts`). The HD models go in the Wi-Fi pack only for the friends in use.
+3. **The look, for every person:**
+   - a soft rim light;
+   - a thin outline (inverted hull, or the game's existing outline if there is one);
+   - more toon bands, or a smooth ramp, so the shading has depth.
+
+   Check `perf` and `battery` after each step.
+4. **Closer in key moments.** The play camera stays where it is. The camera eases in, over about 0.5 s and back, when:
+   - the child talks to a villager;
+   - the child wins a game;
+   - the child waves or cheers;
+   - the Welcome screen and the friend picker are shown.
+
+   No close-up during movement or in games.
+5. **Checks:**
+   - extend `faces`: the HD model loads for the chosen friend only, and the light model is used far away and when the HD one is blocked;
+   - `friendmodel` (new budgets written in the check with the owner's decision), `perf`, `battery`, `longplaymem`, `startup`, `phone`.
+   - Screenshots of each friend in play and in a close-up, before and after, on phone, tablet and computer.
+
+The 11 named villagers are made by the "villagers" helper on the second account (`villagers-brief.md`). Share your eye style, lighting, outline and texture setup with them through the files on GitHub: `tools/blender/` and a short note in your status file.

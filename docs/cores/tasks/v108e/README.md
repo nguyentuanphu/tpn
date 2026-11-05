@@ -33,7 +33,8 @@ The first account runs at most 5 at once: quality is still running, so this roun
 | vehicles | first | `vehicles-brief.md`: every vehicle the child sees or rides | `work/v108e-vehicles` |
 | nature | second | `nature-brief.md`: trees, flowers, plants, farm crops, My House furniture | `work/v108e-nature` |
 | water | first | `water-brief.md`: every river, lake and pond shallow (0.4-0.8 m) and friendly | `work/v108e-water` |
-| faces | first | `faces-brief.md`: living faces for the friends and villagers (soft eyes with lids, blinking, looking, smiling) | `work/v108e-faces` |
+| faces | first | `faces-brief.md`: living faces (soft eyes with lids, blinking, looking, smiling); Part 2: high-detail friends, rim light, outline, close-ups | `work/v108e-faces` |
+| villagers | second | `villagers-brief.md`: the 11 named villagers as real models, crowds refined | `work/v108e-villagers` |
 | places | second | `places-brief.md`: landmarks, buildings, stalls, food and festival props | `work/v108e-places` |
 
 **Split (owner, 6 Nov 2026 AEDT, pop-up):** places and nature run on the second account, to spare the first account's weekly limit.
