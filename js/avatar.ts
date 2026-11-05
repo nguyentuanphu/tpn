@@ -21,7 +21,7 @@ const gParts = {
   head: new THREE.SphereGeometry(.5, 32, 24),
   hairCap: new THREE.SphereGeometry(.54, 32, 18, 0, Math.PI * 2, 0, Math.PI * .55),
   hairBack: new THREE.SphereGeometry(.53, 24, 18, Math.PI, Math.PI, 0, Math.PI * .8),
-  lock: new THREE.SphereGeometry(.15, 14, 10), lockS: new THREE.SphereGeometry(.15, 8, 6), // (v1.08e: lockS, the small locks all round, fewer triangles) bun: new THREE.SphereGeometry(.17, 12, 10), tie: new THREE.TorusGeometry(.1, .035, 8, 16),
+  lock: new THREE.SphereGeometry(.15, 14, 10), lockS: new THREE.SphereGeometry(.15, 8, 6) /* (v1.08e: the small locks all round, fewer triangles) */, bun: new THREE.SphereGeometry(.17, 12, 10), tie: new THREE.TorusGeometry(.1, .035, 8, 16),
   spike: new THREE.ConeGeometry(.14, .4, 6),
   body: new THREE.CylinderGeometry(.27, .36, .62, 16),
   skirt: new THREE.ConeGeometry(.55, .55, 18, 1, true),
