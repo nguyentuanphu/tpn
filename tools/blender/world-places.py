@@ -806,9 +806,162 @@ def hand_hue(m, sp):
     for sx in (-1, 1):   # the small pavilions on the arms
         B(m, 2.0, .9, 2.0, red, (sx * 5.4, 4.9, 3.6)); viet_roof(m, 2.2, 2.2, .8, yellow, (sx * 5.4, 5.35, 3.6), curl=.35, over=.35)
 
+
+def hand_sydneytower(m, sp):
+    # Sydney Tower Eye: a slender gold-and-grey shaft held by cables, the golden turret with its window bands and
+    # observation deck, the spire on top (on a round plinth, 20.5 m like the code shape)
+    grey, gold, glass = '#d9dcde', '#e8b83a', '#6f8f9e'
+    C(m, 2.4, 2.6, .5, '#bfb8aa', (0, .25, 0), seg=20); C(m, 1.6, 2.0, .6, '#cfc8ba', (0, .8, 0), seg=20)
+    C(m, .38, .45, 15.2, grey, (0, 8.6, 0), seg=12)
+    for k in range(10):   # the cables from the plinth to the turret's foot
+        a = k / 10 * TAU; d = Vector((math.cos(a) * -.95, 13.6, math.sin(a) * -.95)); mid = Vector((math.cos(a) * 1.0, 8.0, math.sin(a) * 1.0))
+        m.add(g_cyl(.035, .035, d.length, 4, smooth=False), '#9aa4a8', Matrix.Translation(mid) @ Vector((0, 1, 0)).rotation_difference(d.normalized()).to_matrix().to_4x4())
+    C(m, 1.3, 1.0, .6, gold, (0, 15.0, 0), seg=20)
+    for k, (r, y, col) in enumerate(((1.65, 15.65, gold), (1.7, 16.15, glass), (1.75, 16.6, gold), (1.7, 17.05, glass), (1.6, 17.5, gold))):
+        C(m, r, r, .45, col, (0, y, 0), seg=24)
+    C(m, 1.2, 1.6, .5, gold, (0, 17.95, 0), seg=24); C(m, .6, .9, .4, grey, (0, 18.4, 0), seg=16)
+    C(m, .06, .12, 2.0, grey, (0, 19.5, 0), seg=6); m.part('SphereGeometry', '#e8433a', (0, 20.5, 0), radius=.1)
+
+def hand_lunapark(m, sp):
+    # Luna Park's smiling face entrance: the big round face with wide eyes, rosy cheeks and the open grinning mouth you walk
+    # through, framed by two striped towers topped with lights
+    skin, pink, red, dark = '#ffd6a5', '#ff9ab0', '#c62828', '#2b2238'
+    m.part('SphereGeometry', skin, (0, 3.5, 0), (0, 0, 0), (1, 1, .45), radius=3.3, widthSegments=24, heightSegments=16)
+    m.part('TorusGeometry', '#ffd23f', (0, 3.5, 0), (0, 0, 0), (1, 1, 1), radius=3.32, tube=.18, radialSegments=6, tubularSegments=40)   # the halo of lights
+    for k in range(16): a = k / 16 * TAU; m.part('SphereGeometry', '#fff4c8', (math.cos(a) * 3.55, 3.5 + math.sin(a) * 3.55, .15), radius=.15)
+    for sx in (-1, 1):
+        m.part('SphereGeometry', '#ffffff', (sx * 1.1, 4.5, 1.25), (0, 0, 0), (1, 1.25, .4), radius=.62)
+        m.part('SphereGeometry', '#3a6ab0', (sx * 1.05, 4.4, 1.48), (0, 0, 0), (1, 1, .4), radius=.32); m.part('SphereGeometry', dark, (sx * 1.03, 4.38, 1.6), (0, 0, 0), (1, 1, .4), radius=.16)
+        m.part('TorusGeometry', dark, (sx * 1.1, 5.35, 1.25), (0, 0, 0), (1, .6, 1), radius=.5, tube=.08, arc=math.pi)   # brows
+        m.part('SphereGeometry', pink, (sx * 1.8, 3.1, 1.15), (0, 0, 0), (1, .7, .3), radius=.5)
+    m.part('SphereGeometry', '#f0b088', (0, 3.6, 1.4), (0, 0, 0), (1, 1, .6), radius=.35)   # the nose
+    m.part('TorusGeometry', red, (0, 2.5, 1.35), (0, 0, math.pi), (1, .85, 1), radius=1.6, tube=.3, arc=math.pi)
+    B(m, 2.4, 2.4, 1.0, dark, (0, 1.2, 1.3)); [B(m, .32, .5, .2, '#ffffff', (-.85 + k * .34, 2.25, 1.75)) for k in range(6)]   # the mouth door and teeth
+    for sx in (-1, 1):
+        x = sx * 4.0
+        for k in range(6): C(m, .48 - k * .015, .5 - k * .015, 1.0, '#ff7eb8' if k % 2 else '#ffffff', (x, .5 + k, 0), seg=12)
+        C(m, .6, .55, .25, '#ffd23f', (x, 6.1, 0), seg=12); m.part('SphereGeometry', '#ffd23f', (x, 6.55, 0), radius=.5, widthSegments=12, heightSegments=8)
+
+def tube(m, pts, radii, colors, seg=10, cap=True, scale=(1, 1)):
+    """a smooth tube through pts (three.js frame), radius per point, a colour per point (or one), rings square to the path"""
+    pts = [Vector(p) for p in pts]; n = len(pts); v, f, fc = [], [], []
+    up = Vector((0, 1, 0))
+    for i, p in enumerate(pts):
+        t = (pts[min(i + 1, n - 1)] - pts[max(i - 1, 0)]).normalized()
+        a = (up - t * up.dot(t)); a = a.normalized() if a.length > 1e-4 else Vector((1, 0, 0)); b2 = t.cross(a)
+        for k in range(seg):
+            q = k / seg * TAU; v.append(tuple(p + (a * math.cos(q) * scale[0] + b2 * math.sin(q) * scale[1]) * radii[i]))
+    groups = {}
+    for i in range(n - 1):
+        col = colors if isinstance(colors, str) else colors[i]
+        for k in range(seg):
+            groups.setdefault(col, []).append([i * seg + k, i * seg + (k + 1) % seg, (i + 1) * seg + (k + 1) % seg, (i + 1) * seg + k])
+    for col, ff in groups.items(): m.add((v, [q[::-1] for q in ff]), col)
+    if cap:
+        c0 = colors if isinstance(colors, str) else colors[0]; c1 = colors if isinstance(colors, str) else colors[-1]
+        m.add((v, [list(range(seg))]), c0); m.add((v, [list(range(seg * (n - 1), seg * n))[::-1]]), c1)
+
+def hand_banana(m, sp):
+    # The Big Banana (Coffs Harbour): a smoothie shop with a striped awning under a giant curved banana: a smooth, gently
+    # ridged yellow body with a brown stem and tip
+    B(m, 7, 3.4, 6, '#fff3c4', (0, 1.7, 0)); B(m, 7.2, .4, 6.2, '#e8c03a', (0, 3.6, 0)); B(m, 7.1, .4, 6.1, '#d9b45a', (0, .2, 0))
+    for x in (-2.4, 0, 2.4): arch_door(m, 1.4, 2.0, '#7fa9b8', (x, .4, 3.01), 0)
+    B(m, 7.4, .12, .95, '#e8433a', (0, 2.95, 3.4), (.25, 0, 0))
+    for k in range(7): B(m, .5, .13, .97, '#ffffff', (-3.0 + k, 2.96, 3.4), (.25, 0, 0))
+    n = 24; pts, rad, col = [], [], []
+    for k in range(n + 1):
+        a = -1.1 + k / n * 2.2; r = 6
+        pts.append((math.sin(a) * r, 4.2 + math.cos(a) * r - r + 3.2, 0))
+        e = abs(k - n / 2) / (n / 2); rad.append(1.45 * (1 - e ** 2.4) + .18)
+        col.append('#6b5a2a' if k < 1 or k >= n - 1 else '#e0c23a' if e > .8 else '#f2d23a')
+    tube(m, pts, rad, col, seg=7)   # (seven sides: the soft ridges of the skin)
+    C(m, .16, .22, .7, '#6b5a2a', (math.sin(-1.22) * 6, 4.2 + math.cos(-1.22) * 6 - 2.8 + .1, 0), (0, 0, 1.2), seg=6)
+
+def hand_lighthouse(m, sp):
+    # The Vung Tau lighthouse on its hill: a white tower with a red band, the gallery with its railing, the glowing lantern
+    # room under a red dome, and the keeper's house beside it with a tiled roof
+    white, red = '#ffffff', '#c0392b'
+    C(m, 1.3, 1.7, 8, white, (0, 4, 0), seg=16)
+    C(m, 1.42, 1.48, .6, red, (0, 5.0, 0), seg=16)
+    for y in (2.0, 3.6, 6.4): arch_door(m, .3, .6, '#4a4a5a', (0, y, 1.62 - y * .035), 0)
+    C(m, 1.6, 1.5, .3, '#cfd6da', (0, 8.1, 0), seg=16)
+    for k in range(16): a = k / 16 * TAU; C(m, .03, .03, .55, '#5a5a5a', (math.cos(a) * 1.5, 8.5, math.sin(a) * 1.5), seg=4)
+    m.part('TorusGeometry', '#5a5a5a', (0, 8.78, 0), (math.pi / 2, 0, 0), radius=1.5, tube=.04)
+    C(m, .9, .9, 1.4, '#ffe9a0', (0, 8.95, 0), seg=12)
+    for k in range(6): a = k / 6 * TAU; C(m, .05, .05, 1.4, red, (math.cos(a) * .92, 8.95, math.sin(a) * .92), seg=4)
+    m.part('SphereGeometry', red, (0, 9.65, 0), radius=1.0, widthSegments=14, heightSegments=6, thetaLength=math.pi / 2)
+    C(m, .05, .1, .6, '#5a5a5a', (0, 10.85, 0), seg=6)
+    B(m, 4, 1.8, 3, '#f2e6c2', (2.6, .9, 0)); viet_roof(m, 4.0, 3.0, .9, '#b4523a', (2.6, 1.8, 0), curl=.1, over=.3)
+    arch_door(m, .7, 1.3, '#6a4a3a', (2.6, 0, 1.51), 0)
+    for x in (1.6, 3.6): B(m, .6, .6, .05, '#9fd2ee', (x, 1.1, 1.51))
+
+def hand_goldenbridge(m, sp):
+    # Cau Vang, the Golden Bridge of Ba Na Hills: a golden walkway curving through the air, held up by two giant weathered
+    # stone hands rising from below, their fingers curling up round its side, flower boxes along the rail
+    stone, stone2, moss = '#8f8a80', '#7f7a70', '#6f8a5a'
+    n = 28; R0 = 4.5
+    def at(a, off=0., y=3.4): return (math.sin(a) * (R0 + off), y, (math.cos(a) - .45) * R0 + math.cos(a) * off)
+    ang = [-1.1 + i / n * 2.2 for i in range(n + 1)]
+    # the deck: one continuous strip with a thickness, gold on top
+    v = [at(a, o, y) for a in ang for (o, y) in ((-.8, 3.55), (.8, 3.55), (.8, 3.25), (-.8, 3.25))]; f = []
+    for i in range(n):
+        A, Bq = i * 4, (i + 1) * 4
+        for k in range(4): f.append([A + k, A + (k + 1) % 4, Bq + (k + 1) % 4, Bq + k][::-1])
+    f.append([0, 1, 2, 3]); f.append([n * 4 + 3, n * 4 + 2, n * 4 + 1, n * 4])
+    m.add((v, f), '#f2c230')
+    for o in (-.8, .8):   # the rails and posts
+        tube(m, [at(a, o, 4.25) for a in ang], [.05] * (n + 1), '#e8a51e', seg=5)
+        for i in range(0, n + 1, 2): m.part('CylinderGeometry', '#e8a51e', at(ang[i], o, 3.9), radiusTop=.035, radiusBottom=.035, height=.7, radialSegments=4)
+    for i in range(1, n, 3):   # flower boxes on the outer rail
+        m.part('BoxGeometry', '#7a5a3a', at(ang[i], .9, 3.62), (0, ang[i], 0), width=.5, height=.18, depth=.22)
+        for j in range(3): m.part('SphereGeometry', ('#ff7eb8', '#c060c0', '#ffd23f')[j], at(ang[i] + (j - 1) * .035, .9, 3.78), radius=.09, widthSegments=6, heightSegments=4)
+    for sx in (-1, 1):   # the two stone hands
+        a0 = sx * .55; base = Vector(at(a0, 0, 0)); outward = Vector((math.sin(a0), 0, math.cos(a0)))
+        tube(m, [tuple(base + Vector((0, y, 0)) - outward * .3) for y in (0, .9, 1.8, 2.6)], [.9, .85, .8, .78], stone, seg=10)   # the forearm
+        m.part('SphereGeometry', stone, tuple(base + Vector((0, 2.95, 0))), (0, -a0, 0), (1.25, .45, 1.15), radius=1.0, widthSegments=12, heightSegments=8)   # the palm under the deck
+        for k in range(4):   # four fingers curling up the outer side
+            sa = a0 + (k - 1.5) * .11
+            root = Vector(at(sa, .75, 3.0)); tip = Vector(at(sa, 1.05, 3.9)); top = Vector(at(sa, .85, 4.35))
+            tube(m, [root, (root + tip) / 2 + Vector((0, 0, 0)), tip, top], [.2, .2, .18, .14], stone2 if k % 2 else stone, seg=8)
+        th0 = Vector(at(a0 + sx * -.32, -.7, 3.0)); tube(m, [th0, Vector(at(a0 + sx * -.3, -1.0, 3.7)), Vector(at(a0 + sx * -.28, -.85, 4.15))], [.22, .2, .15], stone, seg=8)   # the thumb, inner side
+        for k in range(7): m.part('SphereGeometry', moss, tuple(base + Vector((math.cos(k * 1.3) * .8, .3 + k * .35, math.sin(k * 2.1) * .7))), radius=.2, widthSegments=6, heightSegments=4)
+
+def hand_uluru(m, sp):
+    # Uluru: the great red rock, long and rounded with steep sides, its weathered flanks in vertical gullies and caves,
+    # a darker red near the ground (60 x 25 m like the code shape)
+    v, f = [], []
+    nu, nv = 40, 12
+    for j in range(nv + 1):
+        th = j / nv * math.pi / 2
+        for i in range(nu):
+            ph = i / nu * TAU
+            gully = 1 - .06 * (math.sin(ph * 17) ** 2) * math.sin(th) ** .5
+            bump = 1 + .04 * math.sin(ph * 5 + j) + .03 * math.cos(ph * 11)
+            r = gully * bump
+            x = math.cos(ph) * math.sin(th) ** .32 * 30 * r; z = math.sin(ph) * math.sin(th) ** .32 * 12.6 * r
+            y = -.5 + math.cos(th) ** .7 * 11 * (1 - .08 * math.sin(ph * 3))
+            v.append((x, y, z))
+    v.append((0, 10.4, 0))
+    for j in range(nv):
+        for i in range(nu):
+            a, b, c, d = j * nu + i, j * nu + (i + 1) % nu, (j + 1) * nu + (i + 1) % nu, (j + 1) * nu + i
+            if j == 0: f.append([len(v) - 1, b, a]) if False else None
+            f.append([a, b, c, d])
+    top = [i for i in range(nu)]
+    f.append(top[::-1])
+    # colour by height: deep red at the foot, warm orange towards the top (the rows of the surface)
+    rows = {}
+    for q in f[:-1]: rows.setdefault(min(q) // nu, []).append(q[::-1])
+    for j, ff in rows.items(): m.add((v, ff), ('#9e3a22', '#b0442a', '#bf4e2e', '#c95a32', '#d26238', '#d86a3c')[min(5, (nv - 1 - j) * 6 // nv)])
+    m.add((v, [f[-1][::-1]]), '#d86a3c')
+    for k in range(7):   # caves at the foot
+        a = k / 7 * TAU + .3
+        m.part('SphereGeometry', '#6a2a1a', (math.cos(a) * 28.6, 1.2, math.sin(a) * 12.0), (0, -a, 0), (1, .7, .35), radius=1.3, widthSegments=8, heightSegments=6)
+
 HAND = {'lm-turtle': hand_turtle, 'lm-thehuc': hand_thehuc, 'lm-vanmieu': hand_vanmieu, 'lm-onepillar': hand_onepillar,
         'lm-benthanh': hand_benthanh, 'lm-opera': hand_opera, 'br-harbour': hand_harbour}
 HAND.update({n: fn for n, (fn, size) in PROPS.items()})
+HAND.update({'lm-sydneytower': hand_sydneytower, 'lm-lunapark': hand_lunapark, 'lm-banana': hand_banana, 'lm-lighthouse': hand_lighthouse, 'lm-goldenbridge': hand_goldenbridge, 'lm-uluru': hand_uluru})
 HAND.update({'lm-cathedral': hand_cathedral, 'lm-postoffice': hand_postoffice, 'lm-flinders': hand_flinders, 'lm-hue': hand_hue})
 BUDGET = lambda name: 8000 if name.startswith(('lm-', 'br-')) else 900 if name.startswith('pr-') else 3000
 
