@@ -1,5 +1,7 @@
 # v1.08c helper B: voices (status)
 
+**ready for Release** (5 Nov 2026 AEDT, last commit on `work/v108c-voices`: see the end of this file). Parts 2 and 3 done; Part 1 (Opus) was the platform helper's.
+
 Branch `work/v108c-voices`, from `origin/work/v108b-platform` (Opus voices, brief part 1, already there). Brief: `voices-brief.md`. Started 5 Nov 2026 AEDT; the owner's go is given.
 
 A scheduled task resumes this work after each usage reset (owner, 5 Nov 2026 AEDT: 12:40 am Sydney time, then every 5 hours; `CRON_TZ=Australia/Sydney 40 0,5,10,15,20 * * *`). It stops itself once this file says "ready for Release".
@@ -10,9 +12,9 @@ A scheduled task resumes this work after each usage reset (owner, 5 Nov 2026 AED
 - `js/state.ts`: `offlineLevel()` ('light' | 'auto' | 'full', unset means 'auto'); Light and Full keep voices by themselves (`autoPackOn`).
 - `js/voicepack.ts`: `setOfflineLevel`, `levelSpace`, `lightGroups` (the core, the area the child is in, then the last areas while they fit in about 45 MB), `levelGroups`; Light downloads only those areas and removes everything else; `packSig` names Opus so a pack kept as MP3 is not counted as the Opus pack.
 - `js/voicestore.ts`: `prune(keep)` (rewrites bundles without the removed recordings, deletes empty ones: the space really comes back) and `bytes()`.
-- `js/voice-index.ts`: `moveToOpus` (a level may move a device from MP3 to Opus: Light always, Full when the pack is not all kept yet).
-- `js/voice.ts`: `chooseOfflineLevel`, `offlineSpace`; "Keep all voices" is now the Full level.
-- `js/extras.ts` + `css/style.css` (block at the end): three buttons (64 px, text 16 px or more) with the space each takes and what this device keeps now; a smaller level says how much it freed. The Full button keeps the old id `#xPackSave`.
+- `js/voicepack.ts` also holds `offlineLevel` and the move to Opus (a level may move a device from MP3 to Opus: Light always, Full when the pack is not all kept yet), so the first download stays as it was.
+- `js/voice.ts`: "Keep all voices" is now the Full level; the offline note points to the levels.
+- `js/offlinelevels.ts` (new, loaded when Grown-ups opens, with its own styles; on the offline list in `sw.ts`) and a slot in `js/extras.ts`: three buttons (64 px, text 16 px or more) with the space each takes and what this device keeps now; a smaller level says how much it freed. The Full button keeps the old id `#xPackSave`.
 - `js/ui/title.ts`, the offline note in `js/voice.ts`: point to "Offline voices → Light or Full".
 - Check: new `offlinelevels` (`tests/offline-levels.mts`), then `phone`, `bilingual`, and the voice checks this touches (`voicepack`, `voicearea`, `voiceopus`, `voicebackground`).
 
@@ -27,7 +29,7 @@ A scheduled task resumes this work after each usage reset (owner, 5 Nov 2026 AED
 
 ## Progress
 - Part 2: code done (commits 7605291d9, db638fdf3, 490932b92; shorter cards with drawings 688edb283, owner 5 Nov 2026 AEDT: "too wordy, make it shorter ... with emoji or infographic"). The cards use our own drawings (feather, signal, suitcase from js/art) and a size bar.
-- Part 3: code done (4c31aea8b), checks running. Festival packs: js/voicepack.ts festivalPacks, run 20 s after the valley is built and when the device comes onto Wi-Fi; js/festivals.ts exports buildupOf; js/voice.ts lineFiles.
+- Part 3: done (4c31aea8b, 07bcc77a9, b89112c58). Festival packs: js/voicepack.ts festivalPacks, run 20 s after the valley is built and when the device comes onto Wi-Fi; js/festivals.ts exports buildupOf; js/voice.ts lineFiles.
 - Part 3 assumed (owner can change): a festival pack is the festival's voice lines (its name and its host's lines). Its decorations and its festival game are drawn by the game's code, which every device already keeps (js/games/all.js is part of the start bundle), so nothing else needs downloading. "On demand" for voices: Light downloads an area when the child goes there; Automatic plays online and keeps what is heard; making the game's own code load on demand is the platform helper's "light first download" (not changed here).
 
 ## Checks
@@ -35,5 +37,17 @@ Run one at a time with `node run.mts <check>` (`--changed` against main asks for
 - 5 Nov 2026 AEDT, commit 490932b92 (Part 2): offlinelevels pass (270 s), bilingual pass, types pass, voicepack pass, voicebackground pass, ownerwificard pass, ownervoicewifi pass, voicearea pass (500 s), welcomevoice pass, voiceopus pass, phone pass (248 s). voiceonline fail: it looked for the old wording "Keep all voices on this device"; the check now looks for "Offline voices -> Light or Full" (re-run below).
 - Screenshots looked at: tests/out/offlinelevels-phone.png, -phone-landscape.png, -tablet.png, -computer.png.
 
+- 5 Nov 2026 AEDT, final code (07bcc77a9, b89112c58): types pass, bilingual pass, offlinelevels pass (279 s), festivalpack pass (70 s), voiceonline pass, voicebackground pass, voicepack pass, swupdate pass, offline pass, startup pass.
+- First download (check startup, tablet speed): 1045 KB against 1044 KB on the base branch (one run each). With the same code it read 1045 to 1048 KB between runs (a file that sometimes arrives before the valley is ready), so the difference is within that noise. All of this branch's new code (the level cards, festival packs, the level logic) loads only later; the start-up files carry about 150 bytes of it (the title line, autoPackOn, the offline note).
+- Not run: the full suite and the combined checks (Release only). `--changed` against main asks for the full suite, so the checks above were run one at a time with `node run.mts`.
+- Screenshots looked at: tests/out/offlinelevels-phone.png, -phone-landscape.png, -tablet.png, -computer.png (the shorter cards with drawings). In the check's Vietnamese screens the sizes read 0 MB only because its made-up pack has English lines only.
+
 ## New spoken lines
-None so far (the level screen is Grown-ups text, not spoken).
+None (the level cards are Grown-ups text, not spoken; festival packs download recordings that already exist).
+
+## Owner's decisions
+- 5 Nov 2026 AEDT: the three level cards were too wordy: shorter, with a picture or infographic (done: one short line each, our own drawings, a size bar).
+- 5 Nov 2026 AEDT: a scheduled task restarts this work after each usage reset (12:40 am Sydney time, then every 5 hours); it stops itself once this file says "ready for Release".
+
+## Commits
+7605291d9, db638fdf3, 490932b92, 688edb283, 4c31aea8b, 559b008be, 07bcc77a9, 3351cae1e, b89112c58 and this status commit.
