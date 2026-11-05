@@ -107,7 +107,58 @@ def kit_copy(kit):
         if not rig.users_collection: scene.collection.objects.link(rig)
         if rig.parent is None: rig.parent = e
     return e, faces, rig
-FACE_OF = {'smile': 'smile', 'happy': 'happy', 'sad': 'sad', 'o': 'surprised', 'sleep': 'blink', 'surprised': 'surprised'}
+FACE_OF = {'smile': 'smile', 'happy': 'happy', 'sad': 'sad', 'o': 'surprised', 'sleep': 'blink', 'blink': 'blink', 'surprised': 'surprised',
+           'curious': 'curious', 'excited': 'excited', 'shy': 'shy'}
+# faces with feeling (owner, 6 Nov 2026 AEDT): every face blinks every 2-6 seconds and looks at whoever is speaking
+FPS = max(1, D.get('fps', 12))
+import random
+def blink_frames(i, n):
+    rnd = random.Random(7919 * (i + 1)); s = set(); t = rnd.uniform(.6, 3.0)
+    while t * FPS < n: f = int(t * FPS); s.update((f, f + 1)); t += rnd.uniform(2, 6)
+    return s
+BLINKS = [blink_frames(i, len(a['m'])) for i, a in enumerate(D['actors'])]
+OPEN_EYES = ('smile', 'surprised', 'sad', 'curious', 'excited', 'shy')
+# (frames) the moves are read from the character's actions and set on its bones by hand each frame (no frame_set), so the
+# whole page renders as one animation and Eevee keeps the scene loaded between frames (about 0.3 s a frame instead of 20)
+ACT_KEYS = {}
+def act_keys(act):
+    if act.name not in ACT_KEYS:
+        ks = []
+        for fc in act.fcurves:
+            if '.' not in fc.data_path: continue
+            own, attr = fc.data_path.rsplit('.', 1); ks.append((own, attr, fc.array_index, fc))
+        ACT_KEYS[act.name] = ks
+    return ACT_KEYS[act.name]
+def pose_at(rig, act, f):
+    for own, attr, j, fc in act_keys(act):
+        try: o = rig.path_resolve(own)
+        except Exception: continue
+        v = fc.evaluate(f); cur = getattr(o, attr)
+        try: cur[j] = v
+        except TypeError: setattr(o, attr, v)
+LOOK = {}
+def at_k(arr, k, dflt):
+    return arr[min(k, len(arr) - 1)] if isinstance(arr, list) and arr else dflt
+def look_pass(k):
+    """(frames) each actor turns its head (up to about 40 degrees) towards whoever is speaking now, easing in and out"""
+    A = D['actors']
+    spk = next((j for j, a in enumerate(A) if ACTORS[j] is not None and at_k(a.get('talk'), k, 0) and at_k(a.get('state'), k, 'idle') != 'hidden'), None)
+    for i, a in enumerate(A):
+        if ACTORS[i] is None: continue
+        cp = COPIES[len([x for x in ACTORS[:i] if x is not None])]
+        if not cp or not cp[2]: continue
+        rig = cp[2]; hb = rig.pose.bones.get('head')
+        if hb is None: continue
+        want = 0.0
+        if spk is not None and spk != i:
+            m, s = a['m'][min(k, len(a['m']) - 1)], A[spk]['m'][min(k, len(A[spk]['m']) - 1)]
+            yaw = math.atan2(m[8], m[10]); to = math.atan2(s[12] - m[12], s[14] - m[14])
+            rel = (to - yaw + math.pi) % (2 * math.pi) - math.pi
+            want = max(-.7, min(.7, rel)) if abs(rel) < 2.4 else 0.0   # someone right behind: no owl turns
+        LOOK[i] = LOOK.get(i, 0.0) + (want - LOOK.get(i, 0.0)) * .3
+        if not POSED.get(i): hb.rotation_euler = (0, 0, 0)
+        r = list(hb.rotation_euler); r[HEAD_AXIS] += LOOK[i] * HEAD_SIGN; hb.rotation_euler = r
+HEAD_AXIS, HEAD_SIGN = int(opt.get('headaxis', 1)), float(opt.get('headsign', 1))
 ACT_OF = {'walk': 'walk', 'wave': 'wave', 'cheer': 'cheer', 'dance': 'cheer', 'sit': 'sit', 'ride': 'ride', 'sitground': 'sit'}
 COPIES = []
 ACTORS = []
@@ -129,13 +180,19 @@ def place_actor(i, k):
     if cp:   # (frames) the face and the move of this frame
         _, faces, rig = cp; mood = (D['actors'][i].get('mood') or ['smile'])[k] if isinstance(D['actors'][i].get('mood'), list) else 'smile'
         want = FACE_OF.get(mood, 'smile')
+        if want not in faces: want = 'smile'
+        if want in OPEN_EYES and k in BLINKS[i] and 'blink' in faces: want = 'blink'
         for n, c in faces.items(): c.hide_render = (n != want)
-        if rig and rig.animation_data:
+        POSED[i] = False
+        if rig:
+            if rig.animation_data and rig.animation_data.action: rig.animation_data.action = None   # posed by hand below
             act = bpy.data.actions.get(ACT_OF.get(st, 'idle')) or bpy.data.actions.get('idle')
-            if act: rig.animation_data.action = act; scene.frame_set(int(k * 24 / max(1, D.get('fps', 12))) % int(act.frame_range[1]) + 1)
+            if act: pose_at(rig, act, int(k * 24 / FPS) % int(act.frame_range[1]) + 1); POSED[i] = True
     if st == 'lie': e.rotation_euler = (-math.pi / 2, 0, yaw); e.location.z += .15
     elif st in ('sitground', 'situp', 'kneel', 'dig', 'plant', 'pick'): e.location.z -= .35 * sc.x
+POSED = {}
 for i in range(len(ACTORS)): place_actor(i, 0)
+if FRAMES: look_pass(0)
 
 # ---------- sky, light and distance by the story's time of day ----------
 top, bottom = D['sky']; T, Bc = hexc(top), hexc(bottom)
@@ -145,15 +202,16 @@ tc = nt.nodes.new('ShaderNodeTexCoord'); sx = nt.nodes.new('ShaderNodeSeparateXY
 mr.inputs['From Min'].default_value = -.05; mr.inputs['From Max'].default_value = .55
 nt.links.new(tc.outputs['Generated'], sx.inputs[0]); nt.links.new(sx.outputs['Z'], mr.inputs['Value']); nt.links.new(mr.outputs['Result'], mix.inputs['Factor'])
 mix.inputs['A'].default_value = Bc; mix.inputs['B'].default_value = T; nt.links.new(mix.outputs['Result'], bgn.inputs['Color'])
-bgn.inputs['Strength'].default_value = .35 if night else 1.0
-sd = bpy.data.lights.new('sun', 'SUN'); sd.energy = .6 if night else 3.2; sd.angle = math.radians(8)
+LIGHT = float(opt.get('light', .82))   # (6 Nov 2026 AEDT, owner: "looks quite bright": the sky and the lights a little lower, so whites keep their colour)
+bgn.inputs['Strength'].default_value = (.35 if night else 1.0) * LIGHT
+sd = bpy.data.lights.new('sun', 'SUN'); sd.energy = (.6 if night else 3.2) * LIGHT; sd.angle = math.radians(8)
 sd.color = (.7, .78, 1.0) if night else tuple(hexc('#fff3e2')[i] * (1 - warm * .5) + hexc('#ffc184')[i] * warm * .5 for i in range(3))
 so = bpy.data.objects.new('sun', sd); scene.collection.objects.link(so); so.rotation_euler = (Vector((0, 0, 0)) - v3((30, 50, 25))).to_track_quat('-Z', 'Y').to_euler()
-fd = bpy.data.lights.new('fill', 'SUN'); fd.energy = .25 if night else .9; fd.color = hexc('#fff6e4')[:3]; fd.angle = math.radians(30)
+fd = bpy.data.lights.new('fill', 'SUN'); fd.energy = (.25 if night else .9) * LIGHT; fd.color = hexc('#fff6e4')[:3]; fd.angle = math.radians(30)
 fo = bpy.data.objects.new('fill', fd); scene.collection.objects.link(fo); fo.rotation_euler = (Vector((0, 0, 0)) - v3((-12, 16, 25))).to_track_quat('-Z', 'Y').to_euler()
 
 # a soft light from the camera, with no shadow, so faces under big hair and hats stay bright (as in the studio pictures)
-kd = bpy.data.lights.new('camfill', 'SUN'); kd.energy = .35 if night else 1.3; kd.use_shadow = False; kd.color = hexc('#fff4e6')[:3]
+kd = bpy.data.lights.new('camfill', 'SUN'); kd.energy = (.35 if night else 1.3) * LIGHT; kd.use_shadow = False; kd.color = hexc('#fff4e6')[:3]
 ko = bpy.data.objects.new('camfill', kd); scene.collection.objects.link(ko)
 cd = bpy.data.cameras.new('cam'); cd.sensor_fit = 'VERTICAL'; cd.angle_y = math.radians(D.get('fov', 42)); cd.clip_start = .1; cd.clip_end = 600
 cam = bpy.data.objects.new('cam', cd); scene.collection.objects.link(cam); scene.camera = cam
@@ -168,7 +226,7 @@ if ENGINE == 'eevee':
     scene.render.engine = 'BLENDER_EEVEE_NEXT'; scene.eevee.taa_render_samples = SAMPLES; scene.eevee.use_shadows = True
 else:
     scene.render.engine = 'CYCLES'; scene.cycles.device = 'CPU'; scene.cycles.samples = SAMPLES; scene.cycles.use_denoising = True; scene.cycles.max_bounces = 4
-scene.view_settings.view_transform = 'Standard'; scene.view_settings.look = 'None'
+scene.view_settings.view_transform = opt.get('view', 'Standard'); scene.view_settings.look = opt.get('look', 'None').replace('_', ' '); scene.view_settings.exposure = float(opt.get('exposure', 0))
 # distance: the far land fades into the sky's bottom colour (the game's fog)
 bpy.context.view_layer.use_pass_mist = True; scene.world.mist_settings.start = 40; scene.world.mist_settings.depth = 220
 scene.use_nodes = True; ct = scene.node_tree; ct.nodes.clear()
@@ -181,11 +239,19 @@ if not FRAMES:
     scene.render.filepath = OUT; bpy.ops.render.render(write_still=True)
 else:
     os.makedirs(OUT, exist_ok=True)
-    for k in range(len(D['cams'])):
+    # range=a-b: only those frames (a quick look before a long render)
+    ra = [int(x) for x in opt['range'].split('-')] if 'range' in opt else [0, len(D['cams']) - 1]
+    def set_frame(k):
         for i, o in enumerate(OBJS):
             ms = D['meshes'][i]; r = k - ms.get('from', 0)
             o.hide_render = r < 0 or r >= len(ms['m']) or (ms.get('vis') and not ms['vis'][min(r, len(ms['vis']) - 1)])
             if 0 <= r < len(ms['m']): o.matrix_world = m4(ms['m'][r])
         for i in range(len(ACTORS)): place_actor(i, k)
+        look_pass(k)
         place_cam(k)
-        scene.render.filepath = os.path.join(OUT, f'f{k:05d}.png'); bpy.ops.render.render(write_still=True)
+    for k in range(ra[0]): set_frame(k)   # (so the head turns ease in from the page's start)
+    def on_frame(sc, *_): set_frame(sc.frame_current)
+    bpy.app.handlers.frame_change_pre.append(on_frame)
+    scene.frame_start, scene.frame_end = ra[0], ra[1]; scene.render.fps = int(FPS)
+    scene.render.image_settings.file_format = 'PNG'; scene.render.filepath = os.path.join(OUT, 'f#####')
+    bpy.ops.render.render(animation=True)

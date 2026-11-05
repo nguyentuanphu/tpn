@@ -51,7 +51,7 @@ for (let k = 0; k < n; k++) {
     // every frame of the page: each mesh once (from the frame it first shows), then its place in every frame; the actors'
     // place, what they do and their face in every frame; the camera in every frame
     if (fps) {
-      const seen = new Map<any, number>(), meshes: any[] = [], actors = p.actors.map((a: any) => ({ look: a.look, kit: a.look.kit || null, m: [] as any[], state: [] as any[], mood: [] as any[] })), cams: any[] = [];
+      const seen = new Map<any, number>(), meshes: any[] = [], actors = p.actors.map((a: any) => ({ look: a.look, kit: a.look.kit || null, m: [] as any[], state: [] as any[], mood: [] as any[], talk: [] as number[] })), cams: any[] = [];
       const len = p.len + .6; let f = 0;
       for (let t = 0; t <= len; t += 1 / fps, f++) {
         await step(t); root.updateMatrixWorld(true);
@@ -65,7 +65,8 @@ for (let k = 0; k < n; k++) {
           const e = meshes[i]; while (e.m.length < f - e.from) { e.m.push(e.m[e.m.length - 1] || Array.from(o.matrixWorld.elements)); e.vis.push(0); }
           e.m.push(Array.from(o.matrixWorld.elements)); e.vis.push(shown(o) ? 1 : 0);
         });
-        p.actors.forEach((a: any, i: number) => { actors[i].m.push(Array.from(a.o.matrixWorld.elements)); actors[i].state.push(shown(a.o) && a.o.scale.x > .05 ? a.state : 'hidden'); actors[i].mood.push(a._face || a.mood); });
+        // talk: 1 while this actor is the one speaking (the film gives the lips to the last one who talked), so the others look at them
+        p.actors.forEach((a: any, i: number) => { actors[i].m.push(Array.from(a.o.matrixWorld.elements)); actors[i].state.push(shown(a.o) && a.o.scale.x > .05 ? a.state : 'hidden'); actors[i].mood.push(a._face || a.mood); actors[i].talk.push(a.lip ? 1 : 0); });
         cams.push([p.camPos.toArray(), p.camLook.toArray()]);
       }
       W.__svFilmRate = 1;
