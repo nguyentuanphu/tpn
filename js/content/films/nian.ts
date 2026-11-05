@@ -34,7 +34,7 @@ export default { pages: [
   // 2. The villagers were scared and hid in their houses.
   S => {
     nightVillage(S);
-    const ppl = [VILLAGER('aodai', '#e86a8a', 'none'), VILLAGER('shirt', '#3b6fe0', 'none', 'short'), VILLAGER('dress', '#ffd23f', 'none', 'ponytail')].map((l, i) => S.person(l, -2 + i * 2, 3, PI));
+    const ppl = [VILLAGER('aodai', '#e86a8a', 'none'), VILLAGER('tunic', '#3b6fe0', 'none', 'short'), VILLAGER('dress', '#ffd23f', 'none', 'ponytail')].map((l, i) => S.person(l, -2 + i * 2, 3, PI));
     S.shot([0, 2.4, 9], [0, 1.2, 0]);
     ppl.forEach((a, i) => { S.mood(a, .2, 'o'); S.walk(a, .4 + i * .2, [i ? 7 : -7, -5.4], 3); S.scale(a.o, 2.6 + i * .2, .3, 1, .01); });
     S.cam(.3, 3, [0, 3, 9], [0, 1, -3]);
@@ -55,7 +55,7 @@ export default { pages: [
   // 4. So everyone hung red paper, lit lanterns and made big bangs!
   S => {
     nightVillage(S);
-    const ppl = [VILLAGER('aodai', '#e86a8a', 'none'), VILLAGER('shirt', '#3b6fe0', 'none', 'short')].map((a, i) => S.person(a, -1.6 + i * 3.2, 1.4, i ? -.6 : .6));
+    const ppl = [VILLAGER('aodai', '#e86a8a', 'none'), VILLAGER('tunic', '#3b6fe0', 'none', 'short')].map((a, i) => S.person(a, -1.6 + i * 3.2, 1.4, i ? -.6 : .6));
     const papers = [[-7, -5.2], [7, -5.2], [-3, -4.6], [3, -4.6]].map(([x, z]) => { const r = red(S, x, z); r.visible = false; return r; });
     const lanterns = [[-3, 2.6, -4.6], [3, 2.6, -4.6]];
     S.shot([0, 2.6, 10], [0, 1.4, -2]);
@@ -83,7 +83,7 @@ export default { pages: [
   S => {
     nightVillage(S); [[-7, -5.2], [7, -5.2]].forEach(([x, z]) => red(S, x, z));
     const fw = Pp.fireworks(S, 4, 9, -12); fw.visible = true; S.lightTo(0, .1, .9, .9);
-    const kids = [VILLAGER('dress', '#ff7eb8', 'none', 'buns'), VILLAGER('shirt', '#43c463', 'none', 'spiky')].map((l, i) => S.person(l, -2 + i * 4, 3.6, PI, .75));
+    const kids = [VILLAGER('dress', '#ff7eb8', 'none', 'buns'), VILLAGER('tunic', '#43c463', 'none', 'spiky')].map((l, i) => S.person(l, -2 + i * 4, 3.6, PI, .75));
     S.shot([0, 2.4, 10], [0, 1.4, 0]);
     S.cam(.3, 3, [0, 2, 8], [0, 1.4, 0]);
     S.help(5.6, 'Tap to start the dragon dance!', 'Chạm để múa rồng nào!', tt => {

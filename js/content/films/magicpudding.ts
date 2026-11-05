@@ -4,7 +4,7 @@
 // thieves (page 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, turn, speak, bush, animal, pudding, jackal } from './kit.js';
 
-const SAILOR = LOOK({ style: 'shirt', color: '#2f4a8a', hat: 'cap', hairStyle: 'short', hair: '#8a8a8a', skin: '#e0aa80' });
+const SAILOR = LOOK({ style: 'tunic', color: '#2f4a8a', hat: 'akubra', hairStyle: 'short', hair: '#8a8a8a', skin: '#e0aa80' });
 const stick = () => mesh([P(new THREE.CylinderGeometry(.025, .025, .9, 5), '#8a5a32', [0, -.1, .1])]);
 // the thieves: a grey possum with big eyes and a round brown wombat
 const possum = () => { const p = jackal('#8a8a96'); p.scale.setScalar(.8); return p; };

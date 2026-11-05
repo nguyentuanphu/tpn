@@ -163,3 +163,104 @@ export async function websiteNewsCheck(b) {
   }
   return 'strip under the hero (3 parts) and the Calendar part inside Discover, EN and VI: ' + out.join('; ');
 }
+
+// chapter4, chapter5, finale: each new lantern chapter played from the start to its festival film, once as an under-5
+// and once as a big kid: closed before its day in the release calendar (open on it), lantern lights, the talk (big kids
+// only), the game (an under-5's own game; the other one does not count), the story, the three hiding spots (an under-5's
+// companion leads), the rope, the festival film, the place lit, the show, the keepsake and the new trick; nothing stands
+// on a road or in the water; the step lines are in English and Vietnamese
+export async function chapterKitCheck(b, id: 'ch4' | 'ch5' | 'finale') {
+  const before = { ch4: ['ch1', 'ch2', 'ch3'], ch5: ['ch1', 'ch2', 'ch3', 'ch4'], finale: ['ch1', 'ch2', 'ch3', 'ch4', 'ch5'] }[id];
+  const res = [], sum = [];
+  for (const age of ['little', 'big']) {
+    const P = await open(b, { w: 1000, h: 700 }); await clear(P.page);
+    const pg = P.page, w = (ms: number) => pg.waitForTimeout(ms);
+    const q = () => pg.evaluate(() => { const c = __sv.currentQuest(__sv.heroes[0].profile); return c && c.id; });
+    const calm = () => pg.evaluate(() => { document.querySelectorAll('.storybook,.dialog,.reward').forEach(e => e.remove()); __sv.paused = false; });
+    const act = (iid: string) => pg.evaluate(iid => { const it = __sv.interactables.find(i => i.id === iid), h = __sv.heroes[0]; if (!it || (it.visible && !it.visible(h))) return false; it.act(h, __sv); return true; }, iid);
+    const tapDialog = (n = 6) => pg.evaluate(async n => { for (let i = 0; i < n; i++) { const d = document.querySelector('.dialog:not(.out)'); if (!d || d.querySelector('.dch')) break; (d as HTMLElement).click(); await new Promise(r => setTimeout(r, 250)); } }, n);
+    const emit = (gid: string) => pg.evaluate(async gid => { const E = await import('/js/core/events.js'); E.events.emit('ActivityCompleted', { activityId: 'x', defId: 'game:' + gid, players: [], result: { won: true } }); }, gid);
+    const settle = async () => { await w(400); await calm(); await w(1500); await calm(); };
+    // every chapter before done; this one's day not come yet: not open; its day today: open
+    const gate = await pg.evaluate(async ({ id, age, before }) => {
+      const G = __sv, p = G.heroes[0].profile, C = (await import('/js/custom.js')), R = await import('/js/content/releasecal.js'), { CHAPTERS } = await import('/js/content/chapters.js');
+      C.setPeeks([], 0); C.CUSTOM.features = { ...(C.CUSTOM.features || {}), story_ch2: true, story_ch3: true };
+      for (const c of before.filter(c => c !== 'ch1')) await G.lanterns.loadCh(c);
+      p.age = age; p.lanterns = { companion: 'firefly', done: { p_owl: true }, chapters: Object.fromEntries(before.map(c => [c, true])) };
+      for (const c of CHAPTERS.filter(c => before.includes(c.id))) for (const s of c.steps) p.lanterns.done[s.id] = true;
+      // (the chapters before in the calendar have opened: their day is moved to today)
+      const today = R.isoDay(new Date()), prior = Object.fromEntries(before.filter(c => R.inCalendar('chapter:' + c)).map(c => ['chapter:' + c, today]));
+      C.CUSTOM.releaseCalendar = { moves: { ...prior, ['chapter:' + id]: R.addDays(today, 3) } }; await G.lanterns.loadCh(id); const closed = G.currentQuest(p);
+      C.CUSTOM.releaseCalendar = { moves: { ...prior, ['chapter:' + id]: today } }; G.lanterns.companions.sync(); const open = G.currentQuest(p);
+      const ch = CHAPTERS.find(c => c.id === id), words = ch.steps.every(s => s.en && s.vi && (!s.tale || (s.tale[2] && s.tale[3])) && (!s.talk || s.talk.lines.every(l => l[0] && l[1])));
+      return { closed: closed && closed.id, open: open && open.id, steps: ch.steps.map(s => ({ id: s.id, big: !!s.big, lights: s.lights || 0, talk: !!s.talk && !s.tale_id, game: s.game || null, little: s.gameLittle || null, tale: s.tale_id || null, find: !!s.find, hang: !!s.hang, visit: s.visit || null })), words };
+    }, { id, age, before });
+    const seen = [await q()];
+    for (const s of gate.steps) {
+      if (s.big && age !== 'big') continue;
+      const now = await q(); if (now !== 'L_' + s.id) { res.push(`${age}: expected ${s.id}, on ${now}`); break; }
+      if (s.lights) { for (let k = 0; k < s.lights; k++) { await act(`story_light_${s.id}_${k}`); await w(250); } await settle(); if (await q() === 'L_' + s.id && s.visit) await pg.evaluate(({ v, sid }) => { const h = __sv.heroes[0]; __sv.lanterns.onRegion(h, v); }, { v: s.visit, sid: s.id }); }
+      else if (s.talk) { await act('story_' + s.id); await w(500); await tapDialog(); }
+      else if (s.game) { const mine = age === 'big' ? s.game[0] : (s.little || s.game)[0], other = s.game.concat(s.little || []).find(g => g !== mine && !(age === 'big' ? s.game : s.little || s.game).includes(g));
+        if (other) { await emit(other); await w(300); if (await q() !== 'L_' + s.id) res.push(`${age}: ${other} counted for ${s.id}`); }
+        await emit(mine); if (s.visit) await pg.evaluate(v => __sv.lanterns.onRegion(__sv.heroes[0], v), s.visit); }
+      else if (s.tale) { await act('story_' + s.id); await w(600); await calm(); await pg.evaluate(() => (document.querySelector('.th-x') as HTMLElement)?.click()); await pg.evaluate(sid => __sv.lanterns._finish(__sv.heroes[0], sid), s.id); }
+      else if (s.find) {
+        await pg.evaluate(id => { const M = __sv.lanterns.mods[id]; __sv.heroes[0].place(M.front[0], M.front[1] + 1); }, id); await w(2000); await calm();
+        const lead = await pg.evaluate(() => { const c = __sv.lanterns.companions.of(__sv.heroes[0]); return c && c.lead ? !!c.lead.high : false; });
+        if (age !== 'big' && !lead) res.push('little: the companion did not lead to the lantern');
+        await act(`story_${id}_clue1`); await w(250); const wrong = await pg.evaluate(id => !!(__sv.heroes[0].profile.lanterns.act || {})['clue_' + id], id);
+        if (wrong) res.push('the wrong spot found the lantern');
+        await act(`story_${id}_clue0`); await w(300); await act('story_' + s.id); }
+      else if (s.hang) {
+        pg.evaluate(sid => { const it = __sv.interactables.find(i => i.id === 'story_' + sid); it.act(__sv.heroes[0]); }, s.id); await w(1500);
+        await pg.evaluate(() => { const el = document.querySelector('.handpad [data-hp=rope]'); if (!el) return; const r = el.getBoundingClientRect(), ev = (t, y) => el.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 9, clientX: r.left + 20, clientY: r.top + r.height * y })); ev('pointerdown', 0); ev('pointermove', 1); ev('pointerup', 1); });
+        let film = false; for (let i = 0; i < 30 && !film; i++) { await w(300); film = await pg.evaluate(() => !!document.querySelector('.theatre.film canvas.th-film')); }
+        if (!film) res.push(`${age}: no festival film`);
+        await pg.evaluate(() => (document.querySelector('.th-x') as HTMLElement)?.click()); await w(1200);
+        await pg.evaluate(() => document.querySelectorAll<HTMLElement>('.reward').forEach(e => e.click())); await w(800); await tapDialog(); await w(400); await calm(); await w(1000); }
+      await settle(); seen.push(await q());
+    }
+    const end = await pg.evaluate(id => { const G = __sv, p = G.heroes[0].profile, M = G.lanterns.mods[id];
+      return { done: !!p.lanterns.chapters[id], keep: (p.keepsakes || []).includes('lantern_' + id), tricks: p.lanterns.tricks || [], lit: M.lit(), show: M.showOn() }; }, id);
+    const placed = await pg.evaluate(async id => { const W = await import('/js/world.js'), M = __sv.lanterns.mods[id], bad = [];
+      for (const [n, x, z] of [['front', M.front[0], M.front[1]], ...M.clues.map(c => ['clue' + c.k, c.x, c.z]), ...M.people.map(c => [c.id, c.x, c.z])] as [string, number, number][]) {
+        const d = W.roadDist(x, z); if (d.road && d.d < d.road.w / 2) bad.push(n + ' on a road'); if (W.heightAt(x, z) < W.WATER + .3) bad.push(n + ' in the water'); }
+      return bad; }, id);
+    const errs = P.errors.filter(e => !/film|WebGL/i.test(e)); await P.ctx.close();
+    assert.ok(gate.words, 'every step in English and Vietnamese');
+    assert.ok(!(gate.closed || '').includes(id === 'finale' ? 'cf_' : 'c' + id.slice(2) + '_') && /^L_c/.test(gate.open || ''), `${age}: closed before its day, open on it ${JSON.stringify(gate)}`);
+    assert.deepEqual(res, [], `${age}: ${JSON.stringify(seen)}`);
+    assert.ok(end.done && end.keep && end.lit && end.tricks.length >= 1, `${age} ${JSON.stringify(end)}`);
+    assert.deepEqual(placed, []); assert.deepEqual(errs, [], age);
+    res.length = 0; sum.push(`${age} ${seen.filter(Boolean).length - 1} steps`);
+  }
+  return `${sum.join(', ')}; ${id}: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water`;
+}
+
+// talecostume: inside the folk-tale films only the tale's people appear, in period dress: no modern T-shirt, hoodie,
+// overalls or cap, and none of the four friends, the child or the companion (they are only the storytellers before and
+// after a tale, in their own clothes). Static: reads every tale film's source.
+export async function taleCostumeCheck() {
+  const fs = await import('node:fs'), R = (p: string) => fs.readFileSync(new globalThis.URL('../' + p, import.meta.url), 'utf8');
+  const taleIds = new Set<string>();
+  for (const m of R('js/learn.ts').matchAll(/\{\s*id:\s*'([\w-]+)',\s*flag:/g)) taleIds.add(m[1]);
+  for (const f of ['js/talesdata.ts', 'js/tales-content.ts']) for (const m of R(f).matchAll(/tale\('([\w-]+)'/g)) taleIds.add(m[1]);
+  const blocks: [string, string][] = [];
+  for (const f of fs.readdirSync(new globalThis.URL('../js/content/films/', import.meta.url))) { const id = f.replace(/\.ts$/, ''); if (f.endsWith('.ts') && id !== 'kit' && taleIds.has(id)) blocks.push([id, R('js/content/films/' + f)]); }
+  // the tale films written inside js/content/films.ts: from "<id>: { pages: [" or "FILMS.<id> = {" to the next film
+  const big = R('js/content/films.ts'), starts = [...big.matchAll(/^(?:\s{2}([\w]+): \{ pages: \[|FILMS\.([\w]+) = \{ pages: \[)/gm)].map(m => ({ id: m[1] || m[2], at: m.index! }));
+  // (a block ends where its pages close: the helpers written between two films are not part of either)
+  starts.forEach((s, k) => { if (!taleIds.has(s.id)) return; const rest = big.slice(s.at, k + 1 < starts.length ? starts[k + 1].at : big.length), end = /^\s*\]\s*\}[;,]?\s*$/m.exec(rest); blocks.push([s.id, end ? rest.slice(0, end.index) : rest]); });
+  // (a film file's own looks are defined above its pages, so the whole file counts)
+  const bad: string[] = [];
+  const MODERN = /style:\s*'(shirt|hoodie|overalls)'|VILLAGER\('(shirt|hoodie|overalls)'|KID\('(shirt|hoodie|overalls)'|ELDER\('(shirt|hoodie|overalls)'|hat:\s*'cap'/g, FRIEND = /\b(kidOf|buildCompanion|S\.ctx\.look|CHI|TEO|JACK|RUBY)\b/g;
+  for (const [id, src] of blocks) {
+    for (const m of src.matchAll(MODERN)) bad.push(`${id}: modern clothes (${m[0]})`);
+    for (const m of src.matchAll(FRIEND)) bad.push(`${id}: a friend, the child or the companion inside the tale (${m[0]})`);
+    if (/LOOK\(\{(?![^}]*style:)/.test(src)) bad.push(`${id}: a look with no clothes chosen (LOOK's default is a T-shirt)`);
+  }
+  assert.ok(blocks.length >= 35, `only ${blocks.length} tale films found`);
+  assert.deepEqual(bad, []);
+  return `${blocks.length} tale films: period dress only (tunics, áo dài, nón lá, khăn, crowns, akubra), no T-shirts, hoodies, overalls or caps, and no friend, child or companion inside a tale`;
+}

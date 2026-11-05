@@ -3,7 +3,7 @@
 // child helps twice: the magpies' bridge (page 5) and the happy rain (page 6).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, speak, FAIRY, heaven, village, night, stars, animal, bird, rain } from './kit.js';
 
-const ZHINU = FAIRY('#c8b0ff'), NIU = LOOK({ style: 'shirt', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const ZHINU = FAIRY('#c8b0ff'), NIU = LOOK({ style: 'tunic', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
 const QUEEN = LOOK({ style: 'aodai', color: '#7a3a8a', hat: 'crown', hairStyle: 'buns', skin: '#e8c0a0' });
 const loom = () => mesh([P(new THREE.BoxGeometry(1.6, .08, .08), '#8a5a32', [0, 1.2, 0]), ...[-.75, .75].map(x => P(new THREE.BoxGeometry(.08, 1.2, .08), '#8a5a32', [x, .6, 0])), P(new THREE.BoxGeometry(1.4, .8, .02), '#ffd0e8', [0, .75, 0])]);
 // the river of stars: a band of little lights across the sky (or across the ground between them)

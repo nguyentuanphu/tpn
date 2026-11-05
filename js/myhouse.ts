@@ -40,7 +40,11 @@ export const DECOR: Record<string, Decoration> = {
   pumpkin: { icon: '🎃', price: 0, en: 'Pumpkin lantern (Halloween)', vi: 'Đèn bí ngô (Halloween)', keepsake: true },
   lantern_ch1: { icon: '🏮', price: 0, en: 'The lantern of Lotus Village (story)', vi: 'Đèn lồng Làng Sen (truyện)', keepsake: true },
   lantern_ch2: { icon: '⭐', price: 0, en: 'The star lantern of Hà Nội (story)', vi: 'Đèn ông sao Hà Nội (truyện)', keepsake: true },
-  lantern_ch3: { icon: '🎭', price: 0, en: 'The Opera House night-light of Sydney (story)', vi: 'Đèn ngủ Nhà hát Opera Sydney (truyện)', keepsake: true }
+  lantern_ch3: { icon: '🎭', price: 0, en: 'The Opera House night-light of Sydney (story)', vi: 'Đèn ngủ Nhà hát Opera Sydney (truyện)', keepsake: true },
+  // (v1.08b story) chapters 4, 5 and the finale
+  lantern_ch4: { icon: '⭐', price: 0, en: 'The Christmas star lantern (story)', vi: 'Đèn ngôi sao Giáng sinh (truyện)', keepsake: true },
+  lantern_ch5: { icon: '🪨', price: 0, en: 'The Uluru sunset lantern (story)', vi: 'Đèn hoàng hôn Uluru (truyện)', keepsake: true },
+  lantern_finale: { icon: '🧧', price: 0, en: 'The Tết lantern of the whole valley (story)', vi: 'Đèn lồng Tết của cả thung lũng (truyện)', keepsake: true }
 };
 // (owner, 13 Oct) each festival's keepsake, won by finding all five things of its festival hunt (js/festhunt.js)
 for (const F of FESTCAL) DECOR['fh_' + F.id] = { icon: F.icon, price: 0, en: F.en + ' (festival hunt)', vi: F.vi + ' (truy tìm lễ hội)', keepsake: true };

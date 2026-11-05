@@ -3,7 +3,7 @@
 // twice (pages 4 and 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, VILLAGER, BUT, village, forest, axe, drum } from './kit.js';
 
-const FARMER = LOOK({ style: 'shirt', color: '#8a6a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const FARMER = LOOK({ style: 'tunic', color: '#8a6a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
 const RICH = LOOK({ style: 'tunic', color: '#7a3a8a', hat: 'silkcap', hairStyle: 'short', skin: '#e0aa80' });
 const DAUGHTER = LOOK({ style: 'aodai', color: '#ff8ab0', hairStyle: 'long', skin: '#f0c098' });
 // one piece of bamboo (a knot at each end)
@@ -87,7 +87,7 @@ export default { pages: [
   S => {
     village(S, { house: [0, -6] }); L.lantern(S, -2.4, 3, -3.2); L.lantern(S, 2.4, 3, -3.2, '#ffd23f');
     const f = S.person(FARMER, -.7, 1.4, 0), d = S.person(DAUGHTER, .7, 1.4, 0), rich = S.person(RICH, 3, 3, -.8);
-    const guests = [VILLAGER('aodai', '#e86a8a'), VILLAGER('shirt', '#3b6fe0', 'nonla', 'short'), VILLAGER('aodai', '#43c463')].map((l, i) => S.person(l, -4 + i * 1.6, 4.6, PI));
+    const guests = [VILLAGER('aodai', '#e86a8a'), VILLAGER('tunic', '#3b6fe0', 'nonla', 'short'), VILLAGER('aodai', '#43c463')].map((l, i) => S.person(l, -4 + i * 1.6, 4.6, PI));
     const dr = drum(); S.add(dr, -3.6, 0, 2.6);
     S.shot([0, 2.2, 8], [0, 1.4, 1.4]);
     S.mood(f, 0, 'happy'); S.mood(d, 0, 'happy'); S.do(f, .4, 'bow', 1.2); S.do(d, .4, 'bow', 1.2);

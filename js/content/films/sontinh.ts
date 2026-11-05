@@ -56,7 +56,7 @@ export default { pages: [
   // 4. People say that is why there is a rainy season every year: Thủy Tinh still remembers!
   S => {
     village(S, { house: [0, -6] });
-    const fam = [VILLAGER('aodai', '#e86a8a'), VILLAGER('shirt', '#3b6fe0', 'nonla', 'short')].map((l, i) => S.person(l, -1 + i * 2, 2.6, 0));
+    const fam = [VILLAGER('aodai', '#e86a8a'), VILLAGER('tunic', '#3b6fe0', 'nonla', 'short')].map((l, i) => S.person(l, -1 + i * 2, 2.6, 0));
     S.shot([0, 2.6, 9], [0, 1.4, 0]);
     S.skyTo(.2, 1, '#6a7a90', '#b8c4d0'); rain(S, .6, 5.4);
     fam.forEach(a => S.do(a, .8, 'hug', 3)); S.cam(.3, 3, [0, 2, 6], [0, 1.4, 1]);

@@ -142,6 +142,17 @@ function pose(a, t) {
   if (a._face !== m) { a._face = m; A.faceMat.map = face(a.look, m); A.faceMat.needsUpdate = true; }
 }
 
+// (v1.08b story, smoother films) soft motes of light drifting slowly through a scene: dust in the sun by day, fireflies
+// at night (the sky's colour says which); 28 points in one draw call, so a film plays as fast as before
+function motes(S) {
+  const n = 28, pos = new Float32Array(n * 3), seed = [...Array(n)].map((_, i) => [Math.sin(i * 12.9898) * 43758.5453 % 1, Math.sin(i * 78.233) * 43758.5453 % 1, Math.sin(i * 39.425) * 43758.5453 % 1].map(v => Math.abs(v)));
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const sky = (S.skyNow && S.skyNow[0]) || '#9ad0ff', night = parseInt(String(sky).slice(1, 3), 16) < 0x50;
+  const m = new THREE.PointsMaterial({ color: night ? '#fff2a8' : '#ffffff', size: night ? .16 : .1, transparent: true, opacity: night ? .85 : .45, depthWrite: false, blending: THREE.AdditiveBlending });
+  const pts = new THREE.Points(g, m); pts.userData.film = true; pts.frustumCulled = false; S.root.add(pts);
+  S.every((dt, time) => { const c = S.camLook; for (let i = 0; i < n; i++) { const [a, b, d] = seed[i]; pos[i * 3] = c.x + (a - .5) * 16 + Math.sin(time * .3 + i) * .6; pos[i * 3 + 1] = .6 + b * 4 + Math.sin(time * .5 + i * 1.7) * .3; pos[i * 3 + 2] = c.z + (d - .5) * 10 + Math.cos(time * .25 + i) * .6; } g.attributes.position.needsUpdate = true; });
+}
+
 // ---------- the renderer (one for the whole session) ----------
 let R = null;
 function renderer() {
@@ -316,9 +327,12 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
       try {
         script.pages[k] && script.pages[k](page);
         if (page.look) { const n = page.tickers.length; dressStory(page); if (calm) page.tickers.length = n; }
+        if (!calm) motes(page); // (v1.08b story) a few soft floating motes of light in every scene
       } catch (e) { console.warn('film page', k, e); }
       page.ev.sort((a, b) => a.t - b.t);
       cam.position.copy(page.camPos); cam.lookAt(page.camLook);
+      // (v1.08b story) a soft fade between scenes (none in calm mode)
+      if (!calm && k > 0) { const c = r.domElement; c.style.transition = 'none'; c.style.opacity = '0'; requestAnimationFrame(() => { c.style.transition = 'opacity .45s ease-out'; c.style.opacity = '1'; }); }
       return page.done;
     },
     // the narrator finished reading this page (help questions wait for that)

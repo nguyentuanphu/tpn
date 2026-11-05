@@ -5,7 +5,7 @@ import { L, Pp, LOOK, THREE, P, mesh, PI, H, serpent, slither, flat, hop, speak,
 
 const LAC = LOOK({ style: 'tunic', color: '#2f8ac8', hat: 'crown', hairStyle: 'short', skin: '#d8a070' });
 const AUCO = FAIRY('#ffd0e4');
-const KIDS = [['shirt', '#3b6fe0', 'short'], ['dress', '#ff7eb8', 'buns'], ['shirt', '#43c463', 'spiky'], ['dress', '#ffd23f', 'ponytail'], ['shirt', '#e8572a', 'short'], ['dress', '#9a6ad8', 'long']].map(([s, c, h]) => KID(s, c, h));
+const KIDS = [['tunic', '#3b6fe0', 'short'], ['dress', '#ff7eb8', 'buns'], ['tunic', '#43c463', 'spiky'], ['dress', '#ffd23f', 'ponytail'], ['tunic', '#e8572a', 'short'], ['dress', '#9a6ad8', 'long']].map(([s, c, h]) => KID(s, c, h));
 const egg = () => mesh([P(new THREE.SphereGeometry(.14, 12, 10), '#fbf3e0', [0, .17, 0], [0, 0, 0], [1, 1.25, 1])]);
 const dragon = S => serpent(S, { n: 22, r: .4, colors: ['#2fb8a0', '#3cc8b0', '#ffd23f'], head: '#2fb8a0', horns: true, y: 1.2, waveAmp: .8 });
 
@@ -93,7 +93,7 @@ export default { pages: [
   // 6. That is why Vietnamese people call each other "đồng bào": we all came from the same bag of eggs!
   S => {
     village(S);
-    const people = [VILLAGER('aodai', '#e86a8a'), VILLAGER('shirt', '#3b6fe0', 'nonla', 'short'), KID('dress', '#ffd23f', 'buns'), VILLAGER('tunic', '#4a9a5a', 'none', 'short'), KID('shirt', '#ff7e3a', 'spiky'), VILLAGER('aodai', '#7a5ad8', 'nonla')];
+    const people = [VILLAGER('aodai', '#e86a8a'), VILLAGER('tunic', '#3b6fe0', 'nonla', 'short'), KID('dress', '#ffd23f', 'buns'), VILLAGER('tunic', '#4a9a5a', 'none', 'short'), KID('tunic', '#ff7e3a', 'spiky'), VILLAGER('aodai', '#7a5ad8', 'nonla')];
     const ring = people.map((l, i) => S.person(l, Math.cos(i / 6 * PI * 2) * 2.2, 2.6 + Math.sin(i / 6 * PI * 2) * 1.6, 0, i % 3 === 2 || i === 4 ? .7 : 1));
     ring.forEach((a, i) => { a.o.rotation.y = Math.atan2(-a.px, 2.6 - a.pz); a.yaw = a.o.rotation.y; });
     S.shot([0, 6, 11], [0, 1, 2.6]);

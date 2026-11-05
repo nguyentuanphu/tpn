@@ -3,7 +3,7 @@
 // moon, and children looking up at Mid-Autumn. The child helps twice: the sick man (page 2) and holding on (page 4).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, hop, VILLAGER, KID, forest, village, night, moonGround, moonDisc, tiger, axe } from './kit.js';
 
-const CUOI = LOOK({ style: 'shirt', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const CUOI = LOOK({ style: 'tunic', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
 const WIFE = LOOK({ style: 'aodai', color: '#b8573a', hairStyle: 'buns', skin: '#f0c098' });
 const leaf = () => mesh([P(new THREE.SphereGeometry(.14, 8, 6), '#3fae3a', [0, 0, 0], [0, 0, 0], [.7, .1, 1.3])]);
 // the magic banyan: a small one with its roots showing (so it can fly)
@@ -33,7 +33,7 @@ export default { pages: [
   S => {
     village(S, { house: [-3, -6] });
     const cuoi = S.person(CUOI, 1, 1.6, -.6), tree = magicTree(.8); S.add(tree, 4, -1.6);
-    const sick = S.person(VILLAGER('shirt', '#9a9aa8', 'none', 'short'), -1, 2, H); S.do(sick, 0, 'lie'); S.mood(sick, 0, 'sleep');
+    const sick = S.person(VILLAGER('tunic', '#9a9aa8', 'none', 'short'), -1, 2, H); S.do(sick, 0, 'lie'); S.mood(sick, 0, 'sleep');
     const fam = S.person(VILLAGER('aodai', '#e86a8a'), -2.4, .8, .8); S.mood(fam, 0, 'sad');
     const lf = leaf(); S.grab(cuoi, 0, lf, [0, -.5, .1]);
     S.shot([0, 2.6, 8], [0, .8, 1.6]);
@@ -89,7 +89,7 @@ export default { pages: [
   S => {
     night(S, { moon: false }); const moon = moonDisc(S, 0, 22, -60, 10);
     const tree = magicTree(1.6); S.add(tree, -2, 21, -49); const cuoi = S.person(CUOI, -.4, -48.4, 0, 1.2); cuoi.o.position.y = 21; S.do(cuoi, 0, 'sitground'); S.mood(cuoi, 0, 'happy');
-    const kids = [KID('dress', '#ff7eb8', 'buns'), KID('shirt', '#3b6fe0'), KID('dress', '#ffd23f', 'ponytail')].map((l, i) => S.person(l, -1.6 + i * 1.6, 4, PI));
+    const kids = [KID('dress', '#ff7eb8', 'buns'), KID('tunic', '#3b6fe0'), KID('dress', '#ffd23f', 'ponytail')].map((l, i) => S.person(l, -1.6 + i * 1.6, 4, PI));
     kids.forEach((k, i) => L.lantern(S, -1.2 + i * 1.6, 1.4, 3.6, ['#e8332a', '#ffd23f', '#ff7eb8'][i]));
     S.shot([0, 1.6, 9], [0, 1.4, 3]);
     kids.forEach((k, i) => { S.do(k, .4 + i * .2, 'point', 2); S.mood(k, .4, 'happy'); });

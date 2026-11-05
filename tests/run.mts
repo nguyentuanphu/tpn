@@ -47,6 +47,10 @@ await check('roundvariety', async () => (await import('./round-variety.mts')).ro
 await check('releasecalendar', async () => (await import('./story-v108b.mts')).releaseCalendarCheck(b));
 await check('calendartab', async () => (await import('./story-v108b.mts')).calendarTabCheck(b));
 await check('websitenews', async () => (await import('./story-v108b.mts')).websiteNewsCheck(b));
+await check('chapter4', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch4'));
+await check('chapter5', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch5'));
+await check('finale', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'finale'));
+await check('talecostume', async () => (await import('./story-v108b.mts')).taleCostumeCheck());
 await check('installgift', async () => (await import('./story-v108b.mts')).installGiftCheck(b));
 
 await b.close();
