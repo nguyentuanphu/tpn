@@ -8,7 +8,7 @@
 import { THREE, P, merge, toonVC, sprite, outline } from './gfx.js';
 import { T, registerName } from './i18n.js';
 import { FESTGROUNDS, oldHeightAt, heightAt, CITIES, roadDist, WATER, VILLAGE, CHINA, INDIA, HOME, PLAYGROUND, PLATEAU, PADDIES, LAKE, BAMBOO, HALF } from './world.js';
-import { buildAvatar } from './avatar.js';
+import { buildAvatar, lateAvatar, afterBuilt } from './avatar.js';
 import { animalModel } from './animals.js';
 import { burstConfetti } from './games/frame.js';
 
@@ -30,9 +30,10 @@ export function createVnFun(G, { sfx, say, dialog, toast }) {
     return null;
   };
   const city = id => CITIES.find(c => c.id === id);
-  const kid = (lk, x, z, face, scale = .8) => { const A = buildAvatar(lk, null); A.root.scale.setScalar(scale); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); world.colliders.push({ x, z, r: .35 }); return A; };
+  // (v1.08d valley) built when a child comes near (js/avatar.ts lateAvatar; the animation below waits for it)
+  const kid = (lk, x, z, face, scale = .8) => { const A = lateAvatar(lk); A.root.scale.setScalar(scale); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); world.colliders.push({ x, z, r: .35 }); return A; };
   const live = [];
-  world.updaters.push((dt, t) => live.forEach(([A, kind], k) => { const p = A.root.position; if (!G.heroes.some(h => Math.abs(h.pos.x - p.x) < 60 && Math.abs(h.pos.z - p.z) < 60)) return; A.anim(kind === 'crouch' ? 'idle' : (Math.floor(t * .6 + k) % 3 === 0 ? 'cheer' : 'idle'), t + k, 0); if (kind === 'crouch') { A.rig.position.y = -.25; A.legL.rotation.x = A.legR.rotation.x = -1.2; A.armR.rotation.x = -1 + Math.sin(t * 3 + k) * .3; } }));
+  world.updaters.push((dt, t) => live.forEach(([A, kind], k) => { const p = A.root.position; if (A.late || !G.heroes.some(h => Math.abs(h.pos.x - p.x) < 60 && Math.abs(h.pos.z - p.z) < 60)) return; A.anim(kind === 'crouch' ? 'idle' : (Math.floor(t * .6 + k) % 3 === 0 ? 'cheer' : 'idle'), t + k, 0); if (kind === 'crouch') { A.rig.position.y = -.25; A.legL.rotation.x = A.legR.rotation.x = -1.2; A.armR.rotation.x = -1 + Math.sin(t * 3 + k) * .3; } }));
 
   // ---------- children playing ----------
   const PLAY = [
@@ -53,7 +54,7 @@ export function createVnFun(G, { sfx, say, dialog, toast }) {
     // the children: the host and two friends
     const host = kid(look(pl.where === 'hanoi' ? 'shirt' : 'tunic', ['#3cc7e8', '#ff7eb8', '#5fd39a', '#ffb52e'][used.length % 4], BLACK, pl.game === 'goat' ? 'ponytail' : 'spiky'), x + 1.6, z + 1.2, Math.PI * 1.3);
     const f1 = kid(look('dress', '#ff9ec4', BLACK, 'buns'), x - 1.5, z + .8, Math.PI * .7), f2 = kid(look('overalls', '#5f86b0', BLACK, 'short', pl.where === 'saigon' ? 'cap' : 'none'), x, z - 1.7, 0);
-    if (pl.game === 'goat') { const bf = new THREE.Mesh(new THREE.TorusGeometry(.27, .05, 6, 16), new THREE.MeshToonMaterial({ color: '#e8433a' })); bf.rotation.x = Math.PI / 2; bf.position.y = .2; f2.head.add(bf); }
+    if (pl.game === 'goat') { const bf = new THREE.Mesh(new THREE.TorusGeometry(.27, .05, 6, 16), new THREE.MeshToonMaterial({ color: '#e8433a' })); bf.rotation.x = Math.PI / 2; bf.position.y = .2; afterBuilt(f2, () => f2.head.add(bf)); }
     live.push([host, 'cheer'], [f1, pl.prop === 'marbles' || pl.prop === 'triangle' ? 'crouch' : 'cheer'], [f2, 'cheer']);
     registerName(pl.name, pl.icon);
     const tag = sprite(pl.icon, 1); tag.position.set(x + 1.6, y + 2.3, z + 1.2); scene.add(tag);

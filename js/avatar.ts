@@ -227,7 +227,7 @@ export type SvAvatar = { root: THREE.Group, rig: THREE.Group, skinMat: THREE.Mat
   still?: THREE.Group, stillLine?: THREE.Mesh, _still?: boolean, _ol?: boolean, anim?: (state: string, t: number, speed?: number) => void,
   // (v1.08) the knees, elbows and swinging hair, and what the animation remembers between frames
   kneeL?: THREE.Group, kneeR?: THREE.Group, elbowL?: THREE.Group, elbowR?: THREE.Group, tail?: THREE.Group, painted?: boolean, life?: AvatarLife,
-  model?: import('./friend-model.js').FriendModel, height?: number, late?: boolean, lateFace?: unknown, latePhoto?: unknown };
+  model?: import('./friend-model.js').FriendModel, height?: number, late?: boolean, lateFace?: unknown, latePhoto?: unknown, lateThen?: (() => void)[] };
 type AvatarLife = { t: number, st: string, chg: number, land: number, ph: number, blink: number, mood: string, seed: number };
 export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvatar }) {
   const friendId = look && look.friend, useModel = !!friendId && !(opts && opts.code) && !!FRIEND_MODELS.ready && FRIEND_MODELS.ready(friendId);
@@ -707,7 +707,10 @@ export function buildLate(A: SvAvatar) {
   if (!A || !A.late) return; A.late = false; const i = LATE.indexOf(A); if (i >= 0) LATE.splice(i, 1);
   buildAvatar(A.look, A.latePhoto, { into: A });
   if (A.lateFace !== undefined) { const f = A.lateFace; A.lateFace = undefined; setFace(A, f); }
+  for (const f of A.lateThen || []) f(); A.lateThen = undefined;
 }
+/** runs fn once the person is really built (at once for one that is) */
+export function afterBuilt(A: SvAvatar, fn: () => void) { if (!A.late) fn(); else (A.lateThen = A.lateThen || []).push(fn); }
 const _lp = new THREE.Vector3();
 /** builds the stand-ins within r m of any of the points, at most max of them (the nearest first) */
 export function wakeLateAvatars(points: { x: number, z: number }[], r = 60, max = 3) {

@@ -166,3 +166,14 @@ Release's go (5 Nov): part 2 one safe step per push, first villagers behind a st
 - Check `areastream`: stand-ins wait at the start, a landing builds those round it, `all()` leaves none and every person
   has their body and animation.
 - No place moved: a stand-in stands where the villager stands.
+
+## Round 3, step 2: more villagers as stand-ins (5 Nov 2026 AEDT)
+- Stand-ins now also: the people of the Asian villages (`js/asia.ts`), the walking sellers (`js/hawkers.ts`, their
+  route goes on; they are built when a child comes near them), the children playing in Hà Nội and Sài Gòn
+  (`js/vnfun.ts`; their pose waits for the build, and the blindfold of Blindfold Goat goes on with `afterBuilt`). 120
+  people wait as stand-ins at home now.
+- Left as they are: Phố Hai Quê (`js/town.ts`, its card players move arms and legs every frame), the yard story, the
+  folk show singers, school and lotus village people (stories and shows: they need their bodies at once).
+- Checks: pass areastream, boot, stalls, dayplan, autoplay, longplaymem, perf, battery, startup (1022 KB).
+  **folkplay and goatcircle fail, not from this branch:** button sizes inside the games ("folk control size", "64px goat
+  controls"); they fail the same on `origin/integrate/v108` 91c01e198 (checked).
