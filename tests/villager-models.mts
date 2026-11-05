@@ -19,18 +19,19 @@ export async function villagerModelsCheck(b) {
     for (const id of IDS) {
       const n = G.npcs.find((x: any) => x.id === id); if (!n || !n.A) { bad.push(id + ': not in the valley'); continue; }
       // the code person's height and feet, before the model
-      // (measured from the villager's own rig: day plans walk some of them about and the children hop while the model loads)
-      const code = new THREE.Box3(); n.A.root.updateMatrixWorld(true); const y0 = n.A.rig.getWorldPosition(new THREE.Vector3()).y; n.A.rig.traverse((o: any) => { if (o.isMesh && o.visible && !o.userData.outline) code.expandByObject(o); });
-      h.pos.set(n.obj.position.x + 2, n.obj.position.y, n.obj.position.z + 2);
+      h.place(n.obj.position.x + 2, n.obj.position.z + 2);
       for (let k = 0; k < 60 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(200);
       if (n._vm !== 'worn') { bad.push(`${id}: model ${n._vm || 'not asked'}`); continue; }
-      for (let k = 0; k < 20 && !n.A.rig.visible; k++) await w(100); // (the far still copy gives way to the moving person within 0.4 s)
+      for (let k = 0; k < 40 && !n.A.rig.visible; k++) await w(100); // (the far still copy gives way to the moving person within 0.4 s)
       if (!n.A.rig.visible) { bad.push(id + ': still the far copy next to the child'); continue; }
-      n.A.root.updateMatrixWorld(true); const mb = new THREE.Box3().setFromObject(n.A.model.obj, true), y1 = n.A.rig.getWorldPosition(new THREE.Vector3()).y;
+      // the size: a fresh code person in this villager's look beside a fresh one wearing the model, both in the rest pose
+      const ref = A.buildAvatar(n.A.look), worn = A.buildAvatar(n.A.look); A.wearVillagerModel(worn, 'villager-' + id);
+      const boxOf = (av: any, model: boolean) => { av.root.updateMatrixWorld(true); const bx = new THREE.Box3(); if (model) bx.setFromObject(av.model.obj, true); else av.rig.traverse((o: any) => { if (o.isMesh && o.visible && !o.userData.outline) bx.expandByObject(o); }); return bx; };
+      const code = boxOf(ref, false), mb = worn.model ? boxOf(worn, true) : null;
+      if (!mb) { bad.push(id + ': the model cannot be worn'); continue; }
       const ch = code.max.y - code.min.y, mh = mb.max.y - mb.min.y;
       if (Math.abs(mh - ch) / ch > .06) bad.push(`${id}: ${mh.toFixed(2)} m tall, the code person ${ch.toFixed(2)} m`);
-      const feet = (mb.min.y - y1) - (code.min.y - y0);
-      if (Math.abs(feet) > .05) bad.push(`${id}: feet at ${feet.toFixed(3)} m from the code person's`);
+      if (Math.abs(mb.min.y - code.min.y) > .05) bad.push(`${id}: feet at ${(mb.min.y - code.min.y).toFixed(3)} m from the code person's`);
       let codeShown = 0; n.A.rig.traverse((o: any) => { if (o.isMesh && !o.userData.outline && o.visible && !n.A.model.obj.getObjectById(o.id)) { let p = o, vis = true; while (p && p !== n.A.root) { if (!p.visible) vis = false; p = p.parent; } if (vis) codeShown++; } });
       if (codeShown) bad.push(`${id}: ${codeShown} code parts still shown`);
       // facing: the model's front (its face) is on the side the code person faces
@@ -55,7 +56,7 @@ export async function villagerModelsCheck(b) {
   const Q = await open(b, { w: 900, h: 700, route: async ctx => { await ctx.route('**/models/villager-*.glb', q => q.abort()); } }); await clear(Q.page);
   const blocked = await Q.page.evaluate(async () => {
     const G = (window as any).__sv, h = G.heroes[0], n = G.npcs.find((x: any) => x.id === 'mai');
-    h.pos.set(n.obj.position.x + 2, n.obj.position.y, n.obj.position.z + 2);
+    h.place(n.obj.position.x + 2, n.obj.position.z + 2);
     for (let k = 0; k < 40 && n._vm !== 'code' && n._vm !== 'worn'; k++) await new Promise(res => setTimeout(res, 200));
     let parts = 0; n.A.rig.traverse((o: any) => { if (o.isMesh && o.visible) parts++; });
     return { vm: n._vm, model: !!n.A.model, parts };
