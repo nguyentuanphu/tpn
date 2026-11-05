@@ -119,6 +119,7 @@ All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed`
   - **The AI chat voice offer** is hidden.
   - **Grown-ups layout:** "Two players on one device", "Fit the screen" and Money (AUD, VND) each sit on one line. Tapping the current choice must not jump to the top.
   - **The TURN relay** keeps working; only its wording and link are hidden (owner's correction).
+  - **The ladybug's "Thử lại / Try again"** on a fixed bug takes the tester to the action, game, screen or thing that was broken, not only to the reported place.
 - 3 November 2026 AEDT (pop-ups, plan `docs/plans/five-screens-check.md`): every game, film and story must work on phone portrait and landscape (phone landscape fully playable, not a "turn your phone" hint), tablet portrait and landscape, and computer; a new five-screen check covers all of them, in v1.09.
 - 3 November 2026 AEDT (chat): "1.09 và 1.1 gộp thành 1.09": everything planned for v1.10 joins v1.09, one round (the new friends, villagers, one home per game, new games, costumes, smoother films, five Blender films, the five-screen check).
 - 3 November 2026 AEDT (pop-ups, `docs/plans/v109-extras.md`): lighter offline in v1.09 with voices in Opus (MP3 kept for devices that can't play it) and three offline levels in Grown-ups (Light, Automatic as default, Full). Also into v1.09: light first download and a valley built as the child walks, the open bugs, Concept D roads, a faster Studio.
