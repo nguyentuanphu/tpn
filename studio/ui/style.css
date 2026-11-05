@@ -391,3 +391,5 @@ details.labmore > summary { cursor: pointer; min-height: 44px; display: flex; al
 .relc-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; padding-left: 72px; flex-wrap: wrap; }
 .relc-foot .relc-st { margin-top: 0; }
 @media (max-width: 520px) { .relc-foot { padding-left: 0; } }
+.tlcal { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } .tlcal .tlitem { flex: 1; min-width: 180px; display: flex; align-items: center; }
+.tlmove { display: flex; gap: 6px; align-items: center; font-size: .95rem; } .tlmove select { min-height: 44px; font-size: 1rem; }

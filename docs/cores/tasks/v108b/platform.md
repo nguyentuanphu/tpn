@@ -14,17 +14,18 @@ Order: the owner's newest ask first (part 6, Studio), then the rest of the brief
 
 ## Shared data with the story helper (release calendar)
 
-The Releases timeline reads an optional module `js/content/release-calendar.ts` (built to `.js`):
+The Releases timeline reads the story helper's module `js/content/releasecal.ts` (agreed 5 Nov 2026 AEDT, their message):
 
 ```ts
-export const RELEASE_CALENDAR: { id: string, week: string, en?: string, vi?: string }[];
-// id: a release id from js/content/releases.ts (or a new thing's own id with en/vi names)
-// week: the Monday of the planned week, 'YYYY-MM-DD' (Sydney date)
+export type CalItem = { key: string; kind: 'game'|'story'|'chapter'|'feature'; id: string; en: string; vi: string; week: string /* Monday YYYY-MM-DD */; end?: string; icon?: string };
+export const CAL_DEFAULT: CalItem[];
+export function calendar(over?: Record<string, string>): CalItem[]; // merges the owner's moves
 ```
 
-- An item with a start date already saved in Studio (`releases[id].start`, the existing start-date mechanism) shows by that date ("Opens 12 Nov"); a calendar item not yet given a start shows in its week as "Planned".
-- The file is the story helper's to create. Until it exists the timeline shows only the saved start and end dates (the import fails quietly).
-- Release: please pass this to the story helper (I could not message it directly).
+- The owner's moves live in the live content section `releaseCalendar`: `{ moves: { "game:crabwalk": "2026-11-23" } }` (key to the Monday of its new week).
+- Studio (this branch): the Timeline view lists every calendar item in its week with a week chooser (a select, easier than dragging on a phone); a move shows in the change list and Save writes `releaseCalendar.moves` with `api('live/content')` online (the exe also saves it in content). An item with a start date saved in Studio (`releases[id].start`) shows by that date instead.
+- Story helper: add `releaseCalendar` to `LIVE_SECTIONS` in both `js/custom.ts` and `netlify/lib/live.mts` (with a CLEAN function), or the website will drop the moves. Until `releasecal.ts` exists the timeline shows only saved start and end dates.
+- Agreed with the story helper by message (5 Nov 2026 AEDT).
 
 ## Measurements (pretend Netlify on this machine, each Studio read delayed 250 ms like a real function and GitHub; `node studio-back.mts --measure`)
 

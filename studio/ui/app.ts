@@ -945,7 +945,12 @@ async function drawReleases(P, lab) {
   const groups = lab ? allGroups.map(g => ({ ...g, items: g.items.filter(inScope) })).filter(g => g.items.length)
     : PURPOSE.map(([g, , en, vi]) => ({ g, en, vi, items: RELEASES.filter(x => inScope(x) && purposeOf(x) === g) })).filter(g => g.items.length);
   const gicon = g => (PURPOSE.find(p => p[0] === g) || [])[1] || REL_ICON[g] || '📦';
-  const CAL = lab ? [] : await import(GAME + 'js/content/release-calendar.js').then(m => m.RELEASE_CALENDAR || [], () => []); if (stale()) return;
+  // the release calendar (story helper, js/content/releasecal.ts): its items by week, the owner's moves in the live
+  // content section releaseCalendar ({ moves: { key: Monday } }); without the module the timeline shows saved dates only
+  const calMod = lab ? null : await import(GAME + 'js/content/releasecal.js').catch(() => null); if (stale()) return;
+  if (calMod) await CONTENT_P.catch(() => { }); if (stale()) return;
+  const calMoves0: Record<string, string> = { ...(((CONTENT as any).releaseCalendar || {}).moves || {}) }, calMoves = { ...calMoves0 };
+  const calList = () => { try { return calMod && typeof calMod.calendar === 'function' ? calMod.calendar(calMoves) : (calMod?.CAL_DEFAULT || []); } catch (e) { return []; } };
   const closed = folds(), gkey = g => 'releases:group:' + g;
   P.innerHTML = `<h2>🆕 ${lab ? T('Sparkle Lab', 'Phòng thử Sparkle') : T('Releases', 'Ra mắt')}</h2><p class="sub">${T('Switch anything on or off. 📅 Schedule picks the day it starts, how long it stays and how long it shows a “New” badge. Switching off never takes away what a child already has.', 'Bật hoặc tắt bất cứ thứ gì. 📅 Lịch chọn ngày bắt đầu, ở lại bao lâu và nhãn “Mới” bao lâu. Tắt đi không lấy mất những gì con đã có.')}</p>
     <div class="relbar card">${lab ? '' : `<div class="chips relview" id="relview" data-nodirty>${[['list', '☰ ' + T('Switches', 'Công tắc')], ['timeline', '🗓️ ' + T('Timeline: what opens when', 'Dòng thời gian: khi nào mở')]].map(([k, t], i) => `<button type="button" class="chip${i ? '' : ' on'}" data-view="${k}" aria-pressed="${!i}">${t}</button>`).join('')}</div>`}<input type="search" data-nodirty id="relq" placeholder="${T('Find a feature…', 'Tìm một tính năng…')}" aria-label="${T('Find a feature', 'Tìm tính năng')}">
@@ -974,6 +979,7 @@ async function drawReleases(P, lab) {
       if (x[2] !== was[i][2]) bits.push(+x[2] ? T(`on for ${x[2]} days`, `bật ${x[2]} ngày`) : T('always on', 'luôn bật'));
       if (x[3] !== was[i][3]) bits.push(+x[3] ? T(`“New” for ${x[3]} days`, `“Mới” ${x[3]} ngày`) : T('no “New” badge', 'không nhãn “Mới”'));
       lines.push(`<li><b>${esc(it ? plainOf(it).name : id)}</b>: ${esc(bits.join(', '))}</li>`); });
+    for (const [k, w] of Object.entries(calMoves)) if (calMoves0[k] !== w) { const e = calList().find(x => x.key === k); lines.push(`<li><b>${esc(e ? T(e.en, e.vi || e.en) : k)}</b>: ${esc(T(`moves to the week of ${fmtDay(w)}`, `chuyển sang tuần từ ${fmtDay(w)}`))}</li>`); }
     const n = lines.length, box = P.querySelector<HTMLDetailsElement>('#relchanges');
     $('#relch').textContent = n ? T(`${n} change${n === 1 ? '' : 's'} not saved yet: what Save will do`, `${n} thay đổi chưa lưu: Lưu sẽ làm gì`) : ''; box.hidden = !n; box.querySelector('ul').innerHTML = lines.join('');
     P.querySelector('.relsave').classList.toggle('dirty', !!n); if (!P.querySelector('#reltl')?.hidden) timeline(); };
@@ -983,11 +989,14 @@ async function drawReleases(P, lab) {
     P.querySelectorAll<HTMLElement>('.relc').forEach(c => { const id = c.dataset.id, it = RELEASES.find(y => y.id === id), on = c.querySelector<HTMLInputElement>('[data-r="on"]').checked, st = c.querySelector<HTMLInputElement>('[data-r="start"]').value, days = +c.querySelector<HTMLInputElement>('[data-r="days"]').value || 0;
       if (!it || !on || !st) return; const name = plainOf(it).name; if (st >= today) add(st, row(id, '🟢', T(`Opens ${fmtDay(st)}: ${name}`, `Mở ${fmtDay(st)}: ${name}`), 'opens'));
       if (days) { const end = isoDay(new Date(new Date(st + 'T12:00:00').getTime() + days * 864e5)); if (end >= today) add(end, row(id, '🔚', T(`Ends ${fmtDay(end)}: ${name}`, `Kết thúc ${fmtDay(end)}: ${name}`), 'ends')); } });
-    for (const e of CAL) { if (!e || !e.week) continue; const c = P.querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(e.id || '')}"]`), st = c?.querySelector<HTMLInputElement>('[data-r="start"]').value; if (st) continue;
-      const it = RELEASES.find(y => y.id === e.id), name = it ? plainOf(it).name : T(e.en || e.id, e.vi || e.en || e.id); add(e.week, row(e.id || '', '📌', T(`Planned: ${name}`, `Dự định: ${name}`), 'planned')); }
+    const mondays = Array.from({ length: 20 }, (_, i) => mondayOf(plusDays(i * 7)));
+    for (const e of calList()) { if (!e || !e.week || !e.key) continue; const c = P.querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(e.id || '')}"]`), st = c?.querySelector<HTMLInputElement>('[data-r="start"]').value; if (st) continue;
+      const name = T(e.en || e.id, e.vi || e.en || e.id), weeksTo = [...new Set([...mondays, e.week])].sort();
+      add(e.week, `<li class="tlcal"><span class="tlitem planned">📌 ${esc(name)}</span><label class="tlmove">${T('Week', 'Tuần')} <select data-calkey="${esc(e.key)}" aria-label="${esc(T('Move to another week', 'Chuyển sang tuần khác'))}">${weeksTo.map(w => `<option value="${w}" ${w === e.week ? 'selected' : ''}>${fmtDay(w)}</option>`).join('')}</select></label></li>`); }
     const list = [...weeks.keys()].sort();
     box.innerHTML = list.length ? list.map(w => `<div class="tlweek"><h4>${T('Week of', 'Tuần từ')} ${fmtDay(w)}</h4><ul>${weeks.get(w).join('')}</ul></div>`).join('')
       : `<p class="note">${T('Nothing is scheduled yet. Open a switch’s 📅 Schedule to give it a start day.', 'Chưa có gì theo lịch. Mở 📅 Lịch của một công tắc để chọn ngày bắt đầu.')}</p>`;
+    box.querySelectorAll<HTMLSelectElement>('[data-calkey]').forEach(sel => sel.onchange = () => { calMoves[sel.dataset.calkey] = sel.value; sum(); });
     box.querySelectorAll<HTMLElement>('[data-tl]').forEach(b => b.onclick = () => { const c = P.querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(b.dataset.tl)}"]`); if (!c) return; view('list'); c.closest('details').open = true; const o = c.querySelector<HTMLElement>('.relc-opt'); o.hidden = false; c.scrollIntoView({ block: 'center' }); }); };
   const view = k => { P.querySelectorAll<HTMLElement>('#relview [data-view]').forEach(b => { b.classList.toggle('on', b.dataset.view === k); b.setAttribute('aria-pressed', String(b.dataset.view === k)); });
     P.querySelectorAll<HTMLElement>('details.relg, #relf, #relq, #relsum').forEach(e => e.classList.toggle('tlhide', k === 'timeline')); const tl = P.querySelector<HTMLElement>('#reltl'); if (tl) { tl.hidden = k !== 'timeline'; if (k === 'timeline') timeline(); } };
@@ -1130,6 +1139,9 @@ async function drawReleases(P, lab) {
           if(on!==isOn(x))festivals[id.slice(5)]={...(festivals[id.slice(5)]||{}),on};
         });
         await saveLive({ releases: out, festivals });Object.keys(R).forEach(k=>delete R[k]);Object.assign(R,out);live.festivals=festivals;
+        if (JSON.stringify(calMoves) !== JSON.stringify(calMoves0)) { const releaseCalendar = { ...((CONTENT as any).releaseCalendar || {}), moves: { ...calMoves } }; (CONTENT as any).releaseCalendar = releaseCalendar;
+          if (INFO?.online) await api('live/content', { content: { releaseCalendar } }); else { await api('content', CONTENT); if (liveOn()) await api('live/content', { content: { releaseCalendar } }).catch(() => { }); }
+          Object.keys(calMoves0).forEach(k => delete calMoves0[k]); Object.assign(calMoves0, calMoves); markSaved(); }
         start = JSON.stringify(snap()); sum();
       } catch (e) { fail(e); }
     };
