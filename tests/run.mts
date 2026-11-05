@@ -57,6 +57,8 @@ await check('installgift', async () => (await import('./story-v108b.mts')).insta
 await check('s2au', async () => (await import('./s2au.mts')).s2auCheck(b));
 await check('s2aureef', async () => (await import('./s2au.mts')).s2auGamesCheck(b, 'gbr'));
 await check('chapter10', async () => (await import('./s2au.mts')).s2auChapterCheck(b, 'ch10'));
+await check('s2autas', async () => (await import('./s2au.mts')).s2auGamesCheck(b, 'tas'));
+await check('chapter11', async () => (await import('./s2au.mts')).s2auChapterCheck(b, 'ch11'));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

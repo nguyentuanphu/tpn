@@ -34,7 +34,7 @@ export function createS2au(G) {
   function addRegion(R: S2Region) {
     if (added.has(R.id)) return; added.add(R.id);
     const a = anchorOf(R.place)!, F = R.friend, f = at(R, F.at);
-    G.PLACES.push({ g: 'au', key: R.place, icon: R.icon, name: () => T(R.name[0], R.name[1]), x: f.x + 1.5, z: f.z - 2.5 });
+    G.PLACES.push({ g: 'au', key: R.place, icon: R.pin, name: () => T(R.name[0], R.name[1]), x: f.x + 1.5, z: f.z - 2.5 });
     G.interactables.push({ id: 's2f_' + F.id, x: f.x, z: f.z, r: 2.6, icon: '💬', label: () => T('Talk to ', 'Nói chuyện với ') + F.name,
       act: async h => { const p = h.profile, S = s2(p), met = !!S['met_' + F.id]; SFX.tap();
         const lines = [F.greet, F.lines[Math.floor(Math.random() * F.lines.length)]];
@@ -44,7 +44,7 @@ export function createS2au(G) {
     const fd = at(R, R.food.at);
     G.interactables.push({ id: 's2food_' + R.id, x: fd.x, z: fd.z, r: 2.4, icon: R.food.id === 'prawns' ? 's2:prawns' : R.food.id === 'crumble' ? 's2:crumble' : 's2:fishchips', label: () => T(R.food.label[0], R.food.label[1]),
       act: h => { const S = s2(h.profile); SFX.tap(); if (S['food_' + R.id] === dayKey()) { say(...R.food.again); return; } S['food_' + R.id] = dayKey(); giveFood(h, R, R.food.give); } });
-    const L = R.landmark, ls = at(R, L.sign), lm = { id: L.id, icon: L.icon, cc: 'au', x: ls.x, z: ls.z, mx: a[0] + L.at[0], mz: a[1] + L.at[1], name: () => T(L.name[0], L.name[1]), fact: L.fact };
+    const L = R.landmark, ls = at(R, L.sign), lm = { id: L.id, icon: R.pin, cc: 'au', x: ls.x, z: ls.z, mx: a[0] + L.at[0], mz: a[1] + L.at[1], name: () => T(L.name[0], L.name[1]), fact: L.fact };
     if (!LANDMARKS.some(l => l.id === L.id)) LANDMARKS.push(lm);
     G.interactables.push({ id: 'pc_' + L.id, x: ls.x, z: ls.z, r: 3, icon: 'ℹ️', label: () => T('About: ', 'Tìm hiểu: ') + lm.name(), act: h => postcard(G, h, lm) });
     for (const [gid, dx, dz] of R.stands) { const s = at(R, [dx, dz]), id = 's2g_' + gid; G.GAME_SPOT[gid] = id;

@@ -41,7 +41,7 @@ export function buildRegion(G, R: S2Region, ctx: Ctx) {
   const pics: THREE.Sprite[] = [];
   for (const [gid, dx, dz] of R.stands) { const s = ctx.at([dx, dz]), rot = face(s.x, s.z);
     put([P(C(.1, .12, 2.4, 6), '#8a5a32', [0, 1.2, 0]), P(B(1.5, 1.5, .14), '#fff6dc', [0, 2.4, 0]), P(B(1.7, .16, .2), '#2f9a8a', [0, 3.2, 0])], s.x, s.z, rot, undefined, onDay);
-    const ic = sprite(GAME_ICON[gid] || '🎮', 1.15); ic.position.set(s.x + Math.sin(rot) * .12, heightAt(s.x, s.z) + 2.4, s.z + Math.cos(rot) * .12); onDay.add(ic); pics.push(ic); block(s.x, s.z, .3); }
+    const ic = sprite(GAME_ICON[gid] || '🎮', 1.15); ic.position.set(s.x, heightAt(s.x, s.z) + 4, s.z); onDay.add(ic); pics.push(ic); block(s.x, s.z, .3); }
 
   // ---------- the region's own scenery and landmark ----------
   SCENERY[R.id]?.(G, R, ctx, put, block);
@@ -83,5 +83,22 @@ const SCENERY: Record<string, (G, R: S2Region, ctx: Ctx, put: Put, block: Block)
     // the lifesavers' flags and an umbrella
     for (const dx of [-4, 4]) { const s = ctx.at([dx, 9]); put([P(C(.05, .05, 2.6, 6), '#e8e4dc', [0, 1.3, 0]), P(B(.9, .3, .05), '#e8433a', [.45, 2.35, 0]), P(B(.9, .3, .05), '#ffd23f', [.45, 2.05, 0])], s.x, s.z, 0); block(s.x, s.z, .2); }
     { const s = ctx.at([-12, -2]); put([P(C(.05, .05, 2.4, 6), '#e8e4dc', [0, 1.2, 0]), P(new THREE.ConeGeometry(1.6, .7, 10), '#ff7eb8', [0, 2.5, 0]), P(B(1.6, .1, .7), '#3b6fe0', [1.4, .08, .6])], s.x, s.z, .5); block(s.x, s.z, .2); }
+  },
+  // Tasmania: Cradle Mountain's jagged rocky crown with snow on the island's peak (the landmark), the boatshed, a forest
+  // of tall gums and pines round the island, and its animals (a wombat, a devil, an echidna) in the grass
+  tas: (G, R, ctx, put, block) => {
+    const L = ctx.at(R.landmark.at), top = heightAt(L.x, L.z);
+    put([[-1.6, 0, 3.4], [.4, -.6, 4.6], [2, .4, 3.2], [-.4, 1.4, 2.6]].map(([x, z, h], i) => P(new THREE.ConeGeometry(1.4, h, 5), i % 2 ? '#6a6a72' : '#7a7a84', [x, h / 2 - .4, z], [0, i, 0])).concat(
+      [[-1.6, 0, 3.4], [.4, -.6, 4.6], [2, .4, 3.2]].map(([x, z, h]) => P(new THREE.ConeGeometry(.6, h * .3, 5), '#ffffff', [x, h * .85 - .4, z]))), L.x, L.z, 0, top - .2);
+    block(L.x, L.z, 3.2);
+    const sg = sprite(R.landmark.icon, 1.4); sg.position.set(L.x, top + 6, L.z); G.scene.add(sg);
+    { const s = ctx.at([-4, 7]); put([P(B(3, 2, 2.4), '#8a5a32', [0, 1, 0]), P(new THREE.ConeGeometry(2.3, 1.2, 4), '#5a3a22', [0, 2.6, 0], [0, Math.PI / 4, 0]), P(B(1.2, 1.4, .1), '#3a2a1a', [0, .7, 1.22])], s.x, s.z, Math.PI); block(s.x, s.z, 1.6); }
+    const a = anchorOf(R.place)!;
+    for (let i = 0; i < 22; i++) { const ang = i * 2.39996, x = a[0] + Math.cos(ang) * (14 + (i % 4) * 3.5), z = a[1] + Math.sin(ang) * (5 + (i % 3) * 1.5);
+      const h = heightAt(x, z); if (h < WATER + .8 || Math.hypot(x - L.x, z - L.z) < 5) continue;
+      const pine = i % 3 === 0, parts = pine ? [P(C(.15, .2, 1.2, 6), '#6a4a32', [0, .6, 0]), P(new THREE.ConeGeometry(1.1, 2.6, 8), '#2f6a3a', [0, 2.2, 0]), P(new THREE.ConeGeometry(.8, 1.8, 8), '#3a7a44', [0, 3.3, 0])]
+        : [P(C(.14, .2, 2.6, 6), '#d8d0c0', [0, 1.3, 0]), P(S(1.2, 10, 8), '#6a9a5a', [0, 3, 0], [0, 0, 0], [1, .8, 1]), P(S(.8, 10, 8), '#7aa860', [.6, 3.5, .2])];
+      put(parts, x, z, i, h, undefined, false); block(x, z, .3); }
+    for (const [p, dx, dz] of [['s2:wombat', 16, 3], ['s2:devil', -10, -3], ['s2:echidna', 18, -3]] as [string, number, number][]) { const s = ctx.at([dx, dz]); const t = sprite(p, .9); t.position.set(s.x, heightAt(s.x, s.z) + .5, s.z); G.scene.add(t); }
   }
 };

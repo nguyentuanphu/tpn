@@ -124,6 +124,7 @@ export async function s2auGamesCheck(b, region: 'gbr' | 'tas' | 'perth') {
       if (F.off) fails.push(`${id} ${name}: ${F.off} of ${F.n} taps off screen`); if (F.small) fails.push(`${id} ${name}: ${F.small} taps under 44 px`);
       if (F.scroll) fails.push(`${id} ${name}: scrolls`); if (F.tiny) fails.push(`${id} ${name}: ${F.tiny} texts under 16 px`);
       if (name !== 'tablet sideways') await P.page.screenshot({ path: `out/s2au/${id}-${name.replace(' ', '-')}.png` });
+      await P.page.evaluate(() => { document.querySelector('.gl:not(.out) .gl-x')?.click(); }); await P.page.waitForTimeout(500);
     }
   }
   const errs = P.errors.filter(e => !/WebGL/i.test(e)); await P.ctx.close();

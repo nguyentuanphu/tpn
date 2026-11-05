@@ -120,7 +120,8 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   th_balance: ['thinking', 4, 2], th_clues: ['thinking', 4, 2], th_robot: ['thinking', 5, 3], th_changed: ['thinking', 4, 2], th_count: ['thinking', 4, 2], th_belong: ['thinking', 3, 1],
   vi_poem: ['hv_vi', 4, 2], vi_tulay: ['hv_vi', 5, 2], vi_sx: ['hv_vi', 5, 3],
   // (v1.08d s2au) Season 2, Australia (js/content/s2au-games.ts): in Going places, found at their region's stands
-  s2a_snorkel: ['travel', 3, 1], s2a_turtle: ['travel', 3, 1], s2a_reefquiz: ['travel', 4, 2]
+  s2a_snorkel: ['travel', 3, 1], s2a_turtle: ['travel', 3, 1], s2a_reefquiz: ['travel', 4, 2],
+  s2a_wombat: ['travel', 3, 1], s2a_devil: ['travel', 3, 1], s2a_cradle: ['travel', 4, 2]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };

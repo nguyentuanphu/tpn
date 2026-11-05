@@ -37,7 +37,11 @@ function style() {
 .mx-btn.s2-opt .art { width: 52px; height: 52px; }
 .mx-btn.s2-opt small { font: 800 18px var(--font, sans-serif); color: #3b2a4f; line-height: 1.15; max-width: 170px; }
 .mx-btn.s2-opt.words small { font-size: 20px; }
-@media (max-height: 500px) { .s2-scene > * { min-height: 46px; } .s2-scene .art, .s2-scene .mx-tap .art { width: 38px; height: 38px; } .mx-btn.s2-opt { min-height: 72px; } .mx-btn.s2-opt .art { width: 40px; height: 40px; } .s2-pics .art { width: 52px; height: 52px; } }
+.s2g .mx-stage { min-height: 0; padding: 6px; }
+.s2g .mx-board { gap: 10px; }
+/* a wide screen: the answers sit beside the picture, not under it (owner, 3 Nov 2026 AEDT: one screen) */
+@media (min-aspect-ratio: 4/3) { .s2g .mx-board { flex-direction: row; justify-content: center; align-items: center; } .s2g .mx-controls { display: grid; grid-template-columns: repeat(2, auto); max-width: 420px; } .s2g .mx-controls:empty { display: none; } }
+@media (max-height: 500px) { .s2g .mx-board { padding: 4px; } .s2g .mx-stage { width: min(460px, 60vw); } .s2-scene > * { min-height: 46px; } .s2-scene .art, .s2-scene .mx-tap .art { width: 38px; height: 38px; } .mx-btn.s2-opt { min-height: 72px; } .mx-btn.s2-opt .art { width: 40px; height: 40px; } .s2-pics .art { width: 52px; height: 52px; } }
 `));
 }
 const tap = (p: string, k: string, cls = '') => { const b = el('button', 'mx-tap ' + cls, pic(p)) as HTMLElement; b.dataset.k = k; b.setAttribute('aria-label', k); return b; };
@@ -123,7 +127,7 @@ function quiz(api, G: S2Game): Round[] {
   const order = mix(qs); let k = 0;
   return distinct(n, () => {
     const x: Q = order[k++ % order.length], key = (o: Opt) => o[0];
-    const pool = (x.w && x.w.length ? x.w : qs.filter(o => o !== x).map(o => o.a)).filter(o => key(o) !== key(x.a));
+    const pool = (x.w && x.w.length ? x.w : qs.filter(o => o !== x && !(o.w && o.w.length)).map(o => o.a)).filter(o => key(o) !== key(x.a));
     const wrong = mix(pool.filter((o, i) => pool.findIndex(z => key(z) === key(o)) === i)).slice(0, wrongN);
     const opts = new Map([x.a, ...wrong].map(o => [key(o), o]));
     return {
@@ -138,7 +142,7 @@ for (const G of S2_GAMES) {
   register({
     id: G.id, learn: true, icon: G.icon, name: () => T(G.name[0], G.name[1]),
     run: api => {
-      style();
+      style(); api.stage.classList.add('s2g');
       const list = G.kind === 'hunt' ? hunt(api, G) : G.kind === 'path' ? path(api, G) : quiz(api, G);
       const mark = new MutationObserver(() => api.stage.querySelectorAll('.mx-btn:not(.s2-opt)').forEach(b => { b.classList.add('s2-opt'); if (!b.querySelector('svg')) b.classList.add('words'); }));
       mark.observe(api.stage, { childList: true, subtree: true });
