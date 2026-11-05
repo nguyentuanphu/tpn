@@ -11,7 +11,6 @@ const opusPossible = pack => { try { return !!(pack && Array.isArray(pack.format
 const moveToOpus = pack => { if (!opusPossible(pack)) return false; try { localStorage.setItem('sv2_voiceFmt', 'opus'); return true; } catch (e) { return false; } };
 import { events } from './core/events.js';
 import { T, swapNames } from './i18n.js';
-import { lineHash, packHash } from './packhash.js';
 import { featureOn } from './custom.js';
 import { voiceStore, storeKey } from './voicestore.js';
 
@@ -177,8 +176,9 @@ export async function levelSpace() {
 export const FEST_AHEAD = 3;
 type FestPack = { until: number, files: string[] };
 // the recordings of these lines (English and Vietnamese pairs) in this device's languages and format, female voice
-function lineFiles(pairs: [string, string][], langs: string[]) {
-  const out: string[] = [], key = (L, t) => { for (const h of [lineHash(L, t), packHash(L, t)]) if (PACK.lines[h]) return h; return null; };
+// (packhash.js is fetched only here, so the game's first download keeps its files as they were: check startup)
+async function lineFiles(pairs: [string, string][], langs: string[]) {
+  const { lineHash, packHash } = await import('./packhash.js'), out: string[] = [], key = (L, t) => { for (const h of [lineHash(L, t), packHash(L, t)]) if (PACK.lines[h]) return h; return null; };
   for (const [en, vi] of pairs) for (const [L, t] of [['en', en], ['vi', vi]] as const) { if (!t || !langs.includes(L)) continue; const h = key(L, swapNames(t, L)) || key(L, t); if (h && String(PACK.lines[h]).includes('f')) out.push(`voices/${L}/f/${h}.${voiceFormatFor(PACK)}`); }
   return [...new Set(out)];
 }
@@ -186,7 +186,7 @@ async function festivalsDue(now: Date) {
   const Fm = await import('./festivals.js'), out: (FestPack & { id: string })[] = [];
   for (const n of Fm.upcoming(now)) {
     if (+now < +n.start - (Fm.buildupOf(n.F) + FEST_AHEAD) * 864e5) continue;
-    out.push({ id: n.F.id, until: +n.end, files: lineFiles([[n.F.en, n.F.vi], ...((n.F.lines || []) as [string, string][])], packLangs()) });
+    out.push({ id: n.F.id, until: +n.end, files: await lineFiles([[n.F.en, n.F.vi], ...((n.F.lines || []) as [string, string][])], packLangs()) });
   }
   return out;
 }
