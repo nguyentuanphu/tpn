@@ -1,4 +1,4 @@
-**ready for Release** (6 Nov 2026, 12:45 am AEDT): branch `work/v108d-s2vn`, all four regions done.
+**ready for Release** (6 Nov 2026, 1:40 am AEDT): branch `work/v108d-s2vn`, all four regions done, origin/integrate/v108 (with s2au) merged in.
 
 # s2vn status (Season 2, Vietnam)
 
@@ -83,6 +83,8 @@ Checks (run one at a time on this machine, 5-6 Nov 2026 AEDT, last code commit a
 **Voices:** recorded with Azure, women's voices (en-AU Natasha, vi-VN HoaiMy): 595 new files (the Season 2 lines and lines on the base that had none). The 136 old files the pack maker deletes were put back, so this branch deletes no voice file.
 
 **Screenshots looked at:** each region on phone, tablet and computer (scratchpad, not committed); the games' fit on all six sizes is in s2vnfit.
+
+**After merging origin/integrate/v108 (s2au, 6 Nov 2026 AEDT):** conflicts combined (both Season 2 blocks kept; s2vn's region games now use s2au's `CAL_LINKS`, one mechanism; `chapterKitCheck` takes s2au's `chaptersBefore` and knows ch6 to ch9). Chapter 9's find step is `c9_find`, as chapter 10 expects: no change needed. Voices recorded on both sides keep integrate's file; manifests rebuilt by the pack maker (0 lines missing). Rerun after the merge: types, releasecalendar, s2vnregions, chapter9, chapter10: all pass.
 
 **Notes for Release:**
 - The checks `s2vnregions`, `s2vngames`, `s2vnfit`, `chapter6` to `chapter9` are in `tests/run.mts`; `tests/check-map.json` will name them after the next full suite.
