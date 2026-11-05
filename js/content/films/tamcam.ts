@@ -3,7 +3,7 @@
 // child helps twice: calling Bống (page 2) and trying the slipper on Tấm (page 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, hop, go, VILLAGER, ELDER, BUT, village, palace, animal, board, carp, fruitTree, basket } from './kit.js';
 
-const TAM = LOOK({ style: 'shirt', color: '#a88a6a', hairStyle: 'long', skin: '#f0c098' });
+const TAM = LOOK({ style: 'tunic', color: '#a88a6a', hairStyle: 'long', skin: '#f0c098' });
 const TAM_FINE = LOOK({ style: 'aodai', color: '#ffd23f', hairStyle: 'long', hat: 'none', skin: '#f0c098' });
 const CAM = LOOK({ style: 'aodai', color: '#c84a8a', hairStyle: 'buns', skin: '#e8b890' });
 const STEP = LOOK({ style: 'aodai', color: '#5a3a5a', hairStyle: 'buns', skin: '#e0aa80' });

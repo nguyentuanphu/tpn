@@ -38,6 +38,7 @@ marketing/source/runvalley.log
 /home/festivals.js
 /home/launch.js
 /home/site.js
+/home/whatsnew.js
 /js/ads.js
 /js/adventure.js
 /js/animalhomes.js
@@ -90,6 +91,10 @@ marketing/source/runvalley.log
 /js/content/chapter3props.js
 /js/content/chapter3sydney.js
 /js/content/chapter3text.js
+/js/content/chapter4.js
+/js/content/chapter5.js
+/js/content/chapterfinale.js
+/js/content/chapterkit.js
 /js/content/chapters.js
 /js/content/companions.js
 /js/content/devname.js
@@ -146,12 +151,17 @@ marketing/source/runvalley.log
 /js/content/hoilang.js
 /js/content/install-state.js
 /js/content/jobs.js
+/js/content/kitfilms.js
 /js/content/learnpaths.js
 /js/content/map.js
 /js/content/notify.js
 /js/content/owllessons.js
 /js/content/parents.js
 /js/content/reading.js
+/js/content/releasecal-core.js
+/js/content/releasecal-items.js
+/js/content/releasecal-names.js
+/js/content/releasecal.js
 /js/content/releases.js
 /js/content/rules.js
 /js/content/savecopy.js
@@ -324,6 +334,7 @@ marketing/source/runvalley.log
 /js/icons.js
 /js/input.js
 /js/install.js
+/js/installgift.js
 /js/jobs.js
 /js/keepcopy.js
 /js/kidplay.js
@@ -420,6 +431,7 @@ marketing/source/runvalley.log
 /js/twinchests.js
 /js/ui-settings.js
 /js/ui.js
+/js/ui/calendar-news.js
 /js/ui/common.js
 /js/ui/festivals-ui.js
 /js/ui/grownups.js

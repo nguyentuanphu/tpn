@@ -372,7 +372,7 @@ export function createAdventure(G) {
     m.querySelector('.x').onclick = close;
     m.querySelector('.adv-bubble').onclick = () => sayL(a.say);
     // (v1.08b games) today's learning step: the game of the next step of one learning journey (js/learnquest.ts)
-    m.querySelectorAll<HTMLElement>('[data-lqplay]').forEach(b => b.onclick = () => { close(); G.meetAndPlay ? G.meetAndPlay(h.i, b.dataset.lqplay, 'learnquest') : G.playGame(h.i, b.dataset.lqplay, 'learnquest'); });
+    m.querySelectorAll('[data-lqplay]').forEach((b: HTMLElement) => b.onclick = () => { close(); G.meetAndPlay ? G.meetAndPlay(h.i, b.dataset.lqplay, 'learnquest') : G.playGame(h.i, b.dataset.lqplay, 'learnquest'); });
     const stepGo = m.querySelector('.adv-step-go'); if (stepGo instanceof HTMLElement) stepGo.onclick = () => { close(); if (!r.done) goToStep(i); };
     m.querySelector('.adv-go').onclick = () => { close(); if (r.done) return; sync(h); if (showWay(h, true)) sayL(stepText(step(h), h.profile.age)); };
     return m;

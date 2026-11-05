@@ -21,7 +21,7 @@ import { pic } from '../art.js';
 import { COMPANIONS } from '../content/companions.js';
 import { modal } from '../popups.js';
 import { PET_ICON, PAL_HAT_ICON, PALS_NAME, PALS_TAB, toast, foldHeadings, jumpNav } from './common.js';
-import { festCalendarHTML } from './festivals-ui.js';
+import { festCalendarHTML, wireCalendar, CAL_TITLE } from './festivals-ui.js';
 import { valleyPicture } from './pad-map.js';
 import { albumTab } from './pad-album.js';
 // ---------- the Sparkle Pad ----------
@@ -34,7 +34,7 @@ export const openPad = Object.assign(function (game, i, tab) {
   const hero = game.heroes[i], p: Profile = hero.profile;
   const m = modal('pad', '');
   const card = m.querySelector('.card');
-  const TABS = [['map', '🗺️', T('Map', 'Bản đồ')], ['bag', '🎒', T('Backpack', 'Ba lô')], ['log', '📜', T('Adventures', 'Nhiệm vụ')], ['album', '⭐', T('Stickers', 'Hình dán')], ['passport', '🛂', T('Passport', 'Hộ chiếu')], ['games', '🎲', T('Games', 'Trò chơi')], ['cam', '📷', T('Camera', 'Máy ảnh')], ['cal', '📅', T('Festivals', 'Lễ hội')]];
+  const TABS = [['map', '🗺️', T('Map', 'Bản đồ')], ['bag', '🎒', T('Backpack', 'Ba lô')], ['log', '📜', T('Adventures', 'Nhiệm vụ')], ['album', '⭐', T('Stickers', 'Hình dán')], ['passport', '🛂', T('Passport', 'Hộ chiếu')], ['games', '🎲', T('Games', 'Trò chơi')], ['cam', '📷', T('Camera', 'Máy ảnh')], ['cal', '📅', T('Calendar', 'Lịch')]];
   if (game.mode === 'online' || game.mode === 'solo') TABS.push(['friend', '📞', T('Friend', 'Bạn bè')]);
   // (Round V, owner 13 Oct: "the shop button should be right next to the bag") a Shop tab straight after Backpack opens the
   // clothes shop right there (no travel); it replaces the dock's Shop button
@@ -403,7 +403,8 @@ export const openPad = Object.assign(function (game, i, tab) {
   }
   // the festival calendar (round R): only a calendar, nothing to visit from it
   function drawCal(body) {
-    body.innerHTML = `<div class="fcal">${festCalendarHTML(game)}</div>`;
+    body.innerHTML = `<div class="fcal"><h3 class="fcal-title">${CAL_TITLE()}</h3>${festCalendarHTML(game)}</div>`;
+    wireCalendar(body, game, i, close); // (v1.08b story) tap a step to fly there
   }
   function drawCam(body) {
     const howTo = savesByShare() ? T('Then tap “Save to my photos” and choose “Save Image”.', 'Rồi chạm “Lưu vào ảnh của máy” và chọn “Lưu hình ảnh”.') : T('Then tap “Save to my photos”.', 'Rồi chạm “Lưu vào ảnh của máy”.');

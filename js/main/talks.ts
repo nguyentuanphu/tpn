@@ -137,9 +137,10 @@ G.hostNews = h => {
   if (!spots || now - spotsAt > 60000) { spots = new Map(); spotsAt = now; for (const id of Object.keys(GAMES)) { const it = G.gameSpot(id); if (it) spots.set(it.id, [...(spots.get(it.id) || []), id]); } }
   const openNow = id => { const g = gameInfo(id); return !g.hidden && isOpen(p, id, 'game', g.area); };
   // (stories too: a tale newly open is told about by Bà Năm, the storyteller, as the child passes her mat)
-  const tales = (G.TALES || []) as { id: string; flag: string; title?: [string, string] }[], taleOpen = t => isOpen(p, t.id, 'tale', t.flag);
+  const tales = (G.TALES || []) as unknown as { id: string; flag: string; title?: [string, string] }[], taleOpen = t => isOpen(p, t.id, 'tale', t.flag);
   if (!p.hostNews) { p.hostNews = {}; for (const ids of spots.values()) for (const id of ids) if (openNow(id)) p.hostNews[id] = 1; for (const t of tales) if (taleOpen(t)) p.hostNews['tale:' + t.id] = 1; save(); return; }
-  if (G.storyteller && dist2(h.pos.x, h.pos.z, G.storyteller.x, G.storyteller.z) < 64) {
+  const teller = (G as unknown as { storyteller?: { x: number; z: number } }).storyteller;
+  if (teller && dist2(h.pos.x, h.pos.z, teller.x, teller.z) < 64) {
     const fresh = tales.filter(t => !p.hostNews['tale:' + t.id] && taleOpen(t));
     if (fresh.length) { fresh.forEach(t => { p.hostNews['tale:' + t.id] = 1; }); save(); say(...STORY_NEWS); hudFor(h).toast('✨ ' + T('New story!', 'Truyện mới!')); return; }
   }

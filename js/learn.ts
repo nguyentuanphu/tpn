@@ -1,4 +1,5 @@
 import { isHeld, isOpen, progressOf, secondSetOf } from './content/unlocks.js';
+import { calNextWeek } from './content/secondset.js';
 // Learning that feels like play:
 // · Story time under the big banyan tree: short folk tales from Vietnam, Australia, China and India.
 // · Counting hunts in each village: find 5 hidden things, counting out loud (and in Chinese or Hindi
@@ -122,7 +123,7 @@ export function createLearning(G) {
     const open = shelf.filter(t => isOpen(p, t.id, 'tale', f)), locked = shelf.filter(t => !open.includes(t));
     const held = secondSetOf('tale', f).filter(id => TALES.some(t => t.id === id) && isHeld(id, 'tale')).length, shown = G.taleFolds.has(f);
     const fold = locked.length ? `<button class="talecard talefold" data-fold-tale="${f}" aria-expanded="${shown}"><span>${pic('\u{1F512}')}</span><small>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock · Read each story above 3 times`, `Còn ${locked.length} truyện để mở · Đọc mỗi truyện ở trên 3 lần`)}</small></button>` : '';
-    const soon = held ? `<button class="talecard talesoon" data-soon="tale"><span>${pic('\u{1F51C}')}</span><small>${T(`Coming soon: ${held} new stories`, `Sắp ra mắt: ${held} truyện mới`)}</small></button>` : '';
+    const soon = held ? `<button class="talecard talesoon" data-soon="tale"><span>${pic('\u{1F51C}')}</span><small>${T(`Coming soon: ${held} new stories`, `Sắp ra mắt: ${held} truyện mới`)}${(n => n ? ' · ' + T(`next week ${n}`, `tuần sau ${n}`) : '')(calNextWeek('story', secondSetOf('tale', f).filter(id => isHeld(id, 'tale'))))}</small></button>` : '';
     const cards = open.map(t => taleCard(t, true, reads[t.id])).join('') + fold + (shown ? locked.map(t => taleCard(t, false, reads[t.id])).join('') : '') + soon;
     if (!cards) return '';
     const progress = progressOf(p, 'tale', f);

@@ -74,6 +74,8 @@ export const HAT_ICON = { none: '🙂', nonla: '👒', cap: '🧢', crown: '👑
 export const HAT_NAME = { none: () => T('No hat', 'Không đội mũ'), nonla: () => T('Nón lá (leaf hat)', 'Nón lá'), cap: () => T('Cap', 'Mũ lưỡi trai'), crown: () => T('Crown', 'Vương miện'), bunny: () => T('Bunny ears', 'Tai thỏ'), flower: () => T('Flower clip', 'Kẹp hoa'), bow: () => T('Bow', 'Nơ'), khanran: () => T('Khăn rằn checked scarf', 'Khăn rằn'), akubra: () => T('Akubra bush hat', 'Mũ Akubra nước Úc'), silkcap: () => T('Chinese silk cap', 'Mũ lụa Trung Hoa'), pagri: () => T('Pagri turban', 'Khăn xếp Pagri') };
 // Passport rewards: hats you earn by filling a country's page (not shown in the wardrobe until earned)
 export const REWARD_HATS = ['khanran', 'akubra', 'silkcap', 'pagri'];
+// (v1.08b story) the install gift's "Mũ Ngôi Nhà / Home hat" (js/installgift.ts): earned, never bought
+REWARD_HATS.push('homehat'); (HAT_ICON as Record<string, string>).homehat = '🏠'; (HAT_NAME as Record<string, () => string>).homehat = () => T('Home hat', 'Mũ Ngôi Nhà');
 
 // Things to gather around the world (they grow back after a while).
 // (round T: where each one lies comes from the map, js/content/map.js GATHER_AT, as an offset from its place)

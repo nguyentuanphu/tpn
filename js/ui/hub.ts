@@ -1,5 +1,6 @@
 // The Play hub (split from js/ui.ts, v1.07): the games by tab.
 import { isOpen, isHeld, progressOf, secondSetOf } from '../content/unlocks.js';
+import { calNextWeek } from '../content/secondset.js';
 import { AREAS, gamesIn, gameInfo, LEARN_CORNERS } from '../content/activities.js';
 import { T } from '../i18n.js';
 import { reduceMotion } from '../state.js';
@@ -13,7 +14,7 @@ import { SONG_GROUPS, SONG_LIST, familySongs } from '../content/songs.js';
 import { originFlags } from '../icons.js';
 import { pic, moreArt, moreArtReady } from '../art.js';
 import { modal, dialog } from '../popups.js';
-import { festCalendarHTML } from './festivals-ui.js';
+import { festCalendarHTML, CAL_TITLE, wireCalendar } from './festivals-ui.js';
 import { markEnglish, englishBadge } from '../englishmode.js'; // (v1.08 english)
 const FOLK_SHOW = ['music', 'firstwords', 'tangram', 'snakes', 'rangoli', 'words', 'mrwolf', 'cricket', 'parcel', 'sackrace', 'chuyen', 'dragon', 'datnieu', 'kite', 'chichi', 'marbles', 'skipping', 'dacau', 'snap', 'tienlen', 'oantuti', 'nemlon', 'oanquan', 'hopscotch', 'tug', 'caro', 'goat'];
 export const folkGames = () => FOLK_SHOW;
@@ -51,7 +52,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
   // one category at a time, picked from a row of tabs (the whole list was too long to scroll on a phone)
   // games first (by kind), then things to watch and listen to, then the festival calendar
   const SECS = hubSections();
-  const tabs = [...SECS, ...(game.taleShelfHTML ? [{ key: 'tales', icon: '📖', short: () => T('Stories', 'Truyện') }] : []), ...(game.openSongs ? [{ key: 'songs', icon: '🎵', short: () => T('Songs', 'Bài hát') }] : []), ...(game.festivals ? [{ key: 'fest', icon: '📅', short: () => T('Festivals', 'Lễ hội') }] : [])];
+  const tabs = [...SECS, ...(game.taleShelfHTML ? [{ key: 'tales', icon: '📖', short: () => T('Stories', 'Truyện') }] : []), ...(game.openSongs ? [{ key: 'songs', icon: '🎵', short: () => T('Songs', 'Bài hát') }] : []), ...(game.festivals ? [{ key: 'fest', icon: '📅', short: () => T('Calendar', 'Lịch') }] : [])];
   let cur = tabs.find(t => t.key === openGamesHub.last) ? openGamesHub.last : 'hocvui';
   // (r90, owner 24 Oct AEDT) a card per game a child can play; the games still to unlock fold into one padlock tile
   // (one tap shows them), and the new games held back in Studio (New games off) into one "Coming soon" tile
@@ -63,6 +64,8 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
   // to show the new games") the unfolded padlock first says what to do: each game above won 3 times, with the stars so far
   const lockGuide = area => { const prog = progressOf(p, 'game', area), ready = prog.perGame.filter(g => g.n >= 3).length, total = prog.perGame.length;
     return total ? `<div class="hsoonlist hlockguide"><p>${T('Win each of these games 3 times to unlock the games below:', 'Thắng mỗi trò này 3 lần để mở các trò bên dưới nhé:')}</p>${prog.perGame.map(g => `<div class="hsoonrow${g.n >= 3 ? ' done' : ''}"><span class="hi">${pic(GAMES[g.id]?.icon || '\u{1F3AE}')}</span><b>${esc(GAMES[g.id]?.name() || g.id)}</b><span class="hsoonstars">${[0, 1, 2].map(k => pic(k < g.n ? '\u2B50' : '\u2606')).join('')}</span></div>`).join('')}<p class="hsoonok">${ready === total ? T('All done!', 'Xong hết rồi!') : T(`${ready} of ${total} done`, `Xong ${ready} trên ${total}`)}</p></div>` : ''; };
+  // (v1.08b story) the release calendar's teaser: what opens next week
+  const nextWk = (ids: string[]) => { const n = calNextWeek('game', ids); return n ? `<small class="hsoonnext">${T(`Next week: ${n} new game${n > 1 ? 's' : ''}`, `Tuần sau: ${n} trò mới`)}</small>` : ''; };
   const card2 = sec => {
     const area = sec.area || sec.key, ids = sec.games.filter(id => GAMES[id]);
     const open = ids.filter(id => isOpen(p, id, 'game', area)), locked = ids.filter(id => !open.includes(id));
@@ -71,11 +74,11 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     // (owner, 30 Oct 2026 AEDT: "it doesn't say how many stars are needed; give a guide so kids understand what they
     // need") the tile shows how far the child is (each game here won 3 times) and opens the list of those games
     const prog = progressOf(p, 'game', area), ready = prog.perGame.filter(g => g.n >= 3).length, total = prog.perGame.length, soonOpen = openGamesHub.soon === area;
-    const soonTile = held ? `<div class="hcard hsoon" style="--hc:#9ad0ff"><button class="hplay" data-soon="${area}" aria-expanded="${soonOpen}"><span class="hi">${pic('\u{1F51C}')}</span><b>${T(`${held} new games coming`, `Sắp có ${held} trò mới`)}</b><small>${total ? T(`Win each game 3 times: ${ready}/${total}`, `Thắng mỗi trò 3 lần: ${ready}/${total}`) : T('On their way!', 'Sắp đến rồi!')}</small><span class="hsoonbar" aria-hidden="true"><i style="width:${total ? Math.round(ready / total * 100) : 100}%"></i></span></button></div>${soonOpen ? `<div class="hsoonbubble" role="dialog" aria-label="${T('New games coming', 'Trò mới sắp có')}"><i class="hsb-dot a"></i><i class="hsb-dot b"></i><p>${T('Coming soon:', 'Sắp có:')}</p><div class="hsb-games">${heldIds.map(id => `<span><span class="hi">${pic(GAMES[id].icon)}</span>${esc(GAMES[id].name())}</span>`).join('')}</div></div>` : ''}${soonOpen && total ? `<div class="hsoonlist"><p>${T('Win each of these games 3 times to open the new games:', 'Thắng mỗi trò này 3 lần để mở trò mới nhé:')}</p>${prog.perGame.map(g => `<div class="hsoonrow${g.n >= 3 ? ' done' : ''}"><span class="hi">${pic(GAMES[g.id]?.icon || '\u{1F3AE}')}</span><b>${esc(GAMES[g.id]?.name() || g.id)}</b><span class="hsoonstars">${[0, 1, 2].map(k => pic(k < g.n ? '\u2B50' : '\u2606')).join('')}</span></div>`).join('')}${ready === total ? `<p class="hsoonok">${T('All done! The new games are on their way.', 'Xong hết rồi! Trò mới đang trên đường đến.')}</p>` : ''}</div>` : ''}` : '';
+    const soonTile = held ? `<div class="hcard hsoon" style="--hc:#9ad0ff"><button class="hplay" data-soon="${area}" aria-expanded="${soonOpen}"><span class="hi">${pic('\u{1F51C}')}</span><b>${T(`${held} new games coming`, `Sắp có ${held} trò mới`)}</b>${nextWk(heldIds)}<small>${total ? T(`Win each game 3 times: ${ready}/${total}`, `Thắng mỗi trò 3 lần: ${ready}/${total}`) : T('On their way!', 'Sắp đến rồi!')}</small><span class="hsoonbar" aria-hidden="true"><i style="width:${total ? Math.round(ready / total * 100) : 100}%"></i></span></button></div>${soonOpen ? `<div class="hsoonbubble" role="dialog" aria-label="${T('New games coming', 'Trò mới sắp có')}"><i class="hsb-dot a"></i><i class="hsb-dot b"></i><p>${T('Coming soon:', 'Sắp có:')}</p><div class="hsb-games">${heldIds.map(id => `<span><span class="hi">${pic(GAMES[id].icon)}</span>${esc(GAMES[id].name())}</span>`).join('')}</div></div>` : ''}${soonOpen && total ? `<div class="hsoonlist"><p>${T('Win each of these games 3 times to open the new games:', 'Thắng mỗi trò này 3 lần để mở trò mới nhé:')}</p>${prog.perGame.map(g => `<div class="hsoonrow${g.n >= 3 ? ' done' : ''}"><span class="hi">${pic(GAMES[g.id]?.icon || '\u{1F3AE}')}</span><b>${esc(GAMES[g.id]?.name() || g.id)}</b><span class="hsoonstars">${[0, 1, 2].map(k => pic(k < g.n ? '\u2B50' : '\u2606')).join('')}</span></div>`).join('')}${ready === total ? `<p class="hsoonok">${T('All done! The new games are on their way.', 'Xong hết rồi! Trò mới đang trên đường đến.')}</p>` : ''}</div>` : ''}` : '';
     return `<div class="hubgrid">${open.map((id, k) => gameCard(id, k, sec.key, true)).join('')}${lockTile}${shown ? lockGuide(area) + locked.map((id, k) => gameCard(id, k + open.length, sec.key, false)).join('') : ''}${soonTile}</div>`;
   };
   const body = key => {
-    if (key === 'fest') return `<h3>📅 ${T('Festival calendar', 'Lịch lễ hội')}</h3>${festCalendarHTML(game)}`;
+    if (key === 'fest') return `<h3>📅 ${CAL_TITLE()}</h3>${festCalendarHTML(game)}`;
     if (key === 'tales') return `<h3>📖 ${T('Fairy tales', 'Truyện cổ tích')}</h3><p class="sub">${T('Tap a story: you fly to Grandma Storyteller and she reads it to you.', 'Chạm vào truyện: con bay đến chỗ Bà Kể Chuyện và bà kể cho con nghe.')}</p><div class="talelib">${game.taleShelfHTML(p)}</div>`;
     if (key === 'songs') {
       // (round O, owner: songs belong with the games, not in Settings) one big button per group; it opens the Songs page there
@@ -96,6 +99,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
   card.querySelector('.x').onclick = close;
   const bind = root => {
     root.querySelectorAll('[data-tale]').forEach(b => b.onclick = () => { close(); game.readTale(i, b.dataset.tale); });
+    if (root.querySelector('[data-fly], [data-cal]')) { wireCalendar(root, game, i, close); } // (v1.08b story) the calendar tab
     if (game.bindTaleShelf) game.bindTaleShelf(root, () => { openGamesHub.scroll = root.scrollTop; draw(); });
     root.querySelectorAll('[data-songs]').forEach(b => b.onclick = () => { SFX.tap(); close(); game.openSongs(b.dataset.songs); });
     root.querySelectorAll('[data-fold]').forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.fold; if (openGamesHub.unfolded.has(k)) openGamesHub.unfolded.delete(k); else { openGamesHub.unfolded.add(k); say('Finish the games above 3 times each to unlock these.', 'Chơi xong mỗi trò ở trên 3 lần để mở những trò này nhé.'); } openGamesHub.scroll = root.scrollTop; draw(); });

@@ -3,7 +3,7 @@
 // being brave with the snake (page 2) and filling every bowl (page 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, VILLAGER, forest, palace, serpent, slither, axe, lute, bird } from './kit.js';
 
-const SANH = LOOK({ style: 'shirt', color: '#8a6a4a', hairStyle: 'short', skin: '#c89060' });
+const SANH = LOOK({ style: 'tunic', color: '#8a6a4a', hairStyle: 'short', skin: '#c89060' });
 const PRINCESS = LOOK({ style: 'aodai', color: '#ffb0d0', hat: 'crown', hairStyle: 'long', skin: '#f0c098' });
 const SOLDIER = c => LOOK({ style: 'tunic', color: c, hat: 'silkcap', skin: '#d8a070' });
 const bow = () => mesh([P(new THREE.TorusGeometry(.45, .03, 6, 16, PI), '#ffcf33', [0, 0, 0], [0, 0, H]), P(new THREE.CylinderGeometry(.006, .006, .9, 4), '#fff8d0', [0, 0, 0])]);
@@ -97,7 +97,7 @@ export default { pages: [
   S => {
     palace(S);
     const sanh = S.person(LOOK({ style: 'tunic', color: '#3a7ac8', hat: 'crown', skin: '#c89060' }), -.7, 0, 0), pr = S.person(PRINCESS, .7, 0, 0);
-    const people = [VILLAGER('aodai', '#e86a8a'), VILLAGER('shirt', '#3b6fe0', 'nonla', 'short'), VILLAGER('aodai', '#43c463'), VILLAGER('shirt', '#ffd23f', 'nonla', 'short')].map((l, i) => S.person(l, -4.5 + i * 3, 4, PI));
+    const people = [VILLAGER('aodai', '#e86a8a'), VILLAGER('tunic', '#3b6fe0', 'nonla', 'short'), VILLAGER('aodai', '#43c463'), VILLAGER('tunic', '#ffd23f', 'nonla', 'short')].map((l, i) => S.person(l, -4.5 + i * 3, 4, PI));
     S.shot([0, 2.4, 9], [0, 1.4, 0]);
     S.mood(sanh, 0, 'happy'); S.mood(pr, 0, 'happy'); S.do(sanh, .4, 'bow', 1.2); S.do(pr, .4, 'bow', 1.2);
     people.forEach((p, i) => { S.do(p, 1 + i * .2, 'cheer', 2); S.mood(p, 1, 'happy'); });

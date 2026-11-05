@@ -5,8 +5,8 @@ import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, hop, KID, VILLAGER, vill
 
 const TAO = LOOK({ style: 'tunic', color: '#c62f2f', hat: 'silkcap', hairStyle: 'short', hair: '#e8e8e8', skin: '#e8b890' });
 const JADE = LOOK({ style: 'tunic', color: '#ffd23f', hat: 'crown', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8c0a0' });
-const MOM = VILLAGER('aodai', '#c84a6a', 'none', 'buns'), DAD = VILLAGER('shirt', '#3b6fe0', 'none', 'short');
-const BOY = KID('shirt', '#ffb52e', 'spiky'), GIRL = KID('dress', '#ff7eb8', 'buns');
+const MOM = VILLAGER('aodai', '#c84a6a', 'none', 'buns'), DAD = VILLAGER('tunic', '#3b6fe0', 'none', 'short');
+const BOY = KID('tunic', '#ffb52e', 'spiky'), GIRL = KID('dress', '#ff7eb8', 'buns');
 const dragon = S => serpent(S, { n: 16, r: .3, colors: ['#e8b62a', '#ffd23f', '#e8332a'], head: '#e8b62a', horns: true, y: 2, waveAmp: .7 });
 const pondAt = (S, x, z, r = 2.4) => S.add(mesh([P(new THREE.CylinderGeometry(r, r, .06, 24), '#4fa8c8', [0, .03, 0]), P(new THREE.CylinderGeometry(r + .3, r + .3, .03, 24), '#a88a5a', [0, .01, 0])]), x, 0, z);
 

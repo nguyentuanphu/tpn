@@ -3,7 +3,7 @@
 // taking the three axes (page 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, turn, BUT, river, axe } from './kit.js';
 
-const WOOD = LOOK({ style: 'shirt', color: '#7a6a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const WOOD = LOOK({ style: 'tunic', color: '#7a6a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
 // Bụt rises from the river with an axe; the woodcutter on the bank
 const scene = (S, color, shown = true) => {
   river(S);
