@@ -1,6 +1,6 @@
 # v1.08e vehicles: status
 
-**ready for Release** (6 Nov 2026, 02:50 AEDT). Branch `work/v108e-vehicles` (from `origin/integrate/v108`). Brief: `vehicles-brief.md`.
+**ready for Release** (6 Nov 2026, 03:20 AEDT; `origin/integrate/v108` merged in). Branch `work/v108e-vehicles` (from `origin/integrate/v108`). Brief: `vehicles-brief.md`.
 
 ## Every vehicle (ridden or seen)
 
@@ -48,7 +48,7 @@ Sizes: 7-48 KB each, 3,200-4,800 triangles (the boats and the excavator less).
   `js/ferry.ts` (each boat's hull; the signs, flag, lantern and the raft's fading roof stay the code's).
 - The code shape stays until the model has arrived and for good when it cannot load.
 - The fitting itself is in `js/vehicle-models.ts`, loaded after the start (not in the first download); `sw.ts` lists it
-  for offline (one line beside `js/modelkit.js`).
+  and all 30 models in its FILES list for offline (no apostrophes).
 - No change to the kit (`js/modelkit.ts`). `js/ferry.ts`: `ferryBoat` and `bambooRaft` are now exported (for the
   blueprints).
 
@@ -70,6 +70,7 @@ Sizes: 7-48 KB each, 3,200-4,800 triangles (the boats and the excavator less).
 | `perf` | pass: village 291 draws, home 175 |
 | `battery` | pass: 164/164 far people still |
 | `startup` | pass: first start 1036 KB (inside the check's 3 % margin; it was 1035 KB before the fitting moved out of `js/vehicles.ts`, so not from this work) |
+| `offline`, `swupdate` (after the merge, with the 30 models and `js/vehicle-models.js` in the `sw.ts` FILES list) | pass |
 | `boats` | **fail, same on `origin/integrate/v108` without this work**: the Season 2 harbour ferry (13 m too shallow at -115,152; the Melbourne, Great Barrier Reef, Tasmania, Perth and Rottnest piers join no road). For the Season 2 Australia helper |
 
 ## Screenshots
@@ -84,3 +85,4 @@ the roof (`seatRider` sinks the code avatar under the roof, but not all of a fri
 
 - 6 Nov 2026 02:10 AEDT: part 1 pushed: blueprints, Blender script, 30 models, swap-in in traffic, yard and ferries.
 - 6 Nov 2026 02:50 AEDT: check `worldvehicles`, fitting moved to `js/vehicle-models.ts`, screenshots, ready for Release.
+- 6 Nov 2026 03:20 AEDT: merged `origin/integrate/v108`; the 30 models added to the `sw.ts` FILES list; `offline`, `swupdate`, `worldvehicles` pass.
