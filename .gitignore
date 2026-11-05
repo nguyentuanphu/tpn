@@ -399,6 +399,7 @@ marketing/source/runvalley.log
 /js/money.js
 /js/myhouse.js
 /js/nametags.js
+/js/nature-tag.js
 /js/net.js
 /js/netgames.js
 /js/netmsg.js
@@ -507,6 +508,7 @@ marketing/source/runvalley.log
 /js/website.js
 /js/words.js
 /js/words2.js
+/js/world-nature.js
 /js/world.js
 /js/world/ground.js
 /js/world/paint.js
@@ -683,3 +685,4 @@ js/voice-fragments.js
 /temp/hanoi-originals-*/
 /js/yard.js
 /js/vehicles.js
+models/world/raw/

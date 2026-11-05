@@ -108,6 +108,9 @@ await check('faces', async () => (await import('./faces.mts')).facesCheck(b));
 // (v1.08e water, owner 6 Nov 2026 AEDT) every river, lake, pond and the sea knee to waist deep: a child walks into each and
 // out again, wading, never swimming or sinking, the camera above the water (tests/wading.mts)
 await check('wading', async () => (await import('./wading.mts')).wadingCheck(b));
+// (v1.08e nature) the trees, flowers, reeds, crops, farm props and My House decorations from Blender near the child: every
+// model loads, sizes and ground match the code shapes, draws within perf's limits, crops' stages, blocked models (tests/world-nature.mts)
+await check('worldnature', async () => (await import('./world-nature.mts')).worldNatureCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

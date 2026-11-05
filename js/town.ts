@@ -11,6 +11,7 @@ import { SFX } from './audio.js';
 import { heightAt, TOWN, PLAYGROUND } from './world.js';
 import { buildAvatar, crowdLook, nameAvatar } from './avatar.js';
 import { dist2 } from './util.js';
+import { natureModel } from './nature-tag.js';
 import { addPole, addDrop } from './powerlines.js';
 import { TOWN_JUICE_CART, rowSlot } from './content/map.js';
 
@@ -192,7 +193,7 @@ export function createTown(G) {
     if (kind === 'gum') { t.push(P(Cyl(.18, .32, 6, 6), '#e9e1d2', [0, 3, 0]), P(Cyl(.1, .14, 2.4, 5), '#e9e1d2', [.7, 5, 0], [0, 0, -.6])); [[0, 6.6, 0, 1.6], [1.4, 6, .4, 1.2], [-1, 6.2, -.5, 1.3]].forEach(([a, b, c, r]) => t.push(P(new THREE.IcosahedronGeometry(r, 0), '#7f9a6a', [a, b, c], [0, 0, 0], [1.2, .7, 1.2]))); }
     if (kind === 'banana') { t.push(P(Cyl(.15, .22, 2.6, 6), '#9aa65a', [0, 1.3, 0])); for (let k = 0; k < 6; k++) t.push(P(Box(.5, .05, 2.2), k % 2 ? '#5fa860' : '#4e9a52', [Math.cos(k) * .9, 2.7, Math.sin(k) * .9], [-.5 * Math.sin(k), -k, .5 * Math.cos(k)])); }
     if (kind === 'frangipani') { t.push(P(Cyl(.14, .22, 2, 6), '#8a7a6a', [0, 1, 0])); [[0, 2.4, 0, 1], [.7, 2.2, .3, .7]].forEach(([a, b, c, r]) => t.push(P(new THREE.IcosahedronGeometry(r, 1), '#4f9a62', [a, b, c]))); for (let k = 0; k < 8; k++) t.push(P(new THREE.SphereGeometry(.12, 5, 4), '#fff6dc', [Math.cos(k) * .7, 2.9 + (k % 3) * .1, Math.sin(k) * .7])); }
-    put(merge(t), x, z); world.colliders.push({ x, z, r: kind === 'banana' ? .4 : .5 });
+    natureModel(put(merge(t), x, z), 'tree-' + kind); world.colliders.push({ x, z, r: kind === 'banana' ? .4 : .5 }); // (v1.08e nature: its Blender model near the child)
   };
   tree(X(-12.5), Z(11.5), 'jacaranda'); tree(X(5), Z(19), 'jacaranda'); tree(X(18), Z(-17), 'gum'); tree(X(19), Z(13), 'gum'); tree(X(-27.4), Z(-16), 'gum');
   tree(X(-20), Z(-22), 'banana'); tree(X(-21.6), Z(-20.4), 'banana'); tree(X(15.6), Z(-22), 'frangipani'); tree(X(-14), Z(18), 'frangipani');

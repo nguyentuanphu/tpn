@@ -1153,6 +1153,7 @@ bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
   afterStart(() => import('./modelkit.js'), m => m.startWorldModels(G, world.updaters));
   afterStart(() => import('./creatures.js'), m => m.startCreatureModels(G));   // (v1.08e creatures) animals, pets and companions in Blender
   afterStart(() => import('./wading.js'), m => m.createWading(G));   // (v1.08e water) splash rings round a wading child, little fish by the banks
+  afterStart(() => import('./world-nature.js'), m => m.startNature(G, world.updaters, settings.quality)); // (v1.08e nature) trees, flowers, crops, farm props and My House decorations from Blender (js/world-nature.ts)
   startAreas(G, { x: +p0.x || 0, z: +p0.z || 0 }, () => { G.claims.wrap(); setupBubbles(); clearTimeout(again); again = setTimeout(solidsNow, areasLeft() ? 2500 : 600); }); }
 setTimeout(() => { void import('./art.js').then(a => a.moreArt()); }, 1500); // (v1.08) the new games' pictures, after the start
 setTimeout(() => { void import('./s2vn.js').then(m => m.installS2vn(G)).catch(e => console.warn('season 2', e)); }, 2500); // (v1.08d s2vn) Season 2's new places, after the start

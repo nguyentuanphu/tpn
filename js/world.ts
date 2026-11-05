@@ -7,6 +7,7 @@ import { THREE, sprite, toonSmooth, merge, P, toonVC, toon, glow, blobShadow } f
 import { seeded, lerp, smooth, clamp, fbm, dist2 } from './util.js';
 import { T } from './i18n.js';
 import { houseVillage } from './houses.js';
+import { natureModel } from './nature-tag.js';
 import { settings } from './state.js';
 import { keptFloats, rememberFloats } from './worldmemo.js';
 import * as MAP from './content/map.js';
@@ -247,6 +248,7 @@ export function createWorld(scene, quality) {
       list.forEach((s, i) => { o3.position.set(s[0], s[1], s[2]); o3.rotation.set(0, s[3], 0); o3.scale.setScalar(s[4]); o3.updateMatrix(); im.setMatrixAt(i, o3.matrix); tint.setHSL(0, 0, .88 + rnd() * .12); im.setColorAt(i, tint); });
       im.computeBoundingSphere(); // so the camera can tell when a whole tile is out of view
       scene.add(im); im.userData.kind = k; im.userData.list = list; W.plants.push(im); // tappable (js/fun.js)
+      natureModel(im, k === 'bush' || k === 'rock' ? k : 'tree-' + k); // (v1.08e nature) its Blender model near the child (js/world-nature.ts)
     }
   }
   appleTrees.forEach((t, i) => {
@@ -271,7 +273,7 @@ export function createWorld(scene, quality) {
     if (rnd() < .16 && fi < fIm.count) { fIm.setMatrixAt(fi, o3.matrix); fIm.setColorAt(fi++, tint.set(FC[Math.floor(rnd() * FC.length)])); }
     else if (gi < nGrass) { gIm.setMatrixAt(gi, o3.matrix); gIm.setColorAt(gi++, tint.setHSL(.26 + rnd() * .06, .55, .3 + rnd() * .1)); }
   }
-  gIm.count = gi; fIm.count = fi; scene.add(gIm, fIm); W.groundCover = [gIm, fIm]; // (the roads check looks at them)
+  gIm.count = gi; fIm.count = fi; scene.add(gIm, fIm); natureModel(fIm, 'flower-meadow'); natureModel(gIm, 'grass'); W.groundCover = [gIm, fIm]; // (the roads check looks at them)
 
   // clouds: big soft painted cumulus with warm afternoon light on their edges
   const cloudTex = k => {

@@ -9,6 +9,7 @@ import { SFX } from './audio.js';
 import { fmt, spoken } from './money.js';
 import { el, esc, pick, shuffle, wait } from './util.js';
 import { heightAt, HOME } from './world.js';
+import { natureModel, natureGeo } from './nature-tag.js';
 import { modal, dialog, reward } from './ui.js';
 
 export const CROPS = {
@@ -124,11 +125,11 @@ export function createFarm(G) {
   ]), toonVC()); hm.castShadow = hm.receiveShadow = true; add(hm, house.x, house.z); solid(house.x, house.z, 5);
   const wardrobe = at(-3.2, 9.6), easel = at(5.6, 9.2), jobs = at(-6.4, 9.4);
   const easelM = new THREE.Mesh(merge([P(new THREE.BoxGeometry(1.4, 1.1, .08), '#ffffff', [0, 1.6, 0], [-.15, 0, 0]), P(new THREE.CylinderGeometry(.05, .05, 2, 5), '#8a5a3b', [-.5, 1, -.2], [.1, 0, .15]), P(new THREE.CylinderGeometry(.05, .05, 2, 5), '#8a5a3b', [.5, 1, -.2], [.1, 0, -.15]), P(new THREE.CylinderGeometry(.05, .05, 2, 5), '#8a5a3b', [0, 1, .45], [-.3, 0, 0])]), toonVC());
-  add(easelM, easel.x, easel.z, Math.PI);
+  add(natureModel(easelM, 'farm-easel'), easel.x, easel.z, Math.PI);
   const board = new THREE.Mesh(merge([P(new THREE.BoxGeometry(1.8, 1.2, .1), '#c9a05a', [0, 1.7, 0]), P(new THREE.CylinderGeometry(.07, .07, 1.8, 5), '#7a5236', [-.7, .9, 0]), P(new THREE.CylinderGeometry(.07, .07, 1.8, 5), '#7a5236', [.7, .9, 0]), P(new THREE.BoxGeometry(.4, .3, .02), '#ffffff', [-.4, 1.8, .06]), P(new THREE.BoxGeometry(.4, .3, .02), '#ffffff', [.1, 1.6, .06]), P(new THREE.BoxGeometry(.4, .3, .02), '#ffffff', [.5, 1.85, .06])]), toonVC());
   add(board, jobs.x, jobs.z, Math.PI); solid(jobs.x, jobs.z, .5);
   const wardM = new THREE.Mesh(merge([P(new THREE.BoxGeometry(1.4, 2.2, .7), '#b07a4a', [0, 1.1, 0]), P(new THREE.BoxGeometry(.05, 2, .02), '#6a4026', [0, 1.1, .36]), P(new THREE.SphereGeometry(.06, 6, 5), '#ffd23f', [.15, 1.2, .38]), P(new THREE.SphereGeometry(.06, 6, 5), '#ffd23f', [-.15, 1.2, .38])]), toonVC());
-  add(wardM, wardrobe.x, wardrobe.z - .6, Math.PI); solid(wardrobe.x, wardrobe.z - .6, .7);
+  add(natureModel(wardM, 'farm-wardrobe'), wardrobe.x, wardrobe.z - .6, Math.PI); solid(wardrobe.x, wardrobe.z - .6, .7);
 
   // the 3×3 field
   const field = at(-11, -4);
@@ -164,8 +165,8 @@ export function createFarm(G) {
   const penParts = []; for (let k = 0; k < 18; k++) { const a = k / 18 * Math.PI * 2; if (k === 13) continue; penParts.push(P(new THREE.BoxGeometry(.15, 1, .15), '#c9a05a', [Math.cos(a) * 6.5, .5, Math.sin(a) * 6.5])); penParts.push(P(new THREE.BoxGeometry(2.3, .12, .08), '#e8c88a', [Math.cos(a + .17) * 6.4, .75, Math.sin(a + .17) * 6.4], [0, -a - .17 + Math.PI / 2, 0])); }
   add(new THREE.Mesh(merge(penParts), toonVC()), pen.x, pen.z);
   const hayM = new THREE.Mesh(merge([P(new THREE.BoxGeometry(1.6, .8, 1.1), '#8a5a3b', [0, .4, 0]), P(new THREE.BoxGeometry(1.4, .3, .9), '#f2d16b', [0, .85, 0])]), toonVC());
-  add(hayM, hay.x, hay.z); solid(hay.x, hay.z, .9);
-  const crateM = new THREE.Mesh(merge([P(new THREE.BoxGeometry(1.2, .7, 1), '#a9764a', [0, .35, 0])]), toonVC()); add(crateM, crate.x, crate.z); solid(crate.x, crate.z, .8);
+  add(natureModel(hayM, 'farm-hay'), hay.x, hay.z); solid(hay.x, hay.z, .9);
+  const crateM = new THREE.Mesh(merge([P(new THREE.BoxGeometry(1.2, .7, 1), '#a9764a', [0, .35, 0])]), toonVC()); add(natureModel(crateM, 'farm-crate'), crate.x, crate.z); solid(crate.x, crate.z, .8);
   const crateIcon = sprite('🥚', .9); crateIcon.position.set(crate.x, heightAt(crate.x, crate.z) + 1.5, crate.z); scene.add(crateIcon); F.crateIcon = crateIcon;
 
   // Mr. Bear's market stall
@@ -226,6 +227,7 @@ export function createFarm(G) {
   F.syncAnimals(); F.syncPets();
 
   // ---------- per-frame update ----------
+  const cropMat = toonVC();
   F.update = (dt, t) => {
     const now = Date.now();
     // crops
@@ -240,7 +242,11 @@ export function createFarm(G) {
       pl.crop.clear();
       if (!p) return;
       const c = CROPS[p.crop];
-      if (p.stage === 0) { const m = new THREE.Mesh(new THREE.SphereGeometry(.12, 6, 5), toon('#5a3a22')); m.position.y = .05; pl.crop.add(m); }
+      // (v1.08e nature) each growing stage is its own Blender model (models/world/<crop>-1..3.glb) once it is here; the code
+      // shapes until then and when it cannot load
+      const geo = p.stage > 0 && natureGeo(p.crop + '-' + p.stage, pl, () => { pl.key = ''; });
+      if (geo) { const m = new THREE.Mesh(geo as THREE.BufferGeometry, cropMat); m.castShadow = true; m.rotation.y = p.crop === 'sunflower' ? 0 : i * 1.3; m.userData.natureModel = p.crop + '-' + p.stage; pl.crop.add(m); }
+      else if (p.stage === 0) { const m = new THREE.Mesh(new THREE.SphereGeometry(.12, 6, 5), toon('#5a3a22')); m.position.y = .05; pl.crop.add(m); }
       else {
         const n = p.stage === 1 ? 3 : 6, hgt = p.stage === 1 ? .35 : .7;
         for (let k = 0; k < n; k++) { const leaf = new THREE.Mesh(new THREE.ConeGeometry(.12, hgt, 4), toon('#4fae4a')); leaf.position.set(Math.cos(k * 2.1) * .25, hgt / 2, Math.sin(k * 2.1) * .25); leaf.rotation.set(Math.sin(k) * .3, 0, Math.cos(k) * .3); pl.crop.add(leaf); }
