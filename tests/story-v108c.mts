@@ -80,5 +80,5 @@ export async function storyPicsCheck(b) {
   await P.page.evaluate(() => caches.delete('sv-story-pics'));
   const none = await show(); assert.ok(!none.drawn && none.actors > 0, 'no picture: the painted stage: ' + JSON.stringify(none));
   assert.deepEqual(P.errors, []); await P.ctx.close();
-  return `a drawn tale shows its own picture on every page (no actors over it), keeps its ${kept} pictures for offline and reads with them offline; with no picture the painted stage plays`;
+  return `a drawn tale shows its own picture on the picture stage (no actors over it), keeps its ${kept} pictures for offline and reads with them offline; with no picture the painted stage plays`;
 }
