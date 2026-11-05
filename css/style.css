@@ -3593,3 +3593,49 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 @media (orientation: landscape) and (max-height: 520px) {
   .gl .out-stage, .gl .n2-stage { height: 270px; }
 }
+/* (v1.08b fivescreens batch 2) on a short landscape screen (a sideways phone) the boards that stood one under the other
+   stand side by side: the picture or the board on the left, the words and the buttons on the right */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .tk2-wrap > .tk2-pipes { grid-column: 1; grid-row: 1 / span 4; }
+  .gl .tk2-wrap > :not(.tk2-board):not(.tk2-pipes):not(style) { grid-column: 2; }
+  /* Bịt mắt bắt dê: the scene, the round and the cue on the left, the buttons on the right */
+  .gl .goat-circle-game { width: 100%; grid-template-columns: auto auto; align-content: center; align-items: center; justify-content: center; column-gap: 16px; }
+  .gl .goat-circle-game > :not(.goat-controls):not(style) { grid-column: 1; }
+  .gl .goat-circle-game > .goat-controls { grid-column: 2; grid-row: 1 / span 3; flex-wrap: wrap; max-width: 300px; }
+  /* Cờ cá ngựa: the board on the left as high as the screen, the players, the words and the buttons on the right */
+  .gl .horse-race { width: 100%; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 6px 14px; }
+  .gl .horse-race > .horse-board { grid-column: 1; grid-row: 1 / span 6; width: min(340px, calc(100dvh - 60px)); }
+  .gl .horse-race > :not(.horse-board):not(style) { grid-column: 2; }
+  .gl .horse-race { grid-template-rows: repeat(5, auto) 1fr; align-content: center; }
+  .gl .horse-race > .horse-roster { grid-row: 1; } .gl .horse-race > .horse-status { grid-row: 2; } .gl .horse-race > .horse-actions { grid-row: 3; }
+  .gl .horse-race > .horse-moves { grid-row: 4; } .gl .horse-race > .horse-wait { grid-row: 5; } .gl .horse-race > .horse-rules-box { grid-row: 6; }
+  /* Trồng nụ trồng hoa: the picture on the left, the title, the level, the words and the button on the right */
+  .gl .tn-game { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 6px 14px; }
+  .gl .tn-game > .tn-picture { grid-column: 1; grid-row: 1 / span 6; }
+  .gl .tn-game > :not(.tn-picture):not(style) { grid-column: 2; justify-self: center; }
+  /* Tiến lên: the cards on the left, the buttons in a column on the right */
+  .gl .tl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; align-items: center; justify-items: center; }
+  .gl .tl > :not(.tl-btns):not(.tl-fly) { grid-column: 1; }
+  .gl .tl > .tl-btns { grid-column: 2; grid-row: 1 / span 4; flex-direction: column; }
+  /* Rangoli: the grid on the left, the tip and the colours on the right */
+  .gl .gl-stage:has(> .rg-grid) { display: grid; grid-template-columns: auto minmax(0, 260px); align-content: center; justify-content: center; gap: 8px 14px; }
+  .gl .gl-stage > .rg-grid { grid-column: 1; grid-row: 1 / span 2; }
+  .gl .gl-stage:has(> .rg-grid) > :not(.rg-grid) { grid-column: 2; }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl > .gl-stage { padding: 3px 6px; }
+  .gl .horse-race { gap: 4px 14px; padding: 2px 6px; }
+  .gl .horse-race .horse-player { padding: 2px 6px !important; line-height: 1.2; }
+  .gl .tl { gap: 4px 10px; padding: 6px 8px 8px; }
+  .gl .tl-table { min-height: 72px; padding: 4px; }
+}
+/* Đánh chuyền: each stick stays thin as drawn, but a finger's width can tap it (clear room either side) */
+.gl .ch-stick { box-sizing: content-box; padding: 0 11px; background-clip: content-box; box-shadow: none; filter: drop-shadow(0 4px 3px rgba(0, 0, 0, .2)); }
+.gl.little .ch-stick { padding: 0 21px; }
+/* (v1.08b fivescreens) a question and its row of answers (the frame's .choices) on a sideways phone: the question on the
+   left, the answers beside it (in two rows when they need to), so a long question never pushes them off the screen */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .gl-stage:has(> .choices):not(:has(> :nth-child(4))) { flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center; }
+  .gl .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > * { flex-shrink: 1; min-width: 0; max-height: 100%; }
+  .gl .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > .choices { flex-wrap: wrap; max-width: 62%; justify-content: center; }
+}

@@ -323,7 +323,8 @@ register({
     // later, or the months of the year
     const L = lv(api, { asks: ['tomorrow'] }, { asks: ['tomorrow', 'yesterday'] }, { asks: ['week', 'tomorrow', 'yesterday'] }, { asks: ['twoweeks', 'week', 'nextmonth', 'lastmonth'] });
     api.stage.dataset.lv = L.asks.join('+');
-    const cellCss = 'min-width:44px;min-height:52px;border:2px solid #3b2a4f;border-radius:10px;background:#fff;font:800 15px var(--font,sans-serif);color:#3b2a4f;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 2px';
+    // (v1.08b fivescreens) an under-5's day and month cards are 64 px, a finger's size for them
+    const cellCss = `min-width:${api.little ? 64 : 44}px;min-height:${api.little ? 64 : 52}px;` + 'border:2px solid #3b2a4f;border-radius:10px;background:#fff;font:800 15px var(--font,sans-serif);color:#3b2a4f;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 2px';
     const list: Round[] = distinct(rounds(api), () => {
       const ask = L.asks[pick(0, L.asks.length - 1)];
       if (ask === 'tomorrow' || ask === 'yesterday') {
