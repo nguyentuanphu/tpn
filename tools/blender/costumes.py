@@ -25,8 +25,8 @@ IN_M = ('#b97f55', '#15100c', '#0d0a08', '#2a1f18', '#24140a', '#4a2c18', '#1510
 # c: the costume's colours by part; body: the garment builder below; hat: the headwear (or ''); feet: bare, sandals, cloth or boots
 KIT = {
     # Vietnamese women
-    'vn-tuthan': dict(name='Áo tứ thân, yếm, váy đụp, khăn mỏ quạ', who='a village woman (Tấm, the mother, the wife)', g='f', size='adult', pal=VN_F, hair='lowbun', body='tuthan',
-                      c=dict(coat='#8a5a3c', yem='#e0603a', skirt='#2b2422', sash='#e8b84a', trim='#5e3a26'), hat='khanmoquat/3e302a', feet='bare'),
+    'vn-tuthan': dict(name='Áo tứ thân, yếm, váy đụp, khăn mỏ quạ, nón quai thao', who='a village woman (Tấm, the mother, the wife)', g='f', size='adult', pal=VN_F, hair='lowbun', body='tuthan',
+                      c=dict(coat='#8a5a3c', yem='#e0603a', skirt='#2b2422', sash='#e8b84a', trim='#5e3a26'), hat='quaithao/3e302a', feet='bare'),
     'vn-khanvan': dict(name='Áo tứ thân, khăn vấn, búi tóc', who='a mother or a grandmother', g='f', size='adult', pal=VN_F, hair='lowbun', body='tuthan',
                        c=dict(coat='#5e4636', yem='#f0d9a8', skirt='#2b2422', sash='#7fae5e', trim='#3e2c22'), hat='khanvan/3a2a22', feet='sandals'),
     'vn-yem': dict(name='Yếm, váy đụp, tóc búi', who='a young girl (Tấm, Cám, the youngest)', g='f', size='kid', pal=VN_KID, hair='lowbun', body='yem',
@@ -41,10 +41,12 @@ KIT = {
     'vn-boy': dict(name='Áo cánh, quần lửng, tóc chỏm', who='a village boy (Thánh Gióng as a boy, the youngest son)', g='m', size='kid', pal=VN_KID, hair='topknot', body='aonau',
                    c=dict(coat='#d8b47a', pants='#5e4636', sash='#b8463a'), hat='', feet='bare'),
     # kings, queens and generals
-    'vn-armour': dict(name='Giáp trụ', who='a general (Thánh Gióng grown, Sơn Tinh, Lê Lợi\'s soldiers)', g='m', size='adult', pal=VN_M, hair='topknot', body='armour',
-                      c=dict(plate='#6a7480', gold='#d4a23a', under='#b8332a', pants='#3a2a22', cape='#b8332a'), hat='warhelm/6a7480', feet='boots'),
-    'vn-king': dict(name='Hoàng bào, mũ miện', who='a king (Hùng Vương, the kings of the tales)', g='m', size='adult', pal=VN_M, hair='topknot', body='royal',
-                    c=dict(robe='#e8b62a', trim='#b8332a', belt='#3f8a6f', gold='#f2d16b'), hat='mien/22202a', feet='boots'),
+    'vn-armour': dict(name='Giáp trụ, nón dấu chóp đỏ', who='a soldier or a general (Thánh Gióng grown, Sơn Tinh, Lê Lợi\'s soldiers)', g='m', size='adult', pal=VN_M, hair='topknot', body='armour',
+                      c=dict(plate='#6a7480', gold='#d4a23a', under='#b8332a', pants='#3a2a22', cape='#b8332a'), hat='nondau/e8d8a8', feet='boots'),
+    'vn-king': dict(name='Hoàng bào, mũ xung thiên', who='a king (Hùng Vương, the kings of the tales)', g='m', size='adult', pal=VN_M, hair='topknot', body='royal',
+                    c=dict(robe='#e8b62a', trim='#b8332a', belt='#3f8a6f', gold='#f2d16b'), hat='xungthien/d4a23a', feet='boots'),
+    'vn-prince': dict(name='Áo bào hoàng tử, kim quan', who='a prince (Tấm\'s prince, Lang Liêu\'s brothers)', g='m', size='adult', pal=VN_M, hair='topknot', body='royal',
+                      c=dict(robe='#2f6fb0', trim='#f2d16b', belt='#f2d16b', gold='#f2d16b'), hat='kimquan/d4a23a', feet='boots'),
     'vn-queen': dict(name='Áo phượng, mũ phượng', who='a queen or a princess (Mỵ Nương, Tấm as queen)', g='f', size='adult', pal=VN_F, hair='lowbun', body='royal',
                      c=dict(robe='#c0392b', trim='#f2d16b', belt='#f2d16b', gold='#f2d16b'), hat='phoenix/f2d16b', feet='cloth'),
     # colonial Australia (The Magic Pudding)
@@ -85,8 +87,8 @@ for _id, _k in KIT.items():
     VILL['kit-' + _id] = {'g': _k['g'], 'size': _k['size'], 'pal': _k['pal'], 'hair': _k['hair'], 'top': (_k['body'], '#ffffff'), 'bottom': '#000000',
                          'kind': 'kit', 'hat': _k['hat'], 'shoes': _k['feet'], 'extra': (), 'kit': _k}
 # headwear the kit adds; the open ones leave the hair on top of the head
-KIT_HATS = ('khanmoquat', 'khanvan', 'khanxep', 'khandaurriu', 'warhelm', 'mien', 'phoenix', 'bonnet', 'guan', 'pagri')
-KIT_OPEN = ('khanvan', 'phoenix', 'guan')
+KIT_HATS = ('quaithao', 'nondau', 'xungthien', 'kimquan', 'khanmoquat', 'khanvan', 'khanxep', 'khandaurriu', 'warhelm', 'mien', 'phoenix', 'bonnet', 'guan', 'pagri')
+KIT_OPEN = ('khanvan', 'phoenix', 'guan', 'kimquan')
 KIT_FIT = {'kitPanel': (.034, .34), 'kitVest': (.03, 0)}   # coat panels over a long skirt: a wider margin and flare than the skirt's (.014, .22)
 
 def kc(part, d='#888888'):
@@ -132,7 +134,7 @@ def kit_hat(kind, col=None):
     """the kit's headwear, in head units (H): the front of the face is -y. Wraps are named hatBand so they keep their place (no settling)."""
     M = felt('kithat' + kind + (col or ''), col or '#2b2422', .85, .08)
     ring_ = lambda z, rx, ry, tilt=0.0: [H(math.sin(t) * rx, -math.cos(t) * ry, z + tilt * math.cos(t)) for t in lin(0, 2 * math.pi, 33)]
-    if kind == 'khanmoquat':   # khăn mỏ quạ: a dark square cloth folded in a triangle over the head, framing the face, its front edge pinched to a crow's-beak point over the forehead, the ends tied under the chin
+    if kind in ('khanmoquat', 'quaithao'):   # khăn mỏ quạ: a dark square cloth folded in a triangle over the head, framing the face, its front edge pinched to a crow's-beak point over the forehead
         bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=64, v_segments=40, radius=1)
         bmesh.ops.delete(bm, geom=[v for v in bm.verts if (v.co.y < -.12 and v.co.z < .5 - .35 * v.co.x * v.co.x) or v.co.z < -.9 or (v.co.y < .2 and v.co.z < -.62)], context='VERTS')
         bmesh.ops.transform(bm, matrix=Matrix.Translation(H(0, .05, .04)) @ Matrix.Diagonal((1.16 * R, 1.14 * R, 1.13 * R, 1)), verts=bm.verts)
@@ -140,9 +142,49 @@ def kit_hat(kind, col=None):
         beak = sphere('hatBand', M, H(0, -.95, .66), (.3 * R, .3 * R, .07 * R), 24, 12, (.25, 0, 0))   # the beak: a pointed flap over the forehead
         for v in beak.data.vertices:
             if v.co.y < 0: v.co.y *= 1.0 + .9 * (1 - min(1, abs(v.co.x) / .3 / R * 1.4))
-        for s in (-1, 1): tube('hatBand', M, [H(s * .9, -.3, -.6), H(s * .5, -.55, -.98), H(0, -.6, -1.08)], [.1 * R, .09 * R, .08 * R], 10)
-        sphere('hatBand', M, H(0, -.62, -1.1), (.15 * R, .1 * R, .11 * R), 12, 6)
-        for s in (-1, 1): tube('hatBand', M, [H(0, -.62, -1.12), H(s * .15, -.7, -1.4)], [(.07 * R, .03 * R), (.05 * R, .02 * R)], 8)
+        # (owner, 6 Nov 2026 AEDT: the ends tied under the chin looked like a black beard) the ends are tucked in at the back
+    if kind == 'quaithao':   # nón quai thao (Quan họ, Kinh Bắc): a wide flat palm-leaf hat over the khăn mỏ quạ, a low ring under it, and the long
+        # black silk straps (quai thao) hanging from its sides down past the shoulders to the chest, where their gold tassels meet (owner, 6 Nov 2026 AEDT)
+        LEAF = felt('quaithaoLeaf', '#e6d3a0', .8, .06); LACQ = mat('quaithaoUnder', '#3a2a1c', .45); SILK = mat('quaithaoSilk', '#1f1a1c', .35, sheen=.6); TAS = felt('quaithaoTassel', '#e8b84a')
+        top = HC + Vector((0, .05 * R, 1.12 * R))
+        lathe('hatBand', LEAF, [(0, .12 * R), (1.4 * R, .1 * R), (2.25 * R, .02 * R), (2.32 * R, -.02 * R)], 64, loc=top)        # the flat top
+        lathe('hatBand', LACQ, [(2.3 * R, -.03 * R), (1.4 * R, .06 * R), (0, .08 * R)], 64, loc=top)                             # its lacquered underside
+        lathe('hatBand', LEAF, [(1.02 * R, -.42 * R), (1.04 * R, .04 * R)], 40, loc=top)                                          # the ring (thành nón)
+        for r_ in (.8, 1.4, 1.9): tube('hatBand', felt('quaithaoRib', '#cdb47e'), [top + Vector((math.cos(t) * r_ * R, math.sin(t) * r_ * R, (.12 - .05 * r_) * R)) for t in lin(0, 2 * math.pi, 49)], .02 * R, 6, False)
+        for s in (-1, 1):   # the straps: from the ring's sides, outside the cheeks, down over the shoulders onto the chest, each with its gold tassel
+            pts = [top + Vector((s * 1.02 * R, -.1 * R, -.3 * R)), HC + Vector((s * 1.3 * R, -.35 * R, -.45 * R)), HC + Vector((s * 1.15 * R, -.85 * R, -1.9 * R)), HC + Vector((s * .85 * R, -1.15 * R, -2.75 * R))]
+            tube('hatBand', SILK, pts, [(.13 * R, .035 * R)] * len(pts), 8)
+            end = pts[-1]; sphere('hatBand', TAS, end, (.1 * R, .07 * R, .09 * R), 12, 6)
+            for k in range(5): tube('hatBand', TAS, [end + Vector(((k - 2) * .03 * R, 0, -.02 * R)), end + Vector(((k - 2) * .045 * R, -.02 * R, -.5 * R))], .02 * R, 6)
+    elif kind == 'nondau':   # nón dấu: the old soldiers' small conical hat of palm leaf, lacquered, with a red top (owner, 6 Nov 2026 AEDT)
+        LEAF = felt('nondauLeaf', col or '#e8d8a8', .7, .05); RED = felt('nondauRed', '#c62f2f', .6, .05); BAND = felt('nondauBand', '#b8332a')
+        top = HC + Vector((0, .02 * R, .62 * R))
+        lathe('hatCrown', LEAF, [(0, .72 * R), (.35 * R, .5 * R), (1.45 * R, .02 * R), (1.48 * R, -.04 * R), (1.3 * R, -.02 * R), (0, .5 * R)], 48, loc=top)
+        lathe('hatBand', RED, [(0, 1.02 * R), (.16 * R, .86 * R), (.3 * R, .62 * R), (.34 * R, .56 * R), (0, .6 * R)], 24, loc=top)   # the red top
+        tube('hatBand', BAND, [top + Vector((math.cos(t) * .6 * R, math.sin(t) * .6 * R, .3 * R)) for t in lin(0, 2 * math.pi, 33)], .035 * R, 8, False)
+        for s in (-1, 1): tube('hatBand', BAND, [top + Vector((s * .95 * R, 0, -.12 * R)), HC + Vector((s * .6 * R, -.25 * R, -.75 * R)), HC + Vector((0, -.5 * R, -1.0 * R))], .02 * R, 8, False)
+    elif kind == 'xungthien':   # mũ xung thiên (the king of the old tales, as in the Vietnamese fairy-tale films): a gold cap, a high crown at the back,
+        # two gold wings standing up behind it, a sun and a pearl in front, dragons along the band (owner, 6 Nov 2026 AEDT)
+        GOLD = mat('kitGold', '#d4a23a', .3, metal=.85); GOLDL = mat('kitGoldL', '#f2d16b', .25, metal=.9); RED = mat('kitRuby', '#c62f2f', .2); PEARL = mat('kitPearl', '#f6f1ea', .2)
+        lathe('hatCrown', GOLD, [(1.1 * R, .15 * R), (1.12 * R, .45 * R), (1.02 * R, .78 * R), (.6 * R, .95 * R), (0, .98 * R)], 40, loc=HC)
+        tube('hatBand', GOLDL, ring_(.2, 1.12, 1.1), .06 * R, 8, False)
+        c = lathe('hatBand', GOLD, [(.0, .6 * R), (.7 * R, .62 * R), (.75 * R, 1.1 * R), (.55 * R, 1.42 * R), (0, 1.5 * R)], 32, loc=HC + Vector((0, .35 * R, 0)))   # the high back crown
+        for s in (-1, 1):   # the two wings standing up behind
+            w = sphere('hatBand', GOLDL, H(s * .62, .62, 1.55), (.18 * R, .05 * R, .55 * R), 16, 8, (.15, s * .35, 0))
+            tube('hatBand', GOLD, [H(s * .62, .6, 1.05), H(s * .66, .62, 2.05)], .03 * R, 6)
+        sphere('hatBand', GOLDL, H(0, -1.1, .5), (.32 * R, .06 * R, .3 * R), 20, 10)   # the sun plate in front
+        sphere('hatBand', PEARL, H(0, -1.16, .52), (.1 * R,) * 3, 12, 6)
+        for k in range(8): a = k * math.pi / 4; sphere('hatBand', RED, H(math.cos(a) * .22, -1.15, .52 + math.sin(a) * .22), (.04 * R,) * 3, 8, 4)
+        for s in (-1, 1):   # a dragon along each side of the band: a curling gold body with a red eye
+            tube('hatBand', GOLDL, [H(s * .3, -1.06, .3), H(s * .7, -.85, .42), H(s * 1.0, -.45, .3), H(s * 1.12, .05, .45), H(s * 1.02, .45, .3)], [.06 * R, .07 * R, .06 * R, .05 * R, .03 * R], 10)
+            sphere('hatBand', RED, H(s * .35, -1.08, .36), (.04 * R,) * 3, 8, 4)
+    elif kind == 'kimquan':   # kim quan (a prince): a small gold crown over the topknot, shaped like a flame, a gold pin through it and a red jewel
+        GOLD = mat('kitGold', '#d4a23a', .3, metal=.85); RED = mat('kitRuby', '#c62f2f', .2)
+        knot = HC + Vector((0, .15 * R, 1.12 * R))
+        lathe('hatBand', GOLD, [(.0, -.12 * R), (.38 * R, -.12 * R), (.42 * R, .12 * R), (.3 * R, .4 * R), (.12 * R, .56 * R), (0, .62 * R)], 32, loc=knot)
+        tube('hatBand', GOLD, [knot + Vector((-.75 * R, 0, .1 * R)), knot + Vector((.75 * R, 0, .1 * R))], .03 * R, 8)
+        sphere('hatBand', RED, knot + Vector((0, -.4 * R, .08 * R)), (.08 * R, .05 * R, .1 * R), 12, 6)
+        tube('hatBand', GOLD, [knot + Vector((math.cos(t) * .42 * R, math.sin(t) * .42 * R, -.1 * R)) for t in lin(0, 2 * math.pi, 25)], .03 * R, 6, False)
     elif kind == 'khanvan':    # khăn vấn: a long cloth wound into a soft ring round the head (the hair inside)
         for j, (z, r, t) in enumerate(((.38, 1.12, .06), (.5, 1.1, .08), (.62, 1.06, .1))):
             tube('hatBand', felt('kitvan' + str(j % 2), col if j % 2 == 0 else '#4a3a2e'), ring_(z, r, r * .97, t), .13 * R, 12, False)

@@ -4,19 +4,22 @@ The period outfits, hair and headwear of the old tales, made once in Blender by 
 
 Make the pictures again: `blender -b -P tools/blender/costumes.py -- docs/characters-v108/costumes` (all, about 6 minutes each) or name some ids; `quick` for a fast look.
 
+Owner's corrections (6 Nov 2026 AEDT, like the costumes of the Vietnamese fairy-tale films on YouTube): soldiers wear the nón dấu with its red top, not a helmet; the king wears the gold mũ xung thiên and a prince the gold kim quan; the village girl's khăn mỏ quạ has no ties under the chin (they looked like a beard), and she wears the nón quai thao with its long straps and gold tassels.
+
 Rules kept: the four friends never wear these and never appear inside a tale (check `talecostume`); the First Nations stories keep their animals as themselves, in the agreed art style.
 
 | id | costume | who wears it | front | three-quarter |
 |---|---|---|---|---|
-| `vn-tuthan` | Áo tứ thân, yếm, váy đụp, khăn mỏ quạ | a village woman (Tấm, the mother, the wife) | ![vn-tuthan front](vn-tuthan-front.jpg) | ![vn-tuthan three-quarter](vn-tuthan-three-quarter.jpg) |
+| `vn-tuthan` | Áo tứ thân, yếm, váy đụp, khăn mỏ quạ, nón quai thao | a village woman (Tấm, the mother, the wife) | ![vn-tuthan front](vn-tuthan-front.jpg) | ![vn-tuthan three-quarter](vn-tuthan-three-quarter.jpg) |
 | `vn-khanvan` | Áo tứ thân, khăn vấn, búi tóc | a mother or a grandmother | ![vn-khanvan front](vn-khanvan-front.jpg) | ![vn-khanvan three-quarter](vn-khanvan-three-quarter.jpg) |
 | `vn-yem` | Yếm, váy đụp, tóc búi | a young girl (Tấm, Cám, the youngest) | ![vn-yem front](vn-yem-front.jpg) | ![vn-yem three-quarter](vn-yem-three-quarter.jpg) |
 | `vn-aothe` | Áo the, khăn xếp, quần trắng | a scholar, a mandarin, a father on a feast day (Lang Liêu) | ![vn-aothe front](vn-aothe-front.jpg) | ![vn-aothe three-quarter](vn-aothe-three-quarter.jpg) |
 | `vn-aonau` | Áo nâu, khăn đầu rìu | a farmer, a woodcutter (Chú Cuội), a fisherman | ![vn-aonau front](vn-aonau-front.jpg) | ![vn-aonau three-quarter](vn-aonau-three-quarter.jpg) |
 | `vn-kho` | Khố, búi tó | the Hùng kings' time: a hunter, a fisherman, a boatman | ![vn-kho front](vn-kho-front.jpg) | ![vn-kho three-quarter](vn-kho-three-quarter.jpg) |
 | `vn-boy` | Áo cánh, quần lửng, tóc chỏm | a village boy (Thánh Gióng as a boy, the youngest son) | ![vn-boy front](vn-boy-front.jpg) | ![vn-boy three-quarter](vn-boy-three-quarter.jpg) |
-| `vn-armour` | Giáp trụ | a general (Thánh Gióng grown, Sơn Tinh, Lê Lợi's soldiers) | ![vn-armour front](vn-armour-front.jpg) | ![vn-armour three-quarter](vn-armour-three-quarter.jpg) |
-| `vn-king` | Hoàng bào, mũ miện | a king (Hùng Vương, the kings of the tales) | ![vn-king front](vn-king-front.jpg) | ![vn-king three-quarter](vn-king-three-quarter.jpg) |
+| `vn-armour` | Giáp trụ, nón dấu chóp đỏ | a soldier or a general (Thánh Gióng grown, Sơn Tinh, Lê Lợi's soldiers) | ![vn-armour front](vn-armour-front.jpg) | ![vn-armour three-quarter](vn-armour-three-quarter.jpg) |
+| `vn-king` | Hoàng bào, mũ xung thiên | a king (Hùng Vương, the kings of the tales) | ![vn-king front](vn-king-front.jpg) | ![vn-king three-quarter](vn-king-three-quarter.jpg) |
+| `vn-prince` | Áo bào hoàng tử, kim quan | a prince (Tấm's prince, Lang Liêu's brothers) | ![vn-prince front](vn-prince-front.jpg) | ![vn-prince three-quarter](vn-prince-three-quarter.jpg) |
 | `vn-queen` | Áo phượng, mũ phượng | a queen or a princess (Mỵ Nương, Tấm as queen) | ![vn-queen front](vn-queen-front.jpg) | ![vn-queen three-quarter](vn-queen-three-quarter.jpg) |
 | `au-colonial-m` | Colonial bushman: shirt, waistcoat, neckerchief, akubra | Bill Barnacle, the bush travellers | ![au-colonial-m front](au-colonial-m-front.jpg) | ![au-colonial-m three-quarter](au-colonial-m-three-quarter.jpg) |
 | `au-colonial-f` | Colonial dress, apron and bonnet | a settler woman in the bush | ![au-colonial-f front](au-colonial-f-front.jpg) | ![au-colonial-f three-quarter](au-colonial-f-three-quarter.jpg) |

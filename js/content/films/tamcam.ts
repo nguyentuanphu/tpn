@@ -7,7 +7,7 @@ const TAM = LOOK({ kit: 'vn-yem', style: 'tunic', color: '#a88a6a', hairStyle: '
 const TAM_FINE = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#ffd23f', hairStyle: 'long', hat: 'none', skin: '#f0c098' });
 const CAM = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#c84a8a', hairStyle: 'buns', skin: '#e8b890' });
 const STEP = LOOK({ kit: 'vn-khanvan', style: 'aodai', color: '#5a3a5a', hairStyle: 'buns', skin: '#e0aa80' });
-const PRINCE = LOOK({ kit: 'vn-king', style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#e0aa80' });
+const PRINCE = LOOK({ kit: 'vn-prince', style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#e0aa80' });
 const slipper = () => mesh([P(new THREE.SphereGeometry(.12, 10, 8), '#e8332a', [0, .05, 0], [0, 0, 0], [.7, .45, 1.5]), P(new THREE.SphereGeometry(.04, 6, 5), '#ffd23f', [0, .1, .1])]);
 const pondAt = (S, x, z) => S.add(mesh([P(new THREE.CylinderGeometry(2, 2, .06, 24), '#5ab0d0', [0, .03, 0]), P(new THREE.CylinderGeometry(2.3, 2.3, .03, 24), '#a88a5a', [0, .01, 0])]), x, 0, z);
 

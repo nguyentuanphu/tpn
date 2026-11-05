@@ -705,8 +705,8 @@ FILMS.lantern_ch1 = { pages: [
 ] };
 
 // ---------------- The next films (Kid UI, 10 Oct): two tales and two guides ----------------
-const PRINCE1 = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#3b6fe0', hat: 'silkcap', skin: '#e0aa80' });
-const PRINCE2 = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#3a9a6a', hat: 'silkcap', skin: '#d8a070' });
+const PRINCE1 = LOOK({ kit: 'vn-prince', style: 'tunic', color: '#3b6fe0', hat: 'silkcap', skin: '#e0aa80' });
+const PRINCE2 = LOOK({ kit: 'vn-prince', style: 'tunic', color: '#3a9a6a', hat: 'silkcap', skin: '#d8a070' });
 const LIEU = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#b89a6a', hairStyle: 'short', skin: '#d8a070' });
 // the palace at Tết: blossom trees, red lanterns and the king on his step
 function palaceYard(S) {

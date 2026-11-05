@@ -20,5 +20,6 @@ A scheduled task wakes this chat at 0:40, 5:40, 10:40, 15:40 and 20:40 AEDT (the
 (filled in per part)
 
 ## Owner's decisions
+- 6 Nov 2026 AEDT (chat, with a picture of the kit): the costumes must look like the actors' costumes in the Vietnamese fairy-tale films on YouTube. Fixed in the Blender kit and in the game's films: soldiers wear the nón dấu with a red top (no black helmet); the king wears the gold mũ xung thiên; a new costume `vn-prince` with the gold kim quan (Tấm's prince, Lang Liêu's brothers); the village girl's khăn mỏ quạ lost its ties under the chin (they looked like a black beard) and she wears the nón quai thao with its straps and gold tassels.
 - 5 Nov 2026 AEDT (pop-up): the five Blender films: "Animate later on a GPU": make the scripts and pictures now; the animated films are rendered later on a machine with a graphics card (the owner's or a render service).
 - 5 Nov 2026 AEDT (chat): a scheduled task resumes the work after each usage reset (every 5 hours from 12:40 am AEDT).

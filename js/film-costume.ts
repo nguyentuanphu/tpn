@@ -23,25 +23,32 @@ const brown = (c: string) => BROWNS[[...String(c)].reduce((a, ch) => a + ch.char
 const bare = (L: Look) => !L.hat || L.hat === 'none';
 
 // ---------- pieces worn on the head (the head's own units: a ball of radius .5, the face towards +z) ----------
+const KHAN = () => [P(Sph(.6, 20, 12, H + .95, PI * 2 - 1.9, 0, PI * .72), C.khan, [0, .02, -.02]), P(Sph(.6, 20, 6, 0, PI * 2, 0, PI * .26), C.khan, [0, .02, -.02]), P(Cone(.16, .3, 4), C.khan, [0, .46, .44], [H + .5, 0, 0], [1, 1, .35])];
 const HEAD: Record<string, (L: Look) => Part[]> = {
-  // khăn mỏ quạ: a dark cloth over the head and down the cheeks, its front edge pinched to a crow's-beak point, tied under the chin
-  khanmoquat: () => [P(Sph(.6, 20, 12, H + .95, PI * 2 - 1.9, 0, PI * .72), C.khan, [0, .02, -.02]), P(Sph(.6, 20, 6, 0, PI * 2, 0, PI * .26), C.khan, [0, .02, -.02]),
-    P(Cone(.16, .3, 4), C.khan, [0, .46, .44], [H + .5, 0, 0], [1, 1, .35]), P(Sph(.07), C.khan, [0, -.5, .32]), P(Box(.05, .16, .02), C.khan, [.04, -.6, .34], [0, 0, .3])],
+  // khăn mỏ quạ: a dark cloth over the head and down the cheeks, its front edge pinched to a crow's-beak point
+  // (owner, 6 Nov 2026 AEDT: the ends tied under the chin looked like a black beard: they are tucked in at the back)
+  khanmoquat: () => KHAN(),
+  // nón quai thao over the khăn mỏ quạ: a wide flat palm-leaf hat on a low ring, its black silk straps hanging down to the
+  // chest with gold tassels (owner, 6 Nov 2026 AEDT)
+  quaithao: () => [...KHAN(), P(Cyl(1.15, 1.18, .04, 32), '#e6d3a0', [0, .66, -.02]), P(Cyl(1.14, 1.14, .012, 32), '#3a2a1c', [0, .635, -.02]), P(Cyl(.52, .54, .2, 24), '#e6d3a0', [0, .54, -.02]),
+    P(Tor(.8, .012), '#cdb47e', [0, .685, -.02], [H, 0, 0]), ...[-1, 1].flatMap(s => [P(Box(.09, 1.5, .02), '#1f1a1c', [s * .62, -.2, .22], [-.25, 0, s * .1]), P(Cone(.07, .26, 6), '#e8b84a', [s * .55, -1.05, .45], [0, 0, 0])])],
+  // nón dấu: the old soldiers' small conical hat of palm leaf with a red top (owner, 6 Nov 2026 AEDT)
+  nondau: () => [P(Cone(.78, .42, 24), '#e8d8a8', [0, .62, 0]), P(Cone(.16, .22, 12), '#c62f2f', [0, .86, 0]), P(Tor(.32, .025), '#b8332a', [0, .7, 0], [H, 0, 0]),
+    P(Box(.03, .5, .02), '#b8332a', [.44, .2, .1], [0, 0, .25]), P(Box(.03, .5, .02), '#b8332a', [-.44, .2, .1], [0, 0, -.25])],
+  // mũ xung thiên: the king's gold cap of the old tales, a high crown at the back, two gold wings standing up behind it,
+  // a sun with a pearl in front and dragons along the band (owner, 6 Nov 2026 AEDT: as in the Vietnamese fairy-tale films)
+  xungthien: () => [P(Cyl(.5, .53, .32, 24), C.gold, [0, .32, 0]), P(Tor(.52, .03), '#f2d16b', [0, .18, 0], [H, 0, 0]), P(Sph(.36, 16, 10), C.gold, [0, .56, -.16], [0, 0, 0], [1, 1.2, .8]),
+    P(Box(.05, .46, .2), '#f2d16b', [.3, .86, -.28], [0, 0, -.3]), P(Box(.05, .46, .2), '#f2d16b', [-.3, .86, -.28], [0, 0, .3]),
+    P(Cyl(.13, .13, .02, 18), '#f2d16b', [0, .32, .52], [H, 0, 0]), P(Sph(.05, 8, 6), '#f6f1ea', [0, .32, .54]),
+    P(Tor(.2, .025, PI * .8), '#f2d16b', [.3, .25, .42], [0, -.6, 0]), P(Tor(.2, .025, PI * .8), '#f2d16b', [-.3, .25, .42], [0, .6, PI])],
+  // kim quan: a prince's small gold crown over the topknot, a gold pin through it and a red jewel
+  kimquan: () => [P(Cone(.14, .26, 12), C.gold, [0, .66, -.06]), P(Cyl(.012, .012, .42, 6), C.gold, [0, .62, -.06], [0, 0, H]), P(Sph(.035, 8, 6), '#c62f2f', [0, .64, .08])],
   // khăn vấn: a long cloth wound into a soft ring round the head
   khanvan: () => [P(Tor(.5, .1), C.van, [0, .2, -.02], [H - .2, 0, 0]), P(Tor(.46, .09), '#4a3a2e', [0, .32, -.04], [H - .25, 0, 0])],
   // khăn xếp: a ready-folded black turban, neat folds and a closed top
   khanxep: () => [0, 1, 2].map(i => P(Tor(.5 - i * .015, .07), C.xep, [0, .12 + i * .11, 0], [H - .05 * (i % 2), 0, 0])).concat([P(Cyl(.46, .48, .05), C.xep, [0, .4, 0]), P(Box(.5, .02, .02), '#3a3646', [0, .25, .5], [0, 0, .2])]),
   // khăn đầu rìu: a cloth wound round the head, the knot standing up over the forehead like an axe head
   khandaurriu: () => [P(Tor(.5, .08), C.van, [0, .2, 0], [H - .1, 0, 0]), P(Sph(.5, 16, 8, 0, PI * 2, 0, PI * .4), C.van, [0, .12, 0]), P(Box(.26, .18, .05), C.van, [0, .48, .42], [-.5, 0, 0]), P(Sph(.06), C.van, [0, .36, .5])],
-  // a general's helmet: an iron dome, a gold rim, a spike and a red plume
-  warhelm: () => [P(Sph(.58, 18, 10, 0, PI * 2, 0, PI * .52), C.iron, [0, .04, 0]), P(Tor(.57, .035), C.gold, [0, .06, 0], [H, 0, 0]), P(Cone(.04, .22), C.gold, [0, .72, 0]),
-    P(Sph(.12), C.red, [0, .74, -.2], [0, 0, 0], [.7, .7, 1.8]), P(Box(.08, .3, .2), C.iron, [.55, -.08, 0]), P(Box(.08, .3, .2), C.iron, [-.55, -.08, 0])],
-  // mũ miện: a black cap, a gold band, a flat board on top with hanging beads in front and behind
-  mien: () => {
-    const p = [P(Cyl(.46, .5, .32), C.xep, [0, .32, 0]), P(Tor(.5, .03), C.gold, [0, .18, 0], [H, 0, 0]), P(Box(1.0, .03, .62), C.xep, [0, .5, 0]), P(Box(1.02, .012, .64), C.gold, [0, .52, 0])];
-    for (let i = 0; i < 7; i++) for (const z of [.3, -.3]) for (let k = 0; k < 3; k++) p.push(P(Sph(.03, 6, 4), k % 2 ? '#c62f2f' : '#f2d16b', [-.42 + i * .14, .46 - k * .08, z]));
-    return p;
-  },
   // mũ phượng: a gold band with upright points and rubies, a phoenix in front, two wings at the sides
   phoenix: () => {
     const p = [P(Tor(.5, .04), C.gold, [0, .26, 0], [H - .08, 0, 0]), P(Sph(.09), C.gold, [0, .48, .44], [0, 0, 0], [1, 1.4, .6]), P(Box(.04, .16, .32), C.gold, [.5, .4, 0], [.4, 0, 0]), P(Box(.04, .16, .32), C.gold, [-.5, .4, 0], [.4, 0, 0])];
@@ -77,7 +84,7 @@ const withHat = (L: Look, hw: string, replace: string[] = []) => bare(L) || repl
 
 export const KIT: Record<string, Kit> = {
   // áo tứ thân over a yếm, váy đụp to the ankle, a sash; the khăn mỏ quạ (or the long hair of a fairy, a young woman)
-  'vn-tuthan': { base: L => under(L, Object.assign({ style: 'aodai' }, L.hairStyle === 'long' ? {} : Object.assign(withHat(L, 'khanmoquat'), bare(L) ? { hairStyle: 'short' } : {}))),
+  'vn-tuthan': { base: L => under(L, Object.assign({ style: 'aodai' }, L.hairStyle === 'long' ? {} : Object.assign(withHat(L, 'quaithao'), bare(L) ? { hairStyle: 'short' } : {}))),
     dress: (A, L) => add(A.torso, [longSkirt(C.skirt, .44, .17, .25), yem(L.kc || C.yem), P(Box(.014, .26, .012), C.trim, [.07, .86, .15], [0, 0, -.3]), P(Box(.014, .26, .012), C.trim, [-.07, .86, .15], [0, 0, .3]), ...sash(C.sash)]) },
   'vn-khanvan': { base: L => under(L, Object.assign({ style: 'aodai' }, withHat(L, 'khanvan'), bare(L) ? { hairStyle: 'short' } : {})),
     dress: (A, L) => add(A.torso, [longSkirt(C.skirt, .44, .17, .25), yem(L.kc || '#f0d9a8'), ...sash('#7fae5e')]) },
@@ -98,13 +105,16 @@ export const KIT: Record<string, Kit> = {
     dress: (A, L) => { const k = L.kc || '#8a5a36'; recolour(A.legL, '#2f3a5a', k); recolour(A.legR, '#2f3a5a', k);
       add(A.torso, [P(Cyl(.165, .17, .14), k, [0, .6, 0], [0, 0, 0], [1.05, 1, .88]), P(Box(.13, .22, .02), k, [0, .47, .15]), P(Box(.13, .2, .02), k, [0, .48, -.15]), P(Tor(.17, .012), '#c9a36a', [0, .66, 0], [H, 0, 0], [1.05, .88, 1])]);
       for (const a of [A.armL, A.armR]) add(a, [P(Tor(.055, .012), '#c9a36a', [0, -.12, 0], [H, 0, 0])]); } },
-  // giáp: an iron breastplate with a gold chest mirror, plates over the hips, shoulder guards, the helmet
-  'vn-armour': { base: L => under(L, Object.assign({ style: 'tunic' }, withHat(L, 'warhelm', ['silkcap']))),
+  // giáp: an iron breastplate with a gold chest mirror, plates over the hips, shoulder guards, the nón dấu with its red top
+  'vn-armour': { base: L => under(L, Object.assign({ style: 'tunic' }, withHat(L, 'nondau', ['silkcap']))),
     dress: (A) => { add(A.torso, [P(Cyl(.178, .172, .27, 20), C.iron, [0, .82, 0], [0, 0, 0], [1.12, 1, .86]), P(Cyl(.055, .055, .012, 16), C.gold, [0, .86, .155], [H, 0, 0]), P(Cyl(.2, .25, .16, 10, true), C.iron, [0, .5, 0], [0, 0, 0], [1, 1, .9]), P(Tor(.18, .02), C.gold, [0, .66, 0], [H, 0, 0], [1.1, .86, 1])]);
       for (const a of [A.armL, A.armR]) add(a, [P(Sph(.08, 12, 8, 0, PI * 2, 0, PI * .6), C.iron, [0, .01, 0], [0, 0, 0], [1.2, .9, 1.15])]); } },
-  // hoàng bào: a long robe to the feet, a gold emblem, a jade belt hung low, wide sleeves, the mũ miện
-  'vn-king': { base: L => under(L, Object.assign({ style: 'aodai' }, withHat(L, 'mien', ['crown']), { hairStyle: 'short' })),
+  // hoàng bào: a long robe to the feet, a gold emblem, a jade belt hung low, wide sleeves, the mũ xung thiên
+  'vn-king': { base: L => under(L, Object.assign({ style: 'aodai' }, withHat(L, 'xungthien', ['crown']), { hairStyle: 'short' })),
     dress: (A, L) => { add(A.torso, [robeToFeet(L.color), collar(C.red), P(Cyl(.06, .06, .012, 18), C.gold, [0, .86, .155], [H, 0, 0]), P(Tor(.2, .018), C.jade, [0, .62, .02], [H + .2, 0, 0], [1.05, .9, 1])]); sleeves(A, L.color); } },
+  // a prince: a robe to the feet in the film's colour, gold trim and sash, wide sleeves, the kim quan over a topknot
+  'vn-prince': { base: L => under(L, Object.assign({ style: 'aodai', hairStyle: 'short' }, bare(L) || ['crown', 'silkcap'].includes(L.hat) ? { hat: 'none', kitHat: 'kimquan', kitHair: 'topknot' } : {})),
+    dress: (A, L) => { add(A.torso, [robeToFeet(L.color), collar(C.gold), P(Cyl(.05, .05, .012, 18), C.gold, [0, .86, .155], [H, 0, 0]), ...sash(C.gold, .66)]); sleeves(A, L.color); } },
   'vn-queen': { base: L => under(L, Object.assign({ style: 'aodai' }, withHat(L, 'phoenix', ['crown']))),
     dress: (A, L) => { add(A.torso, [robeToFeet(L.color), collar(C.gold), P(Cyl(.05, .05, .012, 18), C.gold, [0, .86, .155], [H, 0, 0]), ...sash(C.gold, .68)]); sleeves(A, L.color); } },
   // colonial Australia: a cream shirt, a waistcoat in the film's colour, a red neckerchief (the akubra stays)
