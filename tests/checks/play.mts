@@ -134,7 +134,7 @@ await check('shop', async () => {
       out.wardClear = chips.every(c => !hit(c, dn)) && chips.every((c, k) => chips.every((d, j) => j <= k || !hit(c, d))) && wd.scrollWidth <= wd.clientWidth + 1;
       const grid = wd.querySelector('.wgrid').getBoundingClientRect();
       out.wardRowsFit = [...wd.querySelectorAll('.wit')].every(c => { const z = c.getBoundingClientRect(); return z.left >= grid.left - 1 && z.right <= grid.right + 1; }); }
-    out.wardrobe = !!wd && wd.querySelectorAll('[data-wtab]').length === 6 && !!wd.querySelector('.wbig') && !!wd.querySelector('[data-v="tiara"]') && !wd.querySelector('[data-v="dragon"]') && !/\bRemove\b/.test(wd.textContent);
+    out.wardrobe = !!wd && wd.querySelectorAll('[data-wtab]').length === 7 && !!wd.querySelector('.wbig') && !!wd.querySelector('[data-v="tiara"]') && !wd.querySelector('[data-v="dragon"]') && !/\bRemove\b/.test(wd.textContent);
     wd.querySelector('.wit.on[data-k="hat"]').click(); await w(200); out.off = p.look.hat === 'none';
     document.querySelector('.wardrobe.kward .x').click(); await w(300);
     // a child who already wore wings and a crown keeps them (r79: a girl, in her own set's version of the crown)
@@ -160,7 +160,8 @@ await check('shop', async () => {
   if (!r.offRoad || !r.nearMarket || !r.dry || !r.tap) bad.push('the shop is not by the market on dry ground off the road ' + JSON.stringify(r.spot));
   if (!r.bagOpens || !r.bagShopBtn) bad.push('the Bag button does not open the backpack, or no Shop tab right after Backpack (or a Shop button still in the dock) ' + JSON.stringify({ o: r.bagOpens, b: r.bagShopBtn }));
   if (!r.there || !r.opened) bad.push('the shop button in the bag did not open the shop right there (no travel)');
-  if (r.tabs !== 7 || !r.noBagTab || !r.pics || r.small) bad.push(`the shop card: ${r.tabs} tabs, pictures ${r.pics}, ${r.small} buttons under 44 px`);
+  // (v1.08b friends) 9 tabs: the seven kinds (glasses and masks added), the friend's outfits and the mirror
+  if (r.tabs !== 9 || !r.noBagTab || !r.pics || r.small) bad.push(`the shop card: ${r.tabs} tabs, pictures ${r.pics}, ${r.small} buttons under 44 px`);
   if (!r.bought || !r.poorKept || !r.closed) bad.push('buying ' + JSON.stringify({ bought: r.bought, poor: r.poorKept, closed: r.closed }));
   if (r.little) bad.push(`${r.little} buttons under 64 px for an under-5`);
   if (!r.wardrobe || !r.off) bad.push('the wardrobe does not show what is owned');
@@ -170,7 +171,7 @@ await check('shop', async () => {
   if (!r.offBag || !r.offStall || !r.offWard) bad.push('the Studio switch did not put the old Bag and wardrobe back ' + JSON.stringify(r));
   if (errs.length) bad.push(...errs.slice(0, 2));
   if (bad.length) throw new Error(bad.join('; '));
-  return `the shop at ${r.spot} by the market, off the road; the Bag opens the backpack and the Shop tab right after Backpack opens the shop without travel; 7 picture tabs, coin prices, 64 px for under-5s; bought ${r.boughtId}, could not buy without coins; the wardrobe; worn things kept; every piece drawn in 3D (at most ${Math.max(...Object.values(r.drawn))} extra parts); the switch puts the old Bag back`;
+  return `the shop at ${r.spot} by the market, off the road; the Bag opens the backpack and the Shop tab right after Backpack opens the shop without travel; 9 picture tabs, coin prices, 64 px for under-5s; bought ${r.boughtId}, could not buy without coins; the wardrobe; worn things kept; every piece drawn in 3D (at most ${Math.max(...Object.values(r.drawn))} extra parts); the switch puts the old Bag back`;
 });
 
 // (round S) surprises: at most 3 a session, only when free, never missed (they follow the child), each gives a sticker
@@ -887,7 +888,7 @@ await check('r79clothes', async () => {
     await P.page.waitForSelector('.mirror .wbig'); await P.page.waitForTimeout(400);
     const mr = await P.page.evaluate(() => { const M = document.querySelector('.mirror'), img = M.querySelector('.wbig').getBoundingClientRect();
       return { img: img.width, tabs: M.querySelectorAll('[data-wtab]').length, remove: /\bRemove\b|Bỏ ra/.test(M.textContent), items: [...M.querySelectorAll('.wit')].map(b => b.dataset.v) }; });
-    if (mr.img < 150) bad.push('the mirror picture is small (' + Math.round(mr.img) + ' px)'); if (mr.tabs !== 6) bad.push('the mirror should have 6 tabs'); if (mr.remove) bad.push('the mirror still says Remove');
+    if (mr.img < 150) bad.push('the mirror picture is small (' + Math.round(mr.img) + ' px)'); if (mr.tabs !== 7) bad.push('the mirror should have 7 tabs'); // (v1.08b friends: glasses and masks are the seventh kind) if (mr.remove) bad.push('the mirror still says Remove');
     if (mr.items.includes('cap')) bad.push('the boys\' cap shows in her mirror'); if (!mr.items.includes('bow')) bad.push('her bow is missing from the mirror');
     const t = await P.page.evaluate(async () => { const p = __sv.heroes[0].profile, w = ms => new Promise(r => setTimeout(r, ms)), pick = () => [...document.querySelectorAll('.mirror .wit')].find(b => b.dataset.v === 'sunhat');
       pick().click(); await w(200); const on = p.look.hat, tick = !!pick().querySelector('.ktick'); pick().click(); await w(200); const off = p.look.hat;
@@ -921,7 +922,7 @@ await check('r79clothes', async () => {
     fs.mkdirSync('out/r79', { recursive: true }); await P.page.screenshot({ path: `out/r79/clothes-${dev}.png` });
     rows.push(dev); ok(!bad.length, dev + ': ' + bad.join('; ')); ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
   }
-  return rows.join(', ') + ': mirror (big picture, 6 tabs, own set only, tap on/off, no Remove, Done keeps the Shop\'s place); boys\' collection marked as gifts; gift box given to a brother; small "Eat it?"; Bag things explain themselves; Pad game returns to the Pad';
+  return rows.join(', ') + ': mirror (big picture, 7 tabs, own set only, tap on/off, no Remove, Done keeps the Shop\'s place); boys\' collection marked as gifts; gift box given to a brother; small "Eat it?"; Bag things explain themselves; Pad game returns to the Pad';
 });
 
 // (owner, 30 Oct 2026 AEDT: "where do I manage accessories for companions?") the companion's hats in the shop and the mirror
@@ -1039,16 +1040,16 @@ await check('friendswap', async () => {
 });
 
 await check('wearfit', async () => {
-  // every hat, neck, back and shoe the shop sells (and the passport and tester hats) is drawn on each of the four friends
+  // every hat, pair of glasses, neck, back and shoe the shop sells (and the passport and tester hats) is drawn on each of the four friends
   // with no error, the hat sits on the head (above the eyes, not floating far above), and the back items sit behind
   const r = await (async () => { const P = await open(b, { w: 900, h: 700, play: false });
     const out = await P.page.evaluate(async () => {
       const A = await import('/js/avatar.js'), C = await import('/js/content/shop.js'), F = await import('/js/content/friends.js'), D = await import('/js/data.js'), THREE = (await import('/js/gfx.js')).THREE;
-      const bad = [], n = { hat: 0, neck: 0, back: 0, feet: 0 }, box = a => { a.root.updateMatrixWorld(true); return new THREE.Box3().setFromObject(a.head || a.root); };
+      const bad = [], n = { hat: 0, face: 0, neck: 0, back: 0, feet: 0 }, box = a => { a.root.updateMatrixWorld(true); return new THREE.Box3().setFromObject(a.head || a.root); };
       const hats = [...C.CLOTHES.filter(it => it.slot === 'hat').map(it => it.id), ...(D.REWARD_HATS || [])];
       for (const f of F.FRIEND_IDS) {
         const base = { set: F.FRIENDS[f].set, friend: f, skin: '#f6c7a5' }, plain = A.buildAvatar(base), h0 = box(plain);
-        for (const slot of ['hat', 'neck', 'back', 'feet']) for (const id of (slot === 'hat' ? hats : C.CLOTHES.filter(it => it.slot === slot).map(it => it.id))) {
+        for (const slot of ['hat', 'face', 'neck', 'back', 'feet']) for (const id of (slot === 'hat' ? hats : C.CLOTHES.filter(it => it.slot === slot).map(it => it.id))) {
           try { const a = A.buildAvatar({ ...base, [slot]: id }); n[slot]++;
             if (slot === 'hat') { const hb = box(a); if (hb.max.y > h0.max.y + .9 || hb.max.y < h0.max.y - .05) bad.push(`${f} ${id}: hat top ${hb.max.y.toFixed(2)} vs head ${h0.max.y.toFixed(2)}`); }
           } catch (e) { bad.push(`${f} ${slot} ${id}: ${e.message}`); }
@@ -1058,7 +1059,7 @@ await check('wearfit', async () => {
     });
     const errs = P.errors; await P.ctx.close(); return { ...out, errs }; })();
   ok(!r.bad.length && !r.errs.length && r.n.hat > 18, JSON.stringify(r).slice(0, 1500));
-  return `on Finn, Sol, Clara and Lumi: ${r.n.hat / 4} hats, ${r.n.neck / 4} neck things, ${r.n.back / 4} backs and ${r.n.feet / 4} shoes, all drawn and in place`;
+  return `on Finn, Sol, Clara and Lumi: ${r.n.hat / 4} hats, ${r.n.face / 4} glasses and masks, ${r.n.neck / 4} neck things, ${r.n.back / 4} backs and ${r.n.feet / 4} shoes, all drawn and in place`;
 });
 await check('friendmodel', async () => {
   // the friends' light 3D models (models/<id>.glb): each loads after the start, is small (meshopt, under 500 KB), draws in a
@@ -1098,4 +1099,26 @@ await check('friendmodel', async () => {
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
   return `${sizes.map(n => Math.round(n / 1024)).join(', ')} KB; ${['finn', 'sol', 'clara', 'lumi'].map(id => `${id} ${r[id].tris} triangles in ${r[id].draws} parts`).join(', ')}; skin tone, joints and moods follow; the cap is worn; without the files the code person stays`;
 });
+await check('friendoutfits', async () => {
+  // the shop's Outfits tab (a child with a friend): the friend's four outfits, the everyday one worn free, one tap shows a
+  // price, a second buys it with game coins and puts it on; the character is drawn in it; glasses are bought and worn
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, p = G.heroes[0].profile, S = await import('/js/state.js'), F = await import('/js/content/friends.js');
+    S.farm.coins = 500; G.shop.openShop(0); await w(400);
+    const card = document.querySelector('.modal.shopk .card'); (card.querySelector('[data-stab]') as HTMLElement).click(); await w(200);
+    const ids = [...card.querySelectorAll('[data-suit]')].map((e: HTMLElement) => e.dataset.suit), f = F.friendOf(p.look), aodai = F.suitId(f, 'aodai');
+    (card.querySelector(`[data-suit="${aodai}"]`) as HTMLElement).click(); await w(150); const afterOne = { coins: S.farm.coins, worn: p.look.suit };
+    (card.querySelector(`[data-suit="${aodai}"]`) as HTMLElement).click(); await w(300);
+    const bought = { coins: S.farm.coins, worn: p.look.suit, owned: (p.owned.suits || []).includes(aodai), drawn: G.heroes[0].av.look.style };
+    (card.querySelector(`[data-suit="${F.suitId(f, 'everyday')}"]`) as HTMLElement).click(); await w(200); const back = p.look.suit;
+    (card.querySelector('[data-tab="face"]') as HTMLElement).click(); await w(200); const faces = [...card.querySelectorAll('.kitem')].map((e: HTMLElement) => e.dataset.id);
+    return { ids, f, afterOne, bought, back, faces };
+  });
+  const errs = P.errors; await P.ctx.close();
+  const good = r.ids.length === 4 && r.afterOne.coins === 500 && r.afterOne.worn !== F_AODAI(r) && r.bought.coins === 380 && r.bought.worn === `${r.f}-aodai` && r.bought.owned && r.bought.drawn === 'aodai' && r.back === `${r.f}-everyday` && r.faces.length >= 3 && !errs.length;
+  ok(good, JSON.stringify({ r, errs }));
+  return `${r.f}: ${r.ids.length} outfits; the áo dài bought on the second tap (120 coins) and drawn; back to everyday free; ${r.faces.length} glasses and masks in the shop`;
+});
+const F_AODAI = r => `${r.f}-aodai`;
 // ---- (v1.08b friends) end ----

@@ -140,6 +140,7 @@ function pose(a, t) {
   // the mouth moves while the character speaks
   const m = t < a.talkUntil ? (Math.sin(t * 16) > 0 ? 'o' : a.mood === 'sad' ? 'sad' : 'smile') : a.mood;
   if (a._face !== m) { a._face = m; A.faceMat.map = face(a.look, m); A.faceMat.needsUpdate = true; }
+  if (A.model) (A.life || (A.life = {} as any)).mood = m; // (v1.08b friends) a friend's model shows the same mood on its own face
 }
 
 // ---------- the renderer (one for the whole session) ----------
