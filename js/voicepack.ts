@@ -168,6 +168,7 @@ const valleyBuilt = async () => { for (let i = 0; i < 240 && !(window.__sv && wi
 const rest = ms => new Promise(r => setTimeout(r, ms));
 async function checkPack() {
   if (!PACK) return;
+  if (!autoPackOn()) return; // (v1.08c voices: a grown-up moved to Automatic, voices online: the download stops here)
   if (manualSave) { recheck = true; return; }
   if (checking) { recheck = true; return; }
   checking = true; recheck = false;

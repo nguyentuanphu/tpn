@@ -27,7 +27,7 @@ async function openPack(b, view: { w: number, h: number, touch: boolean }, lang:
     await ctx.route('**/voices/manifest-*.json', r => { const L = /manifest-(\w+)/.exec(r.request().url())[1];
       return r.fulfill({ json: { version: 2, language: L, made: 'offline-levels', signature: 'offline-levels-' + L, formats: ['mp3', 'opus'], areas: 1, lines: L === 'en' ? Object.fromEntries(all.map(h => [h, 'f'])) : {}, other: {}, tpl: {}, cast: {}, voices: {} } }); });
     await ctx.route('**/voices/manifest.json', r => r.fulfill({ status: 404, body: '' }));
-    await ctx.route(/\/voices\/en\/f\/ol\w+\.(mp3|opus)$/, r => { requests.push(r.request().url()); return r.fulfill({ contentType: 'audio/ogg', body: Buffer.alloc(2000, 1) }); });
+    await ctx.route(/\/voices\/en\/f\/ol\w+\.(mp3|opus)$/, r => { requests.push(r.request().url()); return r.fulfill({ contentType: 'audio/ogg', body: Buffer.alloc(40000, 1) }); });
   } });
   await clear(P.page);
   await P.page.evaluate(async () => { (window as any).__sv.paused = true; const V = await import(String('/js/voice.js')); for (let i = 0; i < 80 && !V.voicePack()?.signatures?.en; i++) await new Promise(r => setTimeout(r, 250)); });
@@ -43,6 +43,9 @@ const openSound = async P => {
   await P.page.waitForFunction(() => /MB/.test(document.querySelector('#xLvlInfo')?.textContent || '') && !/…/.test(document.querySelector('[data-sz="light"]')?.textContent || ''), null, { timeout: 20000 });
 };
 const waitKeys = async (P, test: (ks: ReturnType<typeof name>[]) => boolean, ms = 60000) => { let last = null; for (let t = 0; t < ms / 500; t++) { last = (await kept(P)).keys.map(name); if (test(last)) return last; await P.page.waitForTimeout(500); } return last; };
+// wait for the "Freed" line; on a timeout say what the line says instead
+const waitFreed = async P => { try { await P.page.waitForFunction(() => /Freed/.test(document.querySelector('#xLvlInfo')?.textContent || ''), null, { timeout: 30000 }); }
+  catch (e) { await P.page.screenshot({ path: 'out/offlinelevels-nofreed.png' }); throw new Error('no "Freed" line: ' + await P.page.evaluate(async () => document.querySelector('#xLvlInfo')?.textContent + ' | on: ' + document.querySelector('.offlvl-b.on')?.getAttribute('data-lvl') + ' | level ' + (await import(String('/js/state.js'))).settings.offlineLevel + ' | infos ' + document.querySelectorAll('#xLvlInfo').length)); } };
 const enter = (P, place: string) => P.page.evaluate(async place => { const { events } = await import(String('/js/core/events.js')); events.emit('PlayerEnteredVillage', { playerId: 'player:test', villageId: 'place:' + place }); }, place);
 
 export async function offlineLevelsCheck(b) {
@@ -69,7 +72,7 @@ export async function offlineLevelsCheck(b) {
   // 2. a device on MP3 that keeps everything moves to Light
   const { P, requests } = await openPack(b, { w: 390, h: 844, touch: true }, 'en');
   try {
-    await P.page.evaluate(async all => { const s = (await import(String('/js/voicestore.js'))).voiceStore('sv-voices'); for (const h of all) await s.add(`voices/en/f/${h}.mp3`, new Uint8Array(4000).buffer); await s.flush(); }, all);
+    await P.page.evaluate(async all => { const s = (await import(String('/js/voicestore.js'))).voiceStore('sv-voices'); for (const h of all) await s.add(`voices/en/f/${h}.mp3`, new Uint8Array(40000).buffer); await s.flush(); }, all);
     const before = await kept(P);
     ok(before.keys.length === all.length, 'the made-up MP3 recordings were not kept: ' + before.keys.length);
     await enter(P, 'lake');
@@ -78,7 +81,7 @@ export async function offlineLevelsCheck(b) {
     // (Light on Opus: core 8 MB + lake 60 MB, at 45% = about 31 MB; Full: 268 MB at 45%, as this MP3 device may move)
     ok(/About 31 MB/.test(sizes.light) && /About (121|268) MB/.test(sizes.full) && /0\.\d MB|\d MB/.test(sizes.info), 'the sizes shown: ' + JSON.stringify(sizes));
     await P.page.click('.offlvl-b[data-lvl="light"]');
-    await P.page.waitForFunction(() => /Freed/.test(document.querySelector('#xLvlInfo')?.textContent || ''), null, { timeout: 30000 });
+    await waitFreed(P);
     const freedText = await P.page.$eval('#xLvlInfo', e => e.textContent);
     const after = await kept(P), fmt = await P.page.evaluate(() => localStorage.getItem('sv2_voiceFmt'));
     ok(fmt === 'opus' && after.keys.every(k => !k.endsWith('.mp3')) && after.bytes < before.bytes, `Light did not move to Opus or free the MP3s: ${fmt}, ${after.keys.length} kept, ${before.bytes} -> ${after.bytes} bytes`);
@@ -106,7 +109,7 @@ export async function offlineLevelsCheck(b) {
     await P.page.evaluate(async () => { const S = await import(String('/js/state.js')); S.profiles[0].visited = { ...(S.profiles[0].visited || {}), lake: 1 }; });
     const bFull = (await kept(P)).bytes;
     await P.page.click('.offlvl-b[data-lvl="auto"]');
-    await P.page.waitForFunction(() => /Freed/.test(document.querySelector('#xLvlInfo')?.textContent || ''), null, { timeout: 30000 });
+    await waitFreed(P);
     const auto = await kept(P), groups = [...new Set(auto.keys.map(k => name(k).g))].sort().join();
     const s3 = await P.page.evaluate(async () => { const S = await import(String('/js/state.js')); return { level: S.settings.offlineLevel, auto: S.settings.autoPack }; });
     ok(groups === 'core,lake,village' && auto.bytes < bFull && s3.level === 'auto' && s3.auto === false, `Automatic from Full kept ${groups} (${bFull} -> ${auto.bytes} bytes), settings ${JSON.stringify(s3)}`);
