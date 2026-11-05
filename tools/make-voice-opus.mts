@@ -14,13 +14,15 @@ const arg = (k: string) => { const i = process.argv.indexOf(k); return i > 0 ? p
 const JOBS = Math.max(1, +(arg('--jobs') || Math.min(8, os.cpus().length))), CHECK = process.argv.includes('--check');
 export const OPUS_ARGS = ['-ac', '1', '-c:a', 'libopus', '-b:a', '18k', '-vbr', 'on', '-application', 'voip', '-map_metadata', '-1'];
 const langs = fs.readdirSync(DIR).filter(d => fs.statSync(path.join(DIR, d)).isDirectory());
-const todo: [string, string][] = [], stray: string[] = [], per: Record<string, { mp3: number, opus: number }> = {};
+const todo: [string, string][] = [], stray: string[] = [], empty: string[] = [], per: Record<string, { mp3: number, opus: number }> = {};
 for (const L of langs) { per[L] = { mp3: 0, opus: 0 };
   for (const s of fs.readdirSync(path.join(DIR, L))) { const d = path.join(DIR, L, s); if (!fs.statSync(d).isDirectory()) continue;
     for (const f of fs.readdirSync(d)) { const p = path.join(d, f);
+      // (an empty MP3 is no recording at all: it is listed, needs recording again, and gets no Opus copy)
+      if (f.endsWith('.mp3') && fs.statSync(p).size === 0) { empty.push(path.relative(ROOT, p)); continue; }
       if (f.endsWith('.mp3')) { per[L].mp3++; const o = p.slice(0, -4) + '.opus'; if (!fs.existsSync(o) || fs.statSync(o).mtimeMs < fs.statSync(p).mtimeMs) todo.push([p, o]); else per[L].opus++; }
       else if (f.endsWith('.opus') && !fs.existsSync(p.slice(0, -5) + '.mp3')) stray.push(p); } } }
-if (CHECK) { console.log(JSON.stringify({ missing: todo.length, stray: stray.length, per })); process.exit(todo.length || stray.length ? 1 : 0); }
+if (CHECK) { console.log(JSON.stringify({ missing: todo.length, stray: stray.length, empty, per })); process.exit(todo.length || stray.length ? 1 : 0); }
 try { execFileSync('ffmpeg', ['-hide_banner', '-encoders'], { stdio: 'pipe' }).toString().includes('libopus') || (() => { throw 0; })(); } catch (e) { console.error('ffmpeg with libopus is needed'); process.exit(1); }
 for (const p of stray) fs.unlinkSync(p);
 let done = 0, failed = 0, at = 0;
@@ -35,5 +37,5 @@ for (const f of fs.readdirSync(DIR).filter(f => /^manifest(-\w+)?\.json$/.test(f
   const want = all ? ['mp3', 'opus'] : ['mp3']; if (JSON.stringify(m.formats) === JSON.stringify(want)) continue;
   m.formats = want; fs.writeFileSync(p, JSON.stringify(m));
 }
-console.log(JSON.stringify({ made: done, failed, removed: stray.length, per }));
+console.log(JSON.stringify({ made: done, failed, removed: stray.length, empty, per }));
 if (failed) process.exit(1);
