@@ -17,7 +17,12 @@ A scheduled task wakes this chat at 0:40, 5:40, 10:40, 15:40 and 20:40 AEDT (the
 - The films: this container has no GPU, so Blender's real-time renderer (Eevee) runs out of memory, and Cycles takes about 80-100 s a picture; a fully animated minute (about 1,400 frames a film) would take about 35 hours a film. The owner chose (pop-up below): the scripts and pictures now, the animated films later on a machine with a graphics card. So this round makes the pictures (two moments a page of the five films, and the friends at the start and the end) and the animation scripts; the game's player (`js/blenderfilm.ts`) is ready and plays nothing until a film is listed in `js/content/blenderfilms.ts`.
 
 ## Checks
-(filled in per part)
+- 5-6 Nov 2026 AEDT, run one at a time with `suite.mts --only` (Release runs the full suite): types pass, talecostume pass (38 tale films, 17 costumes), blenderfilms pass (the five films with a test video: play, stop for help with the tap ring, go on after the tap, kept and played offline, the game's film with no internet and nothing kept, none in the first download), storypics pass (a drawn page with no actors over it, kept for offline, the painted stage with no picture).
+- noemoji: not finished here (it plays every game; stopped by the time limit while Blender used the machine); to run again when the renders are done.
+
+## Render queue (this container, 6 Nov 2026 AEDT)
+- Done: the 16 costume renders, then the 4 corrected ones and `vn-prince`; the game film scenes of the 20 Vietnamese tales and Rainbow Serpent exported (`scene-export.mts`).
+- Running: the four friends' Blender files, then two pictures a page of the five films and the friends at the start and end, then one picture a page of the other 16 Vietnamese tales (Cycles, 1280 x 720, about 90 s each). Then `python3 tools/blender/storypics-pack.py <pictures dir>` packs the pages into `videos/storypages/` and lists them in `js/content/storypics.ts`.
 
 ## Owner's decisions
 - 6 Nov 2026 AEDT (chat, with a picture of the kit): the costumes must look like the actors' costumes in the Vietnamese fairy-tale films on YouTube. Fixed in the Blender kit and in the game's films: soldiers wear the nón dấu with a red top (no black helmet); the king wears the gold mũ xung thiên; a new costume `vn-prince` with the gold kim quan (Tấm's prince, Lang Liêu's brothers); the village girl's khăn mỏ quạ lost its ties under the chin (they looked like a black beard) and she wears the nón quai thao with its straps and gold tassels.
