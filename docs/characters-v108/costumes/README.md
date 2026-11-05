@@ -19,6 +19,7 @@ Rules kept: the four friends never wear these and never appear inside a tale (ch
 | `vn-aonau` | Áo nâu, khăn đầu rìu | a farmer, a woodcutter (Chú Cuội), a fisherman | ![vn-aonau front](vn-aonau-front.jpg) | ![vn-aonau three-quarter](vn-aonau-three-quarter.jpg) |
 | `vn-kho` | Khố, búi tó | the Hùng kings' time: a hunter, a fisherman, a boatman | ![vn-kho front](vn-kho-front.jpg) | ![vn-kho three-quarter](vn-kho-three-quarter.jpg) |
 | `vn-boy` | Áo cánh, quần lửng, tóc chỏm | a village boy (Thánh Gióng as a boy, the youngest son) | ![vn-boy front](vn-boy-front.jpg) | ![vn-boy three-quarter](vn-boy-three-quarter.jpg) |
+| `vn-but` | Bụt: áo the trắng, tóc trắng búi tó, râu bạc | Bụt, the kind old fairy man (Tấm Cám, Cây tre trăm đốt, Ba lưỡi rìu) | ![vn-but front](vn-but-front.jpg) | ![vn-but three-quarter](vn-but-three-quarter.jpg) |
 | `vn-armour` | Giáp trụ, nón dấu chóp đỏ | a soldier or a general (Thánh Gióng grown, Sơn Tinh, Lê Lợi's soldiers) | ![vn-armour front](vn-armour-front.jpg) | ![vn-armour three-quarter](vn-armour-three-quarter.jpg) |
 | `vn-king` | Hoàng bào, mũ xung thiên | a king (Hùng Vương, the kings of the tales) | ![vn-king front](vn-king-front.jpg) | ![vn-king three-quarter](vn-king-three-quarter.jpg) |
 | `vn-prince` | Áo bào hoàng tử, kim quan | a prince (Tấm's prince, Lang Liêu's brothers) | ![vn-prince front](vn-prince-front.jpg) | ![vn-prince three-quarter](vn-prince-three-quarter.jpg) |

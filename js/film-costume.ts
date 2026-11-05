@@ -55,6 +55,8 @@ const HEAD: Record<string, (L: Look) => Part[]> = {
   // khăn đầu rìu: a cloth wound round the head, the knot standing up over the forehead like an axe head
   khandaurriu: () => [P(Tor(.5, .08), C.van, [0, .2, 0], [H - .1, 0, 0]), P(Sph(.5, 16, 8, 0, PI * 2, 0, PI * .4), C.van, [0, .12, 0]), P(Box(.26, .18, .05), C.van, [0, .48, .42], [-.5, 0, 0]), P(Sph(.06), C.van, [0, .36, .5])],
   // mũ phượng: a gold band with upright points and rubies, a phoenix in front, two wings at the sides
+  // Bụt's long white beard and moustache
+  beard: () => [P(Cone(.17, .46, 12), '#f2f2f0', [0, -.62, .34], [PI, 0, 0], [1, 1, .6]), P(Tor(.1, .03, PI), '#f2f2f0', [0, -.2, .47], [0, 0, PI])],
   phoenix: () => {
     const p = [P(Tor(.5, .04), C.gold, [0, .26, 0], [H - .08, 0, 0]), P(Sph(.09), C.gold, [0, .48, .44], [0, 0, 0], [1, 1.4, .6]), P(Box(.04, .16, .32), C.gold, [.5, .4, 0], [.4, 0, 0]), P(Box(.04, .16, .32), C.gold, [-.5, .4, 0], [.4, 0, 0])];
     for (let i = 0; i < 7; i++) { const a = -1.2 + i * .4; p.push(P(Cone(.035, .16, 6), C.gold, [Math.sin(a) * .48, .38, Math.cos(a) * .48]), P(Sph(.03, 6, 4), '#c62f2f', [Math.sin(a) * .48, .47, Math.cos(a) * .48])); }
@@ -120,6 +122,9 @@ export const KIT: Record<string, Kit> = {
   // a prince: a robe to the feet in the film's colour, gold trim and sash, wide sleeves, the kim quan over a topknot
   'vn-prince': { base: L => under(L, Object.assign({ style: 'aodai', hairStyle: 'short' }, bare(L) || ['crown', 'silkcap'].includes(L.hat) ? { hat: 'none', kitHat: 'kimquan', kitHair: 'topknot' } : {})),
     dress: (A, L) => { add(A.torso, [robeToFeet(L.color), collar(C.gold), P(Cyl(.05, .05, .012, 18), C.gold, [0, .86, .155], [H, 0, 0]), ...sash(C.gold, .66)]); sleeves(A, L.color); } },
+  // Bụt: a white áo the, the white hair in a topknot, a long white beard
+  'vn-but': { base: L => under(L, { style: 'aodai', color: '#f4f0e8', hair: '#f2f2f0', hairStyle: 'short', hat: 'none', kitHair: 'topknot', kitHat: 'beard' }),
+    dress: (A, L) => add(A.torso, [collar('#d8cfb8')]) },
   'vn-queen': { base: L => under(L, Object.assign({ style: 'aodai' }, withHat(L, 'phoenix', ['crown']))),
     dress: (A, L) => { add(A.torso, [robeToFeet(L.color), collar(C.gold), P(Cyl(.05, .05, .012, 18), C.gold, [0, .86, .155], [H, 0, 0]), ...sash(C.gold, .68)]); sleeves(A, L.color); } },
   // colonial Australia: a cream shirt, a waistcoat in the film's colour, a red neckerchief (the akubra stays)

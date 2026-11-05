@@ -15,6 +15,7 @@ import sys, os
 # pal: skin, hair (main, dark, light), iris (dark, light), brows, lashes
 VN_F = ('#f1c6a3', '#1c1715', '#120f0d', '#2c2420', '#2a1a0e', '#5a3a22', '#120f0d', '#1f1712')
 VN_M = ('#dfa47c', '#1f1a18', '#151210', '#2e2622', '#2a1a0e', '#5a3a22', '#151210', '#1f1712')
+VN_OLD = ('#e8b890', '#f2f2f0', '#d6d4ce', '#ffffff', '#2a1a0e', '#5a3a22', '#c3bfb7', '#1f1712')   # an old man's white hair
 VN_KID = ('#f0c09b', '#1f1a18', '#151210', '#2e2622', '#2a1a0e', '#5a3a22', '#151210', '#1f1712')
 AU_M = ('#efc3a6', '#6a4a32', '#4e3524', '#8a6448', '#2e5b8a', '#6f9cc9', '#4e3524', '#4a3a2c')
 AU_F = ('#f6d3bd', '#b5743e', '#965c2e', '#d08f55', '#3d6b3a', '#7aa86a', '#965c2e', '#5a4632')
@@ -40,6 +41,8 @@ KIT = {
                    c=dict(kho='#8a5a36', band='#c9a36a'), hat='', feet='bare'),
     'vn-boy': dict(name='Áo cánh, quần lửng, tóc chỏm', who='a village boy (Thánh Gióng as a boy, the youngest son)', g='m', size='kid', pal=VN_KID, hair='topknot', body='aonau',
                    c=dict(coat='#d8b47a', pants='#5e4636', sash='#b8463a'), hat='', feet='bare'),
+    'vn-but': dict(name='Bụt: áo the trắng, tóc trắng búi tó, râu bạc', who='Bụt, the kind old fairy man (Tấm Cám, Cây tre trăm đốt, Ba lưỡi rìu)', g='m', size='adult', pal=VN_OLD, hair='topknot', body='aothe',
+                   c=dict(coat='#f4f0e8', pants='#f4f0e8', trim='#d8cfb8'), hat='beard/f2f2f0', feet='cloth'),
     # kings, queens and generals
     'vn-armour': dict(name='Giáp trụ, nón dấu chóp đỏ', who='a soldier or a general (Thánh Gióng grown, Sơn Tinh, Lê Lợi\'s soldiers)', g='m', size='adult', pal=VN_M, hair='topknot', body='armour',
                       c=dict(plate='#6a7480', gold='#d4a23a', under='#b8332a', pants='#3a2a22', cape='#b8332a'), hat='nondau/e8d8a8', feet='boots'),
@@ -92,8 +95,8 @@ for _id, _k in KIT.items():
     VILL['kit-' + _id] = {'g': _k['g'], 'size': _k['size'], 'pal': _k['pal'], 'hair': _k['hair'], 'top': (_k['body'], '#ffffff'), 'bottom': '#000000',
                          'kind': 'kit', 'hat': _k['hat'], 'shoes': _k['feet'], 'extra': (), 'kit': _k}
 # headwear the kit adds; the open ones leave the hair on top of the head
-KIT_HATS = ('quaithao', 'nondau', 'xungthien', 'kimquan', 'khanmoquat', 'khanvan', 'khanxep', 'khandaurriu', 'warhelm', 'mien', 'phoenix', 'bonnet', 'guan', 'pagri')
-KIT_OPEN = ('khanvan', 'phoenix', 'guan', 'kimquan')
+KIT_HATS = ('beard', 'quaithao', 'nondau', 'xungthien', 'kimquan', 'khanmoquat', 'khanvan', 'khanxep', 'khandaurriu', 'warhelm', 'mien', 'phoenix', 'bonnet', 'guan', 'pagri')
+KIT_OPEN = ('beard', 'khanvan', 'phoenix', 'guan', 'kimquan')
 KIT_FIT = {'kitPanel': (.034, .34), 'kitVest': (.03, 0)}   # coat panels over a long skirt: a wider margin and flare than the skirt's (.014, .22)
 
 def kc(part, d='#888888'):
@@ -181,6 +184,12 @@ def kit_hat(kind, col=None):
         lathe('hatBand', RED, [(0, 1.02 * R), (.16 * R, .86 * R), (.3 * R, .62 * R), (.34 * R, .56 * R), (0, .6 * R)], 24, loc=top)   # the red top
         tube('hatBand', BAND, [top + Vector((math.cos(t) * .6 * R, math.sin(t) * .6 * R, .3 * R)) for t in lin(0, 2 * math.pi, 33)], .035 * R, 8, False)
         for s in (-1, 1): tube('hatBand', BAND, [top + Vector((s * .95 * R, 0, -.12 * R)), HC + Vector((s * .6 * R, -.25 * R, -.75 * R)), HC + Vector((0, -.5 * R, -1.0 * R))], .02 * R, 8, False)
+    elif kind == 'beard':   # Bụt's long white beard and moustache (no hat: the white topknot shows)
+        W = mat('kitBeard', col or '#f2f2f0', .7)
+        bm = bmesh.new(); bmesh.ops.create_cone(bm, cap_ends=True, segments=16, radius1=.03 * R, radius2=.38 * R, depth=1.35 * R)
+        for v in bm.verts: v.co.y *= .55   # flatter front to back
+        bmesh.ops.transform(bm, matrix=Matrix.Translation(H(0, -.74, -1.12)), verts=bm.verts); obj_from(bm, 'hatBand', W)
+        for s in (-1, 1): tube('hatBand', W, [H(s * .03, -.98, -.4), H(s * .2, -.95, -.46), H(s * .34, -.85, -.62)], [.06 * R, .055 * R, .02 * R], 8)
     elif kind == 'xungthien':   # mũ xung thiên (the king of the old tales, as in the Vietnamese fairy-tale films): a gold cap, a high crown at the back,
         # two gold wings standing up behind it, a sun and a pearl in front, dragons along the band (owner, 6 Nov 2026 AEDT)
         GOLD = mat('kitGold', '#d4a23a', .3, metal=.85); GOLDL = mat('kitGoldL', '#f2d16b', .25, metal=.9); RED = mat('kitRuby', '#c62f2f', .2); PEARL = mat('kitPearl', '#f6f1ea', .2)
