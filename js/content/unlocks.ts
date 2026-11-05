@@ -1,7 +1,7 @@
 // r90 content opens after every original item in its category or shelf has been finished three times.
 import { featureOn, itemEnabled } from '../custom.js';
 import { GAME_INFO } from './activities.js';
-import { SECOND_SET_GAMES, SECOND_SET_TALES, heldGame, heldTale } from './secondset.js';
+import { SECOND_SET_GAMES, SECOND_SET_TALES, heldGame, heldTale, calDue } from './secondset.js';
 export { SECOND_SET_GAMES, SECOND_SET_TALES };
 
 type Counts = Record<string, number | undefined>;
@@ -75,6 +75,7 @@ export const isHeld = (id: string, type: 'game' | 'tale'): boolean => !itemEnabl
 export function isOpen(profile: UnlockProfile, id: string, type: 'game' | 'tale', areaOrShelf: string): boolean {
   if (isHeld(id, type)) return false;
   if (overrideOn(profile)) return true;
+  if (calDue(type === 'game' ? 'game' : 'story', id)) return true; // (v1.08b story) its release-calendar day has come
   const sourceArea=type==='game' ? GAME_INFO[id]?.[0]||areaOrShelf : areaOrShelf;
   if (!secondSet(type, sourceArea).includes(id)) return true;
   return progressOf(profile, type, sourceArea).done >= 3;

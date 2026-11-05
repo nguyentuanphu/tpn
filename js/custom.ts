@@ -45,7 +45,7 @@ export const managementApplication = () => lastManagementApplication;
 // same ones in content/custom.json, which stays the fallback for a section Studio never saved live. The copy kept on this
 // device is used before any screen reads them; the website's answer replaces it as soon as it comes (screens that read
 // once at start get it the next time the game opens; Message and Missions follow onLive).
-export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album', 'itemAvailability', 'reportingPolicy'];
+export const LIVE_SECTIONS = ['message', 'missions', 'quiz', 'tales', 'names', 'genders', 'faces', 'looks', 'plots', 'activities', 'defaults', 'features', 'ads', 'album', 'itemAvailability', 'reportingPolicy', 'releaseCalendar'];
 // A global item Off is independent of menu placement, progress and tester previews.
 export const reportingPolicy = () => effectiveReportingPolicy(CUSTOM.reportingPolicy);
 export const itemEnabled = (kind: 'game' | 'story', id: string): boolean => CUSTOM.itemAvailability?.[kind + ':' + id] !== false;
@@ -155,6 +155,7 @@ const DAY = 864e5, dayOf = s => { const d = new Date(String(s) + 'T00:00:00'); r
 // date is at most `early` days away, without anyone ticking it (js/tester.js passes 7; 0 on every other device)
 let PEEKS = [], EARLY = 0; export const setPeeks = (list, early = 0) => { PEEKS = Array.isArray(list) ? list.slice() : []; EARLY = Math.max(0, +early || 0); };
 export const isPeek = id => PEEKS.includes(id);
+export const earlyDays = () => EARLY; // (v1.08b story) js/content/secondset.ts: the release calendar's tester days
 export function releaseOn(id, def = true, now = new Date()) {
   if (PEEKS.includes(id)) return true;
   const r = liveRule(id); if (!r) return def;
