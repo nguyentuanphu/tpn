@@ -328,6 +328,53 @@ await check('festivalgames', async () => {
   return `${r.fests} festivals, each with its own game at its table; open with the decorations until 3 days after, testers 7 days early, put away with the day it comes back; ${r.won.join(', ')} played to a win`;
 });
 
+await check('learningquests', async () => {
+  // (v1.08b games, owner 5 Nov 2026 AEDT: 9 steps and a badge) each Học vui subject has a journey of 9 steps; a step won
+  // gives its sticker, the 9th the badge; today's learning step is in the daily adventure's window, marked in the Play
+  // hub and starred on the Simple screen; the journeys are at the top of the Học vui tab, on a phone, a tablet and a computer
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    for (let k = 0; k < 50 && !__sv.learnQuest; k++) await wait(100);
+    const LQ = await import('/js/learnquest.js'), LP = await import('/js/content/learnpaths.js'), ST = await import('/js/stickers.js');
+    const h = __sv.heroes[0], p = h.profile; p.age = 'big'; delete p.learnPath; delete p.learnBadges;
+    const out = { paths: LP.LEARN_PATHS.length, short: [], today: null, mark: false, star: false, row: false, rows: 0, steps: 0, stickers: 0, badge: false, wrongNoMove: false };
+    for (const L of LP.LEARN_PATHS) if (LQ.stepsOf(p, L).length !== 9) out.short.push(L.key);
+    const t = LQ.todayStep(p); out.today = t && t.id;
+    document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; __sv.openGamesHub(0); await wait(400);
+    document.querySelector('.hubtabs [data-tab="hocvui"]').click(); await wait(300);
+    out.rows = document.querySelectorAll('.hubbody .lq-row').length;
+    out.mark = !!document.querySelector(`.hubbody [data-play="${t.id}"]`)?.closest('.hcard')?.querySelector('.hquest');
+    document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false;
+    out.row = /lq-today/.test(LQ.adventureRowHTML(p));
+    __sv.simple.show('learn');
+    // the Simple screen: open the subject of today's step and find the quest star on its stop
+    const A = await import('/js/content/activities.js'), area = A.gameInfo(t.id).area; __sv.simple.openGroup('learn', area); await wait(300);
+    out.star = [...document.querySelectorAll('.sp-stop')].some(e => e.querySelector('.sp-quest')); __sv.simple.hide();
+    // a game that is not the next step changes nothing; the 9 steps of the Maths journey, won in turn, give 9 stickers and the badge
+    const M = LP.LEARN_PATHS.find(L => L.key === 'math'), other = LQ.stepsOf(p, LP.LEARN_PATHS.find(L => L.key === 'sci'))[0];
+    LQ.stepWon(p, other); out.wrongNoMove = LQ.doneOf(p, M) === 0;
+    for (let k = 0; k < 9; k++) { const id = LQ.nextOf(p, M); if (!id) break; LQ.stepWon(p, id); out.steps = LQ.doneOf(p, M); }
+    out.stickers = Array.from({ length: 9 }, (_, k) => ST.has(LP.stepSticker('math', k + 1), p)).filter(Boolean).length;
+    out.badge = !!(p.learnBadges && p.learnBadges.math) && !LQ.nextOf(p, M);
+    return out;
+  });
+  fs.mkdirSync('out/learningquests', { recursive: true });
+  for (const [name, w, h] of [['phone', 390, 844], ['tablet', 820, 1180], ['computer', 1366, 800]]) {
+    await P.page.setViewportSize({ width: +w, height: +h });
+    await P.page.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; __sv.openGamesHub(0); });
+    await P.page.waitForTimeout(400); await P.page.evaluate(() => (document.querySelector('.hubtabs [data-tab="hocvui"]') as HTMLElement)?.click()); await P.page.waitForTimeout(400);
+    const small = await P.page.evaluate(() => [...document.querySelectorAll('.lq-row')].filter(e => { const q = e.getBoundingClientRect(); return q.height < 44 || q.right > innerWidth + 1; }).length);
+    if (small) r.short.push(name + ': ' + small + ' journey rows under 44 px or off screen');
+    await P.page.screenshot({ path: `out/learningquests/hocvui-${name}.png` });
+  }
+  ok(r.paths === 8 && !r.short.length && r.rows === 8, JSON.stringify(r));
+  ok(r.today && r.mark && r.star && r.row, 'today: ' + JSON.stringify(r));
+  ok(r.wrongNoMove && r.steps === 9 && r.stickers === 9 && r.badge, 'journey: ' + JSON.stringify(r));
+  ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
+  return `8 journeys of 9 steps at the top of Học vui; today's step (${r.today}) in the adventure, marked in the hub and starred on the Simple screen; 9 wins give 9 stickers and the badge; pictures in tests/out/learningquests/`;
+});
+
 await check('padmap', async () => {
   // (round T4b) the Pad map is drawn from the map data: every place's name on it, names never overlapping at 390, 1180
   // and 1366 px wide; clouds over the places not visited yet, lifting once with a puff after a visit
