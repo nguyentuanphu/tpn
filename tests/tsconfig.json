@@ -187,6 +187,8 @@
     "../js/testerrewards.ts",
     "../js/hud.ts",
     "../home/site.ts",
+    "../home/page.ts",
+    "../home/navigation.ts",
     "../home/analytics.ts",
     "../tools/build-website.mts",
     "./website-float.mts",

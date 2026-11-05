@@ -48,20 +48,25 @@ export function roadTexture(kind, tint = null, style = null) {
     const path = kind === 'footpath', outback = style === 'outback';
     const base = outback ? '#d27434' : path ? '#c27a50' : '#b9653e', deep = outback ? 'rgba(150,62,20,' : 'rgba(130,60,35,', pale = outback ? 'rgba(255,190,130,' : 'rgba(255,214,176,';
     // the edge wanders in and out (whole waves along the picture, so it tiles)
-    const edge = (y, k) => 5 + 2.6 * Math.sin((y / H) * Math.PI * 2 * (3 + k) + k * 2.1) + 1.6 * Math.sin((y / H) * Math.PI * 2 * (11 + k) + k) + 1.2 * Math.sin((y / H) * Math.PI * 2 * 23 + k * 4);
+    // (v1.08c roads, #34: the drawing's edge is a soft line, not a ragged one) half the wander it had
+    const edge = (y, k) => 5 + 1.5 * Math.sin((y / H) * Math.PI * 2 * (3 + k) + k * 2.1) + .9 * Math.sin((y / H) * Math.PI * 2 * (11 + k) + k) + .5 * Math.sin((y / H) * Math.PI * 2 * 23 + k * 4);
     g.fillStyle = base; g.beginPath(); g.moveTo(edge(0, 0), 0);
     for (let y = 0; y <= H; y += 4) g.lineTo(edge(y, 0), y);
     for (let y = H; y >= 0; y -= 4) g.lineTo(W - edge(y, 1), y);
     g.closePath(); g.fill();
     g.save(); g.clip();
-    mottle(70, pale + '.10)', deep + '.10)', 8, 26);
+    // (v1.08c roads, #34 Concept D) the drawing: one warm, even colour with a darker rim along both edges, two clean wheel
+    // tracks and a row of grass down the middle; far less speckle (close up it read as rubble, far away it shimmered)
+    mottle(36, pale + '.07)', deep + '.07)', 12, 30);
+    for (const [w, a] of [[14, .10], [8, .14]]) { g.fillStyle = deep + a + ')'; for (let y = 0; y < H; y += 4) { g.fillRect(edge(y, 0) - 2, y, w, 4); g.fillRect(W - edge(y, 1) - w + 2, y, w, 4); } }
     if (path) { g.fillStyle = pale + '.16)'; g.fillRect(W * .3, 0, W * .4, H); g.fillStyle = pale + '.10)'; g.fillRect(W * .2, 0, W * .6, H); }
-    else for (const cx of [W * .27, W * .73]) for (const [w, a] of [[22, .10], [16, .14], [10, .16]]) { // the wheel tracks, a little wavy
-      g.fillStyle = deep + a + ')'; for (let y = 0; y < H; y += 4) g.fillRect(cx - w / 2 + 2 * Math.sin(y / H * Math.PI * 4), y, w, 4); }
-    grit(2200, pale + '.20)', deep + '.20)');
-    for (let i = 0; i < 70; i++) { const x = 10 + rnd() * (W - 20), y = rnd() * H, r = 1 + rnd() * 1.6; blob(x, y, r, r * .8, rnd() < .5 ? '#a39a8e' : '#8c8378'); } // little stones
-    if (!path) for (let y = 4; y < H; y += 40) { const n = 4 + Math.floor(rnd() * 4), cy = y + rnd() * 10; // grass tufts down the middle
-      for (let k = 0; k < n; k++) { const x = W / 2 + (rnd() - .5) * 10, yy = cy + rnd() * 18; g.fillStyle = rnd() < .5 ? '#7fae5a' : '#6a9a48'; g.beginPath(); g.ellipse(x, yy, 2.2, 4.5, (rnd() - .5) * .8, 0, 7); g.fill(); } }
+    else for (const cx of [W * .3, W * .7]) for (const [w, a] of [[20, .10], [12, .16]]) { // the wheel tracks, a little wavy
+      g.fillStyle = deep + a + ')'; for (let y = 0; y < H; y += 4) g.fillRect(cx - w / 2 + 1.5 * Math.sin(y / H * Math.PI * 4), y, w, 4); }
+    grit(600, pale + '.14)', deep + '.14)');
+    for (let i = 0; i < 24; i++) { const x = 10 + rnd() * (W - 20), y = rnd() * H, r = 1 + rnd() * 1.6; blob(x, y, r, r * .8, rnd() < .5 ? '#a39a8e' : '#8c8378'); } // little stones
+    if (!path) { // the row of grass down the middle: short green dashes, as in the drawing, with a fuller tuft now and then
+      for (let y = 6; y < H; y += 16) { g.fillStyle = (y / 16) % 2 ? '#7fae5a' : '#6a9a48'; g.beginPath(); g.ellipse(W / 2 + 1.5 * Math.sin(y / H * Math.PI * 4), y, 3, 5, 0, 0, 7); g.fill(); }
+      for (let y = 30; y < H; y += 96) for (let k = 0; k < 5; k++) { const x = W / 2 + (rnd() - .5) * 12, yy = y + rnd() * 14; g.fillStyle = rnd() < .5 ? '#86b85e' : '#6a9a48'; g.beginPath(); g.ellipse(x, yy, 2.4, 5, (rnd() - .5) * .8, 0, 7); g.fill(); } }
     g.restore();
     for (let y = 10; y < H; y += 46) for (const side of [0, 1]) { // edging pebbles along both edges
       const yy = (y + side * 23 + rnd() * 8) % H, x = side ? W - edge(yy, 1) - 3 : edge(yy, 0) + 3, r = 3 + rnd() * 1.8;
@@ -70,11 +75,13 @@ export function roadTexture(kind, tint = null, style = null) {
   }
   // asphalt. Concept D: grey Vietnamese asphalt, darker Australian asphalt; other roads keep the region's tint (ROAD-014)
   // gently enough that it does not turn the asphalt pink or tan
-  const base = style === 'au' ? '#45484c' : style === 'vn' ? '#5f6266' : '#6f747a';
+  // (v1.08c roads, #34 Concept D) the drawing's asphalt is one clean grey with crisp markings: much less speckle (it
+  // shimmered at a distance and looked worn close up), softer patches, faint tyre wear
+  const base = style === 'au' ? '#47494e' : style === 'vn' ? '#606368' : '#666b71';
   g.fillStyle = tint ? '#' + new THREE.Color(base).lerp(new THREE.Color(tint), style === 'au' ? .06 : style === 'vn' ? .10 : .32).getHexString() : base; g.fillRect(0, 0, W, H);
-  mottle(90, 'rgba(255,255,255,.035)', 'rgba(0,0,0,.05)', 6, 22);
-  for (const cx of [.3, .7]) { g.fillStyle = 'rgba(0,0,0,.05)'; g.fillRect(W * cx - 12, 0, 24, H); g.fillStyle = 'rgba(0,0,0,.04)'; g.fillRect(W * cx - 7, 0, 14, H); } // tyre wear in each lane
-  grit(2600, 'rgba(255,255,255,.10)', 'rgba(0,0,0,.12)');
+  mottle(40, 'rgba(255,255,255,.025)', 'rgba(0,0,0,.035)', 12, 30);
+  for (const cx of [.3, .7]) { g.fillStyle = 'rgba(0,0,0,.03)'; g.fillRect(W * cx - 10, 0, 20, H); } // tyre wear in each lane
+  grit(700, 'rgba(255,255,255,.06)', 'rgba(0,0,0,.07)');
   { const y = rnd() * H * .7, x = W * (.15 + rnd() * .35); g.fillStyle = 'rgba(0,0,0,.07)'; g.fillRect(x, y, W * .22, 46); g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(x, y, W * .22, 1); g.fillRect(x, y + 45, W * .22, 1); } // one old patch
   if (kind !== 'asphalt') return done(); // ('plain' asphalt without lines)
   const line = (x, w, col, from = 0, len = H) => { g.fillStyle = col; g.fillRect(x, from, w, len); g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(x, from, w * .4, len); };
@@ -86,11 +93,11 @@ export function roadTexture(kind, tint = null, style = null) {
     g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(12, 0, 1, H); g.fillRect(W - 13, 0, 1, H);
     dashes('#f4f1e8', 160, 96);
   } else { // Vietnam (and the other roads): a stone kerb, white edge lines, centre dashes (yellow in Vietnam)
-    const vn = style === 'vn'; g.fillStyle = vn ? '#cfcac0' : '#c4c1b8'; g.fillRect(0, 0, 6, H); g.fillRect(W - 6, 0, 6, H);
-    g.fillStyle = 'rgba(0,0,0,.2)'; for (let y = 0; y < H; y += 28) { g.fillRect(0, y, 6, 1.5); g.fillRect(W - 6, y + 14, 6, 1.5); } // the joints between kerb stones
-    g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(6, 0, 1.5, H); g.fillRect(W - 7.5, 0, 1.5, H);
-    line(10, 4, '#ece8dc'); line(W - 14, 4, '#ece8dc');
-    dashes(vn ? '#f2c230' : '#f4f1e8', 156, 100);
+    const vn = style === 'vn'; g.fillStyle = vn ? '#d8d3c8' : '#d0ccc2'; g.fillRect(0, 0, 7, H); g.fillRect(W - 7, 0, 7, H);
+    g.fillStyle = 'rgba(0,0,0,.16)'; for (let y = 0; y < H; y += 28) { g.fillRect(0, y, 7, 1.5); g.fillRect(W - 7, y + 14, 7, 1.5); } // the joints between kerb stones
+    g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(7, 0, 1.5, H); g.fillRect(W - 8.5, 0, 1.5, H);
+    line(11, 5, '#f3f0e6'); line(W - 16, 5, '#f3f0e6');   // the white edge lines (for motorbikes, in the drawing)
+    dashes(vn ? '#f5c51e' : '#f6f3ea', 156, 100);
   }
   return done();
 }

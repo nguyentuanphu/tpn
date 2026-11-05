@@ -28,6 +28,13 @@ fs.mkdirSync(path.join(artDir,'art'));fs.writeFileSync(path.join(artDir,'art.js'
 for(const f of execFileSync('git',['ls-tree','--name-only',snapshot.source,'js/art/'],{cwd:root,encoding:'utf8'}).split('\n').filter(f=>f.endsWith('.ts')))fs.writeFileSync(path.join(artDir,'art',path.basename(f,'.ts')+'.js'),js(readGame(f)));
 const {artSVG}=await import(pathToFileURL(path.join(artDir,'art.js')).href);
 let html=simplifyNavigation(fs.readFileSync(path.join(here,'prototype.template.html'),'utf8'));
+// (v1.08c) the four destinations' behaviour from its one typed source, home/navigation.ts (the live website runs it from
+// home/page.ts): made into JavaScript here and put into the preview's own script, so the preview and the website agree
+{const nav=js(fs.readFileSync(path.join(root,'home/navigation.ts'),'utf8')).replace(/^export \{\};?$/gm,'').replace(/^export /gm,'');
+ const NAV=`const SVNav=(()=>{${nav}\nreturn {moveSections,showRoute}})();SVNav.moveSections();\n`;
+ if(!html.includes("let lang='en'")||!/function route\(\)\{[^\n]+/.test(html))throw Error('the design script no longer has its language start or route()');
+ html=html.replace("let lang='en'",()=>NAV+"let lang='en'");
+ html=html.replace(/function route\(\)\{[^\n]+/,()=>"function route(){SVNav.showRoute({showAllFestivals:()=>{festivalFilter='all';applyFestivalFilter()},clearSearch:()=>{if(search.value){search.value='';filterQuests()}}})}");}
 const home=`<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 24L24 9l19 15" fill="#ff8a5a" stroke="#3b2a4f" stroke-width="2.6" stroke-linejoin="round"/><path d="M10 23h28v20H10z" fill="#fff3d0" stroke="#3b2a4f" stroke-width="2.6"/><path d="M21 43V31h8v12" fill="#b07a4a" stroke="#3b2a4f" stroke-width="2.6"/><rect x="14" y="27" width="5" height="5" rx="1" fill="#8ed7f3" stroke="#3b2a4f" stroke-width="1.5"/><path d="M37 2l2.1 4.4 4.9.7-3.5 3.4.8 4.8-4.3-2.2-4.3 2.2.8-4.8L30 7.1l4.9-.7z" fill="#ffd23f" stroke="#3b2a4f" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
 const keys={GOAT:'🐐',CARDS:'🎴',CROWN:'👑',OWL:'🦉',BOOK:'📖',NUMBERS:'🔢',MUSIC:'🎵',BRAIN:'🧩',PIG:'🐷',HEART:'💛',GEAR:'⚙️',CLOCK:'🕒',KITE:'🪁',HORSE:'🐴',BIRD:'🐦',MELON:'🍉',APPLE:'🍎',TREE:'🌳',FLAG:'🚩',CAT:'🐱',SAW:'🪚',COIN:'🪙',TARGET:'🎯',FLOWER:'🌸',ROW:'🚣'};
 for(const [key,value]of Object.entries(keys)){const art=artSVG(value);if(!art)throw new Error('Missing actual game art: '+key);html=html.replaceAll(`/*${key}*/`,art)}

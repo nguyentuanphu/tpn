@@ -1,3 +1,5 @@
+// (v1.08c) the page script itself (home/page.ts) runs first: it was an inline script that ran before this module
+import { startPage } from './page.js';
 import {setupWebsiteFestivals} from './festivals.js';
 import {setupLaunchBanner} from './launch.js';
 import { setupWhatsNew } from './whatsnew.js'; // (v1.08b story) What's new strip and the Calendar part
@@ -15,6 +17,7 @@ if (!embedded) {
   if (consent() !== 'no') startAnalytics('/');
 }
 
+startPage();
 setupWebsiteFestivals();
 setupLaunchBanner();
 setupWhatsNew();

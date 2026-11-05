@@ -1,18 +1,18 @@
 {
   "provenance": {
-    "sourceHead": "a5a11e5bbe65be9710e9cfa8f0199b35129696fd",
-    "capturedAt": "2026-10-29T05:02:55.756Z",
+    "sourceHead": "637fcf5b9c804c355e97cba3766b43998163ae65",
+    "capturedAt": "2026-11-05T10:08:55.078Z",
     "timezone": "Australia/Sydney",
     "synthetic": true,
-    "browser": "141.0.7390.37",
+    "browser": "153.0.8010.12",
     "screenshotOptions": {
       "animations": "disabled"
     },
     "sourceFiles": {
-      "home/index.html": "1ec77b1094c7680d3872e1a7e7d90c1bf16898949c98ba922794aaed16a0f937",
-      "docs/website-review-20261023/art-content.mjs": "cbc038af1386bef264897084c010cc2d07a4263e150770dc3ff7a2027dbd0fce",
-      "docs/website-review-20261023/navigation.mjs": "254e47fc732a8ed9af4474e1642d1da0e1eaf93c071818264396bffea045fec1",
-      "docs/website-review-20261023/parent-content.mjs": "5a1c41e505324b5b7eef3a93255671f5ef108e06fe884d40e8137016cdddacbd"
+      "home/index.html": "2db1e7f8922b3ae6d70624ad25ba2f402f579f836810593a15997c6dc7fea558",
+      "docs/website-review-20261023/art-content.mts": "cbc038af1386bef264897084c010cc2d07a4263e150770dc3ff7a2027dbd0fce",
+      "docs/website-review-20261023/navigation.mts": "ace57ab36bcd3d87d58920a049f1e54f89299a4dd055364af2f81282c6ae5407",
+      "docs/website-review-20261023/parent-content.mts": "a2d871d6d9566a7b37f5dc39ecd65bef0f4eb6fa965676262b08a6313efa2a94"
     }
   },
   "results": [
