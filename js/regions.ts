@@ -7,7 +7,7 @@
 //    Bondi lifesavers' tower, Vũng Tàu lighthouse, Turtle Tower, One Pillar Pagoda, Hội An's covered bridge
 //    and Bến Thành market's clock tower.
 import { REAL, openPhotos, openStreetView } from './realworld.js';
-import { THREE, toon, toonVC, P, merge, sprite, worldTag } from './gfx.js';
+import { THREE, toon, toonVC, P, merge, sprite, worldTag, geoKey } from './gfx.js';
 import { T, nm, onLang, registerName } from './i18n.js';
 import { say } from './voice.js';
 import { SFX, tone } from './audio.js';
@@ -139,7 +139,7 @@ export function createRegions(G) {
   for (const v of VENDORS.filter(v => v.region !== 'au')) {
     const s = rowSlot(v.row.place, v.row.i, v.row.d), f = (k, n) => [s.x + s.fx * k + s.ax * n, s.z + s.fz * k + s.az * n];
     if (v.stall) {
-      put(stall(v.stall[0], v.stall[1], 2.8), s.x, s.z, s.face);
+      { const g = stall(v.stall[0], v.stall[1], 2.8); worldTag(put(g, s.x, s.z, s.face), 'st-' + geoKey(g)); }   // (v1.08e places)
       const [nx, nz] = f(1.15, 0); signAt(v.sign, nx, 3.2, nz, s.face, v.stall[0], '#fff8e0', 2.8, .55);
       v.goods.forEach((gd, k) => { const sp = sprite(gd, .55), [gx, gz] = f(0, -.6 + k * 1.2); sp.position.set(gx, M.h + 1.25, gz); scene.add(sp); });
       boxAround(s.x, s.z, 2.8, 1.6, s.face);
@@ -170,7 +170,7 @@ export function createRegions(G) {
     p.push(P(Box(w - 1.6, 2.2, .1), '#9fd2ee', [-.6, 1.6, d / 2 + .03]), P(Box(1, 2.2, .1), '#6a4a3a', [w / 2 - 1, 1.1, d / 2 + .03]));
     p.push(P(Box(w, .12, 2.4), awn, [0, 3.1, d / 2 + 1.1], [.22, 0, 0]));
     [-1, 1].forEach(sx => p.push(P(Box(.12, 3, .12), '#f4efe2', [sx * (w / 2 - .2), 1.5, d / 2 + 2.2])));
-    put(merge(p), x, cz); box(x - w / 2, x + w / 2, cz - d / 2, cz + d / 2);
+    { const g = merge(p); worldTag(put(g, x, cz), 'hs-' + geoKey(g)); } box(x - w / 2, x + w / 2, cz - d / 2, cz + d / 2);
     world.colliders.push({ x: x - w / 2 + .2, z: front + 2.2, r: .25 }, { x: x + w / 2 - .2, z: front + 2.2, r: .25 });
     signAt(text, x, 3.9, front + .05, 0, signBg, '#ffffff', w - .8, .9);
   };

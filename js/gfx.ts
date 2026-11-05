@@ -43,6 +43,12 @@ export function P(geo, color, pos = [0, 0, 0], rot = [0, 0, 0], scl = [1, 1, 1])
 // or a turning wheel, move onto the model so they stay seen).
 export const WORLD_TAGS: [any, string, any][] = [];
 export const worldTag = <T>(obj: T, name: string, opts: any = {}): T => { WORLD_TAGS.push([obj, name, opts]); return obj; };
+// a short name for a merged shape (houses, stalls: one model for every copy of the same shape): from its corners and colours
+export function geoKey(g: THREE.BufferGeometry) {
+  let h = 2166136261; const add = (a: ArrayLike<number>) => { for (let i = 0; i < a.length; i++) h = Math.imul(h ^ Math.round(a[i] * 100), 16777619); };
+  add(g.attributes.position.array); if (g.attributes.color) add(g.attributes.color.array);
+  return (h >>> 0).toString(36);
+}
 export function merge(parts) {
   let n = 0; parts.forEach(p => n += p.g.attributes.position.count);
   const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3);

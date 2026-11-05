@@ -214,6 +214,9 @@ def from_spec(m, sp):
     """the code shape rebuilt part by part"""
     for p in sp['parts']:
         t = p['type']
+        if p.get('tris'):   # a shape with no simple recipe (an extruded sign or roof): its triangles as the game made them
+            a = p['tris']; v = [(a[i], a[i + 1], a[i + 2]) for i in range(0, len(a), 3)]
+            m.add((v, [[i, i + 1, i + 2] for i in range(0, len(v), 3)]), p['color']); continue
         if t not in GEO and t not in POLY: print('SKIP part', t, flush=True); continue
         m.part(t, p['color'], p['pos'], p['rot'], p['scl'], hip=p.get('hip', False), **(p.get('p') or {}))
 
