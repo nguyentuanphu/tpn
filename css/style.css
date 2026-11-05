@@ -3488,7 +3488,7 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 }
 
 /* (v1.08c parents) the learning report and levels by subject (js/learnreport.ts) */
-.learnrep .card { max-width: 640px; }
+.learnrep .card { max-width: 640px; } .learnrep .note, .gsec.learn .note { font-size: 16px; }
 .lr-subj { display: grid; gap: 6px; }
 .lr-row, .lr-sug { display: flex; align-items: center; gap: 10px; background: #fff7ec; border-radius: 12px; padding: 8px 10px; min-height: 56px; }
 .lr-row > div, .lr-sug > div { display: flex; flex-direction: column; min-width: 0; flex: 1; }

@@ -20,7 +20,18 @@ A scheduled resume is set for 6 Nov 2026 12:41 AM AEDT in case the usage limit s
 - **Part 3: play together and gentle play time** (checks `playtogether`, `playtime`, `phone`).
 
 ## Progress
-- Part 1: in progress.
+- **Part 1: done (5 Nov 2026 AEDT).** Learning report (Grown-ups → "Learning: report and levels by subject": per child,
+  this week's games per subject, what went well, one game for next week, save or share as a picture made on the device)
+  and the level that follows the child per subject (the grown-up's own level per subject wins).
+  - Also fixed: games whose id has "_" (vi_tones, rd_blend, mx_bonds, sci_float ...) were never counted in the play
+    report, because the event id turns "_" into "-" (`js/report.ts` now finds the game again).
+  - `index.html` preload list refreshed (`node tools/preload.mts`) for the two new modules.
+  - Checks (one at a time, `node run.mts <name>`; `--changed` asks for the full suite because `.gitignore` changed,
+    so the checks for this change were run by name): learningreport pass, subjectlevel pass, phone pass, bilingual pass,
+    types pass, validate pass, emoji pass, preload pass, viwords pass, enwords pass, noemoji pass, arch pass, unit pass
+    (516), names pass, rules pass, boot pass, contract pass.
+  - Screenshots looked at: tests/out/learningreport-{phone,phone-land,tablet,computer}-{en,vi}.png and the shared picture.
+  - No new spoken lines in Part 1.
 
 ## Shared files touched
 - `js/main.ts`, `js/ui-settings.ts`, `js/report.ts`, `css/style.css` (end block), `tests/run.mts` (end block), `.gitignore` (build adds the new .js files).

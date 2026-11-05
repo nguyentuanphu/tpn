@@ -43,6 +43,11 @@ await check('pushnotify', async () => (await import('./push-notify-browser.mts')
 // each run, all four when the games change
 await check('roundvariety', async () => (await import('./round-variety.mts')).roundVarietyCheck(b, { sample: sampled('roundvariety') ? SEED : null }));
 
+// (v1.08c parents) the learning report by subject in Grown-ups on phone, tablet and computer, and the level that follows
+// the child per subject with the grown-up's own level winning (tests/learn-report.mts)
+await check('learningreport', async () => (await import('./learn-report.mts')).learningReportCheck(b));
+await check('subjectlevel', async () => (await import('./learn-report.mts')).subjectLevelCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

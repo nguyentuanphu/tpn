@@ -53,8 +53,8 @@ export function openLearnReport(p) {
     <h3>${pic('💡')} ${T('For next week', 'Gợi ý tuần sau')}</h3>
     ${L.sug ? `<div class="lr-sug" data-g="${esc(L.sug.id)}"><span class="lr-ic">${pic(L.sug.icon)}</span><div><b>${esc(L.sug.name)}</b><small>${esc(L.sug.why)}</small></div></div>` : `<p class="note">${T('Every game is played. Wonderful!', 'Bé đã chơi hết các trò. Tuyệt vời!')}</p>`}
     <div class="actions"><button class="btn primary" data-share>${pic('🖼️')} ${T('Save or share as a picture', 'Lưu hoặc chia sẻ thành ảnh')}</button><button class="btn ghost" data-close>${T('Close', 'Đóng')}</button></div>`);
-  m.querySelector<HTMLElement>('.x').onclick = m.querySelector<HTMLElement>('[data-close]').onclick = () => m.close();
-  m.querySelector<HTMLElement>('[data-share]').onclick = async () => {
+  (m.querySelector('.x') as HTMLElement).onclick = (m.querySelector('[data-close]') as HTMLElement).onclick = () => m.close();
+  (m.querySelector('[data-share]') as HTMLElement).onclick = async () => {
     SFX.tap && SFX.tap();
     const url = await learnPicture(p, W), how = await saveToDevice(url);
     const note = m.querySelector('.note'); if (note && how !== 'cancelled') note.textContent = how === 'failed' ? T('Could not save the picture.', 'Không lưu được ảnh.') : T('Picture saved!', 'Đã lưu ảnh!');
@@ -107,6 +107,6 @@ export function bindLearn(card: HTMLElement) {
   card.querySelectorAll<HTMLElement>('[data-lrep]').forEach(b => b.onclick = () => { SFX.tap && SFX.tap(); const p = profiles.find(x => x.id === b.dataset.lrep); if (p) openLearnReport(p); });
   card.querySelectorAll<HTMLSelectElement>('[data-subj]').forEach(sel => sel.onchange = () => {
     const [id, s] = sel.dataset.subj.split('|'), p = profiles.find(x => x.id === id); if (!p) return;
-    setPin(p, s as Subject, sel.value); saveProfiles(); SFX.tap && SFX.tap();
+    setPin(p, s as Subject, sel.value); saveProfiles(true); SFX.tap && SFX.tap();
   });
 }

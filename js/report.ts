@@ -27,7 +27,8 @@ export function createReport(G, { save }) {
   // restarted at another level; each game of a school subject also counts for the learning report and the level that
   // follows the child per subject (js/content/subjects.ts)
   const played = (players, defId, result = null) => {
-    const game = (parse(defId) || {}).name;
+    // (v1.08c parents) an id turns "vi_tones" into "vi-tones": find the game's own id again, so games with "_" count too
+    const slugged = (parse(defId) || {}).name, game = slugged && !GAMES[slugged] && GAMES[slugged.replace(/-/g, '_')] ? slugged.replace(/-/g, '_') : slugged;
     for (const id of players || []) { const p = profileOf(id); if (!p) continue; const d = today(p); d.games++; const pl = p.stats.played = p.stats.played || {}; if (game) pl[game] = (pl[game] || 0) + 1;
       if (game && result && players.length === 1) { countDay(d, game, !!result.won, result.stars || 0); noteResult(p, game, result.won ? Math.max(1, result.stars || 1) : 0); } }
     save();
