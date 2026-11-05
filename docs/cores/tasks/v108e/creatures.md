@@ -1,6 +1,15 @@
 # v1.08e creatures: status
 
-**ready for Release** (6 Nov 2026, 04:00 AEDT, fourth pass: plush refinement). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+**ready for Release** (6 Nov 2026, 04:08 AEDT, fifth pass: eyes on the face). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+
+## Fifth pass: eyes on the face (owner, 6 Nov 2026 AEDT: "Animals eyes too pop out, too scary")
+
+- The eyes stood where the old code's eye balls were, in front of the (now bigger) head. Each eye is now found on the
+  head's own surface and lies on it, turned to face out along it, centred on the surface so it stands out only about a
+  third of its size, like a button. Layers in order: colour, pupil and glow, then the sparkles, so the sparkle always shows.
+- A little smaller (1.22 times the code eye; companions 1.05). The light rim only on a dark face (panda, sheep, penguin,
+  firefly), not on the dragon. The closed-eye arcs sit on the face too, and are light on a dark face.
+- worldcreatures passes ({"6 Nov 2026, 04:08 AEDT"}). Pictures updated: moods-1 to moods-3, sheet-1, sheet-2, moves, *-face.png.
 
 ## Fourth pass: plush refinement (owner, 6 Nov 2026 AEDT, pop-up: all four of smoother, cuter proportions, more detail, nicer moves)
 

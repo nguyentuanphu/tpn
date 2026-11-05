@@ -1,9 +1,9 @@
 {
  "tris": {
-  "puppy": 7280,
-  "kitty": 7980,
-  "bunny": 5388,
-  "panda": 6760,
+  "puppy": 7208,
+  "kitty": 7788,
+  "bunny": 5196,
+  "panda": 6352,
   "joey": 5320,
   "calf": 7072,
   "cow": 9156,
@@ -12,7 +12,7 @@
   "unicorn": 6588,
   "chicken": 4064,
   "bear": 5564,
-  "koala": 5376,
+  "koala": 5304,
   "platypus": 3784,
   "penguin": 3888,
   "emu": 3368,
@@ -23,7 +23,7 @@
   "buffalo": 8320,
   "peacock": 8516,
   "firefly": 2912,
-  "dragon": 4456
+  "dragon": 4120
  },
  "happy": {
   "puppy": "wag",
