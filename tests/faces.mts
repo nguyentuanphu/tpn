@@ -77,7 +77,8 @@ export async function facesCheck(b) {
     const near = h.av.modelHD ? { hd: h.av.modelHD.obj.visible, light: h.av.model.obj.visible } : null;
     
     const A = await import(String('/js/avatar.js')); A.showHD(h.av, false); const far = h.av.modelHD ? { hd: h.av.modelHD.obj.visible, light: h.av.model.obj.visible } : null; A.showHD(h.av, true);
-    const asked = performance.getEntriesByType('resource').map(e => e.name).filter(n => /-hd\.glb$/.test(n)).map(n => n.split('/').pop());
+    // (the browser's list of downloads fills up in the valley, so the loader itself is asked which high-detail models it holds)
+    const asked = ['finn', 'sol', 'clara', 'lumi'].filter(id => A.FRIEND_MODELS.ready && A.FRIEND_MODELS.ready(id + '-hd')).map(id => id + '-hd.glb');
     return { f, has: !!h.av.modelHD, near, far, asked };
   });
   if (!hd.has) r.bad.push('no high-detail model for the child\'s friend');
