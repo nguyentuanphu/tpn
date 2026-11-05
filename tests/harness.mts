@@ -86,7 +86,7 @@ export async function start(page, mode = 'solo', screen = 'valley') {
   // (v1.08d valley) parts of the valley are built after the start, near the child first and far ones when the child comes
   // near (js/areas.ts); the checks play in the whole valley, so every part is built first (check areastream checks the
   // building as the child walks)
-  await page.evaluate(() => window.__sv.areas && !(window as any).__svAreaStream && window.__sv.areas.all());
+  await page.evaluate(() => window.__sv.areas && !(window as unknown as { __svAreaStream?: boolean }).__svAreaStream && window.__sv.areas.all());
   // skip the prologue
   for (let i = 0; i < 40; i++) { const sb = await page.$('.storybook'); if (!sb) break; await page.evaluate(() => { const b = document.querySelector<HTMLElement>('.storybook .sb-next, .storybook .next, .storybook button:last-of-type'); b && b.click(); }); await page.waitForTimeout(80); }
   await page.evaluate(() => { document.querySelectorAll('.storybook').forEach(e => e.remove()); window.__sv.paused = false; });

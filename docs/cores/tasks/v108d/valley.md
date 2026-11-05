@@ -1,6 +1,6 @@
 # Helper: valley (v1.08d) — status
 
-**Status:** Part 1 done and pushed (5 Nov 2026, 10:40 pm AEDT); Part 2 in progress. Branch `work/v108d-valley` from `origin/integrate/v108`.
+**ready for Release** (5 Nov 2026, 11:20 pm AEDT). Branch `work/v108d-valley` from `origin/integrate/v108`.
 
 ## Plan
 - **Part 1, the light start:** measure what the merge added; move what the child does not need before moving to after the
@@ -67,8 +67,43 @@ first start) shows `heightAt` (the ground's height) taking 1.8 s of 8.4 s, most 
 | first start, ready | 38.3 s (machine x1.90) | 25.0 s (machine x1.78) |
 | second start, ready | | 19.5 s, longest freeze 2.5 s |
 
+## Parts 2 and 3: what changed
+- `js/areas.ts` (new): **parts of the valley built after the start.** Each part has a place on the map. After the valley
+  is ready, one part is built in each quiet moment of the page: the nearest first, and of two parts the one the child
+  walks towards first. A part more than 150 m from the child waits until the child comes within 150 m or flies there;
+  `G.travel` (`js/main/hero-events.ts`) builds the parts round the landing spot while its blue fade is up (the short,
+  soft loading moment). A built part farther than 170 m sleeps: its scene objects are hidden and its every-frame work
+  stops; it wakes within 140 m. Parts are built once and kept (nothing is thrown away and rebuilt), so the memory stays
+  level; the roads, ground and solid maps stay kept on the device as before (#31).
+- **The parts this round (`js/main.ts`):** the signposts (one part: they share one picture), the crossing warnings of
+  Phố Hai Quê and of Aussie Corner (one part each, `createCrossings(G, ids)`), and each city's symbol animal (ten
+  parts, `createSymbols(G, { only })`: Brisbane, Sydney, Melbourne, Hà Nội, Bắc Ninh, Đà Nẵng, Sài Gòn, Aussie Corner,
+  China, India). They were before "ready"; now about 0.2 s (second start, full speed) less work before the child can move.
+- After each part (`js/main.ts`): its pickups join first come first served (`G.claims.wrap`), its activities get their
+  bubbles (`setupBubbles` now adds only new ones, `js/main/interactables.ts`), and the solid map is made again a moment
+  later. `js/solids.ts` keeps the last three solid maps on the device (it kept only the newest, so every start would
+  have worked it out twice).
+- `js/roads.ts` crossing warnings: the headroom rays test only meshes within 30 m of that street and not the ground
+  mesh (a ray going straight up from just above the ground cannot meet it); the signs land on the same spots
+  (checked against `origin/integrate/v108`: identical), in a fraction of the time (165 ms to 40–80 ms).
+- **Kept at the start on purpose:** the children playing in Hà Nội and Sài Gòn (`js/vnfun.ts`): they are hosts on the
+  folk games time tables (`js/folkshow.ts`), which are made from the hosts present at the start. The region sites:
+  they add to the landmarks list that the name tags and the passport read at the start. The ground, roads, cities,
+  homes and villagers: everything else is built on them.
+- Checks: `tests/harness.mts` start() builds every part before a check plays (the checks play in the whole valley);
+  new check `areastream` (`tests/checks/valley.mts`) starts without that, and checks that the parts near home are built
+  at once and far ones wait, then flies to every part three times round: each is built by its first landing, what it
+  made that can be tapped is not inside anything solid, far parts sleep and wake at home, and the graphics memory is
+  level from the second round.
+
 ## Places moved
-None yet.
+Built later, a part places its things round what already stands, so a few land elsewhere:
+
+| What | Old (x, z) | New (x, z) | Why |
+|---|---|---|---|
+| Signpost at the junction by Memory Village (west) | -136.99, 47.33 | -137.00, 51.48 | built after the start: its old spot is now taken by a collider made before it (same boards) |
+| Signpost on the road to Lotus Village, Đà Nẵng, Hà Nội | 148.01, -38.67 | 146.76, -37.83 | the same |
+| The 4 crossing warning signs | unchanged | unchanged | checked identical |
 
 ## Checks (Part 1, commit 8ed9d5111, 5 Nov 2026 AEDT, one at a time with `--only`; `--changed` asked for the full suite because `.gitignore` changed)
 - pass: startup, festgameids (new), boot, preload (after `node tools/preload.mts`), lighterload, roads, jobs, wayfind,
@@ -78,3 +113,24 @@ None yet.
   (`js/avatar.ts` showStill, v1.08b friends), so the check should leave models out. The same happens on
   `origin/integrate/v108` (checked twice with the same script). Left for Release / the friends work: the check is not mine
   to change.
+
+## Checks (Parts 2 and 3, 5 Nov 2026 AEDT, one at a time with `--only`)
+- pass: types (after adding `areas` to `types/globals.d.ts`), boot, lighterload, festgameids, roads, solid (saved map
+  reused), worldplacement, signs (16 signposts at 16 junctions), ownerroadsafety (20 sign taps at both crossings),
+  areastream (new: 13 parts, 4 near home built at once, 4 far ones built on the flight there, all reachable, far parts
+  sleep and wake, memory level), autoplay (sample), longplaymem, perf (passed on the second run; the first stopped on
+  "__sv is not defined" right after a reload, a timing race in the check on a slow run), startup (1022 KB; ready 31.3 s
+  on a machine x2.24 slower than the reference)
+- fail, not from this branch: battery (the friend model, see Part 1)
+- Screenshots looked at: `tests/out/boot-390.png`, `boot-1024.png`, `boot-1280.png` (phone, tablet, computer): the
+  same as before (nothing on screen changed).
+- No new spoken lines.
+
+## Left for later
+- The ground, roads, cities, homes and villagers are still built before the child can move: everything else stands on
+  them. Splitting those by area (the biggest share of the start: the ground 0.6 s, people 0.4 s, roads 0.3 s at full
+  speed) means changing how the ground mesh and the solid map are made, a round of its own.
+- Far parts sleep (hidden, no every-frame work) but are not thrown away and rebuilt: the builders add to shared lists
+  (tap targets, colliders), so rebuilding them safely needs each builder changed.
+- More parts can join `js/areas.ts` one by one (each needs a check that nothing at the start reads what it makes): the
+  region sites (read by the name tags and passport at the start), the children playing (hosts of the folk games boards).
