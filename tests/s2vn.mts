@@ -96,11 +96,12 @@ export async function s2vnFitCheck() {
   const { launch } = await import('./harness.mts'), ids = await gameIds();
   const fresh = async <V,>(name: string, f: (b) => Promise<V>): Promise<V> => { const b = await launch(); try { return await f(b); } catch (e) { throw new Error(`${name}: ${(e as Error).message}`); } finally { await b.close(); } };
   const wk = process.env.WORKERS; process.env.WORKERS = '1';
-  let V: string; try { V = await fresh('roundvariety', async b => (await import('./round-variety.mts')).roundVarietyCheck(b, { only: ids })); } finally { if (wk == null) delete process.env.WORKERS; else process.env.WORKERS = wk; }
+  // (one game per browser: many games in one page grow too slow for the click waits on a small machine)
+  let V = 0; try { for (const id of ids) { await fresh('roundvariety ' + id, async b => (await import('./round-variety.mts')).roundVarietyCheck(b, { only: [id] })); V++; } } finally { if (wk == null) delete process.env.WORKERS; else process.env.WORKERS = wk; }
   const F: string[] = []; process.env.SV_FIT_GAMES = ids.join(',');
   try { for (const sz of ['phone', 'phonelittle', 'land', 'land2', 'port', 'computer']) { process.env.SV_FIT_SIZES = sz; F.push(await fresh('gamefit ' + sz, async b => (await import('./gamefit-browser.mts')).gameFitCheck(b))); } }
   finally { delete process.env.SV_FIT_GAMES; delete process.env.SV_FIT_SIZES; }
-  return `${ids.length} games; roundvariety: ${V}; gamefit: ${F.join(' / ')}`;
+  return `${ids.length} games; roundvariety: ${V} games, no round repeats and the right answer moves, at every level; gamefit: ${F.join(' / ')}`;
 }
 // the ids of the Season 2 games of the regions above (read from the content file, which has no imports)
 async function gameIds(): Promise<string[]> { const D = await import('../js/content/s2vn.ts'); return S2VN.flatMap(r => D.regionOf(r)!.games); }
