@@ -533,6 +533,8 @@ export function showHD(A, near: boolean) { if (!A || !A.modelHD || A._hd === nea
  *  'happy', 'excited', 'curious'; the blinks go on over it */
 export function feel(A, mood: string, secs = 2) { const L = A && A.life; if (!L) return; L.feel = mood; L.feelUntil = L.t + secs; }
 /** the same, for a person known by their root (a villager found in the scene) */
+/** (v1.08e crowds) the person built on a root, if any */
+export const avatarOf = (root: THREE.Object3D): SvAvatar => AV_OF.get(root);
 export function feelRoot(root: THREE.Object3D, mood: string, secs = 2) { feel(AV_OF.get(root), mood, secs); }
 
 // The wise owl guide.

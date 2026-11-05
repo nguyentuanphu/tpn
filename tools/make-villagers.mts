@@ -13,7 +13,9 @@ import { fileURLToPath } from 'url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BLENDER = process.env.BLENDER || '/opt/blender-dl/blender-4.2.9-linux-x64/blender';
 export const NAMED = ['mai', 'ba', 'teo', 'ti', 'bong', 'su', 'jack', 'mit', 'bom', 'ruby', 'lan'];
-const who = process.argv.slice(2).length ? process.argv.slice(2) : NAMED;
+// (v1.08e crowds) the 14 gallery neighbours, worn by crowd people near a child (js/crowd-models.ts): node tools/make-villagers.mts crowd
+export const CROWD = ['vn-aodai', 'vn-dad', 'vn-farmer', 'vn-vendor', 'vn-grandma', 'vn-grandpa', 'vn-schoolboy', 'vn-schoolgirl', 'au-dad', 'au-mum', 'au-grandma', 'au-grandpa', 'au-boy', 'au-girl'];
+const args = process.argv.slice(2), who = args[0] === 'crowd' ? CROWD : args.length ? args : NAMED;
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sv-villagers-'));
 fs.mkdirSync(path.join(ROOT, 'models'), { recursive: true });
 for (const w of who) {

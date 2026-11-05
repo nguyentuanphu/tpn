@@ -57,6 +57,10 @@ const FILES = [
   'models/finn-hd.glb', 'models/sol-hd.glb', 'models/clara-hd.glb', 'models/lumi-hd.glb', // (v1.08e faces part 2) high-detail friends
   'models/villager-mai.glb', 'models/villager-ba.glb', 'models/villager-teo.glb', 'models/villager-ti.glb', 'models/villager-bong.glb', 'models/villager-su.glb', // (v1.08e villagers)
   'models/villager-jack.glb', 'models/villager-mit.glb', 'models/villager-bom.glb', 'models/villager-ruby.glb', 'models/villager-lan.glb',
+  'js/crowd-models.js', // (v1.08e crowds) the gallery neighbours worn by crowd people near a child
+  'models/villager-vn-aodai.glb', 'models/villager-vn-dad.glb', 'models/villager-vn-farmer.glb', 'models/villager-vn-vendor.glb', 'models/villager-vn-grandma.glb',
+  'models/villager-vn-grandpa.glb', 'models/villager-vn-schoolboy.glb', 'models/villager-vn-schoolgirl.glb', 'models/villager-au-dad.glb', 'models/villager-au-mum.glb',
+  'models/villager-au-grandma.glb', 'models/villager-au-grandpa.glb', 'models/villager-au-boy.glb', 'models/villager-au-girl.glb',
   // (written out one by one: tools/bundle.mts reads the quoted names of the list)
   'icons/friends/finn-f.webp', 'icons/friends/finn-q.webp', 'icons/friends/finn-s.webp', 'icons/friends/finn-face.webp',
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',

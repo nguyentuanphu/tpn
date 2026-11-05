@@ -255,7 +255,8 @@ interface SvItem { id?: string, x: number, z: number, r?: number, icon?: string,
   y?: number, label?: () => string, short?: () => string, visible?: (h?: SvHeroT) => boolean, act(h: SvHeroT, game?: SvGame): void | Promise<unknown>, npc?: unknown, st?: unknown, [k: string]: unknown }
 type SvHome = { hs: { x: number, z: number }, name(): string, people: { name: string }[] };
 export interface SvMain {
-  actCount: number; events: typeof events; settings: typeof settings; world: typeof world; scene: typeof scene; pads: typeof pads;
+  actCount: number; crowdModels?: unknown; // (v1.08e crowds)
+  events: typeof events; settings: typeof settings; world: typeof world; scene: typeof scene; pads: typeof pads;
   heroes: SvHeroT[]; huds: Hud[]; mode: string; partner: unknown; zoom: number; fogMaps: Record<string, HTMLCanvasElement>;
   regionOf: (string | null)[]; interactables: SvItem[]; gatherState: Record<string, unknown>; bubbles: { s: THREE.Sprite, target: { pos: THREE.Vector3 }, until?: number }[];
   paused?: boolean; lastPlayer?: number; untilValley?: () => Promise<void>; playTimes?: { at?: number, waited?: number }; firstFrames?: typeof firstFrames; whenPlaying?: Promise<void>; renderer?: typeof renderer; npcs?: typeof NPCS;
@@ -1139,6 +1140,8 @@ afterStart(() => import('./scrollhelp.js'), m => m.installScrollHelp());
 afterStart(() => warmLumi(), () => { }); // (v1.08d valley) Lumi's welcome, ready before the Simple screen first asks for it (js/simple.ts)
 // (Round U) every villager answers a tap with a fact or a saying of their region (js/villagertalk.js)
 afterStart(() => Promise.all([import('./villagertalk.js'), import('./dayplan.js')]), ([V, D]) => { V.createVillagerTalk(G); D.createDayPlan(G); });   // (Round U) villagers' day plan
+// (v1.08e crowds, owner 6 Nov 2026 AEDT) crowd people near a child wear the gallery neighbours' Blender models (js/crowd-models.js)
+afterStart(() => import('./crowd-models.js'), C => { G.crowdModels = C.createCrowdModels(G); });
 afterStart(() => import('./pricetags.js'), m => m.createPriceTags(G));
 afterStart(() => import('./jobs.js'), m => m.createJobs(G));
 afterStart(() => import('./wayfind.js'), m => m.createWayfind(G));   // (Round U) "Where is…?" sparkles
