@@ -148,7 +148,9 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       // (v1.08 fixes 2, checks horseplay, folkplay, ownerlearningprogression) each button keeps its own minimum too: a game
       // that asks 64 px for everyone (Cờ Cá Ngựa, the folk games) was shrunk to 44 px for a big kid
       const need = little ? 64 : 44, wants = [...(stage.querySelectorAll('button, [role=button], .choice') as NodeListOf<HTMLElement>)].map(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e), w = r.width / z, h = r.height / z; return w > 2 && h > 2 ? Math.max(need / Math.min(w, h), (parseFloat(cs.minWidth) || 0) / w, (parseFloat(cs.minHeight) || 0) / h) : 0; }).filter(Boolean);
-      const floor = wants.length ? Math.max(FIT_MIN, Math.min(1, Math.max(...wants))) : FIT_MIN;
+      // (v1.08b fivescreens) with a little room to spare: a button whose words change a moment later (a narrower number)
+      // must not end a pixel under a finger's size
+      const floor = wants.length ? Math.max(FIT_MIN, Math.min(1, Math.max(...wants) * 1.03)) : FIT_MIN;
       // (v1.08b fivescreens) a short landscape screen grows a game a little less, so its padding and gaps still fit
       const short = innerWidth > innerHeight && innerHeight <= 520;
       let next = room >= 1 ? Math.min(grow, Math.max(1, room * (short ? .85 : .9))) : Math.max(floor, room * .98);
