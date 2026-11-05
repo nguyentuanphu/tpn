@@ -113,6 +113,11 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     // is taller or wider than the playing area, on every screen, so the question, the play picture and every answer fit
     // one screen with no scrolling (at most down to FIT_MIN, and never making a button smaller than a finger)
     const FIT_MIN = .62;
+    const wide = { tried: 0, before: 0 };
+    const setWide = (kids: Element[], on: boolean) => {
+      layer.classList.toggle('gl-wide', on); stage.querySelectorAll('.gl-wide-one').forEach(e => e.classList.remove('gl-wide-one'));
+      if (on && kids.length === 1 && getComputedStyle(kids[0]).display.includes('flex')) kids[0].classList.add('gl-wide-one');
+    };
     const fit = (shrinkOnly = false) => {
       if (closed || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
       const z = parseFloat(stage.style.zoom) || 1, box = stage.getBoundingClientRect(), kids = [...stage.children].filter(e => e.tagName !== 'STYLE' && e.getBoundingClientRect().height > 0 && !/^(absolute|fixed)$/.test(getComputedStyle(e).position));
@@ -122,6 +127,13 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       // the room inside the stage's padding, at zoom 1
       const cs = getComputedStyle(stage), padX = (parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)) * z, padY = (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) * z;
       const room = Math.min((box.width - padX) / w, (box.height - padY) / h);
+      // (v1.08b quality, owner: "phone landscape is fully playable") on a short landscape screen a game that does not fit
+      // tries its picture beside its answers (.gl-wide: the stage, or its one board, in a row); it keeps that only when
+      // it fits better than one under the other
+      if (innerWidth > innerHeight && innerHeight <= 520 && !playing) {
+        if (wide.tried === 0 && room < 1) { wide.tried = 1; wide.before = room; setWide(kids, true); fitSoon(); return; }
+        if (wide.tried === 1) { wide.tried = 2; if (room < wide.before - .01) { setWide(kids, false); fitSoon(); return; } }
+      }
       // tablets and computers grow to fill (at most 2.4x); (v1.08 layout, owner: "text big and clear") a phone grows a
       // small game too, at most 1.4x
       const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : 1.4;
@@ -186,7 +198,7 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       if (!playing || list.some(m => m.target === stage)) fitSoon(playing);
     });
     fitWatch.observe(stage, { childList: true, subtree: true });
-    const fitResize = () => fitSoon(false);
+    const fitResize = () => { if (wide.tried) { wide.tried = 0; setWide([], false); } fitSoon(false); };
     addEventListener('resize', fitResize); setTimeout(() => { floorText(); fit(); if (floorText()) fitSoon(true); }, 400);
     cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitResize); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
     let closed = false, winning = false;

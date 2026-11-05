@@ -23,6 +23,7 @@ import { T, both } from './i18n.js';
 import { el, esc } from './util.js';
 import { SFX } from './audio.js';
 import { say } from './voice.js';
+import { lumiWelcome, lumiNews } from './lumi.js';
 import { pic, moreArt, moreArtReady } from './art.js';
 import { saveProfiles, reduceMotion } from './state.js';
 import { GAMES, gameOpen } from './games/frame.js';
@@ -237,7 +238,7 @@ export function createSimple(G) {
         const got = items.reduce((a, x) => a + (x.stars || 0), 0), all = items.reduce((a, x) => a + (x.max || 0), 0);
         return `<section class="sp-sec" data-cat="${esc(area.key)}"><h3 class="sp-sectitle" role="heading" aria-level="2"><span class="sp-hpic">${pic(area.icon)}</span><b>${esc(area.name())}</b>${all ? `<span class="sp-count">${pic('⭐')} ${got}/${all}</span>` : ''}</h3>
           <div class="sp-secroad"><svg class="sp-road" aria-hidden="true"><path/><path class="dash"/></svg>${items.map((x, n) => stopHTML(list[start + n], start + n)).join('')}</div></section>`; }).join('') +
-        `<button class="sp-owl" aria-label="${T('Ông Cú', 'Ông Cú')}">${pic('🦉')}</button>`;
+        `<button class="sp-owl lumi" aria-label="Lumi">${pic('lumi')}</button>`;
       const W = path.clientWidth || innerWidth, all = [...path.querySelectorAll('.sp-stop')], tall = Math.max(150, ...all.map(b => b.offsetHeight));
       path.classList.toggle('secwide', isWide); if (!isWide) path.style.setProperty('--lw', layout(1, W, tall).lw + 'px');
       if (isWide) { // a phone on its side: the sections side by side, each a title over its own road running sideways
@@ -267,7 +268,7 @@ export function createSimple(G) {
       list.map((s, k) => s.kind === 'head' ? `<div class="sp-stop grp" role="heading" aria-level="2" data-k="${k}" aria-label="${esc(s.name)}"><span class="sp-hpic">${pic(s.icon)}</span><b class="sp-name">${esc(s.name)}</b></div>` : `<button class="sp-stop${k === next ? ' next' : ''}${sel === idOf(s) ? ' sel' : ''}${s.locked ? ' locked' : ''}" data-k="${k}" aria-label="${esc(s.name)}">
         <span class="sp-pic">${pic(s.icon)}${s.badge ? `<i class="sp-badge">${s.badge}</i>` : ''}${s.plus ? `<i class="sp-age" aria-label="${esc(T('For 5 and up', 'Cho bé từ 5 tuổi'))}">5+</i>` : ''}${s.isNew ? `<i class="sp-new">${pic('✨')}</i>` : ''}${s.locked ? `<i class="sp-lockpad">${pic('\u{1F512}')}</i>` : ''}${starsHTML(s.kind === 'lock' ? { max: 3, stars: s.prog } : s)}</span>
         <b class="sp-name">${esc(s.name)}${s.hint ? `<small class="sp-hint">${esc(s.hint)}</small>` : ''}</b>${!lt && s.kind !== 'head' && s.kind !== 'lock' ? `<span class="sp-play">${T('Play', 'Chơi')} ▶</span>` : ''}</button>`).join('') +
-      `<button class="sp-owl" aria-label="${T('Ông Cú', 'Ông Cú')}">${pic('🦉')}</button>`;
+      `<button class="sp-owl lumi" aria-label="Lumi">${pic('lumi')}</button>`;
     // measure the tallest stop (its name may take two or three lines), then place them all
     const btns = [...path.querySelectorAll('.sp-stop')], tall = Math.max(150, ...btns.filter(b => !b.classList.contains('grp')).map(b => b.offsetHeight));
     L = place(tall);
@@ -383,7 +384,8 @@ export function createSimple(G) {
     // a new star since the path was last open: Ông Cú cheers
     const who = hero().profile.name, now = totalStars(), owl = m.querySelector('.sp-owl');
     if (lastStars[who] != null && now > lastStars[who] && owl) { owl.classList.add('cheer'); say('Well done! You won a new star!', 'Giỏi lắm! Con được thêm một ngôi sao!'); }
-    else { const x = tabOf(tab); say(x.say[0], x.say[1]); }
+    // (v1.08b quality) Lumi is the guide of the Simple screen: her welcome for a new child, then the week's news once a week
+    else if (!lumiWelcome(hero().profile) && !lumiNews(hero().profile)) { const x = tabOf(tab); say(x.say[0], x.say[1]); }
     lastStars[who] = now;
   }
   function hide() { if (m) { const sc = m.querySelector('.sp-scroll'); if (!m.hidden) kept = { top: sc.scrollTop, left: sc.scrollLeft }; m.hidden = true; } document.body.classList.remove('simple-on'); G.paused = false; }

@@ -217,5 +217,12 @@ await check('types', async () => {
   // (owner, 16-17 Oct AEDT: TypeScript batches 1 and 2) the website's server pieces, the Studio engine and the tools, as Node runs them
   let server = ''; try { server = runTsc(['-p', 'tsconfig.server.json', '--listFilesOnly']); runTsc(['-p', 'tsconfig.server.json']); } catch (e) { ok(false, 'tsconfig.server.json: ' + diagnostics(e)); }
   const n = JSON.parse(fs.readFileSync('tsconfig.json', 'utf8')).files.length, ts = server.split('\n').filter(f => /\.(mts|cts)$/.test(f) && !f.includes('node_modules')).length;
-  return `${n} explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; ${ts} TypeScript files of the server, Studio and tools; no errors`;
+  // (v1.08b quality, owner 3 Nov 2026 AEDT: "Make sure everything is built in ts") the test code and marketing/source
+  // (tsconfig.tests.json): their findings when first checked are in types-baseline.json; a file may only go down
+  let tout = ''; try { tout = runTsc(['-p', 'tsconfig.tests.json']); } catch (e) { tout = [e.stdout, e.stderr].filter(Boolean).join('\n'); }
+  const now = {}; for (const m of tout.matchAll(/^([^\s(]+)\(\d+,\d+\): error TS/gm)) now[m[1]] = (now[m[1]] || 0) + 1;
+  const base = JSON.parse(fs.readFileSync('types-baseline.json', 'utf8')).files, worse = Object.entries(now).filter(([f, k]) => k > (base[f] || 0));
+  ok(!worse.length, 'new type findings in the test code: ' + worse.map(([f, k]) => `${f} ${k} (was ${base[f] || 0})`).join(', ') + ' | ' + tout.split('\n').filter(l => worse.some(([f]) => l.startsWith(f + '('))).slice(0, 6).join(' | '));
+  const left = Object.values(now).reduce((a, k) => a + Number(k), 0);
+  return `${n} explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; ${ts} TypeScript files of the server, Studio and tools; no errors; the test code and marketing/source checked too: ${left} known findings left (types-baseline.json, none new)`;
 });

@@ -8,6 +8,9 @@ import { isHeld, isOpen, progressOf, secondSetOf } from './content/unlocks.js';
 import { pic } from './art.js';
 import { THREE, sprite, P, merge, toonVC, outline } from './gfx.js';
 import { T } from './i18n.js';
+import { gameOpen } from './games/frame.js';
+import { lumiSay } from './lumi.js';
+import { LUMI_SOON, LUMI_BYE, playTimePhase, byeNow } from './content/lumi.js';
 import { say, sayIn } from './voice.js';
 import { SFX } from './audio.js';
 import { settings, saveSettings, saveProfiles, farm, saveFarm } from './state.js';
@@ -196,26 +199,32 @@ export function createLearning(G) {
 
   // ---------- the gentle rest timer ----------
   // Minutes played today are counted on this device only (never sent anywhere).
+  // (v1.08b quality, owner's pop-up 3 Nov 2026 AEDT: "a gentle play time") the time a grown-up set counts games, the
+  // Simple screen and the valley alike; two minutes before, Lumi says so; when time is up her soft goodbye waits until
+  // the game, film or story in hand is over: never a hard cut mid-game (js/content/lumi.ts playTimePhase, byeNow)
   const today = () => new Date().toDateString();
-  let tick = 0, shown = false;
-  world.updaters.push(dt => {
-    if (!G.heroes.length || G.paused) return;
-    tick += dt; if (tick < 5) return;
-    const add = tick / 60; tick = 0;
-    if (settings.playDay !== today()) { settings.playDay = today(); settings.playMins = 0; shown = false; }
+  let shown = false, soonSaid = false, last = performance.now();
+  const busy = () => gameOpen() || !!document.querySelector('.theatre, .tale-book, .resttime, .dancebreak');
+  const playing = () => !document.hidden && G.heroes.length && (!G.paused || gameOpen() || document.body.classList.contains('simple-on'));
+  setInterval(() => {
+    const now = performance.now(), add = Math.min(10, (now - last) / 1000) / 60; last = now;
+    if (!playing()) return;
+    if (settings.playDay !== today()) { settings.playDay = today(); settings.playMins = 0; shown = false; soonSaid = false; }
     settings.playMins = (settings.playMins || 0) + add; saveSettings();
-    const lim = +settings.restMins || 0;
-    if (lim && settings.playMins >= lim && !shown) { shown = true; restTime(); }
-  });
+    const phase = playTimePhase(settings.playMins, +settings.restMins || 0);
+    if (phase === 'soon' && !soonSaid && !busy()) { soonSaid = true; lumiSay(LUMI_SOON); }
+    if (phase === 'play') { soonSaid = false; shown = false; }
+    if (byeNow(phase, busy()) && !shown) { shown = true; restTime(); }
+  }, 5000);
   const restTime = () => {
     G.paused = true; G.world.time = .82;
     G.heroes.forEach(h => { h.cheerT = 0; h.emoteT = 2; });
-    const m = el('div', 'resttime', `<div class="rt-card"><div class="rt-moon">🌙</div><h2>${T('Time to rest!', 'Đến giờ nghỉ rồi!')}</h2><p>${T('You played so well today. Your explorer is yawning… See you tomorrow!', 'Hôm nay con chơi giỏi lắm. Nhà thám hiểm của con ngáp rồi… Hẹn gặp lại ngày mai nhé!')}</p>
-      <div class="rt-zz">😴 💤</div><button class="btn grownup"><span class="ring"></span>${T('Grown-ups: hold for 10 more minutes', 'Người lớn: giữ để chơi thêm 10 phút')}</button></div>`);
+    const m = el('div', 'resttime', `<div class="rt-card"><div class="rt-moon">${pic('lumi')}</div><h2>${T('Time to rest!', 'Đến giờ nghỉ rồi!')}</h2><p>${esc(T(...LUMI_BYE))}</p>
+      <div class="rt-zz">${pic('🌙')}</div><button class="btn grownup"><span class="ring"></span>${T('Grown-ups: hold for 10 more minutes', 'Người lớn: giữ để chơi thêm 10 phút')}</button></div>`);
     document.body.appendChild(m); SFX.chime();
-    say('You played so well today! Time to rest. See you tomorrow!', 'Hôm nay con chơi giỏi lắm! Đến giờ nghỉ rồi. Hẹn gặp lại ngày mai nhé!');
+    say(LUMI_BYE[0], LUMI_BYE[1]);
     const b = m.querySelector('.grownup'), ring = b.querySelector('.ring'); let t0 = 0, raf = 0;
-    const tickH = () => { const k = Math.min(1, (performance.now() - t0) / 1800); ring.style.setProperty('--p', k * 100 + '%'); if (k >= 1) { settings.restMins = String((+settings.restMins || 0) + 10); saveSettings(); shown = false; m.remove(); G.paused = false; } else raf = requestAnimationFrame(tickH); };
+    const tickH = () => { const k = Math.min(1, (performance.now() - t0) / 1800); ring.style.setProperty('--p', k * 100 + '%'); if (k >= 1) { settings.restMins = String((+settings.restMins || 0) + 10); saveSettings(); shown = false; soonSaid = false; m.remove(); G.paused = document.body.classList.contains('simple-on'); } else raf = requestAnimationFrame(tickH); };
     b.addEventListener('pointerdown', e => { e.preventDefault(); t0 = performance.now(); tickH(); });
     ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => b.addEventListener(k, () => { cancelAnimationFrame(raf); ring.style.setProperty('--p', '0%'); }));
   };

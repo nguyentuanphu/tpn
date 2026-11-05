@@ -42,6 +42,18 @@ await check('pushnotify', async () => (await import('./push-notify-browser.mts')
 // level: no round repeats another and the right answer moves (tests/round-variety.mts); a sample of two levels per game
 // each run, all four when the games change
 await check('roundvariety', async () => (await import('./round-variety.mts')).roundVarietyCheck(b, { sample: sampled('roundvariety') ? SEED : null }));
+// (v1.08b quality) every game on five screens, phone (fivescreens) and wide screens (fivescreenswide); every guide film,
+// tale film and story page on five screens (fivescreensfilms) (tests/fivescreens-browser.mts)
+await check('fivescreens', async () => (await import('./fivescreens-browser.mts')).fiveScreensCheck(b));
+await check('fivescreenswide', async () => (await import('./fivescreens-browser.mts')).fiveScreensWideCheck(b));
+await check('fivescreensfilms', async () => (await import('./fivescreens-films.mts')).fiveScreensFilmsCheck(b, { sample: sampled('fivescreensfilms') ? SEED : null }));
+// (v1.08b quality) for grown-ups: the learning report by subject and the level by subject; Lumi as the guide; Play with Mum
+// and Dad; the gentle play time (tests/quality-v108b-browser.mts)
+await check('subjectlevel', async () => (await import('./quality-v108b-browser.mts')).subjectLevelCheck(b));
+await check('learningreport', async () => (await import('./quality-v108b-browser.mts')).learningReportCheck(b));
+await check('lumiguide', async () => (await import('./quality-v108b-browser.mts')).lumiGuideCheck(b));
+await check('playtogether', async () => (await import('./quality-v108b-browser.mts')).playTogetherCheck(b));
+await check('playtime', async () => (await import('./quality-v108b-browser.mts')).playTimeCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);
