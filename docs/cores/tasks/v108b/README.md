@@ -17,3 +17,5 @@ Before starting, read CLAUDE.md, HANDOFF.md, docs/cores/README.md, docs/cores/ta
 - **Done:** write "ready for Release" at the top of your status file, push, and send Release (session_01SchVRv9GNVGszhptzXpYMs) a short message: branch, last commit, what changed, checks (pass/fail/skipped), what is left.
 
 **The five helpers:** friends, games, story, platform, quality.
+
+**5 Nov 2026 AEDT:** all five sessions stopped three minutes after starting on 4 Nov because the account's weekly usage limit was reached (it reset at 02:00 UTC, 1 pm AEDT, on 5 Nov); they were restarted then. The owner added a Studio redesign (Releases and Sparkle Lab easier to understand, faster Studio, no reload on Back) to the platform helper; the Concept D roads moved to the quality helper.

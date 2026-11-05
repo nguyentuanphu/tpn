@@ -8,4 +8,5 @@ Do:
 3. **Learning report by subject** in Grown-ups: what the child practised this week in Vietnamese, English, Maths, Science and Money, what went well, one game suggested for next week; shareable as a picture. **Difficulty by subject:** the level follows the child per subject (strong in Maths, new to English); the parent's setting still wins.
 4. **Lumi as the guide:** Lumi welcomes new children, explains new things, carries the week's news, and is the voice of the Simple screen (recorded lines, EN and VI, female voice).
 5. **Play together:** a "Chơi cùng bố mẹ / Play with Mum and Dad" list of games two people can play on one device, with a short guide for the grown-up. **Gentle play time:** a parent-set play time with a soft goodbye from Lumi ("Hẹn mai chơi tiếp nhé!"), never a hard cut mid-game.
-6. **Checks:** `fivescreens`, `types`, `arch`, `learningreport`, `subjectlevel`, `lumiguide`, `playtogether`, `playtime`, plus `phone`, `gamespace`, `gamefit`.
+6. **Roads and dirt roads redrawn to the Concept D drawings** (#34; `docs/concept-d/`, `docs/roads-concept-d/`): `js/roads.ts`, with `roads` and `solid` checks (moved here from the platform helper, 5 Nov).
+7. **Checks:** `roads`, `solid`, `fivescreens`, `types`, `arch`, `learningreport`, `subjectlevel`, `lumiguide`, `playtogether`, `playtime`, plus `phone`, `gamespace`, `gamefit`.
