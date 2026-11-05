@@ -8,6 +8,7 @@ import { SFX } from './audio.js';
 import { profiles, saveProfiles, farm, saveFarm } from './state.js';
 import { WATER, heightAt, LEAFIES, HOME } from './world.js';
 import { animalModel, PETS } from './farm.js';
+import { animalCheer } from './animals.js';   // (v1.08e creatures) a happy jump plays the Blender model's cheer
 import { fmt, spoken } from './money.js';
 import { el, esc, dist2, wait } from './util.js';
 import { modal, toast } from './ui.js';
@@ -100,7 +101,7 @@ export function createPets(G) {
     const o = Y.obj, dx = Y.tx - o.position.x, dz = Y.tz - o.position.z, d = Math.hypot(dx, dz);
     if (d < .2) { if (Math.random() < dt * .4) { const a = Math.random() * 6.28, r = Math.random() * 3.2; Y.tx = yardC.x + Math.cos(a) * r; Y.tz = yardC.z + Math.sin(a) * r; } }
     else { o.rotation.y = Math.atan2(dx, dz); o.position.x += dx / d * dt * 1.2; o.position.z += dz / d * dt * 1.2; }
-    o.position.y = heightAt(o.position.x, o.position.z) + (Y.hop > 0 ? Math.abs(Math.sin(Y.hop * 9)) * .5 : d > .2 ? Math.abs(Math.sin(t * 10)) * .08 : 0); Y.hop = Math.max(0, Y.hop - dt);
+    o.position.y = heightAt(o.position.x, o.position.z) + (Y.hop > 0 ? Math.abs(Math.sin(Y.hop * 9)) * .5 : d > .2 ? Math.abs(Math.sin(t * 10)) * .08 : 0); if (Y.hop > 0) animalCheer(o, .3); Y.hop = Math.max(0, Y.hop - dt);
     Y.tag.position.set(o.position.x, o.position.y + 1.4, o.position.z);
   }));
   G.interactables.push({ id: 'petyard', x: yardC.x, z: yardC.z, r: 5, icon: '🐾', bubble: '🐾', label: () => T('Pet yard: play with your pets', 'Sân thú cưng: chơi với thú cưng'), act: h => P.openAdopt(h) });
@@ -134,6 +135,7 @@ export function createPets(G) {
       else if (d > .4) { const sp = Math.min(d * 2.6, 13); o.position.x += dx / d * sp * dt; o.position.z += dz / d * sp * dt; o.rotation.y = Math.atan2(dx, dz); }
       const g = world.groundAt(o.position.x, o.position.z, h.pos.y + 1), swim = g < WATER - .5;
       o.position.y = (swim ? WATER - .35 : g) + (d > .4 && !swim ? Math.abs(Math.sin(t * 12 + L.j)) * .12 : 0) + (L.hop > 0 ? Math.abs(Math.sin(L.hop * 9)) * .5 : 0);
+      if (L.hop > 0) animalCheer(o, .3);
       L.hop = Math.max(0, L.hop - dt);
       o.children[1] && (o.children[1].visible = !swim);
       L.tag.position.set(o.position.x, o.position.y + 1.45, o.position.z);

@@ -1064,7 +1064,8 @@ await check('wearfit', async () => {
   return `on Finn, Sol, Clara and Lumi: ${r.n.hat / 4} hats, ${r.n.face / 4} glasses and masks, ${r.n.neck / 4} neck things, ${r.n.back / 4} backs and ${r.n.feet / 4} shoes, all drawn and in place`;
 });
 await check('friendmodel', async () => {
-  // the friends' light 3D models (models/<id>.glb): each loads after the start, is small (meshopt, under 500 KB), draws in a
+  // the friends' light 3D models (models/<id>.glb): each loads after the start, is small (meshopt, under 500 KB), has its
+  // eleven faces (v1.08e faces: half, lookL and lookR joined the eight moods), draws in a
   // few parts, takes the child's skin tone, follows the code person's joints and moods, and the child plays with it; when
   // a model cannot load, the code person in the friend's colours stays (no error). Triangles shown: about 8,200 for Finn,
   // Sol and Clara (limit 9,000); Lumi's hair is about a thousand felt leaves that cannot be thinned further, so about
@@ -1081,9 +1082,10 @@ await check('friendmodel', async () => {
       const bone = n => { let x = null; m.obj.traverse((o: any) => { if (o.isBone && o.name === n) x = o; }); return x; }, q0 = new THREE.Quaternion(), q1 = new THREE.Quaternion();
       av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q0); av.armL.rotation.x = -1.2; av.life = av.life || ({} as typeof av.life); av.life.mood = 'happy'; av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q1);
       const turned = +q0.angleTo(q1).toFixed(2), face = meshes.filter(o => /^face-/.test(o.material.name) && o.visible).map(o => o.material.name).join();
-      meshes.filter(o => o.visible && (o.material.name !== 'skin-grip')).forEach(o => { tris += o.geometry.index.count / 3; });
+      // (v1.08e faces, part 2) the thin outlines (one per part, the same shape drawn again) are counted on their own
+      meshes.filter(o => o.visible && !o.userData.outline && (o.material.name !== 'skin-grip')).forEach(o => { tris += o.geometry.index.count / 3; });
       const hat = av.rig.getObjectByProperty('isMesh', true) && (() => { let n = 0; av.rig.traverse((o: any) => { if (o.isMesh && !o.isSkinnedMesh && o.parent && o.parent !== m.obj) n++; }); return n; })();
-      out[id] = { ok, skin, faces, turned, face, tris, draws: meshes.filter(o => o.visible).length, hat };
+      out[id] = { ok, skin, faces, turned, face, tris, draws: meshes.filter(o => o.visible && !o.userData.outline).length, lines: meshes.filter(o => o.visible && o.userData.outline).length, hat };
     }
     // the child in the valley plays with the model once it has arrived
     const G = __sv; for (let k = 0; k < 40 && !G.heroes[0].av.model; k++) await new Promise(r => setTimeout(r, 250));
@@ -1096,10 +1098,10 @@ await check('friendmodel', async () => {
   const errs = [...P.errors, ...Q.errors.filter(e => !/glb|friend model|Failed to fetch|aborted/i.test(e))]; await P.ctx.close(); await Q.ctx.close();
   const bad = [];
   sizes.forEach((n, i) => { if (n > 500 * 1024) bad.push(`model ${i} is ${Math.round(n / 1024)} KB`); });
-  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || x.skin !== '#b47a55' || x.faces !== 8 || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 14500 : 9000) || x.draws > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
+  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || x.skin !== '#b47a55' || x.faces !== 11 || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 14500 : 9000) || x.draws > 6 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
   if (!r.hero) bad.push('the child in the valley has no model'); if (f.ok || f.model || f.hero || f.look !== '#e0762a') bad.push('no model: ' + JSON.stringify(f));
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
-  return `${sizes.map(n => Math.round(n / 1024)).join(', ')} KB; ${['finn', 'sol', 'clara', 'lumi'].map(id => `${id} ${r[id].tris} triangles in ${r[id].draws} parts`).join(', ')}; skin tone, joints and moods follow; the cap is worn; without the files the code person stays`;
+  return `${sizes.map(n => Math.round(n / 1024)).join(', ')} KB; ${['finn', 'sol', 'clara', 'lumi'].map(id => `${id} ${r[id].tris} triangles in ${r[id].draws} parts (+${r[id].lines} outlines)`).join(', ')}; skin tone, joints and moods follow; the cap is worn; without the files the code person stays`;
 });
 await check('friendoutfits', async () => {
   // the shop's Outfits tab (a child with a friend): the friend's four outfits, the everyday one worn free, one tap shows a
@@ -1156,7 +1158,7 @@ await check('frienditems', async () => {
     // shop shoes take the place of the model's boots; the model shows its own boots otherwise
     const sh = A.buildAvatar({ ...p.look, feet: 'sneakers_red' }); let codeShoes = 0; sh.rig.traverse((x: any) => { if (x.isMesh && !x.isSkinnedMesh && x.parent && x.parent !== sh.model.obj && (x.parent === sh.kneeL || x.parent === sh.kneeR || x.parent === sh.legL || x.parent === sh.legR)) codeShoes++; });
     out.shoes = { boots: boots(sh), code: codeShoes, plain: boots(h.av) };
-    let draws = 0; h.av.model.obj.traverse(x => { if (x.isMesh && x.visible && x.material.name !== 'skin-grip') draws++; }); out.draws = draws;
+    let draws = 0; h.av.model.obj.traverse(x => { if (x.isMesh && x.visible && !x.userData.outline && x.material.name !== 'skin-grip') draws++; }); out.draws = draws; // (v1.08e faces, part 2: outlines apart, friendmodel limits them)
     return out;
   });
   const errs = P.errors; await P.ctx.close();
