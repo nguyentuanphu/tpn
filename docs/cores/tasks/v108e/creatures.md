@@ -1,6 +1,28 @@
 # v1.08e creatures: status
 
-**ready for Release** (6 Nov 2026, 02:54 AEDT). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+**ready for Release** (6 Nov 2026, 03:28 AEDT, second pass after the owner's review). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+
+## Second pass (owner, 6 Nov 2026 AEDT)
+
+The owner: "The animals need better refinement, this is still very scratchy and still doesn't look as nice. Check the cows
+and buffaloes horns, they look incorrect, all animals need to show emotions, facial expressions, movements, eye blinks."
+
+- **Smooth, clean shapes:** the melted felt surface (voxel remesh, thinned) made lumpy shapes and jagged colour edges; it is
+  gone. Each part is now a smooth round shape at good detail with clean colour edges (2,400-9,000 triangles, 45-92 KB).
+- **Horns:** shaped in Blender as smooth tapering curves with darker tips: the cow's and bull's curve out and up, the calf's
+  are short nubs, the buffalo's sweep out and back in a wide crescent with rings (as wide as before, so its hit area stays).
+- **Faces on all 24:** shiny eyes with two highlights (whites for the sheep, penguin, panda and companions; the kitty's
+  green eyes with slit pupils), brows, a mouth (a "w" for the kitty and bunny; none for beaks, the platypus's bill and the
+  elephant's trunk), rosy cheeks. Bones for each eye, brow, the mouth and the jaw, and a closed-eye arc for each eye.
+- **Moves and moods:** every clip blinks; idle also looks around and twitches its ears. New clips `sad`, `surprised`,
+  `sleep`; happy move and cheer show "^ ^" eyes and an open smile.
+- **In the game** (`js/creatures.ts`): an animal is surprised when a child walks up, then does its happy move to greet
+  them; it is sad for a moment when they walk away; it sleeps at night when nobody is near; a pet cheers on its happy jump.
+  The companion is surprised when it starts lighting the way, flaps on a trick, and sleeps beside a resting child at night.
+- **Check `worldcreatures`** now also checks the eight clips, two eyes and a closed-eye arc on every creature, a blink in
+  idle and shut eyes asleep.
+- Checks (6 Nov 2026, 03:28 AEDT, one at a time): worldcreatures, types, boot, startup (1032 KB, same as the base), perf (village 275 draws),
+  battery, longplaymem, areastream, companiongoal: all pass, each on the first try.
 
 ## What changed
 
