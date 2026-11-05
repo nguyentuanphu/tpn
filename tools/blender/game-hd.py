@@ -107,7 +107,7 @@ def hd():
     for img, kind in (((col_img, 'COMBINED'), (col_img, 'DIFFUSE'), (ao_img, 'AO')) if LIT else ((col_img, 'DIFFUSE'), (ao_img, 'AO'))):
         target(img)
         for k in cloth:
-            if LIT and (kind == 'COMBINED') == (k == 'hair'): continue
+            if LIT and (kind == 'COMBINED') == (k in ('hair', 'hands')): continue   # (the hands came out dark too)
             _select([high[k], low[k]], low[k])
             if kind == 'COMBINED': scene.cycles.samples = 48; bpy.ops.object.bake(type='COMBINED', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
             elif kind == 'DIFFUSE': bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
@@ -133,7 +133,7 @@ def hd():
             one = bpy.data.materials.new(k); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
             ca = nt.nodes.new('ShaderNodeVertexColor'); ca.layer_name = 'Col'; nt.links.new(ca.outputs['Color'], b.inputs['Base Color'])
         else:
-            one = bpy.data.materials.new(('lit-' if LIT and k != 'hair' else 'cloth-') + k); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
+            one = bpy.data.materials.new(('lit-' if LIT and k not in ('hair', 'hands') else 'cloth-') + k); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
             t = nt.nodes.new('ShaderNodeTexImage'); t.image = paint; nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
         b.inputs['Roughness'].default_value = .8
         if skin and k == 'hands': skin = skin.copy(); skin.name = 'skin-grip'
