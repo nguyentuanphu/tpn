@@ -9,7 +9,7 @@ const ALL = { phone: [390, 844], tablet: [820, 1180], computer: [1280, 800] }, S
 for (const [dev, [w, h]] of Object.entries(SIZES)) {
   const P = await open(b, { w, h }); await clear(P.page);
   for (const moods of (process.env.MOODS ? [process.env.MOODS.split(',')] : [['smile', 'half', 'blink'], ['happy', 'o', 'sad']])) {
-    const png = await P.page.evaluate(async ({ w, h, moods }) => {
+    const png = await P.page.evaluate(async ({ w, h, moods, hd }) => {
       const A = await import('/js/avatar.js'), { THREE } = await import('/js/gfx.js');
       const people = [
         { set: 'boy', friend: 'finn', skin: '#f2c6a0' }, { set: 'boy', friend: 'sol', skin: '#c98d62' },
@@ -17,7 +17,7 @@ for (const [dev, [w, h]] of Object.entries(SIZES)) {
         { style: 'shirt', color: '#f2f2f2', hair: '#1a1410', hairStyle: 'short', hat: 'none', skin: '#e8b48c', back: 'none', glider: 0 },
         { style: 'aodai', color: '#7a4aa0', hair: '#1a1410', hairStyle: 'long', hat: 'none', skin: '#f0c6a0', back: 'none', glider: 0 },
         { style: 'tunic', color: '#6b4a2a', hair: '#8a8a8a', hairStyle: 'buns', hat: 'none', skin: '#c98d62', back: 'none', glider: 0 }];
-      for (const p of people) if (p.friend) await A.loadFriendModels(p.friend);
+      for (const p of people) if (p.friend) { await A.loadFriendModels(p.friend); if (hd) await A.loadFriendModels(p.friend + '-hd'); }
       const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); r.setSize(w, h); r.setPixelRatio(1);
       const sc = new THREE.Scene(); sc.background = new THREE.Color('#bfe3f2');
       sc.add(new THREE.HemisphereLight('#ffffff', '#8a9a70', 1.6)); const d = new THREE.DirectionalLight('#ffffff', 1.6); d.position.set(2, 4, 5); sc.add(d);
@@ -26,7 +26,7 @@ for (const [dev, [w, h]] of Object.entries(SIZES)) {
       const [nx, ny] = wide ? [rows, cols] : [cols, rows];
       const avs = [];
       people.forEach((p, i) => moods.forEach((m, j) => {
-        const av = A.buildAvatar(p); sc.add(av.root); A.animate(av, 'idle', 0); av.life.mood = m; if (av.faceMat && av.faceMat.map) A.setFaceMood(av.faceMat.map, m);
+        const av = A.buildAvatar(p, null, { hd }); sc.add(av.root); A.animate(av, 'idle', 0); av.life.mood = m; if (av.faceMat && av.faceMat.map) A.setFaceMood(av.faceMat.map, m);
         const [cx, cy] = wide ? [i, j] : [j, i]; avs.push({ av, cx, cy });
       }));
       // square cells, each the close-up of one head (about 0.8 m across), drawn one person at a time
@@ -40,7 +40,7 @@ for (const [dev, [w, h]] of Object.entries(SIZES)) {
         r.render(sc, cam); av.root.visible = false;
       });
       const url = r.domElement.toDataURL('image/png'); r.dispose(); return url;
-    }, { w, h, moods });
+    }, { w, h, moods, hd: process.env.HD === '1' });
     fs.writeFileSync(`${out}/${tag}-${dev}-${moods.join('-')}.png`, Buffer.from(png.split(',')[1], 'base64'));
   }
   if (P.errors.length) console.log(dev, P.errors.slice(0, 3));
