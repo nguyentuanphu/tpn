@@ -4,6 +4,33 @@ Branch: `work/v108e-nature` (from `origin/integrate/v108`). Brief: `nature-brief
 
 ## Progress
 - Part 1 (inventory): done, below.
+- Part 2 (Blender): done. `tools/blender/world-nature.py` makes 47 models; `node tools/make-world-nature.mts [name ...]`
+  builds them (pip install bpy, Blender 5.2) and compresses each with gltfpack 0.20 (meshopt, `-noq`) into
+  `models/world/` (6-130 KB each, 1.6 MB in all, 112-2,476 triangles; one shape, colours in the corners).
+- Part 3 (in the game): done. `js/nature-tag.ts` (first download, under 1 KB) marks shapes; `js/world-nature.ts`
+  (after the start) swaps a marked shape's geometry for its model when a child is within 70 m (40 on Fast) and back past
+  110 m (70 on Fast). Same mesh, material and draw; areas that sleep, taps and colliders unchanged.
+- Part 4 (check `worldnature`, `tests/world-nature.mts`, end of `tests/run.mts`): running.
+
+## How it works, and changes outside my own files (small, marked "v1.08e nature")
+- `js/world.ts`: the instanced trees (not rocks) and the meadow flowers are marked.
+- `js/roads.ts`: the roadside flower stems are marked; the VN bougainvillea bushes and AU gum trees are now one
+  InstancedMesh each (was one merged mesh each: still one draw), so they can be swapped.
+- `js/town.ts` (jacaranda, gum, banana, frangipani), `js/reeds.ts` (reeds, hyacinth), `js/farm.ts` (hay, egg crate,
+  wardrobe, easel; crops), `js/home-decor-models.ts` (7 decorations; wall pictures and keepsakes stay).
+- `js/farm.ts` crops: stages 1-3 draw their model once loaded (stage 3 no longer shows the produce as a sprite then);
+  stage 0 (the seed) stays the code shape. The sunflower faces the field's gate.
+- `js/solids.ts`: reads `userData.codeGeo || geometry`, so the solid map (and its saved key) is always the code shape's.
+- `js/main.ts`: one `afterStart` line after the kit's. `sw.ts`: lists `js/nature-tag.js`, `js/world-nature.js`.
+  The `.glb` files are not kept offline (the code shapes are the fallback, as the README says).
+- I did not change `js/modelkit.ts`. Note for Release: `worldModelParts` applies the node matrix to a cloned geometry; a
+  gltfpack file with quantized positions (the default, without `-noq`) would be rounded there. My files use `-noq`.
+- The Sa Pa peach tree model (`tree-peach`) is made but not placed: the landmark mesh in `js/s2vn.ts` is the places
+  helper's. Rocks, grass tufts and garden plots stay code shapes.
+
+## Assumed (owner can change)
+- Far trees go back to the code shape (the brief allows it), rather than a still copy.
+- My House: the decorations got models; the room's frames, notice board and bunting stay as they are.
 
 ## Inventory: every tree, flower, plant, crop and My House piece in the code
 

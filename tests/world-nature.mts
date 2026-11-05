@@ -41,7 +41,7 @@ export async function worldNatureCheck(b: Browser) {
       const missing = names.filter(n => !N.natureGeoReady(n));
       // each model: one shape, vertex colours, its triangles, its feet on the ground
       const info: Record<string, { tris: number, y0: number, hgt: number }> = {};
-      for (const n of names) { const g = N.natureGeoReady(n); if (!g) continue; g.computeBoundingBox(); const bb = g.boundingBox; info[n] = { tris: g.getAttribute('position').count / 3, y0: +bb.min.y.toFixed(2), hgt: +(bb.max.y - bb.min.y).toFixed(2), col: !!g.getAttribute('color') } as any; }
+      for (const n of names) { const g = N.natureGeoReady(n); if (!g) continue; g.computeBoundingBox(); const bb = g.boundingBox; info[n] = { tris: g.getAttribute('position').count / 3, y0: +bb.min.y.toFixed(2), hgt: +(bb.max.y - bb.min.y).toFixed(2), col: (() => { const c = g.getAttribute('color'); if (!c) return false; let lo = 9; for (let i = 0; i < c.count; i++) lo = Math.min(lo, c.getX(i), c.getY(i), c.getZ(i)); return lo < .8; })() } as any; } // (colours in the corners, not all white)
       // the swapped shapes against their code shapes: height and footprint within a third, feet on the ground
       const sizes: Record<string, unknown> = {}, wrong: string[] = [];
       G.scene.traverse((o: any) => { const u = o.userData; if (!u.natureModel || !u.codeGeo || !u.natureOn) return; if (sizes[u.natureModel]) return;

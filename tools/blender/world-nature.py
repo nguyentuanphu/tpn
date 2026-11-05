@@ -88,12 +88,12 @@ class Model:
         me = bpy.data.meshes.new(self.name); self.bm.to_mesh(me); self.bm.free()
         ob = bpy.data.objects.new(self.name, me); bpy.context.collection.objects.link(ob)
         m = bpy.data.materials.get('vc') or bpy.data.materials.new('vc'); me.materials.append(m)
-        me.color_attributes.active_color = me.color_attributes['Col']
+        me.color_attributes.active_color = me.color_attributes['Col']; me.color_attributes.render_color_index = 0
         for o in bpy.context.scene.objects: o.select_set(o is ob)
         bpy.context.view_layer.objects.active = ob
         os.makedirs(OUT, exist_ok=True)
         bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, self.name + '.glb'), export_format='GLB', use_selection=True,
-                                  export_vertex_color='ACTIVE', export_texcoords=False, export_normals=True, export_materials='EXPORT',
+                                  export_vertex_color='NAME', export_vertex_color_name='Col', export_all_vertex_colors=False, export_texcoords=False, export_normals=True, export_materials='EXPORT',
                                   export_animations=False, export_apply=True)
         n = len(me.polygons); bpy.data.objects.remove(ob); bpy.data.meshes.remove(me)
         return n
@@ -168,14 +168,15 @@ def tree_palm():
 @model
 def bush():
     m = Model('bush', 17)
-    canopy(m, [(0, .7, 0, 1.05), (.85, .55, .3, .78), (-.7, .5, -.3, .7), (.1, .55, -.8, .65), (-.2, 1.1, .3, .6)], ['#24654f', '#30785c', '#2a6d55', '#358062'], sub=1, jitter=.2)
+    for i, (x, y, z, r) in enumerate([(0, .62, 0, 1.0), (.85, .5, .3, .74), (-.7, .46, -.3, .68), (.1, .5, -.8, .62), (-.2, 1.0, .3, .56)]):
+        m.ball(r, ['#24654f', '#30785c', '#2a6d55', '#358062'][i % 4], (x, y, z), (0, 0, 0), (1.15, .8, 1), sub=1, jitter=.2 * r)
     return m
 @model
 def flower_meadow():
     """white petals and a yellow middle: the game tints each flower (setColorAt), as before"""
     m = Model('flower-meadow', 18)
     m.cyl(.025, .03, .6, '#4f9e45', (0, .3, 0), seg=4)
-    m.leaf(.25, .1, '#5fb04a', (0, .15, 0), .5, droop=-.6, bend=.3); m.leaf(.22, .09, '#5fb04a', (0, .22, 0), 3.6, droop=-.6, bend=.3)
+    m.leaf(.25, .1, '#5fb04a', (0, .15, 0), .5, droop=.6, bend=.3); m.leaf(.22, .09, '#5fb04a', (0, .22, 0), 3.6, droop=.6, bend=.3)
     m.petals(6, .14, '#ffffff', (0, .62, 0), size=.12, tilt=.35, shade=.04)
     m.uv(.085, '#ffd23f', (0, .65, 0), seg=7, ring=5)
     return m
@@ -187,7 +188,7 @@ def flower_roadside():
     m = Model('flower-roadside', 19)
     m.cyl(.012, .017, .36, '#4f9a3c', (0, .18, 0), seg=4)
     m.cyl(.045, .045, .03, '#ffd23f', (0, .375, 0), seg=6)
-    m.leaf(.14, .07, '#5fb04a', (0, .08, 0), 0, droop=-.7, bend=.3); m.leaf(.12, .06, '#5fb04a', (0, .12, 0), 3, droop=-.7, bend=.3)
+    m.leaf(.14, .07, '#5fb04a', (0, .08, 0), 0, droop=.7, bend=.3); m.leaf(.12, .06, '#5fb04a', (0, .12, 0), 3, droop=.7, bend=.3)
     return m
 @model
 def bush_bougainvillea():
@@ -258,7 +259,7 @@ def hyacinth():
 
 # ---------- the farm (js/farm.ts): crops in three stages and the small props ----------
 def sprout(m, n, h, c='#4fae4a'):
-    for k in range(n): a = k * 2 * math.pi / n; m.leaf(h, h * .45, c, (math.cos(a) * .05, .02, math.sin(a) * .05), a, droop=-1.0, bend=-.25)
+    for k in range(n): a = k * 2 * math.pi / n; m.leaf(h, h * .45, c, (math.cos(a) * .05, .02, math.sin(a) * .05), a, droop=1.0, bend=.35)
 def stage1(name, seed):
     m = Model(name, seed); m.ball(.18, '#5a3a22', (0, 0, 0), (0, 0, 0), (1, .35, 1), sub=1); sprout(m, 3, .3); return m
 
@@ -343,12 +344,12 @@ def pumpkin_1(): return stage1('pumpkin-1', 46)
 @model
 def pumpkin_2():
     m = Model('pumpkin-2', 47)
-    for k in range(5): m.leaf(.4, .3, '#4fae4a', (0, .03, 0), k * 1.25, droop=-.1, bend=.15)
+    for k in range(5): m.leaf(.4, .3, '#4fae4a', (0, .03, 0), k * 1.25, droop=.12, bend=.15)
     m.cyl(.015, .015, .5, '#5f9e3a', (.2, .05, 0), (0, 0, 1.4), seg=4); m.uv(.1, '#9ac85a', (.4, .1, 0), seg=8, ring=6); return m
 @model
 def pumpkin_3():
     m = Model('pumpkin-3', 48)
-    for k in range(5): m.leaf(.45, .32, '#4fae4a', (0, .03, 0), k * 1.25, droop=-.1, bend=.15)
+    for k in range(5): m.leaf(.45, .32, '#4fae4a', (0, .03, 0), k * 1.25, droop=.12, bend=.15)
     for k in range(8):
         a = k * math.pi / 4; m.uv(.22, '#ff7a1a' if k % 2 else '#ff8a2a', (math.cos(a) * .14, .26, math.sin(a) * .14), (0, -a, 0), (.7, 1, 1.15), seg=8, ring=7, shade=.04)
     m.cyl(.035, .05, .16, '#6a8a3a', (0, .52, 0), (0, 0, .25), seg=5)
