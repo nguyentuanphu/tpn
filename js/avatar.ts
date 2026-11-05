@@ -4,6 +4,12 @@ import { GLIDERS, settings } from './state.js';
 import { customFace, familyOwnFace, onFamilyPhotos } from './custom.js';
 import { wearing, BOY_OF } from './content/shop.js';
 import { friendLook } from './content/friends.js'; // (v1.08b friends)
+// (v1.08b friends) the friends' 3D models (js/friend-model.ts) are not in the first download: that file loads when a child
+// with a friend is first built, and fills these in; until then the code person in the friend's colours is drawn
+export const FRIEND_MODELS: { ready?: (id: string) => boolean, load?: (id: string) => Promise<boolean>, attach?: (A, id: string, skin: string) => any } = {};
+export const loadFriendModels = (id: string): Promise<boolean> => FRIEND_MODELS.load ? FRIEND_MODELS.load(id)
+  : import('./friend-model.js').then(m => { Object.assign(FRIEND_MODELS, { ready: m.friendModelReady, load: m.loadFriendModel, attach: m.attachFriendModel }); return m.loadFriendModel(id as any); }).catch(() => false);
+const WEAR = <T extends THREE.Object3D>(o: T) => { o.userData.wear = true; return o; }; // (v1.08b) a hat, necklace or back: kept on a friend's model
 
 const gParts = {
   head: new THREE.SphereGeometry(.5, 32, 24),
@@ -113,10 +119,14 @@ export function faceTexture(look, photo?, mood = 'smile') {
 // Every character with an outline; the game hides outlines on far-away characters to keep phones fast.
 export const OUTLINED = [];
 const avatarCache = {};
+// (v1.08b friends) round pictures of the friends' models in each skin tone, made on this device (js/friend-view.ts)
+const PORTRAITS: Record<string, string> = {};
+export const setPortrait = (id: string, skin: string, url: string) => { if (url) PORTRAITS[id + skin] = url; };
 export function avatarURL(p) {
   // (audit, 9 Oct) the result goes into <img src="…">: only a plain base64 picture or a simple file path of our own
   if (p.photo && (/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/]+={0,2}$/.test(p.photo) || /^[\w\/.-]+\.(png|jpe?g|webp)$/i.test(p.photo))) return p.photo;
   const L = friendLook(p.look), k = L.hair + L.skin; // (v1.08b friends) the friend's hair in the child's skin tone
+  if (L.friend && PORTRAITS[L.friend + L.skin]) return PORTRAITS[L.friend + L.skin]; // (the model's portrait, once made: js/friend-view.ts)
   if (!avatarCache[k]) { const c = document.createElement('canvas'); c.width = c.height = 160; drawDefaultFace(c.getContext('2d'), 160, L); avatarCache[k] = c.toDataURL(); }
   return avatarCache[k];
 }
@@ -203,9 +213,12 @@ export type SvAvatar = { root: THREE.Group, rig: THREE.Group, skinMat: THREE.Mat
   wings?: THREE.Group[], cape?: THREE.Mesh, faceMat?: THREE.MeshStandardMaterial, faceLegacy?: string, outlines?: unknown, skinParts?: { g: THREE.BufferGeometry, ranges: number[][] }[],
   still?: THREE.Group, stillLine?: THREE.Mesh, _still?: boolean, _ol?: boolean, anim?: (state: string, t: number, speed?: number) => void,
   // (v1.08) the knees, elbows and swinging hair, and what the animation remembers between frames
-  kneeL?: THREE.Group, kneeR?: THREE.Group, elbowL?: THREE.Group, elbowR?: THREE.Group, tail?: THREE.Group, painted?: boolean, life?: AvatarLife };
+  kneeL?: THREE.Group, kneeR?: THREE.Group, elbowL?: THREE.Group, elbowR?: THREE.Group, tail?: THREE.Group, painted?: boolean, life?: AvatarLife,
+  model?: import('./friend-model.js').FriendModel };
 type AvatarLife = { t: number, st: string, chg: number, land: number, ph: number, blink: number, mood: string, seed: number };
-export function buildAvatar(look, photo?) {
+export function buildAvatar(look, photo?, opts?: { code?: boolean }) {
+  const friendId = look && look.friend, useModel = !!friendId && !(opts && opts.code) && !!FRIEND_MODELS.ready && FRIEND_MODELS.ready(friendId);
+  if (friendId && !useModel && !(opts && opts.code)) loadFriendModels(friendId); // (v1.08b: the next build uses the model)
   look = friendLook(look); // (v1.08b friends) a child is drawn as their friend (Finn, Sol, Clara or Lumi); villagers stay as they are
   const root = new THREE.Group(), rig = new THREE.Group(); root.add(rig); root.userData.avatar = true;
   const shadow = blobShadow(); root.add(shadow); shadow.position.y = .03; shadow.scale.setScalar(.65);
@@ -246,9 +259,9 @@ export function buildAvatar(look, photo?) {
   if (bot && bot.shape === 'skirt' && style !== 'dress') { const sk = new THREE.Mesh(B.skirt, toon(bot.color, { roughness: .8 })); sk.position.y = .5; if (bot.id === 'tutu') sk.scale.set(1.25, .6, 1.25), sk.position.y = .56; torso.add(sk); }
   if (W.top && W.top.trim) torso.add(new THREE.Mesh(merge([.72, .8, .88].map(y => P(B.stripe, W.top.trim, [0, y, 0], [Math.PI / 2, 0, 0], [1.12, .84, 1])).concat(W.top.shape === 'dress' ? [P(B.stripe, W.top.trim, [0, .34, 0], [Math.PI / 2, 0, 0], [2.1, 2.1, 1])] : [])), toonSmooth()));
   const neck = new THREE.Mesh(B.neck, skin); neck.position.y = 1.08; torso.add(neck);
-  if (W.neck) torso.add(new THREE.Mesh(merge(neckParts(W.neck)), toonSmooth()));
+  if (W.neck) torso.add(WEAR(new THREE.Mesh(merge(neckParts(W.neck)), toonSmooth())));
   // (owner, 12 Oct: tester rewards) a tester's Bug Hunter badge on the chest (look.badge: lb1 to lb4), seen by friends too
-  if (/^lb[1-4]$/.test(look.badge || '')) torso.add(new THREE.Mesh(merge(badgeParts(look.badge)), toonSmooth()));
+  if (/^lb[1-4]$/.test(look.badge || '')) torso.add(WEAR(new THREE.Mesh(merge(badgeParts(look.badge)), toonSmooth())));
   // arms (pivot at the shoulder)
   const longSleeve = style === 'hoodie' || style === 'aodai' || style === 'tunic';
   // (v1.08) the upper arm turns at the shoulder, the forearm at the elbow (y -.2); the hand stays at y -.42 when straight
@@ -273,10 +286,10 @@ export function buildAvatar(look, photo?) {
       if (!dragon) { const lo = new THREE.Mesh(B.wing, wm); lo.scale.set(.7, .9, 1); lo.position.set(s * .17, -.12, 0); lo.rotation.z = s * .5; g.add(lo); }
       torso.add(g); return g; });
   }
-  if (bk && (bk.shape === 'backpack' || bk.shape === 'shell')) torso.add(new THREE.Mesh(merge(backParts(bk)), toonSmooth()));
+  if (bk && (bk.shape === 'backpack' || bk.shape === 'shell')) torso.add(WEAR(new THREE.Mesh(merge(backParts(bk)), toonSmooth())));
   if (look.back === 'cape' || (bk && bk.shape === 'cape')) { // (a tester's detective cape is a cape too)
     const cape = new THREE.Mesh(B.cape, toon(bk ? bk.color : '#e8332a', { side: THREE.DoubleSide, roughness: .7 })); cape.position.set(0, 1.0, -.14); cape.rotation.x = .12; torso.add(cape); A.cape = cape;
-    const clasp = new THREE.Mesh(new THREE.SphereGeometry(.025, 8, 6), toon('#ffcf3a', { metalness: .6, roughness: .3 })); clasp.position.set(0, 1.0, .12); torso.add(clasp);
+    const clasp = new THREE.Mesh(new THREE.SphereGeometry(.025, 8, 6), toon('#ffcf3a', { metalness: .6, roughness: .3 })); clasp.position.set(0, 1.0, .12); torso.add(WEAR(clasp));
   }
   // head (built big, then scaled down)
   const head = new THREE.Group(); head.position.y = 1.33; head.scale.setScalar(HEAD_SCALE); rig.add(head); A.head = head;
@@ -316,9 +329,17 @@ export function buildAvatar(look, photo?) {
   [-.45, .45].forEach(x => { const r = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, .9, 4), toon('#7a5236')); r.position.set(x, -.42, 0); r.rotation.z = x * .7; glider.add(r); });
   rig.add(glider); A.glider = glider;
   root.traverse(o => { if (o instanceof THREE.Mesh && o !== shadow) { o.castShadow = true; } });
+  // (v1.08b friends) with the friend's model ready, the code person keeps only what the child wears (hats, necklace, badge,
+  // back, glider); the model, added below, follows its joints
+  if (useModel) {
+    [hat, ...(A.wings || []), A.cape].forEach(g => g && g.traverse(o => { o.userData.wear = true; }));
+    const drop = []; rig.traverse(o => { if (o instanceof THREE.Mesh && !o.userData.wear) { let p = o.parent; while (p && p !== glider) p = p.parent; if (!p) drop.push(o); } });
+    drop.forEach(o => o.parent.remove(o));
+  }
   compact(A); // (battery round) each moving part one shape, before the outlines are made (one outline each, too)
   A.outlines = outline(rig, .011, '#6a4a3a'); OUTLINED.push(A);
   A.anim = (state, t, speed) => animate(A, state, t, speed);
+  if (useModel) { A.model = FRIEND_MODELS.attach(A, friendId, look.skin); A.root.userData.friendModel = friendId; }
   return A;
 }
 
@@ -630,6 +651,7 @@ function recolorSkin(A) {
 }
 // the moving person or the still copy (made the first time it is needed)
 export function showStill(A, yes) {
+  if (A.model) yes = false; // (v1.08b) a friend's model has no still copy: it is one of a few children
   if (!!A._still === yes) return; A._still = yes;
   if (yes) stillOf(A).visible = true; else if (A.still) A.still.visible = false;
   A.rig.visible = !yes;

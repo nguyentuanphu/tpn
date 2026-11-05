@@ -1060,4 +1060,42 @@ await check('wearfit', async () => {
   ok(!r.bad.length && !r.errs.length && r.n.hat > 18, JSON.stringify(r).slice(0, 1500));
   return `on Finn, Sol, Clara and Lumi: ${r.n.hat / 4} hats, ${r.n.neck / 4} neck things, ${r.n.back / 4} backs and ${r.n.feet / 4} shoes, all drawn and in place`;
 });
+await check('friendmodel', async () => {
+  // the friends' light 3D models (models/<id>.glb): each loads after the start, is small (meshopt, under 500 KB), draws in a
+  // few parts, takes the child's skin tone, follows the code person's joints and moods, and the child plays with it; when
+  // a model cannot load, the code person in the friend's colours stays (no error). Triangles shown: about 8,200 for Finn,
+  // Sol and Clara (limit 9,000); Lumi's hair is about a thousand felt leaves that cannot be thinned further, so about
+  // 14,000 (limit 14,500; the owner chose that hair, docs/cores/tasks/v108/lumi.md)
+  const fs2 = await import('fs'), sizes = ['finn', 'sol', 'clara', 'lumi'].map(id => fs2.statSync(new URL(`../../models/${id}.glb`, import.meta.url)).size);
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const A = await import('/js/avatar.js'), THREE = (await import('/js/gfx.js')).THREE, out = {};
+    for (const id of ['finn', 'sol', 'clara', 'lumi']) {
+      const ok = await A.loadFriendModels(id), av = A.buildAvatar({ set: id === 'clara' || id === 'lumi' ? 'girl' : 'boy', friend: id, skin: '#b47a55', hat: 'cap' });
+      const m = av.model, meshes = []; let skin = null, faces = 0, tris = 0;
+      m.obj.traverse(o => { if (o.isMesh) { meshes.push(o); if (/^skin$/.test(o.material.name)) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
+      // a turn of the code person's arm and knee shows on the model's bones; a mood shows the matching face
+      const bone = n => { let x = null; m.obj.traverse(o => { if (o.isBone && o.name === n) x = o; }); return x; }, q0 = new THREE.Quaternion(), q1 = new THREE.Quaternion();
+      av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q0); av.armL.rotation.x = -1.2; av.life = av.life || {}; av.life.mood = 'happy'; av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q1);
+      const turned = +q0.angleTo(q1).toFixed(2), face = meshes.filter(o => /^face-/.test(o.material.name) && o.visible).map(o => o.material.name).join();
+      meshes.filter(o => o.visible && (o.material.name !== 'skin-grip')).forEach(o => { tris += o.geometry.index.count / 3; });
+      const hat = av.rig.getObjectByProperty('isMesh', true) && (() => { let n = 0; av.rig.traverse(o => { if (o.isMesh && !o.isSkinnedMesh && o.parent && o.parent !== m.obj) n++; }); return n; })();
+      out[id] = { ok, skin, faces, turned, face, tris, draws: meshes.filter(o => o.visible).length, hat };
+    }
+    // the child in the valley plays with the model once it has arrived
+    const G = __sv; for (let k = 0; k < 40 && !G.heroes[0].av.model; k++) await new Promise(r => setTimeout(r, 250));
+    out.hero = !!G.heroes[0].av.model;
+    return out;
+  });
+  // no model (an old phone, no network): the code person stays, nothing breaks
+  const Q = await open(b, { w: 900, h: 700, route: async ctx => { await ctx.route('**/models/*.glb', r => r.abort()); } }); await clear(Q.page);
+  const f = await Q.page.evaluate(async () => { const A = await import('/js/avatar.js'), ok = await A.loadFriendModels('sol'), av = A.buildAvatar({ set: 'boy', friend: 'sol', skin: '#f6c7a5' }); await new Promise(r => setTimeout(r, 500)); return { ok, model: !!av.model, hero: !!__sv.heroes[0].av.model, look: av.look.hair }; });
+  const errs = [...P.errors, ...Q.errors.filter(e => !/glb|friend model|Failed to fetch|aborted/i.test(e))]; await P.ctx.close(); await Q.ctx.close();
+  const bad = [];
+  sizes.forEach((n, i) => { if (n > 500 * 1024) bad.push(`model ${i} is ${Math.round(n / 1024)} KB`); });
+  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || x.skin !== '#b47a55' || x.faces !== 8 || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 14500 : 9000) || x.draws > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
+  if (!r.hero) bad.push('the child in the valley has no model'); if (f.ok || f.model || f.hero || f.look !== '#e0762a') bad.push('no model: ' + JSON.stringify(f));
+  ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
+  return `${sizes.map(n => Math.round(n / 1024)).join(', ')} KB; ${['finn', 'sol', 'clara', 'lumi'].map(id => `${id} ${r[id].tris} triangles in ${r[id].draws} parts`).join(', ')}; skin tone, joints and moods follow; the cap is worn; without the files the code person stays`;
+});
 // ---- (v1.08b friends) end ----

@@ -55,6 +55,10 @@ export function showWho(onGo) {
       </div>
       <button class="grown"><span class="ring"></span>${T('Grown-ups', 'Phụ huynh')}<small>${T('press and hold', 'nhấn giữ')}</small></button>`;
     s.querySelectorAll('.views button').forEach(b => b.onclick = () => { settings.twoView = b.dataset.v; saveSettings(); SFX.tap(); draw(); });
+    // (v1.08b friends) a child without a photo gets a round picture of their friend's model in their skin tone, made once
+    // the screen is showing (js/friend-view.ts: loaded later, never in the first download)
+    const noPhoto = profiles.filter(p => !p.photo && p.look && p.look.friend);
+    if (noPhoto.length) import('../friend-view.js').then(V => noPhoto.forEach(p => V.friendPortrait(p.look.friend, p.look.skin).then(u => { const im = u && s.querySelector<HTMLImageElement>(`.pick[data-id="${p.id}"] img`); if (im) im.src = u; }))).catch(() => { });
     const whoCard = s.querySelector('.who-card'), whoAction = whoCard.querySelector('.go'), whoBody = el('div', 'who-body');
     const naturalHeight = whoCard.getBoundingClientRect().height;
     [...whoCard.children].filter(n => n !== whoAction).forEach(n => whoBody.appendChild(n)); whoCard.prepend(whoBody); whoAction.classList.add('who-footer');

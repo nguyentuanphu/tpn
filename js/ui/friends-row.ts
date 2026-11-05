@@ -20,7 +20,7 @@ export function sayHello(id: string) {
 export function friendCard(id: string, on: boolean, skin?: string) {
   const f = FRIENDS[id];
   return `<button class="fr-card${on ? ' on' : ''}" data-friend="${id}" aria-pressed="${on}" style="--fr:${f.color}">
-    <span class="fr-turn">${['f', 'q', 's'].map(v => `<img src="${friendPic(id, v)}" alt="" draggable="false">`).join('')}</span>
+    <span class="fr-turn">${['f', 'q', 's'].map(v => `<img src="${friendPic(id, v)}" alt="" draggable="false">`).join('')}<canvas class="fr-3d" width="240" height="312" data-f3d="${id}"></canvas></span>
     ${skin ? `<i class="fr-tone" style="background:${skin}"></i>` : ''}
     <b>${esc(T(f.en, f.vi))}</b><small>${esc(T(f.titleEn, f.titleVi))}</small></button>`;
 }

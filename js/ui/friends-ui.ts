@@ -14,6 +14,12 @@ import { setOf } from '../content/shop.js';
 const skinRow = (skin: string) => `<div class="fr-skins" role="group" aria-label="${T('Skin tone', 'Màu da')}">${SKIN.map((s, i) => `<button class="fr-skin${s === skin ? ' on' : ''}" data-skin="${s}" style="background:${s}" aria-label="${T('Skin tone', 'Màu da')} ${i + 1}" aria-pressed="${s === skin}"></button>`).join('')}</div>`;
 
 /** The Welcome steps for a new player: name → boy or girl → friend and skin tone. done(null) when cancelled. */
+// the friends' 3D models turning in the cards, in the chosen skin tone (the pictures stay when a model cannot load)
+function live(body: HTMLElement, skin: () => string, mood: (id: string) => string) {
+  import('../friend-view.js').then(V => body.querySelectorAll<HTMLCanvasElement>('canvas[data-f3d]').forEach(c => {
+    const id = c.dataset.f3d; V.drawFriend(c, id, skin(), 0, mood(id)).then(ok => { if (ok && c.isConnected) { c.closest('.fr-card').classList.add('live'); V.turnFriend(c, id, skin, () => mood(id)); } });
+  })).catch(() => { });
+}
 export function welcomeFriend(start: { name?: string, set?: string, friend?: string, skin?: string }, done: (r: { name: string, set: 'boy' | 'girl', friend: FriendId, skin: string } | null) => void) {
   let step = 'name', name = start.name || '', set: 'boy' | 'girl' = start.set === 'girl' ? 'girl' : 'boy', friend = (start.friend as FriendId) || null, skin = SKIN.includes(start.skin) ? start.skin : SKIN[1], chose = !!start.set;
   const m = modal('friendpick', '<div class="fr-body"></div>'), body = m.querySelector('.fr-body') as HTMLElement;
@@ -41,6 +47,7 @@ export function welcomeFriend(start: { name?: string, set?: string, friend?: str
       body.querySelectorAll<HTMLElement>('[data-friend]').forEach(b => b.onclick = () => { friend = b.dataset.friend as FriendId; SFX.pop(1); sayHello(friend); draw(); body.querySelector(`[data-friend="${friend}"]`)?.classList.add('wave'); });
       body.querySelectorAll<HTMLElement>('[data-skin]').forEach(b => b.onclick = () => { skin = b.dataset.skin; SFX.tap(); draw(); });
       body.style.setProperty('--skin', skin);
+      live(body, () => skin, id => id === friend ? 'happy' : 'smile');
     }
     body.querySelectorAll<HTMLElement>('[data-go]').forEach(b => b.onclick = () => {
       const g = b.dataset.go; SFX.tap();
@@ -68,6 +75,7 @@ export function newFriendsCard(p, done: () => void) {
       ${p.newSuits ? `<p class="fr-note">${T('Old clothes became new outfits', 'Áo cũ đã thành bộ đồ mới')}</p>` : ''}
       <div class="fr-nav"><button class="btn primary" data-go="play">${T("Let's play", 'Chơi thôi')} ▶</button></div>`;
     body.querySelectorAll<HTMLElement>('[data-friend]').forEach(b => b.onclick = () => { pick = b.dataset.friend as FriendId; SFX.pop(1); sayHello(pick); draw(); });
+    live(body, () => p.look.skin, id => id === pick ? 'happy' : 'smile');
     (body.querySelector('[data-go="play"]') as HTMLElement).onclick = () => {
       SFX.chime(); setFriend(p, pick); p.friendCard = 'seen'; delete p.newSuits; saveProfiles(true); m.close(); done();
     };

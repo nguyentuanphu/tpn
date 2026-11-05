@@ -3520,3 +3520,7 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .fr-row .fr-slot img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
 .fr-suit { display: inline-flex; border-radius: 12px; padding: 4px; background: var(--c); }
 @media (max-height: 520px) { .fr-turn { height: 30vh; } .fr-two img { max-height: 30vh; } .fr-body h2 { font-size: 22px; } .fr-skin { width: 52px; height: 52px; } .modal.friendpick:not(.little) .fr-nav .btn { min-height: 48px; } }
+/* (v1.08b friends) the 3D model turning in a card, once it has loaded (the pictures stay underneath until then) */
+.fr-3d { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; }
+.fr-card.live .fr-3d { opacity: 1; } .fr-card.live .fr-turn img { visibility: hidden; }
+.fr-card.live .fr-turn { background: #f4ecda; border-radius: 14px; }

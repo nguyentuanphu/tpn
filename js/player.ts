@@ -3,7 +3,7 @@
 import { seatRider } from './vehicles.js';
 import { vehicleEye } from './rideview.js';
 import { THREE } from './gfx.js';
-import { buildAvatar, setLookTarget } from './avatar.js';
+import { buildAvatar, setLookTarget, loadFriendModels } from './avatar.js';
 import { WATER, RIDE_SWIM, heightAt, surfaceAt } from './world.js';
 import { clamp, lerp, angleLerp } from './util.js';
 import { SFX } from './audio.js';
@@ -50,6 +50,10 @@ export class Hero {
     if (this.av) this.scene.remove(this.av.root);
     this.av = buildAvatar(this.profile.look, this.profile.photo); this.av.root.userData.own = true; // (Round V) a child's own character, never a villager (js/villagertalk.js)
     this.scene.add(this.av.root);
+    // (v1.08b friends) the friend's 3D model loads after the start; the code person in the friend's colours stands in until
+    // it arrives, then the child is built again with it (not in the middle of a ride)
+    const f = this.profile.look && this.profile.look.friend;
+    if (f && !this.av.model) loadFriendModels(f).then(ok => { const go = () => { if (!ok || this.av.model || this.profile.look.friend !== f) return; if (this.riding) return void setTimeout(go, 2000); this.buildModel(); }; go(); });
   }
   place(x, z, y?: number) {
     // ground, bridge or deck, but not a tower top (those are reached by climbing)
