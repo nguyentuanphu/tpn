@@ -87,7 +87,8 @@ function rounds(api, G: QuizGame): Round[] {
 for (const G of [...QUIZ_GAMES, ...FEST_GAMES]) {
   if (G.id === 'fg_tet') continue; // (v1.08d polish) the Tết game is hands-on now: js/games/handson.ts
   register({
-    id: G.id, learn: true, english: !!G.english, icon: G.icon, name: () => T(G.name[0], G.name[1]),
+    // english only on the English-mode games, as in the menu catalogue (js/games/catalog.ts)
+    id: G.id, learn: true, ...(G.english ? { english: true } : {}), icon: G.icon, name: () => T(G.name[0], G.name[1]),
     run: api => { style(); return playStyled(api, rounds(api, G), G); }
   });
 }

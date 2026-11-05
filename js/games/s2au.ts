@@ -140,7 +140,8 @@ function quiz(api, G: S2Game): Round[] {
 
 for (const G of S2_GAMES) {
   register({
-    id: G.id, learn: true, icon: G.icon, name: () => T(G.name[0], G.name[1]),
+    // origin: the Australian flag on the game's card, as the menu catalogue (js/games/catalog.ts) shows it before this loads
+    id: G.id, learn: true, icon: G.icon, origin: 'au', name: () => T(G.name[0], G.name[1]),
     run: api => {
       style(); api.stage.classList.add('s2g');
       const list = G.kind === 'hunt' ? hunt(api, G) : G.kind === 'path' ? path(api, G) : quiz(api, G);
