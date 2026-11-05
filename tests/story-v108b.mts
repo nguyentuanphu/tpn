@@ -270,13 +270,24 @@ export async function taleCostumeCheck() {
   starts.forEach((s, k) => { if (!taleIds.has(s.id)) return; const rest = big.slice(s.at, k + 1 < starts.length ? starts[k + 1].at : big.length), end = /^\s*\]\s*\}[;,]?\s*$/m.exec(rest); blocks.push([s.id, end ? rest.slice(0, end.index) : rest]); });
   // (a film file's own looks are defined above its pages, so the whole file counts)
   const bad: string[] = [];
+  // (v1.08c) the costume kit: the film's kit (js/film-costume.ts) and the Blender kit (tools/blender/costumes.py) have the same costumes
+  const kitIds = new Set([...R('js/film-costume.ts').matchAll(/^  '([\w-]+)': \{ base:/gm)].map(m => m[1]));
+  const blender = new Set([...R('tools/blender/costumes.py').matchAll(/^    '([\w-]+)': dict\(/gm)].map(m => m[1]));
+  assert.ok(kitIds.size >= 16, `only ${kitIds.size} costumes in the film kit`);
+  assert.deepEqual([...kitIds].sort(), [...blender].sort(), 'the film kit and the Blender kit differ');
+  // the shared helpers dress their people from the kit too
+  const helpers = R('js/content/films/kit.ts'); for (const h of ['VILLAGER', 'KID', 'ELDER', 'FAIRY']) if (!new RegExp(`export const ${h} = [^\\n]*inKit\\(`).test(helpers)) bad.push(`kit.ts: ${h} is not dressed from the costume kit`);
+  if (!/const VILLAGER = [^\n]*kit:/.test(big)) bad.push('films.ts: VILLAGER is not dressed from the costume kit');
   const MODERN = /style:\s*'(shirt|hoodie|overalls)'|VILLAGER\('(shirt|hoodie|overalls)'|KID\('(shirt|hoodie|overalls)'|ELDER\('(shirt|hoodie|overalls)'|hat:\s*'cap'/g, FRIEND = /\b(kidOf|buildCompanion|S\.ctx\.look|CHI|TEO|JACK|RUBY)\b/g;
   for (const [id, src] of blocks) {
     for (const m of src.matchAll(MODERN)) bad.push(`${id}: modern clothes (${m[0]})`);
     for (const m of src.matchAll(FRIEND)) bad.push(`${id}: a friend, the child or the companion inside the tale (${m[0]})`);
     if (/LOOK\(\{(?![^}]*style:)/.test(src)) bad.push(`${id}: a look with no clothes chosen (LOOK's default is a T-shirt)`);
+    // (v1.08c) every person of a tale wears a costume of the kit, and every kit named is one the kit has
+    for (const m of src.matchAll(/LOOK\(\{[^}]*\}/g)) if (!/kit:/.test(m[0])) bad.push(`${id}: a look outside the costume kit (${m[0].slice(0, 60)})`);
+    for (const m of src.matchAll(/kit: '([\w-]+)'/g)) if (!kitIds.has(m[1])) bad.push(`${id}: no costume '${m[1]}' in the kit`);
   }
   assert.ok(blocks.length >= 35, `only ${blocks.length} tale films found`);
   assert.deepEqual(bad, []);
-  return `${blocks.length} tale films: period dress only (tunics, áo dài, nón lá, khăn, crowns, akubra), no T-shirts, hoodies, overalls or caps, and no friend, child or companion inside a tale`;
+  return `${blocks.length} tale films: everyone in a costume of the kit (${kitIds.size} costumes, the same as the Blender kit), no T-shirts, hoodies, overalls or caps, and no friend, child or companion inside a tale`;
 }

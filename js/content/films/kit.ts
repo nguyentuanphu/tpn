@@ -16,11 +16,17 @@ const { S: Sp, Cyl, Cone, Box } = G3;
 const Cap = (r, l, s = 10) => new THREE.CapsuleGeometry(r, l, 4, s);
 
 // ---------- people ----------
-export const VILLAGER = (style, color, hat = 'nonla', hairStyle = 'buns', skin = '#d8a070') => LOOK({ style, color, hat, hairStyle, skin });
-export const KID = (style, color, hairStyle = 'short', hat = 'none') => LOOK({ style, color, hairStyle, hat, skin: '#e0aa80' });
-export const ELDER = (style, color, hair = '#e8e8e8') => LOOK({ style, color, hairStyle: 'buns', hair, skin: '#e0aa80' });
-export const KINGLOOK = (color = '#e8b62a') => LOOK({ style: 'tunic', color, hat: 'crown', skin: '#e0aa80' });
-export const FAIRY = (color = '#ffc8e8') => LOOK({ style: 'aodai', color, hairStyle: 'long', back: 'wings', skin: '#f2c8a0' });
+// (v1.08c) the tale's people wear the costume kit (js/film-costume.ts, the same as the Blender kit): Vietnamese by default;
+// cn(), india() and colonial() dress a look for the Chinese, Indian and colonial Australian tales instead
+const KITS = { vn: { aodai: 'vn-tuthan', tunic: 'vn-aonau', dress: 'vn-yem' }, vnkid: { aodai: 'vn-yem', tunic: 'vn-boy', dress: 'vn-yem' }, vnold: { aodai: 'vn-khanvan', tunic: 'vn-aothe', dress: 'vn-khanvan' },
+  cn: { aodai: 'cn-hanfu-f', tunic: 'cn-hanfu-m', dress: 'cn-hanfu-f' }, india: { aodai: 'in-sari', tunic: 'in-dhoti', dress: 'in-sari' }, colonial: { aodai: 'au-colonial-f', tunic: 'au-colonial-m', dress: 'au-colonial-f' } };
+export const inKit = (look, region = 'vn') => Object.assign({}, look, { kit: KITS[region][look.style] });
+export const cn = look => inKit(look, 'cn'), india = look => inKit(look, 'india'), colonial = look => inKit(look, 'colonial');
+export const VILLAGER = (style, color, hat = 'nonla', hairStyle = 'buns', skin = '#d8a070') => inKit(LOOK({ style, color, hat, hairStyle, skin }));
+export const KID = (style, color, hairStyle = 'short', hat = 'none') => inKit(LOOK({ style, color, hairStyle, hat, skin: '#e0aa80' }), 'vnkid');
+export const ELDER = (style, color, hair = '#e8e8e8') => inKit(LOOK({ style, color, hairStyle: 'buns', hair, skin: '#e0aa80' }), 'vnold');
+export const KINGLOOK = (color = '#e8b62a') => LOOK({ style: 'tunic', kit: 'vn-king', color, hat: 'crown', skin: '#e0aa80' });
+export const FAIRY = (color = '#ffc8e8', region = 'vn') => inKit(LOOK({ style: 'aodai', color, hairStyle: 'long', back: 'wings', skin: '#f2c8a0' }), region);
 // Bụt, the kind old fairy man: white tunic, white hair
 export const BUT = LOOK({ style: 'tunic', color: '#f4f0e8', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8b890' });
 

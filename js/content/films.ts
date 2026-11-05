@@ -9,18 +9,18 @@ import { STORY_LOOKS } from './film-looks.js';
 
 const PI = Math.PI, H = PI / 2;
 // the cast
-const AN = LOOK({ style: 'tunic', color: '#8a5a32', hairStyle: 'short', skin: '#d8a070' });
-const WIFE = LOOK({ style: 'aodai', color: '#b8573a', hairStyle: 'buns', skin: '#f0c098' });
-const SON = LOOK({ style: 'tunic', color: '#f2e2b8', hairStyle: 'spiky', skin: '#e0aa80' });
-const KING = LOOK({ style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#e0aa80' });
-const GUARD = LOOK({ style: 'tunic', color: '#c62f2f', hat: 'silkcap' });
-const SAILOR = (c, hat = 'nonla') => LOOK({ style: 'tunic', color: c, hat, skin: '#c89060' });
-const MOTHER = LOOK({ style: 'aodai', color: '#6a4a3a', hairStyle: 'buns', hair: '#cfcfcf', skin: '#e0aa80' });
-const GIONG = LOOK({ style: 'tunic', color: '#e8d8a8', hairStyle: 'short', skin: '#e0aa80' });
-const HERO = LOOK({ style: 'tunic', color: '#7a8088', back: 'cape', hairStyle: 'short', skin: '#e0aa80' });
-const MESSENGER = LOOK({ style: 'tunic', color: '#c62f2f', hat: 'silkcap', skin: '#d8a070' });
-const VILLAGER = (style, color, hat = 'nonla', hairStyle = 'buns') => LOOK({ style, color, hat, hairStyle, skin: '#d8a070' });
-const ENEMY = LOOK({ style: 'tunic', color: '#3a3a48', hairStyle: 'spiky', skin: '#c89070' });
+const AN = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#8a5a32', hairStyle: 'short', skin: '#d8a070' });
+const WIFE = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#b8573a', hairStyle: 'buns', skin: '#f0c098' });
+const SON = LOOK({ kit: 'vn-boy', style: 'tunic', color: '#f2e2b8', hairStyle: 'spiky', skin: '#e0aa80' });
+const KING = LOOK({ kit: 'vn-king', style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#e0aa80' });
+const GUARD = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#c62f2f', hat: 'silkcap' });
+const SAILOR = (c, hat = 'nonla') => LOOK({ kit: 'vn-aonau', style: 'tunic', color: c, hat, skin: '#c89060' });
+const MOTHER = LOOK({ kit: 'vn-khanvan', style: 'aodai', color: '#6a4a3a', hairStyle: 'buns', hair: '#cfcfcf', skin: '#e0aa80' });
+const GIONG = LOOK({ kit: 'vn-boy', style: 'tunic', color: '#e8d8a8', hairStyle: 'short', skin: '#e0aa80' });
+const HERO = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#7a8088', back: 'cape', hairStyle: 'short', skin: '#e0aa80' });
+const MESSENGER = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#c62f2f', hat: 'silkcap', skin: '#d8a070' });
+const VILLAGER = (style, color, hat = 'nonla', hairStyle = 'buns') => LOOK({ style, kit: ({ aodai: 'vn-tuthan', tunic: 'vn-aonau', dress: 'vn-yem' })[style], color, hat, hairStyle, skin: '#d8a070' });
+const ENEMY = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#3a3a48', hairStyle: 'spiky', skin: '#c89070' });
 
 // things on the water bob up and down with the waves
 function afloat(S, model, x, z, yaw = 0) {
@@ -705,9 +705,9 @@ FILMS.lantern_ch1 = { pages: [
 ] };
 
 // ---------------- The next films (Kid UI, 10 Oct): two tales and two guides ----------------
-const PRINCE1 = LOOK({ style: 'tunic', color: '#3b6fe0', hat: 'silkcap', skin: '#e0aa80' });
-const PRINCE2 = LOOK({ style: 'tunic', color: '#3a9a6a', hat: 'silkcap', skin: '#d8a070' });
-const LIEU = LOOK({ style: 'tunic', color: '#b89a6a', hairStyle: 'short', skin: '#d8a070' });
+const PRINCE1 = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#3b6fe0', hat: 'silkcap', skin: '#e0aa80' });
+const PRINCE2 = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#3a9a6a', hat: 'silkcap', skin: '#d8a070' });
+const LIEU = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#b89a6a', hairStyle: 'short', skin: '#d8a070' });
 // the palace at Tết: blossom trees, red lanterns and the king on his step
 function palaceYard(S) {
   S.sky('#9fd4f4', '#fff1d8'); L.ground(S, '#cbb88a'); L.palace(S); L.blossom(S, -8, -2.5); L.blossom(S, 8, -2.5);
@@ -893,8 +893,8 @@ FILMS.banhchung = { pages: [
 ] };
 
 // ---------------- Cây khế (The Starfruit Tree) ----------------
-const OLDER = LOOK({ style: 'tunic', color: '#7a4a9a', hairStyle: 'short', skin: '#d8a070' });
-const YOUNGER = LOOK({ style: 'tunic', color: '#4a9a5a', hat: 'nonla', hairStyle: 'short', skin: '#d8a070' });
+const OLDER = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#7a4a9a', hairStyle: 'short', skin: '#d8a070' });
+const YOUNGER = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#4a9a5a', hat: 'nonla', hairStyle: 'short', skin: '#d8a070' });
 // the brothers' village: the big house on the left, the little hut and the starfruit tree on the right
 function khe(S, { house = true, sea = false } = {}) {
   if (sea) { S.sky('#7cc8f0', '#e8f6ff'); L.ground(S, '#8fcf6a', 34); if (house) L.house(S, -6, -7); L.bamboo(S, -9, -3); L.bamboo(S, -12, 6, '#5fae4a', 6, 6); L.sun(S, -60, 55, -170, 9); L.clouds(S, [[-40, 28, -90, 2], [30, 34, -110, 2.4]]); }
@@ -1271,10 +1271,10 @@ GUIDES.memory = { pages: [
 // ---------- Sự tích Hồ Gươm, the Lake of the Returned Sword (Kid UI, owner's go 12 Oct AEDT) ----------
 // The child helps twice: helping Lê Lợi reach the sword's handle in the tree (page 2) and handing the sword back to the
 // Golden Turtle (page 5). (A first page has no tap of its own in any film: its words are read as the theatre opens.)
-const THAN = LOOK({ style: 'tunic', color: '#5a7a9a', hat: 'nonla', skin: '#c89060' });
-const LOI = LOOK({ style: 'tunic', color: '#3a6a4a', hairStyle: 'short', skin: '#d8a070' });
-const LOI_KING = LOOK({ style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#d8a070' });
-const SOLDIER = c => LOOK({ style: 'tunic', color: c, hat: 'silkcap', skin: '#d8a070' });
+const THAN = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#5a7a9a', hat: 'nonla', skin: '#c89060' });
+const LOI = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#3a6a4a', hairStyle: 'short', skin: '#d8a070' });
+const LOI_KING = LOOK({ kit: 'vn-king', style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#d8a070' });
+const SOLDIER = c => LOOK({ kit: 'vn-armour', style: 'tunic', color: c, hat: 'silkcap', skin: '#d8a070' });
 const flat = (w, d, color, y = 0) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d).rotateX(-H), new THREE.MeshToonMaterial({ color })); m.material.userData.film = true; m.position.y = y; return m; };
 // a little rowboat: the valley's boat without its mast and sail, so the people in it can be seen
 const rowboat = (len = 4.4) => { const b = Pp.boat(len); b.children.slice(1).forEach(c => b.remove(c)); return b; };

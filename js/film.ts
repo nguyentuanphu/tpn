@@ -25,6 +25,7 @@ import { SFX } from './audio.js';
 import { el, esc } from './util.js';
 import { pic } from './art.js';
 import { storyLook } from './content/film-looks.js';
+import { kitBase, kitDress } from './film-costume.js';
 
 const H = Math.PI / 2;
 export const io = k => k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
@@ -83,7 +84,10 @@ export const LOOK = (o) => Object.assign({ style: 'shirt', color: '#3b6fe0', hat
 // the people's shapes and paints are shared with the valley, so a page never throws those away
 const KEEP = new WeakSet();
 function person(look, scale = 1) {
-  const A = buildAvatar(LOOK(look), null);
+  // (v1.08c) a tale's period costume from the kit (js/film-costume.ts): the base shape first, then the kit's pieces on top
+  const base = look.kit ? kitBase(LOOK(look)) : LOOK(look);
+  const A = buildAvatar(base, null);
+  if (look.kit) kitDress(A, LOOK(look), base);
   const i = OUTLINED.indexOf(A); if (i >= 0) OUTLINED.splice(i, 1); // the valley hides far outlines; a film keeps them
   A.root.scale.setScalar(scale);
   const a = { A, o: A.root, state: 'idle', speed: 0, mood: 'smile', talkUntil: -1, px: 0, pz: 0, yaw: 0, look: LOOK(look), wig: 0 };

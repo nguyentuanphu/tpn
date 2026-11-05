@@ -3,8 +3,8 @@
 // home again for Tết. The child helps twice: letting the carp go (page 3) and the carp leaping into dragons (page 4).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, hop, KID, VILLAGER, village, kitchen, heaven, carp, serpent, slither, moonDisc, flat, firecrackers } from './kit.js';
 
-const TAO = LOOK({ style: 'tunic', color: '#c62f2f', hat: 'silkcap', hairStyle: 'short', hair: '#e8e8e8', skin: '#e8b890' });
-const JADE = LOOK({ style: 'tunic', color: '#ffd23f', hat: 'crown', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8c0a0' });
+const TAO = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#c62f2f', hat: 'silkcap', hairStyle: 'short', hair: '#e8e8e8', skin: '#e8b890' });
+const JADE = LOOK({ kit: 'vn-king', style: 'tunic', color: '#ffd23f', hat: 'crown', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8c0a0' });
 const MOM = VILLAGER('aodai', '#c84a6a', 'none', 'buns'), DAD = VILLAGER('tunic', '#3b6fe0', 'none', 'short');
 const BOY = KID('tunic', '#ffb52e', 'spiky'), GIRL = KID('dress', '#ff7eb8', 'buns');
 const dragon = S => serpent(S, { n: 16, r: .3, colors: ['#e8b62a', '#ffd23f', '#e8332a'], head: '#e8b62a', horns: true, y: 2, waveAmp: .7 });

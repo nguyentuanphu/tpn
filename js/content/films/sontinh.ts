@@ -3,9 +3,9 @@
 // The child helps twice: bringing the presents (page 2) and making the mountain grow (page 3).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, hop, KINGLOOK, VILLAGER, palace, village, animal, rain, flat } from './kit.js';
 
-const SON = LOOK({ style: 'tunic', color: '#4a8a3a', back: 'cape', hat: 'crown', hairStyle: 'short', skin: '#c89060' });
-const THUY = LOOK({ style: 'tunic', color: '#2f7ac8', back: 'cape', hat: 'crown', hairStyle: 'spiky', skin: '#c8b0a0' });
-const MY = LOOK({ style: 'aodai', color: '#ff9ec8', hat: 'crown', hairStyle: 'long', skin: '#f0c098' });
+const SON = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#4a8a3a', back: 'cape', hat: 'crown', hairStyle: 'short', skin: '#c89060' });
+const THUY = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#2f7ac8', back: 'cape', hat: 'crown', hairStyle: 'spiky', skin: '#c8b0a0' });
+const MY = LOOK({ kit: 'vn-queen', style: 'aodai', color: '#ff9ec8', hat: 'crown', hairStyle: 'long', skin: '#f0c098' });
 const KING = KINGLOOK();
 
 export default { pages: [

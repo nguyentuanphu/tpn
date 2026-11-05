@@ -3,9 +3,9 @@
 // The child helps twice: choosing the small pear (page 3) and handing out the big ones (page 4).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, hop, chinaVillage, pear } from './kit.js';
 
-const KONG = LOOK({ style: 'tunic', color: '#3cb0e8', hairStyle: 'buns', skin: '#f0c8a0' });
-const BRO = ['#c62f2f', '#4a9a5a', '#7a4a9a', '#e8a832'].map(c => LOOK({ style: 'tunic', color: c, hairStyle: 'short', skin: '#e8b890' }));
-const GRANDPA = LOOK({ style: 'tunic', color: '#6a5a4a', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8b890' });
+const KONG = LOOK({ kit: 'cn-hanfu-m', style: 'tunic', color: '#3cb0e8', hairStyle: 'buns', skin: '#f0c8a0' });
+const BRO = ['#c62f2f', '#4a9a5a', '#7a4a9a', '#e8a832'].map(c => LOOK({ kit: 'cn-hanfu-m', style: 'tunic', color: c, hairStyle: 'short', skin: '#e8b890' }));
+const GRANDPA = LOOK({ kit: 'cn-hanfu-m', style: 'tunic', color: '#6a5a4a', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8b890' });
 // the family round a low table with the plate of pears (big ones and one small one)
 const family = S => {
   chinaVillage(S); S.add(Pp.mat(), 0, 0, 2.2, H);

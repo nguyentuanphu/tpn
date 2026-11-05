@@ -3,9 +3,9 @@
 // twice (pages 4 and 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, VILLAGER, BUT, village, forest, axe, drum } from './kit.js';
 
-const FARMER = LOOK({ style: 'tunic', color: '#8a6a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
-const RICH = LOOK({ style: 'tunic', color: '#7a3a8a', hat: 'silkcap', hairStyle: 'short', skin: '#e0aa80' });
-const DAUGHTER = LOOK({ style: 'aodai', color: '#ff8ab0', hairStyle: 'long', skin: '#f0c098' });
+const FARMER = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#8a6a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const RICH = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#7a3a8a', hat: 'silkcap', hairStyle: 'short', skin: '#e0aa80' });
+const DAUGHTER = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#ff8ab0', hairStyle: 'long', skin: '#f0c098' });
 // one piece of bamboo (a knot at each end)
 const piece = () => mesh([P(new THREE.CylinderGeometry(.08, .08, .5, 8), '#6fb84a', [0, .25, 0]), P(new THREE.CylinderGeometry(.095, .095, .05, 8), '#4f9a3a', [0, .5, 0])]);
 // a long bamboo of n pieces lying on the ground (along x)

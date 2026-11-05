@@ -4,7 +4,7 @@
 // the Cat (page 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, turn, speak, river, animal, tiger, rat, monkey, cat, serpent, slither, rain, flat } from './kit.js';
 
-const JADE = LOOK({ style: 'tunic', color: '#ffd23f', hat: 'crown', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8c0a0' });
+const JADE = LOOK({ kit: 'cn-hanfu-m', style: 'tunic', color: '#ffd23f', hat: 'crown', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8c0a0' });
 const finish = (S, x = 0, z = 6) => { const g = new THREE.Group(); g.add(mesh([P(new THREE.CylinderGeometry(.08, .08, 2.4, 6), '#c62f2f', [-2, 1.2, 0]), P(new THREE.CylinderGeometry(.08, .08, 2.4, 6), '#c62f2f', [2, 1.2, 0]), P(new THREE.BoxGeometry(4.2, .5, .06), '#e8b62a', [0, 2.2, 0])])); return S.add(g, x, 0, z); };
 const stones = S => [[-3, 0], [-1.6, -1.6], [0, -3.2], [1.4, -4.8]].map(([x, z]) => S.add(mesh([P(new THREE.CylinderGeometry(.5, .6, .4, 8), '#8a8a8a', [0, 0, 0])]), x, -.1, z));
 const horse = S => { const h = Pp.horse('#8a5a3a'); h.scale.setScalar(.8); S.add(h); h.userData.gait = 1; return h; };

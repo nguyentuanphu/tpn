@@ -160,10 +160,10 @@ def kit_hat(kind, col=None):
         sphere('hatBand', M, H(0, -1.05, .55), (.12 * R, .1 * R, .12 * R), 12, 6)
     elif kind == 'warhelm':   # a general's helmet: an iron dome with a gold rim, cheek guards, a spike and a red plume
         IRON = mat('kitIron', col or '#6a7480', .35, metal=.7); GOLD = mat('kitGold', '#d4a23a', .3, metal=.85)
-        d = sphere('helmet', IRON, H(0, .02, .2), (1.18 * R, 1.16 * R, 1.08 * R), 32, 16)
-        for v in d.data.vertices: v.co.z = max(v.co.z, .2 * R * 0 + 0)   # (cut below)
-        for v in d.data.vertices:
-            if v.co.z < .25 and v.co.y < -.2: v.co.z = .25   # the brow edge
+        bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=24, radius=1)
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.co.z < (.35 if v.co.y < -.3 else -.25)], context='VERTS')   # open over the face, down to the nape at the back
+        bmesh.ops.transform(bm, matrix=Matrix.Translation(H(0, .02, .08)) @ Matrix.Diagonal((1.2 * R, 1.18 * R, 1.12 * R, 1)), verts=bm.verts)
+        d = obj_from(bm, 'hatBand', IRON); so = d.modifiers.new('thick', 'SOLIDIFY'); so.thickness = .06 * R
         tube('hatBand', GOLD, ring_(.42, 1.2, 1.18, -.1), .05 * R, 8, False)
         for s in (-1, 1): sphere('hatBand', IRON, H(s * 1.04, -.15, -.25), (.12 * R, .4 * R, .45 * R), 16, 8, (0, 0, s * .15))
         tube('hatBand', GOLD, [H(0, 0, 1.25), H(0, 0, 1.6)], [.06 * R, .02 * R], 8)
@@ -222,7 +222,7 @@ def body_kit():
                 tube('wideSleeve', m, [el.lerp(wr, .15), wr + e * .02 * S, wr + e * .05 * S + Vector((0, 0, -.06 * S))], [rA * 1.6, rA * wide, rA * wide * 1.05], 20)
             if cuff: tube('cuffTrim', cuff, [end - e * .012 * S, end + e * .006 * S], rA * (wide * 1.06 if wide else 1.42), 16)
         return f
-    def long_panels(m, z_low, flare=1.18, split=True, name='aoDai', four=False):
+    def long_panels(m, z_low, flare=1.18, split=True, name='kitPanel', four=False):
         if split:   # front and back panels, open at the sides (áo the); four: the front in two panels that hang open (áo tứ thân)
             for a0, a1 in (((-1.1, -.14), (.14, 1.1)) if four else ((-1.05, 1.05),)) + ((math.pi - 1.05, math.pi + 1.05),):
                 lathe(name, m, [(wC * 1.05, b['zW']), (wH * 1.1, b['zCr']), (wH * flare, z_low + .02 * S), (wH * flare * 1.01, z_low)], 28, scale=(1, dep * 1.05), arc=(a0, a1))
@@ -243,12 +243,17 @@ def body_kit():
     def long_skirt(m, top=None, low=None, name='longSkirt'):
         top = b['zW'] if top is None else top; low = zA + .03 * S if low is None else low
         lathe(name, m, [(wC * 1.05, top + .01 * S), (wH * 1.12, b['zCr']), (wH * 1.32, low + .03 * S), (wH * 1.33, low)], 40, scale=(1, dep * 1.05))
+    def torso(m, collar=False):
+        before = set(bpy.data.objects); globals()['torso'](m)
+        if not collar:
+            for o in set(bpy.data.objects) - before:
+                if o.name.split('.')[0] == 'collar': bpy.data.objects.remove(o)
     def buttons(z0, z1, n, m, x=0.0):
         for z in lin(z0, z1, n): sphere('button', m, (x, fronty(wC * 1.08) - .004, z), (.008 * S, .004 * S, .008 * S), 10, 5)
 
     if body_ == 'tuthan':   # áo tứ thân: a long coat of four panels over a yếm, the front panels left open and the sash tied at the waist, váy đụp to the ankle
         legs(SKIN); long_skirt(kc('skirt'))
-        torso(kc('coat')); long_panels(kc('coat'), zK - .08 * S, 1.22, name='kitPanel', four=True)
+        torso(kc('coat')); long_panels(kc('coat'), zK - .08 * S, 1.22, four=True)
         lathe('bib', kc('yem'), [(wC * 1.1, b['zW'] - .01 * S), (wC * 1.12, (b['zW'] + b['zC']) / 2), (wC * 1.0, b['zC'] + .03 * S), (wC * .7, b['zS'] - .005 * S)], 16, scale=(1, dep), arc=(-.5, .5))
         for s in (-1, 1): tube('coatCollar', kc('trim'), [Vector((s * wC * .3, fronty(wC * .55) - .006, b['zN'] - .005)), Vector((s * wC * .55, fronty(wC * 1.05) - .008, b['zC'])), Vector((s * wC * .5, fronty(wC * 1.12) - .008, b['zW']))], .012 * S, 8, False)
         sash(kc('sash'))
@@ -314,7 +319,7 @@ def body_kit():
         hands = arm_pair(sleeves_to(kc('robe'), 1.0, kc('trim'), wide=3.0))
     elif body_ == 'colonial':   # colonial bushman: a cream shirt with rolled sleeves, a brown waistcoat, a red neckerchief, moleskin trousers, boots
         legs(kc('pants')); trousers(kc('pants'), zA + .05 * S, .6)
-        torso(kc('shirt'))
+        torso(kc('shirt'), True)
         lathe('bodice', kc('vest'), [(wC * 1.06, b['zW'] - .05 * S), (wC * 1.08, (b['zW'] + b['zC']) / 2), (wC * 1.04, b['zC'] + .01 * S)], 32, scale=(1, dep), arc=(.22, 2 * math.pi - .22))
         buttons(b['zW'] - .03 * S, b['zC'], 4, mat('kitBrass', '#b98a46', .35, metal=.85), .03 * S)
         scarf(c['scarf'])

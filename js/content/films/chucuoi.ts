@@ -3,8 +3,8 @@
 // moon, and children looking up at Mid-Autumn. The child helps twice: the sick man (page 2) and holding on (page 4).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, hop, VILLAGER, KID, forest, village, night, moonGround, moonDisc, tiger, axe } from './kit.js';
 
-const CUOI = LOOK({ style: 'tunic', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
-const WIFE = LOOK({ style: 'aodai', color: '#b8573a', hairStyle: 'buns', skin: '#f0c098' });
+const CUOI = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const WIFE = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#b8573a', hairStyle: 'buns', skin: '#f0c098' });
 const leaf = () => mesh([P(new THREE.SphereGeometry(.14, 8, 6), '#3fae3a', [0, 0, 0], [0, 0, 0], [.7, .1, 1.3])]);
 // the magic banyan: a small one with its roots showing (so it can fly)
 const magicTree = (s = 1) => { const g = new THREE.Group(); g.add(mesh([P(new THREE.CylinderGeometry(.25, .35, 2, 8), '#7a5a3a', [0, 1, 0]), ...[0, 1, 2, 3, 4, 5].map(i => P(new THREE.SphereGeometry(.9, 9, 7), i % 2 ? '#3f8a3a' : '#4f9e42', [Math.cos(i) * .8 * (i ? 1 : 0), 2.5 + (i % 3) * .3, Math.sin(i) * .8 * (i ? 1 : 0)])),
