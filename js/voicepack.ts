@@ -113,13 +113,9 @@ function rememberHere() { const h = hereArea(), r = settings.packRecent || []; i
 // the areas the Light level keeps: the core, where the child is, then the last areas while they fit in about 45 MB
 export function lightGroups() {
   const out = ['core'], cand = [hereArea(), ...(settings.packRecent || [])].filter(isPlace);
-  for (const g of extraLightGroups()) if (AREAS && AREAS.groups[g] && !out.includes(g)) out.push(g);
   for (const g of cand) if (!out.includes(g) && (out.length < 2 || groupsMB(out.concat(g), packLangs(), levelOpus('light')) <= LIGHT_MB)) out.push(g);
   return out;
 }
-// (filled by part 3: a festival pack that is due is kept on Light too)
-let extraLightGroups = (): string[] => [];
-export const setExtraLightGroups = (f: () => string[]) => { extraLightGroups = f; };
 // the areas this level downloads, in their order
 const levelGroups = () => { if (offlineLevel() !== 'light') return packOrder(); const keep = lightGroups(); return packOrder().filter(g => keep.includes(g)).concat(keep.filter(g => !packOrder().includes(g))); };
 // what the Automatic level keeps when a grown-up moves down to it from Full: the core, the places the children have been,
@@ -132,6 +128,7 @@ function autoGroups() {
 // keep only these areas' recordings (in this device's format) and give the rest of the space back
 async function keepOnly(groups: string[], langs = packLangs()) {
   const keep = new Set(packFiles(groups, langs).map(u => storeKey(u)));
+  for (const p of Object.values(settings.festPacks || {}) as FestPack[]) if (p.until > Date.now()) for (const u of p.files || []) keep.add(storeKey(u)); // (a festival pack that is due stays)
   return voiceStore('sv-voices').prune(k => keep.has(k));
 }
 // a grown-up chose a level in Grown-ups. Light (and Full when the pack is not all kept yet) moves the device to Opus when
@@ -158,6 +155,44 @@ export async function levelSpace() {
   const all = AREAS ? Object.keys(AREAS.groups) : ['core'];
   let now = 0; try { now = await voiceStore('sv-voices').bytes(); } catch (e) { }
   return { light: Math.ceil(groupsMB(lightGroups(), packLangs(), levelOpus('light'))), full: Math.ceil(groupsMB(all, packLangs(), levelOpus('full'))), now, level: offlineLevel(), known: !!AREAS };
+}
+// ---------- (v1.08c voices, brief part 3) festival packs ----------
+// A festival pack is what a festival needs that is not already in the game's own download: its voice lines (its name and
+// what its host says). Its decorations and its festival game are drawn by the game's code, which every device already
+// keeps. The pack downloads on Wi-Fi a few days (FEST_AHEAD) before the decorations go up, on every level, so the festival
+// speaks offline on the day. After the festival it is removed on Light (it downloads again next year) and kept on Full
+// and Automatic. What this device holds is kept in settings.festPacks: { id: { until (ms), files } }.
+export const FEST_AHEAD = 3;
+type FestPack = { until: number, files: string[] };
+async function festivalsDue(now: Date) {
+  const [Fm, V] = await Promise.all([import('./festivals.js'), import('./voice.js')]), out: (FestPack & { id: string })[] = [];
+  for (const n of Fm.upcoming(now)) {
+    if (+now < +n.start - (Fm.buildupOf(n.F) + FEST_AHEAD) * 864e5) continue;
+    out.push({ id: n.F.id, until: +n.end, files: V.lineFiles([[n.F.en, n.F.vi], ...((n.F.lines || []) as [string, string][])], packLangs()) });
+  }
+  return out;
+}
+let festRunning: Promise<{ got: number, freed: number, due: string[] }> | null = null;
+export function festivalPacks(pack = PACK, now = new Date()) {
+  if (pack && !PACK) PACK = pack;
+  return festRunning || (festRunning = (async () => {
+    let got = 0, freed = 0; const due: string[] = [];
+    if (!PACK || !('caches' in window)) return { got, freed, due };
+    const store = voiceStore('sv-voices'), packs: Record<string, FestPack> = settings.festPacks || (settings.festPacks = {});
+    for (const [id, p] of Object.entries(packs)) if (p.until <= +now) {
+      if (offlineLevel() === 'light') { const gone = new Set((p.files || []).map(u => storeKey(u))); freed += await store.prune(k => !gone.has(k)); }
+      delete packs[id];
+    }
+    const list = await festivalsDue(now);
+    for (const d of list) {
+      due.push(d.id);
+      if (packNet() !== 'wifi') continue; // (Wi-Fi only: a festival can wait for it, it has days)
+      for (const u of d.files) if (!(await store.has(u))) { try { const r = await fetch(u); if (r.ok) { await store.add(u, await r.arrayBuffer()); got++; } } catch (e) { } }
+      packs[d.id] = { until: d.until, files: d.files };
+    }
+    await store.flush(); saveSettings();
+    return { got, freed, due };
+  })().finally(() => { festRunning = null; }));
 }
 let checking = false, recheck = false;
 // (battery round, owner 12 Oct AEDT: "my phone gets very hot") the download is spread out: nothing while the valley is

@@ -436,6 +436,11 @@ addEventListener('click', () => loadPack(), { once: true, passive: true });
 // Language/settings changes fetch only the newly selected index. Saved MP3s are kept.
 for (const ev of ['LanguageChanged', 'SettingsChanged']) events.on(ev, () => { if (packReady) loadPack(); });
 { const t0 = Date.now(), wait = setInterval(() => { const g = window.__sv; if (packReady) return clearInterval(wait); if ((g && g.bootTimes) || Date.now() - t0 > 30000) { clearInterval(wait); setTimeout(() => { if (settings.voice || autoPackOn()) loadPack(); }, 3000); } }, 500); }
+// (v1.08c voices, brief part 3) festival packs: 20 s after the valley is built, and again when the device comes onto Wi-Fi
+// or back online (js/voicepack.ts festivalPacks: on Wi-Fi only, a few days before the decorations)
+const festNow = () => { if (PACK) voicePackMod().then(m => m.festivalPacks(PACK)).catch(() => { }); };
+{ const t0 = Date.now(), wait = setInterval(() => { const g = window.__sv; if ((g && g.bootTimes) || Date.now() - t0 > 60000) { clearInterval(wait); setTimeout(festNow, 20000); } }, 1000);
+  addEventListener('online', () => setTimeout(festNow, 5000)); try { navigator.connection?.addEventListener('change', () => setTimeout(festNow, 5000)); } catch (e) { } }
 const waitPack = async (langs = voiceLanguages(settings)) => {
   await FMT_SETTLED;
   if (PACK && langs.every(l => voiceIndex.has(l))) return;
@@ -644,6 +649,13 @@ export async function chooseOfflineLevel(level: 'light' | 'auto' | 'full') {
   return freed;
 }
 export const offlineSpace = () => voicePackMod().then(m => m.levelSpace());
+// (v1.08c voices, brief part 3) the recordings of these lines (English and Vietnamese pairs) in this device's languages and
+// format, female voice: what a festival pack downloads (js/voicepack.ts festivalPacks)
+export function lineFiles(pairs: [string, string][], langs: string[]) {
+  const out: string[] = [];
+  for (const [en, vi] of pairs) for (const [L, t] of [['en', en], ['vi', vi]] as const) { if (!t || !langs.includes(L)) continue; const h = packKey(L, swapNames(t, L)) || packKey(L, t); if (h && String(PACK.lines[h]).includes('f')) out.push(`voices/${L}/f/${h}.${voiceFormat()}`); }
+  return [...new Set(out)];
+}
 // (v1.08b platform, brief part 1) a recording as Opus (about half the size) when the pack has Opus copies and this browser
 // plays Opus; MP3 otherwise. The choice is made once on a device and kept (sv2_voiceFmt): a device that already keeps
 // MP3 recordings stays on MP3, so nothing is downloaded twice; the offline levels in Grown-ups may move it later.

@@ -44,7 +44,7 @@ export function festDate(F, year) {
   return null;
 }
 const enabled = F => {const publicState=publicFestivals();return publicState?publicState.enabled.includes(F.id):festivalVisible(festivalRule(F.id),liveRule('fest_'+F.id));};
-const buildupOf = F => { const r = ruleOf(F.id); return r && r.buildup >= 0 ? Math.min(60, r.buildup) : BUILDUP[F.kind] || 3; };
+export const buildupOf = F => { const r = ruleOf(F.id); return r && r.buildup >= 0 ? Math.min(60, r.buildup) : BUILDUP[F.kind] || 3; };
 // the next time it happens on or after today: { F, start, end, daysTo (0 = today), on (it is on today) }
 export function nextOf(F, now = new Date()) {
   const today = at0(now);
