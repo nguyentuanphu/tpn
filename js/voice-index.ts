@@ -49,6 +49,14 @@ export function legacyLanguage(man, lang) {
 // MP3 otherwise. Chosen once on a device and kept (sv2_voiceFmt); a device that already keeps MP3 recordings stays on
 // MP3 (js/voice.ts settleVoiceFormat), so nothing is downloaded twice.
 const opusPlays = () => { try { return typeof Audio !== 'undefined' && !!new Audio().canPlayType('audio/ogg; codecs="opus"'); } catch (e) { return false; } };
+// (v1.08c voices, offline levels) a level chosen in Grown-ups may move a device from MP3 to Opus: only when the pack has
+// Opus copies and this browser plays them. Returns whether the device is on Opus now.
+export function moveToOpus(pack) {
+  const has = !!(pack && Array.isArray(pack.formats) && pack.formats.includes('opus'));
+  if (!has || !opusPlays()) return false;
+  try { localStorage.setItem('sv2_voiceFmt', 'opus'); } catch (e) { return false; }
+  return true;
+}
 export function voiceFormatFor(pack) {
   const has = !!(pack && Array.isArray(pack.formats) && pack.formats.includes('opus'));
   let f = null; try { f = localStorage.getItem('sv2_voiceFmt'); } catch (e) { }

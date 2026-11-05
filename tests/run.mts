@@ -43,6 +43,10 @@ await check('pushnotify', async () => (await import('./push-notify-browser.mts')
 // each run, all four when the games change
 await check('roundvariety', async () => (await import('./round-variety.mts')).roundVarietyCheck(b, { sample: sampled('roundvariety') ? SEED : null }));
 
+// (v1.08c voices) the three offline levels in Grown-ups: Light, Automatic and Full, their sizes, the space a smaller level
+// frees, Light moving an MP3 device to Opus, and the screen on phone, tablet and computer (tests/offline-levels.mts)
+await check('offlinelevels', async () => (await import('./offline-levels.mts')).offlineLevelsCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
