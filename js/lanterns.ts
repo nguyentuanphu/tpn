@@ -121,6 +121,11 @@ export function createLanterns(G, { dialog, say, reward, save, openTheatre }) {
     ch4: [() => import('./content/chapter4.js'), () => import('./content/kitfilms.js'), 'c3_find'],
     ch5: [() => import('./content/chapter5.js'), () => import('./content/kitfilms.js'), 'c4_find'],
     finale: [() => import('./content/chapterfinale.js'), () => import('./content/kitfilms.js'), 'c5_find'],
+    // (v1.08d s2vn) Season 2, Vietnam: chapters 6 to 9 in the new regions (js/s2vn.ts)
+    ch6: [() => import('./content/chapter6.js'), () => import('./content/s2vnfilms.js'), 'cf_find'],
+    ch7: [() => import('./content/chapter7.js'), () => import('./content/s2vnfilms.js'), 'c6_find'],
+    ch8: [() => import('./content/chapter8.js'), () => import('./content/s2vnfilms.js'), 'c7_find'],
+    ch9: [() => import('./content/chapter9.js'), () => import('./content/s2vnfilms.js'), 'c8_find'],
     // (v1.08d s2au) Season 2, Australia: chapter 10 follows s2vn's chapter 9 (its lantern found: c9_find)
     ch10: [() => import('./content/chapter10.js'), () => import('./content/s2aufilms.js'), 'c9_find'],
     ch11: [() => import('./content/chapter11.js'), () => import('./content/s2aufilms.js'), 'c10_find'],

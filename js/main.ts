@@ -23,7 +23,7 @@ import { createWorld, levelUnderBuildings, widenFlatLand, paintMap, paintWater, 
 import { studioPosition } from './studio-position.js';
 import { landmarkAt, MAP_VERSION, onThisMap, rowSlot } from './content/map.js';
 import { build, seatRider, VEHICLES } from './vehicles.js';
-import { buildAvatar, nameAvatar, applyNpcFaces, buildOwl, buildGourd, avatarURL, OUTLINED, showStill } from './avatar.js';
+import { buildAvatar, nameAvatar, applyNpcFaces, buildOwl, buildGourd, avatarURL, OUTLINED, showStill, wakeLateAvatars, lateLeft, buildAllLate } from './avatar.js';
 import { Hero } from './player.js';
 import { Hud, fogMapFor, EMOTES } from './hud.js';
 import { pads, initInput } from './input.js';
@@ -269,6 +269,7 @@ export interface SvMain {
   reeds?: ReturnType<typeof createReeds>; report?: ReturnType<typeof createReport>; secrets?: ReturnType<typeof createSecrets>;
   seeThrough?: ReturnType<typeof createSeeThrough>; shop?: ReturnType<typeof import('./shop.js').createShop>; signposts?: ReturnType<typeof createSignposts>;
   simple?: ReturnType<typeof createSimple>; town?: ReturnType<typeof createTown>; school?: ReturnType<typeof createSchool>; schoolReady?: Promise<unknown>; weather?: ReturnType<typeof createWeather>;
+  friendQuests?: ReturnType<typeof import('./friendquest.js').createFriendQuests>; // (v1.08d polish)
   yard?: ReturnType<typeof createYard>; chests?: ReturnType<typeof createTwinChests>; claims?: ReturnType<typeof createClaims>;
   coop?: ReturnType<typeof createCoop>; familyCards?: ReturnType<typeof createFamilyCards>; parents?: ReturnType<typeof import('./parents.js').createParents>;
   boxes?: ReturnType<typeof import('./boxes.js').createBoxes>; surprises?: ReturnType<typeof import('./surprises.js').createSurprises>; myHouse?: ReturnType<typeof createMyHouse> | null;
@@ -281,11 +282,12 @@ export interface SvMain {
   showcaseCam?: (i: number, h: SvHeroT, dt: number) => boolean; TALES?: { id: string, title(): string, [k: string]: unknown }[];
   readTaleNow?: (h: SvHeroT, tale: { id: string }, sync?: unknown) => Promise<unknown>;
   GAME_SPOT?: Record<string, string>; hostNews?: (h: any) => void; learnQuest?: any; // (v1.08b games)
+  hostLineOf?: (id: string) => [string, string] | null; s2vn?: any; // (v1.08d s2vn) Season 2, Vietnam (js/s2vn.ts)
    lookUpT?: number; tapTargets?: THREE.Object3D[]; travelling?: boolean;
   // values main.ts shares
   LANDMARKS?: typeof LANDMARKS; STICKERS?: typeof STICKERS; VIEWS?: typeof VIEWS; getViews?: (i: number) => typeof VIEWS; PLACES?: { id?: string, x: number, z: number, [k: string]: unknown }[];
   bootTimes?: Record<string, number>; mapPic?: typeof mapPic; waterPic?: typeof waterPic; parked?: unknown;
-  areas?: { near: (x: number, z: number, r?: number) => Promise<void>, done: () => Promise<void>, left: () => number, list: () => { id: string, x: number, z: number, built: boolean, asleep: boolean, ms?: number }[], all: () => Promise<unknown> }; // (v1.08d valley, js/areas.ts)
+  areas?: { near: (x: number, z: number, r?: number) => Promise<void>, done: () => Promise<void>, left: () => number, late: () => number, list: () => { id: string, x: number, z: number, built: boolean, asleep: boolean, ms?: number }[], all: () => Promise<unknown> }; // (v1.08d valley, js/areas.ts)
   bubbleIcons?: THREE.Sprite[]; wanderers?: (SvPerson & { tx: number, tz: number, wave: number })[]; partners?: Record<string, SvFriend>;
   caroSize?: number; _again?: { game: string, from: string[], until: number, timer: ReturnType<typeof setTimeout> } | null; _padRemotes?: number; _familyMsgLive?: boolean; _owlAuto?: boolean; _previewed?: boolean; _reading?: boolean;
   resumedAway?: boolean; valleyGrew?: boolean; closeUp?: number | null;
@@ -953,6 +955,8 @@ const [{ createLanterns }, { createYard }, { createKidPlay }] = await Promise.al
 G.lanterns = createLanterns(G, { dialog, say, reward, save, openTheatre });
 // bà Huệ and ông Nghi's yard near the Huệ Nghi shop (js/yard.js): a side story
 G.yard = createYard(G, { dialog, say, reward, save });
+// (v1.08d polish) each friend's quest of three steps, for the item in the friend's hand (js/friendquest.ts): loaded after the start
+import('./friendquest.js').then(m => { G.friendQuests = m.createFriendQuests(G, { dialog, say, reward, save }); }).catch(e => console.warn('friend quests', e && e.message));
 // the companion grows, a coin goal, a gift every day (js/kidplay.js; Studio group 'For little ones')
 G.kidplay = createKidPlay(G, { say, save });
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
@@ -1140,9 +1144,14 @@ bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
 // chosen: the spot the last child played at, or home); after each one its pickups join first come first served, its
 // activities get their bubbles, and a moment later the solid map is made again with it
 { let again = null; const p0 = (profiles[0] && profiles[0].pos) || { x: PLATEAU.x - 3, z: PLATEAU.z - 4 };
-  G.areas = { near: areasNear, done: areasDone, left: areasLeft, list: areaList, all: async () => { for (const a of areaList()) if (!a.built) await areasNear(a.x, a.z, 1); } };
+  // (v1.08d valley) villagers far from every child are stand-ins until a child comes within 60 m (js/avatar.ts lateAvatar):
+  // three of them at most four times a second while walking, all of them round a flight's landing spot at once
+  G.areas = { near: async (x, z, r) => { wakeLateAvatars([{ x, z }], 60, 1e9); await areasNear(x, z, r); }, done: areasDone, left: areasLeft, late: lateLeft, list: areaList,
+    all: async () => { for (const a of areaList()) if (!a.built) await areasNear(a.x, a.z, 1); buildAllLate(); } };
+  { let acc = 0; world.updaters.push(dt => { acc += dt; if (acc < .25) return; acc = 0; if (G.heroes.length) wakeLateAvatars(G.heroes.map(h => h.pos), 60, 3); }); }
   startAreas(G, { x: +p0.x || 0, z: +p0.z || 0 }, () => { G.claims.wrap(); setupBubbles(); clearTimeout(again); again = setTimeout(solidsNow, areasLeft() ? 2500 : 600); }); }
 setTimeout(() => { void import('./art.js').then(a => a.moreArt()); }, 1500); // (v1.08) the new games' pictures, after the start
+setTimeout(() => { void import('./s2vn.js').then(m => m.installS2vn(G)).catch(e => console.warn('season 2', e)); }, 2500); // (v1.08d s2vn) Season 2's new places, after the start
 // (v1.08b platform, brief part 4: a lighter first download) the surprises and the grown-ups' features (family missions,
 // the family message, the week note) have no place on the map: they are made 2 s after the child can start, not while
 // the valley is built (everything that uses them asks whether they are there yet)

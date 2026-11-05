@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedFrom": {
-    "commit": "e64c0ac03830e761e828e3dbc2102a7f77e38401",
+    "commit": "99d75afa93e585cc2ad33efc6db0466da5325b30",
     "dirty": true,
     "dirtyPaths": [
       "js/content/activities.ts",
       "js/games/catalog.ts"
     ],
-    "sourceHash": "2fcf9f828ea2472430cdbee9626be33d3e0db9c22b0a46eafad14e1cc2633060",
+    "sourceHash": "4ed6cad5a76b9971d02358be1572c47535c8337535a5c94ff0c20ce52f2cc5a3",
     "build": "v1.07"
   },
   "website": {
@@ -328,7 +328,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -370,7 +370,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -395,7 +395,13 @@
           "bubbles",
           "ferries",
           "firstwords",
+          "hl_cave",
+          "hl_nets",
+          "hl_rocks",
           "market",
+          "mk_caybeo",
+          "mk_count",
+          "mk_sampan",
           "order",
           "s2a_beach",
           "s2a_cradle",
@@ -407,6 +413,12 @@
           "s2a_turtle",
           "s2a_wombat",
           "sortout",
+          "sp_brocade",
+          "sp_seasons",
+          "sp_terrace",
+          "tn_elephant",
+          "tn_gong",
+          "tn_nharong",
           "traffic",
           "tram"
         ]
@@ -426,7 +438,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -463,7 +475,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-aodai",
         "kind": "section",
@@ -516,7 +528,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -553,7 +565,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -590,7 +602,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -639,7 +651,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -698,7 +710,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -735,7 +747,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -772,7 +784,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -809,7 +821,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -846,7 +858,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-bubblepaint",
         "kind": "section",
@@ -899,7 +911,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -936,7 +948,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -973,7 +985,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1017,7 +1029,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1054,7 +1066,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1113,7 +1125,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1156,7 +1168,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1193,7 +1205,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1230,7 +1242,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1267,7 +1279,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1311,7 +1323,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1360,7 +1372,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1411,7 +1423,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1448,7 +1460,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1485,7 +1497,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1522,7 +1534,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1559,7 +1571,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1596,7 +1608,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1633,7 +1645,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1670,7 +1682,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1707,7 +1719,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1744,7 +1756,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1781,7 +1793,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1804,6 +1816,7 @@
         "prerequisites": [
           "gardenorder",
           "maze",
+          "mazebuild",
           "patternpicnic",
           "remembergarden",
           "robot",
@@ -1835,7 +1848,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1872,7 +1885,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1916,7 +1929,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -1953,7 +1966,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2002,7 +2015,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2027,7 +2040,13 @@
           "bubbles",
           "ferries",
           "firstwords",
+          "hl_cave",
+          "hl_nets",
+          "hl_rocks",
           "market",
+          "mk_caybeo",
+          "mk_count",
+          "mk_sampan",
           "order",
           "s2a_beach",
           "s2a_cradle",
@@ -2039,6 +2058,12 @@
           "s2a_turtle",
           "s2a_wombat",
           "sortout",
+          "sp_brocade",
+          "sp_seasons",
+          "sp_terrace",
+          "tn_elephant",
+          "tn_gong",
+          "tn_nharong",
           "traffic",
           "tram"
         ]
@@ -2058,7 +2083,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2095,7 +2120,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2144,7 +2169,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2187,7 +2212,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2224,7 +2249,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2261,7 +2286,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2310,7 +2335,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2347,7 +2372,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2384,7 +2409,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2421,7 +2446,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2458,7 +2483,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2495,7 +2520,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2532,7 +2557,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2575,7 +2600,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2624,7 +2649,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2675,7 +2700,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2712,7 +2737,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2749,7 +2774,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2800,7 +2825,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2844,7 +2869,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2881,7 +2906,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2918,7 +2943,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2955,7 +2980,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -2992,7 +3017,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3029,7 +3054,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3066,7 +3091,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3103,7 +3128,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3140,7 +3165,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3177,7 +3202,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3214,7 +3239,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3251,7 +3276,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3288,7 +3313,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3325,7 +3350,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3362,7 +3387,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3399,7 +3424,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3436,7 +3461,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3473,7 +3498,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3510,7 +3535,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3547,7 +3572,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3584,7 +3609,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3621,7 +3646,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#guide-familyquiz",
         "kind": "section",
@@ -3661,7 +3686,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3705,7 +3730,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3742,7 +3767,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3779,7 +3804,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3816,7 +3841,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3853,7 +3878,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3890,7 +3915,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3927,7 +3952,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -3964,7 +3989,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4001,7 +4026,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4038,7 +4063,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4075,7 +4100,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4112,7 +4137,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4149,7 +4174,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4186,7 +4211,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4223,7 +4248,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4260,7 +4285,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4297,7 +4322,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4334,7 +4359,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4371,7 +4396,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4408,7 +4433,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4445,7 +4470,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4482,7 +4507,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4519,7 +4544,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4556,7 +4581,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4593,7 +4618,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4630,7 +4655,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4667,7 +4692,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-fingerpaint",
         "kind": "section",
@@ -4720,7 +4745,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-finishpic",
         "kind": "section",
@@ -4773,7 +4798,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-fireworks",
         "kind": "section",
@@ -4826,7 +4851,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4863,7 +4888,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4888,7 +4913,13 @@
           "bubbles",
           "ferries",
           "firstwords",
+          "hl_cave",
+          "hl_nets",
+          "hl_rocks",
           "market",
+          "mk_caybeo",
+          "mk_count",
+          "mk_sampan",
           "order",
           "s2a_beach",
           "s2a_cradle",
@@ -4900,6 +4931,12 @@
           "s2a_turtle",
           "s2a_wombat",
           "sortout",
+          "sp_brocade",
+          "sp_seasons",
+          "sp_terrace",
+          "tn_elephant",
+          "tn_gong",
+          "tn_nharong",
           "traffic",
           "tram"
         ]
@@ -4919,7 +4956,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -4964,7 +5001,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5001,7 +5038,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-gallery",
         "kind": "section",
@@ -5054,7 +5091,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5091,7 +5128,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5128,7 +5165,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5165,7 +5202,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5207,7 +5244,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5244,7 +5281,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5281,7 +5318,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5371,7 +5408,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5409,6 +5446,117 @@
       }
     },
     {
+      "id": "hl_cave",
+      "kind": "game",
+      "name": {
+        "en": "Find the Hidden Cave",
+        "vi": "Tìm Hang Động Bí Ẩn"
+      },
+      "area": "travel",
+      "ageMin": 4,
+      "difficulty": 2,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "hl_nets",
+      "kind": "game",
+      "name": {
+        "en": "Fishing Village Nets",
+        "vi": "Kéo Lưới Làng Chài"
+      },
+      "area": "travel",
+      "ageMin": 3,
+      "difficulty": 2,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "hl_rocks",
+      "kind": "game",
+      "name": {
+        "en": "Rock Shapes of Hạ Long",
+        "vi": "Đảo Đá Hình Gì?"
+      },
+      "area": "travel",
+      "ageMin": 3,
+      "difficulty": 1,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
       "id": "hoops",
       "kind": "game",
       "name": {
@@ -5422,7 +5570,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5473,7 +5621,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5510,7 +5658,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5547,7 +5695,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5596,7 +5744,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5647,7 +5795,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5694,7 +5842,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5731,7 +5879,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-kitepaint",
         "kind": "section",
@@ -5784,7 +5932,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5821,7 +5969,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-lacquer",
         "kind": "section",
@@ -5874,7 +6022,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -5911,7 +6059,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-leafrub",
         "kind": "section",
@@ -5964,7 +6112,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6023,7 +6171,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6060,7 +6208,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6085,7 +6233,13 @@
           "bubbles",
           "ferries",
           "firstwords",
+          "hl_cave",
+          "hl_nets",
+          "hl_rocks",
           "market",
+          "mk_caybeo",
+          "mk_count",
+          "mk_sampan",
           "order",
           "s2a_beach",
           "s2a_cradle",
@@ -6097,6 +6251,12 @@
           "s2a_turtle",
           "s2a_wombat",
           "sortout",
+          "sp_brocade",
+          "sp_seasons",
+          "sp_terrace",
+          "tn_elephant",
+          "tn_gong",
+          "tn_nharong",
           "traffic",
           "tram"
         ]
@@ -6116,7 +6276,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6161,7 +6321,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6198,7 +6358,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6241,7 +6401,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6278,7 +6438,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-makeface",
         "kind": "section",
@@ -6331,7 +6491,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6368,7 +6528,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6405,7 +6565,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6442,7 +6602,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6479,7 +6639,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-masks",
         "kind": "section",
@@ -6532,7 +6692,44 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "mazebuild",
+      "kind": "game",
+      "name": {
+        "en": "Maze Builder",
+        "vi": "Xây Mê Cung"
+      },
+      "area": "thinking",
+      "ageMin": 4,
+      "difficulty": 2,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6569,7 +6766,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6606,7 +6803,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6643,7 +6840,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6680,7 +6877,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6717,7 +6914,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6754,7 +6951,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6791,7 +6988,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6828,7 +7025,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6865,7 +7062,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6914,7 +7111,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -6937,6 +7134,7 @@
         "prerequisites": [
           "gardenorder",
           "maze",
+          "mazebuild",
           "patternpicnic",
           "remembergarden",
           "robot",
@@ -6968,7 +7166,118 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "mk_caybeo",
+      "kind": "game",
+      "name": {
+        "en": "The Cây Bẹo Pole",
+        "vi": "Cây Bẹo Chợ Nổi"
+      },
+      "area": "travel",
+      "ageMin": 3,
+      "difficulty": 1,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "mk_count",
+      "kind": "game",
+      "name": {
+        "en": "Floating Market Count",
+        "vi": "Đếm Hàng Chợ Nổi"
+      },
+      "area": "travel",
+      "ageMin": 2,
+      "difficulty": 1,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "mk_sampan",
+      "kind": "game",
+      "name": {
+        "en": "Sampan Fruit Seller",
+        "vi": "Chèo Ghe Bán Trái Cây"
+      },
+      "area": "travel",
+      "ageMin": 3,
+      "difficulty": 1,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7005,7 +7314,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7042,7 +7351,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-mosaic",
         "kind": "section",
@@ -7095,7 +7404,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7132,7 +7441,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7181,7 +7490,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7225,7 +7534,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7262,7 +7571,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7299,7 +7608,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7336,7 +7645,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7373,7 +7682,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7410,7 +7719,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7447,7 +7756,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7484,7 +7793,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7521,7 +7830,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7558,7 +7867,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7595,7 +7904,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7632,7 +7941,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7669,7 +7978,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7706,7 +8015,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7743,7 +8052,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7780,7 +8089,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7817,7 +8126,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7854,7 +8163,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7891,7 +8200,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7928,7 +8237,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -7965,7 +8274,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8002,7 +8311,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8039,7 +8348,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8086,7 +8395,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8123,7 +8432,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8160,7 +8469,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8209,7 +8518,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8246,7 +8555,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8297,7 +8606,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-nonla",
         "kind": "section",
@@ -8350,7 +8659,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8387,7 +8696,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8424,7 +8733,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8461,7 +8770,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8498,7 +8807,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8535,7 +8844,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8560,7 +8869,13 @@
           "bubbles",
           "ferries",
           "firstwords",
+          "hl_cave",
+          "hl_nets",
+          "hl_rocks",
           "market",
+          "mk_caybeo",
+          "mk_count",
+          "mk_sampan",
           "order",
           "s2a_beach",
           "s2a_cradle",
@@ -8572,6 +8887,12 @@
           "s2a_turtle",
           "s2a_wombat",
           "sortout",
+          "sp_brocade",
+          "sp_seasons",
+          "sp_terrace",
+          "tn_elephant",
+          "tn_gong",
+          "tn_nharong",
           "traffic",
           "tram"
         ]
@@ -8591,7 +8912,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8628,7 +8949,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8665,7 +8986,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8690,7 +9011,13 @@
           "bubbles",
           "ferries",
           "firstwords",
+          "hl_cave",
+          "hl_nets",
+          "hl_rocks",
           "market",
+          "mk_caybeo",
+          "mk_count",
+          "mk_sampan",
           "order",
           "s2a_beach",
           "s2a_cradle",
@@ -8702,6 +9029,12 @@
           "s2a_turtle",
           "s2a_wombat",
           "sortout",
+          "sp_brocade",
+          "sp_seasons",
+          "sp_terrace",
+          "tn_elephant",
+          "tn_gong",
+          "tn_nharong",
           "traffic",
           "tram"
         ]
@@ -8774,7 +9107,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8811,7 +9144,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8870,7 +9203,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8907,7 +9240,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8944,7 +9277,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -8981,7 +9314,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -9004,6 +9337,7 @@
         "prerequisites": [
           "gardenorder",
           "maze",
+          "mazebuild",
           "patternpicnic",
           "remembergarden",
           "robot",
@@ -9035,7 +9369,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-pixelpic",
         "kind": "section",
@@ -9088,7 +9422,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -9135,7 +9469,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -9194,7 +9528,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -9236,7 +9570,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -9261,7 +9595,13 @@
           "bubbles",
           "ferries",
           "firstwords",
+          "hl_cave",
+          "hl_nets",
+          "hl_rocks",
           "market",
+          "mk_caybeo",
+          "mk_count",
+          "mk_sampan",
           "order",
           "s2a_beach",
           "s2a_cradle",
@@ -9273,6 +9613,12 @@
           "s2a_turtle",
           "s2a_wombat",
           "sortout",
+          "sp_brocade",
+          "sp_seasons",
+          "sp_terrace",
+          "tn_elephant",
+          "tn_gong",
+          "tn_nharong",
           "traffic",
           "tram"
         ]
@@ -9292,7 +9638,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -9329,7 +9675,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -9388,7 +9734,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -9425,7 +9771,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10503,7 +10849,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10562,7 +10908,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10613,7 +10959,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10657,7 +11003,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10701,7 +11047,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10738,7 +11084,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10763,7 +11109,13 @@
           "bubbles",
           "ferries",
           "firstwords",
+          "hl_cave",
+          "hl_nets",
+          "hl_rocks",
           "market",
+          "mk_caybeo",
+          "mk_count",
+          "mk_sampan",
           "order",
           "s2a_beach",
           "s2a_cradle",
@@ -10775,6 +11127,12 @@
           "s2a_turtle",
           "s2a_wombat",
           "sortout",
+          "sp_brocade",
+          "sp_seasons",
+          "sp_terrace",
+          "tn_elephant",
+          "tn_gong",
+          "tn_nharong",
           "traffic",
           "tram"
         ]
@@ -10794,7 +11152,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10880,7 +11238,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10917,7 +11275,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10954,7 +11312,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -10991,7 +11349,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11028,7 +11386,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11065,7 +11423,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11102,7 +11460,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11139,7 +11497,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11176,7 +11534,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11213,7 +11571,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11250,7 +11608,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11287,7 +11645,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11324,7 +11682,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11383,7 +11741,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11420,7 +11778,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-scene",
         "kind": "section",
@@ -11473,7 +11831,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11510,7 +11868,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11547,7 +11905,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11584,7 +11942,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11621,7 +11979,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11658,7 +12016,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11695,7 +12053,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11732,7 +12090,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11769,7 +12127,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11806,7 +12164,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11843,7 +12201,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11880,7 +12238,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11917,7 +12275,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11954,7 +12312,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -11991,7 +12349,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12028,7 +12386,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12065,7 +12423,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12102,7 +12460,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12139,7 +12497,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-scratch",
         "kind": "section",
@@ -12192,7 +12550,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-shades",
         "kind": "section",
@@ -12245,7 +12603,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-shadowpic",
         "kind": "section",
@@ -12298,7 +12656,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12335,7 +12693,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12372,7 +12730,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12409,7 +12767,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12454,7 +12812,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12513,7 +12871,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12550,7 +12908,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12587,7 +12945,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12624,7 +12982,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12675,7 +13033,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12712,7 +13070,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12749,7 +13107,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12786,7 +13144,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12831,7 +13189,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12874,7 +13232,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12911,7 +13269,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12948,7 +13306,118 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "sp_brocade",
+      "kind": "game",
+      "name": {
+        "en": "Brocade Patterns",
+        "vi": "Hoa Văn Thổ Cẩm"
+      },
+      "area": "travel",
+      "ageMin": 3,
+      "difficulty": 1,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "sp_seasons",
+      "kind": "game",
+      "name": {
+        "en": "Rice Through the Year",
+        "vi": "Mùa Lúa Ruộng Bậc Thang"
+      },
+      "area": "travel",
+      "ageMin": 4,
+      "difficulty": 2,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "sp_terrace",
+      "kind": "game",
+      "name": {
+        "en": "Plant the Rice Terraces",
+        "vi": "Cấy Lúa Ruộng Bậc Thang"
+      },
+      "area": "travel",
+      "ageMin": 3,
+      "difficulty": 2,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -12985,7 +13454,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13022,7 +13491,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13112,7 +13581,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-stamps",
         "kind": "section",
@@ -13165,7 +13634,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13202,7 +13671,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13244,7 +13713,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13281,7 +13750,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13318,7 +13787,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13369,7 +13838,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13406,7 +13875,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13443,7 +13912,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13502,7 +13971,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13539,7 +14008,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13576,7 +14045,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13613,7 +14082,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13650,7 +14119,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13687,7 +14156,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13724,7 +14193,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-thocam",
         "kind": "section",
@@ -13777,7 +14246,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13814,7 +14283,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13851,7 +14320,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13883,6 +14352,117 @@
       }
     },
     {
+      "id": "tn_elephant",
+      "kind": "game",
+      "name": {
+        "en": "Feed the Elephants",
+        "vi": "Cho Voi Ăn"
+      },
+      "area": "travel",
+      "ageMin": 3,
+      "difficulty": 2,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "tn_gong",
+      "kind": "game",
+      "name": {
+        "en": "Gong Rhythm",
+        "vi": "Nhịp Cồng Chiêng"
+      },
+      "area": "travel",
+      "ageMin": 3,
+      "difficulty": 1,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
+      "id": "tn_nharong",
+      "kind": "game",
+      "name": {
+        "en": "Build the Nhà Rông",
+        "vi": "Dựng Nhà Rông"
+      },
+      "area": "travel",
+      "ageMin": 4,
+      "difficulty": 2,
+      "online": false,
+      "learn": true,
+      "sourceCommit": null,
+      "sourceFile": "js/games/catalog.ts",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
+      "guide": {
+        "href": "/home/#games",
+        "kind": "section",
+        "verified": true,
+        "reviewedSource": "380ed908b79b94ac32f83865af7d87758e5932d0",
+        "sourceAligned": false
+      },
+      "coverage": {
+        "bilingual": true,
+        "metadata": true,
+        "implementation": true,
+        "discovery": "catalogued",
+        "recordings": "not-audited",
+        "issues": []
+      },
+      "unlock": {
+        "secondSet": false,
+        "featureId": null,
+        "finishesEach": 0,
+        "prerequisites": []
+      }
+    },
+    {
       "id": "tower",
       "kind": "game",
       "name": {
@@ -13896,7 +14476,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13933,7 +14513,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -13978,7 +14558,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14015,7 +14595,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14052,7 +14632,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14096,7 +14676,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14133,7 +14713,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14170,7 +14750,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14219,7 +14799,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14256,7 +14836,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14293,7 +14873,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14338,7 +14918,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14375,7 +14955,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14412,7 +14992,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14449,7 +15029,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14486,7 +15066,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14523,7 +15103,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14560,7 +15140,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14597,7 +15177,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14634,7 +15214,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14671,7 +15251,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14708,7 +15288,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14745,7 +15325,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14782,7 +15362,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14819,7 +15399,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14856,7 +15436,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14893,7 +15473,7 @@
       "learn": true,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14930,7 +15510,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -14967,7 +15547,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-weatherpaint",
         "kind": "section",
@@ -15020,7 +15600,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#art-weave",
         "kind": "section",
@@ -15073,7 +15653,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -15115,7 +15695,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -15159,7 +15739,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -15182,6 +15762,7 @@
         "prerequisites": [
           "gardenorder",
           "maze",
+          "mazebuild",
           "patternpicnic",
           "remembergarden",
           "robot",
@@ -15213,7 +15794,7 @@
       "learn": false,
       "sourceCommit": null,
       "sourceFile": "js/games/catalog.ts",
-      "sourceHash": "b0333e7d7b948f9d0586fbcf4f7a9e9648e17190d41591620ad7eb813817dccf",
+      "sourceHash": "7e56fd447f97fa8dea6c4ddaa664607bbd3c978b1511d363f9b05c007a89adfe",
       "guide": {
         "href": "/home/#games",
         "kind": "section",
@@ -18848,7 +19429,7 @@
     }
   ],
   "coverage": {
-    "games": 364,
+    "games": 377,
     "stories": 92,
     "declaredSecondSetMissingMetadata": [
       "game:hiddenpic",

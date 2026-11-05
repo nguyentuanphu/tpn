@@ -1123,3 +1123,114 @@ await check('friendoutfits', async () => {
   return `${r.f}: ${r.ids.length} outfits; the áo dài bought on the second tap (120 coins) and drawn; back to everyday free; ${r.faces.length} glasses and masks in the shop`;
 });
 // ---- (v1.08b friends) end ----
+// ---- (v1.08d polish) the friends' quests and items ----
+await check('frienditems', async () => {
+  // each friend has a quest of three steps at places that stand in the valley (EN and VI); the model carries its item
+  // (compass, sun crystal, flower staff, star lantern) only once the quest is done; the quest is a side story the child can
+  // follow on the goal bar; shop shoes take the place of the model's boots
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, h = G.heroes[0], p = h.profile, Q = await import('/js/content/friendquests.js'), A = await import('/js/avatar.js');
+    for (let k = 0; k < 60 && !(G.friendQuests && h.av.model); k++) await w(250);
+    const item = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && o.material.name === 'cloth-item') v = o.visible; }); return v; };
+    const boots = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && o.material.name === 'cloth-shoes') v = o.visible; }); return v; };
+    const f = p.look.friend, out: any = { f, model: !!h.av.model };
+    // every quest: three steps, each at a place that stands in the valley, lines in English and Vietnamese
+    out.places = Object.values(Q.FRIEND_QUESTS).flatMap(q => q.steps.map(s => s.spot)).filter(id => !G.interactables.some(it => it.id === id));
+    out.lines = Q.friendQuestLines().filter(([en, vi]) => !(en && vi && en.length > 10 && vi.length > 10 && en !== vi)).length;
+    out.steps = Object.values(Q.FRIEND_QUESTS).map(q => q.steps.length);
+    out.before = { item: item(h.av), side: G.sideStories().map(sd => sd.id).includes('fq'), started: G.friendQuests.side.status(p).started,
+      spark: G.interactables.filter(it => /^fq_/.test(it.id) && it.visible(h)).map(it => it.id) };
+    p.follow = 'fq'; out.goal = G.currentQuest(p) && G.currentQuest(p).id;
+    const t = G.currentQuest(p).target(), s0 = G.friendQuests.sparkAt(p); out.target = !!t && t.x === s0.x && t.z === s0.z;
+    // play the three steps, tapping through what is said
+    const tap = setInterval(() => { const d = document.querySelector('.dialog:not(.out)') as HTMLElement, rw = document.querySelector('.reward:not(.out)') as HTMLElement; if (d) d.click(); else if (rw) rw.click(); }, 120);
+    for (let k = 0; k < 3; k++) { await G.friendQuests.doStep(h, f, k); out['after' + k] = G.interactables.filter(it => /^fq_/.test(it.id) && it.visible(h)).map(it => it.id); }
+    clearInterval(tap); await w(300);
+    for (let k = 0; k < 40 && item(h.av) !== true; k++) await w(150);
+    out.after = { item: item(h.av), fitems: p.look.fitems, step: p.friendQuest[f], done: G.friendQuests.side.status(p).done, follow: p.follow || null, goal: (G.currentQuest(p) || {}).id || '' };
+    // the other friends' items stay hidden; their quests have not been played
+    const set = f === 'clara' || f === 'lumi' ? 'girl' : 'boy', other = set === 'girl' ? (f === 'clara' ? 'lumi' : 'clara') : (f === 'finn' ? 'sol' : 'finn');
+    await A.loadFriendModels(other); const o = A.buildAvatar({ set, friend: other, skin: '#f6c7a5', fitems: p.look.fitems });
+    out.other = item(o);
+    // shop shoes take the place of the model's boots; the model shows its own boots otherwise
+    const sh = A.buildAvatar({ ...p.look, feet: 'sneakers_red' }); let codeShoes = 0; sh.rig.traverse((x: any) => { if (x.isMesh && !x.isSkinnedMesh && x.parent && x.parent !== sh.model.obj && (x.parent === sh.kneeL || x.parent === sh.kneeR || x.parent === sh.legL || x.parent === sh.legR)) codeShoes++; });
+    out.shoes = { boots: boots(sh), code: codeShoes, plain: boots(h.av) };
+    let draws = 0; h.av.model.obj.traverse(x => { if (x.isMesh && x.visible && x.material.name !== 'skin-grip') draws++; }); out.draws = draws;
+    return out;
+  });
+  const errs = P.errors; await P.ctx.close();
+  const bad = [];
+  if (!r.model) bad.push('no model'); if (r.places.length) bad.push('places not in the valley: ' + r.places); if (r.lines) bad.push(r.lines + ' lines not in EN and VI');
+  if (r.steps.some(n => n !== 3)) bad.push('steps ' + r.steps);
+  if (r.before.item !== false || !r.before.side || !r.before.started || r.before.spark.join() !== `fq_${r.f}_0`) bad.push('before ' + JSON.stringify(r.before));
+  if (r.goal !== `FQ_${r.f}_0` || !r.target) bad.push('goal ' + r.goal + ' ' + r.target);
+  if (r.after0.join() !== `fq_${r.f}_1` || r.after1.join() !== `fq_${r.f}_2` || r.after2.length) bad.push('steps ' + JSON.stringify([r.after0, r.after1, r.after2]));
+  if (r.after.item !== true || !String(r.after.fitems).split(' ').includes(r.f) || r.after.step !== 3 || !r.after.done || r.after.follow || /^FQ_/.test(r.after.goal)) bad.push('after ' + JSON.stringify(r.after));
+  if (r.other !== false) bad.push('another friend carries an item not earned');
+  if (r.shoes.boots !== false || r.shoes.code < 2 || r.shoes.plain !== true) bad.push('shoes ' + JSON.stringify(r.shoes));
+  if (r.draws > 7) bad.push('draws ' + r.draws);
+  ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
+  return `${r.f}: three steps at places in the valley, followed on the goal bar; the item shows only after the third; shop shoes replace the boots; ${r.draws} parts drawn with the item`;
+});
+await check('handson', async () => {
+  // the hands-on games: the Tết bánh chưng (leaves, filling in the real order, folding, the string) and the Maze Builder
+  // (stepping stones round the rocks). Each level plays differently and is won by tapping what the game asks for, like
+  // a child's finger; everything fits one screen with no scrolling on a phone (both ways), a tablet (both) and a computer
+  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  await P.page.emulateMedia({ reducedMotion: 'reduce' });
+  const IDS = ['fg_tet', 'mazebuild'], bad = [], played = {};
+  await P.page.evaluate(async () => { const C = (await import('/js/custom.js')).CUSTOM, d = new Date(); C.festivals = C.festivals || {};
+    C.festivals.tet = { ...(C.festivals.tet || {}), date: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') }; await (await import('/js/art.js')).moreArt(); });
+  const openGame = (id, d) => P.page.evaluate(([id, d]) => { document.querySelectorAll('.gl, .modal').forEach(g => g.remove()); __sv.paused = false; const p = __sv.heroes[0].profile; p.age = 'big'; p.gameDiff = { ...(p.gameDiff || {}), [id]: d }; __sv.playGame(0, id, 'hub'); }, [id, d]);
+  for (const id of IDS) for (const d of ['easy', 'medium', 'hard', 'talent']) {
+    await openGame(id, d);
+    if (!await P.page.waitForSelector(`.gl[data-game-id="${id}"]:not(.out)`, { timeout: 10000 }).then(() => true, () => false)) { bad.push(`${id} ${d}: did not open`); continue; }
+    let taps = 0, won = false, stuck = 0, lv = '';
+    for (let k = 0; k < 600 && !won; k++) {
+      const t = await P.page.evaluate(async () => {
+        const { playWatch } = await import('/js/games/frame.js'), gl = document.querySelector('.gl:not(.out)');
+        if (!gl) return { gone: true }; if (gl.querySelector('.gl-win')) return { won: true };
+        const ok = e => e && e.isConnected && !e.disabled && e.getBoundingClientRect().width > 0;
+        let e = null; const a = playWatch.ask;
+        if (a && a.els.some(ok)) e = a.els.find(x => ok(x) && a.check(x)); else if (playWatch.plan) e = playWatch.plan();
+        if (!ok(e)) return { wait: true };
+        const r = e.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, at = document.elementFromPoint(x, y);
+        return { x, y, lv: (gl.querySelector('.gl-stage') as HTMLElement)?.dataset.lv || '', on: !!at && (at === e || e.contains(at)), what: String(e.className) + ' at ' + Math.round(x) + ',' + Math.round(y) + ' under ' + (at ? String(at.className) : 'nothing') };
+      });
+      if (t.won) { won = true; break; } if (t.gone) break;
+      if (t.wait) { if (++stuck > 150) break; await P.page.waitForTimeout(120); continue; }
+      stuck = 0; lv = t.lv || lv; if (!t.on) { bad.push(`${id} ${d}: something covers ${t.what}`); break; }
+      await P.page.touchscreen.tap(t.x, t.y); taps++; await P.page.waitForTimeout(90);
+    }
+    played[id + ':' + d] = { taps, won, lv };
+    if (!won) bad.push(`${id} ${d}: not won (${taps} taps)`);
+    await P.page.evaluate(() => { (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click(); }); await P.page.waitForTimeout(500);
+  }
+  for (const id of IDS) { const l = ['easy', 'medium', 'hard', 'talent'].map(d => played[id + ':' + d]?.lv); if (new Set(l).size < 3) bad.push(`${id}: the levels play alike ${l}`); }
+  // one screen, no scrolling, every button on screen and 44 px or more, text 16 px or more; pictures for the report
+  fs.mkdirSync('out/handson', { recursive: true });
+  for (const [name, w, h] of [['phone', 390, 844], ['phone-wide', 844, 390], ['tablet', 820, 1180], ['tablet-wide', 1180, 820], ['computer', 1366, 800]] as [string, number, number][]) {
+    await P.page.setViewportSize({ width: w, height: h });
+    for (const id of IDS) {
+      await openGame(id, 'talent'); await P.page.waitForSelector(`.gl[data-game-id="${id}"]:not(.out)`, { timeout: 10000 }).catch(() => {});
+      for (let k = 0; k < 30; k++) { await P.page.waitForTimeout(150); if (await P.page.evaluate(() => document.querySelectorAll('.gl:not(.out) .ho-leaf, .gl:not(.out) .ho-cell').length > 0)) break; }
+      await P.page.waitForTimeout(300);
+      const f = await P.page.evaluate(() => {
+        const st = document.querySelector('.gl:not(.out) .gl-stage') as HTMLElement, out = [];
+        if (!st) return ['no stage'];
+        if (st.scrollHeight > st.clientHeight + 2 || document.scrollingElement.scrollHeight > innerHeight + 2) out.push(`scrolls ${st.scrollHeight}/${st.clientHeight}`);
+        st.querySelectorAll('button').forEach((e: HTMLElement) => { const r = e.getBoundingClientRect(); if (r.width < 43 || r.height < 43) out.push(`small ${e.className} ${Math.round(r.width)}x${Math.round(r.height)}`); if (r.bottom > innerHeight + 1 || r.right > innerWidth + 1 || r.top < 0 || r.left < 0) out.push(`off screen ${e.className}`); });
+        st.querySelectorAll('.ho-say, .ho-bowl span, .ho-left').forEach((e: HTMLElement) => { if (e.textContent.trim() && parseFloat(getComputedStyle(e).fontSize) < 16) out.push(`text ${e.className}`); });
+        return out;
+      });
+      if (f.length) bad.push(`${id} ${name}: ${[...new Set(f)].slice(0, 4).join('; ')}`);
+      await P.page.screenshot({ path: `out/handson/${id}-${name}.png` });
+      await P.page.evaluate(() => { (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click(); }); await P.page.waitForTimeout(500);
+    }
+  }
+  const errs = P.errors; await P.ctx.close();
+  ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, played }).slice(0, 2000));
+  return `${IDS.map(id => `${id}: ${['easy', 'medium', 'hard', 'talent'].map(d => played[id + ':' + d].lv).join(' / ')}`).join('; ')}; won at every level; one screen on phone, tablet and computer (out/handson)`;
+});
+// ---- (v1.08d polish) end ----

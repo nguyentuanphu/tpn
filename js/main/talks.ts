@@ -149,7 +149,7 @@ G.hostNews = h => {
     const ids = spots.get(it.id); if (!ids || dist2(h.pos.x, h.pos.z, it.x, it.z) > 64) continue;
     const fresh = ids.filter(id => !p.hostNews[id] && openNow(id)); if (!fresh.length) continue;
     fresh.forEach(id => { p.hostNews[id] = 1; }); save();
-    const line = (AREA_PLACE[gameInfo(fresh[0]).area] || AREA_PLACE.words).line;
+    const line = G.hostLineOf?.(fresh[0]) || (AREA_PLACE[gameInfo(fresh[0]).area] || AREA_PLACE.words).line; // (v1.08d s2vn: a region's friend tells of its own games)
     say(line[0], line[1]); hudFor(h).toast('✨ ' + T('New: ', 'Trò mới: ') + fresh.map(id => GAMES[id]?.name?.() || id).join(', '));
     return;
   }

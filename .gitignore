@@ -50,8 +50,10 @@ marketing/source/runvalley.log
 /js/art/companion-hats.js
 /js/art/emoji108b.js
 /js/art/english.js
+/js/art/frienditems.js
 /js/art/games108.js
 /js/art/games108b.js
+/js/art/handson.js
 /js/art/howto-tales.js
 /js/art/kit.js
 /js/art/learning.js
@@ -65,6 +67,7 @@ marketing/source/runvalley.log
 /js/art/r90-audits.js
 /js/art/round30.js
 /js/art/s2au.js
+/js/art/s2vn.js
 /js/art/science2.js
 /js/art/things-money.js
 /js/art/tiengviet2.js
@@ -101,6 +104,10 @@ marketing/source/runvalley.log
 /js/content/chapter3text.js
 /js/content/chapter4.js
 /js/content/chapter5.js
+/js/content/chapter6.js
+/js/content/chapter7.js
+/js/content/chapter8.js
+/js/content/chapter9.js
 /js/content/chapterfinale.js
 /js/content/chapterkit.js
 /js/content/chapters.js
@@ -152,6 +159,7 @@ marketing/source/runvalley.log
 /js/content/films/tiddalik.js
 /js/content/films/vusua.js
 /js/content/films/weaver.js
+/js/content/friendquests.js
 /js/content/friends.js
 /js/content/fruit-parade.js
 /js/content/gameplace.js
@@ -178,6 +186,8 @@ marketing/source/runvalley.log
 /js/content/s2au-games.js
 /js/content/s2au.js
 /js/content/s2aufilms.js
+/js/content/s2vn.js
+/js/content/s2vnfilms.js
 /js/content/savecopy.js
 /js/content/school-place.js
 /js/content/science-places.js
@@ -227,6 +237,7 @@ marketing/source/runvalley.log
 /js/folkshow.js
 /js/friend-model.js
 /js/friend-view.js
+/js/friendquest.js
 /js/fun.js
 /js/games/all.js
 /js/games/animals2.js
@@ -268,6 +279,8 @@ marketing/source/runvalley.log
 /js/games/goat-art.js
 /js/games/goat-core.js
 /js/games/goat.js
+/js/games/handson-meta.js
+/js/games/handson.js
 /js/games/hocvui-meta.js
 /js/games/horse-session.js
 /js/games/learning-meta.js
@@ -304,6 +317,8 @@ marketing/source/runvalley.log
 /js/games/reveal.js
 /js/games/s2au-meta.js
 /js/games/s2au.js
+/js/games/s2vn-meta.js
+/js/games/s2vn.js
 /js/games/science.js
 /js/games/science2-meta.js
 /js/games/science2.js
@@ -418,6 +433,7 @@ marketing/source/runvalley.log
 /js/roomcode.js
 /js/s2au-region.js
 /js/s2au.js
+/js/s2vn.js
 /js/school.js
 /js/screencapture.js
 /js/scrollhelp.js

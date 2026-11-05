@@ -15,7 +15,7 @@ import { T } from './i18n.js';
 import { SFX, tone } from './audio.js';
 import { reduceMotion } from './state.js';
 import { heightAt, roadDist, WATER } from './world.js';
-import { buildAvatar } from './avatar.js';
+import { buildAvatar, crowdLook } from './avatar.js';
 import { featureOn } from './custom.js';
 import { events } from './core/events.js';
 import { id as makeId } from './core/ids.js';
@@ -108,7 +108,7 @@ export function createHoiLang(G, { say, save, reward }) {
 
   // ---------- the parade and the crowd ----------
   let walkers = null, crowd = null, active = null;
-  const make = (look, k) => { const A = buildAvatar(look, null); A.root.visible = false; scene.add(A.root); return A; };
+  const make = (look, k) => { const A = buildAvatar(crowdLook(look), null); A.root.visible = false; scene.add(A.root); return A; };
   const build = () => {
     walkers = LOOKS.slice(0, 4).map(make); crowd = LOOKS.slice(4, 9).map(make);
     // the first walker carries the festival flag

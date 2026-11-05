@@ -8,7 +8,7 @@ import { T, nm, onLang, registerName } from './i18n.js';
 import { heightAt, CITIES, TOWN, BRIDGES } from './world.js';
 import { landmarkAt, ROAD_WIDTH, rowSlot } from './content/map.js';
 import { roadTexture } from './roads.js';
-import { buildAvatar, nameAvatar } from './avatar.js';
+import { buildAvatar, nameAvatar, lateAvatar, crowdLook } from './avatar.js';
 import { LANDMARKS, VENDORS, postcard } from './regions.js';
 import { PERSONAS } from './chat.js';
 import { dialog, reward } from './ui.js';
@@ -159,7 +159,8 @@ export function createCities(G) {
   const place = (parts, x, z, rot, y?) => { const m = new THREE.Mesh(merge(parts), toonVC()); m.position.set(x, y ?? heightAt(x, z) - .05, z); m.rotation.y = rot; m.castShadow = m.receiveShadow = true; scene.add(m); outline(m, .025, '#4a3a3f'); return m; };
   const info = (x, y, z) => { const s = sprite('ℹ️', 1.5); s.position.set(x, y, z); scene.add(s); world.updaters.push((dt, t) => { s.position.y = y + Math.sin(t * 2 + x) * .25; }); };
   const person = (lk, x, z, face, name, tagH = 2.4) => { // tagH: lift a name tag so two people side by side don't overlap
-    const A = nameAvatar(buildAvatar(lk, null), name); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); people.push(A);
+    // (v1.08d valley) built when a child comes near (js/avatar.ts lateAvatar)
+    const A = nameAvatar(lateAvatar(crowdLook(lk)), name); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); people.push(A);
     const tg = tagSprite(name); tg.position.set(x, heightAt(x, z) + tagH, z); scene.add(tg); world.colliders.push({ x, z, r: .45 }); return A;
   };
   // sellers and hosts breathe and sway only when a child is near enough to see them (saves work on phones)

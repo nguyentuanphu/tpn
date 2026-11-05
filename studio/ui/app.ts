@@ -1453,6 +1453,12 @@ const LOOKS = { style: ['dress', 'shirt', 'aodai', 'tunic', 'overalls', 'hoodie'
 // the looks' choices in words (a list box cannot show pictures)
 const LOOK_WORDS: Record<string, [string, string]> = { dress: ['Dress', 'Váy'], shirt: ['Shirt and shorts', 'Áo và quần soóc'], aodai: ['Áo dài', 'Áo dài'], tunic: ['Tunic', 'Áo tunic'], overalls: ['Overalls', 'Quần yếm'], hoodie: ['Hoodie', 'Áo hoodie'],
   buns: ['Buns', 'Búi tóc'], short: ['Short', 'Tóc ngắn'], long: ['Long', 'Tóc dài'], ponytail: ['Ponytail', 'Tóc đuôi ngựa'], spiky: ['Spiky', 'Tóc dựng'] };
+// (v1.08d polish, plan docs/plans/new-friends-characters.md: "kind (VN or AU)") a villager is Vietnamese or Australian;
+// choosing the kind dresses them in that kind's everyday clothes and hair, which can then be changed one by one
+const VILLAGER_KINDS = [
+  { id: 'vn', en: 'Vietnamese', vi: 'Việt Nam', look: { style: 'aodai', hair: '#1d1412', hairStyle: 'long' } },
+  { id: 'au', en: 'Australian', vi: 'Úc', look: { style: 'shirt', hair: '#c98b4a', hairStyle: 'short' } }
+];
 const lookWord = v => LOOK_WORDS[v] ? T(...LOOK_WORDS[v]) : v;
 let mapCanvas = null, mapMode = 'npc', SNAP = null;
 // the buildings that are in the game now: the game itself is opened out of sight and asked (it needs a moment)
@@ -1721,6 +1727,7 @@ PAGES.map = async P => {
     F.innerHTML = `<h3>✏️ ${esc(c.name)}</h3>
       <label>${T('Name (as the children call them)', 'Tên (như các con gọi)')}</label><input type="text" id="fn" value="${esc(c.name)}" maxlength="40">
       <div class="row"><div><label>${T('Voice', 'Giọng')}</label><select id="fg"><option value="f" ${c.gender !== 'm' ? 'selected' : ''}>👩 ${T('woman/girl', 'nữ')}</option><option value="m" ${c.gender === 'm' ? 'selected' : ''}>👨 ${T('man/boy', 'nam')}</option></select></div>
+      <div><label>${T('Kind', 'Người')}</label><select id="fk">${VILLAGER_KINDS.map(k => `<option value="${k.id}" ${(L.kind || 'vn') === k.id ? 'selected' : ''}>${T(k.en, k.vi)}</option>`).join('')}</select></div>
       <div><label>${T('Age', 'Tuổi')}</label><select id="fa">${[['kid', T('child', 'trẻ em')], ['adult', T('grown-up', 'người lớn')], ['old', T('grandparent', 'ông bà')]].map(([v, l]) => `<option value="${v}" ${(L.age || 'adult') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
       <div><label>${T('Icon', 'Biểu tượng')}</label><input type="text" id="fi" value="${esc(c.icon || '💬')}" maxlength="4"></div></div>
       <div class="row"><div><label>${T('Clothes', 'Trang phục')}</label><select id="fs">${LOOKS.style.map(v => `<option value="${v}" ${L.style === v ? 'selected' : ''}>${lookWord(v)}</option>`).join('')}</select></div><div><label>${T('Hair', 'Tóc')}</label><select id="fh">${LOOKS.hairStyle.map(v => `<option value="${v}" ${L.hairStyle === v ? 'selected' : ''}>${lookWord(v)}</option>`).join('')}</select></div></div>
@@ -1730,6 +1737,7 @@ PAGES.map = async P => {
       <p class="${okc === 'ok' ? 'ok' : 'badtxt'}">📍 ${c.x}, ${c.z} ${okc === 'ok' ? '✅' : '⚠️ ' + why + ' – ' + T('drag them a little', 'kéo ra một chút')}</p>${done}`;
     const up = () => { draw(); list(); };
     $('#fn').oninput = e => { c.name = val(e); up(); }; $('#fg').onchange = e => { c.gender = val(e); up(); };
+    $('#fk').onchange = e => { L.kind = val(e); Object.assign(L, VILLAGER_KINDS.find(k => k.id === L.kind).look); form(); }; // (v1.08d polish) a kind dresses them in its everyday look
     $('#fa').onchange = e => { L.age = val(e); }; $('#fi').oninput = e => { c.icon = val(e); }; $('#fs').onchange = e => { L.style = val(e); }; $('#fh').onchange = e => { L.hairStyle = val(e); };
     F.querySelectorAll<HTMLInputElement>('[data-c]').forEach(b => b.onclick = () => { L.color = b.dataset.c; form(); }); F.querySelectorAll<HTMLInputElement>('[data-h]').forEach(b => b.onclick = () => { L.hair = b.dataset.h; form(); }); F.querySelectorAll<HTMLInputElement>('[data-s]').forEach(b => b.onclick = () => { L.skin = b.dataset.s; form(); });
     F.querySelectorAll<HTMLInputElement>('#flines [data-j]').forEach(r => { const j = +r.dataset.j; r.querySelectorAll<HTMLInputElement>('[data-l]').forEach(i => i.oninput = () => { c.lines[j][+i.dataset.l] = i.value; }); r.querySelector<HTMLInputElement>('[data-rm]').onclick = () => { c.lines.splice(j, 1); form(); }; });

@@ -53,11 +53,16 @@ export function stepWon(p, id: string) {
 }
 
 /** the journeys at the top of the Học vui tab: each subject's 9 steps (done ones filled), its badge, its next game */
+// (v1.08d polish, Release's part 4) on a phone the 8 rows filled the first screen: they fold into one row that opens the
+// list, so the corners show first; on a tablet and a computer the list is open. A child's open or close is remembered.
+const lqOpen: Record<string, boolean> = {}; // (by kind of screen: a phone's choice does not fold a tablet)
+const lqWide = () => typeof innerWidth === 'number' && innerWidth >= 700;
 export function journeysHTML(p): string {
-  return `<section class="lq-journeys"><h4 class="hubarea">${pic('lp:tab')} ${esc(T(...LEARN_LINES.title))}</h4><div class="lq-rows">${LEARN_PATHS.map(L => {
+  const open = lqOpen[String(lqWide())] ?? lqWide(), all = LEARN_PATHS.reduce((a, L) => a + doneOf(p, L), 0);
+  return `<details class="lq-journeys" ${open ? 'open' : ''}><summary class="hubarea lq-sum">${pic('lp:tab')} <b>${esc(T(...LEARN_LINES.title))}</b><small>${all}/${LEARN_PATHS.length * STEPS}</small></summary><div class="lq-rows">${LEARN_PATHS.map(L => {
     const d = doneOf(p, L), next = nextOf(p, L);
     return `<button class="lq-row" style="--lq:${L.color}" ${next ? `data-lqplay="${next}"` : 'disabled'} aria-label="${esc(T(...L.name))}: ${d}/${STEPS}"><b>${esc(T(...L.name))}</b><span class="lq-steps">${Array.from({ length: STEPS }, (_, k) => `<i class="${k < d ? 'done' : k === d ? 'now' : ''}"></i>`).join('')}</span><span class="lq-badge${d >= STEPS ? ' got' : ''}">${pic(badgeIcon(L.key))}</span></button>`;
-  }).join('')}</div></section>`;
+  }).join('')}</div></details>`;
 }
 /** today's learning step as a row of the daily adventure's window */
 export function adventureRowHTML(p): string {
@@ -68,8 +73,15 @@ export function adventureRowHTML(p): string {
 let styled = false;
 export function style() {
   if (styled || typeof document === 'undefined') return; styled = true;
+  document.addEventListener('toggle', e => { const d = e.target as HTMLDetailsElement; if (d && d.classList && d.classList.contains('lq-journeys')) lqOpen[String(lqWide())] = d.open; }, true);
   const s = document.createElement('style'); s.textContent = `
 .lq-journeys { margin: 0 0 10px; }
+.lq-sum { display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 4px 12px; border-radius: 16px; background: #fff8e0; border: 3px solid #ffd23f; cursor: pointer; list-style: none; font: 800 18px var(--font, sans-serif); color: #3b2a4f; }
+.lq-sum::-webkit-details-marker { display: none; }
+.lq-sum::after { content: ''; margin-left: auto; width: 12px; height: 12px; border-right: 4px solid #3b2a4f; border-bottom: 4px solid #3b2a4f; transform: rotate(45deg); transition: transform .2s; }
+.lq-journeys[open] > .lq-sum::after { transform: rotate(-135deg); }
+.lq-sum .art { width: 40px; height: 40px; } .lq-sum small { font-size: 16px; font-weight: 700; }
+.lq-journeys[open] > .lq-rows { margin-top: 8px; }
 .lq-rows { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 8px; }
 .lq-row { display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 6px 10px; border-radius: 16px; border: 3px solid var(--lq); background: #fff; font: 800 16px var(--font, sans-serif); color: #3b2a4f; text-align: left; }
 .lq-row b { flex: 1 1 auto; min-width: 0; }

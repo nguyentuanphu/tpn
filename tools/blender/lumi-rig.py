@@ -23,6 +23,7 @@ HAND_PROPS = ('lantern', 'staff', 'vineLeaf', 'staffPetal', 'staffHeart', 'compa
 TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace', 'tunic', 'cape', 'clasp', 'sun', 'apron', 'scarf', 'aoBaBa', 'longSkirt', 'aoDai', 'dressTop', 'dressSkirt', 'dressBelt', 'tee', 'pocket', 'dressStrap', 'necklace', 'bowtie', 'redScarf', 'backpack')
 ARM = ('arm', 'sleeve', 'sleeveRoll', 'hand', 'thumb', 'coatSleeve', 'coatCuff', 'shirtSleeve', 'glove', 'sleevePuff', 'sleeveFrill', 'watch', 'bracelet', 'handS', 'handG')
 LEG = ('leg', 'sock', 'sockRib', 'boot', 'bootToe', 'sole', 'bootCuff', 'bootLeaf', 'bootStrap', 'bootBuckle', 'lace', 'shoe', 'sandal', 'toes', 'rainboot', 'sneaker', 'thong', 'longSock')
+SHOE_PARTS = ('soft_boot', 'sole', 'bootBuckle', 'bootStrap', 'bootLeaf', 'bootCuff', 'lace')  # (v1.08d polish) what lighten() puts in the shoes part
 HIP = ('shortsLeg', 'shortsCuff', 'trouser', 'seat')
 def seg_d(p, a, b):
     ab = b - a; t = max(0, min(1, (p - a).dot(ab) / ab.length_squared)); return (p - (a + ab * t)).length
@@ -154,6 +155,11 @@ def lighten():
         for g in names: n.vertex_groups.new(name=g)
         col = o.users_collection[0]; col.objects.link(n)
         key = col.name if col != scene.collection else 'body'
+        # (v1.08d polish) the item in the hand and the boots are parts of their own, so the game can show the item only once
+        # the friend's quest is done (js/friendquest.ts) and swap the boots for shoes from the shop (js/friend-model.ts)
+        base = o.name.split('.')[0]
+        if key == 'body' and base.startswith(HAND_PROPS): key = 'item'
+        elif key == 'body' and base.startswith(SHOE_PARTS): key = 'shoes'
         groups.setdefault(key, []).append(n); bpy.data.objects.remove(o)
     for key, objs in groups.items():
         with bpy.context.temp_override(active_object=objs[0], selected_editable_objects=objs, selected_objects=objs):

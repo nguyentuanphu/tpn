@@ -12,7 +12,7 @@ export const FRIEND_DATA = FRIEND_MIGRATE; // (the loaded file is FRIEND_DATA.li
 let friendsP: Promise<typeof import('./content/friends.js')> = null;
 export const friendsReady = () => friendsP || (friendsP = import('./content/friends.js').then(F => {
   FRIEND_DATA.lib = F; friendLook = F.friendLook; FRIEND_MIGRATE.fn = F.migrateFriend; profiles.forEach(p => F.migrateFriend(p)); return F; }));
-export const FRIEND_MODELS: { ready?: (id: string) => boolean, load?: (id: string) => Promise<boolean>, attach?: (A, id: string, skin: string) => any, faceParts?: (it) => THREE.BufferGeometry[] } = {};
+export const FRIEND_MODELS: { ready?: (id: string) => boolean, load?: (id: string) => Promise<boolean>, attach?: (A, id: string, skin: string, wear?: { item?: boolean, shoes?: boolean }) => any, faceParts?: (it) => THREE.BufferGeometry[] } = {};
 export const loadFriendModels = (id: string): Promise<boolean> => FRIEND_MODELS.load ? FRIEND_MODELS.load(id)
   : import('./friend-model.js').then(m => { Object.assign(FRIEND_MODELS, { ready: m.friendModelReady, load: m.loadFriendModel, attach: m.attachFriendModel, faceParts: m.faceParts }); return m.loadFriendModel(id as any); }).catch(() => false);
 const WEAR = <T extends THREE.Object3D>(o: T) => { o.userData.wear = true; return o; }; // (v1.08b) a hat, necklace or back: kept on a friend's model
@@ -227,20 +227,20 @@ export type SvAvatar = { root: THREE.Group, rig: THREE.Group, skinMat: THREE.Mat
   still?: THREE.Group, stillLine?: THREE.Mesh, _still?: boolean, _ol?: boolean, anim?: (state: string, t: number, speed?: number) => void,
   // (v1.08) the knees, elbows and swinging hair, and what the animation remembers between frames
   kneeL?: THREE.Group, kneeR?: THREE.Group, elbowL?: THREE.Group, elbowR?: THREE.Group, tail?: THREE.Group, painted?: boolean, life?: AvatarLife,
-  model?: import('./friend-model.js').FriendModel, height?: number };
+  model?: import('./friend-model.js').FriendModel, height?: number, late?: boolean, lateFace?: unknown, latePhoto?: unknown, lateThen?: (() => void)[] };
 type AvatarLife = { t: number, st: string, chg: number, land: number, ph: number, blink: number, mood: string, seed: number };
-export function buildAvatar(look, photo?, opts?: { code?: boolean }) {
+export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvatar }) {
   const friendId = look && look.friend, useModel = !!friendId && !(opts && opts.code) && !!FRIEND_MODELS.ready && FRIEND_MODELS.ready(friendId);
   if (friendId && !useModel && !(opts && opts.code)) loadFriendModels(friendId); // (v1.08b: the next build uses the model)
   look = friendLook(look); // (v1.08b friends) a child is drawn as their friend (Finn, Sol, Clara or Lumi); villagers stay as they are
-  const root = new THREE.Group(), rig = new THREE.Group(); root.add(rig); root.userData.avatar = true;
+  const into = opts && opts.into, root = into ? into.root : new THREE.Group(), rig = new THREE.Group(); root.add(rig); root.userData.avatar = true; // (v1.08d valley: into, a stand-in made by lateAvatar)
   const shadow = blobShadow(); root.add(shadow); shadow.position.y = .03; shadow.scale.setScalar(.65);
   const W = wearing(look), bot = W.bottom, ft = W.feet; // (round S) shop clothes: each piece one merged shape
   const style = W.top ? TOP_STYLE[W.top.shape] || 'shirt' : look.style || 'shirt', col = W.top ? W.top.color : look.color || '#3b6fe0';
   const skin = toon(look.skin, { roughness: .6 }), hairM = toon(look.hair, { roughness: .45, metalness: .05 }), cloth = toon(col, { roughness: .92 });
   const white = toon('#ffffff', { roughness: .9 }), shoeM = toon(ft ? ft.color : look.shoe || '#7a4a35', { roughness: .45 }), soleM = toon('#fff8ee');
   const trim = toon(style === 'aodai' ? '#ffd84a' : '#f2d16b', { roughness: .7 });
-  const A: SvAvatar = { root, rig, skinMat: skin, look };
+  const A: SvAvatar = into ? Object.assign(into, { rig, skinMat: skin, look }) : { root, rig, skinMat: skin, look };
   // legs (pivot at the hip)
   const legSpec = look.legs ? 'pants:' + look.legs : bot ? (bot.shape === 'shorts' ? 'shorts' : bot.shape === 'skirt' ? 'skin' : 'pants:' + bot.color) : STYLE_LEGS[style] || 'skin';
   const shortsCol = bot && bot.shape === 'shorts' ? bot.color : null;
@@ -356,13 +356,15 @@ export function buildAvatar(look, photo?, opts?: { code?: boolean }) {
   // back, glider); the model, added below, follows its joints
   if (useModel) {
     [hat, ...(A.wings || []), A.cape].forEach(g => g && g.traverse(o => { o.userData.wear = true; }));
+    if (ft) [A.kneeL, A.kneeR].forEach(k => k && k.children.forEach(o => { if (o instanceof THREE.Mesh && o.geometry !== B.shin && o.geometry !== B.pantsShin) o.userData.wear = true; })); // (v1.08d polish) shop shoes stay on the model
     const drop = []; rig.traverse(o => { if (o instanceof THREE.Mesh && !o.userData.wear) { let p = o.parent; while (p && p !== glider) p = p.parent; if (!p) drop.push(o); } });
     drop.forEach(o => o.parent.remove(o));
   }
   compact(A); // (battery round) each moving part one shape, before the outlines are made (one outline each, too)
   A.outlines = outline(rig, .011, '#6a4a3a'); OUTLINED.push(A);
   A.anim = (state, t, speed) => animate(A, state, t, speed);
-  if (useModel) { A.model = FRIEND_MODELS.attach(A, friendId, look.skin); A.root.userData.friendModel = friendId; }
+  // (v1.08d polish) the friend's item in the hand once their quest is done (look.fitems), and the shop's shoes on the model
+  if (useModel) { A.model = FRIEND_MODELS.attach(A, friendId, look.skin, { item: typeof look.fitems === 'string' && look.fitems.split(' ').includes(friendId), shoes: !!ft }); A.root.userData.friendModel = friendId; }
   return A;
 }
 
@@ -516,12 +518,18 @@ export const spriteGlow = c => glow(c);
 // the head, ears, hands and legs take the skin colour sampled from the photo, so the edge of the photo blends in.
 const NAMED: Record<string, SvAvatar[]> = {}; // villager name -> their avatars
 const baseOf = n => String(n).replace(/\s+[^\p{L}\p{N}]+$/u, '').trim();
+// (v1.08d polish, WORLD-011) the crowds (cities, homes, the regions, Asia, heritage games, hawkers, the festival, the folk
+// show, children playing) at the new heights, as the named villagers: a grown-up 2.0, a grandparent 1.8 (grey or white
+// hair), a child 1.6 (they no longer shrink a child by hand). A look with its own age keeps it.
+export const crowdLook = (look, kid = false) => { if (!look || look.age || kid) return look; const h = /^#[0-9a-f]{6}$/i.test(look.hair || '') ? [1, 3, 5].map(i => parseInt(look.hair.slice(i, i + 2), 16)) : null;
+  return { ...look, age: h && Math.max(...h) - Math.min(...h) < 20 && h[0] > 120 ? 'elder' : 'adult' }; };
 export function nameAvatar(A, name, remember = true, stableId?) { // remember: false for people in a room that is torn down later
   if (!A || !name) return A; const legacy = baseOf(name), id = stableId || legacy; A.faceLegacy = legacy; if (remember) (NAMED[id] = NAMED[id] || []).push(A);
   const f = familyOwnFace(id) || familyOwnFace(legacy) || (settings.npcFaces || {})[legacy] || customFace(legacy); if (f) setFace(A, f);
   return A;
 }
 function setFace(A, f) {
+  if (A.late) { A.lateFace = f; return; } // (v1.08d valley) a stand-in gets its face when it is built
   A.faceMat.map = f && f.photo ? faceTexture(A.look, f.photo) : faceTexture(A.look); A.faceMat.needsUpdate = true;
   A.painted = !(f && f.photo); if (A.life) A.life.mood = 'smile';
   if (A.skinMat) { A.skinMat.color.set(f && f.skin ? f.skin : A.look.skin); recolorSkin(A); }
@@ -687,3 +695,39 @@ export function dropStill(A) {
 export function applyNpcFaces() { for (const [id, list] of Object.entries(NAMED)) list.forEach(A => setFace(A, familyOwnFace(id) || familyOwnFace(A.faceLegacy || id) || (settings.npcFaces || {})[A.faceLegacy || id] || customFace(A.faceLegacy || id) || null)); }
 onFamilyPhotos(() => applyNpcFaces()); // (round R privacy) the family's photo faces arrive after the start, with the family code
 export const namedVillagers = () => Object.keys(NAMED);
+
+// (v1.08d valley, owner 5 Nov 2026 AEDT: "the valley building as the child walks") villagers far from every child are
+// made as a stand-in: an empty group where they stand, with their look, their height and an animation that does
+// nothing. The first time a child comes within reach (js/main.ts: wakeLateAvatars four times a second, and at once round
+// a flight's landing spot) the real person is built into the same object and the same group, so everything that holds
+// the villager (their place, their day, their talk, their name and face) keeps it. Only villagers whose makers use
+// nothing but the group and anim before then are made this way (js/cities.ts, js/homes.ts, js/heritage.ts,
+// js/regions.ts); the checks build them all before they play (G.areas.all).
+const LATE: SvAvatar[] = [];
+export function lateAvatar(look, photo = null): SvAvatar {
+  const root = new THREE.Group(); root.userData.avatar = true;
+  const AGE = { adult: 1.25, elder: 1.125, old: 1.125 }[look && look.age] || 1;
+  const A: SvAvatar = { root, look, height: AGE, late: true, latePhoto: photo, anim: () => { } } as unknown as SvAvatar;
+  LATE.push(A); return A;
+}
+export function buildLate(A: SvAvatar) {
+  if (!A || !A.late) return; A.late = false; const i = LATE.indexOf(A); if (i >= 0) LATE.splice(i, 1);
+  buildAvatar(A.look, A.latePhoto, { into: A });
+  if (A.lateFace !== undefined) { const f = A.lateFace; A.lateFace = undefined; setFace(A, f); }
+  for (const f of A.lateThen || []) f(); A.lateThen = undefined;
+}
+/** runs fn once the person is really built (at once for one that is) */
+export function afterBuilt(A: SvAvatar, fn: () => void) { if (!A.late) fn(); else (A.lateThen = A.lateThen || []).push(fn); }
+const _lp = new THREE.Vector3();
+/** builds the stand-ins within r m of any of the points, at most max of them (the nearest first) */
+export function wakeLateAvatars(points: { x: number, z: number }[], r = 60, max = 3) {
+  if (!LATE.length || !points.length) return 0;
+  const near: [number, SvAvatar][] = [];
+  for (const A of LATE) { if (!A.root.parent) continue; A.root.getWorldPosition(_lp); let d = 1e9; for (const p of points) d = Math.min(d, Math.hypot(p.x - _lp.x, p.z - _lp.z)); if (d < r) near.push([d, A]); }
+  near.sort((a, b) => a[0] - b[0]); let n = 0; for (const [, A] of near) { if (n >= max) break; buildLate(A); n++; }
+  return n;
+}
+export const lateLeft = () => LATE.length;
+export function buildAllLate() { while (LATE.length) buildLate(LATE[0]); }
+/** where the stand-ins still waiting stand (for the checks) */
+export function lateSpots() { return LATE.filter(A => A.root.parent).map(A => { A.root.getWorldPosition(_lp); return [Math.round(_lp.x), Math.round(_lp.z)]; }); }

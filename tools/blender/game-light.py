@@ -10,8 +10,9 @@ argv = sys.argv[sys.argv.index('--') + 1:]
 SRC, DST = argv[0], argv[1]
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=SRC)
-# triangle budgets per part, about 7,000 in all
-BUDGET = {'body': 3600, 'hair': 4200, 'hands': 260}
+# triangle budgets per part, about 7,000 in all (v1.08d polish: the item in the hand and the boots, once in the body's
+# 3,600, are parts of their own now: the body keeps the rest)
+BUDGET = {'body': 3000, 'hair': 4200, 'hands': 260, 'item': 350, 'shoes': 250}
 FACE = 280  # each of the eight face moods (only one shows at a time)
 def tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 total = 0
