@@ -3635,7 +3635,7 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 /* (v1.08b fivescreens) a question and its row of answers (the frame's .choices) on a sideways phone: the question on the
    left, the answers beside it (in two rows when they need to), so a long question never pushes them off the screen */
 @media (orientation: landscape) and (max-height: 520px) {
-  .gl .gl-stage:has(> .choices):not(:has(> :nth-child(4))) { flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center; }
-  .gl .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > * { flex-shrink: 1; min-width: 0; max-height: 100%; }
-  .gl .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > .choices { flex-wrap: wrap; max-width: 62%; justify-content: center; }
+  .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) { flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center; }
+  .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > * { flex-shrink: 1; min-width: 0; max-height: 100%; }
+  .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > .choices { flex-wrap: wrap; max-width: 62%; justify-content: center; }
 }

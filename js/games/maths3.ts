@@ -295,7 +295,7 @@ register({
       const hi = counts.indexOf(Math.max(...counts)), lo = counts.indexOf(Math.min(...counts)), which = pick(0, L.cols - 1);
       const graph = (stage: HTMLElement, tap: boolean) => {
         const g = el('div', 'mx-row'); g.style.alignItems = 'flex-end';
-        const things = fruit.map(([f], i) => { const col = el(tap ? 'button' : 'div', '', ''); col.style.cssText = 'display:flex;flex-direction:column-reverse;align-items:center;gap:0;border-bottom:4px solid #3b2a4f;padding:2px 4px;min-width:56px';
+        const things = fruit.map(([f], i) => { const col = el(tap ? 'button' : 'div', '', ''); col.style.cssText = 'display:flex;flex-direction:column-reverse;align-items:center;gap:0;border-bottom:4px solid #3b2a4f;padding:2px 4px;min-width:' + (api.little ? 64 : 56) + 'px';   // (v1.08b fivescreens) 64 px for under-5s
           col.dataset.k = String(i); for (let j = 0; j < counts[i]; j++) col.insertAdjacentHTML('beforeend', pic(f, 'mx-cell')); g.appendChild(col); return col; });
         stage.appendChild(g); stage.querySelectorAll('.mx-cell').forEach((e: Element) => { (e as HTMLElement).style.cssText = 'width:30px;height:30px;flex:none'; }); return things;
       };
