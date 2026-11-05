@@ -13,7 +13,7 @@ import { say } from './voice.js';
 import { SFX, tone } from './audio.js';
 import { heightAt, MARKET, AUSSIE, WATER, ULURU, BRIDGES } from './world.js';
 import { landmarkAt, rowSlot, STALL } from './content/map.js';
-import { buildAvatar } from './avatar.js';
+import { buildAvatar, lateAvatar } from './avatar.js';
 import { Box, Cyl, gable, hip, win } from './town.js';
 import { dialog, reward } from './popups.js';
 import { farm, saveFarm } from './state.js';
@@ -92,7 +92,8 @@ export function createRegions(G) {
   const boxAround = (x, z, w, d, face) => { const hx = Math.abs(Math.cos(face)) * w / 2 + Math.abs(Math.sin(face)) * d / 2, hz = Math.abs(Math.sin(face)) * w / 2 + Math.abs(Math.cos(face)) * d / 2; box(x - hx, x + hx, z - hz, z + hz); };
   const signAt = (text, x, y, z, rot = 0, bg, fg, w, h) => { const s = signMesh(text, bg, fg, w, h); s.position.set(x, heightAt(x, z) + y, z); s.rotation.y = rot; scene.add(s); return s; };
   const people = [];
-  const person = (look, x, z, face) => { const A = buildAvatar(look, null); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); people.push(A); world.colliders.push({ x, z, r: .4 }); return A; };
+  const person = (look, x, z, face) => { const A = lateAvatar(look); // (v1.08d valley: built when a child comes near, js/avatar.ts)
+    A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); people.push(A); world.colliders.push({ x, z, r: .4 }); return A; };
   const I = (id, x, z, r, icon, label, act) => G.interactables.push({ id, x, z, r, icon, label, act, bubble: icon });
 
   // ================= Chợ Ba Miền =================

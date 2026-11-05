@@ -5,7 +5,7 @@ import { THREE, toonVC, P, merge, sprite } from './gfx.js';
 import { T, nm, registerName } from './i18n.js';
 import { heightAt } from './world.js';
 import { walkPath } from './content/map.js';
-import { buildAvatar, nameAvatar } from './avatar.js';
+import { buildAvatar, nameAvatar, lateAvatar } from './avatar.js';
 import { VENDORS } from './regions.js';
 import { PERSONAS } from './chat.js';
 import { dialog } from './ui.js';
@@ -46,7 +46,8 @@ export function createHawkers(G) {
   const { scene, world } = G, list = [];
   for (const [id, name, lk, goods, food, call, greet, where] of HAWKERS) {
     const route = routeFor(where); if (!route) continue;
-    const A = nameAvatar(buildAvatar(lk, null), name); A.root.add(poleModel(goods)); scene.add(A.root); registerName(name);
+    // (v1.08d valley) built when a child comes near (js/avatar.ts lateAvatar)
+    const A = nameAvatar(lateAvatar(lk), name); A.root.add(poleModel(goods)); scene.add(A.root); registerName(name);
     const tag = sprite('📣', .8); scene.add(tag);
     const H: { [k: string]: any } = { id, name, A, tag, route, k: 0, t: Math.random(), x: route[0][0], z: route[0][1], yaw: 0, callT: 4 + Math.random() * 8, call, food };
     list.push(H); world.walks.push({ id: 'hk_' + id, place: where, pts: route });
