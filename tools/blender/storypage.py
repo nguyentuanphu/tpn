@@ -69,13 +69,16 @@ def kit_master(kit):
     pre = f'{kit}-game' if kit in FRIENDS else f'villager-kit-{kit}-'   # the four friends (lumi.py <who> game) or a costume of the kit
     path = next((os.path.join(KITDIR, f) for f in sorted(os.listdir(KITDIR)) if f.startswith(pre) and f.endswith('.blend')), None) if os.path.isdir(KITDIR) else None
     if not path: return None
-    with bpy.data.libraries.load(path, link=False) as (src, dst): dst.collections = [c for c in src.collections if not c.startswith('face-') or c == 'face-smile']
+    # (the head and ears sit outside the character's collections, at the top of its scene)
+    with bpy.data.libraries.load(path, link=False) as (src, dst): dst.collections = [c for c in src.collections if not c.startswith('face-') or c == 'face-smile']; dst.objects = [o for o in src.objects if o.split('.')[0] in ('head', 'ear')]
     # a character in a page is small in the picture: its smoothing steps are kept low, so a page with many people fits in memory
     for c in dst.collections:
         for o in (c.all_objects if c else []):
             for md in o.modifiers:
                 if md.type == 'SUBSURF': md.levels = 0; md.render_levels = min(md.render_levels, int(opt.get('smooth', 0)))
     master = bpy.data.collections.new(name)
+    for o in dst.objects:
+        if o is not None and not o.users_collection: master.objects.link(o)
     for c in dst.collections:
         if c is None or c.name.startswith('hands-grip'): continue
         master.children.link(c)
@@ -87,7 +90,7 @@ def kit_copy(kit):
     pre = f'{kit}-game' if kit in FRIENDS else f'villager-kit-{kit}-'
     path = next((os.path.join(KITDIR, f) for f in sorted(os.listdir(KITDIR)) if f.startswith(pre) and f.endswith('.blend')), None) if os.path.isdir(KITDIR) else None
     if not path: return None
-    with bpy.data.libraries.load(path, link=False) as (src, dst): dst.collections = [c for c in src.collections if not c.startswith('hands-grip')]; dst.objects = [o for o in src.objects if o == 'rig']
+    with bpy.data.libraries.load(path, link=False) as (src, dst): dst.collections = [c for c in src.collections if not c.startswith('hands-grip')]; dst.objects = [o for o in src.objects if o == 'rig' or o.split('.')[0] in ('head', 'ear')]
     e = bpy.data.objects.new('actor-' + kit, None); scene.collection.objects.link(e); faces = {}
     for c in dst.collections:
         if c is None: continue
@@ -95,7 +98,11 @@ def kit_copy(kit):
         if c.name.split('.')[0].startswith('face-'): faces[c.name.split('.')[0][5:]] = c
         for o in c.objects:
             if o.parent is None: o.parent = e
-    rig = next((o for o in dst.objects if o is not None), None)
+    for o in dst.objects:
+        if o is not None and o.name != 'rig' and not o.name.startswith('rig.'):
+            if not o.users_collection: scene.collection.objects.link(o)
+            if o.parent is None: o.parent = e
+    rig = next((o for o in dst.objects if o is not None and o.name.split('.')[0] == 'rig'), None)
     if rig:
         if not rig.users_collection: scene.collection.objects.link(rig)
         if rig.parent is None: rig.parent = e
@@ -145,10 +152,14 @@ so = bpy.data.objects.new('sun', sd); scene.collection.objects.link(so); so.rota
 fd = bpy.data.lights.new('fill', 'SUN'); fd.energy = .25 if night else .9; fd.color = hexc('#fff6e4')[:3]; fd.angle = math.radians(30)
 fo = bpy.data.objects.new('fill', fd); scene.collection.objects.link(fo); fo.rotation_euler = (Vector((0, 0, 0)) - v3((-12, 16, 25))).to_track_quat('-Z', 'Y').to_euler()
 
+# a soft light from the camera, with no shadow, so faces under big hair and hats stay bright (as in the studio pictures)
+kd = bpy.data.lights.new('camfill', 'SUN'); kd.energy = .35 if night else 1.3; kd.use_shadow = False; kd.color = hexc('#fff4e6')[:3]
+ko = bpy.data.objects.new('camfill', kd); scene.collection.objects.link(ko)
 cd = bpy.data.cameras.new('cam'); cd.sensor_fit = 'VERTICAL'; cd.angle_y = math.radians(D.get('fov', 42)); cd.clip_start = .1; cd.clip_end = 600
 cam = bpy.data.objects.new('cam', cd); scene.collection.objects.link(cam); scene.camera = cam
 def place_cam(k):
     p, l = D['cams'][k]; cam.location = v3(p); cam.rotation_euler = (v3(l) - v3(p)).to_track_quat('-Z', 'Y').to_euler()
+    ko.rotation_euler = (v3(l) - v3(p)).to_track_quat('-Z', 'Y').to_euler()
     cd.dof.use_dof = True; cd.dof.focus_distance = (v3(l) - v3(p)).length; cd.dof.aperture_fstop = 5.6
 place_cam(0)
 
