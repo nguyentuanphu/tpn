@@ -1,7 +1,8 @@
 // Check `worldcreatures` (v1.08e creatures, owner 6 Nov 2026 AEDT): the animals, pets and companions made in Blender.
 //   1. every creature model (models/world/creature-<kind>.glb) is there, small (15-200 KB), and loads;
 //   2. it stands on the ground at the code shape's size and faces the same way (+z), so hit areas stay true;
-//   3. it plays its clips: idle, walk (companions: fly), its happy move, follow and cheer, and they move its bones;
+//   3. it plays its clips: idle, walk (companions: fly), its happy move, follow, cheer and the moods sad, surprised and
+//      sleep, and they move its bones; it has a face (two eyes, a closed-eye arc each) and blinks in idle;
 //   4. in the valley, an animal near the child changes to its model, and the child's companion gets its model;
 //   5. when the models are blocked (no network), the code shapes stay and nothing breaks.
 import fs from 'fs';
@@ -35,7 +36,7 @@ export async function worldCreaturesCheck(b) {
         const size = Math.max(cs.x, cs.y, cs.z);
         let tris = 0; m.obj.traverse((o: any) => { if (o.isMesh) tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; });
         info[k] = { tris: Math.round(tris), h: [+cs.y.toFixed(2), +ms.y.toFixed(2)], foot: [+cb.min.y.toFixed(3), +mb.min.y.toFixed(3)] };
-        if (tris < 800 || tris > 5000) bad.push(`${k}: ${Math.round(tris)} triangles (800-5000)`);
+        if (tris < 1500 || tris > 9500) bad.push(`${k}: ${Math.round(tris)} triangles (1,500-9,500)`);
         // the same size (each side within 12 %), the same place, standing on the ground like the code shape
         for (const ax of ['x', 'y', 'z']) if (Math.abs(ms[ax] - cs[ax]) > Math.max(.12 * cs[ax], .04 * size)) bad.push(`${k}: ${ax} size ${ms[ax].toFixed(2)} vs code ${cs[ax].toFixed(2)}`);
         if (Math.abs(mb.min.y - cb.min.y) > .04 * size) bad.push(`${k}: feet at ${mb.min.y.toFixed(3)}, code shape at ${cb.min.y.toFixed(3)} (floating or sinking)`);
@@ -43,12 +44,20 @@ export async function worldCreaturesCheck(b) {
         if (Math.abs(mc.z - cc.z) > .08 * size || Math.abs(mc.x - cc.x) > .08 * size) bad.push(`${k}: not where the code shape stands (or facing another way)`);
         // its clips, and that they move it
         const t = (await K.loadWorldModel(CR.creatureModelName(k))) as any, names = t.clips.map((c: any) => c.name);
-        const want = comp ? ['idle', 'fly', 'flap', 'follow', 'cheer'] : ['idle', 'walk', CR.CREATURE_HAPPY[k], 'follow', 'cheer'];
+        const want = (comp ? ['idle', 'fly', 'flap', 'follow', 'cheer'] : ['idle', 'walk', CR.CREATURE_HAPPY[k], 'follow', 'cheer']).concat(['sad', 'surprised', 'sleep']);
         for (const w of want) if (!names.includes(w)) bad.push(`${k}: no clip ${w} (has ${names.join(',')})`);
         let skinned: any = null; m.obj.traverse((o: any) => { if (o.isSkinnedMesh) skinned = o; });
         if (!skinned) { bad.push(k + ': no skeleton'); continue; }
         const pose = () => skinned.skeleton.bones.map((bn: any) => bn.quaternion.toArray().concat(bn.position.toArray()).map((v: number) => v.toFixed(3)).join()).join('|');
         for (const w of want.slice(1)) { m.play(w, 0); K.tickWorldModels(.01); const p0 = pose(); K.tickWorldModels(.23); if (pose() === p0) bad.push(`${k}: clip ${w} does not move`); }
+        // the face: two eyes that blink in idle (shut a moment at 1.2 s), and shut asleep
+        const bone = (n: string) => skinned.skeleton.bones.find((bn: any) => bn.name === n);
+        if (!bone('eye0') || !bone('eye1') || !bone('lid0')) bad.push(`${k}: no face (eyes ${!!bone('eye0')},${!!bone('eye1')})`);
+        else {
+          m.play('idle', 0); K.tickWorldModels(.01); const open = bone('eye0').scale.y; K.tickWorldModels(1.05); let shut = 1; for (let i = 0; i < 12; i++) { K.tickWorldModels(1 / 60); shut = Math.min(shut, bone('eye0').scale.y); }
+          if (!(open > .8 && shut < .3)) bad.push(`${k}: does not blink (eye ${open.toFixed(2)} then ${shut.toFixed(2)})`);
+          m.play('sleep', 0); K.tickWorldModels(.01); K.tickWorldModels(.3); if (!(bone('eye0').scale.y < .2 && bone('lid0').scale.y > .8)) bad.push(`${k}: eyes not shut asleep`);
+        }
         m.stop();
       }
       return { bad, info };
