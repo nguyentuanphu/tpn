@@ -1,6 +1,6 @@
 # Helper: valley (v1.08d) — status
 
-**Status:** Part 1 in progress (5 Nov 2026, 9:25 pm AEDT). Branch `work/v108d-valley` from `origin/integrate/v108`.
+**Status:** Part 1 done and pushed (5 Nov 2026, 10:40 pm AEDT); Part 2 in progress. Branch `work/v108d-valley` from `origin/integrate/v108`.
 
 ## Plan
 - **Part 1, the light start:** measure what the merge added; move what the child does not need before moving to after the
@@ -56,8 +56,25 @@ first start) shows `heightAt` (the ground's height) taking 1.8 s of 8.4 s, most 
 - `index.html`, `sw.ts`: the page's small icon is a 32 px picture (`icons/icon-32.png`, 2 KB) instead of the 192 px one
   (11 KB); the big ones stay for the Home Screen.
 
+- `tests/startup-baseline.json`: firstKB limit 1040 to 1025.
+- `index.html`: the preload list again (`node tools/preload.mts`).
+
+**Result (check `startup`, this machine x1.78 slower than the reference):**
+
+| | integrate/v108 | Part 1 |
+|---|---|---|
+| first download | 1063 KB | 1021 KB |
+| first start, ready | 38.3 s (machine x1.90) | 25.0 s (machine x1.78) |
+| second start, ready | | 19.5 s, longest freeze 2.5 s |
+
 ## Places moved
 None yet.
 
-## Checks
-(to come)
+## Checks (Part 1, commit 8ed9d5111, 5 Nov 2026 AEDT, one at a time with `--only`; `--changed` asked for the full suite because `.gitignore` changed)
+- pass: startup, festgameids (new), boot, preload (after `node tools/preload.mts`), lighterload, roads, jobs, wayfind,
+  dayplan, animalhomes, perf, longplaymem
+- **fail, not from this branch: battery.** "far people standing still are one shape": one far person is not, the
+  child's own friend model (`userData.friendModel`, `own`), at 1, 44. A friend's model has no still copy by design
+  (`js/avatar.ts` showStill, v1.08b friends), so the check should leave models out. The same happens on
+  `origin/integrate/v108` (checked twice with the same script). Left for Release / the friends work: the check is not mine
+  to change.
