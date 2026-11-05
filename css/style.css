@@ -3643,3 +3643,9 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .gl .ch-stick { transform: translateY(var(--y)) rotate(calc(var(--r) * .6)); }
 @media (max-width: 520px) { .gl .ch-stick { transform: translateY(var(--y)) rotate(calc(var(--r) * .25)); } }
 @media (orientation: landscape) and (max-height: 520px) { .gl .horse-race > .horse-rules-box { padding-top: 0; padding-bottom: 0; } .gl .horse-race .horse-status { margin: 0; } }
+/* (v1.08b fivescreens) on a phone held upright: the little board games never wider than the screen, the folk games' field a
+   little lower so the words, the 64 px buttons and the rules fit under it */
+.gl .tk2-wrap { max-width: 100%; box-sizing: border-box; }
+.gl .tk2-wrap .tk2-seats, .gl .tk2-wrap .tk2-choices { max-width: 100%; box-sizing: border-box; }
+.gl .tk2-wrap .tk2-seats { width: min(100%, 430px); }
+@media (orientation: portrait) and (max-width: 500px) { .gl .folk-court > .folk-field { height: clamp(200px, 33dvh, 320px); } }
