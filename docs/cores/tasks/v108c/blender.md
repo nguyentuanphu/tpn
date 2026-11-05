@@ -1,6 +1,6 @@
 # v1.08c blender: status (blender helper, started 5 Nov 2026 7:30 pm AEDT)
 
-**Ready for Release** (6 Nov 2026 AEDT). Parts 1, 2 and 4 are done; for Part 3 the player, the scripts and the stills are done and the animated films wait for a machine with a graphics card (owner's choice, below). `suite.mts --changed` picks the full suite (`.gitignore` changed): for Release.
+**Working: faces with feeling** (Release update, 6 Nov 2026 AEDT, end of `blender-brief.md`): soft eyes with lids in the films, the story pages and the costume renders, faces that blink, look at the speaker and show the moment's feeling. Not ready for Release until this is done; the parts below are done and pushed.
 
 Branch `work/v108c-blender` from `origin/work/v108b-story`. Brief: `blender-brief.md`. The owner's go is given (5 Nov 2026 AEDT). Only Release merges and runs the full suite.
 
