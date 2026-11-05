@@ -1,7 +1,7 @@
 # v1.08e faces: status
 
-**Part 1 (faces): ready for Release** (6 Nov 2026, 04:45 AEDT). Part 2 (high-detail friends, rim light, outline,
-close-ups): working; its look and close-ups are already in the branch (see Part 2 below). Then the villagers brief.
+**ready for Release** (6 Nov 2026, 07:40 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
+close-ups) and the villagers brief (`villagers.md`). Part 1 was merged into `integrate/v108` already.
 Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
 
 ## 1. Why the faces looked stiff (looked first, 6 Nov 2026, 03:10 AEDT)
@@ -99,6 +99,20 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
 | `longplaymem` | pass |
 | `startup` | pass (first start 1038 KB, within the check's 1025 KB + 3 %) |
 | `films` | not run here (Release's suite; the film faces now use `drawFeatures`) |
+
+## Final checks (6 Nov 2026, 07:35 AEDT, one run, in this container, the branch's last code)
+
+`villagermodels`, `faces`, `friendmodel`, `frienditems`, `perf` (home 162 draws, village 302), `battery` (44/44 far
+people still), `longplaymem`, `startup` (first start 1038 KB), `boot`, `types`, `films` (11 stories): all pass. Also
+passed on this branch in earlier runs today: `offline`, `swupdate`, `village`, `areastream`, `dayplan`, `newfriends`,
+`wearfit`, `friendoutfits`.
+
+Checks changed (with the reason):
+- `friendmodel`: 11 faces (was 8); the outlines of a model are counted on their own (at most 6), not as its parts.
+- `frienditems`: the outlines are not counted as the model's parts (as in `friendmodel`).
+- `longplaymem` (`tests/old-bugs.mts`): a skinned model's skeleton keeps its bone turns in a picture of its own, outside
+  any material; it is now counted as in the valley with its model. Without this, the 62 "held" pictures were exactly
+  those (the run without the villager models was clean).
 
 ## Owner's decisions
 
