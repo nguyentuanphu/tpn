@@ -3,7 +3,6 @@ import {HANOI_PACK_INFO} from './content/hanoi-pack-info.js';
 // Grown-ups opens, not with the start (PERF-001); until then the section is an empty space that fills itself in
 let NOTIFY: typeof import('./notify.js') | null = null;
 import { hasClip, saveClip, deleteClip, playClip, estimatePitch, pitchFromHz } from './voice.js';
-import { FRIENDS } from './content/friends.js'; // (v1.08b friends: "Henry (Finn)")
 import { startRecording, releaseMic, micProblem } from './recorder.js';
 import { ac } from './audio.js';
 
@@ -184,7 +183,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       <label class="tog"><input type="checkbox" id="gBil" ${settings.bilingual ? 'checked' : ''}> ${T('Bilingual voice: also say everything in the other language', 'Giọng song ngữ: nói thêm bằng ngôn ngữ còn lại')}</label>
             <details class="gsec" data-sec="players" ${gOpen.has('players') ? 'open' : ''}><summary><span class="gi">👧</span><b>${T('Children', 'Các con')}</b></summary><div class="gbody">
 
-      <div class="plist">${profiles.map(p => `<div class="prow"><img src="${avatarURL(p)}" alt=""><div class="pw"><b>${esc(nm(p.name))}${FRIENDS[p.look && p.look.friend] ? ` (${esc(T(FRIENDS[p.look.friend].en, FRIENDS[p.look.friend].vi))})` : ''}</b><small>🔮 ${p.orbs} · ✨ ${Object.keys(p.shrines).length}/12 · 💰 ${fmt(farm.coins)}</small></div><button class="btn ghost" data-rep="${p.id}" aria-label="${T('Play report', 'Báo cáo chơi')}">${pic('📊')}</button><button class="btn" data-ed="${p.id}">${T('Edit', 'Sửa')}</button></div>`).join('')}</div>
+      <div class="plist">${profiles.map(p => `<div class="prow"><img src="${avatarURL(p)}" alt=""><div class="pw"><b>${esc(nm(p.name))}</b><small>🔮 ${p.orbs} · ✨ ${Object.keys(p.shrines).length}/12 · 💰 ${fmt(farm.coins)}</small></div><button class="btn ghost" data-rep="${p.id}" aria-label="${T('Play report', 'Báo cáo chơi')}">${pic('📊')}</button><button class="btn" data-ed="${p.id}">${T('Edit', 'Sửa')}</button></div>`).join('')}</div>
       <button class="btn wide" id="gAdd">+ ${T('Add a player', 'Thêm người chơi')}</button>
       ${window.__sv && window.__sv.heroes && window.__sv.heroes.length ? `<button class="btn wide" id="gChange">👫 ${T('Change player', 'Đổi người chơi')}</button>` : ''}
       <details class="legacy-family"><summary>${T('Earlier photo code (optional)', 'Mã ảnh trước đây (không bắt buộc)')}</summary>
