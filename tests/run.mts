@@ -52,6 +52,9 @@ await check('chapter5', async () => (await import('./story-v108b.mts')).chapterK
 await check('finale', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'finale'));
 await check('talecostume', async () => (await import('./story-v108b.mts')).taleCostumeCheck());
 await check('installgift', async () => (await import('./story-v108b.mts')).installGiftCheck(b));
+// (v1.08c blender) the five Blender films and the story pages drawn in Blender (tests/story-v108c.mts)
+await check('blenderfilms', async () => (await import('./story-v108c.mts')).blenderFilmsCheck(b));
+await check('storypics', async () => (await import('./story-v108c.mts')).storyPicsCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

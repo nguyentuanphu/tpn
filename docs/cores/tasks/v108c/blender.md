@@ -11,10 +11,14 @@ A scheduled task wakes this chat at 0:40, 5:40, 10:40, 15:40 and 20:40 AEDT (the
 4. **In-game film polish** (`js/film.ts`): lips with the voice, light depth blur, soft light by the story's time of day.
 
 ## Progress
-- Part 1: in progress.
+- **Part 1, costume kit** (5 Nov 2026 AEDT): `tools/blender/costumes.py` (16 costumes: `vn-tuthan`, `vn-khanvan`, `vn-yem`, `vn-aothe`, `vn-aonau`, `vn-kho`, `vn-boy`, `vn-armour`, `vn-king`, `vn-queen`, `au-colonial-m`, `au-colonial-f`, `cn-hanfu-f`, `cn-hanfu-m`, `in-sari`, `in-dhoti`), small hooks in `lumi.py`, `lumi-more.py`, `lumi-hair.py`, `lumi-sculpt.py` (the kit's hair, headwear and fitted coat panels). Renders and a table: `docs/characters-v108/costumes/` (README.md). In the game: `js/film-costume.ts` (lazy, with the films), `LOOK({ kit })` in `js/film.ts`; every person of the 38 tale films wears a kit costume (`js/content/films*.ts`, the shared `VILLAGER`, `KID`, `ELDER`, `FAIRY` helpers dress from the kit; `cn()`, `colonial()` for the Chinese and colonial tales). Check `talecostume` extended: every tale look names a kit costume, the film kit and the Blender kit have the same 16 ids.
+- **Part 4, film polish** (`js/film.ts`, done early because it shares the film code): lips that follow the words being said (syllables of the line, rests at commas and full stops, stop when the voice stops); a light depth blur (one extra pass, WebGL2 only, off in calm mode); soft light by the time of day read from the sky (warm low sun at dawn and dusk, cool moonlight at night).
+- **Part 2 and 3 pipeline**: `tools/blender/scene-export.mts` (the game film's page scenes, cameras and help moments out of the browser), `tools/blender/storypage.py` (Blender draws a page from it with the kit's people, Cycles), `tools/blender/storyteller.py` (the four friends at the start and the end), `tools/blender/make-film.py` (the video). In the game: `js/blenderfilm.ts` + `js/content/blenderfilms.ts` (the five films), `js/storypics.ts` + `js/content/storypics.ts` (the drawn pages), wired in `js/tales.ts`. The data lists stay empty until the pictures and videos are made, so nothing changes in the game before that.
+- The films: this container has no GPU, so Blender's real-time renderer (Eevee) runs out of memory, and Cycles takes about 80-100 s a picture; a fully animated minute (about 1,400 frames a film) would take about 35 hours a film. The owner chose (pop-up below): the scripts and pictures now, the animated films later on a machine with a graphics card. So this round makes the pictures (two moments a page of the five films, and the friends at the start and the end) and the animation scripts; the game's player (`js/blenderfilm.ts`) is ready and plays nothing until a film is listed in `js/content/blenderfilms.ts`.
 
 ## Checks
 (filled in per part)
 
 ## Owner's decisions
+- 5 Nov 2026 AEDT (pop-up): the five Blender films: "Animate later on a GPU": make the scripts and pictures now; the animated films are rendered later on a machine with a graphics card (the owner's or a render service).
 - 5 Nov 2026 AEDT (chat): a scheduled task resumes the work after each usage reset (every 5 hours from 12:40 am AEDT).

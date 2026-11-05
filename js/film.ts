@@ -141,9 +141,33 @@ function pose(a, t) {
   if (a.hold) a.hold(A, t);
   // a tap on a character: a happy little hop
   if (a.wig > 0) { a.wig = Math.max(0, a.wig - 1 / 40); A.rig.position.y += Math.sin(a.wig * Math.PI) * .25; }
-  // the mouth moves while the character speaks
-  const m = t < a.talkUntil ? (Math.sin(t * 16) > 0 ? 'o' : a.mood === 'sad' ? 'sad' : 'smile') : a.mood;
+  // the mouth moves while the character speaks: (v1.08c) with the voice, syllable by syllable, and still at its pauses
+  const talking = t < a.talkUntil || (a.lip && a.lip.on());
+  const m = talking ? (lipOpen(a.lip && a.lip.line(), t) ? 'o' : a.mood === 'sad' ? 'sad' : 'smile') : a.mood;
   if (a._face !== m) { a._face = m; A.faceMat.map = face(a.look, m); A.faceMat.needsUpdate = true; }
+}
+
+// (v1.08c) lips with the voice: the line being said is cut into syllables (a Vietnamese word is one syllable; an English
+// word one per group of vowels), each about a fifth of a second, with a short rest at every comma and full stop. The mouth
+// opens for the start of each syllable and closes at the rests, so it follows the words and stops when the voice stops.
+const SYL = .2, REST = .28;
+function syllables(text: string) {
+  const out: number[] = []; // 1: a syllable, 0: a rest
+  for (const w of String(text).split(/\s+/)) {
+    if (!w) continue; const v = w.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().match(/[aeiouy]+/g);
+    const n = /[\u0300-\u036f\u01a1\u01b0\u0103\u00e2\u00ea\u00f4\u0111]/i.test(w.normalize('NFD')) || !v ? 1 : Math.min(4, v.length);
+    for (let i = 0; i < n; i++) out.push(1);
+    if (/[,.!?;:]$/.test(w)) out.push(0);
+  }
+  return out;
+}
+const lipCache = new Map<string, number[]>();
+function lipOpen(line: { text: string, t0: number } | null, t: number) {
+  if (!line) return Math.sin(t * 13) + Math.sin(t * 7.3) * .6 > 0; // no words to follow: a soft irregular talk
+  let sy = lipCache.get(line.text); if (!sy) { sy = syllables(line.text); lipCache.set(line.text, sy); if (lipCache.size > 60) lipCache.delete(lipCache.keys().next().value); }
+  let at = t - line.t0;
+  for (const k of sy) { const d = k ? SYL : REST; if (at < d) return !!k && at < d * .62; at -= d; }
+  return false;
 }
 
 // (v1.08b story, smoother films) soft motes of light drifting slowly through a scene: dust in the sun by day, fireflies
@@ -169,6 +193,41 @@ function renderer() {
   } catch (e) { return null; }
 }
 
+// (v1.08c) a light depth blur: the scene is drawn into a picture with its depth, then shown through one small pass that
+// softens what is far behind (and a little what is very near) the place the camera looks at; the actors stay sharp.
+// One extra full-screen pass with 8 taps; off in calm mode and when the device cannot draw into a depth picture.
+function depthBlur(r, scene, cam) {
+  try {
+    const gl = r.getContext(); if (!(gl instanceof WebGL2RenderingContext)) return null;
+    const sz = new THREE.Vector2(); r.getDrawingBufferSize(sz);
+    const rt = new THREE.WebGLRenderTarget(sz.x, sz.y, { samples: 4, depthTexture: new THREE.DepthTexture(sz.x, sz.y) });
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { tC: { value: rt.texture }, tD: { value: rt.depthTexture }, px: { value: new THREE.Vector2() }, focus: { value: 10 }, near: { value: cam.near }, far: { value: cam.far } },
+      vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+      fragmentShader: `uniform sampler2D tC; uniform sampler2D tD; uniform vec2 px; uniform float focus, near, far; varying vec2 vUv;
+        float dist(vec2 uv) { float z = texture2D(tD, uv).x * 2. - 1.; return 2. * near * far / (far + near - z * (far - near)); }
+        void main() {
+          float d = dist(vUv), coc = smoothstep(focus * 1.25, focus * 3.5, d) * 2.4 + smoothstep(focus * .5, focus * .2, d) * 1.4;
+          vec4 c = texture2D(tC, vUv);
+          if (coc > .05) { vec4 s = c; float w = 1.;
+            for (int i = 0; i < 8; i++) { float a = float(i) * .785398; vec2 o = vec2(cos(a), sin(a)) * px * coc * (i % 2 == 0 ? 1. : .55);
+              float dd = dist(vUv + o); float k = dd < focus * 1.1 && d > focus * 1.1 ? 0. : 1.; s += texture2D(tC, vUv + o) * k; w += k; }
+            c = s / w; }
+          gl_FragColor = linearToOutputTexel(c); }`,
+      depthTest: false, depthWrite: false
+    });
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat), qs = new THREE.Scene(), qc = new THREE.Camera(); quad.frustumCulled = false; qs.add(quad);
+    return {
+      draw(focus: number) {
+        r.getDrawingBufferSize(sz); if (rt.width !== sz.x || rt.height !== sz.y) rt.setSize(sz.x, sz.y);
+        mat.uniforms.px.value.set(1 / sz.x, 1 / sz.y).multiplyScalar(Math.max(1, sz.y / 720)); mat.uniforms.focus.value = Math.max(2, focus); mat.uniforms.near.value = cam.near; mat.uniforms.far.value = cam.far;
+        r.setRenderTarget(rt); r.render(scene, cam); r.setRenderTarget(null); r.render(qs, qc);
+      },
+      dispose() { rt.dispose(); rt.depthTexture.dispose(); mat.dispose(); quad.geometry.dispose(); }
+    };
+  } catch (e) { return null; }
+}
+
 // sky colours as a soft gradient
 function skyTex(): PaintedCanvasTexture {
   const c = document.createElement('canvas'); c.width = 2; c.height = 128;
@@ -188,6 +247,14 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
   const hemi = new THREE.HemisphereLight(0xffffff, 0xf1dfc0, 1.25), sun = new THREE.DirectionalLight(0xffffff, 1.4);
   sun.position.set(30, 50, 25); scene.add(hemi, sun);
   if (script.look) { const fill = new THREE.DirectionalLight('#fff6e4', .55); fill.position.set(-12, 16, 25); scene.add(fill); }
+  // (v1.08c) soft light by the time of day in the story, read from the sky: a warm low sun at dawn and dusk, a cool
+  // moonlight at night, a soft warm white by day; the shadow side takes a little of the sky's and the ground's colour
+  const _sun = new THREE.Color(), _a = new THREE.Color(), _b = new THREE.Color();
+  const dayLight = (top, bottom) => {
+    _a.set(top); _b.set(bottom); const lum = _a.r * .3 + _a.g * .59 + _a.b * .11, warm = Math.max(0, Math.min(1, (_b.r - _b.b) * 1.8));
+    if (lum < .22) _sun.set('#b4c2ff'); else _sun.set('#fff6ea').lerp(_a.set('#ffc184'), warm * .8);
+    sun.color.copy(_sun); hemi.color.set('#ffffff').lerp(_a.set(top), .22); hemi.groundColor.set('#f1dfc0').lerp(_b, .25);
+  };
   stage.appendChild(r.domElement);
   const help = el('div', 'film-help'); help.hidden = true; stage.appendChild(help);
   const ring = el('div', 'film-ring'); ring.hidden = true; stage.appendChild(ring);
@@ -199,12 +266,13 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     cam.fov = cam.aspect >= 16 / 9 ? 42 : Math.min(75, 2 * Math.atan(Math.tan(21 * Math.PI / 180) * (16 / 9) / cam.aspect) * 180 / Math.PI);
     cam.updateProjectionMatrix(); };
   const _p = new THREE.Vector3();
+  const blur = depthBlur(r, scene, cam);
   let paused = false; // (a guide's real game is on screen instead: nothing to draw)
   const loop = now => {
     if (!alive) return; requestAnimationFrame(loop);
     const dt = Math.min(.05, (now - last) / 1000) * filmRate(); last = now; if (paused) return; clock += dt; fit();
     if (page) page.tick(dt, clock);
-    r.render(scene, cam);
+    if (blur && page && !calm) blur.draw(page.camPos.distanceTo(page.camLook)); else r.render(scene, cam);
     if (page && page.hold && page.hold.at) { const p = page.hold.at(); _p.copy(p).project(cam); ring.style.left = ((_p.x + 1) / 2 * w) + 'px'; ring.style.top = ((1 - _p.y) / 2 * h) + 'px'; }
   };
   requestAnimationFrame(loop);
@@ -232,8 +300,8 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     S.at = (t, fn) => S.tw(t, 0, (k, first) => { if (first) fn(); });
     S.add = (o, x = 0, y = 0, z = 0, ry = 0) => { o.position.set(x, y, z); o.rotation.y = ry; S.root.add(o); o.traverse(c => { if (c.userData.tick) S.tickers.push(c.userData.tick); }); return o; };
     S.every = f => S.tickers.push(f);
-    S.sky = (top, bottom, fog) => { sky.paint(top, bottom); (scene.fog as THREE.Fog).color.set(fog || bottom); S.skyNow = [top, bottom]; };
-    S.skyTo = (t, dur, top, bottom) => { let from; return S.tw(t, dur, (k, first) => { if (first) from = S.skyNow.slice(); const a = mixHex(from[0], top, k), b = mixHex(from[1], bottom, k); sky.paint(a, b); scene.fog.color.set(b); if (k >= 1) S.skyNow = [top, bottom]; }, lin); };
+    S.sky = (top, bottom, fog) => { sky.paint(top, bottom); (scene.fog as THREE.Fog).color.set(fog || bottom); S.skyNow = [top, bottom]; dayLight(top, bottom); };
+    S.skyTo = (t, dur, top, bottom) => { let from; return S.tw(t, dur, (k, first) => { if (first) from = S.skyNow.slice(); const a = mixHex(from[0], top, k), b = mixHex(from[1], bottom, k); sky.paint(a, b); scene.fog.color.set(b); dayLight(a, b); if (k >= 1) S.skyNow = [top, bottom]; }, lin); };
     S.light = (sunI = 1.05, hemiI = .85) => { sun.intensity = Math.max(S.look ? .8 : .45, sunI); hemi.intensity = Math.max(S.look ? 1.1 : .65, hemiI); };
     S.lightTo = (t, dur, sunI, hemiI) => { let a, b; return S.tw(t, dur, (k, first) => { if (first) { a = sun.intensity; b = hemi.intensity; } sun.intensity = Math.max(S.look ? .8 : .45, lerp(a, sunI, k)); hemi.intensity = Math.max(S.look ? 1.1 : .65, lerp(b, hemiI, k)); }, lin); };
     // actors
@@ -248,7 +316,8 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     };
     S.do = (a, t, state, dur = 0) => { S.at(t, () => { a.state = state; }); if (dur) S.at(t + dur, () => { if (a.state === state) a.state = 'idle'; }); S.len = Math.max(S.len, t + dur); return t + dur; };
     S.mood = (a, t, m) => S.at(t, () => { a.mood = m; });
-    S.talk = (a, t, dur) => { S.at(t, () => { a.talkUntil = clock + dur; }); return t + dur; };
+    // (v1.08c) a character who talks while a line is being said keeps talking with that line, and stops when it ends
+    S.talk = (a, t, dur) => { S.at(t, () => { a.talkUntil = clock + dur; S.actors.forEach(o => { if (o.lip) o.lip = null; }); a.lip = { on: () => S.speaking && !!S.line && clock < a.talkUntil + 6, line: () => S.line }; }); return t + dur; };
     S.scale = (o, t, dur, s0, s1, e = io) => S.tw(t, dur, k => { o.scale.setScalar(lerp(s0, s1, k)); }, e);
     S.move = (o, t, dur, to, e = io, arc = 0) => { let from; return S.tw(t, dur, (k, first) => { if (first) from = o.position.clone(); o.position.set(lerp(from.x, to[0], k), lerp(from.y, to[1], k) + Math.sin(k * Math.PI) * arc, lerp(from.z, to[2], k)); }, e); };
     S.show = (o, t, on = true) => S.at(t, () => { o.visible = on; });
@@ -268,7 +337,8 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     S.say = (t, en, vi) => { S.ev.push({ t, dur: 0, say: { en, vi }, e: lin }); S.len = Math.max(S.len, t + .1); };
     S.speaking = false;
     // a line spoken inside the film (a narration line or the child's turn): the page goes on only once it is said
-    const speak = (en: string, vi: string, after?: () => void, kind = 'say') => { S.speaking = true; Promise.resolve(api.onSay ? api.onSay(en, vi, kind) : sayAsync(en, vi)).catch(() => { }).finally(() => { S.speaking = false; after && after(); }); };
+    S.line = null; // (v1.08c) the words being said now and when they began, for the lips
+    const speak = (en: string, vi: string, after?: () => void, kind = 'say') => { S.speaking = true; S.line = { text: T(en, vi), t0: clock }; Promise.resolve(api.onSay ? api.onSay(en, vi, kind) : sayAsync(en, vi)).catch(() => { }).finally(() => { S.speaking = false; S.line = null; after && after(); }); };
     S.help = (t, en, vi, act, at, dur = 0) => { S.ev.push({ t, dur: 0, help: { en, vi, act, dur, at: at ? () => v3(val(at)) : null }, e: lin }); S.len = Math.max(S.len, t + .1); };
     S.release = byChild => {
       const hd = S.hold; if (!hd) return; S.hold = null; help.hidden = true; ring.hidden = true; clearTimeout(hd.timer);
@@ -327,7 +397,7 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     page(k) {
       if (page) page.dispose();
       paused = false; r.domElement.hidden = false;
-      page = new Page(k); (scene.fog as THREE.Fog).near = 60; (scene.fog as THREE.Fog).far = 260; sun.intensity = 1.4; hemi.intensity = 1.25;
+      page = new Page(k); (scene.fog as THREE.Fog).near = 60; (scene.fog as THREE.Fog).far = 260; sun.intensity = 1.4; hemi.intensity = 1.25; sun.color.set('#ffffff'); hemi.color.set('#ffffff'); hemi.groundColor.set('#f1dfc0');
       try {
         script.pages[k] && script.pages[k](page);
         if (page.look) { const n = page.tickers.length; dressStory(page); if (calm) page.tickers.length = n; }
@@ -343,7 +413,7 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     narrated() { if (page) page.narrated = true; },
     // hide the film while a guide's real game plays on the same screen (the next page() brings it back)
     pause() { if (page) { page.dispose(); page = null; } paused = true; r.domElement.hidden = true; },
-    close() { alive = false; if (page) page.dispose(); page = null; r.domElement.removeEventListener('pointerdown', onDown); r.domElement.removeEventListener('pointerup', onUp); r.domElement.remove(); help.remove(); ring.remove(); r.renderLists.dispose(); if (current === api) current = null; }
+    close() { alive = false; if (blur) blur.dispose(); if (page) page.dispose(); page = null; r.domElement.removeEventListener('pointerdown', onDown); r.domElement.removeEventListener('pointerup', onUp); r.domElement.remove(); help.remove(); ring.remove(); r.renderLists.dispose(); if (current === api) current = null; }
   };
   return api;
 }

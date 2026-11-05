@@ -87,7 +87,7 @@ for _id, _k in KIT.items():
 # headwear the kit adds; the open ones leave the hair on top of the head
 KIT_HATS = ('khanmoquat', 'khanvan', 'khanxep', 'khandaurriu', 'warhelm', 'mien', 'phoenix', 'bonnet', 'guan', 'pagri')
 KIT_OPEN = ('khanvan', 'phoenix', 'guan')
-KIT_FIT = {'kitPanel': (.034, .34)}   # coat panels over a long skirt: a wider margin and flare than the skirt's (.014, .22)
+KIT_FIT = {'kitPanel': (.034, .34), 'kitVest': (.03, 0)}   # coat panels over a long skirt: a wider margin and flare than the skirt's (.014, .22)
 
 def kc(part, d='#888888'):
     """the costume's felt for one part (a costume colour, or d)"""
@@ -201,8 +201,8 @@ def kit_hat(kind, col=None):
         tube('hatBand', mat('kitGold', '#d4a23a', .3, metal=.85), [knot + Vector((-.5 * R, 0, .15 * R)), knot + Vector((.5 * R, 0, .15 * R))], .03 * R, 8)
     elif kind == 'pagri':   # a pagri: a cloth wound in wide rings with a jewel in front
         for j, z in enumerate(lin(.3, .9, 5)):
-            tube('hatCrown', M, ring_(z, 1.2 - j * .06, 1.16 - j * .06, .06 * ((-1) ** j)), .15 * R, 12, False)
-        d = sphere('hatCrown', M, H(0, 0, .85), (.95 * R, .92 * R, .45 * R), 24, 12)
+            tube('hatBand', M, ring_(z, 1.2 - j * .06, 1.16 - j * .06, .06 * ((-1) ** j)), .15 * R, 12, False)
+        sphere('hatBand', M, H(0, 0, .85), (.95 * R, .92 * R, .45 * R), 24, 12)
         sphere('hatBand', mat('kitJewel', '#3cc7e8', .15, metal=.3), H(0, -1.2, .62), (.1 * R, .06 * R, .13 * R), 12, 6)
         sphere('hatBand', felt('kitFeather', '#f4efe2'), H(0, -1.12, .95), (.07 * R, .05 * R, .25 * R), 10, 5, (-.3, 0, 0))
 
@@ -320,7 +320,7 @@ def body_kit():
     elif body_ == 'colonial':   # colonial bushman: a cream shirt with rolled sleeves, a brown waistcoat, a red neckerchief, moleskin trousers, boots
         legs(kc('pants')); trousers(kc('pants'), zA + .05 * S, .6)
         torso(kc('shirt'), True)
-        lathe('bodice', kc('vest'), [(wC * 1.06, b['zW'] - .05 * S), (wC * 1.08, (b['zW'] + b['zC']) / 2), (wC * 1.04, b['zC'] + .01 * S)], 32, scale=(1, dep), arc=(.22, 2 * math.pi - .22))
+        lathe('kitVest', kc('vest'), [(wC * 1.06, b['zW'] - .05 * S), (wC * 1.08, (b['zW'] + b['zC']) / 2), (wC * 1.04, b['zC'] + .01 * S)], 32, scale=(1, dep), arc=(.22, 2 * math.pi - .22))
         buttons(b['zW'] - .03 * S, b['zC'], 4, mat('kitBrass', '#b98a46', .35, metal=.85), .03 * S)
         scarf(c['scarf'])
         hands = arm_pair(sleeves_to(kc('shirt'), .9))

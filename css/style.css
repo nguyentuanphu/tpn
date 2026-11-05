@@ -1307,6 +1307,9 @@ body.calm .hud .act { animation: actIn .25s ease; }
 @media (prefers-reduced-motion: reduce) { .film-help .fh-hand, .film-ring { animation: none; } }
 /* ---------- guide films: the real game plays by itself, with a glowing hand (Kid UI, 10 Oct) ---------- */
 .th-film[hidden] { display: none; }
+.th-video { object-fit: cover; background: #1d2a3a; }
+.th-stage.drawn .th-bg { overflow: hidden; }
+.th-pic { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .howto.film .ht-screen.demo { aspect-ratio: auto; height: min(60vh, 560px); max-height: none; background: linear-gradient(180deg, #8fd8ff 0%, #c8ecff 45%, #fde8ff 100%); }
 .ht-demo { position: absolute; inset: 0; display: flex; flex-direction: column; color: var(--text); }
 .ht-demo .gl-help { font-size: clamp(15px, 2.4vw, 20px); padding: 6px 12px 0; min-height: 1.3em; }
