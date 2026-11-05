@@ -3559,11 +3559,26 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .lumi-card .lumi-face svg { width: 64px; height: 64px; display: block; }
 .lumi-card p { margin: 0; } .lumi-card b { color: #3f8f4e; margin-right: 4px; }
 .rt-moon svg { width: 96px; height: 96px; } .rt-zz svg { width: 48px; height: 48px; }
-/* (v1.08b fivescreens) the folk games on a sideways phone: the field on the left, the words, the buttons and the rules on the right */
-@media (orientation: landscape) and (max-height: 520px) {
-  .gl .folk-court { width: 100%; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; }
-  .gl .folk-court > .folk-field { grid-column: 1; grid-row: 1 / span 3; height: min(330px, 84dvh); }
+/* (v1.08b fivescreens) the folk games on a landscape screen (a sideways phone, a tablet held sideways): the field on the
+   left, the words, the buttons and the rules on the right */
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .gl .folk-court { width: 100%; max-width: 1100px; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; }
+  .gl .folk-court > .folk-field { grid-column: 1; grid-row: 1 / span 3; height: min(460px, calc(100dvh - 60px)); }
   .gl .folk-court > :not(.folk-field):not(style) { grid-column: 2; }
+  .gl .folk-court { grid-template-rows: repeat(6, auto); align-content: center; gap: 6px 12px; }
+  .gl .folk-court > .folk-field { grid-row: 1 / span 6; }
+}
+/* the little board games (mini chess, Cờ tướng nhỏ): the board on the left, the title, the round and the words beside it */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .tk2-wrap { grid-template-columns: auto minmax(0, 1fr); grid-template-rows: repeat(4, auto); align-content: center; align-items: center; gap: 6px 14px; }
+  .gl .tk2-wrap > .tk2-board { grid-column: 1; grid-row: 1 / span 4; }
+  .gl .tk2-wrap > :not(.tk2-board):not(style) { grid-column: 2; }
+  /* Đi chợ đếm quả: the basket and the stall on the left, the sign and the buttons on the right */
+  .gl .mc-round { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; justify-items: center; gap: 8px 12px; }
+  .gl .mc-round > .mc-basket { grid-column: 1; grid-row: 1; max-width: 100%; }
+  .gl .mc-round > .mc-stall { grid-column: 1; grid-row: 2; max-width: 100%; }
+  .gl .mc-round > .mc-sign { grid-column: 2; grid-row: 1; }
+  .gl .mc-round > .sf-tools { grid-column: 2; grid-row: 2; flex-direction: column; }
 }
 /* (v1.08b fivescreens, UI rule: touch targets 44 px, 64 px for under-5s) every button a child taps in a game is at least a
    finger's size, as drawn before the frame's zoom (which never shrinks one below it: js/games/frame.ts); the pick-up
@@ -3573,3 +3588,8 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 /* the science boards on a landscape screen: the answers stand side by side, also an under-5's bigger ones */
 @media (orientation: landscape) and (min-height: 521px) { .gl .sx-board > .sx-controls { width: auto !important; min-width: min(380px, 92vw); max-width: 92vw; } }
 .lr-row small, .pt-row small { font-size: 16px; }
+/* (v1.08b fivescreens) the outside and nature games' fields keep the room their pieces are placed in (up to about 250 px
+   down) on a short landscape screen, instead of half the screen's height */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .out-stage, .gl .n2-stage { height: 270px; }
+}
