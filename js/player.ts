@@ -3,7 +3,7 @@
 import { seatRider } from './vehicles.js';
 import { vehicleEye } from './rideview.js';
 import { THREE } from './gfx.js';
-import { buildAvatar, setLookTarget, loadFriendModels, friendsReady, FRIEND_DATA } from './avatar.js';
+import { buildAvatar, setLookTarget, loadFriendModels, friendsReady, FRIEND_DATA, showHD } from './avatar.js';
 import { WATER, RIDE_SWIM, heightAt, surfaceAt } from './world.js';
 import { clamp, lerp, angleLerp } from './util.js';
 import { SFX } from './audio.js';
@@ -26,8 +26,8 @@ export interface Hero {
   pos: THREE.Vector3; lastSafe: THREE.Vector3; camPos: THREE.Vector3; camLook?: THREE.Vector3; cam: THREE.PerspectiveCamera;
   av: ReturnType<typeof buildAvatar>; yaw: number; vy: number; camYaw: number; camPitch: number; camDist: number;
   state: string; speed: number; onGround: boolean; stamina: number; exhausted: boolean; bonusStamina: number; hearts: number;
-  fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount; _faceDone?: boolean;
-  safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number;
+  fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount; _faceDone?: boolean; _hdTried?: Set<string>;
+  safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number; momentT: number; _mom: number;
   easyT?: number; stillT?: number; steerYaw?: number; goal?: { x: number, z: number }; goalT?: number; view?: string; zoom?: number;
   autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean;
   _camFreeT?: number; _camHitRay?: boolean; _camK?: number; _camLift?: number; _lmF?: number; _lm?: { x: number, z: number };
@@ -43,18 +43,20 @@ export class Hero {
     this.state = 'idle'; this.speed = 0; this.onGround = true;
     this.stamina = profile.staminaMax; this.exhausted = false; this.bonusStamina = 0;
     this.hearts = profile.hearts; this.lastSafe = new THREE.Vector3(); this.fallStart = null; this.towerClimb = null; this.riding = null;
-    this.safeTimer = 0; this.stepTimer = 0; this.emoteT = 0; this.manualCamT = 0; this.cheerT = 0;
+    this.safeTimer = 0; this.stepTimer = 0; this.emoteT = 0; this.manualCamT = 0; this.cheerT = 0; this.momentT = 0; this._mom = 0;
     this.buildModel();
   }
   buildModel() {
     if (this.av) this.scene.remove(this.av.root);
-    this.av = buildAvatar(this.profile.look, this.profile.photo); this.av.root.userData.own = true; // (Round V) a child's own character, never a villager (js/villagertalk.js)
+    this.av = buildAvatar(this.profile.look, this.profile.photo, { hd: true }); this.av.root.userData.own = true; // (Round V) a child's own character, never a villager (js/villagertalk.js)
     this.scene.add(this.av.root);
     // (v1.08b friends) the friend's 3D model loads after the start; the code person in the friend's colours stands in until
     // it arrives, then the child is built again with it (not in the middle of a ride)
     if (!FRIEND_DATA.lib) { friendsReady().then(() => this.buildModel()); } // (v1.08b: a child started without Who's playing is built again once the friends' data is in)
     const f = this.profile.look && this.profile.look.friend;
     if (f && !this.av.model) loadFriendModels(f).then(ok => { const go = () => { if (this.profile.look.friend !== f) return; const face = !ok && this.profile.look.face && this.profile.look.face !== 'none' && !this._faceDone; if (ok ? this.av.model : !face) return; if (this.riding) return void setTimeout(go, 2000); if (!ok) this._faceDone = true; this.buildModel(); }; go(); });
+    // (v1.08e faces, part 2) then the high-detail model of the child's own friend (only theirs), and the child built again with it
+    else if (f && this.av.model && !this.av.modelHD && !(this._hdTried ||= new Set()).has(f)) { this._hdTried.add(f); loadFriendModels(f + '-hd').then(ok => { const go = () => { if (!ok || this.profile.look.friend !== f || this.av.modelHD) return; if (this.riding) return void setTimeout(go, 2000); this.buildModel(); }; go(); }); }
   }
   place(x, z, y?: number) {
     // ground, bridge or deck, but not a tower top (those are reached by climbing)
@@ -196,7 +198,7 @@ export class Hero {
     if (want === 'walk' && this.onGround) { this.stepTimer -= dt * speed; if (this.stepTimer <= 0) { SFX.step(surfaceAt(p.x, p.z, p.y)); this.stepTimer = 2.2; game.stats(this, speed); } }
 
     this.speed = speed; this.state = this.cheerT > 0 ? 'cheer' : this.emoteT > 0 && want === 'idle' ? 'wave' : want === 'idle' && this._dancing ? 'dance' : want;
-    this.cheerT -= dt; this.emoteT -= dt;
+    this.cheerT -= dt; this.emoteT -= dt; this.momentT = (this.momentT || 0) - dt;
     this.finish(dt, t, game, 0);
   }
 
@@ -280,8 +282,14 @@ export class Hero {
     const close = game.closeUp === this.i || (this.view === 'face' && this.speed < .6 && !this.towerClimb && !this.gliding);
     if (close) { this.camYaw = angleLerp(this.camYaw, this.yaw, Math.min(1, dt * 4)); this.camPitch += (.08 - this.camPitch) * Math.min(1, dt * 4); }
     const vk = this.view === 'high' ? 1.6 : this.view === 'street' ? .62 : 1;
-    const dist = close ? 2.8 : this.indoors ? 5.5 * (this.zoom || 1) : (easy ? 11.5 * (1 + (this._lmF || 0) * .55) : this.camDist) * vk * (this.gliding ? 1.25 : this.riding ? 1.15 : 1) * (this.zoom || 1) * (game.zoom || 1);
-    const target = new THREE.Vector3(p.x, p.y + (close ? (this.view === 'face' && game.closeUp !== this.i ? 1.05 : .2) : this.view === 'street' ? 1.6 : 1.15) + rideY, p.z);
+    // (v1.08e faces, part 2: owner 6 Nov 2026 AEDT "closer in key moments") the camera eases in, about half a second each
+    // way, while the child talks to a villager (momentT), wins or cheers (cheerT) or waves (emoteT), standing still; never
+    // while moving, riding, gliding or climbing
+    const moment = (this.cheerT > 0 || this.emoteT > 0 || this.momentT > 0) && this.speed < .6 && !this.riding && !this.gliding && !this.towerClimb && !close;
+    const mk = this._mom = (this._mom || 0) + ((moment ? 1 : 0) - (this._mom || 0)) * Math.min(1, dt * 6);
+    showHD(this.av, this.camPos.distanceTo(p) < 15); // (v1.08e faces, part 2) the high-detail friend up close
+    const dist = (1 - .4 * mk) * (close ? 2.8 : this.indoors ? 5.5 * (this.zoom || 1) : (easy ? 11.5 * (1 + (this._lmF || 0) * .55) : this.camDist) * vk * (this.gliding ? 1.25 : this.riding ? 1.15 : 1) * (this.zoom || 1) * (game.zoom || 1));
+    const target = new THREE.Vector3(p.x, p.y + (close ? (this.view === 'face' && game.closeUp !== this.i ? 1.05 : .2) : this.view === 'street' ? 1.6 : 1.15) + rideY + .2 * mk, p.z);
     const want = new THREE.Vector3(p.x + Math.sin(this.camYaw) * Math.cos(this.camPitch) * dist, target.y + Math.sin(this.camPitch) * dist, p.z + Math.cos(this.camYaw) * Math.cos(this.camPitch) * dist);
     // keep the camera out of houses: if a wall is between the child and the camera, move the camera in
     // front of it. Worked out as one "how much of the distance is free" number (k), then smoothed: the camera

@@ -26,12 +26,12 @@ async function person(id: string, skin: string) {
   return (people[k] = A);
 }
 /** draw a friend into a 2D canvas, turned by yaw; mood: smile, happy ... ; portrait: head and shoulders */
-export async function drawFriend(target: HTMLCanvasElement, id: string, skin: string, yaw = 0, mood = 'smile', portrait = false) {
+export async function drawFriend(target: HTMLCanvasElement, id: string, skin: string, yaw = 0, mood = 'smile', portrait = false, near = 0) {
   if (!setup()) return false;
   const A = await person(id, skin);
   scene.add(A.root); A.root.rotation.y = yaw; if (A.life) A.life.mood = mood;
   const w = target.width, h = target.height; R.setSize(w, h, false); cam.aspect = w / h;
-  if (portrait) { cam.fov = 22; cam.position.set(0, 1.32, 3.2); cam.lookAt(0, 1.25, 0); } else { cam.fov = 26; cam.position.set(0, .95, 3.75); cam.lookAt(0, .84, 0); }
+  if (portrait) { cam.fov = 22; cam.position.set(0, 1.32, 3.2); cam.lookAt(0, 1.25, 0); } else { cam.fov = 26 - 5 * near; cam.position.set(0, .95 + .17 * near, 3.75); cam.lookAt(0, .84 + .2 * near, 0); } // (v1.08e faces, part 2) near: eased in from the full figure to knees-up
   cam.updateProjectionMatrix(); R.render(scene, cam); scene.remove(A.root);
   const x = target.getContext('2d'); x.clearRect(0, 0, w, h); x.drawImage(R.domElement, 0, 0, w, h);
   return true;
@@ -50,10 +50,12 @@ export function friendPortrait(id: string, skin: string): Promise<string> {
 }
 /** the slow turn of a Welcome card: draws about 20 times a second while the canvas is on the page */
 export function turnFriend(target: HTMLCanvasElement, id: string, getSkin: () => string, getMood: () => string) {
-  let yaw = -.5, busy = false;
+  let yaw = -.5, busy = false; const blinkAt = Math.random() * 3, shown = performance.now(); // (v1.08e faces, part 2) the card eases in over half a second as it is shown
   const step = async () => {
     if (!target.isConnected) return;
-    if (!busy) { busy = true; yaw += .03; const ok = await drawFriend(target, id, getSkin(), Math.sin(yaw) * .9, getMood()); busy = false; if (!ok) return; }
+    // (v1.08e faces) the friend blinks now and then while smiling (half, closed, half: three drawings, 150 ms)
+    let mood = getMood(); const b = (performance.now() / 1000 + blinkAt) % 3.4; if (mood === 'smile' && b < .15) mood = b < .05 || b >= .1 ? 'half' : 'blink';
+    if (!busy) { busy = true; yaw += .03; const k = Math.min(1, (performance.now() - shown) / 500), near = k * k * (3 - 2 * k); const ok = await drawFriend(target, id, getSkin(), Math.sin(yaw) * .9, mood, false, near); busy = false; if (!ok) return; }
     setTimeout(step, 50);
   };
   step();

@@ -50,31 +50,7 @@ const faces = {};
 function face(look, mood) {
   const k = look.hair + look.skin + mood; if (faces[k]) return faces[k];
   const S = 256, c = document.createElement('canvas'); c.width = c.height = S; const x = c.getContext('2d');
-  if (mood === 'smile' || mood === 'o') drawFeatures(x, S, look, mood);
-  else {
-    // the same eyes and cheeks as the valley's faces, with other brows and mouths
-    const eyeOpen = mood !== 'sleep';
-    [.36, .64].forEach(cx => {
-      if (eyeOpen) {
-        x.fillStyle = '#fff'; x.beginPath(); x.ellipse(cx * S, S * .55, S * .085, S * .075, 0, 0, 7); x.fill();
-        x.fillStyle = '#3a2418'; x.beginPath(); x.arc(cx * S, S * .56, S * .06, 0, 7); x.fill();
-        x.fillStyle = '#120a08'; x.beginPath(); x.arc(cx * S, S * .56, S * .03, 0, 7); x.fill();
-        x.fillStyle = '#fff'; x.beginPath(); x.arc(cx * S + S * .022, S * .535, S * .02, 0, 7); x.fill();
-      }
-      x.strokeStyle = '#2b1a14'; x.lineWidth = S * .022; x.lineCap = 'round'; x.beginPath();
-      if (eyeOpen) x.ellipse(cx * S, S * .55, S * .088, S * .078, 0, Math.PI * 1.08, Math.PI * 1.92); else x.arc(cx * S, S * .53, S * .07, Math.PI * .15, Math.PI * .85);
-      x.stroke();
-      // brows: sad ones slope down at the sides, happy ones lift
-      const d = cx < .5 ? -1 : 1, sad = mood === 'sad';
-      x.strokeStyle = look.hair; x.lineWidth = S * .024; x.beginPath();
-      x.moveTo(S * (cx - .07), S * (sad ? .43 + .025 * d : .42)); x.quadraticCurveTo(S * cx, S * (sad ? .41 : .39), S * (cx + .07), S * (sad ? .43 - .025 * d : .42)); x.stroke();
-    });
-    x.fillStyle = 'rgba(240,110,110,.4)'; [.24, .76].forEach(cx => { x.beginPath(); x.ellipse(cx * S, S * .67, S * .065, S * .04, 0, 0, 7); x.fill(); });
-    x.fillStyle = '#a3485a'; x.strokeStyle = '#a3485a'; x.lineWidth = S * .02; x.beginPath();
-    if (mood === 'sad') { x.moveTo(S * .44, S * .74); x.quadraticCurveTo(S * .5, S * .69, S * .56, S * .74); x.stroke(); }
-    else if (mood === 'sleep') { x.moveTo(S * .46, S * .72); x.lineTo(S * .54, S * .72); x.stroke(); }
-    else { x.moveTo(S * .42, S * .68); x.quadraticCurveTo(S * .5, S * .8, S * .58, S * .68); x.closePath(); x.fill(); x.fillStyle = '#fff'; x.fillRect(S * .45, S * .68, S * .1, S * .02); }
-  }
+  drawFeatures(x, S, look, mood); // (v1.08e faces) every mood in the valley's soft-lid style: smile, happy, sad, o, sleep ...
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return (faces[k] = t);
 }
 
@@ -86,7 +62,7 @@ function person(look, scale = 1) {
   const A = buildAvatar(LOOK(look), null);
   const i = OUTLINED.indexOf(A); if (i >= 0) OUTLINED.splice(i, 1); // the valley hides far outlines; a film keeps them
   A.root.scale.setScalar(scale);
-  const a = { A, o: A.root, state: 'idle', speed: 0, mood: 'smile', talkUntil: -1, px: 0, pz: 0, yaw: 0, look: LOOK(look), wig: 0 };
+  const a = { A, o: A.root, state: 'idle', speed: 0, mood: 'smile', talkUntil: -1, px: 0, pz: 0, yaw: 0, look: LOOK(look), wig: 0, blinkAt: undefined as number };
   A.root.userData.actor = a; A.faceMat.map = face(a.look, 'smile');
   A.root.traverse((o: Object3D) => {
     const meshObj = o as unknown as Mesh;
@@ -138,7 +114,9 @@ function pose(a, t) {
   // a tap on a character: a happy little hop
   if (a.wig > 0) { a.wig = Math.max(0, a.wig - 1 / 40); A.rig.position.y += Math.sin(a.wig * Math.PI) * .25; }
   // the mouth moves while the character speaks
-  const m = t < a.talkUntil ? (Math.sin(t * 16) > 0 ? 'o' : a.mood === 'sad' ? 'sad' : 'smile') : a.mood;
+  let m = t < a.talkUntil ? (Math.sin(t * 16) > 0 ? 'o' : a.mood === 'sad' ? 'sad' : 'smile') : a.mood;
+  // (v1.08e faces) a soft blink every few seconds while smiling and quiet (each actor at their own moment)
+  if (m === 'smile' && t >= a.talkUntil) { const b = (t + (a.blinkAt ??= Math.random() * 4)) % 3.6; if (b < .15) m = b < .04 || b >= .11 ? 'half' : 'blink'; }
   if (a._face !== m) { a._face = m; A.faceMat.map = face(a.look, m); A.faceMat.needsUpdate = true; }
   if (A.model) (A.life || (A.life = {} as any)).mood = m; // (v1.08b friends) a friend's model shows the same mood on its own face
 }

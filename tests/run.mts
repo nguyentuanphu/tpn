@@ -101,6 +101,10 @@ await check('worldvehicles', async () => (await import('./world-vehicles.mts')).
 // ground, play their clips, swap in near the child, and the code shapes stay when the models are blocked
 await check('worldcreatures', async () => (await import('./world-creatures.mts')).worldCreaturesCheck(b));
 
+// (v1.08e faces) the friends' and villagers' soft eyes with lids: they blink (half, closed, half), the lids close fully,
+// happy, surprised and sad show, and the eyes turn to a child to one side (tests/faces.mts)
+await check('faces', async () => (await import('./faces.mts')).facesCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
