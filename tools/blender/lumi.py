@@ -41,6 +41,7 @@ VILL = {
     'au-boy': {'g': 'm', 'size': 'kid', 'pal': ('#f7d6c2', '#c45a2c', '#a5481f', '#d9733f', '#3d6b3a', '#7aa86a', '#a5481f', '#5a3a28'), 'hair': 'short', 'top': ('tee', '#2aa3b8'), 'bottom': '#f28c38', 'kind': 'shorts', 'hat': 'bucket', 'shoes': 'thongs', 'extra': ('freckles',)},
     'au-girl': {'g': 'f', 'size': 'kid', 'pal': ('#9a6544', '#1c1715', '#120f0d', '#2c2420', '#24140a', '#4a2c18', '#1c1715', '#1f1712'), 'hair': 'pigtails', 'top': ('dress', '#9cc7e8'), 'bottom': '#2c3a5a', 'kind': 'skirt', 'hat': 'straw/2c3a5a', 'shoes': 'sneakers/2a2a2a', 'extra': ('backpack', 'bracelet')},
 }
+if ROLE.startswith('kit-'): exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'costumes.py')).read())   # the costume kit (v1.08c): role=kit-<id>
 V = VILL.get(ROLE) if WHO == 'villager' else None
 G = V['g'] if V else {'finn': 'm', 'sol': 'm'}.get(WHO, 'f')   # boys: Finn, Sol; girls: Clara, Lumi (owner asked, 3 Nov)
 if V and V['hat'] and 'hat' not in WEAR: WEAR['hat'] = V['hat'].replace('/', '/')
@@ -673,8 +674,9 @@ show_face('smile')
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, f'{TAG}-{STYLE}.blend'))
 top = HC.z + R * 1.3; mid = top * .5; dist = top * .5 / math.tan(math.radians(12)) * 1.15
 if RENDER:
+    VIEWS = next((a[6:].split(',') for a in argv if a.startswith('views=')), None)   # views=front,three-quarter: only those
     for name, az in (('front', 0), ('side', math.pi / 2), ('back', math.pi), ('three-quarter', .6)):
-        shoot(name, az, mid + top * .12, dist, mid, (600, 780))
+        if VIEWS is None or name in VIEWS: shoot(name, az, mid + top * .12, dist, mid, (600, 780))
 if FACES:
     for e in FACES_ALL[1:]:
         show_face(e); shoot('face-' + e, .22, HC.z + .1 * R, R * 8.2, HC.z - .02 * R, (640, 640))
