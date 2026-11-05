@@ -1,13 +1,21 @@
-import { voicePackSignature, voiceFormatFor, moveToOpus, opusPossible } from './voice-index.js';
+import { voicePackSignature, voiceFormatFor } from './voice-index.js';
 // The voice pack downloading to the device (split from js/voice.js in round R item 12, so it is fetched only when the
 // download starts, not before the title screen: PERF-001). js/voice.js starts it once the pack's list has arrived.
-import { settings, saveSettings, profiles, autoPackOn, offlineLevel, ASIDE_VOICES_ON, type OfflineLevel } from './state.js';
+import { settings, saveSettings, profiles, autoPackOn, ASIDE_VOICES_ON } from './state.js';
+// (v1.08c voices, brief part 2) the offline level a grown-up chose in Grown-ups ('auto' when never chosen). Kept here, not in
+// js/state.ts, so the first download does not grow; js/state.ts autoPackOn reads settings.offlineLevel itself.
+export type OfflineLevel = 'light' | 'auto' | 'full';
+export const offlineLevel = (): OfflineLevel => settings.offlineLevel === 'light' || settings.offlineLevel === 'full' ? settings.offlineLevel : 'auto';
+// a level may move a device from MP3 to Opus: only when the pack has Opus copies and this browser plays them
+const opusPossible = pack => { try { return !!(pack && Array.isArray(pack.formats) && pack.formats.includes('opus')) && !!new Audio().canPlayType('audio/ogg; codecs="opus"'); } catch (e) { return false; } };
+const moveToOpus = pack => { if (!opusPossible(pack)) return false; try { localStorage.setItem('sv2_voiceFmt', 'opus'); return true; } catch (e) { return false; } };
 import { events } from './core/events.js';
-import { T } from './i18n.js';
+import { T, swapNames } from './i18n.js';
+import { lineHash, packHash } from './packhash.js';
 import { featureOn } from './custom.js';
 import { voiceStore, storeKey } from './voicestore.js';
 
-let PACK = null, packEmit = e => { }, hereArea = () => null, packStarted = false;
+let PACK = null, packEmit = e => { }, hereArea = () => null, packStarted = false, festStarted = false;
 let manualSave: Promise<number> | null = null;
 const manualListeners = new Set<(done: number, total: number) => void>();
 export const refreshPack = () => { checkPack().catch(() => { }); };
@@ -24,6 +32,10 @@ export function startPack(pack, emit, here) {
   const changed = PACK && PACK !== pack;
   PACK = pack; packEmit = emit; hereArea = here;
   if (changed) { areaRevision++; AREAS = null; areasTried = null; groupOfHash = null; }
+  // (v1.08c voices, brief part 3) festival packs, on every level: 20 s after the valley is built, then again when the
+  // device comes onto Wi-Fi or back online (the voice list arrives here whatever the level, js/voice.ts autoSavePack)
+  if (!festStarted) { festStarted = true; const f = () => { festivalPacks().catch(() => { }); };
+    valleyBuilt().then(() => setTimeout(() => { f(); addEventListener('online', f); try { navigator.connection?.addEventListener?.('change', f); } catch (e) { } }, 20000)); }
   // (an address that can't keep files, like http://192.168.… on a phone: the voices still play, from the internet)
   if (!('caches' in window)) { setTimeout(() => packEmit({ state: 'nostore', total: packFiles().length }), 3000); return; }
   // (31 Oct 2026 AEDT) voices online unless the whole pack is kept here; recordings kept the old way still move into bundles
@@ -164,18 +176,25 @@ export async function levelSpace() {
 // and Automatic. What this device holds is kept in settings.festPacks: { id: { until (ms), files } }.
 export const FEST_AHEAD = 3;
 type FestPack = { until: number, files: string[] };
+// the recordings of these lines (English and Vietnamese pairs) in this device's languages and format, female voice
+function lineFiles(pairs: [string, string][], langs: string[]) {
+  const out: string[] = [], key = (L, t) => { for (const h of [lineHash(L, t), packHash(L, t)]) if (PACK.lines[h]) return h; return null; };
+  for (const [en, vi] of pairs) for (const [L, t] of [['en', en], ['vi', vi]] as const) { if (!t || !langs.includes(L)) continue; const h = key(L, swapNames(t, L)) || key(L, t); if (h && String(PACK.lines[h]).includes('f')) out.push(`voices/${L}/f/${h}.${voiceFormatFor(PACK)}`); }
+  return [...new Set(out)];
+}
 async function festivalsDue(now: Date) {
-  const [Fm, V] = await Promise.all([import('./festivals.js'), import('./voice.js')]), out: (FestPack & { id: string })[] = [];
+  const Fm = await import('./festivals.js'), out: (FestPack & { id: string })[] = [];
   for (const n of Fm.upcoming(now)) {
     if (+now < +n.start - (Fm.buildupOf(n.F) + FEST_AHEAD) * 864e5) continue;
-    out.push({ id: n.F.id, until: +n.end, files: V.lineFiles([[n.F.en, n.F.vi], ...((n.F.lines || []) as [string, string][])], packLangs()) });
+    out.push({ id: n.F.id, until: +n.end, files: lineFiles([[n.F.en, n.F.vi], ...((n.F.lines || []) as [string, string][])], packLangs()) });
   }
   return out;
 }
-let festRunning: Promise<{ got: number, freed: number, due: string[] }> | null = null;
+// (one run at a time: a second call waits for the first, then runs with its own date)
+let festChain: Promise<unknown> = Promise.resolve();
 export function festivalPacks(pack = PACK, now = new Date()) {
   if (pack && !PACK) PACK = pack;
-  return festRunning || (festRunning = (async () => {
+  const run = festChain.catch(() => { }).then(async () => {
     let got = 0, freed = 0; const due: string[] = [];
     if (!PACK || !('caches' in window)) return { got, freed, due };
     const store = voiceStore('sv-voices'), packs: Record<string, FestPack> = settings.festPacks || (settings.festPacks = {});
@@ -192,7 +211,8 @@ export function festivalPacks(pack = PACK, now = new Date()) {
     }
     await store.flush(); saveSettings();
     return { got, freed, due };
-  })().finally(() => { festRunning = null; }));
+  });
+  festChain = run; return run;
 }
 let checking = false, recheck = false;
 // (battery round, owner 12 Oct AEDT: "my phone gets very hot") the download is spread out: nothing while the valley is

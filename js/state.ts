@@ -143,11 +143,8 @@ export const saveSettings = () => store.set(KEY_SETTINGS, langHold.lang ? { ...s
 // (owner, 31 Oct 2026 AEDT: "voices online, download only to play offline") whether this device keeps the whole voice
 // pack by itself: a grown-up chose it ("Keep all voices on this device"), or the device had saved voices before (it keeps
 // them up to date as before). Otherwise each line plays over the internet and is kept once heard.
-// (v1.08c voices, brief part 2) the offline level a grown-up chose in Grown-ups: 'light' keeps the core lines and the area
-// the child is in, 'full' keeps everything, 'auto' (the default) is as before. Light and Full keep voices by themselves.
-export type OfflineLevel = 'light' | 'auto' | 'full';
-export const offlineLevel = (): OfflineLevel => settings.offlineLevel === 'light' || settings.offlineLevel === 'full' ? settings.offlineLevel : 'auto';
-export const autoPackOn = () => offlineLevel() !== 'auto' || settings.autoPack === true || (settings.autoPack == null && !!(settings.packSaved || settings.packCore));
+// (v1.08c voices) the offline levels Light and Full keep voices by themselves (js/voicepack.ts offlineLevel)
+export const autoPackOn = () => settings.offlineLevel === 'light' || settings.offlineLevel === 'full' || settings.autoPack === true || (settings.autoPack == null && !!(settings.packSaved || settings.packCore));
 
 // Clothing: a style plus any colour. Dresses and shirt-and-shorts work for girls and boys alike.
 export const STYLES = ['dress', 'shirt', 'aodai', 'tunic', 'overalls', 'hoodie'];

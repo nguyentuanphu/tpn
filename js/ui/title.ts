@@ -1,6 +1,6 @@
 // The title screen (split from js/ui.ts, v1.07).
 import { T } from '../i18n.js';
-import { settings, autoPackOn, offlineLevel } from '../state.js';
+import { settings, autoPackOn } from '../state.js';
 import { SFX, ac } from '../audio.js';
 import { el, $ } from '../util.js';
 import { openCredits } from '../credits.js';
@@ -39,7 +39,7 @@ export function showTitle(onStart) {
     s.querySelector('.title-learn').innerHTML = '';
     // (owner, 31 Oct 2026 AEDT) the voices play over the internet unless a grown-up kept them all on the device; the
     // Welcome says so, and how to keep them for playing offline
-    const vn = s.querySelector('.tt-voice') as HTMLElement; vn.hidden = (autoPackOn() && !!settings.packSaved) || offlineLevel() === 'light'; // (v1.08c: a grown-up chose Light)
+    const vn = s.querySelector('.tt-voice') as HTMLElement; vn.hidden = (autoPackOn() && !!settings.packSaved) || settings.offlineLevel === 'light'; // (v1.08c: a grown-up chose Light)
     vn.innerHTML = both('Voices play over the internet. To play offline with voices: Grown-ups → Sound and voices → Offline voices → Light or Full.',
       'Giọng nói phát qua mạng. Để chơi offline có giọng nói: Người lớn → Âm thanh và giọng nói → Giọng đọc ngoại tuyến → Nhẹ hoặc Đầy đủ.');
     bindLang(s, redraw);

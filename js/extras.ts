@@ -2,11 +2,10 @@
 // Everything here is off until a grown-up turns it on; the chat key stays on this device.
 // (round R privacy, 9 Oct, owner) voices are made in Studio only: no online voice engine, voice key or voice copy here.
 import { T } from './i18n.js';
-import { settings, saveSettings, offlineLevel } from './state.js';
-import { say, voicePack, chooseOfflineLevel, offlineSpace } from './voice.js';
+import { settings, saveSettings } from './state.js';
+import { say, voicePack } from './voice.js';
 import { canListen } from './listen.js';
 import { esc } from './util.js';
-import { pic } from './art.js';
 
 // (round R privacy, 9 Oct, owner) what the game keeps and sends, in plain words: a small block at the top of Grown-ups
 // (its own block, so the Grown-ups groups stay as they are)
@@ -43,38 +42,12 @@ export function netListHTML() {
     <p class="note">${T('With no internet the whole game still plays, with the voices already kept on this device.', 'Không có internet, cả trò chơi vẫn chơi được, với giọng đọc đã lưu trên máy này.')}</p></details>`;
 }
 
-// (v1.08c voices, brief part 2) the three offline levels: what each keeps and the space it takes (filled in once the
-// areas' sizes are read). The Full button keeps its old id (#xPackSave): it is the old "Keep all voices on this device".
-const LEVELS: [string, string, string, string, string, string][] = [
-  ['light', '🪶', 'Light', 'Nhẹ', 'Main voices + where your child plays', 'Giọng chính + nơi con đang chơi'],
-  ['auto', '📶', 'Automatic', 'Tự động', 'Plays online, keeps what is heard', 'Phát qua mạng, giữ câu đã nghe'],
-  ['full', '🧳', 'Full', 'Đầy đủ', 'Every voice, for trips (use Wi-Fi)', 'Mọi giọng đọc, cho chuyến đi (dùng Wi-Fi)']];
-// (owner, 5 Nov 2026 AEDT: "too wordy, make it shorter with a picture or infographic") one short line each, our own
-// drawing, and a bar showing how much space it takes next to Full
-function offlineLevelsHTML() {
-  const now = offlineLevel();
-  return `<p class="note">${T('How many voices does this device keep?', 'Máy này giữ bao nhiêu giọng đọc?')}</p>
-  <div class="offlvl" role="radiogroup" aria-label="${T('Offline voices', 'Giọng đọc ngoại tuyến')}">${LEVELS.map(([k, e, en, vi, den, dvi]) => `<button type="button" role="radio" aria-checked="${k === now}" class="offlvl-b${k === now ? ' on' : ''}" data-lvl="${k}"${k === 'full' ? ' id="xPackSave"' : ''}><span class="offlvl-h">${pic(e, 'offlvl-pic')}<b>${T(en, vi)}</b></span><span>${T(den, dvi)}</span><span class="offlvl-bar${k === 'auto' ? ' grow' : ''}" aria-hidden="true"><i data-bar="${k}"></i></span><span class="offlvl-sz" data-sz="${k}">${k === 'auto' ? T('Grows as lines are heard', 'Tăng dần khi nghe') : '…'}</span></button>`).join('')}</div>
-  <p class="note" id="xLvlInfo" role="status"></p><p class="note" id="xPackProg">${T('Downloads go on while the game is open.', 'Giọng đọc vẫn tải khi trò chơi đang mở.')}</p>`;
-}
-const mbText = (mb: number) => mb >= 1 ? `${Math.round(mb)} MB` : `${Math.max(0, Math.round(mb * 10) / 10)} MB`;
-function fillLevels(card) {
-  const info = card.querySelector('#xLvlInfo'); if (!info) return;
-  offlineSpace().then(sp => { if (!card.isConnected) return;
-    const l = card.querySelector('[data-sz="light"]'), f = card.querySelector('[data-sz="full"]');
-    if (sp.known) { if (l) l.textContent = T(`About ${sp.light} MB`, `Khoảng ${sp.light} MB`); if (f) f.textContent = T(`About ${sp.full} MB`, `Khoảng ${sp.full} MB`);
-      const bar = (k: string, mb: number) => { const i = card.querySelector(`[data-bar="${k}"]`) as HTMLElement | null; if (i) i.style.width = Math.max(4, Math.min(100, mb / Math.max(1, sp.full) * 100)) + '%'; };
-      bar('light', sp.light); bar('full', sp.full); bar('auto', Math.min(sp.full, sp.now / 1048576)); }
-    const extra = info.dataset.freed ? ' ' + info.dataset.freed : '';
-    info.textContent = T(`Voices on this device now: ${mbText(sp.now / 1048576)}.`, `Giọng đọc trên máy này hiện có: ${mbText(sp.now / 1048576)}.`) + extra;
-  }).catch(() => { });
-}
 export function extrasHTML() {
   const s = settings;
   return `
   <h3>🎙️ ${T('Offline voice pack', 'Gói giọng đọc ngoại tuyến')}</h3>
   ${voicePack() ? `<p class="note">${T(`Available: ${Object.keys(voicePack().lines).length} recorded lines (${Object.values(voicePack().voices || {}).flatMap(v => Object.values(v).map(x => x.name)).join(', ')}). They play instead of the device voice, even with no internet.`, `Có sẵn: ${Object.keys(voicePack().lines).length} câu đã thu (${Object.values(voicePack().voices || {}).flatMap(v => Object.values(v).map(x => x.name)).join(', ')}). Các câu này phát thay giọng của máy, kể cả khi không có mạng.`)}</p>
-  ${offlineLevelsHTML()}`
+  <div class="offlvl-slot"></div>`
   : `<p class="note">${T('The recorded voices have not downloaded yet: they come with the game the next time this device is online.', 'Giọng đọc đã thu chưa tải về: sẽ tải cùng trò chơi vào lần tới máy này có mạng.')}</p>`}
   <h3>✨ ${T('More natural voice', 'Giọng tự nhiên hơn')}</h3>
   <p class="note">${T('Every character has their own voice: grandparents speak slower and lower, kids higher, aunties and uncles with a woman’s or a man’s voice. More Vietnamese voices: on Android open Settings → Text-to-speech → Google → Install voice data → Vietnamese and download all 4 voices; the game shares them out between the characters.', 'Mỗi nhân vật có giọng riêng: ông bà nói chậm và trầm hơn, các bạn nhỏ cao giọng hơn, cô chú có giọng nữ hoặc nam. Thêm giọng tiếng Việt: trên Android vào Cài đặt → Chuyển văn bản thành giọng nói → Google → Cài đặt dữ liệu giọng nói → Tiếng Việt và tải cả 4 giọng; trò chơi sẽ chia các giọng cho các nhân vật.')}</p>
@@ -92,15 +65,8 @@ export function extrasHTML() {
 export function bindExtras(card, redraw, toast) {
   const s = settings, q = x => card.querySelector(x), save = () => saveSettings();
   card.querySelectorAll('.seg.vrate button').forEach(b => b.onclick = () => { s.voiceRate = +b.dataset.r; save(); redraw(); say('This is how fast I talk.', 'Tớ nói nhanh như thế này nè.'); });
-  // (v1.08c voices) the offline levels. The shared voice service owns the download and its progress bar, even after
-  // this card closes; a smaller level frees its space before this answers.
-  card.querySelectorAll('.offlvl-b').forEach(btn => btn.onclick = () => {
-    const lvl = btn.dataset.lvl;
-    card.querySelectorAll('.offlvl-b').forEach(x => { x.classList.toggle('on', x === btn); x.setAttribute('aria-checked', String(x === btn)); });
-    const info = card.querySelector('#xLvlInfo'); if (info) { delete info.dataset.freed; info.textContent = T('Working…', 'Đang xử lý…'); }
-    chooseOfflineLevel(lvl).then(freed => { if (info && freed > 1048576 / 10) info.dataset.freed = T(`Freed ${mbText(freed / 1048576)}.`, `Đã giải phóng ${mbText(freed / 1048576)}.`); fillLevels(card); }).catch(() => fillLevels(card));
-  });
-  fillLevels(card);
+  // (v1.08c voices) the offline levels: their own small file, loaded when Grown-ups opens (the first download stays as it was)
+  const slot = q('.offlvl-slot'); if (slot) import('./offlinelevels.js').then(m => m.showLevels(slot, card)).catch(() => { });
   // (round R privacy, 9 Oct) the only key on this device is the chat key (owner: keep as is)
   const k = q('#xAiKey'); if (k) k.onchange = () => { s.aiKey = k.value.trim(); save(); };
   q('#xVc').onchange = e => { s.voiceControl = e.target.checked; save(); document.querySelectorAll<HTMLElement>('.dk.voicecmd').forEach(b => b.hidden = !s.voiceControl); };
