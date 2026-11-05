@@ -58,6 +58,9 @@ export async function worldCreaturesCheck(b) {
         else {
           m.play('idle', 0); K.tickWorldModels(.01); const open = bone('eye0').scale.y; K.tickWorldModels(1.05); let shut = 1; for (let i = 0; i < 12; i++) { K.tickWorldModels(1 / 60); shut = Math.min(shut, bone('eye0').scale.y); }
           if (!(open > .8 && shut < .3)) bad.push(`${k}: does not blink (eye ${open.toFixed(2)} then ${shut.toFixed(2)})`);
+          // (owner via Release, 6 Nov 2026 AEDT) soft eyes with an upper lid that comes all the way down when it blinks
+          const ul = bone('ulid0'); if (!ul) bad.push(`${k}: no upper eyelid`);
+          else { m.play('idle', 0); K.tickWorldModels(.01); const p0 = ul.position.clone(); K.tickWorldModels(1.05); let far = 0; for (let i = 0; i < 12; i++) { K.tickWorldModels(1 / 60); far = Math.max(far, ul.position.distanceTo(p0)); } if (!(far > .005)) bad.push(`${k}: the eyelid does not come down to blink`); }
           m.play('sleep', 0); K.tickWorldModels(.01); K.tickWorldModels(.3); if (!(bone('eye0').scale.y < .2 && bone('lid0').scale.y > .8)) bad.push(`${k}: eyes not shut asleep`);
         }
         m.stop();
