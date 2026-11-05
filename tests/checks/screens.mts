@@ -269,7 +269,7 @@ await check('gameplace', async () => {
     await new Promise(r => setTimeout(r, 1100)); const n1 = Object.keys(p.hostNews).length; __sv.hostNews(h); const n2 = Object.keys(p.hostNews).length;
     // (stories) a tale newly open: Bà Năm tells about it once as the child passes her mat
     const tale = (__sv.TALES || []).find(t => p.hostNews['tale:' + t.id]); let taleNews = false;
-    if (tale && __sv.storyteller) { delete p.hostNews['tale:' + tale.id]; h.pos.x = __sv.storyteller.x + 1; h.pos.z = __sv.storyteller.z + 1; await new Promise(r => setTimeout(r, 1100)); __sv.hostNews(h); taleNews = !!p.hostNews['tale:' + tale.id]; }
+    if (tale && __sv.storyteller) { delete p.hostNews['tale:' + tale.id]; h.pos.x = __sv.storyteller.x + 1; h.pos.z = __sv.storyteller.z + 1; await new Promise(r => setTimeout(r, 1100)); document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false; /* (walking up to her mat opens her greeting: closed first, as a child does) */ __sv.hostNews(h); taleNews = !!p.hostNews['tale:' + tale.id]; }
     return { on: on.length, none, noHost, missingSpot, seeded, marked, again: n1 === n2, toast: /Count|Đếm/.test(toast1), taleNews };
   });
   ok(!r.none.length, 'switched-on games with no place in the valley: ' + r.none.join(', '));
