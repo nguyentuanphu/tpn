@@ -59,6 +59,12 @@
   [headers.values]
     Cache-Control = "no-cache"
 
+# (v1.08b platform) the Opus copies of the voices (tools/make-voice-opus.mts): Ogg Opus, so browsers know what they are
+[[headers]]
+  for = "/voices/*.opus"
+  [headers.values]
+    Content-Type = "audio/ogg"
+
 [[headers]]
   for = "/manifest.webmanifest"
   [headers.values]

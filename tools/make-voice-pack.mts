@@ -350,3 +350,6 @@ async function azure() {
   save(); writeAreas(man);
   console.log(`Finished: ${done} new files (${used} characters)${gone ? `, ${gone} old all-English files of mixed lines removed` : ''}. The pack is in voices/ — include that folder when you publish the game (./build-netlify.sh does).`);
 }
+// (v1.08b platform, brief part 1) every recording also as Opus beside its MP3, and the manifests say so
+// (tools/make-voice-opus.mts; without ffmpeg the pack stays MP3 only, which the game handles)
+if (!process.argv.includes('--no-opus')) { const { spawnSync } = await import('node:child_process'); const r = spawnSync(process.execPath, [path.join(ROOT, 'tools/make-voice-opus.mts')], { stdio: 'inherit' }); if (r.status) console.log('The Opus copies were not all made: the game uses the MP3 files until they are.'); }

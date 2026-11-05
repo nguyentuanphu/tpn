@@ -8,7 +8,9 @@ export async function launch({ full = false } = {}) {
   return chromium.launch({ executablePath: process.env.CHROMIUM || undefined, channel: full && !process.env.CHROMIUM ? 'chromium' : undefined, args: [...(process.env.SV_CHROME_ARGS || '').split(' ').filter(Boolean), '--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--js-flags=--expose-gc'] });
 }
 // (round P: a new device starts with nobody; the checks play as two children made beforehand)
-export const seedPlayers = () => { try { if (!localStorage.getItem('sv2_profiles')) localStorage.setItem('sv2_profiles', JSON.stringify([
+// (v1.08b platform) the checks' devices stay on the MP3 recordings (what Safari and older devices play), unless a check
+// chooses otherwise: the voice checks are about downloading and playing, the Opus copies are checked by voiceopus
+export const seedPlayers = () => { try { if (!localStorage.getItem('sv2_voiceFmt')) localStorage.setItem('sv2_voiceFmt', 'mp3'); } catch (e) { } try { if (!localStorage.getItem('sv2_profiles')) localStorage.setItem('sv2_profiles', JSON.stringify([
     { id: 'kna', name: 'Bé Na', photo: null, age: 'little', difficulty: 'easy', look: { style: 'dress', color: '#ff5fa2', hat: 'bow', back: 'wings', hairStyle: 'buns' }, created: 1 },
     { id: 'kbin', name: 'Bé Bin', photo: null, age: 'little', difficulty: 'easy', look: { style: 'shirt', color: '#3b6fe0', hat: 'cap', back: 'cape', hairStyle: 'short' }, created: 2 }])); } catch (e) { } };
 export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'solo', touch = false, settings = {}, play = true, pre = null, dpr = 1, fast = true, url = URL, screen = 'valley', route = null, schedule = false } = {}) {

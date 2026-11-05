@@ -628,3 +628,29 @@ await check('animalvoices', async () => {
 });
 
 await check('musicaudio', async () => (await import('../music-audio.mts')).musicAudioCheck(b));
+
+await check('voiceopus', async () => {
+  // (v1.08b platform, brief part 1) every recording also as Opus (tools/make-voice-opus.mts): a new device that plays Opus
+  // gets the Opus copy (about half the size) and it plays; a device that already keeps MP3 recordings stays on MP3 (nothing
+  // downloaded twice); a browser that cannot play Opus gets MP3; every MP3 in voices/ has its Opus copy and the manifests say so
+  const { execFileSync } = await import('node:child_process');
+  const files = JSON.parse(execFileSync(process.execPath, ['../tools/make-voice-opus.mts', '--check'], { encoding: 'utf8' }).trim().split('\n').pop());
+  const man = JSON.parse(fs.readFileSync('../voices/manifest-en.json', 'utf8')), h = Object.keys(man.lines).find(k => String(man.lines[k]).includes('f'));
+  const mp3 = fs.statSync(`../voices/en/f/${h}.mp3`).size, opus = fs.statSync(`../voices/en/f/${h}.opus`).size;
+  const fresh = () => { if (!sessionStorage.getItem('fmt-reset')) { localStorage.removeItem('sv2_voiceFmt'); sessionStorage.setItem('fmt-reset', '1'); } };
+  const look = (P, line) => P.page.evaluate(async line => { const V = await import('/js/voice.js'); let f = ''; for (let i = 0; i < 100; i++) { f = V.voiceFormat(); if (localStorage.getItem('sv2_voiceFmt')) break; await new Promise(r => setTimeout(r, 100)); }
+    let secs = 0; if (f === 'opus') { const r = await fetch(`/voices/en/f/${line}.opus`), buf = await new AudioContext().decodeAudioData(await r.arrayBuffer()); secs = buf.duration; }
+    return { f, kept: localStorage.getItem('sv2_voiceFmt'), secs }; }, line);
+  // 1. a new device on a browser that plays Opus
+  let P = await open(b, { pre: fresh }); const a = await look(P, h), e1 = P.errors; await P.ctx.close();
+  // 2. a device that kept MP3 recordings before the Opus copies came
+  P = await open(b, { pre: fresh }); await P.page.evaluate(async () => { const c = await caches.open('sv-voices'); await c.put(new URL('/voices/en/f/old.mp3', location.href).href, new Response(new Uint8Array([0xff, 0xfb]))); localStorage.removeItem('sv2_voiceFmt'); });
+  await P.page.reload(); await P.page.waitForSelector('.screen.title, .valley, canvas', { timeout: 90000 }).catch(() => { }); const k = await look(P, h), e2 = P.errors; await P.ctx.close();
+  // 3. a browser that cannot play Opus
+  P = await open(b, { pre: () => { if (!sessionStorage.getItem('fmt-reset')) { localStorage.removeItem('sv2_voiceFmt'); sessionStorage.setItem('fmt-reset', '1'); } const was = HTMLMediaElement.prototype.canPlayType; HTMLMediaElement.prototype.canPlayType = function (t) { return /opus/.test(t) ? '' : was.call(this, t); }; } });
+  const s = await look(P, h), e3 = P.errors; await P.ctx.close();
+  const got = { files, sizes: { mp3, opus }, opusDevice: a, mp3Kept: k, noOpus: s, errs: [...e1, ...e2, ...e3] };
+  ok(!files.missing && !files.stray && opus < mp3 * .65 && a.f === 'opus' && a.kept === 'opus' && a.secs > .3 && k.f === 'mp3' && k.kept === 'mp3' && s.f === 'mp3' && s.kept === 'mp3' && !got.errs.length, JSON.stringify(got));
+  const tot = Object.values(files.per as Record<string, { mp3: number, opus: number }>).reduce((x, v) => x + v.opus, 0);
+  return `${tot} recordings with an Opus copy; one line ${mp3} -> ${opus} bytes; a new Opus device plays the Opus copy (${a.secs.toFixed(1)} s), a device keeping MP3 stays on MP3, a browser without Opus gets MP3`;
+});

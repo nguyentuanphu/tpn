@@ -1,4 +1,4 @@
-import { voicePackSignature } from './voice-index.js';
+import { voicePackSignature, voiceFormatFor } from './voice-index.js';
 // The voice pack downloading to the device (split from js/voice.js in round R item 12, so it is fetched only when the
 // download starts, not before the title screen: PERF-001). js/voice.js starts it once the pack's list has arrived.
 import { settings, saveSettings, profiles, autoPackOn, ASIDE_VOICES_ON } from './state.js';
@@ -193,14 +193,14 @@ function packFiles(groups?: string[], mine = packLangs()) {
   // language (half the size of the old `langOf`, which named every line's language; older packs still have that)
   const other = new Map(); for (const [L, hs] of Object.entries(PACK.other || {})) for (const h of String(hs).split(' ')) if (h) other.set(h, L);
   const langOf = h => (PACK.langOf && PACK.langOf[h]) || other.get(h) || (PACK.other ? 'en' : null);
-  const maleEnabled = packMale();
+  const maleEnabled = packMale(), ext = voiceFormatFor(PACK);
   for (const [h, slots] of Object.entries(PACK.lines)) {
     if (want && !want.has(groupOf(h))) continue;
     const L1 = langOf(h);
     for (const s of typeof slots === 'string' || Array.isArray(slots) ? slots : []) {
       // Skip male voice files if male voices are not enabled
       if (s === 'm' && !maleEnabled) continue;
-      for (const L of L1 ? [L1] : langs) if (!(L === 'en' || L === 'vi') || mine.includes(L)) urls.push(`voices/${L}/${s}/${h}.mp3`);
+      for (const L of L1 ? [L1] : langs) if (!(L === 'en' || L === 'vi') || mine.includes(L)) urls.push(`voices/${L}/${s}/${h}.${ext}`);
     }
   }
   const first = 'voices/' + mine[0] + '/'; urls.sort((a, b) => b.startsWith(first) - a.startsWith(first));

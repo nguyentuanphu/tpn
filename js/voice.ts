@@ -1,4 +1,4 @@
-import { createVoiceIndex, voiceLanguages } from './voice-index.js';
+import { createVoiceIndex, voiceLanguages, voiceFormatFor } from './voice-index.js';
 // Talking voice in English and Vietnamese using the device's own natural voices.
 // Premium/enhanced/neural voices are picked first; grown-ups can choose a voice in settings.
 import { settings, saveSettings, profiles, autoPackOn, ASIDE_VOICES_ON } from './state.js';
@@ -418,6 +418,7 @@ let packTried = false;
 // Fetch after a click has applied the language choice, or after the valley is ready.
 // Keyboard speech requests its index directly; pointerdown must not fetch the previous language.
 let packReady = null;
+const FMT_SETTLED = typeof caches !== 'undefined' ? settleVoiceFormat() : Promise.resolve();
 const voiceIndex = createVoiceIndex(url => fetch(url), pack => { PACK = pack; voiceDiag.pack = 'ok'; autoSavePack(); }, async () => {
   try { const cached = await (await caches.open('sv-voices')).match('voices/manifest.json'); return cached ? await cached.json() : null; } catch (e) { return null; }
 });
@@ -436,6 +437,7 @@ addEventListener('click', () => loadPack(), { once: true, passive: true });
 for (const ev of ['LanguageChanged', 'SettingsChanged']) events.on(ev, () => { if (packReady) loadPack(); });
 { const t0 = Date.now(), wait = setInterval(() => { const g = window.__sv; if (packReady) return clearInterval(wait); if ((g && g.bootTimes) || Date.now() - t0 > 30000) { clearInterval(wait); setTimeout(() => { if (settings.voice || autoPackOn()) loadPack(); }, 3000); } }, 500); }
 const waitPack = async (langs = voiceLanguages(settings)) => {
+  await FMT_SETTLED;
   if (PACK && langs.every(l => voiceIndex.has(l))) return;
   let timer;
   try { await Promise.race([loadPack(langs), new Promise(r => { timer = setTimeout(r, 12000); })]); } finally { clearTimeout(timer); }
@@ -472,7 +474,10 @@ function offlineNote() {
 }
 // fetch a recorded line of the voice pack (through the offline helper: from its bundle when kept)
 async function packFetch(url: string, init?: RequestInit) {
-  try { const r = await fetch(url, init); if (r.ok) keepHeard(url, r.clone()); else if (navigator.onLine === false) offlineNote(); return r; }
+  try { let r = await fetch(url, init);
+    // (v1.08b platform) an Opus copy not there (yet): the MP3 beside it
+    if (!r.ok && r.status === 404 && url.endsWith('.opus')) { url = url.slice(0, -5) + '.mp3'; r = await fetch(url, init); }
+    if (r.ok) keepHeard(url, r.clone()); else if (navigator.onLine === false) offlineNote(); return r; }
   catch (e) { if (!(e instanceof DOMException && e.name === 'AbortError')) offlineNote(); throw e; }
 }
 // (31 Oct 2026 AEDT) recordings waiting to be written into a bundle (js/voicestore.ts) are written when the page goes away
@@ -630,7 +635,17 @@ export async function savePackOffline(progress?: (done: number, total: number) =
   if(hanoiSelected()){const[n,h]=await Promise.all([standard,downloadHanoiPack()]);return n+h;}
   return standard;
 }
-export const packUrl = (lang, text, slot) => `voices/${lang}/${slot}/${packKey(lang, text) || lineHash(lang, text)}.mp3`;
+// (v1.08b platform, brief part 1) a recording as Opus (about half the size) when the pack has Opus copies and this browser
+// plays Opus; MP3 otherwise. The choice is made once on a device and kept (sv2_voiceFmt): a device that already keeps
+// MP3 recordings stays on MP3, so nothing is downloaded twice; the offline levels in Grown-ups may move it later.
+export const voiceFormat = (): string => voiceFormatFor(PACK);
+// a device that kept MP3 recordings before Opus came keeps MP3 (decided as soon as the voice store is looked at)
+export async function settleVoiceFormat() {
+  try { if (localStorage.getItem('sv2_voiceFmt')) return; const c = await caches.open('sv-voices'), ix = await c.match(new URL('voices/__store/index.json', location.href).href), j = ix ? await ix.json() : null;
+    const kept = (j && j.files && Object.keys(j.files).some(k => /\.mp3$/.test(k))) || (await c.keys()).some(r => /\/voices\/.+\.mp3(\?|$)/.test(r.url));
+    if (kept && !localStorage.getItem('sv2_voiceFmt')) localStorage.setItem('sv2_voiceFmt', 'mp3'); } catch (e) { }
+}
+export const packUrl = (lang, text, slot) => `voices/${lang}/${slot}/${packKey(lang, text) || lineHash(lang, text)}.${voiceFormat()}`;
 async function playPack(lang, text, my, forceHanoi=false, skipHanoi=false) {
   if (my !== seq) return true;
   const slot = packSlot(lang, text); if (!slot) return false;
