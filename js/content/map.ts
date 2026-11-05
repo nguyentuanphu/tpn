@@ -32,13 +32,14 @@ export const ROAD_WIDTH = { asphalt: 6.4, dirt: 3.4, footpath: 1.6 };
 
 // (Concept D map: drawing units × 8/7 = metres, the drawing's middle (210, 210) is (0, 0); north up)
 export const WORLD = {
-  size: 480, north: '-z', water: 0,
+  size: 480, north: '-z', water: 0, riverDepth: 1.25,   // (riverDepth, the lake's 7 m, the ponds' 2.4 m and the sea's 5 m now shape the hollows only: see `wade`)
   // (v1.08e water, owner 6 Nov 2026 AEDT: "all the rivers are too deep; make them shallow, cute and friendlier", pop-up:
-  // knee to waist deep, 0.4-0.8 m, children wade and splash, nobody sinks or swims) every river, the lake, every pond and
-  // the sea are this deep at most, rising gently to the banks (was: rivers 1.25 m, the lake 7 m, ponds 2.4 m, the sea 5 m)
-  riverDepth: .8, lakeDepth: .8, pondDepth: .7, wadeMin: .4,
+  // knee to waist deep, 0.4-0.8 m, children wade and splash, nobody sinks or swims) every river, the lake, every pond and the
+  // sea keep their hollow's shape, so every shore stays where it was, but under the water the depth d of that shape becomes
+  // max * tanh(d / soft): never deeper than 0.8 m, gentler than before at every bank (a river's middle, 1.25 m, is 0.6 m)
+  wade: { max: .8, min: .4, soft: 1.3 },
   edge: [222, 252],                                // the wall of hills on the east, west and north rises between these distances from the middle
-  coast: { z: 194, sea: -.8 },                      // the southern coast: the sea from about z, with a sandy beach before it
+  coast: { z: 194, sea: -5 },                      // the southern coast: the sea from about z, with a sandy beach before it
   mountains: { z0: -150, z1: -238, pines: -150, region: -172 }, // the snowy belt in the north: starts rising at z0, full at z1; pines north of `pines`; "Snowcap Peaks" north of `region`
   wild: { x0: -215, x1: 215, z0: -150, z1: 180 },  // where wild dig spots, bushes and rocks are scattered (js/gather.js)
   summit: { x0: -220, x1: 220, z0: -236, z1: -176, zMin: -234 }, // where the snowman looks for the highest summit (js/secrets.js)
@@ -136,7 +137,7 @@ export const WATERS = [
   { id: 'yarra', kind: 'river', w: .6, pts: [[-156, 84], [-146, 90], [-118, 90], [-96, 98], [-70, 118], [-36, 130], [12, 136]] },
   { id: 'murray', kind: 'river', w: .7, pts: [[-238, 150], [-190, 154], [-132, 154], [-80, 156], [-30, 162], [14, 168]] },
   // small round lakes: Hồ Gươm (Hoàn Kiếm Lake) by Hà Nội with the Turtle Tower in it; a billabong in the outback
-  { id: 'hoguom', kind: 'pond', place: 'hanoi', off: [-29, 3], r: 10.5, islet: 2.6, depth: .45 },   // (the Turtle Tower stands on its little island; r89, owner: bigger and shallow enough to wade in; owner, 30 Oct 2026 AEDT: "too deep, make it shallower": knee deep)
+  { id: 'hoguom', kind: 'pond', place: 'hanoi', off: [-29, 3], r: 10.5, islet: 2.6, depth: .85 },   // (v1.08e water: .85 is the hollow's shape, still 0.45 m of water, js/world/ground.ts)   // (the Turtle Tower stands on its little island; r89, owner: bigger and shallow enough to wade in; owner, 30 Oct 2026 AEDT: "too deep, make it shallower": knee deep)
   { id: 'billabong', kind: 'pond', at: [-204, 22], r: 8 },
   { id: 'swan', kind: 'pond', at: [-222, 168], r: 6 }   // (v1.08d s2au) the Swan River's black swans by Perth
 ];

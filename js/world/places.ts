@@ -76,7 +76,7 @@ export function fpAdd(F) { FOOTPRINTS.push(F); for (let i = Math.floor((F.x0 - F
 // raft's line down the river (js/ferry.js)
 export const RIVERS = MAP.WATERS.filter(w => w.kind === 'river').map(w => ({ id: w.id, w: w.w || 1, tone: w.tone || null, pts: w.pts.map(p => p.slice()) }));   // (round T2: w = width against the main river's, tone = a tinted surface)
 // (round T2) small round lakes and ponds (Hồ Gươm in Hà Nội, the billabong by Uluru): { id, x, z, r }
-export const PONDS = MAP.WATERS.filter(w => w.kind === 'pond').map(w => { const [x, z] = w.at || MAP.anchorOf(w.place).map((v, i) => v + ((w.off || [0, 0])[i])); return { id: w.id, x, z, r: w.r, islet: w.islet || 0, depth: Math.min(w.depth || MAP.WORLD.pondDepth, MAP.WORLD.pondDepth) }; });
+export const PONDS = MAP.WATERS.filter(w => w.kind === 'pond').map(w => { const [x, z] = w.at || MAP.anchorOf(w.place).map((v, i) => v + ((w.off || [0, 0])[i])); return { id: w.id, x, z, r: w.r, islet: w.islet || 0, depth: w.depth || 2.4 }; });
 // how far (x, z) is from the deep middle of the nearest pond (0 inside it), and which pond
 export function pondDist(x, z) { let best = 1e9; PD_NEAR.id = null; for (const P of PONDS) { const dc = dist2(x, z, P.x, P.z); if (dc < P.islet + .8) continue; const d = Math.max(0, dc - P.r * (P.depth < 1.5 ? 1 : .62)); /* (owner, 29 Oct AEDT) a shallow pond's water reaches its radius */ if (d < best) { best = d; PD_NEAR.id = P.id; } } return best; }
 export const PD_NEAR = { id: null };
