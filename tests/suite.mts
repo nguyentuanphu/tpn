@@ -90,6 +90,7 @@ function select() {
       continue;
     }
     if (f === 'tests/studio-check.mts') { add(['studio'], f); continue; }
+    if (f === 'tests/studio-back.mts') { add(['studioback', 'studioreleases', 'sparklelab'], f); continue; } // (v1.08b platform)
     if (/^tests\/unit\/[\w.-]+\.test\.mts$/.test(f)) { add(['unit'], f); continue; } // (r82) a unit test file changes only the unit check
     if (/^types\/.*\.d\.ts$|^tsconfig\.base\.json$/.test(f)) { add(['types', 'names'], f); continue; } // (r82) shared type notes: only the type checks read them
     if (/^tests\/(check-map|check-times)\.json$|^tests\/suite\.mts$/.test(f)) continue;

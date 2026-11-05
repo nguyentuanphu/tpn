@@ -29,15 +29,27 @@ const say = m => LANG === 'vi' ? viMessage(m) : String(m ?? '');
 // e.raw keeps the server's own words (the Voices page looks at them to stop early)
 // (owner, 30 Oct 2026 AEDT: "pages load slow") a management report read is kept for 30 seconds, so moving between Home,
 // People and Game, or choosing a period and back, does not ask the server again; any save and the Reload button clear it
-const READS = new Map<string, { at: number, value: Promise<any> }>(), READ_MS = 30e3;
+// (v1.08b platform, owner 5 Nov 2026 AEDT: "the whole studio website still loads very slow") each read of the reports,
+// the status and the live switches is kept for 3 minutes and shared by every page of the visit: in memory, and in this
+// tab's sessionStorage so opening Studio again in the same tab does not wait either. Any save, signing in or out and the
+// Reload button (and the browser's own reload) clear it, so nothing is ever shown stale after a change made here.
+const READS = new Map<string, { at: number, value: Promise<any> }>(), READ_MS = 180e3, READ_KEY = 'studioReads';
+const KEEPABLE = /^(info|live|live\/content|management\/(overview|summary|devices|children|attention|activities))(\?|$)/;
+const readStore = (): Record<string, { at: number, j: any }> => { try { return JSON.parse(sessionStorage.getItem(READ_KEY) || '{}'); } catch (e) { return {}; } };
+let READ_GEN = 0;
+const forgetReads = () => { READ_GEN++; READS.clear(); try { sessionStorage.removeItem(READ_KEY); } catch (e) { } KEEP.clear(); };
+try { if ((performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type === 'reload') sessionStorage.removeItem(READ_KEY); } catch (e) { }
 const api = (p: string, body?: unknown) => {
-  if (body !== undefined) { READS.clear(); return apiNow(p, body); }
+  if (body !== undefined) { forgetReads(); return apiNow(p, body); }
   // (v1.07) the older Analytics report keeps its own day sums on the server and is read fresh, but pages that open together
   // (Sparkle Lab, Analytics, the device names) share the one read that is on its way instead of each asking again
   if (p === 'players') { const hit = READS.get(p); if (hit && hit.at < 0) return hit.value; const value = apiNow(p); READS.set(p, { at: -1, value }); value.finally(() => { if (READS.get(p)?.value === value) READS.delete(p); }).catch(() => { }); return value; }
-  if (!/^management\/(overview|summary|devices|children|attention|activities)(\?|$)/.test(p)) return apiNow(p);
+  if (!KEEPABLE.test(p)) return apiNow(p);
   const hit = READS.get(p); if (hit && Date.now() - hit.at < READ_MS) return hit.value;
-  const value = apiNow(p); READS.set(p, { at: Date.now(), value }); value.catch(() => READS.delete(p)); return value;
+  const kept = readStore()[p]; if (kept && Date.now() - kept.at < READ_MS) { const value = Promise.resolve(kept.j); READS.set(p, { at: kept.at, value }); return value; }
+  const at = Date.now(), gen = READ_GEN, value = apiNow(p); READS.set(p, { at, value });
+  // (a read that was on its way when something was saved is not kept: it may be from before the save)
+  value.then(j => { if (gen !== READ_GEN) { if (READS.get(p)?.value === value) READS.delete(p); return; } try { const all = readStore(); all[p] = { at, j }; sessionStorage.setItem(READ_KEY, JSON.stringify(all)); } catch (e) { } }, () => READS.delete(p)); return value;
 };
 const apiNow = async (p: string, body?: unknown) => { const r = await fetch(BASE + '/api/' + p, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Studio': '1' }, body: JSON.stringify(body) }); const j = await r.json().catch(() => ({})); if (r.status === 401 && j.signin) { signIn(); throw Object.assign(new Error(T('Please sign in.', 'Vui lòng đăng nhập.')), { signin: true }); } if (!r.ok) { const raw = String(j.error || r.status); throw Object.assign(new Error(say(raw)), { raw }); } return j; };
 // (owner, 10 Oct: "missing feedback after a save") the message is bigger, sits above the bar at the bottom of a phone,
@@ -104,14 +116,14 @@ const saveContent = async () => { if (LIVE_PAGES[cur] && liveOn()) return saveLi
 // On the pages where you change things, a label by Save says "Not saved yet" or "Saved", and leaving the page (another
 // section, Back, the language, reload, closing) asks first. Leaving without saving puts the family's content back as it was.
 const GUARD = new Set(['looks', 'plots', 'message', 'missions', 'children', 'album', 'quiz', 'stories', 'villagers', 'releases', 'lab', 'festivals', 'path', 'music', 'map', 'play', 'ads', 'settings']);
-let KEPT = '', DIRTY = false, SAVED_HERE = '';
+let KEPT = '', DIRTY = false, SAVED_HERE = '', DISCARDED = false;
 const contentNow = () => JSON.stringify(CONTENT);
 const unsaved = () => GUARD.has(cur) && (DIRTY || (!!KEPT && contentNow() !== KEPT));
 function markSaved() { DIRTY = false; KEPT = contentNow(); SAVED_HERE = cur; paintState(); }
 function leaveOk() {
   if (!unsaved()) return true;
   if (!confirm(T('This page has changes that are not saved. Leave without saving them?', 'Trang này có thay đổi chưa lưu. Rời trang mà không lưu?'))) return false;
-  if (KEPT) CONTENT = JSON.parse(KEPT); DIRTY = false; return true;
+  if (KEPT) CONTENT = JSON.parse(KEPT); DIRTY = false; DISCARDED = true; return true;
 }
 function paintState() {
   const P = $('#page'); if (!P || !GUARD.has(cur)) return; const u = unsaved();
@@ -200,6 +212,20 @@ const sectionOf = k => SEC().find(x => x.k === k || x.pages.includes(k)) || SEC(
 const route = () => { const h = location.hash.slice(1).split('?')[0], [a, b] = h.split('/'); if (b && ABOUT[b]) return b; if(a==='family')return 'people';if (ABOUT[a] || SECTIONS.some(x => x.k === a)) return a; return 'home'; };
 let cur = route();
 const viewScroll=new Map<string,number>(),detailOrigin=new Map<string,string>();
+// (v1.08b platform, owner 5 Nov 2026 AEDT: "whenever i click go back it reloads again which is very annoying") each page
+// left without unsaved changes is kept as it was built, with its scroll; Back (or a tab) to it shows it again at once,
+// without asking the website. One older than 3 minutes is shown at once too and then rebuilt with fresh data behind it.
+// A save anywhere, the language, signing in and Reload drop every kept page (forgetReads).
+const KEEP = new Map<string, { nodes: Node[], at: number, scroll: number, lang: string, page: string }>(), KEEP_FRESH = 180e3;
+let SHOWN = { hash: '', page: '', at: 0 };
+try { history.scrollRestoration = 'manual'; } catch (e) { }
+function keepShown() {
+  const P = $('#page'), was = SHOWN; SHOWN = { hash: '', page: '', at: 0 };
+  if (DISCARDED) { DISCARDED = false; return; }
+  if (!was.hash || !P || !P.firstChild || P.querySelector(':scope > .loading')) return;
+  KEEP.set(was.hash, { nodes: [...P.childNodes], at: was.at, scroll: window.scrollY, lang: LANG, page: was.page });
+  while (KEEP.size > 12) KEEP.delete(KEEP.keys().next().value);
+}
 function openHash(value:string){
   const hash='#'+value.replace(/^#/, '');viewScroll.set(location.hash,window.scrollY);
   if(hash!==location.hash&&/\/management(device|activity)(?:\?|$)/.test(hash))detailOrigin.set(hash,location.hash||'#home');
@@ -221,20 +247,32 @@ function nav() {
   document.querySelectorAll<HTMLInputElement>('[data-t]').forEach(e => { const [en, vi] = e.dataset.t.split('|'); e.textContent = T(en, vi); });
   document.querySelectorAll<HTMLInputElement>('.lang button[data-l]').forEach(b => { b.classList.toggle('on', b.dataset.l === LANG); b.onclick = () => { if (b.dataset.l === LANG || !leaveOk()) return; LANG = b.dataset.l; localStorage.setItem('studioLang', LANG); render(); }; });
   if ($('#pub')) $('#pub').onclick = () => go('publish');
-  if ($('#reload')) $('#reload').onclick = () => { if (leaveOk()) { READS.clear(); render(true); } };
+  if ($('#reload')) $('#reload').onclick = () => { if (leaveOk()) { forgetReads(); render(true); } };
   head();
 }
 // the status and the family's content are fetched once and kept while you move between pages (round K: online, every
 // tab used to ask GitHub again); they are fetched again after Publish, after signing in, and with ↻
 let LOADED = false;
+// (v1.08b platform) the status first; the family's content and its live sections are read side by side after it, and
+// the pages that never use them (Home, the reports, the section cards) open without waiting for them
+let CONTENT_P: Promise<void> = Promise.resolve();
+const NO_CONTENT = (k: string) => k === 'home' || k.startsWith('management') || SECTIONS.some(x => x.k === k) || (!!INFO?.online && ['releases', 'lab', 'testers', 'players'].includes(k));
 async function load(force) {
   if (force) SRC = null; // ↻ reads the game's files again (the Voices page keeps them while Studio is open)
   if (LOADED && !force) return;
-  if (!DEVNAME) DEVNAME = await import(GAME + 'js/content/devname.js').catch(() => null);
+  const devname = DEVNAME ? null : import(GAME + 'js/content/devname.js').catch(() => null);
   INFO = await api('info'); document.body.classList.toggle('online', !!INFO.online);if(force||document.documentElement.dataset.gameBrand==='unavailable')void loadGameBrand();
-  CONTENT = INFO.ok && !INFO.managementOnly && CAN('pages') ? await api('content') : {};
-  // (r81) what the devices really get: the content pages' live sections win over custom.json
-  if (INFO.ok && !INFO.managementOnly && CAN('pages') && liveOn()) { try { const L = await api('live/content'); for (const [k, v] of Object.entries((L && L.content) || {})) if (v && typeof v === 'object') CONTENT[k] = v; } catch (e) { } }
+  const pages = INFO.ok && !INFO.managementOnly && CAN('pages');
+  CONTENT_P = (async () => {
+    const [c, L] = await Promise.all([pages ? api('content') : {}, pages && liveOn() ? api('live/content').catch(() => null) : null]);
+    CONTENT = c;
+    // (r81) what the devices really get: the content pages' live sections win over custom.json
+    for (const [k, v] of Object.entries((L && L.content) || {})) if (v && typeof v === 'object') CONTENT[k] = v;
+  })();
+  CONTENT_P.catch(() => { LOADED = false; });
+  if (devname) DEVNAME = await devname;
+  // the live switches (Releases, Sparkle Lab, Festivals) are read once, quietly, while the first page is looked at
+  if (INFO.online && CAN('releases')) setTimeout(() => { api('live').catch(() => { }); import(GAME + 'js/content/releases.js').catch(() => { }); }, 600);
   LOADED = true;
 }
 const drawSection = (P, sec) => {
@@ -245,20 +283,30 @@ const drawSection = (P, sec) => {
 let renderSequence = 0;
 async function render(force?: boolean) {
   const sequence = ++renderSequence;
+  if (force) KEEP.clear(); else keepShown();
   nav(); const P = $('#page'), crumb = $('#crumb'); P.dataset.render = String(sequence); DIRTY = false; KEPT = ''; if (SAVED_HERE !== cur) SAVED_HERE = '';
-  if (!LOADED || force) P.innerHTML = `<div class="loading">✨ ${T('Loading…', 'Đang tải…')}</div>`;
+  const crumbFor = sec => { crumb.innerHTML = sec.pages.length > 1 && cur !== sec.k ? `<button class="back">← ${sec.i} ${T(sec.en, sec.vi)}</button>` : '';
+    if (crumb.firstElementChild instanceof HTMLElement) crumb.firstElementChild.onclick = () => {const origin=detailOrigin.get(location.hash);if(origin&&leaveOk())openHash(origin);else if(!origin)go(sec.k);}; };
+  const shown = (at = Date.now()) => { SHOWN = { hash: location.hash, page: cur, at }; };
+  // a kept page comes back as it was (its scroll too); one kept too long is rebuilt behind it with fresh data
+  const kept = !force && LOADED ? KEEP.get(location.hash) : null; let rebuild = true;
+  if (kept) { KEEP.delete(location.hash);
+    if (kept.lang === LANG && kept.page === cur) { const sec = sectionOf(cur); P.replaceChildren(...kept.nodes); if (sec.k === cur && sec.pages.length > 1 && !ABOUT[sec.k]) crumb.innerHTML = ''; else crumbFor(sec);
+      head(); KEPT = contentNow(); HASH = location.hash; paintState(); refold(P, cur); window.scrollTo(0, kept.scroll); shown(kept.at);
+      if (Date.now() - kept.at < KEEP_FRESH) return; rebuild = false; } }
+  if (rebuild && (!LOADED || force)) P.innerHTML = `<div class="loading">✨ ${T('Loading…', 'Đang tải…')}</div>`;
   try {
     await load(force); if (sequence !== renderSequence) return;nav();
     if (INFO.perms) Object.values(INFO.perms).forEach(([, en, vi]) => { PERM_VI[en] = vi; });
     if (!SEC().some(x => x.k === cur || x.pages.includes(cur))) { cur = (SEC()[0] || { pages: ['admins'] }).pages[0]; nav(); }
     else if (!INFO.ok && cur !== 'settings') { cur = 'settings'; nav(); toast(T('First, choose the game folder.', 'Trước tiên, chọn thư mục game.')); }
     head();
-    const sec = sectionOf(cur);
+    const sec = sectionOf(cur), scroll = rebuild ? viewScroll.get(location.hash) || 0 : window.scrollY;
     // (owner, 12 Oct) the Analytics tab still opens Analytics itself (its section also holds the Tester reports page)
-    if (sec.k === cur && sec.pages.length > 1 && !ABOUT[sec.k]) { crumb.innerHTML = ''; drawSection(P, sec); KEPT = contentNow(); HASH = location.hash; window.scrollTo(0, viewScroll.get(location.hash)||0); return; }
-    crumb.innerHTML = sec.pages.length > 1 && cur !== sec.k ? `<button class="back">← ${sec.i} ${T(sec.en, sec.vi)}</button>` : '';
-    if (crumb.firstElementChild instanceof HTMLElement) crumb.firstElementChild.onclick = () => {const origin=detailOrigin.get(location.hash);if(origin&&leaveOk())openHash(origin);else if(!origin)go(sec.k);};
-    const page = cur; await PAGES[page](P); if (sequence !== renderSequence || cur !== page) return; explainPage(P, cur); foldPage(P, cur); refold(P, page); KEPT = contentNow(); HASH = location.hash; paintState(); window.scrollTo(0, viewScroll.get(location.hash)||0);
+    if (sec.k === cur && sec.pages.length > 1 && !ABOUT[sec.k]) { crumb.innerHTML = ''; drawSection(P, sec); KEPT = contentNow(); HASH = location.hash; window.scrollTo(0, scroll); shown(); return; }
+    crumbFor(sec);
+    if (!NO_CONTENT(cur)) await CONTENT_P; if (sequence !== renderSequence) return;
+    const page = cur; await PAGES[page](P); if (sequence !== renderSequence || cur !== page) return; explainPage(P, cur); foldPage(P, cur); refold(P, page); KEPT = contentNow(); HASH = location.hash; paintState(); window.scrollTo(0, scroll); shown();
   } catch (e) { if (sequence === renderSequence && !e.signin) P.innerHTML = `<div class="card badtxt">${esc(e.message)}</div>`; }
 }
 
@@ -812,6 +860,59 @@ async function pushPanel(P) {
     catch (e) { toast(String(e && e.message || e), 'bad'); }
   });
 }
+// (v1.08b platform, owner 5 Nov 2026 AEDT: "redesign the release and sparklelab on studio so it makes it easier to
+// understand and use") Releases groups its switches by what they are for (the game's own groups stay as they are in
+// js/content/releases.ts), each row says in plain words what it does for a child, its state at a glance, and one tap
+// changes it; a timeline shows what opens and ends when (with the release calendar, js/content/release-calendar.ts,
+// when it is there); before saving, the bar lists every change.
+const PURPOSE: [string, string, string, string][] = [
+  ['play', '🎮', 'Games and stories', 'Trò chơi và truyện'], ['story', '🏮', 'Story chapters', 'Các chương truyện'],
+  ['valley', '🏞️', 'Valley features', 'Tính năng trong thung lũng'], ['family', '🧸', 'Little ones and family', 'Cho các bé và gia đình'],
+  ['festivals', '🎉', 'Festivals', 'Lễ hội'], ['money', '🪙', 'Money and shop', 'Tiền và cửa hàng'],
+  ['help', '💡', 'Tips and explanations', 'Mẹo và lời giải thích'], ['notify', '🔔', 'Notifications for grown-ups', 'Thông báo cho phụ huynh'],
+  ['tools', '🧰', 'Testing and tools', 'Thử nghiệm và công cụ']];
+const PLAY_IDS = new Set(['newGames', 'newStories', 'readingTrial', 'adventure', 'sparkleFruitParade_single', 'sparkleFruitParade_multi', 'sparklefruitbar_single', 'sparklefruitbar_multi']);
+const purposeOf = x => PLAY_IDS.has(x.id) ? 'play' : x.group === 'story' ? 'story' : ['world', 'valley'].includes(x.group) ? 'valley' : ['kids', 'trial'].includes(x.group) ? 'family'
+  : x.group === 'festivals' ? 'festivals' : ['money', 'rewards'].includes(x.group) ? 'money' : x.group === 'explain' ? 'help' : x.group === 'notify' ? 'notify' : x.group === 'tools' ? 'tools' : 'valley';
+// a row's name (the words before the first ":" or "(") and its plain line (the rest; a short line by its purpose when there is none)
+const PLAIN_BY: Record<string, [string, string]> = {
+  play: ['Children find it in the Play menu while it is on.', 'Các con thấy trong Vui chơi khi bật.'],
+  story: ['This part of the lantern story opens for children while it is on.', 'Phần này của truyện đèn lồng mở cho các con khi bật.'],
+  valley: ['Children see this in the valley while it is on.', 'Các con thấy điều này trong thung lũng khi bật.'],
+  family: ['Children and grown-ups get this while it is on.', 'Các con và phụ huynh có điều này khi bật.'],
+  festivals: ['Decorations, the hunt and the festival game at this festival’s time of year.', 'Trang trí, cuộc săn và trò chơi lễ hội vào dịp lễ này.'],
+  money: ['Children play or buy this while it is on.', 'Các con chơi hoặc mua được khi bật.'],
+  help: ['A short note or spoken line helps children while it is on.', 'Một dòng ghi chú hoặc lời nói giúp các con khi bật.'],
+  notify: ['A message on the grown-ups’ phones; each family still picks its own.', 'Tin nhắn trên điện thoại phụ huynh; mỗi gia đình vẫn tự chọn.'],
+  tools: ['For grown-ups testing the game; children do not see it.', 'Cho người lớn thử game; các con không thấy.']};
+const cap = (t: string) => t ? t[0].toUpperCase() + t.slice(1) : t;
+const splitName = (t: string) => { const c = t.indexOf(': '), head = c > 2 && c < 90 ? t.slice(0, c) : t, rest = c > 2 && c < 90 ? t.slice(c + 2) : '';
+  const m = /^(.{3,}?)\s+\((.+)\)$/.exec(head); return m ? [m[1], cap([m[2], rest].filter(Boolean).join('. '))] : [head, cap(rest)]; };
+const plainOf = x => { const [en, enWhat] = splitName(x.en), [vi, viWhat] = splitName(x.vi), d = PLAIN_BY[purposeOf(x)];
+  return { name: T(en, vi), what: T(enWhat || d[0], viWhat || d[1]) }; };
+const mondayOf = (day: string) => { const d = new Date(day + 'T12:00:00'); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.toISOString().slice(0, 10); };
+// (v1.08b platform) Sparkle Lab in three parts, each with a plain heading and one line saying what it is for: Reports
+// from testers (the newest first, fixed or not, which version), Automatic play (the auto play check and the nightly
+// robots) and Devices (each device's own controls). The long tester settings fold away under "More settings".
+function labParts(P) {
+  P.querySelector('.sub').textContent = T('Three parts: what testers reported, the automatic play checks, and each device’s own settings. Save at the bottom keeps them all.', 'Ba phần: người thử báo gì, tự chơi kiểm tra, và cài đặt của từng máy. Nút Lưu ở cuối giữ tất cả.');
+  const part = (k, icon, en, vi, wen, wvi) => { const s = document.createElement('section'); s.className = 'card labpart'; s.dataset.part = k; s.innerHTML = `<h3>${icon} ${T(en, vi)}</h3><p class="labwhy">${T(wen, wvi)}</p>`; return s; };
+  const reports = part('reports', '🐞', 'Reports from testers', 'Báo cáo từ người thử', 'Problems that tester devices found, the newest first: fixed or not, and in which version. Switch Testers on to collect them.', 'Lỗi do máy thử tìm thấy, mới nhất trước: đã sửa hay chưa, và ở phiên bản nào. Bật Người thử để thu thập.');
+  const auto = part('autoplay', '🤖', 'Automatic play (autoplay)', 'Tự chơi kiểm tra (autoplay)', 'A small window plays every game by itself and reports what breaks; robots can also play at night.', 'Một cửa sổ nhỏ tự chơi mọi trò và báo cái gì hỏng; rô bốt cũng có thể chơi ban đêm.');
+  const devs = part('devices', '📱', 'Devices', 'Các máy', 'Each device on its own card: whether it is a tester, whether it shows auto play, and how its progress comes back.', 'Mỗi máy một thẻ: có là máy thử không, có hiện tự chơi không, và tiến trình được trả lại thế nào.');
+  const list = document.createElement('div'); list.className = 'labreports'; list.innerHTML = `<p class="note">${T('Loading the newest reports…', 'Đang tải báo cáo mới nhất…')}</p>`; reports.append(list);
+  if (canSee('testers')) { const link = document.createElement('button'); link.className = 'btn ghost'; link.textContent = T('Open all tester reports', 'Mở mọi báo cáo người thử'); link.onclick = () => go('testers'); reports.append(link); }
+  const tc = P.querySelector('.relc[data-id="tester"]'), ac = P.querySelector('.relc[data-id="autoplay"]'), bots = P.querySelector('.bot-config'), save = P.querySelector('.relsave');
+  if (tc) reports.append(tc); if (ac) auto.append(ac); if (bots) { bots.classList.remove('card'); auto.append(bots); }
+  P.querySelectorAll('details.relg').forEach(d => { if (!d.querySelector('.relc')) d.remove(); });
+  save.before(reports, auto, devs);
+  P.querySelector('.relbar')?.classList.add('tlhide'); // (two switches only: no search here)
+  // the newest reports, after the page has opened
+  api('testers').then(r => { const ps = ((r && r.problems) || []).slice().sort((a, b) => (b.lastAt || 0) - (a.lastAt || 0)).slice(0, 6);
+    const done = p => ['fixed', 'confirmed'].includes(p.status);
+    list.innerHTML = ps.length ? `<ul class="labrep">${ps.map(p => `<li><b>${esc(p.title || '')}</b> <span class="rs ${done(p) ? 'on' : 'soon'}">${done(p) ? '✅ ' + T('Fixed', 'Đã sửa') + (p.fixedIn ? ' ' + esc(p.fixedIn) : '') : '🔧 ' + T('Not fixed yet', 'Chưa sửa')}</span> <small class="note">${esc(((p.builds || []).slice(-1)[0]) || '')} · ${p.n || 1}×</small></li>`).join('')}</ul>`
+      : `<p class="note">${T('No reports yet.', 'Chưa có báo cáo nào.')}</p>`; }, () => { list.innerHTML = `<p class="note">${T('The reports could not be read now; open all tester reports to try again.', 'Chưa đọc được báo cáo; mở mọi báo cáo người thử để thử lại.')}</p>`; });
+}
 PAGES.releases = P => drawReleases(P, false);
 PAGES.lab = P => drawReleases(P, true);
 async function drawReleases(P, lab) {
@@ -826,14 +927,14 @@ async function drawReleases(P, lab) {
     else if (r.start && r.start > today) out.push(['soon', '📅 ' + T(`Starts ${fmtDay(r.start)}`, `Bắt đầu ${fmtDay(r.start)}`)]);
     else out.push(['on', '✅ ' + T('On', 'Bật')]);
     if (on && r.days) { const end = new Date(new Date((r.start || today) + 'T12:00:00').getTime() + r.days * 864e5), left = Math.ceil((end.getTime() - Date.now()) / 864e5);
-      out.push([left > 0 ? 'end' : 'off', left > 0 ? '⏳ ' + T(`Ends in ${left} day${left === 1 ? '' : 's'}`, `Kết thúc sau ${left} ngày`) : '⌛ ' + T('Finished', 'Đã hết')]); }
+      out.push([left > 0 ? 'end' : 'off', left > 0 ? '⏳ ' + T(`Ends on ${fmtDay(isoDay(end))} (in ${left} day${left === 1 ? '' : 's'})`, `Kết thúc ngày ${fmtDay(isoDay(end))} (còn ${left} ngày)`) : '⌛ ' + T('Finished', 'Đã hết')]); }
     if (on && r.newDays) out.push(['new', '✨ ' + T(`“New” for ${r.newDays} day${r.newDays === 1 ? '' : 's'}`, `“Mới” trong ${r.newDays} ngày`)]);
     return out.map(([k, t]) => `<span class="rs ${k}">${t}</span>`).join(''); };
   const card = x => { const r = R[x.id] || {}, on = isOn(x), sched = !!(r.start || r.days || r.newDays);
     return `<div class="relc${on ? ' on' : ''}${sched ? ' sched' : ''}" data-id="${x.id}">
       <div class="relc-top"><label class="tog" title="${T('On or off', 'Bật hoặc tắt')}"><input type="checkbox" data-r="on" ${on ? 'checked' : ''}><span></span></label>
-        <div class="relc-name">${x.icon ? x.icon + ' ' : ''}${esc(T(x.en, x.vi))}<div class="relc-st">${status(on, r)}</div></div>
-        <button class="btn small ghost relc-more" data-more aria-expanded="false">📅 ${T('Schedule', 'Lịch')}</button></div>
+        <div class="relc-name"><b>${x.icon ? x.icon + ' ' : ''}${esc(plainOf(x).name)}</b><div class="relc-what">${esc(plainOf(x).what)}</div></div></div>
+      <div class="relc-foot"><div class="relc-st">${status(on, r)}</div><button class="btn small ghost relc-more" data-more aria-expanded="false">📅 ${T('Schedule', 'Lịch')}</button></div>
       <div class="relc-opt" hidden>
         <label>${T('Starts', 'Bắt đầu')}<input type="date" data-r="start" value="${esc(r.start || '')}"></label>
         <div class="chips">${[0, 1, 3, 7].map(n => `<button type="button" class="chip" data-in="${n}">${n ? T(`in ${n} days`, `${n} ngày nữa`) : T('today', 'hôm nay')}</button>`).join('')}<button type="button" class="chip" data-in="">${T('no date', 'không ngày')}</button></div>
@@ -841,28 +942,56 @@ async function drawReleases(P, lab) {
         <label>${T('“New” badge for (days)', 'Nhãn “Mới” trong (ngày)')}<input type="number" min="0" max="365" data-r="newDays" value="${r.newDays || ''}" placeholder="0"></label>
       </div></div>`; };
   const allGroups = Object.entries<[string, string]>(RELEASE_GROUPS).map(([g, [en, vi]]) => ({ g, en, vi, items: RELEASES.filter(x => x.group === g) }));
-  const groups = allGroups.map(g => ({ ...g, items: g.items.filter(inScope) })).filter(g => g.items.length);
+  const groups = lab ? allGroups.map(g => ({ ...g, items: g.items.filter(inScope) })).filter(g => g.items.length)
+    : PURPOSE.map(([g, , en, vi]) => ({ g, en, vi, items: RELEASES.filter(x => inScope(x) && purposeOf(x) === g) })).filter(g => g.items.length);
+  const gicon = g => (PURPOSE.find(p => p[0] === g) || [])[1] || REL_ICON[g] || '📦';
+  const CAL = lab ? [] : await import(GAME + 'js/content/release-calendar.js').then(m => m.RELEASE_CALENDAR || [], () => []); if (stale()) return;
   const closed = folds(), gkey = g => 'releases:group:' + g;
   P.innerHTML = `<h2>🆕 ${lab ? T('Sparkle Lab', 'Phòng thử Sparkle') : T('Releases', 'Ra mắt')}</h2><p class="sub">${T('Switch anything on or off. 📅 Schedule picks the day it starts, how long it stays and how long it shows a “New” badge. Switching off never takes away what a child already has.', 'Bật hoặc tắt bất cứ thứ gì. 📅 Lịch chọn ngày bắt đầu, ở lại bao lâu và nhãn “Mới” bao lâu. Tắt đi không lấy mất những gì con đã có.')}</p>
-    <div class="relbar card"><input type="search" id="relq" placeholder="${T('Find a feature…', 'Tìm một tính năng…')}" aria-label="${T('Find a feature', 'Tìm tính năng')}">
-      <div class="chips" id="relf">${[['all', T('All', 'Tất cả')], ['on', '✅ ' + T('On', 'Bật')], ['off', '⏸️ ' + T('Off', 'Tắt')], ['sched', '📅 ' + T('Scheduled', 'Có lịch')]].map(([k, t], i) => `<button type="button" class="chip${i ? '' : ' on'}" data-f="${k}">${t}</button>`).join('')}</div>
+    <div class="relbar card">${lab ? '' : `<div class="chips relview" id="relview" data-nodirty>${[['list', '☰ ' + T('Switches', 'Công tắc')], ['timeline', '🗓️ ' + T('Timeline: what opens when', 'Dòng thời gian: khi nào mở')]].map(([k, t], i) => `<button type="button" class="chip${i ? '' : ' on'}" data-view="${k}" aria-pressed="${!i}">${t}</button>`).join('')}</div>`}<input type="search" data-nodirty id="relq" placeholder="${T('Find a feature…', 'Tìm một tính năng…')}" aria-label="${T('Find a feature', 'Tìm tính năng')}">
+      <div class="chips" id="relf" data-nodirty>${[['all', T('All', 'Tất cả')], ['on', '✅ ' + T('On', 'Bật')], ['off', '⏸️ ' + T('Off', 'Tắt')], ['sched', '📅 ' + T('Scheduled', 'Có lịch')]].map(([k, t], i) => `<button type="button" class="chip${i ? '' : ' on'}" data-f="${k}">${t}</button>`).join('')}</div>
       <p class="note" id="relsum"></p></div>
-    ${groups.map(G => `<details class="relg" data-g="${G.g}" ${closed[gkey(G.g)] ? '' : 'open'}><summary><span class="gi">${REL_ICON[G.g] || '📦'}</span><b>${T(G.en, G.vi)}</b><span class="relg-n"></span>
+    ${groups.map(G => `<details class="relg" data-g="${G.g}" ${closed[gkey(G.g)] ? '' : 'open'}><summary><span class="gi">${gicon(G.g)}</span><b>${T(G.en, G.vi)}</b><span class="relg-n"></span>
       <span class="relg-all"><button type="button" class="btn small ghost" data-all="1">${T('All on', 'Bật hết')}</button><button type="button" class="btn small ghost" data-all="0">${T('All off', 'Tắt hết')}</button></span></summary>
       <div class="relgrid">${G.items.map(card).join('')}</div></details>`).join('')}
+    ${lab ? '' : `<section class="card reltl" id="reltl" hidden><h3>🗓️ ${T('What opens when', 'Khi nào mở')}</h3><p class="note">${T('Each week from now: what starts, what ends and what the release calendar plans. Tap one to change it.', 'Từng tuần từ nay: cái gì bắt đầu, cái gì kết thúc và lịch phát hành dự định gì. Chạm vào để đổi.')}</p><div id="reltlw"></div></section>`}
     ${lab && CAN('site') ? `<section class="card bot-config"><h3>🤖 ${T('Nightly Cloud Bot Testing', 'Kiểm thử bot đám mây ban đêm')}</h3><p class="note">${T('Set a nightly schedule and bot profile. Save to persist these settings.', 'Thiết lập lịch ban đêm và hồ sơ bot. Bấm Lưu để lưu cài đặt.')}</p><div class="bot-fields"><label class="chk"><input id="bot-enabled" type="checkbox"> ${T('Enable scheduled testing', 'Bật kiểm thử theo lịch')}</label><label>${T('Schedule', 'Lịch')}<select id="bot-schedule"><option value="day-night">${T('Day & night', 'Ngày và đêm')}</option><option value="custom">${T('Custom UTC time', 'Giờ UTC tùy chỉnh')}</option></select><input id="bot-time" type="time" value="02:00" aria-label="UTC time"></label><label>${T('Bot count', 'Số bot')} <input id="bot-count" type="number" min="1" max="10" value="5"></label><label>${T('Minutes per bot', 'Số phút mỗi bot')} <input id="bot-duration" type="number" min="1" max="30" value="5"></label><label>${T('Behavior profile', 'Hồ sơ hành vi')}<select id="bot-profile"><option value="chaos-toddler">${T('Chaotic Toddler Mashing', 'Bé nghịch ngợm')}</option><option value="gentle-explorer">${T('Gentle Explorer', 'Nhà thám hiểm nhẹ nhàng')}</option><option value="max-competence">${T('Max Competence', 'Thành thạo tối đa')}</option></select></label></div><div class="bar"><button type="button" class="btn" id="bot-run">▶️ ${T('Run Headless Bot Test Now', 'Chạy kiểm thử bot ngay')}</button><span class="note" id="bot-result"></span></div></section>` : ''}
-    <div class="bar relsave"><span class="note" id="relch"></span><button class="btn" id="save">💾 ${T('Save', 'Lưu')}</button></div>`;
+    <div class="bar relsave"><details id="relchanges" hidden><summary class="note" id="relch"></summary><ul></ul></details><button class="btn" id="save">💾 ${T('Save', 'Lưu')}</button></div>`;
   P.querySelector('.sub').after(document.createRange().createContextualFragment(liveNote()));
   if (!lab) pushPanel(P).catch(() => { }); // (v1.08 notifications)
-  if (lab) { P.querySelector('.sub').textContent = T('Report problems and run automatic checks. Choose tester devices, checking speed and how their progress is restored.', 'Báo lỗi và chạy tự kiểm tra. Chọn máy thử, tốc độ kiểm tra và cách khôi phục tiến trình.'); if (canSee('testers')) { const link = document.createElement('button'); link.className = 'btn ghost'; link.textContent = T('Open tester reports', 'Mở báo cáo người thử'); link.onclick = () => go('testers'); P.querySelector('.sub').after(link); } }
+  if (lab) labParts(P);
   // counts, the group numbers and what has changed since the page opened
-  const start = JSON.stringify([...P.querySelectorAll('.relc')].map(c => [c.querySelector('[data-r="on"]').checked, ...['start', 'days', 'newDays'].map(k => c.querySelector(`[data-r="${k}"]`).value)]));
+  let start = JSON.stringify([...P.querySelectorAll('.relc')].map(c => [c.querySelector('[data-r="on"]').checked, ...['start', 'days', 'newDays'].map(k => c.querySelector(`[data-r="${k}"]`).value)]));
+  const snap = () => [...P.querySelectorAll('.relc')].map(c => [c.querySelector<HTMLInputElement>('[data-r="on"]').checked, ...['start', 'days', 'newDays'].map(k => c.querySelector<HTMLInputElement>(`[data-r="${k}"]`).value)]);
   const sum = () => { const cs = [...P.querySelectorAll('.relc')], on = cs.filter(c => c.querySelector('[data-r="on"]').checked).length;
     $('#relsum').textContent = T(`${on} of ${cs.length} on · ${cs.filter(c => c.classList.contains('sched')).length} with a schedule`, `${on}/${cs.length} đang bật · ${cs.filter(c => c.classList.contains('sched')).length} có lịch`);
     P.querySelectorAll('details.relg').forEach(d => { const c = [...d.querySelectorAll('.relc')]; d.querySelector('.relg-n').textContent = T(`${c.filter(x => x.querySelector('[data-r="on"]').checked).length} of ${c.length} on`, `${c.filter(x => x.querySelector('[data-r="on"]').checked).length}/${c.length} bật`); });
     const now = [...P.querySelectorAll('.relc')].map(c => [c.querySelector('[data-r="on"]').checked, ...['start', 'days', 'newDays'].map(k => c.querySelector(`[data-r="${k}"]`).value)]);
-    const n = JSON.parse(start).filter((x, i) => JSON.stringify(x) !== JSON.stringify(now[i])).length;
-    $('#relch').textContent = n ? T(`${n} change${n === 1 ? '' : 's'} not saved yet`, `${n} thay đổi chưa lưu`) : ''; P.querySelector('.relsave').classList.toggle('dirty', !!n); };
+    const was = JSON.parse(start), cards = [...P.querySelectorAll<HTMLElement>('.relc')], lines = [];
+    now.forEach((x, i) => { if (JSON.stringify(x) === JSON.stringify(was[i])) return; const id = cards[i].dataset.id, it = RELEASES.find(y => y.id === id), bits = [];
+      if (x[0] !== was[i][0]) bits.push(x[0] ? T('switched on', 'bật') : T('switched off', 'tắt'));
+      if (x[1] !== was[i][1]) bits.push(x[1] ? T(`starts ${fmtDay(x[1])}`, `bắt đầu ${fmtDay(x[1])}`) : T('no start date', 'không ngày bắt đầu'));
+      if (x[2] !== was[i][2]) bits.push(+x[2] ? T(`on for ${x[2]} days`, `bật ${x[2]} ngày`) : T('always on', 'luôn bật'));
+      if (x[3] !== was[i][3]) bits.push(+x[3] ? T(`“New” for ${x[3]} days`, `“Mới” ${x[3]} ngày`) : T('no “New” badge', 'không nhãn “Mới”'));
+      lines.push(`<li><b>${esc(it ? plainOf(it).name : id)}</b>: ${esc(bits.join(', '))}</li>`); });
+    const n = lines.length, box = P.querySelector<HTMLDetailsElement>('#relchanges');
+    $('#relch').textContent = n ? T(`${n} change${n === 1 ? '' : 's'} not saved yet: what Save will do`, `${n} thay đổi chưa lưu: Lưu sẽ làm gì`) : ''; box.hidden = !n; box.querySelector('ul').innerHTML = lines.join('');
+    P.querySelector('.relsave').classList.toggle('dirty', !!n); if (!P.querySelector('#reltl')?.hidden) timeline(); };
+  // the timeline: weeks from this one, what starts and ends, and the release calendar's plan (items not scheduled yet)
+  const timeline = () => { const box = P.querySelector('#reltlw'); if (!box) return; const today = isoDay(new Date()), weeks = new Map<string, string[]>(), add = (day, html) => { const w = mondayOf(day < today ? today : day); if (!weeks.has(w)) weeks.set(w, []); weeks.get(w).push(html); };
+    const row = (id, icon, text, cls) => `<li><button type="button" class="tlitem ${cls}" data-tl="${esc(id)}">${icon} ${esc(text)}</button></li>`;
+    P.querySelectorAll<HTMLElement>('.relc').forEach(c => { const id = c.dataset.id, it = RELEASES.find(y => y.id === id), on = c.querySelector<HTMLInputElement>('[data-r="on"]').checked, st = c.querySelector<HTMLInputElement>('[data-r="start"]').value, days = +c.querySelector<HTMLInputElement>('[data-r="days"]').value || 0;
+      if (!it || !on || !st) return; const name = plainOf(it).name; if (st >= today) add(st, row(id, '🟢', T(`Opens ${fmtDay(st)}: ${name}`, `Mở ${fmtDay(st)}: ${name}`), 'opens'));
+      if (days) { const end = isoDay(new Date(new Date(st + 'T12:00:00').getTime() + days * 864e5)); if (end >= today) add(end, row(id, '🔚', T(`Ends ${fmtDay(end)}: ${name}`, `Kết thúc ${fmtDay(end)}: ${name}`), 'ends')); } });
+    for (const e of CAL) { if (!e || !e.week) continue; const c = P.querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(e.id || '')}"]`), st = c?.querySelector<HTMLInputElement>('[data-r="start"]').value; if (st) continue;
+      const it = RELEASES.find(y => y.id === e.id), name = it ? plainOf(it).name : T(e.en || e.id, e.vi || e.en || e.id); add(e.week, row(e.id || '', '📌', T(`Planned: ${name}`, `Dự định: ${name}`), 'planned')); }
+    const list = [...weeks.keys()].sort();
+    box.innerHTML = list.length ? list.map(w => `<div class="tlweek"><h4>${T('Week of', 'Tuần từ')} ${fmtDay(w)}</h4><ul>${weeks.get(w).join('')}</ul></div>`).join('')
+      : `<p class="note">${T('Nothing is scheduled yet. Open a switch’s 📅 Schedule to give it a start day.', 'Chưa có gì theo lịch. Mở 📅 Lịch của một công tắc để chọn ngày bắt đầu.')}</p>`;
+    box.querySelectorAll<HTMLElement>('[data-tl]').forEach(b => b.onclick = () => { const c = P.querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(b.dataset.tl)}"]`); if (!c) return; view('list'); c.closest('details').open = true; const o = c.querySelector<HTMLElement>('.relc-opt'); o.hidden = false; c.scrollIntoView({ block: 'center' }); }); };
+  const view = k => { P.querySelectorAll<HTMLElement>('#relview [data-view]').forEach(b => { b.classList.toggle('on', b.dataset.view === k); b.setAttribute('aria-pressed', String(b.dataset.view === k)); });
+    P.querySelectorAll<HTMLElement>('details.relg, #relf, #relq, #relsum').forEach(e => e.classList.toggle('tlhide', k === 'timeline')); const tl = P.querySelector<HTMLElement>('#reltl'); if (tl) { tl.hidden = k !== 'timeline'; if (k === 'timeline') timeline(); } };
+  P.querySelectorAll<HTMLElement>('#relview [data-view]').forEach(b => b.onclick = () => view(b.dataset.view));
   const restatus = c => { const r = { start: c.querySelector('[data-r="start"]').value, days: +c.querySelector('[data-r="days"]').value || 0, newDays: +c.querySelector('[data-r="newDays"]').value || 0 }, on = c.querySelector('[data-r="on"]').checked;
     c.classList.toggle('on', on); c.classList.toggle('sched', !!(r.start || r.days || r.newDays)); c.querySelector('.relc-st').innerHTML = status(on, r); sum(); };
   P.querySelectorAll('.relc').forEach(c => { c.querySelectorAll('input').forEach(i => i.addEventListener(i.type === 'checkbox' ? 'change' : 'input', () => restatus(c)));
@@ -891,9 +1020,9 @@ async function drawReleases(P, lab) {
         const off = items.filter(x => !isOn(x)), on = items.filter(x => isOn(x)), lab = x => `<label class="chk peek${isOn(x) ? ' already' : ''}"><input type="checkbox" data-peek="${esc(x.id)}" ${pk.has(x.id) ? 'checked' : ''}> ${x.icon ? x.icon + ' ' : ''}${esc(T(x.en, x.vi))}</label>`;
         return `<details class="pkg" data-g="${G.g}"><summary><span class="gi">${REL_ICON[G.g] || '📦'}</span><b>${T(G.en, G.vi)}</b> <span class="pkn"></span><span class="relg-all"><button type="button" class="btn small ghost" data-pall="1">${T('All', 'Hết')}</button><button type="button" class="btn small ghost" data-pall="0">${T('None', 'Bỏ hết')}</button></span></summary>
           ${off.map(lab).join('')}${on.length ? `<p class="note">${T('Already on for everyone:', 'Đã bật cho mọi người:')}</p>${on.map(lab).join('')}` : ''}</details>`; };
-      box.innerHTML = `<h4>🐞 ${T('Which devices are testers, and how', 'Máy nào là người thử, và thế nào')}</h4><p class="note">${T('None ticked: every device (while the switch is on). A tester accepts what is collected the first time, on the device.', 'Không chọn máy nào: mọi máy (khi công tắc bật). Người thử đồng ý với những gì được thu thập lần đầu, trên máy.')}</p><p class="note">${T('Tick them under Devices with the Tester chip, each with its own settings.', 'Chọn ở mục Các máy bằng nút Người thử, mỗi máy có cài đặt riêng.')}</p><p><button type="button" class="btn small ghost" data-todevs>📱 ${T('Choose devices', 'Chọn máy')}</button></p>
+      box.innerHTML = `<details class="labmore"><summary>${T('More settings for testers', 'Thêm cài đặt cho người thử')}</summary><h4>🐞 ${T('Which devices are testers, and how', 'Máy nào là người thử, và thế nào')}</h4><p class="note">${T('None ticked: every device (while the switch is on). A tester accepts what is collected the first time, on the device.', 'Không chọn máy nào: mọi máy (khi công tắc bật). Người thử đồng ý với những gì được thu thập lần đầu, trên máy.')}</p><p class="note">${T('Tick them under Devices with the Tester chip, each with its own settings.', 'Chọn ở mục Các máy bằng nút Người thử, mỗi máy có cài đặt riêng.')}</p><p><button type="button" class="btn small ghost" data-todevs>📱 ${T('Choose devices', 'Chọn máy')}</button></p>
         <h4>↩️ ${T('When someone stops being a tester', 'Khi ai đó thôi làm người thử')}</h4><p class="note">${T('These are defaults. Each device’s choice takes priority.', 'Đây là thiết lập mặc định. Lựa chọn của từng máy được ưu tiên.')}</p><div class="revert">${[['keep', 'Keep all progress after testing', 'Giữ mọi tiến trình sau khi thử'], ['progress', 'Everything since they became a tester goes back (badges, stickers and clothes stay)', 'Mọi tiến bộ từ khi làm người thử được trả lại (huy hiệu, nhãn dán và quần áo vẫn giữ)'], ['autoplay', 'Only what auto play did goes back, after each run (what they played themselves stays)', 'Chỉ trả lại phần tự chơi đã làm, sau mỗi lần chạy (phần con tự chơi vẫn giữ)']].map(([k, en, vi]) => `<label class="chk"><input type="radio" name="trevert" data-trevert="${k}" ${(['keep', 'autoplay', 'progress'].includes(TR.revert) ? TR.revert : 'progress') === k ? 'checked' : ''}> ${T(en, vi)}</label>`).join('')}</div>
-        <h4>👀 ${T('Sneak peeks: testers see these early', 'Xem trước: người thử thấy sớm')} <span class="pill" id="pkcount"></span></h4><input type="search" id="pkq" placeholder="${T('Find a feature…', 'Tìm một tính năng…')}"><div id="tpk">${allGroups.map(peekGroup).join('')}</div>`;
+        <h4>👀 ${T('Sneak peeks: testers see these early', 'Xem trước: người thử thấy sớm')} <span class="pill" id="pkcount"></span></h4><input type="search" id="pkq" data-nodirty placeholder="${T('Find a feature…', 'Tìm một tính năng…')}"><div id="tpk">${allGroups.map(peekGroup).join('')}</div></details>`;
       const pcount = () => { box.querySelector<HTMLInputElement>('#pkcount').textContent = T(`${box.querySelectorAll<HTMLInputElement>('[data-peek]:checked').length} picked`, `đã chọn ${box.querySelectorAll<HTMLInputElement>('[data-peek]:checked').length}`);
         box.querySelectorAll<HTMLInputElement>('details.pkg').forEach(d => { d.querySelector<HTMLInputElement>('.pkn').textContent = `${d.querySelectorAll<HTMLInputElement>('[data-peek]:checked').length}/${d.querySelectorAll<HTMLInputElement>('[data-peek]').length}`; }); };
       box.querySelectorAll<HTMLInputElement>('[data-peek]').forEach(i => i.onchange = pcount);
@@ -907,7 +1036,7 @@ async function drawReleases(P, lab) {
     const TR = R.tester || {}, tmine = new Set(TR.devices || []), lv = TR.levels || {}, amine = new Set((R.autoplay && R.autoplay.devices) || []);
     const sec = document.createElement('section'); sec.className = 'card devsec'; sec.id = 'devs';
     sec.innerHTML = `<h3>📱 ${T('Devices: testers and auto play', 'Các máy: người thử và tự chơi')}</h3><p class="note">${T('Tap Tester or Auto play on a device to choose it and its settings. None ticked: every device (while that switch is on).', 'Chạm Người thử hoặc Tự chơi trên một máy để chọn máy đó và cài đặt của nó. Không chọn máy nào: mọi máy (khi công tắc đó bật).')}</p><div id="tdl" class="devcards">${T('Loading the devices…', 'Đang tải danh sách máy…')}</div>`;
-    P.querySelector('.relsave').before(sec);
+    (P.querySelector('section.labpart[data-part="devices"]') || P.querySelector('.relsave')).append(sec); if (!sec.parentElement.matches('.labpart')) P.querySelector('.relsave').before(sec);
     P.querySelectorAll('[data-todevs]').forEach(b => b.onclick = e => { e.preventDefault(); sec.scrollIntoView({ block: 'start', behavior: 'smooth' }); });
     const devs = (await devsP).slice(); if (stale()) return;
     for (const id of new Set([...tmine, ...amine, ...Object.keys(lv), ...Object.keys(TR.policies || {})])) if (!devs.some(d => d.id === id)) devs.push({ id, label: '', kind: '?' });
@@ -1001,6 +1130,7 @@ async function drawReleases(P, lab) {
           if(on!==isOn(x))festivals[id.slice(5)]={...(festivals[id.slice(5)]||{}),on};
         });
         await saveLive({ releases: out, festivals });Object.keys(R).forEach(k=>delete R[k]);Object.assign(R,out);live.festivals=festivals;
+        start = JSON.stringify(snap()); sum();
       } catch (e) { fail(e); }
     };
 }
@@ -1973,7 +2103,7 @@ PAGES.accesslog = async P => {
 };
 // ---------- signing in (online only): the password, then the code from an authenticator app (round R privacy) ----------
 function signIn() {
-  LOADED = false; $('#tabs').innerHTML = ''; if ($('#crumb')) $('#crumb').innerHTML = ''; if ($('#pub')) $('#pub').hidden = true; document.body.classList.add('online');
+  forgetReads(); LOADED = false; $('#tabs').innerHTML = ''; if ($('#crumb')) $('#crumb').innerHTML = ''; if ($('#pub')) $('#pub').hidden = true; document.body.classList.add('online');
   $('#page').innerHTML = `<div class="card signin"><h2>✨ Sparkle Studio</h2><p class="sub">${T('The grown-ups’ dashboard, online. Sign in with your name and password (the owner leaves the name empty and uses the Studio password), then the 6-digit code from your authenticator app.', 'Bảng điều khiển của người lớn, trên mạng. Đăng nhập bằng tên và mật khẩu của bạn (chủ để trống tên và dùng mật khẩu Studio), rồi mã 6 số từ ứng dụng xác thực.')}</p>
     <form id="si"><input type="text" id="nm" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="${T('Sign-in name (empty for the owner)', 'Tên đăng nhập (chủ để trống)')}" style="margin-bottom:8px"><input type="password" id="pw" autocomplete="current-password" placeholder="${T('Password', 'Mật khẩu')}">
     <div id="setup2" hidden></div><input type="text" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="${T('6-digit code (from the second time)', 'Mã 6 số (từ lần thứ hai)')}" style="margin-top:8px">
