@@ -4,8 +4,15 @@ Made by `tools/blender/world-creatures.py` (run with `node tools/make-creatures.
 (`tools/blender/creatures-spec.json`, read by `node tools/blender/creatures-dump.mts`), so each model stands where the
 code shape stands, at its size, facing the same way. Status and checks: `docs/cores/tasks/v108e/creatures.md`.
 
-- `sheet-1.png`, `sheet-2.png`: all 24, the code shape (top row of each pair) and the Blender model (bottom row).
-- `sheet-cheer.png`: six of them a moment into their `cheer` clip (bottom row), beside the code shapes.
-- `computer-before.png` / `computer-after.png`, `tablet-*`, `phone-*`: Lotus Village's hens, the child's puppy and the
-  baby dragon companion in the game. "Before" has the models blocked (the code shapes, as on a phone with no network);
-  "after" has the models. The fourth hen is in the coop.
+Second pass (owner, 6 Nov 2026 AEDT: "better refinement ... check the cows and buffaloes horns ... emotions, facial
+expressions, movements, eye blinks"): smooth clean shapes instead of the melted felt; shaped horns; a face on every
+creature (shiny eyes with highlights, brows, a mouth, rosy cheeks) and moods.
+
+- `sheet-1.png`, `sheet-2.png`: all 24 in idle, the code shape (top row of each pair) and the Blender model (bottom row).
+- `horns.png`: cow, bull, calf, buffalo and unicorn: the code's horns (top) and the shaped horns (bottom).
+- `moods-1.png` to `moods-3.png`: every creature, left to right: idle, happy (eyes "^ ^", open smile), sad (head and ears
+  down, frown, brows up in the middle), surprised (eyes wide, little "o" mouth), asleep (lying down, eyes shut).
+- `computer-face.png`, `tablet-face.png`, `phone-face.png`: the child's puppy in the game's own scene and light, caught
+  mid-blink, at each screen size.
+- `computer-before.png` / `computer-after.png`, `tablet-*`, `phone-*`: Lotus Village's hens, the puppy and the baby
+  dragon in the game, with the models blocked (before) and loaded (after). The phone's after view is behind a tree.
