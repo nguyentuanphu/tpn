@@ -448,7 +448,7 @@ def hand_benthanh(m, sp):
     m.part('ConeGeometry', tile, (0, 9.8, 0), (0, math.pi / 4, 0), radius=1.3, height=1.0, radialSegments=4)
     C(m, .04, .04, .7, '#c9a24a', (0, 10.6, 0), seg=6)
 
-def opera_shell(m, x0, z0, y0, W, H, L, face, white='#f7f4ec', under='#d8d0c0', glass='#7d8f96', lean=.16, nu=12, nt=8):
+def opera_shell(m, x0, z0, y0, W, H, L, face, white='#ffffff', under='#e2dbcc', glass='#7d8f96', lean=.16, nu=12, nt=8):
     """one Opera House shell: a pointed-arch vault (the ridge on top, the two feet on the podium) that grows from its back
     (nested inside the shell behind it) to its open mouth, the tip leaning out over a bronze glass wall.
     x0: where the mouth stands along the hall, face +1/-1: which way it opens (along x), W/H/L: mouth width, height, length."""

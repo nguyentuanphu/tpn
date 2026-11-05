@@ -2,9 +2,21 @@
 
 Branch `work/v108e-places` (from `origin/integrate/v108`). Brief: `places-brief.md`.
 
-## Now (6 Nov 2026, 02:30 AEDT)
+## Now (6 Nov 2026 AEDT)
 
-Part 1 done and pushed: the landmarks and bridges. Next: the homes, shops and stalls, then the food and festival props.
+- Parts 1 to 3 done: the landmarks and bridges, the homes, shops and stalls, and the festival and food props.
+- The owner asked for more refinement and a better Opera House (6 Nov). Done so far:
+  - **The Opera House is rebuilt:**
+    - nested pointed-arch shells in two rows (the Concert Hall and the theatre), each opening onto bronze glass walls;
+    - one shell turned back over the foyer in each row;
+    - the Bennelong restaurant shells;
+    - the granite podium with its broad stairs.
+  - **Ben Thanh is rebuilt:**
+    - the long hipped tile roof and the corner pavilions;
+    - pilasters and arched windows;
+    - the pedimented gate with columns, and the clock tower with hour marks.
+  - **The One Pillar Pagoda's dragons** now curl up to the moon pearl.
+  - **Every model** has soft shading (ambient occlusion) baked into its corner colours.
 
 ## How it works
 
@@ -19,7 +31,7 @@ Part 1 done and pushed: the landmarks and bridges. Next: the homes, shops and st
 
 ## Kit changes (small, marked, for Release)
 
-- `js/gfx.ts`: `WORLD_TAGS` and `worldTag()`.
+- `js/gfx.ts`: `WORLD_TAGS`, `worldTag()`, `geoKey()`; `merge()` keeps a colourless part's own corner colours.
 - `js/modelkit.ts`:
   - imports `WORLD_TAGS` and `outline`;
   - `adoptWorldTags()`, called in the `startWorldModels` updater;
@@ -40,13 +52,26 @@ Part 1 done and pushed: the landmarks and bridges. Next: the homes, shops and st
 | Season 2 Vietnam (`js/s2vn.ts`) | mekong, halong, sapa, taynguyen |
 | Season 2 Australia (`js/s2au-region.ts`) | tagged (`lm-s2au-gbr`, `-tas`, `-perth`), not made yet: not built in the dump; next part |
 
-### Homes, shops, stalls (part 2: to do)
+### Homes, shops, stalls (part 2: done, 38 models)
 
-`js/houses.ts`, `js/homes.ts`, `js/town.ts`, `js/suburbs.ts`, `js/school.ts`, the market stalls (`stall()` in `js/regions.ts`), `js/hawkers.ts`, `js/vendors.ts`, the Aussie Corner shops.
+- **What is covered:** every storybook house (`finish()` in `js/houses.ts`, used by the town, the suburbs, Asia and the village), the Aussie Corner shops, the school, the market stalls (`stall()` in `js/regions.ts`, `js/world.ts`), the clothes stall (`js/shop.ts`) and the farm stall (`js/farm.ts`).
+- **Naming:** one model per distinct shape, named by a hash of the code shape (`geoKey`), so repeated houses share one model.
+- **Over budget:** a few detailed houses have 3,200-5,400 triangles, about what their code shapes already have.
+- **Not done:** the hawkers' carrying poles (they move with a person), and the My House rooms (interior, the nature helper's furniture).
 
-### Food and festival props (part 3: to do)
+### Food and festival props (part 3: done, 8 models)
 
-Stall food, banh chung, mam ngu qua, lanterns, peach blossom in pots, the Christmas tree, Easter eggs, the Mid-Autumn star lantern (`js/festdecor.ts`, `js/lanterns.ts`).
+- **The props:**
+  - `pr-peach` (hoa dao in a red pot) and `pr-mai` (hoa mai);
+  - `pr-banhchung` and `pr-mamnguqua` (new, on the Tet table);
+  - `pr-xmastree` and `pr-eggs` (Easter);
+  - `pr-starlantern` (Mid-Autumn) and `pr-lantern` (round silk lantern).
+- **Drawing:** the festival decorations are merged into 12 m patches under a draw and triangle budget (PERF-003). So a prop's own geometry, with its colours, joins that same merge in place of the code parts (`js/festivals.ts`):
+  - the draws stay the same;
+  - the code parts stay as the fallback;
+  - the lanterns join the glow mesh, so they still light up at night.
+- **Small change in `js/gfx.ts`:** `merge()` keeps a part's own corner colours when the part has no colour.
+- **Not done:** the stall food on the market counters. It is drawn as our 2D art pictures (sprites), which the brief keeps as 2D.
 
 ## Checks
 

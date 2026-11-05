@@ -54,11 +54,12 @@ export function merge(parts) {
   const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3);
   let o = 0;
   for (const p of parts) {
-    const a = p.g.attributes.position, b = p.g.attributes.normal; _c.set(p.color);
+    // (v1.08e places) a part with no colour keeps the colours in its own corners (a Blender prop: js/festivals.ts)
+    const a = p.g.attributes.position, b = p.g.attributes.normal, vc = p.color == null ? p.g.attributes.color : null; if (!vc) _c.set(p.color);
     for (let i = 0; i < a.count; i++, o++) {
       pos[o * 3] = a.getX(i); pos[o * 3 + 1] = a.getY(i); pos[o * 3 + 2] = a.getZ(i);
       nor[o * 3] = b.getX(i); nor[o * 3 + 1] = b.getY(i); nor[o * 3 + 2] = b.getZ(i);
-      col[o * 3] = _c.r; col[o * 3 + 1] = _c.g; col[o * 3 + 2] = _c.b;
+      if (vc) { col[o * 3] = vc.getX(i); col[o * 3 + 1] = vc.getY(i); col[o * 3 + 2] = vc.getZ(i); } else { col[o * 3] = _c.r; col[o * 3 + 1] = _c.g; col[o * 3 + 2] = _c.b; }
     }
   }
   const g = new THREE.BufferGeometry();

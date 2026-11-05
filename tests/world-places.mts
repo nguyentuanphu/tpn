@@ -19,7 +19,7 @@ export async function worldPlacesCheck(browser: Browser) {
   const offline = Object.keys(spec).filter(n => !sw.includes(`'models/world/${n}.glb'`));
   assert.deepEqual(offline, [], 'every places model is in the offline list (sw.ts)');
   const notes: string[] = [];
-  const P = await open(browser, { w: 900, h: 700, settings: { voice: false, online: false } });
+  const P = await open(browser, { w: 900, h: 700, settings: { voice: false, online: false, festival: 'tet' } });   // (Tết on: the festival props)
   try {
     await clear(P.page); await noWelcome(P.page);
     const r = await P.page.evaluate(async (FAMOUS) => {
@@ -54,6 +54,11 @@ export async function worldPlacesCheck(browser: Browser) {
       return { rows, errors, colliders: W.colliders.length };
     }, FAMOUS);
     for (const e of r.errors) notes.push(e);
+    // the festival props (js/festivals.ts): all eight load and join the Tết decorations' patches (no extra draws)
+    const fp = await P.page.evaluate(async () => { const F = await import(String('/js/festivals.js'));
+      for (let i = 0; i < 120 && F.festivalPropsReady().length < 8; i++) await new Promise(r => setTimeout(r, 250));
+      return F.festivalPropsReady(); });
+    if (fp.length !== 8) notes.push('festival props loaded: ' + fp.join(', '));
     await fs.mkdir('out/worldplaces', { recursive: true });
     await fs.writeFile('out/worldplaces/models.json', JSON.stringify(r.rows, null, 1));
     assert.deepEqual(notes, [], notes.join('\n'));
@@ -74,5 +79,5 @@ export async function worldPlacesCheck(browser: Browser) {
     assert.ok(b.failed && !b.model, 'the turtle tower keeps its code shape when its model is blocked');
     assert.deepEqual(Q.errors.filter(e => !/world model/.test(e)), []);
   } finally { await Q.ctx.close(); }
-  return `${count} places models: on the ground, the code shape's size and facing, one draw each; The Huc bridge and the market gate walk through; a blocked model keeps its code shape`;
+  return `${count} places models: on the ground, the code shape's size and facing, one draw each; 8 festival props in the Tet patches; The Huc bridge and the market gate walk through; a blocked model keeps its code shape`;
 }
