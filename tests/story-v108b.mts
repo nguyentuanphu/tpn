@@ -185,8 +185,8 @@ export async function websiteNewsCheck(b) {
 // only), the game (an under-5's own game; the other one does not count), the story, the three hiding spots (an under-5's
 // companion leads), the rope, the festival film, the place lit, the show, the keepsake and the new trick; nothing stands
 // on a road or in the water; the step lines are in English and Vietnamese
-export async function chapterKitCheck(b, id: 'ch4' | 'ch5' | 'finale') {
-  const before = { ch4: ['ch1', 'ch2', 'ch3'], ch5: ['ch1', 'ch2', 'ch3', 'ch4'], finale: ['ch1', 'ch2', 'ch3', 'ch4', 'ch5'] }[id];
+export async function chapterKitCheck(b, id: string, chaptersBefore?: string[]) {   // (v1.08d s2au: the later chapters give theirs)
+  const before = chaptersBefore || { ch4: ['ch1', 'ch2', 'ch3'], ch5: ['ch1', 'ch2', 'ch3', 'ch4'], finale: ['ch1', 'ch2', 'ch3', 'ch4', 'ch5'] }[id];
   const res = [], sum = [];
   for (const age of ['little', 'big']) {
     const P = await open(b, { w: 1000, h: 700 }); await clear(P.page);

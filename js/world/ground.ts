@@ -167,6 +167,10 @@ export function heightAt(x, z) {
   if (PADS) for (const S of PADS) { if (Math.abs(x - S.x) >= 7 || Math.abs(z - S.z) >= 7) continue; const d = dist2(x, z, S.x, S.z); if (d < 7) h = lerp(h, Math.max(h, WATER + 1.4), 1 - smooth(3.6, 7, d)); }
   // the southern coast: a sandy beach, then the sea (its edge waves gently)
   { const cz = COAST.z + Math.sin(x * .025) * 4 + Math.sin(x * .07 + 1) * 2; h = lerp(h, Math.min(h, 1), smooth(cz - 26, cz - 8, z)); h = lerp(h, COAST.sea, smooth(cz - 6, cz + 8, z)); }
+  // (v1.08d s2au) islands in the sea (Tasmania with Cradle Mountain, Rottnest): level ground with a gentle shore
+  if (z > COAST.z) for (const I of MAP.ISLES) { const ex = (x - I.at[0]) / I.rx, ez = (z - I.at[1]) / I.rz; if (ex > 1.3 || ex < -1.3 || ez > 1.3 || ez < -1.3) continue;
+    const e = Math.hypot(ex, ez); let top = I.h + fbm(x * .06, z * .06, 2) * .5; if (I.peak) top += I.peak[2] * (1 - smooth(0, I.peak[3], dist2(x, z, I.peak[0], I.peak[1])));
+    h = lerp(h, top, 1 - smooth(.8, 1.25, e)); }
   const dr = riverDist(x, z);
   // A shallow, even riverbed: keep the swimming channel below the 0.9 m threshold and the boat hulls clear.
   // Water level, bridge decks and banks stay at their authored elevations.

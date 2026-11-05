@@ -91,7 +91,20 @@ export const PLACES = [
   { id: 'playground', kind: 'site', place: 'town', off: [-4, 9], r: 13, h: 4.6 },   // the park on Two Homes Street, where kids from Australia and Vietnam play
   // (round R story) bà Huệ and ông Nghi's yard (js/yard.js): its own levelled plot behind the north row of Two Homes
   // Street, east of the houses, facing the street (+z)
-  { id: 'yard', kind: 'plot', place: 'town', off: [28, -30], w: 15.5, d: 12, rot: 0, h: 4.6 }
+  { id: 'yard', kind: 'plot', place: 'town', off: [28, -30], w: 15.5, d: 12, rot: 0, h: 4.6 },
+  // (v1.08d s2au) Season 2, Australia: new places on the southern coast of the west bank (nothing else moved): the
+  // Great Barrier Reef's beach east of the Twelve Apostles, Tasmania an island in the sea south of them, Perth on the
+  // beach in the far south-west and Rottnest Island off it. The islands rise out of the sea (ISLES below); js/s2au.ts
+  { id: 'gbr', kind: 'site', cc: 'au', at: [-58, 177], r: 7 },
+  { id: 'tasmania', kind: 'site', cc: 'au', at: [-132, 222], r: 10 },
+  { id: 'perth', kind: 'site', cc: 'au', at: [-204, 177], r: 9 },
+  { id: 'rottnest', kind: 'site', cc: 'au', at: [-214, 222], r: 6 }
+];
+// (v1.08d s2au) islands in the southern sea (js/world/ground.ts heightAt): an ellipse rx by rz round `at`, level at h,
+// with a gentle shore; `peak`: a mountain on it [x, z, height, radius] (Cradle Mountain)
+export const ISLES: { id: string; at: [number, number]; rx: number; rz: number; h: number; peak?: [number, number, number, number] }[] = [
+  { id: 'tasmania', at: [-132, 222], rx: 30, rz: 13, h: 2.6, peak: [-148, 226, 9, 9] },
+  { id: 'rottnest', at: [-214, 222], rx: 12, rz: 8, h: 2.2 }
 ];
 
 // Water: one sea-level plane, and channels carved below it. The main river runs from the northern mountains to the sea,
@@ -120,7 +133,8 @@ export const WATERS = [
   { id: 'murray', kind: 'river', w: .7, pts: [[-238, 150], [-190, 154], [-132, 154], [-80, 156], [-30, 162], [14, 168]] },
   // small round lakes: Hồ Gươm (Hoàn Kiếm Lake) by Hà Nội with the Turtle Tower in it; a billabong in the outback
   { id: 'hoguom', kind: 'pond', place: 'hanoi', off: [-29, 3], r: 10.5, islet: 2.6, depth: .45 },   // (the Turtle Tower stands on its little island; r89, owner: bigger and shallow enough to wade in; owner, 30 Oct 2026 AEDT: "too deep, make it shallower": knee deep)
-  { id: 'billabong', kind: 'pond', at: [-204, 22], r: 8 }
+  { id: 'billabong', kind: 'pond', at: [-204, 22], r: 8 },
+  { id: 'swan', kind: 'pond', at: [-222, 168], r: 6 }   // (v1.08d s2au) the Swan River's black swans by Perth
 ];
 
 // Bridges run along the x or the z axis, never diagonally: from a0 to a1 along it, centred on c across it; h is the deck.
@@ -332,6 +346,15 @@ export const BOATS = [
   { id: 'harbourferry', water: 'sydney_harbour', via: [[-106, -2], [-54, -2]], piers: [{ id: 'sydney', at: [-108, 24], to: [-106, 1], name: ['Sydney Harbour', 'Bến cảng Sydney'] }, { id: 'island', at: [-37, -3], to: [-48, -3], name: ['Two Homes Island', 'Đảo Hai Quê'] }] },
   // (round T3) the boat from TP. HCM down Sông Sài Gòn and along the coast to Bãi Sau at Vũng Tàu
   { id: 'vtboat', water: 'saigon_r', via: [[131, 196], [198, 198]], piers: [{ id: 'saigon', at: [136, 156], to: [131, 156], name: ['TP. Hồ Chí Minh', 'TP. Hồ Chí Minh'] }, { id: 'vungtau', at: [198, 181], to: [198, 190], name: ['Bãi Sau, Vũng Tàu', 'Bãi Sau, Vũng Tàu'] }] },
+  // (v1.08d s2au) the Southern Coast Boat: from the Murray by Melbourne, down the river and along the coast to the reef,
+  // Tasmania, Perth and Rottnest (more than two piers: `legs` are the turns between one pier and the next)
+  { id: 'coastboat', water: 'murray', speed: 9, piers: [
+    { id: 'melbourne', at: [-122, 145], to: [-122, 151], name: ['Melbourne river pier', 'Bến sông Melbourne'] },
+    { id: 'gbr', at: [-58, 184], to: [-58, 197], name: ['Great Barrier Reef', 'Rạn san hô Great Barrier'] },
+    { id: 'tasmania', at: [-120, 211], to: [-120, 205], name: ['Tasmania', 'Đảo Tasmania'] },
+    { id: 'perth', at: [-204, 186], to: [-204, 199], name: ['Perth', 'Perth'] },
+    { id: 'rottnest', at: [-210, 216], to: [-210, 209], name: ['Rottnest Island', 'Đảo Rottnest'] }],
+    legs: [[[-80, 156], [-30, 162], [12, 168], [13, 205], [-20, 204]], [[-90, 203]], [[-170, 208]], []] },
   { id: 'crossing', water: 'main_n', count: 0 }            // (round T2, Concept D: no crossing rafts; bridges join every bank and the raft line stops by each)
 ];
 

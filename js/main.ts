@@ -1126,6 +1126,7 @@ afterStart(() => Promise.all([import('./villagertalk.js'), import('./dayplan.js'
 afterStart(() => import('./pricetags.js'), m => m.createPriceTags(G));
 afterStart(() => import('./jobs.js'), m => m.createJobs(G));
 afterStart(() => import('./wayfind.js'), m => m.createWayfind(G));   // (Round U) "Where is…?" sparkles
+setTimeout(() => { void import('./s2au.js').then(m => m.createS2au(G)).catch(e => console.warn('s2au', e)); }, 2000);   // (v1.08d s2au) Season 2, Australia: after the start
 G.openWhere = i => featureOn('wayfind', false) && G.wayfind && G.wayfind.open(i);
 onLive(() => { if (!featureOn('wayfind',false)) { G.wayfind?.stop(true); document.querySelectorAll<HTMLElement>('.wherepick').forEach(m => m.querySelector<HTMLElement>('.x')?.click()); } });
 afterStart(() => import('./animalhomes.js'), m => m.createAnimalHomes(G));   // (Round U) animals with homes   // (Round U) a job board in every place   // (Round U) a coin-picture price over every food stall
