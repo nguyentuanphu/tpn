@@ -4,19 +4,37 @@ Branch `work/v108e-places` (from `origin/integrate/v108`). Brief: `places-brief.
 
 ## Now (6 Nov 2026 AEDT)
 
-- Parts 1 to 3 done: the landmarks and bridges, the homes, shops and stalls, and the festival and food props.
-- The owner asked for more refinement and a better Opera House (6 Nov). Done so far:
+- Parts 1 to 3 are done: the landmarks and bridges; the homes, shops and stalls; the festival and food props.
+- The owner asked twice for more refinement and a better Opera House (6 Nov). Done since then:
+  - **Drawn by hand: 54 landmarks**, so every landmark except the bridges now has its real shape, drawn our way:
+    - Ha Noi: Thap Rua, The Huc with Ngoc Son's gate, Khue Van Cac, the One Pillar Pagoda, the water puppet stage.
+    - Bac Ninh: the clock tower, Chua Dau, But Thap, Den Do's gate, the Quan ho dragon boat.
+    - Saigon: Ben Thanh, Notre-Dame, the Central Post Office.
+    - Central Vietnam: Hue's Ngo Mon, the Golden Bridge with its stone hands, the Marble Mountains, Hoi An's houses with lanterns.
+    - The Mekong and Cai Rang.
+    - Sydney: the Opera House, the Harbour Bridge, Sydney Tower, Luna Park.
+    - Melbourne and Brisbane: Flinders Street, the W-class tram, the Exhibition Building, the Brisbane Wheel stand, Lone Pine.
+    - Around Australia:
+      - the Big Banana, Bondi, Uluru, Kakadu, the reef, the Twelve Apostles, the Three Sisters;
+      - Season 2's Rottnest, Cradle Mountain and reef: tagged, not made yet.
+    - The Vung Tau lighthouse.
+    - The heritage sites: Ha Long, My Son, Phong Nha, Trang An, the Forbidden City, the Temple of Heaven, the Potala, the Terracotta Army, the Qutub Minar, the Red Fort, Konark, Hampi, Mahabodhi.
+    - Season 2 Vietnam: Hon Trong Mai, the Mekong canal and monkey bridge, Sa Pa's terraces, the nha rong.
   - **The Opera House is rebuilt:**
-    - nested pointed-arch shells in two rows (the Concert Hall and the theatre), each opening onto bronze glass walls;
+    - nested pointed-arch shells in two rows, opening onto bronze glass;
     - one shell turned back over the foyer in each row;
     - the Bennelong restaurant shells;
-    - the granite podium with its broad stairs.
-  - **Ben Thanh is rebuilt:**
-    - the long hipped tile roof and the corner pavilions;
-    - pilasters and arched windows;
-    - the pedimented gate with columns, and the clock tower with hour marks.
-  - **The One Pillar Pagoda's dragons** now curl up to the moon pearl.
+    - the granite podium with its stairs.
+  - **Every other model** (houses, shops, stalls, bridges) gets automatic picture-book detail:
+    - tiled roofs with eaves, fascia and tile courses;
+    - darker plinths and lighter cornices on walls;
+    - window frames, sills and glazing bars;
+    - leafy clusters for round bushes;
+    - a slight hand-painted colour change from part to part;
+    - a lighter detail level kicks in automatically when a model gets too heavy.
   - **Every model** has soft shading (ambient occlusion) baked into its corner colours.
+  - All 110 models together: 3.6 MB.
+- **Fix:** the solid map and the open-spot finder keep counting a code shape after its model swaps in; the model is `noSolid`.
 
 ## How it works
 
@@ -75,7 +93,11 @@ Branch `work/v108e-places` (from `origin/integrate/v108`). Brief: `places-brief.
 
 ## Checks
 
-- `worldplaces` (new, `tests/world-places.mts`, at the end of `tests/run.mts`): pass (6 Nov, 02:25 AEDT). It checks that:
+- **Results (6 Nov AEDT):**
+  - Pass: `worldplaces` (102 models and the 8 festival props), `types`, `boot`, `perf` (village 293 draws), `startup`, `battery`, `worldplacement`, `stalls`, `regions`, `festivals`, `ownerfestplacement`, `spawnview`, `flyaudit`.
+  - `startup` passes, but the first download is 1033 KB against the brief's 1025 KB (the tag helpers in `js/gfx.ts`).
+  - `solid` fails on `sing4`, the same on `origin/integrate/v108` (not caused by this work).
+- `worldplaces` (new, `tests/world-places.mts`, at the end of `tests/run.mts`): It checks that:
   - all 60 models in the valley at the start stand on the ground, at the code shape's size and facing, inside its footprint, one draw each;
   - the The Huc bridge and the market gate can be walked through;
   - a blocked model keeps its code shape;

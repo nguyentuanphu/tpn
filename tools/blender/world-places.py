@@ -845,10 +845,14 @@ def hand_lunapark(m, sp):
 def tube(m, pts, radii, colors, seg=10, cap=True, scale=(1, 1)):
     """a smooth tube through pts (three.js frame), radius per point, a colour per point (or one), rings square to the path"""
     pts = [Vector(p) for p in pts]; n = len(pts); v, f, fc = [], [], []
-    up = Vector((0, 1, 0))
+    a = None   # (the ring's frame is carried along the path, so rings never twist)
     for i, p in enumerate(pts):
         t = (pts[min(i + 1, n - 1)] - pts[max(i - 1, 0)]).normalized()
-        a = (up - t * up.dot(t)); a = a.normalized() if a.length > 1e-4 else Vector((1, 0, 0)); b2 = t.cross(a)
+        if a is None:
+            ref = Vector((0, 1, 0)) if abs(t.y) < .9 else Vector((1, 0, 0)); a = (ref - t * ref.dot(t)).normalized()
+        else:
+            a = (a - t * a.dot(t)).normalized()
+        b2 = t.cross(a)
         for k in range(seg):
             q = k / seg * TAU; v.append(tuple(p + (a * math.cos(q) * scale[0] + b2 * math.sin(q) * scale[1]) * radii[i]))
     groups = {}
@@ -958,10 +962,597 @@ def hand_uluru(m, sp):
         a = k / 7 * TAU + .3
         m.part('SphereGeometry', '#6a2a1a', (math.cos(a) * 28.6, 1.2, math.sin(a) * 12.0), (0, -a, 0), (1, .7, .35), radius=1.3, widthSegments=8, heightSegments=6)
 
+
+def hand_puppetstage(m, sp):
+    # the water puppet stage (thuy dinh): a little red pavilion with a curled tiled roof standing in a pond, bamboo blinds
+    # across its front where the puppeteers hide, a wooden landing, lotus leaves on the water
+    m.part('CylinderGeometry', '#9a9080', (0, .1, 0), radiusTop=4.75, radiusBottom=4.85, height=.3, radialSegments=32)
+    m.part('CylinderGeometry', '#3d9fc9', (0, .2, 0), radiusTop=4.5, radiusBottom=4.5, height=.12, radialSegments=32)
+    B(m, 4.8, .3, 3.0, '#7a4a2a', (0, .45, -1.6))
+    B(m, 4.4, 1.6, 2.4, '#c0392b', (0, 1.4, -1.8))
+    for k in range(9): B(m, .42, 1.1, .04, '#d8b46a' if k % 2 else '#c9a35a', (-1.7 + k * .42, 1.25, -.58))   # the bamboo blinds
+    for x in (-2.0, 2.0): C(m, .14, .16, 2.4, '#8a1e1e', (x, 1.4, -.4), seg=8)
+    viet_roof(m, 4.6, 2.8, 1.2, '#a0522d', (0, 2.25, -1.6), curl=.5, over=.45, ridge_color='#7a3a1e')
+    m.part('SphereGeometry', '#ffd23f', (0, 3.6, -1.6), radius=.13)
+    B(m, 4.4, .16, 1.6, '#8a5a3b', (0, .4, -.1))   # the stage over the water
+    for k in range(7):   # lotus leaves
+        a = k * 2.3; m.part('CylinderGeometry', '#4f9a4a', (math.cos(a) * 3.3, .28, 1.2 + math.sin(a) * 1.8), radiusTop=.4, radiusBottom=.4, height=.04, radialSegments=10, thetaLength=TAU - .5)
+    for k in range(3): m.part('SphereGeometry', '#ff9ab8', (-2 + k * 2, .45, 2.6 - k * .4), (0, 0, 0), (1, .8, 1), radius=.16)
+
+def hand_bnclock(m, sp):
+    # Bac Ninh's clock tower at the six-way roundabout: a round fountain basin, four slender white legs rising to the clock
+    # room (its faces are the game's own, carried over), a gold cornice, a pointed roof and a spire
+    stone, white, gold = '#b9b2a4', '#efe6d2', '#c9a24a'
+    C(m, 3.6, 3.8, .5, stone, (0, .25, 0), seg=32); C(m, 3.1, 3.1, .35, '#5fb3dc', (0, .55, 0), seg=32)
+    for k in range(12): a = k / 12 * TAU; C(m, .05, .07, .5, '#d9eef6', (math.cos(a) * 2.4, .85, math.sin(a) * 2.4), seg=5)   # the jets
+    C(m, 1.6, 1.8, 1.4, '#8f8a80', (0, 1.2, 0), seg=16); C(m, 1.7, 1.7, .15, white, (0, 1.95, 0), seg=16)
+    for x, z in ((-.6, -.6), (.6, -.6), (-.6, .6), (.6, .6)):
+        B(m, .4, 7.0, .4, white, (x, 5.4, z)); B(m, .55, .2, .55, gold, (x, 2.1, z))
+    for y in (4.0, 6.4): B(m, 1.6, .15, 1.6, gold, (0, y, 0))
+    B(m, 2.1, 2.1, 2.1, white, (0, 9.8, 0)); B(m, 2.3, .14, 2.3, gold, (0, 8.75, 0))
+    B(m, 2.4, .3, 2.4, gold, (0, 10.95, 0))
+    m.part('ConeGeometry', gold, (0, 12.0, 0), (0, math.pi / 4, 0), radius=1.2, height=1.8, radialSegments=4)
+    C(m, .05, .08, 1.0, gold, (0, 13.3, 0), seg=6); m.part('SphereGeometry', gold, (0, 13.8, 0), radius=.12)
+
+def hand_chuadau(m, sp):
+    # Chua Dau (Bac Ninh): the old temple hall with its curled roof, and in front the Hoa Phong tower: three storeys of
+    # weathered red brick, each with a little tiled eave and an arched niche
+    B(m, 7, .4, 5, '#b9ab8e', (0, .2, -1))
+    B(m, 6, 2.2, 3, '#c9a07a', (0, 1.5, -2.5))
+    for x in (-2.2, -1.1, 0, 1.1, 2.2): C(m, .12, .12, 2.2, '#8a3a2a', (x, 1.5, -.95), seg=8)
+    for x in (-1.6, 0, 1.6): B(m, .8, 1.5, .05, '#5a3a24', (x, 1.15, -.98))
+    viet_roof(m, 6.2, 3.2, 1.2, '#7a3a2a', (0, 2.6, -2.5), curl=.45, over=.45, ridge_color='#5a2a1a')
+    for k in range(3):   # the Hoa Phong brick tower
+        w = 2.5 - k * .42; y = .4 + k * 1.95
+        B(m, w, 1.6, w, '#b45a3a' if k % 2 else '#a85032', (0, y + .8, 1.4))
+        for a in (0, math.pi / 2, math.pi, -math.pi / 2): arch_door(m, .4, .8, '#3a2a22', (math.sin(a) * (w / 2 + .01), y + .35, 1.4 + math.cos(a) * (w / 2 + .01)), a)
+        viet_roof(m, w, w, .45, '#7a3a2a', (0, y + 1.6, 1.4), curl=.18, over=.22)
+    m.part('SphereGeometry', '#c9a24a', (0, 6.35, 1.4), radius=.15)
+
+def hand_butthap(m, sp):
+    # But Thap's Bao Nghiem tower (Bac Ninh): an octagonal grey stone tower in five storeys narrowing upwards like a writing
+    # brush, each storey with carved panels and a stone cornice, on a square terrace with a balustrade
+    stone, stone2, dark = '#9a958a', '#7f7a70', '#4a4640'
+    B(m, 5.4, .4, 5.4, '#a8a296', (0, .2, 0))
+    for k in range(16): a = k / 16 * TAU; B(m, .18, .5, .18, stone2, (math.cos(a) * 2.5 if abs(math.cos(a)) > .7 else 2.5 * math.copysign(1, math.cos(a)) if False else math.cos(a) * 2.5, .65, math.sin(a) * 2.5))
+    for k in range(5):
+        r = 1.5 - k * .2; y = 1.1 + k * 1.6
+        C(m, r, r + .1, 1.4, stone, (0, y, 0), seg=8)
+        C(m, r + .38, r + .32, .22, stone2, (0, y + .8, 0), seg=8)
+        for j in range(8):   # a carved panel on each face
+            a = j / 8 * TAU + math.pi / 8; m.part('BoxGeometry', dark if j % 2 else stone2, (math.sin(a) * (r + .04), y, math.cos(a) * (r + .04)), (0, a, 0), width=r * .55, height=.8, depth=.04)
+    m.part('ConeGeometry', stone2, (0, 9.4, 0), radius=.5, height=1.6, radialSegments=8)
+    m.part('SphereGeometry', stone, (0, 10.1, 0), radius=.14)
+
+def hand_dendo(m, sp):
+    # the three-door gate (tam quan) of Den Do: a tall middle gate and two lower side gates, plastered pillars with
+    # couplet panels, each gate under its own curled roof, the gold name board over the middle door
+    wall, red, roof = '#e8dcc0', '#7a3a2a', '#8a4a2a'
+    for x, w, h in ((-2.8, 1.6, 3.2), (0, 2.4, 4.2), (2.8, 1.6, 3.2)):
+        B(m, w, h, 1.1, wall, (x, h / 2, 0)); B(m, w + .1, .2, 1.2, '#cfc2a4', (x, .1, 0))
+        arch_door(m, w * .55, h * .62, red, (x, .1, .56), 0); arch_door(m, w * .55, h * .62, red, (x, .1, -.56), math.pi)
+        for sx in (-1, 1): B(m, .14, h * .7, .05, '#c62828', (x + sx * w * .38, h * .45, .57))   # couplet boards
+        viet_roof(m, w, 1.2, .75, roof, (x, h, 0), curl=.35, over=.32, ridge_color='#6a3a1e')
+    B(m, 1.2, .38, .08, '#ffd23f', (0, 3.4, .58))
+
+def hand_quanho(m, sp):
+    # a Quan ho dragon boat on a little pond: a red-and-gold boat with a dragon's head and curling tail, a canopy frame
+    # (the two singers are the game's own, carried over)
+    m.part('CylinderGeometry', '#9a9080', (0, .1, 0), radiusTop=4.5, radiusBottom=4.6, height=.3, radialSegments=32)
+    m.part('CylinderGeometry', '#3d9fc9', (0, .2, 0), radiusTop=4.3, radiusBottom=4.3, height=.12, radialSegments=32)
+    pts = [(-2.4, .9, 0), (-1.6, .55, 0), (0, .5, 0), (1.6, .55, 0), (2.4, .9, 0)]
+    tube(m, pts, [.35, .75, .8, .75, .35], ['#8a5a3b', '#8a5a3b', '#8a5a3b', '#8a5a3b'], seg=10, scale=(1, 1.15))
+    B(m, 4.6, .12, 1.5, '#c0392b', (0, .88, 0)); B(m, 4.7, .06, 1.62, '#ffd23f', (0, .95, 0))
+    tube(m, [(2.4, .9, 0), (2.8, 1.3, 0), (2.9, 1.7, 0)], [.28, .24, .2], '#2f8a4a', seg=8)   # the dragon's neck and head
+    m.part('SphereGeometry', '#2f8a4a', (3.0, 1.8, 0), (0, 0, 0), (1.4, .9, .8), radius=.3)
+    for sz in (-1, 1): m.part('SphereGeometry', '#ffd23f', (3.15, 1.92, sz * .14), radius=.07)
+    m.part('ConeGeometry', '#ffd23f', (2.85, 2.1, 0), (0, 0, -.5), radius=.08, height=.35, radialSegments=5)
+    tube(m, [(-2.4, .9, 0), (-2.8, 1.3, 0), (-2.7, 1.8, 0), (-2.4, 1.9, 0)], [.22, .18, .14, .08], '#2f8a4a', seg=8)   # the tail
+
+
+def rock(m, pos, size, color, seed=0, squash=(1, 1, 1)):
+    """a weathered rock: an icosphere pushed in and out a little (seeded), stretched by squash"""
+    import random
+    rnd = random.Random(seed); v, f = g_poly('IcosahedronGeometry', 1, 1)
+    v = [tuple(c * (1 + (rnd.random() - .5) * .28) for c in p) for p in v]
+    m.add((v, f), color, Matrix.Translation(pos) @ Matrix.Diagonal((size * squash[0], size * squash[1], size * squash[2], 1)))
+
+def hand_bondi(m, sp):
+    # Bondi's lifesavers' tower: a white cabin on stilts with blue trim and big windows, a ladder, a flag on top, and the
+    # red-and-yellow flags marking where to swim
+    for x, z in ((-1, -1), (1, -1), (-1, 1), (1, 1)): C(m, .09, .1, 3.0, '#dddddd', (x, 1.5, z), seg=6)
+    for y in (1.0, 2.0): B(m, 2.1, .08, .08, '#cfcfcf', (0, y, 1)); B(m, 2.1, .08, .08, '#cfcfcf', (0, y, -1))
+    B(m, 2.6, 1.5, 2.6, '#ffffff', (0, 3.75, 0)); B(m, 2.75, .3, 2.75, '#2f7ac8', (0, 4.6, 0)); B(m, 2.8, .12, 2.8, '#2f7ac8', (0, 3.0, 0))
+    for a in (0, math.pi / 2, math.pi, -math.pi / 2): m.part('BoxGeometry', '#7fbfe0', (math.sin(a) * 1.31, 3.85, math.cos(a) * 1.31), (0, a, 0), width=1.9, height=.7, depth=.04)
+    for k in range(6): B(m, .5, .05, .1, '#cfcfcf', (0, .4 + k * .45, 1.6), (-.35, 0, 0))   # the ladder
+    for sx in (-.25, .25): B(m, .06, 2.9, .06, '#cfcfcf', (sx, 1.5, 1.7), (-.35, 0, 0))
+    C(m, .03, .03, 1.2, '#888888', (0, 5.3, 0), seg=4); B(m, .6, .4, .03, '#e8433a', (.3, 5.7, 0)); B(m, .6, .2, .035, '#ffd23f', (.3, 5.6, 0))
+    for x in (-6, 6):
+        C(m, .03, .035, 2.4, '#888888', (x, 1.2, 4), seg=4)
+        B(m, .8, .3, .04, '#e8433a', (x + .4, 2.2, 4)); B(m, .8, .3, .04, '#ffd23f', (x + .4, 1.9, 4))
+
+def hand_wtram(m, sp):
+    # a Melbourne W-class tram: green below, cream above, a red roof stripe, rows of windows, a bow collector on the roof,
+    # destination boards at each end, on its own track
+    B(m, 1.4, .1, 9, '#6f747a', (0, .05, 0)); [B(m, .08, .06, 9, '#9aa0a6', (sx * .55, .12, 0)) for sx in (-1, 1)]
+    for k in range(12): B(m, 1.6, .05, .18, '#5a4a3a', (0, .07, -4.2 + k * .76))
+    B(m, 2.2, 1.3, 7, '#2f7a4a', (0, 1.15, 0)); B(m, 2.25, .12, 7.05, '#ffd23f', (0, 1.8, 0))
+    B(m, 2.2, 1.1, 7, '#f4ead2', (0, 2.4, 0)); B(m, 2.3, .25, 7.2, '#8a3a2a', (0, 3.05, 0))
+    m.part('CylinderGeometry', '#7a7f84', (0, 3.25, 0), (math.pi / 2, 0, 0), radiusTop=1.0, radiusBottom=1.0, height=6.6, radialSegments=12, thetaStart=-.9 + math.pi / 2, thetaLength=1.8)
+    for i in range(6):
+        for sx in (-1, 1): B(m, .05, .7, .9, '#9fd3e8', (sx * 1.11, 2.45, -2.75 + i * 1.1))
+    for sz in (-1, 1):
+        B(m, 1.9, .7, .05, '#9fd3e8', (0, 2.45, sz * 3.51)); B(m, 1.2, .3, .05, '#2a2a2a', (0, 3.0, sz * 3.53))
+        C(m, .12, .12, .05, '#fff4c8', (0, 1.0, sz * 3.53), (math.pi / 2, 0, 0), seg=10)
+    B(m, .05, 1.1, .05, '#333333', (0, 3.85, 0), (.5, 0, 0)); B(m, .9, .05, .05, '#333333', (0, 4.35, .27))   # the bow collector
+    for z in (-2.6, 2.6):
+        for sx in (-1, 1): C(m, .35, .35, .2, '#2b2b2b', (sx * .9, .4, z), (0, 0, math.pi / 2), seg=12)
+
+def crag(m, x, z, base_r, h, colors, seed=0, seg=7, lean=(0, 0), y0=0., taper=.78):
+    """a tall weathered limestone stack or peak: a tapering tube with jittered rings, banded in layers"""
+    import random
+    rnd = random.Random(seed); n = 7; pts, rad, cols = [], [], []
+    for i in range(n + 1):
+        t = i / n
+        pts.append((x + lean[0] * t * h + (rnd.random() - .5) * base_r * .25, y0 + t * h, z + lean[1] * t * h + (rnd.random() - .5) * base_r * .25))
+        rad.append(base_r * (1 - taper * t ** 1.3) * (.85 + rnd.random() * .3) + .05)
+        cols.append(colors[i % len(colors)])
+    tube(m, pts, rad, cols[:-1], seg=seg)
+
+def hand_marble(m, sp):
+    # Ngu Hanh Son, the Marble Mountains near Da Nang: steep pale limestone peaks in layers, trees clinging to their flanks,
+    # a little red pagoda on a ledge, a dark cave mouth at the foot, stone steps climbing up
+    pale = ['#d6d3c8', '#c4c1b6', '#cfccc1', '#b8b5aa']
+    for k, (x, z, r, h) in enumerate(((-3, 0, 3.0, 7.0), (2, -1, 2.5, 5.6), (0, 3, 2.0, 4.6), (4.5, 2.5, 1.6, 3.6))):
+        crag(m, x, z, r, h, pale, seed=k * 5, seg=8)
+        for j in range(6):   # trees on the ledges
+            t = .15 + j * .12; a = j * 2.1 + k
+            rr = r * (1 - .78 * t ** 1.3) + .25
+            m.part('IcosahedronGeometry', '#3f7d4a' if j % 2 else '#4f8f52', (x + math.cos(a) * rr, h * t + .3, z + math.sin(a) * rr), radius=.42, detail=0)
+    B(m, 1.4, 1.0, 1.2, '#c0392b', (-3.0, 4.9, 2.0)); viet_roof(m, 1.4, 1.2, .6, '#7a3a2a', (-3.0, 5.4, 2.0), curl=.3, over=.3)   # the pagoda on its ledge
+    B(m, 2.2, .2, 2.0, '#b8b5aa', (-3.0, 4.35, 2.0))
+    m.part('SphereGeometry', '#2a2a2e', (1.8, 1.0, 1.2), (0, 0, 0), (1, 1.3, .35), radius=.9, widthSegments=12, heightSegments=8)
+    for k in range(8): B(m, 1.0, .2, .4, '#e2ded2', (-1.2 + k * .05, .1 + k * .25, 4.2 - k * .35))
+
+def hand_hoian(m, sp):
+    # Hoi An's old town: three yellow shophouses with dark wooden fronts, green shutters and tiled roofs, a street of
+    # silk lanterns strung in front, potted plants by the doors
+    B(m, 12, .15, 7, '#d9c9a8', (0, .07, 0))
+    for x, wall in ((-4, '#f2c230'), (0, '#f6d35a'), (4, '#e9b830')):
+        B(m, 3.6, 2.6, 4, wall, (x, 1.4, -1.2)); B(m, 3.7, .3, 4.1, '#d9a82a', (x, .25, -1.2))
+        B(m, 3.0, 1.9, .1, '#5a3a2a', (x, 1.1, .82))
+        for k in range(5): B(m, .08, 1.8, .12, '#3a2618', (x - 1.2 + k * .6, 1.1, .86))
+        for sx in (-1, 1): B(m, .6, .7, .06, '#3a6a5a', (x + sx * 1.0, 2.2, .84)); B(m, .06, .7, .07, '#2a4a40', (x + sx * 1.0, 2.2, .86))
+        viet_roof(m, 3.8, 4.2, 1.0, '#8a4a2a', (x, 2.7, -1.2), curl=.12, over=.35)
+        C(m, .22, .16, .3, '#b8643a', (x + 1.5, .3, 1.2), seg=8); m.part('IcosahedronGeometry', '#4f9a4a', (x + 1.5, .65, 1.2), radius=.3, detail=0)
+    cols = ['#e8433a', '#ffd23f', '#ff9f43', '#e8433a', '#b03ab0', '#3cc7e8']
+    tube(m, [(-6, 3.5, 1.4), (-3, 3.15, 1.4), (0, 3.0, 1.4), (3, 3.15, 1.4), (6, 3.5, 1.4)], [.02] * 5, '#3a2a1a', seg=4)
+    for i in range(12):
+        x = -5.5 + i; y = 3.2 - math.sin(i / 11 * math.pi) * .5 - .2
+        m.part('SphereGeometry', cols[i % 6], (x, y, 1.4), (0, 0, 0), (1, 1.25, 1), radius=.26, widthSegments=10, heightSegments=7)
+        C(m, .12, .12, .05, '#ffd23f', (x, y + .33, 1.4), seg=8); C(m, .12, .12, .05, '#ffd23f', (x, y - .33, 1.4), seg=8)
+
+def hand_cairang(m, sp):
+    # Cai Rang floating market (Mekong): wooden boats with painted eyes on their bows, blue cabins, piles of fruit, and the
+    # tall pole on each boat hanging what it sells
+    m.part('CylinderGeometry', '#4fa8d8', (0, .06, 0), (0, 0, 0), (1, 1, .7), radiusTop=8, radiusBottom=8, height=.08, radialSegments=32)
+    fruit = ['#ffd23f', '#5fd36a', '#e8433a', '#ff9f43']
+    for k, (x, z, r) in enumerate(((-4, -1.5, .2), (0, 1.5, -.15), (4, -1, .1), (-1, -3.2, .3))):
+        R = Matrix.Translation((x, 0, z)) @ Matrix.Rotation(r, 4, 'Y')
+        def at(px, py, pz): return tuple(R @ Vector((px, py, pz)))
+        tube(m, [at(-2.2, .7, 0), at(-1.4, .35, 0), at(0, .3, 0), at(1.4, .35, 0), at(2.2, .7, 0)], [.15, .6, .65, .6, .15], '#7a4a2a', seg=8, scale=(1, 1.1))
+        B(m, 3.6, .08, 1.1, '#9a6a43', at(0, .65, 0), (0, r, 0))
+        for sz in (-1, 1): m.part('SphereGeometry', '#ffffff', at(2.0, .65, sz * .3), radius=.08); m.part('SphereGeometry', '#1a1a1a', at(2.06, .65, sz * .3), radius=.045)   # the eyes
+        B(m, 1.5, .85, 1.0, '#3a6ab0', at(-.9, 1.05, 0), (0, r, 0)); m.part('CylinderGeometry', '#5a8ad0', at(-.9, 1.5, 0), (math.pi / 2, r, 0) if False else (0, r, math.pi / 2), radiusTop=.55, radiusBottom=.55, height=1.6, radialSegments=10, thetaStart=0, thetaLength=math.pi)
+        C(m, .03, .03, 3, '#5a3a1a', at(1.4, 1.9, 0), seg=4); m.part('SphereGeometry', fruit[k], at(1.4, 3.4, 0), radius=.3, widthSegments=8, heightSegments=6)
+        for i in range(8): m.part('SphereGeometry', fruit[(i + k) % 4], at(.3 + (i % 4) * .3, .8 + (i // 4) * .2, -.25 + (i % 2) * .4), radius=.2, widthSegments=8, heightSegments=6)
+
+def hand_apostles(m, sp):
+    # the Twelve Apostles (Victoria): tall golden limestone stacks standing in the surf off a cliff of layered rock with
+    # green heath on top, white foam round their feet
+    m.part('CylinderGeometry', '#4fa8d8', (0, .06, 0), (0, 0, 0), (1.2, 1, .8), radiusTop=9, radiusBottom=9, height=.08, radialSegments=32)
+    for k in range(4): B(m, 20, .6, 3.0 - k * .05, ('#d9a86a', '#c99a5e', '#e0b47a', '#cf9f62')[k], (0, .3 + k * .6, -6.4 - k * .02))
+    B(m, 20, .25, 3.2, '#5f9a4a', (0, 2.5, -6.4))
+    for k, (x, z, h) in enumerate(((-6, 1, 5.5), (-3, -1, 7), (0, 1.5, 6), (3, 0, 7.5), (6, 2, 5), (8, -1.5, 4))):
+        crag(m, x, z, 1.25, h, ['#e0b07a', '#d6a26c', '#e6bc88', '#cf9a62'], seed=k * 7, seg=7)   # each stack in uneven layers
+        m.part('SphereGeometry', '#5f9a4a', (x, h + .1, z), (0, 0, 0), (1, .35, 1), radius=.7, widthSegments=8, heightSegments=5)
+        m.part('TorusGeometry', '#ffffff', (x, .12, z), (math.pi / 2, 0, 0), radius=1.3, tube=.12, radialSegments=4, tubularSegments=16)
+
+
+def cn_roof(m, w, d, h, color, pos, ridge=None):
+    """a Chinese hall roof: a hipped roof with sweeping upturned eaves (viet_roof with a stronger curl) and a ridge"""
+    viet_roof(m, w, d, h, color, pos, curl=.55, over=.6, ridge_color=ridge)
+
+def hand_forbidden(m, sp):
+    # the Forbidden City (Meridian Gate side): a white marble terrace with balustrades and stairs, a red-walled hall with
+    # rows of red columns, double golden-yellow roofs with upturned eaves, a red wall with a gate in front
+    marble, red, gold, dark = '#f2efe6', '#b8282a', '#e8b83a', '#3a2a22'
+    B(m, 18, 1.2, 12, marble, (0, .6, 0)); B(m, 17, .6, 11, '#e8e4d8', (0, 1.5, 0))
+    for x in range(-8, 9): C(m, .07, .07, .5, marble, (x, 2.05, 5.4), seg=6)
+    for x in (-1.2, 0, 1.2): B(m, 1.0, .1, 3.0, '#ddd8ca', (x, 1.0, 6.4), (.4, 0, 0))   # the stairs
+    B(m, 12, 3.2, 6, red, (0, 3.4, -1))
+    for k in range(11): C(m, .2, .2, 3.2, '#a01e20', (-5.5 + k * 1.1, 3.4, 2.1), seg=10)
+    for x in (-4.4, -2.2, 0, 2.2, 4.4): B(m, 1.4, 2.4, .05, '#7a1a1a', (x, 3.0, 2.03))
+    B(m, 12.6, .35, 6.6, '#2f6a5a', (0, 5.1, -1))   # the painted beams
+    cn_roof(m, 13.4, 7.2, 1.0, gold, (0, 5.3, -1))
+    B(m, 10, 1.0, 4.6, red, (0, 6.7, -1))
+    cn_roof(m, 11.2, 5.6, 1.4, gold, (0, 7.2, -1), ridge='#c9962a')
+    B(m, 18, 2.0, .9, red, (0, 1.0, 7.55)); B(m, 18.2, .3, 1.1, gold, (0, 2.1, 7.55))
+    arch_door(m, 2.0, 1.8, dark, (0, 0, 8.01), 0)
+
+def hand_heaven(m, sp):
+    # the Temple of Heaven: three round white marble terraces with balustrades, the round Hall of Prayer with red columns
+    # and three tiers of deep-blue conical roofs, a gold finial
+    marble, red, blue, gold = '#f2efe6', '#b8282a', '#2f4f9a', '#e8b83a'
+    for k, (r, y) in enumerate(((8.2, .3), (6.8, .9), (5.4, 1.5))):
+        C(m, r, r + .3, .6, marble, (0, y, 0), seg=32)
+        for j in range(int(r * 4)): a = j / int(r * 4) * TAU; C(m, .06, .06, .4, marble, (math.cos(a) * (r - .15), y + .5, math.sin(a) * (r - .15)), seg=4)
+    for z in (-1, 1): B(m, 1.6, .1, 6.5, '#e2ded2', (0, 1.0, z * 5.0), (z * .2, 0, 0))   # the marble stairs
+    C(m, 3.6, 3.6, 2.6, red, (0, 3.1, 0), seg=24)
+    for k in range(12): a = k / 12 * TAU; C(m, .14, .14, 2.6, '#a01e20', (math.cos(a) * 3.65, 3.1, math.sin(a) * 3.65), seg=8)
+    for k, (r, h, y) in enumerate(((4.6, 1.2, 4.4), (3.6, 1.1, 6.1), (2.6, 1.3, 7.7))):
+        m.part('ConeGeometry', blue, (0, y + h / 2, 0), radius=r, height=h, radialSegments=24)
+        C(m, r * .62, r * .62, .9 if k < 2 else 0.01, red, (0, y + h + .45, 0), seg=20) if k < 2 else None
+        m.part('TorusGeometry', gold, (0, y + .02, 0), (math.pi / 2, 0, 0), radius=r - .05, tube=.06, radialSegments=4, tubularSegments=32)
+    C(m, .15, .3, .6, gold, (0, 9.6, 0), seg=10); m.part('SphereGeometry', gold, (0, 10.1, 0), radius=.3)
+
+def hand_potala(m, sp):
+    # the Potala Palace (Lhasa): the great White Palace rising in stepped, inward-sloping walls with rows of small windows,
+    # the Red Palace in the middle on top, gold roofs, on its rocky hill
+    white, red, gold, dark = '#f4f1ea', '#a8352a', '#e8b83a', '#3a2a22'
+    rock(m, (0, -.2, 0), 1, '#8a7a62', seed=3, squash=(9.2, 1.2, 4.2))
+    for k, (w, d, h, y) in enumerate(((18, 8, 3, 0), (15, 6.6, 2.6, 3), (11, 5.4, 2.4, 5.6))):
+        m.part('CylinderGeometry', white, (0, y + h / 2, 0), (0, math.pi / 4, 0), (w / 1.414, 1, d / 1.414), radiusTop=.94, radiusBottom=1, height=h, radialSegments=4)
+        for j in range(int(w / 1.1)):   # rows of windows
+            x = -w / 2 + .8 + j * 1.1
+            if abs(x) < w / 2 - .5: B(m, .35, .5, .05, dark, (x, y + h * .55, d / 2 * .97 + .01))
+        B(m, w * .9, .2, d * .9, '#8a3a2a', (0, y + h - .05, 0))
+    B(m, 6.0, 3.0, 4.2, red, (0, 9.1 - 1.5 + .0, 0))
+    for j in range(5): B(m, .4, .6, .05, dark, (-2 + j, 8.0, 2.11))
+    B(m, 6.4, .3, 4.6, '#8a3a2a', (0, 9.1, 0))
+    for x in (-2.0, 0, 2.0): m.part('ConeGeometry', gold, (x, 9.4, 0), (0, math.pi / 4, 0), radius=.9, height=.5, radialSegments=4)
+    for k in range(8): B(m, .9, .2, .5, '#d8d4c8', (-7 + k * .3, .4 + k * .35, 4.0 - k * .05))   # the zig-zag stairs
+
+def hand_qutub(m, sp):
+    # the Qutub Minar (Delhi): a tall tapering tower of red and buff sandstone in five storeys, each fluted with round and
+    # angular ribs, each with a balcony on carved brackets, a small cupola on top
+    red, buff, dark = '#b8584a', '#d8b48a', '#7a3a2a'
+    y = 0
+    for k in range(5):
+        r0, r1, h = 2.2 - k * .32, 2.0 - k * .32, (5.0, 3.8, 3.2, 2.4, 2.0)[k]
+        col = red if k < 3 else buff
+        m.add(g_cyl(r1, r0, h, 24, smooth=False), col, Matrix.Translation((0, y + h / 2, 0)))
+        for j in range(12):   # the flutes
+            a = j / 12 * TAU; rr = (r0 + r1) / 2 + .06
+            m.part('CylinderGeometry', tint(col, .88), (math.cos(a) * rr, y + h / 2, math.sin(a) * rr), radiusTop=.14, radiusBottom=.16, height=h * .96, radialSegments=6)
+        for j in range(2): m.part('TorusGeometry', dark, (0, y + h * (.3 + .35 * j), 0), (math.pi / 2, 0, 0), radius=(r0 + r1) / 2 + .14, tube=.05, radialSegments=4, tubularSegments=24)
+        y += h
+        C(m, r1 + .5, r1 + .3, .25, buff, (0, y, 0), seg=24)   # the balcony
+        for j in range(16): a = j / 16 * TAU; C(m, .03, .03, .35, buff, (math.cos(a) * (r1 + .45), y + .3, math.sin(a) * (r1 + .45)), seg=4)
+    C(m, .45, .5, .8, buff, (0, y + .5, 0), seg=10); m.part('SphereGeometry', buff, (0, y + 1.0, 0), radius=.45, widthSegments=10, heightSegments=6, thetaLength=math.pi / 2)
+    B(m, 5.0, .3, 5.0, '#c9b89a', (0, .15, 0))
+
+def hand_redfort(m, sp):
+    # the Red Fort (Delhi): the long red sandstone wall with battlements, the Lahori Gate in the middle (a tall arch
+    # between two octagonal towers) and a row of small white-domed pavilions (chhatris) on top
+    red, red2, white, dark = '#b8483a', '#a03e32', '#f4efe6', '#4a2620'
+    B(m, 20, 4.5, 2.4, red, (0, 2.25, 0)); B(m, 20.2, .3, 2.6, red2, (0, 4.5, 0))
+    for k in range(25): B(m, .45, .5, .3, red2, (-9.6 + k * .8, 4.9, 1.05))
+    for k in range(9): arch_door(m, .6, 1.2, red2, (-9 + k * 2.25, 1.2, 1.21), 0)
+    B(m, 4.6, 6.2, 2.8, red, (0, 3.1, .3))
+    arch_door(m, 1.8, 3.6, dark, (0, 0, 1.71), 0); m.part('TorusGeometry', white, (0, 2.7, 1.72), radius=.95, tube=.1, arc=math.pi)
+    for sx in (-1, 1):
+        C(m, .9, 1.0, 7.0, red, (sx * 2.6, 3.5, 1.2), seg=8)
+        C(m, 1.1, 1.1, .25, white, (sx * 2.6, 7.1, 1.2), seg=8)
+        for j in range(6): a = j / 6 * TAU; C(m, .06, .06, .7, white, (sx * 2.6 + math.cos(a) * .7, 7.55, 1.2 + math.sin(a) * .7), seg=4)
+        m.part('SphereGeometry', white, (sx * 2.6, 8.0, 1.2), radius=.75, widthSegments=12, heightSegments=6, thetaLength=math.pi / 2)
+    for x in (-1.2, 0, 1.2):
+        for j in range(4): C(m, .05, .05, .6, white, (x + (j % 2 - .5) * .5, 6.6, .3 + (j // 2 - .5) * .5), seg=4)
+        m.part('SphereGeometry', white, (x, 6.95, .3), radius=.38, widthSegments=10, heightSegments=5, thetaLength=math.pi / 2)
+    for x in (-7, -4.5, 4.5, 7):
+        for j in range(4): C(m, .04, .04, .5, white, (x + (j % 2 - .5) * .4, 5.0, (j // 2 - .5) * .4), seg=4)
+        m.part('SphereGeometry', white, (x, 5.25, 0), radius=.3, widthSegments=10, heightSegments=5, thetaLength=math.pi / 2)
+
+def hand_sisters(m, sp):
+    # the Three Sisters (Blue Mountains): three tall weathered sandstone pillars in warm ochre layers, gum trees at their
+    # feet and the blue haze of the valley, a lookout platform in front
+    for k, (x, h) in enumerate(((-3, 9.5), (0, 11.5), (3.2, 10.0))):
+        crag(m, x, 0, 1.5 - k * .05, h, ['#c9925a', '#b8804a', '#d8a066', '#a87040'], seed=k * 11, seg=8, taper=.38)
+        m.part('SphereGeometry', '#5f8a4a', (x, h + .1, 0), (0, 0, 0), (1, .35, 1), radius=.6, widthSegments=8, heightSegments=5)
+    for k in range(9):   # gum trees round the feet
+        x = -6 + k * 1.5; z = 2.2 + (k % 3) * .8
+        C(m, .1, .14, 2.2, '#e9e1d2', (x, 1.1, z), seg=6); m.part('IcosahedronGeometry', '#6f8a5f' if k % 2 else '#7f9a6a', (x, 2.6, z), (0, 0, 0), (1.2, .7, 1.2), radius=.9, detail=0)
+    B(m, 4.0, .2, 1.6, '#8a6a4a', (0, .8, 5.0)); [C(m, .06, .06, .8, '#6a4a3a', (x, .4, 5.0 + dz), seg=5) for x in (-1.9, 1.9) for dz in (-.7, .7)]
+    B(m, 4.0, .08, .06, '#6a4a3a', (0, 1.6, 5.8))
+
+
+def karst(m, x, z, r, h, seed, y0=0.):
+    """a limestone karst tower: a grey crag with a cap and ledges of green forest"""
+    crag(m, x, z, r, h, ['#9a9a92', '#8a8a84', '#a6a69c', '#7f7f78'], seed=seed, seg=8, y0=y0, taper=.55)
+    m.part('IcosahedronGeometry', '#4f8a4a', (x, y0 + h - .1, z), (0, 0, 0), (1, .55, 1), radius=r * .62, detail=1)
+    for j in range(4):
+        a = seed + j * 1.7; t = .35 + j * .14; rr = r * (1 - .55 * t ** 1.3) + .15
+        m.part('IcosahedronGeometry', '#3f7d4a' if j % 2 else '#5a9a52', (x + math.cos(a) * rr, y0 + h * t, z + math.sin(a) * rr), radius=r * .28, detail=0)
+
+def hand_halong(m, sp):
+    # Ha Long Bay: steep limestone islands with green caps rising from the sea, a junk boat with red sails between them
+    for k, (x, z, h) in enumerate(((-6, 0, 7), (0, -5, 10), (6, 2, 8), (-2, 7, 6), (9, -6, 5))):
+        karst(m, x, z, 1.8 + h * .12, h + 1.3, k * 3, y0=-1.3)
+    B(m, 2.6, .5, .9, '#7a4a2a', (2.5, 2.0, 5.0)); m.part('ConeGeometry', '#7a4a2a', (4.0, 2.05, 5.0), (0, 0, -math.pi / 2), radius=.45, height=.6, radialSegments=4)
+    for k, x in enumerate((1.8, 3.0)):
+        C(m, .04, .04, 2.6, '#5a3a24', (x, 3.4, 5.0), seg=4)
+        m.part('BoxGeometry', '#c8402e', (x, 3.6, 5.0), width=1.0 - k * .1, height=1.8, depth=.04)
+        for j in range(4): B(m, 1.02 - k * .1, .03, .05, '#8a2a1a', (x, 2.9 + j * .45, 5.0))
+
+def hand_myson(m, sp):
+    # My Son sanctuary: Cham temple towers (kalan) of old red brick, each a square body with false doors and pilasters,
+    # rising in shrinking tiers to a rounded top, moss in the joints
+    brick, brick2, moss = '#b45a3a', '#9a4a30', '#6f8a5a'
+    for k, (x, z, h) in enumerate(((0, 0, 7.2), (-5, 2, 5.0), (5, 1.5, 5.5))):
+        w = h * .36
+        B(m, w + .6, .5, w + .6, brick2, (x, .1, z))
+        B(m, w, h * .45, w, brick, (x, .35 + h * .225, z))
+        for a in (0, math.pi / 2, math.pi, -math.pi / 2):
+            px, pz = math.sin(a) * (w / 2 + .05), math.cos(a) * (w / 2 + .05)
+            m.part('BoxGeometry', brick2, (x + px, .35 + h * .22, z + pz), (0, a, 0), width=w * .45, height=h * .36, depth=.15)   # the false door
+            arch_door(m, w * .22, h * .26, '#5a2a1a', (x + px * 1.03, .5, z + pz * 1.03), a)
+            for sx in (-1, 1): m.part('BoxGeometry', brick2, (x + px + math.cos(a) * sx * w * .4, .35 + h * .22, z + pz - math.sin(a) * sx * w * .4), (0, a, 0), width=.18, height=h * .44, depth=.1)
+        y = .35 + h * .45
+        for t in range(3):
+            ww = w * (.86 - t * .2); hh = h * .12
+            B(m, ww, hh, ww, brick if t % 2 == 0 else brick2, (x, y + hh / 2, z)); y += hh
+        m.part('SphereGeometry', brick, (x, y, z), (0, 0, 0), (1, 1.2, 1), radius=w * .22, widthSegments=8, heightSegments=6)
+        for j in range(5): m.part('SphereGeometry', moss, (x + math.cos(j * 2) * w * .5, .4 + j * h * .15, z + math.sin(j * 2) * w * .5), radius=.2, widthSegments=6, heightSegments=4)
+
+def hand_trangan(m, sp):
+    # Trang An (Ninh Binh): karst peaks over a green river, a cave arch at water level, a rowing boat with a woman in a
+    # conical hat rowing with her feet
+    m.part('CylinderGeometry', '#4f9a8a', (0, -.1, 0), (0, 0, 0), (1, 1, 1.1), radiusTop=7.2, radiusBottom=7.2, height=.1, radialSegments=32)
+    for k, (x, z, h) in enumerate(((-5, -2, 7), (4, -3, 9), (0, -6, 6))): karst(m, x, z, 2.0, h + 1.5, k * 4 + 1, y0=-1.5)
+    m.part('TorusGeometry', '#8a8a84', (-.5, -.2, -3.0), (0, 0, 0), (1.4, 1.2, 1), radius=1.3, tube=.7, arc=math.pi)
+    tube(m, [(1.5, .1, 2.5), (2.5, .05, 2.5), (3.5, .1, 2.5)], [.15, .35, .15], '#7a5a3a', seg=8, scale=(1, .6))
+    m.part('ConeGeometry', '#e8d8a0', (2.7, .9, 2.5), radius=.3, height=.22, radialSegments=10); C(m, .12, .15, .5, '#3a5a8a', (2.7, .55, 2.5), seg=6)
+
+def hand_cave(m, sp):
+    # Phong Nha cave: a forested limestone hill with a great dark cave mouth where the river flows out, stalactites hanging
+    # in the opening, a boat at the entrance
+    rock(m, (0, 0, 0), 1, '#8f8a80', seed=5, squash=(9.0, 5.9, 7.0))
+    for k in range(14): a = k * 1.9; m.part('IcosahedronGeometry', '#4f8a4a' if k % 2 else '#3f7d4a', (math.cos(a) * 6.5, 3.5 + (k % 3) * .7, math.sin(a) * 4.5), radius=1.0, detail=0)
+    m.part('SphereGeometry', '#1e1c22', (0, 1.0, 6.2), (0, 0, 0), (1.5, 1.2, .7), radius=2.4, widthSegments=14, heightSegments=8)
+    for k in range(7): m.part('ConeGeometry', '#b8b2a4', (-2.4 + k * .8, 3.3, 6.9), (math.pi, 0, 0), radius=.14, height=.6 + (k % 3) * .3, radialSegments=5)
+    m.part('CylinderGeometry', '#4f9a8a', (0, .05, 10), (0, 0, 0), (1, 1, 2.2), radiusTop=2.4, radiusBottom=2.4, height=.06, radialSegments=20)
+    tube(m, [(-1.0, .2, 11.5), (0, .12, 11.5), (1.0, .2, 11.5)], [.12, .32, .12], '#7a5a3a', seg=8, scale=(1, .6))
+
+def hand_kakadu(m, sp):
+    # Kakadu (Ubirr): a long rocky escarpment of orange sandstone with dark streaks and overhangs where the old rock art is
+    # painted (the painting itself is the game's own), spinifex grass at its foot
+    for k in range(6):
+        x = -7.5 + k * 3.0
+        rock(m, (x, 2.2 + (k % 2) * .6, -1.2), 1, ('#b0643a', '#a8582e', '#c0703e')[k % 3], seed=k, squash=(2.0, 2.8 + (k % 3) * .4, 1.8))
+    B(m, 17, .6, 1.2, '#8a4a2a', (0, 4.6, .5)); B(m, 17.4, .3, 1.6, '#a85a32', (0, 5.0, .4))   # the overhang
+    for k in range(12): m.part('ConeGeometry', '#c8b45a', (-8 + k * 1.45, .3, 1.4 - (k % 2) * .5), radius=.35, height=.6, radialSegments=6)
+
+def hand_reef(m, sp):
+    # the Great Barrier Reef: a sandy shallow ring with branching corals, brain corals and fan corals in bright colours,
+    # a few little fish
+    m.part('CylinderGeometry', '#e2cf9c', (0, -.32, 0), radiusTop=5.0, radiusBottom=5.4, height=.3, radialSegments=28)
+    cols = ['#ff7eb8', '#ff9f43', '#c060c0', '#ffd23f', '#5fd3c0', '#ff6a8a']
+    for k in range(14):
+        a = k * 2.4; r = 1.2 + (k % 4) * .95; x, z = math.cos(a) * r, math.sin(a) * r; c = cols[k % 6]
+        if k % 3 == 0:   # branching coral
+            for j in range(4): b = j * 1.6 + k; tube(m, [(x, -.2, z), (x + math.cos(b) * .25, .35, z + math.sin(b) * .25), (x + math.cos(b) * .4, .8 + (j % 2) * .2, z + math.sin(b) * .4)], [.1, .08, .05], c, seg=5)
+        elif k % 3 == 1: m.part('SphereGeometry', c, (x, -.1, z), (0, 0, 0), (1, .65, 1), radius=.45, widthSegments=10, heightSegments=6)   # brain coral
+        else: m.part('CylinderGeometry', c, (x, .35, z), (math.pi / 2, a, 0), radiusTop=.55, radiusBottom=.55, height=.05, radialSegments=10, thetaStart=-1.2, thetaLength=2.4)   # a fan
+    for k in range(5): a = k * 1.3; m.part('SphereGeometry', ('#ffd23f', '#3a78c8', '#ff9f43')[k % 3], (math.cos(a) * 3, .6 + (k % 2) * .3, math.sin(a) * 2.5), (0, a, 0), (1.6, .8, .5), radius=.14, widthSegments=6, heightSegments=4)
+
+
+def hand_wheelbase(m, sp):
+    # the Wheel of Brisbane's stand: two white tapering legs leaning in to the hub (the turning wheel is the game's own,
+    # carried over), a concrete base, the blue ticket booth with its striped awning
+    B(m, 5, .5, 3, '#c9c4b8', (0, .25, 0)); B(m, 5.2, .1, 3.2, '#b3ae a2'.replace(' ', ''), (0, .52, 0))
+    for sx in (-1, 1):
+        tube(m, [(sx * 1.85, .5, 0), (sx * 1.2, 4.2, 0), (sx * .55, 8.3, 0)], [.28, .22, .16], '#efefef', seg=8)
+        tube(m, [(sx * 1.85, .5, -1.0), (sx * .55, 8.3, 0)], [.12, .08], '#dcdcdc', seg=6)
+    C(m, .45, .45, .9, '#c8ccd0', (0, 8.4, 0), (math.pi / 2, 0, 0), seg=12)
+    B(m, 2.4, 1.0, 1.6, '#3a78c8', (0, .9, 1.6)); B(m, 1.4, .5, .05, '#9fd2ee', (0, 1.0, 2.41))
+    B(m, 2.6, .08, .7, '#e8433a', (0, 1.55, 2.5), (.3, 0, 0))
+    for k in range(4): B(m, .3, .09, .71, '#ffffff', (-.9 + k * .6, 1.56, 2.5), (.3, 0, 0))
+
+def hand_lonepine(m, sp):
+    # Lone Pine Koala Sanctuary: a grassy round with tall pale gum trees, each with a fluffy grey koala hugging the trunk,
+    # a wooden fence and sign at the front
+    m.part('CylinderGeometry', '#9ac06a', (0, .1, 0), radiusTop=4.0, radiusBottom=4.2, height=.2, radialSegments=28)
+    for k, (x, z, h) in enumerate(((-2, -1, 5.5), (1.8, .8, 6.5), (0, -2.6, 5))):
+        tube(m, [(x, 0, z), (x + .1, h * .5, z), (x - .1, h * .85, z + .1)], [.35, .27, .18], '#e8e4dc', seg=8)
+        for j in range(3):
+            b = j * 2.1 + k; m.part('IcosahedronGeometry', '#6f9a7a' if j % 2 else '#7faa86', (x + math.cos(b) * .8, h + .4 + (j % 2) * .4, z + math.sin(b) * .8), (0, 0, 0), (1, .7, 1), radius=1.1, detail=1)
+        kx, ky, kz = x + .35, h * .62, z + .2   # the koala
+        m.part('SphereGeometry', '#9a9a9e', (kx, ky, kz), (0, 0, 0), (1, 1.15, .9), radius=.42, widthSegments=10, heightSegments=8)
+        m.part('SphereGeometry', '#a6a6aa', (kx, ky + .5, kz + .05), radius=.3, widthSegments=10, heightSegments=8)
+        for sx in (-1, 1): m.part('SphereGeometry', '#d8d8dc', (kx + sx * .26, ky + .72, kz), (0, 0, 0), (1, 1, .5), radius=.14, widthSegments=8, heightSegments=6)
+        m.part('SphereGeometry', '#3a3a3e', (kx, ky + .47, kz + .3), (0, 0, 0), (1, 1.2, .8), radius=.08, widthSegments=6, heightSegments=4)
+    for k in range(11): C(m, .06, .07, 1.0, '#8a5a3b', (-4 + k * .8, .5, 3.6), seg=5)
+    for y in (.4, .85): B(m, 8.2, .08, .06, '#8a5a3b', (0, y, 3.6))
+    B(m, 2.4, .8, .1, '#5a7a3a', (0, 1.4, 3.65)); C(m, .05, .05, 1.2, '#6a4a3a', (-1.0, .9, 3.6), seg=4); C(m, .05, .05, 1.2, '#6a4a3a', (1.0, .9, 3.6), seg=4)
+
+def hand_exhibition(m, sp):
+    # the Royal Exhibition Building (Melbourne): a long cream hall with arched windows and pilasters, the grand entrance
+    # porch with its arched portico, the octagonal drum and the great ribbed dome with a lantern on top
+    cream, light, dome, glass = '#e8dcc4', '#f4ecdc', '#8fb0a0', '#86bfd0'
+    B(m, 18, 5, 9, cream, (0, 2.5, 0)); B(m, 19, .6, 10, '#c9b89a', (0, 5.2, 0)); B(m, 18.2, .5, 9.2, '#d4c6a8', (0, .25, 0))
+    for i in range(8):
+        x = -7 + i * 2
+        if abs(x) > 1.5: arch_door(m, 1.0, 2.6, glass, (x, 1.1, 4.52), 0); B(m, .3, 4.6, .15, light, (x + 1, 2.5, 4.55))
+    for sx in (-1, 1):   # end pavilions with little domes
+        B(m, 2.4, 6.4, 2.4, cream, (sx * 8.0, 3.2, 3.4)); m.part('SphereGeometry', dome, (sx * 8.0, 6.4, 3.4), radius=1.1, widthSegments=12, heightSegments=6, thetaLength=math.pi / 2)
+    B(m, 4.4, 4.4, 2.2, cream, (0, 2.2, 5.0)); prism(m, 4.8, 1.2, 2.3, light, (0, 4.4, 5.0))
+    for x in (-1.3, 0, 1.3): arch_door(m, 1.0, 2.8, '#6a5a4a', (0, .2, 6.11) if False else (x, .2, 6.11), 0)
+    for x in (-1.9, -.65, .65, 1.9): C(m, .16, .18, 3.4, light, (x, 1.9, 6.15), seg=10)
+    C(m, 3.6, 3.6, 2.2, cream, (0, 6.6, 0), seg=16)
+    for k in range(16): a = k / 16 * TAU; arch_door(m, .55, 1.3, glass, (math.sin(a) * 3.61, 6.0, math.cos(a) * 3.61), a)
+    m.part('SphereGeometry', dome, (0, 7.6, 0), radius=3.6, widthSegments=24, heightSegments=10, thetaLength=math.pi / 2)
+    for k in range(12): a = k / 12 * TAU; m.part('TorusGeometry', '#7a9a8a', (0, 7.6, 0), (0, a, 0), radius=3.62, tube=.07, radialSegments=4, tubularSegments=12, arc=math.pi / 2)
+    C(m, .55, .7, 1.0, light, (0, 11.6, 0), seg=10); m.part('SphereGeometry', dome, (0, 12.1, 0), radius=.55, widthSegments=10, heightSegments=6, thetaLength=math.pi / 2)
+    C(m, .06, .1, .8, '#ffd23f', (0, 12.9, 0), seg=6)
+
+def hand_terracotta(m, sp):
+    # the Terracotta Army (Xi'an): an excavated pit with earth walls, rows of clay warriors standing in ranks, a few horses
+    clay, clay2, earth = '#b88a5a', '#a87a4a', '#c9a26a'
+    B(m, 14, .3, 10, earth, (0, -.1, 0))
+    for sx in (-1, 1): B(m, 14, 1.0, .6, '#b8925a', (0, .4, sx * 5.0))
+    for z in (-2.5, 0, 2.5): B(m, 13, .9, .5, '#b8925a', (0, .35, z + 1.25)) if z < 2.5 else None
+    for r in range(4):
+        for c2 in range(11):
+            x = -5.5 + c2 * 1.1; z = -3.8 + r * 2.5; col = clay if (r + c2) % 2 else clay2
+            if r == 1 and c2 in (4, 6):   # two horses in the second rank
+                m.part('SphereGeometry', '#9a6a3a', (x, .75, z), (0, 0, 0), (1.6, .7, .7), radius=.4, widthSegments=8, heightSegments=6)
+                tube(m, [(x + .5, .8, z), (x + .75, 1.2, z)], [.12, .1], '#9a6a3a', seg=6)
+                for dx in (-.35, .35): C(m, .06, .06, .55, '#9a6a3a', (x + dx, .28, z), seg=5)
+                continue
+            C(m, .18, .22, .75, col, (x, .45, z), seg=8)               # the robe
+            C(m, .2, .18, .35, tint(col, .9), (x, .95, z), seg=8)      # the armour
+            m.part('SphereGeometry', col, (x, 1.3, z), radius=.15, widthSegments=8, heightSegments=6)
+            m.part('SphereGeometry', '#7a5a3a', (x - .02, 1.43, z - .05), radius=.07, widthSegments=6, heightSegments=4)   # the topknot
+
+def hand_konark(m, sp):
+    # the Konark Sun Temple: a stone chariot for the sun god: a carved platform with twelve pairs of great stone wheels,
+    # the pyramid-roofed porch in tiers, stone horses pulling it at the front stairs
+    stone, stone2, dark = '#9a8070', '#8a7060', '#6a5040'
+    B(m, 10, 3, 6, stone, (0, 1.5, 0))
+    for k in range(5): B(m, 10.1, .12, 6.1, stone2, (0, .5 + k * .55, 0))
+    for y in range(5):   # the porch roof in stepped tiers
+        w = 7.2 - y * 1.2; B(m, w, .6, w * .8, stone if y % 2 else stone2, (0, 3.3 + y * .9, 0)); B(m, w + .3, .12, w * .8 + .3, dark, (0, 3.65 + y * .9, 0))
+    m.part('SphereGeometry', stone2, (0, 7.8, 0), (0, 0, 0), (1, .5, 1), radius=.8, widthSegments=10, heightSegments=6)
+    for sz in (-1, 1):
+        for x in (-3.6, -1.8, 0, 1.8, 3.6):
+            z = sz * 3.12
+            m.part('TorusGeometry', dark, (x, 1.3, z), radius=.8, tube=.12, radialSegments=6, tubularSegments=20)
+            m.part('CylinderGeometry', stone2, (x, 1.3, z), (math.pi / 2, 0, 0), radiusTop=.2, radiusBottom=.2, height=.3, radialSegments=8)
+            for j in range(8): a = j / 8 * math.pi; m.part('BoxGeometry', dark, (x, 1.3, z), (0, 0, a), width=1.5, height=.07, depth=.08)
+    for k in range(3): B(m, 2.4, .25, .5, stone2, (0, .12 + k * .25, 3.3 + .5 * (2 - k)) if False else (-2 + k * 2, .8, 4.6)) if False else None
+    for i in range(3): B(m, .7, 1.6, 2, stone, (-2 + i * 2, .8, 4.6))
+    for sx in (-1, 1):   # the horses
+        x = sx * 3.6; m.part('SphereGeometry', stone, (x, 1.3, 4.6), (0, 0, 0), (.6, .7, 1.4), radius=.6, widthSegments=8, heightSegments=6)
+        tube(m, [(x, 1.5, 5.3), (x, 2.2, 5.6)], [.2, .16], stone, seg=6); m.part('SphereGeometry', stone, (x, 2.3, 5.7), (0, 0, 0), (.6, .6, 1), radius=.25, widthSegments=6, heightSegments=4)
+        for dz in (-.5, .5): C(m, .1, .1, .9, stone2, (x, .45, 4.6 + dz), seg=5)
+
+def hand_hampi(m, sp):
+    # Hampi: the Virupaksha temple's tall tiered gopuram over its gate, carved pillared mandapa, and the huge round granite
+    # boulders of the Hampi landscape all around
+    stone, stone2, dark, boulder = '#c9b098', '#b8a088', '#6a5a4a', '#c8a882'
+    B(m, 5, .6, 6, stone2, (0, .3, 0)); B(m, 3.6, 2.6, 4.4, stone, (0, 1.9, 0))
+    arch_door(m, 1.1, 1.8, dark, (0, .6, 2.21), 0)
+    for k in range(6):   # the gopuram's tiers
+        w = 3.4 - k * .42; d = 2.4 - k * .25; y = 3.2 + k * .55
+        B(m, w, .5, d, stone if k % 2 else stone2, (0, y + .25, 0))
+        for j in range(int(w / .5)): B(m, .2, .3, .05, dark, (-w / 2 + .3 + j * .5, y + .25, d / 2 + .01))
+    B(m, .8, .4, .5, stone2, (0, 6.7, 0)); [m.part('ConeGeometry', '#d8b45a', (x, 7.05, 0), radius=.1, height=.3, radialSegments=6) for x in (-.25, 0, .25)]
+    for sx in (-1, 1):
+        for j in range(3): C(m, .15, .18, 1.6, stone2, (sx * 2.2, 1.4, -1.5 + j * 1.5), seg=8)
+        B(m, 1.0, .2, 4.2, stone, (sx * 2.2, 2.3, 0))
+    for k, (x, z, r) in enumerate(((-7, 2, 2.6), (7, -1, 3.2), (-5, -5, 2), (6, 5, 2.2))):
+        rock(m, (x, r * .7, z), r, boulder if k % 2 else '#b89a72', seed=k + 20, squash=(1, .85, 1))
+        rock(m, (x + r * .6, r * 1.4, z - r * .2), r * .5, '#c8a882', seed=k + 30)
+
+def hand_mahabodhi(m, sp):
+    # the Mahabodhi Temple (Bodh Gaya): the tall pyramidal tower carved in many tiers of niches, four small corner towers,
+    # a gold finial, on its terrace, and the Bodhi tree beside it
+    stone, stone2, gold, dark = '#d4ba90', '#c4a880', '#f2c230', '#8a6a4a'
+    B(m, 9, 1, 9, '#c9b89a', (0, .5, 0)); B(m, 5.5, 4, 5.5, '#c9b089', (0, 3, 0))
+    arch_door(m, 1.2, 2.2, dark, (0, 1.0, 2.76), 0)
+    for k in range(10):   # the tower in tiers of niches
+        t = k / 10; w = 3.6 - t * 2.9; y = 5.0 + k * 1.0
+        m.part('CylinderGeometry', stone if k % 2 else stone2, (0, y + .5, 0), (0, math.pi / 4, 0), radiusTop=(w - .25) * .707 * 1.414 / 1.414 * 1.0, radiusBottom=w * .707 * 1.414 / 1.0 * .707, height=1.0, radialSegments=4)
+        for a in (0, math.pi / 2, math.pi, -math.pi / 2):
+            m.part('BoxGeometry', dark, (math.sin(a) * (w * .5 + .01) * .99, y + .5, math.cos(a) * (w * .5 + .01) * .99), (0, a, 0), width=w * .3, height=.55, depth=.04)
+    C(m, .5, .6, 1.4, gold, (0, 15.6, 0), seg=10); m.part('ConeGeometry', gold, (0, 16.6, 0), radius=.3, height=.6, radialSegments=8)
+    for a, b in ((1, 1), (1, -1), (-1, 1), (-1, -1)):
+        m.part('CylinderGeometry', stone, (a * 3.3, 6.5, b * 3.3), (0, math.pi / 4, 0), radiusTop=.3, radiusBottom=1.0, height=4, radialSegments=4)
+        m.part('SphereGeometry', gold, (a * 3.3, 8.6, b * 3.3), radius=.18)
+    tube(m, [(6, 0, 3), (6.1, 1.6, 3), (5.9, 3.0, 3.1)], [.5, .4, .3], '#7a5236', seg=8)
+    for j in range(5): b = j * 1.3; m.part('IcosahedronGeometry', '#4f9a4a' if j % 2 else '#5faa5a', (6 + math.cos(b) * 1.1, 4.4 + (j % 2) * .6, 3 + math.sin(b) * 1.1), radius=1.3, detail=1)
+
+
+def boat(m, x, z, r, fruit, pole=True):
+    """a Mekong market boat: a curved wooden hull with painted eyes, a woven cabin, fruit piled up, its cay beo pole"""
+    R = Matrix.Translation((x, 0, z)) @ Matrix.Rotation(r, 4, 'Y')
+    def at(px, py, pz): return tuple(R @ Vector((px, py, pz)))
+    tube(m, [at(-1.8, .6, 0), at(-1.1, .3, 0), at(0, .25, 0), at(1.1, .3, 0), at(1.8, .6, 0)], [.12, .5, .55, .5, .12], '#7a4a2a', seg=8, scale=(1, 1.1))
+    B(m, 2.9, .07, .9, '#9a6a43', at(0, .55, 0), (0, r, 0))
+    for sz in (-1, 1): m.part('SphereGeometry', '#ffffff', at(1.65, .55, sz * .22), radius=.07); m.part('SphereGeometry', '#c62828', at(1.69, .55, sz * .22), radius=.04)
+    m.part('CylinderGeometry', '#c8a060', at(-.8, .7, 0), (0, r, math.pi / 2), radiusTop=.45, radiusBottom=.45, height=1.1, radialSegments=10, thetaStart=0, thetaLength=math.pi)
+    for i, c in enumerate(fruit): m.part('SphereGeometry', c, at(.3 + (i % 3) * .32, .75, -.25 + (i // 3) * .4), radius=.18, widthSegments=8, heightSegments=6)
+    if pole: C(m, .04, .04, 3.4, '#6a4a32', at(1.1, 2.1, 0), seg=4); m.part('SphereGeometry', fruit[0], at(1.1, 3.85, 0), radius=.3, widthSegments=8, heightSegments=6)
+
+def hand_s2_mekong(m, sp):
+    # the Mekong delta: a canal under coconut palms, a monkey bridge (one bamboo pole to walk on and a handrail) on crossed
+    # bamboo legs, and two market boats with their cay beo poles
+    B(m, 10, .06, 3.2, '#5fa8b8', (0, .04, 0))
+    for sz in (-1, 1): B(m, 10.4, .3, .5, '#8a7a4a', (0, .1, sz * 1.75))
+    tube(m, [(-4.6, 1.1, 0), (0, 1.0, 0), (4.6, 1.1, 0)], [.09, .09, .09], '#c8a060', seg=6)
+    tube(m, [(-4.6, 2.1, -.25), (0, 2.0, -.25), (4.6, 2.1, -.25)], [.05, .05, .05], '#c8a060', seg=5)
+    for x in (-4.2, -1.4, 1.4, 4.2):
+        for sz in (-1, 1): tube(m, [(x + sz * .35, -.1, sz * .3), (x - sz * .15, 1.3, 0)], [.07, .06], '#a87a40', seg=5)
+        C(m, .05, .05, 1.1, '#a87a40', (x, 1.6, -.25), seg=5)
+    boat(m, -3, -.2, .1, ['#ffd23f', '#5fd36a', '#ff9f43', '#e8433a', '#ffd23f', '#5fd36a'])
+    boat(m, 3.2, .3, -.08, ['#5fd36a', '#e8433a', '#ffd23f', '#ff9f43', '#5fd36a', '#e8433a'])
+    for x in (-4.8, 4.9):   # coconut palms on the banks
+        tube(m, [(x, 0, -1.5), (x + .3, 1.8, -1.5), (x + .6, 3.5, -1.4)], [.14, .12, .1], '#9a7a5a', seg=6)
+        for k in range(6): b = k / 6 * TAU; tube(m, [(x + .6, 3.5, -1.4), (x + .6 + math.cos(b) * .9, 3.6, -1.4 + math.sin(b) * .9), (x + .6 + math.cos(b) * 1.5, 3.1, -1.4 + math.sin(b) * 1.5)], [.12, .1, .03], '#4f9a3a', seg=4, scale=(1, .35))
+
+def hand_s2_halong(m, sp):
+    # Hon Trong Mai (Ha Long): two tall rocks face to face like a rooster and a hen, standing in the sea with green tufts
+    crag(m, -1.8, 0, 1.4, 4.4, ['#a8a092', '#9a9488', '#b4ac9e'], seed=3, seg=8, taper=.5, lean=(.08, 0), y0=-1.0)
+    crag(m, 1.8, .2, 1.15, 3.6, ['#9a9488', '#a8a092', '#8f897e'], seed=7, seg=8, taper=.5, lean=(-.08, 0), y0=-1.0)
+    m.part('IcosahedronGeometry', '#4f8f42', (-1.6, 3.4, -.2), (0, 0, 0), (1.2, .5, 1.2), radius=.6, detail=1)
+    m.part('IcosahedronGeometry', '#4f8f42', (1.6, 2.7, .1), (0, 0, 0), (1.2, .5, 1.2), radius=.5, detail=1)
+    for x in (-1.8, 1.8): m.part('TorusGeometry', '#ffffff', (x, .02, 0), (math.pi / 2, 0, 0), radius=1.3, tube=.1, radialSegments=4, tubularSegments=16)
+
+def hand_s2_sapa(m, sp):
+    # Sa Pa's rice terraces: curving steps of green and flooded paddies climbing a hill, little earth walls between them, a
+    # thatched hut and a peach tree in flower
+    cols = ['#5fa8c8', '#7ac860', '#5fae4a', '#8fd06a', '#4f9a3a']
+    for i in range(5):
+        w, d, y, z = 9 - i * 1.5, 6 - i * 1.1, .25 + i * .5, -i * .4
+        m.part('CylinderGeometry', cols[i], (0, y, z), (0, 0, 0), (w / 2, 1, d / 2), radiusTop=1, radiusBottom=1.02, height=.5, radialSegments=20)
+        m.part('TorusGeometry', '#8a6a42', (0, y + .25, z), (math.pi / 2, 0, 0), (w / 2, d / 2, 1), radius=1, tube=.05, radialSegments=4, tubularSegments=24)
+    B(m, 1.2, .8, 1.0, '#a07a4a', (-1.2, 2.9, -1.6)); viet_roof(m, 1.2, 1.0, .7, '#c8b070', (-1.2, 3.3, -1.6), curl=.05, over=.25)
+    tube(m, [(4.2, 0, 2.2), (4.25, .9, 2.2), (4.1, 1.5, 2.3)], [.16, .12, .08], '#6a4a32', seg=6)
+    for k in range(7): m.part('SphereGeometry', '#ff9ec4' if k % 2 else '#ffb8d4', (4.2 + math.cos(k) * .6, 1.8 + (k % 2) * .3, 2.2 + math.sin(k) * .6), radius=.38, widthSegments=8, heightSegments=6)
+
+def hand_s2_taynguyen(m, sp):
+    # the Central Highlands' nha rong: a communal house on stilts under a towering axe-blade thatched roof with patterned
+    # gable ends, a log ladder, and a rack of bronze gongs beside it
+    wood, thatch, dark = '#b08a5a', '#a8864a', '#6a4a32'
+    for x in (-1.6, 0, 1.6):
+        for z in (-1.2, 1.2): C(m, .12, .14, 1.5, dark, (x, .75, z), seg=6)
+    B(m, 4.2, .15, 3.2, '#8a6a42', (0, 1.45, 0)); B(m, 4, 1.4, 3, wood, (0, 2.2, 0))
+    for k in range(10): B(m, .05, 1.3, .05, '#8a6a42', (-1.8 + k * .4, 2.2, 1.52))
+    # the axe-blade roof: two tall steep faces meeting in a long ridge that flares at both ends
+    v = [(-2.3, 2.9, -1.9), (2.3, 2.9, -1.9), (2.3, 2.9, 1.9), (-2.3, 2.9, 1.9), (-.9, 9.0, 0), (.9, 9.0, 0)]
+    f = [[0, 4, 5, 1], [2, 5, 4, 3], [0, 3, 4], [1, 5, 2]]
+    m.add((v, f), thatch); m.add((v, [q[::-1] for q in f]), tint(thatch, .7))
+    for sz in (-1, 1):   # the patterned gable ends
+        for k in range(4): m.part('BoxGeometry', ('#c62828', '#f4ead2')[k % 2], (sz * 1.75 * 0 + 0, 4.0 + k * 1.1, 0), width=.1, height=.12, depth=.1) if False else None
+    for k in range(5): m.part('BoxGeometry', ('#c62828', '#f4ead2')[k % 2], (0, 3.6 + k * 1.0, 0), (0, 0, 0), (1, 1, 1), width=4.1 - k * .7, height=.12, depth=3.82 - k * .7 if False else .02) if False else None
+    tube(m, [(-.9, 9.0, 0), (-1.3, 9.5, 0)], [.12, .05], '#c62828', seg=5); tube(m, [(.9, 9.0, 0), (1.3, 9.5, 0)], [.12, .05], '#c62828', seg=5)
+    m.part('ConeGeometry', '#e8433a', (0, 9.3, 0), radius=.3, height=.8, radialSegments=4)
+    tube(m, [(0, 0, 2.6), (0, 1.5, 1.6)], [.18, .16], '#8a5a32', seg=6)   # the log ladder
+    B(m, 2.4, .1, .1, dark, (3.6, 2.2, 0)); C(m, .05, .05, 2.2, dark, (2.5, 1.1, 0), seg=5); C(m, .05, .05, 2.2, dark, (4.7, 1.1, 0), seg=5)
+    for x, r in ((3, .45), (3.7, .35), (4.3, .28)):
+        m.part('CylinderGeometry', '#e8b830', (x, 2.2 - r - .1, 0), (math.pi / 2, 0, 0), radiusTop=r, radiusBottom=r, height=.08, radialSegments=16)
+        m.part('SphereGeometry', '#c9962a', (x, 2.2 - r - .1, .05), (0, 0, 0), (1, 1, .4), radius=r * .3, widthSegments=8, heightSegments=6)
+
 HAND = {'lm-turtle': hand_turtle, 'lm-thehuc': hand_thehuc, 'lm-vanmieu': hand_vanmieu, 'lm-onepillar': hand_onepillar,
         'lm-benthanh': hand_benthanh, 'lm-opera': hand_opera, 'br-harbour': hand_harbour}
 HAND.update({n: fn for n, (fn, size) in PROPS.items()})
 HAND.update({'lm-sydneytower': hand_sydneytower, 'lm-lunapark': hand_lunapark, 'lm-banana': hand_banana, 'lm-lighthouse': hand_lighthouse, 'lm-goldenbridge': hand_goldenbridge, 'lm-uluru': hand_uluru})
+HAND.update({'lm-puppetstage': hand_puppetstage, 'lm-bnclock': hand_bnclock, 'lm-chuadau': hand_chuadau, 'lm-butthap': hand_butthap, 'lm-dendo': hand_dendo, 'lm-quanho': hand_quanho})
+HAND.update({'lm-bondi': hand_bondi, 'lm-wtram': hand_wtram, 'lm-marble': hand_marble, 'lm-hoian': hand_hoian, 'lm-cairang': hand_cairang, 'lm-apostles': hand_apostles})
+HAND.update({'lm-forbidden': hand_forbidden, 'lm-heaven': hand_heaven, 'lm-potala': hand_potala, 'lm-qutub': hand_qutub, 'lm-redfort': hand_redfort, 'lm-sisters': hand_sisters})
+HAND.update({'lm-halong': hand_halong, 'lm-myson': hand_myson, 'lm-trangan': hand_trangan, 'lm-cave': hand_cave, 'lm-kakadu': hand_kakadu, 'lm-reef': hand_reef})
+HAND.update({'lm-wheelbase': hand_wheelbase, 'lm-lonepine': hand_lonepine, 'lm-exhibition': hand_exhibition, 'lm-terracotta': hand_terracotta, 'lm-konark': hand_konark, 'lm-hampi': hand_hampi, 'lm-mahabodhi': hand_mahabodhi})
+HAND.update({'lm-s2-mekong': hand_s2_mekong, 'lm-s2-halong': hand_s2_halong, 'lm-s2-sapa': hand_s2_sapa, 'lm-s2-taynguyen': hand_s2_taynguyen})
 HAND.update({'lm-cathedral': hand_cathedral, 'lm-postoffice': hand_postoffice, 'lm-flinders': hand_flinders, 'lm-hue': hand_hue})
 BUDGET = lambda name: 8000 if name.startswith(('lm-', 'br-')) else 900 if name.startswith('pr-') else 3000
 
