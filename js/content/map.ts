@@ -207,7 +207,7 @@ export const ROADS: MapRoad[] = [
   { id: 'quay_north', kind: 'footpath', pts: [[22, -172], [22, -152], [12, -152]] },
   // (v1.08e vehicles, Release round 2) the Southern Coast Boat's piers: Melbourne's up the bank to the road; the Reef's,
   // Perth's and the islands' (no road there) into their own place
-  { id: 'quay_melbourne', kind: 'footpath', pts: [[-122, 145], [-118, 136], [-118, 125], [-122, 122], [-128, 122.5], [-132, 117]] },
+  { id: 'quay_melbourne', kind: 'footpath', pts: [[-122, 145], [-121.5, 136], [-121.5, 125], [-123, 122], [-128, 122.5], [-132, 117]] },
   { id: 'quay_gbr', kind: 'footpath', pts: [[-58, 184], [-58, 179]] },
   { id: 'quay_perth', kind: 'footpath', pts: [[-204, 186], [-204, 180]] },
   { id: 'quay_tasmania', kind: 'footpath', pts: [[-120, 211], [-124, 215], [-127, 218]] },

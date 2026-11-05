@@ -16,8 +16,11 @@ export async function worldPlacesCheck(browser: Browser) {
   const spec = JSON.parse(await fs.readFile(new URL('../tools/blender/places-spec.json', import.meta.url), 'utf8'));
   for (const n of Object.keys(spec)) await fs.access(new URL(`../models/world/${n}.glb`, import.meta.url));
   const sw = await fs.readFile(new URL('../sw.ts', import.meta.url), 'utf8');
-  const offline = Object.keys(spec).filter(n => !sw.includes(`'models/world/${n}.glb'`));
-  assert.deepEqual(offline, [], 'every places model is in the offline list (sw.ts)');
+  // (Release, 6 Nov 2026 AEDT: a light install) the world models are not in the install list; the service worker keeps each
+  // one in the sv-models-<version> cache the first time a child comes near it, so every places model is kept offline that way
+  const inList = Object.keys(spec).filter(n => sw.includes(`'models/world/${n}.glb'`));
+  assert.deepEqual(inList, [], 'no places model in the install list (sw.ts): they are kept when first met');
+  assert.ok(/url\.pathname\.includes\('\/models\/world\/'\)[^\n]*sv-models-/.test(sw), 'the service worker keeps the world models (sv-models-<version>) when first fetched');
   const notes: string[] = [];
   const P = await open(browser, { w: 900, h: 700, settings: { voice: false, online: false, festival: 'tet' } });   // (Tết on: the festival props)
   try {
