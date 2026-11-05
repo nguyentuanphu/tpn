@@ -508,17 +508,17 @@ export function animate(A, state, t, speed = 0) {
 /** (v1.08e villagers) a named villager's own Blender model (models/villager-<id>.glb, made by tools/make-villagers.mts)
  *  in place of the code person: the model follows the code person's joints and moods (js/friend-model.ts), stands at the
  *  code person's height, and the code person's parts are hidden (kept, so a photo face or a rebuild can bring them back).
- *  The far still copy is made first, from the code person, so far away nothing changes. False when it cannot be worn. */
+ *  Far away the still copy of the code person is shown, as for everyone. False when it cannot be worn. */
 export function wearVillagerModel(A: SvAvatar, key: string): boolean {
   if (!A || A.model || !A.painted || !FRIEND_MODELS.ready || !FRIEND_MODELS.ready(key)) return false;
-  stillOf(A); A.rig.updateMatrixWorld(true);
+  stillOf(A); A.rig.updateMatrixWorld(true); // (the far still copy is baked from the code person first)
   const box = new THREE.Box3(), codeParts: THREE.Object3D[] = [];
   A.rig.traverse(o => { if (o instanceof THREE.Mesh && o.visible && !o.userData.outline) { box.expandByObject(o); codeParts.push(o); } });
   const codeH = box.max.y - box.min.y, m = FRIEND_MODELS.attach(A, key, String(A.look.skin || '#f6c7a5'), {}); if (!m) return false;
   codeParts.forEach(o => { o.visible = false; o.children.forEach(c => { if (c.userData.outline) c.visible = false; }); });
   m.obj.updateMatrixWorld(true); const mb = new THREE.Box3().setFromObject(m.obj, true), mh = mb.max.y - mb.min.y;
   if (mh > .1 && codeH > .1) { const k = codeH / mh; m.obj.scale.multiplyScalar(k); m.obj.position.y += (box.min.y - mb.min.y * k) / A.rig.scale.y; }
-  A.model = m; A.root.userData.villagerModel = key; return true;
+  A.model = m; A.root.userData.villagerModel = key; showStill(A, false); return true; // (worn near the child: the moving model, not the still copy)
 }
 /** (v1.08e faces, part 2) the high-detail model up close, the light one far away (a child's own friend only) */
 export function showHD(A, near: boolean) { if (!A || !A.modelHD || A._hd === near) return; A._hd = near; A.modelHD.obj.visible = near; A.model.obj.visible = !near; }
@@ -744,7 +744,7 @@ function recolorSkin(A) {
 }
 // the moving person or the still copy (made the first time it is needed)
 export function showStill(A, yes) {
-  if (A.model) yes = false; // (v1.08b) a friend's model has no still copy: it is one of a few children
+  if (A.model && !A.root.userData.villagerModel) yes = false; // (v1.08b) a friend's model has no still copy: it is one of a few children; (v1.08e) a villager's model has: far away, the code person's still copy
   if (!!A._still === yes) return; A._still = yes;
   if (yes) stillOf(A).visible = true; else if (A.still) A.still.visible = false;
   A.rig.visible = !yes;

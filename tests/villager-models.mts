@@ -23,6 +23,8 @@ export async function villagerModelsCheck(b) {
       h.pos.set(n.obj.position.x + 2, n.obj.position.y, n.obj.position.z + 2);
       for (let k = 0; k < 60 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(200);
       if (n._vm !== 'worn') { bad.push(`${id}: model ${n._vm || 'not asked'}`); continue; }
+      for (let k = 0; k < 20 && !n.A.rig.visible; k++) await w(100); // (the far still copy gives way to the moving person within 0.4 s)
+      if (!n.A.rig.visible) { bad.push(id + ': still the far copy next to the child'); continue; }
       n.A.root.updateMatrixWorld(true); const mb = new THREE.Box3().setFromObject(n.A.model.obj, true);
       const ch = code.max.y - code.min.y, mh = mb.max.y - mb.min.y;
       if (Math.abs(mh - ch) / ch > .06) bad.push(`${id}: ${mh.toFixed(2)} m tall, the code person ${ch.toFixed(2)} m`);
@@ -33,8 +35,9 @@ export async function villagerModelsCheck(b) {
       const fq = new THREE.Vector3(); let face: any = null; n.A.model.obj.traverse((o: any) => { if (o.isMesh && /^face-/.test(o.material.name) && !face) face = o; });
       if (face) { face.geometry.computeBoundingBox(); face.getWorldPosition(fq); }
       // blinks within 7 s; the eyes turn to a child on one side
-      const L = n.A.life, seen = new Set<string>(); A.setLookTarget(null);
-      for (let f = 0; f <= 210; f++) { A.animate(n.A, 'idle', (L ? L.t : 0) + 1 / 30); n.A.root.updateMatrixWorld(true); seen.add(shown(n.A)); }
+      A.setLookTarget(null); if (!n.A.life) A.animate(n.A, 'idle', 1);
+      const L = n.A.life, seen = new Set<string>();
+      for (let f = 0; f <= 210; f++) { A.animate(n.A, 'idle', L.t + 1 / 30); n.A.root.updateMatrixWorld(true); seen.add(shown(n.A)); }
       if (!seen.has('blink')) bad.push(`${id}: no blink in 7 s (${[...seen]})`);
       L.blink = L.t + 50; L.glance = L.t + 50; L.feel = '';
       const yaw = n.obj.rotation.y, side = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw)); // the person's own left
