@@ -1,4 +1,4 @@
-**ready for Release** (part 1 of the brief; see "Left for later") (5 Nov 2026, 19:10 AEDT, last code commit `49132a679`)
+**ready for Release** (parts 1 and 2: the whole brief except the items under "Left for later") (5 Nov 2026, 21:30 AEDT, last code commit `7ce35e35a`)
 
 # v1.08b helper: friends (status)
 
@@ -43,45 +43,74 @@ builder now draws a child from `friendLook()`; tale costumes are yours, the tale
 
 ## Owner's decisions
 
-- None new in this session (the plan's answers of 3 Nov apply).
+- 5 Nov 2026 AEDT (owner, via Release): "dont mention (Finn) at all, if name has been created then dont add the character
+  names". A named child is shown by their own name only, everywhere; the "Henry (Finn)" item is dropped (nothing writes a
+  friend's name after a child's name).
+- 5 Nov 2026 AEDT (owner's rule, via Release): helpers run only their own checks, never the full suite, and push only
+  their own branch.
 
 ## Progress
 
-- 5 Nov 2026 AEDT: plan; Blender 4.2.9 installed in `/opt/blender-dl`; data, fallback builder, Welcome, old saves, card,
-  Backpack rows, offline list, checks. Commits `b7b3621d9` to `49132a679`.
+- Part 1 (commits `b7b3621d9` to `49132a679`): data, the code person in the friend's colours, Welcome, old saves, the
+  one-time card, Backpack rows, offline list, checks newfriends, friendmigrate, friendswap, wearfit.
+- Part 2 (commits `15b14262a` to `7ce35e35a`):
+  - **Light 3D models** `models/finn.glb`, `sol.glb`, `clara.glb`, `lumi.glb`: 92 to 114 KB each (meshopt), about 8,200
+    triangles shown (Lumi about 14,000: her felt-leaf hair is about a thousand leaves that do not thin further), the
+    game's joint names, eight face moods, colours in the corners plus a separate skin material, 5 draws each. Made by
+    `node tools/make-friends.mts` (Blender `lumi.py ... game glb`, then `tools/blender/game-light.py`, then gltfpack).
+    No 512 px texture: plain colours in the corners are lighter and look the same.
+  - **Loader** `js/friend-model.ts` with GLTFLoader, meshopt decoder and SkeletonUtils from three r160 (`vendor/`): loads
+    when a child with a friend is first built, never in the first download. The model copies the code person's joint
+    turns just before each drawing, so walking, jumping, riding (`seatRider`) and film poses work unchanged, and the hats,
+    glasses, necklaces and backs the code person wears stay on it. Until it arrives, or when it cannot load, the code
+    person in the friend's colours is shown. No still copy for a friend's model (a few children only).
+  - **Welcome and pictures** `js/friend-view.ts`: the Welcome cards show the model turning in the chosen skin tone (the
+    renders stay underneath if a model cannot load); Who's playing, the HUD and Grown-ups show a portrait of the friend in
+    the child's skin tone (made on the device).
+  - **Villagers** (owner's choice A, `js/avatar.ts`): smaller eyes set lower, soft round cheeks, seven moods (smile, blink,
+    happy, surprised, curious, sad, shy) on one 512 px picture, two-tone felt-look hair; heights by `look.age` (WORLD-011):
+    child 1.6, grown-up 2.0, grandparent 1.8. Cô Mai is a grown-up, Bác Ba a grandparent; Studio villagers already have
+    an age choice (kid, grown-up, grandparent) and are drawn at those heights now.
+  - **Glasses and masks**: a new slot (sunglasses, round glasses, star mask, boys' and girls'), drawn on every face, sold
+    in the shop, kept on the models.
+  - **Outfits in the shop**: an Outfits tab (everyday free, áo dài 120, festival 120, rain day 70), tap once for the
+    price, again to buy.
+  - **Films**: the child's friend model in the lantern films (the films already used the child's look) with the film's
+    moods; the tale theatre's 2D people redrawn in the new style (rounder head, smaller eyes, soft cheeks, felt shine).
+  - **First download**: the friends' data, styles, titles, the shop tab and the editor row load later (Who's playing
+    opens them), and `models/` is copied by `build-netlify.sh` and the checks' packed copy.
 
-## Checks (5 Nov 2026 AEDT)
+## Checks (5 Nov 2026 AEDT, last code commit `7ce35e35a`)
 
-- New: `newfriends` pass (phone portrait and landscape, tablet, computer: every step fits one screen, 44 px buttons,
-  16 px text), `friendmigrate` pass, `friendswap` pass, `wearfit` pass (22 hats, 8 neck, 12 backs, 8 shoes on all four).
-- Existing, run with `--only` (the `--changed` choice against `main` is the full suite, because `integrate/v108` is far
-  ahead of `main`): pass `emoji`, `noemoji`, `preload`, `unit`, `names`, `bilingual`, `rules`, `arch`, `types`, `boot`,
-  `contract`, `firstplayer`, `shop`, `r79clothes`, `bagpals`, `phone`, `simple`, `vehicles`, `films` (SAMPLE), and alone
-  `perf` (village 375 draws, home 456), `battery`, `longplaymem`, `startup`.
-- `startup` is at its limit: first start 1071 KB, limit 1040 x 1.03 = 1071 (`integrate/v108` itself is 1069 KB). The
-  friend modules load only when needed; anything more in the first download needs the owner to raise the limit or
-  something else to shrink.
-- Fixed on the way: the offline list's friend pictures must be written out one by one (tools/bundle.mts reads quoted
-  names; a generated list broke the packed offline copy).
-- Not run: `stories` (no check of that name), `phone`/`simple`/`vehicles`/`films`/`perf`/`battery`/`longplaymem` were run
-  before the last commit (it only made the friend modules load later), the full suite (Release's).
+- New: `newfriends`, `friendmigrate`, `friendswap`, `wearfit` (22 hats, 6 glasses and masks, 8 neck, 12 backs, 8 shoes on
+  all four), `friendmodel` (sizes, triangles, skin tone, joints, moods, a cap worn, no files: the code person stays),
+  `friendoutfits`: pass.
+- Existing: `unit`, `types`, `names`, `arch`, `preload`, `emoji`, `noemoji`, `bilingual`, `boot`, `contract`,
+  `firstplayer`, `shop`, `r79clothes`, `bagpals`, `simple`, `vehicles`, `story`, `tales`, `films` (SAMPLE),
+  `longplaymem`: pass. `phone` and `friendmodel` passed alone (beside other checks a click timed out); `perf` (village
+  367 draws, home 448) and `battery` passed alone (they failed once while the voice recorder ran at the same time).
+- Checks changed because the game changed (not weakened): `shop` 7 to 9 tabs and `r79clothes` 6 to 7 mirror tabs (the
+  glasses slot and the Outfits tab); `tests/unit/shop.test.mts` lists the new slot; `tests/harness.mts` taps "Let's
+  play" on the one-time card; `firstplayer` goes through the Welcome steps; the packed copy links `models/`.
+- **`startup` is red at the limit, and so is `integrate/v108` itself on this machine**: first start 1073 KB, limit
+  1040 x 1.03 = 1071. The base `origin/integrate/v108` (fetched 5 Nov) measured 1069 and 1072 KB in two runs here;
+  this branch adds about 0.8 KB beside it in the same run (compared file by file). Second start 0 KB (the offline copy
+  fills). Needs the owner's limit or a shrink elsewhere; Release decides.
+- Not run: the full suite (Release's).
 
 ## New spoken lines (recorded with Azure, HoaiMy and Natasha)
 
-The four hellos ("Hi, I'm Finn! Let's explore the sky!" and the others, EN and VI), "Hello! What is your name?",
-"Choose your friend!", "New friends are here!": 14 files. The voice tool also removed 136 old mixed-line files from the
-pack; they are kept on this branch (only the new files and the manifests changed), for Release to decide.
+The four hellos, "Hello! What is your name?", "Choose your friend!", "New friends are here!", the shop's "Outfits for
+your friend. Tap one to see it, tap again to buy it." and the other new lines the voice tool found: 24 files. The voice
+tool also removed 136 old mixed-line files from the pack; they are kept on this branch (Release decides at merge).
 
-## Left for later (not done in this session)
+## Left for later
 
-1. **Light 3D models and the loader** (brief step 1): decimating the Blender friends to 6–8k triangles with a 512 px
-   texture and mood atlas, a meshopt `.glb` each, a GLTFLoader from our vendored three (r160) loaded after Welcome, the
-   skinned walk/idle/wave/cheer/ride, and the far still copy. Until then the code builder in the friend's colours is shown
-   (the plan's fallback). The Welcome cards use the gallery renders, so the skin row does not recolour the picture yet.
-2. Picker pictures per friend and skin tone (today: the drawn face with the friend's hair in the child's tone).
-3. Outfits in the Shop (the four kinds per friend are in the data; buying them is not wired), the glasses slot, items in
-   the hand from each friend's quests, new 2D shop pictures from the models.
-4. Villagers in the new style (brief step 6: proportions, heights 1.6 / 2.0 / 1.8, smaller eyes, felt hair, seven moods),
-   Studio's new look choices.
-5. `seatRider` with the model joints, films with the chosen friend's model, the tale theatre's 2D people.
-6. "Henry (Finn)" in Grown-ups.
+1. **Items in the hand from each friend's quests** (Finn's compass, Clara's flower staff, Sol's sun crystal, Lumi's star
+   lantern): the models carry their item now, always; earning them needs quests (the story helper or a later round) and
+   the item as its own part of the model.
+2. **Studio's "kind" (Vietnamese or Australian) choice**: not added, so as not to collide with the platform helper's
+   Studio redesign this round; Studio's age, clothes and hair choices already draw villagers in the new style.
+3. **Crowds' heights**: the cities, homes and other places that make people at their own scale (children .78, and so on)
+   keep it; only the named villagers and Studio villagers take the new heights.
+4. Shoes swapped on the models (the models keep their own boots; shop shoes show on the code person).
