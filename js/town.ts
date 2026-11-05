@@ -302,7 +302,7 @@ export function createTown(G) {
   const teens = ring.map(([x, z], k) => person(L2(['shirt', 'overalls', 'dress'][k], ['#3cc7e8', '#5fd39a', '#ff7eb8'][k], '#1d1412', ['spiky', 'short', 'ponytail'][k], 'none', '#e0aa80'), x, z, 0));
   teens.forEach((A, k) => { const c = ring.reduce((a, b) => [a[0] + b[0] / 3, a[1] + b[1] / 3], [0, 0]); A.root.rotation.y = Math.atan2(c[0] - ring[k][0], c[1] - ring[k][1]); world.colliders.push({ x: ring[k][0], z: ring[k][1], r: .4 }); });
   const cau = new THREE.Mesh(merge([P(Cyl(.12, .12, .06, 8), '#e8433a', [0, 0, 0]), ...[0, 1, 2, 3].map(k => P(Box(.05, .3, .12), ['#ffd23f', '#5fd39a', '#3cc7e8', '#ff7eb8'][k], [Math.cos(k * 1.57) * .06, .17, Math.sin(k * 1.57) * .06], [0, k * 1.57, 0]))]), mat);
-  scene.add(cau);
+  cau.userData.moving = true; scene.add(cau); // (Release, v1.08e: check solid) it flies only while a child is near: never in the solid map (js/solids.ts), so the map is the same wherever the child starts
   people.forEach(A => world.colliders.push({ x: A.root.position.x, z: A.root.position.z, r: .35 }));
 
   // name tags and chatter bubbles

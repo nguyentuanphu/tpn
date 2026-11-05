@@ -31,7 +31,8 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
   scene.updateMatrixWorld(true);
   scene.traverse(o => {
     // (v1.08e places) a code shape that a Blender model has taken over stays in the map (the model itself is noSolid)
-    if (!(o instanceof THREE.Mesh) || (!o.visible && !o.userData.model && !o.userData.swapped) || o === W.terrain || o.userData.outline || boats.has(o) || skipTree(o)) return;
+    // (Release, v1.08e: check solid) and so does a part of the valley asleep while the child is far away (js/areas.ts)
+    if (!(o instanceof THREE.Mesh) || (!o.visible && !o.userData.model && !o.userData.swapped && !o.userData.areaAsleep) || o === W.terrain || o.userData.outline || boats.has(o) || skipTree(o)) return;
     const m = o.material; if (!m || (Array.isArray(m) ? m.some(x => x.transparent) : m.transparent)) return; // glass, water, verges, sprites
     const g = (o.userData.codeGeo || o.geometry) as THREE.BufferGeometry; if (!g || !g.attributes.position) return; if (!g.boundingBox) g.computeBoundingBox(); // (v1.08e nature: the code shape, whether or not its Blender model is drawn now, js/world-nature.ts)
     if (o instanceof THREE.InstancedMesh && g.boundingBox.max.y - g.boundingBox.min.y < 1.4) return; // grass and flowers
