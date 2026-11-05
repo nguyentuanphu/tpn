@@ -93,10 +93,10 @@ VHAIR = {'vn-aodai': 'long', 'vn-dad': 'sidepart', 'vn-farmer': 'sidepart', 'vn-
          'vn-schoolboy': 'boybangs', 'vn-schoolgirl': 'bangspigtails', 'au-dad': 'messy', 'au-mum': 'ponytail', 'au-grandma': 'curls',
          'au-grandpa': 'tuft', 'au-boy': 'messy', 'au-girl': 'puffs'}
 # (v1.08e villagers, Release 6 Nov: every named villager wore the same short cut) each one's own hair, from their look in
-# the game (js/main.ts): Cô Mai long, Bác Ba a grey tuft, Tèo and Bờm spiky, Tí and Mít two buns, Bống a ponytail, Su and
+# the game (js/main.ts): Cô Mai long, Bác Ba a grey tuft, Tèo and Bờm short with a fringe (owner: no spiky hair), Tí and Mít two buns, Bống a ponytail, Su and
 # Jack short, Ruby her red hair to the shoulders, Lan a ponytail
-VHAIR.update({'mai': 'long', 'ba': 'tuft', 'teo': 'messy', 'ti': 'puffs', 'bong': 'ponytail', 'su': 'boybangs', 'jack': 'messy',
-              'mit': 'puffs', 'bom': 'messy', 'ruby': 'waves', 'lan': 'ponytail'})
+VHAIR.update({'mai': 'long', 'ba': 'tuft', 'teo': 'boybangs', 'ti': 'puffs', 'bong': 'ponytail', 'su': 'boybangs', 'jack': 'boybangs',
+              'mit': 'puffs', 'bom': 'boybangs', 'ruby': 'waves', 'lan': 'ponytail'})  # (owner, 6 Nov: no spiky hair)
 def hair_villager():
     st = VHAIR.get(ROLE, V['hair']); HS = mat('hairShell', PAL[1], .5, .45); HL = mat('hairShellL', PAL[3], .5, .45)
     hatted = bool(WEAR.get('hat'))

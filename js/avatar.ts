@@ -353,7 +353,8 @@ export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvat
   if (look.hairStyle === 'long') { const hb = new THREE.Mesh(G.hairBack, hairM); hb.scale.set(1.04, 1.6, 1.05); hb.position.y = -.43; hang(0, .15, 0).add(hb); }
   if (look.hairStyle === 'buns') [-1, 1].forEach(s => { const b = new THREE.Mesh(G.bun, hairM); b.scale.set(1, 1.5, 1); b.position.set(s * .5, -.08, -.15); b.rotation.z = s * .3; head.add(b); const tie = new THREE.Mesh(G.tie, toon(col)); tie.position.set(s * .44, .08, -.12); tie.rotation.y = Math.PI / 2; head.add(tie); });
   if (look.hairStyle === 'ponytail') { const pt = new THREE.Mesh(new THREE.CapsuleGeometry(.13, .5, 4, 10), hairM); pt.position.set(0, -.23, -.08); pt.rotation.x = .35; hang(0, .08, -.5).add(pt); }
-  if (look.hairStyle === 'spiky') for (let i = 0; i < 6; i++) { const sp = new THREE.Mesh(G.spike, i % 2 ? hairL : hairM); sp.position.set((i - 2.5) * .15, .5, -.06 - Math.abs(i - 2.5) * .04); sp.rotation.set(-.3, 0, (2.5 - i) * .22); head.add(sp); }
+  // (owner, 6 Nov 2026 AEDT: "I don't want this spiky hair") the 'spiky' style is soft tousled felt locks on the crown, not spikes
+  if (look.hairStyle === 'spiky') for (let i = 0; i < 6; i++) { const a = (i - 2.5) * .42, sp = new THREE.Mesh(G.lock, i % 2 ? hairL : hairM); sp.scale.set(1.05, .8, .9); sp.position.set(Math.sin(a) * .3, .43 + (i % 2) * .04, -.1 + Math.cos(a) * .12); sp.rotation.set(-.5, a, 0); head.add(sp); }
   // hats
   const hat = new THREE.Group(); head.add(hat);
   // (r79) the girls' versions of the old shared hats (nonla_g, crown_g, bunny_g) are drawn like the old ones in their own colour
