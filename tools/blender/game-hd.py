@@ -20,7 +20,9 @@ UV_SHARE = {'hair': .3}
 # (COMBINED), skin included, and the game draws it almost unlit ("lit-<part>" materials, js/friend-model.ts), so in the
 # valley they look like the gallery renders
 LIT = WHO == 'villager'
-if LIT: HD_BUDGET = {'body': 7000, 'hair': 5500, 'hands': 500, 'item': 500, 'shoes': 600, 'hat': 900}; HD_FACE = 380; ATLAS = 1024
+# (owner, 6 Nov, pop-up "Smoother, heavier": at 8,000 triangles they were lumpy) about 25,000 triangles, smooth normals,
+# a 2048 px picture baked at 128 samples
+if LIT: HD_BUDGET = {'body': 16000, 'hair': 6500, 'hands': 900, 'item': 700, 'shoes': 1000, 'hat': 1400}; HD_FACE = 450; ATLAS = 2048
 
 def _tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
@@ -71,6 +73,7 @@ def hd():
             bm = bmesh.new(); bm.from_mesh(h.data); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(h.data); bm.free(); h.data.update()
         l = h.copy(); l.data = h.data.copy(); l.name = WHO + '-' + key; h.users_collection[0].objects.link(l); low[key] = l
         _thin(l, HD_FACE if key.startswith('face-') else HD_BUDGET.get(key, 900))
+        for p_ in l.data.polygons: p_.use_smooth = True   # smooth shading on the thinned shape (no facets)
         print('hd:', key, _tris(h), '->', _tris(l))
     cloth = [k for k in low if not k.startswith('face-')]
     # one UV atlas for every part that is not a face (smart projection of all of them together packs them side by side)
@@ -109,7 +112,7 @@ def hd():
         for k in cloth:
             if LIT and (kind == 'COMBINED') == (k in ('hair', 'hands')): continue   # (the hands came out dark too)
             _select([high[k], low[k]], low[k])
-            if kind == 'COMBINED': scene.cycles.samples = 48; bpy.ops.object.bake(type='COMBINED', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
+            if kind == 'COMBINED': scene.cycles.samples = 128; bpy.ops.object.bake(type='COMBINED', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
             elif kind == 'DIFFUSE': bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
             else: bpy.ops.object.bake(type='AO', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
     c = np.array(col_img.pixels[:]).reshape(-1, 4); a = np.array(ao_img.pixels[:]).reshape(-1, 4)

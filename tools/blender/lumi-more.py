@@ -149,7 +149,8 @@ def body_villager():
         r = wH * (.66 if kind == 'wide' else .56)
         for s in (-1, 1):  # trousers (wide and flowing under an áo dài) or shorts
             tube('trouser', BOT, [(s * b['legX'] * .85, 0, b['zCr'] + .02 * S), (s * b['legX'] * 1.05, 0, low)], [r, r * (1.06 if kind == 'wide' else .98)], 24)
-        lathe('seat', BOT, [(wH * .55, b['zCr'] - .035 * S), (wH * .95, b['zCr'] - .005 * S), (wH * 1.02, (b['zCr'] + b['zW']) / 2), (wC * 1.03, b['zW'] + .01 * S)], 32, scale=(1, dep))
+        k_ = .9 if tk == 'aodai' else 1.0   # (v1.08e, owner: "Mai's tummy looks strange") under an áo dài the seat stays inside the panels
+        lathe('seat', BOT, [(wH * .55 * k_, b['zCr'] - .035 * S), (wH * .95 * k_, b['zCr'] - .005 * S), (wH * 1.02 * k_, (b['zCr'] + b['zW']) / 2), (wC * 1.0 * k_, b['zW'] + .01 * S)], 32, scale=(1, dep))
     elif kind == 'skirt' and tk != 'dress':
         lathe('skirt', BOT, [(wC * 1.05, b['zW'] + .01 * S), (wH * 1.15, b['zCr']), (wH * 1.4, b['zCuff'] + .02 * S), (wH * 1.42, b['zCuff'] + .005 * S)], 36, scale=(1, dep * 1.05))
     global BARE
@@ -163,7 +164,7 @@ def body_villager():
         for z in lin(hem + .04 * S, b['zC'] + .02 * S, 4): sphere('button', felt('buttonCloth', '#f2ead8'), (0, fronty(wC * 1.08) - .004, z), (.008 * S, .004 * S, .008 * S), 10, 5)
     elif tk == 'aodai':  # áo dài: a fitted top with a mandarin collar, long front and back panels split at the sides
         lathe('aoDai', TOP, [(wC * 1.04, b['zW'] - .02 * S), (wC * 1.06, b['zC']), (wC * .85, b['zS'] + .01 * S)], 32, scale=(1, dep))
-        for a0, a1 in ((-.95, .95), (math.pi - .95, math.pi + .95)):
+        for a0, a1 in ((-1.2, 1.2), (math.pi - 1.2, math.pi + 1.2)):   # (v1.08e: wider panels, the side slits narrower)
             lathe('aoDai', TOP, [(wC * 1.05, b['zW']), (wH * 1.08, b['zCr']), (wH * 1.2, b['zCuff'] - .1 * S), (wH * 1.24, b['zCuff'] - .13 * S)], 28, scale=(1, dep * 1.05), arc=(a0, a1))
         tube('aoDai', TOP, [Vector((math.cos(t) * wC * .5, math.sin(t) * wC * .45, b['zN'] + .005)) for t in lin(0, 2 * math.pi, 21)], .016 * S, 8, False)
     elif tk == 'dress':  # a sundress or a school dress: a bodice and a flared skirt to the knee, a white collar for school
