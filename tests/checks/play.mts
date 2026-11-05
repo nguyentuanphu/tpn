@@ -1154,7 +1154,7 @@ await check('frienditems', async () => {
     await A.loadFriendModels(other); const o = A.buildAvatar({ set, friend: other, skin: '#f6c7a5', fitems: p.look.fitems });
     out.other = item(o);
     // shop shoes take the place of the model's boots; the model shows its own boots otherwise
-    const sh = A.buildAvatar({ ...p.look, feet: 'sneakers_red' }); let codeShoes = 0; sh.rig.traverse(x => { if (x.isMesh && !x.isSkinnedMesh && x.parent && x.parent !== sh.model.obj && (x.parent === sh.kneeL || x.parent === sh.kneeR || x.parent === sh.legL || x.parent === sh.legR)) codeShoes++; });
+    const sh = A.buildAvatar({ ...p.look, feet: 'sneakers_red' }); let codeShoes = 0; sh.rig.traverse((x: any) => { if (x.isMesh && !x.isSkinnedMesh && x.parent && x.parent !== sh.model.obj && (x.parent === sh.kneeL || x.parent === sh.kneeR || x.parent === sh.legL || x.parent === sh.legR)) codeShoes++; });
     out.shoes = { boots: boots(sh), code: codeShoes, plain: boots(h.av) };
     let draws = 0; h.av.model.obj.traverse(x => { if (x.isMesh && x.visible && x.material.name !== 'skin-grip') draws++; }); out.draws = draws;
     return out;
