@@ -3486,3 +3486,37 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
   .horse-race:not(:has(> details[open])) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .horse-race:not(:has(> details[open])) > :not(details) { grid-column: 1 / -1; }
 }
+/* (v1.08b friends) choosing a friend: Welcome steps, the one-time card, the editor's friend row, the Backpack's rows */
+.modal.friendpick { align-items: center; }
+.modal.friendpick .card { width: min(720px, 100%); max-height: calc(100dvh - 28px); display: flex; flex-direction: column; }
+.fr-body { display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.6vh, 16px); min-height: 0; }
+.fr-body h2 { margin: 0; text-align: center; font-size: clamp(22px, 4.2vmin, 32px); }
+.fr-name { font-size: 24px; min-height: 64px; width: min(420px, 100%); text-align: center; border-radius: 18px; border: 3px solid #c9b8ef; padding: 0 16px; }
+.fr-nav { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.fr-nav .btn { min-height: 64px; min-width: 120px; font-size: 20px; }
+.fr-genders, .fr-cards { display: flex; gap: clamp(10px, 2.4vmin, 22px); justify-content: center; width: 100%; min-height: 0; }
+.fr-gender, .fr-card { flex: 1 1 0; max-width: 300px; min-width: 0; min-height: 64px; border: 4px solid transparent; border-radius: 22px; background: #f4ecda; padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font: inherit; color: #3a2a4a; }
+.fr-gender.on, .fr-card.on { border-color: #7a5cd6; box-shadow: 0 0 0 4px #e4dafc; }
+.fr-gender b, .fr-card b { font-size: clamp(20px, 3.6vmin, 28px); }
+.fr-card small { font-size: 16px; text-align: center; }
+.fr-two { display: flex; justify-content: center; }
+.fr-two img { width: 50%; max-height: min(34vh, 260px); object-fit: contain; }
+.fr-turn { position: relative; width: 100%; height: min(36vh, 300px); }
+.fr-cards.small .fr-turn { height: min(22vh, 170px); }
+.fr-turn img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; animation: fr-turn 9s infinite; }
+.fr-turn img:nth-child(2) { animation-delay: 3s; } .fr-turn img:nth-child(3) { animation-delay: 6s; }
+@keyframes fr-turn { 0%, 30% { opacity: 1; } 36%, 94% { opacity: 0; } 100% { opacity: 1; } }
+.fr-card.wave .fr-turn { animation: fr-wave .9s ease-in-out 2; }
+@keyframes fr-wave { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg) translateY(-6px); } 75% { transform: rotate(4deg) translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .fr-turn img { animation: none; } .fr-turn img:first-child { opacity: 1; } .fr-card.wave .fr-turn { animation: none; } }
+.fr-tone { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; }
+.fr-label, .fr-note { margin: 0; font-size: 18px; text-align: center; }
+.fr-note { color: #6a4bb8; font-weight: 600; }
+.fr-skins { display: flex; gap: clamp(6px, 2vw, 12px); justify-content: center; flex-wrap: wrap; }
+.fr-skin { width: clamp(52px, 15vw, 64px); height: clamp(52px, 15vw, 64px); border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 0 2px #c9b8ef; cursor: pointer; }
+.fr-skin.on { box-shadow: 0 0 0 5px #7a5cd6; }
+.fr-field .fr-cards { justify-content: flex-start; }
+.fr-field .fr-card { max-width: 200px; }
+.fr-row .fr-slot img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+.fr-suit { display: inline-flex; border-radius: 12px; padding: 4px; background: var(--c); }
+@media (max-height: 520px) { .fr-turn { height: 30vh; } .fr-two img { max-height: 30vh; } .fr-body h2 { font-size: 22px; } .fr-skin { width: 52px; height: 52px; } .modal.friendpick:not(.little) .fr-nav .btn { min-height: 48px; } }

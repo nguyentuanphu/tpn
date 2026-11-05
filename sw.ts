@@ -40,6 +40,9 @@ const FILES = [
   'js/games/maths-kit.js', 'js/games/maths3.js', 'js/games/maths3-meta.js', 'js/games/maths4.js',
   'js/games/money3.js', 'js/games/money3-meta.js', 'js/games/moneylogic3.js',
   'js/games/science2.js', 'js/games/science2-meta.js', 'js/games/tiengviet2.js', 'js/games/tiengviet2-meta.js',
+  // (v1.08b friends) the four new friends: their data, the choosing screens and their pictures
+  'js/content/friends.js', 'js/ui/friends-ui.js',
+  ...['finn', 'sol', 'clara', 'lumi'].flatMap(f => ['f', 'q', 's', 'face'].map(v => `icons/friends/${f}-${v}.webp`)),
   'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'
 ];
 // (Analytics & Infra, 10 Oct, owner: "can't even play offline when there is no internet") the newest copy when the

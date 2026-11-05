@@ -3,6 +3,7 @@ import { THREE, toon, glow, blobShadow, outline, P, merge, toonSmooth } from './
 import { GLIDERS, settings } from './state.js';
 import { customFace, familyOwnFace, onFamilyPhotos } from './custom.js';
 import { wearing, BOY_OF } from './content/shop.js';
+import { friendLook } from './content/friends.js'; // (v1.08b friends)
 
 const gParts = {
   head: new THREE.SphereGeometry(.5, 32, 24),
@@ -115,8 +116,8 @@ const avatarCache = {};
 export function avatarURL(p) {
   // (audit, 9 Oct) the result goes into <img src="…">: only a plain base64 picture or a simple file path of our own
   if (p.photo && (/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/]+={0,2}$/.test(p.photo) || /^[\w\/.-]+\.(png|jpe?g|webp)$/i.test(p.photo))) return p.photo;
-  const k = p.look.hair + p.look.skin;
-  if (!avatarCache[k]) { const c = document.createElement('canvas'); c.width = c.height = 160; drawDefaultFace(c.getContext('2d'), 160, p.look); avatarCache[k] = c.toDataURL(); }
+  const L = friendLook(p.look), k = L.hair + L.skin; // (v1.08b friends) the friend's hair in the child's skin tone
+  if (!avatarCache[k]) { const c = document.createElement('canvas'); c.width = c.height = 160; drawDefaultFace(c.getContext('2d'), 160, L); avatarCache[k] = c.toDataURL(); }
   return avatarCache[k];
 }
 
@@ -205,6 +206,7 @@ export type SvAvatar = { root: THREE.Group, rig: THREE.Group, skinMat: THREE.Mat
   kneeL?: THREE.Group, kneeR?: THREE.Group, elbowL?: THREE.Group, elbowR?: THREE.Group, tail?: THREE.Group, painted?: boolean, life?: AvatarLife };
 type AvatarLife = { t: number, st: string, chg: number, land: number, ph: number, blink: number, mood: string, seed: number };
 export function buildAvatar(look, photo?) {
+  look = friendLook(look); // (v1.08b friends) a child is drawn as their friend (Finn, Sol, Clara or Lumi); villagers stay as they are
   const root = new THREE.Group(), rig = new THREE.Group(); root.add(rig); root.userData.avatar = true;
   const shadow = blobShadow(); root.add(shadow); shadow.position.y = .03; shadow.scale.setScalar(.65);
   const W = wearing(look), bot = W.bottom, ft = W.feet; // (round S) shop clothes: each piece one merged shape
@@ -214,7 +216,7 @@ export function buildAvatar(look, photo?) {
   const trim = toon(style === 'aodai' ? '#ffd84a' : '#f2d16b', { roughness: .7 });
   const A: SvAvatar = { root, rig, skinMat: skin, look };
   // legs (pivot at the hip)
-  const legSpec = bot ? (bot.shape === 'shorts' ? 'shorts' : bot.shape === 'skirt' ? 'skin' : 'pants:' + bot.color) : STYLE_LEGS[style] || 'skin';
+  const legSpec = look.legs ? 'pants:' + look.legs : bot ? (bot.shape === 'shorts' ? 'shorts' : bot.shape === 'skirt' ? 'skin' : 'pants:' + bot.color) : STYLE_LEGS[style] || 'skin';
   const shortsCol = bot && bot.shape === 'shorts' ? bot.color : null;
   const legMat = legSpec === 'skin' ? skin : legSpec === 'shorts' ? skin : legSpec === 'pants' ? cloth : toon(legSpec.split(':')[1], { roughness: .9 });
   // (v1.08) the thigh turns at the hip, the shin at the knee (y -.27); the shoe is on the shin, so it stays at y -.54

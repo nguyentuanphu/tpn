@@ -75,6 +75,11 @@ export async function start(page, mode = 'solo', screen = 'valley') {
   // (round R) Ông Cú's prologue film starts by itself for a new child; the checks start without it unless they ask
   await page.evaluate(() => { if (window.__sv) window.__sv._owlAuto = true; });
   await page.click('.who .go', { timeout: 90000 });
+  // (v1.08b friends) the seeded children are old saves, so the one-time "New friends are here!" card comes first; the checks
+  // keep the friend they were moved to (Finn or Clara) and play on, as with the prologue below. The card itself is checked
+  // by "friendmigrate".
+  await page.waitForFunction(() => (window.__sv && window.__sv.heroes.length > 0) || !!document.querySelector('.modal.newfriends [data-go="play"]'), null, { timeout: 90000 });
+  for (let i = 0; i < 4; i++) { const b = await page.$('.modal.newfriends:not(.out) [data-go="play"]'); if (!b) break; await b.click(); await page.waitForTimeout(250); }
   await page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
   // skip the prologue
   for (let i = 0; i < 40; i++) { const sb = await page.$('.storybook'); if (!sb) break; await page.evaluate(() => { const b = document.querySelector<HTMLElement>('.storybook .sb-next, .storybook .next, .storybook button:last-of-type'); b && b.click(); }); await page.waitForTimeout(80); }

@@ -939,3 +939,125 @@ await check('companionhats', async () => {
   ok(locked && bought && off && on && !errors.length, JSON.stringify({ locked, bought, off, on, errors }));
   return 'the shop sells the next hat (45 coins), later hats wait locked; the mirror takes a hat off and puts another on';
 });
+
+// ---- (v1.08b friends) the four new friends: Welcome, old saves, changing friend, wearables on every friend ----
+await check('newfriends', async () => {
+  // (plan docs/plans/new-friends-characters.md, owner 3 Nov 2026 AEDT) a new player: name, "boy or girl?" (two big cards),
+  // the two friends of that set, a skin tone (5), then the editor (age, start screen, difficulty) with the name filled in.
+  // On a phone (both ways), a tablet and a computer every step fits on one screen with 44 px buttons and 16 px text.
+  const rows = [], bad = [];
+  for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['phone-land', 844, 390, true], ['tablet', 1024, 768, true], ['computer', 1280, 800, false]]) {
+    const P = await open(b, { w, h, touch, play: false, pre: () => { localStorage.setItem('sv2_profiles', '[]'); } });
+    await P.page.click('.screen.title .press', { force: true }); await P.page.waitForSelector('.screen.who');
+    await P.page.click('.who .make'); await P.page.waitForSelector('.modal.friendpick .fr-name');
+    const fit = () => P.page.evaluate(() => { const c = document.querySelector('.modal.friendpick .card'), r = c.getBoundingClientRect(), small = [], tiny = [];
+      c.querySelectorAll('button, input').forEach((e: HTMLElement) => { const q = e.getBoundingClientRect(); if (q.width && (q.width < 44 || q.height < 44)) small.push(e.className + ' ' + Math.round(q.width) + 'x' + Math.round(q.height)); });
+      c.querySelectorAll('h2, b, small, p, button, input').forEach((e: HTMLElement) => { if (e.textContent.trim() && parseFloat(getComputedStyle(e).fontSize) < 16) tiny.push(e.className || e.tagName); });
+      return { inside: r.top >= 0 && r.bottom <= innerHeight + 1 && r.left >= 0 && r.right <= innerWidth + 1, scroll: c.scrollHeight > c.clientHeight + 2 || document.querySelector('.modal.friendpick').scrollHeight > innerHeight + 2, small, tiny }; });
+    const steps = {};
+    await P.page.fill('.fr-name', 'An'); steps['name'] = await fit();
+    await P.page.click('.friendpick [data-go="next"]'); steps['gender'] = await fit();
+    await P.page.click('.friendpick [data-set="boy"]');
+    const boys = await P.page.$$eval('.friendpick [data-friend]', e => e.map((x: HTMLElement) => x.dataset.friend));
+    await P.page.click('.friendpick [data-go="back"]'); await P.page.click('.friendpick [data-set="girl"]');
+    const girls = await P.page.$$eval('.friendpick [data-friend]', e => e.map((x: HTMLElement) => x.dataset.friend));
+    const doneOff = await P.page.$eval('.friendpick [data-go="done"]', (e: HTMLButtonElement) => e.disabled);
+    await P.page.click('.friendpick [data-friend="lumi"]'); await P.page.click('.friendpick .fr-skin:nth-child(3)'); steps['friend'] = await fit();
+    const side = await P.page.evaluate(() => { const c = [...document.querySelectorAll('.friendpick .fr-card')].map(e => e.getBoundingClientRect()); return c.length === 2 && Math.abs(c[0].top - c[1].top) < 2; });
+    await P.page.click('.friendpick [data-go="done"]'); await P.page.waitForSelector('.modal.editor #nm');
+    const ed = await P.page.evaluate(() => ({ name: (document.querySelector('#nm') as HTMLInputElement).value, friendRow: [...document.querySelectorAll('#cFriend [data-friend]')].map((e: HTMLElement) => e.dataset.friend + (e.classList.contains('on') ? '*' : '')) }));
+    await P.page.evaluate(() => (document.querySelector('#eSave') as HTMLElement).click());
+    await P.page.waitForSelector('.who .go:not([disabled])'); await P.page.evaluate(() => { window.__sv._owlAuto = true; }); await P.page.click('.who .go');
+    await P.page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
+    const r = await P.page.evaluate(async () => { const S = await import('/js/state.js'), p = __sv.heroes[0].profile; return { friend: p.look.friend, set: p.look.set, skin: p.look.skin === S.SKIN[2], card: p.friendCard, newCard: !!document.querySelector('.modal.newfriends'), name: p.name }; });
+    const errs = P.errors; await P.ctx.close();
+    for (const [k, v] of Object.entries<any>(steps)) if (!v.inside || v.scroll || v.small.length || v.tiny.length) bad.push(`${dev} ${k}: ${JSON.stringify(v)}`);
+    if (boys.join() !== 'finn,sol' || girls.join() !== 'clara,lumi' || !doneOff || !side) bad.push(`${dev}: ${JSON.stringify({ boys, girls, doneOff, side })}`);
+    if (ed.name !== 'An' || ed.friendRow.join() !== 'clara,lumi*') bad.push(`${dev} editor: ${JSON.stringify(ed)}`);
+    if (r.friend !== 'lumi' || r.set !== 'girl' || !r.skin || r.card !== 'seen' || r.newCard || r.name !== 'An') bad.push(`${dev} saved: ${JSON.stringify(r)}`);
+    if (errs.length) bad.push(`${dev} errors: ${errs.join(' | ')}`);
+    rows.push(dev);
+  }
+  ok(!bad.length, bad.join('\n'));
+  return `${rows.join(', ')}: name, boy or girl (Finn and Sol, Clara and Lumi side by side), Lumi with the third skin tone, then the editor; every step on one screen`;
+});
+
+await check('friendmigrate', async () => {
+  // old saves move once: boys to Finn, girls to Clara, a save with no set guessed from its clothes; the skin tone and every
+  // old field stay; tops and bottoms bought become free outfits of the same colour; the card shows once and lets the child
+  // take the other friend; an online friend on an older version is drawn as the default friend of their set
+  const P = await open(b, { w: 1180, h: 820, play: false, pre: () => { if (!sessionStorage.getItem('fm')) sessionStorage.setItem('fm', '1'), localStorage.setItem('sv2_profiles', JSON.stringify([
+    { id: 'kg', name: 'Girl', photo: null, age: 'big', difficulty: 'easy', look: { style: 'shirt', color: '#3b6fe0', set: 'girl', hair: '#3b2618', hairStyle: 'long', skin: '#7a4e33', hat: 'bow', top: 'none' }, owned: { hats: ['none', 'bow'], clothes: ['bow'] }, stickers: ['s1'], created: 1 },
+    { id: 'kb', name: 'Boy', photo: null, age: 'little', difficulty: 'easy', look: { style: 'shirt', color: '#3b6fe0', set: 'boy', skin: '#e0aa80' }, created: 2 },
+    { id: 'kn', name: 'NoSet', photo: null, age: 'little', difficulty: 'easy', look: { style: 'dress', color: '#ff5fa2', skin: '#ffe3d1' }, created: 3 }])); } });
+  const r = await P.page.evaluate(async () => {
+    const S = await import('/js/state.js'), F = await import('/js/content/friends.js'), C = await import('/js/content/shop.js');
+    const g = S.profiles.find(p => p.id === 'kg'), bo = S.profiles.find(p => p.id === 'kb'), n = S.profiles.find(p => p.id === 'kn');
+    const top = C.CLOTHES.find(it => it.slot === 'top' && it.for === 'g'), q = S.normalizeProfile({ id: 'kt', name: 'T', look: { set: 'girl', top: top.id }, owned: { clothes: [top.id] } });
+    return { g: [g.look.friend, g.look.skin, g.look.hair, g.look.hairStyle, g.look.hat, g.owned.hats.join(), g.stickers.join(), g.friendCard], bo: [bo.look.friend, bo.look.skin, bo.friendCard], n: [n.look.friend, n.look.set],
+      old: [q.look.top, q.owned.suits.join(), q.look.suit, q.newSuits, F.friendLook(q.look).color === top.color] };
+  });
+  await start(P.page, 'solo', 'valley'); // (the harness taps "Let's play" on the card: Finn stays)
+  const after = await P.page.evaluate(() => ({ friend: __sv.heroes[0].profile.look.friend, card: __sv.heroes[0].profile.friendCard }));
+  // the card again after a reload: not shown; a new child of the old save's set is not asked either
+  await P.page.reload(); await P.page.waitForSelector('.screen.title'); await P.page.click('.screen.title .press', { force: true }); await P.page.waitForSelector('.screen.who');
+  await P.page.locator('.pick[data-id]').nth(0).click(); await P.page.evaluate(() => { window.__sv._owlAuto = true; }); await P.page.click('.who .go');
+  await P.page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0); const again = await P.page.evaluate(() => !!document.querySelector('.modal.newfriends'));
+  // the card lets a child take the other friend
+  const pick = await P.page.evaluate(async () => { const U = await import('/js/ui/friends-ui.js'), S = await import('/js/state.js'), p = S.profiles.find(x => x.id === 'kb'); p.friendCard = 'due';
+    return new Promise(res => { U.newFriendsCard(p, () => res([p.look.friend, p.friendCard])); (document.querySelector('.newfriends [data-friend="sol"]') as HTMLElement).click(); (document.querySelector('.newfriends [data-go="play"]') as HTMLElement).click(); }); });
+  // an online friend on an older version (a hello with no friend) is drawn as the default friend of their set
+  const online = await P.page.evaluate(async () => { const F = await import('/js/content/friends.js'); return [F.friendOf({ style: 'dress', color: '#ff5fa2' }), F.friendOf({ set: 'boy' }), F.friendOf({ set: 'girl', friend: 'sol' })]; });
+  const errs = P.errors; await P.ctx.close();
+  const good = r.g.join('|') === 'clara|#7a4e33|#3b2618|long|bow|none,bow|s1|due' && r.bo.join('|') === 'finn|#e0aa80|due' && r.n.join('|') === 'clara|girl'
+    && r.old[0] !== 'none' && /^c:/.test(r.old[1]) && r.old[2] === r.old[1] && r.old[3] === 1 && r.old[4] && after.card === 'seen' && !again && pick.join() === 'sol,seen' && online.join() === 'clara,finn,clara' && !errs.length;
+  ok(good, JSON.stringify({ r, after, again, pick, online, errs }));
+  return 'girls to Clara, boys to Finn, no set guessed from a dress; old fields, hats and stickers kept; an old top became a free outfit; the card once; old online looks as the default friend';
+});
+
+await check('friendswap', async () => {
+  // the Backpack's "Character & Outfits": one tap changes friend (free, only the two of the child's set), the character is
+  // drawn again with that friend's hair and clothes, and changing set is not offered there (Grown-ups › Children › Edit only)
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, p = G.heroes[0].profile, U = await import('/js/ui/friends-ui.js'), F = await import('/js/content/friends.js');
+    G.openPad(0, 'bag'); for (let k = 0; k < 20 && !document.querySelector('.pad [data-befriend]'); k++) await w(200);
+    const row = [...document.querySelectorAll('.pad [data-befriend]')].map((e: HTMLElement) => e.dataset.befriend), set = p.look.set, other = F.friendsOf(set).find(id => id !== F.friendOf(p.look));
+    const heading = [...document.querySelectorAll('.pad h3')].some(h => /Character & Outfits/.test(h.textContent));
+    const before = G.heroes[0].av.root; (document.querySelector(`.pad [data-befriend="${other}"]`) as HTMLElement).click(); await w(300);
+    // (the builder merges the parts into a few shapes coloured per corner, so the look it drew from is read back)
+    const hairOf = av => av.look && av.look.hair === F.FRIENDS[other].hair && av.look.hairStyle === F.FRIENDS[other].hairStyle;
+    const swapped = p.look.friend === other && G.heroes[0].av.root !== before && hairOf(G.heroes[0].av), on = !!document.querySelector(`.pad [data-befriend="${other}"].on`);
+    const locked = !U.setFriend(p, set === 'girl' ? 'finn' : 'clara') && p.look.friend === other, suits = [...document.querySelectorAll('.pad [data-suit]')].map((e: HTMLElement) => e.dataset.suit);
+    await w(1500); const saved = JSON.parse(localStorage.getItem('sv2_profiles')).find(x => x.id === p.id).look.friend === other;
+    return { row, set, heading, swapped, on, locked, suits, saved };
+  });
+  const errs = P.errors; await P.ctx.close();
+  const pair = r.set === 'girl' ? 'clara,lumi' : 'finn,sol';
+  ok(r.row.join() === pair && r.heading && r.swapped && r.on && r.locked && r.saved && r.suits.length >= 1 && !errs.length, JSON.stringify({ r, errs }));
+  return `the Bag shows ${pair}; one tap changed friend, drew the new hair and saved it; the other set cannot be chosen there`;
+});
+
+await check('wearfit', async () => {
+  // every hat, neck, back and shoe the shop sells (and the passport and tester hats) is drawn on each of the four friends
+  // with no error, the hat sits on the head (above the eyes, not floating far above), and the back items sit behind
+  const r = await (async () => { const P = await open(b, { w: 900, h: 700, play: false });
+    const out = await P.page.evaluate(async () => {
+      const A = await import('/js/avatar.js'), C = await import('/js/content/shop.js'), F = await import('/js/content/friends.js'), D = await import('/js/data.js'), THREE = (await import('/js/gfx.js')).THREE;
+      const bad = [], n = { hat: 0, neck: 0, back: 0, feet: 0 }, box = a => { a.root.updateMatrixWorld(true); return new THREE.Box3().setFromObject(a.head || a.root); };
+      const hats = [...C.CLOTHES.filter(it => it.slot === 'hat').map(it => it.id), ...(D.REWARD_HATS || [])];
+      for (const f of F.FRIEND_IDS) {
+        const base = { set: F.FRIENDS[f].set, friend: f, skin: '#f6c7a5' }, plain = A.buildAvatar(base), h0 = box(plain);
+        for (const slot of ['hat', 'neck', 'back', 'feet']) for (const id of (slot === 'hat' ? hats : C.CLOTHES.filter(it => it.slot === slot).map(it => it.id))) {
+          try { const a = A.buildAvatar({ ...base, [slot]: id }); n[slot]++;
+            if (slot === 'hat') { const hb = box(a); if (hb.max.y > h0.max.y + .9 || hb.max.y < h0.max.y - .05) bad.push(`${f} ${id}: hat top ${hb.max.y.toFixed(2)} vs head ${h0.max.y.toFixed(2)}`); }
+          } catch (e) { bad.push(`${f} ${slot} ${id}: ${e.message}`); }
+        }
+      }
+      return { bad, n };
+    });
+    const errs = P.errors; await P.ctx.close(); return { ...out, errs }; })();
+  ok(!r.bad.length && !r.errs.length && r.n.hat > 18, JSON.stringify(r).slice(0, 1500));
+  return `on Finn, Sol, Clara and Lumi: ${r.n.hat / 4} hats, ${r.n.neck / 4} neck things, ${r.n.back / 4} backs and ${r.n.feet / 4} shoes, all drawn and in place`;
+});
+// ---- (v1.08b friends) end ----

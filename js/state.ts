@@ -5,6 +5,7 @@ import type { Profile, Farm, Settings } from '../types/save.js';
 import { BUILD } from './build.js';
 import { managementEvidence } from './core/events.js';
 import { sortClothes } from './content/shop.js';
+import { migrateFriend } from './content/friends.js'; // (v1.08b friends)
 const KEY_SETTINGS = 'sv2_settings', KEY_PROFILES = 'sv2_profiles';
 
 const store = {
@@ -163,7 +164,7 @@ function newProfile(i: number): Profile {
     photo: null,
     age: 'little',           // 'little' (under 5: everything spoken, can't lose) or 'big' (5 to 8: harder, real opponents)
     difficulty: 'easy',      // 'easy' | 'medium' | 'hard' | 'talent'
-    look: { style: i === 0 ? 'dress' : 'shirt', color: i === 0 ? '#ff5fa2' : '#3b6fe0', hat: i === 0 ? 'bow' : 'cap', back: i === 0 ? 'wings' : 'cape', hair: HAIR[0], hairStyle: i === 0 ? 'buns' : 'short', skin: SKIN[1], glider: 0 },
+    look: { style: i === 0 ? 'dress' : 'shirt', color: i === 0 ? '#ff5fa2' : '#3b6fe0', hat: i === 0 ? 'bow' : 'cap', back: i === 0 ? 'wings' : 'cape', hair: HAIR[0], hairStyle: i === 0 ? 'buns' : 'short', skin: SKIN[1], glider: 0, set: i === 0 ? 'girl' : 'boy', friend: i === 0 ? 'clara' : 'finn', suit: (i === 0 ? 'clara' : 'finn') + '-everyday' }, // (v1.08b friends)
     created: Date.now()
   };
 }
@@ -190,6 +191,7 @@ export function normalizeProfile(p: Record<string, any>): Profile {
   // (r79, owner 16 Oct: "boy wears boys clothes") clothes of the other set come off and are wrapped as gift boxes; things
   // that were for both sets become the child's own set's version (js/content/shop.js)
   sortClothes(o);
+  migrateFriend(o); // (v1.08b friends) an old save moves to Finn (boys) or Clara (girls); the old look fields stay
   if (!Array.isArray(o.stickers)) o.stickers = [];
   if (!Array.isArray(o.album)) o.album = [];
     // (r90, owner 23 Oct) migration: treat existing profile.tales[id] === true as 1 read

@@ -25,6 +25,8 @@ import { Channel } from './relay.js';
 import { checkMsg } from './netmsg.js';
 import type { Remote,Msg } from '../types/net.js';
 import { MAP_VERSION } from './content/map.js';
+import { FRIENDS, defaultFriend } from './content/friends.js'; // (v1.08b friends)
+import { setOf } from './content/shop.js';
 const PREFIX = 'sparkle-valley-v2-';
 export const MAX_ROOM = 6;
 // (round R privacy, 9 Oct) room codes have 6 digits (4 were easy to guess)
@@ -81,9 +83,11 @@ const okId = id => typeof id === 'string' && /^[\w-]{1,64}$/.test(id);
 export const okPub = p => typeof p === 'string' && /^[A-Za-z0-9+/]{87}=$/.test(p);
 const okSecret = s => typeof s === 'string' && /^[A-Za-z0-9+/]{43}=$/.test(s);
 const okCode = c => typeof c === 'string' && /^[A-Z0-9]{4,8}$/i.test(c);
+// (v1.08b friends) a friend on an older version has no look.friend: shown as the default friend of their set (Finn or Clara)
+const withFriend = l => (l.friend && FRIENDS[l.friend] ? l : { ...l, friend: defaultFriend(setOf(l)) });
 const okLook = l => l && typeof l === 'object' && !Array.isArray(l) ? Object.fromEntries(Object.entries(l).filter(([k, v]) => /^\w{1,16}$/.test(k) && (typeof v === 'number' ? Number.isFinite(v) : typeof v === 'string' && v.length < 40 && /^[#\w -]*$/.test(v)))) : {};
 // (round R privacy, 9 Oct) a hello never carries a photo: the photo goes after admission, locked for each player
-const cleanHello = (d, from) => ({ id: from, name: String(d.name || '').slice(0, 20), look: okLook(d.look), photo: null, friend: okCode(d.friend) ? d.friend.toUpperCase() : null, pub: okPub(d.pub) ? d.pub : null, s: null });
+const cleanHello = (d, from) => ({ id: from, name: String(d.name || '').slice(0, 20), look: withFriend(okLook(d.look)), photo: null, friend: okCode(d.friend) ? d.friend.toUpperCase() : null, pub: okPub(d.pub) ? d.pub : null, s: null });
 // a friend on this device's list (by friend code)
 const noPhoto = h => { const o = Object.assign({}, h || {}); delete o.photo; delete o.w; return o; };
 const friendEntry = code => (Array.isArray(settings.friends) ? settings.friends : []).find(f => f && f.code === String(code || '').toUpperCase()) || null;

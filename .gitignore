@@ -134,6 +134,7 @@ marketing/source/runvalley.log
 /js/content/films/tiddalik.js
 /js/content/films/vusua.js
 /js/content/films/weaver.js
+/js/content/friends.js
 /js/content/fruit-parade.js
 /js/content/hanoi-pack-info.js
 /js/content/hocvui.js
@@ -412,6 +413,7 @@ marketing/source/runvalley.log
 /js/ui.js
 /js/ui/common.js
 /js/ui/festivals-ui.js
+/js/ui/friends-ui.js
 /js/ui/grownups.js
 /js/ui/hub.js
 /js/ui/pad-album.js
