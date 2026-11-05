@@ -1189,6 +1189,12 @@ body.biggertext .hud .dock .dk small, body.biggertext .hud .mv small { font-size
 body.biggertext .hud .q-text { font-size: 1.3em; }
 body.biggertext .caption { font-size: clamp(21px, 5.4vw, 27px); }
 .seg.tsize button { min-width: 64px; font-weight: 700; }
+/* (v1.08f, owner 6 Nov: "make it one line") Two players, Fit the screen and Money: the three choices share one row on every
+   screen; each button shrinks and its words wrap inside it, never under the others; still 44 px or more tall */
+.seg.row3 { display: flex; flex-wrap: nowrap; width: 100%; max-width: 560px; box-sizing: border-box; }
+.seg.row3 button { flex: 1 1 0; min-width: 0; min-height: 48px; padding: 8px 6px; line-height: 1.15; white-space: normal; overflow-wrap: break-word; hyphens: manual; font-size: clamp(13px, 3.6vw, 16px); text-align: center; }
+.seg.row3 button .flagi { display: inline-block; width: 22px; height: 15px; margin-right: 4px; vertical-align: -2px; }
+.seg.row3 button .flagi > * { display: block; width: 100%; height: 100%; margin: 0; }
 
 /* ---------- Round 20: easier to see and reach ---------- */
 /* the action button sits in the middle above the dock, big and glowing, so it is easy to spot */

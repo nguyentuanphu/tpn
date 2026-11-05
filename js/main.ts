@@ -472,7 +472,8 @@ G.mount = (h, b) => { h.mount(b); h.profile.quests.buffalo = true; save(); say('
 const fruitParadeModeOn = fruitParadeAvailable;
 useAreas(id => SUBJECT_AREAS[id]?.[0]);   // (v1.08b quality) the subjects of the learning report and the level by subject
 
-async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number]) {
+// (v1.08f) `want`: a tester's Try again opens the game at the level and difficulty of the report
+async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number], want?: { level?: number, diff?: string }) {
   const h = G.heroes[i]; if (!h || !canStartGame(id,[h.profile])) return;
   if (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar',source === 'online'?'multi':'single')) return;
   if (id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard',source === 'online'?'multi':'single')) return;
@@ -490,8 +491,8 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   // (owner, 1 Nov 2026 AEDT: "the levels often look the same") each level has its own band and wins move a child up inside it:
   // Easy 1-2, Medium 2-3, Hard 4-5, Talent 5 with the game's own extra challenge. (Before, Easy reached the top after a few wins.)
   // (v1.08b quality) with no level chosen in the game, the level follows the child per subject; a grown-up's subject level wins
-  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || subjectDifficulty(p, id), band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
-  const level = Math.min(band[1], band[0] + Math.floor(((p.levels[id] || 1) - 1) / 2));
+  const p = h.profile, diff = ((want && ['easy', 'medium', 'hard', 'talent'].includes(want.diff || '') ? want.diff : '') as '' | import('../types/save.js').Difficulty) || (p.gameDiff && p.gameDiff[id]) || subjectDifficulty(p, id), band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
+  const level = want && want.level ? Math.max(1, Math.min(5, want.level)) : Math.min(band[1], band[0] + Math.floor(((p.levels[id] || 1) - 1) / 2));
   const little = G.heroes.some(x => x.profile.age !== 'big'), strong = !little && diff !== 'easy';
   if (source === 'shrine') { SFX.secret(); say('A shrine! Let’s solve the puzzle.', 'Một ngôi đền! Cùng giải câu đố nào.'); await wait(600); }
   const completion = source === 'hub' || source === 'pad' || source === 'simple' ? 'choose' : 'return';

@@ -3,7 +3,7 @@
 // If a grown-up adds an Anthropic API key in Grown-ups, villagers can answer anything freely with Claude
 // (online; only the chat text is sent, never names of real people, photos or recordings).
 import { T, nm } from './i18n.js';
-import { settings } from './state.js';
+import { settings, AI_CHAT_OFFER } from './state.js';
 import { say, hush, setSpeaker } from './voice.js';
 import { SFX } from './audio.js';
 import { GAMES } from './games/frame.js';
@@ -120,7 +120,7 @@ Latency-sensitive; begin your visible answer immediately.`;
   const text = res.content.filter(b => b.type === 'text').map(b => b.text).join(' ').trim();
   return text || null;
 }
-export const aiReady = () => settings.aiOn && !!settings.aiKey && navigator.onLine !== false;
+export const aiReady = () => AI_CHAT_OFFER && settings.aiOn && !!settings.aiKey && navigator.onLine !== false;
 
 // ---------- the chat window ----------
 export function openChat(G, i, pid, onClose, firstAsk) {
