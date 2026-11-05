@@ -148,7 +148,7 @@ def body_villager():
         low = b['zAnk'] + .05 * S if kind != 'shorts' else b['zCuff'] + (.0 if V['size'] == 'kid' else -.03) * S
         r = wH * (.66 if kind == 'wide' else .56)
         for s in (-1, 1):  # trousers (wide and flowing under an áo dài) or shorts
-            tube('trouser', BOT, [(s * b['legX'] * .85, 0, b['zCr'] + .02 * S), (s * b['legX'] * 1.05, 0, low)], [r, r * (1.06 if kind == 'wide' else .98)], 24)
+            tube('trouser', BOT, [(s * b['legX'] * .85, 0, b['zCr'] + (-.1 if tk == 'aodai' else .02) * S), (s * b['legX'] * 1.05, 0, low)], [r * (.8 if tk == 'aodai' else 1), r * (1.06 if kind == 'wide' else .98)], 24)   # (under an áo dài: the tops hidden in the panels)
         k_ = .9 if tk == 'aodai' else 1.0   # (v1.08e, owner: "Mai's tummy looks strange") no seat under an áo dài: it showed as a white band at the waist
         if tk != 'aodai': lathe('seat', BOT, [(wH * .55 * k_, b['zCr'] - .035 * S), (wH * .95 * k_, b['zCr'] - .005 * S), (wH * 1.02 * k_, (b['zCr'] + b['zW']) / 2), (wC * 1.0 * k_, b['zW'] + .01 * S)], 32, scale=(1, dep))
     elif kind == 'skirt' and tk != 'dress':

@@ -178,7 +178,10 @@ def sculpt():
         o = layer(sk, lambda p, rng=rng: (lambda t: t is not None and any(lo - .03 <= t <= hi + .03 for lo, hi in rng))(arm_of(p)), m, .014 * S, 'soft_sleeve')
     if pmat:
         low = plow if plow is not None else b['zAnk']
-        o = layer(sk, lambda p: arm_of(p) is None and low - .005 < p.z < b['zW'] + .03 * S, pmat, .009 * S, 'soft_pants')
+        # (v1.08e, owner: "Mai's tummy looks strange") under an áo dài the trousers start below its panels' top, or their white
+        # showed as a band round the waist
+        ptop = b['zCr'] - .02 * S if (V and V['top'][0] == 'aodai') else b['zW'] + .03 * S
+        o = layer(sk, lambda p: arm_of(p) is None and low - .005 < p.z < ptop, pmat, .009 * S, 'soft_pants')
     if tights and tights != pmat:   # coloured tights or long trousers drawn on the legs
         layer(sk, lambda p: arm_of(p) is None and p.z < b['zCr'] + .04 * S and p.z > b['zAnk'] - .02 * S, tights, .004 * S, 'soft_tights')
 
