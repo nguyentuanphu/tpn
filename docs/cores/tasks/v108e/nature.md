@@ -47,6 +47,13 @@ Branch: `work/v108e-nature` (from `origin/integrate/v108`). Brief: `nature-brief
 - The Sa Pa peach tree model (`tree-peach`) is made but not placed: the landmark mesh in `js/s2vn.ts` is the places
   helper's. Rocks, grass tufts and garden plots stay code shapes.
 
+## Owner's decisions
+- 6 Nov 2026 AEDT, in this chat: "still very scratchy", "still need better refinements": two refinement passes (smooth
+  shading, painted light, round puffs, turned shapes, rounded props). Then, by pop-up: **"Detailed up close"** for
+  **all** groups (trees and bushes; farm crops and props; My House decorations; flowers, grass, water, rocks): a rich
+  close-up model (5,000-8,000 triangles) within about 25 m, the lighter one further away, so phones and the speed limits
+  hold.
+
 ## Assumed (owner can change)
 - Far trees go back to the code shape (the brief allows it), rather than a still copy.
 - My House: the decorations got models; the room's frames, notice board and bunting stay as they are.

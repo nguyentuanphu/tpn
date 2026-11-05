@@ -11,6 +11,7 @@
 import bpy, bmesh, math, os, random, sys
 from mathutils import Vector, Matrix, noise
 
+HD = False
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(ROOT, 'models', 'world', 'raw')
 
@@ -28,6 +29,8 @@ class Model:
     shade per triangle, and smooth lumps (noise) instead of random spikes."""
     def __init__(self, name, seed=1):
         self.name = name; self.bm = bmesh.new(); self.col = self.bm.loops.layers.float_color.new('Col'); self.rnd = random.Random(seed)
+        self.hd = HD  # (owner, 6 Nov 2026 AEDT: "Detailed up close") the close-up version: rounder, more leaves and petals
+    def S(self, n, f=1.6): return int(round(n * f)) if self.hd else n
 
     def _add(self, make, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), jitter=0.0, shade=.06, top=.14, warp=None, lumps=1.6, ao=None):
         tmp = bmesh.new(); make(tmp)
@@ -60,6 +63,7 @@ class Model:
 
     # three.js-style primitives (centred like three's: cylinder and cone along y, cone tip up)
     def cyl(self, rt, rb, h, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), seg=10, **k):
+        seg = self.S(seg)
         def mk(b):
             bmesh.ops.create_cone(b, cap_ends=True, cap_tris=False, segments=seg, radius1=rb, radius2=rt, depth=h)
             bmesh.ops.rotate(b, verts=b.verts, matrix=Matrix.Rotation(-math.pi / 2, 3, 'X'))
@@ -67,8 +71,10 @@ class Model:
     def cone(self, r, h, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), seg=10, **k):
         return self.cyl(0.001, r, h, color, pos, rot, scl, seg, **k)
     def ball(self, r, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), sub=2, jitter=0.0, **k):
+        if self.hd and sub <= 1: sub += 1
         return self._add(lambda b: bmesh.ops.create_icosphere(b, subdivisions=sub + 1, radius=r), color, pos, rot, scl, jitter=jitter, **k)
     def uv(self, r, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), seg=12, ring=8, **k):
+        seg, ring = self.S(seg, 1.5), self.S(ring, 1.5)
         return self._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=seg, v_segments=ring, radius=r), color, pos, rot, scl, **k)
     def box(self, w, h, d, color, pos=(0, 0, 0), rot=(0, 0, 0), bevel=0.0, seg=2, **k):
         """a box; bevel (metres) rounds its edges like a wooden toy"""
@@ -79,6 +85,7 @@ class Model:
         return self._add(mk, color, pos, rot, (1, 1, 1), **k)
     def lathe(self, prof, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), seg=20, ribs=0, rib=0.0, **k):
         """a turned shape: the profile [(radius, height), ...] from the bottom up, spun round (ribs: a pumpkin's grooves)"""
+        seg = self.S(seg, 1.5)
         def mk(b):
             rings = []
             for (rr, yy) in prof:
@@ -95,6 +102,10 @@ class Model:
         return self._add(mk, color, pos, rot, scl, **k)
     def trunk(self, pts, r0, r1, color, seg=9, flare=1.6, **k):
         """a tapering trunk or branch along points, with a root flare at its foot"""
+        seg = self.S(seg, 1.5)
+        if self.hd and len(pts) < 6:  # more rings along a trunk up close: a smoother bend
+            P0 = [Vector(p) for p in pts]; pts = [tuple(P0[0].lerp(P0[1], 0))]
+            for i in range(len(P0) - 1): pts += [tuple(P0[i].lerp(P0[i + 1], t)) for t in (.5, 1)]
         n = len(pts); rad = [r0 + (r1 - r0) * (i / (n - 1)) for i in range(n)]
         if flare > 1: rad[0] *= flare
         def mk(b):
@@ -109,6 +120,7 @@ class Model:
         return self._add(mk, color, **k)
     def leaf(self, length, width, color, pos, yaw, droop=.5, bend=.35, n=7, fold=.25, **k):
         """a leaf: a bent strip with a folded midrib from its root at pos outwards along yaw (both sides seen)"""
+        n = self.S(n, 1.5)
         def mk(b):
             vs = []
             th = .008 + width * .015
@@ -136,7 +148,7 @@ class Model:
             a = i * 2 * math.pi / n
             self.ball(size, color, (pos[0] + math.cos(a) * r, pos[1], pos[2] + math.sin(a) * r), (0, -a, tilt), (1.3, .35, .8), sub=sub, top=.06, **k)
         return self
-    def puffs(self, centre, radii, n, size, cols, sub=1, skip=-.35, core=True, jitter=.22, seed=0, seg=14):
+    def puffs(self, centre, radii, n, size, cols, sub=1, skip=-.35, core=True, jitter=.22, seed=0, seg=14, leafy=16):
         """a picture-book canopy: a soft core and puffs spread over it like a cloud (fewer underneath)"""
         cx, cy, cz = centre; rx, ry, rz = radii
         ao = (centre, (rx * 1.15, ry * 1.15, rz * 1.15), .42)
@@ -147,8 +159,17 @@ class Model:
             if yy < skip: continue
             rr = math.sqrt(1 - yy * yy); a = i * ga + seed
             s = size * (.8 + .4 * ((i * 7 + seed * 3) % 5) / 4)
-            self._add(lambda b, s=s: bmesh.ops.create_uvsphere(b, u_segments=seg, v_segments=max(5, seg * 4 // 7), radius=s), cols[(i + 1) % len(cols)],
-                      (cx + math.cos(a) * rr * rx, cy + yy * ry, cz + math.sin(a) * rr * rz), (self.rnd.random(), self.rnd.random() * 6, 0), jitter=jitter * s * .22, top=.18, ao=ao)
+            sg = self.S(seg, 1.4); P = (cx + math.cos(a) * rr * rx, cy + yy * ry, cz + math.sin(a) * rr * rz); col = cols[(i + 1) % len(cols)]
+            self._add(lambda b, s=s, sg=sg: bmesh.ops.create_uvsphere(b, u_segments=sg, v_segments=max(5, sg * 4 // 7), radius=s), col,
+                      P, (self.rnd.random(), self.rnd.random() * 6, 0), jitter=jitter * s * .22, top=.18, ao=ao)
+            if self.hd and leafy:  # up close: little leaves all over the puff, pointing out, for a leafy edge
+                g2 = math.pi * (3 - math.sqrt(5))
+                for q in range(leafy):
+                    qy = 1 - 2 * (q + .5) / leafy
+                    if qy < -.2: continue
+                    qr = math.sqrt(1 - qy * qy); qa = q * g2 + i
+                    d = Vector((math.cos(qa) * qr, qy, math.sin(qa) * qr)); at = Vector(P) + d * s * .92
+                    self.leaf(s * .42, s * .2, col, tuple(at), math.atan2(-d.z, d.x), droop=math.asin(max(-1, min(1, d.y))) * .8 + .15, bend=.5, n=2, fold=.2, ao=ao, shade=.12)
         return self
 
     def tris(self):
@@ -189,6 +210,7 @@ BARK, BARK2 = '#7a5a3e', '#8a5a3b'
 LEAF = ['#2f7f5f', '#3a8d68', '#2a7656', '#46a077', '#358a62']
 
 def tier(m, r, h, y, color, scallops=9, droop=.28, turn=0.0, seg=36):
+    seg = m.S(seg, 1.6)
     """one tier of a pine: a cone whose rim hangs down in soft scallops (the picture-book fir)"""
     def mk(b):
         tip = b.verts.new((0, h * .5, 0)); rings = []
@@ -228,6 +250,11 @@ def pine(name, seed, cols, snow=False):
     m.trunk([(0, 0, 0), (0, 1.4, 0), (0, 2.4, 0)], .34, .22, '#6e4a32')
     for i, (r, h, y) in enumerate([(2.1, 2.4, 2.75), (1.75, 2.1, 3.95), (1.35, 1.9, 5.05), (.9, 1.7, 6.2)]):
         tier(m, r, h, y, cols[i], turn=i * .35)
+        if m.hd:  # up close: soft tufts of needles hang from every scallop of the tier's rim
+            for q in range(9):
+                a = 2 * math.pi * q / 9 + i * .35
+                for j, (dr, dy) in enumerate([(1.0, -.5), (.82, -.3)]):
+                    m.cone(.16 * r, .34 * r, cols[i], (math.cos(a + j * .3) * r * dr, y + h * dy - .2 * r * (1 - j), math.sin(a + j * .3) * r * dr), (math.sin(a) * 2.6, 0, -math.cos(a) * 2.6), seg=6, top=.15)
         if snow and i < 2: tier(m, r * .6, .5, y + h * .32, '#f4f8ff', scallops=7, droop=.18, turn=i)
     return m
 @model
@@ -275,6 +302,8 @@ def flower_meadow():
 def flower_roadside():
     """the stem, leaf and yellow middle of a roadside flower (its tinted petals stay their own disc)"""
     m = Model('flower-roadside', 19)
+    if not m.hd:  # (many hundreds along the roads: as light as the old stem; the detail is in the close-up model)
+        m.trunk([(0, 0, 0), (0, .36, 0)], .016, .012, '#4f9a3c', seg=3, flare=1); m.cyl(.048, .048, .03, '#ffd23f', (0, .375, 0), seg=5); return m
     m.trunk([(0, 0, 0), (.01, .18, 0), (0, .36, 0)], .016, .012, '#4f9a3c', seg=5, flare=1)
     m.uv(.048, '#ffd23f', (0, .375, 0), scl=(1, .45, 1), seg=8, ring=5)
     m.leaf(.09, .05, '#5fb04a', (0, .08, 0), 0, droop=.7, bend=.3, n=3); m.leaf(.08, .045, '#5fb04a', (0, .12, 0), 3, droop=.7, bend=.3, n=3)
@@ -345,6 +374,11 @@ def tree_peach():
 @model
 def reeds():
     m = Model('reeds', 26)
+    if not m.hd:  # (light: five blades and two cattails, about the old shape's weight)
+        for i, (x, z, h, c) in enumerate([(0, 0, 1.25, '#6f9a4a'), (.18, .08, 1.05, '#7fae52'), (-.15, .1, .95, '#5f8c40'), (.06, -.17, 1.15, '#88b45c'), (.22, -.1, .7, '#7fae52')]):
+            m.cone(.05, h, c, (x, h / 2, z), (z * .6, 0, -x * .6), seg=3)
+        for (x, z, h) in [(.02, .02, 1.2), (-.12, .1, 1.02)]: m.lathe([(0, 0), (.05, .03), (.05, .17), (0, .21)], '#7a4e2c', (x, h - .14, z), seg=5)
+        return m
     for i, (x, z, h, c) in enumerate([(0, 0, 1.25, '#6f9a4a'), (.18, .08, 1.05, '#7fae52'), (-.15, .1, .95, '#5f8c40'), (.06, -.17, 1.15, '#88b45c'), (-.1, -.12, .85, '#6f9a4a'), (.22, -.1, .7, '#7fae52')]):
         m.leaf(h, .08, c, (x, 0, z), i * 1.1, droop=1.35, bend=.12, n=4, fold=.3)  # a tall curved blade
     for (x, z, h) in [(.02, .02, 1.2), (-.12, .1, 1.02)]:
@@ -355,6 +389,10 @@ def reeds():
 @model
 def hyacinth():
     m = Model('hyacinth', 27)
+    if not m.hd:  # (light: three pads and a few flowers, about the old shape's weight)
+        for (x, z, r_, c) in [(0, 0, .42, '#4f9a52'), (.45, .2, .3, '#5fae5c'), (-.3, .35, .22, '#56a456')]: m.lathe([(0, 0), (r_, .0), (r_ * .95, .025), (0, .03)], c, (x, 0, z), seg=7, top=.12)
+        for k in range(3): m.uv(.07, '#b07ad8' if k % 2 else '#c99ae8', (.04 + math.cos(k * 2) * .05, .14 + k * .04, math.sin(k * 2) * .05), seg=5, ring=3)
+        return m
     for (x, z, r, c) in [(0, 0, .42, '#4f9a52'), (.45, .2, .3, '#5fae5c'), (-.3, .35, .22, '#56a456')]:
         m.lathe([(0, 0), (r * .9, -.005), (r, .01), (r * .95, .025), (0, .03)], c, (x, 0, z), seg=20, top=.12)  # a glossy pad
     for k in range(4): m.leaf(.22, .14, '#5fae5c', (0, .02, 0), k * 1.6, droop=1.0, bend=.4, n=4)
@@ -488,7 +526,7 @@ def sunflower_3():
     for layer, (n, r, c) in enumerate([(14, .25, '#ffc21a'), (14, .22, '#ffd23f')]):
         for k in range(n):
             a = (k + layer * .5) * 2 * math.pi / n; ca, sa = math.cos(a), math.sin(a)
-            m.ball(.09, c, (ca * r, 1.15 + sa * r * .95, .06 + sa * .07 - layer * .02), (.3 - layer * .1, 0, a), (1.5, .55, .22), sub=1, top=.05)
+            m.ball(.09, c, (ca * r, 1.15 + sa * r * .95, .06 + sa * .07 - layer * .02), (.3 - layer * .1, 0, a), (1.5, .55, .22), sub=0, top=.05)
     return m
 @model
 def pumpkin_2():
@@ -637,7 +675,7 @@ def decor_balloons():
 def rock():
     """a smooth boulder with a smaller stone at its side and a little moss; the game tints each copy"""
     m = Model('rock', 70)
-    m._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=18, v_segments=11, radius=1), '#e6dcc6', (0, .42, 0), (0, .5, 0), (1.42, .82, 1.08), jitter=.14, lumps=1.2, top=.16)
+    m._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=m.S(18, 1.8), v_segments=m.S(11, 1.8), radius=1), '#e6dcc6', (0, .42, 0), (0, .5, 0), (1.42, .82, 1.08), jitter=.14, lumps=1.2, top=.16)
     m._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=12, v_segments=8, radius=1), '#d9cfb8', (1.1, .12, .7), (0, 1.1, 0), (.42, .3, .36), jitter=.05, top=.16)
     m._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=12, v_segments=6, radius=1), '#9fb07a', (-.25, 1.12, -.1), (0, .3, .1), (.55, .12, .4), jitter=.03, top=.1)  # moss on top
     return m
@@ -655,7 +693,9 @@ def grass():
                  b.verts.new(Vector(P(.55, -1)) + Vector((0, 0, th))), b.verts.new(Vector(P(.55, 1)) + Vector((0, 0, th))), b.verts.new(Vector(P(1, 0)) + Vector((0, 0, th)))]
             fs = [(v[0], v[1], v[3]), (v[0], v[3], v[2]), (v[2], v[3], v[4])]
             for f in fs: b.faces.new(f if th == 0 else tuple(reversed(f)))
-    m._add(lambda b: [blade(b, a, h, l) for a, h, l in [(0, .88, .26), (2.1, .76, .3), (4.2, .82, .22)]], '#f2f2f2', (0, -.05, 0), top=.0)
+    tuft = [(0, .88, .26), (2.1, .76, .3), (4.2, .82, .22)]
+    if m.hd: tuft += [(1.0, .7, .34), (3.1, .64, .3), (5.2, .74, .28), (.5, .5, .2)]  # up close: a fuller tuft
+    m._add(lambda b: [blade(b, a, h, l) for a, h, l in tuft], '#f2f2f2', (0, -.05, 0), top=.0)
     return m
 @model
 def garden_plot():
@@ -674,8 +714,12 @@ def garden_plot():
         m.box(1.3, .08, 2.6, '#7a5236', (s_ * 1.6, .06, -.4), top=.0)  # the bed's soil
         for k in range(8):
             x, z = s_ * (1.6 + ((k % 2) - .5) * .7), -1.45 + (k // 2) * .7
-            m.cone(.1, .2, '#4f8f45', (x, .17, z), seg=4, top=.1)
-            m.uv(.07, flowers[(k + (s_ > 0)) % len(flowers)], (x, .24, z), scl=(1, .6, 1), seg=6, ring=4, top=.2)
+            if m.hd:
+                m.uv(.13, '#4f8f45', (x, .15, z), scl=(1, .5, 1), seg=6, ring=4, top=.15)
+                for q in range(5): qa = q * 1.2566; m.uv(.045, flowers[(k + (s_ > 0)) % len(flowers)], (x + math.cos(qa) * .045, .25, z + math.sin(qa) * .045), (0, -qa, .25), (1.3, .35, .8), seg=4, ring=3, top=.05)
+                m.uv(.025, '#ffd23f', (x, .26, z), seg=5, ring=3)
+            else:
+                m.cone(.1, .2, '#4f8f45', (x, .17, z), seg=3, top=.1); m.uv(.07, flowers[(k + (s_ > 0)) % len(flowers)], (x, .24, z), scl=(1, .6, 1), seg=4, ring=3, top=.2)
     return m
 
 # ---------- My House: the wall picture frames and the keepsake stands (js/home-decor-models.ts) ----------
@@ -700,12 +744,20 @@ def decor_keepsake():
     m.box(.5, .05, .1, '#8a5a34', (0, .62, .04), bevel=.015)  # the little ledge
     return m
 
+# (owner, 6 Nov 2026 AEDT: "Detailed up close") the many-copy kinds get a light model and a close-up "-hd" one (within
+# about 25 m of the child); the few ones (crops, farm props, My House) are made only in the detailed version
+ONE_DETAILED = ('carrot', 'strawberry', 'tomato', 'corn', 'sunflower', 'pumpkin', 'farm-', 'decor-')
 def main():
+    global HD
     want = [a for a in (sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]) if not a.startswith('-')]
     bpy.ops.wm.read_factory_settings(use_empty=True)
     for name, fn in M.items():
-        if want and name not in want: continue
-        m = fn(); t = m.tris(); m.save(); print(f'{name}: {t} triangles')
+        one = name.startswith(ONE_DETAILED)
+        for hd in ((True,) if one else (False, True)):
+            out = name + ('-hd' if hd and not one else '')
+            if want and out not in want and name not in want: continue
+            HD = hd; m = fn(); m.name = out; t = m.tris(); m.save(); print(f'{out}: {t} triangles')
+    HD = False
 
 if __name__ == '__main__':
     main()

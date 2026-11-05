@@ -17,13 +17,16 @@ export const NATURE_MODELS = ['tree-round', 'tree-apple', 'tree-pine', 'tree-sno
   ...['carrot', 'strawberry', 'tomato', 'corn', 'sunflower', 'pumpkin'].flatMap(c => [1, 2, 3].map(s => `${c}-${s}`)),
   'farm-hay', 'farm-crate', 'farm-wardrobe', 'farm-easel', ...['teddy', 'clock', 'vase', 'lamp', 'sunflower', 'lotus', 'balloons', 'frame', 'keepsake'].map(k => 'decor-' + k),
   'rock', 'grass', 'garden-plot'];
+// (owner, 6 Nov 2026 AEDT: "Detailed up close") the many-copy kinds' close-up models, drawn within 25 m of a child
+const ONE = /^(carrot|strawberry|tomato|corn|sunflower|pumpkin|farm-|decor-)/;
+export const NATURE_HD = NATURE_MODELS.filter(n => !ONE.test(n)).map(n => n + '-hd');
 const SIZES = [{ name: 'phone', w: 390, h: 844, touch: true }, { name: 'tablet', w: 820, h: 1180, touch: true }, { name: 'computer', w: 1440, h: 900, touch: false }];
 const quiet = { voice: false, sound: false, autoPack: false, online: false, countPlayers: false };
 
 export async function worldNatureCheck(b: Browser) {
   const bad: string[] = [], notes: string[] = [];
   fs.mkdirSync('out/worldnature', { recursive: true });
-  for (const n of NATURE_MODELS) if (!fs.existsSync(`../models/world/${n}.glb`)) bad.push('missing file models/world/' + n + '.glb');
+  for (const n of [...NATURE_MODELS, ...NATURE_HD]) if (!fs.existsSync(`../models/world/${n}.glb`)) bad.push('missing file models/world/' + n + '.glb');
   const P = await open(b, { w: 1180, h: 820, settings: quiet });
   try {
     await clear(P.page); await noWelcome(P.page);
@@ -59,6 +62,11 @@ export async function worldNatureCheck(b: Browser) {
       h.place(homeAt[0], homeAt[1]); await wait(1500); const nearHome = N.natureShapes().filter((s: any) => s.on).length;
       const modelHome = await draws(homeAt[0], homeAt[1]); const onHome = N.natureShapes().filter((s: any) => s.on).length;
       const modelVill = await draws(villAt[0], villAt[1]); const onVill = N.natureShapes().filter((s: any) => s.on).length;
+      // close up: by a round tree, its copies within 25 m are drawn with the detailed model (one more draw for the kind)
+      const tile = G.world.plants.find((m: any) => m.userData.kind === 'round' && m.userData.list.length > 3), q = tile.userData.list[0];
+      const closeDraws = await draws(q[0] + 4, q[2] + 4); const closeUp = N.natureClose(), shrunk = (() => { const e = new (G.scene.matrix.constructor)(); tile.getMatrixAt(0, e); return e.elements[0] < .01; })();
+      const keptSolid = tile.userData.codeMatrices ? tile.userData.codeMatrices[0] > .1 : false;
+      h.place(q[0] + 200, q[2] + 200); await wait(1500); const backAfter = (() => { const e = new (G.scene.matrix.constructor)(); tile.getMatrixAt(0, e); return e.elements[0] > .1; })();
       // the solid map reads the code shape (js/solids.ts): a model in place must not change what blocks a child
       // the crops: each stage its own model
       const S = await import(String('/js/state.js')), F = G.farm, pl = F.plots[0], crops: Record<string, string> = {};
@@ -68,18 +76,21 @@ export async function worldNatureCheck(b: Browser) {
         const m = pl.crop.children.find((o: any) => o.userData.natureModel); crops[c + '-' + st] = m ? m.userData.natureModel : 'code';
       }
       S.farm.plots[0] = null; F.update(0, 0);
-      return { shapes0, missing, info, sizes, wrong, farOn, codeHome, codeVill, modelHome, modelVill, nearHome, onHome, onVill, crops, stats: N.natureStats };
-    }, NATURE_MODELS);
+      return { closeDraws, closeUp, shrunk, keptSolid, backAfter, shapes0, missing, info, sizes, wrong, farOn, codeHome, codeVill, modelHome, modelVill, nearHome, onHome, onVill, crops, stats: N.natureStats };
+    }, [...NATURE_MODELS, ...NATURE_HD]);
     if (r.missing.length) bad.push('did not load: ' + r.missing.join(', '));
-    for (const [n, i] of Object.entries(r.info) as [string, any][]) { if (i.tris > 3000) bad.push(`${n}: ${i.tris} triangles`); if (Math.abs(i.y0) > .3 && n !== 'rock' && n !== 'decor-frame') /* (a rock sits sunk in the ground like its code shape; a frame hangs on the wall by its middle) */ bad.push(`${n}: its feet at y ${i.y0}`); if (!i.col) bad.push(n + ': no colours'); }
+    for (const [n, i] of Object.entries(r.info) as [string, any][]) { if (i.tris > (n.endsWith('-hd') || ONE.test(n) ? 8000 : 3000)) bad.push(`${n}: ${i.tris} triangles`); if (Math.abs(i.y0) > .3 && n !== 'rock' && n !== 'decor-frame') /* (a rock sits sunk in the ground like its code shape; a frame hangs on the wall by its middle) */ bad.push(`${n}: its feet at y ${i.y0}`); if (!i.col) bad.push(n + ': no colours'); }
     if (r.wrong.length) bad.push('size or ground differs from the code shape: ' + r.wrong.join('; '));
     if (r.shapes0 < 20) bad.push('only ' + r.shapes0 + ' marked shapes');
     if (r.farOn) bad.push(r.farOn + ' shapes kept their model far from every child');
     if (!r.onHome || !r.onVill) bad.push(`no models near the child (home ${r.onHome}, village ${r.onVill})`);
+    const ct = r.closeUp.find((c: any) => c.name === 'tree-round-hd');
+    if (!ct || !ct.count || !r.shrunk || !r.keptSolid || !r.backAfter) bad.push('close-up trees: ' + JSON.stringify({ closeUp: r.closeUp, shrunk: r.shrunk, keptSolid: r.keptSolid, backAfter: r.backAfter }));
+    if (r.closeDraws > 490) bad.push('draws by a tree close up: ' + r.closeDraws);
     if (r.modelHome > 490 || r.modelVill > 420) bad.push(`draws with the models: home ${r.modelHome} (490), village ${r.modelVill} (420)`);
     if (r.modelHome > r.codeHome + 12 || r.modelVill > r.codeVill + 12) bad.push(`the models added draws: home ${r.codeHome} -> ${r.modelHome}, village ${r.codeVill} -> ${r.modelVill}`);
     const cropBad = Object.entries(r.crops).filter(([k, v]) => k !== v); if (cropBad.length) bad.push('crop stages without their model: ' + cropBad.map(([k, v]) => k + '=' + v).join(', '));
-    notes.push(`${NATURE_MODELS.length} models, ${r.shapes0} marked shapes; draws home ${r.codeHome} -> ${r.modelHome}, village ${r.codeVill} -> ${r.modelVill}; models near the child: home ${r.onHome}, village ${r.onVill}`);
+    notes.push(`${NATURE_MODELS.length} models and ${NATURE_HD.length} close-up ones, close up by a tree ${r.closeDraws} draws (${(r.closeUp || []).map((c: any) => c.name + ' ' + c.count).join(', ')}), ${r.shapes0} marked shapes; draws home ${r.codeHome} -> ${r.modelHome}, village ${r.codeVill} -> ${r.modelVill}; models near the child: home ${r.onHome}, village ${r.onVill}`);
     if (P.errors.length) bad.push('errors: ' + P.errors.slice(0, 3).join(' | '));
   } finally { await P.ctx.close(); }
 
