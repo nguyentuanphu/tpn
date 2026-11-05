@@ -1543,6 +1543,53 @@ def hand_s2_taynguyen(m, sp):
         m.part('CylinderGeometry', '#e8b830', (x, 2.2 - r - .1, 0), (math.pi / 2, 0, 0), radiusTop=r, radiusBottom=r, height=.08, radialSegments=16)
         m.part('SphereGeometry', '#c9962a', (x, 2.2 - r - .1, .05), (0, 0, 0), (1, 1, .4), radius=r * .3, widthSegments=8, heightSegments=6)
 
+
+def hand_longbien(m, sp):
+    # Long Bien bridge (Ha Noi): the old rust-red steel truss: spans with curved (camel-back) top chords, criss-cross
+    # diagonals and portal frames over the road, on stone piers with rounded cutwaters (the deck where the child walks
+    # stays exactly as the game's)
+    d = sp['parts'][0]['p']; L = d['width'] - 2; W = d['depth']; hw = W / 2; rust, rust2, stone = '#7a4a3a', '#6a3a2e', '#9c9284'
+    B(m, L + 2, .5, W, '#6d6a66', (0, -.25, 0)); B(m, L + 2, .06, W - 2.2, '#b4b9bc', (0, .03, 0))
+    for sz in (-1, 1): B(m, L + 2, .1, 1, '#d9d4c8', (0, .07, sz * (hw - .5)))
+    piers = [-.3 * L, 0, .3 * L]
+    for x in piers:
+        B(m, 1.8, 12, W - .6, stone, (x, -6, 0))
+        for sz in (-1, 1): m.part('CylinderGeometry', stone, (x, -6, sz * (hw - .3)), radiusTop=.9, radiusBottom=.9, height=12, radialSegments=10)
+    ends = [-L / 2 - 1] + piers + [L / 2 + 1]
+    for sz in (-1, 1):
+        zz = sz * (hw - .15)
+        for a0, a1 in zip(ends, ends[1:]):
+            n = 6; top = lambda t: 3.2 + 1.4 * math.sin(math.pi * t)
+            pts = [(a0 + (a1 - a0) * i / n, top(i / n)) for i in range(n + 1)]
+            for i in range(n):
+                (xa, ya), (xb, yb) = pts[i], pts[i + 1]
+                m.part('BoxGeometry', rust, ((xa + xb) / 2, (ya + yb) / 2, zz), (0, 0, math.atan2(yb - ya, xb - xa)), width=math.hypot(xb - xa, yb - ya) + .05, height=.3, depth=.3)
+                for (x0, y0, x1, y1) in ((xa, .45, xb, yb), (xa, ya, xb, .45)):   # the X diagonals
+                    m.part('BoxGeometry', rust2, ((x0 + x1) / 2, (y0 + y1) / 2, zz), (0, 0, math.atan2(y1 - y0, x1 - x0)), width=math.hypot(x1 - x0, y1 - y0), height=.13, depth=.13)
+            for (x, y) in pts: m.part('BoxGeometry', rust, (x, y / 2 + .2, zz), width=.22, height=y - .3, depth=.22)
+            m.part('BoxGeometry', rust, ((a0 + a1) / 2, .45, zz), width=a1 - a0, height=.3, depth=.3)
+    for a0, a1 in zip(ends, ends[1:]):   # the portal frames over the road
+        for t in (.2, .5, .8):
+            x = a0 + (a1 - a0) * t; m.part('BoxGeometry', rust, (x, 3.2 + 1.4 * math.sin(math.pi * t) - .1, 0), width=.2, height=.2, depth=W - .3)
+
+def hand_chuacau(m, sp):
+    # Chua Cau, Hoi An's Japanese covered bridge: an arched wooden footbridge with red posts and yellow walls under a
+    # tiled roof, the little temple room in the middle with its own curled roof, stone piers below
+    d = sp['parts'][0]['p']; L = d['width'] - 1; W = d['depth']; hw = W / 2
+    B(m, L + 1, .4, W, '#8a5a3b', (0, -.2, 0)); B(m, L + 1, .06, W - .4, '#a87a4a', (0, .03, 0))
+    n = round(L / 2)
+    for sz in (-1, 1):
+        B(m, L + 1, .7, .12, '#e8c03a', (0, .35, sz * (hw - .06)))
+        for i in range(n + 1):
+            x = -L / 2 - .5 + i * (L + 1) / n
+            C(m, .1, .1, 2.4, '#c0392b', (x, 1.2, sz * (hw - .1)), seg=8)
+            B(m, .3, .12, .3, '#5a3a2a', (x, .05, sz * (hw - .1)))
+        B(m, L + 1.2, .16, .2, '#8a3a22', (0, 2.45, sz * (hw - .1)))
+    viet_roof(m, L + .6, W, 1.0, '#a24e3a', (0, 2.55, 0), curl=.35, over=.55, ridge_color='#7a3a22')
+    B(m, 1.6, 1.4, 1.6, '#f2c230', (0, 3.5, 0)); viet_roof(m, 1.6, 1.6, .7, '#a24e3a', (0, 4.2, 0), curl=.4, over=.3, ridge_color='#7a3a22')
+    B(m, .8, .4, .06, '#c62828', (0, 3.7, .82)); B(m, .5, .2, .07, '#ffd23f', (0, 3.7, .84))
+    for i in range(2): B(m, 1.4, 6, W + .2, '#9c8a6a', ((-.3 + .6 * i) * L, -3.2, 0))
+
 HAND = {'lm-turtle': hand_turtle, 'lm-thehuc': hand_thehuc, 'lm-vanmieu': hand_vanmieu, 'lm-onepillar': hand_onepillar,
         'lm-benthanh': hand_benthanh, 'lm-opera': hand_opera, 'br-harbour': hand_harbour}
 HAND.update({n: fn for n, (fn, size) in PROPS.items()})
@@ -1553,6 +1600,7 @@ HAND.update({'lm-forbidden': hand_forbidden, 'lm-heaven': hand_heaven, 'lm-potal
 HAND.update({'lm-halong': hand_halong, 'lm-myson': hand_myson, 'lm-trangan': hand_trangan, 'lm-cave': hand_cave, 'lm-kakadu': hand_kakadu, 'lm-reef': hand_reef})
 HAND.update({'lm-wheelbase': hand_wheelbase, 'lm-lonepine': hand_lonepine, 'lm-exhibition': hand_exhibition, 'lm-terracotta': hand_terracotta, 'lm-konark': hand_konark, 'lm-hampi': hand_hampi, 'lm-mahabodhi': hand_mahabodhi})
 HAND.update({'lm-s2-mekong': hand_s2_mekong, 'lm-s2-halong': hand_s2_halong, 'lm-s2-sapa': hand_s2_sapa, 'lm-s2-taynguyen': hand_s2_taynguyen})
+HAND.update({'br-longbien': hand_longbien, 'br-chuacau': hand_chuacau})
 HAND.update({'lm-cathedral': hand_cathedral, 'lm-postoffice': hand_postoffice, 'lm-flinders': hand_flinders, 'lm-hue': hand_hue})
 BUDGET = lambda name: 8000 if name.startswith(('lm-', 'br-')) else 900 if name.startswith('pr-') else 3000
 
