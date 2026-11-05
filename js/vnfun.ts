@@ -8,7 +8,7 @@
 import { THREE, P, merge, toonVC, sprite, outline } from './gfx.js';
 import { T, registerName } from './i18n.js';
 import { FESTGROUNDS, oldHeightAt, heightAt, CITIES, roadDist, WATER, VILLAGE, CHINA, INDIA, HOME, PLAYGROUND, PLATEAU, PADDIES, LAKE, BAMBOO, HALF } from './world.js';
-import { buildAvatar } from './avatar.js';
+import { buildAvatar, crowdLook } from './avatar.js';
 import { animalModel } from './animals.js';
 import { burstConfetti } from './games/frame.js';
 
@@ -30,7 +30,8 @@ export function createVnFun(G, { sfx, say, dialog, toast }) {
     return null;
   };
   const city = id => CITIES.find(c => c.id === id);
-  const kid = (lk, x, z, face, scale = .8) => { const A = buildAvatar(lk, null); A.root.scale.setScalar(scale); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); world.colliders.push({ x, z, r: .35 }); return A; };
+  const kid = (lk, x, z, face, grown = false) => { const A = buildAvatar(crowdLook(lk, !grown), null); // (v1.08d polish: a child at the new 1.6, no hand-made .8)
+ A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); world.colliders.push({ x, z, r: .35 }); return A; };
   const live = [];
   world.updaters.push((dt, t) => live.forEach(([A, kind], k) => { const p = A.root.position; if (!G.heroes.some(h => Math.abs(h.pos.x - p.x) < 60 && Math.abs(h.pos.z - p.z) < 60)) return; A.anim(kind === 'crouch' ? 'idle' : (Math.floor(t * .6 + k) % 3 === 0 ? 'cheer' : 'idle'), t + k, 0); if (kind === 'crouch') { A.rig.position.y = -.25; A.legL.rotation.x = A.legR.rotation.x = -1.2; A.armR.rotation.x = -1 + Math.sin(t * 3 + k) * .3; } }));
 
@@ -102,7 +103,7 @@ export function createVnFun(G, { sfx, say, dialog, toast }) {
     if (F.kind === 'race') F.harrows = F.animals.map(() => { const h2 = new THREE.Mesh(new THREE.BoxGeometry(.3, .25, 1.6), new THREE.MeshToonMaterial({ color: '#7a5236' })); scene.add(h2); return h2; });
     F.animals.forEach(A => { A.g.position.set(A.rest[0], heightAt(A.rest[0], A.rest[1]), A.rest[1]); });
     // a few people watching
-    for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 1.4 + 2.2 + F.rot, rr = F.kind === 'race' ? 9 : R + 1.6, px = x + Math.cos(a) * rr, pz = z + Math.sin(a) * rr; const A = kid(look(['shirt', 'aodai', 'tunic', 'dress', 'shirt'][i], ['#f2f2f2', '#d94a6a', '#6b4a2a', '#ffd23f', '#3a78c8'][i], i === 2 ? '#cfcfcf' : BLACK, ['short', 'long', 'short', 'buns', 'spiky'][i], i === 1 ? 'nonla' : 'none', '#e0aa80'), px, pz, Math.atan2(x - px, z - pz), i === 4 ? .8 : 1); live.push([A, 'cheer']); }
+    for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 1.4 + 2.2 + F.rot, rr = F.kind === 'race' ? 9 : R + 1.6, px = x + Math.cos(a) * rr, pz = z + Math.sin(a) * rr; const A = kid(look(['shirt', 'aodai', 'tunic', 'dress', 'shirt'][i], ['#f2f2f2', '#d94a6a', '#6b4a2a', '#ffd23f', '#3a78c8'][i], i === 2 ? '#cfcfcf' : BLACK, ['short', 'long', 'short', 'buns', 'spiky'][i], i === 1 ? 'nonla' : 'none', '#e0aa80'), px, pz, Math.atan2(x - px, z - pz), i !== 4); live.push([A, 'cheer']); }
     F.state = 'idle'; F.t = 0; F.next = 40 + Math.random() * 80; F.pick = null;
     const bub = sprite('📣', 1.6); bub.visible = false; scene.add(bub); F.bub = bub;
     G.interactables.push({ id: 'fest_' + F.id, x: x + Math.sin(F.rot) * (F.kind === 'race' ? 9 : R + 2.5), z: z + Math.cos(F.rot) * (F.kind === 'race' ? 9 : R + 2.5), r: 3.4, icon: '👀', bubble: F.icon,

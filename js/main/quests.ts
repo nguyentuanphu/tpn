@@ -77,9 +77,10 @@ const sideQuest = p => G.yard && G.yard.quest(p);
 type QuestStep = { id: string; icon?: string; title: () => string; at?: string; check?: (p) => boolean; story?: boolean; tale?: string[]; target?: () => { x: number; z: number } };
 function currentQuest(p): QuestStep | undefined {
   if (p.follow === 'yard' && sideQuest(p)) return sideQuest(p);
+  if (p.follow === 'fq' && G.friendQuests && G.friendQuests.quest(p)) return G.friendQuests.quest(p); // (v1.08d polish) the friend's quest, when followed
   return (G.lanterns && G.lanterns.quest(p)) || sideQuest(p) || QUESTS.find(q => !questDone(p, q));
 }
-G.sideStories = () => G.yard && G.keep('story_yard') ? [G.yard.side] : [];
+G.sideStories = () => [...(G.yard && G.keep('story_yard') ? [G.yard.side] : []), ...(G.friendQuests ? [G.friendQuests.side] : [])]; // (v1.08d polish: the friend's quest too)
 G.currentQuest = currentQuest;
 function questTarget(h) {
   const p = h.profile, q = currentQuest(p); if (!q) return null;

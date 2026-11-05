@@ -14,7 +14,7 @@ import { SFX, Music, tone, noise, ac } from './audio.js';
 import { dialog, folkGames } from './ui.js';
 import { dist2 } from './util.js';
 import { heightAt, roadDist, WATER, VILLAGE, TOWN, AUSSIE, MARKET, CHINA, INDIA, CITIES } from './world.js';
-import { buildAvatar, nameAvatar } from './avatar.js';
+import { buildAvatar, crowdLook, nameAvatar } from './avatar.js';
 import { GAMES } from './games/frame.js';
 
 export const SLOT = 150, ON = 75; // a game every two and a half minutes; friends play it for the first 75 s
@@ -192,7 +192,7 @@ export function createFolkShow(G, { looks = [] } = {}) {
       P(new THREE.CylinderGeometry(.03, .03, 1.3, 6), '#444', [.5, .95, .5]), P(new THREE.SphereGeometry(.08, 8, 6), '#222', [.5, 1.64, .5]), P(new THREE.CylinderGeometry(.22, .25, .05, 10), '#444', [.5, .34, .5])]), toonVC());
     stage.position.set(x, y, z); scene.add(stage); const col = { x, z, r: 1.6 }; world.colliders.push(col);
     const look = { style: gender === 'f' ? 'aodai' : 'shirt', color, hat: 'none', back: 'none', hair, hairStyle: hs, skin: '#f2c19e', glider: 0 };
-    const A = nameAvatar(buildAvatar(look, null), name); A.root.position.set(x, y + .33, z); A.root.rotation.y = face; scene.add(A.root);
+    const A = nameAvatar(buildAvatar(crowdLook(look), null), name); A.root.position.set(x, y + .33, z); A.root.rotation.y = face; scene.add(A.root);
     registerName(name, '🎤');
     const tag = textTag(scene); tag.position.set(x, y + 2.75, z); const draw = () => tag.set('🎤 ' + T('Singer ', 'Ca sĩ ') + nm(name)); draw(); onLang(draw);
     const bub = lyricBubble(scene); bub.position.set(x, y + 3.5, z);

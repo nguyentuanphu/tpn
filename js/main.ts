@@ -254,6 +254,7 @@ export interface SvMain {
   reeds?: ReturnType<typeof createReeds>; report?: ReturnType<typeof createReport>; secrets?: ReturnType<typeof createSecrets>;
   seeThrough?: ReturnType<typeof createSeeThrough>; shop?: ReturnType<typeof import('./shop.js').createShop>; signposts?: ReturnType<typeof createSignposts>;
   simple?: ReturnType<typeof createSimple>; town?: ReturnType<typeof createTown>; school?: ReturnType<typeof createSchool>; schoolReady?: Promise<unknown>; weather?: ReturnType<typeof createWeather>;
+  friendQuests?: ReturnType<typeof import('./friendquest.js').createFriendQuests>; // (v1.08d polish)
   yard?: ReturnType<typeof createYard>; chests?: ReturnType<typeof createTwinChests>; claims?: ReturnType<typeof createClaims>;
   coop?: ReturnType<typeof createCoop>; familyCards?: ReturnType<typeof createFamilyCards>; parents?: ReturnType<typeof import('./parents.js').createParents>;
   boxes?: ReturnType<typeof import('./boxes.js').createBoxes>; surprises?: ReturnType<typeof import('./surprises.js').createSurprises>; myHouse?: ReturnType<typeof createMyHouse> | null;
@@ -919,6 +920,8 @@ const [{ createLanterns }, { createYard }, { createKidPlay }] = await Promise.al
 G.lanterns = createLanterns(G, { dialog, say, reward, save, openTheatre });
 // bà Huệ and ông Nghi's yard near the Huệ Nghi shop (js/yard.js): a side story
 G.yard = createYard(G, { dialog, say, reward, save });
+// (v1.08d polish) each friend's quest of three steps, for the item in the friend's hand (js/friendquest.ts): loaded after the start
+import('./friendquest.js').then(m => { G.friendQuests = m.createFriendQuests(G, { dialog, say, reward, save }); }).catch(e => console.warn('friend quests', e && e.message));
 // the companion grows, a coin goal, a gift every day (js/kidplay.js; Studio group 'For little ones')
 G.kidplay = createKidPlay(G, { say, save });
 await breathe(); // (v1.07: a breath for the Simple screen's taps)

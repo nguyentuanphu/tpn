@@ -47,6 +47,7 @@ marketing/source/runvalley.log
 /js/art/companion-hats.js
 /js/art/emoji108b.js
 /js/art/english.js
+/js/art/frienditems.js
 /js/art/games108.js
 /js/art/games108b.js
 /js/art/howto-tales.js
@@ -143,6 +144,7 @@ marketing/source/runvalley.log
 /js/content/films/tiddalik.js
 /js/content/films/vusua.js
 /js/content/films/weaver.js
+/js/content/friendquests.js
 /js/content/friends.js
 /js/content/fruit-parade.js
 /js/content/gameplace.js
@@ -212,6 +214,7 @@ marketing/source/runvalley.log
 /js/folkshow.js
 /js/friend-model.js
 /js/friend-view.js
+/js/friendquest.js
 /js/fun.js
 /js/games/all.js
 /js/games/animals2.js
