@@ -975,12 +975,12 @@ async function drawReleases(P, lab) {
   if (lab) labParts(P);
   // counts, the group numbers and what has changed since the page opened
   let start = JSON.stringify([...P.querySelectorAll('.relc')].map(c => [c.querySelector('[data-r="on"]').checked, ...['start', 'days', 'newDays'].map(k => c.querySelector(`[data-r="${k}"]`).value)]));
-  const snap = () => [...P.querySelectorAll('.relc')].map(c => [c.querySelector<HTMLInputElement>('[data-r="on"]').checked, ...['start', 'days', 'newDays'].map(k => c.querySelector<HTMLInputElement>(`[data-r="${k}"]`).value)]);
+  const snap = () => [...P.querySelectorAll('.relc')].map(c => [(c.querySelector('[data-r="on"]') as HTMLInputElement).checked, ...['start', 'days', 'newDays'].map(k => (c.querySelector(`[data-r="${k}"]`) as HTMLInputElement).value)]);
   const sum = () => { const cs = [...P.querySelectorAll('.relc')], on = cs.filter(c => c.querySelector('[data-r="on"]').checked).length;
     $('#relsum').textContent = T(`${on} of ${cs.length} on · ${cs.filter(c => c.classList.contains('sched')).length} with a schedule`, `${on}/${cs.length} đang bật · ${cs.filter(c => c.classList.contains('sched')).length} có lịch`);
     P.querySelectorAll('details.relg').forEach(d => { const c = [...d.querySelectorAll('.relc')]; d.querySelector('.relg-n').textContent = T(`${c.filter(x => x.querySelector('[data-r="on"]').checked).length} of ${c.length} on`, `${c.filter(x => x.querySelector('[data-r="on"]').checked).length}/${c.length} bật`); });
     const now = [...P.querySelectorAll('.relc')].map(c => [c.querySelector('[data-r="on"]').checked, ...['start', 'days', 'newDays'].map(k => c.querySelector(`[data-r="${k}"]`).value)]);
-    const was = JSON.parse(start), cards = [...P.querySelectorAll<HTMLElement>('.relc')], lines = [];
+    const was = JSON.parse(start), cards = ([...P.querySelectorAll('.relc')] as HTMLElement[]), lines = [];
     now.forEach((x, i) => { if (JSON.stringify(x) === JSON.stringify(was[i])) return; const id = cards[i].dataset.id, it = RELEASES.find(y => y.id === id), bits = [];
       if (x[0] !== was[i][0]) bits.push(x[0] ? T('switched on', 'bật') : T('switched off', 'tắt'));
       if (x[1] !== was[i][1]) bits.push(x[1] ? T(`starts ${fmtDay(x[1])}`, `bắt đầu ${fmtDay(x[1])}`) : T('no start date', 'không ngày bắt đầu'));
@@ -988,27 +988,27 @@ async function drawReleases(P, lab) {
       if (x[3] !== was[i][3]) bits.push(+x[3] ? T(`“New” for ${x[3]} days`, `“Mới” ${x[3]} ngày`) : T('no “New” badge', 'không nhãn “Mới”'));
       lines.push(`<li><b>${esc(it ? plainOf(it).name : id)}</b>: ${esc(bits.join(', '))}</li>`); });
     for (const [k, w] of Object.entries(calMoves)) if (calMoves0[k] !== w) { const e = calList().find(x => x.key === k); lines.push(`<li><b>${esc(e ? T(e.en, e.vi || e.en) : k)}</b>: ${esc(T(`moves to the week of ${fmtDay(w)}`, `chuyển sang tuần từ ${fmtDay(w)}`))}</li>`); }
-    const n = lines.length, box = P.querySelector<HTMLDetailsElement>('#relchanges');
+    const n = lines.length, box = (P as HTMLElement).querySelector<HTMLDetailsElement>('#relchanges');
     $('#relch').textContent = n ? T(`${n} change${n === 1 ? '' : 's'} not saved yet: what Save will do`, `${n} thay đổi chưa lưu: Lưu sẽ làm gì`) : ''; box.hidden = !n; box.querySelector('ul').innerHTML = lines.join('');
     P.querySelector('.relsave').classList.toggle('dirty', !!n); if (!P.querySelector('#reltl')?.hidden) timeline(); };
   // the timeline: weeks from this one, what starts and ends, and the release calendar's plan (items not scheduled yet)
   const timeline = () => { const box = P.querySelector('#reltlw'); if (!box) return; const today = isoDay(new Date()), weeks = new Map<string, string[]>(), add = (day, html) => { const w = mondayOf(day < today ? today : day); if (!weeks.has(w)) weeks.set(w, []); weeks.get(w).push(html); };
     const row = (id, icon, text, cls) => `<li><button type="button" class="tlitem ${cls}" data-tl="${esc(id)}">${icon} ${esc(text)}</button></li>`;
-    P.querySelectorAll<HTMLElement>('.relc').forEach(c => { const id = c.dataset.id, it = RELEASES.find(y => y.id === id), on = c.querySelector<HTMLInputElement>('[data-r="on"]').checked, st = c.querySelector<HTMLInputElement>('[data-r="start"]').value, days = +c.querySelector<HTMLInputElement>('[data-r="days"]').value || 0;
+    (P as HTMLElement).querySelectorAll<HTMLElement>('.relc').forEach(c => { const id = c.dataset.id, it = RELEASES.find(y => y.id === id), on = c.querySelector<HTMLInputElement>('[data-r="on"]').checked, st = c.querySelector<HTMLInputElement>('[data-r="start"]').value, days = +c.querySelector<HTMLInputElement>('[data-r="days"]').value || 0;
       if (!it || !on || !st) return; const name = plainOf(it).name; if (st >= today) add(st, row(id, '🟢', T(`Opens ${fmtDay(st)}: ${name}`, `Mở ${fmtDay(st)}: ${name}`), 'opens'));
       if (days) { const end = isoDay(new Date(new Date(st + 'T12:00:00').getTime() + days * 864e5)); if (end >= today) add(end, row(id, '🔚', T(`Ends ${fmtDay(end)}: ${name}`, `Kết thúc ${fmtDay(end)}: ${name}`), 'ends')); } });
     const mondays = Array.from({ length: 20 }, (_, i) => mondayOf(plusDays(i * 7)));
-    for (const e0 of calList()) { const day = e0 && (e0.week || e0.date); if (!day || !e0.key) continue; const e = { ...e0, week: mondayOf(day) }; const c = P.querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(e.id || '')}"]`), st = c?.querySelector<HTMLInputElement>('[data-r="start"]').value; if (st) continue;
+    for (const e0 of calList()) { const day = e0 && (e0.week || e0.date); if (!day || !e0.key) continue; const e = { ...e0, week: mondayOf(day) }; const c = (P as HTMLElement).querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(e.id || '')}"]`), st = c?.querySelector<HTMLInputElement>('[data-r="start"]').value; if (st) continue;
       const name = T(e.en || e.id, e.vi || e.en || e.id), weeksTo = [...new Set([...mondays, e.week])].sort();
       add(day, `<li class="tlcal"><span class="tlitem planned">📌 ${esc(name)}</span><label class="tlmove">${T('Week', 'Tuần')} <select data-calkey="${esc(e.key)}" aria-label="${esc(T('Move to another week', 'Chuyển sang tuần khác'))}">${weeksTo.map(w => `<option value="${w}" ${w === e.week ? 'selected' : ''}>${fmtDay(w)}</option>`).join('')}</select></label></li>`); }
     const list = [...weeks.keys()].sort();
     box.innerHTML = list.length ? list.map(w => `<div class="tlweek"><h4>${T('Week of', 'Tuần từ')} ${fmtDay(w)}</h4><ul>${weeks.get(w).join('')}</ul></div>`).join('')
       : `<p class="note">${T('Nothing is scheduled yet. Open a switch’s 📅 Schedule to give it a start day.', 'Chưa có gì theo lịch. Mở 📅 Lịch của một công tắc để chọn ngày bắt đầu.')}</p>`;
-    box.querySelectorAll<HTMLSelectElement>('[data-calkey]').forEach(sel => sel.onchange = () => { calMoves[sel.dataset.calkey] = sel.value; sum(); });
-    box.querySelectorAll<HTMLElement>('[data-tl]').forEach(b => b.onclick = () => { const c = P.querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(b.dataset.tl)}"]`); if (!c) return; view('list'); c.closest('details').open = true; const o = c.querySelector<HTMLElement>('.relc-opt'); o.hidden = false; c.scrollIntoView({ block: 'center' }); }); };
-  const view = k => { P.querySelectorAll<HTMLElement>('#relview [data-view]').forEach(b => { b.classList.toggle('on', b.dataset.view === k); b.setAttribute('aria-pressed', String(b.dataset.view === k)); });
-    P.querySelectorAll<HTMLElement>('details.relg, #relf, #relq, #relsum').forEach(e => e.classList.toggle('tlhide', k === 'timeline')); const tl = P.querySelector<HTMLElement>('#reltl'); if (tl) { tl.hidden = k !== 'timeline'; if (k === 'timeline') timeline(); } };
-  P.querySelectorAll<HTMLElement>('#relview [data-view]').forEach(b => b.onclick = () => view(b.dataset.view));
+    (box as HTMLElement).querySelectorAll<HTMLSelectElement>('[data-calkey]').forEach(sel => sel.onchange = () => { calMoves[sel.dataset.calkey] = sel.value; sum(); });
+    (box as HTMLElement).querySelectorAll<HTMLElement>('[data-tl]').forEach(b => b.onclick = () => { const c = (P as HTMLElement).querySelector<HTMLElement>(`.relc[data-id="${CSS.escape(b.dataset.tl)}"]`); if (!c) return; view('list'); c.closest('details').open = true; const o = c.querySelector<HTMLElement>('.relc-opt'); o.hidden = false; c.scrollIntoView({ block: 'center' }); }); };
+  const view = k => { (P as HTMLElement).querySelectorAll<HTMLElement>('#relview [data-view]').forEach(b => { b.classList.toggle('on', b.dataset.view === k); b.setAttribute('aria-pressed', String(b.dataset.view === k)); });
+    (P as HTMLElement).querySelectorAll<HTMLElement>('details.relg, #relf, #relq, #relsum').forEach(e => e.classList.toggle('tlhide', k === 'timeline')); const tl = (P as HTMLElement).querySelector<HTMLElement>('#reltl'); if (tl) { tl.hidden = k !== 'timeline'; if (k === 'timeline') timeline(); } };
+  (P as HTMLElement).querySelectorAll<HTMLElement>('#relview [data-view]').forEach(b => b.onclick = () => view(b.dataset.view));
   const restatus = c => { const r = { start: c.querySelector('[data-r="start"]').value, days: +c.querySelector('[data-r="days"]').value || 0, newDays: +c.querySelector('[data-r="newDays"]').value || 0 }, on = c.querySelector('[data-r="on"]').checked;
     c.classList.toggle('on', on); c.classList.toggle('sched', !!(r.start || r.days || r.newDays)); c.querySelector('.relc-st').innerHTML = status(on, r); sum(); };
   P.querySelectorAll('.relc').forEach(c => { c.querySelectorAll('input').forEach(i => i.addEventListener(i.type === 'checkbox' ? 'change' : 'input', () => restatus(c)));
