@@ -4,6 +4,7 @@ import { THREE, sprite } from './gfx.js';
 import { T } from './i18n.js';
 import { say } from './voice.js';
 import { SFX } from './audio.js';
+import { feel } from './avatar.js';
 import { heightAt, VILLAGE, BAMBOO, LAKE, WATER } from './world.js';
 import { WORLD as MAP_WORLD, landmarkAt } from './content/map.js';
 import { dist2, pick } from './util.js';
@@ -40,7 +41,7 @@ export function createSecrets(G) {
     const p = h.profile; p.secrets = p.secrets || {};
     if (p.secrets[id]) return false;
     p.secrets[id] = true; G.addCoins(15); const st = G.giveSticker(p); G.save();
-    const s = SECRETS.find(x => x.id === id); SFX.secret();
+    const s = SECRETS.find(x => x.id === id); SFX.secret(); if (h && h.av) feel(h.av, 'o', 1.4); // (v1.08e faces) surprised at a find
     const n = Object.keys(p.secrets).length;
     await G.reward(s.icon, T('Secret found!', 'Tìm ra bí mật!') + ' ' + s.name(), s.story() + ' ' + T(`(${n}/${SECRETS.length} secrets)`, `(${n}/${SECRETS.length} bí mật)`) + (st ? ' ' + st : ''));
     say(s.story(), s.story());

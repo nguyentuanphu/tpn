@@ -50,10 +50,12 @@ export function friendPortrait(id: string, skin: string): Promise<string> {
 }
 /** the slow turn of a Welcome card: draws about 20 times a second while the canvas is on the page */
 export function turnFriend(target: HTMLCanvasElement, id: string, getSkin: () => string, getMood: () => string) {
-  let yaw = -.5, busy = false;
+  let yaw = -.5, busy = false; const blinkAt = Math.random() * 3;
   const step = async () => {
     if (!target.isConnected) return;
-    if (!busy) { busy = true; yaw += .03; const ok = await drawFriend(target, id, getSkin(), Math.sin(yaw) * .9, getMood()); busy = false; if (!ok) return; }
+    // (v1.08e faces) the friend blinks now and then while smiling (half, closed, half: three drawings, 150 ms)
+    let mood = getMood(); const b = (performance.now() / 1000 + blinkAt) % 3.4; if (mood === 'smile' && b < .15) mood = b < .05 || b >= .1 ? 'half' : 'blink';
+    if (!busy) { busy = true; yaw += .03; const ok = await drawFriend(target, id, getSkin(), Math.sin(yaw) * .9, mood); busy = false; if (!ok) return; }
     setTimeout(step, 50);
   };
   step();

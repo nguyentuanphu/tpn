@@ -199,41 +199,51 @@ def face(expr):
             else: arc = [(ex + math.cos(a) * E * .95, ez - .02 - math.sin(a) * E * .3) for a in lin(.06 * math.pi, .94 * math.pi, 13)]
             fline(expr + 'Eye', LASH, arc, [.012] + [.024] * 11 + [.012], .02)
         else:
-            sx, sy = {'surprised': (1.03, 1.08), 'sad': (1, .9), 'excited': (1.05, 1.1)}.get(expr, (1, 1))
+            # (v1.08e faces, owner 6 Nov 2026 AEDT: "soft eyes with lids") the upper lid covers the top of each eye: the white,
+            # the iris and the sparkles stop at an arched lid line (skin above it), so only a little white shows beside a big
+            # iris; 'half' is the lids half down (the frames either side of a blink), lookL and lookR turn the eyes aside
+            sx, sy = {'surprised': (1.03, 1.08), 'sad': (1, .94), 'excited': (1.05, 1.1)}.get(expr, (1, 1))
             w, h = E * sx, E * 1.12 * sy * (.82 if P.get('almond') else 1)   # almond eyes for the concept face
-            lx, lz = {'curious': (-.4, .35), 'sad': (0, -.35), 'shy': (-.45, -.5)}.get(expr, (0, 0))
+            lx, lz = {'curious': (-.4, .35), 'sad': (0, -.35), 'shy': (-.45, -.5), 'lookL': (-.62, 0), 'lookR': (.62, 0)}.get(expr, (0, 0))
             ir = .88 if expr == 'surprised' else 1.0
-            decal('eyeWhite', EYEW, ex, ez, w, h, .05)
-            ix, iz = ex + lx * w * .25, ez + lz * h * .22 - .04 * h
-            decal('iris', IRISD, ix, iz, w * ir * .9, h * ir * .9, .02, .03)
-            decal('irisLight', IRIS, ix, iz - h * ir * .25, w * ir * .62, h * ir * .45, .01, .045)
-            decal('pupil', PUPIL, ix, iz + .03 * h, w * ir * .4, h * ir * .44, .008, .052)
-            if expr == 'excited':  # star-shaped sparkles in the eyes
-                p_, n_ = onf(ix + w * .05, iz + h * .1, .065); pstar('shine', SHINE, p_, w * .42 * R, .01 * R, n_.to_track_quat('Z', 'Y').to_euler(), lv=1)
-            else: decal('shine', SHINE, ix + w * .28, iz + h * .34, w * .24, w * .24, .006, .06)   # bigger, softer sparkles (cuter, owner 3 Nov)
-            decal('shine2', SHINE, ix - w * .3, iz - h * .3, w * .1, w * .1, .005, .058)
-            decal('shine3', SHINE, ix + w * .42, iz - h * .05, w * .05, w * .05, .004, .058)
-            # a soft brown upper lid, a little heavier at the outer corner, and two small lashes (sad: the lid droops at the outer corner)
-            a0, a1 = (.06, .94)
-            lid = [(ex + math.cos(a) * w * 1.03, ez + math.sin(a) * h * 1.02 - (.25 * h * max(0, math.cos(a) * s) if expr == 'sad' else 0)) for a in lin(a0 * math.pi, a1 * math.pi, 15)]
-            fline('lid', LASH, lid, [.016 + .014 * max(0, math.cos(a) * s) for a in lin(a0 * math.pi, a1 * math.pi, 15)], .05)
-            for k in range(3 if G == 'f' else 0):  # girls: three soft curled lashes at the outer corner; boys: the lid line only
-                a = (.1 + .12 * k) * math.pi if s > 0 else (.9 - .12 * k) * math.pi
-                p0 = (ex + math.cos(a) * w * 1.02, ez + math.sin(a) * h); L = (.085 - .012 * k) * E / .27
-                p1 = (p0[0] + s * L * (.9 - .3 * k), p0[1] + L * (.6 + .4 * k)); p2 = (p1[0] + s * L * .35, p1[1] + L * .05)
-                fline('lash', LASH, [p0, p1, p2], [.012, .007, .003], .05)
+            op = {'surprised': .86, 'excited': .74, 'curious': .62, 'sad': .34, 'shy': .4, 'half': -.22}.get(expr, .56)
+            def lidz(x, ex=ex, h=h, w=w, op=op, s=s):
+                u = (x - ex) / (w * 1.06); z = ez + h * op - .42 * h * u * u
+                return z - (.22 * h * max(0, u * s) if expr == 'sad' else 0)   # sad: the outer corner droops
+            def under(dx, dz, ssx, ssy):
+                return lambda c: setattr(c, 'y', min(c.y, (lidz(dx + c.x * ssx) - dz) / ssy))
+            decal('eyeWhite', EYEW, ex, ez, w, h, .05, shape=under(ex, ez, w, h))
+            ix, iz = ex + lx * w * .3, ez + lz * h * .22 - .05 * h
+            iw, ih = w * ir * .97, h * ir * .95
+            decal('iris', IRISD, ix, iz, iw, ih, .02, .03, shape=under(ix, iz, iw, ih))
+            decal('irisLight', IRIS, ix, iz - ih * .26, iw * .66, ih * .46, .01, .045, shape=under(ix, iz - ih * .26, iw * .66, ih * .46))
+            decal('pupil', PUPIL, ix, iz + .02 * h, iw * .42, ih * .44, .008, .052, shape=under(ix, iz + .02 * h, iw * .42, ih * .44))
+            if expr != 'half':   # two sparkles, the big one just under the lid
+                sz = min(iz + ih * .3, lidz(ix + w * .26) - w * .26)
+                if expr == 'excited':  # star-shaped sparkles in the eyes
+                    p_, n_ = onf(ix + w * .05, iz + h * .08, .065); pstar('shine', SHINE, p_, w * .42 * R, .01 * R, n_.to_track_quat('Z', 'Y').to_euler(), lv=1)
+                else: decal('shine', SHINE, ix + w * .26, sz, w * .24, w * .24, .006, .06)
+                decal('shine2', SHINE, ix - w * .3, iz - h * .32, w * .11, w * .11, .005, .058)
+            # the lid's soft dark lash line along the arch, heavier at the outer corner, and two small lashes for girls
+            xs = lin(ex - w * 1.04, ex + w * 1.04, 15)
+            fline('lid', LASH, [(x, lidz(x)) for x in xs], [.02 + .016 * max(0, (x - ex) / w * s) for x in xs], .05)
+            if expr != 'half':
+                for k in range(3 if G == 'f' else 1):  # girls: three soft curled lashes at the outer corner; boys: one small flick
+                    x0 = ex + s * w * (1.02 - .1 * k); p0 = (x0, lidz(x0)); L = (.08 - .012 * k) * E / .27
+                    p1 = (p0[0] + s * L * (.9 - .3 * k), p0[1] + L * (.5 + .4 * k)); p2 = (p1[0] + s * L * .35, p1[1] + L * .05)
+                    fline('lash', LASH, [p0, p1, p2], [.012, .007, .003], .05)
         # soft short brows: raised for surprise, one up for curiosity, tilted up in the middle for sadness
         up = {'surprised': .12, 'happy': .05, 'curious': .1 if s < 0 else .02, 'sad': .05, 'excited': .1, 'shy': .06}.get(expr, .03)
         bz = ez + E * 1.12 + .07 + up; tilt = {'sad': .05, 'shy': .03}.get(expr, 0)
         if G == 'f': fline('brow', BROW, [(ex - s * .1, bz - .015 + tilt), (ex - s * .02, bz + .025), (ex + s * .09, bz + .005 - tilt)], [.012, .019, .009], .02)   # thin and arched
         else: fline('brow', BROW, [(ex - s * .11, bz + tilt), (ex - s * .01, bz + .018), (ex + s * .1, bz + .008 - tilt)], [.022, .03, .02], .02)   # a little thicker and straighter
         bl = 1.35 if expr in ('shy', 'excited') else 1.0   # rosier cheeks when shy or excited
-        decal('blush', BLUSH if G == 'f' or bl > 1 else BLUSHM, s * P.get('blushX', .57), P.get('blushZ', -.33), .17 * M * bl, .1 * M * bl, .012, .004)
+        decal('blush', BLUSH, s * P.get('blushX', .57), P.get('blushZ', -.33), .17 * M * bl, .1 * M * bl, .012, .004)   # (v1.08e faces) pink cheeks for everyone
     mz = P.get('mouthZ', -.47)
     decal('nose', NOSE, 0, P.get('noseZ', -.3), .035, .025, .025)
     flat_top = lambda c: setattr(c, 'y', c.y * .15) if c.y > 0 else None
-    if expr in ('smile', 'happy', 'excited'):
-        mw, mh = (.17 * M, .15 * M) if expr == 'smile' else (.2 * M, .17 * M) if expr == 'happy' else (.22 * M, .2 * M)
+    if expr in ('smile', 'happy', 'excited', 'half', 'lookL', 'lookR'):
+        mw, mh = (.17 * M, .15 * M) if expr in ('smile', 'half', 'lookL', 'lookR') else (.2 * M, .17 * M) if expr == 'happy' else (.22 * M, .2 * M)
         decal('mouth', MOUTH, 0, mz, mw, mh, .07, .0, shape=flat_top)
         decal('tongue', TONGUE, 0, mz - mh * .6, mw * .55, mh * .32, .02, .06)
     elif expr == 'blink':
@@ -248,7 +258,7 @@ def face(expr):
         decal('mouth', MOUTH, 0, mz - .03, .07 * M, .095 * M, .07)
         decal('tongue', TONGUE, 0, mz - .03 - .055 * M, .04 * M, .03 * M, .03, .035)
 
-FACES_ALL = ('smile', 'blink', 'happy', 'curious', 'surprised', 'sad', 'shy', 'excited')
+FACES_ALL = ('smile', 'blink', 'happy', 'curious', 'surprised', 'sad', 'shy', 'excited', 'half', 'lookL', 'lookR')
 FACE_SETS = {e: group('face-' + e, lambda e=e: face(e)) for e in FACES_ALL}
 
 # ---------- leaf hair: puffy felt leaves in overlapping rows, a fringe over the forehead ----------

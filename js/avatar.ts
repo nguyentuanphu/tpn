@@ -32,6 +32,8 @@ const gParts = {
   nonla: new THREE.ConeGeometry(.82, .5, 24, 1, false), cap: new THREE.SphereGeometry(.56, 20, 12, 0, Math.PI * 2, 0, Math.PI * .45), brim: new THREE.CylinderGeometry(.3, .3, .04, 16, 1, false, 0, Math.PI),
   crown: new THREE.CylinderGeometry(.26, .3, .22, 8, 1, true), ear: new THREE.CapsuleGeometry(.08, .38, 4, 8), petal: new THREE.SphereGeometry(.09, 8, 6)
 };
+// (v1.08e faces) each person by their root, for feelRoot (a WeakMap: a copy of a root or one torn down costs nothing)
+const AV_OF = new WeakMap<THREE.Object3D, SvAvatar>();
 // (TypeScript, r86) the head's shapes, and the face and glider made just below
 const G: typeof gParts & { face?: THREE.BufferGeometry, glider?: THREE.BufferGeometry } = gParts;
 G.face = (() => {
@@ -55,7 +57,7 @@ export function drawDefaultFace(x, S, look, mood = 'smile') {
 // (v1.08e faces, owner 6 Nov 2026 AEDT: "soft eyes with lids") the villagers in the friends' style: the upper lid covers
 // the top of each eye (a soft dark lash line along it), so only a little white shows beside a big warm-brown iris with two
 // sparkles; rosy cheeks. Moods: smile, 'blink' (closed), 'half' (the lids half down, the frame either side of a blink),
-// 'lookL' and 'lookR' (the irises to one side), 'happy' (curved eyes, an open smile), 'o' (surprised: the lids lift),
+// 'lookL' and 'lookR' (the irises to the person's own left or right: the viewer's right or left), 'happy' (curved eyes, an open smile), 'o' (surprised: the lids lift),
 // 'curious' (one brow up), 'sad' (the lids droop at the outer corner, a small frown), 'shy' (eyes down, rosy cheeks),
 // 'excited' (wide bright eyes, an open smile) and 'sleep' (closed, a flat mouth, for the films).
 const LID = { smile: .58, lookL: .58, lookR: .58, curious: .66, o: .86, excited: .74, sad: .36, half: -.2 };
@@ -81,7 +83,7 @@ export function drawFeatures(x, S, look, mood = 'smile') {
       x.save(); x.beginPath(); x.ellipse(cx * S, ey * S, rx * S, ry * S, 0, 0, Math.PI * 2); x.clip();
       x.beginPath(); x.moveTo(xl * S, yl * S); x.quadraticCurveTo(cx * S, ctl * S, xr * S, yr * S); x.lineTo(xr * S, (ey + ry + .02) * S); x.lineTo(xl * S, (ey + ry + .02) * S); x.closePath(); x.clip();
       x.fillStyle = '#fffdf8'; x.fillRect((cx - rx) * S, (ey - ry) * S, 2 * rx * S, 2 * ry * S);
-      const lookX = mood === 'lookL' ? -.022 : mood === 'lookR' ? .022 : mood === 'curious' ? .014 : 0, ix = cx + lookX, iy = ey + .016, ir = mood === 'o' ? .06 : .07;
+      const lookX = mood === 'lookL' ? .022 : mood === 'lookR' ? -.022 : mood === 'curious' ? .014 : 0, ix = cx + lookX, iy = ey + .016, ir = mood === 'o' ? .06 : .07;
       const g = x.createRadialGradient(ix * S, (iy + .026) * S, S * .004, ix * S, (iy + .008) * S, S * ir);
       g.addColorStop(0, '#b07444'); g.addColorStop(.6, '#5e361d'); g.addColorStop(1, '#2e180c');
       x.fillStyle = g; dot(ix, iy, ir);
@@ -263,6 +265,7 @@ export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvat
   const white = toon('#ffffff', { roughness: .9 }), shoeM = toon(ft ? ft.color : look.shoe || '#7a4a35', { roughness: .45 }), soleM = toon('#fff8ee');
   const trim = toon(style === 'aodai' ? '#ffd84a' : '#f2d16b', { roughness: .7 });
   const A: SvAvatar = into ? Object.assign(into, { rig, skinMat: skin, look }) : { root, rig, skinMat: skin, look };
+  AV_OF.set(root, A); // (v1.08e faces) for feelRoot
   // legs (pivot at the hip)
   const legSpec = look.legs ? 'pants:' + look.legs : bot ? (bot.shape === 'shorts' ? 'shorts' : bot.shape === 'skirt' ? 'skin' : 'pants:' + bot.color) : STYLE_LEGS[style] || 'skin';
   const shortsCol = bot && bot.shape === 'shorts' ? bot.color : null;
@@ -463,7 +466,7 @@ export function animate(A, state, t, speed = 0) {
       put('tail', 0, 0, -shift * .05);
       if (lookAt.on && lookAt.self !== A && A.root.parent) { // a villager turns their head to the child close by
         A.root.getWorldPosition(_wp); const dx = lookAt.x - _wp.x, dz = lookAt.z - _wp.z, d2 = dx * dx + dz * dz;
-        if (d2 < 30 && d2 > .2) { let a = Math.atan2(dx, dz) - A.root.rotation.y; a = Math.atan2(Math.sin(a), Math.cos(a)); if (Math.abs(a) < 1.9) { const turn = Math.max(-1.1, Math.min(1.1, a)); add('head', 0, turn * .8 - POSE[JI.head + 1] * .7); add('torso', 0, turn * .2); if (Math.abs(a) > .3) eyeTo = a > 0 ? 'lookR' : 'lookL'; } }
+        if (d2 < 30 && d2 > .2) { let a = Math.atan2(dx, dz) - A.root.rotation.y; a = Math.atan2(Math.sin(a), Math.cos(a)); if (Math.abs(a) < 1.9) { const turn = Math.max(-1.1, Math.min(1.1, a)); add('head', 0, turn * .8 - POSE[JI.head + 1] * .7); add('torso', 0, turn * .2); if (Math.abs(a) > .3) eyeTo = a > 0 ? 'lookL' : 'lookR'; /* +x is a person's left */ } }
       }
     }
   }
@@ -498,6 +501,8 @@ export function animate(A, state, t, speed = 0) {
 /** (v1.08e faces) a feeling on a person's face for a moment: 'o' (surprised at a find), 'sad' (a game lost), 'shy' (greeted),
  *  'happy', 'excited', 'curious'; the blinks go on over it */
 export function feel(A, mood: string, secs = 2) { const L = A && A.life; if (!L) return; L.feel = mood; L.feelUntil = L.t + secs; }
+/** the same, for a person known by their root (a villager found in the scene) */
+export function feelRoot(root: THREE.Object3D, mood: string, secs = 2) { feel(AV_OF.get(root), mood, secs); }
 
 // The wise owl guide.
 export function buildOwl() {
