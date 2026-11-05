@@ -120,7 +120,7 @@ function marketBoats(G, r: S2Region) {
 }
 
 // the sea in front of a region (south of it), and the open shore facing it
-function seaSpot(r: S2Region) { for (let d = r.r; d < r.r + 30; d += 1) for (const dx of [0, -4, 4, -8, 8]) { const x = r.at[0] + dx, z = r.at[1] + d; if (heightAt(x, z) < WATER - 1.2) return { x, z: z + 3 }; } return null; }
+function seaSpot(r: S2Region) { for (let d = r.r; d < r.r + 30; d += 1) for (const dx of [0, -4, 4, -8, 8]) { const x = r.at[0] + dx, z = r.at[1] + d; if (heightAt(x, z) < WATER - .6) return { x, z: z + 3 }; /* (v1.08e water) the sea is 0.8 m deep now (was 1.2 m here) */ } return null; }
 function shoreSpot(G, r: S2Region, wet: { x: number; z: number }) { for (let d = 6; d < 30; d += 1) { const x = wet.x + (r.at[0] - wet.x) * d / 30, z = wet.z + (r.at[1] - wet.z) * d / 30; if (heightAt(x, z) > WATER + .5 && freeAt(G, x, z, 1.2)) return { x, z }; } return openSpot(G, r.at[0], r.at[1] + 4, 1.2, 8); }
 
 // ---------- building a region's area (once) ----------

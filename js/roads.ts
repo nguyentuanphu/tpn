@@ -385,7 +385,7 @@ export function plantRoadside(G) {
   const VT = CITIES.find(c => c.id === 'vungtau'), at = (dx: number, dz: number) => [VT.x + dx, VT.z + dz];
   for (const [x, z] of VT ? [at(-19, 36), at(-15, 38), at(-1, 38), at(-13, 48), at(-5, 50)] : []) { const h = heightAt(x, z), dry = h > WATER + .05;
     if (dry && h > WATER + 1.6 || !free(x, z, 1.2) || !plotFree(x, z, 1)) continue;
-    const y = dry ? h - .5 : WATER - .45, yaw = (x * 7 + z) % 6.3; boats.push(...boatParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; }));
+    const y = dry ? h - .5 : Math.max(WATER - .2, h + .32),   /* (v1.08e water) floating high on the shallow sea, never inside its bed */ yaw = (x * 7 + z) % 6.3; boats.push(...boatParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; }));
     if (dry) world.colliders.push({ x, z, r: .9 }); }
   if (boats.length) { const m = new THREE.Mesh(merge(boats), toonVC()); m.castShadow = true; m.userData.noSolid = true; scene.add(m); }
   // only roads near a player show their flowers

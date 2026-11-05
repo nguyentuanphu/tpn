@@ -138,7 +138,7 @@ export function heightAt(x, z) {
   h = flat(h, x, z, PADDIES, PADDIES.r, 12, PADDIES.h + (Math.floor((z - PADDIES.z) / 9) * .35));
   if (Math.abs(x - BAMBOO.x) < BAMBOO.r + 10 && Math.abs(z - BAMBOO.z) < BAMBOO.r + 10) h = flat(h, x, z, BAMBOO, BAMBOO.r - 10, 20, 5 + fbm(x * .03, z * .03, 2) * 2); // (farther: weight 0, no noise needed)
   const dl = dist2(x, z, LAKE.x, LAKE.z);
-  h = lerp(h, -7, 1 - smooth(LAKE.r * .55, LAKE.r, dl));
+  h = lerp(h, WATER - MAP.WORLD.lakeDepth, 1 - smooth(LAKE.r * .55, LAKE.r, dl));   // (v1.08e water) knee to waist deep (was 7 m)
   h = lerp(h, Math.min(h, 1.2), 1 - smooth(LAKE.r, LAKE.r + 14, dl));
   for (const F of FLATS) { const ox = Math.max(F.x0 - WIDE - x, 0, x - F.x1 - WIDE), oz = Math.max(F.z0 - WIDE - z, 0, z - F.z1 - WIDE), fall = WIDE ? 16 : 12; if (ox < fall && oz < fall) h = lerp(h, F.h, 1 - smooth(0, fall, Math.hypot(ox, oz))); }
   for (const L of LOTS) { // a level plot, easing back to the hillside over 4 m
@@ -162,7 +162,7 @@ export function heightAt(x, z) {
     h = lerp(h, F.h, 1 - smooth(15, 21, d));
   }
   // the lake stays a lake: level land round the market and farm used to spill into it (a sandy tongue the ferry drove over)
-  if (dl < LAKE.r) h = lerp(h, Math.min(h, -7), 1 - smooth(LAKE.r * .62, LAKE.r * .82, dl));
+  if (dl < LAKE.r) h = lerp(h, Math.min(h, WATER - MAP.WORLD.lakeDepth), 1 - smooth(LAKE.r * .62, LAKE.r * .82, dl));
   // shrines and the rocks with a Leafy under them stand on a small dry pad (one shrine stood in a pond)
   if (PADS) for (const S of PADS) { if (Math.abs(x - S.x) >= 7 || Math.abs(z - S.z) >= 7) continue; const d = dist2(x, z, S.x, S.z); if (d < 7) h = lerp(h, Math.max(h, WATER + 1.4), 1 - smooth(3.6, 7, d)); }
   // the southern coast: a sandy beach, then the sea (its edge waves gently)
@@ -172,7 +172,7 @@ export function heightAt(x, z) {
     const e = Math.hypot(ex, ez); let top = I.h + fbm(x * .06, z * .06, 2) * .5; if (I.peak) top += I.peak[2] * (1 - smooth(0, I.peak[3], dist2(x, z, I.peak[0], I.peak[1])));
     h = lerp(h, top, 1 - smooth(.8, 1.25, e)); }
   const dr = riverDist(x, z);
-  // A shallow, even riverbed: keep the swimming channel below the 0.9 m threshold and the boat hulls clear.
+  // (v1.08e water, owner 6 Nov 2026 AEDT) a shallow, even riverbed, 0.8 m at most: children wade across anywhere.
   // Water level, bridge decks and banks stay at their authored elevations.
   h = lerp(h, WATER - MAP.WORLD.riverDepth, 1 - smooth(3.5, 11, dr));
   // (round T2) ponds: a round hollow with a gentle shore (after the places' flat ground, so a pond by a city stays wet)

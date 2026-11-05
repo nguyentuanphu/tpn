@@ -32,9 +32,13 @@ export const ROAD_WIDTH = { asphalt: 6.4, dirt: 3.4, footpath: 1.6 };
 
 // (Concept D map: drawing units × 8/7 = metres, the drawing's middle (210, 210) is (0, 0); north up)
 export const WORLD = {
-  size: 480, north: '-z', water: 0, riverDepth: 1.25,
+  size: 480, north: '-z', water: 0,
+  // (v1.08e water, owner 6 Nov 2026 AEDT: "all the rivers are too deep; make them shallow, cute and friendlier", pop-up:
+  // knee to waist deep, 0.4-0.8 m, children wade and splash, nobody sinks or swims) every river, the lake, every pond and
+  // the sea are this deep at most, rising gently to the banks (was: rivers 1.25 m, the lake 7 m, ponds 2.4 m, the sea 5 m)
+  riverDepth: .8, lakeDepth: .8, pondDepth: .7, wadeMin: .4,
   edge: [222, 252],                                // the wall of hills on the east, west and north rises between these distances from the middle
-  coast: { z: 194, sea: -5 },                      // the southern coast: the sea from about z, with a sandy beach before it
+  coast: { z: 194, sea: -.8 },                      // the southern coast: the sea from about z, with a sandy beach before it
   mountains: { z0: -150, z1: -238, pines: -150, region: -172 }, // the snowy belt in the north: starts rising at z0, full at z1; pines north of `pines`; "Snowcap Peaks" north of `region`
   wild: { x0: -215, x1: 215, z0: -150, z1: 180 },  // where wild dig spots, bushes and rocks are scattered (js/gather.js)
   summit: { x0: -220, x1: 220, z0: -236, z1: -176, zMin: -234 }, // where the snowman looks for the highest summit (js/secrets.js)
