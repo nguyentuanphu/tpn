@@ -1,4 +1,4 @@
-import { voicePackSignature, voiceFormatFor, moveToOpus } from './voice-index.js';
+import { voicePackSignature, voiceFormatFor, moveToOpus, opusPossible } from './voice-index.js';
 // The voice pack downloading to the device (split from js/voice.js in round R item 12, so it is fetched only when the
 // download starts, not before the title screen: PERF-001). js/voice.js starts it once the pack's list has arrived.
 import { settings, saveSettings, profiles, autoPackOn, offlineLevel, ASIDE_VOICES_ON, type OfflineLevel } from './state.js';
@@ -102,17 +102,19 @@ export function packOrder() {
 // an Opus copy is about 45% of the MP3.
 const OPUS_SHARE = 0.45, LIGHT_MB = 45;
 const isPlace = g => !!(g && AREAS && AREAS.groups[g] && !NOT_PLACES.includes(g));
-export function groupsMB(gs: string[], langs = packLangs()) {
+export function groupsMB(gs: string[], langs = packLangs(), opus = !!PACK && voiceFormatFor(PACK) === 'opus') {
   let n = 0; for (const g of gs) for (const L of [...langs, 'zh', 'hi']) n += (AREAS && AREAS.size && AREAS.size[g] && AREAS.size[g][L]) || 0;
-  return n / 1048576 * (PACK && voiceFormatFor(PACK) === 'opus' ? OPUS_SHARE : 1);
+  return n / 1048576 * (opus ? OPUS_SHARE : 1);
 }
+// the format a level will use: Light moves to Opus when it can, Full too unless the whole pack is kept already
+const levelOpus = (level: OfflineLevel) => (!!PACK && voiceFormatFor(PACK) === 'opus') || ((level === 'light' || (level === 'full' && !packIsSaved(packLangs()))) && opusPossible(PACK));
 // the last areas the child was in (newest first), kept with the settings
 function rememberHere() { const h = hereArea(), r = settings.packRecent || []; if (!isPlace(h) || r[0] === h) return false; settings.packRecent = [h, ...r.filter(x => x !== h)].slice(0, 4); return true; }
 // the areas the Light level keeps: the core, where the child is, then the last areas while they fit in about 45 MB
 export function lightGroups() {
   const out = ['core'], cand = [hereArea(), ...(settings.packRecent || [])].filter(isPlace);
   for (const g of extraLightGroups()) if (AREAS && AREAS.groups[g] && !out.includes(g)) out.push(g);
-  for (const g of cand) if (!out.includes(g) && (out.length < 2 || groupsMB(out.concat(g)) <= LIGHT_MB)) out.push(g);
+  for (const g of cand) if (!out.includes(g) && (out.length < 2 || groupsMB(out.concat(g), packLangs(), levelOpus('light')) <= LIGHT_MB)) out.push(g);
   return out;
 }
 // (filled by part 3: a festival pack that is due is kept on Light too)
@@ -155,7 +157,7 @@ export async function levelSpace() {
   await loadAreas();
   const all = AREAS ? Object.keys(AREAS.groups) : ['core'];
   let now = 0; try { now = await voiceStore('sv-voices').bytes(); } catch (e) { }
-  return { light: Math.ceil(groupsMB(lightGroups())), full: Math.ceil(groupsMB(all)), now, level: offlineLevel(), known: !!AREAS };
+  return { light: Math.ceil(groupsMB(lightGroups(), packLangs(), levelOpus('light'))), full: Math.ceil(groupsMB(all, packLangs(), levelOpus('full'))), now, level: offlineLevel(), known: !!AREAS };
 }
 let checking = false, recheck = false;
 // (battery round, owner 12 Oct AEDT: "my phone gets very hot") the download is spread out: nothing while the valley is

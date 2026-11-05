@@ -51,6 +51,7 @@ export function legacyLanguage(man, lang) {
 const opusPlays = () => { try { return typeof Audio !== 'undefined' && !!new Audio().canPlayType('audio/ogg; codecs="opus"'); } catch (e) { return false; } };
 // (v1.08c voices, offline levels) a level chosen in Grown-ups may move a device from MP3 to Opus: only when the pack has
 // Opus copies and this browser plays them. Returns whether the device is on Opus now.
+export const opusPossible = pack => !!(pack && Array.isArray(pack.formats) && pack.formats.includes('opus')) && opusPlays();
 export function moveToOpus(pack) {
   const has = !!(pack && Array.isArray(pack.formats) && pack.formats.includes('opus'));
   if (!has || !opusPlays()) return false;
