@@ -66,6 +66,14 @@ await check('websitenews', async () => (await import('./story-v108b.mts')).websi
 await check('chapter4', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch4'));
 await check('chapter5', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch5'));
 await check('finale', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'finale'));
+// (v1.08d s2vn) Season 2, Vietnam: the regions, their games and the lantern chapters 6 to 9 (tests/s2vn.mts)
+await check('s2vnregions', async () => (await import('./s2vn.mts')).s2vnRegionsCheck(b));
+await check('s2vngames', async () => (await import('./s2vn.mts')).s2vnGamesCheck(b));
+await check('s2vnfit', async () => (await import('./s2vn.mts')).s2vnFitCheck());
+await check('chapter6', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch6'));
+await check('chapter7', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch7'));
+await check('chapter8', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch8'));
+await check('chapter9', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch9'));
 await check('talecostume', async () => (await import('./story-v108b.mts')).taleCostumeCheck());
 await check('installgift', async () => (await import('./story-v108b.mts')).installGiftCheck(b));
 

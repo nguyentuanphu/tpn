@@ -31,6 +31,15 @@ export const CAL_FIXED: CalItem[] = [
   { key: 'chapter:ch4', kind: 'chapter', id: 'ch4', en: 'Lantern story chapter 4: Christmas and New Year', vi: 'Truyện đèn lồng chương 4: Giáng sinh và Năm mới', icon: '🎄', date: CAL_DAYS['chapter:ch4'] },
   { key: 'chapter:ch5', kind: 'chapter', id: 'ch5', en: 'Lantern story chapter 5: Huế, Đà Nẵng, Melbourne and Uluru', vi: 'Truyện đèn lồng chương 5: Huế, Đà Nẵng, Melbourne và Uluru', icon: '🏯', date: CAL_DAYS['chapter:ch5'] },
   { key: 'chapter:finale', kind: 'chapter', id: 'finale', en: 'Lantern story finale: every lantern home for Tết', vi: 'Truyện đèn lồng phần cuối: mọi đèn lồng về nhà đón Tết', icon: '🧧', date: CAL_DAYS['chapter:finale'] },
+  // (v1.08d s2vn) Season 2, Vietnam (js/content/s2vn.ts): each region with its three games and its lantern chapter
+  { key: 'feature:s2_mekong', kind: 'feature', id: 's2_mekong', en: 'New place: the Mekong floating market, with 3 games', vi: 'Nơi mới: Chợ nổi miền Tây, có 3 trò chơi', icon: 's2:mekong', date: CAL_DAYS['feature:s2_mekong'] },
+  { key: 'chapter:ch6', kind: 'chapter', id: 'ch6', en: 'Lantern story chapter 6: the floating market', vi: 'Truyện đèn lồng chương 6: Chợ nổi miền Tây', icon: 's2:mekong', date: CAL_DAYS['chapter:ch6'] },
+  { key: 'feature:s2_halong', kind: 'feature', id: 's2_halong', en: 'New place: Hạ Long Bay, with 3 games', vi: 'Nơi mới: Vịnh Hạ Long, có 3 trò chơi', icon: 's2:halong', date: CAL_DAYS['feature:s2_halong'] },
+  { key: 'chapter:ch7', kind: 'chapter', id: 'ch7', en: 'Lantern story chapter 7: Hạ Long Bay', vi: 'Truyện đèn lồng chương 7: Vịnh Hạ Long', icon: 's2:halong', date: CAL_DAYS['chapter:ch7'] },
+  { key: 'feature:s2_sapa', kind: 'feature', id: 's2_sapa', en: 'New place: the Sapa rice terraces, with 3 games', vi: 'Nơi mới: Ruộng bậc thang Sapa, có 3 trò chơi', icon: 's2:sapa', date: CAL_DAYS['feature:s2_sapa'] },
+  { key: 'chapter:ch8', kind: 'chapter', id: 'ch8', en: 'Lantern story chapter 8: Sapa in spring', vi: 'Truyện đèn lồng chương 8: Sapa mùa xuân', icon: 's2:sapa', date: CAL_DAYS['chapter:ch8'] },
+  { key: 'feature:s2_taynguyen', kind: 'feature', id: 's2_taynguyen', en: 'New place: the Central Highlands, with 3 games', vi: 'Nơi mới: Tây Nguyên, có 3 trò chơi', icon: 's2:taynguyen', date: CAL_DAYS['feature:s2_taynguyen'] },
+  { key: 'chapter:ch9', kind: 'chapter', id: 'ch9', en: 'Lantern story chapter 9: the gongs of the Central Highlands', vi: 'Truyện đèn lồng chương 9: Cồng chiêng Tây Nguyên', icon: 's2:taynguyen', date: CAL_DAYS['chapter:ch9'] },
 ];
 // (v1.08d s2au) Season 2, Australia: three regions (each with its friend, food and three games, which open with it) and
 // chapters 10 to 12

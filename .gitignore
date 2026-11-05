@@ -65,6 +65,7 @@ marketing/source/runvalley.log
 /js/art/r90-audits.js
 /js/art/round30.js
 /js/art/s2au.js
+/js/art/s2vn.js
 /js/art/science2.js
 /js/art/things-money.js
 /js/art/tiengviet2.js
@@ -101,6 +102,10 @@ marketing/source/runvalley.log
 /js/content/chapter3text.js
 /js/content/chapter4.js
 /js/content/chapter5.js
+/js/content/chapter6.js
+/js/content/chapter7.js
+/js/content/chapter8.js
+/js/content/chapter9.js
 /js/content/chapterfinale.js
 /js/content/chapterkit.js
 /js/content/chapters.js
@@ -178,6 +183,8 @@ marketing/source/runvalley.log
 /js/content/s2au-games.js
 /js/content/s2au.js
 /js/content/s2aufilms.js
+/js/content/s2vn.js
+/js/content/s2vnfilms.js
 /js/content/savecopy.js
 /js/content/school-place.js
 /js/content/science-places.js
@@ -304,6 +311,8 @@ marketing/source/runvalley.log
 /js/games/reveal.js
 /js/games/s2au-meta.js
 /js/games/s2au.js
+/js/games/s2vn-meta.js
+/js/games/s2vn.js
 /js/games/science.js
 /js/games/science2-meta.js
 /js/games/science2.js
@@ -418,6 +427,7 @@ marketing/source/runvalley.log
 /js/roomcode.js
 /js/s2au-region.js
 /js/s2au.js
+/js/s2vn.js
 /js/school.js
 /js/screencapture.js
 /js/scrollhelp.js

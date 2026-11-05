@@ -225,7 +225,9 @@ export const RELIEF = [{ id: 'gdr', pts: [[-166, -96], [-166, 120]], h: 14, w: 1
   { id: 'truongson', pts: [[123, -30], [122, 30]], h: 14, w: 10, pass: { at: [122, 7], h: 4, w: 14 } }];
 
 // Spots kept free of trees ([x, z, r]): round Uluru.
-export const CLEARINGS: { id: string; place?: string; off?: number[]; at?: number[]; r: number }[] = [{ id: 'uluru', place: 'uluru', off: [0, -2], r: 34 }];
+export const CLEARINGS: { id: string; place?: string; off?: number[]; at?: number[]; r: number }[] = [{ id: 'uluru', place: 'uluru', off: [0, -2], r: 34 },
+  // (v1.08d s2vn) Season 2's small new areas, kept free of trees (js/content/s2vn.ts: the same middles)
+  { id: 's2_mekong', at: [182, 169], r: 16 }, { id: 's2_halong', at: [221, 166], r: 14 }, { id: 's2_sapa', at: [173, -83], r: 13 }, { id: 's2_taynguyen', at: [188, 58], r: 15 }];
 
 // ---------- places of interest ----------
 export const SHRINES = [

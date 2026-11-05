@@ -13,7 +13,7 @@ import { buildLantern } from '../dinh.js';
 import { STORY_LINES } from './chapters.js';
 import type { StoryPair } from '../../types/story.js';
 
-export type PlaceRef = { city?: string; landmark?: string; site?: string; game?: string; gate?: string; dx?: number; dz?: number };
+export type PlaceRef = { city?: string; landmark?: string; site?: string; game?: string; gate?: string; at?: [number, number]; dx?: number; dz?: number }; // (v1.08d s2vn: at, a spot itself)
 export type KitPerson = { id: string; name: string; look: Record<string, unknown>; at: PlaceRef; small?: boolean };
 export type ClueKind = 'tree' | 'gift' | 'star' | 'rock' | 'gum' | 'peach' | 'mai' | 'boat';
 export type KitDef = {
@@ -32,6 +32,7 @@ const at0 = (r: PlaceRef, G): { x: number; z: number } => {
   if (r.gate) { const c = CITIES.find(c => c.id === r.gate), g = c && (c.gates || [])[0]; if (g) p = { x: g[0] + 4, z: g[1] }; else if (c) p = { x: c.x1 + 4, z: c.z }; }
   if (!p && r.game) { const i = G.interactables.find(i => i.id === 'g_' + r.game); if (i) p = { x: i.x, z: i.z }; }
   if (!p && r.site) { const s = MAP_PLACES.find(s => s.id === r.site); if (s) p = { x: s.at[0], z: s.at[1] }; }
+  if (!p && r.at) p = { x: r.at[0], z: r.at[1] };
   p = p || { x: 0, z: 0 };
   return { x: p.x + (r.dx || 0), z: p.z + (r.dz || 0) };
 };

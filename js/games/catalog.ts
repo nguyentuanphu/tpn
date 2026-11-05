@@ -351,6 +351,19 @@ export const GAME_CATALOG = [
   { id: 'fg_reconciliation', icon: 'fg:reconciliation', name: () => T('Hands Together', 'Những Bàn Tay Nắm Lấy Nhau') },
   { id: 'fg_naidoc', icon: 'fg:naidoc', name: () => T('Dot Painting Story', 'Tranh Chấm Kể Chuyện') },
   { id: 'fg_diwali', icon: 'fg:diwali', name: () => T('Light the Diyas', 'Thắp Đèn Diya') },
+  // (v1.08d s2vn) Season 2, Vietnam: three games for each new region, open on its day (js/games/s2vn.ts, js/content/s2vn.ts)
+  { id: 'mk_sampan', learn: true, icon: 's2g:sampan', name: () => T('Sampan Fruit Seller', 'Chèo Ghe Bán Trái Cây') },
+  { id: 'mk_caybeo', learn: true, icon: 's2g:caybeo', name: () => T('The Cây Bẹo Pole', 'Cây Bẹo Chợ Nổi') },
+  { id: 'mk_count', learn: true, icon: 's2g:count', name: () => T('Floating Market Count', 'Đếm Hàng Chợ Nổi') },
+  { id: 'hl_cave', learn: true, icon: 's2g:cave', name: () => T('Find the Hidden Cave', 'Tìm Hang Động Bí Ẩn') },
+  { id: 'hl_rocks', learn: true, icon: 's2g:rocks', name: () => T('Rock Shapes of Hạ Long', 'Đảo Đá Hình Gì?') },
+  { id: 'hl_nets', learn: true, icon: 's2g:nets', name: () => T('Fishing Village Nets', 'Kéo Lưới Làng Chài') },
+  { id: 'sp_terrace', learn: true, icon: 's2g:terrace', name: () => T('Plant the Rice Terraces', 'Cấy Lúa Ruộng Bậc Thang') },
+  { id: 'sp_seasons', learn: true, icon: 's2g:seasons', name: () => T('Rice Through the Year', 'Mùa Lúa Ruộng Bậc Thang') },
+  { id: 'sp_brocade', learn: true, icon: 's2g:brocade', name: () => T('Brocade Patterns', 'Hoa Văn Thổ Cẩm') },
+  { id: 'tn_gong', learn: true, icon: 's2g:gong', name: () => T('Gong Rhythm', 'Nhịp Cồng Chiêng') },
+  { id: 'tn_nharong', learn: true, icon: 's2g:nharong', name: () => T('Build the Nhà Rông', 'Dựng Nhà Rông') },
+  { id: 'tn_elephant', learn: true, icon: 's2g:elephant', name: () => T('Feed the Elephants', 'Cho Voi Ăn') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -408,5 +421,7 @@ export const GAME_LOADERS = {
   // (v1.08d s2au)
   's2au.ts': { ids: ['s2a_snorkel', 's2a_turtle', 's2a_reefquiz', 's2a_wombat', 's2a_devil', 's2a_cradle', 's2a_quokka', 's2a_swan', 's2a_beach'], load: () => import('./s2au.js') },
   'money3.ts': { ids: ['shoppay', 'givechange', 'toysave', 'needsfirst', 'pricesort', 'marketday', 'coinsort', 'makeamount', 'budgetpicnic', 'chores', 'twomoney'], load: () => import('./money3.js') },
+  // (v1.08d s2vn) Season 2, Vietnam
+  's2vn.ts': { ids: ['mk_sampan', 'mk_caybeo', 'mk_count', 'hl_cave', 'hl_rocks', 'hl_nets', 'sp_terrace', 'sp_seasons', 'sp_brocade', 'tn_gong', 'tn_nharong', 'tn_elephant'], load: () => import('./s2vn.js') },
 
 };

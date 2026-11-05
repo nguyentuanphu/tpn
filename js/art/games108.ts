@@ -16,3 +16,5 @@ import '../games/games108b-meta.js';
 // (v1.08d s2au) the Season 2 Australia games' pictures and How to play
 import './s2au.js';
 import '../games/s2au-meta.js';
+import './s2vn.js'; // (v1.08d s2vn) Season 2, Vietnam: the regions' and their games' pictures
+import '../games/s2vn-meta.js';
