@@ -3,6 +3,7 @@
 // for), en, vi, group, def (what it is when Studio never set it: the owner chose "everything on"). Every festival is
 // one too (fest_<id>, from js/content/festcal.js). Part 2 of round R adds the rest of the list as each one is built.
 import { FESTCAL } from './festcal.js';
+import { BLENDER_FILMS, BLENDER_FOR_ALL, BLENDER_TITLES } from './blenderfilms.js';
 // game: the money game it switches; icon: a festival's picture
 export type Release = { id: string, en: string, vi: string, group: string, def: boolean, icon?: string, game?: string };
 export const RELEASES: Release[] = [
@@ -146,3 +147,15 @@ RELEASES.push(
   { id: 'push_invite', en: 'Notification: play invites from a friend’s family', vi: 'Thông báo: lời mời chơi từ gia đình bạn', group: 'notify', def: true },
   { id: 'push_tester', en: 'Notification: testers, a reported problem is fixed', vi: 'Thông báo: người thử, lỗi đã báo được sửa', group: 'notify', def: true },
 );
+
+// (v1.08f films, owner 6 Nov 2026 AEDT) the Blender films (js/blenderfilm.ts, js/content/blenderfilms.ts): one switch for
+// all of them, one for testers, and one per listed film (on for the five, off for the rest), built from the film list so a
+// film added there gets its switch with no code change
+RELEASES.push(
+  { id: 'blenderFilms', en: 'Blender films: the stories that have a film made in Blender play it as a video (kept on the device once watched). Off: every story plays the in-game film', vi: 'Phim Blender: truyện có phim làm bằng Blender sẽ chiếu video đó (giữ trên máy sau khi xem). Tắt: mọi truyện chiếu phim trong game', group: 'story', def: true },
+  { id: 'blenderFilmsTesters', en: 'Blender films for testers: on tester devices, every Blender film plays, also the ones not yet for everyone. Off: testers see only the films for everyone', vi: 'Phim Blender cho người thử: trên máy thử, mọi phim Blender đều chiếu, cả phim chưa mở cho mọi người. Tắt: người thử chỉ xem các phim cho mọi người', group: 'story', def: false }
+);
+for (const id of [...new Set([...BLENDER_FOR_ALL, ...Object.keys(BLENDER_FILMS)])]) {
+  const f = BLENDER_FILMS[id] || { v: '', pages: [] }, t = BLENDER_TITLES[id] || [f.en || id, f.vi || f.en || id];
+  RELEASES.push({ id: `blenderFilm_${id}`, en: `Blender film for everyone: ${t[0]}. Off: only testers see it (with "Blender films for testers"); everyone else sees the in-game film`, vi: `Phim Blender cho mọi người: ${t[1]}. Tắt: chỉ người thử xem được (khi bật "Phim Blender cho người thử"); mọi người khác xem phim trong game`, group: 'story', def: BLENDER_FOR_ALL.includes(id) });
+}
