@@ -13,7 +13,7 @@ import { el } from './util.js';
 import { events, managementEvidence } from './core/events.js';
 
 import { T, applyLang, nm, NPC_NAMES, defaultName } from './i18n.js';
-import { settings, saveSettings, profiles, saveProfiles, normalizeProfile, exportBackup, importBackup, backupAge, farm, resetFarm, saveFarm, MAX_KIDS, getSnapshot, saveReadbackMatches, ASIDE_VOICES_ON } from './state.js';
+import { settings, saveSettings, profiles, saveProfiles, normalizeProfile, exportBackup, importBackup, backupAge, farm, resetFarm, saveFarm, MAX_KIDS, getSnapshot, saveReadbackMatches, ASIDE_VOICES_ON, TURN_OFFER } from './state.js';
 import { createSaveCopy, readSaveCopyOrLegacy } from './content/savecopy.js';
 import { FAMILY_CODE_PRIVACY, makeFamilyCode, normalizeFamilyCode, familyName, familyQrSvg } from './content/familycode.js';
 import { say, voicePack, voiceDiag, allowMobilePack, voiceMisses, clearVoiceMisses, voicesFor, onVoices, hasVietnamese, FAMILY_PHRASES, previewPackVoice, resumePackDownload, chooseVietnamesePack, downloadHanoiPack, previewHanoiVoice } from './voice.js';
@@ -171,12 +171,38 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
   const m = modal('grownups', ''), gOpen = new Set(['players']);
   const card = m.querySelector('.card');
   // (v1.08f, owner 6 Nov: "once I click on the current it jumps to the top") the part that scrolls is .grownups-body,
-  // which every redraw makes anew; its scroll is kept here, so no choice in Grown-ups moves the page
+  // which every redraw makes anew. The control that was tapped (or else the first one in view) is found again after the
+  // redraw and put back where it was on screen, also after late parts above it (voices, notices) have loaded
+  const ANCH = '.seg, h3, summary, label.tog, .actions';
+  let tapped: Element | null = null;
+  card.addEventListener('pointerdown', e => { tapped = e.target instanceof Element ? e.target : null; }, true);
+  const anchorNow = (body: HTMLElement) => {
+    const top = body.getBoundingClientRect().top, list = [...card.querySelectorAll(ANCH)];
+    let i = tapped && tapped.isConnected ? list.indexOf(tapped.closest(ANCH)) : -1;
+    if (i >= 0 && !list[i].getClientRects().length) i = -1;
+    if (i < 0) i = list.findIndex(x => x.getClientRects().length && x.getBoundingClientRect().top >= top);
+    if (i < 0) return null;
+    const key = keyOf(list[i]);
+    return { key, n: list.slice(0, i).filter(x => keyOf(x) === key).length, off: list[i].getBoundingClientRect().top - top };
+  };
+  // a control is known again by its kind, its classes and the start of its words (late parts can add others before it)
+  const keyOf = (x: Element) => x.tagName + '|' + x.className.replace(/\bon\b/g, '') + '|' + (x.tagName === 'DIV' ? '' : (x.textContent || '').trim().slice(0, 40));
+  const putBack = (a: { key: string, n: number, off: number }) => {
+    const body = card.querySelector<HTMLElement>('.grownups-body'), x = body && [...card.querySelectorAll(ANCH)].filter(y => keyOf(y) === a.key)[a.n];
+    if (!x || !x.getClientRects().length) return null;
+    body.scrollTop += x.getBoundingClientRect().top - body.getBoundingClientRect().top - a.off; return body.scrollTop;
+  };
   const draw = () => {
     const vEn = voicesFor('en'), vVi = voicesFor('vi');
-    const oldBody = card.querySelector('.grownups-body'), keepY = oldBody ? oldBody.scrollTop : 0;
-    draw0(vEn, vVi);
-    const newBody = card.querySelector('.grownups-body'); if (newBody && keepY) newBody.scrollTop = keepY;
+    const oldBody = card.querySelector<HTMLElement>('.grownups-body'), keepY = oldBody ? oldBody.scrollTop : 0;
+    const a = oldBody && keepY ? anchorNow(oldBody) : null;
+    draw0(vEn, vVi); tapped = null;
+    const newBody = card.querySelector<HTMLElement>('.grownups-body'); if (!newBody || !keepY) return;
+    newBody.scrollTop = keepY;
+    if (!a) return;
+    let set = putBack(a);
+    // late parts: put it back again while nobody has scrolled since
+    [60, 250, 700, 1500].forEach(ms => setTimeout(() => { if (set === null || !newBody.isConnected || Math.abs(newBody.scrollTop - set) > 2) return; set = putBack(a); }, ms));
   };
   const draw0 = (vEn, vVi) => {
     card.innerHTML = `
@@ -273,7 +299,9 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       <h3>👥 ${T('Who’s here', 'Ai đang ở đây')}</h3><div class="whohere" id="gWho"><p class="note">…</p></div>
       <p class="note">${T('Online play uses the free PeerJS service to connect two devices directly. Voice goes straight between the devices and is never recorded.', 'Chơi trực tuyến dùng dịch vụ miễn phí PeerJS để nối hai máy trực tiếp. Giọng nói đi thẳng giữa hai máy và không bao giờ được ghi lại.')}</p>
       <label class="tog"><input type="checkbox" id="gAutoMeet" ${settings.autoMeet !== false ? 'checked' : ''}> ${T('Tell me when a friend on the list starts playing (with buttons to invite them or go to their room; nobody is put in a room by themselves)', 'Báo khi một bạn trong danh sách bắt đầu chơi (có nút mời bạn hoặc sang phòng bạn; không ai tự bị đưa vào phòng)')}</label>
-      <p class="note">${T('Friends connect directly. On some mobile data or strict networks a direct link cannot open: the game still plays together through the cloud, but voice between those two devices does not work.', 'Bạn bè kết nối trực tiếp. Trên một số mạng di động hoặc mạng chặt, không mở được kết nối trực tiếp: vẫn chơi cùng nhau qua mạng đám mây, nhưng không nói chuyện bằng giọng được giữa hai máy đó.')}</p>
+      ${TURN_OFFER ? `<p class="note">${T('If a friend far away stays on “Connecting…”, your two networks need a relay (TURN server). Free public relays are tried automatically. For a reliable one, make a free account at a TURN service (for example metered.ca), then paste its credentials link here, or a turn: address with its name and password. Both devices need the same relay.', 'Nếu bạn ở xa cứ “Đang kết nối…” mãi, hai mạng cần một máy chủ trung chuyển (TURN). Trò chơi tự thử các máy chủ miễn phí công cộng. Để ổn định hơn, hãy tạo tài khoản miễn phí ở một dịch vụ TURN (ví dụ metered.ca), rồi dán đường link lấy thông tin vào đây, hoặc địa chỉ turn: kèm tên và mật khẩu. Cả hai máy cần dùng cùng máy chủ.')}</p>
+      <div class="vrow"><input type="text" id="gTurn" placeholder="https://…/turn/credentials?apiKey=…  ${T('or', 'hoặc')}  turn:…" value="${esc(settings.turnUrl || '')}" autocomplete="off"></div>
+      <div class="vrow ${/^turns?:/i.test(settings.turnUrl || '') ? '' : 'vh'}" id="gTurnCred"><input type="text" id="gTurnUser" placeholder="${T('Name', 'Tên')}" value="${esc(settings.turnUser || '')}" autocomplete="off"><input type="password" id="gTurnPass" placeholder="${T('Password', 'Mật khẩu')}" value="${esc(settings.turnPass || '')}" autocomplete="off"></div>` : ''}
       <div class="actions"><button class="btn" id="gNetCheck">🔍 ${T('Test the connection', 'Kiểm tra kết nối')}</button></div><p class="note" id="gNetRes"></p>
 
       </div></details>
@@ -350,14 +378,22 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       box.querySelectorAll('[data-whokick]').forEach(b => b.onclick = () => { if (confirm(T('Remove this player from the room?', 'Mời bạn này ra khỏi phòng?'))) { Net.kick(b.dataset.whokick); setTimeout(drawWho, 600); } });
     };
     drawWho();
+    // (v1.08f, owner 6 Nov: "the turn function stays but the wording and the link there to hide") the relay field, hidden
+    if (TURN_OFFER) {
+    const turnIn = card.querySelector('#gTurn');
+    turnIn.oninput = () => { settings.turnUrl = turnIn.value.trim(); saveSettings(); card.querySelector('#gTurnCred').classList.toggle('vh', !/^turns?:/i.test(settings.turnUrl)); };
+    card.querySelector('#gTurnUser').oninput = e => { settings.turnUser = e.target.value; saveSettings(); };
+    card.querySelector('#gTurnPass').oninput = e => { settings.turnPass = e.target.value; saveSettings(); };
+    }
     card.querySelector('#gNetCheck').onclick = async e => {
       const b = e.currentTarget, out = card.querySelector('#gNetRes'); b.disabled = true; out.textContent = '⏳ ' + T('Checking… (about 10 seconds)', 'Đang kiểm tra… (khoảng 10 giây)');
       const { Net } = await import('./net.js'); const r = await Net.check(); b.disabled = false;
-      const cloudLine = '<br>' + (r.cloud ? '☁️ ' + T(`Cloud relay: ${r.cloud} servers answer, so friends can always play together (voice calls need a direct link).`, `Mạng đám mây: ${r.cloud} máy chủ trả lời, nên các bạn luôn chơi cùng được (gọi bằng giọng nói cần kết nối trực tiếp).`) : '⚠️ ' + T('Cloud relay: no server answered (the network may block it).', 'Mạng đám mây: không máy chủ nào trả lời (mạng có thể đang chặn).'));
+      const cloudLine = TURN_OFFER ? '<br>' + (r.cloud ? '☁️ ' + T(`Cloud relay: ${r.cloud} servers answer, so friends can always play together (voice calls still need a direct link or a relay).`, `Mạng đám mây: ${r.cloud} máy chủ trả lời, nên các bạn luôn chơi cùng được (gọi bằng giọng nói vẫn cần kết nối trực tiếp hoặc máy chủ trung chuyển).`) : '⚠️ ' + T('Cloud relay: no server answered (the network may block it).', 'Mạng đám mây: không máy chủ nào trả lời (mạng có thể đang chặn).')) : '<br>' + (r.cloud ? '☁️ ' + T(`Cloud relay: ${r.cloud} servers answer, so friends can always play together.`, `Mạng đám mây: ${r.cloud} máy chủ trả lời, nên các bạn luôn chơi cùng được.`) : '⚠️ ' + T('Cloud relay: no server answered (the network may block it).', 'Mạng đám mây: không máy chủ nào trả lời (mạng có thể đang chặn).'));
       let msg;
       if (!r.server) msg = r.cloud ? '🟡 ' + T('The meeting service (PeerJS) is not answering, but the cloud relay works: you can still play together.', 'Dịch vụ PeerJS không trả lời, nhưng mạng đám mây hoạt động: vẫn chơi cùng nhau được.') : '❌ ' + T('Cannot reach the PeerJS service. Check the internet connection.', 'Không kết nối được dịch vụ PeerJS. Kiểm tra lại mạng internet.');
-      else if (r.srflx) msg = '🟡 ' + T('Direct links work on most home Wi-Fi. Voice with friends on mobile data or strict networks may not connect.', 'Kết nối trực tiếp chạy được với hầu hết Wi-Fi gia đình. Gọi giọng nói với bạn dùng 4G hoặc mạng chặt có thể không kết nối được.');
-      else msg = '🟠 ' + T('Direct links only work on the same Wi-Fi. Voice with friends far away may not connect.', 'Kết nối trực tiếp chỉ chạy khi cùng Wi-Fi. Gọi giọng nói với bạn ở xa có thể không kết nối được.');
+      else if (r.relay) msg = TURN_OFFER ? '✅ ' + T('Ready to play with friends anywhere (a relay is working).', 'Sẵn sàng chơi với bạn ở bất cứ đâu (máy chủ trung chuyển hoạt động).') : '✅ ' + T('Ready to play with friends anywhere.', 'Sẵn sàng chơi với bạn ở bất cứ đâu.');
+      else if (r.srflx) msg = TURN_OFFER ? '🟡 ' + T('Direct links work on most home Wi-Fi. For voice with friends on mobile data or strict networks, add a relay above.', 'Kết nối trực tiếp chạy được với Wi-Fi gia đình. Để gọi giọng nói với bạn dùng 4G hoặc mạng chặt, hãy thêm máy chủ trung chuyển ở trên.') : '🟡 ' + T('Direct links work on most home Wi-Fi.', 'Kết nối trực tiếp chạy được với hầu hết Wi-Fi gia đình.');
+      else msg = TURN_OFFER ? '🟠 ' + T('Direct links only work on the same Wi-Fi. Add a relay above for voice with friends far away.', 'Kết nối trực tiếp chỉ chạy khi cùng Wi-Fi. Thêm máy chủ trung chuyển ở trên để gọi giọng nói với bạn ở xa.') : '🟠 ' + T('Direct links only work on the same Wi-Fi; friends far away play together through the cloud.', 'Kết nối trực tiếp chỉ chạy khi cùng Wi-Fi; bạn ở xa vẫn chơi cùng nhau qua mạng đám mây.');
       out.innerHTML = msg + cloudLine;
     };
     card.querySelector('#gRain').onchange = e => { settings.noRain = !e.target.checked; saveSettings(); };

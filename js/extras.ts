@@ -2,7 +2,7 @@
 // Everything here is off until a grown-up turns it on; the chat key stays on this device.
 // (round R privacy, 9 Oct, owner) voices are made in Studio only: no online voice engine, voice key or voice copy here.
 import { T } from './i18n.js';
-import { settings, saveSettings, AI_CHAT_OFFER } from './state.js';
+import { settings, saveSettings, AI_CHAT_OFFER, TURN_OFFER } from './state.js';
 import { say, voicePack } from './voice.js';
 import { canListen } from './listen.js';
 import { esc } from './util.js';
@@ -26,7 +26,7 @@ export function privacyHTML() {
 export function netListHTML() {
   const ON = [
     ['Playing with friends: rooms, knocking, invitations and “playing now” (the free PeerJS meeting service and a cloud relay).', 'Chơi cùng bạn: phòng, gõ cửa, lời mời và “đang chơi” (dịch vụ gặp nhau PeerJS miễn phí và mạng đám mây).'],
-    ['Talking with friends: voices go straight between the devices (on some strict networks they cannot connect). Never recorded.', 'Nói chuyện với bạn: giọng đi thẳng giữa hai máy (trên một số mạng chặt sẽ không kết nối được). Không bao giờ ghi lại.'],
+    TURN_OFFER ? ['Talking with friends: voices go straight between the devices, or through a relay on strict networks. Never recorded.', 'Nói chuyện với bạn: giọng đi thẳng giữa hai máy, hoặc qua máy trung chuyển khi mạng chặt. Không bao giờ ghi lại.'] : ['Talking with friends: voices go between the devices. Never recorded.', 'Nói chuyện với bạn: giọng đi giữa hai máy. Không bao giờ ghi lại.'],
     ['Real places: Google Maps and Street View open inside the game without asking again. Google sees which place is looked at.', 'Nơi thật: Google Maps và Street View mở ngay trong trò chơi, không hỏi lại. Google biết nơi nào đang được xem.']];
   const ALWAYS = [
     ['Game updates: a new version downloads by itself.', 'Cập nhật trò chơi: bản mới tự tải về.'],

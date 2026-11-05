@@ -32,6 +32,7 @@ declare global {
     /** PeerJS, for playing with friends (vendor/peerjs.min.js); its own types are not shipped */
     Peer?: new (...args: any[]) => any;
     /** the checks: a pretend voice relay (TURN) and a pretend PeerJS server */
+    SV_TURN_TEST?: any;
     SV_PEER?: { host: string, port: number, path: string, secure: boolean };
     /** the checks: the local MQTT brokers to use instead of the public ones (js/relay.ts BROKERS) */
     SV_MQTT?: string[];

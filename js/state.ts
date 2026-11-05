@@ -124,6 +124,10 @@ export const settings: Settings = Object.assign({
 // (v1.08f, owner 6 Nov: "Hide the offer for AI chat") the Grown-ups offer of villager chat with Claude (the AI key) is
 // hidden and the AI is not used; the code stays, so switching this to true brings it back
 export const AI_CHAT_OFFER = false;
+// (v1.08f, owner 6 Nov, corrected: "the turn function stays but the wording and the link there to hide") the voice relay
+// (TURN) still works as before (js/net.ts iceServers, /api/turn); only its wording and the grown-ups' relay field are
+// hidden. Switching this to true shows them again
+export const TURN_OFFER = false;
 // (round R privacy, 9 Oct, owner: "no voice keys on children's devices") voices are made in Studio only: an online voice
 // key saved by an older version, and its engine and voice choices, are deleted from this device
 const OLD_VOICE = ['tts', 'ttsKey', 'elevenVoice', 'googleVoiceEn', 'googleVoiceVi', 'azureRegion', 'azureVoiceEn', 'azureVoiceVi'];

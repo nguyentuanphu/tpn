@@ -6,7 +6,8 @@
 //   2. tapping the choice that is already on (and another one) keeps Grown-ups where it was scrolled;
 //   3. captions are off on a fresh start: the box is unticked and a spoken line shows no caption;
 //   4. no AI chat offer (no Claude key field, no "Anthropic"), and the AI is not used even with an old key saved;
-//   5. no TURN relay: no relay field in Grown-ups and only STUN servers in the connection set-up.
+//   5. the TURN relay still works (its servers are in the connection set-up) but Grown-ups shows no relay text or field
+//      (owner, corrected: "the turn function stays but the wording and the link there to hide").
 // Pictures of Grown-ups on a phone, a tablet and a computer go to out/grownupsrow/.
 import fs from 'fs';
 import { open, clear } from './harness.mts';
@@ -35,7 +36,7 @@ export async function grownupsRowCheck(b) {
       // 3. captions off on a fresh start
       const cap = await P.page.evaluate(async () => { const V = await import(String('/js/voice.js')); V.spoken.forEach(f => f('A surprise gift is waiting in the valley.')); await new Promise(r => setTimeout(r, 600)); return { setting: (window as any).__sv.settings.captions, shown: !!document.querySelector('.caption.show') }; });
       if (cap.setting === true || cap.shown) bad.push('captions are on at a fresh start: ' + JSON.stringify(cap));
-      // 4. the AI is not used even with an old key and the old switch on; 5. only STUN
+      // 4. the AI is not used even with an old key and the old switch on; 5. the relay is still used
       const net = await P.page.evaluate(async () => {
         const S = (window as any).__sv.settings, was = [S.aiOn, S.aiKey]; S.aiOn = true; S.aiKey = 'sk-ant-test';
         const C = await import(String('/js/chat-player.js')), ai = C.aiReady(); S.aiOn = was[0]; S.aiKey = was[1];
@@ -43,13 +44,13 @@ export async function grownupsRowCheck(b) {
         return { ai, turn: JSON.stringify(ice).match(/turns?:/g) || [], n: ice.length };
       });
       if (net.ai) bad.push('villager chat still uses the AI with a key saved');
-      if (net.turn.length || !net.n) bad.push('connection set-up is not STUN only: ' + JSON.stringify(net));
+      if (!net.turn.length) bad.push('the TURN relay is no longer in the connection set-up: ' + JSON.stringify(net));
     }
     await openPanel(P);
     const gr = await P.page.evaluate(() => { const c = document.querySelector('.modal.grownups'); return { cap: (c.querySelector('#gCap') as HTMLInputElement)?.checked, ai: !!c.querySelector('#xAi, #xAiKey') || /Anthropic|Claude/.test(c.textContent), turn: !!c.querySelector('#gTurn, #gTurnUser, #gTurnPass') || /TURN/.test(c.textContent) }; });
     if (gr.cap) bad.push(lang + ': the captions box is ticked on a fresh start');
     if (gr.ai) bad.push(lang + ': Grown-ups still offers the AI chat');
-    if (gr.turn) bad.push(lang + ': Grown-ups still offers a TURN relay');
+    if (gr.turn) bad.push(lang + ': Grown-ups still shows the TURN relay text or field');
     // 1. one row each
     for (const r of await rows(P) as any[]) {
       if (r.missing) { bad.push(`${lang}: ${r.sel} not found`); continue; }
@@ -60,10 +61,12 @@ export async function grownupsRowCheck(b) {
     }
     // 2. the scroll stays where it was: the current choice, then another one, then back
     for (const [sel, pick] of [['.seg.cur', 'button.on'], ['.seg.cur', 'button[data-c="AUD"]'], ['.seg.cur', 'button[data-c="auto"]'], ['.seg.tview', 'button.on']]) {
-      const before = await P.page.evaluate(sel => { const body = document.querySelector<HTMLElement>('.modal.grownups .grownups-body'), seg = document.querySelector<HTMLElement>('.modal.grownups ' + sel); body.scrollTop += seg.getBoundingClientRect().top - body.getBoundingClientRect().top - 200; return body.scrollTop; }, sel);
-      await P.page.locator(`.modal.grownups ${sel} ${pick}`).first().click(); await P.page.waitForTimeout(400);
-      const after = await P.page.evaluate(() => document.querySelector<HTMLElement>('.modal.grownups .grownups-body').scrollTop);
-      if (before < 100 || Math.abs(after - before) > 3) bad.push(`${lang}: tapping ${sel} ${pick} moved Grown-ups from ${before} to ${after}`);
+      const where = () => P.page.evaluate(sel => { const body = document.querySelector<HTMLElement>('.modal.grownups .grownups-body'), seg = document.querySelector<HTMLElement>('.modal.grownups ' + sel); return Math.round(seg.getBoundingClientRect().top - body.getBoundingClientRect().top); }, sel);
+      await P.page.evaluate(sel => { const body = document.querySelector<HTMLElement>('.modal.grownups .grownups-body'), seg = document.querySelector<HTMLElement>('.modal.grownups ' + sel); body.scrollTop += seg.getBoundingClientRect().top - body.getBoundingClientRect().top - 200; }, sel);
+      const before = await where();
+      await P.page.locator(`.modal.grownups ${sel} ${pick}`).first().click(); await P.page.waitForTimeout(1800);
+      const after = await where();
+      if (Math.abs(after - before) > 3) bad.push(`${lang}: tapping ${sel} ${pick} moved it on screen from ${before} to ${after} px`);
     }
     if (lang === 'en') notes.push('scroll kept on 4 taps');
     fs.mkdirSync('out/grownupsrow', { recursive: true });
@@ -82,5 +85,5 @@ export async function grownupsRowCheck(b) {
     await P.ctx.close();
   }
   ok(!bad.length, bad.slice(0, 12).join(' · '));
-  return `Two players, Fit the screen and Money on one row (390 px EN and VI, tablet, computer), ≥ 44 px; ${notes.join(', ')}; captions off at start; no AI chat offer; STUN only, no relay field`;
+  return `Two players, Fit the screen and Money on one row (390 px EN and VI, tablet, computer), ≥ 44 px; ${notes.join(', ')}; captions off at start; no AI chat offer; TURN relay still used, its text and field hidden`;
 }

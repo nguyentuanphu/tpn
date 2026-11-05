@@ -253,8 +253,15 @@ export async function studioCheck(browser, open) {
       await live(0); r = (await call('/studio/api/players', { cookie: C })).j; d = (r.devices || []).find(x => x.id === 'livetest0001');
       ok(d && !d.online && d.seenAt, 'a device that left still shows online: ' + JSON.stringify(d));
       notes.push('online now: 🟢 while playing (with the child), ⚪ after leaving'); }
-    // 1d. (v1.08f, owner 6 Nov: "Remove the TURN server connection") the voice relay function is gone
-    ok(!fs.existsSync(path.join(ROOT, 'netlify/functions/turn.mts')), 'the TURN relay function is still there');
+    // 1d. the voice relay (round O): with Cloudflare's key in Netlify the game gets short-lived relay details (never the key)
+    { const { makeTurn } = await import(toURL(path.join(ROOT, 'netlify/functions/turn.mts')));
+      const empty = await (await makeTurn({ fetchFn: async () => { throw new Error('no'); } })(new Request('http://x/api/turn'))).json();
+      ok(Array.isArray(empty.iceServers) && !empty.iceServers.length, 'the relay answered something without a key');
+      Object.assign(process.env, { CF_TURN_KEY_ID: 'kid123', CF_TURN_KEY_TOKEN: 'secret-token' }); let asked = null;
+      const got = await (await makeTurn({ fetchFn: async (u, o) => { asked = { u, auth: o.headers.Authorization }; return new Response(JSON.stringify({ iceServers: [{ urls: ['stun:stun.cloudflare.com:3478'] }, { urls: ['turn:turn.cloudflare.com:3478?transport=udp'], username: 'u1', credential: 'c1' }] })); } })(new Request('http://x/api/turn'))).json();
+      delete process.env.CF_TURN_KEY_ID; delete process.env.CF_TURN_KEY_TOKEN;
+      ok(asked && /kid123\/credentials\/generate-ice-servers$/.test(asked.u) && asked.auth === 'Bearer secret-token' && got.iceServers.length === 2 && got.iceServers[1].username === 'u1' && !JSON.stringify(got).includes('secret-token'), 'the relay details are wrong: ' + JSON.stringify({ asked, got }));
+      notes.push('voice relay: short-lived details from Cloudflare, the key never sent'); }
     const info = await call('/studio/api/info', { cookie: C }); ok(info.j && info.j.ok && info.j.online && info.j.voices === 1, 'online info: ' + JSON.stringify(info.j));
     // round K: changing page online is quick: the status and the family's content take a few small GitHub calls, never the list of every file
     { gh.log.length = 0; await call('/studio/api/info', { cookie: C }); await call('/studio/api/content', { cookie: C }); const calls = gh.log.slice();
