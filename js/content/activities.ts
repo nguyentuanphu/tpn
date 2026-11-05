@@ -9,7 +9,8 @@ import { fruitParadeAvailable } from './fruit-parade.js';
 import { T } from '../i18n.js';
 import { CUSTOM, itemEnabled, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
-import { heldGame } from './secondset.js';
+import { heldGame, calDue } from './secondset.js';
+import { inCalendar } from './releasecal-core.js'; // (v1.08d s2vn) a game with a fixed day in the release calendar waits for it
 import { inSeason } from './festseason.js'; // (v1.08b games) festival games only in their season
 
 // the areas, in the order the path visits them; a child who can't read knows each one by its picture
@@ -118,7 +119,12 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   en_verbs: ['hv_en', 3, 1], en_shop: ['hv_en', 4, 2], en_teens: ['hv_en', 4, 2], en_body: ['hv_en', 2, 1], en_wh: ['hv_en', 5, 2], en_mydaystory: ['hv_en', 4, 2],
   me_tree: ['me', 3, 2], me_wash: ['me', 2, 1], me_safe: ['me', 3, 1], me_help: ['me', 3, 1], me_calm: ['me', 3, 1], me_table: ['me', 3, 1],
   th_balance: ['thinking', 4, 2], th_clues: ['thinking', 4, 2], th_robot: ['thinking', 5, 3], th_changed: ['thinking', 4, 2], th_count: ['thinking', 4, 2], th_belong: ['thinking', 3, 1],
-  vi_poem: ['hv_vi', 4, 2], vi_tulay: ['hv_vi', 5, 2], vi_sx: ['hv_vi', 5, 3]
+  vi_poem: ['hv_vi', 4, 2], vi_tulay: ['hv_vi', 5, 2], vi_sx: ['hv_vi', 5, 3],
+  // (v1.08d s2vn) Season 2, Vietnam: three games for each region (js/games/s2vn.ts), open on the region's day
+  mk_sampan: ['travel', 3, 1], mk_caybeo: ['travel', 3, 1], mk_count: ['travel', 2, 1],
+  hl_cave: ['travel', 4, 2], hl_rocks: ['travel', 3, 1], hl_nets: ['travel', 3, 2],
+  sp_terrace: ['travel', 3, 2], sp_seasons: ['travel', 4, 2], sp_brocade: ['travel', 3, 1],
+  tn_gong: ['travel', 3, 1], tn_nharong: ['travel', 4, 2], tn_elephant: ['travel', 3, 2]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };
@@ -127,7 +133,7 @@ export function gameInfo(id) {
   // (batch rollout) each money game has its own Studio switch (money_<id>): off or not started yet, it is hidden unless a
   // child playing has already played it; an explicit Off still wins (the owner-approved explicit-off policy)
   // (r90) the second set of games is held back while Studio's New games switch is off (js/content/secondset.ts)
-  const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id);
+  const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id) || (inCalendar('game:' + id) && !calDue('game', id)); // (v1.08d s2vn: a Season 2 game opens on its region's day)
   const orchardHeld = id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','single');
   const fruitHeld = id === 'fruitparade' && !fruitParadeAvailable('single');
   return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: !itemEnabled('game', id) || !inSeason(id) || (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld };

@@ -31,6 +31,27 @@ export const CAL_FIXED: CalItem[] = [
   { key: 'chapter:ch4', kind: 'chapter', id: 'ch4', en: 'Lantern story chapter 4: Christmas and New Year', vi: 'Truyện đèn lồng chương 4: Giáng sinh và Năm mới', icon: '🎄', date: CAL_DAYS['chapter:ch4'] },
   { key: 'chapter:ch5', kind: 'chapter', id: 'ch5', en: 'Lantern story chapter 5: Huế, Đà Nẵng, Melbourne and Uluru', vi: 'Truyện đèn lồng chương 5: Huế, Đà Nẵng, Melbourne và Uluru', icon: '🏯', date: CAL_DAYS['chapter:ch5'] },
   { key: 'chapter:finale', kind: 'chapter', id: 'finale', en: 'Lantern story finale: every lantern home for Tết', vi: 'Truyện đèn lồng phần cuối: mọi đèn lồng về nhà đón Tết', icon: '🧧', date: CAL_DAYS['chapter:finale'] },
+  // (v1.08d s2vn) Season 2, Vietnam (js/content/s2vn.ts): each region with its three games and its lantern chapter
+  { key: 'feature:s2_mekong', kind: 'feature', id: 's2_mekong', en: 'New place: the Mekong floating market', vi: 'Nơi mới: Chợ nổi miền Tây', icon: 's2:mekong', date: CAL_DAYS['feature:s2_mekong'] },
+  { key: 'chapter:ch6', kind: 'chapter', id: 'ch6', en: 'Lantern story chapter 6: the floating market', vi: 'Truyện đèn lồng chương 6: Chợ nổi miền Tây', icon: 's2:mekong', date: CAL_DAYS['chapter:ch6'] },
+  { key: 'game:mk_sampan', kind: 'game', id: 'mk_sampan', en: 'Sampan Fruit Seller', vi: 'Chèo Ghe Bán Trái Cây', icon: 's2g:sampan', date: CAL_DAYS['game:mk_sampan'] },
+  { key: 'game:mk_caybeo', kind: 'game', id: 'mk_caybeo', en: 'The Cây Bẹo Pole', vi: 'Cây Bẹo Chợ Nổi', icon: 's2g:caybeo', date: CAL_DAYS['game:mk_caybeo'] },
+  { key: 'game:mk_count', kind: 'game', id: 'mk_count', en: 'Floating Market Count', vi: 'Đếm Hàng Chợ Nổi', icon: 's2g:count', date: CAL_DAYS['game:mk_count'] },
+  { key: 'feature:s2_halong', kind: 'feature', id: 's2_halong', en: 'New place: Hạ Long Bay', vi: 'Nơi mới: Vịnh Hạ Long', icon: 's2:halong', date: CAL_DAYS['feature:s2_halong'] },
+  { key: 'chapter:ch7', kind: 'chapter', id: 'ch7', en: 'Lantern story chapter 7: Hạ Long Bay', vi: 'Truyện đèn lồng chương 7: Vịnh Hạ Long', icon: 's2:halong', date: CAL_DAYS['chapter:ch7'] },
+  { key: 'game:hl_cave', kind: 'game', id: 'hl_cave', en: 'Find the Hidden Cave', vi: 'Tìm Hang Động Bí Ẩn', icon: 's2g:cave', date: CAL_DAYS['game:hl_cave'] },
+  { key: 'game:hl_rocks', kind: 'game', id: 'hl_rocks', en: 'Rock Shapes of Hạ Long', vi: 'Đảo Đá Hình Gì?', icon: 's2g:rocks', date: CAL_DAYS['game:hl_rocks'] },
+  { key: 'game:hl_nets', kind: 'game', id: 'hl_nets', en: 'Fishing Village Nets', vi: 'Kéo Lưới Làng Chài', icon: 's2g:nets', date: CAL_DAYS['game:hl_nets'] },
+  { key: 'feature:s2_sapa', kind: 'feature', id: 's2_sapa', en: 'New place: the Sapa rice terraces', vi: 'Nơi mới: Ruộng bậc thang Sapa', icon: 's2:sapa', date: CAL_DAYS['feature:s2_sapa'] },
+  { key: 'chapter:ch8', kind: 'chapter', id: 'ch8', en: 'Lantern story chapter 8: Sapa in spring', vi: 'Truyện đèn lồng chương 8: Sapa mùa xuân', icon: 's2:sapa', date: CAL_DAYS['chapter:ch8'] },
+  { key: 'game:sp_terrace', kind: 'game', id: 'sp_terrace', en: 'Plant the Rice Terraces', vi: 'Cấy Lúa Ruộng Bậc Thang', icon: 's2g:terrace', date: CAL_DAYS['game:sp_terrace'] },
+  { key: 'game:sp_seasons', kind: 'game', id: 'sp_seasons', en: 'Rice Through the Year', vi: 'Mùa Lúa Ruộng Bậc Thang', icon: 's2g:seasons', date: CAL_DAYS['game:sp_seasons'] },
+  { key: 'game:sp_brocade', kind: 'game', id: 'sp_brocade', en: 'Brocade Patterns', vi: 'Hoa Văn Thổ Cẩm', icon: 's2g:brocade', date: CAL_DAYS['game:sp_brocade'] },
+  { key: 'feature:s2_taynguyen', kind: 'feature', id: 's2_taynguyen', en: 'New place: the Central Highlands', vi: 'Nơi mới: Tây Nguyên', icon: 's2:taynguyen', date: CAL_DAYS['feature:s2_taynguyen'] },
+  { key: 'chapter:ch9', kind: 'chapter', id: 'ch9', en: 'Lantern story chapter 9: the gongs of the Central Highlands', vi: 'Truyện đèn lồng chương 9: Cồng chiêng Tây Nguyên', icon: 's2:taynguyen', date: CAL_DAYS['chapter:ch9'] },
+  { key: 'game:tn_gong', kind: 'game', id: 'tn_gong', en: 'Gong Rhythm', vi: 'Nhịp Cồng Chiêng', icon: 's2g:gong', date: CAL_DAYS['game:tn_gong'] },
+  { key: 'game:tn_nharong', kind: 'game', id: 'tn_nharong', en: 'Build the Nhà Rông', vi: 'Dựng Nhà Rông', icon: 's2g:nharong', date: CAL_DAYS['game:tn_nharong'] },
+  { key: 'game:tn_elephant', kind: 'game', id: 'tn_elephant', en: 'Feed the Elephants', vi: 'Cho Voi Ăn', icon: 's2g:elephant', date: CAL_DAYS['game:tn_elephant'] },
 ];
 
 // the names come with releasecal-names.ts, loaded when a calendar is shown (the start-up download stays small); until
@@ -51,7 +72,7 @@ export const CAL_DEFAULT: CalItem[] = [...DEFAULTS, ...CAL_FIXED];
 /** the calendar with the owner's moves applied (bad dates are ignored), sorted by day */
 export function calendar(moves?: CalMoves | null): CalItem[] {
   const m = moves && typeof moves === 'object' ? moves : {};
-  return CAL_DEFAULT.map(it => { const d = m[it.key]; return typeof d === 'string' && ISO.test(d) && d !== it.date ? (it.kind === 'game' || it.kind === 'story' ? Object.assign(item(it.kind, it.id, d), { moved: true }) : { ...it, date: d, moved: true }) : it; })
+  return CAL_DEFAULT.map(it => { const d = m[it.key]; return typeof d === 'string' && ISO.test(d) && d !== it.date ? ((it.kind === 'game' || it.kind === 'story') && !CAL_FIXED.includes(it) ? Object.assign(item(it.kind, it.id, d), { moved: true }) : { ...it, date: d, moved: true }) : it; })
     .sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.key < b.key ? -1 : 1);
 }
 /** the items whose day is in the week starting on `monday` */

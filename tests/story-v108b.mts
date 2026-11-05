@@ -185,8 +185,9 @@ export async function websiteNewsCheck(b) {
 // only), the game (an under-5's own game; the other one does not count), the story, the three hiding spots (an under-5's
 // companion leads), the rope, the festival film, the place lit, the show, the keepsake and the new trick; nothing stands
 // on a road or in the water; the step lines are in English and Vietnamese
-export async function chapterKitCheck(b, id: 'ch4' | 'ch5' | 'finale') {
-  const before = { ch4: ['ch1', 'ch2', 'ch3'], ch5: ['ch1', 'ch2', 'ch3', 'ch4'], finale: ['ch1', 'ch2', 'ch3', 'ch4', 'ch5'] }[id];
+export async function chapterKitCheck(b, id: 'ch4' | 'ch5' | 'finale' | 'ch6' | 'ch7' | 'ch8' | 'ch9') {
+  const S1 = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'finale'];   // (v1.08d s2vn: Season 2's chapters come after the Tết finale)
+  const before = { ch4: ['ch1', 'ch2', 'ch3'], ch5: ['ch1', 'ch2', 'ch3', 'ch4'], finale: ['ch1', 'ch2', 'ch3', 'ch4', 'ch5'], ch6: S1, ch7: [...S1, 'ch6'], ch8: [...S1, 'ch6', 'ch7'], ch9: [...S1, 'ch6', 'ch7', 'ch8'] }[id];
   const res = [], sum = [];
   for (const age of ['little', 'big']) {
     const P = await open(b, { w: 1000, h: 700 }); await clear(P.page);

@@ -7,6 +7,8 @@ import * as MAP from '../content/map.js';
 import { AUSSIE, BAMBOO, CHINA, CITIES, FLATS, HOIAN, HOME, INDIA, LAKE, LOTS, MARKET, MTN, PADDIES, PLATEAU, PLAYGROUND, TOWN, VILLAGE, WATER, bridgeAt, pondDist } from './places.js';
 import { ROADS, heightAt, riverDist, roadDist, setGround } from './ground.js';
 
+// (v1.08d s2vn) the small new areas of Season 2 (js/s2vn.ts adds each open one: its id, middle and radius)
+export const EXTRA_REGIONS: { id: string; x: number; z: number; r: number }[] = [];
 export function regionAt(x, z) {
   if (dist2(x, z, PLATEAU.x, PLATEAU.z) < PLATEAU.r + 8 && heightAt(x, z) > PLATEAU.h - 2) return 'plateau'; // its top, from the map (round T lowered it to 8 m)
   for (const c of CITIES) if (x > c.x0 - 4 && x < c.x1 + 4 && z > c.z0 - 4 && z < c.z1 + 4) return c.id;
@@ -22,6 +24,7 @@ export function regionAt(x, z) {
   for (const V of MEMORY) if (x > V.x0 && x < V.x1 && z > V.z0 && z < V.z1) return V.id;   // (round T3) the Memory Villages
   if (dist2(x, z, LAKE.x, LAKE.z) < LAKE.r + 12) return 'lake';
   if (dist2(x, z, BAMBOO.x, BAMBOO.z) < BAMBOO.r + 6) return 'bamboo';
+  for (const R of EXTRA_REGIONS) if (dist2(x, z, R.x, R.z) < R.r) return R.id;
   if (z < MTN.region) return 'mountain';
   return 'meadow';
 }

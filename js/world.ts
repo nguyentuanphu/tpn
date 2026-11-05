@@ -17,7 +17,7 @@ import { LEAFIES, SHRINES, TOWERS, TOWER_H } from './world/sites.js';
 export { MAP_VERSION, STUDIO_ON_MAP, PARKED, SIZE, HALF, WATER, RIDE_SWIM, PLATEAU, VILLAGE, PADDIES, LAKE, BAMBOO, APOSTLES, ULURU, HOIAN, ISLAND, FESTGROUNDS, HOME, PLAYGROUND, TOWN, MARKET, AUSSIE, CITIES, levelAt, LOTS, YARD, FOOTPRINTS, RIVERS, PONDS, pondDist, RIVER, CHINA, INDIA, BRIDGES, BRIDGE, DRAGON, bridgeAlong, bridgeAcross, bridgeAt, bridgeDist, bridgeBox } from './world/places.js';
 export type { SvCity, SvBridge, SvRoad } from './world/places.js';
 export { ROADS, edgeDist, roadDist, riverDist, waterAt, waterDist, setRoadBeds, heightAt, surfaceAt, oldHeightAt } from './world/ground.js';
-export { regionAt, REGION_NAMES, SHRINES, TOWERS, TOWER_H, REVEAL_R, LEAFIES, PLOTS, MEMORY, plotBox } from './world/sites.js';
+export { regionAt, EXTRA_REGIONS, REGION_NAMES, SHRINES, TOWERS, TOWER_H, REVEAL_R, LEAFIES, PLOTS, MEMORY, plotBox } from './world/sites.js';
 export { paintWater, paintWaterRows, paintMap, paintMapRows } from './world/paint.js';
 export { levelUnderBuildings, widenFlatLand, roadBedsOn } from './world/reshape.js';
 

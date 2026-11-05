@@ -13,3 +13,5 @@ import '../games/money3-meta.js';
 // (v1.08b games) the new corner games' pictures and How to play
 import './games108b.js';
 import '../games/games108b-meta.js';
+import './s2vn.js'; // (v1.08d s2vn) Season 2, Vietnam: the regions' and their games' pictures
+import '../games/s2vn-meta.js';
