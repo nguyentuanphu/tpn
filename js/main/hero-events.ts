@@ -53,7 +53,7 @@ G.rescue = async (h, fainted) => {
 G.travel = async (h, x, z) => {
   if (!Number.isFinite(x) || !Number.isFinite(z)) { console.warn('travel: no place to go to'); return; } // never fly into nowhere (a black screen)
   const f = el('div', 'fade blue'); document.body.appendChild(f); SFX.travel();
-  await wait(650); if (h.riding) h.dismount();
+  await Promise.all([wait(650), G.areas ? G.areas.near(x, z) : null]); if (h.riding) h.dismount(); // (v1.08d valley) the parts round the landing spot are built while the fade is up (js/areas.ts)
   if (h.cancelCarry) { h.cancelCarry(); h.cancelCarry = null; }
   h.place(x + 4.5, z + 1); h.gliding = false; h.camYaw = Math.PI;
   f.classList.add('out'); setTimeout(() => f.remove(), 700);

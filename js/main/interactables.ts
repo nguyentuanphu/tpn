@@ -31,8 +31,9 @@ function setupInteractables() {
   });
 }
 // Floating bubble icons over every activity, so children who can't read can see where the fun is.
+const bubbled = new WeakSet();
+const tex = {};
 function setupBubbles() {
-  const tex = {};
   // a round picture bubble with a big name tag underneath
   const mat = (ch, label) => { const key = ch + label; if (tex[key]) return tex[key]; const c = document.createElement('canvas'); c.width = 320; c.height = 200; const x = c.getContext('2d');
     const g = x.createRadialGradient(150, 62, 10, 160, 72, 64); g.addColorStop(0, '#ffffff'); g.addColorStop(.8, '#e9f8ff'); g.addColorStop(1, '#9fdcff');
@@ -47,13 +48,16 @@ function setupBubbles() {
       x.fillStyle = '#3a2a20'; x.fillText(label, 160, 168, 290);
     }
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return tex[key] = new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false }); };
-  G.bubbleIcons = G.interactables.filter(it => it.bubble).map((it, k) => {
+  // (v1.08d valley) called again after each part of the valley built later (js/areas.ts): only new activities get a bubble
+  const fresh = G.interactables.filter(it => it.bubble && !bubbled.has(it)); fresh.forEach(it => bubbled.add(it));
+  const k0 = (G.bubbleIcons || []).length;
+  G.bubbleIcons = (G.bubbleIcons || []).concat(fresh.map((it, k1) => { const k = k0 + k1;
     const label = (it.short ? it.short() : it.label ? it.label() : '').replace(/^(Talk to |Nói chuyện với |Enter shrine: |Vào đền: )/, '');
     const s = new THREE.Sprite(mat(it.bubble, label.length > 22 ? label.slice(0, 21) + '…' : label)); s.scale.set(3.2, 2, 1); const y = heightAt(it.x, it.z) + 3.6; s.position.set(it.x, y, it.z); s.userData.it = it; scene.add(s);
     world.updaters.push((dt, t) => { s.position.y = y + Math.sin(t * 2 + k) * .15; const near = G.heroes.some(h => dist2(h.pos.x, h.pos.z, it.x, it.z) < it.r); s.material.opacity = near ? .45 : 1; });
     onLang(() => { const l = (it.short ? it.short() : it.label ? it.label() : '').replace(/^(Talk to |Nói chuyện với |Enter shrine: |Vào đền: )/, ''); s.material = mat(it.bubble, l.length > 22 ? l.slice(0, 21) + '…' : l); });
     return s;
-  });
+  }));
 }
 // Help finding the next goal: a golden light beam with a bouncing "!" over it, and for each player
 // a glowing arrow plus a trail of sparkles on the ground leading the way.

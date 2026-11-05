@@ -51,7 +51,9 @@ const SYMBOLS: SymbolDefinition[] = [
     ['India made the peacock its national bird in 1963. The god Kartikeya rides a peacock, and Shah Jahan, who built the Taj Mahal, sat on the famous Peacock Throne.', 'Năm 1963 Ấn Độ chọn chim công làm quốc điểu. Thần Kartikeya cưỡi chim công, còn vua Shah Jahan, người xây đền Taj Mahal, ngồi trên Ngai Chim Công nổi tiếng.'], ['en:Indian peafowl']]
 ];
 
-export function createSymbols(G, { sfx, dialog }) {
+// (v1.08d valley) the places with a symbol animal (js/areas.ts builds each as its own part: createSymbols with only)
+export const SYMBOL_PLACES = () => SYMBOLS.map(s => s[0]);
+export function createSymbols(G, { sfx, dialog, only = null as string | null }) {
   const { scene, world } = G;
   const swordLake = PONDS.find(p => p.id === 'hoguom');
   const spotFor = id => {
@@ -66,7 +68,7 @@ export function createSymbols(G, { sfx, dialog }) {
     return G.clearSpot((AUSSIE.x0 + AUSSIE.x1) / 2 + 12, AUSSIE.roadZ + 9, 1.4);
   };
   const live = [], tags = [];
-  for (const [where, kind, scale, sound, icon, name, about, story, wiki] of SYMBOLS) {
+  for (const [where, kind, scale, sound, icon, name, about, story, wiki] of SYMBOLS.filter(s => !only || s[0] === only)) {
     const [x, z] = spotFor(where), water = where === 'hanoi' && kind === 'turtle' ? swordLake : null, g = animalModel(kind); g.scale.setScalar(scale); g.position.set(x, water ? WATER-.12 : heightAt(x, z), z); scene.add(g);
     const A = { g, water, home: [x, z], tx: x, tz: z, wait: Math.random() * 4, speed: kind === 'turtle' || kind === 'koala' || kind === 'elephant' ? .45 : .8 };
     live.push(A);
