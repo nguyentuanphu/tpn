@@ -1151,6 +1151,7 @@ bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
   { let acc = 0; world.updaters.push(dt => { acc += dt; if (acc < .25) return; acc = 0; if (G.heroes.length) wakeLateAvatars(G.heroes.map(h => h.pos), 60, 3); }); }
   // (v1.08e) the Blender models of the world (js/modelkit.ts): swapped in for the code shapes when a child comes near
   afterStart(() => import('./modelkit.js'), m => m.startWorldModels(G, world.updaters));
+  afterStart(() => import('./world-nature.js'), m => m.startNature(G, world.updaters, settings.quality)); // (v1.08e nature) trees, flowers, crops, farm props and My House decorations from Blender (js/world-nature.ts)
   startAreas(G, { x: +p0.x || 0, z: +p0.z || 0 }, () => { G.claims.wrap(); setupBubbles(); clearTimeout(again); again = setTimeout(solidsNow, areasLeft() ? 2500 : 600); }); }
 setTimeout(() => { void import('./art.js').then(a => a.moreArt()); }, 1500); // (v1.08) the new games' pictures, after the start
 setTimeout(() => { void import('./s2vn.js').then(m => m.installS2vn(G)).catch(e => console.warn('season 2', e)); }, 2500); // (v1.08d s2vn) Season 2's new places, after the start

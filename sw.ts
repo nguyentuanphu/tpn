@@ -49,6 +49,7 @@ const FILES = [
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
   'icons/friends/clara-f.webp', 'icons/friends/clara-q.webp', 'icons/friends/clara-s.webp', 'icons/friends/clara-face.webp',
   'icons/friends/lumi-f.webp', 'icons/friends/lumi-q.webp', 'icons/friends/lumi-s.webp', 'icons/friends/lumi-face.webp',
+  'js/nature-tag.js', 'js/world-nature.js', // (v1.08e nature) the marks in the world code and the swaps near the child (models/world/*.glb are not kept offline: the code shapes are the fallback)
   'js/modelkit.js', // (v1.08e) the shared loader of the world's Blender models (models/world/*.glb load near the child)
   'js/offlinelevels.js', // (v1.08c voices) the offline levels in Grown-ups, loaded when Grown-ups opens
   'icons/icon-32.png', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'
