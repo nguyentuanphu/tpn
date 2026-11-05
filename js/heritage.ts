@@ -6,7 +6,7 @@ import { THREE, toon, toonVC, P, merge, outline, sprite } from './gfx.js';
 import { T, nm, registerName } from './i18n.js';
 import { landmarkAt, inHeritageGrounds } from './content/map.js';
 import { heightAt, oldHeightAt, roadDist, VILLAGE, MARKET, AUSSIE, CHINA, INDIA, LAKE, WATER, APOSTLES, FESTGROUNDS, LEAFIES, SHRINES, HALF } from './world.js';
-import { buildAvatar, lateAvatar } from './avatar.js';
+import { buildAvatar, lateAvatar, crowdLook } from './avatar.js';
 import { LANDMARKS, postcard } from './regions.js';
 import { ITEMS } from './data.js';
 import { WILD } from './gather.js';
@@ -162,7 +162,7 @@ export function createHeritage(G, { give, sfx, say, toast }) {
   ];
   groups.forEach((gr, gi) => {
     const [x, z] = spot(gr.c[0], gr.c[1], 4), y = heightAt(x, z), n = gr.ppl.length, rad = gr.kind === 'board' ? 1.1 : gr.kind === 'rope' ? 2.2 : 2.6;
-    const A = gr.ppl.map((l, i) => { const a = i / n * Math.PI * 2; const av = lateAvatar(l); const px = x + Math.cos(a) * rad, pz = z + Math.sin(a) * rad; av.root.position.set(px, heightAt(px, pz), pz); av.root.rotation.y = Math.atan2(x - px, z - pz); scene.add(av.root); return av; });
+    const A = gr.ppl.map((l, i) => { const a = i / n * Math.PI * 2; const av = lateAvatar(crowdLook(l)); const px = x + Math.cos(a) * rad, pz = z + Math.sin(a) * rad; av.root.position.set(px, heightAt(px, pz), pz); av.root.rotation.y = Math.atan2(x - px, z - pz); scene.add(av.root); return av; });
     world.colliders.push({ x, z, r: rad + .4 });
     if (G.chatGroup && CHAT[gr.kind]) G.chatGroup(A.map(av => av.root), CHAT[gr.kind], { face: false });
     let prop = null;

@@ -206,8 +206,11 @@ register({
     mark(api, rounds, price, lv(api, 1, 1, 2, 2), api.little ? 3 : lv(api, 5, 5, 7, 7), answersFor(api));   // (v1.07 levels) customers, cup price, fewest cups, spread of cups, answers
     const wrap = setup(api, ["Sell lemonade! Work out how much each customer pays.", "Bán nước chanh! Tính xem mỗi khách trả bao nhiêu."], rounds);
     await wait(1500);
+    // (v1.08d polish, check roundvariety) each customer asks for a different number of cups: no two rounds alike
+    const base = lv(api, 1, 1, 2, 2), spread = api.little ? 3 : lv(api, 5, 5, 7, 7);
+    const counts = Array.from({ length: spread }, (_, k) => base + k).sort(() => Math.random() - .5);
     for (let r = 0; r < rounds; r++) {
-      const cups = lv(api, 1, 1, 2, 2) + Math.floor(Math.random() * (api.little ? 3 : lv(api, 5, 5, 7, 7)));
+      const cups = counts[r % counts.length];
       const show = `${pic("🍋")} ${money(price, code)} ${T("a cup", "một cốc")} · ${pic("🥤").repeat(cups)}`;
       const ok = await moneyQuestion(api, show, [`${cups} ${cups === 1 ? "cup" : "cups"}, please! How much altogether?`, `Cho tôi ${cups} cốc! Tất cả bao nhiêu tiền?`], price * cups, price, code);
       if (!ok || api.closed) return;

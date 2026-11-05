@@ -7,7 +7,7 @@ import { THREE, P, merge, toonVC } from './gfx.js';
 import { T, nm, onLang, registerName } from './i18n.js';
 import { heightAt, regionAt, REGION_NAMES, TOWN } from './world.js';
 import { WORLD as MAP_WORLD } from './content/map.js';
-import { buildAvatar, nameAvatar, lateAvatar } from './avatar.js';
+import { buildAvatar, nameAvatar, lateAvatar, crowdLook } from './avatar.js';
 import { PERSONAS } from './chat.js';
 import { ITEMS } from './data.js';
 import { el, wait } from './util.js';
@@ -97,7 +97,8 @@ export function createHomes(G, { KNOCK, GIFTS, give, sfx, say }) {
   const person = ([name, lk, kid], x, y, z, face) => {
     const temp = y > RY - 20; // inside a room: everything is freed when the room is torn down
     // (v1.08d valley) outside: built when a child comes near (js/avatar.ts lateAvatar); in a room: at once
-    const A = nameAvatar(temp ? buildAvatar(lk, null) : lateAvatar(lk), name, !temp); A.root.position.set(x, y, z); A.root.rotation.y = face; if (kid) A.root.scale.setScalar(.78);
+    // (v1.08d polish: the new heights, no hand-made .78 for a child)
+    const A = nameAvatar(temp ? buildAvatar(crowdLook(lk, kid), null) : lateAvatar(crowdLook(lk, kid)), name, !temp); A.root.position.set(x, y, z); A.root.rotation.y = face;
     const tg = tagSprite(name, kid ? 2.05 : 2.45, temp); tg.position.x = x; tg.position.z = z; tg.position.y += y; scene.add(A.root); scene.add(tg);
     return { A, tg, name } as { A: any, tg: THREE.Sprite, name: any, hop?: boolean };
   };

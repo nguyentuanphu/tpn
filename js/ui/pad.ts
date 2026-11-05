@@ -368,7 +368,7 @@ export const openPad = Object.assign(function (game, i, tab) {
   // (round R, owner 9 Oct) side stories in their own list: the child picks one to follow on the goal bar
   const sideHTML = () => { const list = game.sideStories ? game.sideStories() : []; if (!list.length) return '';
     return `<h3>${T('Side stories', 'Truyện phụ')}</h3><div class="sides">${list.map(sd => { const st = sd.status(p), on = p.follow === sd.id;
-      return `<div class="side ${st.done ? 'done' : ''}"><span>${pic(sd.icon)}</span><div><b>${esc(sd.title())}</b><small>${st.done ? T('Finished!', 'Xong rồi!') : esc(st.step)}</small></div>${st.done || !st.started ? '' : `<button class="btn ${on ? 'on' : ''}" data-follow="${sd.id}">${on ? T('Following', 'Đang theo') : T('Follow', 'Theo truyện này')}</button>`}</div>`; }).join('')}</div>`; };
+      return `<div class="side ${st.done ? 'done' : ''}"><span>${pic(sd.icon)}</span><div><b>${esc(sd.title(p))}</b><small>${st.done ? T('Finished!', 'Xong rồi!') : esc(st.step)}</small></div>${st.done || !st.started ? '' : `<button class="btn ${on ? 'on' : ''}" data-follow="${sd.id}">${on ? T('Following', 'Đang theo') : T('Follow', 'Theo truyện này')}</button>`}</div>`; }).join('')}</div>`; };
   // (tester's notes, 12 Oct) what a dish not cooked yet needs: every ingredient, the ones in the bag bright with a tick,
   // the ones still to find faded, so a child can see what is collected for which recipe
   const recNeed = r => r.need.map((n, k) => { const have = (p.inv[n] || 0) >= r.need.slice(0, k + 1).filter(x => x === n).length;

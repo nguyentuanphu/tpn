@@ -18,3 +18,6 @@ import './s2au.js';
 import '../games/s2au-meta.js';
 import './s2vn.js'; // (v1.08d s2vn) Season 2, Vietnam: the regions' and their games' pictures
 import '../games/s2vn-meta.js';
+// (v1.08d polish) the hands-on games' pictures and How to play (after the quiz guides, so the Tết guide is the hands-on one)
+import './handson.js';
+import '../games/handson-meta.js';

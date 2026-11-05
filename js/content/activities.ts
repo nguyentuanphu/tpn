@@ -128,7 +128,9 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   mk_sampan: ['travel', 3, 1], mk_caybeo: ['travel', 3, 1], mk_count: ['travel', 2, 1],
   hl_cave: ['travel', 4, 2], hl_rocks: ['travel', 3, 1], hl_nets: ['travel', 3, 2],
   sp_terrace: ['travel', 3, 2], sp_seasons: ['travel', 4, 2], sp_brocade: ['travel', 3, 1],
-  tn_gong: ['travel', 3, 1], tn_nharong: ['travel', 4, 2], tn_elephant: ['travel', 3, 2]
+  tn_gong: ['travel', 3, 1], tn_nharong: ['travel', 4, 2], tn_elephant: ['travel', 3, 2],
+  // (v1.08d polish)
+  mazebuild: ['thinking', 4, 2]
 };
 // a game the family's Studio changed (hand-edited files can't break it: anything odd is ignored)
 const custom = id => { const c = CUSTOM.activities && CUSTOM.activities[id]; return c && typeof c === 'object' ? c : {}; };

@@ -9,7 +9,7 @@ import { T, nm, onLang, registerName } from './i18n.js';
 import { say } from './voice.js';
 import { SFX } from './audio.js';
 import { heightAt, TOWN, PLAYGROUND } from './world.js';
-import { buildAvatar, nameAvatar } from './avatar.js';
+import { buildAvatar, crowdLook, nameAvatar } from './avatar.js';
 import { dist2 } from './util.js';
 import { addPole, addDrop } from './powerlines.js';
 import { TOWN_JUICE_CART, rowSlot } from './content/map.js';
@@ -283,7 +283,7 @@ export function createTown(G) {
     people.push(A); return A;
   };
   const L2 = (style, color, hair, hairStyle, hat = 'none', skin = '#e8b48c') => ({ style, color, hair, hairStyle, hat, skin });
-  const sau = person(L2('aodai', '#d94a6a', '#1d1412', 'long', 'nonla'), sellerX, sellerZ, juiceSlot.face);
+  const sau = person(crowdLook(L2('aodai', '#d94a6a', '#1d1412', 'long', 'nonla')), sellerX, sellerZ, juiceSlot.face);
   sau.root.userData.townSeller = 'nuocmia';
   const players = [
     person(L2('shirt', '#ffffff', '#2a2a2a', 'short'), cxT - 1, czT, Math.PI / 2, true),

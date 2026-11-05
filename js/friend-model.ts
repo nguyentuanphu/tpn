@@ -40,9 +40,12 @@ export function loadFriendModel(id: FriendId): Promise<boolean> {
 // the code person's mood → the model's face
 const MOOD = { smile: 'face-smile', blink: 'face-blink', happy: 'face-happy', o: 'face-surprised', curious: 'face-curious', excited: 'face-excited', sad: 'face-sad', shy: 'face-shy' };
 const JOINTS = ['torso', 'head', 'armL', 'elbowL', 'armR', 'elbowR', 'legL', 'kneeL', 'legR', 'kneeR'];
-export type FriendModel = { obj: THREE.Object3D, follow: (mood?: string, riding?: boolean) => void, skin: (hex: string) => void };
+export type FriendModel = { obj: THREE.Object3D, follow: (mood?: string, riding?: boolean) => void, skin: (hex: string) => void, item: boolean, boots: boolean };
+// (v1.08d polish) what a model shows besides the body: the item in the hand once the friend's quest is done
+// (js/friendquest.ts), and its own boots unless the child wears shoes from the shop (then the code person's shoes stay on)
+export type FriendModelWear = { item?: boolean, shoes?: boolean };
 /** a copy of the friend's model inside the code person's rig, following its joints. A: the code person (js/avatar.ts) */
-export function attachFriendModel(A, id: string, skinHex: string): FriendModel {
+export function attachFriendModel(A, id: string, skinHex: string, wear: FriendModelWear = {}): FriendModel {
   const L = ready[id]; if (!L) return null;
   const obj = L.clone(L.scene); obj.name = 'friend-model';
   const bones: Record<string, THREE.Bone> = {}, faces: Record<string, THREE.Object3D[]> = {}, grips: THREE.Object3D[] = [], skinMats = [];
@@ -53,6 +56,8 @@ export function attachFriendModel(A, id: string, skinHex: string): FriendModel {
       if (n.startsWith('face-')) (faces[n] = faces[n] || []).push(o);
       if (n.startsWith('skin')) { o.material = o.material.clone(); skinMats.push(o.material); }
       if (n === 'skin-grip') grips.push(o);
+      if (n === 'cloth-item') o.visible = !!wear.item; // (v1.08d polish) the item in the hand: only once earned
+      if (n === 'cloth-shoes') o.visible = !wear.shoes; // (v1.08d polish) the model's boots, unless shop shoes are worn
     }
   });
   A.rig.add(obj); A.rig.updateMatrixWorld(true);
@@ -82,7 +87,7 @@ export function attachFriendModel(A, id: string, skinHex: string): FriendModel {
   // rider's seat, a film's pose): the renderer updates every object's place first, and this copy goes with the model's
   const own = obj.updateMatrixWorld.bind(obj);
   obj.updateMatrixWorld = (force?: boolean) => { if (A.rig.visible) follow(A.life && A.life.mood || 'smile'); own(force); };
-  return { obj, follow, skin };
+  return { obj, follow, skin, item: !!wear.item, boots: !wear.shoes };
 }
 
 // (v1.08b friends) glasses and a mask (head coordinates: the eyes sit at x ±.12, y -.09, the face's front at z .49)

@@ -7,6 +7,7 @@ import { BUILDUP } from '../content/festcal.js';
 import { pic } from '../art.js';
 import { modal } from '../popups.js';
 import { isHeld } from '../content/unlocks.js';
+import { inSeason, backOn } from '../content/festseason.js'; // (v1.08d polish)
 // (v1.08b story) the calendar's "what's new" parts and their names load when a calendar is first shown, not with the start
 // (PERF-001): js/ui/calendar-news.ts fills the place kept for them
 const news = () => import('./calendar-news.js');
@@ -46,8 +47,12 @@ export function festCalendarHTML(game) {
     // the bar: from the decorations to the festival game's end; a dot per step, a marker for today
     const t0 = +decoStart, t1 = Math.max(+gameEnd, +last) + DAYMS, pos = (d: Date) => Math.max(0, Math.min(100, (+d - t0) / (t1 - t0) * 100)).toFixed(1);
     const bar = `<span class="fcal-bar" aria-hidden="true"><i class="fcal-fill" style="width:${pos(today0)}%"></i>${steps.map(s => `<i class="fcal-dot${s.from <= 0 ? ' on' : ''}" style="left:${pos(s.k === 'game' ? gameEnd : s.a)}%"></i>`).join('')}${+today0 >= t0 && +today0 <= t1 ? `<i class="fcal-now" style="left:${pos(today0)}%"></i>` : ''}</span>`;
+    // (v1.08d polish) the festival game: while it is open, how long it stays; out of season, the day it comes back
+    // ("Back at …", js/content/festseason.ts backOn), so a child knows when to look for it
+    const gameWhen = (fid: string, st: Step) => { const back = inSeason('fg_' + fid) ? null : backOn('fg_' + fid);
+      return back ? T(`Back at ${dayLabel(back)}`, `Sẽ quay lại vào ${dayLabel(back)}`) : left(st.from, st.b); };
     const plan = n.on && n.F.kind !== 'quiet' ? `<p class="fcal-plan">${T('08:00 present · 15:00 game', '08:00 nhận quà · 15:00 trò chơi')}${n.F.show && n.F.show !== 'none' ? ` · ${show} ${T(...SHOW[n.F.show])}` : ''}</p>` : '';
-    const det = steps.map(s => `<button class="fcal-step${s.from <= 0 ? ' on' : ''}" data-fly="${esc(n.F.id)}" data-step="${s.k}"><span class="fi">${pic(s.icon)}</span><b>${esc(s.label)}: ${esc(span(s.a, s.b))}</b><em>${esc(left(s.from, s.b))}${s.k === 'game' ? ' · ' + esc(T('Back next year', 'Quay lại năm sau')) : ''}</em></button>`).join('');
+    const det = steps.map(s => `<button class="fcal-step${s.from <= 0 ? ' on' : ''}" data-fly="${esc(n.F.id)}" data-step="${s.k}"><span class="fi">${pic(s.icon)}</span><b>${esc(s.label)}: ${esc(span(s.a, s.b))}</b><em>${esc(s.k === 'game' ? gameWhen(n.F.id, s) : left(s.from, s.b))}</em></button>`).join('');
     return `<div class="fcal-row ${gr}${n.on ? ' on' : ''}${k >= 4 ? ' later' : ''}" data-festid="${esc(n.F.id)}"><button class="fcal-head" aria-expanded="false"><span class="fi">${pic(n.F.icon)}</span><span class="fcal-name"><b>${esc(T(n.F.en, n.F.vi))}${n.isNew ? ` <i class="newtag">${T('New', 'Mới')}</i>` : ''}</b>${bar}</span><small>${dayLabel(n.start)}</small><em class="fcal-chip">${esc(chip)}</em></button><div class="fcal-det" hidden>${plan}${det}</div></div>`; };
   const ordered = [...list.filter(n => n.on), ...list.filter(n => !n.on)].slice(0, 12);
   return `<div class="fcal-list">${ordered.map(row).join('')}</div>${ordered.length > 4 ? `<button class="btn fcal-more" aria-expanded="false">${T('See more', 'Xem thêm')}</button>` : ''}
