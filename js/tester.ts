@@ -33,10 +33,11 @@ import { readReportQueue, persistReportQueue } from './report-outbox.js';
 
 import type { SvMain } from './main.js';
 import type { ReportEntry } from './report-outbox.js';
-type Where = { area: string; place: string; game: string; window: string; x: number; z: number };
+type Where = { area: string; place: string; game: string; window: string; x: number; z: number; lvl?: number; diff?: string; mode?: string; np?: number; quest?: string; screen?: string; thing?: string };
 type Problem = { spoken?: boolean; k: string; title: string; status?: string; fixedIn?: string; n?: number; auto?: string; where?: Where };
 type TesterStatus = { open?: Problem[]; mine?: Problem[]; retest?: Problem[]; reports?: number; helped?: number; peeks?: string[] };
-type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regionOf' | 'travelTo'> & {
+type TesterGame = Pick<SvMain, 'heroes' | 'huds' | 'paused' | 'renderer' | 'regionOf' | 'travelTo'> & Partial<Pick<SvMain, 'interactables' | 'currentQuest' | 'questTarget' | 'goToObjective' | 'openPad' | 'openGamesHub' | 'landBy' | 'scene'>> & {
+  readTale?: ((i: number, id: string) => unknown) & { __tester?: boolean };
   playGame?: SvMain['playGame'] & { __tester?: boolean };
   tester?: TesterApi;
   autoplay?: { running(): boolean; attach?(body: HTMLElement, close: () => void): void; detach?(): void; stop?(): void; start?(items: unknown, speed: string): void; open?(): void };
@@ -62,7 +63,7 @@ const L = pair => T(pair[0], pair[1]);
 let G: TesterGame | null = null, level = '', live = false;
 const offs: (() => void)[] = [], log: [number, string, string][] = [], errors: string[] = [];
 const want = new Set<(source: HTMLCanvasElement) => void>();
-let lastGame = '', status: TesterStatus | null = get(KEY.st, null), panelOpening = false;
+let lastGame = '', lastMode = '', lastTale = '', status: TesterStatus | null = get(KEY.st, null), panelOpening = false;
 const sent = new Map(), counts = new Map(), reporting = new Map();
 let automaticPicture = null;
 // A detector scan can report several buttons. Share its composed-screen capture so
@@ -73,7 +74,30 @@ const autoShot = () => automaticPicture || (automaticPicture = shot().finally(()
 const note = (k, s) => { const t = Date.now(); log.push([t, k, String(s || '').replace(/\s+/g, ' ').slice(0, 120)]); while (log.length && (t - log[0][0] > C.LIMITS.replay * 1000 || log.length > 400)) log.shift(); };
 const labelOf = n => { const element = n instanceof Element ? n : n?.parentElement; if (element?.closest('[data-capture-private], [data-private]')) return 'Private family content'; const b = n && n.closest && n.closest('button, [role=button], a, .hcard, .sp-stop, .sp-catcard, .chip'); if (!b) return n && n.tagName ? n.tagName.toLowerCase() : ''; return (b.getAttribute('aria-label') || b.textContent || b.className || '').trim().slice(0, 40); };
 const topWindow = () => { const w = [...document.querySelectorAll<HTMLElement>('.modal, .gl, .theatre, .storybook, .dialog')].filter(x => x.offsetParent || getComputedStyle(x).position === 'fixed').pop(); if (!w) return ''; const h = w.querySelector('h2, h3, .gl-title, .dname, b'); return (w.className.split(' ').slice(0, 2).join(' ') + (h ? ': ' + h.textContent.trim() : '')).slice(0, 80); };
-const whereNow = () => { const h = G && G.heroes && G.heroes[0], open = document.querySelector('.gl'); return { area: String((G && G.regionOf && G.regionOf[0]) || 'valley'), place: '', game: open ? lastGame : '', window: topWindow(), x: h ? Math.round(h.pos.x) : 0, z: h ? Math.round(h.pos.z) : 0 }; };
+// (v1.08f, owner 6 Nov 2026 AEDT: "Try again only moves me to the place I reported") a report also keeps what Try again
+// needs to go back to the broken thing: the game's level, difficulty, mode and players; the screen and its tab; the
+// quest step when the tester was by its goal; the thing (stall, villager, tap spot) within reach
+const screenNow = (): string => {
+  const top = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].filter(x => !x.classList.contains('out')).pop();
+  const pad = top('.modal.pad'); if (pad) { const t = pad.querySelector<HTMLElement>('.pad-tabs button.on'); return 'pad:' + (t && t.dataset.t || 'map'); }
+  if (top('.modal.grownups')) return 'grownups';
+  if (top('.modal.hub')) return 'hub';
+  if (top('.modal.shop')) return 'shop';
+  if (top('.modal.cook')) return 'cook';
+  if (top('.theatre, .storybook:not(.quest-tale)') && lastTale) return 'tale:' + lastTale;
+  return '';
+};
+const near2 = (a: { x: number, z: number }, b: { x: number, z: number }) => (a.x - b.x) ** 2 + (a.z - b.z) ** 2;
+const questNow = (h): string => { try { const q = G.currentQuest && G.currentQuest(h.profile), tg = q && G.questTarget && G.questTarget(h); return q && q.id && tg && near2(tg, h.pos) < 144 ? String(q.id) : ''; } catch (e) { return ''; } };
+const thingNow = (h): string => { const it = (G.interactables || []).filter(x => x && x.id && !x.auto).sort((a, b) => near2(a, h.pos) - near2(b, h.pos))[0]; return it && near2(it, h.pos) < 49 ? String(it.id) : ''; };
+const whereNow = (): Where => {
+  const h = G && G.heroes && G.heroes[0], open = document.querySelector<HTMLElement>('.gl');
+  const w: Where = { area: String((G && G.regionOf && G.regionOf[0]) || 'valley'), place: '', game: open ? lastGame : '', window: topWindow(), x: h ? Math.round(h.pos.x) : 0, z: h ? Math.round(h.pos.z) : 0 };
+  if (open && lastGame) { const lv = +(open.dataset.level || 0); if (lv) w.lvl = lv; const d = h && h.profile.gameDiff && h.profile.gameDiff[gameIdOf(w)]; if (d) w.diff = String(d); if (lastMode) w.mode = lastMode; w.np = (G.heroes || []).length || 1; return w; }
+  const sc = screenNow(); if (sc) { w.screen = sc; return w; }
+  if (h) { const q = questNow(h); if (q) w.quest = q; const t = thingNow(h); if (t) w.thing = t; }
+  return w;
+};
 const playersNow = () => (profiles || []).slice(0, 8).map(p => ({ name: nm(p.name || ''), age: p.age || '', coins: farm ? farm.coins : 0, stars: p.stars ? Object.keys(p.stars).length : 0, level: p.difficulty || '' }));
 const osOf = (ua = navigator.userAgent) => /iPhone|iPod/.test(ua) ? 'iOS' : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPadOS' : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'Windows' : /Mac/.test(ua) ? 'macOS' : 'other';
 const brOf = (ua = navigator.userAgent) => /Edg\//.test(ua) ? 'Edge' : /Firefox|FxiOS/.test(ua) ? 'Firefox' : /CriOS|Chrome/.test(ua) ? 'Chrome' : /Safari/.test(ua) ? 'Safari' : 'other';
@@ -246,7 +270,7 @@ function watch() {
     const pg = G.playGame, pending = new Set<() => void>();
     G.playGame = Object.assign(function (this: TesterGame, ...args: Parameters<NonNullable<TesterGame['playGame']>>) {
       const [i, id] = args;
-      const requested = String(id || ''); lastGame = requested; note('game', requested);
+      const requested = String(id || ''); lastGame = requested; lastMode = String(args[2] || ''); note('game', requested);
       // The game rejects a second launch while another activity is open: not a failed open.
       const cancel = document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
       if (cancel) pending.add(cancel);
@@ -254,6 +278,11 @@ function watch() {
       try { return pg.apply(this, args); } catch (error) { cancel?.(); pending.delete(cancel); clearTimeout(timer); throw error; }
     }, { __tester:true });
     offs.push(() => { pending.forEach(cancel => cancel()); pending.clear(); G.playGame = pg; });
+  }
+  // (v1.08f) the tale being read, so a report from inside it can open it again
+  if (G.readTale && !(G.readTale as { __tester?: boolean }).__tester) {
+    const rt = G.readTale; G.readTale = Object.assign((i: number, id: string) => { lastTale = String(id || ''); return rt(i, id); }, { __tester: true });
+    offs.push(() => { G.readTale = rt; });
   }
   // a child stuck (js/players.js watchHero)
   setProblemHook((kind, key) => { if (kind === 'stuck') autoReport('stuck', key); }); offs.push(() => setProblemHook(null));
@@ -375,12 +404,48 @@ const paintCount = () => { dispatchEvent(new Event('sv-report-queue')); const n 
 const gameIdOf = (w): string => String(w && w.game || '').replace(/^game:/, '');
 const gameName = p => { const w = p && p.where || {}; if (w.game) return { id: gameIdOf(w) }; const m = /^autoplay: ([^:]+):/.exec(p && p.title || ''); return m ? { name: m[1].trim() } : null; };
 const spotOf = p => { const w = p && p.where || {}; let x = +w.x, z = +w.z; const m = /(-?\d+),\s*(-?\d+)/.exec(p && p.title || ''); if ((!x && !z || !Number.isFinite(x)) && m) { x = +m[1]; z = +m[2]; } return Number.isFinite(x) && Number.isFinite(z) && (x || z) ? { x, z } : null; };
-const tryable = p => !!(gameName(p) || spotOf(p));
+const tryable = p => { const w = p && p.where || {}; return !!(gameName(p) || spotOf(p) || w.screen || w.quest || w.thing); };
+// (v1.08f, owner 6 Nov 2026 AEDT) Try again goes back to the broken thing itself: the game at its level, difficulty, mode
+// and players; the screen and its tab; the quest step (walked to and started); the thing in the valley, faced and pointed
+// out with a ring. A report without these (older ones) goes to the place, as before, with a small note.
+const GAME_MODES = ['folk', 'hub', 'pad', 'place', 'simple', 'shrine', 'tester'];
+let ringOff: (() => void) | null = null;
+async function pointAt(h, x: number, z: number) {
+  h.yaw = Math.atan2(x - h.pos.x, z - h.pos.z); h.camYaw = h.yaw + Math.PI; h.manualCamT = 0;
+  if (h.camPos && h.camPos.set) h.camPos.set(h.pos.x + Math.sin(h.camYaw) * (h.camDist || 8), h.pos.y + 4, h.pos.z + Math.cos(h.camYaw) * (h.camDist || 8));
+  if (!G.scene) return;
+  ringOff && ringOff();
+  const { THREE } = await import('./gfx.js');
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.4, .12, 6, 32).rotateX(Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#ff3b6b', fog: false, transparent: true, opacity: .9 }));
+  ring.name = 'tester-target-ring'; ring.position.set(x, h.pos.y + .15, z); G.scene.add(ring);
+  let t = 0; const spin = setInterval(() => { t += .1; ring.scale.setScalar(1 + Math.sin(t * 4) * .12); }, 100);
+  const done = setTimeout(() => ringOff && ringOff(), 15000);
+  ringOff = () => { clearInterval(spin); clearTimeout(done); G.scene && G.scene.remove(ring); ring.geometry.dispose(); ringOff = null; };
+}
+const unknownNote = () => toast(T('Action unknown, you are at the reported place', 'Không rõ hành động, đã đưa bạn tới chỗ đã báo'));
+async function openScreen(sc: string): Promise<boolean> {
+  const [kind, arg] = sc.split(':');
+  if (kind === 'pad' && G.openPad) { G.openPad(0, arg || 'map'); return !!document.querySelector('.modal.pad'); }
+  if (kind === 'hub' && G.openGamesHub) { G.openGamesHub(0); return true; }
+  if (kind === 'grownups') { (await import('./ui.js')).openGrownups(); return true; }
+  if (kind === 'shop' || kind === 'cook') { const S = await import('./ui/shops.js'); if (kind === 'shop') S.openShop(G, 0); else S.openCooking(G, 0); return true; }
+  if (kind === 'tale' && arg && G.readTale) { void G.readTale(0, arg); return true; }
+  return false;
+}
 async function tryAgain(p) {
-  const g = gameName(p), h = G.heroes && G.heroes[0];
+  const g = gameName(p), h = G.heroes && G.heroes[0], w: Where = p && p.where || ({} as Where);
   if (g) { let id = g.id; if (!id) { const { GAMES } = await import('./games/registry.js'); id = Object.keys(GAMES).find(k => { try { const x = GAMES[k]; return [x.name(), x.en, x.vi].includes(g.name); } catch (e) { return false; } }); }
-    if (id) { G.playGame?.(0, id, 'tester'); return; } }
-  const at = spotOf(p); if (at && h && G.travelTo) await (G.travelTo as unknown as (h: unknown, x: number, z: number, snapToNpc?: boolean) => Promise<unknown>)(h, at.x, at.z, false);
+    if (id) {
+      const mode = GAME_MODES.includes(w.mode || '') ? w.mode : 'tester';
+      if ((w.np || 1) > ((G.heroes || []).length || 1)) toast(T(`This was played by ${w.np} players: add them to try it the same way`, `Lỗi này khi ${w.np} người chơi: thêm người chơi để thử giống vậy`));
+      G.playGame?.(0, id, mode, undefined, { level: w.lvl, diff: w.diff }); return;
+    } }
+  if (w.screen && await openScreen(w.screen)) return;
+  if (w.quest && h && G.currentQuest && G.goToObjective) { const q = G.currentQuest(h.profile); if (q && q.id === w.quest) { await G.goToObjective(0); const tg = G.questTarget && G.questTarget(h); if (tg) await pointAt(h, tg.x, tg.z); return; } }
+  const it = w.thing && (G.interactables || []).find(x => x && x.id === w.thing);
+  if (it && h) { if (near2(it, h.pos) > 9) { if (G.landBy) await G.landBy(h, it.x, it.z); else if (G.travelTo) await G.travelTo(h, it.x, it.z, false); } await pointAt(h, it.x, it.z); return; }
+  const at = spotOf(p); if (at && h && G.travelTo) await G.travelTo(h, at.x, at.z, false);
+  if (w.screen || w.quest || w.thing || !g) unknownNote();
 }
 const fixedToSee = () => { const seen = get(KEY.seen, {}); return ((status && status.mine) || []).filter(p => ['fixed', 'confirmed'].includes(p.status) && !seen[p.k]); };
 function addUI() {
