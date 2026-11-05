@@ -1,4 +1,4 @@
-**Cancelled (5 Nov 2026 AEDT): already built by the quality helper on `work/v108b-quality` (commit 00b86fd26). Do not start.**
+**Stopped (5 Nov 2026 AEDT): also built by the quality helper on `work/v108b-quality` (commit 00b86fd26). Keep `work/v108c-parents` as it is and go on with `roads-brief.md`.**
 
 # Helper brief C: parents (learning report, difficulty by subject, Lumi as guide, play together, gentle play time)
 
