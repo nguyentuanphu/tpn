@@ -70,7 +70,10 @@ export async function fitGames(browser:Browser,sizes:FitSize[],opt:{dir:string,t
      if(TAPS){const min=LITTLE?64:44,boxes=taps.map(e=>({e,b:e.getBoundingClientRect()}));
       const nm=(e:Element)=>`${e.tagName.toLowerCase()}.${String((e as HTMLElement).className).split(' ')[0]}`;
       for(const {e,b} of boxes)if(Math.min(b.width,b.height)<min-.5)tiny.push(`${nm(e)}=${Math.round(b.width)}x${Math.round(b.height)}`);
-      for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){const A=boxes[i],B=boxes[j];if(A.e.contains(B.e)||B.e.contains(A.e))continue;
+      // (two controls on top of each other are a tap that may go to the wrong one; a switched-off button, a drop slot that
+      // waits for its turn, takes no tap, so it is not counted for overlaps: it still counts for size and for the screen's edge)
+      const live=(e:Element)=>!(e as HTMLButtonElement).disabled;
+      for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){const A=boxes[i],B=boxes[j];if(A.e.contains(B.e)||B.e.contains(A.e)||!live(A.e)||!live(B.e))continue;
        const ix=Math.min(A.b.right,B.b.right)-Math.max(A.b.left,B.b.left),iy=Math.min(A.b.bottom,B.b.bottom)-Math.max(A.b.top,B.b.top);
        if(ix>4&&iy>4&&ix*iy>.15*Math.min(A.b.width*A.b.height,B.b.width*B.b.height))over.push(`${nm(A.e)}+${nm(B.e)}`);}}
      return {out,scroll:Math.round(scroll),head:onHead(stars)&&onHead(lvl),stacked,zoom:st.style.zoom||'1',small:[...new Set(small)].slice(0,6),tiny:[...new Set(tiny)].slice(0,6),over:[...new Set(over)].slice(0,4)};},[TEXT_MIN,opt.taps,(size.age||'big')==='little'] as const);
