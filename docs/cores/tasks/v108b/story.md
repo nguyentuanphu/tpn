@@ -52,3 +52,11 @@ Not run here: voicearea, roundvariety (their files changed only through the voic
 
 ### Calendar redesign (owner, 5 Nov 2026 AEDT: "too long")
 One compact row per festival (picture, name, date, one status chip such as "Hunt until 8 Nov" / "Săn đồ đến 8/11", "Decorations from 4 Dec"), a thin bar with a dot per step and a red mark for today; tap a row for its steps (picture, start - end, days left; "Back next year" only there), one open at a time; the festival on now first; next 4, then "See more". The new-things lines show only when they have something, as one line of picture chips. Screenshots: `docs/cores/tasks/v108b/story-shots/cal2-*.png` (phone, phone sideways, tablet, computer, a row opened). Checks: calendartab (rewritten for the compact layout: one chip and a bar per row, details on tap, one open, See more, no "Nothing" lines, 16 px, 44 px, no sideways scroll on five screens), festcal, emoji, types pass.
+
+### Blender parts handed over (5 Nov 2026 AEDT)
+Release moved the Blender work and film polish to the v1.08c Blender helper (owner's second account). Started here before that message arrived, left as drafts for that helper, nothing in the game uses them:
+- `tools/blender/costumes.py`: the costume kit (15 period roles: áo tứ thân with yếm and váy đụp, khăn mỏ quạ, khăn vấn, áo nâu, áo the, khăn xếp, khăn đầu rìu, khố and topknot, armour, royal robe, Bụt, prince, colonial Australian, hanfu, sari, dhoti), run through `lumi.py` without changing it. Test renders looked right.
+- `tools/blender/talepages.py`: pages for the five film tales from the kit (not rendered yet).
+- `tools/tale-films.mts`: pages to a silent 720p video per tale with page times (not run yet).
+- `tools/blender/talevideo.draft.txt`: the theatre player for those videos (draft, not wired into `js/tales.ts`).
+Blender 4.2.3 was installed in this container with the owner's pop-up "yes".

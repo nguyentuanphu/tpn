@@ -1,0 +1,54 @@
+// (v1.08b story) The Blender tale films (videos/tales/<tale>.mp4, made by tools/tale-films.mts) in the tale theatre: the
+// same pages and the same narrator as the in-game film. It works like a film (js/film.ts): page(k) plays that page's part
+// of the video and resolves at its end; at the page's help moment the video pauses under the tap ring until the child
+// taps (or after a while by itself, once the narrator has finished); narrated() says the page's words are read.
+// The video is downloaded only when its tale is opened, then kept on the device (cache "sv-tale-videos") for offline
+// play; it is never in the first download or the Wi-Fi voice pack. When it cannot be had in 8 s the theatre plays the
+// in-game film instead.
+import { el } from './util.js';
+import { T } from './i18n.js';
+import type { TaleVideo } from './content/talevideos.js';
+
+const CACHE = 'sv-tale-videos';
+async function blobOf(file: string, signal: AbortSignal): Promise<string> {
+  let res: Response | undefined;
+  try { const c = await caches.open(CACHE); res = await c.match(file); if (!res) { const r = await fetch(file, { signal }); if (!r.ok) throw Error('video ' + r.status); await c.put(file, r.clone()); res = r; } }
+  catch (e) { if (signal.aborted) throw e; const r = await fetch(file, { signal }); if (!r.ok) throw Error('video ' + r.status); res = r; }
+  return URL.createObjectURL(await res.blob());
+}
+/** a film made of a video: resolves when it can play, rejects after `wait` ms (the in-game film is used then) */
+export async function createVideoFilm(stage: HTMLElement, meta: TaleVideo, wait = 8000) {
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), wait);
+  let url = '';
+  try { url = await blobOf(meta.file, ctl.signal); } finally { clearTimeout(timer); }
+  const v = el('video', 'th-video', '') as HTMLVideoElement;
+  v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = url; v.setAttribute('aria-hidden', 'true');
+  const ring = el('button', 'th-ring', `<span>${T('Tap!', 'Chạm nào!')}</span>`) as HTMLButtonElement; ring.hidden = true;
+  stage.append(v, ring);
+  await new Promise<void>((ok, bad) => { v.oncanplay = () => ok(); v.onerror = () => bad(Error('video')); setTimeout(() => bad(Error('video slow')), wait); });
+  let narrated = false, cur = -1, stop: (() => void) | null = null;
+  const until = (t: number) => new Promise<void>(res => { const tick = () => { if (v.currentTime >= t - .05 || v.ended) { v.removeEventListener('timeupdate', tick); res(); } }; v.addEventListener('timeupdate', tick); tick(); });
+  return {
+    video: v,
+    page(k: number): Promise<void> {
+      if (stop) stop(); cur = k; narrated = false;
+      const [a, b, help] = meta.pages[k] || meta.pages[meta.pages.length - 1];
+      v.currentTime = a; v.play().catch(() => { });
+      return new Promise<void>(done => {
+        let gone = false; stop = () => { gone = true; ring.hidden = true; done(); };
+        (async () => {
+          await until(help); if (gone || cur !== k) return;
+          // the help moment: the video waits under the tap ring; a tap (or, once the words are read, 6 s) goes on
+          v.pause(); ring.hidden = false;
+          await new Promise<void>(go => { ring.onclick = () => go(); const t0 = Date.now(); const w = setInterval(() => { if (gone || (narrated && Date.now() - t0 > 6000)) { clearInterval(w); go(); } }, 250); ring.addEventListener('click', () => clearInterval(w), { once: true }); });
+          ring.hidden = true; if (gone || cur !== k) return;
+          v.play().catch(() => { }); await until(b); if (gone || cur !== k) return;
+          v.pause(); stop = null; done();
+        })();
+      });
+    },
+    narrated() { narrated = true; },
+    close() { if (stop) stop(); v.pause(); v.removeAttribute('src'); v.load(); v.remove(); ring.remove(); URL.revokeObjectURL(url); },
+    onSay: null as null | ((en: string, vi: string, kind?: string) => Promise<unknown>)
+  };
+}
