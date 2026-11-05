@@ -2,7 +2,7 @@
 // the code shape (before) and the Blender model (after), from where the child stands at the postcard spot.
 //   cd tests && node places-shots.mts [id ...]   -> docs/world-models-v108e/places/<id>-<screen>-<before|after>.png
 import { launch, open, clear, noWelcome } from './harness.mts';
-const IDS = process.argv.slice(2).length ? process.argv.slice(2) : ['opera', 'turtle', 'onepillar', 'benthanh', 'vanmieu', 'thehuc', 'harbour'];
+const IDS = process.argv.slice(2).length ? process.argv.slice(2) : ['opera', 'turtle', 'onepillar', 'benthanh', 'vanmieu', 'thehuc', 'harbour', 'cathedral', 'postoffice', 'flinders', 'hue', 'sydneytower', 'lunapark', 'banana', 'lighthouse', 'goldenbridge', 'uluru'];
 const SIZES = [{ name: 'phone', w: 390, h: 844, touch: true }, { name: 'tablet', w: 820, h: 1180, touch: true }, { name: 'computer', w: 1440, h: 900, touch: false }];
 const OUT = new URL('../docs/world-models-v108e/places/', import.meta.url).pathname;
 const b = await launch();

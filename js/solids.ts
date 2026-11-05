@@ -30,7 +30,8 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
   const cand: { o: THREE.Mesh; m0: THREE.Matrix4 }[] = [];
   scene.updateMatrixWorld(true);
   scene.traverse(o => {
-    if (!(o instanceof THREE.Mesh) || !o.visible || o === W.terrain || o.userData.outline || boats.has(o) || skipTree(o)) return;
+    // (v1.08e places) a code shape that a Blender model has taken over stays in the map (the model itself is noSolid)
+    if (!(o instanceof THREE.Mesh) || (!o.visible && !o.userData.model) || o === W.terrain || o.userData.outline || boats.has(o) || skipTree(o)) return;
     const m = o.material; if (!m || (Array.isArray(m) ? m.some(x => x.transparent) : m.transparent)) return; // glass, water, verges, sprites
     const g = o.geometry; if (!g || !g.attributes.position) return; if (!g.boundingBox) g.computeBoundingBox();
     if (o instanceof THREE.InstancedMesh && g.boundingBox.max.y - g.boundingBox.min.y < 1.4) return; // grass and flowers

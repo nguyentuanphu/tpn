@@ -9,7 +9,7 @@ import { heightAt, roadDist, WATER } from './world.js';
 export function openSpot(G, { cx, cz, rmax, need = 6, flatR = 6, want = 10, levelTo = null, distW = .1 }) {
   const { scene, world } = G, near = [], bb = new THREE.Box3(), reach = rmax + 12;
   for (const o of scene.children) {
-    if (!o.visible || o.isLight || o.isCamera || (o.userData && o.userData.noSolid)) continue;
+    if ((!o.visible && !(o.userData && o.userData.model)) || o.isLight || o.isCamera || (o.userData && o.userData.noSolid)) continue;
     bb.setFromObject(o); if (bb.isEmpty()) continue;
     if (bb.max.x - bb.min.x > 40 || bb.max.z - bb.min.z > 40 || bb.max.y - bb.min.y < .4) continue; // the ground, the sky, the water, flat decals
     if (bb.max.x < cx - reach || bb.min.x > cx + reach || bb.max.z < cz - reach || bb.min.z > cz + reach) continue;
@@ -34,7 +34,7 @@ export function openSpot(G, { cx, cz, rmax, need = 6, flatR = 6, want = 10, leve
 export function openRoom(G, x, z) {
   const bb = new THREE.Box3(); let m = 99;
   for (const o of G.scene.children) {
-    if (!o.visible || o.isLight || o.isCamera || (o.userData && (o.userData.noSolid || o.userData.yard))) continue;
+    if ((!o.visible && !(o.userData && o.userData.model)) || o.isLight || o.isCamera || (o.userData && (o.userData.noSolid || o.userData.yard))) continue;
     bb.setFromObject(o); if (bb.isEmpty() || bb.max.x - bb.min.x > 40 || bb.max.z - bb.min.z > 40 || bb.max.y - bb.min.y < .4) continue;
     m = Math.min(m, Math.hypot(Math.max(bb.min.x - x, 0, x - bb.max.x), Math.max(bb.min.z - z, 0, z - bb.max.z)));
   }
