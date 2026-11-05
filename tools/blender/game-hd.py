@@ -16,7 +16,7 @@ HD_FACE = 700
 ATLAS = 1024
 UV_SHARE = {'hair': .3}
 if WHO == 'villager':   # (v1.08e villagers) the named villagers: about 8,000 triangles shown, one 512 px picture
-    HD_BUDGET = {'body': 4300, 'hair': 2600, 'hands': 400, 'item': 400, 'shoes': 450}; HD_FACE = 380; ATLAS = 512   # the hair's strip of the picture (a share of its width)
+    HD_BUDGET = {'body': 4000, 'hair': 5000, 'hands': 400, 'item': 400, 'shoes': 450, 'hat': 700}; HD_FACE = 380; ATLAS = 512   # (the hair at 2,600 collapsed into a block)   # the hair's strip of the picture (a share of its width)
 
 def _tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
