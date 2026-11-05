@@ -131,7 +131,7 @@ class Model:
                 a, c = vs[i], vs[i + 1]
                 b.faces.new((a[0], c[0], c[2], a[2])); b.faces.new((a[2], c[2], c[4], a[4]))
                 b.faces.new((a[3], c[3], c[1], a[1])); b.faces.new((a[5], c[5], c[3], a[3]))
-        return self._add(mk, color, pos, (0, yaw, droop), top=.08, **k)
+        k.setdefault('top', .08); return self._add(mk, color, pos, (0, yaw, droop), **k)
     def frond(self, length, color, pos, yaw, droop=.3, bend=.5, pairs=7, leaflet=.8, **k):
         """a palm frond: a curved stem with pairs of narrow leaflets along it"""
         for i in range(pairs):
@@ -148,7 +148,7 @@ class Model:
             a = i * 2 * math.pi / n
             self.ball(size, color, (pos[0] + math.cos(a) * r, pos[1], pos[2] + math.sin(a) * r), (0, -a, tilt), (1.3, .35, .8), sub=sub, top=.06, **k)
         return self
-    def puffs(self, centre, radii, n, size, cols, sub=1, skip=-.35, core=True, jitter=.22, seed=0, seg=14, leafy=16):
+    def puffs(self, centre, radii, n, size, cols, sub=1, skip=-.35, core=True, jitter=.22, seed=0, seg=14, leafy=40):
         """a picture-book canopy: a soft core and puffs spread over it like a cloud (fewer underneath)"""
         cx, cy, cz = centre; rx, ry, rz = radii
         ao = (centre, (rx * 1.15, ry * 1.15, rz * 1.15), .42)
@@ -159,17 +159,26 @@ class Model:
             if yy < skip: continue
             rr = math.sqrt(1 - yy * yy); a = i * ga + seed
             s = size * (.8 + .4 * ((i * 7 + seed * 3) % 5) / 4)
-            sg = self.S(seg, 1.4); P = (cx + math.cos(a) * rr * rx, cy + yy * ry, cz + math.sin(a) * rr * rz); col = cols[(i + 1) % len(cols)]
-            self._add(lambda b, s=s, sg=sg: bmesh.ops.create_uvsphere(b, u_segments=sg, v_segments=max(5, sg * 4 // 7), radius=s), col,
-                      P, (self.rnd.random(), self.rnd.random() * 6, 0), jitter=jitter * s * .22, top=.18, ao=ao)
-            if self.hd and leafy:  # up close: little leaves all over the puff, pointing out, for a leafy edge
-                g2 = math.pi * (3 - math.sqrt(5))
-                for q in range(leafy):
-                    qy = 1 - 2 * (q + .5) / leafy
-                    if qy < -.2: continue
-                    qr = math.sqrt(1 - qy * qy); qa = q * g2 + i
-                    d = Vector((math.cos(qa) * qr, qy, math.sin(qa) * qr)); at = Vector(P) + d * s * .92
-                    self.leaf(s * .42, s * .2, col, tuple(at), math.atan2(-d.z, d.x), droop=math.asin(max(-1, min(1, d.y))) * .8 + .15, bend=.5, n=2, fold=.2, ao=ao, shade=.12)
+            P = (cx + math.cos(a) * rr * rx, cy + yy * ry, cz + math.sin(a) * rr * rz); col = cols[(i + 1) % len(cols)]
+            if not (self.hd and leafy):
+                self._add(lambda b, s=s: bmesh.ops.create_uvsphere(b, u_segments=seg, v_segments=max(5, seg * 4 // 7), radius=s), col,
+                          P, (self.rnd.random(), self.rnd.random() * 6, 0), jitter=jitter * s * .22, top=.18, ao=ao)
+                continue
+            # up close: a smaller dark heart covered with broad overlapping leaves whose tips reach past it, so the puff's
+            # edge is soft and leafy instead of a smooth ball
+            dark = [x * .78 for x in lin(col)]
+            self._add(lambda b, s=s: bmesh.ops.create_uvsphere(b, u_segments=10, v_segments=6, radius=s * .78), dark, P, (0, self.rnd.random() * 6, 0), top=.1, ao=ao)
+            g2 = math.pi * (3 - math.sqrt(5)); base = lin(col)
+            for q in range(leafy):
+                qy = 1 - 2 * (q + .5) / leafy
+                if qy < -.45: continue
+                qr = math.sqrt(1 - qy * qy); qa = q * g2 + i * .7
+                d = Vector((math.cos(qa) * qr, qy, math.sin(qa) * qr)); at = Vector(P) + d * s * .62
+                tint = [min(1, x * (.92 + .16 * self.rnd.random())) for x in base]
+                L = s * (.5 + .1 * self.rnd.random())
+                n0 = self.hd; self.hd = False  # (two segments per leaf whatever the detail: there are many)
+                self.leaf(L, L * .78, tint, tuple(at), math.atan2(-d.z, d.x) + (self.rnd.random() - .5) * .6, droop=math.asin(max(-1, min(1, d.y))) * .6 - .5, bend=.5, n=2, fold=.3, ao=ao, shade=.0, top=.22)
+                self.hd = n0
         return self
 
     def tris(self):
@@ -210,6 +219,7 @@ BARK, BARK2 = '#7a5a3e', '#8a5a3b'
 LEAF = ['#2f7f5f', '#3a8d68', '#2a7656', '#46a077', '#358a62']
 
 def tier(m, r, h, y, color, scallops=9, droop=.28, turn=0.0, seg=36):
+    if m.hd and scallops == 9: scallops = 11
     seg = m.S(seg, 1.6)
     """one tier of a pine: a cone whose rim hangs down in soft scallops (the picture-book fir)"""
     def mk(b):
@@ -250,12 +260,8 @@ def pine(name, seed, cols, snow=False):
     m.trunk([(0, 0, 0), (0, 1.4, 0), (0, 2.4, 0)], .34, .22, '#6e4a32')
     for i, (r, h, y) in enumerate([(2.1, 2.4, 2.75), (1.75, 2.1, 3.95), (1.35, 1.9, 5.05), (.9, 1.7, 6.2)]):
         tier(m, r, h, y, cols[i], turn=i * .35)
-        if m.hd:  # up close: soft tufts of needles hang from every scallop of the tier's rim
-            for q in range(9):
-                a = 2 * math.pi * q / 9 + i * .35
-                for j, (dr, dy) in enumerate([(1.0, -.5), (.82, -.3)]):
-                    m.cone(.16 * r, .34 * r, cols[i], (math.cos(a + j * .3) * r * dr, y + h * dy - .2 * r * (1 - j), math.sin(a + j * .3) * r * dr), (math.sin(a) * 2.6, 0, -math.cos(a) * 2.6), seg=6, top=.15)
-        if snow and i < 2: tier(m, r * .6, .5, y + h * .32, '#f4f8ff', scallops=7, droop=.18, turn=i)
+        if m.hd:  # up close: a second, finer skirt just above each tier, turned a little, for a layered, fluffy fir
+            tier(m, r * .86, h * .8, y + h * .12, cols[i], scallops=13, droop=.22, turn=i * .35 + .24)
     return m
 @model
 def tree_pine(): return pine('tree-pine', 13, ['#25664f', '#2c7558', '#307d5c', '#348462'])
@@ -325,7 +331,7 @@ def tree_gum():
     for k in range(6): m.box(.09, .55, .02, '#c9bba5', (math.cos(k * 1.3) * .25, .9 + k * .75, math.sin(k * 1.3) * .25), (0, -k * 1.3, 0))  # peeling bark
     # the gum's open, drooping crown: separate clumps of grey-green leaves, sky between them
     for j, (c, rad) in enumerate([((.1, 6.3, 0), (1.1, .6, 1.0)), ((1.4, 5.7, .4), (.9, .5, .8)), ((-1.1, 5.6, -.4), (.95, .5, .85)), ((.2, 5.2, -1.1), (.7, .4, .7))]):
-        m.puffs(c, rad, 6, .5, ['#7a9a6a', '#86a676', '#6f8f60'], skip=-.3, core=False, seed=j + 5, seg=10)
+        m.puffs(c, rad, 6, .5, ['#7a9a6a', '#86a676', '#6f8f60'], skip=-.3, core=False, seed=j + 5, seg=10, leafy=9)
     return m
 
 # ---------- the towns' trees (js/town.ts; the Sa Pa peach tree in js/s2vn.ts) ----------
@@ -367,7 +373,7 @@ def tree_peach():
     for k in range(4):
         a = k * 1.7; ex, ez = math.cos(a) * .6, math.sin(a) * .6
         m.trunk([(0, 1.5, 0), (ex * .5, 1.9, ez * .5), (ex, 2.2, ez)], .06, .035, '#6a4a32', seg=5, flare=1)
-    m.puffs((0, 2.1, 0), (.75, .45, .75), 20, .18, ['#ff9ec4', '#ffc2da', '#ff8ab8'], skip=-.4, core=False, seed=7, seg=9)
+    m.puffs((0, 2.1, 0), (.75, .45, .75), 20, .18, ['#ff9ec4', '#ffc2da', '#ff8ab8'], skip=-.4, core=False, seed=7, seg=9, leafy=7)
     return m
 
 # ---------- by the water (js/reeds.ts) ----------

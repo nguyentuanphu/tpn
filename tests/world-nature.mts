@@ -79,7 +79,7 @@ export async function worldNatureCheck(b: Browser) {
       return { closeDraws, closeUp, shrunk, keptSolid, backAfter, shapes0, missing, info, sizes, wrong, farOn, codeHome, codeVill, modelHome, modelVill, nearHome, onHome, onVill, crops, stats: N.natureStats };
     }, [...NATURE_MODELS, ...NATURE_HD]);
     if (r.missing.length) bad.push('did not load: ' + r.missing.join(', '));
-    for (const [n, i] of Object.entries(r.info) as [string, any][]) { if (i.tris > (n.endsWith('-hd') || ONE.test(n) ? 8000 : 3000)) bad.push(`${n}: ${i.tris} triangles`); if (Math.abs(i.y0) > .3 && n !== 'rock' && n !== 'decor-frame') /* (a rock sits sunk in the ground like its code shape; a frame hangs on the wall by its middle) */ bad.push(`${n}: its feet at y ${i.y0}`); if (!i.col) bad.push(n + ': no colours'); }
+    for (const [n, i] of Object.entries(r.info) as [string, any][]) { if (i.tris > (n.endsWith('-hd') || ONE.test(n) ? 8000 : 3000)) bad.push(`${n}: ${i.tris} triangles`); if (Math.abs(i.y0) > .3 && !n.startsWith('rock') && n !== 'decor-frame') /* (a rock sits sunk in the ground like its code shape; a frame hangs on the wall by its middle) */ bad.push(`${n}: its feet at y ${i.y0}`); if (!i.col) bad.push(n + ': no colours'); }
     if (r.wrong.length) bad.push('size or ground differs from the code shape: ' + r.wrong.join('; '));
     if (r.shapes0 < 20) bad.push('only ' + r.shapes0 + ' marked shapes');
     if (r.farOn) bad.push(r.farOn + ' shapes kept their model far from every child');
