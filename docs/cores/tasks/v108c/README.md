@@ -26,5 +26,5 @@ The owner runs three more helpers on a second Pro account. They split the rest o
 
 **The three helpers** (start A and B; start C when one of them finishes):
 - **A. blender:** brief `blender-brief.md`, branch `work/v108c-blender`, from `origin/work/v108b-story`.
-- **B. voices:** brief `voices-brief.md`, branch `work/v108c-voices`, from `origin/integrate/v108`.
+- **B. voices:** brief `voices-brief.md`, branch `work/v108c-voices`, from `origin/work/v108b-platform` (Opus is already done there).
 - **C. parents:** brief `parents-brief.md`, branch `work/v108c-parents`, from `origin/integrate/v108`.
