@@ -1,6 +1,6 @@
 # v1.08b platform helper: status
 
-**Ready for Release (Studio part).** Branch `work/v108b-platform` (from `origin/integrate/v108`). Parts 1 to 5 of the brief are not started in this session (see "Left for later").
+**Ready for Release (Studio part, part 6 of the brief).** Branch `work/v108b-platform` (from `origin/integrate/v108`). Parts 1 to 5 of the brief are not started in this session (see "Left for later").
 
 ## Plan (5 Nov 2026 AEDT, owner's go given in the round's shared rules)
 
@@ -51,6 +51,7 @@ See "Progress notes" below for the commit and results.
 ## Left for later (not started in this session)
 
 - Part 1 voices in Opus, part 2 three offline levels, part 3 downloads on demand and festival packs, part 4 light first download and the valley that builds as the child walks, part 5 the open bugs and the rules audit; checks `offlinelevels`, `festivalpack`.
+- Studio: the owner's desk pages (Home, People, Work, the management tools) are drawn again on Back instead of kept (they hold their own state with the page they drew); their reads are shared for 3 minutes, so Back to them asks the website nothing new within that time. A page opened by a tap (tab or card) is drawn again from the kept reads; only Back (browser or the arrow button) shows the kept page.
 - Studio: the content (`content` read) is kept in memory only, not in `sessionStorage`, on purpose: content pages save the whole content back, and an old copy from another tab could overwrite a newer one.
 
 ## Owner's decisions
@@ -58,3 +59,9 @@ See "Progress notes" below for the commit and results.
 - 5 Nov 2026 AEDT: Studio redesign added to this helper (Releases and Sparkle Lab easier to understand, Studio fast, no reload on Back).
 
 ## Progress notes
+
+- 5 Nov 2026 19:13 AEDT, commit 396e345d1 (studio code unchanged since; this note is the next commit). `suite.mts --changed` asks for the full suite (it compares with `main`, far behind `integrate/v108`), so the checks covering the change ran with `--only`, one at a time:
+  - pass: `studio`, `studioback` (new), `studioreleases` (new), `sparklelab` (new), `managementstudio`, `ownerdesk`, `ownerstudiofailures`, `ownerstudiofolds`, `ownerstudioperms`, `types`, `names`, `nostudio`.
+  - Fixed on the way (my own changes): `managementstudio` and `studio` were red when the owner's desk pages and pages opened by a tap were kept; `studio` was red on a missing-file error for the calendar module before the story branch is merged; `types` on generic calls.
+  - Screenshots looked at: Releases (list and timeline) and Sparkle Lab, phone 390 and computer 1280, EN and VI (`tests/out/studio-*.png`). A tablet screenshot was not taken separately; the `studio` check opens every page at 820 px and checks the 44 px targets there.
+  - Release calendar tried with a stand-in module: items listed by week, a move shows in the change list, Save sends `releaseCalendar.moves` (the website keeps it once the story branch adds the section).
