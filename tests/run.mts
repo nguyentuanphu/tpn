@@ -94,6 +94,10 @@ await check('offlinelevels', async () => (await import('./offline-levels.mts')).
 // removed after the festival on Light and kept on Full (tests/festival-pack.mts)
 await check('festivalpack', async () => (await import('./festival-pack.mts')).festivalPackCheck(b));
 
+// (v1.08e creatures) the animals, pets and companions made in Blender: they load, stand at the code shape's size on the
+// ground, play their clips, swap in near the child, and the code shapes stay when the models are blocked
+await check('worldcreatures', async () => (await import('./world-creatures.mts')).worldCreaturesCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

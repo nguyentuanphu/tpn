@@ -9,21 +9,21 @@ import { buildLantern } from './dinh.js';
 
 const H = Math.PI / 2;
 function firefly() {
-  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
-  body.add(new THREE.Mesh(merge([P(new THREE.SphereGeometry(.13, 12, 10), '#3a3a52', [0, 0, .08]), P(new THREE.SphereGeometry(.035, 6, 5), '#ffffff', [.06, .04, .18]), P(new THREE.SphereGeometry(.035, 6, 5), '#ffffff', [-.06, .04, .18]),
+  const g = new THREE.Group(), body = new THREE.Group(), look = new THREE.Group(); g.add(body); body.add(look);   // (v1.08e: look = the code shape, the Blender model's fallback)
+  look.add(new THREE.Mesh(merge([P(new THREE.SphereGeometry(.13, 12, 10), '#3a3a52', [0, 0, .08]), P(new THREE.SphereGeometry(.035, 6, 5), '#ffffff', [.06, .04, .18]), P(new THREE.SphereGeometry(.035, 6, 5), '#ffffff', [-.06, .04, .18]),
     P(new THREE.SphereGeometry(.017, 6, 5), '#1a1a1a', [.065, .045, .21]), P(new THREE.SphereGeometry(.017, 6, 5), '#1a1a1a', [-.065, .045, .21]),
     ...[-1, 1].map(s => P(new THREE.CylinderGeometry(.008, .008, .16, 4), '#3a3a52', [s * .05, .15, .12], [-.4, 0, s * .3])), ...[-1, 1].map(s => P(new THREE.SphereGeometry(.022, 6, 5), '#ffd23f', [s * .075, .22, .15]))]), toonVC()));
   const tail = new THREE.Mesh(new THREE.SphereGeometry(.15, 14, 10), glow('#d8ff6a')); tail.scale.set(1, .9, 1.3); tail.position.z = -.14; body.add(tail);
   const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex(), color: '#eaff8a', transparent: true, depthWrite: false, opacity: .7 })); halo.scale.setScalar(.9); halo.position.z = -.14; body.add(halo);
   const wings = [-1, 1].map(s => { const w = new THREE.Mesh(new THREE.CircleGeometry(.16, 12), new THREE.MeshBasicMaterial({ color: '#dff4ff', transparent: true, opacity: .55, side: THREE.DoubleSide, depthWrite: false }));
-    w.scale.set(1, .55, 1); const p = new THREE.Group(); p.position.set(s * .06, .1, .02); w.position.x = s * .15; w.rotation.x = -H; p.add(w); body.add(p); return p; });
-  g.userData = { body, wings, glow: tail, flap: 22 };
+    w.scale.set(1, .55, 1); const p = new THREE.Group(); p.position.set(s * .06, .1, .02); w.position.x = s * .15; w.rotation.x = -H; p.add(w); look.add(p); return p; });
+  g.userData = { body, look, wings, glow: tail, flap: 22 };
   return g;
 }
 function dragon() {
-  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  const g = new THREE.Group(), body = new THREE.Group(), look = new THREE.Group(); g.add(body); body.add(look);   // (v1.08e: look = the code shape)
   const teal = '#3cb8a0', belly = '#f2e2a8', horn = '#ffd23f';
-  body.add(new THREE.Mesh(merge([
+  look.add(new THREE.Mesh(merge([
     P(new THREE.CapsuleGeometry(.13, .22, 4, 10), teal, [0, 0, 0], [H, 0, 0]), P(new THREE.SphereGeometry(.1, 10, 8), belly, [0, -.04, .05], [0, 0, 0], [1, .8, 1.4]),
     P(new THREE.SphereGeometry(.13, 12, 10), teal, [0, .14, .2]), P(new THREE.CapsuleGeometry(.065, .08, 4, 8), teal, [0, .1, .32], [H, 0, 0]), P(new THREE.SphereGeometry(.018, 6, 5), '#1a3a32', [.03, .11, .4]), P(new THREE.SphereGeometry(.018, 6, 5), '#1a3a32', [-.03, .11, .4]),
     P(new THREE.SphereGeometry(.035, 8, 6), '#ffffff', [.06, .2, .3]), P(new THREE.SphereGeometry(.035, 8, 6), '#ffffff', [-.06, .2, .3]), P(new THREE.SphereGeometry(.018, 6, 5), '#1a1a1a', [.065, .205, .325]), P(new THREE.SphereGeometry(.018, 6, 5), '#1a1a1a', [-.065, .205, .325]),
@@ -33,8 +33,8 @@ function dragon() {
     ...[-1, 1].flatMap(s => [P(new THREE.CapsuleGeometry(.03, .06, 3, 6), teal, [s * .08, -.13, .06]), P(new THREE.CapsuleGeometry(.03, .06, 3, 6), teal, [s * .08, -.13, -.08])])]), toonVC()));
   const wings = [-1, 1].map(s => { const p = new THREE.Group(); p.position.set(s * .08, .08, 0);
     const shape = new THREE.Shape(); shape.moveTo(0, 0); shape.lineTo(.32, .12); shape.lineTo(.28, -.04); shape.lineTo(.18, -.02); shape.lineTo(.1, -.08); shape.closePath();
-    const w = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshToonMaterial({ color: '#7fe0c8', side: THREE.DoubleSide })); w.rotation.x = -H; if (s < 0) w.scale.x = -1; p.add(w); body.add(p); return p; });
-  g.userData = { body, wings, glow: null, flap: 9 };
+    const w = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshToonMaterial({ color: '#7fe0c8', side: THREE.DoubleSide })); w.rotation.x = -H; if (s < 0) w.scale.x = -1; p.add(w); look.add(p); return p; });
+  g.userData = { body, look, wings, glow: null, flap: 9 };
   return g;
 }
 let _halo = null;
@@ -45,6 +45,12 @@ function haloTex() {
   return (_halo = new THREE.CanvasTexture(c));
 }
 export const buildCompanion = kind => kind === 'dragon' ? dragon() : firefly();
+// (v1.08e creatures, owner 6 Nov 2026 AEDT) The companion's Blender model (models/world/creature-firefly.glb or
+// creature-dragon.glb) loads as soon as the child has one, and takes the place of the code shape (look), which stays as
+// the fallback. The glow, the lantern, the hat and the tricks stay the game's own. js/main.ts hands over the kit.
+type Kit = typeof import('./modelkit.js');
+let KIT: Kit = null;
+export function useWorldModels(kit: Kit) { KIT = kit; }
 
 export function createCompanions(G) {
   const list = new Map(); // hero → { kind, o, lantern }
@@ -61,6 +67,8 @@ export function createCompanions(G) {
       }
     }
     for (const [h, c] of list) if (!G.heroes.includes(h)) { G.scene.remove(c.o); list.delete(h); }
+    if (KIT) for (const [h, c] of list) if (!c.asked) { c.asked = true;   // (v1.08e) its Blender model
+      KIT.worldModel('creature-' + c.kind, { clip: 'idle' }).then(m => { if (!m || list.get(h) !== c) return; const u = c.o.userData; u.look.visible = false; u.body.add(m.obj); c.model = m; c.clip = 'idle'; }); }
   };
   const _t = new THREE.Vector3();
   G.world.updaters.push((dt, t) => {
@@ -75,7 +83,10 @@ export function createCompanions(G) {
       c.beam.visible = !!c.lead; if (c.lead) { c.beam.scale.setScalar(2 + Math.sin(t * 4) * .3); c.beam.material.opacity = .65 + Math.sin(t * 4) * .2; }
       o.position.y -= c.off || 0; c.off = 0; // (a trick's lift is taken off first, so it never builds up)
       if (o.position.distanceTo(_t) > 25) o.position.copy(_t); // after a jump across the map
+      const was = c.model ? o.position.clone() : null;
       o.position.lerp(_t, Math.min(1, dt * 3.2));
+      if (c.model) { const sp = was.distanceTo(o.position) / Math.max(dt, 1e-3), clip = c.trick ? 'flap' : c.lead ? 'follow' : sp > 1.2 ? 'fly' : 'idle';   // (v1.08e) the model's clip
+        if (clip !== c.clip) { c.clip = clip; c.model.play(clip); } }
       o.rotation.y += ((((yaw - o.rotation.y) % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI) * Math.min(1, dt * 4);
       u.wings.forEach((w, i) => { w.rotation.z = (i ? -1 : 1) * Math.sin(t * u.flap) * .6; });
       u.body.rotation.x = Math.sin(t * 1.7) * .08;
