@@ -6,6 +6,7 @@ import { settings, saveSettings, offlineLevel } from './state.js';
 import { say, voicePack, chooseOfflineLevel, offlineSpace } from './voice.js';
 import { canListen } from './listen.js';
 import { esc } from './util.js';
+import { pic } from './art.js';
 
 // (round R privacy, 9 Oct, owner) what the game keeps and sends, in plain words: a small block at the top of Grown-ups
 // (its own block, so the Grown-ups groups stay as they are)
@@ -44,22 +45,26 @@ export function netListHTML() {
 
 // (v1.08c voices, brief part 2) the three offline levels: what each keeps and the space it takes (filled in once the
 // areas' sizes are read). The Full button keeps its old id (#xPackSave): it is the old "Keep all voices on this device".
-const LEVELS: [string, string, string, string, string][] = [
-  ['light', 'Light', 'Nhẹ', 'The core lines and the place your child is in. Other lines play over the internet.', 'Các câu chính và nơi con đang chơi. Các câu khác phát qua mạng.'],
-  ['auto', 'Automatic', 'Tự động', 'As before: lines play over the internet and are kept once heard.', 'Như trước: câu phát qua mạng và được giữ lại sau khi nghe.'],
-  ['full', 'Full', 'Đầy đủ', 'Every voice on this device, for trips with no internet (use Wi-Fi).', 'Mọi giọng đọc trên máy, cho chuyến đi không có mạng (dùng Wi-Fi).']];
+const LEVELS: [string, string, string, string, string, string][] = [
+  ['light', '🪶', 'Light', 'Nhẹ', 'Main voices + where your child plays', 'Giọng chính + nơi con đang chơi'],
+  ['auto', '📶', 'Automatic', 'Tự động', 'Plays online, keeps what is heard', 'Phát qua mạng, giữ câu đã nghe'],
+  ['full', '🧳', 'Full', 'Đầy đủ', 'Every voice, for trips (use Wi-Fi)', 'Mọi giọng đọc, cho chuyến đi (dùng Wi-Fi)']];
+// (owner, 5 Nov 2026 AEDT: "too wordy, make it shorter with a picture or infographic") one short line each, our own
+// drawing, and a bar showing how much space it takes next to Full
 function offlineLevelsHTML() {
   const now = offlineLevel();
-  return `<p class="note">${T('Offline voices: choose how many voices this device keeps. A smaller level frees the space at once.', 'Giọng đọc ngoại tuyến: chọn số giọng đọc máy này giữ lại. Chọn mức nhỏ hơn sẽ giải phóng dung lượng ngay.')}</p>
-  <div class="offlvl" role="radiogroup" aria-label="${T('Offline voices', 'Giọng đọc ngoại tuyến')}">${LEVELS.map(([k, en, vi, den, dvi]) => `<button type="button" role="radio" aria-checked="${k === now}" class="offlvl-b${k === now ? ' on' : ''}" data-lvl="${k}"${k === 'full' ? ' id="xPackSave"' : ''}><b>${T(en, vi)}</b><span>${T(den, dvi)}</span><span class="offlvl-sz" data-sz="${k}">${k === 'auto' ? T('Grows as lines are heard', 'Tăng dần khi nghe') : '…'}</span></button>`).join('')}</div>
-  <p class="note" id="xLvlInfo" role="status"></p><p class="note" id="xPackProg">${T('Downloads continue in the background while the game stays open, including after Save & close.', 'Giọng đọc tiếp tục tải khi trò chơi còn mở, kể cả sau khi Lưu và đóng.')}</p>`;
+  return `<p class="note">${T('How many voices does this device keep?', 'Máy này giữ bao nhiêu giọng đọc?')}</p>
+  <div class="offlvl" role="radiogroup" aria-label="${T('Offline voices', 'Giọng đọc ngoại tuyến')}">${LEVELS.map(([k, e, en, vi, den, dvi]) => `<button type="button" role="radio" aria-checked="${k === now}" class="offlvl-b${k === now ? ' on' : ''}" data-lvl="${k}"${k === 'full' ? ' id="xPackSave"' : ''}><span class="offlvl-h">${pic(e, 'offlvl-pic')}<b>${T(en, vi)}</b></span><span>${T(den, dvi)}</span><span class="offlvl-bar${k === 'auto' ? ' grow' : ''}" aria-hidden="true"><i data-bar="${k}"></i></span><span class="offlvl-sz" data-sz="${k}">${k === 'auto' ? T('Grows as lines are heard', 'Tăng dần khi nghe') : '…'}</span></button>`).join('')}</div>
+  <p class="note" id="xLvlInfo" role="status"></p><p class="note" id="xPackProg">${T('Downloads go on while the game is open.', 'Giọng đọc vẫn tải khi trò chơi đang mở.')}</p>`;
 }
 const mbText = (mb: number) => mb >= 1 ? `${Math.round(mb)} MB` : `${Math.max(0, Math.round(mb * 10) / 10)} MB`;
 function fillLevels(card) {
   const info = card.querySelector('#xLvlInfo'); if (!info) return;
   offlineSpace().then(sp => { if (!card.isConnected) return;
     const l = card.querySelector('[data-sz="light"]'), f = card.querySelector('[data-sz="full"]');
-    if (sp.known) { if (l) l.textContent = T(`About ${sp.light} MB`, `Khoảng ${sp.light} MB`); if (f) f.textContent = T(`About ${sp.full} MB`, `Khoảng ${sp.full} MB`); }
+    if (sp.known) { if (l) l.textContent = T(`About ${sp.light} MB`, `Khoảng ${sp.light} MB`); if (f) f.textContent = T(`About ${sp.full} MB`, `Khoảng ${sp.full} MB`);
+      const bar = (k: string, mb: number) => { const i = card.querySelector(`[data-bar="${k}"]`) as HTMLElement | null; if (i) i.style.width = Math.max(4, Math.min(100, mb / Math.max(1, sp.full) * 100)) + '%'; };
+      bar('light', sp.light); bar('full', sp.full); bar('auto', Math.min(sp.full, sp.now / 1048576)); }
     const extra = info.dataset.freed ? ' ' + info.dataset.freed : '';
     info.textContent = T(`Voices on this device now: ${mbText(sp.now / 1048576)}.`, `Giọng đọc trên máy này hiện có: ${mbText(sp.now / 1048576)}.`) + extra;
   }).catch(() => { });
