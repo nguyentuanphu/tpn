@@ -27,12 +27,14 @@ Each branch starts from `origin/integrate/v108`.
 
 The first account runs at most 5 at once: quality is still running, so this round adds 4.
 
-| Helper | Brief | Branch |
-|---|---|---|
-| creatures | `creatures-brief.md`: animals, pets, companions, farm animals | `work/v108e-creatures` |
-| nature | `nature-brief.md`: trees, flowers, plants, farm crops, My House furniture | `work/v108e-nature` |
-| vehicles | `vehicles-brief.md`: every vehicle the child sees or rides | `work/v108e-vehicles` |
-| places | `places-brief.md`: landmarks, buildings, stalls, food and festival props | `work/v108e-places` |
+| Helper | Account | Brief | Branch |
+|---|---|---|---|
+| creatures | first | `creatures-brief.md`: animals, pets, companions, farm animals | `work/v108e-creatures` |
+| vehicles | first | `vehicles-brief.md`: every vehicle the child sees or rides | `work/v108e-vehicles` |
+| nature | second | `nature-brief.md`: trees, flowers, plants, farm crops, My House furniture | `work/v108e-nature` |
+| places | second | `places-brief.md`: landmarks, buildings, stalls, food and festival props | `work/v108e-places` |
+
+**Split (owner, 6 Nov 2026 AEDT, pop-up):** places and nature run on the second account, to spare the first account's weekly limit.
 
 ## The shared kit (written by Release; use it, do not copy it)
 
@@ -77,7 +79,10 @@ Everything in `docs/cores/tasks/v108b/README.md` applies.
   - It faces the way the code shape faced.
   - Its size matches the code shape, so colliders and hit areas stay true (no floating, no sinking).
 - **Screenshots:** phone, tablet and computer, before and after, in `docs/world-models-v108e/<helper>/` (the owner's rule: designs go in the repo).
-- **Done:** write "ready for Release" at the top of your status file, then message Release (session_01SchVRv9GNVGszhptzXpYMs) with:
+- **Done:** write "ready for Release" at the top of your status file.
+  - **First account:** message Release (session_01SchVRv9GNVGszhptzXpYMs).
+  - **Second account:** chats there cannot message Release, so write the report in your last reply for the owner to pass on.
+  - The report gives:
   - what changed;
   - the checks, with pass or fail;
   - your branch and last commit;
