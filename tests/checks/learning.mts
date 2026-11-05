@@ -42,7 +42,8 @@ await check('hocvui', async () => {
   if (hub.tabs[0] !== 'hocvui' || hub.tabs.includes('learn')) fails.push('tabs ' + hub.tabs.join(','));
   const HEADS = ['Vietnamese', 'English', 'Maths', 'Shapes', 'Money and shopping', 'Science', 'Letters and reading'];
   if (JSON.stringify(hub.heads.filter(h => HEADS.includes(h))) !== JSON.stringify(HEADS) || !hub.heads.includes('Me and my family')) fails.push('corners ' + hub.heads.join(' | '));
-  if (!NEW.every(id => hub.plays.includes(id))) fails.push('corner games missing ' + NEW.filter(id => !hub.plays.includes(id)).join(','));
+  // (v1.08b games) the new Big thinkers games (th_) live in the Suy nghĩ giỏi tab, not Học vui
+  if (!NEW.filter(id => !id.startsWith('th_')).every(id => hub.plays.includes(id))) fails.push('corner games missing ' + NEW.filter(id => !id.startsWith('th_') && !hub.plays.includes(id)).join(','));
   for (const id of ['words', 'phonics', 'opposites', 'counting', 'sums', 'numline', 'shoppay']) if (!hub.plays.includes(id)) fails.push(id + ' is not in Học vui');
   if (hub.links.length) fails.push('link tiles are back: ' + hub.links.join(','));
   if (hub.plays.includes('firstwords')) fails.push('First Words (Chinese and Hindi) is in a Fun learning corner');

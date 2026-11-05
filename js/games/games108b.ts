@@ -70,6 +70,8 @@ function rounds(api, G: QuizGame): Round[] {
   const key = (o: Opt) => o[0];
   return distinct(n, () => {
     const x: Q = order[k++ % order.length];
+    // its own wrong answers first; a question with fewer than the level asks for is not padded (its own are the only
+    // safe ones); without its own, the other questions' right answers are the wrong ones
     const pool = (x.w && x.w.length ? x.w : G.qs.filter(o => o !== x).map(o => o.a)).filter(o => key(o) !== key(x.a));
     const wrong = mix(pool.filter((o, i) => pool.findIndex(z => key(z) === key(o)) === i)).slice(0, wrongN);
     const opts = new Map([x.a, ...wrong].map(o => [key(o), o]));
