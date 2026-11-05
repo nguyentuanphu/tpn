@@ -5,7 +5,8 @@ import {open,clear,noWelcome} from './harness.mts';
 // sure it is in open area") every place a child is set down, landed on in the running game with the shared code
 // (G.setDown, js/dropspot.ts): every map place and pin, every tap-to-talk and game place (the games' hosts, the shops, the
 // bus stops, the shrines, the school), and the end of every bus ride. Each landing must be open ground, with a way out
-// (4 of 8 directions), and the camera must see the child (a real ray through the scene, nothing big in the way).
+// (4 of 8 directions), and the camera must see the child (a real ray through the scene after the camera settles and
+// fades what is in the way, as in play; nothing big, over 1.2 m in two directions, in the way: a pole or a small sign is not).
 // A failure lists the place; out/flyaudit/rows.json has every landing.
 export async function flyAuditCheck(browser:Browser){
  const P=await open(browser,{w:1024,h:768,lang:'en',settings:{voice:false,sound:false,autoPack:false,online:false,countPlayers:false,busFares:true}});
@@ -17,7 +18,7 @@ export async function flyAuditCheck(browser:Browser){
    const targets:{kind:string,id:string,x:number,z:number,land:[number,number],face:{x:number,z:number}|null}[]=[];
    // a flight (G.travel) lands beside its place at (x + 4.5, z + 1), facing it; G.landBy (games, villagers, shops) at (x + 1.8, z + 1.4)
    for(const p of G.PLACES||[])if(Number.isFinite(p.x))targets.push({kind:'place',id:p.id,x:p.x,z:p.z,land:[p.x+4.5,p.z+1],face:{x:p.x,z:p.z}});
-   for(const it of G.interactables)if(Number.isFinite(it.x)&&(!it.visible||it.visible()))targets.push({kind:/^busstop_/.test(it.id)?'busstop':'tap',id:it.id,x:it.x,z:it.z,land:[it.x+1.8,it.z+1.4],face:{x:it.x,z:it.z}});
+   for(const it of G.interactables)if(Number.isFinite(it.x)&&(!it.visible||it.visible(h)))targets.push({kind:/^busstop_/.test(it.id)?'busstop':'tap',id:it.id,x:it.x,z:it.z,land:[it.x+1.8,it.z+1.4],face:{x:it.x,z:it.z}});
    // the end of a bus ride: beside the stop it was going to
    for(const [k,b] of (G.world.busStops||[]).entries())targets.push({kind:'busride',id:'stop'+k,x:b.x,z:b.z,land:[b.x+1.2,b.z+1.2],face:b.place?{x:b.place.x,z:b.place.z}:null});
    const mine=(o:any)=>{for(let n=o;n;n=n.parent)if(n===h.av.root)return true;return false;};
@@ -27,10 +28,13 @@ export async function flyAuditCheck(browser:Browser){
     const d=G.setDown(h,t.land[0],t.land[1],t.face);
     const ways=D.waysOut(G.world,d.x,d.z),stand=D.standable(G.world,d.x,d.z);
     const head=new THREE.Vector3(d.x,h.pos.y+1.1,d.z),cam=new THREE.Vector3(d.x+Math.sin(d.camYaw)*h.camDist,h.pos.y+4,d.z+Math.cos(d.camYaw)*h.camDist);
-    const dist=cam.distanceTo(head),ray=new THREE.Raycaster(cam,head.clone().sub(cam).normalize(),.1,dist-.4);
-    const hit=ray.intersectObjects(all,true).find((x:any)=>x.object.isMesh&&x.object.visible&&!mine(x.object)&&!x.object.isSprite&&!(x.object.material?.transparent&&x.object.material.opacity<.5)&&(()=>{const b=new THREE.Box3().setFromObject(x.object),s=b.getSize(new THREE.Vector3());return Math.max(s.x,s.y,s.z)>1.2&&Math.max(s.x,s.z)<60;})());
+    const dist=cam.distanceTo(head),ray=new THREE.Raycaster(cam,head.clone().sub(cam).normalize(),.1,dist-.4);ray.camera=h.cam;
+    const blocker=()=>ray.intersectObjects(all,true).find((x:any)=>x.object.isMesh&&x.object.visible&&!mine(x.object)&&!x.object.isSprite&&!(x.object.material?.transparent&&x.object.material.opacity<.5)&&(()=>{const b=new THREE.Box3().setFromObject(x.object),s=b.getSize(new THREE.Vector3());const d=[s.x,s.y,s.z].sort((a,b)=>b-a);return d[1]>1.2&&Math.max(s.x,s.z)<60;})());
+    // the game fades what stands between the camera and the child (G.seeThrough): let the camera settle as it does in play
+    let hit=blocker();
+    if(hit&&G.seeThrough){h.camPos.copy(cam);for(let k=0;k<40;k++){h.finish(.05,k*.05,G,0);G.seeThrough.step(.05);}ray.set(h.cam.position,head.clone().sub(h.cam.position).normalize());ray.far=h.cam.position.distanceTo(head)-.4;hit=blocker();}
     const moved=+Math.hypot(d.x-t.land[0],d.z-t.land[1]).toFixed(1);
-    rows.push({...t,at:[+d.x.toFixed(1),+d.z.toFixed(1)],moved,ways,stand,ok:d.ok,hit:hit?(hit.object.name||hit.object.parent?.name||'mesh'):null});
+    rows.push({...t,at:[+d.x.toFixed(1),+d.z.toFixed(1)],moved,ways,stand,ok:d.ok,hit:hit?(hit.object.name||hit.object.parent?.name||'mesh')+' at '+(()=>{const c=new THREE.Box3().setFromObject(hit.object).getCenter(new THREE.Vector3()),s=new THREE.Box3().setFromObject(hit.object).getSize(new THREE.Vector3());return [c.x,c.y,c.z,s.x,s.y,s.z].map(v=>v.toFixed(1)).join(',')+' cam '+[h.cam.position.x,h.cam.position.y,h.cam.position.z].map(v=>v.toFixed(1)).join(',')+' d '+hit.distance.toFixed(1);})():null});
     const why=[stand?'':'not open ground',ways>=D.WAYS_MIN?'':`only ${ways} ways out`,hit?`camera blocked by ${hit.object.name||'something big'}`:''].filter(Boolean);
     if(hit)covered++;
     if(why.length)bad.push(`${t.kind} ${t.id} (${Math.round(t.x)}, ${Math.round(t.z)}): ${why.join(', ')}`);

@@ -20,9 +20,9 @@ export async function spawnViewCheck(browser:Browser){
      const onScreen=(v:any)=>{const p=v.clone().project(cam);return p.z<1&&p.x>-.95&&p.x<.95&&p.y>-.95&&p.y<.95;};
      const dKid=cam.position.distanceTo(head),dOwl=cam.position.distanceTo(owlAt);
      // what the camera sees first on its way to the child: something big (over 1.2 m) and not the child
-     const ray=new THREE.Raycaster(cam.position,head.clone().sub(cam.position).normalize(),.1,dKid-.4);
+     const ray=new THREE.Raycaster(cam.position,head.clone().sub(cam.position).normalize(),.1,dKid-.4);ray.camera=cam;
      const mine=(o:any)=>{for(let n=o;n;n=n.parent)if(n===h.av.root)return true;return false;};
-     const cover=ray.intersectObjects(G.scene.children,true).filter((x:any)=>x.object.visible&&!mine(x.object)&&x.object.isMesh&&!(x.object.material&&x.object.material.transparent&&x.object.material.opacity<.5)).map((x:any)=>{const b=new THREE.Box3().setFromObject(x.object),sz=b.getSize(new THREE.Vector3());return {name:x.object.name||x.object.parent?.name||'mesh',size:+Math.max(sz.x,sz.y,sz.z).toFixed(1)};}).filter((x:any)=>x.size>1.2);
+     const cover=ray.intersectObjects(G.scene.children,true).filter((x:any)=>x.object.visible&&!mine(x.object)&&x.object.isMesh&&!(x.object.material&&x.object.material.transparent&&x.object.material.opacity<.5)).map((x:any)=>{const b=new THREE.Box3().setFromObject(x.object),sz=b.getSize(new THREE.Vector3());const d=[sz.x,sz.y,sz.z].sort((a,b)=>b-a);return {name:x.object.name||x.object.parent?.name||'mesh',size:+d[1].toFixed(1)};}).filter((x:any)=>x.size>1.2);
      return {kid:onScreen(head),owl:onScreen(owlAt),inFront:dOwl>dKid,cover:cover.slice(0,3),near:+Math.hypot(owl.x-h.pos.x,owl.z-h.pos.z).toFixed(1)};});
     rows.push({size:s.name,when,...r});
     const why=[r.kid?'':'the child is off the screen',r.owl?'':'the owl is off the screen',r.inFront?'':'the owl stands between the camera and the child',r.cover.length?`covered by ${JSON.stringify(r.cover)}`:''].filter(Boolean);
