@@ -250,7 +250,7 @@ function nav() {
   const settings=$('#setup-link');if(settings){settings.hidden=!SEC().some(s=>s.k==='setup');settings.title=T('Settings','Cài đặt');settings.setAttribute('aria-label',settings.title);settings.onclick=()=>go('setup');}
   $('#tabs').querySelectorAll<HTMLInputElement>('button').forEach(b => b.onclick = () => go(b.dataset.k));
   document.querySelectorAll<HTMLInputElement>('[data-t]').forEach(e => { const [en, vi] = e.dataset.t.split('|'); e.textContent = T(en, vi); });
-  document.querySelectorAll<HTMLInputElement>('.lang button[data-l]').forEach(b => { b.classList.toggle('on', b.dataset.l === LANG); b.onclick = () => { if (b.dataset.l === LANG || !leaveOk()) return; LANG = b.dataset.l; localStorage.setItem('studioLang', LANG); render(); }; });
+  document.querySelectorAll<HTMLInputElement>('.lang button[data-l]').forEach(b => { b.classList.toggle('on', b.dataset.l === LANG); b.onclick = () => { if (b.dataset.l === LANG || !leaveOk()) return; LANG = b.dataset.l; localStorage.setItem('studioLang', LANG); KEEP.clear(); SHOWN = { hash: '', page: '', at: 0 }; render(); }; });
   if ($('#pub')) $('#pub').onclick = () => go('publish');
   if ($('#reload')) $('#reload').onclick = () => { if (leaveOk()) { forgetReads(); render(true); } };
   head();
