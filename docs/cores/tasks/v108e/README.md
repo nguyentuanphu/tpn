@@ -32,9 +32,20 @@ The first account runs at most 5 at once: quality is still running, so this roun
 | creatures | first | `creatures-brief.md`: animals, pets, companions, farm animals | `work/v108e-creatures` |
 | vehicles | first | `vehicles-brief.md`: every vehicle the child sees or rides | `work/v108e-vehicles` |
 | nature | second | `nature-brief.md`: trees, flowers, plants, farm crops, My House furniture | `work/v108e-nature` |
+| water | first | `water-brief.md`: every river, lake and pond shallow (0.4-0.8 m) and friendly | `work/v108e-water` |
+| faces | first | `faces-brief.md`: living faces (soft eyes with lids, blinking, looking, smiling); Part 2: high-detail friends, rim light, outline, close-ups | `work/v108e-faces` |
+| villagers | second | `villagers-brief.md`: the 11 named villagers as real models, crowds refined | `work/v108e-villagers` |
 | places | second | `places-brief.md`: landmarks, buildings, stalls, food and festival props | `work/v108e-places` |
 
-**Split (owner, 6 Nov 2026 AEDT, pop-up):** places and nature run on the second account, to spare the first account's weekly limit.
+**Split (owner, 6 Nov 2026 AEDT, corrected):**
+- **The second account** runs Blender (A), nature and places.
+- **The first account** runs, at most 5:
+  - quality;
+  - creatures: animals round 2;
+  - vehicles: round 2 and the Season 2 piers;
+  - water: shallow water;
+  - faces: faces, then high-detail friends (Part 2), then the 11 villagers (`villagers-brief.md`).
+- Each first-account helper finishes and pushes a part, and messages Release, before starting the next part on the same branch.
 
 ## The shared kit (written by Release; use it, do not copy it)
 
@@ -78,6 +89,10 @@ Everything in `docs/cores/tasks/v108b/README.md` applies.
   - Every model is made by our scripts; no downloaded models.
   - Things a child sees keep English and Vietnamese names.
   - Do not move places on the map; models sit where the code shapes stand.
+- **A new design, not a rebuild (Release, 6 Nov, after the first vehicles round):**
+  - Each model is a new picture-book design: soft, rounded, detailed, in the style of the four friends and the gallery (`docs/characters-v108/gallery/`, `tools/blender/vehicles.py`).
+  - Rebuilding the code shape with softer shading is not enough. The before and after screenshots must show a clear change.
+  - Keep the code shape's footprint and height, so the colliders, seat points and checks stay true.
 - **Check every swap:**
   - The model stands on the ground.
   - It faces the way the code shape faced.

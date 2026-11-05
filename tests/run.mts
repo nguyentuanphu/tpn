@@ -97,6 +97,9 @@ await check('festivalpack', async () => (await import('./festival-pack.mts')).fe
 // (v1.08e vehicles) every vehicle and boat as a Blender model, swapped in near the child: in place, wheels turning, riders
 // seated on the model's points, the code shape kept when blocked (tests/world-vehicles.mts)
 await check('worldvehicles', async () => (await import('./world-vehicles.mts')).worldVehiclesCheck(b));
+// (v1.08e creatures) the animals, pets and companions made in Blender: they load, stand at the code shape's size on the
+// ground, play their clips, swap in near the child, and the code shapes stay when the models are blocked
+await check('worldcreatures', async () => (await import('./world-creatures.mts')).worldCreaturesCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

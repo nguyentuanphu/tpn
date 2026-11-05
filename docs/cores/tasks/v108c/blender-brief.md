@@ -43,3 +43,36 @@ In `js/film.ts`:
 
 ## Checks at the end
 `films`, `stories`, `tales`, `talecostume`, `perf`, `startup`, `types`, `noemoji`, and a new `blenderfilms` check (each of the five opens, plays, pauses for help, and falls back offline).
+
+## Update from Release (6 Nov 2026 AEDT): faces with feeling (the owner's decision)
+
+The owner says the new friends' and the villagers' faces look stiff and scary: eyes wide open all round, never closing.
+
+**The new style for every face, everywhere:** soft eyes with lids.
+- The upper lid covers part of the eye, and little white shows.
+- The iris is big, with two sparkles.
+- The cheeks have a pink blush.
+- Every face blinks, looks at whoever it talks to, smiles, and changes with its mood: happy, surprised, curious, excited, sad, shy.
+
+**For your work:**
+1. **The costume kit and the tale people:**
+   - Use the soft eyes with lids and the blush on every face.
+   - No round staring eyes.
+   - Every person keeps the eyes at their own size: grown-ups, grandparents, children.
+2. **The story pages:**
+   - Each page shows the feeling of its moment: Tấm crying by the well, Cám sly, the king surprised, Cuội homesick on the moon.
+   - Use the eyes, brows and mouth, not only the pose.
+   - Nobody stares straight out with wide eyes.
+3. **The five animated films:**
+   - Every character blinks every 2-6 seconds.
+   - Characters look at whoever is speaking.
+   - Their faces change with the story.
+4. **The in-game film polish (`js/film.ts`):**
+   - Keep the lips that follow the words.
+   - Use the faces helper's moods and blinks, so film faces match the game.
+
+**The faces helper (first account, branch `work/v108e-faces`)** owns the face drawings and the blink code for the friends and the villagers. Its brief is `docs/cores/tasks/v108e/faces-brief.md`, its notes are `docs/cores/tasks/v108e/faces.md`, and its Blender setup is in `tools/blender/` on its branch. Use its eye shapes and colours so the films and pages match the game. Pull its branch to see them, but do not merge it into yours: Release merges both.
+
+**The 11 named villagers** become real models, made by the villagers helper (`docs/cores/tasks/v108e/villagers-brief.md`). Once they exist, your films and pages can use them in place of the code-built people.
+
+**Redo** the story pages and costume renders you already made that have the old eyes, and say so in your status file.
