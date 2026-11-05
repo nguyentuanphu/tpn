@@ -54,6 +54,7 @@ const FILES = [
   'js/content/friends.js', 'js/ui/friends-row.js', 'js/ui/friends-ui.js', 'js/friend-model.js', 'js/friend-view.js',
   'vendor/GLTFLoader.js', 'vendor/BufferGeometryUtils.js', 'vendor/SkeletonUtils.js', 'vendor/meshopt_decoder.module.js',
   'models/finn.glb', 'models/sol.glb', 'models/clara.glb', 'models/lumi.glb',
+  'models/finn-hd.glb', 'models/sol-hd.glb', 'models/clara-hd.glb', 'models/lumi-hd.glb', // (v1.08e faces part 2) high-detail friends
   // (written out one by one: tools/bundle.mts reads the quoted names of the list)
   'icons/friends/finn-f.webp', 'icons/friends/finn-q.webp', 'icons/friends/finn-s.webp', 'icons/friends/finn-face.webp',
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
@@ -138,8 +139,8 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
   }
   if (url.origin !== location.origin) return;
   // Hashed chunks are immutable. An open previous-version game may still need its own lazy chunks.
-  // (v1.08e faces, part 2) a friend's high-detail model (models/<id>-hd.glb, about 0.5 MB) is not in the list above, so a
-  // device never downloads all four: the one the child's own friend uses is kept the first time it loads, for offline play
+  // (v1.08e faces, part 2) a friend's high-detail model (models/<id>-hd.glb, about 0.5 MB): from the saved copy, or kept the
+  // first time it loads (also when the offline list above has not finished saving it)
   if (/\/models\/[a-z]+-hd\.glb$/.test(url.pathname)) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   if (url.pathname.includes('/bundle/')) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   // the voice pack: kept in its own cache (it survives game updates) and stored as lines are played

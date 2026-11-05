@@ -21,7 +21,7 @@ const gParts = {
   head: new THREE.SphereGeometry(.5, 32, 24),
   hairCap: new THREE.SphereGeometry(.54, 32, 18, 0, Math.PI * 2, 0, Math.PI * .55),
   hairBack: new THREE.SphereGeometry(.53, 24, 18, Math.PI, Math.PI, 0, Math.PI * .8),
-  lock: new THREE.SphereGeometry(.15, 14, 10), bun: new THREE.SphereGeometry(.17, 12, 10), tie: new THREE.TorusGeometry(.1, .035, 8, 16),
+  lock: new THREE.SphereGeometry(.15, 14, 10), lockS: new THREE.SphereGeometry(.15, 8, 6), // (v1.08e: lockS, the small locks all round, fewer triangles) bun: new THREE.SphereGeometry(.17, 12, 10), tie: new THREE.TorusGeometry(.1, .035, 8, 16),
   spike: new THREE.ConeGeometry(.14, .4, 6),
   body: new THREE.CylinderGeometry(.27, .36, .62, 16),
   skirt: new THREE.ConeGeometry(.55, .55, 18, 1, true),
@@ -60,17 +60,17 @@ export function drawDefaultFace(x, S, look, mood = 'smile') {
 // 'lookL' and 'lookR' (the irises to the person's own left or right: the viewer's right or left), 'happy' (curved eyes, an open smile), 'o' (surprised: the lids lift),
 // 'curious' (one brow up), 'sad' (the lids droop at the outer corner, a small frown), 'shy' (eyes down, rosy cheeks),
 // 'excited' (wide bright eyes, an open smile) and 'sleep' (closed, a flat mouth, for the films).
-const LID = { smile: .58, lookL: .58, lookR: .58, curious: .66, o: .86, excited: .74, sad: .36, half: -.2 };
+const LID = { smile: .58, lookL: .58, lookR: .58, curious: .66, o: .86, excited: .74, sad: .36 }; // (Release, 6 Nov: a heavy half-open lid looked bored; 'half' is now a flatter closing lid, inside a blink only)
 export function drawFeatures(x, S, look, mood = 'smile') {
   x.save(); x.lineCap = 'round'; x.lineJoin = 'round';
   const ey = .565, dot = (cx, cy, r) => { x.beginPath(); x.arc(cx * S, cy * S, r * S, 0, Math.PI * 2); x.fill(); };
-  const closed = mood === 'blink' || mood === 'happy' || mood === 'shy' || mood === 'sleep';
+  const closed = mood === 'blink' || mood === 'half' || mood === 'happy' || mood === 'shy' || mood === 'sleep';
   [.375, .625].forEach(cx => {
     const out = cx < .5 ? -1 : 1;
     if (closed) {
       x.strokeStyle = '#2b1a14'; x.lineWidth = S * .024; x.beginPath();
       if (mood === 'happy') { x.moveTo(S * (cx - .065), S * (ey + .02)); x.quadraticCurveTo(S * cx, S * (ey - .055), S * (cx + .065), S * (ey + .02)); }
-      else { const dy = mood === 'shy' ? .02 : 0; x.moveTo(S * (cx - .072), S * (ey + dy)); x.quadraticCurveTo(S * cx, S * (ey + dy + .045), S * (cx + .072), S * (ey + dy)); }
+      else { const dy = mood === 'shy' ? .02 : mood === 'half' ? -.012 : 0, bow = mood === 'half' ? .018 : .045; x.moveTo(S * (cx - .072), S * (ey + dy)); x.quadraticCurveTo(S * cx, S * (ey + dy + bow), S * (cx + .072), S * (ey + dy)); } // (half: a flatter lid, closing)
       x.stroke();
       if (mood !== 'happy') { x.beginPath(); x.moveTo(S * (cx + out * .072), S * ey); x.lineTo(S * (cx + out * .092), S * (ey - .014)); x.stroke(); }
     } else {
@@ -345,6 +345,9 @@ export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvat
   // (v1.08b) felt-look hair: the locks in front a shade lighter than the cap, like the friends' felt hair
   const hairL = toon('#' + new THREE.Color(look.hair).offsetHSL(0, .02, .045).getHexString(), { roughness: .5 });
   for (let i = 0; i < 5; i++) { const a = (i - 2) * .32, l = new THREE.Mesh(G.lock, hairL); l.scale.set(.9, 1.25, .55); l.position.set(Math.sin(a) * .42, .32 - Math.abs(i - 2) * .03, Math.cos(a) * .33); l.rotation.set(-.75, a, (i - 2) * -.25); head.add(l); }
+  // (v1.08e faces, Release: the crowd's hair read as a flat helmet) soft locks all round the sides and the back, in two
+  // shades, so the hair has the friends' felt shape (merged with the head: no extra draws)
+  for (let i = 0; i < 11; i++) { const a = 1.05 + i * (2 * Math.PI - 2.1) / 10, l = new THREE.Mesh(G.lockS, i % 2 ? hairL : hairM); l.scale.set(1, 1.15, .6); l.position.set(Math.sin(a) * .49, .06 + (i % 2) * .04, Math.cos(a) * .46 - .03); l.rotation.set(-.35 * Math.cos(a), a, 0); head.add(l); }
   // (v1.08) long hair and the ponytail hang from their own pivot, so they swing as the child moves
   const hang = (x, y, z) => { const g = new THREE.Group(); g.position.set(x, y, z); head.add(g); A.tail = g; return g; };
   if (look.hairStyle === 'long') { const hb = new THREE.Mesh(G.hairBack, hairM); hb.scale.set(1.04, 1.6, 1.05); hb.position.y = -.43; hang(0, .15, 0).add(hb); }
