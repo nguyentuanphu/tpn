@@ -31,10 +31,36 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
 - `js/friend-model.ts`: the new moods map to the friends' new faces (`face-half`, `face-lookL`, `face-lookR`); a model
   made before them shows its nearest face.
 
+## 3. The four friends (done)
+
+- `tools/blender/lumi.py` `face()`: the same soft eyes with lids in Blender: the eye white, iris, highlights and pupil
+  stop at an arched lid line (the decals are cut by `under()`), a dark lash line along the lid (heavier at the outer
+  corner; girls keep three curled lashes, boys get one small flick), a bigger iris, two sparkles, pink cheeks for
+  everyone. Three new faces: `half`, `lookL`, `lookR` (eleven in all). `game-light.py`: each face 420 triangles (was
+  280, which made the eye edges faceted).
+- `models/finn.glb`, `sol.glb`, `clara.glb`, `lumi.glb` rebuilt (`node tools/make-friends.mts`, Blender 4.2.9):
+  107, 108, 109, 130 KB; 8,040 / 8,024 / 8,026 / 13,880 triangles shown (limits 9,000 and 14,500).
+- `js/friend-view.ts`: the Welcome cards' turning friend blinks (half, closed, half).
+- Moments: "Say hello" to a villager (`js/villagertalk.ts`): the villager smiles shyly, the child's friend is happy;
+  a secret found (`js/secrets.ts`): the child's friend is surprised; cheering, waving: happy; dancing: excited.
+
+## The style, for the villagers helper (shared setup)
+
+- Eyes: `face()` in `tools/blender/lumi.py` (the `op` lid heights per mood, `lidz()` the arch, `under()` cuts any decal
+  at the lid). The painted 2D version for code-built people is `drawFeatures` in `js/avatar.ts` (`LID`).
+- Moods every model needs (mesh collection and material `face-<mood>`): smile, blink, happy, curious, surprised, sad,
+  shy, excited, half, lookL, lookR. `lookL` is the person's own left (the viewer's right).
+
 ## Checks
 
 (to come)
 
+## Owner's decisions
+
+- 6 Nov 2026 AEDT (pop-up, in this chat): "Everything still need better refinement" → next is Part 2 (high-detail
+  friends, rim light, outline and deeper shading for every person), then the 11 villagers.
+
 ## Assumed (owner can change)
 
-(none yet)
+- "Sad when a game is lost": the learning games never lose (the gentle rule: nothing lost, no timers), so no game end
+  shows sad; `feel(A, 'sad')` is there for stories and any game that has a loss.
