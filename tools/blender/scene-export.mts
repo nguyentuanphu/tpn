@@ -73,7 +73,9 @@ for (let k = 0; k < n; k++) {
           e.m.push(Array.from(o.matrixWorld.elements)); e.vis.push(shown(o) ? 1 : 0);
         });
         // talk: 1 while this actor is the one speaking (the film gives the lips to the last one who talked), so the others look at them
-        p.actors.forEach((a: any, i: number) => { actors[i].m.push(Array.from(a.o.matrixWorld.elements)); actors[i].state.push(shown(a.o) && a.o.scale.x > .05 ? a.state : 'hidden'); actors[i].mood.push(a._face || a.mood); actors[i].talk.push(a.lip ? 1 : 0); });
+        // (an actor who joins the page partway, e.g. rongtien page 3, gets its place from then on, hidden before)
+        p.actors.forEach((a: any, i: number) => { if (!actors[i]) { const h = Array.from(a.o.matrixWorld.elements); actors[i] = { look: a.look, kit: a.look.kit || null, m: Array(f).fill(h), state: Array(f).fill('hidden'), mood: Array(f).fill(a.mood || 'smile'), talk: Array(f).fill(0) }; }
+          actors[i].m.push(Array.from(a.o.matrixWorld.elements)); actors[i].state.push(shown(a.o) && a.o.scale.x > .05 ? a.state : 'hidden'); actors[i].mood.push(a._face || a.mood); actors[i].talk.push(a.lip ? 1 : 0); });
         cams.push([p.camPos.toArray(), p.camLook.toArray()]);
       }
       W.__svFilmRate = 1;
