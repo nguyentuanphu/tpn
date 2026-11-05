@@ -10,7 +10,8 @@ import { pic } from './art.js';
 import { THREE, sprite, P, merge, toonVC, outline } from './gfx.js';
 import { T } from './i18n.js';
 import { gameOpen } from './games/frame.js';
-import { lumiSay } from './lumi.js';
+// (v1.08d valley, PERF-001) Lumi's speech bubble and the story theatre load when they are first needed, not in the first download
+const lumiSay = (line: [string, string]) => { void import('./lumi.js').then(L => L.lumiSay(line)).catch(() => { }); };
 import { LUMI_SOON, LUMI_BYE, playTimePhase, byeNow } from './content/lumi.js';
 import { say, sayIn } from './voice.js';
 import { SFX } from './audio.js';
@@ -21,7 +22,7 @@ import { LEARN } from './words2.js';
 import { el, esc, dist2, shuffle } from './util.js';
 import { modal } from './ui.js';
 import { MORE_TALES } from './talesdata.js';
-import { openTheatre } from './tales.js';
+const openTheatre = (...a: Parameters<typeof import('./tales.js').openTheatre>) => import('./tales.js').then(m => m.openTheatre(...a));
 import { buildAvatar } from './avatar.js';
 import { registerName, onLang } from './i18n.js';
 

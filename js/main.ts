@@ -75,7 +75,7 @@ import { createCoop } from './coop.js';
 import { createTwinChests } from './twinchests.js';
 import { createClaims } from './claims.js';
 import { createNetGames, onlineDef, ONLINE_GAMES } from './netgames.js';
-import { createSimple, wantsSimple } from './simple.js';
+import { createSimple, wantsSimple, warmLumi } from './simple.js';
 import { id as makeId } from './core/ids.js';
 import { createCities } from './cities.js';
 import { createChatter, LINES as CHAT_LINES } from './chatter.js';
@@ -1120,11 +1120,13 @@ resize();
 // (v1.08d valley, PERF-001: the first download holds only what the child needs to start moving) the parts below are made
 // after the start, one at a time when the page has a quiet moment (afterStart, above)
 afterStart(() => import('./scrollhelp.js'), m => m.installScrollHelp());
+afterStart(() => warmLumi(), () => { }); // (v1.08d valley) Lumi's welcome, ready before the Simple screen first asks for it (js/simple.ts)
 // (Round U) every villager answers a tap with a fact or a saying of their region (js/villagertalk.js)
 afterStart(() => Promise.all([import('./villagertalk.js'), import('./dayplan.js')]), ([V, D]) => { V.createVillagerTalk(G); D.createDayPlan(G); });   // (Round U) villagers' day plan
 afterStart(() => import('./pricetags.js'), m => m.createPriceTags(G));
 afterStart(() => import('./jobs.js'), m => m.createJobs(G));
 afterStart(() => import('./wayfind.js'), m => m.createWayfind(G));   // (Round U) "Where is…?" sparkles
+setTimeout(() => { void import('./s2au.js').then(m => m.createS2au(G)).catch(e => console.warn('s2au', e)); }, 2000);   // (v1.08d s2au) Season 2, Australia: after the start
 G.openWhere = i => featureOn('wayfind', false) && G.wayfind && G.wayfind.open(i);
 onLive(() => { if (!featureOn('wayfind',false)) { G.wayfind?.stop(true); document.querySelectorAll<HTMLElement>('.wherepick').forEach(m => m.querySelector<HTMLElement>('.x')?.click()); } });
 afterStart(() => import('./animalhomes.js'), m => m.createAnimalHomes(G));   // (Round U) animals with homes   // (Round U) a job board in every place   // (Round U) a coin-picture price over every food stall

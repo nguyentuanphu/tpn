@@ -89,7 +89,7 @@ await check('shop', async () => {
   const r = await P.page.evaluate(async () => {
     const G = __sv, h = G.heroes[0], p = h.profile, w = t => new Promise(r => setTimeout(r, t)), S = await import('/js/state.js'), W = await import('/js/world.js');
     const C = (await import('/js/custom.js')).CUSTOM, SH = await import('/js/content/shop.js'), { buildAvatar } = await import('/js/avatar.js');
-    const out = {}, sp = G.shop.spot, rd = W.roadDist(sp.x, sp.z), M = W.MARKET;
+    const out: Record<string, any> = {}, sp = G.shop.spot, rd = W.roadDist(sp.x, sp.z), M = W.MARKET;
     out.spot = [Math.round(sp.x), Math.round(sp.z)]; out.offRoad = !rd.road || rd.d > rd.road.w / 2 + 1.5;
     out.nearMarket = Math.hypot(Math.max(M.x0 - sp.x, 0, sp.x - M.x1), Math.max(M.z0 - sp.z, 0, sp.z - M.z1)) < 40;
     out.dry = W.heightAt(sp.x, sp.z) > W.WATER + .3; out.tap = !!G.interactables.find(i => i.id === 'shop_clothes');
@@ -171,7 +171,7 @@ await check('shop', async () => {
   if (!r.offBag || !r.offStall || !r.offWard) bad.push('the Studio switch did not put the old Bag and wardrobe back ' + JSON.stringify(r));
   if (errs.length) bad.push(...errs.slice(0, 2));
   if (bad.length) throw new Error(bad.join('; '));
-  return `the shop at ${r.spot} by the market, off the road; the Bag opens the backpack and the Shop tab right after Backpack opens the shop without travel; 9 picture tabs, coin prices, 64 px for under-5s; bought ${r.boughtId}, could not buy without coins; the wardrobe; worn things kept; every piece drawn in 3D (at most ${Math.max(...Object.values(r.drawn))} extra parts); the switch puts the old Bag back`;
+  return `the shop at ${r.spot} by the market, off the road; the Bag opens the backpack and the Shop tab right after Backpack opens the shop without travel; 9 picture tabs, coin prices, 64 px for under-5s; bought ${r.boughtId}, could not buy without coins; the wardrobe; worn things kept; every piece drawn in 3D (at most ${Math.max(...(Object.values(r.drawn) as number[]))} extra parts); the switch puts the old Bag back`;
 });
 
 // (round S) surprises: at most 3 a session, only when free, never missed (they follow the child), each gives a sticker
@@ -948,7 +948,7 @@ await check('newfriends', async () => {
   // On a phone (both ways), a tablet and a computer every step fits on one screen with 44 px buttons and 16 px text.
   const rows = [], bad = [];
   for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['phone-land', 844, 390, true], ['tablet', 1024, 768, true], ['computer', 1280, 800, false]]) {
-    const P = await open(b, { w, h, touch, play: false, pre: () => { localStorage.setItem('sv2_profiles', '[]'); } });
+    const P = await open(b, { w: w as number, h: h as number, touch: touch as boolean, play: false, pre: () => { localStorage.setItem('sv2_profiles', '[]'); } });
     await P.page.click('.screen.title .press', { force: true }); await P.page.waitForSelector('.screen.who');
     await P.page.click('.who .make'); await P.page.waitForSelector('.modal.friendpick .fr-name');
     const fit = () => P.page.evaluate(() => { const c = document.querySelector('.modal.friendpick .card'), r = c.getBoundingClientRect(), small = [], tiny = [];
@@ -1072,17 +1072,17 @@ await check('friendmodel', async () => {
   const fs2 = await import('fs'), sizes = ['finn', 'sol', 'clara', 'lumi'].map(id => fs2.statSync(new URL(`../../models/${id}.glb`, import.meta.url)).size);
   const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
-    const A = await import('/js/avatar.js'), THREE = (await import('/js/gfx.js')).THREE, out = {};
+    const A = await import('/js/avatar.js'), THREE = (await import('/js/gfx.js')).THREE, out: Record<string, any> = {};
     for (const id of ['finn', 'sol', 'clara', 'lumi']) {
       const ok = await A.loadFriendModels(id), av = A.buildAvatar({ set: id === 'clara' || id === 'lumi' ? 'girl' : 'boy', friend: id, skin: '#b47a55', hat: 'cap' });
       const m = av.model, meshes = []; let skin = null, faces = 0, tris = 0;
-      m.obj.traverse(o => { if (o.isMesh) { meshes.push(o); if (/^skin$/.test(o.material.name)) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
+      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); if (/^skin$/.test(o.material.name)) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
       // a turn of the code person's arm and knee shows on the model's bones; a mood shows the matching face
-      const bone = n => { let x = null; m.obj.traverse(o => { if (o.isBone && o.name === n) x = o; }); return x; }, q0 = new THREE.Quaternion(), q1 = new THREE.Quaternion();
-      av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q0); av.armL.rotation.x = -1.2; av.life = av.life || {}; av.life.mood = 'happy'; av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q1);
+      const bone = n => { let x = null; m.obj.traverse((o: any) => { if (o.isBone && o.name === n) x = o; }); return x; }, q0 = new THREE.Quaternion(), q1 = new THREE.Quaternion();
+      av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q0); av.armL.rotation.x = -1.2; av.life = av.life || ({} as typeof av.life); av.life.mood = 'happy'; av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q1);
       const turned = +q0.angleTo(q1).toFixed(2), face = meshes.filter(o => /^face-/.test(o.material.name) && o.visible).map(o => o.material.name).join();
       meshes.filter(o => o.visible && (o.material.name !== 'skin-grip')).forEach(o => { tris += o.geometry.index.count / 3; });
-      const hat = av.rig.getObjectByProperty('isMesh', true) && (() => { let n = 0; av.rig.traverse(o => { if (o.isMesh && !o.isSkinnedMesh && o.parent && o.parent !== m.obj) n++; }); return n; })();
+      const hat = av.rig.getObjectByProperty('isMesh', true) && (() => { let n = 0; av.rig.traverse((o: any) => { if (o.isMesh && !o.isSkinnedMesh && o.parent && o.parent !== m.obj) n++; }); return n; })();
       out[id] = { ok, skin, faces, turned, face, tris, draws: meshes.filter(o => o.visible).length, hat };
     }
     // the child in the valley plays with the model once it has arrived

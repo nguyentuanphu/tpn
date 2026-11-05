@@ -23,7 +23,11 @@ import { T, both } from './i18n.js';
 import { el, esc } from './util.js';
 import { SFX } from './audio.js';
 import { say } from './voice.js';
-import { lumiWelcome, lumiNews } from './lumi.js';
+// (v1.08d valley, PERF-001) Lumi's welcome and news (js/lumi.ts) load the first time the Simple screen opens, not in the first download
+let L: typeof import('./lumi.js') | null = null;
+const lumi = () => L ? Promise.resolve(L) : import('./lumi.js').then(m => (L = m));
+/** (v1.08d valley) loads Lumi's file ahead (js/main.ts, after the start), so the Simple screen greets at once */
+export const warmLumi = () => lumi();
 import { pic, moreArt, moreArtReady } from './art.js';
 import { saveProfiles, reduceMotion } from './state.js';
 import { GAMES, gameOpen } from './games/frame.js';
@@ -386,7 +390,8 @@ export function createSimple(G) {
     const who = hero().profile.name, now = totalStars(), owl = m.querySelector('.sp-owl');
     if (lastStars[who] != null && now > lastStars[who] && owl) { owl.classList.add('cheer'); say('Well done! You won a new star!', 'Giỏi lắm! Con được thêm một ngôi sao!'); }
     // (v1.08b quality) Lumi is the guide of the Simple screen: her welcome for a new child, then the week's news once a week
-    else if (!lumiWelcome(hero().profile) && !lumiNews(hero().profile)) { const x = tabOf(tab); say(x.say[0], x.say[1]); }
+    else { const p = hero().profile, greet = (Lm: typeof import('./lumi.js')) => { if (m.hidden) return; if (!Lm.lumiWelcome(p) && !Lm.lumiNews(p)) { const x = tabOf(tab); say(x.say[0], x.say[1]); } };
+      if (L) greet(L); else void lumi().then(greet).catch(() => { const x = tabOf(tab); say(x.say[0], x.say[1]); }); }
     lastStars[who] = now;
   }
   function hide() { if (m) { const sc = m.querySelector('.sp-scroll'); if (!m.hidden) kept = { top: sc.scrollTop, left: sc.scrollLeft }; m.hidden = true; } document.body.classList.remove('simple-on'); G.paused = false; }

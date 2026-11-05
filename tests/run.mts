@@ -69,6 +69,15 @@ await check('finale', async () => (await import('./story-v108b.mts')).chapterKit
 await check('talecostume', async () => (await import('./story-v108b.mts')).taleCostumeCheck());
 await check('installgift', async () => (await import('./story-v108b.mts')).installGiftCheck(b));
 
+// (v1.08d s2au) Season 2, Australia: the regions, their games and chapters (tests/s2au.mts)
+await check('s2au', async () => (await import('./s2au.mts')).s2auCheck(b));
+await check('s2aureef', async () => (await import('./s2au.mts')).s2auGamesCheck(b, 'gbr'));
+await check('chapter10', async () => (await import('./s2au.mts')).s2auChapterCheck(b, 'ch10'));
+await check('s2autas', async () => (await import('./s2au.mts')).s2auGamesCheck(b, 'tas'));
+await check('chapter11', async () => (await import('./s2au.mts')).s2auChapterCheck(b, 'ch11'));
+await check('s2auperth', async () => (await import('./s2au.mts')).s2auGamesCheck(b, 'perth'));
+await check('chapter12', async () => (await import('./s2au.mts')).s2auChapterCheck(b, 'ch12'));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

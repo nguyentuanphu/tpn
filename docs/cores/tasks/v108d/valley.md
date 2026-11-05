@@ -134,3 +134,17 @@ Built later, a part places its things round what already stands, so a few land e
   (tap targets, colliders), so rebuilding them safely needs each builder changed.
 - More parts can join `js/areas.ts` one by one (each needs a check that nothing at the start reads what it makes): the
   region sites (read by the name tags and passport at the start), the children playing (hosts of the folk games boards).
+
+## Round 2 (after Release's merge, 5 Nov 2026 AEDT)
+Release merged this branch with the quality and games work; on the combined code the first download was 1033 KB
+against the 1025 KB limit. `origin/integrate/v108` (91c01e198) merged in here.
+- What came back into the first download: Lumi (`js/lumi.ts`, `js/content/parents.ts` through it), read by the Simple
+  screen and by `js/learn.ts`; and `js/tales.ts` with `js/cartoon.ts`, read by `js/learn.ts`.
+- `js/learn.ts`: Lumi's speech bubble and the story theatre load when they are first needed.
+- `js/simple.ts`: Lumi's welcome and news use her file at once when it is loaded (`warmLumi`, called by `js/main.ts`
+  just after the start), else load it first.
+- Result: **1021 KB** on the combined code (check `startup`: 1021 KB, ready 27.2 s on a machine x2.29 slower).
+- Checks: pass startup, boot, lighterload, preload (list refreshed), simple, parents, tales, lumiguide (failed before
+  `warmLumi`: the first greeting came about 1 s late on the slow test page).
+- **types fails, not from this branch:** new findings in `tests/checks/play.mts`, `tests/checks/screens.mts`,
+  `tests/checks/voice.mts`, `tests/story-v108b.mts`, files this branch does not change (they came with the merge).
