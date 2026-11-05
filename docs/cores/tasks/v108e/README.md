@@ -82,7 +82,8 @@ Everything in `docs/cores/tasks/v108b/README.md` applies.
   - `startup`: first download 1025 KB or less.
   - Many copies of one model are one InstancedMesh. Far things stay the code shape or a still copy.
 - **Offline list:**
-  - Every new `js/` file and every `models/world/*.glb` goes into the `FILES` list in `sw.ts`.
+  - Every new `js/` file goes into the `FILES` list in `sw.ts`.
+  - The `models/world/*.glb` files do **not** (Release, 6 Nov): the service worker keeps each one in the `sv-models-<version>` cache the first time a child comes near it, and the code shapes stand in until then.
   - On 6 Nov, 66 files from earlier helpers were missing, which broke the `offline` and `swupdate` checks.
   - Never write an apostrophe inside that list, comments included: `tools/bundle.mts` reads the quoted names.
 - **Our own art only:**
