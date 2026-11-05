@@ -63,6 +63,8 @@ def hd():
         with bpy.context.temp_override(active_object=objs[0], selected_editable_objects=objs, selected_objects=objs):
             bpy.ops.object.join()
         h = objs[0]; h.name = WHO + '-' + key + '_src'; high[key] = h
+        if key == 'hat':   # (a hat's shell can face inward: the bake's rays then start inside it and come out dark)
+            bm = bmesh.new(); bm.from_mesh(h.data); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(h.data); bm.free(); h.data.update()
         l = h.copy(); l.data = h.data.copy(); l.name = WHO + '-' + key; h.users_collection[0].objects.link(l); low[key] = l
         _thin(l, HD_FACE if key.startswith('face-') else HD_BUDGET.get(key, 900))
         print('hd:', key, _tris(h), '->', _tris(l))

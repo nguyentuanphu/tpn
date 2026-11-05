@@ -35,6 +35,7 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
         // (v1.08e faces, part 2) a high-detail model's parts carry their painted picture (m.map) instead of corner colours
         if (!mats.has(m)) mats.set(m, name.startsWith('skin') ? new THREE.MeshToonMaterial({ name, color: '#f6c7a5', gradientMap: bands })
           : m.map ? new THREE.MeshToonMaterial({ name, map: m.map, gradientMap: bands }) : new THREE.MeshToonMaterial({ name, vertexColors: true, gradientMap: bands }));
+        if (/^cloth-hat/.test(name)) mats.get(m).side = THREE.DoubleSide; // (v1.08e villagers) a hat is a thin shell: both sides drawn
         o.material = personLook(mats.get(m)); }); // (v1.08e faces, part 2) the people's soft ramp and rim light
       ready[id] = { scene: g.scene, clone };
       return true;
@@ -72,7 +73,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
   // (v1.08e faces, part 2) the same thin ink outline as the code people, bent by the model's bones (not on the faces);
   // each follows its part's visibility (the item in the hand, the riding hands) and hides far away with the others
   const lines: [THREE.Object3D, THREE.Object3D][] = [];
-  obj.traverse((o: any) => { if (o.isSkinnedMesh && !o.userData.outline && !/^face-/.test(o.material.name || '')) lines.push([o, null]); });
+  obj.traverse((o: any) => { if (o.isSkinnedMesh && !o.userData.outline && !/^(face-|cloth-hat)/.test(o.material.name || '')) lines.push([o, null]); }); // (no shell behind a thin hat)
   lines.forEach(l => { l[1] = outlineSkinned(l[0], .009); });
   if (Array.isArray(A.outlines)) A.outlines.push(...lines.map(l => l[1]));
   // the rest turn of each joint, the code person's and the model's (both in the rig's space)
