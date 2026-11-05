@@ -9,6 +9,16 @@ const worker = self;
 // saved progress (localStorage, IndexedDB, and the 'sv-save' copy) and the voice pack are never deleted.
 const VERSION = 'sv-2026-11-02-v1.07';
 const FILES = [
+  // (v1.08, Release) the files the v1.08 helpers added, all offline (checks offline and swupdate)
+  'js/areas.js', 'js/art/emoji108b.js', 'js/art/frienditems.js', 'js/art/games108b.js', 'js/art/handson.js', 'js/art/lumi.js', 'js/art/maths3.js', 'js/art/money3.js', 'js/art/s2au.js',
+  'js/art/s2vn.js', 'js/art/science2.js', 'js/art/tiengviet2.js', 'js/content/chapter10.js', 'js/content/chapter11.js', 'js/content/chapter12.js', 'js/content/chapter4.js', 'js/content/chapter5.js',
+  'js/content/chapter6.js', 'js/content/chapter7.js', 'js/content/chapter8.js', 'js/content/chapter9.js', 'js/content/chapterfinale.js', 'js/content/chapterkit.js', 'js/content/festgame-ids.js',
+  'js/content/festgames108b.js', 'js/content/festseason.js', 'js/content/friendquests.js', 'js/content/gameplace.js', 'js/content/games108b.js', 'js/content/kitfilms.js', 'js/content/learnpaths.js',
+  'js/content/lumi.js', 'js/content/releasecal-core.js', 'js/content/releasecal-items.js', 'js/content/releasecal-names.js', 'js/content/releasecal.js', 'js/content/s2au-games.js',
+  'js/content/s2au.js', 'js/content/s2aufilms.js', 'js/content/s2vn.js', 'js/content/s2vnfilms.js', 'js/content/subjects.js', 'js/dropspot.js', 'js/friendquest.js', 'js/games/art-pending.js',
+  'js/games/games108b-meta.js', 'js/games/games108b.js', 'js/games/handson-meta.js', 'js/games/handson.js', 'js/games/reveal.js', 'js/games/s2au-meta.js', 'js/games/s2au.js', 'js/games/s2vn-meta.js',
+  'js/games/s2vn.js', 'js/games/sudoku-core.js', 'js/games/variety.js', 'js/installgift.js', 'js/learnquest.js', 'js/lumi.js', 'js/playtogether.js',
+  'js/s2au-region.js', 'js/s2au.js', 'js/s2vn.js', 'js/ui/calendar-news.js', 'js/validate.js', 'js/voicestore.js',
   'js/content/tester-arcades.js', 'js/games/parade-engine.js', 'js/games/arcade-session.js', 'js/games/arcade-board.js', 'js/games/sparkleorchard.js', 'js/games/fruitbar-engine.js', 'js/games/sparklefruitbar.js',
   'js/games/trongnu.js', 'js/games/trongnu-rules.js',
   'js/content/fruit-parade.js', 'js/games/fruitparade.js', 'js/games/fruitparade-core.js', 'js/games/fruitparade-engine.js', 'js/games/fruitparade-session.js', 'js/games/fruitparade-input.js', 'js/games/fruitparade-style.js',
@@ -49,7 +59,7 @@ const FILES = [
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
   'icons/friends/clara-f.webp', 'icons/friends/clara-q.webp', 'icons/friends/clara-s.webp', 'icons/friends/clara-face.webp',
   'icons/friends/lumi-f.webp', 'icons/friends/lumi-q.webp', 'icons/friends/lumi-s.webp', 'icons/friends/lumi-face.webp',
-  'js/modelkit.js', // (v1.08e) the shared loader of the world's Blender models (models/world/*.glb load near the child)
+  'js/modelkit.js', // (v1.08e) the shared loader of the Blender models of the world (models/world/*.glb load near the child)
   'js/offlinelevels.js', // (v1.08c voices) the offline levels in Grown-ups, loaded when Grown-ups opens
   'icons/icon-32.png', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'
 ];
