@@ -452,7 +452,7 @@ await check('ownerlearninglayout', async () => {
 });
 
 await check('owneractivityshell', async () => {
-  const P=await open(b,{w:320,h:640,touch:true,lang:'vi'});await clear(P.page);
+  const P=await open(b,{w:320,h:640,touch:true,lang:'vi',settings:{captions:true}});await clear(P.page);
   await P.page.evaluate(async()=>{const V=await import('/js/voice.js');V.spoken.forEach(f=>f('A surprise gift is waiting in the valley.'));});await P.page.waitForSelector('.caption.show');
   await P.page.evaluate(async()=>{const F=await import('/js/games/frame.js');__sv.paused=true;window.__learning=F.openGame('shapebuilders',{players:[__sv.heroes[0].profile],little:true,level:1});});await P.page.waitForSelector('.bt-piece');await P.page.evaluate(()=>document.fonts.ready);
   const before=await P.page.locator('.gl-head').boundingBox();await P.page.locator('.bt-piece').last().scrollIntoViewIfNeeded();

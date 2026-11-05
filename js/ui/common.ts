@@ -47,7 +47,7 @@ let hideCaption = () => { };
     return out;
   };
   spoken.push(text => {
-    if (settings.captions === false || !text) return;
+    if (settings.captions !== true || !text) return; // (v1.08f, owner 6 Nov: captions are off unless a grown-up turns them on)
     if (document.querySelector('.modal:not(.out), .wardrobe, .audio-tray, .dialog:not(.out), .storybook, .gl, .howto, .credits')) { hideCaption(); return; }
     if (!cap) { cap = el('div', 'caption'); cap.setAttribute('role', 'status'); cap.setAttribute('aria-live', 'polite'); document.body.appendChild(cap); }
     stop(); let at = 0;

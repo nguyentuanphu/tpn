@@ -2,7 +2,7 @@
 // Everything here is off until a grown-up turns it on; the chat key stays on this device.
 // (round R privacy, 9 Oct, owner) voices are made in Studio only: no online voice engine, voice key or voice copy here.
 import { T } from './i18n.js';
-import { settings, saveSettings } from './state.js';
+import { settings, saveSettings, AI_CHAT_OFFER } from './state.js';
 import { say, voicePack } from './voice.js';
 import { canListen } from './listen.js';
 import { esc } from './util.js';
@@ -26,7 +26,7 @@ export function privacyHTML() {
 export function netListHTML() {
   const ON = [
     ['Playing with friends: rooms, knocking, invitations and “playing now” (the free PeerJS meeting service and a cloud relay).', 'Chơi cùng bạn: phòng, gõ cửa, lời mời và “đang chơi” (dịch vụ gặp nhau PeerJS miễn phí và mạng đám mây).'],
-    ['Talking with friends: voices go straight between the devices, or through a relay on strict networks. Never recorded.', 'Nói chuyện với bạn: giọng đi thẳng giữa hai máy, hoặc qua máy trung chuyển khi mạng chặt. Không bao giờ ghi lại.'],
+    ['Talking with friends: voices go straight between the devices (on some strict networks they cannot connect). Never recorded.', 'Nói chuyện với bạn: giọng đi thẳng giữa hai máy (trên một số mạng chặt sẽ không kết nối được). Không bao giờ ghi lại.'],
     ['Real places: Google Maps and Street View open inside the game without asking again. Google sees which place is looked at.', 'Nơi thật: Google Maps và Street View mở ngay trong trò chơi, không hỏi lại. Google biết nơi nào đang được xem.']];
   const ALWAYS = [
     ['Game updates: a new version downloads by itself.', 'Cập nhật trò chơi: bản mới tự tải về.'],
@@ -34,7 +34,7 @@ export function netListHTML() {
     ['Messages, stories, festivals and names set by your family.', 'Lời nhắn, truyện, lễ hội và tên do gia đình đặt.'],
     ['Private family photos, after connecting and approving this device in Family photos and devices.', 'Ảnh gia đình riêng tư, sau khi kết nối và chấp nhận máy trong Ảnh gia đình và thiết bị.'],
     ['Analytics and Backup', 'Phân tích và sao lưu'],
-    ['Talking to the game (🎤) and villager chat (AI), only when switched on below.', 'Nói chuyện với trò chơi (🎤) và dân làng trò chuyện (AI), chỉ khi được bật bên dưới.']];
+    AI_CHAT_OFFER ? ['Talking to the game (🎤) and villager chat (AI), only when switched on below.', 'Nói chuyện với trò chơi (🎤) và dân làng trò chuyện (AI), chỉ khi được bật bên dưới.'] : ['Talking to the game (🎤), only when switched on below.', 'Nói chuyện với trò chơi (🎤), chỉ khi được bật bên dưới.']];
   const ul = L => `<ul>${L.map(([en, vi]) => `<li>${T(en, vi)}</li>`).join('')}</ul>`;
   return `<details class="g-priv g-net"><summary>🌐 ${T('What uses the internet', 'Những gì dùng internet')}</summary>
     <p class="note"><b>${T('When Use the internet is on:', 'Khi bật Dùng internet:')}</b></p>${ul(ON)}
@@ -56,10 +56,10 @@ export function extrasHTML() {
   <h3>🎤 ${T('Talking to the game', 'Nói chuyện với trò chơi')}</h3>
   <label class="tog"><input type="checkbox" id="xVc" ${s.voiceControl ? 'checked' : ''}> ${T('Show the 🎤 button: children can say “open the map”, “play marbles”, “go to the village”…', 'Hiện nút 🎤: trẻ có thể nói “mở bản đồ”, “chơi bắn bi”, “đi đến làng”…')}</label>
   <p class="note">${canListen() ? T('Speech recognition is done by Apple or Google and usually needs the internet. Nothing is recorded or saved.', 'Nhận dạng giọng nói do Apple hoặc Google thực hiện và thường cần mạng. Không có gì được ghi âm hay lưu lại.') : T('This browser cannot listen. Use Safari on iPhone/iPad or Chrome on Android.', 'Trình duyệt này không nghe được. Hãy dùng Safari trên iPhone/iPad hoặc Chrome trên Android.')}</p>
-  <h3>💬 ${T('Villagers who chat freely (AI)', 'Dân làng trò chuyện tự nhiên (AI)')}</h3>
+  ${AI_CHAT_OFFER ? `<h3>💬 ${T('Villagers who chat freely (AI)', 'Dân làng trò chuyện tự nhiên (AI)')}</h3>
   <p class="note">${T('Tap 💬 Chat when a villager talks. Without a key they answer with built-in, offline answers. With an Anthropic API key they can answer anything, kindly and in character, using Claude. Only the chat text and the child’s first name are sent.', 'Chạm 💬 Trò chuyện khi dân làng nói. Không có key thì họ trả lời bằng câu có sẵn, không cần mạng. Có Anthropic API key thì họ trả lời mọi câu hỏi, nhẹ nhàng và đúng tính cách, nhờ Claude. Chỉ gửi nội dung trò chuyện và tên của bé.')}</p>
   <label class="tog"><input type="checkbox" id="xAi" ${s.aiOn ? 'checked' : ''}> ${T('Use Claude for villager chat', 'Dùng Claude cho dân làng trò chuyện')}</label>
-  <div class="field" ${s.aiOn ? '' : 'hidden'} id="xAiF"><label for="xAiKey">Anthropic API key</label><input type="password" id="xAiKey" autocomplete="off" value="${esc(s.aiKey || '')}" placeholder="sk-ant-…"></div>`;
+  <div class="field" ${s.aiOn ? '' : 'hidden'} id="xAiF"><label for="xAiKey">Anthropic API key</label><input type="password" id="xAiKey" autocomplete="off" value="${esc(s.aiKey || '')}" placeholder="sk-ant-…"></div>` : ''}`;
 }
 
 export function bindExtras(card, redraw, toast) {
@@ -70,5 +70,5 @@ export function bindExtras(card, redraw, toast) {
   // (round R privacy, 9 Oct) the only key on this device is the chat key (owner: keep as is)
   const k = q('#xAiKey'); if (k) k.onchange = () => { s.aiKey = k.value.trim(); save(); };
   q('#xVc').onchange = e => { s.voiceControl = e.target.checked; save(); document.querySelectorAll<HTMLElement>('.dk.voicecmd').forEach(b => b.hidden = !s.voiceControl); };
-  q('#xAi').onchange = e => { s.aiOn = e.target.checked; save(); redraw(); };
+  const ai = q('#xAi'); if (ai) ai.onchange = e => { s.aiOn = e.target.checked; save(); redraw(); };
 }

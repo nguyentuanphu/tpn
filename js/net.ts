@@ -6,8 +6,8 @@ import {cleanFamilyQuiz,type FamilyQuestion} from './content/family-quiz.js';
 // game listens on that code while it is open, so a friend who is hosting a room can send an invite.
 // Nothing goes through a server of ours: only names, outfits, positions and the player photos travel.
 // When the direct link can't open (different networks, mobile data), the room carries on through the cloud
-// relay (relay.js): encrypted messages through free public MQTT brokers. Voice needs the direct link or a
-// TURN relay. Everyone pings everyone every 2 s, so the game can show each friend's signal and ping.
+// relay (relay.js): encrypted messages through free public MQTT brokers. Voice needs the direct link (no TURN
+// relay since v1.08f). Everyone pings everyone every 2 s, so the game can show each friend's signal and ping.
 // (round R privacy, 9 Oct, owner) Online play is off until a grown-up turns it on (settings.online): until then no
 // connection of any kind is made. Two cloud channels per room:
 //  · the door (made from the room code): only knocks and the starter's answers. Everyone who guesses the code can
@@ -38,38 +38,13 @@ function loadPeer() {
   return loading;
 }
 // How two devices find each other. STUN servers tell each device its public address, which is enough on
-// most home Wi-Fi. When one friend is on mobile data or behind a strict router, the devices also need a
-// relay (TURN) server to pass the game along. Free public relays are tried by default; a grown-up can paste
-// their own relay in Grown-ups (a link from a free TURN service, or a turn: address with a name and password).
+// most home Wi-Fi. (v1.08f, owner 6 Nov: "Remove the TURN server connection") no relay (TURN) server is used any more:
+// devices connect directly, and where a direct link cannot be made (some mobile data or strict networks) the game
+// carries on through the cloud relay below (relay.js, MQTT), but a voice call between those two devices cannot open.
 const STUN: RTCIceServer[] = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }, { urls: 'stun:stun.cloudflare.com:3478' }];
-// (the old free "Open Relay" TURN service now needs an account, so it is still tried but may not answer;
-// the cloud relay below keeps the game working anyway, and a grown-up can add their own TURN for voice)
-const PUBLIC_TURN = [{ urls: ['turn:openrelay.metered.ca:80', 'turn:openrelay.metered.ca:443', 'turn:openrelay.metered.ca:443?transport=tcp'], username: 'openrelayproject', credential: 'openrelayproject' }];
-let fetched = null;
-export async function iceServers() {
-  const r = (settings.turnUrl || '').trim();
-  if (/^https:\/\//i.test(r)) { // a link that hands out relay details (e.g. Metered's free plan)
-    if (!fetched || fetched.url !== r) { try { const res = await fetch(r); const j = await res.json(); fetched = { url: r, list: Array.isArray(j) ? j : j.iceServers || [] }; } catch (e) { fetched = { url: r, list: [] }; } }
-    if (fetched.list.length) return STUN.concat(fetched.list);
-  } else if (/^turns?:/i.test(r)) return STUN.concat([{ urls: r.split(/[\s,]+/).filter(Boolean), username: settings.turnUser || '', credential: settings.turnPass || '' }]);
-  // the family's own relay, set up once on the website (round O: netlify/functions/turn.mjs gives each game details
-  // that last a few hours; the key itself never leaves Netlify)
-  const own = await siteTurn(); if (own.length) return STUN.concat(own);
-  return STUN.concat(PUBLIC_TURN);
-}
-let siteTurnAt = 0, siteTurnList = [];
-async function siteTurn() {
-  if (!/^https:$/.test(location.protocol) && !window.SV_TURN_TEST) return [];
-  if (Date.now() - siteTurnAt < 30 * 60e3) return siteTurnList;
-  try {
-    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 4000);
-    const r = await fetch((window.SV_TURN_TEST || '') + '/api/turn', { signal: ctl.signal }); clearTimeout(t);
-    const j = r.ok ? await r.json() : {}; siteTurnList = Array.isArray(j.iceServers) ? j.iceServers.filter(x => x && x.urls) : [];
-  } catch (e) { siteTurnList = []; }
-  siteTurnAt = Date.now(); return siteTurnList;
-}
+export async function iceServers() { return STUN.slice(); }
 // PeerJS settings (the free public PeerJS server by default; tests can point it at a local one)
-let ICE = STUN.concat(PUBLIC_TURN);
+let ICE = STUN.slice();
 const peerOpts = () => Object.assign({ debug: 0, config: { iceServers: ICE, iceCandidatePoolSize: 2 } }, window.SV_PEER || {});
 const prepare = async () => { await loadPeer(); ICE = await iceServers(); };
 // (audit, 9 Oct) a photo goes into <img src="…">, so only a plain base64 picture is accepted: no quotes, spaces or

@@ -15,7 +15,6 @@
 # Small server pieces (Git deploys only; a drag-and-drop zip has none of them):
 #   /api/hello        devices counting players, anonymously (netlify/functions/hello.mts)
 #   /studio/api/*     Sparkle Studio online, behind the grown-ups' password (netlify/functions/studio.mts)
-#   /api/turn         the voice relay details for friends on different networks (netlify/functions/turn.mts)
 #   /api/live         releases and festival changes from Studio (netlify/functions/live.mts)
 #   /api/family/*     a family photo, only with the family code (netlify/functions/family.mts, round R privacy)
 #   /api/tester       tester devices' reports and their status (netlify/functions/tester.mts, owner 12 Oct: PRIV-016)
