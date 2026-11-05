@@ -24,7 +24,7 @@ export default { pages: [
     S.shot([3, 2.4, 11], [0, 1, 4]);
     S.do(w, .3, 'swing', 2.2); S.drop(a, 2.5); S.move(a, 2.51, .9, [0, -.6, 2], k => k * k, .8); S.show(sp, 3.3); S.show(sp, 5, false);
     S.mood(w, 2.6, 'o'); S.do(w, 2.6, 'surprised', 1.2); S.cam(2.2, 1.6, [2, 1.6, 6.4], [0, .2, 3]);
-    S.do(w, 4, 'sitground', 5); S.mood(w, 4, 'cry');   // (faces with feeling) he sat down and cried
+    S.do(w, 4, 'sitground', 5); S.mood(w, 4, 'cry'); S.still(8.8);   // (faces with feeling) he sat down and cried (the picture: once the camera is on him)
     S.say(6.2, 'Without his axe, he could not cut any wood.', 'Mất rìu rồi, chàng không thể đốn củi được nữa.');
     S.cam(6, 3, [1.4, 1.2, 8.6], [0, .6, 6]);
     S.at(9.2, () => { });

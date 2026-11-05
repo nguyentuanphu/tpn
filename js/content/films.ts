@@ -1061,7 +1061,7 @@ FILMS.caykhe = { pages: [
     S.drop(big, 5);
     S.move(big, 5.02, .9, [0, -.9, -24], k => k * k);
     const splash = Pp.sparkle('#9fe0ff'); splash.scale.setScalar(2.4); S.add(splash, 0, -.3, -24); S.show(splash, 5.9); S.show(splash, 7.4, false);
-    S.mood(older, 5.2, 'sad');
+    S.mood(older, 5.2, 'sad'); S.still(6.8);   // (faces with feeling) the picture: the heavy bag over the sea (earlier the camera is inside the hill)
     S.tw(5.6, 4, k => { bird.position.set(k * 3, 1.4 + Math.sin(k * PI) * 3, -26 + k * 26); }, k => k);
     S.at(5.6, () => { bird.userData.flap = 1; bird.rotation.y = Math.atan2(3, 26); });
     S.cam(5, 1, [6, 2, -16], [0, 0, -24]);

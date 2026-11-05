@@ -88,7 +88,7 @@ export default { pages: [
   // 6. At Mid-Autumn, look at the full moon: can you see Chú Cuội sitting under his banyan tree?
   S => {
     night(S, { moon: false }); const moon = moonDisc(S, 0, 22, -60, 10);
-    const tree = magicTree(1.6); S.add(tree, -2, 21, -49); const cuoi = S.person(CUOI, -.4, -48.4, 0, 1.2); cuoi.o.position.y = 21; S.do(cuoi, 0, 'sitground'); S.mood(cuoi, 0, 'sad');   // still homesick under his banyan tree, while the children wave up at him
+    const tree = magicTree(1.6); S.add(tree, -2, 21, -49); const cuoi = S.person(CUOI, -.4, -48.4, 0, 1.2); cuoi.o.position.y = 21; S.do(cuoi, 0, 'sitground'); S.mood(cuoi, 0, 'sad'); S.still(8.1);   // still homesick under his banyan tree, while the children wave up at him (the picture: close to him on the moon)
     const kids = [KID('dress', '#ff7eb8', 'buns'), KID('tunic', '#3b6fe0'), KID('dress', '#ffd23f', 'ponytail')].map((l, i) => S.person(l, -1.6 + i * 1.6, 4, PI));
     kids.forEach((k, i) => L.lantern(S, -1.2 + i * 1.6, 1.4, 3.6, ['#e8332a', '#ffd23f', '#ff7eb8'][i]));
     S.shot([0, 1.6, 9], [0, 1.4, 3]);
