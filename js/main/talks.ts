@@ -130,12 +130,19 @@ G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || MONEY3
 // child who walks past a game's place while a game there is newly open hears its host's line once, with the game's name
 // on screen. The games already open the first time this runs are counted as known (no burst of news on an old save).
 let newsAt = 0, spots: Map<string, string[]> | null = null, spotsAt = 0;
+const STORY_NEWS: [string, string] = ['There is a new story on my mat! Sit down and I will read it to you.', 'Có truyện mới trên chiếu của bà đó! Ngồi xuống bà kể cho nghe nhé.'];
 G.hostNews = h => {
   const now = performance.now(); if (now - newsAt < 1000 || gameOpen() || G.paused) return; newsAt = now;
   const p = h.profile; if (!p) return;
   if (!spots || now - spotsAt > 60000) { spots = new Map(); spotsAt = now; for (const id of Object.keys(GAMES)) { const it = G.gameSpot(id); if (it) spots.set(it.id, [...(spots.get(it.id) || []), id]); } }
   const openNow = id => { const g = gameInfo(id); return !g.hidden && isOpen(p, id, 'game', g.area); };
-  if (!p.hostNews) { p.hostNews = {}; for (const ids of spots.values()) for (const id of ids) if (openNow(id)) p.hostNews[id] = 1; save(); return; }
+  // (stories too: a tale newly open is told about by Bà Năm, the storyteller, as the child passes her mat)
+  const tales = (G.TALES || []) as { id: string; flag: string; title?: [string, string] }[], taleOpen = t => isOpen(p, t.id, 'tale', t.flag);
+  if (!p.hostNews) { p.hostNews = {}; for (const ids of spots.values()) for (const id of ids) if (openNow(id)) p.hostNews[id] = 1; for (const t of tales) if (taleOpen(t)) p.hostNews['tale:' + t.id] = 1; save(); return; }
+  if (G.storyteller && dist2(h.pos.x, h.pos.z, G.storyteller.x, G.storyteller.z) < 64) {
+    const fresh = tales.filter(t => !p.hostNews['tale:' + t.id] && taleOpen(t));
+    if (fresh.length) { fresh.forEach(t => { p.hostNews['tale:' + t.id] = 1; }); save(); say(...STORY_NEWS); hudFor(h).toast('✨ ' + T('New story!', 'Truyện mới!')); return; }
+  }
   for (const it of G.interactables) {
     const ids = spots.get(it.id); if (!ids || dist2(h.pos.x, h.pos.z, it.x, it.z) > 64) continue;
     const fresh = ids.filter(id => !p.hostNews[id] && openNow(id)); if (!fresh.length) continue;

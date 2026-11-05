@@ -267,14 +267,18 @@ await check('gameplace', async () => {
     __sv.hostNews(h); const toast1 = [...document.querySelectorAll('.toast, .htoast, [class*=toast]')].map(e => e.textContent).join('|');
     const marked = !!p.hostNews[id];
     await new Promise(r => setTimeout(r, 1100)); const n1 = Object.keys(p.hostNews).length; __sv.hostNews(h); const n2 = Object.keys(p.hostNews).length;
-    return { on: on.length, none, noHost, missingSpot, seeded, marked, again: n1 === n2, toast: /Count|Đếm/.test(toast1) };
+    // (stories) a tale newly open: Bà Năm tells about it once as the child passes her mat
+    const tale = (__sv.TALES || []).find(t => p.hostNews['tale:' + t.id]); let taleNews = false;
+    if (tale && __sv.storyteller) { delete p.hostNews['tale:' + tale.id]; h.pos.x = __sv.storyteller.x + 1; h.pos.z = __sv.storyteller.z + 1; await new Promise(r => setTimeout(r, 1100)); __sv.hostNews(h); taleNews = !!p.hostNews['tale:' + tale.id]; }
+    return { on: on.length, none, noHost, missingSpot, seeded, marked, again: n1 === n2, toast: /Count|Đếm/.test(toast1), taleNews };
   });
   ok(!r.none.length, 'switched-on games with no place in the valley: ' + r.none.join(', '));
   ok(!r.noHost.length, 'areas without a host and line: ' + r.noHost.join(', '));
   ok(!r.missingSpot.length, 'area places that do not stand in the valley: ' + r.missingSpot.join(', '));
   ok(r.seeded > 20 && r.marked && r.again, 'host news: ' + JSON.stringify(r));
+  ok(r.taleNews, 'no story news from Bà Năm: ' + JSON.stringify(r));
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
-  return `${r.on} switched-on games, each with a place and a host; ${r.seeded} games already open counted as known; a host told about a new game once (name on screen: ${r.toast})`;
+  return `${r.on} switched-on games, each with a place and a host; ${r.seeded} games already open counted as known; a host told about a new game once (name on screen: ${r.toast}); Bà Năm told about a new story`;
 });
 
 await check('festivalgames', async () => {
