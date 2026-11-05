@@ -10,6 +10,7 @@ import { T } from '../i18n.js';
 import { CUSTOM, itemEnabled, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
 import { heldGame } from './secondset.js';
+import { inSeason } from './festseason.js'; // (v1.08b games) festival games only in their season
 
 // the areas, in the order the path visits them; a child who can't read knows each one by its picture
 export const AREAS = [
@@ -31,7 +32,9 @@ export const AREAS = [
   // corner (hv_math) is gone, Con số (numbers) is the Toán corner now
   { key: 'hv_vi', icon: 'hv:vi', name: () => T('Vietnamese', 'Tiếng Việt') },
   { key: 'hv_en', icon: 'hv:en', name: () => T('English', 'Tiếng Anh') },
-  { key: 'hv_sci', icon: 'hv:sci', name: () => T('Science', 'Khoa học') }
+  { key: 'hv_sci', icon: 'hv:sci', name: () => T('Science', 'Khoa học') },
+  // (v1.08b games) the festival games, each open only in its festival's season (js/content/festseason.ts)
+  { key: 'festival', icon: 'fg:area', name: () => T('Festival games', 'Trò chơi lễ hội') }
 ];
 
 // id: [area, youngest age (2 = everyone, 5 = big kids), how hard (1 easy · 2 a bit harder · 3 hardest)]
@@ -108,6 +111,8 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   // (v1.08 money) eleven more money games for ages 4 to 9 (js/games/money3.ts): open at once, not a second set (js/content/unlocks.ts)
   shoppay: ['money', 3, 1], givechange: ['money', 4, 2], toysave: ['money', 4, 2], needsfirst: ['money', 3, 1], pricesort: ['money', 3, 1], marketday: ['money', 4, 2],
   coinsort: ['money', 3, 1], makeamount: ['money', 3, 2], budgetpicnic: ['money', 4, 2], chores: ['money', 4, 2], twomoney: ['money', 3, 1],
+  // (v1.08b games) one game per festival (js/content/festgames108b.ts)
+  fg_tet: ['festival', 3, 1], fg_ramthang1: ['festival', 3, 1], fg_giotohung: ['festival', 3, 1], fg_doanngo: ['festival', 3, 1], fg_vulan: ['festival', 3, 1], fg_midautumn: ['festival', 3, 1], fg_ongtao: ['festival', 3, 1], fg_thieunhi: ['festival', 3, 1], fg_quockhanh: ['festival', 3, 1], fg_nhagiao: ['festival', 3, 1], fg_easter: ['festival', 3, 1], fg_mothersday: ['festival', 3, 1], fg_fathersday: ['festival', 3, 1], fg_halloween: ['festival', 3, 1], fg_christmas: ['festival', 3, 1], fg_newyear: ['festival', 3, 1], fg_ausday: ['festival', 3, 1], fg_cleanup: ['festival', 3, 1], fg_harmony: ['festival', 3, 1], fg_holi: ['festival', 3, 1], fg_anzac: ['festival', 3, 1], fg_reconciliation: ['festival', 3, 1], fg_naidoc: ['festival', 3, 1], fg_diwali: ['festival', 3, 1],
   // (v1.08b games) the new games of the thin corners (js/content/games108b.ts)
   en_animalsay: ['hv_en', 2, 1], en_opposite: ['hv_en', 3, 1], en_feel: ['hv_en', 2, 1], en_weather: ['hv_en', 3, 1], en_routine: ['hv_en', 3, 2], en_where: ['hv_en', 4, 2],
   en_verbs: ['hv_en', 3, 1], en_shop: ['hv_en', 4, 2], en_teens: ['hv_en', 4, 2], en_body: ['hv_en', 2, 1], en_wh: ['hv_en', 5, 2], en_mydaystory: ['hv_en', 4, 2],
@@ -125,7 +130,7 @@ export function gameInfo(id) {
   const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id);
   const orchardHeld = id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','single');
   const fruitHeld = id === 'fruitparade' && !fruitParadeAvailable('single');
-  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: !itemEnabled('game', id) || (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld };
+  return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: !itemEnabled('game', id) || !inSeason(id) || (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld };
 }
 // the games of one area for a child: under-5s only see the ones made for them
 export const gamesIn = (games, area, little) => Object.keys(games).map(gameInfo).filter(g => g.area === area && !g.hidden && (!little || g.ageMin < 5));

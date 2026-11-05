@@ -3,7 +3,8 @@
 // the game's own picture first.
 import { HOWTO, type HowToGuide } from '../howto-registry.js';
 import { QUIZ_GAMES } from '../content/games108b.js';
-for (const G of QUIZ_GAMES) {
+import { FEST_GAMES } from '../content/festgames108b.js';
+for (const G of [...QUIZ_GAMES, ...FEST_GAMES]) {
   const guide: HowToGuide = { steps: G.how.map(([en, vi], i) => ({ pic: i === 0 ? G.icon : '👆 ✅', en, vi })) };
   if (!HOWTO[G.id] || (HOWTO[G.id].steps || []).length <= 1) HOWTO[G.id] = guide;
 }

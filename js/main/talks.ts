@@ -16,7 +16,8 @@ import { solidCircleHit } from '../solids.js';
 import { openGamesHub, openQuick } from '../ui.js';
 import type { SvMain } from '../main.js';
 import { SCIENCE_PLACES } from '../content/science-places.js';   // (v1.08 science)
-import { areaSpot, AREA_PLACE } from '../content/gameplace.js';   // (v1.08b games) a place and a host for every game
+import { areaSpot, AREA_PLACE } from '../content/gameplace.js';
+import { FEST_OF_GAME } from '../content/festgames108b.js';   // (v1.08b games) a place and a host for every game
 import { gameInfo } from '../content/activities.js';
 import { isOpen } from '../content/unlocks.js';
 import { say } from '../voice.js';
@@ -124,7 +125,7 @@ const LEARN_SPOT = id => /^en_/.test(id) ? 'school' : '';
 // (v1.08 money) the new money games' places: Cô Mai's market for buying and selling, the family's stall for sorting and
 // making amounts, and home for saving and chores
 const MONEY3_SPOT = { shoppay: 'npc_mai', givechange: 'npc_mai', needsfirst: 'npc_mai', pricesort: 'npc_mai', marketday: 'npc_mai', budgetpicnic: 'npc_mai', twomoney: 'npc_mai', coinsort: 'stall', makeamount: 'stall', toysave: 'myhouse_door', chores: 'myhouse_door' };
-G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || MONEY3_SPOT[id] || (G.GAME_SPOT || {})[id] || SCIENCE_PLACES[id] || (SHRINES.find(s => s.game === id) || {}).id || LEARN_SPOT(id))) || G.interactables.find(it => it.id === areaSpot(gameInfo(id).area)); // (v1.08b games) else its area's place
+G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || MONEY3_SPOT[id] || (G.GAME_SPOT || {})[id] || SCIENCE_PLACES[id] || (SHRINES.find(s => s.game === id) || {}).id || LEARN_SPOT(id))) || (FEST_OF_GAME[id] && G.interactables.find(it => it.id === 'festival_' + FEST_OF_GAME[id])) || G.interactables.find(it => it.id === areaSpot(gameInfo(id).area)); // (v1.08b games) a festival game at its festival's table, else its area's place
 // (v1.08b games, owner's plan: "when a game opens for the first time, its host says so once as the child passes") a
 // child who walks past a game's place while a game there is newly open hears its host's line once, with the game's name
 // on screen. The games already open the first time this runs are counted as known (no burst of news on an old save).

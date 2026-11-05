@@ -19,6 +19,7 @@ export const AREA_PLACE: Record<string, AreaPlace> = {
   animals: { spot: 'pen', host: ['Uncle Ba', 'Bác Ba'], line: ['There is a new game with the farm animals! Come and see.', 'Có trò mới với các con vật ở trang trại đó! Ra xem nhé.'] },
   me: { spot: 'myhouse_door', host: ['Home', 'Nhà mình'], line: ['There is a new game at home! Come inside and play.', 'Có trò mới ở nhà mình đó! Vào nhà chơi nhé.'] },
   thinking: { spot: 'npc_owl', host: ['Grandpa Owl', 'Ông Cú'], line: ['Hoo hoo! There is a new puzzle for big thinkers.', 'Hú hú! Có câu đố mới cho bạn suy nghĩ giỏi đó.'] },
+  festival: { spot: 'statue', host: ['Lotus Village', 'Làng Sen'], line: ['There is a festival game today! Come to the festival table.', 'Hôm nay có trò chơi lễ hội đó! Ra bàn lễ hội chơi nhé.'] },
   travel: { spot: 'busstop_1', host: ['Bus stop', 'Trạm xe buýt'], line: ['There is a new game on the road! Hop on and go.', 'Có trò mới trên đường đi đó! Lên xe đi nào.'] }
 };
 /** the place a game is found at when it has none of its own (its area's place) */

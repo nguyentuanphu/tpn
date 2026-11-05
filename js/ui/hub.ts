@@ -25,7 +25,7 @@ const HUB_TABS = [
   // with a corner per subject: Tiếng Việt, Tiếng Anh, Toán, Hình khối, Tiền, Khoa học, Chữ và đọc (with the Reading
   // corner), Em và gia đình. No link tiles: every game is in one corner only (the `hubmap` check)
   { key: 'hocvui', icon: 'hv:tab', short: () => T('Fun learning', 'Học vui'), title: () => T('Fun learning: languages, maths, science and me', 'Học vui: ngôn ngữ, toán, khoa học và em'), areas: [...LEARN_CORNERS] },
-  { key: 'folk', icon: '🪁', short: () => T('Folk games', 'Dân gian'), title: () => T('Folk games to play together', 'Trò chơi dân gian chơi cùng nhau'), areas: ['vietnam', 'play'] },
+  { key: 'folk', icon: '🪁', short: () => T('Folk games', 'Dân gian'), title: () => T('Folk games to play together', 'Trò chơi dân gian chơi cùng nhau'), areas: ['vietnam', 'play', 'festival'] }, // (v1.08b games) and the festival games in season
   { key: 'animals', icon: '🐶', short: () => T('Animals and music', 'Con vật, âm nhạc'), title: () => T('Animals and music', 'Con vật và âm nhạc'), areas: ['animals', 'music'] },
   { key: 'art', icon: '🎨', short: () => T('Pictures', 'Tranh'), title: () => T('Colours, pictures and puzzles', 'Màu sắc, tranh và ghép hình'), areas: ['art'] },
   { key: 'places', icon: '🚋', short: () => T('Going places', 'Đi đây đi đó'), title: () => T('Games in the cities and on the road', 'Trò chơi ở thành phố và trên đường'), areas: ['travel'] },

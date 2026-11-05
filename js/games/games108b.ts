@@ -10,6 +10,7 @@ import { T } from '../i18n.js';
 import { el, esc } from '../util.js';
 import { play, lv, mix, distinct, type Round } from './maths-kit.js';
 import { QUIZ_GAMES, type QuizGame, type Opt, type Q } from '../content/games108b.js';
+import { FEST_GAMES } from '../content/festgames108b.js';
 
 let styled = false;
 function style() {
@@ -81,7 +82,7 @@ function rounds(api, G: QuizGame): Round[] {
   });
 }
 
-for (const G of QUIZ_GAMES) {
+for (const G of [...QUIZ_GAMES, ...FEST_GAMES]) {
   register({
     id: G.id, learn: true, english: !!G.english, icon: G.icon, name: () => T(G.name[0], G.name[1]),
     run: api => { style(); return playStyled(api, rounds(api, G), G); }

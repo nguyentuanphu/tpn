@@ -277,6 +277,57 @@ await check('gameplace', async () => {
   return `${r.on} switched-on games, each with a place and a host; ${r.seeded} games already open counted as known; a host told about a new game once (name on screen: ${r.toast})`;
 });
 
+await check('festivalgames', async () => {
+  // (v1.08b games, owner's plan 3 Nov 2026 AEDT: festival games) one game of its own per festival, the festival's table
+  // game; open only in its season (with the decorations, until 3 days after), testers 7 days earlier, put away the
+  // rest of the year with the day it comes back; each plays to a win; its How to play and pictures are there
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const { GAMES } = await import('/js/games/frame.js'), FC = await import('/js/content/festcal.js'), FG = await import('/js/content/festgames108b.js');
+    const S = await import('/js/content/festseason.js'), A = await import('/js/content/activities.js'), C = (await import('/js/custom.js')).CUSTOM, H = await import('/js/howto-registry.js'), ART = await import('/js/art.js');
+    await ART.moreArt();
+    const out = { fests: FC.FESTCAL.length, noGame: [], notTable: [], noHow: [], noPic: [], season: [], tester: [], back: [], hiddenWrong: [], won: [], notWon: [] };
+    const DAY = 864e5, day0 = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    for (const F of FC.FESTCAL) {
+      const id = 'fg_' + F.id;
+      if (!GAMES[id] || FG.FEST_GAME_OF[F.id] !== id) out.noGame.push(F.id);
+      if (F.game !== id) out.notTable.push(F.id + ':' + F.game);
+      if (!H.HOWTO[id]) out.noHow.push(id);
+      if (!ART.hasArt(GAMES[id]?.icon || '')) out.noPic.push(id);
+      const s = S.seasonOf(F.id, new Date()); if (!s) { out.season.push(F.id + ': no date'); continue; }
+      const d = s.day, before = F.kind === 'quiet' ? 3 : 21;
+      const at = n => S.inSeason(id, new Date(+d + n * DAY + 3600e3));
+      if (!at(0) || !at(-before) || at(-before - 1) || !at((F.days || 1) + 2) || at((F.days || 1) + 3 + 1)) out.season.push(F.id);
+      localStorage.setItem('sv2_tester', JSON.stringify({ at: Date.now() })); const t = S.inSeason(id, new Date(+d - (before + 7) * DAY + 3600e3)); localStorage.removeItem('sv2_tester');
+      if (!t) out.tester.push(F.id);
+      const away = new Date(+d + ((F.days || 1) + 10) * DAY), back = S.backOn(id, away);
+      if (!back || +back <= +away) out.back.push(F.id);
+      if (A.gameInfo(id).hidden !== !S.inSeason(id)) out.hiddenWrong.push(id);
+    }
+    // three festival games played to a win (a grown-up's moved date puts each in season today)
+    C.festivals = C.festivals || {};
+    const today = new Date(), iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    for (const f of ['tet', 'christmas', 'diwali']) {
+      const id = 'fg_' + f; C.festivals[f] = { ...(C.festivals[f] || {}), date: iso };
+      if (A.gameInfo(id).hidden) { out.notWon.push(id + ' still hidden'); continue; }
+      document.querySelectorAll('.gl, .modal').forEach(e => e.remove()); __sv.paused = false; __sv.playGame(0, id, 'hub');
+      const { playWatch } = await import('/js/games/frame.js'); let won = false;
+      for (let k = 0; k < 400 && !won; k++) {
+        await new Promise(r => setTimeout(r, 120));
+        const gl = document.querySelector('.gl:not(.out)'); if (!gl) continue; if (gl.querySelector('.gl-win')) { won = true; break; }
+        const e = playWatch.plan && playWatch.plan(); if (e && e.isConnected && !e.disabled) e.click();
+      }
+      (won ? out.won : out.notWon).push(id);
+      document.querySelector('.gl:not(.out) .gl-x')?.click(); await new Promise(r => setTimeout(r, 300));
+    }
+    return out;
+  });
+  const bad = Object.entries(r).filter(([k, v]) => Array.isArray(v) && k !== 'won' && v.length).map(([k, v]) => k + ': ' + v.join(','));
+  ok(r.fests >= 24 && !bad.length, bad.join(' | '));
+  ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
+  return `${r.fests} festivals, each with its own game at its table; open with the decorations until 3 days after, testers 7 days early, put away with the day it comes back; ${r.won.join(', ')} played to a win`;
+});
+
 await check('padmap', async () => {
   // (round T4b) the Pad map is drawn from the map data: every place's name on it, names never overlapping at 390, 1180
   // and 1366 px wide; clouds over the places not visited yet, lifting once with a puff after a visit

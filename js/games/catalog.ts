@@ -316,6 +316,31 @@ export const GAME_CATALOG = [
   { id: 'vi_poem', learn: true, icon: 'g8:poem', name: () => T('Little Poems', 'Đọc Thơ Ngắn') },
   { id: 'vi_tulay', learn: true, icon: 'g8:tulay', name: () => T('Echo Words', 'Từ Láy') },
   { id: 'vi_sx', learn: true, icon: 'g8:sx', name: () => T('S or X?', 'Chính Tả S hay X?') },
+  // (v1.08b games) one game per festival, open only in its season (js/content/festgames108b.ts, festseason.ts)
+  { id: 'fg_tet', icon: 'fg:tet', name: () => T('Wrap the Bánh Chưng', 'Gói Bánh Chưng') },
+  { id: 'fg_ramthang1', icon: 'fg:ramthang1', name: () => T('First Full Moon Lanterns', 'Thả Đèn Rằm Tháng Giêng') },
+  { id: 'fg_giotohung', icon: 'fg:giotohung', name: () => T('The Hùng Kings’ Cakes', 'Bánh Dâng Vua Hùng') },
+  { id: 'fg_doanngo', icon: 'fg:doanngo', name: () => T('Dragon Boat Race', 'Đua Thuyền Rồng') },
+  { id: 'fg_vulan', icon: 'fg:vulan', name: () => T('A Rose for Mum', 'Bông Hồng Cài Áo') },
+  { id: 'fg_midautumn', icon: 'fg:midautumn', name: () => T('Star Lantern Maker', 'Làm Đèn Ông Sao') },
+  { id: 'fg_ongtao', icon: 'fg:ongtao', name: () => T('Carp to the Sky', 'Thả Cá Chép Tiễn Ông Táo') },
+  { id: 'fg_thieunhi', icon: 'fg:thieunhi', name: () => T('Children’s Day Balloons', 'Bóng Bay Ngày 1/6') },
+  { id: 'fg_quockhanh', icon: 'fg:quockhanh', name: () => T('Flags for National Day', 'Treo Cờ Mừng Quốc Khánh') },
+  { id: 'fg_nhagiao', icon: 'fg:nhagiao', name: () => T('Flowers for the Teacher', 'Hoa Tặng Thầy Cô') },
+  { id: 'fg_easter', icon: 'fg:easter', name: () => T('Easter Egg Painting', 'Tô Trứng Phục Sinh') },
+  { id: 'fg_mothersday', icon: 'fg:mothersday', name: () => T('Card for Mum', 'Thiệp Tặng Mẹ') },
+  { id: 'fg_fathersday', icon: 'fg:fathersday', name: () => T('Picnic with Dad', 'Dã Ngoại Cùng Bố') },
+  { id: 'fg_halloween', icon: 'fg:halloween', name: () => T('Pumpkin Lantern', 'Đèn Bí Ngô') },
+  { id: 'fg_christmas', icon: 'fg:christmas', name: () => T('Trim the Christmas Tree', 'Trang Trí Cây Thông') },
+  { id: 'fg_newyear', icon: 'fg:newyear', name: () => T('Countdown to New Year', 'Đếm Ngược Năm Mới') },
+  { id: 'fg_ausday', icon: 'fg:ausday', name: () => T('Backyard Cricket Day', 'Cricket Sân Sau') },
+  { id: 'fg_cleanup', icon: 'fg:cleanup', name: () => T('Clean Up the Park', 'Dọn Sạch Công Viên') },
+  { id: 'fg_harmony', icon: 'fg:harmony', name: () => T('Hello in Many Languages', 'Xin Chào Nhiều Thứ Tiếng') },
+  { id: 'fg_holi', icon: 'fg:holi', name: () => T('Colour Splash', 'Tung Bột Màu Holi') },
+  { id: 'fg_anzac', icon: 'fg:anzac', name: () => T('Anzac Biscuits', 'Bánh Quy Anzac') },
+  { id: 'fg_reconciliation', icon: 'fg:reconciliation', name: () => T('Hands Together', 'Những Bàn Tay Nắm Lấy Nhau') },
+  { id: 'fg_naidoc', icon: 'fg:naidoc', name: () => T('Dot Painting Story', 'Tranh Chấm Kể Chuyện') },
+  { id: 'fg_diwali', icon: 'fg:diwali', name: () => T('Light the Diyas', 'Thắp Đèn Diya') },
 ].filter(def => def.id !== 'familyquiz' || familyQuizQuestions().length > 0);
 export const GAME_LOADERS = {
   'thinking.js': { ids: ["pattern","counting","letters","numbers","shapes","colors","sorting","memory"], load: () => import('./thinking.js') },
@@ -369,7 +394,7 @@ export const GAME_LOADERS = {
   'tiengviet2.ts': { ids: ['vi_tonemean', 'vi_rhyme', 'vi_letters', 'vi_opposite', 'vi_cadao', 'vi_tucngu', 'vi_readalong', 'vi_sentence', 'vi_dictation', 'vi_riddle'], load: () => import('./tiengviet2.js') },
   // (v1.08 money)
   // (v1.08b games)
-  'games108b.ts': { ids: ['en_animalsay', 'en_opposite', 'en_feel', 'en_weather', 'en_routine', 'en_where', 'en_verbs', 'en_shop', 'en_teens', 'en_body', 'en_wh', 'en_mydaystory', 'me_tree', 'me_wash', 'me_safe', 'me_help', 'me_calm', 'me_table', 'th_balance', 'th_clues', 'th_robot', 'th_changed', 'th_count', 'th_belong', 'vi_poem', 'vi_tulay', 'vi_sx'], load: () => import('./games108b.js') },
+  'games108b.ts': { ids: ['fg_tet', 'fg_ramthang1', 'fg_giotohung', 'fg_doanngo', 'fg_vulan', 'fg_midautumn', 'fg_ongtao', 'fg_thieunhi', 'fg_quockhanh', 'fg_nhagiao', 'fg_easter', 'fg_mothersday', 'fg_fathersday', 'fg_halloween', 'fg_christmas', 'fg_newyear', 'fg_ausday', 'fg_cleanup', 'fg_harmony', 'fg_holi', 'fg_anzac', 'fg_reconciliation', 'fg_naidoc', 'fg_diwali', 'en_animalsay', 'en_opposite', 'en_feel', 'en_weather', 'en_routine', 'en_where', 'en_verbs', 'en_shop', 'en_teens', 'en_body', 'en_wh', 'en_mydaystory', 'me_tree', 'me_wash', 'me_safe', 'me_help', 'me_calm', 'me_table', 'th_balance', 'th_clues', 'th_robot', 'th_changed', 'th_count', 'th_belong', 'vi_poem', 'vi_tulay', 'vi_sx'], load: () => import('./games108b.js') },
   'money3.ts': { ids: ['shoppay', 'givechange', 'toysave', 'needsfirst', 'pricesort', 'marketday', 'coinsort', 'makeamount', 'budgetpicnic', 'chores', 'twomoney'], load: () => import('./money3.js') },
 
 };

@@ -68,13 +68,32 @@ def('g8:tulay', `<rect x="3" y="12" width="20" height="22" rx="5" fill="#ffe3a3"
 // S or X?: the letters S and X on a slate
 def('g8:sx', `<rect x="4" y="8" width="40" height="32" rx="5" fill="#2f5d4a" ${W}/>` + txt(9, 32, 20, 's', '#fff') + txt(27, 32, 20, 'x', '#ffd23f') + `<path d="M24 14v20" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 3"/>`);
 
-// ---------- pictures the new games ask about that had no drawing yet ----------
-add('🩳', `<path d="M8 10h32l4 30H28l-4-16-4 16H4z" fill="#5fb6ff" ${W}/><path d="M8 16h32" ${W}/>`);
-add('🧤', g('a-wave', `<path d="M14 44V20a3 3 0 0 1 6 0v-6a3 3 0 0 1 6 0v4a3 3 0 0 1 6 0v6a3 3 0 0 1 6 0v12c0 6-4 8-8 8z" fill="#e8433a" ${W}/><path d="M14 30l-6-6a3 3 0 0 1 4-4l2 2" fill="#e8433a" ${W}/><path d="M14 38h22" stroke="#fff" stroke-width="3"/>`, '24px 40px'));
-add('🌬️', g('a-sway', `<path d="M4 16h26a6 6 0 1 0-6-6M4 26h34a6 6 0 1 1-6 6M4 36h18" stroke="#5fb6ff" stroke-width="3.4" stroke-linecap="round" ${N}/>`, '20px 24px'));
-add('🚴', `${circ(12, 36, 8, 'none')}${circ(36, 36, 8, 'none')}<path d="M12 36l8-12h10l6 12M20 24l6 12" ${W} ${N}/>` + g('a-bob', `${circ(28, 8, 4.6, '#ffd6b8')}<path d="M27 13l-3 10 6 3M26 16l6 4" stroke="#e8433a" stroke-width="3" stroke-linecap="round" ${N}/>`, '28px 18px'));
-add('🪮', `<rect x="6" y="10" width="36" height="10" rx="4" fill="#ff7eb8" ${W}/><path d="M10 20v18M15 20v18M20 20v18M25 20v18M30 20v18M35 20v18M40 20v14" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>`);
-add('🧻', `<path d="M10 10h22v30H10z" fill="#fff" ${W}/><ellipse cx="32" cy="14" rx="8" ry="6" fill="#fff" ${W}/>${circ(32, 14, 2.2, '#e0d6c8')}<path d="M10 40l4-4 4 4 4-4 4 4 4-4 2 2" ${W} ${N}/>`);
-def('g8:can', `<path d="M10 18h22v20a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4z" fill="#43c463" ${W}/><path d="M32 22l10-8" stroke="#43c463" stroke-width="5" stroke-linecap="round"/><path d="M14 18q7-10 14 0" ${W} ${N}/>` + g('a-drop', `<path d="M42 18l2 6M38 20l1 6" stroke="#3b6fe0" stroke-width="2.4" stroke-linecap="round"/>`, '42px 22px'));
-add('😟', face(24, 24, 18, '#ffd23f', `<path d="M17 34q7-5 14 0" ${W} ${N}/><path d="M14 14l6 2M34 14l-6 2" ${W}/>`));
-add('🤐', face(24, 24, 18, '#ffd23f', `<path d="M14 32h20" ${W}/><path d="M17 29v6M21 29v6M25 29v6M29 29v6" stroke="${O}" stroke-width="1.8"/>`));
+// ---------- the festival games (js/content/festgames108b.ts) ----------
+const leaf = (x: number, y: number, r = 0) => `<path d="M${x} ${y}q8-10 16 0q-8 10-16 0z" fill="#43a047" ${W} transform="rotate(${r} ${x + 8} ${y})"/>`;
+const lantern = (x: number, y: number, c: string) => `<path d="M${x} ${y - 10}v-4" ${W}/><ellipse cx="${x}" cy="${y}" rx="8" ry="10" fill="${c}" ${W}/><path d="M${x - 4} ${y + 10}h8" ${W}/>`;
+// the area's picture: a little festival flag string
+def('fg:area', `<path d="M2 10q22 14 44 0" ${W} ${N}/><path d="M8 13l3 9 4-7zM20 17l3 9 3-9zM32 16l3 9 3-9zM42 12l1 9 3-8z" fill="#e8433a" ${W}/>` + g('a-twinkle', sparkle(24, 36, 1.4), '24px 36px'));
+def('fg:tet', `<rect x="10" y="10" width="28" height="28" rx="2" fill="#5cae4a" ${W}/><path d="M10 24h28M24 10v28" stroke="#e8433a" stroke-width="3"/>` + leaf(2, 8, -30));
+def('fg:ramthang1', circ(34, 12, 9, '#fff3b0') + g('a-bob', lantern(16, 28, '#e8433a'), '16px 28px') + `<path d="M4 44q20-6 40 0" stroke="#5fb6ff" stroke-width="3" ${N}/>`);
+def('fg:giotohung', `<rect x="6" y="24" width="16" height="16" fill="#5cae4a" ${W}/>` + circ(34, 32, 9, '#fffdf6') + `<path d="M14 4l4 8 6-6 6 6 4-8 2 14H12z" fill="#ffd23f" ${W}/>`);
+def('fg:doanngo', `<path d="M4 32h34l6-10-6 2" fill="#e8433a" ${W}/><path d="M38 22q4-10 8-6-2 4-6 4" fill="#ffd23f" ${W}/>` + g('a-sway', `<path d="M12 32l-4 10M22 32l-4 10M32 32l-4 10" ${W}/>`, '22px 36px') + `<path d="M2 42q22 6 44 0" stroke="#5fb6ff" stroke-width="3" ${N}/>`);
+def('fg:vulan', `<path d="M24 44V22" stroke="#43a047" stroke-width="3"/>` + leaf(10, 32, -20) + g('a-pulse', `${circ(24, 16, 9, '#e8433a')}<path d="M18 16q6-8 12 0M20 19q4-5 8 0" ${W} ${N}/>`, '24px 16px'));
+def('fg:midautumn', g('a-sway', `<path d="M24 4v6" ${W}/>${star5(24, 26, 16, '#ffd23f')}${circ(24, 26, 3, '#ff9f43')}`, '24px 6px'));
+def('fg:ongtao', `<path d="M6 30q14-18 30-4l8-6v16l-8-6q-16 14-30 0z" fill="#ffb020" ${W}/>${dot(14, 28, 1.6)}` + g('a-bob', `<path d="M30 10q4-6 10-4" ${W} ${N}/>${sparkle(36, 6)}`, '36px 8px'));
+def('fg:thieunhi', g('a-bob', `${circ(14, 16, 8, '#ff7eb8')}${circ(28, 12, 8, '#5fb6ff')}${circ(38, 20, 7, '#ffd23f')}`, '24px 16px') + `<path d="M14 24l6 20M28 20l-6 24M38 27l-14 17" ${W} ${N}/>`);
+def('fg:quockhanh', `<path d="M8 6v38" stroke="#b07a4a" stroke-width="3"/><rect x="10" y="8" width="30" height="20" fill="#e8433a" ${W}/>` + star5(25, 18, 6, '#ffd23f') + g('a-twinkle', sparkle(40, 38), '40px 38px'));
+def('fg:nhagiao', `<path d="M18 44l6-18 6 18" fill="#43a047" ${W}/>` + circ(16, 18, 6, '#ff7eb8') + circ(32, 18, 6, '#ffd23f') + circ(24, 10, 6, '#e8433a') + `<path d="M14 36h20" stroke="#5fb6ff" stroke-width="4"/>`);
+def('fg:easter', `<ellipse cx="24" cy="26" rx="13" ry="17" fill="#ffe3a3" ${W}/><path d="M11 22q6 4 13 0t13 0M12 32q6 4 12 0t12 0" stroke="#ff7eb8" stroke-width="2.6" ${N}/>` + g('a-twinkle', sparkle(40, 8), '40px 8px'));
+def('fg:mothersday', `<rect x="6" y="10" width="36" height="28" rx="4" fill="#fff6e4" ${W}/><path d="M6 10l18 14 18-14" ${W} ${N}/>` + g('a-pulse', `<path d="M18 30c0-4 6-4 6 0 0-4 6-4 6 0 0 4-6 8-6 8s-6-4-6-8z" fill="#e8433a" ${W}/>`, '24px 32px'));
+def('fg:fathersday', `<path d="M4 34h40" ${W}/><rect x="8" y="22" width="32" height="12" rx="3" fill="#e8b97a" ${W}/>` + g('a-bob', `<path d="M14 18q4-6 8 0M26 18q4-6 8 0" stroke="#ff9f43" stroke-width="2.4" ${N}/>`, '24px 16px') + circ(24, 40, 3, '#e8433a'));
+def('fg:halloween', `<ellipse cx="24" cy="28" rx="18" ry="14" fill="#ff9f43" ${W}/><path d="M24 14v-6" stroke="#43a047" stroke-width="3"/><path d="M14 24l4 4-4 2zM34 24l-4 4 4 2z" fill="${O}"/>${smile(24, 34, 12)}`);
+def('fg:christmas', `<path d="M24 6l14 20h-6l8 12H8l8-12h-6z" fill="#2e8b57" ${W}/><rect x="21" y="38" width="6" height="6" fill="#b07a4a" ${W}/>` + g('a-twinkle', star5(24, 6, 5, '#ffd23f'), '24px 6px') + circ(18, 30, 2.4, '#e8433a') + circ(30, 24, 2.4, '#5fb6ff'));
+def('fg:newyear', `<path d="M4 44h40" ${W}/>` + g('a-pulse', `<path d="M24 22l0-14M24 22l10-8M24 22l-10-8M24 22l12 2M24 22l-12 2" stroke="#ffd23f" stroke-width="2.6" stroke-linecap="round"/>`, '24px 22px') + txt(12, 42, 12, '3 2 1', '#e8433a'));
+def('fg:ausday', `<path d="M6 40h36" ${W}/><path d="M12 40V20M20 40V20M16 20v20" stroke="#b07a4a" stroke-width="2.6"/>` + g('a-sway', `<path d="M30 40l8-26" stroke="#e8b97a" stroke-width="5" stroke-linecap="round"/>`, '30px 40px') + circ(40, 10, 3.4, '#e8433a'));
+def('fg:cleanup', `<path d="M12 16h24l-3 28H15z" fill="#43c463" ${W}/><path d="M10 16h28M20 10h8v6" ${W} ${N}/><path d="M18 26q6-6 12 0l-3 3M30 34q-6 6-12 0l3-3" stroke="#fff" stroke-width="2.4" ${N}/>`);
+def('fg:harmony', g('a-wave', `<path d="M6 30q6-10 14-4l6 4" stroke="#c98a5a" stroke-width="6" stroke-linecap="round" ${N}/><path d="M42 30q-6-10-14-4l-6 4" stroke="#ffd6b8" stroke-width="6" stroke-linecap="round" ${N}/>`, '24px 30px') + circ(24, 12, 6, '#ff9f43'));
+def('fg:holi', `${circ(14, 18, 9, '#ff7eb8')}${circ(30, 14, 9, '#ffd23f')}${circ(24, 30, 10, '#5fb6ff')}` + g('a-twinkle', `${circ(40, 34, 3, '#43c463')}${circ(8, 36, 3, '#9a6bff')}`, '24px 34px'));
+def('fg:anzac', `<ellipse cx="24" cy="30" rx="16" ry="10" fill="#e0a95b" ${W}/>${dot(18, 28, 1.6, '#8a5a2a')}${dot(28, 32, 1.6, '#8a5a2a')}${dot(24, 26, 1.6, '#8a5a2a')}` + circ(36, 12, 6, '#e8433a') + dot(36, 12, 2));
+def('fg:reconciliation', `<path d="M8 40q4-14 12-16l4 6 4-6q8 2 12 16" fill="#ffd23f" ${W}/>` + circ(16, 14, 5, '#c98a5a') + circ(32, 14, 5, '#ffd6b8') + `<path d="M20 30h8" stroke="#e8433a" stroke-width="3"/>`);
+def('fg:naidoc', `<rect x="4" y="4" width="40" height="40" rx="6" fill="#8a4b2a" ${W}/>` + [10, 16, 22].map(r => `<circle cx="24" cy="24" r="${r}" fill="none" stroke="${r === 10 ? '#ffd23f' : r === 16 ? '#fff' : '#e8433a'}" stroke-width="2.4" stroke-dasharray="1 4" stroke-linecap="round"/>`).join('') + circ(24, 24, 4, '#ffd23f'));
+def('fg:diwali', `<path d="M8 32h32q-4 10-16 10T8 32z" fill="#c26a2a" ${W}/>` + g('a-flicker', `<path d="M24 30q-6-8 0-18 6 10 0 18z" fill="#ffb020" ${W}/>`, '24px 30px'));

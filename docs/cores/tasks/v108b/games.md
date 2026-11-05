@@ -1,6 +1,6 @@
 # v1.08b games helper: status
 
-**Ready for Release (part 1 of the brief): items 1, 2, 4 and their checks. Items 3, 5 and 6 are not started (see "Left for later").**
+**Ready for Release: items 1, 2, 3, 4, 5 and their checks. Item 6 (learning quests) is not started (see "Left for later").**
 
 Branch `work/v108b-games` from `origin/integrate/v108`. Times in AEDT.
 
@@ -63,6 +63,39 @@ Their names and pictures were already different, so nothing was renamed (no new 
   save); `profile.hostNews` remembers them.
 - `js/main.ts`: one line in the hero loop calls `G.hostNews`; the `SvMain` type gains `hostNews`.
 
+### 3. New games where a corner is thin (27 games)
+- `js/content/games108b.ts`: each game is a table of questions in English and Vietnamese (every line written in full, so
+  the voice pack records it). `js/games/games108b.ts` plays them as picture quizzes on the maths kit's rounds (the right
+  answer moves, no two rounds alike; Easy 4 rounds and 2 wrong answers, Medium 5, Hard 6 and 3, Talent 7 and 3 with
+  written answers only; under-5s always Easy with pictures). English corner games play in English mode.
+- Tiếng Anh 9 to 21: Who Says That?, Opposites in English, How Do You Feel?, Clothes and Weather, My Daily Routine,
+  In On Under, Action Words, At the Shop, Numbers 11 to 20, Body Song, Who What Where?, My Day Story.
+- Em và gia đình 6 to 12: Family Tree, Brush and Wash, Safe or Not Safe?, Helping at Home, Calm Down Corner, At the Table
+  (the plan's My Feelings, Healthy Plate and Kind Choices already existed as feelings, plate and kindchoice, so three
+  other topics were chosen).
+- Suy nghĩ giỏi 8 to 14: Balance Puzzle, Clue Detective, Code the Robot, What Changed?, Hidden Counting, What Goes Together?
+  (the plan's Maze Builder, Memory Pairs Plus and Tangram Animals overlap maze, memory and tangram, so other puzzles were chosen).
+- Tiếng Việt 15 to 18: Đọc Thơ Ngắn, Từ Láy, Chính Tả S hay X (Ghép câu ca dao already exists as vi_cadao).
+- Our own drawings: 27 game pictures in `js/art/games108b.ts`; 9 pictures that had none (shorts, gloves, wind, cyclist,
+  comb, tissue, watering can, worried face, zipped mouth) in `js/art/emoji108b.ts`, part of the start so the emoji check sees them.
+- How to play (the TV guide film reads it): `js/games/games108b-meta.ts`. Catalogue and loader: `js/games/catalog.ts`
+  (one block each); `GAME_INFO` block in `js/content/activities.ts`.
+
+### 5. One game per festival (24 games)
+- `js/content/festgames108b.ts`: one game per festival of `js/content/festcal.ts` (Gói Bánh Chưng, Thả Đèn Rằm Tháng
+  Giêng, Bánh Dâng Vua Hùng, Đua Thuyền Rồng, Bông Hồng Cài Áo, Làm Đèn Ông Sao, Thả Cá Chép Tiễn Ông Táo, Bóng Bay 1/6,
+  Treo Cờ Quốc Khánh, Hoa Tặng Thầy Cô, Tô Trứng Phục Sinh, Thiệp Tặng Mẹ, Dã Ngoại Cùng Bố, Đèn Bí Ngô, Trang Trí Cây
+  Thông, Đếm Ngược Năm Mới, Cricket Sân Sau, Dọn Sạch Công Viên, Xin Chào Nhiều Thứ Tiếng, Tung Bột Màu Holi, Bánh Quy
+  Anzac, Những Bàn Tay Nắm Lấy Nhau, Tranh Chấm Kể Chuyện, Thắp Đèn Diya); quiet days are gentle. Same quiz engine.
+- `js/content/festseason.ts`: a festival game is open from the decorations (3 weeks before a party, 3 days before a quiet
+  day, or the build-up set in Studio) until 3 days after; testers 7 days earlier; a date moved in Studio is followed.
+  `backOn(id)` gives the day it comes back. `gameInfo` hides a festival game out of season.
+- `festcal.ts`: one line at the end makes each festival's table game its own festival game (the everyday games are
+  everyday only again). New area `festival` (Trò chơi lễ hội) in the Dân gian tab; its place is the festival's table,
+  else the Lotus statue in the village.
+- **Request to the story helper (calendar tab):** outside the season the calendar should show "Sẽ quay lại vào …" /
+  "Back on …" for the festival's game: call `backOn('fg_' + festivalId)` from `js/content/festseason.ts` (a Date or null).
+
 ## Checks (5 Nov 2026 AEDT)
 - `hubmap` extended: no link tiles in the Play hub; each game once across Học vui and Vui chơi on the Simple screen: pass.
 - `gameplace` (new, `tests/checks/screens.mts`): every switched-on game has a place that stands in the valley; every area
@@ -71,10 +104,10 @@ Their names and pictures were already different, so nothing was renamed (no new 
   and the link tiles that the owner's plan removes): see the progress notes below.
 
 ## Left for later
-- Item 3: the new corner games (Tiếng Anh to about 20, Em và gia đình to about 12, Suy nghĩ giỏi to about 14,
-  Tiếng Việt to about 16).
-- Item 5: the 24 festival games and their seasons.
-- Item 6: learning quests (a learning step in the daily adventure, 10-step subject paths, quest marks).
+- The new games are picture quizzes on one engine; richer hands-on versions (wrapping the cake, a maze builder) could follow.
+- Item 6: learning quests (a learning step in the daily adventure, 10-step subject paths, quest marks). Not started: the
+  sticker book has pages of exactly 9 (STK rules), so a 10-step path with a sticker per step needs Release or the owner
+  to choose how the stickers fit (for example 9 steps and a badge, or a page of its own).
 - The host news for a newly opened story (games only so far).
 - Recording the 11 host lines (they are in `js/content/gameplace.ts`; the voice pack tool collects them as pairs).
 
