@@ -13,23 +13,23 @@ Branch: `work/v108e-nature` (from `origin/integrate/v108`). Brief: `nature-brief
   (after the start) swaps a marked shape's geometry for its model when a child is within 70 m (40 on Fast) and back past
   110 m (70 on Fast). Same mesh, material and draw; areas that sleep, taps and colliders unchanged.
 - Part 4 (check `worldnature`, `tests/world-nature.mts`, end of `tests/run.mts`): done, passes.
+- Part 6 (owner: refinements, then "Detailed up close"): smooth shading and painted light; round picture-book puffs;
+  turned pots, vases, lamp, pumpkins, eggs and cobs; rounded wooden props; a different sprout per crop; rocks, grass,
+  garden plots, wall frames and keepsake stands too. Close-up models `<name>-hd` for every many-copy kind (canopies of
+  broad overlapping leaves, layered fir skirts, fuller grass, reeds and flowers), drawn within 25 m by one small
+  InstancedMesh per kind (js/world-nature.ts tickClose); crops, farm props and My House made only in the detailed version.
+  Sheets: `docs/world-models-v108e/nature/all-models.png` (light), `close-up-models.png`, `close-up-trees.png`.
 - Part 5 (screenshots): `docs/world-models-v108e/nature/` before (models blocked) and after, phone, tablet, computer,
   at the farm and among the trees.
 
-## Checks (6 Nov 2026 AEDT, one at a time, `node suite.mts --jobs 1 --only ...`)
+## Checks (6 Nov 2026 AEDT, after the refinements and the close-up models; one at a time)
 | Check | Result |
 |---|---|
-| worldnature (new) | pass: 46 models, 113 marked shapes; draws home 170 -> 170, village 289 -> 293; blocked: code shapes kept |
-| boot | pass |
-| perf | pass: home 174 draws (490), village 292 draws (420) / 741k triangles (800k) |
-| battery | pass |
-| longplaymem | pass |
-| startup | pass: first start 1033 KB; integrate/v108 measured the same way 1032 KB (the tag file, about 1 KB) |
-| areastream | pass |
-| myhouse | pass |
-| types | pass |
-| farm, seasons, festdecor | no such checks |
-| `--changed` | picks the full suite (.gitignore and shared files): left to Release (GitHub full suite) |
+| worldnature (new) | pass: 51 models and 20 close-up ones; close up by a tree 229 draws (close-up trees, rocks, grass, reeds, flowers drawn) |
+| perf | pass: home 175 draws (490), village 289 draws (420) / 605k triangles (800k; was 741k before this work) |
+| battery, longplaymem, areastream, myhouse, plots, boot, types | pass |
+| startup | pass: first start 1033 KB (integrate/v108 measured the same way: 1032 KB) |
+| `--changed` | picks the full suite (shared files): left to Release (GitHub full suite) |
 
 ## How it works, and changes outside my own files (small, marked "v1.08e nature")
 - `js/world.ts`: the instanced trees (not rocks) and the meadow flowers are marked.
