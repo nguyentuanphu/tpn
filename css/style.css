@@ -3517,3 +3517,59 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .fcal-line h3 { margin: 0 6px 0 0; font-size: 16px; }
 .fcal-line .fcal-new { display: flex; grid-template-columns: none; align-items: center; gap: 6px; min-height: 44px; padding: 4px 10px; }
 .fcal-line .fcal-new .fi { font-size: 26px; }
+/* (v1.08b quality) the learning report by subject, Play with Mum and Dad, and the gentle play time */
+.lr-list { display: grid; gap: 8px; }
+.lr-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: #fff8ee; border-radius: 14px; padding: 8px 10px; font-size: 16px; }
+.lr-ic svg, .lr-ic img { width: 40px; height: 40px; }
+.lr-t { flex: 1 1 200px; line-height: 1.4; }
+.lr-lv select { min-height: 44px; font-size: 16px; border-radius: 10px; padding: 0 8px; }
+.lr-next { font-weight: 700; font-size: 17px; }
+/* (v1.08b quality, owner 3 Nov 2026 AEDT: "phone landscape is fully playable") a short landscape screen (a phone held
+   sideways): Leave, the name, the dots, the level, the stars, the film and the guide stand in a rail on the left, so the
+   game has the whole height; the frame puts the game's picture beside its answers when that fits better (.gl-wide,
+   js/games/frame.ts) */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl { display: grid; grid-template-columns: clamp(170px, 23vw, 230px) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .gl > .gl-head { grid-column: 1; grid-row: 1; flex-wrap: wrap; align-content: flex-start; gap: 6px 8px; padding: 8px 8px 4px; }
+  .gl > .gl-head .gl-x { order: 0; } .gl > .gl-head .gl-how { order: 1; margin-left: auto; }
+  .gl > .gl-head .gl-title { order: 2; flex: 1 1 100%; font-size: 16px; }
+  .gl > .gl-head .gl-dots { order: 3; flex-wrap: wrap; } .gl > .gl-head .gl-status { order: 4; flex-wrap: wrap; }
+  .gl > .gl-guide { grid-column: 1; grid-row: 2; align-items: flex-start; padding: 4px 8px; overflow: hidden; }
+  .gl > .gl-guide .gl-help { font-size: 16px; -webkit-line-clamp: 6; max-height: none; }
+  .gl > .gl-stage { grid-column: 2; grid-row: 1 / span 2; padding: 6px; gap: 8px; }
+}
+.gl.gl-wide .gl-stage { flex-direction: row; flex-wrap: wrap; align-content: center; justify-content: center; }
+.gl.gl-wide .gl-stage > .gl-wide-one { flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center; align-content: center; }
+.gl.gl-wide .gl-stage > .gl-wide-one > * { flex: 0 1 auto; min-width: 0; }
+/* the shared board games (Rắn và thang and the like): the board on the left, the players, the words and the buttons beside it */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .snakes-shared { grid-template-columns: auto minmax(0, 1fr); align-items: center; width: 100%; }
+  .gl .snakes-shared > .snakes-board { grid-column: 1; grid-row: 1 / span 6; width: min(300px, 80dvh); grid-template-rows: repeat(5, minmax(0, 1fr)); }
+  .gl .snakes-shared > :not(.snakes-board):not(style) { grid-column: 2; }
+}
+.pt-guide { margin: 0 0 8px; padding-left: 20px; line-height: 1.5; font-size: 16px; }
+.pt-list { display: grid; gap: 8px; }
+.pt-row { display: flex; align-items: center; gap: 10px; background: #fff8ee; border-radius: 14px; padding: 8px 10px; font-size: 16px; }
+.pt-ic svg, .pt-ic img { width: 40px; height: 40px; }
+.pt-t { flex: 1; min-width: 0; line-height: 1.35; }
+.pt-play { min-width: 64px; min-height: 44px; }
+/* Lumi's card: her face and her words at the foot of the screen (js/lumi.ts) */
+.lumi-card { position: fixed; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 80; display: flex; align-items: center; gap: 10px;
+  width: min(560px, calc(100vw - 32px)); background: #fffdf6; color: #3b2a4f; border-radius: 22px; padding: 10px 14px; box-shadow: 0 8px 24px rgba(59, 42, 79, .25); font-size: 18px; line-height: 1.35; animation: fadein .3s; pointer-events: none; }
+.lumi-card .lumi-face svg { width: 64px; height: 64px; display: block; }
+.lumi-card p { margin: 0; } .lumi-card b { color: #3f8f4e; margin-right: 4px; }
+.rt-moon svg { width: 96px; height: 96px; } .rt-zz svg { width: 48px; height: 48px; }
+/* (v1.08b fivescreens) the folk games on a sideways phone: the field on the left, the words, the buttons and the rules on the right */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .folk-court { width: 100%; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; }
+  .gl .folk-court > .folk-field { grid-column: 1; grid-row: 1 / span 3; height: min(330px, 84dvh); }
+  .gl .folk-court > :not(.folk-field):not(style) { grid-column: 2; }
+}
+/* (v1.08b fivescreens, UI rule: touch targets 44 px, 64 px for under-5s) every button a child taps in a game is at least a
+   finger's size, as drawn before the frame's zoom (which never shrinks one below it: js/games/frame.ts); the pick-up
+   sticks keep their thin sticks */
+.gl .gl-stage :is(button, [role=button]):not(.ch-stick) { min-width: 44px; min-height: 44px; }
+.gl.little .gl-stage :is(button, [role=button]):not(.ch-stick) { min-width: 64px; min-height: 64px; }
+/* the science boards on a landscape screen: the answers stand side by side, also an under-5's bigger ones */
+@media (orientation: landscape) and (min-height: 521px) { .gl .sx-board > .sx-controls { width: auto !important; min-width: min(380px, 92vw); max-width: 92vw; } }
+.lr-row small, .pt-row small { font-size: 16px; }

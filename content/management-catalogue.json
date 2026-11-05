@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "generatedFrom": {
-    "commit": "bd7bef926cdd4d51b7511e23c9b7be0ec4811faf",
+    "commit": "eeb4b354f14231d2ef0d594a6476c035438e36b8",
     "dirty": true,
     "dirtyPaths": [
-      "home/index.html"
+      "js/learn.ts"
     ],
-    "sourceHash": "45f4ae0286c838f19482be2a5a87856bc44633c495c0c94407aeedc14920f7a8",
+    "sourceHash": "86442c3697aa6c9e3ed77ccfedbc07b492279324521e761e2146a0e2556e3b09",
     "build": "v1.07"
   },
   "website": {
@@ -14993,7 +14993,7 @@
       "area": "🇻🇳",
       "sourceCommit": null,
       "sourceFile": "js/learn.ts",
-      "sourceHash": "549147718ccd7a7c4d4e9ca9b7e4132fe6f34c1751000568d4f84aef40b6dcc5",
+      "sourceHash": "e592d2dcc0bddbce46d2e9fc894b769e84b79b45af8c596139361761cd603886",
       "guide": {
         "href": "/home/#guides",
         "kind": "section",
@@ -15452,7 +15452,7 @@
       "area": "🇨🇳",
       "sourceCommit": null,
       "sourceFile": "js/learn.ts",
-      "sourceHash": "549147718ccd7a7c4d4e9ca9b7e4132fe6f34c1751000568d4f84aef40b6dcc5",
+      "sourceHash": "e592d2dcc0bddbce46d2e9fc894b769e84b79b45af8c596139361761cd603886",
       "guide": {
         "href": "/home/#guides",
         "kind": "section",
@@ -16906,7 +16906,7 @@
       "area": "🇮🇳",
       "sourceCommit": null,
       "sourceFile": "js/learn.ts",
-      "sourceHash": "549147718ccd7a7c4d4e9ca9b7e4132fe6f34c1751000568d4f84aef40b6dcc5",
+      "sourceHash": "e592d2dcc0bddbce46d2e9fc894b769e84b79b45af8c596139361761cd603886",
       "guide": {
         "href": "/home/#guides",
         "kind": "section",
@@ -17570,7 +17570,7 @@
       "area": "🇻🇳",
       "sourceCommit": null,
       "sourceFile": "js/learn.ts",
-      "sourceHash": "549147718ccd7a7c4d4e9ca9b7e4132fe6f34c1751000568d4f84aef40b6dcc5",
+      "sourceHash": "e592d2dcc0bddbce46d2e9fc894b769e84b79b45af8c596139361761cd603886",
       "guide": {
         "href": "/home/#guides",
         "kind": "section",
@@ -18010,7 +18010,7 @@
       "area": "🇦🇺",
       "sourceCommit": null,
       "sourceFile": "js/learn.ts",
-      "sourceHash": "549147718ccd7a7c4d4e9ca9b7e4132fe6f34c1751000568d4f84aef40b6dcc5",
+      "sourceHash": "e592d2dcc0bddbce46d2e9fc894b769e84b79b45af8c596139361761cd603886",
       "guide": {
         "href": "/home/#guides",
         "kind": "section",

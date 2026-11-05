@@ -7,6 +7,7 @@ import { SFX } from '../audio.js';
 import { fmt } from '../money.js';
 import { $, dist2, wait } from '../util.js';
 import { heightAt, SHRINES, WATER, HALF } from '../world.js';
+import { dropSpot } from '../dropspot.js';
 import { dialog, dialogHooks, reward, openCooking, openShop } from '../ui.js';
 import { openChat, personaByName, PERSONAS } from '../chat.js';
 import { voiceCommand, voiceControlOn } from '../commands.js';
@@ -158,14 +159,10 @@ G.openGamesHub = i => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return;
 // Games hub / map: fly straight to the friend who runs a game (or a place), then start it there
 const npcLike = it => /^(npc_|g_|v_|pc_|cards$|dacau$|musiccorner$|bear$|stall$|school$)/.test(it.id || ''); // (school: Cô Tam at the school door)
 // the nearest open spot to (x, z): not inside a building, tree or stall, not in water. Travelling lands there.
-G.clearSpot = (x, z, pad = .9) => {
-  // (reports #251/#256) inside the valley's walkable edge, as G.goodSpot: past it the child is held at the edge beside what stands there
-  const W = G.world, free = (px, pz) => Math.abs(px) <= HALF - 10 && Math.abs(pz) <= HALF - 10 && heightAt(px, pz) > WATER + .3 && !(W.solidAt && (W.solidAt(px, pz) || W.solidAt(px + .6, pz) || W.solidAt(px - .6, pz) || W.solidAt(px, pz + .6) || W.solidAt(px, pz - .6))) && !solidCircleHit(W, px, pz) && !W.colliders.some(c => c.r > 0 && Math.hypot(c.x - px, c.z - pz) < c.r + pad) && !W.boxes.some(b => px > b.x0 - pad && px < b.x1 + pad && pz > b.z0 - pad && pz < b.z1 + pad);
-  if (free(x, z)) return [x, z];
-  for (let r = 1.5; r <= 14; r += 1.25) for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2, px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r; if (free(px, pz)) return [px, pz]; }
-  return [x, z];
-};
-G.landBy = async (h, x, z) => { const [sx, sz] = G.clearSpot(x + 1.8, z + 1.4); await G.travel(h, sx - 4.5, sz - 1); h.yaw = Math.atan2(x - h.pos.x, z - h.pos.z); h.camYaw = h.yaw + Math.PI; };
+// (v1.08b quality) the nearest open ground to (x, z) with a way out and a clear camera view (js/dropspot.ts): every
+// flight lands there (G.travel), the same rule as the end of every ride
+G.clearSpot = (x, z) => { const d = dropSpot(G.world, x, z); return [d.x, d.z]; };
+G.landBy = async (h, x, z) => { await G.travel(h, x + 1.8 - 4.5, z + 1.4 - 1, { x, z }); };
 G.meetAndPlay = async (i, id, source = 'place') => {
   const h = G.heroes[i], it = G.gameSpot(id); if (!h) return;
   if (!it) { return G.playGame(i, id, source); return; }

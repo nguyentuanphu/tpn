@@ -55,6 +55,7 @@ marketing/source/runvalley.log
 /js/art/kit.js
 /js/art/learning.js
 /js/art/lookup.js
+/js/art/lumi.js
 /js/art/maths3.js
 /js/art/money3.js
 /js/art/notify.js
@@ -156,6 +157,7 @@ marketing/source/runvalley.log
 /js/content/jobs.js
 /js/content/kitfilms.js
 /js/content/learnpaths.js
+/js/content/lumi.js
 /js/content/map.js
 /js/content/notify.js
 /js/content/owllessons.js
@@ -175,6 +177,7 @@ marketing/source/runvalley.log
 /js/content/songs.js
 /js/content/stickers.js
 /js/content/storyhelp.js
+/js/content/subjects.js
 /js/content/surprises.js
 /js/content/talefilms.js
 /js/content/tester-arcades.js
@@ -194,6 +197,7 @@ marketing/source/runvalley.log
 /js/data.js
 /js/dayplan.js
 /js/dinh.js
+/js/dropspot.js
 /js/emojiswap.js
 /js/englishmode.js
 /js/explain.js
@@ -350,6 +354,7 @@ marketing/source/runvalley.log
 /js/learnquest.js
 /js/listen.js
 /js/lotus.js
+/js/lumi.js
 /js/lunar.js
 /js/main.js
 /js/main/friends.js
@@ -382,6 +387,7 @@ marketing/source/runvalley.log
 /js/places.js
 /js/player.js
 /js/players.js
+/js/playtogether.js
 /js/plots.js
 /js/popups.js
 /js/powerlines.js

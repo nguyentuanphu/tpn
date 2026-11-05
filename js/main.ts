@@ -1,4 +1,6 @@
 import { testerArcadeAvailable } from './content/tester-arcades.js';
+import { subjectDifficulty, useAreas } from './content/subjects.js';
+import { GAME_INFO as SUBJECT_AREAS } from './content/activities.js';
 import { fruitParadeAvailable } from './content/fruit-parade.js';
 // Sparkle Valley: boot, the game loop, split-screen, NPCs, quests and rewards.
 import './emojiswap.js'; // (first: no phone emoji on the page or on any canvas)
@@ -227,7 +229,7 @@ const titleCam = new THREE.PerspectiveCamera(50, 1, .3, 1200);
 /** a child in the valley (js/player.js), with what the other modules add to it */
 type SvHeroT = Hero & { walkTo?: { x: number, z: number, friend?: string, name?: string } | null, _tiredHint?: boolean, _rescuing?: boolean, cancelCarry?: (() => void) | null, indoors?: unknown, view?: string, zoom?: number,
   carry?: unknown, carryIt?: unknown, followId?: string | null, goalAct?: SvItem | null, _dancing?: boolean, _followHop?: number };
-type SvAt = (h: SvHeroT, x: number, z: number) => Promise<void>;
+type SvAt = (h: SvHeroT, x: number, z: number, face?: { x: number, z: number }) => Promise<void>;
 /** a window that closes by itself when the children walk away from where it opened */
 type SvWalkClose = HTMLElement & { _from?: { x: number, z: number }[], _autoClose?: (() => void) | null };
 /** someone walking about who is not a child playing here: a wanderer at home, or a friend online */
@@ -282,7 +284,8 @@ export interface SvMain {
   kidTalk?: (h: SvHeroT, game: string, name: string, line: string) => void; townTalk?: (h: SvHeroT, who: unknown) => Promise<void>;
   chatWith?: (i: number, pid: string, firstAsk?: boolean) => void; emote?: (i: number, id: string) => void; fx?: (x: number, y: number, z: number, ch: string) => void;
   rescue?: (h: SvHeroT, fainted?: boolean) => Promise<void>; onTowerTop?: (h: SvHeroT, tw: (typeof TOWERS)[number]) => Promise<void>;
-  travel?: SvAt; travelTo?: SvAt; landBy?: SvAt; clearSpot?: (x: number, z: number, pad?: number) => [number, number]; goodSpot?: (x: number, z: number) => boolean;
+  travel?: SvAt; travelTo?: (h: SvHeroT, x: number, z: number, snapToNpc?: boolean) => Promise<void>; landBy?: SvAt; faceOwl?: (h: SvHeroT, near?: number) => void; setDown?: (...a: any[]) => unknown; // (v1.08b quality)
+  clearSpot?: (x: number, z: number, pad?: number) => [number, number]; goodSpot?: (x: number, z: number) => boolean;
   npcAt?: (id: string) => { x: number, z: number } | undefined; npcNear?: (x: number, z: number, r?: number) => SvItem | null; gameSpot?: (id: string) => SvItem | undefined;
   goToGame?: (i: number, id: string) => void; playGameOnline?: (id: string, level: number, online: SvOnline) => Promise<ReturnType<typeof openGame> extends Promise<infer R> ? R | undefined : unknown>;
   openPad?: (i: number, tab?: string) => void; closePad?: () => void; closePadNow?: () => void; openGamesHub?: (i: number) => void; openQuick?: (i: number) => void;
@@ -372,6 +375,14 @@ function addNPC({ id, name, faceName, look, model, x, z, face = 0, icon = '💬'
 const V = VILLAGE;
 const kidLook = (style, color, h, hs, hat) => ({ style, color, hat, back: 'none', hair: h, hairStyle: hs, skin: '#f6c7a5', glider: 0 });
 let owl, gourd;
+/** the child faces Ông Cú and the camera stands behind the child (at spawn, near him) */
+function faceOwl(h, near = 30) {
+  if (!owl || !h || Math.hypot(owl.x - h.pos.x, owl.z - h.pos.z) > near) return false;
+  h.yaw = Math.atan2(owl.x - h.pos.x, owl.z - h.pos.z); h.camYaw = h.yaw + Math.PI; h.manualCamT = 0;
+  h.camPos.set(h.pos.x + Math.sin(h.camYaw) * h.camDist, h.pos.y + 4, h.pos.z + Math.cos(h.camYaw) * h.camDist);
+  return true;
+}
+G.faceOwl = faceOwl;
 function setupNPCs() {
   owl = addNPC({ id: 'owl', name: 'Ông Cú', model: buildOwl(), x: PLATEAU.x - 2, z: PLATEAU.z - 8, face: .3, icon: '🦉', talk: owlTalk });
   addNPC({ id: 'mai', name: 'Cô Mai', look: { style: 'aodai', color: '#e8435a', hat: 'nonla', back: 'none', hair: '#1d1412', hairStyle: 'long', skin: '#f6c7a5', glider: 0, age: 'adult' }, x: V.x + 2, z: V.z - 11.6, face: 0, icon: '🛒', talk: maiTalk });
@@ -438,6 +449,7 @@ G.fx = (x, y, z, ch) => { const s = sprite(ch, 1.4); s.material = s.material.clo
 G.mount = (h, b) => { h.mount(b); h.profile.quests.buffalo = true; save(); say('Moo! Hold on tight!', 'Ụm bò! Bám chắc nhé!'); hudFor(h).toast(T('Press Jump to get off', 'Bấm Nhảy để xuống')); };
 
 const fruitParadeModeOn = fruitParadeAvailable;
+useAreas(id => SUBJECT_AREAS[id]?.[0]);   // (v1.08b quality) the subjects of the learning report and the level by subject
 
 async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number]) {
   const h = G.heroes[i]; if (!h || !canStartGame(id,[h.profile])) return;
@@ -456,7 +468,8 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   // the level the child chose inside this game (round M), else the grown-ups' difficulty for this child
   // (owner, 1 Nov 2026 AEDT: "the levels often look the same") each level has its own band and wins move a child up inside it:
   // Easy 1-2, Medium 2-3, Hard 4-5, Talent 5 with the game's own extra challenge. (Before, Easy reached the top after a few wins.)
-  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || p.difficulty || 'easy', band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
+  // (v1.08b quality) with no level chosen in the game, the level follows the child per subject; a grown-up's subject level wins
+  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || subjectDifficulty(p, id), band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
   const level = Math.min(band[1], band[0] + Math.floor(((p.levels[id] || 1) - 1) / 2));
   const little = G.heroes.some(x => x.profile.age !== 'big'), strong = !little && diff !== 'easy';
   if (source === 'shrine') { SFX.secret(); say('A shrine! Let’s solve the puzzle.', 'Một ngôi đền! Cùng giải câu đố nào.'); await wait(600); }
@@ -591,6 +604,10 @@ function startSession(mode, chosen) {
     if (p.pos && !onThisMap(p.posMap)) { p.pos = null; p.posMap = MAP_VERSION; G.valleyGrew = true; save(); }
     const back = p.pos && G.goodSpot(p.pos.x, p.pos.z), start = back ? p.pos : HOME_SPOT(i);
     h.place(start.x, start.z); h.camYaw = Math.PI * .85;
+    // (v1.08b quality, owner 5 Nov 2026 AEDT: "when the user spawn in, the owl blocks it, better to move the camera angle
+    // to look at the owl instead") near Ông Cú the child faces him and the camera stands behind the child, so the owl
+    // is in front of them both, never between the camera and the child
+    faceOwl(h);
     if (i === 0) G.resumedAway = false;
     if (back && Math.hypot(start.x - HOME_SPOT(i).x, start.z - HOME_SPOT(i).z) > 12) { if (i === 0) G.resumedAway = true; const rg = regionAt(start.x, start.z), where = REGION_NAMES[rg] ? REGION_NAMES[rg]() : ''; setTimeout(() => toast(where ? T(`Welcome back, ${p.name}! You were in ${where}.`, `Chào mừng ${p.name} quay lại! Lần trước con ở ${where}.`) : T(`Welcome back, ${p.name}! You are where you left off.`, `Chào mừng ${p.name} quay lại! Con ở đúng chỗ lần trước.`)), 1500); }
     G.heroes.push(h); G.huds.push(new Hud(i, h, G)); G.regionOf[i] = null; if (i === 0) helloPhoto(h.profile.photo); // ready before a friend joins

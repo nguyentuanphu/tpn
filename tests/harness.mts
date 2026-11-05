@@ -103,6 +103,8 @@ export async function clear(page) {
 // The sticker checks leave the welcome alone.
 export async function noWelcome(page) {
   await page.evaluate(() => import(String('/js/stickers.js')).then(S => { for (const h of window.__sv.heroes) S.book(h.profile).welcomed = Date.now(); }));
+  // (v1.08b quality) and Lumi's welcome and the week's news on the Simple screen are counted as heard (js/lumi.ts)
+  await page.evaluate(() => Promise.all([import(String('/js/content/lumi.js')), import(String('/js/content/parents.js'))]).then(([L, P]) => { for (const h of window.__sv.heroes) h.profile.lumi = { met: Date.now(), news: L.weekKey(P.aestDate()) }; }));
 }
 
 // ---- which game code a check ran (SV_COVER=1; tests/suite.mts builds tests/check-map.json from it) ----
