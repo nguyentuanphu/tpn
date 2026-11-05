@@ -3,11 +3,11 @@
 // Studio's switch list (js/content/releases.ts, in the first download) never brings the films' page data
 // (js/content/blenderfilms.ts) with it: Studio adds the switches of the other listed films itself (addFilmSwitches).
 export const BLENDER_FOR_ALL = ['banhchung', 'chucuoi', 'tamcam', 'thanhgiong', 'rainbowserpent'];
-// the titles of the five for their Studio switches (a film added later brings its own en / vi, or shows its id)
-export const BLENDER_TITLES: Record<string, [string, string]> = {
-  banhchung: ['Bánh Chưng Bánh Giầy', 'Bánh Chưng Bánh Giầy'], chucuoi: ['Chú Cuội', 'Chú Cuội'], tamcam: ['Tấm Cám', 'Tấm Cám'],
-  thanhgiong: ['Thánh Gióng', 'Thánh Gióng'], rainbowserpent: ['The Rainbow Serpent', 'Rắn Cầu Vồng']
-};
+// the titles of the five for their Studio switches: a Vietnamese tale keeps its Vietnamese name in both languages (a film
+// added later brings its own en / vi, or shows its id)
+const NAME: Record<string, string> = { banhchung: 'Bánh Chưng Bánh Giầy', chucuoi: 'Chú Cuội', tamcam: 'Tấm Cám', thanhgiong: 'Thánh Gióng' };
+export const BLENDER_TITLES: Record<string, [string, string]> = { rainbowserpent: ['The Rainbow Serpent', 'Rắn Cầu Vồng'] };
+for (const id of Object.keys(NAME)) BLENDER_TITLES[id] = [NAME[id], NAME[id]];
 /** the "Blender film for everyone" switch of one film (on for the five, off for the rest) */
 export function filmSwitch(id: string, f?: { en?: string, vi?: string }) {
   const t = BLENDER_TITLES[id] || [f?.en || id, f?.vi || f?.en || id];
