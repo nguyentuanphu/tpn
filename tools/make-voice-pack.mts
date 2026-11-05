@@ -1,5 +1,6 @@
 import {readReviewedVoiceDelta} from './reviewed-voice-delta.mts';
 import {AZURE_VOICES,AZURE_OUTPUT_FORMAT} from './voice-providers.mts';
+import { spawnSync } from 'node:child_process'; // (v1.08b platform: the Opus step)
 // Makes the offline voice pack with ElevenLabs: every line the game speaks, saved as small MP3 files in
 // voices/. The game plays these instead of the device voice, with no internet needed, and keeps the whole
 // pack on the device after the first visit (so nothing has to be downloaded again).
@@ -234,7 +235,7 @@ if (flag('cover')) {
 }
 if (flag('count')) process.exit(0);
 if (!KEY) { console.error(ENGINE === 'azure' ? 'Add your Azure Speech key and region: --key <KEY 1> --region <Location/Region>. Use --count to see the cost without a key.' : 'Add your key: --key sk_... (or set ELEVEN_KEY). Use --count to see the cost without a key.'); process.exit(1); }
-if (ENGINE === 'azure') { await azure(); process.exit(0); }
+if (ENGINE === 'azure') { await azure(); opusStep(); process.exit(0); }
 const H = { 'xi-api-key': KEY };
 const get = async p => { const r = await fetch(API + p, { headers: H }); if (r.status === 401) { console.error('ElevenLabs did not accept the key (401). Check it on elevenlabs.io → API Keys, and that it may use Text to Speech, Voices and User.'); process.exit(3); } if (!r.ok) throw new Error(p + ' ' + r.status + ' ' + (await r.text()).slice(0, 200)); return r.json(); };
 const sub = await get('/user/subscription');
@@ -352,4 +353,6 @@ async function azure() {
 }
 // (v1.08b platform, brief part 1) every recording also as Opus beside its MP3, and the manifests say so
 // (tools/make-voice-opus.mts; without ffmpeg the pack stays MP3 only, which the game handles)
-if (!process.argv.includes('--no-opus')) { const { spawnSync } = await import('node:child_process'); const r = spawnSync(process.execPath, [path.join(ROOT, 'tools/make-voice-opus.mts')], { stdio: 'inherit' }); if (r.status) console.log('The Opus copies were not all made: the game uses the MP3 files until they are.'); }
+// (run after the Azure recordings too, before that path exits)
+function opusStep() { if (process.argv.includes('--no-opus')) return; const r = spawnSync(process.execPath, [path.join(ROOT, 'tools/make-voice-opus.mts')], { stdio: 'inherit' }); if (r.status) console.log('The Opus copies were not all made: the game uses the MP3 files until they are.'); }
+opusStep();
