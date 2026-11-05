@@ -229,12 +229,14 @@ function keepShown() {
   KEEP.set(was.hash, { nodes: [...P.childNodes], at: was.at, scroll: window.scrollY, lang: LANG, page: was.page });
   while (KEEP.size > 12) KEEP.delete(KEEP.keys().next().value);
 }
-function openHash(value:string){
-  const hash='#'+value.replace(/^#/, '');viewScroll.set(location.hash,window.scrollY);
+// (a page opened by a tap is drawn again from the kept reads; only going back, with the browser or the ← button, shows the kept page)
+let FRESH = false;
+function openHash(value:string, back = false){
+  const hash='#'+value.replace(/^#/, '');viewScroll.set(location.hash,window.scrollY);FRESH=!back;
   if(hash!==location.hash&&/\/management(device|activity)(?:\?|$)/.test(hash))detailOrigin.set(hash,location.hash||'#home');
   if(location.hash===hash)void render();else location.hash=hash;
 }
-const go = k => { if (k === cur || !leaveOk()) return; const sec=sectionOf(k);openHash(sec.k===k||sec.pages.length===1?sec.k:sec.k+'/'+k); };
+const go = (k, back = false) => { if (k === cur || !leaveOk()) return; const sec=sectionOf(k);openHash(sec.k===k||sec.pages.length===1?sec.k:sec.k+'/'+k, back); };
 // the bar at the top: Publish when something is waiting, reload, language
 function head() {
   const pub = $('#pub'); if (!pub) return;
@@ -289,10 +291,11 @@ async function render(force?: boolean) {
   if (force) KEEP.clear(); else keepShown();
   nav(); const P = $('#page'), crumb = $('#crumb'); P.dataset.render = String(sequence); DIRTY = false; KEPT = ''; if (SAVED_HERE !== cur) SAVED_HERE = '';
   const crumbFor = sec => { crumb.innerHTML = sec.pages.length > 1 && cur !== sec.k ? `<button class="back">← ${sec.i} ${T(sec.en, sec.vi)}</button>` : '';
-    if (crumb.firstElementChild instanceof HTMLElement) crumb.firstElementChild.onclick = () => {const origin=detailOrigin.get(location.hash);if(origin&&leaveOk())openHash(origin);else if(!origin)go(sec.k);}; };
+    if (crumb.firstElementChild instanceof HTMLElement) crumb.firstElementChild.onclick = () => {const origin=detailOrigin.get(location.hash);if(origin&&leaveOk())openHash(origin, true);else if(!origin)go(sec.k, true);}; };
   const shown = (at = Date.now()) => { SHOWN = { hash: location.hash, page: cur, at }; };
   // a kept page comes back as it was (its scroll too); one kept too long is rebuilt behind it with fresh data
-  const kept = !force && LOADED ? KEEP.get(location.hash) : null; let rebuild = true;
+  const fresh = FRESH; FRESH = false;
+  const kept = !force && LOADED && !fresh ? KEEP.get(location.hash) : null; let rebuild = true;
   if (kept) { KEEP.delete(location.hash);
     if (kept.lang === LANG && kept.page === cur) { const sec = sectionOf(cur); P.replaceChildren(...kept.nodes); if (sec.k === cur && sec.pages.length > 1 && !ABOUT[sec.k]) crumb.innerHTML = ''; else crumbFor(sec);
       head(); KEPT = contentNow(); HASH = location.hash; paintState(); refold(P, cur); window.scrollTo(0, kept.scroll); shown(kept.at);
