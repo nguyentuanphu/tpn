@@ -495,42 +495,13 @@ export function build(id, { real = false, args = [] } = {}) {
 }
 
 // ---------- (v1.08e vehicles) the Blender models ----------
-// models/world/veh-<id>.glb (tools/blender/world-vehicles.py, from these very code shapes, so the size, the seat and the
-// wheels are where the code puts them). wear(v) asks js/modelkit.ts to swap it in when a child first comes near: the code
-// body is hidden, each model wheel (and moving part) goes inside its code wheel, so it turns as the code turns it, and the
-// model's named points (seat, handleL/R, pedalL/R ...) become the vehicle's seat, grips and feet. Until the model has
-// arrived, or for good when it cannot load, the code shape stays. Only the toy look (the friends' picture-book look):
-// the older children's real look and a vehicle in its own colours (args) keep their code shapes.
-const EMPTY = new THREE.BufferGeometry();
-const POINTS: [string, string, number?][] = [['seat', 'seat'], ['seat2', 'passenger'], ['wheelAt', 'wheelAt'], ['handleL', 'grips', 0], ['handleR', 'grips', 1],
-  ['pedalL', 'feet', 0], ['pedalR', 'feet', 1], ['handle2L', 'pgrips', 0], ['handle2R', 'pgrips', 1], ['pedal2L', 'pfeet', 0], ['pedal2R', 'pfeet', 1]];
-function hideOwn(n, keep) {   // the code meshes of one moving part (not the parts hanging from it)
-  if (n.isMesh) { n.userData.codeGeo = n.geometry; n.geometry = EMPTY; n.children.forEach(c => { if (c.userData.outline) c.visible = false; }); return; }
-  n.children.forEach(c => { if (c.isMesh && !keep.has(c)) c.visible = false; });
-}
-export function fitModel(v, m) {
-  const o = v.o, root = m.obj, keep = new Set([o.userData && o.userData.load].filter(Boolean)), _p = new THREE.Vector3();
-  root.updateMatrixWorld(true);
-  for (const [name, key, i] of POINTS) {   // the named points, in the vehicle's own space
-    const e = root.getObjectByName(name), dst = i == null ? v[key] : v[key] && v[key][i]; if (!e || !dst) continue;
-    e.getWorldPosition(_p); o.worldToLocal(_p); dst[0] = _p.x; dst[1] = _p.y; dst[2] = _p.z;
-  }
-  const parts = [];
-  root.traverse(n => { if (/^wheel\d+$/.test(n.name) || (n.name && o.userData && o.userData[n.name] && o.userData[n.name].isObject3D)) parts.push(n); });
-  for (const n of parts) {
-    const code = /^wheel/.test(n.name) ? v.wheels[+n.name.slice(5)] : o.userData[n.name]; if (!code) continue;
-    hideOwn(code, keep); code.add(n); n.position.set(0, 0, 0); n.quaternion.identity(); n.userData.fromModel = true;
-    if (/^wheel/.test(n.name)) outline(n, .008, '#3c3236');
-  }
-  outline(root, .012, '#3c3236');   // (the ink line of the toy look, as on the code shapes)
-  v.model = m; return v;
-}
-let modelKit = null;
+// wear(v): the vehicle's Blender model when a child first comes near (js/vehicle-models.ts, loaded after the start, so
+// the first download does not grow). Only the toy look; the code shape stays until the model arrives, or for good.
+let fitter = null;
 export function wear(v, done?: (v) => void) {
   if (!v || v.look !== 'toy' || v.worn) return; v.worn = true;
-  const body = v.o.getObjectByName('codeBody'); if (!body) return;
-  modelKit = modelKit || import('./modelkit.js');
-  modelKit.then(K => K.modelFor(body, 'veh-' + v.id, {}, m => { if (m) fitModel(v, m); if (done) done(v); })).catch(() => { });
+  fitter = fitter || import('./vehicle-models.js');
+  fitter.then(F => F.wearModel(v, done)).catch(() => { });
 }
 // every vehicle by id, for Sparkle Studio and the valley's traffic
 export const VEHICLES = { honda67, cub, dream, scooter, xichlo, baGac, postie, trailBike, quadBike, roadster, miniBike, roadBike, bmx, kidsBike, packBike,
