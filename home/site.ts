@@ -1,3 +1,5 @@
+// (v1.08c) the page script itself (home/page.ts) runs first: it was an inline script that ran before this module
+import { startPage } from './page.js';
 import {setupWebsiteFestivals} from './festivals.js';
 import {setupLaunchBanner} from './launch.js';
 // (r89) first-party visit counts for the standalone family website (/home), on by default (owner, 23 Oct AEDT), never
@@ -14,5 +16,6 @@ if (!embedded) {
   if (consent() !== 'no') startAnalytics('/');
 }
 
+startPage();
 setupWebsiteFestivals();
 setupLaunchBanner();
