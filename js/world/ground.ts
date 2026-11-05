@@ -222,6 +222,9 @@ export function heightAt(x, z) {
   } }
   // (v1.08e water, owner 6 Nov 2026 AEDT: knee to waist deep, 0.4-0.8 m) under the water, the hollow's depth d becomes
   // max * tanh(d / soft): every shore stays where it was, nothing is deeper than 0.8 m, and every bank is gentler
+  for (const C of MAP.BOAT_CHANNELS) { const [[ax, az], [bx, bz]] = C.pts; if (x < Math.min(ax, bx) - 4 || x > Math.max(ax, bx) + 4 || z < Math.min(az, bz) - 4 || z > Math.max(az, bz) + 4) continue;
+    const dx = bx - ax, dz = bz - az, t = clamp(((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz), 0, 1), d = Math.hypot(x - ax - dx * t, z - az - dz * t);
+    h = lerp(h, Math.min(h, WATER - 1.4), 1 - smooth(C.w, C.w + 1.4, d)); }   // (v1.08e water: a boat channel, MAP.BOAT_CHANNELS)
   if (h < WATER) h = WATER - WADE.max * Math.tanh((WATER - h) / WADE.soft);
   return h;
 }

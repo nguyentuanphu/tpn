@@ -364,6 +364,10 @@ export const BOATS = [
     legs: [[[-80, 156], [-30, 162], [12, 168], [13, 205], [-20, 204]], [[-90, 203]], [[-170, 208]], []] },
   { id: 'crossing', water: 'main_n', count: 0 }            // (round T2, Concept D: no crossing rafts; bridges join every bank and the raft line stops by each)
 ];
+// (v1.08e water, Release 6 Nov 2026 AEDT) boat channels: where a boat's route runs close to a bank, the water under it and
+// 1.5 m either side is 0.6 m deep (js/world/ground.ts): the Southern Coast Boat leaving the Melbourne river pier along the
+// Murray's north bank (the route, the piers and the rest of the shore stay where they are)
+export const BOAT_CHANNELS: { pts: [number, number][]; w: number }[] = [{ pts: [[-120, 151.2], [-104, 153.2]], w: 1.8 }];
 
 // ---------- (T1b, owner 11 Oct) tidy streets: one market row per place ----------
 // Every stall, kiosk, food van and seller's tent of a place stands in one row on one side of the place's main street,
