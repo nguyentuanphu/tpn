@@ -45,12 +45,10 @@ function haloTex() {
   return (_halo = new THREE.CanvasTexture(c));
 }
 export const buildCompanion = kind => kind === 'dragon' ? dragon() : firefly();
-// (v1.08e creatures, owner 6 Nov 2026 AEDT) The companion's Blender model (models/world/creature-firefly.glb or
-// creature-dragon.glb) loads as soon as the child has one, and takes the place of the code shape (look), which stays as
-// the fallback. The glow, the lantern, the hat and the tricks stay the game's own. js/main.ts hands over the kit.
-type Kit = typeof import('./modelkit.js');
-let KIT: Kit = null;
-export function useWorldModels(kit: Kit) { KIT = kit; }
+// (v1.08e creatures) the companion's Blender model: js/creatures.ts (after the start) loads it as soon as the child has one
+// and puts it in place of the code shape (look), the fallback; the glow, lantern, hat and tricks stay the game's own
+let MODELS: { ask: (c, still: () => boolean) => void, tick: (c, from, dt: number) => void } = null;
+export const useCompanionModels = (m: typeof MODELS) => { MODELS = m; };
 
 export function createCompanions(G) {
   const list = new Map(); // hero → { kind, o, lantern }
@@ -67,8 +65,7 @@ export function createCompanions(G) {
       }
     }
     for (const [h, c] of list) if (!G.heroes.includes(h)) { G.scene.remove(c.o); list.delete(h); }
-    if (KIT) for (const [h, c] of list) if (!c.asked) { c.asked = true;   // (v1.08e) its Blender model
-      KIT.worldModel('creature-' + c.kind, { clip: 'idle' }).then(m => { if (!m || list.get(h) !== c) return; const u = c.o.userData; u.look.visible = false; u.body.add(m.obj); c.model = m; c.clip = 'idle'; }); }
+    if (MODELS) for (const [h, c] of list) if (!c.asked) { c.asked = true; MODELS.ask(c, () => list.get(h) === c); }   // (v1.08e)
   };
   const _t = new THREE.Vector3();
   G.world.updaters.push((dt, t) => {
@@ -85,8 +82,7 @@ export function createCompanions(G) {
       if (o.position.distanceTo(_t) > 25) o.position.copy(_t); // after a jump across the map
       const was = c.model ? o.position.clone() : null;
       o.position.lerp(_t, Math.min(1, dt * 3.2));
-      if (c.model) { const sp = was.distanceTo(o.position) / Math.max(dt, 1e-3), clip = c.trick ? 'flap' : c.lead ? 'follow' : sp > 1.2 ? 'fly' : 'idle';   // (v1.08e) the model's clip
-        if (clip !== c.clip) { c.clip = clip; c.model.play(clip); } }
+      if (c.model) MODELS.tick(c, was, dt);   // (v1.08e) the model's clip
       o.rotation.y += ((((yaw - o.rotation.y) % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI) * Math.min(1, dt * 4);
       u.wings.forEach((w, i) => { w.rotation.z = (i ? -1 : 1) * Math.sin(t * u.flap) * .6; });
       u.body.rotation.x = Math.sin(t * 1.7) * .08;

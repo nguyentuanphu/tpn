@@ -24,11 +24,11 @@ export async function worldCreaturesCheck(b) {
   const P = await open(b, { w: 1180, h: 820 });
   try {
     const res = await P.page.evaluate(async ({ ANIMALS, COMPANIONS }) => {
-      const { THREE } = await import(String('/js/gfx.js')), A = await import(String('/js/animals.js')), C = await import(String('/js/companion.js')), K = await import(String('/js/modelkit.js'));
+      const { THREE } = await import(String('/js/gfx.js')), A = await import(String('/js/animals.js')), C = await import(String('/js/companion.js')), K = await import(String('/js/modelkit.js')), CR = await import(String('/js/creatures.js'));
       const bad: string[] = [], info: Record<string, unknown> = {};
       const box = (o: any) => { o.updateMatrixWorld(true); const bx = new THREE.Box3(); o.traverse((m: any) => { if (m.isMesh && m.visible !== false) { if (m.isSkinnedMesh) { m.computeBoundingBox(); bx.union(m.boundingBox.clone().applyMatrix4(m.matrixWorld)); } else bx.expandByObject(m); } }); return bx; };
       for (const k of [...ANIMALS, ...COMPANIONS]) {
-        const comp = COMPANIONS.includes(k), m = await K.worldModel(A.creatureModelName(k));
+        const comp = COMPANIONS.includes(k), m = await K.worldModel(CR.creatureModelName(k));
         if (!m) { bad.push(k + ': did not load'); continue; }
         const code = comp ? C.buildCompanion(k).userData.look : A.filmAnimal(k).userData.rig.root;
         const cb = box(code), mb = box(m.obj), cs = cb.getSize(new THREE.Vector3()), ms = mb.getSize(new THREE.Vector3());
@@ -42,8 +42,8 @@ export async function worldCreaturesCheck(b) {
         const cc = cb.getCenter(new THREE.Vector3()), mc = mb.getCenter(new THREE.Vector3());
         if (Math.abs(mc.z - cc.z) > .08 * size || Math.abs(mc.x - cc.x) > .08 * size) bad.push(`${k}: not where the code shape stands (or facing another way)`);
         // its clips, and that they move it
-        const t = (await K.loadWorldModel(A.creatureModelName(k))) as any, names = t.clips.map((c: any) => c.name);
-        const want = comp ? ['idle', 'fly', 'flap', 'follow', 'cheer'] : ['idle', 'walk', A.CREATURE_HAPPY[k], 'follow', 'cheer'];
+        const t = (await K.loadWorldModel(CR.creatureModelName(k))) as any, names = t.clips.map((c: any) => c.name);
+        const want = comp ? ['idle', 'fly', 'flap', 'follow', 'cheer'] : ['idle', 'walk', CR.CREATURE_HAPPY[k], 'follow', 'cheer'];
         for (const w of want) if (!names.includes(w)) bad.push(`${k}: no clip ${w} (has ${names.join(',')})`);
         let skinned: any = null; m.obj.traverse((o: any) => { if (o.isSkinnedMesh) skinned = o; });
         if (!skinned) { bad.push(k + ': no skeleton'); continue; }

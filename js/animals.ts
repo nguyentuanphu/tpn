@@ -220,23 +220,10 @@ Object.assign(BUILD, {
 const SHADOW = { buffalo: 1.5, bull: 1.35, koala: .6, platypus: .6, penguin: .45, emu: .9, turtle: 1, elephant: 2, crane: .8, peacock: .8, puppy: .7, kitty: .6, bunny: .55, panda: .75, joey: .6, calf: .9, cow: 1.35, sheep: 1, pig: .95, unicorn: 1.35, chicken: .5, bear: 1.3 };
 
 const LIVE = new Set<THREE.Object3D>();
-// (v1.08e creatures, owner 6 Nov 2026 AEDT) Each animal's Blender model (models/world/creature-<kind>.glb, made by
-// tools/make-creatures.mts) takes the code shape's place the first time a child comes near (tickAnimals only runs for
-// animals within 60 m of a child). The code shape (rig.root) is hidden, not removed: it is the fallback when the model
-// cannot load (no network, an old phone). The model plays its clips: idle, walk, its happy move, follow and cheer.
-// Films keep the code shapes (filmAnimal). js/main.ts hands over the kit after the start (useWorldModels).
-type Kit = typeof import('./modelkit.js');
-let KIT: Kit = null, asked = 0;
-export const CREATURE_HAPPY = { puppy: 'wag', kitty: 'hop', bunny: 'hop', panda: 'hop', joey: 'hop', calf: 'wag', cow: 'wag', sheep: 'wag', pig: 'wag', unicorn: 'wag', chicken: 'flap', bear: 'hop', koala: 'hop', platypus: 'hop', penguin: 'flap', emu: 'flap', turtle: 'hop', elephant: 'wag', crane: 'flap', bull: 'wag', buffalo: 'wag', peacock: 'flap' };
-export const creatureModelName = (kind: string) => 'creature-' + kind;
-export function useWorldModels(kit: Kit) { KIT = kit; }
-function askModel(g, r) {
-  r.asked = true; asked++;
-  KIT.worldModel(creatureModelName(r.kind), { clip: 'idle' }).then(m => {
-    if (!m) return;   // (blocked or failed: the code shape stays)
-    g.add(m.obj); r.root.visible = false; r.model = m; r.clip = 'idle'; r.idleT = 0; g.userData.model = m;
-  });
-}
+// (v1.08e creatures, owner 6 Nov 2026 AEDT) each animal's Blender model: js/creatures.ts (after the start) asks for it when
+// a child first comes near and plays its clips; the code shape (rig.root) stays as the fallback. Films keep the code shapes.
+let MODELS: { near: (g, r) => void, tick: (g, r, dt: number) => void } = null;
+export const useCreatureModels = (m: typeof MODELS) => { MODELS = m; };
 /** a happy jump (a pet that is stroked or fed): the model plays its cheer for a moment */
 export function animalCheer(g, secs = .5) { const r = g && g.userData.rig; if (r) r.cheerT = Math.max(r.cheerT || 0, secs); }
 export function animalModel(kind) { const k = BUILD[kind] ? kind : 'puppy'; return make(k, BUILD[k], SHADOW[k] || .8); }
@@ -245,13 +232,12 @@ export function animalModel(kind) { const k = BUILD[kind] ? kind : 'puppy'; retu
 // (films batch) an animal in a story film moves only with its film (js/content/films/kit.js calls tickAnimal itself)
 export function filmAnimal(kind) { const g = animalModel(kind); LIVE.delete(g); return g; }
 export function tickAnimals(dt, t, heroes = []) {
-  asked = 0;
   for (const g of LIVE) {
     if (!g.parent) { g.userData.gone = (g.userData.gone || 0) + 1; if (g.userData.gone > 300) LIVE.delete(g); continue; }
     g.userData.gone = 0;
     const p = g.position;
     if (heroes.length && !heroes.some(h => Math.abs(h.pos.x - p.x) < 60 && Math.abs(h.pos.z - p.z) < 60)) continue; // nobody can see it
-    { const r = g.userData.rig; if (KIT && !r.asked && asked < 3) askModel(g, r); }   // (v1.08e: at most 3 new models a frame)
+    if (MODELS && !g.userData.rig.asked) MODELS.near(g, g.userData.rig);   // (v1.08e)
     tickAnimal(g, dt, t);
   }
 }
@@ -261,13 +247,7 @@ export function tickAnimal(g, dt, t) {
     if (r.px == null) { r.px = p.x; r.pz = p.z; }
     const moved = Math.hypot(p.x - r.px, p.z - r.pz) / Math.max(dt, 1e-3); r.px = p.x; r.pz = p.z;
     r.sp += (Math.min(moved, 10) - r.sp) * Math.min(1, dt * 6);
-    if (r.model) {   // (v1.08e) the Blender model moves by its clips: walking, following, cheering, now and then its happy move
-      r.cheerT = Math.max(0, (r.cheerT || 0) - dt); r.idleT = r.sp < .5 ? (r.idleT || 0) + dt : 0;
-      const happy = CREATURE_HAPPY[r.kind] || 'hop', idleFor = 9 + (r.seed % 5);
-      const clip = r.cheerT > 0 ? 'cheer' : r.sp > 2.4 ? 'follow' : r.sp > .5 ? 'walk' : r.idleT % idleFor > idleFor - 2.4 ? happy : 'idle';
-      if (clip !== r.clip) { r.clip = clip; r.model.play(clip); }
-      return;
-    }
+    if (r.model) { MODELS.tick(g, r, dt); return; }   // (v1.08e) the Blender model moves by its clips
     const run = Math.min(1, r.sp / 1.4), T = t + r.seed;
     r.ph += dt * (r.gait === 'hop' ? 4 + r.sp * 2.2 : 3 + r.sp * 4.5);
     const R = r.root;

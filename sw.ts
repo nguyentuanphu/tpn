@@ -50,6 +50,7 @@ const FILES = [
   'icons/friends/clara-f.webp', 'icons/friends/clara-q.webp', 'icons/friends/clara-s.webp', 'icons/friends/clara-face.webp',
   'icons/friends/lumi-f.webp', 'icons/friends/lumi-q.webp', 'icons/friends/lumi-s.webp', 'icons/friends/lumi-face.webp',
   'js/modelkit.js', // (v1.08e) the shared loader of the world's Blender models (models/world/*.glb load near the child)
+  'js/creatures.js', // (v1.08e creatures) the animals', pets' and companions' Blender models: asked for near the child
   'js/offlinelevels.js', // (v1.08c voices) the offline levels in Grown-ups, loaded when Grown-ups opens
   'icons/icon-32.png', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'
 ];
