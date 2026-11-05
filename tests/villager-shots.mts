@@ -29,7 +29,7 @@ for (const [dev, [w, h]] of Object.entries(SIZES)) {
       const n = people.length, cols = kind === 'named' ? (w > h ? 11 : 4) : (w > h ? 8 : 4), rows = Math.ceil(n / (kind === 'named' ? 2 * Math.min(cols, 11) / 2 : cols));
       const per = kind === 'named' ? 2 : 1, perRow = kind === 'named' ? (w > h ? 6 : 2) : cols, rws = Math.ceil(n / per / perRow);
       const cellW = w / (perRow * per), cellH = h / rws, span = 2.7, cam = new THREE.OrthographicCamera(-span / 2 * cellW / cellH, span / 2 * cellW / cellH, span / 2, -span / 2, -10, 10);
-      cam.position.set(0, 1.2, 3); cam.lookAt(0, 1.2, 0);
+      cam.position.set(0, 1.35, 3); cam.lookAt(0, 1.35, 0);
       r.setScissorTest(true); r.setClearColor('#bfe3f2'); r.setScissor(0, 0, w, h); r.clear();
       people.forEach((p, i) => { sc.add(p.root); p.root.visible = false; A.animate(p, 'idle', 1); });
       people.forEach((p, i) => {
@@ -40,7 +40,7 @@ for (const [dev, [w, h]] of Object.entries(SIZES)) {
       });
       const url = r.domElement.toDataURL('image/png'); r.dispose(); return url;
     }, { w, h, kind });
-    fs.writeFileSync(`${out}/after-${kind}-${dev}.png`, Buffer.from(png.split(',')[1], 'base64'));
+    fs.writeFileSync(`${out}/${kind === 'named' ? 'before-after' : 'after'}-${kind}-${dev}.png`, Buffer.from(png.split(',')[1], 'base64'));
   }
   if (P.errors.length) console.log(dev, P.errors.slice(0, 3));
   await P.ctx.close();
