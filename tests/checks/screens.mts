@@ -230,15 +230,51 @@ await check('hubmap', async () => {
     const placesOf = async name => { const c = [...document.querySelectorAll('.mapcities button')].find(b => b.innerText.includes(name)); if (!c) return null;
       c.click(); await new Promise(r => setTimeout(r, 200)); return [...document.querySelectorAll('.mapplaces .qbtn')].map(b => b.innerText.trim()); };
     const hanoi = (await placesOf('Hà Nội')) || (await placesOf('Hanoi')), danang = await placesOf('Đà Nẵng');
-    return { games: Object.keys(seen).length, all: Object.keys(__sv.GAMES || {}).length, dup: Object.entries(seen).filter(([, n]) => n > 1).map(([k]) => k), cities, hanoi, danang };
+    // (v1.08b games, owner 3 Nov 2026 AEDT: one home per game) no link tiles in the Play hub, and on the Simple screen
+    // each game is one stop across Học vui and Vui chơi together (a stop or a locked stop), never two
+    const links = document.querySelectorAll('[data-link]').length;
+    document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false;
+    const simple = {}; for (const t of ['learn', 'fun']) { __sv.simple.show(t); __sv.simple.openGroup(t, null); const v = __sv.simple.view; for (const id of v.stops.concat(v.locks)) simple[id] = (simple[id] || 0) + 1; }
+    __sv.simple.hide();
+    return { games: Object.keys(seen).length, dup: Object.entries(seen).filter(([, n]) => n > 1).map(([k]) => k), links, simpleDup: Object.entries(simple).filter(([, n]) => n > 1).map(([k]) => k), simple: Object.keys(simple).length, cities, hanoi, danang };
   });
   ok(!r.dup.length, 'games in two tabs: ' + r.dup.join(', ')); ok(r.games >= 60, 'games in the hub: ' + r.games);
+  ok(!r.links, 'link tiles in the Play hub: ' + r.links);
+  ok(!r.simpleDup.length, 'games twice on the Simple screen: ' + r.simpleDup.join(', '));
   const at = n => r.cities.findIndex(x => x.includes(n)), hn = at('Hà Nội') >= 0 ? at('Hà Nội') : at('Hanoi'), dn = at('Đà Nẵng');
   ok(hn >= 0 && dn > hn, 'map: the Vietnam cities are not north to south (Hà Nội before Đà Nẵng): ' + r.cities.join(' | '));
   ok(r.hanoi && r.hanoi.some(x => x.includes('Hạ Long')), 'map: Hạ Long should be under Hà Nội: ' + (r.hanoi || []).join(' | '));
   ok(r.danang && r.danang.some(x => x.includes('Huế')) && !r.hanoi.some(x => x.includes('Huế')), 'map: Huế should be under Đà Nẵng only: ' + (r.danang || []).join(' | '));
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
-  return `${r.games} games, each in one tab; the map's Vietnam cities run north to south, each with its landmarks (${r.cities.length} cities)`;
+  return `${r.games} games, each in one tab, no link tiles; ${r.simple} games once each on the Simple screen; the map's Vietnam cities run north to south, each with its landmarks (${r.cities.length} cities)`;
+});
+
+await check('gameplace', async () => {
+  // (v1.08b games, owner's plan 3 Nov 2026 AEDT, docs/plans/links-rollout-install.md part 4) every switched-on game has a
+  // place in the valley (its 📍 button walks there) and a host with a spoken line in English and Vietnamese; a host says
+  // once, as the child walks past, that a game at their place has just opened, and never again for that game
+  const P = await openAllGamesFixture(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const { GAMES } = await import('/js/games/frame.js'), A = await import('/js/content/activities.js'), GP = await import('/js/content/gameplace.js');
+    const on = Object.keys(GAMES).filter(id => !A.gameInfo(id).hidden), none = on.filter(id => !__sv.gameSpot(id));
+    const noHost = [...new Set(on.map(id => A.gameInfo(id).area))].filter(a => !GP.AREA_PLACE[a] || !GP.AREA_PLACE[a].line.every(x => x && x.length > 10));
+    const missingSpot = Object.entries(GP.AREA_PLACE).filter(([, a]) => !__sv.interactables.some(it => it.id === a.spot)).map(([k]) => k);
+    // the news: a game known as not yet seen, the child next to its place, then the host's line once
+    const h = __sv.heroes[0], p = h.profile; delete p.hostNews; document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false; await new Promise(r => setTimeout(r, 1100));
+    __sv.hostNews(h); const seeded = !!p.hostNews && Object.keys(p.hostNews).length;
+    const id = 'counting', it = __sv.gameSpot(id); delete p.hostNews[id];
+    h.pos.x = it.x + 1; h.pos.z = it.z + 1; await new Promise(r => setTimeout(r, 1100));
+    __sv.hostNews(h); const toast1 = [...document.querySelectorAll('.toast, .htoast, [class*=toast]')].map(e => e.textContent).join('|');
+    const marked = !!p.hostNews[id];
+    await new Promise(r => setTimeout(r, 1100)); const n1 = Object.keys(p.hostNews).length; __sv.hostNews(h); const n2 = Object.keys(p.hostNews).length;
+    return { on: on.length, none, noHost, missingSpot, seeded, marked, again: n1 === n2, toast: /Count|Đếm/.test(toast1) };
+  });
+  ok(!r.none.length, 'switched-on games with no place in the valley: ' + r.none.join(', '));
+  ok(!r.noHost.length, 'areas without a host and line: ' + r.noHost.join(', '));
+  ok(!r.missingSpot.length, 'area places that do not stand in the valley: ' + r.missingSpot.join(', '));
+  ok(r.seeded > 20 && r.marked && r.again, 'host news: ' + JSON.stringify(r));
+  ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
+  return `${r.on} switched-on games, each with a place and a host; ${r.seeded} games already open counted as known; a host told about a new game once (name on screen: ${r.toast})`;
 });
 
 await check('padmap', async () => {
@@ -465,12 +501,12 @@ await check('adventure', async () => {
     for (const t of ['learn', 'fun']) {
       __sv.simple.show(t); __sv.simple.openGroup(t, null); const v = __sv.simple.view;
       for (const id of new Set(v.stops.concat(v.locks))) (seen[id] = seen[id] || []).push(t);
-      for (const c of v.cats) if ((t === 'learn') !== (['numbers', 'shapes', 'words', 'reading', 'me', 'money'].includes(c) || c.startsWith('hv_'))) out.learnWrong.push(t + ':' + c);
+      for (const c of v.cats) if ((t === 'learn') !== (A.LEARN_CORNERS.includes(c) || c.startsWith('hv_'))) out.learnWrong.push(t + ':' + c);
       document.querySelectorAll('.sp-stop.locked').forEach(b => { if (!b.querySelector('.sp-lockpad .art') || !b.querySelector('.sp-hint')?.textContent.trim()) out.noPad.push(b.getAttribute('aria-label')); });
       out.folded += [...document.querySelectorAll('.sp-stop')].filter(e => /more to unlock|trò để mở/.test(e.textContent)).length;
     }
     out.missing = want.filter(id => !seen[id]);
-    out.twoTabs = want.filter(id => seen[id] && seen[id].length > 1 && !A.linksIn(GAMES, 'hv_vi', false).concat(A.linksIn(GAMES, 'hv_en', false), A.linksIn(GAMES, 'hv_math', false), A.linksIn(GAMES, 'hv_sci', false)).some(g => g.id === id));
+    out.twoTabs = want.filter(id => seen[id] && seen[id].length > 1);   // (v1.08b games: one home per game, no link stops)
     out.bar = [...document.querySelectorAll('.sp-tabs button')].map(b => b.dataset.tab || (b.classList.contains('sp-discover') ? 'discover' : '?')).join(',');
     out.top = !!document.querySelector('.sp-top .sp-tools .sp-valley') && !document.querySelector('.sp-tabs .sp-valley');
     out.games = want.length;

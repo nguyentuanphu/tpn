@@ -686,14 +686,14 @@ await check('secondset', async () => {
     const plays = root => [...root.querySelectorAll('[data-play]')].map(b => b.dataset.play);
     const out = {};
     C.releases = { ...(C.releases || {}), newGames: { on: false }, newStories: { on: false } };
-    let body = await hub('learn');
+    let body = await hub('hocvui');
     // (30 Oct 2026 AEDT) the Coming soon tile names its group now (data-soon="learn"), so it is found by its tile
     out.offSoon = !!body.querySelector('.hsoon [data-soon]'); out.offNoNew = !plays(body).some(id => newIds.includes(id)); out.offNoFold = !body.querySelector('[data-fold]');
     out.offSimple = !A.gamesIn(F.GAMES, 'numbers', false).some(g => newIds.includes(g.id)); out.offTales = !__sv.TALES.some(t => Object.values(U.SECOND_SET_TALES).flat().includes(t.id));
     out.offShut = !U.isOpen({ unlockAll: true }, 'solids', 'game', 'shapes');   // (v1.08 maths: the numbers set is switched on, so a shapes game is the sample)
     body = await hub('tales'); out.offTaleSoon = !!body.querySelector('[data-soon="tale"]');
     C.releases.newGames = { on: true }; C.releases.newStories = { on: true }; p.unlockAll = false; p.admin = false;
-    body = await hub('learn');
+    body = await hub('hocvui');
     const fold = body.querySelector('[data-fold]'); out.onFold = !!fold; out.onHidden = !body.querySelector('.hcard.locked'); out.onNoSoon = !body.querySelector('.hsoon [data-soon]');
     fold?.click(); await wait(300); body = document.querySelector('.hubbody'); out.onShown = body.querySelectorAll('.hcard.locked').length; out.onGuide = body.querySelectorAll('.hlockguide .hsoonrow').length; // (owner, 1 Nov 2026 AEDT) the unfolded padlock says what to do first
     body = await hub('tales'); const tf = body.querySelector('[data-fold-tale]'); out.taleFold = !!tf; tf?.click(); await wait(300); out.taleShown = document.querySelectorAll('.hubbody .talecard.locked').length;

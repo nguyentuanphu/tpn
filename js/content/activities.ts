@@ -10,16 +10,15 @@ import { T } from '../i18n.js';
 import { CUSTOM, itemEnabled, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
 import { heldGame } from './secondset.js';
-import { CORNER_LINKS } from './hocvui.js';
 
 // the areas, in the order the path visits them; a child who can't read knows each one by its picture
 export const AREAS = [
   { key: 'animals', icon: '🐶', name: () => T('Animals', 'Con vật') },
   { key: 'music', icon: '🎵', name: () => T('Music', 'Âm nhạc') },
   { key: 'art', icon: '🎨', name: () => T('Colours and pictures', 'Màu sắc và tranh') },
-  { key: 'numbers', icon: '🔢', name: () => T('Numbers', 'Con số') },
+  { key: 'numbers', icon: 'hv:math', name: () => T('Maths', 'Toán') }, // (v1.08b games) Con số becomes the Toán corner of Học vui
   { key: 'shapes', icon: '🔷', name: () => T('Shapes', 'Hình khối') },
-  { key: 'words', icon: '🔤', name: () => T('Letters and words', 'Chữ và từ') },
+  { key: 'words', icon: '🔤', name: () => T('Letters and reading', 'Chữ và đọc') }, // (v1.08b games) letter and word games in the child's own language
   { key: 'me', icon: '💛', name: () => T('Me and my family', 'Em và gia đình') },
   { key: 'play', icon: '🪁', name: () => T('Play outside', 'Chơi ngoài trời') },
   { key: 'vietnam', icon: '🇻🇳', name: () => T('Vietnamese games', 'Trò chơi Việt Nam') },
@@ -27,11 +26,11 @@ export const AREAS = [
   { key: 'thinking', icon: '🧠', name: () => T('Big thinkers', 'Suy nghĩ giỏi') },
   // (round S, owner plan 8 Oct) the money games, in the child's home currency
   { key: 'money', icon: '💰', name: () => T('Money and shopping', 'Tiền và mua sắm') },
-  // (Học vui, owner's plan 1 Nov 2026 AEDT, docs/learn-tab/PLAN.md) the four corners of the Fun learning tab; their own
-  // games live here, and existing games are linked in from their own area (js/content/hocvui.ts CORNER_LINKS)
+  // (Học vui, owner's plan 1 Nov 2026 AEDT, docs/learn-tab/PLAN.md) corners of the Fun learning tab. (v1.08b games, owner
+  // 3 Nov 2026 AEDT: one home per game) no link tiles any more: every game lives in one corner only; the old empty Maths
+  // corner (hv_math) is gone, Con số (numbers) is the Toán corner now
   { key: 'hv_vi', icon: 'hv:vi', name: () => T('Vietnamese', 'Tiếng Việt') },
   { key: 'hv_en', icon: 'hv:en', name: () => T('English', 'Tiếng Anh') },
-  { key: 'hv_math', icon: 'hv:math', name: () => T('Maths', 'Toán') },
   { key: 'hv_sci', icon: 'hv:sci', name: () => T('Science', 'Khoa học') }
 ];
 
@@ -49,7 +48,7 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   cyclo: ['travel', 2, 1], reunification: ['travel', 3, 1], lighthouse: ['travel', 2, 1], operaseats: ['travel', 4, 2], outback: ['travel', 4, 2], floating: ['travel', 3, 1], airport: ['travel', 3, 1], postcard: ['travel', 3, 1],
   hideseek: ['play', 2, 1], duckgoose: ['play', 2, 1], redgreen: ['play', 2, 1], simon: ['play', 3, 1], eggspoon: ['play', 2, 1], chairs: ['play', 2, 1], kicktokick: ['play', 3, 1], nippers: ['play', 4, 2], hoops: ['play', 3, 1], tag: ['play', 2, 1],
   savegoal: ['money', 3, 1], pocketweek: ['money', 4, 2], pricetags: ['money', 3, 1], busfare: ['money', 3, 1], lemonade: ['money', 4, 2], party: ['money', 5, 3], recycle: ['money', 3, 1], tetmarket: ['money', 3, 1], bank: ['money', 4, 2], sharefair: ['money', 3, 1],
-  rd_blend: ['reading', 3, 1], rd_hats: ['reading', 3, 1], rd_endings: ['reading', 3, 1], rd_compound: ['reading', 3, 1], rd_labels: ['reading', 3, 1], rd_signs: ['reading', 3, 1], rd_questions: ['reading', 3, 1], rd_many: ['reading', 3, 1], rd_caps: ['reading', 3, 1], rd_poem: ['reading', 3, 1], rd_missing: ['reading', 3, 1], rd_book: ['reading', 3, 1],
+  rd_blend: ['reading', 3, 1], rd_hats: ['hv_vi', 3, 1] /* (v1.08b games) â ê ô: Tiếng Việt */, rd_endings: ['reading', 3, 1], rd_compound: ['reading', 3, 1], rd_labels: ['reading', 3, 1], rd_signs: ['reading', 3, 1], rd_questions: ['reading', 3, 1], rd_many: ['reading', 3, 1], rd_caps: ['reading', 3, 1], rd_poem: ['reading', 3, 1], rd_missing: ['reading', 3, 1], rd_book: ['reading', 3, 1],
   music: ['music', 2, 1], tune: ['music', 3, 2], chichi: ['music', 2, 1], puppets: ['music', 2, 1], parcel: ['music', 2, 1],
   colors: ['art', 2, 1], dongho: ['art', 3, 1], rangoli: ['art', 3, 2], jigsaw: ['art', 3, 2], tangram: ['art', 4, 2],
   // (r89) the ten drawing games
@@ -78,7 +77,9 @@ export const GAME_INFO: Record<string, [string, number, number]> = {
   leafrub: ['art', 2, 1],
   counting: ['numbers', 2, 1], numbers: ['numbers', 3, 1], moreless: ['numbers', 3, 2], dragonfire: ['numbers', 3, 1], sums: ['numbers', 5, 3], clock: ['numbers', 5, 3], days: ['numbers', 5, 2],
   shapes: ['shapes', 2, 1], pattern: ['shapes', 3, 2], sorting: ['shapes', 2, 1], tower: ['shapes', 2, 1], memory: ['shapes', 3, 2], sudoku: ['shapes', 5, 3], hanoi: ['shapes', 5, 3],
-  letters: ['words', 4, 2], phonics: ['words', 4, 2], opposites: ['words', 4, 2], words: ['words', 5, 2],
+  // (v1.08b games) First Sounds teaches English letter sounds: Tiếng Anh; Two Homes Words teaches Vietnamese words of the
+  // regions: Tiếng Việt. Letter Hunt and Opposites play in the child's own language: Chữ và đọc
+  letters: ['words', 4, 2], phonics: ['hv_en', 4, 2], opposites: ['words', 4, 2], words: ['hv_vi', 5, 2],
   // (v1.08 english) First Words is Chinese and Hindi, not English: it left the English corner for Going places, beside China Town and India Village
   firstwords: ['travel', 5, 3],
   feelings: ['me', 2, 1], bodyparts: ['me', 2, 1], familyquiz: ['me', 3, 2], fruitparade: ['play', 2, 1], sparkleorchard: ['play', 2, 1], sparklefruitbar: ['play', 2, 1],
@@ -122,9 +123,6 @@ export function gameInfo(id) {
 }
 // the games of one area for a child: under-5s only see the ones made for them
 export const gamesIn = (games, area, little) => Object.keys(games).map(gameInfo).filter(g => g.area === area && !g.hidden && (!little || g.ageMin < 5));
-// (Học vui) the existing games linked into a corner of the Fun learning tab: each keeps its own area (gamesIn above), so
-// it is listed once in the Play hub and shown here as a link; only games that exist and are switched on
-export const linksIn = (games, area, little) => (CORNER_LINKS[area] || []).filter(id => games[id]).map(gameInfo).filter(g => g.area !== area && !g.hidden && (!little || g.ageMin < 5));
 
 // stories by where they come from, places by where they are
 // (bug #30, owner) China and India always come last: after "Our own stories" and after Australia
@@ -189,4 +187,7 @@ export const pages = (list, n) => { const k = Math.max(1, Math.ceil(list.length 
 // Its ten games, with their ages, are added only while Studio's readingTrial switch is on (js/games/readingmenu.js), so
 // with the switch off the area has no games and is never shown.
 AREAS.splice(AREAS.findIndex(a => a.key === 'words') + 1, 0, { key: 'reading', icon: '📖', name: () => T('Reading corner', 'Góc đọc') });
+// (v1.08b games) the Học vui tab's corners, in the order shown, on the Play hub and on the Simple screen's Học vui button;
+// every other area is a Vui chơi (play) area
+export const LEARN_CORNERS = ['hv_vi', 'hv_en', 'numbers', 'shapes', 'money', 'hv_sci', 'words', 'reading', 'me'];
 
