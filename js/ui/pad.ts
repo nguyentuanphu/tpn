@@ -319,8 +319,8 @@ export const openPad = Object.assign(function (game, i, tab) {
     });
     body.querySelectorAll('[data-hat]').forEach(b => b.onclick = () => { p.look.hat = b.dataset.hat; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
     // (v1.08b friends) change friend (free, same set) and outfit
-    body.querySelectorAll<HTMLElement>('[data-befriend]').forEach(b => b.onclick = () => { if (setFriend(p, b.dataset.befriend as any)) { saveProfiles(); game.rebuildHero(i); SFX.pop(1); sayHello(b.dataset.befriend); draw(); } });
-    body.querySelectorAll<HTMLElement>('[data-suit]').forEach(b => b.onclick = () => { if (wearSuit(p, b.dataset.suit)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
+    body.querySelectorAll('[data-befriend]').forEach(b => b.onclick = () => { if (setFriend(p, b.dataset.befriend as any)) { saveProfiles(); game.rebuildHero(i); SFX.pop(1); sayHello(b.dataset.befriend); draw(); } });
+    body.querySelectorAll('[data-suit]').forEach(b => b.onclick = () => { if (wearSuit(p, b.dataset.suit)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-wear]').forEach(b => b.onclick = () => { const it = ITEM[b.dataset.wear]; if (it && wearItem(p, it.slot, it.id)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-unwear]').forEach(b => b.onclick = () => { if (wearItem(p, b.dataset.unwear, 'none')) { saveProfiles(); game.rebuildHero(i); SFX.tap(); draw(); } });
     // (r79) a gift box says what is inside and who it is for, and offers the players on this device it fits
