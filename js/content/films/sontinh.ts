@@ -3,9 +3,9 @@
 // The child helps twice: bringing the presents (page 2) and making the mountain grow (page 3).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, hop, KINGLOOK, VILLAGER, palace, village, animal, rain, flat } from './kit.js';
 
-const SON = LOOK({ style: 'tunic', color: '#4a8a3a', back: 'cape', hat: 'crown', hairStyle: 'short', skin: '#c89060' });
-const THUY = LOOK({ style: 'tunic', color: '#2f7ac8', back: 'cape', hat: 'crown', hairStyle: 'spiky', skin: '#c8b0a0' });
-const MY = LOOK({ style: 'aodai', color: '#ff9ec8', hat: 'crown', hairStyle: 'long', skin: '#f0c098' });
+const SON = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#4a8a3a', back: 'cape', hat: 'crown', hairStyle: 'short', skin: '#c89060' });
+const THUY = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#2f7ac8', back: 'cape', hat: 'crown', hairStyle: 'spiky', skin: '#c8b0a0' });
+const MY = LOOK({ kit: 'vn-queen', style: 'aodai', color: '#ff9ec8', hat: 'crown', hairStyle: 'long', skin: '#f0c098' });
 const KING = KINGLOOK();
 
 export default { pages: [
@@ -27,11 +27,11 @@ export default { pages: [
     const king = S.person(KING, -1, -4.6, 0), my = S.person(MY, 1, -4.4, 0), son = S.person(SON, -2, 1, 0);
     const el = animal(S, 'elephant', -8, 4, H, 1.1), hen = animal(S, 'chicken', -9, 2, H, 1.3), rice = Pp.sack(); S.add(rice, -9.6, 0, 5);
     S.shot([0, 3, 10], [0, 1.4, -1]);
-    speak(S, king, .3, 3.4); S.cam(.3, 3, [0, 2, 3], [0, 1.6, -4.6]);
+    speak(S, king, .3, 3.4); S.mood(my, .3, 'shy'); S.mood(son, .3, 'curious'); S.cam(.3, 3, [0, 2, 3], [0, 1.6, -4.6]);   // (faces with feeling) Mỵ Nương shy, Sơn Tinh listening
     S.do(son, 3.6, 'point', 1.6); S.cam(3.6, 2.4, [-4, 2.6, 9], [-5, 1, 2]);
     S.help(7.2, 'Tap to bring the presents!', 'Chạm để mang sính lễ đến nào!', tt => {
       go(S, el, tt, 2, [-3, 0, -1.6]); go(S, hen, tt + .1, 2, [-1.6, 0, -2.4]); S.move(rice, tt + .2, 2, [-.4, 0, -2.6]);
-      S.mood(king, tt + 1, 'happy'); S.mood(my, tt + 1, 'happy'); S.do(son, tt + 1.2, 'cheer', 1);
+      S.mood(king, tt + .4, 'o'); S.mood(king, tt + 1.4, 'happy'); S.mood(my, tt + 1, 'happy'); S.do(son, tt + 1.2, 'cheer', 1);   // the king surprised: Sơn Tinh is first!
       S.cam(tt, 2, [0, 3.4, 8], [-1.6, 1, -2]);
     }, [-5, 1, 2], 2.3);
   },

@@ -3,8 +3,8 @@
 // child helps twice: the magpies' bridge (page 5) and the happy rain (page 6).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, speak, FAIRY, heaven, village, night, stars, animal, bird, rain } from './kit.js';
 
-const ZHINU = FAIRY('#c8b0ff'), NIU = LOOK({ style: 'tunic', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
-const QUEEN = LOOK({ style: 'aodai', color: '#7a3a8a', hat: 'crown', hairStyle: 'buns', skin: '#e8c0a0' });
+const ZHINU = FAIRY('#c8b0ff', 'cn'), NIU = LOOK({ kit: 'cn-hanfu-m', style: 'tunic', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const QUEEN = LOOK({ kit: 'cn-hanfu-f', style: 'aodai', color: '#7a3a8a', hat: 'crown', hairStyle: 'buns', skin: '#e8c0a0' });
 const loom = () => mesh([P(new THREE.BoxGeometry(1.6, .08, .08), '#8a5a32', [0, 1.2, 0]), ...[-.75, .75].map(x => P(new THREE.BoxGeometry(.08, 1.2, .08), '#8a5a32', [x, .6, 0])), P(new THREE.BoxGeometry(1.4, .8, .02), '#ffd0e8', [0, .75, 0])]);
 // the river of stars: a band of little lights across the sky (or across the ground between them)
 const milkyWay = (S, w = 4, len = 60, y = 0) => { const g = new THREE.Group(), m = new THREE.MeshBasicMaterial({ color: '#cfe0ff' }); m.userData.film = true; for (let i = 0; i < 260; i++) { const s = new THREE.Mesh(new THREE.OctahedronGeometry(.06 + (i % 3) * .03), m); s.position.set(((i * 37) % 100) / 100 * w - w / 2, y + ((i * 13) % 10) * .02, ((i * 71) % 100) / 100 * len - len / 2); g.add(s); } S.every((dt, time) => g.children.forEach((s, i) => { s.position.y = y + Math.sin(time * 2 + i) * .05; })); return S.add(g); };
@@ -79,4 +79,4 @@ export default { pages: [
     }, [0, 2, 0], 2.3);
   }
 ] };
-function VILLAGER_KID(c) { return LOOK({ style: 'dress', color: c, hairStyle: 'buns', skin: '#e0aa80' }); }
+function VILLAGER_KID(c) { return LOOK({ kit: 'cn-hanfu-f', style: 'dress', color: c, hairStyle: 'buns', skin: '#e0aa80' }); }

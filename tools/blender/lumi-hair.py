@@ -141,6 +141,7 @@ VSTYLE = {'sidepart': 'sidepart', 'boybangs': 'bangs', 'messy': 'messy', 'long':
           'bangspigtails': 'pigtails', 'puffs': 'puffs', 'curls': 'curls', 'tuft': 'tuft'}
 def hair_villager():
     HS = mat('hairShell', PAL[1], .5, .45); HL = mat('hairShellL', PAL[3], .5, .45)
+    if V.get('kit'): return kit_hair(V['hair'], HS, HL)   # the costume kit's hair (costumes.py)
     style(VSTYLE.get(VHAIR.get(ROLE, 'sidepart'), 'sidepart'), HS, HL)
 
 def _clara_braids_and_flower():

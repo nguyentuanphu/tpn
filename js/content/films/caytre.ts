@@ -3,9 +3,9 @@
 // twice (pages 4 and 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, VILLAGER, BUT, village, forest, axe, drum } from './kit.js';
 
-const FARMER = LOOK({ style: 'tunic', color: '#8a6a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
-const RICH = LOOK({ style: 'tunic', color: '#7a3a8a', hat: 'silkcap', hairStyle: 'short', skin: '#e0aa80' });
-const DAUGHTER = LOOK({ style: 'aodai', color: '#ff8ab0', hairStyle: 'long', skin: '#f0c098' });
+const FARMER = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#8a6a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const RICH = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#7a3a8a', hat: 'silkcap', hairStyle: 'short', skin: '#e0aa80' });
+const DAUGHTER = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#ff8ab0', hairStyle: 'long', skin: '#f0c098' });
 // one piece of bamboo (a knot at each end)
 const piece = () => mesh([P(new THREE.CylinderGeometry(.08, .08, .5, 8), '#6fb84a', [0, .25, 0]), P(new THREE.CylinderGeometry(.095, .095, .05, 8), '#4f9a3a', [0, .5, 0])]);
 // a long bamboo of n pieces lying on the ground (along x)
@@ -44,9 +44,9 @@ export default { pages: [
     but.o.scale.setScalar(.01);
     const short = [0, 1, 2].map(i => { const p = piece(); p.rotation.z = -H; return S.add(p, -1.6 + i * .6, .09, 2.2); });
     S.shot([0, 2.2, 7], [0, 1, 1]);
-    S.do(f, .2, 'sitground', 5); S.mood(f, .2, 'sad'); S.cam(.2, 2.6, [0, 1.6, 5], [0, .8, 1]);
+    S.do(f, .2, 'sitground', 5); S.mood(f, .2, 'cry'); S.still(4.6); S.cam(.2, 2.6, [0, 1.6, 5], [0, .8, 1]);   // (faces with feeling) the picture: the farmer crying as Bụt appears
     const sp = Pp.sparkle('#ffe27a'); S.add(sp, 1.8, .2, -.4); S.show(sp, 2.6);
-    S.scale(but.o, 3, 1.2, .01, 1); S.mood(but, 3.2, 'happy'); S.mood(f, 4, 'o');
+    S.scale(but.o, 3, 1.2, .01, 1); S.mood(but, 3.2, 'happy'); S.mood(f, 5, 'o');
     S.cam(2.8, 1.6, [1, 2, 5.4], [1, 1.2, .2]);
     S.say(5.1, 'Bụt asked kindly: "Why are you crying?"', 'Bụt hiền từ hỏi: "Vì sao con khóc?"');
     speak(S, but, 5.2, 2.2); S.do(f, 7.2, 'idle'); S.face(f, 7.2, [1.8, -.4]);
@@ -58,7 +58,7 @@ export default { pages: [
     const f = S.person(FARMER, -1.6, 2, .4), but = S.person(BUT, 2.4, .4, -.6);
     const pieces = []; for (let i = 0; i < 24; i++) { const p = piece(); p.position.set(-2.4 + (i % 8) * .7, 0, 2.8 + (i >> 3) * .5); p.rotation.set(0, i * .7, H); S.root.add(p); pieces.push(p); }
     S.shot([0, 3, 8], [0, .6, 2.6]);
-    speak(S, but, .3, 3.2); S.do(f, 3.8, 'kneel', 2.4); S.cam(.3, 3, [-1, 2.4, 6.6], [.4, .6, 2.6]);
+    speak(S, but, .3, 3.2); S.mood(f, .3, 'curious'); S.mood(but, .3, 'happy'); S.do(f, 3.8, 'kneel', 2.4); S.cam(.3, 3, [-1, 2.4, 6.6], [.4, .6, 2.6]);   // the farmer listens, wondering
     const a = axe(); S.grab(f, 0, a, [0, -.5, .1]);
     S.help(8.9, 'Tap and say: Khắc nhập!', 'Chạm và đọc: Khắc nhập!', tt => {
       pieces.forEach((p, i) => { S.move(p, tt + i * .05, .5, [-3 + i * .5, .09, 4.2], undefined, .8); S.tw(tt + i * .05, .5, k => { p.rotation.set(0, 0, -H); }); });

@@ -75,6 +75,7 @@ marketing/source/runvalley.log
 /js/audio.js
 /js/autoplay.js
 /js/avatar.js
+/js/blenderfilm.js
 /js/boxes.js
 /js/build.js
 /js/cartoon.js
@@ -89,6 +90,7 @@ marketing/source/runvalley.log
 /js/content/activities.js
 /js/content/adventures.js
 /js/content/autoplay.js
+/js/content/blenderfilms.js
 /js/content/boxes.js
 /js/content/build-types.js
 /js/content/chapter10.js
@@ -197,6 +199,7 @@ marketing/source/runvalley.log
 /js/content/stickers.js
 /js/content/storyhelp.js
 /js/content/subjects.js
+/js/content/storypics.js
 /js/content/surprises.js
 /js/content/talefilms.js
 /js/content/tester-arcades.js
@@ -234,6 +237,7 @@ marketing/source/runvalley.log
 /js/festhunt.js
 /js/festival-live.js
 /js/festivals.js
+/js/film-costume.js
 /js/film.js
 /js/folkshow.js
 /js/friend-model.js
@@ -455,6 +459,7 @@ marketing/source/runvalley.log
 /js/stickerfx.js
 /js/stickers.js
 /js/story.js
+/js/storypics.js
 /js/studio-position.js
 /js/suburbs.js
 /js/surprises.js
@@ -686,3 +691,4 @@ js/voice-fragments.js
 /js/yard.js
 /js/vehicles.js
 models/world/raw/
+/docs/characters-v108/costumes/_tmp/
