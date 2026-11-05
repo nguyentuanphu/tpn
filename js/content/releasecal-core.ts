@@ -17,17 +17,22 @@ export const daysUntil = (s: string, now: Date = new Date()): number => Math.rou
 // theirs in their own block
 export const CAL_DAYS: Record<string, string> = { 'chapter:ch4': '2026-12-04', 'chapter:ch5': '2027-01-08', 'chapter:finale': '2027-02-06',
   // (v1.08d s2vn) Season 2, Vietnam: each region, its three games and its lantern chapter open together (js/content/s2vn.ts)
-  'feature:s2_mekong': '2027-02-15', 'chapter:ch6': '2027-02-15', 'game:mk_sampan': '2027-02-15', 'game:mk_caybeo': '2027-02-15', 'game:mk_count': '2027-02-15',
-  'feature:s2_halong': '2027-03-15', 'chapter:ch7': '2027-03-15', 'game:hl_cave': '2027-03-15', 'game:hl_rocks': '2027-03-15', 'game:hl_nets': '2027-03-15',
-  'feature:s2_sapa': '2027-04-12', 'chapter:ch8': '2027-04-12', 'game:sp_terrace': '2027-04-12', 'game:sp_seasons': '2027-04-12', 'game:sp_brocade': '2027-04-12',
-  'feature:s2_taynguyen': '2027-05-10', 'chapter:ch9': '2027-05-10', 'game:tn_gong': '2027-05-10', 'game:tn_nharong': '2027-05-10', 'game:tn_elephant': '2027-05-10' };
+  'feature:s2_mekong': '2027-02-15', 'chapter:ch6': '2027-02-15',
+  'feature:s2_halong': '2027-03-15', 'chapter:ch7': '2027-03-15',
+  'feature:s2_sapa': '2027-04-12', 'chapter:ch8': '2027-04-12',
+  'feature:s2_taynguyen': '2027-05-10', 'chapter:ch9': '2027-05-10' };
+// (v1.08d s2vn) items that open with another one: a Season 2 region's three games open on the region's day (and move with it)
+export const CAL_WITH: Record<string, string> = Object.fromEntries([
+  ['s2_mekong', 'mk_sampan mk_caybeo mk_count'], ['s2_halong', 'hl_cave hl_rocks hl_nets'], ['s2_sapa', 'sp_terrace sp_seasons sp_brocade'], ['s2_taynguyen', 'tn_gong tn_nharong tn_elephant']
+].flatMap(([r, ids]) => ids.split(' ').map(id => ['game:' + id, 'feature:' + r])));
 let DATES: Map<string, string> | null = null;
 const dates = () => { if (DATES) return DATES; DATES = new Map(Object.entries(CAL_DAYS));
   for (const [date, v] of Object.entries(CAL_WEEKS)) { const [g, st] = v.split('|'); for (const id of g.split(' ').filter(Boolean)) DATES.set('game:' + id, date); for (const id of (st || '').split(' ').filter(Boolean)) DATES.set('story:' + id, date); }
   return DATES; };
-export const inCalendar = (key: string): boolean => dates().has(key);
+export const inCalendar = (key: string): boolean => dates().has(key) || !!CAL_WITH[key];
 /** the day an item opens (with the owner's move), or '' when it is not in the calendar */
 export function openDate(key: string, moves?: CalMoves | null): string {
+  if (CAL_WITH[key]) return openDate(CAL_WITH[key], moves);
   const d0 = dates().get(key); if (!d0) return '';
   const d = moves && moves[key]; return typeof d === 'string' && ISO.test(d) ? d : d0;
 }

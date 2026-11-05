@@ -22,10 +22,10 @@ export async function s2vnRegionsCheck(b) {
     for (const id of ids) {
       const r = D.regionOf(id); if (!r) { bad.push(id + ': no data'); continue; }
       // before its day: closed, its games hidden
-      C.CUSTOM.releaseCalendar = { moves: { ['feature:' + r.key]: R.addDays(today, 3), ...Object.fromEntries(r.games.map(g => ['game:' + g, R.addDays(today, 3)])) } };
+      C.CUSTOM.releaseCalendar = { moves: { ['feature:' + r.key]: R.addDays(today, 3), } };   // (the games follow their region's day)
       const closed = M.regionOpen(r), hidden = r.games.every(g => A.gameInfo(g).hidden);
       // on its day: open
-      C.CUSTOM.releaseCalendar = { moves: { ['feature:' + r.key]: today, ...Object.fromEntries(r.games.map(g => ['game:' + g, today])) } };
+      C.CUSTOM.releaseCalendar = { moves: { ['feature:' + r.key]: today, } };
       const S = M.installS2vn(G); const openNow = M.regionOpen(r); S.open(id); const shown = r.games.every(g => !A.gameInfo(g).hidden);
       const B = S.ensure(id), info = S.info(id);
       const offRoad = (x: number, z: number, n: string, pad = .6) => { const d = W.roadDist(x, z); if (d.road && d.d < d.road.w / 2 + pad) bad.push(`${id} ${n} on the road ${d.road.id}`); if (W.heightAt(x, z) < W.WATER + .3) bad.push(`${id} ${n} in the water`); };
