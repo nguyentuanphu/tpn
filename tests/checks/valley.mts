@@ -1108,3 +1108,62 @@ await check('ridingcamera', async () => (await import('../riding-camera.mts')).r
 await check('rememberedhomes', async () => (await import('../remembered-homes.mts')).rememberedHomesCheck(b));
 
 await check('rigidmodels', async () => (await import('../rigid-models.mts')).rigidModelsCheck(b));
+
+await check('areastream', async () => {
+  // (v1.08d valley, owner 5 Nov 2026 AEDT: "the valley building as the child walks"; js/areas.ts) parts of the valley are
+  // built after the start: the ones near the child at once, nearest first; a far one when the child flies there (built
+  // while the blue fade is up); far parts sleep (hidden, their every-frame work stopped) and wake when the child comes
+  // back. Here the child flies to every part three times round: each is built by its first landing, everything it made
+  // that can be tapped stands on open ground the child can reach, far parts sleep, and the graphics memory stops growing
+  // from the second round (each part is built once, never again).
+  const P = await open(b, { w: 900, h: 640, pre: () => { (window as any).__svAreaStream = true; } });
+  try {
+    await clear(P.page);
+    const home = await P.page.evaluate(async () => { const W = await import('/js/world.js'); const x = W.PLATEAU.x - 3, z = W.PLATEAU.z - 4; __sv.heroes[0].place(x, z); return { x, z }; });
+    // the parts near home are built within a few seconds, while the child stands there; far ones wait
+    await P.page.waitForFunction(([x, z]) => __sv.areas.list().filter(a => Math.hypot(a.x - x, a.z - z) < 140).every(a => a.built), [home.x, home.z], { timeout: 60000 });
+    const first = await P.page.evaluate(() => __sv.areas.list());
+    // villagers far from the child wait as stand-ins (js/avatar.ts lateAvatar); those round a landing spot are built on landing
+    const late0 = await P.page.evaluate(() => __sv.areas.late());
+    const landed = await P.page.evaluate(async () => { const A = await import('/js/avatar.js'), s = A.lateSpots()[0]; if (!s) return null; const n0 = __sv.areas.late(); await __sv.travel(__sv.heroes[0], s[0], s[1]);
+      return { n0, n1: __sv.areas.late(), stillThere: A.lateSpots().some(q => Math.hypot(q[0] - s[0], q[1] - s[1]) < 5) }; });
+    ok(late0 > 0 && landed && landed.n1 < landed.n0 && !landed.stillThere, 'stand-in villagers: ' + JSON.stringify({ late0, landed }));
+    const near = first.filter(a => Math.hypot(a.x - home.x, a.z - home.z) < 140), far = first.filter(a => Math.hypot(a.x - home.x, a.z - home.z) > 160);
+    ok(first.length >= 10 && near.length && near.every(a => a.built), 'the parts near home were not built: ' + JSON.stringify(first));
+    ok(far.length && far.some(a => !a.built), 'no far part waited for the child: ' + JSON.stringify(first));
+    const mem = () => P.page.evaluate(() => ({ geo: __sv.renderer.info.memory.geometries, tex: __sv.renderer.info.memory.textures }));
+    const rounds = [], bad = [];
+    for (let round = 0; round < 3; round++) {
+      for (const a of first) {
+        const r = await P.page.evaluate(async ({ id, x, z }) => {
+          const G = __sv, h = G.heroes[0], W = G.world; await G.travel(h, x, z);
+          await G.solidsReady;
+          // (the sleeping is looked at four times a second, on the game's own frames: a few seconds here, where frames are slow)
+          for (let k = 0; k < 50 && G.areas.list().find(p => p.id === id)?.asleep; k++) await new Promise(r => setTimeout(r, 100));
+          const part = G.areas.list().find(p => p.id === id);
+          // what this part made that can be tapped: on open ground (not inside anything solid), on dry land or a jetty
+          const its = G.interactables.filter(it => Number.isFinite(it.x) && Math.hypot(it.x - x, it.z - z) < 30 && (/^(sym_|crossing_)/.test(it.id)));
+          const stuck = its.filter(it => { const p = { x: it.x, y: W.groundAt(it.x, it.z), z: it.z }; W.collide(p, .3); return Math.hypot(p.x - it.x, p.z - it.z) > (it.r || 2.5); }).map(it => it.id);
+          return { id, built: !!part && part.built, asleep: part && part.asleep, stuck, landed: { x: +h.pos.x.toFixed(1), z: +h.pos.z.toFixed(1) } };
+        }, a);
+        if (!r.built || r.asleep || r.stuck.length) bad.push({ round, ...r });
+      }
+      // far from home now? the parts near home sleep; flying home wakes them
+      const sleepy = await P.page.evaluate(() => __sv.areas.list().filter(p => p.asleep).map(p => p.id));
+      await P.page.evaluate(({ x, z }) => __sv.travel(__sv.heroes[0], x, z), home);
+      await P.page.waitForFunction(([x, z]) => __sv.areas.list().every(p => Math.hypot(p.x - x, p.z - z) >= 100 || !p.asleep), [home.x, home.z], { timeout: 8000 }).catch(() => { });
+      const awake = await P.page.evaluate(([x, z]) => __sv.areas.list().filter(p => Math.hypot(p.x - x, p.z - z) < 100 && p.asleep).map(p => p.id), [home.x, home.z]);
+      rounds.push({ ...(await mem()), sleepy: sleepy.length, stillAsleepAtHome: awake });
+    }
+    const left = await P.page.evaluate(() => __sv.areas.left());
+    const lateAll = await P.page.evaluate(async () => { await __sv.areas.all(); return { late: __sv.areas.late(), broken: (await import('/js/avatar.js')).OUTLINED.filter(A => !A.rig || !A.anim).length }; });
+    ok(lateAll.late === 0 && lateAll.broken === 0, 'stand-ins left after building all: ' + JSON.stringify(lateAll));
+    ok(!bad.length, 'parts not built, asleep where the child landed, or with something out of reach: ' + JSON.stringify(bad));
+    ok(left === 0, left + ' parts were never built');
+    ok(rounds.every(r => !r.stillAsleepAtHome.length) && rounds.some(r => r.sleepy > 0), 'parts did not sleep far away or did not wake at home: ' + JSON.stringify(rounds));
+    // (the first two rounds also fill the game's own caches as places are seen; from the second round on it is level)
+    ok(rounds[2].geo <= rounds[1].geo * 1.03 + 20 && rounds[2].tex <= rounds[1].tex * 1.03 + 5, 'the graphics memory kept growing: ' + JSON.stringify(rounds));
+    ok(!P.errors.length, P.errors.join(' | '));
+    return `${late0} villagers waited as stand-ins (built on landing near them); ${first.length} parts after the start: ${near.length} near home built at once, ${far.filter(a => !a.built).length} far ones built when the child flew there; every part reachable; far parts sleep (${rounds[0].sleepy} on the last flight out) and wake at home; graphics ${rounds.map(r => r.geo + '/' + r.tex).join(', ')} shapes/pictures over 3 rounds`;
+  } finally { await P.ctx.close(); }
+});

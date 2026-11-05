@@ -191,3 +191,13 @@ The Sites design guidance was used for presentation and local-preview planning. 
 Current-main changed-file suite: 9/9 passed, 187 unit tests, seven minutes, serial. Parent/control/report/graph tests pass five screen sizes, including selectable sample days, zero-play Wednesday, totals, EN/VI selection retention, disclosure, image enlargement, focus return, no overflow and no Storage reads/API calls. Navigation and original quest/photo/Family Quiz/printing regression also pass five layouts; phone/tablet/computer pictures inspected. Earlier capture failures during world startup/fade were corrected using the actual r88 UI renderer in an isolated harness and waiting for full opacity. No game code was changed. New graph disclosure and swipe hint were checked visually.
 
 [Release handoff](RELEASE-HANDOFF.md) · [Copyable Release prompt](RELEASE-PROMPT.md). The handoff names runtime changes that remain, rather than claiming Home has already moved in the live game. Reward/festival checks reuse prior unchanged r88 results; no new game full suite, speed/offline/update integration or release zip is claimed.
+
+## The page script is TypeScript (v1.08c, 5 Nov 2026 AEDT)
+- The family website's behaviour (the four destinations and topic pages, the menu, the language switch, the Quest Guide
+  search and printing, pictures, the festival calendar, the sample quiz and the example day) is `home/page.ts`, run by
+  `home/site.ts`, built and type-checked like the rest of the game.
+- How the sections move onto their topic pages and how one page is shown at a time is `home/navigation.ts`, the one
+  source for both the website and this design preview (`build-preview.mts` makes it into JavaScript for the preview).
+- `navigation.mts` only makes the HTML now. `tools/build-website.mts` takes the design's inline script out of
+  `home/index.html` and refuses a page that still has one, apart from the one-line festival switch in the head.
+- The 1 KB browser guard in the game's own `index.html` stays plain JavaScript, on purpose.

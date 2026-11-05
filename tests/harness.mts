@@ -83,6 +83,10 @@ export async function start(page, mode = 'solo', screen = 'valley') {
   await page.waitForFunction(() => (window.__sv && window.__sv.heroes.length > 0) || !!document.querySelector('.modal.newfriends [data-go="play"]'), null, { timeout: 90000 });
   for (let i = 0; i < 4; i++) { const b = await page.$('.modal.newfriends:not(.out) [data-go="play"]'); if (!b) break; await b.click(); await page.waitForTimeout(250); }
   await page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
+  // (v1.08d valley) parts of the valley are built after the start, near the child first and far ones when the child comes
+  // near (js/areas.ts); the checks play in the whole valley, so every part is built first (check areastream checks the
+  // building as the child walks)
+  await page.evaluate(() => window.__sv.areas && !(window as unknown as { __svAreaStream?: boolean }).__svAreaStream && window.__sv.areas.all());
   // skip the prologue
   for (let i = 0; i < 40; i++) { const sb = await page.$('.storybook'); if (!sb) break; await page.evaluate(() => { const b = document.querySelector<HTMLElement>('.storybook .sb-next, .storybook .next, .storybook button:last-of-type'); b && b.click(); }); await page.waitForTimeout(80); }
   await page.evaluate(() => { document.querySelectorAll('.storybook').forEach(e => e.remove()); window.__sv.paused = false; });
@@ -103,6 +107,8 @@ export async function clear(page) {
 // The sticker checks leave the welcome alone.
 export async function noWelcome(page) {
   await page.evaluate(() => import(String('/js/stickers.js')).then(S => { for (const h of window.__sv.heroes) S.book(h.profile).welcomed = Date.now(); }));
+  // (v1.08b quality) and Lumi's welcome and the week's news on the Simple screen are counted as heard (js/lumi.ts)
+  await page.evaluate(() => Promise.all([import(String('/js/content/lumi.js')), import(String('/js/content/parents.js'))]).then(([L, P]) => { for (const h of window.__sv.heroes) h.profile.lumi = { met: Date.now(), news: L.weekKey(P.aestDate()) }; }));
 }
 
 // ---- which game code a check ran (SV_COVER=1; tests/suite.mts builds tests/check-map.json from it) ----

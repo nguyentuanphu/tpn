@@ -4,7 +4,7 @@
 // after the festival, and is put away until next year; testers (the device accepted as a tester) see it 7 days earlier.
 // A date a grown-up moved in Sparkle Studio is followed, as the calendar does (js/festivals.ts festDate).
 import { FESTCAL, BUILDUP } from './festcal.js';
-import { FEST_OF_GAME } from './festgames108b.js';
+import { FEST_OF_GAME } from './festgame-ids.js'; // (v1.08d valley) the map only, not the questions
 import { lunarDay, easter, nthWeekday } from '../lunar.js';
 import { festivalRule } from '../custom.js';
 

@@ -387,7 +387,7 @@ await check('battery', async () => {
   const play = await rate(P.page);
   // far people standing still: one shape (the still copy); near people and the child keep every moving part
   const people = await P.page.evaluate(async () => { const { OUTLINED } = await import('/js/avatar.js'), h = __sv.heroes[0], v = { far: 0, farStill: 0, near: 0, nearStill: 0, mine: !!h.av._still };
-    for (const A of OUTLINED) { if (!A.root.parent || A === h.av) continue; const p = A.root.getWorldPosition(A.root.position.clone()), d = Math.hypot(p.x - h.pos.x, p.z - h.pos.z);
+    for (const A of OUTLINED) { if (!A.root.parent || A === h.av || A.model) continue; /* (v1.08b friends) a child drawn with a friend model has no still copy by design (js/avatar.ts showStill): only a few children are ever on screen; villagers are still checked */ const p = A.root.getWorldPosition(A.root.position.clone()), d = Math.hypot(p.x - h.pos.x, p.z - h.pos.z);
       if (d > 24 && A._calm >= 2) { v.far++; if (A._still && A.still && A.still.visible && !A.rig.visible) v.farStill++; } else if (d < 16) { v.near++; if (A._still) v.nearStill++; } }
     return v; });
   // nothing moves for 15 s: the valley is drawn a few times a second; a touch brings it back at once (up to 90 s: the test
@@ -457,6 +457,19 @@ await check('startup', async () => {
     ok(!over.length && !errs.length && !mutedIndexLoads.length, JSON.stringify({ over, got, mutedIndexLoads, machineMs: Math.round(machineMs), speed: +speed.toFixed(2), slowest: slow, firstSteps: first.steps, secondSteps: second.steps, errs }));
     return `machine ${Math.round(machineMs)} ms (x${speed.toFixed(2)} of the reference); tablet speed: first start ${first.kb} KB, title ${(first.title / 1000).toFixed(1)} s, valley ready ${(first.ready / 1000).toFixed(1)} s; second start ${second.kb} KB from the network, ready ${(second.ready / 1000).toFixed(1)} s, longest freeze ${(second.freeze / 1000).toFixed(1)} s; slowest steps ${slow.join(', ')}`;
   } finally { S.close(); }
+});
+
+await check('festgameids', async () => {
+  // (v1.08d valley, PERF-001) the valley reads which festival each festival game belongs to from a small list
+  // (js/content/festgame-ids.ts), so the games' questions (js/content/festgames108b.ts) are not in the first download;
+  // the two lists must stay the same
+  const P = await open(b, { play: false });
+  try {
+    const r = await P.page.evaluate(async () => { const A = await import('/js/content/festgame-ids.js'), B = await import('/js/content/festgames108b.js');
+      return { ids: Object.entries(A.FEST_OF_GAME).sort().join(), games: Object.entries(B.FEST_OF_GAME).sort().join(), n: B.FEST_GAMES.length }; });
+    ok(r.n > 0 && r.ids === r.games, 'the festival game list and the games differ: ' + JSON.stringify(r));
+    return `${r.n} festival games, the same in both lists`;
+  } finally { await P.ctx.close(); }
 });
 
 await check('saves', async () => {

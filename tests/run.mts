@@ -42,6 +42,22 @@ await check('pushnotify', async () => (await import('./push-notify-browser.mts')
 // level: no round repeats another and the right answer moves (tests/round-variety.mts); a sample of two levels per game
 // each run, all four when the games change
 await check('roundvariety', async () => (await import('./round-variety.mts')).roundVarietyCheck(b, { sample: sampled('roundvariety') ? SEED : null }));
+// (v1.08b quality) every game on five screens, phone (fivescreens) and wide screens (fivescreenswide); every guide film,
+// tale film and story page on five screens (fivescreensfilms) (tests/fivescreens-browser.mts)
+await check('fivescreens', async () => (await import('./fivescreens-browser.mts')).fiveScreensCheck(b));
+await check('fivescreenswide', async () => (await import('./fivescreens-browser.mts')).fiveScreensWideCheck(b));
+await check('fivescreensfilms', async () => (await import('./fivescreens-films.mts')).fiveScreensFilmsCheck(b, { sample: sampled('fivescreensfilms') ? SEED : null }));
+// (v1.08b quality) for grown-ups: the learning report by subject and the level by subject; Lumi as the guide; Play with Mum
+// and Dad; the gentle play time (tests/quality-v108b-browser.mts)
+await check('subjectlevel', async () => (await import('./quality-v108b-browser.mts')).subjectLevelCheck(b));
+await check('learningreport', async () => (await import('./quality-v108b-browser.mts')).learningReportCheck(b));
+await check('lumiguide', async () => (await import('./quality-v108b-browser.mts')).lumiGuideCheck(b));
+await check('playtogether', async () => (await import('./quality-v108b-browser.mts')).playTogetherCheck(b));
+await check('playtime', async () => (await import('./quality-v108b-browser.mts')).playTimeCheck(b));
+// (v1.08b quality, owner 5 Nov) at spawn the camera stands behind the child, looking towards Ông Cú (tests/spawn-view.mts)
+await check('spawnview', async () => (await import('./spawn-view.mts')).spawnViewCheck(b));
+// (v1.08b quality, owner 5 Nov) every fly target and every ride end lands on open ground with a way out and a clear view (tests/fly-audit.mts)
+await check('flyaudit', async () => (await import('./fly-audit.mts')).flyAuditCheck(b));
 
 // (v1.08b story) the release calendar and the pad's calendar tab (tests/story-v108b.mts)
 await check('releasecalendar', async () => (await import('./story-v108b.mts')).releaseCalendarCheck(b));
@@ -60,6 +76,15 @@ await check('chapter8', async () => (await import('./story-v108b.mts')).chapterK
 await check('chapter9', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch9'));
 await check('talecostume', async () => (await import('./story-v108b.mts')).taleCostumeCheck());
 await check('installgift', async () => (await import('./story-v108b.mts')).installGiftCheck(b));
+
+// (v1.08d s2au) Season 2, Australia: the regions, their games and chapters (tests/s2au.mts)
+await check('s2au', async () => (await import('./s2au.mts')).s2auCheck(b));
+await check('s2aureef', async () => (await import('./s2au.mts')).s2auGamesCheck(b, 'gbr'));
+await check('chapter10', async () => (await import('./s2au.mts')).s2auChapterCheck(b, 'ch10'));
+await check('s2autas', async () => (await import('./s2au.mts')).s2auGamesCheck(b, 'tas'));
+await check('chapter11', async () => (await import('./s2au.mts')).s2auChapterCheck(b, 'ch11'));
+await check('s2auperth', async () => (await import('./s2au.mts')).s2auGamesCheck(b, 'perth'));
+await check('chapter12', async () => (await import('./s2au.mts')).s2auChapterCheck(b, 'ch12'));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

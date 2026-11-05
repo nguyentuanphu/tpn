@@ -176,11 +176,14 @@ export function createFerries(G) {
   // ---------- boats between two piers (round T2: the Sydney Harbour ferry, under the Harbour Bridge to the island; round
   // T3: the Sài Gòn boat down Sông Sài Gòn and along the coast to Vũng Tàu): from one pier along `via` to the other ----------
   for (const HF of BOATS.filter(b => b.piers)) {
-    const [A, Bp] = HF.piers, path = [], pts = [A.to, ...(HF.via || []), Bp.to];
-    for (let i = 0; i < pts.length - 1; i++) { const [ax, az] = pts[i], [bx, bz] = pts[i + 1], n = Math.max(1, Math.ceil(Math.hypot(bx - ax, bz - az) / 4)); for (let k = 0; k < n; k++) path.push({ x: ax + (bx - ax) * k / n, z: az + (bz - az) * k / n }); }
-    path.push({ x: Bp.to[0], z: Bp.to[1] });
-    const stopOf = (P0, i) => ({ i, name: () => T(P0.name[0], P0.name[1]), dock: { pier: pier(P0.at[0], P0.at[1], P0.to[0] + Math.sign(P0.at[0] - P0.to[0]) * 1.4, P0.to[1] + Math.sign(P0.at[1] - P0.to[1]) * 1.4) } });
-    const f = makeFerry({ model: ferryBoat(false), path, loop: false, stops: [stopOf(A, 0), stopOf(Bp, path.length - 1)], speed: 5 }); f.harbour = true; f.boat = HF.id;
+    // (v1.08d s2au) a boat with more than two piers (the Southern Coast Boat) goes pier to pier along its `legs`
+    const HX = HF as typeof HF & { legs?: number[][][]; speed?: number; via?: number[][] };
+    const PS = HX.legs ? HF.piers : HF.piers.slice(0, 2), legs = HX.legs || [HX.via || []], path = [], at: number[] = [];
+    for (let p = 0; p < PS.length; p++) { at.push(path.length); if (p === PS.length - 1) break; const pts = [PS[p].to, ...(legs[p] || []), PS[p + 1].to];
+      for (let i = 0; i < pts.length - 1; i++) { const [ax, az] = pts[i], [bx, bz] = pts[i + 1], n = Math.max(1, Math.ceil(Math.hypot(bx - ax, bz - az) / 4)); for (let k = 0; k < n; k++) path.push({ x: ax + (bx - ax) * k / n, z: az + (bz - az) * k / n }); } }
+    path.push({ x: PS[PS.length - 1].to[0], z: PS[PS.length - 1].to[1] });
+    const stopOf = (P0, i) => ({ i, id: P0.id, name: () => T(P0.name[0], P0.name[1]), dock: { pier: pier(P0.at[0], P0.at[1], P0.to[0] + Math.sign(P0.at[0] - P0.to[0]) * 1.4, P0.to[1] + Math.sign(P0.at[1] - P0.to[1]) * 1.4) } });
+    const f = makeFerry({ model: ferryBoat(false), path, loop: false, stops: PS.map((P0, k) => stopOf(P0, at[k])), speed: HX.speed || 5 }); f.harbour = true; f.boat = HF.id;
   }
 
   // ---------- riding ----------

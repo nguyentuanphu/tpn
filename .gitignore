@@ -37,12 +37,15 @@ marketing/source/runvalley.log
 /home/analytics.js
 /home/festivals.js
 /home/launch.js
+/home/navigation.js
+/home/page.js
 /home/site.js
 /home/whatsnew.js
 /js/ads.js
 /js/adventure.js
 /js/animalhomes.js
 /js/animals.js
+/js/areas.js
 /js/art.js
 /js/art/companion-hats.js
 /js/art/emoji108b.js
@@ -53,6 +56,7 @@ marketing/source/runvalley.log
 /js/art/kit.js
 /js/art/learning.js
 /js/art/lookup.js
+/js/art/lumi.js
 /js/art/maths3.js
 /js/art/money3.js
 /js/art/notify.js
@@ -61,6 +65,7 @@ marketing/source/runvalley.log
 /js/art/r90-audits.js
 /js/art/round30.js
 /js/art/s2vn.js
+/js/art/s2au.js
 /js/art/science2.js
 /js/art/things-money.js
 /js/art/tiengviet2.js
@@ -84,6 +89,9 @@ marketing/source/runvalley.log
 /js/content/autoplay.js
 /js/content/boxes.js
 /js/content/build-types.js
+/js/content/chapter10.js
+/js/content/chapter11.js
+/js/content/chapter12.js
 /js/content/chapter2films.js
 /js/content/chapter2hanoi.js
 /js/content/chapter2props.js
@@ -108,6 +116,7 @@ marketing/source/runvalley.log
 /js/content/familycode.js
 /js/content/familymissions.js
 /js/content/festcal.js
+/js/content/festgame-ids.js
 /js/content/festgames108b.js
 /js/content/festhunt.js
 /js/content/festival-visibility.js
@@ -159,6 +168,7 @@ marketing/source/runvalley.log
 /js/content/jobs.js
 /js/content/kitfilms.js
 /js/content/learnpaths.js
+/js/content/lumi.js
 /js/content/map.js
 /js/content/notify.js
 /js/content/owllessons.js
@@ -172,6 +182,9 @@ marketing/source/runvalley.log
 /js/content/rules.js
 /js/content/s2vn.js
 /js/content/s2vnfilms.js
+/js/content/s2au-games.js
+/js/content/s2au.js
+/js/content/s2aufilms.js
 /js/content/savecopy.js
 /js/content/school-place.js
 /js/content/science-places.js
@@ -180,6 +193,7 @@ marketing/source/runvalley.log
 /js/content/songs.js
 /js/content/stickers.js
 /js/content/storyhelp.js
+/js/content/subjects.js
 /js/content/surprises.js
 /js/content/talefilms.js
 /js/content/tester-arcades.js
@@ -199,6 +213,7 @@ marketing/source/runvalley.log
 /js/data.js
 /js/dayplan.js
 /js/dinh.js
+/js/dropspot.js
 /js/emojiswap.js
 /js/englishmode.js
 /js/explain.js
@@ -296,6 +311,8 @@ marketing/source/runvalley.log
 /js/games/reveal.js
 /js/games/s2vn-meta.js
 /js/games/s2vn.js
+/js/games/s2au-meta.js
+/js/games/s2au.js
 /js/games/science.js
 /js/games/science2-meta.js
 /js/games/science2.js
@@ -357,6 +374,7 @@ marketing/source/runvalley.log
 /js/learnquest.js
 /js/listen.js
 /js/lotus.js
+/js/lumi.js
 /js/lunar.js
 /js/main.js
 /js/main/friends.js
@@ -389,6 +407,7 @@ marketing/source/runvalley.log
 /js/places.js
 /js/player.js
 /js/players.js
+/js/playtogether.js
 /js/plots.js
 /js/popups.js
 /js/powerlines.js
@@ -407,6 +426,8 @@ marketing/source/runvalley.log
 /js/roads.js
 /js/roomcode.js
 /js/s2vn.js
+/js/s2au-region.js
+/js/s2au.js
 /js/school.js
 /js/screencapture.js
 /js/scrollhelp.js

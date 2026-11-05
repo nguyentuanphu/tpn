@@ -125,7 +125,11 @@ export function createLanterns(G, { dialog, say, reward, save, openTheatre }) {
     ch6: [() => import('./content/chapter6.js'), () => import('./content/s2vnfilms.js'), 'cf_find'],
     ch7: [() => import('./content/chapter7.js'), () => import('./content/s2vnfilms.js'), 'c6_find'],
     ch8: [() => import('./content/chapter8.js'), () => import('./content/s2vnfilms.js'), 'c7_find'],
-    ch9: [() => import('./content/chapter9.js'), () => import('./content/s2vnfilms.js'), 'c8_find'] };
+    ch9: [() => import('./content/chapter9.js'), () => import('./content/s2vnfilms.js'), 'c8_find'],
+    // (v1.08d s2au) Season 2, Australia: chapter 10 follows s2vn's chapter 9 (its lantern found: c9_find)
+    ch10: [() => import('./content/chapter10.js'), () => import('./content/s2aufilms.js'), 'c9_find'],
+    ch11: [() => import('./content/chapter11.js'), () => import('./content/s2aufilms.js'), 'c10_find'],
+    ch12: [() => import('./content/chapter12.js'), () => import('./content/s2aufilms.js'), 'c11_find'] };
   const loadCh = id => loadingCh[id] || (loadingCh[id] = LATER[id][0]().then(M => {
     const P = mods[id] = M.create(G, { current, isOn, A, st, big, gamesOf, say, save, dialog, reward, actions, plan, finish: (h, id) => finish(h, id), companions: () => companions });
     Object.assign(spots, P.spots); G.landmarksStory[id] = { x: P.front[0], z: P.front[1] }; addButtons(CHAPTERS.find(c => c.id === id));
