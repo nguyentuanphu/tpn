@@ -46,7 +46,7 @@ The designs:
 3. **Skin tone** (5 tones, owner's answer 2). It is one row under the model, and the model changes colour straight away.
 4. **Age, start screen and difficulty** stay as they are, on the same page.
 5. **The photo** stays for the round picture (picker, HUD, friends list). It is no longer pasted onto the 3D face, because the new faces are drawn with moods and a photo would break them.
-6. The child's name stays the child's name. Finn or Clara is the look, not a new name: "Henry (Finn)" in Grown-ups.
+6. The child's name stays the child's name. Finn, Sol, Clara or Lumi is the look, not a new name, and the friend's name is never added after a child's name anywhere, Grown-ups included (owner, 5 Nov 2026 AEDT).
 
 ### 2. A child who already has a character (Who's playing)
 - The cards in the picker show a picture of the chosen friend in the child's skin tone (a ready-made picture per friend and tone), or the photo if there is one.
