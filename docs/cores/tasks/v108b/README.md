@@ -19,3 +19,8 @@ Before starting, read CLAUDE.md, HANDOFF.md, docs/cores/README.md, docs/cores/ta
 **The five helpers:** friends, games, story, platform, quality.
 
 **5 Nov 2026 AEDT:** all five sessions stopped three minutes after starting on 4 Nov because the account's weekly usage limit was reached (it reset at 02:00 UTC, 1 pm AEDT, on 5 Nov); they were restarted then. The owner added a Studio redesign (Releases and Sparkle Lab easier to understand, faster Studio, no reload on Back) to the platform helper; the Concept D roads moved to the quality helper.
+
+**Owner, 5 Nov 2026 AEDT: "Ensure you will be the only one who collects, combines and run checks and full suites."**
+- Only Release merges branches: into `integrate/v108`, `release/v1.08` or anything else. A helper never merges another helper's branch, and never merges into `integrate/v108`; to use another helper's work, ask Release.
+- Only Release runs the full suite, the combined checks across branches, and the speed checks for the round.
+- A helper runs only the checks for its own change (`--changed` or `--only <names>`, one at a time) before pushing its own branch.
