@@ -672,7 +672,9 @@ def shoot(name, az, height, dist, look, res):
 
 show_face('smile')
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, f'{TAG}-{STYLE}.blend'))
-top = HC.z + R * 1.3; mid = top * .5; dist = top * .5 / math.tan(math.radians(12)) * 1.15
+top = HC.z + R * 1.3   # the top of the frame: over the head, or over a tall hat (a king's crown wings)
+top = max([top] + [(o.matrix_world @ Vector(c)).z + .08 * R for o in bpy.context.scene.objects if o.type == 'MESH' and not o.hide_render and o.name.startswith('hat') for c in o.bound_box])
+mid = top * .5; dist = top * .5 / math.tan(math.radians(12)) * 1.15
 if RENDER:
     VIEWS = next((a[6:].split(',') for a in argv if a.startswith('views=')), None)   # views=front,three-quarter: only those
     for name, az in (('front', 0), ('side', math.pi / 2), ('back', math.pi), ('three-quarter', .6)):

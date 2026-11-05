@@ -23,6 +23,9 @@ const brown = (c: string) => BROWNS[[...String(c)].reduce((a, ch) => a + ch.char
 const bare = (L: Look) => !L.hat || L.hat === 'none';
 
 // ---------- pieces worn on the head (the head's own units: a ball of radius .5, the face towards +z) ----------
+// a crown wing's outline (the Blender kit's WING, in head units: the head's radius is .5), base at 0, a thin plate
+const WING = () => { const o = [[-.07, 0], [.07, 0], [.3, .5], [.27, .66], [.14, .76], [0, .7], [-.14, .76], [-.27, .66], [-.3, .5]].map(([x, y]) => new THREE.Vector2(x * .5, y * .5));
+  return new THREE.ExtrudeGeometry(new THREE.Shape(o), { depth: .02, bevelEnabled: false }); };
 const KHAN = () => [P(Sph(.6, 20, 12, H + .95, PI * 2 - 1.9, 0, PI * .72), C.khan, [0, .02, -.02]), P(Sph(.6, 20, 6, 0, PI * 2, 0, PI * .26), C.khan, [0, .02, -.02]), P(Cone(.16, .3, 4), C.khan, [0, .46, .44], [H + .5, 0, 0], [1, 1, .35])];
 const HEAD: Record<string, (L: Look) => Part[]> = {
   // khăn mỏ quạ: a dark cloth over the head and down the cheeks, its front edge pinched to a crow's-beak point
@@ -38,7 +41,9 @@ const HEAD: Record<string, (L: Look) => Part[]> = {
   // mũ xung thiên: the king's gold cap of the old tales, a high crown at the back, two gold wings standing up behind it,
   // a sun with a pearl in front and dragons along the band (owner, 6 Nov 2026 AEDT: as in the Vietnamese fairy-tale films)
   xungthien: () => [P(Cyl(.5, .53, .32, 24), C.gold, [0, .32, 0]), P(Tor(.52, .03), '#f2d16b', [0, .18, 0], [H, 0, 0]), P(Sph(.36, 16, 10), C.gold, [0, .56, -.16], [0, 0, 0], [1, 1.2, .8]),
-    P(Cyl(.17, .17, .02, 18), '#f2d16b', [.28, .9, -.36], [-.35, 0, H + .12], [1, 1, 1.5]), P(Cyl(.17, .17, .02, 18), '#f2d16b', [-.28, .9, -.36], [-.35, 0, H - .12], [1, 1, 1.5]),
+    // the two wings standing up behind (owner, 6 Nov 2026 AEDT: rounded wings read as rabbit ears): flat fan-shaped gold
+    // plates, narrow where they meet behind the crown and wide at the top, a ruby in each, the pair opening in a V
+    ...[1, -1].flatMap(s => [P(WING(), '#f2d16b', [s * .08, .74, -.36], [0, 0, -s * .42], [1.5, 1.5, 1]), P(Sph(.05, 8, 6), '#c62f2f', [s * .08 + s * .32 * Math.sin(.42), .74 + .32 * Math.cos(.42), -.33], [0, 0, 0], [1, 1.3, .5])]),
     P(Cyl(.13, .13, .02, 18), '#f2d16b', [0, .32, .52], [H, 0, 0]), P(Sph(.05, 8, 6), '#f6f1ea', [0, .32, .54]),
     P(Tor(.2, .025, PI * .8), '#f2d16b', [.3, .25, .42], [0, -.6, 0]), P(Tor(.2, .025, PI * .8), '#f2d16b', [-.3, .25, .42], [0, .6, PI])],
   // kim quan: a prince's small gold crown over the topknot, a gold pin through it and a red jewel

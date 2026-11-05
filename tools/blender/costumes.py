@@ -130,6 +130,19 @@ def kit_hair(name, A, Bm):
     else:
         style(VSTYLE.get(name, name), A, Bm)
 
+WING = [(-.07, 0), (.07, 0), (.3, .5), (.27, .66), (.14, .76), (0, .7), (-.14, .76), (-.27, .66), (-.3, .5)]   # a crown wing's outline, base at 0
+
+def kit_plate(name, m, rim, jewel, base, tilt, thick=.03):
+    """a crown wing: the WING outline (head units) as a flat plate facing the front, tilted out by tilt (radians, about the
+    view axis) at base, with a rim tube and a jewel in the middle"""
+    rot = Matrix.Rotation(tilt, 3, 'Y'); P3 = lambda x, z, y=0.0: base + rot @ (Vector((x, y, z)) * R)
+    bm = bmesh.new(); f = [bm.verts.new(P3(x, z, -thick)) for x, z in WING]; b = [bm.verts.new(P3(x, z, thick)) for x, z in WING]
+    bm.faces.new(f); bm.faces.new(b[::-1]); n = len(WING)
+    for k in range(n): bm.faces.new((f[k], f[(k + 1) % n], b[(k + 1) % n], b[k]))
+    obj_from(bm, name, m, False)
+    tube(name, rim, [P3(x * 1.0, z, -thick * 1.4) for x, z in WING + WING[:1]], .035 * R, 8, False)
+    sphere(name, jewel, P3(0, .42, -thick * 2.2), (.07 * R, .03 * R, .09 * R), 12, 6)
+
 def kit_hat(kind, col=None):
     """the kit's headwear, in head units (H): the front of the face is -y. Wraps are named hatBand so they keep their place (no settling)."""
     M = felt('kithat' + kind + (col or ''), col or '#2b2422', .85, .08)
@@ -169,9 +182,10 @@ def kit_hat(kind, col=None):
         lathe('hatCrown', GOLD, [(1.1 * R, .15 * R), (1.12 * R, .45 * R), (1.02 * R, .78 * R), (.6 * R, .95 * R), (0, .98 * R)], 40, loc=HC)
         tube('hatBand', GOLDL, ring_(.2, 1.12, 1.1), .06 * R, 8, False)
         c = lathe('hatBand', GOLD, [(.0, .6 * R), (.7 * R, .62 * R), (.75 * R, 1.1 * R), (.55 * R, 1.42 * R), (0, 1.5 * R)], 32, loc=HC + Vector((0, .35 * R, 0)))   # the high back crown
-        for s in (-1, 1):   # the two wings standing up behind
-            # (owner, 6 Nov 2026 AEDT: they looked like rabbit ears) flat, tall wing plates with a gold rim, leaning out a little
-            w = sphere('hatBand', GOLDL, H(s * .55, .8, 1.35), (.03 * R, .34 * R, .52 * R), 24, 12, (-.35, 0, s * .12))   # a blade seen from the front, a wing from the side
+        for s in (-1, 1):   # the two wings standing up behind ("xung thiên", toward the sky)
+            # (owner, 6 Nov 2026 AEDT: rounded wings read as rabbit ears) flat fan-shaped gold plates, narrow where they meet behind
+            # the crown and wide at the top, a light gold rim and a ruby, their face to the front, the pair opening in a V
+            kit_plate('hatBand', GOLD, GOLDL, RED, H(s * .16, .72, 1.38), s * .42)
         sphere('hatBand', GOLDL, H(0, -1.1, .5), (.32 * R, .06 * R, .3 * R), 20, 10)   # the sun plate in front
         sphere('hatBand', PEARL, H(0, -1.16, .52), (.1 * R,) * 3, 12, 6)
         for k in range(8): a = k * math.pi / 4; sphere('hatBand', RED, H(math.cos(a) * .22, -1.15, .52 + math.sin(a) * .22), (.04 * R,) * 3, 8, 4)
