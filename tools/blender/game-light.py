@@ -55,7 +55,7 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
     me.materials.clear()
     for m in keep: me.materials.append(m)
     for p, i in zip(me.polygons, idx): p.material_index = i
-for o in [o for o in bpy.context.scene.objects if o.type == 'MESH' and not o.name.split('-')[0] in ('finn', 'sol', 'clara', 'lumi')]:
+for o in [o for o in bpy.context.scene.objects if o.type == 'MESH' and not o.name.split('-')[0] in ('finn', 'sol', 'clara', 'lumi', 'villager')]:  # (v1.08e: the villagers too)
     bpy.data.objects.remove(o)  # (the importer's bone shapes)
 bpy.ops.export_scene.gltf(filepath=DST, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                           export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,

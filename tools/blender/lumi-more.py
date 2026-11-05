@@ -92,6 +92,11 @@ def curtain(m, length=2.2, width=1.15, open_front=.95):
 VHAIR = {'vn-aodai': 'long', 'vn-dad': 'sidepart', 'vn-farmer': 'sidepart', 'vn-vendor': 'lowbun', 'vn-grandma': 'lowbun', 'vn-grandpa': 'tuft',
          'vn-schoolboy': 'boybangs', 'vn-schoolgirl': 'bangspigtails', 'au-dad': 'messy', 'au-mum': 'ponytail', 'au-grandma': 'curls',
          'au-grandpa': 'tuft', 'au-boy': 'messy', 'au-girl': 'puffs'}
+# (v1.08e villagers, Release 6 Nov: every named villager wore the same short cut) each one's own hair, from their look in
+# the game (js/main.ts): Cô Mai long, Bác Ba a grey tuft, Tèo and Bờm spiky, Tí and Mít two buns, Bống a ponytail, Su and
+# Jack short, Ruby her red hair to the shoulders, Lan a ponytail
+VHAIR.update({'mai': 'long', 'ba': 'tuft', 'teo': 'messy', 'ti': 'puffs', 'bong': 'ponytail', 'su': 'boybangs', 'jack': 'messy',
+              'mit': 'puffs', 'bom': 'messy', 'ruby': 'waves', 'lan': 'ponytail'})
 def hair_villager():
     st = VHAIR.get(ROLE, V['hair']); HS = mat('hairShell', PAL[1], .5, .45); HL = mat('hairShellL', PAL[3], .5, .45)
     hatted = bool(WEAR.get('hat'))
@@ -285,7 +290,7 @@ def scarf(col):
     tube('scarf', M, [Vector((.05 * S, fronty(b['wC'] * .6), b['zN'] - .04 * S)), Vector((.07 * S, fronty(b['wC'] * 1.05), b['zC'] - .02 * S)), Vector((.075 * S, fronty(b['wC'] * 1.1), b['zC'] - .1 * S))], [(.028 * S, .012 * S)] * 3, 10)
 
 # accessories: girls (bow, headband, earrings, necklace, pearls, bracelet), boys (bowtie, watch, backpack works for all), anyone (sunglasses, glasses, red scarf, freckles, moustache, long socks, flower clip)
-HEAD_ACC = ('bow', 'headband', 'earrings', 'sunglasses', 'glasses', 'freckles', 'moustache', 'flowerclip', 'stubble')
+HEAD_ACC = ('bow', 'headband', 'earrings', 'sunglasses', 'glasses', 'freckles', 'moustache', 'flowerclip', 'stubble', 'bunny')
 def acc(name, col=None):
     b = B; C = lambda d: felt('acc' + name + (col or d), col or d)
     puff = {'lumi': .32, 'clara': .12, 'sol': .1, 'finn': .2}.get(WHO, 0)
@@ -293,6 +298,13 @@ def acc(name, col=None):
         c = HC + Vector((.62, -.48, .62)).normalized() * R * (1.22 + puff); M = C('#ef6f8e')
         for s in (-1, 1): sphere('bow', M, c + Vector((s * .25 * R, -.02 * R, .03 * R)), (.26 * R, .11 * R, .19 * R), 16, 8, (0, s * .35, 0))
         sphere('bowKnot', M, c + Vector((0, -.03 * R, 0)), (.08 * R, .08 * R, .09 * R), 12, 6)
+    elif name == 'bunny':  # (v1.08e villagers) Bống's soft bunny ears on a headband: white felt, pink inside
+        W_ = C('#fbf7f2'); Pk = felt('accbunnyPink', '#f6a9bd')
+        for s in (-1, 1):
+            base = HC + Vector((s * .38, -.05, .92)).normalized() * R * (1.08 + puff)
+            sphere('bunnyEar', W_, base + Vector((s * .06 * R, 0, .42 * R)), (.13 * R, .07 * R, .42 * R), 16, 10, (0, s * .18, 0))
+            sphere('bunnyInner', Pk, base + Vector((s * .06 * R, -.05 * R, .42 * R)), (.07 * R, .03 * R, .32 * R), 12, 8, (0, s * .18, 0))
+        tube('bunnyBand', W_, [HC + Vector((math.cos(t) * 1.06 * R, -.05 * R, math.sin(t) * 1.0 * R + .05 * R)) for t in lin(.12 * math.pi, .88 * math.pi, 13)], .035 * R, 8)
     elif name == 'headband':
         M = C('#ef6f8e'); k = 1.06 + puff
         tube('headband', M, [HC + Vector((math.cos(t) * k * R, -math.sin(t) * .25 * R - .2 * R, math.sin(t) * k * R * .95 + .1 * R)) for t in lin(.05 * math.pi, .95 * math.pi, 17)], .045 * R, 10)
