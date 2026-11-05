@@ -54,6 +54,10 @@ await check('learningreport', async () => (await import('./quality-v108b-browser
 await check('lumiguide', async () => (await import('./quality-v108b-browser.mts')).lumiGuideCheck(b));
 await check('playtogether', async () => (await import('./quality-v108b-browser.mts')).playTogetherCheck(b));
 await check('playtime', async () => (await import('./quality-v108b-browser.mts')).playTimeCheck(b));
+// (v1.08b quality, owner 5 Nov) at spawn the camera stands behind the child, looking towards Ông Cú (tests/spawn-view.mts)
+await check('spawnview', async () => (await import('./spawn-view.mts')).spawnViewCheck(b));
+// (v1.08b quality, owner 5 Nov) every fly target and every ride end lands on open ground with a way out and a clear view (tests/fly-audit.mts)
+await check('flyaudit', async () => (await import('./fly-audit.mts')).flyAuditCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);

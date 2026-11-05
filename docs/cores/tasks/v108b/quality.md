@@ -69,6 +69,23 @@ time allows).
   this round, so it is left for a quiet moment after the merge.
 - The new game files are in `tests/tsconfig.json`; the new test files have no findings.
 
+**Owner's additions, 5 Nov: spawn camera, fly targets and drop-offs**
+- Spawn (`js/main.ts` `faceOwl`): a child who appears near Ông Cú faces him and the camera stands behind the child
+  (before, the camera stood on the owl's side, so the owl stood between). Check `spawnview` (phone, tablet, computer).
+- One rule for every place a child is set down, `js/dropspot.ts`: open ground (nothing solid at or right beside the
+  child, not water, not the edge), a way out (4 of 8 directions walkable for 2.5 m), and a camera direction with nothing
+  in the way (the wanted one, else the nearest clear one). `G.setDown` (js/main/hero-events.ts) uses it; `G.travel`
+  (every flight: map, Go there, games, quests, Simple Places, calendar, chapters all call it) and `G.landBy` go through
+  it; so do the end of every ride in `js/traffic.ts` (bus to a chosen stop, getting off a bus, xích lô, electric cart,
+  taxis and motorbikes share these four drop points) and `dismount` in `js/player.ts` (animals and vehicles; off a raft
+  into the water stays as it was). `G.clearSpot` is the same rule.
+- Bus stops: the shelter's posts, glass back and sign post are solid now (before, one small circle in the middle, so a
+  child could land or stand inside or behind the shelter).
+- Check `flyaudit`: every map place, every tap-to-talk and game place, every bus stop and every bus ride's end, landed
+  with the shared code; each must be open ground with 4 ways out and a clear camera ray to the child.
+- The ferry's pier step (`js/ferry.ts`) keeps its own landing (on the pier, by design).
+- The games helper's new places: once Release has a combined branch, run `flyaudit` on it.
+
 ## Shared files touched (small edits)
 
 `js/games/frame.ts` (the fit: the wide try), `js/main.ts` (one line: the level, plus the import), `js/simple.ts` (the
