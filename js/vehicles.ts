@@ -305,21 +305,22 @@ function car({ color, L = 3.9, Wd = 1.62, R = .3, body, glass, roof, extra = [],
   const dx = lhd ? .38 : -.38;
   return { o: g, cabin: { width: Wd, length: L, bottom: Math.min(...glass.map(p => p[1])), top: Math.max(...glass.map(p => p[1])), color }, wheels, wr: R, seat: [dx, .62, -.1], grips: [[dx + .17, .95, .42], [dx - .17, .95, .42]], feet: [[dx + .1, .3, .9], [dx - .1, .3, .9]], wheelAt: [dx, .95, .45] };
 }
-// a family sedan
+// a family sedan. (v1.08e, Release round 2: the cabin is 30 cm taller, so a seated friend's hair stays under the roof
+// and the legs inside the car; the ute's cab 8 cm)
 export function sedan(color = '#c8d4dc', lhd = true) {
-  const v = car({ color, lhd, body: [[1.95, .42], [2.0, .68], [1.0, .82], [-1.7, .86], [-1.98, .74], [-1.95, .42]], glass: [[1.0, .8], [.35, 1.3], [-.95, 1.3], [-1.55, .84]], roof: [[.35, 1.28], [-.95, 1.28], [-.92, 1.34], [.32, 1.34]] });
+  const v = car({ color, lhd, body: [[1.95, .42], [2.0, .68], [1.0, .82], [-1.7, .86], [-1.98, .74], [-1.95, .42]], glass: [[1.0, .8], [.3, 1.6], [-1.0, 1.6], [-1.6, .84]], roof: [[.3, 1.58], [-1.0, 1.58], [-.97, 1.64], [.27, 1.64]] });
   return { ...v, name: ['Car', 'Xe hơi'] };
 }
 // a Vietnamese taxi: white with a green stripe and a roof sign (no brand)
 export function taxi() {
-  const v = car({ color: '#f4f4ee', lhd: true, body: [[1.95, .42], [2.0, .68], [1.0, .82], [-1.7, .86], [-1.98, .74], [-1.95, .42]], glass: [[1.0, .8], [.35, 1.3], [-.95, 1.3], [-1.55, .84]], roof: [[.35, 1.28], [-.95, 1.28], [-.92, 1.34], [.32, 1.34]],
-    extra: [box(1.64, .12, 3.2, '#2f9a4a', [0, .6, 0]), box(.5, .16, .22, '#ffd23f', [0, 1.43, -.3])] });
+  const v = car({ color: '#f4f4ee', lhd: true, body: [[1.95, .42], [2.0, .68], [1.0, .82], [-1.7, .86], [-1.98, .74], [-1.95, .42]], glass: [[1.0, .8], [.3, 1.6], [-1.0, 1.6], [-1.6, .84]], roof: [[.3, 1.58], [-1.0, 1.58], [-.97, 1.64], [.27, 1.64]],
+    extra: [box(1.64, .12, 3.2, '#2f9a4a', [0, .6, 0]), box(.5, .16, .22, '#ffd23f', [0, 1.73, -.3])] });
   return { ...v, name: ['Taxi', 'Xe taxi'] };
 }
 // the Australian ute: a cab in front and an open tray behind, with a roll bar
 export function ute(color = '#f4f4ee') {
   const v = car({ color, lhd: false, L: 4.6, wheelbase: 2.9, R: .34, body: [[2.3, .4], [2.32, .8], [1.4, .96], [-2.2, .98], [-2.3, .9], [-2.3, .4]],
-    glass: [[1.35, .96], [.85, 1.5], [.05, 1.5], [-.05, .98]], roof: [[.85, 1.48], [.0, 1.48], [.0, 1.55], [.82, 1.55]],
+    glass: [[1.35, .96], [.82, 1.58], [.05, 1.58], [-.05, .98]], roof: [[.82, 1.56], [.0, 1.56], [.0, 1.63], [.79, 1.63]],
     extra: [box(1.66, .5, 2.0, '#3a3d40', [0, 1.1, -1.2]), box(1.5, .45, 1.9, '#5a5f64', [0, 1.16, -1.2]), ...[-1, 1].map(s => rod([s * .7, .98, -.25], [s * .7, 1.65, -.25], .03, CHROME)), rod([-.7, 1.65, -.25], [.7, 1.65, -.25], .03, CHROME),
       box(.8, .1, .3, '#2b2e31', [0, .48, 2.32]), P(new THREE.TorusGeometry(.12, .025, 6, 14), CHROME, [0, .6, 2.36])] });
   return { ...v, name: ['Ute', 'Xe bán tải Úc'] };
@@ -422,7 +423,8 @@ export function touristCart() {
     ...[0, 1, 2, 3].flatMap(k => [box(1.2, .1, .4, '#c62f2f', [0, .78, L / 2 - 1.3 - k * .85]), box(1.2, .45, .08, '#c62f2f', [0, 1.02, L / 2 - 1.5 - k * .85])]),
     disc(.16, .03, '#2b2e31', [.3, 1.25, L / 2 - .8]), ...[-1, 1].map(sd => box(.18, .08, .04, '#fff6c8', [sd * .5, .7, L / 2 + .04]))];
   g.add(solid(p, .012));
-  return { o: g, wheels, wr: R, seat: [.3, .86, L / 2 - 1.3], grips: [[.42, 1.25, L / 2 - .8], [.18, 1.25, L / 2 - .8]], feet: [[.36, .4, L / 2 - .7], [.24, .4, L / 2 - .7]], name: ['Electric tourist cart (Hà Nội)', 'Xe điện du lịch Hồ Gươm'] };
+  // (v1.08e: its canopy is its roof, so a seated friend sinks under it, as js/traffic.ts already gave it for the ride view)
+  return { o: g, wheels, wr: R, seat: [.3, .86, L / 2 - 1.3], grips: [[.42, 1.25, L / 2 - .8], [.18, 1.25, L / 2 - .8]], feet: [[.36, .4, L / 2 - .7], [.24, .4, L / 2 - .7]], cabin: { width: 1.5, length: 4.6, bottom: 1.05, top: 2.12, color: '#f4f4ee' }, name: ['Electric tourist cart (Hà Nội)', 'Xe điện du lịch Hồ Gươm'] };
 }
 // xe ba gác máy: a motorbike front with a wooden cargo bed on two wheels behind, loaded with crates
 export function baGac() {
@@ -448,6 +450,21 @@ function aim(limb, target, len) {
   limb.quaternion.copy(_q.setFromUnitVectors(DOWN, _b));
   return d / len;                                                                     // above 1: the limb can't quite reach
 }
+// the top of a seated person's head in the scene. (v1.08e, Release round 2: a friend's hair came through the car's roof)
+// With the friend's Blender model on, the code head is empty: the hair's top is measured on the model once (above the
+// head joint, in the person's own size) and kept, since measuring a moving model every frame is slow.
+const _ht = new THREE.Vector3();
+function headTop(A) {
+  if (!A.model || !A.model.obj) return new THREE.Box3().setFromObject(A.head).max;
+  A.head.getWorldPosition(_ht);
+  if (A._hairTop == null) {
+    if (A.model.follow) A.model.follow(undefined, true); A.root.updateMatrixWorld(true); A.head.getWorldPosition(_ht);
+    const bones = []; A.model.obj.traverse(n => { if (n.isSkinnedMesh) bones.push(n); });
+    const b = new THREE.Box3(); bones.forEach(m => { m.computeBoundingBox(); b.union(m.boundingBox.clone().applyMatrix4(m.matrixWorld)); });
+    A._hairTop = b.isEmpty() ? .9 : Math.max(.5, (b.max.y - _ht.y) / (A.root.scale.y || 1));
+  }
+  return _ht.add(new THREE.Vector3(0, A._hairTop * (A.root.scale.y || 1), 0));
+}
 // attach = false: the person stays where they are in the scene (a child riding) and is only moved onto the seat
 export function seatRider(A, v, at, grips, feet, scale = .9, attach = true) {
   const o = v.o; A.root.scale.setScalar(scale);
@@ -472,7 +489,7 @@ export function seatRider(A, v, at, grips, feet, scale = .9, attach = true) {
   // (owner, 30 Oct 2026 AEDT: "the head pokes through the roof") a seated child is taller than a car's cabin: sink into the
   // seat until the head is under the roof (the closed body hides the hips), then reach for the wheel and pedals again
   if (v.cabin) {
-    A.root.updateMatrixWorld(true); const top = new THREE.Box3().setFromObject(A.head).max, head = o.worldToLocal(top.clone()).y;
+    A.root.updateMatrixWorld(true); const top = headTop(A), head = o.worldToLocal(top.clone()).y;
     const over = head - (v.cabin.top - .03);
     if (over > 0) {
       if (attach) A.root.position.y -= over; else A.root.position.y -= over * o.scale.y;

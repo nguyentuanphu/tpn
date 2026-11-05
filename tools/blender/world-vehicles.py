@@ -644,15 +644,15 @@ def car(F, color, L, W, R, belt_f, belt_r, roof, wind_base, wind_top, rear_top, 
 
 def sedan(color='#c8d4dc', taxi=False):
     F = Frame('veh-taxi' if taxi else 'veh-sedan')
-    car(F, color, 3.9, 1.62, .3, .8, .84, 1.32, 1.0, .35, -.95, -1.55, bpillar=-.25)
+    car(F, color, 3.9, 1.62, .3, .8, .84, 1.62, 1.0, .3, -1.0, -1.6, bpillar=-.3)
     if taxi:
         for s in (1, -1): rbox('#2f9a4a', 'paint', (s * .8, .62, 0), (.03, .12, 3.0), .01)
-        rbox('#ffd23f', 'paint', (0, 1.43, -.3), (.5, .16, .22), .05); rbox('#2f9a4a', 'paint', (0, 1.43, -.3), (.46, .06, .225), .01)
+        rbox('#ffd23f', 'paint', (0, 1.73, -.3), (.5, .16, .22), .05); rbox('#2f9a4a', 'paint', (0, 1.73, -.3), (.46, .06, .225), .01)
     return F
 
 def ute(color='#f4f4ee', tam=False):
     F = Frame('veh-tamTruck' if tam else 'veh-ute')
-    car(F, color, 4.6, 1.62, .34, .92, .96, 1.52, 1.35, .82, .02, -.06, bpillar=.45, tray=True)
+    car(F, color, 4.6, 1.62, .34, .92, .96, 1.6, 1.35, .8, .02, -.06, bpillar=.45, tray=True)
     rbox('#3a3d40', 'matte', (0, 1.0, -1.2), (1.5, .06, 2.0), .02)
     if not tam:
         for s in (1, -1): rbox(color, 'paint', (s * .78, 1.12, -1.2), (.06, .3, 2.0), .03)
