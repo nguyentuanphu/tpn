@@ -46,6 +46,7 @@ await check('roundvariety', async () => (await import('./round-variety.mts')).ro
 // (v1.08b story) the release calendar and the pad's calendar tab (tests/story-v108b.mts)
 await check('releasecalendar', async () => (await import('./story-v108b.mts')).releaseCalendarCheck(b));
 await check('calendartab', async () => (await import('./story-v108b.mts')).calendarTabCheck(b));
+await check('websitenews', async () => (await import('./story-v108b.mts')).websiteNewsCheck(b));
 await check('installgift', async () => (await import('./story-v108b.mts')).installGiftCheck(b));
 
 await b.close();

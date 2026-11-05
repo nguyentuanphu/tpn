@@ -1,5 +1,6 @@
 import {setupWebsiteFestivals} from './festivals.js';
 import {setupLaunchBanner} from './launch.js';
+import { setupWhatsNew } from './whatsnew.js'; // (v1.08b story) What's new strip and the Calendar part
 // (r89) first-party visit counts for the standalone family website (/home), on by default (owner, 23 Oct AEDT), never
 // inside the game's floating view (a child's device). The page itself is tools/build-website.mts's; the counting is
 // home/analytics.ts, the same allowlisted events netlify/functions/parent-analytics.mts accepts. No names, family
@@ -16,3 +17,4 @@ if (!embedded) {
 
 setupWebsiteFestivals();
 setupLaunchBanner();
+setupWhatsNew();

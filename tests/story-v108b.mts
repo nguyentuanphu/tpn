@@ -132,3 +132,34 @@ export async function installGiftCheck(b) {
   if (t.chip) assert.match(t.chip, /get a gift for your child/);
   return `installed: Home hat, +${r.coins} coins, a sticker, told in a reward card, once; in a browser tab nothing is given; Grown-ups chip: "${t.chip.trim().slice(0, 80)}"`;
 }
+
+// websitenews: the family website's What's new strip under the hero and the Calendar part inside Discover, from the
+// game's release calendar and festival dates; EN and VI; phone, tablet and computer with no sideways scroll
+export async function websiteNewsCheck(b) {
+  const out = [];
+  for (const [name, w, h, touch] of SCREENS) {
+    const ctx = await b.newContext({ viewport: { width: w, height: h }, hasTouch: touch, isMobile: touch }), page = await ctx.newPage(), errs: string[] = [];
+    page.on('pageerror', e => errs.push(e.message));
+    // the public festival switches, as /api/festivals gives them on the site (every festival on)
+    const { FESTCAL } = await import('../js/content/festcal.ts');
+    await page.route('**/api/festivals', r => r.fulfill({ json: { schema: 1, enabled: FESTCAL.map(F => F.id), festivals: {} } }));
+    await page.goto(new globalThis.URL('home/', process.env.SV_URL || 'http://localhost:8765/').href); await page.waitForTimeout(1500);
+    const r = await page.evaluate(async () => {
+      const s = document.querySelector('#whats-new-strip'), c = document.querySelector('#calendar');
+      const en = s?.textContent || '', cells = s?.querySelectorAll('.wn-cell').length || 0, rows = c?.querySelectorAll('.wn-row').length || 0;
+      const heads = [...(c?.querySelectorAll('h3') || [])].map(e => e.textContent);
+      const small = [...document.querySelectorAll<HTMLElement>('.wn-cell, .wn-row small, .wn-row strong')].filter(e => parseFloat(getComputedStyle(e).fontSize) < 16).length;
+      const over = document.documentElement.scrollWidth > innerWidth + 1, pics = c?.querySelectorAll('.wn-face svg').length || 0;
+      const afterHero = document.querySelector('section.hero#discover')?.nextElementSibling?.id, inDiscover = document.querySelector('#calendar')?.parentElement === document.querySelector('section.hero#discover')?.parentElement && (document.querySelector('#calendar') as HTMLElement).getBoundingClientRect().height > 100;
+      (document.querySelector('#language-button') as HTMLElement)?.click(); await new Promise(r => setTimeout(r, 200));
+      return { en, vi: s?.textContent || '', cells, rows, heads, small, over, pics, afterHero, inDiscover };
+    });
+    await ctx.close();
+    assert.ok(r.cells === 3 && r.rows >= 6 && r.pics >= 3 && r.afterHero === 'whats-new-strip' && r.inDiscover === true, name + ' ' + JSON.stringify(r));
+    assert.match(r.en, /Happening now.*New this week.*Coming up/s); assert.match(r.vi, /Đang diễn ra.*Mới tuần này.*Sắp tới/s);
+    for (const hd of ['Festivals', 'New lantern chapters', 'New games and stories', 'Festival games']) assert.ok(r.heads.includes(hd), name + ' ' + JSON.stringify(r.heads));
+    assert.ok(!r.small && !r.over, name + ' ' + JSON.stringify(r)); assert.deepEqual(errs, [], name);
+    out.push(`${name} ${r.rows} rows`);
+  }
+  return 'strip under the hero (3 parts) and the Calendar part inside Discover, EN and VI: ' + out.join('; ');
+}
