@@ -16,7 +16,7 @@ export default { pages: [
   S => {
     village(S, { house: [0, -6] });
     const tam = S.person(TAM, 2, 2, -.4), step = S.person(STEP, -2.4, -2.4, .4), cam = S.person(CAM, -1.2, -2.6, .2);
-    S.do(step, 0, 'sitground'); S.do(cam, 0, 'sitground'); S.mood(step, 0, 'sad'); S.mood(cam, 0, 'happy');
+    S.do(step, 0, 'sitground'); S.do(cam, 0, 'sitground'); S.mood(step, 0, 'sly'); S.mood(cam, 0, 'sly');   // (faces with feeling) the stepmother and Cám: sly, Tấm at work
     S.shot([3, 2.4, 9], [0, 1.2, 0]);
     S.do(tam, .3, 'swing', 2.6); S.mood(tam, .3, 'smile');
     S.do(step, 2.2, 'point', 1.6); speak(S, step, 2.2, 1.6);
@@ -33,7 +33,7 @@ export default { pages: [
     const tam = S.person(TAM, -1.2, 3.6, PI * .9), but = S.person(BUT, 2.4, 3.2, -1.2); but.o.scale.setScalar(.01);
     const fish = carp('#ffcf33', '#ffe27a'); fish.scale.setScalar(.6); S.add(fish, 0, -.6, 1);
     S.shot([0, 2.4, 9], [0, .8, 2]);
-    S.do(tam, .2, 'sitground', 3.6); S.mood(tam, .2, 'sad');
+    S.do(tam, .2, 'sitground', 3.6); S.mood(tam, .2, 'cry'); S.still(3.4);   // the picture: Tấm crying as Bụt appears
     const sp = Pp.sparkle('#ffe27a'); S.add(sp, 2.4, .2, 3.2); S.show(sp, 1.8);
     S.scale(but.o, 2.2, 1.1, .01, 1); S.mood(but, 2.4, 'happy'); speak(S, but, 3.4, 2); S.do(but, 5.4, 'point', 1.4);
     S.mood(tam, 4, 'o'); S.cam(2, 3, [3, 2, 7], [1, 1, 2.4]);

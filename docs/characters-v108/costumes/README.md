@@ -4,6 +4,8 @@ The period outfits, hair and headwear of the old tales, made once in Blender by 
 
 Make the pictures again: `blender -b -P tools/blender/costumes.py -- docs/characters-v108/costumes` (all, about 6 minutes each) or name some ids; `quick` for a fast look.
 
+Faces with feeling (Release update, 6 Nov 2026 AEDT): every costume is drawn again with the soft eyes with lids of the v1.08e faces helper (`face()` in `tools/blender/lumi.py` on `work/v108e-faces`): the upper lid over part of the eye, little white, a big iris with two sparkles, a pink blush; each person keeps the eyes of their own size. These pictures were made from a trial merge of the two branches (not committed); the kit's characters carry all eleven faces (smile, blink, happy, curious, surprised, sad, shy, excited, half, lookL, lookR) for the story pages and films.
+
 Owner's corrections (6 Nov 2026 AEDT, like the costumes of the Vietnamese fairy-tale films on YouTube): soldiers wear the nón dấu with its red top, not a helmet; the king wears the gold mũ xung thiên (its two wings are flat fan-shaped plates with a ruby, opening in a V above the crown: rounded wings read as rabbit ears) and a prince the gold kim quan; the village girl's khăn mỏ quạ has no ties under the chin (they looked like a beard), and she wears the nón quai thao with its long straps and gold tassels.
 
 Rules kept: the four friends never wear these and never appear inside a tale (check `talecostume`); the First Nations stories keep their animals as themselves, in the agreed art style.

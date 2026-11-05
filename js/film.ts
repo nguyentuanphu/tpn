@@ -4,7 +4,8 @@
 //   S.walk(actor, t, [x, z])        walks there (turns first), returns when it arrives
 //   S.do(actor, t, 'kneel', dur)    a pose or action: kneel dig plant water eat point talk sad bow hug carry
 //                                   give pull swing throw stretch surprised sitground lie cheer wave ride
-//   S.mood(actor, t, 'happy')       the face: smile happy sad o or surprised, curious, shy, excited, sleep; S.talk() moves the mouth
+//   S.mood(actor, t, 'happy')       the face: smile happy sad o or surprised, curious, shy, excited, sleep, cry (sad), sly (curious); S.talk() moves the mouth
+//   S.still(t)                      the moment drawn as the page's story picture (Blender)
 //   S.tw(t, dur, k => …)            anything else that changes over time (grow, fall, change colour, fly…)
 //   S.cam(t, dur, pos, look)        the camera glides to a new shot (in calm mode it cuts instead)
 //   S.help(t, en, vi, act)          the child helps: the film waits for a tap anywhere on the picture
@@ -107,6 +108,8 @@ function lean(A, a, nod = 0) {
   A.torso.rotation.x = a; A.torso.position.set(0, .6 - .6 * Math.cos(a), -.6 * Math.sin(a));
   A.head.position.set(0, .6 + .73 * Math.cos(a), .73 * Math.sin(a)); A.head.rotation.x = a * .7 + nod;
 }
+// the story moods that use another face: surprised is the o face, crying the sad one (tears in the Blender pages), sly the curious one
+const FACE_AS = { surprised: 'o', cry: 'sad', sly: 'curious' };
 const OPEN_EYES = new Set(['smile', 'o', 'sad', 'curious', 'excited']);
 // the blink and the glances need the soft faces with lids (v1.08e faces: drawFeatures draws 'half', 'lookL', 'lookR')
 const SOFT = ((AV as any).MOODS || []).includes('half');
@@ -159,7 +162,7 @@ function pose(a, t) {
   // a tap on a character: a happy little hop
   if (a.wig > 0) { a.wig = Math.max(0, a.wig - 1 / 40); A.rig.position.y += Math.sin(a.wig * Math.PI) * .25; }
   // the mouth moves while the character speaks: (v1.08c) with the voice, syllable by syllable, and still at its pauses
-  const talking = t < a.talkUntil || (a.lip && a.lip.on()), mood = a.mood === 'surprised' ? 'o' : a.mood;
+  const talking = t < a.talkUntil || (a.lip && a.lip.on()), mood = FACE_AS[a.mood] || a.mood;
   let m = talking ? (lipOpen(a.lip && a.lip.line(), t) ? 'o' : mood === 'sad' ? 'sad' : 'smile') : mood;
   // (v1.08c, with the v1.08e faces) while quiet with open eyes: a soft blink (half, closed, half) every 2 to 6 s, each actor
   // at their own moment; between blinks the eyes turn to whoever is speaking
@@ -343,8 +346,9 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     };
     S.do = (a, t, state, dur = 0) => { S.at(t, () => { a.state = state; }); if (dur) S.at(t + dur, () => { if (a.state === state) a.state = 'idle'; }); S.len = Math.max(S.len, t + dur); return t + dur; };
     S.mood = (a, t, m) => S.at(t, () => { a.mood = m; });
+    S.still = t => { S.stillAt = t; };   // (v1.08c) the moment of this page drawn as its story picture in Blender (tools/blender/scene-export.mts); nothing in the game
     // (v1.08c) a character who talks while a line is being said keeps talking with that line, and stops when it ends
-    S.talk = (a, t, dur) => { S.at(t, () => { a.talkUntil = clock + dur; S.actors.forEach(o => { if (o.lip) o.lip = null; }); a.lip = { on: () => S.speaking && !!S.line && clock < a.talkUntil + 6, line: () => S.line }; }); return t + dur; };
+    S.talk = (a, t, dur) => { S.at(t, () => { a.talkUntil = clock + dur; a.talkSpan = [t, t + dur]; S.actors.forEach(o => { if (o.lip) o.lip = null; }); a.lip = { on: () => S.speaking && !!S.line && clock < a.talkUntil + 6, line: () => S.line }; }); return t + dur; };
     S.scale = (o, t, dur, s0, s1, e = io) => S.tw(t, dur, k => { o.scale.setScalar(lerp(s0, s1, k)); }, e);
     S.move = (o, t, dur, to, e = io, arc = 0) => { let from; return S.tw(t, dur, (k, first) => { if (first) from = o.position.clone(); o.position.set(lerp(from.x, to[0], k), lerp(from.y, to[1], k) + Math.sin(k * Math.PI) * arc, lerp(from.z, to[2], k)); }, e); };
     S.show = (o, t, on = true) => S.at(t, () => { o.visible = on; });

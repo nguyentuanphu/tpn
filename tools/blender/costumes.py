@@ -69,7 +69,8 @@ if 'VILL' not in globals():
     # ---------- run as the main script: render every costume through lumi.py ----------
     import subprocess, shutil
     argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
-    out = next((a for a in argv if a not in KIT and a not in ('all', 'quick')), 'docs/characters-v108/costumes')
+    keep = next((a[5:] for a in argv if a.startswith('keep=')), None)   # keep=<dir>: keep each costume's .blend there (for the story pages)
+    out = next((a for a in argv if a not in KIT and a not in ('all', 'quick') and not a.startswith('keep=')), 'docs/characters-v108/costumes')
     ids = [a for a in argv if a in KIT] or list(KIT)
     here = os.path.dirname(os.path.abspath(__file__)); tmp = os.path.join(out, '_tmp'); os.makedirs(tmp, exist_ok=True)
     for i in ids:
@@ -79,6 +80,10 @@ if 'VILL' not in globals():
         for v in ('front', 'three-quarter'):
             src = os.path.join(tmp, f'villager-kit-{i}-{size}-{v}.png')
             subprocess.run(['convert', src, '-quality', '86', os.path.join(out, f'{i}-{v}.jpg')], check=True)
+        if keep:
+            os.makedirs(keep, exist_ok=True)
+            for f in os.listdir(tmp):
+                if f.startswith(f'villager-kit-{i}-') and f.endswith('.blend'): shutil.copy(os.path.join(tmp, f), keep)
     shutil.rmtree(tmp)
     sys.exit(0)
 

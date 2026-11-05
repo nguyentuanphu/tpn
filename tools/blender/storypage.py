@@ -70,7 +70,8 @@ def kit_master(kit):
     path = next((os.path.join(KITDIR, f) for f in sorted(os.listdir(KITDIR)) if f.startswith(pre) and f.endswith('.blend')), None) if os.path.isdir(KITDIR) else None
     if not path: return None
     # (the head and ears sit outside the character's collections, at the top of its scene)
-    with bpy.data.libraries.load(path, link=False) as (src, dst): dst.collections = [c for c in src.collections if not c.startswith('face-') or c == 'face-smile']; dst.objects = [o for o in src.objects if o.split('.')[0] in ('head', 'ear')]
+    # (faces with feeling) every face of the character comes too: each actor shows the face of its moment (kit_face)
+    with bpy.data.libraries.load(path, link=False) as (src, dst): dst.collections = list(src.collections); dst.objects = [o for o in src.objects if o.split('.')[0] in ('head', 'ear')]
     # a character in a page is small in the picture: its smoothing steps are kept low, so a page with many people fits in memory
     for c in dst.collections:
         for o in (c.all_objects if c else []):
@@ -79,10 +80,27 @@ def kit_master(kit):
     master = bpy.data.collections.new(name)
     for o in dst.objects:
         if o is not None and not o.users_collection: master.objects.link(o)
+    FACES[name] = {}
     for c in dst.collections:
         if c is None or c.name.startswith('hands-grip'): continue
+        if c.name.split('.')[0].startswith('face-'): FACES[name][c.name.split('.')[0][5:]] = c; continue
+        if any(c.name in [x.name for x in o.children] for o in dst.collections if o is not None and o is not c): continue   # (a child of another loaded collection)
         master.children.link(c)
+    head = next((o for o in dst.objects if o is not None and o.name.split('.')[0] == 'head'), None)
+    if head:   # where the head is (for the tears): its box in the character's own space
+        bb = [head.matrix_world @ Vector(c) for c in head.bound_box]; HEADS[name] = (Vector([min(v[i] for v in bb) for i in range(3)]), Vector([max(v[i] for v in bb) for i in range(3)]))
     return master
+FACES, HEADS = {}, {}
+def kit_face(kit, want):
+    """the character with one face: its body (the master) and the face collection of that mood, as one collection to instance"""
+    master = kit_master(kit)
+    if master is None: return None
+    fs = FACES.get(master.name, {}); want = want if want in fs else 'smile' if 'smile' in fs else next(iter(fs), None)
+    name = f'{master.name}-{want}'
+    if name in bpy.data.collections: return bpy.data.collections[name]
+    c = bpy.data.collections.new(name); c.children.link(master)
+    if want: fs[want].hide_render = False; fs[want].hide_viewport = False; c.children.link(fs[want])
+    return c
 HOLD = bpy.data.collections.new('kit-masters'); scene.collection.children.link(HOLD)
 lc = bpy.context.view_layer.layer_collection.children['kit-masters']; lc.exclude = False; HOLD.hide_render = True; HOLD.hide_viewport = True
 def kit_copy(kit):
@@ -107,7 +125,30 @@ def kit_copy(kit):
         if not rig.users_collection: scene.collection.objects.link(rig)
         if rig.parent is None: rig.parent = e
     return e, faces, rig
-FACE_OF = {'smile': 'smile', 'happy': 'happy', 'sad': 'sad', 'o': 'surprised', 'sleep': 'blink', 'surprised': 'surprised'}
+# the game film's moods to the character's faces (the v1.08e faces: smile, blink, happy, curious, surprised, sad, shy,
+# excited, half, lookL, lookR); crying is the sad face with tears, sly the curious one
+FACE_OF = {'smile': 'smile', 'happy': 'happy', 'sad': 'sad', 'o': 'surprised', 'sleep': 'blink', 'surprised': 'surprised', 'curious': 'curious', 'shy': 'shy',
+           'excited': 'excited', 'cry': 'sad', 'sly': 'curious', 'blink': 'blink', 'half': 'half', 'lookL': 'lookL', 'lookR': 'lookR'}
+def face_of(a, k=0):
+    """the face of an actor in a picture: its mood's face; quiet and smiling, its eyes go to the speaker"""
+    mood = a.get('mood'); mood = (mood[k] if k < len(mood) else mood[-1]) if isinstance(mood, list) else (mood or 'smile')
+    if mood == 'smile' and a.get('eyes'): return a['eyes']
+    return FACE_OF.get(mood, 'smile')
+TEAR = None
+def tears(e, kit):
+    """two small tears on the cheeks of a crying actor (a child of the actor, in the character's own space)"""
+    global TEAR
+    hb = HEADS.get('KIT-' + kit)
+    if not hb: return
+    if TEAR is None:
+        TEAR = bpy.data.materials.new('tear'); TEAR.use_nodes = True; b = TEAR.node_tree.nodes['Principled BSDF']
+        b.inputs['Base Color'].default_value = (.55, .8, 1, 1); b.inputs['Roughness'].default_value = .05; b.inputs['Emission Color'].default_value = (.5, .75, 1, 1); b.inputs['Emission Strength'].default_value = .4
+    lo, hi = hb; c = (lo + hi) / 2; r = (hi.x - lo.x) / 2
+    for sx in (-1, 1):
+        bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=12, v_segments=8, radius=1)
+        for v in bm.verts: v.co.z *= 1.5 if v.co.z < 0 else 1.0   # a drop: rounder on top, longer below
+        me = bpy.data.meshes.new('tear'); bm.to_mesh(me); bm.free(); o = bpy.data.objects.new('tear', me); me.materials.append(TEAR)
+        o.location = (c.x + sx * .36 * r, lo.y + .1 * r, c.z - .28 * r); o.scale = (.06 * r, .05 * r, .09 * r); o.parent = e; scene.collection.objects.link(o)
 ACT_OF = {'walk': 'walk', 'wave': 'wave', 'cheer': 'cheer', 'dance': 'cheer', 'sit': 'sit', 'ride': 'ride', 'sitground': 'sit'}
 COPIES = []
 ACTORS = []
@@ -117,7 +158,9 @@ for a in D['actors']:
     if col.name not in [c.name for c in HOLD.children]: HOLD.children.link(col)
     size = 'kid' if kit in ('vn-yem', 'vn-boy') + FRIENDS else 'adult'
     if FRAMES and (cp := kit_copy(kit)): e = cp[0]; COPIES.append(cp)
-    else: e = bpy.data.objects.new('actor-' + kit, None); e.instance_type = 'COLLECTION'; e.instance_collection = col; scene.collection.objects.link(e); COPIES.append(None)
+    else:
+        e = bpy.data.objects.new('actor-' + kit, None); e.instance_type = 'COLLECTION'; e.instance_collection = kit_face(kit, face_of(a)) or col; scene.collection.objects.link(e); COPIES.append(None)
+        if (a.get('mood') if isinstance(a.get('mood'), str) else '') == 'cry': tears(e, kit)
     ACTORS.append((e, 1.6 / KIT_H[size]))
 def place_actor(i, k):
     if ACTORS[i] is None: return
@@ -127,8 +170,7 @@ def place_actor(i, k):
     e.hide_render = st == 'hidden'
     cp = COPIES[len([x for x in ACTORS[:i] if x is not None])] if FRAMES and i < len(ACTORS) and ACTORS[i] is not None else None
     if cp:   # (frames) the face and the move of this frame
-        _, faces, rig = cp; mood = (D['actors'][i].get('mood') or ['smile'])[k] if isinstance(D['actors'][i].get('mood'), list) else 'smile'
-        want = FACE_OF.get(mood, 'smile')
+        _, faces, rig = cp; want = face_of(D['actors'][i], k)
         for n, c in faces.items(): c.hide_render = (n != want)
         if rig and rig.animation_data:
             act = bpy.data.actions.get(ACT_OF.get(st, 'idle')) or bpy.data.actions.get('idle')
