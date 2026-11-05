@@ -31,8 +31,12 @@ new friends today, and leaves the heavy model work as its own next piece:
 - `js/ui/pad.ts`: the clothes heading renamed "Character & Outfits", the friend and outfit rows, their taps.
 - `js/ui/profile.ts`: Welcome steps before the editor for a new player; the editor's "My friend" row; the one-time card
   before play.
-- `sw.ts`: the two new modules and the 16 friend pictures in the offline list.
-- `css/style.css`: one block at the end marked `(v1.08b friends)`.
+- `sw.ts`: the friends' modules, loaders, models and 16 pictures in the offline list.
+- `css/style.css`: unchanged in the end (the friends' styles are added by `js/ui/friends-row.ts`, not in the first download).
+- Part 2 also: `js/player.ts` (rebuild when the model arrives), `js/shop.ts` (the Outfits tab button and the glasses
+  pictures), `js/content/shop.ts` (the glasses slot and six items), `js/main.ts` (Cô Mai and Bác Ba's age, name tags
+  above a grown-up), `js/film.ts` (one line: the model's mood), `js/cartoon.ts` (the tale people's face and hair),
+  `build-netlify.sh` and `tests/checks/shared.mts` (copy `models/`).
 - `tests/harness.mts`: `start()` taps "Let's play" on the one-time card (the seeded children are old saves), as it skips
   the prologue. `tests/checks/startup.mts` `firstplayer` goes through the new Welcome steps. Neither check was weakened:
   both still check what they checked, through the new screens.
