@@ -343,21 +343,29 @@ def add_face(kind, piv, size, companion):
         # a picture book's, not balls: a warm dark brown, a little taller than wide, a big sparkle and a small one (the same
         # side on both eyes), a soft glow at the bottom; no whites round them (a thin light rim only where the face is dark),
         # round pupils (no slits)
-        ay = math.atan2(d.x, d.z); flat = .4; R = e['r'] * (1.12 if companion else 1.4); pr = []
-        def disc(r, col, at, sy=1.1, depth=flat): return sph(r, col, at, (1, sy, depth), (0, ay, 0))
+        # (owner, 6 Nov 2026 AEDT: "animals eyes too pop out, too scary") each eye lies ON the face: found on the head's
+        # own surface (the old eye balls are gone), facing out along it, thin and set a little into it, like a painted eye
+        R = e['r'] * (1.05 if companion else 1.22); flat = .3
+        h, nrm = hit(c + d * .6, -d)
+        if h is None: h, nrm = c, d
+        dn = Vector(nrm).normalized(); ay = math.atan2(dn.x, dn.z); ax = -math.asin(max(-1, min(1, dn.y)))
+        sideways = Vector((0, 1, 0)).cross(dn).normalized(); up = dn.cross(sideways).normalized()
+        base = h; pr = []   # (centred on the surface: it stands out only about a third of its size, like a button)
+        def disc(r, col, at, sy=1.1, depth=flat): return sph(r, col, at, (1, sy, depth), (ax, ay, 0))
+        # each layer's front is just in front of the one under it: colour .30 R, pupil and glow .32, sparkles .36-.38
         iris = '#2b1b12' if (e['white'] or lum(e['iris']) < .08) else e['iris']
-        if e['white']: pr.append(disc(R * 1.14, '#fff8ee', d * R * .18, 1.1, flat * .9))
-        pr.append(disc(R, iris, d * R * .3))
-        if lum(iris) > .08: pr.append(disc(R * .66, '#1c120c', d * R * .48, 1.12))   # (a round pupil, in front of the colour)
-        pr.append(disc(R * .5, '#6e4a36' if lum(iris) < .08 else shade(iris, 1.25), d * R * .38 + Vector((0, -R * .46, 0)), .5))
-        pr.append(disc(R * .4, '#ffffff', d * R * .52 + Vector((0, R * .38, 0)) - sideways * R * .3, 1.0, .6))
-        pr.append(disc(R * .18, '#ffffff', d * R * .52 + Vector((0, -R * .3, 0)) + sideways * R * .34, 1.0, .6))
-        face['eyes'].append(pivot('eye%d' % i, c, pr))
+        if e['white'] and lum(skin) < .25: pr.append(disc(R * 1.12, '#fff8ee', -dn * R * .03, 1.1, .27))   # (a light rim only on a dark face)
+        pr.append(disc(R, iris, Vector((0, 0, 0))))
+        if lum(iris) > .08: pr.append(disc(R * .64, '#1c120c', dn * R * .1, 1.12, .35))   # (a round pupil)
+        pr.append(disc(R * .5, '#6e4a36' if lum(iris) < .08 else shade(iris, 1.25), dn * R * .1 - up * R * .46, .5, .45))
+        pr.append(disc(R * .36, '#ffffff', dn * R * .2 + up * R * .36 - sideways * R * .3, 1.0, .5))
+        pr.append(disc(R * .16, '#ffffff', dn * R * .2 - up * R * .3 + sideways * R * .34, 1.0, 1.0))
+        face['eyes'].append(pivot('eye%d' % i, base, pr))
         # the closed-eye arc: "^" for joy, turned over for sleep (shown by the clips, tiny otherwise)
         Rt = R * .7
-        arc = {'type': 'TorusGeometry', 'p': {'radius': Rt, 'tube': R * .14, 'arc': 2.3}, 'color': '#2b1b12',
-               'pos': list(d * R * .45 + Vector((0, -Rt * .55, 0))), 'rot': [0, ay, math.pi / 2 - 1.15], 'scl': [1, 1, 1]}
-        face.setdefault('lids', []).append(pivot('lid%d' % i, c, [arc]))
+        arc = {'type': 'TorusGeometry', 'p': {'radius': Rt, 'tube': R * .13, 'arc': 2.3}, 'color': '#2b1b12' if lum(skin) > .06 else '#fff3e0',   # (light on a dark face)
+               'pos': list(dn * R * .2 - up * Rt * .55), 'rot': [ax, ay, math.pi / 2 - 1.15], 'scl': [1, 1, .6]}
+        face.setdefault('lids', []).append(pivot('lid%d' % i, base, [arc]))
         if kind not in NO_BROW:   # a soft brow above the eye, on the head
             at = c + Vector((0, e['r'] * 2.7, 0)); h, n = hit(at + d * .4, -d)   # (soft, short and well above the eye: no frown)
             if h is not None:
