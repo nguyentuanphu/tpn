@@ -1,6 +1,6 @@
 # v1.08d s2au (Season 2, Australia): status
 
-**In progress** (started 5 Nov 2026 AEDT). Branch `work/v108d-s2au` from `origin/integrate/v108`. Brief: `s2au-brief.md`.
+**ready for Release** (parts 1 to 3 done, 5 Nov 2026 AEDT; started 5 Nov 2026 AEDT). Branch `work/v108d-s2au` from `origin/integrate/v108`. Brief: `s2au-brief.md`.
 
 ## Plan (owner's go given)
 
@@ -70,3 +70,39 @@ None of the existing places move. New (`js/content/map.ts`, x east, z south):
 - (assumed, owner can change) The dates above.
 
 ## Progress notes
+
+### Parts 1 to 3, 5 Nov 2026 AEDT (helper machine; `--changed` asks for the full suite, so the checks covering the change were run with `--only` / `run.mts`, one run at a time)
+- Part 1 (frame and the Great Barrier Reef), part 2 (Tasmania), part 3 (Perth and Rottnest Island) each pushed when done.
+- **Pass:** s2au, s2aureef, s2autas, s2auperth, chapter10, chapter11, chapter12, types, emoji, noemoji, bilingual, names,
+  arch, rules, preload, enwords, voicecover, releasecalendar, calendartab, festcal, contentpair, boot and contract (each
+  passed alone; beside two other checks they timed out on a click), startup (first start 1064 KB, under the limit:
+  Season 2 is not in the first download), perf (alone).
+- **Fail, also on `origin/integrate/v108` (not this branch):** `solid` "desktop and phone maps differ" (base 44492 vs
+  44496 cells, this branch 44537 vs 44541: the same 4-cell gap; the 45 more cells on both are the coast boat's piers);
+  `phone` (a click times out the same way on the base); `unit` (two tests need the `pg` package, not in this container).
+- **Voices:** recorded with Azure (HoaiMy, Natasha): 300 new files (the regions' friends, foods, landmarks, the nine
+  games, chapters 10 to 12, and lines that were missing on the base), with Opus copies; the pack maker removed 136 old
+  all-English mixed-line files, as it does.
+- **Screenshots looked at:** each game on phone, phone sideways, tablet and computer (`tests/out/s2au/`), the reef,
+  Tasmania and Perth in the valley. On a wide screen the answers sit beside the picture.
+
+## Shared files touched (small edits, each marked `(v1.08d s2au)`)
+`js/content/map.ts` (places, `ISLES`, the Swan pond, the coast boat), `js/world/ground.ts` (islands in `heightAt`),
+`js/ferry.ts` (a boat with more than two piers), `js/content/releasecal-core.ts` (days and `CAL_LINKS`; `openDate`
+and `inCalendar` follow a link), `js/content/releasecal.ts` (three region items, three chapter items; an owner's move of
+a fixed game keeps its name), `js/content/activities.ts` (`GAME_INFO`; a Season 2 game is hidden until its region's
+day), `js/games/catalog.ts`, `js/art/games108.ts` (the drawings load after the start), `js/data.ts` (three foods in
+FEAST), `js/myhouse.ts` (three keepsakes), `js/lanterns.ts` (LATER: ch10 after `c9_find`, ch11, ch12), `js/main.ts`
+(one line: `js/s2au.ts` 2 s after the start), `tests/run.mts`, `tests/story-v108b.mts` (`chapterKitCheck` takes the
+chapters before as an argument).
+
+## For s2vn (agree through the status files)
+- Chapter 10 starts when chapter 9's lantern is found (`c9_find`) and is placed after `ch9` in `CHAPTERS`. If s2vn's
+  last find step has another id, change the one line in `js/lanterns.ts` LATER `ch10`.
+- Dates: Vietnamese regions 12 Feb, 12 Mar, 9 Apr, 7 May 2027 assumed; ours two weeks after each; chapters 10 to 12
+  on 21 May, 4 Jun, 18 Jun 2027.
+
+## Left for later
+- The games are on one engine (hunt, path, quiz); richer hands-on versions (swimming the snorkel, digging the burrow)
+  could follow.
+- Huế-style "told, not visited" was not needed: all three regions stand on the map.
