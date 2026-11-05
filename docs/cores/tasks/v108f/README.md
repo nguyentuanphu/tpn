@@ -8,6 +8,8 @@ The owner's message (6 Nov 2026 AEDT), with two screenshots of Grown-ups on an i
 > AUD and VND should be in one line; once I click on the current it jumps to the top of page.
 > Remove the TURN server connection.
 
+Corrected by the owner the same morning: "the turn function stays but the wording and the link there to hide".
+
 Rules: everything in `docs/cores/tasks/v108b/README.md` and `docs/cores/tasks/v108e/README.md` applies:
 - only Release merges and runs the full suite;
 - push often;
