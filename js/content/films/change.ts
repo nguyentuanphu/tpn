@@ -1,10 +1,10 @@
 // Chang'e, the Lady in the Moon (Hằng Nga trên cung trăng): Chang'e floats up to the moon and lives with the white jade
 // rabbit, the rabbit mixing medicine in a little pot, Mid-Autumn with the full moon, mooncakes and lanterns, and Chị
 // Hằng and Chú Cuội in Vietnam. The child helps once: the lanterns of Mid-Autumn (page 3).
-import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, speak, FAIRY, KID, VILLAGER, night, moonGround, moonDisc, animal, fruitTree } from './kit.js';
+import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, speak, FAIRY, KID, VILLAGER, night, moonGround, moonDisc, animal, fruitTree, cn } from './kit.js';
 
-const CHANGE = FAIRY('#f4e8ff');
-const CUOI = LOOK({ style: 'tunic', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const CHANGE = FAIRY('#f4e8ff', 'cn');
+const CUOI = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#5a7a4a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
 const mortar = () => { const g = new THREE.Group(); g.add(mesh([P(new THREE.CylinderGeometry(.22, .18, .3, 12), '#c8c0b0', [0, .15, 0]), P(new THREE.CylinderGeometry(.2, .2, .02, 12), '#9ad88a', [0, .3, 0])])); const pe = mesh([P(new THREE.CylinderGeometry(.03, .03, .5, 6), '#a8784a', [0, .25, 0])]); pe.position.set(0, .2, 0); g.add(pe); g.userData.pestle = pe; return g; };
 const mooncake = () => mesh([P(new THREE.CylinderGeometry(.2, .2, .1, 14), '#c8883a', [0, .05, 0]), P(new THREE.CylinderGeometry(.12, .12, .105, 14), '#d89a4a', [0, .055, 0])]);
 
@@ -34,7 +34,7 @@ export default { pages: [
   // 3. At the Mid-Autumn Festival, families look up at the full moon, share mooncakes and carry lanterns.
   S => {
     night(S); const t = Pp.table(); S.add(t, 0, 0, 2); [-.3, .3].forEach(x => S.add(mooncake(), x, .46, 2));
-    const fam = [VILLAGER('aodai', '#c84a6a', 'none'), VILLAGER('tunic', '#3b6fe0', 'none', 'short'), KID('dress', '#ffd23f', 'buns'), KID('tunic', '#ff7e3a', 'spiky')].map((l, i) => S.person(l, -2.2 + i * 1.5, 3.4, PI, i > 1 ? .75 : 1));
+    const fam = [cn(VILLAGER('aodai', '#c84a6a', 'none')), cn(VILLAGER('tunic', '#3b6fe0', 'none', 'short')), cn(KID('dress', '#ffd23f', 'buns')), cn(KID('tunic', '#ff7e3a', 'spiky'))].map((l, i) => S.person(l, -2.2 + i * 1.5, 3.4, PI, i > 1 ? .75 : 1));
     S.shot([0, 2.2, 9], [0, 1.6, 0]);
     fam.forEach((a, i) => { S.mood(a, 0, 'happy'); S.do(a, .4 + i * .2, 'point', 1.6); }); S.cam(.3, 3.4, [0, 1.6, 7], [0, 6, -20]);
     S.help(6.4, 'Tap to light the lanterns!', 'Chạm để thắp đèn lồng nào!', tt => {

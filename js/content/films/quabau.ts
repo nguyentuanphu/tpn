@@ -3,8 +3,8 @@
 // out come the peoples of Vietnam. The child helps twice: planting the seed (page 3) and opening the gourd (page 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, hop, VILLAGER, KID, village, mountainTop, mouse, gourd, rain, flat } from './kit.js';
 
-const HUS = LOOK({ style: 'tunic', color: '#4a6a8a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
-const WIF = LOOK({ style: 'aodai', color: '#a84a3a', hairStyle: 'buns', skin: '#e8b890' });
+const HUS = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#4a6a8a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' });
+const WIF = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#a84a3a', hairStyle: 'buns', skin: '#e8b890' });
 // the peoples (each in their own colours)
 const PEOPLES = [['aodai', '#1f3a7a', 'none', 'long'], ['tunic', '#2a2a2a', 'none', 'short'], ['aodai', '#e8332a', 'nonla', 'buns'], ['tunic', '#e8b62a', 'none', 'short'], ['dress', '#7a3a9a', 'none', 'ponytail'], ['tunic', '#2f8a5a', 'silkcap', 'short']].map(([s, c, h, hs]) => VILLAGER(s, c, h, hs));
 const dui = () => { const m = mouse('#8a6a4a'); m.scale.setScalar(1.6); return m; };
@@ -88,7 +88,7 @@ export default { pages: [
   S => {
     village(S, { house: null });
     const g = gourd(2); S.add(g, 0, 0, 0);
-    const folk = [...PEOPLES, LOOK({ style: 'tunic', color: '#4a6a8a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' }), KID('dress', '#ff7eb8', 'buns')].map((l, i, all) => { const a = i / all.length * PI * 2; return S.person(l, Math.cos(a) * 3, Math.sin(a) * 3, Math.atan2(-Math.cos(a), -Math.sin(a))); });
+    const folk = [...PEOPLES, LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#4a6a8a', hat: 'nonla', hairStyle: 'short', skin: '#c89060' }), KID('dress', '#ff7eb8', 'buns')].map((l, i, all) => { const a = i / all.length * PI * 2; return S.person(l, Math.cos(a) * 3, Math.sin(a) * 3, Math.atan2(-Math.cos(a), -Math.sin(a))); });
     S.shot([0, 6, 10], [0, 1, 0]);
     folk.forEach((a, i) => { S.mood(a, 0, 'happy'); S.do(a, .3 + i * .05, 'dance', 4.6); });
     S.tw(.2, 7.4, k => { const r = folk.length; folk.forEach((a, i) => { const ang = i / r * PI * 2 + k * 1.2; a.o.position.set(Math.cos(ang) * 3, 0, Math.sin(ang) * 3); a.o.rotation.y = Math.atan2(-Math.cos(ang), -Math.sin(ang)); }); }, k => k);

@@ -4,10 +4,10 @@
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, hop, speak, go, VILLAGER, ELDER, KID, village, animal, basket } from './kit.js';
 
 const MOM = ELDER('aodai', '#7a5a4a', '#5a4a40');
-const RICH = LOOK({ style: 'tunic', color: '#7a3a8a', hat: 'silkcap', hairStyle: 'short', skin: '#e0aa80' });
-const BOY = LOOK({ style: 'tunic', color: '#3a7ac8', hairStyle: 'short', skin: '#e0aa80' });
-const SCHOLAR = LOOK({ style: 'tunic', color: '#c62f2f', hat: 'silkcap', skin: '#e0aa80' });
-const YOUNGEST = LOOK({ style: 'aodai', color: '#ffd0e4', hairStyle: 'long', skin: '#f0c098' });
+const RICH = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#7a3a8a', hat: 'silkcap', hairStyle: 'short', skin: '#e0aa80' });
+const BOY = LOOK({ kit: 'vn-boy', style: 'tunic', color: '#3a7ac8', hairStyle: 'short', skin: '#e0aa80' });
+const SCHOLAR = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#c62f2f', hat: 'silkcap', skin: '#e0aa80' });
+const YOUNGEST = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#ffd0e4', hairStyle: 'long', skin: '#f0c098' });
 // the coconut-shell boy: a round brown coconut with a little face
 const coconut = (s = 1) => { const g = new THREE.Group(); const m = mesh([P(new THREE.SphereGeometry(.4, 16, 12), '#8a5a32', [0, .4, 0]), ...[-1, 1].flatMap(k => [P(new THREE.SphereGeometry(.07, 8, 6), '#ffffff', [k * .13, .5, .35]), P(new THREE.SphereGeometry(.04, 6, 5), '#1a1a1a', [k * .13, .5, .41])]), P(new THREE.BoxGeometry(.12, .025, .02), '#4a2a1a', [0, .36, .39]), P(new THREE.SphereGeometry(.05, 6, 5), '#6a4a2a', [0, .8, 0])]); g.add(m); g.scale.setScalar(s); return g; };
 const halfShell = () => mesh([P(new THREE.SphereGeometry(.4, 14, 8, 0, PI * 2, 0, PI / 2), '#8a5a32', [0, 0, 0])]);

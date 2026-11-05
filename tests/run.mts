@@ -76,6 +76,9 @@ await check('chapter8', async () => (await import('./story-v108b.mts')).chapterK
 await check('chapter9', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch9'));
 await check('talecostume', async () => (await import('./story-v108b.mts')).taleCostumeCheck());
 await check('installgift', async () => (await import('./story-v108b.mts')).installGiftCheck(b));
+// (v1.08c blender) the five Blender films and the story pages drawn in Blender (tests/story-v108c.mts)
+await check('blenderfilms', async () => (await import('./story-v108c.mts')).blenderFilmsCheck(b));
+await check('storypics', async () => (await import('./story-v108c.mts')).storyPicsCheck(b));
 
 // (v1.08d s2au) Season 2, Australia: the regions, their games and chapters (tests/s2au.mts)
 await check('s2au', async () => (await import('./s2au.mts')).s2auCheck(b));

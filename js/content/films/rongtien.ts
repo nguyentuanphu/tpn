@@ -3,7 +3,7 @@
 // "đồng bào". The child helps twice: the eggs hatch (page 4), the family waves goodbye (page 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, serpent, slither, flat, hop, speak, VILLAGER, KID, FAIRY, mountainTop, seaside, village, stars } from './kit.js';
 
-const LAC = LOOK({ style: 'tunic', color: '#2f8ac8', hat: 'crown', hairStyle: 'short', skin: '#d8a070' });
+const LAC = LOOK({ kit: 'vn-king', style: 'tunic', color: '#2f8ac8', hat: 'crown', hairStyle: 'short', skin: '#d8a070' });
 const AUCO = FAIRY('#ffd0e4');
 const KIDS = [['tunic', '#3b6fe0', 'short'], ['dress', '#ff7eb8', 'buns'], ['tunic', '#43c463', 'spiky'], ['dress', '#ffd23f', 'ponytail'], ['tunic', '#e8572a', 'short'], ['dress', '#9a6ad8', 'long']].map(([s, c, h]) => KID(s, c, h));
 const egg = () => mesh([P(new THREE.SphereGeometry(.14, 12, 10), '#fbf3e0', [0, .17, 0], [0, 0, 0], [1, 1.25, 1])]);
@@ -81,6 +81,7 @@ export default { pages: [
     seaside(S); S.add(new THREE.Mesh(new THREE.ConeGeometry(22, 18, 10), new THREE.MeshToonMaterial({ color: '#7aa86a' })), -34, 0, -20);
     const lac = S.person(LAC, 0, 4, 0), au = S.person(AUCO, -1, 4, 0);
     const kids = KIDS.map((k, i) => S.person(k, -2 + i * .8, 5.4, 0, .6));
+    S.mood(lac, 0, 'sad'); S.mood(au, 0, 'sad'); kids.forEach((k, i) => S.mood(k, 0, i % 2 ? 'excited' : 'curious'));   // (faces with feeling) the parents sad to part, the children eager
     S.shot([0, 3, 13], [0, 1.2, 3]);
     S.walk(lac, .4, [5, 1], 2.4); S.walk(au, .4, [-6, 1], 2.4);
     kids.forEach((k, i) => S.walk(k, .6 + i * .1, i % 2 ? [4 + i * .3, 2] : [-5 - i * .3, 2], 2.4));
