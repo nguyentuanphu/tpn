@@ -14,6 +14,8 @@ import { T } from '../i18n.js';
 import { el, wait } from '../util.js';
 
 const lv = <V,>(api, e: V, m: V, h: V, t: V): V => { const v = api.little ? e : [e, m, h, t][api.smart || 0] ?? e; api.lvNote?.([e, m, h, t], v); return v; };
+// the computer player and the checks: the right one of what the game is asking for now (playWatch.ask)
+const planRight = api => api.plan(() => { const a = playWatch.ask; return a ? a.els.find(x => x.isConnected && a.check(x)) || null : null; });
 const mixUp = <V,>(a: V[]): V[] => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 let styled = false;
@@ -68,7 +70,7 @@ const SIDES = ['t', 'r', 'b', 'l'], OPP = { t: 'b', b: 't', l: 'r', r: 'l' };
 register({
   id: 'fg_tet', learn: true, icon: 'fg:tet', name: () => T('Wrap the Bánh Chưng', 'Gói Bánh Chưng'),
   async run(api) {
-    style();
+    style(); planRight(api);
     const cakes = lv(api, 1, 1, 2, 2), odd = lv(api, 0, 1, 1, 2), pairs = !api.little && api.smart >= 3;
     api.stage.dataset.lv = [cakes, odd, pairs ? 'pairs' : '', api.talent ? 'words' : ''].join(',');
     api.say('Let us wrap a square bánh chưng for Tết! First lay the dong leaves in the mould.', 'Cùng gói bánh chưng vuông đón Tết nhé! Trước tiên xếp lá dong vào khuôn.');
@@ -80,7 +82,7 @@ register({
     }
     api.say('A square, green bánh chưng for Tết. Now it boils all night!', 'Bánh chưng xanh vuông vắn cho ngày Tết. Giờ luộc bánh cả đêm nhé!');
     await wait(1200);
-    return api.win({ title: T('Bánh chưng wrapped!', 'Gói xong bánh chưng!') });
+    return api.win({ title: T('All wrapped for Tết!', 'Gói xong bánh chưng!') });
   }
 });
 async function wrapOne(api, c: number, cakes: number, STEPS: number, odd: number, pairs: boolean) {
@@ -156,7 +158,7 @@ const near = (n: number, k: number) => { const r = Math.floor(k / n), c = k % n,
 register({
   id: 'mazebuild', learn: true, icon: 'ho:maze', name: () => T('Maze Builder', 'Xây Mê Cung'),
   async run(api) {
-    style();
+    style(); planRight(api);
     const want = lv(api, 4, 5, 5, 6), mazes = lv(api, 2, 2, 3, 3), budget = api.talent;
     // (one screen) a short screen, such as a phone on its side, holds fewer rows of 44 px stones: the maze is made smaller
     // to fit (its rocks in proportion), never scrolled
@@ -202,8 +204,8 @@ async function buildOne(api, M, m: number, mazes: number, budget: boolean) {
     if (near(n, end()).includes(goal)) break;
     // the best next stones (one step nearer the mother along the shortest way), for the hint and the computer player
     const best = (k: number) => near(n, end()).includes(k) && !rock.has(k) && !chain.includes(k) && dist[k] >= 0 && dist[k] === dist[end()] - 1;
-    const open = cells.filter((b, k) => k !== start && k !== goal);
-    playWatch.ask = { els: open, check: b => best(+b.dataset.k) };
+    const open = cells.filter((b, k) => k !== start && k !== goal) as HTMLElement[];
+    playWatch.ask = { els: open, check: (b: Element) => best(+(b as HTMLElement).dataset.k) };
     let hintT: ReturnType<typeof setTimeout> | 0 = 0; if (api.little) hintT = setTimeout(() => { const h = open.find(b => best(+b.dataset.k)); if (h) h.classList.add('hint'); }, 8000);
     const e = await tapOne(open, api); clearTimeout(hintT); playWatch.ask = null; open.forEach(b => b.classList.remove('hint'));
     if (!e || api.closed) return false;

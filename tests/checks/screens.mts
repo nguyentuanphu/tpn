@@ -369,9 +369,15 @@ await check('learningquests', async () => {
     await P.page.setViewportSize({ width: +w, height: +h });
     await P.page.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; __sv.openGamesHub(0); });
     await P.page.waitForTimeout(400); await P.page.evaluate(() => (document.querySelector('.hubtabs [data-tab="hocvui"]') as HTMLElement)?.click()); await P.page.waitForTimeout(400);
+    // (v1.08d polish) on a phone the journeys are folded into one row, so the corners show first; a tap opens them.
+    // On a tablet and a computer they are open. The picture is taken folded on the phone, then each row is measured open.
+    const fold = await P.page.evaluate(() => { const d = document.querySelector('.hubbody details.lq-journeys') as HTMLDetailsElement, s = d && d.querySelector('summary'); return d ? { open: d.open, h: s.getBoundingClientRect().height } : null; });
+    if (!fold || fold.h < 44 || fold.open !== (name !== 'phone')) r.short.push(name + ': journeys ' + JSON.stringify(fold));
+    await P.page.screenshot({ path: `out/learningquests/hocvui-${name}.png` });
+    if (fold && !fold.open) { await P.page.click('.hubbody details.lq-journeys > summary'); await P.page.waitForTimeout(300); }
     const small = await P.page.evaluate(() => [...document.querySelectorAll('.lq-row')].filter(e => { const q = e.getBoundingClientRect(); return q.height < 44 || q.right > innerWidth + 1; }).length);
     if (small) r.short.push(name + ': ' + small + ' journey rows under 44 px or off screen');
-    await P.page.screenshot({ path: `out/learningquests/hocvui-${name}.png` });
+    if (fold && !fold.open) await P.page.click('.hubbody details.lq-journeys > summary'); // (folded again, as the child had it)
   }
   ok(r.paths === 8 && !r.short.length && r.rows === 8, JSON.stringify(r));
   ok(r.today && r.mark && r.star && r.row, 'today: ' + JSON.stringify(r));
