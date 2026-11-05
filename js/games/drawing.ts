@@ -51,7 +51,9 @@ const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
 // a drawing pad the size of the stage (logical size w × h, sharp on high-density screens)
 function pad(api, aspect = .75, bg = '#fffdf6') {
   const box = api.stage.getBoundingClientRect();
-  const w = Math.round(Math.max(260, Math.min(560, box.width - 16, (innerHeight * .5) / aspect))), h = Math.round(w * aspect), dpr = Math.min(2, devicePixelRatio || 1);
+  // (v1.08b fivescreens) a sideways phone gives the board the whole height but its row of buttons (the top row stands beside it)
+  const tall = innerWidth > innerHeight && innerHeight <= 520 ? innerHeight - 90 : innerHeight * .5;
+  const w = Math.round(Math.max(260, Math.min(560, box.width - 16, tall / aspect))), h = Math.round(w * aspect), dpr = Math.min(2, devicePixelRatio || 1);
   const wrap = el('div', 'dg-wrap'); wrap.style.width = w + 'px'; wrap.style.height = h + 'px';
   const c = el('canvas', 'dg-cv'); c.width = w * dpr; c.height = h * dpr; c.style.width = w + 'px'; c.style.height = h + 'px'; c.style.background = bg;
   const g = c.getContext('2d'); g.scale(dpr, dpr); g.lineCap = 'round'; g.lineJoin = 'round';

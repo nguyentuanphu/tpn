@@ -3604,7 +3604,7 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
   .gl .goat-circle-game > .goat-controls { grid-column: 2; grid-row: 1 / span 3; flex-wrap: wrap; max-width: 300px; }
   /* Cờ cá ngựa: the board on the left as high as the screen, the players, the words and the buttons on the right */
   .gl .horse-race { width: 100%; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 6px 14px; }
-  .gl .horse-race > .horse-board { grid-column: 1; grid-row: 1 / span 6; width: min(340px, calc(100dvh - 60px)); }
+  .gl .horse-race > .horse-board { grid-column: 1; grid-row: 1 / span 6; width: min(330px, calc(100dvh - 70px)); }
   .gl .horse-race > :not(.horse-board):not(style) { grid-column: 2; }
   .gl .horse-race { grid-template-rows: repeat(5, auto) 1fr; align-content: center; }
   .gl .horse-race > .horse-roster { grid-row: 1; } .gl .horse-race > .horse-status { grid-row: 2; } .gl .horse-race > .horse-actions { grid-row: 3; }
@@ -3639,3 +3639,6 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
   .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > * { flex-shrink: 1; min-width: 0; max-height: 100%; }
   .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > .choices { flex-wrap: wrap; max-width: 62%; justify-content: center; }
 }
+.gl .ch-stick { transform: translateY(var(--y)) rotate(calc(var(--r) * .6)); }
+@media (max-width: 520px) { .gl .ch-stick { transform: translateY(var(--y)) rotate(calc(var(--r) * .25)); } }
+@media (orientation: landscape) and (max-height: 520px) { .gl .horse-race > .horse-rules-box { padding-top: 0; padding-bottom: 0; } .gl .horse-race .horse-status { margin: 0; } }
