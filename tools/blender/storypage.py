@@ -166,6 +166,12 @@ def place_actor(i, k):
     if ACTORS[i] is None: return
     e, ks = ACTORS[i]; k = min(k, len(D['actors'][i]['m']) - 1); M = m4(D['actors'][i]['m'][k]); loc, rot, sc = M.decompose()
     e3 = D['actors'][i]['m'][k]; yaw = math.atan2(e3[8], e3[10]); st = D['actors'][i]['state'][k] if D['actors'][i]['state'] else 'idle'
+    if not FRAMES and D.get('cams'):
+        # (faces with feeling) a story picture shows faces: someone with their back to the camera turns to three-quarter
+        # (at most 55 degrees from the camera), so their feeling can be seen; the films (frames) keep the game's turns
+        cp = v3(D['cams'][0][0]); tx, ty = cp.x - loc.x, cp.y - loc.y; fx, fy = math.sin(yaw), -math.cos(yaw)
+        a = math.atan2(fx * ty - fy * tx, fx * tx + fy * ty); lim = math.radians(55)
+        if abs(a) > lim: yaw += math.copysign(abs(a) - lim, a)
     e.location = loc; e.rotation_euler = (0, 0, yaw); e.scale = (sc.x * ks,) * 3
     e.hide_render = st == 'hidden'
     cp = COPIES[len([x for x in ACTORS[:i] if x is not None])] if FRAMES and i < len(ACTORS) and ACTORS[i] is not None else None
