@@ -19,7 +19,8 @@ ONLY = set(argv[2:])
 os.makedirs(OUT, exist_ok=True)
 SPECS = json.load(open(SPEC))
 TAU = math.pi * 2
-REMAKE = [True]   # rebuilding a code shape: round parts get more sides; a hand model keeps the sides it asks for
+REMAKE = [True]
+DETAIL = [2]   # 2: tile courses and leafy clusters, 1: roofs and bands only (a heavy model), 0: none   # rebuilding a code shape: round parts get more sides; a hand model keeps the sides it asks for
 
 # ---------- colours: the game's hex colours are sRGB; the corners hold linear values (as three.js merge() does) ----------
 def lin(c):
@@ -210,15 +211,91 @@ class Model:
         if hip is None: hip = geo == 'ConeGeometry' and p.get('radialSegments') == 4 and not rot[0] and not rot[2] and sc[0] != sc[2]
         self.add(vf, color, part_matrix(pos, rot, sc, hip))
 
+def tint(c, f):
+    """a colour (hex or linear tuple) made lighter (f > 1) or darker (f < 1), in linear values"""
+    r, g, b, _ = hexc(c) if isinstance(c, str) else c
+    return (min(1., r * f), min(1., g * f), min(1., b * f), 1.)
+
+def rgb(c): return hexc(c)[:3]
+
+def roof_detail(m, v, color):
+    """(refinement) a pyramid or hip roof (a 4-sided cone) dressed as a tiled roof: eaves overhang with a fascia board,
+    darker ridges along the hips and tile courses across each face"""
+    lo = min(p[1] for p in v); hi = max(p[1] for p in v)
+    base = [Vector(p) for p in v if abs(p[1] - lo) < 1e-4]; apex = [Vector(p) for p in v if abs(p[1] - hi) < 1e-4]
+    if len(base) < 4 or not apex or hi - lo < .15: return False
+    c = sum(base, Vector()) / len(base); top = sum(apex, Vector()) / len(apex)
+    base = sorted({(round(p.x, 4), round(p.z, 4)): p for p in base}.values(), key=lambda p: math.atan2(p.z - c.z, p.x - c.x))
+    if len(base) != 4: return False
+    out = [c + (p - c) * 1.07 - Vector((0, .04, 0)) for p in base]   # the eaves stand out a little
+    dark, light = tint(color, .72), tint(color, 1.12)
+    faces = [[0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4]]
+    if (out[1] - out[0]).cross(top - out[0]).dot(((out[0] + out[1]) / 2 + top) / 2 - c) < 0: faces = [q[::-1] for q in faces]   # (facing out)
+    m.add(([tuple(p) for p in out] + [tuple(top)], faces), color)
+    m.add(([tuple(p) for p in out], [[3, 2, 1, 0] if faces[0] == [0, 1, 4] else [0, 1, 2, 3]]), tint(color, .6))   # the soffit underneath
+    # the fascia under the eaves
+    fz = [tuple(p) for p in out] + [tuple(p - Vector((0, .12, 0))) for p in out]
+    m.add((fz, [[i, (i + 1) % 4, 4 + (i + 1) % 4, 4 + i] for i in range(4)] + [[4 + (i + 1) % 4, (i + 1) % 4, i, 4 + i] for i in range(4)]), dark)
+    # hip ridges and tile courses (thin raised strips)
+    def strip(a, b, w, col, lift=.025):
+        d = b - a; L = d.length
+        if L < .05: return
+        mid = (a + b) / 2 + Vector((0, lift, 0)); R = Vector((1, 0, 0)).rotation_difference(d.normalized()).to_matrix().to_4x4()
+        m.add(g_box(L, w, w), col, Matrix.Translation(mid) @ R)
+    for p in out: strip(p, top, .07, dark)
+    n = max(1, int((hi - lo) / .4)) if DETAIL[0] > 1 else 1
+    for i in range(4):
+        a0, b0 = out[i], out[(i + 1) % 4]
+        for k in range(1, n):
+            t = k / n; strip(a0 + (top - a0) * t, b0 + (top - b0) * t, .035, light if k % 2 else dark, .02)
+    return True
+
 def from_spec(m, sp):
-    """the code shape rebuilt part by part"""
-    for p in sp['parts']:
-        t = p['type']
+    """the code shape rebuilt part by part, with picture-book detail: tiled roofs, wall bands, window frames and sills,
+    rounder foliage, and a slight hand-painted colour change from part to part"""
+    import random
+    rnd = random.Random(len(sp['parts']))
+    for idx, p in enumerate(sp['parts']):
+        t = p['type']; col = p['color']
         if p.get('tris'):   # a shape with no simple recipe (an extruded sign or roof): its triangles as the game made them
             a = p['tris']; v = [(a[i], a[i + 1], a[i + 2]) for i in range(0, len(a), 3)]
-            m.add((v, [[i, i + 1, i + 2] for i in range(0, len(v), 3)]), p['color']); continue
+            m.add((v, [[i, i + 1, i + 2] for i in range(0, len(v), 3)]), col); continue
         if t not in GEO and t not in POLY: print('SKIP part', t, flush=True); continue
-        m.part(t, p['color'], p['pos'], p['rot'], p['scl'], hip=p.get('hip', False), **(p.get('p') or {}))
+        prm = dict(p.get('p') or {}); sc = p['scl']; rot = p['rot']; hip = p.get('hip', False)
+        M = part_matrix(p['pos'], rot, sc, hip)
+        c = tint(col, .95 + rnd.random() * .09)   # (each part a touch different, as if painted by hand)
+        r, g, b = rgb(col)
+        flat_turn = abs(rot[0]) < 1e-3 and abs(rot[2]) < 1e-3
+        # a 4-sided cone standing up: a roof
+        if t == 'ConeGeometry' and prm.get('radialSegments') == 4 and flat_turn and not prm.get('openEnded'):
+            v, f = g_cone(**prm); vv = [tuple(M @ Vector(q)) for q in v]
+            if roof_detail(m, vv, c): continue
+        # green round things: foliage, a soft cluster of smaller balls in the same space
+        if t in ('SphereGeometry', 'IcosahedronGeometry', 'DodecahedronGeometry') and DETAIL[0] > 1 and g > r * 1.15 and g > b * 1.1 and .25 < prm.get('radius', 1) < 2.2 and prm.get('thetaLength', math.pi) > 3 and prm.get('phiLength', TAU) > 6:   # (whole balls only: a dome is not a bush)
+            R0 = prm.get('radius', 1)
+            for k in range(4):
+                a = k / 4 * TAU + idx; off = (math.cos(a) * .42, .12 * (k % 2), math.sin(a) * .42) if k < 3 else (0, .35, 0)
+                rr = R0 * (.62 if k < 3 else .58)
+                m.add(g_sphere(rr, 8, 6), tint(c, .9 + .08 * k), M @ Matrix.Translation(Vector(off) * R0))
+            continue
+        m.part(t, c, p['pos'], rot, sc, hip=hip, **prm)
+        if t != 'BoxGeometry' or not flat_turn: continue
+        w, h, d = prm.get('width', 1), prm.get('height', 1), prm.get('depth', 1)
+        # a wall block: a darker plinth at its foot, a lighter cornice at its top
+        if h > 1.2 and w > 1 and d > 1 and p['pos'][1] - h / 2 < .6:
+            ph = min(.35, h * .12)
+            m.add(g_box(w + .06, ph, d + .06), tint(c, .8), M @ Matrix.Translation((0, -h / 2 + ph / 2, 0)))
+            m.add(g_box(w + .1, .12, d + .1), tint(c, 1.12), M @ Matrix.Translation((0, h / 2 - .06, 0)))
+            continue
+        # a window or door pane (thin, glassy or dark): a light frame round it and a sill under it
+        thin = min(w, d); glassy = b > r + .08 and b >= g * .95
+        if thin < .16 and h > .4 and max(w, d) > .4 and (glassy or max(r, g, b) < .12):
+            along_x = w >= d; W = w if along_x else d; frame = (.98, .95, .9, 1.); s = .06
+            def bx(cx, cy, ww, hh, dd): m.add(g_box(ww, hh, dd) if along_x else g_box(dd, hh, ww), frame, M @ Matrix.Translation((cx, cy, 0) if along_x else (0, cy, cx)))
+            bx(0, h / 2 + s / 2, W + 2 * s, s, thin + .04); bx(-W / 2 - s / 2, 0, s, h, thin + .04); bx(W / 2 + s / 2, 0, s, h, thin + .04)
+            if glassy:
+                bx(0, -h / 2 - .03, W + .2, .06, thin + .14)   # the sill
+                bx(0, 0, .04, h, thin + .02)                  # the glazing bar
 
 # ---------- shapes for the hand-made landmarks ----------
 def B(m, w, h, d, color, pos, rot=(0, 0, 0)): m.part('BoxGeometry', color, pos, rot, width=w, height=h, depth=d)
@@ -634,9 +711,105 @@ PROPS = {'pr-peach': (prop_peach, 1.9), 'pr-mai': (prop_mai, 1.4), 'pr-banhchung
 for n, (fn, size) in PROPS.items():
     if n not in SPECS: SPECS[n] = {'box': {'min': [-size / 2, 0, -size / 2], 'max': [size / 2, size, size / 2]}, 'parts': [], 'prop': True}
 
+
+def hand_cathedral(m, sp):
+    # Nha tho Duc Ba (Saigon's Notre-Dame): red brick nave, two square bell towers with slate spires and crosses, a rose
+    # window and three arched doors on the front (+z), buttresses down the sides
+    brick, trim, slate, dark = '#c0553a', '#e8d6b8', '#5d6b75', '#4a2e24'
+    B(m, 6.0, 4.2, 6.6, brick, (0, 2.1, -1.2)); B(m, 6.2, .2, 6.8, trim, (0, 4.2, -1.2))
+    m.part('ConeGeometry', slate, (0, 5.15, -1.2), (0, math.pi / 4, 0), (3.2, 1.9, 3.45), radius=1.414, height=1.0, radialSegments=4, hip=True)
+    for z in (-3.6, -2.0, -.4, 1.2):   # buttresses and tall windows down each side
+        for sx in (-1, 1):
+            B(m, .35, 3.4, .45, brick, (sx * 3.1, 1.7, z)); arch_door(m, .5, 1.6, dark, (sx * 3.01, 1.6, z + .8), sx * math.pi / 2)
+    for sx in (-1, 1):   # the two bell towers
+        x = sx * 2.1
+        B(m, 1.9, 7.2, 1.9, brick, (x, 3.6, 2.6))
+        for y in (2.4, 4.6, 6.8): B(m, 2.0, .16, 2.0, trim, (x, y, 2.6))
+        for y in (3.2, 5.4): arch_door(m, .5, 1.1, dark, (x, y, 3.56), 0)
+        B(m, 1.6, 1.0, 1.6, trim, (x, 7.7, 2.6))
+        arch_door(m, .55, .8, dark, (x, 7.3, 3.41), 0)
+        C(m, .0, 1.05, 2.6, slate, (x, 9.5, 2.6), seg=8)
+        for k in range(4): a = k * math.pi / 2 + math.pi / 4; C(m, 0, .12, .5, slate, (x + math.cos(a) * .85, 8.45, 2.6 + math.sin(a) * .85), seg=6)   # pinnacles
+        B(m, .06, .7, .06, '#e8c03a', (x, 11.0 - .3, 2.6)); B(m, .4, .06, .06, '#e8c03a', (x, 10.85, 2.6))
+    # the front between the towers: a gable, the rose window, three doors
+    B(m, 2.4, 4.6, .5, brick, (0, 2.3, 3.0)); prism(m, 2.6, 1.2, .5, brick, (0, 4.6, 3.0))
+    m.part('TorusGeometry', trim, (0, 3.6, 3.27), radius=.55, tube=.08); m.add(g_cyl(.5, .5, .06, 16), '#5a7a9a', Matrix.Translation((0, 3.6, 3.27)) @ Matrix.Rotation(math.pi / 2, 4, 'X'))
+    for k in range(8): b = k / 8 * TAU; m.part('BoxGeometry', trim, (math.cos(b) * .25, 3.6 + math.sin(b) * .25, 3.3), (0, 0, b), width=.5, height=.04, depth=.03)
+    arch_door(m, .9, 2.0, dark, (0, .1, 3.27), 0)
+    for sx in (-1, 1): arch_door(m, .6, 1.5, dark, (sx * 2.1, .1, 3.56), 0)
+    B(m, 6.4, .25, 7.4, '#cfc6b4', (0, .12, -.6))   # the paved forecourt step
+
+def hand_postoffice(m, sp):
+    # Saigon Central Post Office: the long yellow French hall with white pilasters and arched windows, a big round-arched
+    # front with the clock, and the iron-and-glass barrel roof behind
+    yel, white, dark, green = '#f2cf6a', '#f6f1e2', '#6a4a2a', '#5f8a7a'
+    B(m, 8.0, 4.2, 4.0, yel, (0, 2.1, 0)); B(m, 8.2, .3, 4.2, white, (0, .15, 0)); B(m, 8.3, .25, 4.3, white, (0, 4.3, 0))
+    for k in range(9):   # pilasters and arched windows
+        x = -3.6 + k * .9
+        B(m, .18, 3.8, .12, white, (x, 2.1, 2.04))
+        if k < 8 and abs(x + .45) > .9: arch_door(m, .45, 1.5, dark, (x + .45, 1.0, 2.03), 0); arch_door(m, .35, .6, '#7fa9b8', (x + .45, 2.9, 2.03), 0)
+    # the central bay: taller, with the great arch, the clock and a pediment
+    B(m, 2.4, 5.4, .5, yel, (0, 2.7, 2.1)); B(m, 2.6, .25, .6, white, (0, 5.4, 2.1))
+    arch_door(m, 1.4, 3.0, dark, (0, .3, 2.36), 0); m.part('TorusGeometry', white, (0, 2.6, 2.37), radius=.75, tube=.1, arc=math.pi)
+    R = Matrix.Translation((0, 4.4, 2.37)); m.add(g_cyl(.5, .5, .06, 20), '#fffaf0', R @ Matrix.Rotation(math.pi / 2, 4, 'X'))
+    m.add(g_torus(.52, .05, 6, 20), '#2b2238', R); m.add(g_box(.04, .38, .03), '#333333', R @ Matrix.Translation((0, .15, .05))); m.add(g_box(.28, .04, .03), '#333333', R @ Matrix.Translation((.1, 0, .05)))
+    prism(m, 2.8, .8, .5, white, (0, 5.5, 2.1))
+    # the barrel roof (green iron) over the hall, with glass panes along it
+    m.add(g_cyl(1.9, 1.9, 7.6, 16, thetaStart=-math.pi / 2, thetaLength=math.pi, smooth=False), green, Matrix.Translation((0, 4.4, 0)) @ Matrix.Rotation(math.pi / 2, 4, 'Z'))
+    for k in range(7): m.part('TorusGeometry', '#3f6a5a', (-3.3 + k * 1.1, 4.4, 0), (0, math.pi / 2, 0), radius=1.92, tube=.05, arc=math.pi)
+    for sx in (-1, 1): B(m, .9, 5.0, .9, yel, (sx * 3.8, 2.5, 1.6)); m.part('ConeGeometry', green, (sx * 3.8, 5.4, 1.6), (0, math.pi / 4, 0), radius=.75, height=.8, radialSegments=4)
+
+def hand_flinders(m, sp):
+    # Flinders Street Station: the long mustard-and-cream building with its arched entrance under the green copper dome,
+    # the row of clocks over the doors, and the corner clock tower
+    must, cream, copper, dark = '#e8b44a', '#f4ead2', '#5fa07a', '#5a3a2a'
+    B(m, 9.0, 3.8, 4.0, must, (0, 1.9, 0)); B(m, 9.2, .3, 4.2, cream, (0, 3.9, 0)); B(m, 9.1, .35, 4.1, '#c99a3a', (0, .17, 0))
+    for k in range(10):   # cream bands and arched windows along the front
+        x = -4.05 + k * .9
+        if 1.4 < abs(x) < 3.4: arch_door(m, .45, 1.2, dark, (x, 1.9, 2.03), 0); B(m, .14, 3.6, .1, cream, (x - .45, 1.9, 2.04))
+    B(m, 9.05, .14, 4.05, cream, (0, 1.5, 0))
+    # the entrance: the great arch, the row of clocks above, the dome on its drum
+    B(m, 3.0, 4.6, .6, must, (0, 2.3, 2.0)); arch_door(m, 2.0, 2.8, dark, (0, .2, 2.31), 0)
+    m.part('TorusGeometry', cream, (0, 2.2, 2.32), radius=1.05, tube=.1, arc=math.pi)
+    for k in range(5):
+        R = Matrix.Translation((-1.0 + k * .5, 3.4, 2.32)); m.add(g_cyl(.19, .19, .05, 14), '#fffaf0', R @ Matrix.Rotation(math.pi / 2, 4, 'X')); m.add(g_torus(.2, .03, 4, 14), '#2b2238', R)
+    C(m, 1.8, 1.8, 1.4, must, (0, 4.75, .3), seg=20); C(m, 1.9, 1.9, .15, cream, (0, 5.5, .3), seg=20)
+    for k in range(8): a = k / 8 * TAU; arch_door(m, .35, .7, dark, (math.sin(a) * 1.81, 4.25, .3 + math.cos(a) * 1.81), a)
+    m.part('SphereGeometry', copper, (0, 5.55, .3), radius=1.85, widthSegments=16, heightSegments=8, thetaLength=math.pi / 2)
+    C(m, .25, .3, .6, copper, (0, 7.6, .3), seg=8); m.part('SphereGeometry', '#e8c03a', (0, 8.0, .3), radius=.14)
+    # the clock tower at the corner, and its twin pinnacle
+    for sx in (-1, 1):
+        x = sx * 4.2
+        B(m, 1.2, 5.6, 1.2, must, (x, 2.8, 1.4)); B(m, 1.35, .2, 1.35, cream, (x, 5.6, 1.4))
+        m.part('ConeGeometry', copper, (x, 6.35, 1.4), (0, math.pi / 4, 0), radius=.95, height=1.3, radialSegments=4)
+        R = Matrix.Translation((x, 4.8, 2.02)); m.add(g_cyl(.35, .35, .05, 14), '#fffaf0', R @ Matrix.Rotation(math.pi / 2, 4, 'X')); m.add(g_torus(.36, .04, 4, 14), '#2b2238', R)
+
+def hand_hue(m, sp):
+    # Ngo Mon, the Meridian Gate of Hue's citadel: a massive U-shaped stone base with three gates (the middle one for the
+    # king), and on top the Five Phoenix Pavilion with its two-tiered yellow-tiled roofs over red wooden columns
+    stone, stone2, red, yellow, dark = '#c9bfae', '#b3a892', '#c62828', '#e8b83a', '#3a2a22'
+    B(m, 18, 1.0, 11, '#d9cdb8', (0, .5, 0))   # the plaza (the code shape's own base)
+    B(m, 14, 3.2, 4.0, stone, (0, 2.6, -1.2))   # the main wall
+    for sx in (-1, 1): B(m, 3.2, 3.2, 5.6, stone, (sx * 5.4, 2.6, 2.6))   # the two arms reaching forward
+    B(m, 14.2, .25, 4.2, stone2, (0, 4.3, -1.2)); [B(m, 3.4, .25, 5.8, stone2, (sx * 5.4, 4.3, 2.6)) for sx in (-1, 1)]
+    for k in range(14): B(m, .5, .4, .3, stone2, (-6.75 + k * 1.04, 4.6, .82))   # the battlement
+    arch_door(m, 1.6, 2.5, dark, (0, 1.0, .81), 0)
+    for sx in (-1, 1): arch_door(m, 1.1, 2.0, dark, (sx * 2.6, 1.0, .81), 0)
+    # the Five Phoenix Pavilion: a red-columned hall, two curled roofs
+    B(m, 9.0, .25, 3.2, '#8a5a3b', (0, 4.55, -1.2))
+    for k in range(9):
+        for z in (-2.5, .1): C(m, .12, .12, 1.4, red, (-4.0 + k, 5.35, z), seg=8)
+    B(m, 8.6, 1.0, 2.4, '#a84a2a', (0, 5.3, -1.2))
+    viet_roof(m, 9.4, 3.4, .9, yellow, (0, 6.05, -1.2), curl=.4, over=.5)
+    B(m, 6.0, .7, 2.0, red, (0, 6.85, -1.2))
+    viet_roof(m, 6.6, 2.6, 1.0, yellow, (0, 7.2, -1.2), curl=.45, over=.45, ridge_color='#c9962a')
+    for sx in (-1, 1):   # the small pavilions on the arms
+        B(m, 2.0, .9, 2.0, red, (sx * 5.4, 4.9, 3.6)); viet_roof(m, 2.2, 2.2, .8, yellow, (sx * 5.4, 5.35, 3.6), curl=.35, over=.35)
+
 HAND = {'lm-turtle': hand_turtle, 'lm-thehuc': hand_thehuc, 'lm-vanmieu': hand_vanmieu, 'lm-onepillar': hand_onepillar,
         'lm-benthanh': hand_benthanh, 'lm-opera': hand_opera, 'br-harbour': hand_harbour}
 HAND.update({n: fn for n, (fn, size) in PROPS.items()})
+HAND.update({'lm-cathedral': hand_cathedral, 'lm-postoffice': hand_postoffice, 'lm-flinders': hand_flinders, 'lm-hue': hand_hue})
 BUDGET = lambda name: 8000 if name.startswith(('lm-', 'br-')) else 900 if name.startswith('pr-') else 3000
 
 # ---------- making and saving one model ----------
@@ -672,8 +845,12 @@ def bake_ao(me, dist):
 def build(name, sp):
     clear(); m = Model(); REMAKE[0] = name not in HAND
     (HAND.get(name) or (lambda m, sp: from_spec(m, sp)))(m, sp)
+    DETAIL[0] = 2
+    while not (name in HAND) and DETAIL[0] > 0 and len(m.bm.faces) > BUDGET(name) * .55:   # too heavy: less detail
+        DETAIL[0] -= 1; m.bm.free(); m = Model(); from_spec(m, sp)
     if REMAKE[0] and len(m.bm.faces) > BUDGET(name) * .6:   # many round parts: keep the code shape's own number of sides
         m.bm.free(); m = Model(); REMAKE[0] = False; from_spec(m, sp)
+    print('  detail', DETAIL[0], flush=True)
     bmesh.ops.remove_doubles(m.bm, verts=m.bm.verts, dist=1e-5)
     me = bpy.data.meshes.new(name); m.bm.to_mesh(me); m.bm.free()
     ob = bpy.data.objects.new(name, me); bpy.context.scene.collection.objects.link(ob)
