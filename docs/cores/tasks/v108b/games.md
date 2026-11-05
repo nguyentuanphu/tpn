@@ -109,6 +109,11 @@ Their names and pictures were already different, so nothing was renamed (no new 
   the new theme and the new way (the test pins the list of themes; changed on purpose).
 - Drawings (part of the start, `js/art/emoji108b.ts`): the tab, the quest mark, a medal per step, a badge per subject.
 
+### Leftovers asked by Release (5 Nov 2026 AEDT)
+- The 11 host lines and the festival host line are recorded (Azure, HoaiMy and Natasha), with every new game's lines.
+- Host news for stories: Bà Năm says once, as the child passes her mat, that a story has newly opened
+  ("Có truyện mới trên chiếu của bà đó!"); stories already open the first time are counted as known (`js/main/talks.ts`).
+
 ## Checks (5 Nov 2026 AEDT)
 - `hubmap` extended: no link tiles in the Play hub; each game once across Học vui and Vui chơi on the Simple screen: pass.
 - `gameplace` (new, `tests/checks/screens.mts`): every switched-on game has a place that stands in the valley; every area
@@ -119,10 +124,18 @@ Their names and pictures were already different, so nothing was renamed (no new 
 ## Left for later
 - The new games are picture quizzes on one engine; richer hands-on versions (wrapping the cake, a maze builder) could follow.
 
-- The host news for a newly opened story (games only so far).
-- Recording the 11 host lines (they are in `js/content/gameplace.ts`; the voice pack tool collects them as pairs).
+- On a phone the 8 journey rows fill the first screen of the Học vui tab (the games are just below); Release may want them folded.
 
 ## Progress notes
 
 ## Owner's decisions
 - 5 Nov 2026 AEDT: learning journeys have 9 steps and a badge (fits the sticker book's pages of 9).
+
+## Progress notes
+- 5 Nov 2026 AEDT, branch work/v108b-games, checks (each run alone, `node run.mts` or `suite.mts --only`; `--changed` asks
+  for the full suite, which only Release runs):
+  - pass: hubmap, gameplace (with story news), hocvui (65 new games won at Easy and Talent), englishmode, simple,
+    secondset, playhub, emoji, noemoji, festivalgames, learningquests, games (326 games), phone, boot, contract.
+  - fail, not this branch: unit (2 tests need the `pg` package, not installed in this container); roundvariety
+    (`lemonade`, a money game: hard round 4 = round 2; every new game passed).
+  - guides, levelsa, gamespace, gamefit: see the next note.
