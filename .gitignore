@@ -76,7 +76,6 @@ marketing/source/runvalley.log
 /js/autoplay.js
 /js/avatar.js
 /js/blenderfilm.js
-/js/filmpack.js
 /js/boxes.js
 /js/build.js
 /js/cartoon.js
@@ -127,6 +126,7 @@ marketing/source/runvalley.log
 /js/content/festival-visibility.js
 /js/content/festseason.js
 /js/content/film-looks.js
+/js/content/films-for-all.js
 /js/content/films.js
 /js/content/films/baluoiriu.js
 /js/content/films/birdcolours.js

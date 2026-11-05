@@ -923,7 +923,9 @@ PAGES.releases = P => drawReleases(P, false);
 PAGES.lab = P => drawReleases(P, true);
 async function drawReleases(P, lab) {
   const myDraw = P.dataset.draw = String((+P.dataset.draw || 0) + 1), stale = () => P.dataset.draw !== myDraw || cur !== (lab ? 'lab' : 'releases');
-  const [{ RELEASES, RELEASE_GROUPS }, live, {festivalSwitchedOn}] = await Promise.all([import(GAME + 'js/content/releases.js'), loadLive(),import(GAME+'js/content/festival-visibility.js')]);
+  const [{ RELEASES, RELEASE_GROUPS, addFilmSwitches }, live, {festivalSwitchedOn}] = await Promise.all([import(GAME + 'js/content/releases.js'), loadLive(),import(GAME+'js/content/festival-visibility.js')]);
+  // (v1.08f films) a "Blender film for everyone" switch for every listed Blender film (js/content/releases.ts addFilmSwitches)
+  await import(GAME + 'js/content/blenderfilms.js').then(B => addFilmSwitches(B.BLENDER_FILMS)).catch(() => { });
   if (stale()) return;
   const R = live.releases || {}, inScope = x => lab === ['tester', 'autoplay'].includes(x.id);
   const isOn = x => { const r = R[x.id] || {};if(x.id.startsWith('fest_'))return festivalSwitchedOn(live.festivals?.[x.id.slice(5)],r); if (x.id === 'wayfind' && r.controlVersion !== 1) return false; return typeof r.on === 'boolean' ? r.on : x.def; };

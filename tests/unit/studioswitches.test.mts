@@ -10,10 +10,12 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { RELEASES, RELEASE_GROUPS } from '../../js/content/releases.js';
+import { RELEASES, RELEASE_GROUPS, addFilmSwitches } from '../../js/content/releases.js';
 import { FESTCAL } from '../../js/content/festcal.js';
 import { MONEY_GAMES } from '../../js/custom.js';
 import { CHAPTERS } from '../../js/content/chapters.js';
+import { BLENDER_FILMS, BLENDER_FOR_ALL } from '../../js/content/blenderfilms.js';
+addFilmSwitches(BLENDER_FILMS); // (as Studio's Releases page does)
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const IDS = new Set(RELEASES.map(r => r.id));
@@ -70,7 +72,9 @@ const EXPAND = {
   'money_*': MONEY_GAMES.map(g => 'money_' + g),
   'story_*': CHAPTERS.map(c => 'story_' + c.id),
   'fest_*': FESTCAL.map(F => 'fest_' + F.id),
-  'sparkleFruitParade_*': ['sparkleFruitParade_single', 'sparkleFruitParade_multi', 'sparkleFruitParade_tester']
+  'sparkleFruitParade_*': ['sparkleFruitParade_single', 'sparkleFruitParade_multi', 'sparkleFruitParade_tester'],
+  // (v1.08f films) one "Blender film for everyone" switch per listed film and for each of the five
+  'blenderFilm_*': [...new Set([...BLENDER_FOR_ALL, ...Object.keys(BLENDER_FILMS)])].map(id => 'blenderFilm_' + id)
 };
 
 test('every switch the game reads by name has a Studio control (Releases or Sparkle Lab)', () => {
@@ -117,4 +121,13 @@ test('the Defaults page and content/custom.json switch only what Releases also h
   assert.deepEqual(onDefaults.filter(id => !IDS.has(id)), []);
   const custom = JSON.parse(readFileSync(join(ROOT, 'content/custom.json'), 'utf8'));
   assert.deepEqual(Object.keys(custom.features || {}).filter(id => !IDS.has(id)), []);
+});
+
+test('the Blender films: one switch for all, one for testers, one per film (on for the five, off for the rest) (v1.08f, owner 6 Nov 2026 AEDT)', () => {
+  const r = id => RELEASES.find(x => x.id === id);
+  assert.equal(r('blenderFilms')?.def, true); assert.equal(r('blenderFilmsTesters')?.def, false);
+  assert.match(r('blenderFilmsTesters').en, /Blender films for testers/);
+  for (const id of BLENDER_FOR_ALL) assert.equal(r('blenderFilm_' + id)?.def, true, id + ' is for everyone');
+  for (const id of Object.keys(BLENDER_FILMS).filter(id => !BLENDER_FOR_ALL.includes(id))) assert.equal(r('blenderFilm_' + id)?.def, false, id + ' is for testers only');
+  assert.equal(BLENDER_FOR_ALL.length, 5);
 });
