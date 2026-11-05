@@ -9,7 +9,7 @@ import { T, nm } from './i18n.js';
 import { heightAt, YARD, TOWN } from './world.js';
 import { featureOn, markTried } from './custom.js';
 import { buildAvatar, nameAvatar } from './avatar.js';
-import { build } from './vehicles.js';
+import { build, wear } from './vehicles.js';
 import { openRoom } from './openspot.js';
 import { pic } from './art.js';
 import { pad, frames, holdable, slot, until, QUIT } from './handpad.js';
@@ -61,7 +61,8 @@ export function createYard(G, { dialog, say, reward, save }) {
     ...[0, 1, 2].map(k => P(new THREE.BoxGeometry(5.04, .04, 3.64), '#e8dcc8', [0, .25 + k * .33, 0]))]), toonVC()));
   const roof = new THREE.Mesh(merge([P(new THREE.ConeGeometry(3.9, 1.6, 4), '#b8402e', [0, .8, 0], [0, Math.PI / 4, 0], [1, 1, .78])]), toonVC()); roof.position.set(SITE[0], 2.6, SITE[1]); yard.add(roof);
   // the coach (at the yard's open side), the dump truck and the excavator
-  const coach = build('coach').o, truck = build('dumpTruck'), digger = build('excavator');
+  const coachV = build('coach'), coach = coachV.o, truck = build('dumpTruck'), digger = build('excavator');
+  [coachV, truck, digger].forEach(v => wear(v));   // (v1.08e) the Blender models when a child comes near
   coach.position.set(-3, 0, 10.5); coach.rotation.y = Math.PI / 2; yard.add(coach); coach.userData.noSolid = true; // (it comes and goes with the story: never an invisible wall)
   truck.o.position.set(-5.5, 0, 2.5); truck.o.rotation.y = Math.PI / 2; yard.add(truck.o);
   digger.o.position.set(SITE[0] + .5, 0, SITE[1] - 5); digger.o.rotation.y = 0; yard.add(digger.o);
