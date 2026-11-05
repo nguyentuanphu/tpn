@@ -205,7 +205,7 @@ class Model:
         if not REMAKE[0]:   # a hand model: light defaults (three.js's own are 32 sides)
             if geo == 'SphereGeometry': p.setdefault('widthSegments', 12); p.setdefault('heightSegments', 8)
             elif geo in ('CylinderGeometry', 'ConeGeometry'): p.setdefault('radialSegments', 12)
-            elif geo == 'TorusGeometry': p.setdefault('radialSegments', 6); p.setdefault('tubularSegments', 20)
+            elif geo == 'TorusGeometry': p.setdefault('radialSegments', 4); p.setdefault('tubularSegments', 16)
         vf = geo if isinstance(geo, tuple) else (g_poly(geo, **p) if geo in POLY else GEO[geo](**p))
         if hip is None: hip = geo == 'ConeGeometry' and p.get('radialSegments') == 4 and not rot[0] and not rot[2] and sc[0] != sc[2]
         self.add(vf, color, part_matrix(pos, rot, sc, hip))
@@ -392,56 +392,119 @@ def hand_onepillar(m, sp):
     for a in (0, math.pi / 2, math.pi, -math.pi / 2):
         m.part('BoxGeometry', '#5a2a1a', (math.sin(a) * .66, 2.45, math.cos(a) * .66), (0, a, 0), width=.7, height=.65, depth=.03)   # the doors
     viet_roof(m, 1.3, 1.3, .62, '#5a4a3a', (0, 2.98, 0), curl=.45, over=.4, ridge_color='#4a3a2a')
-    for s in (-1, 1):   # two dragons on the ridge
-        m.part('CylinderGeometry', '#d9b44a', (s * .3, 3.75, 0), (0, 0, s * .9), radiusTop=.03, radiusBottom=.07, height=.5, radialSegments=6)
+    for s in (-1, 1):   # two dragons on the ridge, curling up towards the moon pearl between them
+        for k in range(8):
+            t = k / 7; m.part('SphereGeometry', '#c9a24a' if k % 2 else '#d9b44a', (s * (.62 - t * .5), 3.66 + math.sin(t * math.pi) * .14 + t * .06, 0), radius=.06 - t * .025, widthSegments=6, heightSegments=5)
+        m.part('ConeGeometry', '#c9a24a', (s * .66, 3.74, 0), (0, 0, s * .7), radius=.05, height=.18, radialSegments=5)   # the tail flick
     m.part('SphereGeometry', '#ffd23f', (0, 3.82, 0), radius=.09, widthSegments=10, heightSegments=8)
 
+def prism(m, w, h, d, color, pos, rot_y=0):
+    """a gable (pediment): a triangle w wide and h high, d deep, its base at pos"""
+    x, y, z = w / 2, h, d / 2
+    v = [(-x, 0, -z), (x, 0, -z), (0, y, -z), (-x, 0, z), (x, 0, z), (0, y, z)]
+    f = [[0, 2, 1], [3, 4, 5], [0, 3, 5, 2], [1, 2, 5, 4], [0, 1, 4, 3]]
+    m.add((v, f), color, Matrix.Translation(pos) @ Matrix.Rotation(rot_y, 4, 'Y'))
+
 def hand_benthanh(m, sp):
-    # Cho Ben Thanh: the long low market hall and its clock tower over the main door (the front faces -x, the street)
-    cream, rust = '#f2e6c2', '#a24e3a'
-    B(m, 3.0, 4.6, 10, cream, (0, 2.3, 0))
-    B(m, 3.2, .3, 10.2, '#e2d2a8', (0, 4.7, 0))
-    for zz in (-3.3, 3.3):   # the two side wings, each with its low hipped roof
-        m.part('ConeGeometry', rust, (0, 5.35, zz), (0, math.pi / 4, 0), (1.6, 1, 1.6), radius=1.414, height=1.0, radialSegments=4)
-    # the main front: a taller gable with three arched doors
-    B(m, .4, 5.6, 4.2, cream, (-1.52, 2.8, 0))
-    for z in (-1.3, 0, 1.3): arch_door(m, .95, 2.4, '#5a3a2a', (-1.73, 0, z), -math.pi / 2)
-    for z in (-3.6, -2.6, 2.6, 3.6): arch_door(m, .7, 1.8, '#6a4a3a', (-1.51, .3, z), -math.pi / 2)
-    for z in (-1.3, 0, 1.3): m.part('TorusGeometry', '#d8b86a', (-1.74, 2.0, z), (0, math.pi / 2, 0), radius=.5, tube=.08, arc=math.pi)
-    # the clock tower
-    B(m, 2.4, 3.2, 2.4, cream, (0, 7.2, 0))
-    B(m, 2.7, .25, 2.7, '#e2d2a8', (0, 8.9, 0))
+    # Cho Ben Thanh: the long cream market hall under its red-tiled hipped roof, pilasters and arched windows along it,
+    # corner pavilions at both ends, and the south gate: a pedimented entrance of three arches under the famous clock tower
+    # (the front faces -x, the street; the hall is the code shape's 3 x 10)
+    cream, light, band, tile, dark = '#f2e6c2', '#fbf3dc', '#d9c9a0', '#b4523a', '#5a3a2a'
+    B(m, 3.0, 4.0, 9.0, cream, (0, 2.0, 0)); B(m, 3.1, .5, 9.1, band, (0, .25, 0)); B(m, 3.2, .22, 9.2, light, (0, 4.0, 0))
+    m.part('ConeGeometry', tile, (0, 4.75, 0), (0, math.pi / 4, 0), (1.75, 1.3, 4.7), radius=1.414, height=1.3, radialSegments=4, hip=True)
+    for zs in (-1, 1):   # the corner pavilions, a little taller, with their own small hipped roofs
+        B(m, 3.2, 4.5, 1.1, cream, (0, 2.25, zs * 4.45)); B(m, 3.35, .22, 1.25, light, (0, 4.5, zs * 4.45))
+        m.part('ConeGeometry', tile, (0, 5.05, zs * 4.45), (0, math.pi / 4, 0), (1.8, .8, .75), radius=1.414, height=1.1, radialSegments=4, hip=True)
+        arch_door(m, .6, 1.5, dark, (-1.61, 1.6, zs * 4.45), -math.pi / 2)
+    for k in range(-6, 7):   # pilasters and arched windows along the street side and the back
+        z = k * .62
+        if abs(z) < 2.0 or abs(z) > 3.8: continue
+        for sx in (-1, 1):
+            B(m, .12, 3.4, .16, light, (sx * 1.53, 2.2, z - .31))
+            arch_door(m, .32, 1.0, dark, (sx * 1.51, 2.4, z), -sx * math.pi / 2)
+            arch_door(m, .32, .5, '#8a6a4a', (sx * 1.51, .9, z), -sx * math.pi / 2)
+    # the south gate: a deeper block with three tall arches between columns, a pediment over it
+    B(m, .7, 5.0, 3.8, cream, (-1.55, 2.5, 0)); B(m, .85, .25, 4.0, light, (-1.55, 5.0, 0))
+    prism(m, 4.0, .9, .6, light, (-1.6, 5.12, 0), math.pi / 2)
+    for z in (-1.25, 0, 1.25):
+        arch_door(m, .9, 2.6, dark, (-1.91, .2, z), -math.pi / 2)
+        m.part('TorusGeometry', '#d8b86a', (-1.92, 2.35, z), (0, math.pi / 2, 0), radius=.47, tube=.06, arc=math.pi)
+    for z in (-1.85, -.62, .62, 1.85): C(m, .12, .14, 4.4, light, (-1.95, 2.4, z), seg=10)
+    # the clock tower over the gate: a square stage with a clock on each face, a balcony cornice, the lantern and its roof
+    B(m, 2.2, 3.2, 2.2, cream, (0, 6.6, 0)); B(m, 2.5, .25, 2.5, light, (0, 8.25, 0))
+    for k in range(4):   # corner pilasters
+        a = k * math.pi / 2 + math.pi / 4; B(m, .25, 3.2, .25, light, (math.cos(a) * 1.5, 6.6, math.sin(a) * 1.5))
     for a in (-math.pi / 2, math.pi / 2, 0, math.pi):
-        dx, dz = math.sin(a) * 1.22, math.cos(a) * 1.22
-        Mx = Matrix.Translation((dx, 7.6, dz)) @ Matrix.Rotation(a, 4, 'Y') @ Matrix.Rotation(math.pi / 2, 4, 'X')
-        m.add(g_cyl(.78, .78, .1, 24), '#ffffff', Mx)
-        m.add(g_torus(.8, .07, 6, 24), '#2b2238', Matrix.Translation((dx, 7.6, dz)) @ Matrix.Rotation(a, 4, 'Y') @ Matrix.Translation((0, 0, .06)))
-        m.add(g_box(.06, .55, .05), '#333333', Matrix.Translation((dx, 7.6, dz)) @ Matrix.Rotation(a, 4, 'Y') @ Matrix.Translation((0, .22, .08)))
-        m.add(g_box(.4, .06, .05), '#333333', Matrix.Translation((dx, 7.6, dz)) @ Matrix.Rotation(a, 4, 'Y') @ Matrix.Translation((.16, 0, .08)))
-    m.part('ConeGeometry', rust, (0, 9.7, 0), (0, math.pi / 4, 0), radius=1.8, height=1.4, radialSegments=4)
-    C(m, .04, .04, .8, '#c9a24a', (0, 10.6, 0), seg=6)
+        dx, dz = math.sin(a) * 1.12, math.cos(a) * 1.12
+        R = Matrix.Translation((dx, 7.0, dz)) @ Matrix.Rotation(a, 4, 'Y')
+        m.add(g_cyl(.72, .72, .1, 24), '#ffffff', R @ Matrix.Rotation(math.pi / 2, 4, 'X'))
+        m.add(g_torus(.74, .07, 6, 24), '#2b2238', R @ Matrix.Translation((0, 0, .06)))
+        for h in range(12):   # the hour marks
+            b = h / 12 * TAU; m.add(g_box(.05, .1, .03), '#2b2238', R @ Matrix.Translation((math.sin(b) * .58, math.cos(b) * .58, .07)) @ Matrix.Rotation(-b, 4, 'Z'))
+        m.add(g_box(.06, .5, .04), '#333333', R @ Matrix.Translation((0, .2, .09)))
+        m.add(g_box(.36, .06, .04), '#333333', R @ Matrix.Translation((.14, 0, .09)))
+    B(m, 1.5, 1.0, 1.5, cream, (0, 8.85, 0))
+    for a in (-math.pi / 2, math.pi / 2, 0, math.pi): arch_door(m, .5, .75, dark, (math.sin(a) * .76, 8.45, math.cos(a) * .76), a)
+    m.part('ConeGeometry', tile, (0, 9.8, 0), (0, math.pi / 4, 0), radius=1.3, height=1.0, radialSegments=4)
+    C(m, .04, .04, .7, '#c9a24a', (0, 10.6, 0), seg=6)
+
+def opera_shell(m, x0, z0, y0, W, H, L, face, white='#f7f4ec', under='#d8d0c0', glass='#7d8f96', lean=.16, nu=12, nt=8):
+    """one Opera House shell: a pointed-arch vault (the ridge on top, the two feet on the podium) that grows from its back
+    (nested inside the shell behind it) to its open mouth, the tip leaning out over a bronze glass wall.
+    x0: where the mouth stands along the hall, face +1/-1: which way it opens (along x), W/H/L: mouth width, height, length."""
+    def pt(t, u, inset=0.):
+        a = W / 2 * (.62 + .38 * t ** .7) - inset; b = H * (.3 + .7 * t ** 1.3) - inset * 1.4   # (broad all along: the back nests in the shell behind)
+        y = max(0., b) * (1 - abs(u) ** 1.45)
+        ax = -L * (1 - t) + lean * H * t ** 2 * (1 - abs(u)) ** 1.6
+        return (x0 + face * ax, y0 + y, z0 + a * u)
+    us = [-1 + 2 * i / nu for i in range(nu + 1)]; ts = [j / nt for j in range(nt + 1)]
+    for inset, col, flip in ((0., white, False), (.14, under, True)):   # the tiled outside, the ribbed inside
+        v = [pt(t, u, inset) for t in ts for u in us]; f = []
+        for j in range(nt):
+            for i in range(nu):
+                q = [j * (nu + 1) + i, j * (nu + 1) + i + 1, (j + 1) * (nu + 1) + i + 1, (j + 1) * (nu + 1) + i]
+                f.append(q[::-1] if (flip != (face < 0)) else q)
+        m.add((v, f), col)
+    # the rims: the mouth's edge (a cream band) and the feet, joining outside and inside
+    for t, col in ((1., '#efe8d8'), (0., under)):
+        o = [pt(t, u) for u in us]; n = [pt(t, u, .14) for u in us]; v = o + n; f = []
+        for i in range(nu): q = [i, i + 1, nu + 1 + i + 1, nu + 1 + i]; f.append(q if (t == 1.) != (face < 0) else q[::-1])
+        m.add((v, f), col)
+    # the glass wall in the mouth, set back a little, with bronze mullions
+    gi = .97; v = [(x0 + face * -.2, y0, z0)] + [(x0 + face * -.2, y0 + H * gi * (1 - abs(u) ** 1.45), z0 + W / 2 * gi * u) for u in us]
+    f = [[0, i + 1, i + 2] if face > 0 else [0, i + 2, i + 1] for i in range(nu)]
+    m.add((v, f), glass); m.add((v, [q[::-1] for q in f]), glass)
+    for k in range(-3, 4):
+        u = k / 4; h = H * gi * .72 * (1 - abs(u) ** 1.45)
+        if h > .3: m.part('BoxGeometry', '#5a4a3a', (x0 + face * -.18, y0 + h / 2, z0 + W / 2 * gi * u), width=.05, height=h, depth=.05)
 
 def hand_opera(m, sp):
-    # The Sydney Opera House: the stepped granite podium and its interlocking white shells, two rows of sails opening to
-    # the harbour, in the code shape's frame (16 x 10 podium; the sails rise along x, the first ones the tallest)
-    B(m, 16, 1.6, 10, '#cdb89a', (0, .8, 0))
-    B(m, 16, .3, 2, '#d9c9aa', (0, .15, 6))
-    for i in range(5):   # the grand stairs at the land end
-        B(m, 5, .32, .5, '#d9c9aa', (-5.5, .16 + i * .32, -5.25 + i * .02))
-    white, shade = '#f6f3ec', '#e4ded2'
-    def sail(x, z, s, face, tilt=.2):
-        # one shell pair: an outer sail and a smaller one tucked behind, opening towards face (+1: +x, -1: -x)
-        Mx = Matrix.Translation((x, 1.6, z)) @ Matrix.Rotation(-math.pi / 2 * face, 4, 'Y') @ Matrix.Rotation(-tilt, 4, 'X')
-        shell(m, 3.2 * s, -.95, 1.9, .05, 1.45, .12, white, Mx)
-        Mx2 = Matrix.Translation((x - face * 1.2 * s, 1.6, z)) @ Matrix.Rotation(-math.pi / 2 * face, 4, 'Y') @ Matrix.Rotation(-tilt * .5, 4, 'X')
-        shell(m, 2.5 * s, -.85, 1.7, .2, 1.3, .1, shade, Mx2)
-    # the big hall row (z > 0) and the smaller row (z < 0), each a line of sails, a restaurant shell at the end
-    for k, (x, s) in enumerate(((-3.6, 1.15), (-1.2, 1.0), (.9, .82))): sail(x, 1.6, s, 1)
-    for k, (x, s) in enumerate(((-3.2, .95), (-1.1, .82), (.7, .68))): sail(x, -2.2, s, 1)
-    sail(4.4, .2, .7, -1)
-    # the glass walls under the sails' mouths
-    for (x, z, w) in ((2.3, 1.6, 3.0), (2.0, -2.2, 2.4)):
-        B(m, .1, 1.6, w, '#7fa9b8', (x, 2.4, z))
+    # The Sydney Opera House, our way: on its broad granite podium, two halls side by side (the Concert Hall, the larger,
+    # and the Joan Sutherland Theatre), each a row of nested white shells rising to the tallest and opening onto bronze
+    # glass walls, one shell turned back over the foyer, the little Bennelong restaurant shells by the grand stairs.
+    # In the code shape's frame: the podium 16 x 10 (x along the halls), its top at 1.6.
+    gran, edge, dark = '#c9a88a', '#b8977a', '#9a7d66'
+    B(m, 16, 1.6, 10, gran, (0, .8, 0))
+    B(m, 16.2, .12, 10.2, '#d9c2a6', (0, 1.6, 0))                       # the terrace paving
+    B(m, 16.05, .3, 10.05, dark, (0, .45, 0))                           # the dark band round the podium
+    B(m, 16, .3, 2, '#d9c9aa', (0, .15, 6))                             # the promenade by the water
+    for i in range(6):   # the grand stairs at the land end, the full width of the halls
+        B(m, .42, .27 * (i + 1), 7.0, edge if i % 2 else gran, (-8.0 - .38 * (5 - i) + 1.9, .135 * (i + 1), -.6))
+    for z in (-4.9, 4.9):   # the terrace edge
+        B(m, 15.6, .35, .12, '#e2d4bc', (0, 1.83, z))
+    y = 1.66
+    # the Concert Hall (z > 0): shells opening towards +x, the tallest at the back, one turned back over the foyer
+    for (x, W, H, L) in ((-1.6, 4.2, 5.8, 5.2), (1.0, 3.8, 4.8, 4.4), (3.2, 3.3, 3.8, 3.6), (5.0, 2.7, 2.8, 2.8)):
+        opera_shell(m, x, 2.2, y, W, H, L, 1)
+    opera_shell(m, -5.0, 2.2, y, 3.6, 4.0, 3.0, -1)
+    # the Joan Sutherland Theatre (z < 0), a little smaller
+    for (x, W, H, L) in ((-2.0, 3.6, 4.9, 4.6), (.4, 3.2, 4.0, 3.8), (2.5, 2.8, 3.2, 3.0), (4.2, 2.3, 2.4, 2.4)):
+        opera_shell(m, x, -2.4, y, W, H, L, 1)
+    opera_shell(m, -5.2, -2.4, y, 3.0, 3.4, 2.6, -1)
+    # the Bennelong restaurant: two small shells back to back by the stairs
+    opera_shell(m, -6.9, -.1, y, 1.6, 1.9, 1.4, -1); opera_shell(m, -5.9, -.1, y, 1.4, 1.5, 1.1, 1)
+    # the foyer under the shells' backs, dark glass
+    B(m, 7.0, .7, 3.0, '#7d8a8e', (-1.0, 2.0, 2.2)); B(m, 6.4, .6, 2.6, '#7d8a8e', (-1.4, 1.95, -2.4))   # (low, under the shells)
 
 def hand_harbour(m, sp):
     # The Sydney Harbour Bridge: the road deck, the great steel through-arch (two chords with criss-crossed truss), the
@@ -484,9 +547,97 @@ def hand_harbour(m, sp):
         x = -R + i / n * 2 * R; y = arch_y(x, R * .62, -1.2)
         if y > 5: m.part('BoxGeometry', dark, (x, y - .2, 0), width=.2, height=.2, depth=w - .4)
 
+
+# ---------- festival and food props (v1.08e): not code shapes in the valley but pieces merged into the festival's patches
+# (js/festivals.ts); each stands on its own base at the origin, +z the front, at the size of the code piece it replaces
+def S(m, r, color, pos, scl=(1, 1, 1), w=8, h=6): m.part('SphereGeometry', color, pos, (0, 0, 0), scl, radius=r, widthSegments=w, heightSegments=h)
+def blossom_pot(m, flower, centre, tall):
+    C(m, .34, .26, .4, '#c62828', (0, .2, 0), seg=12); C(m, .36, .36, .06, '#e8b83a', (0, .4, 0), seg=12)   # the red pot, a gold rim
+    C(m, .3, .3, .02, '#5a3a24', (0, .41, 0), seg=10)
+    trunk = [(0, .4, 0), (.05, .75, .02), (-.04, 1.05, 0), (.03, tall, -.02)]
+    for (a, b) in zip(trunk, trunk[1:]):
+        d = Vector(b) - Vector(a); L = d.length; mid = (Vector(a) + Vector(b)) / 2
+        m.add(g_cyl(.035, .055, L, 6, smooth=False), '#6a4a3a', Matrix.Translation(mid) @ Vector((0, 1, 0)).rotation_difference(d.normalized()).to_matrix().to_4x4())
+    for k in range(5):   # branches with clusters of flowers
+        a = k * 2.4; bx, bz = math.cos(a) * .32, math.sin(a) * .32; by = tall - .25 + (k % 3) * .14
+        d = Vector((bx, by - 1.0, bz)); mid = Vector((bx / 2, (by + 1.0) / 2, bz / 2))
+        m.add(g_cyl(.018, .03, d.length, 5, smooth=False), '#6a4a3a', Matrix.Translation(mid) @ Vector((0, 1, 0)).rotation_difference(d.normalized()).to_matrix().to_4x4())
+        for j in range(4):
+            b = a + j * 1.6; r = .07 + (j % 2) * .05
+            S(m, .085, flower if (j + k) % 3 else centre, (bx + math.cos(b) * r, by + .04 + (j % 2) * .06, bz + math.sin(b) * r), w=6, h=5)
+def prop_peach(m, sp): blossom_pot(m, '#ffb3c8', '#ffffff', 1.4)        # hoa dao: pink blossom in a red pot (Tet in the north)
+def prop_mai(m, sp): blossom_pot(m, '#ffd23f', '#ffe9a0', 1.0)          # hoa mai: yellow apricot blossom (Tet in the south)
+def prop_banhchung(m, sp):
+    # banh chung: two square rice cakes wrapped in green dong leaves, tied with bamboo string, the top one a little turned
+    for k, (y, a) in enumerate(((.0, 0), (.13, .35))):
+        M0 = Matrix.Translation((0, y + .065, 0)) @ Matrix.Rotation(a, 4, 'Y')
+        m.add(g_box(.26, .12, .26), '#3f8a3a', M0)
+        m.add(g_box(.27, .02, .02), '#d8c48a', M0 @ Matrix.Translation((0, .055, 0)))
+        m.add(g_box(.02, .02, .27), '#d8c48a', M0 @ Matrix.Translation((0, .055, 0)))
+        for s in (-1, 1): m.add(g_box(.272, .11, .015), '#d8c48a', M0 @ Matrix.Translation((0, 0, s * .065)))
+def prop_mamnguqua(m, sp):
+    # mam ngu qua: the five-fruit tray of Tet on its red-lacquer stand: a hand of green bananas, a pomelo, red dragon fruit,
+    # mandarins and a bunch of grapes
+    C(m, .1, .14, .12, '#a8261e', (0, .06, 0), seg=10); C(m, .3, .26, .05, '#c62828', (0, .14, 0), seg=16); m.part('TorusGeometry', '#e8b83a', (0, .165, 0), (math.pi / 2, 0, 0), radius=.29, tube=.015)
+    for k in range(5):   # the bananas fanned behind
+        a = -.9 + k * .45
+        m.part('CapsuleGeometry', '#7fbf3a', (math.sin(a) * .12, .3 + abs(k - 2) * -.01, -.12 + math.cos(a) * .03), (.5, a, 0), radius=.035, length=.22, capSegments=2, radialSegments=6)
+    S(m, .13, '#c8e06a', (0, .3, .02), (1, .95, 1), w=10, h=8)      # the pomelo in the middle
+    S(m, .07, '#e83a6a', (.17, .24, .08), (1, 1.2, 1)); C(m, .0, .03, .06, '#7fbf3a', (.17, .33, .08), seg=4)   # dragon fruit
+    for k in range(3): S(m, .055, '#ff9a2a', (-.18 + k * .06, .22, .14 - k * .03))
+    for k in range(6): S(m, .03, '#7a3aa0', (.1 + (k % 2) * .04, .2 + (k // 2) * .03, -.02 + (k // 2) * .02), w=6, h=4)
+def prop_xmastree(m, sp):
+    # the Christmas tree: three soft tiers of fir, a wooden tub, red and gold baubles (its star and lights stay the code's
+    # glowing parts, so they light up at night)
+    C(m, .2, .16, .35, '#a8261e', (0, .17, 0), seg=10); C(m, .1, .12, .3, '#6a4a3a', (0, .45, 0), seg=6)
+    for k in range(3):
+        r, y = .9 - k * .25, .8 + k * .55
+        m.part('ConeGeometry', '#2f7a3a', (0, y, 0), radius=r, height=.95, radialSegments=10)
+        for j in range(8):   # the tier's soft scalloped edge
+            a = j / 8 * TAU + k * .3
+            S(m, .14 - k * .03, '#3a8a44', (math.cos(a) * r * .86, y - .4, math.sin(a) * r * .86), (1, .6, 1), w=6, h=4)
+        for j in range(4): a = j * 1.7 + k; S(m, .06, '#e8433a' if j % 2 else '#ffd23f', (math.cos(a) * r * .7, y - .15, math.sin(a) * r * .7), w=6, h=5)
+    for k in range(5): m.part('TorusGeometry', '#ffd23f', (0, .7 + k * .32, 0), (math.pi / 2, 0, 0), radius=.75 - k * .12, tube=.015)   # tinsel
+def prop_eggs(m, sp):
+    # Easter eggs in a little nest of straw: four painted eggs with stripes and dots
+    for k, c in enumerate(('#ff9ab8', '#7fd6d0', '#ffd23f', '#c6a8f0')):
+        x = (k - 1.5) * .35
+        C(m, .17, .15, .06, '#d8b46a', (x, .03, 0), seg=10)
+        S(m, .2, c, (x, .25, 0), (1, 1.35, 1), w=10, h=7)
+        m.part('TorusGeometry', '#ffffff', (x, .25, 0), (math.pi / 2, 0, 0), radius=.2, tube=.02)
+def prop_starlantern(m, sp):
+    # the Mid-Autumn star lantern (den ong sao): a five-pointed star of bamboo and red cellophane, a gold tassel and a candle
+    # glow inside; centred on its middle (the code's pole holds it up)
+    pts = []
+    for k in range(10):
+        a = math.pi / 2 + k * math.pi / 5; r = .36 if k % 2 == 0 else .15
+        pts.append((math.cos(a) * r, math.sin(a) * r))
+    v = [(x, y, .07) for x, y in pts] + [(x, y, -.07) for x, y in pts] + [(0, 0, .12), (0, 0, -.12)]
+    f = []
+    for k in range(10):
+        j = (k + 1) % 10
+        f.append([20, k, j]); f.append([21, 10 + j, 10 + k]); f.append([k, 10 + k, 10 + j, j])
+    m.add((v, f), '#ff4a3a')
+    for k in range(5):   # the bamboo frame along each point
+        a = math.pi / 2 + k * 2 * math.pi / 5
+        m.part('CylinderGeometry', '#d8b46a', (math.cos(a) * .18, math.sin(a) * .18, .075), (0, 0, a - math.pi / 2), radiusTop=.01, radiusBottom=.01, height=.36, radialSegments=4)
+    S(m, .07, '#ffe9a0', (0, 0, 0)); m.part('CylinderGeometry', '#ffd23f', (0, -.47, 0), radiusTop=.01, radiusBottom=.04, height=.2, radialSegments=6)
+def prop_lantern(m, sp):
+    # a round silk lantern (den long): red silk over ribs, gold caps top and bottom, a tassel; centred on its middle
+    S(m, .3, '#ff6a3a', (0, 0, 0), (1, 1.2, 1), w=12, h=8)
+    for k in range(8):
+        a = k / 8 * TAU; m.part('TorusGeometry', '#c8341e', (0, 0, 0), (0, a, 0), (1, 1.2, 1), radius=.3, tube=.01, tubularSegments=16, radialSegments=3)
+    C(m, .12, .12, .06, '#ffd23f', (0, .38, 0), seg=10); C(m, .1, .1, .05, '#ffd23f', (0, -.37, 0), seg=10)
+    m.part('CylinderGeometry', '#ffd23f', (0, -.5, 0), radiusTop=.01, radiusBottom=.035, height=.2, radialSegments=6)
+PROPS = {'pr-peach': (prop_peach, 1.9), 'pr-mai': (prop_mai, 1.4), 'pr-banhchung': (prop_banhchung, .3), 'pr-mamnguqua': (prop_mamnguqua, .6),
+         'pr-xmastree': (prop_xmastree, 2.6), 'pr-eggs': (prop_eggs, 1.4), 'pr-starlantern': (prop_starlantern, .8), 'pr-lantern': (prop_lantern, .8)}
+for n, (fn, size) in PROPS.items():
+    if n not in SPECS: SPECS[n] = {'box': {'min': [-size / 2, 0, -size / 2], 'max': [size / 2, size, size / 2]}, 'parts': [], 'prop': True}
+
 HAND = {'lm-turtle': hand_turtle, 'lm-thehuc': hand_thehuc, 'lm-vanmieu': hand_vanmieu, 'lm-onepillar': hand_onepillar,
         'lm-benthanh': hand_benthanh, 'lm-opera': hand_opera, 'br-harbour': hand_harbour}
-BUDGET = lambda name: 8000 if name.startswith(('lm-', 'br-')) else 3000
+HAND.update({n: fn for n, (fn, size) in PROPS.items()})
+BUDGET = lambda name: 8000 if name.startswith(('lm-', 'br-')) else 900 if name.startswith('pr-') else 3000
 
 # ---------- making and saving one model ----------
 def clear():
@@ -502,6 +653,22 @@ def material():
     bsdf.inputs['Roughness'].default_value = .9
     return mt
 
+def bake_ao(me, dist):
+    """(v1.08e refinement) soft shading baked into the corner colours: creases, eaves, doorways and the joins between parts
+    a little darker, as in a picture book; no texture, no extra triangles (Cycles on the processor)"""
+    sc = bpy.context.scene; sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'; sc.cycles.samples = 32
+    if not sc.world: sc.world = bpy.data.worlds.new('w')
+    sc.world.light_settings.distance = dist
+    ao = me.color_attributes.new('AO', 'FLOAT_COLOR', 'CORNER'); me.color_attributes.active_color = ao
+    bpy.ops.object.bake(type='AO', target='VERTEX_COLORS')
+    n = len(me.loops); a = [0.] * (n * 4); c = [0.] * (n * 4)
+    me.color_attributes['AO'].data.foreach_get('color', a); me.color_attributes['Col'].data.foreach_get('color', c)
+    for i in range(n):
+        f = .66 + .34 * min(1., a[i * 4] * 1.5)   # (open faces stay their own colour; only creases darken)
+        c[i * 4] *= f; c[i * 4 + 1] *= f; c[i * 4 + 2] *= f
+    me.color_attributes['Col'].data.foreach_set('color', c)
+    me.color_attributes.remove(me.color_attributes['AO']); me.color_attributes.active_color = me.color_attributes['Col']
+
 def build(name, sp):
     clear(); m = Model(); REMAKE[0] = name not in HAND
     (HAND.get(name) or (lambda m, sp: from_spec(m, sp)))(m, sp)
@@ -515,7 +682,8 @@ def build(name, sp):
     # the picture-book softness: a small bevel on the hard edges, then smooth shading kept sharp across real corners
     size = max(sp['box']['max'][i] - sp['box']['min'][i] for i in range(3))
     base = sum(len(p.vertices) - 2 for p in me.polygons)
-    seg = 2 if base * 9 < BUDGET(name) else 1 if base * 4 < BUDGET(name) else 0   # (one bevel step makes about 4 times the triangles)
+    seg = 2 if base * 9 < BUDGET(name) else 1 if base * 4 < BUDGET(name) else 0
+    if name.startswith('pr-'): seg = 0   # (props are small and merged by the hundred: no bevel)   # (one bevel step makes about 4 times the triangles)
     if seg:
         bv = ob.modifiers.new('soft', 'BEVEL'); bv.width = min(.05, max(.012, size * .004)); bv.segments = seg; bv.limit_method = 'ANGLE'; bv.angle_limit = math.radians(40); bv.use_clamp_overlap = True; bv.harden_normals = False
         bpy.ops.object.modifier_apply(modifier='soft')
@@ -524,6 +692,7 @@ def build(name, sp):
     if tris > BUDGET(name): print('  OVER BUDGET', name, tris, flush=True)   # (no thinning: it breaks small parts apart; make the model lighter)
     bpy.ops.object.shade_smooth_by_angle(angle=math.radians(35))
     me.materials.append(material())
+    bake_ao(me, min(1.2, max(.25, size * .09)))
     tris = sum(len(p.vertices) - 2 for p in me.polygons)
     path = os.path.join(OUT, name + '.raw.glb')
     bpy.ops.export_scene.gltf(filepath=path, export_format='GLB', use_selection=True, export_yup=True, export_apply=True,
