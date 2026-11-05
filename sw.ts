@@ -59,7 +59,9 @@ const FILES = [
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
   'icons/friends/clara-f.webp', 'icons/friends/clara-q.webp', 'icons/friends/clara-s.webp', 'icons/friends/clara-face.webp',
   'icons/friends/lumi-f.webp', 'icons/friends/lumi-q.webp', 'icons/friends/lumi-s.webp', 'icons/friends/lumi-face.webp',
+  'js/vehicle-models.js', // (v1.08e vehicles) the vehicles models put in place (js/vehicles.ts wear)
   'js/modelkit.js', // (v1.08e) the shared loader of the Blender models of the world (models/world/*.glb load near the child)
+  'models/world/boat-ferry.glb', 'models/world/boat-raft.glb', 'models/world/veh-baGac.glb', 'models/world/veh-bmx.glb', 'models/world/veh-bus.glb', 'models/world/veh-busAU.glb', 'models/world/veh-coach.glb', 'models/world/veh-cub.glb', 'models/world/veh-dream.glb', 'models/world/veh-dumpTruck.glb', 'models/world/veh-excavator.glb', 'models/world/veh-honda67.glb', 'models/world/veh-kidsBike.glb', 'models/world/veh-miniBike.glb', 'models/world/veh-packBike.glb', 'models/world/veh-postie.glb', 'models/world/veh-quadBike.glb', 'models/world/veh-roadBike.glb', 'models/world/veh-roadster.glb', 'models/world/veh-scooter.glb', 'models/world/veh-sedan.glb', 'models/world/veh-suv.glb', 'models/world/veh-tamTruck.glb', 'models/world/veh-taxi.glb', 'models/world/veh-touristCart.glb', 'models/world/veh-trailBike.glb', 'models/world/veh-tram.glb', 'models/world/veh-tramModern.glb', 'models/world/veh-ute.glb', 'models/world/veh-xichlo.glb',
   'js/offlinelevels.js', // (v1.08c voices) the offline levels in Grown-ups, loaded when Grown-ups opens
   'icons/icon-32.png', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'
 ];

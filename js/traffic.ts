@@ -13,7 +13,7 @@ const plainName = (s: string) => s.normalize('NFC').replace(/[\u200B-\u200D\uFEF
 // Under-5s see the toy look; when every child playing is 5 or older (and realVehicles is on) the real look is used.
 // apply() rebuilds the meshes when the look changes (G.traffic.apply(real) at the start of each session).
 import { THREE, blobShadow, P, merge, toonVC, sprite } from './gfx.js';
-import { build, seatRider } from './vehicles.js';
+import { build, seatRider, wear } from './vehicles.js';
 import { CITIES, ROADS, VILLAGE, HOME, TOWN, AUSSIE, WATER, heightAt, roadDist } from './world.js';
 import { WORLD as MAP_WORLD } from './content/map.js';
 const KEEP_LEFT = MAP_WORLD.keepLeft;
@@ -137,6 +137,7 @@ export function createTraffic(G) {
     const at = where(sl), yaw0 = sl.v ? sl.v.o.rotation.y : sl.yaw || 0;
     if (sl.v) scene.remove(sl.v.o);
     const v = sl.v = copy(sl.id);
+    wear(v);   // (v1.08e) the Blender model, once a child comes near (js/vehicles.ts)
     // (owner, 29 Oct AEDT) a vehicle can be driven away, so it is never part of the still solid map: it would leave an invisible wall
     v.o.userData.moving = true;
     if (TWO_WHEEL.has(sl.id) && !sl.rideable && v.seat && sl.mover) {
