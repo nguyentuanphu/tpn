@@ -519,7 +519,7 @@ export function fitModel(v, m) {
   root.traverse(n => { if (/^wheel\d+$/.test(n.name) || (n.name && o.userData && o.userData[n.name] && o.userData[n.name].isObject3D)) parts.push(n); });
   for (const n of parts) {
     const code = /^wheel/.test(n.name) ? v.wheels[+n.name.slice(5)] : o.userData[n.name]; if (!code) continue;
-    hideOwn(code, keep); code.add(n); n.position.set(0, 0, 0); n.quaternion.identity();
+    hideOwn(code, keep); code.add(n); n.position.set(0, 0, 0); n.quaternion.identity(); n.userData.fromModel = true;
     if (/^wheel/.test(n.name)) outline(n, .008, '#3c3236');
   }
   outline(root, .012, '#3c3236');   // (the ink line of the toy look, as on the code shapes)

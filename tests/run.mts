@@ -94,6 +94,10 @@ await check('offlinelevels', async () => (await import('./offline-levels.mts')).
 // removed after the festival on Light and kept on Full (tests/festival-pack.mts)
 await check('festivalpack', async () => (await import('./festival-pack.mts')).festivalPackCheck(b));
 
+// (v1.08e vehicles) every vehicle and boat as a Blender model, swapped in near the child: in place, wheels turning, riders
+// seated on the model's points, the code shape kept when blocked (tests/world-vehicles.mts)
+await check('worldvehicles', async () => (await import('./world-vehicles.mts')).worldVehiclesCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
