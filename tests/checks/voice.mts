@@ -102,7 +102,7 @@ await check('voiceonline', async () => {
   await P.page.waitForSelector('.screen.title .tt-voice', { timeout: 60000 });
   const note = await P.page.$eval('.screen.title .tt-voice', e => ({ shown: !e.hidden && e.getBoundingClientRect().height > 0, text: e.innerText }));
   await P.page.screenshot({ path: 'out/voiceonline-welcome-phone.png' });
-  ok(note.shown && /over the internet/.test(note.text) && /Keep all voices on this device/.test(note.text), 'the Welcome note: ' + JSON.stringify(note));
+  ok(note.shown && /over the internet/.test(note.text) && /Offline voices → Light or Full/.test(note.text), 'the Welcome note: ' + JSON.stringify(note));
   await start(P.page); await clear(P.page);
   await P.page.mouse.click(195, 420); await P.page.waitForTimeout(20000);
   const r = await P.page.evaluate(async () => {
@@ -121,11 +121,11 @@ await check('voiceonline', async () => {
   await P.page.evaluate(async () => { const V = await import('/js/voice.js'); for (const ph of V.FAMILY_PHRASES.slice(-6)) V.sayIn('en', ph.en); });
   const card = await P.page.waitForSelector('.voice-offline', { timeout: 15000 }).then(() => P.page.$eval('.voice-offline', e => ({ text: e.innerText, buttons: [...e.querySelectorAll('button')].map(x => Math.round(x.getBoundingClientRect().height)) })), () => null);
   await P.page.screenshot({ path: 'out/voiceonline-offline-phone.png' });
-  ok(card && /No internet/.test(card.text) && /Keep all voices on this device/.test(card.text) && card.buttons.every(h => h >= 44), 'the offline note: ' + JSON.stringify(card));
+  ok(card && /No internet/.test(card.text) && /Offline voices → Light or Full/.test(card.text) && card.buttons.every(h => h >= 44), 'the offline note: ' + JSON.stringify(card));
   await P.page.click('.voice-offline button:last-child'); await P.page.waitForTimeout(300);
   ok(!(await P.page.$('.voice-offline')), 'OK closes the offline note');
   const errs = P.errors.filter(e => !/Failed to fetch|ERR_INTERNET_DISCONNECTED|NetworkError|net::/.test(e)); await P.ctx.close(); ok(!errs.length, errs.join('\n'));
-  return `the Welcome says the voices play online and how to keep them; a new device downloaded ${mp3.length} recordings by itself; ${r.kept} heard kept; offline a grown-up is told "Keep all voices on this device" (buttons ${card.buttons.join('/')} px)`;
+  return `the Welcome says the voices play online and how to keep them; a new device downloaded ${mp3.length} recordings by itself; ${r.kept} heard kept; offline a grown-up is told "Offline voices → Light or Full" (v1.08c: the offline levels replaced "Keep all voices") (buttons ${card.buttons.join('/')} px)`;
 });
 
 await check('mixedhanoivoice', async () => (await import('../mixed-hanoi-voice.mts')).mixedHanoiVoiceCheck(b));

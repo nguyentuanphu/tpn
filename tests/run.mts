@@ -86,6 +86,14 @@ await check('chapter11', async () => (await import('./s2au.mts')).s2auChapterChe
 await check('s2auperth', async () => (await import('./s2au.mts')).s2auGamesCheck(b, 'perth'));
 await check('chapter12', async () => (await import('./s2au.mts')).s2auChapterCheck(b, 'ch12'));
 
+// (v1.08c voices) the three offline levels in Grown-ups: Light, Automatic and Full, their sizes, the space a smaller level
+// frees, Light moving an MP3 device to Opus, and the screen on phone, tablet and computer (tests/offline-levels.mts)
+await check('offlinelevels', async () => (await import('./offline-levels.mts')).offlineLevelsCheck(b));
+
+// (v1.08c voices) festival packs: a festival's voice lines download on Wi-Fi a few days before its decorations, are
+// removed after the festival on Light and kept on Full (tests/festival-pack.mts)
+await check('festivalpack', async () => (await import('./festival-pack.mts')).festivalPackCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

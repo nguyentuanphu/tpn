@@ -394,6 +394,7 @@ marketing/source/runvalley.log
 /js/main/talks.js
 /js/management-telemetry.js
 /js/mictest.js
+/js/modelkit.js
 /js/money.js
 /js/myhouse.js
 /js/nametags.js
@@ -401,6 +402,7 @@ marketing/source/runvalley.log
 /js/netgames.js
 /js/netmsg.js
 /js/notify.js
+/js/offlinelevels.js
 /js/openspot.js
 /js/owlguide.js
 /js/packbar.js

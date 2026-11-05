@@ -39,9 +39,9 @@ export function showTitle(onStart) {
     s.querySelector('.title-learn').innerHTML = '';
     // (owner, 31 Oct 2026 AEDT) the voices play over the internet unless a grown-up kept them all on the device; the
     // Welcome says so, and how to keep them for playing offline
-    const vn = s.querySelector('.tt-voice') as HTMLElement; vn.hidden = autoPackOn() && !!settings.packSaved;
-    vn.innerHTML = both('Voices play over the internet. To play offline with voices: Grown-ups → Sound and voices → Keep all voices on this device.',
-      'Giọng nói phát qua mạng. Để chơi offline có giọng nói: Người lớn → Âm thanh và giọng nói → Lưu tất cả giọng đọc vào máy.');
+    const vn = s.querySelector('.tt-voice') as HTMLElement; vn.hidden = (autoPackOn() && !!settings.packSaved) || settings.offlineLevel === 'light'; // (v1.08c: a grown-up chose Light)
+    vn.innerHTML = both('Voices play over the internet. To play offline with voices: Grown-ups → Sound and voices → Offline voices → Light or Full.',
+      'Giọng nói phát qua mạng. Để chơi offline có giọng nói: Người lớn → Âm thanh và giọng nói → Giọng đọc ngoại tuyến → Nhẹ hoặc Đầy đủ.');
     bindLang(s, redraw);
     const top = s.querySelector('.title-top'); top.innerHTML = '';
     const b = installButton(); if (b) top.appendChild(b);
