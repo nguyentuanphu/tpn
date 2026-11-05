@@ -9,20 +9,19 @@ import { setOf, ITEM } from './shop.js';
 
 export type FriendId = 'finn' | 'sol' | 'clara' | 'lumi';
 export type Friend = { id: FriendId, set: 'boy' | 'girl', en: string, vi: string, titleEn: string, titleVi: string,
-  helloEn: string, helloVi: string, hair: string, hairStyle: string, style: string, color: string, legs: string, shoe: string,
-  accent: string, handEn: string, handVi: string };
-const F = (id: FriendId, set: 'boy' | 'girl', titleEn, titleVi, helloEn, helloVi, hair, hairStyle, style, color, legs, shoe, accent, handEn, handVi): Friend =>
-  ({ id, set, en: id[0].toUpperCase() + id.slice(1), vi: id[0].toUpperCase() + id.slice(1), titleEn, titleVi, helloEn, helloVi, hair, hairStyle, style, color, legs, shoe, accent, handEn, handVi });
+  hair: string, hairStyle: string, style: string, color: string, legs: string, shoe: string };
+const F = (id: FriendId, set: 'boy' | 'girl', titleEn, titleVi, hair, hairStyle, style, color, legs, shoe): Friend =>
+  ({ id, set, en: id[0].toUpperCase() + id.slice(1), vi: id[0].toUpperCase() + id.slice(1), titleEn, titleVi, hair, hairStyle, style, color, legs, shoe });
 // colours read from the gallery renders (docs/artifacts/sparkle-valley-characters/img/<id>-front.jpg)
 export const FRIENDS: Record<FriendId, Friend> = {
-  finn: F('finn', 'boy', 'Sky Explorer', 'Nhà thám hiểm bầu trời', "Hi, I'm Finn! Let's explore the sky!", 'Chào bạn, mình là Finn! Cùng khám phá bầu trời nhé!',
-    '#3d4b7e', 'spiky', 'tunic', '#2f8f86', '#f3e6c8', '#8a5a3a', '#e0b04a', 'Compass', 'La bàn'),
-  sol: F('sol', 'boy', 'Sun Keeper', 'Người giữ mặt trời', "Hi, I'm Sol! The sun is shining for us!", 'Chào bạn, mình là Sol! Mặt trời đang chiếu sáng cho chúng mình!',
-    '#e0762a', 'spiky', 'shirt', '#f6c13a', '#6b4226', '#9a6a3a', '#fff3d6', 'Sun crystal', 'Pha lê mặt trời'),
-  clara: F('clara', 'girl', 'Bloom Keeper', 'Người giữ hoa', "Hi, I'm Clara! Let's make the flowers bloom!", 'Chào bạn, mình là Clara! Cùng làm hoa nở nhé!',
-    '#f08a7a', 'long', 'dress', '#b89ae0', '#9ab07a', '#8a5a3a', '#fff0f4', 'Flower staff', 'Gậy hoa'),
-  lumi: F('lumi', 'girl', 'Leaf Sprite', 'Tiên lá', "Hi, I'm Lumi! Come and play in the leaves!", 'Chào bạn, mình là Lumi! Đến chơi trong vườn lá nhé!',
-    '#7aa65a', 'short', 'overalls', '#9ab86a', '#9ab86a', '#c0603a', '#ffd23f', 'Star lantern', 'Đèn sao')
+  finn: F('finn', 'boy', 'Sky Explorer', 'Nhà thám hiểm bầu trời',
+    '#3d4b7e', 'spiky', 'tunic', '#2f8f86', '#f3e6c8', '#8a5a3a'),
+  sol: F('sol', 'boy', 'Sun Keeper', 'Người giữ mặt trời',
+    '#e0762a', 'spiky', 'shirt', '#f6c13a', '#6b4226', '#9a6a3a'),
+  clara: F('clara', 'girl', 'Bloom Keeper', 'Người giữ hoa',
+    '#f08a7a', 'long', 'dress', '#b89ae0', '#9ab07a', '#8a5a3a'),
+  lumi: F('lumi', 'girl', 'Leaf Sprite', 'Tiên lá',
+    '#7aa65a', 'short', 'overalls', '#9ab86a', '#9ab86a', '#c0603a')
 };
 export const FRIEND_IDS = Object.keys(FRIENDS) as FriendId[];
 export const friendsOf = (set: string): FriendId[] => FRIEND_IDS.filter(id => FRIENDS[id].set === (set === 'girl' ? 'girl' : 'boy'));

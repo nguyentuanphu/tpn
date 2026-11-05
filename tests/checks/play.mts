@@ -1020,7 +1020,7 @@ await check('friendswap', async () => {
   // drawn again with that friend's hair and clothes, and changing set is not offered there (Grown-ups › Children › Edit only)
   const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
-    const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, p = G.heroes[0].profile, U = await import('/js/ui/friends-ui.js'), F = await import('/js/content/friends.js');
+    const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, p = G.heroes[0].profile, U = await import('/js/ui/friends-row.js'), F = await import('/js/content/friends.js');
     G.openPad(0, 'bag'); for (let k = 0; k < 20 && !document.querySelector('.pad [data-befriend]'); k++) await w(200);
     const row = [...document.querySelectorAll('.pad [data-befriend]')].map((e: HTMLElement) => e.dataset.befriend), set = p.look.set, other = F.friendsOf(set).find(id => id !== F.friendOf(p.look));
     const heading = [...document.querySelectorAll('.pad h3')].some(h => /Character & Outfits/.test(h.textContent));

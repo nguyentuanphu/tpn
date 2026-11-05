@@ -7,26 +7,10 @@ import { say } from '../voice.js';
 import { SFX } from '../audio.js';
 import { esc } from '../util.js';
 import { modal } from '../popups.js';
-import { FRIENDS, friendsOf, friendOf, defaultFriend, suitId, suitInfo, friendLook, type FriendId } from '../content/friends.js';
-import { pic } from '../art.js';
+import { friendsOf, friendOf, defaultFriend, type FriendId } from '../content/friends.js';
+import { friendPic, friendCard, sayHello, setFriend } from './friends-row.js';
 import { setOf } from '../content/shop.js';
 
-export const friendPic = (id: string, view = 'f') => `icons/friends/${FRIENDS[id] ? id : 'finn'}-${view}.webp`;
-// each friend's spoken hello, written out so the voice pack finds the lines (tools/voice-lines.mts)
-export function sayHello(id: string) {
-  if (id === 'finn') say("Hi, I'm Finn! Let's explore the sky!", 'Chào bạn, mình là Finn! Cùng khám phá bầu trời nhé!');
-  else if (id === 'sol') say("Hi, I'm Sol! The sun is shining for us!", 'Chào bạn, mình là Sol! Mặt trời đang chiếu sáng cho chúng mình!');
-  else if (id === 'clara') say("Hi, I'm Clara! Let's make the flowers bloom!", 'Chào bạn, mình là Clara! Cùng làm hoa nở nhé!');
-  else if (id === 'lumi') say("Hi, I'm Lumi! Come and play in the leaves!", 'Chào bạn, mình là Lumi! Đến chơi trong vườn lá nhé!');
-}
-// a friend card: the friend turning slowly (front, three-quarter, side), the name and the title
-export function friendCard(id: string, on: boolean, skin?: string) {
-  const f = FRIENDS[id];
-  return `<button class="fr-card${on ? ' on' : ''}" data-friend="${id}" aria-pressed="${on}" style="--fr:${f.color}">
-    <span class="fr-turn">${['f', 'q', 's'].map(v => `<img src="${friendPic(id, v)}" alt="" draggable="false">`).join('')}</span>
-    ${skin ? `<i class="fr-tone" style="background:${skin}"></i>` : ''}
-    <b>${esc(T(f.en, f.vi))}</b><small>${esc(T(f.titleEn, f.titleVi))}</small></button>`;
-}
 const skinRow = (skin: string) => `<div class="fr-skins" role="group" aria-label="${T('Skin tone', 'Màu da')}">${SKIN.map((s, i) => `<button class="fr-skin${s === skin ? ' on' : ''}" data-skin="${s}" style="background:${s}" aria-label="${T('Skin tone', 'Màu da')} ${i + 1}" aria-pressed="${s === skin}"></button>`).join('')}</div>`;
 
 /** The Welcome steps for a new player: name → boy or girl → friend and skin tone. done(null) when cancelled. */
@@ -98,23 +82,3 @@ export function newFriendsCards(list, done: () => void) {
   const next = () => { const p = due.shift(); if (!p) return done(); newFriendsCard(p, next); };
   next();
 }
-// change friend (free, as often as the child likes; the other set only in Grown-ups). The worn outfit follows the friend
-// when it was the old friend's own kind (an everyday stays an everyday).
-export function setFriend(p, id: FriendId) {
-  const L = p.look; if (!FRIENDS[id] || FRIENDS[id].set !== setOf(L)) return false;
-  const old = L.friend; L.friend = id;
-  if (typeof L.suit === 'string' && old && L.suit.startsWith(old + '-')) L.suit = suitId(id, L.suit.slice(old.length + 1));
-  if (!L.suit) L.suit = suitId(id, 'everyday');
-  return true;
-}
-/** the Backpack's friend row (html) */
-export const friendRowHTML = p => `<div class="slots fr-row">${friendsOf(setOf(p.look)).map(id => `<button class="slot fr-slot${friendOf(p.look) === id ? ' on' : ''}" data-befriend="${id}" title="${esc(T(FRIENDS[id].en, FRIENDS[id].vi))}"><img src="${friendPic(id, 'face')}" alt=""><small>${esc(T(FRIENDS[id].en, FRIENDS[id].vi))}</small></button>`).join('')}</div>`;
-// the outfits a child can wear now: their friend's everyday one, the ones bought for this friend, and the old clothes
-// turned into outfits (any friend)
-export const suitsOwned = p => { const f = friendOf(p.look), mine = (p.owned && p.owned.suits || []).filter(id => id.startsWith('c:') || id.startsWith(f + '-'));
-  return [suitId(f, 'everyday'), ...mine.filter(id => id !== suitId(f, 'everyday'))].filter(id => suitInfo(id)); };
-export function wearSuit(p, id: string) { if (!suitsOwned(p).includes(id)) return false; p.look.suit = id; return true; }
-/** the Backpack's outfit row (html): a coloured outfit picture for each one owned */
-export const suitRowHTML = p => {
-  return `<div class="slots fr-suits">${suitsOwned(p).map(id => { const s = suitInfo(id), c = friendLook({ ...p.look, suit: id }).color, on = p.look.suit === id || (!suitInfo(p.look.suit) && id === suitsOwned(p)[0]);
-    return `<button class="slot${on ? ' on' : ''}" data-suit="${esc(id)}" title="${esc(T(s.en, s.vi))}"><span class="fr-suit" style="--c:${c}">${pic('👕')}</span><small>${esc(T(s.en, s.vi))}</small></button>`; }).join('')}</div>`; };

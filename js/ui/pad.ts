@@ -18,7 +18,8 @@ import { WILD } from '../gather.js';
 import { snackOf, eatSnack } from '../snacks.js';
 import { saveToDevice, savesByShare } from '../photos.js';
 import { pic } from '../art.js';
-import { friendRowHTML, suitRowHTML, setFriend, wearSuit, sayHello } from './friends-ui.js'; // (v1.08b friends)
+// (v1.08b friends) the friend and outfit rows load with the first Backpack (not in the first download, check startup)
+let FR: typeof import('./friends-row.js') = null;
 import { COMPANIONS } from '../content/companions.js';
 import { modal } from '../popups.js';
 import { PET_ICON, PAL_HAT_ICON, PALS_NAME, PALS_TAB, toast, foldHeadings, jumpNav } from './common.js';
@@ -265,6 +266,7 @@ export const openPad = Object.assign(function (game, i, tab) {
       else { SFX.tap(); say('All hats! Your companion has every hat. Tap a hat to choose who wears it.', 'Đủ mũ rồi! Bạn đồng hành có tất cả các mũ. Chạm vào mũ để chọn bạn nào đội.'); } });
   }
   function drawBag(body) {
+    if (!FR) import('./friends-row.js').then(m => { FR = m; if (body.isConnected && body.querySelector('.bag-top')) drawBag(body); });
     // (Round V) what an ingredient is for: the dishes it goes into at a cooking pot
     const ingInfo = id => { const it = ITEMS[id], uses = RECIPES.filter(r => r.need.includes(id)), names = uses.map(r => r.name());
       const en = `${it.name()}: an ingredient. ${uses.length ? 'Cook it at a cooking pot to make ' + names.join(', ') + '.' : 'Cook it at a cooking pot.'}`, vi = `${it.name()}: nguyên liệu. ${uses.length ? 'Nấu ở nồi để làm ' + names.join(', ') + '.' : 'Nấu ở nồi nhé.'}`;
@@ -287,7 +289,7 @@ export const openPad = Object.assign(function (game, i, tab) {
         const itemSVG = it => game.shop && game.shop.itemSVG ? game.shop.itemSVG(it) : pic(SLOT_ICON[it.slot] || '👕'), mine = CLOTHES.filter(it => owns(p, it.id) && it.for === (setOfLook(p.look) === 'girl' ? 'g' : 'b')), off = mine.filter(it => p.look[it.slot] !== it.id), on = mine.filter(it => p.look[it.slot] === it.id);
         const hats = HATS.concat(REWARD_HATS.filter(h => p.owned.hats.includes(h))).filter(h => h !== 'none' && !ITEM[h]);
         return `<h3>${pic('👕')} ${T('Character & Outfits', 'Nhân vật & Trang phục')} <small>${T('tap to wear', 'chạm để mặc')}</small></h3>
-      ${friendRowHTML(p)}${suitRowHTML(p)}
+      ${FR ? FR.friendRowHTML(p) + FR.suitRowHTML(p) : ''}
       <div class="slots">${off.map(it => `<button class="slot" data-wear="${it.id}" title="${esc(T(it.en, it.vi))}">${itemSVG(it)}<small>${esc(T(it.en, it.vi))}</small></button>`).join('')}${hats.filter(h => p.look.hat !== h).map(h => `<button class="slot" data-hat="${h}"><span>${HAT_ICON[h]}</span><small>${esc(HAT_NAME[h]())}</small></button>`).join('')}${!off.length && !hats.filter(h => p.look.hat !== h).length ? `<p class="note">${T('Everything you have is on! Find more at the clothes shop.', 'Con đang mặc hết đồ rồi! Ghé cửa hàng quần áo để mua thêm nhé.')}</p>` : ''}</div>
       ${on.length || (p.look.hat && p.look.hat !== 'none' && !ITEM[p.look.hat]) ? `<h3>${T('Wearing now', 'Đang mặc')} <small>${T('tap to take off', 'chạm để cởi ra')}</small></h3>
       <div class="slots">${on.map(it => `<button class="slot on" data-unwear="${it.slot}" title="${esc(T(it.en, it.vi))}">${itemSVG(it)}<small>${esc(T(it.en, it.vi))}</small></button>`).join('')}${p.look.hat && p.look.hat !== 'none' && !ITEM[p.look.hat] && HAT_ICON[p.look.hat] ? `<button class="slot on" data-hat="none"><span>${HAT_ICON[p.look.hat]}</span><small>${esc(HAT_NAME[p.look.hat] ? HAT_NAME[p.look.hat]() : '')}</small></button>` : ''}</div>` : ''}`; })()}
@@ -319,8 +321,8 @@ export const openPad = Object.assign(function (game, i, tab) {
     });
     body.querySelectorAll('[data-hat]').forEach(b => b.onclick = () => { p.look.hat = b.dataset.hat; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
     // (v1.08b friends) change friend (free, same set) and outfit
-    body.querySelectorAll('[data-befriend]').forEach(b => b.onclick = () => { if (setFriend(p, b.dataset.befriend as any)) { saveProfiles(); game.rebuildHero(i); SFX.pop(1); sayHello(b.dataset.befriend); draw(); } });
-    body.querySelectorAll('[data-suit]').forEach(b => b.onclick = () => { if (wearSuit(p, b.dataset.suit)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
+    body.querySelectorAll('[data-befriend]').forEach(b => b.onclick = () => { if (FR.setFriend(p, b.dataset.befriend as any)) { saveProfiles(); game.rebuildHero(i); SFX.pop(1); FR.sayHello(b.dataset.befriend); draw(); } });
+    body.querySelectorAll('[data-suit]').forEach(b => b.onclick = () => { if (FR.wearSuit(p, b.dataset.suit)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-wear]').forEach(b => b.onclick = () => { const it = ITEM[b.dataset.wear]; if (it && wearItem(p, it.slot, it.id)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-unwear]').forEach(b => b.onclick = () => { if (wearItem(p, b.dataset.unwear, 'none')) { saveProfiles(); game.rebuildHero(i); SFX.tap(); draw(); } });
     // (r79) a gift box says what is inside and who it is for, and offers the players on this device it fits
