@@ -29,7 +29,7 @@ class Model:
     def __init__(self, name, seed=1):
         self.name = name; self.bm = bmesh.new(); self.col = self.bm.loops.layers.float_color.new('Col'); self.rnd = random.Random(seed)
 
-    def _add(self, make, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), jitter=0.0, shade=.06, top=.14, warp=None, lumps=1.6):
+    def _add(self, make, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), jitter=0.0, shade=.06, top=.14, warp=None, lumps=1.6, ao=None):
         tmp = bmesh.new(); make(tmp)
         if warp:
             for v in tmp.verts: v.co = Vector(warp(v.co))
@@ -51,6 +51,10 @@ class Model:
             for l in f.loops:
                 ny = l.vert.normal.y
                 k = tone * (1 + max(0, ny) * top - max(0, -ny) * top * 1.2)
+                if ao:  # inside a canopy: darker towards its heart, so the puffs read as a full crown with depth
+                    (cx, cy, cz), (rx, ry, rz), st = ao; v = l.vert.co
+                    d = math.sqrt(((v.x - cx) / rx) ** 2 + ((v.y - cy) / ry) ** 2 + ((v.z - cz) / rz) ** 2)
+                    k *= max(1 - st, min(1.06, 1 - st + st * d))
                 l[self.col] = [min(1, x * k) for x in base] + [1]
         return self
 
@@ -66,11 +70,29 @@ class Model:
         return self._add(lambda b: bmesh.ops.create_icosphere(b, subdivisions=sub + 1, radius=r), color, pos, rot, scl, jitter=jitter, **k)
     def uv(self, r, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), seg=12, ring=8, **k):
         return self._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=seg, v_segments=ring, radius=r), color, pos, rot, scl, **k)
-    def box(self, w, h, d, color, pos=(0, 0, 0), rot=(0, 0, 0), bevel=0.0, **k):
+    def box(self, w, h, d, color, pos=(0, 0, 0), rot=(0, 0, 0), bevel=0.0, seg=2, **k):
+        """a box; bevel (metres) rounds its edges like a wooden toy"""
         def mk(b):
             bmesh.ops.create_cube(b, size=1)
-            if bevel: bmesh.ops.bevel(b, geom=list(b.edges), offset=bevel / max(.05, min(w, h, d)), segments=1, affect='EDGES')
-        return self._add(mk, color, pos, rot, (w, h, d), **k)
+            bmesh.ops.scale(b, vec=(w, h, d), verts=b.verts)
+            if bevel: bmesh.ops.bevel(b, geom=list(b.edges), offset=min(bevel, min(w, h, d) * .45), segments=seg, affect='EDGES', profile=.5)
+        return self._add(mk, color, pos, rot, (1, 1, 1), **k)
+    def lathe(self, prof, color, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1), seg=20, ribs=0, rib=0.0, **k):
+        """a turned shape: the profile [(radius, height), ...] from the bottom up, spun round (ribs: a pumpkin's grooves)"""
+        def mk(b):
+            rings = []
+            for (rr, yy) in prof:
+                ring = []
+                for s_ in range(seg):
+                    a = 2 * math.pi * s_ / seg; R = rr * (1 - rib * (1 - abs(math.cos(a * ribs / 2))) if ribs else 1)
+                    ring.append(b.verts.new((math.cos(a) * R, yy, math.sin(a) * R)))
+                rings.append(ring)
+            for i in range(len(rings) - 1):
+                for s_ in range(seg): b.faces.new((rings[i][s_], rings[i + 1][s_], rings[i + 1][(s_ + 1) % seg], rings[i][(s_ + 1) % seg]))
+            if prof[0][0] > 1e-4: b.faces.new(list(reversed(rings[0])))
+            if prof[-1][0] > 1e-4: b.faces.new(rings[-1])
+            bmesh.ops.remove_doubles(b, verts=b.verts, dist=1e-6); bmesh.ops.recalc_face_normals(b, faces=b.faces)
+        return self._add(mk, color, pos, rot, scl, **k)
     def trunk(self, pts, r0, r1, color, seg=9, flare=1.6, **k):
         """a tapering trunk or branch along points, with a root flare at its foot"""
         n = len(pts); rad = [r0 + (r1 - r0) * (i / (n - 1)) for i in range(n)]
@@ -117,7 +139,8 @@ class Model:
     def puffs(self, centre, radii, n, size, cols, sub=1, skip=-.35, core=True, jitter=.22, seed=0, seg=14):
         """a picture-book canopy: a soft core and puffs spread over it like a cloud (fewer underneath)"""
         cx, cy, cz = centre; rx, ry, rz = radii
-        if core: self._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=16, v_segments=10, radius=1), cols[0], centre, (0, 0, 0), (rx * .92, ry * .92, rz * .92), jitter=.08, shade=.03)
+        ao = (centre, (rx * 1.15, ry * 1.15, rz * 1.15), .42)
+        if core: self._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=16, v_segments=10, radius=1), cols[0], centre, (0, 0, 0), (rx * .92, ry * .92, rz * .92), jitter=.08, shade=.03, ao=ao)
         ga = math.pi * (3 - math.sqrt(5))
         for i in range(n):
             yy = 1 - 2 * (i + .5) / n
@@ -125,7 +148,7 @@ class Model:
             rr = math.sqrt(1 - yy * yy); a = i * ga + seed
             s = size * (.8 + .4 * ((i * 7 + seed * 3) % 5) / 4)
             self._add(lambda b, s=s: bmesh.ops.create_uvsphere(b, u_segments=seg, v_segments=max(5, seg * 4 // 7), radius=s), cols[(i + 1) % len(cols)],
-                      (cx + math.cos(a) * rr * rx, cy + yy * ry, cz + math.sin(a) * rr * rz), (self.rnd.random(), self.rnd.random() * 6, 0), jitter=jitter * s * .22, top=.18)
+                      (cx + math.cos(a) * rr * rx, cy + yy * ry, cz + math.sin(a) * rr * rz), (self.rnd.random(), self.rnd.random() * 6, 0), jitter=jitter * s * .22, top=.18, ao=ao)
         return self
 
     def tris(self):
@@ -323,20 +346,25 @@ def tree_peach():
 def reeds():
     m = Model('reeds', 26)
     for i, (x, z, h, c) in enumerate([(0, 0, 1.25, '#6f9a4a'), (.18, .08, 1.05, '#7fae52'), (-.15, .1, .95, '#5f8c40'), (.06, -.17, 1.15, '#88b45c'), (-.1, -.12, .85, '#6f9a4a'), (.22, -.1, .7, '#7fae52')]):
-        m.cone(.05, h, c, (x, h / 2, z), ((z * .6), 0, -(x * .6)), seg=4)
-    m.cyl(.05, .05, .22, '#7a4e2c', (.02, 1.08, .02), seg=6); m.cyl(.045, .045, .2, '#6e4426', (-.12, .92, .1), seg=6)
+        m.leaf(h, .08, c, (x, 0, z), i * 1.1, droop=1.35, bend=.12, n=4, fold=.3)  # a tall curved blade
+    for (x, z, h) in [(.02, .02, 1.2), (-.12, .1, 1.02)]:
+        m.trunk([(x, 0, z), (x + .01, h * .5, z), (x, h - .12, z)], .014, .012, '#7a8a4a', seg=5, flare=1)
+        m.lathe([(0, 0), (.04, .02), (.05, .06), (.05, .16), (.04, .2), (0, .22)], '#7a4e2c', (x, h - .14, z), seg=10, top=.15)  # the cattail
+        m.trunk([(x, h + .08, z), (x, h + .16, z)], .006, .003, '#7a8a4a', seg=3, flare=1)
     return m
 @model
 def hyacinth():
     m = Model('hyacinth', 27)
-    m.cyl(.42, .42, .03, '#4f9a52', (0, 0, 0), seg=16); m.cyl(.3, .3, .03, '#5fae5c', (.45, 0, .2), seg=14); m.cyl(.22, .22, .03, '#56a456', (-.3, 0, .35), seg=12)
+    for (x, z, r, c) in [(0, 0, .42, '#4f9a52'), (.45, .2, .3, '#5fae5c'), (-.3, .35, .22, '#56a456')]:
+        m.lathe([(0, 0), (r * .9, -.005), (r, .01), (r * .95, .025), (0, .03)], c, (x, 0, z), seg=20, top=.12)  # a glossy pad
     for k in range(4): m.leaf(.22, .14, '#5fae5c', (0, .02, 0), k * 1.6, droop=1.0, bend=.4, n=4)
-    for k in range(5): m.uv(.08, '#b07ad8' if k % 2 else '#c99ae8', (.05 + math.cos(k) * .07, .12 + k * .03, math.sin(k) * .07), seg=6, ring=4)
+    m.trunk([(0, 0, 0), (.02, .1, 0), (.04, .2, 0)], .015, .012, '#5f9e3a', seg=5, flare=1)
+    for k in range(7): a = k * 2.4; m.petals(5, .035, '#b07ad8' if k % 2 else '#c99ae8', (.04 + math.cos(a) * .05, .14 + k * .022, math.sin(a) * .05), size=.035, tilt=.4, sub=0)
     return m
 
 # ---------- the farm (js/farm.ts): crops in three stages and the small props ----------
 SOIL = '#5a3a22'
-def mound(m, r=.2): m.ball(r, SOIL, (0, 0, 0), (0, 0, 0), (1, .32, 1), sub=1, jitter=.02, top=.05)
+def mound(m, r=.2): m.lathe([(0, -.02), (r, -.02), (r * .85, .015), (r * .5, .045), (0, .055)], SOIL, (0, 0, 0), seg=18, top=.08, jitter=.006)  # a soft little heap of soil
 def sprout(m, n, h, c='#4fae4a', w=.45, droop=1.0):
     for k in range(n): a = k * 2 * math.pi / n + .3; m.leaf(h, h * w, c, (math.cos(a) * .04, .03, math.sin(a) * .04), a, droop=droop, bend=.4, n=5)
 def stem(m, h, c='#4f9e45', r=.02, lean=.0): m.trunk([(0, 0, 0), (lean * .5, h * .5, 0), (lean, h, 0)], r, r * .7, c, seg=5, flare=1)
@@ -389,36 +417,9 @@ def tomato_1():  # two seed leaves and a first jagged leaf
     m.leaf(.12, .08, '#45a046', (0, .15, 0), 0, droop=.9, bend=.3, n=4)
     return m
 @model
-def tomato_2():
-    m = Model('tomato-2', 38); m.cyl(.015, .015, .9, '#c9a05a', (.15, .45, 0), seg=4); m.cyl(.03, .035, .7, '#3f8f3a', (0, .35, 0), seg=5)
-    for k in range(6): m.leaf(.25, .14, '#4fae4a', (0, .2 + k * .09, 0), k * 2.3, droop=.3, bend=.2)
-    for k in range(2): m.petals(5, .04, '#ffd23f', (math.cos(k * 3) * .12, .62, math.sin(k * 3) * .12), size=.035, tilt=.2, shade=.02)
-    return m
-@model
-def tomato_3():
-    m = Model('tomato-3', 39); m.cyl(.015, .015, 1.1, '#c9a05a', (.18, .55, 0), seg=4); m.cyl(.035, .04, .95, '#3f8f3a', (0, .47, 0), seg=5)
-    for k in range(8): m.leaf(.3, .16, '#4fae4a', (0, .2 + k * .1, 0), k * 2.3, droop=.3, bend=.2)
-    for k, (x, y, z) in enumerate([(.16, .55, .12), (-.14, .7, .1), (.05, .85, -.16), (-.12, .45, -.12), (.14, .9, .08)]):
-        m.uv(.11, '#e8433a', (x, y, z), seg=9, ring=6); m.cone(.06, .04, '#3f8f3a', (x, y + .11, z), seg=5)
-    return m
-@model
 def corn_1():  # grass-like blades
     m = Model('corn-1', 40); mound(m)
     for k in range(3): m.leaf(.32, .06, '#6fbf4f', (0, .03, 0), k * 2.2, droop=1.25, bend=.5, n=5)
-    return m
-@model
-def corn_2():
-    m = Model('corn-2', 41); m.cyl(.04, .055, .8, '#6fae4a', (0, .4, 0), seg=6)
-    for k in range(6): m.leaf(.5, .12, '#5fae4a' if k % 2 else '#4f9e45', (0, .15 + k * .1, 0), k * 2.6, droop=.1, bend=.6)
-    return m
-@model
-def corn_3():
-    m = Model('corn-3', 42)
-    for j, (x, z) in enumerate([(0, 0), (.32, .18), (-.28, .2)]):
-        h = 1.2 - j * .1; m.cyl(.04, .06, h, '#6fae4a', (x, h / 2, z), seg=6)
-        for k in range(6): m.leaf(.55, .13, '#5fae4a' if k % 2 else '#4f9e45', (x, .15 + k * .14, z), k * 2.6 + j, droop=.1, bend=.6)
-        m.uv(.08, '#ffd23f', (x + .09, h * .6, z), (0, 0, -.3), (1, 2.3, 1), seg=8, ring=6); m.leaf(.22, .12, '#9ac85a', (x + .05, h * .45, z), 0, droop=-1.1, bend=.1)
-        m.cone(.04, .25, '#d9b07a', (x, h + .1, z), seg=4)
     return m
 @model
 def sunflower_1():  # two round seed leaves on a short stem
@@ -426,129 +427,209 @@ def sunflower_1():  # two round seed leaves on a short stem
     for s_ in (-1, 1): round_leaf(m, .08, '#5fb04a', (s_ * .08, .23, 0), 0, tilt=s_ * -.3)
     return m
 @model
-def sunflower_2():
-    m = Model('sunflower-2', 44); m.cyl(.035, .05, .7, '#5f9e3a', (0, .35, 0), seg=6)
-    for k in range(4): m.leaf(.3, .2, '#4fae4a', (0, .2 + k * .12, 0), k * 1.7, droop=.2, bend=.3)
-    m.ball(.1, '#6fae4a', (0, .74, 0), sub=1); return m
-@model
-def sunflower_3():
-    m = Model('sunflower-3', 45); m.cyl(.04, .06, 1.1, '#5f9e3a', (0, .55, 0), seg=6)
-    for k in range(5): m.leaf(.34, .22, '#4fae4a', (0, .2 + k * .14, 0), k * 1.7, droop=.2, bend=.3)
-    # the head looks to the front (+z), a little up
-    head = (0, 1.15, .05); m.cyl(.16, .16, .07, '#7a4a22', head, (math.pi / 2 - .3, 0, 0), seg=12)
-    for k in range(12):
-        a = k * math.pi / 6; m.ball(.09, '#ffc21a' if k % 2 else '#ffd23f', (math.cos(a) * .24, 1.15 + math.sin(a) * .24 * .95, .05 + math.sin(a) * .07), (0, 0, a), (1.5, .6, .35), sub=1, shade=.03)
-    return m
-@model
 def pumpkin_1():  # two seed leaves and one broad round leaf
     m = Model('pumpkin-1', 46); mound(m); stem(m, .14, '#5f9e3a', .022)
     for s_ in (-1, 1): round_leaf(m, .07, '#5fb04a', (s_ * .07, .15, 0), 0, tilt=s_ * -.3)
     round_leaf(m, .11, '#4fae4a', (0, .19, .07), 1.57, tilt=-.4)
     return m
+def tomato_plant(m, h, leaves, fruit):
+    m.trunk([(.2, 0, -.05), (.2, h * .5, -.05), (.2, h + .1, -.05)], .018, .014, '#c9a05a', seg=5, flare=1)  # the cane
+    m.box(.06, .04, .1, '#d9c9a0', (.17, h * .62, -.03), top=0)  # its tie
+    m.trunk([(0, 0, 0), (.04, h * .35, .02), (.1, h * .7, -.02), (.12, h, 0)], .035, .02, '#3f8f3a', seg=6, flare=1.2)
+    for k in range(leaves):  # leaflets in threes along the stem
+        t = .15 + .8 * k / leaves; a = k * 2.4; base = (.1 * t, h * t, 0)
+        for j in (-1, 0, 1): m.leaf(.2 if j == 0 else .15, .1, '#4fae4a' if k % 2 else '#45a046', base, a + j * .55, droop=.35, bend=.3, n=4)
+    for k, (x, y, z, r) in enumerate(fruit):
+        m.uv(r, '#e8433a' if r > .07 else '#f0a43a', (x, y, z), scl=(1, .88, 1), seg=12, ring=8, top=.25)
+        for s_ in range(5): m.leaf(.06, .03, '#3f8f3a', (x, y + r * .85, z), s_ * 1.26, droop=-.3, bend=.2, n=2)
+
+@model
+def tomato_2():
+    m = Model('tomato-2', 38); tomato_plant(m, .75, 6, [])
+    for k in range(3): x, z = math.cos(k * 2.1) * .14, math.sin(k * 2.1) * .14; m.petals(5, .035, '#ffd23f', (x, .6 + k * .04, z), size=.032, tilt=.3, sub=0); m.uv(.015, '#e8a01a', (x, .61 + k * .04, z), seg=5, ring=3)
+    return m
+@model
+def tomato_3():
+    m = Model('tomato-3', 39)
+    tomato_plant(m, 1.0, 8, [(.16, .55, .12, .1), (-.14, .7, .1, .095), (.05, .85, -.16, .09), (-.12, .45, -.12, .1), (.14, .9, .08, .085), (.0, .62, .17, .06)])
+    return m
+def corn_stalk(m, x, z, h, j, cob=True):
+    m.trunk([(x, 0, z), (x + .01, h * .5, z), (x, h, z)], .055, .03, '#6fae4a', seg=7, flare=1.3)
+    for k in range(7): m.leaf(.55 - k * .03, .12, '#5fae4a' if k % 2 else '#4f9e45', (x, .12 + k * h * .12, z), k * 2.6 + j, droop=.5, bend=.9, n=6, fold=.35)
+    if cob:
+        m.lathe([(0, 0), (.06, .04), (.075, .12), (.07, .22), (.045, .3), (0, .33)], '#ffd23f', (x + .07, h * .5, z), (0, 0, -.35), seg=10)
+        for s_ in (-1, 1): m.leaf(.3, .11, '#9ac85a', (x + .05, h * .48, z), s_ * .5, droop=1.2, bend=-.1, n=4, fold=.4)  # its husk
+        m.leaf(.12, .03, '#c98a4a', (x + .12, h * .5 + .3, z), 0, droop=.6, bend=.4, n=3)  # the silk
+    m.trunk([(x, h, z), (x, h + .22, z)], .02, .005, '#d9b07a', seg=4, flare=1)  # the tassel
+    for k in range(4): m.leaf(.14, .02, '#d9b07a', (x, h + .12, z), k * 1.57, droop=-.5, bend=.3, n=2)
+@model
+def corn_2():
+    m = Model('corn-2', 41); corn_stalk(m, 0, 0, .8, 0, cob=False); return m
+@model
+def corn_3():
+    m = Model('corn-3', 42)
+    for j, (x, z) in enumerate([(0, 0), (.32, .18), (-.28, .2)]): corn_stalk(m, x, z, 1.15 - j * .1, j)
+    return m
+@model
+def sunflower_2():
+    m = Model('sunflower-2', 44); m.trunk([(0, 0, 0), (.02, .35, 0), (0, .7, 0)], .045, .03, '#5f9e3a', seg=7, flare=1.2)
+    for k in range(4): m.leaf(.32, .22, '#4fae4a', (0, .2 + k * .12, 0), k * 1.7, droop=.35, bend=.35, n=5)
+    m.lathe([(.0, 0), (.08, .03), (.1, .1), (.06, .16), (0, .18)], '#6fae4a', (0, .68, 0), seg=10)  # the closed bud
+    for k in range(6): m.leaf(.1, .05, '#5f9e3a', (0, .76, 0), k * 1.05, droop=1.0, bend=.2, n=2)
+    return m
+@model
+def sunflower_3():
+    m = Model('sunflower-3', 45); m.trunk([(0, 0, 0), (.02, .6, 0), (0, 1.1, .04)], .055, .035, '#5f9e3a', seg=7, flare=1.2)
+    for k in range(5): m.leaf(.36, .24, '#4fae4a', (0, .2 + k * .14, 0), k * 1.7, droop=.35, bend=.35, n=5)
+    # the head looks to the front (+z), a little up: a dark seed dome in rings, two layers of petals
+    tilt = (math.pi / 2 - .3, 0, 0)
+    m.lathe([(0, -.05), (.17, -.04), (.18, 0), (.15, .03), (0, .05)], '#5a3418', (0, 1.15, .06), tilt, seg=18, top=.0)
+    m.lathe([(.12, .03), (.125, .035), (.1, .04)], '#7a4a22', (0, 1.15, .06), tilt, seg=18, top=.0)
+    for layer, (n, r, c) in enumerate([(14, .25, '#ffc21a'), (14, .22, '#ffd23f')]):
+        for k in range(n):
+            a = (k + layer * .5) * 2 * math.pi / n; ca, sa = math.cos(a), math.sin(a)
+            m.ball(.09, c, (ca * r, 1.15 + sa * r * .95, .06 + sa * .07 - layer * .02), (.3 - layer * .1, 0, a), (1.5, .55, .22), sub=1, top=.05)
+    return m
 @model
 def pumpkin_2():
     m = Model('pumpkin-2', 47)
-    for k in range(5): m.leaf(.4, .3, '#4fae4a', (0, .03, 0), k * 1.25, droop=.12, bend=.15)
-    m.cyl(.015, .015, .5, '#5f9e3a', (.2, .05, 0), (0, 0, 1.4), seg=4); m.uv(.1, '#9ac85a', (.4, .1, 0), seg=8, ring=6); return m
+    for k in range(5): m.leaf(.4, .3, '#4fae4a', (0, .03, 0), k * 1.25, droop=.12, bend=.15, n=5)
+    m.trunk([(0, .04, 0), (.2, .08, .05), (.38, .08, 0)], .016, .014, '#5f9e3a', seg=5, flare=1)
+    m.lathe([(0, 0), (.08, .02), (.11, .08), (.1, .14), (.05, .18), (0, .19)], '#9ac85a', (.42, .02, 0), seg=14, ribs=8, rib=.08)
+    return m
 @model
 def pumpkin_3():
     m = Model('pumpkin-3', 48)
-    for k in range(5): m.leaf(.45, .32, '#4fae4a', (0, .03, 0), k * 1.25, droop=.12, bend=.15)
-    for k in range(8):
-        a = k * math.pi / 4; m.uv(.22, '#ff7a1a' if k % 2 else '#ff8a2a', (math.cos(a) * .14, .26, math.sin(a) * .14), (0, -a, 0), (.7, 1, 1.15), seg=8, ring=7, shade=.04)
-    m.cyl(.035, .05, .16, '#6a8a3a', (0, .52, 0), (0, 0, .25), seg=5)
+    for k in range(5): m.leaf(.45, .32, '#4fae4a', (0, .03, 0), k * 1.25, droop=.12, bend=.15, n=5)
+    m.lathe([(0, 0), (.16, .02), (.27, .09), (.31, .2), (.29, .33), (.2, .43), (.08, .47), (0, .45)], '#ff8a2a', (0, 0, 0), seg=32, ribs=10, rib=.1, top=.2)
+    m.trunk([(0, .44, 0), (.02, .52, 0), (.07, .58, .02)], .04, .03, '#6a8a3a', seg=6, flare=1)
+    m.trunk([(.03, .5, 0), (.15, .55, .08), (.22, .5, .14)], .01, .008, '#5f9e3a', seg=4, flare=1)  # a curly tendril
     return m
 
 @model
 def farm_hay():
     m = Model('farm-hay', 49)
-    m.box(1.6, .8, 1.1, '#8a5a3b', (0, .4, 0))
-    for k in range(4): m.box(1.62, .06, .06, '#6e4426', (0, .2 + k * .18, .56))
-    for k in range(9): m.ball(.32, '#f2d16b' if k % 2 else '#e8c25a', (-.6 + (k % 5) * .3, .9 + (k // 5) * .06, -.2 + (k // 5) * .35), (0, 0, 0), (1.1, .5, 1), sub=1, jitter=.05)
+    m.box(1.6, .8, 1.1, '#8a5a3b', (0, .4, 0), bevel=.04)
+    for k in range(4): m.box(1.62, .1, .05, '#6e4426', (0, .14 + k * .19, .55), bevel=.02)
+    m.lathe([(0, 0), (.7, 0), (.66, .12), (.4, .2), (0, .22)], '#f2d16b', (0, .78, 0), scl=(1, 1, .7), seg=16)  # the heap of hay on top
+    for k in range(26):  # loose straws sticking out
+        a = k * 2.4; r = .3 + (k % 5) * .08
+        m.trunk([(math.cos(a) * r, .86 + (k % 3) * .04, math.sin(a) * r * .7), (math.cos(a) * (r + .18), .98 + (k % 4) * .03, math.sin(a) * (r + .18) * .7)], .012, .008, '#e8c25a' if k % 2 else '#f6dc80', seg=3, flare=1)
     return m
 @model
 def farm_crate():
     m = Model('farm-crate', 50)
-    m.box(1.2, .7, 1, '#a9764a', (0, .35, 0))
-    for y in (.15, .55): m.box(1.22, .08, 1.02, '#8a5a34', (0, y, 0))
-    for k in range(6): m.uv(.1, '#fff6e6' if k % 2 else '#f2dcc0', (-.35 + (k % 3) * .35, .74, -.15 + (k // 3) * .3), (0, 0, 0), (1, 1.3, 1), seg=8, ring=6)
+    for y in (.1, .32, .54): m.box(1.2, .16, .04, '#a9764a', (0, y, .48), bevel=.015); m.box(1.2, .16, .04, '#a9764a', (0, y, -.48), bevel=.015)
+    for y in (.1, .32, .54): m.box(.04, .16, 1.0, '#9d6c42', (.58, y, 0), bevel=.015); m.box(.04, .16, 1.0, '#9d6c42', (-.58, y, 0), bevel=.015)
+    for x in (-.58, .58):
+        for z in (-.48, .48): m.box(.08, .66, .08, '#8a5a34', (x, .33, z), bevel=.02)
+    m.box(1.14, .04, .94, '#c9a06a', (0, .5, 0), top=.0)
+    m.lathe([(.55, 0), (.55, .06), (.5, .08), (0, .08)], '#e8d29a', (0, .52, 0), scl=(1, 1, .82), seg=16, top=.0)  # straw bed
+    egg = [(0, 0), (.06, .015), (.085, .06), (.08, .11), (.055, .155), (0, .17)]
+    for k in range(6): m.lathe(egg, '#fff6e6' if k % 2 else '#f2dcc0', (-.35 + (k % 3) * .35, .6, -.15 + (k // 3) * .3), (.15 * (k % 2), 0, .2 * (k % 3 - 1)), seg=12, top=.2)
     return m
 @model
 def farm_wardrobe():
     m = Model('farm-wardrobe', 51)
-    m.box(1.4, 2.1, .7, '#b07a4a', (0, 1.1, 0)); m.box(1.5, .12, .78, '#8a5a34', (0, 2.2, 0)); m.box(1.46, .1, .74, '#8a5a34', (0, .05, 0))
-    for s in (-1, 1): m.box(.6, 1.7, .03, '#c08a58', (s * .33, 1.15, .36)); m.uv(.06, '#ffd23f', (s * .12, 1.2, .39), seg=6, ring=4)
-    m.box(.05, 1.8, .03, '#6a4026', (0, 1.15, .37))
+    for x in (-.62, .62):
+        for z in (-.28, .28): m.lathe([(.05, 0), (.06, .06), (.04, .14), (.06, .18)], '#6a4026', (x, 0, z), seg=10)  # turned feet
+    m.box(1.4, 1.95, .7, '#b07a4a', (0, 1.15, 0), bevel=.03)
+    m.box(1.5, .14, .8, '#8a5a34', (0, 2.18, 0), bevel=.04); m.box(1.2, .1, .1, '#8a5a34', (0, 2.29, -.3), bevel=.03)  # the cornice
+    m.box(1.46, .1, .76, '#8a5a34', (0, .2, 0), bevel=.03)
+    for s in (-1, 1):
+        m.box(.62, 1.65, .04, '#c08a58', (s * .33, 1.2, .36), bevel=.02)  # the doors, each with a raised panel
+        m.box(.42, .7, .03, '#b07a4a', (s * .33, 1.55, .385), bevel=.02); m.box(.42, .5, .03, '#b07a4a', (s * .33, .78, .385), bevel=.02)
+        m.uv(.04, '#ffd23f', (s * .07, 1.2, .4), seg=8, ring=5, top=.3)
     return m
 @model
 def farm_easel():
     m = Model('farm-easel', 52)
-    m.box(1.4, 1.1, .06, '#ffffff', (0, 1.6, 0), (-.15, 0, 0))
-    for x, c in [(-.35, '#ff7eb8'), (0, '#7fd8ff'), (.3, '#ffd23f')]: m.ball(.16, c, (x, 1.65, .05), (0, 0, 0), (1, 1, .15), sub=1)
-    m.cyl(.05, .05, 2, '#8a5a3b', (-.5, 1, -.2), (.1, 0, .15), seg=5); m.cyl(.05, .05, 2, '#8a5a3b', (.5, 1, -.2), (.1, 0, -.15), seg=5); m.cyl(.05, .05, 2, '#8a5a3b', (0, 1, .45), (-.3, 0, 0), seg=5)
-    m.box(1.3, .06, .14, '#8a5a3b', (0, 1.02, .1))
+    m.box(1.4, 1.1, .05, '#ffffff', (0, 1.6, 0), (-.15, 0, 0), bevel=.01)
+    for x, y, c, r in [(-.35, 1.7, '#ff7eb8', .17), (0, 1.55, '#7fd8ff', .15), (.32, 1.72, '#ffd23f', .14), (.1, 1.85, '#5fd39a', .1)]: m.ball(r, c, (x, y, .04 - (y - 1.6) * .15), (-.15, 0, 0), (1, 1, .12), sub=2, top=0)
+    for (p0, p1) in [((-.55, 0, -.1), (-.08, 2.15, -.3)), ((.55, 0, -.1), (.08, 2.15, -.3)), ((0, 0, .55), (0, 2.0, -.25))]:
+        m.trunk([p0, ((p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2, (p0[2] + p1[2]) / 2), p1], .045, .035, '#8a5a3b', seg=7, flare=1)
+    m.box(1.3, .06, .14, '#8a5a3b', (0, 1.02, .1), bevel=.02)
+    for k, c in enumerate(['#ff7eb8', '#7fd8ff', '#ffd23f']): m.trunk([(-.3 + k * .12, 1.06, .12), (-.3 + k * .12 + .05, 1.06, .2)], .012, .012, c, seg=5, flare=1)  # crayons on the ledge
     return m
 
 # ---------- My House decorations (js/home-decor-models.ts) ----------
 @model
 def decor_teddy():
-    m = Model('decor-teddy', 61)
-    m.uv(.34, '#c18a5e', (0, .4, 0), seg=12, ring=9); m.uv(.29, '#dca679', (0, .91, 0), seg=12, ring=9); m.uv(.2, '#f5d7ab', (0, .4, .2), (0, 0, 0), (1, 1.1, .5), seg=10, ring=7)
+    m = Model('decor-teddy', 61); fur, dark, light = '#c18a5e', '#b67c54', '#f5d7ab'
+    m.uv(.34, fur, (0, .42, 0), scl=(1, 1.08, .92), seg=14, ring=10); m.uv(.2, light, (0, .4, .18), scl=(1, 1.15, .5), seg=14, ring=10)  # tummy
+    m.uv(.29, '#dca679', (0, .93, 0), scl=(1.05, .95, .95), seg=14, ring=10)
     for s in (-1, 1):
-        m.uv(.12, '#b67c54', (s * .23, 1.12, 0), seg=8, ring=6); m.uv(.06, '#f0c8a0', (s * .23, 1.12, .07), seg=6, ring=4)
-        m.uv(.14, '#c18a5e', (s * .32, .52, .05), (0, 0, 0), (1, 1.2, 1), seg=8, ring=6); m.uv(.17, '#b67c54', (s * .2, .15, .1), seg=8, ring=6)
-        m.uv(.035, '#382644', (s * .09, .95, .26), seg=6, ring=4)
-    m.uv(.12, '#f5d7ab', (0, .84, .23), seg=8, ring=6); m.uv(.035, '#382644', (0, .87, .35), seg=6, ring=4)
-    m.box(.3, .08, .06, '#e8433a', (0, .67, .2)); m.ball(.06, '#e8433a', (0, .67, .25), sub=1)
+        m.uv(.12, dark, (s * .23, 1.14, -.02), scl=(1, 1, .6), seg=12, ring=8); m.uv(.07, '#f0c8a0', (s * .23, 1.13, .03), scl=(1, 1, .4), seg=10, ring=6)
+        m.uv(.13, fur, (s * .33, .55, .06), (0, 0, s * .5), (.85, 1.35, .85), seg=12, ring=8)  # arms
+        m.uv(.16, dark, (s * .19, .16, .12), (0, 0, 0), (.9, .8, 1.25), seg=12, ring=8); m.uv(.09, light, (s * .19, .14, .3), scl=(1, 1, .3), seg=10, ring=6)  # feet, paw pads
+        m.uv(.038, '#2a1c30', (s * .1, .97, .25), seg=8, ring=6, top=.4)
+    m.uv(.13, light, (0, .85, .22), scl=(1.1, .85, .8), seg=12, ring=8); m.uv(.04, '#2a1c30', (0, .89, .33), scl=(1.3, 1, 1), seg=8, ring=6, top=.4)
+    m.lathe([(.07, 0), (.08, .02), (.07, .04)], '#e8433a', (0, .66, .2), (math.pi / 2, 0, 0), seg=10)
+    for s in (-1, 1): m.uv(.08, '#e8433a', (s * .09, .67, .22), (0, 0, s * .4), (1.3, .7, .5), seg=10, ring=6)  # the bow
     return m
 @model
 def decor_clock():
-    m = Model('decor-clock', 62)
-    m.box(.8, .18, .55, '#885840', (0, .09, 0)); m.box(.55, 1.2, .4, '#bb875c', (0, .7, 0)); m.box(.4, .8, .02, '#2e2030', (0, .7, .2))
-    m.cyl(.06, .06, .5, '#e7b953', (0, .55, .21), seg=5); m.cyl(.1, .1, .03, '#e7b953', (0, .3, .22), (math.pi / 2, 0, 0), seg=10)
-    m.cyl(.42, .42, .13, '#f1c76c', (0, 1.6, 0), (math.pi / 2, 0, 0), seg=16); m.cyl(.34, .34, .02, '#fff7de', (0, 1.6, .07), (math.pi / 2, 0, 0), seg=16)
-    m.box(.035, .22, .025, '#4a344c', (0, 1.7, .09)); m.box(.2, .035, .025, '#4a344c', (.08, 1.6, .09))
-    for k in range(12): a = k * math.pi / 6; m.box(.03, .03, .01, '#4a344c', (math.cos(a) * .28, 1.6 + math.sin(a) * .28, .085))
+    m = Model('decor-clock', 62); wood, darkw = '#bb875c', '#885840'
+    m.box(.8, .18, .55, darkw, (0, .09, 0), bevel=.04); m.box(.58, 1.15, .42, wood, (0, .74, 0), bevel=.03)
+    m.box(.42, .8, .03, '#2e2030', (0, .72, .21), bevel=.01, top=0)
+    m.trunk([(0, 1.05, .23), (0, .42, .23)], .012, .012, '#e7b953', seg=5, flare=1); m.lathe([(0, 0), (.09, .005), (.1, .02), (0, .03)], '#e7b953', (0, .35, .22), (math.pi / 2, 0, 0), seg=14)
+    m.lathe([(.42, -.07), (.44, -.04), (.44, .04), (.4, .07), (.36, .07)], '#f1c76c', (0, 1.6, 0), (math.pi / 2, 0, 0), seg=28)
+    m.lathe([(0, .055), (.36, .055)], '#fff7de', (0, 1.6, 0), (math.pi / 2, 0, 0), seg=28, top=0)
+    m.box(.035, .22, .02, '#4a344c', (0, 1.7, .08), bevel=.008); m.box(.18, .035, .02, '#4a344c', (.08, 1.6, .08), bevel=.008)
+    for k in range(12): a = k * math.pi / 6; m.uv(.02 if k % 3 else .03, '#4a344c', (math.cos(a) * .29, 1.6 + math.sin(a) * .29, .07), seg=6, ring=4)
+    m.uv(.06, '#e7b953', (0, 2.06, 0), seg=10, ring=6)
     return m
 @model
 def decor_vase():
     m = Model('decor-vase', 63)
-    m.cyl(.16, .25, .15, '#8e66ae', (0, .075, 0), seg=12); m.cyl(.32, .22, .65, '#ad8bd0', (0, .45, 0), seg=12); m.cyl(.17, .3, .25, '#8e66ae', (0, .9, 0), seg=12)
-    m.cyl(.33, .33, .06, '#ffd23f', (0, .55, 0), seg=12)
-    for k in range(3): a = k * 2.1; m.cyl(.015, .015, .5, '#5b935e', (math.cos(a) * .08, 1.2, math.sin(a) * .08), (math.sin(a) * .2, 0, -math.cos(a) * .2), seg=4); m.petals(5, .06, '#ff9ec4', (math.cos(a) * .13, 1.45, math.sin(a) * .13), size=.06, tilt=.3)
+    m.lathe([(0, 0), (.2, 0), (.24, .05), (.32, .3), (.31, .5), (.2, .75), (.15, .88), (.2, 1.0), (.17, 1.02), (.13, .9), (0, .9)], '#ad8bd0', seg=24, top=.2)
+    m.lathe([(.322, .5), (.33, .53), (.322, .56)], '#ffd23f', seg=24)
+    for k in range(3):
+        a = k * 2.1; tip = (math.cos(a) * .14, 1.42, math.sin(a) * .14)
+        m.trunk([(0, .9, 0), (tip[0] * .5, 1.2, tip[2] * .5), tip], .014, .012, '#5b935e', seg=5, flare=1)
+        m.petals(5, .06, '#ff9ec4', tip, size=.06, tilt=.3); m.uv(.03, '#ffd23f', (tip[0], tip[1] + .02, tip[2]), seg=6, ring=4)
     return m
 @model
 def decor_lamp():
     m = Model('decor-lamp', 64)
-    m.cyl(.3, .36, .12, '#bd8a5e', (0, .06, 0), seg=14); m.cyl(.045, .045, .9, '#d2a860', (0, .55, 0), seg=6); m.cyl(.24, .42, .5, '#ffe6a5', (0, 1.2, 0), seg=14)
-    m.cyl(.43, .43, .04, '#e8b84a', (0, .96, 0), seg=14); m.uv(.09, '#f5b75a', (0, 1.51, 0), seg=8, ring=6)
+    m.lathe([(0, 0), (.36, 0), (.36, .04), (.3, .1), (.12, .14), (.06, .2), (0, .2)], '#bd8a5e', seg=24)
+    m.trunk([(0, .18, 0), (0, .55, 0), (0, .98, 0)], .04, .035, '#d2a860', seg=8, flare=1)
+    m.lathe([(.43, .95), (.43, .99), (.24, 1.45), (.24, 1.47)], '#ffe6a5', seg=28, top=.1)
+    m.lathe([(.44, .94), (.45, .97), (.44, 1.0)], '#e8b84a', seg=28); m.lathe([(.25, 1.44), (.26, 1.46), (.25, 1.48)], '#e8b84a', seg=24)
+    m.uv(.08, '#f5b75a', (0, 1.53, 0), seg=10, ring=6)
     return m
+POT = [(0, 0), (.2, 0), (.22, .02), (.29, .34), (.33, .36), (.33, .44), (.27, .44), (.26, .4), (0, .4)]
 def potted_flower(name, seed, petal, middle):
     m = Model(name, seed)
-    m.cyl(.3, .22, .4, '#c98268', (0, .2, 0), seg=12); m.cyl(.32, .32, .06, '#b56f58', (0, .4, 0), seg=12); m.cyl(.27, .27, .02, '#5a3a22', (0, .41, 0), seg=12)
-    m.cyl(.035, .035, .65, '#5b935e', (0, .72, 0), seg=5); m.leaf(.3, .16, '#5b935e', (0, .6, 0), .4, droop=.1, bend=.2); m.leaf(.28, .15, '#5b935e', (0, .7, 0), 3.5, droop=.1, bend=.2)
-    for i in range(8): a = i * math.pi / 4; m.ball(.14, petal, (math.cos(a) * .23, 1 + math.sin(a) * .23, 0), (0, 0, a), (1.3, .7, .35), sub=1, shade=.04)
-    m.cyl(.16, .16, .1, middle, (0, 1, .04), (math.pi / 2, 0, 0), seg=12)
+    m.lathe(POT, '#c98268', seg=22); m.lathe([(0, .4), (.26, .4)], '#5a3a22', seg=22, top=0)
+    m.trunk([(0, .4, 0), (.02, .7, 0), (0, 1.0, 0)], .03, .025, '#5b935e', seg=6, flare=1)
+    m.leaf(.3, .16, '#5b935e', (0, .62, 0), .4, droop=.3, bend=.3, n=5); m.leaf(.28, .15, '#5b935e', (0, .74, 0), 3.5, droop=.3, bend=.3, n=5)
+    for layer in range(2):
+        for i in range(10): a = (i + layer * .5) * math.pi / 5; m.ball(.13, petal, (math.cos(a) * .23, 1 + math.sin(a) * .23, -layer * .02), (0, 0, a), (1.4, .6, .25), sub=1, top=.05)
+    m.lathe([(0, -.05), (.15, -.04), (.16, 0), (.12, .03), (0, .05)], middle, (0, 1, .04), (math.pi / 2, 0, 0), seg=16)
     return m
 @model
 def decor_sunflower(): return potted_flower('decor-sunflower', 65, '#ffd35f', '#8e6642')
 @model
 def decor_lotus():
     m = Model('decor-lotus', 66)
-    m.cyl(.3, .22, .4, '#c98268', (0, .2, 0), seg=12); m.cyl(.32, .32, .06, '#b56f58', (0, .4, 0), seg=12); m.cyl(.28, .28, .02, '#7cc3d6', (0, .41, 0), seg=12)
-    m.cyl(.03, .03, .55, '#5b935e', (0, .68, 0), seg=5); m.cyl(.2, .2, .015, '#4f9a52', (.12, .43, .05), seg=10)
-    for ring, (n, r, tilt, c) in enumerate([(8, .14, .9, '#f59bc7'), (6, .08, .5, '#f8b4d4')]):
-        for i in range(n): a = i * 2 * math.pi / n + ring * .3; m.ball(.12, c, (math.cos(a) * r, .98 + ring * .05, math.sin(a) * r), (0, -a, tilt), (1.1, .4, .6), sub=1, shade=.03)
-    m.uv(.07, '#ffdc74', (0, 1.02, 0), seg=7, ring=5)
+    m.lathe(POT, '#c98268', seg=22); m.lathe([(0, .41), (.26, .41)], '#7cc3d6', seg=22, top=0)
+    m.trunk([(0, .4, 0), (.02, .7, 0), (0, .95, 0)], .025, .02, '#5b935e', seg=6, flare=1)
+    m.lathe([(0, 0), (.2, .0), (.2, .01), (0, .01)], '#4f9a52', (.1, .42, .05), seg=16)  # a lily pad
+    for ring, (n, r, tilt, c) in enumerate([(8, .13, 1.0, '#f59bc7'), (7, .08, .65, '#f8b4d4'), (5, .04, .3, '#fbd0e2')]):
+        for i in range(n): a = i * 2 * math.pi / n + ring * .3; m.lathe([(0, 0), (.04, .03), (.05, .09), (.03, .15), (0, .18)], c, (math.cos(a) * r, .96 + ring * .03, math.sin(a) * r), (0, -a, tilt), (1, 1, .45), seg=8)
+    m.uv(.05, '#ffdc74', (0, 1.03, 0), scl=(1, .6, 1), seg=10, ring=6)
     return m
 @model
 def decor_balloons():
     m = Model('decor-balloons', 67)
-    m.cyl(.28, .34, .12, '#b98b64', (0, .06, 0), seg=12)
+    m.lathe([(0, 0), (.34, 0), (.33, .08), (.26, .13), (0, .13)], '#b98b64', seg=20)
     for i, c in enumerate(['#ff99c5', '#81d9ed', '#ffd46b']):
         x = (i - 1) * .3; y = 1.35 + (.2 if i == 1 else 0)
-        m.cyl(.008, .008, y - .3, '#d9c7aa', (x * .5, (y - .25) / 2 + .1, 0), (0, 0, -x * .25), seg=3)
-        m.uv(.25, c, (x, y, 0), (0, 0, 0), (1, 1.15, 1), seg=12, ring=9, shade=.03); m.cone(.04, .07, c, (x, y - .3, 0), (math.pi, 0, 0), seg=5)
+        m.trunk([(0, .12, 0), (x * .5, (y - .3) * .5, 0), (x, y - .3, 0)], .006, .006, '#d9c7aa', seg=3, flare=1)
+        m.lathe([(0, -.28), (.06, -.25), (.2, -.12), (.25, .05), (.2, .2), (.1, .27), (0, .29)], c, (x, y, 0), seg=18, top=.3)
+        m.cone(.035, .05, c, (x, y - .3, 0), (math.pi, 0, 0), seg=6)
+        m.uv(.04, '#ffffff', (x - .09, y + .1, .17), scl=(1, 1.5, .5), seg=6, ring=4, top=0)  # a shine
     return m
 
 # ---------- rocks, grass and the garden plots (js/world.ts, js/plots.ts) ----------
