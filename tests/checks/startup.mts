@@ -459,6 +459,19 @@ await check('startup', async () => {
   } finally { S.close(); }
 });
 
+await check('festgameids', async () => {
+  // (v1.08d valley, PERF-001) the valley reads which festival each festival game belongs to from a small list
+  // (js/content/festgame-ids.ts), so the games' questions (js/content/festgames108b.ts) are not in the first download;
+  // the two lists must stay the same
+  const P = await open(b, { play: false });
+  try {
+    const r = await P.page.evaluate(async () => { const A = await import('/js/content/festgame-ids.js'), B = await import('/js/content/festgames108b.js');
+      return { ids: Object.entries(A.FEST_OF_GAME).sort().join(), games: Object.entries(B.FEST_OF_GAME).sort().join(), n: B.FEST_GAMES.length }; });
+    ok(r.n > 0 && r.ids === r.games, 'the festival game list and the games differ: ' + JSON.stringify(r));
+    return `${r.n} festival games, the same in both lists`;
+  } finally { await P.ctx.close(); }
+});
+
 await check('saves', async () => {
   // progress survives: the main save is wiped (as a browser might do), and the game brings it back by itself
   const P = await open(b, { w: 800, h: 600 }); await clear(P.page);

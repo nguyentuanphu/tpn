@@ -160,6 +160,18 @@ const BOOT0 = performance.now(), bootTimes: Record<string, number> = { start: Ma
 // breath between steps so the screen keeps answering taps. Pressing Go before it is ready waits a moment (startWhenBuilt).
 let framesSeen = 0, framesDone = null; const firstFrames = new Promise(r => { framesDone = r; });
 let bootDone = null, booted = false; const bootReady = new Promise<void>(r => { bootDone = () => { booted = true; r(); }; });
+// (v1.08d valley, PERF-001) work that waits until the child can move: 1.5 s after the valley is ready its files are all
+// fetched side by side, then each part is made in its own quiet moment of the page (requestIdleCallback, or a short pause
+// where there is none), so the first walk never stutters and the first download is only what the start needs. A part
+// that fails is only noted (it never stops the others).
+type AfterPart<M> = { load: () => Promise<M>, make: (m: M) => unknown };
+const afterQueue: AfterPart<any>[] = []; let afterOpen = false;
+const idle = () => new Promise<void>(r => (window as any).requestIdleCallback ? (window as any).requestIdleCallback(() => r(), { timeout: 250 }) : setTimeout(r, 60));
+const runPart = async <M,>(p: AfterPart<M>, loading: Promise<M>) => { try { const m = await loading; await idle(); await p.make(m); } catch (e) { console.warn('after start', e); } };
+let afterChain: Promise<unknown> = Promise.resolve();
+const startPart = <M,>(p: AfterPart<M>) => { const loading = p.load(); loading.catch(() => { }); afterChain = afterChain.then(() => runPart(p, loading)); };
+const afterStart = <M,>(load: () => Promise<M>, make: (m: M) => unknown) => { const p = { load, make }; if (afterOpen) startPart(p); else afterQueue.push(p); };
+void bootReady.then(() => setTimeout(() => { afterOpen = true; for (const p of afterQueue.splice(0)) startPart(p); }, 1500));
 // (v1.07 startup) while a game or story opened from the Simple screen before the valley was built is up (simpleFirst),
 // the building waits between its steps, so the game runs smoothly; it goes on when the child is back on the Simple screen
 let earlySimple = false;
@@ -528,7 +540,7 @@ async function foundLeafy(h, lf) {
 
 // ---------- NPC talks ----------
 const { GAME_SPOT, baTalk, maiTalk, kidTalk, owlTalk } = installTalks(G, { playGame, twoHalves, save, checkQuests: h => checkQuests(h), hudFor, goAndDo: (h, it) => goAndDo(h, it), currentQuest: p => currentQuest(p), addMoney, NPCS }); // (the quests are made just below: js/main/quests.ts)
-void import('./learnquest.js').then(m => m.installLearnQuest(G)).catch(e => console.warn('learning quests', e)); // (v1.08b games) the learning journeys
+afterStart(() => import('./learnquest.js'), m => m.installLearnQuest(G)); // (v1.08b games) the learning journeys (v1.08d valley: after the start)
 
 // ---------- objective helpers ----------
 const { statueTalk, questTarget, currentQuest, gourdTalk, checkQuests } = installQuests(G, { world, save, V, NPCS, theOwl: () => owl, addMoney, isPlaying: () => playing, hudFor, goAndDo: (h, it) => goAndDo(h, it), giveSticker });
@@ -962,7 +974,7 @@ G.folkShow = (await later.folkShow).createFolkShow(G, { looks: [kidLook('shirt',
 // (Play reading trial, owner 11 Oct AEDT) the ten reading games load only while Studio's readingTrial switch is on (now, or when it is switched on);
 // on unless Studio switches it off (owner, 12 Oct AEDT)
 // (batch rollout: also for a child who already played a reading game, checked again when a session starts)
-{ const rd = () => { if (keptOn('readingTrial')) import('./games/readingmenu.js').catch(() => { }); }; rd(); G.readingCheck = rd; import('./custom.js').then(C => C.onLive(rd)); }
+{ const rd = () => { if (keptOn('readingTrial')) import('./games/readingmenu.js').catch(() => { }); }; afterStart(async () => null, rd); G.readingCheck = rd; /* (v1.08d valley: after the start) */ import('./custom.js').then(C => C.onLive(rd)); }
 // level land under every building, stall and landmark placed above (and anything added in future rounds)
 world.familyEdits = applyWorldEdits(G); // buildings the family moved or removed in Sparkle Studio
 bootMark('things'); widenFlatLand(world, scene); bootMark('wideland'); await breathe(); // more level land round every village and city, for new buildings (nothing moves on the map)
@@ -1081,15 +1093,17 @@ resize();
   requestAnimationFrame(() => setTimeout(start, 30));
 }
 // (Round U, owner: rows and pages scroll by finger and mouse everywhere: js/scrollhelp.js; loaded after the title)
-import('./scrollhelp.js').then(m => m.installScrollHelp());
+// (v1.08d valley, PERF-001: the first download holds only what the child needs to start moving) the parts below are made
+// after the start, one at a time when the page has a quiet moment (afterStart, above)
+afterStart(() => import('./scrollhelp.js'), m => m.installScrollHelp());
 // (Round U) every villager answers a tap with a fact or a saying of their region (js/villagertalk.js)
-import('./villagertalk.js').then(m => m.createVillagerTalk(G)).then(() => import('./dayplan.js')).then(m => m.createDayPlan(G));   // (Round U) villagers' day plan
-import('./pricetags.js').then(m => m.createPriceTags(G));
-import('./jobs.js').then(m => m.createJobs(G));
-import('./wayfind.js').then(m => m.createWayfind(G));   // (Round U) "Where is…?" sparkles
+afterStart(() => Promise.all([import('./villagertalk.js'), import('./dayplan.js')]), ([V, D]) => { V.createVillagerTalk(G); D.createDayPlan(G); });   // (Round U) villagers' day plan
+afterStart(() => import('./pricetags.js'), m => m.createPriceTags(G));
+afterStart(() => import('./jobs.js'), m => m.createJobs(G));
+afterStart(() => import('./wayfind.js'), m => m.createWayfind(G));   // (Round U) "Where is…?" sparkles
 G.openWhere = i => featureOn('wayfind', false) && G.wayfind && G.wayfind.open(i);
 onLive(() => { if (!featureOn('wayfind',false)) { G.wayfind?.stop(true); document.querySelectorAll<HTMLElement>('.wherepick').forEach(m => m.querySelector<HTMLElement>('.x')?.click()); } });
-import('./animalhomes.js').then(m => m.createAnimalHomes(G));   // (Round U) animals with homes   // (Round U) a job board in every place   // (Round U) a coin-picture price over every food stall
+afterStart(() => import('./animalhomes.js'), m => m.createAnimalHomes(G));   // (Round U) animals with homes   // (Round U) a job board in every place   // (Round U) a coin-picture price over every food stall
 // (Round U) a tap on a coin, orb or Leafy chip (top bar, Backpack) says what it is (js/chipinfo.js, loaded on the first tap)
 document.addEventListener('click', e => { const c = e.target instanceof Element && e.target.closest<HTMLElement>('[data-chip]'); if (c) import('./chipinfo.js').then(m => m.showChip(c.dataset.chip, c)); });
 import('./state.js').then(S => { if (S.restoredFromCopy) setTimeout(() => toast(T('Your progress was brought back from the safe copy on this device.', 'Tiến trình chơi đã được khôi phục từ bản lưu dự phòng trên máy.')), 1200); });

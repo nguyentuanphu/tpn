@@ -124,7 +124,18 @@ function denseLine(R) {
 // the deck height at (x, z), over the deck or its apron; DECK_CORE says whether it was over the deck itself
 let DECK_CORE = false;
 const deckAt = (world, x, z) => { for (const p of world.platforms) { const b = p.apron || p; if (!p.tower && x > b.x0 && x < b.x1 && z > b.z0 && z < b.z1) { DECK_CORE = x > p.x0 && x < p.x1 && z > p.z0 && z < p.z1; return p.y; } } return null; };
+// (v1.08d valley, PERF-001) a road's profile is worked out up to four times on a first start (again round each joint
+// with its anchors); the ground under it does not change in between, so the ground's answers (and the deck and level
+// tests) are kept per road and only copied the later times: the same numbers, a fraction of the work
+const BASES = new WeakMap<object, { base: number[], deck: boolean[], apron: boolean[], lvl: (number | null)[] }>();
 function profile(R, world, pts, anchors = null) {
+  const kept = BASES.get(pts);
+  const { base: base0, deck, apron, lvl } = kept || profileBase(R, world, pts);
+  if (!kept) BASES.set(pts, { base: base0, deck, apron, lvl });
+  const base = base0.slice();
+  return profileFrom(R, pts, anchors, base, deck, apron, lvl);
+}
+function profileBase(R, world, pts) {
   const hw = R.w / 2, deck = [], apron = [], base = pts.map(([x, z], i) => {
     const [px, pz] = pts[Math.max(0, i - 1)], [nx, nz] = pts[Math.min(pts.length - 1, i + 1)], L = Math.hypot(nx - px, nz - pz) || 1, ux = -(nz - pz) / L, uz = (nx - px) / L;
     // a real bridge deck: the deck is well above the ground under it (near the ends the bank is the ground)
@@ -140,6 +151,9 @@ function profile(R, world, pts, anchors = null) {
   // HARD RULE: inside a village or city the road runs at the place's own level (places are flat); on a bridge, on its deck
   const lvl = pts.map(([x, z], i) => { if (deck[i]) return null; const L = levelAt(x, z); return L != null && riverDist(x, z) > 13 && !bridgeAt(x, z, 9, 12, 18) ? L : null; });
   lvl.forEach((L, i) => { if (L != null) base[i] = L; });
+  return { base, deck, apron, lvl };
+}
+function profileFrom(R, pts, anchors, base, deck, apron, lvl) {
   if (anchors) anchors.forEach((y, i) => { base[i] = y; });
   const n = pts.length, deepIn = lvl.map((L, i) => { if (L == null) return false; for (let k = -6; k <= 6; k++) { const j = i + k; if (j >= 0 && j < n && lvl[j] == null) return false; } return true; }); // (the outer 6 m eases in)
   const gates = R.gates || [], gateEnd = i => (gates[0] && i < 2) || (gates[1] && i > n - 3);
