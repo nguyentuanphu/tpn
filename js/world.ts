@@ -31,7 +31,7 @@ export function createWorld(scene, quality) {
   };
   // (TypeScript, r86) what the valley's object gets after it is made: here, and by js/solids.js, js/roads.js, js/main.ts…
   type SvRideAnimal = { id: string, kind: string, swims: boolean, mesh: THREE.Mesh, shadow: THREE.Object3D, firstPersonHide?: THREE.Object3D[], home: number[], tx: number, tz: number, rider: unknown, yaw: number, back?: boolean };
-  type SvWorldMore = { underpassSolid?: Uint8Array, fronts?: { x: number, z: number, rot: number, d: number, kind: string }[], terrain?: THREE.Mesh, groundCover?: THREE.InstancedMesh[], critters?: unknown, fireflies?: unknown, buffalo?: SvRideAnimal[], cows?: SvRideAnimal[], rideAnimals?: SvRideAnimal[],
+  type SvWorldMore = { underpassSolid?: Uint8Array, splash?: (x: number, z: number, s?: number) => void, fronts?: { x: number, z: number, rot: number, d: number, kind: string }[], terrain?: THREE.Mesh, groundCover?: THREE.InstancedMesh[], critters?: unknown, fireflies?: unknown, buffalo?: SvRideAnimal[], cows?: SvRideAnimal[], rideAnimals?: SvRideAnimal[],
     pots?: { x: number, z: number, [k: string]: unknown }[], statue?: { x: number, z: number, [k: string]: unknown },
     groundAt?: (x: number, z: number, y?: number) => number, platformAt?: (x: number, z: number, y?: number) => unknown, collide?: (pos: { x: number, y?: number, z: number }, r?: number) => unknown,
     update?: (dt: number, t: number) => void, updateSky?: (dt: number, camPos: THREE.Vector3, focus?: THREE.Vector3) => void, isNight?: () => boolean,
@@ -114,7 +114,7 @@ export function createWorld(scene, quality) {
   const tg = new THREE.PlaneGeometry(SIZE, SIZE, seg, seg); tg.rotateX(-Math.PI / 2);
   const pa = tg.attributes.position, cols = new Float32Array(pa.count * 3), c = new THREE.Color();
   const C = { sand: new THREE.Color('#ecd6a4'), grassA: new THREE.Color('#7fbf8c'), grassB: new THREE.Color('#62a878'), dry: new THREE.Color('#e3cf9c'),
-    rock: new THREE.Color('#d9cfba'), snow: new THREE.Color('#f6f8fb'), dirt: new THREE.Color('#e6d2a2'), paddy: new THREE.Color('#a7d67c'), bamboo: new THREE.Color('#6eae78'), deep: new THREE.Color('#cdb88e'), outback: new THREE.Color('#d98f58') };
+    rock: new THREE.Color('#d9cfba'), snow: new THREE.Color('#f6f8fb'), dirt: new THREE.Color('#e6d2a2'), paddy: new THREE.Color('#a7d67c'), bamboo: new THREE.Color('#6eae78'), deep: new THREE.Color('#cdb88e'), wet: new THREE.Color('#d9c08a'), pebble: new THREE.Color('#a8a296'), outback: new THREE.Color('#d98f58') };
   // (round T2) the slope from the next grid points east and south (already worked out), scaled to 1.5 m as before:
   // two more heightAt calls per point made the valley a quarter of a second slower to build
   const row = seg + 1, step = SIZE / seg, HS = new Float32Array(pa.count);
@@ -144,7 +144,7 @@ export function createWorld(scene, quality) {
     if (sl > 2.2) c.lerp(C.rock, clamp((sl - 2.2) / 1.5, 0, 1));
     if (h > 34) c.lerp(C.snow, clamp((h - 34) / 6, 0, 1));
     if (h < 1.6) c.copy(C.sand);
-    if (h < -1.5) c.copy(C.deep);
+    if (h < WATER - .12) { const pb = fbm(x * .9, z * .9, 1); c.copy(C.sand).lerp(pb > .15 ? C.pebble : C.wet, pb > .15 ? clamp((pb - .15) * 4, 0, .8) : .35); }   // (v1.08e water) the shallow bed: wet sand with pebbles, seen through the water
     cols[i * 3] = c.r; cols[i * 3 + 1] = c.g; cols[i * 3 + 2] = c.b;
   }
   if (!keptCols) rememberFloats('ground-colours', cols);
@@ -166,7 +166,9 @@ export function createWorld(scene, quality) {
   // colour, deeper water darker, and a white foam line that moves along every shore; until it is ready (the first start
   // paints it after the valley is built) the water is the plain blue of before. Still one plane, one draw.
   const WU = { uWaterMap: { value: new THREE.Texture() }, uReady: { value: 0 }, uTime: { value: 0 }, uSize: { value: SIZE } };
-  const waterMat = new THREE.MeshStandardMaterial({ color: '#2f8fc8', map: wtex, transparent: true, opacity: .8, roughness: .08, metalness: .25 });
+  // (v1.08e water, owner 6 Nov 2026 AEDT: "the bed shows through clear, light water") lighter and clearer than before (was
+  // #2f8fc8 at 0.8): the sandy, pebbly bed shows through; each water keeps its own tint (js/world/paint.ts)
+  const waterMat = new THREE.MeshStandardMaterial({ color: '#4fb4e2', map: wtex, transparent: true, opacity: .56, roughness: .08, metalness: .15 });
   waterMat.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, WU);
     sh.vertexShader = 'varying vec2 vWXZ;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  vWXZ = position.xz;');

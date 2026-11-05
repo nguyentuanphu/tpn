@@ -1,6 +1,48 @@
 # v1.08e creatures: status
 
-**ready for Release** (6 Nov 2026, 03:36 AEDT, third pass: friendly eyes; before that 6 Nov 2026, 03:28 AEDT, second pass after the owner's review). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+**ready for Release** (6 Nov 2026, 04:29 AEDT, sixth pass: eyelids, the kangaroo). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+
+## Sixth pass: eyelids, the kangaroo (Release's notes, 6 Nov 2026 AEDT)
+
+- Merged origin/integrate/v108 (with Release's sw.ts FILES list of the 24 glb files; js/creatures.js is listed too).
+- **Soft eyes with lids** (the owner's rule for every face, via Release): an upper lid in the face's own colour (black on
+  the panda's patches) rests over the top of each eye and slides all the way down as the eye closes. Every clip blinks
+  (idle about every 2.6 s, walking and following once a loop, sad slowly), so a creature blinks every 2-6 s whatever it is
+  doing; the blinks are in each clip rather than a separate mixed track (modelkit plays one clip at a time). Sad eyes are
+  half-lidded; surprised lifts the lid. Never a staring face. Pictures: blink-start.png and blink-mid.png.
+- **The kangaroo:** its two "dots" were its arms seen end on. Now short arms held forward with darker paws, the cream belly
+  showing again, and a soft pouch line.
+- worldcreatures now also checks that every creature has an upper lid that comes down to blink.
+- Checks ({"6 Nov 2026, 04:29 AEDT"}, one at a time, all on the first try): worldcreatures, startup (1038 KB after the merge; the merged base
+  grew, this branch adds nothing to the first download), perf (village 328 draws, 721k triangles), battery, longplaymem,
+  offline, swupdate.
+
+## Fifth pass: eyes on the face (owner, 6 Nov 2026 AEDT: "Animals eyes too pop out, too scary")
+
+- The eyes stood where the old code's eye balls were, in front of the (now bigger) head. Each eye is now found on the
+  head's own surface and lies on it, turned to face out along it, centred on the surface so it stands out only about a
+  third of its size, like a button. Layers in order: colour, pupil and glow, then the sparkles, so the sparkle always shows.
+- A little smaller (1.22 times the code eye; companions 1.05). The light rim only on a dark face (panda, sheep, penguin,
+  firefly), not on the dragon. The closed-eye arcs sit on the face too, and are light on a dark face.
+- worldcreatures passes ({"6 Nov 2026, 04:08 AEDT"}). Pictures updated: moods-1 to moods-3, sheet-1, sheet-2, moves, *-face.png.
+
+## Fourth pass: plush refinement (owner, 6 Nov 2026 AEDT, pop-up: all four of smoother, cuter proportions, more detail, nicer moves)
+
+- **Smoother, softer:** cylinders and cones have rounded edges and tips; boxes (feet, flippers, bills, the peacock's fan)
+  are rounded; a soft round hip where each leg meets the body (no hard seam); more detail on the big shapes.
+- **Cuter proportions:** bigger heads (about 1.15-1.35 times), chubbier bodies, shorter chunkier legs, like soft toys. Each
+  creature is then sized back to its code shape's height, so it stands as tall as before; width and length change a
+  little (the check allows 30 % there, the height still 12 %, as the owner chose when picking cuter proportions).
+- **More detail:** three toes on each paw (puppy, kitty, bear, panda, koala), split hooves (calf, cow, bull, buffalo,
+  unicorn, pig), a tuft of fur on the head (puppy, calf, cow, bull, buffalo, pig, joey).
+- **Nicer moves:** knees half way down each walking leg that bend as the foot comes forward and fold under when lying
+  down; the body bounces and squashes a little with each step; ears and head move a beat behind the step; in the game an
+  animal near a child turns its head to look at them (`js/creatures.ts`).
+- 2,900-9,200 triangles, 2.0 MB for all 24 (loaded only near the child).
+- Checks ({"6 Nov 2026, 04:00 AEDT"}, one at a time, all on the first try): worldcreatures, types, boot, startup (1032 KB, same as the
+  base), perf (village 278 draws, 631k triangles), battery, longplaymem, companiongoal.
+- Pictures: sheet-1, sheet-2, moods-1 to moods-3, horns, moves (walk, walk, cheer, asleep), *-face.png (the puppy greeting
+  the child in the game).
 
 ## Third pass: friendly eyes (owner, 6 Nov 2026 AEDT: "All the animals eyes look still very scary")
 
@@ -104,4 +146,5 @@ and buffaloes horns, they look incorrect, all animals need to show emotions, fac
 
 ## Owner's decisions
 
+- 6 Nov 2026 AEDT (pop-up, "Everything still need better refinement"): all four: smoother and softer (no facets or hard seams, rounded boxes, soft joints, paws and hooves); cuter proportions (bigger heads, chubbier bodies, shorter legs, like plush toys; the sizes the game uses for touching them adjusted); more detail (tufts, toes, hooves); nicer moves (bending knees, bouncing bodies, heads that follow the child, ears and tails with follow-through).
 - 6 Nov 2026 AEDT (pop-ups, via Release): the go for v1.08e; models load near the child; code shapes stay as the fallback.

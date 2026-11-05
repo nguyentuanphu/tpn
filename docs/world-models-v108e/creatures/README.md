@@ -4,6 +4,13 @@ Made by `tools/blender/world-creatures.py` (run with `node tools/make-creatures.
 (`tools/blender/creatures-spec.json`, read by `node tools/blender/creatures-dump.mts`), so each model stands where the
 code shape stands, at its size, facing the same way. Status and checks: `docs/cores/tasks/v108e/creatures.md`.
 
+Sixth pass (Release's notes, 6 Nov 2026 AEDT): soft upper eyelids that close fully to blink (`blink-start.png`, `blink-mid.png`:
+the same faces open and mid-blink), and the kangaroo's arms, cream belly and pouch.
+
+Fourth pass (owner, 6 Nov 2026 AEDT, "everything still needs better refinement"): plush-toy proportions, rounded
+shapes and soft joints, toes, hooves and tufts, knees that bend, heads that follow the child. `moves.png`: puppy, cow and
+kitty walking, cheering and asleep. The *-face.png pictures show the puppy greeting the child in the game.
+
 Second pass (owner, 6 Nov 2026 AEDT: "better refinement ... check the cows and buffaloes horns ... emotions, facial
 expressions, movements, eye blinks"): smooth clean shapes instead of the melted felt; shaped horns; a face on every
 creature (shiny eyes with highlights, brows, a mouth, rosy cheeks) and moods.

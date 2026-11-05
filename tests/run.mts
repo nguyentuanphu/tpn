@@ -105,6 +105,10 @@ await check('worldcreatures', async () => (await import('./world-creatures.mts')
 // happy, surprised and sad show, and the eyes turn to a child to one side (tests/faces.mts)
 await check('faces', async () => (await import('./faces.mts')).facesCheck(b));
 
+// (v1.08e water, owner 6 Nov 2026 AEDT) every river, lake, pond and the sea knee to waist deep: a child walks into each and
+// out again, wading, never swimming or sinking, the camera above the water (tests/wading.mts)
+await check('wading', async () => (await import('./wading.mts')).wadingCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

@@ -38,7 +38,9 @@ export async function worldCreaturesCheck(b) {
         info[k] = { tris: Math.round(tris), h: [+cs.y.toFixed(2), +ms.y.toFixed(2)], foot: [+cb.min.y.toFixed(3), +mb.min.y.toFixed(3)] };
         if (tris < 1500 || tris > 9500) bad.push(`${k}: ${Math.round(tris)} triangles (1,500-9,500)`);
         // the same size (each side within 12 %), the same place, standing on the ground like the code shape
-        for (const ax of ['x', 'y', 'z']) if (Math.abs(ms[ax] - cs[ax]) > Math.max(.12 * cs[ax], .04 * size)) bad.push(`${k}: ${ax} size ${ms[ax].toFixed(2)} vs code ${cs[ax].toFixed(2)}`);
+        // (owner, 6 Nov 2026 AEDT, "cuter proportions": bigger heads, chubbier bodies, shorter legs, "the sizes the game uses for
+        // touching them adjusted") the height stays the code shape's (within 12 %); width and length may change by up to 30 %
+        for (const ax of ['x', 'y', 'z']) { const tol = ax === 'y' ? .12 : .3; if (Math.abs(ms[ax] - cs[ax]) > Math.max(tol * cs[ax], .04 * size)) bad.push(`${k}: ${ax} size ${ms[ax].toFixed(2)} vs code ${cs[ax].toFixed(2)}`); }
         if (Math.abs(mb.min.y - cb.min.y) > .04 * size) bad.push(`${k}: feet at ${mb.min.y.toFixed(3)}, code shape at ${cb.min.y.toFixed(3)} (floating or sinking)`);
         const cc = cb.getCenter(new THREE.Vector3()), mc = mb.getCenter(new THREE.Vector3());
         if (Math.abs(mc.z - cc.z) > .08 * size || Math.abs(mc.x - cc.x) > .08 * size) bad.push(`${k}: not where the code shape stands (or facing another way)`);
@@ -56,6 +58,9 @@ export async function worldCreaturesCheck(b) {
         else {
           m.play('idle', 0); K.tickWorldModels(.01); const open = bone('eye0').scale.y; K.tickWorldModels(1.05); let shut = 1; for (let i = 0; i < 12; i++) { K.tickWorldModels(1 / 60); shut = Math.min(shut, bone('eye0').scale.y); }
           if (!(open > .8 && shut < .3)) bad.push(`${k}: does not blink (eye ${open.toFixed(2)} then ${shut.toFixed(2)})`);
+          // (owner via Release, 6 Nov 2026 AEDT) soft eyes with an upper lid that comes all the way down when it blinks
+          const ul = bone('ulid0'); if (!ul) bad.push(`${k}: no upper eyelid`);
+          else { m.play('idle', 0); K.tickWorldModels(.01); const p0 = ul.position.clone(); K.tickWorldModels(1.05); let far = 0; for (let i = 0; i < 12; i++) { K.tickWorldModels(1 / 60); far = Math.max(far, ul.position.distanceTo(p0)); } if (!(far > .005)) bad.push(`${k}: the eyelid does not come down to blink`); }
           m.play('sleep', 0); K.tickWorldModels(.01); K.tickWorldModels(.3); if (!(bone('eye0').scale.y < .2 && bone('lid0').scale.y > .8)) bad.push(`${k}: eyes not shut asleep`);
         }
         m.stop();

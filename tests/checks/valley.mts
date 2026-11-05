@@ -553,22 +553,27 @@ await check('boats', async () => {
   // (round T2, RIVER-002/005/006) ride every boat end to end, 1 m at a time: the water under it and 1.5 m either side
   // is deep enough (at the piers a little shallower), every deck it passes is high enough over it, and every pier's land
   // end joins a road or footpath; the raft stops by every bridge it passes under
+  // (v1.08e water, owner 6 Nov 2026 AEDT, pop-up: "boats float on the shallow water like toy boats, sitting flat and high;
+  // their routes and piers stay; the checks are updated to the new depth") "deep enough" was 0.8 m under the boat and 1.5 m
+  // either side (0.25 m by a pier); the water is 0.8 m deep at most now, so: the boat floats on the water (its hull's
+  // bottom 0 to 0.4 m under the top), and its hull never reaches the bed, under it and 1.5 m either side (under it by a pier)
   const P = await open(b, { w: 900, h: 640 }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
     const W = await import('/js/world.js'), M = await import('/js/content/map.js'), G = __sv, bad = [], THREE = await import('/vendor/three.module.js');
     await G.solidsReady;
     const F = G.ferries.ferries, info = [];
     for (const f of F) {
-      const box = new THREE.Box3().setFromObject(f.model), tall = box.max.y - W.WATER, name = f.boat === 'vtboat' ? 'Vũng Tàu boat' : f.harbour ? 'harbour ferry' : f.line ? 'raft line' : f.loop ? 'lake ferry' : 'crossing raft';
+      const box = new THREE.Box3().setFromObject(f.model), tall = box.max.y - W.WATER, keel = box.min.y - f.model.position.y + W.WATER - .06 /* the lowest the hull goes, bobbing */, name = f.boat === 'vtboat' ? 'Vũng Tàu boat' : f.harbour ? 'harbour ferry' : f.line ? 'raft line' : f.loop ? 'lake ferry' : 'crossing raft';
       let shallow = 0, low = 0, pierHits = 0, first = '';
       const stopPts = f.stops.map(s => f.path[s.i]);
       for (let i = 0; i < f.path.length - (f.loop ? 0 : 1); i++) { const a = f.path[i], c = f.path[(i + 1) % f.path.length], L = Math.hypot(c.x - a.x, c.z - a.z), n = Math.max(1, Math.ceil(L));
         for (let k = 0; k < n; k++) { const x = a.x + (c.x - a.x) * k / n, z = a.z + (c.z - a.z) * k / n, ux = -(c.z - a.z) / (L || 1), uz = (c.x - a.x) / (L || 1);
-          const nearStop = stopPts.some(p => Math.hypot(p.x - x, p.z - z) < 6), lim = nearStop ? W.WATER - .25 : W.WATER - .8;
+          const nearStop = stopPts.some(p => Math.hypot(p.x - x, p.z - z) < 6), lim = keel - .05;
           const hs = [0, -1.5, 1.5].map(o => W.heightAt(x + ux * o, z + uz * o)); if ((nearStop ? hs[0] : Math.max(...hs)) > lim) { shallow++; if (!first) first = `${x.toFixed(0)},${z.toFixed(0)}`; }
           const B = W.bridgeAt(x, z, 4); if (B && B.h - tall < .5) low++;
           if(B&&!nearStop&&G.world.underpassSolid){const N=Math.round(W.SIZE/.5);for(const o of[0,-1.5,1.5]){const gx=Math.floor((x+ux*o+W.HALF)/.5),gz=Math.floor((z+uz*o+W.HALF)/.5);if(G.world.underpassSolid[gz*N+gx])pierHits++;}} } }
-      if (shallow) bad.push(`${name}: ${shallow} m too shallow (first at ${first})`);
+      if (shallow) bad.push(`${name}: ${shallow} m where its hull reaches the bed (first at ${first})`);
+      if (keel > W.WATER || keel < W.WATER - .4) bad.push(`${name}: does not float on the water (its hull's bottom ${(keel - W.WATER).toFixed(2)} m from the top)`);
       if(pierHits)bad.push(`${name}: ${pierHits} hull samples intersect a real bridge support`);
       if (low) bad.push(`${name}: ${low} m under a deck too low for it`);
       for (const s of f.stops) { const p = s.dock && s.dock.pier && s.dock.pier.land; if (!p) continue; const rd = W.roadDist(p.x, p.z); if (!rd.road || rd.d > rd.road.w / 2 + 3) bad.push(`${name}: the pier at ${p.x.toFixed(0)},${p.z.toFixed(0)} (${s.name()}) joins no road (${rd.d.toFixed(1)} m)`); }
@@ -597,7 +602,7 @@ await check('boats', async () => {
   const errs = P.errors; await P.ctx.close();
   ok(!r.bad.length, r.bad.slice(0, 10).join('; '));
   ok(!errs.length, errs.join(' | '));
-  return r.info.join(', ') + '; every route deep enough, under high enough decks, every pier on a road or path, level with its bank and walkable to its end; every bridge landmark sign on land by its bridge';
+  return r.info.join(', ') + '; every boat floating flat and high, its hull clear of the bed on every route, under high enough decks, every pier on a road or path, level with its bank and walkable to its end; every bridge landmark sign on land by its bridge';
 });
 
 await check('plots', async () => {
