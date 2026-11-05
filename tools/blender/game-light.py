@@ -14,6 +14,9 @@ bpy.ops.import_scene.gltf(filepath=SRC)
 # 3,600, are parts of their own now: the body keeps the rest)
 BUDGET = {'body': 3000, 'hair': 4200, 'hands': 260, 'item': 350, 'shoes': 250}
 FACE = 420  # each of the eleven face moods (only one shows at a time); (v1.08e faces) 280 left the eyes faceted
+# (v1.08e villagers) the villagers' clothes are layers close together (a shirt over shorts, a belt): thinned to 3,000 the
+# lower layer showed through in patches, so their bodies keep more
+if any(o.name.startswith('villager-') for o in bpy.context.scene.objects if o.type == 'MESH'): BUDGET['body'] = 5200
 def tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 total = 0
 for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
