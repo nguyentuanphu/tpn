@@ -18,3 +18,9 @@
 ## Part 3: small leftovers
 - **Old voice files:** remove the 136 old mixed-line files that `tools/make-voice-pack.mts` wants to delete, and re-record the two empty Vietnamese files `voices/vi/f/2473f892-1b292ac5.mp3` and `e67396f8-2132059d.mp3` (Azure, female).
 - **Checks:** `voicearea`, `voicecover`, `voicepack`, `voiceopus`.
+
+## Part 4 (added 5 Nov from the games helper's notes)
+- **Học vui on a phone:** the 8 learning-journey rows fill the whole first screen. Fold them into one row, "Hành trình học / Learning journeys", that opens the list, so the corners show first.
+- **The calendar:** for a festival game outside its season, show "Sẽ quay lại vào … / Back at …" with `backOn('fg_' + festivalId)` from `js/content/festseason.ts`.
+- **`roundvariety` fails on lemonade:** make its rounds differ.
+- **Checks:** `hocvui`, `learningquests`, `calendartab`, `roundvariety`, `fivescreens`.
