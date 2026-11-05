@@ -105,6 +105,10 @@ await check('worldcreatures', async () => (await import('./world-creatures.mts')
 // happy, surprised and sad show, and the eyes turn to a child to one side (tests/faces.mts)
 await check('faces', async () => (await import('./faces.mts')).facesCheck(b));
 
+// (v1.08e villagers) the 11 named villagers wear their Blender models near the child: height, ground, blinks, eyes to
+// the child, tags and talk kept, the code person when blocked (tests/villager-models.mts)
+await check('villagermodels', async () => (await import('./villager-models.mts')).villagerModelsCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

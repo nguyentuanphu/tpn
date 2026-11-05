@@ -55,6 +55,8 @@ const FILES = [
   'vendor/GLTFLoader.js', 'vendor/BufferGeometryUtils.js', 'vendor/SkeletonUtils.js', 'vendor/meshopt_decoder.module.js',
   'models/finn.glb', 'models/sol.glb', 'models/clara.glb', 'models/lumi.glb',
   'models/finn-hd.glb', 'models/sol-hd.glb', 'models/clara-hd.glb', 'models/lumi-hd.glb', // (v1.08e faces part 2) high-detail friends
+  'models/villager-mai.glb', 'models/villager-ba.glb', 'models/villager-teo.glb', 'models/villager-ti.glb', 'models/villager-bong.glb', 'models/villager-su.glb', // (v1.08e villagers)
+  'models/villager-jack.glb', 'models/villager-mit.glb', 'models/villager-bom.glb', 'models/villager-ruby.glb', 'models/villager-lan.glb',
   // (written out one by one: tools/bundle.mts reads the quoted names of the list)
   'icons/friends/finn-f.webp', 'icons/friends/finn-q.webp', 'icons/friends/finn-s.webp', 'icons/friends/finn-face.webp',
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
