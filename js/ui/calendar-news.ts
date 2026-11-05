@@ -9,16 +9,16 @@ import { calMoves } from '../content/secondset.js';
 
 // (v1.08b story) "This week's new things", "Opens next week" and "Ending soon", from the release calendar
 // (js/content/releasecal.ts), the same list Studio, the website and Saturday's push read
-const calItem = (it: CalItem, when: string) => `<button class="fcal-new" data-cal="${esc(it.key)}"><span class="fi">${pic(it.icon)}</span><b>${esc(T(it.en, it.vi))}</b><small>${esc(when)}</small></button>`;
+// (owner, 5 Nov 2026 AEDT: shorter) one short line each, only when it has something: a label, then the things as small
+// picture chips (a game goes to its place). Never "Nothing ..." lines.
+const chip = (it: CalItem) => `<button class="fcal-new" data-cal="${esc(it.key)}"><span class="fi">${pic(it.icon)}</span><b>${esc(T(it.en, it.vi))}</b></button>`;
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], dayEn = (d: string) => `${+d.slice(8)} ${MON[+d.slice(5, 7) - 1]}`;
 export function whatsNewHTML(now = new Date()) {
-  const W = whatsNew(calendar(calMoves()), now);
-  const opened = (it: CalItem) => T('Open now', 'Đã mở');
-  const opens = (it: CalItem) => { const k = daysUntil(it.date, now); return k <= 0 ? T('Open now', 'Đã mở') : k === 1 ? T('Opens tomorrow', 'Mở ngày mai') : T(`Opens in ${k} days`, `Mở sau ${k} ngày`); };
-  const ends = (it: CalItem) => { const k = daysUntil(it.end || it.date, now); return k <= 0 ? T('Last day', 'Ngày cuối') : T(`${k} days left`, `Còn ${k} ngày`); };
-  const part = (h: string, list: CalItem[], f: (it: CalItem) => string, none: string) => `<h3>${h}</h3>${list.length ? `<div class="fcal-news">${list.slice(0, 8).map(it => calItem(it, f(it))).join('')}</div>` : `<p class="note">${none}</p>`}`;
-  return part(T("This week's new things", 'Có gì mới tuần này'), W.thisWeek, opened, T('Nothing new yet this week.', 'Tuần này chưa có gì mới.'))
-    + part(T('Opens next week', 'Tuần sau mở'), W.nextWeek.length ? W.nextWeek : W.upcoming.slice(0, 4), opens, T('Nothing planned yet.', 'Chưa có gì.'))
-    + part(T('Ending soon', 'Sắp kết thúc'), W.endingSoon, ends, T('Nothing ends this week.', 'Tuần này không có gì kết thúc.'));
+  const W = whatsNew(calendar(calMoves()), now), next = W.nextWeek.length ? W.nextWeek : W.upcoming.slice(0, 3);
+  const line = (h: string, list: CalItem[]) => list.length ? `<div class="fcal-line"><h3>${h}</h3>${list.slice(0, 6).map(chip).join('')}</div>` : '';
+  return line(T('New this week', 'Mới tuần này'), W.thisWeek)
+    + line(W.nextWeek.length ? T('Next week', 'Tuần sau') : next[0] ? T(`From ${dayEn(next[0].date)}`, `Từ ${+next[0].date.slice(8)}/${+next[0].date.slice(5, 7)}`) : '', next)
+    + line(T('Ending soon', 'Sắp kết thúc'), W.endingSoon);
 }
 
 // (v1.08b story, owner 3 Nov 2026 AEDT) the "What's new" card at the top of Grown-ups: new this week, opening next week

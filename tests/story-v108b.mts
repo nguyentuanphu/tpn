@@ -51,31 +51,43 @@ export async function releaseCalendarCheck(b) {
   return `${R.CAL_DEFAULT.length} items in ${weeks.size} weeks (${held.length} held back, every one placed, chapters 4, 5 and finale on their days); moves win; opens on its day (testers 7 days early); a held game whose day came is open with no wins; the Coming soon tile says "${r.tile}"`;
 }
 
-// calendartab: the pad's tab "Calendar: festivals and what's new": a timeline per festival (start, end, days left, 44 px
-// steps), then This week's new things, Opens next week and Ending soon; fits phone, tablet and computer with 16 px text
+// calendartab: the pad's tab "Calendar: festivals and what's new", compact (owner, 5 Nov 2026 AEDT: "too long"): one row
+// per festival with its picture, name, date, ONE status chip and a thin bar with dots; the next 4 show and "See more"
+// opens the rest; tapping a row opens its steps (start - end, days left), one row at a time; the new-things lines show
+// only when they have something (never "Nothing ..."); 16 px text, 44 px targets, no sideways scroll on phone, tablet
+// and computer; a step that is on takes the child there
 export async function calendarTabCheck(b) {
   const out = [];
   for (const [name, w, h, touch] of SCREENS) {
     const P = await open(b, { w, h, touch }); await clear(P.page);
     const r = await P.page.evaluate(async () => {
-      __sv.openPad(0, 'cal'); await new Promise(r => setTimeout(r, 600));
-      // (the new things fill in once their code and names have loaded)
-      for (let k = 0; k < 40 && !document.querySelector('.fcal-whatsnew h3'); k++) await new Promise(r => setTimeout(r, 100));
-      const pad = document.querySelector('.pad') || document; const q = (s: string) => [...pad.querySelectorAll<HTMLElement>(s)];
-      const steps = q('.fcal-step'), heads = q('.fcal h3').map(e => e.textContent || '');
-      const small = [...q('.fcal-step b, .fcal-step small, .fcal-step em, .fcal-new b, .fcal-new small')].filter(e => parseFloat(getComputedStyle(e).fontSize) < 16).length;
-      const tiny = steps.concat(q('.fcal-new')).filter(e => { const b = e.getBoundingClientRect(); return b.height < 44 || b.width < 44; }).length;
-      const over = document.documentElement.scrollWidth > innerWidth + 1;
-      const tabLabel = document.querySelector('.pad [data-tab="cal"]')?.textContent || '';
-      return { steps: steps.length, rows: q('.fcal-row').length, withDays: steps.filter(s => /day|ngày/.test(s.textContent || '')).length, heads, small, tiny, over, tabLabel, title: q('.fcal-title').map(e => e.textContent).join() };
+      const wait = (t: number) => new Promise(r => setTimeout(r, t));
+      __sv.openPad(0, 'cal'); await wait(600);
+      for (let k = 0; k < 40 && !document.querySelector('.fcal-whatsnew .fcal-line'); k++) await wait(100);
+      const pad = document.querySelector('.pad') || document, q = (s: string) => [...pad.querySelectorAll<HTMLElement>(s)], vis = (e: HTMLElement) => e.getBoundingClientRect().height > 0;
+      const rows = q('.fcal-row'), shown = rows.filter(vis), chips = shown.map(r => r.querySelectorAll('.fcal-chip').length), bars = shown.filter(r => r.querySelector('.fcal-bar .fcal-dot')).length;
+      const words = shown.map(r => (r.querySelector('.fcal-head')?.textContent || '').length);
+      const detOpen = q('.fcal-det').filter(vis).length;
+      const head = shown[0]?.querySelector<HTMLElement>('.fcal-head'); head?.click(); await wait(100);
+      const steps = q('.fcal-step').filter(vis), stepDays = steps.filter(s => /day|ngày/.test(s.textContent || '')).length, openNow = q('.fcal-det').filter(vis).length;
+      shown[1]?.querySelector<HTMLElement>('.fcal-head')?.click(); await wait(100); const oneOpen = q('.fcal-det').filter(vis).length;
+      const more = pad.querySelector<HTMLElement>('.fcal-more'); more?.click(); await wait(100); const afterMore = q('.fcal-row').filter(vis).length;
+      const texts = q('.fcal-head b, .fcal-head small, .fcal-chip, .fcal-step b, .fcal-step em, .fcal-line h3, .fcal-new b').filter(vis);
+      const small = texts.filter(e => parseFloat(getComputedStyle(e).fontSize) < 16).length;
+      const tiny = q('.fcal-head, .fcal-step, .fcal-new, .fcal-more').filter(vis).filter(e => { const b = e.getBoundingClientRect(); return b.height < 44 || b.width < 44; }).length;
+      const over = document.documentElement.scrollWidth > innerWidth + 1, nothing = /Nothing|Chưa có|không có gì/.test(pad.querySelector('.fcal')?.textContent || '');
+      return { rows: rows.length, shown: shown.length, chips, bars, words: Math.max(...words), detOpen, steps: steps.length, stepDays, openNow, oneOpen, afterMore, small, tiny, over, nothing,
+        lines: q('.fcal-line h3').map(e => e.textContent), title: q('.fcal-title').map(e => e.textContent).join(), tab: document.querySelector('.pad [data-tab="cal"]')?.textContent || '' };
     });
     const errs = P.errors; await P.ctx.close();
-    assert.ok(r.rows > 0 && r.steps >= r.rows * 2 && r.withDays === r.steps, name + ' ' + JSON.stringify(r));
-    for (const hd of ["This week's new things", 'Opens next week', 'Ending soon']) assert.ok(r.heads.includes(hd), name + ' missing ' + hd + ' ' + JSON.stringify(r.heads));
+    assert.ok(r.rows >= 6 && r.shown <= 5 && r.chips.every(c => c === 1) && r.bars === r.shown && r.detOpen === 0, name + ' rows ' + JSON.stringify(r));
+    assert.ok(r.words < 110, name + ': a row says too much ' + JSON.stringify(r));
+    assert.ok(r.steps >= 2 && r.stepDays === r.steps && r.openNow === 1 && r.oneOpen === 1 && r.afterMore > r.shown, name + ' details ' + JSON.stringify(r));
+    assert.ok(!r.nothing && r.lines.length >= 1, name + ' new-things lines ' + JSON.stringify(r));
     assert.match(r.title, /Calendar: festivals and what's new/);
     assert.ok(!r.small && !r.tiny && !r.over, name + ' ' + JSON.stringify(r));
     assert.deepEqual(errs, [], name);
-    out.push(`${name} ${r.rows} festivals, ${r.steps} steps`);
+    out.push(`${name} ${r.shown} of ${r.rows} rows`);
   }
   // a step that is on takes the child there: Halloween moved to today in Studio (its festival date)
   const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
@@ -85,14 +97,15 @@ export async function calendarTabCheck(b) {
     document.querySelectorAll('.dialog, .reward, .modal').forEach(e => e.remove()); __sv.paused = false;
     let went = null; const was = __sv.travel; __sv.travel = async (h, x, z) => { went = { x, z }; };
     __sv.openPad(0, 'cal'); await new Promise(r => setTimeout(r, 500));
-    const step = document.querySelector<HTMLElement>('.pad .fcal-step.on[data-fly="halloween"]') || document.querySelector<HTMLElement>('.fcal-step.on[data-fly="halloween"]');
-    const any = !!step; step?.click(); await new Promise(r => setTimeout(r, 300)); __sv.travel = was;
+    const row = document.querySelector<HTMLElement>('.pad .fcal-row[data-festid="halloween"]'), first = document.querySelector('.pad .fcal-row') === row, chip = row?.querySelector('.fcal-chip')?.textContent;
+    row?.querySelector<HTMLElement>('.fcal-head')?.click(); await new Promise(r => setTimeout(r, 100));
+    const step = row?.querySelector<HTMLElement>('.fcal-step.on'); const any = !!step; step?.click(); await new Promise(r => setTimeout(r, 300)); __sv.travel = was;
     const padOpen = !!document.querySelector('.pad'); document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false;
-    return { any, went, padOpen };
+    return { first, chip, any, went, padOpen };
   });
   const errs = P.errors; await P.ctx.close();
-  assert.ok(fly.any && fly.went && !fly.padOpen, 'tap a step to fly there ' + JSON.stringify(fly)); assert.deepEqual(errs, []);
-  return out.join('; ') + '; a step that is on takes the child to the festival';
+  assert.ok(fly.first && /On now/.test(fly.chip || '') && fly.any && fly.went && !fly.padOpen, 'the festival that is on comes first, and its step takes the child there ' + JSON.stringify(fly)); assert.deepEqual(errs, []);
+  return out.join('; ') + '; one chip and a bar per row, details on tap (one at a time), See more; the festival that is on comes first and a step that is on takes the child there';
 }
 
 // installgift: the first time the game runs installed, each child gets the Home hat, 100 coins and a sticker, once; the
