@@ -90,14 +90,21 @@ def prim(spec, res):
         prof = [(0, -L / 2 - r)] + [(r * math.sin(math.pi / 2 * k / n), -L / 2 - r * math.cos(math.pi / 2 * k / n)) for k in range(1, n + 1)]
         prof += [(r * math.sin(math.pi / 2 * k / n), L / 2 + r * math.cos(math.pi / 2 * k / n)) for k in range(n, 0, -1)] + [(0, L / 2 + r)]
         return lathe(prof, max(res, 8))
+    # (owner, 6 Nov 2026 AEDT: "smoother, softer") cylinders and cones with soft rounded edges and tips, boxes rounded
     if t == 'CylinderGeometry':
-        h = p['height']; return lathe([(0, -h / 2), (p['radiusBottom'], -h / 2), (p['radiusTop'], h / 2), (0, h / 2)], max(res, 8))
+        h, rb, rt = p['height'], p['radiusBottom'], p['radiusTop']; e = min(h * .18, max(rb, rt) * .3)
+        return lathe([(0, -h / 2), (rb * .82, -h / 2), (rb * .97, -h / 2 + e * .35), (rb, -h / 2 + e), (rt, h / 2 - e), (rt * .97, h / 2 - e * .35), (rt * .82, h / 2), (0, h / 2)], max(res, 8))
     if t == 'ConeGeometry':
-        h = p['height']; return lathe([(0, -h / 2), (p['radius'], -h / 2), (0, h / 2)], max(res, 8))
+        h, r = p['height'], p['radius']
+        return lathe([(0, -h / 2), (r * .9, -h / 2), (r, -h / 2 + h * .05), (r * .55, h * .05), (r * .2, h / 2 - h * .08), (r * .08, h / 2 - h * .02), (0, h / 2)], max(res, 8))
     if t == 'BoxGeometry':
         w, h, d = p['width'] / 2, p['height'] / 2, p['depth'] / 2
-        V = [(x * w, y * h, z * d) for x in (-1, 1) for y in (-1, 1) for z in (-1, 1)]
-        return V, [[0, 1, 3, 2], [4, 6, 7, 5], [0, 4, 5, 1], [2, 3, 7, 6], [0, 2, 6, 4], [1, 5, 7, 3]]
+        if min(w, h, d) < .008:   # (a whisker or a stripe: a plain thin box)
+            V = [(x * w, y * h, z * d) for x in (-1, 1) for y in (-1, 1) for z in (-1, 1)]
+            return V, [[0, 1, 3, 2], [4, 6, 7, 5], [0, 4, 5, 1], [2, 3, 7, 6], [0, 2, 6, 4], [1, 5, 7, 3]]
+        V, F = prim({'type': 'SphereGeometry', 'p': {'radius': 1}}, max(res, 12))   # a rounded box: a sphere pushed out to the corners
+        q = .32
+        return [(math.copysign(abs(x) ** q, x) * w, math.copysign(abs(y) ** q, y) * h, math.copysign(abs(z) ** q, z) * d) for x, y, z in V], F
     if t == 'TorusGeometry':
         R, tr, arc = p['radius'], p['tube'], p.get('arc', TAU); tub = max(res * 2, 16); rad = max(res // 2, 6)
         full = arc >= TAU - 1e-4; V, rows = [], []
@@ -167,6 +174,64 @@ def apply_mods(o):
 
 def tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
+
+# ---- plush-toy proportions and details (owner, 6 Nov 2026 AEDT: "cuter proportions", "more detail", "smoother, softer") ----
+# head, body (chubbier across), legs (shorter): bigger heads, rounder bodies, short legs, like a soft toy. The whole
+# creature is then sized back to the code shape's height (build), so it stands as tall as before.
+PROP = {'bull': (1.15, 1.06, .86), 'kitty': (1.15, 1.1, .8), 'calf': (1.15, 1.1, .8), 'bunny': (1.12, 1.08, 1), 'joey': (1.2, 1.1, 1), 'koala': (1.15, 1.08, 1), 'penguin': (1.12, 1.05, 1), 'turtle': (1.15, 1, 1),
+        'platypus': (1.25, 1.05, 1), 'emu': (1.35, 1.1, .82), 'crane': (1.35, 1.1, .82), 'peacock': (1.3, 1.05, .85), 'chicken': (1.15, 1.05, .85),
+        'elephant': (1.15, 1.08, .8), 'unicorn': (1.22, 1.1, .8), 'sheep': (1.2, 1, .8), 'pig': (1.2, 1.05, .82), 'panda': (1.2, 1.08, .85), 'bear': (1.22, 1.08, .82)}
+PAWS = {'puppy', 'kitty', 'bear', 'panda', 'koala'}
+HOOVES = {'calf', 'cow', 'bull', 'buffalo', 'unicorn', 'pig'}
+TUFTS = {'puppy', 'calf', 'cow', 'bull', 'buffalo', 'pig', 'joey'}
+KNEES = {}
+def kids(piv, i): return [j for j, p in enumerate(piv) if p['parent'] == i]
+def subtree(piv, i):
+    out = [i]
+    for j in kids(piv, i): out += subtree(piv, j)
+    return out
+def restyle(kind, A, piv):
+    KNEES.clear()
+    if kind in ('firefly', 'dragon'): return
+    hk, bk, lk = PROP.get(kind, (1.28, 1.12, .78))
+    roles = {p['role']: i for i, p in enumerate(piv)}
+    legs = [(i, A['legs'][int(p['role'][3:])]) for i, p in enumerate(piv) if p['role'].startswith('leg')]
+    walkers = [i for i, l in legs if not l['arm']] if A['gait'] != 'hop' else []
+    hip = sum(piv[i]['pos'][1] for i in walkers) / len(walkers) if walkers else 0
+    drop = hip * (1 - lk)
+    def move(i, dv):
+        for j in subtree(piv, i): piv[j]['pos'] = [a + b for a, b in zip(piv[j]['pos'], dv)]
+    hi = roles.get('head')
+    if hi is not None:   # a bigger head, grown round its own pivot (ears and all)
+        hp = Vector(piv[hi]['pos'])
+        for j in subtree(piv, hi):
+            if j != hi: piv[j]['pos'] = list(hp + (Vector(piv[j]['pos']) - hp) * hk)
+            for s in piv[j]['parts']: s['pos'] = [v * hk for v in s['pos']]; s['scl'] = [v * hk for v in s['scl']]
+    bi = roles['body']
+    for s in piv[bi]['parts']: s['pre'] = Matrix.Diagonal((bk, 1, bk, 1))   # a chubbier body
+    for i, p in enumerate(piv):   # what hangs on the body moves out with it
+        if p['parent'] == bi: move(i, [p['pos'][0] * (bk - 1), 0, p['pos'][2] * (bk - 1)])
+    for i in walkers:   # shorter, chunkier legs
+        for s in piv[i]['parts']: s['pre'] = Matrix.Diagonal((1.12, lk, 1.12, 1))
+    for p in piv:
+        if p['role'] != 'root': p['pos'] = [p['pos'][0], p['pos'][1] - drop, p['pos'][2]]
+    body0 = Vector(piv[bi]['pos'])
+    for i in walkers:
+        lp = piv[i]; top = lp['parts'][0]; e, _ = extents(top); r = min(e[0], e[2]) / 2 * 1.12
+        # a soft round hip where the leg meets the body, so there is no hard seam
+        piv[bi]['parts'].append(sph(r * 1.4, top['color'], list(Vector(lp['pos']) - body0), (1, .9, 1)))
+        foot = min(lp['parts'], key=lambda s: s['pos'][1]); fe, _ = extents(foot); fr = max(fe[0], fe[2]) / 2 * 1.12
+        fp = Vector((foot['pos'][0] * 1.12, foot['pos'][1] * lk, foot['pos'][2] * 1.12))
+        if kind in PAWS:   # three little toes at the front of each paw
+            for dx in (-.55, 0, .55):
+                lp['parts'].append(sph(fr * .36, shade(foot['color'], .96), list(fp + Vector((dx * fr, -fe[1] * lk * .2, fr * .78)))))
+        if kind in HOOVES:   # the split at the front of each hoof
+            lp['parts'].append({'type': 'BoxGeometry', 'p': {'width': fr * .14, 'height': fe[1] * lk * .9, 'depth': fr * .3}, 'color': shade(foot['color'], .55),
+                                'pos': list(fp + Vector((0, 0, fr * .9))), 'rot': [0, 0, 0], 'scl': [1, 1, 1]})
+        if lk < 1 and kind not in ('turtle', 'platypus'):   # a knee half way down, so the legs bend as they walk
+            ki = len(piv); kn = lp['pos'][1] * .5
+            piv.append({'role': 'knee' + lp['role'][3:], 'parent': i, 'pos': [lp['pos'][0], kn, lp['pos'][2]], 'rot': lp['rot'], 'parts': [], 'extra': []})
+            KNEES[lp['role']] = kn
 
 # ---- the face: shiny eyes that blink, brows, a mouth, rosy cheeks (owner, 6 Nov 2026 AEDT) ----
 # where the mouth sits, in the head's own frame (y up, z to the front): the height under the nose; None = no mouth (a beak,
@@ -303,6 +368,11 @@ def add_face(kind, piv, size, companion):
         if kind not in NO_CHEEK:   # rosy cheeks
             h, n = hit(Vector((side * eye_x * 1.12, eye_y - R0 * 1.9, 1.5)), (0, 0, -1))
             if h is not None: H['parts'].append(sph(R0 * 1.05, '#ff98a8', h - n * R0 * .25, (1, .62, .4)))
+    if kind in TUFTS:   # a soft tuft of fur on top of the head
+        h, n = hit(centre + Vector((0, 1.5, 0)), (0, -1, 0))
+        if h is not None:
+            for dx, dz, k in ((0, .2, 1), (-.9, 0, .85), (.9, 0, .85)):
+                H['parts'].append(sph(R0 * 1.3 * k, shade(skin, 1.07), h + Vector((dx * R0 * 1.1, -R0 * .35, dz * R0)), (1, 1.15, 1), (0, 0, -dx * .3)))
     my = MOUTH_Y.get(kind)
     if my is not None:
         h, n = hit(Vector((0, my, 1.5)), (0, 0, -1))
@@ -383,10 +453,12 @@ def animal_moves(kind, A, arm, bones, F, size):
             for b, l in legs: P[b] = ((-hop * .9 if l['back'] else (.3 + hop * .4 if l['arm'] else -hop * .6), 0, 0), Z3, O3)
             for i, e in enumerate(ears): P[e] = ((-hop * .5, 0, 0), Z3, O3)
         else:
-            for b, l in legs: P[b] = ((math.sin(ph + l['ph']) * .65 * run, 0, 0), Z3, O3)
-            P['body'] = ((0, 0, math.sin(ph) * A['waddle'] * run), (0, abs(math.sin(ph)) * .03 * run, 0), O3)
-            for i, e in enumerate(ears): P[e] = ((math.sin(ph * 2 + i) * .12 * run, 0, 0), Z3, O3)
-        if 'head' in bones: P['head'] = ((math.sin(ph * 2) * .06 * run - lift, 0, 0), Z3, O3)
+            for b, l in legs:
+                P[b] = ((math.sin(ph + l['ph']) * .65 * run, 0, 0), Z3, O3)
+                P['knee' + b[3:]] = ((max(0, -math.cos(ph + l['ph'])) * .95 * run, 0, 0), Z3, O3)   # (the knee bends as the foot comes forward)
+            P['body'] = ((math.sin(ph * 2) * .025 * run, 0, math.sin(ph) * A['waddle'] * run), (0, abs(math.sin(ph)) * .035 * run, 0), (1, 1 - .03 * math.cos(2 * ph) * run, 1))
+            for i, e in enumerate(ears): P[e] = ((math.sin(ph * 2 + i - .9) * .16 * run, 0, math.sin(ph + i) * .05 * run), Z3, O3)   # (a beat behind the step)
+        if 'head' in bones: P['head'] = ((math.sin(ph * 2 - .5) * .07 * run - lift, math.sin(ph) * .05 * run, 0), Z3, O3)
     def idle(t):
         L = 6.0; w = TAU / L; P = rest(bones)
         P['body'] = (Z3, Z3, (1, 1 + math.sin(2 * w * t) * .02, 1))
@@ -438,7 +510,7 @@ def animal_moves(kind, A, arm, bones, F, size):
         jump = max(0, math.sin(2 * w * t)) ** .8
         P['body'] = ((-.2 * jump, 0, 0), (0, jump * (.35 if not up else .45), 0), (1, 1 + .06 * jump, 1))
         if 'head' in bones: P['head'] = ((-.3 * jump, math.sin(w * t) * .2, 0), Z3, O3)
-        for b, l in legs: P[b] = ((.7 * jump if l['arm'] else (-.6 * jump if not l['back'] else -.9 * jump), 0, 0), Z3, O3)
+        for b, l in legs: P[b] = ((.7 * jump if l['arm'] else (-.6 * jump if not l['back'] else -.9 * jump), 0, 0), Z3, O3); P['knee' + b[3:]] = ((.9 * jump, 0, 0), Z3, O3)
         for e in ears: P[e] = ((-.5 * jump, 0, 0), Z3, O3)
         tail_pose(P, t, w, 1.4, 2.5)
         face(P, F, joy=True, smile=1.4, jaw=.6 + .4 * jump, brow_y=br * (1 + jump))
@@ -471,7 +543,7 @@ def animal_moves(kind, A, arm, bones, F, size):
         for bn, l in legs:
             if l['arm']: P[bn] = ((.6, 0, 0), Z3, O3)
             elif hop_gait or up: P[bn] = ((-.6 if l['back'] else -.3, 0, 0), Z3, O3)
-            else: P[bn] = ((1.35 if l.get('front') else -1.35, 0, 0), Z3, O3)
+            else: P[bn] = ((1.2 if l.get('front') else -1.2, 0, 0), Z3, O3); P['knee' + bn[3:]] = ((-1.4 if l.get('front') else 1.4, 0, 0), Z3, O3)   # (folded under)
         if has_tail: P['tail'] = ((-.4, .5, 0), Z3, O3)
         face(P, F, shut=True, smile=.8, brow_y=-br * .2)
         return P
@@ -501,7 +573,8 @@ def build(kind, A, companion=False):
     bpy.ops.wm.read_factory_settings(use_empty=True)
     sc = bpy.context.scene; sc.render.fps = FPS
     mn, mx = A['box']['min'], A['box']['max']; size = max(mx[i] - mn[i] for i in range(3))
-    piv = [dict(p, parts=list(p['parts']), extra=list(p['extra'])) for p in A['pivots']]
+    piv = json.loads(json.dumps(A['pivots'])); A = dict(A, legs=[dict(l) for l in A['legs']]) if not companion else A
+    restyle(kind, A, piv)
     F = add_face(kind, piv, size, companion)
     if not companion:   # the legs' heights (how low it lies down to sleep) and which legs are in front
         lp = [p for p in piv if p['role'].startswith('leg')]
@@ -515,16 +588,22 @@ def build(kind, A, companion=False):
         items = []
         for s in p['parts'] + [e for e in p['extra'] if not (e.get('glow') and e.get('opacity', 1) >= 1)]:
             e, _ = extents(s); m = max(e)
-            res = 16 if m > size * .25 else (12 if m > size * .1 else (12 if p['role'].startswith('eye') else 8))
+            res = 16 if m > size * .35 else (12 if m > size * .1 else (11 if p['role'].startswith('eye') else (8 if m > size * .05 else 6)))
+            if p['role'] == 'body' and m <= size * .35: res = min(res, 10)   # (patches and puffs on the body: fewer triangles)
             V, Fc = prim(s, res)
             special = s['type'] == 'ConeGeometry' and s['p'].get('radialSegments') == 4 and not s['rot'][0] and not s['rot'][2] and s['scl'][0] != s['scl'][2]
-            M = C @ W[i] @ three_matrix(s['pos'], s['rot'], s['scl'], special)
+            M = C @ W[i] @ s.get('pre', Matrix.Identity(4)) @ three_matrix(s['pos'], s['rot'], s['scl'], special)
             V = [(M @ Vector(v)).to_tuple() for v in V]
             if s['scl'][0] * s['scl'][1] * s['scl'][2] < 0: Fc = [f[::-1] for f in Fc]   # a mirrored part (the dragon's left wing)
             items.append((V, Fc, lin(s['color'])))
         if not items: continue
         o = mesh_obj(p['role'], items)
         vg = o.vertex_groups.new(name=p['role']); vg.add(list(range(len(o.data.vertices))), 1.0, 'REPLACE')
+        kn = KNEES.get(p['role'])
+        if kn is not None:   # the lower leg follows the knee, blended softly round it
+            vk = o.vertex_groups.new(name='knee' + p['role'][3:]); band = max(.02, kn * .3)
+            for v in o.data.vertices:
+                t = max(0.0, min(1.0, (kn + band - v.co.z) / (2 * band))); vg.add([v.index], 1 - t, 'REPLACE'); vk.add([v.index], t, 'REPLACE')
         objs.append(o)
     # one mesh, one material
     bpy.ops.object.select_all(action='DESELECT')
@@ -536,6 +615,13 @@ def build(kind, A, companion=False):
     nt.links.new(ca.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Base Color']); nt.nodes['Principled BSDF'].inputs['Roughness'].default_value = .9
     body.data.materials.clear(); body.data.materials.append(mat)
     body.data.color_attributes.active_color = body.data.color_attributes['Col']
+    # as tall as the code shape (the plush proportions changed it), so it stands where it stood and is touched the same
+    low = min(v.co.z for v in body.data.vertices); lift = -low if (low < -.005 and not companion) else 0.0   # (nothing below the ground)
+    if lift: body.data.transform(Matrix.Translation((0, 0, lift))); W = [Matrix.Translation((0, 0, lift)) @ Wm for Wm in W]
+    want = A['box']['max'][1] - min(0, A['box']['min'][1]); got = max(v.co.z for v in body.data.vertices)
+    fit = max(.8, min(1.25, want / got)) if got > 0 and not companion else 1.0
+    body.data.transform(Matrix.Scale(fit, 4)); W = [Matrix.Translation(Wm.to_translation() * fit) @ Wm.to_3x3().to_4x4() for Wm in W]
+    if not companion: A['hip'] = A['hip'] * fit
     # the skeleton: one bone per moving piece, standing up (so its turns read like three's: x, y, z)
     ad = bpy.data.armatures.new('rig'); arm = bpy.data.objects.new('rig', ad); bpy.context.collection.objects.link(arm)
     bpy.context.view_layer.objects.active = arm; bpy.ops.object.mode_set(mode='EDIT')

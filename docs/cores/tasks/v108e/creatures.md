@@ -1,6 +1,24 @@
 # v1.08e creatures: status
 
-**ready for Release** (6 Nov 2026, 03:36 AEDT, third pass: friendly eyes; before that 6 Nov 2026, 03:28 AEDT, second pass after the owner's review). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+**ready for Release** (6 Nov 2026, 04:00 AEDT, fourth pass: plush refinement). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+
+## Fourth pass: plush refinement (owner, 6 Nov 2026 AEDT, pop-up: all four of smoother, cuter proportions, more detail, nicer moves)
+
+- **Smoother, softer:** cylinders and cones have rounded edges and tips; boxes (feet, flippers, bills, the peacock's fan)
+  are rounded; a soft round hip where each leg meets the body (no hard seam); more detail on the big shapes.
+- **Cuter proportions:** bigger heads (about 1.15-1.35 times), chubbier bodies, shorter chunkier legs, like soft toys. Each
+  creature is then sized back to its code shape's height, so it stands as tall as before; width and length change a
+  little (the check allows 30 % there, the height still 12 %, as the owner chose when picking cuter proportions).
+- **More detail:** three toes on each paw (puppy, kitty, bear, panda, koala), split hooves (calf, cow, bull, buffalo,
+  unicorn, pig), a tuft of fur on the head (puppy, calf, cow, bull, buffalo, pig, joey).
+- **Nicer moves:** knees half way down each walking leg that bend as the foot comes forward and fold under when lying
+  down; the body bounces and squashes a little with each step; ears and head move a beat behind the step; in the game an
+  animal near a child turns its head to look at them (`js/creatures.ts`).
+- 2,900-9,200 triangles, 2.0 MB for all 24 (loaded only near the child).
+- Checks ({"6 Nov 2026, 04:00 AEDT"}, one at a time, all on the first try): worldcreatures, types, boot, startup (1032 KB, same as the
+  base), perf (village 278 draws, 631k triangles), battery, longplaymem, companiongoal.
+- Pictures: sheet-1, sheet-2, moods-1 to moods-3, horns, moves (walk, walk, cheer, asleep), *-face.png (the puppy greeting
+  the child in the game).
 
 ## Third pass: friendly eyes (owner, 6 Nov 2026 AEDT: "All the animals eyes look still very scary")
 
@@ -104,4 +122,5 @@ and buffaloes horns, they look incorrect, all animals need to show emotions, fac
 
 ## Owner's decisions
 
+- 6 Nov 2026 AEDT (pop-up, "Everything still need better refinement"): all four: smoother and softer (no facets or hard seams, rounded boxes, soft joints, paws and hooves); cuter proportions (bigger heads, chubbier bodies, shorter legs, like plush toys; the sizes the game uses for touching them adjusted); more detail (tufts, toes, hooves); nicer moves (bending knees, bouncing bodies, heads that follow the child, ears and tails with follow-through).
 - 6 Nov 2026 AEDT (pop-ups, via Release): the go for v1.08e; models load near the child; code shapes stay as the fallback.
