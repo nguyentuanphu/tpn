@@ -104,4 +104,5 @@ and buffaloes horns, they look incorrect, all animals need to show emotions, fac
 
 ## Owner's decisions
 
+- 6 Nov 2026 AEDT (pop-up, "Everything still need better refinement"): all four: smoother and softer (no facets or hard seams, rounded boxes, soft joints, paws and hooves); cuter proportions (bigger heads, chubbier bodies, shorter legs, like plush toys; the sizes the game uses for touching them adjusted); more detail (tufts, toes, hooves); nicer moves (bending knees, bouncing bodies, heads that follow the child, ears and tails with follow-through).
 - 6 Nov 2026 AEDT (pop-ups, via Release): the go for v1.08e; models load near the child; code shapes stay as the fallback.

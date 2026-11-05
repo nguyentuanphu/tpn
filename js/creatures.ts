@@ -17,6 +17,22 @@ export const creatureModelName = (kind: string) => 'creature-' + kind;
 export const CREATURE_HAPPY = { puppy: 'wag', kitty: 'hop', bunny: 'hop', panda: 'hop', joey: 'hop', calf: 'wag', cow: 'wag', sheep: 'wag', pig: 'wag', unicorn: 'wag', chicken: 'flap', bear: 'hop', koala: 'hop', platypus: 'hop', penguin: 'flap', emu: 'flap', turtle: 'hop', elephant: 'wag', crane: 'flap', bull: 'wag', buffalo: 'wag', peacock: 'flap' };
 
 let since = 0, asked = 0;
+// (owner, 6 Nov 2026 AEDT: "nicer moves") an animal near a child turns its head to look at them (after its clip has moved
+// the head, so the two add up); not while it walks, follows or sleeps
+const LOOKING = new Set<any>();
+const _look = (dt: number) => {
+  for (const r of LOOKING) {
+    if (!r.g.parent) { LOOKING.delete(r); continue; }
+    if (!r.headBone || !G) continue;
+    let want = 0, best = 6;
+    if (r.clip !== 'sleep' && r.clip !== 'walk' && r.clip !== 'follow' && r.clip !== 'cheer') for (const h of G.heroes) {
+      const dx = h.pos.x - r.g.position.x, dz = h.pos.z - r.g.position.z, d = Math.hypot(dx, dz);
+      if (d < best) { best = d; let a = Math.atan2(dx, dz) - r.g.rotation.y; a = ((a + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI; want = Math.abs(a) < 2 ? Math.max(-.75, Math.min(.75, a)) : 0; }
+    }
+    r.look += (want - r.look) * Math.min(1, dt * 4);
+    if (Math.abs(r.look) > .002) r.headBone.rotateY(r.look);
+  }
+};
 function near(g, r) {
   const now = performance.now(); if (now - since > 100) { since = now; asked = 0; }
   if (asked >= 3) return;   // (at most 3 new models a moment, so a frame never stalls)
@@ -24,6 +40,7 @@ function near(g, r) {
   void worldModel(creatureModelName(r.kind), { clip: 'idle' }).then(m => {
     if (!m) return;   // (blocked or failed: the code shape stays)
     g.add(m.obj); r.root.visible = false; r.model = m; r.clip = 'idle'; r.idleT = 0; g.userData.model = m;
+    r.g = g; r.headBone = m.obj.getObjectByName('head'); r.look = 0; LOOKING.add(r);
   });
 }
 // (owner, 6 Nov 2026 AEDT: "all animals need to show emotions, facial expressions, movements, eye blinks") every clip blinks;
@@ -57,4 +74,4 @@ function flyTick(c, from, dt: number) {
   const clip = c.trick ? 'flap' : c.moodT > 0 ? 'surprised' : c.lead ? 'follow' : sp > 1.2 ? 'fly' : night && c.stillT > 6 ? 'sleep' : 'idle';
   if (clip !== c.clip) { c.clip = clip; c.model.play(clip); }
 }
-export function startCreatureModels(game?: any) { G = game || null; useCreatureModels({ near, tick }); useCompanionModels({ ask, tick: flyTick }); }
+export function startCreatureModels(game?: any) { G = game || null; if (G && G.world && G.world.updaters) G.world.updaters.push(_look); useCreatureModels({ near, tick }); useCompanionModels({ ask, tick: flyTick }); }
