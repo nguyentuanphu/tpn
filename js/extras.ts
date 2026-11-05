@@ -3,7 +3,7 @@
 // (round R privacy, 9 Oct, owner) voices are made in Studio only: no online voice engine, voice key or voice copy here.
 import { T } from './i18n.js';
 import { settings, saveSettings } from './state.js';
-import { say, voicePack, savePackOffline } from './voice.js';
+import { say, voicePack } from './voice.js';
 import { canListen } from './listen.js';
 import { esc } from './util.js';
 
@@ -47,8 +47,7 @@ export function extrasHTML() {
   return `
   <h3>🎙️ ${T('Offline voice pack', 'Gói giọng đọc ngoại tuyến')}</h3>
   ${voicePack() ? `<p class="note">${T(`Available: ${Object.keys(voicePack().lines).length} recorded lines (${Object.values(voicePack().voices || {}).flatMap(v => Object.values(v).map(x => x.name)).join(', ')}). They play instead of the device voice, even with no internet.`, `Có sẵn: ${Object.keys(voicePack().lines).length} câu đã thu (${Object.values(voicePack().voices || {}).flatMap(v => Object.values(v).map(x => x.name)).join(', ')}). Các câu này phát thay giọng của máy, kể cả khi không có mạng.`)}</p>
-  <p class="note">${T('Voices play over the internet while this device is online, and the lines already heard stay on it. To play offline with every voice, keep them all on this device (about 250 MB for each language; use Wi-Fi).', 'Khi máy có mạng, giọng nói phát qua mạng, và những câu đã nghe được giữ lại trong máy. Để chơi offline với đủ giọng nói, hãy lưu tất cả vào máy (khoảng 250 MB cho mỗi ngôn ngữ; dùng Wi-Fi).')}</p>
-  <button class="btn wide" id="xPackSave">⬇️ ${T('Keep all voices on this device', 'Lưu tất cả giọng đọc vào máy')}</button><p class="note" id="xPackProg">${T('Downloads continue in the background while the game stays open, including after Save & close.', 'Giọng đọc tiếp tục tải khi trò chơi còn mở, kể cả sau khi Lưu và đóng.')}</p>`
+  <div class="offlvl-slot"></div>`
   : `<p class="note">${T('The recorded voices have not downloaded yet: they come with the game the next time this device is online.', 'Giọng đọc đã thu chưa tải về: sẽ tải cùng trò chơi vào lần tới máy này có mạng.')}</p>`}
   <h3>✨ ${T('More natural voice', 'Giọng tự nhiên hơn')}</h3>
   <p class="note">${T('Every character has their own voice: grandparents speak slower and lower, kids higher, aunties and uncles with a woman’s or a man’s voice. More Vietnamese voices: on Android open Settings → Text-to-speech → Google → Install voice data → Vietnamese and download all 4 voices; the game shares them out between the characters.', 'Mỗi nhân vật có giọng riêng: ông bà nói chậm và trầm hơn, các bạn nhỏ cao giọng hơn, cô chú có giọng nữ hoặc nam. Thêm giọng tiếng Việt: trên Android vào Cài đặt → Chuyển văn bản thành giọng nói → Google → Cài đặt dữ liệu giọng nói → Tiếng Việt và tải cả 4 giọng; trò chơi sẽ chia các giọng cho các nhân vật.')}</p>
@@ -66,10 +65,8 @@ export function extrasHTML() {
 export function bindExtras(card, redraw, toast) {
   const s = settings, q = x => card.querySelector(x), save = () => saveSettings();
   card.querySelectorAll('.seg.vrate button').forEach(b => b.onclick = () => { s.voiceRate = +b.dataset.r; save(); redraw(); say('This is how fast I talk.', 'Tớ nói nhanh như thế này nè.'); });
-  if (q('#xPackSave')) q('#xPackSave').onclick = () => {
-    // The shared voice service owns this job and its progress bar, even after this card closes.
-    savePackOffline().catch(() => {});
-  };
+  // (v1.08c voices) the offline levels: their own small file, loaded when Grown-ups opens (the first download stays as it was)
+  const slot = q('.offlvl-slot'); if (slot) import('./offlinelevels.js').then(m => m.showLevels(slot, card)).catch(() => { });
   // (round R privacy, 9 Oct) the only key on this device is the chat key (owner: keep as is)
   const k = q('#xAiKey'); if (k) k.onchange = () => { s.aiKey = k.value.trim(); save(); };
   q('#xVc').onchange = e => { s.voiceControl = e.target.checked; save(); document.querySelectorAll<HTMLElement>('.dk.voicecmd').forEach(b => b.hidden = !s.voiceControl); };

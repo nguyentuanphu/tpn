@@ -2,12 +2,19 @@ import { voicePackSignature, voiceFormatFor } from './voice-index.js';
 // The voice pack downloading to the device (split from js/voice.js in round R item 12, so it is fetched only when the
 // download starts, not before the title screen: PERF-001). js/voice.js starts it once the pack's list has arrived.
 import { settings, saveSettings, profiles, autoPackOn, ASIDE_VOICES_ON } from './state.js';
+// (v1.08c voices, brief part 2) the offline level a grown-up chose in Grown-ups ('auto' when never chosen). Kept here, not in
+// js/state.ts, so the first download does not grow; js/state.ts autoPackOn reads settings.offlineLevel itself.
+export type OfflineLevel = 'light' | 'auto' | 'full';
+export const offlineLevel = (): OfflineLevel => settings.offlineLevel === 'light' || settings.offlineLevel === 'full' ? settings.offlineLevel : 'auto';
+// a level may move a device from MP3 to Opus: only when the pack has Opus copies and this browser plays them
+const opusPossible = pack => { try { return !!(pack && Array.isArray(pack.formats) && pack.formats.includes('opus')) && !!new Audio().canPlayType('audio/ogg; codecs="opus"'); } catch (e) { return false; } };
+const moveToOpus = pack => { if (!opusPossible(pack)) return false; try { localStorage.setItem('sv2_voiceFmt', 'opus'); return true; } catch (e) { return false; } };
 import { events } from './core/events.js';
-import { T } from './i18n.js';
+import { T, swapNames } from './i18n.js';
 import { featureOn } from './custom.js';
 import { voiceStore, storeKey } from './voicestore.js';
 
-let PACK = null, packEmit = e => { }, hereArea = () => null, packStarted = false;
+let PACK = null, packEmit = e => { }, hereArea = () => null, packStarted = false, festStarted = false;
 let manualSave: Promise<number> | null = null;
 const manualListeners = new Set<(done: number, total: number) => void>();
 export const refreshPack = () => { checkPack().catch(() => { }); };
@@ -24,6 +31,10 @@ export function startPack(pack, emit, here) {
   const changed = PACK && PACK !== pack;
   PACK = pack; packEmit = emit; hereArea = here;
   if (changed) { areaRevision++; AREAS = null; areasTried = null; groupOfHash = null; }
+  // (v1.08c voices, brief part 3) festival packs, on every level: 20 s after the valley is built, then again when the
+  // device comes onto Wi-Fi or back online (the voice list arrives here whatever the level, js/voice.ts autoSavePack)
+  if (!festStarted) { festStarted = true; const f = () => { festivalPacks().catch(() => { }); };
+    valleyBuilt().then(() => setTimeout(() => { f(); addEventListener('online', f); try { navigator.connection?.addEventListener?.('change', f); } catch (e) { } }, 20000)); }
   // (an address that can't keep files, like http://192.168.… on a phone: the voices still play, from the internet)
   if (!('caches' in window)) { setTimeout(() => packEmit({ state: 'nostore', total: packFiles().length }), 3000); return; }
   // (31 Oct 2026 AEDT) voices online unless the whole pack is kept here; recordings kept the old way still move into bundles
@@ -36,6 +47,8 @@ export function startPack(pack, emit, here) {
   try { const c = navigator.connection; if (c && c.addEventListener) c.addEventListener('change', again); } catch (e) { } // (onto Wi-Fi: the rest goes on)
   events.on('LanguageChanged', again); // (a new language, or both spoken: its core, then its areas)
   events.on('SettingsChanged', again);
+  // (v1.08c voices) on the Light level a new area's voices come when the child goes there, and the old ones make room
+  events.on('PlayerEnteredVillage', () => { if (offlineLevel() === 'light') setTimeout(again, 0); });
 }
 // the languages this device's children hear: the game's language, and the other one too when both are spoken
 export const packLangs = () => { const L = [settings.lang === 'vi' ? 'vi' : 'en']; if (settings.bilingual) L.push(L[0] === 'vi' ? 'en' : 'vi'); return L; };
@@ -90,6 +103,117 @@ export function packOrder() {
   all.filter(g => !NOT_PLACES.includes(g)).forEach(add); add('world'); all.forEach(add);
   return out;
 }
+// (v1.08c voices, brief part 2) the three offline levels (Grown-ups → Sound and voices):
+//   Light (Nhẹ)          the core lines and the area the child is in (and the last ones, while they fit), about 30–50 MB;
+//                        everything else is removed, so lines heard elsewhere play over the internet again next time
+//   Automatic (Tự động)  the default, as before: lines play over the internet and are kept once heard (a device that
+//                        kept every voice before keeps them up to date on Wi-Fi)
+//   Full (Đầy đủ)        everything, kept up to date on Wi-Fi (for trips)
+// Moving to a smaller level frees the space at once (js/voicestore.ts prune). Sizes come from voices/areas.json (MP3);
+// an Opus copy is about 45% of the MP3.
+const OPUS_SHARE = 0.45, LIGHT_MB = 45;
+const isPlace = g => !!(g && AREAS && AREAS.groups[g] && !NOT_PLACES.includes(g));
+export function groupsMB(gs: string[], langs = packLangs(), opus = !!PACK && voiceFormatFor(PACK) === 'opus') {
+  let n = 0; for (const g of gs) for (const L of [...langs, 'zh', 'hi']) n += (AREAS && AREAS.size && AREAS.size[g] && AREAS.size[g][L]) || 0;
+  return n / 1048576 * (opus ? OPUS_SHARE : 1);
+}
+// the format a level will use: Light moves to Opus when it can, Full too unless the whole pack is kept already
+const levelOpus = (level: OfflineLevel) => (!!PACK && voiceFormatFor(PACK) === 'opus') || ((level === 'light' || (level === 'full' && !packIsSaved(packLangs()))) && opusPossible(PACK));
+// the last areas the child was in (newest first), kept with the settings
+function rememberHere() { const h = hereArea(), r = settings.packRecent || []; if (!isPlace(h) || r[0] === h) return false; settings.packRecent = [h, ...r.filter(x => x !== h)].slice(0, 4); return true; }
+// the areas the Light level keeps: the core, where the child is, then the last areas while they fit in about 45 MB
+export function lightGroups() {
+  const out = ['core'], cand = [hereArea(), ...(settings.packRecent || [])].filter(isPlace);
+  for (const g of cand) if (!out.includes(g) && (out.length < 2 || groupsMB(out.concat(g), packLangs(), levelOpus('light')) <= LIGHT_MB)) out.push(g);
+  return out;
+}
+// the areas this level downloads, in their order
+const levelGroups = () => { if (offlineLevel() !== 'light') return packOrder(); const keep = lightGroups(); return packOrder().filter(g => keep.includes(g)).concat(keep.filter(g => !packOrder().includes(g))); };
+// what the Automatic level keeps when a grown-up moves down to it from Full: the core, the places the children have been,
+// the stories and the festivals (game lines come back as they are heard)
+function autoGroups() {
+  const out = ['core'], add = g => { if (AREAS && AREAS.groups[g] && !out.includes(g)) out.push(g); };
+  add(hereArea()); for (const p of profiles || []) for (const k of Object.keys((p && p.visited) || {})) add(k); add('stories'); add('festivals');
+  return out;
+}
+// keep only these areas' recordings (in this device's format) and give the rest of the space back
+async function keepOnly(groups: string[], langs = packLangs()) {
+  const keep = new Set(packFiles(groups, langs).map(u => storeKey(u)));
+  for (const p of Object.values(settings.festPacks || {}) as FestPack[]) if (p.until > Date.now()) for (const u of p.files || []) keep.add(storeKey(u)); // (a festival pack that is due stays)
+  return voiceStore('sv-voices').prune(k => keep.has(k));
+}
+// a grown-up chose a level in Grown-ups. Light (and Full when the pack is not all kept yet) moves the device to Opus when
+// it plays Opus (about half the size); then a smaller level frees its space. Returns the bytes freed.
+export async function setOfflineLevel(level: OfflineLevel) {
+  const was = offlineLevel(); settings.offlineLevel = level;
+  if (level === 'full') settings.autoPack = true;
+  else if (level === 'auto' && was !== 'auto') settings.autoPack = false;
+  if (level !== 'full') { delete settings.packSaved; delete settings.packLangs; }
+  if (level === 'light' || (level === 'full' && !packIsSaved(packLangs()))) moveToOpus(PACK);
+  saveSettings();
+  let freed = 0;
+  if (PACK && level !== 'full' && level !== was) {
+    while (checking) await rest(25);
+    await loadAreas();
+    if (AREAS) { if (level === 'light') rememberHere(); freed = await keepOnly(level === 'light' ? lightGroups() : autoGroups()); }
+  }
+  events.emit('SettingsChanged', { key: 'offlineLevel' });
+  return freed;
+}
+// for Grown-ups: the space each level takes, and what this device keeps now (bytes)
+export async function levelSpace() {
+  await loadAreas();
+  const all = AREAS ? Object.keys(AREAS.groups) : ['core'];
+  let now = 0; try { now = await voiceStore('sv-voices').bytes(); } catch (e) { }
+  return { light: Math.ceil(groupsMB(lightGroups(), packLangs(), levelOpus('light'))), full: Math.ceil(groupsMB(all, packLangs(), levelOpus('full'))), now, level: offlineLevel(), known: !!AREAS };
+}
+// ---------- (v1.08c voices, brief part 3) festival packs ----------
+// A festival pack is what a festival needs that is not already in the game's own download: its voice lines (its name and
+// what its host says). Its decorations and its festival game are drawn by the game's code, which every device already
+// keeps. The pack downloads on Wi-Fi a few days (FEST_AHEAD) before the decorations go up, on every level, so the festival
+// speaks offline on the day. After the festival it is removed on Light (it downloads again next year) and kept on Full
+// and Automatic. What this device holds is kept in settings.festPacks: { id: { until (ms), files } }.
+export const FEST_AHEAD = 3;
+type FestPack = { until: number, files: string[] };
+// the recordings of these lines (English and Vietnamese pairs) in this device's languages and format, female voice
+// (packhash.js is fetched only here, so the game's first download keeps its files as they were: check startup)
+async function lineFiles(pairs: [string, string][], langs: string[]) {
+  const { lineHash, packHash } = await import('./packhash.js'), out: string[] = [], key = (L, t) => { for (const h of [lineHash(L, t), packHash(L, t)]) if (PACK.lines[h]) return h; return null; };
+  for (const [en, vi] of pairs) for (const [L, t] of [['en', en], ['vi', vi]] as const) { if (!t || !langs.includes(L)) continue; const h = key(L, swapNames(t, L)) || key(L, t); if (h && String(PACK.lines[h]).includes('f')) out.push(`voices/${L}/f/${h}.${voiceFormatFor(PACK)}`); }
+  return [...new Set(out)];
+}
+async function festivalsDue(now: Date) {
+  const Fm = await import('./festivals.js'), out: (FestPack & { id: string })[] = [];
+  for (const n of Fm.upcoming(now)) {
+    if (+now < +n.start - (Fm.buildupOf(n.F) + FEST_AHEAD) * 864e5) continue;
+    out.push({ id: n.F.id, until: +n.end, files: await lineFiles([[n.F.en, n.F.vi], ...((n.F.lines || []) as [string, string][])], packLangs()) });
+  }
+  return out;
+}
+// (one run at a time: a second call waits for the first, then runs with its own date)
+let festChain: Promise<unknown> = Promise.resolve();
+export function festivalPacks(pack = PACK, now = new Date()) {
+  if (pack && !PACK) PACK = pack;
+  const run = festChain.catch(() => { }).then(async () => {
+    let got = 0, freed = 0; const due: string[] = [];
+    if (!PACK || !('caches' in window)) return { got, freed, due };
+    const store = voiceStore('sv-voices'), packs: Record<string, FestPack> = settings.festPacks || (settings.festPacks = {});
+    for (const [id, p] of Object.entries(packs)) if (p.until <= +now) {
+      if (offlineLevel() === 'light') { const gone = new Set((p.files || []).map(u => storeKey(u))); freed += await store.prune(k => !gone.has(k)); }
+      delete packs[id];
+    }
+    const list = await festivalsDue(now);
+    for (const d of list) {
+      due.push(d.id);
+      if (packNet() !== 'wifi') continue; // (Wi-Fi only: a festival can wait for it, it has days)
+      for (const u of d.files) if (!(await store.has(u))) { try { const r = await fetch(u); if (r.ok) { await store.add(u, await r.arrayBuffer()); got++; } } catch (e) { } }
+      packs[d.id] = { until: d.until, files: d.files };
+    }
+    await store.flush(); saveSettings();
+    return { got, freed, due };
+  });
+  festChain = run; return run;
+}
 let checking = false, recheck = false;
 // (battery round, owner 12 Oct AEDT: "my phone gets very hot") the download is spread out: nothing while the valley is
 // being built (the busiest seconds of a start), then 6 files at a time with a short rest between (longer once the small
@@ -99,6 +223,7 @@ const valleyBuilt = async () => { for (let i = 0; i < 240 && !(window.__sv && wi
 const rest = ms => new Promise(r => setTimeout(r, ms));
 async function checkPack() {
   if (!PACK) return;
+  if (!autoPackOn()) return; // (v1.08c voices: a grown-up moved to Automatic, voices online: the download stops here)
   if (manualSave) { recheck = true; return; }
   if (checking) { recheck = true; return; }
   checking = true; recheck = false;
@@ -113,12 +238,15 @@ async function checkPack() {
     // the whole pack is on the device, a start only looks at 16 files picked at random, says nothing and downloads
     // nothing; the full check (listing every file) runs only for a new pack, or when a file has gone missing
     const quick = async list => { const pick = list.length <= 64 ? list : Array.from({ length: 16 }, () => list[Math.floor(Math.random() * list.length)]); return (await Promise.all(pick.map(u => store.has(u)))).every(Boolean); };
-    if (packIsSaved(langs) && await quick(packFiles(null, langs))) { packEmit({ state: 'ready', quiet: true, known: true, total: packFiles(null, langs).length }); return; }
+    if (offlineLevel() !== 'light' && packIsSaved(langs) && await quick(packFiles(null, langs))) { packEmit({ state: 'ready', quiet: true, known: true, total: packFiles(null, langs).length }); return; }
     await loadAreas();
     // a pack made by area whose list could not be fetched (a bad connection): nothing is downloaded until it can be,
     // so a phone on mobile data never takes the whole pack by mistake
     if (PACK.areas && !AREAS) return;
-    const order = packOrder(), core = packFiles(['core'], langs);
+    // (v1.08c voices) Light: the child's area joins the list, and what Light no longer keeps is removed first
+    const light = offlineLevel() === 'light';
+    if (light) { if (rememberHere()) saveSettings(); await keepOnly(lightGroups(), langs); }
+    const order = levelGroups(), core = packFiles(['core'], langs);
     // only the core is wanted for now (mobile data, no yes yet) and it is all here: nothing to show, maybe a question
     if (!mayFetchRest() && settings.packCore === packSig() + '|' + langs.join('') && await quick(core)) { packEmit({ state: 'ready', quiet: true, known: true, core: true, total: core.length }); askRest().catch(() => { }); return; }
     const have = await store.keys(), abs = u => storeKey(u);
@@ -163,6 +291,7 @@ async function checkPack() {
   }
 }
 function donePack(want, langs) {
+  if (offlineLevel() === 'light') { settings.packCore = packSig() + '|' + langs.join(''); saveSettings(); return; } // (never "all kept")
   if (want.length === 1) settings.packCore = packSig() + '|' + langs.join('');
   else { settings.packSaved = packSig(); settings.packLangs = langs.join(''); settings.packCore = packSig() + '|' + langs.join(''); }
   saveSettings();
@@ -174,7 +303,7 @@ async function askRest() {
   // (owner, 16 Oct) Studio can turn the question off: the rest of the voices then come on Wi-Fi only
   if (!featureOn('explain_voiceAsk', true)) return;
   if (mayFetchRest() || !askDue() || packNet() === 'off') return;
-  const rest = packOrder().filter(g => g !== 'core'); if (!rest.length) return;
+  const rest = levelGroups().filter(g => g !== 'core'); if (!rest.length) return;
   // how much is still to come (a device that kept an older pack has most of it already)
   const all = packFiles(rest); if (!all.length) return;
   const have = await voiceStore('sv-voices').keys(), miss = all.filter(u => !have.has(storeKey(u))).length;
@@ -182,7 +311,7 @@ async function askRest() {
   let bytes = 0; for (const g of rest) for (const L of packLangs().concat(['zh', 'hi'])) bytes += (AREAS && AREAS.size && AREAS.size[g] && AREAS.size[g][L]) || 0;
   packEmit({ state: 'ask', mb: Math.max(1, Math.round(bytes * miss / all.length / 1048576)) });
 }
-const packSig = () => voicePackSignature(PACK, packLangs()) + (packMale() ? ':m' : '');
+const packSig = () => voicePackSignature(PACK, packLangs()) + (packMale() ? ':m' : '') + (voiceFormatFor(PACK) === 'opus' ? ':opus' : ''); // (v1.08c: a pack kept as MP3 is not the Opus pack)
 // the files of the pack in these areas (all areas when none are named), in the children's own languages (Chinese and
 // Hindi only come with the places and games that speak them)
 // (read fresh each time: the connection can drop while the pack downloads)

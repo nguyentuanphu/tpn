@@ -466,7 +466,7 @@ function offlineNote() {
   const card = document.createElement('div'); card.className = 'voice-offline'; card.setAttribute('role', 'status');
   card.style.cssText = 'position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 184px);transform:translateX(-50%);z-index:70;width:min(360px,calc(100% - 32px));box-sizing:border-box;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.97);box-shadow:0 6px 24px rgba(60,30,90,.25);color:#3a2a20;font:600 14px/1.4 var(--font);text-align:center';
   const p = document.createElement('p'); p.style.margin = '0 0 8px';
-  p.textContent = T('No internet, so the voices can’t play now (lines already heard still do). To play offline with voices, a grown-up goes to Grown-ups → Sound and voices → “Keep all voices on this device”, on Wi-Fi.', 'Không có mạng nên giọng nói chưa phát được (những câu đã nghe vẫn phát). Để chơi offline có giọng nói, người lớn vào Người lớn → Âm thanh và giọng nói → “Lưu tất cả giọng đọc vào máy”, khi có Wi-Fi.');
+  p.textContent = T('No internet, so the voices can’t play now (lines already heard still do). To play offline with voices, a grown-up goes to Grown-ups → Sound and voices → Offline voices → Light or Full, on Wi-Fi.', 'Không có mạng nên giọng nói chưa phát được (những câu đã nghe vẫn phát). Để chơi offline có giọng nói, người lớn vào Người lớn → Âm thanh và giọng nói → Giọng đọc ngoại tuyến → Nhẹ hoặc Đầy đủ, khi có Wi-Fi.');
   const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;justify-content:center;flex-wrap:wrap';
   const btn = (text: string, bg: string, go: () => void) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.style.cssText = `min-height:48px;min-width:120px;flex:1 1 130px;padding:6px 12px;border:0;border-radius:12px;font:700 14px/1.2 var(--font);color:#fff;background:${bg}`; b.onclick = () => { card.remove(); go(); }; return b; };
   row.append(btn(T('Grown-ups', 'Người lớn'), 'var(--purple, #8a5cf6)', () => { import('./ui.js').then(m => m.openGrownups()).catch(() => { }); }), btn(T('OK', 'Đã hiểu'), '#9a8aa8', () => { }));
@@ -629,7 +629,7 @@ export async function resumePackDownload() {
   m.refreshPack();
 }
 export async function savePackOffline(progress?: (done: number, total: number) => void) {
-  settings.autoPack = true; saveSettings();
+  settings.autoPack = true; settings.offlineLevel = 'full'; saveSettings(); // (v1.08c voices: keeping every voice is the Full level)
   await resumePackDownload();
   const standard=(await voicePackMod()).savePackOffline(progress);
   if(hanoiSelected()){const[n,h]=await Promise.all([standard,downloadHanoiPack()]);return n+h;}
