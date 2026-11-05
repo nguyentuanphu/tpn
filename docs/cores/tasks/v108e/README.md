@@ -78,6 +78,10 @@ Everything in `docs/cores/tasks/v108b/README.md` applies.
   - Every model is made by our scripts; no downloaded models.
   - Things a child sees keep English and Vietnamese names.
   - Do not move places on the map; models sit where the code shapes stand.
+- **A new design, not a rebuild (Release, 6 Nov, after the first vehicles round):**
+  - Each model is a new picture-book design: soft, rounded, detailed, in the style of the four friends and the gallery (`docs/characters-v108/gallery/`, `tools/blender/vehicles.py`).
+  - Rebuilding the code shape with softer shading is not enough. The before and after screenshots must show a clear change.
+  - Keep the code shape's footprint and height, so the colliders, seat points and checks stay true.
 - **Check every swap:**
   - The model stands on the ground.
   - It faces the way the code shape faced.
