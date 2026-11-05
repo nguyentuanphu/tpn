@@ -235,7 +235,7 @@ def tree_palm():
 @model
 def bush():
     m = Model('bush', 17)
-    m.puffs((0, .75, 0), (1.25, .65, 1.15), 8, .68, ['#24654f', '#30785c', '#2a6d55', '#358062'], skip=-.1, seed=9, seg=12)
+    m.puffs((0, .55, 0), (1.25, .65, 1.15), 8, .68, ['#24654f', '#30785c', '#2a6d55', '#358062'], skip=-.1, seed=9, seg=12)
     return m
 @model
 def flower_meadow():
@@ -291,7 +291,7 @@ def tree_banana():
     m = Model('tree-banana', 23)
     m.trunk([(0, 0, 0), (.02, 1.3, 0), (0, 2.6, 0)], .24, .15, '#9aa65a', flare=1.2)
     m.trunk([(.4, 0, .2), (.42, .8, .22), (.4, 1.5, .2)], .15, .1, '#a3ae62', seg=7, flare=1.2)  # a young shoot beside it
-    for k in range(7): m.leaf(2.3, .75, '#5fa860' if k % 2 else '#4e9a52', (0, 2.55, 0), k * .9, droop=.55, bend=.6, n=9, fold=.3)
+    for k in range(7): m.leaf(1.85, .7, '#5fa860' if k % 2 else '#4e9a52', (0, 2.55, 0), k * .9, droop=.6, bend=.6, n=9, fold=.3)
     m.trunk([(0, 2.4, 0), (.25, 2.3, .1), (.45, 2.0, .1)], .03, .025, '#7a8a3a', seg=5, flare=1)
     for k in range(7): m.uv(.055, '#e8d24a', (.4 + (k % 2) * .09, 1.98 - k * .065, .1 + (k % 3 - 1) * .08), (0, 0, .4), (1, 3.2, 1), seg=7, ring=5)
     m.uv(.12, '#8a2a4a', (.5, 1.5, .1), (0, 0, 0), (1, 1.6, 1), seg=9, ring=6)
@@ -549,6 +549,74 @@ def decor_balloons():
         x = (i - 1) * .3; y = 1.35 + (.2 if i == 1 else 0)
         m.cyl(.008, .008, y - .3, '#d9c7aa', (x * .5, (y - .25) / 2 + .1, 0), (0, 0, -x * .25), seg=3)
         m.uv(.25, c, (x, y, 0), (0, 0, 0), (1, 1.15, 1), seg=12, ring=9, shade=.03); m.cone(.04, .07, c, (x, y - .3, 0), (math.pi, 0, 0), seg=5)
+    return m
+
+# ---------- rocks, grass and the garden plots (js/world.ts, js/plots.ts) ----------
+@model
+def rock():
+    """a smooth boulder with a smaller stone at its side and a little moss; the game tints each copy"""
+    m = Model('rock', 70)
+    m._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=18, v_segments=11, radius=1), '#e6dcc6', (0, .42, 0), (0, .5, 0), (1.42, .82, 1.08), jitter=.14, lumps=1.2, top=.16)
+    m._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=12, v_segments=8, radius=1), '#d9cfb8', (1.1, .12, .7), (0, 1.1, 0), (.42, .3, .36), jitter=.05, top=.16)
+    m._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=12, v_segments=6, radius=1), '#9fb07a', (-.25, 1.12, -.1), (0, .3, .1), (.55, .12, .4), jitter=.03, top=.1)  # moss on top
+    return m
+@model
+def grass():
+    """a tuft of three curved blades, about as light as the code shape (18 triangles); white so the game tints it"""
+    m = Model('grass', 71)
+    def blade(b, yaw, h, lean, w=.07):
+        ca, sa = math.cos(yaw), math.sin(yaw)
+        def P(t, side):  # along the blade (t 0..1), side -1..1, bent outwards as it rises
+            x = lean * t * t; y = h * t; ww = w * (1 - t) * side
+            return (ca * x - sa * ww, y, sa * x + ca * ww)
+        for th in (0, .006):  # front and back, a hair apart
+            v = [b.verts.new(Vector(P(0, -1)) + Vector((0, 0, th))), b.verts.new(Vector(P(0, 1)) + Vector((0, 0, th))),
+                 b.verts.new(Vector(P(.55, -1)) + Vector((0, 0, th))), b.verts.new(Vector(P(.55, 1)) + Vector((0, 0, th))), b.verts.new(Vector(P(1, 0)) + Vector((0, 0, th)))]
+            fs = [(v[0], v[1], v[3]), (v[0], v[3], v[2]), (v[2], v[3], v[4])]
+            for f in fs: b.faces.new(f if th == 0 else tuple(reversed(f)))
+    m._add(lambda b: [blade(b, a, h, l) for a, h, l in [(0, .88, .26), (2.1, .76, .3), (4.2, .82, .22)]], '#f2f2f2', (0, -.05, 0), top=.0)
+    return m
+@model
+def garden_plot():
+    """an empty plot's little garden, 6 x 7 m, its front (+z) to the lane: a striped lawn, low rounded hedges round the
+    back and sides, a stepping-stone path from the front and two flower beds; nothing taller than 30 cm (check plots)"""
+    m = Model('garden-plot', 72); W, D = 6, 7
+    for k in range(6):  # the lawn in soft mown stripes
+        m.box((W - .1) / 6, .06, D - .1, '#8fcf7a' if k % 2 else '#86c672', (-W / 2 + .05 + (k + .5) * (W - .1) / 6, .03, 0), top=.0)
+    # low rounded hedges: one soft lumpy roll along the back and one down each side
+    m._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=12, v_segments=5, radius=1), '#4f9a52', (0, .15, -D / 2 + .27), (0, 0, 0), ((W - .3) / 2, .15, .24), jitter=.03, lumps=3.5, top=.2)
+    for s_ in (-1, 1):
+        m._add(lambda b: bmesh.ops.create_uvsphere(b, u_segments=12, v_segments=5, radius=1), '#56a356', (s_ * (W / 2 - .27), .15, -.15), (0, math.pi / 2, 0), ((D - .7) / 2, .15, .24), jitter=.03, lumps=3.5, top=.2)
+    for i in range(5): m.cyl(.3, .32, .06, '#e3cf9c' if i % 2 else '#d9c48e', ((i % 2 - .5) * .18, .07, D / 2 - .45 - i * .7), seg=9, top=.05)  # stepping stones
+    flowers = ['#ff7eb8', '#ffd23f', '#ffffff', '#c86bff', '#ff8a3d']
+    for s_ in (-1, 1):
+        m.box(1.3, .08, 2.6, '#7a5236', (s_ * 1.6, .06, -.4), top=.0)  # the bed's soil
+        for k in range(8):
+            x, z = s_ * (1.6 + ((k % 2) - .5) * .7), -1.45 + (k // 2) * .7
+            m.cone(.1, .2, '#4f8f45', (x, .17, z), seg=4, top=.1)
+            m.uv(.07, flowers[(k + (s_ > 0)) % len(flowers)], (x, .24, z), scl=(1, .6, 1), seg=6, ring=4, top=.2)
+    return m
+
+# ---------- My House: the wall picture frames and the keepsake stands (js/home-decor-models.ts) ----------
+@model
+def decor_frame():
+    """a moulded wooden frame on the wall, its middle the height of the old one (the picture is drawn in front of it)"""
+    m = Model('decor-frame', 73)
+    m.box(1.08, .88, .05, '#fff9e9', (0, 0, 0), top=.0)  # the mat behind the picture (front at z 0.025, under the picture)
+    for (w, h, x, y) in [(1.25, .1, 0, .475), (1.25, .1, 0, -.475), (.1, .85, -.575, 0), (.1, .85, .575, 0)]:
+        m.box(w, h, .07, '#b77952', (x, y, .005), bevel=.025, top=.05)
+    for (w, h, x, y) in [(1.06, .03, 0, .43), (1.06, .03, 0, -.43), (.03, .86, -.53, 0), (.03, .86, .53, 0)]:
+        m.box(w, h, .05, '#e0b062', (x, y, .015), top=.0)  # a thin gold line inside
+    return m
+@model
+def decor_keepsake():
+    """a little wooden display stand for a keepsake (its picture is drawn in front of the board)"""
+    m = Model('decor-keepsake', 74)
+    m.box(.9, .12, .55, '#b7885e', (0, .06, 0), bevel=.03)
+    m.trunk([(0, .1, -.05), (0, .4, -.07), (0, .7, -.09)], .05, .04, '#a5794f', seg=8, flare=1.2)
+    m.box(1.0, .85, .08, '#a5794f', (0, 1.05, -.03), bevel=.03)
+    m.box(.88, .73, .04, '#f6dfb4', (0, 1.05, .01), top=.0)
+    m.box(.5, .05, .1, '#8a5a34', (0, .62, .04), bevel=.015)  # the little ledge
     return m
 
 def main():

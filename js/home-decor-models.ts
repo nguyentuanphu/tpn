@@ -35,5 +35,5 @@ export function homeDecoration(key: string, icon: string, wall = false) {
     // Keepsakes remain the game's own illustrations, mounted as a small crafted display rather than a floating icon.
     box(.9,.12,.55,'#b7885e');box(.08,.65,.08,'#b7885e',0,.4);box(1,.85,.1,'#f6dfb4',0,1.05);picture();
   }
-  const mesh=new THREE.Mesh(merge(parts),FURNISHING_MATERIAL);mesh.userData.roomShape=true;mesh.castShadow=mesh.receiveShadow=true;if(!wall&&DECOR_MODELS.has(key))natureModel(mesh,'decor-'+key);g.add(mesh);g.userData.homeDecoration=key;return g;
+  const mesh=new THREE.Mesh(merge(parts),FURNISHING_MATERIAL);mesh.userData.roomShape=true;mesh.castShadow=mesh.receiveShadow=true;natureModel(mesh,wall?'decor-frame':DECOR_MODELS.has(key)?'decor-'+key:'decor-keepsake');g.add(mesh);g.userData.homeDecoration=key;return g;
 }

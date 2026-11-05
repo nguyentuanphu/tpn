@@ -15,7 +15,8 @@ import { open, clear, noWelcome } from './harness.mts';
 export const NATURE_MODELS = ['tree-round', 'tree-apple', 'tree-pine', 'tree-snowpine', 'tree-bamboo', 'tree-palm', 'bush', 'flower-meadow', 'flower-roadside',
   'bush-bougainvillea', 'tree-gum', 'tree-jacaranda', 'tree-banana', 'tree-frangipani', 'tree-peach', 'reeds', 'hyacinth',
   ...['carrot', 'strawberry', 'tomato', 'corn', 'sunflower', 'pumpkin'].flatMap(c => [1, 2, 3].map(s => `${c}-${s}`)),
-  'farm-hay', 'farm-crate', 'farm-wardrobe', 'farm-easel', ...['teddy', 'clock', 'vase', 'lamp', 'sunflower', 'lotus', 'balloons'].map(k => 'decor-' + k)];
+  'farm-hay', 'farm-crate', 'farm-wardrobe', 'farm-easel', ...['teddy', 'clock', 'vase', 'lamp', 'sunflower', 'lotus', 'balloons', 'frame', 'keepsake'].map(k => 'decor-' + k),
+  'rock', 'grass', 'garden-plot'];
 const SIZES = [{ name: 'phone', w: 390, h: 844, touch: true }, { name: 'tablet', w: 820, h: 1180, touch: true }, { name: 'computer', w: 1440, h: 900, touch: false }];
 const quiet = { voice: false, sound: false, autoPack: false, online: false, countPlayers: false };
 
@@ -70,7 +71,7 @@ export async function worldNatureCheck(b: Browser) {
       return { shapes0, missing, info, sizes, wrong, farOn, codeHome, codeVill, modelHome, modelVill, nearHome, onHome, onVill, crops, stats: N.natureStats };
     }, NATURE_MODELS);
     if (r.missing.length) bad.push('did not load: ' + r.missing.join(', '));
-    for (const [n, i] of Object.entries(r.info) as [string, any][]) { if (i.tris > 3000) bad.push(`${n}: ${i.tris} triangles`); if (Math.abs(i.y0) > .3 && !n.startsWith('hyacinth')) bad.push(`${n}: its feet at y ${i.y0}`); if (!i.col) bad.push(n + ': no colours'); }
+    for (const [n, i] of Object.entries(r.info) as [string, any][]) { if (i.tris > 3000) bad.push(`${n}: ${i.tris} triangles`); if (Math.abs(i.y0) > .3 && n !== 'rock' && n !== 'decor-frame') /* (a rock sits sunk in the ground like its code shape; a frame hangs on the wall by its middle) */ bad.push(`${n}: its feet at y ${i.y0}`); if (!i.col) bad.push(n + ': no colours'); }
     if (r.wrong.length) bad.push('size or ground differs from the code shape: ' + r.wrong.join('; '));
     if (r.shapes0 < 20) bad.push('only ' + r.shapes0 + ' marked shapes');
     if (r.farOn) bad.push(r.farOn + ' shapes kept their model far from every child');
