@@ -203,7 +203,7 @@ export const FILMS: Record<string, Film> = {
       S.cam(2.5, 1.5, [2.6, 1.5, 14.2], [0, .6, 11.2]);
       const boat = afloat(S, Pp.boat(7, '#c8783a'), 6, 56, PI);
       const s1 = S.person(SAILOR('#3b6fe0'), 0, 0, 0), s2 = S.person(SAILOR('#5fa84a', 'none'), 0, 0, 0);
-      board(s1, boat.children[0], [0, .4, 2.3], 0); board(s2, boat.children[0], [.4, .4, -1.4], 0);
+      board(s1, boat.children[0], [0, .4, 2.3], 0); board(s2, boat.children[0], [.4, .4, -1.4], 0); S.mood(s1, 0, 'curious'); S.mood(s2, 0, 'excited');   // (faces with feeling) a strange fruit on the sea
       S.help(4, 'Tap to push the melon out to sea!', 'Chạm để thả quả dưa ra biển nào!', t => {
         S.do(an, t, 'throw', .5); S.drop(m, t + .2); S.move(m, t + .21, .8, [.3, -.2, 14], undefined, .8);
         let floating = false; S.at(t + 1, () => { floating = true; });
@@ -322,7 +322,8 @@ export const FILMS: Record<string, Film> = {
       const loads = [Pp.pot(), Pp.basket(), Pp.pot()];
       vs.forEach((v, i) => { S.add(loads[i]); S.grab(v, 0, loads[i], [0, .3, .42], 'torso', .8); S.do(v, 0, 'carry'); });
       [[-2.2, 3.2], [2.6, 3.1], [1.2, 4.6]].forEach((p, i) => S.walk(vs[i], .2 + i * .3, p, 1.8));
-      vs.forEach((v, i) => { S.face(v, 5, [0, 1]); S.drop(loads[i], 5.2, [vs[i].px * .8, 0, vs[i].pz - .5]); S.do(v, 5.2, 'idle'); });
+      vs.forEach((v, i) => { S.face(v, 5, [0, 1]); S.drop(loads[i], 5.2, [vs[i].px * .8, 0, vs[i].pz - .5]); S.do(v, 5.2, 'idle'); S.mood(v, 4.6, 'o'); });
+      S.mood(mom, 1.6, 'o'); S.mood(boy, 1.6, 'excited');   // (faces with feeling) everyone amazed as the boy grows
       S.shot([0, 3, 10.5], [0, .8, 1.2]);
       S.cam(1.2, 1.6, [.7, .85, 3.4], [0, .55, 1]);
       S.scale(boy.o, 1.5, 4, .56, .85);
@@ -874,7 +875,7 @@ FILMS.banhchung = { pages: [
     S.cam(7, 1.4, [1.6, 2.2, -.6], [.2, 1, -3.8]);
     // the king tastes, and smiles
     const bite = new THREE.Mesh(G3.S(.07, 10, 8), new THREE.MeshToonMaterial({ color: '#ffffff', emissive: '#a8a49a' })); bite.scale.set(1, .5, 1); bite.visible = false; S.add(bite);
-    S.walk(king, 8.6, [.6, -5.2], 1); S.grab(king, 9.8, bite, [0, -.5, .12]); S.show(bite, 9.8); S.do(king, 10, 'eat', 2.2);
+    S.walk(king, 8.6, [.6, -5.2], 1); S.grab(king, 9.8, bite, [0, -.5, .12]); S.show(bite, 9.8); S.do(king, 10, 'eat', 2.2); S.mood(king, 10.6, 'o'); S.mood(p1, 10.6, 'curious'); S.mood(p2, 10.8, 'curious'); S.still(11.4);   // (faces with feeling) the king surprised by the simple cakes, the brothers wondering
     S.cam(9.2, 1.4, [2.4, 2.4, -1.6], [.4, 1.8, -5.2]);
     S.mood(king, 12.2, 'happy'); S.show(bite, 12.2, false); S.talk(king, 12.4, 2.4); S.do(king, 12.4, 'talk', 2.4);
     S.mood(lieu, 12.6, 'happy'); S.mood(p1, 13, 'happy'); S.mood(p2, 13.2, 'happy');
@@ -1402,7 +1403,7 @@ FILMS.hoguom = { pages: [
     // the turtle speaks
     S.tw(.4, 2.6, k => { turtle.userData.head.rotation.x = Math.sin(k * PI * 4) * .12; });
     S.cam(.2, 2.6, [3.4, 2.4, 5.4], [-.2, .8, -1.8]);
-    S.mood(king, 2.4, 'smile'); S.do(king, 2.6, 'bow', 1.4);
+    S.mood(king, 2.4, 'shy'); S.do(king, 2.6, 'bow', 1.4);   // (faces with feeling) the king bows to the Golden Turtle, humble
     const ring = Pp.sparkle('#ffe27a'); S.add(ring, 1.6, .3, -4);
     S.help(4.2, 'Tap to give the sword back to the Golden Turtle!', 'Chạm để trả gươm cho Rùa Vàng nhé!', t => {
       S.do(king, t, 'give', 1.6); S.drop(sword, t + .8); S.move(sword, t + .8, 1.2, [1.6, .5, -3.1], io, .6);
