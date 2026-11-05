@@ -4,7 +4,7 @@
 //   S.walk(actor, t, [x, z])        walks there (turns first), returns when it arrives
 //   S.do(actor, t, 'kneel', dur)    a pose or action: kneel dig plant water eat point talk sad bow hug carry
 //                                   give pull swing throw stretch surprised sitground lie cheer wave ride
-//   S.mood(actor, t, 'happy')       the face: smile happy sad o (surprised) sleep; S.talk() moves the mouth
+//   S.mood(actor, t, 'happy')       the face: smile happy sad o or surprised, curious, shy, excited, sleep; S.talk() moves the mouth
 //   S.tw(t, dur, k => …)            anything else that changes over time (grow, fall, change colour, fly…)
 //   S.cam(t, dur, pos, look)        the camera glides to a new shot (in calm mode it cuts instead)
 //   S.help(t, en, vi, act)          the child helps: the film waits for a tap anywhere on the picture
@@ -18,6 +18,7 @@ import type { BufferGeometry, CanvasTexture, Material, Mesh, Object3D } from '..
 type PaintedCanvasTexture = CanvasTexture & { paint(top: string, bottom: string): void };
 type FilmApi = { onSay?: (en: string, vi: string, kind?: string) => Promise<unknown>; readonly now: any; page(k: number): Promise<unknown>; narrated(): void; pause(): void; close(): void };
 import { buildAvatar, drawFeatures, OUTLINED } from './avatar.js';
+import * as AV from './avatar.js';
 import { reduceMotion } from './state.js';
 import { T } from './i18n.js';
 import { sayAsync } from './voice.js';
@@ -87,6 +88,7 @@ function person(look, scale = 1) {
   // (v1.08c) a tale's period costume from the kit (js/film-costume.ts): the base shape first, then the kit's pieces on top
   const base = look.kit ? kitBase(LOOK(look)) : LOOK(look);
   const A = buildAvatar(base, null);
+  (A as any).painted = false; // the film drives this face itself (its own picture per mood): the valley's face code must not move it
   if (look.kit) kitDress(A, LOOK(look), base);
   const i = OUTLINED.indexOf(A); if (i >= 0) OUTLINED.splice(i, 1); // the valley hides far outlines; a film keeps them
   A.root.scale.setScalar(scale);
@@ -104,6 +106,21 @@ function person(look, scale = 1) {
 function lean(A, a, nod = 0) {
   A.torso.rotation.x = a; A.torso.position.set(0, .6 - .6 * Math.cos(a), -.6 * Math.sin(a));
   A.head.position.set(0, .6 + .73 * Math.cos(a), .73 * Math.sin(a)); A.head.rotation.x = a * .7 + nod;
+}
+const OPEN_EYES = new Set(['smile', 'o', 'sad', 'curious', 'excited']);
+// the blink and the glances need the soft faces with lids (v1.08e faces: drawFeatures draws 'half', 'lookL', 'lookR')
+const SOFT = ((AV as any).MOODS || []).includes('half');
+// (v1.08c) the eyes of everyone quiet turn to whoever is speaking: 'lookL' is the person's own left (+x as they face +z)
+const _sp = new THREE.Vector3(), _me = new THREE.Vector3();
+function lookToSpeaker(actors: any[], t: number) {
+  const sp = actors.find(a => t < a.talkUntil || (a.lip && a.lip.on()));
+  if (sp) sp.o.getWorldPosition(_sp);
+  for (const a of actors) {
+    if (!sp || sp === a) { a.lookAt = null; continue; }
+    a.o.getWorldPosition(_me); const dx = _sp.x - _me.x, dz = _sp.z - _me.z, y = a.o.rotation.y;
+    const side = dx * Math.cos(y) - dz * Math.sin(y), ahead = dx * Math.sin(y) + dz * Math.cos(y);
+    a.lookAt = Math.abs(side) < .35 || ahead < -.2 ? null : side > 0 ? 'lookL' : 'lookR';
+  }
 }
 const BASE = { walk: 'walk', ride: 'ride', sit: 'sit', cheer: 'cheer', wave: 'wave', dance: 'dance' };
 function pose(a, t) {
@@ -142,9 +159,19 @@ function pose(a, t) {
   // a tap on a character: a happy little hop
   if (a.wig > 0) { a.wig = Math.max(0, a.wig - 1 / 40); A.rig.position.y += Math.sin(a.wig * Math.PI) * .25; }
   // the mouth moves while the character speaks: (v1.08c) with the voice, syllable by syllable, and still at its pauses
-  const talking = t < a.talkUntil || (a.lip && a.lip.on());
-  const m = talking ? (lipOpen(a.lip && a.lip.line(), t) ? 'o' : a.mood === 'sad' ? 'sad' : 'smile') : a.mood;
+  const talking = t < a.talkUntil || (a.lip && a.lip.on()), mood = a.mood === 'surprised' ? 'o' : a.mood;
+  let m = talking ? (lipOpen(a.lip && a.lip.line(), t) ? 'o' : mood === 'sad' ? 'sad' : 'smile') : mood;
+  // (v1.08c, with the v1.08e faces) while quiet with open eyes: a soft blink (half, closed, half) every 2 to 6 s, each actor
+  // at their own moment; between blinks the eyes turn to whoever is speaking
+  if (SOFT && !talking && OPEN_EYES.has(m)) {
+    if (a.blinkAt === undefined) a.blinkAt = t + Math.random() * 4;
+    const into = t - a.blinkAt;
+    if (into >= .15) a.blinkAt = t + 2 + Math.random() * 4;
+    else if (into >= 0) m = into < .04 || into >= .11 ? 'half' : 'blink';
+    else if (m === 'smile' && a.lookAt) m = a.lookAt;
+  }
   if (a._face !== m) { a._face = m; A.faceMat.map = face(a.look, m); A.faceMat.needsUpdate = true; }
+  if (A.model) (A.life || (A.life = {} as any)).mood = m; // (v1.08b friends) a friend's model shows the same mood on its own face
 }
 
 // (v1.08c) lips with the voice: the line being said is cut into syllables (a Vietnamese word is one syllable; an English
@@ -376,7 +403,7 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
         if (S.t > S.len + .4 && !S.ended && !S.speaking && !S.ev.some(e => (e.help || e.say) && !e.fin)) { S.ended = true; resolve(); }
       }
       for (const f of S.tickers) f(dt, time, S.t);
-      for (const a of S.actors) pose(a, time);
+      lookToSpeaker(S.actors, time); for (const a of S.actors) pose(a, time);
       cam.position.copy(S.camPos); cam.lookAt(S.camLook);
     };
     S.dispose = () => {
