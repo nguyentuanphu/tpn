@@ -12,11 +12,14 @@ def m(x, z, turn=0.0):
     a = yaw + turn; ca, sa = math.cos(a), math.sin(a)
     px, pz = lx + x * c, lz - x * s
     return [ca, 0, -sa, 0, 0, 1, 0, 0, sa, 0, ca, 0, px, 0, pz, 1]
-def scene(order, turns, cam_back, cam_up, look_up):
+def scene(order, turns, cam_back, cam_up, look_up, moods, speaker):
     d = json.loads(json.dumps(D))
-    d['actors'] = [{'look': {}, 'kit': who, 'm': [m(x, 0, t)], 'state': ['idle'], 'mood': 'happy'} for who, x, t in zip(order, (-1.35, -.45, .45, 1.35), turns)]
+    # (faces with feeling) each friend's own feeling; one tells the story and the others look at them
+    xs = (-1.35, -.45, .45, 1.35); sx = xs[order.index(speaker)]
+    d['actors'] = [{'look': {}, 'kit': who, 'm': [m(x, 0, t)], 'state': ['idle'], 'mood': md, 'talk': who == speaker,
+                    'eyes': None if who == speaker else ('lookL' if sx > x else 'lookR')} for who, x, t, md in zip(order, xs, turns, moods)]
     dist = 4.6 + cam_back
     d['cams'] = [[[lx + s * dist, cam_up, lz + c * dist], [lx, look_up, lz]]]
     return d
-json.dump(scene(('finn', 'clara', 'sol', 'lumi'), (.25, .1, -.1, -.25), 0, 1.55, 1.0), open(oi, 'w'))
-json.dump(scene(('lumi', 'sol', 'clara', 'finn'), (.2, .08, -.08, -.2), .8, 1.8, 1.05), open(oo, 'w'))
+json.dump(scene(('finn', 'clara', 'sol', 'lumi'), (.25, .1, -.1, -.25), 0, 1.55, 1.0, ('smile', 'excited', 'smile', 'happy'), 'lumi'), open(oi, 'w'))   # the start: Lumi begins the story, Clara can't wait
+json.dump(scene(('lumi', 'sol', 'clara', 'finn'), (.2, .08, -.08, -.2), .8, 1.8, 1.05, ('happy', 'happy', 'shy', 'excited'), 'finn'), open(oo, 'w'))   # the end: Finn says goodbye

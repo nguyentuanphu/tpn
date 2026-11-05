@@ -38,6 +38,7 @@ export default { pages: [
   S => {
     village(S, { house: [-5, -8], paddy: false }); pondAt(S, 0, 0);
     const kids = [S.person(BOY, -1, 3, PI, .7), S.person(GIRL, 1, 3, PI, .7)], mom = S.person(MOM, 0, 4, PI), bowl = Pp.bowl(false); bowl.scale.setScalar(2.4); S.grab(mom, 0, bowl, [0, -.55, .2]);
+    kids.forEach(k => S.mood(k, 0, 'excited')); S.mood(mom, 0, 'happy');   // (faces with feeling) the children eager to set the carp free
     const fish = [0, 1, 2].map(i => { const f = carp(); f.scale.setScalar(.35); f.visible = false; S.add(f, -.6 + i * .6, .1, 1.4); return f; });
     S.shot([0, 2.6, 8], [0, .6, 1]);
     S.walk(mom, .3, [0, 2.6]); S.do(mom, 1.8, 'kneel', 4.6); kids.forEach(k => S.do(k, 1.8, 'kneel', 4.6));
@@ -52,7 +53,7 @@ export default { pages: [
   S => {
     village(S, { house: [-5, -8], paddy: false }); pondAt(S, 0, 0);
     const fish = [0, 1, 2].map(i => { const f = carp(); f.scale.setScalar(.5); S.add(f, -1 + i, 0, 0); return f; });
-    const tao = S.person(TAO, 0, 2.6, PI, .8);
+    const tao = S.person(TAO, 0, 2.6, PI, .8); S.mood(tao, 0, 'excited');   // (faces with feeling) ready to fly
     S.shot([0, 2.4, 8], [0, 1, 0]);
     fish.forEach((f, i) => S.tw(.3 + i * .3, 1, k => { f.position.y = Math.sin(k * PI) * 1.4; f.rotation.x = -Math.sin(k * PI * 2) * .6; }));
     S.cam(.3, 3, [2, 1.8, 6], [0, 1, 0]);

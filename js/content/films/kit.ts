@@ -28,7 +28,7 @@ export const ELDER = (style, color, hair = '#e8e8e8') => inKit(LOOK({ style, col
 export const KINGLOOK = (color = '#e8b62a') => LOOK({ style: 'tunic', kit: 'vn-king', color, hat: 'crown', skin: '#e0aa80' });
 export const FAIRY = (color = '#ffc8e8', region = 'vn') => inKit(LOOK({ style: 'aodai', color, hairStyle: 'long', back: 'wings', skin: '#f2c8a0' }), region);
 // Bụt, the kind old fairy man: white tunic, white hair
-export const BUT = LOOK({ style: 'tunic', color: '#f4f0e8', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8b890' });
+export const BUT = LOOK({ kit: 'vn-but', style: 'tunic', color: '#f4f0e8', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8b890' });
 
 // ---------- moving with the film ----------
 // things on the water bob up and down with the waves

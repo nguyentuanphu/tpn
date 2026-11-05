@@ -81,6 +81,7 @@ export default { pages: [
     seaside(S); S.add(new THREE.Mesh(new THREE.ConeGeometry(22, 18, 10), new THREE.MeshToonMaterial({ color: '#7aa86a' })), -34, 0, -20);
     const lac = S.person(LAC, 0, 4, 0), au = S.person(AUCO, -1, 4, 0);
     const kids = KIDS.map((k, i) => S.person(k, -2 + i * .8, 5.4, 0, .6));
+    S.mood(lac, 0, 'sad'); S.mood(au, 0, 'sad'); kids.forEach((k, i) => S.mood(k, 0, i % 2 ? 'excited' : 'curious'));   // (faces with feeling) the parents sad to part, the children eager
     S.shot([0, 3, 13], [0, 1.2, 3]);
     S.walk(lac, .4, [5, 1], 2.4); S.walk(au, .4, [-6, 1], 2.4);
     kids.forEach((k, i) => S.walk(k, .6 + i * .1, i % 2 ? [4 + i * .3, 2] : [-5 - i * .3, 2], 2.4));

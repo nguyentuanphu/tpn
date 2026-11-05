@@ -24,7 +24,7 @@ export default { pages: [
     S.shot([3, 2.4, 11], [0, 1, 4]);
     S.do(w, .3, 'swing', 2.2); S.drop(a, 2.5); S.move(a, 2.51, .9, [0, -.6, 2], k => k * k, .8); S.show(sp, 3.3); S.show(sp, 5, false);
     S.mood(w, 2.6, 'o'); S.do(w, 2.6, 'surprised', 1.2); S.cam(2.2, 1.6, [2, 1.6, 6.4], [0, .2, 3]);
-    S.do(w, 4, 'sitground', 5); S.mood(w, 4, 'sad');
+    S.do(w, 4, 'sitground', 5); S.mood(w, 4, 'cry');   // (faces with feeling) he sat down and cried
     S.say(6.2, 'Without his axe, he could not cut any wood.', 'Mất rìu rồi, chàng không thể đốn củi được nữa.');
     S.cam(6, 3, [1.4, 1.2, 8.6], [0, .6, 6]);
     S.at(9.2, () => { });
@@ -47,7 +47,7 @@ export default { pages: [
     S.shot([3, 2, 10], [0, 1.4, 1]);
     S.show(a, .6); S.show(sp, .6); S.do(but, .8, 'throw', 2); speak(S, but, 1.6, 1.4);
     S.cam(.3, 2.4, [1.4, 2, 3.6], [0, 1.8, -2]);
-    S.cam(3.4, 1.6, [-2, 1.8, 9], [0, 1.2, 4]); S.mood(w, 3.4, 'smile');
+    S.cam(3.4, 1.6, [-2, 1.8, 9], [0, 1.2, 4]); S.mood(w, 3.4, 'curious');   // (faces with feeling) a silver axe? he looks, wondering
     S.help(6.4, 'Tap to say: not mine!', 'Chạm để nói: không phải của con!', tt => {
       no(S, w, tt); S.do(w, tt + 1.2, 'bow', 1); S.mood(but, tt + 1, 'happy');
       S.cam(tt, 1.4, [0, 2, 9], [0, 1.4, 2]);

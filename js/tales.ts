@@ -96,7 +96,7 @@ export async function openTheatre(tale, { name = '', onDone = undefined, startPa
       if (STORY_PICS.includes(tale.id)) {
         const src = await import('./storypics.js').then(Sp => { if (!kept) { kept = true; Sp.keepStoryPics(tale.id); } return Sp.storyPic(tale.id, k); }).catch(() => null);
         if (!alive || my !== token) return;
-        if (src) { stage.classList.add('drawn'); bg.innerHTML = `<img class="th-pic" alt="" src="${src}">`; }
+        if (src) { stage.classList.add('drawn'); bg.innerHTML = `<img class="th-pic-fill" alt="" src="${src}"><img class="th-pic" alt="" src="${src}">`; }
       }
       // actors: spread across the stage, each entering from its side, then moving its own way
       // on a narrow (phone) stage fewer, smaller actors, spread over the whole width, so nobody overlaps
