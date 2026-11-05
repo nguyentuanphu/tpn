@@ -19,7 +19,7 @@ const POINTS: [string, string, number?][] = [['seat', 'seat'], ['seat2', 'passen
   ['pedalL', 'feet', 0], ['pedalR', 'feet', 1], ['handle2L', 'pgrips', 0], ['handle2R', 'pgrips', 1], ['pedal2L', 'pfeet', 0], ['pedal2R', 'pfeet', 1]];
 function hideOwn(n, keep) {   // the code meshes of one moving part (not the parts hanging from it)
   if (n.isMesh) { n.userData.codeGeo = n.geometry; n.geometry = EMPTY; n.children.forEach(c => { if (c.userData.outline) c.visible = false; }); return; }
-  n.children.forEach(c => { if (c.isMesh && !keep.has(c)) c.visible = false; });
+  n.children.forEach(c => { if (c.isMesh && !keep.has(c)) { c.visible = false; c.userData.swapped = true; } }); // (Release, v1.08e: swapped, the code part still counts in the solid map, js/solids.ts, so its saved copy matches on the next start)
 }
 // (owner, 6 Nov 2026 AEDT: "stylised real") each kind of surface its own look: glossy paint, matte rubber and seats,
 // shiny chrome, see-through glass; the colours are in the corners (tools/blender/world-vehicles.py)
