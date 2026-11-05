@@ -956,7 +956,7 @@ async function drawReleases(P, lab) {
   // (asked for only when the game has it: the story helper adds releaseCalendar to LIVE_SECTIONS together with the module)
   const hasCal = !lab && await import(GAME + 'js/custom.js').then(m => (m.LIVE_SECTIONS || []).includes('releaseCalendar'), () => false);
   const calMod = hasCal ? await import(GAME + 'js/content/releasecal.js').catch(() => null) : null; if (stale()) return;
-  if (calMod) await CONTENT_P.catch(() => { }); if (stale()) return;
+  if (calMod) { await CONTENT_P.catch(() => { }); if (typeof calMod.loadCalNames === 'function') await calMod.loadCalNames().catch(() => { }); } if (stale()) return; // (the calendar's names load lazily)
   const calMoves0: Record<string, string> = { ...(((CONTENT as any).releaseCalendar || {}).moves || {}) }, calMoves = { ...calMoves0 };
   const calList = () => { try { return calMod && typeof calMod.calendar === 'function' ? calMod.calendar(calMoves) : (calMod?.CAL_DEFAULT || []); } catch (e) { return []; } };
   const closed = folds(), gkey = g => 'releases:group:' + g;
