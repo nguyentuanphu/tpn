@@ -9,7 +9,8 @@
 
 export type Pair = [string, string];
 export type S2Region = {
-  id: 'gbr' | 'tas' | 'perth'; key: string; place: string; icon: string; pin: string;   // pin: the map's picture (an emoji with our drawing: the map paints it) name: Pair; chapter: string;
+  id: 'gbr' | 'tas' | 'perth'; key: string; place: string; icon: string; name: Pair; chapter: string;
+  pin: string;   // the map's picture (an emoji with our drawing: the map paints it)
   friend: { id: string; name: string; look: Record<string, unknown>; at: [number, number]; greet: Pair; lines: Pair[]; host: Pair };
   food: { id: string; at: [number, number]; give: Pair; again: Pair; label: Pair };
   landmark: { id: string; icon: string; at: [number, number]; sign: [number, number]; name: Pair; fact: Pair };
@@ -43,6 +44,19 @@ export const S2_REGIONS: S2Region[] = [
     landmark: { id: 'cradle', icon: 's2:cradle', at: [-16, 4], sign: [-6, -4], name: ['Cradle Mountain', 'Núi Cradle'],
       fact: ['Cradle Mountain in Tasmania has jagged rocky peaks above Dove Lake. Snow falls there even in spring, and wombats graze in the grass around the lake.', 'Núi Cradle ở đảo Tasmania có những đỉnh đá lởm chởm phía trên hồ Dove. Ở đó tuyết rơi cả vào mùa xuân, và gấu túi mũi trần gặm cỏ quanh hồ.'] },
     stands: [['s2a_wombat', -2, -6], ['s2a_devil', 4, -6.5], ['s2a_cradle', 10, -6]],
-    soon: ['Coming soon: Tasmania', 'Sắp mở: Đảo Tasmania'] }
+    soon: ['Coming soon: Tasmania', 'Sắp mở: Đảo Tasmania'] },
+  { id: 'perth', key: 'feature:s2au_perth', place: 'perth', icon: 's2:quokka', pin: '🏖️', name: ['Perth and Rottnest Island', 'Perth và đảo Rottnest'], chapter: 'ch12',
+    friend: { id: 'ava', name: 'Ava', at: [-5, 1], look: { style: 'shirt', color: '#ff7a3a', hat: 'cap', back: 'none', hair: '#e8c26a', hairStyle: 'ponytail', skin: '#f0c8a0', age: 'adult', glider: 0 },
+      greet: ['Hi there! I am Ava from Perth, on the west coast of Australia. The sun sets over the sea here!', 'Chào con! Chị là Ava ở Perth, bờ biển phía tây nước Úc. Ở đây mặt trời lặn xuống biển đó!'],
+      lines: [['Rottnest Island is just a ferry ride away. Its Noongar name is Wadjemup.', 'Đảo Rottnest chỉ cách một chuyến phà thôi. Tên của đảo trong tiếng người Noongar là Wadjemup.'],
+        ['Quokkas look like they are smiling. We look at them, but we never feed or touch them.', 'Chuột túi quokka trông như đang cười. Mình ngắm các bạn ấy, nhưng không bao giờ cho ăn hay chạm vào.'],
+        ['Black swans swim on the Swan River. That is how the river got its name!', 'Thiên nga đen bơi trên sông Swan. Vì thế con sông mới có tên như vậy!'],
+        ['On Rottnest Island there are no cars. Everyone rides a bike!', 'Trên đảo Rottnest không có ô tô. Ai cũng đạp xe đạp!']],
+      host: ['Come and play a beach game with me!', 'Lại đây chơi trò chơi bãi biển với chị nhé!'] },
+    food: { id: 'fishchips', at: [6, 1], label: ['Fish and chips', 'Cá chiên khoai tây'], give: ['Here are some fish and chips. Watch out for the seagulls!', 'Cá chiên khoai tây đây. Coi chừng mấy chú hải âu nhé!'], again: ['The fish and chips are all gone today. Come back tomorrow!', 'Hôm nay hết cá chiên khoai tây rồi. Mai con quay lại nhé!'] },
+    landmark: { id: 'wadjemup', icon: 's2:lighthouse', at: [-10, 45], sign: [-9, 6], name: ['Rottnest Island lighthouse', 'Ngọn hải đăng đảo Rottnest'],
+      fact: ['Rottnest Island, called Wadjemup by the Noongar people, lies off the coast of Perth. Its white lighthouse has guided ships for more than a hundred years, and little quokkas live all over the island.', 'Đảo Rottnest, người Noongar gọi là Wadjemup, nằm ngoài khơi Perth. Ngọn hải đăng màu trắng của đảo đã dẫn đường cho tàu thuyền hơn một trăm năm, và những chú chuột túi quokka nhỏ sống khắp đảo.'] },
+    stands: [['s2a_quokka', -9, -4], ['s2a_swan', 0, -5], ['s2a_beach', 9, -4]],
+    soon: ['Coming soon: Perth and Rottnest Island', 'Sắp mở: Perth và đảo Rottnest'] }
 ];
 export const regionOfGame = (id: string): S2Region | undefined => S2_REGIONS.find(r => r.stands.some(s => s[0] === id));

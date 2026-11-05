@@ -38,11 +38,13 @@ Three regions, one part each, pushed after each: Great Barrier Reef, Tasmania, P
 
 | Region | Place | Landmark | Friend | Food | Games | Chapter |
 |---|---|---|---|---|---|---|
-| Great Barrier Reef | beach and reef pontoon | the reef pontoon with coral | Mia, the reef ranger | grilled prawns | Snorkel Spotter (hunt), Turtle to the Sea (path), Reef Friends (quiz) | 10 |
+| Great Barrier Reef | beach and reef pontoon | the reef pontoon with coral | Mia, the reef ranger | grilled prawns | Snorkel Spotter (hunt; the old Reef Count already counts fish), Turtle to the Sea (path), Reef Friends (quiz) | 10 |
 | Tasmania | the island | Cradle Mountain and the boatshed | Ollie, the bushwalker | apple crumble | Wombat Burrow (path), Spot the Devil (hunt), Cradle Mountain Walk (quiz) | 11 |
-| Perth and Rottnest | the beach, the Swan River, Rottnest Island | the lighthouse on Rottnest | Ava, the island cyclist | fish and chips | Quokka Photo Hunt (hunt), Swan River Row (path), Beach Day (quiz) | 12 |
+| Perth and Rottnest | the beach, the Swan River, Rottnest Island | the lighthouse on Rottnest (Wadjemup) | Ava, the island cyclist | fish and chips | Quokka Photo Hunt (hunt), Swan River Row (path), Beach Day (quiz) | 12 |
 
-**Dates (assumed, owner can change; for s2vn to agree):** regions open Fri 26 Feb, Fri 26 Mar and Fri 23 Apr 2027,
+**Dates (assumed, owner can change; for s2vn to agree):** regions open Fri 26 Feb, Fri 26 Mar and Fri 23 Apr 2027
+(`feature:s2au_gbr`, `feature:s2au_tas`, `feature:s2au_perth`; each region's games follow its day through
+`CAL_LINKS`, so moving a region in Studio moves its games),
 between s2vn's monthly regions (Mekong 12 Feb, Hạ Long 12 Mar, Sapa 9 Apr, Tây Nguyên 7 May), so one region opens
 every two weeks. Chapters 10, 11 and 12 follow chapter 9: Fri 21 May, 4 Jun and 18 Jun 2027.
 
@@ -51,8 +53,16 @@ stories); the art style is the one already agreed.
 
 ## Places added (not moved)
 
-None of the existing places move. New: `gbr` (the reef beach), `tasmania` (island), `perth` (beach), `rottnest`
-(island), the Swan River pond, the coast boat's piers. Positions are in the part notes below.
+None of the existing places move. New (`js/content/map.ts`, x east, z south):
+
+| New place | Where | Why there |
+|---|---|---|
+| `gbr` (the reef beach) | (-58, 177), r 7; the reef and its pontoon in the sea at (-58, 213) | the beach between the Murray and the sea, east of the Apostles |
+| `tasmania` (island, `ISLES`) | (-132, 222), 30 by 13 m, Cradle Mountain peak 9 m at (-148, 226) | the sea south of the Apostles, as Tasmania is south of Victoria |
+| `perth` (beach) | (-204, 177), r 9 | the far south-west beach, Perth being on the west coast |
+| `rottnest` (island, `ISLES`) | (-214, 222), 12 by 8 m | off Perth's beach |
+| Swan River pond (`WATERS` 'swan') | (-222, 168), r 6 | beside Perth |
+| Southern Coast Boat (`BOATS` 'coastboat') | piers: Melbourne's river pier (-122, 145), reef (-58, 184), Tasmania (-120, 211), Perth (-204, 186), Rottnest (-210, 216) | from Melbourne down the Murray and the main river to the sea, then west along the coast |
 
 ## Owner's decisions
 - (assumed, owner can change) The three regions sit on the southern coast of the Australian bank, reached by one coast

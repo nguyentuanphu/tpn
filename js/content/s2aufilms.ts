@@ -5,7 +5,7 @@
 import { PROPS as Pp, SETS as L, LOOK, G3 } from '../film.js';
 import { THREE } from '../gfx.js';
 import { FILMS } from './films.js';
-import './chapter10.js'; import './chapter11.js'; // (the films' words)
+import './chapter10.js'; import './chapter11.js'; import './chapter12.js'; // (the films' words)
 import { buildLantern } from '../dinh.js';
 import { buildCompanion } from '../companion.js';
 
@@ -21,7 +21,10 @@ type Look = { sky: [string, string]; night: [string, string]; ground: string; pr
 const coral = (S, x, z, col) => { for (let i = 0; i < 4; i++) S.add(new THREE.Mesh(new THREE.CylinderGeometry(.2, .3, 1.6 + i * .3, 6), new THREE.MeshToonMaterial({ color: col })), x + Math.cos(i * 1.7) * .8, .8, z + Math.sin(i * 1.7) * .8); S.add(new THREE.Mesh(G3.S(1, 12, 8), new THREE.MeshToonMaterial({ color: col })), x, 1.6, z); };
 const pine = (S, x, z) => { S.add(new THREE.Mesh(new THREE.CylinderGeometry(.2, .3, 1.6, 6), new THREE.MeshToonMaterial({ color: '#6a4a32' })), x, .8, z); for (let i = 0; i < 3; i++) S.add(new THREE.Mesh(new THREE.ConeGeometry(1.8 - i * .45, 2, 8), new THREE.MeshToonMaterial({ color: '#2f6a3a' })), x, 2 + i * 1.1, z); };
 const peak = (S, x, z) => { const m = new THREE.Mesh(new THREE.ConeGeometry(6, 9, 5), new THREE.MeshToonMaterial({ color: '#6a6a72' })); S.add(m, x, 4.5, z); S.add(new THREE.Mesh(new THREE.ConeGeometry(2.4, 3.4, 5), new THREE.MeshToonMaterial({ color: '#ffffff' })), x, 7.6, z); };
+const tower = (S, x, z) => { S.add(new THREE.Mesh(new THREE.CylinderGeometry(.7, 1, 6, 12), new THREE.MeshToonMaterial({ color: '#ffffff' })), x, 3, z); S.add(new THREE.Mesh(new THREE.CylinderGeometry(.6, .6, 1, 12), new THREE.MeshBasicMaterial({ color: '#ffd23f' })), x, 6.5, z); S.add(new THREE.Mesh(new THREE.ConeGeometry(.9, .8, 12), new THREE.MeshToonMaterial({ color: '#e8433a' })), x, 7.4, z); };
 const LOOKS: Record<string, Look> = {
+  // (v1.08d s2au) Perth and Rottnest: the island's lighthouse over the sea at sunset
+  ch12: { sky: ['#ff8a5a', '#ffd08a'], night: ['#1a1a44', '#3a3a6a'], ground: '#f2d48a', prop: S => { tower(S, 4, -16); coral(S, -8, -14, '#7aa860'); }, say: ['The sun set over the sea, and the lighthouse began to shine.', 'Mặt trời lặn xuống biển, và ngọn hải đăng bắt đầu tỏa sáng.'], tap: ['Tap to light up the sky over the island!', 'Chạm để thắp sáng bầu trời trên đảo nào!'] },
   // (v1.08d s2au) Tasmania: Cradle Mountain with snow behind a forest
   ch11: { sky: ['#9ab8d8', '#e8eef8'], night: ['#141a34', '#2a3a5a'], ground: '#6a9a5a', prop: S => { peak(S, 2, -22); pine(S, -7, -12); pine(S, 8, -13); pine(S, -12, -16); }, say: ['Snow fell softly on Cradle Mountain.', 'Tuyết rơi nhẹ trên núi Cradle.'], tap: ['Tap to make the snow sparkle!', 'Chạm để tuyết lấp lánh nào!'] },
   // (v1.08d s2au) the reef beach: coral by the water, the sea at night, baby turtles

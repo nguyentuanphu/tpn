@@ -100,5 +100,22 @@ const SCENERY: Record<string, (G, R: S2Region, ctx: Ctx, put: Put, block: Block)
         : [P(C(.14, .2, 2.6, 6), '#d8d0c0', [0, 1.3, 0]), P(S(1.2, 10, 8), '#6a9a5a', [0, 3, 0], [0, 0, 0], [1, .8, 1]), P(S(.8, 10, 8), '#7aa860', [.6, 3.5, .2])];
       put(parts, x, z, i, h, undefined, false); block(x, z, .3); }
     for (const [p, dx, dz] of [['s2:wombat', 16, 3], ['s2:devil', -10, -3], ['s2:echidna', 18, -3]] as [string, number, number][]) { const s = ctx.at([dx, dz]); const t = sprite(p, .9); t.position.set(s.x, heightAt(s.x, s.z) + .5, s.z); G.scene.add(t); }
+  },
+  // Perth and Rottnest Island: the white lighthouse on Rottnest (the landmark), quokkas and bikes on the island, black
+  // swans on the Swan River's pond, a beach umbrella and the lifesavers' flags on Perth's beach, a little city skyline
+  perth: (G, R, ctx, put, block) => {
+    const L = ctx.at(R.landmark.at), lh = heightAt(L.x, L.z);
+    put([P(C(.9, 1.3, 7, 12), '#ffffff', [0, 3.5, 0]), P(C(1, 1, .6, 12), '#e8433a', [0, 5, 0]), P(C(.75, .75, 1.2, 12), '#ffd23f', [0, 7.6, 0]), P(new THREE.ConeGeometry(1, .9, 12), '#e8433a', [0, 8.6, 0]), P(B(2.4, 1.6, 2), '#f2e6c8', [1.8, .8, 0])], L.x, L.z, 0, lh - .1);
+    block(L.x, L.z, 1.4);
+    const sg = sprite(R.landmark.icon, 1.4); sg.position.set(L.x, lh + 10.5, L.z); G.scene.add(sg);
+    for (const [p, dx, dz, s] of [['s2:quokka', 4, -3, .9], ['s2:quokka', -5, 2, .8], ['s2:quokka', 3, 4, .8], ['s2:bike', -3, -4, .9]] as [string, number, number, number][]) {
+      const x = L.x + dx, z = L.z + dz; if (heightAt(x, z) < WATER + .3) continue; const t = sprite(p, s); t.position.set(x, heightAt(x, z) + .45, z); G.scene.add(t); }
+    // black swans on the Swan River (its pond, js/content/map.ts WATERS 'swan')
+    const sw = anchorOf('perth')!, pond = [-222, 168];
+    for (let i = 0; i < 4; i++) { const a = i * 1.7, t = sprite('s2:swan', .9); t.position.set(pond[0] + Math.cos(a) * 2.6, WATER + .45, pond[1] + Math.sin(a) * 2.6); G.scene.add(t); }
+    { const s = ctx.at([12, -2]); put([P(C(.05, .05, 2.4, 6), '#e8e4dc', [0, 1.2, 0]), P(new THREE.ConeGeometry(1.6, .7, 10), '#3b6fe0', [0, 2.5, 0]), P(B(1.6, .1, .7), '#ffd23f', [1.4, .08, .6])], s.x, s.z, .5); block(s.x, s.z, .2); }
+    for (const dx of [-4, 4]) { const s = ctx.at([dx, 8]); if (heightAt(s.x, s.z) < WATER + .3) continue; put([P(C(.05, .05, 2.6, 6), '#e8e4dc', [0, 1.3, 0]), P(B(.9, .3, .05), '#e8433a', [.45, 2.35, 0]), P(B(.9, .3, .05), '#ffd23f', [.45, 2.05, 0])], s.x, s.z, 0); block(s.x, s.z, .2); }
+    // Perth's city towers, far behind the beach (on the hill north of the Murray)
+    put([[0, 9, '#9ab8d8'], [3, 13, '#bfd4e8'], [6, 7, '#8aa8c8'], [-3, 11, '#a8c0d8']].map(([x, h, c]: [number, number, string]) => P(B(2.4, h, 2.4), c, [x, h / 2, 0])), sw[0] + 6, sw[1] - 44, 0, undefined, undefined, false);
   }
 };
