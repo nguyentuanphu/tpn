@@ -44,6 +44,7 @@ marketing/source/runvalley.log
 /js/animals.js
 /js/art.js
 /js/art/companion-hats.js
+/js/art/emoji108b.js
 /js/art/english.js
 /js/art/games108.js
 /js/art/games108b.js
@@ -97,8 +98,10 @@ marketing/source/runvalley.log
 /js/content/familycode.js
 /js/content/familymissions.js
 /js/content/festcal.js
+/js/content/festgames108b.js
 /js/content/festhunt.js
 /js/content/festival-visibility.js
+/js/content/festseason.js
 /js/content/film-looks.js
 /js/content/films.js
 /js/content/films/baluoiriu.js
@@ -143,6 +146,7 @@ marketing/source/runvalley.log
 /js/content/hoilang.js
 /js/content/install-state.js
 /js/content/jobs.js
+/js/content/learnpaths.js
 /js/content/map.js
 /js/content/notify.js
 /js/content/owllessons.js
@@ -327,6 +331,7 @@ marketing/source/runvalley.log
 /js/lanterns.js
 /js/launch.js
 /js/learn.js
+/js/learnquest.js
 /js/listen.js
 /js/lotus.js
 /js/lunar.js
