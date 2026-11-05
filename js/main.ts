@@ -19,7 +19,7 @@ import { openSongs } from './songs.js';
 import { songsFor, VN_AREAS, familySongs } from './content/songs.js';
 import { fmt } from './money.js';
 import { el, esc, $, dist2, pick, wait, clamp } from './util.js';
-import { createWorld, levelUnderBuildings, widenFlatLand, paintMap, paintWater, paintMapRows, paintWaterRows, heightAt, regionAt, REGION_NAMES, MARKET, CHINA, INDIA, SHRINES, TOWERS, LEAFIES, VILLAGE, HOME, PLAYGROUND, REVEAL_R, WATER, PLATEAU, TOWN, AUSSIE, LAKE, ULURU, HALF, STUDIO_ON_MAP, PARKED } from './world.js';
+import { createWorld, levelUnderBuildings, widenFlatLand, paintMap, paintWater, paintMapRows, paintWaterRows, heightAt, regionAt, REGION_NAMES, MARKET, CHINA, INDIA, SHRINES, TOWERS, LEAFIES, VILLAGE, HOME, PLAYGROUND, REVEAL_R, WATER, PLATEAU, TOWN, AUSSIE, LAKE, ULURU, HALF, STUDIO_ON_MAP, PARKED, CITIES } from './world.js';
 import { studioPosition } from './studio-position.js';
 import { landmarkAt, MAP_VERSION, onThisMap, rowSlot } from './content/map.js';
 import { build, seatRider, VEHICLES } from './vehicles.js';
@@ -57,6 +57,7 @@ import {configureFestivalStartup} from './festival-live.js';
 import {projectPublicFestivals} from './content/festival-visibility.js';
 import {FESTCAL} from './content/festcal.js';
 import { createRoads, plantRoadside, createCrossings } from './roads.js';
+import { addArea, startAreas, areasNear, areasDone, areasLeft, areaList } from './areas.js'; // (v1.08d valley) parts built after the start, nearest first
 import type { createSignposts } from './signposts.js';
 import type { createWeather } from './weather.js';
 import { createNameTags } from './nametags.js';
@@ -162,6 +163,18 @@ const BOOT0 = performance.now(), bootTimes: Record<string, number> = { start: Ma
 // breath between steps so the screen keeps answering taps. Pressing Go before it is ready waits a moment (startWhenBuilt).
 let framesSeen = 0, framesDone = null; const firstFrames = new Promise(r => { framesDone = r; });
 let bootDone = null, booted = false; const bootReady = new Promise<void>(r => { bootDone = () => { booted = true; r(); }; });
+// (v1.08d valley, PERF-001) work that waits until the child can move: 1.5 s after the valley is ready its files are all
+// fetched side by side, then each part is made in its own quiet moment of the page (requestIdleCallback, or a short pause
+// where there is none), so the first walk never stutters and the first download is only what the start needs. A part
+// that fails is only noted (it never stops the others).
+type AfterPart<M> = { load: () => Promise<M>, make: (m: M) => unknown };
+const afterQueue: AfterPart<any>[] = []; let afterOpen = false;
+const idle = () => new Promise<void>(r => (window as any).requestIdleCallback ? (window as any).requestIdleCallback(() => r(), { timeout: 250 }) : setTimeout(r, 60));
+const runPart = async <M,>(p: AfterPart<M>, loading: Promise<M>) => { try { const m = await loading; await idle(); await p.make(m); } catch (e) { console.warn('after start', e); } };
+let afterChain: Promise<unknown> = Promise.resolve();
+const startPart = <M,>(p: AfterPart<M>) => { const loading = p.load(); loading.catch(() => { }); afterChain = afterChain.then(() => runPart(p, loading)); };
+const afterStart = <M,>(load: () => Promise<M>, make: (m: M) => unknown) => { const p = { load, make }; if (afterOpen) startPart(p); else afterQueue.push(p); };
+void bootReady.then(() => setTimeout(() => { afterOpen = true; for (const p of afterQueue.splice(0)) startPart(p); }, 1500));
 // (v1.07 startup) while a game or story opened from the Simple screen before the valley was built is up (simpleFirst),
 // the building waits between its steps, so the game runs smoothly; it goes on when the child is back on the Simple screen
 let earlySimple = false;
@@ -272,6 +285,7 @@ export interface SvMain {
   // values main.ts shares
   LANDMARKS?: typeof LANDMARKS; STICKERS?: typeof STICKERS; VIEWS?: typeof VIEWS; getViews?: (i: number) => typeof VIEWS; PLACES?: { id?: string, x: number, z: number, [k: string]: unknown }[];
   bootTimes?: Record<string, number>; mapPic?: typeof mapPic; waterPic?: typeof waterPic; parked?: unknown;
+  areas?: { near: (x: number, z: number, r?: number) => Promise<void>, done: () => Promise<void>, left: () => number, list: () => { id: string, x: number, z: number, built: boolean, asleep: boolean, ms?: number }[], all: () => Promise<unknown> }; // (v1.08d valley, js/areas.ts)
   bubbleIcons?: THREE.Sprite[]; wanderers?: (SvPerson & { tx: number, tz: number, wave: number })[]; partners?: Record<string, SvFriend>;
   caroSize?: number; _again?: { game: string, from: string[], until: number, timer: ReturnType<typeof setTimeout> } | null; _padRemotes?: number; _familyMsgLive?: boolean; _owlAuto?: boolean; _previewed?: boolean; _reading?: boolean;
   resumedAway?: boolean; valleyGrew?: boolean; closeUp?: number | null;
@@ -541,7 +555,7 @@ async function foundLeafy(h, lf) {
 
 // ---------- NPC talks ----------
 const { GAME_SPOT, baTalk, maiTalk, kidTalk, owlTalk } = installTalks(G, { playGame, twoHalves, save, checkQuests: h => checkQuests(h), hudFor, goAndDo: (h, it) => goAndDo(h, it), currentQuest: p => currentQuest(p), addMoney, NPCS }); // (the quests are made just below: js/main/quests.ts)
-void import('./learnquest.js').then(m => m.installLearnQuest(G)).catch(e => console.warn('learning quests', e)); // (v1.08b games) the learning journeys
+afterStart(() => import('./learnquest.js'), m => m.installLearnQuest(G)); // (v1.08b games) the learning journeys (v1.08d valley: after the start)
 
 // ---------- objective helpers ----------
 const { statueTalk, questTarget, currentQuest, gourdTalk, checkQuests } = installQuests(G, { world, save, V, NPCS, theOwl: () => owl, addMoney, isPlaying: () => playing, hudFor, goAndDo: (h, it) => goAndDo(h, it), giveSticker });
@@ -894,9 +908,12 @@ const later = Object.fromEntries((['heritage', 'symbols', 'regionSites', 'vnFun'
 for (const p of Object.values(later)) p.catch(() => { });
 (await later.heritage).createHeritage(G, { give, sfx: SFX, say, toast: (h, m) => hudFor(h).toast(m) });
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
-{ const S = await later.symbols; S.createSymbols(G, { sfx: SFX, dialog }); regionLabel = S.regionLabel; } // each region's symbol animal, in a corner of its city square
+{ const S = await later.symbols; regionLabel = S.regionLabel; // each region's symbol animal, in a corner of its city square
+  // (v1.08d valley) each one is its own part, built after the start when the child is near its city (js/areas.ts)
+  const at = (id: string): [number, number] => { const c = CITIES.find(k => k.id === id); return c ? [c.x, c.z] : id === 'china' ? [CHINA.x, CHINA.z] : id === 'india' ? [INDIA.x, INDIA.z] : [(AUSSIE.x0 + AUSSIE.x1) / 2, AUSSIE.roadZ]; };
+  for (const where of S.SYMBOL_PLACES()) addArea('symbol:' + where, at(where), () => S.createSymbols(G, { sfx: SFX, dialog, only: where })); }
 (await later.regionSites).createRegionSites(G); // more famous places of each region, just outside its city
-(await later.vnFun).createVnFun(G, { sfx: SFX, say, dialog, toast: (h, m) => hudFor(h).toast(m) }); // children playing north and south; buffalo and bull festivals
+(await later.vnFun).createVnFun(G, { sfx: SFX, say, dialog, toast: (h, m) => hudFor(h).toast(m) }); // children playing north and south; buffalo and bull festivals (v1.08d valley: kept here, its children host games on the folk games boards, js/folkshow.ts)
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
 G.placeBook = createPlaceBook(G, { toast: (h, m) => hudFor(h).toast(m), save }); // the places sticker book listens to the event bus (js/placebook.js)
 G.familyCards = createFamilyCards(G, { toast: (h, m) => hudFor(h).toast(m), save }); // family photos from Studio arrive as postcards (js/familycards.js)
@@ -979,18 +996,20 @@ G.folkShow = (await later.folkShow).createFolkShow(G, { looks: [kidLook('shirt',
 // (Play reading trial, owner 11 Oct AEDT) the ten reading games load only while Studio's readingTrial switch is on (now, or when it is switched on);
 // on unless Studio switches it off (owner, 12 Oct AEDT)
 // (batch rollout: also for a child who already played a reading game, checked again when a session starts)
-{ const rd = () => { if (keptOn('readingTrial')) import('./games/readingmenu.js').catch(() => { }); }; rd(); G.readingCheck = rd; import('./custom.js').then(C => C.onLive(rd)); }
+{ const rd = () => { if (keptOn('readingTrial')) import('./games/readingmenu.js').catch(() => { }); }; afterStart(async () => null, rd); G.readingCheck = rd; /* (v1.08d valley: after the start) */ import('./custom.js').then(C => C.onLive(rd)); }
 // level land under every building, stall and landmark placed above (and anything added in future rounds)
 world.familyEdits = applyWorldEdits(G); // buildings the family moved or removed in Sparkle Studio
 bootMark('things'); widenFlatLand(world, scene); bootMark('wideland'); await breathe(); // more level land round every village and city, for new buildings (nothing moves on the map)
 createAds(G); // the family's own signboards (only when Sparkle Studio switched ads on)
 world.levelled = levelUnderBuildings(world, scene); bootMark('levelled'); await breathe();
 G.plots = createPlots(G); // (round T3) the Memory Villages' garden plots and the spare ones by each city, on their levelled ground
-G.signposts = (await later.signposts).createSignposts(G); // (round T4b, js/signposts.js) a picture signpost at every road junction
-bootMark('roadside'); G.solidsReady = buildSolids(G);
+{ const S = await later.signposts; addArea('signposts', [PLATEAU.x, PLATEAU.z + 40], () => { G.signposts = S.createSignposts(G); }); } // (round T4b, js/signposts.js) a picture signpost at every road junction (v1.08d valley: after the start, one part for the whole valley: one shared picture)
+bootMark('roadside');
+// (v1.08d valley) the solid map is made again a moment after parts of the valley built later (js/areas.ts) stand
+const solidsNow = () => { G.solidsReady = buildSolids(G); void G.solidsReady.then(afterSolids); return G.solidsReady; };
 // Later buildings can cover an authored collectible. Keep its stable pickup ID and
 // cooldown, but move the picture and interaction together onto nearby open ground.
-void G.solidsReady.then(() => {
+const afterSolids = () => {
   for (const b of world.rideAnimals || world.buffalo || []) {
     if (b.rider) continue;
     const [x, z] = G.clearSpot(b.mesh.position.x, b.mesh.position.z, 1.1);
@@ -1006,7 +1025,7 @@ void G.solidsReady.then(() => {
     it.x = x; it.z = z; state.baseY = Math.max(heightAt(x, z), WATER) + .7;
     state.s.position.set(x, state.baseY, z);
   }
-}); bootMark('solids'); // (no breath here: the solid map is read once everything below is placed too) // nobody walks through houses and things (js/solids.js)
+}; solidsNow(); bootMark('solids'); // (no breath here: the solid map is read once everything below is placed too) // nobody walks through houses and things (js/solids.js)
 startPackBar(); // the recorded voices downloading: a small bar at the bottom (js/packbar.js)
 startCounting(G); // how many children play, and what they play, for Studio's report (js/players.js; Grown-ups can switch it off)
 // solid things the camera must never go inside: big, opaque, still-standing meshes (collected once, refreshed
@@ -1082,7 +1101,7 @@ G.openTrade = (i, id) => { if (G.paused) return; openTrade(G, G.heroes[i], id); 
 G.secrets = (await later.secrets).createSecrets(G);
 ensureJobs();
 G.claims.wrap(); // (after every pickup exists: first come, first served online)
-createCrossings(G); // Road warnings beside the existing crossings, after all doors/stalls are known.
+for (const [id, P0] of [['town', TOWN], ['aussie', AUSSIE]] as const) addArea('crossing:' + id, [P0.x - 4, P0.roadZ], () => createCrossings(G, [id])); // Road warnings beside the existing crossings, after all doors/stalls are known (v1.08d valley: each street's after the start, js/areas.ts)
 setupBubbles(); setupAreaSigns(); setupGuides();
 $('#songBtn').onclick = () => G.places.nextSong();
 resize();
@@ -1098,21 +1117,29 @@ resize();
   requestAnimationFrame(() => setTimeout(start, 30));
 }
 // (Round U, owner: rows and pages scroll by finger and mouse everywhere: js/scrollhelp.js; loaded after the title)
-import('./scrollhelp.js').then(m => m.installScrollHelp());
+// (v1.08d valley, PERF-001: the first download holds only what the child needs to start moving) the parts below are made
+// after the start, one at a time when the page has a quiet moment (afterStart, above)
+afterStart(() => import('./scrollhelp.js'), m => m.installScrollHelp());
 // (Round U) every villager answers a tap with a fact or a saying of their region (js/villagertalk.js)
-import('./villagertalk.js').then(m => m.createVillagerTalk(G)).then(() => import('./dayplan.js')).then(m => m.createDayPlan(G));   // (Round U) villagers' day plan
-import('./pricetags.js').then(m => m.createPriceTags(G));
-import('./jobs.js').then(m => m.createJobs(G));
-import('./wayfind.js').then(m => m.createWayfind(G));   // (Round U) "Where is…?" sparkles
+afterStart(() => Promise.all([import('./villagertalk.js'), import('./dayplan.js')]), ([V, D]) => { V.createVillagerTalk(G); D.createDayPlan(G); });   // (Round U) villagers' day plan
+afterStart(() => import('./pricetags.js'), m => m.createPriceTags(G));
+afterStart(() => import('./jobs.js'), m => m.createJobs(G));
+afterStart(() => import('./wayfind.js'), m => m.createWayfind(G));   // (Round U) "Where is…?" sparkles
 G.openWhere = i => featureOn('wayfind', false) && G.wayfind && G.wayfind.open(i);
 onLive(() => { if (!featureOn('wayfind',false)) { G.wayfind?.stop(true); document.querySelectorAll<HTMLElement>('.wherepick').forEach(m => m.querySelector<HTMLElement>('.x')?.click()); } });
-import('./animalhomes.js').then(m => m.createAnimalHomes(G));   // (Round U) animals with homes   // (Round U) a job board in every place   // (Round U) a coin-picture price over every food stall
+afterStart(() => import('./animalhomes.js'), m => m.createAnimalHomes(G));   // (Round U) animals with homes   // (Round U) a job board in every place   // (Round U) a coin-picture price over every food stall
 // (Round U) a tap on a coin, orb or Leafy chip (top bar, Backpack) says what it is (js/chipinfo.js, loaded on the first tap)
 document.addEventListener('click', e => { const c = e.target instanceof Element && e.target.closest<HTMLElement>('[data-chip]'); if (c) import('./chipinfo.js').then(m => m.showChip(c.dataset.chip, c)); });
 import('./state.js').then(S => { if (S.restoredFromCopy) setTimeout(() => toast(T('Your progress was brought back from the safe copy on this device.', 'Tiến trình chơi đã được khôi phục từ bản lưu dự phòng trên máy.')), 1200); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (playing) keepSpot(); save(); hush(); } });
 addEventListener('pagehide', () => { if (playing) keepSpot(); saveProfiles(true); });
 bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
+// (v1.08d valley, js/areas.ts) the parts of the valley built after the start: nearest the child first (before a child is
+// chosen: the spot the last child played at, or home); after each one its pickups join first come first served, its
+// activities get their bubbles, and a moment later the solid map is made again with it
+{ let again = null; const p0 = (profiles[0] && profiles[0].pos) || { x: PLATEAU.x - 3, z: PLATEAU.z - 4 };
+  G.areas = { near: areasNear, done: areasDone, left: areasLeft, list: areaList, all: async () => { for (const a of areaList()) if (!a.built) await areasNear(a.x, a.z, 1); } };
+  startAreas(G, { x: +p0.x || 0, z: +p0.z || 0 }, () => { G.claims.wrap(); setupBubbles(); clearTimeout(again); again = setTimeout(solidsNow, areasLeft() ? 2500 : 600); }); }
 setTimeout(() => { void import('./art.js').then(a => a.moreArt()); }, 1500); // (v1.08) the new games' pictures, after the start
 // (v1.08b platform, brief part 4: a lighter first download) the surprises and the grown-ups' features (family missions,
 // the family message, the week note) have no place on the map: they are made 2 s after the child can start, not while

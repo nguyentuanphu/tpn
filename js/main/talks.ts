@@ -18,7 +18,7 @@ import { openGamesHub, openQuick } from '../ui.js';
 import type { SvMain } from '../main.js';
 import { SCIENCE_PLACES } from '../content/science-places.js';   // (v1.08 science)
 import { areaSpot, AREA_PLACE } from '../content/gameplace.js';
-import { FEST_OF_GAME } from '../content/festgames108b.js';   // (v1.08b games) a place and a host for every game
+import { FEST_OF_GAME } from '../content/festgame-ids.js';   // (v1.08b games) a place and a host for every game (v1.08d valley: the map only)
 import { gameInfo } from '../content/activities.js';
 import { isOpen } from '../content/unlocks.js';
 import { say } from '../voice.js';

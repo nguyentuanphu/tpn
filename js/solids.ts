@@ -91,7 +91,11 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
       work += performance.now() - s0; lastEnd = performance.now();
       if (oi < still.length) return setTimeout(step, 0);
       try { const bytes = new Uint8Array(N * N / 8); for (let k = 0; k < N * N; k++) if (grid[k]) bytes[k >> 3] |= 1 << (k & 7); let str = ''; for (let k = 0; k < bytes.length; k += 4096) str += String.fromCharCode.apply(null, bytes.subarray(k, k + 4096));
-        for (let k = localStorage.length - 1; k >= 0; k--) { const key = localStorage.key(k); if (key && key.startsWith('sv2_solid_') && key !== sig) localStorage.removeItem(key); }
+        // (v1.08d valley) the map is made again once the parts built after the start stand (js/areas.ts), so the last three
+        // maps are kept (the start's, and with the parts), not only the newest
+        let keep: string[] = []; try { keep = JSON.parse(localStorage.getItem('sv2_solidkeys') || '[]'); } catch (e) { }
+        keep = [sig, ...keep.filter(k => k !== sig)].slice(0, 3); localStorage.setItem('sv2_solidkeys', JSON.stringify(keep));
+        for (let k = localStorage.length - 1; k >= 0; k--) { const key = localStorage.key(k); if (key && key.startsWith('sv2_solid_') && !keep.includes(key)) localStorage.removeItem(key); }
         localStorage.setItem(sig, JSON.stringify({version:1,deck:btoa(str),water:Array.from(waterGrid.keys()).filter(k=>waterGrid[k])})); } catch (e) { }
       done(false);
     };
