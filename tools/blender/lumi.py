@@ -41,6 +41,24 @@ VILL = {
     'au-boy': {'g': 'm', 'size': 'kid', 'pal': ('#f7d6c2', '#c45a2c', '#a5481f', '#d9733f', '#3d6b3a', '#7aa86a', '#a5481f', '#5a3a28'), 'hair': 'short', 'top': ('tee', '#2aa3b8'), 'bottom': '#f28c38', 'kind': 'shorts', 'hat': 'bucket', 'shoes': 'thongs', 'extra': ('freckles',)},
     'au-girl': {'g': 'f', 'size': 'kid', 'pal': ('#9a6544', '#1c1715', '#120f0d', '#2c2420', '#24140a', '#4a2c18', '#1c1715', '#1f1712'), 'hair': 'pigtails', 'top': ('dress', '#9cc7e8'), 'bottom': '#2c3a5a', 'kind': 'skirt', 'hat': 'straw/2c3a5a', 'shoes': 'sneakers/2a2a2a', 'extra': ('backpack', 'bracelet')},
 }
+# (v1.08e villagers, owner 6 Nov 2026 AEDT) the 11 named villagers of the valley (js/main.ts addNPC), each from the
+# neighbour closest to them, in their own colours in the game: role=<id> (mai, ba, teo, ti, bong, su, jack, mit, bom, ruby, lan)
+def _named(base, **k): d = dict(VILL[base]); d.update(k); return d
+VN_KID_F = ('#f6c7a5', '#1d1412', '#120f0d', '#3b2a22', '#2a1a0e', '#5a3a22', '#120f0d', '#1f1712')
+VN_KID_M = ('#f6c7a5', '#1d1412', '#120f0d', '#3b2a22', '#2a1a0e', '#5a3a22', '#120f0d', '#1f1712')
+VILL.update({
+    'mai': _named('vn-aodai', top=('aodai', '#e8435a'), hat='nonla'),
+    'ba': _named('vn-grandpa', top=('aobaba', '#5b7fbf'), bottom='#3d4a6a', hat='', extra=('moustache',)),
+    'teo': _named('vn-schoolboy', pal=VN_KID_M, top=('shirt', '#ffb52e'), bottom='#2c3a5a', extra=()),
+    'ti': _named('vn-schoolgirl', pal=('#f6c7a5', '#3b2618', '#2a1a10', '#5a3a26', '#2a1a0e', '#5a3a22', '#2a1a10', '#1f1712'), top=('dress', '#ff7eb8'), bottom='#ff7eb8', extra=('bow',)),
+    'bong': _named('vn-schoolgirl', pal=VN_KID_F, hair='ponytail', top=('tee', '#9a6bff'), bottom='#5a3f9a', kind='shorts', extra=()),
+    'su': _named('vn-schoolboy', pal=('#f6c7a5', '#3b2618', '#2a1a10', '#5a3a26', '#2a1a0e', '#5a3a22', '#2a1a10', '#1f1712'), top=('tee', '#5bbf6a'), bottom='#3f7a48', hat='bucket/5bbf6a', extra=()),
+    'jack': _named('au-boy', pal=('#ffe3d1', '#e8c26a', '#c9a24c', '#f3d98e', '#2e5b8a', '#6f9cc9', '#c9a24c', '#6a5a40'), top=('tee', '#3b6fe0'), bottom='#c8b48a', hat='bucket/3b6fe0'),
+    'mit': _named('vn-schoolgirl', pal=VN_KID_F, top=('dress', '#ffd23f'), bottom='#ffd23f', extra=('bow',)),
+    'bom': _named('vn-schoolboy', pal=VN_KID_M, top=('shirt', '#e8434a'), bottom='#2c3a5a', extra=()),
+    'ruby': _named('au-girl', pal=('#ffe3d1', '#a8432a', '#86331f', '#c4603f', '#3d6b3a', '#7aa86a', '#86331f', '#5a3a28'), top=('dress', '#a66bff'), hat='', extra=('bow',)),
+    'lan': _named('vn-schoolgirl', pal=('#f6c7a5', '#3b2618', '#2a1a10', '#5a3a26', '#2a1a0e', '#5a3a22', '#2a1a10', '#1f1712'), hair='ponytail', top=('aodai', '#5fd39a'), bottom='#f6f3ee', kind='wide', extra=()),
+})
 V = VILL.get(ROLE) if WHO == 'villager' else None
 G = V['g'] if V else {'finn': 'm', 'sol': 'm'}.get(WHO, 'f')   # boys: Finn, Sol; girls: Clara, Lumi (owner asked, 3 Nov)
 if V and V['hat'] and 'hat' not in WEAR: WEAR['hat'] = V['hat'].replace('/', '/')
