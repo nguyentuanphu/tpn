@@ -3,7 +3,7 @@
 import { seatRider } from './vehicles.js';
 import { vehicleEye } from './rideview.js';
 import { THREE } from './gfx.js';
-import { buildAvatar, setLookTarget } from './avatar.js';
+import { buildAvatar, setLookTarget, loadFriendModels, friendsReady, FRIEND_DATA } from './avatar.js';
 import { WATER, RIDE_SWIM, heightAt, surfaceAt } from './world.js';
 import { clamp, lerp, angleLerp } from './util.js';
 import { SFX } from './audio.js';
@@ -26,7 +26,7 @@ export interface Hero {
   pos: THREE.Vector3; lastSafe: THREE.Vector3; camPos: THREE.Vector3; camLook?: THREE.Vector3; cam: THREE.PerspectiveCamera;
   av: ReturnType<typeof buildAvatar>; yaw: number; vy: number; camYaw: number; camPitch: number; camDist: number;
   state: string; speed: number; onGround: boolean; stamina: number; exhausted: boolean; bonusStamina: number; hearts: number;
-  fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount;
+  fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount; _faceDone?: boolean;
   safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number;
   easyT?: number; stillT?: number; steerYaw?: number; goal?: { x: number, z: number }; goalT?: number; view?: string; zoom?: number;
   autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean;
@@ -50,6 +50,11 @@ export class Hero {
     if (this.av) this.scene.remove(this.av.root);
     this.av = buildAvatar(this.profile.look, this.profile.photo); this.av.root.userData.own = true; // (Round V) a child's own character, never a villager (js/villagertalk.js)
     this.scene.add(this.av.root);
+    // (v1.08b friends) the friend's 3D model loads after the start; the code person in the friend's colours stands in until
+    // it arrives, then the child is built again with it (not in the middle of a ride)
+    if (!FRIEND_DATA.lib) { friendsReady().then(() => this.buildModel()); } // (v1.08b: a child started without Who's playing is built again once the friends' data is in)
+    const f = this.profile.look && this.profile.look.friend;
+    if (f && !this.av.model) loadFriendModels(f).then(ok => { const go = () => { if (this.profile.look.friend !== f) return; const face = !ok && this.profile.look.face && this.profile.look.face !== 'none' && !this._faceDone; if (ok ? this.av.model : !face) return; if (this.riding) return void setTimeout(go, 2000); if (!ok) this._faceDone = true; this.buildModel(); }; go(); });
   }
   place(x, z, y?: number) {
     // ground, bridge or deck, but not a tower top (those are reached by climbing)

@@ -18,6 +18,8 @@ import { WILD } from '../gather.js';
 import { snackOf, eatSnack } from '../snacks.js';
 import { saveToDevice, savesByShare } from '../photos.js';
 import { pic } from '../art.js';
+// (v1.08b friends) the friend and outfit rows load with the first Backpack (not in the first download, check startup)
+let FR: typeof import('./friends-row.js') = null;
 import { COMPANIONS } from '../content/companions.js';
 import { modal } from '../popups.js';
 import { PET_ICON, PAL_HAT_ICON, PALS_NAME, PALS_TAB, toast, foldHeadings, jumpNav } from './common.js';
@@ -264,6 +266,7 @@ export const openPad = Object.assign(function (game, i, tab) {
       else { SFX.tap(); say('All hats! Your companion has every hat. Tap a hat to choose who wears it.', 'Đủ mũ rồi! Bạn đồng hành có tất cả các mũ. Chạm vào mũ để chọn bạn nào đội.'); } });
   }
   function drawBag(body) {
+    if (!FR) import('./friends-row.js').then(m => { FR = m; if (body.isConnected && body.querySelector('.bag-top')) drawBag(body); });
     // (Round V) what an ingredient is for: the dishes it goes into at a cooking pot
     const ingInfo = id => { const it = ITEMS[id], uses = RECIPES.filter(r => r.need.includes(id)), names = uses.map(r => r.name());
       const en = `${it.name()}: an ingredient. ${uses.length ? 'Cook it at a cooking pot to make ' + names.join(', ') + '.' : 'Cook it at a cooking pot.'}`, vi = `${it.name()}: nguyên liệu. ${uses.length ? 'Nấu ở nồi để làm ' + names.join(', ') + '.' : 'Nấu ở nồi nhé.'}`;
@@ -285,7 +288,8 @@ export const openPad = Object.assign(function (game, i, tab) {
       ${(() => { const SLOT_ICON = { hat: '👒', neck: '📿', top: '👕', bottom: '👖', feet: '👟', back: '🪽' }; // (Round U, owner 11 Oct: everything bought shows here until it is worn) the clothes and accessories the child owns
         const itemSVG = it => game.shop && game.shop.itemSVG ? game.shop.itemSVG(it) : pic(SLOT_ICON[it.slot] || '👕'), mine = CLOTHES.filter(it => owns(p, it.id) && it.for === (setOfLook(p.look) === 'girl' ? 'g' : 'b')), off = mine.filter(it => p.look[it.slot] !== it.id), on = mine.filter(it => p.look[it.slot] === it.id);
         const hats = HATS.concat(REWARD_HATS.filter(h => p.owned.hats.includes(h))).filter(h => h !== 'none' && !ITEM[h]);
-        return `<h3>${pic('👕')} ${T('Clothes and accessories', 'Quần áo và phụ kiện')} <small>${T('tap to wear', 'chạm để mặc')}</small></h3>
+        return `<h3>${pic('👕')} ${T('Character & Outfits', 'Nhân vật & Trang phục')} <small>${T('tap to wear', 'chạm để mặc')}</small></h3>
+      ${FR ? FR.friendRowHTML(p) + FR.suitRowHTML(p) : ''}
       <div class="slots">${off.map(it => `<button class="slot" data-wear="${it.id}" title="${esc(T(it.en, it.vi))}">${itemSVG(it)}<small>${esc(T(it.en, it.vi))}</small></button>`).join('')}${hats.filter(h => p.look.hat !== h).map(h => `<button class="slot" data-hat="${h}"><span>${HAT_ICON[h]}</span><small>${esc(HAT_NAME[h]())}</small></button>`).join('')}${!off.length && !hats.filter(h => p.look.hat !== h).length ? `<p class="note">${T('Everything you have is on! Find more at the clothes shop.', 'Con đang mặc hết đồ rồi! Ghé cửa hàng quần áo để mua thêm nhé.')}</p>` : ''}</div>
       ${on.length || (p.look.hat && p.look.hat !== 'none' && !ITEM[p.look.hat]) ? `<h3>${T('Wearing now', 'Đang mặc')} <small>${T('tap to take off', 'chạm để cởi ra')}</small></h3>
       <div class="slots">${on.map(it => `<button class="slot on" data-unwear="${it.slot}" title="${esc(T(it.en, it.vi))}">${itemSVG(it)}<small>${esc(T(it.en, it.vi))}</small></button>`).join('')}${p.look.hat && p.look.hat !== 'none' && !ITEM[p.look.hat] && HAT_ICON[p.look.hat] ? `<button class="slot on" data-hat="none"><span>${HAT_ICON[p.look.hat]}</span><small>${esc(HAT_NAME[p.look.hat] ? HAT_NAME[p.look.hat]() : '')}</small></button>` : ''}</div>` : ''}`; })()}
@@ -316,6 +320,9 @@ export const openPad = Object.assign(function (game, i, tab) {
       say(`Sold! Now you have ${money(farm.coins)}.`, `Bán rồi! Giờ con có ${money(farm.coins)}.`); game.job && game.job('sell', 1, hero); draw();
     });
     body.querySelectorAll('[data-hat]').forEach(b => b.onclick = () => { p.look.hat = b.dataset.hat; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
+    // (v1.08b friends) change friend (free, same set) and outfit
+    body.querySelectorAll('[data-befriend]').forEach(b => b.onclick = () => { if (FR.setFriend(p, b.dataset.befriend as any)) { saveProfiles(); game.rebuildHero(i); SFX.pop(1); FR.sayHello(b.dataset.befriend); draw(); } });
+    body.querySelectorAll('[data-suit]').forEach(b => b.onclick = () => { if (FR.wearSuit(p, b.dataset.suit)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-wear]').forEach(b => b.onclick = () => { const it = ITEM[b.dataset.wear]; if (it && wearItem(p, it.slot, it.id)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-unwear]').forEach(b => b.onclick = () => { if (wearItem(p, b.dataset.unwear, 'none')) { saveProfiles(); game.rebuildHero(i); SFX.tap(); draw(); } });
     // (r79) a gift box says what is inside and who it is for, and offers the players on this device it fits
@@ -337,7 +344,7 @@ export const openPad = Object.assign(function (game, i, tab) {
     body.querySelectorAll('[data-gl]').forEach(b => b.onclick = () => { p.look.glider = +b.dataset.gl; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
     // Help is the first tap; every change requires an explicit action inside the same Bag.
     for (const b of body.querySelectorAll('.slot')) {
-      if (b.dataset.eat || b.dataset.snack || b.dataset.gift) continue;
+      if (b.dataset.eat || b.dataset.snack || b.dataset.gift || b.dataset.befriend) continue; // (v1.08b friends: one tap changes friend)
       const oldAction = b.onclick, name = b.querySelector('small')?.textContent || b.title || T('Item', 'Đồ dùng');
       const it = ITEM[b.dataset.wear], ingredient = b.dataset.ing, treasure = WILD[b.dataset.sellgem];
       let en = 'Keep this item in your Backpack and use its action when you need it.', vi = 'Giữ món này trong Ba lô và chọn hành động khi cần.';
@@ -348,11 +355,12 @@ export const openPad = Object.assign(function (game, i, tab) {
       if (b.dataset.hat && b.dataset.hat !== 'none' && !ITEM[b.dataset.hat]) { en = 'A hat you won on an adventure. Tap Wear to put it on.'; vi = 'Chiếc mũ con giành được trong chuyến phiêu lưu. Chạm Mặc để đội.'; }
       if (b.dataset.hat === 'none') { en = 'The hat you won, on your head now. Tap Take off to take it off.'; vi = 'Chiếc mũ con giành được, đang đội trên đầu. Chạm Cởi ra để bỏ mũ.'; }
       if (b.dataset.hlcarry) { en = 'A prize you won at the village festival. Carry it to show everyone, or put it away. It is a keepsake in your house too.'; vi = 'Phần quà con giành được ở hội làng. Mang theo cho mọi người xem, hoặc cất đi. Nó cũng là kỷ vật trong nhà con.'; }
+      if (b.dataset.suit) { en = 'An outfit for your friend. Tap Wear to put it on.'; vi = 'Một bộ đồ cho bạn của con. Chạm Mặc để mặc vào.'; } // (v1.08b friends)
       if (b.dataset.gl) { en = 'Choose the colour of your glider for flying safely from high places.'; vi = 'Chọn màu cánh lượn để bay an toàn từ nơi cao.'; }
       if (b.dataset.kite || b.dataset.whistle) { en = 'Your whistling kite follows you; its bamboo flute sings in the wind.'; vi = 'Diều sáo bay theo con; sáo tre hát trong gió.'; }
       if (ingredient) { const info = ingInfo(ingredient); en = info[1]; vi = info[2]; }
       if (treasure) { en = `A treasure you found. Sell one for ${money(treasure.sell)} or keep it.`; vi = `Báu vật con tìm được. Bán một món lấy ${money(treasure.sell)} hoặc giữ lại.`; }
-      const action = treasure ? T('Sell one', 'Bán một') : b.dataset.unwear || b.dataset.hat === 'none' ? T('Take off', 'Cởi ra') : b.dataset.wear || b.dataset.hat ? T('Wear', 'Mặc') : b.dataset.kite ? (p.kiteOn !== false ? T('Put away', 'Cất đi') : T('Fly', 'Thả diều')) : b.dataset.hlcarry ? (p.hoilang?.carryOn !== false && p.hoilang?.carry === b.dataset.hlcarry ? T('Put away', 'Cất đi') : T('Carry', 'Mang theo')) : b.dataset.whistle ? T('Whistle', 'Thổi sáo') : b.dataset.gl !== undefined ? T('Choose', 'Chọn') : T('Use', 'Dùng');
+      const action = treasure ? T('Sell one', 'Bán một') : b.dataset.unwear || b.dataset.hat === 'none' ? T('Take off', 'Cởi ra') : b.dataset.wear || b.dataset.hat || b.dataset.suit ? T('Wear', 'Mặc') : b.dataset.kite ? (p.kiteOn !== false ? T('Put away', 'Cất đi') : T('Fly', 'Thả diều')) : b.dataset.hlcarry ? (p.hoilang?.carryOn !== false && p.hoilang?.carry === b.dataset.hlcarry ? T('Put away', 'Cất đi') : T('Carry', 'Mang theo')) : b.dataset.whistle ? T('Whistle', 'Thổi sáo') : b.dataset.gl !== undefined ? T('Choose', 'Chọn') : T('Use', 'Dùng');
       b.onclick = () => { const art = b.querySelector('svg, .art, .sw')?.outerHTML || ''; helpCard(name, art, en, vi, oldAction && !ingredient ? action : '', ok => { if (ok) { oldAction?.call(b); } }); };
     }
 

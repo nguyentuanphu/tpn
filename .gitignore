@@ -143,6 +143,7 @@ marketing/source/runvalley.log
 /js/content/films/tiddalik.js
 /js/content/films/vusua.js
 /js/content/films/weaver.js
+/js/content/friends.js
 /js/content/fruit-parade.js
 /js/content/gameplace.js
 /js/content/games108b.js
@@ -209,6 +210,8 @@ marketing/source/runvalley.log
 /js/festivals.js
 /js/film.js
 /js/folkshow.js
+/js/friend-model.js
+/js/friend-view.js
 /js/fun.js
 /js/games/all.js
 /js/games/animals2.js
@@ -434,6 +437,8 @@ marketing/source/runvalley.log
 /js/ui/calendar-news.js
 /js/ui/common.js
 /js/ui/festivals-ui.js
+/js/ui/friends-row.js
+/js/ui/friends-ui.js
 /js/ui/grownups.js
 /js/ui/hub.js
 /js/ui/pad-album.js

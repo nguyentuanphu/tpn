@@ -79,7 +79,7 @@ export async function packedSite() {
   const path = await import('path'), { execFileSync } = await import('child_process'), dir = path.resolve('out/packed'), repo = path.resolve('..');
   fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
   for (const f of ['index.html', 'sw.js']) fs.copyFileSync(path.join(repo, f), path.join(dir, f));
-  for (const f of ['manifest.webmanifest', 'css', 'fonts', 'icons', 'js', 'vendor', 'content', 'videos', 'voices', 'photos', 'sounds']) if (fs.existsSync(path.join(repo, f))) fs.symlinkSync(path.join(repo, f), path.join(dir, f));
+  for (const f of ['manifest.webmanifest', 'css', 'fonts', 'icons', 'js', 'vendor', 'models', 'content', 'videos', 'voices', 'photos', 'sounds']) if (fs.existsSync(path.join(repo, f))) fs.symlinkSync(path.join(repo, f), path.join(dir, f));
   execFileSync(process.execPath, [path.join(repo, 'tools/bundle.mts'), dir], { encoding: 'utf8' });
   ok(fs.existsSync(path.join(dir, 'bundle')), 'the packed copy was not built (tools/bundle.mts: esbuild missing?)');
   return (packedDir = dir);

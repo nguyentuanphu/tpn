@@ -10,7 +10,7 @@ if command -v node >/dev/null 2>&1; then node tools/build.mts
 elif find js studio/ui -name '*.ts' ! -name '*.d.ts' 2>/dev/null | grep -q . || [ -f sw.ts ]; then echo "Node is needed to build the game's TypeScript files (tools/build.mts)"; exit 1; fi
 rm -rf "$OUT" sparkle-valley-netlify.zip
 mkdir -p "$OUT"
-cp -r index.html manifest.webmanifest sw.js netlify.toml css fonts icons js vendor videos content "$OUT"/
+cp -r index.html manifest.webmanifest sw.js netlify.toml css fonts icons js vendor models videos content "$OUT"/
 # (r89) the family website at /home, made from the reviewed design by tools/build-website.mts (its TypeScript was made
 # into .js above); only the page, its pictures and its scripts, not the TypeScript
 mkdir -p "$OUT"/home && cp -r home/index.html home/assets home/site.js home/analytics.js home/festivals.js home/launch.js "$OUT"/home/

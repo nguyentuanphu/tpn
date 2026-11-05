@@ -171,8 +171,12 @@ await check('firstplayer', async () => {
   const P = await open(b, { w: 390, h: 844, touch: true, lang: 'vi', play: false, pre: () => { localStorage.setItem('sv2_profiles', '[]'); } });
   await P.page.click('.screen.title .press', { force: true }); await P.page.waitForSelector('.screen.who');
   const before = await P.page.evaluate(() => ({ first: !!document.querySelector('.who-card.first .make'), picks: document.querySelectorAll('.pick[data-id]').length }));
-  await P.page.click('.who .make'); await P.page.waitForSelector('.modal.editor #nm');
-  await P.page.fill('#nm', 'Mai'); await P.page.evaluate(() => document.querySelector('#eSave').click());
+  // (v1.08b friends) "Make my character" now starts with the Welcome steps: name, boy or girl, friend and skin tone; the
+  // editor with age, start screen and difficulty follows with the name already filled in (checked in full by "newfriends")
+  await P.page.click('.who .make'); await P.page.waitForSelector('.modal.friendpick .fr-name');
+  await P.page.fill('.fr-name', 'Mai'); await P.page.click('.friendpick [data-go="next"]'); await P.page.click('.friendpick [data-set="girl"]');
+  await P.page.click('.friendpick [data-friend="clara"]'); await P.page.click('.friendpick [data-go="done"]');
+  await P.page.waitForSelector('.modal.editor #nm'); await P.page.evaluate(() => document.querySelector('#eSave').click());
   await P.page.waitForSelector('.who .go:not([disabled])', { timeout: 5000 });
   await P.page.click('.who .go'); await P.page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
   const r = await P.page.evaluate(() => ({ name: __sv.heroes[0].profile.name, saved: JSON.parse(localStorage.getItem('sv2_profiles')).map(p => p.name) }));
