@@ -318,7 +318,7 @@ export function buildAvatar(look, photo?, opts?: { code?: boolean }) {
   const back = new THREE.Mesh(G.hairBack, hairM); back.scale.set(1.02, .9, 1.02); back.position.y = .02; head.add(back);
   // soft locks of fringe across the forehead
   // (v1.08b) felt-look hair: the locks in front a shade lighter than the cap, like the friends' felt hair
-  const hairL = toon('#' + new THREE.Color(look.hair).lerp(new THREE.Color('#ffffff'), .14).getHexString(), { roughness: .5 });
+  const hairL = toon('#' + new THREE.Color(look.hair).offsetHSL(0, .02, .045).getHexString(), { roughness: .5 });
   for (let i = 0; i < 5; i++) { const a = (i - 2) * .32, l = new THREE.Mesh(G.lock, hairL); l.scale.set(.9, 1.25, .55); l.position.set(Math.sin(a) * .42, .32 - Math.abs(i - 2) * .03, Math.cos(a) * .33); l.rotation.set(-.75, a, (i - 2) * -.25); head.add(l); }
   // (v1.08) long hair and the ponytail hang from their own pivot, so they swing as the child moves
   const hang = (x, y, z) => { const g = new THREE.Group(); g.position.set(x, y, z); head.add(g); A.tail = g; return g; };
