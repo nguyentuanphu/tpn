@@ -26,10 +26,14 @@ A scheduled task resumes this work after each usage reset (owner, 5 Nov 2026 AED
 - Light keeps the last areas too while the total stays under about 45 MB (the plan says 30–50 MB); lines heard elsewhere on Light are removed at the next tidy (start or area change).
 
 ## Progress
-- Part 2: in progress.
+- Part 2: code done (commits 7605291d9, db638fdf3, 490932b92; shorter cards with drawings 688edb283, owner 5 Nov 2026 AEDT: "too wordy, make it shorter ... with emoji or infographic"). The cards use our own drawings (feather, signal, suitcase from js/art) and a size bar.
+- Part 3: code done (4c31aea8b), checks running. Festival packs: js/voicepack.ts festivalPacks, run 20 s after the valley is built and when the device comes onto Wi-Fi; js/festivals.ts exports buildupOf; js/voice.ts lineFiles.
+- Part 3 assumed (owner can change): a festival pack is the festival's voice lines (its name and its host's lines). Its decorations and its festival game are drawn by the game's code, which every device already keeps (js/games/all.js is part of the start bundle), so nothing else needs downloading. "On demand" for voices: Light downloads an area when the child goes there; Automatic plays online and keeps what is heard; making the game's own code load on demand is the platform helper's "light first download" (not changed here).
 
 ## Checks
-(filled in per part: commit, check, pass/fail/skipped, date AEDT)
+Run one at a time with `node run.mts <check>` (`--changed` against main asks for the full suite, which only Release runs). Chromium: the pre-installed headless shell.
+- 5 Nov 2026 AEDT, commit 490932b92 (Part 2): offlinelevels pass (270 s), bilingual pass, types pass, voicepack pass, voicebackground pass, ownerwificard pass, ownervoicewifi pass, voicearea pass (500 s), welcomevoice pass, voiceopus pass, phone pass (248 s). voiceonline fail: it looked for the old wording "Keep all voices on this device"; the check now looks for "Offline voices -> Light or Full" (re-run below).
+- Screenshots looked at: tests/out/offlinelevels-phone.png, -phone-landscape.png, -tablet.png, -computer.png.
 
 ## New spoken lines
 None so far (the level screen is Grown-ups text, not spoken).
