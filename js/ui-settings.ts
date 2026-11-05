@@ -27,6 +27,7 @@ import { familyCode, setFamilyCode, familyPhotoCount } from './custom.js';
 import { avatarURL, applyNpcFaces, namedVillagers } from './avatar.js';
 
 import { openReport } from './report.js';
+import { togetherHTML, bindTogether } from './playtogether.js';
 
 import { extrasHTML, bindExtras, privacyHTML, netListHTML } from './extras.js';
 
@@ -304,6 +305,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       <p class="note">${T('The file stays in your own Drive or iCloud: Sparkle Valley has no server and never sees it.', 'Tệp nằm trong Drive hoặc iCloud của bạn: Thung Lũng Lấp Lánh không có máy chủ và không bao giờ xem tệp này.')}</p>
       
       </div></details>
+      ${togetherHTML(gOpen.has('together')) /* (v1.08b quality) Play with Mum and Dad */}
       ${window.__sv && window.__sv.parents ? window.__sv.parents.grownupsHTML(gOpen.has('family'), familyQuestionsHTML()) : `<details class="gsec family" data-sec="family" ${gOpen.has('family') ? 'open' : ''}><summary><span class="gi">${pic('💛')}</span><b>${T('Family', 'Gia đình')}</b></summary><div class="gbody">${familyQuestionsHTML()}</div></details>` /* Family questions also work before the world/mission service has finished starting. */}
 
       ${NOTIFY ? NOTIFY.notifyHTML(gOpen.has('notify')) : '<div class="pushsec-wait"></div>' /* (v1.08 notifications) */}
@@ -395,6 +397,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
     // (v1.08 fixes 2, check familycodejourney) once it has loaded, only the notifications part takes its place: drawing the
     // whole card again replaced whatever a grown-up was tapping or typing in at that moment
     else void import('./notify.js').then(mod => { NOTIFY = mod; const wait = card.isConnected && card.querySelector('.pushsec-wait'); if (!wait) return; wait.insertAdjacentHTML('afterend', mod.notifyHTML(gOpen.has('notify'))); wait.remove(); (card.querySelectorAll('details.gsec[data-sec="notify"]') as NodeListOf<HTMLDetailsElement>).forEach(d => d.ontoggle = () => { if (d.open) gOpen.add(d.dataset.sec); else gOpen.delete(d.dataset.sec); }); mod.bindNotify(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); }).catch(() => { });
+    bindTogether(card, () => { m.close(); after && after(); });   // (v1.08b quality)
     if (window.__sv && window.__sv.parents) window.__sv.parents.bindGrownups(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); // (round S)
     card.querySelector('#gFarm').onclick = () => { if (confirm(T('Start the farm over? Players and stickers are kept.', 'Làm lại nông trại? Người chơi và hình dán được giữ lại.'))) { resetFarm(); window.__sv && window.__sv.farm && (window.__sv.farm.syncAnimals(), window.__sv.farm.syncPets()); toast(T('A fresh new farm!', 'Nông trại mới tinh!')); } };
     const syncFamTelemetry = () => { import('./players.js').then(M => M.noteFamilyCode && M.noteFamilyCode()).catch(() => {}); };

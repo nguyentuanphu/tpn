@@ -207,7 +207,10 @@ export class Hero {
   }
   mount(b) { this.riding = b; b.rider = this; this._rideNew = true; this.gliding = false; this.pos.copy(b.mesh.position); this.yaw = b.yaw; if (!b.quiet) SFX.moo(); }
   dismount() { const b = this.riding; if (!b) return; b.rider = null; b.tx = b.mesh.position.x; b.tz = b.mesh.position.z; if (b.home) { b.tx = b.home[0]; b.tz = b.home[1]; b.back = true; }   // (Round V, owner 13 Oct) an animal runs back home when the child gets off
-    if (b.slot) b.slot.taken = null; if (b.vehicle) this.av.torso.rotation.set(0, 0, 0), this.av.torso.position.set(0, 0, 0), this.av.head.position.set(0, 1.33, 0), this.av.armL.scale.y = this.av.armR.scale.y = 1; this.riding = null; this.pos.x += Math.cos(this.yaw) * 1.8; this.pos.z -= Math.sin(this.yaw) * 1.8; this.pos.y = this.world.groundAt(this.pos.x, this.pos.z); }
+    if (b.slot) b.slot.taken = null; if (b.vehicle) this.av.torso.rotation.set(0, 0, 0), this.av.torso.position.set(0, 0, 0), this.av.head.position.set(0, 1.33, 0), this.av.armL.scale.y = this.av.armR.scale.y = 1; this.riding = null;
+    // (v1.08b quality) off to the side, on open ground with a way out and a clear view (js/dropspot.ts through G.setDown); off a raft into the water stays as it was
+    const ox = this.pos.x + Math.cos(this.yaw) * 1.8, oz = this.pos.z - Math.sin(this.yaw) * 1.8, G = window.__sv as { setDown?: (h: Hero, x: number, z: number, f: null) => unknown } | undefined;
+    if (G?.setDown && heightAt(ox, oz) > WATER + .3) { const y = this.yaw; G.setDown(this, ox, oz, null); this.yaw = y; } else { this.pos.x = ox; this.pos.z = oz; this.pos.y = this.world.groundAt(this.pos.x, this.pos.z); } }
 
   startTowerClimb(tw) {
     const m = this.world.towerMeshes[tw.id];

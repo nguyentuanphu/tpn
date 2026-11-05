@@ -23,20 +23,10 @@ function cut(html: string, start: string, end: string, put = ''): string {
   return html.slice(0, a) + put + html.slice(b + end.length);
 }
 
-// the production behaviour, in place of the review page's demo modes (the rest of the page's script is kept as reviewed)
-const LIVE = `const Q=new URLSearchParams(location.search),EMBED=Q.get('embed')==='1'&&window.parent!==window;
-const keptLang=()=>{try{return localStorage.getItem('sv_parent_lang')}catch(e){return null}};
-let lang=Q.get('lang')==='vi'||Q.get('lang')==='en'?Q.get('lang'):keptLang()==='vi'?'vi':'en';
-const site=document.querySelector('#site-content'),host=document.querySelector('#standalone'),menu=document.querySelector('#menu-dialog'),dialog={get open(){return EMBED}};host.append(site);
-document.body.dataset.mode=EMBED?'embedded':'website';if(EMBED)site.classList.add('overlay');
-// inside the game the page only ever asks to close (Close, Back to game, Escape); it is told nothing and sends nothing else
-function tell(what){if(EMBED)window.parent.postMessage({sv:'website',do:what},location.origin)}
-function closeSite(){tell('close')}
-function playGame(){if(EMBED){tell('play');return}window.svWebsitePlay?.();location.href='/'}
-document.querySelectorAll('[data-action=play]').forEach(b=>b.onclick=playGame);document.querySelector('#close-site').onclick=closeSite;
-document.querySelector('#language-button').onclick=()=>{lang=lang==='en'?'vi':'en';if(!EMBED)try{localStorage.setItem('sv_parent_lang',lang)}catch(e){}translate()};
-document.querySelectorAll('[data-open-menu]').forEach(b=>b.onclick=()=>menu.showModal());document.querySelector('#close-menu').onclick=()=>menu.close();menu.addEventListener('click',e=>{if(e.target===menu)menu.close()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&EMBED&&!document.querySelector('dialog[open]'))closeSite()});`;
+// (v1.08c) the page's behaviour is typed code in home/page.ts (run by home/site.ts), not the design's inline script: the
+// design's script (its demo modes, and the navigation the preview gets from home/navigation.ts) is taken out whole, and
+// only the one-line festival switch in the head stays inline
+const HEAD_SCRIPT = '<script>window.svFestivalVisible=()=>false;</script>';
 
 export function makeWebsite(html: string): { page: string, files: Map<string, Buffer> } {
   let h = html.replace('window.svFestivalVisible=()=>true;', 'window.svFestivalVisible=()=>false;');
@@ -44,10 +34,9 @@ export function makeWebsite(html: string): { page: string, files: Map<string, Bu
   h = cut(h, '<div class="demo-bar">', '</div></div>\n');
   h = cut(h, '<section id="game-stage"', '</section>\n');
   h = cut(h, '<dialog id="site-dialog"', '</dialog>\n');
-  // the language switch is the design's own: kept as it is, after the production start
-  const tr = h.indexOf('function translate(){'), translate = tr < 0 ? '' : h.slice(tr, h.indexOf('\n', tr));
-  if (!translate) throw Error('the design no longer has its translate()');
-  h = cut(h, "let lang='en',mode='website',opener=null;", "menu.addEventListener('click',e=>{if(e.target===menu)menu.close()});", LIVE + '\n' + translate);
+  const scripts = [...h.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+  if (scripts.length !== 2 || scripts[0][0] !== HEAD_SCRIPT || !scripts[1][1].includes('function translate(){')) throw Error('the design no longer has its head switch and one page script');
+  h = h.replace(scripts[1][0], () => '');
   h = h.replace(/<title>[^<]*<\/title>/, '<link rel="icon" href="/icons/icon-192.png"><title>Sparkle Valley | Family website · Trang web gia đình</title>');
   // first-party visit counts on the standalone site only, after a grown-up says yes (home/site.ts)
   h = h.replace('</body>', '<script type="module" src="/home/site.js"></script></body>');
@@ -59,6 +48,7 @@ export function makeWebsite(html: string): { page: string, files: Map<string, Bu
     files.set(name, data); return '/home/assets/' + name;
   });
   if (/class="demo-bar"|data-mode-button=|id="game-stage"|id="site-dialog"|setMode\(/.test(h)) throw Error('a review-only control is still in the website');
+  if ((h.match(/<script>/g) || []).length !== 1) throw Error('an inline script is left in the website: its behaviour belongs in home/page.ts');
   // (owner, 23 Oct AEDT: "no where in website or game should be sent to github, they are my source code")
   if (/github\.com|githubusercontent/i.test(h)) throw Error('the website links to GitHub: ' + (h.match(/.{60}github.{40}/i) || [''])[0]);
   return { page: h, files };

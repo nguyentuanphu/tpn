@@ -21,3 +21,9 @@ Each branch starts from `origin/integrate/v108`.
 - **Medium effort, few subagents.** If a usage limit stops you, carry on from your last push after the reset.
 - **Moving places:** the owner has allowed it for this round. Record every place you move in your status file: old position, new position, why.
 - **Done:** write "ready for Release" at the top of the status file and message Release (session_01SchVRv9GNVGszhptzXpYMs).
+
+**Release's merge notes (5 Nov 2026):**
+- `work/v108c-roads` (Concept D roads, website script in TypeScript) merged into `integrate/v108`.
+- **To do when quality merges:**
+  - Keep the underscore fix from `work/v108c-parents` `js/report.ts`: an event id turns "vi_tones" into "vi-tones", so games with "_" were not counted in the play report. Map the slug back to the game id.
+  - Update the expected counts in `check-preview` (18, was 17) and `check-festivals` (15, was 13). They went red because content grew; the roads helper found this.
