@@ -1,16 +1,35 @@
 # v1.08e nature: status
 
+**ready for Release** (6 Nov 2026 AEDT)
+
 Branch: `work/v108e-nature` (from `origin/integrate/v108`). Brief: `nature-brief.md`.
 
 ## Progress
 - Part 1 (inventory): done, below.
-- Part 2 (Blender): done. `tools/blender/world-nature.py` makes 47 models; `node tools/make-world-nature.mts [name ...]`
+- Part 2 (Blender): done. `tools/blender/world-nature.py` makes 46 models; `node tools/make-world-nature.mts [name ...]`
   builds them (pip install bpy, Blender 5.2) and compresses each with gltfpack 0.20 (meshopt, `-noq`) into
   `models/world/` (6-130 KB each, 1.6 MB in all, 112-2,476 triangles; one shape, colours in the corners).
 - Part 3 (in the game): done. `js/nature-tag.ts` (first download, under 1 KB) marks shapes; `js/world-nature.ts`
   (after the start) swaps a marked shape's geometry for its model when a child is within 70 m (40 on Fast) and back past
   110 m (70 on Fast). Same mesh, material and draw; areas that sleep, taps and colliders unchanged.
-- Part 4 (check `worldnature`, `tests/world-nature.mts`, end of `tests/run.mts`): running.
+- Part 4 (check `worldnature`, `tests/world-nature.mts`, end of `tests/run.mts`): done, passes.
+- Part 5 (screenshots): `docs/world-models-v108e/nature/` before (models blocked) and after, phone, tablet, computer,
+  at the farm and among the trees.
+
+## Checks (6 Nov 2026 AEDT, one at a time, `node suite.mts --jobs 1 --only ...`)
+| Check | Result |
+|---|---|
+| worldnature (new) | pass: 46 models, 113 marked shapes; draws home 170 -> 170, village 289 -> 293; blocked: code shapes kept |
+| boot | pass |
+| perf | pass: home 174 draws (490), village 292 draws (420) / 741k triangles (800k) |
+| battery | pass |
+| longplaymem | pass |
+| startup | pass: first start 1033 KB; integrate/v108 measured the same way 1032 KB (the tag file, about 1 KB) |
+| areastream | pass |
+| myhouse | pass |
+| types | pass |
+| farm, seasons, festdecor | no such checks |
+| `--changed` | picks the full suite (.gitignore and shared files): left to Release (GitHub full suite) |
 
 ## How it works, and changes outside my own files (small, marked "v1.08e nature")
 - `js/world.ts`: the instanced trees (not rocks) and the meadow flowers are marked.
