@@ -215,6 +215,12 @@ def restyle(kind, A, piv):
         for s in piv[i]['parts']: s['pre'] = Matrix.Diagonal((1.12, lk, 1.12, 1))
     for p in piv:
         if p['role'] != 'root': p['pos'] = [p['pos'][0], p['pos'][1] - drop, p['pos'][2]]
+    if kind == 'joey':   # (Release, 6 Nov 2026 AEDT: two round dots on its chest) short arms held forward, darker paws, the cream belly and its pouch
+        for i, l in legs:
+            if l['arm']: piv[i]['parts'] = [{'type': 'CapsuleGeometry', 'p': {'radius': .032, 'length': .13}, 'color': '#c98a5a', 'pos': [0, -.07, .09], 'rot': [-.6, 0, 0], 'scl': [1, 1, 1]},
+                                            sph(.036, '#8a5634', (0, -.13, .14), (1.1, .8, 1.1))]
+        piv[bi]['parts'][1]['pos'] = [0, .45, .14]; piv[bi]['parts'][1]['scl'] = [.85, 1.1, .6]
+        piv[bi]['parts'].append({'type': 'TorusGeometry', 'p': {'radius': .08, 'tube': .009, 'arc': 2.3}, 'color': '#a8724a', 'pos': [0, .43, .235], 'rot': [-.1, 0, -math.pi / 2 - 1.15], 'scl': [1, 1, 1]})
     body0 = Vector(piv[bi]['pos'])
     for i in walkers:
         lp = piv[i]; top = lp['parts'][0]; e, _ = extents(top); r = min(e[0], e[2]) / 2 * 1.12
@@ -358,14 +364,22 @@ def add_face(kind, piv, size, companion):
         pr.append(disc(R, iris, Vector((0, 0, 0))))
         if lum(iris) > .08: pr.append(disc(R * .64, '#1c120c', dn * R * .1, 1.12, .35))   # (a round pupil)
         pr.append(disc(R * .5, '#6e4a36' if lum(iris) < .08 else shade(iris, 1.25), dn * R * .1 - up * R * .46, .5, .45))
-        pr.append(disc(R * .36, '#ffffff', dn * R * .2 + up * R * .36 - sideways * R * .3, 1.0, .5))
-        pr.append(disc(R * .16, '#ffffff', dn * R * .2 - up * R * .3 + sideways * R * .34, 1.0, 1.0))
+        pr.append(disc(R * .34, '#ffffff', dn * R * .2 + up * R * .14 - sideways * R * .3, 1.0, .5))
+        pr.append(disc(R * .16, '#ffffff', dn * R * .2 - up * R * .42 + sideways * R * .32, 1.0, 1.0))
         face['eyes'].append(pivot('eye%d' % i, base, pr))
         # the closed-eye arc: "^" for joy, turned over for sleep (shown by the clips, tiny otherwise)
         Rt = R * .7
         arc = {'type': 'TorusGeometry', 'p': {'radius': Rt, 'tube': R * .13, 'arc': 2.3}, 'color': '#2b1b12' if lum(skin) > .06 else '#fff3e0',   # (light on a dark face)
                'pos': list(dn * R * .2 - up * Rt * .55), 'rot': [ax, ay, math.pi / 2 - 1.15], 'scl': [1, 1, .6]}
         face.setdefault('lids', []).append(pivot('lid%d' % i, base, [arc]))
+        # (owner via Release, 6 Nov 2026 AEDT: soft eyes with lids, never a staring face) an upper lid in the face's own colour
+        # rests over the top of the eye and slides all the way down when it blinks or closes its eyes
+        lc = min(parts, key=lambda s: (Vector(s['pos']) - h).length - max(extents(s)[0]) / 2)['color'] if parts else skin
+        if lc.lower() in HORN_COLS or lum(lc) > .9 and lum(skin) < .5: lc = skin
+        lid = {'type': 'SphereGeometry', 'p': {'radius': R * 1.1}, 'color': lc, 'pos': list(dn * R * .08 + up * R * 1.12),
+               'rot': [ax, ay, 0], 'scl': [1, .6, .22]}   # (thin, almost flush with the eye; at rest it covers the top fifth)
+        face.setdefault('ulids', []).append(pivot('ulid%d' % i, base, [lid]))
+        face.setdefault('lidR', []).append(R)
         if kind not in NO_BROW:   # a soft brow above the eye, on the head
             at = c + Vector((0, e['r'] * 2.7, 0)); h, n = hit(at + d * .4, -d)   # (soft, short and well above the eye: no frown)
             if h is not None:
@@ -430,6 +444,9 @@ def face(P, F, eye=1.0, big=1.0, brow_y=0.0, brow_tilt=0.0, smile=1.0, frown=Fal
     closed = joy or shut
     for b in F.get('eyes', []): P[b] = ((0, look, 0), Z3, ((.01, .01, .01) if closed else (big, max(.06, big * eye), big)))
     for b in F.get('lids', []): P[b] = ((0, 0, math.pi if shut else 0), Z3, (1, 1, 1) if closed else (.02, .02, .02))
+    for b, dd in zip(F.get('ulids', []), F.get('lidR', [])):   # the upper lid: resting over the top, all the way down to blink
+        down = 1.0 if closed else max(0.0, min(1.0, (1 - eye) * 1.15)) if big <= 1.01 else -.12
+        P[b] = (Z3, (0, -dd * 1.05 * down, 0), (1, 1 + .25 * down, 1))
     for i, b in enumerate(F.get('brows', [])):
         side = -1 if i == 0 else 1
         P[b] = ((0, 0, -side * brow_tilt), (0, brow_y, 0), O3)

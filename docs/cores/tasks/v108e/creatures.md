@@ -1,6 +1,21 @@
 # v1.08e creatures: status
 
-**ready for Release** (6 Nov 2026, 04:08 AEDT, fifth pass: eyes on the face). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+**ready for Release** (6 Nov 2026, 04:29 AEDT, sixth pass: eyelids, the kangaroo). Branch `work/v108e-creatures` from `origin/integrate/v108`.
+
+## Sixth pass: eyelids, the kangaroo (Release's notes, 6 Nov 2026 AEDT)
+
+- Merged origin/integrate/v108 (with Release's sw.ts FILES list of the 24 glb files; js/creatures.js is listed too).
+- **Soft eyes with lids** (the owner's rule for every face, via Release): an upper lid in the face's own colour (black on
+  the panda's patches) rests over the top of each eye and slides all the way down as the eye closes. Every clip blinks
+  (idle about every 2.6 s, walking and following once a loop, sad slowly), so a creature blinks every 2-6 s whatever it is
+  doing; the blinks are in each clip rather than a separate mixed track (modelkit plays one clip at a time). Sad eyes are
+  half-lidded; surprised lifts the lid. Never a staring face. Pictures: blink-start.png and blink-mid.png.
+- **The kangaroo:** its two "dots" were its arms seen end on. Now short arms held forward with darker paws, the cream belly
+  showing again, and a soft pouch line.
+- worldcreatures now also checks that every creature has an upper lid that comes down to blink.
+- Checks ({"6 Nov 2026, 04:29 AEDT"}, one at a time, all on the first try): worldcreatures, startup (1038 KB after the merge; the merged base
+  grew, this branch adds nothing to the first download), perf (village 328 draws, 721k triangles), battery, longplaymem,
+  offline, swupdate.
 
 ## Fifth pass: eyes on the face (owner, 6 Nov 2026 AEDT: "Animals eyes too pop out, too scary")
 
