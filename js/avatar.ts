@@ -511,13 +511,19 @@ export function animate(A, state, t, speed = 0) {
  *  Far away the still copy of the code person is shown, as for everyone. False when it cannot be worn. */
 export function wearVillagerModel(A: SvAvatar, key: string): boolean {
   if (!A || A.model || !A.painted || !FRIEND_MODELS.ready || !FRIEND_MODELS.ready(key)) return false;
-  stillOf(A); A.rig.updateMatrixWorld(true); // (the far still copy is baked from the code person first)
+  stillOf(A); // (the far still copy is baked from the code person first)
+  // sizes are measured in the rest pose (no hop, no squash, joints straight), so a villager caught mid-jump stands right
+  const keep = JOINTS.map(j => A[j] ? A[j].rotation.clone() : null), lift = A.rig.position.y, sc = A.rig.scale.clone(), H = A.height || 1;
+  JOINTS.forEach(j => { if (A[j] && j !== 'rig') A[j].rotation.set(0, 0, 0); }); A.rig.position.y = 0; A.rig.scale.set(H, H, H); A.root.updateMatrixWorld(true);
   const box = new THREE.Box3(), codeParts: THREE.Object3D[] = [];
   A.rig.traverse(o => { if (o instanceof THREE.Mesh && o.visible && !o.userData.outline) { box.expandByObject(o); codeParts.push(o); } });
-  const codeH = box.max.y - box.min.y, m = FRIEND_MODELS.attach(A, key, String(A.look.skin || '#f6c7a5'), {}); if (!m) return false;
+  const codeH = box.max.y - box.min.y, m = FRIEND_MODELS.attach(A, key, String(A.look.skin || '#f6c7a5'), {}); // (attached in the rest pose, as a friend's is when built)
+  const back = () => { JOINTS.forEach((j, i) => { if (keep[i]) A[j].rotation.copy(keep[i]); }); A.rig.position.y = lift; A.rig.scale.copy(sc); };
+  if (!m) { back(); return false; }
   codeParts.forEach(o => { o.visible = false; o.children.forEach(c => { if (c.userData.outline) c.visible = false; }); });
   m.obj.updateMatrixWorld(true); const mb = new THREE.Box3().setFromObject(m.obj, true), mh = mb.max.y - mb.min.y;
   if (mh > .1 && codeH > .1) { const k = codeH / mh; m.obj.scale.multiplyScalar(k); m.obj.position.y += (box.min.y - mb.min.y * k) / A.rig.scale.y; }
+  back();
   A.model = m; A.root.userData.villagerModel = key; showStill(A, false); return true; // (worn near the child: the moving model, not the still copy)
 }
 /** (v1.08e faces, part 2) the high-detail model up close, the light one far away (a child's own friend only) */
