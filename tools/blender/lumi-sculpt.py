@@ -224,8 +224,10 @@ def body_r(z):
     return r * 1.06   # the melted surface is a little fuller than the parts
 
 # garments that follow the body (owner, 3 Nov: a skirt must not be wider than the belly and hips): (margin, flare below the hips)
-FIT = {'skirt': (.014, .3), 'dressSkirt': (.014, .3), 'longSkirt': (.014, .22), 'frill': (.02, .3), 'dressTop': (.012, 0), 'bodice': (.012, 0),
-       'aoBaBa': (.022, .12), 'corset': (.016, 0), 'belt': (.016, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.03, .12), 'aoDaiTop': (.03, 0)}   # (round 3: the same fit, so the top runs on into the panels)   # (over the hips with room, the top just over the panels' top edge)
+# (round 3, Release: Clara's blouse showed a torn, jagged cream edge: the shirt's fitted layer, just under the bodice, belt
+# and skirt, poked through them once thinned) the outer layers sit with more room over the shirt
+FIT = {'skirt': (.022, .3), 'dressSkirt': (.014, .3), 'longSkirt': (.014, .22), 'frill': (.026, .3), 'dressTop': (.012, 0), 'bodice': (.022, 0),
+       'aoBaBa': (.022, .12), 'corset': (.026, 0), 'belt': (.028, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.03, .12), 'aoDaiTop': (.03, 0)}   # (round 3: the same fit, so the top runs on into the panels)   # (over the hips with room, the top just over the panels' top edge)
 FIT.update(globals().get('KIT_FIT', {}))   # the costume kit's long coat panels hang over its skirts (costumes.py)
 def fit_loose():
     rh = B['wH'] * BW * .98 * 1.06; dep = B['dep']; top_hip = HP_Z()
@@ -246,5 +248,5 @@ def fit_loose():
         elif base in ('petalHem', 'apron', 'pocketLeaf'):   # pieces on a skirt move with it
             mw = o.matrix_world; c = mw @ (sum((Vector(b) for b in o.bound_box), Vector()) / 8); r = math.hypot(c.x, c.y / dep)
             if r > 1e-4 and c.z < B['zW']:
-                k = (target(c.z, .03, .3) / r) if base == 'petalHem' else (target(c.z, .03, .2) / r)
+                k = (target(c.z, .042, .3) / r) if base == 'petalHem' else (target(c.z, .04, .2) / r)   # (round 3: out with the roomier skirt, or the petals sank into it as dark holes)
                 o.matrix_world = Matrix.Translation(Vector((c.x * (k - 1), c.y * (k - 1), 0))) @ mw
