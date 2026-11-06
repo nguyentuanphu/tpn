@@ -127,6 +127,10 @@ await check('testertryagain', async () => (await import('./tester-tryagain.mts')
 // the child, tags and talk kept, the code person when blocked (tests/villager-models.mts)
 await check('villagermodels', async () => (await import('./villager-models.mts')).villagerModelsCheck(b));
 
+// (v1.08g creatures) the little flocks as Blender models near the child: one InstancedMesh per kind, where their pictures
+// are, pictures hidden but kept for taps, the new little birds, blocked models keep the pictures (tests/flocks.mts)
+await check('flocks', async () => (await import('./flocks.mts')).flocksCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

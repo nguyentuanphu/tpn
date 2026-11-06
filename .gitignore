@@ -242,6 +242,7 @@ marketing/source/runvalley.log
 /js/film-costume.js
 /js/film.js
 /js/filmpack.js
+/js/flocks.js
 /js/folkshow.js
 /js/friend-model.js
 /js/friend-view.js
@@ -695,3 +696,5 @@ js/voice-fragments.js
 /js/vehicles.js
 models/world/raw/
 /docs/characters-v108/costumes/_tmp/
+models/world/raw-flocks/
+/js/flocks.js
