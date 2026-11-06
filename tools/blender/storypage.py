@@ -110,6 +110,13 @@ def kit_copy(kit):
     if not path: return None
     with bpy.data.libraries.load(path, link=False) as (src, dst): dst.collections = [c for c in src.collections if not c.startswith('hands-grip')]; dst.objects = [o for o in src.objects if o == 'rig' or o.split('.')[0] in ('head', 'ear')]
     e = bpy.data.objects.new('actor-' + kit, None); scene.collection.objects.link(e); faces = {}
+    # many people on a page (rongtien's children: 8 on screen) fill an 8 GB graphics card with full copies, and it swaps
+    # (17 s a frame instead of 1): with more than crowd=<n> people (5) each copy is drawn with smooth=<k> smoothing steps (0)
+    if sum(1 for a in D['actors'] if a.get('kit')) > int(opt.get('crowd', 5)):
+        for c in dst.collections:
+            for o in (c.all_objects if c else []):
+                for md in o.modifiers:
+                    if md.type == 'SUBSURF': md.levels = 0; md.render_levels = min(md.render_levels, int(opt.get('smooth', 0)))
     for c in dst.collections:
         if c is None: continue
         scene.collection.children.link(c)
@@ -124,7 +131,11 @@ def kit_copy(kit):
     if rig:
         if not rig.users_collection: scene.collection.objects.link(rig)
         if rig.parent is None: rig.parent = e
-    return e, faces, rig
+    # (hiding an actor) a parent's hide_render does not hide its children in Blender: the actor's own collections and loose
+    # objects are hidden instead (an actor who is not on stage yet, e.g. the children inside rongtien's egg, was drawn anyway)
+    own = [c for c in dst.collections if c is not None and not c.name.split('.')[0].startswith('face-')]
+    loose = [o for o in dst.objects if o is not None and not o.name.startswith('rig')]
+    return e, faces, rig, own, loose
 # the game film's moods to the character's faces (the v1.08e faces: smile, blink, happy, curious, surprised, sad, shy,
 # excited, half, lookL, lookR); crying is the sad face with tears, sly the curious one
 FACE_OF = {'smile': 'smile', 'happy': 'happy', 'sad': 'sad', 'o': 'surprised', 'sleep': 'blink', 'surprised': 'surprised', 'curious': 'curious', 'shy': 'shy',
@@ -229,12 +240,18 @@ def place_actor(i, k):
     e.hide_render = st == 'hidden'
     cp = COPIES[len([x for x in ACTORS[:i] if x is not None])] if FRAMES and i < len(ACTORS) and ACTORS[i] is not None else None
     if cp:   # (frames) the face and the move of this frame
-        _, faces, rig = cp; want = face_of(D['actors'][i], k)
+        faces, rig = cp[1], cp[2]; want = face_of(D['actors'][i], k); gone = st == 'hidden'
+        if HID.get(i) != gone:
+            HID[i] = gone
+            for c in cp[3]: c.hide_render = gone
+            for o in cp[4]: o.hide_render = gone
         # the kit has no half-closed or sideways-eyes faces (lumi.py): a half blink shows closed, so a blink caught at 12 frames a
         # second is seen; the eyes' turn to the speaker is the head's turn (look_pass)
         if want not in faces: want = 'blink' if want == 'half' and 'blink' in faces else 'smile' if 'smile' in faces else want
         if want in OPEN_EYES and k in BLINKS[i] and 'blink' in faces: want = 'blink'
-        for n, c in faces.items(): c.hide_render = (n != want)
+        for n, c in faces.items():
+            h = gone or n != want
+            if c.hide_render != h: c.hide_render = h
         POSED[i] = False
         if rig:
             if rig.animation_data and rig.animation_data.action: rig.animation_data.action = None   # posed by hand below
@@ -243,6 +260,7 @@ def place_actor(i, k):
     if st == 'lie': e.rotation_euler = (-math.pi / 2, 0, yaw); e.location.z += .15
     elif st in ('sitground', 'situp', 'kneel', 'dig', 'plant', 'pick'): e.location.z -= .35 * sc.x
 POSED = {}
+HID = {}
 for i in range(len(ACTORS)): place_actor(i, 0)
 if FRAMES: look_pass(0)
 
