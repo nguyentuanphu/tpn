@@ -48,7 +48,7 @@ jobs:
           if [ -n "$N" ]; then sha=$(gh pr view "$N" --json headRefOid -q .headRefOid); else sha=$GITHUB_SHA; fi
           echo "sha=$sha" >> "$GITHUB_OUTPUT"; echo "pr=$N" >> "$GITHUB_OUTPUT"
           gh api "repos/$GH_REPO/statuses/$sha" -f state=pending -f context='Full suite' \
-            -f description='Running on 8 machines' -f target_url="$GITHUB_SERVER_URL/$GH_REPO/actions/runs/$GITHUB_RUN_ID" >/dev/null
+            -f description='Running on 12 machines' -f target_url="$GITHUB_SERVER_URL/$GH_REPO/actions/runs/$GITHUB_RUN_ID" >/dev/null
 
   postgres:
     name: Management PostgreSQL
@@ -105,11 +105,11 @@ jobs:
   share:
     needs: which
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 170   # (Release, 7 Nov 2026 AEDT) v1.08 has about 374 checks: 12 machines and more time each, nothing skipped
     strategy:
       fail-fast: false
       matrix:
-        k: [1, 2, 3, 4, 5, 6, 7, 8]
+        k: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -134,7 +134,7 @@ jobs:
       - name: Run this machine's share
         env:
           SV_SEED: ${{ github.run_id }}
-        run: cd tests && SV_URL=http://localhost:8765/ node suite.mts ${{ (inputs.all || github.head_ref == 'work/v1.02-fruit-parade') && '--all' || '' }} ${{ inputs.only && format('--only {0}', inputs.only) || '' }} --shard ${{ matrix.k }}/8 --no-solo --jobs 1
+        run: cd tests && SV_URL=http://localhost:8765/ node suite.mts ${{ (inputs.all || github.head_ref == 'work/v1.02-fruit-parade') && '--all' || '' }} ${{ inputs.only && format('--only {0}', inputs.only) || '' }} --shard ${{ matrix.k }}/12 --no-solo --jobs 1
       - name: Keep the results
         if: always()
         run: |

@@ -13,7 +13,7 @@ Branch `work/v108f-settings` (from `origin/integrate/v108`). Helper: settings. S
 2. **AI chat offer hidden** (`js/state.ts` `AI_CHAT_OFFER = false`, `js/extras.ts`, `js/chat-player.ts`): the Grown-ups
    section "Villagers who chat freely (AI)" with the Anthropic key is gone, the internet list no longer mentions it,
    and `aiReady()` is false even with an old key saved. Set `AI_CHAT_OFFER` to true to bring it back.
-   Assumed (owner can change): the villagers' offline 💬 Chat button (built-in answers, no AI) stays.
+   Assumed (owner can change): the villagers' offline Chat button (speech-bubble picture) (built-in answers, no AI) stays.
 3. **One row** (`js/ui-settings.ts` class `row3`, `css/style.css`): Two players, Fit the screen and Money each sit on one
    row on every screen; each button shrinks (13 to 16 px text) and wraps inside itself, 48 px tall.
 4. **The jump**: the part that scrolls is `.grownups-body`, which every redraw made anew, so the old

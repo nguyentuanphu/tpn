@@ -90,7 +90,7 @@ each), `tests/checks/play.mts` (the new check at the end, one marked block), `.g
 - The two empty Vietnamese files `voices/vi/f/2473f892-1b292ac5.mp3` and `e67396f8-2132059d.mp3` are removed: they are
   the Vietnamese parts of mixed lines, which the pack maker no longer lists (those parts are in the reviewed FPT pack,
   `tools/make-voice-pack.mts`: "Do not duplicate Vietnamese fragments in both Azure casts"), so nothing in the game asks
-  for them and there is nothing to record. The only other empty file, `05b7dbba-7ca64a0e.mp3`, is the line "♟️" (a
+  for them and there is nothing to record. The only other empty file, `05b7dbba-7ca64a0e.mp3`, is the line that is only the chess-piece emoji (a
   picture with no words to say).
 - Checks: `voicecover`, `voicepack`, `voicearea` (SAMPLE), `voiceopus`: pass.
 
