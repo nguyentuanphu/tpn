@@ -171,7 +171,9 @@ def sculpt():
             t = arm_of(p)
             if t is not None:   # on the arm: covered only as far as the sleeves of this top reach
                 return any(lo - .05 <= t <= hi for m, lo, hi in sleeves if m == top) or t < .12
-            return b['zW'] - .05 * S < p.z < b['zN'] - .012 * S
+            # (v1.08e, Release 6 Nov: under an áo dài this layer's hem stood out over the hips like a box) the áo dài's own
+            # top covers the body there, so the layer stops above the waist
+            return (b['zW'] + (.03 * S if (V and V['top'][0] == 'aodai') else -.05 * S)) < p.z < b['zN'] - .012 * S
         layer(sk, keep_top, top, .007 * S, 'soft_top')
     for m in {m for m, lo, hi in sleeves if m != top}:   # sleeves of another cloth (a coat over a shirt)
         rng = [(lo, hi) for mm, lo, hi in sleeves if mm == m]
@@ -185,7 +187,7 @@ def sculpt():
     if tights and tights != pmat:   # coloured tights or long trousers drawn on the legs
         layer(sk, lambda p: arm_of(p) is None and p.z < b['zCr'] + .04 * S and p.z > b['zAnk'] - .02 * S, tights, .004 * S, 'soft_tights')
 
-LOOSE = ('bodice', 'corset', 'belt', 'buckle', 'aoBaBa', 'aoDai', 'coat', 'coatHem', 'coatStar', 'coatCollar', 'cape', 'clasp', 'tunic', 'bib', 'backPanel', 'apron',
+LOOSE = ('bodice', 'corset', 'belt', 'buckle', 'aoBaBa', 'aoDai', 'aoDaiTop', 'coat', 'coatHem', 'coatStar', 'coatCollar', 'cape', 'clasp', 'tunic', 'bib', 'backPanel', 'apron',
          'skirt', 'frill', 'petalHem', 'dressTop', 'dressSkirt', 'dressBelt', 'longSkirt', 'brace', 'strap', 'button', 'bibStar', 'pocketLeaf', 'pocket', 'sun', 'dressStrap', 'collar')
 def ease_loose(f=1.07):
     """the loose clothes were sized for the old body: open them a little so the fitted layer never shows through"""
@@ -206,7 +208,7 @@ def body_r(z):
 
 # garments that follow the body (owner, 3 Nov: a skirt must not be wider than the belly and hips): (margin, flare below the hips)
 FIT = {'skirt': (.014, .3), 'dressSkirt': (.014, .3), 'longSkirt': (.014, .22), 'frill': (.02, .3), 'dressTop': (.012, 0), 'bodice': (.012, 0),
-       'aoBaBa': (.022, .12), 'corset': (.016, 0), 'belt': (.016, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.014, .12)}
+       'aoBaBa': (.022, .12), 'corset': (.016, 0), 'belt': (.016, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.028, .12), 'aoDaiTop': (.031, 0)}   # (over the hips with room, the top just over the panels' top edge)
 FIT.update(globals().get('KIT_FIT', {}))   # the costume kit's long coat panels hang over its skirts (costumes.py)
 def fit_loose():
     rh = B['wH'] * BW * .98 * 1.06; dep = B['dep']; top_hip = HP_Z()

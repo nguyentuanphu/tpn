@@ -96,7 +96,7 @@ def hd():
         _select(objs, objs[0])
         if kind == 'LIGHT': scene.cycles.samples = 64; bpy.ops.object.bake(type='DIFFUSE', pass_filter={'DIRECT', 'INDIRECT'}, target='VERTEX_COLORS')
         else: scene.cycles.samples = 32; bpy.ops.object.bake(type='AO', target='VERTEX_COLORS')
-    lit_parts = [low[k] for k in cloth if LIT and k not in ('hair', 'hands')]
+    lit_parts = [low[k] for k in cloth if LIT and k != 'hair' and not k.startswith('hands')]
     bake(lit_parts, 'LIGHT'); bake([low[k] for k in cloth if low[k] not in lit_parts], 'AO')
     total = 0
     if face3: face3.name = WHO + '-face3d'; low['face3d'] = face3   # (part 3: the face keeps its mood keys, as built)
@@ -117,7 +117,7 @@ def hd():
         one = bpy.data.materials.new(name); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
         ca = nt.nodes.new('ShaderNodeVertexColor'); ca.layer_name = 'Col'; nt.links.new(ca.outputs['Color'], b.inputs['Base Color'])
         b.inputs['Roughness'].default_value = .8
-        if skin and k == 'hands': skin = skin.copy(); skin.name = 'skin-grip'
+        if skin and k.startswith('hands'): skin = skin.copy(); skin.name = 'skin-grip'   # (the part is 'hands-grip': the hands that hold handlebars, shown only when riding; Release 6 Nov saw them drawn over the hands as a dark band)
         # (the skin keeps its own plain colour, the person's skin tone in the game)
         keep = [one] + ([skin] if skin else [])
         idx = [keep.index(skin) if (skin and mats[p.material_index] == skin) else 0 for p in me.polygons]
