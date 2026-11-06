@@ -107,12 +107,14 @@ const rimUniforms = { uRimCol: { value: RIM.color }, uRim: { value: RIM.strength
 export function personLook(m) {
   if (!m || !m.isMeshToonMaterial || m.userData.person) return m;
   m.userData.person = true; m.gradientMap = personBands;
-  m.onBeforeCompile = sh => {
+  const before = m.onBeforeCompile; // (a material's own change goes first: the friend models' corner light, js/friend-model.ts)
+  m.onBeforeCompile = (sh, r) => {
+    if (before) before.call(m, sh, r);
     Object.assign(sh.uniforms, rimUniforms);
     sh.fragmentShader = 'uniform vec3 uRimCol;\nuniform float uRim;\n' + sh.fragmentShader.replace('#include <opaque_fragment>',
       'float rimK = 1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0);\noutgoingLight += uRimCol * uRim * smoothstep(.55, 1.0, rimK);\n#include <opaque_fragment>');
   };
-  m.customProgramCacheKey = () => 'person'; m.needsUpdate = true; return m;
+  m.customProgramCacheKey = () => 'person' + (m.userData.cornerLight ? '-corner' : ''); m.needsUpdate = true; return m;
 }
 /** an outline for a skinned model (the friends' Blender models): the same inverted hull, bent by the same bones */
 export function outlineSkinned(o, width = .011, color = '#6a4a3a') {

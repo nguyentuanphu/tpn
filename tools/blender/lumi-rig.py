@@ -20,7 +20,7 @@ for n, p in PARENT.items(): ad.edit_bones[n].parent = ad.edit_bones[p]
 bpy.ops.object.mode_set(mode='OBJECT')
 
 HAND_PROPS = ('lantern', 'staff', 'vineLeaf', 'staffPetal', 'staffHeart', 'compass', 'sunCrystal', 'sunRay', 'basket')
-TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace', 'tunic', 'cape', 'clasp', 'sun', 'apron', 'scarf', 'aoBaBa', 'longSkirt', 'aoDai', 'dressTop', 'dressSkirt', 'dressBelt', 'tee', 'pocket', 'dressStrap', 'necklace', 'bowtie', 'redScarf', 'backpack')
+TORSO_ONLY = ('shirt', 'collar', 'bib', 'backPanel', 'strap', 'button', 'bibStar', 'pocketLeaf', 'bag', 'belt', 'buckle', 'coat', 'spyglass', 'bodice', 'skirt', 'frill', 'petalHem', 'corset', 'brace', 'tunic', 'cape', 'clasp', 'sun', 'apron', 'scarf', 'aoBaBa', 'longSkirt', 'aoDai', 'aoDaiTop', 'aoDaiCollar', 'dressTop', 'dressSkirt', 'dressBelt', 'tee', 'pocket', 'dressStrap', 'necklace', 'bowtie', 'redScarf', 'backpack')
 ARM = ('arm', 'sleeve', 'sleeveRoll', 'hand', 'thumb', 'coatSleeve', 'coatCuff', 'shirtSleeve', 'glove', 'sleevePuff', 'sleeveFrill', 'watch', 'bracelet', 'handS', 'handG')
 LEG = ('leg', 'sock', 'sockRib', 'boot', 'bootToe', 'sole', 'bootCuff', 'bootLeaf', 'bootStrap', 'bootBuckle', 'lace', 'shoe', 'sandal', 'toes', 'rainboot', 'sneaker', 'thong', 'longSock')
 SHOE_PARTS = ('soft_boot', 'sole', 'bootBuckle', 'bootStrap', 'bootLeaf', 'bootCuff', 'lace')  # (v1.08d polish) what lighten() puts in the shoes part
@@ -38,7 +38,11 @@ def bind(o, rigid=None):
         return groups[n]
     for v in o.data.vertices:
         p = mw @ v.co; side = 'L' if p.x > 0 else 'R'
-        if rigid: w = {rigid: 1.0}
+        if rigid == 'head' and base in ('hair', 'hairLock', 'lock') or (rigid == 'head' and o.users_collection and o.users_collection[0].name == 'hair' and p.z < B['zN'] - .02 * S):
+            # (v1.08e, Release 6 Nov: long hair swung through the body when the head turned) hair below the neck hangs from
+            # the shoulders: the head's turn fades out down the locks, the torso carries the ends
+            t = max(0.0, min(1.0, (p.z - (B['zN'] - .14 * S)) / (.12 * S))); w = {'head': t, 'torso': 1 - t} if t < 1 else {'head': 1.0}
+        elif rigid: w = {rigid: 1.0}
         elif base.startswith(HAND_PROPS): w = {'elbowL': 1.0}
         elif base in TORSO_ONLY: w = {'torso': 1.0}
         elif base == 'neck': w = {'torso': .5, 'head': .5} if p.z > B['zN'] else {'torso': 1.0}
@@ -66,7 +70,7 @@ def bind(o, rigid=None):
         if t == 'SOLIDIFY': m.thickness = th
     o.parent = rig
 for col in bpy.data.collections:
-    rigid = 'head' if col.name.split('.')[0] in ('hair', 'hat') or col.name.startswith('face-') else None
+    rigid = 'head' if col.name.split('.')[0] in ('hair', 'hat') or col.name.startswith('face') else None   # (face3d too)
     for o in col.objects:
         if o.type == 'MESH': bind(o, rigid)
 for o in list(scene.collection.objects):
@@ -146,6 +150,8 @@ def lighten():
     dg = bpy.context.evaluated_depsgraph_get()
     groups = {}
     for o in [o for o in scene.objects if o.type == 'MESH' and o.parent == rig]:
+        if o.users_collection[0].name == 'face3d':   # (v1.08e part 3) kept as built: its shape keys are the moods
+            o.name = WHO + '-face3d'; continue
         for m in o.modifiers:
             if m.type == 'SUBSURF': m.levels = 0 if o.users_collection[0].name == 'hair' else min(m.levels, 1)
             if m.type == 'ARMATURE': m.show_viewport = False

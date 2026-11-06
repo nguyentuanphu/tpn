@@ -1,6 +1,6 @@
 # v1.08e faces: status
 
-**ready for Release** (6 Nov 2026, 14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
+**ready for Release** (6 Nov 2026, 18:45 AEDT): Part 3 (sculpted faces) and Release's hair, clothes and hands faults are done too; before that (14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
 close-ups), the villagers brief (`villagers.md`) and Release's clear in-game shots
 (`docs/world-models-v108e/faces/game/`, 28 pictures at 2x, Pretty, phone and computer). Next: Part 3 (sculpted faces). Part 1 was merged into `integrate/v108` already.
 Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
@@ -71,6 +71,45 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
   the crowd's hair has soft locks all round the sides and back (no longer a flat helmet).
 - Shots: `docs/world-models-v108e/faces/after-play-*.webp` and `after-closeup-*.webp` (phone, tablet, computer: the
   friend in play, then in a close-up); `tests/faces-play-shots.mts`.
+
+## 5. Part 3: sculpted 3D faces (6 Nov 2026 AEDT)
+
+- **The head** (`tools/blender/lumi-face3d.py`, `sculpt_head`, run by `lumi.py` for every game model; `flatface` keeps
+  the old painted shapes): the oval head is shaped into a real head: a brow ridge, eye sockets, a small nose with a
+  bridge and nostril wings, round cheeks, a soft muzzle and chin, narrower temples and cupped ears; grandparents get
+  softer, lower cheeks and smile lines, children rounder cheeks. The faces check measures it: depth about 7 % more than
+  the width, height about 11 % more, the nose in front.
+- **The face** (`face3d`): one mesh, about 2,600 triangles: two eyeballs set in the sockets (white, an iris darker above
+  and lighter below, a pupil, two sparkles), upper and lower lids as shells round them that close (the upper one with a
+  dark lash line, three lashes for girls, one for boys), brows on the brow ridge, rosy cheeks and a mouth with lips.
+  Its 13 moods are shape keys (smile is the rest shape): blink, half, happy, curious, surprised, sad, shy, excited,
+  lookL, lookR, open (talking), sleep. The game sets one key at a time from the existing mood and blink hooks
+  (`js/friend-model.ts`, `follow()`): nothing else in the game changed. The painted face stays for the code people far
+  away.
+- **Release's faults (6 Nov), fixed in the export:** Clara's dark triangles were the ink outline poking out between the
+  locks (no outline on hair now; locks face outward and are drawn both sides); Mai's black forehead band and strips were
+  texels the bake missed (no picture any more: each face keeps its material's flat colour, times the light baked into
+  its corners: the studio light for the villagers, the soft fold shadow for the friends and all hair); the áo dài is one
+  smooth fitted top over wide panels (the fitted layer under it stopped at the hips and stood out as a box; it stops at
+  the waist now), and under a loose áo bà ba or cardigan the trousers start under the hem; long hair hangs from the
+  shoulders, so it no longer swings through the body when the head turns; the riding hands (`hands-grip`) are hidden
+  again in the high-detail models (they showed as a dark band at the wrist); long sleeves are fuller.
+- **Crowds:** the 14 gallery neighbours each have their own sculpted head (more than the brief's six shared heads, from
+  the same script); a crowd model farther than 12 m gives way to the person beside the child (at most 3 within 25 m).
+- Sizes: friends' light models 129-153 KB, high-detail 226-270 KB, villagers 247-309 KB (no picture inside any more).
+- Shots: `docs/world-models-v108e/faces/heads/` (before and after, friends, villagers and crowd, smiling and mid-blink,
+  phone and computer, 2x), `docs/world-models-v108e/faces/hair/` (Clara's and Mai's hair, before and after).
+
+- **More of Release's notes (6 Nov):** the left palm was mirrored (its faces turned inward) and drawn dark on every person;
+  the top's fitted layer ran past the cuff and showed as a dark band at the wrist (it ends inside the sleeve, sleeves open
+  at the cuff); the films' character kit (`lumi.py ... rig`, `storypage.py`) keeps its face sets with half, lookL and
+  lookR (only the game models, `glb`, get the sculpted face; the films do not drive its shape keys yet).
+- **Checks (6 Nov 2026, 18:40 AEDT, one at a time, the final models):** `faces` pass (now with the sculpted face:
+  lids close, eye white about 310 open, none closed; 8 mouth shapes; heads not spheres), `villagermodels` pass, `perf`
+  pass (village 274 draws, 694k triangles), `battery` pass, `longplaymem` pass (it now counts the sculpted face's
+  mood-key picture as in use, as it did the skeletons'), `friendmodel` pass (its limits raised by the brief's face
+  budget: 12,000 and 17,500 triangles, one more part), `frienditems` pass. `suite --changed` would choose the full suite
+  (shared files changed): left for Release's GitHub run.
 
 ## The style, for the villagers helper (shared setup)
 

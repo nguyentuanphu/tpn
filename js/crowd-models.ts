@@ -5,11 +5,11 @@
 // swaps every half second; far away the code person's still copy is shown; a photo face, a stand-in not built yet, a
 // named villager (js/main.ts) or a child's own character is never swapped. Blocked or not arrived: the code person.
 // Loaded after the start (js/main.ts), so it is never in the first download.
-import { loadFriendModels, wearVillagerModel, OUTLINED } from './avatar.js';
+import { loadFriendModels, wearVillagerModel, unwearVillagerModel, OUTLINED } from './avatar.js';
 import { THREE } from './gfx.js';
 import { regionOf } from './villagertalk.js';
 
-const _p = new THREE.Vector3(), NEAR2 = 12 * 12, PER_TICK = 2, MAX_NEAR = 3, NEAR_DRAWN2 = 25 * 25; // (check perf: swapped within 12 m, at most 3 crowd models within 25 m of a child)
+const _p = new THREE.Vector3(), NEAR2 = 12 * 12, PER_TICK = 2, MAX_NEAR = 3, NEAR_DRAWN2 = 25 * 25; // (check perf: swapped within 12 m, at most 3 crowd models within 25 m of a child; the farthest gives way)
 /** the gallery neighbour a crowd person looks most like */
 export function crowdRole(look, height: number, x: number, z: number): string {
   const au = regionOf(x, z) === 'au', style = look.style || '', hs = look.hairStyle || '';
@@ -28,15 +28,23 @@ export function createCrowdModels(G) {
   const tick = (_dt?: number) => {
     const now = performance.now(); if (now < next) return; next = now + 500;
     const skip = named(), mine = new Set(G.heroes.map(h => h.av && h.av.root));
-    let swaps = 0, near = 0;
-    // every person in the valley (js/avatar.ts OUTLINED), also those inside a stall or a house group; their place in the world
-    for (const A of OUTLINED as any[]) if (A.model && /villager-(vn|au)-/.test(A.root.userData.villagerModel || '') && A.root.parent) { A.root.getWorldPosition(_p); if (G.heroes.some(h => (h.pos.x - _p.x) ** 2 + (h.pos.z - _p.z) ** 2 < NEAR_DRAWN2)) near++; }
+    let swaps = 0;
+    const d2 = (A: any) => { A.root.getWorldPosition(_p); return Math.min(...G.heroes.map(h => (h.pos.x - _p.x) ** 2 + (h.pos.z - _p.z) ** 2)); };
+    // the crowd models worn within 25 m of a child (every person in the valley, js/avatar.ts OUTLINED, also those inside a
+    // stall or a house group: their place in the world)
+    const worn = (OUTLINED as any[]).filter(A => A.model && /villager-(vn|au)-/.test(A.root.userData.villagerModel || '') && A.root.parent).map(A => ({ A, d: d2(A) })).filter(w => w.d < NEAR_DRAWN2);
     for (const A of OUTLINED as any[]) {
-      if (swaps >= PER_TICK || near + swaps >= MAX_NEAR) break;
+      if (swaps >= PER_TICK) break;
       const o = A.root; if (!o.parent || tried.has(o) || skip.has(o) || mine.has(o) || o.userData.own || A.late || A.model || !A.painted) continue;
-      o.getWorldPosition(_p); if (!G.heroes.some(h => (h.pos.x - _p.x) ** 2 + (h.pos.z - _p.z) ** 2 < NEAR2)) continue;
-      tried.add(o); swaps++;
-      const key = 'villager-' + crowdRole(A.look || {}, A.height || 1, _p.x, _p.z);
+      const d = d2(A); if (d >= NEAR2) continue;
+      // (Release, 6 Nov: the one beside the child comes first) at the limit, the farthest worn one beyond 12 m gives its
+      // model up; if every worn one is nearer, this person waits
+      if (worn.length >= MAX_NEAR) {
+        const far = worn.filter(w => w.d >= NEAR2).sort((a, b) => b.d - a.d)[0]; if (!far) break;
+        unwearVillagerModel(far.A); tried.delete(far.A.root); worn.splice(worn.indexOf(far), 1);
+      }
+      tried.add(o); swaps++; worn.push({ A, d });
+      A.root.getWorldPosition(_p); const key = 'villager-' + crowdRole(A.look || {}, A.height || 1, _p.x, _p.z);
       loadFriendModels(key).then(ok => { if (ok && o.parent) wearVillagerModel(A, key); });
     }
   };

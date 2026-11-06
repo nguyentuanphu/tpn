@@ -161,13 +161,18 @@ def body_villager():
         for s_ in (-1, 1): tube('dressStrap', TOP, [(s_ * .45 * wC, fronty(wC * .9), b['zC'] + .04 * S), (s_ * .55 * wC, -.01 * S, b['zS'] + .012 * S), (s_ * .5 * wC, wC * dep * .85, b['zC'] + .04 * S)], .009 * S, 8, False)
     if tk in ('aobaba', 'cardigan'):  # a loose top to the hips with buttons down the front
         hem = b['zCr'] - .05 * S
-        lathe('aoBaBa', TOP, [(wH * 1.12, hem), (wH * 1.06, hem + .05 * S), (wC * 1.06, b['zW'] + .02 * S), (wC * 1.05, b['zC'] - .01 * S)], 36, scale=(1, dep))
+        # (Release 6 Nov: in four rings it stood out in tiers once fitted) in many rings, so it follows the body smoothly
+        top_ = b['zC'] - .01 * S
+        lathe('aoBaBa', TOP, [(wC, hem + (top_ - hem) * k / 10) for k in range(11)], 36, scale=(1, dep))
         for z in lin(hem + .04 * S, b['zC'] + .02 * S, 4): sphere('button', felt('buttonCloth', '#f2ead8'), (0, fronty(wC * 1.08) - .004, z), (.008 * S, .004 * S, .008 * S), 10, 5)
     elif tk == 'aodai':  # áo dài: a fitted top with a mandarin collar, long front and back panels split at the sides
-        lathe('aoDai', TOP, [(wC * 1.04, b['zW'] - .02 * S), (wC * 1.06, b['zC']), (wC * .85, b['zS'] + .01 * S)], 32, scale=(1, dep))
-        for a0, a1 in ((-1.2, 1.2), (math.pi - 1.2, math.pi + 1.2)):   # (v1.08e: wider panels, the side slits narrower)
-            lathe('aoDai', TOP, [(wC * 1.05, b['zW']), (wH * 1.08, b['zCr']), (wH * 1.2, b['zCuff'] - .1 * S), (wH * 1.24, b['zCuff'] - .13 * S)], 28, scale=(1, dep * 1.05), arc=(a0, a1))
-        tube('aoDai', TOP, [Vector((math.cos(t) * wC * .5, math.sin(t) * wC * .45, b['zN'] + .005)) for t in lin(0, 2 * math.pi, 21)], .016 * S, 8, False)
+        # (v1.08e, Release 6 Nov: "a square box across the chest and waist with a dark seam") one smooth fitted top, in many
+        # rings from the waist to the shoulders so it follows the body (lumi-sculpt FIT, "aoDaiTop"), meeting the panels
+        zt0 = b['zW'] - .04 * S   # (its hem a little over the panels' top edge, a hair outside them: no step, no gap once smoothed)
+        lathe('aoDaiTop', TOP, [(wC, zt0 + (b['zS'] + .01 * S - zt0) * k / 10) for k in range(11)], 32, scale=(1, dep))
+        for a0, a1 in ((-1.42, 1.42), (math.pi - 1.42, math.pi + 1.42)):   # (v1.08e: wide panels, narrow side slits from the waist, Release 6 Nov)
+            lathe('aoDai', TOP, [(wC * 1.05, b['zW']), (wH * 1.08, b['zCr']), (wH * 1.2, b['zCuff'] - .1 * S), (wH * 1.24, b['zCuff'] - .13 * S)], 32, scale=(1, dep), arc=(a0, a1))
+        tube('aoDaiCollar', TOP, [Vector((math.cos(t) * wC * .5, math.sin(t) * wC * .45, b['zN'] + .005)) for t in lin(0, 2 * math.pi, 21)], .016 * S, 8, False)
     elif tk == 'dress':  # a sundress or a school dress: a bodice and a flared skirt to the knee, a white collar for school
         if BARE: lathe('dressTop', TOP, [(wC * 1.05, b['zW'] - .02 * S), (wC * 1.08, b['zC']), (wC * 1.04, b['zC'] + .045 * S), (wC * .98, b['zC'] + .05 * S)], 32, scale=(1, dep))
         else: lathe('dressTop', TOP, [(wC * 1.05, b['zW'] - .02 * S), (wC * 1.07, b['zC']), (wC * .9, b['zS'])], 32, scale=(1, dep))
@@ -188,8 +193,9 @@ def body_villager():
     def sleeves(s, sh, el, wr):
         rU, rA = B['rU'], B['rA']
         if tk == 'dress' and V['size'] != 'kid': return   # a sundress: bare arms
-        if long_sleeves: tube('sleeve', TOP, [sh, el, wr - (wr - el).normalized() * .03 * S], [rU * 1.3, rA * 1.35, rA * 1.3], 18)
-        else: tube('sleeve', TOP, [sh, sh.lerp(el, .55)], [rU * 1.35, rU * 1.3], 18)
+        # (Release 6 Nov: fuller, not thin tubes; open at the cuff: its end, facing down, got no light and showed as a dark band)
+        if long_sleeves: tube('sleeve', TOP, [sh, el, wr - (wr - el).normalized() * .03 * S], [rU * 1.5, rA * 1.6, rA * 1.55], 18, False)
+        else: tube('sleeve', TOP, [sh, sh.lerp(el, .55)], [rU * 1.35, rU * 1.3], 18, False)
     hands = arm_pair(sleeves)
     sk, _, sc = V['shoes'].partition('/'); shoes(sk, ('#' + sc) if sc else None)
     if 'basket' in V['extra']:  # a woven basket of greens in the left hand

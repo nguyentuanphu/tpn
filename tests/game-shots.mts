@@ -8,12 +8,15 @@ import fs from 'fs';
 const out = process.argv[2] || 'docs/world-models-v108e/faces/game';
 fs.mkdirSync(out, { recursive: true });
 const b = await launch();
-const save = (name: string, url: string) => fs.writeFileSync(`${out}/${name}.png`, Buffer.from(url.split(',')[1], 'base64'));
+// ONLY=market,clara,mai,welcome: just those shots (a comma list), and OUT_TAG=<prefix> to name them apart
+const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null, only = (k: string) => !ONLY || ONLY.includes(k), TAG = process.env.OUT_TAG || '';
+const save = (name: string, url: string) => fs.writeFileSync(`${out}/${TAG}${name}.png`, Buffer.from(url.split(',')[1], 'base64'));
 for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 800, false]] as [string, number, number, boolean][]) {
   const P = await open(b, { w, h, touch, dpr: 2, settings: { quality: 'high' } }); await clear(P.page);
   // the page's own helpers: close a story chapter, wait, and draw the valley from a camera (the game's renderer and scene)
-  await P.page.evaluate(() => {
+  await P.page.evaluate((FULL) => {
     const W = window as any, G = W.__sv;
+    W.__full = FULL;
     W.__calm = () => { document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; dispatchEvent(new Event('pointermove')); };
     W.__wait = async (ms: number) => { const t = performance.now(); while (performance.now() - t < ms) { W.__calm(); await new Promise(r => setTimeout(r, 150)); } };
     W.__shoot = async (from: number[], to: number[], fov = 30) => {
@@ -25,9 +28,9 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
       await new Promise(res => requestAnimationFrame(res)); r.render(G.scene, cam); const url = c.toDataURL('image/png');
       r.setPixelRatio(pr); r.setSize(sz.x, sz.y, false); return url;
     };
-  });
+  }, !!process.env.FULL);
   // 1. each friend, the camera in front at the close-up distance: smiling, then mid-blink
-  for (const id of process.env.ONLY ? [] : ['finn', 'sol', 'clara', 'lumi']) {
+  for (const id of ['finn', 'sol', 'clara', 'lumi'].filter(only)) {
     const shots = await P.page.evaluate(async id => {
       const W = window as any, G = W.__sv, hh = G.heroes[0], WD = await import(String('/js/world.js'));
       hh.profile.look.friend = id; hh.profile.look.set = id === 'clara' || id === 'lumi' ? 'girl' : 'boy'; hh.place(WD.VILLAGE.x + 6, WD.VILLAGE.z - 8); hh.buildModel();
@@ -45,19 +48,21 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     console.log(dev, id, shots.hd ? 'high-detail' : 'light model');
   }
   // 2. Mai, Ba, Jack and Ruby in the valley, the child beside them, the camera in front of their faces
-  for (const id of process.env.ONLY ? [] : ['mai', 'ba', 'jack', 'ruby']) {
+  for (const id of ['mai', 'ba', 'jack', 'ruby'].filter(only)) {
     const url = await P.page.evaluate(async id => {
       const W = window as any, G = W.__sv, hh = G.heroes[0], n = G.npcs.find((x: any) => x.id === id), r = n.obj.rotation.y, fx = Math.sin(r), fz = Math.cos(r), o = n.obj.position;
       hh.place(o.x + fx * 2.2 + fz * 1.6, o.z + fz * 2.2 - fx * 1.6);
       for (let k = 0; k < 80 && !(n._vm === 'worn' && n.A.rig.visible); k++) await W.__wait(250);
       await W.__wait(1200);
       const top = (n.A.height || 1) * 1.35;
+      // (FULL=1: the whole person, head to feet)
+      if ((window as any).__full) return W.__shoot([o.x + fx * 6.2, o.y + top * .62, o.z + fz * 6.2], [o.x, o.y + top * .5, o.z], 30);
       return W.__shoot([o.x + fx * 3.2, o.y + top + .25, o.z + fz * 3.2], [o.x, o.y + top * .78, o.z], 34);
     }, id);
-    save(`villager-${id}-${dev}`, url);
+    save(`villager-${id}${process.env.FULL ? '-full' : ''}-${dev}`, url);
   }
   // 3. the Three Regions market with its crowd (the nearest people in their gallery models)
-  const market = await P.page.evaluate(async () => {
+  if (only('market')) { const market = await P.page.evaluate(async () => {
     const W = window as any, G = W.__sv, hh = G.heroes[0], M = await import(String('/js/content/map.js'));
     const m = (M.WORLD.places || M.PLACES || []).find((x: any) => x.id === 'market'), at = m ? m.at : [197, 114];
     hh.place(at[0], at[1] + 4); await W.__wait(9000);
@@ -75,11 +80,11 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     const t = n0.q; await W.__wait(800);
     return W.__shoot([t.x + f.x * 3.4 + sx.x * 1.2, t.y + 1.9, t.z + f.z * 3.4 + sx.z * 1.2], [t.x, t.y + 1.15, t.z], 38);
   });
-  save(`market-crowd-${dev}`, market);
+  save(`market-crowd-${dev}`, market); }
   if (P.errors.length) console.log(dev, P.errors.slice(0, 3));
   await P.ctx.close();
   // 4. the Welcome friend picker (a new player), the friends turning in their cards
-  if (process.env.ONLY) continue;
+  if (!only('welcome')) continue;
   const Q = await open(b, { w, h, touch, dpr: 2, play: false, settings: { quality: 'high' }, pre: () => { localStorage.setItem('sv2_profiles', '[]'); } });
   await Q.page.click('.screen.title .press', { force: true }); await Q.page.waitForSelector('.screen.who');
   await Q.page.click('.who .make'); await Q.page.waitForSelector('.modal.friendpick .fr-name');
