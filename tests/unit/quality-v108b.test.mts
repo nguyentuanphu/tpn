@@ -5,7 +5,9 @@ import assert from 'node:assert/strict';
 import { subjectOf, weekBySubject, learningReport, subjectDifficulty, subjectStrength, useAreas, SUBJECTS } from '../../js/content/subjects.js';
 import { playTimePhase, byeNow, newsOfWeek, weekKey, LUMI_NEWS, LUMI_WELCOME, LUMI_BYE, LUMI_SOON, PLAY_TOGETHER, TOGETHER_GUIDE } from '../../js/content/lumi.js';
 
-useAreas(id => ({ kite: 'play', duckmaze: 'animals', bunny: 'animals', letters: 'words' } as Record<string, string>)[id]);
+// (v1.08 games: one home per game, no corner links) each game's subject comes from its own home in GAME_INFO
+// (js/content/activities.ts): counting, sums and numline in numbers, phonics in hv_en, words in hv_vi
+useAreas(id => ({ kite: 'play', duckmaze: 'animals', bunny: 'animals', letters: 'words', counting: 'numbers', sums: 'numbers', numline: 'numbers', phonics: 'hv_en', words: 'hv_vi' } as Record<string, string>)[id]);
 
 test('every game has its subject, or none for play', () => {
   assert.deepEqual(['counting', 'mx_bonds', 'rd_trace', 'phonics', 'sci_float', 'shoppay', 'words', 'vi_tones', 'duckmaze', 'kite'].map(subjectOf), ['math', 'math', 'en', 'en', 'sci', 'money', 'vi', 'vi', 'sci', null]);
