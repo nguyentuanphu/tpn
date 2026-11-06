@@ -141,4 +141,38 @@ export const BLENDER_FILMS: Record<string, BlenderFilm> = {
     { s: 30.29, e: 40.58 },
     { s: 40.58, e: 46.13, help: { t: 44.3, x: 41, y: 42, en: 'Tap to hop home!', vi: 'Chạm để nhảy về nhà nào!' } },
     { s: 46.13, e: 58.42 }] },
+  birdcolours: { v: 'v1', pages: [
+    { s: 0, e: 11.96 },
+    { s: 11.96, e: 19.67 },
+    { s: 19.67, e: 25.79, help: { t: 23.93, x: 45, y: 53, en: 'Tap to bring the little bird some berries!', vi: 'Chạm để mang quả mọng cho chim nhỏ nào!' } },
+    { s: 25.79, e: 32.25, help: { t: 30.36, x: 50, y: 29, en: 'Tap to paint the birds!', vi: 'Chạm để tô màu cho các bạn chim nào!' } },
+    { s: 32.25, e: 41.21 },
+    { s: 41.21, e: 52.92 }] },
+  magicpudding: { v: 'v1', pages: [
+    { s: 0, e: 11.71 },
+    { s: 11.71, e: 20.67 },
+    { s: 20.67, e: 27.21, help: { t: 25.32, x: 50, y: 43, en: 'Tap to cut a slice of pudding!', vi: 'Chạm để cắt một miếng bánh nào!' } },
+    { s: 27.21, e: 37.5 },
+    { s: 37.5, e: 41.88, help: { t: 40.18, x: 6, y: 40, en: 'Tap to get Albert back!', vi: 'Chạm để giành lại Albert nào!' } },
+    { s: 41.88, e: 54 }] },
+  tiddalik: { v: 'v1', pages: [
+    { s: 0, e: 15.71 },
+    { s: 15.71, e: 26.83 },
+    { s: 26.83, e: 35.88, help: { t: 33.87, x: 40, y: 62, en: 'Tap to make the animals dance!', vi: 'Chạm để các con vật nhảy múa nào!' } },
+    { s: 35.88, e: 44.42, help: { t: 42.43, x: 56, y: 54, en: 'Tap to tie the eel in a silly knot!', vi: 'Chạm để lươn uốn thành nút buồn cười nào!' } },
+    { s: 44.42, e: 58.54 }] },
+  greatrace: { v: 'v1', pages: [
+    { s: 0, e: 13.21 },
+    { s: 13.21, e: 19.67, help: { t: 17.78, x: 50, y: 36, en: 'Tap to make Rat jump!', vi: 'Chạm để Chuột nhảy nào!' } },
+    { s: 19.67, e: 29.96 },
+    { s: 29.96, e: 40.08 },
+    { s: 40.08, e: 46.29, help: { t: 44.43, x: 50, y: 46, en: 'Tap to wake up Cat!', vi: 'Chạm để đánh thức Mèo nào!' } },
+    { s: 46.29, e: 60.17 }] },
+  maliang: { v: 'v1', pages: [
+    { s: 0, e: 13.29 },
+    { s: 13.29, e: 21.25 },
+    { s: 21.25, e: 28.79, help: { t: 26.85, x: 50, y: 41, en: 'Tap to bring the bird to life!', vi: 'Chạm để chú chim sống dậy nào!' } },
+    { s: 28.79, e: 37.5 },
+    { s: 37.5, e: 47.13, help: { t: 45.1, x: 35, y: 46, en: 'Tap to paint a big wind!', vi: 'Chạm để vẽ một cơn gió to nào!' } },
+    { s: 47.13, e: 60 }] },
 };
