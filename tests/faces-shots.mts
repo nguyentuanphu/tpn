@@ -9,7 +9,7 @@ const ALL = { phone: [390, 844], tablet: [820, 1180], computer: [1280, 800] }, S
 for (const [dev, [w, h]] of Object.entries(SIZES)) {
   const P = await open(b, { w, h }); await clear(P.page);
   for (const moods of (process.env.MOODS ? [process.env.MOODS.split(',')] : [['smile', 'half', 'blink'], ['happy', 'o', 'sad']])) {
-    const png = await P.page.evaluate(async ({ w, h, moods, hd }) => {
+    const png = await P.page.evaluate(async ({ w, h, moods, hd, full }) => {
       const A = await import('/js/avatar.js'), { THREE } = await import('/js/gfx.js');
       const people = [
         { set: 'boy', friend: 'finn', skin: '#f2c6a0' }, { set: 'boy', friend: 'sol', skin: '#c98d62' },
@@ -31,16 +31,16 @@ for (const [dev, [w, h]] of Object.entries(SIZES)) {
       }));
       // square cells, each the close-up of one head (about 0.8 m across), drawn one person at a time
       const cell = Math.floor(Math.min(w / nx, h / ny)), ox = Math.floor((w - nx * cell) / 2), oy = Math.floor((h - ny * cell) / 2), hp = new THREE.Vector3();
-      const cam = new THREE.OrthographicCamera(-.34, .34, .34, -.34, -10, 10);
+      const Z = full ? .95 : .34, cam = new THREE.OrthographicCamera(-Z, Z, Z, -Z, -10, 10);
       r.setScissorTest(true); r.setScissor(0, 0, w, h); r.setClearColor('#bfe3f2'); r.clear();
       avs.forEach(({ av }) => { av.root.visible = false; });
       avs.forEach(({ av, cx, cy }) => {
-        av.root.visible = true; av.root.updateMatrixWorld(true); av.head.getWorldPosition(hp); cam.position.set(hp.x, hp.y + .04, hp.z + 2); cam.updateMatrixWorld(true);
+        av.root.visible = true; av.root.updateMatrixWorld(true); av.head.getWorldPosition(hp); cam.position.set(hp.x, full ? av.root.position.y + .85 : hp.y + .04, hp.z + 2); cam.updateMatrixWorld(true);
         const x0 = ox + cx * cell, y0 = h - oy - (cy + 1) * cell; r.setViewport(x0, y0, cell, cell); r.setScissor(x0 + 2, y0 + 2, cell - 4, cell - 4);
         r.render(sc, cam); av.root.visible = false;
       });
       const url = r.domElement.toDataURL('image/png'); r.dispose(); return url;
-    }, { w, h, moods, hd: process.env.HD === '1' });
+    }, { w, h, moods, hd: process.env.HD === '1', full: process.env.FULL === '1' });
     fs.writeFileSync(`${out}/${tag}-${dev}-${moods.join('-')}.png`, Buffer.from(png.split(',')[1], 'base64'));
   }
   if (P.errors.length) console.log(dev, P.errors.slice(0, 3));

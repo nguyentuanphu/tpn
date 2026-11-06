@@ -1,7 +1,8 @@
 # v1.08e faces: status
 
-**Part 1 (faces): ready for Release** (6 Nov 2026, 04:45 AEDT). Part 2 (high-detail friends, rim light, outline,
-close-ups): working; its look and close-ups are already in the branch (see Part 2 below). Then the villagers brief.
+**ready for Release** (6 Nov 2026, 14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
+close-ups), the villagers brief (`villagers.md`) and Release's clear in-game shots
+(`docs/world-models-v108e/faces/game/`, 28 pictures at 2x, Pretty, phone and computer). Next: Part 3 (sculpted faces). Part 1 was merged into `integrate/v108` already.
 Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
 
 ## 1. Why the faces looked stiff (looked first, 6 Nov 2026, 03:10 AEDT)
@@ -46,12 +47,40 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
 - Moments: "Say hello" to a villager (`js/villagertalk.ts`): the villager smiles shyly, the child's friend is happy;
   a secret found (`js/secrets.ts`): the child's friend is surprised; cheering, waving: happy; dancing: excited.
 
+## 4. Part 2: high-detail friends, the people's look, close-ups (done)
+
+- **High-detail friends** (`tools/blender/game-hd.py`, `node tools/make-friends.mts hd`): made in the same Blender session
+  as the full model, so the felt mottle, fabric folds, seams, buttons and hair locks of the full model (about a million
+  triangles) are baked from it: each part is thinned (about 21,000 triangles shown), the parts share one 1024 px UV
+  picture (the hair on its own strip, the clothes on the rest), and the colour and the soft shadow in the folds (AO) are
+  baked into one JPEG inside the `.glb`. `models/finn-hd.glb` 497 KB, `sol-hd` 501, `clara-hd` 568, `lumi-hd` 554 (under
+  the 0.6-0.9 MB the brief allowed). Skin stays a plain colour (the child's skin tone); the faces keep their colours in
+  the corners.
+- **When it is used** (`js/player.ts`, `js/avatar.ts` `showHD`): only the child's own friend, loaded after the light model
+  (other friends are never downloaded); drawn when the camera is within 15 m, the light model farther away, for other
+  children and when the HD one cannot load. `sw.ts`: the four HD models are in the offline list (Release asked), and a
+  first load is also kept.
+- **The look, every person** (`js/gfx.ts` `personLook`, `outlineSkinned`): a five-band soft ramp (the valley keeps its
+  four), a soft warm rim light on the edges, and the thin ink outline on the friends' models too (bent by their bones;
+  hidden far away like the code people's). One shader for every person, no new picture.
+- **Close-ups** (`js/player.ts`): the camera eases in (about half a second each way, 45 % closer, a little higher) and
+  turns to a three-quarter view of the face while the child cheers or wins (`cheerT`), waves (`emoteT`) or talks to a
+  villager (`momentT`, set by "Say hello"); never while moving, riding, gliding or climbing. The Welcome card's friend
+  eases in from the full figure to knees-up as the card is shown (`js/friend-view.ts`).
+- **Release's notes (6 Nov):** the villagers' half-blink frame is now a flatter closing lid (it is only inside a blink);
+  the crowd's hair has soft locks all round the sides and back (no longer a flat helmet).
+- Shots: `docs/world-models-v108e/faces/after-play-*.webp` and `after-closeup-*.webp` (phone, tablet, computer: the
+  friend in play, then in a close-up); `tests/faces-play-shots.mts`.
+
 ## The style, for the villagers helper (shared setup)
 
 - Eyes: `face()` in `tools/blender/lumi.py` (the `op` lid heights per mood, `lidz()` the arch, `under()` cuts any decal
   at the lid). The painted 2D version for code-built people is `drawFeatures` in `js/avatar.ts` (`LID`).
 - Moods every model needs (mesh collection and material `face-<mood>`): smile, blink, happy, curious, surprised, sad,
   shy, excited, half, lookL, lookR. `lookL` is the person's own left (the viewer's right).
+- Texture: `tools/blender/game-hd.py` (budgets, the UV split, the colour + AO bake; villagers: 512 px, about 8,000
+  triangles). Lighting and outline: `personLook` and `outlineSkinned` in `js/gfx.ts`, applied by `js/friend-model.ts` to
+  any model it loads (friends and villagers).
 
 - 2D pictures: `icons/friends/<id>-f, -q, -s, -face.webp` rendered again in Blender with the new eyes
   (`node tools/make-friend-pictures.mts`, Cycles, quick).
@@ -71,6 +100,20 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
 | `longplaymem` | pass |
 | `startup` | pass (first start 1038 KB, within the check's 1025 KB + 3 %) |
 | `films` | not run here (Release's suite; the film faces now use `drawFeatures`) |
+
+## Final checks (6 Nov 2026, 07:35 AEDT, one run, in this container, the branch's last code)
+
+`villagermodels`, `faces`, `friendmodel`, `frienditems`, `perf` (home 162 draws, village 302), `battery` (44/44 far
+people still), `longplaymem`, `startup` (first start 1038 KB), `boot`, `types`, `films` (11 stories): all pass. Also
+passed on this branch in earlier runs today: `offline`, `swupdate`, `village`, `areastream`, `dayplan`, `newfriends`,
+`wearfit`, `friendoutfits`.
+
+Checks changed (with the reason):
+- `friendmodel`: 11 faces (was 8); the outlines of a model are counted on their own (at most 6), not as its parts.
+- `frienditems`: the outlines are not counted as the model's parts (as in `friendmodel`).
+- `longplaymem` (`tests/old-bugs.mts`): a skinned model's skeleton keeps its bone turns in a picture of its own, outside
+  any material; it is now counted as in the valley with its model. Without this, the 62 "held" pictures were exactly
+  those (the run without the villager models was clean).
 
 ## Owner's decisions
 

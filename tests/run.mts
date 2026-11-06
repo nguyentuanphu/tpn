@@ -123,6 +123,10 @@ await check('grownupsrow', async () => (await import('./grownups-row.mts')).grow
 // (v1.08f settings item 6) the ladybird's Try again goes back to the broken thing: a game at its level, a screen on its
 // tab, a quest step, a thing faced and ringed, a place with a note; new reports save it (tests/tester-tryagain.mts)
 await check('testertryagain', async () => (await import('./tester-tryagain.mts')).testerTryAgainCheck(b));
+// (v1.08e villagers) the 11 named villagers wear their Blender models near the child: height, ground, blinks, eyes to
+// the child, tags and talk kept, the code person when blocked (tests/villager-models.mts)
+await check('villagermodels', async () => (await import('./villager-models.mts')).villagerModelsCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

@@ -23,7 +23,7 @@ import { createWorld, levelUnderBuildings, widenFlatLand, paintMap, paintWater, 
 import { studioPosition } from './studio-position.js';
 import { landmarkAt, MAP_VERSION, onThisMap, rowSlot } from './content/map.js';
 import { build, seatRider, VEHICLES } from './vehicles.js';
-import { buildAvatar, nameAvatar, applyNpcFaces, buildOwl, buildGourd, avatarURL, OUTLINED, showStill, wakeLateAvatars, lateLeft, buildAllLate } from './avatar.js';
+import { buildAvatar, nameAvatar, applyNpcFaces, buildOwl, buildGourd, avatarURL, OUTLINED, showStill, wakeLateAvatars, lateLeft, buildAllLate, loadFriendModels, wearVillagerModel } from './avatar.js';
 import { Hero } from './player.js';
 import { Hud, fogMapFor, EMOTES } from './hud.js';
 import { pads, initInput } from './input.js';
@@ -260,7 +260,8 @@ interface SvItem { id?: string, x: number, z: number, r?: number, icon?: string,
   y?: number, label?: () => string, short?: () => string, visible?: (h?: SvHeroT) => boolean, act(h: SvHeroT, game?: SvGame): void | Promise<unknown>, npc?: unknown, st?: unknown, [k: string]: unknown }
 type SvHome = { hs: { x: number, z: number }, name(): string, people: { name: string }[] };
 export interface SvMain {
-  actCount: number; events: typeof events; settings: typeof settings; world: typeof world; scene: typeof scene; pads: typeof pads;
+  actCount: number; crowdModels?: unknown; // (v1.08e crowds)
+  events: typeof events; settings: typeof settings; world: typeof world; scene: typeof scene; pads: typeof pads;
   heroes: SvHeroT[]; huds: Hud[]; mode: string; partner: unknown; zoom: number; fogMaps: Record<string, HTMLCanvasElement>;
   regionOf: (string | null)[]; interactables: SvItem[]; gatherState: Record<string, unknown>; bubbles: { s: THREE.Sprite, target: { pos: THREE.Vector3 }, until?: number }[];
   paused?: boolean; lastPlayer?: number; untilValley?: () => Promise<void>; playTimes?: { at?: number, waited?: number }; firstFrames?: typeof firstFrames; whenPlaying?: Promise<void>; renderer?: typeof renderer; npcs?: typeof NPCS;
@@ -387,7 +388,7 @@ function addNPC({ id, name, faceName, look, model, x, z, face = 0, icon = '💬'
   const av = model ? null : obj;
   obj.position.set(x, world.groundAt(x, z), z); obj.rotation.y = face; scene.add(obj);
   const tag = nameTag(name); tag.position.set(x, obj.position.y + (model ? 3.4 : 2.0 * ((A && A.height) || 1)), z); scene.add(tag); // (v1.08b: above a grown-up's head)
-  const n = { id, name, x, z, obj, tag, avatar: av, A, talk }; registerName(name, icon);
+  const n = { id, name, x, z, obj, tag, avatar: av, A, talk, _vm: '' }; registerName(name, icon);
   NPCS.push(n);
   world.colliders.push({ x, z, r: .7 });
   G.interactables.push({ id: 'npc_' + id, x, z, r: 3, icon, label: () => T('Talk to ', 'Nói chuyện với ') + nm(name), act: h => talk(h) });
@@ -434,13 +435,28 @@ function setupNPCs() {
       // (battery round, PERF-003) far (STILL m from every child) and standing still for two looks: the one-piece still
       // copy (js/avatar.js); anyone walking, riding or near keeps every moving part. A child's own character never.
       const moved = A._wx !== _wp.x || A._wz !== _wp.z; A._wx = _wp.x; A._wz = _wp.z; A._calm = moved ? 0 : (A._calm || 0) + 1;
-      showStill(A, !mine.has(A) && A._calm >= 2 && !G.heroes.some(h => dist2(h.pos.x, h.pos.z, _wp.x, _wp.z) < STILL)); });
+      // (v1.08e villagers) a villager in their Blender model keeps it only within 12 m (check perf: the models are about
+      // 18,000 triangles); farther, the still copy, as for everyone past 20 m
+      const still = A.root.userData.villagerModel ? 12 : STILL;
+      showStill(A, !mine.has(A) && A._calm >= 2 && !G.heroes.some(h => dist2(h.pos.x, h.pos.z, _wp.x, _wp.z) < still)); });
+  });
+  // (v1.08e villagers) the 11 named villagers' own models, loaded when a child comes within 40 m (a few at a time), worn
+  // in place of the code person (js/avatar.ts wearVillagerModel); blocked or not yet arrived, the code person stays
+  const NAMED_MODELS = new Set(['mai', 'ba', 'teo', 'ti', 'bong', 'su', 'jack', 'mit', 'bom', 'ruby', 'lan']); let vmT = 0;
+  world.updaters.push(dt => {
+    if ((vmT -= dt) > 0) return; vmT = .5;
+    for (const n of NPCS) {
+      if (!n.A || n._vm || !NAMED_MODELS.has(n.id) || !G.heroes.some(h => dist2(h.pos.x, h.pos.z, n.obj.position.x, n.obj.position.z) < 1600)) continue;
+      n._vm = 'loading'; const key = 'villager-' + n.id;
+      loadFriendModels(key).then(ok => { n._vm = ok && wearVillagerModel(n.A, key) ? 'worn' : 'code'; });
+    }
   });
   // gentle idle animation
   // the children who host folk games are busy playing: they cheer, wave and clap now and then
   const PLAYERS = new Set(['teo', 'ti', 'bong', 'su', 'jack', 'mit', 'bom', 'ruby', 'lan']);
   world.updaters.push((dt, t) => NPCS.forEach((n, k) => {
     if (n.A && PLAYERS.has(n.id)) { const ph = Math.floor(t * .7 + k * 1.3) % 4; n.A.anim(ph === 0 ? 'cheer' : ph === 2 ? 'wave' : 'idle', t + k, 0); }
+    else if (n.A && n._vm === 'worn') n.A.anim('idle', t + k, 0); // (v1.08e villagers) a villager's model blinks, looks and breathes
     else if (n.avatar) { n.avatar.children[0].position.y = Math.sin(t * 2 + k) * .03; }
     else n.obj.rotation.z = Math.sin(t * 1.5 + k) * .05;
   }));
@@ -1133,6 +1149,8 @@ afterStart(() => import('./scrollhelp.js'), m => m.installScrollHelp());
 afterStart(() => warmLumi(), () => { }); // (v1.08d valley) Lumi's welcome, ready before the Simple screen first asks for it (js/simple.ts)
 // (Round U) every villager answers a tap with a fact or a saying of their region (js/villagertalk.js)
 afterStart(() => Promise.all([import('./villagertalk.js'), import('./dayplan.js')]), ([V, D]) => { V.createVillagerTalk(G); D.createDayPlan(G); });   // (Round U) villagers' day plan
+// (v1.08e crowds, owner 6 Nov 2026 AEDT) crowd people near a child wear the gallery neighbours' Blender models (js/crowd-models.js)
+afterStart(() => import('./crowd-models.js'), C => { G.crowdModels = C.createCrowdModels(G); });
 afterStart(() => import('./pricetags.js'), m => m.createPriceTags(G));
 afterStart(() => import('./jobs.js'), m => m.createJobs(G));
 afterStart(() => import('./wayfind.js'), m => m.createWayfind(G));   // (Round U) "Where is…?" sparkles

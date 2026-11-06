@@ -111,6 +111,7 @@ export function adoptWorldTags() {
     if (!m) return; const fb = obj as THREE.Object3D;
     if (opts.outline) outline(m.obj, opts.outline[0], opts.outline[1]);
     if (opts.carry) for (const c of fb.children.slice()) if (!c.userData.outline) { c.userData.carried = true; m.obj.add(c); }
-    m.obj.userData.worldTag = name; m.obj.userData.noSolid = true;   // (the solid map keeps the code shape: js/solids.ts) for (const k of ['walk', 'noCam']) if (fb.userData[k]) m.obj.userData[k] = fb.userData[k];
+    m.obj.userData.worldTag = name; m.obj.userData.noSolid = true;   // (the solid map keeps the code shape: js/solids.ts)
+    for (const k of ['walk', 'noCam']) if (fb.userData[k]) m.obj.userData[k] = fb.userData[k];
   });
 }

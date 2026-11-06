@@ -14,6 +14,9 @@ bpy.ops.import_scene.gltf(filepath=SRC)
 # 3,600, are parts of their own now: the body keeps the rest)
 BUDGET = {'body': 3000, 'hair': 4200, 'hands': 260, 'item': 350, 'shoes': 250}
 FACE = 420  # each of the eleven face moods (only one shows at a time); (v1.08e faces) 280 left the eyes faceted
+# (v1.08e villagers) the villagers' clothes are layers close together (a shirt over shorts, a belt): thinned to 3,000 the
+# lower layer showed through in patches, so their bodies keep more
+if any(o.name.startswith('villager-') for o in bpy.context.scene.objects if o.type == 'MESH'): BUDGET['body'] = 5200
 def tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 total = 0
 for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
@@ -55,7 +58,7 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
     me.materials.clear()
     for m in keep: me.materials.append(m)
     for p, i in zip(me.polygons, idx): p.material_index = i
-for o in [o for o in bpy.context.scene.objects if o.type == 'MESH' and not o.name.split('-')[0] in ('finn', 'sol', 'clara', 'lumi')]:
+for o in [o for o in bpy.context.scene.objects if o.type == 'MESH' and not o.name.split('-')[0] in ('finn', 'sol', 'clara', 'lumi', 'villager')]:  # (v1.08e: the villagers too)
     bpy.data.objects.remove(o)  # (the importer's bone shapes)
 bpy.ops.export_scene.gltf(filepath=DST, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                           export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,

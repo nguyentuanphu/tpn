@@ -54,6 +54,8 @@ const FILES = [
   'js/content/friends.js', 'js/ui/friends-row.js', 'js/ui/friends-ui.js', 'js/friend-model.js', 'js/friend-view.js',
   'vendor/GLTFLoader.js', 'vendor/BufferGeometryUtils.js', 'vendor/SkeletonUtils.js', 'vendor/meshopt_decoder.module.js',
   'models/finn.glb', 'models/sol.glb', 'models/clara.glb', 'models/lumi.glb',
+  'models/finn-hd.glb', 'models/sol-hd.glb', 'models/clara-hd.glb', 'models/lumi-hd.glb', // (v1.08e faces part 2) high-detail friends
+  'js/crowd-models.js', // (v1.08e crowds) the gallery neighbours worn by crowd people near a child
   // (written out one by one: tools/bundle.mts reads the quoted names of the list)
   'icons/friends/finn-f.webp', 'icons/friends/finn-q.webp', 'icons/friends/finn-s.webp', 'icons/friends/finn-face.webp',
   'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
@@ -143,6 +145,11 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
   // all) are not in the install list: each is kept in its own cache the first time a child comes near it and is used from
   // there after, offline too. Until then the code shapes stand in (js/modelkit.ts), with or without a network.
   if (url.pathname.includes('/models/world/')) { e.respondWith(caches.open('sv-models-' + VERSION).then(c => c.match(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(c.put(req, r.clone())); return r; })))); return; }
+  // (v1.08e faces, part 2) a friend's high-detail model (models/<id>-hd.glb, about 0.5 MB): from the saved copy, or kept the
+  // first time it loads (also when the offline list above has not finished saving it)
+  // (v1.08e villagers) the villagers' models (about 400 KB each, 25 of them: 10 MB) are not in the list either: each is
+  // kept the first time a child meets that villager, so the ones a child has met are there offline
+  if (/\/models\/([a-z]+-hd|villager-[a-z-]+)\.glb$/.test(url.pathname)) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   if (url.pathname.includes('/bundle/')) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   // the voice pack: kept in its own cache (it survives game updates) and stored as lines are played
   if(url.pathname.startsWith('/voices/fpt-leminh-v1/')){

@@ -81,7 +81,7 @@ export async function longPlayMemoryCheck(b: Browser): Promise<string> {
   try {
     await clear(P.page);
     const count = () => P.page.evaluate(() => { const G = (window as any).__sv, geos = new Set(), texs = new Set();
-      G.scene.traverse((o: any) => { if (o.geometry) geos.add(o.geometry); for (const m of (Array.isArray(o.material) ? o.material : o.material ? [o.material] : [])) for (const v of Object.values(m)) if (v && (v as any).isTexture) texs.add(v); });
+      G.scene.traverse((o: any) => { if (o.geometry) geos.add(o.geometry); if (o.isSkinnedMesh && o.skeleton && o.skeleton.boneTexture) texs.add(o.skeleton.boneTexture); for (const m of (Array.isArray(o.material) ? o.material : o.material ? [o.material] : [])) for (const v of Object.values(m)) if (v && (v as any).isTexture) texs.add(v); });
       // (three.js: a shape sent to the graphics gets a 'dispose' listener; a picture sent gets __webglInit)
       const sent = [...geos].filter((g: any) => g._listeners?.dispose?.length).length, texSent = [...texs].filter(t => G.renderer.properties.get(t).__webglInit).length;
       return { inScene: geos.size, sent, held: G.renderer.info.memory.geometries, texInScene: texs.size, texSent, texHeld: G.renderer.info.memory.textures }; });
@@ -95,6 +95,8 @@ export async function longPlayMemoryCheck(b: Browser): Promise<string> {
     await P.page.waitForTimeout(1500);
     const after = await count();
     // (a few shapes may be drawn once without a place in the valley: the sky's light setup, a game's preview)
+    // (v1.08e villagers: a skinned model's skeleton keeps its bone turns in a picture of its own, not in a material: it is
+    // counted with the model it belongs to, so it is in the valley while the model is)
     const bad: string[] = [];
     if (after.held > after.sent + 12) bad.push(`the graphics hold ${after.held} shapes, ${after.held - after.sent} of them no longer in the valley`);
     if (after.texHeld > after.texSent + 12) bad.push(`the graphics hold ${after.texHeld} pictures, ${after.texHeld - after.texSent} of them no longer in the valley`);

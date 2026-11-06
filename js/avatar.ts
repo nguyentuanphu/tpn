@@ -21,7 +21,7 @@ const gParts = {
   head: new THREE.SphereGeometry(.5, 32, 24),
   hairCap: new THREE.SphereGeometry(.54, 32, 18, 0, Math.PI * 2, 0, Math.PI * .55),
   hairBack: new THREE.SphereGeometry(.53, 24, 18, Math.PI, Math.PI, 0, Math.PI * .8),
-  lock: new THREE.SphereGeometry(.15, 14, 10), bun: new THREE.SphereGeometry(.17, 12, 10), tie: new THREE.TorusGeometry(.1, .035, 8, 16),
+  lock: new THREE.SphereGeometry(.15, 14, 10), lockS: new THREE.SphereGeometry(.15, 8, 6) /* (v1.08e: the small locks all round, fewer triangles) */, bun: new THREE.SphereGeometry(.17, 12, 10), tie: new THREE.TorusGeometry(.1, .035, 8, 16),
   spike: new THREE.ConeGeometry(.14, .4, 6),
   body: new THREE.CylinderGeometry(.27, .36, .62, 16),
   skirt: new THREE.ConeGeometry(.55, .55, 18, 1, true),
@@ -60,17 +60,17 @@ export function drawDefaultFace(x, S, look, mood = 'smile') {
 // 'lookL' and 'lookR' (the irises to the person's own left or right: the viewer's right or left), 'happy' (curved eyes, an open smile), 'o' (surprised: the lids lift),
 // 'curious' (one brow up), 'sad' (the lids droop at the outer corner, a small frown), 'shy' (eyes down, rosy cheeks),
 // 'excited' (wide bright eyes, an open smile) and 'sleep' (closed, a flat mouth, for the films).
-const LID = { smile: .58, lookL: .58, lookR: .58, curious: .66, o: .86, excited: .74, sad: .36, half: -.2 };
+const LID = { smile: .58, lookL: .58, lookR: .58, curious: .66, o: .86, excited: .74, sad: .36 }; // (Release, 6 Nov: a heavy half-open lid looked bored; 'half' is now a flatter closing lid, inside a blink only)
 export function drawFeatures(x, S, look, mood = 'smile') {
   x.save(); x.lineCap = 'round'; x.lineJoin = 'round';
   const ey = .565, dot = (cx, cy, r) => { x.beginPath(); x.arc(cx * S, cy * S, r * S, 0, Math.PI * 2); x.fill(); };
-  const closed = mood === 'blink' || mood === 'happy' || mood === 'shy' || mood === 'sleep';
+  const closed = mood === 'blink' || mood === 'half' || mood === 'happy' || mood === 'shy' || mood === 'sleep';
   [.375, .625].forEach(cx => {
     const out = cx < .5 ? -1 : 1;
     if (closed) {
       x.strokeStyle = '#2b1a14'; x.lineWidth = S * .024; x.beginPath();
       if (mood === 'happy') { x.moveTo(S * (cx - .065), S * (ey + .02)); x.quadraticCurveTo(S * cx, S * (ey - .055), S * (cx + .065), S * (ey + .02)); }
-      else { const dy = mood === 'shy' ? .02 : 0; x.moveTo(S * (cx - .072), S * (ey + dy)); x.quadraticCurveTo(S * cx, S * (ey + dy + .045), S * (cx + .072), S * (ey + dy)); }
+      else { const dy = mood === 'shy' ? .02 : mood === 'half' ? -.012 : 0, bow = mood === 'half' ? .018 : .045; x.moveTo(S * (cx - .072), S * (ey + dy)); x.quadraticCurveTo(S * cx, S * (ey + dy + bow), S * (cx + .072), S * (ey + dy)); } // (half: a flatter lid, closing)
       x.stroke();
       if (mood !== 'happy') { x.beginPath(); x.moveTo(S * (cx + out * .072), S * ey); x.lineTo(S * (cx + out * .092), S * (ey - .014)); x.stroke(); }
     } else {
@@ -345,12 +345,16 @@ export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvat
   // (v1.08b) felt-look hair: the locks in front a shade lighter than the cap, like the friends' felt hair
   const hairL = toon('#' + new THREE.Color(look.hair).offsetHSL(0, .02, .045).getHexString(), { roughness: .5 });
   for (let i = 0; i < 5; i++) { const a = (i - 2) * .32, l = new THREE.Mesh(G.lock, hairL); l.scale.set(.9, 1.25, .55); l.position.set(Math.sin(a) * .42, .32 - Math.abs(i - 2) * .03, Math.cos(a) * .33); l.rotation.set(-.75, a, (i - 2) * -.25); head.add(l); }
+  // (v1.08e faces, Release: the crowd's hair read as a flat helmet) soft locks all round the sides and the back, in two
+  // shades, so the hair has the friends' felt shape (merged with the head: no extra draws)
+  for (let i = 0; i < 11; i++) { const a = 1.05 + i * (2 * Math.PI - 2.1) / 10, l = new THREE.Mesh(G.lockS, i % 2 ? hairL : hairM); l.scale.set(1, 1.15, .6); l.position.set(Math.sin(a) * .49, .06 + (i % 2) * .04, Math.cos(a) * .46 - .03); l.rotation.set(-.35 * Math.cos(a), a, 0); head.add(l); }
   // (v1.08) long hair and the ponytail hang from their own pivot, so they swing as the child moves
   const hang = (x, y, z) => { const g = new THREE.Group(); g.position.set(x, y, z); head.add(g); A.tail = g; return g; };
   if (look.hairStyle === 'long') { const hb = new THREE.Mesh(G.hairBack, hairM); hb.scale.set(1.04, 1.6, 1.05); hb.position.y = -.43; hang(0, .15, 0).add(hb); }
   if (look.hairStyle === 'buns') [-1, 1].forEach(s => { const b = new THREE.Mesh(G.bun, hairM); b.scale.set(1, 1.5, 1); b.position.set(s * .5, -.08, -.15); b.rotation.z = s * .3; head.add(b); const tie = new THREE.Mesh(G.tie, toon(col)); tie.position.set(s * .44, .08, -.12); tie.rotation.y = Math.PI / 2; head.add(tie); });
   if (look.hairStyle === 'ponytail') { const pt = new THREE.Mesh(new THREE.CapsuleGeometry(.13, .5, 4, 10), hairM); pt.position.set(0, -.23, -.08); pt.rotation.x = .35; hang(0, .08, -.5).add(pt); }
-  if (look.hairStyle === 'spiky') for (let i = 0; i < 6; i++) { const sp = new THREE.Mesh(G.spike, i % 2 ? hairL : hairM); sp.position.set((i - 2.5) * .15, .5, -.06 - Math.abs(i - 2.5) * .04); sp.rotation.set(-.3, 0, (2.5 - i) * .22); head.add(sp); }
+  // (owner, 6 Nov 2026 AEDT: "I don't want this spiky hair") the 'spiky' style is soft tousled felt locks on the crown, not spikes
+  if (look.hairStyle === 'spiky') for (let i = 0; i < 6; i++) { const a = (i - 2.5) * .42, sp = new THREE.Mesh(G.lock, i % 2 ? hairL : hairM); sp.scale.set(1.05, .8, .9); sp.position.set(Math.sin(a) * .3, .43 + (i % 2) * .04, -.1 + Math.cos(a) * .12); sp.rotation.set(-.5, a, 0); head.add(sp); }
   // hats
   const hat = new THREE.Group(); head.add(hat);
   // (r79) the girls' versions of the old shared hats (nonla_g, crown_g, bunny_g) are drawn like the old ones in their own colour
@@ -502,12 +506,41 @@ export function animate(A, state, t, speed = 0) {
     if (want !== L.mood && A.faceMat.map) { L.mood = want; setFaceMood(A.faceMat.map, want); }
   }
 }
+/** (v1.08e villagers) a named villager's own Blender model (models/villager-<id>.glb, made by tools/make-villagers.mts)
+ *  in place of the code person: the model follows the code person's joints and moods (js/friend-model.ts), stands at the
+ *  code person's height, and the code person's parts are hidden (kept, so a photo face or a rebuild can bring them back).
+ *  Far away the still copy of the code person is shown, as for everyone. False when it cannot be worn. */
+export function wearVillagerModel(A: SvAvatar, key: string): boolean {
+  if (!A || A.model || !A.painted || !FRIEND_MODELS.ready || !FRIEND_MODELS.ready(key)) return false;
+  stillOf(A); // (the far still copy is baked from the code person first)
+  // sizes are measured in the rest pose (no hop, no squash, joints straight), so a villager caught mid-jump stands right
+  const keep = JOINTS.map(j => A[j] ? A[j].rotation.clone() : null), lift = A.rig.position.y, sc = A.rig.scale.clone(), H = A.height || 1;
+  JOINTS.forEach(j => { if (A[j] && j !== 'rig') A[j].rotation.set(0, 0, 0); }); A.rig.position.y = 0; A.rig.scale.set(H, H, H); A.root.updateMatrixWorld(true);
+  const box = new THREE.Box3(), codeParts: THREE.Object3D[] = [];
+  // (only what is drawn: a hidden group, such as the folded glider over the head, made the code person seem far taller)
+  A.rig.traverse(o => { if (o instanceof THREE.Mesh && shown(o, A.rig) && !o.userData.outline) { box.expandByObject(o); codeParts.push(o); } }); // (inside the rig: it is hidden while the far still copy shows)
+  const codeH = box.max.y - box.min.y, m = FRIEND_MODELS.attach(A, key, String(A.look.skin || '#f6c7a5'), {}); // (attached in the rest pose, as a friend's is when built)
+  const back = () => { JOINTS.forEach((j, i) => { if (keep[i]) A[j].rotation.copy(keep[i]); }); A.rig.position.y = lift; A.rig.scale.copy(sc); };
+  if (!m) { back(); return false; }
+  codeParts.forEach(o => { o.visible = false; o.children.forEach(c => { if (c.userData.outline) c.visible = false; }); });
+  m.obj.updateMatrixWorld(true); const mb = new THREE.Box3().setFromObject(m.obj, true), mh = mb.max.y - mb.min.y;
+  // the model's head at the code person's head (a hat does not count), its feet on the code person's feet
+  let headBone: THREE.Object3D = null; m.obj.traverse(o => { if ((o as THREE.Bone).isBone && o.name === 'head') headBone = o; });
+  const wp = new THREE.Vector3(), hc = A.head ? A.head.getWorldPosition(new THREE.Vector3()).y : box.max.y, hm = headBone ? headBone.getWorldPosition(wp).y : mb.max.y;
+  const k = hm - mb.min.y > .1 && hc - box.min.y > .1 ? (hc - box.min.y) / (hm - mb.min.y) : codeH / Math.max(mh, .1);
+  if (mh > .1 && codeH > .1) { const O = m.obj.getWorldPosition(new THREE.Vector3()).y, ws = A.rig.getWorldScale(new THREE.Vector3()).y;
+    m.obj.scale.multiplyScalar(k); m.obj.position.y += (box.min.y - (O + (mb.min.y - O) * k)) / ws; }
+  back();
+  A.model = m; A.root.userData.villagerModel = key; showStill(A, false); return true; // (worn near the child: the moving model, not the still copy)
+}
 /** (v1.08e faces, part 2) the high-detail model up close, the light one far away (a child's own friend only) */
 export function showHD(A, near: boolean) { if (!A || !A.modelHD || A._hd === near) return; A._hd = near; A.modelHD.obj.visible = near; A.model.obj.visible = !near; }
 /** (v1.08e faces) a feeling on a person's face for a moment: 'o' (surprised at a find), 'sad' (a game lost), 'shy' (greeted),
  *  'happy', 'excited', 'curious'; the blinks go on over it */
 export function feel(A, mood: string, secs = 2) { const L = A && A.life; if (!L) return; L.feel = mood; L.feelUntil = L.t + secs; }
 /** the same, for a person known by their root (a villager found in the scene) */
+/** (v1.08e crowds) the person built on a root, if any */
+export const avatarOf = (root: THREE.Object3D): SvAvatar => AV_OF.get(root);
 export function feelRoot(root: THREE.Object3D, mood: string, secs = 2) { feel(AV_OF.get(root), mood, secs); }
 
 // The wise owl guide.
@@ -726,7 +759,7 @@ function recolorSkin(A) {
 }
 // the moving person or the still copy (made the first time it is needed)
 export function showStill(A, yes) {
-  if (A.model) yes = false; // (v1.08b) a friend's model has no still copy: it is one of a few children
+  if (A.model && !A.root.userData.villagerModel) yes = false; // (v1.08b) a friend's model has no still copy: it is one of a few children; (v1.08e) a villager's model has: far away, the code person's still copy
   if (!!A._still === yes) return; A._still = yes;
   if (yes) stillOf(A).visible = true; else if (A.still) A.still.visible = false;
   A.rig.visible = !yes;

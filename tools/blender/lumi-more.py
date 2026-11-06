@@ -92,6 +92,11 @@ def curtain(m, length=2.2, width=1.15, open_front=.95):
 VHAIR = {'vn-aodai': 'long', 'vn-dad': 'sidepart', 'vn-farmer': 'sidepart', 'vn-vendor': 'lowbun', 'vn-grandma': 'lowbun', 'vn-grandpa': 'tuft',
          'vn-schoolboy': 'boybangs', 'vn-schoolgirl': 'bangspigtails', 'au-dad': 'messy', 'au-mum': 'ponytail', 'au-grandma': 'curls',
          'au-grandpa': 'tuft', 'au-boy': 'messy', 'au-girl': 'puffs'}
+# (v1.08e villagers, Release 6 Nov: every named villager wore the same short cut) each one's own hair, from their look in
+# the game (js/main.ts): Cô Mai long, Bác Ba a grey tuft, Tèo and Bờm short with a fringe (owner: no spiky hair), Tí and Mít two buns, Bống a ponytail, Su and
+# Jack short, Ruby her red hair to the shoulders, Lan a ponytail
+VHAIR.update({'mai': 'long', 'ba': 'tuft', 'teo': 'boybangs', 'ti': 'puffs', 'bong': 'ponytail', 'su': 'boybangs', 'jack': 'boybangs',
+              'mit': 'puffs', 'bom': 'boybangs', 'ruby': 'waves', 'lan': 'ponytail'})  # (owner, 6 Nov: no spiky hair)
 def hair_villager():
     st = VHAIR.get(ROLE, V['hair']); HS = mat('hairShell', PAL[1], .5, .45); HL = mat('hairShellL', PAL[3], .5, .45)
     hatted = bool(WEAR.get('hat'))
@@ -144,8 +149,9 @@ def body_villager():
         low = b['zAnk'] + .05 * S if kind != 'shorts' else b['zCuff'] + (.0 if V['size'] == 'kid' else -.03) * S
         r = wH * (.66 if kind == 'wide' else .56)
         for s in (-1, 1):  # trousers (wide and flowing under an áo dài) or shorts
-            tube('trouser', BOT, [(s * b['legX'] * .85, 0, b['zCr'] + .02 * S), (s * b['legX'] * 1.05, 0, low)], [r, r * (1.06 if kind == 'wide' else .98)], 24)
-        lathe('seat', BOT, [(wH * .55, b['zCr'] - .035 * S), (wH * .95, b['zCr'] - .005 * S), (wH * 1.02, (b['zCr'] + b['zW']) / 2), (wC * 1.03, b['zW'] + .01 * S)], 32, scale=(1, dep))
+            tube('trouser', BOT, [(s * b['legX'] * .85, 0, b['zCr'] + (-.1 if tk == 'aodai' else .02) * S), (s * b['legX'] * 1.05, 0, low)], [r * (.8 if tk == 'aodai' else 1), r * (1.06 if kind == 'wide' else .98)], 24)   # (under an áo dài: the tops hidden in the panels)
+        k_ = .9 if tk == 'aodai' else 1.0   # (v1.08e, owner: "Mai's tummy looks strange") no seat under an áo dài: it showed as a white band at the waist
+        if tk != 'aodai': lathe('seat', BOT, [(wH * .55 * k_, b['zCr'] - .035 * S), (wH * .95 * k_, b['zCr'] - .005 * S), (wH * 1.02 * k_, (b['zCr'] + b['zW']) / 2), (wC * 1.0 * k_, b['zW'] + .01 * S)], 32, scale=(1, dep))
     elif kind == 'skirt' and tk != 'dress':
         lathe('skirt', BOT, [(wC * 1.05, b['zW'] + .01 * S), (wH * 1.15, b['zCr']), (wH * 1.4, b['zCuff'] + .02 * S), (wH * 1.42, b['zCuff'] + .005 * S)], 36, scale=(1, dep * 1.05))
     global BARE
@@ -159,7 +165,7 @@ def body_villager():
         for z in lin(hem + .04 * S, b['zC'] + .02 * S, 4): sphere('button', felt('buttonCloth', '#f2ead8'), (0, fronty(wC * 1.08) - .004, z), (.008 * S, .004 * S, .008 * S), 10, 5)
     elif tk == 'aodai':  # áo dài: a fitted top with a mandarin collar, long front and back panels split at the sides
         lathe('aoDai', TOP, [(wC * 1.04, b['zW'] - .02 * S), (wC * 1.06, b['zC']), (wC * .85, b['zS'] + .01 * S)], 32, scale=(1, dep))
-        for a0, a1 in ((-.95, .95), (math.pi - .95, math.pi + .95)):
+        for a0, a1 in ((-1.2, 1.2), (math.pi - 1.2, math.pi + 1.2)):   # (v1.08e: wider panels, the side slits narrower)
             lathe('aoDai', TOP, [(wC * 1.05, b['zW']), (wH * 1.08, b['zCr']), (wH * 1.2, b['zCuff'] - .1 * S), (wH * 1.24, b['zCuff'] - .13 * S)], 28, scale=(1, dep * 1.05), arc=(a0, a1))
         tube('aoDai', TOP, [Vector((math.cos(t) * wC * .5, math.sin(t) * wC * .45, b['zN'] + .005)) for t in lin(0, 2 * math.pi, 21)], .016 * S, 8, False)
     elif tk == 'dress':  # a sundress or a school dress: a bodice and a flared skirt to the knee, a white collar for school
@@ -231,8 +237,9 @@ def shoes(kind, col=None):
 HAT_COL = {'straw': '#e3c37c', 'nonla': '#eadbb0', 'cap': '#e2574c', 'beanie': '#6f9fd8', 'crown': '#7fae5e', 'akubra': '#8a6142', 'bucket': '#f2c14e', 'helmet': '#d64b4b'}
 def hat(kind, col=None):
     if kind in globals().get('KIT_HATS', ()): return kit_hat(kind, col)   # the costume kit's headwear (costumes.py)
-    k = R * {'lumi': 1.2, 'clara': 1.12, 'sol': 1.08, 'finn': 1.2}.get(WHO, 1.14)   # bigger hair needs a bigger hat
-    top = HC + Vector((0, .02 * R, (.55 + {'lumi': .32, 'clara': .12, 'sol': .1, 'finn': .32}.get(WHO, 0)) * R)); M = felt('hat' + kind + (col or ''), col or HAT_COL[kind], .85, .1)
+    k = R * {'lumi': 1.2, 'clara': 1.12, 'sol': 1.08, 'finn': 1.2}.get(WHO, 1.24)   # bigger hair needs a bigger hat
+    # (v1.08e villagers, owner: "the hats don't fit the head") a villager's hat sits down over the hair, not perched on top
+    top = HC + Vector((0, .02 * R, (.55 + {'lumi': .32, 'clara': .12, 'sol': .1, 'finn': .32}.get(WHO, -.12)) * R)); M = felt('hat' + kind + (col or ''), col or HAT_COL[kind], .85, .1)
     BAND = felt('hatRibbon', '#c75b4a')
     if kind == 'straw':  # a sun hat with a ribbon (also the broad-brimmed school hat, in navy)
         lathe('hatCrown', M, [(.0, .62 * k), (.42 * k, .6 * k), (.66 * k, .4 * k), (.74 * k, .05 * k)], 32, loc=top)
@@ -287,7 +294,7 @@ def scarf(col):
     tube('scarf', M, [Vector((.05 * S, fronty(b['wC'] * .6), b['zN'] - .04 * S)), Vector((.07 * S, fronty(b['wC'] * 1.05), b['zC'] - .02 * S)), Vector((.075 * S, fronty(b['wC'] * 1.1), b['zC'] - .1 * S))], [(.028 * S, .012 * S)] * 3, 10)
 
 # accessories: girls (bow, headband, earrings, necklace, pearls, bracelet), boys (bowtie, watch, backpack works for all), anyone (sunglasses, glasses, red scarf, freckles, moustache, long socks, flower clip)
-HEAD_ACC = ('bow', 'headband', 'earrings', 'sunglasses', 'glasses', 'freckles', 'moustache', 'flowerclip', 'stubble')
+HEAD_ACC = ('bow', 'headband', 'earrings', 'sunglasses', 'glasses', 'freckles', 'moustache', 'flowerclip', 'stubble', 'bunny')
 def acc(name, col=None):
     b = B; C = lambda d: felt('acc' + name + (col or d), col or d)
     puff = {'lumi': .32, 'clara': .12, 'sol': .1, 'finn': .2}.get(WHO, 0)
@@ -295,6 +302,13 @@ def acc(name, col=None):
         c = HC + Vector((.62, -.48, .62)).normalized() * R * (1.22 + puff); M = C('#ef6f8e')
         for s in (-1, 1): sphere('bow', M, c + Vector((s * .25 * R, -.02 * R, .03 * R)), (.26 * R, .11 * R, .19 * R), 16, 8, (0, s * .35, 0))
         sphere('bowKnot', M, c + Vector((0, -.03 * R, 0)), (.08 * R, .08 * R, .09 * R), 12, 6)
+    elif name == 'bunny':  # (v1.08e villagers) Bống's soft bunny ears on a headband: white felt, pink inside
+        W_ = C('#fbf7f2'); Pk = felt('accbunnyPink', '#f6a9bd')
+        for s in (-1, 1):
+            base = HC + Vector((s * .38, -.05, .92)).normalized() * R * (1.08 + puff)
+            sphere('bunnyEar', W_, base + Vector((s * .06 * R, 0, .42 * R)), (.13 * R, .07 * R, .42 * R), 16, 10, (0, s * .18, 0))
+            sphere('bunnyInner', Pk, base + Vector((s * .06 * R, -.05 * R, .42 * R)), (.07 * R, .03 * R, .32 * R), 12, 8, (0, s * .18, 0))
+        tube('bunnyBand', W_, [HC + Vector((math.cos(t) * 1.06 * R, -.05 * R, math.sin(t) * 1.0 * R + .05 * R)) for t in lin(.12 * math.pi, .88 * math.pi, 13)], .035 * R, 8)
     elif name == 'headband':
         M = C('#ef6f8e'); k = 1.06 + puff
         tube('headband', M, [HC + Vector((math.cos(t) * k * R, -math.sin(t) * .25 * R - .2 * R, math.sin(t) * k * R * .95 + .1 * R)) for t in lin(.05 * math.pi, .95 * math.pi, 17)], .045 * R, 10)
