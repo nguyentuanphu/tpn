@@ -730,7 +730,7 @@ PAGES.path = async P => {
   const tags = id => { const g = info(id); return `${g.little ? `<span class="pill">🧒 ${T('Under 5', 'Dưới 5 tuổi')}</span>` : ''}${g.hide ? `<span class="pill">🙈 ${T('Hidden', 'Đã ẩn')}</span>` : ''}${g.changed ? ` <span class="sub">(${T('changed', 'đã đổi')}; ${T('usual', 'mặc định')}: ${g.base[1] < 5 ? '✓' : '✗'})</span>` : ''}`; };
   const row = id => { const g = info(id);
     return `<tr data-id="${id}"><td><button type="button" class="gopen" aria-expanded="false"><span class="gn">${GAMES[id].icon} ${esc(nm(GAMES[id].name))}</span><span class="gtags">${tags(id)}</span><span class="gv">▾</span></button>
-      <div class="gpanel" hidden><label>${T('Group', 'Nhóm')}<select data-f="area" data-nodirty>${A.AREAS.map(b => `<option value="${b.key}" ${g.area === b.key ? 'selected' : ''}>${b.icon} ${esc(nm(b.name))}</option>`).join('')}</select></label>
+      <div class="gpanel" hidden><label>${T('Group', 'Nhóm')}<select data-f="area" data-nodirty>${A.AREAS.map(b => `<option value="${b.key}" ${g.area === b.key ? 'selected' : ''}>${/^[a-z0-9]+:/.test(b.icon) ? '' : b.icon + ' '}${esc(nm(b.name))}</option>`).join('')}</select></label>
         <label class="chk"><input type="checkbox" data-f="little" ${g.little ? 'checked' : ''}> ${T('Under 5', 'Dưới 5 tuổi')}</label>
         <label class="chk"><input type="checkbox" data-f="hide" ${g.hide ? 'checked' : ''}> ${T('Hide', 'Ẩn')}</label></div></td></tr>`; };
   const count = () => P.querySelectorAll('.card[data-area]').forEach(c => { c.querySelector('.gcount').textContent = `(${c.querySelectorAll('tr[data-id]').length})`; });
