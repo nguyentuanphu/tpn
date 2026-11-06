@@ -22,14 +22,14 @@ for (const s of SIZES) {
         const h = G.heroes[0], st = (id: string) => G.world.stalls.find((x: any) => x.id === id);
         let x = 0, z = 0, face = 0, far = 8, up = 3, lift = 1.2;
         const w = window as any;
-        if (sc === 'market') { const ss = ['bahai', 'olai', 'chunam', 'chutam', 'cout'].map(st); x = ss.reduce((t, a) => t + a.x, 0) / 5; z = ss.reduce((t, a) => t + a.z, 0) / 5; face = ss[0].face; far = 15; up = 6; }
+        if (sc === 'market') { const ss = ['bahai', 'olai', 'chunam', 'chutam', 'cout'].map(st); x = ss.reduce((t, a) => t + a.x, 0) / 5; z = ss.reduce((t, a) => t + a.z, 0) / 5; face = ss[0].face; far = 10; up = 4; lift = 1.6; }
         else if (sc === 'sizzle') { const a = st('robbo'); x = a.x; z = a.z; face = a.face; far = 7; up = 3; }
-        else if (sc === 'hawker') { const H = G.hawkers[0]; x = H.x; z = H.z; face = H.yaw + Math.PI / 2; far = 4; up = 1.6; }
+        else if (sc === 'hawker') { const H = G.hawkers[0]; x = H.x; z = H.z; face = H.yaw + Math.PI / 2; far = 3; up = 1.7; lift = 1.1; }
         else {
-          // the test spot: 6 m in front of the child, the props in a row
+          // the test spot: open ground 25 m to the child's side (clear of Grandpa Owl at the start), the props in a row
           if (!w.__propSpot) {
             const C2 = await import(String('/js/content/chapter2props.js')), C3 = await import(String('/js/content/chapter3props.js'));
-            const yaw = h.yaw || 0, sx = h.pos.x + Math.sin(yaw) * 6, sz = h.pos.z + Math.cos(yaw) * 6;
+            const yaw = h.yaw || 0, sx = h.pos.x + Math.cos(yaw) * 25, sz = h.pos.z - Math.sin(yaw) * 25;
             const add = (o: any, set: string, dx: number, dy = 0) => { const g = new THREE.Group(); g.add(o); g.userData.set = set; g.position.set(sx + Math.cos(yaw) * dx, G.world.groundAt(sx, sz) + dy, sz - Math.sin(yaw) * dx); g.rotation.y = yaw + Math.PI; G.scene.add(g); return g; };
             add(C2.buildStoneTurtle(), 'hanoi', -1.6); add(C2.buildStarLantern('#ff4a3a', true), 'hanoi', -.2); add(C2.buildLionHead(), 'hanoi', 1.1, .45); add(C2.buildMooncakes(), 'hanoi', 2.3, .02);
             const tree = C3.buildGumTree(1), koala = C3.buildKoala(); koala.position.set(.25, 2.6, .25); tree.add(koala);
@@ -54,10 +54,10 @@ for (const s of SIZES) {
         const G = (window as any).__sv, [p, t, when] = (window as any).__shotCam, cam = G.heroes[0].cam;
         G.scene.traverse((o: any) => { if (o.userData.worldTag && o.userData.fallback) { o.visible = when === 'after'; o.userData.fallback.visible = when !== 'after'; } });
         cam.position.copy(p); cam.lookAt(t[0], t[1], t[2]); cam.updateMatrixWorld(true); G.renderer.render(G.scene, cam);
-        document.querySelectorAll('.hud, .quest, .toast').forEach((e: any) => e.style.visibility = 'hidden');
+        document.querySelectorAll('body *').forEach((e: any) => { if (e.tagName !== 'CANVAS' && !e.querySelector('canvas')) { e.dataset.shotHid = e.style.visibility; e.style.visibility = 'hidden'; } });
       });
       await P.page.screenshot({ path: `${OUT}${sc}-${s.name}-${when}.png` });
-      await P.page.evaluate(() => document.querySelectorAll('.hud, .quest, .toast').forEach((e: any) => e.style.visibility = ''));
+      await P.page.evaluate(() => document.querySelectorAll('[data-shot-hid]').forEach((e: any) => { e.style.visibility = e.dataset.shotHid; delete e.dataset.shotHid; }));
     }
   }
   await P.ctx.close();
