@@ -56,7 +56,6 @@ tighter.
 | Model | Total | Hair |
 |---|---|---|
 | Clara light | 11,196 (before 11,195) | 4,200 |
-| Clara high-detail | see the progress notes | 9,500 |
 | Mai | 20,150 (before 20,150) | 5,000 |
 | Tèo | 19,566 (before 19,566) | 5,000 |
 
@@ -73,6 +72,29 @@ before. Models rebuilt here were never committed.
 
 ## Checks
 
-See the progress notes below.
+7 Nov 2026, 00:30 AEDT, one at a time (`node suite.mts --jobs 1 --only ...`), with Clara, Mai and Tèo rebuilt here
+(the other 30 models as committed):
+
+| Check | Result |
+|---|---|
+| `friendmodel` | pass (clara 10,363 triangles in 6 parts by the check's count; finn 10,299, sol 10,281, lumi 16,267 as committed) |
+| `villagermodels` | pass (11 villagers wear their models, blink and look; the crowd wears its model) |
+| `faces` | pass (lids close, 8 mouth shapes, heads not spheres) |
+| `noemoji`, `arch`, `bilingual`, `rules` | pass |
+| `names`, `types` | skipped (no npm install in tests here) |
+| `emoji` | fail, not this change: emoji in `docs/cores/tasks/v108d/polish.md` and `docs/cores/tasks/v108f/settings.md` |
+| `unit` | fail, not this change: the packages `pg` and `typescript` are not installed in this container |
+
+`suite --changed` cannot run here (no `main` in this clone); the change is build scripts only, so the game checks are
+unchanged until the rebuild. Release / the faces helper runs the full rebuild of all 33 models and then the checks.
+
+## Left for a later round
+
+- Clara's (and Finn's, Sol's) locks are still chunky at the 4x close-up (fine at phone 1x and 2x): fewer, bigger locks
+  in `lumi.py`'s friend hair, which this helper was not to touch.
+- Release's tip, not done: bring the fringe and hairline down to meet the eyes (they moved up about 4 % of head height).
+- Finn, Sol, Lumi and the other villagers were not built here (the brief's three test models only).
 
 ## Progress notes
+
+- 7 Nov 2026, 00:35 AEDT: scripts pushed (`work/v108e-hair`); checks above.
