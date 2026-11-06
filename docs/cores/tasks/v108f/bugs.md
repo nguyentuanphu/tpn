@@ -1,3 +1,5 @@
+**ready for Release** (6 Nov 2026 AEDT): branch `work/v108f-bugs`; 6 bugs fixed (#796 #810 #812 #814 #816 #817), 3 fixed before by v1.08 (#811 #813 #815); full suite left for Release.
+
 # v1.08f helper: bugs (status)
 
 Branch `work/v108f-bugs` (from `origin/integrate/v108` at `55a1c17a3`). Started 6 Nov 2026 AEDT. Brief: `bugs-brief.md`.
@@ -47,6 +49,51 @@ shown, so it is not a lost button. A button really lost, in an open list or in a
 Check `reportdetectors` (`tests/owner-report-detection.mts`): three new cases; fails on the old code (`folded: true`),
 passes with the fix. `testernews` passes.
 
+### #816: Bottle Music, every round the same
+
+Under-5s (level 0) had two bottles, always red and blue, and were asked "which is highest?" every round (the tester's
+taps alternate "Chai xanh duong" and "Chai do"). Bigger kids alternated the question but kept the same colours. The
+`roundvariety` check plays big kids only, so it never saw level 0. Fix (`js/games/science.ts`): each round has other bottle
+colours (rotating through the five), and every level asks for the highest and the lowest note in turn, starting either
+way. Every line used is already recorded (the "lowest" question and all five bottle names were used at higher levels).
+New check `bottlevariety` (`tests/bottle-variety.mts`, registered in `tests/checks/learning.mts`): plays as an under-5 and as a
+big kid at Easy and fails when two rounds look the same or the under-5s hear one question only. It fails on the old code
+(little: rounds 2 and 3 = round 1, one question) and passes with the fix.
+
+### #796: Read With Me, book titles out of their cards
+
+Found by the v1.08 bugs helper (the english helper owned the file then). Replayed at the tester's 430x517 in Vietnamese,
+under-5: "Chu Meo Con", "Di Cho Voi Ba" and "Trang Ram" wrapped and the second line fell below the card. Cause: the
+under-5s' fixed square `.gl.little .choice` (css/style.css) won over `.choice.rd-book { height: auto }`. Fix
+(`js/games/reading.ts`, its own style block): `.gl .choice.rd-book { width: auto; height: auto; }`. Replayed: every title
+inside its card (screenshot looked at).
+
+### #812: Lamp and Shadow, the shadow hard to see
+
+The shadow was an 11 px grey wedge at 55 % strength, mostly hidden under the teddy. Now (`js/games/science.ts`) a dark band
+lying on the ground from the teddy's feet to the tip, thick at the feet with a rounded tip; the tip (where the shadow
+ends) and so the answers are unchanged. Screenshot looked at at 1600x960; `hocvui` plays Lamp and Shadow to a win.
+
+### Already fixed in v1.08 (Release can close after the deploy)
+
+- **#811** Sound Pond, answers below the screen: v1.08 layout (fit one screen, answers side by side; check `gamefit`).
+  Replayed at 1600x960, under-5, Vietnamese: the ear and both fish on one screen.
+- **#815** science answers in a row: the same v1.08 layout work (Lamp and Shadow at 1600x960: the two answers side by side
+  under the picture).
+- **#813** Two Homes Words in Vietnamese: v1.08 aussie-voice (`31b8a2d2f`, `f639b3052`, check `enwords`): the slang word
+  inside the Vietnamese question is said by the English voice. If the tester wants the whole question in English, that is
+  a design choice for the owner (the Vietnamese child would then hear an English question).
+
+### Not changed, for Release or the owner
+
+- **#797** (iPhone, v1.06, stuck near the Lang Sen festival stage): still needs the owner to say which decoration (Studio,
+  Analytics, Tester reports, problem `d1a729a3bf33fed5`, its picture); then likely a small World or Play fix.
+- **#781, #780, #746, #341, #739**: fixed before as far as reproducible (see the table); waiting for the owner to replay on
+  the reporting devices after v1.08 is live (steps in `docs/cores/tasks/v108/bugs.md`).
+- **The bug robot is stuck for every new issue**: its account has Claude Code subscription access turned off (run
+  41642681657). For Release and the owner: switch `CLAUDE_CODE_OAUTH_TOKEN` (or the backup) to an account with access, or
+  the robot stays off.
+
 ## Plans for big ones
 
 - **#355 (restarts and white screens).** Unchanged from v1.08 (`docs/cores/tasks/v108/bugs.md`): World, a later round:
@@ -55,7 +102,22 @@ passes with the fix. `testernews` passes.
 
 ## Checks
 
+Run one at a time on `work/v108f-bugs`, 6 Nov 2026 AEDT. `node suite.mts --changed --list` picks the full suite (a new test
+file), so per the rules it is left for Release.
+
 | Check | Result |
 |---|---|
 | `reportdetectors` | pass (fails on the old code) |
 | `testernews` | pass (79 s) |
+| `bottlevariety` (new) | pass (77 s; fails on the old code) |
+| `hocvui` | pass (1127 s; plays Bottle Music and Lamp and Shadow to a win at Easy and Talent) |
+| `types` | pass (after typing the new test file plainly; first run flagged 2 findings in it) |
+| `bilingual` | pass |
+| `boot` | pass (96 s) |
+| `phone` | pass (259 s; 10 screens on phone, tablet and computer) |
+| `reading` | **fail, not from this branch**: "with the switch on" expects `rd_tones` in the big kids' reading list, but v1.08b moved Tone Detective to the Tieng Viet corner (`readingmenu.ts`: `rd_tones: ['hv_vi', ...]`). This branch changed one CSS line in `reading.ts`, which cannot change the list. For Release (the check's IDS list or the menu) |
+| full suite | left for Release |
+
+Screenshots looked at: Read With Me 430x517 (before and after), Sound Pond 1600x960, Lamp and Shadow 1600x960 (before and
+after). New spoken lines: none. Version: not changed. Reserved files (avatar, friend-model, film, villagers, modelkit,
+places models, s2au-region): not touched.

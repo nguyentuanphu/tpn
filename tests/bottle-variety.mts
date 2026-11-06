@@ -33,8 +33,8 @@ async function play(page, age: 'little' | 'big'): Promise<Round[]> {
         offer[0].click(); continue;
       }
       // the experiment: tap every bottle with the spoon
-      for (const b of gl.querySelectorAll<HTMLElement>('.sx-bottle')) { b.click(); await w(120); }
-      gl.querySelector<HTMLElement>('.sx-go, .gl-next')?.click();
+      for (const b of gl.querySelectorAll('.sx-bottle')) { b.click(); await w(120); }
+      gl.querySelector('.sx-go, .gl-next')?.click();
     }
     gl.querySelector('.gl-x')?.click(); await w(300);
     return out;
