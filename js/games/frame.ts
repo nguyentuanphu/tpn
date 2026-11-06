@@ -114,6 +114,10 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     // one screen with no scrolling (at most down to FIT_MIN, and never making a button smaller than a finger)
     const FIT_MIN = .62;
     const wide = { tried: 0, before: 0, round: false };
+    // (v1.08 release fix, horsestability on GitHub) once the game has been fitted and the child plays, it does not grow again
+    // until the screen changes size: a redraw can be short for a moment (a full fit queued before the first tap then grew
+    // the board, and the next pass shrank it back under the child's finger)
+    let fitted = false, resized = false;
     const setWide = (kids: Element[], on: boolean) => {
       layer.classList.toggle('gl-wide', on); stage.querySelectorAll('.gl-wide-one').forEach(e => e.classList.remove('gl-wide-one'));
       // (one board of two parts, a picture and its answers, turns into a row; a board of many parts, a card table or a
@@ -155,6 +159,9 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       // (v1.08b fivescreens) a short landscape screen grows a game a little less, so its padding and gaps still fit
       const short = innerWidth > innerHeight && innerHeight <= 520;
       let next = room >= 1 ? Math.min(grow, Math.max(1, room * (short ? .85 : .9))) : Math.max(floor, room * .98);
+      const hold = playing && fitted && !resized;
+      if (!shrinkOnly) { fitted = true; resized = false; }
+      if (hold && next > z) next = z;
       // (v1.08 fixes 2, checks horseplay, folkplay) a button drawn after the last fit (Roll the die, Pull) may now be under a
       // finger at this zoom: go back up to the floor then, even on a shrink-only pass
       if (shrinkOnly && next >= z && z >= floor - .005) return;
@@ -167,8 +174,21 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     // at least TEXT_MIN px as drawn (their size times the stage's zoom): a smaller label is raised, and goes back to the
     // game's own size when the stage grows. Drawings (svg) and the round dots keep their size.
     const TEXT_MIN = 16;
+    // (v1.08 release fix, UI rule: touch targets 44 px, 64 px for under-5s) a button whose game draws it smaller than a
+    // finger, also with a size set on the button itself, is raised to a finger's size; a game's own bigger minimum (Pull,
+    // Roll, the Ô ăn quan pits: 64 px for everyone) is left as it is (css/style.css keeps only a zero-weight floor)
+    const floorTaps = () => {
+      const need = little ? 64 : 44;
+      for (const e of [...stage.querySelectorAll('button, [role=button]')] as HTMLElement[]) {
+        if (e.classList.contains('ch-stick')) continue;
+        const cs = getComputedStyle(e);
+        if ((parseFloat(cs.minWidth) || 0) < need) e.style.setProperty('min-width', need + 'px', 'important');
+        if ((parseFloat(cs.minHeight) || 0) < need) e.style.setProperty('min-height', need + 'px', 'important');
+      }
+    };
     const floorText = () => {
       if (closed) return 0; let changed = 0;
+      floorTaps();
       const z = parseFloat(stage.style.zoom) || 1, done = new Set<HTMLElement>(), walk = document.createTreeWalker(stage, NodeFilter.SHOW_TEXT);
       for (let t = walk.nextNode(); t; t = walk.nextNode()) {
         const p = t.parentElement;
@@ -213,7 +233,7 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       if (!playing || list.some(m => m.target === stage)) fitSoon(playing);
     });
     fitWatch.observe(stage, { childList: true, subtree: true });
-    const fitResize = () => { if (wide.tried) { wide.tried = 0; setWide([], false); } fitSoon(false); };
+    const fitResize = () => { resized = true; if (wide.tried) { wide.tried = 0; setWide([], false); } fitSoon(false); };
     addEventListener('resize', fitResize); setTimeout(() => { floorText(); fit(); if (floorText()) fitSoon(true); }, 400);
     cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitResize); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
     let closed = false, winning = false;

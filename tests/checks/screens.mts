@@ -709,6 +709,9 @@ await check('grownupsui', async () => {
     const wait = ms => new Promise(x => setTimeout(x, ms)), h = __sv.huds[0];
     __sv.paused = true; h.setAction({ label: () => 'Nhặt Lá dong', icon: '🌿' }); await wait(300); // (paused: the valley's own loop would hide it again)
     const a = h.q('.act').getBoundingClientRect(), mv = h.q('.hud-br').getBoundingClientRect();
+    // (v1.08f, owner 6 Nov 2026 AEDT: captions are off unless a grown-up turns them on) the place of the words is checked
+    // with captions turned on, as in a11y
+    __sv.settings.captions = true;
     const { say } = await import('/js/voice.js'); say('A test line.', 'Một câu thử.'); await wait(400);
     const cap = document.querySelector('.caption'), c = cap ? cap.getBoundingClientRect() : null;
     const { openGrownups } = await import('/js/ui.js'); await openGrownups(); await wait(400);
