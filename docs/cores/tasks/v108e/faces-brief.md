@@ -94,3 +94,33 @@ The owner said: "The characters and villagers need higher definition or some ref
    - Screenshots of each friend in play and in a close-up, before and after, on phone, tablet and computer.
 
 The 11 named villagers are made by the "villagers" helper on the second account (`villagers-brief.md`). Share your eye style, lighting, outline and texture setup with them through the files on GitHub: `tools/blender/` and a short note in your status file.
+
+## Part 3: sculpted 3D faces in the style of family animated films (owner, 6 Nov 2026 AEDT, pop-ups)
+
+The owner said: "The faces and heads are still round like the current ones; they don't look like the model at all. Anything you can do on the face to refine it and look more like a real 3D person?"
+
+**Pop-up answers:**
+- **Animated-film 3D:** a sculpted head like a family animated film: a real head shape with cheeks, chin and jaw, a small nose, ears and brows, eyes set into the face with real lids, and a mouth that changes shape. Still cute and child-friendly, and it matches the gallery models.
+- **Friends, villagers and crowds:** the four friends and 11 villagers get their own sculpted heads; crowds share a few sculpted heads with their own hair and skin.
+
+1. **Heads are sculpted geometry, not a ball with a painted face:**
+   - forehead, brow ridge, eye sockets, cheekbones and round cheeks, a small nose, a jaw and chin, ears;
+   - a neck that joins the body smoothly.
+   - Start from the four gallery models (`docs/characters-v108/`, the Blender scripts in `tools/blender/lumi*.py`), which already have this. Your game models must keep their face shape, not replace it with a sphere.
+2. **Eyes:**
+   - a real eyeball in a socket, with an iris and two sparkle highlights;
+   - upper and lower lids as geometry that close over the eye for blinks (shape keys or lid bones), keeping the soft-eyes-with-lids look;
+   - brows as their own small shapes that move with the mood.
+3. **Mouth and moods by shape keys:** smile, open (talking), sad, surprised, happy (cheeks up, eyes curved), shy, excited, sleep.
+   - The game drives them through the existing mood and blink hooks (`follow(mood)`, the film's lips with the voice).
+   - The painted face sheet stays only as the far fallback.
+4. **Villagers:**
+   - each of the 11 named villagers has their own head: age and face shape (grandparents with softer cheeks and smile lines, children rounder), from the gallery neighbours.
+   - **Crowds:** about 6 shared sculpted heads (child, grown-up and grandparent; Vietnamese and Australian), each with its own hair, skin and clothes colours, swapped in near the child like the villagers. Far away, the code person or still copy stays.
+5. **Budgets:**
+   - a sculpted head adds about 2-4k triangles;
+   - the HD friend stays within about 25k;
+   - keep `perf`, `battery` and `longplaymem` green: shape keys only on people within close range, still copies far away.
+6. **Pictures and checks:**
+   - before and after close-ups of every friend, the 11 villagers and the crowd heads, at deviceScaleFactor 2 in the game, mid-blink and smiling, on phone and computer;
+   - extend `faces` with: the face has eyelid geometry that closes, the mouth changes shape per mood, and the head is not a sphere (its width differs from its depth and height by a margin).
