@@ -556,7 +556,8 @@ def m_sizzle(m):
     for x in (-1.6, 1.6):
         for z in (-1.4, 1.4): m.cyl(.05, .05, 2.6, '#dddddd', (x, 1.3, z), seg=10)
     m.box(3.4, .12, 3, blue, (0, 2.62, 0), r=.05)
-    m.add(g_cyl(0, 2.4, .7, 4, True), white, mat_of((0, 3.0, 0), (0, math.pi / 4, 0)))   # the white peak
+    for k in range(8): m.add(g_lathe([(2.45, 0), (0, .75)], 1, arc=TAU / 8, a0=k * TAU / 8), white if k % 2 else '#5fa8e8', mat_of((0, 2.66, 0)))   # the striped peak
+    m.sph(.1, '#ffd23f', (0, 3.45, 0), u=10, v=6)
     for s in (-1, 1):
         for k in range(8):
             m.sph(.21, blue if k % 2 else white, (-1.5 + k * .43, 2.48, s * 1.5), (1, .6, .3), u=10, v=6)
