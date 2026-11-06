@@ -5,11 +5,12 @@
 # (no texture: each part keeps its material colour, and the game recolours the "skin" material for the skin tone).
 #   blender -b -P tools/blender/game-light.py -- <in.glb> <out.glb>
 # then: gltfpack -i out.glb -o models/<who>.glb -cc -kn -km   (meshopt compression; tools/make-friends.mts does both)
-import bpy, sys
+import bpy, sys, os
 from mathutils import Vector
 KEY = Vector((-.45, -.6, .66)).normalized()   # the key light, from above and the viewer's left (the person's right)
 argv = sys.argv[sys.argv.index('--') + 1:]
 SRC, DST = argv[0], argv[1]
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hair-finish.py')).read())   # (v1.08e hair round 3: soft hair)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=SRC)
 # triangle budgets per part, about 7,000 in all (v1.08d polish: the item in the hand and the boots, once in the body's
@@ -35,10 +36,14 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
         o.modifiers.move(o.modifiers.find(d.name), 0)  # (before the skin, so the weights are thinned with the shape)
         with bpy.context.temp_override(object=o, active_object=o):
             bpy.ops.object.modifier_apply(modifier=d.name)
+    if '-hair' in o.name: soften_hair(o)   # (v1.08e hair round 3: smooth, weighted normals, no facets)
     print('light:', o.name, have, '->', tris(o)); total += tris(o)
 print('light: total triangles', total)
 # (v1.08e, owner 6 Nov: the sculpted head thinned on its own, its shape kept) joined to the body again: one part, as before
 _h = next((o for o in bpy.context.scene.objects if o.type == 'MESH' and o.name.endswith('-head')), None)
+HEADC = None   # (the head's middle, for the hair's highlight band)
+if _h:
+    _bb = [_h.matrix_world @ Vector(c) for c in _h.bound_box]; HEADC = sum(_bb, Vector()) / 8
 _b = next((o for o in bpy.context.scene.objects if o.type == 'MESH' and o.name.endswith('-body')), None)
 if _h and _b:
     with bpy.context.temp_override(active_object=_b, selected_editable_objects=[_b, _h], selected_objects=[_b, _h]): bpy.ops.object.join()
@@ -61,6 +66,11 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
             # (the game multiplies the skin tone by it, "skin-shade"); the same light as the high-detail models (game-hd.py)
             for li in poly.loop_indices:
                 n = cn[li].vector; k = max(0.0, n.dot(KEY)); v = .64 + .36 * min(1.0, .72 * k + .38 * (.5 + .5 * n.z)); col.data[li].color = (v, v, v, 1)
+            continue
+        if HEADC is not None and '-hair' in o.name and is_hair_mat(mats[poly.material_index] if poly.material_index < len(mats) else None):
+            mw = o.matrix_world; nm = mw.to_3x3()   # (v1.08e hair round 3: one base colour and one soft highlight band)
+            for li in poly.loop_indices:
+                col.data[li].color = hair_colour(c, mw @ me.vertices[me.loops[li].vertex_index].co, (nm @ cn[li].vector).normalized(), HEADC)
             continue
         for li in poly.loop_indices: col.data[li].color = c
     me.color_attributes.active_color = col

@@ -153,7 +153,9 @@ def lighten():
         if o.users_collection[0].name == 'face3d':   # (v1.08e part 3) kept as built: its shape keys are the moods
             o.name = WHO + '-face3d'; continue
         for m in o.modifiers:
-            if m.type == 'SUBSURF': m.levels = 0 if o.users_collection[0].name == 'hair' else min(m.levels, 1)
+            # (v1.08e hair round 3: the locks smoothed once before they are thinned, so no shards or spikes; Lumi's many small
+            # leaves stay as built, smoothed by their normals in game-light.py)
+            if m.type == 'SUBSURF': m.levels = (0 if WHO == 'lumi' else 1) if o.users_collection[0].name == 'hair' else min(m.levels, 1)
             if m.type == 'ARMATURE': m.show_viewport = False
         dg.update(); names = [g.name for g in o.vertex_groups]
         me = bpy.data.meshes.new_from_object(o.evaluated_get(dg), preserve_all_data_layers=True, depsgraph=dg)
