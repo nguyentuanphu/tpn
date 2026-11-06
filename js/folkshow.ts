@@ -212,7 +212,10 @@ export function createFolkShow(G, { looks = [] } = {}) {
   // (batch rollout) Studio switch 'singers': off or not started yet, the stages wait (hidden) for children who never asked
   // a singer to sing
   function singOn() { return !G.keep || G.keep('singers'); }
-  world.updaters.push(() => { const on = singOn(); if (singers.length && (singers[0].col.r > 0) !== on) singers.forEach(Sg => { Sg.parts.forEach(o => { const md = o.userData.model; if (md) { md.obj.visible = on; o.visible = false; } else o.visible = on; }); Sg.col.r = on ? 1.6 : 0; }); });   // (no wall where nothing shows)
+  world.updaters.push(() => { const on = singOn(); if (singers.length && (singers[0].col.r > 0) !== on) singers.forEach(Sg => { Sg.parts.forEach(o => { const md = o.userData.model || o.userData.offModel; if (md) { md.obj.visible = on; o.visible = false; if (on) { o.userData.model = md; delete o.userData.offModel; } else { o.userData.offModel = md; delete o.userData.model; } } else o.visible = on; }); Sg.col.r = on ? 1.6 : 0; }); });
+  world.updaters.push(() => { if (!singers.length || singers[0].col.r > 0) return; for (const Sg of singers) for (const o of Sg.parts) { const md = o.userData.model; if (md) { md.obj.visible = false; o.userData.offModel = md; delete o.userData.model; } } });
+  // (the line above: a stage model that arrives while the singers are off stays hidden too)
+  // (v1.08g festivals: an off stage with its Blender model is left out of the solid map, as the hidden code stage is: js/solids.ts reads a hidden code shape only while it has a model)   // (no wall where nothing shows)
   async function sing(Sg) {
     if (Sg.singing) return; Sg.singing = true;
     const s = Sg.song, beat = 60 / s.bpm;
