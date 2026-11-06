@@ -7,7 +7,7 @@
 // · Each village also has a singer on a little round stage: tap them and they sing a Vietnamese folk song
 //   (traditional songs, played on the game's own synthesiser, with the words shown in a bubble).
 //   Their names are in the villager list, so the grown-ups can rename them (Grown-ups, or Sparkle Studio).
-import { THREE, P, merge, toonVC } from './gfx.js';
+import { THREE, P, merge, toonVC, worldTag } from './gfx.js';
 import { T, nm, onLang, registerName } from './i18n.js';
 import { say } from './voice.js';
 import { SFX, Music, tone, noise, ac } from './audio.js';
@@ -124,7 +124,8 @@ export function createFolkShow(G, { looks = [] } = {}) {
     const [bx, bz] = at, y = heightAt(bx, bz);
     // the board on a post
     const post = new THREE.Mesh(merge([P(new THREE.CylinderGeometry(.09, .11, 3.4, 6), '#7a5236', [0, 1.7, 0]), P(new THREE.CylinderGeometry(.35, .45, .25, 8), '#8a6a4a', [0, .12, 0])]), toonVC());
-    post.position.set(bx, y, bz); scene.add(post); world.colliders.push({ x: bx, z: bz, r: .35 });
+    post.position.set(bx, y, bz); scene.add(post);
+    worldTag(post, 'fe-folk-post'); world.colliders.push({ x: bx, z: bz, r: .35 });
     const board = boardSprite(); board.position.set(bx, y + 4.1, bz); scene.add(board);
     const S = { id: 'fs' + k, x: bx, z: bz, y, hosts: g.hosts, where, board, off: 0, live: -1 };
     shows.push(S);
@@ -190,7 +191,8 @@ export function createFolkShow(G, { looks = [] } = {}) {
     const [x, z] = at, y = heightAt(x, z), face = Math.atan2(S.x - x, S.z - z) + Math.PI;
     const stage = new THREE.Mesh(merge([P(new THREE.CylinderGeometry(1.5, 1.6, .3, 20), '#7a3a8a', [0, .15, 0]), P(new THREE.CylinderGeometry(1.42, 1.42, .04, 20), '#ffd23f', [0, .31, 0]),
       P(new THREE.CylinderGeometry(.03, .03, 1.3, 6), '#444', [.5, .95, .5]), P(new THREE.SphereGeometry(.08, 8, 6), '#222', [.5, 1.64, .5]), P(new THREE.CylinderGeometry(.22, .25, .05, 10), '#444', [.5, .34, .5])]), toonVC());
-    stage.position.set(x, y, z); scene.add(stage); const col = { x, z, r: 1.6 }; world.colliders.push(col);
+    stage.position.set(x, y, z); scene.add(stage);
+    worldTag(stage, 'fe-folk-stage'); const col = { x, z, r: 1.6 }; world.colliders.push(col);
     const look = { style: gender === 'f' ? 'aodai' : 'shirt', color, hat: 'none', back: 'none', hair, hairStyle: hs, skin: '#f2c19e', glider: 0 };
     const A = nameAvatar(buildAvatar(crowdLook(look), null), name); A.root.position.set(x, y + .33, z); A.root.rotation.y = face; scene.add(A.root);
     registerName(name, '🎤');
@@ -210,7 +212,7 @@ export function createFolkShow(G, { looks = [] } = {}) {
   // (batch rollout) Studio switch 'singers': off or not started yet, the stages wait (hidden) for children who never asked
   // a singer to sing
   function singOn() { return !G.keep || G.keep('singers'); }
-  world.updaters.push(() => { const on = singOn(); if (singers.length && singers[0].parts[0].visible !== on) singers.forEach(Sg => { Sg.parts.forEach(o => { o.visible = on; }); Sg.col.r = on ? 1.6 : 0; }); });   // (no wall where nothing shows)
+  world.updaters.push(() => { const on = singOn(); if (singers.length && (singers[0].col.r > 0) !== on) singers.forEach(Sg => { Sg.parts.forEach(o => { const md = o.userData.model; if (md) { md.obj.visible = on; o.visible = false; } else o.visible = on; }); Sg.col.r = on ? 1.6 : 0; }); });   // (no wall where nothing shows)
   async function sing(Sg) {
     if (Sg.singing) return; Sg.singing = true;
     const s = Sg.song, beat = 60 / s.bpm;
