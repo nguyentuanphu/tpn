@@ -175,4 +175,37 @@ export const BLENDER_FILMS: Record<string, BlenderFilm> = {
     { s: 28.79, e: 37.5 },
     { s: 37.5, e: 47.13, help: { t: 45.1, x: 35, y: 46, en: 'Tap to paint a big wind!', vi: 'Chạm để vẽ một cơn gió to nào!' } },
     { s: 47.13, e: 60 }] },
+  weaver: { v: 'v1', pages: [
+    { s: 0, e: 11.13 },
+    { s: 11.13, e: 19.42 },
+    { s: 19.42, e: 27.96 },
+    { s: 27.96, e: 36.67 },
+    { s: 36.67, e: 42.96, help: { t: 41.09, x: 50, y: 68, en: 'Tap to call the magpies!', vi: 'Chạm để gọi chim khách nào!' } },
+    { s: 42.96, e: 51.75, help: { t: 46.92, x: 50, y: 50, en: 'Tap for the gentle Ngâu rain!', vi: 'Chạm để mưa ngâu rơi nào!' } }] },
+  nian: { v: 'v1', pages: [
+    { s: 0, e: 12.29 },
+    { s: 12.29, e: 19.58 },
+    { s: 19.58, e: 29.71 },
+    { s: 29.71, e: 35.75, help: { t: 33.89, x: 50, y: 50, en: 'Tap to make it bright and loud!', vi: 'Chạm để thắp đèn và đốt pháo nào!' } },
+    { s: 35.75, e: 43.04 },
+    { s: 43.04, e: 52.25, help: { t: 47.39, x: 50, y: 50, en: 'Tap to start the dragon dance!', vi: 'Chạm để múa rồng nào!' } }] },
+  kongrong: { v: 'v1', pages: [
+    { s: 0, e: 11.96 },
+    { s: 11.96, e: 20.67 },
+    { s: 20.67, e: 27.71, help: { t: 25.79, x: 42, y: 43, en: 'Tap to help Kong Rong take the smallest pear!', vi: 'Chạm để Khổng Dung lấy quả lê nhỏ nhất nào!' } },
+    { s: 27.71, e: 32.92, help: { t: 31.13, x: 50, y: 47, en: 'Tap to give the big pears to the brothers!', vi: 'Chạm để mời các anh quả lê to nào!' } },
+    { s: 32.92, e: 40.46 },
+    { s: 40.46, e: 52.17 }] },
+  change: { v: 'v1', pages: [
+    { s: 0, e: 13.54 },
+    { s: 13.54, e: 22.25 },
+    { s: 22.25, e: 29.29, help: { t: 27.37, x: 50, y: 82, en: 'Tap to light the lanterns!', vi: 'Chạm để thắp đèn lồng nào!' } },
+    { s: 29.29, e: 42.17 }] },
+  crow: { v: 'v1', pages: [
+    { s: 0, e: 10.54 },
+    { s: 10.54, e: 19.5 },
+    { s: 19.5, e: 27.21 },
+    { s: 27.21, e: 33.67, help: { t: 31.78, x: 65, y: 28, en: 'Tap to drop the pebbles in!', vi: 'Chạm để thả sỏi vào bình nào!' } },
+    { s: 33.67, e: 38.79, help: { t: 37.01, x: 53, y: 46, en: 'Tap to help the crow drink!', vi: 'Chạm để quạ uống nước nào!' } },
+    { s: 38.79, e: 49.92 }] },
 };
