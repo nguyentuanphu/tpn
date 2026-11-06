@@ -132,6 +132,9 @@ await check('villagermodels', async () => (await import('./villager-models.mts')
 // (v1.08g festivals) the festivals' Blender pieces: every model loads, each theme fetches and uses its models with its
 // colours painted, Lotus Village's draws on Tet, the quest lantern and the folk show's models, blocked models (tests/festival-models.mts)
 await check('festmodels', async () => (await import('./festival-models.mts')).festivalModelsCheck(b));
+// (v1.08g creatures) the little flocks as Blender models near the child: one InstancedMesh per kind, where their pictures
+// are, pictures hidden but kept for taps, the new little birds, blocked models keep the pictures (tests/flocks.mts)
+await check('flocks', async () => (await import('./flocks.mts')).flocksCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);
