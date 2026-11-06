@@ -35,7 +35,8 @@ export function createFlocks(G) {
   for (const s of world.swans || []) add('swan', s);
   // (pop-up) a new flock of little birds circling over the trees round home: no picture before, so only the models
   const birds = K('bird', 'flock-bird', 0, 'flock-bird-wing'), cx = PLATEAU.x, cz = PLATEAU.z;
-  for (let i = 0; i < 9; i++) { const o = new THREE.Object3D(); o.userData.circle = { a: i * .7, r: 14 + (i % 3) * 5, h: 7 + (i % 4) * 1.5, sp: .35 + (i % 3) * .08 }; o.position.set(cx + Math.cos(i * .7) * 14, 0, cz + Math.sin(i * .7) * 14); birds.members.push({ s: o, kind: 'bird', ph: i }); }
+  // (their rounds of 13, 16 and 19 m stay over the trees, off the road past home: check roads)
+  for (let i = 0; i < 9; i++) { const o = new THREE.Object3D(); o.userData.circle = { a: i * .7, r: 13 + (i % 3) * 3, h: 7 + (i % 4) * 1.5, sp: .35 + (i % 3) * .08 }; o.position.set(cx + Math.cos(i * .7) * 13, 0, cz + Math.sin(i * .7) * 13); birds.members.push({ s: o, kind: 'bird', ph: i }); }
 
   const near = (k: Kind) => k.members.some(m => G.heroes.some(h => Math.hypot(h.pos.x - m.s.position.x, h.pos.z - m.s.position.z) < NEAR));
   async function load(k: Kind) {

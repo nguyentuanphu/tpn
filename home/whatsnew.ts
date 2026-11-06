@@ -1,11 +1,12 @@
 // (v1.08b story, owner 3 Nov 2026 AEDT pop-up: docs/plans/links-rollout-install.md "The website: what's new and coming
 // up") Two parts of the family website read the game's own release calendar (js/content/releasecal.ts, with the owner's
-// moves from /api/live) and the festival dates already on the page (made from the game's festival calendar), so the
-// website and the game always agree (WEBSITE-RULES rule 7, one release source):
+// moves, carried by the public festival snapshot /api/festivals) and the festival dates already on the page (made from
+// the game's festival calendar), so the website and the game always agree (WEBSITE-RULES rule 7, one release source):
 // - a strip just under the hero picture: Happening now, New this week, Coming up;
 // - a Calendar part inside Discover (after its "start here" cards; it extends the festival overview): festivals, new lantern chapters, new games and stories,
 //   and festival games with the days they come back.
 // The four destinations stay as they are (rule 1). English and Vietnamese follow the page's language button.
+import { onPublicFestivals, publicFestivals, startPublicFestivals } from '../js/festival-live.js';
 import { calendar, whatsNew, countLine, daysUntil, addDays, weekOf, isoDay, loadCalNames, type CalItem, type CalMoves } from '../js/content/releasecal.js';
 
 type Fest = { id: string, en: string, vi: string, face: string, date: string, build: number, quiet: boolean };
@@ -64,7 +65,7 @@ const CSS = `.wn-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax
 .wn-row{display:flex;gap:10px;align-items:center;background:#fff;border-radius:14px;padding:8px 12px;font-size:16px;min-height:56px}.wn-row small{display:block;font-size:16px;color:#6a5a7a}
 .wn-face{display:flex;flex:0 0 auto;max-width:144px}.wn-face svg{width:48px;height:48px}.wn-sub{font-size:16px}`;
 
-export async function setupWhatsNew(now = new Date()) {
+export function setupWhatsNew(now = new Date()) {
   const hero = document.querySelector('section.hero#discover'); if (!hero) return;
   // in Discover itself (the page the hero is on), after its first section; the festival overview stays where it is
   const over = hero.parentElement?.querySelector(':scope > section.start-here') || hero;
@@ -82,5 +83,8 @@ export async function setupWhatsNew(now = new Date()) {
   document.querySelector('#language-button')?.addEventListener('click', () => setTimeout(() => document.querySelectorAll<HTMLElement>('[data-wn-en]').forEach(e => { e.textContent = (lang() === 'vi' ? e.dataset.wnVi : e.dataset.wnEn) || ''; }), 0));
   import('../js/art.js').then(m => { PIC = m.pic; draw(); }).catch(() => { });
   loadCalNames().then(draw).catch(() => { });
-  try { const r = await fetch('/api/live', { cache: 'no-store' }); if (r.ok) { const j = await r.json(); moves = j && j.content && j.content.releaseCalendar && j.content.releaseCalendar.moves || null; draw(); } } catch { }
+  // the owner's moves come with the public festival snapshot (/api/festivals, netlify/functions/festival-status.mts): the
+  // website reads no other settings (check festivalsync)
+  const fromPublic = () => { const m = publicFestivals()?.calendar?.moves || null; if (JSON.stringify(m) !== JSON.stringify(moves)) { moves = m; draw(); } };
+  onPublicFestivals(fromPublic); startPublicFestivals(); fromPublic();
 }

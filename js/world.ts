@@ -589,8 +589,11 @@ export function createWorld(scene, quality) {
   // ducks on the lake and chickens in the village (just for company)
   const critters = [];
   for (let i = 0; i < 6; i++) { const s = sprite('🦆', 1.4); critters.push({ s, cx: LAKE.x + (Math.random() - .5) * 30, cz: LAKE.z + (Math.random() - .5) * 30, r: 3 + Math.random() * 4, a: Math.random() * 6, sp: .3 + Math.random() * .3, water: true }); }
-  for (let i = 0; i < 5; i++) { const s = sprite(i % 2 ? '🐓' : '🐔', 1.1); critters.push({ s, cx: V.x - 8 + Math.random() * 20, cz: V.z - 20 + Math.random() * 8, r: 2 + Math.random() * 3, a: Math.random() * 6, sp: .4 }); }
-  for (let i = 0; i < 14; i++) { const s = sprite('🦋', .7); critters.push({ s, cx: PLATEAU.x + (Math.random() - .5) * 160, cz: PLATEAU.z + (Math.random() - .5) * 160, r: 3, a: Math.random() * 6, sp: .8, fly: true }); }
+  // (v1.08g) the hens' and butterflies' little rounds stay off the roads and streets (check roads: since they are drawn as
+  // models, js/flocks.ts, they count as small things on the ground): a spot is tried again until its whole round is clear
+  const offRoad = (spot: () => [number, number], r: number) => { let x = 0, z = 0; for (let k = 0; k < 60; k++) { [x, z] = spot(); x = clamp(x, -HALF + 30, HALF - 30); z = clamp(z, -HALF + 30, HALF - 30); if (edgeDist(x, z) > r + 1) break; } return { cx: x, cz: z }; };
+  for (let i = 0; i < 5; i++) { const s = sprite(i % 2 ? '🐓' : '🐔', 1.1), r = 2 + Math.random() * 3; critters.push({ s, ...offRoad(() => [V.x - 8 + Math.random() * 20, V.z - 20 + Math.random() * 8], r), r, a: Math.random() * 6, sp: .4 }); }
+  for (let i = 0; i < 14; i++) { const s = sprite('🦋', .7); critters.push({ s, ...offRoad(() => [PLATEAU.x + (Math.random() - .5) * 160, PLATEAU.z + (Math.random() - .5) * 160], 3), r: 3, a: Math.random() * 6, sp: .8, fly: true }); }
   const fireflies = [];
   for (let i = 0; i < 40; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ color: '#fff7a0', transparent: true, opacity: 0, depthWrite: false, fog: false })); s.scale.setScalar(.25); const x = BAMBOO.x + (Math.random() - .5) * 80, z = BAMBOO.z + (Math.random() - .5) * 80; s.position.set(x, heightAt(x, z) + 1.5, z); scene.add(s); fireflies.push({ s, ox: x, oz: z, a: Math.random() * 6 }); }
   for (let i = 0; i < 30; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ color: '#fff7a0', transparent: true, opacity: 0, depthWrite: false, fog: false })); s.scale.setScalar(.25); const x = V.x + (Math.random() - .5) * 60, z = V.z + (Math.random() - .5) * 60; s.position.set(x, heightAt(x, z) + 1.5, z); scene.add(s); fireflies.push({ s, ox: x, oz: z, a: Math.random() * 6 }); }

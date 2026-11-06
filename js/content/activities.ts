@@ -10,7 +10,9 @@ import { T } from '../i18n.js';
 import { CUSTOM, itemEnabled, keptOn, MONEY_GAMES, releaseOn } from '../custom.js';
 import { PLACES as MAP_PLACES, PLOTS as MAP_PLOTS } from './map.js';
 import { heldGame, calDue } from './secondset.js';
-import { inCalendar } from './releasecal-core.js'; // (v1.08d s2vn) a game with a fixed day in the release calendar waits for it
+// (v1.08d s2vn) a Season 2 region's game waits for its region's day. Only those (CAL_WITH): the second set's games are in
+// the calendar too, but they follow heldGame (open on their day, or earlier by playing with New games on: check secondset)
+import { CAL_WITH } from './releasecal-core.js';
 import { inSeason } from './festseason.js'; // (v1.08b games) festival games only in their season
 
 // the areas, in the order the path visits them; a child who can't read knows each one by its picture
@@ -139,7 +141,7 @@ export function gameInfo(id) {
   // (batch rollout) each money game has its own Studio switch (money_<id>): off or not started yet, it is hidden unless a
   // child playing has already played it; an explicit Off still wins (the owner-approved explicit-off policy)
   // (r90) the second set of games is held back while Studio's New games switch is off (js/content/secondset.ts)
-  const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id) || (inCalendar('game:' + id) && !calDue('game', id)); // (v1.08d s2vn: a Season 2 game opens on its region's day)
+  const held = (MONEY_GAMES.includes(id) && !keptOn('money_' + id)) || heldGame(id) || (!!CAL_WITH['game:' + id] && !calDue('game', id)); // (v1.08d s2vn: a Season 2 game opens on its region's day)
   const orchardHeld = id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard','single');
   const fruitHeld = id === 'fruitparade' && !fruitParadeAvailable('single');
   return { id, area: AREAS.some(a => a.key === c.area) ? c.area : area, ageMin: c.little === true ? 2 : c.little === false ? 5 : age, level, hidden: !itemEnabled('game', id) || !inSeason(id) || (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar','single')) || c.hide === true || held || fruitHeld || orchardHeld || (id.startsWith('s2a_') && !calDue('game', id)) }; // (v1.08d s2au) a Season 2 game waits for its region's day
