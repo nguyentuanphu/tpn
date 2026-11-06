@@ -1,7 +1,8 @@
 # v1.08e faces: status
 
-**ready for Release** (6 Nov 2026, 07:40 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
-close-ups) and the villagers brief (`villagers.md`). Part 1 was merged into `integrate/v108` already.
+**ready for Release** (6 Nov 2026, 14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
+close-ups), the villagers brief (`villagers.md`) and Release's clear in-game shots
+(`docs/world-models-v108e/faces/game/`, 28 pictures at 2x, Pretty, phone and computer). Next: Part 3 (sculpted faces). Part 1 was merged into `integrate/v108` already.
 Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
 
 ## 1. Why the faces looked stiff (looked first, 6 Nov 2026, 03:10 AEDT)

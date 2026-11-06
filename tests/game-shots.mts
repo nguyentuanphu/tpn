@@ -27,7 +27,7 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     };
   });
   // 1. each friend, the camera in front at the close-up distance: smiling, then mid-blink
-  for (const id of ['finn', 'sol', 'clara', 'lumi']) {
+  for (const id of process.env.ONLY ? [] : ['finn', 'sol', 'clara', 'lumi']) {
     const shots = await P.page.evaluate(async id => {
       const W = window as any, G = W.__sv, hh = G.heroes[0], WD = await import(String('/js/world.js'));
       hh.profile.look.friend = id; hh.profile.look.set = id === 'clara' || id === 'lumi' ? 'girl' : 'boy'; hh.place(WD.VILLAGE.x + 6, WD.VILLAGE.z - 8); hh.buildModel();
@@ -45,7 +45,7 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     console.log(dev, id, shots.hd ? 'high-detail' : 'light model');
   }
   // 2. Mai, Ba, Jack and Ruby in the valley, the child beside them, the camera in front of their faces
-  for (const id of ['mai', 'ba', 'jack', 'ruby']) {
+  for (const id of process.env.ONLY ? [] : ['mai', 'ba', 'jack', 'ruby']) {
     const url = await P.page.evaluate(async id => {
       const W = window as any, G = W.__sv, hh = G.heroes[0], n = G.npcs.find((x: any) => x.id === id), r = n.obj.rotation.y, fx = Math.sin(r), fz = Math.cos(r), o = n.obj.position;
       hh.place(o.x + fx * 2.2 + fz * 1.6, o.z + fz * 2.2 - fx * 1.6);
@@ -61,12 +61,25 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     const W = window as any, G = W.__sv, hh = G.heroes[0], M = await import(String('/js/content/map.js'));
     const m = (M.WORLD.places || M.PLACES || []).find((x: any) => x.id === 'market'), at = m ? m.at : [197, 114];
     hh.place(at[0], at[1] + 4); await W.__wait(9000);
-    const p = hh.pos; return W.__shoot([p.x + 6, p.y + 4.2, p.z + 9], [p.x, p.y + 1, p.z - 2], 44);
+    // aimed at the crowd people near the child who wear their gallery models, the child at the side
+    const AV = await import(String('/js/avatar.js')), T3 = (await import(String('/js/gfx.js'))).THREE, wp = (o: any) => o.getWorldPosition(new T3.Vector3());
+    const near: any[] = [];
+    for (let k = 0; k < 40 && !near.length; k++) {
+      for (const A of AV.OUTLINED as any[]) if (A.model && /villager-(vn|au)-/.test(A.root.userData.villagerModel || '')) { const q = wp(A.root); near.push({ q, d: Math.hypot(q.x - hh.pos.x, q.z - hh.pos.z), y: A.root.getWorldQuaternion(new T3.Quaternion()) }); }
+      if (!near.length) await W.__wait(500);
+    }
+    hh.av.root.visible = false; // (the child out of the picture: the crowd is the subject)
+    if (!near.length) return W.__shoot([hh.pos.x, hh.pos.y + 2.2, hh.pos.z + 6], [hh.pos.x, hh.pos.y + 1.1, hh.pos.z], 40);
+    // in front of the nearest one, a little to the side, so its face and the people behind it show
+    near.sort((a: any, b: any) => a.d - b.d); const n0 = near[0], f = new T3.Vector3(0, 0, 1).applyQuaternion(n0.y), sx = new T3.Vector3(f.z, 0, -f.x);
+    const t = n0.q; await W.__wait(800);
+    return W.__shoot([t.x + f.x * 3.4 + sx.x * 1.2, t.y + 1.9, t.z + f.z * 3.4 + sx.z * 1.2], [t.x, t.y + 1.15, t.z], 38);
   });
   save(`market-crowd-${dev}`, market);
   if (P.errors.length) console.log(dev, P.errors.slice(0, 3));
   await P.ctx.close();
   // 4. the Welcome friend picker (a new player), the friends turning in their cards
+  if (process.env.ONLY) continue;
   const Q = await open(b, { w, h, touch, dpr: 2, play: false, settings: { quality: 'high' }, pre: () => { localStorage.setItem('sv2_profiles', '[]'); } });
   await Q.page.click('.screen.title .press', { force: true }); await Q.page.waitForSelector('.screen.who');
   await Q.page.click('.who .make'); await Q.page.waitForSelector('.modal.friendpick .fr-name');

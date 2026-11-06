@@ -58,6 +58,9 @@ and soft hair locks all round the head.
 
 ## Checks
 
+6 Nov 2026, 14:20 AEDT, one at a time: `perf` pass (village 276 draws, 692k triangles, largest texture 1024 px),
+`villagermodels` pass (the 11 and a crowd neighbour), `battery` pass.
+
 `villagermodels` (new, `tests/villager-models.mts`, end of `tests/run.mts`): pass (each of the 11 worn at the code
 person's height and feet, blinks, eyes to a child on its left, tag and talk kept, the code person when blocked). The
 other checks: see `faces.md` (the same branch and runs).
@@ -74,4 +77,6 @@ other checks: see `faces.md` (the same branch and runs).
 
 - Each named villager is drawn from the gallery neighbour closest to their look in the game, in their game colours.
 - Up to about 26,000 triangles and 0.4-0.9 MB per model (the owner chose "smoother, heavier"); only the villagers within
-  40 m (named) or 25 m (crowd, three swaps every half second) wear them, so `perf` stays inside its limits.
+  40 m (named) or 12 m (crowd: two swaps every half second, at most three crowd models within 25 m of a child), at
+  about 18,000 triangles and a 1024 px picture each, so `perf` stays inside its limits (village 692k triangles, 6 Nov
+  2026 14:20 AEDT).
