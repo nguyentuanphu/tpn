@@ -61,7 +61,12 @@ G.netGames = createNetGames({
     const online = { mine: s.mine, names, seed: s.gid, size: s.size, connected: () => !!Net.connected, present: seat => seat === s.mine || !s.gone.has(seat) && !!Net.remotes[s.seats[seat]], leave: end,familyQuiz:()=>live()?G.netGames.familyQuiz():null,shareFamilyQuiz:(questions:import('../content/family-quiz.js').FamilyQuestion[])=>live()&&G.netGames.shareFamilyQuiz(questions),requestFamilyQuiz:()=>{if(live())G.netGames.requestFamilyQuiz();}, peek: (n, seat) => live() ? G.netGames.session?.moves.get(n)?.get(seat) : undefined, onMove: f => live() ? G.netGames.onMove(f) : undefined, move: (n, mv) => live() && G.netGames.move(n, mv), next: (n, seat) => live() ? G.netGames.next(n, seat) : Promise.resolve(null), all: n => live() ? G.netGames.all(n) : Promise.resolve([]) };
     if (/^tale-/.test(s.game)) { // a tale read together: page turns travel as moves
       const t = (G.TALES || []).find(x => 'tale-' + x.id === s.game); if (!t || !G.readTaleNow) { end(); return; }
-      let seq = 0; const sync = { send: p => online.move(seq++, p), listen: fn => online.onMove((seat, n, mv) => { if (seat !== s.mine) fn(mv); }) };
+      // (v1.08 Release, check ownertogetherstart) the story theatre now loads after the start (js/learn.ts), so it listens a
+      // moment after the game began: turns that came before it (a friend's early turns, replayed at the start) are handed
+      // to it when it listens, in order, as if they had come just then
+      let seq = 0; const sync = { send: p => online.move(seq++, p), listen: fn => { const off = online.onMove((seat, n, mv) => { if (seat !== s.mine) fn(mv); });
+        const had = live() ? G.netGames.session.moves : null; if (had) for (const n of [...had.keys()].sort((a, b) => a - b)) for (const [seat, mv] of had.get(n)) if (seat !== s.mine) fn(mv);
+        return off; } };
       G.readTaleNow(G.heroes[0], t, sync).finally(end); return;
     }
     // (Round V, owner 13 Oct) the Friends page closes when the game starts (it stayed in front of the game); "Play again"

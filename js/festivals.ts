@@ -119,9 +119,19 @@ export function createFestivals(G) {
   const free = (x, z, r = 1) => Math.abs(x) <= EDGE - r && Math.abs(z) <= EDGE - r && heightAt(x, z) > WATER + .3 && !W.colliders.some(c => c.r > 0 && c.top == null && Math.hypot(c.x - x, c.z - z) < c.r + r) && !W.boxes.some(b => x > b.x0 - r && x < b.x1 + r && z > b.z0 - r && z < b.z1 + r);
   // (owner, 10 Oct) the street spots: js/festdecor.js, loaded once a child plays (PERF-001), then the decorations are built
   // (v1.08 startup, PERF-001) the decorations' pieces (js/festpieces.ts) come with it
+  // (v1.08 Release, check tienlen) the festivals' Blender models are fetched first (at most 8 s), then the decorations are
+  // built once: they were built three times a few seconds after the start (before the models, and twice after), and a
+  // game opened then stood still; a model that comes later still has build() make them again, as before
   let D = null, loadingD = null, waitD = false, FP: typeof import('./festpieces.js') = null;
-  const loadD = () => loadingD || (loadingD = Promise.all([import('./festdecor.js'), import('./festpieces.js')]).then(([m, fp]) => { FP = fp; D = { ...m.createDecor(free), tell: m.tell, decoOf: m.decoOf, FRAC: m.FRAC }; build();
-    FP.loadProps(FP.propsFor(active)).then(() => { if (Object.keys(PROPS).length && active.length) build(); }).catch(e => console.warn('festival props', e && e.message)); }).catch(e => { loadingD = null; console.warn('festdecor', e); window.svModuleGone?.(e); }));
+  const loadD = () => loadingD || (loadingD = Promise.all([import('./festdecor.js'), import('./festpieces.js')]).then(([m, fp]) => { FP = fp;
+    return Promise.race([FP.loadProps(FP.propsFor(active)).catch(e => console.warn('festival props', e && e.message)), new Promise(r => setTimeout(r, 8000))])
+      .then(() => { D = { ...m.createDecor(free), tell: m.tell, decoOf: m.decoOf, FRAC: m.FRAC }; buildFree(); }); }).catch(e => { loadingD = null; console.warn('festdecor', e); window.svModuleGone?.(e); }));
+  // (v1.08 Release, check tienlen) the builds that come by themselves (the first, and again when the models are in) wait
+  // while a game or a story is open in front of the valley: building takes a second or two on a slow device, and the game
+  // stood still meanwhile (the cards stopped being dealt)
+  let freeWait = 0;
+  const busy = () => !!document.querySelector('.gl:not(.out), .theatre:not(.out)');
+  const buildFree = () => { if (!busy()) { build(); return; } if (freeWait) return; freeWait = window.setInterval(() => { if (busy()) return; clearInterval(freeWait); freeWait = 0; build(); }, 500); };
   const streetSpots = (key, o) => D ? D.streetSpots(key, o) : [];
   const unhook = list => { list.forEach(it => { const k = G.interactables.indexOf(it); if (k >= 0) G.interactables.splice(k, 1); }); list.length = 0; };
   // (owner, 13 Oct: 5x the decorations) the decorations are drawn in 12 m patches: the ones nearest the children first,
@@ -156,7 +166,7 @@ export function createFestivals(G) {
     group.clear(); places3.length = 0; placed.length = 0; bursts.length = 0; glowMeshes = []; unhook(tables); unhook(doors);
     active = activeFestivals();
     // (v1.08g festivals) a festival that starts while playing: its models are fetched, then the decorations built again
-    { const need = FP.propsFor(active); if (need.length && !loadingProps) { loadingProps = true; FP.loadProps(need).then(() => { loadingProps = false; if (FP.propsFor(active).length < need.length) build(); }, () => { loadingProps = false; }); } }
+    { const need = FP.propsFor(active); if (need.length && !loadingProps) { loadingProps = true; FP.loadProps(need).then(() => { loadingProps = false; if (FP.propsFor(active).length < need.length) buildFree(); }, () => { loadingProps = false; }); } }
     D.begin();const supports=new Map(),drawBunting=(a,b,cols,kind,wall=false)=>FP.bunting(a,b,cols,kind,wall,supports);
     for (const A of active) if (A.F.id === 'halloween' && A.on) doorSpots(A.F).forEach(q => D.claim(q));
     const places = PLACES(), taken = new Set(), hunts = [];

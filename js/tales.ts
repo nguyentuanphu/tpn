@@ -96,6 +96,9 @@ export async function openTheatre(tale, { name = '', onDone = undefined, startPa
       const my = ++token; await readyOr; if (!alive || my !== token) return;
       const [pics, en, vi] = tale.pages[k], st = stageOf(en);
       if (film) return drawFilm(my, en, vi, fromFriend);
+      // (v1.08 Release, check ownertogetherstart) the page turn goes to the friends at once: waiting for the page's
+      // picture first lost a turn when the next tap came before the picture (only the last of two quick turns was sent)
+      publish(fromFriend);
       stage.className = 'th-stage st-' + st; bg.innerHTML = SCENES[st] ? `<svg class="sc" viewBox="0 0 800 450" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${SCENES[st]()}</svg>` : STAGE_ART[st] || '';
       // (v1.08c) a tale with pages drawn in Blender shows its own picture of the page (it has the people and the place in
       // it, so the little actors stay away); with no picture to be had, the painted stage below plays as before
@@ -122,7 +125,6 @@ export async function openTheatre(tale, { name = '', onDone = undefined, startPa
       if (/✨|magic|thần|fairy|Bụt/i.test(pics + en)) for (let i = 0; i < 10; i++) fx.appendChild(el('i', 'th-spark', pic('✨'))).style.cssText = `left:${10 + (i * 41) % 80}%;top:${10 + (i * 23) % 60}%;animation-delay:${(i % 6) * .3}s`;
       text.innerHTML = `<p>${esc(T(en, vi).replace(/\{name\}/g, name))}</p>`;
       dots.innerHTML = tale.pages.map((_, i) => `<i class="${i === k ? 'on' : i < k ? 'done' : ''}"></i>`).join('');
-      publish(fromFriend);
       m.querySelector('.th-prev').disabled = k === 0;
       m.querySelector('.th-next').innerHTML = (k === tale.pages.length - 1 ? pic('🏁') : '▶') + `<small>${k === tale.pages.length - 1 ? T('End', 'Hết') : T('Next', 'Sau')}</small>`;
       const pageSound=(SFX as typeof SFX & {page?:()=>void}).page; pageSound ? pageSound() : SFX.tap();

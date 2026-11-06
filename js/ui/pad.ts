@@ -266,7 +266,10 @@ export const openPad = Object.assign(function (game, i, tab) {
       else { SFX.tap(); say('All hats! Your companion has every hat. Tap a hat to choose who wears it.', 'Đủ mũ rồi! Bạn đồng hành có tất cả các mũ. Chạm vào mũ để chọn bạn nào đội.'); } });
   }
   function drawBag(body) {
-    if (!FR) import('./friends-row.js').then(m => { FR = m; if (body.isConnected && body.querySelector('.bag-top')) drawBag(body); });
+    // (v1.08 Release) the friends' rows come in after the Backpack is first drawn: a help card the child already opened
+    // stays open over the redrawn page (it was wiped, so the first tap on a thing seemed to do nothing; check wearbag)
+    if (!FR) import('./friends-row.js').then(m => { FR = m; if (!body.isConnected || !body.querySelector('.bag-top')) return;
+      const open = body.querySelector('.bag-help'); drawBag(body); if (open && !body.querySelector('.bag-help')) body.appendChild(open); });
     // (Round V) what an ingredient is for: the dishes it goes into at a cooking pot
     const ingInfo = id => { const it = ITEMS[id], uses = RECIPES.filter(r => r.need.includes(id)), names = uses.map(r => r.name());
       const en = `${it.name()}: an ingredient. ${uses.length ? 'Cook it at a cooking pot to make ' + names.join(', ') + '.' : 'Cook it at a cooking pot.'}`, vi = `${it.name()}: nguyên liệu. ${uses.length ? 'Nấu ở nồi để làm ' + names.join(', ') + '.' : 'Nấu ở nồi nhé.'}`;
