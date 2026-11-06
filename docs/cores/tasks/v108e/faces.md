@@ -212,6 +212,21 @@ Checks changed (with the reason):
   any material; it is now counted as in the valley with its model. Without this, the 62 "held" pictures were exactly
   those (the run without the villager models was clean).
 
+## The full rebuild (7 Nov 2026, 01:12 AEDT, real Blender 4.2.9, after merging work/v108e-hair)
+
+All 33 models built once (friends light and high-detail, 11 named villagers, the crowd), commit fb7eef9d3.
+Checks, one at a time: villagermodels pass, perf pass (village 274 draws / 715k triangles, over its own
+budget note as before), battery pass, longplaymem pass, friendmodel pass (finn 10927, sol 10902, clara 10892,
+lumi 15596 triangles), frienditems pass, faces pass. The faces check's mouth colour limit (green under .12) was
+written from a wrong note for the rose #c4626a (its linear green is .122, not .05); now under .16, which still
+keeps the lips (green .2) out.
+
+Shots: [rebuild/](../../../world-models-v108e/faces/rebuild/) (heads phone 1x and 2x, computer 2x, 3/4 view,
+full length, 4x close-ups of Clara and Mai) and [rebuild/game/](../../../world-models-v108e/faces/rebuild/game/)
+(friends and villagers in the valley, the market crowd, Welcome). Seen: faces smooth and even on all 33.
+Still to look at: the friends' hair (Finn, Sol, Clara) shows facets at 2x and 4x (the hair helper's part); dark
+bake smudges at the waist and hips of the ao dai (Mai and the crowd), Su's and Lan's tunics.
+
 ## Owner's decisions
 
 - 6 Nov 2026 AEDT (pop-up, in this chat): "Everything still need better refinement" → next is Part 2 (high-detail
