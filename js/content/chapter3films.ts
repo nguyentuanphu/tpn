@@ -52,7 +52,7 @@ FILMS.lantern_ch3 = { pages: [
     S.add(buildHarbourBridge(), -6, 0, -30);
     const op = buildOperaHouse(); op.scale.setScalar(.7); S.add(op, 12, 0, -16, -.5);
     const sails = buildSailLights(); sails.scale.setScalar(.7); S.add(sails, 12, 0, -16, -.5); S.every((dt, time) => sails.userData.tint(time));
-    S.add(buildFerry(), -2, 0, -12, .4);
+    S.add(buildFerry(true), -2, 0, -12, .4);
     const kid = S.person(kidOf(S), -.6, -1, PI, .72), chi = S.person(CHI, .8, -.8, PI, .72), jack = S.person(JACK, -2, -.6, PI, .72), ruby = S.person(RUBY, 2.2, -.6, PI, .72);
     const comp = buildCompanion(S.ctx.companion || 'firefly'); S.add(comp, .1, 1.9, -.4); flap(S, comp, 2);
     const fw = [[-14, 16, -34], [-4, 19, -38], [6, 17, -34], [16, 15, -30]].map(p => Pp.fireworks(S, ...p));

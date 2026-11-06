@@ -1,7 +1,7 @@
 // Street sellers with a shoulder pole (gánh hàng rong): they walk up and down a street with two baskets
 // on a bamboo pole, calling out what they sell, and stop to serve a child who comes close. What they sell goes in the
 // backpack like kiosk food (snacks.js), and eating it fills the food passport.
-import { THREE, toonVC, P, merge, sprite } from './gfx.js';
+import { THREE, toonVC, P, merge, sprite, worldTag } from './gfx.js';
 import { T, nm, registerName } from './i18n.js';
 import { heightAt } from './world.js';
 import { walkPath } from './content/map.js';
@@ -31,13 +31,15 @@ const HAWKERS: [string, string, any, string[], [string, string, string, number],
 // row (T1b, owner 11 Oct: js/content/map.js walkPath; never on the road, never through a stall or a house)
 const routeFor = where => walkPath(where) || [[0, 0], [0, 0]];
 
-function poleModel(goods) {
+// (v1.08g props) the pole and baskets are the Blender model pp-pole-<seller> near the child, with the goods drawn in its
+// baskets; the goods pictures are the code shape's children, so they go with it when the model comes
+function poleModel(goods, id) {
   const g = new THREE.Group();
   const m = new THREE.Mesh(merge([P(new THREE.BoxGeometry(2.4, .07, .07), '#c9a35a'),
     ...[-1.1, 1.1].flatMap(x => [P(new THREE.CylinderGeometry(.34, .26, .34, 12), '#b98a4a', [x, -.78, 0]), P(new THREE.TorusGeometry(.34, .03, 4, 14), '#8a6a3a', [x, -.62, 0], [Math.PI / 2, 0, 0]),
       ...[-.25, .25].map(dz => P(new THREE.BoxGeometry(.02, .62, .02), '#7a5a3a', [x, -.33, dz]))])]), toonVC());
-  g.add(m);
-  goods.forEach((e, k) => { const s = sprite(e, .55); s.position.set(k ? 1.1 : -1.1, -.45, 0); g.add(s); });
+  g.add(worldTag(m, 'pp-pole-' + id.replace(/^h_/, '')));
+  goods.forEach((e, k) => { const s = sprite(e, .55); s.position.set(k ? 1.1 : -1.1, -.45, 0); m.add(s); });
   g.position.set(0, 1.2, .02); g.rotation.y = Math.PI / 2; // across the shoulder, baskets in front and behind
   return g;
 }
@@ -47,7 +49,7 @@ export function createHawkers(G) {
   for (const [id, name, lk, goods, food, call, greet, where] of HAWKERS) {
     const route = routeFor(where); if (!route) continue;
     // (v1.08d valley) built when a child comes near (js/avatar.ts lateAvatar)
-    const A = nameAvatar(lateAvatar(crowdLook(lk)), name); A.root.add(poleModel(goods)); scene.add(A.root); registerName(name);
+    const A = nameAvatar(lateAvatar(crowdLook(lk)), name); A.root.add(poleModel(goods, id)); scene.add(A.root); registerName(name);
     const tag = sprite('📣', .8); scene.add(tag);
     const H: { [k: string]: any } = { id, name, A, tag, route, k: 0, t: Math.random(), x: route[0][0], z: route[0][1], yaw: 0, callT: 4 + Math.random() * 8, call, food };
     list.push(H); world.walks.push({ id: 'hk_' + id, place: where, pts: route });

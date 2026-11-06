@@ -3,24 +3,29 @@
 // turtle carrying a stele at Văn Miếu, the lion head of the lion dance (múa lân) and the red Thê Húc bridge. Toon
 // shapes only, small (G9), friendly (G8).
 import { THREE, P, merge, toonVC, glow } from '../gfx.js';
+import { propModel } from './propmodel.js';
 
 const H = Math.PI / 2;
 // a five-pointed star of thin paper on a bamboo stick, a candle glow inside; lit = it glows
-export function buildStarLantern(color = '#ff4a3a', lit = true) {
+// (v1.08g props) the stick and the star's bamboo frame become the Blender model pp-starlantern; the paper star stays
+// the game's (its colour, its glow). now: in a film, the model at once
+export function buildStarLantern(color = '#ff4a3a', lit = true, now = false) {
   const g = new THREE.Group(), s = new THREE.Shape();
   for (let i = 0; i < 10; i++) { const r = i % 2 ? .13 : .3, a = i / 10 * Math.PI * 2 + H; i ? s.lineTo(Math.cos(a) * r, Math.sin(a) * r) : s.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
   const geo = new THREE.ExtrudeGeometry(s, { depth: .1, bevelEnabled: true, bevelSize: .03, bevelThickness: .03, bevelSegments: 1 }); geo.translate(0, 0, -.05);
   const star = new THREE.Mesh(geo, lit ? glow(color) : new THREE.MeshToonMaterial({ color })); star.position.y = 1.15; g.add(star);
   const bits = [P(new THREE.CylinderGeometry(.015, .02, 1.3, 5), '#c9a25a', [0, .55, -.12], [.18, 0, 0]),
     ...[-1, 1].map(s => P(new THREE.CylinderGeometry(.012, .03, .28, 5), '#ffd23f', [s * .1, .82, 0], [0, 0, s * .2]))];
-  g.add(new THREE.Mesh(merge(bits), toonVC()));
+  g.add(propModel(new THREE.Mesh(merge(bits), toonVC()), 'pp-starlantern', now));
   if (lit) { const c = new THREE.Mesh(new THREE.SphereGeometry(.07, 8, 6), glow('#fff2a8')); c.position.set(0, 1.15, .1); g.add(c); }
   g.userData.star = star;
   return g;
 }
 
 // a stone turtle carrying a stone stele with a rounded top (the doctors' steles of Văn Miếu); about 1 m long
-export function buildStoneTurtle() {
+// (v1.08g props) the Blender model pp-stoneturtle near the child; model = false keeps the code shape (the golden turtle,
+// which takes a gold material of its own)
+export function buildStoneTurtle(model = true) {
   const stone = '#9a968c', dark = '#7e7a70', slab = '#b8b2a4';
   const parts = [
     P(new THREE.SphereGeometry(.5, 12, 8), stone, [0, .22, 0], [0, 0, 0], [1, .45, 1.25]),
@@ -32,7 +37,7 @@ export function buildStoneTurtle() {
     P(new THREE.BoxGeometry(.4, .5, .02), '#a49e90', [0, .82, .05])
   ];
   const m = new THREE.Mesh(merge(parts), toonVC()); m.castShadow = true;
-  const g = new THREE.Group(); g.add(m); return g;
+  const g = new THREE.Group(); g.add(model ? propModel(m, 'pp-stoneturtle') : m); return g;
 }
 
 // the lion head of a Trung Thu lion dance: big friendly eyes, a smile, a red and gold mane (never scary: G8)
@@ -46,14 +51,16 @@ export function buildLionHead() {
     P(new THREE.SphereGeometry(.08, 8, 6), '#ff8ab0', [0, .04, .5]),
     ...[...Array(9)].map((_, i) => { const a = -1.3 + i * .32; return P(new THREE.SphereGeometry(.11, 8, 6), i % 2 ? '#ffd23f' : '#ff7a2a', [Math.sin(a) * .46, .2 + Math.cos(a) * .3, -.12]); })
   ];
-  const m = new THREE.Mesh(merge(parts), toonVC()); const g = new THREE.Group(); g.add(m); return g;
+  // (v1.08g props) only in the film: the Blender model at once
+  const m = new THREE.Mesh(merge(parts), toonVC()); const g = new THREE.Group(); g.add(propModel(m, 'pp-lionhead', true)); return g;
 }
 
 // mooncakes (bánh trung thu) on a little plate
 export function buildMooncakes() {
   const parts = [P(new THREE.CylinderGeometry(.42, .38, .05, 16), '#f4f0e8', [0, .03, 0])];
   [[-.16, 0], [.16, .05], [0, -.18]].forEach(([x, z], i) => parts.push(P(new THREE.CylinderGeometry(.13, .14, .1, 12), i === 2 ? '#e8c06a' : '#c98a3a', [x, .11, z]), P(new THREE.TorusGeometry(.08, .012, 4, 10), '#8a5a2a', [x, .165, z], [H, 0, 0])));
-  const g = new THREE.Group(); g.add(new THREE.Mesh(merge(parts), toonVC())); return g;
+  // (v1.08g props) only in the film: the Blender model at once
+  const g = new THREE.Group(); g.add(propModel(new THREE.Mesh(merge(parts), toonVC()), 'pp-mooncakes', true)); return g;
 }
 
 // the red Thê Húc bridge as an arch of planks with rails (the same shape as the one by Hồ Gươm in js/regionsites.js):
@@ -65,7 +72,8 @@ export function buildBridge() {
     parts.push(P(new THREE.BoxGeometry(1.5, .2, 2), '#d9302a', [x, y, 0], [0, 0, Math.cos(t * Math.PI) * -.35]));
     [-1, 1].forEach(s => { parts.push(P(new THREE.BoxGeometry(1.4, .5, .12), '#e8433a', [x, y + .35, s])); rail.push(new THREE.Vector3(x, y + .7, s)); }); }
   for (const x of [-6, -2, 2, 6]) parts.push(P(new THREE.CylinderGeometry(.14, .16, 1.4, 8), '#a8281e', [x, bridgeY((x + 7) / 14) - .6, 0]));
-  const g = new THREE.Group(); const m = new THREE.Mesh(merge(parts), toonVC()); m.castShadow = true; g.add(m); g.userData.rail = rail; return g;
+  // (v1.08g props) only in the film: the Blender model at once (its rail tops where these lights hang)
+  const g = new THREE.Group(); const m = new THREE.Mesh(merge(parts), toonVC()); m.castShadow = true; g.add(propModel(m, 'pp-thehuc', true)); g.userData.rail = rail; return g;
 }
 // the lights along the bridge's rails: small red and gold lanterns on both rails, and a thin red line of light along each
 // rail top (shown when it is lit). rail: points in pairs, one per side, plank by plank (as buildBridge makes them)
