@@ -1,5 +1,7 @@
 # v1.08g creatures: dragons and birds (status)
 
+**ready for Release** (6 Nov 2026 AEDT)
+
 Branch: `work/v108g-creatures` (from `origin/integrate/v108`). Brief: the owner's message in the helper chat (6 Nov 2026
 AEDT, "Cac con rong, con chim deu etc phai blender thiet dep"), `docs/cores/tasks/v108g/README.md`,
 `docs/cores/tasks/v108e/README.md`, `docs/cores/tasks/v108e/creatures.md`.
@@ -40,3 +42,27 @@ AEDT, "Cac con rong, con chim deu etc phai blender thiet dep"), `docs/cores/task
   listed in `world.swans` by js/s2au-region.ts); the pictures are hidden but kept for taps and stickers, and stay with no
   network. A new flock of nine little birds circles over home.
 - Not in the first download (js/flocks.ts after the start; the models load near the child).
+
+## Checks (6 Nov 2026 AEDT, one at a time)
+| Check | Result |
+|---|---|
+| worldcreatures | pass (7 redrawn models: size, feet, facing, clips, faces, 1,500-9,500 triangles) |
+| flocks (new, `tests/flocks.mts`) | pass: hen 3, rooster 2, duck 7, fish 3, clownfish 3, butterfly 14, bird 9; 9 draws for all; blocked models keep all 25 pictures |
+| companiongoal, animalhomes, s2auperth, longplaymem, types | pass |
+| perf | pass: home 164 draws, village 278 draws / 733k triangles |
+| battery | pass |
+| startup | pass: first start 1047 KB, the same as origin/integrate/v108 measured the same way (this branch adds nothing to it) |
+| stickers | FAIL, also on origin/integrate/v108 with the same message (learning-path ways to earn): not from this branch |
+| companionhats | FAIL, also on origin/integrate/v108 with the same message (a click on the flower hat times out): not from this branch |
+| `--changed` | picks the full suite (shared files): left to Release |
+
+## Pictures (`docs/world-models-v108g/creatures/`)
+- `all-birds-and-companions.png`: the seven redrawn models in Blender (Cycles, a frame of their idle clip).
+- `before-*` and `after-*`: phone 390x844, tablet 820x1180 and computer 1280x800 (crane, chicken, ducks), and computer
+  for the peacock, emu, penguin, hens, butterflies, fish and the little birds; `compare-*.png` side by side. Small things
+  far off (butterflies, birds) are small in these views.
+
+## Notes
+- The firefly's glowing tail is the game's own glow beside the model (the check counts the model without it).
+- Perth's swans are drawn by js/flocks.ts once Season 2's places are built (not covered by the flocks check, which stays
+  near home and Lotus Village).
