@@ -8,7 +8,7 @@
 import { loadFriendModels, wearVillagerModel, avatarOf } from './avatar.js';
 import { regionOf } from './villagertalk.js';
 
-const NEAR2 = 25 * 25, PER_TICK = 3;
+const NEAR2 = 25 * 25, PER_TICK = 3, MAX_NEAR = 4, NEAR_DRAWN2 = 20 * 20; // (check perf: at most 4 crowd models drawn near a child at once)
 /** the gallery neighbour a crowd person looks most like */
 export function crowdRole(look, height: number, x: number, z: number): string {
   const au = regionOf(x, z) === 'au', style = look.style || '', hs = look.hairStyle || '';
@@ -27,9 +27,10 @@ export function createCrowdModels(G) {
   const tick = (_dt?: number) => {
     const now = performance.now(); if (now < next) return; next = now + 500;
     const skip = named(), mine = new Set(G.heroes.map(h => h.av && h.av.root));
-    let swaps = 0;
+    let swaps = 0, near = 0;
+    for (const o of G.scene.children) if (o.userData.villagerModel && o.userData.villagerModel.includes('-') && /villager-(vn|au)-/.test(o.userData.villagerModel) && G.heroes.some(h => (h.pos.x - o.position.x) ** 2 + (h.pos.z - o.position.z) ** 2 < NEAR_DRAWN2)) near++;
     for (const o of G.scene.children) {
-      if (swaps >= PER_TICK) break;
+      if (swaps >= PER_TICK || near + swaps >= MAX_NEAR) break;
       if (!o.userData.avatar || tried.has(o) || skip.has(o) || mine.has(o) || o.userData.own) continue;
       if (!G.heroes.some(h => (h.pos.x - o.position.x) ** 2 + (h.pos.z - o.position.z) ** 2 < NEAR2)) continue;
       const A = avatarOf(o); if (!A || A.late || A.model || !A.painted) continue;
