@@ -167,10 +167,17 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     // at least TEXT_MIN px as drawn (their size times the stage's zoom): a smaller label is raised, and goes back to the
     // game's own size when the stage grows. Drawings (svg) and the round dots keep their size.
     const TEXT_MIN = 16;
-    const floorText = () => {
+    // (v1.08 Release, check tienlen) roots: only the pieces just added (a card flying in, a new label), not the whole
+    // stage again at every change; the whole stage is looked at again with each fit
+    const floorText = (roots: Node[] = [stage]) => {
       if (closed) return 0; let changed = 0;
-      const z = parseFloat(stage.style.zoom) || 1, done = new Set<HTMLElement>(), walk = document.createTreeWalker(stage, NodeFilter.SHOW_TEXT);
-      for (let t = walk.nextNode(); t; t = walk.nextNode()) {
+      const z = parseFloat(stage.style.zoom) || 1, done = new Set<HTMLElement>(), texts: Node[] = [];
+      for (const r of roots) {
+        if (r.nodeType === Node.TEXT_NODE) { if (stage.contains(r)) texts.push(r); continue; }
+        if (r.nodeType !== Node.ELEMENT_NODE || !stage.contains(r)) continue;
+        const walk = document.createTreeWalker(r, NodeFilter.SHOW_TEXT); for (let t = walk.nextNode(); t; t = walk.nextNode()) texts.push(t);
+      }
+      for (const t of texts) {
         const p = t.parentElement;
         if (!p || done.has(p) || !/[\p{L}\p{N}]/u.test(t.textContent || '') || p.closest('svg, style, script')) continue;
         done.add(p);
@@ -207,7 +214,7 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     // button, a cheer) only raises small text, so the board never moves under a finger (horsestability)
     // (small text is raised at once, before the new pieces are drawn, so nothing grows a moment after it appears)
     const fitWatch = new MutationObserver(list => {
-      floorText();
+      floorText(list.flatMap(m => [...m.addedNodes]));
       // (v1.08b fivescreens) a new round on a sideways phone may try the picture beside its answers again
       if (playing && list.some(m => m.target === stage) && wide.tried === 2 && !layer.classList.contains('gl-wide')) { wide.tried = 0; wide.round = true; }
       if (!playing || list.some(m => m.target === stage)) fitSoon(playing);
