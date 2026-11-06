@@ -25,6 +25,7 @@ def sculpt_head(x, y, z):
     # plane flatter; then the features, about twice as strong as before
     E, ex, ez = P['eye'], P['eyeX'], P['eyeZ']; nz, mz = P.get('noseZ', -.3), P.get('mouthZ', -.47)
     if z > -.1: x *= 1 - .07 * min(1, (z + .1) / .8); z *= 1 + .05 * max(0, z)   # taller, narrower above the eyes
+    if y > 0: y *= 1 + .1 * max(0.0, 1 - abs(z + .05) / .9)   # a little fuller at the back (a child's head is deeper than it is wide)
     l0 = math.sqrt(x * x + y * y + z * z) or 1; fr0 = max(0, min(1, (-y / l0 - .25) / .5))
     if abs(z) < .75: y *= 1 - .07 * fr0 * (1 - (z / .75) ** 2)                    # the face plane a little flatter
     l = math.sqrt(x * x + y * y + z * z) or 1; fr = max(0, min(1, (-y / l - .05) / .55)); fr = fr * fr * (3 - 2 * fr)
