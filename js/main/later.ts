@@ -8,20 +8,6 @@ export * as myHouse from '../myhouse.js';
 export * as lotus from '../lotus.js';
 export * as pets from '../pets.js';
 export * as ferry from '../ferry.js';
-export * as passport from '../passport.js';
-export * as festivals from '../festivals.js';
-export * as weather from '../weather.js';
-export * as fun from '../fun.js';
-export * as learn from '../learn.js';
-export * as showcase from '../showcase.js';
-export * as trade from '../trade.js';
-export * as folkShow from '../folkshow.js';
-export * as signposts from '../signposts.js';
-export * as secrets from '../secrets.js';
-// (v1.08 startup, PERF-001) the parts made after the games boards, also in this one piece
-export * as lanterns from '../lanterns.js';
-export * as yard from '../yard.js';
-export * as shop from '../shop.js';
-export * as boxes from '../boxes.js';
-export * as hoiLang from '../hoilang.js';
-export * as friendQuest from '../friendquest.js';
+// (v1.08 start-up MB, PERF-001) the parts from the passport on are their own piece (js/main/last.ts), fetched when the
+// build comes to them; trading, mystery boxes and the friends' quests are made after the start
+// (js/main.ts afterPlay), each loaded then on its own

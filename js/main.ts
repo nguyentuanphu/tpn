@@ -167,13 +167,19 @@ let bootDone = null, booted = false; const bootReady = new Promise<void>(r => { 
 // fetched side by side, then each part is made in its own quiet moment of the page (requestIdleCallback, or a short pause
 // where there is none), so the first walk never stutters and the first download is only what the start needs. A part
 // that fails is only noted (it never stops the others).
-type AfterPart<M> = { load: () => Promise<M>, make: (m: M) => unknown };
+type AfterPart<M> = { load: () => Promise<M>, make: (m: M) => unknown, done: () => void };
 const afterQueue: AfterPart<any>[] = []; let afterOpen = false;
 const idle = () => new Promise<void>(r => (window as any).requestIdleCallback ? (window as any).requestIdleCallback(() => r(), { timeout: 250 }) : setTimeout(r, 60));
-const runPart = async <M,>(p: AfterPart<M>, loading: Promise<M>) => { try { const m = await loading; await idle(); await p.make(m); } catch (e) { console.warn('after start', e); } };
+const runPart = async <M,>(p: AfterPart<M>, loading: Promise<M>) => { try { const m = await loading; await idle(); await p.make(m); } catch (e) { console.warn('after start', e); } finally { p.done(); } };
 let afterChain: Promise<unknown> = Promise.resolve();
 const startPart = <M,>(p: AfterPart<M>) => { const loading = p.load(); loading.catch(() => { }); afterChain = afterChain.then(() => runPart(p, loading)); };
-const afterStart = <M,>(load: () => Promise<M>, make: (m: M) => unknown) => { const p = { load, make }; if (afterOpen) startPart(p); else afterQueue.push(p); };
+// (v1.08 start-up MB) each part answers when it is made (or failed), so G.areas.all can wait for the play parts below
+const afterStart = <M,>(load: () => Promise<M>, make: (m: M) => unknown) => { let done = () => { }; const made = new Promise<void>(r => { done = r; }); const p = { load, make, done }; if (afterOpen) startPart(p); else afterQueue.push(p); return made; };
+// (v1.08 start-up MB, PERF-001) features of the valley that nothing in the build needs and that take no ground (mystery
+// boxes, trading, the friends' quests) are made after the start like the parts above;
+// playParts says when they are all made (G.areas.all waits for it, so the checks find them as before)
+const playParts: Promise<void>[] = [];
+const afterPlay = <M,>(load: () => Promise<M>, make: (m: M) => unknown) => { playParts.push(afterStart(load, make)); };
 // (Release, v1.08e: check solid) lateMade: every part above made (and Season 2's places below). The solid map made
 // again after parts of the valley waits for it, so the map counts the same things however fast a device starts:
 // before, a quick second start made it before the job boards stood and missed the map saved on the first start
@@ -271,14 +277,14 @@ export interface SvMain {
   // places, people and things of the valley (each made by its own module)
   farm?: ReturnType<typeof createFarm>; ferries?: ReturnType<typeof createFerries>; festivals?: ReturnType<typeof createFestivals>;
   folkShow?: ReturnType<typeof createFolkShow>; hoilang?: ReturnType<typeof import('./hoilang.js').createHoiLang>; kidplay?: ReturnType<typeof createKidPlay>;
-  kites?: ReturnType<typeof createKites>; lanterns?: ReturnType<typeof createLanterns>; lotus?: ReturnType<typeof createLotus>;
+  kites?: ReturnType<typeof createKites>; lanterns?: ReturnType<typeof import('./lanterns.js').createLanterns>; lotus?: ReturnType<typeof createLotus>;
   nameTags?: ReturnType<typeof createNameTags>; netGames?: ReturnType<typeof createNetGames>; pets?: ReturnType<typeof createPets>;
   placeBook?: ReturnType<typeof createPlaceBook>; places?: ReturnType<typeof createPlaces>; plots?: ReturnType<typeof createPlots>;
   reeds?: ReturnType<typeof createReeds>; report?: ReturnType<typeof createReport>; secrets?: ReturnType<typeof createSecrets>;
   seeThrough?: ReturnType<typeof createSeeThrough>; shop?: ReturnType<typeof import('./shop.js').createShop>; signposts?: ReturnType<typeof createSignposts>;
   simple?: ReturnType<typeof createSimple>; town?: ReturnType<typeof createTown>; school?: ReturnType<typeof createSchool>; schoolReady?: Promise<unknown>; weather?: ReturnType<typeof createWeather>;
   friendQuests?: ReturnType<typeof import('./friendquest.js').createFriendQuests>; // (v1.08d polish)
-  yard?: ReturnType<typeof createYard>; chests?: ReturnType<typeof createTwinChests>; claims?: ReturnType<typeof createClaims>;
+  yard?: ReturnType<typeof import('./yard.js').createYard>; chests?: ReturnType<typeof createTwinChests>; claims?: ReturnType<typeof createClaims>;
   coop?: ReturnType<typeof createCoop>; familyCards?: ReturnType<typeof createFamilyCards>; parents?: ReturnType<typeof import('./parents.js').createParents>;
   boxes?: ReturnType<typeof import('./boxes.js').createBoxes>; surprises?: ReturnType<typeof import('./surprises.js').createSurprises>; myHouse?: ReturnType<typeof createMyHouse> | null;
   solidsReady?: ReturnType<typeof buildSolids>;
@@ -931,8 +937,7 @@ buildPowerLines(G); // power poles (when switched on in Studio) wired to each ot
 bootMark('pretraffic'); (await soon.traffic).createTraffic(G); bootMark('traffic'); await breathe(); // motorbikes, cars, buses, trams, xích lô and bicycles (js/traffic.js; Studio switches)
 // (v1.07 startup, PERF-001) the parts made from here on, loaded side by side while the first ones are made
 const laterAll = import('./main/later.js');
-const later = Object.fromEntries((['heritage', 'symbols', 'regionSites', 'vnFun', 'myHouse', 'lotus', 'pets', 'ferry', 'passport', 'festivals', 'weather', 'fun',
-  'learn', 'showcase', 'trade', 'folkShow', 'signposts', 'secrets', 'lanterns', 'yard', 'shop', 'boxes', 'hoiLang', 'friendQuest'] as const).map(k => [k, laterAll.then(m => m[k])])) as { [K in keyof typeof import('./main/later.js')]: Promise<typeof import('./main/later.js')[K]> };
+const later = Object.fromEntries((['heritage', 'symbols', 'regionSites', 'vnFun', 'myHouse', 'lotus', 'pets', 'ferry'] as const).map(k => [k, laterAll.then(m => m[k])])) as { [K in keyof typeof import('./main/later.js')]: Promise<typeof import('./main/later.js')[K]> };
 for (const p of Object.values(later)) p.catch(() => { });
 (await later.heritage).createHeritage(G, { give, sfx: SFX, say, toast: (h, m) => hudFor(h).toast(m) });
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
@@ -957,9 +962,13 @@ G.reward = reward;
 G.pets = (await later.pets).createPets(G);
 G.ferries = (await later.ferry).createFerries(G);
 G.kites = createKites(G);
-(await later.passport).createPassport(G);
+// (v1.08 start-up MB, PERF-001) the parts from the passport on come in their own piece (js/main/last.ts), fetched now
+// beside js/kidplay.ts, while the first piece (js/main/later.ts) was fetched at the traffic step: the first wait is shorter
+const lastAll = import('./main/last.js'), kidAll = import('./kidplay.js'); lastAll.catch(() => { }); kidAll.catch(() => { });
+const lastParts = await lastAll;
+lastParts.passport.createPassport(G);
 if(liveBoot)configureFestivalStartup(liveBoot.then(live=>live?projectPublicFestivals(FESTCAL.map(f=>f.id),live,CUSTOM):null));
-G.festivals = (await later.festivals).createFestivals(G);
+G.festivals = lastParts.festivals.createFestivals(G);
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
 // (owner, 12 Oct) the auto play check for grown-ups testing the game: only on the devices Studio's Releases page allows
 // (switch `autoplay`: every device, or the ticked ones); everywhere else nothing of it is even downloaded
@@ -972,27 +981,28 @@ await breathe(); // (v1.07: a breath for the Simple screen's taps)
 import('./testergate.js').then(m => m.testerGate(G));
 // (v1.08 notifications) grown-ups' push notifications: this week's lines on the device, and a tap that opened the game (js/notify.js)
 if (((settings as unknown as { push?: { on?: boolean } }).push || {}).on || /[?&]open=/.test(location.search)) import('./notify.js').then(m => m.startNotify(G)).catch(() => { });
-G.weather = (await later.weather).createWeather(G);
-(await later.fun).createFun(G);
-(await later.learn).createLearning(G);
+G.weather = lastParts.weather.createWeather(G);
+lastParts.fun.createFun(G);
+lastParts.learn.createLearning(G);
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
 // the main story, Đèn Lồng Thung Lũng (js/lanterns.js, chapters in js/content/chapters.js): after the storyteller and the villagers
 G.npcAt = id => (n => n && { x: n.x, z: n.z })(NPCS.find(n => n.id === id));
 // (loaded while the valley is built behind the title screen, so the title comes up sooner: PERF-001)
-const [{ createLanterns }, { createYard }, { createKidPlay }] = await Promise.all([later.lanterns, later.yard, import('./kidplay.js')]);
-G.lanterns = createLanterns(G, { dialog, say, reward, save, openTheatre });
+const { createKidPlay } = await kidAll;
+G.lanterns = lastParts.lanterns.createLanterns(G, { dialog, say, reward, save, openTheatre });
 // bà Huệ and ông Nghi's yard near the Huệ Nghi shop (js/yard.js): a side story
-G.yard = createYard(G, { dialog, say, reward, save });
-// (v1.08d polish) each friend's quest of three steps, for the item in the friend's hand (js/friendquest.ts; v1.08 startup: in js/main/later.ts's piece)
-later.friendQuest.then(m => { G.friendQuests = m.createFriendQuests(G, { dialog, say, reward, save }); }).catch(e => console.warn('friend quests', e && e.message));
+G.yard = lastParts.yard.createYard(G, { dialog, say, reward, save });
+// (v1.08d polish) each friend's quest of three steps, for the item in the friend's hand (js/friendquest.ts; v1.08 start-up MB: after the start)
+afterPlay(() => import('./friendquest.js'), m => { G.friendQuests = m.createFriendQuests(G, { dialog, say, reward, save }); });
 // the companion grows, a coin goal, a gift every day (js/kidplay.js; Studio group 'For little ones')
 G.kidplay = createKidPlay(G, { say, save });
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
-(await later.showcase).createShowcase(G);
+lastParts.showcase.createShowcase(G);
 world.updaters.push((dt, t) => tickAnimals(dt, t, G.heroes)); // every animal walks, hops, wags and looks around
 createGathering(G, { give, sfx: SFX, say, toast: (h, m) => hudFor(h).toast(m) });
-const { setupTrading, openTrade } = await later.trade;
-setupTrading(G);
+// (v1.08 start-up MB) trading with friends online listens from just after the start; its window loads when first opened
+const tradeCode = () => import('./trade.js');
+afterPlay(tradeCode, m => m.setupTrading(G));
 // "My market stall" at the Three Regions Market: trade with friends who are playing online
 {
   const S = rowSlot('market', 9, 1.4), sx = S.x, sz = S.z, y = heightAt(sx, sz), parts = [];   // (T1b) in the market row, after the south's stalls
@@ -1005,7 +1015,8 @@ setupTrading(G);
 }
 // ---- (round S, owner plan 8 Oct: Round R Part 2 items 6 and 10) the clothes shop by the market and the wardrobe (js/shop.js);
 // mystery boxes, family rankings and the collection book for 5 to 8 year olds at Medium or Hard (js/boxes.js) ----
-{ const [{ createShop }, { createBoxes }] = await Promise.all([later.shop, later.boxes]); G.shop = createShop(G, { say, save }); G.boxes = createBoxes(G, { say, save }); }
+G.shop = lastParts.shop.createShop(G, { say, save });
+afterPlay(() => import('./boxes.js'), m => { G.boxes = m.createBoxes(G, { say, save }); }); // (v1.08 start-up MB: after the start)
 // ---- (round S) end ----
 // villagers the family added in Sparkle Studio (content pack "npcs"): placed where they were put on the map, saying
 // their own lines in both languages
@@ -1021,10 +1032,10 @@ for (const c of (Array.isArray(CUSTOM.npcs) ? CUSTOM.npcs : []).slice(0, 60)) {
   addNPC({ id: 'fam_' + (c.id || name.replace(/[^\p{L}\p{N}]+/gu, '_')), name, faceName: c.faceName, look, x: position.x, z: position.z, face: +c.face || 0, icon: typeof c.icon === 'string' ? c.icon.slice(0, 4) : '💬', talk: () => dialog(name, lines.length ? lines : [['Hello! Nice to see you!', 'Xin chào! Gặp con vui quá!']]) });
 }
 // each village's games time table (with a countdown board) and its singer; after every host is in place
-G.folkShow = (await later.folkShow).createFolkShow(G, { looks: [kidLook('shirt', '#ff7eb8', '#1d1412', 'buns', 'none'), kidLook('overalls', '#3cc7e8', '#3b2618', 'short', 'cap'), kidLook('dress', '#ffb52e', '#1d1412', 'ponytail', 'flower')] });
+G.folkShow = lastParts.folkShow.createFolkShow(G, { looks: [kidLook('shirt', '#ff7eb8', '#1d1412', 'buns', 'none'), kidLook('overalls', '#3cc7e8', '#3b2618', 'short', 'cap'), kidLook('dress', '#ffb52e', '#1d1412', 'ponytail', 'flower')] });
 // (round S, owner plan 8 Oct) Hội làng three times a day, surprises, and the grown-ups' features: each in its own file,
 // loaded while the valley is built (js/hoilang.js after the games boards it uses; Studio switches in the 'kids' group)
-{ const { createHoiLang } = await later.hoiLang; G.hoilang = createHoiLang(G, { say, save, reward }); }
+G.hoilang = lastParts.hoiLang.createHoiLang(G, { say, save, reward });
 // (Play reading trial, owner 11 Oct AEDT) the ten reading games load only while Studio's readingTrial switch is on (now, or when it is switched on);
 // on unless Studio switches it off (owner, 12 Oct AEDT)
 // (batch rollout: also for a child who already played a reading game, checked again when a session starts)
@@ -1035,7 +1046,7 @@ bootMark('things'); widenFlatLand(world, scene); bootMark('wideland'); await bre
 createAds(G); // the family's own signboards (only when Sparkle Studio switched ads on)
 world.levelled = levelUnderBuildings(world, scene); bootMark('levelled'); await breathe();
 G.plots = createPlots(G); // (round T3) the Memory Villages' garden plots and the spare ones by each city, on their levelled ground
-{ const S = await later.signposts; addArea('signposts', [PLATEAU.x, PLATEAU.z + 40], () => { G.signposts = S.createSignposts(G); }); } // (round T4b, js/signposts.js) a picture signpost at every road junction (v1.08d valley: after the start, one part for the whole valley: one shared picture)
+{ const S = lastParts.signposts; addArea('signposts', [PLATEAU.x, PLATEAU.z + 40], () => { G.signposts = S.createSignposts(G); }); } // (round T4b, js/signposts.js) a picture signpost at every road junction (v1.08d valley: after the start, one part for the whole valley: one shared picture)
 bootMark('roadside');
 // (v1.08d valley) the solid map is made again a moment after parts of the valley built later (js/areas.ts) stand
 const solidsNow = () => { G.solidsReady = buildSolids(G); void G.solidsReady.then(afterSolids); return G.solidsReady; };
@@ -1129,8 +1140,8 @@ startCounting(G); // how many children play, and what they play, for Studio's re
     }
   };
 }
-G.openTrade = (i, id) => { if (G.paused) return; openTrade(G, G.heroes[i], id); };
-G.secrets = (await later.secrets).createSecrets(G);
+G.openTrade = (i, id) => { if (G.paused) return; void tradeCode().then(m => { if (!G.paused) m.openTrade(G, G.heroes[i], id); }); };
+G.secrets = lastParts.secrets.createSecrets(G);
 ensureJobs();
 G.claims.wrap(); // (after every pickup exists: first come, first served online)
 for (const [id, P0] of [['town', TOWN], ['aussie', AUSSIE]] as const) addArea('crossing:' + id, [P0.x - 4, P0.roadZ], () => createCrossings(G, [id])); // Road warnings beside the existing crossings, after all doors/stalls are known (v1.08d valley: each street's after the start, js/areas.ts)
@@ -1177,7 +1188,7 @@ bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
   // (v1.08d valley) villagers far from every child are stand-ins until a child comes within 60 m (js/avatar.ts lateAvatar):
   // three of them at most four times a second while walking, all of them round a flight's landing spot at once
   G.areas = { near: async (x, z, r) => { wakeLateAvatars([{ x, z }], 60, 1e9); await areasNear(x, z, r); }, done: areasDone, left: areasLeft, late: lateLeft, list: areaList,
-    all: async () => { for (const a of areaList()) if (!a.built) await areasNear(a.x, a.z, 1); buildAllLate(); } };
+    all: async () => { for (const a of areaList()) if (!a.built) await areasNear(a.x, a.z, 1); buildAllLate(); await Promise.all(playParts); } };
   { let acc = 0; world.updaters.push(dt => { acc += dt; if (acc < .25) return; acc = 0; if (G.heroes.length) wakeLateAvatars(G.heroes.map(h => h.pos), 60, 3); }); }
   // (v1.08e) the Blender models of the world (js/modelkit.ts): swapped in for the code shapes when a child comes near
   afterStart(() => import('./modelkit.js'), m => m.startWorldModels(G, world.updaters));

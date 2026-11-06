@@ -27,7 +27,7 @@ const FILES = [
   'vendor/three.module.js', 'vendor/peerjs.min.js', 'vendor/RoomEnvironment.js', 'css/fonts.css',
   'fonts/Fredoka-latin-500.woff2', 'fonts/Fredoka-latin-ext-500.woff2', 'fonts/Baloo2-latin-600.woff2', 'fonts/Baloo2-latin-ext-600.woff2', 'fonts/Baloo2-vietnamese-600.woff2',
   // (v1.07 split) the parts of js/main.js
-  'js/main/online-games.js', 'js/main/friends.js', 'js/main/talks.js', 'js/main/quests.js', 'js/main/interactables.js', 'js/main/hero-events.js', 'js/main/talking.js', 'js/main/layout.js', 'js/main/later.js', 'js/main/soon.js',
+  'js/main/online-games.js', 'js/main/friends.js', 'js/main/talks.js', 'js/main/quests.js', 'js/main/interactables.js', 'js/main/hero-events.js', 'js/main/talking.js', 'js/main/layout.js', 'js/main/later.js', 'js/main/soon.js', 'js/main/last.js',
   'js/main.js', 'js/rideview.js', 'js/render-recovery.js', 'js/gpu.js', 'js/launch.js', 'js/screencapture.js', 'js/familydevices.js', 'js/family-backup.js', 'js/util.js', 'js/state.js', 'js/i18n.js', 'js/money.js', 'js/audio.js', 'js/voice.js', 'js/hanoi-pack.js', 'js/content/hanoi-pack-info.js', 'js/gfx.js',
   'js/world.js', 'js/world/places.js', 'js/world/ground.js', 'js/world/sites.js', 'js/world/paint.js', 'js/world/reshape.js', 'js/avatar.js', 'js/player.js', 'js/input.js', 'js/net.js', 'js/mictest.js', 'js/hud.js', 'js/explain.js', 'js/ui.js', 'js/ui-settings.js', 'js/data.js',
   // (v1.07 split-code) the parts of js/ui.js
