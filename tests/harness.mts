@@ -81,7 +81,10 @@ export async function start(page, mode = 'solo', screen = 'valley') {
   // keep the friend they were moved to (Finn or Clara) and play on, as with the prologue below. The card itself is checked
   // by "friendmigrate".
   await page.waitForFunction(() => (window.__sv && window.__sv.heroes.length > 0) || !!document.querySelector('.modal.newfriends [data-go="play"]'), null, { timeout: 90000 });
-  for (let i = 0; i < 4; i++) { const b = await page.$('.modal.newfriends:not(.out) [data-go="play"]'); if (!b) break; await b.click(); await page.waitForTimeout(250); }
+  for (let i = 0; i < 4; i++) { const b = await page.$('.modal.newfriends:not(.out) [data-go="play"]'); if (!b) break;
+    // (v1.08) with three game windows open at once (check phone) a busy machine can keep the pointer tap from landing for
+    // 30 s; this card is only set-up here (friendmigrate checks it), so the button is pressed directly if the tap stalls
+    await b.click({ timeout: 8000 }).catch(() => b.evaluate(e => (e as HTMLElement).click()).catch(() => { })); await page.waitForTimeout(250); }
   await page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
   // (v1.08d valley) parts of the valley are built after the start, near the child first and far ones when the child comes
   // near (js/areas.ts); the checks play in the whole valley, so every part is built first (check areastream checks the
