@@ -208,4 +208,38 @@ export const BLENDER_FILMS: Record<string, BlenderFilm> = {
     { s: 27.21, e: 33.67, help: { t: 31.78, x: 65, y: 28, en: 'Tap to drop the pebbles in!', vi: 'Chạm để thả sỏi vào bình nào!' } },
     { s: 33.67, e: 38.79, help: { t: 37.01, x: 53, y: 46, en: 'Tap to help the crow drink!', vi: 'Chạm để quạ uống nước nào!' } },
     { s: 38.79, e: 49.92 }] },
+  lionrabbit: { v: 'v1', pages: [
+    { s: 0, e: 11.54 },
+    { s: 11.54, e: 18.08, help: { t: 16.19, x: 50, y: 43, en: 'Tap to walk slowly, slowly!', vi: 'Chạm để đi thật chậm, thật chậm nào!' } },
+    { s: 18.08, e: 28.96 },
+    { s: 28.96, e: 37.67 },
+    { s: 37.67, e: 46.79, help: { t: 44.78, x: 50, y: 40, en: 'Tap to look into the well!', vi: 'Chạm để nhìn xuống giếng nào!' } },
+    { s: 46.79, e: 58.08 }] },
+  ganesha: { v: 'v1', pages: [
+    { s: 0, e: 15.13 },
+    { s: 15.13, e: 24.25 },
+    { s: 24.25, e: 31.96 },
+    { s: 31.96, e: 38.42, help: { t: 36.53, x: 37, y: 65, en: 'Tap to walk around Mother and Father!', vi: 'Chạm để đi vòng quanh cha mẹ nào!' } },
+    { s: 38.42, e: 46.71 },
+    { s: 46.71, e: 56.17, help: { t: 51.28, x: 60, y: 48, en: 'Tap to give Ganesha the mango!', vi: 'Chạm để trao xoài cho Ganesha nào!' } }] },
+  bluejackal: { v: 'v1', pages: [
+    { s: 0, e: 11.29 },
+    { s: 11.29, e: 19, help: { t: 17.05, x: 68, y: 38, en: 'Tap for the big splash!', vi: 'Chạm để nghe "tõm" nào!' } },
+    { s: 19, e: 29.88 },
+    { s: 29.88, e: 37.17, help: { t: 35.24, x: 50, y: 74, en: 'Tap: what does the blue jackal do?', vi: 'Chạm xem chó rừng xanh làm gì nào?' } },
+    { s: 37.17, e: 44.46 },
+    { s: 44.46, e: 54.58 }] },
+  elephantmice: { v: 'v1', pages: [
+    { s: 0, e: 10.71 },
+    { s: 10.71, e: 19.83 },
+    { s: 19.83, e: 30.13 },
+    { s: 30.13, e: 35.42, help: { t: 33.53, x: 50, y: 58, en: 'Tap to show the elephants the other path!', vi: 'Chạm để chỉ đường khác cho đàn voi nào!' } },
+    { s: 35.42, e: 44.71 },
+    { s: 44.71, e: 55.92, help: { t: 50.95, x: 50, y: 41, en: 'Tap to help the mice chew the ropes!', vi: 'Chạm để giúp lũ chuột gặm dây nào!' } }] },
+  monkey: { v: 'v1', pages: [
+    { s: 0, e: 14.71 },
+    { s: 14.71, e: 20.42, help: { t: 18.59, x: 47, y: 37, en: 'Tap to share the fruit!', vi: 'Chạm để chia quả cho bạn nào!' } },
+    { s: 20.42, e: 31.29 },
+    { s: 31.29, e: 41.17, help: { t: 39.14, x: 50, y: 44, en: 'Tap to help the monkey jump to the tree!', vi: 'Chạm để khỉ nhảy lên cây nào!' } },
+    { s: 41.17, e: 53.12 }] },
 };
