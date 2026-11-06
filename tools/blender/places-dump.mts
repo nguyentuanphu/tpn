@@ -39,7 +39,8 @@ const spec = await page.evaluate(async () => {
   // every Season 2 place, built now (they are built when a child first comes near)
   try { const V = await import('/js/s2vn.js' as any), C = await import('/js/content/s2vn.js' as any); V.installS2vn(G); for (const r of C.S2_REGIONS) V.ensureRegion(G, r.id); } catch (e) { console.warn('s2vn', e); }
   try { const A = await import('/js/s2au-region.js' as any), C = await import('/js/content/s2au.js' as any); await (await import('/js/art.js' as any)).moreArt?.();
-    for (const R of C.S2_REGIONS) A.buildRegion(G, R, { open: () => true, at: (d: [number, number]) => ({ x: R.at[0] + d[0], z: R.at[1] + d[1] }) }); } catch (e) { console.warn('s2au', e); }
+    const { anchorOf } = await import('/js/content/map.js' as any);   // (v1.08f places-fix: a region is placed at its place's anchor, as js/s2au.ts does; R.at does not exist)
+    for (const R of C.S2_REGIONS) { const a = anchorOf(R.place); A.buildRegion(G, R, { open: () => true, at: (d: [number, number]) => ({ x: a[0] + d[0], z: a[1] + d[1] }) }); } } catch (e) { console.warn('s2au', e); }
   const round = (v: number) => Math.round(v * 10000) / 10000;
   const R = (a: any) => Array.isArray(a) ? a.map((x: any) => typeof x === 'number' ? round(x) : x) : a;
   const out: Record<string, any> = {};

@@ -172,7 +172,7 @@ export function createRegions(G) {
     [-1, 1].forEach(sx => p.push(P(Box(.12, 3, .12), '#f4efe2', [sx * (w / 2 - .2), 1.5, d / 2 + 2.2])));
     { const g = merge(p); worldTag(put(g, x, cz), 'hs-' + geoKey(g)); } box(x - w / 2, x + w / 2, cz - d / 2, cz + d / 2);
     world.colliders.push({ x: x - w / 2 + .2, z: front + 2.2, r: .25 }, { x: x + w / 2 - .2, z: front + 2.2, r: .25 });
-    signAt(text, x, 3.9, front + .05, 0, signBg, '#ffffff', w - .8, .9);
+    signAt(text, x, 3.9, front + .22, 0, signBg, '#ffffff', w - .8, .9);   // (v1.08f places-fix: just in front of the cornice, which covered its top edge)
   };
   shop(A.x - 19, 8.5, '#f2e6c2', '#d9483a', ['MILK BAR · LOLLIES', 'TIỆM TẠP HÓA · KẸO'], '#d9483a');
   shop(A.x - 9, 8.5, '#cfe0e6', '#2f7ac8', ['FISH & CHIPS', 'CÁ & KHOAI CHIÊN'], '#2f7ac8');

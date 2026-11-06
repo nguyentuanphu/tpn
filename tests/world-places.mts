@@ -28,6 +28,9 @@ export async function worldPlacesCheck(browser: Browser) {
     const r = await P.page.evaluate(async (FAMOUS) => {
       const G = (window as any).__sv; G.paused = true;
       const K = await import(String('/js/modelkit.js')), { THREE } = await import(String('/js/gfx.js'));
+      // (v1.08f places-fix) the Season 2 Australia regions are built when a child first comes near: build them now so their
+      // three landmark models (the reef pontoon, Cradle Mountain, the Rottnest lighthouse) are checked like the others
+      if (G.s2au) await Promise.all(G.s2au.regions.map((R: any) => G.s2au.build(R)));
       K.adoptWorldTags(); await K.wakeAllWorldModels();
       G.scene.updateMatrixWorld(true);
       const rows: any[] = [], errors: string[] = [];
@@ -48,6 +51,22 @@ export async function worldPlacesCheck(browser: Browser) {
         if (!row.hidden) errors.push(`${name}: the code shape is still drawn`);
       });
       for (const n of FAMOUS) if (!rows.some(r => r.name === n)) errors.push(`${n}: no model in the valley`);
+      // (v1.08f places-fix) every name sign or board on a model still shows: no part of a model stands in the 1.5 m just in
+      // front of its readable face (Ben Thanh's gate and the Big Banana's awning covered theirs; a house across the street
+      // is not covering it)
+      { const models: any[] = [], signs: any[] = [];
+        G.scene.traverse((o: any) => { if (o.userData.worldTag) o.traverse((m: any) => { if (m.isMesh && !m.userData.outline) models.push([m, o]); });
+          if (o.isMesh && o.material?.map?.isCanvasTexture && o.geometry.type === 'PlaneGeometry') signs.push(o); });
+        const ray = new THREE.Raycaster(), N = new THREE.Vector3(), c = new THREE.Vector3(), mc = new THREE.Vector3();
+        for (const s of signs) { N.set(0, 0, 1).transformDirection(s.matrixWorld); if (Math.abs(N.y) > .3) continue;   // (floors and pavings)
+          s.getWorldPosition(c); const p = s.geometry.parameters;
+          for (const [m, o] of models) { m.geometry.boundingSphere || m.geometry.computeBoundingSphere(); const bs = m.geometry.boundingSphere.clone().applyMatrix4(m.matrixWorld);
+            if (bs.center.distanceTo(c) > bs.radius + 1) continue;
+            o.getWorldPosition(mc); if (N.dot(mc.clone().sub(c)) > 0) continue;   // (the face turned to the building is its back: only the readable face counts)
+            let hid = 0, was = 0; const pts = [[0, 0], [-.4, 0], [.4, 0], [0, .3], [0, -.3], [-.4, .3], [.4, -.3]];
+            for (const [u, v] of pts) { const q = new THREE.Vector3(u * p.width, v * p.height, 0).applyMatrix4(s.matrixWorld); ray.set(q.clone().addScaledVector(N, 1.5), N.clone().negate()); ray.far = 1.48; if (ray.intersectObject(m, false).length) hid++; if (o.userData.fallback && ray.intersectObject(o.userData.fallback, false).length) was++; }
+            if (hid > was) errors.push(`${o.userData.worldTag}: covers ${hid} of ${pts.length} points of the sign at ${c.x.toFixed(1)}, ${c.z.toFixed(1)} (its code shape ${was})`); } } }   // (a sign the code shape already overlaps is a layout matter, not the model's)
+      for (const n of ['lm-s2au-gbr', 'lm-s2au-tas', 'lm-s2au-perth']) if (!rows.some(r => r.name === n)) errors.push(`${n}: no model in its Season 2 region`);
       // walks: across the The Huc deck (the deck the child stands on stays where it was) and through the market gate
       const W = G.world, lm = (await import(String('/js/regions.js'))).LANDMARKS, hu = lm.find((l: any) => l.id === 'thehuc');
       const walk = (x0: number, z0: number, x1: number, z1: number) => { const p = { x: x0, y: 0, z: z0 }; let stuck = 0; for (let i = 0; i <= 60; i++) { const tx = x0 + (x1 - x0) * i / 60, tz = z0 + (z1 - z0) * i / 60; p.x = tx; p.z = tz; p.y = W.groundAt(tx, tz) + .1; W.collide(p, .45); if (Math.hypot(p.x - tx, p.z - tz) > .3) stuck++; } return stuck; };
@@ -82,5 +101,5 @@ export async function worldPlacesCheck(browser: Browser) {
     assert.ok(b.failed && !b.model, 'the turtle tower keeps its code shape when its model is blocked');
     assert.deepEqual(Q.errors.filter(e => !/world model/.test(e)), []);
   } finally { await Q.ctx.close(); }
-  return `${count} places models: on the ground, the code shape's size and facing, one draw each; 8 festival props in the Tet patches; The Huc bridge and the market gate walk through; a blocked model keeps its code shape`;
+  return `${count} places models (Season 2 Australia's three included): on the ground, the code shape's size and facing, one draw each; every name sign in front of a model shows; 8 festival props in the Tet patches; The Huc bridge and the market gate walk through; a blocked model keeps its code shape`;
 }

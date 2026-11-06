@@ -97,7 +97,10 @@ export function createShop(G, { say, save }) {
   world.colliders.push({ x: spot.x, z: spot.z, r: 1.8 }); world.stalls.push({ id: 'shop_clothes', place: 'market', kind: 'stall', x: spot.x, z: spot.z, w: 3.6, d: 2.1, face, tap: 'shop_clothes' });
   const front = { x: spot.x + Math.sin(face) * 1.8, z: spot.z + Math.cos(face) * 1.8 };
   G.interactables.push({ id: 'shop_clothes', x: front.x, z: front.z, r: 3, icon: '🛍️', label: () => T('Clothes shop', 'Cửa hàng quần áo'), visible: () => on(), act: h => openShop(h.i) });
-  stall.visible = on(); world.updaters.push(() => { stall.visible = on(); });
+  // (v1.08f places-fix) once its Blender model is in (js/modelkit.ts), the model shows and hides with the shop, and the
+  // code shape stays hidden (it was switched back on every frame, drawn over the model)
+  const show = () => { const v = on(), mdl = stall.userData.model?.obj; if (mdl) { mdl.visible = v; stall.visible = false; } else stall.visible = v; };
+  show(); world.updaters.push(show);
 
   // ---------- the companion's hats ----------
   // (owner, 30 Oct 2026 AEDT: "where do I manage accessories for companions?") a tab in the shop and the mirror, shown once

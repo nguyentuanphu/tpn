@@ -501,8 +501,12 @@ def hand_benthanh(m, sp):
             arch_door(m, .32, 1.0, dark, (sx * 1.51, 2.4, z), -sx * math.pi / 2)
             arch_door(m, .32, .5, '#8a6a4a', (sx * 1.51, .9, z), -sx * math.pi / 2)
     # the south gate: a deeper block with three tall arches between columns, a pediment over it
-    B(m, .7, 5.0, 3.8, cream, (-1.55, 2.5, 0)); B(m, .85, .25, 4.0, light, (-1.55, 5.0, 0))
-    prism(m, 4.0, .9, .6, light, (-1.6, 5.12, 0), math.pi / 2)
+    # (v1.08f places-fix) the game's "BEN THANH MARKET" sign hangs over the gate at x -1.55, 4.8-5.6 m up and 5 m wide: the
+    # gate stays deep only up to the arches' top; above it a shallow frieze set back behind the sign, and the cornice and
+    # pediment lifted over the sign, so the sign shows in front as on the code shape
+    B(m, .7, 4.7, 3.8, cream, (-1.55, 2.35, 0)); B(m, .8, .14, 3.9, light, (-1.55, 4.7, 0))
+    B(m, .3, 1.2, 3.8, cream, (-1.35, 5.3, 0)); B(m, .85, .25, 4.0, light, (-1.48, 5.95, 0))
+    prism(m, 4.0, .45, .6, light, (-1.45, 6.07, 0), math.pi / 2)   # (low: the clock above stays whole)
     for z in (-1.25, 0, 1.25):
         arch_door(m, .9, 2.6, dark, (-1.91, .2, z), -math.pi / 2)
         m.part('TorusGeometry', '#d8b86a', (-1.92, 2.35, z), (0, math.pi / 2, 0), radius=.47, tube=.06, arc=math.pi)
@@ -869,9 +873,11 @@ def hand_banana(m, sp):
     # The Big Banana (Coffs Harbour): a smoothie shop with a striped awning under a giant curved banana: a smooth, gently
     # ridged yellow body with a brown stem and tip
     B(m, 7, 3.4, 6, '#fff3c4', (0, 1.7, 0)); B(m, 7.2, .4, 6.2, '#e8c03a', (0, 3.6, 0)); B(m, 7.1, .4, 6.1, '#d9b45a', (0, .2, 0))
-    for x in (-2.4, 0, 2.4): arch_door(m, 1.4, 2.0, '#7fa9b8', (x, .4, 3.01), 0)
-    B(m, 7.4, .12, .95, '#e8433a', (0, 2.95, 3.4), (.25, 0, 0))
-    for k in range(7): B(m, .5, .13, .97, '#ffffff', (-3.0 + k, 2.96, 3.4), (.25, 0, 0))
+    # (v1.08f places-fix) the game's "THE BIG BANANA" sign is on the front wall 2.5-3.3 m up: the windows are a little lower
+    # and the striped awning sits under the sign, so the sign shows over it as on the code shape
+    for x in (-2.4, 0, 2.4): arch_door(m, 1.4, 1.65, '#7fa9b8', (x, .4, 3.01), 0)
+    B(m, 7.4, .12, .95, '#e8433a', (0, 2.2, 3.4), (.25, 0, 0))
+    for k in range(7): B(m, .5, .13, .97, '#ffffff', (-3.0 + k, 2.21, 3.4), (.25, 0, 0))
     n = 24; pts, rad, col = [], [], []
     for k in range(n + 1):
         a = -1.1 + k / n * 2.2; r = 6
@@ -1593,6 +1599,100 @@ def hand_chuacau(m, sp):
     B(m, .8, .4, .06, '#c62828', (0, 3.7, .82)); B(m, .5, .2, .07, '#ffd23f', (0, 3.7, .84))
     for i in range(2): B(m, 1.4, 6, W + .2, '#9c8a6a', ((-.3 + .6 * i) * L, -3.2, 0))
 
+# ---------- (v1.08f places-fix) Season 2 Australia's three landmarks (js/s2au-region.ts) ----------
+def hand_s2au_gbr(m, sp):
+    # a Great Barrier Reef pontoon: a white floating deck on blue floats moored over the reef, a teal shade roof on poles,
+    # a little glass-walled underwater viewing cabin in the middle, rails round the edge, the yellow snorkel steps going
+    # down into the water at the front, life rings, sun loungers and a curly water slide at the back corner
+    white, teal, blue, rail, yellow = '#f4f1ea', '#2f9a8a', '#3b6fe0', '#d8dde0', '#ffd23f'
+    for x in (-2.6, 0, 2.6):   # the floats under the deck
+        for z in (-1.4, 1.4): m.part('CapsuleGeometry', blue, (x, .05, z), (0, 0, math.pi / 2), radius=.32, length=1.6, capSegments=3, radialSegments=10)
+    B(m, 7.0, .3, 4.0, white, (0, .32, 0)); B(m, 7.1, .1, 4.1, '#c8ccd0', (0, .2, 0))
+    for k in range(-6, 7): B(m, .04, .02, 3.9, '#dcd6c8', (k * .52, .48, 0))   # deck planks
+    # the rails: posts and a top rail round three sides (the front is open for the steps)
+    for x in [-3.4 + i * .85 for i in range(9)]:
+        C(m, .03, .03, .8, rail, (x, .87, -1.9), seg=5)
+    for z in (-1.0, 0, 1.0):
+        for sx in (-1, 1): C(m, .03, .03, .8, rail, (sx * 3.4, .87, z), seg=5)
+    B(m, 6.9, .05, .05, rail, (0, 1.27, -1.9))
+    for sx in (-1, 1): B(m, .05, .05, 3.8, rail, (sx * 3.4, 1.27, 0))
+    # the shade roof: four poles and a teal roof with a scalloped white edge
+    for x, z in ((-3, -1.6), (3, -1.6), (-3, 1.6), (3, 1.6)): C(m, .07, .07, 2.2, rail, (x, 1.55, z), seg=8)
+    B(m, 7.2, .14, 4.2, teal, (0, 2.62, 0))
+    m.part('ConeGeometry', teal, (0, 2.68, 0), (0, math.pi / 4, 0), (3.3, .3, 1.8), radius=1.414, height=.5, radialSegments=4, hip=True)
+    for k in range(14): S(m, .17, '#ffffff', (-3.4 + k * .523, 2.5, 2.1), (1, .6, .4))
+    for k in range(14): S(m, .17, '#ffffff', (-3.4 + k * .523, 2.5, -2.1), (1, .6, .4))
+    # the underwater viewing cabin: a round glass room in the middle with a white roof and a porthole band
+    C(m, .9, .9, 1.3, '#7fc8d8', (0, 1.12, -.2), seg=16); C(m, 1.0, 1.0, .12, white, (0, 1.82, -.2), seg=16)
+    for k in range(8): a = k / 8 * TAU; C(m, .035, .035, 1.3, white, (math.sin(a) * .9, 1.12, -.2 + math.cos(a) * .9), seg=4)
+    B(m, .7, 1.0, .08, '#2b5a7a', (0, .97, .72))   # its door
+    # the snorkel steps at the front: a yellow ladder going down into the sea, with hand rails
+    for k in range(4): B(m, 1.4, .07, .3, yellow, (0, .38 - k * .22, 2.15 + k * .16))
+    for sx in (-1, 1): tube(m, [(sx * .75, .4, 2.0), (sx * .75, 1.1, 2.05), (sx * .75, 1.05, 2.4), (sx * .75, -.3, 2.7)], [.04] * 4, yellow, seg=5)
+    B(m, 2.2, .14, .14, yellow, (-2.4, .5, 2.02)); B(m, 2.2, .14, .14, yellow, (2.4, .5, 2.02))   # the bright yellow bumpers
+    # life rings on the rail, sun loungers, a dive flag
+    for x in (-2.0, 2.0): tube(m, [(x + math.cos(k / 16 * TAU) * .25, .95 + math.sin(k / 16 * TAU) * .25, -1.95) for k in range(17)], [.07] * 17, '#e8433a', seg=6, cap=False)
+    for x in (-2.0, 2.0):
+        for k in range(4): b = k / 4 * TAU + .4; B(m, .1, .14, .08, '#ffffff', (x + math.cos(b) * .25, .95 + math.sin(b) * .25, -1.93), (0, 0, b))
+    for x in (-2.6, -1.6, 1.6):
+        B(m, .65, .1, 1.4, ('#ff7eb8', '#ffd23f', '#5fd3c0')[int(x) % 3], (x, .62, .9)); B(m, .65, .1, .5, '#ffffff', (x, .8, .3), (-.6, 0, 0))
+    C(m, .03, .03, 1.6, '#e8e4dc', (3.2, 1.3, 1.8), seg=5); B(m, .6, .4, .03, '#e8433a', (3.5, 1.9, 1.8)); B(m, .62, .07, .035, '#ffffff', (3.5, 1.9, 1.8), (0, 0, -.55))
+    # the water slide: a blue spiral chute from a little platform at the back corner down to the sea
+    B(m, .9, .1, .9, white, (2.9, 1.9, -1.4)); C(m, .05, .05, 1.5, rail, (2.9, 1.15, -1.4), seg=6)
+    tube(m, [(2.9 + math.cos(t) * .6, 1.9 - t * .3, -1.4 + math.sin(t) * .6) for t in [i * .45 for i in range(9)]], [.13] * 9, '#3cc7e8', seg=6)
+
+def hand_s2au_tas(m, sp):
+    # Cradle Mountain: a long grey-green dolerite massif with its famous jagged crown of fluted columns (the two summits and
+    # Weindorfers Tower), snow lying in the hollows and on the tops, buttongrass slopes at its feet and a few pencil pines
+    import random
+    rnd = random.Random(7)
+    # the shoulders of the mountain: two long rounded rocky ridges, darker at the foot
+    rock(m, (0, .2, .2), 2.0, '#7d8a6c', seed=3, squash=(1.4, .3, .95))   # (its foot level with the code shape's, -0.4 m)
+    rock(m, (1.4, .3, -.4), 1.4, '#86907a', seed=5, squash=(1.0, .45, .8))
+    rock(m, (-1.6, .15, .6), 1.2, '#8a9280', seed=8, squash=(.9, .4, .9))
+    # the crown: tall fluted dolerite columns in clusters along the top, highest in the middle (Cradle's summit)
+    for k, (x, z, h, r) in enumerate(((-1.7, .1, 2.5, .5), (-1.15, -.25, 3.0, .45), (-.5, -.3, 3.4, .5), (.35, -.5, 4.0, .55), (.95, -.3, 3.6, .45), (1.6, .2, 3.1, .5), (2.25, .5, 2.6, .45))):
+        crag(m, x, z, r, h, ['#9a9aa6', '#a8a8b2', '#8e8e9a'], seed=k * 13 + 1, seg=6, taper=.55, y0=.1)
+        for j in range(3):   # the fluting: thin columns against each crag
+            a = j * 2.1 + k; crag(m, x + math.cos(a) * r * .8, z + math.sin(a) * r * .8, r * .32, h * (.62 + j * .1), ['#8a8b95', '#9a9aa4'], seed=k * 7 + j, seg=5, taper=.5, y0=.1)
+        S(m, r * .7, '#ffffff', (x, h + .2, z), (1, .45, 1))   # snow on the tops
+    for k, (x, y, z) in enumerate(((-.85, 1.25, .5), (.65, 1.45, .25), (1.9, 1.0, .75), (-1.4, .95, .85))): S(m, .32, '#f6f8fa', (x, y, z), (1.3, .35, .8))   # snow lying in the hollows between the columns
+    for k in range(7):   # scree and boulders on the lower slopes
+        a = k * 2.3 + .5; rock(m, (math.cos(a) * 2.1, .15, .3 + math.sin(a) * 1.3), .28 + (k % 3) * .08, ('#8a8e84', '#7a7e76', '#94968c')[k % 3], seed=20 + k)
+    # buttongrass tussocks and pencil pines round the foot
+    for k in range(10):
+        a = k / 10 * TAU + .2; x, z = math.cos(a) * 2.7, math.sin(a) * 1.9 + .3
+        S(m, .3, ('#b8a85a', '#a89a4a', '#c2b26a')[k % 3], (x, -.15, z), (1.3, .6, 1.3))
+    for x, z in ((-2.4, 1.6), (2.6, 1.7), (-2.1, -1.2)):
+        C(m, .06, .08, .5, '#6a4a32', (x, .0, z), seg=5); m.part('ConeGeometry', '#2f6a3a', (x, .85, z), radius=.32, height=1.2, radialSegments=7)
+
+def hand_s2au_perth(m, sp):
+    # the Wadjemup lighthouse on Rottnest Island: a tall round limestone tower, white with a red band, small windows up its
+    # side, the black-railed gallery round the lantern room with its warm light, a red dome with a vent ball on top; the
+    # keeper's cottage beside it in pale limestone with a red tin roof and a shady verandah
+    white, red = '#ffffff', '#e8433a'
+    C(m, 1.32, 1.4, .4, '#e8e0cc', (0, .2, 0), seg=16)   # the base step
+    C(m, .9, 1.25, 6.8, white, (0, 3.6, 0), seg=16)
+    C(m, 1.08, 1.12, .6, red, (0, 5.0, 0), seg=16)
+    for y in (1.6, 3.2, 6.3): arch_door(m, .28, .55, '#4a4a5a', (0, y, 1.2 - y * .043), 0)
+    arch_door(m, .6, 1.2, '#7a4a2a', (0, .3, 1.27), 0)   # the door
+    C(m, 1.15, .95, .35, '#e8e4dc', (0, 7.15, 0), seg=16)   # the gallery floor
+    for k in range(16): a = k / 16 * TAU; C(m, .025, .025, .5, '#2b2b2b', (math.cos(a) * 1.08, 7.55, math.sin(a) * 1.08), seg=4)
+    m.part('TorusGeometry', '#2b2b2b', (0, 7.8, 0), (math.pi / 2, 0, 0), radius=1.08, tube=.035)
+    C(m, .7, .7, 1.1, '#ffe08a', (0, 7.85, 0), seg=12)   # the lantern room's glass
+    for k in range(6): a = k / 6 * TAU; C(m, .04, .04, 1.1, red, (math.cos(a) * .71, 7.85, math.sin(a) * .71), seg=4)
+    m.part('SphereGeometry', red, (0, 8.4, 0), radius=.78, widthSegments=14, heightSegments=6, thetaLength=math.pi / 2)
+    C(m, .03, .06, .35, '#5a5a5a', (0, 9.3, 0), seg=6); S(m, .1, red, (0, 9.0, 0))
+    # the keeper's cottage
+    B(m, 2.3, 1.5, 1.9, '#f2e6c8', (1.85, .75, 0)); B(m, 2.35, .2, 1.95, '#d9c9a0', (1.85, .1, 0))
+    m.part('ConeGeometry', '#c0503a', (1.85, 1.95, 0), (0, math.pi / 4, 0), (1.25, .9, 1.05), radius=1.414, height=.9, radialSegments=4, hip=True)
+    B(m, 2.3, .06, .55, '#c0503a', (1.85, 1.45, 1.2), (.18, 0, 0))   # the verandah roof
+    for x in (.8, 1.85, 2.9): C(m, .04, .04, 1.4, '#ffffff', (x, .72, 1.25), seg=5)
+    arch_door(m, .5, 1.0, '#7a4a2a', (1.85, .2, .96), 0)
+    for x in (1.15, 2.55): B(m, .45, .5, .04, '#9fd2ee', (x, .95, .96)); B(m, .55, .06, .05, '#ffffff', (x, .68, .97))
+    C(m, .14, .14, .5, '#d9c9a0', (2.6, 2.3, -.4), seg=6)   # the chimney
+
+
 HAND = {'lm-turtle': hand_turtle, 'lm-thehuc': hand_thehuc, 'lm-vanmieu': hand_vanmieu, 'lm-onepillar': hand_onepillar,
         'lm-benthanh': hand_benthanh, 'lm-opera': hand_opera, 'br-harbour': hand_harbour}
 HAND.update({n: fn for n, (fn, size) in PROPS.items()})
@@ -1604,6 +1704,7 @@ HAND.update({'lm-halong': hand_halong, 'lm-myson': hand_myson, 'lm-trangan': han
 HAND.update({'lm-wheelbase': hand_wheelbase, 'lm-lonepine': hand_lonepine, 'lm-exhibition': hand_exhibition, 'lm-terracotta': hand_terracotta, 'lm-konark': hand_konark, 'lm-hampi': hand_hampi, 'lm-mahabodhi': hand_mahabodhi})
 HAND.update({'lm-s2-mekong': hand_s2_mekong, 'lm-s2-halong': hand_s2_halong, 'lm-s2-sapa': hand_s2_sapa, 'lm-s2-taynguyen': hand_s2_taynguyen})
 HAND.update({'br-longbien': hand_longbien, 'br-chuacau': hand_chuacau})
+HAND.update({'lm-s2au-gbr': hand_s2au_gbr, 'lm-s2au-tas': hand_s2au_tas, 'lm-s2au-perth': hand_s2au_perth})   # (v1.08f places-fix)
 HAND.update({'lm-cathedral': hand_cathedral, 'lm-postoffice': hand_postoffice, 'lm-flinders': hand_flinders, 'lm-hue': hand_hue})
 BUDGET = lambda name: 8000 if name.startswith(('lm-', 'br-')) else 900 if name.startswith('pr-') else 3000
 
