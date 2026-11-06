@@ -116,6 +116,8 @@ await check('wading', async () => (await import('./wading.mts')).wadingCheck(b))
 await check('worldnature', async () => (await import('./world-nature.mts')).worldNatureCheck(b));
 // (v1.08e places) the landmarks, bridges and buildings remade in Blender stand where their code shapes stood (tests/world-places.mts)
 await check('worldplaces', async () => (await import('./world-places.mts')).worldPlacesCheck(b));
+// (v1.08g props) the story and street props' Blender models fit their code shapes (tests/props-fit.mts)
+await check('propsfit', async () => (await import('./props-fit.mts')).propsFitCheck(b));
 
 // (v1.08f settings) Grown-ups: Two players, Fit the screen and Money on one row at 390 px in EN and VI; tapping a choice
 // keeps the scroll; captions off on a fresh start; no AI chat offer; no TURN relay (tests/grownups-row.mts)
