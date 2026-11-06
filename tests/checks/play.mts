@@ -1069,7 +1069,10 @@ await check('friendmodel', async () => {
   // few parts, takes the child's skin tone, follows the code person's joints and moods, and the child plays with it; when
   // a model cannot load, the code person in the friend's colours stays (no error). Triangles shown: about 8,200 for Finn,
   // Sol and Clara (limit 9,000); Lumi's hair is about a thousand felt leaves that cannot be thinned further, so about
-  // 14,000 (limit 14,500; the owner chose that hair, docs/cores/tasks/v108/lumi.md)
+  // 14,000 (limit 14,500; the owner chose that hair, docs/cores/tasks/v108/lumi.md).
+  // (v1.08e faces, part 3, owner 6 Nov 2026 AEDT: sculpted faces, "a sculpted head adds about 2-4k triangles", faces-brief.md)
+  // the face is one mesh of real shapes with 13 moods as shape keys (about 2,600 triangles): limits 12,000 and 17,500, and
+  // one more draw (the face's own colours, and its lids in the child's skin tone)
   const fs2 = await import('fs'), sizes = ['finn', 'sol', 'clara', 'lumi'].map(id => fs2.statSync(new URL(`../../models/${id}.glb`, import.meta.url)).size);
   const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
@@ -1077,11 +1080,13 @@ await check('friendmodel', async () => {
     for (const id of ['finn', 'sol', 'clara', 'lumi']) {
       const ok = await A.loadFriendModels(id), av = A.buildAvatar({ set: id === 'clara' || id === 'lumi' ? 'girl' : 'boy', friend: id, skin: '#b47a55', hat: 'cap' });
       const m = av.model, meshes = []; let skin = null, faces = 0, tris = 0;
-      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); if (/^skin$/.test(o.material.name)) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
+      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); if (/^skin$/.test(o.material.name) && !o.userData.face3d) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
+      // (v1.08e faces, part 3) a sculpted face is one mesh whose moods are its shape keys: its mood count (12 keys and the rest smile)
+      if (m.face3d) faces = Object.keys(m.face3d[0].morphTargetDictionary).length + 1;
       // a turn of the code person's arm and knee shows on the model's bones; a mood shows the matching face
       const bone = n => { let x = null; m.obj.traverse((o: any) => { if (o.isBone && o.name === n) x = o; }); return x; }, q0 = new THREE.Quaternion(), q1 = new THREE.Quaternion();
       av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q0); av.armL.rotation.x = -1.2; av.life = av.life || ({} as typeof av.life); av.life.mood = 'happy'; av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q1);
-      const turned = +q0.angleTo(q1).toFixed(2), face = meshes.filter(o => /^face-/.test(o.material.name) && o.visible).map(o => o.material.name).join();
+      const turned = +q0.angleTo(q1).toFixed(2), face = m.face3d ? 'face-' + m.mood : meshes.filter(o => /^face-/.test(o.material.name) && o.visible).map(o => o.material.name).join();
       // (v1.08e faces, part 2) the thin outlines (one per part, the same shape drawn again) are counted on their own
       meshes.filter(o => o.visible && !o.userData.outline && (o.material.name !== 'skin-grip')).forEach(o => { tris += o.geometry.index.count / 3; });
       const hat = av.rig.getObjectByProperty('isMesh', true) && (() => { let n = 0; av.rig.traverse((o: any) => { if (o.isMesh && !o.isSkinnedMesh && o.parent && o.parent !== m.obj) n++; }); return n; })();
@@ -1098,7 +1103,7 @@ await check('friendmodel', async () => {
   const errs = [...P.errors, ...Q.errors.filter(e => !/glb|friend model|Failed to fetch|aborted/i.test(e))]; await P.ctx.close(); await Q.ctx.close();
   const bad = [];
   sizes.forEach((n, i) => { if (n > 500 * 1024) bad.push(`model ${i} is ${Math.round(n / 1024)} KB`); });
-  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || x.skin !== '#b47a55' || x.faces !== 11 || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 14500 : 9000) || x.draws > 6 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
+  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || x.skin !== '#b47a55' || x.faces < 13 || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 17500 : 12000) || x.draws > 7 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
   if (!r.hero) bad.push('the child in the valley has no model'); if (f.ok || f.model || f.hero || f.look !== '#e0762a') bad.push('no model: ' + JSON.stringify(f));
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
   return `${sizes.map(n => Math.round(n / 1024)).join(', ')} KB; ${['finn', 'sol', 'clara', 'lumi'].map(id => `${id} ${r[id].tris} triangles in ${r[id].draws} parts (+${r[id].lines} outlines)`).join(', ')}; skin tone, joints and moods follow; the cap is worn; without the files the code person stays`;
@@ -1171,7 +1176,7 @@ await check('frienditems', async () => {
   if (r.after.item !== true || !String(r.after.fitems).split(' ').includes(r.f) || r.after.step !== 3 || !r.after.done || r.after.follow || /^FQ_/.test(r.after.goal)) bad.push('after ' + JSON.stringify(r.after));
   if (r.other !== false) bad.push('another friend carries an item not earned');
   if (r.shoes.boots !== false || r.shoes.code < 2 || r.shoes.plain !== true) bad.push('shoes ' + JSON.stringify(r.shoes));
-  if (r.draws > 7) bad.push('draws ' + r.draws);
+  if (r.draws > 8) bad.push('draws ' + r.draws); // (v1.08e part 3: the sculpted face draws in two parts, its colours and its lids in the skin tone)
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
   return `${r.f}: three steps at places in the valley, followed on the goal bar; the item shows only after the third; shop shoes replace the boots; ${r.draws} parts drawn with the item`;
 });

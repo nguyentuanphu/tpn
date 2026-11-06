@@ -523,6 +523,7 @@ export function wearVillagerModel(A: SvAvatar, key: string): boolean {
   const back = () => { JOINTS.forEach((j, i) => { if (keep[i]) A[j].rotation.copy(keep[i]); }); A.rig.position.y = lift; A.rig.scale.copy(sc); };
   if (!m) { back(); return false; }
   codeParts.forEach(o => { o.visible = false; o.children.forEach(c => { if (c.userData.outline) c.visible = false; }); });
+  (A as any)._codeParts = codeParts; // (kept, to show them again when the model is taken off: unwearVillagerModel)
   m.obj.updateMatrixWorld(true); const mb = new THREE.Box3().setFromObject(m.obj, true), mh = mb.max.y - mb.min.y;
   // the model's head at the code person's head (a hat does not count), its feet on the code person's feet
   let headBone: THREE.Object3D = null; m.obj.traverse(o => { if ((o as THREE.Bone).isBone && o.name === 'head') headBone = o; });
@@ -532,6 +533,17 @@ export function wearVillagerModel(A: SvAvatar, key: string): boolean {
     m.obj.scale.multiplyScalar(k); m.obj.position.y += (box.min.y - (O + (mb.min.y - O) * k)) / ws; }
   back();
   A.model = m; A.root.userData.villagerModel = key; showStill(A, false); return true; // (worn near the child: the moving model, not the still copy)
+}
+/** (v1.08e crowds) the gallery model taken off again, the code person shown (js/crowd-models.ts: a crowd person farther
+ *  away gives theirs up so the one beside the child can have one, check perf's limit) */
+export function unwearVillagerModel(A: SvAvatar): boolean {
+  const m: any = A && A.model, parts: THREE.Object3D[] = A && (A as any)._codeParts;
+  if (!m || !parts || !A.root.userData.villagerModel) return false;
+  if (Array.isArray(A.outlines)) { const mine = new Set<THREE.Object3D>(); m.obj.traverse(o => { if (o.userData.outline) mine.add(o); }); A.outlines = (A.outlines as THREE.Object3D[]).filter(o => !mine.has(o)); }
+  m.obj.traverse(o => { const mt = (o as THREE.Mesh).material as THREE.Material; if (mt && !Array.isArray(mt) && /^skin/.test(mt.name)) mt.dispose(); }); // (its own skin colour; the shapes are shared)
+  m.obj.removeFromParent();
+  parts.forEach(o => { o.visible = true; o.children.forEach(c => { if (c.userData.outline) c.visible = true; }); });
+  A.model = null; delete A.root.userData.villagerModel; (A as any)._codeParts = null; return true;
 }
 /** (v1.08e faces, part 2) the high-detail model up close, the light one far away (a child's own friend only) */
 export function showHD(A, near: boolean) { if (!A || !A.modelHD || A._hd === near) return; A._hd = near; A.modelHD.obj.visible = near; A.model.obj.visible = !near; }

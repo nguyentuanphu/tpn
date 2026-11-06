@@ -49,19 +49,22 @@ export async function facesCheck(b) {
       let top = S; for (let y = 0; y < S && top === S; y++) for (let k = Math.round(.29 * S); k < Math.round(.46 * S); k++) if (EYEW(d, (y * S + k) * 4)) { top = y; break; }
       return { top: +(top / S).toFixed(3), eyeTop: .467 };
     };
-    // (part 3) rays from in front of the face, straight at it, over the eyes: how many first meet eye white (or a sparkle)
+    // (part 3) how much eye white the face shows from the front: the person drawn small and flat (the face in its corner
+    // colours, everything else black, nothing in front), the white pixels counted
+    const flatV = new THREE.MeshBasicMaterial({ vertexColors: true }), flatK = new THREE.MeshBasicMaterial({ color: '#000' });
+    const rt = new THREE.WebGLRenderTarget(160, 160), px = new Uint8Array(160 * 160 * 4), rr = (window as any).__sv.renderer;
     (window as any).__rayWhite = (av: any, key: string) => {
-      av.model.follow(key); av.root.updateMatrixWorld(true);
-      const meshes = av.model.face3d, box = new THREE.Box3(); meshes.forEach((o: any) => box.expandByObject(o, true));
-      const rc = new THREE.Raycaster(), hitMeshes: any[] = []; av.model.obj.traverse((o: any) => { if (o.isMesh && o.visible && !o.userData.outline) hitMeshes.push(o); });
-      let n = 0; const N = 70, y0 = box.min.y + (box.max.y - box.min.y) * .35;
-      for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) {
-        const x = box.min.x + (box.max.x - box.min.x) * i / N, y = y0 + (box.max.y - y0) * j / N;
-        rc.set(new THREE.Vector3(x, y, box.max.z + 1), new THREE.Vector3(0, 0, -1)); const h = rc.intersectObjects(hitMeshes, false)[0];
-        if (!h || !h.object.userData.face3d || !h.face) continue;
-        const c = h.object.geometry.attributes.color; if (!c) continue; const k = h.face.a;
-        if (c.getX(k) > .85 && c.getY(k) > .85 && c.getZ(k) > .8) n++;
-      }
+      // (the model follows the person's mood each time it is drawn: the mood is set on the person too)
+      if (av.life) { av.life.mood = key === 'surprised' ? 'o' : key; av.life.blink = av.life.t + 60; }
+      av.model.follow(av.life ? av.life.mood : key); av.root.updateMatrixWorld(true);
+      const box = new THREE.Box3(); av.model.face3d.forEach((o: any) => box.expandByObject(o, true));
+      const sc = new THREE.Scene(), parent = av.root.parent; sc.add(av.root);
+      const swap: [any, any][] = []; av.root.traverse((o: any) => { if (o.isMesh) { swap.push([o, o.material]); o.material = o.userData.face3d && o.geometry.attributes.color && !/^skin/.test(o.material.name) ? flatV : flatK; } });
+      const c = box.getCenter(new THREE.Vector3()), h = (box.max.y - box.min.y) * .3, y0 = c.y + h * .7;
+      const cam = new THREE.OrthographicCamera(-h * 1.6, h * 1.6, h, -h, .01, 10); cam.position.set(c.x, y0, box.max.z + 2); cam.lookAt(c.x, y0, 0);
+      const was = rr.getRenderTarget(); rr.setRenderTarget(rt); rr.setClearColor('#000', 1); rr.clear(); rr.render(sc, cam); rr.readRenderTargetPixels(rt, 0, 0, 160, 160, px); rr.setRenderTarget(was);
+      swap.forEach(([o, m]) => { o.material = m; }); if (parent) parent.add(av.root); else sc.remove(av.root);
+      let n = 0; for (let k = 0; k < px.length; k += 4) if (px[k] > 225 && px[k + 1] > 225 && px[k + 2] > 210) n++;
       return n;
     };
     for (const [id, look] of people) {
@@ -90,7 +93,19 @@ export async function facesCheck(b) {
     }
     return { bad, out };
   });
-  // (part 3) the sculpted faces of the four friends, light and high-detail models
+  // (part 2) the high-detail model: only the child's own friend's is downloaded, after the start; it is drawn up close and
+  // the light one far away; blocked, the light model stays and nothing breaks
+  const hd = await P.page.evaluate(async () => {
+    const G = (window as any).__sv, h = G.heroes[0], f = h.profile.look.friend;
+    for (let k = 0; k < 80 && !h.av.modelHD; k++) await new Promise(r => setTimeout(r, 250));
+    const near = h.av.modelHD ? { hd: h.av.modelHD.obj.visible, light: h.av.model.obj.visible } : null;
+    
+    const A = await import(String('/js/avatar.js')); A.showHD(h.av, false); const far = h.av.modelHD ? { hd: h.av.modelHD.obj.visible, light: h.av.model.obj.visible } : null; A.showHD(h.av, true);
+    // (the browser's list of downloads fills up in the valley, so the loader itself is asked which high-detail models it holds)
+    const asked = ['finn', 'sol', 'clara', 'lumi'].filter(id => A.FRIEND_MODELS.ready && A.FRIEND_MODELS.ready(id + '-hd')).map(id => id + '-hd.glb');
+    return { f, has: !!h.av.modelHD, near, far, asked };
+  });
+  // (part 3, after part 2's count of downloads) the sculpted faces of the four friends, light and high-detail models
   const sculpt = await P.page.evaluate(async () => {
     const A = await import(String('/js/avatar.js')), { THREE } = await import(String('/js/gfx.js')), W = window as any;
     const bad: string[] = [], out: Record<string, unknown> = {};
@@ -105,11 +120,11 @@ export async function facesCheck(b) {
       const m = { ...av, model: M };
       // 1. the lids close: eye white seen open, less half-closed, none closed (blink, sleep, happy's curved eyes)
       const white: Record<string, number> = {}; for (const k of ['smile', 'half', 'blink', 'sleep', 'happy']) white[k] = W.__rayWhite(m, k);
-      if (!(white.smile > 20) || !(white.half < white.smile) || white.blink > 0 || white.sleep > 0 || white.happy > 0) bad.push(`${tag}: eye white ${JSON.stringify(white)}`);
+      if (!(white.smile > 40) || !(white.half < white.smile) || white.blink > 0 || white.sleep > 0 || white.happy > 0) bad.push(`${tag}: eye white ${JSON.stringify(white)}`);
       // 2. the mouth changes shape per mood: its dark inside, each mood's own width, height and place
       const face = M.face3d.find((o: any) => o.geometry.attributes.color), g = face.geometry, pos = g.attributes.position, col = g.attributes.color, dict = face.morphTargetDictionary, tgt = g.morphAttributes.position, rel = g.morphTargetsRelative;
-      g.computeBoundingBox(); const low = g.boundingBox.min.y + (g.boundingBox.max.y - g.boundingBox.min.y) * .45; // (the mouth's dark red, under the eyes: not a brown brow)
-      const mouth: number[] = []; for (let i = 0; i < pos.count; i++) if (pos.getY(i) < low && col.getX(i) > .08 && col.getX(i) < .3 && col.getY(i) < .06 && col.getZ(i) < .06) mouth.push(i);
+      // (the mouth's own dark red, #6f2b2b: linear .16, .024, .024 in the corners)
+      const mouth: number[] = []; for (let i = 0; i < pos.count; i++) if (Math.abs(col.getX(i) - .161) < .025 && col.getY(i) < .04 && col.getZ(i) < .04) mouth.push(i);
       const shape: Record<string, number[]> = {};
       for (const k of ['smile', 'open', 'sad', 'surprised', 'happy', 'shy', 'excited', 'sleep']) {
         let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; const t = k === 'smile' ? null : tgt[dict[k]];
@@ -129,24 +144,12 @@ export async function facesCheck(b) {
       for (const [x, y, z] of pts) { hy0 = Math.min(hy0, y); hy1 = Math.max(hy1, y); hz0 = Math.min(hz0, z); hz1 = Math.max(hz1, z); if (!front || z > front[2]) front = [x, y, z]; }
       const zc = hz0 + (hz1 - hz0) * .65; for (const [x, , z] of pts) if (z > zc) { hx0 = Math.min(hx0, x); hx1 = Math.max(hx1, x); }
       const Wd = hx1 - hx0, Dp = hz1 - hz0, Ht = hy1 - hy0, k1 = Math.abs(Wd - Dp) / Wd, k2 = Math.abs(Wd - Ht) / Wd;
-      if (pts.length < 50 || !(k1 > .04 && k2 > .04) || !(Math.abs(front[0]) < Wd * .08)) bad.push(`${tag}: head ${pts.length} points, width ${Wd.toFixed(3)} depth ${Dp.toFixed(3)} height ${Ht.toFixed(3)}, front at x ${front && front[0].toFixed(3)}`);
+      if (pts.length < 50 || !(k1 > .04 && k2 > .04) || !(Math.abs(front[0] - (hx0 + hx1) / 2) < Wd * .08)) /* (the stored points are packed: measured from the head's middle) */ bad.push(`${tag}: head ${pts.length} points, width ${Wd.toFixed(3)} depth ${Dp.toFixed(3)} height ${Ht.toFixed(3)}, front ${front && ((front[0] - (hx0 + hx1) / 2) / Wd).toFixed(3)} of the width from the middle`);
       out[tag] = { white, mouth: mouth.length, head: [Wd, Dp, Ht].map(v => +v.toFixed(3)) };
     }
     return { bad, out };
   });
   r.bad.push(...sculpt.bad);
-  // (part 2) the high-detail model: only the child's own friend's is downloaded, after the start; it is drawn up close and
-  // the light one far away; blocked, the light model stays and nothing breaks
-  const hd = await P.page.evaluate(async () => {
-    const G = (window as any).__sv, h = G.heroes[0], f = h.profile.look.friend;
-    for (let k = 0; k < 80 && !h.av.modelHD; k++) await new Promise(r => setTimeout(r, 250));
-    const near = h.av.modelHD ? { hd: h.av.modelHD.obj.visible, light: h.av.model.obj.visible } : null;
-    
-    const A = await import(String('/js/avatar.js')); A.showHD(h.av, false); const far = h.av.modelHD ? { hd: h.av.modelHD.obj.visible, light: h.av.model.obj.visible } : null; A.showHD(h.av, true);
-    // (the browser's list of downloads fills up in the valley, so the loader itself is asked which high-detail models it holds)
-    const asked = ['finn', 'sol', 'clara', 'lumi'].filter(id => A.FRIEND_MODELS.ready && A.FRIEND_MODELS.ready(id + '-hd')).map(id => id + '-hd.glb');
-    return { f, has: !!h.av.modelHD, near, far, asked };
-  });
   if (!hd.has) r.bad.push('no high-detail model for the child\'s friend');
   if (hd.asked.length !== 1 || hd.asked[0] !== hd.f + '-hd.glb') r.bad.push('high-detail models asked: ' + hd.asked.join());
   if (hd.near && !(hd.near.hd && !hd.near.light)) r.bad.push('up close: ' + JSON.stringify(hd.near));
