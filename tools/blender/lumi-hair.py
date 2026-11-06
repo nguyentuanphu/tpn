@@ -10,15 +10,15 @@
 # (game-light.py, game-hd.py). The friends keep their approved shapes and colours, only smoothed.
 CLUMP = .72 if WHO == 'villager' else 1.0   # (the villagers: about a quarter fewer locks, each wider)
 
-def slock(m, L, W, th=None, wave=0.0, curl=.25, flick=.15, hug=1.0, taper=.85, N=9):
+def slock(m, L, W, th=None, wave=0.0, curl=.25, flick=.15, hug=1.0, taper=.85, N=7):
     """one soft lock along +Y (its outer side +Z): an oval clump, full at the root, narrowing a little and ending in a round tip;
     wave makes a gentle S-curve, flick lifts the tip a little; the root and the tip are closed and round"""
-    th = th or W * (.62 if WHO == 'villager' else .55)
+    th = th or W * (.78 if WHO == 'villager' else .55)
     SEG = 8; bm = bmesh.new(); rows = []
-    t0 = .74   # where the round tip starts
+    t0 = 1 - min(.26, .8 * W / max(L, 1e-6))   # where the round tip starts: about one width from the end, so a long lock ends round, not in a point
     for i in range(N + 1):
         t = i / N
-        w = W * (1 - .38 * t ** (1.3 * taper)) * (.94 + .06 * math.sin(math.pi * t))
+        w = W * (1 - (.22 if WHO == 'villager' else .38) * t ** (1.3 * taper)) * (.94 + .06 * math.sin(math.pi * t))   # (the villagers' locks stay full to the tip)
         if t > t0: w *= math.sqrt(max(0.0, 1 - ((t - t0) / (1 - t0)) ** 2)) * .9 + .1 * (1 - t) / (1 - t0)
         y = t * L; z = -(y * y) / (2 * hug) + .6 * flick * L * t ** 3; xo = wave * W * math.sin(t * math.pi * 2)
         if i == N:
@@ -57,14 +57,22 @@ def lock_at(m, az, el, L, W, toward=None, away=None, gravity=.6, spin=.15, lift=
     else: d = g.copy()
     if d.length < 1e-4: d = g
     d = (d.normalized() * (1 - gravity) + (g.normalized() if g.length > 1e-4 else d.normalized()) * gravity + n * out).normalized()
-    kw.setdefault('flick', .2); o = slock(m, L * R * (1.0 if TOY else 1.1), W * R * (1.35 if TOY else 1.15) / CLUMP ** .6, hug=kw.pop('hug', 1.05) * R * lift * 1.15, **kw)
+    kw.setdefault('flick', .2); o = slock(m, L * R * (1.0 if TOY else 1.1), W * R * (1.35 if TOY else 1.15) / CLUMP ** .45, hug=kw.pop('hug', 1.05) * R * lift * 1.15, **kw)
     place(o, base, d, n, random.uniform(-spin, spin)); return o
 
 def hair_base(m, hairline=.3, sides=-.4, back=-.66):
     """a thin base that shapes the hairline round the face (the locks give the volume)"""
     hx, hy, hz = P.get('head', (1.03, .96, .94))
-    bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=64, v_segments=40, radius=1)
+    bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=30, radius=1)
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if (v.co.y < -.18 and v.co.z < hairline + .3 * v.co.x ** 2) or (v.co.z < sides and v.co.y < .3) or v.co.z < back], context='VERTS')
+    # (round 3) the trimmed edge round the face smoothed along itself, so the hairline is a soft curve, not a staircase
+    for _ in range(8):
+        edge = [v for v in bm.verts if v.is_boundary]
+        new = {}
+        for v in edge:
+            nb = [e.other_vert(v) for e in v.link_edges if e.is_boundary]
+            if len(nb) == 2: new[v] = (v.co * 2 + nb[0].co + nb[1].co) / 4
+        for v, c in new.items(): v.co = c.normalized()
     bmesh.ops.transform(bm, matrix=Matrix.Translation(HC + Vector((0, .02 * R, .04 * R))) @ Matrix.Diagonal((hx * 1.1 * R, hy * 1.09 * R, hz * 1.08 * R, 1)), verts=bm.verts)
     o = obj_from(bm, 'hairCap', m); so = o.modifiers.new('thick', 'SOLIDIFY'); so.thickness = .05 * R; so.offset = -1; subsurf(o, 2); return o
 
@@ -73,6 +81,7 @@ def ring(el, count, fn, skip_face=True, phase=0.0):
     for k in range(count):
         az = 2 * math.pi * (k + phase) / count + random.uniform(-.06, .06)
         if skip_face and front_open(az, el): continue
+        if skip_face and CLUMP < 1 and math.cos(az) > .25 and el < .6: continue   # (the villagers' wider side locks start behind the temple, off the cheek)
         fn(az, el, k)
 
 def style(name, A=None, Bm=None, side=1):

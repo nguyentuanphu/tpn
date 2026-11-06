@@ -29,6 +29,9 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
     if '-hair' in o.name or '-hat' in o.name:   # (v1.08e, Release 6 Nov: every lock and hat shell facing out, none drawn dark)
         import bmesh; bm = bmesh.new(); bm.from_mesh(o.data); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(o.data); bm.free(); o.data.update()
     if o.data.shape_keys: print('light:', o.name, have, '(kept: its mood keys)'); total += have; continue   # (v1.08e part 3: the face, built small)
+    src = None
+    if '-hair' in o.name:   # (v1.08e hair round 3: the full hair kept for a moment, so the thinned hair takes its smooth normals)
+        src = o.copy(); src.data = o.data.copy(); src.modifiers.clear(); bpy.context.scene.collection.objects.link(src)
     for _ in range(3):  # (small separate pieces, such as Lumi's leaves, thin less each time: up to three goes)
         now = tris(o)
         if now <= want * 1.15: break
@@ -36,7 +39,8 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
         o.modifiers.move(o.modifiers.find(d.name), 0)  # (before the skin, so the weights are thinned with the shape)
         with bpy.context.temp_override(object=o, active_object=o):
             bpy.ops.object.modifier_apply(modifier=d.name)
-    if '-hair' in o.name: soften_hair(o)   # (v1.08e hair round 3: smooth, weighted normals, no facets)
+    if src is not None:   # (v1.08e hair round 3: smooth, the full hair's normals, no facets)
+        soften_hair(o, src); bpy.data.objects.remove(src)
     print('light:', o.name, have, '->', tris(o)); total += tris(o)
 print('light: total triangles', total)
 # (v1.08e, owner 6 Nov: the sculpted head thinned on its own, its shape kept) joined to the body again: one part, as before

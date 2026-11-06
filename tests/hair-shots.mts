@@ -35,8 +35,8 @@ async function shot(P: any, w: number, h: number, dpr: number, who: string[], tu
       A.animate(p, 'idle', 1 + 1 / 30); p.root.rotation.y = 0; p.root.visible = true; p.root.updateMatrixWorld(true);
       let hb: any = null; if (p.model) p.model.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; });
       const bx = new THREE.Box3().setFromObject(p.model ? p.model.obj : p.rig, true), H = bx.max.y - bx.min.y;
-      const hp = (hb || p.head).getWorldPosition(new THREE.Vector3()); hp.y += H * .07;
-      const half = H * .21 / zoom, cam = new THREE.PerspectiveCamera(22, cw / ch, .05, 50), dist = half / Math.tan(11 * Math.PI / 180) * Math.max(1, ch / cw);
+      const hp = (hb || p.head).getWorldPosition(new THREE.Vector3()); hp.y += H * .085;
+      const half = H * .25 / zoom, cam = new THREE.PerspectiveCamera(22, cw / ch, .05, 50), dist = half / Math.tan(11 * Math.PI / 180) * Math.max(1, ch / cw);
       cam.position.set(hp.x + Math.sin(turn) * dist, hp.y + half * .25, hp.z + Math.cos(turn) * dist); cam.lookAt(hp.x, hp.y - half * .1, hp.z);
       const x0 = Math.floor(j * cw), y0 = Math.floor(h - (i + 1) * ch);
       r.setViewport(x0, y0, Math.floor(cw), Math.floor(ch)); r.setScissor(x0 + 1, y0 + 1, Math.floor(cw) - 2, Math.floor(ch) - 2);
@@ -53,6 +53,6 @@ for (const dpr of [1, 2]) {
   await P.ctx.close();
 }
 const P = await open(b, { w: 390, h: 390, dpr: 4, settings: { quality: 'high' } }); await clear(P.page);
-for (const id of ids) for (const [v, t] of [['front', 0], ['three-quarter', .8]] as [string, number][]) save(`close-${id}-${v}`, await shot(P, 390, 390, 4, [id], [t], 1.25));
+for (const id of ids) for (const [v, t] of [['front', 0], ['three-quarter', .8]] as [string, number][]) save(`close-${id}-${v}`, await shot(P, 390, 390, 4, [id], [t], 1.1));
 await P.ctx.close();
 await b.close(); console.log('shots in', out);
