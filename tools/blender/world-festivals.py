@@ -10,6 +10,7 @@
 # - Colour slots: parts painted pure red, blue or green (SLOT_A, SLOT_B, SLOT_C) are repainted by the game with the
 #   festival's own colours (js/festivals.ts prop(..., pal)), so one shared piece serves every festival.
 import importlib.util, math, os, sys
+sys.dont_write_bytecode = True
 HERE = os.path.dirname(os.path.abspath(__file__))
 spec = importlib.util.spec_from_file_location('world_nature', os.path.join(HERE, 'world-nature.py'))
 WN = importlib.util.module_from_spec(spec); spec.loader.exec_module(WN)
