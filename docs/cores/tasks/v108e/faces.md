@@ -137,6 +137,24 @@ The owner saw the Part 3 shots: "from the front the heads still read as round ba
 - Shots: `docs/world-models-v108e/faces/heads/` (`before-*` Part 2, `round1-*` Part 3, `after-*` this round, and
   `after-turn0.8-*` three-quarter views), `docs/world-models-v108e/faces/hair/after-full-*` (full length).
 
+## 7. Round 3: calm, cute and smooth (owner 6 Nov 2026 AEDT, via Release)
+
+The owner on round 2: "the pair of eyes and cheeks plus the hair will 100% scare the kids". Release: realistic lumpy
+cheeks under flat sticker eyes, faceted shard hair; this round is about calm, cute and smooth, not more detail.
+- **Smooth:** every thinned part gets smooth shading with weighted normals (`game-hd.py` `_smooth`, `game-light.py`);
+  the hair locks are rounder and thicker for everyone (the friends keep their shapes).
+- **Cheeks and jaw** about half of round 2: no bulge past the jaw, no jaw dent, no lumps round the mouth; soft round
+  cheeks in an egg-shaped face; the nose bridge and tip subtle.
+- **Eyes** about 15 % smaller, a touch further apart and a little lower; one sparkle; a thin upper lash line only (no
+  lash flicks); the iris colours stay.
+- **Mouth:** at rest a closed, gentle smile; happy, excited, surprised (and talking) a soft rounded opening with no
+  points, a small tongue low inside.
+- **Blush:** smaller, lower on the cheek, a softer paler rose.
+- **Villagers' hair** (`lumi-hair.py` `clay`): a smooth cap and a few big soft lobes (fringe, crown, over the ears),
+  one colour; ponytails, buns, pigtails and puffs smooth shapes; a soft highlight band added in the game models; dark
+  hair a warm dark brown.
+- **Mai:** the áo dài's top and panels have the same fit and meet at the waist (no step).
+
 ## The style, for the villagers helper (shared setup)
 
 - Eyes: `face()` in `tools/blender/lumi.py` (the `op` lid heights per mood, `lidz()` the arch, `under()` cuts any decal
