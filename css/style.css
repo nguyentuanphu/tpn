@@ -2713,6 +2713,10 @@ details.ocard.friends:not([open]) > summary::after { transform: rotate(-90deg); 
 .hud .dk.mus { display:none; }
 
 .shop-preview { display:block; margin:8px auto; max-width:200px; height:220px; object-fit:contain; border-radius:20px; background:#f1eaff; }
+/* (v1.08, one screen, owner 3 Nov) on a phone the preview gives way to the items: it shrinks with the screen's height and the
+   item row keeps at least one row of things to tap (check companionhats: the hats sat in a grid squeezed to nothing) */
+.modal.shopk .card .shop-preview { height: clamp(96px, 15dvh, 220px); }
+.modal.shopk .card.shop-content > .kgrid { min-height: 124px; }
 .shop-collections { display:flex; gap:8px; flex-wrap:wrap; }
 .shop-content .kgrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .shop-content .ktabs { display:flex; flex-wrap:wrap; gap:8px; }

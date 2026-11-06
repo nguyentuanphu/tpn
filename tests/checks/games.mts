@@ -392,7 +392,7 @@ await check('stickers', async () => {
     const r = await P.page.evaluate(async ([age, lang]) => {
       const G = __sv, hero = G.heroes[0], p = hero.profile, wait = ms => new Promise(r => setTimeout(r, ms));
       const SB = await import('/js/stickers.js'), C = await import('/js/content/stickers.js'), S = await import('/js/state.js'), V = await import('/js/voice.js'), A = await import('/js/audio.js');
-      const W = await import('/js/world.js'), R = await import('/js/regions.js'), GA = await import('/js/gather.js'), D = await import('/js/data.js'), SE = await import('/js/secrets.js'), PS = await import('/js/passport.js'), MH = await import('/js/myhouse.js'), FE = await import('/js/festivals.js'), SP = await import('/js/content/surprises.js');
+      const LP = await import('/js/content/learnpaths.js'), W = await import('/js/world.js'), R = await import('/js/regions.js'), GA = await import('/js/gather.js'), D = await import('/js/data.js'), SE = await import('/js/secrets.js'), PS = await import('/js/passport.js'), MH = await import('/js/myhouse.js'), FE = await import('/js/festivals.js'), SP = await import('/js/content/surprises.js');
       const out = { age, lang };
       // the ways to earn exist in the running game
       const kinds = new Set(['duck', 'chicken', 'butterfly', 'bird', 'kitty']); G.scene.traverse(o => { if (o.userData && o.userData.rig) kinds.add(o.userData.rig.kind); });
@@ -402,7 +402,9 @@ await check('stickers', async () => {
         const [k, v] = Object.entries(w)[0];
         const okk = k === 'act' ? (v.endsWith('*') ? [...its].some(x => x.startsWith(v.slice(0, -1))) : its.has(v)) : k === 'meet' ? kinds.has(v) : k === 'postcard' ? lms.has(v) : k === 'enter' ? !!W.REGION_NAMES[v]
           : k === 'find' ? !!GA.WILD[v] : k === 'cook' ? recipes.has(v) : k === 'taste' ? vend.has(v) : k === 'secret' ? SE.SECRETS.some(x => x.id === v) : k === 'tower' ? W.TOWERS.some(x => x.id === v)
-          : k === 'stamp' ? PS.COUNTRIES.some(c => c.cc + '_full' === v) : k === 'fest' ? !!FE.FESTIVALS[v] : k === 'surprise' ? SP.SURPRISES.some(x => x.id === v) : k === 'prize' ? C.LEGACY_EMOJI.includes(v) : false;
+          : k === 'stamp' ? PS.COUNTRIES.some(c => c.cc + '_full' === v) : k === 'fest' ? !!FE.FESTIVALS[v] : k === 'surprise' ? SP.SURPRISES.some(x => x.id === v) : k === 'prize' ? C.LEGACY_EMOJI.includes(v)
+          // (v1.08b games) a learning journey's step: the journey exists and the step is one of its 1 to STEPS
+          : k === 'learn' ? (([pk, n]) => LP.LEARN_PATHS.some(x => x.key === pk) && +n >= 1 && +n <= LP.STEPS)(String(v).split(':')) : false;
         if (!okk) bad.push(s.id + ':' + k + '=' + v);
         if (typeof A.SFX[s.sound] !== 'function') bad.push(s.id + ' sound ' + s.sound);
       }
@@ -466,7 +468,8 @@ await check('stickers', async () => {
     ok(!r.bad.length, 'ways to earn that do not exist: ' + r.bad.slice(0, 12).join(', '));
     ok(r.earned.length === 4, 'earned: ' + JSON.stringify(r.earned));
     ok(['hen', 'owl', 'pc_opera', 'place_village'].every(id => r.fresh.includes(id)) && +r.bagBadge >= 4 && +r.padTabBadge >= 4, 'New! badges: ' + JSON.stringify([r.fresh, r.bagBadge, r.padTabBadge]));
-    ok(r.tabs === 10 && r.tiles === 9 && /^\d \/ 9$/.test(r.count) && r.bar && r.missing && r.newOnHen, 'the page: ' + JSON.stringify(r));
+    // (v1.08b games, owner 5 Nov 2026 AEDT) the Learning journeys tab joined the ten themes: 11 tabs
+    ok(r.tabs === 11 && r.tiles === 9 && /^\d \/ 9$/.test(r.count) && r.bar && r.missing && r.newOnHen, 'the page: ' + JSON.stringify(r));
     ok(r.sizes.minTab >= want && r.sizes.minTile >= want && r.inView, `sizes (at least ${want} px): ` + JSON.stringify(r.sizes) + ' in view ' + r.inView);
     const other = lang === 'vi' ? 'en:Hen' : 'vi:Gà mái', mine = lang === 'vi' ? 'vi:Gà mái' : 'en:Hen';
     ok(r.henSaid.includes(mine) && r.henSaid.includes(other) && r.henSeen, 'tap: both names said and the badge gone: ' + JSON.stringify(r.henSaid));
