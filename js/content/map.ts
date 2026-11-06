@@ -207,7 +207,9 @@ export const ROADS: MapRoad[] = [
   { id: 'quay_north', kind: 'footpath', pts: [[22, -172], [22, -152], [12, -152]] },
   // (v1.08e vehicles, Release round 2) the Southern Coast Boat's piers: Melbourne's up the bank to the road; the Reef's,
   // Perth's and the islands' (no road there) into their own place
-  { id: 'quay_melbourne', kind: 'footpath', pts: [[-122, 145], [-121.5, 136], [-121.5, 125], [-123, 123.6], [-129.5, 123.6], [-132, 117]] },   // (v1.08) round Uncle Ray's dim sim kiosk, 1.5 m clear (check stalls)
+  // (v1.08) between Flinders Street Station (-123.4, 130, 3.8 m: validate ROAD-004) and saved home 36's lot, slanting
+  // along the lot's edge (2.5 m clear of it, check worldplacement), then round Uncle Ray's dim sim kiosk, 1.5 m clear (check stalls)
+  { id: 'quay_melbourne', kind: 'footpath', pts: [[-122, 145], [-122, 137.5], [-117.3, 128.3], [-117.3, 125], [-123, 123.6], [-129.5, 123.6], [-132, 117]] },
   { id: 'quay_gbr', kind: 'footpath', pts: [[-58, 184], [-58, 179]] },
   { id: 'quay_perth', kind: 'footpath', pts: [[-204, 186], [-204, 180]] },
   { id: 'quay_tasmania', kind: 'footpath', pts: [[-120, 211], [-124, 215], [-127, 218]] },
