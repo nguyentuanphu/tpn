@@ -188,7 +188,7 @@ def face3d_points(expr):
         rad = [.018, .028, .016] if G != 'f' else [.012, .02, .01]
         _tube(M, [onf(x_, z_, .035)[0] for x_, z_ in pts], [r_ * R for r_ in rad], Vector((0, -1, 0)), BROW, 6)
         # rosy cheeks, lifted and fuller when happy, shy or excited
-        bl = 1.2 if expr in ('shy', 'excited', 'happy') else 1.0; lift = .025 if expr in ('happy', 'excited') else .015 if expr in ('smile', 'open', 'half', 'lookL', 'lookR') else 0   # (the cheeks rise a touch with the smile)
+        bl = 1.2 if expr in ('shy', 'excited', 'happy') else 1.0; lift = .025 if expr in ('happy', 'excited') else 0   # (the cheeks stay where they are at rest, owner 6 Nov)
         _disc(M, s * P.get('blushX', .53), P.get('blushZ', -.37) + lift, .1 * Mo * bl, .058 * Mo * bl, .009, BLUSH3)
     # the mouth: a grid between its top and bottom lines (dark inside, the tongue low), soft lips round it in the skin colour
     mz = P.get('mouthZ', -.5); s_ = lambda u: math.sqrt(max(0, 1 - u * u))
@@ -196,9 +196,11 @@ def face3d_points(expr):
     # (and talking) a soft rounded opening, its corners round, no points
     if expr in ('smile', 'half', 'lookL', 'lookR'):   # (owner 6 Nov: "the mouth should be bigger and prettier") a small open happy smile
         # (owner 6 Nov, again: "bigger, clearer and prettier") about 1.5 times bigger: a wide open happy smile, a D lying on
-        # its side (a flat-ish top lifting into the cheeks at the corners, a round bottom), a small soft tongue low inside
-        w, h = .24 * Mo, .13 * Mo
-        top = lambda u: mz + h * (.32 + .35 * u * u + .45 * u ** 4); bot = lambda u: mz + h * (.32 + .35 * u * u + .45 * u ** 4) - h * 1.0 * s_(u) ** .65; x0 = 0
+        # its side (a level top, a round bottom), a small soft tongue low inside
+        w, h = .21 * Mo, .16 * Mo
+        # (owner 6 Nov: "the corners look better level; lifted they look sly") the corners level and symmetric: the joy is in
+        # the round open shape, a level top and the bottom lip in a soft, round U
+        top = lambda u: mz + h * .3; bot = lambda u: mz + h * .3 - h * 1.0 * s_(u) ** 1.1; x0 = 0
     elif expr in ('happy', 'excited'):
         w, h = {'happy': (.12, .11), 'excited': (.13, .13)}[expr]; w *= Mo; h *= Mo
         top = lambda u: mz + h * (.12 + .12 * u * u) * s_(u) ** .3 + h * .1 * (1 - s_(u)); bot = lambda u: mz + h * .1 - h * .95 * s_(u); x0 = 0
