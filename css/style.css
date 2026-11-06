@@ -3289,7 +3289,8 @@ body.calm .sv2 .press::after { animation: none; display: none; }
 .z-lb .lb-new { position: absolute; bottom: -4px; right: -4px; width: 14px; height: 14px; border-radius: 50%; background: #ffd23f; border: 2px solid #fff; }
 .tp-news { margin: 0 0 12px; border-radius: 16px; background: #fff7d6; padding: 8px 12px; }
 .tp-news summary { min-height: 44px; display: flex; align-items: center; gap: 6px; font-weight: 800; cursor: pointer; }
-.tp-news-list { display: grid; gap: 6px; padding-bottom: 4px; }
+.tp-news { flex:none; }
+.tp-news-list { display: grid; gap: 6px; padding-bottom: 4px; max-height: 32dvh; overflow-y: auto; overscroll-behavior: contain; }
 .tp-news-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; }
 .tp-news-row span { display: grid; } .tp-news-row small { opacity: .75; }
 
