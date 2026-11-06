@@ -15,7 +15,7 @@ const SETS = {
 };
 for (const [dev, w, h] of [['phone', 390, 844], ['computer', 1280, 800]] as [string, number, number][]) {
   const P = await open(b, { w, h, dpr: 2, settings: { quality: 'high' } }); await clear(P.page);
-  for (const [set, ids] of Object.entries(SETS)) for (const mood of ['smile', 'blink']) {
+  for (const [set, ids] of Object.entries(SETS).filter(([k]) => !process.env.ONLY || process.env.ONLY.split(',').includes(k))) for (const mood of ['smile', 'blink']) {
     const png = await P.page.evaluate(async ({ w, h, set, ids, mood }) => {
       const A = await import(String('/js/avatar.js')), { THREE } = await import(String('/js/gfx.js')), G = (window as any).__sv;
       const LOOK = { finn: ['boy', '#f2c6a0'], sol: ['boy', '#c98d62'], clara: ['girl', '#f6d2b5'], lumi: ['girl', '#8d5a3c'] };
@@ -46,8 +46,8 @@ for (const [dev, w, h] of [['phone', 390, 844], ['computer', 1280, 800]] as [str
         let hb: any = null; if (p.model) p.model.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; });
         // (the head joint is at the neck: the head's middle is above it; the whole height frames the head and shoulders)
         const bx = new THREE.Box3().setFromObject(p.model ? p.model.obj : p.rig, true), H = bx.max.y - bx.min.y;
-        const hp = (hb || p.head).getWorldPosition(new THREE.Vector3()); hp.y += H * .1;
-        const half = H * .2, cam = new THREE.PerspectiveCamera(22, cw / ch, .05, 50), dist = half / Math.tan(11 * Math.PI / 180) * Math.max(1, ch / cw * .75);
+        const hp = (hb || p.head).getWorldPosition(new THREE.Vector3()); hp.y += H * .055;
+        const half = H * .21, cam = new THREE.PerspectiveCamera(22, cw / ch, .05, 50), dist = half / Math.tan(11 * Math.PI / 180) * Math.max(1, ch / cw * .75);
         const fy = Math.sin(.3), fz = Math.cos(.3); cam.position.set(hp.x + fy * dist, hp.y + half * .15, hp.z + fz * dist); cam.lookAt(hp.x, hp.y - half * .15, hp.z);
         const cx = i % cols, cy = Math.floor(i / cols), x0 = Math.floor(cx * cw), y0 = Math.floor(h - (cy + 1) * ch);
         r.setViewport(x0, y0, Math.floor(cw), Math.floor(ch)); r.setScissor(x0 + 1, y0 + 1, Math.floor(cw) - 2, Math.floor(ch) - 2);

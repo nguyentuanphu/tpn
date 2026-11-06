@@ -52,7 +52,9 @@ def hd():
     rig.animation_data.action = None
     for b in pb: b.rotation_euler = (0, 0, 0); b.location = (0, 0, 0)
     dg = bpy.context.evaluated_depsgraph_get(); groups = {}
+    face3 = None
     for o in [o for o in scene.objects if o.type == 'MESH' and o.parent == rig]:
+        if o.users_collection[0].name == 'face3d': face3 = o; continue   # (part 3: the face keeps its mood keys, as built)
         for m in o.modifiers:
             if m.type == 'SUBSURF': m.levels = 0 if (LIT and o.users_collection[0].name == 'hair') else min(m.levels, 2)   # (villagers: smooth locks as built, not smoothed and thinned into spikes)
             if m.type == 'ARMATURE': m.show_viewport = False
@@ -127,9 +129,10 @@ def hd():
     for k, h in high.items(): bpy.data.objects.remove(h)
     # one material per part: "cloth-<part>" with the picture, "skin" apart; the faces keep their colours in the corners
     total = 0
+    if face3: face3.name = WHO + '-face3d'; low['face3d'] = face3   # (its colours into the corners, as the faces)
     for k, o in low.items():
         me = o.data; mats = list(me.materials); skin = next((m for m in mats if m and m.name.startswith('skin')), None)
-        if k.startswith('face-'):
+        if k.startswith('face'):
             colr = me.color_attributes.new('Col', 'BYTE_COLOR', 'CORNER')
             for poly in me.polygons:
                 cc = _base(mats[poly.material_index] if poly.material_index < len(mats) else None)
@@ -148,7 +151,8 @@ def hd():
         me.materials.clear()
         for m in keep: me.materials.append(m)
         for p, i in zip(me.polygons, idx): p.material_index = i
-        o.parent = rig; o.matrix_parent_inverse = rig.matrix_world.inverted()
-        am = o.modifiers.new('rig', 'ARMATURE'); am.object = rig
-        if not k.startswith('face-') or k == 'face-smile': total += _tris(o)
+        if k != 'face3d':
+            o.parent = rig; o.matrix_parent_inverse = rig.matrix_world.inverted()
+            am = o.modifiers.new('rig', 'ARMATURE'); am.object = rig
+        if not k.startswith('face-') or k == 'face-smile': total += _tris(o)   # (face3d counts: one face, its moods are keys)
     print('hd: total triangles shown', total)

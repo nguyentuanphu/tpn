@@ -66,7 +66,7 @@ def bind(o, rigid=None):
         if t == 'SOLIDIFY': m.thickness = th
     o.parent = rig
 for col in bpy.data.collections:
-    rigid = 'head' if col.name.split('.')[0] in ('hair', 'hat') or col.name.startswith('face-') else None
+    rigid = 'head' if col.name.split('.')[0] in ('hair', 'hat') or col.name.startswith('face') else None   # (face3d too)
     for o in col.objects:
         if o.type == 'MESH': bind(o, rigid)
 for o in list(scene.collection.objects):
@@ -146,6 +146,8 @@ def lighten():
     dg = bpy.context.evaluated_depsgraph_get()
     groups = {}
     for o in [o for o in scene.objects if o.type == 'MESH' and o.parent == rig]:
+        if o.users_collection[0].name == 'face3d':   # (v1.08e part 3) kept as built: its shape keys are the moods
+            o.name = WHO + '-face3d'; continue
         for m in o.modifiers:
             if m.type == 'SUBSURF': m.levels = 0 if o.users_collection[0].name == 'hair' else min(m.levels, 1)
             if m.type == 'ARMATURE': m.show_viewport = False

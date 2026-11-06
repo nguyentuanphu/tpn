@@ -18,7 +18,7 @@ export async function villagerModelsCheck(b) {
     // (each wait touches the screen, as a child playing does: the valley's battery saver slows a page left alone)
     // (and a story chapter a place starts, which rests the valley under it, is closed, as the other checks do)
     const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; return new Promise(res => setTimeout(res, ms)); }, h = G.heroes[0], bad: string[] = [], out: Record<string, unknown> = {};
-    const shown = (av: any) => { let f = ''; av.model.obj.traverse((o: any) => { if (o.isMesh && o.visible && /^face-/.test(o.material.name)) f = o.material.name.slice(5); }); return f; };
+    const shown = (av: any) => { if (av.model.face3d) return av.model.mood; let f = ''; av.model.obj.traverse((o: any) => { if (o.isMesh && o.visible && /^face-/.test(o.material.name)) f = o.material.name.slice(5); }); return f; }; // (part 3: a sculpted face's mood key)
     for (const id of IDS) {
       const n = G.npcs.find((x: any) => x.id === id); if (!n || !n.A) { bad.push(id + ': not in the valley'); continue; }
       // the code person's height and feet, before the model
@@ -41,7 +41,7 @@ export async function villagerModelsCheck(b) {
       let codeShown = 0; n.A.rig.traverse((o: any) => { if (o.isMesh && !o.userData.outline && o.visible && !n.A.model.obj.getObjectById(o.id)) { let p = o, vis = true; while (p && p !== n.A.root) { if (!p.visible) vis = false; p = p.parent; } if (vis) codeShown++; } });
       if (codeShown) bad.push(`${id}: ${codeShown} code parts still shown`);
       // facing: the model's front (its face) is on the side the code person faces
-      const fq = new THREE.Vector3(); let face: any = null; n.A.model.obj.traverse((o: any) => { if (o.isMesh && /^face-/.test(o.material.name) && !face) face = o; });
+      const fq = new THREE.Vector3(); let face: any = null; n.A.model.obj.traverse((o: any) => { if (o.isMesh && (/^face-/.test(o.material.name) || o.userData.face3d) && !face) face = o; });
       if (face) { face.geometry.computeBoundingBox(); face.getWorldPosition(fq); }
       // blinks within 7 s; the eyes turn to a child on one side
       A.setLookTarget(null); if (!n.A.life) A.animate(n.A, 'idle', 1);

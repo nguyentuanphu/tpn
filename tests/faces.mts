@@ -6,7 +6,11 @@
 //   4. the eyes turn toward a child standing to one side (a person's own left or right), and straight ahead again;
 //   5. the villager's open eye has a lid: its white starts well under the eye's top;
 //   6. (part 2) only the child's own friend's high-detail model is downloaded; it is drawn near, the light one far away
-//      and when the high-detail one is blocked.
+//      and when the high-detail one is blocked;
+//   7. (part 3, owner 6 Nov 2026 AEDT: "like a real 3D person") each friend's model, light and high-detail, has a sculpted
+//      face of real shapes: lids that close over the eyes (rays from the front find eye white open, none closed, less
+//      half-closed), a mouth that changes shape for each mood (smile, open, sad, surprised, happy, shy, excited, sleep),
+//      and a head that is not a sphere (its width differs from its depth and its height, its nose in front).
 import { open, clear } from './harness.mts';
 
 const ok = (c: unknown, msg: string) => { if (!c) throw new Error(msg); };
@@ -23,6 +27,7 @@ export async function facesCheck(b) {
     for (const [id] of people) if (id !== 'villager' && !(await A.loadFriendModels(id))) bad.push(id + ': no model');
     // the face shown now: the friend's visible face mesh, or the villager's mood square
     const shown = (av: any) => {
+      if (av.model && av.model.face3d) { av.root.updateMatrixWorld(true); return av.model.mood; } // (part 3: one face, its mood keys)
       if (av.model) { let f = ''; av.root.updateMatrixWorld(true); av.model.obj.traverse((o: any) => { if (o.isMesh && o.visible && /^face-/.test(o.material.name)) f = o.material.name.slice(5); }); return f; }
       const o = av.faceMat.map.offset, i = Math.round(o.x * 4) + 4 * (2 - Math.round(o.y * 3)); return A.MOODS[i];
     };
@@ -31,6 +36,7 @@ export async function facesCheck(b) {
     const EYEW = (d: Uint8ClampedArray, k: number) => d[k + 3] > 200 && d[k] > 250 && d[k + 1] > 247 && d[k + 2] > 238 && d[k + 2] < 252;
     // how much eye white a face shows: the friend's face mesh corners of the eye-white colour, or the villager's pixels
     const whiteOf = (av: any, m: string) => {
+      if (av.model && av.model.face3d) return (window as any).__rayWhite(av, want(av, m));
       if (av.model) { let n = 0; av.model.obj.traverse((o: any) => { if (o.isMesh && o.material.name === 'face-' + want(av, m)) { const c = o.geometry.attributes.color; for (let i = 0; i < c.count; i++) if (c.getX(i) > .9 && c.getY(i) > .9 && c.getZ(i) > .88) n++; } }); return n; }
       const img = av.faceMat.map.image as HTMLCanvasElement, i = A.MOODS.indexOf(m), S = img.width / 4, x = img.getContext('2d');
       const d = x.getImageData((i % 4) * S, Math.floor(i / 4) * S, S, S).data; let n = 0;
@@ -42,6 +48,21 @@ export async function facesCheck(b) {
       const img = av.faceMat.map.image as HTMLCanvasElement, S = img.width / 4, x = img.getContext('2d'), d = x.getImageData(0, 0, S, S).data;
       let top = S; for (let y = 0; y < S && top === S; y++) for (let k = Math.round(.29 * S); k < Math.round(.46 * S); k++) if (EYEW(d, (y * S + k) * 4)) { top = y; break; }
       return { top: +(top / S).toFixed(3), eyeTop: .467 };
+    };
+    // (part 3) rays from in front of the face, straight at it, over the eyes: how many first meet eye white (or a sparkle)
+    (window as any).__rayWhite = (av: any, key: string) => {
+      av.model.follow(key); av.root.updateMatrixWorld(true);
+      const meshes = av.model.face3d, box = new THREE.Box3(); meshes.forEach((o: any) => box.expandByObject(o, true));
+      const rc = new THREE.Raycaster(), hitMeshes: any[] = []; av.model.obj.traverse((o: any) => { if (o.isMesh && o.visible && !o.userData.outline) hitMeshes.push(o); });
+      let n = 0; const N = 70, y0 = box.min.y + (box.max.y - box.min.y) * .35;
+      for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) {
+        const x = box.min.x + (box.max.x - box.min.x) * i / N, y = y0 + (box.max.y - y0) * j / N;
+        rc.set(new THREE.Vector3(x, y, box.max.z + 1), new THREE.Vector3(0, 0, -1)); const h = rc.intersectObjects(hitMeshes, false)[0];
+        if (!h || !h.object.userData.face3d || !h.face) continue;
+        const c = h.object.geometry.attributes.color; if (!c) continue; const k = h.face.a;
+        if (c.getX(k) > .85 && c.getY(k) > .85 && c.getZ(k) > .8) n++;
+      }
+      return n;
     };
     for (const [id, look] of people) {
       const av: any = A.buildAvatar(look); sc.add(av.root); av.root.position.set(0, 0, 0); av.root.rotation.y = 0;
@@ -69,6 +90,51 @@ export async function facesCheck(b) {
     }
     return { bad, out };
   });
+  // (part 3) the sculpted faces of the four friends, light and high-detail models
+  const sculpt = await P.page.evaluate(async () => {
+    const A = await import(String('/js/avatar.js')), { THREE } = await import(String('/js/gfx.js')), W = window as any;
+    const bad: string[] = [], out: Record<string, unknown> = {};
+    const LOOK = { finn: ['boy', '#f2c6a0'], sol: ['boy', '#c98d62'], clara: ['girl', '#f6d2b5'], lumi: ['girl', '#8d5a3c'] };
+    for (const id of ['finn', 'sol', 'clara', 'lumi']) for (const hd of [false, true]) {
+      if (hd && !(await A.loadFriendModels(id + '-hd'))) { bad.push(id + ': no high-detail model'); continue; }
+      const av: any = A.buildAvatar({ set: LOOK[id][0], friend: id, skin: LOOK[id][1] }, null, { hd }), M = hd ? av.modelHD : av.model, tag = id + (hd ? '-hd' : '');
+      if (!M) { bad.push(tag + ': no model'); continue; }
+      if (hd) A.showHD(av, true);
+      if (!M.face3d) { bad.push(tag + ': no sculpted face (face3d)'); continue; }
+      A.animate(av, 'idle', 1); av.root.rotation.y = 0; av.root.updateMatrixWorld(true);
+      const m = { ...av, model: M };
+      // 1. the lids close: eye white seen open, less half-closed, none closed (blink, sleep, happy's curved eyes)
+      const white: Record<string, number> = {}; for (const k of ['smile', 'half', 'blink', 'sleep', 'happy']) white[k] = W.__rayWhite(m, k);
+      if (!(white.smile > 20) || !(white.half < white.smile) || white.blink > 0 || white.sleep > 0 || white.happy > 0) bad.push(`${tag}: eye white ${JSON.stringify(white)}`);
+      // 2. the mouth changes shape per mood: its dark inside, each mood's own width, height and place
+      const face = M.face3d.find((o: any) => o.geometry.attributes.color), g = face.geometry, pos = g.attributes.position, col = g.attributes.color, dict = face.morphTargetDictionary, tgt = g.morphAttributes.position, rel = g.morphTargetsRelative;
+      g.computeBoundingBox(); const low = g.boundingBox.min.y + (g.boundingBox.max.y - g.boundingBox.min.y) * .45; // (the mouth's dark red, under the eyes: not a brown brow)
+      const mouth: number[] = []; for (let i = 0; i < pos.count; i++) if (pos.getY(i) < low && col.getX(i) > .08 && col.getX(i) < .3 && col.getY(i) < .06 && col.getZ(i) < .06) mouth.push(i);
+      const shape: Record<string, number[]> = {};
+      for (const k of ['smile', 'open', 'sad', 'surprised', 'happy', 'shy', 'excited', 'sleep']) {
+        let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; const t = k === 'smile' ? null : tgt[dict[k]];
+        for (const i of mouth) { const x = pos.getX(i) + (t ? (rel ? t.getX(i) : t.getX(i) - pos.getX(i)) : 0), y = pos.getY(i) + (t ? (rel ? t.getY(i) : t.getY(i) - pos.getY(i)) : 0); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+        shape[k] = [x1 - x0, y1 - y0, (y0 + y1) / 2].map(v => +v.toFixed(4));
+      }
+      const ks = Object.keys(shape), same: string[] = [];
+      for (let a = 0; a < ks.length; a++) for (let b = a + 1; b < ks.length; b++) { const p = shape[ks[a]], q = shape[ks[b]]; if (Math.abs(p[0] - q[0]) < .002 && Math.abs(p[1] - q[1]) < .002 && Math.abs(p[2] - q[2]) < .002) same.push(ks[a] + '=' + ks[b]); }
+      if (mouth.length < 20 || same.length) bad.push(`${tag}: mouth ${mouth.length} points, the same shape for ${same.join(', ')}`);
+      // 3. the head is not a sphere: the skin bound to the head bone alone (its front third, without the ears), in the rest pose
+      let hx0 = 1e9, hx1 = -1e9, hy0 = 1e9, hy1 = -1e9, hz0 = 1e9, hz1 = -1e9, front: number[] = null; const pts: number[][] = [];
+      M.obj.traverse((o: any) => {
+        if (!o.isSkinnedMesh || o.userData.face3d || o.userData.outline || !/^skin/.test(o.material.name)) return;
+        const headIdx = o.skeleton.bones.findIndex((b: any) => b.name === 'head'), p = o.geometry.attributes.position, si = o.geometry.attributes.skinIndex, sw = o.geometry.attributes.skinWeight;
+        for (let i = 0; i < p.count; i++) if (si.getX(i) === headIdx && sw.getX(i) > .99) pts.push([p.getX(i), p.getY(i), p.getZ(i)]);
+      });
+      for (const [x, y, z] of pts) { hy0 = Math.min(hy0, y); hy1 = Math.max(hy1, y); hz0 = Math.min(hz0, z); hz1 = Math.max(hz1, z); if (!front || z > front[2]) front = [x, y, z]; }
+      const zc = hz0 + (hz1 - hz0) * .65; for (const [x, , z] of pts) if (z > zc) { hx0 = Math.min(hx0, x); hx1 = Math.max(hx1, x); }
+      const Wd = hx1 - hx0, Dp = hz1 - hz0, Ht = hy1 - hy0, k1 = Math.abs(Wd - Dp) / Wd, k2 = Math.abs(Wd - Ht) / Wd;
+      if (pts.length < 50 || !(k1 > .04 && k2 > .04) || !(Math.abs(front[0]) < Wd * .08)) bad.push(`${tag}: head ${pts.length} points, width ${Wd.toFixed(3)} depth ${Dp.toFixed(3)} height ${Ht.toFixed(3)}, front at x ${front && front[0].toFixed(3)}`);
+      out[tag] = { white, mouth: mouth.length, head: [Wd, Dp, Ht].map(v => +v.toFixed(3)) };
+    }
+    return { bad, out };
+  });
+  r.bad.push(...sculpt.bad);
   // (part 2) the high-detail model: only the child's own friend's is downloaded, after the start; it is drawn up close and
   // the light one far away; blocked, the light model stays and nothing breaks
   const hd = await P.page.evaluate(async () => {
@@ -93,5 +159,6 @@ export async function facesCheck(b) {
   const errs = P.errors; await P.ctx.close();
   ok(!r.bad.length && !errs.length, JSON.stringify({ bad: r.bad, errs, out: r.out }).slice(0, 2500));
   const o = r.out as Record<string, { blinkAt: number }>;
-  return `${Object.entries(o).map(([k, v]) => `${k} blinks at ${v.blinkAt} s`).join(', ')}; half, closed, half; lids close fully; happy, surprised and sad faces; the eyes turn to a child on either side; the high-detail ${hd.f} only, near (light far away, light when blocked)`;
+  const so = sculpt.out as Record<string, { white: Record<string, number>, head: number[] }>;
+  return `${Object.entries(o).map(([k, v]) => `${k} blinks at ${v.blinkAt} s`).join(', ')}; half, closed, half; lids close fully; happy, surprised and sad faces; the eyes turn to a child on either side; the high-detail ${hd.f} only, near (light far away, light when blocked); sculpted faces (light and high-detail): lids close (eye white open ${Object.values(so).map(v => v.white.smile).join('/')}, closed 0), 8 mouth shapes, heads not spheres (${Object.entries(so).filter(([k]) => !k.endsWith('-hd')).map(([k, v]) => `${k} ${v.head.join('x')}`).join(', ')})`;
 }

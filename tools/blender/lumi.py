@@ -15,7 +15,7 @@ from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube,
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 argv = ['clara' if x == 'flora' else x for x in argv]   # Flora was renamed Clara (owner, 3 Nov 2026 AEDT); the old name still works
-FLAGS = ('look=felt', 'look=now', 'look=toy', 'rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'clara', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard', 'hd')
+FLAGS = ('look=felt', 'look=now', 'look=toy', 'rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'clara', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard', 'hd', 'flatface')
 OUT = next((a for a in argv if a not in FLAGS and '=' not in a), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
@@ -174,18 +174,23 @@ def group(name, build):
     return col
 
 # ---------- head: a smaller forehead (eyes a little higher, the fringe low), fuller cheeks, a soft round chin ----------
-bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=64, v_segments=48, radius=1)
+# (v1.08e faces, part 3, owner 6 Nov 2026 AEDT: "like a real 3D person") the game's people get a sculpted head and a face of
+# real shapes with a shape key per mood (tools/blender/lumi-face3d.py); `flatface` keeps the painted-on shapes
+SCULPT = GAME and 'flatface' not in argv
+if SCULPT: exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-face3d.py')).read())
+bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=96 if SCULPT else 64, v_segments=72 if SCULPT else 48, radius=1)
 for v in bm.verts:
     hx, hy, hz = P.get('head', (1.03, .96, .94)); x, y, z = v.co.x * hx, v.co.y * hy, v.co.z * hz
     if z < .1:
         k = min(1, (.1 - z) / 1.04)
         x *= 1 + P['cheek'] * math.sin(math.pi * min(1, k * 1.5)) - P['jaw'] * k ** 1.5
         if y < 0: y *= 1 + P['cheek'] * .7 * math.sin(math.pi * min(1, k * 1.4)) - .06 * k ** 2
+    if SCULPT: x, y, z = sculpt_head(x, y, z)
     v.co = H(x, y, z)
 bm.verts.index_update()
 bvh = BVHTree.FromPolygons([v.co.copy() for v in bm.verts], [[v.index for v in f.verts] for f in bm.faces])
 obj_from(bm, 'head', SKIN)
-for s in (-1, 1): sphere('ear', SKIN, H(s * 1.0, .05, -.12), (.12 * R, .08 * R, .17 * R), 20, 10)
+for s in (-1, 1): ear(s) if SCULPT else sphere('ear', SKIN, H(s * 1.0, .05, -.12), (.12 * R, .08 * R, .17 * R), 20, 10)
 
 def onf(x, z, out=0.0):
     """the point on the face in front of (x, z) in head units, pushed out along the skin"""
@@ -279,7 +284,8 @@ def face(expr):
         decal('tongue', TONGUE, 0, mz - .03 - .055 * M, .04 * M, .03 * M, .03, .035)
 
 FACES_ALL = ('smile', 'blink', 'happy', 'curious', 'surprised', 'sad', 'shy', 'excited', 'half', 'lookL', 'lookR')
-FACE_SETS = {e: group('face-' + e, lambda e=e: face(e)) for e in FACES_ALL}
+FACE_SETS = {} if SCULPT else {e: group('face-' + e, lambda e=e: face(e)) for e in FACES_ALL}
+if SCULPT: face3d()
 
 # ---------- leaf hair: puffy felt leaves in overlapping rows, a fringe over the forehead ----------
 def leaf(name, m, L, W, curl=.25, flick=.3, hug=1.0, th=.04, bulge=.25, N=10):
@@ -691,6 +697,7 @@ nt.links.new(rl.outputs['Image'], gl.inputs['Image']); nt.links.new(gl.outputs['
 
 def show_face(expr):
     for e, col in FACE_SETS.items(): col.hide_render = col.hide_viewport = (e != expr)
+    if SCULPT: show_face3d(expr)
 
 def shoot(name, az, height, dist, look, res):
     q = .5 if QUICK else 1
@@ -727,14 +734,16 @@ if 'anim' in argv:
 if 'glb' in argv:
     for col in FACE_SETS.values(): col.hide_viewport = False; col.hide_render = False
     if 'hd' in argv:   # (v1.08e faces, part 2) the high-detail model: thinned, one baked 1024 px picture (tools/blender/game-hd.py)
-        exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'game-hd.py')).read()); hd()
+        exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'game-hd.py')).read()); hd(); show_face('smile')
         bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f'{TAG}-{STYLE}-hd.glb'), export_format='GLB', export_apply=False, export_animations=True,
                                   export_animation_mode='ACTIONS', export_lights=False, export_cameras=False, use_selection=False, export_skins=True,
-                                  export_morph=False, export_image_format='JPEG', export_vertex_color='ACTIVE')
+                                  export_morph=True, export_morph_normal=False, export_image_format='JPEG', export_vertex_color='ACTIVE')
     else:
         lighten()
-        bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f'{TAG}-{STYLE}.glb'), export_format='GLB', export_apply=True, export_animations=True,
-                                  export_animation_mode='ACTIONS', export_lights=False, export_cameras=False, use_selection=False)
+        show_face('smile')   # (the rest shape: every mood key at 0)
+        bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f'{TAG}-{STYLE}.glb'), export_format='GLB', export_apply=not SCULPT, export_animations=True,
+                                  export_animation_mode='ACTIONS', export_lights=False, export_cameras=False, use_selection=False,
+                                  export_morph=True, export_morph_normal=False)   # (part 3: the face's mood keys; applying would drop them)
 
 if 'lineup' in argv:  # the same camera for everyone, so heights compare side by side
     show_face('smile'); shoot('lineup', .3, 1.2, 6.4, 1.0, (420, 760))
