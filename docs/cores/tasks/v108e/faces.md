@@ -1,6 +1,6 @@
 # v1.08e faces: status
 
-**ready for Release** (6 Nov 2026, 19:10 AEDT): Part 3 (sculpted faces) and Release's hair, clothes and hands faults are done too; before that (14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
+**ready for Release** (6 Nov 2026, 18:45 AEDT): Part 3 (sculpted faces) and Release's hair, clothes and hands faults are done too; before that (14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
 close-ups), the villagers brief (`villagers.md`) and Release's clear in-game shots
 (`docs/world-models-v108e/faces/game/`, 28 pictures at 2x, Pretty, phone and computer). Next: Part 3 (sculpted faces). Part 1 was merged into `integrate/v108` already.
 Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
@@ -104,7 +104,7 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
   the top's fitted layer ran past the cuff and showed as a dark band at the wrist (it ends inside the sleeve, sleeves open
   at the cuff); the films' character kit (`lumi.py ... rig`, `storypage.py`) keeps its face sets with half, lookL and
   lookR (only the game models, `glb`, get the sculpted face; the films do not drive its shape keys yet).
-- **Checks (6 Nov 2026, 19:00 AEDT, one at a time, the final models):** `faces` pass (now with the sculpted face:
+- **Checks (6 Nov 2026, 18:40 AEDT, one at a time, the final models):** `faces` pass (now with the sculpted face:
   lids close, eye white about 310 open, none closed; 8 mouth shapes; heads not spheres), `villagermodels` pass, `perf`
   pass (village 274 draws, 694k triangles), `battery` pass, `longplaymem` pass (it now counts the sculpted face's
   mood-key picture as in use, as it did the skeletons'), `friendmodel` pass (its limits raised by the brief's face
