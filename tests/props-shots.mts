@@ -29,13 +29,13 @@ for (const s of SIZES) {
           // the test spot: flat open ground near the child (found below), the props in a row
           if (!w.__propSpot) {
             const C2 = await import(String('/js/content/chapter2props.js')), C3 = await import(String('/js/content/chapter3props.js'));
-            // flat open ground: level within 0.4 m over 40 m, nothing solid within 20 m, the nearest such spot to the child
+            // flat open ground: level within 0.8 m over 40 m, nothing solid within 10 m, the nearest such spot to the child
             const yaw = h.yaw || 0, gA = (x: number, z: number) => G.world.groundAt(x, z);
             let sx = h.pos.x, sz = h.pos.z;
             search: for (let r = 30; r <= 260; r += 10) for (let k = 0; k < 24; k++) {
               const a = k / 24 * Math.PI * 2, cx = h.pos.x + Math.cos(a) * r, cz = h.pos.z + Math.sin(a) * r, g0 = gA(cx, cz);
-              let ok = true; for (let i = -2; i <= 2 && ok; i++) for (let j = -2; j <= 2 && ok; j++) if (Math.abs(gA(cx + i * 10, cz + j * 10) - g0) > .4) ok = false;
-              if (ok && (G.world.colliders || []).some((c: any) => Math.hypot(c.x - cx, c.z - cz) < 20)) ok = false;
+              let ok = true; for (let i = -2; i <= 2 && ok; i++) for (let j = -2; j <= 2 && ok; j++) if (Math.abs(gA(cx + i * 10, cz + j * 10) - g0) > .8) ok = false;
+              if (ok && (G.world.colliders || []).some((c: any) => Math.hypot(c.x - cx, c.z - cz) < 10)) ok = false;
               if (ok) { sx = cx; sz = cz; break search; }
             }
             const add = (o: any, set: string, dx: number, dy = 0) => { const g = new THREE.Group(); g.add(o); g.userData.set = set; g.position.set(sx + Math.cos(yaw) * dx, G.world.groundAt(sx, sz) + dy, sz - Math.sin(yaw) * dx); g.rotation.y = yaw + Math.PI; G.scene.add(g); return g; };
