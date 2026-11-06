@@ -15,13 +15,13 @@ none of #810 to #817 had been looked at before this round.
 | #817 | Voice and audio (really the tester panel) | v1.07 | auto "offscreen: Den do" with the report panel open (Bottle Music) | fixed now | `efe70719c` |
 | #814 | Play (really the tester panel) | v1.07 | auto "offscreen: Den do" with the report panel open (Two Homes Words) | fixed now (same cause as #817) | `efe70719c` |
 | #810 | Play | v1.07 | auto "offscreen: Bat dau van cung may moi" in Ludo (Co Ca Ngua) | fixed now (same cause) | `efe70719c` |
-| #816 | Voice and audio (Play's game) | v1.07 | Bottle Music: every round is the same | (checking) | |
-| #815 | Voice and audio (Play's game) | v1.07 | science answers should sit in a row to save space | (checking) | |
-| #813 | Play | v1.07 | Two Homes Words: a question about an English word should be said in English | (checking) | |
-| #812 | Play | v1.07 | Lamp and Shadow: the shadow should show more clearly | (checking) | |
-| #811 | Voice and audio (Play's game) | v1.07 | Sound Pond (Ao Am Thanh): the answers sit below, not on the same screen | (checking) | |
+| #816 | Voice and audio (Play's game) | v1.07 | Bottle Music: every round is the same | fixed now | `f4f34b511` |
+| #815 | Voice and audio (Play's game) | v1.07 | science answers should sit in a row to save space | fixed before: v1.08 layout (answers side by side, one screen, check `gamefit`); seen at 1600x960 | |
+| #813 | Play | v1.07 | Two Homes Words: a question about an English word should be said in English | fixed before: v1.08 aussie-voice (`31b8a2d2f`, check `enwords`): the slang word in a Vietnamese line is said by the English voice | |
+| #812 | Play | v1.07 | Lamp and Shadow: the shadow should show more clearly | fixed now | `a8ed53a26` |
+| #811 | Voice and audio (Play's game) | v1.07 | Sound Pond (Ao Am Thanh): the answers sit below, not on the same screen | fixed before: v1.08 layout (`gamefit`); replayed at 1600x960, both fish side by side on one screen | |
 | #797 | Kid UI | v1.06 | stuck, cannot walk to some decorations (village 232, -12) | needs the owner (v1.08 bugs: which decoration) | |
-| #796 | Play | v1.06 | Read With Me: the book titles drop to a second line, out of the card | (fixing) | |
+| #796 | Play | v1.06 | Read With Me: the book titles drop to a second line, out of the card | fixed now | `fc87f039c` |
 | #781 | Play | v1.05 | Odd One Out: 13 frames a second, 3 s freezes | fixed before (v1.08 `618e4186d`, v1.06 #745); owner to replay | |
 | #780 | Play | v1.05 | Mirror Painting: freezes 3.2 s and 3.5 s | fixed before (v1.06 `capturefreeze`, v1.08 `618e4186d`); owner to replay | |
 | #746 | Analytics and Infra | v1.05 | 16 frames a second on a Windows PC (Brisbane) | fixed before as far as reproducible (v1.07 `autoplayheld`); owner to replay | |

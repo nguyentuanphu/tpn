@@ -19,13 +19,14 @@ async function play(page, age: 'little' | 'big'): Promise<Round[]> {
       document.querySelectorAll('.howto').forEach(h => h.remove());
       const pickLv = gl.querySelector('.gl-lvlpick'); if (pickLv) { (pickLv.querySelector('[data-l].on') || pickLv.querySelector('[data-l]'))?.click(); continue; }
       if (gl.querySelector('.gl-win')) break;
-      // the guess before the experiment: the question and each bottle (its colour and how full it is, in screen order)
+      // the guess before the experiment: the question and each bottle (its colour and how high its water stands, in screen order)
       const offer = playWatch.offer;
       if (offer && offer !== last && offer.some(e => e.isConnected && e.offsetWidth)) {
         last = offer; await w(150);
         const help = gl.querySelector('.gl-help')?.textContent || '';
-        const bottles = [...gl.querySelectorAll('.sx-bottle')].map(b => (b.getAttribute('aria-label') || '') + ':' + (b.innerHTML.match(/<rect[^>]*>/g) || []).join('')).join(' | ');
-        out.push({ ask: help, bottles });
+        const bottles = [...gl.querySelectorAll('.sx-bottle')].map(b => (b.getAttribute('aria-label') || '') + ':' + ((b.innerHTML.match(/<path d="M10 ([\d.]+)/) || [])[1] || '')).join(' | ');
+        // the follow-up after the experiment ("Now you know! Tap what really happened.") is not a new round
+        if (/\?/.test(help)) out.push({ ask: help, bottles });
         offer[0].click(); continue;
       }
       // the experiment: tap every bottle with the spoon
