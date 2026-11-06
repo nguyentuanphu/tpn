@@ -63,7 +63,8 @@ function askLanternModels() {
   setTimeout(async () => {
     try {
       const K = await import('./modelkit.js'), [b, t] = await Promise.all([K.worldModelParts('fe-questlantern-body'), K.worldModelParts('fe-questlantern-trim')]);
-      if (b && b[0] && t && t[0]) { lanternParts = { body: b[0].geometry.clone().scale(1, 1 / 1.15, 1), trim: t[0].geometry };   // (the body mesh keeps its own 1.15 tall scale) WAITING_LANTERNS.forEach(dressLantern); }
+      if (b && b[0] && t && t[0]) { lanternParts = { body: b[0].geometry.clone().scale(1, 1 / 1.15, 1), trim: t[0].geometry }; WAITING_LANTERNS.forEach(dressLantern); }
+      // (the body is drawn 1.15 times as tall by its own mesh scale, as the code shape was, so the model is made shorter)
     } catch (e) { /* the code shapes stay */ }
     WAITING_LANTERNS.clear();
   }, 3000);
