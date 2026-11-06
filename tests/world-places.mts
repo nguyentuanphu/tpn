@@ -78,8 +78,10 @@ export async function worldPlacesCheck(browser: Browser) {
     for (const e of r.errors) notes.push(e);
     // the festival props (js/festivals.ts): all eight load and join the Tết decorations' patches (no extra draws)
     const fp = await P.page.evaluate(async () => { const F = await import(String('/js/festivals.js'));
-      for (let i = 0; i < 120 && F.festivalPropsReady().length < 8; i++) await new Promise(r => setTimeout(r, 250));
-      return F.festivalPropsReady(); });
+      // (v1.08g festivals: the festivals' own fe-* models load beside them; the eight v1.08e pr-* props are counted here)
+      const pr = () => F.festivalPropsReady().filter((n: string) => n.startsWith('pr-'));
+      for (let i = 0; i < 120 && pr().length < 8; i++) await new Promise(r => setTimeout(r, 250));
+      return pr(); });
     if (fp.length !== 8) notes.push('festival props loaded: ' + fp.join(', '));
     await fs.mkdir('out/worldplaces', { recursive: true });
     await fs.writeFile('out/worldplaces/models.json', JSON.stringify(r.rows, null, 1));
