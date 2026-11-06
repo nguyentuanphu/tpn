@@ -1,6 +1,6 @@
 # v1.08f places-fix: status
 
-Working (6 Nov 2026 AEDT). Branch `work/v108f-places-fix` (from `origin/integrate/v108`). Brief: `places-fix-brief.md`.
+**ready for Release** (6 Nov 2026, 2:17 pm AEDT). Branch `work/v108f-places-fix` (from `origin/integrate/v108`). Brief: `places-fix-brief.md`.
 
 ## What changed
 
@@ -40,7 +40,17 @@ Before and after on phone, tablet and computer, in `docs/world-models-v108e/plac
 
 ## Checks
 
-Run one at a time (`cd tests && node suite.mts --jobs 1 --only <name>`), results below.
+Run one at a time (`cd tests && node suite.mts --jobs 1 --only <name>`), 6 Nov 2026 AEDT, on commit `7a116f463` plus this status note. All pass:
+- `types`, `boot`;
+- `solid` (it failed on `sing4` on `origin/integrate/v108` before this work: it passes now);
+- `worldplacement`, `flyaudit`;
+- `s2au` (3 regions);
+- `worldplaces` (105 models, the three Season 2 Australia ones included, and the new sign check);
+- `perf`: village 288 draws, 645k triangles; home 163 draws;
+- `battery`;
+- `startup`: first start 1046 KB, second start 0 KB from the network.
+
+The full suite is Release's.
 
 ## Owner's decisions / assumed
 
