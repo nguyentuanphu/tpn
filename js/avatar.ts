@@ -517,13 +517,19 @@ export function wearVillagerModel(A: SvAvatar, key: string): boolean {
   const keep = JOINTS.map(j => A[j] ? A[j].rotation.clone() : null), lift = A.rig.position.y, sc = A.rig.scale.clone(), H = A.height || 1;
   JOINTS.forEach(j => { if (A[j] && j !== 'rig') A[j].rotation.set(0, 0, 0); }); A.rig.position.y = 0; A.rig.scale.set(H, H, H); A.root.updateMatrixWorld(true);
   const box = new THREE.Box3(), codeParts: THREE.Object3D[] = [];
-  A.rig.traverse(o => { if (o instanceof THREE.Mesh && o.visible && !o.userData.outline) { box.expandByObject(o); codeParts.push(o); } });
+  // (only what is drawn: a hidden group, such as the folded glider over the head, made the code person seem far taller)
+  A.rig.traverse(o => { if (o instanceof THREE.Mesh && shown(o, A.rig) && !o.userData.outline) { box.expandByObject(o); codeParts.push(o); } }); // (inside the rig: it is hidden while the far still copy shows)
   const codeH = box.max.y - box.min.y, m = FRIEND_MODELS.attach(A, key, String(A.look.skin || '#f6c7a5'), {}); // (attached in the rest pose, as a friend's is when built)
   const back = () => { JOINTS.forEach((j, i) => { if (keep[i]) A[j].rotation.copy(keep[i]); }); A.rig.position.y = lift; A.rig.scale.copy(sc); };
   if (!m) { back(); return false; }
   codeParts.forEach(o => { o.visible = false; o.children.forEach(c => { if (c.userData.outline) c.visible = false; }); });
   m.obj.updateMatrixWorld(true); const mb = new THREE.Box3().setFromObject(m.obj, true), mh = mb.max.y - mb.min.y;
-  if (mh > .1 && codeH > .1) { const k = codeH / mh; m.obj.scale.multiplyScalar(k); m.obj.position.y += (box.min.y - mb.min.y * k) / A.rig.scale.y; }
+  // the model's head at the code person's head (a hat does not count), its feet on the code person's feet
+  let headBone: THREE.Object3D = null; m.obj.traverse(o => { if ((o as THREE.Bone).isBone && o.name === 'head') headBone = o; });
+  const wp = new THREE.Vector3(), hc = A.head ? A.head.getWorldPosition(new THREE.Vector3()).y : box.max.y, hm = headBone ? headBone.getWorldPosition(wp).y : mb.max.y;
+  const k = hm - mb.min.y > .1 && hc - box.min.y > .1 ? (hc - box.min.y) / (hm - mb.min.y) : codeH / Math.max(mh, .1);
+  if (mh > .1 && codeH > .1) { const O = m.obj.getWorldPosition(new THREE.Vector3()).y, ws = A.rig.getWorldScale(new THREE.Vector3()).y;
+    m.obj.scale.multiplyScalar(k); m.obj.position.y += (box.min.y - (O + (mb.min.y - O) * k)) / ws; }
   back();
   A.model = m; A.root.userData.villagerModel = key; showStill(A, false); return true; // (worn near the child: the moving model, not the still copy)
 }

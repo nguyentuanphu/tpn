@@ -22,9 +22,10 @@ export function crowdRole(look, height: number, x: number, z: number): string {
 }
 export function createCrowdModels(G) {
   const named = () => new Set((G.npcs || []).map(n => n.obj)), tried = new WeakSet();
-  let t = 0;
-  const tick = dt => {
-    if ((t -= dt) > 0) return; t = .5;
+  let next = 0;
+  // (by the clock, not the frame times: late in the valley's long list of updaters, it is not called every frame)
+  const tick = (_dt?: number) => {
+    const now = performance.now(); if (now < next) return; next = now + 500;
     const skip = named(), mine = new Set(G.heroes.map(h => h.av && h.av.root));
     let swaps = 0;
     for (const o of G.scene.children) {
@@ -38,5 +39,5 @@ export function createCrowdModels(G) {
     }
   };
   G.world.updaters.push(tick);
-  return { tick, roleOf: crowdRole };
+  return { tick, roleOf: crowdRole, tried };
 }

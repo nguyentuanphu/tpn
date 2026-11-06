@@ -1,7 +1,7 @@
 // Check `villagermodels` (v1.08e villagers, owner 6 Nov 2026 AEDT: the 11 named villagers as Blender models, in the
 // friends' soft-eye style): with a child next to each of Mai, Bác Ba, Tèo, Tí, Bống, Su, Jack, Mít, Bờm, Ruby and Lan,
-//   1. their model (models/villager-<id>.glb) loads and is worn in place of the code person: the same height (within
-//      6 %), standing on the ground where the code person stood (within 5 cm), facing the same way;
+//   1. their model (models/villager-<id>.glb) loads and is worn in place of the code person: the head at the code
+//      person's head height (within 6 %; a hat on top does not count), the feet on its feet (within 5 cm);
 //   2. it blinks (the model's closed face shows within 7 s) and its eyes turn toward a child standing to one side;
 //   3. the name tag and the talk stay;
 //   4. blocked (no network), the code person stays and nothing breaks;
@@ -15,7 +15,9 @@ export async function villagerModelsCheck(b) {
   const P = await open(b, { w: 1180, h: 760 }); await clear(P.page);
   const r = await P.page.evaluate(async (IDS) => {
     const G = (window as any).__sv, A = await import(String('/js/avatar.js')), { THREE } = await import(String('/js/gfx.js'));
-    const w = (ms: number) => new Promise(res => setTimeout(res, ms)), h = G.heroes[0], bad: string[] = [], out: Record<string, unknown> = {};
+    // (each wait touches the screen, as a child playing does: the valley's battery saver slows a page left alone)
+    // (and a story chapter a place starts, which rests the valley under it, is closed, as the other checks do)
+    const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; return new Promise(res => setTimeout(res, ms)); }, h = G.heroes[0], bad: string[] = [], out: Record<string, unknown> = {};
     const shown = (av: any) => { let f = ''; av.model.obj.traverse((o: any) => { if (o.isMesh && o.visible && /^face-/.test(o.material.name)) f = o.material.name.slice(5); }); return f; };
     for (const id of IDS) {
       const n = G.npcs.find((x: any) => x.id === id); if (!n || !n.A) { bad.push(id + ': not in the valley'); continue; }
@@ -27,11 +29,14 @@ export async function villagerModelsCheck(b) {
       if (!n.A.rig.visible) { bad.push(id + ': still the far copy next to the child'); continue; }
       // the size: a fresh code person in this villager's look beside a fresh one wearing the model, both in the rest pose
       const ref = A.buildAvatar(n.A.look), worn = A.buildAvatar(n.A.look); A.wearVillagerModel(worn, 'villager-' + id);
-      const boxOf = (av: any, model: boolean) => { av.root.updateMatrixWorld(true); const bx = new THREE.Box3(); if (model) bx.setFromObject(av.model.obj, true); else av.rig.traverse((o: any) => { if (o.isMesh && o.visible && !o.userData.outline) bx.expandByObject(o); }); return bx; };
+      const boxOf = (av: any, model: boolean) => { av.root.updateMatrixWorld(true); const bx = new THREE.Box3(); if (model) bx.setFromObject(av.model.obj, true); else av.rig.traverse((o: any) => { let p = o, vis = o.isMesh && !o.userData.outline; while (vis && p && p !== av.root) { if (!p.visible) vis = false; p = p.parent; } if (vis) bx.expandByObject(o); }); return bx; }; // (only what is drawn)
       const code = boxOf(ref, false), mb = worn.model ? boxOf(worn, true) : null;
       if (!mb) { bad.push(id + ': the model cannot be worn'); continue; }
       const ch = code.max.y - code.min.y, mh = mb.max.y - mb.min.y;
-      if (Math.abs(mh - ch) / ch > .06) bad.push(`${id}: ${mh.toFixed(2)} m tall, the code person ${ch.toFixed(2)} m`);
+      // the head where the code person's head is (a hat on top does not count), the feet on its feet
+      let hb: any = null; worn.model.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; });
+      const hc = ref.head.getWorldPosition(new THREE.Vector3()).y - code.min.y, hm = hb ? hb.getWorldPosition(new THREE.Vector3()).y - mb.min.y : mh;
+      if (Math.abs(hm - hc) / hc > .06) bad.push(`${id}: head at ${hm.toFixed(2)} m, the code person's at ${hc.toFixed(2)} m`);
       if (Math.abs(mb.min.y - code.min.y) > .05) bad.push(`${id}: feet at ${(mb.min.y - code.min.y).toFixed(3)} m from the code person's`);
       let codeShown = 0; n.A.rig.traverse((o: any) => { if (o.isMesh && !o.userData.outline && o.visible && !n.A.model.obj.getObjectById(o.id)) { let p = o, vis = true; while (p && p !== n.A.root) { if (!p.visible) vis = false; p = p.parent; } if (vis) codeShown++; } });
       if (codeShown) bad.push(`${id}: ${codeShown} code parts still shown`);
@@ -49,7 +54,7 @@ export async function villagerModelsCheck(b) {
       for (let k = 0; k < 4; k++) A.animate(n.A, 'idle', L.t + 1 / 30); n.A.root.updateMatrixWorld(true); const look = shown(n.A); A.setLookTarget(null);
       if (look !== 'lookL') bad.push(`${id}: eyes ${look} for a child on the left`);
       if (!n.tag || !n.tag.visible || !G.interactables.some((i: any) => i.id === 'npc_' + id)) bad.push(`${id}: name tag or talk gone`);
-      out[id] = { h: +mh.toFixed(2), code: +ch.toFixed(2), blink: seen.has('blink'), look };
+      out[id] = { h: +hm.toFixed(2), code: +hc.toFixed(2), blink: seen.has('blink'), look };
     }
     // (crowds) a crowd person next to a child wears a gallery neighbour's model, at the code person's height
     const AV = A, skipN = new Set(G.npcs.map((n: any) => n.obj)), mine = new Set(G.heroes.map((x: any) => x.av.root));
@@ -57,8 +62,8 @@ export async function villagerModelsCheck(b) {
     if (!crowd) bad.push('no crowd person found');
     else {
       h.place(crowd.position.x + 2, crowd.position.z + 2); const CA: any = AV.avatarOf(crowd);
-      for (let k = 0; k < 60 && !CA.model; k++) await w(200);
-      if (!CA.model || !/^villager-(vn|au)-/.test(crowd.userData.villagerModel || '')) bad.push('crowd: no neighbour model (' + (crowd.userData.villagerModel || 'none') + ')');
+      for (let k = 0; k < 150 && !CA.model; k++) await w(200); // (up to 30 s: after the eleven villagers the page is busy loading)
+      if (!CA.model || !/^villager-(vn|au)-/.test(crowd.userData.villagerModel || '')) bad.push('crowd: no neighbour model (' + (crowd.userData.villagerModel || 'none') + ', ' + JSON.stringify({ tried: G.crowdModels && G.crowdModels.tried.has(crowd), model: !!CA.model, painted: CA.painted, late: CA.late, at: [crowd.position.x | 0, crowd.position.z | 0], hero: [h.pos.x | 0, h.pos.z | 0] }) + ')');
       out.crowd = crowd.userData.villagerModel;
     }
     return { bad, out };
@@ -75,5 +80,5 @@ export async function villagerModelsCheck(b) {
   const errs = [...P.errors, ...Q.errors.filter(e => !/glb|friend model|Failed to fetch|aborted/i.test(e))]; await P.ctx.close(); await Q.ctx.close();
   if (blocked.vm !== 'code' || blocked.model || blocked.parts < 3) r.bad.push('blocked: ' + JSON.stringify(blocked));
   ok(!r.bad.length && !errs.length, JSON.stringify({ bad: r.bad, errs: errs.slice(0, 5), out: r.out }).slice(0, 2500));
-  return `the crowd wears ${(r.out as any).crowd}; ${Object.keys(r.out).length - 1} villagers wear their models at the code person's height (${Object.entries(r.out as Record<string, { h: number }>).filter(([k]) => k !== 'crowd').map(([k, v]) => `${k} ${v.h} m`).join(', ')}), blink and look at the child; blocked, the code people stay`;
+  return `the crowd wears ${(r.out as any).crowd}; ${Object.keys(r.out).length - 1} villagers wear their models with the head at the code person's head (${Object.entries(r.out as Record<string, { h: number }>).filter(([k]) => k !== 'crowd').map(([k, v]) => `${k} ${v.h} m`).join(', ')}), blink and look at the child; blocked, the code people stay`;
 }
