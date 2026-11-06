@@ -44,7 +44,8 @@ export function createReeds(G) {
     if (!list.length) continue;
     const mesh = new THREE.InstancedMesh(geo, toonVC(), list.length), m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
     list.forEach(([x, y, z, rot, s], i) => { q.setFromAxisAngle(up, rot); m.compose(new THREE.Vector3(x, name === 'reeds' ? y - .05 : y, z), q, new THREE.Vector3(s, s, s)); mesh.setMatrixAt(i, m); });
-    mesh.instanceMatrix.needsUpdate = true; mesh.computeBoundingSphere(); mesh.userData[name] = true; natureModel(mesh, name); scene.add(mesh); // (v1.08e nature: models/world/reeds.glb, hyacinth.glb) out.push(mesh);
+    mesh.instanceMatrix.needsUpdate = true; mesh.computeBoundingSphere(); mesh.userData[name] = true; natureModel(mesh, name); scene.add(mesh);   // (v1.08e nature: models/world/reeds.glb, hyacinth.glb)
+    out.push(mesh);
   }
   return { reeds: reeds.length, hyacinth: lilies.length, meshes: out };
 }

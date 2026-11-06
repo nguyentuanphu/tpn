@@ -151,7 +151,7 @@ export function createFerries(G) {
   // ---------- the river raft line: up and down the river, stopping by the towns (passes under both bridges) ----------
   {
     const path = []; for (let i = 1; i < RIVER.length - 1; i++) { const [ax, az] = RIVER[i], [bx, bz] = RIVER[i + 1], L = Math.hypot(bx - ax, bz - az), n = Math.ceil(L / 4); for (let k = 0; k < n; k++) path.push({ x: ax + (bx - ax) * k / n, z: az + (bz - az) * k / n }); }
-    const wet = path.filter(p => heightAt(p.x, p.z) < WATER - .35);   // (v1.08e water: 0.6 m of the old depth) path.length = 0; path.push(...wet);
+    const wet = path.filter(p => heightAt(p.x, p.z) < WATER - .35); path.length = 0; path.push(...wet);   // (v1.08e water: 0.6 m of the old depth)
     const under = (x, z) => !!bridgeAt(x, z, 18, 18);
     const stops = [];
     const byRiver = PLACES.map(pl => ({ pl, d: Math.min(...path.map(p => Math.hypot(p.x - pl.x, p.z - pl.z))) })).sort((a, b) => a.d - b.d).map(o => o.pl); // the towns nearest the river first
