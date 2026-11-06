@@ -15,7 +15,7 @@ from svkit import reset, mat, felt, softpaint, glass, pstar, hexc, sphere, tube,
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 argv = ['clara' if x == 'flora' else x for x in argv]   # Flora was renamed Clara (owner, 3 Nov 2026 AEDT); the old name still works
-FLAGS = ('look=felt', 'look=now', 'look=toy', 'rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'clara', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard', 'hd', 'flatface')
+FLAGS = ('look=felt', 'look=now', 'look=toy', 'rig', 'portrait', 'tubes', 'face=oval', 'face=concept', 'chibi', 'tall', 'game', 'render', 'faces', 'quick', 'lumi', 'finn', 'clara', 'flora', 'sol', 'villager', 'anim', 'glb', 'lineup', 'hard', 'hd', 'flatface', 'sculpt')
 OUT = next((a for a in argv if a not in FLAGS and '=' not in a), '/tmp/lumi')
 TALL = 'tall' in argv; RENDER = 'render' in argv; FACES = 'faces' in argv; QUICK = 'quick' in argv
 STYLE = 'tall' if TALL else 'chibi'
@@ -177,7 +177,9 @@ def group(name, build):
 # ---------- head: a smaller forehead (eyes a little higher, the fringe low), fuller cheeks, a soft round chin ----------
 # (v1.08e faces, part 3, owner 6 Nov 2026 AEDT: "like a real 3D person") the game's people get a sculpted head and a face of
 # real shapes with a shape key per mood (tools/blender/lumi-face3d.py); `flatface` keeps the painted-on shapes
-SCULPT = GAME and 'flatface' not in argv
+# (Release 6 Nov: the films' character kit, `rig` built for tools/blender/storypage.py, switches face-<mood> sets, with half,
+# lookL and lookR; those builds keep them: only the game models, `glb`, or `sculpt` asked for, get the sculpted face)
+SCULPT = GAME and ('glb' in argv or 'sculpt' in argv) and 'flatface' not in argv
 if SCULPT: exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lumi-face3d.py')).read())
 bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=96 if SCULPT else 64, v_segments=72 if SCULPT else 48, radius=1)
 for v in bm.verts:
