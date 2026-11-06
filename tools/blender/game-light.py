@@ -7,7 +7,7 @@
 # then: gltfpack -i out.glb -o models/<who>.glb -cc -kn -km   (meshopt compression; tools/make-friends.mts does both)
 import bpy, sys
 from mathutils import Vector
-KEY = Vector((-.45, -.6, .66)).normalized(); HAIRBAND = Vector((0, -.35, .94)).normalized()   # the key light, from above and the viewer's left (the person's right)
+KEY = Vector((-.45, -.6, .66)).normalized()   # the key light, from above and the viewer's left (the person's right)
 argv = sys.argv[sys.argv.index('--') + 1:]
 SRC, DST = argv[0], argv[1]
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -65,11 +65,6 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
             # (the game multiplies the skin tone by it, "skin-shade"); the same light as the high-detail models (game-hd.py)
             for li in poly.loop_indices:
                 n = cn[li].vector; k = max(0.0, n.dot(KEY)); v = .64 + .36 * min(1.0, .72 * k + .38 * (.5 + .5 * n.z)); col.data[li].color = (v, v, v, 1)
-            continue
-        if '-hair' in o.name:   # one soft highlight band (the light from above, a little in front)
-            for li in poly.loop_indices:
-                d = cn[li].vector.dot(HAIRBAND); t = max(0.0, 1 - abs(d - .72) / .16); bnd = t * t * (3 - 2 * t) * .45
-                col.data[li].color = tuple(c[i] + (min(1, c[i] * 1.6 + .06) - c[i]) * bnd for i in range(3)) + (1,)
             continue
         for li in poly.loop_indices: col.data[li].color = c
     me.color_attributes.active_color = col

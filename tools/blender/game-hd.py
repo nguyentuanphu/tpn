@@ -39,11 +39,6 @@ def _smooth(o):
     m = o.modifiers.new('wn', 'WEIGHTED_NORMAL'); m.keep_sharp = False; m.weight = 50
     with bpy.context.temp_override(object=o, active_object=o): bpy.ops.object.modifier_apply(modifier=m.name)
 
-HAIRBAND = Vector((0, -.35, .94)).normalized()
-def hair_band(n):
-    """one soft highlight band round the hair (the light from above, a little in front)"""
-    d = n.dot(HAIRBAND); t = max(0.0, 1 - abs(d - .72) / .16); return t * t * (3 - 2 * t)
-
 def _tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
 def _thin(o, want, keep=None):
@@ -130,7 +125,6 @@ def hd():
         lit = o in lit_parts
         skin0_ = next((m for m in mats if m and m.name.startswith('skin')), None)
         cn = me.corner_normals if skin0_ is not None else None
-        cn_all = me.corner_normals if k == 'hair' else None
         ref = 1.0
         if lit and light is not None and skin0_ is not None:   # (the lit skin's own brightest tenth reads as full light)
             ls = sorted(sum(light.data[li].color[:3]) / 3 for p_ in me.polygons if mats[p_.material_index] == skin0_ for li in p_.loop_indices)
@@ -151,8 +145,6 @@ def hd():
                 l = light.data[li].color
                 f = [min(1, l[0]), min(1, l[1]), min(1, l[2])] if lit else [.4 + .6 * min(1, l[0])] * 3   # (lit: the light's own warm colour)
                 cc2 = [cc[0] * f[0], cc[1] * f[1], cc[2] * f[2]]
-                if k == 'hair' and cn_all is not None:   # one soft highlight band
-                    bnd = hair_band(cn_all[li].vector) * .45; cc2 = [c_ + (min(1, c_ * 1.6 + .06) - c_) * bnd for c_ in cc2]
                 colr.data[li].color = (cc2[0], cc2[1], cc2[2], 1)
         if light is not None: me.color_attributes.remove(light)
         me.color_attributes.active_color = me.color_attributes['Col']
