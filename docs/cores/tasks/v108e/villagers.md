@@ -1,6 +1,6 @@
 # v1.08e villagers: status
 
-Working again (6 Nov 2026, 07:00 AEDT, after Release's review of the first models), by the faces helper (Release moved the villagers brief here). Branch `work/v108e-faces`.
+Working again (6 Nov 2026, after Release's review of the first models and the owner's notes), by the faces helper (Release moved the villagers brief here). Branch `work/v108e-faces`.
 Brief: `villagers-brief.md`.
 
 ## The 11 named villagers as models (done)
@@ -9,10 +9,17 @@ Brief: `villagers-brief.md`.
   `ruby`, `lan`), each from the gallery neighbour closest to them, in their own colours in the game (Cô Mai's red áo dài
   and nón lá, Bác Ba's blue, Tèo's orange shirt, Ruby's red hair and purple dress ...). Heights by the neighbour's size
   (children, grown-ups, grandparents), the friends' skeleton and joint names, the soft eyes with lids and all 11 faces.
-- `tools/make-villagers.mts`: made like the friends' light models (`tools/blender/game-light.py`): the colours crisp in
-  the corners (Release: the first try's baked 512 px picture smeared the clothes), the body kept at 5,200 triangles (at
-  3,000 the shorts showed through the shirts), about 12,000-15,000 triangles in all with the 11 faces (about 8,500 shown at
-  once), about 100-115 KB each: `models/villager-<id>.glb`.
+- `tools/make-villagers.mts` (the owner, 6 Nov 2026 AEDT, by pop-up: "Bake gallery light", then "Smoother, heavier"):
+  each model keeps far more of the gallery shape (about 21,000-26,000 triangles, smooth normals), and the gallery's soft
+  studio light (felt sheen, soft shadows in the folds) is baked into its picture (`tools/blender/game-hd.py`, `LIT`: the
+  named 2048 px at 64 samples, the 14 crowd neighbours 1024 px). The game draws it mostly by its own light, warm and
+  bright (`lit-` materials in `js/friend-model.ts`; the owner: "brighter, warmer"). The hair and hands get their clean
+  colour and soft shadow instead (baked light came out speckled and dark there); the skin keeps the villager's own skin
+  tone. Sizes: the named 720-890 KB, the crowd 390-540 KB.
+- The owner (6 Nov): "the heads are too round and don't look like the model; the hats don't fit the head": the gallery's
+  smaller, oval head and softer chin for villagers (`lumi.py`), hats sit down over the hair (`lumi-more.py hat()`).
+- The owner (6 Nov): "Mai's tummy looks strange": under an áo dài the sculpted trousers start below its panels (they
+  showed as a white band at the waist, `lumi-sculpt.py`).
 - Each villager's own hair from their look (Release: everyone wore the same short cut, because the hair table had no
   entry for the named roles): Cô Mai long and black under the nón lá, Bác Ba a grey tuft, Tèo, Su, Jack and Bờm short with
   a fringe, Tí and Mít two buns (with a flower clip), Bống a ponytail with bunny ears, Ruby red to the shoulders, Lan a
@@ -20,10 +27,12 @@ Brief: `villagers-brief.md`.
   soft tousled locks now, and no model has spikes).
 - `js/main.ts`: a named villager's model is loaded when a child comes within 40 m and worn in place of the code person
   (`wearVillagerModel` in `js/avatar.ts`): it follows the code person's joints and moods, stands at the code person's
-  height and feet (it is scaled to them), blinks, looks at the child, and Mai and Bác Ba now breathe and blink too. Far
+  head and feet (the model's head joint at the code person's head, a hat does not count; only what is drawn is measured:
+  the hidden glider over the head had made every model too big), blinks, looks at the child, and Mai and Bác Ba now breathe and blink too. Far
   away the code person's still copy is shown, as for everyone. A villager with a photo face keeps the code person (the
   photo). Name tags, talk and day plans are unchanged. Blocked: the code person stays.
-- `sw.ts`: the 11 models are in the offline list.
+- `sw.ts`: the villager models (about 15 MB for all 25) are not in the up-front offline list: each is kept by the service
+  worker the first time a child meets that villager.
 
 ## Crowds (owner, 6 Nov 2026 AEDT, pop-up: "Models near the child")
 
@@ -57,8 +66,12 @@ other checks: see `faces.md` (the same branch and runs).
 
 - 6 Nov 2026 AEDT: "I don't want this spiky hair" (a picture of Tèo): no spiky hair.
 - 6 Nov 2026 AEDT (pop-up): the crowds look nicer with models near the child.
+- 6 Nov 2026 AEDT (pop-up): bake the gallery light; then brighter, warmer; then smoother, heavier models (about 25k triangles).
+- 6 Nov 2026 AEDT: the heads too round and the hats not fitting; Mai's tummy looked strange (both fixed).
+- 6 Nov 2026 AEDT: the owner offered their own computer for Blender: not needed (this container builds them; the gap was the conversion).
 
 ## Assumed (owner can change)
 
 - Each named villager is drawn from the gallery neighbour closest to their look in the game, in their game colours.
-- About 8,500 triangles shown at once (12,000-15,000 with all 11 faces), about 100-115 KB, instead of a 512 px picture.
+- Up to about 26,000 triangles and 0.4-0.9 MB per model (the owner chose "smoother, heavier"); only the villagers within
+  40 m (named) or 25 m (crowd, three swaps every half second) wear them, so `perf` stays inside its limits.
