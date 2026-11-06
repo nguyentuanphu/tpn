@@ -18,7 +18,7 @@ async function registered(file) {
   visit(ast, n => { if (ts.isVariableDeclaration(n) && n.initializer && ts.isObjectLiteralExpression(n.initializer)) vars[n.name.getText(ast)] = n.initializer; });
   for (const st of ast.statements) if (ts.isVariableStatement(st)) for (const d of st.declarationList.declarations) if (ts.isIdentifier(d.name) && d.initializer) locals[d.name.text] = d.initializer;
   for (const st of ast.statements) if (ts.isImportDeclaration(st) && st.importClause?.namedBindings && ts.isNamedImports(st.importClause.namedBindings))
-    for (const el of st.importClause.namedBindings.elements) if (!el.isTypeOnly && !st.importClause.isTypeOnly) imports[el.name.text] = new URL(st.moduleSpecifier.text, new URL(file, root));
+    for (const el of st.importClause.namedBindings.elements) if (!el.isTypeOnly && !st.importClause.isTypeOnly) imports[el.name.text] = new URL((st.moduleSpecifier as ts.StringLiteral).text, new URL(file, root));
   const props = n => {
     if (ts.isIdentifier(n)) n = vars[n.getText(ast)];
     assert.ok(n && ts.isObjectLiteralExpression(n), `unsupported registration in ${file}`);
