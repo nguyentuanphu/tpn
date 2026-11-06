@@ -29,7 +29,9 @@ const LEVELS: [string, string, string, string, string, string][] = [
 // setOfflineLevel), then go on by themselves. Kept here, not in js/voice.ts, so the first download does not grow.
 async function chooseOfflineLevel(level: string) {
   await resumePackDownload();
-  const freed = await (await import('./voicepack.js')).setOfflineLevel(level as 'light' | 'auto' | 'full');
+  let freed = await (await import('./voicepack.js')).setOfflineLevel(level as 'light' | 'auto' | 'full');
+  // (v1.08f films) Light also frees the Blender films kept for offline (they download again when a story opens)
+  if (level === 'light') freed += await import('./filmpack.js').then(F => F.freeFilms()).catch(() => 0);
   if (level === 'full') savePackOffline().catch(() => { }); else if (level === 'light') await resumePackDownload();
   return freed;
 }

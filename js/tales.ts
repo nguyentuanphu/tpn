@@ -34,8 +34,6 @@ const STAGES: Array<[RegExp,string]> = [
   [/king|palace|prince|princess|emperor|queen|festival/i, 'palace'], [/rice|field|farm|garden|village|plant|seed/i, 'field'],
   [/desert|hot|dry|thirsty/i, 'desert']
 ];
-// (v1.08c) the stories with a Blender film (js/blenderfilm.ts, js/content/blenderfilms.ts)
-const BLENDER_FILMS = ['banhchung', 'chucuoi', 'tamcam', 'thanhgiong', 'rainbowserpent'];
 // (v1.08c) the tales whose pages are drawn in Blender (js/storypics.ts, js/content/storypics.ts): the 20 Vietnamese tales
 const STORY_PICS = ['duahau', 'thanhgiong', 'banhchung', 'caykhe', 'hoguom', 'rongtien', 'caytre', 'tamcam', 'sodua', 'thachsanh', 'chucuoi', 'cockien', 'vusua', 'baluoiriu', 'quabau', 'thayboi', 'nhacmeo', 'ongtao', 'cachep', 'sontinh'];
 export const stageOf = en => STAGES.find(([re]) => re.test(en))?.[1] || 'meadow';
@@ -71,12 +69,14 @@ export async function openTheatre(tale, { name = '', onDone = undefined, startPa
     const loadFilm = async () => { const C = await import('./content/films.js'); return C.FILMS[tale.id] || (await import('./content/talefilms.js')).taleFilm(tale.id); };
     // a narration line inside the film shows under the page's words, and is spoken only while the story reads itself
     const onSay = (en, vi, kind) => { if (kind !== 'help') { text.querySelectorAll('.th-more').forEach(e => e.remove()); text.appendChild(el('p', 'th-more', esc(T(en, vi).replace(/\{name\}/g, name)))); } return auto ? sayAsync(en, vi) : Promise.resolve(); };
-    // (v1.08c) five stories also have a film made in Blender (js/blenderfilm.ts): it plays when it is kept on the device
-    // or the internet can bring it; otherwise the game's own film plays, as before
+    // (v1.08c) stories with a film made in Blender (js/blenderfilm.ts) play it when it is kept on the device or the internet
+    // can bring it; otherwise the game's own film plays, as before. (v1.08f) Which films a child sees (the five for
+    // everyone, the rest on tester devices with Studio's "Blender films for testers") is js/blenderfilm.ts filmOpen.
     const videoFilm = async () => {
-      if (!BLENDER_FILMS.includes(tale.id) || !featureOn('blenderFilms', true)) return false;
+      if (!featureOn('blenderFilms', true)) return false;
       try {
-        const B = await import('./blenderfilm.js'); const v = await B.videoFor(tale.id); if (!v || !alive || gaveUp) return false;
+        const B = await import('./blenderfilm.js'); if (!B.filmOpen(tale.id)) return false; // (v1.08f) five for everyone, the rest for testers
+        const v = await B.videoFor(tale.id); if (!v || !alive || gaveUp) return false;
         const vf = B.createVideoFilm(stage, tale.id, v.src); if (!vf) return false;
         // a video this device cannot show (a broken file, no codec for it) is let go: the game's own film plays instead
         if (!(await vf.playable(8000)) || !alive || gaveUp) { vf.close(); return false; }

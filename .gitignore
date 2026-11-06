@@ -126,6 +126,7 @@ marketing/source/runvalley.log
 /js/content/festival-visibility.js
 /js/content/festseason.js
 /js/content/film-looks.js
+/js/content/films-for-all.js
 /js/content/films.js
 /js/content/films/baluoiriu.js
 /js/content/films/birdcolours.js
@@ -239,6 +240,7 @@ marketing/source/runvalley.log
 /js/festivals.js
 /js/film-costume.js
 /js/film.js
+/js/filmpack.js
 /js/folkshow.js
 /js/friend-model.js
 /js/friend-view.js

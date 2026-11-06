@@ -10,7 +10,9 @@
 // - The child's help moments stay: the video stops with the tap ring and goes on after the tap (or after 7 s by itself).
 // It plays like a film (the same page(), narrated(), onSay and close() as js/film.ts), so the theatre (js/tales.ts) treats
 // both the same way. Loaded only when one of the five stories opens.
-import { BLENDER_FILMS } from './content/blenderfilms.js';
+import { BLENDER_FILMS, BLENDER_FOR_ALL, filmBytes } from './content/blenderfilms.js';
+import { featureOn, releaseOn, liveRule } from './custom.js';
+import { testerLevel } from './content/tester.js';
 import { T } from './i18n.js';
 import { sayAsync } from './voice.js';
 import { SFX } from './audio.js';
@@ -18,9 +20,26 @@ import { el, esc } from './util.js';
 import { pic } from './art.js';
 import { reduceMotion } from './state.js';
 
-const STORE = 'sv-films';
+// the films' own cache: not the game's (an update never deletes it, sw.ts) and never the install list
+export const FILM_STORE = 'sv-films';
+const STORE = FILM_STORE;
 export const blenderFilmUrl = (id: string) => { const f = BLENDER_FILMS[id]; return f ? `videos/films/${id}-${f.v}.mp4` : null; };
 export const hasBlenderFilm = (id: string) => !!BLENDER_FILMS[id];
+
+// (v1.08f films, owner 6 Nov 2026 AEDT) who sees which film: the five for everyone (each its own Studio switch,
+// blenderFilm_<id>, on for the five and off for the rest, so the owner can open the others one by one); every other listed
+// film only on a tester device while Studio's "Blender films for testers" is on. Everyone else gets the in-game film.
+export function isTesterDevice() {
+  let me = ''; try { me = localStorage.getItem('sv2_playerid') || ''; } catch (e) { }
+  return !!testerLevel(releaseOn('tester', false), liveRule('tester'), me);
+}
+export function filmOpen(id: string) {
+  if (!BLENDER_FILMS[id] || !featureOn('blenderFilms', true)) return false;
+  if (releaseOn(`blenderFilm_${id}`, BLENDER_FOR_ALL.includes(id))) return true;
+  return releaseOn('blenderFilmsTesters', false) && isTesterDevice();
+}
+/** the films this device may play (and so may download all at once) */
+export const myFilms = () => Object.keys(BLENDER_FILMS).filter(filmOpen);
 
 /** the video for a story: the kept copy, else the internet (kept for next time while it plays); null when neither can be had */
 export async function videoFor(id: string): Promise<{ src: string, kept: boolean } | null> {
