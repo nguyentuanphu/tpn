@@ -16,7 +16,8 @@ from mathutils import Vector
 AGE = (V['size'] if V else 'kid')
 # (v1.08e round 3, owner 6 Nov 2026 AEDT via Release: "the pair of eyes and cheeks plus the hair will scare the kids")
 # calm, cute and smooth: the eyes about 15 % smaller, a touch further apart and a little lower; the blush lower and smaller
-P['eye'] = P['eye'] * .85; P['eyeX'] = P['eyeX'] + .03; P['eyeZ'] = P['eyeZ'] - .03
+P['eye'] = P['eye'] * .85 * (1.1 if V else 1.0);   # (the villagers' eyes 10 % bigger than that, so they read on a phone)
+P['eyeX'] = P['eyeX'] + .03; P['eyeZ'] = P['eyeZ'] - .03
 # (Release, round 3 review: "a big empty plate with a high forehead") the eyes, nose, mouth and cheeks up about 4 % of
 # the head's height, so the face sits framed under the fringe
 for k_ in ('eyeZ', 'noseZ', 'mouthZ', 'blushZ'): P[k_] = P.get(k_, {'noseZ': -.3, 'mouthZ': -.5, 'blushZ': -.42}[k_] if k_ != 'eyeZ' else -.13) + .08
@@ -106,12 +107,12 @@ def _disc(M, x, z, sx, sz, out, m, n=12):
 EYE3D = {
     # (owner 6 Nov, via Release: "the eyes are still too sad") at rest the lower lid lifts into a soft smile and the iris is a
     # touch larger; the outer corners are lifted (HAPPY_REST below)
-    # (owner 6 Nov, again: "happier and more joyful") a clearly smiling eye at rest: the lower lid about a third of the way
-    # up the iris, the eye gently squeezed by the smile, the upper lid round and open
-    'smile': (34, -15, -3, 0, 0, 0, 1.12), 'open': (34, -15, -3, 0, 0, 0, 1.12), 'half': (-4, -16, -8, 0, 0, 0, 1.12),
+    # (owner 6 Nov, and Release's review: the lower lid a third up the iris read sleepy) round open eyes, the iris fully seen,
+    # the lower lid only a slight smile curve (about a sixth of the iris)
+    'smile': (31, -30, -4, 0, 0, 0, 1.12), 'open': (31, -30, -4, 0, 0, 0, 1.12), 'half': (-4, -29, -8, 0, 0, 0, 1.12),
     'blink': (-28, -24, -16, 0, 0, 0, 1), 'sleep': (-28, -24, -16, 0, 0, -4, 1), 'happy': (6, 8, -14, 0, 0, 0, 1),
     'excited': (40, -50, -6, 0, 0, 2, 1.04), 'surprised': (46, -54, -4, 0, 0, 0, .84), 'curious': (35, -44, -5, 0, -12, 6, 1),
-    'sad': (19, -42, -10, 14, 0, -9, 1), 'shy': (21, -38, -8, 0, -14, -12, 1), 'lookL': (34, -15, -3, 0, 22, 0, 1.12), 'lookR': (34, -15, -3, 0, -22, 0, 1.12),
+    'sad': (19, -42, -10, 14, 0, -9, 1), 'shy': (21, -38, -8, 0, -14, -12, 1), 'lookL': (31, -30, -4, 0, 22, 0, 1.12), 'lookR': (31, -30, -4, 0, -22, 0, 1.12),
 }
 BROW3D = {'surprised': .12, 'happy': .07, 'sad': .04, 'excited': .1, 'shy': .06, 'curious': .08, 'blink': .05, 'sleep': .035}
 BROW_REST = .075   # (owner 6 Nov: the brows higher at rest, with a gentle raised arch)
