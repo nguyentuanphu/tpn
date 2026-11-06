@@ -20,4 +20,6 @@ Rules: everything in `docs/cores/tasks/v108b/README.md` and `docs/cores/tasks/v1
 |---|---|---|
 | films | `films-brief.md` | `work/v108f-films` |
 | settings | `settings-brief.md` | `work/v108f-settings` |
+| bugs (another account) | `bugs-brief.md` | `work/v108f-bugs` |
+| places-fix | `places-fix-brief.md` | `work/v108f-places-fix` |
 | PC render (owner's computer) | the 34 other tale films at 720p, by the PC session | `work/v108c-films-gpu` |
