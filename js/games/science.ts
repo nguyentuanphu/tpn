@@ -453,7 +453,10 @@ register({ id: 'sci_shadow', learn: true, icon: 'sci:shadow', name: () => T('Lam
     let lamp: HTMLElement = null, shade: SVGPathElement = null, ray: SVGPathElement = null, rings: HTMLElement[] = [];
     const put = (lx: number, ly: number) => {
       const tip = Math.max(-60, Math.min(460, tipOf(lx, ly))), w = 16;
-      shade.setAttribute('d', `M${TOY.x - w} ${TOY.ground}L${TOY.x + w} ${TOY.ground}L${tip} ${TOY.ground + 9}L${tip} ${TOY.ground - 2}z`);
+      // (v1.08f, #812: "the shadow must show more clearly") a dark band lying on the ground from the teddy's feet to the tip,
+      // thick at the feet; it was an 11 px grey sliver, half see-through, hidden under the teddy when the lamp was high
+      const g = TOY.ground, dir = tip >= TOY.x ? 1 : -1;
+      shade.setAttribute('d', `M${TOY.x - w} ${g}L${TOY.x + w} ${g}L${tip} ${g}Q${tip + dir * 7} ${g + 4} ${tip} ${g + 8}Q${(tip + TOY.x) / 2} ${g + 14} ${TOY.x + dir * w} ${g + 16}L${TOY.x - dir * w} ${g + 16}z`);
       if (ray) ray.setAttribute('d', `M${lx} ${ly}L${tip} ${TOY.ground}`);
     };
     const pct = ([a, b]: [number, number]) => [a / 4, b / 3];
@@ -463,7 +466,7 @@ register({ id: 'sci_shadow', learn: true, icon: 'sci:shadow', name: () => T('Lam
     else { ask = ['The lamp will move to the ring. Will the shadow get longer or shorter?', 'Đèn sẽ chuyển tới vòng tròn. Bóng sẽ dài ra hay ngắn lại?']; choices = [{ key: 'long', pic: 'sci:longer', label: ['Longer', 'Dài ra'] }, { key: 'short', pic: 'sci:shorter', label: ['Shorter', 'Ngắn lại'] }]; answer = R.kind === 'high' || R.kind === 'near' ? 'short' : 'long'; }
     rounds.push({
       draw: x => {
-        bg(x.scene, `<rect x="0" y="${TOY.ground}" width="400" height="${300 - TOY.ground}" fill="#cfe8b8"/><path d="M0 ${TOY.ground}H400" stroke="#3b2a4f" stroke-width="3"/><path class="sx-shade" fill="#4a405a" opacity=".55"/>${lv >= 3 ? '<path class="sx-ray" stroke="#ffb020" stroke-width="3" stroke-dasharray="8 6" fill="none"/>' : ''}${R.star != null ? `<path transform="translate(${R.star} ${TOY.ground + 30})" d="M0-14l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#ffd23f" stroke="#3b2a4f" stroke-width="2.5"/>` : ''}`);
+        bg(x.scene, `<rect x="0" y="${TOY.ground}" width="400" height="${300 - TOY.ground}" fill="#cfe8b8"/><path d="M0 ${TOY.ground}H400" stroke="#3b2a4f" stroke-width="3"/><path class="sx-shade" fill="#2f2840" opacity=".82" stroke="#2f2840" stroke-width="2" stroke-linejoin="round"/>${lv >= 3 ? '<path class="sx-ray" stroke="#ffb020" stroke-width="3" stroke-dasharray="8 6" fill="none"/>' : ''}${R.star != null ? `<path transform="translate(${R.star} ${TOY.ground + 30})" d="M0-14l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#ffd23f" stroke="#3b2a4f" stroke-width="2.5"/>` : ''}`);
         shade = x.scene.querySelector('.sx-shade'); ray = x.scene.querySelector('.sx-ray');
         const toy = el('div', 'sx-rider', pic('🧸')); toy.style.left = '50%'; toy.style.bottom = (100 - TOY.ground / 3) + '%'; toy.style.width = toy.style.height = '64px'; x.scene.appendChild(toy);
         rings = R.rings.map((p, i) => { const [a, b] = pct(p), g = el('button', 'sx-ring', R.rings.length > 1 ? String(i + 1) : ''); g.style.left = a + '%'; g.style.top = b + '%'; g.dataset.i = String(i); g.setAttribute('aria-label', T('Ring', 'Vòng tròn') + ' ' + (i + 1)); x.scene.appendChild(g); return g; });
