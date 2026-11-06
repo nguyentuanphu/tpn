@@ -281,7 +281,9 @@ await check('reading', async () => {
   await Q.page.waitForFunction(async () => Object.keys((await import('/js/games/frame.js')).GAMES).filter(k => /^rd_/.test(k)).length === 13, null, { timeout: 30000 }).catch(() => { });
   const on = await Q.page.evaluate(async () => { const F = await import('/js/games/frame.js'), A = await import('/js/content/activities.js'); __sv.openGamesHub(0); await new Promise(r => setTimeout(r, 300)); document.querySelector('.hubtabs [data-tab="learn"]')?.click(); await new Promise(r => setTimeout(r, 200));
     const hub = [...document.querySelectorAll('.hubbody [data-play]')].map(b => b.dataset.play), head = [...document.querySelectorAll('.hubbody .hubarea')].map(h => h.textContent); document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false;
-    return { games: Object.keys(F.GAMES).filter(k => /^rd_/.test(k)), big: A.gamesIn(F.GAMES, 'reading', false).map(g => g.id), little: A.gamesIn(F.GAMES, 'reading', true).map(g => g.id), hub: hub.filter(k => /^rd_/.test(k)), head }; });
+    return { games: Object.keys(F.GAMES).filter(k => /^rd_/.test(k)), big: ['reading', 'hv_vi'].flatMap(a => A.gamesIn(F.GAMES, a, false).map(g => g.id)).filter(k => /^rd_/.test(k)), little: ['reading', 'hv_vi'].flatMap(a => A.gamesIn(F.GAMES, a, true).map(g => g.id)).filter(k => /^rd_/.test(k)), hub: hub.filter(k => /^rd_/.test(k)), head }; });
+  // (v1.08b games) Tone Marks lives in Tiếng Việt (js/games/readingmenu.ts: rd_tones hv_vi), the rest in the Reading corner:
+  // big and little are read from both homes
   // (owner, 18 Oct AEDT) Story Helpers joins the Reading corner too, for 2 to 8 (played through by its own check, storyhelp)
   ok([...IDS, 'rd_storyhelp'].every(id => on.games.includes(id) && on.big.includes(id) && on.hub.includes(id)) && on.head.some(h => /Reading corner/.test(h)), 'with the switch on: ' + JSON.stringify(on));
   ok(BIG_ONLY.every(id => !on.little.includes(id)) && on.little.length === IDS.length - BIG_ONLY.length + 1 && [...IDS.filter(id => !BIG_ONLY.includes(id)), 'rd_storyhelp'].every(id => on.little.includes(id)), 'under-5s see: ' + on.little.join(','));
