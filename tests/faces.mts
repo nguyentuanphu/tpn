@@ -123,8 +123,8 @@ export async function facesCheck(b) {
       if (!(white.smile > 40) || !(white.half < white.smile) || white.blink > 0 || white.sleep > 0 || white.happy > 0) bad.push(`${tag}: eye white ${JSON.stringify(white)}`);
       // 2. the mouth changes shape per mood: its dark inside, each mood's own width, height and place
       const face = M.face3d.find((o: any) => o.geometry.attributes.color), g = face.geometry, pos = g.attributes.position, col = g.attributes.color, dict = face.morphTargetDictionary, tgt = g.morphAttributes.position, rel = g.morphTargetsRelative;
-      // (the mouth's own dark red, #6f2b2b: linear .16, .024, .024 in the corners)
-      const mouth: number[] = []; for (let i = 0; i < pos.count; i++) if (Math.abs(col.getX(i) - .161) < .025 && col.getY(i) < .04 && col.getZ(i) < .04) mouth.push(i);
+      // (the mouth's own colour in the corners)
+      const mouth: number[] = []; for (let i = 0; i < pos.count; i++) if (Math.abs(col.getX(i) - .37) < .06 && col.getY(i) < .1 && col.getZ(i) < .1 && col.getX(i) > 3 * col.getY(i)) mouth.push(i); // (round 3: the soft lip colour #a24a4c, linear .37, .06, .07)
       const shape: Record<string, number[]> = {};
       for (const k of ['smile', 'open', 'sad', 'surprised', 'happy', 'shy', 'excited', 'sleep']) {
         let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; const t = k === 'smile' ? null : tgt[dict[k]];

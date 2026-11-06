@@ -160,7 +160,14 @@ full rebuild).
   1fb4972bc for the hair helper to look at; it was taken out again (`lumi-hair.py` and the export scripts as in round 2).
 - Test models (Clara, Mai, Tèo, not committed) and shots: `docs/world-models-v108e/faces/round3/` (phone 390x844 at 1x
   and 2x, front and three-quarter, smiling and mid-blink; Clara and Tèo at 4x). `faces` passes with them.
-- Not this branch's: the clothes still show some facets and bands of baked light on the thinned shapes.
+- **Release's review of round 3 (6 Nov ~9:35 pm AEDT), done:** the closed smile about 1.6 times wider with a deeper curve,
+  in a soft lip colour with a soft lip rim (the skin-coloured lip rows were shaded apart from the face and showed as
+  patches); the eyes, nose, mouth and cheeks up 4 % of the head's height (the hairline is the hair helper's, to bring
+  down to meet them); under Mai's áo dài the top's fitted layer goes down to the hips in the dress's colour, so no skin
+  shows in the side slits from any side; the clothes' cut edges relaxed along themselves (no torn, stepped hems), the
+  body given more triangles (high-detail 8,000-8,500, light 2,700), the head 4,000 high-detail and 1,300 light and
+  thinned the same on both sides, the skin's baked shading gentler (it showed as patches across the thinned face), a
+  kid's shorts slimmer (no belly).
 
 ## The style, for the villagers helper (shared setup)
 

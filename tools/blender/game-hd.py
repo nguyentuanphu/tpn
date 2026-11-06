@@ -12,7 +12,7 @@ import bpy, bmesh, math
 from mathutils import Vector
 import numpy as np
 
-HD_BUDGET = {'body': 7000, 'head': 2600, 'hair': 9500, 'hands': 700, 'item': 900, 'shoes': 900}
+HD_BUDGET = {'body': 8000, 'head': 4000, 'hair': 9500, 'hands': 700, 'item': 900, 'shoes': 900}
 HD_FACE = 700
 ATLAS = 1024
 UV_SHARE = {'hair': .3}
@@ -25,13 +25,13 @@ LIT = WHO == 'villager'
 # a 2048 px picture baked at 64 samples (the 14 crowd neighbours: 1024 px, VILLAGER_ATLAS)
 # (check perf: at 25,000 triangles and 2048 px the village went past 800,000 triangles and the 1024 px picture limit)
 # about 18,000 triangles and 1024 px
-if LIT: HD_BUDGET = {'body': 8000, 'head': 2600, 'hair': 5000, 'hands': 700, 'item': 600, 'shoes': 800, 'hat': 1200}; HD_FACE = 400; ATLAS = int(os.environ.get('VILLAGER_ATLAS', '1024'))
+if LIT: HD_BUDGET = {'body': 8500, 'head': 4000, 'hair': 5000, 'hands': 700, 'item': 600, 'shoes': 800, 'hat': 1200}; HD_FACE = 400; ATLAS = int(os.environ.get('VILLAGER_ATLAS', '1024'))
 
 KEY = Vector((-.45, -.6, .66)).normalized()   # the key light, from above and the viewer's left (the person's right)
 def skin_shade(n):
     """the soft form shading of a skin point from its normal: the key light, and a little more light from above"""
     k = max(0.0, n.dot(KEY)); up = .5 + .5 * n.z
-    return .64 + .36 * min(1.0, .72 * k + .38 * up)   # (the lit side keeps the skin tone)
+    return .82 + .18 * min(1.0, .72 * k + .38 * up)   # (the lit side keeps the skin tone; round 3: gentler, the game's own light shades the form too, and a strong bake showed as patches across the thinned face)
 
 def _smooth(o):
     """(v1.08e round 3, owner 6 Nov: no facets anywhere) smooth shading on a thinned part, its normals the plain average
@@ -47,6 +47,7 @@ def _thin(o, want, keep=None):
         now = _tris(o)
         if now <= want * 1.12: break
         d = o.modifiers.new('thin', 'DECIMATE'); d.decimate_type = 'COLLAPSE'; d.ratio = want / now; d.use_collapse_triangulate = True
+        if o.name.endswith('-head'): d.use_symmetry = True; d.symmetry_axis = 'X'   # (round 3: the face thinned the same on both sides, no lopsided facets)
 
         with bpy.context.temp_override(object=o, active_object=o):
             bpy.ops.object.modifier_apply(modifier=d.name)

@@ -121,6 +121,16 @@ def layer(sk, keep, m, off, name):
     """a fitted garment: the body surface where keep(point) is true, lifted by off and given a little thickness"""
     bm = bmesh.new(); bm.from_mesh(sk.data); bm.normal_update()
     bmesh.ops.delete(bm, geom=[f for f in bm.faces if not keep(f.calc_center_median())], context='FACES')
+    # (v1.08e round 3, Release: "jagged torn edges" on the hems, sleeves and belts) the cut follows the body's triangles in
+    # steps: the edge loop is relaxed along itself (each edge point toward its two edge neighbours) until it runs smooth
+    bnd = [v for v in bm.verts if v.is_boundary]
+    for _ in range(8):
+        new = {}
+        for v in bnd:
+            nb = [e.other_vert(v) for e in v.link_edges if e.is_boundary]
+            if len(nb) == 2: new[v] = v.co * .4 + (nb[0].co + nb[1].co) * .3
+        for v, c in new.items(): v.co = c
+    bm.normal_update()
     for v in bm.verts: v.co += v.normal * off
     o = obj_from(bm, name, m)
     for c in list(o.users_collection): c.objects.unlink(o)
@@ -173,12 +183,13 @@ def sculpt():
             t = arm_of(p)
             if t is not None:   # on the arm: covered only as far as the sleeves of this top reach
                 return any(lo - .05 <= t <= hi - .08 for m, lo, hi in sleeves if m == top) or t < .12   # (Release 6 Nov: it ends inside the sleeve; past the cuff its end, unlit, showed as a dark band on the wrist)
-            # (v1.08e, Release 6 Nov: under an áo dài this layer's hem stood out over the hips like a box) the áo dài's own
-            # top covers the body there, so the layer stops above the waist
+            # (v1.08e, Release 6 Nov: under an áo dài this layer's hem stood out over the hips like a box; round 3: with it
+            # stopping at the waist, skin showed in the side slits) it goes down to the hips in the dress's colour, under the
+            # panels, which now fit with room (aoDai .03)
             # (and under a loose áo bà ba or cardigan, which reach the hips, it follows the body down to their hem: anything
             # showing through them is their own colour, not a band of the trousers)
             tk_ = V['top'][0] if V else ''
-            lo_ = b['zW'] + .03 * S if tk_ == 'aodai' else b['zCr'] - .045 * S if tk_ in ('aobaba', 'cardigan') else b['zW'] - .05 * S
+            lo_ = b['zCr'] - .03 * S if tk_ == 'aodai' else b['zCr'] - .045 * S if tk_ in ('aobaba', 'cardigan') else b['zW'] - .05 * S
             return lo_ < p.z < b['zN'] - .012 * S
         layer(sk, keep_top, top, .007 * S, 'soft_top')
     for m in {m for m, lo, hi in sleeves if m != top}:   # sleeves of another cloth (a coat over a shirt)

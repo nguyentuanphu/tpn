@@ -17,6 +17,11 @@ AGE = (V['size'] if V else 'kid')
 # (v1.08e round 3, owner 6 Nov 2026 AEDT via Release: "the pair of eyes and cheeks plus the hair will scare the kids")
 # calm, cute and smooth: the eyes about 15 % smaller, a touch further apart and a little lower; the blush lower and smaller
 P['eye'] = P['eye'] * .85; P['eyeX'] = P['eyeX'] + .03; P['eyeZ'] = P['eyeZ'] - .03
+# (Release, round 3 review: "a big empty plate with a high forehead") the eyes, nose, mouth and cheeks up about 4 % of
+# the head's height, so the face sits framed under the fringe
+for k_ in ('eyeZ', 'noseZ', 'mouthZ', 'blushZ'): P[k_] = P.get(k_, {'noseZ': -.3, 'mouthZ': -.5, 'blushZ': -.42}[k_] if k_ != 'eyeZ' else -.13) + .08
+MOUTH = mat('mouth3', '#a24a4c', .5)   # (a soft lip colour: the closed smile reads as lips, not a dark cut)
+LIP3 = mat('lip3', '#c57a74', .5)   # (the soft rim of the lips: skin-coloured rows were shaded apart from the face and showed as patches)
 P['blushZ'] = P.get('blushZ', -.37) - .05; P['blushX'] = P.get('blushX', .53) + .01
 BLUSH3 = softpaint('blushSoft', '#f4b1a6', .85)   # a softer, paler rose, so it is not a sticker
 MOODS3D = ('smile', 'blink', 'half', 'happy', 'curious', 'surprised', 'sad', 'shy', 'excited', 'lookL', 'lookR', 'open', 'sleep')
@@ -187,17 +192,18 @@ def face3d_points(expr):
     elif expr == 'surprised':
         w, h = .06 * Mo, .08 * Mo; top = lambda u: mz - .03 + h * .5 * s_(u); bot = lambda u: mz - .03 - h * .5 * s_(u); x0 = 0
     else:
-        mid = {'blink': (lambda u: mz - .018 * Mo + .022 * Mo * u * u, .065), 'sleep': (lambda u: mz - .01 * Mo + .008 * Mo * u * u, .05),
-               'smile': (lambda u: mz - .02 * Mo + .028 * Mo * u * u, .075), 'half': (lambda u: mz - .02 * Mo + .028 * Mo * u * u, .075),
-               'lookL': (lambda u: mz - .02 * Mo + .028 * Mo * u * u, .075), 'lookR': (lambda u: mz - .02 * Mo + .028 * Mo * u * u, .075),
-               'sad': (lambda u: mz - .015 - .022 * Mo * u * u, .06), 'shy': (lambda u: mz - .03 * Mo + .025 * Mo * u * u, .055),
+        mid = {'blink': (lambda u: mz - .024 * Mo + .036 * Mo * u * u, .1), 'sleep': (lambda u: mz - .012 * Mo + .012 * Mo * u * u, .075),
+               # (Release, round 3 review: the closed smile too small to read on a phone) about 1.6 times wider, a deeper curve
+               'smile': (lambda u: mz - .028 * Mo + .045 * Mo * u * u, .12), 'half': (lambda u: mz - .028 * Mo + .045 * Mo * u * u, .12),
+               'lookL': (lambda u: mz - .028 * Mo + .045 * Mo * u * u, .12), 'lookR': (lambda u: mz - .028 * Mo + .045 * Mo * u * u, .12),
+               'sad': (lambda u: mz - .015 - .03 * Mo * u * u, .09), 'shy': (lambda u: mz - .03 * Mo + .035 * Mo * u * u, .085),
                'curious': (lambda u: mz - .03 + .01 * u, .045)}[expr]
-        w = mid[1] * Mo; th = lambda u: .009 * (.35 + .65 * s_(u)); top = lambda u, f=mid[0]: f(u) + th(u); bot = lambda u, f=mid[0]: f(u) - th(u); x0 = -.008 if expr == 'shy' else 0
+        w = mid[1] * Mo; th = lambda u: .012 * (.3 + .7 * s_(u)) ** .7; top = lambda u, f=mid[0]: f(u) + th(u); bot = lambda u, f=mid[0]: f(u) - th(u); x0 = -.008 if expr == 'shy' else 0
     us = lin(-1, 1, 13); vs = (1.0, .5, 0, -.5, -1.0)
-    rows = [[M.vert(onf(x0 + w * u * 1.06, top(u) + .016, .006)[0]) for u in us]]   # the upper lip
+    rows = [[M.vert(onf(x0 + w * u * 1.04, top(u) + .008, .004)[0]) for u in us]]   # the upper lip, a thin soft rim
     for v in vs: rows.append([M.vert(onf(x0 + w * u, (top(u) + bot(u)) / 2 + v * (top(u) - bot(u)) / 2, .012 - .004 * (1 - abs(v)))[0]) for u in us])
-    rows.append([M.vert(onf(x0 + w * u * 1.06, bot(u) - .018, .006)[0]) for u in us])   # the lower lip
-    M.grid(rows, lambda r, c: SKIN if r in (0, len(rows) - 2) else TONGUE if (r >= 4 and 4 <= c <= 7) else MOUTH, ref=HC)
+    rows.append([M.vert(onf(x0 + w * u * 1.04, bot(u) - .009, .004)[0]) for u in us])   # the lower lip, a thin soft rim
+    M.grid(rows, lambda r, c: LIP3 if r in (0, len(rows) - 2) else TONGUE if (r >= 4 and 4 <= c <= 7) else MOUTH, ref=HC)
     return M
 
 def face3d():

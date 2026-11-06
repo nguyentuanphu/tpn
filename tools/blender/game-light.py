@@ -14,7 +14,7 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=SRC)
 # triangle budgets per part, about 7,000 in all (v1.08d polish: the item in the hand and the boots, once in the body's
 # 3,600, are parts of their own now: the body keeps the rest)
-BUDGET = {'body': 2400, 'head': 900, 'hair': 4200, 'hands': 260, 'item': 350, 'shoes': 250}
+BUDGET = {'body': 2700, 'head': 1300, 'hair': 4200, 'hands': 260, 'item': 350, 'shoes': 250}
 FACE = 420  # each of the eleven face moods (only one shows at a time); (v1.08e faces) 280 left the eyes faceted
 # (v1.08e villagers) the villagers' clothes are layers close together (a shirt over shorts, a belt): thinned to 3,000 the
 # lower layer showed through in patches, so their bodies keep more
@@ -32,6 +32,7 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
         now = tris(o)
         if now <= want * 1.15: break
         d = o.modifiers.new('thin', 'DECIMATE'); d.decimate_type = 'COLLAPSE'; d.ratio = want / now; d.use_collapse_triangulate = True
+        if key == 'head': d.use_symmetry = True; d.symmetry_axis = 'X'   # (round 3: the face thinned the same on both sides)
         o.modifiers.move(o.modifiers.find(d.name), 0)  # (before the skin, so the weights are thinned with the shape)
         with bpy.context.temp_override(object=o, active_object=o):
             bpy.ops.object.modifier_apply(modifier=d.name)
@@ -65,7 +66,7 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
             # (v1.08e, owner 6 Nov: the flat skin lost all modelling) the skin's corners carry a soft key light from above-left
             # (the game multiplies the skin tone by it, "skin-shade"); the same light as the high-detail models (game-hd.py)
             for li in poly.loop_indices:
-                n = cn[li].vector; k = max(0.0, n.dot(KEY)); v = .64 + .36 * min(1.0, .72 * k + .38 * (.5 + .5 * n.z)); col.data[li].color = (v, v, v, 1)
+                n = cn[li].vector; k = max(0.0, n.dot(KEY)); v = .82 + .18 * min(1.0, .72 * k + .38 * (.5 + .5 * n.z)); col.data[li].color = (v, v, v, 1)
             continue
         for li in poly.loop_indices: col.data[li].color = c
     me.color_attributes.active_color = col
