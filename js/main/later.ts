@@ -18,3 +18,10 @@ export * as trade from '../trade.js';
 export * as folkShow from '../folkshow.js';
 export * as signposts from '../signposts.js';
 export * as secrets from '../secrets.js';
+// (v1.08 startup, PERF-001) the parts made after the games boards, also in this one piece
+export * as lanterns from '../lanterns.js';
+export * as yard from '../yard.js';
+export * as shop from '../shop.js';
+export * as boxes from '../boxes.js';
+export * as hoiLang from '../hoilang.js';
+export * as friendQuest from '../friendquest.js';

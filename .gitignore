@@ -205,6 +205,7 @@ marketing/source/runvalley.log
 /js/content/surprises.js
 /js/content/talefilms.js
 /js/content/tester-arcades.js
+/js/content/tester-level.js
 /js/content/tester.js
 /js/content/tiengviet2.js
 /js/content/unlocks.js
@@ -240,6 +241,7 @@ marketing/source/runvalley.log
 /js/festhunt.js
 /js/festival-live.js
 /js/festivals.js
+/js/festpieces.js
 /js/film-costume.js
 /js/film.js
 /js/filmpack.js
@@ -400,6 +402,7 @@ marketing/source/runvalley.log
 /js/main/layout.js
 /js/main/online-games.js
 /js/main/quests.js
+/js/main/soon.js
 /js/main/talking.js
 /js/main/talks.js
 /js/management-telemetry.js
@@ -439,6 +442,7 @@ marketing/source/runvalley.log
 /js/regionsites.js
 /js/relay.js
 /js/render-recovery.js
+/js/report-count.js
 /js/report-outbox.js
 /js/report.js
 /js/rideview.js
@@ -487,6 +491,7 @@ marketing/source/runvalley.log
 /js/ui.js
 /js/ui/calendar-news.js
 /js/ui/common.js
+/js/ui/editor.js
 /js/ui/festivals-ui.js
 /js/ui/friends-row.js
 /js/ui/friends-ui.js

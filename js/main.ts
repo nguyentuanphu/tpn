@@ -4,7 +4,7 @@ import { GAME_INFO as SUBJECT_AREAS } from './content/activities.js';
 import { fruitParadeAvailable } from './content/fruit-parade.js';
 // Sparkle Valley: boot, the game loop, split-screen, NPCs, quests and rewards.
 import './emojiswap.js'; // (first: no phone emoji on the page or on any canvas)
-import { THREE, sprite, P, merge, toonVC } from './gfx.js';
+import { THREE, sprite, P, merge, toonVC, gameBooting, gameStarted } from './gfx.js';
 import { createSeeThrough } from './seethrough.js';
 import { withRideView } from './rideview.js';
 import { mountRenderRecovery } from './render-recovery.js';
@@ -70,7 +70,7 @@ import { createPlaceBook } from './placebook.js';
 import { createFamilyCards } from './familycards.js';
 import { attach as attachStickers } from './stickers.js'; // the sticker book (chat B, 16 Oct): give(id), has(id), count()
 import type { createMyHouse } from './myhouse.js';
-import { createReport, addMinute } from './report.js';
+import { createReport, addMinute } from './report-count.js'; // (v1.08 startup: the report window, js/report.ts, loads when opened)
 import { createCoop } from './coop.js';
 import { createTwinChests } from './twinchests.js';
 import { createClaims } from './claims.js';
@@ -178,7 +178,9 @@ const afterStart = <M,>(load: () => Promise<M>, make: (m: M) => unknown) => { co
 // again after parts of the valley waits for it, so the map counts the same things however fast a device starts:
 // before, a quick second start made it before the job boards stood and missed the map saved on the first start
 let lateUp: () => void = () => { }; const lateBuilt = new Promise<void>(r => { lateUp = r; }), lateMore: Promise<unknown>[] = [];
-void bootReady.then(() => setTimeout(() => { afterOpen = true; for (const p of afterQueue.splice(0)) startPart(p); void afterChain.then(lateUp); }, 1500));
+// (v1.08 startup) the Blender models wait for the same moment (js/gfx.ts afterGameStart: the lanterns, boats, vehicles)
+gameBooting();
+void bootReady.then(() => setTimeout(() => { afterOpen = true; gameStarted(); for (const p of afterQueue.splice(0)) startPart(p); void afterChain.then(lateUp); }, 1500));
 const lateMade = () => Promise.all([lateBuilt, ...lateMore]);
 // (v1.07 startup) while a game or story opened from the Simple screen before the valley was built is up (simpleFirst),
 // the building waits between its steps, so the game runs smoothly; it goes on when the child is back on the Simple screen
@@ -890,14 +892,16 @@ bootMark('people'); G.farm = createFarm(G); world.updaters.push(G.farm.update); 
 // not in the start-up download: those of the next steps now, side by side (the rest after the traffic, below); each one
 // is made at its old place in the build order (nothing else changes). One that cannot be loaded stops the start where it
 // is made, as a missing start-up file did (js/launch.ts shows Try again).
-const soon = { asia: import('./asia.js'), hawkers: import('./hawkers.js'), suburbs: import('./suburbs.js'), traffic: import('./traffic.js') };
+// (v1.08 startup, PERF-001) gathered in one module (js/main/soon.ts), fetched as one piece, as js/main/later.ts below
+const soonAll = import('./main/soon.js');
+const soon = { asia: soonAll.then(m => m.asia), hawkers: soonAll.then(m => m.hawkers), suburbs: soonAll.then(m => m.suburbs), traffic: soonAll.then(m => m.traffic), school: soonAll.then(m => m.school) };
 for (const p of Object.values(soon)) p.catch(() => { });
 G.places = createPlaces(G); world.updaters.push(G.places.update);
 world.heroesNear = (x, z, r) => G.heroes.some(h => dist2(h.pos.x, h.pos.z, x, z) < r);   // (Round V) a ridden animal goes home out of every child's sight
 G.town = createTown(G);
 // (Học vui phase 4) Trường Học Vui at the west end of Two Homes Street, Cô Tam at its door (js/school.js); loaded after the
 // title screen, so it is not in the start-up download (PERF-001); G.schoolReady says when it stands
-G.schoolReady = import('./school.js').then(m => { G.school = m.createSchool(G); if (G.school) Object.assign(G.PLACES.find(p => p.key === 'school'), G.school.place); return G.school; });
+G.schoolReady = soon.school.then(m => { G.school = m.createSchool(G); if (G.school) Object.assign(G.PLACES.find(p => p.key === 'school'), G.school.place); return G.school; });
 G.GAMES_ICON = id => (GAMES[id] || {}).icon || "🎮";
 createRegions(G);
 G.dialog = (name, lines, choices) => dialog(name, lines, choices);
@@ -928,7 +932,7 @@ bootMark('pretraffic'); (await soon.traffic).createTraffic(G); bootMark('traffic
 // (v1.07 startup, PERF-001) the parts made from here on, loaded side by side while the first ones are made
 const laterAll = import('./main/later.js');
 const later = Object.fromEntries((['heritage', 'symbols', 'regionSites', 'vnFun', 'myHouse', 'lotus', 'pets', 'ferry', 'passport', 'festivals', 'weather', 'fun',
-  'learn', 'showcase', 'trade', 'folkShow', 'signposts', 'secrets'] as const).map(k => [k, laterAll.then(m => m[k])])) as { [K in keyof typeof import('./main/later.js')]: Promise<typeof import('./main/later.js')[K]> };
+  'learn', 'showcase', 'trade', 'folkShow', 'signposts', 'secrets', 'lanterns', 'yard', 'shop', 'boxes', 'hoiLang', 'friendQuest'] as const).map(k => [k, laterAll.then(m => m[k])])) as { [K in keyof typeof import('./main/later.js')]: Promise<typeof import('./main/later.js')[K]> };
 for (const p of Object.values(later)) p.catch(() => { });
 (await later.heritage).createHeritage(G, { give, sfx: SFX, say, toast: (h, m) => hudFor(h).toast(m) });
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
@@ -959,8 +963,10 @@ G.festivals = (await later.festivals).createFestivals(G);
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
 // (owner, 12 Oct) the auto play check for grown-ups testing the game: only on the devices Studio's Releases page allows
 // (switch `autoplay`: every device, or the ticked ones); everywhere else nothing of it is even downloaded
-{ const apGate = async () => { const A = await import('./content/autoplay.js'); let me = ''; try { me = localStorage.getItem('sv2_playerid') || ''; } catch (e) { }
-    if (A.apAllowed(releaseOn('autoplay', false) && liveRule('tester')?.policies?.[me]?.autoplay !== false, liveRule('autoplay'), me)) (await import('./autoplay.js')).mountAutoplay(G); else if (G.autoplay) G.autoplay.unmount(); };
+// (v1.08 startup, PERF-001) its rules (js/content/autoplay.ts) load only while Studio has it switched on
+{ const apGate = async () => { let me = ''; try { me = localStorage.getItem('sv2_playerid') || ''; } catch (e) { }
+    const on = releaseOn('autoplay', false) && liveRule('tester')?.policies?.[me]?.autoplay !== false;
+    if (on && (await import('./content/autoplay.js')).apAllowed(on, liveRule('autoplay'), me)) (await import('./autoplay.js')).mountAutoplay(G); else if (G.autoplay) G.autoplay.unmount(); };
   apGate(); onLive(apGate); }
 // (owner, 12 Oct) tester devices report problems by themselves and with the ladybird (js/testergate.js, js/tester.js)
 import('./testergate.js').then(m => m.testerGate(G));
@@ -973,12 +979,12 @@ await breathe(); // (v1.07: a breath for the Simple screen's taps)
 // the main story, Đèn Lồng Thung Lũng (js/lanterns.js, chapters in js/content/chapters.js): after the storyteller and the villagers
 G.npcAt = id => (n => n && { x: n.x, z: n.z })(NPCS.find(n => n.id === id));
 // (loaded while the valley is built behind the title screen, so the title comes up sooner: PERF-001)
-const [{ createLanterns }, { createYard }, { createKidPlay }] = await Promise.all([import('./lanterns.js'), import('./yard.js'), import('./kidplay.js')]);
+const [{ createLanterns }, { createYard }, { createKidPlay }] = await Promise.all([later.lanterns, later.yard, import('./kidplay.js')]);
 G.lanterns = createLanterns(G, { dialog, say, reward, save, openTheatre });
 // bà Huệ and ông Nghi's yard near the Huệ Nghi shop (js/yard.js): a side story
 G.yard = createYard(G, { dialog, say, reward, save });
-// (v1.08d polish) each friend's quest of three steps, for the item in the friend's hand (js/friendquest.ts): loaded after the start
-import('./friendquest.js').then(m => { G.friendQuests = m.createFriendQuests(G, { dialog, say, reward, save }); }).catch(e => console.warn('friend quests', e && e.message));
+// (v1.08d polish) each friend's quest of three steps, for the item in the friend's hand (js/friendquest.ts; v1.08 startup: in js/main/later.ts's piece)
+later.friendQuest.then(m => { G.friendQuests = m.createFriendQuests(G, { dialog, say, reward, save }); }).catch(e => console.warn('friend quests', e && e.message));
 // the companion grows, a coin goal, a gift every day (js/kidplay.js; Studio group 'For little ones')
 G.kidplay = createKidPlay(G, { say, save });
 await breathe(); // (v1.07: a breath for the Simple screen's taps)
@@ -999,7 +1005,7 @@ setupTrading(G);
 }
 // ---- (round S, owner plan 8 Oct: Round R Part 2 items 6 and 10) the clothes shop by the market and the wardrobe (js/shop.js);
 // mystery boxes, family rankings and the collection book for 5 to 8 year olds at Medium or Hard (js/boxes.js) ----
-{ const [{ createShop }, { createBoxes }] = await Promise.all([import('./shop.js'), import('./boxes.js')]); G.shop = createShop(G, { say, save }); G.boxes = createBoxes(G, { say, save }); }
+{ const [{ createShop }, { createBoxes }] = await Promise.all([later.shop, later.boxes]); G.shop = createShop(G, { say, save }); G.boxes = createBoxes(G, { say, save }); }
 // ---- (round S) end ----
 // villagers the family added in Sparkle Studio (content pack "npcs"): placed where they were put on the map, saying
 // their own lines in both languages
@@ -1018,7 +1024,7 @@ for (const c of (Array.isArray(CUSTOM.npcs) ? CUSTOM.npcs : []).slice(0, 60)) {
 G.folkShow = (await later.folkShow).createFolkShow(G, { looks: [kidLook('shirt', '#ff7eb8', '#1d1412', 'buns', 'none'), kidLook('overalls', '#3cc7e8', '#3b2618', 'short', 'cap'), kidLook('dress', '#ffb52e', '#1d1412', 'ponytail', 'flower')] });
 // (round S, owner plan 8 Oct) Hội làng three times a day, surprises, and the grown-ups' features: each in its own file,
 // loaded while the valley is built (js/hoilang.js after the games boards it uses; Studio switches in the 'kids' group)
-{ const { createHoiLang } = await import('./hoilang.js'); G.hoilang = createHoiLang(G, { say, save, reward }); }
+{ const { createHoiLang } = await later.hoiLang; G.hoilang = createHoiLang(G, { say, save, reward }); }
 // (Play reading trial, owner 11 Oct AEDT) the ten reading games load only while Studio's readingTrial switch is on (now, or when it is switched on);
 // on unless Studio switches it off (owner, 12 Oct AEDT)
 // (batch rollout: also for a child who already played a reading game, checked again when a session starts)

@@ -5,7 +5,7 @@
 // (the valley's people are a little small), drawn in the valley's toon style with an outline.
 // Bodies are side profiles (drawn in z, y like a sketch on paper) given thickness and soft edges, so tanks, leg shields
 // and side covers have the real shapes instead of boxes.
-import { THREE, P, merge, toonSmooth, outline } from './gfx.js';
+import { THREE, P, merge, toonSmooth, outline, afterGameStart } from './gfx.js';
 
 const V3 = (...p: number[]) => new THREE.Vector3(p[0], p[1], p[2]);
 const CHROME = '#d8dee2', BLACK = '#26292c', TYRE = '#2b2e31', RUBBER = '#3a3d40', STEEL = '#9aa4a8';
@@ -517,7 +517,8 @@ export function build(id, { real = false, args = [] } = {}) {
 let fitter = null;
 export function wear(v, done?: (v) => void) {
   if (!v || v.look !== 'toy' || v.worn) return; v.worn = true;
-  fitter = fitter || import('./vehicle-models.js');
+  // (v1.08 startup, PERF-001) after the game's start (js/gfx.ts): the model code is not in the first download
+  fitter = fitter || afterGameStart().then(() => import('./vehicle-models.js'));
   fitter.then(F => F.wearModel(v, done)).catch(() => { });
 }
 // every vehicle by id, for Sparkle Studio and the valley's traffic

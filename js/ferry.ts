@@ -2,7 +2,7 @@
 // that cross the river, and a river raft that runs up and down the river past the towns. On a boat with more
 // than two stops the child chooses where to go, and the boat takes them straight there. Walk to the end of a pier and tap "Ride the ferry"; if the boat
 // isn't there yet, you wait and hop on when it arrives. Tap "Get off" at any stop.
-import { THREE, P, merge, toonVC, outline, sprite } from './gfx.js';
+import { THREE, P, merge, toonVC, outline, sprite, afterGameStart } from './gfx.js';
 import { T, onLang } from './i18n.js';
 import { say } from './voice.js';
 import { SFX } from './audio.js';
@@ -57,7 +57,8 @@ export function bambooRaft() {
 // fading roof stay the code's own. Until the model has arrived, or when it cannot load, the code hull stays.
 function wearBoat(g, name) {
   const hull = g.children[0]; if (!hull) return;
-  import('./modelkit.js').then(K => K.modelFor(hull, name, {}, m => { if (!m) return; m.obj.traverse(o => { o.userData.noCam = true; }); import('./vehicle-models.js').then(V => V.dress(m.obj)); })).catch(() => { });
+  // (v1.08 startup, PERF-001) asked for after the game's start (js/gfx.ts): the model code is not in the first download
+  afterGameStart().then(() => import('./modelkit.js')).then(K => K.modelFor(hull, name, {}, m => { if (!m) return; m.obj.traverse(o => { o.userData.noCam = true; }); import('./vehicle-models.js').then(V => V.dress(m.obj)); })).catch(() => { });
 }
 export function createFerries(G) {
   const { scene, world } = G;

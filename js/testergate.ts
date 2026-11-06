@@ -2,7 +2,7 @@
 // every device or only the ticked ones, each at a level (auto reports only, or with the ladybird). Only a tester
 // device ever downloads js/tester.js; when the switch goes off, everything stops at once.
 import { releaseOn, liveRule, onLive } from './custom.js';
-import { testerLevel } from './content/tester.js';
+import { testerLevel } from './content/tester-level.js'; // (v1.08 startup: the small part only)
 
 export function testerGate(G) {
   const check = async () => {
