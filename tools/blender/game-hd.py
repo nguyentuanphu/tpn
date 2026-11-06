@@ -34,10 +34,11 @@ def skin_shade(n):
     return .64 + .36 * min(1.0, .72 * k + .38 * up)   # (the lit side keeps the skin tone)
 
 def _smooth(o):
-    """(v1.08e round 3, owner 6 Nov: no facets anywhere) smooth shading with weighted normals on a thinned part"""
+    """(v1.08e round 3, owner 6 Nov: no facets anywhere) smooth shading on a thinned part, its normals the plain average
+    (weighted normals were tried: on a thinned shape's uneven triangles they leaned to the big ones and showed facets)"""
     for p_ in o.data.polygons: p_.use_smooth = True
-    m = o.modifiers.new('wn', 'WEIGHTED_NORMAL'); m.keep_sharp = False; m.weight = 50
-    with bpy.context.temp_override(object=o, active_object=o): bpy.ops.object.modifier_apply(modifier=m.name)
+    if o.data.has_custom_normals:
+        with bpy.context.temp_override(object=o, active_object=o): bpy.ops.mesh.customdata_custom_splitnormals_clear()
 
 def _tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
@@ -113,8 +114,8 @@ def hd():
         for o in objs:
             me = o.data; a = me.color_attributes.get('Light') or me.color_attributes.new('Light', 'FLOAT_COLOR', 'CORNER'); me.color_attributes.active_color = a
         _select(objs, objs[0])
-        if kind == 'LIGHT': scene.cycles.samples = 64; bpy.ops.object.bake(type='DIFFUSE', pass_filter={'DIRECT', 'INDIRECT'}, target='VERTEX_COLORS')
-        else: scene.cycles.samples = 32; bpy.ops.object.bake(type='AO', target='VERTEX_COLORS')
+        if kind == 'LIGHT': scene.cycles.samples = 256; bpy.ops.object.bake(type='DIFFUSE', pass_filter={'DIRECT', 'INDIRECT'}, target='VERTEX_COLORS')
+        else: scene.cycles.samples = 128; bpy.ops.object.bake(type='AO', target='VERTEX_COLORS')
     lit_parts = [low[k] for k in cloth if LIT and k != 'hair' and not k.startswith('hands')]
     bake(lit_parts, 'LIGHT'); bake([low[k] for k in cloth if low[k] not in lit_parts], 'AO')
     total = 0
@@ -137,7 +138,7 @@ def hd():
                 # game multiplies the child's skin tone by it ("skin-shade")
                 for li in poly.loop_indices:
                     a = (sum(light.data[li].color[:3]) / 3 / ref) if light is not None else 1.0
-                    v = min(1.0, skin_shade(cn[li].vector) * (.7 + .3 * min(1.0, a)))
+                    v = min(1.0, skin_shade(cn[li].vector))   # (round 3: the key light alone; the baked shadow, sampled per point, came out blotchy on the face)
                     colr.data[li].color = (v, v, v, 1)
                 continue
             for li in poly.loop_indices:

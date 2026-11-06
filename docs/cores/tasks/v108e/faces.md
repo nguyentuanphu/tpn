@@ -140,20 +140,27 @@ The owner saw the Part 3 shots: "from the front the heads still read as round ba
 ## 7. Round 3: calm, cute and smooth (owner 6 Nov 2026 AEDT, via Release)
 
 The owner on round 2: "the pair of eyes and cheeks plus the hair will 100% scare the kids". Release: realistic lumpy
-cheeks under flat sticker eyes, faceted shard hair; this round is about calm, cute and smooth, not more detail.
-- **Smooth:** every thinned part gets smooth shading with weighted normals (`game-hd.py` `_smooth`, `game-light.py`);
-  the hair locks are rounder and thicker for everyone (the friends keep their shapes).
-- **Cheeks and jaw** about half of round 2: no bulge past the jaw, no jaw dent, no lumps round the mouth; soft round
-  cheeks in an egg-shaped face; the nose bridge and tip subtle.
+cheeks under flat sticker eyes, faceted shard hair; this round is about calm, cute and smooth, not more detail. Split by
+the owner: the hair (item 6, `tools/blender/lumi-hair.py`) is the hair helper's, on `work/v108e-hair`; this branch keeps
+the face, the head's smoothing and Mai's waist. No rebuilt models are committed until both are merged (Release runs the
+full rebuild).
+- **Cheeks and jaw** about half of round 2 (`lumi-face3d.py` `sculpt_head`): no bulge past the jaw, no jaw dent, no
+  lumps round the mouth; soft round cheeks in an egg-shaped face; the nose bridge and tip subtle.
 - **Eyes** about 15 % smaller, a touch further apart and a little lower; one sparkle; a thin upper lash line only (no
   lash flicks); the iris colours stay.
 - **Mouth:** at rest a closed, gentle smile; happy, excited, surprised (and talking) a soft rounded opening with no
   points, a small tongue low inside.
 - **Blush:** smaller, lower on the cheek, a softer paler rose.
-- **Villagers' hair** (`lumi-hair.py` `clay`): a smooth cap and a few big soft lobes (fringe, crown, over the ears),
-  one colour; ponytails, buns, pigtails and puffs smooth shapes; a soft highlight band added in the game models; dark
-  hair a warm dark brown.
+- **Smooth skin:** the skin's shading is the soft key light alone (the baked shadow, sampled per point, came out as
+  blotches on the face); smooth shading with plain averaged normals on every thinned part (weighted normals were tried
+  and showed facets on the thinned shapes); the villagers' baked light at 256 samples, the soft shadow at 128 (less
+  speckle on the clothes).
 - **Mai:** the áo dài's top and panels have the same fit and meet at the waist (no step).
+- My first try at the hair (a smooth clay cap with big soft lobes, one colour and a highlight band) is in commit
+  1fb4972bc for the hair helper to look at; it was taken out again (`lumi-hair.py` and the export scripts as in round 2).
+- Test models (Clara, Mai, Tèo, not committed) and shots: `docs/world-models-v108e/faces/round3/` (phone 390x844 at 1x
+  and 2x, front and three-quarter, smiling and mid-blink; Clara and Tèo at 4x). `faces` passes with them.
+- Not this branch's: the clothes still show some facets and bands of baked light on the thinned shapes.
 
 ## The style, for the villagers helper (shared setup)
 

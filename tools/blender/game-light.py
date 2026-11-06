@@ -35,10 +35,11 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
         o.modifiers.move(o.modifiers.find(d.name), 0)  # (before the skin, so the weights are thinned with the shape)
         with bpy.context.temp_override(object=o, active_object=o):
             bpy.ops.object.modifier_apply(modifier=d.name)
-    # (v1.08e round 3, owner 6 Nov: no facets anywhere) smooth shading with weighted normals on the thinned part
+    # (v1.08e round 3, owner 6 Nov: no facets anywhere) smooth shading on the thinned part, the plain averaged normals (the
+    # imported custom normals, from before the thinning, are dropped: they no longer fit the thinned shape)
     for p_ in o.data.polygons: p_.use_smooth = True
-    wn = o.modifiers.new('wn', 'WEIGHTED_NORMAL'); wn.keep_sharp = False; wn.weight = 50; o.modifiers.move(o.modifiers.find(wn.name), 0)
-    with bpy.context.temp_override(object=o, active_object=o): bpy.ops.object.modifier_apply(modifier=wn.name)
+    if o.data.has_custom_normals:
+        with bpy.context.temp_override(object=o, active_object=o): bpy.ops.mesh.customdata_custom_splitnormals_clear()
     print('light:', o.name, have, '->', tris(o)); total += tris(o)
 print('light: total triangles', total)
 # (v1.08e, owner 6 Nov: the sculpted head thinned on its own, its shape kept) joined to the body again: one part, as before
