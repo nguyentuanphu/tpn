@@ -1,5 +1,7 @@
 # v1.08g festivals: status
 
+**ready for Release** (6 Nov 2026 AEDT)
+
 Branch: `work/v108g-festivals` (from `origin/integrate/v108`). Brief: `README.md` (this folder).
 
 ## Owner's decisions
@@ -41,4 +43,25 @@ Branch: `work/v108g-festivals` (from `origin/integrate/v108`). Brief: `README.md
   drives the model when there is one (`js/folkshow.ts`). The quest lantern is dressed inside `buildLantern` (`js/dinh.ts`).
 
 ## Progress
-- Models, game wiring, check `festmodels` (`tests/festival-models.mts`, end of `tests/run.mts`): done, check running.
+- Models, game wiring, check `festmodels` (`tests/festival-models.mts`, end of `tests/run.mts`): done.
+- Screenshots: `docs/world-models-v108g/festivals/` (before = models blocked, after; phone 390x844, tablet 820x1180,
+  computer 1280x800; Tet, Mid-Autumn lanterns, Halloween, Diwali; `compare-*.png` side by side). The Tet pair is badly
+  framed (a roof in front of the camera in both).
+
+## Checks (6 Nov 2026 AEDT, one at a time)
+| Check | Result |
+|---|---|
+| festmodels (new) | pass: all 15 themes fetch and use their models, no colour slot left, Lotus Village on Tet within 420 draws, quest lantern and folk show models, blocked models keep the code pieces |
+| festivals, festhunt, festcal, wading | pass |
+| perf | pass: home 164 draws, village 283 draws / 761k triangles |
+| battery, types | pass |
+| solid | pass (was failing: desktop and phone maps differed by 3 cells; fixed in js/folkshow.ts and js/dinh.ts, see below) |
+| worldplaces | pass (the check waited for exactly 8 festival props; it now counts the eight v1.08e `pr-*` ones by name, since the festivals' own `fe-*` models load beside them: what it checks is unchanged) |
+| `--changed` | picks the full suite (shared files): left to Release |
+
+## Fixes found by the checks
+- `js/folkshow.ts`: a singer's stage that is off (Studio switch) with its model arrived would have counted in the solid map
+  (js/solids.ts reads a hidden code shape while it has a model): an off stage now parks its model (`offModel`), hidden.
+- `js/dinh.ts`: the quest lantern keeps its code shapes in the solid map (`codeGeo`, `swapped`), the trim is `noSolid`,
+  and the lantern's own scale is untouched.
+- A note pasted before code swallowed a statement in `js/dinh.ts` (commit 22393a492); restored in d733e171a.
