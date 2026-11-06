@@ -69,6 +69,9 @@ await check('films', async () => {
   // every page of the pilot story and guide films plays to its end, the child's turn waits for a tap, and closing frees it
   const P = await open(b, { w: 1000, h: 700 }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
+    // (v1.08c) the theatre plays a tale's Blender video first when it has one (check blenderfilms); this check is about the
+    // game's own 3D films, which stay the stand-in whenever a video cannot play, so here the videos are switched off
+    const CU = await import('/js/custom.js'); (CU.CUSTOM as any).features = { ...((CU.CUSTOM as any).features || {}), blenderFilms: false };
     const F = await import('/js/film.js'), C = await import('/js/content/films.js'), { MORE_TALES: more } = await import('/js/talesdata.js'), { TALES } = await import('/js/learn.js');
     const MORE_TALES = [...TALES, ...more]; // (Bánh chưng is one of the first tales, in js/learn.js)
     const { openTheatre } = await import('/js/tales.js'), { openHowTo } = await import('/js/howto.js');

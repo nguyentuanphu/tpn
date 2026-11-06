@@ -23,4 +23,12 @@ Films: Bánh Chưng Bánh Giầy (`banhchung`), Chú Cuội (`chucuoi`), Tấm C
 6. **List it in the game**: copy the video to `videos/films/<id>-v1.mp4` and add the film to `js/content/blenderfilms.ts` with each page's start and end (seconds) and the help moment (when the game's film asks the child, where the tap ring goes in % of the picture, and what is asked; `scene-export.mts` writes these as `help` in each page's file).
 7. **Check**: `cd tests && node suite.mts --only blenderfilms,films,tales,story`.
 
+## Notes from the first render (6 Nov 2026 AEDT, Windows 11, RTX 3060 Ti 8 GB, 64 GB memory)
+- **Serving the game on Windows:** `python3 -m http.server` drops connections when the game loads its many files at once (the title screen never shows and `scene-export.mts` times out after 90 s). Any static server that keeps up works; a few lines of Node with `http.createServer` did.
+- **No admin rights needed:** the portable Blender 4.2 LTS zip from download.blender.org (checked against its `.sha256`), Blender's own Python 3.11 (`<blender>/4.2/python/bin/python.exe`) as `python3`, and the gyan.dev ffmpeg essentials zip.
+- **Speed:** `storypage.py ... frames` now renders a page as one animation (each frame set by a frame-change handler, the moves read from the actions and set on the bones by hand), so Eevee keeps the scene loaded: about 1 s a frame instead of 20. `range=a-b` renders only those frames (a quick look). All five films: about 4,400 frames.
+- **Light:** the sky and the lights are at 0.82 of the old strength (`light=`, owner: "looks quite bright"); `view=`, `look=` and `exposure=` are there for trials (AgX and Filmic turned the whites grey).
+- **Faces with feeling:** each frame takes the game film's own face (its blink every 2 to 6 s, its moods); a half blink shows closed, since the kit (`lumi.py`) has no `half`, `lookL` or `lookR` face yet. Everyone also turns their head, up to about 40 degrees, towards whoever is speaking (`talk` in the frames export: the actor the film gave the lips to).
+- The help moments come from the one-moment export (`<id>-p<k>.json`, no `fps=`); the frames export has `help: null`.
+
 The player (`js/blenderfilm.ts`) is already in the game: it downloads a film only when its story opens, keeps it on the device for offline, stops for the help moments with the tap ring, and plays the game's own film when there is no internet and no kept copy.
