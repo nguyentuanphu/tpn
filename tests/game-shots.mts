@@ -18,8 +18,12 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     W.__wait = async (ms: number) => { const t = performance.now(); while (performance.now() - t < ms) { W.__calm(); await new Promise(r => setTimeout(r, 150)); } };
     W.__shoot = async (from: number[], to: number[], fov = 30) => {
       const { THREE } = await import(String('/js/gfx.js')), r = G.renderer, c = r.domElement;
-      const cam = new THREE.PerspectiveCamera(fov, c.width / c.height, .1, 600); cam.position.set(from[0], from[1], from[2]); cam.lookAt(to[0], to[1], to[2]); cam.updateMatrixWorld(true);
-      await new Promise(res => requestAnimationFrame(res)); r.render(G.scene, cam); return c.toDataURL('image/png');
+      const cam = new THREE.PerspectiveCamera(fov, innerWidth / innerHeight, .1, 600); cam.position.set(from[0], from[1], from[2]); cam.lookAt(to[0], to[1], to[2]); cam.updateMatrixWorld(true);
+      // (at the screen's full size, twice its pixels: the game's own resolution drops while the test browser is slow)
+      const pr = r.getPixelRatio(), sz = r.getSize(new THREE.Vector2()); r.setPixelRatio(2); r.setSize(innerWidth, innerHeight, false);
+      cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
+      await new Promise(res => requestAnimationFrame(res)); r.render(G.scene, cam); const url = c.toDataURL('image/png');
+      r.setPixelRatio(pr); r.setSize(sz.x, sz.y, false); return url;
     };
   });
   // 1. each friend, the camera in front at the close-up distance: smiling, then mid-blink
