@@ -127,6 +127,10 @@ await check('testertryagain', async () => (await import('./tester-tryagain.mts')
 // the child, tags and talk kept, the code person when blocked (tests/villager-models.mts)
 await check('villagermodels', async () => (await import('./villager-models.mts')).villagerModelsCheck(b));
 
+// (v1.08g festivals) the festivals' Blender pieces: every model loads, each theme fetches and uses its models with its
+// colours painted, Lotus Village's draws on Tet, the quest lantern and the folk show's models, blocked models (tests/festival-models.mts)
+await check('festmodels', async () => (await import('./festival-models.mts')).festivalModelsCheck(b));
+
 await b.close();
 const failed = results.filter(r => !r[1]);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`);

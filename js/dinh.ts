@@ -43,5 +43,30 @@ export function buildLantern(lit = false, color = '#d8301e') {
   const tassel = new THREE.Mesh(new THREE.CylinderGeometry(.02, .05, .4, 6), cap); tassel.position.y = -.6; g.add(tassel);
   const string = new THREE.Mesh(new THREE.CylinderGeometry(.01, .01, .4, 4), cap); string.position.y = .58; g.add(string);
   g.userData.body = body;
+  // (v1.08g festivals) its Blender shape: a ribbed paper body (still lit or not in its own colour) and gold trim
+  if (lanternParts) dressLantern(g); else { WAITING_LANTERNS.add(g); askLanternModels(); }
   return g;
 }
+// (v1.08g festivals, tools/blender/world-festivals.py) the lantern's models (models/world/fe-questlantern-body.glb and
+// -trim.glb, a few KB each) are fetched a moment after the first lantern is made; until then, and with no network, the
+// code shapes stay
+let lanternParts: { body: THREE.BufferGeometry, trim: THREE.BufferGeometry } | null = null, lanternAsked = false;
+const WAITING_LANTERNS = new Set<THREE.Group>(), trimMat = toonVC();
+function dressLantern(g: THREE.Group) {
+  // (the solid map keeps reading the code shapes, whenever the models arrive: userData.codeGeo, swapped, js/solids.ts)
+  const body = g.userData.body as THREE.Mesh; body.userData.codeGeo = body.geometry; body.geometry = lanternParts.body;
+  for (const c of g.children) if (c !== body) { c.visible = false; c.userData.swapped = true; }
+  const trim = new THREE.Mesh(lanternParts.trim, trimMat); trim.userData.lanternTrim = true; trim.userData.noSolid = true; g.add(trim);
+}
+function askLanternModels() {
+  if (lanternAsked) return; lanternAsked = true;
+  setTimeout(async () => {
+    try {
+      const K = await import('./modelkit.js'), [b, t] = await Promise.all([K.worldModelParts('fe-questlantern-body'), K.worldModelParts('fe-questlantern-trim')]);
+      if (b && b[0] && t && t[0]) { lanternParts = { body: b[0].geometry.clone().scale(1, 1 / 1.15, 1), trim: t[0].geometry }; WAITING_LANTERNS.forEach(dressLantern); }
+      // (the body is drawn 1.15 times as tall by its own mesh scale, as the code shape was, so the model is made shorter)
+    } catch (e) { /* the code shapes stay */ }
+    WAITING_LANTERNS.clear();
+  }, 3000);
+}
+export const lanternModelsReady = () => !!lanternParts;
