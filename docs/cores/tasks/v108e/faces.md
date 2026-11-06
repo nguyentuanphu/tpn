@@ -72,6 +72,34 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
 - Shots: `docs/world-models-v108e/faces/after-play-*.webp` and `after-closeup-*.webp` (phone, tablet, computer: the
   friend in play, then in a close-up); `tests/faces-play-shots.mts`.
 
+## 5. Part 3: sculpted 3D faces (6 Nov 2026 AEDT)
+
+- **The head** (`tools/blender/lumi-face3d.py`, `sculpt_head`, run by `lumi.py` for every game model; `flatface` keeps
+  the old painted shapes): the oval head is shaped into a real head: a brow ridge, eye sockets, a small nose with a
+  bridge and nostril wings, round cheeks, a soft muzzle and chin, narrower temples and cupped ears; grandparents get
+  softer, lower cheeks and smile lines, children rounder cheeks. The faces check measures it: depth about 7 % more than
+  the width, height about 11 % more, the nose in front.
+- **The face** (`face3d`): one mesh, about 2,600 triangles: two eyeballs set in the sockets (white, an iris darker above
+  and lighter below, a pupil, two sparkles), upper and lower lids as shells round them that close (the upper one with a
+  dark lash line, three lashes for girls, one for boys), brows on the brow ridge, rosy cheeks and a mouth with lips.
+  Its 13 moods are shape keys (smile is the rest shape): blink, half, happy, curious, surprised, sad, shy, excited,
+  lookL, lookR, open (talking), sleep. The game sets one key at a time from the existing mood and blink hooks
+  (`js/friend-model.ts`, `follow()`): nothing else in the game changed. The painted face stays for the code people far
+  away.
+- **Release's faults (6 Nov), fixed in the export:** Clara's dark triangles were the ink outline poking out between the
+  locks (no outline on hair now; locks face outward and are drawn both sides); Mai's black forehead band and strips were
+  texels the bake missed (no picture any more: each face keeps its material's flat colour, times the light baked into
+  its corners: the studio light for the villagers, the soft fold shadow for the friends and all hair); the áo dài is one
+  smooth fitted top over wide panels (the fitted layer under it stopped at the hips and stood out as a box; it stops at
+  the waist now), and under a loose áo bà ba or cardigan the trousers start under the hem; long hair hangs from the
+  shoulders, so it no longer swings through the body when the head turns; the riding hands (`hands-grip`) are hidden
+  again in the high-detail models (they showed as a dark band at the wrist); long sleeves are fuller.
+- **Crowds:** the 14 gallery neighbours each have their own sculpted head (more than the brief's six shared heads, from
+  the same script); a crowd model farther than 12 m gives way to the person beside the child (at most 3 within 25 m).
+- Sizes: friends' light models 129-153 KB, high-detail 226-270 KB, villagers 247-309 KB (no picture inside any more).
+- Shots: `docs/world-models-v108e/faces/heads/` (before and after, friends, villagers and crowd, smiling and mid-blink,
+  phone and computer, 2x), `docs/world-models-v108e/faces/hair/` (Clara's and Mai's hair, before and after).
+
 ## The style, for the villagers helper (shared setup)
 
 - Eyes: `face()` in `tools/blender/lumi.py` (the `op` lid heights per mood, `lidz()` the arch, `under()` cuts any decal

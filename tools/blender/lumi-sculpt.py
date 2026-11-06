@@ -173,7 +173,11 @@ def sculpt():
                 return any(lo - .05 <= t <= hi for m, lo, hi in sleeves if m == top) or t < .12
             # (v1.08e, Release 6 Nov: under an áo dài this layer's hem stood out over the hips like a box) the áo dài's own
             # top covers the body there, so the layer stops above the waist
-            return (b['zW'] + (.03 * S if (V and V['top'][0] == 'aodai') else -.05 * S)) < p.z < b['zN'] - .012 * S
+            # (and under a loose áo bà ba or cardigan, which reach the hips, it follows the body down to their hem: anything
+            # showing through them is their own colour, not a band of the trousers)
+            tk_ = V['top'][0] if V else ''
+            lo_ = b['zW'] + .03 * S if tk_ == 'aodai' else b['zCr'] - .045 * S if tk_ in ('aobaba', 'cardigan') else b['zW'] - .05 * S
+            return lo_ < p.z < b['zN'] - .012 * S
         layer(sk, keep_top, top, .007 * S, 'soft_top')
     for m in {m for m, lo, hi in sleeves if m != top}:   # sleeves of another cloth (a coat over a shirt)
         rng = [(lo, hi) for mm, lo, hi in sleeves if mm == m]
@@ -182,7 +186,7 @@ def sculpt():
         low = plow if plow is not None else b['zAnk']
         # (v1.08e, owner: "Mai's tummy looks strange") under an áo dài the trousers start below its panels' top, or their white
         # showed as a band round the waist
-        ptop = b['zCr'] - .02 * S if (V and V['top'][0] == 'aodai') else b['zW'] + .03 * S
+        ptop = b['zCr'] - .02 * S if (V and V['top'][0] == 'aodai') else b['zCr'] - .03 * S if (V and V['top'][0] in ('aobaba', 'cardigan')) else b['zW'] + .03 * S   # (Release 6 Nov: under a loose top the trousers start under its hem)
         o = layer(sk, lambda p: arm_of(p) is None and low - .005 < p.z < ptop, pmat, .009 * S, 'soft_pants')
     if tights and tights != pmat:   # coloured tights or long trousers drawn on the legs
         layer(sk, lambda p: arm_of(p) is None and p.z < b['zCr'] + .04 * S and p.z > b['zAnk'] - .02 * S, tights, .004 * S, 'soft_tights')
