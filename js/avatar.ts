@@ -541,6 +541,8 @@ export function unwearVillagerModel(A: SvAvatar): boolean {
   if (!m || !parts || !A.root.userData.villagerModel) return false;
   if (Array.isArray(A.outlines)) { const mine = new Set<THREE.Object3D>(); m.obj.traverse(o => { if (o.userData.outline) mine.add(o); }); A.outlines = (A.outlines as THREE.Object3D[]).filter(o => !mine.has(o)); }
   m.obj.traverse(o => { const mt = (o as THREE.Mesh).material as THREE.Material; if (mt && !Array.isArray(mt) && /^skin/.test(mt.name)) mt.dispose(); }); // (its own skin colour; the shapes are shared)
+  const sk = new Set<THREE.Skeleton>(); m.obj.traverse(o => { if ((o as THREE.SkinnedMesh).isSkinnedMesh) sk.add((o as THREE.SkinnedMesh).skeleton); });
+  sk.forEach(k => k.dispose()); // (each skeleton keeps its bone turns in a picture of its own, check longplaymem)
   m.obj.removeFromParent();
   parts.forEach(o => { o.visible = true; o.children.forEach(c => { if (c.userData.outline) c.visible = true; }); });
   A.model = null; delete A.root.userData.villagerModel; (A as any)._codeParts = null; return true;

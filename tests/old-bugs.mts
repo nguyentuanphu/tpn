@@ -83,7 +83,11 @@ export async function longPlayMemoryCheck(b: Browser): Promise<string> {
     const count = () => P.page.evaluate(() => { const G = (window as any).__sv, geos = new Set(), texs = new Set();
       G.scene.traverse((o: any) => { if (o.geometry) geos.add(o.geometry); if (o.isSkinnedMesh && o.skeleton && o.skeleton.boneTexture) texs.add(o.skeleton.boneTexture); for (const m of (Array.isArray(o.material) ? o.material : o.material ? [o.material] : [])) for (const v of Object.values(m)) if (v && (v as any).isTexture) texs.add(v); });
       // (three.js: a shape sent to the graphics gets a 'dispose' listener; a picture sent gets __webglInit)
-      const sent = [...geos].filter((g: any) => g._listeners?.dispose?.length).length, texSent = [...texs].filter(t => G.renderer.properties.get(t).__webglInit).length;
+      // (v1.08e faces, part 3: a shape with mood keys, a sculpted face, keeps them in a picture of its own that three.js makes
+      // for that shape when it is first drawn and frees with it: one for each such shape drawn in the valley)
+      const mg = new Set(); G.scene.traverse((o: any) => { const g = o.geometry; if (!o.isMesh || !g || !(g.morphAttributes && g.morphAttributes.position && g.morphAttributes.position.length) || !g._listeners?.dispose?.length) return; for (let p = o; p; p = p.parent) if (!p.visible) return; mg.add(g); });
+      const morphTex = mg.size; // (only the faces drawn: a hidden one's picture may not have been made)
+      const sent = [...geos].filter((g: any) => g._listeners?.dispose?.length).length, texSent = [...texs].filter(t => G.renderer.properties.get(t).__webglInit).length + morphTex;
       return { inScene: geos.size, sent, held: G.renderer.info.memory.geometries, texInScene: texs.size, texSent, texHeld: G.renderer.info.memory.textures }; });
     const before = await count();
     const places: number[][] = await P.page.evaluate(async () => (await import('/js/world.js')).CITIES.slice(0, 6).map((c: any) => [c.x, c.z]));

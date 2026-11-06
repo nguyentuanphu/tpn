@@ -1,6 +1,6 @@
 # v1.08e faces: status
 
-**ready for Release** (6 Nov 2026, 14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
+**ready for Release** (6 Nov 2026, 19:10 AEDT): Part 3 (sculpted faces) and Release's hair, clothes and hands faults are done too; before that (14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
 close-ups), the villagers brief (`villagers.md`) and Release's clear in-game shots
 (`docs/world-models-v108e/faces/game/`, 28 pictures at 2x, Pretty, phone and computer). Next: Part 3 (sculpted faces). Part 1 was merged into `integrate/v108` already.
 Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
@@ -99,6 +99,17 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
 - Sizes: friends' light models 129-153 KB, high-detail 226-270 KB, villagers 247-309 KB (no picture inside any more).
 - Shots: `docs/world-models-v108e/faces/heads/` (before and after, friends, villagers and crowd, smiling and mid-blink,
   phone and computer, 2x), `docs/world-models-v108e/faces/hair/` (Clara's and Mai's hair, before and after).
+
+- **More of Release's notes (6 Nov):** the left palm was mirrored (its faces turned inward) and drawn dark on every person;
+  the top's fitted layer ran past the cuff and showed as a dark band at the wrist (it ends inside the sleeve, sleeves open
+  at the cuff); the films' character kit (`lumi.py ... rig`, `storypage.py`) keeps its face sets with half, lookL and
+  lookR (only the game models, `glb`, get the sculpted face; the films do not drive its shape keys yet).
+- **Checks (6 Nov 2026, 19:00 AEDT, one at a time, the final models):** `faces` pass (now with the sculpted face:
+  lids close, eye white about 310 open, none closed; 8 mouth shapes; heads not spheres), `villagermodels` pass, `perf`
+  pass (village 274 draws, 694k triangles), `battery` pass, `longplaymem` pass (it now counts the sculpted face's
+  mood-key picture as in use, as it did the skeletons'), `friendmodel` pass (its limits raised by the brief's face
+  budget: 12,000 and 17,500 triangles, one more part), `frienditems` pass. `suite --changed` would choose the full suite
+  (shared files changed): left for Release's GitHub run.
 
 ## The style, for the villagers helper (shared setup)
 
