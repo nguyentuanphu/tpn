@@ -108,4 +108,37 @@ export const BLENDER_FILMS: Record<string, BlenderFilm> = {
     { s: 26.88, e: 36 },
     { s: 36, e: 40.71, help: { t: 38.97, x: 50, y: 47, en: 'Tap to see who is brave!', vi: 'Chạm xem ai dũng cảm nào!' } },
     { s: 40.71, e: 51.25 }] },
+  ongtao: { v: 'v1', pages: [
+    { s: 0, e: 12.13 },
+    { s: 12.13, e: 20.67 },
+    { s: 20.67, e: 27.71, help: { t: 25.79, x: 50, y: 44, en: 'Tap to let the carp swim free!', vi: 'Chạm để thả cá chép nào!' } },
+    { s: 27.71, e: 33.67, help: { t: 31.81, x: 50, y: 58, en: 'Tap to help the carp leap!', vi: 'Chạm để cá chép vượt lên nào!' } },
+    { s: 33.67, e: 43.38 },
+    { s: 43.38, e: 54.08 }] },
+  cachep: { v: 'v1', pages: [
+    { s: 0, e: 10.96 },
+    { s: 10.96, e: 21.25 },
+    { s: 21.25, e: 32.13 },
+    { s: 32.13, e: 37.33, help: { t: 35.55, x: 50, y: 78, en: 'Tap to help her practise!', vi: 'Chạm để giúp chú tập nhảy nào!' } },
+    { s: 37.33, e: 43.29, help: { t: 41.43, x: 48, y: 69, en: 'Tap for the biggest leap!', vi: 'Chạm để nhảy thật cao nào!' } },
+    { s: 43.29, e: 55.25 }] },
+  sontinh: { v: 'v1', pages: [
+    { s: 0, e: 13.54 },
+    { s: 13.54, e: 21.33, help: { t: 19.39, x: 50, y: 50, en: 'Tap to bring the presents!', vi: 'Chạm để mang sính lễ đến nào!' } },
+    { s: 21.33, e: 29.96, help: { t: 27.97, x: 52, y: 41, en: 'Tap to make the mountain grow!', vi: 'Chạm để núi cao thêm nào!' } },
+    { s: 29.96, e: 43.08 }] },
+  emu: { v: 'v1', pages: [
+    { s: 0, e: 14.88 },
+    { s: 14.88, e: 26 },
+    { s: 26, e: 34.21, help: { t: 32.24, x: -2, y: 43, en: 'Tap to see what the turkey does!', vi: 'Chạm xem gà tây làm gì nào!' } },
+    { s: 34.21, e: 43.5 },
+    { s: 43.5, e: 49.46, help: { t: 47.6, x: 35, y: 41, en: 'Tap to make Dinewan run!', vi: 'Chạm để Dinewan chạy nào!' } },
+    { s: 49.46, e: 60.58 }] },
+  dotkangaroo: { v: 'v1', pages: [
+    { s: 0, e: 13.13 },
+    { s: 13.13, e: 23 },
+    { s: 23, e: 30.29, help: { t: 28.37, x: 55, y: 46, en: 'Tap to give Dot the magic berries!', vi: 'Chạm để Dot ăn quả mọng thần nào!' } },
+    { s: 30.29, e: 40.58 },
+    { s: 40.58, e: 46.13, help: { t: 44.3, x: 41, y: 42, en: 'Tap to hop home!', vi: 'Chạm để nhảy về nhà nào!' } },
+    { s: 46.13, e: 58.42 }] },
 };
