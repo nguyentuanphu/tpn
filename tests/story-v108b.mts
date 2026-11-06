@@ -92,7 +92,9 @@ export async function calendarTabCheck(b) {
   // a step that is on takes the child there: Halloween moved to today in Studio (its festival date)
   const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
   const fly = await P.page.evaluate(async () => {
-    const C = (await import('/js/custom.js')).CUSTOM, ymd = (await import('/js/content/festival-visibility.js')).sydneyFestivalDate();
+    // (v1.08, Release 7 Nov) the game's festivals count days on the device's own calendar (js/festivals.ts nextOf), so
+    // today is the device's date here too: Sydney's date was a different day from 13:00 UTC, on GitHub's machines
+    const C = (await import('/js/custom.js')).CUSTOM, d0 = new Date(), ymd = `${d0.getFullYear()}-${String(d0.getMonth() + 1).padStart(2, '0')}-${String(d0.getDate()).padStart(2, '0')}`;
     C.festivals = { ...(C.festivals || {}), halloween: { date: ymd } }; __sv.festivals.rebuild(); await new Promise(r => setTimeout(r, 2000));
     document.querySelectorAll('.dialog, .reward, .modal').forEach(e => e.remove()); __sv.paused = false;
     let went = null; const was = __sv.travel; __sv.travel = async (h, x, z) => { went = { x, z }; };
