@@ -20,37 +20,45 @@ def _g(dx, dz, sx, sz): return math.exp(-(dx * dx) / (sx * sx) - (dz * dz) / (sz
 
 def sculpt_head(x, y, z):
     """a point of the (already oval) head moved out or in along its own direction, by the face's shapes"""
+    # (v1.08e, owner 6 Nov 2026 AEDT, via Release: "the heads still read as round balls with a face painted on") a real head
+    # shape that reads from the front at phone size: first the skull, a little taller and narrower at the temples, the face
+    # plane flatter; then the features, about twice as strong as before
     E, ex, ez = P['eye'], P['eyeX'], P['eyeZ']; nz, mz = P.get('noseZ', -.3), P.get('mouthZ', -.47)
+    if z > -.1: x *= 1 - .07 * min(1, (z + .1) / .8); z *= 1 + .05 * max(0, z)   # taller, narrower above the eyes
+    l0 = math.sqrt(x * x + y * y + z * z) or 1; fr0 = max(0, min(1, (-y / l0 - .25) / .5))
+    if abs(z) < .75: y *= 1 - .07 * fr0 * (1 - (z / .75) ** 2)                    # the face plane a little flatter
     l = math.sqrt(x * x + y * y + z * z) or 1; fr = max(0, min(1, (-y / l - .05) / .55)); fr = fr * fr * (3 - 2 * fr)
-    d = .05 * _g(x, z - (ez + E * 1.6), .62, .085) * fr                         # the brow ridge, a soft shelf over the eyes
+    d = .06 * _g(x, z - (ez + E * 1.6), .62, .085) * fr                         # the brow ridge, a soft shelf over the eyes
     d -= .03 * _g(x, z - (ez + E * 2.6), .7, .2) * fr                           # a gentle slope of the forehead above it
     for s in (-1, 1):
         d -= .06 * _g(x - s * ex, z - ez, E * 1.35, E * 1.25) * fr               # the eye sockets
-        ck = {'kid': .055, 'adult': .035, 'elder': .028}[AGE]
-        d += ck * _g(x - s * (ex + .06), z - (ez - E * 1.75), .16, .12) * fr     # round cheeks (the apples)
-        d -= .035 * _g(x - s * .82, z - (ez + .22), .16, .22)                    # narrower temples
-        d -= .02 * _g(x - s * .62, z - (mz + .02), .16, .14) * fr                # under the cheekbone, toward the jaw
+        ck = {'kid': .1, 'adult': .065, 'elder': .05}[AGE]
+        d += ck * _g(x - s * (ex + .1), z - (ez - E * 1.9), .19, .14) * fr       # round cheeks (the apples), full
+        d += ck * .6 * _g(x - s * (ex + .32), z - (mz + .1), .14, .14)           # and bulging out past the jaw line
+        d -= .05 * _g(x - s * .82, z - (ez + .22), .16, .22)                     # narrower temples
+        d -= .035 * _g(x - s * .55, z - (mz - .17), .16, .1) * fr               # the jaw under the cheeks, toward the chin
         if AGE == 'elder':   # smile lines from the nose to the mouth's corners, and softer, lower cheeks
             for t in (0, .5, 1):
-                d -= .016 * _g(x - s * (.13 + .1 * t), z - (nz - .02 + (mz - nz - .02) * t), .035, .06) * fr
-            d += .02 * _g(x - s * (ex + .1), z - (mz + .05), .14, .1) * fr
-    d += .085 * _g(x, z - nz, .06, .065) * fr                                     # a small round nose
-    d += .03 * _g(x, z - (nz + .13), .045, .11) * fr                              # its bridge
-    for s in (-1, 1): d += .025 * _g(x - s * .065, z - (nz - .02), .04, .035) * fr   # the nostril wings
-    d += .03 * _g(x, z - (mz + .02), .2, .1) * fr                                 # a soft muzzle round the mouth
-    d += .035 * _g(x, z - (mz - .21), .11, .075) * fr                             # the chin
+                d -= .02 * _g(x - s * (.13 + .1 * t), z - (nz - .02 + (mz - nz - .02) * t), .035, .06) * fr
+            d += .025 * _g(x - s * (ex + .1), z - (mz + .05), .14, .1) * fr
+    d += .15 * _g(x, z - nz, .065, .07) * fr                                      # a small round nose that catches the light
+    d += .06 * _g(x, z - (nz + .13), .05, .12) * fr                               # its bridge
+    for s in (-1, 1): d += .04 * _g(x - s * .07, z - (nz - .025), .045, .04) * fr   # the nostril wings
+    d -= .035 * _g(x, z - (nz - .1), .07, .04) * fr                               # a soft hollow under it (its shadow)
+    d += .035 * _g(x, z - (mz + .02), .2, .1) * fr                                # a soft muzzle round the mouth
+    d += .07 * _g(x, z - (mz - .21), .12, .075) * fr                              # a defined chin
     k = 1 + d / l
     return x * k, y * k, z * k
 
 def ear(s):
-    """a cupped ear on side s (+1 the person's left), its hollow facing forward and out"""
+    """a cupped ear on side s (+1 the person's left), its hollow facing forward and out; it shows past the cheeks"""
     bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=20, v_segments=12, radius=1)
     for v in bm.verts:
         lx, ly, lz = v.co
         if lx > 0: lx -= 1.25 * lx * math.exp(-(ly * ly + lz * lz) / .35)   # the hollow
         lz += .12 * ly   # a little rounder at the back
-        v.co = Vector((lx * .07, ly * .1, lz * .17))
-    M = Matrix.Translation(H(s * .98, .06, -.12)) @ Matrix.Rotation(s * .35, 4, 'Z') @ Matrix.Rotation(-.18, 4, 'X') @ Matrix.Diagonal((s * R, R, R, 1))
+        v.co = Vector((lx * .085, ly * .13, lz * .21))
+    M = Matrix.Translation(H(s * .93, .06, -.12)) @ Matrix.Rotation(s * .55, 4, 'Z') @ Matrix.Rotation(-.18, 4, 'X') @ Matrix.Diagonal((s * R, R, R, 1))
     bmesh.ops.transform(bm, matrix=M, verts=bm.verts)
     if s < 0: bmesh.ops.reverse_faces(bm, faces=bm.faces)
     return obj_from(bm, 'ear', SKIN)

@@ -164,7 +164,8 @@ def lighten():
         # (v1.08d polish) the item in the hand and the boots are parts of their own, so the game can show the item only once
         # the friend's quest is done (js/friendquest.ts) and swap the boots for shoes from the shop (js/friend-model.ts)
         base = o.name.split('.')[0]
-        if key == 'body' and base.startswith(HAND_PROPS): key = 'item'
+        if key == 'body' and base in ('head', 'ear') and globals().get('SCULPT'): key = 'head'   # (v1.08e: thinned on its own, game-light.py)
+        elif key == 'body' and base.startswith(HAND_PROPS): key = 'item'
         elif key == 'body' and base.startswith(SHOE_PARTS): key = 'shoes'
         groups.setdefault(key, []).append(n); bpy.data.objects.remove(o)
     for key, objs in groups.items():

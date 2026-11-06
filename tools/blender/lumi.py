@@ -49,7 +49,7 @@ VN_KID_F = ('#f6c7a5', '#1d1412', '#120f0d', '#3b2a22', '#2a1a0e', '#5a3a22', '#
 VN_KID_M = ('#f6c7a5', '#1d1412', '#120f0d', '#3b2a22', '#2a1a0e', '#5a3a22', '#120f0d', '#1f1712')
 VILL.update({
     'mai': _named('vn-aodai', top=('aodai', '#e8435a'), hat='nonla'),
-    'ba': _named('vn-grandpa', top=('aobaba', '#5b7fbf'), bottom='#3d4a6a', hat='', extra=('moustache',)),
+    'ba': _named('vn-grandpa', top=('aobaba', '#5b7fbf'), bottom='#3d4a6a', kind='wide', hat='', extra=('moustache',)),   # (Release 6 Nov: wide trousers)
     'teo': _named('vn-schoolboy', pal=VN_KID_M, top=('shirt', '#ffb52e'), bottom='#2c3a5a', extra=()),
     'ti': _named('vn-schoolgirl', pal=('#f6c7a5', '#3b2618', '#2a1a10', '#5a3a26', '#2a1a0e', '#5a3a22', '#2a1a10', '#1f1712'), top=('dress', '#ff7eb8'), bottom='#ff7eb8', extra=('flowerclip',)),
     'bong': _named('vn-schoolgirl', pal=VN_KID_F, hair='ponytail', top=('tee', '#9a6bff'), bottom='#5a3f9a', kind='shorts', extra=('bunny',)),
@@ -577,7 +577,7 @@ def torso(m):
     b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']
     lathe('shirt', m, [(wH * .95, b['zW'] - .04 * S), (wC, b['zW']), (wC * 1.03, (b['zW'] + b['zC']) / 2), (wC, b['zC']), (wC * .82, b['zS'] + .008 * S), (wC * .42, b['zN']), (wC * .32, b['zN'] + .01 * S)], 32, scale=(1, dep))
     for s in (-1, 1):
-        if m is not SKIN: sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))
+        if m is not SKIN and not V: sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))   # (the friends' cream collar; a villager's top brings its own, Release 6 Nov)
     tube('neck', SKIN, [(0, 0, b['zS']), (0, 0, b['zN'] + .03 * S)], .04 * S, 16)
 
 def satchel(a, m, md, deco, across=True):

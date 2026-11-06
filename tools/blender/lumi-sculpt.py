@@ -221,6 +221,9 @@ def fit_loose():
     def target(z, m, fl):
         r = body_r(z)
         if z < top_hip: r = max(r, rh)
+        # (v1.08e, Release 6 Nov: an áo bà ba drawn to the shoulders was pulled in above the chest and left a ledge) above
+        # the chest's middle a top is never narrower than most of the chest
+        if z > CH_Z(): r = max(r, B['wC'] * BW * .92)
         return r + m * S + fl * max(0, B['zCr'] + .03 * S - z)
     for o in [o for o in bpy.data.objects if o.type == 'MESH']:
         base = o.name.split('.')[0]

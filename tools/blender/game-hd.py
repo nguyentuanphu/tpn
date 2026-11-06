@@ -9,9 +9,10 @@
 #      faces keep their colours in the corners ("face-<mood>"), as the light model does (game-light.py).
 # exec'd by lumi.py, which then exports the .glb; tools/make-friends.mts hd runs gltfpack on it.
 import bpy, bmesh, math
+from mathutils import Vector
 import numpy as np
 
-HD_BUDGET = {'body': 9000, 'hair': 9500, 'hands': 700, 'item': 900, 'shoes': 900}
+HD_BUDGET = {'body': 7000, 'head': 2600, 'hair': 9500, 'hands': 700, 'item': 900, 'shoes': 900}
 HD_FACE = 700
 ATLAS = 1024
 UV_SHARE = {'hair': .3}
@@ -24,15 +25,22 @@ LIT = WHO == 'villager'
 # a 2048 px picture baked at 64 samples (the 14 crowd neighbours: 1024 px, VILLAGER_ATLAS)
 # (check perf: at 25,000 triangles and 2048 px the village went past 800,000 triangles and the 1024 px picture limit)
 # about 18,000 triangles and 1024 px
-if LIT: HD_BUDGET = {'body': 10500, 'hair': 5000, 'hands': 700, 'item': 600, 'shoes': 800, 'hat': 1200}; HD_FACE = 400; ATLAS = int(os.environ.get('VILLAGER_ATLAS', '1024'))
+if LIT: HD_BUDGET = {'body': 8000, 'head': 2600, 'hair': 5000, 'hands': 700, 'item': 600, 'shoes': 800, 'hat': 1200}; HD_FACE = 400; ATLAS = int(os.environ.get('VILLAGER_ATLAS', '1024'))
+
+KEY = Vector((-.45, -.6, .66)).normalized()   # the key light, from above and the viewer's left (the person's right)
+def skin_shade(n):
+    """the soft form shading of a skin point from its normal: the key light, and a little more light from above"""
+    k = max(0.0, n.dot(KEY)); up = .5 + .5 * n.z
+    return .64 + .36 * min(1.0, .72 * k + .38 * up)   # (the lit side keeps the skin tone)
 
 def _tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
-def _thin(o, want):
+def _thin(o, want, keep=None):
     for _ in range(3):
         now = _tris(o)
         if now <= want * 1.12: break
         d = o.modifiers.new('thin', 'DECIMATE'); d.decimate_type = 'COLLAPSE'; d.ratio = want / now; d.use_collapse_triangulate = True
+
         with bpy.context.temp_override(object=o, active_object=o):
             bpy.ops.object.modifier_apply(modifier=d.name)
 
@@ -65,7 +73,8 @@ def hd():
         col = o.users_collection[0]; col.objects.link(n)
         key = col.name if col != scene.collection else 'body'
         base = o.name.split('.')[0]
-        if key == 'body' and base.startswith(HAND_PROPS): key = 'item'
+        if key == 'body' and base in ('head', 'ear') and globals().get('SCULPT'): key = 'head'   # (v1.08e, owner 6 Nov: the sculpted head thinned to a budget of its own, so its shape still reads; joined to the body after)
+        elif key == 'body' and base.startswith(HAND_PROPS): key = 'item'
         elif key == 'body' and base.startswith(SHOE_PARTS): key = 'shoes'
         groups.setdefault(key, []).append(n); bpy.data.objects.remove(o)
     high, low = {}, {}
@@ -85,6 +94,9 @@ def hd():
     # light for the villagers (LIT: direct and bounced light), the soft shadow in the folds (AO) for the friends and for
     # everyone's hair and hands (the game shades those)
     for k, h in high.items(): bpy.data.objects.remove(h)
+    if 'head' in low and 'body' in low:   # the thinned head joined to the thinned body: one part, as before
+        hb, bb = low.pop('head'), low['body']
+        with bpy.context.temp_override(active_object=bb, selected_editable_objects=[bb, hb], selected_objects=[bb, hb]): bpy.ops.object.join()
     cloth = [k for k in low if not k.startswith('face')]
     scene.render.engine = 'CYCLES'; scene.cycles.device = 'CPU'
     for c in scene.collection.children: c.hide_render = False; c.hide_viewport = False
@@ -104,8 +116,23 @@ def hd():
         me = o.data; mats = list(me.materials); skin = next((m for m in mats if m and m.name.startswith('skin')), None)
         colr = me.color_attributes.new('Col', 'BYTE_COLOR', 'CORNER'); light = me.color_attributes.get('Light')
         lit = o in lit_parts
+        skin0_ = next((m for m in mats if m and m.name.startswith('skin')), None)
+        cn = me.corner_normals if skin0_ is not None else None
+        ref = 1.0
+        if lit and light is not None and skin0_ is not None:   # (the lit skin's own brightest tenth reads as full light)
+            ls = sorted(sum(light.data[li].color[:3]) / 3 for p_ in me.polygons if mats[p_.material_index] == skin0_ for li in p_.loop_indices)
+            ref = max(.05, ls[int(len(ls) * .9)] if ls else 1.0)
         for poly in me.polygons:
             cc = _base(mats[poly.material_index] if poly.material_index < len(mats) else None)
+            if skin0_ is not None and mats[poly.material_index] == skin0_:
+                # (v1.08e, owner 6 Nov: "the flat corner colours lost all modelling") the skin's corners carry its form
+                # shading, a soft key light from above-left times the soft shadow (or the gallery light) baked here; the
+                # game multiplies the child's skin tone by it ("skin-shade")
+                for li in poly.loop_indices:
+                    a = (sum(light.data[li].color[:3]) / 3 / ref) if light is not None else 1.0
+                    v = min(1.0, skin_shade(cn[li].vector) * (.7 + .3 * min(1.0, a)))
+                    colr.data[li].color = (v, v, v, 1)
+                continue
             for li in poly.loop_indices:
                 if light is None: colr.data[li].color = cc; continue
                 l = light.data[li].color
@@ -117,6 +144,7 @@ def hd():
         one = bpy.data.materials.new(name); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
         ca = nt.nodes.new('ShaderNodeVertexColor'); ca.layer_name = 'Col'; nt.links.new(ca.outputs['Color'], b.inputs['Base Color'])
         b.inputs['Roughness'].default_value = .8
+        if skin and not k.startswith('hands'): skin = skin.copy(); skin.name = 'skin-shade'   # (its corners carry the shading)
         if skin and k.startswith('hands'): skin = skin.copy(); skin.name = 'skin-grip'   # (the part is 'hands-grip': the hands that hold handlebars, shown only when riding; Release 6 Nov saw them drawn over the hands as a dark band)
         # (the skin keeps its own plain colour, the person's skin tone in the game)
         keep = [one] + ([skin] if skin else [])

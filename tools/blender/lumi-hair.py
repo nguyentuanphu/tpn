@@ -5,12 +5,16 @@
 
 def slock(m, L, W, th=None, wave=0.0, curl=.25, flick=.15, hug=1.0, taper=.85, N=12):
     """one sculpted lock along +Y (its face +Z): wide at the root, tapering to a soft tip; wave makes an S-curve, flick turns the tip out"""
-    th = th or W * .45
+    # (v1.08e, owner 6 Nov via Release: the villagers' fringe read as flat slabs with hard square edges) their locks are
+    # rounder and thicker, the edges rolled under (the friends' locks stay as approved)
+    rnd = WHO == 'villager'
+    th = th or W * (.7 if rnd else .45)
     bm = bmesh.new(); rows = []
     for i in range(N + 1):
         t = i / N; w = W * (1 - t) ** taper * (.85 + .15 * math.sin(math.pi * t)) + W * .08
         y = t * L; z = -(y * y) / (2 * hug) + flick * L * t ** 3; xo = wave * W * math.sin(t * math.pi * 2)
-        rows.append([bm.verts.new((xo + u * w, y, z + .35 * w * (1 - u * u) - curl * w * u * u)) for u in (-1, -.5, 0, .5, 1)])
+        us = (-1, -.7, 0, .7, 1) if rnd else (-1, -.5, 0, .5, 1)
+        rows.append([bm.verts.new((xo + u * w * (.85 if rnd and abs(u) == 1 else 1), y, z + (.6 if rnd else .35) * w * (1 - u * u) - (curl * w * u * u) - (.25 * w if rnd and abs(u) == 1 else 0))) for u in us])
     for i in range(N):
         for j in range(4): bm.faces.new((rows[i][j], rows[i][j + 1], rows[i + 1][j + 1], rows[i + 1][j]))
     bmesh.ops.solidify(bm, geom=bm.faces[:], thickness=th)
@@ -122,8 +126,11 @@ def style(name, A=None, Bm=None, side=1):
         ring(.7, 14, lambda az, el, k: lock_at(C(k), az, el, 1.7, .55, gravity=1, flick=.12, wave=.18, out=.0), True, .5)
         ring(.25, 12, lambda az, el, k: lock_at(C(k), az, el, 1.5, .52, gravity=1, flick=.15, wave=.18, out=.0), True)
     else:   # tuft: bald on top, short hair round the back and sides (grandpas)
-        for k in range(14):
-            az = math.pi * .35 + k * math.pi * 1.3 / 13; lock_at(C(k), az, .1, .35, .4, gravity=1, flick=.2)
+        # (v1.08e, Release 6 Nov: Bác Ba's tufts were flat grey blocks) soft round tufts in two rows, from above the ears round the back
+        for row, el in enumerate((-.18, .1)):
+            for k in range(13):
+                az = math.pi * .36 + k * math.pi * 1.28 / 12 + .08 * row
+                p_, n_ = on_head(az, el, 1.0); sphere('hairTuft', C(k + row), p_, (.22 * R, .2 * R, .16 * R), 16, 8, n_.to_track_quat('Z', 'Y').to_euler())
 
 # the friends' hair in sculpted locks (Lumi keeps her leaves)
 def hair_finn():
@@ -139,8 +146,15 @@ def hair_sol():
 
 VSTYLE = {'sidepart': 'sidepart', 'boybangs': 'bangs', 'messy': 'messy', 'long': 'long', 'lowbun': 'lowbun', 'ponytail': 'ponytail',
           'bangspigtails': 'pigtails', 'puffs': 'puffs', 'curls': 'curls', 'tuft': 'tuft'}
+def _lift(hexs, k):
+    """a dark hair colour lifted a little toward a warm brown, so its locks show their shape in the light"""
+    c = [int(hexs[i:i + 2], 16) for i in (1, 3, 5)]; lum = (.3 * c[0] + .59 * c[1] + .11 * c[2]) / 255
+    if lum > .2: return hexs
+    w = (138, 104, 88); c = [round(a + (b - a) * k) for a, b in zip(c, w)]
+    return '#%02x%02x%02x' % tuple(c)
 def hair_villager():
-    HS = mat('hairShell', PAL[1], .5, .45); HL = mat('hairShellL', PAL[3], .5, .45)
+    # (v1.08e, Release 6 Nov: near-black hair drew as a flat black slab) the dark colours lifted a little, the second shade more
+    HS = mat('hairShell', _lift(PAL[1], .14), .5, .45); HL = mat('hairShellL', _lift(PAL[3], .3), .5, .45)
     if V.get('kit'): return kit_hair(V['hair'], HS, HL)   # the costume kit's hair (costumes.py)
     style(VSTYLE.get(VHAIR.get(ROLE, 'sidepart'), 'sidepart'), HS, HL)
 

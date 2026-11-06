@@ -1080,7 +1080,7 @@ await check('friendmodel', async () => {
     for (const id of ['finn', 'sol', 'clara', 'lumi']) {
       const ok = await A.loadFriendModels(id), av = A.buildAvatar({ set: id === 'clara' || id === 'lumi' ? 'girl' : 'boy', friend: id, skin: '#b47a55', hat: 'cap' });
       const m = av.model, meshes = []; let skin = null, faces = 0, tris = 0;
-      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); if (/^skin$/.test(o.material.name) && !o.userData.face3d) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
+      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); if (/^skin(-shade)?$/.test(o.material.name) && !o.userData.face3d) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
       // (v1.08e faces, part 3) a sculpted face is one mesh whose moods are its shape keys: its mood count (12 keys and the rest smile)
       if (m.face3d) faces = Object.keys(m.face3d[0].morphTargetDictionary).length + 1;
       // a turn of the code person's arm and knee shows on the model's bones; a mood shows the matching face
