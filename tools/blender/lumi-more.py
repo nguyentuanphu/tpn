@@ -193,8 +193,9 @@ def body_villager():
     def sleeves(s, sh, el, wr):
         rU, rA = B['rU'], B['rA']
         if tk == 'dress' and V['size'] != 'kid': return   # a sundress: bare arms
-        if long_sleeves: tube('sleeve', TOP, [sh, el, wr - (wr - el).normalized() * .03 * S], [rU * 1.5, rA * 1.6, rA * 1.55], 18)   # (Release 6 Nov: fuller, not thin tubes)
-        else: tube('sleeve', TOP, [sh, sh.lerp(el, .55)], [rU * 1.35, rU * 1.3], 18)
+        # (Release 6 Nov: fuller, not thin tubes; open at the cuff: its end, facing down, got no light and showed as a dark band)
+        if long_sleeves: tube('sleeve', TOP, [sh, el, wr - (wr - el).normalized() * .03 * S], [rU * 1.5, rA * 1.6, rA * 1.55], 18, False)
+        else: tube('sleeve', TOP, [sh, sh.lerp(el, .55)], [rU * 1.35, rU * 1.3], 18, False)
     hands = arm_pair(sleeves)
     sk, _, sc = V['shoes'].partition('/'); shoes(sk, ('#' + sc) if sc else None)
     if 'basket' in V['extra']:  # a woven basket of greens in the left hand

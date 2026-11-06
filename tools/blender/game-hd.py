@@ -120,7 +120,8 @@ def hd():
         if skin and k.startswith('hands'): skin = skin.copy(); skin.name = 'skin-grip'   # (the part is 'hands-grip': the hands that hold handlebars, shown only when riding; Release 6 Nov saw them drawn over the hands as a dark band)
         # (the skin keeps its own plain colour, the person's skin tone in the game)
         keep = [one] + ([skin] if skin else [])
-        idx = [keep.index(skin) if (skin and mats[p.material_index] == skin) else 0 for p in me.polygons]
+        skin0 = next((m for m in mats if m and m.name.startswith('skin')), None)   # (the polygons' own skin material, before the copy)
+        idx = [keep.index(skin) if (skin and mats[p.material_index] == skin0) else 0 for p in me.polygons]
         me.materials.clear()
         for m in keep: me.materials.append(m)
         for p, i in zip(me.polygons, idx): p.material_index = i

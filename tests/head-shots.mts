@@ -8,15 +8,17 @@ import fs from 'fs';
 const out = process.argv[2] || 'docs/world-models-v108e/faces/heads', tag = process.argv[3] || 'after';
 fs.mkdirSync(out, { recursive: true });
 const b = await launch();
-const SETS = {
+const SETS0 = {
   friends: ['finn', 'sol', 'clara', 'lumi'],
   villagers: ['mai', 'ba', 'teo', 'ti', 'bong', 'su', 'jack', 'mit', 'bom', 'ruby', 'lan'],
   crowd: ['vn-schoolboy', 'vn-aodai', 'vn-grandma', 'au-girl', 'au-dad', 'au-grandpa'],
 };
+// FULL=1 IDS=mai: those people only, head to feet (<tag>-full-<set>-<mood>-<dev>.png)
+const SETS = process.env.IDS ? Object.fromEntries(Object.entries(SETS0).map(([k, v]) => [k, v.filter(i => process.env.IDS.split(',').includes(i))]).filter(([, v]) => v.length)) : SETS0;
 for (const [dev, w, h] of [['phone', 390, 844], ['computer', 1280, 800]] as [string, number, number][]) {
   const P = await open(b, { w, h, dpr: 2, settings: { quality: 'high' } }); await clear(P.page);
   for (const [set, ids] of Object.entries(SETS).filter(([k]) => !process.env.ONLY || process.env.ONLY.split(',').includes(k))) for (const mood of ['smile', 'blink']) {
-    const png = await P.page.evaluate(async ({ w, h, set, ids, mood }) => {
+    const png = await P.page.evaluate(async ({ w, h, set, ids, mood, full }) => {
       const A = await import(String('/js/avatar.js')), { THREE } = await import(String('/js/gfx.js')), G = (window as any).__sv;
       const LOOK = { finn: ['boy', '#f2c6a0'], sol: ['boy', '#c98d62'], clara: ['girl', '#f6d2b5'], lumi: ['girl', '#8d5a3c'] };
       const people: any[] = [];
@@ -47,15 +49,16 @@ for (const [dev, w, h] of [['phone', 390, 844], ['computer', 1280, 800]] as [str
         // (the head joint is at the neck: the head's middle is above it; the whole height frames the head and shoulders)
         const bx = new THREE.Box3().setFromObject(p.model ? p.model.obj : p.rig, true), H = bx.max.y - bx.min.y;
         const hp = (hb || p.head).getWorldPosition(new THREE.Vector3()); hp.y += H * .055;
-        const half = H * .21, cam = new THREE.PerspectiveCamera(22, cw / ch, .05, 50), dist = half / Math.tan(11 * Math.PI / 180) * Math.max(1, ch / cw * .75);
+        if (full) hp.y = bx.min.y + H * .5; // (FULL=1: head to feet)
+        const half = H * (full ? .56 : .21), cam = new THREE.PerspectiveCamera(22, cw / ch, .05, 50), dist = half / Math.tan(11 * Math.PI / 180) * Math.max(1, ch / cw * .75);
         const fy = Math.sin(.3), fz = Math.cos(.3); cam.position.set(hp.x + fy * dist, hp.y + half * .15, hp.z + fz * dist); cam.lookAt(hp.x, hp.y - half * .15, hp.z);
         const cx = i % cols, cy = Math.floor(i / cols), x0 = Math.floor(cx * cw), y0 = Math.floor(h - (cy + 1) * ch);
         r.setViewport(x0, y0, Math.floor(cw), Math.floor(ch)); r.setScissor(x0 + 1, y0 + 1, Math.floor(cw) - 2, Math.floor(ch) - 2);
         r.render(sc, cam); p.root.visible = false;
       });
       const url = r.domElement.toDataURL('image/png'); r.dispose(); return url;
-    }, { w, h, set, ids, mood });
-    fs.writeFileSync(`${out}/${tag}-${set}-${mood}-${dev}.png`, Buffer.from(png.split(',')[1], 'base64'));
+    }, { w, h, set, ids, mood, full: !!process.env.FULL });
+    fs.writeFileSync(`${out}/${tag}${process.env.FULL ? '-full' : ''}-${set}-${mood}-${dev}.png`, Buffer.from(png.split(',')[1], 'base64'));
     console.log(dev, set, mood);
   }
   if (P.errors.length) console.log(dev, P.errors.slice(0, 3));

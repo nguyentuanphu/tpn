@@ -86,6 +86,7 @@ def make_hand(s):
     o = sphere('handS', SKIN, palm, (1, 1, 1), 24, 12)
     M = Matrix((front * rA * 1.1, d * rA * 1.25, n * rA * .55)).transposed()
     for v in o.data.vertices: v.co = palm + M @ (v.co - palm)
+    if M.determinant() < 0: o.data.flip_normals()   # (Release 6 Nov: on one side the shape is mirrored, its faces turned in: the palm drawn dark)
     for k, t in enumerate((-.68, -.22, .24, .7)):   # fingers: index at the front
         base = palm + d * rA * .85 + front * t * rA * .82; L = rA * (.95, 1.05, 1.0, .8)[k]
         tip = base + d * L + n * rA * .32
@@ -103,6 +104,7 @@ def make_grip(s):
     o = sphere('handG', SKIN, palm, (1, 1, 1), 24, 12)
     M = Matrix((front * rA * 1.05, d * rA * 1.0, n * rA * .55)).transposed()
     for v in o.data.vertices: v.co = palm + M @ (v.co - palm)
+    if M.determinant() < 0: o.data.flip_normals()   # (Release 6 Nov: on one side the shape is mirrored, its faces turned in: the palm drawn dark)
     rb = rA * .42; axis_c = palm + d * rA * .85 + n * (rA * .25 + rb)   # the bar's centre, inside the curl
     for k, t in enumerate((-.66, -.22, .22, .64)):
         k0 = palm + d * rA * .8 + front * t * rA * .8 + n * rA * .1
@@ -170,7 +172,7 @@ def sculpt():
         def keep_top(p):
             t = arm_of(p)
             if t is not None:   # on the arm: covered only as far as the sleeves of this top reach
-                return any(lo - .05 <= t <= hi for m, lo, hi in sleeves if m == top) or t < .12
+                return any(lo - .05 <= t <= hi - .08 for m, lo, hi in sleeves if m == top) or t < .12   # (Release 6 Nov: it ends inside the sleeve; past the cuff its end, unlit, showed as a dark band on the wrist)
             # (v1.08e, Release 6 Nov: under an áo dài this layer's hem stood out over the hips like a box) the áo dài's own
             # top covers the body there, so the layer stops above the waist
             # (and under a loose áo bà ba or cardigan, which reach the hips, it follows the body down to their hem: anything
