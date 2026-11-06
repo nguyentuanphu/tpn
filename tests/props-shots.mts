@@ -26,10 +26,18 @@ for (const s of SIZES) {
         else if (sc === 'sizzle') { const a = st('robbo'); x = a.x; z = a.z; face = a.face; far = 7; up = 3; }
         else if (sc === 'hawker') { const H = G.hawkers[0]; x = H.x; z = H.z; face = H.yaw + Math.PI / 2; far = 3; up = 1.7; lift = 1.1; }
         else {
-          // the test spot: open ground 25 m to the child's side (clear of Grandpa Owl at the start), the props in a row
+          // the test spot: flat open ground near the child (found below), the props in a row
           if (!w.__propSpot) {
             const C2 = await import(String('/js/content/chapter2props.js')), C3 = await import(String('/js/content/chapter3props.js'));
-            const yaw = h.yaw || 0, sx = h.pos.x + Math.cos(yaw) * 25, sz = h.pos.z - Math.sin(yaw) * 25;
+            // flat open ground: level within 0.4 m over 40 m, nothing solid within 20 m, the nearest such spot to the child
+            const yaw = h.yaw || 0, gA = (x: number, z: number) => G.world.groundAt(x, z);
+            let sx = h.pos.x, sz = h.pos.z;
+            search: for (let r = 30; r <= 260; r += 10) for (let k = 0; k < 24; k++) {
+              const a = k / 24 * Math.PI * 2, cx = h.pos.x + Math.cos(a) * r, cz = h.pos.z + Math.sin(a) * r, g0 = gA(cx, cz);
+              let ok = true; for (let i = -2; i <= 2 && ok; i++) for (let j = -2; j <= 2 && ok; j++) if (Math.abs(gA(cx + i * 10, cz + j * 10) - g0) > .4) ok = false;
+              if (ok && (G.world.colliders || []).some((c: any) => Math.hypot(c.x - cx, c.z - cz) < 20)) ok = false;
+              if (ok) { sx = cx; sz = cz; break search; }
+            }
             const add = (o: any, set: string, dx: number, dy = 0) => { const g = new THREE.Group(); g.add(o); g.userData.set = set; g.position.set(sx + Math.cos(yaw) * dx, G.world.groundAt(sx, sz) + dy, sz - Math.sin(yaw) * dx); g.rotation.y = yaw + Math.PI; G.scene.add(g); return g; };
             add(C2.buildStoneTurtle(), 'hanoi', -1.6); add(C2.buildStarLantern('#ff4a3a', true), 'hanoi', -.2); add(C2.buildLionHead(), 'hanoi', 1.1, .45); add(C2.buildMooncakes(), 'hanoi', 2.3, .02);
             const tree = C3.buildGumTree(1), koala = C3.buildKoala(); koala.position.set(.25, 2.6, .25); tree.add(koala);
