@@ -198,7 +198,12 @@ export function createFolkShow(G, { looks = [] } = {}) {
     const bub = lyricBubble(scene); bub.position.set(x, y + 3.5, z);
     const Sg = { name, song, A, x, z, y, bub, singing: false, face, parts: [stage, A.root, tag], col };
     singers.push(Sg);
-    G.interactables.push({ id: 'sing' + k, x: x + Math.sin(face) * 2.2, z: z + Math.cos(face) * 2.2, r: 2.8, icon: '🎤', bubble: '🎤', label: () => T('Ask ', 'Nhờ ') + T('singer ', 'ca sĩ ') + nm(name) + T(' to sing', ' hát'), visible: () => singOn(),
+    // (Release, v1.08: check solid sing4) the tap spot goes in front of the singer when the ground there is open, else to the
+    // first open side of the stage, so a child always has somewhere to stand
+    const openAt = (px, pz) => !world.colliders.some(c => c !== col && Math.hypot(c.x - px, c.z - pz) < c.r + .6) && !world.boxes.some(b => px > b.x0 - .6 && px < b.x1 + .6 && pz > b.z0 - .6 && pz < b.z1 + .6);
+    let tx = x + Math.sin(face) * 2.2, tz = z + Math.cos(face) * 2.2;
+    if (!openAt(tx, tz)) for (let i = 1; i < 12; i++) { const a = face + i * Math.PI / 6, px = x + Math.sin(a) * 2.2, pz = z + Math.cos(a) * 2.2; if (openAt(px, pz)) { tx = px; tz = pz; break; } }
+    G.interactables.push({ id: 'sing' + k, x: tx, z: tz, r: 2.8, icon: '🎤', bubble: '🎤', label: () => T('Ask ', 'Nhờ ') + T('singer ', 'ca sĩ ') + nm(name) + T(' to sing', ' hát'), visible: () => singOn(),
       act: h => { if (G.tried) G.tried(h, 'singers'); sing(Sg); } });
   });
   G.singers = singers;

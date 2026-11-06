@@ -112,7 +112,16 @@ All of them once per release (`node suite.mjs`), plus `node suite.mjs --changed`
   - **The 11 named villagers** become real models (about 200 KB each). Crowds keep the code builder with the new face and outline.
   - **The camera comes closer** in key moments: talking, winning, waving or cheering, and the Welcome screen.
   - **Who builds it:** the faces helper (Part 2) and a villagers helper on the second account.
-- 6 November 2026 AEDT (chat): the second account runs only the Blender chat. Release splits the rest evenly on the first account: faces then villagers, water then nature part A, creatures then nature part B, vehicles round 2, and places when quality finishes.
+- 6 November 2026 AEDT (chat, corrected the same night): the second account runs Blender, nature and places. The first account runs quality, creatures, vehicles, water, and faces (then high-detail friends, then the 11 villagers).
+- 6 November 2026 AEDT, morning (chat, with two Grown-ups screenshots; brief `docs/cores/tasks/v108f/README.md`):
+  - **All tale films in Blender at 720p.** Only 5 are visible to everyone; the rest are for testers with a Studio switch. The story section offers one download of every film, for offline.
+  - **Captions** are off by default.
+  - **The AI chat voice offer** is hidden.
+  - **Grown-ups layout:** "Two players on one device", "Fit the screen" and Money (AUD, VND) each sit on one line. Tapping the current choice must not jump to the top.
+  - **The TURN relay** keeps working; only its wording and link are hidden (owner's correction).
+  - **The ladybug's "Thử lại / Try again"** on a fixed bug takes the tester to the action, game, screen or thing that was broken, not only to the reported place.
+- 6 November 2026 AEDT (pop-up): the heavy files (Blender films, world models, voices) **stay on Netlify for now**, next to the game. Cloudflare R2 was offered (free downloads, 10 GB free storage) and can be moved to later; GitHub was ruled out (private repo, no proper offline saving, history bloat).
+- 6 November 2026 AEDT (pop-ups): the faces and heads still look like the old round ones. They become **sculpted 3D faces in the style of family animated films**: a real head shape, eyes in sockets with lids as geometry, a nose, cheeks, a chin, ears, and a mouth and brows that move by shape keys. This is for the **friends, villagers and crowds** (crowds share about 6 sculpted heads). The faces helper does it as Part 3 (`docs/cores/tasks/v108e/faces-brief.md`).
 - 3 November 2026 AEDT (pop-ups, plan `docs/plans/five-screens-check.md`): every game, film and story must work on phone portrait and landscape (phone landscape fully playable, not a "turn your phone" hint), tablet portrait and landscape, and computer; a new five-screen check covers all of them, in v1.09.
 - 3 November 2026 AEDT (chat): "1.09 và 1.1 gộp thành 1.09": everything planned for v1.10 joins v1.09, one round (the new friends, villagers, one home per game, new games, costumes, smoother films, five Blender films, the five-screen check).
 - 3 November 2026 AEDT (pop-ups, `docs/plans/v109-extras.md`): lighter offline in v1.09 with voices in Opus (MP3 kept for devices that can't play it) and three offline levels in Grown-ups (Light, Automatic as default, Full). Also into v1.09: light first download and a valley built as the child walks, the open bugs, Concept D roads, a faster Studio.

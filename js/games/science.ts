@@ -453,7 +453,10 @@ register({ id: 'sci_shadow', learn: true, icon: 'sci:shadow', name: () => T('Lam
     let lamp: HTMLElement = null, shade: SVGPathElement = null, ray: SVGPathElement = null, rings: HTMLElement[] = [];
     const put = (lx: number, ly: number) => {
       const tip = Math.max(-60, Math.min(460, tipOf(lx, ly))), w = 16;
-      shade.setAttribute('d', `M${TOY.x - w} ${TOY.ground}L${TOY.x + w} ${TOY.ground}L${tip} ${TOY.ground + 9}L${tip} ${TOY.ground - 2}z`);
+      // (v1.08f, #812: "the shadow must show more clearly") a dark band lying on the ground from the teddy's feet to the tip,
+      // thick at the feet; it was an 11 px grey sliver, half see-through, hidden under the teddy when the lamp was high
+      const g = TOY.ground, dir = tip >= TOY.x ? 1 : -1;
+      shade.setAttribute('d', `M${TOY.x - w} ${g}L${TOY.x + w} ${g}L${tip} ${g}Q${tip + dir * 7} ${g + 4} ${tip} ${g + 8}Q${(tip + TOY.x) / 2} ${g + 14} ${TOY.x + dir * w} ${g + 16}L${TOY.x - dir * w} ${g + 16}z`);
       if (ray) ray.setAttribute('d', `M${lx} ${ly}L${tip} ${TOY.ground}`);
     };
     const pct = ([a, b]: [number, number]) => [a / 4, b / 3];
@@ -463,7 +466,7 @@ register({ id: 'sci_shadow', learn: true, icon: 'sci:shadow', name: () => T('Lam
     else { ask = ['The lamp will move to the ring. Will the shadow get longer or shorter?', 'Đèn sẽ chuyển tới vòng tròn. Bóng sẽ dài ra hay ngắn lại?']; choices = [{ key: 'long', pic: 'sci:longer', label: ['Longer', 'Dài ra'] }, { key: 'short', pic: 'sci:shorter', label: ['Shorter', 'Ngắn lại'] }]; answer = R.kind === 'high' || R.kind === 'near' ? 'short' : 'long'; }
     rounds.push({
       draw: x => {
-        bg(x.scene, `<rect x="0" y="${TOY.ground}" width="400" height="${300 - TOY.ground}" fill="#cfe8b8"/><path d="M0 ${TOY.ground}H400" stroke="#3b2a4f" stroke-width="3"/><path class="sx-shade" fill="#4a405a" opacity=".55"/>${lv >= 3 ? '<path class="sx-ray" stroke="#ffb020" stroke-width="3" stroke-dasharray="8 6" fill="none"/>' : ''}${R.star != null ? `<path transform="translate(${R.star} ${TOY.ground + 30})" d="M0-14l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#ffd23f" stroke="#3b2a4f" stroke-width="2.5"/>` : ''}`);
+        bg(x.scene, `<rect x="0" y="${TOY.ground}" width="400" height="${300 - TOY.ground}" fill="#cfe8b8"/><path d="M0 ${TOY.ground}H400" stroke="#3b2a4f" stroke-width="3"/><path class="sx-shade" fill="#2f2840" opacity=".82" stroke="#2f2840" stroke-width="2" stroke-linejoin="round"/>${lv >= 3 ? '<path class="sx-ray" stroke="#ffb020" stroke-width="3" stroke-dasharray="8 6" fill="none"/>' : ''}${R.star != null ? `<path transform="translate(${R.star} ${TOY.ground + 30})" d="M0-14l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#ffd23f" stroke="#3b2a4f" stroke-width="2.5"/>` : ''}`);
         shade = x.scene.querySelector('.sx-shade'); ray = x.scene.querySelector('.sx-ray');
         const toy = el('div', 'sx-rider', pic('🧸')); toy.style.left = '50%'; toy.style.bottom = (100 - TOY.ground / 3) + '%'; toy.style.width = toy.style.height = '64px'; x.scene.appendChild(toy);
         rings = R.rings.map((p, i) => { const [a, b] = pct(p), g = el('button', 'sx-ring', R.rings.length > 1 ? String(i + 1) : ''); g.style.left = a + '%'; g.style.top = b + '%'; g.dataset.i = String(i); g.setAttribute('aria-label', T('Ring', 'Vòng tròn') + ' ' + (i + 1)); x.scene.appendChild(g); return g; });
@@ -507,9 +510,13 @@ const ring = (fill: number) => { const f = pitch(fill); tone(f, .9, { type: 'sin
 register({ id: 'sci_sound', learn: true, icon: 'sci:sound', name: () => T('Bottle Music', 'Nhạc Chai Nước'), async run(api) {
   const lv = lvOf(api), n = [3, 3, 4, 4, 3][lv], count = [2, 2, 3, 4, 5][lv], rounds: Round[] = [];
   mark(api, n, count, lv === 4 ? 'match' : 'high-low');   // rounds, bottles, question
+  // (v1.08f, #816: "every round of Bottle Music is the same") each round has bottles of other colours, and the under-5s
+  // too are asked for the highest and the lowest note in turn (they had two bottles, red and blue, and "highest" every time)
+  const hue0 = Math.floor(Math.random() * BOTTLE_C.length), lowFirst = Math.random() < .5;
   for (let r = 0; r < n; r++) {
+    const col = (i: number) => BOTTLE_C[(hue0 + r * count + i) % BOTTLE_C.length];
     const fills = lv <= 1 ? shuffle([.18, .86]) : lv === 2 ? shuffle([.15, .5, .85]) : lv === 3 ? shuffle([.2, .4, .6, .8]) : shuffle([.15, .32, .5, .68, .85]);
-    const mode = lv === 4 ? 'match' : lv === 0 || r % 2 === 0 ? 'high' : 'low';
+    const mode = lv === 4 ? 'match' : (r % 2 === 0) !== lowFirst ? 'high' : 'low';
     const best = mode === 'high' ? fills.indexOf(Math.min(...fills)) : mode === 'low' ? fills.indexOf(Math.max(...fills)) : Math.floor(Math.random() * count);
     let bottles: HTMLElement[] = [];
     const why: Pair = mode === 'high' ? ['Less water lets the bottle shake faster, so its note is higher.', 'Ít nước thì chai rung nhanh hơn, nên tiếng kêu cao hơn.'] : mode === 'low' ? ['More water makes the bottle shake more slowly, so its note is lower.', 'Nhiều nước làm chai rung chậm hơn, nên tiếng kêu trầm hơn.'] : ['The same amount of water makes the same shake, so the notes match.', 'Cùng một mực nước thì rung giống nhau, nên hai tiếng giống nhau.'];
@@ -517,11 +524,11 @@ register({ id: 'sci_sound', learn: true, icon: 'sci:sound', name: () => T('Bottl
     rounds.push({
       draw: x => {
         const row = el('div', 'sx-bottles' + (mode === 'match' ? ' sx-low' : '')); x.scene.appendChild(row);
-        bottles = fills.map((f, i) => { const b = el('button', 'sx-bottle', bottleSVG(f, BOTTLE_C[i].c)); b.setAttribute('aria-label', T(...BOTTLE_C[i].name)); row.appendChild(b); return b; });
+        bottles = fills.map((f, i) => { const b = el('button', 'sx-bottle', bottleSVG(f, col(i).c)); b.setAttribute('aria-label', T(...col(i).name)); row.appendChild(b); return b; });
         if (mode === 'match') { const hear = el('button', 'sx-go sx-hear', `${pic('🔊')}<span>${esc(T('Hear the note', 'Nghe nốt nhạc'))}</span>`); hear.onclick = () => ring(fills[best]); x.scene.appendChild(hear); setTimeout(() => { if (!x.api.closed) ring(fills[best]); }, 900); }
       },
       trials: [{ ask: mode === 'high' ? ['Which bottle will make the highest sound when you tap it?', 'Gõ vào thì chai nào kêu cao nhất?'] : mode === 'low' ? ['Which bottle will make the lowest sound when you tap it?', 'Gõ vào thì chai nào kêu trầm nhất?'] : ['Listen to the note. Which bottle plays the same note?', 'Nghe nốt nhạc này. Chai nào kêu giống như vậy?'],
-        answer: String(best), why, choices: fills.map((f, i) => ({ key: String(i), html: `<span class="sx-mini">${bottleSVG(f, BOTTLE_C[i].c).replace('<svg ', '<svg width="100%" height="100%" ')}</span>`, label: BOTTLE_C[i].name })) }],
+        answer: String(best), why, choices: fills.map((f, i) => ({ key: String(i), html: `<span class="sx-mini">${bottleSVG(f, col(i).c).replace('<svg ', '<svg width="100%" height="100%" ')}</span>`, label: col(i).name })) }],
       act: ['Now tap each bottle with the spoon and listen.', 'Giờ gõ thìa vào từng chai và lắng nghe nhé.'],
       tryIt: x => new Promise<void>(res => {
         const heard = new Set<number>(), next = () => x.target(bottles.find((_, i) => !heard.has(i)) || null);

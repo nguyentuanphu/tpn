@@ -207,6 +207,7 @@ def body_r(z):
 # garments that follow the body (owner, 3 Nov: a skirt must not be wider than the belly and hips): (margin, flare below the hips)
 FIT = {'skirt': (.014, .3), 'dressSkirt': (.014, .3), 'longSkirt': (.014, .22), 'frill': (.02, .3), 'dressTop': (.012, 0), 'bodice': (.012, 0),
        'aoBaBa': (.022, .12), 'corset': (.016, 0), 'belt': (.016, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.014, .12)}
+FIT.update(globals().get('KIT_FIT', {}))   # the costume kit's long coat panels hang over its skirts (costumes.py)
 def fit_loose():
     rh = B['wH'] * BW * .98 * 1.06; dep = B['dep']; top_hip = HP_Z()
     def target(z, m, fl):

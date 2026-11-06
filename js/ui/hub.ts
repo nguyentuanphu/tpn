@@ -79,7 +79,7 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
   };
   const body = key => {
     if (key === 'fest') return `<h3>📅 ${CAL_TITLE()}</h3>${festCalendarHTML(game)}`;
-    if (key === 'tales') return `<h3>📖 ${T('Fairy tales', 'Truyện cổ tích')}</h3><p class="sub">${T('Tap a story: you fly to Grandma Storyteller and she reads it to you.', 'Chạm vào truyện: con bay đến chỗ Bà Kể Chuyện và bà kể cho con nghe.')}</p><div class="talelib">${game.taleShelfHTML(p)}</div>`;
+    if (key === 'tales') return `<h3>📖 ${T('Fairy tales', 'Truyện cổ tích')}</h3><p class="sub">${T('Tap a story: you fly to Grandma Storyteller and she reads it to you.', 'Chạm vào truyện: con bay đến chỗ Bà Kể Chuyện và bà kể cho con nghe.')}</p><div class="filmpack-slot"></div><div class="talelib">${game.taleShelfHTML(p)}</div>`;
     if (key === 'songs') {
       // (round O, owner: songs belong with the games, not in Settings) one big button per group; it opens the Songs page there
       const fam = familySongs().length, groups = SONG_GROUPS.filter(g => g.key === 'family' ? fam : SONG_LIST.some(s => s.group === g.key && Music.has(s.key)));
@@ -94,6 +94,8 @@ export const openGamesHub = Object.assign(function (game, i, onClose) {
     card.querySelectorAll('.hubtabs [data-tab]').forEach(b => { const on = b.dataset.tab === cur; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
     const hb = card.querySelector('.hubbody'); hb.innerHTML = body(cur); hb.scrollTop = openGamesHub.scroll || 0;
     bind(hb);
+    // (v1.08f films) "Download all films for offline" over the shelves, when this device has Blender films (js/filmpack.ts)
+    const fp = hb.querySelector('.filmpack-slot'); if (fp) import('../filmpack.js').then(F => F.showFilmPack(fp as HTMLElement)).catch(() => { });
   };
   card.querySelectorAll('.hubtabs [data-tab]').forEach(b => b.onclick = () => { cur = openGamesHub.last = b.dataset.tab; openGamesHub.scroll = 0; SFX.tap(); draw(); const row = b.parentElement; row.scrollTo({ left: b.offsetLeft - row.clientWidth / 2 + b.offsetWidth / 2, behavior: 'smooth' }); }); // sideways only: the page must not jump
   card.querySelector('.x').onclick = close;

@@ -110,6 +110,9 @@ await check('hocvui', async () => {
   return `one Fun learning tab, its corners in order (${hub.plays.length} games, no links; a card opens its game); the same corners on the Simple screen, each game once; ${NEW.length} new games won by real taps at Easy and Talent (${NEW.map(id => `${id} ${played[id + ':easy'].shown}→${played[id + ':talent'].shown}`).join(', ')}); pictures in tests/out/hocvui`;
 });
 
+// (v1.08f bugs, #816) Bottle Music: no two rounds the same, the under-5s too (tests/bottle-variety.mts)
+await check('bottlevariety', async () => (await import('../bottle-variety.mts')).bottleVarietyCheck(b));
+
 await check('englishmode', async () => {
   // (v1.08 english, owner's plan 3 Nov 2026 AEDT, part C) English mode: a Vietnamese child opens Opposites from Học vui ›
   // Tiếng Anh by a real tap, and it plays in English (its question line English, a Vietnamese hint under it with a speaker
@@ -278,7 +281,9 @@ await check('reading', async () => {
   await Q.page.waitForFunction(async () => Object.keys((await import('/js/games/frame.js')).GAMES).filter(k => /^rd_/.test(k)).length === 13, null, { timeout: 30000 }).catch(() => { });
   const on = await Q.page.evaluate(async () => { const F = await import('/js/games/frame.js'), A = await import('/js/content/activities.js'); __sv.openGamesHub(0); await new Promise(r => setTimeout(r, 300)); document.querySelector('.hubtabs [data-tab="learn"]')?.click(); await new Promise(r => setTimeout(r, 200));
     const hub = [...document.querySelectorAll('.hubbody [data-play]')].map(b => b.dataset.play), head = [...document.querySelectorAll('.hubbody .hubarea')].map(h => h.textContent); document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false;
-    return { games: Object.keys(F.GAMES).filter(k => /^rd_/.test(k)), big: A.gamesIn(F.GAMES, 'reading', false).map(g => g.id), little: A.gamesIn(F.GAMES, 'reading', true).map(g => g.id), hub: hub.filter(k => /^rd_/.test(k)), head }; });
+    return { games: Object.keys(F.GAMES).filter(k => /^rd_/.test(k)), big: ['reading', 'hv_vi'].flatMap(a => A.gamesIn(F.GAMES, a, false).map(g => g.id)).filter(k => /^rd_/.test(k)), little: ['reading', 'hv_vi'].flatMap(a => A.gamesIn(F.GAMES, a, true).map(g => g.id)).filter(k => /^rd_/.test(k)), hub: hub.filter(k => /^rd_/.test(k)), head }; });
+  // (v1.08b games) Tone Marks lives in Tiếng Việt (js/games/readingmenu.ts: rd_tones hv_vi), the rest in the Reading corner:
+  // big and little are read from both homes
   // (owner, 18 Oct AEDT) Story Helpers joins the Reading corner too, for 2 to 8 (played through by its own check, storyhelp)
   ok([...IDS, 'rd_storyhelp'].every(id => on.games.includes(id) && on.big.includes(id) && on.hub.includes(id)) && on.head.some(h => /Reading corner/.test(h)), 'with the switch on: ' + JSON.stringify(on));
   ok(BIG_ONLY.every(id => !on.little.includes(id)) && on.little.length === IDS.length - BIG_ONLY.length + 1 && [...IDS.filter(id => !BIG_ONLY.includes(id)), 'rd_storyhelp'].every(id => on.little.includes(id)), 'under-5s see: ' + on.little.join(','));
@@ -452,7 +457,7 @@ await check('ownerlearninglayout', async () => {
 });
 
 await check('owneractivityshell', async () => {
-  const P=await open(b,{w:320,h:640,touch:true,lang:'vi'});await clear(P.page);
+  const P=await open(b,{w:320,h:640,touch:true,lang:'vi',settings:{captions:true}});await clear(P.page);
   await P.page.evaluate(async()=>{const V=await import('/js/voice.js');V.spoken.forEach(f=>f('A surprise gift is waiting in the valley.'));});await P.page.waitForSelector('.caption.show');
   await P.page.evaluate(async()=>{const F=await import('/js/games/frame.js');__sv.paused=true;window.__learning=F.openGame('shapebuilders',{players:[__sv.heroes[0].profile],little:true,level:1});});await P.page.waitForSelector('.bt-piece');await P.page.evaluate(()=>document.fonts.ready);
   const before=await P.page.locator('.gl-head').boundingBox();await P.page.locator('.bt-piece').last().scrollIntoViewIfNeeded();

@@ -6,6 +6,7 @@
 import { THREE, toonVC, P, merge } from './gfx.js';
 import { PLOTS } from './world.js';
 import { builtPlotIds } from './worldedit.js';
+import { natureModel } from './nature-tag.js';
 
 export function createPlots(G) {
   const { scene } = G;
@@ -24,7 +25,7 @@ export function createPlots(G) {
   }
   const geo = merge(parts), mesh = new THREE.InstancedMesh(geo, toonVC(), gardens.length), m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(1, 1, 1);
   gardens.forEach((p, i) => { q.setFromAxisAngle(up, p.rot); m.compose(new THREE.Vector3(p.x, p.h, p.z), q, one); mesh.setMatrixAt(i, m); });
-  mesh.instanceMatrix.needsUpdate = true; mesh.computeBoundingSphere(); mesh.receiveShadow = true; mesh.userData.plots = true;
+  mesh.instanceMatrix.needsUpdate = true; mesh.computeBoundingSphere(); mesh.receiveShadow = true; mesh.userData.plots = true; natureModel(mesh, 'garden-plot'); // (v1.08e nature: models/world/garden-plot.glb near the child)
   scene.add(mesh);
   return mesh;
 }

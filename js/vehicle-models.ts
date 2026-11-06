@@ -1,7 +1,7 @@
 // (v1.08e vehicles, owner 6 Nov 2026 AEDT: every vehicle remade in Blender, loaded near the child) The Blender model of
 // a vehicle from js/vehicles.ts, put in place of its code shape. Loaded after the start (js/vehicles.ts wear), never in
 // the first download.
-import { THREE, outline } from './gfx.js';
+import { THREE } from './gfx.js';
 import { modelFor } from './modelkit.js';
 
 // models/world/veh-<id>.glb (tools/blender/world-vehicles.py, from these very code shapes, so the size, the seat and the
@@ -19,9 +19,25 @@ const POINTS: [string, string, number?][] = [['seat', 'seat'], ['seat2', 'passen
   ['pedalL', 'feet', 0], ['pedalR', 'feet', 1], ['handle2L', 'pgrips', 0], ['handle2R', 'pgrips', 1], ['pedal2L', 'pfeet', 0], ['pedal2R', 'pfeet', 1]];
 function hideOwn(n, keep) {   // the code meshes of one moving part (not the parts hanging from it)
   if (n.isMesh) { n.userData.codeGeo = n.geometry; n.geometry = EMPTY; n.children.forEach(c => { if (c.userData.outline) c.visible = false; }); return; }
-  n.children.forEach(c => { if (c.isMesh && !keep.has(c)) c.visible = false; });
+  n.children.forEach(c => { if (c.isMesh && !keep.has(c)) { c.visible = false; c.userData.swapped = true; } }); // (Release, v1.08e: swapped, the code part still counts in the solid map, js/solids.ts, so its saved copy matches on the next start)
+}
+// (owner, 6 Nov 2026 AEDT: "stylised real") each kind of surface its own look: glossy paint, matte rubber and seats,
+// shiny chrome, see-through glass; the colours are in the corners (tools/blender/world-vehicles.py)
+const LOOKS = {
+  paint: { metalness: .15, roughness: .32 }, matte: { metalness: 0, roughness: .82 }, chrome: { metalness: .85, roughness: .22 },
+  glass: { metalness: .3, roughness: .05, transparent: true, opacity: .62, depthWrite: false }, wheel: { metalness: .3, roughness: .55 },
+};
+const looks = new Map<string, THREE.Material>();
+function lookOf(name: string) {
+  const k = LOOKS[name] ? name : 'paint';
+  if (!looks.has(k)) { const m = new THREE.MeshStandardMaterial({ vertexColors: true, ...LOOKS[k] }); m.name = k; m.userData.shared = true; looks.set(k, m); }
+  return looks.get(k);
+}
+export function dress(root) {
+  root.traverse(n => { if (!n.isMesh) return; const k = (n.material && n.material.name) || 'paint'; n.material = lookOf(k); if (k === 'glass') { n.castShadow = false; n.renderOrder = 1; } });
 }
 export function fitModel(v, m) {
+  dress(m.obj);
   const o = v.o, root = m.obj, keep = new Set([o.userData && o.userData.load].filter(Boolean)), _p = new THREE.Vector3();
   root.updateMatrixWorld(true);
   for (const [name, key, i] of POINTS) {   // the named points, in the vehicle's own space
@@ -33,9 +49,7 @@ export function fitModel(v, m) {
   for (const n of parts) {
     const code = /^wheel/.test(n.name) ? v.wheels[+n.name.slice(5)] : o.userData[n.name]; if (!code) continue;
     hideOwn(code, keep); code.add(n); n.position.set(0, 0, 0); n.quaternion.identity(); n.userData.fromModel = true;
-    if (/^wheel/.test(n.name)) outline(n, .008, '#3c3236');
   }
-  outline(root, .012, '#3c3236');   // (the ink line of the toy look, as on the code shapes)
   v.model = m; return v;
 }
 export function wearModel(v, done?: (v) => void) {

@@ -141,6 +141,7 @@ def hair_villager():
         shell(HS, hairline=.1, part=None, sides=-.35, back=-.62, puff=1.03, top_cut=.35)
 
 def body_villager():
+    if V.get('kit'): return body_kit()   # the costume kit (costumes.py)
     b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']; kind, tk = V['kind'], V['top'][0]
     TOP = felt('top', V['top'][1]); BOT = felt('bottom', V['bottom'])
     legs(SKIN if kind in ('shorts', 'skirt') or tk == 'dress' else BOT)
@@ -235,6 +236,7 @@ def shoes(kind, col=None):
 
 HAT_COL = {'straw': '#e3c37c', 'nonla': '#eadbb0', 'cap': '#e2574c', 'beanie': '#6f9fd8', 'crown': '#7fae5e', 'akubra': '#8a6142', 'bucket': '#f2c14e', 'helmet': '#d64b4b'}
 def hat(kind, col=None):
+    if kind in globals().get('KIT_HATS', ()): return kit_hat(kind, col)   # the costume kit's headwear (costumes.py)
     k = R * {'lumi': 1.2, 'clara': 1.12, 'sol': 1.08, 'finn': 1.2}.get(WHO, 1.24)   # bigger hair needs a bigger hat
     # (v1.08e villagers, owner: "the hats don't fit the head") a villager's hat sits down over the hair, not perched on top
     top = HC + Vector((0, .02 * R, (.55 + {'lumi': .32, 'clara': .12, 'sol': .1, 'finn': .32}.get(WHO, -.12)) * R)); M = felt('hat' + kind + (col or ''), col or HAT_COL[kind], .85, .1)
@@ -371,7 +373,7 @@ def wear():
         sk, _, sc = WEAR['shoes'].partition('/'); group('shoes', lambda: shoes(sk, ('#' + sc) if sc else None))
     if WEAR.get('hat'):
         hk, _, hc = WEAR['hat'].partition('/'); group('hat', lambda: hat(hk, ('#' + hc) if hc else None))
-        if hk != 'crown':   # no hair poking out of the hat: hair on the crown of the head goes, the hat covers it
+        if hk != 'crown' and hk not in globals().get('KIT_OPEN', ()):   # no hair poking out of the hat: hair on the crown of the head goes, the hat covers it
             for o in [o for o in bpy.data.collections['hair'].objects if o.type == 'MESH' and o.name.split('.')[0] in ('hairLeaf', 'hairClump', 'hairLobe', 'hairCurl', 'hairLock', 'hairPuff', 'sprout', 'sproutStem', 'hairStar', 'starLeaf', 'sproutLeaf')]:
                 c = o.matrix_world @ (sum((Vector(b) for b in o.bound_box), Vector()) / 8)
                 if c.z > HC.z + .45 * R: bpy.data.objects.remove(o)

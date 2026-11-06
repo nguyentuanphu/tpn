@@ -1189,6 +1189,12 @@ body.biggertext .hud .dock .dk small, body.biggertext .hud .mv small { font-size
 body.biggertext .hud .q-text { font-size: 1.3em; }
 body.biggertext .caption { font-size: clamp(21px, 5.4vw, 27px); }
 .seg.tsize button { min-width: 64px; font-weight: 700; }
+/* (v1.08f, owner 6 Nov: "make it one line") Two players, Fit the screen and Money: the three choices share one row on every
+   screen; each button shrinks and its words wrap inside it, never under the others; still 44 px or more tall */
+.seg.row3 { display: flex; flex-wrap: nowrap; width: 100%; max-width: 560px; box-sizing: border-box; }
+.seg.row3 button { flex: 1 1 0; min-width: 0; min-height: 48px; padding: 8px 6px; line-height: 1.15; white-space: normal; overflow-wrap: break-word; hyphens: manual; font-size: clamp(13px, 3.6vw, 16px); text-align: center; }
+.seg.row3 button .flagi { display: inline-block; width: 22px; height: 15px; margin-right: 4px; vertical-align: -2px; }
+.seg.row3 button .flagi > * { display: block; width: 100%; height: 100%; margin: 0; }
 
 /* ---------- Round 20: easier to see and reach ---------- */
 /* the action button sits in the middle above the dock, big and glowing, so it is easy to spot */
@@ -1304,6 +1310,13 @@ body.calm .hud .act { animation: actIn .25s ease; }
 @media (prefers-reduced-motion: reduce) { .film-help .fh-hand, .film-ring { animation: none; } }
 /* ---------- guide films: the real game plays by itself, with a glowing hand (Kid UI, 10 Oct) ---------- */
 .th-film[hidden] { display: none; }
+.th-video { object-fit: cover; background: #1d2a3a; }
+.th-stage.drawn .th-bg { overflow: hidden; }
+/* the whole drawn page shows on any screen (an upright phone too); the same picture, blurred, fills the space round it */
+.th-pic, .th-pic-fill { position: absolute; inset: 0; width: 100%; height: 100%; }
+.th-pic { object-fit: contain; }
+@media (orientation: portrait) { .th-pic { width: 150%; left: -25%; } }   /* an upright screen: bigger, only the outer sixth of each side cut */
+.th-pic-fill { object-fit: cover; filter: blur(14px) brightness(.9); transform: scale(1.1); }
 .howto.film .ht-screen.demo { aspect-ratio: auto; height: min(60vh, 560px); max-height: none; background: linear-gradient(180deg, #8fd8ff 0%, #c8ecff 45%, #fde8ff 100%); }
 .ht-demo { position: absolute; inset: 0; display: flex; flex-direction: column; color: var(--text); }
 .ht-demo .gl-help { font-size: clamp(15px, 2.4vw, 20px); padding: 6px 12px 0; min-height: 1.3em; }
@@ -3559,17 +3572,100 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
 .lumi-card .lumi-face svg { width: 64px; height: 64px; display: block; }
 .lumi-card p { margin: 0; } .lumi-card b { color: #3f8f4e; margin-right: 4px; }
 .rt-moon svg { width: 96px; height: 96px; } .rt-zz svg { width: 48px; height: 48px; }
-/* (v1.08b fivescreens) the folk games on a sideways phone: the field on the left, the words, the buttons and the rules on the right */
-@media (orientation: landscape) and (max-height: 520px) {
-  .gl .folk-court { width: 100%; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; }
-  .gl .folk-court > .folk-field { grid-column: 1; grid-row: 1 / span 3; height: min(330px, 84dvh); }
+/* (v1.08b fivescreens) the folk games on a landscape screen (a sideways phone, a tablet held sideways): the field on the
+   left, the words, the buttons and the rules on the right */
+@media (orientation: landscape) and (min-aspect-ratio: 5/4) {
+  .gl .folk-court { width: 100%; max-width: 1100px; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; }
+  .gl .folk-court > .folk-field { grid-column: 1; grid-row: 1 / span 3; height: min(460px, calc(100dvh - 60px)); }
   .gl .folk-court > :not(.folk-field):not(style) { grid-column: 2; }
+  .gl .folk-court { grid-template-rows: repeat(6, auto); align-content: center; gap: 6px 12px; }
+  .gl .folk-court { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
+  .gl .folk-court > .folk-field { grid-row: 1 / span 6; }
+}
+/* the little board games (mini chess, Cờ tướng nhỏ): the board on the left, the title, the round and the words beside it */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .tk2-wrap { grid-template-columns: auto minmax(0, 1fr); grid-template-rows: repeat(4, auto); align-content: center; align-items: center; gap: 6px 14px; }
+  .gl .tk2-wrap > .tk2-board { grid-column: 1; grid-row: 1 / span 4; }
+  .gl .tk2-wrap > :not(.tk2-board):not(style) { grid-column: 2; }
+  /* Đi chợ đếm quả: the basket and the stall on the left, the sign and the buttons on the right */
+  .gl .mc-round { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; justify-items: center; gap: 8px 12px; }
+  .gl .mc-round > .mc-basket { grid-column: 1; grid-row: 1; max-width: 100%; }
+  .gl .mc-round > .mc-stall { grid-column: 1; grid-row: 2; max-width: 100%; }
+  .gl .mc-round > .mc-sign { grid-column: 2; grid-row: 1; }
+  .gl .mc-round > .sf-tools { grid-column: 2; grid-row: 2; flex-direction: column; }
 }
 /* (v1.08b fivescreens, UI rule: touch targets 44 px, 64 px for under-5s) every button a child taps in a game is at least a
    finger's size, as drawn before the frame's zoom (which never shrinks one below it: js/games/frame.ts); the pick-up
    sticks keep their thin sticks */
-.gl .gl-stage :is(button, [role=button]):not(.ch-stick) { min-width: 44px; min-height: 44px; }
-.gl.little .gl-stage :is(button, [role=button]):not(.ch-stick) { min-width: 64px; min-height: 64px; }
+/* (above a game's own smaller sizes, also ones set on the button itself; the games that ask 64 px for everyone, the folk
+   games, Bịt mắt bắt dê and Cờ cá ngựa, keep it) */
+.gl .gl-stage :is(button, [role=button]):not(.ch-stick) { min-width: 44px !important; min-height: 44px !important; }
+.gl.little .gl-stage :is(button, [role=button]):not(.ch-stick),
+.gl .gl-stage :is(.folk-court, .goat-circle-game, .horse-race) :is(button, [role=button]) { min-width: 64px !important; min-height: 64px !important; }
 /* the science boards on a landscape screen: the answers stand side by side, also an under-5's bigger ones */
 @media (orientation: landscape) and (min-height: 521px) { .gl .sx-board > .sx-controls { width: auto !important; min-width: min(380px, 92vw); max-width: 92vw; } }
 .lr-row small, .pt-row small { font-size: 16px; }
+/* (v1.08b fivescreens) the outside and nature games' fields keep the room their pieces are placed in (up to about 250 px
+   down) on a short landscape screen, instead of half the screen's height */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .out-stage, .gl .n2-stage { height: 270px; }
+}
+/* (v1.08b fivescreens batch 2) on a short landscape screen (a sideways phone) the boards that stood one under the other
+   stand side by side: the picture or the board on the left, the words and the buttons on the right */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .tk2-wrap > .tk2-pipes { grid-column: 1; grid-row: 1 / span 4; }
+  .gl .tk2-wrap > :not(.tk2-board):not(.tk2-pipes):not(style) { grid-column: 2; }
+  /* Bịt mắt bắt dê: the scene, the round and the cue on the left, the buttons on the right */
+  .gl .goat-circle-game { width: 100%; grid-template-columns: auto auto; align-content: center; align-items: center; justify-content: center; column-gap: 16px; }
+  .gl .goat-circle-game > :not(.goat-controls):not(style) { grid-column: 1; }
+  .gl .goat-circle-game > .goat-controls { grid-column: 2; grid-row: 1 / span 3; flex-wrap: wrap; max-width: 300px; }
+  /* Cờ cá ngựa: the board on the left as high as the screen, the players, the words and the buttons on the right */
+  .gl .horse-race { width: 100%; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 6px 14px; }
+  .gl .horse-race > .horse-board { grid-column: 1; grid-row: 1 / span 6; width: min(330px, calc(100dvh - 70px)); }
+  .gl .horse-race > :not(.horse-board):not(style) { grid-column: 2; }
+  .gl .horse-race { grid-template-rows: repeat(5, auto) 1fr; align-content: center; }
+  .gl .horse-race > .horse-roster { grid-row: 1; } .gl .horse-race > .horse-status { grid-row: 2; } .gl .horse-race > .horse-actions { grid-row: 3; }
+  .gl .horse-race > .horse-moves { grid-row: 4; } .gl .horse-race > .horse-wait { grid-row: 5; } .gl .horse-race > .horse-rules-box { grid-row: 6; }
+  /* Trồng nụ trồng hoa: the picture on the left, the title, the level, the words and the button on the right */
+  .gl .tn-game { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 6px 14px; }
+  .gl .tn-game > .tn-picture { grid-column: 1; grid-row: 1 / span 6; }
+  .gl .tn-game > :not(.tn-picture):not(style) { grid-column: 2; justify-self: center; }
+  /* Tiến lên: the cards on the left, the buttons in a column on the right */
+  .gl .tl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; align-items: center; justify-items: center; }
+  .gl .tl > :not(.tl-btns):not(.tl-fly) { grid-column: 1; }
+  .gl .tl > .tl-btns { grid-column: 2; grid-row: 1 / span 4; flex-direction: column; }
+  /* Rangoli: the grid on the left, the tip and the colours on the right */
+  .gl .gl-stage:has(> .rg-grid) { display: grid; grid-template-columns: auto minmax(0, 260px); align-content: center; justify-content: center; gap: 8px 14px; }
+  .gl .gl-stage > .rg-grid { grid-column: 1; grid-row: 1 / span 2; }
+  .gl .gl-stage:has(> .rg-grid) > :not(.rg-grid) { grid-column: 2; }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl > .gl-stage { padding: 3px 6px; }
+  .gl .horse-race { gap: 4px 14px; padding: 2px 6px; }
+  .gl .horse-race .horse-player { padding: 2px 6px !important; line-height: 1.2; }
+  .gl .tl { gap: 4px 10px; padding: 6px 8px 8px; }
+  .gl .tl-table { min-height: 72px; padding: 4px; }
+}
+/* Đánh chuyền: each stick stays thin as drawn, but a finger's width can tap it (clear room either side) */
+.gl .ch-stick { box-sizing: content-box; padding: 0 11px; background-clip: content-box; box-shadow: none; filter: drop-shadow(0 4px 3px rgba(0, 0, 0, .2)); }
+.gl.little .ch-stick { padding: 0 21px; }
+/* (v1.08b fivescreens) a question and its row of answers (the frame's .choices) on a sideways phone: the question on the
+   left, the answers beside it (in two rows when they need to), so a long question never pushes them off the screen */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) { flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center; }
+  .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > * { flex-shrink: 1; min-width: 0; max-height: 100%; }
+  .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > .choices { flex-wrap: wrap; max-width: 62%; justify-content: center; }
+}
+.gl .ch-stick { transform: translateY(var(--y)) rotate(calc(var(--r) * .6)); }
+@media (max-width: 520px) { .gl .ch-stick { transform: translateY(var(--y)) rotate(calc(var(--r) * .25)); } }
+@media (orientation: landscape) and (max-height: 520px) { .gl .horse-race > .horse-rules-box { padding-top: 0; padding-bottom: 0; } .gl .horse-race .horse-status { margin: 0; } }
+/* (v1.08b fivescreens) on a phone held upright: the little board games never wider than the screen, the folk games' field a
+   little lower so the words, the 64 px buttons and the rules fit under it */
+.gl .tk2-wrap { max-width: 100%; box-sizing: border-box; }
+.gl .tk2-wrap .tk2-seats, .gl .tk2-wrap .tk2-choices { max-width: 100%; box-sizing: border-box; }
+.gl .tk2-wrap .tk2-seats { width: min(100%, 430px); }
+@media (orientation: portrait) and (max-width: 500px) { .gl .folk-court > .folk-field { height: clamp(200px, 33dvh, 320px); } }
+@media (orientation: landscape) and (max-height: 520px) { .gl .folk-court { gap: 3px 12px; padding: 2px 6px; } .gl .folk-court > p { margin: 0; } .gl .folk-court .folk-readout { min-height: 0; } }
+/* (v1.08b fivescreens) Từ Ngữ Hai Quê on a sideways phone: the word card a little more compact, so a long example sentence
+   still leaves room for an under-5's 64 px answers */
+@media (orientation: landscape) and (max-height: 520px) { .gl .wq { padding: 8px 16px; gap: 2px; } .gl .wq-flag { font-size: 26px; } .gl .wq-flag .art { width: 40px; height: 40px; } }

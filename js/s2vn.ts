@@ -9,7 +9,7 @@
 // Its 3D area (the landmark, the friend, the seller's stall, the game stands, a sign and the bus stop's post) is built
 // only when a child comes within 140 m or the story needs it (ensureRegion): the regions load when visited.
 // Everything stands on open ground: off the roads and the water, clear of other solids (the chapter kit's rule).
-import { THREE, P, merge, toonVC, sprite, outline } from './gfx.js';
+import { THREE, P, merge, toonVC, sprite, outline, worldTag } from './gfx.js';
 import { T } from './i18n.js';
 import { say } from './voice.js';
 import { SFX } from './audio.js';
@@ -28,7 +28,7 @@ import './art/s2vn.js';
 
 const NEAR = 140;
 /** is the region open today (its calendar day, a tester's early days, or Studio's peek)? */
-export const regionOpen = (r: S2Region, now = new Date()) => calOpen('feature:' + r.key, calMoves(), now, earlyDays()) || isPeek(r.key);
+export const regionOpen = (r: S2Region, now = new Date()) => calOpen('feature:' + r.key, calMoves(), now, earlyDays()) || isPeek(`s2_${r.id}`); // (its key is s2_<id>: a Studio card each, js/content/releases.ts)
 
 type Built = { r: S2Region; stop: { x: number; z: number } | null; parts: THREE.Object3D[]; spots: Record<string, { x: number; z: number }> };
 const opened = new Map<string, { stop: { x: number; z: number } | null }>(), built = new Map<string, Built>();
@@ -113,14 +113,14 @@ function marketBoats(G, r: S2Region) {
   const cols = [['#ffd23f', '#5fd36a', '#ff9f43'], ['#e8433a', '#ffd23f', '#ff7eb8'], ['#5fd36a', '#ffd23f', '#3cc7e8'], ['#ff9f43', '#e8433a', '#5fd36a']];
   let k = 0;
   for (let i = 0; i < 40 && out.length < 4; i++) {
-    const x = r.at[0] - 16 + (i % 8) * 4.6, z = r.at[1] + 20 + Math.floor(i / 8) * 3.2; if (heightAt(x, z) > WATER - .6) continue;
+    const x = r.at[0] - 16 + (i % 8) * 4.6, z = r.at[1] + 20 + Math.floor(i / 8) * 3.2; if (heightAt(x, z) > WATER - .35) continue; /* (v1.08e water: 0.6 m of the old depth) */
     const m = new THREE.Mesh(merge(r.id === 'halong' ? junkParts() : boatParts(cols[k++ % cols.length])), toonVC()); m.position.set(x, WATER + .05, z); m.rotation.y = i * .7; m.userData.noSolid = true; m.userData.bob = i; G.scene.add(m); out.push(m);
   }
   return out;
 }
 
 // the sea in front of a region (south of it), and the open shore facing it
-function seaSpot(r: S2Region) { for (let d = r.r; d < r.r + 30; d += 1) for (const dx of [0, -4, 4, -8, 8]) { const x = r.at[0] + dx, z = r.at[1] + d; if (heightAt(x, z) < WATER - 1.2) return { x, z: z + 3 }; } return null; }
+function seaSpot(r: S2Region) { for (let d = r.r; d < r.r + 30; d += 1) for (const dx of [0, -4, 4, -8, 8]) { const x = r.at[0] + dx, z = r.at[1] + d; if (heightAt(x, z) < WATER - .58) return { x, z: z + 3 }; /* (v1.08e water: 1.2 m of the old depth) */ } return null; }
 function shoreSpot(G, r: S2Region, wet: { x: number; z: number }) { for (let d = 6; d < 30; d += 1) { const x = wet.x + (r.at[0] - wet.x) * d / 30, z = wet.z + (r.at[1] - wet.z) * d / 30; if (heightAt(x, z) > WATER + .5 && freeAt(G, x, z, 1.2)) return { x, z }; } return openSpot(G, r.at[0], r.at[1] + 4, 1.2, 8); }
 
 // ---------- building a region's area (once) ----------
@@ -133,7 +133,7 @@ export function ensureRegion(G, id: string) {
   // the landmark, toward the water side of the area
   // (Hạ Long's rocks stand out in the sea when there is sea near: then the sign is on the shore in front of them)
   const M = MODELS[r.id] && MODELS[r.id](), wet = r.id === 'halong' ? seaSpot(r) : null, lm = wet ? shoreSpot(G, r, wet) : openSpot(G, cx, cz + 4, 5.8, 8);
-  if (M) { const mesh = new THREE.Mesh(merge(M.parts), toonVC()); mesh.castShadow = true; if (wet) { mesh.position.set(wet.x, WATER - .3, wet.z); scene.add(mesh); parts.push(mesh); } else add(mesh, lm.x, lm.z); outline(mesh, .03, '#4a3a3f');
+  if (M) { const mesh = new THREE.Mesh(merge(M.parts), toonVC()); mesh.castShadow = true; if (wet) { mesh.position.set(wet.x, WATER - .3, wet.z); scene.add(mesh); parts.push(mesh); } else add(mesh, lm.x, lm.z); outline(mesh, .03, '#4a3a3f'); worldTag(mesh, 'lm-s2-' + r.id, { outline: [.03, '#4a3a3f'] });
     if (!wet) for (const [dx, dz, rr] of M.solid) world.colliders.push({ x: lm.x + dx, z: lm.z + dz, r: rr }); }
   spots.landmark = lm;
   G.interactables.push({ id: 's2_lm_' + r.id, x: lm.x, z: lm.z - (wet ? 0 : 3.2), r: 3, icon: r.landmark.icon, bubble: 'ℹ️', label: () => T(r.landmark.name[0], r.landmark.name[1]),

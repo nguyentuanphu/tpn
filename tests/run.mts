@@ -76,6 +76,9 @@ await check('chapter8', async () => (await import('./story-v108b.mts')).chapterK
 await check('chapter9', async () => (await import('./story-v108b.mts')).chapterKitCheck(b, 'ch9'));
 await check('talecostume', async () => (await import('./story-v108b.mts')).taleCostumeCheck());
 await check('installgift', async () => (await import('./story-v108b.mts')).installGiftCheck(b));
+// (v1.08c blender) the five Blender films and the story pages drawn in Blender (tests/story-v108c.mts)
+await check('blenderfilms', async () => (await import('./story-v108c.mts')).blenderFilmsCheck(b));
+await check('storypics', async () => (await import('./story-v108c.mts')).storyPicsCheck(b));
 
 // (v1.08d s2au) Season 2, Australia: the regions, their games and chapters (tests/s2au.mts)
 await check('s2au', async () => (await import('./s2au.mts')).s2auCheck(b));
@@ -105,6 +108,21 @@ await check('worldcreatures', async () => (await import('./world-creatures.mts')
 // happy, surprised and sad show, and the eyes turn to a child to one side (tests/faces.mts)
 await check('faces', async () => (await import('./faces.mts')).facesCheck(b));
 
+// (v1.08e water, owner 6 Nov 2026 AEDT) every river, lake, pond and the sea knee to waist deep: a child walks into each and
+// out again, wading, never swimming or sinking, the camera above the water (tests/wading.mts)
+await check('wading', async () => (await import('./wading.mts')).wadingCheck(b));
+// (v1.08e nature) the trees, flowers, reeds, crops, farm props and My House decorations from Blender near the child: every
+// model loads, sizes and ground match the code shapes, draws within perf's limits, crops' stages, blocked models (tests/world-nature.mts)
+await check('worldnature', async () => (await import('./world-nature.mts')).worldNatureCheck(b));
+// (v1.08e places) the landmarks, bridges and buildings remade in Blender stand where their code shapes stood (tests/world-places.mts)
+await check('worldplaces', async () => (await import('./world-places.mts')).worldPlacesCheck(b));
+
+// (v1.08f settings) Grown-ups: Two players, Fit the screen and Money on one row at 390 px in EN and VI; tapping a choice
+// keeps the scroll; captions off on a fresh start; no AI chat offer; no TURN relay (tests/grownups-row.mts)
+await check('grownupsrow', async () => (await import('./grownups-row.mts')).grownupsRowCheck(b));
+// (v1.08f settings item 6) the ladybird's Try again goes back to the broken thing: a game at its level, a screen on its
+// tab, a quest step, a thing faced and ringed, a place with a note; new reports save it (tests/tester-tryagain.mts)
+await check('testertryagain', async () => (await import('./tester-tryagain.mts')).testerTryAgainCheck(b));
 // (v1.08e villagers) the 11 named villagers wear their Blender models near the child: height, ground, blinks, eyes to
 // the child, tags and talk kept, the code person when blocked (tests/villager-models.mts)
 await check('villagermodels', async () => (await import('./villager-models.mts')).villagerModelsCheck(b));

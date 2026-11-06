@@ -29,7 +29,7 @@ export interface Hero {
   fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount; _faceDone?: boolean; _hdTried?: Set<string>;
   safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number; momentT: number; _mom: number;
   easyT?: number; stillT?: number; steerYaw?: number; goal?: { x: number, z: number }; goalT?: number; view?: string; zoom?: number;
-  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean;
+  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; wading?: number; _wadeSfx?: boolean; _wadeT?: number; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean;
   _camFreeT?: number; _camHitRay?: boolean; _camK?: number; _camLift?: number; _lmF?: number; _lm?: { x: number, z: number };
   _houseFront?: { x: number, z: number, rot: number, d: number }; indoors?: unknown; ferry?: unknown;
   carry?: (dt: number, t: number, pad: HeroPad) => CarryResult | void; carryVehicle?: RideVehicle;
@@ -162,6 +162,14 @@ export class Hero {
       if (this.gliding) { speed = GLIDE; this.vy = Math.max(this.vy - GRAV * dt, -2.2); this.useStamina(dt * .1); want = 'glide'; if (mag < .05) { mx = Math.sin(this.yaw); mz = Math.cos(this.yaw); } }
       else this.vy -= GRAV * dt;
       if (!this.onGround && !this.gliding) want = 'air'; else if (speed > .3) want = 'walk';
+      // (v1.08e water, owner 6 Nov 2026 AEDT: every river, lake and pond knee to waist deep, "children wade through and
+      // splash") wading: a little slower the deeper it is, splash rings round the legs while walking, a splash going in
+      const wade = this.onGround ? clamp((WATER - ground) / .8, 0, 1) : 0; this.wading = wade;
+      if (wade > .02) {
+        speed *= 1 - .3 * wade;
+        if (!this._wadeSfx) { SFX.splash(); this._wadeSfx = true; this._wadeT = 0; }
+        if (speed > .3 && (this._wadeT = (this._wadeT || 0) - dt) <= 0) { this._wadeT = .3; W.splash?.(p.x, p.z, .45 + wade * .45); }
+      } else this._wadeSfx = false;
     }
     if (mag > .05 && !this.gliding) this.yaw = angleLerp(this.yaw, Math.atan2(mx, mz), Math.min(1, dt * 12));
     if (this.gliding) this.yaw = angleLerp(this.yaw, Math.atan2(mx, mz), Math.min(1, dt * 3));
@@ -318,7 +326,7 @@ export class Hero {
     // on a boat the camera stays under a bridge's deck (it used to jump on top of the deck: nothing to see)
     let gy;
     if (this.ferry) { gy = Math.max(WATER, heightAt(want.x, want.z)) + .7; for (const pl of this.world.platforms) if (pl.y > target.y + 1.5 && want.x > pl.x0 - 1 && want.x < pl.x1 + 1 && want.z > pl.z0 - 1 && want.z < pl.z1 + 1) want.y = Math.min(want.y, pl.y - .8); }
-    else gy = this.world.groundAt(want.x, want.z) + .7;
+    else gy = Math.max(this.world.groundAt(want.x, want.z), WATER) + .7;   // (v1.08e water) the camera never goes under the water
     if (this.riding && this.riding.swims) gy = Math.max(gy, WATER + .7);   // (a swimming buffalo or cow: the camera stays above the water)
     if (want.y < gy) want.y = gy;
     // (Round V, owner 13 Oct: "the camera angle should be point of view") riding an animal or a vehicle, or sitting in a bus,

@@ -9,7 +9,7 @@
 // - Many copies of one thing (trees, flowers, crops): worldModelParts(name) gives its geometry and material for one
 //   InstancedMesh, the way the code trees are drawn today.
 // Nothing here is in the first download: js/main.ts loads it after the start (check startup).
-import { THREE } from './gfx.js';
+import { THREE, WORLD_TAGS, outline } from './gfx.js';
 
 type Template = { scene: THREE.Object3D, clips: THREE.AnimationClip[] };
 export type WorldModel = { obj: THREE.Object3D, play: (clip: string, fade?: number) => void, stop: () => void };
@@ -102,5 +102,16 @@ export function tickWorldModels(dt: number) { for (const m of mixers) m.update(d
 /** js/main.ts: start the kit after the start */
 export function startWorldModels(G: { heroes: { pos: { x: number, z: number } }[], world?: { updaters: ((dt: number) => void)[] } }, updaters: ((dt: number) => void)[]) {
   let acc = 0;
-  updaters.push(dt => { tickWorldModels(dt); acc += dt; if (acc < .25) return; acc = 0; if (G.heroes.length) wakeWorldModels(G.heroes.map(h => h.pos), 70, 3); });
+  updaters.push(dt => { tickWorldModels(dt); acc += dt; if (acc < .25) return; acc = 0; adoptWorldTags(); if (G.heroes.length) wakeWorldModels(G.heroes.map(h => h.pos), 70, 3); });
+}
+// (v1.08e places, a small kit change for Release) the code shapes tagged with worldTag (js/gfx.ts) wait for their model
+// like modelFor; the model gets the code shape's outline, and the code shape's own children (opts.carry) move onto it
+export function adoptWorldTags() {
+  for (const [obj, name, opts] of WORLD_TAGS.splice(0)) modelFor(obj, name, opts, m => {
+    if (!m) return; const fb = obj as THREE.Object3D;
+    if (opts.outline) outline(m.obj, opts.outline[0], opts.outline[1]);
+    if (opts.carry) for (const c of fb.children.slice()) if (!c.userData.outline) { c.userData.carried = true; m.obj.add(c); }
+    m.obj.userData.worldTag = name; m.obj.userData.noSolid = true;   // (the solid map keeps the code shape: js/solids.ts)
+    for (const k of ['walk', 'noCam']) if (fb.userData[k]) m.obj.userData[k] = fb.userData[k];
+  });
 }

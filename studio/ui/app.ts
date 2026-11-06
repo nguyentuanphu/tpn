@@ -730,7 +730,7 @@ PAGES.path = async P => {
   const tags = id => { const g = info(id); return `${g.little ? `<span class="pill">🧒 ${T('Under 5', 'Dưới 5 tuổi')}</span>` : ''}${g.hide ? `<span class="pill">🙈 ${T('Hidden', 'Đã ẩn')}</span>` : ''}${g.changed ? ` <span class="sub">(${T('changed', 'đã đổi')}; ${T('usual', 'mặc định')}: ${g.base[1] < 5 ? '✓' : '✗'})</span>` : ''}`; };
   const row = id => { const g = info(id);
     return `<tr data-id="${id}"><td><button type="button" class="gopen" aria-expanded="false"><span class="gn">${GAMES[id].icon} ${esc(nm(GAMES[id].name))}</span><span class="gtags">${tags(id)}</span><span class="gv">▾</span></button>
-      <div class="gpanel" hidden><label>${T('Group', 'Nhóm')}<select data-f="area" data-nodirty>${A.AREAS.map(b => `<option value="${b.key}" ${g.area === b.key ? 'selected' : ''}>${b.icon} ${esc(nm(b.name))}</option>`).join('')}</select></label>
+      <div class="gpanel" hidden><label>${T('Group', 'Nhóm')}<select data-f="area" data-nodirty>${A.AREAS.map(b => `<option value="${b.key}" ${g.area === b.key ? 'selected' : ''}>${/^[a-z0-9]+:/.test(b.icon) ? '' : b.icon + ' '}${esc(nm(b.name))}</option>`).join('')}</select></label>
         <label class="chk"><input type="checkbox" data-f="little" ${g.little ? 'checked' : ''}> ${T('Under 5', 'Dưới 5 tuổi')}</label>
         <label class="chk"><input type="checkbox" data-f="hide" ${g.hide ? 'checked' : ''}> ${T('Hide', 'Ẩn')}</label></div></td></tr>`; };
   const count = () => P.querySelectorAll('.card[data-area]').forEach(c => { c.querySelector('.gcount').textContent = `(${c.querySelectorAll('tr[data-id]').length})`; });
@@ -923,7 +923,9 @@ PAGES.releases = P => drawReleases(P, false);
 PAGES.lab = P => drawReleases(P, true);
 async function drawReleases(P, lab) {
   const myDraw = P.dataset.draw = String((+P.dataset.draw || 0) + 1), stale = () => P.dataset.draw !== myDraw || cur !== (lab ? 'lab' : 'releases');
-  const [{ RELEASES, RELEASE_GROUPS }, live, {festivalSwitchedOn}] = await Promise.all([import(GAME + 'js/content/releases.js'), loadLive(),import(GAME+'js/content/festival-visibility.js')]);
+  const [{ RELEASES, RELEASE_GROUPS, addFilmSwitches }, live, {festivalSwitchedOn}] = await Promise.all([import(GAME + 'js/content/releases.js'), loadLive(),import(GAME+'js/content/festival-visibility.js')]);
+  // (v1.08f films) a "Blender film for everyone" switch for every listed Blender film (js/content/releases.ts addFilmSwitches)
+  await import(GAME + 'js/content/blenderfilms.js').then(B => addFilmSwitches(B.BLENDER_FILMS)).catch(() => { });
   if (stale()) return;
   const R = live.releases || {}, inScope = x => lab === ['tester', 'autoplay'].includes(x.id);
   const isOn = x => { const r = R[x.id] || {};if(x.id.startsWith('fest_'))return festivalSwitchedOn(live.festivals?.[x.id.slice(5)],r); if (x.id === 'wayfind' && r.controlVersion !== 1) return false; return typeof r.on === 'boolean' ? r.on : x.def; };

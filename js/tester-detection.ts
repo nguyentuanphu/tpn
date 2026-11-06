@@ -10,6 +10,11 @@ export function unreachableControl(control: Element, top: Element | null = null)
   if (top && !top.contains(control)) return false; // a covered/background panel
   const doc = control.ownerDocument, view = doc.defaultView;
   if (!view || !control.getClientRects().length) return false;
+  // (v1.08f, #810 #814 #817) a button in a folded <details> (outside its summary) is not shown: Chrome still lays it out
+  // below the summary, so with a long folded list its box can lie past the bottom of the screen, yet nobody can see or
+  // tap it until the list is opened (and then the panel scrolls to it). Not a lost control.
+  const folded = control.closest('details:not([open])'), summary = control.closest('summary');
+  if (folded && summary?.parentElement !== folded) return false;
   const rect = control.getBoundingClientRect(), vv = view.visualViewport;
   const left = vv?.offsetLeft || 0, upper = vv?.offsetTop || 0;
   const right = left + (vv?.width || view.innerWidth), bottom = upper + (vv?.height || view.innerHeight);

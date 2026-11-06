@@ -75,6 +75,7 @@ marketing/source/runvalley.log
 /js/audio.js
 /js/autoplay.js
 /js/avatar.js
+/js/blenderfilm.js
 /js/boxes.js
 /js/build.js
 /js/cartoon.js
@@ -89,6 +90,7 @@ marketing/source/runvalley.log
 /js/content/activities.js
 /js/content/adventures.js
 /js/content/autoplay.js
+/js/content/blenderfilms.js
 /js/content/boxes.js
 /js/content/build-types.js
 /js/content/chapter10.js
@@ -124,6 +126,7 @@ marketing/source/runvalley.log
 /js/content/festival-visibility.js
 /js/content/festseason.js
 /js/content/film-looks.js
+/js/content/films-for-all.js
 /js/content/films.js
 /js/content/films/baluoiriu.js
 /js/content/films/birdcolours.js
@@ -196,6 +199,7 @@ marketing/source/runvalley.log
 /js/content/songs.js
 /js/content/stickers.js
 /js/content/storyhelp.js
+/js/content/storypics.js
 /js/content/subjects.js
 /js/content/surprises.js
 /js/content/talefilms.js
@@ -235,7 +239,9 @@ marketing/source/runvalley.log
 /js/festhunt.js
 /js/festival-live.js
 /js/festivals.js
+/js/film-costume.js
 /js/film.js
+/js/filmpack.js
 /js/folkshow.js
 /js/friend-model.js
 /js/friend-view.js
@@ -400,6 +406,7 @@ marketing/source/runvalley.log
 /js/money.js
 /js/myhouse.js
 /js/nametags.js
+/js/nature-tag.js
 /js/net.js
 /js/netgames.js
 /js/netmsg.js
@@ -455,6 +462,7 @@ marketing/source/runvalley.log
 /js/stickerfx.js
 /js/stickers.js
 /js/story.js
+/js/storypics.js
 /js/studio-position.js
 /js/suburbs.js
 /js/surprises.js
@@ -502,11 +510,13 @@ marketing/source/runvalley.log
 /js/voice.js
 /js/voicepack.js
 /js/voicestore.js
+/js/wading.js
 /js/wayfind.js
 /js/weather.js
 /js/website.js
 /js/words.js
 /js/words2.js
+/js/world-nature.js
 /js/world.js
 /js/world/ground.js
 /js/world/paint.js
@@ -683,3 +693,5 @@ js/voice-fragments.js
 /temp/hanoi-originals-*/
 /js/yard.js
 /js/vehicles.js
+models/world/raw/
+/docs/characters-v108/costumes/_tmp/

@@ -30,9 +30,11 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
   const cand: { o: THREE.Mesh; m0: THREE.Matrix4 }[] = [];
   scene.updateMatrixWorld(true);
   scene.traverse(o => {
-    if (!(o instanceof THREE.Mesh) || !o.visible || o === W.terrain || o.userData.outline || boats.has(o) || skipTree(o)) return;
+    // (v1.08e places) a code shape that a Blender model has taken over stays in the map (the model itself is noSolid)
+    // (Release, v1.08e: check solid) and so does a part of the valley asleep while the child is far away (js/areas.ts)
+    if (!(o instanceof THREE.Mesh) || (!o.visible && !o.userData.model && !o.userData.swapped && !o.userData.areaAsleep) || o === W.terrain || o.userData.outline || boats.has(o) || skipTree(o)) return;
     const m = o.material; if (!m || (Array.isArray(m) ? m.some(x => x.transparent) : m.transparent)) return; // glass, water, verges, sprites
-    const g = o.geometry; if (!g || !g.attributes.position) return; if (!g.boundingBox) g.computeBoundingBox();
+    const g = (o.userData.codeGeo || o.geometry) as THREE.BufferGeometry; if (!g || !g.attributes.position) return; if (!g.boundingBox) g.computeBoundingBox(); // (v1.08e nature: the code shape, whether or not its Blender model is drawn now, js/world-nature.ts)
     if (o instanceof THREE.InstancedMesh && g.boundingBox.max.y - g.boundingBox.min.y < 1.4) return; // grass and flowers
     // (a placeholder squashed to a point, filled in later or never, blocks nothing; counted, it made the saved map's key
     // depend on whether it was there yet: check solid)
@@ -77,10 +79,10 @@ export function buildSolids(G: SvMain): Promise<SolidStats> {
     const step = () => {
       const s0 = performance.now(), until = s0 + Math.min(120, Math.max(12, lastEnd ? (s0 - lastEnd) * .25 : 12));
       while (oi < still.length && performance.now() < until) {
-        const o = still[oi++], g = o.geometry, pos = g.attributes.position, ix = g.index, count = ix ? ix.count : pos.count;
+        const o = still[oi++], g = (o.userData.codeGeo || o.geometry) as THREE.BufferGeometry, pos = g.attributes.position, ix = g.index, count = ix ? ix.count : pos.count;
         const reps = o instanceof THREE.InstancedMesh ? o.count : 1;
         for (let r = 0; r < reps; r++) {
-          if (o instanceof THREE.InstancedMesh) { o.getMatrixAt(r, mi); m4.multiplyMatrices(o.matrixWorld, mi); } else m4.copy(o.matrixWorld);
+          if (o instanceof THREE.InstancedMesh) { if (o.userData.codeMatrices) mi.fromArray(o.userData.codeMatrices, r * 16); else o.getMatrixAt(r, mi); m4.multiplyMatrices(o.matrixWorld, mi); } else m4.copy(o.matrixWorld); // (v1.08e nature: a copy drawn close up keeps its first place here) (Release, v1.08e: the comment had swallowed the else, so a plain mesh was stamped with the last instance's matrix)
           for (let t = 0; t < count; t += 3) {
             const i0 = ix ? ix.getX(t) : t, i1 = ix ? ix.getX(t + 1) : t + 1, i2 = ix ? ix.getX(t + 2) : t + 2;
             a.fromBufferAttribute(pos, i0).applyMatrix4(m4); b.fromBufferAttribute(pos, i1).applyMatrix4(m4); c.fromBufferAttribute(pos, i2).applyMatrix4(m4);

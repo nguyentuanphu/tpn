@@ -113,7 +113,7 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     // is taller or wider than the playing area, on every screen, so the question, the play picture and every answer fit
     // one screen with no scrolling (at most down to FIT_MIN, and never making a button smaller than a finger)
     const FIT_MIN = .62;
-    const wide = { tried: 0, before: 0 };
+    const wide = { tried: 0, before: 0, round: false };
     const setWide = (kids: Element[], on: boolean) => {
       layer.classList.toggle('gl-wide', on); stage.querySelectorAll('.gl-wide-one').forEach(e => e.classList.remove('gl-wide-one'));
       // (one board of two parts, a picture and its answers, turns into a row; a board of many parts, a card table or a
@@ -125,7 +125,10 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       if (closed || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
       const z = parseFloat(stage.style.zoom) || 1, box = stage.getBoundingClientRect(), kids = [...stage.children].filter(e => e.tagName !== 'STYLE' && e.getBoundingClientRect().height > 0 && !/^(absolute|fixed)$/.test(getComputedStyle(e).position));
       if (!kids.length || !box.width || !box.height) return;
-      const rs = kids.map(e => e.getBoundingClientRect()), w = (Math.max(...rs.map(r => r.right)) - Math.min(...rs.map(r => r.left))) / z, h = (Math.max(...rs.map(r => r.bottom)) - Math.min(...rs.map(r => r.top))) / z;
+      // (v1.08b fivescreens) every button counts too, also one standing outside its board (a floating piece), so no
+      // answer is grown past the edge of the screen
+      const taps = [...stage.querySelectorAll('button, [role=button]')].filter(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return r.width > 2 && r.height > 2 && cs.visibility !== 'hidden' && !e.getAnimations().some(a => a.playState === 'running'); });
+      const rs = [...kids, ...taps].map(e => e.getBoundingClientRect()), w = (Math.max(...rs.map(r => r.right)) - Math.min(...rs.map(r => r.left))) / z, h = (Math.max(...rs.map(r => r.bottom)) - Math.min(...rs.map(r => r.top))) / z;
       if (!w || !h) return;
       // the room inside the stage's padding, at zoom 1
       const cs = getComputedStyle(stage), padX = (parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)) * z, padY = (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) * z;
@@ -133,24 +136,31 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       // (v1.08b quality, owner: "phone landscape is fully playable") on a short landscape screen a game that does not fit
       // tries its picture beside its answers (.gl-wide: the stage, or its one board, in a row); it keeps that only when
       // it fits better than one under the other
-      if (innerWidth > innerHeight && innerHeight <= 520 && !playing) {
+      if (innerWidth > innerHeight && innerHeight <= 520 && (!playing || wide.round)) {
+        wide.round = false;
         if (wide.tried === 0 && room < 1) { wide.tried = 1; wide.before = room; setWide(kids, true); fitSoon(); return; }
         if (wide.tried === 1) { wide.tried = 2; if (room < wide.before - .01) { setWide(kids, false); fitSoon(); return; } }
       }
       // tablets and computers grow to fill (at most 2.4x); (v1.08 layout, owner: "text big and clear") a phone grows a
       // small game too, at most 1.4x
-      const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : 1.4;
+      // (v1.08b fivescreens) a sideways phone grows a game less: the next round's words may be longer
+      const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : innerWidth > innerHeight && innerHeight <= 520 ? 1.15 : 1.4;
       // a shrink keeps every button a finger size: 44 px, 64 px for under-5s (it stops there, at FIT_MIN at most)
       // (v1.08 fixes 2, checks horseplay, folkplay, ownerlearningprogression) each button keeps its own minimum too: a game
       // that asks 64 px for everyone (Cờ Cá Ngựa, the folk games) was shrunk to 44 px for a big kid
       const need = little ? 64 : 44, wants = [...(stage.querySelectorAll('button, [role=button], .choice') as NodeListOf<HTMLElement>)].map(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e), w = r.width / z, h = r.height / z; return w > 2 && h > 2 ? Math.max(need / Math.min(w, h), (parseFloat(cs.minWidth) || 0) / w, (parseFloat(cs.minHeight) || 0) / h) : 0; }).filter(Boolean);
-      const floor = wants.length ? Math.max(FIT_MIN, Math.min(1, Math.max(...wants))) : FIT_MIN;
-      let next = room >= 1 ? Math.min(grow, Math.max(1, room * .9)) : Math.max(floor, room * .98);
+      // (v1.08b fivescreens) with a little room to spare: a button whose words change a moment later (a narrower number)
+      // must not end a pixel under a finger's size
+      const floor = wants.length ? Math.max(FIT_MIN, Math.min(1, Math.max(...wants) * 1.03)) : FIT_MIN;
+      // (v1.08b fivescreens) a short landscape screen grows a game a little less, so its padding and gaps still fit
+      const short = innerWidth > innerHeight && innerHeight <= 520;
+      let next = room >= 1 ? Math.min(grow, Math.max(1, room * (short ? .85 : .9))) : Math.max(floor, room * .98);
       // (v1.08 fixes 2, checks horseplay, folkplay) a button drawn after the last fit (Roll the die, Pull) may now be under a
       // finger at this zoom: go back up to the floor then, even on a shrink-only pass
       if (shrinkOnly && next >= z && z >= floor - .005) return;
       if (z < floor) next = Math.max(next, floor);
-      next = Math.round(next * 100) / 100;
+      // (v1.08b fivescreens) rounded up, so a shrink never takes a button just under a finger's size (43 for 44)
+      next = Math.ceil(next * 100 - 1e-6) / 100;
       if (Math.abs(next - z) > .04 || (next < z && h * z > (box.height - padY) + 1)) { stage.style.zoom = next === 1 ? '' : String(next); fitSoon(true); }
     };
     // (v1.08 layout, owner 3 Nov 2026 AEDT, CLAUDE.md "One screen, big clear text") the words a child reads in a game are
@@ -198,6 +208,8 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     // (small text is raised at once, before the new pieces are drawn, so nothing grows a moment after it appears)
     const fitWatch = new MutationObserver(list => {
       floorText();
+      // (v1.08b fivescreens) a new round on a sideways phone may try the picture beside its answers again
+      if (playing && list.some(m => m.target === stage) && wide.tried === 2 && !layer.classList.contains('gl-wide')) { wide.tried = 0; wide.round = true; }
       if (!playing || list.some(m => m.target === stage)) fitSoon(playing);
     });
     fitWatch.observe(stage, { childList: true, subtree: true });

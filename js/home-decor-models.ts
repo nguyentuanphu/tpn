@@ -1,5 +1,7 @@
 // Original low-poly furnishings for the eight saved decoration slots. No catalogue IDs or prices change.
 import { THREE, P, merge, toonVC, sprite } from './gfx.js';
+import { natureModel } from './nature-tag.js';
+const DECOR_MODELS = new Set(['teddy', 'clock', 'vase', 'lamp', 'sunflower', 'lotus', 'balloons']); // (v1.08e nature: models/world/decor-<key>.glb)
 const FURNISHING_MATERIAL = toonVC(); FURNISHING_MATERIAL.userData.shared = true;
 export function homeDecoration(key: string, icon: string, wall = false) {
   const g = new THREE.Group(), parts: ReturnType<typeof P>[] = [];
@@ -33,5 +35,5 @@ export function homeDecoration(key: string, icon: string, wall = false) {
     // Keepsakes remain the game's own illustrations, mounted as a small crafted display rather than a floating icon.
     box(.9,.12,.55,'#b7885e');box(.08,.65,.08,'#b7885e',0,.4);box(1,.85,.1,'#f6dfb4',0,1.05);picture();
   }
-  const mesh=new THREE.Mesh(merge(parts),FURNISHING_MATERIAL);mesh.userData.roomShape=true;mesh.castShadow=mesh.receiveShadow=true;g.add(mesh);g.userData.homeDecoration=key;return g;
+  const mesh=new THREE.Mesh(merge(parts),FURNISHING_MATERIAL);mesh.userData.roomShape=true;mesh.castShadow=mesh.receiveShadow=true;natureModel(mesh,wall?'decor-frame':DECOR_MODELS.has(key)?'decor-'+key:'decor-keepsake');g.add(mesh);g.userData.homeDecoration=key;return g;
 }

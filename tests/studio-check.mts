@@ -733,7 +733,9 @@ export async function studioCheck(browser, open) {
         // (r81) the reading games are listed too (the game registers them only while the readingTrial switch is on), in the Reading corner
         await names('en'); const rd = await pe.evaluate(() => [...document.querySelectorAll<HTMLInputElement>('tr[data-id^="rd_"]')].map(r => ({ id: r.dataset.id, area: r.querySelector<HTMLInputElement>('[data-f="area"]').value, txt: r.textContent, head: r.closest('.card').querySelector<HTMLInputElement>('h3').textContent })));
         await names('vi'); const rdVi = await pe.evaluate(() => (document.querySelector<HTMLInputElement>('tr[data-id="rd_trace"]') || {}).textContent || '');
-        if (!(rd.length >= 10 && rd.every(r => r.area === 'reading') && /Lantern Letters/.test((rd.find(r => r.id === 'rd_trace') || {}).txt || '') && /reading trial/.test(rd[0].head) && /Đèn Lồng Chữ Cái/.test(rdVi))) bad.push('the Simple screen page does not list the reading games: ' + JSON.stringify({ rd: rd.slice(0, 3), n: rd.length, rdVi }));
+        // (v1.08b games, one home per game) Tone Marks and Vowel Hats (â ê ô) live in Tiếng Việt; every other reading game in the Reading corner
+        const RD_HOME = { rd_tones: 'hv_vi', rd_hats: 'hv_vi' };
+        if (!(rd.filter(r => r.area === 'reading').length >= 10 && Object.keys(RD_HOME).every(id => rd.some(r => r.id === id)) && rd.every(r => r.area === (RD_HOME[r.id] || 'reading')) && /Lantern Letters/.test((rd.find(r => r.id === 'rd_trace') || {}).txt || '') && /reading trial/.test(rd[0].head) && /Đèn Lồng Chữ Cái/.test(rdVi))) bad.push('the Simple screen page does not list the reading games: ' + JSON.stringify({ homes: rd.map(r => r.id + ':' + r.area), head: rd[0] && rd[0].head, rdVi: rdVi.slice(0, 80) }));
         else notes.push(`Simple screen: ${rd.length} reading games listed`);
         // (r85, owner 18 Oct AEDT) no group dropdown on the rows: a game opens its own panel; moving it says "Moved to …" with
         // Undo, and what is on the screen stays where it is (the page does not jump)

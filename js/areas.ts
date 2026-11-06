@@ -16,7 +16,7 @@
 import type { SvMain } from './main.js';
 
 export const NEAR = 150, SLEEP = 170, WAKE = 140;
-type Part = { id: string, x: number, z: number, build: () => unknown, built: boolean, building?: Promise<void>, objects: { o: { visible: boolean }, was: boolean }[], updaters: number[], asleep: boolean, ms?: number };
+type Part = { id: string, x: number, z: number, build: () => unknown, built: boolean, building?: Promise<void>, objects: { o: { visible: boolean, userData?: Record<string, unknown> }, was: boolean }[], updaters: number[], asleep: boolean, ms?: number };
 const parts: Part[] = [];
 let G: SvMain = null, started = false, last: { x: number, z: number } = null, dir = { x: 0, z: 0 }, chain: Promise<unknown> = Promise.resolve();
 const doneWaiters: (() => void)[] = [];
@@ -65,7 +65,9 @@ function wakeSleep(x: number, z: number) {
     const d = Math.hypot(p.x - x, p.z - z), sleep = p.asleep ? d > WAKE : d > SLEEP;
     if (sleep === p.asleep) continue;
     p.asleep = sleep;
-    for (const k of p.objects) { if (sleep) { k.was = k.o.visible; k.o.visible = false; } else k.o.visible = k.was; }
+    // (Release, v1.08e: check solid) a sleeping part's things are marked (those shown when awake), so the solid map counts them as when awake
+    // (js/solids.ts): it is made the same wherever the child stands, and a saved map from an earlier start fits
+    for (const k of p.objects) { if (sleep) { k.was = k.o.visible; k.o.visible = false; } else k.o.visible = k.was; if (k.o.userData) k.o.userData.areaAsleep = sleep && k.was; }
   }
 }
 

@@ -37,16 +37,29 @@ export function P(geo, color, pos = [0, 0, 0], rot = [0, 0, 0], scl = [1, 1, 1])
   const g = (geo.index ? geo.toNonIndexed() : geo.clone()).applyMatrix4(_m);
   return { g, color };
 }
+// (v1.08e places) a code shape that a Blender model (models/world/<name>.glb) takes over when a child comes near:
+// js/modelkit.ts picks this list up after the start (nothing is loaded here). opts: as modelFor, plus outline [width,
+// colour] for the model (the same edge as the code shape) and carry (the code shape's own children, such as a clock face
+// or a turning wheel, move onto the model so they stay seen).
+export const WORLD_TAGS: [any, string, any][] = [];
+export const worldTag = <T>(obj: T, name: string, opts: any = {}): T => { WORLD_TAGS.push([obj, name, opts]); return obj; };
+// a short name for a merged shape (houses, stalls: one model for every copy of the same shape): from its corners and colours
+export function geoKey(g: THREE.BufferGeometry) {
+  let h = 2166136261; const add = (a: ArrayLike<number>) => { for (let i = 0; i < a.length; i++) h = Math.imul(h ^ Math.round(a[i] * 100), 16777619); };
+  add(g.attributes.position.array); if (g.attributes.color) add(g.attributes.color.array);
+  return (h >>> 0).toString(36);
+}
 export function merge(parts) {
   let n = 0; parts.forEach(p => n += p.g.attributes.position.count);
   const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3);
   let o = 0;
   for (const p of parts) {
-    const a = p.g.attributes.position, b = p.g.attributes.normal; _c.set(p.color);
+    // (v1.08e places) a part with no colour keeps the colours in its own corners (a Blender prop: js/festivals.ts)
+    const a = p.g.attributes.position, b = p.g.attributes.normal, vc = p.color == null ? p.g.attributes.color : null; if (!vc) _c.set(p.color);
     for (let i = 0; i < a.count; i++, o++) {
       pos[o * 3] = a.getX(i); pos[o * 3 + 1] = a.getY(i); pos[o * 3 + 2] = a.getZ(i);
       nor[o * 3] = b.getX(i); nor[o * 3 + 1] = b.getY(i); nor[o * 3 + 2] = b.getZ(i);
-      col[o * 3] = _c.r; col[o * 3 + 1] = _c.g; col[o * 3 + 2] = _c.b;
+      if (vc) { col[o * 3] = vc.getX(i); col[o * 3 + 1] = vc.getY(i); col[o * 3 + 2] = vc.getZ(i); } else { col[o * 3] = _c.r; col[o * 3 + 1] = _c.g; col[o * 3 + 2] = _c.b; }
     }
   }
   const g = new THREE.BufferGeometry();

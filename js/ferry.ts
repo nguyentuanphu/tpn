@@ -53,11 +53,11 @@ export function bambooRaft() {
 }
 
 // (v1.08e vehicles) the Blender boats (models/world/boat-ferry.glb, boat-raft.glb from tools/blender/world-vehicles.py):
-// the hull is swapped when a child first comes near (js/modelkit.ts); the signs, the flag, the lantern and the raft's
+// the hull is swapped when a child first comes near (js/modelkit.ts), dressed like the vehicles (js/vehicle-models.ts); the signs, the flag, the lantern and the raft's
 // fading roof stay the code's own. Until the model has arrived, or when it cannot load, the code hull stays.
 function wearBoat(g, name) {
   const hull = g.children[0]; if (!hull) return;
-  import('./modelkit.js').then(K => K.modelFor(hull, name, {}, m => { if (!m) return; m.obj.traverse(o => { o.userData.noCam = true; }); outline(m.obj, .03, name === 'boat-raft' ? '#4a3a2a' : '#2b3a4f'); })).catch(() => { });
+  import('./modelkit.js').then(K => K.modelFor(hull, name, {}, m => { if (!m) return; m.obj.traverse(o => { o.userData.noCam = true; }); import('./vehicle-models.js').then(V => V.dress(m.obj)); })).catch(() => { });
 }
 export function createFerries(G) {
   const { scene, world } = G;
@@ -125,7 +125,7 @@ export function createFerries(G) {
   const cands = [];
   for (let i = 1; i < RIVER.length - 1; i++) for (let t = .1; t < .95; t += .1) {
     const [ax, az] = RIVER[i], [bx, bz] = RIVER[i + 1], x = ax + (bx - ax) * t, z = az + (bz - az) * t;
-    if (bridgeD(x, z) < 34 || Math.hypot(x - LAKE.x, z - LAKE.z) < LAKE.r + 16 || heightAt(x, z) > WATER - .5) continue;
+    if (bridgeD(x, z) < 34 || Math.hypot(x - LAKE.x, z - LAKE.z) < LAKE.r + 16 || heightAt(x, z) > WATER - .29) continue;   /* (v1.08e water: 0.5 m of the old depth) */
     cands.push({ i, x, z, d: nearest(x, z)[1] });
   }
   cands.sort((a, b) => a.d - b.d);
@@ -151,7 +151,7 @@ export function createFerries(G) {
   // ---------- the river raft line: up and down the river, stopping by the towns (passes under both bridges) ----------
   {
     const path = []; for (let i = 1; i < RIVER.length - 1; i++) { const [ax, az] = RIVER[i], [bx, bz] = RIVER[i + 1], L = Math.hypot(bx - ax, bz - az), n = Math.ceil(L / 4); for (let k = 0; k < n; k++) path.push({ x: ax + (bx - ax) * k / n, z: az + (bz - az) * k / n }); }
-    const wet = path.filter(p => heightAt(p.x, p.z) < WATER - .6); path.length = 0; path.push(...wet);
+    const wet = path.filter(p => heightAt(p.x, p.z) < WATER - .35);   // (v1.08e water: 0.6 m of the old depth) path.length = 0; path.push(...wet);
     const under = (x, z) => !!bridgeAt(x, z, 18, 18);
     const stops = [];
     const byRiver = PLACES.map(pl => ({ pl, d: Math.min(...path.map(p => Math.hypot(p.x - pl.x, p.z - pl.z))) })).sort((a, b) => a.d - b.d).map(o => o.pl); // the towns nearest the river first

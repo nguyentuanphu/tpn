@@ -110,6 +110,8 @@ function style() {
 .rd-nav button { border: 0; min-width: 72px; min-height: 72px; border-radius: 24px; background: #5fd36a; color: #fff; font-size: 22px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; box-shadow: 0 5px 0 rgba(0, 0, 0, .2); cursor: pointer; }
 .rd-nav button .art { width: 40px; height: 40px; } .rd-nav .rd-again { background: #9a8cff; }
 .choice.rd-book { width: auto; min-width: clamp(120px, 28vw, 180px); height: auto; min-height: clamp(120px, 28vw, 170px); flex-direction: column; gap: 6px; padding: 10px; font-size: 18px; font-weight: 800; }
+/* (v1.08f, #796) the under-5s' fixed square choice (.gl.little .choice) cut a two-line book title off the card */
+.gl .choice.rd-book { width: auto; height: auto; }
 .rd-mark { font-size: clamp(34px, 8vw, 54px); }
 `));
 }

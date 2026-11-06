@@ -146,8 +146,10 @@ export function createLearning(G) {
     const m = modal('tales', ''), card = m.querySelector('.card'), p = h.profile; p.tales = p.tales || {};
     const close = () => { m.close(); G.paused = false; };
     card.innerHTML = `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>📖 ${T('Story time', 'Giờ kể chuyện')}</h2><p class="sub">${T('Folk tales from Vietnam, Australia, China and India. Tap a picture and Grandma reads it to you!', 'Truyện cổ tích Việt Nam, Úc, Trung Quốc và Ấn Độ. Chạm vào hình, bà sẽ kể cho con nghe!')}</p>
-      <div class="talelib">${G.taleShelfHTML(p)}</div>`;
+      <div class="filmpack-slot"></div><div class="talelib">${G.taleShelfHTML(p)}</div>`;
     card.querySelector('.x').onclick = close;
+    // (v1.08f films) "Download all films for offline": shown only when this device has Blender films to offer (js/filmpack.ts)
+    import('./filmpack.js').then(F => F.showFilmPack(card.querySelector('.filmpack-slot'))).catch(() => { });
     const lib = card.querySelector('.talelib');
     const bindLib = () => { G.bindTaleShelf(lib, () => { lib.innerHTML = G.taleShelfHTML(p); bindLib(); }); lib.querySelectorAll('[data-tale]').forEach(b => b.onclick = () => { const t = TALES.find(x => x.id === b.dataset.tale); m.close(); readTale(h, t); }); };
     bindLib();

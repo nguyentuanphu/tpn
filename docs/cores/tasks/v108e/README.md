@@ -37,14 +37,15 @@ The first account runs at most 5 at once: quality is still running, so this roun
 | villagers | second | `villagers-brief.md`: the 11 named villagers as real models, crowds refined | `work/v108e-villagers` |
 | places | second | `places-brief.md`: landmarks, buildings, stalls, food and festival props | `work/v108e-places` |
 
-**Split (owner, 6 Nov 2026 AEDT):** the second account runs only the Blender chat (A). Everything else is on the first account, at most 5 helpers, split evenly as follow-on parts:
-- **faces:** faces, then high-detail friends (Part 2), then the 11 villagers (`villagers-brief.md`).
-- **water:** shallow water, then nature part A: trees, flowers, bushes, reeds, lotus and plants (`nature-brief.md` items 1-3, without crops).
-- **creatures:** animals round 2, then nature part B: farm crops with growth stages, and My House furniture (`nature-brief.md`, crops and item 4).
-- **vehicles:** round 2 and the Season 2 piers.
-- **places:** a fresh helper that starts when quality finishes (`places-brief.md`).
-
-Each helper finishes and pushes its first job (and messages Release) before starting the next, on the same branch.
+**Split (owner, 6 Nov 2026 AEDT, corrected):**
+- **The second account** runs Blender (A), nature and places.
+- **The first account** runs, at most 5:
+  - quality;
+  - creatures: animals round 2;
+  - vehicles: round 2 and the Season 2 piers;
+  - water: shallow water;
+  - faces: faces, then high-detail friends (Part 2), then the 11 villagers (`villagers-brief.md`).
+- Each first-account helper finishes and pushes a part, and messages Release, before starting the next part on the same branch.
 
 ## The shared kit (written by Release; use it, do not copy it)
 
@@ -81,7 +82,8 @@ Everything in `docs/cores/tasks/v108b/README.md` applies.
   - `startup`: first download 1025 KB or less.
   - Many copies of one model are one InstancedMesh. Far things stay the code shape or a still copy.
 - **Offline list:**
-  - Every new `js/` file and every `models/world/*.glb` goes into the `FILES` list in `sw.ts`.
+  - Every new `js/` file goes into the `FILES` list in `sw.ts`.
+  - The `models/world/*.glb` files do **not** (Release, 6 Nov): the service worker keeps each one in the `sv-models-<version>` cache the first time a child comes near it, and the code shapes stand in until then.
   - On 6 Nov, 66 files from earlier helpers were missing, which broke the `offline` and `swupdate` checks.
   - Never write an apostrophe inside that list, comments included: `tools/bundle.mts` reads the quoted names.
 - **Our own art only:**

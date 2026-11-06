@@ -11,6 +11,7 @@ import { SFX } from './audio.js';
 import { heightAt, TOWN, PLAYGROUND } from './world.js';
 import { buildAvatar, crowdLook, nameAvatar } from './avatar.js';
 import { dist2 } from './util.js';
+import { natureModel } from './nature-tag.js';
 import { addPole, addDrop } from './powerlines.js';
 import { TOWN_JUICE_CART, rowSlot } from './content/map.js';
 
@@ -192,7 +193,7 @@ export function createTown(G) {
     if (kind === 'gum') { t.push(P(Cyl(.18, .32, 6, 6), '#e9e1d2', [0, 3, 0]), P(Cyl(.1, .14, 2.4, 5), '#e9e1d2', [.7, 5, 0], [0, 0, -.6])); [[0, 6.6, 0, 1.6], [1.4, 6, .4, 1.2], [-1, 6.2, -.5, 1.3]].forEach(([a, b, c, r]) => t.push(P(new THREE.IcosahedronGeometry(r, 0), '#7f9a6a', [a, b, c], [0, 0, 0], [1.2, .7, 1.2]))); }
     if (kind === 'banana') { t.push(P(Cyl(.15, .22, 2.6, 6), '#9aa65a', [0, 1.3, 0])); for (let k = 0; k < 6; k++) t.push(P(Box(.5, .05, 2.2), k % 2 ? '#5fa860' : '#4e9a52', [Math.cos(k) * .9, 2.7, Math.sin(k) * .9], [-.5 * Math.sin(k), -k, .5 * Math.cos(k)])); }
     if (kind === 'frangipani') { t.push(P(Cyl(.14, .22, 2, 6), '#8a7a6a', [0, 1, 0])); [[0, 2.4, 0, 1], [.7, 2.2, .3, .7]].forEach(([a, b, c, r]) => t.push(P(new THREE.IcosahedronGeometry(r, 1), '#4f9a62', [a, b, c]))); for (let k = 0; k < 8; k++) t.push(P(new THREE.SphereGeometry(.12, 5, 4), '#fff6dc', [Math.cos(k) * .7, 2.9 + (k % 3) * .1, Math.sin(k) * .7])); }
-    put(merge(t), x, z); world.colliders.push({ x, z, r: kind === 'banana' ? .4 : .5 });
+    natureModel(put(merge(t), x, z), 'tree-' + kind); world.colliders.push({ x, z, r: kind === 'banana' ? .4 : .5 }); // (v1.08e nature: its Blender model near the child)
   };
   tree(X(-12.5), Z(11.5), 'jacaranda'); tree(X(5), Z(19), 'jacaranda'); tree(X(18), Z(-17), 'gum'); tree(X(19), Z(13), 'gum'); tree(X(-27.4), Z(-16), 'gum');
   tree(X(-20), Z(-22), 'banana'); tree(X(-21.6), Z(-20.4), 'banana'); tree(X(15.6), Z(-22), 'frangipani'); tree(X(-14), Z(18), 'frangipani');
@@ -301,7 +302,7 @@ export function createTown(G) {
   const teens = ring.map(([x, z], k) => person(L2(['shirt', 'overalls', 'dress'][k], ['#3cc7e8', '#5fd39a', '#ff7eb8'][k], '#1d1412', ['spiky', 'short', 'ponytail'][k], 'none', '#e0aa80'), x, z, 0));
   teens.forEach((A, k) => { const c = ring.reduce((a, b) => [a[0] + b[0] / 3, a[1] + b[1] / 3], [0, 0]); A.root.rotation.y = Math.atan2(c[0] - ring[k][0], c[1] - ring[k][1]); world.colliders.push({ x: ring[k][0], z: ring[k][1], r: .4 }); });
   const cau = new THREE.Mesh(merge([P(Cyl(.12, .12, .06, 8), '#e8433a', [0, 0, 0]), ...[0, 1, 2, 3].map(k => P(Box(.05, .3, .12), ['#ffd23f', '#5fd39a', '#3cc7e8', '#ff7eb8'][k], [Math.cos(k * 1.57) * .06, .17, Math.sin(k * 1.57) * .06], [0, k * 1.57, 0]))]), mat);
-  scene.add(cau);
+  cau.userData.moving = true; scene.add(cau); // (Release, v1.08e: check solid) it flies only while a child is near: never in the solid map (js/solids.ts), so the map is the same wherever the child starts
   people.forEach(A => world.colliders.push({ x: A.root.position.x, z: A.root.position.z, r: .35 }));
 
   // name tags and chatter bubbles

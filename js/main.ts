@@ -174,7 +174,12 @@ const runPart = async <M,>(p: AfterPart<M>, loading: Promise<M>) => { try { cons
 let afterChain: Promise<unknown> = Promise.resolve();
 const startPart = <M,>(p: AfterPart<M>) => { const loading = p.load(); loading.catch(() => { }); afterChain = afterChain.then(() => runPart(p, loading)); };
 const afterStart = <M,>(load: () => Promise<M>, make: (m: M) => unknown) => { const p = { load, make }; if (afterOpen) startPart(p); else afterQueue.push(p); };
-void bootReady.then(() => setTimeout(() => { afterOpen = true; for (const p of afterQueue.splice(0)) startPart(p); }, 1500));
+// (Release, v1.08e: check solid) lateMade: every part above made (and Season 2's places below). The solid map made
+// again after parts of the valley waits for it, so the map counts the same things however fast a device starts:
+// before, a quick second start made it before the job boards stood and missed the map saved on the first start
+let lateUp: () => void = () => { }; const lateBuilt = new Promise<void>(r => { lateUp = r; }), lateMore: Promise<unknown>[] = [];
+void bootReady.then(() => setTimeout(() => { afterOpen = true; for (const p of afterQueue.splice(0)) startPart(p); void afterChain.then(lateUp); }, 1500));
+const lateMade = () => Promise.all([lateBuilt, ...lateMore]);
 // (v1.07 startup) while a game or story opened from the Simple screen before the valley was built is up (simpleFirst),
 // the building waits between its steps, so the game runs smoothly; it goes on when the child is back on the Simple screen
 let earlySimple = false;
@@ -483,7 +488,8 @@ G.mount = (h, b) => { h.mount(b); h.profile.quests.buffalo = true; save(); say('
 const fruitParadeModeOn = fruitParadeAvailable;
 useAreas(id => SUBJECT_AREAS[id]?.[0]);   // (v1.08b quality) the subjects of the learning report and the level by subject
 
-async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number]) {
+// (v1.08f) `want`: a tester's Try again opens the game at the level and difficulty of the report
+async function playGame(i: number, id: string, source: string, shrine?: (typeof SHRINES)[number], want?: { level?: number, diff?: string }) {
   const h = G.heroes[i]; if (!h || !canStartGame(id,[h.profile])) return;
   if (id === 'sparklefruitbar' && !testerArcadeAvailable('sparklefruitbar',source === 'online'?'multi':'single')) return;
   if (id === 'sparkleorchard' && !testerArcadeAvailable('sparkleorchard',source === 'online'?'multi':'single')) return;
@@ -501,8 +507,8 @@ async function playGame(i: number, id: string, source: string, shrine?: (typeof 
   // (owner, 1 Nov 2026 AEDT: "the levels often look the same") each level has its own band and wins move a child up inside it:
   // Easy 1-2, Medium 2-3, Hard 4-5, Talent 5 with the game's own extra challenge. (Before, Easy reached the top after a few wins.)
   // (v1.08b quality) with no level chosen in the game, the level follows the child per subject; a grown-up's subject level wins
-  const p = h.profile, diff = (p.gameDiff && p.gameDiff[id]) || subjectDifficulty(p, id), band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
-  const level = Math.min(band[1], band[0] + Math.floor(((p.levels[id] || 1) - 1) / 2));
+  const p = h.profile, diff = ((want && ['easy', 'medium', 'hard', 'talent'].includes(want.diff || '') ? want.diff : '') as '' | import('../types/save.js').Difficulty) || (p.gameDiff && p.gameDiff[id]) || subjectDifficulty(p, id), band = ({ easy: [1, 2], medium: [2, 3], hard: [4, 5], talent: [5, 5] })[diff] || [1, 2];
+  const level = want && want.level ? Math.max(1, Math.min(5, want.level)) : Math.min(band[1], band[0] + Math.floor(((p.levels[id] || 1) - 1) / 2));
   const little = G.heroes.some(x => x.profile.age !== 'big'), strong = !little && diff !== 'easy';
   if (source === 'shrine') { SFX.secret(); say('A shrine! Let’s solve the puzzle.', 'Một ngôi đền! Cùng giải câu đố nào.'); await wait(600); }
   const completion = source === 'hub' || source === 'pad' || source === 'simple' ? 'choose' : 'return';
@@ -1148,7 +1154,7 @@ afterStart(() => import('./crowd-models.js'), C => { G.crowdModels = C.createCro
 afterStart(() => import('./pricetags.js'), m => m.createPriceTags(G));
 afterStart(() => import('./jobs.js'), m => m.createJobs(G));
 afterStart(() => import('./wayfind.js'), m => m.createWayfind(G));   // (Round U) "Where is…?" sparkles
-setTimeout(() => { void import('./s2au.js').then(m => m.createS2au(G)).catch(e => console.warn('s2au', e)); }, 2000);   // (v1.08d s2au) Season 2, Australia: after the start
+lateMore.push(new Promise<void>(r => setTimeout(() => { void import('./s2au.js').then(m => m.createS2au(G)).catch(e => console.warn('s2au', e)).finally(r); }, 2000)));   // (v1.08d s2au) Season 2, Australia: after the start
 G.openWhere = i => featureOn('wayfind', false) && G.wayfind && G.wayfind.open(i);
 onLive(() => { if (!featureOn('wayfind',false)) { G.wayfind?.stop(true); document.querySelectorAll<HTMLElement>('.wherepick').forEach(m => m.querySelector<HTMLElement>('.x')?.click()); } });
 afterStart(() => import('./animalhomes.js'), m => m.createAnimalHomes(G));   // (Round U) animals with homes   // (Round U) a job board in every place   // (Round U) a coin-picture price over every food stall
@@ -1161,7 +1167,7 @@ bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
 // (v1.08d valley, js/areas.ts) the parts of the valley built after the start: nearest the child first (before a child is
 // chosen: the spot the last child played at, or home); after each one its pickups join first come first served, its
 // activities get their bubbles, and a moment later the solid map is made again with it
-{ let again = null; const p0 = (profiles[0] && profiles[0].pos) || { x: PLATEAU.x - 3, z: PLATEAU.z - 4 };
+{ let again = null, againN = 0; const p0 = (profiles[0] && profiles[0].pos) || { x: PLATEAU.x - 3, z: PLATEAU.z - 4 };
   // (v1.08d valley) villagers far from every child are stand-ins until a child comes within 60 m (js/avatar.ts lateAvatar):
   // three of them at most four times a second while walking, all of them round a flight's landing spot at once
   G.areas = { near: async (x, z, r) => { wakeLateAvatars([{ x, z }], 60, 1e9); await areasNear(x, z, r); }, done: areasDone, left: areasLeft, late: lateLeft, list: areaList,
@@ -1169,10 +1175,12 @@ bootMark('ready'); G.bootTimes = bootTimes; bootDone(); managementBootReady();
   { let acc = 0; world.updaters.push(dt => { acc += dt; if (acc < .25) return; acc = 0; if (G.heroes.length) wakeLateAvatars(G.heroes.map(h => h.pos), 60, 3); }); }
   // (v1.08e) the Blender models of the world (js/modelkit.ts): swapped in for the code shapes when a child comes near
   afterStart(() => import('./modelkit.js'), m => m.startWorldModels(G, world.updaters));
-  afterStart(() => import('./creatures.js'), m => m.startCreatureModels());   // (v1.08e creatures) animals, pets and companions in Blender
-  startAreas(G, { x: +p0.x || 0, z: +p0.z || 0 }, () => { G.claims.wrap(); setupBubbles(); clearTimeout(again); again = setTimeout(solidsNow, areasLeft() ? 2500 : 600); }); }
+  afterStart(() => import('./creatures.js'), m => m.startCreatureModels(G));   // (v1.08e creatures) animals, pets and companions in Blender
+  afterStart(() => import('./wading.js'), m => m.createWading(G));   // (v1.08e water) splash rings round a wading child, little fish by the banks
+  afterStart(() => import('./world-nature.js'), m => m.startNature(G, world.updaters, settings.quality)); // (v1.08e nature) trees, flowers, crops, farm props and My House decorations from Blender (js/world-nature.ts)
+  startAreas(G, { x: +p0.x || 0, z: +p0.z || 0 }, () => { G.claims.wrap(); setupBubbles(); clearTimeout(again); const n = ++againN; again = setTimeout(() => void lateMade().then(() => { if (n === againN) solidsNow(); }), areasLeft() ? 2500 : 600); }); } // (Release, v1.08e: after the late parts, lateMade above)
 setTimeout(() => { void import('./art.js').then(a => a.moreArt()); }, 1500); // (v1.08) the new games' pictures, after the start
-setTimeout(() => { void import('./s2vn.js').then(m => m.installS2vn(G)).catch(e => console.warn('season 2', e)); }, 2500); // (v1.08d s2vn) Season 2's new places, after the start
+lateMore.push(new Promise<void>(r => setTimeout(() => { void import('./s2vn.js').then(m => m.installS2vn(G)).catch(e => console.warn('season 2', e)).finally(r); }, 2500))); // (v1.08d s2vn) Season 2's new places, after the start
 // (v1.08b platform, brief part 4: a lighter first download) the surprises and the grown-ups' features (family missions,
 // the family message, the week note) have no place on the map: they are made 2 s after the child can start, not while
 // the valley is built (everything that uses them asks whether they are there yet)

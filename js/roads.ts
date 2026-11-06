@@ -6,6 +6,7 @@ import { T, onLang } from './i18n.js';
 import { SFX } from './audio.js';
 import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox, PADDIES, PLOTS, plotBox } from './world.js';
 import { settings } from './state.js';
+import { natureModel } from './nature-tag.js';
 import { featureOn } from './custom.js';
 import { remember } from './worldmemo.js';
 import { ROAD_TONES } from './content/map.js';
@@ -339,6 +340,7 @@ export function plantRoadside(G) {
     let cxs = 0, czs = 0;
     spots.forEach(([x, y, z, s, r, c], j) => { q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), r); m4.compose(ps.set(x, y - .02, z), q, sc.set(s, s, s)); stems.setMatrixAt(j, m4); heads.setMatrixAt(j, m4); heads.setColorAt(j, c); cxs += x; czs += z; });
     for (const M of [stems, heads]) { M.computeBoundingSphere(); M.userData.noCam = true; scene.add(M); }
+    natureModel(stems, 'flower-roadside'); // (v1.08e nature: the stem, leaves and middle from Blender; the tinted petals stay)
     groups.push({ meshes: [stems, heads], spots });
   });
   // (#34, Concept D) along the main roads: red lamp posts and bougainvillea on the Vietnam side, orange lamp posts and gum
@@ -364,7 +366,13 @@ export function plantRoadside(G) {
   const bushGeo = ([P(new THREE.IcosahedronGeometry(.6, 1), '#4f8f3e', [0, .55, 0], [0, 0, 0], [1.2, .9, 1]), ...[[.35, .9, .2], [-.3, .85, -.25], [.05, 1.05, -.1], [-.2, .7, .4], [.4, .6, -.3]].map(([x, y, z]) => P(new THREE.IcosahedronGeometry(.2, 0), '#e0328c', [x, y, z]))]);
   const gumGeo = ([P(new THREE.CylinderGeometry(.16, .28, 5.4, 6), '#e9e1d2', [0, 2.7, 0]), P(new THREE.CylinderGeometry(.09, .13, 2.2, 5), '#e9e1d2', [.6, 4.6, 0], [0, 0, -.6]),
     ...[[0, 6, 0, 1.5], [1.3, 5.5, .4, 1.1], [-.9, 5.7, -.5, 1.2]].map(([a, b, c, r]) => P(new THREE.IcosahedronGeometry(r, 1), '#7a9a6a', [a, b, c]))]);
-  const solidMat = toonVC(); place(lampGeo('#b3261e'), lampVN, solidMat); place(lampGeo('#e07b26'), lampAU, solidMat); place(bushGeo, bushes, solidMat); place(gumGeo, gums, solidMat);
+  const solidMat = toonVC(); place(lampGeo('#b3261e'), lampVN, solidMat); place(lampGeo('#e07b26'), lampAU, solidMat);
+  // (v1.08e nature) the bushes and gum trees are one InstancedMesh each (still one draw), so their Blender models can take
+  // the code shape's place near the child (js/world-nature.ts); the same turn for each as before (j * 1.7)
+  const placeMany = (parts, list, name) => { if (!list.length) return null; const m = new THREE.InstancedMesh(merge(parts), toonVC(), list.length), o = new THREE.Object3D();
+    list.forEach(([x, y, z], j) => { o.position.set(x, y, z); o.rotation.set(0, j * 1.7, 0); o.updateMatrix(); m.setMatrixAt(j, o.matrix); });
+    m.computeBoundingSphere(); m.castShadow = true; m.userData.noSolid = true; scene.add(m); return natureModel(m, name); };
+  placeMany(bushGeo, bushes, 'bush-bougainvillea'); placeMany(gumGeo, gums, 'tree-gum');
   // (#34 Concept D, owner plan 30 Oct AEDT) paddy dikes (bờ ruộng): low earth paths along the rice terraces' steps (every 9 m)
   // and across them, with shallow water glinting in each field; children walk along them (no solid, nothing to climb)
   const dikes = [], pools = [], R = (PADDIES.r || 16) - 1.5, inside = (x, z) => Math.hypot(x - PADDIES.x, z - PADDIES.z) < R;
@@ -385,7 +393,7 @@ export function plantRoadside(G) {
   const VT = CITIES.find(c => c.id === 'vungtau'), at = (dx: number, dz: number) => [VT.x + dx, VT.z + dz];
   for (const [x, z] of VT ? [at(-19, 36), at(-15, 38), at(-1, 38), at(-13, 48), at(-5, 50)] : []) { const h = heightAt(x, z), dry = h > WATER + .05;
     if (dry && h > WATER + 1.6 || !free(x, z, 1.2) || !plotFree(x, z, 1)) continue;
-    const y = dry ? h - .5 : WATER - .45, yaw = (x * 7 + z) % 6.3; boats.push(...boatParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; }));
+    const y = dry ? h - .5 : Math.max(WATER - .2, h + .32),   /* (v1.08e water) floating high on the shallow sea, never inside its bed */ yaw = (x * 7 + z) % 6.3; boats.push(...boatParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; }));
     if (dry) world.colliders.push({ x, z, r: .9 }); }
   if (boats.length) { const m = new THREE.Mesh(merge(boats), toonVC()); m.castShadow = true; m.userData.noSolid = true; scene.add(m); }
   // only roads near a player show their flowers

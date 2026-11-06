@@ -295,7 +295,7 @@ register({
       const hi = counts.indexOf(Math.max(...counts)), lo = counts.indexOf(Math.min(...counts)), which = pick(0, L.cols - 1);
       const graph = (stage: HTMLElement, tap: boolean) => {
         const g = el('div', 'mx-row'); g.style.alignItems = 'flex-end';
-        const things = fruit.map(([f], i) => { const col = el(tap ? 'button' : 'div', '', ''); col.style.cssText = 'display:flex;flex-direction:column-reverse;align-items:center;gap:0;border-bottom:4px solid #3b2a4f;padding:2px 4px;min-width:56px';
+        const things = fruit.map(([f], i) => { const col = el(tap ? 'button' : 'div', '', ''); col.style.cssText = 'display:flex;flex-direction:column-reverse;align-items:center;gap:0;border-bottom:4px solid #3b2a4f;padding:2px 4px;min-width:' + (api.little ? 64 : 56) + 'px';   // (v1.08b fivescreens) 64 px for under-5s
           col.dataset.k = String(i); for (let j = 0; j < counts[i]; j++) col.insertAdjacentHTML('beforeend', pic(f, 'mx-cell')); g.appendChild(col); return col; });
         stage.appendChild(g); stage.querySelectorAll('.mx-cell').forEach((e: Element) => { (e as HTMLElement).style.cssText = 'width:30px;height:30px;flex:none'; }); return things;
       };
@@ -323,7 +323,8 @@ register({
     // later, or the months of the year
     const L = lv(api, { asks: ['tomorrow'] }, { asks: ['tomorrow', 'yesterday'] }, { asks: ['week', 'tomorrow', 'yesterday'] }, { asks: ['twoweeks', 'week', 'nextmonth', 'lastmonth'] });
     api.stage.dataset.lv = L.asks.join('+');
-    const cellCss = 'min-width:44px;min-height:52px;border:2px solid #3b2a4f;border-radius:10px;background:#fff;font:800 15px var(--font,sans-serif);color:#3b2a4f;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 2px';
+    // (v1.08b fivescreens) an under-5's day and month cards are 64 px, a finger's size for them
+    const cellCss = `min-width:${api.little ? 64 : 44}px;min-height:${api.little ? 64 : 52}px;` + 'border:2px solid #3b2a4f;border-radius:10px;background:#fff;font:800 15px var(--font,sans-serif);color:#3b2a4f;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 2px';
     const list: Round[] = distinct(rounds(api), () => {
       const ask = L.asks[pick(0, L.asks.length - 1)];
       if (ask === 'tomorrow' || ask === 'yesterday') {

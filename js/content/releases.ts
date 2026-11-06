@@ -3,6 +3,7 @@
 // for), en, vi, group, def (what it is when Studio never set it: the owner chose "everything on"). Every festival is
 // one too (fest_<id>, from js/content/festcal.js). Part 2 of round R adds the rest of the list as each one is built.
 import { FESTCAL } from './festcal.js';
+import { BLENDER_FOR_ALL, filmSwitch } from './films-for-all.js';
 // game: the money game it switches; icon: a festival's picture
 export type Release = { id: string, en: string, vi: string, group: string, def: boolean, icon?: string, game?: string };
 export const RELEASES: Release[] = [
@@ -74,6 +75,12 @@ RELEASES.push(
   { id: 'rideAny', en: 'Ride any vehicle: drive the parked cars and motorbikes', vi: 'Đi mọi loại xe: lái xe hơi và xe máy đang đậu', group: 'world', def: true },
   { id: 'busFares', en: 'Buses, trams and taxis take a passenger for a fare; bus stops with a picture timetable', vi: 'Xe buýt, tàu điện và taxi chở khách có trả tiền vé; trạm xe buýt có bảng giờ bằng hình', group: 'world', def: true },
   { id: 'wayfind', en: 'Find a place: compass guidance (hidden until enabled)', vi: 'Tìm một nơi: la bàn chỉ đường (ẩn đến khi bật)', group: 'valley', def: false },
+  // (Release, v1.08: check studioswitches) the four Season 2 Vietnam regions open on their calendar day; these cards let
+  // Studio peek each one early on testers' devices (js/s2vn.ts regionOpen)
+  { id: 's2_mekong', en: 'Season 2: the Mekong floating market (opens on its calendar day)', vi: 'Mùa 2: chợ nổi miền Tây (mở vào ngày trong lịch)', group: 'valley', def: true },
+  { id: 's2_halong', en: 'Season 2: Hạ Long Bay (opens on its calendar day)', vi: 'Mùa 2: Vịnh Hạ Long (mở vào ngày trong lịch)', group: 'valley', def: true },
+  { id: 's2_sapa', en: 'Season 2: the Sapa rice terraces (opens on its calendar day)', vi: 'Mùa 2: ruộng bậc thang Sapa (mở vào ngày trong lịch)', group: 'valley', def: true },
+  { id: 's2_taynguyen', en: 'Season 2: the Central Highlands (opens on its calendar day)', vi: 'Mùa 2: Tây Nguyên (mở vào ngày trong lịch)', group: 'valley', def: true },
   { id: 'jobs', en: 'Village job boards: helping jobs for coins and a sticker', vi: 'Bảng việc làng: việc giúp đỡ được tiền và hình dán', group: 'valley', def: true },
   { id: 'villagerTalk', en: 'Every villager talks: a fact or a saying of their place', vi: 'Mọi người trong làng đều nói chuyện: kể điều hay hoặc câu nói của quê mình', group: 'valley', def: true },
   { id: 'dayPlan', en: 'Villagers\' day plan: they walk home at night, umbrellas in the rain', vi: 'Một ngày của dân làng: tối đi về nhà, trời mưa che ô', group: 'valley', def: true },
@@ -146,3 +153,18 @@ RELEASES.push(
   { id: 'push_invite', en: 'Notification: play invites from a friend’s family', vi: 'Thông báo: lời mời chơi từ gia đình bạn', group: 'notify', def: true },
   { id: 'push_tester', en: 'Notification: testers, a reported problem is fixed', vi: 'Thông báo: người thử, lỗi đã báo được sửa', group: 'notify', def: true },
 );
+
+// (v1.08f films, owner 6 Nov 2026 AEDT) the Blender films (js/blenderfilm.ts, js/content/blenderfilms.ts): one switch for
+// all of them, one for testers, and one per listed film (on for the five, off for the rest), built from the film list so a
+// film added there gets its switch with no code change
+RELEASES.push(
+  { id: 'blenderFilms', en: 'Blender films: the stories that have a film made in Blender play it as a video (kept on the device once watched). Off: every story plays the in-game film', vi: 'Phim Blender: truyện có phim làm bằng Blender sẽ chiếu video đó (giữ trên máy sau khi xem). Tắt: mọi truyện chiếu phim trong game', group: 'story', def: true },
+  { id: 'blenderFilmsTesters', en: 'Blender films for testers: on tester devices, every Blender film plays, also the ones not yet for everyone. Off: testers see only the films for everyone', vi: 'Phim Blender cho người thử: trên máy thử, mọi phim Blender đều chiếu, cả phim chưa mở cho mọi người. Tắt: người thử chỉ xem các phim cho mọi người', group: 'story', def: false }
+);
+for (const id of BLENDER_FOR_ALL) RELEASES.push(filmSwitch(id));
+// the switches of the other listed films (Studio calls this with js/content/blenderfilms.ts BLENDER_FILMS, so a film added
+// there gets its switch with no code change, and the game's first download never carries the films' page data)
+export function addFilmSwitches(films: Record<string, { en?: string, vi?: string }>) {
+  for (const id of Object.keys(films)) if (!RELEASES.some(r => r.id === `blenderFilm_${id}`)) RELEASES.push(filmSwitch(id, films[id]));
+  return RELEASES;
+}

@@ -127,3 +127,18 @@ Release, run the voice pack once after merging (it is cheap: everything else is 
 - gamefit: did not finish on this machine (over 45 minutes for 6 sizes); for the GitHub full suite.
 - Screenshots looked at: phone landscape games (words, science, snakes, banhchung, folk), the learning report and Play
   with Mum and Dad on phone and tablet, spawn view on phone, tablet and computer (tests/out/spawnview/).
+
+## Sideways-phone fixes, 5-6 Nov 2026 AEDT (after Release's first merge)
+
+Batches 1-8 on `work/v108b-quality` (shared frame and CSS blocks at the end of `css/style.css`, a few games' own sizes):
+folk games side by side on every landscape screen; mini chess, Cờ tướng, pipes, whosits; Đi chợ đếm quả; the outside
+and nature fields; Bịt mắt bắt dê, Cờ cá ngựa, Trồng nụ trồng hoa, Tiến lên, Rangoli; a question beside its answers
+when it does not fit (also on a new round); Đánh chuyền's sticks (finger-wide tap area, less lean); Nối điểm's board;
+the calendar and picture graph at 64 px for under-5s; the finger-size minimum above a game's smaller sizes, with 64 px
+for everyone kept where a game asks it; the shrink rounds up with 3% to spare; a sideways phone grows a game at most
+1.15x. The overlap part of the check skips switched-off buttons (drop slots waiting for their turn), which take no tap.
+
+Checks on the combined code (integrate/v108 merged in): **fivescreens pass (370 games, phone portrait and landscape,
+big kid and under-5)**, **fivescreenswide pass (370 games, tablet both ways and computer)**, folkplay pass, goatcircle
+pass, gamefit pass on danhdao, nemcon, keocua, duathuyen, whosits, meochuot, cuopco, minichess, cotuong, pipes (the
+whole gamefit is for the GitHub run: over 45 minutes here).

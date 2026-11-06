@@ -1,6 +1,7 @@
 // (v1.08e vehicles) The blueprints for the Blender vehicles: the game's own code shapes (js/vehicles.ts, js/ferry.ts),
-// read in a browser and written as plain parts (triangles, corner colours, where each moving part turns), so
-// tools/blender/world-vehicles.py rebuilds every vehicle at exactly the size, place and facing of its code shape.
+// read in a browser: each part's box, where each wheel and moving part turns, the seat and handle points. The Blender
+// script (tools/blender/world-vehicles.py) models every vehicle anew inside that frame, so it has the size, place and
+// facing of its code shape and the riders sit where the code puts them.
 //   node tools/build.mts && python3 -m http.server 8765 &   then   node tools/vehicle-blueprints.mts <out.json>
 import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
@@ -45,7 +46,10 @@ const data = await page.evaluate(async () => {
     if (v.feet) { put('pedalL', v.feet[0]); put('pedalR', v.feet[1]); }
     if (v.pgrips) { put('handle2L', v.pgrips[0]); put('handle2R', v.pgrips[1]); }
     if (v.pfeet) { put('pedal2L', v.pfeet[0]); put('pedal2R', v.pfeet[1]); }
-    return { parts: parts.filter(p => p.tris.length || p.name !== 'body').map(({ node, ...p }) => p), points: pts, wr: v.wr };
+    const bb = (t: number[]) => { if (!t.length) return null; const mn = [1e9, 1e9, 1e9], mx = [-1e9, -1e9, -1e9]; for (let i = 0; i < t.length; i += 3) for (let k = 0; k < 3; k++) { mn[k] = Math.min(mn[k], t[i + k]); mx[k] = Math.max(mx[k], t[i + k]); } return [mn, mx]; };
+    const all = new THREE.Box3().setFromObject(o, true);
+    return { parts: parts.filter(p => p.tris.length || p.name !== 'body').map(({ node, tris, cols, ...p }) => ({ ...p, box: bb(tris) })), points: pts, wr: v.wr,
+      box: [all.min.toArray().map(r3), all.max.toArray().map(r3)], name: v.name || null, cabin: v.cabin || null };
   }
   const all: Record<string, any> = {};
   for (const id of Object.keys(V.VEHICLES)) { const v = V.build(id); all['veh-' + id] = dump(v.o, v); }
@@ -56,5 +60,5 @@ const data = await page.evaluate(async () => {
   return all;
 });
 await b.close();
-writeFileSync(out, JSON.stringify(data));
-for (const [k, v] of Object.entries<any>(data)) console.log(k, v.parts.map((p: any) => `${p.name}:${p.tris.length / 9}`).join(' '));
+writeFileSync(out, JSON.stringify(data, null, 1));
+for (const [k, v] of Object.entries<any>(data)) console.log(k, JSON.stringify(v.box), v.parts.map((p: any) => p.name).join(' '));
