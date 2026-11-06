@@ -13,12 +13,15 @@ async function play(page, age: 'little' | 'big'): Promise<Round[]> {
     window.__sv.playGame(0, 'sci_sound', 'hub');
     let gl = null; for (let k = 0; k < 60 && !gl; k++) { await w(100); gl = document.querySelector('.gl:not(.out)'); }
     if (!gl) return [];
-    const out = []; let last = null; const t0 = Date.now();
+    const out = []; let last = null, lastAsk = null; const t0 = Date.now();
     while (out.length < 3 && Date.now() - t0 < 60000 && gl.isConnected) {
       await w(150);
       document.querySelectorAll('.howto').forEach(h => h.remove());
       const pickLv = gl.querySelector('.gl-lvlpick'); if (pickLv) { (pickLv.querySelector('[data-l].on') || pickLv.querySelector('[data-l]'))?.click(); continue; }
       if (gl.querySelector('.gl-win')) break;
+      // after the experiment a big kid answers what really happened: the right bottle (the question waits for it)
+      const ask = playWatch.ask;
+      if (ask && ask.els !== lastAsk && ask.els.some(e => e.isConnected && e.offsetWidth)) { lastAsk = ask.els; await w(150); (ask.els.find(e => ask.check(e)) || ask.els[0]).click(); continue; }
       // the guess before the experiment: the question and each bottle (its colour and how high its water stands, in screen order)
       const offer = playWatch.offer;
       if (offer && offer !== last && offer.some(e => e.isConnected && e.offsetWidth)) {
