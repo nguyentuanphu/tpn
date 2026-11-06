@@ -430,7 +430,10 @@ function setupNPCs() {
       // (battery round, PERF-003) far (STILL m from every child) and standing still for two looks: the one-piece still
       // copy (js/avatar.js); anyone walking, riding or near keeps every moving part. A child's own character never.
       const moved = A._wx !== _wp.x || A._wz !== _wp.z; A._wx = _wp.x; A._wz = _wp.z; A._calm = moved ? 0 : (A._calm || 0) + 1;
-      showStill(A, !mine.has(A) && A._calm >= 2 && !G.heroes.some(h => dist2(h.pos.x, h.pos.z, _wp.x, _wp.z) < STILL)); });
+      // (v1.08e villagers) a villager in their Blender model keeps it only within 12 m (check perf: the models are about
+      // 18,000 triangles); farther, the still copy, as for everyone past 20 m
+      const still = A.root.userData.villagerModel ? 12 : STILL;
+      showStill(A, !mine.has(A) && A._calm >= 2 && !G.heroes.some(h => dist2(h.pos.x, h.pos.z, _wp.x, _wp.z) < still)); });
   });
   // (v1.08e villagers) the 11 named villagers' own models, loaded when a child comes within 40 m (a few at a time), worn
   // in place of the code person (js/avatar.ts wearVillagerModel); blocked or not yet arrived, the code person stays

@@ -8,7 +8,7 @@
 import { loadFriendModels, wearVillagerModel, avatarOf } from './avatar.js';
 import { regionOf } from './villagertalk.js';
 
-const NEAR2 = 25 * 25, PER_TICK = 3, MAX_NEAR = 4, NEAR_DRAWN2 = 20 * 20; // (check perf: at most 4 crowd models drawn near a child at once)
+const NEAR2 = 25 * 25, PER_TICK = 3, MAX_NEAR = 2, NEAR_DRAWN2 = 12 * 12; // (check perf: at most 2 crowd models drawn near a child at once)
 /** the gallery neighbour a crowd person looks most like */
 export function crowdRole(look, height: number, x: number, z: number): string {
   const au = regionOf(x, z) === 'au', style = look.style || '', hs = look.hairStyle || '';
