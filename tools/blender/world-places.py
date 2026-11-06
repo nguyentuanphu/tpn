@@ -506,7 +506,7 @@ def hand_benthanh(m, sp):
     # pediment lifted over the sign, so the sign shows in front as on the code shape
     B(m, .7, 4.7, 3.8, cream, (-1.55, 2.35, 0)); B(m, .8, .14, 3.9, light, (-1.55, 4.7, 0))
     B(m, .3, 1.2, 3.8, cream, (-1.35, 5.3, 0)); B(m, .85, .25, 4.0, light, (-1.48, 5.95, 0))
-    prism(m, 4.0, .9, .6, light, (-1.45, 6.07, 0), math.pi / 2)
+    prism(m, 4.0, .45, .6, light, (-1.45, 6.07, 0), math.pi / 2)   # (low: the clock above stays whole)
     for z in (-1.25, 0, 1.25):
         arch_door(m, .9, 2.6, dark, (-1.91, .2, z), -math.pi / 2)
         m.part('TorusGeometry', '#d8b86a', (-1.92, 2.35, z), (0, math.pi / 2, 0), radius=.47, tube=.06, arc=math.pi)
@@ -1631,7 +1631,7 @@ def hand_s2au_gbr(m, sp):
     for sx in (-1, 1): tube(m, [(sx * .75, .4, 2.0), (sx * .75, 1.1, 2.05), (sx * .75, 1.05, 2.4), (sx * .75, -.3, 2.7)], [.04] * 4, yellow, seg=5)
     B(m, 2.2, .14, .14, yellow, (-2.4, .5, 2.02)); B(m, 2.2, .14, .14, yellow, (2.4, .5, 2.02))   # the bright yellow bumpers
     # life rings on the rail, sun loungers, a dive flag
-    for x in (-2.0, 2.0): m.part('TorusGeometry', '#e8433a', (x, .95, -1.95), (0, 0, 0), radius=.25, tube=.07, radialSegments=6, tubularSegments=16)
+    for x in (-2.0, 2.0): tube(m, [(x + math.cos(k / 16 * TAU) * .25, .95 + math.sin(k / 16 * TAU) * .25, -1.95) for k in range(17)], [.07] * 17, '#e8433a', seg=6, cap=False)
     for x in (-2.0, 2.0):
         for k in range(4): b = k / 4 * TAU + .4; B(m, .1, .14, .08, '#ffffff', (x + math.cos(b) * .25, .95 + math.sin(b) * .25, -1.93), (0, 0, b))
     for x in (-2.6, -1.6, 1.6):
@@ -1647,14 +1647,14 @@ def hand_s2au_tas(m, sp):
     import random
     rnd = random.Random(7)
     # the shoulders of the mountain: two long rounded rocky ridges, darker at the foot
-    rock(m, (0, .4, .2), 2.2, '#6f7a6a', seed=3, squash=(1.35, .38, .95))   # (its foot level with the code shape's, -0.4 m)
-    rock(m, (1.4, .75, -.4), 1.6, '#7a8274', seed=5, squash=(1.0, .7, .8))
-    rock(m, (-1.6, .35, .6), 1.4, '#808676', seed=8, squash=(.9, .5, .9))
+    rock(m, (0, .2, .2), 2.0, '#7d8a6c', seed=3, squash=(1.4, .3, .95))   # (its foot level with the code shape's, -0.4 m)
+    rock(m, (1.4, .3, -.4), 1.4, '#86907a', seed=5, squash=(1.0, .45, .8))
+    rock(m, (-1.6, .15, .6), 1.2, '#8a9280', seed=8, squash=(.9, .4, .9))
     # the crown: tall fluted dolerite columns in clusters along the top, highest in the middle (Cradle's summit)
     for k, (x, z, h, r) in enumerate(((-1.7, .1, 2.5, .5), (-1.15, -.25, 3.0, .45), (-.5, -.3, 3.4, .5), (.35, -.5, 4.0, .55), (.95, -.3, 3.6, .45), (1.6, .2, 3.1, .5), (2.25, .5, 2.6, .45))):
-        crag(m, x, z, r, h, ['#6a6a72', '#7a7a84', '#5f6068'], seed=k * 13 + 1, seg=6, taper=.55, y0=.3)
+        crag(m, x, z, r, h, ['#9a9aa6', '#a8a8b2', '#8e8e9a'], seed=k * 13 + 1, seg=6, taper=.55, y0=.1)
         for j in range(3):   # the fluting: thin columns against each crag
-            a = j * 2.1 + k; crag(m, x + math.cos(a) * r * .8, z + math.sin(a) * r * .8, r * .32, h * (.62 + j * .1), ['#5a5b63', '#6e6e78'], seed=k * 7 + j, seg=5, taper=.5, y0=.3)
+            a = j * 2.1 + k; crag(m, x + math.cos(a) * r * .8, z + math.sin(a) * r * .8, r * .32, h * (.62 + j * .1), ['#8a8b95', '#9a9aa4'], seed=k * 7 + j, seg=5, taper=.5, y0=.1)
         S(m, r * .7, '#ffffff', (x, h + .2, z), (1, .45, 1))   # snow on the tops
     for k, (x, y, z) in enumerate(((-.85, 1.25, .5), (.65, 1.45, .25), (1.9, 1.0, .75), (-1.4, .95, .85))): S(m, .32, '#f6f8fa', (x, y, z), (1.3, .35, .8))   # snow lying in the hollows between the columns
     for k in range(7):   # scree and boulders on the lower slopes
