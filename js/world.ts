@@ -16,6 +16,9 @@ import { edgeDist, heightAt, riverDist, roadDist, setGround } from './world/grou
 import { LEAFIES, SHRINES, TOWERS, TOWER_H } from './world/sites.js';
 
 export { MAP_VERSION, STUDIO_ON_MAP, PARKED, SIZE, HALF, WATER, RIDE_SWIM, PLATEAU, VILLAGE, PADDIES, LAKE, BAMBOO, APOSTLES, ULURU, HOIAN, ISLAND, FESTGROUNDS, HOME, PLAYGROUND, TOWN, MARKET, AUSSIE, CITIES, levelAt, LOTS, YARD, FOOTPRINTS, RIVERS, PONDS, pondDist, RIVER, CHINA, INDIA, BRIDGES, BRIDGE, DRAGON, bridgeAlong, bridgeAcross, bridgeAt, bridgeDist, bridgeBox } from './world/places.js';
+// (#797) how far from the middle a child can walk: the valley's edge, 8 m inside the drawn ground (W.collide holds everyone
+// within it), so anything a child should reach (festival decorations, js/festivals.js) stands inside it
+export const EDGE = HALF - 8;
 export type { SvCity, SvBridge, SvRoad } from './world/places.js';
 export { ROADS, edgeDist, roadDist, riverDist, waterAt, waterDist, setRoadBeds, heightAt, surfaceAt, oldHeightAt } from './world/ground.js';
 export { regionAt, EXTRA_REGIONS, REGION_NAMES, SHRINES, TOWERS, TOWER_H, REVEAL_R, LEAFIES, PLOTS, MEMORY, plotBox } from './world/sites.js';
@@ -653,7 +656,7 @@ export function createWorld(scene, quality) {
       if (k === 0) pos.x = b.x0 - r; else if (k === 1) pos.x = b.x1 + r; else if (k === 2) pos.z = b.z0 - r; else pos.z = b.z1 + r;
     }
     pushOutOfSolids(W, pos, r); // the solid map: walls, fences, rocks, kiosks… (js/solids.js)
-    pos.x = clamp(pos.x, -HALF + 8, HALF - 8); pos.z = clamp(pos.z, -HALF + 8, HALF - 8);
+    pos.x = clamp(pos.x, -EDGE, EDGE); pos.z = clamp(pos.z, -EDGE, EDGE);
   };
   W.update = (dt, t) => W.updaters.forEach(f => f(dt, t));
   return W;
