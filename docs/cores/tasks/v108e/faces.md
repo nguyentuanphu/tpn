@@ -1,6 +1,6 @@
 # v1.08e faces: status
 
-**ready for Release** (6 Nov 2026, 18:45 AEDT): Part 3 (sculpted faces) and Release's hair, clothes and hands faults are done too; before that (14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
+**ready for Release** (6 Nov 2026, 20:45 AEDT): round 2 (heads, shading, hair, clothes, section 6); before that (18:45 AEDT): Part 3 (sculpted faces) and Release's hair, clothes and hands faults are done too; before that (14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
 close-ups), the villagers brief (`villagers.md`) and Release's clear in-game shots
 (`docs/world-models-v108e/faces/game/`, 28 pictures at 2x, Pretty, phone and computer). Next: Part 3 (sculpted faces). Part 1 was merged into `integrate/v108` already.
 Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
@@ -130,6 +130,10 @@ The owner saw the Part 3 shots: "from the front the heads still read as round ba
   own (Tèo and Bờm a school shirt with a collar, Tí and Mít dresses, Jack a tee and shorts, Ruby a dress with a bow,
   Lan an áo dài, Bống a tee, shorts and bunny ears); their sleeves follow the body's arms, so they still share its soft
   shoulders (not changed this round).
+- The back of the skull a little fuller too (a child's head is deeper than it is wide).
+- **Checks (6 Nov 2026, 20:45 AEDT, one at a time, the final models):** `faces` pass, `villagermodels` pass, `perf` pass
+  (village 271 draws, 691k triangles), `battery` pass, `longplaymem` pass (535 pictures held, 528 in use),
+  `friendmodel` pass (light models about 10,300 triangles, Lumi 16,300), `frienditems` pass.
 - Shots: `docs/world-models-v108e/faces/heads/` (`before-*` Part 2, `round1-*` Part 3, `after-*` this round, and
   `after-turn0.8-*` three-quarter views), `docs/world-models-v108e/faces/hair/after-full-*` (full length).
 
