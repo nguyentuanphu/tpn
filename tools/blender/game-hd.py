@@ -33,6 +33,17 @@ def skin_shade(n):
     k = max(0.0, n.dot(KEY)); up = .5 + .5 * n.z
     return .64 + .36 * min(1.0, .72 * k + .38 * up)   # (the lit side keeps the skin tone)
 
+def _smooth(o):
+    """(v1.08e round 3, owner 6 Nov: no facets anywhere) smooth shading with weighted normals on a thinned part"""
+    for p_ in o.data.polygons: p_.use_smooth = True
+    m = o.modifiers.new('wn', 'WEIGHTED_NORMAL'); m.keep_sharp = False; m.weight = 50
+    with bpy.context.temp_override(object=o, active_object=o): bpy.ops.object.modifier_apply(modifier=m.name)
+
+HAIRBAND = Vector((0, -.35, .94)).normalized()
+def hair_band(n):
+    """one soft highlight band round the hair (the light from above, a little in front)"""
+    d = n.dot(HAIRBAND); t = max(0.0, 1 - abs(d - .72) / .16); return t * t * (3 - 2 * t)
+
 def _tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
 def _thin(o, want, keep=None):
@@ -87,6 +98,7 @@ def hd():
         l = h.copy(); l.data = h.data.copy(); l.name = WHO + '-' + key; h.users_collection[0].objects.link(l); low[key] = l
         _thin(l, HD_FACE if key.startswith('face-') else HD_BUDGET.get(key, 900))
         for p_ in l.data.polygons: p_.use_smooth = True   # smooth shading on the thinned shape (no facets)
+        _smooth(l)
         print('hd:', key, _tris(h), '->', _tris(l))
     # (v1.08e, Release 6 Nov 2026 AEDT: the 1024 px picture smeared the clothes, and texels the bake missed came out as
     # black bands and strips in the hair) no picture: each face keeps its material's flat colour in its corners (crisp,
@@ -118,6 +130,7 @@ def hd():
         lit = o in lit_parts
         skin0_ = next((m for m in mats if m and m.name.startswith('skin')), None)
         cn = me.corner_normals if skin0_ is not None else None
+        cn_all = me.corner_normals if k == 'hair' else None
         ref = 1.0
         if lit and light is not None and skin0_ is not None:   # (the lit skin's own brightest tenth reads as full light)
             ls = sorted(sum(light.data[li].color[:3]) / 3 for p_ in me.polygons if mats[p_.material_index] == skin0_ for li in p_.loop_indices)
@@ -137,7 +150,10 @@ def hd():
                 if light is None: colr.data[li].color = cc; continue
                 l = light.data[li].color
                 f = [min(1, l[0]), min(1, l[1]), min(1, l[2])] if lit else [.4 + .6 * min(1, l[0])] * 3   # (lit: the light's own warm colour)
-                colr.data[li].color = (cc[0] * f[0], cc[1] * f[1], cc[2] * f[2], 1)
+                cc2 = [cc[0] * f[0], cc[1] * f[1], cc[2] * f[2]]
+                if k == 'hair' and cn_all is not None:   # one soft highlight band
+                    bnd = hair_band(cn_all[li].vector) * .45; cc2 = [c_ + (min(1, c_ * 1.6 + .06) - c_) * bnd for c_ in cc2]
+                colr.data[li].color = (cc2[0], cc2[1], cc2[2], 1)
         if light is not None: me.color_attributes.remove(light)
         me.color_attributes.active_color = me.color_attributes['Col']
         name = k if k.startswith('face') else ('lit-' if lit else 'cloth-') + k

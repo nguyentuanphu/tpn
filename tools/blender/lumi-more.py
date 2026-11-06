@@ -185,7 +185,7 @@ def body_villager():
     elif tk == 'aodai':  # áo dài: a fitted top with a mandarin collar, long front and back panels split at the sides
         # (v1.08e, Release 6 Nov: "a square box across the chest and waist with a dark seam") one smooth fitted top, in many
         # rings from the waist to the shoulders so it follows the body (lumi-sculpt FIT, "aoDaiTop"), meeting the panels
-        zt0 = b['zW'] - .04 * S   # (its hem a little over the panels' top edge, a hair outside them: no step, no gap once smoothed)
+        zt0 = b['zW'] - .012 * S   # (round 3, Release: a step showed at the waist; its hem now meets the panels' top edge at the same fit)
         lathe('aoDaiTop', TOP, [(wC, zt0 + (b['zS'] + .01 * S - zt0) * k / 10) for k in range(11)], 32, scale=(1, dep))
         for a0, a1 in ((-1.42, 1.42), (math.pi - 1.42, math.pi + 1.42)):   # (v1.08e: wide panels, narrow side slits from the waist, Release 6 Nov)
             lathe('aoDai', TOP, [(wC * 1.05, b['zW']), (wH * 1.08, b['zCr']), (wH * 1.2, b['zCuff'] - .1 * S), (wH * 1.24, b['zCuff'] - .13 * S)], 32, scale=(1, dep), arc=(a0, a1))

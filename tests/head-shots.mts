@@ -15,10 +15,12 @@ const SETS0 = {
 };
 // FULL=1 IDS=mai: those people only, head to feet (<tag>-full-<set>-<mood>-<dev>.png)
 const SETS = process.env.IDS ? Object.fromEntries(Object.entries(SETS0).map(([k, v]) => [k, v.filter(i => process.env.IDS.split(',').includes(i))]).filter(([, v]) => v.length)) : SETS0;
-for (const [dev, w, h] of [['phone', 390, 844], ['computer', 1280, 800]] as [string, number, number][]) {
-  const P = await open(b, { w, h, dpr: 2, settings: { quality: 'high' } }); await clear(P.page);
+// DEVS=phone: only those screens; DPR=1|2|4: the pixel ratio (2 by default)
+const DPR = +(process.env.DPR || 2);
+for (const [dev, w, h] of ([['phone', 390, 844], ['computer', 1280, 800]] as [string, number, number][]).filter(([d]) => !process.env.DEVS || process.env.DEVS.split(',').includes(d))) {
+  const P = await open(b, { w, h, dpr: DPR, settings: { quality: 'high' } }); await clear(P.page);
   for (const [set, ids] of Object.entries(SETS).filter(([k]) => !process.env.ONLY || process.env.ONLY.split(',').includes(k))) for (const mood of ['smile', 'blink']) {
-    const png = await P.page.evaluate(async ({ w, h, set, ids, mood, full, turn }) => {
+    const png = await P.page.evaluate(async ({ w, h, set, ids, mood, full, turn, dpr }) => {
       const A = await import(String('/js/avatar.js')), { THREE } = await import(String('/js/gfx.js')), G = (window as any).__sv;
       const LOOK = { finn: ['boy', '#f2c6a0'], sol: ['boy', '#c98d62'], clara: ['girl', '#f6d2b5'], lumi: ['girl', '#8d5a3c'] };
       const people: any[] = [];
@@ -34,7 +36,7 @@ for (const [dev, w, h] of [['phone', 390, 844], ['computer', 1280, 800]] as [str
         }
         people.push(av);
       }
-      const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); r.setPixelRatio(2); r.setSize(w, h); r.outputColorSpace = THREE.SRGBColorSpace;
+      const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); r.setPixelRatio(dpr); r.setSize(w, h); r.outputColorSpace = THREE.SRGBColorSpace;
       // the valley's kind of light: a sky and ground fill and a warm sun from the front and above
       const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight('#fff6e8', '#7f9a6a', 1.5)); const d = new THREE.DirectionalLight('#fff1d6', 1.8); d.position.set(1.5, 4, 5); sc.add(d);
       const cols = w > h ? Math.min(ids.length, 6) : Math.min(ids.length, 2), rows = Math.ceil(ids.length / cols);
@@ -57,8 +59,8 @@ for (const [dev, w, h] of [['phone', 390, 844], ['computer', 1280, 800]] as [str
         r.render(sc, cam); p.root.visible = false;
       });
       const url = r.domElement.toDataURL('image/png'); r.dispose(); return url;
-    }, { w, h, set, ids, mood, full: !!process.env.FULL, turn: +(process.env.TURN || 0) });
-    fs.writeFileSync(`${out}/${tag}${process.env.FULL ? '-full' : ''}${process.env.TURN ? '-turn' + process.env.TURN : ''}-${set}-${mood}-${dev}.png`, Buffer.from(png.split(',')[1], 'base64'));
+    }, { w, h, set, ids, mood, full: !!process.env.FULL, turn: +(process.env.TURN || 0), dpr: DPR });
+    fs.writeFileSync(`${out}/${tag}${process.env.FULL ? '-full' : ''}${process.env.TURN ? '-turn' + process.env.TURN : ''}${process.env.DPR ? '-x' + process.env.DPR : ''}-${set}-${mood}-${dev}.png`, Buffer.from(png.split(',')[1], 'base64'));
     console.log(dev, set, mood);
   }
   if (P.errors.length) console.log(dev, P.errors.slice(0, 3));

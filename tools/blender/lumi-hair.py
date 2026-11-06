@@ -7,7 +7,7 @@ def slock(m, L, W, th=None, wave=0.0, curl=.25, flick=.15, hug=1.0, taper=.85, N
     """one sculpted lock along +Y (its face +Z): wide at the root, tapering to a soft tip; wave makes an S-curve, flick turns the tip out"""
     # (v1.08e, owner 6 Nov via Release: the villagers' fringe read as flat slabs with hard square edges) their locks are
     # rounder and thicker, the edges rolled under (the friends' locks stay as approved)
-    rnd = WHO == 'villager'
+    rnd = True   # (round 3, Release: the friends' hair too, same shapes, no facets)
     th = th or W * (.7 if rnd else .45)
     bm = bmesh.new(); rows = []
     for i in range(N + 1):
@@ -154,9 +154,62 @@ def _lift(hexs, k):
     return '#%02x%02x%02x' % tuple(c)
 def hair_villager():
     # (v1.08e, Release 6 Nov: near-black hair drew as a flat black slab) the dark colours lifted a little, the second shade more
-    HS = mat('hairShell', _lift(PAL[1], .14), .5, .45); HL = mat('hairShellL', _lift(PAL[3], .3), .5, .45)
+    HS = mat('hairShell', _lift(PAL[1], .2), .5, .45); HL = mat('hairShellL', _lift(PAL[3], .3), .5, .45)
     if V.get('kit'): return kit_hair(V['hair'], HS, HL)   # the costume kit's hair (costumes.py)
-    style(VSTYLE.get(VHAIR.get(ROLE, 'sidepart'), 'sidepart'), HS, HL)
+    clay(VHAIR.get(ROLE, 'sidepart'), HS)
+
+def lobe(m, az, el, size, lift=1.0, tilt=0.0):
+    """one big soft lobe of hair lying on the head at (az, el): a smooth flattened ball, its long side along the head"""
+    p_, n_ = on_head(az, el, lift); q = n_.to_track_quat('Z', 'Y').to_matrix().to_4x4() @ Matrix.Rotation(tilt, 4, 'Z')
+    bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=14, radius=1)
+    bmesh.ops.transform(bm, matrix=Matrix.Translation(p_) @ q @ Matrix.Diagonal((size[0] * R, size[1] * R, size[2] * R, 1)), verts=bm.verts)
+    return obj_from(bm, 'hairLobe', m)
+
+def clay(st, A):
+    """(v1.08e round 3, owner 6 Nov 2026 AEDT via Release: "the hair will scare the kids": triangle shards) the villagers'
+    hair like a soft clay sculpt: one smooth cap with a rounded edge, a few big soft lobes for the fringe and the crown,
+    one colour (a soft highlight band is added in the game models, game-hd.py and game-light.py); ponytails, buns,
+    pigtails and puffs are smooth shapes too"""
+    cap_ = {'tuft': None, 'long': (.3, 0.0, -.15, -.5), 'lowbun': (.36, 0.0, -.3, -.62), 'sidepart': (.38, .35, -.28, -.6),
+            'curls': (.34, None, -.3, -.6)}.get(st, (.34, None, -.2, -.62))
+    if cap_: shell(A, hairline=cap_[0], part=cap_[1], sides=cap_[2], back=cap_[3], puff=1.05)
+    if st != 'tuft':
+        fr_ = {'boybangs': 4, 'messy': 4, 'bangspigtails': 4, 'sidepart': 3, 'puffs': 3, 'ponytail': 3, 'curls': 3, 'waves': 3}.get(st, 0)
+        for k in range(fr_):   # the fringe: a few big lobes over the forehead, their lower edge soft
+            az = (-.62 + 1.24 * k / max(1, fr_ - 1)) + (.18 if st == 'sidepart' else 0)
+            lobe(A, az, .72, (.3, .22, .16), 1.04, .25 * (-1 if az < 0 else 1))
+        for k in range(5):     # the crown: soft volume all round
+            az = -1.2 + 2.4 * k / 4; lobe(A, az + math.pi * (k % 2), 1.15, (.42, .36, .2), 1.02)
+    if st in ('boybangs', 'messy', 'sidepart'):
+        for s_ in (-1, 1): lobe(A, s_ * 1.35, .3, (.26, .3, .16), 1.0)   # over the ears, short
+    elif st == 'long':
+        curtain(A, 2.6, 1.12)
+        for s_ in (-1, 1): tube('hairSide', A, [H(s_ * .95, -.2, .1), H(s_ * 1.02, -.15, -.6), H(s_ * 1.05, .0, -1.4)], [(.2 * R, .13 * R), (.24 * R, .13 * R), (.18 * R, .09 * R)], 16)
+    elif st == 'lowbun':
+        sphere('bun', A, H(0, .9, -.32), (.36 * R, .3 * R, .32 * R), 24, 12)
+    elif st == 'ponytail':
+        base = H(0, .7, .62); sphere('ponyTie', felt('tie', '#e2574c'), base, (.16 * R, .12 * R, .16 * R), 16, 8)
+        o = tube('ponytail', A, [base, base + Vector((0, .25 * R, -.2 * R)), base + Vector((0, .32 * R, -.8 * R)), base + Vector((0, .22 * R, -1.35 * R))], [.22 * R, .26 * R, .2 * R, .06 * R], 20); subsurf(o, 1)
+    elif st == 'bangspigtails':
+        for s_ in (-1, 1):
+            base = H(s_ * 1.0, .2, .05); sphere('pigTie', felt('tie', '#e2574c'), base, (.14 * R, .14 * R, .12 * R), 16, 8)
+            o = tube('pigtail', A, [base, base + Vector((s_ * .18 * R, .05 * R, -.15 * R)), base + Vector((s_ * .24 * R, .05 * R, -.65 * R)), base + Vector((s_ * .2 * R, .02 * R, -.95 * R))], [.17 * R, .2 * R, .15 * R, .05 * R], 16); subsurf(o, 1)
+    elif st == 'puffs':
+        for s_ in (-1, 1):
+            sphere('hairPuff', A, H(s_ * .78, .15, .78), (.42 * R, .4 * R, .4 * R), 24, 12); sphere('puffTie', felt('tie', '#f2c14e'), H(s_ * .62, .1, .62), (.15 * R, .15 * R, .1 * R), 12, 6)
+    elif st == 'waves':   # soft waves to the shoulders (Ruby): big lobes falling down the sides and back
+        for k in range(9):
+            az = math.pi * (.35 + 1.3 * k / 8); lobe(A, az, -.25, (.32, .5, .2), 1.04)
+    elif st == 'curls':
+        for k in range(40):
+            az = random.uniform(-math.pi, math.pi); el = random.uniform(-.1, 1.5)
+            if front_open(az, el) and el < .95: continue
+            p_, n_ = on_head(az, el, 1.12); sphere('hairCurl', A, p_, (.26 * R, .26 * R, .2 * R), 14, 8)
+    elif st == 'tuft':   # soft round tufts round the sides and back (grandpas)
+        for row, el in enumerate((-.18, .1)):
+            for k in range(13):
+                az = math.pi * .36 + k * math.pi * 1.28 / 12 + .08 * row
+                p_, n_ = on_head(az, el, 1.0); sphere('hairTuft', A, p_, (.22 * R, .2 * R, .16 * R), 16, 8, n_.to_track_quat('Z', 'Y').to_euler())
 
 def _clara_braids_and_flower():
     # two braids over the shoulders with lilac ties

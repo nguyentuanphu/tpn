@@ -14,6 +14,11 @@ import math
 from mathutils import Vector
 
 AGE = (V['size'] if V else 'kid')
+# (v1.08e round 3, owner 6 Nov 2026 AEDT via Release: "the pair of eyes and cheeks plus the hair will scare the kids")
+# calm, cute and smooth: the eyes about 15 % smaller, a touch further apart and a little lower; the blush lower and smaller
+P['eye'] = P['eye'] * .85; P['eyeX'] = P['eyeX'] + .03; P['eyeZ'] = P['eyeZ'] - .03
+P['blushZ'] = P.get('blushZ', -.37) - .05; P['blushX'] = P.get('blushX', .53) + .01
+BLUSH3 = softpaint('blushSoft', '#f4b1a6', .85)   # a softer, paler rose, so it is not a sticker
 MOODS3D = ('smile', 'blink', 'half', 'happy', 'curious', 'surprised', 'sad', 'shy', 'excited', 'lookL', 'lookR', 'open', 'sleep')
 
 def _g(dx, dz, sx, sz): return math.exp(-(dx * dx) / (sx * sx) - (dz * dz) / (sz * sz))
@@ -33,21 +38,18 @@ def sculpt_head(x, y, z):
     d -= .03 * _g(x, z - (ez + E * 2.6), .7, .2) * fr                           # a gentle slope of the forehead above it
     for s in (-1, 1):
         d -= .06 * _g(x - s * ex, z - ez, E * 1.35, E * 1.25) * fr               # the eye sockets
-        ck = {'kid': .1, 'adult': .065, 'elder': .05}[AGE]
+        ck = {'kid': .05, 'adult': .032, 'elder': .025}[AGE]   # (round 3: about half, soft round cheeks inside an egg-shaped face)
         d += ck * _g(x - s * (ex + .1), z - (ez - E * 1.9), .19, .14) * fr       # round cheeks (the apples), full
-        d += ck * .6 * _g(x - s * (ex + .32), z - (mz + .1), .14, .14)           # and bulging out past the jaw line
-        d -= .05 * _g(x - s * .82, z - (ez + .22), .16, .22)                     # narrower temples
-        d -= .035 * _g(x - s * .55, z - (mz - .17), .16, .1) * fr               # the jaw under the cheeks, toward the chin
+        d -= .035 * _g(x - s * .82, z - (ez + .22), .18, .24)                     # narrower temples
         if AGE == 'elder':   # smile lines from the nose to the mouth's corners, and softer, lower cheeks
             for t in (0, .5, 1):
-                d -= .02 * _g(x - s * (.13 + .1 * t), z - (nz - .02 + (mz - nz - .02) * t), .035, .06) * fr
-            d += .025 * _g(x - s * (ex + .1), z - (mz + .05), .14, .1) * fr
-    d += .15 * _g(x, z - nz, .065, .07) * fr                                      # a small round nose that catches the light
-    d += .06 * _g(x, z - (nz + .13), .05, .12) * fr                               # its bridge
-    for s in (-1, 1): d += .04 * _g(x - s * .07, z - (nz - .025), .045, .04) * fr   # the nostril wings
-    d -= .035 * _g(x, z - (nz - .1), .07, .04) * fr                               # a soft hollow under it (its shadow)
-    d += .035 * _g(x, z - (mz + .02), .2, .1) * fr                                # a soft muzzle round the mouth
-    d += .07 * _g(x, z - (mz - .21), .12, .075) * fr                              # a defined chin
+                d -= .008 * _g(x - s * (.13 + .1 * t), z - (nz - .02 + (mz - nz - .02) * t), .05, .07) * fr
+    d += .09 * _g(x, z - nz, .07, .075) * fr                                      # a small round nose that catches the light
+    d += .035 * _g(x, z - (nz + .13), .055, .12) * fr                               # its bridge
+    for s in (-1, 1): d += .015 * _g(x - s * .07, z - (nz - .025), .05, .045) * fr   # the nostril wings
+    d -= .012 * _g(x, z - (nz - .1), .08, .05) * fr                               # a soft hollow under it (its shadow)
+    d += .012 * _g(x, z - (mz + .02), .22, .12) * fr                                # a soft muzzle round the mouth
+    d += .035 * _g(x, z - (mz - .21), .14, .09) * fr                              # a defined chin
     k = 1 + d / l
     return x * k, y * k, z * k
 
@@ -129,7 +131,7 @@ def face3d_points(expr):
                 elif r == len(rows) - 2: M.face((rows[r][k], rows[r + 1][0], rows[r][k2]), m, C)
                 else: M.face((rows[r][k], rows[r + 1][k], rows[r + 1][k2], rows[r][k2]), m, C)
         # two sparkles, the light's reflection: they stay still while the eye turns (the lids hide them when closed)
-        for az, el, rad in ((10, 15, 6.5 if expr != 'excited' else 8), (-15, -20, 3)):
+        for az, el, rad in ((10, 15, 7 if expr != 'excited' else 8.5),):   # (round 3: one sparkle)
             cc = M.vert(C + D(az, el) * (rE * 1.012)); ring = []
             for k in range(8):
                 q = 2 * math.pi * k / 8; ring.append(M.vert(C + D(az + rad * math.cos(q), el + rad * math.sin(q)) * (rE * 1.01)))
@@ -155,9 +157,9 @@ def face3d_points(expr):
                     row.append(M.vert(C + D(az, el) * (rE * rad)))
                 rows.append(row)
             if not upper: rows = [list(reversed(r)) for r in rows]
-            M.grid(rows, lambda r, c, upper=upper: LASH if upper and r <= 1 else SKIN, ref=C)
+            M.grid(rows, lambda r, c, upper=upper: LASH if upper and r == 0 else SKIN, ref=C)   # (round 3: a thin upper lash line only)
             if upper:   # lashes at the outer corner: three soft curls for girls, one small flick for boys
-                for k in range(3 if G == 'f' else 1):
+                for k in range(0):   # (round 3: no lash flicks, the thin line only)
                     az = s * (A * (.98 - .14 * k)); e = edge(mid, az)
                     if droop and az * s > 0: e -= droop * min(1, az * s / A) ** 1.5
                     if expr in ('blink', 'sleep', 'happy'): e = min(e, edge(b0, az) - 2)
@@ -171,27 +173,31 @@ def face3d_points(expr):
         rad = [.018, .028, .016] if G != 'f' else [.012, .02, .01]
         _tube(M, [onf(x_, z_, .035)[0] for x_, z_ in pts], [r_ * R for r_ in rad], Vector((0, -1, 0)), BROW, 6)
         # rosy cheeks, lifted and fuller when happy, shy or excited
-        bl = 1.3 if expr in ('shy', 'excited', 'happy') else 1.0; lift = .035 if expr in ('happy', 'excited') else 0
-        _disc(M, s * P.get('blushX', .53), P.get('blushZ', -.37) + lift, .15 * Mo * bl, .085 * Mo * bl, .014, BLUSH)
+        bl = 1.2 if expr in ('shy', 'excited', 'happy') else 1.0; lift = .025 if expr in ('happy', 'excited') else 0
+        _disc(M, s * P.get('blushX', .53), P.get('blushZ', -.37) + lift, .1 * Mo * bl, .058 * Mo * bl, .009, BLUSH3)
     # the mouth: a grid between its top and bottom lines (dark inside, the tongue low), soft lips round it in the skin colour
     mz = P.get('mouthZ', -.5); s_ = lambda u: math.sqrt(max(0, 1 - u * u))
-    if expr in ('smile', 'half', 'lookL', 'lookR', 'happy', 'excited'):
-        w, h = {'happy': (.2, .17), 'excited': (.22, .2)}.get(expr, (.17, .15)); w *= Mo; h *= Mo
-        top = lambda u: mz + h * (.08 + .24 * u * u); bot = lambda u: mz + h * (.08 + .24 * u * u) - h * 1.02 * s_(u) ** .8; x0 = 0
+    # (round 3: "the open mouth with tongue reads as fangs") at rest a closed, gentle smile; happy, excited and surprised
+    # (and talking) a soft rounded opening, its corners round, no points
+    if expr in ('happy', 'excited'):
+        w, h = {'happy': (.12, .11), 'excited': (.13, .13)}[expr]; w *= Mo; h *= Mo
+        top = lambda u: mz + h * (.12 + .12 * u * u) * s_(u) ** .3 + h * .1 * (1 - s_(u)); bot = lambda u: mz + h * .1 - h * .95 * s_(u); x0 = 0
     elif expr == 'open':
-        w, h = .12 * Mo, .15 * Mo; top = lambda u: mz + h * .32 * s_(u); bot = lambda u: mz - h * .68 * s_(u); x0 = 0
+        w, h = .075 * Mo, .09 * Mo; top = lambda u: mz + h * .3 * s_(u); bot = lambda u: mz - h * .6 * s_(u); x0 = 0
     elif expr == 'surprised':
-        w, h = .075 * Mo, .1 * Mo; top = lambda u: mz - .03 + h * .5 * s_(u); bot = lambda u: mz - .03 - h * .5 * s_(u); x0 = 0
+        w, h = .06 * Mo, .08 * Mo; top = lambda u: mz - .03 + h * .5 * s_(u); bot = lambda u: mz - .03 - h * .5 * s_(u); x0 = 0
     else:
-        mid = {'blink': (lambda u: mz - .02 * Mo + .025 * Mo * u * u, .07), 'sleep': (lambda u: mz - .01 * Mo + .008 * Mo * u * u, .05),
-               'sad': (lambda u: mz - .015 - .028 * Mo * u * u, .07), 'shy': (lambda u: mz - .03 * Mo + .025 * Mo * u * u, .058),
-               'curious': (lambda u: mz - .03 + .012 * u, .05)}[expr]
-        w = mid[1] * Mo; th = lambda u: .011 * (.35 + .65 * s_(u)); top = lambda u, f=mid[0]: f(u) + th(u); bot = lambda u, f=mid[0]: f(u) - th(u); x0 = -.008 if expr == 'shy' else 0
+        mid = {'blink': (lambda u: mz - .018 * Mo + .022 * Mo * u * u, .065), 'sleep': (lambda u: mz - .01 * Mo + .008 * Mo * u * u, .05),
+               'smile': (lambda u: mz - .02 * Mo + .028 * Mo * u * u, .075), 'half': (lambda u: mz - .02 * Mo + .028 * Mo * u * u, .075),
+               'lookL': (lambda u: mz - .02 * Mo + .028 * Mo * u * u, .075), 'lookR': (lambda u: mz - .02 * Mo + .028 * Mo * u * u, .075),
+               'sad': (lambda u: mz - .015 - .022 * Mo * u * u, .06), 'shy': (lambda u: mz - .03 * Mo + .025 * Mo * u * u, .055),
+               'curious': (lambda u: mz - .03 + .01 * u, .045)}[expr]
+        w = mid[1] * Mo; th = lambda u: .009 * (.35 + .65 * s_(u)); top = lambda u, f=mid[0]: f(u) + th(u); bot = lambda u, f=mid[0]: f(u) - th(u); x0 = -.008 if expr == 'shy' else 0
     us = lin(-1, 1, 13); vs = (1.0, .5, 0, -.5, -1.0)
     rows = [[M.vert(onf(x0 + w * u * 1.06, top(u) + .016, .006)[0]) for u in us]]   # the upper lip
     for v in vs: rows.append([M.vert(onf(x0 + w * u, (top(u) + bot(u)) / 2 + v * (top(u) - bot(u)) / 2, .012 - .004 * (1 - abs(v)))[0]) for u in us])
     rows.append([M.vert(onf(x0 + w * u * 1.06, bot(u) - .018, .006)[0]) for u in us])   # the lower lip
-    M.grid(rows, lambda r, c: SKIN if r in (0, len(rows) - 2) else TONGUE if (r >= 3 and 3 <= c <= 8) else MOUTH, ref=HC)
+    M.grid(rows, lambda r, c: SKIN if r in (0, len(rows) - 2) else TONGUE if (r >= 4 and 4 <= c <= 7) else MOUTH, ref=HC)
     return M
 
 def face3d():
