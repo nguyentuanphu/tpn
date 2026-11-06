@@ -124,7 +124,7 @@ export async function facesCheck(b) {
       // 2. the mouth changes shape per mood: its dark inside, each mood's own width, height and place
       const face = M.face3d.find((o: any) => o.geometry.attributes.color), g = face.geometry, pos = g.attributes.position, col = g.attributes.color, dict = face.morphTargetDictionary, tgt = g.morphAttributes.position, rel = g.morphTargetsRelative;
       // (the mouth's own colour in the corners)
-      const mouth: number[] = []; for (let i = 0; i < pos.count; i++) if (Math.abs(col.getX(i) - .37) < .06 && col.getY(i) < .1 && col.getZ(i) < .1 && col.getX(i) > 3 * col.getY(i)) mouth.push(i); // (round 3: the soft lip colour #a24a4c, linear .37, .06, .07)
+      const mouth: number[] = []; for (let i = 0; i < pos.count; i++) if (Math.abs(col.getX(i) - .55) < .08 && col.getY(i) < .12 && col.getZ(i) < .2 && col.getX(i) > 3 * col.getY(i)) mouth.push(i); // (round 3: the soft rose inside the mouth, #c4626a, linear .55, .05, .14)
       const shape: Record<string, number[]> = {};
       for (const k of ['smile', 'open', 'sad', 'surprised', 'happy', 'shy', 'excited', 'sleep']) {
         let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; const t = k === 'smile' ? null : tgt[dict[k]];

@@ -20,7 +20,7 @@ P['eye'] = P['eye'] * .85; P['eyeX'] = P['eyeX'] + .03; P['eyeZ'] = P['eyeZ'] - 
 # (Release, round 3 review: "a big empty plate with a high forehead") the eyes, nose, mouth and cheeks up about 4 % of
 # the head's height, so the face sits framed under the fringe
 for k_ in ('eyeZ', 'noseZ', 'mouthZ', 'blushZ'): P[k_] = P.get(k_, {'noseZ': -.3, 'mouthZ': -.5, 'blushZ': -.42}[k_] if k_ != 'eyeZ' else -.13) + .08
-MOUTH = mat('mouth3', '#a24a4c', .5)   # (a soft lip colour: the closed smile reads as lips, not a dark cut)
+MOUTH = mat('mouth3', '#c4626a', .5)   # (a soft rose: the smile's soft pink inside, never a dark cut)
 LIP3 = mat('lip3', '#c57a74', .5)   # (the soft rim of the lips: skin-coloured rows were shaded apart from the face and showed as patches)
 P['blushZ'] = P.get('blushZ', -.37) - .05; P['blushX'] = P.get('blushX', .53) + .01
 BLUSH3 = softpaint('blushSoft', '#f4b1a6', .85)   # a softer, paler rose, so it is not a sticker
@@ -101,12 +101,16 @@ def _disc(M, x, z, sx, sz, out, m, n=12):
 # per mood: the upper lid's middle, the lower lid's middle, the corners (degrees up from the eye's middle), the sad droop of
 # the outer corner, where the eyes look (degrees to the person's left, up), the iris size
 EYE3D = {
-    'smile': (30, -46, -6, 0, 0, 0, 1), 'open': (30, -46, -6, 0, 0, 0, 1), 'half': (-4, -42, -10, 0, 0, 0, 1),
+    # (owner 6 Nov, via Release: "the eyes are still too sad") at rest the lower lid lifts into a soft smile and the iris is a
+    # touch larger; the outer corners are lifted (HAPPY_REST below)
+    'smile': (30, -32, -4, 0, 0, 0, 1.12), 'open': (30, -32, -4, 0, 0, 0, 1.12), 'half': (-4, -31, -8, 0, 0, 0, 1.12),
     'blink': (-28, -24, -16, 0, 0, 0, 1), 'sleep': (-28, -24, -16, 0, 0, -4, 1), 'happy': (6, 8, -14, 0, 0, 0, 1),
     'excited': (40, -50, -6, 0, 0, 2, 1.04), 'surprised': (46, -54, -4, 0, 0, 0, .84), 'curious': (35, -44, -5, 0, -12, 6, 1),
-    'sad': (19, -42, -10, 14, 0, -9, 1), 'shy': (21, -38, -8, 0, -14, -12, 1), 'lookL': (30, -46, -6, 0, 22, 0, 1), 'lookR': (30, -46, -6, 0, -22, 0, 1),
+    'sad': (19, -42, -10, 14, 0, -9, 1), 'shy': (21, -38, -8, 0, -14, -12, 1), 'lookL': (30, -32, -4, 0, 22, 0, 1.12), 'lookR': (30, -32, -4, 0, -22, 0, 1.12),
 }
-BROW3D = {'surprised': .1, 'happy': .045, 'sad': .04, 'excited': .085, 'shy': .05, 'curious': .07, 'blink': .015, 'sleep': .0}
+BROW3D = {'surprised': .12, 'happy': .07, 'sad': .04, 'excited': .1, 'shy': .06, 'curious': .08, 'blink': .05, 'sleep': .035}
+BROW_REST = .06   # (owner 6 Nov: the brows higher at rest, with a gentle raised arch)
+HAPPY_REST = ('smile', 'open', 'half', 'lookL', 'lookR', 'blink', 'excited', 'happy', 'curious')   # outer eye corners lifted, never drooping
 RINGS = [0, 7, 13, 18, 24, 30, 35, 39, 47, 62, 82, 110, 140, 180]   # the eyeball's rings, degrees from where it looks
 
 def face3d_points(expr):
@@ -136,14 +140,15 @@ def face3d_points(expr):
                 elif r == len(rows) - 2: M.face((rows[r][k], rows[r + 1][0], rows[r][k2]), m, C)
                 else: M.face((rows[r][k], rows[r + 1][k], rows[r + 1][k2], rows[r][k2]), m, C)
         # two sparkles, the light's reflection: they stay still while the eye turns (the lids hide them when closed)
-        for az, el, rad in ((10, 15, 7 if expr != 'excited' else 8.5),):   # (round 3: one sparkle)
+        for az, el, rad in ((10, 21, 9 if expr != 'excited' else 10),):   # (round 3: one sparkle, big and high on the iris)
             cc = M.vert(C + D(az, el) * (rE * 1.012)); ring = []
             for k in range(8):
                 q = 2 * math.pi * k / 8; ring.append(M.vert(C + D(az + rad * math.cos(q), el + rad * math.sin(q)) * (rE * 1.01)))
             for k in range(8): M.face((cc, ring[k], ring[(k + 1) % 8]), SHINE, C)
         # the lids: shells round the eyeball from their edge back into the head; the upper one in front where they meet
-        def edge(mid, az):
+        def edge(mid, az, s=s):
             k = max(0, 1 - (az / A) ** 2); e = c0 + (mid - c0) * k
+            if expr in HAPPY_REST and az * s > 0: e += 7 * min(1.0, az * s / A) ** 2   # the outer corner lifted
             return e
         azs = lin(-AW, AW, 17)
         for upper in (True, False):
@@ -172,9 +177,9 @@ def face3d_points(expr):
                     Ll = (.05 - .008 * k) * R * E / .185
                     _tube(M, [base, base + out_ * Ll * .6 + U * Ll * .2, base + out_ * Ll + U * Ll * .45], [.008 * R, .005 * R, .0015 * R], F, LASH, 5)
         # the brow: on the brow ridge, raised and tilted by the mood
-        up = BROW3D.get(expr, .025) + (.03 if expr == 'curious' and s < 0 else 0); tilt = {'sad': .05, 'shy': .03}.get(expr, 0)
+        up = BROW3D.get(expr, BROW_REST) + (.03 if expr == 'curious' and s < 0 else 0); tilt = {'sad': .05, 'shy': .03}.get(expr, 0)
         bz = ez + E * 1.62 + .03 + up
-        pts = [(s * ex - s * .11, bz + tilt - .01), (s * ex - s * .01, bz + .018), (s * ex + s * .11, bz + .002 - tilt)]
+        pts = [(s * ex - s * .11, bz + tilt - .006), (s * ex - s * .01, bz + .034), (s * ex + s * .11, bz + .014 - tilt)]   # (a gentle raised arch, the outer end not lower than the inner)
         rad = [.018, .028, .016] if G != 'f' else [.012, .02, .01]
         _tube(M, [onf(x_, z_, .035)[0] for x_, z_ in pts], [r_ * R for r_ in rad], Vector((0, -1, 0)), BROW, 6)
         # rosy cheeks, lifted and fuller when happy, shy or excited
@@ -184,7 +189,10 @@ def face3d_points(expr):
     mz = P.get('mouthZ', -.5); s_ = lambda u: math.sqrt(max(0, 1 - u * u))
     # (round 3: "the open mouth with tongue reads as fangs") at rest a closed, gentle smile; happy, excited and surprised
     # (and talking) a soft rounded opening, its corners round, no points
-    if expr in ('happy', 'excited'):
+    if expr in ('smile', 'half', 'lookL', 'lookR'):   # (owner 6 Nov: "the mouth should be bigger and prettier") a small open happy smile
+        w, h = .16 * Mo, .085 * Mo
+        top = lambda u: mz + h * (.35 + .6 * u * u); bot = lambda u: mz + h * (.35 + .6 * u * u) - h * 1.05 * s_(u) ** .7; x0 = 0
+    elif expr in ('happy', 'excited'):
         w, h = {'happy': (.12, .11), 'excited': (.13, .13)}[expr]; w *= Mo; h *= Mo
         top = lambda u: mz + h * (.12 + .12 * u * u) * s_(u) ** .3 + h * .1 * (1 - s_(u)); bot = lambda u: mz + h * .1 - h * .95 * s_(u); x0 = 0
     elif expr == 'open':
@@ -194,8 +202,6 @@ def face3d_points(expr):
     else:
         mid = {'blink': (lambda u: mz - .024 * Mo + .036 * Mo * u * u, .1), 'sleep': (lambda u: mz - .012 * Mo + .012 * Mo * u * u, .075),
                # (Release, round 3 review: the closed smile too small to read on a phone) about 1.6 times wider, a deeper curve
-               'smile': (lambda u: mz - .028 * Mo + .045 * Mo * u * u, .12), 'half': (lambda u: mz - .028 * Mo + .045 * Mo * u * u, .12),
-               'lookL': (lambda u: mz - .028 * Mo + .045 * Mo * u * u, .12), 'lookR': (lambda u: mz - .028 * Mo + .045 * Mo * u * u, .12),
                'sad': (lambda u: mz - .015 - .03 * Mo * u * u, .09), 'shy': (lambda u: mz - .03 * Mo + .035 * Mo * u * u, .085),
                'curious': (lambda u: mz - .03 + .01 * u, .045)}[expr]
         w = mid[1] * Mo; th = lambda u: .012 * (.3 + .7 * s_(u)) ** .7; top = lambda u, f=mid[0]: f(u) + th(u); bot = lambda u, f=mid[0]: f(u) - th(u); x0 = -.008 if expr == 'shy' else 0
