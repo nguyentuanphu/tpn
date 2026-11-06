@@ -41,6 +41,13 @@ export function P(geo, color, pos = [0, 0, 0], rot = [0, 0, 0], scl = [1, 1, 1])
 // js/modelkit.ts picks this list up after the start (nothing is loaded here). opts: as modelFor, plus outline [width,
 // colour] for the model (the same edge as the code shape) and carry (the code shape's own children, such as a clock face
 // or a turning wheel, move onto the model so they stay seen).
+// (v1.08 startup, PERF-001) afterGameStart(): resolves when the valley's game has started (js/main.ts, with its other
+// after-the-start parts), so the Blender model code (js/modelkit.ts, the GLTF loader) and the models are not in the first
+// download. A page with no valley booting (Sparkle Studio, a check's page) gets it at once.
+let gameStart: Promise<void> | null = null, gameStartDone: (() => void) | null = null;
+export const gameBooting = () => { if (!gameStart) gameStart = new Promise<void>(r => { gameStartDone = r; }); };
+export const gameStarted = () => { if (gameStartDone) gameStartDone(); else gameStart = Promise.resolve(); };
+export const afterGameStart = (): Promise<void> => gameStart || Promise.resolve();
 export const WORLD_TAGS: [any, string, any][] = [];
 export const worldTag = <T>(obj: T, name: string, opts: any = {}): T => { WORLD_TAGS.push([obj, name, opts]); return obj; };
 // a short name for a merged shape (houses, stalls: one model for every copy of the same shape): from its corners and colours

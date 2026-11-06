@@ -3,7 +3,6 @@ import { T } from '../i18n.js';
 import { settings, autoPackOn } from '../state.js';
 import { SFX, ac } from '../audio.js';
 import { el, $ } from '../util.js';
-import { openCredits } from '../credits.js';
 import { installButton } from '../install.js';
 import { SHOWN } from '../build.js';
 import { hideCaption, flagBtns, bindLang, WEBSITE_ICON, openSite } from './common.js';
@@ -47,7 +46,8 @@ export function showTitle(onStart) {
     const b = installButton(); if (b) top.appendChild(b);
   };
   redraw();
-  s.querySelector('.about').onclick = e => { e.stopPropagation(); ac(); openCredits(hideCaption); };
+  // (v1.08 startup, PERF-001) the credits load when the About button is tapped, not in the first download
+  s.querySelector('.about').onclick = e => { e.stopPropagation(); ac(); import('../credits.js').then(m => m.openCredits(hideCaption)).catch(err => console.warn('credits', err)); };
   // (r89, owner 23 Oct AEDT) the family website floats over the Welcome screen; closing it comes back here, not into play
   s.querySelector('.sitebtn').onclick = e => { e.stopPropagation(); ac(); SFX.tap(); openSite(e.currentTarget instanceof Element ? e.currentTarget : null); };
   let starting = false;

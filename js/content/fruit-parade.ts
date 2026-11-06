@@ -1,5 +1,5 @@
 import { releaseOn, liveRule } from '../custom.js';
-import { testerLevel } from './tester.js';
+import { testerLevel } from './tester-level.js';
 
 export const fruitPreviewAllowed = (modeOn: boolean, previewOn: boolean, tester: boolean) => modeOn || previewOn && tester;
 export function fruitParadeAvailable(mode: 'single' | 'multi') {

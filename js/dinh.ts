@@ -1,7 +1,7 @@
 // The đình (village communal house) of Làng Sen (round R, story chapter 1): where the first lantern is hung. A raised
 // stone base with steps, wooden pillars, red doors and a big two-tier tiled roof with upturned corners. Faces +z, sits on
 // y = 0, about 9 x 6 m. Used in the valley (js/lanterns.js) and in the chapter's festival film (js/content/films.js).
-import { THREE, P, merge, toonVC, glow } from './gfx.js';
+import { THREE, P, merge, toonVC, glow, afterGameStart } from './gfx.js';
 
 const H = Math.PI / 2;
 export function buildDinh() {
@@ -60,13 +60,14 @@ function dressLantern(g: THREE.Group) {
 }
 function askLanternModels() {
   if (lanternAsked) return; lanternAsked = true;
-  setTimeout(async () => {
+  // (v1.08 startup, PERF-001) in the valley, only after the game's start (js/gfx.ts afterGameStart): not in the first download
+  void afterGameStart().then(() => setTimeout(async () => {
     try {
       const K = await import('./modelkit.js'), [b, t] = await Promise.all([K.worldModelParts('fe-questlantern-body'), K.worldModelParts('fe-questlantern-trim')]);
       if (b && b[0] && t && t[0]) { lanternParts = { body: b[0].geometry.clone().scale(1, 1 / 1.15, 1), trim: t[0].geometry }; WAITING_LANTERNS.forEach(dressLantern); }
       // (the body is drawn 1.15 times as tall by its own mesh scale, as the code shape was, so the model is made shorter)
     } catch (e) { /* the code shapes stay */ }
     WAITING_LANTERNS.clear();
-  }, 3000);
+  }, 3000));
 }
 export const lanternModelsReady = () => !!lanternParts;
