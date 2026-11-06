@@ -227,6 +227,20 @@ full length, 4x close-ups of Clara and Mai) and [rebuild/game/](../../../world-m
 Still to look at: the friends' hair (Finn, Sol, Clara) shows facets at 2x and 4x (the hair helper's part); dark
 bake smudges at the waist and hips of the ao dai (Mai and the crowd), Su's and Lan's tunics.
 
+## Fixes after the rebuild (7 Nov 2026, 2:20 am AEDT, Release's yes to both)
+
+- Waist and hip smudges: the villagers' baked light was sampled once per corner of the thinned shape. It is now
+  averaged per point, smoothed over the neighbours 3 times and kept above .5 (tools/blender/game-hd.py
+  soften_light). Rebuilt: Mai, Lan, Su, vn-aodai.
+- The friends' hair facets: in game-hd.py the "full smooth hair" that soften_hair takes its normals from had
+  already been thinned by thin_friend_hair_evenly, so the thinned hair copied its own facets. The hair is now
+  evaluated a second time without that thinning, for its normals. Its AO is smoothed (4 passes) and gentler
+  (.7 to 1, was .4 to 1). Rebuilt: Finn, Sol, Clara, Lumi (high-detail; the light models are unchanged).
+- Checks, one at a time: friendmodel, villagermodels, faces and perf pass (village 273 draws / 726k triangles).
+- Shots: [rebuild/fix/](../../../world-models-v108e/faces/rebuild/fix/), with before/after of Clara at 4x and of Mai.
+  Seen: the hard ridges on the hair are gone; the clumps' outlines are still a little angular (their shape);
+  Sol's side locks still end in points; Mai's waist is clean.
+
 ## Owner's decisions
 
 - 6 Nov 2026 AEDT (pop-up, in this chat): "Everything still need better refinement" → next is Part 2 (high-detail
