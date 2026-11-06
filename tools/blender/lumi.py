@@ -49,7 +49,7 @@ VN_KID_F = ('#f6c7a5', '#1d1412', '#120f0d', '#3b2a22', '#2a1a0e', '#5a3a22', '#
 VN_KID_M = ('#f6c7a5', '#1d1412', '#120f0d', '#3b2a22', '#2a1a0e', '#5a3a22', '#120f0d', '#1f1712')
 VILL.update({
     'mai': _named('vn-aodai', top=('aodai', '#e8435a'), hat='nonla'),
-    'ba': _named('vn-grandpa', top=('aobaba', '#5b7fbf'), bottom='#3d4a6a', hat='', extra=('moustache',)),
+    'ba': _named('vn-grandpa', top=('aobaba', '#5b7fbf'), bottom='#3d4a6a', kind='wide', hat='', extra=('moustache',)),   # (Release 6 Nov: wide trousers)
     'teo': _named('vn-schoolboy', pal=VN_KID_M, top=('shirt', '#ffb52e'), bottom='#2c3a5a', extra=()),
     'ti': _named('vn-schoolgirl', pal=('#f6c7a5', '#3b2618', '#2a1a10', '#5a3a26', '#2a1a0e', '#5a3a22', '#2a1a10', '#1f1712'), top=('dress', '#ff7eb8'), bottom='#ff7eb8', extra=('flowerclip',)),
     'bong': _named('vn-schoolgirl', pal=VN_KID_F, hair='ponytail', top=('tee', '#9a6bff'), bottom='#5a3f9a', kind='shorts', extra=('bunny',)),
@@ -577,7 +577,7 @@ def torso(m):
     b = B; wH, wC, dep = b['wH'], b['wC'], b['dep']
     lathe('shirt', m, [(wH * .95, b['zW'] - .04 * S), (wC, b['zW']), (wC * 1.03, (b['zW'] + b['zC']) / 2), (wC, b['zC']), (wC * .82, b['zS'] + .008 * S), (wC * .42, b['zN']), (wC * .32, b['zN'] + .01 * S)], 32, scale=(1, dep))
     for s in (-1, 1):
-        if m is not SKIN: sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))
+        if m is not SKIN and not V: sphere('collar', SHIRT, (s * .3 * wC, fronty(wC * .5), b['zN'] - .1 * wC), (.3 * wC, .09 * wC, .18 * wC), 16, 8, (0, s * .3, s * .5))   # (the friends' cream collar; a villager's top brings its own, Release 6 Nov)
     tube('neck', SKIN, [(0, 0, b['zS']), (0, 0, b['zN'] + .03 * S)], .04 * S, 16)
 
 def satchel(a, m, md, deco, across=True):
@@ -639,7 +639,7 @@ def body_clara():
     skirt = [(wC * 1.07, b['zW'] + .01 * S), (wH * 1.12, b['zW'] - .03 * S), (wH * 1.4, b['zCr']), (wH * 1.65, b['zCuff'] + .02 * S), (wH * 1.66, b['zCuff'] + .008 * S)]
     lathe('skirt', DRESS, skirt, 40, scale=(1, dep * 1.05))
     lathe('frill', SHIRT, [(wH * 1.45, b['zCuff'] + .025 * S), (wH * 1.6, b['zCuff'] - .005 * S), (wH * 1.55, b['zCuff'] - .015 * S)], 40, scale=(1, dep * 1.05))
-    for k in range(11):
+    for k in range(0 if SCULPT else 11):   # (round 3, Release: in the game the petals read as a torn edge at phone size: the game models leave them off)
         a = 2 * math.pi * k / 11; n = Vector((math.sin(a), -math.cos(a) * dep, -.35)).normalized()
         p = Vector((math.sin(a) * wH * 1.5, -math.cos(a) * wH * 1.5 * dep * 1.05, b['zCr'] - .01 * S))
         o = leaf('petalHem', DRESSL if k % 2 else DRESS, .085 * S, .05 * S, .15, -.1, 1, .006 * S, .3); place(o, p, Vector((math.sin(a) * .35, -math.cos(a) * .35, -1)), n)

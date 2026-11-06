@@ -1,6 +1,6 @@
 # v1.08e faces: status
 
-**ready for Release** (6 Nov 2026, 18:45 AEDT): Part 3 (sculpted faces) and Release's hair, clothes and hands faults are done too; before that (14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
+**ready for Release** (6 Nov 2026, 20:45 AEDT): round 2 (heads, shading, hair, clothes, section 6); before that (18:45 AEDT): Part 3 (sculpted faces) and Release's hair, clothes and hands faults are done too; before that (14:20 AEDT): Part 1 (faces), Part 2 (high-detail friends, the people's look,
 close-ups), the villagers brief (`villagers.md`) and Release's clear in-game shots
 (`docs/world-models-v108e/faces/game/`, 28 pictures at 2x, Pretty, phone and computer). Next: Part 3 (sculpted faces). Part 1 was merged into `integrate/v108` already.
 Branch `work/v108e-faces` (from `origin/integrate/v108`). Brief: `faces-brief.md`.
@@ -111,6 +111,64 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
   budget: 12,000 and 17,500 triangles, one more part), `frienditems` pass. `suite --changed` would choose the full suite
   (shared files changed): left for Release's GitHub run.
 
+## 6. Round 2: heads that read as heads (owner 6 Nov 2026 AEDT, via Release)
+
+The owner saw the Part 3 shots: "from the front the heads still read as round balls with a face painted on".
+- **Head shape** (`lumi-face3d.py` `sculpt_head`): the skull a little taller and narrower at the temples, the face plane
+  flatter, then the features about twice as strong: a nose with a bridge and a tip that catch the light and a soft
+  hollow under it, full cheeks that bulge past the jaw line, a defined chin and jaw, bigger ears turned out. The head (and
+  ears) are now thinned on their own (2,600 triangles high-detail, 900 light) and joined to the body again, so the shape
+  survives the thinning (before, the whole body shared one budget and the head lost its form).
+- **Shading:** the skin's corners carry soft form shading, a key light from above-left (and the baked soft shadow or
+  gallery light in the high-detail models); the game multiplies the child's skin tone by it (`skin-shade` material,
+  `js/friend-model.ts`). The ink outline stays on the head's silhouette.
+- **Hair** (`lumi-hair.py`, the villagers' sculpted locks): rounder, thicker locks with the edges rolled under (the
+  friends' locks stay as approved), near-black hair lifted a little toward a warm brown so the locks show; Bác Ba's
+  tufts are soft round tufts.
+- **Clothes:** no cream collar on the villagers (the friends' collar); Bác Ba's áo bà ba up to the shoulders with wide
+  trousers; a fitted top is never pulled in above the chest (the ledge). The other named villagers already wear their
+  own (Tèo and Bờm a school shirt with a collar, Tí and Mít dresses, Jack a tee and shorts, Ruby a dress with a bow,
+  Lan an áo dài, Bống a tee, shorts and bunny ears); their sleeves follow the body's arms, so they still share its soft
+  shoulders (not changed this round).
+- The back of the skull a little fuller too (a child's head is deeper than it is wide).
+- **Checks (6 Nov 2026, 20:45 AEDT, one at a time, the final models):** `faces` pass, `villagermodels` pass, `perf` pass
+  (village 271 draws, 691k triangles), `battery` pass, `longplaymem` pass (535 pictures held, 528 in use),
+  `friendmodel` pass (light models about 10,300 triangles, Lumi 16,300), `frienditems` pass.
+- Shots: `docs/world-models-v108e/faces/heads/` (`before-*` Part 2, `round1-*` Part 3, `after-*` this round, and
+  `after-turn0.8-*` three-quarter views), `docs/world-models-v108e/faces/hair/after-full-*` (full length).
+
+## 7. Round 3: calm, cute and smooth (owner 6 Nov 2026 AEDT, via Release)
+
+The owner on round 2: "the pair of eyes and cheeks plus the hair will 100% scare the kids". Release: realistic lumpy
+cheeks under flat sticker eyes, faceted shard hair; this round is about calm, cute and smooth, not more detail. Split by
+the owner: the hair (item 6, `tools/blender/lumi-hair.py`) is the hair helper's, on `work/v108e-hair`; this branch keeps
+the face, the head's smoothing and Mai's waist. No rebuilt models are committed until both are merged (Release runs the
+full rebuild).
+- **Cheeks and jaw** about half of round 2 (`lumi-face3d.py` `sculpt_head`): no bulge past the jaw, no jaw dent, no
+  lumps round the mouth; soft round cheeks in an egg-shaped face; the nose bridge and tip subtle.
+- **Eyes** about 15 % smaller, a touch further apart and a little lower; one sparkle; a thin upper lash line only (no
+  lash flicks); the iris colours stay.
+- **Mouth:** at rest a closed, gentle smile; happy, excited, surprised (and talking) a soft rounded opening with no
+  points, a small tongue low inside.
+- **Blush:** smaller, lower on the cheek, a softer paler rose.
+- **Smooth skin:** the skin's shading is the soft key light alone (the baked shadow, sampled per point, came out as
+  blotches on the face); smooth shading with plain averaged normals on every thinned part (weighted normals were tried
+  and showed facets on the thinned shapes); the villagers' baked light at 256 samples, the soft shadow at 128 (less
+  speckle on the clothes).
+- **Mai:** the áo dài's top and panels have the same fit and meet at the waist (no step).
+- My first try at the hair (a smooth clay cap with big soft lobes, one colour and a highlight band) is in commit
+  1fb4972bc for the hair helper to look at; it was taken out again (`lumi-hair.py` and the export scripts as in round 2).
+- Test models (Clara, Mai, Tèo, not committed) and shots: `docs/world-models-v108e/faces/round3/` (phone 390x844 at 1x
+  and 2x, front and three-quarter, smiling and mid-blink; Clara and Tèo at 4x). `faces` passes with them.
+- **Release's review of round 3 (6 Nov ~9:35 pm AEDT), done:** the closed smile about 1.6 times wider with a deeper curve,
+  in a soft lip colour with a soft lip rim (the skin-coloured lip rows were shaded apart from the face and showed as
+  patches); the eyes, nose, mouth and cheeks up 4 % of the head's height (the hairline is the hair helper's, to bring
+  down to meet them); under Mai's áo dài the top's fitted layer goes down to the hips in the dress's colour, so no skin
+  shows in the side slits from any side; the clothes' cut edges relaxed along themselves (no torn, stepped hems), the
+  body given more triangles (high-detail 8,000-8,500, light 2,700), the head 4,000 high-detail and 1,300 light and
+  thinned the same on both sides, the skin's baked shading gentler (it showed as patches across the thinned face), a
+  kid's shorts slimmer (no belly).
+
 ## The style, for the villagers helper (shared setup)
 
 - Eyes: `face()` in `tools/blender/lumi.py` (the `op` lid heights per mood, `lidz()` the arch, `under()` cuts any decal
@@ -153,6 +211,35 @@ Checks changed (with the reason):
 - `longplaymem` (`tests/old-bugs.mts`): a skinned model's skeleton keeps its bone turns in a picture of its own, outside
   any material; it is now counted as in the valley with its model. Without this, the 62 "held" pictures were exactly
   those (the run without the villager models was clean).
+
+## The full rebuild (7 Nov 2026, 01:12 AEDT, real Blender 4.2.9, after merging work/v108e-hair)
+
+All 33 models built once (friends light and high-detail, 11 named villagers, the crowd), commit fb7eef9d3.
+Checks, one at a time: villagermodels pass, perf pass (village 274 draws / 715k triangles, over its own
+budget note as before), battery pass, longplaymem pass, friendmodel pass (finn 10927, sol 10902, clara 10892,
+lumi 15596 triangles), frienditems pass, faces pass. The faces check's mouth colour limit (green under .12) was
+written from a wrong note for the rose #c4626a (its linear green is .122, not .05); now under .16, which still
+keeps the lips (green .2) out.
+
+Shots: [rebuild/](../../../world-models-v108e/faces/rebuild/) (heads phone 1x and 2x, computer 2x, 3/4 view,
+full length, 4x close-ups of Clara and Mai) and [rebuild/game/](../../../world-models-v108e/faces/rebuild/game/)
+(friends and villagers in the valley, the market crowd, Welcome). Seen: faces smooth and even on all 33.
+Still to look at: the friends' hair (Finn, Sol, Clara) shows facets at 2x and 4x (the hair helper's part); dark
+bake smudges at the waist and hips of the ao dai (Mai and the crowd), Su's and Lan's tunics.
+
+## Fixes after the rebuild (7 Nov 2026, 2:20 am AEDT, Release's yes to both)
+
+- Waist and hip smudges: the villagers' baked light was sampled once per corner of the thinned shape. It is now
+  averaged per point, smoothed over the neighbours 3 times and kept above .5 (tools/blender/game-hd.py
+  soften_light). Rebuilt: Mai, Lan, Su, vn-aodai.
+- The friends' hair facets: in game-hd.py the "full smooth hair" that soften_hair takes its normals from had
+  already been thinned by thin_friend_hair_evenly, so the thinned hair copied its own facets. The hair is now
+  evaluated a second time without that thinning, for its normals. Its AO is smoothed (4 passes) and gentler
+  (.7 to 1, was .4 to 1). Rebuilt: Finn, Sol, Clara, Lumi (high-detail; the light models are unchanged).
+- Checks, one at a time: friendmodel, villagermodels, faces and perf pass (village 273 draws / 726k triangles).
+- Shots: [rebuild/fix/](../../../world-models-v108e/faces/rebuild/fix/), with before/after of Clara at 4x and of Mai.
+  Seen: the hard ridges on the hair are gone; the clumps' outlines are still a little angular (their shape);
+  Sol's side locks still end in points; Mai's waist is clean.
 
 ## Owner's decisions
 

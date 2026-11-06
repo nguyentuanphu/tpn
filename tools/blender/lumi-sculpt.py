@@ -121,6 +121,16 @@ def layer(sk, keep, m, off, name):
     """a fitted garment: the body surface where keep(point) is true, lifted by off and given a little thickness"""
     bm = bmesh.new(); bm.from_mesh(sk.data); bm.normal_update()
     bmesh.ops.delete(bm, geom=[f for f in bm.faces if not keep(f.calc_center_median())], context='FACES')
+    # (v1.08e round 3, Release: "jagged torn edges" on the hems, sleeves and belts) the cut follows the body's triangles in
+    # steps: the edge loop is relaxed along itself (each edge point toward its two edge neighbours) until it runs smooth
+    bnd = [v for v in bm.verts if v.is_boundary]
+    for _ in range(8):
+        new = {}
+        for v in bnd:
+            nb = [e.other_vert(v) for e in v.link_edges if e.is_boundary]
+            if len(nb) == 2: new[v] = v.co * .4 + (nb[0].co + nb[1].co) * .3
+        for v, c in new.items(): v.co = c
+    bm.normal_update()
     for v in bm.verts: v.co += v.normal * off
     o = obj_from(bm, name, m)
     for c in list(o.users_collection): c.objects.unlink(o)
@@ -173,12 +183,13 @@ def sculpt():
             t = arm_of(p)
             if t is not None:   # on the arm: covered only as far as the sleeves of this top reach
                 return any(lo - .05 <= t <= hi - .08 for m, lo, hi in sleeves if m == top) or t < .12   # (Release 6 Nov: it ends inside the sleeve; past the cuff its end, unlit, showed as a dark band on the wrist)
-            # (v1.08e, Release 6 Nov: under an áo dài this layer's hem stood out over the hips like a box) the áo dài's own
-            # top covers the body there, so the layer stops above the waist
+            # (v1.08e, Release 6 Nov: under an áo dài this layer's hem stood out over the hips like a box; round 3: with it
+            # stopping at the waist, skin showed in the side slits) it goes down to the hips in the dress's colour, under the
+            # panels, which now fit with room (aoDai .03)
             # (and under a loose áo bà ba or cardigan, which reach the hips, it follows the body down to their hem: anything
             # showing through them is their own colour, not a band of the trousers)
             tk_ = V['top'][0] if V else ''
-            lo_ = b['zW'] + .03 * S if tk_ == 'aodai' else b['zCr'] - .045 * S if tk_ in ('aobaba', 'cardigan') else b['zW'] - .05 * S
+            lo_ = b['zW'] - .01 * S if tk_ == 'aodai' else b['zCr'] - .045 * S if tk_ in ('aobaba', 'cardigan') else b['zW'] - .05 * S
             return lo_ < p.z < b['zN'] - .012 * S
         layer(sk, keep_top, top, .007 * S, 'soft_top')
     for m in {m for m, lo, hi in sleeves if m != top}:   # sleeves of another cloth (a coat over a shirt)
@@ -188,7 +199,7 @@ def sculpt():
         low = plow if plow is not None else b['zAnk']
         # (v1.08e, owner: "Mai's tummy looks strange") under an áo dài the trousers start below its panels' top, or their white
         # showed as a band round the waist
-        ptop = b['zCr'] - .02 * S if (V and V['top'][0] == 'aodai') else b['zCr'] - .03 * S if (V and V['top'][0] in ('aobaba', 'cardigan')) else b['zW'] + .03 * S   # (Release 6 Nov: under a loose top the trousers start under its hem)
+        ptop = b['zW'] + .01 * S if (V and V['top'][0] == 'aodai') else b['zCr'] - .03 * S if (V and V['top'][0] in ('aobaba', 'cardigan')) else b['zW'] + .03 * S   # (Release 6 Nov: under a loose top the trousers start under its hem)
         o = layer(sk, lambda p: arm_of(p) is None and low - .005 < p.z < ptop, pmat, .009 * S, 'soft_pants')
     if tights and tights != pmat:   # coloured tights or long trousers drawn on the legs
         layer(sk, lambda p: arm_of(p) is None and p.z < b['zCr'] + .04 * S and p.z > b['zAnk'] - .02 * S, tights, .004 * S, 'soft_tights')
@@ -213,14 +224,19 @@ def body_r(z):
     return r * 1.06   # the melted surface is a little fuller than the parts
 
 # garments that follow the body (owner, 3 Nov: a skirt must not be wider than the belly and hips): (margin, flare below the hips)
-FIT = {'skirt': (.014, .3), 'dressSkirt': (.014, .3), 'longSkirt': (.014, .22), 'frill': (.02, .3), 'dressTop': (.012, 0), 'bodice': (.012, 0),
-       'aoBaBa': (.022, .12), 'corset': (.016, 0), 'belt': (.016, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.028, .12), 'aoDaiTop': (.031, 0)}   # (over the hips with room, the top just over the panels' top edge)
+# (round 3, Release: Clara's blouse showed a torn, jagged cream edge: the shirt's fitted layer, just under the bodice, belt
+# and skirt, poked through them once thinned) the outer layers sit with more room over the shirt
+FIT = {'skirt': (.022, .3), 'dressSkirt': (.014, .3), 'longSkirt': (.014, .22), 'frill': (.026, .3), 'dressTop': (.012, 0), 'bodice': (.022, 0),
+       'aoBaBa': (.022, .12), 'corset': (.026, 0), 'belt': (.028, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.034, .12), 'aoDaiTop': (.03, 0)}   # (round 3: the panels hang with room over the hips; the trousers, up to the waist, show in the slits as on a real áo dài)   # (over the hips with room, the top just over the panels' top edge)
 FIT.update(globals().get('KIT_FIT', {}))   # the costume kit's long coat panels hang over its skirts (costumes.py)
 def fit_loose():
     rh = B['wH'] * BW * .98 * 1.06; dep = B['dep']; top_hip = HP_Z()
     def target(z, m, fl):
         r = body_r(z)
         if z < top_hip: r = max(r, rh)
+        # (v1.08e, Release 6 Nov: an áo bà ba drawn to the shoulders was pulled in above the chest and left a ledge) above
+        # the chest's middle a top is never narrower than most of the chest
+        if z > CH_Z(): r = max(r, B['wC'] * BW * .92)
         return r + m * S + fl * max(0, B['zCr'] + .03 * S - z)
     for o in [o for o in bpy.data.objects if o.type == 'MESH']:
         base = o.name.split('.')[0]
@@ -232,5 +248,5 @@ def fit_loose():
         elif base in ('petalHem', 'apron', 'pocketLeaf'):   # pieces on a skirt move with it
             mw = o.matrix_world; c = mw @ (sum((Vector(b) for b in o.bound_box), Vector()) / 8); r = math.hypot(c.x, c.y / dep)
             if r > 1e-4 and c.z < B['zW']:
-                k = (target(c.z, .03, .3) / r) if base == 'petalHem' else (target(c.z, .03, .2) / r)
+                k = (target(c.z, .042, .3) / r) if base == 'petalHem' else (target(c.z, .04, .2) / r)   # (round 3: out with the roomier skirt, or the petals sank into it as dark holes)
                 o.matrix_world = Matrix.Translation(Vector((c.x * (k - 1), c.y * (k - 1), 0))) @ mw

@@ -40,7 +40,8 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
       g.scene.traverse((o: any) => { if (!o.isMesh) return; o.frustumCulled = false; o.castShadow = true;
         const m = o.material, name = m.name || '';
         // (v1.08e faces, part 2) a high-detail model's parts carry their painted picture (m.map) instead of corner colours
-        if (!mats.has(m)) mats.set(m, name.startsWith('skin') ? new THREE.MeshToonMaterial({ name, color: '#f6c7a5', gradientMap: bands })
+        // (v1.08e, owner 6 Nov: "skin-shade": the skin's corners carry its soft form shading, times the child's skin tone)
+        if (!mats.has(m)) mats.set(m, name.startsWith('skin') ? new THREE.MeshToonMaterial({ name, color: '#f6c7a5', gradientMap: bands, vertexColors: name.startsWith('skin-shade') && !!(o.geometry && o.geometry.attributes.color) })
           // (v1.08e villagers) "lit-": the gallery's studio light is baked into the picture, so it is drawn mostly by its own light
           // (emissive), with a little of the valley's light on top, so day and night still show
           : name.startsWith('lit-') && m.map ? new THREE.MeshToonMaterial({ name, map: m.map, emissiveMap: m.map, emissive: '#fff0dc', emissiveIntensity: .9, color: '#8a8070', gradientMap: bands }) // (owner, 6 Nov: brighter, warmer)

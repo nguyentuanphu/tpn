@@ -97,14 +97,25 @@ VHAIR = {'vn-aodai': 'long', 'vn-dad': 'sidepart', 'vn-farmer': 'sidepart', 'vn-
 # Jack short, Ruby her red hair to the shoulders, Lan a ponytail
 VHAIR.update({'mai': 'long', 'ba': 'tuft', 'teo': 'boybangs', 'ti': 'puffs', 'bong': 'ponytail', 'su': 'boybangs', 'jack': 'boybangs',
               'mit': 'puffs', 'bom': 'boybangs', 'ruby': 'waves', 'lan': 'ponytail'})  # (owner, 6 Nov: no spiky hair)
+def fringe(HS, HL, n=8, spread=.85, el=.95, L=.5, W=.28, sides=True):
+    """(v1.08e, owner 6 Nov via Release: the dark-haired children's fringe read as a flat slab with hard edges) soft locks
+    over the forehead, like Clara's and Finn's, two shades, and a few at the sides and back for volume"""
+    for k in range(n):
+        az = -spread + 2 * spread * k / (n - 1) + random.uniform(-.05, .05)
+        clump(az, el + random.uniform(-.05, .05), L * random.uniform(.85, 1.1), W, .1, .3, HS if k % 3 else HL, 1.07)
+    if sides:
+        for k in range(10):
+            az = (1 if k % 2 else -1) * (1.15 + .17 * (k // 2)) + random.uniform(-.08, .08)
+            clump(az, .3 + random.uniform(-.08, .08), L * .55, W * .85, .0, .12, HL if k % 4 == 0 else HS, 1.03)   # (hanging close: no spikes)
 def hair_villager():
     st = VHAIR.get(ROLE, V['hair']); HS = mat('hairShell', PAL[1], .5, .45); HL = mat('hairShellL', PAL[3], .5, .45)
     hatted = bool(WEAR.get('hat'))
     if st == 'sidepart':   # short and neat with a side parting
         shell(HS, hairline=.38, part=.35, sides=-.35, back=-.6, sweep=-.12)
         for k, az in enumerate((-.45, -.15, .15)): sphere('hairLobe', HS, H(math.sin(az) * .78, -math.cos(az) * .78, .6), (.32 * R, .2 * R, .2 * R), 20, 10, (0, 0, az))
-    elif st == 'boybangs':  # a short cut with a straight fringe
-        shell(HS, hairline=.2, part=None, sides=-.38, back=-.62, puff=1.08)
+    elif st == 'boybangs':  # a short cut with a soft fringe of locks
+        shell(HS, hairline=.35, part=None, sides=-.1, back=-.62, puff=1.04)   # (no flap down the temples: its cut edge read as a black wedge)
+        fringe(HS, HL, 9, .9, .95, .5, .28, False)   # (no locks at the sides: they read as wedges)
     elif st == 'messy':  # tousled short hair, a few soft tufts on top
         shell(HS, hairline=.3, part=None, sides=-.4, back=-.62, puff=1.08)
         for k in range(7):
@@ -118,7 +129,8 @@ def hair_villager():
         shell(HS, hairline=.36, part=0.0, sides=-.38, back=-.65, puff=1.05)
         sphere('bun', HS, H(0, .9, -.32), (.36 * R, .3 * R, .32 * R), 24, 12); sphere('bunTie', DRESS, H(0, .72, -.28), (.22 * R, .08 * R, .2 * R), 16, 8)
     elif st == 'ponytail':
-        shell(HS, hairline=.32, part=None, sides=-.38, back=-.62, puff=1.05)
+        shell(HS, hairline=.38, part=None, sides=-.12, back=-.62, puff=1.03)
+        fringe(HS, HL, 7, .75, .98, .44, .26, False)
         base = H(0, .7, .62); sphere('ponyTie', felt('tie', '#e2574c'), base, (.16 * R, .12 * R, .16 * R), 16, 8)
         o = tube('ponytail', HS, [base, base + Vector((0, .25 * R, -.2 * R)), base + Vector((0, .32 * R, -.8 * R)), base + Vector((0, .22 * R, -1.35 * R))], [.22 * R, .26 * R, .2 * R, .05 * R], 20); subsurf(o, 1)
     elif st == 'bangspigtails':  # straight bangs and two pigtails with bows
@@ -126,8 +138,9 @@ def hair_villager():
         for s in (-1, 1):
             base = H(s * 1.0, .2, .05); sphere('pigTie', felt('tie', '#e2574c'), base, (.14 * R, .14 * R, .12 * R), 16, 8)
             o = tube('pigtail', HS, [base, base + Vector((s * .18 * R, .05 * R, -.15 * R)), base + Vector((s * .24 * R, .05 * R, -.65 * R)), base + Vector((s * .2 * R, .02 * R, -.95 * R))], [.17 * R, .2 * R, .15 * R, .04 * R], 16); subsurf(o, 1)
-    elif st == 'puffs':  # two round afro puffs
-        shell(HS, hairline=.3, part=0.0, sides=-.4, back=-.62, puff=1.06)
+    elif st == 'puffs':  # two round puffs (buns), a soft fringe
+        shell(HS, hairline=.38, part=0.0, sides=-.12, back=-.62, puff=1.04)
+        fringe(HS, HL, 7, .75, .98, .44, .26, False)
         for s in (-1, 1):
             sphere('hairPuff', HS, H(s * .78, .15, .78), (.42 * R, .4 * R, .4 * R), 24, 12); sphere('puffTie', felt('tie', '#f2c14e'), H(s * .62, .1, .62), (.15 * R, .15 * R, .1 * R), 12, 6)
     elif st == 'curls':  # short soft curls
@@ -137,8 +150,12 @@ def hair_villager():
             if math.cos(az) > .2 and el < .9: continue
             n = Vector((math.cos(el) * math.sin(az), -math.cos(el) * math.cos(az), math.sin(el)))
             sphere('hairCurl', (HS, HL)[k % 2], HC + n * R * 1.1, (.15 * R,) * 3, 12, 6)
-    else:  # tuft: bald on top, short hair round the back and sides
-        shell(HS, hairline=.1, part=None, sides=-.35, back=-.62, puff=1.03, top_cut=.35)
+    else:  # tuft: bald on top, short soft hair round the back and sides (Release 6 Nov: no flat grey blocks)
+        for row, el in enumerate((-.2, .08)):   # two rows of soft round tufts, from above the ears round the back
+            for k in range(12):
+                az = (1 if k % 2 else -1) * (1.2 + .3 * (k // 2) + .15 * row) + random.uniform(-.05, .05)
+                n_ = Vector((math.cos(el) * math.sin(az), -math.cos(el) * math.cos(az), math.sin(el)))
+                sphere('hairLobe', HL if (k + row) % 3 == 0 else HS, HC + n_ * R * 1.0, (.2 * R, .2 * R, .15 * R), 16, 8, (0, 0, az))
 
 def body_villager():
     if V.get('kit'): return body_kit()   # the costume kit (costumes.py)
@@ -150,7 +167,7 @@ def body_villager():
         r = wH * (.66 if kind == 'wide' else .56)
         for s in (-1, 1):  # trousers (wide and flowing under an áo dài) or shorts
             tube('trouser', BOT, [(s * b['legX'] * .85, 0, b['zCr'] + (-.1 if tk == 'aodai' else .02) * S), (s * b['legX'] * 1.05, 0, low)], [r * (.8 if tk == 'aodai' else 1), r * (1.06 if kind == 'wide' else .98)], 24)   # (under an áo dài: the tops hidden in the panels)
-        k_ = .9 if tk == 'aodai' else 1.0   # (v1.08e, owner: "Mai's tummy looks strange") no seat under an áo dài: it showed as a white band at the waist
+        k_ = .9 if tk == 'aodai' else .84 if (kind == 'shorts' and V['size'] == 'kid') else 1.0   # (v1.08e, owner: "Mai's tummy looks strange") no seat under an áo dài: it showed as a white band at the waist; (round 3, Release: a kid's shorts bulged like a belly) slimmer
         if tk != 'aodai': lathe('seat', BOT, [(wH * .55 * k_, b['zCr'] - .035 * S), (wH * .95 * k_, b['zCr'] - .005 * S), (wH * 1.02 * k_, (b['zCr'] + b['zW']) / 2), (wC * 1.0 * k_, b['zW'] + .01 * S)], 32, scale=(1, dep))
     elif kind == 'skirt' and tk != 'dress':
         lathe('skirt', BOT, [(wC * 1.05, b['zW'] + .01 * S), (wH * 1.15, b['zCr']), (wH * 1.4, b['zCuff'] + .02 * S), (wH * 1.42, b['zCuff'] + .005 * S)], 36, scale=(1, dep * 1.05))
@@ -162,14 +179,16 @@ def body_villager():
     if tk in ('aobaba', 'cardigan'):  # a loose top to the hips with buttons down the front
         hem = b['zCr'] - .05 * S
         # (Release 6 Nov: in four rings it stood out in tiers once fitted) in many rings, so it follows the body smoothly
-        top_ = b['zC'] - .01 * S
+        top_ = b['zS'] + .01 * S   # (up to the shoulders: it stopped at the chest and left a ledge, Release 6 Nov)
         lathe('aoBaBa', TOP, [(wC, hem + (top_ - hem) * k / 10) for k in range(11)], 36, scale=(1, dep))
         for z in lin(hem + .04 * S, b['zC'] + .02 * S, 4): sphere('button', felt('buttonCloth', '#f2ead8'), (0, fronty(wC * 1.08) - .004, z), (.008 * S, .004 * S, .008 * S), 10, 5)
     elif tk == 'aodai':  # áo dài: a fitted top with a mandarin collar, long front and back panels split at the sides
         # (v1.08e, Release 6 Nov: "a square box across the chest and waist with a dark seam") one smooth fitted top, in many
         # rings from the waist to the shoulders so it follows the body (lumi-sculpt FIT, "aoDaiTop"), meeting the panels
-        zt0 = b['zW'] - .04 * S   # (its hem a little over the panels' top edge, a hair outside them: no step, no gap once smoothed)
-        lathe('aoDaiTop', TOP, [(wC, zt0 + (b['zS'] + .01 * S - zt0) * k / 10) for k in range(11)], 32, scale=(1, dep))
+        zt0 = b['zW'] - .012 * S   # (round 3, Release: a step showed at the waist; its hem now meets the panels' top edge at the same fit)
+        # (round 3, Release: the top read as a flat plate on the chest, wider than the body, square at the shoulders) no top
+        # shell: the body-hugging layer in the dress's colour (lumi-sculpt, soft_top, down to the hips under an áo dài) is the
+        # fitted top, running round the shoulders into the sleeves; the panels hang from the waist
         for a0, a1 in ((-1.42, 1.42), (math.pi - 1.42, math.pi + 1.42)):   # (v1.08e: wide panels, narrow side slits from the waist, Release 6 Nov)
             lathe('aoDai', TOP, [(wC * 1.05, b['zW']), (wH * 1.08, b['zCr']), (wH * 1.2, b['zCuff'] - .1 * S), (wH * 1.24, b['zCuff'] - .13 * S)], 32, scale=(1, dep), arc=(a0, a1))
         tube('aoDaiCollar', TOP, [Vector((math.cos(t) * wC * .5, math.sin(t) * wC * .45, b['zN'] + .005)) for t in lin(0, 2 * math.pi, 21)], .016 * S, 8, False)
