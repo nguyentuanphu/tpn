@@ -69,7 +69,7 @@ def hd():
     rig.animation_data.action = None
     for b in pb: b.rotation_euler = (0, 0, 0); b.location = (0, 0, 0)
     dg = bpy.context.evaluated_depsgraph_get(); groups = {}
-    face3 = None
+    face3 = None; full_hair = []
     soften_friend_hair([o for o in scene.objects if o.parent == rig], WHO, subdivide=False)   # (v1.08e hair round 3: round tips)
     thin_friend_hair_evenly([o for o in scene.objects if o.parent == rig], WHO, HD_BUDGET['hair'])   # (every lock thinned by the same share)
     for o in [o for o in scene.objects if o.type == 'MESH' and o.parent == rig]:
@@ -79,6 +79,13 @@ def hd():
             if m.type == 'SUBSURF': m.levels = 0 if (o.users_collection[0].name == 'hair' and is_cap(o)) else 1 if (LIT and o.users_collection[0].name == 'hair') else min(m.levels, 2)
             if m.type == 'ARMATURE': m.show_viewport = False
         dg.update(); names = [g.name for g in o.vertex_groups]
+        ev = [m for m in o.modifiers if m.type == 'DECIMATE' and m.name.startswith('even')]
+        if ev:   # (v1.08e faces, Release 7 Nov: the friends' hair took its "full smooth" normals from hair already thinned by
+            # thin_friend_hair_evenly, so the facets stayed) the lock as it is without that thinning, kept for its normals
+            for m in ev: m.show_viewport = False
+            dg.update(); fm = bpy.data.meshes.new_from_object(o.evaluated_get(dg), preserve_all_data_layers=True, depsgraph=dg)
+            for m in ev: m.show_viewport = True
+            dg.update(); fo = bpy.data.objects.new(o.name + '_full', fm); fo.matrix_world = o.matrix_world; scene.collection.objects.link(fo); full_hair.append(fo)
         me = bpy.data.meshes.new_from_object(o.evaluated_get(dg), preserve_all_data_layers=True, depsgraph=dg)
         n = bpy.data.objects.new(o.name + '_h', me); n.matrix_world = o.matrix_world
         for g in names: n.vertex_groups.new(name=g)
@@ -100,7 +107,14 @@ def hd():
         _thin(l, HD_FACE if key.startswith('face-') else HD_BUDGET.get(key, 900))
         for p_ in l.data.polygons: p_.use_smooth = True   # smooth shading on the thinned shape (no facets)
         _smooth(l)
-        if key == 'hair': soften_hair(l, h)   # (v1.08e hair round 3: the full hair's smooth normals, no sharp edges)
+        if key == 'hair':   # (v1.08e hair round 3: the full hair's smooth normals, no sharp edges)
+            src = h
+            if full_hair:   # (the friends: the hair before thin_friend_hair_evenly, joined; see above)
+                with bpy.context.temp_override(active_object=full_hair[0], selected_editable_objects=full_hair, selected_objects=full_hair): bpy.ops.object.join()
+                src = full_hair[0]
+                bm = bmesh.new(); bm.from_mesh(src.data); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(src.data); bm.free(); src.data.update()
+            soften_hair(l, src)
+            if src is not h: bpy.data.objects.remove(src)
         print('hd:', key, _tris(h), '->', _tris(l))
     # (v1.08e, Release 6 Nov 2026 AEDT: the 1024 px picture smeared the clothes, and texels the bake missed came out as
     # black bands and strips in the hair) no picture: each face keeps its material's flat colour in its corners (crisp,
@@ -124,6 +138,29 @@ def hd():
         else: scene.cycles.samples = 128; bpy.ops.object.bake(type='AO', target='VERTEX_COLORS')
     lit_parts = [low[k] for k in cloth if LIT and k != 'hair' and not k.startswith('hands')]
     bake(lit_parts, 'LIGHT'); bake([low[k] for k in cloth if low[k] not in lit_parts], 'AO')
+    # (v1.08e faces, Release 7 Nov 2026 2 am AEDT: dark smudges at the waist and hips, and the friends' hair clumps shaded
+    # into facets) the bake is sampled once per corner of the thinned shape, so a corner tucked under a fold or beside a
+    # neighbouring clump came out much darker than the corners round it. Each point's light is now the average of its
+    # corners, smoothed over its neighbours a few times, and kept above a floor (lit clothes) or made gentle (the AO)
+    def soften_light(o, passes, floor):
+        me = o.data; L = me.color_attributes.get('Light')
+        if L is None: return
+        nv = len(me.vertices); acc = [[0.0, 0.0, 0.0, 0] for _ in range(nv)]
+        for lp in me.loops:
+            c = L.data[lp.index].color; a = acc[lp.vertex_index]; a[0] += c[0]; a[1] += c[1]; a[2] += c[2]; a[3] += 1
+        v = [(a[0] / a[3], a[1] / a[3], a[2] / a[3]) if a[3] else (1.0, 1.0, 1.0) for a in acc]
+        nb = [[] for _ in range(nv)]
+        for e in me.edges: i, j = e.vertices; nb[i].append(j); nb[j].append(i)
+        for _ in range(passes):
+            v = [tuple(.5 * v[i][c] + .5 * sum(v[j][c] for j in nb[i]) / len(nb[i]) for c in range(3)) if nb[i] else v[i] for i in range(nv)]
+        for lp in me.loops:
+            r, g, b = v[lp.vertex_index]; lum = (r + g + b) / 3
+            if lum < floor: k = floor / max(lum, 1e-4); r, g, b = r * k, g * k, b * k   # (the same warm colour, lifted to the floor)
+            L.data[lp.index].color = (r, g, b, 1)
+    for k_ in cloth:
+        o_ = low[k_]
+        if o_ in lit_parts: soften_light(o_, 3, .5)
+        elif k_ == 'hair': soften_light(o_, 4, .7)
     total = 0
     if face3: face3.name = WHO + '-face3d'; low['face3d'] = face3   # (part 3: the face keeps its mood keys, as built)
     for k, o in low.items():
@@ -155,7 +192,7 @@ def hd():
                     cc = hair_colour(cc_, mw @ me.vertices[me.loops[li].vertex_index].co, (nm @ me.corner_normals[li].vector).normalized(), HC)
                 if light is None: colr.data[li].color = cc; continue
                 l = light.data[li].color
-                f = [min(1, l[0]), min(1, l[1]), min(1, l[2])] if lit else [.4 + .6 * min(1, l[0])] * 3   # (lit: the light's own warm colour)
+                f = [min(1, l[0]), min(1, l[1]), min(1, l[2])] if lit else [(.7 + .3 * min(1, l[0])) if k == 'hair' else (.4 + .6 * min(1, l[0]))] * 3   # (lit: the light's own warm colour)
                 cc2 = [cc[0] * f[0], cc[1] * f[1], cc[2] * f[2]]
                 colr.data[li].color = (cc2[0], cc2[1], cc2[2], 1)
         if light is not None: me.color_attributes.remove(light)
