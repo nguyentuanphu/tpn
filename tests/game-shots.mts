@@ -8,7 +8,9 @@ import fs from 'fs';
 const out = process.argv[2] || 'docs/world-models-v108e/faces/game';
 fs.mkdirSync(out, { recursive: true });
 const b = await launch();
-const save = (name: string, url: string) => fs.writeFileSync(`${out}/${name}.png`, Buffer.from(url.split(',')[1], 'base64'));
+// ONLY=market,clara,mai,welcome: just those shots (a comma list), and OUT_TAG=<prefix> to name them apart
+const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null, only = (k: string) => !ONLY || ONLY.includes(k), TAG = process.env.OUT_TAG || '';
+const save = (name: string, url: string) => fs.writeFileSync(`${out}/${TAG}${name}.png`, Buffer.from(url.split(',')[1], 'base64'));
 for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 800, false]] as [string, number, number, boolean][]) {
   const P = await open(b, { w, h, touch, dpr: 2, settings: { quality: 'high' } }); await clear(P.page);
   // the page's own helpers: close a story chapter, wait, and draw the valley from a camera (the game's renderer and scene)
@@ -27,7 +29,7 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     };
   });
   // 1. each friend, the camera in front at the close-up distance: smiling, then mid-blink
-  for (const id of process.env.ONLY ? [] : ['finn', 'sol', 'clara', 'lumi']) {
+  for (const id of ['finn', 'sol', 'clara', 'lumi'].filter(only)) {
     const shots = await P.page.evaluate(async id => {
       const W = window as any, G = W.__sv, hh = G.heroes[0], WD = await import(String('/js/world.js'));
       hh.profile.look.friend = id; hh.profile.look.set = id === 'clara' || id === 'lumi' ? 'girl' : 'boy'; hh.place(WD.VILLAGE.x + 6, WD.VILLAGE.z - 8); hh.buildModel();
@@ -45,7 +47,7 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     console.log(dev, id, shots.hd ? 'high-detail' : 'light model');
   }
   // 2. Mai, Ba, Jack and Ruby in the valley, the child beside them, the camera in front of their faces
-  for (const id of process.env.ONLY ? [] : ['mai', 'ba', 'jack', 'ruby']) {
+  for (const id of ['mai', 'ba', 'jack', 'ruby'].filter(only)) {
     const url = await P.page.evaluate(async id => {
       const W = window as any, G = W.__sv, hh = G.heroes[0], n = G.npcs.find((x: any) => x.id === id), r = n.obj.rotation.y, fx = Math.sin(r), fz = Math.cos(r), o = n.obj.position;
       hh.place(o.x + fx * 2.2 + fz * 1.6, o.z + fz * 2.2 - fx * 1.6);
@@ -57,7 +59,7 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     save(`villager-${id}-${dev}`, url);
   }
   // 3. the Three Regions market with its crowd (the nearest people in their gallery models)
-  const market = await P.page.evaluate(async () => {
+  if (only('market')) { const market = await P.page.evaluate(async () => {
     const W = window as any, G = W.__sv, hh = G.heroes[0], M = await import(String('/js/content/map.js'));
     const m = (M.WORLD.places || M.PLACES || []).find((x: any) => x.id === 'market'), at = m ? m.at : [197, 114];
     hh.place(at[0], at[1] + 4); await W.__wait(9000);
@@ -75,11 +77,11 @@ for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['computer', 1280, 
     const t = n0.q; await W.__wait(800);
     return W.__shoot([t.x + f.x * 3.4 + sx.x * 1.2, t.y + 1.9, t.z + f.z * 3.4 + sx.z * 1.2], [t.x, t.y + 1.15, t.z], 38);
   });
-  save(`market-crowd-${dev}`, market);
+  save(`market-crowd-${dev}`, market); }
   if (P.errors.length) console.log(dev, P.errors.slice(0, 3));
   await P.ctx.close();
   // 4. the Welcome friend picker (a new player), the friends turning in their cards
-  if (process.env.ONLY) continue;
+  if (!only('welcome')) continue;
   const Q = await open(b, { w, h, touch, dpr: 2, play: false, settings: { quality: 'high' }, pre: () => { localStorage.setItem('sv2_profiles', '[]'); } });
   await Q.page.click('.screen.title .press', { force: true }); await Q.page.waitForSelector('.screen.who');
   await Q.page.click('.who .make'); await Q.page.waitForSelector('.modal.friendpick .fr-name');

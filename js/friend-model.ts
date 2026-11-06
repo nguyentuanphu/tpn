@@ -9,6 +9,13 @@ import { THREE, P, personLook, outlineSkinned } from './gfx.js';
 import type { FriendId } from './content/friends.js';
 
 type Loaded = { scene: THREE.Object3D, clone: (o: THREE.Object3D) => THREE.Object3D };
+/** (v1.08e) a "lit-" part whose gallery light is in its corner colours: lit mostly by them (emissive), a little by the valley */
+function litCorners(name: string) {
+  const m = new THREE.MeshToonMaterial({ name, vertexColors: true, emissive: '#fff0dc', emissiveIntensity: .9, color: '#8a8070' });
+  m.userData.cornerLight = true;
+  m.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n#ifdef USE_COLOR\ntotalEmissiveRadiance *= vColor.rgb;\n#endif'); };
+  return m;
+}
 const ready: Record<string, Loaded> = {}, loading: Record<string, Promise<boolean>> = {}, failed = new Set<string>();
 let bands: THREE.Texture = null;
 export const friendModelReady = (id: string) => !!ready[id];
@@ -37,8 +44,10 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
           // (v1.08e villagers) "lit-": the gallery's studio light is baked into the picture, so it is drawn mostly by its own light
           // (emissive), with a little of the valley's light on top, so day and night still show
           : name.startsWith('lit-') && m.map ? new THREE.MeshToonMaterial({ name, map: m.map, emissiveMap: m.map, emissive: '#fff0dc', emissiveIntensity: .9, color: '#8a8070', gradientMap: bands }) // (owner, 6 Nov: brighter, warmer)
+          // (v1.08e, Release 6 Nov: no picture, the clothes crisp) the light is baked into the corner colours: drawn the same way
+          : name.startsWith('lit-') ? litCorners(name)
           : m.map ? new THREE.MeshToonMaterial({ name, map: m.map, gradientMap: bands }) : new THREE.MeshToonMaterial({ name, vertexColors: true, gradientMap: bands }));
-        if (/^cloth-hat/.test(name)) mats.get(m).side = THREE.DoubleSide; // (v1.08e villagers) a hat is a thin shell: both sides drawn
+        if (/^cloth-(hat|hair)/.test(name)) mats.get(m).side = THREE.DoubleSide; // (v1.08e villagers) a hat is a thin shell, and a lock of hair a thin card: both sides drawn
         o.material = personLook(mats.get(m)); }); // (v1.08e faces, part 2) the people's soft ramp and rim light
       ready[id] = { scene: g.scene, clone };
       return true;
@@ -81,7 +90,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
   // (v1.08e faces, part 2) the same thin ink outline as the code people, bent by the model's bones (not on the faces);
   // each follows its part's visibility (the item in the hand, the riding hands) and hides far away with the others
   const lines: [THREE.Object3D, THREE.Object3D][] = [];
-  obj.traverse((o: any) => { if (o.isSkinnedMesh && !o.userData.outline && !o.userData.face3d && !/^(face-|cloth-hat)/.test(o.material.name || '')) lines.push([o, null]); }); // (no shell behind a thin hat, none on the face)
+  obj.traverse((o: any) => { if (o.isSkinnedMesh && !o.userData.outline && !o.userData.face3d && !/^(face-|cloth-hat|cloth-hair)/.test(o.material.name || '')) lines.push([o, null]); }); // (no shell behind a thin hat, none on the face, none round the locks of hair: it poked out between them, Release 6 Nov)
   lines.forEach(l => { l[1] = outlineSkinned(l[0], .009); });
   if (Array.isArray(A.outlines)) A.outlines.push(...lines.map(l => l[1]));
   // the rest turn of each joint, the code person's and the model's (both in the rig's space)

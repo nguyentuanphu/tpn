@@ -73,79 +73,52 @@ def hd():
         with bpy.context.temp_override(active_object=objs[0], selected_editable_objects=objs, selected_objects=objs):
             bpy.ops.object.join()
         h = objs[0]; h.name = WHO + '-' + key + '_src'; high[key] = h
-        if key == 'hat':   # (a hat's shell can face inward: the bake's rays then start inside it and come out dark)
+        if key in ('hat', 'hair'):   # (a hat's shell or a lock can face inward: drawn dark, or not at all, in the game)
             bm = bmesh.new(); bm.from_mesh(h.data); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(h.data); bm.free(); h.data.update()
         l = h.copy(); l.data = h.data.copy(); l.name = WHO + '-' + key; h.users_collection[0].objects.link(l); low[key] = l
         _thin(l, HD_FACE if key.startswith('face-') else HD_BUDGET.get(key, 900))
         for p_ in l.data.polygons: p_.use_smooth = True   # smooth shading on the thinned shape (no facets)
         print('hd:', key, _tris(h), '->', _tris(l))
-    cloth = [k for k in low if not k.startswith('face-')]
-    # one UV atlas for every part that is not a face (smart projection of all of them together packs them side by side)
-    objs = [low[k] for k in cloth]
-    for o in objs:
-        while o.data.uv_layers: o.data.uv_layers.remove(o.data.uv_layers[0])
-        o.data.uv_layers.new(name='UVMap')
-    # two areas of the picture: the hair's thousand small locks (an even colour) on a narrow strip, the clothes, seams
-    # and buttons on the rest; each area is unwrapped and packed on its own, then moved into place
-    def unwrap(group, x0, x1):
-        if not group: return
-        _select(group, group[0])
-        bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
-        bpy.ops.uv.smart_project(angle_limit=math.radians(60), island_margin=.004)
-        bpy.ops.object.mode_set(mode='OBJECT')
-        for o in group:
-            for d in o.data.uv_layers[0].data: d.uv = (x0 + d.uv[0] * (x1 - x0), d.uv[1])
-    hair = [low[k] for k in cloth if k == 'hair']
-    unwrap([o for o in objs if o not in hair], 0, 1 - UV_SHARE['hair'])
-    unwrap(hair, 1 - UV_SHARE['hair'] + .004, 1)
-    # bake: the colour (no light) and the soft shadow in the folds, from the full parts onto the thinned ones
-    col_img = bpy.data.images.new('hd-colour', ATLAS, ATLAS); ao_img = bpy.data.images.new('hd-ao', ATLAS, ATLAS)
-    col_img.generated_color = (0, 0, 0, 1); ao_img.generated_color = (1, 1, 1, 1)
-    scene.render.engine = 'CYCLES'; scene.cycles.device = 'CPU'; scene.cycles.samples = 16
-    bk = scene.render.bake; bk.use_selected_to_active = True; bk.cage_extrusion = .012; bk.max_ray_distance = .05; bk.margin = 6; bk.use_clear = False
-    for c in scene.collection.children: c.hide_render = False; c.hide_viewport = False
-    def target(img):
-        for o in objs:
-            for m in o.data.materials:
-                if not m or not m.use_nodes: continue
-                nt = m.node_tree; t = nt.nodes.get('hd-bake') or nt.nodes.new('ShaderNodeTexImage'); t.name = 'hd-bake'; t.image = img; nt.nodes.active = t
-    # (villagers: the light is baked into everything but the hair, whose thousands of small locks come out speckled;
-    # the hair gets its clean colour and the soft shadow, and the game shades it)
-    for img, kind in (((col_img, 'COMBINED'), (col_img, 'DIFFUSE'), (ao_img, 'AO')) if LIT else ((col_img, 'DIFFUSE'), (ao_img, 'AO'))):
-        target(img)
-        for k in cloth:
-            if LIT and (kind == 'COMBINED') == (k in ('hair', 'hands')): continue   # (the hands came out dark too)
-            _select([high[k], low[k]], low[k])
-            if kind == 'COMBINED': scene.cycles.samples = 64 if ATLAS >= 2048 else 48; bpy.ops.object.bake(type='COMBINED', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
-            elif kind == 'DIFFUSE': bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
-            else: bpy.ops.object.bake(type='AO', use_selected_to_active=True, cage_extrusion=.012, margin=6, use_clear=False)
-    c = np.array(col_img.pixels[:]).reshape(-1, 4); a = np.array(ao_img.pixels[:]).reshape(-1, 4)
-    if not LIT: c[:, :3] *= (.32 + .68 * a[:, :1])   # the folds, seams and buttons a little deeper
-    else:   # only the hair's strip takes the soft shadow (the rest has its light baked in)
-        u = (np.arange(c.shape[0]) % ATLAS) / ATLAS; hs = u > 1 - UV_SHARE['hair']; c[hs, :3] *= (.45 + .55 * a[hs, :1])
-    c[:, 3] = 1
-    paint = bpy.data.images.new(WHO + '-hd', ATLAS, ATLAS); paint.pixels[:] = c.reshape(-1).tolist()
-    paint.file_format = 'JPEG'; paint.pack()
+    # (v1.08e, Release 6 Nov 2026 AEDT: the 1024 px picture smeared the clothes, and texels the bake missed came out as
+    # black bands and strips in the hair) no picture: each face keeps its material's flat colour in its corners (crisp,
+    # as in the gallery), times the light baked into the corners of the thinned shape itself: the gallery's soft studio
+    # light for the villagers (LIT: direct and bounced light), the soft shadow in the folds (AO) for the friends and for
+    # everyone's hair and hands (the game shades those)
     for k, h in high.items(): bpy.data.objects.remove(h)
-    # one material per part: "cloth-<part>" with the picture, "skin" apart; the faces keep their colours in the corners
+    cloth = [k for k in low if not k.startswith('face')]
+    scene.render.engine = 'CYCLES'; scene.cycles.device = 'CPU'
+    for c in scene.collection.children: c.hide_render = False; c.hide_viewport = False
+    bk = scene.render.bake; bk.target = 'VERTEX_COLORS'; bk.use_selected_to_active = False; bk.use_clear = True
+    def bake(objs, kind):
+        if not objs: return
+        for o in objs:
+            me = o.data; a = me.color_attributes.get('Light') or me.color_attributes.new('Light', 'FLOAT_COLOR', 'CORNER'); me.color_attributes.active_color = a
+        _select(objs, objs[0])
+        if kind == 'LIGHT': scene.cycles.samples = 64; bpy.ops.object.bake(type='DIFFUSE', pass_filter={'DIRECT', 'INDIRECT'}, target='VERTEX_COLORS')
+        else: scene.cycles.samples = 32; bpy.ops.object.bake(type='AO', target='VERTEX_COLORS')
+    lit_parts = [low[k] for k in cloth if LIT and k not in ('hair', 'hands')]
+    bake(lit_parts, 'LIGHT'); bake([low[k] for k in cloth if low[k] not in lit_parts], 'AO')
     total = 0
-    if face3: face3.name = WHO + '-face3d'; low['face3d'] = face3   # (its colours into the corners, as the faces)
+    if face3: face3.name = WHO + '-face3d'; low['face3d'] = face3   # (part 3: the face keeps its mood keys, as built)
     for k, o in low.items():
         me = o.data; mats = list(me.materials); skin = next((m for m in mats if m and m.name.startswith('skin')), None)
-        if k.startswith('face'):
-            colr = me.color_attributes.new('Col', 'BYTE_COLOR', 'CORNER')
-            for poly in me.polygons:
-                cc = _base(mats[poly.material_index] if poly.material_index < len(mats) else None)
-                for li in poly.loop_indices: colr.data[li].color = cc
-            me.color_attributes.active_color = colr
-            one = bpy.data.materials.new(k); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
-            ca = nt.nodes.new('ShaderNodeVertexColor'); ca.layer_name = 'Col'; nt.links.new(ca.outputs['Color'], b.inputs['Base Color'])
-        else:
-            one = bpy.data.materials.new(('lit-' if LIT and k not in ('hair', 'hands') else 'cloth-') + k); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
-            t = nt.nodes.new('ShaderNodeTexImage'); t.image = paint; nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
+        colr = me.color_attributes.new('Col', 'BYTE_COLOR', 'CORNER'); light = me.color_attributes.get('Light')
+        lit = o in lit_parts
+        for poly in me.polygons:
+            cc = _base(mats[poly.material_index] if poly.material_index < len(mats) else None)
+            for li in poly.loop_indices:
+                if light is None: colr.data[li].color = cc; continue
+                l = light.data[li].color
+                f = [min(1, l[0]), min(1, l[1]), min(1, l[2])] if lit else [.4 + .6 * min(1, l[0])] * 3   # (lit: the light's own warm colour)
+                colr.data[li].color = (cc[0] * f[0], cc[1] * f[1], cc[2] * f[2], 1)
+        if light is not None: me.color_attributes.remove(light)
+        me.color_attributes.active_color = me.color_attributes['Col']
+        name = k if k.startswith('face') else ('lit-' if lit else 'cloth-') + k
+        one = bpy.data.materials.new(name); one.use_nodes = True; nt = one.node_tree; b = nt.nodes['Principled BSDF']
+        ca = nt.nodes.new('ShaderNodeVertexColor'); ca.layer_name = 'Col'; nt.links.new(ca.outputs['Color'], b.inputs['Base Color'])
         b.inputs['Roughness'].default_value = .8
         if skin and k == 'hands': skin = skin.copy(); skin.name = 'skin-grip'
-        # (the skin keeps its own plain colour, the villager's skin tone in the game: baked, the fingers came out dark)
+        # (the skin keeps its own plain colour, the person's skin tone in the game)
         keep = [one] + ([skin] if skin else [])
         idx = [keep.index(skin) if (skin and mats[p.material_index] == skin) else 0 for p in me.polygons]
         me.materials.clear()

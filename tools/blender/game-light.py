@@ -23,6 +23,8 @@ for o in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
     key = next((k for k in BUDGET if ('-' + k) in o.name), None)
     want = BUDGET[key] if key else FACE
     have = tris(o)
+    if '-hair' in o.name or '-hat' in o.name:   # (v1.08e, Release 6 Nov: every lock and hat shell facing out, none drawn dark)
+        import bmesh; bm = bmesh.new(); bm.from_mesh(o.data); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(o.data); bm.free(); o.data.update()
     if o.data.shape_keys: print('light:', o.name, have, '(kept: its mood keys)'); total += have; continue   # (v1.08e part 3: the face, built small)
     for _ in range(3):  # (small separate pieces, such as Lumi's leaves, thin less each time: up to three goes)
         now = tris(o)
