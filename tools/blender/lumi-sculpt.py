@@ -189,7 +189,7 @@ def sculpt():
             # (and under a loose áo bà ba or cardigan, which reach the hips, it follows the body down to their hem: anything
             # showing through them is their own colour, not a band of the trousers)
             tk_ = V['top'][0] if V else ''
-            lo_ = b['zCr'] - .03 * S if tk_ == 'aodai' else b['zCr'] - .045 * S if tk_ in ('aobaba', 'cardigan') else b['zW'] - .05 * S
+            lo_ = b['zW'] - .01 * S if tk_ == 'aodai' else b['zCr'] - .045 * S if tk_ in ('aobaba', 'cardigan') else b['zW'] - .05 * S
             return lo_ < p.z < b['zN'] - .012 * S
         layer(sk, keep_top, top, .007 * S, 'soft_top')
     for m in {m for m, lo, hi in sleeves if m != top}:   # sleeves of another cloth (a coat over a shirt)
@@ -199,7 +199,7 @@ def sculpt():
         low = plow if plow is not None else b['zAnk']
         # (v1.08e, owner: "Mai's tummy looks strange") under an áo dài the trousers start below its panels' top, or their white
         # showed as a band round the waist
-        ptop = b['zCr'] - .02 * S if (V and V['top'][0] == 'aodai') else b['zCr'] - .03 * S if (V and V['top'][0] in ('aobaba', 'cardigan')) else b['zW'] + .03 * S   # (Release 6 Nov: under a loose top the trousers start under its hem)
+        ptop = b['zW'] + .01 * S if (V and V['top'][0] == 'aodai') else b['zCr'] - .03 * S if (V and V['top'][0] in ('aobaba', 'cardigan')) else b['zW'] + .03 * S   # (Release 6 Nov: under a loose top the trousers start under its hem)
         o = layer(sk, lambda p: arm_of(p) is None and low - .005 < p.z < ptop, pmat, .009 * S, 'soft_pants')
     if tights and tights != pmat:   # coloured tights or long trousers drawn on the legs
         layer(sk, lambda p: arm_of(p) is None and p.z < b['zCr'] + .04 * S and p.z > b['zAnk'] - .02 * S, tights, .004 * S, 'soft_tights')
@@ -227,7 +227,7 @@ def body_r(z):
 # (round 3, Release: Clara's blouse showed a torn, jagged cream edge: the shirt's fitted layer, just under the bodice, belt
 # and skirt, poked through them once thinned) the outer layers sit with more room over the shirt
 FIT = {'skirt': (.022, .3), 'dressSkirt': (.014, .3), 'longSkirt': (.014, .22), 'frill': (.026, .3), 'dressTop': (.012, 0), 'bodice': (.022, 0),
-       'aoBaBa': (.022, .12), 'corset': (.026, 0), 'belt': (.028, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.03, .12), 'aoDaiTop': (.03, 0)}   # (round 3: the same fit, so the top runs on into the panels)   # (over the hips with room, the top just over the panels' top edge)
+       'aoBaBa': (.022, .12), 'corset': (.026, 0), 'belt': (.028, 0), 'dressBelt': (.016, 0), 'tunic': (.02, .15), 'aoDai': (.034, .12), 'aoDaiTop': (.03, 0)}   # (round 3: the panels hang with room over the hips; the trousers, up to the waist, show in the slits as on a real áo dài)   # (over the hips with room, the top just over the panels' top edge)
 FIT.update(globals().get('KIT_FIT', {}))   # the costume kit's long coat panels hang over its skirts (costumes.py)
 def fit_loose():
     rh = B['wH'] * BW * .98 * 1.06; dep = B['dep']; top_hip = HP_Z()

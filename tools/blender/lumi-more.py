@@ -186,7 +186,9 @@ def body_villager():
         # (v1.08e, Release 6 Nov: "a square box across the chest and waist with a dark seam") one smooth fitted top, in many
         # rings from the waist to the shoulders so it follows the body (lumi-sculpt FIT, "aoDaiTop"), meeting the panels
         zt0 = b['zW'] - .012 * S   # (round 3, Release: a step showed at the waist; its hem now meets the panels' top edge at the same fit)
-        lathe('aoDaiTop', TOP, [(wC, zt0 + (b['zS'] + .01 * S - zt0) * k / 10) for k in range(11)], 32, scale=(1, dep))
+        # (round 3, Release: the top read as a flat plate on the chest, wider than the body, square at the shoulders) no top
+        # shell: the body-hugging layer in the dress's colour (lumi-sculpt, soft_top, down to the hips under an áo dài) is the
+        # fitted top, running round the shoulders into the sleeves; the panels hang from the waist
         for a0, a1 in ((-1.42, 1.42), (math.pi - 1.42, math.pi + 1.42)):   # (v1.08e: wide panels, narrow side slits from the waist, Release 6 Nov)
             lathe('aoDai', TOP, [(wC * 1.05, b['zW']), (wH * 1.08, b['zCr']), (wH * 1.2, b['zCuff'] - .1 * S), (wH * 1.24, b['zCuff'] - .13 * S)], 32, scale=(1, dep), arc=(a0, a1))
         tube('aoDaiCollar', TOP, [Vector((math.cos(t) * wC * .5, math.sin(t) * wC * .45, b['zN'] + .005)) for t in lin(0, 2 * math.pi, 21)], .016 * S, 8, False)
