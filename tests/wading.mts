@@ -45,6 +45,27 @@ export async function wadingCheck(browser:Browser){
   }
   G.paused=false;return {out,rings};
  });
+ // (#797, tester on iPhone v1.06, owner 6 Nov 2026 AEDT: "stuck, cannot walk up to the decorations in the water" at Làng Sen
+ // (232, -12)) every festival decoration stands where a child can walk up to it: none past the valley's edge (where pots
+ // and lamps stood over the sea beyond the drawn ground), and from (232, -12) the child walks up to each one nearby
+ const deco=await P.page.evaluate(async()=>{
+  const G=(window as any).__sv,W=await import(String('/js/world.js')),C=(await import(String('/js/custom.js'))).CUSTOM,h=G.heroes[0],wait=(ms:number)=>new Promise(r=>setTimeout(r,ms));
+  const ymd=(await import(String('/js/content/festival-visibility.js'))).sydneyFestivalDate(),keep=C.releases;
+  for(let k=0;k<40&&!G.festivals.count('village','tet',4);k++){G.festivals.rebuild();await wait(300);}
+  const out:any={past:[],far:[],near:0,festivals:[]};
+  for(const id of ['tet','midautumn','quockhanh']){C.releases={...(keep||{}),['fest_'+id]:{on:true,start:ymd,days:1}};G.festivals.rebuild();await wait(300);
+   out.festivals.push(id);const all=G.festivals.items();
+   const edge=W.EDGE??W.HALF-8;for(const q of all)if(Math.abs(q.x)>edge||Math.abs(q.z)>edge)out.past.push([id,+q.x.toFixed(1),+q.z.toFixed(1),q.kind]);
+   const pad={mx:0,mz:0,cdx:0,cdy:0,jump:()=>false,act:()=>false,run:false};G.paused=true;
+   for(const q of all.filter((q:any)=>q.kind!=='string'&&Math.hypot(q.x-232,q.z+12)<12)){out.near++;
+    h.carry=null;h.riding=null;h.place(232,-12);h.goal={x:q.x,z:q.z};h.goalT=0;let best=99;
+    for(let i=0;i<450;i++){h.update(1/30,pad,i/30,G);best=Math.min(best,Math.hypot(h.pos.x-q.x,h.pos.z-q.z));if(best<.8)break;}
+    if(best>1.2)out.far.push([id,+q.x.toFixed(1),+q.z.toFixed(1),+best.toFixed(2)]);}
+   G.paused=false;}
+  C.releases=keep;G.festivals.rebuild();return out;});
+ assert.deepEqual(deco.past,[],'festival decorations past the valley edge, where no child can reach them (#797): '+JSON.stringify(deco.past.slice(0,12)));
+ assert.ok(deco.near>=3,'festival decorations near (232, -12) to walk up to: '+deco.near);
+ assert.deepEqual(deco.far,[],'from (232, -12) the child cannot get within 1.2 m of these decorations (#797): '+JSON.stringify(deco.far));
  const bad=rows.out.map((r:any)=>r.bad?`${r.id}: ${r.bad}`:[!r.reached&&'did not get into the water',!r.back&&'did not get back out onto dry land',r.swims&&'swam',r.sinks&&'sank under the bed',!r.wades&&'did not wade',
   r.maxDepth>.83&&`water ${r.maxDepth} m deep (over 0.8)`,r.maxDepth<.3&&`water only ${r.maxDepth} m deep`,r.camLow<.2&&`the camera went down to ${r.camLow} m over the water`].filter(Boolean).map(w=>`${r.id}: ${w}`).join('; ')).filter(Boolean);
  assert.ok(rows.out.length>=20,'every water tried ('+rows.out.length+')');
@@ -53,6 +74,6 @@ export async function wadingCheck(browser:Browser){
  assert.deepEqual(P.errors,[]);
  const deep=Math.max(...rows.out.map((r:any)=>r.maxDepth)),low=Math.min(...rows.out.map((r:any)=>r.camLow));
  const climbs=rows.out.filter((r:any)=>r.climb).map((r:any)=>r.id);
- return `${rows.out.length} waters (every river, the lake, every pond, the sea by Hạ Long, the Reef, Rottnest and Tasmania): walked in and out, wading at most ${deep} m deep, never swimming or sinking, splash rings, the camera at least ${low} m over the water${climbs.length?`; a steep bank climbed at ${climbs.join(', ')}`:''}`;
+ return `${deco.festivals.join(', ')}: no decoration past the valley edge, the child walks up to all ${deco.near} near Làng Sen (232, -12) (#797); ${rows.out.length} waters (every river, the lake, every pond, the sea by Hạ Long, the Reef, Rottnest and Tasmania): walked in and out, wading at most ${deep} m deep, never swimming or sinking, splash rings, the camera at least ${low} m over the water${climbs.length?`; a steep bank climbed at ${climbs.join(', ')}`:''}`;
  }finally{await P.ctx.close();}
 }

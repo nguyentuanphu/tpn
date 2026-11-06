@@ -17,7 +17,7 @@ import { T } from './i18n.js';
 import { say } from './voice.js';
 import { SFX } from './audio.js';
 import { settings, saveProfiles, farm, saveFarm, reduceMotion } from './state.js';
-import { heightAt, WATER, VILLAGE, CHINA, INDIA, AUSSIE, TOWN, MARKET, HOME, HOIAN, CITIES } from './world.js';
+import { heightAt, WATER, EDGE, VILLAGE, CHINA, INDIA, AUSSIE, TOWN, MARKET, HOME, HOIAN, CITIES } from './world.js';
 import { FEAST } from './data.js';
 import { FESTCAL, DAY_PLAN, BUILDUP, GROUPS } from './content/festcal.js';
 import { lunarDay, easter, nthWeekday } from './lunar.js';
@@ -238,7 +238,10 @@ export function createFestivals(G) {
   const group = new THREE.Group(); scene.add(group); group.userData.noSolid = true; // (decorations come and go with the dates: never part of the solid map)
   const bursts = [], tables = [], doors = [];
   let active = [], glowMeshes = [];
-  const free = (x, z, r = 1) => heightAt(x, z) > WATER + .3 && !W.colliders.some(c => c.r > 0 && c.top == null && Math.hypot(c.x - x, c.z - z) < c.r + r) && !W.boxes.some(b => x > b.x0 - r && x < b.x1 + r && z > b.z0 - r && z < b.z1 + r);
+  // (#797, tester on iPhone v1.06: "stuck, cannot walk up to some decorations" at Làng Sen (232, -12)) the ground is free
+  // only where a child can walk up to it: inside the valley's edge (world.js EDGE), never past it, where pots and lamps
+  // stood over the sea beyond the drawn ground and nobody could reach them
+  const free = (x, z, r = 1) => Math.abs(x) <= EDGE - r && Math.abs(z) <= EDGE - r && heightAt(x, z) > WATER + .3 && !W.colliders.some(c => c.r > 0 && c.top == null && Math.hypot(c.x - x, c.z - z) < c.r + r) && !W.boxes.some(b => x > b.x0 - r && x < b.x1 + r && z > b.z0 - r && z < b.z1 + r);
   // (owner, 10 Oct) the street spots: js/festdecor.js, loaded once a child plays (PERF-001), then the decorations are built
   let D = null, loadingD = null, waitD = false;
   const loadD = () => loadingD || (loadingD = import('./festdecor.js').then(m => { D = { ...m.createDecor(free), tell: m.tell, decoOf: m.decoOf, FRAC: m.FRAC }; build();
