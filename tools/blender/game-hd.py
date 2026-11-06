@@ -11,6 +11,7 @@
 import bpy, bmesh, math
 from mathutils import Vector
 import numpy as np
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hair-finish.py')).read())   # (v1.08e hair round 3: soft hair)
 
 HD_BUDGET = {'body': 8000, 'head': 4000, 'hair': 9500, 'hands': 700, 'item': 900, 'shoes': 900}
 HD_FACE = 700
@@ -69,10 +70,13 @@ def hd():
     for b in pb: b.rotation_euler = (0, 0, 0); b.location = (0, 0, 0)
     dg = bpy.context.evaluated_depsgraph_get(); groups = {}
     face3 = None
+    soften_friend_hair([o for o in scene.objects if o.parent == rig], WHO, subdivide=False)   # (v1.08e hair round 3: round tips)
+    thin_friend_hair_evenly([o for o in scene.objects if o.parent == rig], WHO, HD_BUDGET['hair'])   # (every lock thinned by the same share)
     for o in [o for o in scene.objects if o.type == 'MESH' and o.parent == rig]:
         if o.users_collection[0].name == 'face3d': face3 = o; continue   # (part 3: the face keeps its mood keys, as built)
         for m in o.modifiers:
-            if m.type == 'SUBSURF': m.levels = 0 if (LIT and o.users_collection[0].name == 'hair') else min(m.levels, 2)   # (villagers: smooth locks as built, not smoothed and thinned into spikes)
+            # (v1.08e hair round 3: the villagers' round locks smoothed once before thinning, so no shards or spikes)
+            if m.type == 'SUBSURF': m.levels = 0 if (o.users_collection[0].name == 'hair' and is_cap(o)) else 1 if (LIT and o.users_collection[0].name == 'hair') else min(m.levels, 2)
             if m.type == 'ARMATURE': m.show_viewport = False
         dg.update(); names = [g.name for g in o.vertex_groups]
         me = bpy.data.meshes.new_from_object(o.evaluated_get(dg), preserve_all_data_layers=True, depsgraph=dg)
@@ -96,6 +100,7 @@ def hd():
         _thin(l, HD_FACE if key.startswith('face-') else HD_BUDGET.get(key, 900))
         for p_ in l.data.polygons: p_.use_smooth = True   # smooth shading on the thinned shape (no facets)
         _smooth(l)
+        if key == 'hair': soften_hair(l, h)   # (v1.08e hair round 3: the full hair's smooth normals, no sharp edges)
         print('hd:', key, _tris(h), '->', _tris(l))
     # (v1.08e, Release 6 Nov 2026 AEDT: the 1024 px picture smeared the clothes, and texels the bake missed came out as
     # black bands and strips in the hair) no picture: each face keeps its material's flat colour in its corners (crisp,
@@ -142,7 +147,12 @@ def hd():
                     v = min(1.0, skin_shade(cn[li].vector))   # (round 3: the key light alone; the baked shadow, sampled per point, came out blotchy on the face)
                     colr.data[li].color = (v, v, v, 1)
                 continue
+            if k == 'hair' and is_hair_mat(mats[poly.material_index] if poly.material_index < len(mats) else None):
+                mw = o.matrix_world; nm = mw.to_3x3()   # (v1.08e hair round 3: one base colour and one soft highlight band)
+                cc_ = cc
             for li in poly.loop_indices:
+                if k == 'hair' and is_hair_mat(mats[poly.material_index] if poly.material_index < len(mats) else None):
+                    cc = hair_colour(cc_, mw @ me.vertices[me.loops[li].vertex_index].co, (nm @ me.corner_normals[li].vector).normalized(), HC)
                 if light is None: colr.data[li].color = cc; continue
                 l = light.data[li].color
                 f = [min(1, l[0]), min(1, l[1]), min(1, l[2])] if lit else [.4 + .6 * min(1, l[0])] * 3   # (lit: the light's own warm colour)

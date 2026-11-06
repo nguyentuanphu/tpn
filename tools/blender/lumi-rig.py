@@ -149,11 +149,17 @@ def lighten():
     for b in pb: b.rotation_euler = (0, 0, 0); b.location = (0, 0, 0)
     dg = bpy.context.evaluated_depsgraph_get()
     groups = {}
+    # (v1.08e hair round 3: the friends' felt clumps get round tips and one subdivision before they are thinned)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hair-finish.py')).read(), globals())
+    soften_friend_hair([o for o in scene.objects if o.parent == rig], WHO, subdivide=False)
+    thin_friend_hair_evenly([o for o in scene.objects if o.parent == rig], WHO, 4200)   # (game-light.py's hair budget)
     for o in [o for o in scene.objects if o.type == 'MESH' and o.parent == rig]:
         if o.users_collection[0].name == 'face3d':   # (v1.08e part 3) kept as built: its shape keys are the moods
             o.name = WHO + '-face3d'; continue
         for m in o.modifiers:
-            if m.type == 'SUBSURF': m.levels = 0 if o.users_collection[0].name == 'hair' else min(m.levels, 1)
+            # (v1.08e hair round 3: the locks smoothed once before they are thinned, so no shards or spikes; Lumi's many small
+            # leaves, the friends' light tubes and the hair base under the locks stay as built, smoothed by their normals in game-light.py)
+            if m.type == 'SUBSURF': m.levels = ((1 if o.name.split('.')[0] == 'hairCap' and WHO in FRIEND_SOFT else 0) if WHO in ('lumi',) + FRIEND_SOFT or is_cap(o) else 1) if o.users_collection[0].name == 'hair' else min(m.levels, 1)
             if m.type == 'ARMATURE': m.show_viewport = False
         dg.update(); names = [g.name for g in o.vertex_groups]
         me = bpy.data.meshes.new_from_object(o.evaluated_get(dg), preserve_all_data_layers=True, depsgraph=dg)
