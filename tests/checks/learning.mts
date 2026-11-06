@@ -110,6 +110,9 @@ await check('hocvui', async () => {
   return `one Fun learning tab, its corners in order (${hub.plays.length} games, no links; a card opens its game); the same corners on the Simple screen, each game once; ${NEW.length} new games won by real taps at Easy and Talent (${NEW.map(id => `${id} ${played[id + ':easy'].shown}→${played[id + ':talent'].shown}`).join(', ')}); pictures in tests/out/hocvui`;
 });
 
+// (v1.08f bugs, #816) Bottle Music: no two rounds the same, the under-5s too (tests/bottle-variety.mts)
+await check('bottlevariety', async () => (await import('../bottle-variety.mts')).bottleVarietyCheck(b));
+
 await check('englishmode', async () => {
   // (v1.08 english, owner's plan 3 Nov 2026 AEDT, part C) English mode: a Vietnamese child opens Opposites from Học vui ›
   // Tiếng Anh by a real tap, and it plays in English (its question line English, a Vietnamese hint under it with a speaker
