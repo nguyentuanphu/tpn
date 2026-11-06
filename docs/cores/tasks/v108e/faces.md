@@ -111,6 +111,28 @@ happy, surprised and sad), made by `tests/faces-shots.mts`.
   budget: 12,000 and 17,500 triangles, one more part), `frienditems` pass. `suite --changed` would choose the full suite
   (shared files changed): left for Release's GitHub run.
 
+## 6. Round 2: heads that read as heads (owner 6 Nov 2026 AEDT, via Release)
+
+The owner saw the Part 3 shots: "from the front the heads still read as round balls with a face painted on".
+- **Head shape** (`lumi-face3d.py` `sculpt_head`): the skull a little taller and narrower at the temples, the face plane
+  flatter, then the features about twice as strong: a nose with a bridge and a tip that catch the light and a soft
+  hollow under it, full cheeks that bulge past the jaw line, a defined chin and jaw, bigger ears turned out. The head (and
+  ears) are now thinned on their own (2,600 triangles high-detail, 900 light) and joined to the body again, so the shape
+  survives the thinning (before, the whole body shared one budget and the head lost its form).
+- **Shading:** the skin's corners carry soft form shading, a key light from above-left (and the baked soft shadow or
+  gallery light in the high-detail models); the game multiplies the child's skin tone by it (`skin-shade` material,
+  `js/friend-model.ts`). The ink outline stays on the head's silhouette.
+- **Hair** (`lumi-hair.py`, the villagers' sculpted locks): rounder, thicker locks with the edges rolled under (the
+  friends' locks stay as approved), near-black hair lifted a little toward a warm brown so the locks show; Bác Ba's
+  tufts are soft round tufts.
+- **Clothes:** no cream collar on the villagers (the friends' collar); Bác Ba's áo bà ba up to the shoulders with wide
+  trousers; a fitted top is never pulled in above the chest (the ledge). The other named villagers already wear their
+  own (Tèo and Bờm a school shirt with a collar, Tí and Mít dresses, Jack a tee and shorts, Ruby a dress with a bow,
+  Lan an áo dài, Bống a tee, shorts and bunny ears); their sleeves follow the body's arms, so they still share its soft
+  shoulders (not changed this round).
+- Shots: `docs/world-models-v108e/faces/heads/` (`before-*` Part 2, `round1-*` Part 3, `after-*` this round, and
+  `after-turn0.8-*` three-quarter views), `docs/world-models-v108e/faces/hair/after-full-*` (full length).
+
 ## The style, for the villagers helper (shared setup)
 
 - Eyes: `face()` in `tools/blender/lumi.py` (the `op` lid heights per mood, `lidz()` the arch, `under()` cuts any decal
