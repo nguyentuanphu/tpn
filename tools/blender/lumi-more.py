@@ -161,7 +161,9 @@ def body_villager():
         for s_ in (-1, 1): tube('dressStrap', TOP, [(s_ * .45 * wC, fronty(wC * .9), b['zC'] + .04 * S), (s_ * .55 * wC, -.01 * S, b['zS'] + .012 * S), (s_ * .5 * wC, wC * dep * .85, b['zC'] + .04 * S)], .009 * S, 8, False)
     if tk in ('aobaba', 'cardigan'):  # a loose top to the hips with buttons down the front
         hem = b['zCr'] - .05 * S
-        lathe('aoBaBa', TOP, [(wH * 1.12, hem), (wH * 1.06, hem + .05 * S), (wC * 1.06, b['zW'] + .02 * S), (wC * 1.05, b['zC'] - .01 * S)], 36, scale=(1, dep))
+        # (Release 6 Nov: in four rings it stood out in tiers once fitted) in many rings, so it follows the body smoothly
+        top_ = b['zC'] - .01 * S
+        lathe('aoBaBa', TOP, [(wC, hem + (top_ - hem) * k / 10) for k in range(11)], 36, scale=(1, dep))
         for z in lin(hem + .04 * S, b['zC'] + .02 * S, 4): sphere('button', felt('buttonCloth', '#f2ead8'), (0, fronty(wC * 1.08) - .004, z), (.008 * S, .004 * S, .008 * S), 10, 5)
     elif tk == 'aodai':  # áo dài: a fitted top with a mandarin collar, long front and back panels split at the sides
         # (v1.08e, Release 6 Nov: "a square box across the chest and waist with a dark seam") one smooth fitted top, in many
