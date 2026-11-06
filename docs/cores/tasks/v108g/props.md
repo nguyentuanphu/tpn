@@ -11,6 +11,11 @@ Branch `work/v108g-props` (from `origin/integrate/v108` at `6fc7bf1e5`). Started
 - The food on the stall counters and in the hawkers' baskets becomes small 3D food models near the child; the 2D
   pictures stay as the fallback and in the bag and menus.
 
+- (6 Nov 2026 AEDT, pop-up, in this chat) The dragons and birds made really beautiful in Blender: both the v1.08e models
+  (Little Dragon, crane, peacock, penguin, emu, chicken) remade with more detail, and the 2D flocks (little hens, ducks,
+  flying birds, fish) made as Blender models, one InstancedMesh per kind. After the props, on a new branch
+  `work/v108g-creatures`; Release merges it separately.
+
 ## Plan
 
 Models `models/world/pp-*.glb`, made by `tools/blender/world-props.py`:
